@@ -1,0 +1,99 @@
+//____________________________________________________________________________
+/*!
+
+\class    t2kana::year1_numuosc::OscillationFitter
+
+\brief    MINUIT-based numu oscillation param fitter
+
+\author   STFC, Rutherford Appleton Laboratory / Oxford T2K groups
+
+          Costas Andreopoulos <costas.andreopoulos \at stfc.ac.uk>
+          Jelena Ilic         <Jelena.Ilic \at stfc.ac.uk>
+          Nick Grant          <nick.grant \at stfc.ac.uk>
+          Geoff Pearce        <geoff.pearce \at stfc.ac.uk>
+          Alfons Weber        <alfons.weber \at stfc.ac.uk>
+
+\created  October 20, 2010
+
+*/
+//____________________________________________________________________________
+
+#ifndef _t2kana_year1_numu_analysis_fitter_minuit_h_
+#define _t2kana_year1_numu_analysis_fitter_minuit_h_
+
+#include <TMinuit.h>
+
+class TVirtualPad;
+
+#include "year1_numu_osc_analysis/Conventions.h"
+#include "year1_numu_osc_analysis/PhysParamList.h"
+
+namespace t2kana {
+namespace year1_numuosc {
+
+class SuperkObservation;
+class SuperkExpectation;
+
+class OscillationFitter
+{
+public:
+   OscillationFitter();
+  ~OscillationFitter();
+
+   void      SetObservation  (SuperkObservation * skobs);
+   void      SetExpectation  (SuperkExpectation * skexp);
+   void      SetFitParams    (PhysParamList * params);
+   void      PrepareFitter   (Option_t * option = "minuit");
+   void      DoTheFit        (void);
+   void      Draw            (TVirtualPad * c, Option_t * option = "results", const char * outtag = 0);
+   void      ActualOscParams (double sinsq2theta23, double dmsq23);
+   TMinuit * Minuit          (void) { return gMinuit; }
+
+   //
+   // nested utility classes
+   //
+
+   // Bundle fitter inputs into a single TObject-derived class so that they can be 
+   // passed to the minuit fitting function via TMinuit::Set/GetObjectFit();
+   class FitInputs: public TObject 
+   {
+    public :
+      FitInputs(SuperkObservation * skobs, SuperkExpectation * skexp, PhysParamList * fpar) :
+       fObs(skobs), fExp(skexp), fFitParams(fpar) { }
+     ~FitInputs()  { }
+      SuperkObservation & Observation(void) { return *fObs;       }
+      SuperkExpectation & Expectation(void) { return *fExp;       }
+      PhysParamList &     FitParams  (void) { return *fFitParams; }
+    private:
+      SuperkObservation * fObs;
+      SuperkExpectation * fExp;
+      PhysParamList *     fFitParams;
+    ClassDef(FitInputs,1)
+   };
+
+private:
+
+   void Init (void);
+
+   SuperkObservation *  fObs;              ///<
+   SuperkExpectation *  fExp;              ///<
+   PhysParamList *      fFitParams;        ///<
+   bool                 fKnowActualParams; ///<
+   double               fSinsq2Theta23;    ///<
+   double               fDm23sq;           ///<
+   int                  fNdof;             ///<
+   int                  fNFreeFitParams;   ///<
+   int                  fNonZeroBins;      ///<
+};
+
+//
+// MINUIT fit functions
+//
+void FitFunc1 (
+       Int_t &, Double_t *, Double_t &f, Double_t *par, Int_t iflag);
+
+} // year1_numuosc
+} // t2kana
+
+#endif
+
