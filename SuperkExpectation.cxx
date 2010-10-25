@@ -26,7 +26,7 @@ SuperkExpectation::~SuperkExpectation(void)
   this->CleanUp();
 }
 //________________________________________________________________________________________
-bool SuperkExpectation::Generate(double Er, const PhysParamList & fp)
+double SuperkExpectation::Generate(double Er, const PhysParamList & fp)
 {
 // Calculate dN^{exp}_{SuperK}(E_{reco}) / dE_{reco} for the input E_{reco} and 
 // the input physics parameter list.
@@ -112,7 +112,7 @@ bool SuperkExpectation::Generate(double Er, const PhysParamList & fp)
     }//m
   }//s
 
-  return 0;
+  return expectation;
 }
 //________________________________________________________________________________________
 void SuperkExpectation::Init(void)

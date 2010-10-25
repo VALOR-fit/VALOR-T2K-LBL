@@ -54,7 +54,7 @@ public:
   ~SuperkExpectation();
 
    // generate SK energy spectrum expectation for the current inputs
-   bool Generate(double Ereco, const PhysParamList & fp);
+   double Generate(double Ereco, const PhysParamList & fp);
 
    // access inputs used for building-up the expected spectrum at SK
    ND280Inputs *     GetND280Inputs     (void) { return fND280Inputs;     }
