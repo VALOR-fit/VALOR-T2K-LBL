@@ -14,10 +14,10 @@
 #include "year1_numu_osc_analysis/Utilities.h"
 
 using namespace t2kana;
-using namespace t2kana::year1_numuosc::conventions;
+using namespace t2kana::yr1numu::conv;
 
 //____________________________________________________________________________
-double t2kana::year1_numuosc::utilities::DeltaChisquare(
+double t2kana::yr1numu::util::DeltaChisquare(
   ConfLevel_t cl, int nfitparams) 
 {
   switch(cl) {
@@ -64,7 +64,7 @@ double t2kana::year1_numuosc::utilities::DeltaChisquare(
   return -99999;
 }
 //____________________________________________________________________________
-double t2kana::year1_numuosc::utilities::ChisqGauss(
+double t2kana::yr1numu::util::ChisqGauss(
   double ndata, double nmc)
 {
   double chisq = 0.;
@@ -74,7 +74,7 @@ double t2kana::year1_numuosc::utilities::ChisqGauss(
   return chisq;
 }
 //____________________________________________________________________________
-double t2kana::year1_numuosc::utilities::ChisqPoisson(
+double t2kana::yr1numu::util::ChisqPoisson(
   double ndata, double nmc)
 {
   const double epsilon = kASmallNum;
@@ -106,7 +106,7 @@ double NuMuSurvProb2D(double sinsq2theta, double dmsq, double Et)
   return psurv;
 }
 //____________________________________________________________________________
-string t2kana::year1_numuosc::utilities::AsString(PhysParamId_t p)
+string t2kana::yr1numu::util::AsString(PhysParamId_t p)
 {
   switch(p) {
     case ( kPhypSinsq2Theta23 ) : return "sinsq2theta23"; break;
@@ -116,7 +116,7 @@ string t2kana::year1_numuosc::utilities::AsString(PhysParamId_t p)
   return "--";
 }
 //____________________________________________________________________________
-void t2kana::year1_numuosc::utilities::SetDefaultStyle(bool black_n_white)
+void t2kana::yr1numu::util::SetDefaultStyle(bool black_n_white)
 {
   gROOT->SetStyle("Plain");
 
@@ -249,7 +249,7 @@ void t2kana::year1_numuosc::utilities::SetDefaultStyle(bool black_n_white)
   gROOT->ForceStyle();
 }
 //___________________________________________________________________________
-void t2kana::year1_numuosc::utilities::Format(
+void t2kana::yr1numu::util::Format(
    TGraph* gr, int lcol, int lsty, int lwid, int mcol, int msty, double msiz)
 {
   if(!gr) return;
@@ -264,7 +264,7 @@ void t2kana::year1_numuosc::utilities::Format(
   if (msiz >= 0) gr -> SetMarkerSize  (msiz);
 }
 //___________________________________________________________________________
-void t2kana::year1_numuosc::utilities::Format(
+void t2kana::yr1numu::util::Format(
      TH1* hst, int lcol, int lsty, int lwid, int mcol, int msty, double msiz)
 {
   if(!hst) return;

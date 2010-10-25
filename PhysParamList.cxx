@@ -19,12 +19,12 @@ using std::setw;
 using std::setprecision;
 
 using namespace t2kana;
-using namespace t2kana::year1_numuosc;
-using namespace t2kana::year1_numuosc::conventions;
+using namespace t2kana::yr1numu;
+using namespace t2kana::yr1numu::conv;
 
 //________________________________________________________________________________________
 namespace t2kana {
-namespace year1_numuosc {
+namespace yr1numu {
   ostream & operator << (ostream & stream, const PhysParamList & plst)
   {
     plst.Print(stream);
@@ -51,7 +51,7 @@ bool PhysParamList::AddParam (int ip, PhysParamId_t p,
   fIdMap.insert(map<PhysParamId_t, int>::value_type(p,ip));
 
   if(name.size()==0) {
-    name = utilities::AsString(p);
+    name = util::AsString(p);
   }
 
   fCurrValue [ip] = init;
@@ -150,7 +150,7 @@ int PhysParamList::Id(PhysParamId_t p) const
 {
    map<PhysParamId_t, int>::const_iterator it = fIdMap.find(p);
    if(it == fIdMap.end()) {
-     cerr << "Parameter : " << utilities::AsString(p) 
+     cerr << "Parameter : " << util::AsString(p) 
           << " was not included in current PhysParamList" 
          << endl;
      exit(1);

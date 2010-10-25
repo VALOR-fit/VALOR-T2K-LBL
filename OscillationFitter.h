@@ -1,7 +1,7 @@
 //____________________________________________________________________________
 /*!
 
-\class    t2kana::year1_numuosc::OscillationFitter
+\class    t2kana::yr1numu::OscillationFitter
 
 \brief    MINUIT-based numu oscillation param fitter
 
@@ -29,7 +29,7 @@ class TVirtualPad;
 #include "year1_numu_osc_analysis/PhysParamList.h"
 
 namespace t2kana {
-namespace year1_numuosc {
+namespace yr1numu {
 
 class SuperkObservation;
 class SuperkExpectation;
@@ -61,13 +61,19 @@ public:
       FitInputs(SuperkObservation * skobs, SuperkExpectation * skexp, PhysParamList * fpar) :
        fObs(skobs), fExp(skexp), fFitParams(fpar) { }
      ~FitInputs()  { }
+
       SuperkObservation & Observation(void) { return *fObs;       }
       SuperkExpectation & Expectation(void) { return *fExp;       }
       PhysParamList &     FitParams  (void) { return *fFitParams; }
+
+      // judge the agreement between the input data and the current prediction
+      double Chisquare(Option_t * opt = "poisson");
+      
     private:
       SuperkObservation * fObs;
       SuperkExpectation * fExp;
       PhysParamList *     fFitParams;
+
     ClassDef(FitInputs,1)
    };
 
@@ -92,7 +98,7 @@ private:
 void FitFunc1 (
        Int_t &, Double_t *, Double_t &f, Double_t *par, Int_t iflag);
 
-} // year1_numuosc
+} // yr1numu
 } // t2kana
 
 #endif

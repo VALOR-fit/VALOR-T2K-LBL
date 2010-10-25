@@ -6,15 +6,12 @@
 
 #include <cassert>
 
-#include <TAxis.h>
-#include <TH1D.h>
-#include <TH2D.h>
-#include <TSpline.h>
-
 #include "year1_numu_osc_analysis/SuperkExpectation.h"
+#include "year1_numu_osc_analysis/Conventions.h"
 
 using namespace t2kana;
-using namespace t2kana::year1_numuosc;
+using namespace t2kana::yr1numu;
+using namespace t2kana::yr1numu::conv;
 
 ClassImp(SuperkExpectation)
 
@@ -29,88 +26,91 @@ SuperkExpectation::~SuperkExpectation(void)
   this->CleanUp();
 }
 //________________________________________________________________________________________
-bool SuperkExpectation::Generate(double Er)
+bool SuperkExpectation::Generate(double Er, const PhysParamList & fp)
 {
+// Calculate dN^{exp}_{SuperK}(E_{reco}) / dE_{reco} for the input E_{reco} and 
+// the input physics parameter list.
 //
-//
-//
 
-/*
-   for(int it = 0; it < fSuperkInputs->NEnergyBins(); it++) {
+  //
+  double expectation     = 0.;
 
+  // input physics params (params included in the fit / systematics params)
+  double dmsq23          = fp.CurrValue(kPhypDm23sq);
+  double sinsq2theta23   = fp.CurrValue(kPhypSinsq2Theta23);
 
+  // calc stuff with no energy dependency
+  double Mfiducial_nd280 = fND280Inputs  -> FiducialMass();
+  double Npot_nd280      = fND280Inputs  -> AnalyzedSamplePOT();
+  double A_nd280         = 12;///////
+  double Mfiducial_sk    = fSuperkInputs -> FiducialMass();
+  double Npot_sk         = fSuperkInputs -> AnalyzedSamplePOT();
+  double A_sk            = 16;///////
+  double C0 = (Npot_sk    * Mfiducial_sk    * A_nd280) / 
+              (Npot_nd280 * Mfiducial_nd280 * A_sk);
 
-   //
-   // calculate get dN^{total}_{nd280} (Et) / dEt
-   //
-   
-   ntot_nd280_t = 0;
+  SuperkSample_t sk_samples[kNSuperkSamples] =  { kSKsFCFV1RingMuLike, kSKsFCFVmRingMuLike };
+  SuperkMode_t sk_modes[kNSuperkModes] = { kSKmNuMuCCQE, kSKmNuMuNonCCQE, kSKmNC };
 
-   for(int ir = 0; ir < fND280Inputs->NEnergyBins(); ir++) {
+  const TAxis & ereco_binning = fSuperkInputs->ErecoBinning();
+  const TAxis & etrue_binning = fSuperkInputs->EtrueBinning();
 
-     double Erp  = fND280Inputs->BinCentre(ir);
-     double dErp = fND280Inputs->BinWidth(ir);
+  // loop over SK samples & modes/sample
+  for(int is = 0; is < kNSuperkSamples; is++) {
+    SuperkSample_t s = sk_samples[is];
+    for(int im = 0; im < kNSuperkModes; im++) {
+       SuperkMode_t m = sk_modes[im];
 
-     // get dN^{observed}_{nd280} (Er') / dEr'
-     double nobs_nd280_r  = fND280Inputs -> NEvents(Erp);
+       double IntgEtrue = 0; // integral over E_{true}
 
-     // get nd280 efficiency (Er')
-     double eff_nd280  = fND280Inputs -> Efficiency(Erp);
+       // E_{true} bin loop
+       for(int itbin = 1; itbin <= etrue_binning.GetNbins(); itbin++) {
+         double Etrue = etrue_binning.GetBinCenter(itbin);
 
-     // calculate get dN^{total}_{nd280} (Er') / dEr'
-     double ntot_nd280_r = nobs_nd280_r / eff_nd280;
+         // calc stuff with E_{true} energy dependency only
+         double fn_ratio          = fBeamInputs->FNRatio(Etrue);
+         double xsec_totcc_nd280  = fGeneratorInputs -> SigmaTotCCND280(Etrue);
+         double xsec_tot_sk       = fGeneratorInputs -> SigmaTotWater(Etrue);
+         double evtfrac_m_sk      = fGeneratorInputs -> ModeFraction(Etrue,m);
+         double xsec_m_sk         = xsec_tot_sk * evtfrac_m_sk;
+         double prob_surv         = 1;///here
+         double eff_reco_m_sk     = fSuperkInputs -> ReconstructionEfficiency(Etrue,m);
+         double eff_reco_cc_nd280 = fND280Inputs  -> ReconstructionEfficiency(Etrue); 
 
-     // get nd280 energy resolution matrix
-     double Rnd280  = fND280Inputs->EnergyResolutionMatrix(Et, Erp);
+         double Ct = fn_ratio * 
+                     (xsec_m_sk / xsec_totcc_nd280) * 
+                     prob_surv * 
+                     (eff_reco_m_sk / eff_reco_cc_nd280);
 
-     ntot_nd280_t += (dErp * Rnd280 * ntot_nd280_r);
-  }
+         double IntgEreco = 0; // integral over E_{reco}
 
-   //
-   // calculate dFlux_{nd280}(Et)/dEt
-   //
+         // E_{reco} bin loop
+         for(int irbin = 1; irbin <= ereco_binning.GetNbins(); irbin++) {
+            double Ereco = ereco_binning.GetBinCenter(irbin);
 
-   double mass_nd280    = fND280Inputs -> FiducialMass();
-   double pot_nd280     = fND280Inputs -> POT();
-   double xsec_nd280    = fGeneratorInputs -> XXX();
-   double flux_nd280    = ntot_nd280_t / (mass_nd280 * pot_nd280 * xsec_nd280);
+            // calc stuff with E_{reco} energy dependency only
+            double nobscclike_nd280 = fND280Inputs -> NumOfObsCCLikeEvents (Ereco);
+            double nexpnc_nd280     = fND280Inputs -> NumOfEstNCBkgEvents  (Ereco);
+            double ncc_nd280        = TMath::Max(0., nobscclike_nd280-nexpnc_nd280);
+            double eff_sel_s_m_sk   = fSuperkInputs -> SelectionEfficiency(Etrue,s,m);
+            double eff_sel_cc_nd280 = fND280Inputs  -> SelectionEfficiency(Etrue); 
+            double Cr = ncc_nd280 * 
+                        (eff_sel_s_m_sk / eff_sel_cc_nd280);
 
-   //
-   // calculate dFlux_{SK}(Et)/dEt
-   //
+            // calc stuff with both E_{true}, E_{reco} energy dependency
+            double R_s_m_sk    = fSuperkInputs -> EnergyResolutionMatrix(Etrue,Ereco,s,m);
+            double RT_cc_nd280 = fND280Inputs  -> EnergyResolutionMatrix(Etrue,Ereco);
+            double Ctr = R_s_m_sk * RT_cc_nd280;
 
-   double fn_ratio = fBeamInputs->FNRatio(Et);
-   double flux_sk  = flux_nd280 * fn_ratio;
+            IntgEreco += (Cr*Ctr);
+         }//E_{reco}
 
-   //
-   // calculate dN^{total;unoscillated}_{SK}(Et)/dEt
-   //
+         IntgEtrue += (Ct*IntgEreco);
+       }//E_{true}
 
-   double mass_sk    = fSuperkInputs -> FiducialMass();
-   double pot_sk     = fSuperkInputs -> POT();
-   double xsec_water = fGeneratorInputs -> XXX();
-   double evt_frac   = fGeneratorInputs -> XXX();
-
-   double ntot_unosc_sk_t = flux_sk * xsec_water * evt_frac * mass_sk * pot_sk;
-
-   //
-   // calculate dN^{total;oscillated}_{SK}(Et)/dEt
-   //
-   double prob_survival = XXX;
-   ntot_sk_t = ntot_unosc_sk_t * prob_survival;
-*/
-  return 0;
-}
-//________________________________________________________________________________________
-void SuperkExpectation::Update(PhysParamList & fp)
-{
-// update SK energy spectrum expectation
-
-}
-//________________________________________________________________________________________
-double SuperkExpectation::Chisquare(SuperkObservation & skobs, Option_t * opt)
-{
-// judge the agreement between the input data and the current prediction
+       expectation += (C0*IntgEtrue);
+    }//m
+  }//s
 
   return 0;
 }
@@ -174,6 +174,52 @@ bool SuperkExpectation::ND280Inputs::Read(string config_file)
   return true;
 }
 //________________________________________________________________________________________
+double SuperkExpectation::ND280Inputs::NumOfObsCCLikeEvents(double Ereco) const
+{
+// observed number of CC-like events
+
+  int    bin = fObsCCLikeEr->FindBin(Ereco);
+  double nev = fObsCCLikeEr->GetBinContent(bin);
+
+  return nev;
+}
+//________________________________________________________________________________________
+double SuperkExpectation::ND280Inputs::NumOfEstNCBkgEvents(double Ereco) const
+{
+// estimated NC background
+
+  int    bin = fEstNCBkgEr->FindBin(Ereco);
+  double nev = fEstNCBkgEr->GetBinContent(bin);
+
+  return nev;
+}
+//________________________________________________________________________________________
+double SuperkExpectation::ND280Inputs::FiducialMass(void) const
+{
+  return fFidMass;
+}
+//________________________________________________________________________________________
+double SuperkExpectation::ND280Inputs::AnalyzedSamplePOT(void) const
+{
+  return fPOT;
+}
+//________________________________________________________________________________________
+double SuperkExpectation::ND280Inputs::ReconstructionEfficiency(double Etrue) const
+{
+  return 0; 
+}
+//________________________________________________________________________________________
+double SuperkExpectation::ND280Inputs::SelectionEfficiency(double Ereco) const
+{
+  return 0; 
+}
+//________________________________________________________________________________________
+double SuperkExpectation::ND280Inputs::EnergyResolutionMatrix(
+  double Etrue, double Ereco) const
+{
+  return 0; 
+}
+//________________________________________________________________________________________
 //........................................................................................
 // nested class SuperkInputs
 //........................................................................................
@@ -227,18 +273,80 @@ bool SuperkExpectation::SuperkInputs::Read(string config_file)
   return true;
 }
 //________________________________________________________________________________________
+double SuperkExpectation::SuperkInputs::FiducialMass(void) const
+{
+  return 0;
+}
+//________________________________________________________________________________________
+double SuperkExpectation::SuperkInputs::AnalyzedSamplePOT(void) const
+{
+  return 0;
+}
+//________________________________________________________________________________________
+double SuperkExpectation::SuperkInputs::ReconstructionEfficiency(
+    double Etrue, SuperkMode_t m) const
+{
+  return 0;
+}
+//________________________________________________________________________________________
+double SuperkExpectation::SuperkInputs::SelectionEfficiency(
+    double Ereco, SuperkSample_t s, SuperkMode_t m) const
+{
+  return 0;
+}
+//________________________________________________________________________________________
+double SuperkExpectation::SuperkInputs::EnergyResolutionMatrix(
+    double Etrue, double Ereco, SuperkSample_t s, SuperkMode_t m) const
+{
+  return 0;
+}
+//________________________________________________________________________________________
 //........................................................................................
 // nested class BeamInputs
 //........................................................................................
 //________________________________________________________________________________________
 SuperkExpectation::BeamInputs::BeamInputs()
 {
-
+  this->Init();
 }
 //________________________________________________________________________________________
 SuperkExpectation::BeamInputs::~BeamInputs()
 {
+  this->CleanUp();
+}
+//________________________________________________________________________________________
+void SuperkExpectation::BeamInputs::Init(void)
+{
 
+}
+//________________________________________________________________________________________
+void SuperkExpectation::BeamInputs::CleanUp(void)
+{
+
+}
+//________________________________________________________________________________________
+bool SuperkExpectation::BeamInputs::Read(string config_file)
+{
+  return true;
+}
+//________________________________________________________________________________________
+double SuperkExpectation::BeamInputs::FNRatio(double Etrue) const 
+{ 
+  double f = this->SuperkFlux(Etrue);
+  double n = this->ND280Flux(Etrue);
+
+  double R = (n>0 && f>=0) ? (f/n) : 0;
+  return R;
+}
+//________________________________________________________________________________________
+double SuperkExpectation::BeamInputs::SuperkFlux (double Etrue) const
+{
+  return 0;
+}
+//________________________________________________________________________________________
+double SuperkExpectation::BeamInputs::ND280Flux(double Etrue) const
+{
+  return 0;
 }
 //________________________________________________________________________________________
 //........................................................................................
@@ -276,6 +384,21 @@ void SuperkExpectation::GeneratorInputs::CleanUp(void)
 bool SuperkExpectation::GeneratorInputs::Read(string config_file)
 {
   return true;
+}
+//________________________________________________________________________________________
+double SuperkExpectation::GeneratorInputs::ModeFraction(double Etrue, SuperkMode_t m) const
+{
+  return 0;
+}
+//________________________________________________________________________________________
+double SuperkExpectation::GeneratorInputs::SigmaTotWater(double Etrue) const
+{
+  return 0;
+}
+//________________________________________________________________________________________
+double SuperkExpectation::GeneratorInputs::SigmaTotCCND280(double Etrue) const
+{
+  return 0;
 }
 //________________________________________________________________________________________
 

@@ -16,8 +16,8 @@ Important revisions after version 1.0.0 :
 #include "year1_numu_osc_analysis/Utilities.h"
 
 using namespace t2kana;
-using namespace t2kana::year1_numuosc;
-using namespace t2kana::year1_numuosc::conventions;
+using namespace t2kana::yr1numu;
+using namespace t2kana::yr1numu::conv;
 
 ClassImp(SuperkObservation)
 
@@ -36,14 +36,24 @@ double SuperkObservation::NumOfEvents(SuperkSample_t s) const
 {
   if(!fErDistr[s]) return -1;
 
-  return fErDistr[s]->Integral();
+  if(s == t2kana::yr1numu::conv::kSKsUndefined) {
+    return ( fErDistr[kSKsFCFV1RingMuLike]->Integral() +
+             fErDistr[kSKsFCFVmRingMuLike]->Integral() );
+  } else {
+    return fErDistr[s]->Integral();
+  }
 }
 //________________________________________________________________________________________
 double SuperkObservation::NumOfEvents(double Er, SuperkSample_t s) const
 {
   if(!fErDistr[s]) return -1;
 
-  return fErDistr[s]->GetBinContent(fErDistr[s]->FindBin(Er));
+  if(s == t2kana::yr1numu::conv::kSKsUndefined) {
+    return ( fErDistr[kSKsFCFV1RingMuLike]->GetBinContent(fErDistr[s]->FindBin(Er)) +
+             fErDistr[kSKsFCFVmRingMuLike]->GetBinContent(fErDistr[s]->FindBin(Er)) );
+  } else {
+    return fErDistr[s]->GetBinContent(fErDistr[s]->FindBin(Er));
+  }
 }
 //________________________________________________________________________________________
 bool SuperkObservation::Read(string config_file)
@@ -62,7 +72,7 @@ void SuperkObservation::Draw(TVirtualPad * c, Option_t * option) const
   c->cd();
 
   TString opt = option;
-  //utilities::SetDefaultStyle();
+  //util::SetDefaultStyle();
 
   if(opt.Contains("Ereco")) { 
 /*

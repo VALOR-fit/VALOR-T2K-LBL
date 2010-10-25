@@ -1,7 +1,7 @@
 //____________________________________________________________________________
 /*!
 
-\class    t2kana::year1_numuosc::conventions
+\class    t2kana::yr1numu::conv
 
 \brief    Conventions
 
@@ -18,16 +18,16 @@
 */
 //____________________________________________________________________________
 
-#ifndef _t2kana_year1_numu_analysis_conventions_h_
-#define _t2kana_year1_numu_analysis_conventions_h_
+#ifndef _t2kana_year1_numu_analysis_conv_h_
+#define _t2kana_year1_numu_analysis_conv_h_
 
 #ifndef ROOT_Rtypes
 #include "Rtypes.h"
 #endif
 
 namespace t2kana {
-namespace year1_numuosc {
-namespace conventions {
+namespace yr1numu {
+namespace conv {
 
 // confidence level
 typedef enum EConfLevel {
@@ -70,8 +70,8 @@ static const int knm = kNSuperkModes;
 static const double kASmallNum = 1E-10;
 static const double kBaseline  = 295;    // Tokai->Kamioka (km)
 
-} // conventions
-} // year1_numuosc
+} // conv
+} // yr1numu
 } // t2kana
   
 #endif 

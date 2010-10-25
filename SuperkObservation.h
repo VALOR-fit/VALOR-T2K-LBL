@@ -1,7 +1,7 @@
 //____________________________________________________________________________
 /*!
 
-\class    t2kana::year1_numuosc::SuperkObservation
+\class    t2kana::yr1numu::SuperkObservation
 
 \brief    
 
@@ -30,11 +30,11 @@ class TVirtualPad;
 #include "year1_numu_osc_analysis/Conventions.h"
 
 using std::string;
-//using t2kana::year1_numuosc::conventions::SuperkSample_t;
-using t2kana::year1_numuosc::conventions::kns;
+//using t2kana::yr1numu::conv::SuperkSample_t;
+using t2kana::yr1numu::conv::kns;
 
 namespace t2kana {
-namespace year1_numuosc {
+namespace yr1numu {
 
 class SuperkObservation: public TObject
 {
@@ -46,11 +46,11 @@ public:
   bool Read(string file);
 
   // Get data
-  double NumOfEvents (t2kana::year1_numuosc::conventions::SuperkSample_t s) const;             ///< all events in input sample
-  double NumOfEvents (double Er, t2kana::year1_numuosc::conventions::SuperkSample_t s) const;  ///< all events in given bin of input sample
+  double NumOfEvents (t2kana::yr1numu::conv::SuperkSample_t s = t2kana::yr1numu::conv::kSKsUndefined) const;             ///< all events in input sample
+  double NumOfEvents (double Er, t2kana::yr1numu::conv::SuperkSample_t s = t2kana::yr1numu::conv::kSKsUndefined) const;  ///< all events in given bin of input sample
 
   // Binning info
-  const TAxis& ErBinning (void) const { return *fErBinning; }
+  const TAxis& ErecoBinning (void) const { return *fErBinning; }
 
   // Draw.
   // Set option to "Ereco"  to show the reconstructed Ereco distributions
@@ -68,7 +68,7 @@ private:
 ClassDef(SuperkObservation, 1)
 };
 
-} // year1_numuosc
+} // yr1numu
 } // t2kana
 
 #endif // _t2kana_year1_numu_analysis_sk_expectation_h_

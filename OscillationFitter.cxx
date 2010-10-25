@@ -24,6 +24,7 @@
 #include "year1_numu_osc_analysis/OscillationFitter.h"
 #include "year1_numu_osc_analysis/SuperkObservation.h"
 #include "year1_numu_osc_analysis/SuperkExpectation.h"
+#include "year1_numu_osc_analysis/PhysParamList.h"
 #include "year1_numu_osc_analysis/Utilities.h"
 
 using std::cerr;
@@ -32,7 +33,7 @@ using std::endl;
 using std::ostringstream;
 
 using namespace t2kana;
-using namespace t2kana::year1_numuosc;
+using namespace t2kana::yr1numu;
    
 //____________________________________________________________________________
 OscillationFitter::OscillationFitter()
@@ -400,26 +401,47 @@ void OscillationFitter::Draw(
 */
 }
 //____________________________________________________________________________
+// FitInputs utility class 
+//
+double OscillationFitter::FitInputs::Chisquare(Option_t * option)
+{
+  double chisq = 0;
+  TString opt = option;
+
+  const TAxis & ereco_binning =
+          this->Observation().ErecoBinning();
+
+  int nbins = ereco_binning.GetNbins(); 
+  for(int ibin = 1; ibin <= nbins; ibin++) {
+     double Ereco = ereco_binning.GetBinCenter(ibin);
+     double delta = 0.;
+     double nobs = this->Observation().NumOfEvents();
+     double nexp = this->Expectation().Generate(Ereco, this->FitParams());
+     if      (opt.Contains("poisson")) { delta = util::ChisqPoisson(nobs,nexp); }
+     else if (opt.Contains("gauss")  ) { delta = util::ChisqGauss  (nobs,nexp); }
+     chisq += delta;
+  }//ibin  
+
+  return chisq;
+}
+//____________________________________________________________________________
 // MINUIT fit functions
 //
-void FitFunc1 (Int_t &, Double_t *, Double_t &f, Double_t *par, Int_t iflag)
+void FitFunc1 (
+  Int_t &, Double_t *, Double_t &f, Double_t *par, Int_t /*iflag*/)
 {
   OscillationFitter::FitInputs * inputs = 
       (OscillationFitter::FitInputs *) gMinuit->GetObjectFit();
 
-  SuperkObservation & skobs = inputs->Observation(); // data
-  SuperkExpectation & skexp = inputs->Expectation(); // model
+//SuperkObservation & skobs = inputs->Observation(); // data
+//SuperkExpectation & skexp = inputs->Expectation(); // model
   PhysParamList &     fpar  = inputs->FitParams();   // params
 
   // synchronize PhysParamList with the paramerer array used by MINUIT        
   fpar.Sync(par); 
 
-  // propagate the modified physics parameter, so that an the SuperK
-  // expectation can be updated
-  skexp.Update(fpar);
-
   // judge the agreement between the data and the current prediction
-  f = skexp.Chisquare(skobs,"poisson+penalty");
+  f = inputs->Chisquare("poisson");
 }
 //____________________________________________________________________________
 

@@ -1,7 +1,7 @@
 //____________________________________________________________________________
 /*!
 
-\class    t2kana::year1_numuosc::PhysParamList
+\class    t2kana::yr1numu::PhysParamList
 
 \brief    List of physics parameters included in the fit
 
@@ -33,7 +33,7 @@ using std::string;
 using std::map;
 
 namespace t2kana {
-namespace year1_numuosc {
+namespace yr1numu {
 
 class PhysParamList {
 
@@ -43,33 +43,33 @@ public:
 
    // Get information for the physics parameter list
    int    Size      (void)                                                const { return fNParams;                  }
-   string Name      (t2kana::year1_numuosc::conventions::PhysParamId_t p) const { return fName     [this->Id(p)];   }
-   double CurrValue (t2kana::year1_numuosc::conventions::PhysParamId_t p) const { return fCurrValue[this->Id(p)];   }
-   double InitValue (t2kana::year1_numuosc::conventions::PhysParamId_t p) const { return fInitValue[this->Id(p)];   }
-   double MinValue  (t2kana::year1_numuosc::conventions::PhysParamId_t p) const { return fMinValue [this->Id(p)];   }
-   double MaxValue  (t2kana::year1_numuosc::conventions::PhysParamId_t p) const { return fMaxValue [this->Id(p)];   }
-   double StepSize  (t2kana::year1_numuosc::conventions::PhysParamId_t p) const { return fStepSize [this->Id(p)];   }
-   bool   IsFixed   (t2kana::year1_numuosc::conventions::PhysParamId_t p) const { return fIsFixed  [this->Id(p)];   }
+   string Name      (t2kana::yr1numu::conv::PhysParamId_t p) const { return fName     [this->Id(p)];   }
+   double CurrValue (t2kana::yr1numu::conv::PhysParamId_t p) const { return fCurrValue[this->Id(p)];   }
+   double InitValue (t2kana::yr1numu::conv::PhysParamId_t p) const { return fInitValue[this->Id(p)];   }
+   double MinValue  (t2kana::yr1numu::conv::PhysParamId_t p) const { return fMinValue [this->Id(p)];   }
+   double MaxValue  (t2kana::yr1numu::conv::PhysParamId_t p) const { return fMaxValue [this->Id(p)];   }
+   double StepSize  (t2kana::yr1numu::conv::PhysParamId_t p) const { return fStepSize [this->Id(p)];   }
+   bool   IsFixed   (t2kana::yr1numu::conv::PhysParamId_t p) const { return fIsFixed  [this->Id(p)];   }
 
    // Add a parameter
    bool AddParam (
-     int ip, t2kana::year1_numuosc::conventions::PhysParamId_t p, double init, 
+     int ip, t2kana::yr1numu::conv::PhysParamId_t p, double init, 
      double min, double max, double step, bool fix=false, string name="");
 
    // Update current/running value for the given parameter
-   void Update(t2kana::year1_numuosc::conventions::PhysParamId_t p, double v) 
+   void Update(t2kana::yr1numu::conv::PhysParamId_t p, double v) 
    { 
      fCurrValue [this->Id(p)] = v; 
    }
 
    // allow modifying the initial value (minimization may be sensitive to this choice)
-   void SetInitValue(t2kana::year1_numuosc::conventions::PhysParamId_t p, double v) 
+   void SetInitValue(t2kana::yr1numu::conv::PhysParamId_t p, double v) 
    { 
      fInitValue [this->Id(p)] = v; 
    }
 
    // Fix a parameter
-   void FixParameter (t2kana::year1_numuosc::conventions::PhysParamId_t p) 
+   void FixParameter (t2kana::yr1numu::conv::PhysParamId_t p) 
    { 
      fIsFixed [this->Id(p)] = true;  
    }
@@ -88,9 +88,9 @@ private:
 
    void CleanUp (void);
    void Init    (int nparams);
-   int  Id      (t2kana::year1_numuosc::conventions::PhysParamId_t p) const; // PhysParamId_t --> array slot
+   int  Id      (t2kana::yr1numu::conv::PhysParamId_t p) const; // PhysParamId_t --> array slot
 
-   map<t2kana::year1_numuosc::conventions::PhysParamId_t, int> fIdMap;
+   map<t2kana::yr1numu::conv::PhysParamId_t, int> fIdMap;
 
    int      fNParams;   
    double * fCurrValue; //[fNParams]
@@ -102,7 +102,7 @@ private:
    bool *   fIsFixed;   //[fNParams]
 };
 
-} // year1_numuosc
+} // yr1numu
 } // t2kana
   
 #endif

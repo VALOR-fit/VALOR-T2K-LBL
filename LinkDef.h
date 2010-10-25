@@ -5,22 +5,23 @@
 #pragma link off all functions;
 
 #pragma link C++ namespace t2kana;
-#pragma link C++ namespace t2kana::year1_numuosc;
-//#pragma link C++ namespace t2kana::year1_numuosc::conventions;
-#pragma link C++ namespace t2kana::year1_numuosc::utilities;
+#pragma link C++ namespace t2kana::yr1numu;
+//#pragma link C++ namespace t2kana::yr1numu::conv;
+#pragma link C++ namespace t2kana::yr1numu::util;
 
-#pragma link C++ class t2kana::year1_numuosc::PhysParamList;
-#pragma link C++ class t2kana::year1_numuosc::OscillationFitter;
-#pragma link C++ class t2kana::year1_numuosc::OscillationFitter::FitInputs;
-#pragma link C++ class t2kana::year1_numuosc::SuperkObservation;
-#pragma link C++ class t2kana::year1_numuosc::SuperkExpectation;
-#pragma link C++ class t2kana::year1_numuosc::SuperkExpectation::ND280Inputs;
-#pragma link C++ class t2kana::year1_numuosc::SuperkExpectation::SuperkInputs;
-#pragma link C++ class t2kana::year1_numuosc::SuperkExpectation::BeamInputs;
-#pragma link C++ class t2kana::year1_numuosc::SuperkExpectation::GeneratorInputs;
-#pragma link C++ enum  t2kana::year1_numuosc::conventions::PhysParamId_t;
-#pragma link C++ enum  t2kana::year1_numuosc::conventions::ConfLevel_t;
-#pragma link C++ enum  t2kana::year1_numuosc::conventions::SuperkSample_t;
-#pragma link C++ enum  t2kana::year1_numuosc::conventions::SuperkMode_t;
+#pragma link C++ class t2kana::yr1numu::PhysParamList;
+#pragma link C++ class t2kana::yr1numu::OscillationFitter;
+#pragma link C++ class t2kana::yr1numu::OscillationFitter::FitInputs;
+#pragma link C++ class t2kana::yr1numu::SuperkObservation;
+#pragma link C++ class t2kana::yr1numu::SuperkExpectation;
+#pragma link C++ class t2kana::yr1numu::SuperkExpectation::ND280Inputs;
+#pragma link C++ class t2kana::yr1numu::SuperkExpectation::SuperkInputs;
+#pragma link C++ class t2kana::yr1numu::SuperkExpectation::BeamInputs;
+#pragma link C++ class t2kana::yr1numu::SuperkExpectation::GeneratorInputs;
+
+#pragma link C++ enum  t2kana::yr1numu::conv::PhysParamId_t;
+#pragma link C++ enum  t2kana::yr1numu::conv::ConfLevel_t;
+#pragma link C++ enum  t2kana::yr1numu::conv::SuperkSample_t;
+#pragma link C++ enum  t2kana::yr1numu::conv::SuperkMode_t;
 
 #endif
