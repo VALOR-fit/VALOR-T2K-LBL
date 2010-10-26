@@ -37,13 +37,12 @@ class SuperkExpectation;
 class OscillationFitter
 {
 public:
+   class FitInputs;
+
    OscillationFitter();
+   OscillationFitter(OscillationFitter::FitInputs * inputs, Option_t * option = "minuit");
   ~OscillationFitter();
 
-   void      SetObservation  (SuperkObservation * skobs);
-   void      SetExpectation  (SuperkExpectation * skexp);
-   void      SetFitParams    (PhysParamList * params);
-   void      PrepareFitter   (Option_t * option = "minuit");
    void      DoTheFit        (void);
    void      Draw            (TVirtualPad * c, Option_t * option = "results", const char * outtag = 0);
    void      ActualOscParams (double sinsq2theta23, double dmsq23);
@@ -79,11 +78,14 @@ public:
 
 private:
 
-   void Init (void);
+   void Init      (void);
+   void SetInputs (OscillationFitter::FitInputs * inputs);
+//   void      SetObservation  (SuperkObservation * skobs);
+//   void      SetExpectation  (SuperkExpectation * skexp);
+//   void      SetFitParams    (PhysParamList * params);
+   void      PrepareFitter   (Option_t * option = "minuit");
 
-   SuperkObservation *  fObs;              ///<
-   SuperkExpectation *  fExp;              ///<
-   PhysParamList *      fFitParams;        ///<
+   FitInputs*           fFitInputs;
    bool                 fKnowActualParams; ///<
    double               fSinsq2Theta23;    ///<
    double               fDm23sq;           ///<

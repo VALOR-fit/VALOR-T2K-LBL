@@ -8,6 +8,7 @@
 
 #include "year1_numu_osc_analysis/SuperkExpectation.h"
 #include "year1_numu_osc_analysis/Conventions.h"
+#include "year1_numu_osc_analysis/Utilities.h"
 
 using namespace t2kana;
 using namespace t2kana::yr1numu;
@@ -32,7 +33,6 @@ double SuperkExpectation::Generate(double Er, const PhysParamList & fp)
 // the input physics parameter list.
 //
 
-  //
   double expectation     = 0.;
 
   // input physics params (params included in the fit / systematics params)
@@ -73,7 +73,7 @@ double SuperkExpectation::Generate(double Er, const PhysParamList & fp)
          double xsec_tot_sk       = fGeneratorInputs -> SigmaTotWater(Etrue);
          double evtfrac_m_sk      = fGeneratorInputs -> ModeFraction(Etrue,m);
          double xsec_m_sk         = xsec_tot_sk * evtfrac_m_sk;
-         double prob_surv         = 1;///here
+         double prob_surv         = util::NuMuSurvProb2D(sinsq2theta23, dmsq23, Etrue, m);
          double eff_reco_m_sk     = fSuperkInputs -> ReconstructionEfficiency(Etrue,m);
          double eff_reco_cc_nd280 = fND280Inputs  -> ReconstructionEfficiency(Etrue); 
 

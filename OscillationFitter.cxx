@@ -41,6 +41,17 @@ OscillationFitter::OscillationFitter()
   this->Init();
 }
 //____________________________________________________________________________
+OscillationFitter::OscillationFitter(
+   FitInputs * fit_inputs, Option_t * option)
+{
+  this->Init();
+  this->SetInputs(fit_inputs);
+  this->PrepareFitter(option);
+//  this->SetObservation(skobs);
+//  this->SetExpectation(skexp);
+//  this->SetFitParams(params);
+}
+//____________________________________________________________________________
 OscillationFitter::~OscillationFitter()
 {
 
@@ -48,12 +59,16 @@ OscillationFitter::~OscillationFitter()
 //____________________________________________________________________________
 void OscillationFitter::Init(void)
 {
-  fObs              = 0;
-  fExp              = 0;
-  fFitParams        = 0;
+//  fObs              = 0;
+//  fExp              = 0;
+//  fFitParams        = 0;
+
+  fFitInputs        = 0;
+
   fKnowActualParams = false;
   fSinsq2Theta23    = -1;
   fDm23sq           = -1;
+
   fNdof             = 0;
   fNFreeFitParams   = 0;
   fNonZeroBins      = 0;
@@ -66,6 +81,12 @@ void OscillationFitter::ActualOscParams (double sinsq2theta23, double dm23sq)
   fDm23sq           = dm23sq;
 }
 //____________________________________________________________________________
+void OscillationFitter::SetInputs(FitInputs * fit_inputs)
+{
+  fFitInputs = fit_inputs;
+}
+//____________________________________________________________________________
+/*
 void OscillationFitter::SetObservation(SuperkObservation * skobs)
 {
   cout << "OscillationFitter> Setting SK observation..." << endl;
@@ -73,7 +94,6 @@ void OscillationFitter::SetObservation(SuperkObservation * skobs)
 
   fObs = skobs;
 
-/*
   fNonZeroBins = 0;
 
   assert( fData->ErecoCCQElike() );
@@ -86,7 +106,6 @@ void OscillationFitter::SetObservation(SuperkObservation * skobs)
       fNonZeroBins++;
     }
   }
-*/
 }
 //____________________________________________________________________________
 void OscillationFitter::SetExpectation(SuperkExpectation * skexp)
@@ -96,13 +115,14 @@ void OscillationFitter::SetExpectation(SuperkExpectation * skexp)
 
   fExp = skexp;
 }
+*/
 //____________________________________________________________________________
 void OscillationFitter::PrepareFitter(Option_t * option)
 {
   cout << "OscillationFitter> Fitter initialization..." << endl;
 
-  if(!fFitParams) {
-     cout << "OscillationFitter> Set the fit params first!" << endl;
+  if(!fFitInputs) {
+     cout << "OscillationFitter> Set the fit inputs first!" << endl;
      return;
   }
 
@@ -117,10 +137,11 @@ void OscillationFitter::PrepareFitter(Option_t * option)
     exit(1);
   }
 
-  TVirtualFitter * fitter = TVirtualFitter::Fitter(0,fFitParams->Size());
+  PhysParamList & fit_params = fFitInputs->FitParams();
+  TVirtualFitter * fitter = TVirtualFitter::Fitter(0,fit_params.Size());
 
   // set params
-  fFitParams->SetTo(fitter);
+  fit_params.SetTo(fitter);
 
   // set minimization function
   fitter->SetFCN(FitFunc1);
@@ -144,8 +165,8 @@ void OscillationFitter::DoTheFit(void)
        << ", nfreeparams = " << fNFreeFitParams << endl;
 
   // pass fitted data & expectation to MINUIT
-  OscillationFitter::FitInputs fit_inputs(fObs,fExp,fFitParams);
-  gMinuit->SetObjectFit(&fit_inputs);
+  //OscillationFitter::FitInputs fit_inputs(fObs,fExp,fFitParams);
+  gMinuit->SetObjectFit(fFitInputs);
 
   // MINUIT's minimization step
   cout << "OscillationFitter> Running MIGRAD..." << endl;
@@ -427,7 +448,7 @@ double OscillationFitter::FitInputs::Chisquare(Option_t * option)
 //____________________________________________________________________________
 // MINUIT fit functions
 //
-void FitFunc1 (
+void t2kana::yr1numu::FitFunc1 (
   Int_t &, Double_t *, Double_t &f, Double_t *par, Int_t /*iflag*/)
 {
   OscillationFitter::FitInputs * inputs = 

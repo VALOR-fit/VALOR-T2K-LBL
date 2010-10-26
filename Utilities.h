@@ -29,10 +29,11 @@ namespace t2kana {
 namespace yr1numu {
 namespace util {
 
-  double DeltaChisquare (t2kana::yr1numu::conv::ConfLevel_t cl, int nfitparams);
-  double ChisqGauss     (double ndata, double nmc);
-  double ChisqPoisson   (double ndata, double nmc);
-  double NuMuSurvProb2D (double sinsq2theta, double dmsq, double Et);
+  double DeltaChisquare   (t2kana::yr1numu::conv::ConfLevel_t cl, int nfitparams);
+  double ChisqGauss       (double ndata, double nmc);
+  double ChisqPoisson     (double ndata, double nmc);
+  double NuMuSurvProb2D   (double sinsq2theta, double dmsq, double Et);
+  double NuMuSurvProb2D   (double sinsq2theta, double dmsq, double Et, t2kana::yr1numu::conv::SuperkMode_t m);
 
   string AsString(t2kana::yr1numu::conv::PhysParamId_t p);
 

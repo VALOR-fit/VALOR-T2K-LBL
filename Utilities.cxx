@@ -4,6 +4,9 @@
 */
 //____________________________________________________________________________
 
+#include <cstdlib>
+#include <iostream>
+
 #include <TMath.h>
 #include <TROOT.h>
 #include <TStyle.h>
@@ -12,6 +15,9 @@
 #include <TH1.h>
 
 #include "year1_numu_osc_analysis/Utilities.h"
+
+using std::cerr;
+using std::endl;
 
 using namespace t2kana;
 using namespace t2kana::yr1numu::conv;
@@ -92,7 +98,8 @@ double t2kana::yr1numu::util::ChisqPoisson(
   return chisq;
 }
 //____________________________________________________________________________
-double NuMuSurvProb2D(double sinsq2theta, double dmsq, double Et)
+double t2kana::yr1numu::util::NuMuSurvProb2D(
+  double sinsq2theta, double dmsq, double Et)
 {
   if(Et <= 0.) return 0.;
 
@@ -104,6 +111,23 @@ double NuMuSurvProb2D(double sinsq2theta, double dmsq, double Et)
   psurv = TMath::Max(0.,psurv);
 
   return psurv;
+}
+//____________________________________________________________________________
+double t2kana::yr1numu::util::NuMuSurvProb2D(
+  double sinsq2theta, double dmsq, double Et, 
+  t2kana::yr1numu::conv::SuperkMode_t m)
+{
+  if(m == kSKmNC) {
+    return 1.;
+  }
+  else
+  if(m == kSKmNuMuCCQE || m == kSKmNuMuNonCCQE) {
+    return NuMuSurvProb2D(sinsq2theta, dmsq, Et);
+  }
+  else {
+    cerr << "NuMuSurvProb2D> Can't handle SK mode = " << m << endl;
+    exit(1);
+  }
 }
 //____________________________________________________________________________
 string t2kana::yr1numu::util::AsString(PhysParamId_t p)
