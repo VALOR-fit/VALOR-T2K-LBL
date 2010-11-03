@@ -19,10 +19,10 @@
   fparm.AddParam(1, t2kana::yr1numu::conv::kPhypDm23sq,        2E-3, 5E-4, 5E-2, 1E-5, false, "dmsq23");
 
   SuperkExpectation skexp;
-//  skexp.GetND280Inputs()->Read("inputs/nd280.cfg");
-//  skexp.GetSuperkInputs()->Read("inputs/superk.cfg");
-//  skexp.GetBeamInputs()->Read("inputs/beam.cfg");
-//  skexp.GetGeneratorInputs()->Read("inputs/genie.cfg");
+//  skexp.GetND280Inputs()->Read("inputs/nd280.metadata");
+//  skexp.GetSuperkInputs()->Read("inputs/superk.metadata");
+//  skexp.GetBeamInputs()->Read("inputs/beam.metadata");
+//  skexp.GetGeneratorInputs()->Read("inputs/genie.metadata");
 
   SuperkObservation skobs;
 //  skobs.Read("inputs/skdata.root);

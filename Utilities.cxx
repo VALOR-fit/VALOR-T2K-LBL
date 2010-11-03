@@ -4,6 +4,7 @@
 */
 //____________________________________________________________________________
 
+#include <cassert>
 #include <cstdlib>
 #include <iostream>
 
@@ -13,6 +14,9 @@
 #include <TColor.h>
 #include <TGraph.h>
 #include <TH1.h>
+#include <TVectorD.h>
+#include <TMatrixD.h>
+#include <TRandom3.h>
 
 #include "year1_numu_osc_analysis/Utilities.h"
 
@@ -128,6 +132,64 @@ double t2kana::yr1numu::util::NuMuSurvProb2D(
     cerr << "NuMuSurvProb2D> Can't handle SK mode = " << m << endl;
     exit(1);
   }
+}
+//____________________________________________________________________________
+TVectorD t2kana::yr1numu::util::RunCholeskyThingy(
+  TMatrixD& cov_matrix, TVectorD& parm)
+{
+   int ncols = cov_matrix.GetNcols();
+   int nrows = cov_matrix.GetNrows();
+   int npars = parm.GetNrows();
+
+   assert(ncols==nrows);
+   assert(npars==nrows);
+
+   int n = nrows;
+
+   TMatrixD L(n, n);
+
+   for (int i = 0; i < n; ++i) {
+
+     // calculate the diagonal term first
+     L(i,i) = cov_matrix(i,i);
+     for (int k = 0; k < i; ++k) {
+        double tmp = L(k,i);
+        L(i,i) -= tmp*tmp;
+     }//k
+     L(i,i) = TMath::Sqrt(L(i,i));
+
+     // then the off-diagonal terms
+     for (int j = i+1; j < n; ++j) {
+        L(i,j) = cov_matrix(i,j);
+        for (int k = 0; k < i; ++k) {
+           L(i,j) -= L(k,i)*L(k,j);
+        }
+        L(i,j) /= L(i,i);
+     }//j
+  }//i
+
+  // create the transpose of L
+  TMatrixD * Lt = new TMatrixD(TMatrixD::kTransposed,L);
+
+  // create a vector of unit Gaussian variables
+  // and multiply by Lt to introduce the appropriate correlations
+  TVectorD g(n);
+  TRandom3 random(0);
+  for (int k = 0; k < n; ++k) {
+      g(k) = random.Gaus();
+  }
+  g *= (*Lt);
+
+
+  // add the mean value offsets and store the results
+  TVectorD rand_parm(n);
+  for (int i = 0; i < n; ++i) {
+     double v = parm[i];
+     v += g(i);
+     rand_parm[i] = v;
+  }
+
+  return rand_parm;
 }
 //____________________________________________________________________________
 string t2kana::yr1numu::util::AsString(PhysParamId_t p)

@@ -18,6 +18,9 @@
 
 #include <string>
 
+#include <TVectorD.h>
+#include <TMatrixD.h>
+
 class TGraph;
 class TH1;
 
@@ -34,6 +37,8 @@ namespace util {
   double ChisqPoisson     (double ndata, double nmc);
   double NuMuSurvProb2D   (double sinsq2theta, double dmsq, double Et);
   double NuMuSurvProb2D   (double sinsq2theta, double dmsq, double Et, t2kana::yr1numu::conv::SuperkMode_t m);
+
+  TVectorD RunCholeskyThingy(TMatrixD& cov_matrix, TVectorD& parm);
 
   string AsString(t2kana::yr1numu::conv::PhysParamId_t p);
 
