@@ -4,9 +4,13 @@
 */
 //____________________________________________________________________________
 
+//#define __debug__
+
 #include <cassert>
 #include <cstdlib>
+#include <fstream>
 #include <iostream>
+#include <iomanip>
 
 #include <TMath.h>
 #include <TROOT.h>
@@ -20,11 +24,18 @@
 
 #include "year1_numu_osc_analysis/Utilities.h"
 
+using std::cout;
 using std::cerr;
 using std::endl;
+using std::setw;
+using std::setfill;
+using std::setprecision;
+using std::ofstream;
 
 using namespace t2kana;
 using namespace t2kana::yr1numu::conv;
+
+TRandom3 gR(89289281);
 
 //____________________________________________________________________________
 double t2kana::yr1numu::util::DeltaChisquare(
@@ -135,11 +146,11 @@ double t2kana::yr1numu::util::NuMuSurvProb2D(
 }
 //____________________________________________________________________________
 TVectorD t2kana::yr1numu::util::RunCholeskyThingy(
-  TMatrixD& cov_matrix, TVectorD& parm)
+   TMatrixD& cov_matrix, TVectorD& def_params)
 {
    int ncols = cov_matrix.GetNcols();
    int nrows = cov_matrix.GetNrows();
-   int npars = parm.GetNrows();
+   int npars = def_params.GetNrows();
 
    assert(ncols==nrows);
    assert(npars==nrows);
@@ -156,8 +167,11 @@ TVectorD t2kana::yr1numu::util::RunCholeskyThingy(
         double tmp = L(k,i);
         L(i,i) -= tmp*tmp;
      }//k
+     if(L(i,i) < 0) {
+       cerr << "Decomposed covariance matrix not positive-definite" << endl;
+       exit(1);
+     }
      L(i,i) = TMath::Sqrt(L(i,i));
-
      // then the off-diagonal terms
      for (int j = i+1; j < n; ++j) {
         L(i,j) = cov_matrix(i,j);
@@ -174,22 +188,48 @@ TVectorD t2kana::yr1numu::util::RunCholeskyThingy(
   // create a vector of unit Gaussian variables
   // and multiply by Lt to introduce the appropriate correlations
   TVectorD g(n);
-  TRandom3 random(0);
   for (int k = 0; k < n; ++k) {
-      g(k) = random.Gaus();
+    g(k) = gR.Gaus();
   }
   g *= (*Lt);
 
+#ifdef __debug__
+  cout << "Cholesky matrix L^{T}" << endl;
+  for(int ip=0; ip<n; ip++) {
+    for(int jp=0; jp<n; jp++) {
+      cout << setw(15) << setfill(' ') << setprecision(6) << (*Lt)[ip][jp] << " | ";
+    }//jp
+    cout << endl;
+  }//ip
+#endif
+
+#ifdef __debug__
+  ofstream foutp1("cholesky_uncorrelated_params.txt",fstream::app);
+  for (int i = 0; i < n; ++i) {
+    foutp1 << g[i] << "\t";
+  }
+  foutp1 << endl;
+  foutp1.close();
+#endif
 
   // add the mean value offsets and store the results
-  TVectorD rand_parm(n);
+  TVectorD twk_params(n);
   for (int i = 0; i < n; ++i) {
-     double v = parm[i];
+     double v = def_params[i];
      v += g(i);
-     rand_parm[i] = v;
+     twk_params[i] = v;
   }
 
-  return rand_parm;
+#ifdef __debug__
+  ofstream foutp2("cholesky_correlated_params.txt",fstream::app);
+  for (int i = 0; i < n; ++i) {
+    foutp2 << twk_params[i] << "\t";
+  }
+  foutp2 << endl;
+  foutp2.close();
+#endif
+
+  return twk_params;
 }
 //____________________________________________________________________________
 string t2kana::yr1numu::util::AsString(PhysParamId_t p)

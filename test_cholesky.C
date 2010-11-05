@@ -8,6 +8,9 @@
 //
 // C.Andreopoulos
 
+#include <iomanip.h>
+
+void test_cholesky(void)
 {
   gSystem->Load("libGpad");  
   gSystem->Load("libPhysics");  
@@ -25,53 +28,88 @@
   using namespace t2kana::yr1numu;
 
   //
-  // generate inputs for the Cholesky method 
+  // read inputs for the Cholesky method 
   //
 
-  const int np = 5;
+  const int np = 6;
 
   TVectorD def_vector (np);
   TMatrixD cov_matrix (np,np);
 
-  TRandom3 random(0);
+  ifstream finp("inputs/validation/cholesky_inputs_6dim_1.txt");
+  int iline=0;
+  while(1) {
+    char c = finp.peek();
+    char comment[1024];
+    if(c == '#' || c == '\n') {
+       finp.getline(comment,1024);
+     //cout << comment << endl;
+       continue;
+    }
+    double val;
+    if(iline==0) {
+      for(int jp=0; jp<np; jp++) {
+        finp >> val; 
+        def_vector[jp] = val;
+      //cout << "Reading def_vec(" << jp << ") = " << def_vector[jp] << endl;
+      }
+    } else {
+      int ip = iline-1;
+      for(int jp=0; jp<np; jp++) {
+        finp >> val; 
+        cov_matrix[ip][jp] = val;
+      //cout << "Reading cov_matrix(" << ip << ", " << jp << ") = " << cov_matrix[ip][jp] << endl;
+      //cout << val << endl;
+      }
+    }
+    iline++;
+    if(iline == np+1) break;
+  }//eof
 
-  for(int ip=0; ip<np; ip++) {
-    def_vector[ip] = random.Gaus();
-    for(int jp=0; jp<np; jp++) {
-      cov_matrix[ip][jp] = -1 + 2.*random.Rndm();
-    }//jp
-  }//ip
+  cout << "Covariant matrix determinant = " << cov_matrix.Determinant() << endl;
 
   //
   // run the Cholesky method N times and store the tweaked output vectors
   //
 
-  const int N = 1000;
+  const int N = 200000;
 
   TMatrixD x(N,np);
 
   for(int i=0; i<N; i++) {
-     cout << "Iteration: " << i << " --> ";
+     if(i%100) {
+       cout << "Number of vectors generated so far: " << i << endl;
+     }
      TVectorD twk_vector = util::RunCholeskyThingy(cov_matrix, def_vector);
      for(int ip=0; ip<np; ip++) {
-       cout << " p[" << ip << "] = " << twk_vector[ip];
        x[i][ip] = twk_vector[ip];
      }//ip  
-     cout << endl;
   }//i
 
   //
-  // calculate the covariance matrix
+  // calculate the expectation, correlation & covariance matrix
   //
 
-  TMatrixD calc_cov_matrix (np,np);
+  TVectorD calc_mean_vector (np);
+  TMatrixD calc_cov_matrix  (np,np);
+  TMatrixD calc_cor_matrix  (np,np);
+
+  for(int ip=0; ip<np; ip++) {
+    calc_mean_vector[ip] = 0.;
+    for(int i=0; i<N; i++) {
+      calc_mean_vector[ip] += x[i][ip];
+    }//i
+    calc_mean_vector[ip] /= N;
+  }//ip
 
   for(int ip=0; ip<np; ip++) {
     for(int jp=0; jp<np; jp++) {
       double cov=0;
       for(int i=0; i<N; i++) {
-         double dxip = x[i][ip] - def_vector[ip];
-         double dxjp = x[i][jp] - def_vector[jp];
+//       double dxip = x[i][ip] - def_vector[ip];
+//       double dxjp = x[i][jp] - def_vector[jp];
+         double dxip = x[i][ip] - calc_mean_vector[ip];
+         double dxjp = x[i][jp] - calc_mean_vector[jp];
          cov += (dxip*dxjp);
       }//i
       cov /= N;
@@ -79,18 +117,48 @@
     }//jp
   }//ip
 
-  //
-  // compare the input covariance matrix and the one calculated 
-  // from the generated vectors
-  //
-
-  cout << "\n\nComparing ovariance matrices" << endl;
-  cout << "Printing out `calculated(input)' covariance matrix elements\n" << endl;
   for(int ip=0; ip<np; ip++) {
     for(int jp=0; jp<np; jp++) {
-         cout << calc_cov_matrix[ip][jp] << "(" << cov_matrix[ip][jp] << ")\t";
+      double sigip =  TMath::Sqrt(calc_cov_matrix[ip][ip]);
+      double sigjp =  TMath::Sqrt(calc_cov_matrix[jp][jp]);
+      calc_cor_matrix[ip][jp] = calc_cov_matrix[ip][jp] / (sigip*sigjp);
+    }//jp
+  }//ip
+
+  //
+  // print-out so as to compare the covariance matrices
+  //
+
+  cout << "\n\nCalculated mean vector" << endl;
+  for(int ip=0; ip<np; ip++) {
+    cout << setw(15) << setfill(' ') << setprecision(6) << calc_mean_vector[ip] << " | ";
+  }
+  cout << "\n\nInput vector" << endl;
+  for(int ip=0; ip<np; ip++) {
+    cout << setw(15) << setfill(' ') << setprecision(6) << def_vector[ip] << " | ";
+  }
+  cout << endl;
+  cout << "\n\nCalculated correlation matrix" << endl;
+  for(int ip=0; ip<np; ip++) {
+    for(int jp=0; jp<np; jp++) {
+         cout << setw(15) << setfill(' ') << setprecision(6) << calc_cor_matrix[ip][jp] << " | ";
+    }//jp
+    cout << endl;
+  }//ip
+  cout << "\n\nCalculated covariance matrix" << endl;
+  for(int ip=0; ip<np; ip++) {
+    for(int jp=0; jp<np; jp++) {
+         cout << setw(15) << setfill(' ') << setprecision(6) << calc_cov_matrix[ip][jp] << " | ";
+    }//jp
+    cout << endl;
+  }//ip
+  cout << "\n\nInput covariance matrix" << endl;
+  for(int ip=0; ip<np; ip++) {
+    for(int jp=0; jp<np; jp++) {
+         cout << setw(15) << setfill(' ') << setprecision(6) << cov_matrix[ip][jp] << " | ";
     }//jp
     cout << endl;
   }//ip
 
+  cout << "Done!" << endl;
 }
