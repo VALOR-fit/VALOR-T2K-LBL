@@ -28,6 +28,7 @@
 #include <TH1D.h>
 #include <TH2D.h>
 #include <TSpline.h>
+#include <TVirtualPad.h>
 
 #include "year1_numu_osc_analysis/PhysParamList.h"
 #include "year1_numu_osc_analysis/SuperkObservation.h"
@@ -56,6 +57,9 @@ public:
    // generate SK energy spectrum expectation for the current inputs
    double Generate(double Ereco, const PhysParamList & fp);
 
+   // read inputs from input XML file
+   bool Read(string config_file);
+
    // access inputs used for building-up the expected spectrum at SK
    ND280Inputs *     GetND280Inputs     (void) { return fND280Inputs;     }
    SuperkInputs *    GetSuperkInputs    (void) { return fSuperkInputs;    }
@@ -72,14 +76,11 @@ public:
      ~ND280Inputs();
 
       // get information needed from nd280 for predicting the SK spectrum
-      double       NumOfObsCCLikeEvents     (double Ereco) const; ///< observed number of CC-like events
-      double       NumOfEstNCBkgEvents      (double Ereco) const; ///< estimated NC background
+      double       NumOfObsCCLikeEvents     (void) const; ///< observed number of CC-like events
+      double       NumOfEstNCBkgEvents      (void) const; ///< estimated NC background
       double       FiducialMass             (void) const;
       double       AnalyzedSamplePOT        (void) const;
-      double       ReconstructionEfficiency (double Etrue) const;
-      double       SelectionEfficiency      (double Ereco) const;
-      double       EnergyResolutionMatrix   (double Etrue, double Ereco) const;
-      const TAxis& ErecoBinning             (void) const { return *fErBinning; }
+      double       Efficiency               (double Etrue) const;
       const TAxis& EtrueBinning             (void) const { return *fEtBinning; }
 
       // read inputs
@@ -92,13 +93,10 @@ public:
 
       double  fPOT;             ///< number of POT
       double  fFidMass;         ///< fiducial mass
-      TAxis * fErBinning;       ///< E_{reco} binning (both fixed and variable bin widths supported)
       TAxis * fEtBinning;       ///< E_{true} binning (both fixed and variable bin widths supported)
-      TH1D  * fObsCCLikeEr;     ///< Observed CC-like inclusive dN/dE_{reco} 
-      TH1D  * fEstNCBkgEr;      ///< Estimated NC-bkg dN/dE_{reco} 
-      TH1D  * fRecoEffCC;       ///< Reconstruction efficiency = f(E_{true})
-      TH1D  * fSelEffCC;        ///< Reconstruction efficiency = f(E_{reco})
-      TH2D  * fResolMtrxCC;     ///< Energy resolution matrix = f(E_{true}, E_{reco})
+      double  fNumObsCCLike;    ///< Observed number of CC-like events 
+      double  fNumEstNCBkg;     ///< Estimated number of NC-bkg events
+      TH1D  * fEfficiency;      ///< Reconstruction efficiency = f(E_{reco})
    };
 
    //.........................................................................
@@ -153,6 +151,12 @@ public:
 
       // read inputs
       bool Read(string config_file);
+
+      // draw inputs
+      // Set option to "SKFlux"       to draw the SK flux
+      // Set option to "ND280Flux"    to draw the ND280 flux
+      // Set option to "OffAxisRatio" to draw the SK/ND280
+      void Draw(TVirtualPad * c, Option_t * opt = "OffAxisRatio") const;
 
     private:
 

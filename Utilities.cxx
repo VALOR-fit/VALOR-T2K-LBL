@@ -12,8 +12,8 @@
 #include <iostream>
 #include <iomanip>
 
-#include <TMath.h>
 #include <TROOT.h>
+#include <TMath.h>
 #include <TStyle.h>
 #include <TColor.h>
 #include <TGraph.h>
@@ -21,6 +21,8 @@
 #include <TVectorD.h>
 #include <TMatrixD.h>
 #include <TRandom3.h>
+#include <TXMLEngine.h>
+#include <TFile.h>
 
 #include "year1_numu_osc_analysis/Utilities.h"
 
@@ -391,7 +393,7 @@ void t2kana::yr1numu::util::Format(
 }
 //___________________________________________________________________________
 void t2kana::yr1numu::util::Format(
-     TH1* hst, int lcol, int lsty, int lwid, int mcol, int msty, double msiz)
+  TH1* hst, int lcol, int lsty, int lwid, int mcol, int msty, double msiz)
 {
   if(!hst) return;
 
@@ -404,5 +406,98 @@ void t2kana::yr1numu::util::Format(
   if (msiz >= 0) hst -> SetMarkerSize  (msiz);
 }
 //___________________________________________________________________________
+string t2kana::yr1numu::util::TrimSpaces(string input)
+{
+  if( input.find_first_not_of(" \n") != 0)
+    input.erase( 0,  input.find_first_not_of(" \n")  );
 
+  if( input.find_last_not_of(" \n") != input.length() )
+    input.erase( input.find_last_not_of(" \n")+1, input.length() );
 
+  return input;
+}
+//____________________________________________________________________________
+vector<string> t2kana::yr1numu::util::Tokens (string input, string delimiter)
+{
+// split a string of 'delimiter' separated values and return each string
+// part as a vector<string> element.
+
+  vector<string> tokens;
+
+  while(input.find_first_of(delimiter) < input.length()) {
+
+    tokens.push_back( input.substr(0, input.find_first_of(delimiter)) );
+    input = input.substr(input.find_first_of(delimiter)+1, input.length());
+  }
+  tokens.push_back(input);
+  return tokens;
+}
+//___________________________________________________________________________
+TH1D * t2kana::yr1numu::util::XML2TH1D(
+  TXMLEngine * xmleng, XMLNodePointer_t top_node, string path)
+{
+  XMLNodePointer_t found_node = FindNode(xmleng,top_node,path);
+  if(!found_node) {
+    cerr << "utils/XML2TH1D >> No node was found at input XML node path: "
+         << path << endl;
+    return 0;
+  }
+
+  string filename = "";
+  string objname  = "";
+
+  XMLNodePointer_t child_node = xmleng->GetChild(found_node);
+  while(child_node) {
+    string child_node_name = xmleng->GetNodeName(child_node);
+  //cout << "utils/XML2TH1D >> node = " << child_node_name << endl;
+    string content = xmleng->GetNodeContent(child_node);
+  //cout << "utils/XML2TH1D >> \t content = " << content << endl;
+    if(child_node_name == "filename") { filename = TrimSpaces(content); }
+    if(child_node_name == "objname" ) { objname  = TrimSpaces(content); }
+    child_node = xmleng->GetNext(child_node);    
+  }
+
+  cout << "utils/XML2TH1D >> filename : " << filename << endl;
+  cout << "utils/XML2TH1D >> objname  : " << objname  << endl;
+
+  TFile file(filename.c_str(), "read");
+  TH1D * h = (TH1D*)file.Get(objname.c_str());
+  if(!h) {
+    cerr << "utils/XML2TH1D >> No " << objname << " in " << filename << endl;
+    file.Close();
+    return 0;
+  }
+
+  TH1D * hcopy = new TH1D(*h);
+  hcopy->SetDirectory(0);
+
+  file.Close();
+
+  return hcopy;
+}
+//___________________________________________________________________________
+XMLNodePointer_t t2kana::yr1numu::util::FindNode(
+  TXMLEngine * xmleng, XMLNodePointer_t topnode, string path)
+{
+  vector<string> node_path = Tokens(path,"/");
+
+  unsigned int ndepth = node_path.size();
+  unsigned int idepth = 0;
+
+  XMLNodePointer_t curr_node = xmleng->GetChild(topnode);
+  while(curr_node) {
+    string curr_node_name = xmleng->GetNodeName(curr_node);
+    if(node_path[idepth] == curr_node_name) {
+        idepth++;
+        if(idepth == ndepth) {
+          return curr_node;
+        } else {
+          curr_node = xmleng->GetChild(curr_node);
+        }
+    } else {
+       curr_node = xmleng->GetNext(curr_node);
+    }
+  }
+  return 0;
+}
+//___________________________________________________________________________

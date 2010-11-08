@@ -4,11 +4,21 @@
 */
 //________________________________________________________________________________________
 
+#include <TFile.h>
+#include <TXMLEngine.h>
+#include <TString.h>
+
 #include <cassert>
+#include <cstdlib>
+#include <iostream>
 
 #include "year1_numu_osc_analysis/SuperkExpectation.h"
 #include "year1_numu_osc_analysis/Conventions.h"
 #include "year1_numu_osc_analysis/Utilities.h"
+
+using std::cout;
+using std::cerr;
+using std::endl;
 
 using namespace t2kana;
 using namespace t2kana::yr1numu;
@@ -27,7 +37,7 @@ SuperkExpectation::~SuperkExpectation(void)
   this->CleanUp();
 }
 //________________________________________________________________________________________
-double SuperkExpectation::Generate(double Er, const PhysParamList & fp)
+double SuperkExpectation::Generate(double Ereco, const PhysParamList & fp)
 {
 // Calculate dN^{exp}_{SuperK}(E_{reco}) / dE_{reco} for the input E_{reco} and 
 // the input physics parameter list.
@@ -52,7 +62,6 @@ double SuperkExpectation::Generate(double Er, const PhysParamList & fp)
   SuperkSample_t sk_samples[kNSuperkSamples] =  { kSKsFCFV1RingMuLike, kSKsFCFVmRingMuLike };
   SuperkMode_t sk_modes[kNSuperkModes] = { kSKmNuMuCCQE, kSKmNuMuNonCCQE, kSKmNC };
 
-  const TAxis & ereco_binning = fSuperkInputs->ErecoBinning();
   const TAxis & etrue_binning = fSuperkInputs->EtrueBinning();
 
   // loop over SK samples & modes/sample
@@ -74,38 +83,20 @@ double SuperkExpectation::Generate(double Er, const PhysParamList & fp)
          double evtfrac_m_sk      = fGeneratorInputs -> ModeFraction(Etrue,m);
          double xsec_m_sk         = xsec_tot_sk * evtfrac_m_sk;
          double prob_surv         = util::NuMuSurvProb2D(sinsq2theta23, dmsq23, Etrue, m);
+         double R_s_m_sk          = fSuperkInputs -> EnergyResolutionMatrix(Etrue,Ereco,s,m);
+         double eff_sel_s_m_sk    = fSuperkInputs -> SelectionEfficiency(Ereco,s,m);
          double eff_reco_m_sk     = fSuperkInputs -> ReconstructionEfficiency(Etrue,m);
-         double eff_reco_cc_nd280 = fND280Inputs  -> ReconstructionEfficiency(Etrue); 
+         double nobscclike_nd280  = fND280Inputs -> NumOfObsCCLikeEvents ();
+         double nexpnc_nd280      = fND280Inputs -> NumOfEstNCBkgEvents  ();
+         double eff_nd280         = fND280Inputs  -> Efficiency(Etrue); 
 
          double Ct = fn_ratio * 
                      (xsec_m_sk / xsec_totcc_nd280) * 
                      prob_surv * 
-                     (eff_reco_m_sk / eff_reco_cc_nd280);
+                     (nobscclike_nd280 - nexpnc_nd280) *
+                     R_s_m_sk * (eff_sel_s_m_sk * eff_reco_m_sk / eff_nd280);     
 
-         double IntgEreco = 0; // integral over E_{reco}
-
-         // E_{reco} bin loop
-         for(int irbin = 1; irbin <= ereco_binning.GetNbins(); irbin++) {
-            double Ereco = ereco_binning.GetBinCenter(irbin);
-
-            // calc stuff with E_{reco} energy dependency only
-            double nobscclike_nd280 = fND280Inputs -> NumOfObsCCLikeEvents (Ereco);
-            double nexpnc_nd280     = fND280Inputs -> NumOfEstNCBkgEvents  (Ereco);
-            double ncc_nd280        = TMath::Max(0., nobscclike_nd280-nexpnc_nd280);
-            double eff_sel_s_m_sk   = fSuperkInputs -> SelectionEfficiency(Etrue,s,m);
-            double eff_sel_cc_nd280 = fND280Inputs  -> SelectionEfficiency(Etrue); 
-            double Cr = ncc_nd280 * 
-                        (eff_sel_s_m_sk / eff_sel_cc_nd280);
-
-            // calc stuff with both E_{true}, E_{reco} energy dependency
-            double R_s_m_sk    = fSuperkInputs -> EnergyResolutionMatrix(Etrue,Ereco,s,m);
-            double RT_cc_nd280 = fND280Inputs  -> EnergyResolutionMatrix(Etrue,Ereco);
-            double Ctr = R_s_m_sk * RT_cc_nd280;
-
-            IntgEreco += (Cr*Ctr);
-         }//E_{reco}
-
-         IntgEtrue += (Ct*IntgEreco);
+         IntgEtrue += Ct;
        }//E_{true}
 
        expectation += (C0*IntgEtrue);
@@ -149,24 +140,14 @@ void SuperkExpectation::ND280Inputs::Init(void)
 {
   fPOT             = 0;
   fFidMass         = 0;
-  fErBinning       = 0;
   fEtBinning       = 0;
-  fObsCCLikeEr     = 0;
-  fEstNCBkgEr      = 0;
-  fRecoEffCC       = 0;
-  fSelEffCC        = 0;
-  fResolMtrxCC     = 0;
+  fEfficiency      = 0;
 }
 //________________________________________________________________________________________
 void SuperkExpectation::ND280Inputs::CleanUp(void)
 {
-  if ( fErBinning   ) delete fErBinning;
   if ( fEtBinning   ) delete fEtBinning;
-  if ( fObsCCLikeEr ) delete fObsCCLikeEr;
-  if ( fEstNCBkgEr  ) delete fEstNCBkgEr;
-  if ( fRecoEffCC   ) delete fRecoEffCC;
-  if ( fSelEffCC    ) delete fSelEffCC;
-  if ( fResolMtrxCC ) delete fResolMtrxCC;
+  if ( fEfficiency  ) delete fEfficiency;
 }
 //________________________________________________________________________________________
 bool SuperkExpectation::ND280Inputs::Read(string config_file)
@@ -174,24 +155,24 @@ bool SuperkExpectation::ND280Inputs::Read(string config_file)
   return true;
 }
 //________________________________________________________________________________________
-double SuperkExpectation::ND280Inputs::NumOfObsCCLikeEvents(double Ereco) const
+double SuperkExpectation::ND280Inputs::NumOfObsCCLikeEvents(void) const
 {
 // observed number of CC-like events
 
-  int    bin = fObsCCLikeEr->FindBin(Ereco);
-  double nev = fObsCCLikeEr->GetBinContent(bin);
-
-  return nev;
+  return fNumObsCCLike;
 }
 //________________________________________________________________________________________
-double SuperkExpectation::ND280Inputs::NumOfEstNCBkgEvents(double Ereco) const
+double SuperkExpectation::ND280Inputs::NumOfEstNCBkgEvents(void) const
 {
 // estimated NC background
 
-  int    bin = fEstNCBkgEr->FindBin(Ereco);
-  double nev = fEstNCBkgEr->GetBinContent(bin);
+  double Nnc0 = fNumEstNCBkg; // nominal estimation 
 
-  return nev;
+  //
+  // ...
+  //
+
+  return Nnc0;
 }
 //________________________________________________________________________________________
 double SuperkExpectation::ND280Inputs::FiducialMass(void) const
@@ -204,20 +185,9 @@ double SuperkExpectation::ND280Inputs::AnalyzedSamplePOT(void) const
   return fPOT;
 }
 //________________________________________________________________________________________
-double SuperkExpectation::ND280Inputs::ReconstructionEfficiency(double Etrue) const
+double SuperkExpectation::ND280Inputs::Efficiency(double Etrue) const
 {
-  return 0; 
-}
-//________________________________________________________________________________________
-double SuperkExpectation::ND280Inputs::SelectionEfficiency(double Ereco) const
-{
-  return 0; 
-}
-//________________________________________________________________________________________
-double SuperkExpectation::ND280Inputs::EnergyResolutionMatrix(
-  double Etrue, double Ereco) const
-{
-  return 0; 
+  return 1; ///TODO
 }
 //________________________________________________________________________________________
 //........................................................................................
@@ -317,17 +287,71 @@ SuperkExpectation::BeamInputs::~BeamInputs()
 //________________________________________________________________________________________
 void SuperkExpectation::BeamInputs::Init(void)
 {
-
+  fSuperkFlux = 0; 
+  fND280Flux  = 0; 
 }
 //________________________________________________________________________________________
 void SuperkExpectation::BeamInputs::CleanUp(void)
 {
-
+  if (fSuperkFlux) delete fSuperkFlux;
+  if (fND280Flux ) delete fND280Flux;
 }
 //________________________________________________________________________________________
 bool SuperkExpectation::BeamInputs::Read(string config_file)
 {
+// Read beam analysis inputs from the input XML config file
+//
+  cout << "SKexp/Beam >> " << "Reading config file: " << config_file << endl;
+
+  // Parse the input configuration file
+  TXMLEngine* xml = new TXMLEngine;   
+  XMLDocPointer_t xmldoc = xml->ParseFile(config_file.c_str());
+  if (xmldoc==0) {
+    cerr << "SKexp/Beam >> " << "Can not parse input: " << config_file << endl;
+    delete xml;
+    return false;  
+  }
+  XMLNodePointer_t root_node = xml->DocGetRootElement(xmldoc);
+
+  // Get 
+  fSuperkFlux = util::XML2TH1D(xml,root_node,"beam/superk_flux");
+  if(!fSuperkFlux) {
+    cerr << "SKexp/Beam >> No input SuperK flux histogram!" << endl;
+    exit(1);
+  }
+
+  fND280Flux  = util::XML2TH1D(xml,root_node,"beam/nd280_flux");
+  if(!fND280Flux) {
+    cerr << "SKexp/Beam >> No input nd280 flux histogram!" << endl;
+    exit(1);
+  }
+
+  // Release memory
+  xml->FreeDoc(xmldoc);
+  delete xml;
+
+  cout << "SKexp/Beam >> Done reading beam inputs!" << endl;
+
   return true;
+}
+//________________________________________________________________________________________
+void SuperkExpectation::BeamInputs::Draw(TVirtualPad * c, Option_t * option) const
+{
+  if(!c) return;
+
+  c->cd();
+
+  TString opt = option;
+  util::SetDefaultStyle();
+
+  if(opt.Contains("Nd280Flux")) { 
+  } 
+  else
+  if(opt.Contains("SKFlux")) { 
+    fSuperkFlux->Draw();
+  } 
+
+  c->Update();
 }
 //________________________________________________________________________________________
 double SuperkExpectation::BeamInputs::FNRatio(double Etrue) const 
@@ -341,12 +365,12 @@ double SuperkExpectation::BeamInputs::FNRatio(double Etrue) const
 //________________________________________________________________________________________
 double SuperkExpectation::BeamInputs::SuperkFlux (double Etrue) const
 {
-  return 0;
+  return 1;//TODO
 }
 //________________________________________________________________________________________
 double SuperkExpectation::BeamInputs::ND280Flux(double Etrue) const
 {
-  return 0;
+  return 1;//TODO
 }
 //________________________________________________________________________________________
 //........................................................................................
@@ -383,7 +407,7 @@ void SuperkExpectation::GeneratorInputs::CleanUp(void)
 //________________________________________________________________________________________
 bool SuperkExpectation::GeneratorInputs::Read(string config_file)
 {
-  return true;
+  return true;  
 }
 //________________________________________________________________________________________
 double SuperkExpectation::GeneratorInputs::ModeFraction(double Etrue, SuperkMode_t m) const

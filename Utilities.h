@@ -17,16 +17,20 @@
 #define _t2kana_year1_numu_analysis_util_h_
 
 #include <string>
+#include <vector>
 
 #include <TVectorD.h>
 #include <TMatrixD.h>
+#include <TXMLEngine.h>
 
 class TGraph;
 class TH1;
+class TH1D;
 
 #include "year1_numu_osc_analysis/Conventions.h"
 
 using std::string;
+using std::vector;
 
 namespace t2kana {
 namespace yr1numu {
@@ -48,6 +52,12 @@ namespace util {
         int lcol, int lsty, int lwid, int mcol, int msty, double msiz);
   void Format(TH1* hst, 
         int lcol, int lsty, int lwid, int mcol, int msty, double msiz);
+
+  vector<string> Tokens     (string input, string delimiter);
+  string         TrimSpaces (string input);
+
+  TH1D *           XML2TH1D(TXMLEngine * eng, XMLNodePointer_t topnode, string path);
+  XMLNodePointer_t FindNode(TXMLEngine * eng, XMLNodePointer_t topnode, string path);
 
 } // util
 } // yr1numu
