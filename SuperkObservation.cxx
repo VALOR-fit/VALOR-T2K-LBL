@@ -6,14 +6,21 @@ Important revisions after version 1.0.0 :
 //____________________________________________________________________________
 
 #include <cassert>
+#include <cstdlib>
+#include <iostream>
 
 #include <TString.h>
 #include <TAxis.h>
 #include <TH1D.h>
 #include <TCanvas.h>
+#include <TXMLEngine.h>
 
 #include "year1_numu_osc_analysis/SuperkObservation.h"
 #include "year1_numu_osc_analysis/Utilities.h"
+
+using std::cout;
+using std::cerr;
+using std::endl;
 
 using namespace t2kana;
 using namespace t2kana::yr1numu;
@@ -58,9 +65,28 @@ double SuperkObservation::NumOfEvents(double Er, SuperkSample_t s) const
 //________________________________________________________________________________________
 bool SuperkObservation::Read(string config_file)
 {
-  //
-  //...
-  //
+  cout << "Obs >> " << "Reading config file: " << config_file << endl;
+ 
+  // Parse the input configuration file
+  TXMLEngine* xml = new TXMLEngine;
+  XMLDocPointer_t xmldoc = xml->ParseFile(config_file.c_str());
+  if (xmldoc==0) {
+    cerr << "Obs >> " << "Can not parse input: " << config_file << endl;
+    delete xml;
+    return false;
+  }
+  XMLNodePointer_t root_node = xml->DocGetRootElement(xmldoc);
+
+  // Get binning info
+  fErBinning = util::XML2BinInfo(xml,root_node,"superk/binning/ereco");
+
+  // Get observed recosntructed energy distribution
+  fErDistr[kSKsFCFV1RingMuLike] = 
+    util::XML2TH1D(xml,root_node,"superk/observation/one_mu_ring_tight/ereco");
+
+  // Release memory
+  xml->FreeDoc(xmldoc);
+  delete xml;
 
   return true;
 }
@@ -72,19 +98,22 @@ void SuperkObservation::Draw(TVirtualPad * c, Option_t * option) const
   c->cd();
 
   TString opt = option;
-  //util::SetDefaultStyle();
+  util::SetDefaultStyle();
 
   if(opt.Contains("Ereco")) { 
-/*
-     fErecoCCQElike->SetLineColor(kBlack);
-     fErecoCCQElike->SetLineWidth(2);
-     fErecoCCQElike->SetMarkerColor(kBlack);
-     fErecoCCQElike->SetMarkerStyle(20);
-     fErecoCCQElike->SetMarkerSize(1);
-     fErecoCCQElike->Draw("E");
-     fErecoCCQElike->GetXaxis()->SetTitle("E (GeV)");
-     fErecoCCQElike->GetYaxis()->SetTitle("number of CCQE-like events");
-*/
+     if(opt.Contains("OneMuRingTight")) { 
+        fErDistr[kSKsFCFV1RingMuLike]->SetLineColor(kBlack);
+        fErDistr[kSKsFCFV1RingMuLike]->SetLineWidth(2);
+        fErDistr[kSKsFCFV1RingMuLike]->SetMarkerColor(kBlack);
+        fErDistr[kSKsFCFV1RingMuLike]->SetMarkerStyle(20);
+        fErDistr[kSKsFCFV1RingMuLike]->SetMarkerSize(1);
+        fErDistr[kSKsFCFV1RingMuLike]->Draw("E");
+        fErDistr[kSKsFCFV1RingMuLike]->GetXaxis()->SetTitle("E (GeV)");
+        fErDistr[kSKsFCFV1RingMuLike]->GetYaxis()->SetTitle("Number 1RingMuTight events");
+     }
+     else {
+        exit(1);
+     }
   }
 
   c->Update();

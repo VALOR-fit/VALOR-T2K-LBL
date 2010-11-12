@@ -7,8 +7,8 @@
 //
 
 {
-//TString opt = "SuperK+Beam+NeutrinoGenerator";
-  TString opt = "SuperK";
+//TString opt = "Prediction:SuperK,Beam,NeutrinoGenerator+Observation";
+  TString opt = "Observation";
 
   gSystem->Load("libGpad");  
   gSystem->Load("libPhysics");  
@@ -27,7 +27,9 @@
   using namespace t2kana::yr1numu;
 
   SuperkExpectation * skexp = new SuperkExpectation;
+  SuperkObservation * skobs = new SuperkObservation;
   skexp->Read("inputs/analysis_configuration.xml");
+  skobs->Read("inputs/analysis_configuration.xml");
   
   if(opt.Contains("Beam")) {
     skexp->GetBeamInputs()->Draw(new TCanvas(), "SKFlux");
@@ -42,6 +44,9 @@
   if(opt.Contains("NeutrinoGenerator")) {
     skexp->GetGeneratorInputs()->Draw(new TCanvas(), "SKSigTotal");
     skexp->GetGeneratorInputs()->Draw(new TCanvas(), "SKFracMode");
+  }
+  if(opt.Contains("Observation")) {
+    skobs->Draw(new TCanvas(), "Ereco/OneMuRingTight");
   }
 }
 
