@@ -29,6 +29,7 @@
 #include <TH2D.h>
 #include <TSpline.h>
 #include <TVirtualPad.h>
+#include <TXMLEngine.h>
 
 #include "year1_numu_osc_analysis/PhysParamList.h"
 #include "year1_numu_osc_analysis/SuperkObservation.h"
@@ -54,13 +55,13 @@ public:
    SuperkExpectation();
   ~SuperkExpectation();
 
-   // generate SK energy spectrum expectation for the current inputs
+   // Generate SK energy spectrum expectation for the current inputs
    double Generate(double Ereco, const PhysParamList & fp);
 
-   // read inputs from input XML file
+   // Read inputs from input XML file
    bool Read(string config_file);
 
-   // access inputs used for building-up the expected spectrum at SK
+   // Access inputs used for building-up the expected spectrum at SK
    ND280Inputs *     GetND280Inputs     (void) { return fND280Inputs;     }
    SuperkInputs *    GetSuperkInputs    (void) { return fSuperkInputs;    }
    BeamInputs *      GetBeamInputs      (void) { return fBeamInputs;      }
@@ -71,28 +72,30 @@ public:
    //.........................................................................
    class ND280Inputs 
    {
+    friend class SuperkExpectation;
+
     public:
       ND280Inputs();
      ~ND280Inputs();
 
-      // get information needed from nd280 for predicting the SK spectrum
-      double       NumOfObsCCLikeEvents     (void) const; ///< observed number of CC-like events
-      double       NumOfEstNCBkgEvents      (void) const; ///< estimated NC background
+      // Get information needed from nd280 for predicting the SK spectrum
+      double       EffectiveTargetMassNumber(void) const;
       double       FiducialMass             (void) const;
       double       AnalyzedSamplePOT        (void) const;
+      double       NumOfObsCCLikeEvents     (void) const; ///< observed number of CC-like events
+      double       NumOfEstNCBkgEvents      (void) const; ///< estimated NC background
       double       Efficiency               (double Etrue) const;
       const TAxis& EtrueBinning             (void) const { return *fEtBinning; }
-
-      // read inputs
-      bool Read(string config_file);
 
     private:
 
       void Init    (void);
       void CleanUp (void);
+      bool Read    (TXMLEngine* xml, XMLNodePointer_t root_node); ///< read inputs from XML file
 
-      double  fPOT;             ///< number of POT
+      double  fAeff;            ///< target mass number
       double  fFidMass;         ///< fiducial mass
+      double  fPOT;             ///< number of POT
       TAxis * fEtBinning;       ///< E_{true} binning (both fixed and variable bin widths supported)
       double  fNumObsCCLike;    ///< Observed number of CC-like events 
       double  fNumEstNCBkg;     ///< Estimated number of NC-bkg events
@@ -104,11 +107,14 @@ public:
    //.........................................................................
    class SuperkInputs 
    {
+    friend class SuperkExpectation;
+
     public:
       SuperkInputs();
      ~SuperkInputs();
 
-      // get information needed from SK for predicting the SK spectrum
+      // Get information needed from SK for predicting the SK spectrum
+      double       EffectiveTargetMassNumber(void) const;
       double       FiducialMass             (void) const;
       double       AnalyzedSamplePOT        (void) const;
       double       ReconstructionEfficiency (double Etrue, t2kana::yr1numu::conv::SuperkMode_t m) const;
@@ -117,16 +123,18 @@ public:
       const TAxis& ErecoBinning             (void) const { return *fErBinning; }
       const TAxis& EtrueBinning             (void) const { return *fEtBinning; }
 
-      // read inputs
-      bool Read(string config_file);
+      // Draw inputs:
+      void Draw(TVirtualPad * c, Option_t * opt = "") const;
 
     private:
 
       void Init    (void);
       void CleanUp (void);
+      bool Read    (TXMLEngine* xml, XMLNodePointer_t root_node); ///< read inputs from XML file
 
-      double  fPOT;                  ///< number of POT
+      double  fAeff;                 ///< effective mass number
       double  fFidMass;              ///< fiducial mass
+      double  fPOT;                  ///< number of POT
       TAxis * fErBinning;            ///< E_{reco} binning (both fixed and variable bin widths supported)
       TAxis * fEtBinning;            ///< E_{true} binning (both fixed and variable bin widths supported)
       TH1D  * fRecoEff[knm];         ///< Reconstruction efficiency = f(E_{true}, mode)
@@ -139,20 +147,19 @@ public:
    //.........................................................................
    class BeamInputs 
    {
+    friend class SuperkExpectation;
+
     public:
       BeamInputs();
      ~BeamInputs();
 
-      // get information needed from beam for predicting the SK spectrum
+      // Get information needed from beam for predicting the SK spectrum
       double       FNRatio    (double Etrue) const;
       double       SuperkFlux (double Etrue) const;
       double       ND280Flux  (double Etrue) const;
       const TAxis& EtBinning  (void) const { return *fEtBinning; }
 
-      // read inputs
-      bool Read(string config_file);
-
-      // draw inputs
+      // Draw inputs:
       // Set option to "SKFlux"       to draw the SK flux
       // Set option to "ND280Flux"    to draw the ND280 flux
       // Set option to "OffAxisRatio" to draw the SK/ND280
@@ -162,6 +169,7 @@ public:
 
       void Init    (void);
       void CleanUp (void);
+      bool Read    (TXMLEngine* xml, XMLNodePointer_t root_node); ///< read inputs from XML file
 
       TAxis * fEtBinning;   // E_{true} binning (both fixed and variable bin widths supported)
       TH1D *  fSuperkFlux;  // SuperK flux estimation
@@ -173,26 +181,34 @@ public:
    //.........................................................................
    class GeneratorInputs 
    {
+    friend class SuperkExpectation;
+
     public:
       GeneratorInputs();
      ~GeneratorInputs();
   
       // get information needed from neutrino generator for predicting the SK spectrum
-      double ModeFraction   (double Etrue, t2kana::yr1numu::conv::SuperkMode_t m) const;
-      double SigmaTotWater  (double Etrue) const;
+      double SigmaTotSK     (double Etrue) const;
+      double FractModeSK    (double Etrue, t2kana::yr1numu::conv::SuperkMode_t m) const;
+      double SigmaModeSK    (double Etrue, t2kana::yr1numu::conv::SuperkMode_t m) const;
       double SigmaTotCCND280(double Etrue) const;
 
-      // read inputs
-      bool Read(string config_file);
+      // Draw inputs:
+      // - "SKSigTotal" : draw the numu+H20 total cross section
+      // - "SKSigMode"  : draw cross section = f(Etrue) for various event modes in numu+H20
+      // - "SKSigAll"   : numu+H20 total cross section + cross section for various event modes
+      // - "SKFracMode" : draw fraction = f(Etrue) for various event modes in numu+H20
+      void Draw(TVirtualPad * c, Option_t * opt = "") const;
 
     private:
 
       void Init    (void);
       void CleanUp (void);
+      bool Read    (TXMLEngine* xml, XMLNodePointer_t root_node); ///< read inputs from XML file
 
-      TSpline3 * fModeFraction[knm];
-      TSpline3 * fSigmaTotWater;
-      TSpline3 * fSigmaTotCCND280;
+      TH1D * fFractModeSK[knm];
+      TH1D * fSigmaTotSK;
+      TH1D * fSigmaTotCCND280;
    };
 
 private:

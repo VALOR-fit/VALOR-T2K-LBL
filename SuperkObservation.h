@@ -43,7 +43,7 @@ public:
  ~SuperkObservation();
 
   // Read data
-  bool Read(string file);
+  bool Read(string config_file);
 
   // Get data
   double NumOfEvents (t2kana::yr1numu::conv::SuperkSample_t s = t2kana::yr1numu::conv::kSKsUndefined) const;             ///< all events in input sample

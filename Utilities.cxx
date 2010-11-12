@@ -18,6 +18,8 @@
 #include <TColor.h>
 #include <TGraph.h>
 #include <TH1.h>
+#include <TH2.h>
+#include <TAxis.h>
 #include <TVectorD.h>
 #include <TMatrixD.h>
 #include <TRandom3.h>
@@ -436,6 +438,10 @@ vector<string> t2kana::yr1numu::util::Tokens (string input, string delimiter)
 TH1D * t2kana::yr1numu::util::XML2TH1D(
   TXMLEngine * xmleng, XMLNodePointer_t top_node, string path)
 {
+// Get a TH1D instance from the info in the input XML config file
+//
+  cout << "utils/XML2TH1D >> Reading info at XML node path: " << path << endl;
+
   XMLNodePointer_t found_node = FindNode(xmleng,top_node,path);
   if(!found_node) {
     cerr << "utils/XML2TH1D >> No node was found at input XML node path: "
@@ -476,9 +482,125 @@ TH1D * t2kana::yr1numu::util::XML2TH1D(
   return hcopy;
 }
 //___________________________________________________________________________
+TH2D * t2kana::yr1numu::util::XML2TH2D(
+  TXMLEngine * xmleng, XMLNodePointer_t top_node, string path)
+{
+// Get a TH2D instance from the info in the input XML config file
+//
+  cout << "utils/XML2TH2D >> Reading info at XML node path: " << path << endl;
+
+  XMLNodePointer_t found_node = FindNode(xmleng,top_node,path);
+  if(!found_node) {
+    cerr << "utils/XML2TH2D >> No node was found at input XML node path: "
+         << path << endl;
+    return 0;
+  }
+
+  string filename = "";
+  string objname  = "";
+
+  XMLNodePointer_t child_node = xmleng->GetChild(found_node);
+  while(child_node) {
+    string child_node_name = xmleng->GetNodeName(child_node);
+  //cout << "utils/XML2TH2D >> node = " << child_node_name << endl;
+    string content = xmleng->GetNodeContent(child_node);
+  //cout << "utils/XML2TH2D >> \t content = " << content << endl;
+    if(child_node_name == "filename") { filename = TrimSpaces(content); }
+    if(child_node_name == "objname" ) { objname  = TrimSpaces(content); }
+    child_node = xmleng->GetNext(child_node);    
+  }
+
+  cout << "utils/XML2TH1D >> filename : " << filename << endl;
+  cout << "utils/XML2TH1D >> objname  : " << objname  << endl;
+
+  TFile file(filename.c_str(), "read");
+  TH2D * h2 = (TH2D*)file.Get(objname.c_str());
+  if(!h2) {
+    cerr << "utils/XML2TH2D >> No " << objname << " in " << filename << endl;
+    file.Close();
+    return 0;
+  }
+
+  TH2D * h2copy = new TH2D(*h2);
+  h2copy->SetDirectory(0);
+
+  file.Close();
+
+  return h2copy;
+}
+//___________________________________________________________________________
+TAxis *  t2kana::yr1numu::util::XML2BinInfo(
+  TXMLEngine * xmleng, XMLNodePointer_t top_node, string path)
+{
+//
+//
+  cout << "utils/XML2BinInfo >> Reading info at XML node path: " << path << endl;
+
+  XMLNodePointer_t found_node = FindNode(xmleng,top_node,path);
+  if(!found_node) {
+    cerr << "utils/XML2TH2D >> No node was found at input XML node path: "
+         << path << endl;
+    return 0;
+  }
+
+  string binsz = xmleng->GetAttr(found_node,"bin_size");
+  if(binsz == "fixed") {
+    int    nbins = 0;
+    double min   = 0;
+    double max   = 0;
+    XMLNodePointer_t child_node = xmleng->GetChild(found_node);
+    while(child_node) {
+      string child_node_name = xmleng->GetNodeName(child_node);
+      string content = xmleng->GetNodeContent(child_node);
+      if(child_node_name == "nbins") { nbins = atoi(TrimSpaces(content).c_str()); }
+      if(child_node_name == "min"  ) { min   = atof(TrimSpaces(content).c_str()); }
+      if(child_node_name == "max"  ) { max   = atof(TrimSpaces(content).c_str()); }
+      child_node = xmleng->GetNext(child_node);    
+    }
+    cout << "utils/XML2BinInfo >> nbins = " << nbins 
+         << ", range = (" << min << ", " << max << ")" << endl;
+
+    assert(nbins>0 && min<max);
+
+    TAxis * axis = new TAxis(nbins,min,max);
+    return axis;
+  } 
+  else   
+  if(binsz == "variable") {
+    cerr << "utils/XML2BinInfo >> Not handling variable size bins yet" << endl;
+    exit(1);
+  }
+  else {
+    cerr << "utils/XML2BinInfo >> Invalid bin_size attribute" << endl;
+    exit(1);
+  }
+
+  return 0;
+}
+//___________________________________________________________________________
+double t2kana::yr1numu::util::XML2Dbl(
+  TXMLEngine * xmleng, XMLNodePointer_t top_node, string path)
+{
+// Get the specified node content as a floating-point number
+//
+  cout << "utils/XML2Dbl >> Reading info at XML node path: " << path << endl;
+
+  XMLNodePointer_t found_node = FindNode(xmleng,top_node,path);
+  if(!found_node) {
+    cerr << "utils/XML2Dbl >> No node was found at input XML node path: "
+         << path << endl;
+    return 0;
+  }
+  string content = xmleng->GetNodeContent(found_node);
+  double value = atof(content.c_str());
+  return value;
+}
+//___________________________________________________________________________
 XMLNodePointer_t t2kana::yr1numu::util::FindNode(
   TXMLEngine * xmleng, XMLNodePointer_t topnode, string path)
 {
+// Find & return the XMLNodePointer_t at the specified path
+//
   vector<string> node_path = Tokens(path,"/");
 
   unsigned int ndepth = node_path.size();

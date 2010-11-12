@@ -26,6 +26,8 @@
 class TGraph;
 class TH1;
 class TH1D;
+class TH2D;
+class TAxis;
 
 #include "year1_numu_osc_analysis/Conventions.h"
 
@@ -56,8 +58,11 @@ namespace util {
   vector<string> Tokens     (string input, string delimiter);
   string         TrimSpaces (string input);
 
-  TH1D *           XML2TH1D(TXMLEngine * eng, XMLNodePointer_t topnode, string path);
-  XMLNodePointer_t FindNode(TXMLEngine * eng, XMLNodePointer_t topnode, string path);
+  TH1D *           XML2TH1D    (TXMLEngine * eng, XMLNodePointer_t topnode, string path);
+  TH2D *           XML2TH2D    (TXMLEngine * eng, XMLNodePointer_t topnode, string path);
+  TAxis *          XML2BinInfo (TXMLEngine * eng, XMLNodePointer_t topnode, string path);
+  double           XML2Dbl     (TXMLEngine * eng, XMLNodePointer_t topnode, string path);
+  XMLNodePointer_t FindNode    (TXMLEngine * eng, XMLNodePointer_t topnode, string path);
 
 } // util
 } // yr1numu
