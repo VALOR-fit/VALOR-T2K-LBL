@@ -52,22 +52,21 @@ void test_superk_spectrum_prediction()
     hEreco[icase]->SetLineStyle(hstyle[icase]);
   }
 
-  //
+  // superk spectrum predictor
   SuperkExpectation skexp;
   skexp.Read("inputs/analysis_configuration.xml");
 
-  PhysParamList fparm(2);
-  fparm.AddParam(0, t2kana::yr1numu::conv::kPhypSinsq2Theta23, 0.0,   0.0,  1.0, 0.02, false, "sinsq2theta23");
-  fparm.AddParam(1, t2kana::yr1numu::conv::kPhypDm23sq,        2E-3, 5E-4, 5E-2, 1E-5, false, "dmsq23");
+  // fit params
+  PhysParamList * fparm = PhysParamList::NumuDisapFitNoSyst();
 
   // generate predictions
   for(int icase = 0; icase < ncases; icase++) {
-    fparm.Update(t2kana::yr1numu::conv::kPhypSinsq2Theta23, sinsq2theta23[icase]);
-    fparm.Update(t2kana::yr1numu::conv::kPhypDm23sq,        dm23sq[icase]);
+    fparm->Update(t2kana::yr1numu::conv::kPhypSinsq2Theta23, sinsq2theta23[icase]);
+    fparm->Update(t2kana::yr1numu::conv::kPhypDm23sq,        dm23sq[icase]);
     for(int ibin=1; ibin<=nbins; ibin++) {
        double Ereco = hEreco[icase]->GetBinCenter(ibin);
-       double Nexp  = skexp.Generate(Ereco, fparm);
-       cout << "N^{exp}_{SK} (E_{reco} = " << Ereco << ") = " << Nexp << endl;
+       double Nexp  = skexp.Generate(Ereco, *fparm);
+       cout << "NumExpSK (Ereco = " << Ereco << ") = " << Nexp << endl;
        hEreco[icase]->SetBinContent(ibin,Nexp);
     }
   }
@@ -82,6 +81,8 @@ void test_superk_spectrum_prediction()
      const char * label = (icase==0) ? "Unoscillated" : Form("#Deltam^{2} = %.5f eV^{2}/c^{4}, sin^{2}2#theta = %.2f", dm23sq[icase], sinsq2theta23[icase]);
      hEreco[icase]->Draw(opt);
      legend->AddEntry(hEreco[icase], label, "L");
+
+     cout << " *** " << label << " : NumEvents = " << hEreco[icase]->Integral() << endl;
   }
   legend->Draw();
   

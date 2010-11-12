@@ -23,20 +23,23 @@
   using namespace t2kana;
   using namespace t2kana::yr1numu;
 
-  //
-  PhysParamList fparm(2);
-  fparm.AddParam(0, t2kana::yr1numu::conv::kPhypSinsq2Theta23, 0.9,   0.0,  1.0, 0.02, false, "sinsq2theta23");
-  fparm.AddParam(1, t2kana::yr1numu::conv::kPhypDm23sq,        2E-3, 5E-4, 5E-2, 1E-5, false, "dmsq23");
+  // fit params
+  PhysParamList * fparm = PhysParamList::NumuDisapFitNoSyst();
 
+  // get superk spectrum predictor & configure
   SuperkExpectation skexp;
   skexp.Read("inputs/analysis_configuration.xml");
 
+  // get superk spectrum observation
   SuperkObservation skobs;
-//  skobs.Read("inputs/skdata.root);
+  skobs.Read("inputs/analysis_configuration.xml);
 
-  OscillationFitter::FitInputs fit_inputs(skobs,skexp,fparm);
+  // create fit inputs
+  OscillationFitter::FitInputs fit_inputs(skobs,skexp,*fparm);
 
+  // get fitter
   OscillationFitter fitter(fit_inputs,"minuit");
 
+  // do the fit
   fitter.DoTheFit();
 }

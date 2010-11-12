@@ -84,6 +84,9 @@ public:
    void Print (ostream & stream) const;
    friend ostream & operator << (ostream & stream, const PhysParamList & plst);
 
+   // Using the "Named Constructor" C++ idiom for fast creation of typical parameter lists.
+   static PhysParamList * NumuDisapFitNoSyst (void);
+
 private:
 
    void CleanUp (void);
