@@ -42,7 +42,7 @@ public:
   ~PhysParamList();
 
    // Get information for the physics parameter list
-   int    Size      (void)                                                const { return fNParams;                  }
+   int    Size      (void)                                   const { return fNParams;                  }
    string Name      (t2kana::yr1numu::conv::PhysParamId_t p) const { return fName     [this->Id(p)];   }
    double CurrValue (t2kana::yr1numu::conv::PhysParamId_t p) const { return fCurrValue[this->Id(p)];   }
    double InitValue (t2kana::yr1numu::conv::PhysParamId_t p) const { return fInitValue[this->Id(p)];   }

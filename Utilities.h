@@ -44,9 +44,12 @@ namespace util {
   double NuMuSurvProb2D   (double sinsq2theta, double dmsq, double Et);
   double NuMuSurvProb2D   (double sinsq2theta, double dmsq, double Et, t2kana::yr1numu::conv::SuperkMode_t m);
 
-  TVectorD RunCholeskyThingy(TMatrixD& cov_matrix, TVectorD& parm);
+  TMatrixD CholeskyDecomposition      (TMatrixD& cov_matrix); ///< Cholesky decomposition. Return lower triangular matrix.
+  TVectorD CholeskyGenerateCorrelated (TMatrixD& cholesky_triangular, TVectorD& mean_parm); ///< Generate a vector of correlated params
 
-  string AsString(t2kana::yr1numu::conv::PhysParamId_t p);
+  string AsString(t2kana::yr1numu::conv::PhysParamId_t  p);
+  string AsString(t2kana::yr1numu::conv::SuperkSample_t s);
+  string AsString(t2kana::yr1numu::conv::SuperkMode_t   m);
 
   void SetDefaultStyle(bool black_n_white=false);
 

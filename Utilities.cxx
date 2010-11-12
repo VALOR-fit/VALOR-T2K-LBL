@@ -149,15 +149,15 @@ double t2kana::yr1numu::util::NuMuSurvProb2D(
   }
 }
 //____________________________________________________________________________
-TVectorD t2kana::yr1numu::util::RunCholeskyThingy(
-   TMatrixD& cov_matrix, TVectorD& def_params)
+TMatrixD t2kana::yr1numu::util::CholeskyDecomposition(TMatrixD& cov_matrix)
 {
+// Perform a Cholesky decomposition of the input covariance matrix and
+// return the lower triangular matrix
+//
    int ncols = cov_matrix.GetNcols();
    int nrows = cov_matrix.GetNrows();
-   int npars = def_params.GetNrows();
 
    assert(ncols==nrows);
-   assert(npars==nrows);
 
    int n = nrows;
 
@@ -187,7 +187,34 @@ TVectorD t2kana::yr1numu::util::RunCholeskyThingy(
   }//i
 
   // create the transpose of L
-  TMatrixD * Lt = new TMatrixD(TMatrixD::kTransposed,L);
+  TMatrixD LT(TMatrixD::kTransposed,L);
+
+#ifdef __debug__
+  cout << "Cholesky matrix L^{T}" << endl;
+  for(int ip=0; ip<n; ip++) {
+    for(int jp=0; jp<n; jp++) {
+      cout << setw(15) << setfill(' ') << setprecision(6) << LT[ip][jp] << " | ";
+    }//jp
+    cout << endl;
+  }//ip
+#endif
+
+  return LT;
+}
+//____________________________________________________________________________
+TVectorD t2kana::yr1numu::util::CholeskyGenerateCorrelated (
+    TMatrixD& cholesky_triangular, TVectorD& mean_params) 
+{
+// Generate a vector of correlated params
+
+  int ncols = cholesky_triangular.GetNcols();
+  int nrows = cholesky_triangular.GetNrows();
+  int npars = mean_params.GetNrows();
+
+  assert(ncols==nrows);
+  assert(npars==nrows);
+
+  int n = nrows;
 
   // create a vector of unit Gaussian variables
   // and multiply by Lt to introduce the appropriate correlations
@@ -195,17 +222,7 @@ TVectorD t2kana::yr1numu::util::RunCholeskyThingy(
   for (int k = 0; k < n; ++k) {
     g(k) = gR.Gaus();
   }
-  g *= (*Lt);
-
-#ifdef __debug__
-  cout << "Cholesky matrix L^{T}" << endl;
-  for(int ip=0; ip<n; ip++) {
-    for(int jp=0; jp<n; jp++) {
-      cout << setw(15) << setfill(' ') << setprecision(6) << (*Lt)[ip][jp] << " | ";
-    }//jp
-    cout << endl;
-  }//ip
-#endif
+  g *= cholesky_triangular;
 
 #ifdef __debug__
   ofstream foutp1("cholesky_uncorrelated_params.txt",fstream::app);
@@ -217,23 +234,23 @@ TVectorD t2kana::yr1numu::util::RunCholeskyThingy(
 #endif
 
   // add the mean value offsets and store the results
-  TVectorD twk_params(n);
+  TVectorD correlated_params(n);
   for (int i = 0; i < n; ++i) {
-     double v = def_params[i];
+     double v = mean_params[i];
      v += g(i);
-     twk_params[i] = v;
+     correlated_params[i] = v;
   }
 
 #ifdef __debug__
   ofstream foutp2("cholesky_correlated_params.txt",fstream::app);
   for (int i = 0; i < n; ++i) {
-    foutp2 << twk_params[i] << "\t";
+    foutp2 << correlated_params[i] << "\t";
   }
   foutp2 << endl;
   foutp2.close();
 #endif
 
-  return twk_params;
+  return correlated_params;
 }
 //____________________________________________________________________________
 string t2kana::yr1numu::util::AsString(PhysParamId_t p)
@@ -242,6 +259,29 @@ string t2kana::yr1numu::util::AsString(PhysParamId_t p)
     case ( kPhypSinsq2Theta23 ) : return "sinsq2theta23"; break;
     case ( kPhypDm23sq        ) : return "dm23sq";        break;
     default                     : return "--";
+  }
+  return "--";
+}
+//____________________________________________________________________________
+string t2kana::yr1numu::util::AsString(
+    t2kana::yr1numu::conv::SuperkSample_t s)
+{
+  switch(s) {
+     case ( kSKsFCFV1RingMuLike ) : return "FCFV1RingMuLike"; break;
+     case ( kSKsFCFVmRingMuLike ) : return "FCFVmRingMuLike"; break;
+     default                      : return "--";
+  }
+  return "--";
+}
+//____________________________________________________________________________
+string t2kana::yr1numu::util::AsString(
+     t2kana::yr1numu::conv::SuperkMode_t m)
+{
+  switch(m) {
+     case ( kSKmNuMuCCQE    ) : return "CCQE";    break;
+     case ( kSKmNuMuNonCCQE ) : return "CCnonQE"; break;
+     case ( kSKmNC          ) : return "NC";      break;
+     default                  : return "--";
   }
   return "--";
 }

@@ -91,6 +91,14 @@ double SuperkExpectation::Generate(double Ereco, const PhysParamList & fp)
          double nexpnc_nd280      = fND280Inputs -> NumOfEstNCBkgEvents  ();
          double eff_nd280         = fND280Inputs  -> Efficiency(Etrue); 
 
+         cout << "** " << util::AsString(m) << ", Etrue = " << Etrue 
+              << ", F/N = " << fn_ratio 
+              << ", Psurv = " << prob_surv 
+              << ", SigTot(SK) = " << xsec_tot_sk << ", ModeFrac(SK) = " << evtfrac_m_sk
+              << ", SigCCTot(nd280) = " << xsec_totcc_nd280 
+              << ", RSK = " << R_s_m_sk 
+              << ", EffSelSK = " << eff_sel_s_m_sk << ", EffRecoSK = " << eff_reco_m_sk << endl;
+         
          double Ct = fn_ratio * 
                      (xsec_m_sk / xsec_totcc_nd280) * 
                      prob_surv * 
@@ -652,7 +660,9 @@ double SuperkExpectation::GeneratorInputs::SigmaModeSK(double Etrue, SuperkMode_
 //________________________________________________________________________________________
 double SuperkExpectation::GeneratorInputs::SigmaTotCCND280(double Etrue) const
 {
-  return 1;//TODO
+//TODO
+//CURRENTLY ASSUME A NEAR SK TOO
+  return this->SigmaTotSK(Etrue);
 }
 //________________________________________________________________________________________
 

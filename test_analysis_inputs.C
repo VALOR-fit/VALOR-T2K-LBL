@@ -1,3 +1,11 @@
+//
+// ------------------------------------------------------------------------------------------------
+// Plot numu disappearane analysis inputs
+//
+// Costas Andreopoulos
+// ------------------------------------------------------------------------------------------------
+//
+
 {
 //TString opt = "SuperK+Beam+NeutrinoGenerator";
   TString opt = "SuperK";

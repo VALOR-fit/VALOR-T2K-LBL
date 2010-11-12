@@ -1,3 +1,11 @@
+//
+// ------------------------------------------------------------------------------------------------
+// Plot predicted SuperK reconstructed neutrino energy spectrum for various oscillation hypotheses
+//
+// Costas Andreopoulos
+// ------------------------------------------------------------------------------------------------
+//
+
 #include "Conventions.h"
 
 void test_superk_spectrum_prediction()
@@ -18,24 +26,63 @@ void test_superk_spectrum_prediction()
   using namespace t2kana;
   using namespace t2kana::yr1numu;
 
+  // energy range and binning
+  const double Emin  = 0;
+  const double Emax  = 4;
+  const double dE    = 0.05;
+  const int    nbins = (int) ((Emax - Emin)/dE);
+
+  // oscillation params
+  const int ncases = 4;
+  double sinsq2theta23[ncases] = { 0., 1.0,    1.0,    1.0    };
+  double dm23sq       [ncases] = { 0., 2.0E-3, 2.5E-3, 3.0E-3 };
+
+  // histogram drawing options
+  int hwidth [ncases] = { 2,      1,       1,       1       };
+  int hcolor [ncases] = { kBlack, kBlue,   kGreen,  kRed    };
+  int hstyle [ncases] = { kBlack, kDashed, kDashed, kDashed };
+
+  // histogram booking
+  TH1D * hEreco[ncases];
+  for(int icase = 0; icase < ncases; icase++) {
+    hEreco[icase] = new TH1D("","",nbins,Emin,Emax);
+    hEreco[icase]->SetDirectory(0);
+    hEreco[icase]->SetLineWidth(hwidth[icase]);
+    hEreco[icase]->SetLineColor(hcolor[icase]);
+    hEreco[icase]->SetLineStyle(hstyle[icase]);
+  }
+
+  //
   SuperkExpectation skexp;
   skexp.Read("inputs/analysis_configuration.xml");
 
-  double Emin  = 0;
-  double Emax  = 4;
-  double dE    = 0.05;
-  int    nbins = (int) ((Emax - Emin)/dE);
-
-  TH1D * hEreco = new TH1D("hEreco","",nbins,Emin,Emax);
-
   PhysParamList fparm(2);
-  fparm.AddParam(0, t2kana::yr1numu::conv::kPhypSinsq2Theta23, 0.9,   0.0,  1.0, 0.02, false, "sinsq2theta23");
+  fparm.AddParam(0, t2kana::yr1numu::conv::kPhypSinsq2Theta23, 0.0,   0.0,  1.0, 0.02, false, "sinsq2theta23");
   fparm.AddParam(1, t2kana::yr1numu::conv::kPhypDm23sq,        2E-3, 5E-4, 5E-2, 1E-5, false, "dmsq23");
 
-  for(int ibin=1; ibin<=nbins; ibin++) {
-     double Ereco = hEreco->GetBinCenter(ibin);
-     double Nexp  = skexp.Generate(Ereco, fparm);
-
-     cout << "N^{exp}_{SK} (E_{reco} = " << Ereco << ") = " << Nexp << endl;
+  // generate predictions
+  for(int icase = 0; icase < ncases; icase++) {
+    fparm.Update(t2kana::yr1numu::conv::kPhypSinsq2Theta23, sinsq2theta23[icase]);
+    fparm.Update(t2kana::yr1numu::conv::kPhypDm23sq,        dm23sq[icase]);
+    for(int ibin=1; ibin<=nbins; ibin++) {
+       double Ereco = hEreco[icase]->GetBinCenter(ibin);
+       double Nexp  = skexp.Generate(Ereco, fparm);
+       cout << "N^{exp}_{SK} (E_{reco} = " << Ereco << ") = " << Nexp << endl;
+       hEreco[icase]->SetBinContent(ibin,Nexp);
+    }
   }
+
+  // draw
+  gStyle->SetOptStat(0);
+  TLegend * legend = new TLegend(0.3, 0.7, 0.85, 0.9);
+  legend->SetFillColor(0);
+  legend->SetBorderSize(0);
+  for(int icase = 0; icase < ncases; icase++) {
+     const char * opt   = (icase==0) ? ""             : "same";
+     const char * label = (icase==0) ? "Unoscillated" : Form("#Deltam^{2} = %.5f eV^{2}/c^{4}, sin^{2}2#theta = %.2f", dm23sq[icase], sinsq2theta23[icase]);
+     hEreco[icase]->Draw(opt);
+     legend->AddEntry(hEreco[icase], label, "L");
+  }
+  legend->Draw();
+  
 }
