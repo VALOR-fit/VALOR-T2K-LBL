@@ -78,12 +78,9 @@ public:
 
 private:
 
-   void Init      (void);
-   void SetInputs (OscillationFitter::FitInputs * inputs);
-//   void      SetObservation  (SuperkObservation * skobs);
-//   void      SetExpectation  (SuperkExpectation * skexp);
-//   void      SetFitParams    (PhysParamList * params);
-   void      PrepareFitter   (Option_t * option = "minuit");
+   void Init          (void);
+   void SetInputs     (OscillationFitter::FitInputs * inputs);
+   void PrepareFitter (Option_t * option = "minuit");
 
    FitInputs*           fFitInputs;
    bool                 fKnowActualParams; ///<

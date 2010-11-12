@@ -32,13 +32,13 @@
 
   // get superk spectrum observation
   SuperkObservation skobs;
-  skobs.Read("inputs/analysis_configuration.xml);
+  skobs.Read("inputs/analysis_configuration.xml");
 
   // create fit inputs
-  OscillationFitter::FitInputs fit_inputs(skobs,skexp,*fparm);
+  OscillationFitter::FitInputs fit_inputs(&skobs,&skexp,fparm);
 
   // get fitter
-  OscillationFitter fitter(fit_inputs,"minuit");
+  OscillationFitter fitter(&fit_inputs,"minuit");
 
   // do the fit
   fitter.DoTheFit();

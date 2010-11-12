@@ -47,9 +47,6 @@ OscillationFitter::OscillationFitter(
   this->Init();
   this->SetInputs(fit_inputs);
   this->PrepareFitter(option);
-//  this->SetObservation(skobs);
-//  this->SetExpectation(skexp);
-//  this->SetFitParams(params);
 }
 //____________________________________________________________________________
 OscillationFitter::~OscillationFitter()
@@ -59,10 +56,6 @@ OscillationFitter::~OscillationFitter()
 //____________________________________________________________________________
 void OscillationFitter::Init(void)
 {
-//  fObs              = 0;
-//  fExp              = 0;
-//  fFitParams        = 0;
-
   fFitInputs        = 0;
 
   fKnowActualParams = false;
@@ -85,37 +78,6 @@ void OscillationFitter::SetInputs(FitInputs * fit_inputs)
 {
   fFitInputs = fit_inputs;
 }
-//____________________________________________________________________________
-/*
-void OscillationFitter::SetObservation(SuperkObservation * skobs)
-{
-  cout << "OscillationFitter> Setting SK observation..." << endl;
-  assert(skobs);
-
-  fObs = skobs;
-
-  fNonZeroBins = 0;
-
-  assert( fData->ErecoCCQElike() );
-
-  int nbins = fData->ErecoCCQElike()->GetNbinsX();
-  for(int i = 1; i <= nbins; i++) {
-    double y = fData->ErecoCCQElike()->GetBinContent(i);
-	cout << i << " --> " << y << endl;
-    if(y>0) {
-      fNonZeroBins++;
-    }
-  }
-}
-//____________________________________________________________________________
-void OscillationFitter::SetExpectation(SuperkExpectation * skexp)
-{
-  cout << "OscillationFitter> Setting SK expectation..." << endl;
-  assert(skexp);
-
-  fExp = skexp;
-}
-*/
 //____________________________________________________________________________
 void OscillationFitter::PrepareFitter(Option_t * option)
 {

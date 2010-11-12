@@ -57,6 +57,8 @@ double SuperkExpectation::Generate(double Ereco, const PhysParamList & fp)
   double C0 = (Npot_sk    * Mfiducial_sk    * A_nd280) / 
               (Npot_nd280 * Mfiducial_nd280 * A_sk);
 
+  cout << "C0 = " << C0 << endl;
+
   const int ns = 1;  
   const int nm = 3;  
 
@@ -90,7 +92,7 @@ double SuperkExpectation::Generate(double Ereco, const PhysParamList & fp)
          double nobscclike_nd280  = fND280Inputs -> NumOfObsCCLikeEvents ();
          double nexpnc_nd280      = fND280Inputs -> NumOfEstNCBkgEvents  ();
          double eff_nd280         = fND280Inputs  -> Efficiency(Etrue); 
-
+/*
          cout << "** " << util::AsString(m) << ", Etrue = " << Etrue 
               << ", F/N = " << fn_ratio 
               << ", Psurv = " << prob_surv 
@@ -98,7 +100,7 @@ double SuperkExpectation::Generate(double Ereco, const PhysParamList & fp)
               << ", SigCCTot(nd280) = " << xsec_totcc_nd280 
               << ", RSK = " << R_s_m_sk 
               << ", EffSelSK = " << eff_sel_s_m_sk << ", EffRecoSK = " << eff_reco_m_sk << endl;
-         
+*/         
          double Ct = fn_ratio * 
                      (xsec_m_sk / xsec_totcc_nd280) * 
                      prob_surv * 
@@ -109,6 +111,9 @@ double SuperkExpectation::Generate(double Ereco, const PhysParamList & fp)
        }//E_{true}
 
        expectation += (C0*IntgEtrue);
+
+       cout << util::AsString(s) << "/" << util::AsString(m) 
+            << " ==> adding to expectation = " << (C0*IntgEtrue) << endl;
     }//m
   }//s
 
@@ -330,6 +335,15 @@ bool SuperkExpectation::SuperkInputs::Read(TXMLEngine* xml, XMLNodePointer_t roo
     util::XML2TH2D(xml,root_node,"superk/energy_resolution_matrix/one_mu_ring_tight/nonccqe");
   fResolMtrx[kSKsFCFV1RingMuLike][kSKmNC] = 
     util::XML2TH2D(xml,root_node,"superk/energy_resolution_matrix/one_mu_ring_tight/nc");
+
+//HACK: THEY SHOULD HAVE BEEN NORMALIZED
+  fResolMtrx[kSKsFCFV1RingMuLike][kSKmNuMuCCQE] -> Scale(
+          1./fResolMtrx[kSKsFCFV1RingMuLike][kSKmNuMuCCQE]->Integral());
+  fResolMtrx[kSKsFCFV1RingMuLike][kSKmNuMuNonCCQE] -> Scale(
+          1./fResolMtrx[kSKsFCFV1RingMuLike][kSKmNuMuNonCCQE]->Integral());
+  fResolMtrx[kSKsFCFV1RingMuLike][kSKmNC] -> Scale(
+          1./fResolMtrx[kSKsFCFV1RingMuLike][kSKmNC]->Integral());
+
 
   // Get fiducial mass
   fFidMass = util::XML2Dbl(xml,root_node,"superk/fiducial_mass");
