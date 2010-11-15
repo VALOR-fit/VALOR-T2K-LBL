@@ -43,7 +43,7 @@
   fitter->ActualOscParams(0.97,2.4E-3);
 
   // see inputs
-//  fitter->Draw(new TCanvas(), "fit::inputs");
+  fitter->Draw(new TCanvas(), "fit::inputs");
 
   // do the fit
   fitter.DoTheFit();

@@ -4,6 +4,10 @@
 */
 //________________________________________________________________________________________
 
+#define __debug_level_1__
+//#define __debug_level_2__
+//#define __debug_level_3__
+
 #include <cassert>
 #include <cstdlib>
 #include <iostream>
@@ -75,7 +79,9 @@ double SuperkExpectation::Generate(double Ereco, const PhysParamList & fp)
   double C0 = (Npot_sk    * Mfiducial_sk    * A_nd280) / 
               (Npot_nd280 * Mfiducial_nd280 * A_sk);
 
-  cout << "C0 = " << C0 << endl;
+#ifdef __debug_level_3__
+  cout << "Exp / Generate() >> C0 = " << C0 << endl;
+#endif
 
   const unsigned int ns = fSamples.size();
   const unsigned int nm = 3;  
@@ -108,15 +114,17 @@ double SuperkExpectation::Generate(double Ereco, const PhysParamList & fp)
          double nobscclike_nd280  = fND280Inputs -> NumOfObsCCLikeEvents ();
          double nexpnc_nd280      = fND280Inputs -> NumOfEstNCBkgEvents  ();
          double eff_nd280         = fND280Inputs  -> Efficiency(Etrue); 
-/*
-         cout << "** " << util::AsString(m) << ", Etrue = " << Etrue 
+
+#ifdef __debug_level_3__
+         cout << "** " << util::AsString(m) << ", Etrue = " << Etrue << " GeV"
               << ", F/N = " << fn_ratio 
               << ", Psurv = " << prob_surv 
               << ", SigTot(SK) = " << xsec_tot_sk << ", ModeFrac(SK) = " << evtfrac_m_sk
               << ", SigCCTot(nd280) = " << xsec_totcc_nd280 
               << ", RSK = " << R_s_m_sk 
               << ", EffSelSK = " << eff_sel_s_m_sk << ", EffRecoSK = " << eff_reco_m_sk << endl;
-*/         
+#endif
+
          double Ct = fn_ratio * 
                      (xsec_m_sk / xsec_totcc_nd280) * 
                      prob_surv * 
@@ -126,12 +134,24 @@ double SuperkExpectation::Generate(double Ereco, const PhysParamList & fp)
          IntgEtrue += Ct;
        }//E_{true}
 
-       expectation += (C0*IntgEtrue);
+       double mode_contrib_in_sample = C0*IntgEtrue;
 
-       cout << util::AsString(s) << "/" << util::AsString(m) 
-            << " ==> adding to expectation = " << (C0*IntgEtrue) << endl;
+       expectation += mode_contrib_in_sample;
+
+#ifdef __debug_level_2__
+       cout << "Exp / Generate() >> "
+            << "NEvents(" << util::AsString(s) << "/" << util::AsString(m) 
+            << ", Ereco = " << Ereco << " GeV) = " << mode_contrib_in_sample << endl;
+#endif
+
     }//m
   }//s
+
+#ifdef __debug_level_1__
+  cout << "Exp / Generate() >> "
+       << "NEvents(all_analysis_samples/all_modes, Ereco = " << Ereco << " GeV) = "
+       << expectation << endl;
+#endif
 
   return expectation;
 }

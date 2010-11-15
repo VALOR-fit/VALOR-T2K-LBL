@@ -4,7 +4,9 @@
 */
 //____________________________________________________________________________
 
-#define _debug_
+#define __debug_level_1__
+#define __debug_level_2__
+//#define __debug_level_3__
 
 #include <cassert>
 #include <cstdlib>
@@ -164,7 +166,6 @@ void OscillationFitter::Draw(
   if(opt.Contains("fit:inputs")) { 
      c->Divide(1,2);
      fFitInputs->Observation().Draw(c->GetPad(1), "Ereco/OneMuRingTight");
-/*
      if(fKnowActualParams) {
        double xmax = 5; // fMC->ErecoCCQElike()->GetXaxis()->GetXmax();
        double ymax = 5; // 1.2 * fMC->ErecoCCQElike()->GetBinContent(fMC->ErecoCCQElike()->GetMaximumBin());
@@ -191,7 +192,6 @@ void OscillationFitter::Draw(
        grosc->SetLineColor(kRed);
        grosc->Draw("lsame");
      }
-*/
 //     fMC->Draw(c->GetPad(2),  "Ereco:def");
 
   }//option = fit:inputs
@@ -403,18 +403,22 @@ double OscillationFitter::FitInputs::Chisquare(Option_t * option)
   for(int ibin = 1; ibin <= nbins; ibin++) {
      double Ereco = ereco_binning.GetBinCenter(ibin);
      double delta = 0.;
-     double nobs = this->Observation().NumOfEvents();
+     double nobs = this->Observation().NumOfEvents(Ereco);
      double nexp = this->Expectation().Generate(Ereco, this->FitParams());
      if      (opt.Contains("poisson")) { delta = util::ChisqPoisson(nobs,nexp); }
      else if (opt.Contains("gauss")  ) { delta = util::ChisqGauss  (nobs,nexp); }
      chisq += delta;
 
+#ifdef __debug_level_3__
      cout << "OscillationFitter> chisq (bin = " << ibin << " / Ereco = " 
-          << Ereco << ") = " << delta << endl;
+          << Ereco << " GeV) = " << delta << endl;
+#endif
 
   }//ibin  
 
+#ifdef __debug_level_2__
   cout << "OscillationFitter> chisq = " << chisq << endl;
+#endif
 
   return chisq;
 }

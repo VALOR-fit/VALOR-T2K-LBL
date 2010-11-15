@@ -5,6 +5,10 @@ Important revisions after version 1.0.0 :
 */
 //____________________________________________________________________________
 
+#define __debug_level_1__
+#define __debug_level_2__
+//#define __debug_level_3__
+
 #include <cassert>
 #include <cstdlib>
 #include <iostream>
@@ -62,16 +66,26 @@ double SuperkObservation::NumOfEvents(SuperkSample_t s) const
        TH1D * h = fErDistr[sp];
        assert(h);
        double nevs = h->Integral();
+#ifdef __debug_level_3__
        cout << "Obs >> NEvents(" 
           << util::AsString(sp) << ") = " << nevs << endl;
+#endif
        nev += nevs;
-    }
+    }//isample
+#ifdef __debug_level_2__
+    cout << "Obs >> NEvents(all_analysis_samples) = " << nev << endl;
+#endif
+
   } else {
+
     TH1D * h = fErDistr[s];
     assert(h);
     nev = h->Integral();
+#ifdef __debug_level_2__
     cout << "Obs >> NEvents(" 
          << util::AsString(s) << ") = " << nev << endl;
+#endif
+
   }
 
   return nev;
@@ -89,19 +103,28 @@ double SuperkObservation::NumOfEvents(double Er, SuperkSample_t s) const
        assert(h);
        int bin = h->FindBin(Er);
        double nevs = h->GetBinContent(bin);
+#ifdef __debug_level_3__
        cout << "Obs >> NEvents(" 
-          << util::AsString(sp) << ") = " << nevs << endl;
+          << util::AsString(sp) << ", Ereco = " << Er << " GeV) = " << nevs << endl;
+#endif
        nev += nevs;
-    }
-    cout << "Obs >> NEvents(all) = " << nev << endl;
+    }//isample
+#ifdef __debug_level_2__
+    cout << "Obs >> NEvents(all_analysis_samples, Ereco = " 
+         << Er << ") = " << nev << endl;
+#endif
 
   } else {
+
     TH1D * h = fErDistr[s];
     assert(h);
     int bin = h->FindBin(Er);
     nev = h->GetBinContent(bin);
+#ifdef __debug_level_2__
     cout << "Obs >> NEvents(" 
-         << util::AsString(s) << ") = " << nev << endl;
+         << util::AsString(s) << ", Ereco = " << Er << " GeV) = " << nev << endl;
+#endif
+
   }
 
   return nev;
