@@ -26,9 +26,21 @@ using namespace t2kana::yr1numu::conv;
 ClassImp(SuperkExpectation)
 
 //________________________________________________________________________________________
-SuperkExpectation::SuperkExpectation(void)
+SuperkExpectation::SuperkExpectation()
 {
   this->Init();
+
+  fSamples.push_back(kSKsFCFV1RingMuLike);
+}
+//________________________________________________________________________________________
+SuperkExpectation::SuperkExpectation(const vector<SuperkSample_t> & samples)
+{
+  this->Init();
+
+  vector<SuperkSample_t>::const_iterator iter = samples.begin();
+  for( ; iter != samples.end(); ++iter) {
+    fSamples.push_back(*iter);
+  }
 }
 //________________________________________________________________________________________
 SuperkExpectation::~SuperkExpectation(void)
@@ -41,6 +53,12 @@ double SuperkExpectation::Generate(double Ereco, const PhysParamList & fp)
 // Calculate dN^{exp}_{SuperK}(E_{reco}) / dE_{reco} for the input E_{reco} and 
 // the input physics parameter list.
 //
+
+  if(!fIsConfigured) {
+    cerr << "Exp >> Not configured properly! " << endl;
+    return -1;
+  }
+
   double expectation = 0.;
 
   // input physics params (params included in the fit / systematics params)
@@ -59,17 +77,15 @@ double SuperkExpectation::Generate(double Ereco, const PhysParamList & fp)
 
   cout << "C0 = " << C0 << endl;
 
-  const int ns = 1;  
-  const int nm = 3;  
-
-  SuperkSample_t sk_samples [ns] = { kSKsFCFV1RingMuLike };
-  SuperkMode_t   sk_modes   [nm] = { kSKmNuMuCCQE, kSKmNuMuNonCCQE, kSKmNC };
+  const unsigned int ns = fSamples.size();
+  const unsigned int nm = 3;  
+  SuperkMode_t sk_modes [nm] = { kSKmNuMuCCQE, kSKmNuMuNonCCQE, kSKmNC };
 
   const TAxis & etrue_binning = fSuperkInputs->EtrueBinning();
 
   // loop over SK samples & modes/sample
   for(int is = 0; is < ns; is++) {
-    SuperkSample_t s = sk_samples[is];
+    SuperkSample_t s = fSamples[is];
     for(int im = 0; im < nm; im++) {
        SuperkMode_t m = sk_modes[im];
 
@@ -124,6 +140,11 @@ bool SuperkExpectation::Read(string config_file)
 {
   cout << "Exp >> " << "Reading config file: " << config_file << endl;
 
+  fND280Inputs     = new ND280Inputs;
+  fSuperkInputs    = new SuperkInputs;
+  fBeamInputs      = new BeamInputs; 
+  fGeneratorInputs = new GeneratorInputs; 
+
   // Parse the input configuration file
   TXMLEngine* xml = new TXMLEngine;   
   XMLDocPointer_t xmldoc = xml->ParseFile(config_file.c_str());
@@ -143,23 +164,31 @@ bool SuperkExpectation::Read(string config_file)
   xml->FreeDoc(xmldoc);
   delete xml;
 
+  fIsConfigured = true;
+
   return true;
 }
 //________________________________________________________________________________________
 void SuperkExpectation::Init(void)
 {
-  fND280Inputs     = new ND280Inputs;
-  fSuperkInputs    = new SuperkInputs;
-  fBeamInputs      = new BeamInputs; 
-  fGeneratorInputs = new GeneratorInputs; 
+  fIsConfigured    = false;
+
+  fND280Inputs     = 0;
+  fSuperkInputs    = 0;
+  fBeamInputs      = 0;
+  fGeneratorInputs = 0;
+
+  fSamples.clear();
 }
 //________________________________________________________________________________________
 void SuperkExpectation::CleanUp(void)
 {
-  delete fND280Inputs;
-  delete fSuperkInputs;
-  delete fBeamInputs; 
-  delete fGeneratorInputs;
+  if (fND280Inputs    ) delete fND280Inputs;
+  if (fSuperkInputs   ) delete fSuperkInputs;
+  if (fBeamInputs     ) delete fBeamInputs; 
+  if (fGeneratorInputs) delete fGeneratorInputs;
+
+  fSamples.clear();
 }
 //________________________________________________________________________________________
 //........................................................................................

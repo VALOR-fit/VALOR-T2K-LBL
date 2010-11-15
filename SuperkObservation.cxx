@@ -32,6 +32,18 @@ ClassImp(SuperkObservation)
 SuperkObservation::SuperkObservation(void) 
 {
   this->Init();
+
+  fSamples.push_back(kSKsFCFV1RingMuLike);
+}
+//________________________________________________________________________________________
+SuperkObservation::SuperkObservation(const vector<SuperkSample_t> & samples)
+{
+  this->Init();
+
+  vector<SuperkSample_t>::const_iterator iter = samples.begin();
+  for( ; iter != samples.end(); ++iter) {
+    fSamples.push_back(*iter);
+  }
 }
 //________________________________________________________________________________________
 SuperkObservation::~SuperkObservation(void)
@@ -41,26 +53,58 @@ SuperkObservation::~SuperkObservation(void)
 //________________________________________________________________________________________
 double SuperkObservation::NumOfEvents(SuperkSample_t s) const
 {
-  if(!fErDistr[s]) return -1;
+  double nev = 0;
 
-  if(s == t2kana::yr1numu::conv::kSKsUndefined) {
-    return ( fErDistr[kSKsFCFV1RingMuLike]->Integral() +
-             fErDistr[kSKsFCFVmRingMuLike]->Integral() );
+  if(s == kSKsUndefined) {
+    unsigned int nsamples = fSamples.size();
+    for(unsigned int isample = 0; isample < nsamples; isample++) {
+       SuperkSample_t sp = fSamples[isample];
+       TH1D * h = fErDistr[sp];
+       assert(h);
+       double nevs = h->Integral();
+       cout << "Obs >> NEvents(" 
+          << util::AsString(sp) << ") = " << nevs << endl;
+       nev += nevs;
+    }
   } else {
-    return fErDistr[s]->Integral();
+    TH1D * h = fErDistr[s];
+    assert(h);
+    nev = h->Integral();
+    cout << "Obs >> NEvents(" 
+         << util::AsString(s) << ") = " << nev << endl;
   }
+
+  return nev;
 }
 //________________________________________________________________________________________
 double SuperkObservation::NumOfEvents(double Er, SuperkSample_t s) const
 {
-  if(!fErDistr[s]) return -1;
+  double nev = 0;
 
-  if(s == t2kana::yr1numu::conv::kSKsUndefined) {
-    return ( fErDistr[kSKsFCFV1RingMuLike]->GetBinContent(fErDistr[s]->FindBin(Er)) +
-             fErDistr[kSKsFCFVmRingMuLike]->GetBinContent(fErDistr[s]->FindBin(Er)) );
+  if(s == kSKsUndefined) {
+    unsigned int nsamples = fSamples.size();
+    for(unsigned int isample = 0; isample < nsamples; isample++) {
+       SuperkSample_t sp = fSamples[isample];
+       TH1D * h = fErDistr[sp];
+       assert(h);
+       int bin = h->FindBin(Er);
+       double nevs = h->GetBinContent(bin);
+       cout << "Obs >> NEvents(" 
+          << util::AsString(sp) << ") = " << nevs << endl;
+       nev += nevs;
+    }
+    cout << "Obs >> NEvents(all) = " << nev << endl;
+
   } else {
-    return fErDistr[s]->GetBinContent(fErDistr[s]->FindBin(Er));
+    TH1D * h = fErDistr[s];
+    assert(h);
+    int bin = h->FindBin(Er);
+    nev = h->GetBinContent(bin);
+    cout << "Obs >> NEvents(" 
+         << util::AsString(s) << ") = " << nev << endl;
   }
+
+  return nev;
 }
 //________________________________________________________________________________________
 bool SuperkObservation::Read(string config_file)
@@ -139,5 +183,7 @@ void SuperkObservation::CleanUp(void)
   for(int is=0; is<kns; is++) {
     if(fErDistr[is]) delete fErDistr[is];
   }
+
+  fSamples.clear();
 }
 //________________________________________________________________________________________

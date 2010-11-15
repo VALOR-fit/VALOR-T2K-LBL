@@ -22,6 +22,7 @@
 #define _t2kana_year1_numu_analysis_sk_observation_h_
 
 #include <string>
+#include <vector>
 
 class TAxis;
 class TH1D;
@@ -30,7 +31,7 @@ class TVirtualPad;
 #include "year1_numu_osc_analysis/Conventions.h"
 
 using std::string;
-//using t2kana::yr1numu::conv::SuperkSample_t;
+using std::vector;
 using t2kana::yr1numu::conv::kns;
 
 namespace t2kana {
@@ -40,6 +41,7 @@ class SuperkObservation: public TObject
 {
 public:
   SuperkObservation();
+  SuperkObservation(const vector<t2kana::yr1numu::conv::SuperkSample_t> & samples);
  ~SuperkObservation();
 
   // Read data
@@ -65,11 +67,13 @@ private:
   TAxis * fErBinning;     ///< E_{reco} binning (both fixed and variable bin widths supported)
   TH1D *  fErDistr[kns];  ///< Reconstructed energy spectrum for each sample
 
+   vector<t2kana::yr1numu::conv::SuperkSample_t> fSamples;  
+
 ClassDef(SuperkObservation, 1)
 };
 
 } // yr1numu
 } // t2kana
 
-#endif // _t2kana_year1_numu_analysis_sk_expectation_h_
+#endif // _t2kana_year1_numu_analysis_sk_observation_h_
 

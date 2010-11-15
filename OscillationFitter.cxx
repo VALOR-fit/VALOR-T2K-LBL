@@ -146,8 +146,7 @@ void OscillationFitter::DoTheFit(void)
 void OscillationFitter::Draw(
   TVirtualPad * c, Option_t * option, const char * outtag)
 {
-/*
-  style::SetDefaultStyle();
+  util::SetDefaultStyle();
 
   if(!c) return;
   c->cd();
@@ -156,16 +155,19 @@ void OscillationFitter::Draw(
 
   TString opt = option;
 
+  cout << "OscillationFitter> Drawing with option = " << opt.Data() << endl;
+
   //
   // draw fitter inputs
   //
 
   if(opt.Contains("fit:inputs")) { 
-     c->Divide(2,2);
-     fMC->Draw(c->GetPad(1),  "Etrue:def");
+     c->Divide(1,2);
+     fFitInputs->Observation().Draw(c->GetPad(1), "Ereco/OneMuRingTight");
+/*
      if(fKnowActualParams) {
-       double xmax = fMC->ErecoCCQElike()->GetXaxis()->GetXmax();
-       double ymax = 1.2 * fMC->ErecoCCQElike()->GetBinContent(fMC->ErecoCCQElike()->GetMaximumBin());
+       double xmax = 5; // fMC->ErecoCCQElike()->GetXaxis()->GetXmax();
+       double ymax = 5; // 1.2 * fMC->ErecoCCQElike()->GetBinContent(fMC->ErecoCCQElike()->GetMaximumBin());
        TGaxis *axis = new TGaxis(xmax, 0, xmax, ymax, 0, 1, 50510, "-L");
        axis->SetLabelColor(kRed);
        axis->SetLabelOffset(0.030);
@@ -177,21 +179,24 @@ void OscillationFitter::Draw(
        double scale = ymax;
        const int n = 2000;
        double e[n], p[n];
-       double de = (sksel::kEnu_max-sksel::kEnu_min)/(n-1);
+       double emax = 5;
+       double emin = 0;
+       double de = (emax-emin)/(n-1);
        for(int i=0; i<n; i++) {
-          e[i] = sksel::kEnu_min + i*de;
-          p[i] = utils::osc::NuMuSurvProb2D(fSinsq2Theta23, fDm23sq, e[i]);
+          e[i] = emin + i*de;
+          p[i] = util::NuMuSurvProb2D(fSinsq2Theta23, fDm23sq, e[i]);
           p[i] *= scale; // for plotting on canvas with two superimposed y-axes
        }
        TGraph * grosc = new TGraph(n,e,p);
        grosc->SetLineColor(kRed);
        grosc->Draw("lsame");
      }
-     fMC->Draw(c->GetPad(2),  "Ereco:def");
-     fMC->Draw(c->GetPad(3),  "Ereco2Etrue");
+*/
+//     fMC->Draw(c->GetPad(2),  "Ereco:def");
 
   }//option = fit:inputs
 
+/*
   //
   // draw fitter results
   //
@@ -403,7 +408,13 @@ double OscillationFitter::FitInputs::Chisquare(Option_t * option)
      if      (opt.Contains("poisson")) { delta = util::ChisqPoisson(nobs,nexp); }
      else if (opt.Contains("gauss")  ) { delta = util::ChisqGauss  (nobs,nexp); }
      chisq += delta;
+
+     cout << "OscillationFitter> chisq (bin = " << ibin << " / Ereco = " 
+          << Ereco << ") = " << delta << endl;
+
   }//ibin  
+
+  cout << "OscillationFitter> chisq = " << chisq << endl;
 
   return chisq;
 }

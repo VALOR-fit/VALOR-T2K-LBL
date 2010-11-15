@@ -22,6 +22,7 @@
 #define _t2kana_year1_numu_analysis_sk_expectation_h_
 
 #include <string>
+#include <vector>
 
 #include <TObject.h>
 #include <TAxis.h>
@@ -36,6 +37,7 @@
 #include "year1_numu_osc_analysis/Conventions.h"
 
 using std::string;
+using std::vector;
 using t2kana::yr1numu::conv::kns;
 using t2kana::yr1numu::conv::knm;
 
@@ -53,6 +55,7 @@ public:
 
    // ctors & dtor
    SuperkExpectation();
+   SuperkExpectation(const vector<t2kana::yr1numu::conv::SuperkSample_t> & samples);
   ~SuperkExpectation();
 
    // Generate SK energy spectrum expectation for the current inputs
@@ -216,11 +219,13 @@ private:
    void Init    (void);
    void CleanUp (void);
 
-   PhysParamList *   fPhysParamList;
+   bool              fIsConfigured;
    ND280Inputs *     fND280Inputs;
    SuperkInputs *    fSuperkInputs;
    BeamInputs *      fBeamInputs;
    GeneratorInputs * fGeneratorInputs;
+
+   vector<t2kana::yr1numu::conv::SuperkSample_t> fSamples;
 
 ClassDef(SuperkExpectation, 1)
 };

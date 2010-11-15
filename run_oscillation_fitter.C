@@ -27,18 +27,23 @@
   PhysParamList * fparm = PhysParamList::NumuDisapFitNoSyst();
 
   // get superk spectrum predictor & configure
-  SuperkExpectation skexp;
-  skexp.Read("inputs/analysis_configuration.xml");
+  SuperkExpectation * skexp = new SuperkExpectation;
+  skexp->Read("inputs/analysis_configuration.xml");
 
   // get superk spectrum observation
-  SuperkObservation skobs;
-  skobs.Read("inputs/analysis_configuration.xml");
+  SuperkObservation * skobs = new SuperkObservation;
+  skobs->Read("inputs/analysis_configuration.xml");
 
   // create fit inputs
-  OscillationFitter::FitInputs fit_inputs(&skobs,&skexp,fparm);
+  OscillationFitter::FitInputs * fit_inputs = new OscillationFitter::FitInputs(skobs,skexp,fparm);
 
   // get fitter
-  OscillationFitter fitter(&fit_inputs,"minuit");
+  OscillationFitter * fitter = new OscillationFitter(fit_inputs,"minuit");
+
+  fitter->ActualOscParams(0.97,2.4E-3);
+
+  // see inputs
+//  fitter->Draw(new TCanvas(), "fit::inputs");
 
   // do the fit
   fitter.DoTheFit();
