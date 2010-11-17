@@ -8,7 +8,7 @@
 
 #include "Conventions.h"
 
-void test_superk_spectrum_prediction_twg_osc()
+void test_superk_spectrum_prediction_twk_osc()
 {
   gSystem->Load("libGpad");  
   gSystem->Load("libPhysics");  
@@ -34,8 +34,8 @@ void test_superk_spectrum_prediction_twg_osc()
 
   // oscillation params
   const int ncases = 4;
-  double sinsq2theta23[ncases] = { 0., 1.0,    1.0,    1.0    };
-  double dm23sq       [ncases] = { 0., 2.0E-3, 2.5E-3, 3.0E-3 };
+  double sinsq2theta23[ncases] = { 0., 1.0,    1.0,     1.0    };
+  double dm23sq       [ncases] = { 0., 2.0E-3, 2.35E-3, 3.3E-3 };
 
   // histogram drawing options
   int hwidth [ncases] = { 2,      1,       1,       1       };
@@ -79,7 +79,7 @@ void test_superk_spectrum_prediction_twg_osc()
   for(int icase = 0; icase < ncases; icase++) {
      const char * opt   = (icase==0) ? ""             : "same";
      const char * label = (icase==0) ? "Unoscillated" : Form("#Deltam^{2} = %.5f eV^{2}/c^{4}, sin^{2}2#theta = %.2f", dm23sq[icase], sinsq2theta23[icase]);
-     if(idial==0) {
+     if(icase==0) {
        hEreco[icase]->GetXaxis()->SetTitle("E_{reco} (GeV)");
        hEreco[icase]->GetYaxis()->SetTitle("Number of events");
      }

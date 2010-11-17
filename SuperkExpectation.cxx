@@ -96,7 +96,7 @@ double SuperkExpectation::Generate(
     return -1;
   }
   
-  if(Ereco < 0.350) return 0;
+  if(Ereco < 0.20) return 0;
 
   const double kton2gr        = 1E+9;
   const double pot_in_flux_mc = 1E+23;
@@ -507,8 +507,6 @@ void SuperkExpectation::SuperkInputs::NormResolutionMtrx(SuperkSample_t s, Super
 // (Input matrices: y->Etrue, x->Ereco)
 //
   TH2D * h2 = fResolMtrx[s][m];
-
-//  h2->Scale(1./h2->Integral());
 
   for(int bint=1; bint <= h2->GetYaxis()->GetNbins(); bint++) {
 
