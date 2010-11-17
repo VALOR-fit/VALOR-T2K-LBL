@@ -8,7 +8,7 @@
 
 #include "Conventions.h"
 
-void test_superk_spectrum_prediction()
+void test_superk_spectrum_prediction_twg_osc()
 {
   gSystem->Load("libGpad");  
   gSystem->Load("libPhysics");  
@@ -79,6 +79,10 @@ void test_superk_spectrum_prediction()
   for(int icase = 0; icase < ncases; icase++) {
      const char * opt   = (icase==0) ? ""             : "same";
      const char * label = (icase==0) ? "Unoscillated" : Form("#Deltam^{2} = %.5f eV^{2}/c^{4}, sin^{2}2#theta = %.2f", dm23sq[icase], sinsq2theta23[icase]);
+     if(idial==0) {
+       hEreco[icase]->GetXaxis()->SetTitle("E_{reco} (GeV)");
+       hEreco[icase]->GetYaxis()->SetTitle("Number of events");
+     }
      hEreco[icase]->Draw(opt);
      legend->AddEntry(hEreco[icase], label, "L");
 

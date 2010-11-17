@@ -56,6 +56,9 @@ public:
      int ip, t2kana::yr1numu::conv::PhysParamId_t p, double init, 
      double min, double max, double step, bool fix=false, string name="");
 
+   // Check whether the input parameter was included in the physics param list
+   bool Exists (t2kana::yr1numu::conv::PhysParamId_t p) const;
+
    // Update current/running value for the given parameter
    void Update(t2kana::yr1numu::conv::PhysParamId_t p, double v) 
    { 
@@ -85,7 +88,8 @@ public:
    friend ostream & operator << (ostream & stream, const PhysParamList & plst);
 
    // Using the "Named Constructor" C++ idiom for fast creation of typical parameter lists.
-   static PhysParamList * NumuDisapFitNoSyst (void);
+   static PhysParamList * NumuDisapFitNoSyst          (void);
+   static PhysParamList * NumuDisapFitShapeOnlyNoSyst (void);
 
 private:
 

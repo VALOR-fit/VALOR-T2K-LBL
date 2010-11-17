@@ -48,8 +48,10 @@ public:
   bool Read(string config_file);
 
   // Get data
-  double NumOfEvents (t2kana::yr1numu::conv::SuperkSample_t s = t2kana::yr1numu::conv::kSKsUndefined) const;             ///< all events in input sample
-  double NumOfEvents (double Er, t2kana::yr1numu::conv::SuperkSample_t s = t2kana::yr1numu::conv::kSKsUndefined) const;  ///< all events in given bin of input sample
+  double NumOfEvents (t2kana::yr1numu::conv::SuperkSample_t s = t2kana::yr1numu::conv::kSKsUndefined) const;             
+  double NumOfEvents (double Er, t2kana::yr1numu::conv::SuperkSample_t s = t2kana::yr1numu::conv::kSKsUndefined) const;  
+
+  TH1D*  AsTH1D (t2kana::yr1numu::conv::SuperkSample_t s = t2kana::yr1numu::conv::kSKsUndefined) const; 
 
   // Binning info
   const TAxis& ErecoBinning (void) const { return *fErBinning; }

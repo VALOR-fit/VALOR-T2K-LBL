@@ -1,6 +1,6 @@
 //
 // ------------------------------------------------------------------------------------------------
-// Run numu disappearance oscillation analysis
+// Run numu disappearance oscillation fit
 //
 // Costas Andreopoulos
 // ------------------------------------------------------------------------------------------------
@@ -24,7 +24,8 @@
   using namespace t2kana::yr1numu;
 
   // fit params
-  PhysParamList * fparm = PhysParamList::NumuDisapFitNoSyst();
+  PhysParamList * fparm = PhysParamList::NumuDisapFitShapeOnlyNoSyst();
+//PhysParamList * fparm = PhysParamList::NumuDisapFitNoSyst();
 
   // get superk spectrum predictor & configure
   SuperkExpectation * skexp = new SuperkExpectation;
@@ -42,9 +43,9 @@
 
   fitter->ActualOscParams(0.97,2.4E-3);
 
-  // see inputs
-  fitter->Draw(new TCanvas(), "fit::inputs");
-
   // do the fit
   fitter.DoTheFit();
+
+  // see inputs
+  fitter->Draw(new TCanvas(), "Results");
 }

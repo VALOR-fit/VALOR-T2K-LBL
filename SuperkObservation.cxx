@@ -130,6 +130,24 @@ double SuperkObservation::NumOfEvents(double Er, SuperkSample_t s) const
   return nev;
 }
 //________________________________________________________________________________________
+TH1D* SuperkObservation::AsTH1D(SuperkSample_t s) const
+{
+  int    nbins = fErBinning->GetNbins();
+  double emin  = fErBinning->GetXmin();
+  double emax  = fErBinning->GetXmax();
+
+  TH1D * hEreco = new TH1D("hEreco", "", nbins, emin, emax);
+  hEreco->SetDirectory(0);
+
+  for(int bin=1; bin < hEreco->GetNbinsX(); bin++) {
+    double Ereco = hEreco->GetBinCenter(bin);
+    double nev   = this->NumOfEvents(Ereco,s);
+    hEreco->SetBinContent(bin,nev);
+  }
+
+  return hEreco;
+}
+//________________________________________________________________________________________
 bool SuperkObservation::Read(string config_file)
 {
   cout << "Obs >> " << "Reading config file: " << config_file << endl;

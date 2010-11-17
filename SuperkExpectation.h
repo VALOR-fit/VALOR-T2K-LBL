@@ -35,6 +35,7 @@
 #include "year1_numu_osc_analysis/PhysParamList.h"
 #include "year1_numu_osc_analysis/SuperkObservation.h"
 #include "year1_numu_osc_analysis/Conventions.h"
+#include "year1_numu_osc_analysis/Utilities.h"
 
 using std::string;
 using std::vector;
@@ -58,11 +59,17 @@ public:
    SuperkExpectation(const vector<t2kana::yr1numu::conv::SuperkSample_t> & samples);
   ~SuperkExpectation();
 
-   // Generate SK energy spectrum expectation for the current inputs
-   double Generate(double Ereco, const PhysParamList & fp);
-
    // Read inputs from input XML file
    bool Read(string config_file);
+
+   // Generate SK energy spectrum expectation for the current inputs
+   double Generate(double Ereco, const PhysParamList & fp);
+   double Generate(double Ereco, const PhysParamList & fp, t2kana::yr1numu::conv::SuperkSample_t s, t2kana::yr1numu::conv::SuperkMode_t m);
+
+   TH1D * AsTH1D(const PhysParamList & fp);
+   TH1D * AsTH1D(const PhysParamList & fp, t2kana::yr1numu::conv::SuperkSample_t s);
+   TH1D * AsTH1D(const PhysParamList & fp, t2kana::yr1numu::conv::SuperkMode_t m);
+   TH1D * AsTH1D(const PhysParamList & fp, t2kana::yr1numu::conv::SuperkSample_t s, t2kana::yr1numu::conv::SuperkMode_t m);
 
    // Access inputs used for building-up the expected spectrum at SK
    ND280Inputs *     GetND280Inputs     (void) { return fND280Inputs;     }
@@ -131,9 +138,10 @@ public:
 
     private:
 
-      void Init    (void);
-      void CleanUp (void);
-      bool Read    (TXMLEngine* xml, XMLNodePointer_t root_node); ///< read inputs from XML file
+      void Init     (void);
+      void CleanUp  (void);
+      bool Read     (TXMLEngine* xml, XMLNodePointer_t root_node); ///< read inputs from XML file
+      void NormResolutionMtrx (t2kana::yr1numu::conv::SuperkSample_t s, t2kana::yr1numu::conv::SuperkMode_t m);
 
       double  fAeff;                 ///< effective mass number
       double  fFidMass;              ///< fiducial mass
@@ -191,10 +199,13 @@ public:
      ~GeneratorInputs();
   
       // get information needed from neutrino generator for predicting the SK spectrum
-      double SigmaTotSK     (double Etrue) const;
-      double FractModeSK    (double Etrue, t2kana::yr1numu::conv::SuperkMode_t m) const;
-      double SigmaModeSK    (double Etrue, t2kana::yr1numu::conv::SuperkMode_t m) const;
-      double SigmaTotCCND280(double Etrue) const;
+      double SigmaTotSK       (double Etrue) const;
+      double FractModeSK      (double Etrue, t2kana::yr1numu::conv::SuperkMode_t m) const;
+      double SigmaModeSK      (double Etrue, t2kana::yr1numu::conv::SuperkMode_t m) const;
+      double RelErrSigmaModeSK(double Etrue, t2kana::yr1numu::conv::SuperkMode_t m, int sign) const;
+      double SigmaTotCCND280  (double Etrue) const;
+
+      void TweakSigmaModeSK(t2kana::yr1numu::conv::SuperkMode_t m, double twk_dial);
 
       // Draw inputs:
       // - "SKSigTotal" : draw the numu+H20 total cross section
@@ -212,6 +223,10 @@ public:
       TH1D * fFractModeSK[knm];
       TH1D * fSigmaTotSK;
       TH1D * fSigmaTotCCND280;
+
+      util::TH1DErrEnv * fErrSigmaModeSK[knm];
+
+      double fTwkSigmaModeSK[knm];
    };
 
 private:

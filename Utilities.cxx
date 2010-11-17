@@ -475,6 +475,41 @@ vector<string> t2kana::yr1numu::util::Tokens (string input, string delimiter)
   return tokens;
 }
 //___________________________________________________________________________
+int t2kana::yr1numu::util::Sign(double tweaking_dial)
+{
+  if(TMath::Abs(tweaking_dial) < kASmallNum) return 0;
+
+  if (tweaking_dial < 0) return -1;
+  return +1;
+}
+//___________________________________________________________________________
+XMLNodePointer_t t2kana::yr1numu::util::FindNode(
+  TXMLEngine * xmleng, XMLNodePointer_t topnode, string path)
+{
+// Find & return the XMLNodePointer_t at the specified path
+//
+  vector<string> node_path = Tokens(path,"/");
+
+  unsigned int ndepth = node_path.size();
+  unsigned int idepth = 0;
+
+  XMLNodePointer_t curr_node = xmleng->GetChild(topnode);
+  while(curr_node) {
+    string curr_node_name = xmleng->GetNodeName(curr_node);
+    if(node_path[idepth] == curr_node_name) {
+        idepth++;
+        if(idepth == ndepth) {
+          return curr_node;
+        } else {
+          curr_node = xmleng->GetChild(curr_node);
+        }
+    } else {
+       curr_node = xmleng->GetNext(curr_node);
+    }
+  }
+  return 0;
+}
+//___________________________________________________________________________
 TH1D * t2kana::yr1numu::util::XML2TH1D(
   TXMLEngine * xmleng, XMLNodePointer_t top_node, string path)
 {
@@ -636,30 +671,19 @@ double t2kana::yr1numu::util::XML2Dbl(
   return value;
 }
 //___________________________________________________________________________
-XMLNodePointer_t t2kana::yr1numu::util::FindNode(
-  TXMLEngine * xmleng, XMLNodePointer_t topnode, string path)
+t2kana::yr1numu::util::TH1DErrEnv *    
+  t2kana::yr1numu::util::XML2TH1DErrEnv(
+     TXMLEngine * eng, XMLNodePointer_t topnode, string path)
 {
-// Find & return the XMLNodePointer_t at the specified path
-//
-  vector<string> node_path = Tokens(path,"/");
+  TH1D * low  = XML2TH1D(eng,topnode,path + "/low" );
+  TH1D * high = XML2TH1D(eng,topnode,path + "/high");
 
-  unsigned int ndepth = node_path.size();
-  unsigned int idepth = 0;
+  assert(low);
+  assert(high);
 
-  XMLNodePointer_t curr_node = xmleng->GetChild(topnode);
-  while(curr_node) {
-    string curr_node_name = xmleng->GetNodeName(curr_node);
-    if(node_path[idepth] == curr_node_name) {
-        idepth++;
-        if(idepth == ndepth) {
-          return curr_node;
-        } else {
-          curr_node = xmleng->GetChild(curr_node);
-        }
-    } else {
-       curr_node = xmleng->GetNext(curr_node);
-    }
-  }
-  return 0;
+  TH1DErrEnv * error_envelope = new TH1DErrEnv(low,high);
+
+  return error_envelope;
 }
 //___________________________________________________________________________
+

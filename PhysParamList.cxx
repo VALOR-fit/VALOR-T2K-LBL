@@ -65,6 +65,13 @@ bool PhysParamList::AddParam (int ip, PhysParamId_t p,
   return true;
 }
 //________________________________________________________________________________________
+bool PhysParamList::Exists(PhysParamId_t p) const
+{
+  map<PhysParamId_t, int>::const_iterator iter = fIdMap.find(p);
+  if(iter != fIdMap.end()) return true;
+  return false;
+}
+//________________________________________________________________________________________
 void PhysParamList::SetTo(TVirtualFitter * fitter)
 {
   if(!fitter) return;
@@ -124,8 +131,20 @@ PhysParamList * PhysParamList::NumuDisapFitNoSyst(void)
   PhysParamList * fparm = new PhysParamList(2);
 
   //                                     init   min   max  step  fix?   name
-  fparm->AddParam(0, kPhypSinsq2Theta23, 0.9,   0.0,  1.0, 0.02, false, "sinsq2theta23");
-  fparm->AddParam(1, kPhypDm23sq,        2E-3, 5E-4, 5E-2, 1E-5, false, "dmsq23");
+  fparm->AddParam(0, kPhypSinsq2Theta23, 0.9,   0.7,  1.0, 0.02, false, "sinsq2theta23");
+  fparm->AddParam(1, kPhypDm23sq,        2E-3, 1E-4, 8E-3, 1E-5, false, "dmsq23");
+
+  return fparm;
+}
+//________________________________________________________________________________________
+PhysParamList * PhysParamList::NumuDisapFitShapeOnlyNoSyst(void)
+{
+  PhysParamList * fparm = new PhysParamList(3);
+
+  //                                     init   min   max  step  fix?   name
+  fparm->AddParam(0, kPhypSinsq2Theta23, 0.9,   0.7,  1.0, 0.02, false, "sinsq2theta23");
+  fparm->AddParam(1, kPhypDm23sq,        2E-3, 1E-4, 8E-3, 1E-5, false, "dmsq23");
+  fparm->AddParam(2, kPhypNorm,          1, 1E-2, 1E+2, 0.1 , false, "norm");
 
   return fparm;
 }

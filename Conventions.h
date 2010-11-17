@@ -57,7 +57,8 @@ typedef enum ESuperkMode {
 typedef enum EPhysParamId {   
    kPhypUndefined = -1, 
    kPhypSinsq2Theta23, 
-   kPhypDm23sq
+   kPhypDm23sq,
+   kPhypNorm,
 } PhysParamId_t;
 
 
@@ -68,7 +69,8 @@ static const int kns = kNSuperkSamples;
 static const int knm = kNSuperkModes; 
 
 static const double kASmallNum = 1E-10;
-static const double kBaseline  = 295;    // Tokai->Kamioka (km)
+static const double kBaseline  = 295;        // Tokai->Kamioka (km)
+static const double kNA        = 6.023E+23;  // Avogadro's number
 
 } // conv
 } // yr1numu

@@ -114,6 +114,23 @@ void OscillationFitter::PrepareFitter(Option_t * option)
   Double_t arglist[100];
   arglist[0] = 0;
   fitter->ExecuteCommand("SET PRINT",arglist,2);
+
+  // calculate degrees of freedom
+
+  fNonZeroBins = 0;
+  const TAxis & ereco_binning = fFitInputs->Observation().ErecoBinning();
+  for(int bin = 1; bin <= ereco_binning.GetNbins(); bin++) {
+     double Etrue = ereco_binning.GetBinCenter(bin);
+     double nev = fFitInputs->Observation().NumOfEvents(Etrue);
+     if(nev>0) {
+       fNonZeroBins++;
+     }
+  }
+  fNFreeFitParams = fitter->GetNumberFreeParameters();
+  fNdof           = fNonZeroBins - fNFreeFitParams;
+
+  cout << "OscillationFitter >> ndof = " << fNdof
+       << ", nfreeparams = " << fNFreeFitParams << endl;
 }
 //____________________________________________________________________________
 void OscillationFitter::DoTheFit(void)
@@ -121,12 +138,6 @@ void OscillationFitter::DoTheFit(void)
   cout << "OscillationFitter> Running the fitter..." << endl;
 
   TVirtualFitter * fitter = TVirtualFitter::GetFitter();
-
-  fNdof           = fNonZeroBins - fitter->GetNumberFreeParameters();
-  fNFreeFitParams = fitter->GetNumberFreeParameters();
-
-  cout << "OscillationFitter> ndof = " << fNdof
-       << ", nfreeparams = " << fNFreeFitParams << endl;
 
   // pass fitted data & expectation to MINUIT
   //OscillationFitter::FitInputs fit_inputs(fObs,fExp,fFitParams);
@@ -157,8 +168,9 @@ void OscillationFitter::Draw(
 
   TString opt = option;
 
-  cout << "OscillationFitter> Drawing with option = " << opt.Data() << endl;
+  cout << "OscillationFitter/Draw >> Drawing with option = " << opt.Data() << endl;
 
+/*
   //
   // draw fitter inputs
   //
@@ -196,19 +208,24 @@ void OscillationFitter::Draw(
 
   }//option = fit:inputs
 
-/*
+*/
+
   //
   // draw fitter results
   //
 
-  if(opt.Contains("fit:result")) { 
+  if(opt.Contains("Result")) { 
 
      TVirtualFitter * fitter = TVirtualFitter::GetFitter();
 
      // best fit results
      double sinsq2theta23_bestfit = fitter->GetParameter(0);
      double dm23sq_bestfit        = fitter->GetParameter(1);
-     double norm_bestfit          = fitter->GetParameter(2);
+
+     cout << "OscillationFitter/Draw >> Best fit results: " 
+          << "sinsq2theta23 = " << sinsq2theta23_bestfit 
+          << ", Dmsq23 = " << dm23sq_bestfit << endl;
+
 
      double xmin, ymin, xmax, ymax;
 
@@ -221,18 +238,18 @@ void OscillationFitter::Draw(
      c->cd(1);
 
      // get oscillated MC
-     fFitParams->Update( kPhypSinsq2Theta23, sinsq2theta23_bestfit );
-     fFitParams->Update( kPhypDm23sq,        dm23sq_bestfit        );
-     fFitParams->Update( kPhypNorm,          norm_bestfit          );
-     fMC->Update(fFitParams);
+     fFitInputs->FitParams().Update( conv::kPhypSinsq2Theta23, sinsq2theta23_bestfit );
+     fFitInputs->FitParams().Update( conv::kPhypDm23sq,        dm23sq_bestfit        );
 
-     fData -> ErecoCCQElike() -> SetMarkerStyle(20);
-     fData -> ErecoCCQElike() -> SetMarkerSize(0.8);
+     TH1D * data = fFitInputs->Observation().AsTH1D();
 
-     TH1D * bestfit_tot   = utils::misc::Copy( fMC -> CurrErecoCCQElike() );
-     TH1D * bestfit_ccqe  = utils::misc::Copy( fMC -> CurrErecoSigCCQE()  ); 
-     TH1D * bestfit_bkgcc = utils::misc::Copy( fMC -> CurrErecoBkgCC()    ); 
-     TH1D * bestfit_bkgnc = utils::misc::Copy( fMC -> CurrErecoBkgNC()    ); 
+     TH1D * bestfit_tot   = fFitInputs->Expectation().AsTH1D(fFitInputs->FitParams());
+     TH1D * bestfit_ccqe  = fFitInputs->Expectation().AsTH1D(fFitInputs->FitParams(), conv::kSKmNuMuCCQE);
+     TH1D * bestfit_bkgcc = fFitInputs->Expectation().AsTH1D(fFitInputs->FitParams(), conv::kSKmNuMuNonCCQE);
+     TH1D * bestfit_bkgnc = fFitInputs->Expectation().AsTH1D(fFitInputs->FitParams(), conv::kSKmNC);
+
+     data -> SetMarkerStyle(20);
+     data -> SetMarkerSize(1);
 
      bestfit_bkgcc -> SetFillStyle ( 3006    );
      bestfit_bkgnc -> SetFillStyle ( 3006    );
@@ -241,8 +258,11 @@ void OscillationFitter::Draw(
      bestfit_ccqe  -> SetLineColor ( kBlack  );
      bestfit_ccqe  -> SetLineWidth ( 1       );
      bestfit_tot   -> SetLineWidth ( 2       );
-   
-     fData->ErecoCCQElike()->Draw("PERR");
+
+     data -> GetXaxis()->SetTitle("E_{reco} (GeV)");
+     data -> GetYaxis()->SetTitle("Number of events");
+   //data -> Draw("PERR");
+     data -> Draw("P");
      bestfit_tot   -> Draw("SAME");
      bestfit_ccqe  -> Draw("SAME");
      bestfit_bkgcc -> Draw("SAME");
@@ -251,15 +271,14 @@ void OscillationFitter::Draw(
      TLegend * spectrum_legend = new TLegend(0.6,0.5,0.9,0.9);
      spectrum_legend->SetFillColor (0);
      spectrum_legend->SetBorderSize(0);
-     spectrum_legend->AddEntry(fData,         "mock data",         "P" );
+     spectrum_legend->AddEntry(data,          "data",              "P" );
      spectrum_legend->AddEntry(bestfit_tot,   "best fit",          "L" );
      spectrum_legend->AddEntry(bestfit_ccqe,  "best fit (ccqe)",   "L" );
      spectrum_legend->AddEntry(bestfit_bkgcc, "best fit (bkg cc)", "LF");
      spectrum_legend->AddEntry(bestfit_bkgnc, "best fit (bkg nc)", "LF");
      spectrum_legend->Draw();
 
-     fData->ErecoCCQElike()->GetXaxis()->SetTitle("E_{reco} (GeV)");
-     fData->ErecoCCQElike()->GetYaxis()->SetTitle("number of events");
+     c->Update();
 
      //
      // plot contour
@@ -268,23 +287,30 @@ void OscillationFitter::Draw(
      c->cd(2);
      
      // chisquare surface
+
+     double sinsq2theta23_min  = fFitInputs->FitParams().MinValue(conv::kPhypSinsq2Theta23);
+     double sinsq2theta23_max  = fFitInputs->FitParams().MaxValue(conv::kPhypSinsq2Theta23);
+     double sinsq2theta23_step = fFitInputs->FitParams().StepSize(conv::kPhypSinsq2Theta23);
+     double dm23sq_min         = fFitInputs->FitParams().MinValue(conv::kPhypDm23sq);
+     double dm23sq_max         = fFitInputs->FitParams().MaxValue(conv::kPhypDm23sq);
+     double dm23sq_step        = fFitInputs->FitParams().StepSize(conv::kPhypDm23sq);
+
+//     int sinsq2theta23_nbins   = (int) ((sinsq2theta23_max - sinsq2theta23_min) / sinsq2theta23_step); 
+//     int dm23sq_nbins          = (int) ((dm23sq_max        - dm23sq_min       ) / dm23sq_step       );
+     int sinsq2theta23_nbins   = 40;
+     int dm23sq_nbins          = 40;
   
-     int nDm23sqBins       = utils::misc::NBins(osc23::kDm23sqMin,        osc23::kDm23sqMax,        osc23::kDm23sqStep       );
-     int nSinsqTheta23Bins = utils::misc::NBins(osc23::kSinsq2Theta23Min, osc23::kSinsq2Theta23Max, osc23::kSinsq2Theta23Step);
-  
-     TH2D * delta_chisq_surf = new TH2D("delta_chisq_surf","#delta{#chi^{2}} surface",
-        nSinsqTheta23Bins, osc23::kSinsq2Theta23Min, osc23::kSinsq2Theta23Max,
-        nDm23sqBins,       osc23::kDm23sqMin,        osc23::kDm23sqMax);
+     TH2D * delta_chisq_surf = new TH2D(
+        "delta_chisq_surf","#delta{#chi^{2}} surface",
+        sinsq2theta23_nbins, sinsq2theta23_min, sinsq2theta23_max, dm23sq_nbins, dm23sq_min, dm23sq_max);
   
      double chisq_min = 999999;
      for(int i = 1; i <= delta_chisq_surf->GetNbinsX(); i++) {
         for(int j = 1; j <= delta_chisq_surf->GetNbinsY(); j++) {
 
-           fFitParams->Update( kPhypSinsq2Theta23, delta_chisq_surf->GetXaxis()->GetBinCenter(i) );
-           fFitParams->Update( kPhypDm23sq,        delta_chisq_surf->GetYaxis()->GetBinCenter(j) );
-           fFitParams->Update( kPhypNorm,          norm_bestfit );
-           fMC->Update(fFitParams);
-           double chisq = fMC->Chisquare(*fData);
+           fFitInputs->FitParams().Update( conv::kPhypSinsq2Theta23, delta_chisq_surf->GetXaxis()->GetBinCenter(i) );
+           fFitInputs->FitParams().Update( conv::kPhypDm23sq,        delta_chisq_surf->GetYaxis()->GetBinCenter(j) );
+           double chisq = fFitInputs->Chisquare();
            chisq_min = TMath::Min(chisq_min, chisq);
        
            delta_chisq_surf->Fill( 
@@ -309,10 +335,11 @@ void OscillationFitter::Draw(
      delta_chisq_surf->GetYaxis()->SetTitleSize(0.05);
      delta_chisq_surf->GetXaxis()->SetTitleSize(0.05);
 
-     const int nlev = 2;
+     const int nlev = 3;
      double levels[nlev] = { 
-         T2KConfLevel::DeltaChisquare(kCL90, fNFreeFitParams),
-         T2KConfLevel::DeltaChisquare(kCL99, fNFreeFitParams)
+         util::DeltaChisquare(conv::kCL68, fNFreeFitParams),
+         util::DeltaChisquare(conv::kCL90, fNFreeFitParams),
+         util::DeltaChisquare(conv::kCL99, fNFreeFitParams)
      };
 
      delta_chisq_surf->SetContour(nlev,levels);
@@ -329,51 +356,52 @@ void OscillationFitter::Draw(
         true_point->SetMarkerSize(1.2);
         true_point->SetMarkerColor(kRed);
         true_point->Draw();
-      }
+     }
      
-      c->GetPad(2)->Update();
+     c->GetPad(2)->Update();
 
-      //
-      // plot chisq = f (sinsq2theta23)
-      //
+     //
+     // plot chisq = f (sinsq2theta23)
+     //
 
-      c->cd(3);
-      gMinuit->Command("SCAn 1");
-      TGraph * gr1 = (TGraph *) gMinuit->GetPlot();
-      for(int i=0; i < gr1->GetN(); i++) {
+     c->cd(3);
+     gMinuit->Command("SCAn 1");
+     TGraph * gr1 = (TGraph *) gMinuit->GetPlot();
+     for(int i=0; i < gr1->GetN(); i++) {
           double x,y;
           gr1->GetPoint(i,x,y);
           gr1->SetPoint(i,x,y/fNdof);
-      }
-      xmin  = ( gr1->GetX() )[TMath::LocMin(gr1->GetN(),gr1->GetX())];
-      xmax  = ( gr1->GetX() )[TMath::LocMax(gr1->GetN(),gr1->GetX())];
-      ymin  = ( gr1->GetY() )[TMath::LocMin(gr1->GetN(),gr1->GetY())];
-      ymax  = ( gr1->GetY() )[TMath::LocMax(gr1->GetN(),gr1->GetY())];
-      TH1F* hframe1 = c->GetPad(3)->DrawFrame(xmin,0.8*ymin,xmax,1.2*ymax);
-      hframe1->GetXaxis()->SetTitle("sin^{2}(2#theta_{23})");
-      hframe1->GetYaxis()->SetTitle("#chi^{2}");
-      gr1->Draw("l");
+     }
+     xmin  = ( gr1->GetX() )[TMath::LocMin(gr1->GetN(),gr1->GetX())];
+     xmax  = ( gr1->GetX() )[TMath::LocMax(gr1->GetN(),gr1->GetX())];
+     ymin  = ( gr1->GetY() )[TMath::LocMin(gr1->GetN(),gr1->GetY())];
+     ymax  = ( gr1->GetY() )[TMath::LocMax(gr1->GetN(),gr1->GetY())];
+     TH1F* hframe1 = c->GetPad(3)->DrawFrame(xmin,0.8*ymin,xmax,1.2*ymax);
+     hframe1->GetXaxis()->SetTitle("sin^{2}(2#theta_{23})");
+     hframe1->GetYaxis()->SetTitle("#chi^{2}");
+     gr1->Draw("l");
 
-      //
-      // plot chisq = f (Dm23sq)
-      //
+     //
+     // plot chisq = f (Dm23sq)
+     //
 
-      c->cd(4);
-      gMinuit->Command("SCAn 2");
-      TGraph * gr2 = (TGraph *) gMinuit->GetPlot();
-      for(int i=0; i < gr2->GetN(); i++) {
+     c->cd(4);
+     gMinuit->Command("SCAn 2");
+     TGraph * gr2 = (TGraph *) gMinuit->GetPlot();
+     for(int i=0; i < gr2->GetN(); i++) {
           double x,y;
           gr2->GetPoint(i,x,y); 
           gr2->SetPoint(i,x,y/fNdof);
-      }
-      xmin  = ( gr2->GetX() )[TMath::LocMin(gr2->GetN(),gr2->GetX())];
-      xmax  = ( gr2->GetX() )[TMath::LocMax(gr2->GetN(),gr2->GetX())];
-      ymin  = ( gr2->GetY() )[TMath::LocMin(gr2->GetN(),gr2->GetY())];
-      ymax  = ( gr2->GetY() )[TMath::LocMax(gr2->GetN(),gr2->GetY())];
-      TH1F* hframe2 = c->GetPad(4)->DrawFrame(xmin,0.8*ymin,xmax,1.2*ymax);
-      hframe2->GetXaxis()->SetTitle("|#Deltam_{32}^{2}| (eV^{2}/c^{4})");
-      hframe2->GetYaxis()->SetTitle("#chi^{2}");
-      gr2->Draw("l");
+     }
+     xmin  = ( gr2->GetX() )[TMath::LocMin(gr2->GetN(),gr2->GetX())];
+     xmax  = ( gr2->GetX() )[TMath::LocMax(gr2->GetN(),gr2->GetX())];
+     ymin  = ( gr2->GetY() )[TMath::LocMin(gr2->GetN(),gr2->GetY())];
+     ymax  = ( gr2->GetY() )[TMath::LocMax(gr2->GetN(),gr2->GetY())];
+     TH1F* hframe2 = c->GetPad(4)->DrawFrame(xmin,0.8*ymin,xmax,1.2*ymax);
+     hframe2->GetXaxis()->SetTitle("|#Deltam_{32}^{2}| (eV^{2}/c^{4})");
+     hframe2->GetYaxis()->SetTitle("#chi^{2}");
+     gr2->Draw("l");
+
   }//option = fit:result
 
   // Save canvas
@@ -386,7 +414,6 @@ void OscillationFitter::Draw(
     c->SaveAs( outgif.str().c_str()  );
     c->SaveAs( outroot.str().c_str() );
   }
-*/
 }
 //____________________________________________________________________________
 // FitInputs utility class 
