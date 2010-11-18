@@ -96,8 +96,6 @@ double SuperkExpectation::Generate(
     return -1;
   }
   
-  if(Ereco < 0.20) return 0;
-
   const double kton2gr        = 1E+9;
   const double pot_in_flux_mc = 1E+23;
   const double xsec_scale     = 1E+38;
@@ -581,6 +579,8 @@ double SuperkExpectation::SuperkInputs::AnalyzedSamplePOT(void) const
 double SuperkExpectation::SuperkInputs::ReconstructionEfficiency(
     double Etrue, SuperkMode_t m) const
 {
+//  if(m==kSKmNC && Etrue<4) return 0;//TODO
+
   TH1D * h = fRecoEff[m];
   assert(h);
   int bin = h->FindBin(Etrue);

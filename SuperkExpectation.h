@@ -33,7 +33,6 @@
 #include <TXMLEngine.h>
 
 #include "year1_numu_osc_analysis/PhysParamList.h"
-#include "year1_numu_osc_analysis/SuperkObservation.h"
 #include "year1_numu_osc_analysis/Conventions.h"
 #include "year1_numu_osc_analysis/Utilities.h"
 

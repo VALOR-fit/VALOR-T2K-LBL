@@ -251,18 +251,21 @@ void OscillationFitter::Draw(
      data -> SetMarkerStyle(20);
      data -> SetMarkerSize(1);
 
-     bestfit_bkgcc -> SetFillStyle ( 3006    );
-     bestfit_bkgnc -> SetFillStyle ( 3006    );
+     bestfit_bkgcc -> SetFillStyle ( 3354    );
+     bestfit_bkgnc -> SetFillStyle ( 3345    );
      bestfit_bkgcc -> SetFillColor ( kBlue   );
      bestfit_bkgnc -> SetFillColor ( kRed    );
      bestfit_ccqe  -> SetLineColor ( kBlack  );
+     bestfit_bkgcc -> SetLineWidth ( 1       );
+     bestfit_bkgnc -> SetLineWidth ( 1       );
      bestfit_ccqe  -> SetLineWidth ( 1       );
      bestfit_tot   -> SetLineWidth ( 2       );
+     bestfit_bkgnc -> SetLineStyle ( kDashed );
 
      data -> GetXaxis()->SetTitle("E_{reco} (GeV)");
      data -> GetYaxis()->SetTitle("Number of events");
-   //data -> Draw("PERR");
-     data -> Draw("P");
+     data -> Draw("PERR");
+     //data -> Draw("P");
      bestfit_tot   -> Draw("SAME");
      bestfit_ccqe  -> Draw("SAME");
      bestfit_bkgcc -> Draw("SAME");

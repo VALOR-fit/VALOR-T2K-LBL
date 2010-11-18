@@ -18,6 +18,8 @@ Important revisions after version 1.0.0 :
 #include <TH1D.h>
 #include <TCanvas.h>
 #include <TXMLEngine.h>
+#include <TRandom3.h>
+#include <TMath.h>
 
 #include "year1_numu_osc_analysis/SuperkObservation.h"
 #include "year1_numu_osc_analysis/Utilities.h"
@@ -174,6 +176,30 @@ bool SuperkObservation::Read(string config_file)
   delete xml;
 
   return true;
+}
+//________________________________________________________________________________________
+void SuperkObservation::CreateMockData(
+      SuperkExpectation & exp, const PhysParamList & fp, bool fluctuate)
+{
+  // Get binning info
+  fErBinning = new TAxis( exp.GetSuperkInputs()->ErecoBinning() );
+
+  // Get observed recosntructed energy distribution
+
+  int    nbins = fErBinning->GetNbins();
+  double emin  = fErBinning->GetXmin();
+  double emax  = fErBinning->GetXmax();
+
+  fErDistr[kSKsFCFV1RingMuLike] = new TH1D("", "", nbins, emin, emax);
+  fErDistr[kSKsFCFV1RingMuLike]->SetDirectory(0);
+
+  TRandom3 rand(0);
+  for(int ibin = 0; ibin <= fErDistr[kSKsFCFV1RingMuLike]->GetNbinsX(); ibin++) {
+     double Ereco = fErDistr[kSKsFCFV1RingMuLike]->GetBinCenter(ibin);
+     double nexp  = exp.Generate(Ereco, fp);
+     double nobs  = (fluctuate) ? rand.Poisson(nexp) : nexp;
+     fErDistr[kSKsFCFV1RingMuLike]->SetBinContent(ibin,nobs);
+  }
 }
 //________________________________________________________________________________________
 void SuperkObservation::Draw(TVirtualPad * c, Option_t * option) const

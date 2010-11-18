@@ -8,7 +8,7 @@
 
 {
 //TString opt = "Prediction:SuperK,Beam,NeutrinoGenerator+Observation";
-  TString opt = "Prediction:SuperK";
+  TString opt = "NeutrinoGenerator";
 
   gSystem->Load("libGpad");  
   gSystem->Load("libPhysics");  

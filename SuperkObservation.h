@@ -29,6 +29,8 @@ class TH1D;
 class TVirtualPad;
 
 #include "year1_numu_osc_analysis/Conventions.h"
+#include "year1_numu_osc_analysis/SuperkExpectation.h"
+#include "year1_numu_osc_analysis/PhysParamList.h"
 
 using std::string;
 using std::vector;
@@ -46,6 +48,9 @@ public:
 
   // Read data
   bool Read(string config_file);
+
+  // Create mock data
+  void CreateMockData(SuperkExpectation & exp, const PhysParamList & fp, bool fluctuate=true);
 
   // Get data
   double NumOfEvents (t2kana::yr1numu::conv::SuperkSample_t s = t2kana::yr1numu::conv::kSKsUndefined) const;             
@@ -69,7 +74,7 @@ private:
   TAxis * fErBinning;     ///< E_{reco} binning (both fixed and variable bin widths supported)
   TH1D *  fErDistr[kns];  ///< Reconstructed energy spectrum for each sample
 
-   vector<t2kana::yr1numu::conv::SuperkSample_t> fSamples;  
+  vector<t2kana::yr1numu::conv::SuperkSample_t> fSamples;  
 
 ClassDef(SuperkObservation, 1)
 };
