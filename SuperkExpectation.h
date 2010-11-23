@@ -40,6 +40,7 @@ using std::string;
 using std::vector;
 using t2kana::yr1numu::conv::kns;
 using t2kana::yr1numu::conv::knm;
+using t2kana::yr1numu::conv::knmnd;
 
 namespace t2kana {
 namespace yr1numu {
@@ -65,6 +66,13 @@ public:
    double Generate(double Ereco, const PhysParamList & fp);
    double Generate(double Ereco, const PhysParamList & fp, t2kana::yr1numu::conv::SuperkSample_t s, t2kana::yr1numu::conv::SuperkMode_t m);
 
+   // Systematics
+   void TweakBeamNorm     (double twkdial)     { fTwkBeamNorm     = twkdial; }
+   void TweakBeamShape    (void)               { }
+   void TweakSuperkNorm   (double twkdial)     { fTwkSuperkNorm   = twkdial; }
+   void TweakSuperkEScale (double twkdial)     { fTwkSuperkEScale = twkdial; }
+   void TweakSuperkShape  (void)               { }
+
    TH1D * AsTH1D(const PhysParamList & fp);
    TH1D * AsTH1D(const PhysParamList & fp, t2kana::yr1numu::conv::SuperkSample_t s);
    TH1D * AsTH1D(const PhysParamList & fp, t2kana::yr1numu::conv::SuperkMode_t m);
@@ -88,13 +96,20 @@ public:
      ~ND280Inputs();
 
       // Get information needed from nd280 for predicting the SK spectrum
-      double       EffectiveTargetMassNumber(void) const;
-      double       FiducialMass             (void) const;
-      double       AnalyzedSamplePOT        (void) const;
-      double       NumOfObsCCLikeEvents     (void) const; ///< observed number of CC-like events
-      double       NumOfEstNCBkgEvents      (void) const; ///< estimated NC background
-      double       Efficiency               (double Etrue) const;
-      const TAxis& EtrueBinning             (void) const { return *fEtBinning; }
+      double       NObsCCLike        (void) const; ///< observed number of CC-like events
+      double       NExpNCBkg         (void) const; ///< expected NC contamination of CC-like sample
+      double       NExpCC            (void) const; ///< expected number of CC events
+      const TAxis& EtrueBinning      (void) const { return *fEtBinning; }
+
+      // Draw inputs:
+      // "Saclay/NuMu/All"
+      // "Saclay/NuMu/CC"
+      // "Saclay/NuMu/NC"
+      // "Saclay/NuMuBar/CC"
+      // "Saclay/NuMuBar/NC"
+      // "Saclay/NuMuBar/CC"
+      // "Saclay/NuMuBar/NC"
+      void Draw(TVirtualPad * c, Option_t * opt = "") const;
 
     private:
 
@@ -102,13 +117,15 @@ public:
       void CleanUp (void);
       bool Read    (TXMLEngine* xml, XMLNodePointer_t root_node); ///< read inputs from XML file
 
-      double  fAeff;            ///< target mass number
-      double  fFidMass;         ///< fiducial mass
-      double  fPOT;             ///< number of POT
       TAxis * fEtBinning;       ///< E_{true} binning (both fixed and variable bin widths supported)
+
+      double  fPOTData;         ///< number of POT (data)
       double  fNumObsCCLike;    ///< Observed number of CC-like events 
-      double  fNumEstNCBkg;     ///< Estimated number of NC-bkg events
-      TH1D  * fEfficiency;      ///< Reconstruction efficiency = f(E_{reco})
+
+      double  fPOTMC;           ///< number of POT (MC)
+      TH1F *  fNumSelEt[knmnd]; ///<
+      TH1F *  fSelEffEt[knmnd]; ///<
+
    };
 
    //.........................................................................
@@ -164,15 +181,11 @@ public:
      ~BeamInputs();
 
       // Get information needed from beam for predicting the SK spectrum
-      double       FNRatio    (double Etrue) const;
       double       SuperkFlux (double Etrue) const;
-      double       ND280Flux  (double Etrue) const;
       const TAxis& EtBinning  (void) const { return *fEtBinning; }
 
       // Draw inputs:
-      // Set option to "SKFlux"       to draw the SK flux
-      // Set option to "ND280Flux"    to draw the ND280 flux
-      // Set option to "OffAxisRatio" to draw the SK/ND280
+      // Set option to "SKFlux" to draw the SK flux
       void Draw(TVirtualPad * c, Option_t * opt = "OffAxisRatio") const;
 
     private:
@@ -183,7 +196,6 @@ public:
 
       TAxis * fEtBinning;   // E_{true} binning (both fixed and variable bin widths supported)
       TH1D *  fSuperkFlux;  // SuperK flux estimation
-      TH1D *  fND280Flux;   // ND280 flux estimation
    };
 
    //.........................................................................
@@ -238,6 +250,11 @@ private:
    SuperkInputs *    fSuperkInputs;
    BeamInputs *      fBeamInputs;
    GeneratorInputs * fGeneratorInputs;
+
+   // systematics
+   double fTwkBeamNorm;     ///<
+   double fTwkSuperkNorm;   ///<
+   double fTwkSuperkEScale; ///<
 
    vector<t2kana::yr1numu::conv::SuperkSample_t> fSamples;
 

@@ -26,8 +26,8 @@ void test_mock_data_fit()
   using namespace t2kana;
   using namespace t2kana::yr1numu;
 
-  const double input_sinsq2theta23 = 0.9;
-  const double input_dm23sq        = 2.4E-3;
+  const double input_sinsq2theta23 = 0.97;
+  const double input_dm23sq        = 2.5E-3;
 
   // fit params
   PhysParamList * fparm = PhysParamList::NumuDisapFitNoSyst();

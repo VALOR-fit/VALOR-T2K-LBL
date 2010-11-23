@@ -45,13 +45,42 @@ typedef enum ESuperkSample {
    kSKsFCFVmRingMuLike
 } SuperkSample_t; 
 
-// (true) reaction modes considered separately within each sample
+// (true) reaction modes considered separately within each SuperK sample
 typedef enum ESuperkMode {
    kSKmUndefined = -1, 
    kSKmNuMuCCQE, 
    kSKmNuMuNonCCQE, 
    kSKmNC    
 } SuperkMode_t; 
+
+// (true) reaction modes considered separately in nd280 inputs
+typedef enum END280Mode {
+   kNDmUndefined = -1, 
+   kNDmNuMuCCQE, 
+   kNDmNuMuCCRES, 
+   kNDmNuMuCCCOH, 
+   kNDmNuMuCCOth, 
+   kNDmNuMuNCEL, 
+   kNDmNuMuNCRES, 
+   kNDmNuMuNCCOH, 
+   kNDmNuMuNCOth, 
+   kNDmNuMuBarCCQE, 
+   kNDmNuMuBarCCRES, 
+   kNDmNuMuBarCCCOH, 
+   kNDmNuMuBarCCOth, 
+   kNDmNuMuBarNCEL, 
+   kNDmNuMuBarNCRES, 
+   kNDmNuMuBarNCCOH, 
+   kNDmNuMuBarNCOth, 
+   kNDmNuECCQE, 
+   kNDmNuECCRES, 
+   kNDmNuECCCOH, 
+   kNDmNuECCOth, 
+   kNDmNuENCEL, 
+   kNDmNuENCRES, 
+   kNDmNuENCCOH, 
+   kNDmNuENCOth
+} ND280Mode_t; 
 
 // fit parameters
 typedef enum EPhysParamId {   
@@ -62,11 +91,13 @@ typedef enum EPhysParamId {
 } PhysParamId_t;
 
 
-static const int kNSuperkSamples  = 2; // number of samples included in analysis
-static const int kNSuperkModes    = 3; // number of reaction modes considered separately within each sample
+static const int kNSuperkSamples  = 2;  // number of samples included in analysis
+static const int kNSuperkModes    = 3;  // number of reaction modes considered separately within each SuperK sample
+static const int kNND280Modes     = 24; // number of reaction modes considered separately within the ND280 sample
 //shorter names
-static const int kns = kNSuperkSamples;
-static const int knm = kNSuperkModes; 
+static const int kns   = kNSuperkSamples;
+static const int knm   = kNSuperkModes; 
+static const int knmnd = kNND280Modes; 
 
 static const double kASmallNum = 1E-10;
 static const double kBaseline  = 295;        // Tokai->Kamioka (km)

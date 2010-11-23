@@ -14,7 +14,7 @@
 
 #include <iomanip.h>
 
-void test_cholesky(void)
+void test_cholesky_output_covariance(void)
 {
   gSystem->Load("libGpad");  
   gSystem->Load("libPhysics");  

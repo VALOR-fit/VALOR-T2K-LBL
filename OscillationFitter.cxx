@@ -4,8 +4,8 @@
 */
 //____________________________________________________________________________
 
-#define __debug_level_1__
-#define __debug_level_2__
+//#define __debug_level_1__
+//#define __debug_level_2__
 //#define __debug_level_3__
 
 #include <cassert>
@@ -83,10 +83,12 @@ void OscillationFitter::SetInputs(FitInputs * fit_inputs)
 //____________________________________________________________________________
 void OscillationFitter::PrepareFitter(Option_t * option)
 {
-  cout << "OscillationFitter> Fitter initialization..." << endl;
+#ifdef __debug_level_1__
+  cout << "OscillationFitter >> Fitter initialization..." << endl;
+#endif
 
   if(!fFitInputs) {
-     cout << "OscillationFitter> Set the fit inputs first!" << endl;
+     cerr << "OscillationFitter >> ** Null fit inputs!" << endl;
      return;
   }
 
@@ -96,8 +98,8 @@ void OscillationFitter::PrepareFitter(Option_t * option)
     // get fitter
     TVirtualFitter::SetDefaultFitter("Minuit");
   } else {
-    cerr << "** We have not tested any fitter other than MINUIT." << endl;
-    cerr << "** Modify the code and proceed at your own risk." << endl;
+    cerr << "OscillationFitter >> ** We have not tested any fitter other than MINUIT." << endl;
+    cerr << "OscillationFitter >> ** Modify the code and proceed at your own risk." << endl;
     exit(1);
   }
 
@@ -129,13 +131,17 @@ void OscillationFitter::PrepareFitter(Option_t * option)
   fNFreeFitParams = fitter->GetNumberFreeParameters();
   fNdof           = fNonZeroBins - fNFreeFitParams;
 
+#ifdef __debug_level_1__
   cout << "OscillationFitter >> ndof = " << fNdof
        << ", nfreeparams = " << fNFreeFitParams << endl;
+#endif
 }
 //____________________________________________________________________________
 void OscillationFitter::DoTheFit(void)
 {
-  cout << "OscillationFitter> Running the fitter..." << endl;
+#ifdef __debug_level_1__
+  cout << "OscillationFitter/DoTheFit >> Running the fitter..." << endl;
+#endif
 
   TVirtualFitter * fitter = TVirtualFitter::GetFitter();
 
@@ -144,7 +150,9 @@ void OscillationFitter::DoTheFit(void)
   gMinuit->SetObjectFit(fFitInputs);
 
   // MINUIT's minimization step
-  cout << "OscillationFitter> Running MIGRAD..." << endl;
+#ifdef __debug_level_1__
+  cout << "OscillationFitter/DoTheFit >> Running MIGRAD..." << endl;
+#endif
   Double_t arglist[100];
   arglist[0] = 5000;  // num of func calls
   arglist[1] = 0.01;  // tolerance
@@ -153,7 +161,9 @@ void OscillationFitter::DoTheFit(void)
   Double_t amin = 0;
   fitter->PrintResults(3,amin);
 
-  cout << "OscillationFitter> Done!" << endl;
+#ifdef __debug_level_1__
+  cout << "OscillationFitter/DoTheFit >> Done!" << endl;
+#endif
 }
 //____________________________________________________________________________
 void OscillationFitter::Draw(
@@ -168,7 +178,9 @@ void OscillationFitter::Draw(
 
   TString opt = option;
 
+#ifdef __debug_level_1__
   cout << "OscillationFitter/Draw >> Drawing with option = " << opt.Data() << endl;
+#endif
 
 /*
   //

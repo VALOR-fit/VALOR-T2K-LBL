@@ -4,7 +4,7 @@
 */
 //________________________________________________________________________________________
 
-#define __debug_level_1__
+//#define __debug_level_1__
 //#define __debug_level_2__
 //#define __debug_level_3__
 
@@ -111,12 +111,12 @@ double SuperkExpectation::Generate(
   double Mfiducial_sk      = fSuperkInputs -> FiducialMass() * kton2gr;
   double Npot_sk           = fSuperkInputs -> AnalyzedSamplePOT();
   double A_sk              = fSuperkInputs -> EffectiveTargetMassNumber();
-  double nobscclike_nd280  = fND280Inputs -> NumOfObsCCLikeEvents ();
-  double nexpnc_nd280      = fND280Inputs -> NumOfEstNCBkgEvents  ();
-  double nexpcc_nd280      = fND280Inputs -> NumOfObsCCLikeEvents (); ///TODO
+  double nobscclike_nd280  = fND280Inputs  -> NObsCCLike();
+  double nexpncbkg_nd280   = fND280Inputs  -> NExpNCBkg();
+  double nexpcc_nd280      = fND280Inputs  -> NExpCC();
 
   double C0 = Npot_sk * (Mfiducial_sk / A_sk) * kNA;
-  double flux_correction = (nobscclike_nd280 - nexpnc_nd280) / nexpcc_nd280;
+  double flux_correction = (nobscclike_nd280 - nexpncbkg_nd280) / nexpcc_nd280;
 
   const TAxis & etrue_binning = fSuperkInputs->EtrueBinning();
 
@@ -125,14 +125,13 @@ double SuperkExpectation::Generate(
     double Etrue = etrue_binning.GetBinCenter(itbin);
 
     // calc stuff with E_{true} energy dependency only
-    double fn_ratio          = fBeamInputs->FNRatio(Etrue);
-    double flux_nd280        = fBeamInputs->ND280Flux(Etrue) / pot_in_flux_mc;
-    double flux_sk           = fn_ratio * flux_nd280 * flux_correction;
-    double xsec_m_sk         = fGeneratorInputs->SigmaModeSK(Etrue,m) / xsec_scale;
-    double prob_surv         = util::NuMuSurvProb2D(sinsq2theta23, dmsq23, Etrue, m);
-    double R_s_m_sk          = fSuperkInputs -> EnergyResolutionMatrix(Etrue,Ereco,s,m);
-    double eff_sel_s_m_sk    = fSuperkInputs -> SelectionEfficiency(Ereco,s,m);
-    double eff_reco_m_sk     = fSuperkInputs -> ReconstructionEfficiency(Etrue,m);
+    double flux_sk_mc      = fBeamInputs->SuperkFlux(Etrue) / pot_in_flux_mc;
+    double flux_sk         = flux_sk_mc * flux_correction;
+    double xsec_m_sk       = fGeneratorInputs->SigmaModeSK(Etrue,m) / xsec_scale;
+    double prob_surv       = util::NuMuSurvProb2D(sinsq2theta23, dmsq23, Etrue, m);
+    double R_s_m_sk        = fSuperkInputs -> EnergyResolutionMatrix(Etrue,Ereco,s,m);
+    double eff_sel_s_m_sk  = fSuperkInputs -> SelectionEfficiency(Ereco,s,m);
+    double eff_reco_m_sk   = fSuperkInputs -> ReconstructionEfficiency(Etrue,m);
 
     double expectation_from_true_bin = 
         C0 * flux_sk * xsec_m_sk * prob_surv * R_s_m_sk * eff_sel_s_m_sk * eff_reco_m_sk;     
@@ -152,7 +151,10 @@ double SuperkExpectation::Generate(
 
   }//E_{true}
 
-//  expectation/=etrue_binning.GetNbins();
+  if(fTwkBeamNorm != 0.) {
+    double sigma = 0.1;
+    expectation *= (1 + fTwkBeamNorm * sigma);
+  }
 
 #ifdef __debug_level_2__
   cout << "Exp / Generate() >> "
@@ -252,6 +254,10 @@ bool SuperkExpectation::Read(string config_file)
 {
   cout << "Exp >> " << "Reading config file: " << config_file << endl;
 
+  if(fIsConfigured) {
+    this->CleanUp();
+  } 
+
   fND280Inputs     = new ND280Inputs;
   fSuperkInputs    = new SuperkInputs;
   fBeamInputs      = new BeamInputs; 
@@ -290,6 +296,10 @@ void SuperkExpectation::Init(void)
   fBeamInputs      = 0;
   fGeneratorInputs = 0;
 
+  fTwkBeamNorm     = 0;
+  fTwkSuperkNorm   = 0;
+  fTwkSuperkEScale = 0;
+
   fSamples.clear();
 }
 //________________________________________________________________________________________
@@ -319,83 +329,277 @@ SuperkExpectation::ND280Inputs::~ND280Inputs()
 //________________________________________________________________________________________
 void SuperkExpectation::ND280Inputs::Init(void)
 {
-  fAeff            = 0;  
-  fFidMass         = 0;
-  fPOT             = 0;
-  fEtBinning       = 0;
-  fEfficiency      = 0;
+  fEtBinning      = 0;
+  fPOTData        = 0;
+  fNumObsCCLike   = 0;
+  fPOTMC          = 0;
+  for(int i = 0; i < knmnd; i++) {
+    fNumSelEt[i] = 0;
+    fSelEffEt[i] = 0;
+  }
 }
 //________________________________________________________________________________________
 void SuperkExpectation::ND280Inputs::CleanUp(void)
 {
-  if ( fEtBinning   ) delete fEtBinning;
-  if ( fEfficiency  ) delete fEfficiency;
+  if (fEtBinning) delete fEtBinning;
+
+  for(int i = 0; i < knmnd; i++) {
+    if (fNumSelEt[i]) delete fNumSelEt[i];
+    if (fSelEffEt[i]) delete fSelEffEt[i];
+  }
 }
 //________________________________________________________________________________________
 bool SuperkExpectation::ND280Inputs::Read(TXMLEngine* xml, XMLNodePointer_t root_node)
 {
   cout << "Exp/nd280 >> Reading nd280 inputs from input XML file." << endl;
 
-  // Get observed number of CC-like events
-  fNumObsCCLike = util::XML2Dbl(xml,root_node,"nd280/ncclike");
-  // Get nominal estimated number of NC bkg events
-  fNumEstNCBkg  = util::XML2Dbl(xml,root_node,"nd280/nncbkg"); 
-  // Get fiducial mass
-  fFidMass = util::XML2Dbl(xml,root_node,"nd280/fiducial_mass");
-  // Get POT
-  fPOT = util::XML2Dbl(xml,root_node,"nd280/pot");
-  // Get mass number
-  fAeff = util::XML2Dbl(xml,root_node,"nd280/mass_number");
+  // Get Data POT
+  fPOTData = util::XML2Dbl(xml,root_node,"nd280/pot_data");
+  cout << "Exp/nd280 >> " << "N_{POT;data} : " << fPOTData << endl;
 
+  // Get observed number of CC-like events
+  fNumObsCCLike = util::XML2Dbl(xml,root_node,"nd280/saclay_selection/nobs_cclike");
   cout << "Exp/nd280 >> " << "N^{obs}_{CClike} : " << fNumObsCCLike << endl;
-  cout << "Exp/nd280 >> " << "N^{exp}_{NCbkg}  : " << fNumEstNCBkg  << endl;
-  cout << "Exp/nd280 >> " << "M_{fiducial}     : " << fFidMass << " kton" << endl;
-  cout << "Exp/nd280 >> " << "N_{POT}          : " << fPOT     << endl;
-  cout << "Exp/nd280 >> " << "A_{effective}    : " << fAeff    << endl;
+
+  // Get MC POT
+  fPOTMC = util::XML2Dbl(xml,root_node,"nd280/saclay_selection/pot_mc");
+  cout << "Exp/nd280 >> " << "N_{POT;mc} : " << fPOTMC << endl;
+
+  // Get NMC_{mode}(Etrue) after cuts
+  fNumSelEt [kNDmNuMuCCQE]      =
+    util::XML2TH1F(xml,root_node,"nd280/saclay_selection/true_energy_spectrum/numu_ccqe");
+  fNumSelEt [kNDmNuMuCCRES]     =
+    util::XML2TH1F(xml,root_node,"nd280/saclay_selection/true_energy_spectrum/numu_ccres");
+  fNumSelEt [kNDmNuMuCCCOH]     =
+    util::XML2TH1F(xml,root_node,"nd280/saclay_selection/true_energy_spectrum/numu_cccoh");
+  fNumSelEt [kNDmNuMuCCOth]     =
+    util::XML2TH1F(xml,root_node,"nd280/saclay_selection/true_energy_spectrum/numu_ccoth");
+  fNumSelEt [kNDmNuMuNCEL]      =
+    util::XML2TH1F(xml,root_node,"nd280/saclay_selection/true_energy_spectrum/numu_ncel");
+  fNumSelEt [kNDmNuMuNCRES]     = 
+    util::XML2TH1F(xml,root_node,"nd280/saclay_selection/true_energy_spectrum/numu_ncres");
+  fNumSelEt [kNDmNuMuNCCOH]     =
+    util::XML2TH1F(xml,root_node,"nd280/saclay_selection/true_energy_spectrum/numu_nccoh");
+  fNumSelEt [kNDmNuMuNCOth]     =
+    util::XML2TH1F(xml,root_node,"nd280/saclay_selection/true_energy_spectrum/numu_ncoth");
+  fNumSelEt [kNDmNuMuBarCCQE]   = 
+    util::XML2TH1F(xml,root_node,"nd280/saclay_selection/true_energy_spectrum/numubar_ccqe");
+  fNumSelEt [kNDmNuMuBarCCRES]  = 
+    util::XML2TH1F(xml,root_node,"nd280/saclay_selection/true_energy_spectrum/numubar_ccres");
+  fNumSelEt [kNDmNuMuBarCCCOH]  =
+    util::XML2TH1F(xml,root_node,"nd280/saclay_selection/true_energy_spectrum/numubar_cccoh");
+  fNumSelEt [kNDmNuMuBarCCOth]  =
+    util::XML2TH1F(xml,root_node,"nd280/saclay_selection/true_energy_spectrum/numubar_ccoth");
+  fNumSelEt [kNDmNuMuBarNCEL]   =
+    util::XML2TH1F(xml,root_node,"nd280/saclay_selection/true_energy_spectrum/numubar_ncel");
+  fNumSelEt [kNDmNuMuBarNCRES]  = 
+    util::XML2TH1F(xml,root_node,"nd280/saclay_selection/true_energy_spectrum/numubar_ncres");
+  fNumSelEt [kNDmNuMuBarNCCOH]  =
+    util::XML2TH1F(xml,root_node,"nd280/saclay_selection/true_energy_spectrum/numubar_nccoh");
+  fNumSelEt [kNDmNuMuBarNCOth]  =
+    util::XML2TH1F(xml,root_node,"nd280/saclay_selection/true_energy_spectrum/numubar_ncoth");
+  fNumSelEt [kNDmNuECCQE]       =
+    util::XML2TH1F(xml,root_node,"nd280/saclay_selection/true_energy_spectrum/nue_ccqe");
+  fNumSelEt [kNDmNuECCRES]      =
+    util::XML2TH1F(xml,root_node,"nd280/saclay_selection/true_energy_spectrum/nue_ccres");
+  fNumSelEt [kNDmNuECCCOH]      =
+    util::XML2TH1F(xml,root_node,"nd280/saclay_selection/true_energy_spectrum/nue_cccoh");
+  fNumSelEt [kNDmNuECCOth]      =
+    util::XML2TH1F(xml,root_node,"nd280/saclay_selection/true_energy_spectrum/nue_ccoth");
+  fNumSelEt [kNDmNuENCEL]       =
+    util::XML2TH1F(xml,root_node,"nd280/saclay_selection/true_energy_spectrum/nue_ncel");
+  fNumSelEt [kNDmNuENCRES]      =
+    util::XML2TH1F(xml,root_node,"nd280/saclay_selection/true_energy_spectrum/nue_ncres");
+  fNumSelEt [kNDmNuENCCOH]      =
+    util::XML2TH1F(xml,root_node,"nd280/saclay_selection/true_energy_spectrum/nue_nccoh");
+  fNumSelEt [kNDmNuENCOth]      =
+    util::XML2TH1F(xml,root_node,"nd280/saclay_selection/true_energy_spectrum/nue_ncoth");
+
+  cout << "Exp/nd280 >> Done loading NMC_{mode}(Etrue) histograms" << endl;
+
+
+  double data_to_mc_pot = fPOTData/fPOTMC;
+  cout << "Exp/nd280 >> " << "MC POT scaling factor : " << data_to_mc_pot << endl;
+
+  fNumSelEt [kNDmNuMuCCQE]     -> Scale (data_to_mc_pot);
+  fNumSelEt [kNDmNuMuCCRES]    -> Scale (data_to_mc_pot);
+  fNumSelEt [kNDmNuMuCCCOH]    -> Scale (data_to_mc_pot);
+  fNumSelEt [kNDmNuMuCCOth]    -> Scale (data_to_mc_pot);
+  fNumSelEt [kNDmNuMuNCEL]     -> Scale (data_to_mc_pot);
+  fNumSelEt [kNDmNuMuNCRES]    -> Scale (data_to_mc_pot);
+  fNumSelEt [kNDmNuMuNCCOH]    -> Scale (data_to_mc_pot);
+  fNumSelEt [kNDmNuMuNCOth]    -> Scale (data_to_mc_pot);
+  fNumSelEt [kNDmNuMuBarCCQE]  -> Scale (data_to_mc_pot);
+  fNumSelEt [kNDmNuMuBarCCRES] -> Scale (data_to_mc_pot);
+  fNumSelEt [kNDmNuMuBarCCCOH] -> Scale (data_to_mc_pot);
+  fNumSelEt [kNDmNuMuBarCCOth] -> Scale (data_to_mc_pot);
+  fNumSelEt [kNDmNuMuBarNCEL]  -> Scale (data_to_mc_pot);
+  fNumSelEt [kNDmNuMuBarNCRES] -> Scale (data_to_mc_pot);
+  fNumSelEt [kNDmNuMuBarNCCOH] -> Scale (data_to_mc_pot);
+  fNumSelEt [kNDmNuMuBarNCOth] -> Scale (data_to_mc_pot);
+  fNumSelEt [kNDmNuECCQE]      -> Scale (data_to_mc_pot);
+  fNumSelEt [kNDmNuECCRES]     -> Scale (data_to_mc_pot);
+  fNumSelEt [kNDmNuECCCOH]     -> Scale (data_to_mc_pot);
+  fNumSelEt [kNDmNuECCOth]     -> Scale (data_to_mc_pot);
+  fNumSelEt [kNDmNuENCEL]      -> Scale (data_to_mc_pot);
+  fNumSelEt [kNDmNuENCRES]     -> Scale (data_to_mc_pot);
+  fNumSelEt [kNDmNuENCCOH]     -> Scale (data_to_mc_pot);
+  fNumSelEt [kNDmNuENCOth]     -> Scale (data_to_mc_pot);
+
+  fNumSelEt [kNDmNuMuCCQE]     -> Sumw2();
+  fNumSelEt [kNDmNuMuCCRES]    -> Sumw2();
+  fNumSelEt [kNDmNuMuCCCOH]    -> Sumw2();
+  fNumSelEt [kNDmNuMuCCOth]    -> Sumw2();
+  fNumSelEt [kNDmNuMuNCEL]     -> Sumw2();
+  fNumSelEt [kNDmNuMuNCRES]    -> Sumw2();
+  fNumSelEt [kNDmNuMuNCCOH]    -> Sumw2();
+  fNumSelEt [kNDmNuMuNCOth]    -> Sumw2();
+  fNumSelEt [kNDmNuMuBarCCQE]  -> Sumw2();
+  fNumSelEt [kNDmNuMuBarCCRES] -> Sumw2();
+  fNumSelEt [kNDmNuMuBarCCCOH] -> Sumw2();
+  fNumSelEt [kNDmNuMuBarCCOth] -> Sumw2();
+  fNumSelEt [kNDmNuMuBarNCEL]  -> Sumw2();
+  fNumSelEt [kNDmNuMuBarNCRES] -> Sumw2();
+  fNumSelEt [kNDmNuMuBarNCCOH] -> Sumw2();
+  fNumSelEt [kNDmNuMuBarNCOth] -> Sumw2();
+  fNumSelEt [kNDmNuECCQE]      -> Sumw2();
+  fNumSelEt [kNDmNuECCRES]     -> Sumw2();
+  fNumSelEt [kNDmNuECCCOH]     -> Sumw2();
+  fNumSelEt [kNDmNuECCOth]     -> Sumw2();
+  fNumSelEt [kNDmNuENCEL]      -> Sumw2();
+  fNumSelEt [kNDmNuENCRES]     -> Sumw2();
+  fNumSelEt [kNDmNuENCCOH]     -> Sumw2();
+  fNumSelEt [kNDmNuENCOth]     -> Sumw2();
+
+  cout << "Exp/nd280 >> Done rescaling NMC_{mode} histograms to the data POT" << endl;
 
   cout << "Exp/nd280 >> Done reading nd280 inputs!" << endl;
 
   return true;
 }
 //________________________________________________________________________________________
-double SuperkExpectation::ND280Inputs::NumOfObsCCLikeEvents(void) const
+void SuperkExpectation::ND280Inputs::Draw(TVirtualPad * c, Option_t * option) const
+{
+  if(!c) return;
+
+  c->cd();
+
+  util::SetDefaultStyle();
+
+  fNumSelEt [kNDmNuMuCCQE]     -> SetLineColor (kBlack);
+  fNumSelEt [kNDmNuMuCCRES]    -> SetLineColor (kBlack); 
+  fNumSelEt [kNDmNuMuCCCOH]    -> SetLineColor (kBlack); 
+  fNumSelEt [kNDmNuMuCCOth]    -> SetLineColor (kBlack); 
+  fNumSelEt [kNDmNuMuNCEL]     -> SetLineColor (kRed); 
+  fNumSelEt [kNDmNuMuNCRES]    -> SetLineColor (kRed); 
+  fNumSelEt [kNDmNuMuNCCOH]    -> SetLineColor (kRed); 
+  fNumSelEt [kNDmNuMuNCOth]    -> SetLineColor (kRed); 
+  fNumSelEt [kNDmNuMuBarCCQE]  -> SetLineColor (kBlue); 
+  fNumSelEt [kNDmNuMuBarCCRES] -> SetLineColor (kBlue); 
+  fNumSelEt [kNDmNuMuBarCCCOH] -> SetLineColor (kBlue); 
+  fNumSelEt [kNDmNuMuBarCCOth] -> SetLineColor (kBlue); 
+  fNumSelEt [kNDmNuMuBarNCEL]  -> SetLineColor (kMagenta); 
+  fNumSelEt [kNDmNuMuBarNCRES] -> SetLineColor (kMagenta); 
+  fNumSelEt [kNDmNuMuBarNCCOH] -> SetLineColor (kMagenta); 
+  fNumSelEt [kNDmNuMuBarNCOth] -> SetLineColor (kMagenta); 
+  fNumSelEt [kNDmNuECCQE]      -> SetLineColor (kGreen); 
+  fNumSelEt [kNDmNuECCRES]     -> SetLineColor (kGreen); 
+  fNumSelEt [kNDmNuECCCOH]     -> SetLineColor (kGreen); 
+  fNumSelEt [kNDmNuECCOth]     -> SetLineColor (kGreen); 
+  fNumSelEt [kNDmNuENCEL]      -> SetLineColor (kPink); 
+  fNumSelEt [kNDmNuENCRES]     -> SetLineColor (kPink); 
+  fNumSelEt [kNDmNuENCCOH]     -> SetLineColor (kPink); 
+  fNumSelEt [kNDmNuENCOth]     -> SetLineColor (kPink); 
+
+  fNumSelEt [kNDmNuMuCCQE]     -> SetLineStyle (kSolid);
+  fNumSelEt [kNDmNuMuCCRES]    -> SetLineStyle (kDashed); 
+  fNumSelEt [kNDmNuMuCCCOH]    -> SetLineStyle (kDotted); 
+  fNumSelEt [kNDmNuMuCCOth]    -> SetLineStyle (kDashDotted); 
+  fNumSelEt [kNDmNuMuNCEL]     -> SetLineStyle (kSolid); 
+  fNumSelEt [kNDmNuMuNCRES]    -> SetLineStyle (kDashed); 
+  fNumSelEt [kNDmNuMuNCCOH]    -> SetLineStyle (kDotted); 
+  fNumSelEt [kNDmNuMuNCOth]    -> SetLineStyle (kDashDotted); 
+  fNumSelEt [kNDmNuMuBarCCQE]  -> SetLineStyle (kSolid); 
+  fNumSelEt [kNDmNuMuBarCCRES] -> SetLineStyle (kDashed); 
+  fNumSelEt [kNDmNuMuBarCCCOH] -> SetLineStyle (kDotted); 
+  fNumSelEt [kNDmNuMuBarCCOth] -> SetLineStyle (kDashDotted); 
+  fNumSelEt [kNDmNuMuBarNCEL]  -> SetLineStyle (kSolid); 
+  fNumSelEt [kNDmNuMuBarNCRES] -> SetLineStyle (kDashed); 
+  fNumSelEt [kNDmNuMuBarNCCOH] -> SetLineStyle (kDotted); 
+  fNumSelEt [kNDmNuMuBarNCOth] -> SetLineStyle (kDashDotted); 
+  fNumSelEt [kNDmNuECCQE]      -> SetLineStyle (kSolid); 
+  fNumSelEt [kNDmNuECCRES]     -> SetLineStyle (kDashed); 
+  fNumSelEt [kNDmNuECCCOH]     -> SetLineStyle (kDotted); 
+  fNumSelEt [kNDmNuECCOth]     -> SetLineStyle (kDashDotted); 
+  fNumSelEt [kNDmNuENCEL]      -> SetLineStyle (kSolid); 
+  fNumSelEt [kNDmNuENCRES]     -> SetLineStyle (kDashed); 
+  fNumSelEt [kNDmNuENCCOH]     -> SetLineStyle (kDotted); 
+  fNumSelEt [kNDmNuENCOth]     -> SetLineStyle (kDashDotted); 
+
+  TString opt = option;
+
+  if(opt.Contains("Saclay/NuMu/CC")) { 
+    fNumSelEt [kNDmNuMuCCQE]     -> Draw();
+    fNumSelEt [kNDmNuMuCCRES]    -> Draw("SAME");
+    fNumSelEt [kNDmNuMuCCCOH]    -> Draw("SAME");
+    fNumSelEt [kNDmNuMuCCOth]    -> Draw("SAME");
+    fNumSelEt [kNDmNuMuCCQE]     -> GetXaxis()->SetTitle("E_{#nu} (GeV)");
+    fNumSelEt [kNDmNuMuCCQE]     -> GetYaxis()->SetTitle(Form("events / %d POT", fPOTData));
+  }
+  else
+  if(opt.Contains("SKSigAll")) { 
+  }
+ 
+  c->Update();
+}
+//________________________________________________________________________________________
+double SuperkExpectation::ND280Inputs::NObsCCLike(void) const 
 {
 // observed number of CC-like events
 
   return fNumObsCCLike;
 }
 //________________________________________________________________________________________
-double SuperkExpectation::ND280Inputs::NumOfEstNCBkgEvents(void) const
+double SuperkExpectation::ND280Inputs::NExpNCBkg(void) const
 {
-// estimated NC background
+// expected NC contamination of CC-like sample
 
-  double Nnc0 = fNumEstNCBkg; // nominal estimation 
+  double nexpncbkg =
+       fNumSelEt [kNDmNuMuNCEL]     -> Integral() +
+       fNumSelEt [kNDmNuMuNCRES]    -> Integral() +
+       fNumSelEt [kNDmNuMuNCCOH]    -> Integral() +
+       fNumSelEt [kNDmNuMuNCOth]    -> Integral() +
+       fNumSelEt [kNDmNuMuBarNCEL]  -> Integral() +
+       fNumSelEt [kNDmNuMuBarNCRES] -> Integral() +
+       fNumSelEt [kNDmNuMuBarNCCOH] -> Integral() +
+       fNumSelEt [kNDmNuMuBarNCOth] -> Integral() +
+       fNumSelEt [kNDmNuENCEL]      -> Integral() +
+       fNumSelEt [kNDmNuENCRES]     -> Integral() +
+       fNumSelEt [kNDmNuENCCOH]     -> Integral() +
+       fNumSelEt [kNDmNuENCOth]     -> Integral();
 
-  //
-  // ...
-  //
+  return nexpncbkg;
+}
+//________________________________________________________________________________________
+double SuperkExpectation::ND280Inputs::NExpCC(void) const
+{
+// expected number of CC events
 
-  return Nnc0;
-}
-//________________________________________________________________________________________
-double SuperkExpectation::ND280Inputs::EffectiveTargetMassNumber(void) const
-{
-  return fAeff;
-}
-//________________________________________________________________________________________
-double SuperkExpectation::ND280Inputs::FiducialMass(void) const
-{
-  return fFidMass;
-}
-//________________________________________________________________________________________
-double SuperkExpectation::ND280Inputs::AnalyzedSamplePOT(void) const
-{
-  return fPOT;
-}
-//________________________________________________________________________________________
-double SuperkExpectation::ND280Inputs::Efficiency(double Etrue) const
-{
-  return 1; ///TODO
+  double nexpcc =
+       fNumSelEt [kNDmNuMuCCQE]     -> Integral() +
+       fNumSelEt [kNDmNuMuCCRES]    -> Integral() +
+       fNumSelEt [kNDmNuMuCCCOH]    -> Integral() +
+       fNumSelEt [kNDmNuMuCCOth]    -> Integral() +
+       fNumSelEt [kNDmNuMuBarCCQE]  -> Integral() +
+       fNumSelEt [kNDmNuMuBarCCRES] -> Integral() +
+       fNumSelEt [kNDmNuMuBarCCCOH] -> Integral() +
+       fNumSelEt [kNDmNuMuBarCCOth] -> Integral() +
+       fNumSelEt [kNDmNuECCQE]      -> Integral() +
+       fNumSelEt [kNDmNuECCRES]     -> Integral() +
+       fNumSelEt [kNDmNuECCCOH]     -> Integral() +
+       fNumSelEt [kNDmNuECCOth]     -> Integral();
+
+  return nexpcc;
 }
 //________________________________________________________________________________________
 //........................................................................................
@@ -579,8 +783,6 @@ double SuperkExpectation::SuperkInputs::AnalyzedSamplePOT(void) const
 double SuperkExpectation::SuperkInputs::ReconstructionEfficiency(
     double Etrue, SuperkMode_t m) const
 {
-//  if(m==kSKmNC && Etrue<4) return 0;//TODO
-
   TH1D * h = fRecoEff[m];
   assert(h);
   int bin = h->FindBin(Etrue);
@@ -626,13 +828,11 @@ SuperkExpectation::BeamInputs::~BeamInputs()
 void SuperkExpectation::BeamInputs::Init(void)
 {
   fSuperkFlux = 0; 
-  fND280Flux  = 0; 
 }
 //________________________________________________________________________________________
 void SuperkExpectation::BeamInputs::CleanUp(void)
 {
   if (fSuperkFlux) delete fSuperkFlux;
-  if (fND280Flux ) delete fND280Flux;
 }
 //________________________________________________________________________________________
 bool SuperkExpectation::BeamInputs::Read(TXMLEngine* xml, XMLNodePointer_t root_node)
@@ -645,13 +845,6 @@ bool SuperkExpectation::BeamInputs::Read(TXMLEngine* xml, XMLNodePointer_t root_
   fSuperkFlux = util::XML2TH1D(xml,root_node,"beam/superk_flux");
   if(!fSuperkFlux) {
     cerr << "Exp/Beam >> No input SuperK flux histogram!" << endl;
-    exit(1);
-  }
-
-  // Get ND280 flux
-  fND280Flux  = util::XML2TH1D(xml,root_node,"beam/nd280_flux");
-  if(!fND280Flux) {
-    cerr << "Exp/Beam >> No input nd280 flux histogram!" << endl;
     exit(1);
   }
 
@@ -669,40 +862,13 @@ void SuperkExpectation::BeamInputs::Draw(TVirtualPad * c, Option_t * option) con
   TString opt = option;
   util::SetDefaultStyle();
 
-  if(opt.Contains("ND280Flux")) { 
-    fND280Flux->Draw();
-    fND280Flux->GetXaxis()->SetTitle("E_{#nu} (GeV)");
-    fND280Flux->GetYaxis()->SetTitle("ND280 flux");
-  } 
-  else
   if(opt.Contains("SKFlux")) { 
     fSuperkFlux->Draw();
     fSuperkFlux->GetXaxis()->SetTitle("E_{#nu} (GeV)");
-    fSuperkFlux->GetYaxis()->SetTitle("SuperK flux");
+    fSuperkFlux->GetYaxis()->SetTitle("SuperK flux (#neutrinos /cm2 /N?POT)");
   } 
-  else
-  if(opt.Contains("OffAxisRatio")) { 
-    TH1D * h = new TH1D("h","",100,0,5);
-    for(int i=1; i<=h->GetNbinsX(); i++) {
-	double e = h->GetBinCenter(i);
-	double fn = this->FNRatio(e);
-	h->SetBinContent(i,fn);
-    }
-    h->Draw();
-    h->GetXaxis()->SetTitle("E_{#nu} (GeV)");
-    h->GetYaxis()->SetTitle("SuperK/ND280 flux ratio");
-  }
 
   c->Update();
-}
-//________________________________________________________________________________________
-double SuperkExpectation::BeamInputs::FNRatio(double Etrue) const 
-{ 
-  double f = this->SuperkFlux(Etrue);
-  double n = this->ND280Flux(Etrue);
-
-  double R = (n>0 && f>=0) ? (f/n) : 0;
-  return R;
 }
 //________________________________________________________________________________________
 double SuperkExpectation::BeamInputs::SuperkFlux (double Etrue) const
@@ -711,15 +877,6 @@ double SuperkExpectation::BeamInputs::SuperkFlux (double Etrue) const
 
   int bin = fSuperkFlux->FindBin(Etrue);
   double flux = fSuperkFlux->GetBinContent(bin);
-  return flux;
-}
-//________________________________________________________________________________________
-double SuperkExpectation::BeamInputs::ND280Flux(double Etrue) const
-{
-  assert(fND280Flux);
-
-  int bin = fND280Flux->FindBin(Etrue);
-  double flux = fND280Flux->GetBinContent(bin);
   return flux;
 }
 //________________________________________________________________________________________

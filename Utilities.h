@@ -26,6 +26,7 @@
 
 class TGraph;
 class TH1;
+class TH1F;
 class TH1D;
 class TH2D;
 class TAxis;
@@ -64,6 +65,7 @@ namespace util {
   // XML utilities
 
   XMLNodePointer_t FindNode      (TXMLEngine * eng, XMLNodePointer_t topnode, string path);
+  TH1F *           XML2TH1F      (TXMLEngine * eng, XMLNodePointer_t topnode, string path);
   TH1D *           XML2TH1D      (TXMLEngine * eng, XMLNodePointer_t topnode, string path);
   TH2D *           XML2TH2D      (TXMLEngine * eng, XMLNodePointer_t topnode, string path);
   TAxis *          XML2BinInfo   (TXMLEngine * eng, XMLNodePointer_t topnode, string path);

@@ -510,6 +510,53 @@ XMLNodePointer_t t2kana::yr1numu::util::FindNode(
   return 0;
 }
 //___________________________________________________________________________
+TH1F * t2kana::yr1numu::util::XML2TH1F(
+  TXMLEngine * xmleng, XMLNodePointer_t top_node, string path)
+{
+// Get a TH1F instance from the info in the input XML config file
+//
+  cout << "utils/XML2TH1F >> Reading info at XML node path: " << path << endl;
+
+  XMLNodePointer_t found_node = FindNode(xmleng,top_node,path);
+  if(!found_node) {
+    cerr << "utils/XML2TH1F >> No node was found at input XML node path: "
+         << path << endl;
+    return 0;
+  }
+
+  string filename = "";
+  string objname  = "";
+
+  XMLNodePointer_t child_node = xmleng->GetChild(found_node);
+  while(child_node) {
+    string child_node_name = xmleng->GetNodeName(child_node);
+  //cout << "utils/XML2TH1F >> node = " << child_node_name << endl;
+    string content = xmleng->GetNodeContent(child_node);
+  //cout << "utils/XML2TH1F >> \t content = " << content << endl;
+    if(child_node_name == "filename") { filename = TrimSpaces(content); }
+    if(child_node_name == "objname" ) { objname  = TrimSpaces(content); }
+    child_node = xmleng->GetNext(child_node);    
+  }
+
+  cout << "utils/XML2TH1F >> filename : " << filename << endl;
+  cout << "utils/XML2TH1F >> objname  : " << objname  << endl;
+
+  TFile file(filename.c_str(), "read");
+  TH1F * h = (TH1F*)file.Get(objname.c_str());
+  if(!h) {
+    cerr << "utils/XML2TH1F >> No " << objname << " in " << filename << endl;
+    file.Close();
+    return 0;
+  }
+
+  TH1F * hcopy = new TH1F(*h);
+  hcopy->SetDirectory(0);
+
+  file.Close();
+
+  return hcopy;
+}
+//___________________________________________________________________________
 TH1D * t2kana::yr1numu::util::XML2TH1D(
   TXMLEngine * xmleng, XMLNodePointer_t top_node, string path)
 {

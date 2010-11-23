@@ -5,8 +5,8 @@ Important revisions after version 1.0.0 :
 */
 //____________________________________________________________________________
 
-#define __debug_level_1__
-#define __debug_level_2__
+//#define __debug_level_1__
+//#define __debug_level_2__
 //#define __debug_level_3__
 
 #include <cassert>

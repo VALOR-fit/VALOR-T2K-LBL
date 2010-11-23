@@ -8,7 +8,7 @@
 
 {
 //TString opt = "Prediction:SuperK,Beam,NeutrinoGenerator+Observation";
-  TString opt = "NeutrinoGenerator";
+  TString opt = "nd280";
 
   gSystem->Load("libGpad");  
   gSystem->Load("libPhysics");  
@@ -48,6 +48,14 @@
     skexp->GetSuperkInputs()->Draw(new TCanvas(), "SelectionEfficiency/OneMuRingTight");
     skexp->GetSuperkInputs()->Draw(new TCanvas(), "EnergyResolutionMatrix/OneMuRingTight");
   }//SuperK
+
+  if(opt.Contains("nd280")) {
+    cout << "Nobs(CC-like) = " << skexp->GetND280Inputs()->NObsCCLike() << endl;
+    cout << "Nexp(NC-bkg)  = " << skexp->GetND280Inputs()->NExpNCBkg()  << endl;
+    cout << "Nexp(CC)      = " << skexp->GetND280Inputs()->NExpCC()     << endl;
+
+    skexp->GetND280Inputs()->Draw(new TCanvas(), "Saclay/NuMu/CC");
+  }
 
   if(opt.Contains("NeutrinoGenerator")) {
     skexp->GetGeneratorInputs()->Draw(new TCanvas(), "SKSigTotal");
