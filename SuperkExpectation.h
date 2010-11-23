@@ -181,12 +181,15 @@ public:
      ~BeamInputs();
 
       // Get information needed from beam for predicting the SK spectrum
-      double       SuperkFlux (double Etrue) const;
-      const TAxis& EtBinning  (void) const { return *fEtBinning; }
+      double       SuperkFlux    (double Etrue, bool wght_to_10d=true) const;
+      double       SuperkFluxPOT (void) const;
+      const TAxis& EtBinning     (void) const { return *fEtBinning; }
 
-      // Draw inputs:
-      // Set option to "SKFlux" to draw the SK flux
-      void Draw(TVirtualPad * c, Option_t * opt = "OffAxisRatio") const;
+      // Drawing option:
+      // - "SKFlux/10a"       : nominal SuperK flux (10a)
+      // - "SKFlux/10d"       : weighted SuperK flux (10d)
+      // - "Weights/10aTo10d" : 10a->10d weights
+      void Draw(TVirtualPad * c, Option_t * opt = "SKFlux/10d") const;
 
     private:
 
@@ -194,8 +197,11 @@ public:
       void CleanUp (void);
       bool Read    (TXMLEngine* xml, XMLNodePointer_t root_node); ///< read inputs from XML file
 
-      TAxis * fEtBinning;   // E_{true} binning (both fixed and variable bin widths supported)
-      TH1D *  fSuperkFlux;  // SuperK flux estimation
+      TAxis * fEtBinning;      // E_{true} binning (both fixed and variable bin widths supported)
+
+      double  fSuperkFluxPOT;  // integrated POT for flux simulation
+      TH1D *  fSuperkFlux;     // SuperK flux estimation
+      TH1D *  fWght10aTo10d;   // SuperK flux weights (10a -> 10d)0
    };
 
    //.........................................................................

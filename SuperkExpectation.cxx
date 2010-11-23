@@ -97,7 +97,6 @@ double SuperkExpectation::Generate(
   }
   
   const double kton2gr        = 1E+9;
-  const double pot_in_flux_mc = 1E+23;
   const double xsec_scale     = 1E+38;
 
   double expectation = 0;
@@ -125,7 +124,7 @@ double SuperkExpectation::Generate(
     double Etrue = etrue_binning.GetBinCenter(itbin);
 
     // calc stuff with E_{true} energy dependency only
-    double flux_sk_mc      = fBeamInputs->SuperkFlux(Etrue) / pot_in_flux_mc;
+    double flux_sk_mc      = fBeamInputs->SuperkFlux(Etrue); // per cm2 per POT
     double flux_sk         = flux_sk_mc * flux_correction;
     double xsec_m_sk       = fGeneratorInputs->SigmaModeSK(Etrue,m) / xsec_scale;
     double prob_surv       = util::NuMuSurvProb2D(sinsq2theta23, dmsq23, Etrue, m);
@@ -827,12 +826,15 @@ SuperkExpectation::BeamInputs::~BeamInputs()
 //________________________________________________________________________________________
 void SuperkExpectation::BeamInputs::Init(void)
 {
-  fSuperkFlux = 0; 
+  fSuperkFluxPOT = 0;
+  fSuperkFlux    = 0; 
+  fWght10aTo10d  = 0;
 }
 //________________________________________________________________________________________
 void SuperkExpectation::BeamInputs::CleanUp(void)
 {
-  if (fSuperkFlux) delete fSuperkFlux;
+  if (fSuperkFlux  ) delete fSuperkFlux;
+  if (fWght10aTo10d) delete fWght10aTo10d;
 }
 //________________________________________________________________________________________
 bool SuperkExpectation::BeamInputs::Read(TXMLEngine* xml, XMLNodePointer_t root_node)
@@ -842,9 +844,21 @@ bool SuperkExpectation::BeamInputs::Read(TXMLEngine* xml, XMLNodePointer_t root_
   cout << "Exp/Beam >> Reading beam inputs from input XML file." << endl;
 
   // Get SuperK flux
-  fSuperkFlux = util::XML2TH1D(xml,root_node,"beam/superk_flux");
+  fSuperkFlux = util::XML2TH1D(xml,root_node,"beam/superk_flux/v10a");
   if(!fSuperkFlux) {
     cerr << "Exp/Beam >> No input SuperK flux histogram!" << endl;
+    exit(1);
+  }
+  // Integrated POT for flux simulation
+  fSuperkFluxPOT = util::XML2Dbl(xml,root_node,"beam/superk_flux/pot_mc");
+  cout << "Exp/Beam >> SK flux simulation POT = " << fSuperkFluxPOT << endl;
+
+  fSuperkFlux->Scale(1./fSuperkFluxPOT);
+
+  // 10a->10d weights
+  fWght10aTo10d = util::XML2TH1D(xml,root_node,"beam/superk_flux/weight_v10a_to_v10d");
+  if(!fWght10aTo10d) {
+    cerr << "Exp/Beam >> No input 10a->10d SuperK flux weights!" << endl;
     exit(1);
   }
 
@@ -862,22 +876,48 @@ void SuperkExpectation::BeamInputs::Draw(TVirtualPad * c, Option_t * option) con
   TString opt = option;
   util::SetDefaultStyle();
 
-  if(opt.Contains("SKFlux")) { 
+  if(opt.Contains("Weights/10aTo10d")) { 
+    fWght10aTo10d->Draw();
+    fWght10aTo10d->GetXaxis()->SetTitle("E_{#nu} (GeV)");
+    fWght10aTo10d->GetYaxis()->SetTitle("SuperK flux weight");
+    c->Update();
+  }
+  else
+  if(opt.Contains("SKFlux/10a")) { 
     fSuperkFlux->Draw();
     fSuperkFlux->GetXaxis()->SetTitle("E_{#nu} (GeV)");
-    fSuperkFlux->GetYaxis()->SetTitle("SuperK flux (#neutrinos /cm2 /N?POT)");
+    fSuperkFlux->GetYaxis()->SetTitle("SuperK flux (#neutrinos /cm2 /POT)");
+    c->Update();
   } 
+  else
+  if(opt.Contains("SKFlux/10d")) { 
+    fSuperkFlux->Draw();
+    fSuperkFlux->GetXaxis()->SetTitle("E_{#nu} (GeV)");
+    fSuperkFlux->GetYaxis()->SetTitle("SuperK flux (#neutrinos /cm2 /POT)");
+    c->Update();
+  }
 
-  c->Update();
 }
 //________________________________________________________________________________________
-double SuperkExpectation::BeamInputs::SuperkFlux (double Etrue) const
+double SuperkExpectation::BeamInputs::SuperkFlux (double Etrue, bool wght_to_10d) const
 {
   assert(fSuperkFlux);
 
-  int bin = fSuperkFlux->FindBin(Etrue);
-  double flux = fSuperkFlux->GetBinContent(bin);
+  int flux_bin = fSuperkFlux->FindBin(Etrue);
+  double flux  = fSuperkFlux->GetBinContent(flux_bin);
+ 
+  if(wght_to_10d) {
+    int wght_bin = fWght10aTo10d->FindBin(Etrue);
+    double wght  = fWght10aTo10d->GetBinContent(wght_bin);
+    flux *= wght;
+  }
+
   return flux;
+}
+//________________________________________________________________________________________
+double SuperkExpectation::BeamInputs::SuperkFluxPOT (void) const
+{
+  return fSuperkFluxPOT;
 }
 //________________________________________________________________________________________
 //........................................................................................

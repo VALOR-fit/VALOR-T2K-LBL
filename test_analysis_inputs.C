@@ -7,8 +7,7 @@
 //
 
 {
-//TString opt = "Prediction:SuperK,Beam,NeutrinoGenerator+Observation";
-  TString opt = "nd280";
+  TString opt = "Flux";
 
   gSystem->Load("libGpad");  
   gSystem->Load("libPhysics");  
@@ -37,11 +36,11 @@
   const double dE    = 0.05;
   const int    nbins = (int) ((Emax - Emin)/dE);
   
-  if(opt.Contains("Beam")) {
-    skexp->GetBeamInputs()->Draw(new TCanvas(), "SKFlux");
-    skexp->GetBeamInputs()->Draw(new TCanvas(), "ND280Flux");
-    skexp->GetBeamInputs()->Draw(new TCanvas(), "OffAxisRatio");
-  }//Beam
+  if(opt.Contains("Flux")) {
+    skexp->GetBeamInputs()->Draw(new TCanvas(), "SKFlux/10a");
+    skexp->GetBeamInputs()->Draw(new TCanvas(), "SKFlux/10d");
+    skexp->GetBeamInputs()->Draw(new TCanvas(), "Weights/10aTo10d");
+  }//Flux
 
   if(opt.Contains("SuperK")) {
     skexp->GetSuperkInputs()->Draw(new TCanvas(), "ReconstructionEfficiency");
