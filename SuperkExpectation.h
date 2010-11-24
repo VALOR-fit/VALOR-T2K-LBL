@@ -145,7 +145,7 @@ public:
       double       AnalyzedSamplePOT        (void) const;
       double       ReconstructionEfficiency (double Etrue, t2kana::yr1numu::conv::SuperkMode_t m) const;
       double       SelectionEfficiency      (double Ereco, t2kana::yr1numu::conv::SuperkSample_t s, t2kana::yr1numu::conv::SuperkMode_t m) const;
-      double       EnergyResolutionMatrix   (double Etrue, double Ereco, t2kana::yr1numu::conv::SuperkSample_t s, t2kana::yr1numu::conv::SuperkMode_t m) const;
+      double       EnergyTransferMatrix     (double Etrue, double Ereco, t2kana::yr1numu::conv::SuperkSample_t s, t2kana::yr1numu::conv::SuperkMode_t m) const;
       const TAxis& ErecoBinning             (void) const { return *fErBinning; }
       const TAxis& EtrueBinning             (void) const { return *fEtBinning; }
 
@@ -154,10 +154,10 @@ public:
 
     private:
 
-      void Init     (void);
-      void CleanUp  (void);
-      bool Read     (TXMLEngine* xml, XMLNodePointer_t root_node); ///< read inputs from XML file
-      void NormResolutionMtrx (t2kana::yr1numu::conv::SuperkSample_t s, t2kana::yr1numu::conv::SuperkMode_t m);
+      void Init               (void);
+      void CleanUp            (void);
+      bool Read               (TXMLEngine* xml, XMLNodePointer_t root_node); ///< read inputs from XML file
+      void NormTransferMatrix (t2kana::yr1numu::conv::SuperkSample_t s, t2kana::yr1numu::conv::SuperkMode_t m);
 
       double  fAeff;                 ///< effective mass number
       double  fFidMass;              ///< fiducial mass
@@ -166,7 +166,7 @@ public:
       TAxis * fEtBinning;            ///< E_{true} binning (both fixed and variable bin widths supported)
       TH1D  * fRecoEff[knm];         ///< Reconstruction efficiency = f(E_{true}, mode)
       TH1D  * fSelEff[kns][knm];     ///< Selection efficiency = f(E_{reco}, sample, mode)
-      TH2D  * fResolMtrx[kns][knm];  ///< Energy resolution matrix = f(E_{true}, E_{reco}, sample, mode)
+      TH2D  * fETransMtrx[kns][knm]; ///< Energy transfer matrix = f(E_{true}, E_{reco}, sample, mode)
    };
 
    //.........................................................................

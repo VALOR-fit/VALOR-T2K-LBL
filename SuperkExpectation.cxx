@@ -129,7 +129,7 @@ double SuperkExpectation::Generate(
     double flux_sk         = flux_sk_mc * flux_correction;
     double xsec_m_sk       = fGeneratorInputs->SigmaModeSK(Etrue,m) / xsec_scale;
     double prob_surv       = util::NuMuSurvProb2D(sinsq2theta23, dmsq23, Etrue, m);
-    double R_s_m_sk        = fSuperkInputs -> EnergyResolutionMatrix(Etrue,Ereco,s,m);
+    double R_s_m_sk        = fSuperkInputs -> EnergyTransferMatrix(Etrue,Ereco,s,m);
     double eff_sel_s_m_sk  = fSuperkInputs -> SelectionEfficiency(Ereco,s,m);
     double eff_reco_m_sk   = fSuperkInputs -> ReconstructionEfficiency(Etrue,m);
 
@@ -952,8 +952,8 @@ void SuperkExpectation::SuperkInputs::Init(void)
   }
   for(int is=0; is<kns; is++) {
     for(int im=0; im<knm; im++) {
-      fSelEff   [is][im] = 0; 
-      fResolMtrx[is][im] = 0; 
+      fSelEff    [is][im] = 0; 
+      fETransMtrx[is][im] = 0; 
     }
   }
 }
@@ -968,8 +968,8 @@ void SuperkExpectation::SuperkInputs::CleanUp(void)
   }
   for(int is=0; is<kns; is++) {
     for(int im=0; im<knm; im++) {
-      if ( fSelEff   [is][im] ) delete  fSelEff   [is][im];
-      if ( fResolMtrx[is][im] ) delete  fResolMtrx[is][im];
+      if ( fSelEff    [is][im] ) delete  fSelEff    [is][im];
+      if ( fETransMtrx[is][im] ) delete  fETransMtrx[is][im];
     }
   }
 }
@@ -996,17 +996,17 @@ bool SuperkExpectation::SuperkInputs::Read(TXMLEngine* xml, XMLNodePointer_t roo
   fSelEff[kSKsFCFV1RingMuLike][kSKmNC] = 
     util::XML2TH1D(xml,root_node,"superk/selection_efficiency/one_mu_ring_tight/nc");
 
-  // Get energy resolution matrices
-  fResolMtrx[kSKsFCFV1RingMuLike][kSKmNuMuCCQE] =
-    util::XML2TH2D(xml,root_node,"superk/energy_resolution_matrix/one_mu_ring_tight/ccqe");
-  fResolMtrx[kSKsFCFV1RingMuLike][kSKmNuMuNonCCQE] = 
-    util::XML2TH2D(xml,root_node,"superk/energy_resolution_matrix/one_mu_ring_tight/nonccqe");
-  fResolMtrx[kSKsFCFV1RingMuLike][kSKmNC] = 
-    util::XML2TH2D(xml,root_node,"superk/energy_resolution_matrix/one_mu_ring_tight/nc");
+  // Get energy transfer matrices
+  fETransMtrx[kSKsFCFV1RingMuLike][kSKmNuMuCCQE] =
+    util::XML2TH2D(xml,root_node,"superk/energy_transfer_matrix/one_mu_ring_tight/ccqe");
+  fETransMtrx[kSKsFCFV1RingMuLike][kSKmNuMuNonCCQE] = 
+    util::XML2TH2D(xml,root_node,"superk/energy_transfer_matrix/one_mu_ring_tight/nonccqe");
+  fETransMtrx[kSKsFCFV1RingMuLike][kSKmNC] = 
+    util::XML2TH2D(xml,root_node,"superk/energy_transfer_matrix/one_mu_ring_tight/nc");
 
-  this->NormResolutionMtrx( kSKsFCFV1RingMuLike, kSKmNuMuCCQE    );
-  this->NormResolutionMtrx( kSKsFCFV1RingMuLike, kSKmNuMuNonCCQE );
-  this->NormResolutionMtrx( kSKsFCFV1RingMuLike, kSKmNC          );
+  this->NormTransferMatrix( kSKsFCFV1RingMuLike, kSKmNuMuCCQE    );
+  this->NormTransferMatrix( kSKsFCFV1RingMuLike, kSKmNuMuNonCCQE );
+  this->NormTransferMatrix( kSKsFCFV1RingMuLike, kSKmNC          );
 
   // Get fiducial mass
   fFidMass = util::XML2Dbl(xml,root_node,"superk/fiducial_mass");
@@ -1027,11 +1027,11 @@ bool SuperkExpectation::SuperkInputs::Read(TXMLEngine* xml, XMLNodePointer_t roo
   return true;
 }
 //________________________________________________________________________________________
-void SuperkExpectation::SuperkInputs::NormResolutionMtrx(SuperkSample_t s, SuperkMode_t m)
+void SuperkExpectation::SuperkInputs::NormTransferMatrix(SuperkSample_t s, SuperkMode_t m)
 {
 // (Input matrices: y->Etrue, x->Ereco)
 //
-  TH2D * h2 = fResolMtrx[s][m];
+  TH2D * h2 = fETransMtrx[s][m];
 
   for(int bint=1; bint <= h2->GetYaxis()->GetNbins(); bint++) {
 
@@ -1073,15 +1073,15 @@ void SuperkExpectation::SuperkInputs::Draw(TVirtualPad * c, Option_t * option) c
     } 
   } 
   else
-  if(opt.Contains("EnergyResolutionMatrix")) { 
+  if(opt.Contains("EnergyTransferMatrix")) { 
     if(opt.Contains("OneMuRingTight")) { 
        c->Divide(1,3);
        c->cd(1);
-       fResolMtrx[kSKsFCFV1RingMuLike][kSKmNuMuCCQE]->Draw("colz");
+       fETransMtrx[kSKsFCFV1RingMuLike][kSKmNuMuCCQE]->Draw("colz");
        c->cd(2);
-       fResolMtrx[kSKsFCFV1RingMuLike][kSKmNuMuNonCCQE]->Draw("colz");
+       fETransMtrx[kSKsFCFV1RingMuLike][kSKmNuMuNonCCQE]->Draw("colz");
        c->cd(3);
-       fResolMtrx[kSKsFCFV1RingMuLike][kSKmNC]->Draw("colz");
+       fETransMtrx[kSKsFCFV1RingMuLike][kSKmNC]->Draw("colz");
     }
   }
 
@@ -1123,10 +1123,10 @@ double SuperkExpectation::SuperkInputs::SelectionEfficiency(
   return eff;
 }
 //________________________________________________________________________________________
-double SuperkExpectation::SuperkInputs::EnergyResolutionMatrix(
+double SuperkExpectation::SuperkInputs::EnergyTransferMatrix(
     double Etrue, double Ereco, SuperkSample_t s, SuperkMode_t m) const
 {
-  TH2D * h2 = fResolMtrx[s][m];
+  TH2D * h2 = fETransMtrx[s][m];
   assert(h2);
   int bint = h2->GetYaxis()->FindBin(Etrue);
   int binr = h2->GetXaxis()->FindBin(Ereco);
