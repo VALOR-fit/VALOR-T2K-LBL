@@ -47,7 +47,7 @@
   if(opt.Contains("SuperK")) {
     skexp->GetSuperkInputs()->Draw(new TCanvas(), "ReconstructionEfficiency");
     skexp->GetSuperkInputs()->Draw(new TCanvas(), "SelectionEfficiency/OneMuRingTight");
-    skexp->GetSuperkInputs()->Draw(new TCanvas(), "EnergyResolutionMatrix/OneMuRingTight");
+    skexp->GetSuperkInputs()->Draw(new TCanvas(), "EnergyTransferMatrix/OneMuRingTight");
   }//SuperK
 
   if(opt.Contains("nd280")) {
