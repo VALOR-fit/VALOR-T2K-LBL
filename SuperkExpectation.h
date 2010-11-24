@@ -96,11 +96,12 @@ public:
       ND280Inputs();
      ~ND280Inputs();
 
-      // Get information needed from nd280 for predicting the SK spectrum
-      double       NObsCCLike        (void) const; ///< observed number of CC-like events
-      double       NExpNCBkg         (void) const; ///< expected NC contamination of CC-like sample
-      double       NExpCC            (void) const; ///< expected number of CC events
-      const TAxis& EtrueBinning      (void) const { return *fEtBinning; }
+      // Get nd280 oscillation analysis inputs
+      double NObsCCLike       (void) const; ///< observed number of CC-like events
+      double NExpNCBkg        (void) const; ///< expected NC contamination of CC-like sample
+      double NExpCC           (void) const; ///< expected number of CC events
+      double NumOfEvents      (t2kana::yr1numu::conv::ND280Mode_t mode) const;
+      double EfficiencyRelErr (double Et, t2kana::yr1numu::conv::ND280Mode_t mode, int sign) const; ///< relative uncertainty on efficiency
 
       // Draw inputs:
       // "Saclay/EtrueSpectrum/NuMu/All"
@@ -119,18 +120,22 @@ public:
       // "Saclay/Efficiency/NuMuBar/NC"
       void Draw(TVirtualPad * c, Option_t * opt = "") const;
 
+      // Tweak inputs for oscillation systematic studies
+      void TweakEfficiency   (t2kana::yr1numu::conv::ND280Mode_t mode, double twkdial);
+      void TweakCrossSection (t2kana::yr1numu::conv::ND280Mode_t mode, double twkdial);
+
     private:
 
-      void Init    (void);
-      void CleanUp (void);
-      bool Read    (TXMLEngine* xml, XMLNodePointer_t root_node); ///< read inputs from XML file
+      void   Init    (void);
+      void   CleanUp (void);
+      bool   Read    (TXMLEngine* xml, XMLNodePointer_t root_node); ///< read inputs from XML file
 
-      TAxis * fEtBinning;       ///< E_{true} binning (both fixed and variable bin widths supported)
-      double  fPOTData;         ///< number of POT (data)
-      double  fNumObsCCLike;    ///< Observed number of CC-like events 
-      double  fPOTMC;           ///< number of POT (MC)
-      TH1F *  fNumSelEt[knmnd]; ///<
-      TH1F *  fSelEffEt[knmnd]; ///<
+      double  fPOTData;             ///< number of POT (data)
+      double  fNumObsCCLike;        ///< Observed number of CC-like events 
+      double  fPOTMC;               ///< number of POT (MC)
+      TH1F *  fNumSelEt[knmnd];     ///<
+      TH1F *  fSelEffEt[knmnd];     ///<
+      double  fSelEffTwkDial[knmnd];
    };
 
    //.........................................................................
@@ -193,8 +198,6 @@ public:
       double              SuperkNuMuFluxPOT (void) const;
       const TMatrixDSym & SuperkNuMuFluxCov (void) const { return *fSuperkNuMuFluxCov; } ///< covariance matrix
 
-      const TAxis& EtBinning (void) const { return *fEtBinning; }
-
       // Drawing option:
       // - "SKFlux/10a/NuMu"              : nominal SuperK numu flux (10a)
       // - "SKFlux/10d/NuMu"              : weighted SuperK numu flux (10d)
@@ -208,8 +211,6 @@ public:
       void Init    (void);
       void CleanUp (void);
       bool Read    (TXMLEngine* xml, XMLNodePointer_t root_node); ///< read inputs from XML file
-
-      TAxis * fEtBinning; // E_{true} binning (both fixed and variable bin widths supported)
 
       TH1D *        fSuperkNuMuFlux;         // SuperK numu flux estimation
       double        fSuperkNuMuFluxPOT;      // integrated POT for numu flux simulation

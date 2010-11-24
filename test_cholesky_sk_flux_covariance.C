@@ -27,9 +27,11 @@
   skexp->Read("inputs/analysis_configuration.xml");
 
   TMatrixD sk_flux_cov(skexp->GetBeamInputs()->SuperkNuMuFluxCov());
-  sk_flux_cov.Print();
 
-  TMatrixD L = util::CholeskyDecomposition(sk_flux_cov);
-  L.Print();
+
+  sk_flux_cov.Invert().Print();
+
+//  TMatrixD L = util::CholeskyDecomposition(sk_flux_cov);
+//  L.Print();
 }
 

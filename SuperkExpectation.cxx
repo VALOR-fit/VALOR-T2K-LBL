@@ -138,8 +138,7 @@ double SuperkExpectation::Generate(
 
 #ifdef __debug_level_3__
     cout << "** " << util::AsString(m) << ", Etrue = " << Etrue << " GeV"
-         << "norm = " << norm << ", Psurv = " << prob_surv 
-         << ", F/N = " << fn_ratio << "F(nd280) = " << flux_nd280 << ", F(SK) = " << flux_sk
+         << "norm = " << norm << ", Psurv = " << prob_surv << ", F(SK) = " << flux_sk
          << ", SigModeFrac(SK) = " << xsec_m_sk
          << ", RSK = " << R_s_m_sk 
          << ", EffSelSK = " << eff_sel_s_m_sk << ", EffRecoSK = " << eff_reco_m_sk 
@@ -329,20 +328,18 @@ SuperkExpectation::ND280Inputs::~ND280Inputs()
 //________________________________________________________________________________________
 void SuperkExpectation::ND280Inputs::Init(void)
 {
-  fEtBinning      = 0;
   fPOTData        = 0;
   fNumObsCCLike   = 0;
   fPOTMC          = 0;
   for(int i = 0; i < knmnd; i++) {
     fNumSelEt[i] = 0;
     fSelEffEt[i] = 0;
+    fSelEffTwkDial[i] = 0;
   }
 }
 //________________________________________________________________________________________
 void SuperkExpectation::ND280Inputs::CleanUp(void)
 {
-  if (fEtBinning) delete fEtBinning;
-
   for(int i = 0; i < knmnd; i++) {
     if (fNumSelEt[i]) delete fNumSelEt[i];
     if (fSelEffEt[i]) delete fSelEffEt[i];
@@ -888,18 +885,18 @@ double SuperkExpectation::ND280Inputs::NExpNCBkg(void) const
 // expected NC contamination of CC-like sample
 
   double nexpncbkg =
-       fNumSelEt [kNDmNuMuNCEL]     -> Integral() +
-       fNumSelEt [kNDmNuMuNCRES]    -> Integral() +
-       fNumSelEt [kNDmNuMuNCCOH]    -> Integral() +
-       fNumSelEt [kNDmNuMuNCOth]    -> Integral() +
-       fNumSelEt [kNDmNuMuBarNCEL]  -> Integral() +
-       fNumSelEt [kNDmNuMuBarNCRES] -> Integral() +
-       fNumSelEt [kNDmNuMuBarNCCOH] -> Integral() +
-       fNumSelEt [kNDmNuMuBarNCOth] -> Integral() +
-       fNumSelEt [kNDmNuENCEL]      -> Integral() +
-       fNumSelEt [kNDmNuENCRES]     -> Integral() +
-       fNumSelEt [kNDmNuENCCOH]     -> Integral() +
-       fNumSelEt [kNDmNuENCOth]     -> Integral();
+       this->NumOfEvents( kNDmNuMuNCEL     ) +
+       this->NumOfEvents( kNDmNuMuNCRES    ) +
+       this->NumOfEvents( kNDmNuMuNCCOH    ) +
+       this->NumOfEvents( kNDmNuMuNCOth    ) +
+       this->NumOfEvents( kNDmNuMuBarNCEL  ) +
+       this->NumOfEvents( kNDmNuMuBarNCRES ) +
+       this->NumOfEvents( kNDmNuMuBarNCCOH ) +
+       this->NumOfEvents( kNDmNuMuBarNCOth ) +
+       this->NumOfEvents( kNDmNuENCEL      ) +
+       this->NumOfEvents( kNDmNuENCRES     ) +
+       this->NumOfEvents( kNDmNuENCCOH     ) +
+       this->NumOfEvents( kNDmNuENCOth     );
 
   return nexpncbkg;
 }
@@ -909,20 +906,58 @@ double SuperkExpectation::ND280Inputs::NExpCC(void) const
 // expected number of CC events
 
   double nexpcc =
-       fNumSelEt [kNDmNuMuCCQE]     -> Integral() +
-       fNumSelEt [kNDmNuMuCCRES]    -> Integral() +
-       fNumSelEt [kNDmNuMuCCCOH]    -> Integral() +
-       fNumSelEt [kNDmNuMuCCOth]    -> Integral() +
-       fNumSelEt [kNDmNuMuBarCCQE]  -> Integral() +
-       fNumSelEt [kNDmNuMuBarCCRES] -> Integral() +
-       fNumSelEt [kNDmNuMuBarCCCOH] -> Integral() +
-       fNumSelEt [kNDmNuMuBarCCOth] -> Integral() +
-       fNumSelEt [kNDmNuECCQE]      -> Integral() +
-       fNumSelEt [kNDmNuECCRES]     -> Integral() +
-       fNumSelEt [kNDmNuECCCOH]     -> Integral() +
-       fNumSelEt [kNDmNuECCOth]     -> Integral();
+       this->NumOfEvents( kNDmNuMuCCQE     ) +
+       this->NumOfEvents( kNDmNuMuCCRES    ) +
+       this->NumOfEvents( kNDmNuMuCCCOH    ) +
+       this->NumOfEvents( kNDmNuMuCCOth    ) +
+       this->NumOfEvents( kNDmNuMuBarCCQE  ) +
+       this->NumOfEvents( kNDmNuMuBarCCRES ) +
+       this->NumOfEvents( kNDmNuMuBarCCCOH ) +
+       this->NumOfEvents( kNDmNuMuBarCCOth ) +
+       this->NumOfEvents( kNDmNuECCQE      ) +
+       this->NumOfEvents( kNDmNuECCRES     ) +
+       this->NumOfEvents( kNDmNuECCCOH     ) +
+       this->NumOfEvents( kNDmNuECCOth     );
 
   return nexpcc;
+}
+//________________________________________________________________________________________
+double SuperkExpectation::ND280Inputs::NumOfEvents(ND280Mode_t mode) const
+{
+  TH1F * spectrum   = fNumSelEt[mode];
+  TH1F * efficiency = fSelEffEt[mode];
+
+  double efftwkdial = fSelEffTwkDial[mode];
+
+  assert(spectrum && efficiency);
+
+  double sum_nev = 0;
+  for(int ibin = 1; ibin <= spectrum->GetNbinsX(); ibin++) {
+     double Etrue   = spectrum->GetBinCenter(ibin);
+     double nev     = spectrum->GetBinContent(ibin);
+   //double eff     = efficiency->GetBinContent(ibin);
+     double efferr  = this->EfficiencyRelErr(Etrue, mode, util::Sign(efftwkdial));
+   //double twkeff  = eff * (1 + efftwkdial * efferr)
+     double effwght = 1 + efftwkdial * efferr;
+     nev *= effwght;
+     sum_nev += nev;
+  }
+  
+  return sum_nev;
+}
+//________________________________________________________________________________________
+double SuperkExpectation::ND280Inputs::EfficiencyRelErr(
+   double /*Et*/, ND280Mode_t /*mode*/, int /*sign*/) const
+{
+// relative uncertainty on efficiency 
+// (can be asymmetric)
+
+  return 0.01; //TODO
+}
+//________________________________________________________________________________________
+void SuperkExpectation::ND280Inputs::TweakEfficiency(ND280Mode_t mode, double twkdial)
+{
+  fSelEffTwkDial[mode] = twkdial;
 }
 //________________________________________________________________________________________
 //........................................................................................
@@ -1179,7 +1214,7 @@ bool SuperkExpectation::BeamInputs::Read(TXMLEngine* xml, XMLNodePointer_t root_
   fSuperkNuMuFluxPOT = util::XML2Dbl(xml,root_node,"beam/superk_flux/pot_mc");
   cout << "Exp/Beam >> SK flux simulation POT = " << fSuperkNuMuFluxPOT << endl;
 
-  fSuperkNuMuFlux->Scale(1./fSuperkNuMuFluxPOT);
+  fSuperkNuMuFlux->Scale(1./fSuperkNuMuFluxPOT); 
 
   // Get SuperK numu flux covariance matrix
   fSuperkNuMuFluxCov = util::XML2TMatrixDSym(
@@ -1187,6 +1222,15 @@ bool SuperkExpectation::BeamInputs::Read(TXMLEngine* xml, XMLNodePointer_t root_
   if(!fSuperkNuMuFluxCov) {
     cerr << "Exp/Beam >> No input SuperK numu flux covariance matrix!" << endl;
     exit(1);
+  }
+
+  TMatrixDSym & m = *fSuperkNuMuFluxCov;
+  for(int ibin=1; ibin<fSuperkNuMuFlux->GetNbinsX(); ibin++){
+    double flux_i = fSuperkNuMuFlux->GetBinContent(ibin);
+    for(int jbin=1; jbin<fSuperkNuMuFlux->GetNbinsX(); jbin++){
+       double flux_j = fSuperkNuMuFlux->GetBinContent(jbin);
+       m(ibin-1,jbin-1) = m(ibin-1,jbin-1) * (flux_i*flux_j);
+    }
   }
 
   // 10a->10d weights
