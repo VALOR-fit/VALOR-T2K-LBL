@@ -30,6 +30,7 @@
 #include <TH2D.h>
 #include <TSpline.h>
 #include <TVirtualPad.h>
+#include <TMatrixTSym.h>
 #include <TXMLEngine.h>
 
 #include "year1_numu_osc_analysis/PhysParamList.h"
@@ -102,13 +103,20 @@ public:
       const TAxis& EtrueBinning      (void) const { return *fEtBinning; }
 
       // Draw inputs:
-      // "Saclay/NuMu/All"
-      // "Saclay/NuMu/CC"
-      // "Saclay/NuMu/NC"
-      // "Saclay/NuMuBar/CC"
-      // "Saclay/NuMuBar/NC"
-      // "Saclay/NuMuBar/CC"
-      // "Saclay/NuMuBar/NC"
+      // "Saclay/EtrueSpectrum/NuMu/All"
+      // "Saclay/EtrueSpectrum/NuMu/CC"
+      // "Saclay/EtrueSpectrum/NuMu/NC"
+      // "Saclay/EtrueSpectrum/NuMuBar/CC"
+      // "Saclay/EtrueSpectrum/NuMuBar/NC"
+      // "Saclay/EtrueSpectrum/NuMuBar/CC"
+      // "Saclay/EtrueSpectrum/NuMuBar/NC"
+      // "Saclay/Efficiency/NuMu/All"
+      // "Saclay/Efficiency/NuMu/CC"
+      // "Saclay/Efficiency/NuMu/NC"
+      // "Saclay/Efficiency/NuMuBar/CC"
+      // "Saclay/Efficiency/NuMuBar/NC"
+      // "Saclay/Efficiency/NuMuBar/CC"
+      // "Saclay/Efficiency/NuMuBar/NC"
       void Draw(TVirtualPad * c, Option_t * opt = "") const;
 
     private:
@@ -118,14 +126,11 @@ public:
       bool Read    (TXMLEngine* xml, XMLNodePointer_t root_node); ///< read inputs from XML file
 
       TAxis * fEtBinning;       ///< E_{true} binning (both fixed and variable bin widths supported)
-
       double  fPOTData;         ///< number of POT (data)
       double  fNumObsCCLike;    ///< Observed number of CC-like events 
-
       double  fPOTMC;           ///< number of POT (MC)
       TH1F *  fNumSelEt[knmnd]; ///<
       TH1F *  fSelEffEt[knmnd]; ///<
-
    };
 
    //.........................................................................
@@ -150,6 +155,9 @@ public:
       const TAxis& EtrueBinning             (void) const { return *fEtBinning; }
 
       // Draw inputs:
+      // "ReconstructionEfficiency"            :
+      // "SelectionEfficiency/OneMuRingTight"  :
+      // "EnergyTransferMatrix/OneMuRingTight" :
       void Draw(TVirtualPad * c, Option_t * opt = "") const;
 
     private:
@@ -181,14 +189,18 @@ public:
      ~BeamInputs();
 
       // Get information needed from beam for predicting the SK spectrum
-      double       SuperkFlux    (double Etrue, bool wght_to_10d=true) const;
-      double       SuperkFluxPOT (void) const;
-      const TAxis& EtBinning     (void) const { return *fEtBinning; }
+      double              SuperkNuMuFlux    (double Etrue, bool wght_to_10d=true) const;
+      double              SuperkNuMuFluxPOT (void) const;
+      const TMatrixDSym & SuperkNuMuFluxCov (void) const { return *fSuperkNuMuFluxCov; } ///< covariance matrix
+
+      const TAxis& EtBinning (void) const { return *fEtBinning; }
 
       // Drawing option:
-      // - "SKFlux/10a"       : nominal SuperK flux (10a)
-      // - "SKFlux/10d"       : weighted SuperK flux (10d)
-      // - "Weights/10aTo10d" : 10a->10d weights
+      // - "SKFlux/10a/NuMu"              : nominal SuperK numu flux (10a)
+      // - "SKFlux/10d/NuMu"              : weighted SuperK numu flux (10d)
+      // - "SKFlux/Both10a10d/NuMu"       : nominal (10a) and weighted SuperK numu flux (10d)
+      // - "SKFlux/Weights/10aTo10d/NuMu" : 10a->10d numu flux weights
+      // - "SKFlux/CovarianceMatrix/NuMu" : SK numu flux covariance matrix
       void Draw(TVirtualPad * c, Option_t * opt = "SKFlux/10d") const;
 
     private:
@@ -197,11 +209,12 @@ public:
       void CleanUp (void);
       bool Read    (TXMLEngine* xml, XMLNodePointer_t root_node); ///< read inputs from XML file
 
-      TAxis * fEtBinning;      // E_{true} binning (both fixed and variable bin widths supported)
+      TAxis * fEtBinning; // E_{true} binning (both fixed and variable bin widths supported)
 
-      double  fSuperkFluxPOT;  // integrated POT for flux simulation
-      TH1D *  fSuperkFlux;     // SuperK flux estimation
-      TH1D *  fWght10aTo10d;   // SuperK flux weights (10a -> 10d)0
+      TH1D *        fSuperkNuMuFlux;         // SuperK numu flux estimation
+      double        fSuperkNuMuFluxPOT;      // integrated POT for numu flux simulation
+      TMatrixDSym * fSuperkNuMuFluxCov;      // SuperK numu flux estimation
+      TH1D *        fSuperkNuMuWght10aTo10d; // SuperK flux weights (10a -> 10d)0
    };
 
    //.........................................................................

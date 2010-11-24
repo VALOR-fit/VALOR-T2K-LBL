@@ -125,7 +125,7 @@ double SuperkExpectation::Generate(
     double Etrue = etrue_binning.GetBinCenter(itbin);
 
     // calc stuff with E_{true} energy dependency only
-    double flux_sk_mc      = fBeamInputs->SuperkFlux(Etrue); // per cm2 per POT
+    double flux_sk_mc      = fBeamInputs->SuperkNuMuFlux(Etrue); // per cm2 per POT
     double flux_sk         = flux_sk_mc * flux_correction;
     double xsec_m_sk       = fGeneratorInputs->SigmaModeSK(Etrue,m) / xsec_scale;
     double prob_surv       = util::NuMuSurvProb2D(sinsq2theta23, dmsq23, Etrue, m);
@@ -1150,15 +1150,17 @@ SuperkExpectation::BeamInputs::~BeamInputs()
 //________________________________________________________________________________________
 void SuperkExpectation::BeamInputs::Init(void)
 {
-  fSuperkFluxPOT = 0;
-  fSuperkFlux    = 0; 
-  fWght10aTo10d  = 0;
+  fSuperkNuMuFlux         = 0; 
+  fSuperkNuMuFluxPOT      = 0;
+  fSuperkNuMuFluxCov      = 0;
+  fSuperkNuMuWght10aTo10d = 0;
 }
 //________________________________________________________________________________________
 void SuperkExpectation::BeamInputs::CleanUp(void)
 {
-  if (fSuperkFlux  ) delete fSuperkFlux;
-  if (fWght10aTo10d) delete fWght10aTo10d;
+  if (fSuperkNuMuFlux         ) delete fSuperkNuMuFlux;
+  if (fSuperkNuMuFluxCov      ) delete fSuperkNuMuFluxCov;
+  if (fSuperkNuMuWght10aTo10d ) delete fSuperkNuMuWght10aTo10d;
 }
 //________________________________________________________________________________________
 bool SuperkExpectation::BeamInputs::Read(TXMLEngine* xml, XMLNodePointer_t root_node)
@@ -1167,22 +1169,31 @@ bool SuperkExpectation::BeamInputs::Read(TXMLEngine* xml, XMLNodePointer_t root_
 //
   cout << "Exp/Beam >> Reading beam inputs from input XML file." << endl;
 
-  // Get SuperK flux
-  fSuperkFlux = util::XML2TH1D(xml,root_node,"beam/superk_flux/v10a");
-  if(!fSuperkFlux) {
-    cerr << "Exp/Beam >> No input SuperK flux histogram!" << endl;
+  // Get SuperK numu flux
+  fSuperkNuMuFlux = util::XML2TH1D(xml,root_node,"beam/superk_flux/v10a/numu");
+  if(!fSuperkNuMuFlux) {
+    cerr << "Exp/Beam >> No input SuperK numu flux histogram!" << endl;
     exit(1);
   }
-  // Integrated POT for flux simulation
-  fSuperkFluxPOT = util::XML2Dbl(xml,root_node,"beam/superk_flux/pot_mc");
-  cout << "Exp/Beam >> SK flux simulation POT = " << fSuperkFluxPOT << endl;
+  // Integrated POT for numu flux simulation
+  fSuperkNuMuFluxPOT = util::XML2Dbl(xml,root_node,"beam/superk_flux/pot_mc");
+  cout << "Exp/Beam >> SK flux simulation POT = " << fSuperkNuMuFluxPOT << endl;
 
-  fSuperkFlux->Scale(1./fSuperkFluxPOT);
+  fSuperkNuMuFlux->Scale(1./fSuperkNuMuFluxPOT);
+
+  // Get SuperK numu flux covariance matrix
+  fSuperkNuMuFluxCov = util::XML2TMatrixDSym(
+      xml,root_node,"beam/superk_flux/systematics/covariance/numu");
+  if(!fSuperkNuMuFluxCov) {
+    cerr << "Exp/Beam >> No input SuperK numu flux covariance matrix!" << endl;
+    exit(1);
+  }
 
   // 10a->10d weights
-  fWght10aTo10d = util::XML2TH1D(xml,root_node,"beam/superk_flux/weight_v10a_to_v10d");
-  if(!fWght10aTo10d) {
-    cerr << "Exp/Beam >> No input 10a->10d SuperK flux weights!" << endl;
+  fSuperkNuMuWght10aTo10d = 
+   util::XML2TH1D(xml,root_node,"beam/superk_flux/weight_v10a_to_v10d/numu");
+  if(!fSuperkNuMuWght10aTo10d) {
+    cerr << "Exp/Beam >> No input 10a->10d SuperK numu flux weights!" << endl;
     exit(1);
   }
 
@@ -1200,64 +1211,68 @@ void SuperkExpectation::BeamInputs::Draw(TVirtualPad * c, Option_t * option) con
   TString opt = option;
   util::SetDefaultStyle();
 
-  if(opt.Contains("Weights/10aTo10d")) { 
-    fWght10aTo10d->Draw();
-    fWght10aTo10d->GetXaxis()->SetTitle("E_{#nu} (GeV)");
-    fWght10aTo10d->GetYaxis()->SetTitle("SuperK flux weight");
+  if(opt.Contains("SKFlux/Weights/10aTo10d/NuMu")) { 
+    fSuperkNuMuWght10aTo10d->Draw();
+    fSuperkNuMuWght10aTo10d->GetXaxis()->SetTitle("E_{#nu} (GeV)");
+    fSuperkNuMuWght10aTo10d->GetYaxis()->SetTitle("SuperK numu flux weight");
     c->Update();
   }
   else
-  if(opt.Contains("SKFlux/10a")) { 
-    fSuperkFlux->Draw();
-    fSuperkFlux->GetXaxis()->SetTitle("E_{#nu} (GeV)");
-    fSuperkFlux->GetYaxis()->SetTitle("SuperK flux (#neutrinos /cm2 /POT)");
+  if(opt.Contains("SKFlux/10a/NuMu")) { 
+    fSuperkNuMuFlux->Draw();
+    fSuperkNuMuFlux->GetXaxis()->SetTitle("E_{#nu} (GeV)");
+    fSuperkNuMuFlux->GetYaxis()->SetTitle("SuperK numu flux (#neutrinos /cm2 /POT)");
     c->Update();
   } 
   else
-  if(opt.Contains("SKFlux/10d")) { 
-    TH1D * weighted_flux = new TH1D(*fSuperkFlux);
+  if(opt.Contains("SKFlux/10d/NuMu")) { 
+    TH1D * weighted_flux = new TH1D(*fSuperkNuMuFlux);
     weighted_flux->SetDirectory(0);
     for(int bin=1; bin <= weighted_flux->GetNbinsX(); bin++) {
 	double Et = weighted_flux->GetBinCenter(bin);
-	double f  = this->SuperkFlux(Et,true);
+	double f  = this->SuperkNuMuFlux(Et,true);
         weighted_flux->SetBinContent(bin,f);
     }
     weighted_flux->Draw();
     weighted_flux->GetXaxis()->SetTitle("E_{#nu} (GeV)");
-    weighted_flux->GetYaxis()->SetTitle("SuperK flux (#neutrinos /cm2 /POT)");
+    weighted_flux->GetYaxis()->SetTitle("SuperK numu flux (#neutrinos /cm2 /POT)");
     c->Update();
   }
   else
-  if(opt.Contains("SKFlux/Both10a10d")) { 
-    TH1D * weighted_flux = new TH1D(*fSuperkFlux);
+  if(opt.Contains("SKFlux/Both10a10d/NuMu")) { 
+    TH1D * weighted_flux = new TH1D(*fSuperkNuMuFlux);
     weighted_flux->SetDirectory(0);
     for(int bin=1; bin <= weighted_flux->GetNbinsX(); bin++) {
 	double Et = weighted_flux->GetBinCenter(bin);
-	double f  = this->SuperkFlux(Et,true);
+	double f  = this->SuperkNuMuFlux(Et,true);
         weighted_flux->SetBinContent(bin,f);
     }
     weighted_flux->SetLineStyle(kDashed);
-    fSuperkFlux->Draw();
+    fSuperkNuMuFlux->Draw();
     weighted_flux->Draw("same");
-    fSuperkFlux->GetXaxis()->SetTitle("E_{#nu} (GeV)");
-    fSuperkFlux->GetYaxis()->SetTitle("SuperK flux (#neutrinos /cm2 /POT)");
+    fSuperkNuMuFlux->GetXaxis()->SetTitle("E_{#nu} (GeV)");
+    fSuperkNuMuFlux->GetYaxis()->SetTitle("SuperK numu flux (#neutrinos /cm2 /POT)");
     c->Update();
   }
-
+  else
+  if(opt.Contains("SKFlux/CovarianceMatrix/NuMu")) { 
+    fSuperkNuMuFluxCov->Draw("colz");
+    c->Update();
+  }
 }
 //________________________________________________________________________________________
-double SuperkExpectation::BeamInputs::SuperkFlux (double Etrue, bool wght_to_10d) const
+double SuperkExpectation::BeamInputs::SuperkNuMuFlux(double Etrue, bool wght_to_10d) const
 {
-  assert(fSuperkFlux);
+  assert(fSuperkNuMuFlux);
 
-  int flux_bin = fSuperkFlux->FindBin(Etrue);
-  double flux  = fSuperkFlux->GetBinContent(flux_bin);
+  int flux_bin = fSuperkNuMuFlux->FindBin(Etrue);
+  double flux  = fSuperkNuMuFlux->GetBinContent(flux_bin);
  
   if(wght_to_10d) {
     double wght = 1.0;
     if(Etrue < 10/*GeV*/) {
-      int wght_bin = fWght10aTo10d->FindBin(Etrue);
-      wght = fWght10aTo10d->GetBinContent(wght_bin);
+      int wght_bin = fSuperkNuMuWght10aTo10d->FindBin(Etrue);
+      wght = fSuperkNuMuWght10aTo10d->GetBinContent(wght_bin);
     }
     flux *= wght;
   }
@@ -1265,9 +1280,9 @@ double SuperkExpectation::BeamInputs::SuperkFlux (double Etrue, bool wght_to_10d
   return flux;
 }
 //________________________________________________________________________________________
-double SuperkExpectation::BeamInputs::SuperkFluxPOT (void) const
+double SuperkExpectation::BeamInputs::SuperkNuMuFluxPOT (void) const
 {
-  return fSuperkFluxPOT;
+  return fSuperkNuMuFluxPOT;
 }
 //________________________________________________________________________________________
 //........................................................................................

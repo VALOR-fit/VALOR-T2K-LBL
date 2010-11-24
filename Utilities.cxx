@@ -4,7 +4,9 @@
 */
 //____________________________________________________________________________
 
-//#define __debug__
+//#define __debug_level_1__
+//#define __debug_level_2__
+//#define __debug_level_3__
 
 #include <cassert>
 #include <cstdlib>
@@ -189,7 +191,7 @@ TMatrixD t2kana::yr1numu::util::CholeskyDecomposition(TMatrixD& cov_matrix)
   // create the transpose of L
   TMatrixD LT(TMatrixD::kTransposed,L);
 
-#ifdef __debug__
+#ifdef __debug_level_1___
   cout << "Cholesky matrix L^{T}" << endl;
   for(int ip=0; ip<n; ip++) {
     for(int jp=0; jp<n; jp++) {
@@ -224,7 +226,7 @@ TVectorD t2kana::yr1numu::util::CholeskyGenerateCorrelated (
   }
   g *= cholesky_triangular;
 
-#ifdef __debug__
+#ifdef __debug_level_3__
   ofstream foutp1("cholesky_uncorrelated_params.txt",fstream::app);
   for (int i = 0; i < n; ++i) {
     foutp1 << g[i] << "\t";
@@ -241,7 +243,7 @@ TVectorD t2kana::yr1numu::util::CholeskyGenerateCorrelated (
      correlated_params[i] = v;
   }
 
-#ifdef __debug__
+#ifdef __debug_level_3__
   ofstream foutp2("cholesky_correlated_params.txt",fstream::app);
   for (int i = 0; i < n; ++i) {
     foutp2 << correlated_params[i] << "\t";
@@ -515,7 +517,9 @@ TH1F * t2kana::yr1numu::util::XML2TH1F(
 {
 // Get a TH1F instance from the info in the input XML config file
 //
+#ifdef __debug_level_2__
   cout << "utils/XML2TH1F >> Reading info at XML node path: " << path << endl;
+#endif
 
   XMLNodePointer_t found_node = FindNode(xmleng,top_node,path);
   if(!found_node) {
@@ -530,16 +534,20 @@ TH1F * t2kana::yr1numu::util::XML2TH1F(
   XMLNodePointer_t child_node = xmleng->GetChild(found_node);
   while(child_node) {
     string child_node_name = xmleng->GetNodeName(child_node);
-  //cout << "utils/XML2TH1F >> node = " << child_node_name << endl;
     string content = xmleng->GetNodeContent(child_node);
-  //cout << "utils/XML2TH1F >> \t content = " << content << endl;
+#ifdef __debug_level_2__
+    cout << "utils/XML2TH1F >> node = " << child_node_name << endl;
+    cout << "utils/XML2TH1F >> \t content = " << content << endl;
+#endif
     if(child_node_name == "filename") { filename = TrimSpaces(content); }
     if(child_node_name == "objname" ) { objname  = TrimSpaces(content); }
     child_node = xmleng->GetNext(child_node);    
   }
 
+#ifdef __debug_level_2__
   cout << "utils/XML2TH1F >> filename : " << filename << endl;
   cout << "utils/XML2TH1F >> objname  : " << objname  << endl;
+#endif
 
   TFile file(filename.c_str(), "read");
   TH1F * h = (TH1F*)file.Get(objname.c_str());
@@ -562,7 +570,9 @@ TH1D * t2kana::yr1numu::util::XML2TH1D(
 {
 // Get a TH1D instance from the info in the input XML config file
 //
+#ifdef __debug_level_2__
   cout << "utils/XML2TH1D >> Reading info at XML node path: " << path << endl;
+#endif
 
   XMLNodePointer_t found_node = FindNode(xmleng,top_node,path);
   if(!found_node) {
@@ -577,16 +587,20 @@ TH1D * t2kana::yr1numu::util::XML2TH1D(
   XMLNodePointer_t child_node = xmleng->GetChild(found_node);
   while(child_node) {
     string child_node_name = xmleng->GetNodeName(child_node);
-  //cout << "utils/XML2TH1D >> node = " << child_node_name << endl;
     string content = xmleng->GetNodeContent(child_node);
-  //cout << "utils/XML2TH1D >> \t content = " << content << endl;
+#ifdef __debug_level_2__
+    cout << "utils/XML2TH1D >> node = " << child_node_name << endl;
+    cout << "utils/XML2TH1D >> \t content = " << content << endl;
+#endif
     if(child_node_name == "filename") { filename = TrimSpaces(content); }
     if(child_node_name == "objname" ) { objname  = TrimSpaces(content); }
     child_node = xmleng->GetNext(child_node);    
   }
 
+#ifdef __debug_level_2__
   cout << "utils/XML2TH1D >> filename : " << filename << endl;
   cout << "utils/XML2TH1D >> objname  : " << objname  << endl;
+#endif
 
   TFile file(filename.c_str(), "read");
   TH1D * h = (TH1D*)file.Get(objname.c_str());
@@ -609,7 +623,9 @@ TH2D * t2kana::yr1numu::util::XML2TH2D(
 {
 // Get a TH2D instance from the info in the input XML config file
 //
+#ifdef __debug_level_2__
   cout << "utils/XML2TH2D >> Reading info at XML node path: " << path << endl;
+#endif
 
   XMLNodePointer_t found_node = FindNode(xmleng,top_node,path);
   if(!found_node) {
@@ -624,16 +640,20 @@ TH2D * t2kana::yr1numu::util::XML2TH2D(
   XMLNodePointer_t child_node = xmleng->GetChild(found_node);
   while(child_node) {
     string child_node_name = xmleng->GetNodeName(child_node);
-  //cout << "utils/XML2TH2D >> node = " << child_node_name << endl;
     string content = xmleng->GetNodeContent(child_node);
-  //cout << "utils/XML2TH2D >> \t content = " << content << endl;
+#ifdef __debug_level_2__
+    cout << "utils/XML2TH2D >> node = " << child_node_name << endl;
+    cout << "utils/XML2TH2D >> \t content = " << content << endl;
+#endif
     if(child_node_name == "filename") { filename = TrimSpaces(content); }
     if(child_node_name == "objname" ) { objname  = TrimSpaces(content); }
     child_node = xmleng->GetNext(child_node);    
   }
 
+#ifdef __debug_level_2__
   cout << "utils/XML2TH1D >> filename : " << filename << endl;
   cout << "utils/XML2TH1D >> objname  : " << objname  << endl;
+#endif
 
   TFile file(filename.c_str(), "read");
   TH2D * h2 = (TH2D*)file.Get(objname.c_str());
@@ -656,7 +676,10 @@ TAxis *  t2kana::yr1numu::util::XML2BinInfo(
 {
 //
 //
+
+#ifdef __debug_level_2__
   cout << "utils/XML2BinInfo >> Reading info at XML node path: " << path << endl;
+#endif
 
   XMLNodePointer_t found_node = FindNode(xmleng,top_node,path);
   if(!found_node) {
@@ -679,9 +702,10 @@ TAxis *  t2kana::yr1numu::util::XML2BinInfo(
       if(child_node_name == "max"  ) { max   = atof(TrimSpaces(content).c_str()); }
       child_node = xmleng->GetNext(child_node);    
     }
+#ifdef __debug_level_2__
     cout << "utils/XML2BinInfo >> nbins = " << nbins 
          << ", range = (" << min << ", " << max << ")" << endl;
-
+#endif
     assert(nbins>0 && min<max);
 
     TAxis * axis = new TAxis(nbins,min,max);
@@ -705,7 +729,10 @@ double t2kana::yr1numu::util::XML2Dbl(
 {
 // Get the specified node content as a floating-point number
 //
+
+#ifdef __debug_level_2__
   cout << "utils/XML2Dbl >> Reading info at XML node path: " << path << endl;
+#endif
 
   XMLNodePointer_t found_node = FindNode(xmleng,top_node,path);
   if(!found_node) {
@@ -731,6 +758,57 @@ t2kana::yr1numu::util::TH1DErrEnv *
   TH1DErrEnv * error_envelope = new TH1DErrEnv(low,high);
 
   return error_envelope;
+}
+//___________________________________________________________________________
+TMatrixDSym * t2kana::yr1numu::util::XML2TMatrixDSym(
+     TXMLEngine * xmleng, XMLNodePointer_t top_node, string path)
+{
+// Get a TMatrixDSym instance from the info in the input XML config file
+//
+
+#ifdef __debug_level_2__
+  cout << "utils/XML2TMatrixDSym >> "
+       << "Reading info at XML node path: " << path << endl;
+#endif
+
+  XMLNodePointer_t found_node = FindNode(xmleng,top_node,path);
+  if(!found_node) {
+    cerr << "utils/XML2TMatrixDSym >> "
+         << "No node was found at input XML node path: " << path << endl;
+    return 0;
+  }
+
+  string filename = "";
+  string objname  = "";
+
+  XMLNodePointer_t child_node = xmleng->GetChild(found_node);
+  while(child_node) {
+    string child_node_name = xmleng->GetNodeName(child_node);
+    string content = xmleng->GetNodeContent(child_node);
+    if(child_node_name == "filename") { filename = TrimSpaces(content); }
+    if(child_node_name == "objname" ) { objname  = TrimSpaces(content); }
+    child_node = xmleng->GetNext(child_node);    
+  }
+
+#ifdef __debug_level_2__
+  cout << "utils/XML2TMatrixDSym >> filename : " << filename << endl;
+  cout << "utils/XML2TMatrixDSym >> objname  : " << objname  << endl;
+#endif
+
+  TFile file(filename.c_str(), "read");
+  TMatrixDSym * matrix = (TMatrixDSym*)file.Get(objname.c_str());
+  if(!matrix) {
+    cerr << "utils/XML2TMatrixDSym >> No " 
+         << objname << " in " << filename << endl;
+    file.Close();
+    return 0;
+  }
+
+  TMatrixDSym * matrix_copy = new TMatrixDSym(*matrix);
+
+  file.Close();
+
+  return matrix_copy;
 }
 //___________________________________________________________________________
 

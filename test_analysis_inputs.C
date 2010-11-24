@@ -7,7 +7,7 @@
 //
 
 {
-  TString opt = "nd280";
+  TString opt = "Flux";
 
   gSystem->Load("libGpad");  
   gSystem->Load("libPhysics");  
@@ -37,10 +37,11 @@
   const int    nbins = (int) ((Emax - Emin)/dE);
   
   if(opt.Contains("Flux")) {
-    skexp->GetBeamInputs()->Draw(new TCanvas(), "SKFlux/10a");
-    skexp->GetBeamInputs()->Draw(new TCanvas(), "SKFlux/10d");
-    skexp->GetBeamInputs()->Draw(new TCanvas(), "SKFlux/Both10a10d");
-    skexp->GetBeamInputs()->Draw(new TCanvas(), "Weights/10aTo10d");
+    skexp->GetBeamInputs()->Draw(new TCanvas(), "SKFlux/10a/NuMu");
+    skexp->GetBeamInputs()->Draw(new TCanvas(), "SKFlux/10d/NuMu");
+    skexp->GetBeamInputs()->Draw(new TCanvas(), "SKFlux/Both10a10d/NuMu");
+    skexp->GetBeamInputs()->Draw(new TCanvas(), "SKFlux/Weights/10aTo10d/NuMu");
+    skexp->GetBeamInputs()->Draw(new TCanvas(), "SKFlux/CovarianceMatrix/NuMu");
   }//Flux
 
   if(opt.Contains("SuperK")) {

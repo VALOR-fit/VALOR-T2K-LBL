@@ -64,13 +64,14 @@ namespace util {
 
   // XML utilities
 
-  XMLNodePointer_t FindNode      (TXMLEngine * eng, XMLNodePointer_t topnode, string path);
-  TH1F *           XML2TH1F      (TXMLEngine * eng, XMLNodePointer_t topnode, string path);
-  TH1D *           XML2TH1D      (TXMLEngine * eng, XMLNodePointer_t topnode, string path);
-  TH2D *           XML2TH2D      (TXMLEngine * eng, XMLNodePointer_t topnode, string path);
-  TAxis *          XML2BinInfo   (TXMLEngine * eng, XMLNodePointer_t topnode, string path);
-  double           XML2Dbl       (TXMLEngine * eng, XMLNodePointer_t topnode, string path);
-  TH1DErrEnv *     XML2TH1DErrEnv(TXMLEngine * eng, XMLNodePointer_t topnode, string path);
+  XMLNodePointer_t FindNode        (TXMLEngine * eng, XMLNodePointer_t topnode, string path);
+  TH1F *           XML2TH1F        (TXMLEngine * eng, XMLNodePointer_t topnode, string path);
+  TH1D *           XML2TH1D        (TXMLEngine * eng, XMLNodePointer_t topnode, string path);
+  TH2D *           XML2TH2D        (TXMLEngine * eng, XMLNodePointer_t topnode, string path);
+  TAxis *          XML2BinInfo     (TXMLEngine * eng, XMLNodePointer_t topnode, string path);
+  double           XML2Dbl         (TXMLEngine * eng, XMLNodePointer_t topnode, string path);
+  TH1DErrEnv *     XML2TH1DErrEnv  (TXMLEngine * eng, XMLNodePointer_t topnode, string path);
+  TMatrixDSym *    XML2TMatrixDSym (TXMLEngine * eng, XMLNodePointer_t topnode, string path);
 
   // ROOT style/formatting
 
