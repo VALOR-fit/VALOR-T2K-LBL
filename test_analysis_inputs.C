@@ -7,7 +7,7 @@
 //
 
 {
-  TString opt = "Flux";
+  TString opt = "nd280";
 
   gSystem->Load("libGpad");  
   gSystem->Load("libPhysics");  
@@ -39,6 +39,7 @@
   if(opt.Contains("Flux")) {
     skexp->GetBeamInputs()->Draw(new TCanvas(), "SKFlux/10a");
     skexp->GetBeamInputs()->Draw(new TCanvas(), "SKFlux/10d");
+    skexp->GetBeamInputs()->Draw(new TCanvas(), "SKFlux/Both10a10d");
     skexp->GetBeamInputs()->Draw(new TCanvas(), "Weights/10aTo10d");
   }//Flux
 
@@ -53,7 +54,18 @@
     cout << "Nexp(NC-bkg)  = " << skexp->GetND280Inputs()->NExpNCBkg()  << endl;
     cout << "Nexp(CC)      = " << skexp->GetND280Inputs()->NExpCC()     << endl;
 
-    skexp->GetND280Inputs()->Draw(new TCanvas(), "Saclay/NuMu/CC");
+    skexp->GetND280Inputs()->Draw(new TCanvas(), "Saclay/EtrueSpectrum/NuMu/CC");
+    skexp->GetND280Inputs()->Draw(new TCanvas(), "Saclay/EtrueSpectrum/NuMu/NC");
+    skexp->GetND280Inputs()->Draw(new TCanvas(), "Saclay/EtrueSpectrum/NuMuBar/CC");
+    skexp->GetND280Inputs()->Draw(new TCanvas(), "Saclay/EtrueSpectrum/NuMuBar/NC");
+    skexp->GetND280Inputs()->Draw(new TCanvas(), "Saclay/EtrueSpectrum/NuE/CC");
+    skexp->GetND280Inputs()->Draw(new TCanvas(), "Saclay/EtrueSpectrum/NuE/NC");
+    skexp->GetND280Inputs()->Draw(new TCanvas(), "Saclay/Efficiency/NuMu/CC");
+    skexp->GetND280Inputs()->Draw(new TCanvas(), "Saclay/Efficiency/NuMu/NC");
+    skexp->GetND280Inputs()->Draw(new TCanvas(), "Saclay/Efficiency/NuMuBar/CC");
+    skexp->GetND280Inputs()->Draw(new TCanvas(), "Saclay/Efficiency/NuMuBar/NC");
+    skexp->GetND280Inputs()->Draw(new TCanvas(), "Saclay/Efficiency/NuE/CC");
+    skexp->GetND280Inputs()->Draw(new TCanvas(), "Saclay/Efficiency/NuE/NC");
   }
 
   if(opt.Contains("NeutrinoGenerator")) {
