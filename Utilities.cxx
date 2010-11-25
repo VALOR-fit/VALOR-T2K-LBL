@@ -204,7 +204,7 @@ TMatrixD t2kana::yr1numu::util::CholeskyDecomposition(TMatrixD& cov_matrix)
   return LT;
 }
 //____________________________________________________________________________
-TVectorD t2kana::yr1numu::util::CholeskyGenerateCorrelated (
+TVectorD t2kana::yr1numu::util::CholeskyGenerateCorrelatedParams (
     TMatrixD& cholesky_triangular, TVectorD& mean_params) 
 {
 // Generate a vector of correlated params
@@ -253,6 +253,29 @@ TVectorD t2kana::yr1numu::util::CholeskyGenerateCorrelated (
 #endif
 
   return correlated_params;
+}
+//____________________________________________________________________________
+TVectorD t2kana::yr1numu::util::CholeskyGenerateCorrelatedParamVariations (
+    TMatrixD& cholesky_triangular) 
+{
+// Generate a vector of correlated params
+
+  int ncols = cholesky_triangular.GetNcols();
+  int nrows = cholesky_triangular.GetNrows();
+
+  assert(ncols==nrows);
+
+  int n = nrows;
+
+  // create a vector of unit Gaussian variables
+  // and multiply by Lt to introduce the appropriate correlations
+  TVectorD g(n);
+  for (int k = 0; k < n; ++k) {
+    g(k) = gR.Gaus();
+  }
+  g *= cholesky_triangular;
+
+  return g;
 }
 //____________________________________________________________________________
 string t2kana::yr1numu::util::AsString(PhysParamId_t p)

@@ -87,7 +87,7 @@ void test_cholesky_output_covariance(void)
      if(i%100) {
        cout << "Number of vectors generated so far: " << i << endl;
      }
-     TVectorD twk_vector = util::CholeskyGenerateCorrelated(cholesky_triangular, input_mean_params);
+     TVectorD twk_vector = util::CholeskyGenerateCorrelatedParams(cholesky_triangular, input_mean_params);
      for(int ip=0; ip<np; ip++) {
        x[i][ip] = twk_vector[ip];
      }//ip  

@@ -29,7 +29,7 @@ void test_superk_spectrum_prediction_twk_bnorm()
 
   // energy range and binning
   const double Emin  = 0;
-  const double Emax  = 4;
+  const double Emax  = 10;
   const double dE    = 0.05;
   const int    nbins = (int) ((Emax - Emin)/dE);
 
@@ -62,7 +62,7 @@ void test_superk_spectrum_prediction_twk_bnorm()
 
   // generate predictions
   for(int idial = 0; idial < ntwkdials; idial++) {
-     skexp.TweakBeamNorm( twkdial[idial] );
+     skexp.GetBeamInputs()->TweakNorm( twkdial[idial] );
      for(int ibin=1; ibin<=nbins; ibin++) {
         double Ereco = hEreco[idial]->GetBinCenter(ibin);
         double Nexp  = skexp.Generate(Ereco, *fparm);

@@ -102,6 +102,9 @@ double SuperkExpectation::Generate(
 
   double expectation = 0;
 
+  // plug-in energy scale systematics
+  Ereco *= fSuperkInputs->EnergyScale();
+
   // input physics params (params included in the fit / systematics params)
   double dmsq23          = fp.CurrValue(kPhypDm23sq);
   double sinsq2theta23   = fp.CurrValue(kPhypSinsq2Theta23);
@@ -150,10 +153,10 @@ double SuperkExpectation::Generate(
 
   }//E_{true}
 
-  if(fTwkBeamNorm != 0.) {
-    double sigma = 0.1;
-    expectation *= (1 + fTwkBeamNorm * sigma);
-  }
+  // plug-in global normalization systematics
+  double flux_norm = fBeamInputs->SuperkNuMuFluxNorm(sinsq2theta23, dmsq23);
+  double sk_norm   = fSuperkInputs->Norm();
+  expectation *= (flux_norm * sk_norm);
 
 #ifdef __debug_level_2__
   cout << "Exp / Generate() >> "
@@ -294,10 +297,6 @@ void SuperkExpectation::Init(void)
   fSuperkInputs    = 0;
   fBeamInputs      = 0;
   fGeneratorInputs = 0;
-
-  fTwkBeamNorm     = 0;
-  fTwkSuperkNorm   = 0;
-  fTwkSuperkEScale = 0;
 
   fSamples.clear();
 }
@@ -991,6 +990,9 @@ void SuperkExpectation::SuperkInputs::Init(void)
       fETransMtrx[is][im] = 0; 
     }
   }
+
+  fNormTwkDial        = 0.;
+  fEnergyScaleTwkDial = 0.;
 }
 //________________________________________________________________________________________
 void SuperkExpectation::SuperkInputs::CleanUp(void)
@@ -1169,6 +1171,40 @@ double SuperkExpectation::SuperkInputs::EnergyTransferMatrix(
   return Rij;
 }
 //________________________________________________________________________________________
+double SuperkExpectation::SuperkInputs::NormErr(void) const
+{
+// normalization err
+  
+  return 0.01;//TODO
+}
+//________________________________________________________________________________________
+double SuperkExpectation::SuperkInputs::Norm(void) const
+{
+// normalization
+
+  double twkdial = fNormTwkDial;
+  double normerr = this->NormErr();
+  double norm    = 1 + twkdial * normerr;
+  return norm;
+}
+//________________________________________________________________________________________
+double SuperkExpectation::SuperkInputs::EnergyScaleErr(void) const
+{
+// energy scale err
+
+  return 0.1;//TODO
+}
+//________________________________________________________________________________________
+double SuperkExpectation::SuperkInputs::EnergyScale(void) const
+{
+// energy scale
+
+  double twkdial  = fEnergyScaleTwkDial;
+  double scaleerr = this->EnergyScaleErr();
+  double scale    = 1 + twkdial * scaleerr;
+  return scale;
+}
+//________________________________________________________________________________________
 //........................................................................................
 // nested class BeamInputs
 //........................................................................................
@@ -1185,10 +1221,13 @@ SuperkExpectation::BeamInputs::~BeamInputs()
 //________________________________________________________________________________________
 void SuperkExpectation::BeamInputs::Init(void)
 {
-  fSuperkNuMuFlux         = 0; 
-  fSuperkNuMuFluxPOT      = 0;
-  fSuperkNuMuFluxCov      = 0;
-  fSuperkNuMuWght10aTo10d = 0;
+  fSuperkNuMuFlux              = 0; 
+  fSuperkNuMuFluxPOT           = 0;
+  fSuperkNuMuFluxCov           = 0;
+  fSuperkNuMuWght10aTo10d      = 0;
+  fSuperkNuMuFluxNormTwkDial   = 0;
+  fSuperkNuMuFluxHaveCholeskyL = false;
+  fSuperkNuMuFluxTwks          = 0;
 }
 //________________________________________________________________________________________
 void SuperkExpectation::BeamInputs::CleanUp(void)
@@ -1196,6 +1235,7 @@ void SuperkExpectation::BeamInputs::CleanUp(void)
   if (fSuperkNuMuFlux         ) delete fSuperkNuMuFlux;
   if (fSuperkNuMuFluxCov      ) delete fSuperkNuMuFluxCov;
   if (fSuperkNuMuWght10aTo10d ) delete fSuperkNuMuWght10aTo10d;
+  if (fSuperkNuMuFluxTwks     ) delete fSuperkNuMuFluxTwks;
 }
 //________________________________________________________________________________________
 bool SuperkExpectation::BeamInputs::Read(TXMLEngine* xml, XMLNodePointer_t root_node)
@@ -1321,12 +1361,77 @@ double SuperkExpectation::BeamInputs::SuperkNuMuFlux(double Etrue, bool wght_to_
     flux *= wght;
   }
 
+  if(fSuperkNuMuFluxTwks) {
+    int var_bin = fSuperkNuMuFluxTwks->FindBin(Etrue);
+    double var = fSuperkNuMuFluxTwks->GetBinContent(var_bin);
+
+    cout << "Exp/Beam >> Applying shape variation: Flux(E=" << Etrue << "): " 
+         <<  flux << " ---> " << flux+var << endl;
+
+    flux += var;
+  }
+
   return flux;
 }
 //________________________________________________________________________________________
 double SuperkExpectation::BeamInputs::SuperkNuMuFluxPOT (void) const
 {
   return fSuperkNuMuFluxPOT;
+}
+//________________________________________________________________________________________
+const TMatrixDSym &  SuperkExpectation::BeamInputs::SuperkNuMuFluxCov(void) const 
+{ 
+  return *fSuperkNuMuFluxCov; 
+} 
+//________________________________________________________________________________________
+double SuperkExpectation::BeamInputs::SuperkNuMuFluxNormErr(
+  double /*sinsq2theta23*/, double /*dmsq23*/) const
+{
+// normalization err Nsk/Nd280
+
+  return 0.10; //TODO
+}
+//________________________________________________________________________________________
+double SuperkExpectation::BeamInputs::SuperkNuMuFluxNorm(
+  double sinsq2theta23, double dmsq23) const
+{
+// normalization
+
+  double twkdial = fSuperkNuMuFluxNormTwkDial;
+  double normerr = this->SuperkNuMuFluxNormErr(sinsq2theta23, dmsq23);
+  double norm    = 1 + twkdial * normerr;
+  return norm;
+}
+//________________________________________________________________________________________
+void SuperkExpectation::BeamInputs::TweakShape(bool reset)    
+{ 
+  if(reset) {
+    if(fSuperkNuMuFluxTwks) {
+      delete fSuperkNuMuFluxTwks;
+      fSuperkNuMuFluxTwks = 0;
+    }
+    return;
+  }
+
+  if(!fSuperkNuMuFluxHaveCholeskyL) {
+    TMatrixD sk_flux_cov(*fSuperkNuMuFluxCov);
+    fSuperkNuMuFluxCovCholeskyL = util::CholeskyDecomposition(sk_flux_cov);
+    fSuperkNuMuFluxHaveCholeskyL = true;
+  }
+
+  if(!fSuperkNuMuFluxTwks) {
+    fSuperkNuMuFluxTwks = new TH1D(*fSuperkNuMuFlux);
+    //reset
+  }
+
+  TVectorD var = 
+       util::CholeskyGenerateCorrelatedParamVariations(fSuperkNuMuFluxCovCholeskyL);
+
+  int npars = var.GetNrows();
+  for(int i=0; i<npars; i++) {
+    fSuperkNuMuFluxTwks->SetBinContent(i+1, var(i));
+  }
+
 }
 //________________________________________________________________________________________
 //........................................................................................

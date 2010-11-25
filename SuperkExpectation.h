@@ -31,6 +31,7 @@
 #include <TSpline.h>
 #include <TVirtualPad.h>
 #include <TMatrixTSym.h>
+#include <TVectorD.h>
 #include <TXMLEngine.h>
 
 #include "year1_numu_osc_analysis/PhysParamList.h"
@@ -66,13 +67,6 @@ public:
    // Generate SK energy spectrum expectation for the current inputs
    double Generate(double Ereco, const PhysParamList & fp);
    double Generate(double Ereco, const PhysParamList & fp, t2kana::yr1numu::conv::SuperkSample_t s, t2kana::yr1numu::conv::SuperkMode_t m);
-
-   // Systematics
-   void TweakBeamNorm     (double twkdial)     { fTwkBeamNorm     = twkdial; }
-   void TweakBeamShape    (void)               { }
-   void TweakSuperkNorm   (double twkdial)     { fTwkSuperkNorm   = twkdial; }
-   void TweakSuperkEScale (double twkdial)     { fTwkSuperkEScale = twkdial; }
-   void TweakSuperkShape  (void)               { }
 
    TH1D * AsTH1D(const PhysParamList & fp);
    TH1D * AsTH1D(const PhysParamList & fp, t2kana::yr1numu::conv::SuperkSample_t s);
@@ -120,7 +114,7 @@ public:
       // "Saclay/Efficiency/NuMuBar/NC"
       void Draw(TVirtualPad * c, Option_t * opt = "") const;
 
-      // Tweak inputs for oscillation systematic studies
+      // Systematic variations
       void TweakEfficiency   (t2kana::yr1numu::conv::ND280Mode_t mode, double twkdial);
       void TweakCrossSection (t2kana::yr1numu::conv::ND280Mode_t mode, double twkdial);
 
@@ -156,6 +150,10 @@ public:
       double       ReconstructionEfficiency (double Etrue, t2kana::yr1numu::conv::SuperkMode_t m) const;
       double       SelectionEfficiency      (double Ereco, t2kana::yr1numu::conv::SuperkSample_t s, t2kana::yr1numu::conv::SuperkMode_t m) const;
       double       EnergyTransferMatrix     (double Etrue, double Ereco, t2kana::yr1numu::conv::SuperkSample_t s, t2kana::yr1numu::conv::SuperkMode_t m) const;
+      double       NormErr                  (void) const; ///< normalization err
+      double       Norm                     (void) const; ///< normalization 
+      double       EnergyScaleErr           (void) const; ///< energy scale err
+      double       EnergyScale              (void) const; ///< energy scale 
       const TAxis& ErecoBinning             (void) const { return *fErBinning; }
       const TAxis& EtrueBinning             (void) const { return *fEtBinning; }
 
@@ -164,6 +162,11 @@ public:
       // "SelectionEfficiency/OneMuRingTight"  :
       // "EnergyTransferMatrix/OneMuRingTight" :
       void Draw(TVirtualPad * c, Option_t * opt = "") const;
+
+      // Systematic variations
+      void TweakNorm        (double twkdial) { fNormTwkDial        = twkdial; }
+      void TweakEnergyScale (double twkdial) { fEnergyScaleTwkDial = twkdial; }
+      void TweakEfficiency  (void) { } ///TODO
 
     private:
 
@@ -180,6 +183,8 @@ public:
       TH1D  * fRecoEff[knm];         ///< Reconstruction efficiency = f(E_{true}, mode)
       TH1D  * fSelEff[kns][knm];     ///< Selection efficiency = f(E_{reco}, sample, mode)
       TH2D  * fETransMtrx[kns][knm]; ///< Energy transfer matrix = f(E_{true}, E_{reco}, sample, mode)
+      double  fNormTwkDial;          ///< Normalization tweaking dial
+      double  fEnergyScaleTwkDial;   ///< Energy scale tweaking dial
    };
 
    //.........................................................................
@@ -193,10 +198,12 @@ public:
       BeamInputs();
      ~BeamInputs();
 
-      // Get information needed from beam for predicting the SK spectrum
-      double              SuperkNuMuFlux    (double Etrue, bool wght_to_10d=true) const;
-      double              SuperkNuMuFluxPOT (void) const;
-      const TMatrixDSym & SuperkNuMuFluxCov (void) const { return *fSuperkNuMuFluxCov; } ///< covariance matrix
+      // Get beam oscillation analysis inputs
+      double              SuperkNuMuFlux        (double Etrue, bool wght_to_10d=true) const;
+      double              SuperkNuMuFluxPOT     (void) const; 
+      const TMatrixDSym & SuperkNuMuFluxCov     (void) const; ///< Superk flux covariance matrix
+      double              SuperkNuMuFluxNormErr (double sinsq2theta23, double dmsq23) const; ///< normalization err
+      double              SuperkNuMuFluxNorm    (double sinsq2theta23, double dmsq23) const; ///< normalization 
 
       // Drawing option:
       // - "SKFlux/10a/NuMu"              : nominal SuperK numu flux (10a)
@@ -206,16 +213,24 @@ public:
       // - "SKFlux/CovarianceMatrix/NuMu" : SK numu flux covariance matrix
       void Draw(TVirtualPad * c, Option_t * opt = "SKFlux/10d") const;
 
+      //
+      void TweakNorm  (double twkdial) { fSuperkNuMuFluxNormTwkDial = twkdial; }
+      void TweakShape (bool reset=false);
+
     private:
 
       void Init    (void);
       void CleanUp (void);
       bool Read    (TXMLEngine* xml, XMLNodePointer_t root_node); ///< read inputs from XML file
 
-      TH1D *        fSuperkNuMuFlux;         // SuperK numu flux estimation
-      double        fSuperkNuMuFluxPOT;      // integrated POT for numu flux simulation
-      TMatrixDSym * fSuperkNuMuFluxCov;      // SuperK numu flux estimation
-      TH1D *        fSuperkNuMuWght10aTo10d; // SuperK flux weights (10a -> 10d)0
+      TH1D *        fSuperkNuMuFlux;            ///< SuperK numu flux estimation
+      double        fSuperkNuMuFluxPOT;         ///< integrated POT for numu flux simulation
+      TMatrixDSym * fSuperkNuMuFluxCov;         ///< SuperK numu flux estimation
+      TH1D *        fSuperkNuMuWght10aTo10d;    ///< SuperK flux weights (10a -> 10d)0
+      double        fSuperkNuMuFluxNormTwkDial; ///<
+      bool          fSuperkNuMuFluxHaveCholeskyL;
+      TMatrixD      fSuperkNuMuFluxCovCholeskyL;
+      TH1D *        fSuperkNuMuFluxTwks;
    };
 
    //.........................................................................
@@ -270,11 +285,6 @@ private:
    SuperkInputs *    fSuperkInputs;
    BeamInputs *      fBeamInputs;
    GeneratorInputs * fGeneratorInputs;
-
-   // systematics
-   double fTwkBeamNorm;     ///<
-   double fTwkSuperkNorm;   ///<
-   double fTwkSuperkEScale; ///<
 
    vector<t2kana::yr1numu::conv::SuperkSample_t> fSamples;
 

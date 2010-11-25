@@ -50,8 +50,9 @@ namespace util {
 
   // Cholesky decomposition
 
-  TMatrixD CholeskyDecomposition      (TMatrixD& cov_matrix); ///< Cholesky decomposition. Return lower triangular matrix.
-  TVectorD CholeskyGenerateCorrelated (TMatrixD& cholesky_triangular, TVectorD& mean_parm); ///< Generate a vector of correlated params
+  TMatrixD CholeskyDecomposition                     (TMatrixD& cov_matrix); ///< Cholesky decomposition. Return lower triangular matrix.
+  TVectorD CholeskyGenerateCorrelatedParams          (TMatrixD& cholesky_triangular, TVectorD& mean_parm); ///< Generate a vector of correlated params
+  TVectorD CholeskyGenerateCorrelatedParamVariations (TMatrixD& cholesky_triangular); ///< Generate a vector of correlated param variations
 
   string AsString(t2kana::yr1numu::conv::PhysParamId_t  p);
   string AsString(t2kana::yr1numu::conv::SuperkSample_t s);
