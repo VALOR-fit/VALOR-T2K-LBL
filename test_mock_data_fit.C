@@ -51,7 +51,7 @@ void test_mock_data_fit()
   fitter->ActualOscParams(input_sinsq2theta23, input_dm23sq);
 
   // do the fit
-  fitter.DoTheFit();
+  fitter->DoTheFit();
 
   // draw results
   fitter->Draw(new TCanvas(), "Results");

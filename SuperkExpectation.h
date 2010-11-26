@@ -79,6 +79,9 @@ public:
    BeamInputs *      GetBeamInputs      (void) { return fBeamInputs;      }
    GeneratorInputs * GetGeneratorInputs (void) { return fGeneratorInputs; }
 
+   // Reset all systematic variations
+   void ResetSystematicVariations(void);
+
    //.........................................................................
    // nested class ND280Inputs
    //.........................................................................
@@ -124,12 +127,13 @@ public:
       void   CleanUp (void);
       bool   Read    (TXMLEngine* xml, XMLNodePointer_t root_node); ///< read inputs from XML file
 
-      double  fPOTData;             ///< number of POT (data)
-      double  fNumObsCCLike;        ///< Observed number of CC-like events 
-      double  fPOTMC;               ///< number of POT (MC)
-      TH1F *  fNumSelEt[knmnd];     ///<
-      TH1F *  fSelEffEt[knmnd];     ///<
-      double  fSelEffTwkDial[knmnd];
+      double  fPOTData;              ///< number of POT (data)
+      double  fNumObsCCLike;         ///< Observed number of CC-like events 
+      double  fPOTMC;                ///< number of POT (MC)
+      TH1F *  fNumSelEt[knmnd];      ///< number of events passing cuts as function of Etrue for various modes
+      TH1F *  fSelEffEt[knmnd];      ///< selection efficiency as function of Etrue for various modes
+      double  fSelEffTwkDial[knmnd]; ///< selection efficiency tweaking dials for various modes
+      double  fSelEffRelErr;         ///< relative error on selection effciencies
    };
 
    //.........................................................................
@@ -147,12 +151,12 @@ public:
       double       EffectiveTargetMassNumber(void) const;
       double       FiducialMass             (void) const;
       double       AnalyzedSamplePOT        (void) const;
-      double       ReconstructionEfficiency (double Etrue, t2kana::yr1numu::conv::SuperkMode_t m) const;
+      double       RecoEfficiency           (double Etrue, t2kana::yr1numu::conv::SuperkMode_t m) const;
       double       SelectionEfficiency      (double Ereco, t2kana::yr1numu::conv::SuperkSample_t s, t2kana::yr1numu::conv::SuperkMode_t m) const;
       double       EnergyTransferMatrix     (double Etrue, double Ereco, t2kana::yr1numu::conv::SuperkSample_t s, t2kana::yr1numu::conv::SuperkMode_t m) const;
-      double       NormErr                  (void) const; ///< normalization err
-      double       Norm                     (void) const; ///< normalization 
-      double       EnergyScaleErr           (void) const; ///< energy scale err
+      double       FiducialMassRelErr       (void) const; ///< relative err on fiducial mass 
+      double       RecoEfficiencyRelErr     (void) const; ///< relative err on "reconstruction efficiency" (reduction, OD cut, visible energy cut)
+      double       EnergyScaleRelErr        (void) const; ///< energy scale err
       double       EnergyScale              (void) const; ///< energy scale 
       const TAxis& ErecoBinning             (void) const { return *fErBinning; }
       const TAxis& EtrueBinning             (void) const { return *fEtBinning; }
@@ -164,9 +168,10 @@ public:
       void Draw(TVirtualPad * c, Option_t * opt = "") const;
 
       // Systematic variations
-      void TweakNorm        (double twkdial) { fNormTwkDial        = twkdial; }
-      void TweakEnergyScale (double twkdial) { fEnergyScaleTwkDial = twkdial; }
-      void TweakEfficiency  (void) { } ///TODO
+      void TweakFiducialMass   (double twkdial) { fFidMassTwkDial     = twkdial; }
+      void TweakRecoEfficiency (double twkdial) { fRecoEffTwkDial     = twkdial; }
+      void TweakEnergyScale    (double twkdial) { fEnergyScaleTwkDial = twkdial; }
+      void TweakEfficiency   (void) { } ///TODO
 
     private:
 
@@ -175,15 +180,19 @@ public:
       bool Read               (TXMLEngine* xml, XMLNodePointer_t root_node); ///< read inputs from XML file
       void NormTransferMatrix (t2kana::yr1numu::conv::SuperkSample_t s, t2kana::yr1numu::conv::SuperkMode_t m);
 
-      double  fAeff;                 ///< effective mass number
-      double  fFidMass;              ///< fiducial mass
-      double  fPOT;                  ///< number of POT
+      double  fAeff;                 ///< Effective mass number
+      double  fFidMass;              ///< Fiducial mass
+      double  fFidMassRelErr;        ///< Fiducial mass relative error
+      double  fFidMassTwkDial;       ///< Fiducial mass tweaking dial
+      double  fPOT;                  ///< Number of POT
       TAxis * fErBinning;            ///< E_{reco} binning (both fixed and variable bin widths supported)
       TAxis * fEtBinning;            ///< E_{true} binning (both fixed and variable bin widths supported)
       TH1D  * fRecoEff[knm];         ///< Reconstruction efficiency = f(E_{true}, mode)
+      double  fRecoEffRelErr;        ///< Reconstruction efficiency relative error
+      double  fRecoEffTwkDial;       ///< Reconstruction efficiency tweaking dial
       TH1D  * fSelEff[kns][knm];     ///< Selection efficiency = f(E_{reco}, sample, mode)
       TH2D  * fETransMtrx[kns][knm]; ///< Energy transfer matrix = f(E_{true}, E_{reco}, sample, mode)
-      double  fNormTwkDial;          ///< Normalization tweaking dial
+      double  fEnergyScaleRelErr;    ///< Energy scale relative error
       double  fEnergyScaleTwkDial;   ///< Energy scale tweaking dial
    };
 
@@ -244,14 +253,9 @@ public:
       GeneratorInputs();
      ~GeneratorInputs();
   
-      // get information needed from neutrino generator for predicting the SK spectrum
-      double SigmaTotSK       (double Etrue) const;
-      double FractModeSK      (double Etrue, t2kana::yr1numu::conv::SuperkMode_t m) const;
-      double SigmaModeSK      (double Etrue, t2kana::yr1numu::conv::SuperkMode_t m) const;
-      double RelErrSigmaModeSK(double Etrue, t2kana::yr1numu::conv::SuperkMode_t m, int sign) const;
-      double SigmaTotCCND280  (double Etrue) const;
-
-      void TweakSigmaModeSK(t2kana::yr1numu::conv::SuperkMode_t m, double twk_dial);
+      // Get neutrino generator oscillation analysis inputs
+      double SigmaModeSK      (double Etrue, t2kana::yr1numu::conv::SuperkMode_t m) const; ///< cross section for input mode
+      double SigmaModeSKRelErr(double Etrue, t2kana::yr1numu::conv::SuperkMode_t m, int sign) const; /// relative err on cross section for input mode
 
       // Draw inputs:
       // - "SKSigTotal" : draw the numu+H20 total cross section
@@ -260,19 +264,22 @@ public:
       // - "SKFracMode" : draw fraction = f(Etrue) for various event modes in numu+H20
       void Draw(TVirtualPad * c, Option_t * opt = "") const;
 
+      // Systematic variations
+      void TweakSigmaModeSK(t2kana::yr1numu::conv::SuperkMode_t m, double twk_dial);
+
     private:
 
       void Init    (void);
       void CleanUp (void);
       bool Read    (TXMLEngine* xml, XMLNodePointer_t root_node); ///< read inputs from XML file
 
-      TH1D * fFractModeSK[knm];
-      TH1D * fSigmaTotSK;
-      TH1D * fSigmaTotCCND280;
+      double SigmaTotSK  (double Etrue) const;
+      double FractModeSK (double Etrue, t2kana::yr1numu::conv::SuperkMode_t m) const;
 
-      util::TH1DErrEnv * fErrSigmaModeSK[knm];
-
-      double fTwkSigmaModeSK[knm];
+      TH1D *             fSigmaTotSK;              ///< numu+H20 total cross section as a function of energy
+      TH1D *             fFractModeSK[knm];        ///< fraction of event modes in numu+H20 as a function of energy
+      util::TH1DErrEnv * fSigmaModeSKRelErr[knm];  /// 
+      double             fSigmaModeSKTwkDial[knm]; ///<
    };
 
 private:

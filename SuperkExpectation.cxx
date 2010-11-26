@@ -103,7 +103,7 @@ double SuperkExpectation::Generate(
   double expectation = 0;
 
   // plug-in energy scale systematics
-  Ereco *= fSuperkInputs->EnergyScale();
+///////////////////////////  Ereco *= fSuperkInputs->EnergyScale();
 
   // input physics params (params included in the fit / systematics params)
   double dmsq23          = fp.CurrValue(kPhypDm23sq);
@@ -134,7 +134,7 @@ double SuperkExpectation::Generate(
     double prob_surv       = util::NuMuSurvProb2D(sinsq2theta23, dmsq23, Etrue, m);
     double R_s_m_sk        = fSuperkInputs -> EnergyTransferMatrix(Etrue,Ereco,s,m);
     double eff_sel_s_m_sk  = fSuperkInputs -> SelectionEfficiency(Ereco,s,m);
-    double eff_reco_m_sk   = fSuperkInputs -> ReconstructionEfficiency(Etrue,m);
+    double eff_reco_m_sk   = fSuperkInputs -> RecoEfficiency(Etrue,m);
 
     double expectation_from_true_bin = 
         C0 * flux_sk * xsec_m_sk * prob_surv * R_s_m_sk * eff_sel_s_m_sk * eff_reco_m_sk;     
@@ -155,8 +155,7 @@ double SuperkExpectation::Generate(
 
   // plug-in global normalization systematics
   double flux_norm = fBeamInputs->SuperkNuMuFluxNorm(sinsq2theta23, dmsq23);
-  double sk_norm   = fSuperkInputs->Norm();
-  expectation *= (flux_norm * sk_norm);
+  expectation *= flux_norm;
 
 #ifdef __debug_level_2__
   cout << "Exp / Generate() >> "
@@ -252,6 +251,46 @@ TH1D * SuperkExpectation::AsTH1D(
   return hEreco;
 }
 //________________________________________________________________________________________
+void SuperkExpectation::ResetSystematicVariations(void)
+{
+  this->GetND280Inputs()->TweakEfficiency( kNDmNuMuCCQE,      0.);
+  this->GetND280Inputs()->TweakEfficiency( kNDmNuMuCCRES,     0.);
+  this->GetND280Inputs()->TweakEfficiency( kNDmNuMuCCCOH,     0.);
+  this->GetND280Inputs()->TweakEfficiency( kNDmNuMuCCOth,     0.);
+  this->GetND280Inputs()->TweakEfficiency( kNDmNuMuNCEL,      0.);
+  this->GetND280Inputs()->TweakEfficiency( kNDmNuMuNCRES,     0.);
+  this->GetND280Inputs()->TweakEfficiency( kNDmNuMuNCCOH,     0.);
+  this->GetND280Inputs()->TweakEfficiency( kNDmNuMuNCOth,     0.);
+  this->GetND280Inputs()->TweakEfficiency( kNDmNuMuBarCCQE,   0.);
+  this->GetND280Inputs()->TweakEfficiency( kNDmNuMuBarCCRES,  0.);
+  this->GetND280Inputs()->TweakEfficiency( kNDmNuMuBarCCCOH,  0.);
+  this->GetND280Inputs()->TweakEfficiency( kNDmNuMuBarCCOth,  0.);
+  this->GetND280Inputs()->TweakEfficiency( kNDmNuMuBarNCEL,   0.);
+  this->GetND280Inputs()->TweakEfficiency( kNDmNuMuBarNCRES,  0.);
+  this->GetND280Inputs()->TweakEfficiency( kNDmNuMuBarNCCOH,  0.);
+  this->GetND280Inputs()->TweakEfficiency( kNDmNuMuBarNCOth,  0.);
+  this->GetND280Inputs()->TweakEfficiency( kNDmNuECCQE,       0.);
+  this->GetND280Inputs()->TweakEfficiency( kNDmNuECCRES,      0.);
+  this->GetND280Inputs()->TweakEfficiency( kNDmNuECCCOH,      0.);
+  this->GetND280Inputs()->TweakEfficiency( kNDmNuECCOth,      0.);
+  this->GetND280Inputs()->TweakEfficiency( kNDmNuENCEL,       0.);
+  this->GetND280Inputs()->TweakEfficiency( kNDmNuENCRES,      0.);
+  this->GetND280Inputs()->TweakEfficiency( kNDmNuENCCOH,      0.);
+  this->GetND280Inputs()->TweakEfficiency( kNDmNuENCOth,      0.);
+
+  this->GetSuperkInputs()->TweakFiducialMass   (0.);
+  this->GetSuperkInputs()->TweakRecoEfficiency (0.);
+  this->GetSuperkInputs()->TweakEnergyScale    (0.);
+//selection efficiency
+
+  this->GetBeamInputs()->TweakNorm(0.);
+//shape      
+
+  this->GetGeneratorInputs()->TweakSigmaModeSK(kSKmNuMuCCQE,    0.);
+  this->GetGeneratorInputs()->TweakSigmaModeSK(kSKmNuMuNonCCQE, 0.);
+  this->GetGeneratorInputs()->TweakSigmaModeSK(kSKmNC,          0.);
+}
+//________________________________________________________________________________________
 bool SuperkExpectation::Read(string config_file)
 {
   cout << "Exp >> " << "Reading config file: " << config_file << endl;
@@ -335,6 +374,7 @@ void SuperkExpectation::ND280Inputs::Init(void)
     fSelEffEt[i] = 0;
     fSelEffTwkDial[i] = 0;
   }
+  fSelEffRelErr = 0.;
 }
 //________________________________________________________________________________________
 void SuperkExpectation::ND280Inputs::CleanUp(void)
@@ -519,6 +559,10 @@ bool SuperkExpectation::ND280Inputs::Read(TXMLEngine* xml, XMLNodePointer_t root
     util::XML2TH1F(xml,root_node,"nd280/saclay_selection/efficiency_vs_true_energy/nue_nccoh");
   fSelEffEt [kNDmNuENCOth]      =
     util::XML2TH1F(xml,root_node,"nd280/saclay_selection/efficiency_vs_true_energy/nue_ncoth");
+
+  // Get error on efficiency
+  fSelEffRelErr = util::XML2Dbl(xml,root_node,"nd280/saclay_selection/systematics/efficiency_relative_error");
+  cout << "Exp/nd280 >> delta{efficiency} : " << fSelEffRelErr << endl;
 
   // Set colors and line styles for drawing
 
@@ -951,7 +995,7 @@ double SuperkExpectation::ND280Inputs::EfficiencyRelErr(
 // relative uncertainty on efficiency 
 // (can be asymmetric)
 
-  return 0.01; //TODO
+  return fSelEffRelErr;
 }
 //________________________________________________________________________________________
 void SuperkExpectation::ND280Inputs::TweakEfficiency(ND280Mode_t mode, double twkdial)
@@ -975,15 +1019,21 @@ SuperkExpectation::SuperkInputs::~SuperkInputs()
 //________________________________________________________________________________________
 void SuperkExpectation::SuperkInputs::Init(void)
 {
-  fAeff      = 0;  
-  fFidMass   = 0; 
-  fPOT       = 0;  
-  fErBinning = 0;
-  fEtBinning = 0;
+  fAeff           = 0;  
+  fFidMass        = 0; 
+  fFidMassRelErr  = 0; 
+  fFidMassTwkDial = 0; 
+  fPOT            = 0;  
+  fErBinning      = 0;
+  fEtBinning      = 0;
 
   for(int im=0; im<knm; im++) {
     fRecoEff[im] = 0;
   }
+
+  fRecoEffRelErr  = 0;
+  fRecoEffTwkDial = 0;
+
   for(int is=0; is<kns; is++) {
     for(int im=0; im<knm; im++) {
       fSelEff    [is][im] = 0; 
@@ -991,7 +1041,7 @@ void SuperkExpectation::SuperkInputs::Init(void)
     }
   }
 
-  fNormTwkDial        = 0.;
+  fEnergyScaleRelErr  = 0.;
   fEnergyScaleTwkDial = 0.;
 }
 //________________________________________________________________________________________
@@ -1047,13 +1097,23 @@ bool SuperkExpectation::SuperkInputs::Read(TXMLEngine* xml, XMLNodePointer_t roo
 
   // Get fiducial mass
   fFidMass = util::XML2Dbl(xml,root_node,"superk/fiducial_mass");
+  // Get relative error on fiducial mass
+  fFidMassRelErr = util::XML2Dbl(xml,root_node,"superk/systematics/fiducial_mass_error");
+  // Get relative error on reconstruction efficiency (reduction / OD cut / visible energy cut)
+  fRecoEffRelErr = util::XML2Dbl(xml,root_node,"superk/systematics/reconstruction_efficiency_error");
+  // Get relative error on energy scale
+  fEnergyScaleRelErr = util::XML2Dbl(xml,root_node,"superk/systematics/energy_scale_error");
   // Get POT
   fPOT = util::XML2Dbl(xml,root_node,"superk/pot");
   // Get mass number
   fAeff = util::XML2Dbl(xml,root_node,"superk/mass_number");
-  cout << "Exp/SK >> " << "M_{fiducial}  : " << fFidMass << " kton" << endl;
-  cout << "Exp/SK >> " << "N_{POT}       : " << fPOT     << endl;
-  cout << "Exp/SK >> " << "A_{effective} : " << fAeff    << endl;
+
+  cout << "Exp/SK >> " << "N_{POT} : " << fPOT << endl;
+  cout << "Exp/SK >> " << "A_{effective} : " << fAeff << endl;
+  cout << "Exp/SK >> " << "M_{fiducial} : " << fFidMass << " kton" << endl;
+  cout << "Exp/SK >> " << "delta{M_{fiducial}} : " << fFidMassRelErr << endl;
+  cout << "Exp/SK >> " << "delta{efficiency_{reco}} : " << fRecoEffRelErr << endl;
+  cout << "Exp/SK >> " << "delta{energy_scale} : " << fEnergyScaleRelErr << endl;
 
   // Get Ereco and Etrue binning
   fErBinning = util::XML2BinInfo(xml,root_node,"superk/binning/ereco");
@@ -1132,7 +1192,7 @@ double SuperkExpectation::SuperkInputs::EffectiveTargetMassNumber(void) const
 //________________________________________________________________________________________
 double SuperkExpectation::SuperkInputs::FiducialMass(void) const
 {
-  return fFidMass; 
+  return fFidMass * (1. + fFidMassTwkDial * fFidMassRelErr); 
 }
 //________________________________________________________________________________________
 double SuperkExpectation::SuperkInputs::AnalyzedSamplePOT(void) const
@@ -1140,13 +1200,15 @@ double SuperkExpectation::SuperkInputs::AnalyzedSamplePOT(void) const
   return fPOT;  
 }
 //________________________________________________________________________________________
-double SuperkExpectation::SuperkInputs::ReconstructionEfficiency(
+double SuperkExpectation::SuperkInputs::RecoEfficiency(
     double Etrue, SuperkMode_t m) const
 {
   TH1D * h = fRecoEff[m];
   assert(h);
   int bin = h->FindBin(Etrue);
   double eff = h->GetBinContent(bin);
+  eff *= (1. + fRecoEffTwkDial * fRecoEffRelErr);
+  eff = TMath::Max(1.,eff);
   return eff;
 }
 //________________________________________________________________________________________
@@ -1171,37 +1233,34 @@ double SuperkExpectation::SuperkInputs::EnergyTransferMatrix(
   return Rij;
 }
 //________________________________________________________________________________________
-double SuperkExpectation::SuperkInputs::NormErr(void) const
+double SuperkExpectation::SuperkInputs::FiducialMassRelErr(void) const
 {
-// normalization err
+// relative error on fiducial mass
   
-  return 0.01;//TODO
+  return fFidMassRelErr;
 }
 //________________________________________________________________________________________
-double SuperkExpectation::SuperkInputs::Norm(void) const
+double SuperkExpectation::SuperkInputs::RecoEfficiencyRelErr(void) const
 {
-// normalization
-
-  double twkdial = fNormTwkDial;
-  double normerr = this->NormErr();
-  double norm    = 1 + twkdial * normerr;
-  return norm;
+// relative error on reconstruction efficiency
+  
+  return fRecoEffRelErr;
 }
 //________________________________________________________________________________________
-double SuperkExpectation::SuperkInputs::EnergyScaleErr(void) const
+double SuperkExpectation::SuperkInputs::EnergyScaleRelErr(void) const
 {
-// energy scale err
+// energy scale relative error
 
-  return 0.1;//TODO
+  return fEnergyScaleRelErr;
 }
 //________________________________________________________________________________________
 double SuperkExpectation::SuperkInputs::EnergyScale(void) const
 {
 // energy scale
 
-  double twkdial  = fEnergyScaleTwkDial;
-  double scaleerr = this->EnergyScaleErr();
-  double scale    = 1 + twkdial * scaleerr;
+  double twkdial = fEnergyScaleTwkDial;
+  double err     = this->EnergyScaleRelErr();
+  double scale   = 1 + twkdial * err;
   return scale;
 }
 //________________________________________________________________________________________
@@ -1450,20 +1509,22 @@ SuperkExpectation::GeneratorInputs::~GeneratorInputs()
 //________________________________________________________________________________________
 void SuperkExpectation::GeneratorInputs::Init(void)
 {
+  fSigmaTotSK = 0;
   for(int im=0; im<knm; im++) {
-    fFractModeSK[im] = 0;
+    fFractModeSK[im]       = 0;
+    fSigmaModeSKRelErr[im] = 0;
+    fSigmaModeSKTwkDial[im] = 0;
   }
-  fSigmaTotSK      = 0;
-  fSigmaTotCCND280 = 0;
 }
 //________________________________________________________________________________________
 void SuperkExpectation::GeneratorInputs::CleanUp(void)
 {
+  if ( fSigmaTotSK ) delete fSigmaTotSK;
+
   for(int im=0; im<knm; im++) {
-    if ( fFractModeSK[im] ) delete fFractModeSK[im];
+    if ( fFractModeSK[im]       ) delete fFractModeSK[im];
+    if ( fSigmaModeSKRelErr[im] ) delete fSigmaModeSKRelErr[im];
   }
-  if ( fSigmaTotSK      ) delete fSigmaTotSK;
-  if ( fSigmaTotCCND280 ) delete fSigmaTotCCND280;
 }
 //________________________________________________________________________________________
 bool SuperkExpectation::GeneratorInputs::Read(TXMLEngine* xml, XMLNodePointer_t root_node)
@@ -1471,15 +1532,19 @@ bool SuperkExpectation::GeneratorInputs::Read(TXMLEngine* xml, XMLNodePointer_t 
   cout << "Exp/NuGen >> Reading neutrino generator inputs from input XML file." << endl;
 
   // Get numu+H20 total cross section = f(E_true)
-  fSigmaTotSK = util::XML2TH1D(xml,root_node,"genie/sigma_total_H2O");
+  fSigmaTotSK = util::XML2TH1D(xml,root_node,"genie/superk/sigma_total");
   if(!fSigmaTotSK) {
     cerr << "Exp/NuGen >> No input numu+H20 total cross section histogram!" << endl;
     exit(1);
   }
-  // Get event fractions for different modes in numu+H20 interactions  = f(E_true)
-  fFractModeSK[kSKmNuMuCCQE]    = util::XML2TH1D(xml,root_node,"genie/fraction_mode_H2O/ccqe");
-  fFractModeSK[kSKmNuMuNonCCQE] = util::XML2TH1D(xml,root_node,"genie/fraction_mode_H2O/nonccqe");
-  fFractModeSK[kSKmNC]          = util::XML2TH1D(xml,root_node,"genie/fraction_mode_H2O/nc");
+
+  // Get event fractions for different modes in numu+H20 interactions = f(E_true)
+  fFractModeSK[kSKmNuMuCCQE] = 
+     util::XML2TH1D(xml,root_node,"genie/superk/fraction_mode/ccqe");
+  fFractModeSK[kSKmNuMuNonCCQE] = 
+     util::XML2TH1D(xml,root_node,"genie/superk/fraction_mode/nonccqe");
+  fFractModeSK[kSKmNC] = 
+     util::XML2TH1D(xml,root_node,"genie/superk/fraction_mode/nc");
   if ( !fFractModeSK[kSKmNuMuCCQE]    ||
        !fFractModeSK[kSKmNuMuNonCCQE] ||
        !fFractModeSK[kSKmNC] ) {
@@ -1487,9 +1552,14 @@ bool SuperkExpectation::GeneratorInputs::Read(TXMLEngine* xml, XMLNodePointer_t 
     exit(1);
   }
 
-  fErrSigmaModeSK[kSKmNuMuCCQE]    = util::XML2TH1DErrEnv(xml,root_node,"genie/err_sigma_mode_H2O/ccqe");
-  fErrSigmaModeSK[kSKmNuMuNonCCQE] = util::XML2TH1DErrEnv(xml,root_node,"genie/err_sigma_mode_H2O/nonccqe");
-  fErrSigmaModeSK[kSKmNC]          = util::XML2TH1DErrEnv(xml,root_node,"genie/err_sigma_mode_H2O/nc");
+  // Get relative error on cross section for various numu+H20 reaction modes
+  // Error can be asymmetric.
+  fSigmaModeSKRelErr[kSKmNuMuCCQE] = 
+    util::XML2TH1DErrEnv(xml,root_node,"genie/superk/systematics/sigma_mode_relative_error/ccqe");
+  fSigmaModeSKRelErr[kSKmNuMuNonCCQE] = 
+    util::XML2TH1DErrEnv(xml,root_node,"genie/superk/systematics/sigma_mode_relative_error/nonccqe");
+  fSigmaModeSKRelErr[kSKmNC] = 
+    util::XML2TH1DErrEnv(xml,root_node,"genie/superk/systematics/sigma_mode_relative_error/nc");
 
   cout << "Exp/NuGen >> Done reading neutrino generator inputs!" << endl;
 
@@ -1528,12 +1598,12 @@ void SuperkExpectation::GeneratorInputs::Draw(TVirtualPad * c, Option_t * option
   if(opt.Contains("SKErrSigMode")) { 
     TH1F * hframe = (TH1F*)c->DrawFrame(0,-.5,4,.5);
     hframe->Draw();
-    fErrSigmaModeSK[kSKmNuMuCCQE]    -> fLow  -> Draw("same");
-    fErrSigmaModeSK[kSKmNuMuCCQE]    -> fHigh -> Draw("same");
-    fErrSigmaModeSK[kSKmNuMuNonCCQE] -> fLow  -> Draw("same");
-    fErrSigmaModeSK[kSKmNuMuNonCCQE] -> fHigh -> Draw("same");
-    fErrSigmaModeSK[kSKmNC]          -> fLow  -> Draw("same");
-    fErrSigmaModeSK[kSKmNC]          -> fHigh -> Draw("same");
+    fSigmaModeSKRelErr[kSKmNuMuCCQE]    -> fLow  -> Draw("same");
+    fSigmaModeSKRelErr[kSKmNuMuCCQE]    -> fHigh -> Draw("same");
+    fSigmaModeSKRelErr[kSKmNuMuNonCCQE] -> fLow  -> Draw("same");
+    fSigmaModeSKRelErr[kSKmNuMuNonCCQE] -> fHigh -> Draw("same");
+    fSigmaModeSKRelErr[kSKmNC]          -> fLow  -> Draw("same");
+    fSigmaModeSKRelErr[kSKmNC]          -> fHigh -> Draw("same");
   }
   
   c->Update();
@@ -1564,19 +1634,20 @@ double SuperkExpectation::GeneratorInputs::SigmaModeSK(double Etrue, SuperkMode_
   double sigtot   = this->SigmaTotSK(Etrue);
   double frcmode  = this->FractModeSK(Etrue,m);
   double sigmode0 = sigtot * frcmode; 
-  double twkdial  = fTwkSigmaModeSK[m];
-  double relerr   = this->RelErrSigmaModeSK(Etrue,m,util::Sign(twkdial));
+  double twkdial  = fSigmaModeSKTwkDial[m];
+  double relerr   = this->SigmaModeSKRelErr(Etrue,m,util::Sign(twkdial));
   double sigmode  = sigmode0 * (1. + twkdial * relerr);
   return sigmode;
 }
 //________________________________________________________________________________________
-double SuperkExpectation::GeneratorInputs::RelErrSigmaModeSK(
+double SuperkExpectation::GeneratorInputs::SigmaModeSKRelErr(
   double Etrue, SuperkMode_t m, int sign) const
 {
 // Get estimated relative error on sigma_H2O(mode;Etrue)
 //
   if(sign==0) return 0;
-  TH1D * hrelerr = (sign>0) ? fErrSigmaModeSK[m]->fHigh : fErrSigmaModeSK[m]->fLow;
+  TH1D * hrelerr = (sign>0) ? 
+    fSigmaModeSKRelErr[m]->fHigh : fSigmaModeSKRelErr[m]->fLow;
   assert(hrelerr);
   int    bin    = hrelerr->FindBin(Etrue);
   double relerr = hrelerr->GetBinContent(bin);
@@ -1584,17 +1655,10 @@ double SuperkExpectation::GeneratorInputs::RelErrSigmaModeSK(
   return relerr;
 }
 //________________________________________________________________________________________
-double SuperkExpectation::GeneratorInputs::SigmaTotCCND280(double Etrue) const
-{
-//TODO
-//CURRENTLY ASSUME A NEAR SK TOO
-  return this->SigmaTotSK(Etrue);
-}
-//________________________________________________________________________________________
 void SuperkExpectation::GeneratorInputs::TweakSigmaModeSK(
   t2kana::yr1numu::conv::SuperkMode_t m, double twk_dial)
 {
-  fTwkSigmaModeSK[m] = twk_dial;
+  fSigmaModeSKTwkDial[m] = twk_dial;
 }
 //________________________________________________________________________________________
 

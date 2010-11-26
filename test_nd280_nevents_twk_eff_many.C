@@ -35,7 +35,7 @@ void test_nd280_nevents_twk_eff_many()
 
   const int n = 10000;
 
-  TH1D * hst_flux_correction_factor = new TH1D("hst_flux_correction_factor","",60,1.10,1.30);
+  TH1D * hst_flux_correction_factor = new TH1D("hst_flux_correction_factor","",70,0.8,1.5);
 
   for(int i = 0; i < n; i++) {
      skexp.GetND280Inputs()->TweakEfficiency( conv::kNDmNuMuCCQE,     rand.Gaus(0,1) );
