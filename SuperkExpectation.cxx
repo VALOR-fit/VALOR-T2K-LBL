@@ -102,9 +102,6 @@ double SuperkExpectation::Generate(
 
   double expectation = 0;
 
-  // plug-in energy scale systematics
-///////////////////////////  Ereco *= fSuperkInputs->EnergyScale();
-
   // input physics params (params included in the fit / systematics params)
   double dmsq23          = fp.CurrValue(kPhypDm23sq);
   double sinsq2theta23   = fp.CurrValue(kPhypSinsq2Theta23);
@@ -168,9 +165,13 @@ double SuperkExpectation::Generate(
 //________________________________________________________________________________________
 TH1D * SuperkExpectation::AsTH1D(const PhysParamList & fp)
 {
-  int    nbins = fSuperkInputs->fErBinning->GetNbins();
-  double emin  = fSuperkInputs->fErBinning->GetXmin();
-  double emax  = fSuperkInputs->fErBinning->GetXmax();
+////  int    nbins = fSuperkInputs->fErBinning->GetNbins();
+////  double emin  = fSuperkInputs->fErBinning->GetXmin();
+////  double emax  = fSuperkInputs->fErBinning->GetXmax();
+
+  int    nbins = fSuperkInputs->ErecoBinning().GetNbins();
+  double emin  = fSuperkInputs->ErecoBinning().GetXmin();
+  double emax  = fSuperkInputs->ErecoBinning().GetXmax();
 
   TH1D * hEreco = new TH1D("hEreco", "", nbins, emin, emax);
   hEreco->SetDirectory(0);
@@ -186,9 +187,13 @@ TH1D * SuperkExpectation::AsTH1D(const PhysParamList & fp)
 //________________________________________________________________________________________
 TH1D * SuperkExpectation::AsTH1D(const PhysParamList & fp, SuperkSample_t s)
 {
-  int    nbins = fSuperkInputs->fErBinning->GetNbins();
-  double emin  = fSuperkInputs->fErBinning->GetXmin();
-  double emax  = fSuperkInputs->fErBinning->GetXmax();
+///  int    nbins = fSuperkInputs->fErBinning->GetNbins();
+///  double emin  = fSuperkInputs->fErBinning->GetXmin();
+///  double emax  = fSuperkInputs->fErBinning->GetXmax();
+
+  int    nbins = fSuperkInputs->ErecoBinning().GetNbins();
+  double emin  = fSuperkInputs->ErecoBinning().GetXmin();
+  double emax  = fSuperkInputs->ErecoBinning().GetXmax();
 
   const unsigned int nm = 3;  
   SuperkMode_t sk_modes [nm] = { kSKmNuMuCCQE, kSKmNuMuNonCCQE, kSKmNC };
@@ -210,9 +215,13 @@ TH1D * SuperkExpectation::AsTH1D(const PhysParamList & fp, SuperkSample_t s)
 //________________________________________________________________________________________
 TH1D * SuperkExpectation::AsTH1D(const PhysParamList & fp, SuperkMode_t m)
 {
-  int    nbins = fSuperkInputs->fErBinning->GetNbins();
-  double emin  = fSuperkInputs->fErBinning->GetXmin();
-  double emax  = fSuperkInputs->fErBinning->GetXmax();
+///  int    nbins = fSuperkInputs->fErBinning->GetNbins();
+///  double emin  = fSuperkInputs->fErBinning->GetXmin();
+///  double emax  = fSuperkInputs->fErBinning->GetXmax();
+
+  int    nbins = fSuperkInputs->ErecoBinning().GetNbins();
+  double emin  = fSuperkInputs->ErecoBinning().GetXmin();
+  double emax  = fSuperkInputs->ErecoBinning().GetXmax();
 
   TH1D * hEreco = new TH1D("hEreco", "", nbins, emin, emax);
   hEreco->SetDirectory(0);
@@ -235,9 +244,13 @@ TH1D * SuperkExpectation::AsTH1D(const PhysParamList & fp, SuperkMode_t m)
 TH1D * SuperkExpectation::AsTH1D(
   const PhysParamList & fp, SuperkSample_t s, SuperkMode_t m)
 {
-  int    nbins = fSuperkInputs->fErBinning->GetNbins();
-  double emin  = fSuperkInputs->fErBinning->GetXmin();
-  double emax  = fSuperkInputs->fErBinning->GetXmax();
+///  int    nbins = fSuperkInputs->fErBinning->GetNbins();
+///  double emin  = fSuperkInputs->fErBinning->GetXmin();
+///  double emax  = fSuperkInputs->fErBinning->GetXmax();
+
+  int    nbins = fSuperkInputs->ErecoBinning().GetNbins();
+  double emin  = fSuperkInputs->ErecoBinning().GetXmin();
+  double emax  = fSuperkInputs->ErecoBinning().GetXmax();
 
   TH1D * hEreco = new TH1D("hEreco", "", nbins, emin, emax);
   hEreco->SetDirectory(0);
@@ -303,6 +316,8 @@ bool SuperkExpectation::Read(string config_file)
   fSuperkInputs    = new SuperkInputs;
   fBeamInputs      = new BeamInputs; 
   fGeneratorInputs = new GeneratorInputs; 
+
+  fND280Inputs->TellMeAboutCrossSections(fGeneratorInputs);
 
   // Parse the input configuration file
   TXMLEngine* xml = new TXMLEngine;   
@@ -375,6 +390,7 @@ void SuperkExpectation::ND280Inputs::Init(void)
     fSelEffTwkDial[i] = 0;
   }
   fSelEffRelErr = 0.;
+  fGenInp = 0; //TODO
 }
 //________________________________________________________________________________________
 void SuperkExpectation::ND280Inputs::CleanUp(void)
@@ -974,6 +990,8 @@ double SuperkExpectation::ND280Inputs::NumOfEvents(ND280Mode_t mode) const
 
   assert(spectrum && efficiency);
 
+  double mev2gev = 1E-3;
+
   double sum_nev = 0;
   for(int ibin = 1; ibin <= spectrum->GetNbinsX(); ibin++) {
      double Etrue   = spectrum->GetBinCenter(ibin);
@@ -982,7 +1000,8 @@ double SuperkExpectation::ND280Inputs::NumOfEvents(ND280Mode_t mode) const
      double efferr  = this->EfficiencyRelErr(Etrue, mode, util::Sign(efftwkdial));
    //double twkeff  = eff * (1 + efftwkdial * efferr)
      double effwght = 1 + efftwkdial * efferr;
-     nev *= effwght;
+     double sigwght = fGenInp->SigmaModeND280Wght(Etrue*mev2gev, mode);
+     nev *= (effwght*sigwght);
      sum_nev += nev;
   }
   
@@ -1098,11 +1117,11 @@ bool SuperkExpectation::SuperkInputs::Read(TXMLEngine* xml, XMLNodePointer_t roo
   // Get fiducial mass
   fFidMass = util::XML2Dbl(xml,root_node,"superk/fiducial_mass");
   // Get relative error on fiducial mass
-  fFidMassRelErr = util::XML2Dbl(xml,root_node,"superk/systematics/fiducial_mass_error");
+  fFidMassRelErr = util::XML2Dbl(xml,root_node,"superk/systematics/fiducial_mass_relative_error");
   // Get relative error on reconstruction efficiency (reduction / OD cut / visible energy cut)
-  fRecoEffRelErr = util::XML2Dbl(xml,root_node,"superk/systematics/reconstruction_efficiency_error");
+  fRecoEffRelErr = util::XML2Dbl(xml,root_node,"superk/systematics/reconstruction_efficiency_relative_error");
   // Get relative error on energy scale
-  fEnergyScaleRelErr = util::XML2Dbl(xml,root_node,"superk/systematics/energy_scale_error");
+  fEnergyScaleRelErr = util::XML2Dbl(xml,root_node,"superk/systematics/energy_scale_relative_error");
   // Get POT
   fPOT = util::XML2Dbl(xml,root_node,"superk/pot");
   // Get mass number
@@ -1215,9 +1234,13 @@ double SuperkExpectation::SuperkInputs::RecoEfficiency(
 double SuperkExpectation::SuperkInputs::SelectionEfficiency(
     double Ereco, SuperkSample_t s, SuperkMode_t m) const
 {
+  // plug-in energy scale systematic
+  double Erecoprime = Ereco * this->EnergyScale();
+
+  // get (s;m) selection efficiency at Ereco'
   TH1D * h = fSelEff[s][m];
   assert(h);
-  int bin = h->FindBin(Ereco);
+  int bin = h->FindBin(Erecoprime);
   double eff = h->GetBinContent(bin);
   return eff;
 }
@@ -1225,10 +1248,14 @@ double SuperkExpectation::SuperkInputs::SelectionEfficiency(
 double SuperkExpectation::SuperkInputs::EnergyTransferMatrix(
     double Etrue, double Ereco, SuperkSample_t s, SuperkMode_t m) const
 {
+  // plug-in energy scale systematic
+  double Erecoprime = Ereco * this->EnergyScale();
+
+  // get (e;m) energy transfer matrix element at Etrue,Ereco'.
   TH2D * h2 = fETransMtrx[s][m];
   assert(h2);
   int bint = h2->GetYaxis()->FindBin(Etrue);
-  int binr = h2->GetXaxis()->FindBin(Ereco);
+  int binr = h2->GetXaxis()->FindBin(Erecoprime);
   double Rij = h2->GetBinContent(binr,bint);
   return Rij;
 }
@@ -1260,7 +1287,7 @@ double SuperkExpectation::SuperkInputs::EnergyScale(void) const
 
   double twkdial = fEnergyScaleTwkDial;
   double err     = this->EnergyScaleRelErr();
-  double scale   = 1 + twkdial * err;
+  double scale   = 1. + twkdial * err;
   return scale;
 }
 //________________________________________________________________________________________
@@ -1515,6 +1542,7 @@ void SuperkExpectation::GeneratorInputs::Init(void)
     fSigmaModeSKRelErr[im] = 0;
     fSigmaModeSKTwkDial[im] = 0;
   }
+  fCorrelateSKWithND280 = true;
 }
 //________________________________________________________________________________________
 void SuperkExpectation::GeneratorInputs::CleanUp(void)
@@ -1629,14 +1657,19 @@ double SuperkExpectation::GeneratorInputs::SigmaTotSK(double Etrue) const
   return sig;
 }
 //________________________________________________________________________________________
-double SuperkExpectation::GeneratorInputs::SigmaModeSK(double Etrue, SuperkMode_t m) const
+double SuperkExpectation::GeneratorInputs::SigmaModeSK(
+   double Etrue, SuperkMode_t m, bool neglect_twk) const
 {
   double sigtot   = this->SigmaTotSK(Etrue);
   double frcmode  = this->FractModeSK(Etrue,m);
   double sigmode0 = sigtot * frcmode; 
+
+  if(neglect_twk) return sigmode0;
+
   double twkdial  = fSigmaModeSKTwkDial[m];
   double relerr   = this->SigmaModeSKRelErr(Etrue,m,util::Sign(twkdial));
   double sigmode  = sigmode0 * (1. + twkdial * relerr);
+
   return sigmode;
 }
 //________________________________________________________________________________________
@@ -1647,7 +1680,7 @@ double SuperkExpectation::GeneratorInputs::SigmaModeSKRelErr(
 //
   if(sign==0) return 0;
   TH1D * hrelerr = (sign>0) ? 
-    fSigmaModeSKRelErr[m]->fHigh : fSigmaModeSKRelErr[m]->fLow;
+      fSigmaModeSKRelErr[m]->fHigh : fSigmaModeSKRelErr[m]->fLow;
   assert(hrelerr);
   int    bin    = hrelerr->FindBin(Etrue);
   double relerr = hrelerr->GetBinContent(bin);
@@ -1655,10 +1688,70 @@ double SuperkExpectation::GeneratorInputs::SigmaModeSKRelErr(
   return relerr;
 }
 //________________________________________________________________________________________
+double SuperkExpectation::GeneratorInputs::SigmaModeND280Wght(
+   double Etrue, t2kana::yr1numu::conv::ND280Mode_t mnd) const  
+{
+   if(!fCorrelateSKWithND280) return 1;
+
+   double weight = 1.;
+
+//----------------------- <TODO/>
+
+   //
+   // Cheat / Recycle SuperK error evnelopes for ND280.
+   // Work to calculate ND280 error envelopes is in progress
+   //
+
+   double sig_ccqe_def     = this->SigmaModeSK(Etrue, kSKmNuMuCCQE,    true);
+   double sig_ccnonqe_def  = this->SigmaModeSK(Etrue, kSKmNuMuNonCCQE, true);
+   double sig_nc_def       = this->SigmaModeSK(Etrue, kSKmNC,          true);
+
+   double sig_ccqe_twk     = this->SigmaModeSK(Etrue, kSKmNuMuCCQE);
+   double sig_ccnonqe_twk  = this->SigmaModeSK(Etrue, kSKmNuMuNonCCQE);
+   double sig_nc_twk       = this->SigmaModeSK(Etrue, kSKmNC);
+
+   double ccqe_wght    =  (sig_ccqe_def    > 0) ? sig_ccqe_twk    / sig_ccqe_def     : 1.;
+   double ccnonqe_wght =  (sig_ccnonqe_def > 0) ? sig_ccnonqe_twk / sig_ccnonqe_def  : 1.;
+   double nc_wght      =  (sig_nc_def      > 0) ? sig_nc_twk      / sig_nc_def       : 1.;
+
+   switch(mnd) {
+      case ( kNDmNuMuCCQE     ) : weight = ccqe_wght;     break;
+      case ( kNDmNuMuCCRES    ) : weight = ccnonqe_wght;  break;
+      case ( kNDmNuMuCCCOH    ) : weight = ccnonqe_wght;  break;
+      case ( kNDmNuMuCCOth    ) : weight = ccnonqe_wght;  break;
+      case ( kNDmNuMuNCEL     ) : weight = nc_wght;       break;
+      case ( kNDmNuMuNCRES    ) : weight = nc_wght;       break;
+      case ( kNDmNuMuNCCOH    ) : weight = nc_wght;       break;
+      case ( kNDmNuMuNCOth    ) : weight = nc_wght;       break;
+      case ( kNDmNuMuBarCCQE  ) : weight = ccqe_wght;     break;
+      case ( kNDmNuMuBarCCRES ) : weight = ccnonqe_wght;  break;
+      case ( kNDmNuMuBarCCCOH ) : weight = ccnonqe_wght;  break;
+      case ( kNDmNuMuBarCCOth ) : weight = ccnonqe_wght;  break;
+      case ( kNDmNuMuBarNCEL  ) : weight = nc_wght;       break;
+      case ( kNDmNuMuBarNCRES ) : weight = nc_wght;       break;
+      case ( kNDmNuMuBarNCCOH ) : weight = nc_wght;       break;
+      case ( kNDmNuMuBarNCOth ) : weight = nc_wght;       break;
+      case ( kNDmNuECCQE      ) : weight = ccqe_wght;     break;
+      case ( kNDmNuECCRES     ) : weight = ccnonqe_wght;  break;
+      case ( kNDmNuECCCOH     ) : weight = ccnonqe_wght;  break;
+      case ( kNDmNuECCOth     ) : weight = ccnonqe_wght;  break;
+      case ( kNDmNuENCEL      ) : weight = nc_wght;       break;
+      case ( kNDmNuENCRES     ) : weight = nc_wght;       break;
+      case ( kNDmNuENCCOH     ) : weight = nc_wght;       break;
+      case ( kNDmNuENCOth     ) : weight = nc_wght;       break;
+      default                   : weight = 1;             break;
+   }
+//----------------------- </TODO>
+
+   return weight;
+
+}
+//________________________________________________________________________________________
 void SuperkExpectation::GeneratorInputs::TweakSigmaModeSK(
-  t2kana::yr1numu::conv::SuperkMode_t m, double twk_dial)
+  t2kana::yr1numu::conv::SuperkMode_t m, double twk_dial, bool correlate_with_nd280)
 {
   fSigmaModeSKTwkDial[m] = twk_dial;
+  fCorrelateSKWithND280 = correlate_with_nd280;
 }
 //________________________________________________________________________________________
 

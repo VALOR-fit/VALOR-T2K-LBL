@@ -87,8 +87,6 @@ public:
    //.........................................................................
    class ND280Inputs 
    {
-    friend class SuperkExpectation;
-
     public:
       ND280Inputs();
      ~ND280Inputs();
@@ -119,13 +117,17 @@ public:
 
       // Systematic variations
       void TweakEfficiency   (t2kana::yr1numu::conv::ND280Mode_t mode, double twkdial);
-      void TweakCrossSection (t2kana::yr1numu::conv::ND280Mode_t mode, double twkdial);
+
+      //
+      void TellMeAboutCrossSections(GeneratorInputs * geninp) { fGenInp = geninp; }
+
+      // Read inputs from XML file
+      bool Read (TXMLEngine* xml, XMLNodePointer_t root_node); 
 
     private:
 
       void   Init    (void);
       void   CleanUp (void);
-      bool   Read    (TXMLEngine* xml, XMLNodePointer_t root_node); ///< read inputs from XML file
 
       double  fPOTData;              ///< number of POT (data)
       double  fNumObsCCLike;         ///< Observed number of CC-like events 
@@ -134,6 +136,7 @@ public:
       TH1F *  fSelEffEt[knmnd];      ///< selection efficiency as function of Etrue for various modes
       double  fSelEffTwkDial[knmnd]; ///< selection efficiency tweaking dials for various modes
       double  fSelEffRelErr;         ///< relative error on selection effciencies
+      GeneratorInputs * fGenInp;
    };
 
    //.........................................................................
@@ -141,8 +144,6 @@ public:
    //.........................................................................
    class SuperkInputs 
    {
-    friend class SuperkExpectation;
-
     public:
       SuperkInputs();
      ~SuperkInputs();
@@ -173,11 +174,13 @@ public:
       void TweakEnergyScale    (double twkdial) { fEnergyScaleTwkDial = twkdial; }
       void TweakEfficiency   (void) { } ///TODO
 
+      // Read inputs from XML file
+      bool Read (TXMLEngine* xml, XMLNodePointer_t root_node); 
+
     private:
 
       void Init               (void);
       void CleanUp            (void);
-      bool Read               (TXMLEngine* xml, XMLNodePointer_t root_node); ///< read inputs from XML file
       void NormTransferMatrix (t2kana::yr1numu::conv::SuperkSample_t s, t2kana::yr1numu::conv::SuperkMode_t m);
 
       double  fAeff;                 ///< Effective mass number
@@ -201,8 +204,6 @@ public:
    //.........................................................................
    class BeamInputs 
    {
-    friend class SuperkExpectation;
-
     public:
       BeamInputs();
      ~BeamInputs();
@@ -222,20 +223,22 @@ public:
       // - "SKFlux/CovarianceMatrix/NuMu" : SK numu flux covariance matrix
       void Draw(TVirtualPad * c, Option_t * opt = "SKFlux/10d") const;
 
-      //
+      // Systematic variations
       void TweakNorm  (double twkdial) { fSuperkNuMuFluxNormTwkDial = twkdial; }
       void TweakShape (bool reset=false);
+
+      // Read inputs from XML file
+      bool Read (TXMLEngine* xml, XMLNodePointer_t root_node); 
 
     private:
 
       void Init    (void);
       void CleanUp (void);
-      bool Read    (TXMLEngine* xml, XMLNodePointer_t root_node); ///< read inputs from XML file
 
       TH1D *        fSuperkNuMuFlux;            ///< SuperK numu flux estimation
       double        fSuperkNuMuFluxPOT;         ///< integrated POT for numu flux simulation
       TMatrixDSym * fSuperkNuMuFluxCov;         ///< SuperK numu flux estimation
-      TH1D *        fSuperkNuMuWght10aTo10d;    ///< SuperK flux weights (10a -> 10d)0
+      TH1D *        fSuperkNuMuWght10aTo10d;    ///< SuperK flux weights (10a -> 10d)
       double        fSuperkNuMuFluxNormTwkDial; ///<
       bool          fSuperkNuMuFluxHaveCholeskyL;
       TMatrixD      fSuperkNuMuFluxCovCholeskyL;
@@ -247,15 +250,14 @@ public:
    //.........................................................................
    class GeneratorInputs 
    {
-    friend class SuperkExpectation;
-
     public:
       GeneratorInputs();
      ~GeneratorInputs();
   
       // Get neutrino generator oscillation analysis inputs
-      double SigmaModeSK      (double Etrue, t2kana::yr1numu::conv::SuperkMode_t m) const; ///< cross section for input mode
-      double SigmaModeSKRelErr(double Etrue, t2kana::yr1numu::conv::SuperkMode_t m, int sign) const; /// relative err on cross section for input mode
+      double SigmaModeSK       (double Etrue, t2kana::yr1numu::conv::SuperkMode_t m, bool neglect_twk=false) const; ///< cross section for input mode
+      double SigmaModeSKRelErr (double Etrue, t2kana::yr1numu::conv::SuperkMode_t m, int sign) const; /// relative err on cross section for input mode
+      double SigmaModeND280Wght(double Etrue, t2kana::yr1numu::conv::ND280Mode_t mnd) const; 
 
       // Draw inputs:
       // - "SKSigTotal" : draw the numu+H20 total cross section
@@ -265,13 +267,15 @@ public:
       void Draw(TVirtualPad * c, Option_t * opt = "") const;
 
       // Systematic variations
-      void TweakSigmaModeSK(t2kana::yr1numu::conv::SuperkMode_t m, double twk_dial);
+      void TweakSigmaModeSK(t2kana::yr1numu::conv::SuperkMode_t m, double twk_dial, bool correlate_with_nd280=true);
+
+      // Read inputs from XML file
+      bool Read (TXMLEngine* xml, XMLNodePointer_t root_node); 
 
     private:
 
       void Init    (void);
       void CleanUp (void);
-      bool Read    (TXMLEngine* xml, XMLNodePointer_t root_node); ///< read inputs from XML file
 
       double SigmaTotSK  (double Etrue) const;
       double FractModeSK (double Etrue, t2kana::yr1numu::conv::SuperkMode_t m) const;
@@ -280,6 +284,7 @@ public:
       TH1D *             fFractModeSK[knm];        ///< fraction of event modes in numu+H20 as a function of energy
       util::TH1DErrEnv * fSigmaModeSKRelErr[knm];  /// 
       double             fSigmaModeSKTwkDial[knm]; ///<
+      bool               fCorrelateSKWithND280;
    };
 
 private:

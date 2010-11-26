@@ -58,7 +58,7 @@ void test_nd280_nevents_twk_eff_many()
      skexp.GetND280Inputs()->TweakEfficiency( conv::kNDmNuECCRES,     rand.Gaus(0,1) );
      skexp.GetND280Inputs()->TweakEfficiency( conv::kNDmNuECCCOH,     rand.Gaus(0,1) );
      skexp.GetND280Inputs()->TweakEfficiency( conv::kNDmNuECCOth,     rand.Gaus(0,1) );
-     skexp.GetND280Inputs()->TweakEfficiency( conv:: kNDmNuENCEL,     rand.Gaus(0,1) );
+     skexp.GetND280Inputs()->TweakEfficiency( conv::kNDmNuENCEL,      rand.Gaus(0,1) );
      skexp.GetND280Inputs()->TweakEfficiency( conv::kNDmNuENCRES,     rand.Gaus(0,1) );
      skexp.GetND280Inputs()->TweakEfficiency( conv::kNDmNuENCCOH,     rand.Gaus(0,1) );
      skexp.GetND280Inputs()->TweakEfficiency( conv::kNDmNuENCOth,     rand.Gaus(0,1) );

@@ -761,7 +761,7 @@ double t2kana::yr1numu::util::XML2Dbl(
   if(!found_node) {
     cerr << "utils/XML2Dbl >> No node was found at input XML node path: "
          << path << endl;
-    return 0;
+    exit(1);
   }
   string content = xmleng->GetNodeContent(found_node);
   double value = atof(content.c_str());
