@@ -7,7 +7,7 @@
 //
 
 {
-  TString opt = "Flux";
+  TString opt = "nd280";
 
   gSystem->Load("libGpad");  
   gSystem->Load("libPhysics");  

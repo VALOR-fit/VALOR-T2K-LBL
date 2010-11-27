@@ -44,12 +44,18 @@ void test_superk_spectrum_prediction_twk_osc()
 
   // histogram booking
   TH1D * hEreco[ncases];
+  TH1D * hErecoFracDeficit[ncases];
   for(int icase = 0; icase < ncases; icase++) {
     hEreco[icase] = new TH1D("","",nbins,Emin,Emax);
     hEreco[icase]->SetDirectory(0);
     hEreco[icase]->SetLineWidth(hwidth[icase]);
     hEreco[icase]->SetLineColor(hcolor[icase]);
     hEreco[icase]->SetLineStyle(hstyle[icase]);
+    hErecoFracDeficit[icase] = new TH1D("","",nbins,Emin,Emax);
+    hErecoFracDeficit[icase]->SetDirectory(0);
+    hErecoFracDeficit[icase]->SetLineWidth(hwidth[icase]);
+    hErecoFracDeficit[icase]->SetLineColor(hcolor[icase]);
+    hErecoFracDeficit[icase]->SetLineStyle(hstyle[icase]);
   }
 
   // superk spectrum predictor
@@ -70,24 +76,49 @@ void test_superk_spectrum_prediction_twk_osc()
        hEreco[icase]->SetBinContent(ibin,Nexp);
     }
   }
+  // calculate fractional deficit
+  for(int icase = 1; icase < ncases; icase++) {
+    for(int ibin=1; ibin<=nbins; ibin++) {
+       double Nunosc = hEreco[0]    ->GetBinContent(ibin); 
+       double Nosc   = hEreco[icase]->GetBinContent(ibin);
+       if(Nunosc>0) {
+          double frac_deficit = (Nunosc-Nosc)/Nunosc;
+          hErecoFracDeficit[icase]->SetBinContent(ibin,frac_deficit);
+       }
+    }
+  }
 
   // draw
   gStyle->SetOptStat(0);
+  TCanvas * c = new TCanvas("c","",20,20,500,500);
+  TPad * upp = new TPad("upp","",0.05,0.35,0.95,0.97);
+  TPad * low = new TPad("low","",0.05,0.02,0.95,0.30);
+  upp->Draw();
+  low->Draw();
+  upp->cd();
   TLegend * legend = new TLegend(0.3, 0.7, 0.85, 0.9);
   legend->SetFillColor(0);
   legend->SetBorderSize(0);
   for(int icase = 0; icase < ncases; icase++) {
      const char * opt   = (icase==0) ? ""             : "same";
-     const char * label = (icase==0) ? "Unoscillated" : Form("#Deltam^{2} = %.5f eV^{2}/c^{4}, sin^{2}2#theta = %.2f", dm23sq[icase], sinsq2theta23[icase]);
+     const char * label = (icase==0) ? "Unoscillated" : 
+        Form("#Deltam^{2} = %.5f eV^{2}/c^{4}, sin^{2}2#theta = %.2f", dm23sq[icase], sinsq2theta23[icase]);
      if(icase==0) {
        hEreco[icase]->GetXaxis()->SetTitle("E_{reco} (GeV)");
        hEreco[icase]->GetYaxis()->SetTitle("Number of events");
      }
      hEreco[icase]->Draw(opt);
      legend->AddEntry(hEreco[icase], label, "L");
-
      cout << " *** " << label << " : NumEvents = " << hEreco[icase]->Integral() << endl;
   }
   legend->Draw();
-  
+  low->cd();
+  TH1F * hframe = (TH1F*) low->DrawFrame(0., 0., hEreco[0]->GetXaxis()->GetXmax(), 1);
+  hframe->GetXaxis()->SetTitle("E_{reco} (GeV)");
+  hframe->GetYaxis()->SetTitle("Fractional deficit");
+  hframe->Draw();
+  for(int icase = 1; icase < ncases; icase++) {
+     hErecoFracDeficit[icase]->Draw("same");
+  }
+  c->Update();
 }
