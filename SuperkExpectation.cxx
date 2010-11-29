@@ -276,11 +276,9 @@ void SuperkExpectation::ResetSystematicVariations(void)
   this->GetND280Inputs()->TweakEfficiency( kNDmNuENCOth,      0.);
 
   this->GetSuperkInputs()->TweakEnergyScale    (0.);
-  this->GetSuperkInputs()->TweakFiducialMass   (0.);
-  this->GetSuperkInputs()->TweakRecoEfficiency (0.);
-  this->GetSuperkInputs()->TweakSelectionEfficiency (kSKsFCFV1RingMuLike, kSKmNuMuCCQE,    0.);
-  this->GetSuperkInputs()->TweakSelectionEfficiency (kSKsFCFV1RingMuLike, kSKmNuMuNonCCQE, 0.);
-  this->GetSuperkInputs()->TweakSelectionEfficiency (kSKsFCFV1RingMuLike, kSKmNC,          0.);
+  this->GetSuperkInputs()->TweakEfficiency (kSKsFCFV1RingMuLike, kSKmNuMuCCQE,    0.);
+  this->GetSuperkInputs()->TweakEfficiency (kSKsFCFV1RingMuLike, kSKmNuMuNonCCQE, 0.);
+  this->GetSuperkInputs()->TweakEfficiency (kSKsFCFV1RingMuLike, kSKmNC,          0.);
 
   this->GetBeamInputs()->TweakNorm(0.);
 //shape      
@@ -1024,32 +1022,28 @@ SuperkExpectation::SuperkInputs::~SuperkInputs()
 //________________________________________________________________________________________
 void SuperkExpectation::SuperkInputs::Init(void)
 {
-  fAeff           = 0;  
-  fFidMass        = 0; 
-  fFidMassRelErr  = 0; 
-  fFidMassTwkDial = 0; 
-  fPOT            = 0;  
-  fErBinning      = 0;
-  fEtBinning      = 0;
+  fAeff    = 0;  
+  fFidMass = 0; 
+  fPOT     = 0;  
 
   for(int im=0; im<knm; im++) {
     fRecoEff[im] = 0;
   }
 
-  fRecoEffRelErr  = 0;
-  fRecoEffTwkDial = 0;
-
   for(int is=0; is<kns; is++) {
     for(int im=0; im<knm; im++) {
-      fSelEff        [is][im] = 0; 
-      fSelEffRelErr  [is][im] = 0;
-      fSelEffTwkDial [is][im] = 0;
-      fETransMtrx    [is][im] = 0; 
+      fSelEff     [is][im] = 0; 
+      fEffRelErr  [is][im] = 0;
+      fEffTwkDial [is][im] = 0;
+      fETransMtrx [is][im] = 0; 
     }
   }
 
   fEnergyScaleRelErr  = 0.;
   fEnergyScaleTwkDial = 0.;
+
+  fErBinning = 0;
+  fEtBinning = 0;
 }
 //________________________________________________________________________________________
 void SuperkExpectation::SuperkInputs::CleanUp(void)
@@ -1108,33 +1102,32 @@ bool SuperkExpectation::SuperkInputs::Read(TXMLEngine* xml, XMLNodePointer_t roo
   fAeff = util::XML2Dbl(xml,root_node,"superk/mass_number");
   // Get fiducial mass
   fFidMass = util::XML2Dbl(xml,root_node,"superk/fiducial_mass");
-  // Get relative error on fiducial mass
-  fFidMassRelErr = util::XML2Dbl(
-      xml,root_node,"superk/systematics/fiducial_mass_relative_error");
-  // Get relative error on reconstruction efficiency 
-  // (reduction / OD cut / visible energy cut)
-  fRecoEffRelErr = util::XML2Dbl(
-      xml,root_node,"superk/systematics/reconstruction_efficiency_relative_error");
-  // Get relative error on energy scale
-  fEnergyScaleRelErr = util::XML2Dbl(
-     xml,root_node,"superk/systematics/energy_scale_relative_error");
-  // Get relative error on selection efficiency (ring counting)
-  fSelEffRelErr[kSKsFCFV1RingMuLike][kSKmNuMuCCQE] =  
-    util::XML2Dbl(xml,root_node,
-      "superk/systematics/selection_efficiency_relative_err/one_mu_ring_tight/ccqe");
-  fSelEffRelErr[kSKsFCFV1RingMuLike][kSKmNuMuNonCCQE] = 
-    util::XML2Dbl(xml,root_node,
-      "superk/systematics/selection_efficiency_relative_err/one_mu_ring_tight/ccnonqe");
-  fSelEffRelErr[kSKsFCFV1RingMuLike][kSKmNC] =  
-    util::XML2Dbl(xml,root_node,
-      "superk/systematics/selection_efficiency_relative_err/one_mu_ring_tight/nc");
 
   cout << "Exp/SK >> " << "N_{POT} : " << fPOT << endl;
   cout << "Exp/SK >> " << "A_{effective} : " << fAeff << endl;
   cout << "Exp/SK >> " << "M_{fiducial} : " << fFidMass << " kton" << endl;
-  cout << "Exp/SK >> " << "delta{M_{fiducial}} : " << fFidMassRelErr << endl;
-  cout << "Exp/SK >> " << "delta{efficiency_{reco}} : " << fRecoEffRelErr << endl;
+
+  // Get relative error on energy scale
+  fEnergyScaleRelErr = util::XML2Dbl(
+     xml,root_node,"superk/systematics/energy_scale_relative_error");
+  // Get combined relative error on efficiency 
+  fEffRelErr[kSKsFCFV1RingMuLike][kSKmNuMuCCQE] =  
+    util::XML2Dbl(xml,root_node,
+      "superk/systematics/efficiency_relative_err/one_mu_ring_tight/ccqe");
+  fEffRelErr[kSKsFCFV1RingMuLike][kSKmNuMuNonCCQE] = 
+    util::XML2Dbl(xml,root_node,
+      "superk/systematics/efficiency_relative_err/one_mu_ring_tight/nonccqe");
+  fEffRelErr[kSKsFCFV1RingMuLike][kSKmNC] =  
+    util::XML2Dbl(xml,root_node,
+      "superk/systematics/efficiency_relative_err/one_mu_ring_tight/nc");
+
   cout << "Exp/SK >> " << "delta{energy_scale} : " << fEnergyScaleRelErr << endl;
+  cout << "Exp/SK >> " << "delta{efficiency/1RingMu/CCQE} : " 
+       << fEffRelErr[kSKsFCFV1RingMuLike][kSKmNuMuCCQE] << endl;
+  cout << "Exp/SK >> " << "delta{efficiency/1RingMu/CCnonQE} : " 
+       << fEffRelErr[kSKsFCFV1RingMuLike][kSKmNuMuNonCCQE] << endl;
+  cout << "Exp/SK >> " << "delta{efficiency/1RingMu/NC} : " 
+       << fEffRelErr[kSKsFCFV1RingMuLike][kSKmNC] << endl;
 
   // Get Ereco and Etrue binning
   fErBinning = util::XML2BinInfo(xml,root_node,"superk/binning/ereco");
@@ -1213,7 +1206,7 @@ double SuperkExpectation::SuperkInputs::EffectiveTargetMassNumber(void) const
 //________________________________________________________________________________________
 double SuperkExpectation::SuperkInputs::FiducialMass(void) const
 {
-  return fFidMass * (1. + fFidMassTwkDial * fFidMassRelErr); 
+  return fFidMass; 
 }
 //________________________________________________________________________________________
 double SuperkExpectation::SuperkInputs::AnalyzedSamplePOT(void) const
@@ -1228,8 +1221,6 @@ double SuperkExpectation::SuperkInputs::RecoEfficiency(
   assert(h);
   int bin = h->FindBin(Etrue);
   double eff = h->GetBinContent(bin);
-  eff *= (1. + fRecoEffTwkDial * fRecoEffRelErr);
-  eff = TMath::Max(1.,eff);
   return eff;
 }
 //________________________________________________________________________________________
@@ -1244,16 +1235,16 @@ double SuperkExpectation::SuperkInputs::SelectionEfficiency(
   assert(h);
   int bin = h->FindBin(Erecoprime);
   double eff = h->GetBinContent(bin);
-  double twkdial = fSelEffTwkDial[s][m];
-  double relerr  = fSelEffRelErr[s][m];
+  double twkdial = fEffTwkDial[s][m];
+  double relerr  = fEffRelErr[s][m];
   eff *= (1. + twkdial*relerr);
   return eff;
 }
 //________________________________________________________________________________________
-double SuperkExpectation::SuperkInputs::SelectionEfficiencyRelErr(
+double SuperkExpectation::SuperkInputs::EfficiencyRelErr(
     SuperkSample_t s, SuperkMode_t m) const
 {
-  double err = fSelEffRelErr[s][m];
+  double err = fEffRelErr[s][m];
   return err;
 }
 //________________________________________________________________________________________
@@ -1270,20 +1261,6 @@ double SuperkExpectation::SuperkInputs::EnergyTransferMatrix(
   int binr = h2->GetXaxis()->FindBin(Erecoprime);
   double Rij = h2->GetBinContent(binr,bint);
   return Rij;
-}
-//________________________________________________________________________________________
-double SuperkExpectation::SuperkInputs::FiducialMassRelErr(void) const
-{
-// relative error on fiducial mass
-  
-  return fFidMassRelErr;
-}
-//________________________________________________________________________________________
-double SuperkExpectation::SuperkInputs::RecoEfficiencyRelErr(void) const
-{
-// relative error on reconstruction efficiency
-  
-  return fRecoEffRelErr;
 }
 //________________________________________________________________________________________
 double SuperkExpectation::SuperkInputs::EnergyScaleRelErr(void) const
@@ -1303,25 +1280,15 @@ double SuperkExpectation::SuperkInputs::EnergyScale(void) const
   return scale;
 }
 //________________________________________________________________________________________
-void SuperkExpectation::SuperkInputs::TweakFiducialMass(double twkdial) 
-{ 
-  fFidMassTwkDial = twkdial; 
-}
-//________________________________________________________________________________________
-void SuperkExpectation::SuperkInputs::TweakRecoEfficiency(double twkdial) 
-{ 
-  fRecoEffTwkDial = twkdial; 
-}
-//________________________________________________________________________________________
 void SuperkExpectation::SuperkInputs::TweakEnergyScale(double twkdial) 
 { 
   fEnergyScaleTwkDial = twkdial; 
 }
 //________________________________________________________________________________________
-void SuperkExpectation::SuperkInputs::TweakSelectionEfficiency(
+void SuperkExpectation::SuperkInputs::TweakEfficiency(
   SuperkSample_t s, SuperkMode_t m, double twkdial)
 {
-  fSelEffTwkDial[s][m] = twkdial;
+  fEffTwkDial[s][m] = twkdial;
 }
 //________________________________________________________________________________________
 //........................................................................................

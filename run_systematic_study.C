@@ -8,7 +8,7 @@
 
 #include "Conventions.h"
 
-void test_systematic_shift()
+void run_systematic_study()
 {
   gSystem->Load("libGpad");  
   gSystem->Load("libPhysics");  

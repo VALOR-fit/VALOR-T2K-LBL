@@ -154,10 +154,8 @@ public:
       double       AnalyzedSamplePOT         (void) const;
       double       RecoEfficiency            (double Etrue, t2kana::yr1numu::conv::SuperkMode_t m) const;
       double       SelectionEfficiency       (double Ereco, t2kana::yr1numu::conv::SuperkSample_t s, t2kana::yr1numu::conv::SuperkMode_t m) const;
-      double       SelectionEfficiencyRelErr (t2kana::yr1numu::conv::SuperkSample_t s, t2kana::yr1numu::conv::SuperkMode_t m) const; ///< rel err on "selection eff" (ring-counting)
       double       EnergyTransferMatrix      (double Etrue, double Ereco, t2kana::yr1numu::conv::SuperkSample_t s, t2kana::yr1numu::conv::SuperkMode_t m) const;
-      double       FiducialMassRelErr        (void) const; ///< relative err on fiducial mass 
-      double       RecoEfficiencyRelErr      (void) const; ///< relative err on "reconstruction efficiency" (reduction, OD cut, visible energy cut)
+      double       EfficiencyRelErr          (t2kana::yr1numu::conv::SuperkSample_t s, t2kana::yr1numu::conv::SuperkMode_t m) const; ///< rel err on efficiency
       double       EnergyScaleRelErr         (void) const; ///< energy scale err
       double       EnergyScale               (void) const; ///< energy scale 
       const TAxis& ErecoBinning              (void) const { return *fErBinning; }
@@ -170,10 +168,8 @@ public:
       void Draw(TVirtualPad * c, Option_t * opt = "") const;
 
       // Systematic variations
-      void TweakFiducialMass        (double twkdial);
-      void TweakRecoEfficiency      (double twkdial);
       void TweakEnergyScale         (double twkdial);
-      void TweakSelectionEfficiency (t2kana::yr1numu::conv::SuperkSample_t s, t2kana::yr1numu::conv::SuperkMode_t m, double twkdial); 
+      void TweakEfficiency          (t2kana::yr1numu::conv::SuperkSample_t s, t2kana::yr1numu::conv::SuperkMode_t m, double twkdial); 
 
       // Read inputs from XML file
       bool Read (TXMLEngine* xml, XMLNodePointer_t root_node); 
@@ -186,20 +182,16 @@ public:
 
       double  fAeff;                    ///< Effective mass number
       double  fFidMass;                 ///< Fiducial mass
-      double  fFidMassRelErr;           ///< Fiducial mass relative error
-      double  fFidMassTwkDial;          ///< Fiducial mass tweaking dial
       double  fPOT;                     ///< Number of POT
       TAxis * fErBinning;               ///< E_{reco} binning (both fixed and variable bin widths supported)
       TAxis * fEtBinning;               ///< E_{true} binning (both fixed and variable bin widths supported)
       TH1D  * fRecoEff[knm];            ///< Reconstruction efficiency = f(E_{true}, mode)
-      double  fRecoEffRelErr;           ///< Reconstruction efficiency relative error
-      double  fRecoEffTwkDial;          ///< Reconstruction efficiency tweaking dial
       TH1D  * fSelEff[kns][knm];        ///< Selection efficiency = f(E_{reco}, sample, mode)
-      double  fSelEffRelErr[kns][knm];  ///< Selection efficiency relative error
-      double  fSelEffTwkDial[kns][knm]; ///< Selection efficiency tweaking dial
       TH2D  * fETransMtrx[kns][knm];    ///< Energy transfer matrix = f(E_{true}, E_{reco}, sample, mode)
       double  fEnergyScaleRelErr;       ///< Energy scale relative error
       double  fEnergyScaleTwkDial;      ///< Energy scale tweaking dial
+      double  fEffRelErr[kns][knm];     ///< Efficiency relative error
+      double  fEffTwkDial[kns][knm];    ///< Efficiency tweaking dial
    };
 
    //.........................................................................
