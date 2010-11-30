@@ -116,7 +116,8 @@ public:
       void Draw(TVirtualPad * c, Option_t * opt = "") const;
 
       // Systematic variations
-      void TweakEfficiency   (t2kana::yr1numu::conv::ND280Mode_t mode, double twkdial);
+      void TweakEfficiency (t2kana::yr1numu::conv::ND280Mode_t mode, double twkdial);
+      void TweakEfficiency (double twkdial);
 
       //
       void TellMeAboutCrossSections(GeneratorInputs * geninp) { fGenInp = geninp; }
@@ -149,49 +150,55 @@ public:
      ~SuperkInputs();
 
       // Get information needed from SK for predicting the SK spectrum
-      double       EffectiveTargetMassNumber (void) const;
-      double       FiducialMass              (void) const;
-      double       AnalyzedSamplePOT         (void) const;
-      double       RecoEfficiency            (double Etrue, t2kana::yr1numu::conv::SuperkMode_t m) const;
-      double       SelectionEfficiency       (double Ereco, t2kana::yr1numu::conv::SuperkSample_t s, t2kana::yr1numu::conv::SuperkMode_t m) const;
-      double       EnergyTransferMatrix      (double Etrue, double Ereco, t2kana::yr1numu::conv::SuperkSample_t s, t2kana::yr1numu::conv::SuperkMode_t m) const;
-      double       EfficiencyRelErr          (t2kana::yr1numu::conv::SuperkSample_t s, t2kana::yr1numu::conv::SuperkMode_t m) const; ///< rel err on efficiency
-      double       EnergyScaleRelErr         (void) const; ///< energy scale err
-      double       EnergyScale               (void) const; ///< energy scale 
-      const TAxis& ErecoBinning              (void) const { return *fErBinning; }
-      const TAxis& EtrueBinning              (void) const { return *fEtBinning; }
+      double  AnalyzedSamplePOT (void) const;   
+      TTree * MCTree            (t2kana::yr1numu::conv::SuperkSample_t s, t2kana::yr1numu::conv::SuperkMode_t m);
+      double  MCPOT             (t2kana::yr1numu::conv::SuperkSample_t s, t2kana::yr1numu::conv::SuperkMode_t m);
+      double  NumOfEvents       (double Ereco, t2kana::yr1numu::conv::SuperkSample_t s, t2kana::yr1numu::conv::SuperkMode_t m, double sinsq2theta23, double dmsq23);
+      double  EfficiencyRelErr  (t2kana::yr1numu::conv::SuperkSample_t s, t2kana::yr1numu::conv::SuperkMode_t m) const; ///< rel err on efficiency
+      double  EnergyScaleRelErr (void) const; ///< energy scale err
+      double  EnergyScale       (void) const; ///< energy scale 
 
       // Draw inputs:
-      // "ReconstructionEfficiency"            :
-      // "SelectionEfficiency/OneMuRingTight"  :
-      // "EnergyTransferMatrix/OneMuRingTight" :
+      // ...
       void Draw(TVirtualPad * c, Option_t * opt = "") const;
 
       // Systematic variations
-      void TweakEnergyScale         (double twkdial);
-      void TweakEfficiency          (t2kana::yr1numu::conv::SuperkSample_t s, t2kana::yr1numu::conv::SuperkMode_t m, double twkdial); 
+      void TweakEnergyScale (double twkdial);
+      void TweakEfficiency  (t2kana::yr1numu::conv::SuperkSample_t s, t2kana::yr1numu::conv::SuperkMode_t m, double twkdial); 
 
       // Read inputs from XML file
       bool Read (TXMLEngine* xml, XMLNodePointer_t root_node); 
 
+      //
+      void TellMeAboutTheFlux(BeamInputs * bi) { fBeamInputs = bi; } ///< so that SK distributions can be reweighted 10a->10d
+
     private:
 
-      void Init               (void);
-      void CleanUp            (void);
-      void NormTransferMatrix (t2kana::yr1numu::conv::SuperkSample_t s, t2kana::yr1numu::conv::SuperkMode_t m);
+      void Init          (void);
+      void CleanUp       (void);
+      void FillHistogram (t2kana::yr1numu::conv::SuperkSample_t s, t2kana::yr1numu::conv::SuperkMode_t m);
 
-      double  fAeff;                    ///< Effective mass number
-      double  fFidMass;                 ///< Fiducial mass
+      double NumOfEventsReadFromTree(double Ereco, double ErecoBinSz, 
+          t2kana::yr1numu::conv::SuperkSample_t s, t2kana::yr1numu::conv::SuperkMode_t m, double sinsq2theta23, double dmsq23);
+
       double  fPOT;                     ///< Number of POT
-      TAxis * fErBinning;               ///< E_{reco} binning (both fixed and variable bin widths supported)
-      TAxis * fEtBinning;               ///< E_{true} binning (both fixed and variable bin widths supported)
-      TH1D  * fRecoEff[knm];            ///< Reconstruction efficiency = f(E_{true}, mode)
-      TH1D  * fSelEff[kns][knm];        ///< Selection efficiency = f(E_{reco}, sample, mode)
-      TH2D  * fETransMtrx[kns][knm];    ///< Energy transfer matrix = f(E_{true}, E_{reco}, sample, mode)
       double  fEnergyScaleRelErr;       ///< Energy scale relative error
       double  fEnergyScaleTwkDial;      ///< Energy scale tweaking dial
       double  fEffRelErr[kns][knm];     ///< Efficiency relative error
       double  fEffTwkDial[kns][knm];    ///< Efficiency tweaking dial
+
+      TH2D *       fMCSpectrum[kns][knm];
+      TTree*       fMC1Rmu_numu;
+      double       fMCPOT_numu;
+      TTree*       fMC1Rmu_numubar;
+      double       fMCPOT_numubar;
+      TTree*       fMC1Rmu_nue;
+      double       fMCPOT_nue;
+      double       fBrEreco;
+      double       fBrEtrue;
+      int          fBrPdg;
+      int          fBrGenCode;
+      BeamInputs * fBeamInputs;
    };
 
    //.........................................................................
@@ -204,11 +211,15 @@ public:
      ~BeamInputs();
 
       // Get beam oscillation analysis inputs
-      double              SuperkNuMuFlux        (double Etrue, bool wght_to_10d=true) const;
-      double              SuperkNuMuFluxPOT     (void) const; 
-      const TMatrixDSym & SuperkNuMuFluxCov     (void) const; ///< Superk flux covariance matrix
-      double              SuperkNuMuFluxNormErr (double sinsq2theta23, double dmsq23) const; ///< normalization err
-      double              SuperkNuMuFluxNorm    (double sinsq2theta23, double dmsq23) const; ///< normalization 
+      double              SuperkNuMuFlux10aTo10dWght    (double Etrue) const;
+      double              SuperkNuMuBarFlux10aTo10dWght (double Etrue) const;
+      double              SuperkNuEFlux10aTo10dWght     (double Etrue) const;
+      double              SuperkNuMuFlux                (double Etrue, bool wght_to_10d=true) const;
+      double              SuperkNuMuFluxPOT             (void) const; 
+      const TMatrixD &    SuperkNuMuFluxCov             (void) const; ///< Superk flux covariance matrix
+      double              SuperkNuMuFluxNormErr         (double sinsq2theta23, double dmsq23) const; ///< normalization err
+      double              SuperkNuMuFluxNorm            (double sinsq2theta23, double dmsq23) const; ///< normalization 
+      double              SuperkNuMuFluxShapeWeight     (double Etrue);
 
       // Drawing option:
       // - "SKFlux/10a/NuMu"              : nominal SuperK numu flux (10a)
@@ -220,7 +231,7 @@ public:
 
       // Systematic variations
       void TweakNorm  (double twkdial) { fSuperkNuMuFluxNormTwkDial = twkdial; }
-      void TweakShape (bool reset=false);
+      void TweakShape (void);
 
       // Read inputs from XML file
       bool Read (TXMLEngine* xml, XMLNodePointer_t root_node); 
@@ -230,14 +241,17 @@ public:
       void Init    (void);
       void CleanUp (void);
 
-      TH1D *        fSuperkNuMuFlux;            ///< SuperK numu flux estimation
-      double        fSuperkNuMuFluxPOT;         ///< integrated POT for numu flux simulation
-      TMatrixDSym * fSuperkNuMuFluxCov;         ///< SuperK numu flux estimation
-      TH1D *        fSuperkNuMuWght10aTo10d;    ///< SuperK flux weights (10a -> 10d)
-      double        fSuperkNuMuFluxNormTwkDial; ///<
+      TH1D *        fSuperkNuMuFlux;               ///< SuperK numu flux estimation (50 MeV binning)
+      TH1D *        fSuperkNuMuFluxVarBin;         ///< SuperK numu flux estimation (beam group var binning scheme)
+      double        fSuperkNuMuFluxPOT;            ///< integrated POT for numu flux simulation
+      TMatrixD *    fSuperkNuMuFluxCov;            ///< SuperK numu flux estimation
+      TH1D *        fSuperkNuMuWght10aTo10d;       ///< SuperK numu    flux weights (10a -> 10d)
+      TH1D *        fSuperkNuMuBarWght10aTo10d;    ///< SuperK numubar flux weights (10a -> 10d)
+      TH1D *        fSuperkNuEWght10aTo10d;        ///< SuperK nue     flux weights (10a -> 10d)
+      double        fSuperkNuMuFluxNormTwkDial;    ///<
       bool          fSuperkNuMuFluxHaveCholeskyL;
-      TMatrixD      fSuperkNuMuFluxCovCholeskyL;
-      TH1D *        fSuperkNuMuFluxTwks;
+      TMatrixD *    fSuperkNuMuFluxCovCholeskyL;
+      TH1D *        fSuperkNuMuFluxTweaked;        ///< SuperK numu flux estimation (tweaked / 50 MeV binning)
    };
 
    //.........................................................................

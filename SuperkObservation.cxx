@@ -134,9 +134,9 @@ double SuperkObservation::NumOfEvents(double Er, SuperkSample_t s) const
 //________________________________________________________________________________________
 TH1D* SuperkObservation::AsTH1D(SuperkSample_t s) const
 {
-  int    nbins = fErBinning->GetNbins();
-  double emin  = fErBinning->GetXmin();
-  double emax  = fErBinning->GetXmax();
+  int    nbins = (int) ((kErecoMax-kErecoMin)/kErecoBinSz);
+  double emin  = kErecoMin;
+  double emax  = kErecoMax;
 
   TH1D * hEreco = new TH1D("hEreco", "", nbins, emin, emax);
   hEreco->SetDirectory(0);
@@ -148,6 +148,11 @@ TH1D* SuperkObservation::AsTH1D(SuperkSample_t s) const
   }
 
   return hEreco;
+}
+//________________________________________________________________________________________
+const TAxis & SuperkObservation::ErecoBinning(void) const 
+{ 
+  return *(fErDistr[0]->GetXaxis()); 
 }
 //________________________________________________________________________________________
 bool SuperkObservation::Read(string config_file)
@@ -164,12 +169,9 @@ bool SuperkObservation::Read(string config_file)
   }
   XMLNodePointer_t root_node = xml->DocGetRootElement(xmldoc);
 
-  // Get binning info
-  fErBinning = util::XML2BinInfo(xml,root_node,"superk/binning/ereco");
-
   // Get observed recosntructed energy distribution
   fErDistr[kSKsFCFV1RingMuLike] = 
-    util::XML2TH1D(xml,root_node,"superk/observation/one_mu_ring_tight/ereco");
+    util::XML2TH1D(xml,root_node,"superk/observation/one_mu_ring/ereco");
 
   // Release memory
   xml->FreeDoc(xmldoc);
@@ -181,14 +183,10 @@ bool SuperkObservation::Read(string config_file)
 void SuperkObservation::CreateMockData(
       SuperkExpectation & exp, const PhysParamList & fp, bool fluctuate)
 {
-  // Get binning info
-  fErBinning = new TAxis( exp.GetSuperkInputs()->ErecoBinning() );
-
-  // Get observed recosntructed energy distribution
-
-  int    nbins = fErBinning->GetNbins();
-  double emin  = fErBinning->GetXmin();
-  double emax  = fErBinning->GetXmax();
+  // Get observed reconstructed energy distribution
+  int    nbins = (int) ((kErecoMax-kErecoMin)/kErecoBinSz);
+  double emin  = kErecoMin;
+  double emax  = kErecoMax;
 
   fErDistr[kSKsFCFV1RingMuLike] = new TH1D("", "", nbins, emin, emax);
   fErDistr[kSKsFCFV1RingMuLike]->SetDirectory(0);
@@ -234,8 +232,6 @@ void SuperkObservation::Init(void)
 {
 // Initialize priv data members
 //
-  fErBinning = 0;
-
   for(int is=0; is<kns; is++) {
     fErDistr[is] = 0;
   }
@@ -245,8 +241,6 @@ void SuperkObservation::CleanUp(void)
 {
 // De-allocate all memory taken up by this object
 //
-  if(fErBinning) delete fErBinning;
-
   for(int is=0; is<kns; is++) {
     if(fErDistr[is]) delete fErDistr[is];
   }

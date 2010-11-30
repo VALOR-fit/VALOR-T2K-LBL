@@ -24,7 +24,6 @@
 #include <string>
 #include <vector>
 
-class TAxis;
 class TH1D;
 class TVirtualPad;
 
@@ -58,20 +57,19 @@ public:
 
   TH1D*  AsTH1D (t2kana::yr1numu::conv::SuperkSample_t s = t2kana::yr1numu::conv::kSKsUndefined) const; 
 
-  // Binning info
-  const TAxis& ErecoBinning (void) const { return *fErBinning; }
+  //          
+  const TAxis & ErecoBinning(void) const;
 
   // Draw.
   // Set option to "Ereco"  to show the reconstructed Ereco distributions
   // Set option to ... to show ...
   void Draw(TVirtualPad * c, Option_t * opt = "Ereco") const;
-          
+
 private:
 
   void Init    (void);
   void CleanUp (void);
 
-  TAxis * fErBinning;     ///< E_{reco} binning (both fixed and variable bin widths supported)
   TH1D *  fErDistr[kns];  ///< Reconstructed energy spectrum for each sample
 
   vector<t2kana::yr1numu::conv::SuperkSample_t> fSamples;  

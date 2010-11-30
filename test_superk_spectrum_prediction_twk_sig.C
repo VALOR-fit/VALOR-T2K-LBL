@@ -39,7 +39,7 @@ void test_superk_spectrum_prediction_twk_sig()
   const int ntwkmodes = 3;
   t2kana::yr1numu::conv::SuperkMode_t twkmodes[ntwkmodes] = {
     t2kana::yr1numu::conv::kSKmNuMuCCQE, 
-    t2kana::yr1numu::conv::kSKmNuMuNonCCQE, 
+    t2kana::yr1numu::conv::kSKmNuMuCC1pi, 
     t2kana::yr1numu::conv::kSKmNC    
   };
 

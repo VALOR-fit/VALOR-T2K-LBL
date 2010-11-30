@@ -21,6 +21,7 @@
 #include <TGraph.h>
 #include <TH1.h>
 #include <TH2.h>
+#include <TTree.h>
 #include <TAxis.h>
 #include <TVectorD.h>
 #include <TMatrixD.h>
@@ -138,11 +139,17 @@ double t2kana::yr1numu::util::NuMuSurvProb2D(
   double sinsq2theta, double dmsq, double Et, 
   t2kana::yr1numu::conv::SuperkMode_t m)
 {
-  if(m == kSKmNC) {
+  if(m == kSKmNC || 
+     m == kSKmNuE) 
+  {
     return 1.;
   }
   else
-  if(m == kSKmNuMuCCQE || m == kSKmNuMuNonCCQE) {
+  if(m == kSKmNuMuCCQE  || 
+     m == kSKmNuMuCC1pi || 
+     m == kSKmNuMuCCoth ||
+     m == kSKmNuMuBar) 
+  {
     return NuMuSurvProb2D(sinsq2theta, dmsq, Et);
   }
   else {
@@ -275,6 +282,8 @@ TVectorD t2kana::yr1numu::util::CholeskyGenerateCorrelatedParamVariations (
   }
   g *= cholesky_triangular;
 
+  cout << "Util >> Tweak vector size = " << g.GetNrows() << endl;
+
   return g;
 }
 //____________________________________________________________________________
@@ -303,9 +312,12 @@ string t2kana::yr1numu::util::AsString(
      t2kana::yr1numu::conv::SuperkMode_t m)
 {
   switch(m) {
-     case ( kSKmNuMuCCQE    ) : return "CCQE";    break;
-     case ( kSKmNuMuNonCCQE ) : return "CCnonQE"; break;
-     case ( kSKmNC          ) : return "NC";      break;
+     case ( kSKmNuMuCCQE    ) : return "numu CCQE";      break;
+     case ( kSKmNuMuCC1pi   ) : return "numu CC1pi";     break;
+     case ( kSKmNuMuCCoth   ) : return "numu CCoth";     break;
+     case ( kSKmNC          ) : return "numu/nutau NC";  break;
+     case ( kSKmNuMuBar     ) : return "numubar";        break;
+     case ( kSKmNuE         ) : return "nue";            break;
      default                  : return "--";
   }
   return "--";
@@ -498,6 +510,60 @@ vector<string> t2kana::yr1numu::util::Tokens (string input, string delimiter)
   }
   tokens.push_back(input);
   return tokens;
+}
+//___________________________________________________________________________
+int t2kana::yr1numu::util::Fixed2VarNumbering(int fixBinNo)
+{
+           // cov matrix is 19x19, made for a variable binning of this type:
+            // (0.0, 0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 1.0, 1.2, 1.5, 2.0, 2.5, 3.0, 3.5, 4.0, 5.0, 7.0, 10.0) GeV
+            //  We have to deal with the uniform 0.05GeV binning; So, varBinning->UniformBinning mapping is the following:
+            // 0.0(2)0.1; 0.1(2)0.2; .....; 07(2)08; =>16 50Mev bins
+            // 0.8(4)1.0; 1.0(4)1.2; = > 8 50MeV bins
+            // 1.2(6)1.5; = > 6 50MeV bins
+            // 1.5(10)2.0; ....;3.5(10)4.0 => 50 50MeV bins
+            // 4.0(20)5.0 =>20 50MeV bins
+            // 5(40)7 =>40 50MeV bins
+            // 7(40)10 =>60 50MeV bins
+      
+            // Maps are slow - try  a vector; vectors index is our fixBinNo, the value is therBinNo
+            std::vector<int> binMapping ;
+            
+            //lets zero element to be 0
+            binMapping.push_back(0);
+            for( int i=1  ;  i<=16; i++){binMapping.push_back((i+1)/2);}
+            for( int i=17 ; i<=20; i++){ binMapping.push_back( 9);}
+            for( int i=21 ; i<=24; i++){ binMapping.push_back( 10);}
+            for( int i=25 ; i<=30; i++){ binMapping.push_back( 11);}
+            for( int i=31 ; i<=40; i++){ binMapping.push_back( 12);}
+            for( int i=41 ; i<=50; i++){ binMapping.push_back( 13);}
+            for( int i=51 ; i<=60; i++){ binMapping.push_back( 14);}
+            for( int i=61 ; i<=70; i++){ binMapping.push_back( 15);}
+            for( int i=71 ; i<=80; i++){ binMapping.push_back( 16);}
+            for( int i=81 ; i<=100; i++){ binMapping.push_back( 17);}
+            for( int i=101;i<=140; i++){ binMapping.push_back( 18);}
+            for( int i=141;i<=200; i++){ binMapping.push_back( 19);}
+      
+            return binMapping[fixBinNo];
+}
+//___________________________________________________________________________
+double t2kana::yr1numu::util::FluxFractionsFixedBinRelToVarBin (
+  int fixBinNo, TH1D* ourFluxHisto, TH1D* theirFluxHisto)
+{
+// ratio 50 MeV bin content relative to the larger bin content (in the 
+// var size biining scheme) that contains it.
+//
+      double ratio (0.0);
+      
+      if( ourFluxHisto->GetBinCenter(fixBinNo)<10.0 ){
+            double ourFlux = ourFluxHisto->GetBinContent(fixBinNo);
+            int ibin = Fixed2VarNumbering(fixBinNo);
+            double theirFlux = theirFluxHisto->GetBinContent(ibin);
+            ratio = ourFlux/theirFlux;
+      } else{
+            cout<<"Check your binning! You shouldn't calculate anything for energies above 10GeV!!!"<<endl;
+            ratio = 1.0;
+      }
+      return ratio;
 }
 //___________________________________________________________________________
 int t2kana::yr1numu::util::Sign(double tweaking_dial)
@@ -694,6 +760,61 @@ TH2D * t2kana::yr1numu::util::XML2TH2D(
   return h2copy;
 }
 //___________________________________________________________________________
+TTree * t2kana::yr1numu::util::XML2TTree(
+   TXMLEngine * xmleng, XMLNodePointer_t top_node, string path)
+{
+// Get a TH2D instance from the info in the input XML config file
+//
+#ifdef __debug_level_2__
+  cout << "utils/XML2TTree >> Reading info at XML node path: " << path << endl;
+#endif
+
+  XMLNodePointer_t found_node = FindNode(xmleng,top_node,path);
+  if(!found_node) {
+    cerr << "utils/XML2TTree >> No node was found at input XML node path: "
+         << path << endl;
+    return 0;
+  }
+
+  string filename = "";
+  string objname  = "";
+
+  XMLNodePointer_t child_node = xmleng->GetChild(found_node);
+  while(child_node) {
+    string child_node_name = xmleng->GetNodeName(child_node);
+    string content = xmleng->GetNodeContent(child_node);
+#ifdef __debug_level_2__
+    cout << "utils/XML2TTree >> node = " << child_node_name << endl;
+    cout << "utils/XML2TTree >> \t content = " << content << endl;
+#endif
+    if(child_node_name == "filename") { filename = TrimSpaces(content); }
+    if(child_node_name == "objname" ) { objname  = TrimSpaces(content); }
+    child_node = xmleng->GetNext(child_node);    
+  }
+
+#ifdef __debug_level_2__
+  cout << "utils/XML2TTree >> filename : " << filename << endl;
+  cout << "utils/XML2TTree >> objname  : " << objname  << endl;
+#endif
+
+/////  TFile file(filename.c_str(), "read");
+/////  TTree * tree = (TTree*)file.Get(objname.c_str());
+
+
+  TFile * file = new TFile(filename.c_str(), "read");
+  TTree * tree = (TTree*)file->Get(objname.c_str());
+  if(!tree) {
+    cerr << "utils/XML2TTree >> No " << objname << " in " << filename << endl;
+//    file.Close();
+    return 0;
+  }
+
+  return tree;
+//  TTree * treecopy = tree->CloneTree();
+//  file.Close();
+//  return treecopy;
+}
+//___________________________________________________________________________
 TAxis *  t2kana::yr1numu::util::XML2BinInfo(
   TXMLEngine * xmleng, XMLNodePointer_t top_node, string path)
 {
@@ -828,6 +949,57 @@ TMatrixDSym * t2kana::yr1numu::util::XML2TMatrixDSym(
   }
 
   TMatrixDSym * matrix_copy = new TMatrixDSym(*matrix);
+
+  file.Close();
+
+  return matrix_copy;
+}
+//___________________________________________________________________________
+TMatrixD * t2kana::yr1numu::util::XML2TMatrixD(
+     TXMLEngine * xmleng, XMLNodePointer_t top_node, string path)
+{
+// Get a TMatrixD instance from the info in the input XML config file
+//
+
+#ifdef __debug_level_2__
+  cout << "utils/XML2TMatrixD >> "
+       << "Reading info at XML node path: " << path << endl;
+#endif
+
+  XMLNodePointer_t found_node = FindNode(xmleng,top_node,path);
+  if(!found_node) {
+    cerr << "utils/XML2TMatrixD >> "
+         << "No node was found at input XML node path: " << path << endl;
+    return 0;
+  }
+
+  string filename = "";
+  string objname  = "";
+
+  XMLNodePointer_t child_node = xmleng->GetChild(found_node);
+  while(child_node) {
+    string child_node_name = xmleng->GetNodeName(child_node);
+    string content = xmleng->GetNodeContent(child_node);
+    if(child_node_name == "filename") { filename = TrimSpaces(content); }
+    if(child_node_name == "objname" ) { objname  = TrimSpaces(content); }
+    child_node = xmleng->GetNext(child_node);    
+  }
+
+#ifdef __debug_level_2__
+  cout << "utils/XML2TMatrixD >> filename : " << filename << endl;
+  cout << "utils/XML2TMatrixD >> objname  : " << objname  << endl;
+#endif
+
+  TFile file(filename.c_str(), "read");
+  TMatrixD * matrix = (TMatrixD*)file.Get(objname.c_str());
+  if(!matrix) {
+    cerr << "utils/XML2TMatrixD >> No " 
+         << objname << " in " << filename << endl;
+    file.Close();
+    return 0;
+  }
+
+  TMatrixD * matrix_copy = new TMatrixD(*matrix);
 
   file.Close();
 

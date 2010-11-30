@@ -27,12 +27,6 @@ void test_superk_spectrum_prediction_twk_skeff_one()
   using namespace t2kana;
   using namespace t2kana::yr1numu;
 
-  // energy range and binning
-  const double Emin  = 0;
-  const double Emax  = 10;
-  const double dE    = 0.05;
-  const int    nbins = (int) ((Emax - Emin)/dE);
-
   const int ntwkdials = 5;
   double twkdial[ntwkdials] = { -1.0, -0.5, 0.0, +0.5, +1.0 };
 
@@ -41,7 +35,7 @@ void test_superk_spectrum_prediction_twk_skeff_one()
   const int ntwkmodes = 3;
   t2kana::yr1numu::conv::SuperkMode_t twkmodes[ntwkmodes] = {
     t2kana::yr1numu::conv::kSKmNuMuCCQE,
-    t2kana::yr1numu::conv::kSKmNuMuNonCCQE,
+    t2kana::yr1numu::conv::kSKmNuMuCC1pi,
     t2kana::yr1numu::conv::kSKmNC
   };
 
@@ -55,12 +49,12 @@ void test_superk_spectrum_prediction_twk_skeff_one()
   TH1D * hErecoErr[ntwkmodes][ntwkdials];
   for(int imode = 0; imode < ntwkmodes; imode++) {
      for(int idial = 0; idial < ntwkdials; idial++) {
-       hEreco   [imode][idial] = new TH1D("","",nbins,Emin,Emax);
+       hEreco   [imode][idial] = new TH1D("","",conv::kNErecoBins,conv::kErecoMin,conv::kErecoMax);
        hEreco   [imode][idial]->SetDirectory(0);
        hEreco   [imode][idial]->SetLineWidth(hwidth[idial]);
        hEreco   [imode][idial]->SetLineColor(hcolor[idial]);
        hEreco   [imode][idial]->SetLineStyle(hstyle[idial]);
-       hErecoErr[imode][idial] = new TH1D("","",nbins,Emin,Emax);
+       hErecoErr[imode][idial] = new TH1D("","",conv::kNErecoBins,conv::kErecoMin,conv::kErecoMax);
        hErecoErr[imode][idial]->SetDirectory(0);
        hErecoErr[imode][idial]->SetLineWidth(hwidth[idial]);
        hErecoErr[imode][idial]->SetLineColor(hcolor[idial]);
@@ -83,7 +77,7 @@ void test_superk_spectrum_prediction_twk_skeff_one()
      for(int idial = 0; idial < ntwkdials; idial++) {
         skexp.GetSuperkInputs()->TweakEfficiency(
            t2kana::yr1numu::conv::kSKsFCFV1RingMuLike, twkmodes[imode], twkdial[idial]);
-        for(int ibin=1; ibin<=nbins; ibin++) {
+        for(int ibin=1; ibin <= conv::kNErecoBins; ibin++) {
            double Ereco = hEreco[imode][idial]->GetBinCenter(ibin);
            double Nexp  = skexp.Generate(Ereco, *fparm);
            maxnev[imode] = TMath::Max(maxnev[imode],Nexp);
@@ -99,7 +93,7 @@ void test_superk_spectrum_prediction_twk_skeff_one()
   double maxerrneg[ntwkmodes] = {+1.};
   for(int imode = 0; imode < ntwkmodes; imode++) {
     for(int idial = 0; idial < ntwkdials; idial++) {
-      for(int ibin=1; ibin<=nbins; ibin++) {
+      for(int ibin=1; ibin <= conv::kNErecoBins; ibin++) {
          double ncurr  = hEreco[imode][idial]->GetBinContent(ibin);
          double ndeflt = hEreco[imode][deflt]->GetBinContent(ibin);
          if(ndeflt>0) {

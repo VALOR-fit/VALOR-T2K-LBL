@@ -49,8 +49,11 @@ typedef enum ESuperkSample {
 typedef enum ESuperkMode {
    kSKmUndefined = -1, 
    kSKmNuMuCCQE, 
-   kSKmNuMuNonCCQE, 
-   kSKmNC    
+   kSKmNuMuCC1pi, 
+   kSKmNuMuCCoth, 
+   kSKmNC,    
+   kSKmNuMuBar, 
+   kSKmNuE
 } SuperkMode_t; 
 
 // (true) reaction modes considered separately in nd280 inputs
@@ -91,8 +94,15 @@ typedef enum EPhysParamId {
 } PhysParamId_t;
 
 
-static const int kNSuperkSamples  = 2;  // number of samples included in analysis
-static const int kNSuperkModes    = 3;  // number of reaction modes considered separately within each SuperK sample
+static const int kPdgNuE      =  12;
+static const int kPdgNuMu     =  14;
+static const int kPdgNuTau    =  16;
+static const int kPdgNuEBar   = -12;
+static const int kPdgNuMuBar  = -14;
+static const int kPdgNuTauBar = -16;
+
+static const int kNSuperkSamples  = 1;  // number of samples included in analysis
+static const int kNSuperkModes    = 6;  // number of reaction modes considered separately within each SuperK sample
 static const int kNND280Modes     = 24; // number of reaction modes considered separately within the ND280 sample
 //shorter names
 static const int kns   = kNSuperkSamples;
@@ -102,6 +112,15 @@ static const int knmnd = kNND280Modes;
 static const double kASmallNum = 1E-10;
 static const double kBaseline  = 295;        // Tokai->Kamioka (km)
 static const double kNA        = 6.023E+23;  // Avogadro's number
+
+static const double kErecoMin    = 0;
+static const double kErecoMax    = 4;
+static const double kErecoBinSz  = 0.05;
+static const double kNErecoBins  = (int) ((kErecoMax - kErecoMin)/kErecoBinSz);
+static const double kEtrueMin    = 0;
+static const double kEtrueMax    = 10;
+static const double kEtrueBinSz  = 0.05;
+static const double kNEtrueBins  = (int) ((kEtrueMax - kEtrueMin)/kEtrueBinSz);
 
 } // conv
 } // yr1numu

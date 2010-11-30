@@ -27,22 +27,16 @@ void test_superk_spectrum_prediction_twk_skeff_many()
   using namespace t2kana;
   using namespace t2kana::yr1numu;
 
-  // energy range and binning
-  const double Emin  = 0;
-  const double Emax  = 10;
-  const double dE    = 0.05;
-  const int    nbins = (int) ((Emax - Emin)/dE);
-
   // histogram booking
   const int N = 300;
   TH1D * hEreco   [N];
   for(int i = 0; i < N; i++) {
-     hEreco[i] = new TH1D("","",nbins,Emin,Emax);
+     hEreco[i] = new TH1D("","",conv::kNErecoBins,conv::kErecoMin,conv::kErecoMax);
      hEreco[i]->SetDirectory(0);
   }
-  TH1D * hErecoErrPos = new TH1D("hErecoErrPos","",nbins,Emin,Emax);
+  TH1D * hErecoErrPos = new TH1D("hErecoErrPos","",conv::kNErecoBins,conv::kErecoMin,conv::kErecoMax);
   hErecoErrPos->SetDirectory(0);
-  TH1D * hErecoErrNeg = new TH1D("hErecoErrNeg","",nbins,Emin,Emax);
+  TH1D * hErecoErrNeg = new TH1D("hErecoErrNeg","",conv::kNErecoBins,conv::kErecoMin,conv::kErecoMax);
   hErecoErrNeg->SetDirectory(0);
 
   // superk spectrum predictor
@@ -65,14 +59,14 @@ void test_superk_spectrum_prediction_twk_skeff_many()
      skexp.GetSuperkInputs()->TweakEfficiency(
         t2kana::yr1numu::conv::kSKsFCFV1RingMuLike, t2kana::yr1numu::conv::kSKmNuMuCCQE, ccqe_eff_twk);
      skexp.GetSuperkInputs()->TweakEfficiency(
-        t2kana::yr1numu::conv::kSKsFCFV1RingMuLike, t2kana::yr1numu::conv::kSKmNuMuNonCCQE, ccnonqe_eff_twk);
+        t2kana::yr1numu::conv::kSKsFCFV1RingMuLike, t2kana::yr1numu::conv::kSKmNuMuCC1pi, ccnonqe_eff_twk);
      skexp.GetSuperkInputs()->TweakEfficiency(
         t2kana::yr1numu::conv::kSKsFCFV1RingMuLike, t2kana::yr1numu::conv::kSKmNC, nc_eff_twk);
      cout << " ** i = " << i << " : "
              << "ccqe eff twk = " << ccqe_eff_twk 
              << ", ccnonqe_eff_twk = " << ccnonqe_eff_twk 
              << ", nc_eff_twk = " << nc_eff_twk << endl;
-     for(int ibin=1; ibin<=nbins; ibin++) {
+     for(int ibin=1; ibin <= conv::kNErecoBins; ibin++) {
         double Ereco = hEreco[i]->GetBinCenter(ibin);
         double Nexp  = skexp.Generate(Ereco, *fparm);
         maxNexp = TMath::Max(maxNexp,Nexp);
@@ -83,7 +77,7 @@ void test_superk_spectrum_prediction_twk_skeff_many()
   // get fractional err
   double global_maxerrpos = -1;
   double global_maxerrneg = +1;
-  for(int ibin=1; ibin<=nbins; ibin++) {
+  for(int ibin=1; ibin <= conv::kNErecoBins; ibin++) {
     double max = -1.;
     double min = +1.;
     double ndeflt = hEreco[0]->GetBinContent(ibin);

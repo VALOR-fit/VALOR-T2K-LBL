@@ -8,7 +8,7 @@
 
 #include "Conventions.h"
 
-void run_systematic_study()
+void run_systematic_study(string systematic="superk/ccqe_efficiency")
 {
   gSystem->Load("libGpad");  
   gSystem->Load("libPhysics");  
@@ -29,7 +29,7 @@ void run_systematic_study()
   const double input_sinsq2theta23 = 0.97;
   const double input_dm23sq        = 2.5E-3;
 
-  const int nexperiments = 100;
+  const int nexperiments = 10;
   double output_sinsq2theta23[nexperiments];
   double output_dm23sq       [nexperiments];
 
@@ -54,21 +54,62 @@ void run_systematic_study()
 
   for(int iexperiment = 0; iexperiment < nexperiments; iexperiment++) {
 
-     skexp->TweakBeamNorm(rand.Gaus(0,1));
+     double gtwk = rand.Gaus(0.,1.);
 
-     fparm->Update(t2kana::yr1numu::conv::kPhypSinsq2Theta23, input_sinsq2theta23);
-     fparm->Update(t2kana::yr1numu::conv::kPhypDm23sq,        input_dm23sq);
+     if(systematic == "nd280/efficiency") {
+	skexp->GetND280Inputs()->TweakEfficiency(gtwk);
+     } 
+     else 
+     if(systematic == "superk/energy_scale") {
+        skexp->GetSuperkInputs()->TweakEnergyScale(gtwk);
+     } 
+     else
+     if(systematic == "superk/ccqe_efficiency") {
+        skexp->GetSuperkInputs()->TweakEfficiency(conv::kSKsFCFV1RingMuLike, conv::kSKmNuMuCCQE, gtwk);
+     } 
+     else
+     if(systematic == "superk/ccnonqe_efficiency") {
+        skexp->GetSuperkInputs()->TweakEfficiency(conv::kSKsFCFV1RingMuLike, conv::kSKmNuMuCC1pi, gtwk);
+     } 
+     else
+     if(systematic == "superk/nc_efficiency") {
+        skexp->GetSuperkInputs()->TweakEfficiency(conv::kSKsFCFV1RingMuLike, conv::kSKmNC, gtwk);
+     }
+     else
+     if(systematic == "flux/norm") {   
+        skexp->GetBeamInputs()->TweakNorm(gtwk);  
+     }
+     else
+     if(systematic == "flux/shape") {   
+	exit(1);
+     }
+     else
+     if(systematic == "generator/ccqe_cross_section") {
+        skexp->GetGeneratorInputs()->TweakSigmaModeSK(conv::kSKmNuMuCCQE, gtwk);
+     }
+     else
+     if(systematic == "generator/ccnonqe_cross_section") {
+        skexp->GetGeneratorInputs()->TweakSigmaModeSK(conv::kSKmNuMuCC1pi, gtwk);
+     }
+     else
+     if(systematic == "generator/nc_cross_section") {
+        skexp->GetGeneratorInputs()->TweakSigmaModeSK(conv::kSKmNC, gtwk);
+     } 
+     else {
+	exit(1);
+     }
+
+     fparm->Update(conv::kPhypSinsq2Theta23, input_sinsq2theta23);
+     fparm->Update(conv::kPhypDm23sq,        input_dm23sq);
 
      // get fitter
-     OscillationFitter * fitter = new OscillationFitter(fit_inputs,"minuit");
+     OscillationFitter fitter(fit_inputs,"minuit");
 
      // do the fit
-     fitter->DoTheFit();
+     fitter.DoTheFit();
 
-     output_sinsq2theta23[iexperiment] = fparm->CurrValue(t2kana::yr1numu::conv::kPhypSinsq2Theta23);
-     output_dm23sq       [iexperiment] = fparm->CurrValue(t2kana::yr1numu::conv::kPhypDm23sq);
-
-     delete fitter;
+     output_sinsq2theta23[iexperiment] = fparm->CurrValue(conv::kPhypSinsq2Theta23);
+     output_dm23sq       [iexperiment] = fparm->CurrValue(conv::kPhypDm23sq);
   }
 
   TH1D * hp1 = new TH1D("hs1","",100,0,1);

@@ -23,12 +23,14 @@
 #include <TMatrixD.h>
 #include <TXMLEngine.h>
 #include <TH1D.h>
+#include <TAxis.h>
 
 class TGraph;
 class TH1;
 class TH1F;
 class TH1D;
 class TH2D;
+class TTree;
 class TAxis;
 
 #include "year1_numu_osc_analysis/Conventions.h"
@@ -69,10 +71,12 @@ namespace util {
   TH1F *           XML2TH1F        (TXMLEngine * eng, XMLNodePointer_t topnode, string path);
   TH1D *           XML2TH1D        (TXMLEngine * eng, XMLNodePointer_t topnode, string path);
   TH2D *           XML2TH2D        (TXMLEngine * eng, XMLNodePointer_t topnode, string path);
+  TTree *          XML2TTree       (TXMLEngine * eng, XMLNodePointer_t topnode, string path);
   TAxis *          XML2BinInfo     (TXMLEngine * eng, XMLNodePointer_t topnode, string path);
   double           XML2Dbl         (TXMLEngine * eng, XMLNodePointer_t topnode, string path);
   TH1DErrEnv *     XML2TH1DErrEnv  (TXMLEngine * eng, XMLNodePointer_t topnode, string path);
   TMatrixDSym *    XML2TMatrixDSym (TXMLEngine * eng, XMLNodePointer_t topnode, string path);
+  TMatrixD *       XML2TMatrixD    (TXMLEngine * eng, XMLNodePointer_t topnode, string path);
 
   // ROOT style/formatting
 
@@ -83,9 +87,15 @@ namespace util {
   void Format(TH1* hst, 
         int lcol, int lsty, int lwid, int mcol, int msty, double msiz);
 
+
+  // handle variable binning in fluc covariance matrices
+
+  int    Fixed2VarNumbering               (int fixBinNo);
+  double FluxFractionsFixedBinRelToVarBin (int fixBinNo, TH1D* ourFluxHisto, TH1D* theirFluxHisto);
+
   // etc
 
-  int Sign(double tweaking_dial);
+  int Sign (double tweaking_dial);
 
   // utility classes
 

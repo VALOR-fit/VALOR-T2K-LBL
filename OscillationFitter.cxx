@@ -17,6 +17,7 @@
 #include <TVirtualFitter.h>
 #include <TGraph.h>
 #include <TH2D.h>
+#include <THStack.h>
 #include <TMarker.h>
 #include <TLegend.h>
 #include <TString.h>
@@ -182,46 +183,6 @@ void OscillationFitter::Draw(
   cout << "OscillationFitter/Draw >> Drawing with option = " << opt.Data() << endl;
 #endif
 
-/*
-  //
-  // draw fitter inputs
-  //
-
-  if(opt.Contains("fit:inputs")) { 
-     c->Divide(1,2);
-     fFitInputs->Observation().Draw(c->GetPad(1), "Ereco/OneMuRingTight");
-     if(fKnowActualParams) {
-       double xmax = 5; // fMC->ErecoCCQElike()->GetXaxis()->GetXmax();
-       double ymax = 5; // 1.2 * fMC->ErecoCCQElike()->GetBinContent(fMC->ErecoCCQElike()->GetMaximumBin());
-       TGaxis *axis = new TGaxis(xmax, 0, xmax, ymax, 0, 1, 50510, "-L");
-       axis->SetLabelColor(kRed);
-       axis->SetLabelOffset(0.030);
-       axis->SetLabelSize(0.025);
-       axis->Draw();
-       // scale probability (Pmax := 1 --> scale) for drawing purposes
-       // only (so that the oscillation probability can be superimposed
-       // on the spectrum plot - both vertical axis scales will be shown)
-       double scale = ymax;
-       const int n = 2000;
-       double e[n], p[n];
-       double emax = 5;
-       double emin = 0;
-       double de = (emax-emin)/(n-1);
-       for(int i=0; i<n; i++) {
-          e[i] = emin + i*de;
-          p[i] = util::NuMuSurvProb2D(fSinsq2Theta23, fDm23sq, e[i]);
-          p[i] *= scale; // for plotting on canvas with two superimposed y-axes
-       }
-       TGraph * grosc = new TGraph(n,e,p);
-       grosc->SetLineColor(kRed);
-       grosc->Draw("lsame");
-     }
-//     fMC->Draw(c->GetPad(2),  "Ereco:def");
-
-  }//option = fit:inputs
-
-*/
-
   //
   // draw fitter results
   //
@@ -255,42 +216,68 @@ void OscillationFitter::Draw(
 
      TH1D * data = fFitInputs->Observation().AsTH1D();
 
-     TH1D * bestfit_tot   = fFitInputs->Expectation().AsTH1D(fFitInputs->FitParams());
-     TH1D * bestfit_ccqe  = fFitInputs->Expectation().AsTH1D(fFitInputs->FitParams(), conv::kSKmNuMuCCQE);
-     TH1D * bestfit_bkgcc = fFitInputs->Expectation().AsTH1D(fFitInputs->FitParams(), conv::kSKmNuMuNonCCQE);
-     TH1D * bestfit_bkgnc = fFitInputs->Expectation().AsTH1D(fFitInputs->FitParams(), conv::kSKmNC);
+     TH1D * bestfit_tot       = fFitInputs->Expectation().AsTH1D(fFitInputs->FitParams());
+     TH1D * bestfit_numuccqe  = fFitInputs->Expectation().AsTH1D(fFitInputs->FitParams(), conv::kSKmNuMuCCQE);
+     TH1D * bestfit_numucc1pi = fFitInputs->Expectation().AsTH1D(fFitInputs->FitParams(), conv::kSKmNuMuCC1pi);
+     TH1D * bestfit_numuccoth = fFitInputs->Expectation().AsTH1D(fFitInputs->FitParams(), conv::kSKmNuMuCCoth);
+     TH1D * bestfit_nc        = fFitInputs->Expectation().AsTH1D(fFitInputs->FitParams(), conv::kSKmNC);
+     TH1D * bestfit_numubar   = fFitInputs->Expectation().AsTH1D(fFitInputs->FitParams(), conv::kSKmNuMuBar);
+     TH1D * bestfit_nue       = fFitInputs->Expectation().AsTH1D(fFitInputs->FitParams(), conv::kSKmNuE);
 
      data -> SetMarkerStyle(20);
      data -> SetMarkerSize(1);
 
-     bestfit_bkgcc -> SetFillStyle ( 3354    );
-     bestfit_bkgnc -> SetFillStyle ( 3345    );
-     bestfit_bkgcc -> SetFillColor ( kBlue   );
-     bestfit_bkgnc -> SetFillColor ( kRed    );
-     bestfit_ccqe  -> SetLineColor ( kBlack  );
-     bestfit_bkgcc -> SetLineWidth ( 1       );
-     bestfit_bkgnc -> SetLineWidth ( 1       );
-     bestfit_ccqe  -> SetLineWidth ( 1       );
-     bestfit_tot   -> SetLineWidth ( 2       );
-     bestfit_bkgnc -> SetLineStyle ( kDashed );
+     bestfit_numucc1pi -> SetFillStyle ( 3354     );
+     bestfit_numuccoth -> SetFillStyle ( 3345     );
+     bestfit_nc        -> SetFillStyle ( 3006     );
+     bestfit_numubar   -> SetFillStyle ( 3001     );
+     bestfit_nue       -> SetFillStyle ( 3001     );
+     bestfit_numucc1pi -> SetFillColor ( kBlue    );
+     bestfit_numuccoth -> SetFillColor ( kMagenta );
+     bestfit_nc        -> SetFillColor ( kRed     );
+     bestfit_numubar   -> SetFillColor ( kYellow  );
+     bestfit_nue       -> SetFillColor ( kGreen   );
+     bestfit_numuccqe  -> SetLineColor ( kBlack   );
+     bestfit_numucc1pi -> SetLineWidth ( 1        );
+     bestfit_numuccoth -> SetLineWidth ( 1        );
+     bestfit_nc        -> SetLineWidth ( 1        );
+     bestfit_numuccqe  -> SetLineWidth ( 1        );
+     bestfit_numubar   -> SetLineWidth ( 1        );
+     bestfit_nue       -> SetLineWidth ( 1        );
+     bestfit_tot       -> SetLineWidth ( 2        );
+     bestfit_nc        -> SetLineStyle ( kDashed  );
 
      data -> GetXaxis()->SetTitle("E_{reco} (GeV)");
      data -> GetYaxis()->SetTitle("Number of events");
      data -> Draw("PERR");
      //data -> Draw("P");
      bestfit_tot   -> Draw("SAME");
-     bestfit_ccqe  -> Draw("SAME");
-     bestfit_bkgcc -> Draw("SAME");
-     bestfit_bkgnc -> Draw("SAME");
+
+     THStack * stack = new THStack("stack","spectrum contributions");
+     stack->Add(bestfit_numuccqe);
+     stack->Add(bestfit_numucc1pi);
+     stack->Add(bestfit_numuccoth);
+     stack->Add(bestfit_nc);
+     stack->Add(bestfit_numubar);
+     stack->Add(bestfit_nue);
+     stack->Draw("same");
+
+//     bestfit_ccqe  -> Draw("SAME");
+//     bestfit_cc1pi -> Draw("SAME");
+//     bestfit_ccoth -> Draw("SAME");
+//     bestfit_nc    -> Draw("SAME");
 
      TLegend * spectrum_legend = new TLegend(0.6,0.5,0.9,0.9);
      spectrum_legend->SetFillColor (0);
      spectrum_legend->SetBorderSize(0);
-     spectrum_legend->AddEntry(data,          "data",              "P" );
-     spectrum_legend->AddEntry(bestfit_tot,   "best fit",          "L" );
-     spectrum_legend->AddEntry(bestfit_ccqe,  "best fit (ccqe)",   "L" );
-     spectrum_legend->AddEntry(bestfit_bkgcc, "best fit (bkg cc)", "LF");
-     spectrum_legend->AddEntry(bestfit_bkgnc, "best fit (bkg nc)", "LF");
+     spectrum_legend->AddEntry(data,              "data",                               "P" );
+     spectrum_legend->AddEntry(bestfit_tot,       "best fit",                           "L" );
+     spectrum_legend->AddEntry(bestfit_numuccqe,  "best fit (#nu_{#mu} CCQE)",          "L" );
+     spectrum_legend->AddEntry(bestfit_numucc1pi, "best fit (#nu_{#mu} CC1#pi)",        "LF");
+     spectrum_legend->AddEntry(bestfit_numuccoth, "best fit (#nu_{#mu} CC other)",      "LF");
+     spectrum_legend->AddEntry(bestfit_nc,        "best fit (#nu_{#mu}/#nu_{#tau} NC)", "LF");
+     spectrum_legend->AddEntry(bestfit_numubar,   "best fit (#bar{#nu_{#mu}})",         "LF");
+     spectrum_legend->AddEntry(bestfit_nue,       "best fit (#nu_{e})", "LF");
      spectrum_legend->Draw();
 
      c->Update();

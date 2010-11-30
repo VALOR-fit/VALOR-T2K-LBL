@@ -27,12 +27,6 @@ void test_superk_spectrum_prediction_twk_skescale()
   using namespace t2kana;
   using namespace t2kana::yr1numu;
 
-  // energy range and binning
-  const double Emin  = 0;
-  const double Emax  = 10;
-  const double dE    = 0.05;
-  const int    nbins = (int) ((Emax - Emin)/dE);
-
   const int ntwkdials = 5;
   double twkdial[ntwkdials] = { -1.0, -0.5, 0.0, +0.5, +1.0 };
 
@@ -47,12 +41,12 @@ void test_superk_spectrum_prediction_twk_skescale()
   TH1D * hEreco   [ntwkdials];
   TH1D * hErecoErr[ntwkdials];
   for(int idial = 0; idial < ntwkdials; idial++) {
-     hEreco   [idial] = new TH1D("","",nbins,Emin,Emax);
+     hEreco   [idial] = new TH1D("","",conv::kNErecoBins,conv::kErecoMin,conv::kErecoMax);
      hEreco   [idial]->SetDirectory(0);
      hEreco   [idial]->SetLineWidth(hwidth[idial]);
      hEreco   [idial]->SetLineColor(hcolor[idial]);
      hEreco   [idial]->SetLineStyle(hstyle[idial]);
-     hErecoErr[idial] = new TH1D("","",nbins,Emin,Emax);
+     hErecoErr[idial] = new TH1D("","",conv::kNErecoBins,conv::kErecoMin,conv::kErecoMax);
      hErecoErr[idial]->SetDirectory(0);
      hErecoErr[idial]->SetLineWidth(hwidth[idial]);
      hErecoErr[idial]->SetLineColor(hcolor[idial]);
@@ -71,7 +65,7 @@ void test_superk_spectrum_prediction_twk_skescale()
   // generate predictions
   for(int idial = 0; idial < ntwkdials; idial++) {
      skexp.GetSuperkInputs()->TweakEnergyScale( twkdial[idial] );
-     for(int ibin=1; ibin<=nbins; ibin++) {
+     for(int ibin=1; ibin <= conv::kNErecoBins; ibin++) {
         double Ereco = hEreco[idial]->GetBinCenter(ibin);
         double Nexp  = skexp.Generate(Ereco, *fparm);
         cout << "NumExpSK (Ereco = " << Ereco << ") = " << Nexp << endl;
@@ -82,7 +76,7 @@ void test_superk_spectrum_prediction_twk_skescale()
   double maxerrpos = -1.;
   double maxerrneg = +1.;
   for(int idial = 0; idial < ntwkdials; idial++) {
-    for(int ibin=1; ibin<=nbins; ibin++) {
+    for(int ibin=1; ibin <= conv::kNErecoBins; ibin++) {
       double ncurr  = hEreco[idial]->GetBinContent(ibin);
       double ndeflt = hEreco[deflt]->GetBinContent(ibin);
       if(ndeflt>0) {

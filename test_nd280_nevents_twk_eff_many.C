@@ -9,7 +9,7 @@
 
 #include "Conventions.h"
 
-void test_nd280_nevents_twk_eff_many()
+void test_nd280_nevents_twk_eff_many(bool mode_efficiency_twk_correlated=true)
 {
   gSystem->Load("libGpad");  
   gSystem->Load("libPhysics");  
@@ -38,30 +38,34 @@ void test_nd280_nevents_twk_eff_many()
   TH1D * hst_flux_correction_factor = new TH1D("hst_flux_correction_factor","",70,0.8,1.5);
 
   for(int i = 0; i < n; i++) {
-     skexp.GetND280Inputs()->TweakEfficiency( conv::kNDmNuMuCCQE,     rand.Gaus(0,1) );
-     skexp.GetND280Inputs()->TweakEfficiency( conv::kNDmNuMuCCRES,    rand.Gaus(0,1) );
-     skexp.GetND280Inputs()->TweakEfficiency( conv::kNDmNuMuCCCOH,    rand.Gaus(0,1) );
-     skexp.GetND280Inputs()->TweakEfficiency( conv::kNDmNuMuCCOth,    rand.Gaus(0,1) );
-     skexp.GetND280Inputs()->TweakEfficiency( conv::kNDmNuMuNCEL,     rand.Gaus(0,1) );
-     skexp.GetND280Inputs()->TweakEfficiency( conv::kNDmNuMuNCRES,    rand.Gaus(0,1) );
-     skexp.GetND280Inputs()->TweakEfficiency( conv::kNDmNuMuNCCOH,    rand.Gaus(0,1) );
-     skexp.GetND280Inputs()->TweakEfficiency( conv::kNDmNuMuNCOth,    rand.Gaus(0,1) );
-     skexp.GetND280Inputs()->TweakEfficiency( conv::kNDmNuMuBarCCQE,  rand.Gaus(0,1) );
-     skexp.GetND280Inputs()->TweakEfficiency( conv::kNDmNuMuBarCCRES, rand.Gaus(0,1) );
-     skexp.GetND280Inputs()->TweakEfficiency( conv::kNDmNuMuBarCCCOH, rand.Gaus(0,1) );
-     skexp.GetND280Inputs()->TweakEfficiency( conv::kNDmNuMuBarCCOth, rand.Gaus(0,1) );
-     skexp.GetND280Inputs()->TweakEfficiency( conv::kNDmNuMuBarNCEL,  rand.Gaus(0,1) );
-     skexp.GetND280Inputs()->TweakEfficiency( conv::kNDmNuMuBarNCRES, rand.Gaus(0,1) );
-     skexp.GetND280Inputs()->TweakEfficiency( conv::kNDmNuMuBarNCCOH, rand.Gaus(0,1) );
-     skexp.GetND280Inputs()->TweakEfficiency( conv::kNDmNuMuBarNCOth, rand.Gaus(0,1) );
-     skexp.GetND280Inputs()->TweakEfficiency( conv::kNDmNuECCQE,      rand.Gaus(0,1) );
-     skexp.GetND280Inputs()->TweakEfficiency( conv::kNDmNuECCRES,     rand.Gaus(0,1) );
-     skexp.GetND280Inputs()->TweakEfficiency( conv::kNDmNuECCCOH,     rand.Gaus(0,1) );
-     skexp.GetND280Inputs()->TweakEfficiency( conv::kNDmNuECCOth,     rand.Gaus(0,1) );
-     skexp.GetND280Inputs()->TweakEfficiency( conv::kNDmNuENCEL,      rand.Gaus(0,1) );
-     skexp.GetND280Inputs()->TweakEfficiency( conv::kNDmNuENCRES,     rand.Gaus(0,1) );
-     skexp.GetND280Inputs()->TweakEfficiency( conv::kNDmNuENCCOH,     rand.Gaus(0,1) );
-     skexp.GetND280Inputs()->TweakEfficiency( conv::kNDmNuENCOth,     rand.Gaus(0,1) );
+     if(mode_efficiency_twk_correlated) {
+        skexp.GetND280Inputs()->TweakEfficiency( rand.Gaus(0,1) );
+     } else {
+        skexp.GetND280Inputs()->TweakEfficiency( conv::kNDmNuMuCCQE,     rand.Gaus(0,1) );
+        skexp.GetND280Inputs()->TweakEfficiency( conv::kNDmNuMuCCRES,    rand.Gaus(0,1) );
+        skexp.GetND280Inputs()->TweakEfficiency( conv::kNDmNuMuCCCOH,    rand.Gaus(0,1) );
+        skexp.GetND280Inputs()->TweakEfficiency( conv::kNDmNuMuCCOth,    rand.Gaus(0,1) );
+        skexp.GetND280Inputs()->TweakEfficiency( conv::kNDmNuMuNCEL,     rand.Gaus(0,1) );
+        skexp.GetND280Inputs()->TweakEfficiency( conv::kNDmNuMuNCRES,    rand.Gaus(0,1) );
+        skexp.GetND280Inputs()->TweakEfficiency( conv::kNDmNuMuNCCOH,    rand.Gaus(0,1) );
+        skexp.GetND280Inputs()->TweakEfficiency( conv::kNDmNuMuNCOth,    rand.Gaus(0,1) );
+        skexp.GetND280Inputs()->TweakEfficiency( conv::kNDmNuMuBarCCQE,  rand.Gaus(0,1) );
+        skexp.GetND280Inputs()->TweakEfficiency( conv::kNDmNuMuBarCCRES, rand.Gaus(0,1) );
+        skexp.GetND280Inputs()->TweakEfficiency( conv::kNDmNuMuBarCCCOH, rand.Gaus(0,1) );
+        skexp.GetND280Inputs()->TweakEfficiency( conv::kNDmNuMuBarCCOth, rand.Gaus(0,1) );
+        skexp.GetND280Inputs()->TweakEfficiency( conv::kNDmNuMuBarNCEL,  rand.Gaus(0,1) );
+        skexp.GetND280Inputs()->TweakEfficiency( conv::kNDmNuMuBarNCRES, rand.Gaus(0,1) );
+        skexp.GetND280Inputs()->TweakEfficiency( conv::kNDmNuMuBarNCCOH, rand.Gaus(0,1) );
+        skexp.GetND280Inputs()->TweakEfficiency( conv::kNDmNuMuBarNCOth, rand.Gaus(0,1) );
+        skexp.GetND280Inputs()->TweakEfficiency( conv::kNDmNuECCQE,      rand.Gaus(0,1) );
+        skexp.GetND280Inputs()->TweakEfficiency( conv::kNDmNuECCRES,     rand.Gaus(0,1) );
+        skexp.GetND280Inputs()->TweakEfficiency( conv::kNDmNuECCCOH,     rand.Gaus(0,1) );
+        skexp.GetND280Inputs()->TweakEfficiency( conv::kNDmNuECCOth,     rand.Gaus(0,1) );
+        skexp.GetND280Inputs()->TweakEfficiency( conv::kNDmNuENCEL,      rand.Gaus(0,1) );
+        skexp.GetND280Inputs()->TweakEfficiency( conv::kNDmNuENCRES,     rand.Gaus(0,1) );
+        skexp.GetND280Inputs()->TweakEfficiency( conv::kNDmNuENCCOH,     rand.Gaus(0,1) );
+        skexp.GetND280Inputs()->TweakEfficiency( conv::kNDmNuENCOth,     rand.Gaus(0,1) );
+     }
 
      double nobscclike_nd280  = skexp.GetND280Inputs()->NObsCCLike();
      double nexpncbkg_nd280   = skexp.GetND280Inputs()->NExpNCBkg();

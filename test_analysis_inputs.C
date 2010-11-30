@@ -7,7 +7,7 @@
 //
 
 {
-  TString opt = "nd280";
+  TString opt = "SuperK";
 
   gSystem->Load("libGpad");  
   gSystem->Load("libPhysics");  
@@ -45,9 +45,11 @@
   }//Flux
 
   if(opt.Contains("SuperK")) {
-    skexp->GetSuperkInputs()->Draw(new TCanvas(), "ReconstructionEfficiency");
-    skexp->GetSuperkInputs()->Draw(new TCanvas(), "SelectionEfficiency/OneMuRingTight");
-    skexp->GetSuperkInputs()->Draw(new TCanvas(), "EnergyTransferMatrix/OneMuRingTight");
+    skexp->GetSuperkInputs()->Draw(new TCanvas(), "etrue_spectra");
+
+///    skexp->GetSuperkInputs()->Draw(new TCanvas(), "ReconstructionEfficiency");
+///    skexp->GetSuperkInputs()->Draw(new TCanvas(), "SelectionEfficiency/OneMuRingTight");
+///    skexp->GetSuperkInputs()->Draw(new TCanvas(), "EnergyTransferMatrix/OneMuRingTight");
   }//SuperK
 
   if(opt.Contains("nd280")) {
@@ -68,11 +70,11 @@
     skexp->GetND280Inputs()->Draw(new TCanvas(), "Saclay/Efficiency/NuE/CC");
     skexp->GetND280Inputs()->Draw(new TCanvas(), "Saclay/Efficiency/NuE/NC");
   }
-
   if(opt.Contains("NeutrinoGenerator")) {
-    skexp->GetGeneratorInputs()->Draw(new TCanvas(), "SKSigTotal");
-    skexp->GetGeneratorInputs()->Draw(new TCanvas(), "SKFracMode");
-    skexp->GetGeneratorInputs()->Draw(new TCanvas(), "SKErrSigMode");
+//    skexp->GetGeneratorInputs()->Draw(new TCanvas(), "SKSigTotal");
+    skexp->GetGeneratorInputs()->Draw(new TCanvas(), "SKSigMode");
+//    skexp->GetGeneratorInputs()->Draw(new TCanvas(), "SKFracMode");
+//    skexp->GetGeneratorInputs()->Draw(new TCanvas(), "SKErrSigMode");
   }//NeutrinoGenerator
 
   if(opt.Contains("Observation")) {

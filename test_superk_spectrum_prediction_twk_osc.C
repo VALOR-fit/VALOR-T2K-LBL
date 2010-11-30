@@ -26,16 +26,10 @@ void test_superk_spectrum_prediction_twk_osc()
   using namespace t2kana;
   using namespace t2kana::yr1numu;
 
-  // energy range and binning
-  const double Emin  = 0;
-  const double Emax  = 4;
-  const double dE    = 0.05;
-  const int    nbins = (int) ((Emax - Emin)/dE);
-
   // oscillation params
   const int ncases = 4;
-  double sinsq2theta23[ncases] = { 0., 1.0,    1.0,     1.0    };
-  double dm23sq       [ncases] = { 0., 2.0E-3, 2.35E-3, 3.3E-3 };
+  double sinsq2theta23[ncases] = { 0., 1.0,    1.0,    1.0    };
+  double dm23sq       [ncases] = { 0., 2.0E-3, 2.4E-3, 3.3E-3 };
 
   // histogram drawing options
   int hwidth [ncases] = { 2,      1,       1,       1       };
@@ -46,12 +40,12 @@ void test_superk_spectrum_prediction_twk_osc()
   TH1D * hEreco[ncases];
   TH1D * hErecoFracDeficit[ncases];
   for(int icase = 0; icase < ncases; icase++) {
-    hEreco[icase] = new TH1D("","",nbins,Emin,Emax);
+    hEreco[icase] = new TH1D("","",conv::kNErecoBins,conv::kErecoMin,conv::kErecoMax);
     hEreco[icase]->SetDirectory(0);
     hEreco[icase]->SetLineWidth(hwidth[icase]);
     hEreco[icase]->SetLineColor(hcolor[icase]);
     hEreco[icase]->SetLineStyle(hstyle[icase]);
-    hErecoFracDeficit[icase] = new TH1D("","",nbins,Emin,Emax);
+    hErecoFracDeficit[icase] = new TH1D("","",conv::kNErecoBins,conv::kErecoMin,conv::kErecoMax);
     hErecoFracDeficit[icase]->SetDirectory(0);
     hErecoFracDeficit[icase]->SetLineWidth(hwidth[icase]);
     hErecoFracDeficit[icase]->SetLineColor(hcolor[icase]);
@@ -69,7 +63,7 @@ void test_superk_spectrum_prediction_twk_osc()
   for(int icase = 0; icase < ncases; icase++) {
     fparm->Update(t2kana::yr1numu::conv::kPhypSinsq2Theta23, sinsq2theta23[icase]);
     fparm->Update(t2kana::yr1numu::conv::kPhypDm23sq,        dm23sq[icase]);
-    for(int ibin=1; ibin<=nbins; ibin++) {
+    for(int ibin=1; ibin <= conv::kNErecoBins; ibin++) {
        double Ereco = hEreco[icase]->GetBinCenter(ibin);
        double Nexp  = skexp.Generate(Ereco, *fparm);
        cout << "NumExpSK (Ereco = " << Ereco << ") = " << Nexp << endl;
@@ -78,7 +72,7 @@ void test_superk_spectrum_prediction_twk_osc()
   }
   // calculate fractional deficit
   for(int icase = 1; icase < ncases; icase++) {
-    for(int ibin=1; ibin<=nbins; ibin++) {
+    for(int ibin=1; ibin <= conv::kNErecoBins; ibin++) {
        double Nunosc = hEreco[0]    ->GetBinContent(ibin); 
        double Nosc   = hEreco[icase]->GetBinContent(ibin);
        if(Nunosc>0) {
