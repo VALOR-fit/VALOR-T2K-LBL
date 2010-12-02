@@ -1,7 +1,7 @@
 //
 // ------------------------------------------------------------------------------------------------
-// Plot predicted SuperK reconstructed neutrino energy spectrum for various sets of SuperK
-// cross section tweaking dials.
+// Plot predicted SuperK reconstructed neutrino energy spectrum for various flux normalization
+// tweaking dials.
 //
 // Costas Andreopoulos
 // ------------------------------------------------------------------------------------------------
@@ -27,12 +27,6 @@ void test_superk_spectrum_prediction_twk_bnorm()
   using namespace t2kana;
   using namespace t2kana::yr1numu;
 
-  // energy range and binning
-  const double Emin  = 0;
-  const double Emax  = 10;
-  const double dE    = 0.05;
-  const int    nbins = (int) ((Emax - Emin)/dE);
-
   const int ntwkdials = 5;
   double twkdial[ntwkdials] = { -1.0, -0.5, 0.0, +0.5, +1.0 };
 
@@ -44,7 +38,7 @@ void test_superk_spectrum_prediction_twk_bnorm()
   // histogram booking
   TH1D * hEreco[ntwkdials];
   for(int idial = 0; idial < ntwkdials; idial++) {
-     hEreco[idial] = new TH1D("","",nbins,Emin,Emax);
+     hEreco[idial] = new TH1D("","",conv::kNErecoBins,conv::kErecoMin,conv::kErecoMax);
      hEreco[idial]->SetDirectory(0);
      hEreco[idial]->SetLineWidth(hwidth[idial]);
      hEreco[idial]->SetLineColor(hcolor[idial]);
@@ -62,9 +56,12 @@ void test_superk_spectrum_prediction_twk_bnorm()
 
   // generate predictions
   for(int idial = 0; idial < ntwkdials; idial++) {
+     cout << " ** Beam norm tweaking dial = " << twkdial[idial] << endl;
      skexp.GetBeamInputs()->TweakNorm( twkdial[idial] );
-     for(int ibin=1; ibin<=nbins; ibin++) {
+     for(int ibin=1; ibin <= conv::kNErecoBins; ibin++) {
+        cout << "ibin = " << ibin << endl;
         double Ereco = hEreco[idial]->GetBinCenter(ibin);
+        cout << "Ereco = " << Ereco << endl;
         double Nexp  = skexp.Generate(Ereco, *fparm);
         cout << "NumExpSK (Ereco = " << Ereco << ") = " << Nexp << endl;
         hEreco[idial]->SetBinContent(ibin,Nexp);
