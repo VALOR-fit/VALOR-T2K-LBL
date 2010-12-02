@@ -282,7 +282,9 @@ TVectorD t2kana::yr1numu::util::CholeskyGenerateCorrelatedParamVariations (
   }
   g *= cholesky_triangular;
 
+#ifdef __debug_level_3__
   cout << "Util >> Tweak vector size = " << g.GetNrows() << endl;
+#endif
 
   return g;
 }
@@ -512,58 +514,80 @@ vector<string> t2kana::yr1numu::util::Tokens (string input, string delimiter)
   return tokens;
 }
 //___________________________________________________________________________
-int t2kana::yr1numu::util::Fixed2VarNumbering(int fixBinNo)
+int t2kana::yr1numu::util::FluxFix2VarBinNumber(int fixBinNo)
 {
-           // cov matrix is 19x19, made for a variable binning of this type:
-            // (0.0, 0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 1.0, 1.2, 1.5, 2.0, 2.5, 3.0, 3.5, 4.0, 5.0, 7.0, 10.0) GeV
-            //  We have to deal with the uniform 0.05GeV binning; So, varBinning->UniformBinning mapping is the following:
-            // 0.0(2)0.1; 0.1(2)0.2; .....; 07(2)08; =>16 50Mev bins
-            // 0.8(4)1.0; 1.0(4)1.2; = > 8 50MeV bins
-            // 1.2(6)1.5; = > 6 50MeV bins
-            // 1.5(10)2.0; ....;3.5(10)4.0 => 50 50MeV bins
-            // 4.0(20)5.0 =>20 50MeV bins
-            // 5(40)7 =>40 50MeV bins
-            // 7(40)10 =>60 50MeV bins
-      
-            // Maps are slow - try  a vector; vectors index is our fixBinNo, the value is therBinNo
-            std::vector<int> binMapping ;
+  // Given flux cov matrix is 19x19, made for a variable binning scheme:
+  // (0.0, 0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 1.0, 1.2, 1.5, 2.0, 
+  //  2.5, 3.0, 3.5, 4.0, 5.0, 7.0, 10.0) GeV
+  // We use fixed-size 0.05 GeV binning.
+  // Bin numbers (from the fixed binning scheme to the variable one) are
+  // mapped as follows:
+  //
+  // 0.0(2)0.1; 0.1(2)0.2; .....; 07(2)08; =>16 50Mev bins
+  // 0.8(4)1.0; 1.0(4)1.2; = > 8 50MeV bins
+  // 1.2(6)1.5; = > 6 50MeV bins
+  // 1.5(10)2.0; ....;3.5(10)4.0 => 50 50MeV bins
+  // 4.0(20)5.0 =>20 50MeV bins
+  // 5(40)7 =>40 50MeV bins
+  // 7(40)10 =>60 50MeV bins
+
+/*      
+  std::vector<int> binMapping;
             
-            //lets zero element to be 0
-            binMapping.push_back(0);
-            for( int i=1  ;  i<=16; i++){binMapping.push_back((i+1)/2);}
-            for( int i=17 ; i<=20; i++){ binMapping.push_back( 9);}
-            for( int i=21 ; i<=24; i++){ binMapping.push_back( 10);}
-            for( int i=25 ; i<=30; i++){ binMapping.push_back( 11);}
-            for( int i=31 ; i<=40; i++){ binMapping.push_back( 12);}
-            for( int i=41 ; i<=50; i++){ binMapping.push_back( 13);}
-            for( int i=51 ; i<=60; i++){ binMapping.push_back( 14);}
-            for( int i=61 ; i<=70; i++){ binMapping.push_back( 15);}
-            for( int i=71 ; i<=80; i++){ binMapping.push_back( 16);}
-            for( int i=81 ; i<=100; i++){ binMapping.push_back( 17);}
-            for( int i=101;i<=140; i++){ binMapping.push_back( 18);}
-            for( int i=141;i<=200; i++){ binMapping.push_back( 19);}
+  //lets zero element to be 0
+  binMapping.push_back(0);
+  for( int i=1  ;  i<=16; i++){binMapping.push_back((i+1)/2);}
+  for( int i=17 ; i<=20; i++){ binMapping.push_back( 9);}
+  for( int i=21 ; i<=24; i++){ binMapping.push_back( 10);}
+  for( int i=25 ; i<=30; i++){ binMapping.push_back( 11);}
+  for( int i=31 ; i<=40; i++){ binMapping.push_back( 12);}
+  for( int i=41 ; i<=50; i++){ binMapping.push_back( 13);}
+  for( int i=51 ; i<=60; i++){ binMapping.push_back( 14);}
+  for( int i=61 ; i<=70; i++){ binMapping.push_back( 15);}
+  for( int i=71 ; i<=80; i++){ binMapping.push_back( 16);}
+  for( int i=81 ; i<=100; i++){ binMapping.push_back( 17);}
+  for( int i=101;i<=140; i++){ binMapping.push_back( 18);}
+  for( int i=141;i<=200; i++){ binMapping.push_back( 19);}
       
-            return binMapping[fixBinNo];
+  return binMapping[fixBinNo];
+*/
+
+  if (fixBinNo >=   1 && fixBinNo <=  16) return (fixBinNo+1)/2;
+  if (fixBinNo >=  17 && fixBinNo <=  20) return 9;
+  if (fixBinNo >=  21 && fixBinNo <=  24) return 10;
+  if (fixBinNo >=  25 && fixBinNo <=  30) return 11;
+  if (fixBinNo >=  31 && fixBinNo <=  40) return 12;
+  if (fixBinNo >=  41 && fixBinNo <=  50) return 13;
+  if (fixBinNo >=  51 && fixBinNo <=  60) return 14;
+  if (fixBinNo >=  61 && fixBinNo <=  70) return 15;
+  if (fixBinNo >=  71 && fixBinNo <=  80) return 16;
+  if (fixBinNo >=  81 && fixBinNo <= 100) return 17;
+  if (fixBinNo >= 101 && fixBinNo <= 140) return 18;
+  if (fixBinNo >= 141 && fixBinNo <= 200) return 19;
+
+  return -1;
 }
 //___________________________________________________________________________
 double t2kana::yr1numu::util::FluxFractionsFixedBinRelToVarBin (
-  int fixBinNo, TH1D* ourFluxHisto, TH1D* theirFluxHisto)
+  int fixBinNo, TH1D* fixBinFluxHisto, TH1D* varBinFluxHisto)
 {
 // ratio 50 MeV bin content relative to the larger bin content (in the 
-// var size biining scheme) that contains it.
+// var size binning scheme) that contains it.
 //
-      double ratio (0.0);
       
-      if( ourFluxHisto->GetBinCenter(fixBinNo)<10.0 ){
-            double ourFlux = ourFluxHisto->GetBinContent(fixBinNo);
-            int ibin = Fixed2VarNumbering(fixBinNo);
-            double theirFlux = theirFluxHisto->GetBinContent(ibin);
-            ratio = ourFlux/theirFlux;
-      } else{
-            cout<<"Check your binning! You shouldn't calculate anything for energies above 10GeV!!!"<<endl;
-            ratio = 1.0;
-      }
-      return ratio;
+  if(fixBinFluxHisto->GetBinCenter(fixBinNo) < 10.0 /* GeV */)
+  {
+     double fixBinFlux = fixBinFluxHisto->GetBinContent(fixBinNo);
+     int ibin = FluxFix2VarBinNumber(fixBinNo);
+     double varBinFlux = varBinFluxHisto->GetBinContent(ibin);
+     double ratio = (varBinFlux>0) ? fixBinFlux/varBinFlux : 1;
+     return ratio;
+   }
+
+  cout << "Util/FluxFractionsFixedBinRelToVarBin >> "
+       << "Note! Input bin center above 10 GeV" << endl;
+
+   return 1;
 }
 //___________________________________________________________________________
 int t2kana::yr1numu::util::Sign(double tweaking_dial)
@@ -614,7 +638,8 @@ TH1F * t2kana::yr1numu::util::XML2TH1F(
   if(!found_node) {
     cerr << "utils/XML2TH1F >> No node was found at input XML node path: "
          << path << endl;
-    return 0;
+    //return 0;
+    exit(1);
   }
 
   string filename = "";
@@ -643,7 +668,8 @@ TH1F * t2kana::yr1numu::util::XML2TH1F(
   if(!h) {
     cerr << "utils/XML2TH1F >> No " << objname << " in " << filename << endl;
     file.Close();
-    return 0;
+    //return 0;
+    exit(1);
   }
 
   TH1F * hcopy = new TH1F(*h);
@@ -667,7 +693,8 @@ TH1D * t2kana::yr1numu::util::XML2TH1D(
   if(!found_node) {
     cerr << "utils/XML2TH1D >> No node was found at input XML node path: "
          << path << endl;
-    return 0;
+    //return 0;
+    exit(1);
   }
 
   string filename = "";
@@ -696,7 +723,8 @@ TH1D * t2kana::yr1numu::util::XML2TH1D(
   if(!h) {
     cerr << "utils/XML2TH1D >> No " << objname << " in " << filename << endl;
     file.Close();
-    return 0;
+    //return 0;
+    exit(1);
   }
 
   TH1D * hcopy = new TH1D(*h);
@@ -720,7 +748,8 @@ TH2D * t2kana::yr1numu::util::XML2TH2D(
   if(!found_node) {
     cerr << "utils/XML2TH2D >> No node was found at input XML node path: "
          << path << endl;
-    return 0;
+    //return 0;
+    exit(1);
   }
 
   string filename = "";
@@ -749,7 +778,8 @@ TH2D * t2kana::yr1numu::util::XML2TH2D(
   if(!h2) {
     cerr << "utils/XML2TH2D >> No " << objname << " in " << filename << endl;
     file.Close();
-    return 0;
+    //return 0;
+    exit(1);
   }
 
   TH2D * h2copy = new TH2D(*h2);
@@ -773,7 +803,8 @@ TTree * t2kana::yr1numu::util::XML2TTree(
   if(!found_node) {
     cerr << "utils/XML2TTree >> No node was found at input XML node path: "
          << path << endl;
-    return 0;
+    //return 0;
+    exit(1);
   }
 
   string filename = "";
@@ -806,7 +837,8 @@ TTree * t2kana::yr1numu::util::XML2TTree(
   if(!tree) {
     cerr << "utils/XML2TTree >> No " << objname << " in " << filename << endl;
 //    file.Close();
-    return 0;
+    //return 0;
+    exit(1);
   }
 
   return tree;
@@ -829,7 +861,8 @@ TAxis *  t2kana::yr1numu::util::XML2BinInfo(
   if(!found_node) {
     cerr << "utils/XML2TH2D >> No node was found at input XML node path: "
          << path << endl;
-    return 0;
+    //return 0;
+    exit(1);
   }
 
   string binsz = xmleng->GetAttr(found_node,"bin_size");
@@ -919,7 +952,8 @@ TMatrixDSym * t2kana::yr1numu::util::XML2TMatrixDSym(
   if(!found_node) {
     cerr << "utils/XML2TMatrixDSym >> "
          << "No node was found at input XML node path: " << path << endl;
-    return 0;
+    //return 0;
+    exit(1);
   }
 
   string filename = "";
@@ -945,7 +979,8 @@ TMatrixDSym * t2kana::yr1numu::util::XML2TMatrixDSym(
     cerr << "utils/XML2TMatrixDSym >> No " 
          << objname << " in " << filename << endl;
     file.Close();
-    return 0;
+    //return 0;
+    exit(1);
   }
 
   TMatrixDSym * matrix_copy = new TMatrixDSym(*matrix);
@@ -970,7 +1005,8 @@ TMatrixD * t2kana::yr1numu::util::XML2TMatrixD(
   if(!found_node) {
     cerr << "utils/XML2TMatrixD >> "
          << "No node was found at input XML node path: " << path << endl;
-    return 0;
+    //return 0;
+    exit(1);
   }
 
   string filename = "";
@@ -990,18 +1026,18 @@ TMatrixD * t2kana::yr1numu::util::XML2TMatrixD(
   cout << "utils/XML2TMatrixD >> objname  : " << objname  << endl;
 #endif
 
-  TFile file(filename.c_str(), "read");
-  TMatrixD * matrix = (TMatrixD*)file.Get(objname.c_str());
+  TFile * file = new TFile(filename.c_str(), "read");
+  TMatrixD * matrix = (TMatrixD*) file->Get(objname.c_str());
   if(!matrix) {
     cerr << "utils/XML2TMatrixD >> No " 
          << objname << " in " << filename << endl;
-    file.Close();
-    return 0;
+    file->Close();
+    //return 0;
+    exit(1);
   }
 
   TMatrixD * matrix_copy = new TMatrixD(*matrix);
-
-  file.Close();
+  file->Close();
 
   return matrix_copy;
 }
