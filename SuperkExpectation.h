@@ -92,6 +92,7 @@ public:
      ~ND280Inputs();
 
       // Get nd280 oscillation analysis inputs
+      double CorrectionFactor (void) const;
       double NObsCCLike       (void) const; ///< observed number of CC-like events
       double NExpNCBkg        (void) const; ///< expected NC contamination of CC-like sample
       double NExpCC           (void) const; ///< expected number of CC events
@@ -120,7 +121,7 @@ public:
       void TweakEfficiency (double twkdial);
 
       //
-      void TellMeAboutCrossSections(GeneratorInputs * geninp) { fGenInp = geninp; }
+      void TellMeAboutCrossSections(GeneratorInputs * geninp) { fGenInputs = geninp; }
 
       // Read inputs from XML file
       bool Read (TXMLEngine* xml, XMLNodePointer_t root_node); 
@@ -130,14 +131,17 @@ public:
       void   Init    (void);
       void   CleanUp (void);
 
-      double  fPOTData;              ///< number of POT (data)
-      double  fNumObsCCLike;         ///< Observed number of CC-like events 
-      double  fPOTMC;                ///< number of POT (MC)
-      TH1F *  fNumSelEt[knmnd];      ///< number of events passing cuts as function of Etrue for various modes
-      TH1F *  fSelEffEt[knmnd];      ///< selection efficiency as function of Etrue for various modes
-      double  fSelEffTwkDial[knmnd]; ///< selection efficiency tweaking dials for various modes
-      double  fSelEffRelErr;         ///< relative error on selection effciencies
-      GeneratorInputs * fGenInp;
+      double  fPOTData;                ///< number of POT (data)
+      double  fNumObsCCLike;           ///< Observed number of CC-like events 
+      double  fNumExpNCBkgDeflt;       ///<
+      double  fNumNExpCCDeflt;         ///<
+      double  fPOTMC;                  ///< number of POT (MC)
+      TH1F *  fNumSelEt[knmnd];        ///< number of events passing cuts as function of Etrue for various modes
+      TH1F *  fSelEffEt[knmnd];        ///< selection efficiency as function of Etrue for various modes
+      double  fSelEffTwkDial[knmnd];   ///< selection efficiency tweaking dials for various modes
+      double  fSelEffRelErr;           ///< relative error on selection effciencies
+
+      GeneratorInputs * fGenInputs;
    };
 
    //.........................................................................
@@ -170,7 +174,8 @@ public:
       bool Read (TXMLEngine* xml, XMLNodePointer_t root_node); 
 
       //
-      void TellMeAboutTheFlux(BeamInputs * bi) { fBeamInputs = bi; } ///< so that SK distributions can be reweighted 10a->10d
+      void TellMeAboutTheFlux       (BeamInputs *      bi) { fBeamInputs = bi; }
+      void TellMeAboutCrossSections (GeneratorInputs * gi) { fGenInputs  = gi; }
 
     private:
 
@@ -187,18 +192,20 @@ public:
       double  fEffRelErr[kns][knm];     ///< Efficiency relative error
       double  fEffTwkDial[kns][knm];    ///< Efficiency tweaking dial
 
-      TH2D *       fMCSpectrum[kns][knm];
-      TTree*       fMC1Rmu_numu;
-      double       fMCPOT_numu;
-      TTree*       fMC1Rmu_numubar;
-      double       fMCPOT_numubar;
-      TTree*       fMC1Rmu_nue;
-      double       fMCPOT_nue;
-      double       fBrEreco;
-      double       fBrEtrue;
-      int          fBrPdg;
-      int          fBrGenCode;
-      BeamInputs * fBeamInputs;
+      TH2D *  fMCSpectrum[kns][knm];    ///<
+      TTree*  fMC1Rmu_numu;             ///<
+      double  fMCPOT_numu;              ///<
+      TTree*  fMC1Rmu_numubar;          ///<
+      double  fMCPOT_numubar;           ///<
+      TTree*  fMC1Rmu_nue;              ///<
+      double  fMCPOT_nue;               ///<
+      double  fBrEreco;                 ///<
+      double  fBrEtrue;                 ///<
+      int     fBrPdg;                   ///<
+      int     fBrGenCode;               ///<
+
+      BeamInputs * fBeamInputs;         ///<
+      GeneratorInputs * fGenInputs;     ///<
    };
 
    //.........................................................................
@@ -231,7 +238,7 @@ public:
 
       // Systematic variations
       void TweakNorm  (double twkdial) { fSuperkNuMuFluxNormTwkDial = twkdial; }
-      void TweakShape (void);
+      void TweakShape (bool enable_tweaking=true);
 
       // Read inputs from XML file
       bool Read (TXMLEngine* xml, XMLNodePointer_t root_node); 
@@ -252,6 +259,7 @@ public:
       bool          fSuperkNuMuFluxHaveCholeskyL;
       TMatrixD *    fSuperkNuMuFluxCovCholeskyL;
       TH1D *        fSuperkNuMuFluxTweaked;        ///< SuperK numu flux estimation (tweaked / 50 MeV binning)
+      bool          fEnableFluxShapeTweaking;
    };
 
    //.........................................................................
@@ -264,19 +272,17 @@ public:
      ~GeneratorInputs();
   
       // Get neutrino generator oscillation analysis inputs
-      double SigmaModeSK       (double Etrue, t2kana::yr1numu::conv::SuperkMode_t m, bool neglect_twk=false) const; ///< cross section for input mode
-      double SigmaModeSKRelErr (double Etrue, t2kana::yr1numu::conv::SuperkMode_t m, int sign) const; /// relative err on cross section for input mode
-      double SigmaModeND280Wght(double Etrue, t2kana::yr1numu::conv::ND280Mode_t mnd) const; 
+      double ND280XSecRatioWght  (double Etrue, t2kana::yr1numu::conv::ND280Mode_t  m) const; 
+      double SuperkXSecRatioWght (double Etrue, t2kana::yr1numu::conv::SuperkMode_t m) const;
 
       // Draw inputs:
-      // - "SKSigTotal" : draw the numu+H20 total cross section
-      // - "SKSigMode"  : draw cross section = f(Etrue) for various event modes in numu+H20
-      // - "SKSigAll"   : numu+H20 total cross section + cross section for various event modes
-      // - "SKFracMode" : draw fraction = f(Etrue) for various event modes in numu+H20
+      //
       void Draw(TVirtualPad * c, Option_t * opt = "") const;
 
       // Systematic variations
-      void TweakSigmaModeSK(t2kana::yr1numu::conv::SuperkMode_t m, double twk_dial, bool correlate_with_nd280=true);
+      void TweakCC1piToCCQEXSecRatio (double twkdial) { fCC1piToCCQEXSecRatioTwkDial = twkdial; } ///< tweak CC1pi/CCQE (both near & far)
+      void TweakCCOthToCCQEXSecRatio (double twkdial) { fCCOthToCCQEXSecRatioTwkDial = twkdial; } ///< tweak CCoth/CCQE (both near & far)
+      void TweakNCToCCQEXSecRatio    (double twkdial) { fNCToCCQEXSecRatioTwkDial    = twkdial; } ///< tweak NC/CCQE (both near & far)
 
       // Read inputs from XML file
       bool Read (TXMLEngine* xml, XMLNodePointer_t root_node); 
@@ -286,14 +292,25 @@ public:
       void Init    (void);
       void CleanUp (void);
 
-      double SigmaTotSK  (double Etrue) const;
-      double FractModeSK (double Etrue, t2kana::yr1numu::conv::SuperkMode_t m) const;
+      double CC1piToCCQEXSecRatioWght(double Etrue) const;
+      double CCOthToCCQEXSecRatioWght(double Etrue) const;
+      double NCToCCQEXSecRatioWght   (double Etrue) const;
+      double XSecRatioWght           (double Etrue, double twkdial, TH1D * hRelErr) const;
 
-      TH1D *             fSigmaTotSK;              ///< numu+H20 total cross section as a function of energy
-      TH1D *             fFractModeSK[knm];        ///< fraction of event modes in numu+H20 as a function of energy
-      util::TH1DErrEnv * fSigmaModeSKRelErr[knm];  /// 
-      double             fSigmaModeSKTwkDial[knm]; ///<
-      bool               fCorrelateSKWithND280;
+//      double SigmaModeSK (double Etrue, t2kana::yr1numu::conv::SuperkMode_t m, bool neglect_twk=false) const; ///< cross section for input mode
+//      double SigmaTotSK  (double Etrue) const;
+//      double FractModeSK (double Etrue, t2kana::yr1numu::conv::SuperkMode_t m) const;
+//
+//      TH1D * fSigmaTotSK;        ///< numu+H20 total cross section as a function of energy
+//      TH1D * fFractModeSK[knm];  ///< fraction of event modes in numu+H20 as a function of energy
+
+      double fCC1piToCCQEXSecRatioTwkDial;
+      double fCCOthToCCQEXSecRatioTwkDial;
+      double fNCToCCQEXSecRatioTwkDial;
+      TH1D * fCCQEXSecRelErr;
+      TH1D * fCC1piToCCQEXSecRatioRelErr;
+      TH1D * fCCOthToCCQEXSecRatioRelErr;
+      TH1D * fNCToCCQEXSecRatioRelErr;
    };
 
 private:
