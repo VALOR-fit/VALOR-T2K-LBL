@@ -1,6 +1,6 @@
 //
 // ------------------------------------------------------------------------------------------------
-// Plot contributions from various event modes in the predicted SuperK spectrum
+// Plot contributions from various event modes in the predicted SuperK spectrum.
 //
 // Costas Andreopoulos
 // ------------------------------------------------------------------------------------------------
