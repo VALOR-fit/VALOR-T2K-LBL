@@ -27,22 +27,12 @@ void test_superk_spectrum_prediction_twk_sig()
   using namespace t2kana;
   using namespace t2kana::yr1numu;
 
-  // vary cross sections at far only or at near+far (see cross section err cancelation)
-  bool correlate_near_far_sigtwk = true;
-
-  // energy range and binning
-  const double Emin  = 0;
-  const double Emax  = 4;
-  const double dE    = 0.05;
-  const int    nbins = (int) ((Emax - Emin)/dE);
-
   const int ntwkmodes = 3;
-  t2kana::yr1numu::conv::SuperkMode_t twkmodes[ntwkmodes] = {
-    t2kana::yr1numu::conv::kSKmNuMuCCQE, 
-    t2kana::yr1numu::conv::kSKmNuMuCC1pi, 
-    t2kana::yr1numu::conv::kSKmNC    
-  };
-
+  string twklabel[ntwkmodes] = {
+   "CC1#pi/CCQE cross section ratio",
+   "CCother/CCQE cross section ratio",
+   "NC/CCQE cross section ratio"
+  }
   const int ntwkdials = 5;
   double twkdial[ntwkdials] = { -1.0, -0.5, 0.0, +0.5, +1.0 };
 
@@ -58,12 +48,12 @@ void test_superk_spectrum_prediction_twk_sig()
   TH1D * hErecoErr[ntwkmodes][ntwkdials];
   for(int imode = 0; imode < ntwkmodes; imode++) {
     for(int idial = 0; idial < ntwkdials; idial++) {
-       hEreco   [imode][idial] = new TH1D("","",nbins,Emin,Emax);
+       hEreco   [imode][idial] = new TH1D("","",conv::kNErecoBins,conv::kErecoMin,conv::kErecoMax);
        hEreco   [imode][idial]->SetDirectory(0);
        hEreco   [imode][idial]->SetLineWidth(hwidth[idial]);
        hEreco   [imode][idial]->SetLineColor(hcolor[idial]);
        hEreco   [imode][idial]->SetLineStyle(hstyle[idial]);
-       hErecoErr[imode][idial] = new TH1D("","",nbins,Emin,Emax);
+       hErecoErr[imode][idial] = new TH1D("","",conv::kNErecoBins,conv::kErecoMin,conv::kErecoMax);
        hErecoErr[imode][idial]->SetDirectory(0);
        hErecoErr[imode][idial]->SetLineWidth(hwidth[idial]);
        hErecoErr[imode][idial]->SetLineColor(hcolor[idial]);
@@ -77,17 +67,20 @@ void test_superk_spectrum_prediction_twk_sig()
 
   // phys params
   PhysParamList * fparm = PhysParamList::NumuDisapFitNoSyst();
-  fparm->Update(t2kana::yr1numu::conv::kPhypSinsq2Theta23, 0);
-  fparm->Update(t2kana::yr1numu::conv::kPhypDm23sq,        0);
+  fparm->Update(t2kana::yr1numu::conv::kPhypSinsq2Theta23, 1.0);
+  fparm->Update(t2kana::yr1numu::conv::kPhypDm23sq,        2.4E-3);
 
   // generate predictions
   for(int imode = 0; imode < ntwkmodes; imode++) {
+    skexp.ResetSystematicVariations(); // reset previously set tweaks
     for(int idial = 0; idial < ntwkdials; idial++) {
-       skexp.GetGeneratorInputs().TweakSigmaModeSK(twkmodes[imode], twkdial[idial], correlate_near_far_sigtwk);
-       for(int ibin=1; ibin<=nbins; ibin++) {
+       if      (imode==0) skexp.GetGeneratorInputs()->TweakCC1piToCCQEXSecRatio( twkdial[idial] );
+       else if (imode==1) skexp.GetGeneratorInputs()->TweakCCOthToCCQEXSecRatio( twkdial[idial] );
+       else if (imode==2) skexp.GetGeneratorInputs()->TweakNCToCCQEXSecRatio   ( twkdial[idial] );
+       for(int ibin=1; ibin <= conv::kNErecoBins; ibin++) {
           double Ereco = hEreco[imode][idial]->GetBinCenter(ibin);
           double Nexp  = skexp.Generate(Ereco, *fparm);
-          cout << "NumExpSK (Ereco = " << Ereco << ") = " << Nexp << endl;
+          //cout << "NumExpSK (Ereco = " << Ereco << ") = " << Nexp << endl;
           hEreco[imode][idial]->SetBinContent(ibin,Nexp);
        }//ibin
     }//idial
@@ -97,7 +90,7 @@ void test_superk_spectrum_prediction_twk_sig()
   double maxerrneg = +1.;
   for(int imode = 0; imode < ntwkmodes; imode++) {
     for(int idial = 0; idial < ntwkdials; idial++) {
-       for(int ibin=1; ibin<=nbins; ibin++) {
+       for(int ibin=1; ibin <= conv::kNErecoBins; ibin++) {
          double ncurr  = hEreco[imode][idial]->GetBinContent(ibin);
          double ndeflt = hEreco[imode][deflt]->GetBinContent(ibin);
          if(ndeflt>0) {
@@ -123,8 +116,7 @@ void test_superk_spectrum_prediction_twk_sig()
     for(int idial = 0; idial < ntwkdials; idial++) {
        const char * opt   = (idial==0) ? "" : "same";
        const char * label = 
-         Form("%s cross section tweaking dial = %.2f", 
-             util::AsString(twkmodes[imode]).c_str(), twkdial[idial]);
+         Form("%s tweaking dial = %.2f", twklabel[imode].c_str(), twkdial[idial]);
        if(idial==0) {
         hEreco[imode][idial]->GetXaxis()->SetTitle("E_{reco} (GeV)");
         hEreco[imode][idial]->GetYaxis()->SetTitle("Number of events");
@@ -135,7 +127,7 @@ void test_superk_spectrum_prediction_twk_sig()
     }//idial
     legend->Draw();
     c[imode]->cd(2);
-    TH1F * hframe = (TH1F*) c[imode]->DrawFrame(
+    TH1F * hframe = (TH1F*) c[imode]->GetPad(2)->DrawFrame(
        0., 1.2*maxerrneg, hErecoErr[imode][deflt]->GetXaxis()->GetXmax(), 1.2*maxerrpos);
     hframe->GetXaxis()->SetTitle("E_{reco} (GeV)");
     hframe->GetYaxis()->SetTitle("Fractional variation");
