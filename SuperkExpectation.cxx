@@ -62,7 +62,8 @@ double SuperkExpectation::Generate(double Ereco, const PhysParamList & fp)
 
   if(!fIsConfigured) {
     cerr << "Exp >> Not configured properly! " << endl;
-    return -1;
+  //return -1;
+    exit(1);
   }
 
   double expectation = 0.;
@@ -100,18 +101,18 @@ double SuperkExpectation::Generate(
     return -1;
   }
   
+#ifdef __debug_level_2__
+  cout << "Exp / Generate() >> Calculating contribution from: "
+       << util::AsString(s) << "/" << util::AsString(m) << endl;
+#endif
+
   // input physics params (params included in the fit / systematics params)
   double dmsq23          = fp.CurrValue(kPhypDm23sq);
   double sinsq2theta23   = fp.CurrValue(kPhypSinsq2Theta23);
 
-  double nobscclike_nd280  = fND280Inputs  -> NObsCCLike();
-  double nexpncbkg_nd280   = fND280Inputs  -> NExpNCBkg();
-  double nexpcc_nd280      = fND280Inputs  -> NExpCC();
-
-  double flux_correction = (nobscclike_nd280 - nexpncbkg_nd280) / nexpcc_nd280;
-  double nevsk = fSuperkInputs->NumOfEvents(Ereco, s, m, sinsq2theta23, dmsq23);
-
-  double expectation = nevsk * flux_correction;
+  double correction  = fND280Inputs->CorrectionFactor();
+  double nevsk       = fSuperkInputs->NumOfEvents(Ereco, s, m, sinsq2theta23, dmsq23);
+  double expectation = nevsk * correction;
 
 #ifdef __debug_level_2__
   cout << "Exp / Generate() >> "
@@ -146,8 +147,10 @@ TH1D * SuperkExpectation::AsTH1D(const PhysParamList & fp, SuperkSample_t s)
   double emin  = kErecoMin;
   double emax  = kErecoMax;
 
-  const unsigned int nm = 3;  
-  SuperkMode_t sk_modes [nm] = { kSKmNuMuCCQE, kSKmNuMuCC1pi, kSKmNC };///HERE
+  const unsigned int nm = 6;  
+  SuperkMode_t sk_modes [nm] = { 
+     kSKmNuMuCCQE, kSKmNuMuCC1pi, kSKmNuMuCCoth, kSKmNC, kSKmNuMuBar, kSKmNuE 
+  };
 
   TH1D * hEreco = new TH1D("hEreco", "", nbins, emin, emax);
   hEreco->SetDirectory(0);
@@ -240,13 +243,12 @@ void SuperkExpectation::ResetSystematicVariations(void)
   this->GetSuperkInputs()->TweakEfficiency (kSKsFCFV1RingMuLike, kSKmNuMuCCoth,   0.);
   this->GetSuperkInputs()->TweakEfficiency (kSKsFCFV1RingMuLike, kSKmNC,          0.);
 
-  this->GetBeamInputs()->TweakNorm(0.);
-//shape      
+  this->GetBeamInputs()->TweakNorm (0.);
+  this->GetBeamInputs()->TweakShape(false);
 
-  this->GetGeneratorInputs()->TweakSigmaModeSK(kSKmNuMuCCQE,  0.);
-  this->GetGeneratorInputs()->TweakSigmaModeSK(kSKmNuMuCC1pi, 0.);
-  this->GetGeneratorInputs()->TweakSigmaModeSK(kSKmNuMuCCoth, 0.);
-  this->GetGeneratorInputs()->TweakSigmaModeSK(kSKmNC,        0.);
+  this->GetGeneratorInputs()->TweakCC1piToCCQEXSecRatio (0.);
+  this->GetGeneratorInputs()->TweakCCOthToCCQEXSecRatio (0.);
+  this->GetGeneratorInputs()->TweakNCToCCQEXSecRatio    (0.);
 }
 //________________________________________________________________________________________
 bool SuperkExpectation::Read(string config_file)
@@ -263,6 +265,7 @@ bool SuperkExpectation::Read(string config_file)
   fGeneratorInputs = new GeneratorInputs; 
 
   fND280Inputs  -> TellMeAboutCrossSections (fGeneratorInputs);
+  fSuperkInputs -> TellMeAboutCrossSections (fGeneratorInputs);
   fSuperkInputs -> TellMeAboutTheFlux       (fBeamInputs);
 
   // Parse the input configuration file
@@ -327,16 +330,16 @@ SuperkExpectation::ND280Inputs::~ND280Inputs()
 //________________________________________________________________________________________
 void SuperkExpectation::ND280Inputs::Init(void)
 {
-  fPOTData        = 0;
-  fNumObsCCLike   = 0;
-  fPOTMC          = 0;
+  fPOTData       = 0;
+  fNumObsCCLike  = 0;
+  fPOTMC         = 0;
   for(int i = 0; i < knmnd; i++) {
     fNumSelEt[i] = 0;
     fSelEffEt[i] = 0;
     fSelEffTwkDial[i] = 0;
   }
-  fSelEffRelErr = 0.;
-  fGenInp       = 0; 
+  fSelEffRelErr  = 0.;
+  fGenInputs     = 0; 
 }
 //________________________________________________________________________________________
 void SuperkExpectation::ND280Inputs::CleanUp(void)
@@ -878,6 +881,25 @@ void SuperkExpectation::ND280Inputs::Draw(TVirtualPad * c, Option_t * option) co
   c->Update();
 }
 //________________________________________________________________________________________
+double SuperkExpectation::ND280Inputs::CorrectionFactor(void) const
+{
+  double nobscclike_nd280  = this -> NObsCCLike();
+  double nexpncbkg_nd280   = this -> NExpNCBkg();
+  double nexpcc_nd280      = this -> NExpCC();
+
+  double correction = (nobscclike_nd280 - nexpncbkg_nd280) / nexpcc_nd280;
+
+#ifdef __debug_level_2__
+  cout << "Exp / nd280 >> "
+       << "nobscclike_nd280 = "  << nobscclike_nd280
+       << ", nexpncbkg_nd280 = " << nexpncbkg_nd280
+       << ", nexpcc_nd280 = " << nexpcc_nd280
+       << " ==> correction factor = " << correction << endl;
+#endif
+
+  return correction;
+}
+//________________________________________________________________________________________
 double SuperkExpectation::ND280Inputs::NObsCCLike(void) const 
 {
 // observed number of CC-like events
@@ -944,9 +966,9 @@ double SuperkExpectation::ND280Inputs::NumOfEvents(ND280Mode_t mode) const
      double nev     = spectrum->GetBinContent(ibin);
    //double eff     = efficiency->GetBinContent(ibin);
      double efferr  = this->EfficiencyRelErr(Etrue, mode, util::Sign(efftwkdial));
-   //double twkeff  = eff * (1 + efftwkdial * efferr)
+   //double twkeff  = eff * (1 + efftwkdial * efferr);
      double effwght = 1 + efftwkdial * efferr;
-     double sigwght = fGenInp->SigmaModeND280Wght(Etrue*mev2gev, mode);
+     double sigwght = fGenInputs->ND280XSecRatioWght(Etrue*mev2gev, mode);
      nev *= (effwght*sigwght);
      sum_nev += nev;
   }
@@ -1231,6 +1253,11 @@ double SuperkExpectation::SuperkInputs::NumOfEvents(
   // plug-in energy scale systematic
   double Ereco_prime = Ereco * this->EnergyScale();
 
+#ifdef __debug_level_3__
+  cout << "Exp/SK >> Ereco' = " << Ereco_prime << ", Ereco = " << Ereco 
+       << " (energy scale = " << this->EnergyScale() << ")" << endl;
+#endif
+
   int reco_bin = nsk2d->GetXaxis()->FindBin(Ereco_prime);
 
   for(int true_bin = 1; true_bin <= nsk2d->GetYaxis()->GetNbins(); true_bin++) {
@@ -1239,14 +1266,20 @@ double SuperkExpectation::SuperkInputs::NumOfEvents(
       double nev       = nsk2d->GetBinContent(reco_bin, true_bin);
       double prob_surv = util::NuMuSurvProb2D(sinsq2theta23, dmsq23, Etrue, m);
 
-      double flux_10d_weight = 1.;
+      //
+      // flux weights
+      //
+      double flux_10d_weight      = 1.; // 10a->10d weight
+      double numu_flux_shape_wght = 1.; // systematic variation (flux shape)
+      double numu_flux_norm_wght  = fBeamInputs->SuperkNuMuFluxNorm(sinsq2theta23, dmsq23); // systematic variation (flux norm)
       if(fBeamInputs) {
          switch(m) {
            case (kSKmNuMuCCQE ):
            case (kSKmNuMuCC1pi):
            case (kSKmNuMuCCoth):
            case (kSKmNC       ):
-               flux_10d_weight = fBeamInputs->SuperkNuMuFlux10aTo10dWght(Etrue);
+               flux_10d_weight      = fBeamInputs->SuperkNuMuFlux10aTo10dWght(Etrue);
+               numu_flux_shape_wght = fBeamInputs->SuperkNuMuFluxShapeWeight (Etrue);
                break;
            case(kSKmNuMuBar):
                flux_10d_weight = fBeamInputs->SuperkNuMuBarFlux10aTo10dWght(Etrue);
@@ -1259,7 +1292,21 @@ double SuperkExpectation::SuperkInputs::NumOfEvents(
          }//m switch
       }
 
-      nevtot += (nev*prob_surv*flux_10d_weight);
+      //
+      // cross section systematics
+      //
+      double xsec_ratio_wght = 1.;
+      if(fGenInputs) {
+         xsec_ratio_wght = fGenInputs->SuperkXSecRatioWght(Etrue, m);
+      }
+
+      nevtot += ( nev * 
+                  prob_surv * 
+                  flux_10d_weight * 
+                  numu_flux_shape_wght * 
+                  numu_flux_norm_wght *
+                  xsec_ratio_wght
+                );
   }
 
   // Plug-in "efficiency" uncertainty due to fiducial volume, 
@@ -1464,18 +1511,19 @@ void SuperkExpectation::BeamInputs::Init(void)
   fSuperkNuMuFluxCovCholeskyL  = 0;
   fSuperkNuMuFluxHaveCholeskyL = false;
   fSuperkNuMuFluxTweaked       = 0;
+  fEnableFluxShapeTweaking     = false;
 }
 //________________________________________________________________________________________
 void SuperkExpectation::BeamInputs::CleanUp(void)
 {
-  if (fSuperkNuMuFlux            ) delete fSuperkNuMuFlux;
-  if (fSuperkNuMuFluxVarBin      ) delete fSuperkNuMuFluxVarBin;
-  if (fSuperkNuMuFluxCov         ) delete fSuperkNuMuFluxCov;
-  if (fSuperkNuMuWght10aTo10d    ) delete fSuperkNuMuWght10aTo10d;
-  if (fSuperkNuMuBarWght10aTo10d ) delete fSuperkNuMuBarWght10aTo10d;
-  if (fSuperkNuEWght10aTo10d     ) delete fSuperkNuEWght10aTo10d;
-  if (fSuperkNuMuFluxTweaked     ) delete fSuperkNuMuFluxTweaked;
-///  fSuperkNuMuFluxCovCholeskyL     = 0; TODO
+  if ( fSuperkNuMuFlux             ) delete fSuperkNuMuFlux;
+  if ( fSuperkNuMuFluxVarBin       ) delete fSuperkNuMuFluxVarBin;
+  if ( fSuperkNuMuFluxCov          ) delete fSuperkNuMuFluxCov;
+  if ( fSuperkNuMuWght10aTo10d     ) delete fSuperkNuMuWght10aTo10d;
+  if ( fSuperkNuMuBarWght10aTo10d  ) delete fSuperkNuMuBarWght10aTo10d;
+  if ( fSuperkNuEWght10aTo10d      ) delete fSuperkNuEWght10aTo10d;
+  if ( fSuperkNuMuFluxTweaked      ) delete fSuperkNuMuFluxTweaked;
+  if ( fSuperkNuMuFluxCovCholeskyL ) delete fSuperkNuMuFluxCovCholeskyL;
 
 }
 //________________________________________________________________________________________
@@ -1501,7 +1549,10 @@ bool SuperkExpectation::BeamInputs::Read(TXMLEngine* xml, XMLNodePointer_t root_
   fSuperkNuMuFluxPOT = util::XML2Dbl(xml,root_node,"beam/superk_flux/pot_mc");
   cout << "Exp/Beam >> SK flux simulation POT = " << fSuperkNuMuFluxPOT << endl;
 
-////////////  fSuperkNuMuFlux->Scale(1./fSuperkNuMuFluxPOT);  TODO
+  /////// (no need to normalize in v2)
+  ///////
+  /////// fSuperkNuMuFlux->Scale(1./fSuperkNuMuFluxPOT);  
+  ///////
 
   // Get SuperK numu flux covariance matrix
   fSuperkNuMuFluxCov = util::XML2TMatrixD(
@@ -1510,6 +1561,9 @@ bool SuperkExpectation::BeamInputs::Read(TXMLEngine* xml, XMLNodePointer_t root_
     cerr << "Exp/Beam >> No input SuperK numu flux covariance matrix!" << endl;
     exit(1);
   }
+#ifdef __debug_level_3__
+  fSuperkNuMuFluxCov->Print();
+#endif
 
   // 10a->10d weights
   fSuperkNuMuWght10aTo10d = 
@@ -1671,6 +1725,8 @@ double SuperkExpectation::BeamInputs::SuperkNuMuFluxNorm(
 //________________________________________________________________________________________
 double  SuperkExpectation::BeamInputs::SuperkNuMuFluxShapeWeight(double Etrue)
 {
+  if(!fEnableFluxShapeTweaking) return 1;
+
   if(!fSuperkNuMuFluxHaveCholeskyL) {
 	exit(1);
   }
@@ -1690,46 +1746,44 @@ double  SuperkExpectation::BeamInputs::SuperkNuMuFluxShapeWeight(double Etrue)
   return wght;
 }
 //________________________________________________________________________________________
-void SuperkExpectation::BeamInputs::TweakShape(void)    
+void SuperkExpectation::BeamInputs::TweakShape(bool enable_tweaking)    
 { 
+  fEnableFluxShapeTweaking = enable_tweaking;
+  if(!fEnableFluxShapeTweaking) return;
+
   if(!fSuperkNuMuFluxHaveCholeskyL) {
     cout << "Exp/Beam/TweakShape >> Running Cholesky's method." << endl;
-    TMatrixD sk_flux_cov = this->SuperkNuMuFluxCov();
-    sk_flux_cov.Invert().Print();
+    TMatrixD  sk_flux_cov(this->SuperkNuMuFluxCov());
     TMatrixD L = util::CholeskyDecomposition(sk_flux_cov);
+#ifdef __debug_level_3__
     L.Print();
-    fSuperkNuMuFluxCovCholeskyL = new TMatrixD(L);
-    fSuperkNuMuFluxCovCholeskyL->Print();
+#endif
 
-//    fSuperkNuMuFluxCovCholeskyL = util::CholeskyDecomposition(*fSuperkNuMuFluxCov);
-//    fSuperkNuMuFluxCovCholeskyL.Print();
+    fSuperkNuMuFluxCovCholeskyL = new TMatrixD(L);
+#ifdef __debug_level_3__
+    fSuperkNuMuFluxCovCholeskyL->Print();
+#endif
     fSuperkNuMuFluxHaveCholeskyL = true;
     fSuperkNuMuFluxTweaked = new TH1D(*fSuperkNuMuFlux);
   }
 
+#ifdef __debug_level_3__
   cout << "Exp/Beam >> Tweaking SuperK flux shape" << endl;
+#endif
  
   //get the variations
   TVectorD tweek_vec = 
      util::CholeskyGenerateCorrelatedParamVariations(*fSuperkNuMuFluxCovCholeskyL);
 
-//  cout << "Exp/Beam/TweakShape >> Tweak vector size = " << tweek_vec.GetNrows() << endl;
-
   // fill in the histo
 //int nbins = fSuperkNuMuFlux->GetXaxis()->GetNbins();
 //for(int j=1; j <= nbins; j++){
   for(int j=1; j <= 200; j++){ ///TODO
-     double rto = util::FluxFractionsFixedBinRelToVarBin(j, fSuperkNuMuFlux, fSuperkNuMuFluxVarBin);
-     double flux50 = fSuperkNuMuFlux->GetBinContent(j);
-     int theirBin = util::Fixed2VarNumbering(j);
-
-//     cout << "Exp/Beam/TweakShape >> "
-//          << "fixBinNo = " << j << ", --> varBinNo = " << theirBin << endl;
-
-     cout << "Exp/Beam/TweakShape >> "
-          << "flux change: " <<  tweek_vec[theirBin - 1]*rto << endl;
-
-     fSuperkNuMuFluxTweaked->SetBinContent(j, flux50 + tweek_vec[theirBin - 1]*rto );
+     double rto = util::FluxFractionsFixedBinRelToVarBin(
+         j, fSuperkNuMuFlux, fSuperkNuMuFluxVarBin);
+     double fixBinFlux = fSuperkNuMuFlux->GetBinContent(j);
+     int varBin = util::FluxFix2VarBinNumber(j);
+     fSuperkNuMuFluxTweaked->SetBinContent(j, fixBinFlux + tweek_vec[varBin - 1]*rto );
   }//end of bin loop
 
 }
@@ -1750,63 +1804,74 @@ SuperkExpectation::GeneratorInputs::~GeneratorInputs()
 //________________________________________________________________________________________
 void SuperkExpectation::GeneratorInputs::Init(void)
 {
-  fSigmaTotSK = 0;
-  for(int im=0; im<knm; im++) {
-    fFractModeSK[im]       = 0;
-    fSigmaModeSKRelErr[im] = 0;
-    fSigmaModeSKTwkDial[im] = 0;
-  }
-  fCorrelateSKWithND280 = true;
+//  fSigmaTotSK = 0;
+//  for(int im=0; im<knm; im++) {
+//    fFractModeSK[im]       = 0;
+//    fSigmaModeSKRelErr[im] = 0;
+//    fSigmaModeSKTwkDial[im] = 0;
+//  }
+
+  fCC1piToCCQEXSecRatioTwkDial = 0;
+  fCCOthToCCQEXSecRatioTwkDial = 0;
+  fNCToCCQEXSecRatioTwkDial    = 0;
+  fCCQEXSecRelErr              = 0;
+  fCC1piToCCQEXSecRatioRelErr  = 0;
+  fCCOthToCCQEXSecRatioRelErr  = 0;
+  fNCToCCQEXSecRatioRelErr     = 0;
 }
 //________________________________________________________________________________________
 void SuperkExpectation::GeneratorInputs::CleanUp(void)
 {
-  if ( fSigmaTotSK ) delete fSigmaTotSK;
+//  if ( fSigmaTotSK ) delete fSigmaTotSK;
+//
+//  for(int im=0; im<knm; im++) {
+//    if ( fFractModeSK[im]       ) delete fFractModeSK[im];
+//    if ( fSigmaModeSKRelErr[im] ) delete fSigmaModeSKRelErr[im];
+//  }
 
-  for(int im=0; im<knm; im++) {
-    if ( fFractModeSK[im]       ) delete fFractModeSK[im];
-    if ( fSigmaModeSKRelErr[im] ) delete fSigmaModeSKRelErr[im];
-  }
+  if ( fCCQEXSecRelErr             ) delete fCCQEXSecRelErr;
+  if ( fCC1piToCCQEXSecRatioRelErr ) delete fCC1piToCCQEXSecRatioRelErr;
+  if ( fCCOthToCCQEXSecRatioRelErr ) delete fCCOthToCCQEXSecRatioRelErr;
+  if ( fNCToCCQEXSecRatioRelErr    ) delete fNCToCCQEXSecRatioRelErr;
 }
 //________________________________________________________________________________________
 bool SuperkExpectation::GeneratorInputs::Read(TXMLEngine* xml, XMLNodePointer_t root_node)
 {
   cout << "Exp/NuGen >> Reading neutrino generator inputs from input XML file." << endl;
 
-  // Get numu+H20 total cross section = f(E_true)
-  fSigmaTotSK = util::XML2TH1D(xml,root_node,"genie/superk/sigma_total");
-  if(!fSigmaTotSK) {
-    cerr << "Exp/NuGen >> No input numu+H20 total cross section histogram!" << endl;
-    exit(1);
-  }
+//  // Get numu+H20 total cross section = f(E_true)
+//  fSigmaTotSK = util::XML2TH1D(xml,root_node,"genie/superk/sigma_total");
+//  if(!fSigmaTotSK) {
+//    cerr << "Exp/NuGen >> No input numu+H20 total cross section histogram!" << endl;
+//    exit(1);
+//  }
+//
+//  // Get event fractions for different modes in numu+H20 interactions = f(E_true)
+//  fFractModeSK[kSKmNuMuCCQE] = 
+//     util::XML2TH1D(xml,root_node,"genie/superk/fraction_mode/ccqe");
+//  fFractModeSK[kSKmNuMuCC1pi] = 
+//     util::XML2TH1D(xml,root_node,"genie/superk/fraction_mode/cc1pi");
+//  fFractModeSK[kSKmNuMuCCoth] = 
+//     util::XML2TH1D(xml,root_node,"genie/superk/fraction_mode/ccoth");
+//  fFractModeSK[kSKmNC] = 
+//     util::XML2TH1D(xml,root_node,"genie/superk/fraction_mode/nc");
+//  if ( !fFractModeSK[kSKmNuMuCCQE]    ||
+//       !fFractModeSK[kSKmNuMuCC1pi]   ||
+//       !fFractModeSK[kSKmNuMuCCoth]   ||
+//       !fFractModeSK[kSKmNC] ) {
+//    cerr << "Exp/NuGen >> No input numu+H20 event fractions for CCQE,CC1pi,CCoth,NC modes!" << endl;
+//    exit(1);
+//  }
+//
 
-  // Get event fractions for different modes in numu+H20 interactions = f(E_true)
-  fFractModeSK[kSKmNuMuCCQE] = 
-     util::XML2TH1D(xml,root_node,"genie/superk/fraction_mode/ccqe");
-  fFractModeSK[kSKmNuMuCC1pi] = 
-     util::XML2TH1D(xml,root_node,"genie/superk/fraction_mode/cc1pi");
-  fFractModeSK[kSKmNuMuCCoth] = 
-     util::XML2TH1D(xml,root_node,"genie/superk/fraction_mode/ccoth");
-  fFractModeSK[kSKmNC] = 
-     util::XML2TH1D(xml,root_node,"genie/superk/fraction_mode/nc");
-  if ( !fFractModeSK[kSKmNuMuCCQE]    ||
-       !fFractModeSK[kSKmNuMuCC1pi]   ||
-       !fFractModeSK[kSKmNuMuCCoth]   ||
-       !fFractModeSK[kSKmNC] ) {
-    cerr << "Exp/NuGen >> No input numu+H20 event fractions for CCQE,CC1pi,CCoth,NC modes!" << endl;
-    exit(1);
-  }
-
-/*
-  // Get relative error on cross section for various numu+H20 reaction modes
-  // Error can be asymmetric.
-  fSigmaModeSKRelErr[kSKmNuMuCCQE] = 
-    util::XML2TH1DErrEnv(xml,root_node,"genie/superk/systematics/sigma_mode_relative_error/ccqe");
-  fSigmaModeSKRelErr[kSKmNuMuCC1pi] = 
-    util::XML2TH1DErrEnv(xml,root_node,"genie/superk/systematics/sigma_mode_relative_error/nonccqe");
-  fSigmaModeSKRelErr[kSKmNC] = 
-    util::XML2TH1DErrEnv(xml,root_node,"genie/superk/systematics/sigma_mode_relative_error/nc");
-*/
+  fCCQEXSecRelErr = 
+    util::XML2TH1D(xml,root_node,"niwg/systematics/xsec_relative_error/ccqe");
+  fCC1piToCCQEXSecRatioRelErr = 
+    util::XML2TH1D(xml,root_node,"niwg/systematics/xsec_ratio_relative_error/cc1pi_ccqe");
+  fCCOthToCCQEXSecRatioRelErr = 
+    util::XML2TH1D(xml,root_node,"niwg/systematics/xsec_ratio_relative_error/ccother_ccqe");
+  fNCToCCQEXSecRatioRelErr = 
+    util::XML2TH1D(xml,root_node,"niwg/systematics/xsec_ratio_relative_error/nc_ccqe");
 
   cout << "Exp/NuGen >> Done reading neutrino generator inputs!" << endl;
 
@@ -1822,181 +1887,188 @@ void SuperkExpectation::GeneratorInputs::Draw(TVirtualPad * c, Option_t * option
   TString opt = option;
   util::SetDefaultStyle();
 
-  if(opt.Contains("SKSigTotal")) { 
-    fSigmaTotSK->Draw();
-    fSigmaTotSK->GetXaxis()->SetTitle("E_{#nu} (GeV)");
-    fSigmaTotSK->GetYaxis()->SetTitle("#sigma_{tot} (#nu_{#mu}+H20), 1E-38 cm^{2}");
-  }
-  else
-  if(opt.Contains("SKSigMode")) { 
-    TH1D * hsigccqe  = new TH1D("sig_ccqe","", 200,0,10);
-    TH1D * hsigcc1pi = new TH1D("sig_cc1pi","",200,0,10);
-    TH1D * hsigccoth = new TH1D("sig_ccoth","",200,0,10);
-    TH1D * hsignc    = new TH1D("sig_nc","",   200,0,10);
-    for(int i=1; i<hsigccqe->GetNbinsX(); i++) {
-       double E = hsigccqe->GetBinCenter(i);
-       double sig = this->SigmaTotSK(E);
-       hsigccqe  -> SetBinContent(i, sig*this->FractModeSK(E, kSKmNuMuCCQE));
-       hsigcc1pi -> SetBinContent(i, sig*this->FractModeSK(E, kSKmNuMuCC1pi));
-       hsigccoth -> SetBinContent(i, sig*this->FractModeSK(E, kSKmNuMuCCoth));
-       hsignc    -> SetBinContent(i, sig*this->FractModeSK(E, kSKmNC));
-    }
-    fSigmaTotSK->Draw();
-    hsigccqe  -> Draw("same");
-    hsigcc1pi -> Draw("same");
-    hsigccoth -> Draw("same");
-    hsignc    -> Draw("same");
-  }
-  else
-  if(opt.Contains("SKSigAll")) { 
-  }
-  else
-  if(opt.Contains("SKFracMode")) { 
-    fFractModeSK[kSKmNuMuCCQE] -> Draw();
-    fFractModeSK[kSKmNuMuCC1pi]-> Draw("same");
-    fFractModeSK[kSKmNuMuCCoth]-> Draw("same");
-    fFractModeSK[kSKmNC]       -> Draw("same");
-    fFractModeSK[kSKmNuMuCCQE] ->GetXaxis()->SetTitle("E_{#nu} (GeV)");
-    fFractModeSK[kSKmNuMuCCQE] ->GetYaxis()->SetTitle("event fraction");
-  }
-  else
-  if(opt.Contains("SKErrSigMode")) { 
-    TH1F * hframe = (TH1F*)c->DrawFrame(0,-.5,4,.5);
-    hframe->Draw();
-/*
-HERE
-    fSigmaModeSKRelErr[kSKmNuMuCCQE]  -> fLow  -> Draw("same");
-    fSigmaModeSKRelErr[kSKmNuMuCCQE]  -> fHigh -> Draw("same");
-    fSigmaModeSKRelErr[kSKmNuMuCC1pi] -> fLow  -> Draw("same");
-    fSigmaModeSKRelErr[kSKmNuMuCC1pi] -> fHigh -> Draw("same");
-    fSigmaModeSKRelErr[kSKmNC]        -> fLow  -> Draw("same");
-    fSigmaModeSKRelErr[kSKmNC]        -> fHigh -> Draw("same");
-*/
-  }
+//  if(opt.Contains("SKSigTotal")) { 
+//    fSigmaTotSK->Draw();
+//    fSigmaTotSK->GetXaxis()->SetTitle("E_{#nu} (GeV)");
+//    fSigmaTotSK->GetYaxis()->SetTitle("#sigma_{tot} (#nu_{#mu}+H20), 1E-38 cm^{2}");
+//  }
+//  else
+//  if(opt.Contains("SKSigMode")) { 
+//    TH1D * hsigccqe  = new TH1D("sig_ccqe","", 200,0,10);
+//    TH1D * hsigcc1pi = new TH1D("sig_cc1pi","",200,0,10);
+//    TH1D * hsigccoth = new TH1D("sig_ccoth","",200,0,10);
+//    TH1D * hsignc    = new TH1D("sig_nc","",   200,0,10);
+//    for(int i=1; i<hsigccqe->GetNbinsX(); i++) {
+//       double E = hsigccqe->GetBinCenter(i);
+//       double sig = this->SigmaTotSK(E);
+//       hsigccqe  -> SetBinContent(i, sig*this->FractModeSK(E, kSKmNuMuCCQE));
+//       hsigcc1pi -> SetBinContent(i, sig*this->FractModeSK(E, kSKmNuMuCC1pi));
+//       hsigccoth -> SetBinContent(i, sig*this->FractModeSK(E, kSKmNuMuCCoth));
+//       hsignc    -> SetBinContent(i, sig*this->FractModeSK(E, kSKmNC));
+//    }
+//    fSigmaTotSK->Draw();
+//    hsigccqe  -> Draw("same");
+//    hsigcc1pi -> Draw("same");
+//    hsigccoth -> Draw("same");
+//    hsignc    -> Draw("same");
+//  }
+//  else
+//  if(opt.Contains("SKSigAll")) { 
+//  }
+//  else
+//  if(opt.Contains("SKFracMode")) { 
+//    fFractModeSK[kSKmNuMuCCQE] -> Draw();
+//    fFractModeSK[kSKmNuMuCC1pi]-> Draw("same");
+//    fFractModeSK[kSKmNuMuCCoth]-> Draw("same");
+//    fFractModeSK[kSKmNC]       -> Draw("same");
+//    fFractModeSK[kSKmNuMuCCQE] ->GetXaxis()->SetTitle("E_{#nu} (GeV)");
+//    fFractModeSK[kSKmNuMuCCQE] ->GetYaxis()->SetTitle("event fraction");
+//  }
+//  else
+//  if(opt.Contains("SKErrSigMode")) { 
+//    TH1F * hframe = (TH1F*)c->DrawFrame(0,-.5,4,.5);
+//    hframe->Draw();
+//  }
   
   c->Update();
 }
 //________________________________________________________________________________________
-double SuperkExpectation::GeneratorInputs::FractModeSK(double Etrue, SuperkMode_t m) const
-{
-  TH1D * h = fFractModeSK[m];
-  assert(h);
-  int    bin   = h->FindBin(Etrue);
-  double frac  = h->GetBinContent(bin);
-  return frac;
-}
+//double SuperkExpectation::GeneratorInputs::FractModeSK(double Etrue, SuperkMode_t m) const
+//{
+//  TH1D * h = fFractModeSK[m];
+//  assert(h);
+//  int    bin   = h->FindBin(Etrue);
+//  double frac  = h->GetBinContent(bin);
+//  return frac;
+//}
 //________________________________________________________________________________________
-double SuperkExpectation::GeneratorInputs::SigmaTotSK(double Etrue) const
-{
-  TH1D* h = fSigmaTotSK;
-  assert(h);
-  int    bin  = h->FindBin(Etrue);
-  double sig  = h->GetBinContent(bin);
-  return sig;
-}
+//double SuperkExpectation::GeneratorInputs::SigmaTotSK(double Etrue) const
+//{
+//  TH1D* h = fSigmaTotSK;
+//  assert(h);
+//  int    bin  = h->FindBin(Etrue);
+//  double sig  = h->GetBinContent(bin);
+//  return sig;
+//}
 //________________________________________________________________________________________
-double SuperkExpectation::GeneratorInputs::SigmaModeSK(
-   double Etrue, SuperkMode_t m, bool neglect_twk) const
-{
-  double sigtot   = this->SigmaTotSK(Etrue);
-  double frcmode  = this->FractModeSK(Etrue,m);
-  double sigmode0 = sigtot * frcmode; 
-
-  if(neglect_twk) return sigmode0;
-
-  double twkdial  = fSigmaModeSKTwkDial[m];
-  double relerr   = this->SigmaModeSKRelErr(Etrue,m,util::Sign(twkdial));
-  double sigmode  = sigmode0 * (1. + twkdial * relerr);
-
-  return sigmode;
-}
-//________________________________________________________________________________________
-double SuperkExpectation::GeneratorInputs::SigmaModeSKRelErr(
-  double Etrue, SuperkMode_t m, int sign) const
-{
-// Get estimated relative error on sigma_H2O(mode;Etrue)
+//double SuperkExpectation::GeneratorInputs::SigmaModeSK(
+//   double Etrue, SuperkMode_t m, bool neglect_twk) const
+//{
+//  double sigtot   = this->SigmaTotSK(Etrue);
+//  double frcmode  = this->FractModeSK(Etrue,m);
+//  double sigmode0 = sigtot * frcmode; 
 //
-
-/*
-HERE
-  if(sign==0) return 0;
-  TH1D * hrelerr = (sign>0) ? 
-      fSigmaModeSKRelErr[m]->fHigh : fSigmaModeSKRelErr[m]->fLow;
-  assert(hrelerr);
-  int    bin    = hrelerr->FindBin(Etrue);
-  double relerr = hrelerr->GetBinContent(bin);
-  relerr = TMath::Abs(relerr);
-  return relerr;
-*/
-return 0.3;
-}
+//  if(neglect_twk) return sigmode0;
+//
+//  double twkdial  = fSigmaModeSKTwkDial[m];
+//  double relerr   = this->SigmaModeSKRelErr(Etrue,m,util::Sign(twkdial));
+//  double sigmode  = sigmode0 * (1. + twkdial * relerr);
+//
+//  return sigmode;
+//}
 //________________________________________________________________________________________
-double SuperkExpectation::GeneratorInputs::SigmaModeND280Wght(
-   double Etrue, t2kana::yr1numu::conv::ND280Mode_t mnd) const  
+//double SuperkExpectation::GeneratorInputs::SigmaModeSKRelErr(
+//  double Etrue, SuperkMode_t m, int sign) const
+//{
+//// Get estimated relative error on sigma_H2O(mode;Etrue)
+////
+//
+//  if(sign==0) return 0;
+//  TH1D * hrelerr = (sign>0) ? 
+//      fSigmaModeSKRelErr[m]->fHigh : fSigmaModeSKRelErr[m]->fLow;
+//  assert(hrelerr);
+//  int    bin    = hrelerr->FindBin(Etrue);
+//  double relerr = hrelerr->GetBinContent(bin);
+//  relerr = TMath::Abs(relerr);
+//  return relerr;
+//}
+//________________________________________________________________________________________
+double SuperkExpectation::GeneratorInputs::ND280XSecRatioWght(
+    double Etrue, t2kana::yr1numu::conv::ND280Mode_t mnd) const
 {
-   if(!fCorrelateSKWithND280) return 1;
-
-   double weight = 1.;
-
-/*
-HERE
-//----------------------- <TODO/>
-
-   //
-   // Cheat / Recycle SuperK error evnelopes for ND280.
-   // Work to calculate ND280 error envelopes is in progress
-   //
-
-   double sig_ccqe_def     = this->SigmaModeSK(Etrue, kSKmNuMuCCQE,    true);
-   double sig_ccnonqe_def  = this->SigmaModeSK(Etrue, kSKmNuMuCC1pi, true);
-   double sig_nc_def       = this->SigmaModeSK(Etrue, kSKmNC,          true);
-
-   double sig_ccqe_twk     = this->SigmaModeSK(Etrue, kSKmNuMuCCQE);
-   double sig_ccnonqe_twk  = this->SigmaModeSK(Etrue, kSKmNuMuCC1pi);
-   double sig_nc_twk       = this->SigmaModeSK(Etrue, kSKmNC);
-
-   double ccqe_wght    =  (sig_ccqe_def    > 0) ? sig_ccqe_twk    / sig_ccqe_def     : 1.;
-   double ccnonqe_wght =  (sig_ccnonqe_def > 0) ? sig_ccnonqe_twk / sig_ccnonqe_def  : 1.;
-   double nc_wght      =  (sig_nc_def      > 0) ? sig_nc_twk      / sig_nc_def       : 1.;
-
    switch(mnd) {
-      case ( kNDmNuMuCCQE     ) : weight = ccqe_wght;     break;
-      case ( kNDmNuMuCCRES    ) : weight = ccnonqe_wght;  break;
-      case ( kNDmNuMuCCCOH    ) : weight = ccnonqe_wght;  break;
-      case ( kNDmNuMuCCOth    ) : weight = ccnonqe_wght;  break;
-      case ( kNDmNuMuNCEL     ) : weight = nc_wght;       break;
-      case ( kNDmNuMuNCRES    ) : weight = nc_wght;       break;
-      case ( kNDmNuMuNCCOH    ) : weight = nc_wght;       break;
-      case ( kNDmNuMuNCOth    ) : weight = nc_wght;       break;
-      case ( kNDmNuMuBarCCQE  ) : weight = ccqe_wght;     break;
-      case ( kNDmNuMuBarCCRES ) : weight = ccnonqe_wght;  break;
-      case ( kNDmNuMuBarCCCOH ) : weight = ccnonqe_wght;  break;
-      case ( kNDmNuMuBarCCOth ) : weight = ccnonqe_wght;  break;
-      case ( kNDmNuMuBarNCEL  ) : weight = nc_wght;       break;
-      case ( kNDmNuMuBarNCRES ) : weight = nc_wght;       break;
-      case ( kNDmNuMuBarNCCOH ) : weight = nc_wght;       break;
-      case ( kNDmNuMuBarNCOth ) : weight = nc_wght;       break;
-      case ( kNDmNuECCQE      ) : weight = ccqe_wght;     break;
-      case ( kNDmNuECCRES     ) : weight = ccnonqe_wght;  break;
-      case ( kNDmNuECCCOH     ) : weight = ccnonqe_wght;  break;
-      case ( kNDmNuECCOth     ) : weight = ccnonqe_wght;  break;
-      case ( kNDmNuENCEL      ) : weight = nc_wght;       break;
-      case ( kNDmNuENCRES     ) : weight = nc_wght;       break;
-      case ( kNDmNuENCCOH     ) : weight = nc_wght;       break;
-      case ( kNDmNuENCOth     ) : weight = nc_wght;       break;
-      default                   : weight = 1;             break;
+      case ( kNDmNuMuCCQE     ) : return 1.; break;
+      case ( kNDmNuMuCCRES    ) : return this->CC1piToCCQEXSecRatioWght(Etrue); break;
+      case ( kNDmNuMuCCCOH    ) : this->CCOthToCCQEXSecRatioWght(Etrue); break;
+      case ( kNDmNuMuCCOth    ) : this->CCOthToCCQEXSecRatioWght(Etrue); break;
+      case ( kNDmNuMuNCEL     ) : return 1.; break;
+      case ( kNDmNuMuNCRES    ) : this->NCToCCQEXSecRatioWght(Etrue);  break;
+      case ( kNDmNuMuNCCOH    ) : this->NCToCCQEXSecRatioWght(Etrue);  break;
+      case ( kNDmNuMuNCOth    ) : this->NCToCCQEXSecRatioWght(Etrue);  break;
+      case ( kNDmNuMuBarCCQE  ) : return 1.; break;
+      case ( kNDmNuMuBarCCRES ) : return 1.; break;
+      case ( kNDmNuMuBarCCCOH ) : return 1.; break;
+      case ( kNDmNuMuBarCCOth ) : return 1.; break;
+      case ( kNDmNuMuBarNCEL  ) : return 1.; break;
+      case ( kNDmNuMuBarNCRES ) : return 1.; break;
+      case ( kNDmNuMuBarNCCOH ) : return 1.; break;
+      case ( kNDmNuMuBarNCOth ) : return 1.; break;
+      case ( kNDmNuECCQE      ) : return 1.; break;
+      case ( kNDmNuECCRES     ) : return 1.; break;
+      case ( kNDmNuECCCOH     ) : return 1.; break;
+      case ( kNDmNuECCOth     ) : return 1.; break;
+      case ( kNDmNuENCEL      ) : return 1.; break;
+      case ( kNDmNuENCRES     ) : return 1.; break;
+      case ( kNDmNuENCCOH     ) : return 1.; break;
+      case ( kNDmNuENCOth     ) : return 1.; break;
+      default                   : return 1.; break;
    }
-//----------------------- </TODO>
-*/
-   return weight;
+   return 1.;
 
 }
 //________________________________________________________________________________________
-void SuperkExpectation::GeneratorInputs::TweakSigmaModeSK(
-  t2kana::yr1numu::conv::SuperkMode_t m, double twk_dial, bool correlate_with_nd280)
+double SuperkExpectation::GeneratorInputs::SuperkXSecRatioWght(
+   double Etrue, t2kana::yr1numu::conv::SuperkMode_t m) const
 {
-  fSigmaModeSKTwkDial[m] = twk_dial;
-  fCorrelateSKWithND280 = correlate_with_nd280;
+   switch(m) {
+      case ( kSKmNuMuCCQE  ) : return 1.; break;
+      case ( kSKmNuMuCC1pi ) : return this->CC1piToCCQEXSecRatioWght(Etrue); break;
+      case ( kSKmNuMuCCoth ) : return this->CCOthToCCQEXSecRatioWght(Etrue); break;
+      case ( kSKmNC        ) : return this->NCToCCQEXSecRatioWght(Etrue);    break;
+      case ( kSKmNuMuBar   ) : return 1.; break;
+      case ( kSKmNuE       ) : return 1.; break;
+      default                : return 1.; break;
+   }
+   return 1.;
+}
+//________________________________________________________________________________________
+double SuperkExpectation::GeneratorInputs::CC1piToCCQEXSecRatioWght(double Etrue) const
+{
+   return this->XSecRatioWght(
+     Etrue, fCC1piToCCQEXSecRatioTwkDial, fCC1piToCCQEXSecRatioRelErr);
+}
+//________________________________________________________________________________________
+double SuperkExpectation::GeneratorInputs::CCOthToCCQEXSecRatioWght(double Etrue) const
+{
+   return this->XSecRatioWght(
+     Etrue, fCCOthToCCQEXSecRatioTwkDial, fCCOthToCCQEXSecRatioRelErr);
+}
+//________________________________________________________________________________________
+double SuperkExpectation::GeneratorInputs::NCToCCQEXSecRatioWght(double Etrue) const
+{
+   return this->XSecRatioWght(
+     Etrue, fNCToCCQEXSecRatioTwkDial, fNCToCCQEXSecRatioRelErr);
+}
+//________________________________________________________________________________________
+double SuperkExpectation::GeneratorInputs::XSecRatioWght(
+   double E, double twk, TH1D * hRelErr) const
+{
+   assert(hRelErr);
+
+   E = TMath::Min( E, hRelErr->GetXaxis()->GetXmax() );
+
+   int    bin   = hRelErr->FindBin(E);
+   double relerr = hRelErr->GetBinContent(bin);
+
+   double wght = (1. + twk*relerr);
+
+#ifdef __debug_level_3__
+   cout << "Exp/NuGen/XSecRatioWght >> E = " << E 
+        << ", relerr = " << relerr << ", twkdial = " << twk << ", wght = " << wght 
+        << endl;
+#endif
+
+   return wght; 
 }
 //________________________________________________________________________________________
 
