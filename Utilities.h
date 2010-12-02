@@ -90,8 +90,8 @@ namespace util {
 
   // handle variable binning in fluc covariance matrices
 
-  int    Fixed2VarNumbering               (int fixBinNo);
-  double FluxFractionsFixedBinRelToVarBin (int fixBinNo, TH1D* ourFluxHisto, TH1D* theirFluxHisto);
+  int    FluxFix2VarBinNumber             (int fixBinNo);
+  double FluxFractionsFixedBinRelToVarBin (int fixBinNo, TH1D* fixBinFluxHisto, TH1D* varBinFluxHisto);
 
   // etc
 
