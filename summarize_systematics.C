@@ -82,8 +82,8 @@ void summarize_systematics()
 
     cout << "* Systematic: " << syst_label << endl;
     cout << "  - number of fits = " << nfits << endl;
-    cout << "  - frac_err(dmsq) = "          << 100*dm23sq_frac_err[isyst] << " %" << endl;
-    cout << "  - frac_err(sinsq2theta23) = " << 100*sinsq2theta23_frac_err[isyst] << " %" << endl;
+    cout << "  - syst_err(dmsq) = "          << 100*dm23sq_frac_err[isyst] << " %" << endl;
+    cout << "  - syst_err(sinsq2theta23) = " << 100*sinsq2theta23_frac_err[isyst] << " %" << endl;
 
     int syst_bin = isyst+1;
     h_dm23sq_frac_err        -> SetBinContent(syst_bin, 100*dm23sq_frac_err[isyst]); 
@@ -106,4 +106,18 @@ void summarize_systematics()
   h_dm23sq_frac_err->Draw();
   TCanvas * c2 = new TCanvas("c2","",100,100,500,500);
   h_sinsq2theta23_frac_err->Draw();
+
+  double dm23sq_combined_frac_err        = 0;
+  double sinsq2theta23_combined_frac_err = 0;
+
+  for(int isyst = 0; isyst < nsyst; isyst++) {
+      dm23sq_combined_frac_err        += TMath::Power(dm23sq_frac_err[isyst]  ,      2.);
+      sinsq2theta23_combined_frac_err += TMath::Power(sinsq2theta23_frac_err[isyst], 2.);
+  }
+  dm23sq_combined_frac_err        += TMath::Sqrt(dm23sq_combined_frac_err);
+  sinsq2theta23_combined_frac_err += TMath::Sqrt(sinsq2theta23_combined_frac_err);
+
+  cout << "* Combined systematics: " << endl;
+  cout << "  - syst_err(dmsq) = "          << 100*dm23sq_combined_frac_err << " %" << endl;
+  cout << "  - syst_err(sinsq2theta23) = " << 100*sinsq2theta23_combined_frac_err << " %" << endl;
 }
