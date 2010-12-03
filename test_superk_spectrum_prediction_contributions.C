@@ -27,7 +27,7 @@ void test_superk_spectrum_prediction_contributions()
   using namespace t2kana::yr1numu;
 
   // oscillation params
-  double input_sinsq2theta23 = 1.0;
+  double input_sinsq2theta23 = .45;
   double input_dm23sq        = 2.4E-3;
 
   const unsigned int nm = 6;
@@ -121,8 +121,14 @@ void test_superk_spectrum_prediction_contributions()
   legend->AddEntry(hErecoMode[conv::kSKmNuE],       "#nu_{e}",                 "LF");
   legend->Draw();
   c->Update();
+  double E1 = 0.75; // GeV
+  double E2 = 1.00; // GeV
+  double E3 = 2.00; // GeV
   double ntot = hErecoTot->Integral();
   cout << "Total number of events: " << ntot << endl;
+  cout << "Total number of events (< " << E1 << " GeV): " << hErecoTot->Integral(1,hErecoTot->FindBin(E1)) << endl;
+  cout << "Total number of events (< " << E2 << " GeV): " << hErecoTot->Integral(1,hErecoTot->FindBin(E2)) << endl;
+  cout << "Total number of events (<  "<< E3 << " GeV): " << hErecoTot->Integral(1,hErecoTot->FindBin(E3)) << endl;
   for(int im = 0; im < nm; im++) {
      double nmode = hErecoMode[im]->Integral();
      cout << "Contrib from mode: " << util::AsString(modes[im]) << " : " << nmode 

@@ -922,6 +922,26 @@ double t2kana::yr1numu::util::XML2Dbl(
   return value;
 }
 //___________________________________________________________________________
+string t2kana::yr1numu::util::XML2String(
+  TXMLEngine * xmleng, XMLNodePointer_t top_node, string path)
+{
+// Get the specified node content as a floating-point number
+//
+
+#ifdef __debug_level_2__
+  cout << "utils/XML2Str >> Reading info at XML node path: " << path << endl;
+#endif
+
+  XMLNodePointer_t found_node = FindNode(xmleng,top_node,path);
+  if(!found_node) {
+    cerr << "utils/XML2Str >> No node was found at input XML node path: "
+         << path << endl;
+    exit(1);
+  }
+  string content = xmleng->GetNodeContent(found_node);
+  return TrimSpaces(content);
+}
+//___________________________________________________________________________
 t2kana::yr1numu::util::TH1DErrEnv *    
   t2kana::yr1numu::util::XML2TH1DErrEnv(
      TXMLEngine * eng, XMLNodePointer_t topnode, string path)

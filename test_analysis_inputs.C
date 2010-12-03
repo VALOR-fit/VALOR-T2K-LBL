@@ -7,7 +7,7 @@
 //
 
 {
-  TString opt = "SuperK";
+  TString opt = "nd280";
 
   gSystem->Load("libGpad");  
   gSystem->Load("libPhysics");  
@@ -63,12 +63,14 @@
     skexp->GetND280Inputs()->Draw(new TCanvas(), "Saclay/EtrueSpectrum/NuMuBar/NC");
     skexp->GetND280Inputs()->Draw(new TCanvas(), "Saclay/EtrueSpectrum/NuE/CC");
     skexp->GetND280Inputs()->Draw(new TCanvas(), "Saclay/EtrueSpectrum/NuE/NC");
+/*
     skexp->GetND280Inputs()->Draw(new TCanvas(), "Saclay/Efficiency/NuMu/CC");
     skexp->GetND280Inputs()->Draw(new TCanvas(), "Saclay/Efficiency/NuMu/NC");
     skexp->GetND280Inputs()->Draw(new TCanvas(), "Saclay/Efficiency/NuMuBar/CC");
     skexp->GetND280Inputs()->Draw(new TCanvas(), "Saclay/Efficiency/NuMuBar/NC");
     skexp->GetND280Inputs()->Draw(new TCanvas(), "Saclay/Efficiency/NuE/CC");
     skexp->GetND280Inputs()->Draw(new TCanvas(), "Saclay/Efficiency/NuE/NC");
+*/
   }
   if(opt.Contains("NeutrinoGenerator")) {
 //    skexp->GetGeneratorInputs()->Draw(new TCanvas(), "SKSigTotal");

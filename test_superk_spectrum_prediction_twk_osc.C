@@ -27,14 +27,19 @@ void test_superk_spectrum_prediction_twk_osc()
   using namespace t2kana::yr1numu;
 
   // oscillation params
-  const int ncases = 4;
-  double sinsq2theta23[ncases] = { 0., 1.0,    1.0,    1.0    };
-  double dm23sq       [ncases] = { 0., 2.0E-3, 2.4E-3, 3.3E-3 };
+/*
+  const int ncases = 5;
+  double sinsq2theta23[ncases] = { 0., 1.0,    1.0,    1.0,    1.0  };
+  double dm23sq       [ncases] = { 0., 2.0E-3, 2.4E-3, 3.3E-3, 8E-3 };
+*/
+  const int ncases = 5;
+  double sinsq2theta23[ncases] = { 0., 1.0,    0.8,    0.6,    0.4    };
+  double dm23sq       [ncases] = { 0., 2.4E-3, 2.4E-3, 2.4E-3, 2.4E-3 };
 
   // histogram drawing options
-  int hwidth [ncases] = { 2,      1,       1,       1       };
-  int hcolor [ncases] = { kBlack, kBlue,   kGreen,  kRed    };
-  int hstyle [ncases] = { kBlack, kDashed, kDashed, kDashed };
+  int hwidth [ncases] = { 2,      1,       1,       1,       1        };
+  int hcolor [ncases] = { kBlack, kBlue,   kGreen,  kRed,    kBlack   };
+  int hstyle [ncases] = { kBlack, kDashed, kDashed, kDashed, kDashed  };
 
   // histogram booking
   TH1D * hEreco[ncases];
@@ -103,7 +108,15 @@ void test_superk_spectrum_prediction_twk_osc()
      }
      hEreco[icase]->Draw(opt);
      legend->AddEntry(hEreco[icase], label, "L");
-     cout << " *** " << label << " : NumEvents = " << hEreco[icase]->Integral() << endl;
+     double E1 = 0.75; // GeV
+     double E2 = 1.00; // GeV
+     double E3 = 2.00; // GeV
+     cout << " *** " << label << " : " << endl;
+     cout << "NumEvents = " << hEreco[icase]->Integral() << endl;
+     cout << "NumEvents (< " << E1 << " GeV): " << hEreco[icase]->Integral(1,hEreco[icase]->FindBin(E1)) << endl;
+     cout << "NumEvents (< " << E2 << " GeV): " << hEreco[icase]->Integral(1,hEreco[icase]->FindBin(E2)) << endl;
+     cout << "NumEvents (<  "<< E3 << " GeV): " << hEreco[icase]->Integral(1,hEreco[icase]->FindBin(E3)) << endl;
+
   }
   legend->Draw();
   low->cd();

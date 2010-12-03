@@ -44,6 +44,8 @@ using t2kana::yr1numu::conv::kns;
 using t2kana::yr1numu::conv::knm;
 using t2kana::yr1numu::conv::knmnd;
 
+class HadErrCalc;
+
 namespace t2kana {
 namespace yr1numu {
 
@@ -82,6 +84,9 @@ public:
    // Reset all systematic variations
    void ResetSystematicVariations(void);
 
+   //
+   void PreComputeND280CorrectionFactorChanges(void);
+
    //.........................................................................
    // nested class ND280Inputs
    //.........................................................................
@@ -94,10 +99,15 @@ public:
       // Get nd280 oscillation analysis inputs
       double CorrectionFactor (void) const;
       double NObsCCLike       (void) const; ///< observed number of CC-like events
-      double NExpNCBkg        (void) const; ///< expected NC contamination of CC-like sample
-      double NExpCC           (void) const; ///< expected number of CC events
-      double NumOfEvents      (t2kana::yr1numu::conv::ND280Mode_t mode) const;
+      double NExpNCBkg        (bool nominal=false) const; ///< expected NC contamination of CC-like sample (by default report tweaked value)
+      double NExpCC           (bool nominal=false) const; ///< expected number of CC events  (by default report tweaked value)
+      double NumOfEvents      (t2kana::yr1numu::conv::ND280Mode_t mode, bool nominal=false) const; 
+      double NumOfEvents      (t2kana::yr1numu::conv::ND280Mode_t mode, int bin, bool nominal=false) const;
+      double NumOfEvents      (t2kana::yr1numu::conv::ND280Mode_t mode, double Etrue, bool nominal=false) const;
       double EfficiencyRelErr (double Et, t2kana::yr1numu::conv::ND280Mode_t mode, int sign) const; ///< relative uncertainty on efficiency
+      TH1D*  CurrNuMuEtrue    (void); ///< current (allowing for applied weights) Etrue distribution for numu
+      TH1D*  CurrNuMuBarEtrue (void); ///<      -//-  for numubar
+      TH1D*  CurrNuEEtrue     (void); ///<      -//-  for nue
 
       // Draw inputs:
       // "Saclay/EtrueSpectrum/NuMu/All"
@@ -141,6 +151,12 @@ public:
       double  fSelEffTwkDial[knmnd];   ///< selection efficiency tweaking dials for various modes
       double  fSelEffRelErr;           ///< relative error on selection effciencies
 
+      TH1D *  fNuMuEt;                 ///< fEtrue distribution for numu    - needed for beam norm err calculation
+      TH1D *  fNuMuBarEt;              ///< fEtrue distribution for numubar - needed for beam norm err calculation
+      TH1D *  fNuEEt;                  ///< fEtrue distribution for nue     - needed for beam norm err calculation
+
+      double  fNomCorr;                ///< nominal correction factor (without efficiency, cross section tweaks)
+
       GeneratorInputs * fGenInputs;
    };
 
@@ -158,9 +174,14 @@ public:
       TTree * MCTree            (t2kana::yr1numu::conv::SuperkSample_t s, t2kana::yr1numu::conv::SuperkMode_t m);
       double  MCPOT             (t2kana::yr1numu::conv::SuperkSample_t s, t2kana::yr1numu::conv::SuperkMode_t m);
       double  NumOfEvents       (double Ereco, t2kana::yr1numu::conv::SuperkSample_t s, t2kana::yr1numu::conv::SuperkMode_t m, double sinsq2theta23, double dmsq23);
+      double  NumOfEvents_Etrue (double Etrue, t2kana::yr1numu::conv::SuperkSample_t s, t2kana::yr1numu::conv::SuperkMode_t m, double sinsq2theta23, double dmsq23);
       double  EfficiencyRelErr  (t2kana::yr1numu::conv::SuperkSample_t s, t2kana::yr1numu::conv::SuperkMode_t m) const; ///< rel err on efficiency
       double  EnergyScaleRelErr (void) const; ///< energy scale err
       double  EnergyScale       (void) const; ///< energy scale 
+
+      TH1D*  Curr1RmuNuMuEtrue    (double sinsq2theta23, double dmsq23); ///< current (allowing for applied weights) Etrue distribution for numu
+      TH1D*  Curr1RmuNuMuBarEtrue (double sinsq2theta23, double dmsq23); ///<      -//-  for numubar
+      TH1D*  Curr1RmuNuEEtrue     (double sinsq2theta23, double dmsq23); ///<      -//-  for nue
 
       // Draw inputs:
       // ...
@@ -192,7 +213,8 @@ public:
       double  fEffRelErr[kns][knm];     ///< Efficiency relative error
       double  fEffTwkDial[kns][knm];    ///< Efficiency tweaking dial
 
-      TH2D *  fMCSpectrum[kns][knm];    ///<
+      TH2D *  fMCSpectrum2d[kns][knm];  ///< Ereco-Etrue
+      TH1D *  fMCSpectrum1d[kns][knm];  ///< Etrue
       TTree*  fMC1Rmu_numu;             ///<
       double  fMCPOT_numu;              ///<
       TTree*  fMC1Rmu_numubar;          ///<
@@ -204,7 +226,11 @@ public:
       int     fBrPdg;                   ///<
       int     fBrGenCode;               ///<
 
-      BeamInputs * fBeamInputs;         ///<
+      TH1D *  f1RmNuMuEt;               ///< fEtrue distribution for 1-Ring mu-like numu    - needed for beam norm err calculation
+      TH1D *  f1RmNuMuBarEt;            ///< fEtrue distribution for 1-Ring mu-like numubar - needed for beam norm err calculation
+      TH1D *  f1RmNuEEt;                ///< fEtrue distribution for 1-Ring mu-like nue     - needed for beam norm err calculation
+
+      BeamInputs *      fBeamInputs;    ///<
       GeneratorInputs * fGenInputs;     ///<
    };
 
@@ -224,9 +250,11 @@ public:
       double              SuperkNuMuFlux                (double Etrue, bool wght_to_10d=true) const;
       double              SuperkNuMuFluxPOT             (void) const; 
       const TMatrixD &    SuperkNuMuFluxCov             (void) const; ///< Superk flux covariance matrix
-      double              SuperkNuMuFluxNormErr         (double sinsq2theta23, double dmsq23) const; ///< normalization err
-      double              SuperkNuMuFluxNorm            (double sinsq2theta23, double dmsq23) const; ///< normalization 
       double              SuperkNuMuFluxShapeWeight     (double Etrue);
+      double              SuperkFluxNormErr             (TH1D * hnumu1Rmu, TH1D * hnumubar1Rmu, TH1D * hnue1Rm, 
+                                                         TH1D * hnumuND, TH1D * hnumubarND, TH1D * hnueND) const; ///< normalization err
+      double              SuperkFluxNorm                (TH1D * hnumu1Rmu, TH1D * hnumubar1Rmu, TH1D * hnue1Rm, 
+                                                         TH1D * hnumuND, TH1D * hnumubarND, TH1D * hnueND) const; ///< normalization 
 
       // Drawing option:
       // - "SKFlux/10a/NuMu"              : nominal SuperK numu flux (10a)
@@ -260,6 +288,7 @@ public:
       TMatrixD *    fSuperkNuMuFluxCovCholeskyL;
       TH1D *        fSuperkNuMuFluxTweaked;        ///< SuperK numu flux estimation (tweaked / 50 MeV binning)
       bool          fEnableFluxShapeTweaking;
+      HadErrCalc *  fHEC;                          ///< Kubo-san / BEAM WG norm err calc code
    };
 
    //.........................................................................
@@ -274,15 +303,22 @@ public:
       // Get neutrino generator oscillation analysis inputs
       double ND280XSecRatioWght  (double Etrue, t2kana::yr1numu::conv::ND280Mode_t  m) const; 
       double SuperkXSecRatioWght (double Etrue, t2kana::yr1numu::conv::SuperkMode_t m) const;
+      double SuperkCCQEXSecWght  (double Etrue, t2kana::yr1numu::conv::SuperkMode_t m) const;
+      double SuperkNuclEffectWght(double Ereco, t2kana::yr1numu::conv::SuperkMode_t m) const;
 
       // Draw inputs:
       //
       void Draw(TVirtualPad * c, Option_t * opt = "") const;
 
       // Systematic variations
+      void TweakCCQEXSec             (double twkdial) { fCCQEXSecTwkDial             = twkdial; } ///< tweak CCQE (far only)
       void TweakCC1piToCCQEXSecRatio (double twkdial) { fCC1piToCCQEXSecRatioTwkDial = twkdial; } ///< tweak CC1pi/CCQE (both near & far)
       void TweakCCOthToCCQEXSecRatio (double twkdial) { fCCOthToCCQEXSecRatioTwkDial = twkdial; } ///< tweak CCoth/CCQE (both near & far)
       void TweakNCToCCQEXSecRatio    (double twkdial) { fNCToCCQEXSecRatioTwkDial    = twkdial; } ///< tweak NC/CCQE (both near & far)
+      void TweakNuclEffect           (double twkdial) { fNuclEffectTwkDial           = twkdial; } ///< tweak nuclear effect (far only)
+
+      bool TweakAffectsND280 (void) const;
+      bool TweakAffectsSuperk(void) const;
 
       // Read inputs from XML file
       bool Read (TXMLEngine* xml, XMLNodePointer_t root_node); 
@@ -304,13 +340,16 @@ public:
 //      TH1D * fSigmaTotSK;        ///< numu+H20 total cross section as a function of energy
 //      TH1D * fFractModeSK[knm];  ///< fraction of event modes in numu+H20 as a function of energy
 
+      double fCCQEXSecTwkDial;
       double fCC1piToCCQEXSecRatioTwkDial;
       double fCCOthToCCQEXSecRatioTwkDial;
       double fNCToCCQEXSecRatioTwkDial;
+      double fNuclEffectTwkDial;
       TH1D * fCCQEXSecRelErr;
       TH1D * fCC1piToCCQEXSecRatioRelErr;
       TH1D * fCCOthToCCQEXSecRatioRelErr;
       TH1D * fNCToCCQEXSecRatioRelErr;
+      TH1D * fSuperkNuclearEffectRelErr;
    };
 
 private:

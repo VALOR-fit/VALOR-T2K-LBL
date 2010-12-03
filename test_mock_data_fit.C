@@ -40,7 +40,7 @@ void test_mock_data_fit()
 
   // get superk spectrum observation
   SuperkObservation * skobs = new SuperkObservation;
-  skobs->CreateMockData(*skexp, *fparm);
+  skobs->CreateMockData(*skexp, *fparm, false);
 
   // create fit inputs
   OscillationFitter::FitInputs * fit_inputs = 

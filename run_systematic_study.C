@@ -10,9 +10,11 @@
 //	- sk_nc_eff
 //	- flux_norm
 //	- flux_shape
+//      - xsec_ccqe
 //      - xsec_cc1pi_to_ccqe
 //      - xsec_ccoth_to_ccqe
 //      - xsec_nc_to_ccqe
+//      - nuclear_effect
 //
 // Costas Andreopoulos
 // ------------------------------------------------------------------------------------------------
@@ -41,7 +43,7 @@ void run_systematic_study(string systematic, int run=0)
   const double input_sinsq2theta23 = 0.90;
   const double input_dm23sq        = 2.4E-3;
 
-  const int nexperiments = 100;
+  const int nexperiments = 250;
   double output_sinsq2theta23[nexperiments];
   double output_dm23sq       [nexperiments];
 
@@ -58,8 +60,8 @@ void run_systematic_study(string systematic, int run=0)
 
   // get superk spectrum observation
   SuperkObservation * skobs = new SuperkObservation;
-//skobs->CreateMockData(*skexp, *fparm, false);     ///<-- generate mock data now
-  skobs->Read("inputs/analysis_configuration.xml"); ///<-- read mock data stored in file (do that if you run multiple jobs for the same systematic)
+  skobs->CreateMockData(*skexp, *fparm, false);     ///<-- generate mock data now
+  //skobs->Read("inputs/analysis_configuration.xml"); ///<-- read mock data stored in file (do that if you run multiple jobs for the same systematic)
 
   // create fit inputs
   OscillationFitter::FitInputs * fit_inputs =
@@ -118,6 +120,10 @@ void run_systematic_study(string systematic, int run=0)
      // cross section systematics
      //     
      else
+     if(systematic == "xsec_ccqe") {
+        skexp->GetGeneratorInputs()->TweakCCQEXSec(rand.Gaus(0.,1.));
+     }
+     else
      if(systematic == "xsec_cc1pi_to_ccqe") {
         skexp->GetGeneratorInputs()->TweakCC1piToCCQEXSecRatio(rand.Gaus(0.,1.));
      }
@@ -128,6 +134,10 @@ void run_systematic_study(string systematic, int run=0)
      else
      if(systematic == "xsec_nc_to_ccqe") {
         skexp->GetGeneratorInputs()->TweakNCToCCQEXSecRatio(rand.Gaus(0.,1.));
+     }
+     else
+     if(systematic == "nuclear_effect") {
+        skexp->GetGeneratorInputs()->TweakNuclEffect(rand.Gaus(0.,1.));
      }
 
      else {
@@ -170,7 +180,7 @@ void run_systematic_study(string systematic, int run=0)
   hp2->Draw();
   hp2->GetXaxis()->SetTitle("|#Delta m^2_{23}|");
 
-  TFile f(Form("syst_%s-sinsq2theta23_%.2f-dm23sq:%.5feV2_%d.root",
+  TFile f(Form("syst_%s-sinsq2theta23_%.2f-dm23sq_%.5feV2_%d.root",
           systematic.c_str(),input_sinsq2theta23,input_dm23sq,run), "recreate"); 
   systnt->Write("sysnt");
   f.Close();

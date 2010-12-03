@@ -27,11 +27,13 @@ void test_superk_spectrum_prediction_twk_sig()
   using namespace t2kana;
   using namespace t2kana::yr1numu;
 
-  const int ntwkmodes = 3;
+  const int ntwkmodes = 5;
   string twklabel[ntwkmodes] = {
+   "CCQE cross section",
    "CC1#pi/CCQE cross section ratio",
    "CCother/CCQE cross section ratio",
-   "NC/CCQE cross section ratio"
+   "NC/CCQE cross section ratio",
+   "Nuclear effect"
   }
   const int ntwkdials = 5;
   double twkdial[ntwkdials] = { -1.0, -0.5, 0.0, +0.5, +1.0 };
@@ -74,9 +76,11 @@ void test_superk_spectrum_prediction_twk_sig()
   for(int imode = 0; imode < ntwkmodes; imode++) {
     skexp.ResetSystematicVariations(); // reset previously set tweaks
     for(int idial = 0; idial < ntwkdials; idial++) {
-       if      (imode==0) skexp.GetGeneratorInputs()->TweakCC1piToCCQEXSecRatio( twkdial[idial] );
-       else if (imode==1) skexp.GetGeneratorInputs()->TweakCCOthToCCQEXSecRatio( twkdial[idial] );
-       else if (imode==2) skexp.GetGeneratorInputs()->TweakNCToCCQEXSecRatio   ( twkdial[idial] );
+       if      (imode==0) skexp.GetGeneratorInputs()->TweakCCQEXSec            ( twkdial[idial] );
+       else if (imode==1) skexp.GetGeneratorInputs()->TweakCC1piToCCQEXSecRatio( twkdial[idial] );
+       else if (imode==2) skexp.GetGeneratorInputs()->TweakCCOthToCCQEXSecRatio( twkdial[idial] );
+       else if (imode==3) skexp.GetGeneratorInputs()->TweakNCToCCQEXSecRatio   ( twkdial[idial] );
+       else if (imode==4) skexp.GetGeneratorInputs()->TweakNuclEffect          ( twkdial[idial] );
        for(int ibin=1; ibin <= conv::kNErecoBins; ibin++) {
           double Ereco = hEreco[imode][idial]->GetBinCenter(ibin);
           double Nexp  = skexp.Generate(Ereco, *fparm);

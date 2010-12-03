@@ -74,6 +74,7 @@ namespace util {
   TTree *          XML2TTree       (TXMLEngine * eng, XMLNodePointer_t topnode, string path);
   TAxis *          XML2BinInfo     (TXMLEngine * eng, XMLNodePointer_t topnode, string path);
   double           XML2Dbl         (TXMLEngine * eng, XMLNodePointer_t topnode, string path);
+  string           XML2String      (TXMLEngine * eng, XMLNodePointer_t topnode, string path);
   TH1DErrEnv *     XML2TH1DErrEnv  (TXMLEngine * eng, XMLNodePointer_t topnode, string path);
   TMatrixDSym *    XML2TMatrixDSym (TXMLEngine * eng, XMLNodePointer_t topnode, string path);
   TMatrixD *       XML2TMatrixD    (TXMLEngine * eng, XMLNodePointer_t topnode, string path);

@@ -24,7 +24,6 @@
   using namespace t2kana::yr1numu;
 
   // fit params
-//PhysParamList * fparm = PhysParamList::NumuDisapFitShapeOnlyNoSyst();
   PhysParamList * fparm = PhysParamList::NumuDisapFitNoSyst();
 
   // get superk spectrum predictor & configure
@@ -40,8 +39,6 @@
 
   // get fitter
   OscillationFitter * fitter = new OscillationFitter(fit_inputs,"minuit");
-
-//fitter->ActualOscParams(0.97,2.4E-3);
 
   // do the fit
   fitter.DoTheFit();
