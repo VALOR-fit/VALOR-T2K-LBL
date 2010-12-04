@@ -43,7 +43,7 @@ public:
    OscillationFitter(OscillationFitter::FitInputs * inputs, Option_t * option = "minuit");
   ~OscillationFitter();
 
-   void      DoTheFit        (void);
+   bool      DoTheFit        (void);
    void      Draw            (TVirtualPad * c, Option_t * option = "results", const char * outtag = 0);
    void      ActualOscParams (double sinsq2theta23, double dmsq23);
    TMinuit * Minuit          (void) { return gMinuit; }
