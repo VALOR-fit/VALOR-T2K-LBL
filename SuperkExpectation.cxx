@@ -1926,6 +1926,10 @@ void SuperkExpectation::SuperkInputs::TweakEfficiency(
   SuperkSample_t s, SuperkMode_t m, double twkdial)
 {
   fEffTwkDial[s][m] = twkdial;
+
+  // link CC1pi and CCoth as I have a single efficiency for CCnonQE
+  if      (m == kSKmNuMuCCoth) { fEffTwkDial[s][kSKmNuMuCC1pi] = twkdial; }
+  else if (m == kSKmNuMuCC1pi) { fEffTwkDial[s][kSKmNuMuCCoth] = twkdial; }
 }
 //________________________________________________________________________________________
 //........................................................................................
