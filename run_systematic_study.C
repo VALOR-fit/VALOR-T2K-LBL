@@ -74,77 +74,10 @@ void run_systematic_study(string systematic, int run=0)
 
      cout << " ******* experiment = " << iexperiment << endl;
 
-     //     
-     // ND280 detector systematics
-     //     
-     if(systematic == "nd280_eff") {
-	skexp->GetND280Inputs()->TweakEfficiency(rand.Gaus(0.,1.));
-     } 
+     // tweak source of systematic err
+     skexp->TweakSystematic(systematic, rand.Gaus(0.,1.));
 
-     //     
-     // SuperK detector systematics
-     //     
-     else 
-     if(systematic == "sk_energy_scale") {
-        skexp->GetSuperkInputs()->TweakEnergyScale(rand.Gaus(0.,1.));
-     } 
-     else
-     if(systematic == "sk_ccqe_eff") {
-        skexp->GetSuperkInputs()->TweakEfficiency(
-           conv::kSKsFCFV1RingMuLike, conv::kSKmNuMuCCQE, rand.Gaus(0.,1.));
-     } 
-     else
-     if(systematic == "sk_ccnonqe_eff") {
-        skexp->GetSuperkInputs()->TweakEfficiency(
-           conv::kSKsFCFV1RingMuLike, conv::kSKmNuMuCC1pi, rand.Gaus(0.,1.));
-     } 
-     else
-     if(systematic == "sk_nc_eff") {
-        skexp->GetSuperkInputs()->TweakEfficiency(
-           conv::kSKsFCFV1RingMuLike, conv::kSKmNC, rand.Gaus(0.,1.));
-     }
-
-     //     
-     // flux systematics
-     //     
-     else
-     if(systematic == "flux_norm") {   
-        skexp->GetBeamInputs()->TweakNorm(rand.Gaus(0.,1.));  
-     }
-     else
-     if(systematic == "flux_shape") {   
-        skexp->GetBeamInputs()->TweakShape();  
-     }
-
-     //     
-     // cross section systematics
-     //     
-     else
-     if(systematic == "xsec_ccqe") {
-        skexp->GetGeneratorInputs()->TweakCCQEXSec(rand.Gaus(0.,1.));
-     }
-     else
-     if(systematic == "xsec_cc1pi_to_ccqe") {
-        skexp->GetGeneratorInputs()->TweakCC1piToCCQEXSecRatio(rand.Gaus(0.,1.));
-     }
-     else
-     if(systematic == "xsec_ccoth_to_ccqe") {
-        skexp->GetGeneratorInputs()->TweakCCOthToCCQEXSecRatio(rand.Gaus(0.,1.));
-     }
-     else
-     if(systematic == "xsec_nc_to_ccqe") {
-        skexp->GetGeneratorInputs()->TweakNCToCCQEXSecRatio(rand.Gaus(0.,1.));
-     }
-     else
-     if(systematic == "nuclear_effect") {
-        skexp->GetGeneratorInputs()->TweakNuclEffect(rand.Gaus(0.,1.));
-     }
-
-     else {
-        cerr << "Unknown systematic parameter!" << endl;
-	exit(1);
-     }
-
+     // reset oscillation params following last fit
      fparm->Update(conv::kPhypSinsq2Theta23, input_sinsq2theta23);
      fparm->Update(conv::kPhypDm23sq,        input_dm23sq);
 
@@ -154,6 +87,7 @@ void run_systematic_study(string systematic, int run=0)
      // do the fit
      fitter.DoTheFit();
 
+     // store params
      double bestfit_sinsq2theta23 = fparm->CurrValue(conv::kPhypSinsq2Theta23);
      double bestfit_dm23sq        = fparm->CurrValue(conv::kPhypDm23sq);
      double bestfit_chisq         = fit_inputs->Chisquare();

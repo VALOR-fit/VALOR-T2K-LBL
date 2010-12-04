@@ -40,7 +40,9 @@ void test_nd280_nevents_twk_sig()
   for(int i = 0; i < n; i++) {
 
      double twkdial = rand.Gaus(0,1);
-     skexp.GetGeneratorInputs()->TweakSigmaModeSK(conv::kSKmNuMuCCQE, twkdial);
+   //skexp.GetGeneratorInputs()->TweakCC1piToCCQEXSecRatio(twkdial);
+   //skexp.GetGeneratorInputs()->TweakCCOthToCCQEXSecRatio(twkdial);
+   skexp.GetGeneratorInputs()->TweakNCToCCQEXSecRatio   (twkdial);
 
      double nobscclike_nd280  = skexp.GetND280Inputs()->NObsCCLike();
      double nexpncbkg_nd280   = skexp.GetND280Inputs()->NExpNCBkg();

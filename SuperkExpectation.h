@@ -67,13 +67,15 @@ public:
    bool Read(string config_file);
 
    // Generate SK energy spectrum expectation for the current inputs
-   double Generate(double Ereco, const PhysParamList & fp);
-   double Generate(double Ereco, const PhysParamList & fp, t2kana::yr1numu::conv::SuperkSample_t s, t2kana::yr1numu::conv::SuperkMode_t m);
+   double Generate(double Ereco, const PhysParamList & fp, bool with_nd_correction=true);
+   double Generate(double Ereco, const PhysParamList & fp, t2kana::yr1numu::conv::SuperkSample_t s, 
+                   t2kana::yr1numu::conv::SuperkMode_t m, bool with_nd_correction=true);
 
-   TH1D * AsTH1D(const PhysParamList & fp);
-   TH1D * AsTH1D(const PhysParamList & fp, t2kana::yr1numu::conv::SuperkSample_t s);
-   TH1D * AsTH1D(const PhysParamList & fp, t2kana::yr1numu::conv::SuperkMode_t m);
-   TH1D * AsTH1D(const PhysParamList & fp, t2kana::yr1numu::conv::SuperkSample_t s, t2kana::yr1numu::conv::SuperkMode_t m);
+   TH1D * AsTH1D(const PhysParamList & fp, bool with_nd_correction=true);
+   TH1D * AsTH1D(const PhysParamList & fp, t2kana::yr1numu::conv::SuperkSample_t s, bool with_nd_correction=true);
+   TH1D * AsTH1D(const PhysParamList & fp, t2kana::yr1numu::conv::SuperkMode_t m, bool with_nd_correction=true);
+   TH1D * AsTH1D(const PhysParamList & fp, t2kana::yr1numu::conv::SuperkSample_t s, 
+                 t2kana::yr1numu::conv::SuperkMode_t m, bool with_nd_correction=true);
 
    // Access inputs used for building-up the expected spectrum at SK
    ND280Inputs *     GetND280Inputs     (void) { return fND280Inputs;     }
@@ -82,7 +84,8 @@ public:
    GeneratorInputs * GetGeneratorInputs (void) { return fGeneratorInputs; }
 
    // Reset all systematic variations
-   void ResetSystematicVariations(void);
+   void ResetSystematicVariations (void);
+   void TweakSystematic           (string systematic, double twkdial=0.);
 
    //
    void PreComputeND280CorrectionFactorChanges(void);
@@ -255,6 +258,7 @@ public:
                                                          TH1D * hnumuND, TH1D * hnumubarND, TH1D * hnueND) const; ///< normalization err
       double              SuperkFluxNorm                (TH1D * hnumu1Rmu, TH1D * hnumubar1Rmu, TH1D * hnue1Rm, 
                                                          TH1D * hnumuND, TH1D * hnumubarND, TH1D * hnueND) const; ///< normalization 
+      bool                UsingKuboSansCode             (void) { return (fHEC!=0); }
 
       // Drawing option:
       // - "SKFlux/10a/NuMu"              : nominal SuperK numu flux (10a)
@@ -289,6 +293,7 @@ public:
       TH1D *        fSuperkNuMuFluxTweaked;        ///< SuperK numu flux estimation (tweaked / 50 MeV binning)
       bool          fEnableFluxShapeTweaking;
       HadErrCalc *  fHEC;                          ///< Kubo-san / BEAM WG norm err calc code
+      double        fSuperkNormRelErr_simple;      ///< a fixed norm rel error (to use when not using Kubo-san's code)
    };
 
    //.........................................................................
