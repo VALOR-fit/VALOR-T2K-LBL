@@ -2477,7 +2477,20 @@ double SuperkExpectation::GeneratorInputs::ND280XSecRatioWght(
 {
    switch(mnd) {
       case ( kNDmNuMuCCQE     ) : return 1.; break;
-      case ( kNDmNuMuCCRES    ) : return this->CC1piToCCQEXSecRatioWght(Etrue); break;
+      case ( kNDmNuMuCCRES    ) : 
+        // There is a mismatch between the event categories in the nd280 sample and the 
+        // event categories for which errors are given.
+        // I need to propagate errors on CCOther/CCQE and CC1pi/CCQE.
+        // The CCRES category contains both CC1pi and CCOther.
+        // I estimate that 5% of the CCRES at the T2K energies are not CC1pi,
+        // but something else multi-pi, N+gamma, etc.
+        // Use that number ...to weight the weight... so that in every true energy bin
+        // we apply the CC1pi/CCQE weight to 95% of events and the CCOth/CCQE to the
+        // other 5%. Although approximate, this helps assigning the proper CCOth/CCQE
+        // error on nd280
+	return (0.95 * this->CC1piToCCQEXSecRatioWght(Etrue) +
+                0.05 * this->CCOthToCCQEXSecRatioWght(Etrue));
+	break;
       case ( kNDmNuMuCCCOH    ) : this->CCOthToCCQEXSecRatioWght(Etrue); break;
       case ( kNDmNuMuCCOth    ) : this->CCOthToCCQEXSecRatioWght(Etrue); break;
       case ( kNDmNuMuNCEL     ) : return 1.; break;

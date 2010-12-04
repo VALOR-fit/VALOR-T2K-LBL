@@ -8,7 +8,7 @@
 
 #include "Conventions.h"
 
-void test_superk_spectrum_prediction_twk_osc()
+void test_superk_spectrum_prediction_twk_osc(bool showdata=false)
 {
   gSystem->Load("libGpad");  
   gSystem->Load("libPhysics");  
@@ -116,6 +116,14 @@ void test_superk_spectrum_prediction_twk_osc()
      cout << "NumEvents (< " << E1 << " GeV): " << hEreco[icase]->Integral(1,hEreco[icase]->FindBin(E1)) << endl;
      cout << "NumEvents (< " << E2 << " GeV): " << hEreco[icase]->Integral(1,hEreco[icase]->FindBin(E2)) << endl;
      cout << "NumEvents (<  "<< E3 << " GeV): " << hEreco[icase]->Integral(1,hEreco[icase]->FindBin(E3)) << endl;
+     if(showdata) {
+       SuperkObservation * skobs = new SuperkObservation;
+       skobs->Read("inputs/analysis_configuration.xml");
+       TH1D * data = skobs->AsTH1D();
+       data->SetMarkerStyle(20);
+       data->SetMarkerSize(1);
+       data->Draw("PERRSAME");
+     }
 
   }
   legend->Draw();
