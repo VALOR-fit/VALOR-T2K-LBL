@@ -149,12 +149,11 @@ void test_syst_err_cancellation(string systematic)
   effect_mins_1_sigma -> SetBinContent(7, 100*frac_nsknumunc_m     ); 
   effect_mins_1_sigma -> SetBinContent(8, 100*frac_nsk_m           ); 
 
-  double max = 1.3 * TMath::Max( effect_plus_1_sigma->GetMaximum(), effect_mins_1_sigma->GetMaximum() );
-  double min = 1.3 * TMath::Min( effect_plus_1_sigma->GetMinimum(), effect_mins_1_sigma->GetMinimum() );
+  double max = 1.4 * TMath::Max( effect_plus_1_sigma->GetMaximum(), effect_mins_1_sigma->GetMaximum() );
+  double min = 1.4 * TMath::Min( effect_plus_1_sigma->GetMinimum(), effect_mins_1_sigma->GetMinimum() );
 
   effect_plus_1_sigma->GetYaxis()->SetRangeUser(min,max);
   effect_mins_1_sigma->GetYaxis()->SetRangeUser(min,max);
-
   effect_plus_1_sigma->GetYaxis()->SetTitle("%");
   effect_mins_1_sigma->GetYaxis()->SetTitle("%");
 
@@ -164,11 +163,13 @@ void test_syst_err_cancellation(string systematic)
 
   gStyle->SetOptStat(0);
 
-  TLegend * legend = new TLegend(1,.3,6,.8);
+  TLegend * legend = new TLegend(0.2,.6,0.4,.9);
   legend->SetFillColor(0);
   legend->SetBorderSize(0);
   legend->SetHeader(systematic.c_str());
-  legend->AddEntry(effect_plus_1_sigma, "+1#sigma", "L");
-  legend->AddEntry(effect_mins_1_sigma, "-1#sigma", "L");
+  legend->AddEntry(effect_plus_1_sigma, "+1 #sigma", "L");
+  legend->AddEntry(effect_mins_1_sigma, "-1 #sigma", "L");
   legend->Draw();
+
+  c->Update();
 }
