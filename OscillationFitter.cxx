@@ -138,7 +138,7 @@ void OscillationFitter::PrepareFitter(Option_t * option)
 #endif
 }
 //____________________________________________________________________________
-void OscillationFitter::DoTheFit(void)
+bool OscillationFitter::DoTheFit(void)
 {
 #ifdef __debug_level_1__
   cout << "OscillationFitter/DoTheFit >> Running the fitter..." << endl;
@@ -162,9 +162,22 @@ void OscillationFitter::DoTheFit(void)
   Double_t amin = 0;
   fitter->PrintResults(3,amin);
 
+  // Dummy variables - need to feed them to the function
+  // used for getting error matrix status
+  double ha(0.0);
+  double edm, errdef;
+  int nvpar, nparx;
+  int errMatrixStatus = fitter->GetStats(ha, edm, errdef, nvpar, nparx);
+
+#ifdef __debug_level_2__
+  cout << "Final error matrix status = " << errMatrixStatus << endl;
+#endif
+
 #ifdef __debug_level_1__
   cout << "OscillationFitter/DoTheFit >> Done!" << endl;
 #endif
+
+   return (errMatrixStatus == 3);
 }
 //____________________________________________________________________________
 void OscillationFitter::Draw(
