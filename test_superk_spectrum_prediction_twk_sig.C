@@ -117,17 +117,18 @@ void test_superk_spectrum_prediction_twk_sig()
     TLegend * legend = new TLegend(0.3, 0.7, 0.85, 0.9);
     legend->SetFillColor(0);
     legend->SetBorderSize(0);
+    legend->SetHeader(twklabel[imode].c_str());
+    cout << " *** " << twklabel[imode] << endl;
     for(int idial = 0; idial < ntwkdials; idial++) {
        const char * opt   = (idial==0) ? "" : "same";
-       const char * label = 
-         Form("%s tweaking dial = %.2f", twklabel[imode].c_str(), twkdial[idial]);
+       const char * label = Form("tweak dial = %.2f", twkdial[idial]);
        if(idial==0) {
         hEreco[imode][idial]->GetXaxis()->SetTitle("E_{reco} (GeV)");
         hEreco[imode][idial]->GetYaxis()->SetTitle("Number of events");
        }
        hEreco[imode][idial]->Draw(opt);
        legend->AddEntry(hEreco[imode][idial], label, "L");
-       cout << " *** " << label << " : NumEvents = " << hEreco[imode][idial]->Integral() << endl;
+       cout << " * " << label << " : NumEvents = " << hEreco[imode][idial]->Integral() << endl;
     }//idial
     legend->Draw();
     c[imode]->cd(2);

@@ -116,17 +116,18 @@ void test_superk_spectrum_prediction_twk_skeff_one()
     TLegend * legend1 = new TLegend(0.3, 0.7, 0.85, 0.9);
     legend1->SetFillColor(0);
     legend1->SetBorderSize(0);
+    legend1->SetHeader(Form("SuperK %s efficiency", util::AsString(twkmodes[imode]).c_str()));
+    cout << "*** " << Form("SuperK %s efficiency", util::AsString(twkmodes[imode]).c_str()) << endl;
     TH1F * hframe1 = (TH1F*) c[imode]->DrawFrame(
        0., 0., hErecoErr[imode][deflt]->GetXaxis()->GetXmax(), maxnev[imode]);
     hframe1->Draw();
     hframe1->GetXaxis()->SetTitle("E_{reco} (GeV)");
     hframe1->GetYaxis()->SetTitle("Number of events");
     for(int idial = 0; idial < ntwkdials; idial++) {
-      const char * label = Form("SuperK %s efficiency tweaking dial = %.2f", 
-                util::AsString(twkmodes[imode]).c_str(), twkdial[idial]);
+      const char * label = Form("tweak dial = %.2f", twkdial[idial]);
       hEreco[imode][idial]->Draw("same");
       legend1->AddEntry(hEreco[imode][idial], label, "L");
-      cout << " *** " << label << " : NumEvents = " << hEreco[imode][idial]->Integral() << endl;
+      cout << " * " << label << " : NumEvents = " << hEreco[imode][idial]->Integral() << endl;
     }//idial
     legend1->Draw();
     c[imode]->cd(2);

@@ -51,8 +51,8 @@ void test_superk_spectrum_prediction_twk_bnorm()
 
   // phys params
   PhysParamList * fparm = PhysParamList::NumuDisapFitNoSyst();
-  fparm->Update(t2kana::yr1numu::conv::kPhypSinsq2Theta23, 0);
-  fparm->Update(t2kana::yr1numu::conv::kPhypDm23sq,        0);
+  fparm->Update(t2kana::yr1numu::conv::kPhypSinsq2Theta23, 1.);
+  fparm->Update(t2kana::yr1numu::conv::kPhypDm23sq,        2.4E-3);
 
   // generate predictions
   for(int idial = 0; idial < ntwkdials; idial++) {

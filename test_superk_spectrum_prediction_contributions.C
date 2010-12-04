@@ -27,7 +27,7 @@ void test_superk_spectrum_prediction_contributions()
   using namespace t2kana::yr1numu;
 
   // oscillation params
-  double input_sinsq2theta23 = 0.90;
+  double input_sinsq2theta23 = 1.00;
   double input_dm23sq        = 2.4E-3;
 
   const unsigned int nm = 6;
