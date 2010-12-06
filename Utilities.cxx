@@ -96,8 +96,11 @@ double t2kana::yr1numu::util::ChisqGauss(
   double ndata, double nmc)
 {
   double chisq = 0.;
-  if(ndata>0) {
-    chisq = TMath::Power(ndata-nmc,2.)/ndata;
+//  if(ndata>0) {
+//    chisq = TMath::Power(ndata-nmc,2.)/ndata;
+//  }
+  if(nmc>0) {
+    chisq = TMath::Power(ndata-nmc,2.)/nmc;
   }
   return chisq;
 }
@@ -105,6 +108,7 @@ double t2kana::yr1numu::util::ChisqGauss(
 double t2kana::yr1numu::util::ChisqPoisson(
   double ndata, double nmc)
 {
+/*
   const double epsilon = kASmallNum;
 
   if(TMath::Abs(nmc-ndata) < epsilon) {
@@ -116,8 +120,13 @@ double t2kana::yr1numu::util::ChisqPoisson(
 
   double chisq = 2. * TMath::Abs(nmc-ndata) + 
                  2. * ndata * TMath::Log(ndata/nmc);
-
   return chisq;
+*/
+
+  if(nmc <= 0 || ndata <= 0) return 2. * TMath::Abs(nmc-ndata);
+
+  return 2. * TMath::Abs(nmc-ndata) +
+         2. * ndata * TMath::Log(ndata/nmc);
 }
 //____________________________________________________________________________
 double t2kana::yr1numu::util::NuMuSurvProb2D(

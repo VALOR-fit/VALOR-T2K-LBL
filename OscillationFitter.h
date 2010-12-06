@@ -22,6 +22,7 @@
 #define _t2kana_year1_numu_analysis_fitter_minuit_h_
 
 #include <TMinuit.h>
+#include <TString.h>
 
 class TVirtualPad;
 
@@ -78,9 +79,12 @@ public:
 
 private:
 
-   void Init          (void);
-   void SetInputs     (OscillationFitter::FitInputs * inputs);
-   void PrepareFitter (Option_t * option = "minuit");
+   void Init              (void);
+   void SetInputs         (OscillationFitter::FitInputs * inputs);
+   void PrepareFitter     (Option_t * option = "minuit");
+   bool DoTheFitCustom    (void);
+   bool DoTheFitMinuit    (void);
+   void BuildChisqSurface (void);
 
    FitInputs*           fFitInputs;
    bool                 fKnowActualParams; ///<
@@ -89,6 +93,9 @@ private:
    int                  fNdof;             ///<
    int                  fNFreeFitParams;   ///<
    int                  fNonZeroBins;      ///<
+   TH2D *               fChisqSurface;
+   TString              fOption;
+   double               fChisqMin;
 };
 
 //

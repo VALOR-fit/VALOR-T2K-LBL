@@ -7,7 +7,7 @@
 //
 
 {
-  TString opt = "nd280";
+  TString opt = "SuperK";
 
   gSystem->Load("libGpad");  
   gSystem->Load("libPhysics");  
@@ -46,7 +46,7 @@
 
   if(opt.Contains("SuperK")) {
     skexp->GetSuperkInputs()->Draw(new TCanvas(), "etrue_spectra");
-
+    skexp->GetSuperkInputs()->Draw(new TCanvas(), "1RingMuLike/ErecoEtrueTemplates");
 ///    skexp->GetSuperkInputs()->Draw(new TCanvas(), "ReconstructionEfficiency");
 ///    skexp->GetSuperkInputs()->Draw(new TCanvas(), "SelectionEfficiency/OneMuRingTight");
 ///    skexp->GetSuperkInputs()->Draw(new TCanvas(), "EnergyTransferMatrix/OneMuRingTight");
@@ -56,21 +56,18 @@
     cout << "Nobs(CC-like) = " << skexp->GetND280Inputs()->NObsCCLike() << endl;
     cout << "Nexp(NC-bkg)  = " << skexp->GetND280Inputs()->NExpNCBkg()  << endl;
     cout << "Nexp(CC)      = " << skexp->GetND280Inputs()->NExpCC()     << endl;
-
     skexp->GetND280Inputs()->Draw(new TCanvas(), "Saclay/EtrueSpectrum/NuMu/CC");
     skexp->GetND280Inputs()->Draw(new TCanvas(), "Saclay/EtrueSpectrum/NuMu/NC");
     skexp->GetND280Inputs()->Draw(new TCanvas(), "Saclay/EtrueSpectrum/NuMuBar/CC");
     skexp->GetND280Inputs()->Draw(new TCanvas(), "Saclay/EtrueSpectrum/NuMuBar/NC");
     skexp->GetND280Inputs()->Draw(new TCanvas(), "Saclay/EtrueSpectrum/NuE/CC");
     skexp->GetND280Inputs()->Draw(new TCanvas(), "Saclay/EtrueSpectrum/NuE/NC");
-/*
     skexp->GetND280Inputs()->Draw(new TCanvas(), "Saclay/Efficiency/NuMu/CC");
     skexp->GetND280Inputs()->Draw(new TCanvas(), "Saclay/Efficiency/NuMu/NC");
     skexp->GetND280Inputs()->Draw(new TCanvas(), "Saclay/Efficiency/NuMuBar/CC");
     skexp->GetND280Inputs()->Draw(new TCanvas(), "Saclay/Efficiency/NuMuBar/NC");
     skexp->GetND280Inputs()->Draw(new TCanvas(), "Saclay/Efficiency/NuE/CC");
     skexp->GetND280Inputs()->Draw(new TCanvas(), "Saclay/Efficiency/NuE/NC");
-*/
   }
   if(opt.Contains("NeutrinoGenerator")) {
 //    skexp->GetGeneratorInputs()->Draw(new TCanvas(), "SKSigTotal");

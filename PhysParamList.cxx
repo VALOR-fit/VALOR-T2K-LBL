@@ -131,8 +131,20 @@ PhysParamList * PhysParamList::NumuDisapFitNoSyst(void)
   PhysParamList * fparm = new PhysParamList(2);
 
   //                                     init   min   max    step  fix?   name
-  fparm->AddParam(0, kPhypSinsq2Theta23, 0.9,    0.0,  1.0,  0.02, false, "sinsq2theta23");
+  fparm->AddParam(0, kPhypSinsq2Theta23, 1.0,    0.0,  1.0,  0.02, false, "sinsq2theta23");
+  fparm->AddParam(1, kPhypDm23sq,        2.4E-3, 1E-4, 8E-3, 1E-4, false, "dmsq23"); 
+
+  return fparm;
+}
+//________________________________________________________________________________________
+PhysParamList * PhysParamList::NumuDisapFitFloatNormNoSyst(void)
+{
+  PhysParamList * fparm = new PhysParamList(3);
+
+  //                                     init   min   max    step  fix?   name
+  fparm->AddParam(0, kPhypSinsq2Theta23, 1.0,    0.0,  1.0,  0.02, false, "sinsq2theta23");
   fparm->AddParam(1, kPhypDm23sq,        2.4E-3, 1E-4, 1E-2, 1E-4, false, "dmsq23");
+  fparm->AddParam(2, kPhypNorm,          1,      0.5,  1.5,  0.1,  false, "norm");
 
   return fparm;
 }

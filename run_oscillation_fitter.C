@@ -24,6 +24,7 @@
   using namespace t2kana::yr1numu;
 
   // fit params
+  //PhysParamList * fparm = PhysParamList::NumuDisapFitFloatNormNoSyst();
   PhysParamList * fparm = PhysParamList::NumuDisapFitNoSyst();
 
   // get superk spectrum predictor & configure
@@ -38,11 +39,13 @@
   OscillationFitter::FitInputs * fit_inputs = new OscillationFitter::FitInputs(skobs,skexp,fparm);
 
   // get fitter
-  OscillationFitter * fitter = new OscillationFitter(fit_inputs,"minuit");
+//  OscillationFitter * fitter = new OscillationFitter(fit_inputs,"minuit");
+  OscillationFitter * fitter = new OscillationFitter(fit_inputs,"custom");
 
   // do the fit
   fitter.DoTheFit();
 
   // see inputs
-  fitter->Draw(new TCanvas(), "Results");
+  fitter->Draw(new TCanvas(), "StandardOscFitPlots");
+  fitter->Draw(new TCanvas(), "ChisqSurface");
 }

@@ -27,14 +27,14 @@ void test_superk_spectrum_prediction_twk_osc(bool showdata=false)
   using namespace t2kana::yr1numu;
 
   // oscillation params
+/*
   const int ncases = 5;
   double sinsq2theta23[ncases] = { 0., 1.0,    1.0,    1.0,    1.0  };
   double dm23sq       [ncases] = { 0., 2.0E-3, 2.4E-3, 3.3E-3, 8E-3 };
-/*
+*/
   const int ncases = 5;
   double sinsq2theta23[ncases] = { 0., 1.0,    0.8,    0.6,    0.4    };
   double dm23sq       [ncases] = { 0., 2.4E-3, 2.4E-3, 2.4E-3, 2.4E-3 };
-*/
 
   // histogram drawing options
   int hwidth [ncases] = { 2,      1,       1,       1,       1        };

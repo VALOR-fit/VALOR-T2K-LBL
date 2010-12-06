@@ -26,10 +26,10 @@ void test_oscillation_contour_coverage()
   using namespace t2kana;
   using namespace t2kana::yr1numu;
 
-  const double input_sinsq2theta23 = 0.97;
-  const double input_dm23sq        = 2.5E-3;
+  const double input_sinsq2theta23 = 1.0;
+  const double input_dm23sq        = 2.4E-3;
 
-  const int nexperiments = 500;
+  const int nexperiments = 200;
   double output_sinsq2theta23[nexperiments];
   double output_dm23sq       [nexperiments];
 
@@ -47,6 +47,9 @@ void test_oscillation_contour_coverage()
   OscillationFitter::FitInputs * fit_inputs = 
       new OscillationFitter::FitInputs(skobs,skexp,fparm);
 
+  // store results
+  TNtupleD * nfitnt = new TNtupleD("nfitnt","", "iexp:sinsq2theta23:dm23sq:chisq");
+
   for(int iexperiment = 0; iexperiment < nexperiments; iexperiment++) {
 
      fparm->Update(t2kana::yr1numu::conv::kPhypSinsq2Theta23, input_sinsq2theta23);
@@ -55,16 +58,23 @@ void test_oscillation_contour_coverage()
      skobs->CreateMockData(*skexp, *fparm);
 
      // get fitter
-     OscillationFitter * fitter = new OscillationFitter(fit_inputs,"minuit");
+     OscillationFitter * fitter = new OscillationFitter(fit_inputs,"custom");
+   //OscillationFitter * fitter = new OscillationFitter(fit_inputs,"minuit");
      fitter->ActualOscParams(input_sinsq2theta23, input_dm23sq);
 
      // do the fit
-     fitter.DoTheFit();
+     fitter->DoTheFit();
 
      output_sinsq2theta23[iexperiment] = fparm->CurrValue(t2kana::yr1numu::conv::kPhypSinsq2Theta23);
      output_dm23sq       [iexperiment] = fparm->CurrValue(t2kana::yr1numu::conv::kPhypDm23sq);
+
+     double bestfit_chisq = fit_inputs->Chisquare();
+
+     nfitnt->Fill(iexperiment, 
+         output_sinsq2theta23[iexperiment], output_dm23sq[iexperiment] , bestfit_chisq);
   }
 
+  // show results
   TH1D * hp1 = new TH1D("hs1","",100,0,1);
   TH1D * hp2 = new TH1D("hp2","",100,1E-4,1E-2);
   TH2D * hp3 = new TH2D("hp3","",100,0,1,100,1E-4,1E-2);
@@ -88,4 +98,9 @@ void test_oscillation_contour_coverage()
   hp3->GetXaxis()->SetTitle("sin^{2}(2#theta_{23})");
   hp3->GetYaxis()->SetTitle("|#Delta m^2_{23}|");
   hp3->Draw();
+
+  TFile f(Form("Nfits-sinsq2theta23_%.2f-dm23sq_%.5feV2.root",
+          input_sinsq2theta23,input_dm23sq), "recreate");
+  nfitnt->Write("nfitnt");
+  f.Close();
 }

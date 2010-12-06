@@ -27,15 +27,15 @@ void test_superk_spectrum_prediction_twk_skescale()
   using namespace t2kana;
   using namespace t2kana::yr1numu;
 
-  const int ntwkdials = 5;
-  double twkdial[ntwkdials] = { -1.0, -0.5, 0.0, +0.5, +1.0 };
+  const int ntwkdials = 3;
+  double twkdial[ntwkdials] = { -1.0, 0.0, +1.0 };
 
   int deflt = ntwkdials/2; //untweaked case
 
   // histogram drawing options
-  int hwidth [ntwkdials] = { 1,       1,       2,       1,       1      };
-  int hcolor [ntwkdials] = { kBlue,   kBlue,   kBlack,  kRed,    kRed   };
-  int hstyle [ntwkdials] = { kDotted, kDashed, kSolid,  kDashed, kDotted};
+  int hwidth [ntwkdials] = { 1,       1,       2      };
+  int hcolor [ntwkdials] = { kBlue,   kBlack,  kRed   };
+  int hstyle [ntwkdials] = { kDashed, kSolid, kDashed };
 
   // histogram booking
   TH1D * hEreco   [ntwkdials];
@@ -59,8 +59,8 @@ void test_superk_spectrum_prediction_twk_skescale()
 
   // phys params
   PhysParamList * fparm = PhysParamList::NumuDisapFitNoSyst();
-  fparm->Update(t2kana::yr1numu::conv::kPhypSinsq2Theta23, 0);
-  fparm->Update(t2kana::yr1numu::conv::kPhypDm23sq,        0);
+  fparm->Update(t2kana::yr1numu::conv::kPhypSinsq2Theta23, 1.0);
+  fparm->Update(t2kana::yr1numu::conv::kPhypDm23sq,        2.4E-3);
 
   // generate predictions
   for(int idial = 0; idial < ntwkdials; idial++) {
@@ -97,9 +97,10 @@ void test_superk_spectrum_prediction_twk_skescale()
   TLegend * legend = new TLegend(0.3, 0.7, 0.85, 0.9);
   legend->SetFillColor(0);
   legend->SetBorderSize(0);
+  legend->SetHeader("SuperK energy scale");
   for(int idial = 0; idial < ntwkdials; idial++) {
     const char * opt   = (idial==0) ? "" : "same";
-    const char * label = Form("SuperK energy scale tweaking dial = %.2f", twkdial[idial]);
+    const char * label = Form("Tweaking dial = %.2f", twkdial[idial]);
     if(idial==0) {
       hEreco[idial]->GetXaxis()->SetTitle("E_{reco} (GeV)");
       hEreco[idial]->GetYaxis()->SetTitle("Number of events");

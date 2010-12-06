@@ -9,7 +9,7 @@
 #include "Conventions.h"
 
 void write_out_mock_data(
-  double sinsq2theta23=0.90, double dm23sq=2.4E-3, const char * filename="mock_data.root")
+  double sinsq2theta23=0.90, double dm23sq=2.4E-3, const char * filename="mock_data_tight.root")
 {
   gSystem->Load("libGpad");  
   gSystem->Load("libPhysics");  

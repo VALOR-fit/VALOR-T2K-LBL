@@ -143,6 +143,12 @@ double SuperkExpectation::Generate(
   }
   expectation *= beam_norm;
 
+
+  if(fp.Exists(kPhypNorm)) {
+     double norm = fp.CurrValue(kPhypNorm);
+     expectation *= norm;
+  }
+
   return expectation;
 }
 //________________________________________________________________________________________
@@ -1442,9 +1448,11 @@ void SuperkExpectation::SuperkInputs::FillHistogram(SuperkSample_t s, SuperkMode
   int netrue = (int) ((kEtrueMax-kEtrueMin)/kEtrueBinSz);
 
   fMCSpectrum2d[is][im] = new TH2D(
-     Form("nsk_%d_%d",is,im), "", 
+     Form("nsk_%d_%d",is,im), util::AsString(m).c_str(), 
        nereco, kErecoMin, kErecoMax, netrue, kEtrueMin, kEtrueMax);
   fMCSpectrum2d[is][im]->SetDirectory(0);
+  fMCSpectrum2d[is][im]->GetXaxis()->SetTitle("E_{reco} (GeV)");
+  fMCSpectrum2d[is][im]->GetYaxis()->SetTitle("E_{true} (GeV)");
 
   fMCSpectrum1d[is][im] = new TH1D(
      Form("nsketrue_%d_%d",is,im), "", netrue, kEtrueMin, kEtrueMax);
@@ -1545,6 +1553,24 @@ void SuperkExpectation::SuperkInputs::Draw(TVirtualPad * c, Option_t * option) c
       fMC1Rmu_numu->Draw("Enu","Mode==1","same");
       fMC1Rmu_numu->Draw("Enu","Mode==11||Mode==12||Mode==13","same");
       c->Update();
+  }
+
+  if(opt.Contains("1RingMuLike/ErecoEtrueTemplates")) { 
+    const char * draw_opt = "BOX";
+    c->Divide(2,3);
+    c->cd(1);
+    fMCSpectrum2d[kSKsFCFV1RingMuLike][kSKmNuMuCCQE]->Draw(draw_opt);
+    c->cd(2);
+    fMCSpectrum2d[kSKsFCFV1RingMuLike][kSKmNuMuCC1pi]->Draw(draw_opt);
+    c->cd(3);
+    fMCSpectrum2d[kSKsFCFV1RingMuLike][kSKmNuMuCCoth]->Draw(draw_opt);
+    c->cd(4);
+    fMCSpectrum2d[kSKsFCFV1RingMuLike][kSKmNC]->Draw(draw_opt);
+    c->cd(5);
+    fMCSpectrum2d[kSKsFCFV1RingMuLike][kSKmNuMuBar]->Draw(draw_opt);
+    c->cd(6);
+    fMCSpectrum2d[kSKsFCFV1RingMuLike][kSKmNuE]->Draw(draw_opt);
+    c->Update();
   }
 
   c->Update();
