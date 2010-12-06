@@ -165,9 +165,23 @@ bool SuperkObservation::Read(string config_file)
   }
   XMLNodePointer_t root_node = xml->DocGetRootElement(xmldoc);
 
-  // Get observed recosntructed energy distribution
-  fErDistr[kSKsFCFV1RingMuLike] = 
-    util::XML2TH1D(xml,root_node,"superk/observation/one_mu_ring/ereco");
+  if(util::NodeExists(xml,root_node,"superk/observation/one_mu_ring/ereco")) {
+     // Get observed recosntructed energy distribution
+     fErDistr[kSKsFCFV1RingMuLike] = 
+        util::XML2TH1D(xml,root_node,"superk/observation/one_mu_ring/ereco");
+  }
+  else
+  if(util::NodeExists(xml,root_node,"superk/observation/one_mu_ring/ereco_values")) {
+     fErDistr[kSKsFCFV1RingMuLike] = new TH1D("", "", kNvErecoBins,kNvErecoBinEdges);
+     fErDistr[kSKsFCFV1RingMuLike]->SetDirectory(0);
+     vector<double> values = util::XML2DblArray(
+        xml,root_node,"superk/observation/one_mu_ring/ereco_values");
+     vector<double>::const_iterator value_iter = values.begin();
+     for( ; value_iter != values.end(); ++value_iter) {
+       double Ereco = *value_iter;
+       fErDistr[kSKsFCFV1RingMuLike]->Fill(Ereco);
+     }
+  }
 
   // Release memory
   xml->FreeDoc(xmldoc);

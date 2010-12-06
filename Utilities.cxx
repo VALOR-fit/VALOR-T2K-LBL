@@ -108,25 +108,11 @@ double t2kana::yr1numu::util::ChisqGauss(
 double t2kana::yr1numu::util::ChisqPoisson(
   double ndata, double nmc)
 {
-/*
-  const double epsilon = kASmallNum;
+  assert(nmc >= 0. && ndata >= 0.);
 
-  if(TMath::Abs(nmc-ndata) < epsilon) {
-    return 0.;
-  }
+  if(nmc <= 0. || ndata <= 0.) return 2. * TMath::Abs(nmc-ndata);
 
-  if(nmc   <= 0.) { nmc   = epsilon; }
-  if(ndata <= 0.) { ndata = epsilon; }
-
-  double chisq = 2. * TMath::Abs(nmc-ndata) + 
-                 2. * ndata * TMath::Log(ndata/nmc);
-  return chisq;
-*/
-
-  if(nmc <= 0 || ndata <= 0) return 2. * TMath::Abs(nmc-ndata);
-
-  return 2. * TMath::Abs(nmc-ndata) +
-         2. * ndata * TMath::Log(ndata/nmc);
+  return (2. * TMath::Abs(nmc-ndata) + 2. * ndata * TMath::Log(ndata/nmc));
 }
 //____________________________________________________________________________
 double t2kana::yr1numu::util::NuMuSurvProb2D(
@@ -634,6 +620,33 @@ XMLNodePointer_t t2kana::yr1numu::util::FindNode(
   return 0;
 }
 //___________________________________________________________________________
+bool t2kana::yr1numu::util::NodeExists(
+  TXMLEngine * xmleng, XMLNodePointer_t topnode, string path)
+{
+// Find & return the XMLNodePointer_t at the specified path
+//
+  vector<string> node_path = Tokens(path,"/");
+
+  unsigned int ndepth = node_path.size();
+  unsigned int idepth = 0;
+
+  XMLNodePointer_t curr_node = xmleng->GetChild(topnode);
+  while(curr_node) {
+    string curr_node_name = xmleng->GetNodeName(curr_node);
+    if(node_path[idepth] == curr_node_name) {
+        idepth++;
+        if(idepth == ndepth) {
+          return true;
+        } else {
+          curr_node = xmleng->GetChild(curr_node);
+        }
+    } else {
+       curr_node = xmleng->GetNext(curr_node);
+    }
+  }
+  return false;
+}
+//___________________________________________________________________________
 TH1F * t2kana::yr1numu::util::XML2TH1F(
   TXMLEngine * xmleng, XMLNodePointer_t top_node, string path)
 {
@@ -929,6 +942,34 @@ double t2kana::yr1numu::util::XML2Dbl(
   string content = xmleng->GetNodeContent(found_node);
   double value = atof(content.c_str());
   return value;
+}
+//___________________________________________________________________________
+vector<double> t2kana::yr1numu::util::XML2DblArray(
+  TXMLEngine * xmleng, XMLNodePointer_t top_node, string path)
+{
+// Get the specified node content as a vector floating-point number
+// The node content should be a comma-separed list of numbers
+
+#ifdef __debug_level_2__
+  cout << "utils/XML2Dbl >> Reading info at XML node path: " << path << endl;
+#endif
+
+  XMLNodePointer_t found_node = FindNode(xmleng,top_node,path);
+  if(!found_node) {
+    cerr << "utils/XML2Dbl >> No node was found at input XML node path: "
+         << path << endl;
+    exit(1);
+  }
+  string content = TrimSpaces(xmleng->GetNodeContent(found_node));
+
+  vector<double> array;
+  vector<string> str_tokens = Tokens(content, ",");
+  vector<string>::const_iterator str_tokens_iter = str_tokens.begin();
+  for( ; str_tokens_iter != str_tokens.end(); ++str_tokens_iter) {
+     string token = *str_tokens_iter;
+     array.push_back( atof(token.c_str()) );
+  }
+  return array;
 }
 //___________________________________________________________________________
 string t2kana::yr1numu::util::XML2String(

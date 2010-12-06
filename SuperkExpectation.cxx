@@ -157,7 +157,7 @@ TH1D * SuperkExpectation::AsTH1D(const PhysParamList & fp, bool with_nd_correcti
   TH1D * hEreco = new TH1D("hEreco", "", kNvErecoBins, kNvErecoBinEdges);
   hEreco->SetDirectory(0);
 
-  for(int bin=1; bin < hEreco->GetNbinsX(); bin++) {
+  for(int bin=1; bin <= hEreco->GetNbinsX(); bin++) {
     double Ereco = hEreco->GetBinCenter(bin);
     double nev   = this->Generate(Ereco,fp,with_nd_correction);
     hEreco->SetBinContent(bin,nev);
@@ -176,7 +176,7 @@ TH1D * SuperkExpectation::AsTH1D(
   TH1D * hEreco = new TH1D("hEreco", "", kNvErecoBins, kNvErecoBinEdges);
   hEreco->SetDirectory(0);
 
-  for(int bin=1; bin < hEreco->GetNbinsX(); bin++) {
+  for(int bin=1; bin <= hEreco->GetNbinsX(); bin++) {
     double Ereco = hEreco->GetBinCenter(bin);
     double nev = 0;
     for(unsigned int im = 0; im < nm; im++) {
@@ -196,7 +196,7 @@ TH1D * SuperkExpectation::AsTH1D(
 
   const unsigned int ns = fSamples.size();
 
-  for(int bin=1; bin < hEreco->GetNbinsX(); bin++) {
+  for(int bin=1; bin <= hEreco->GetNbinsX(); bin++) {
     double Ereco = hEreco->GetBinCenter(bin);
     double nev = 0;
     // loop over SK samples 
@@ -215,7 +215,7 @@ TH1D * SuperkExpectation::AsTH1D(
   TH1D * hEreco = new TH1D("hEreco", "", kNvErecoBins, kNvErecoBinEdges);
   hEreco->SetDirectory(0);
 
-  for(int bin=1; bin < hEreco->GetNbinsX(); bin++) {
+  for(int bin=1; bin <= hEreco->GetNbinsX(); bin++) {
     double Ereco = hEreco->GetBinCenter(bin);
     double nev   = this->Generate(Ereco,fp,s,m,with_nd_correction);
     hEreco->SetBinContent(bin,nev);

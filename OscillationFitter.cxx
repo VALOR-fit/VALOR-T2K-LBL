@@ -124,8 +124,8 @@ void OscillationFitter::PrepareFitter(Option_t * option)
   fNonZeroBins = 0;
   const TAxis & ereco_binning = fFitInputs->Observation().ErecoBinning();
   for(int bin = 1; bin <= ereco_binning.GetNbins(); bin++) {
-     double Etrue = ereco_binning.GetBinCenter(bin);
-     double nev = fFitInputs->Observation().NumOfEvents(Etrue);
+     double E = ereco_binning.GetBinCenter(bin);
+     double nev = fFitInputs->Observation().NumOfEvents(E);
      if(nev>0) {
        fNonZeroBins++;
      }
@@ -540,6 +540,10 @@ double OscillationFitter::FitInputs::Chisquare(Option_t * option)
           this->Observation().ErecoBinning();
 
   int nbins = ereco_binning.GetNbins(); 
+#ifdef __debug_level_3__
+   cout << "OscillationFitter/Chisquare> nbins = " << nbins << endl;
+#endif
+
   for(int ibin = 1; ibin <= nbins; ibin++) {
      double Ereco = ereco_binning.GetBinCenter(ibin);
      double delta = 0.;
@@ -550,8 +554,8 @@ double OscillationFitter::FitInputs::Chisquare(Option_t * option)
      chisq += delta;
 
 #ifdef __debug_level_3__
-     cout << "OscillationFitter> chisq (bin = " << ibin << " / Ereco = " 
-          << Ereco << " GeV) = " << delta << endl;
+     cout << "OscillationFitter/Chisquare> chisq (bin = " 
+          << ibin << " / Ereco = " << Ereco << " GeV) = " << delta << endl;
 #endif
 
   }//ibin  
@@ -579,7 +583,6 @@ void t2kana::yr1numu::FitFunc1 (
   fpar.Sync(par); 
 
   // judge the agreement between the data and the current prediction
-  //f = inputs->Chisquare("gauss");
   f = inputs->Chisquare("poisson");
 }
 //____________________________________________________________________________
