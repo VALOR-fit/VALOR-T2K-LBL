@@ -49,12 +49,12 @@ void test_superk_spectrum_prediction_twk_skeff_one()
   TH1D * hErecoErr[ntwkmodes][ntwkdials];
   for(int imode = 0; imode < ntwkmodes; imode++) {
      for(int idial = 0; idial < ntwkdials; idial++) {
-       hEreco   [imode][idial] = new TH1D("","",conv::kNErecoBins,conv::kErecoMin,conv::kErecoMax);
+       hEreco   [imode][idial] = new TH1D("","",conv::kNvErecoBins,conv::kNvErecoBinEdges);
        hEreco   [imode][idial]->SetDirectory(0);
        hEreco   [imode][idial]->SetLineWidth(hwidth[idial]);
        hEreco   [imode][idial]->SetLineColor(hcolor[idial]);
        hEreco   [imode][idial]->SetLineStyle(hstyle[idial]);
-       hErecoErr[imode][idial] = new TH1D("","",conv::kNErecoBins,conv::kErecoMin,conv::kErecoMax);
+       hErecoErr[imode][idial] = new TH1D("","",conv::kNvErecoBins,conv::kNvErecoBinEdges);
        hErecoErr[imode][idial]->SetDirectory(0);
        hErecoErr[imode][idial]->SetLineWidth(hwidth[idial]);
        hErecoErr[imode][idial]->SetLineColor(hcolor[idial]);
@@ -77,7 +77,7 @@ void test_superk_spectrum_prediction_twk_skeff_one()
      for(int idial = 0; idial < ntwkdials; idial++) {
         skexp.GetSuperkInputs()->TweakEfficiency(
            t2kana::yr1numu::conv::kSKsFCFV1RingMuLike, twkmodes[imode], twkdial[idial]);
-        for(int ibin=1; ibin <= conv::kNErecoBins; ibin++) {
+        for(int ibin=1; ibin <= conv::kNvErecoBins; ibin++) {
            double Ereco = hEreco[imode][idial]->GetBinCenter(ibin);
            double Nexp  = skexp.Generate(Ereco, *fparm);
            maxnev[imode] = TMath::Max(maxnev[imode],Nexp);
@@ -93,7 +93,7 @@ void test_superk_spectrum_prediction_twk_skeff_one()
   double maxerrneg[ntwkmodes] = {+1.};
   for(int imode = 0; imode < ntwkmodes; imode++) {
     for(int idial = 0; idial < ntwkdials; idial++) {
-      for(int ibin=1; ibin <= conv::kNErecoBins; ibin++) {
+      for(int ibin=1; ibin <= conv::kNvErecoBins; ibin++) {
          double ncurr  = hEreco[imode][idial]->GetBinContent(ibin);
          double ndeflt = hEreco[imode][deflt]->GetBinContent(ibin);
          if(ndeflt>0) {

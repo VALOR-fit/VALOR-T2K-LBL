@@ -31,12 +31,12 @@ void test_superk_spectrum_prediction_twk_skeff_many()
   const int N = 300;
   TH1D * hEreco   [N];
   for(int i = 0; i < N; i++) {
-     hEreco[i] = new TH1D("","",conv::kNErecoBins,conv::kErecoMin,conv::kErecoMax);
+     hEreco[i] = new TH1D("","",conv::kNvErecoBins,conv::kNvErecoBinEdges);
      hEreco[i]->SetDirectory(0);
   }
-  TH1D * hErecoErrPos = new TH1D("hErecoErrPos","",conv::kNErecoBins,conv::kErecoMin,conv::kErecoMax);
+  TH1D * hErecoErrPos = new TH1D("hErecoErrPos","",conv::kNvErecoBins,conv::kNvErecoBinEdges);
   hErecoErrPos->SetDirectory(0);
-  TH1D * hErecoErrNeg = new TH1D("hErecoErrNeg","",conv::kNErecoBins,conv::kErecoMin,conv::kErecoMax);
+  TH1D * hErecoErrNeg = new TH1D("hErecoErrNeg","",conv::kNvErecoBins,conv::kNvErecoBinEdges);
   hErecoErrNeg->SetDirectory(0);
 
   // superk spectrum predictor
@@ -66,7 +66,7 @@ void test_superk_spectrum_prediction_twk_skeff_many()
              << "ccqe eff twk = " << ccqe_eff_twk 
              << ", ccnonqe_eff_twk = " << ccnonqe_eff_twk 
              << ", nc_eff_twk = " << nc_eff_twk << endl;
-     for(int ibin=1; ibin <= conv::kNErecoBins; ibin++) {
+     for(int ibin=1; ibin <= conv::kNvErecoBins; ibin++) {
         double Ereco = hEreco[i]->GetBinCenter(ibin);
         double Nexp  = skexp.Generate(Ereco, *fparm);
         maxNexp = TMath::Max(maxNexp,Nexp);
@@ -77,7 +77,7 @@ void test_superk_spectrum_prediction_twk_skeff_many()
   // get fractional err
   double global_maxerrpos = -1;
   double global_maxerrneg = +1;
-  for(int ibin=1; ibin <= conv::kNErecoBins; ibin++) {
+  for(int ibin=1; ibin <= conv::kNvErecoBins; ibin++) {
     double max = -1.;
     double min = +1.;
     double ndeflt = hEreco[0]->GetBinContent(ibin);

@@ -134,11 +134,7 @@ double SuperkObservation::NumOfEvents(double Er, SuperkSample_t s) const
 //________________________________________________________________________________________
 TH1D* SuperkObservation::AsTH1D(SuperkSample_t s) const
 {
-  int    nbins = (int) ((kErecoMax-kErecoMin)/kErecoBinSz);
-  double emin  = kErecoMin;
-  double emax  = kErecoMax;
-
-  TH1D * hEreco = new TH1D("hEreco", "", nbins, emin, emax);
+  TH1D * hEreco = new TH1D("", "", kNvErecoBins,kNvErecoBinEdges);
   hEreco->SetDirectory(0);
 
   for(int bin=1; bin < hEreco->GetNbinsX(); bin++) {
@@ -184,11 +180,7 @@ void SuperkObservation::CreateMockData(
       SuperkExpectation & exp, const PhysParamList & fp, bool fluctuate)
 {
   // Get observed reconstructed energy distribution
-  int    nbins = (int) ((kErecoMax-kErecoMin)/kErecoBinSz);
-  double emin  = kErecoMin;
-  double emax  = kErecoMax;
-
-  fErDistr[kSKsFCFV1RingMuLike] = new TH1D("", "", nbins, emin, emax);
+  fErDistr[kSKsFCFV1RingMuLike] = new TH1D("", "", kNvErecoBins,kNvErecoBinEdges);
   fErDistr[kSKsFCFV1RingMuLike]->SetDirectory(0);
 
   TRandom3 rand(0);

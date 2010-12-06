@@ -36,13 +36,13 @@ void test_superk_spectrum_prediction_twk_nd280eff()
   // histogram booking
   TH1D * hEreco[n];
   for(int i = 0; i < n; i++) {
-     hEreco[i] = new TH1D("","",conv::kNErecoBins,conv::kErecoMin,conv::kErecoMax);
+     hEreco[i] = new TH1D("","",conv::kNvErecoBins,conv::kNvErecoBinEdges);
      hEreco[i]->SetDirectory(0);
   }
-  TH1D * alo = new TH1D("alo",  "spectrum err envelope: low  boundary",            conv::kNErecoBins,conv::kErecoMin,conv::kErecoMax);
-  TH1D * ahi = new TH1D("ahi",  "spectrum err envelope: high boundary",            conv::kNErecoBins,conv::kErecoMin,conv::kErecoMax);
-  TH1D * flo = new TH1D("flo",  "spectrum fractional err envelope: low  boundary", conv::kNErecoBins,conv::kErecoMin,conv::kErecoMax);
-  TH1D * fhi = new TH1D("fhi",  "spectrum fractional err envelope: high boundary", conv::kNErecoBins,conv::kErecoMin,conv::kErecoMax);
+  TH1D * alo = new TH1D("alo",  "spectrum err envelope: low  boundary",            conv::kNvErecoBins,conv::kNvErecoBinEdges);
+  TH1D * ahi = new TH1D("ahi",  "spectrum err envelope: high boundary",            conv::kNvErecoBins,conv::kNvErecoBinEdges);
+  TH1D * flo = new TH1D("flo",  "spectrum fractional err envelope: low  boundary", conv::kNvErecoBins,conv::kNvErecoBinEdges);
+  TH1D * fhi = new TH1D("fhi",  "spectrum fractional err envelope: high boundary", conv::kNvErecoBins,conv::kNvErecoBinEdges);
 
   // superk spectrum predictor
   SuperkExpectation skexp;
@@ -91,7 +91,7 @@ void test_superk_spectrum_prediction_twk_nd280eff()
           skexp.GetND280Inputs()->TweakEfficiency(twkdial);
        }
      }
-     for(int ibin=1; ibin <= conv::kNErecoBins; ibin++) {
+     for(int ibin=1; ibin <= conv::kNvErecoBins; ibin++) {
         double Ereco = hEreco[i]->GetBinCenter(ibin);
         double Nexp  = skexp.Generate(Ereco, *fparm);
       //cout << "NumExpSK_{" << i << "} (Ereco = " << Ereco << ") = " << Nexp << endl;
@@ -99,7 +99,7 @@ void test_superk_spectrum_prediction_twk_nd280eff()
      }//ibin
   }//i
 
-  for(int ibin=1; ibin <= conv::kNErecoBins; ibin++) {
+  for(int ibin=1; ibin <= conv::kNvErecoBins; ibin++) {
     double nlo =  999999;
     double nhi = -999999;
     double def = hEreco[0]->GetBinContent(ibin);

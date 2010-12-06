@@ -154,11 +154,7 @@ double SuperkExpectation::Generate(
 //________________________________________________________________________________________
 TH1D * SuperkExpectation::AsTH1D(const PhysParamList & fp, bool with_nd_correction)
 {
-  int    nbins = (int) ((kErecoMax-kErecoMin)/kErecoBinSz);
-  double emin  = kErecoMin;
-  double emax  = kErecoMax;
-
-  TH1D * hEreco = new TH1D("hEreco", "", nbins, emin, emax);
+  TH1D * hEreco = new TH1D("hEreco", "", kNvErecoBins, kNvErecoBinEdges);
   hEreco->SetDirectory(0);
 
   for(int bin=1; bin < hEreco->GetNbinsX(); bin++) {
@@ -173,16 +169,11 @@ TH1D * SuperkExpectation::AsTH1D(const PhysParamList & fp, bool with_nd_correcti
 TH1D * SuperkExpectation::AsTH1D(
   const PhysParamList & fp, SuperkSample_t s,  bool with_nd_correction)
 {
-  int    nbins = (int) ((kErecoMax-kErecoMin)/kErecoBinSz);
-  double emin  = kErecoMin;
-  double emax  = kErecoMax;
-
   const unsigned int nm = 6;  
   SuperkMode_t sk_modes [nm] = { 
      kSKmNuMuCCQE, kSKmNuMuCC1pi, kSKmNuMuCCoth, kSKmNC, kSKmNuMuBar, kSKmNuE 
   };
-
-  TH1D * hEreco = new TH1D("hEreco", "", nbins, emin, emax);
+  TH1D * hEreco = new TH1D("hEreco", "", kNvErecoBins, kNvErecoBinEdges);
   hEreco->SetDirectory(0);
 
   for(int bin=1; bin < hEreco->GetNbinsX(); bin++) {
@@ -200,11 +191,7 @@ TH1D * SuperkExpectation::AsTH1D(
 TH1D * SuperkExpectation::AsTH1D(
   const PhysParamList & fp, SuperkMode_t m,  bool with_nd_correction)
 {
-  int    nbins = (int) ((kErecoMax-kErecoMin)/kErecoBinSz);
-  double emin  = kErecoMin;
-  double emax  = kErecoMax;
-
-  TH1D * hEreco = new TH1D("hEreco", "", nbins, emin, emax);
+  TH1D * hEreco = new TH1D("hEreco", "", kNvErecoBins, kNvErecoBinEdges);
   hEreco->SetDirectory(0);
 
   const unsigned int ns = fSamples.size();
@@ -225,11 +212,7 @@ TH1D * SuperkExpectation::AsTH1D(
 TH1D * SuperkExpectation::AsTH1D(
   const PhysParamList & fp, SuperkSample_t s, SuperkMode_t m,  bool with_nd_correction)
 {
-  int    nbins = (int) ((kErecoMax-kErecoMin)/kErecoBinSz);
-  double emin  = kErecoMin;
-  double emax  = kErecoMax;
-
-  TH1D * hEreco = new TH1D("hEreco", "", nbins, emin, emax);
+  TH1D * hEreco = new TH1D("hEreco", "", kNvErecoBins, kNvErecoBinEdges);
   hEreco->SetDirectory(0);
 
   for(int bin=1; bin < hEreco->GetNbinsX(); bin++) {
@@ -1444,18 +1427,15 @@ void SuperkExpectation::SuperkInputs::FillHistogram(SuperkSample_t s, SuperkMode
   int is = (int)s;
   int im = (int)m;
 
-  int nereco = (int) ((kErecoMax-kErecoMin)/kErecoBinSz);
-  int netrue = (int) ((kEtrueMax-kEtrueMin)/kEtrueBinSz);
-
   fMCSpectrum2d[is][im] = new TH2D(
      Form("nsk_%d_%d",is,im), util::AsString(m).c_str(), 
-       nereco, kErecoMin, kErecoMax, netrue, kEtrueMin, kEtrueMax);
+       kNvErecoBins, kNvErecoBinEdges, kNEtrueBins, kEtrueMin, kEtrueMax);
   fMCSpectrum2d[is][im]->SetDirectory(0);
   fMCSpectrum2d[is][im]->GetXaxis()->SetTitle("E_{reco} (GeV)");
   fMCSpectrum2d[is][im]->GetYaxis()->SetTitle("E_{true} (GeV)");
 
   fMCSpectrum1d[is][im] = new TH1D(
-     Form("nsketrue_%d_%d",is,im), "", netrue, kEtrueMin, kEtrueMax);
+     Form("nsketrue_%d_%d",is,im), "", kNEtrueBins, kEtrueMin, kEtrueMax);
   fMCSpectrum1d[is][im]->SetDirectory(0);
 
   TTree * mctree = this->MCTree(s,m);
@@ -1578,7 +1558,7 @@ void SuperkExpectation::SuperkInputs::Draw(TVirtualPad * c, Option_t * option) c
 //________________________________________________________________________________________
 double SuperkExpectation::SuperkInputs::NumOfEvents(
     double Ereco, SuperkSample_t s, SuperkMode_t m, 
-    double sinsq2theta23, double dmsq23)
+    double sinsq2theta23, double dmsq23, bool ignore_energy_scale_twk)
 {
 // Count events
 // Apply oscillations, apply flux 10a->10d weights, 
@@ -1590,16 +1570,7 @@ double SuperkExpectation::SuperkInputs::NumOfEvents(
 
   double nevtot = 0;
 
-  // plug-in energy scale systematic
-  double Ereco_prime = Ereco * this->EnergyScale();
-
-#ifdef __debug_level_3__
-  cout << "Exp/SK >> Ereco' = " << Ereco_prime << ", Ereco = " << Ereco 
-       << " (energy scale = " << this->EnergyScale() << ")" << endl;
-#endif
-
-  int reco_bin = nsk2d->GetXaxis()->FindBin(Ereco_prime);
-
+  int reco_bin = nsk2d->GetXaxis()->FindBin(Ereco);
   for(int true_bin = 1; true_bin <= nsk2d->GetYaxis()->GetNbins(); true_bin++) {
 
       double Etrue     = nsk2d->GetYaxis()->GetBinCenter(true_bin);
@@ -1655,7 +1626,7 @@ double SuperkExpectation::SuperkInputs::NumOfEvents(
   //
   double nucl_effect_wght = 1;
   if(fGenInputs) {
-     nucl_effect_wght = fGenInputs->SuperkNuclEffectWght(Ereco_prime,m);
+     nucl_effect_wght = fGenInputs->SuperkNuclEffectWght(Ereco,m);
   }
   nevtot *= nucl_effect_wght;
 
@@ -1667,6 +1638,48 @@ double SuperkExpectation::SuperkInputs::NumOfEvents(
   double relerr  = fEffRelErr[s][m];
   double effwght = (1. + twkdial*relerr);
   nevtot *= effwght; 
+
+  //
+  // Plug-in energy scale systematic.
+  // Let t be the energy scale tweaking dial and sigE the input energy scale err.
+  // Estimate the energy shift of the bin edges.
+  // If the upper edge of bin i moves higher by dE, and the bin size is EbinSz 
+  // then bin i loses dE/EbinSz fraction of its events to bin i+1.
+  // But it gains dE'/EbinSz from bin i-1, where dE' is the shift of the lower bin
+  // boundary. Vice-versa if the shift is downwards to lower energies.
+
+  if(!ignore_energy_scale_twk) {
+     double escale = this->EnergyScale();
+     if( TMath::Abs(escale-1) > kASmallNum) {
+        double bin_width   = nsk2d->GetXaxis()->GetBinWidth  (reco_bin);
+        double bin_max     = nsk2d->GetXaxis()->GetBinUpEdge (reco_bin);
+        double bin_min     = nsk2d->GetXaxis()->GetBinLowEdge(reco_bin);
+        if(escale > 1) {
+           // Losing events to bin i+1 and gaining events from bin i-1
+           double lose_to_higher  = (escale - 1) * bin_max / bin_width;
+           double gain_from_lower = (escale - 1) * bin_min / bin_width;
+           double nev_prev_bin    = 0;
+           if(reco_bin > 1) {
+             double Ereco_prev_bin = nsk2d->GetXaxis()->GetBinCenter(reco_bin-1);
+             nev_prev_bin = this->NumOfEvents(Ereco_prev_bin,s,m,sinsq2theta23,dmsq23,true);
+           }
+           nevtot *= (1-lose_to_higher);
+           nevtot += gain_from_lower * nev_prev_bin;
+        }//scale>1
+        if(escale < 1) {
+           // Losing events to bin i-1 and gaining events from bin i+1
+           double lose_to_lower    = (1 - escale) * bin_min / bin_width;
+           double gain_from_higher = (1 - escale) * bin_max / bin_width;
+           double nev_next_bin    = 0;
+           if(reco_bin < nsk2d->GetXaxis()->GetNbins()) {
+             double Ereco_next_bin = nsk2d->GetXaxis()->GetBinCenter(reco_bin+1);
+             nev_next_bin = this->NumOfEvents(Ereco_next_bin,s,m,sinsq2theta23,dmsq23,true);
+           }
+           nevtot *= (1-lose_to_lower);
+           nevtot += gain_from_higher * nev_next_bin;
+        }//scale<1
+     }//energy scale tweaked?
+  }//ignore escale
 
   return nevtot;
 }

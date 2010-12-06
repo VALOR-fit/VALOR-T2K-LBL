@@ -41,12 +41,12 @@ void test_superk_spectrum_prediction_twk_skescale()
   TH1D * hEreco   [ntwkdials];
   TH1D * hErecoErr[ntwkdials];
   for(int idial = 0; idial < ntwkdials; idial++) {
-     hEreco   [idial] = new TH1D("","",conv::kNErecoBins,conv::kErecoMin,conv::kErecoMax);
+     hEreco   [idial] = new TH1D("","",conv::kNvErecoBins,conv::kNvErecoBinEdges);
      hEreco   [idial]->SetDirectory(0);
      hEreco   [idial]->SetLineWidth(hwidth[idial]);
      hEreco   [idial]->SetLineColor(hcolor[idial]);
      hEreco   [idial]->SetLineStyle(hstyle[idial]);
-     hErecoErr[idial] = new TH1D("","",conv::kNErecoBins,conv::kErecoMin,conv::kErecoMax);
+     hErecoErr[idial] = new TH1D("","",conv::kNvErecoBins,conv::kNvErecoBinEdges);
      hErecoErr[idial]->SetDirectory(0);
      hErecoErr[idial]->SetLineWidth(hwidth[idial]);
      hErecoErr[idial]->SetLineColor(hcolor[idial]);
@@ -65,7 +65,7 @@ void test_superk_spectrum_prediction_twk_skescale()
   // generate predictions
   for(int idial = 0; idial < ntwkdials; idial++) {
      skexp.GetSuperkInputs()->TweakEnergyScale( twkdial[idial] );
-     for(int ibin=1; ibin <= conv::kNErecoBins; ibin++) {
+     for(int ibin=1; ibin <= conv::kNvErecoBins; ibin++) {
         double Ereco = hEreco[idial]->GetBinCenter(ibin);
         double Nexp  = skexp.Generate(Ereco, *fparm);
         cout << "NumExpSK (Ereco = " << Ereco << ") = " << Nexp << endl;
@@ -76,7 +76,7 @@ void test_superk_spectrum_prediction_twk_skescale()
   double maxerrpos = -1.;
   double maxerrneg = +1.;
   for(int idial = 0; idial < ntwkdials; idial++) {
-    for(int ibin=1; ibin <= conv::kNErecoBins; ibin++) {
+    for(int ibin=1; ibin <= conv::kNvErecoBins; ibin++) {
       double ncurr  = hEreco[idial]->GetBinContent(ibin);
       double ndeflt = hEreco[deflt]->GetBinContent(ibin);
       if(ndeflt>0) {
@@ -111,7 +111,7 @@ void test_superk_spectrum_prediction_twk_skescale()
   }//idial
   legend->Draw();
   c->cd(2);
-  TH1F * hframe = (TH1F*) c->DrawFrame(
+  TH1F * hframe = (TH1F*) c->GetPad(2)->DrawFrame(
      0., 1.2*maxerrneg, hErecoErr[deflt]->GetXaxis()->GetXmax(), 1.2*maxerrpos);
   hframe->GetXaxis()->SetTitle("E_{reco} (GeV)");
   hframe->GetYaxis()->SetTitle("Fractional variation");

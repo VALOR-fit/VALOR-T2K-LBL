@@ -41,11 +41,11 @@ void test_superk_spectrum_prediction_contributions()
   };
 
   // histogram booking
-  TH1D * hErecoTot = new TH1D("","",conv::kNErecoBins,conv::kErecoMin,conv::kErecoMax);
+  TH1D * hErecoTot = new TH1D("","",conv::kNvErecoBins,conv::kNvErecoBinEdges);
   hErecoTot->SetDirectory(0);
   TH1D * hErecoMode[nm]; //< contribution from mode
   for(int im = 0; im < nm; im++) {
-    hErecoMode[im] = new TH1D("","",conv::kNErecoBins,conv::kErecoMin,conv::kErecoMax);
+    hErecoMode[im] = new TH1D("","",conv::kNvErecoBins,conv::kNvErecoBinEdges);
     hErecoMode[im]->SetDirectory(0);
   }
 
@@ -81,14 +81,14 @@ void test_superk_spectrum_prediction_contributions()
 
   // generate predictions
   for(int im = 0; im < nm; im++) {
-    for(int ibin=1; ibin <= conv::kNErecoBins; ibin++) {
+    for(int ibin=1; ibin <= conv::kNvErecoBins; ibin++) {
        double Ereco = hErecoMode[im]->GetBinCenter(ibin);
        double Nexp  = skexp.Generate(Ereco, *fparm, conv::kSKsFCFV1RingMuLike, modes[im]);
        cout << "NumExpSK (Ereco = " << Ereco << " / " << util::AsString(modes[im]) << ") = " << Nexp << endl;
        hErecoMode[im]->SetBinContent(ibin,Nexp);
     }
   }
-  for(int ibin=1; ibin <= conv::kNErecoBins; ibin++) {
+  for(int ibin=1; ibin <= conv::kNvErecoBins; ibin++) {
     double Ereco = hErecoTot->GetBinCenter(ibin);
     double Nexp  = skexp.Generate(Ereco, *fparm);
     cout << "NumExpSK (Ereco = " << Ereco << " / total) = " << Nexp << endl;

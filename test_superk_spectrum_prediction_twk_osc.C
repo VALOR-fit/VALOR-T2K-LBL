@@ -45,12 +45,12 @@ void test_superk_spectrum_prediction_twk_osc(bool showdata=false)
   TH1D * hEreco[ncases];
   TH1D * hErecoFracDeficit[ncases];
   for(int icase = 0; icase < ncases; icase++) {
-    hEreco[icase] = new TH1D("","",conv::kNErecoBins,conv::kErecoMin,conv::kErecoMax);
+    hEreco[icase] = new TH1D("","",conv::kNvErecoBins,conv::kNvErecoBinEdges);
     hEreco[icase]->SetDirectory(0);
     hEreco[icase]->SetLineWidth(hwidth[icase]);
     hEreco[icase]->SetLineColor(hcolor[icase]);
     hEreco[icase]->SetLineStyle(hstyle[icase]);
-    hErecoFracDeficit[icase] = new TH1D("","",conv::kNErecoBins,conv::kErecoMin,conv::kErecoMax);
+    hErecoFracDeficit[icase] = new TH1D("","",conv::kNvErecoBins,conv::kNvErecoBinEdges);
     hErecoFracDeficit[icase]->SetDirectory(0);
     hErecoFracDeficit[icase]->SetLineWidth(hwidth[icase]);
     hErecoFracDeficit[icase]->SetLineColor(hcolor[icase]);
@@ -68,7 +68,7 @@ void test_superk_spectrum_prediction_twk_osc(bool showdata=false)
   for(int icase = 0; icase < ncases; icase++) {
     fparm->Update(t2kana::yr1numu::conv::kPhypSinsq2Theta23, sinsq2theta23[icase]);
     fparm->Update(t2kana::yr1numu::conv::kPhypDm23sq,        dm23sq[icase]);
-    for(int ibin=1; ibin <= conv::kNErecoBins; ibin++) {
+    for(int ibin=1; ibin <= conv::kNvErecoBins; ibin++) {
        double Ereco = hEreco[icase]->GetBinCenter(ibin);
        double Nexp  = skexp.Generate(Ereco, *fparm);
        cout << "NumExpSK (Ereco = " << Ereco << ") = " << Nexp << endl;
@@ -77,7 +77,7 @@ void test_superk_spectrum_prediction_twk_osc(bool showdata=false)
   }
   // calculate fractional deficit
   for(int icase = 1; icase < ncases; icase++) {
-    for(int ibin=1; ibin <= conv::kNErecoBins; ibin++) {
+    for(int ibin=1; ibin <= conv::kNvErecoBins; ibin++) {
        double Nunosc = hEreco[0]    ->GetBinContent(ibin); 
        double Nosc   = hEreco[icase]->GetBinContent(ibin);
        if(Nunosc>0) {

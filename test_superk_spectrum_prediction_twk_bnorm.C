@@ -41,12 +41,12 @@ void test_superk_spectrum_prediction_twk_bnorm()
   TH1D * hEreco   [ntwkdials];
   TH1D * hErecoErr[ntwkdials];
   for(int idial = 0; idial < ntwkdials; idial++) {
-     hEreco   [idial] = new TH1D("","",conv::kNErecoBins,conv::kErecoMin,conv::kErecoMax);
+     hEreco   [idial] = new TH1D("","",conv::kNvErecoBins,conv::kNvErecoBinEdges);
      hEreco   [idial]->SetDirectory(0);
      hEreco   [idial]->SetLineWidth(hwidth[idial]);
      hEreco   [idial]->SetLineColor(hcolor[idial]);
      hEreco   [idial]->SetLineStyle(hstyle[idial]);
-     hErecoErr[idial] = new TH1D("","",conv::kNErecoBins,conv::kErecoMin,conv::kErecoMax);
+     hErecoErr[idial] = new TH1D("","",conv::kNvErecoBins,conv::kNvErecoBinEdges);
      hErecoErr[idial]->SetDirectory(0);
      hErecoErr[idial]->SetLineWidth(hwidth[idial]);
      hErecoErr[idial]->SetLineColor(hcolor[idial]);
@@ -66,7 +66,7 @@ void test_superk_spectrum_prediction_twk_bnorm()
   for(int idial = 0; idial < ntwkdials; idial++) {
      cout << " ** Beam norm tweaking dial = " << twkdial[idial] << endl;
      skexp.GetBeamInputs()->TweakNorm( twkdial[idial] );
-     for(int ibin=1; ibin <= conv::kNErecoBins; ibin++) {
+     for(int ibin=1; ibin <= conv::kNvErecoBins; ibin++) {
         cout << "ibin = " << ibin << endl;
         double Ereco = hEreco[idial]->GetBinCenter(ibin);
         cout << "Ereco = " << Ereco << endl;
@@ -80,7 +80,7 @@ void test_superk_spectrum_prediction_twk_bnorm()
   double maxerrpos = -1.;
   double maxerrneg = +1.;
   for(int idial = 0; idial < ntwkdials; idial++) {
-       for(int ibin=1; ibin <= conv::kNErecoBins; ibin++) {
+       for(int ibin=1; ibin <= conv::kNvErecoBins; ibin++) {
          double ncurr  = hEreco[idial]->GetBinContent(ibin);
          double ndeflt = hEreco[deflt]->GetBinContent(ibin);
          if(ndeflt>0) {

@@ -31,11 +31,11 @@ void test_superk_spectrum_prediction_twk_bshape()
   // histogram booking
   TH1D * hEreco [nexp];
   for(int iexp = 0; iexp < nexp; iexp++) {
-     hEreco [iexp] = new TH1D("","",conv::kNErecoBins,conv::kErecoMin,conv::kErecoMax);
+     hEreco [iexp] = new TH1D("","",conv::kNvErecoBins,conv::kNvErecoBinEdges);
      hEreco [iexp]->SetDirectory(0);
   }
-  TH1D * hErecoMax = new TH1D("","",conv::kNErecoBins,conv::kErecoMin,conv::kErecoMax);
-  TH1D * hErecoMin = new TH1D("","",conv::kNErecoBins,conv::kErecoMin,conv::kErecoMax);
+  TH1D * hErecoMax = new TH1D("","",conv::kNvErecoBins,conv::kNvErecoBinEdges);
+  TH1D * hErecoMin = new TH1D("","",conv::kNvErecoBins,conv::kNvErecoBinEdges);
   hErecoMax->SetDirectory(0);
   hErecoMin->SetDirectory(0);
 
@@ -55,7 +55,7 @@ void test_superk_spectrum_prediction_twk_bshape()
        // use 0^th entry to store the untweaked SK reco energy spectrum
        skexp.GetBeamInputs()->TweakShape();       
      }
-     for(int ibin=1; ibin <= conv::kNErecoBins; ibin++) {
+     for(int ibin=1; ibin <= conv::kNvErecoBins; ibin++) {
         double Ereco = hEreco[iexp]->GetBinCenter(ibin);
         double Nexp  = skexp.Generate(Ereco, *fparm);
         //cout << "NumExpSK (Ereco = " << Ereco << ") = " << Nexp << endl;
@@ -69,7 +69,7 @@ void test_superk_spectrum_prediction_twk_bshape()
         }
      }//ibin
   }//iexp
-  for(int ibin=1; ibin <= conv::kNErecoBins; ibin++) {
+  for(int ibin=1; ibin <= conv::kNvErecoBins; ibin++) {
      double ndef = hEreco[0]->GetBinContent(ibin);
      double nmax = hErecoMax->GetBinContent(ibin);
      double nmin = hErecoMin->GetBinContent(ibin);
