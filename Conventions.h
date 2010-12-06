@@ -118,7 +118,6 @@ static const double kEtrueBinSz  = 0.05;
 static const double kNEtrueBins  = (int) ((kEtrueMax - kEtrueMin)/kEtrueBinSz);
 
 // fixed bins: 50 MeV from 0 to 4 GeV
-/*
 static const int kNvErecoBins = 80;
 static const double kNvErecoBinEdges[kNvErecoBins+1] = {
    0.000, 0.050, 0.100, 0.150, 0.200, 0.250, 0.300, 0.350, 0.400, 0.450, 
@@ -131,12 +130,14 @@ static const double kNvErecoBinEdges[kNvErecoBins+1] = {
    3.500, 3.550, 3.600, 3.650, 3.700, 3.750, 3.800, 3.850, 3.900, 3.950, 
    4.000
 };
-*/
 
+// variable bins
+/*
 static const int kNvErecoBins = 7;
 static const double kNvErecoBinEdges[kNvErecoBins+1] = {
    0.000, 0.300, 0.450, 0.600, 0.750, 1.000, 1.500, 4.000 
 };
+*/
 
 } // conv
 } // yr1numu
