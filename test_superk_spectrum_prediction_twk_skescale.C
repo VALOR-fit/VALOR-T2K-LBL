@@ -28,7 +28,7 @@ void test_superk_spectrum_prediction_twk_skescale()
   using namespace t2kana::yr1numu;
 
   const int ntwkdials = 3;
-  double twkdial[ntwkdials] = { -1.0, 0.0, +1.0 };
+  double twkdial[ntwkdials] = { -5.0, 0.0, +5.0 };
 
   int deflt = ntwkdials/2; //untweaked case
 

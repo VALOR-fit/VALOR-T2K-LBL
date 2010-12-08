@@ -137,7 +137,7 @@ TH1D* SuperkObservation::AsTH1D(SuperkSample_t s) const
   TH1D * hEreco = new TH1D("", "", kNvErecoBins,kNvErecoBinEdges);
   hEreco->SetDirectory(0);
 
-  for(int bin=1; bin < hEreco->GetNbinsX(); bin++) {
+  for(int bin=1; bin <= hEreco->GetNbinsX(); bin++) {
     double Ereco = hEreco->GetBinCenter(bin);
     double nev   = this->NumOfEvents(Ereco,s);
     hEreco->SetBinContent(bin,nev);
@@ -198,7 +198,7 @@ void SuperkObservation::CreateMockData(
   fErDistr[kSKsFCFV1RingMuLike]->SetDirectory(0);
 
   TRandom3 rand(0);
-  for(int ibin = 0; ibin <= fErDistr[kSKsFCFV1RingMuLike]->GetNbinsX(); ibin++) {
+  for(int ibin = 1; ibin <= fErDistr[kSKsFCFV1RingMuLike]->GetNbinsX(); ibin++) {
      double Ereco = fErDistr[kSKsFCFV1RingMuLike]->GetBinCenter(ibin);
      double nexp  = exp.Generate(Ereco, fp);
      double nobs  = (fluctuate) ? rand.Poisson(nexp) : nexp;

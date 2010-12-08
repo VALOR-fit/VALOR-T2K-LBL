@@ -117,8 +117,12 @@ static const double kEtrueMax    = 10;
 static const double kEtrueBinSz  = 0.05;
 static const double kNEtrueBins  = (int) ((kEtrueMax - kEtrueMin)/kEtrueBinSz);
 
+//
+// SuperK Ereco binning
+//
+
 /*
-// fixed bins: 50 MeV from 0 to 4 GeV
+// fixed  50 MeV bins from 0 to 4 GeV
 static const int kNvErecoBins = 80;
 static const double kNvErecoBinEdges[kNvErecoBins+1] = {
    0.000, 0.050, 0.100, 0.150, 0.200, 0.250, 0.300, 0.350, 0.400, 0.450, 
@@ -132,17 +136,36 @@ static const double kNvErecoBinEdges[kNvErecoBins+1] = {
    4.000
 };
 */
-// variable bins
 
-//static const int kNvErecoBins = 8;
-//static const double kNvErecoBinEdges[kNvErecoBins+1] = {
-//   0.000, 0.200, 0.300, 0.400, 0.500, 0.750, 1.000, 2.000, 4.000
-//};
-
-static const int kNvErecoBins = 9;
+/*
+// fixed 100 MeV bins from 0 to 4 GeV
+static const int kNvErecoBins = 40;
 static const double kNvErecoBinEdges[kNvErecoBins+1] = {
-   0.000, 0.300, 0.400, 0.500, 0.600, 0.750, 1.000, 1.500, 2.500, 4.000
+   0.000, 0.100, 0.200, 0.300, 0.400, 
+   0.500, 0.600, 0.700, 0.800, 0.900,
+   1.000, 1.100, 1.200, 1.300, 1.400,
+   1.500, 1.600, 1.700, 1.800, 1.900,
+   2.000, 2.100, 2.200, 2.300, 2.400,
+   2.500, 2.600, 2.700, 2.800, 2.900,
+   3.000, 3.100, 3.200, 3.300, 3.400,
+   3.500, 3.600, 3.700, 3.800, 3.900,
+   4.000
 };
+*/
+
+// for 3.23E+19 POT
+static const int kNvErecoBins = 7;
+static const double kNvErecoBinEdges[kNvErecoBins+1] = {
+   0.000, 0.300, 0.400, 0.500, 0.600, 0.750, 1.000, 4.000
+};
+
+/*
+// for data x10 current POT
+static const int kNvErecoBins = 14;
+static const double kNvErecoBinEdges[kNvErecoBins+1] = {
+   0.000, 0.200, 0.300, 0.400, 0.500, 0.600, 0.700, 0.800, 0.900, 1.000, 1.200, 1.500, 2.000, 2.000, 4.000
+};
+*/
 
 } // conv
 } // yr1numu

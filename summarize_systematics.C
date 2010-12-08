@@ -2,13 +2,15 @@
 // ------------------------------------------------------------------------------------------------
 // Systematics summary
 //
+// Inputs: Files produced by run_systematic_study.C
+//
 // Costas Andreopoulos
 // ------------------------------------------------------------------------------------------------
 //
 
 #include "Conventions.h"
 
-void summarize_systematics()
+void summarize_systematics(string file_path="./")
 {
   gSystem->Load("libGpad");  
   gSystem->Load("libPhysics");  
@@ -29,9 +31,6 @@ void summarize_systematics()
   // systematics were evaluated for these oscillation params
   const double input_sinsq2theta23 = 0.90;
   const double input_dm23sq        = 2.4E-3;
-
-  // location of files produced by run_systematic_study.C
-  string file_path="./syst_files/";
 
   // chain together files for each systematic
 

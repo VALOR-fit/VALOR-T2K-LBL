@@ -118,7 +118,6 @@ void OscillationFitter::PrepareFitter(Option_t * option)
    fitter->ExecuteCommand("SET PRINT",arglist,2);
   }
 
-
   // calculate degrees of freedom
 
   fNonZeroBins = 0;
@@ -234,28 +233,26 @@ void OscillationFitter::BuildChisqSurface(void)
 
    double sinsq2theta23_min  = fFitInputs->FitParams().MinValue(conv::kPhypSinsq2Theta23);
    double sinsq2theta23_max  = fFitInputs->FitParams().MaxValue(conv::kPhypSinsq2Theta23);
-// double sinsq2theta23_step = fFitInputs->FitParams().StepSize(conv::kPhypSinsq2Theta23);
+   double sinsq2theta23_step = fFitInputs->FitParams().StepSize(conv::kPhypSinsq2Theta23);
    double dm23sq_min         = fFitInputs->FitParams().MinValue(conv::kPhypDm23sq);
    double dm23sq_max         = fFitInputs->FitParams().MaxValue(conv::kPhypDm23sq);
-// double dm23sq_step        = fFitInputs->FitParams().StepSize(conv::kPhypDm23sq);
-// int sinsq2theta23_nbins   = (int) ((sinsq2theta23_max - sinsq2theta23_min) / sinsq2theta23_step); 
-// int dm23sq_nbins          = (int) ((dm23sq_max        - dm23sq_min       ) / dm23sq_step       );
-   int sinsq2theta23_nbins   = 40;
-   int dm23sq_nbins          = 40;
-  
+   double dm23sq_step        = fFitInputs->FitParams().StepSize(conv::kPhypDm23sq);
+
+   // make sure that min and max are at the bin centre
+   int sinsq2theta23_nbins   = 1 + (int) ((sinsq2theta23_max - sinsq2theta23_min) / sinsq2theta23_step); 
+   int dm23sq_nbins          = 1 + (int) ((dm23sq_max        - dm23sq_min       ) / dm23sq_step       );
    fChisqSurface = new TH2D(
       "fChisqSurface","#delta{#chi^{2}} surface",
-      sinsq2theta23_nbins, sinsq2theta23_min, sinsq2theta23_max, dm23sq_nbins, dm23sq_min, dm23sq_max);
-  
+         sinsq2theta23_nbins, sinsq2theta23_min - 0.5*sinsq2theta23_step, sinsq2theta23_max + 0.5*sinsq2theta23_step, 
+         dm23sq_nbins,        dm23sq_min        - 0.5*dm23sq_step,        dm23sq_max        + 0.5*dm23sq_step);
+   fChisqSurface->GetXaxis()->SetRangeUser(0.,1.);
+
    for(int i = 1; i <= fChisqSurface->GetNbinsX(); i++) {
      for(int j = 1; j <= fChisqSurface->GetNbinsY(); j++) {
          fFitInputs->FitParams().Update( conv::kPhypSinsq2Theta23, fChisqSurface->GetXaxis()->GetBinCenter(i) );
          fFitInputs->FitParams().Update( conv::kPhypDm23sq,        fChisqSurface->GetYaxis()->GetBinCenter(j) );
          double chisq = fFitInputs->Chisquare();
-         fChisqSurface->Fill( 
-            fChisqSurface->GetXaxis()->GetBinCenter(i),
-            fChisqSurface->GetYaxis()->GetBinCenter(j),
-            chisq);
+         fChisqSurface->SetBinContent(i,j,chisq);
      }//j
    }//i
 
@@ -354,32 +351,31 @@ void OscillationFitter::Draw(
      data -> GetXaxis()->SetTitle("E_{reco} (GeV)");
      data -> GetYaxis()->SetTitle("Number of events");
      data -> Draw("PERR");
-     //data -> Draw("P");
-     bestfit_tot   -> Draw("SAME");
+     bestfit_tot   -> Draw("same");
 
-     THStack * stack = new THStack("stack","spectrum contributions");
-     stack->Add(bestfit_numuccqe);
-     stack->Add(bestfit_numucc1pi);
-     stack->Add(bestfit_numuccoth);
-     stack->Add(bestfit_nc);
-     stack->Add(bestfit_numubar);
-     stack->Add(bestfit_nue);
-     stack->Draw("same");
-
-     data -> Draw("PERRSAME");
-
-     TLegend * spectrum_legend = new TLegend(0.6,0.5,0.9,0.9);
-     spectrum_legend->SetFillColor (0);
-     spectrum_legend->SetBorderSize(0);
-     spectrum_legend->AddEntry(data,              "data",                               "P" );
-     spectrum_legend->AddEntry(bestfit_tot,       "best fit",                           "L" );
-     spectrum_legend->AddEntry(bestfit_numuccqe,  "best fit (#nu_{#mu} CCQE)",          "L" );
-     spectrum_legend->AddEntry(bestfit_numucc1pi, "best fit (#nu_{#mu} CC1#pi)",        "LF");
-     spectrum_legend->AddEntry(bestfit_numuccoth, "best fit (#nu_{#mu} CC other)",      "LF");
-     spectrum_legend->AddEntry(bestfit_nc,        "best fit (#nu_{#mu}/#nu_{#tau} NC)", "LF");
-     spectrum_legend->AddEntry(bestfit_numubar,   "best fit (#bar{#nu_{#mu}})",         "LF");
-     spectrum_legend->AddEntry(bestfit_nue,       "best fit (#nu_{e})", "LF");
-     spectrum_legend->Draw();
+     if(opt.Contains("ShowContributions")) { 
+        THStack * stack = new THStack("stack","spectrum contributions");
+        stack->Add(bestfit_numuccqe);
+        stack->Add(bestfit_numucc1pi);
+        stack->Add(bestfit_numuccoth);
+        stack->Add(bestfit_nc);
+        stack->Add(bestfit_numubar);
+        stack->Add(bestfit_nue);
+        stack->Draw("same");
+        data->Draw("PERRSAME");
+        TLegend * spectrum_legend = new TLegend(0.6,0.5,0.9,0.9);
+        spectrum_legend->SetFillColor (0);
+        spectrum_legend->SetBorderSize(0);
+        spectrum_legend->AddEntry(data,              "data",                               "P" );
+        spectrum_legend->AddEntry(bestfit_tot,       "best fit",                           "L" );
+        spectrum_legend->AddEntry(bestfit_numuccqe,  "best fit (#nu_{#mu} CCQE)",          "L" );
+        spectrum_legend->AddEntry(bestfit_numucc1pi, "best fit (#nu_{#mu} CC1#pi)",        "LF");
+        spectrum_legend->AddEntry(bestfit_numuccoth, "best fit (#nu_{#mu} CC other)",      "LF");
+        spectrum_legend->AddEntry(bestfit_nc,        "best fit (#nu_{#mu}/#nu_{#tau} NC)", "LF");
+        spectrum_legend->AddEntry(bestfit_numubar,   "best fit (#bar{#nu_{#mu}})",         "LF");
+        spectrum_legend->AddEntry(bestfit_nue,       "best fit (#nu_{e})", "LF");
+        spectrum_legend->Draw();
+     }//ShowContributions?
 
      c->Update();
 
@@ -413,11 +409,18 @@ void OscillationFitter::Draw(
      chisq_surf_shift->GetYaxis()->SetTitleSize(0.05);
      chisq_surf_shift->GetXaxis()->SetTitleSize(0.05);
 
+/*
      const int nlev = 3;
      double levels[nlev] = { 
          util::DeltaChisquare(conv::kCL68, fNFreeFitParams),
          util::DeltaChisquare(conv::kCL90, fNFreeFitParams),
          util::DeltaChisquare(conv::kCL99, fNFreeFitParams)
+     };
+*/
+     const int nlev = 2;
+     double levels[nlev] = { 
+         util::DeltaChisquare(conv::kCL68, fNFreeFitParams),
+         util::DeltaChisquare(conv::kCL90, fNFreeFitParams)
      };
 
      chisq_surf_shift->SetContour(nlev,levels);
@@ -431,11 +434,22 @@ void OscillationFitter::Draw(
      if(fKnowActualParams) {
         TMarker * true_point =
             new TMarker(fSinsq2Theta23, fDm23sq, 20);
-        true_point->SetMarkerSize(1.2);
+        true_point->SetMarkerSize(1);
         true_point->SetMarkerColor(kRed);
         true_point->Draw();
      }
      
+     if(opt.Contains("Minos90CL")) { 
+         TFile f("./inputs/test/minos_90cl_contour.root","read");
+         TGraph * gr = (TGraph*)f.Get("Graph");
+	 TGraph * minos_90cl = new TGraph(*gr);
+         minos_90cl->SetLineColor(kRed);
+         minos_90cl->SetLineStyle(kSolid);
+         minos_90cl->SetLineWidth(1);
+         minos_90cl->Draw("l");
+	 f.Close();
+     }
+
      c->GetPad(2)->Update();
 
      //
@@ -458,7 +472,6 @@ void OscillationFitter::Draw(
         int n = chisq_surf_shift->GetXaxis()->GetNbins();
         double * lchisq = new double[n];
         double * lsinsq = new double[n];
-//        int bin_dmsq = fChisqSurface->GetYaxis()->FindBin(dm23sq_bestfit);
         for(int i=1; i<=n; i++) {
 	    lchisq[i-1] = (fChisqSurface->GetBinContent(i,bin_dmsq_bestfit))/fNdof;
 	    lsinsq[i-1] = fChisqSurface->GetXaxis()->GetBinCenter(i);	
@@ -492,7 +505,6 @@ void OscillationFitter::Draw(
         int n = fChisqSurface->GetYaxis()->GetNbins();
         double * lchisq = new double[n];
         double * ldmsq  = new double[n];
-//        int bin_sinsq = fChisqSurface->GetXaxis()->FindBin(sinsq2theta23_bestfit);
         for(int i=1; i<=n; i++) {
 	    lchisq[i-1] = (fChisqSurface->GetBinContent(bin_sinsq_bestfit,i))/fNdof;
 	    ldmsq [i-1] = fChisqSurface->GetYaxis()->GetBinCenter(i);
