@@ -27,41 +27,64 @@ void test_superk_spectrum_prediction()
   using namespace t2kana::yr1numu;
 
   // oscillation params
-  double input_sinsq2theta23 = 0.00;
-  double input_dm23sq        = 0;
+  const int ncases = 2;
+  double input_sinsq2theta23[ncases] = { 0.00, 1.00   };
+  double input_dm23sq[ncases]        = { 0.00, 2.4E-3 };
+
+  double line_width[ncases] = {      2,       2 };
+  double line_style[ncases] = { kSolid, kDashed };
 
   // histogram booking
-  TH1D * hErecoTot = new TH1D("","",conv::kNvErecoBins,conv::kNvErecoBinEdges);
-  hErecoTot->SetDirectory(0);
-  hErecoTot->SetLineWidth(2);
-  
+  TH1D * hErecoTot[ncases];
+  for(int icase = 0; icase < ncases; icase++) {
+     hErecoTot[icase] = new TH1D("","",conv::kNvErecoBins,conv::kNvErecoBinEdges);
+     hErecoTot[icase]->SetDirectory(0);
+     hErecoTot[icase]->SetLineWidth(line_width[icase]);
+     hErecoTot[icase]->SetLineStyle(line_style[icase]);
+  }
+
   // superk spectrum predictor
   SuperkExpectation skexp;
   skexp.Read("inputs/analysis_configuration.xml");
 
   // oscillation params
   PhysParamList * fparm = PhysParamList::NumuDisapFitNoSyst();
-  fparm->Update(t2kana::yr1numu::conv::kPhypSinsq2Theta23, input_sinsq2theta23);
-  fparm->Update(t2kana::yr1numu::conv::kPhypDm23sq,        input_dm23sq);
 
-  for(int ibin=1; ibin <= conv::kNvErecoBins; ibin++) {
-    double Ereco = hErecoTot->GetBinCenter(ibin);
-    double Nexp  = skexp.Generate(Ereco, *fparm);
-    cout << "NumExpSK (Ereco = " << Ereco << " / total) = " << Nexp << endl;
-    hErecoTot->SetBinContent(ibin,Nexp);
-  }
+  for(int icase = 0; icase < ncases; icase++) {
+    fparm->Update(t2kana::yr1numu::conv::kPhypSinsq2Theta23, input_sinsq2theta23[icase]);
+    fparm->Update(t2kana::yr1numu::conv::kPhypDm23sq,        input_dm23sq[icase]);
+    for(int ibin=1; ibin <= conv::kNvErecoBins; ibin++) {
+       double Ereco = hErecoTot[icase]->GetBinCenter(ibin);
+       double Nexp  = skexp.Generate(Ereco, *fparm);
+       cout << "NumExpSK (Ereco = " << Ereco << " / total) = " << Nexp << endl;
+       hErecoTot[icase]->SetBinContent(ibin,Nexp);
+    }//ibin
+  }//icase
 
   // draw
   gStyle->SetOptStat(0);
   TCanvas * c = new TCanvas("c","",20,20,500,500);
-  hErecoTot->Draw();
+  TLegend * legend = new TLegend(0.5,0.1,0.9,0.5);
+  legend->SetFillColor(0);
+  legend->SetBorderSize(0);
+  hErecoTot[0]->GetXaxis()->SetTitle("E_{reco} (GeV)");
+  hErecoTot[0]->GetYaxis()->SetTitle("number of events in bin");
+  for(int icase = 0; icase < ncases; icase++) {
+     const char * opt   = (icase == 0) ? "" : "same";
+     const char * label = (icase == 0) ? "No oscillation" : 
+       Form("#Delta,^{2}_{23}=%.5f eV^{2}/c^{4}, sin^{2}2#theta_{23}=%.1f",input_dm23sq[icase],input_sinsq2theta23[icase]);
+     hErecoTot[icase]->Draw(opt);
+     legend->AddEntry(hErecoTot[icase], label, "L");
+     double E1 = 0.75; // GeV
+     double E2 = 1.00; // GeV
+     double E3 = 2.00; // GeV
+     double ntot = hErecoTot[icase]->Integral();
+     cout << "*** " << label << endl;
+     cout << "  Total number of events: " << ntot << endl;
+     cout << "  Total number of events (< " << E1 << " GeV): " << hErecoTot[icase]->Integral(1,hErecoTot[icase]->FindBin(E1)) << endl;
+     cout << "  Total number of events (< " << E2 << " GeV): " << hErecoTot[icase]->Integral(1,hErecoTot[icase]->FindBin(E2)) << endl;
+     cout << "  Total number of events (<  "<< E3 << " GeV): " << hErecoTot[icase]->Integral(1,hErecoTot[icase]->FindBin(E3)) << endl;
+  }
+  legend->Draw();
   c->Update();
-  double E1 = 0.75; // GeV
-  double E2 = 1.00; // GeV
-  double E3 = 2.00; // GeV
-  double ntot = hErecoTot->Integral();
-  cout << "Total number of events: " << ntot << endl;
-  cout << "Total number of events (< " << E1 << " GeV): " << hErecoTot->Integral(1,hErecoTot->FindBin(E1)) << endl;
-  cout << "Total number of events (< " << E2 << " GeV): " << hErecoTot->Integral(1,hErecoTot->FindBin(E2)) << endl;
-  cout << "Total number of events (<  "<< E3 << " GeV): " << hErecoTot->Integral(1,hErecoTot->FindBin(E3)) << endl;
 }

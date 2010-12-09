@@ -26,7 +26,7 @@ void test_mock_data_fit()
   using namespace t2kana;
   using namespace t2kana::yr1numu;
 
-  const double input_sinsq2theta23 = 1.0;
+  const double input_sinsq2theta23 = 0.9;
   const double input_dm23sq        = 2.4E-3;
 
   // fit params
@@ -56,4 +56,5 @@ void test_mock_data_fit()
 
   // draw results
   fitter->Draw(new TCanvas(), "StandardOscFitPlots+Minos90CL");
+//fitter->Draw(new TCanvas(), "MarginalizedChisq");
 }

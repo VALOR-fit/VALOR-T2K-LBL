@@ -62,7 +62,7 @@ void test_syst_err_cancellation(string systematic)
 
   effect_plus_1_sigma->GetXaxis()->SetBinLabel(1,"nd280 MC: CC");
   effect_plus_1_sigma->GetXaxis()->SetBinLabel(2,"nd280 MC: CC-like NC (bkg)");
-  effect_plus_1_sigma->GetXaxis()->SetBinLabel(3,"nd280: CC obs/MC");
+  effect_plus_1_sigma->GetXaxis()->SetBinLabel(3,"nd280: OBS/MC ratio");
   effect_plus_1_sigma->GetXaxis()->SetBinLabel(4,"SK MC: #nu_{#mu} CCQE");
   effect_plus_1_sigma->GetXaxis()->SetBinLabel(5,"SK MC: #nu_{#mu} CC1pi");
   effect_plus_1_sigma->GetXaxis()->SetBinLabel(6,"SK MC: #nu_{#mu} CCOth");

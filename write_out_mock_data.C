@@ -9,7 +9,7 @@
 #include "Conventions.h"
 
 void write_out_mock_data(
-  double sinsq2theta23=0.90, double dm23sq=2.4E-3, const char * filename="mock_data_tight.root")
+  double sinsq2theta23=1.00, double dm23sq=2.4E-3, const char * filename="mock_data_tight.root")
 {
   gSystem->Load("libGpad");  
   gSystem->Load("libPhysics");  
@@ -43,6 +43,15 @@ void write_out_mock_data(
   skobs->CreateMockData(*skexp, *fparm, fluctuate);
 
   TH1D* mock_data = skobs->AsTH1D(conv::kSKsFCFV1RingMuLike);
+
+  for(int i = 1; i <= mock_data->GetNbinsX(); i++) {
+        double n = mock_data->GetBinContent(i);
+        double e = mock_data->GetBinCenter(i);
+        if(n>0) {
+           cout << e << "\t" << n << endl;
+        }
+  }
+
 
   TFile f(filename, "recreate");
   mock_data->Write("mock_data");

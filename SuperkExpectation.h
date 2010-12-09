@@ -86,6 +86,7 @@ public:
    // Reset all systematic variations
    void ResetSystematicVariations (void);
    void TweakSystematic           (string systematic, double twkdial=0.);
+   void TweakAllSystematics       (bool do_tweak=true);
 
    //
    void PreComputeND280CorrectionFactorChanges(void);

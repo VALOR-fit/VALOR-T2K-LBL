@@ -108,7 +108,7 @@ double t2kana::yr1numu::util::ChisqGauss(
 double t2kana::yr1numu::util::ChisqPoisson(
   double ndata, double nmc)
 {
-  assert(nmc >= 0. && ndata >= 0.);
+  //assert(nmc >= 0. && ndata >= 0.);
 
   if(nmc <= 0. || ndata <= 0.) return 2. * TMath::Abs(nmc-ndata);
 

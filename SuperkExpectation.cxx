@@ -17,6 +17,7 @@
 #include <TString.h>
 #include <TLegend.h>
 #include <TSpline.h>
+#include <TRandom3.h>
 
 #include "year1_numu_osc_analysis/SuperkExpectation.h"
 #include "year1_numu_osc_analysis/Conventions.h"
@@ -339,6 +340,54 @@ void SuperkExpectation::TweakSystematic(string systematic, double twkdial)
      cerr << "Exp >> Unknown systematic parameter!" << endl;
   }   
      
+}
+//________________________________________________________________________________________
+void SuperkExpectation::TweakAllSystematics(bool do_tweak)
+{
+  if(do_tweak) 
+  {
+     TRandom3 rand(0);
+
+     this->GetND280Inputs()->TweakEfficiency( kNDmNuMuCCQE,      rand.Gaus(0.,1.));
+     this->GetND280Inputs()->TweakEfficiency( kNDmNuMuCCRES,     rand.Gaus(0.,1.));
+     this->GetND280Inputs()->TweakEfficiency( kNDmNuMuCCCOH,     rand.Gaus(0.,1.));
+     this->GetND280Inputs()->TweakEfficiency( kNDmNuMuCCOth,     rand.Gaus(0.,1.));
+     this->GetND280Inputs()->TweakEfficiency( kNDmNuMuNCEL,      rand.Gaus(0.,1.));
+     this->GetND280Inputs()->TweakEfficiency( kNDmNuMuNCRES,     rand.Gaus(0.,1.));
+     this->GetND280Inputs()->TweakEfficiency( kNDmNuMuNCCOH,     rand.Gaus(0.,1.));
+     this->GetND280Inputs()->TweakEfficiency( kNDmNuMuNCOth,     rand.Gaus(0.,1.));
+     this->GetND280Inputs()->TweakEfficiency( kNDmNuMuBarCCQE,   rand.Gaus(0.,1.));
+     this->GetND280Inputs()->TweakEfficiency( kNDmNuMuBarCCRES,  rand.Gaus(0.,1.));
+     this->GetND280Inputs()->TweakEfficiency( kNDmNuMuBarCCCOH,  rand.Gaus(0.,1.));
+     this->GetND280Inputs()->TweakEfficiency( kNDmNuMuBarCCOth,  rand.Gaus(0.,1.));
+     this->GetND280Inputs()->TweakEfficiency( kNDmNuMuBarNCEL,   rand.Gaus(0.,1.));
+     this->GetND280Inputs()->TweakEfficiency( kNDmNuMuBarNCRES,  rand.Gaus(0.,1.));
+     this->GetND280Inputs()->TweakEfficiency( kNDmNuMuBarNCCOH,  rand.Gaus(0.,1.));
+     this->GetND280Inputs()->TweakEfficiency( kNDmNuMuBarNCOth,  rand.Gaus(0.,1.));
+     this->GetND280Inputs()->TweakEfficiency( kNDmNuECCQE,       rand.Gaus(0.,1.));
+     this->GetND280Inputs()->TweakEfficiency( kNDmNuECCRES,      rand.Gaus(0.,1.));
+     this->GetND280Inputs()->TweakEfficiency( kNDmNuECCCOH,      rand.Gaus(0.,1.));
+     this->GetND280Inputs()->TweakEfficiency( kNDmNuECCOth,      rand.Gaus(0.,1.));
+     this->GetND280Inputs()->TweakEfficiency( kNDmNuENCEL,       rand.Gaus(0.,1.));
+     this->GetND280Inputs()->TweakEfficiency( kNDmNuENCRES,      rand.Gaus(0.,1.));
+     this->GetND280Inputs()->TweakEfficiency( kNDmNuENCCOH,      rand.Gaus(0.,1.));
+     this->GetND280Inputs()->TweakEfficiency( kNDmNuENCOth,      rand.Gaus(0.,1.));
+
+     this->GetSuperkInputs()->TweakEnergyScale(rand.Gaus(0.,1.));
+     this->GetSuperkInputs()->TweakEfficiency (kSKsFCFV1RingMuLike, kSKmNuMuCCQE,    rand.Gaus(0.,1.));
+     this->GetSuperkInputs()->TweakEfficiency (kSKsFCFV1RingMuLike, kSKmNuMuCC1pi,   rand.Gaus(0.,1.));
+     this->GetSuperkInputs()->TweakEfficiency (kSKsFCFV1RingMuLike, kSKmNuMuCCoth,   rand.Gaus(0.,1.));
+     this->GetSuperkInputs()->TweakEfficiency (kSKsFCFV1RingMuLike, kSKmNC,          rand.Gaus(0.,1.));
+
+     this->GetBeamInputs()->TweakNorm (rand.Gaus(0.,1.));
+     this->GetBeamInputs()->TweakShape();
+
+     this->GetGeneratorInputs()->TweakCCQEXSec             (rand.Gaus(0.,1.));
+     this->GetGeneratorInputs()->TweakCC1piToCCQEXSecRatio (rand.Gaus(0.,1.));
+     this->GetGeneratorInputs()->TweakCCOthToCCQEXSecRatio (rand.Gaus(0.,1.));
+     this->GetGeneratorInputs()->TweakNCToCCQEXSecRatio    (rand.Gaus(0.,1.));
+     this->GetGeneratorInputs()->TweakNuclEffect           (rand.Gaus(0.,1.));
+  }
 }
 //________________________________________________________________________________________
 bool SuperkExpectation::Read(string config_file)

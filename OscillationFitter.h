@@ -48,6 +48,7 @@ public:
    void      Draw            (TVirtualPad * c, Option_t * option = "results", const char * outtag = 0);
    void      ActualOscParams (double sinsq2theta23, double dmsq23);
    TMinuit * Minuit          (void) { return gMinuit; }
+   TH2D *    GetChisqSurface (void) { return fChisqSurface; }
 
    //
    // nested utility classes
@@ -79,12 +80,14 @@ public:
 
 private:
 
-   void Init              (void);
-   void SetInputs         (OscillationFitter::FitInputs * inputs);
-   void PrepareFitter     (Option_t * option = "minuit");
-   bool DoTheFitCustom    (void);
-   bool DoTheFitMinuit    (void);
-   void BuildChisqSurface (void);
+   void  Init                    (void);
+   void  SetInputs               (OscillationFitter::FitInputs * inputs);
+   void  PrepareFitter           (Option_t * option = "minuit");
+   bool  DoTheFitCustom          (void);
+   bool  DoTheFitMinuit          (void);
+   void  BuildChisqSurface       (void);
+   TH1D* MarginalizeChisqSurface (Option_t * option);
+
 
    FitInputs*           fFitInputs;
    bool                 fKnowActualParams; ///<
@@ -95,7 +98,6 @@ private:
    int                  fNonZeroBins;      ///<
    TH2D *               fChisqSurface;
    TString              fOption;
-   double               fChisqMin;
 };
 
 //
