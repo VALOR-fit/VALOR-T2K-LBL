@@ -8,7 +8,7 @@
 
 #include "Conventions.h"
 
-void run_syst_contour_calc(int run=0)
+void run_syst_contour_calc(int run=0, string tag="systcontour")
 {
   gSystem->Load("libGpad");  
   gSystem->Load("libPhysics");  
@@ -48,8 +48,8 @@ void run_syst_contour_calc(int run=0)
 
   // get superk spectrum observation
   SuperkObservation * skobs = new SuperkObservation;
-  skobs->CreateMockData(*skexp, *fparm, false);     ///<-- generate mock data now
-  //skobs->Read("inputs/analysis_configuration.xml"); ///<-- read mock data stored in file (do that if you run multiple jobs for the same systematic)
+  //skobs->CreateMockData(*skexp, *fparm, false);     ///<-- generate mock data now
+  skobs->Read("inputs/analysis_configuration.xml"); ///<-- read mock data stored in file (do that if you run multiple jobs for the same systematic)
 
   // create fit inputs
   OscillationFitter::FitInputs * fit_inputs =
@@ -104,8 +104,8 @@ void run_syst_contour_calc(int run=0)
    //
    // write-out results
    //
-   TFile f(Form("contour-run_%d-sinsq2theta23_%.2f-dm23sq_%.5feV2.root",
-               run,input_sinsq2theta23,input_dm23sq), "recreate"); 
+   TFile f(Form("%s-run_%d-sinsq2theta23_%.2f-dm23sq_%.5feV2.root",
+               tag.c_str(), run,input_sinsq2theta23,input_dm23sq), "recreate"); 
 
    chisq_surf_avg->Write();
    for(int iexperiment = 0; iexperiment < nexperiments; iexperiment++) {
