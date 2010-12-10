@@ -29,9 +29,13 @@ void run_syst_contour_calc(int run=0)
   const double input_sinsq2theta23 = 0.90;
   const double input_dm23sq        = 2.4E-3;
 
+  //
+  // ntuple & histograms to store results
+  //
   const int nexperiments = 3;
-
   TH2D * chisq_surf[nexperiments];
+  TNtupleD * systnt = new TNtupleD("sysnt","", "iexp:sinsq2theta23:dm23sq:chisq");
+
 
   // fit params
   PhysParamList * fparm = PhysParamList::NumuDisapFitNoSyst();
@@ -50,10 +54,8 @@ void run_syst_contour_calc(int run=0)
   // create fit inputs
   OscillationFitter::FitInputs * fit_inputs =
      new OscillationFitter::FitInputs(skobs,skexp,fparm);
-
   
   for(int iexperiment = 0; iexperiment < nexperiments; iexperiment++) {
-
      cout << " ******* experiment = " << iexperiment << endl;
 
      // tweak source of systematic err
@@ -69,10 +71,20 @@ void run_syst_contour_calc(int run=0)
      // do the fit
      fitter.DoTheFit();
 
+     // store params
+     double bestfit_sinsq2theta23 = fparm->CurrValue(conv::kPhypSinsq2Theta23);
+     double bestfit_dm23sq        = fparm->CurrValue(conv::kPhypDm23sq);
+     double bestfit_chisq         = fit_inputs->Chisquare();
+     systnt->Fill(iexperiment, bestfit_sinsq2theta23, bestfit_dm23sq, bestfit_chisq);
+
      chisq_surf[iexperiment] = new TH2D(*fitter.GetChisqSurface());
      chisq_surf[iexperiment] -> SetName(Form("chisqsurf_%d",iexperiment));
   }
 
+  //
+  // average chisq over experiments in this run to make later
+  // histogram processing easier
+  //
   TH2D * chisq_surf_avg = new TH2D(*chisq_surf[0]);
   chisq_surf_avg->SetName("chisqsurf_avg");
   double chisq_avg_min = 99999999;
@@ -88,22 +100,10 @@ void run_syst_contour_calc(int run=0)
           chisq_avg_min = TMath::Min(chisq_avg_min, chisq_avg);
       }//j
    }//i
-
-  for(int i = 1; i <= chisq_surf_avg->GetNbinsX(); i++) {
-      for(int j = 1; j <= chisq_surf_avg->GetNbinsY(); j++) {
-          chisq_surf_avg->SetBinContent(i,j, chisq_surf_avg->GetBinContent(i,j) - chisq_avg_min);
-      }
-   }
   
-   const int nlev = 2;
-   double levels[nlev] = {
-         util::DeltaChisquare(conv::kCL68, 2),
-         util::DeltaChisquare(conv::kCL90, 2)
-   };
-  
-   chisq_surf_avg->SetContour(nlev,levels); 
-   chisq_surf_avg->Draw("same"); 
-
+   //
+   // write-out results
+   //
    TFile f(Form("contour-run_%d-sinsq2theta23_%.2f-dm23sq_%.5feV2.root",
                run,input_sinsq2theta23,input_dm23sq), "recreate"); 
 
@@ -111,6 +111,6 @@ void run_syst_contour_calc(int run=0)
    for(int iexperiment = 0; iexperiment < nexperiments; iexperiment++) {
 	chisq_surf[iexperiment]->Write();
    }
-
+   systnt->Write("sysnt");
    f.Close();
 }
