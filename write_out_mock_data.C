@@ -27,7 +27,7 @@ void write_out_mock_data(
   using namespace t2kana;
   using namespace t2kana::yr1numu;
 
-  bool fluctuate = false;
+  bool fluctuate = true;
 
   // fit params
   PhysParamList * fparm = PhysParamList::NumuDisapFitNoSyst();

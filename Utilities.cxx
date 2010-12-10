@@ -110,9 +110,11 @@ double t2kana::yr1numu::util::ChisqPoisson(
 {
   //assert(nmc >= 0. && ndata >= 0.);
 
-  if(nmc <= 0. || ndata <= 0.) return 2. * TMath::Abs(nmc-ndata);
+//  if(nmc <= 0. || ndata <= 0.) return 2. * TMath::Abs(nmc-ndata);
+//  return (2. * TMath::Abs(nmc-ndata) + 2. * ndata * TMath::Log(ndata/nmc));
 
-  return (2. * TMath::Abs(nmc-ndata) + 2. * ndata * TMath::Log(ndata/nmc));
+  if(nmc <= 0. || ndata <= 0.) return 2.*(nmc-ndata);
+  return (2. * (nmc-ndata) + 2. * ndata * TMath::Log(ndata/nmc));
 }
 //____________________________________________________________________________
 double t2kana::yr1numu::util::NuMuSurvProb2D(

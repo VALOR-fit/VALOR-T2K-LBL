@@ -32,7 +32,7 @@ void run_syst_contour_calc(int run=0, string tag="systcontour")
   //
   // ntuple & histograms to store results
   //
-  const int nexperiments = 3;
+  const int nexperiments = 100;
   TH2D * chisq_surf[nexperiments];
   TNtupleD * systnt = new TNtupleD("sysnt","", "iexp:sinsq2theta23:dm23sq:chisq");
 

@@ -118,15 +118,16 @@ void  OscillationFitter::PrepareFitter(Option_t * option)
 
   // calculate degrees of freedom
 
-  fNonZeroBins = 0;
   const TAxis & ereco_binning = fFitInputs->Observation().ErecoBinning();
-  for(int bin = 1; bin <= ereco_binning.GetNbins(); bin++) {
-     double E = ereco_binning.GetBinCenter(bin);
-     double nev = fFitInputs->Observation().NumOfEvents(E);
-     if(nev>0) {
-       fNonZeroBins++;
-     }
-  }
+  fNonZeroBins = ereco_binning.GetNbins(); // get all bins instead
+//  fNonZeroBins = 0;
+//  for(int bin = 1; bin <= ereco_binning.GetNbins(); bin++) {
+//     double E = ereco_binning.GetBinCenter(bin);
+//     double nev = fFitInputs->Observation().NumOfEvents(E);
+//     if(nev>0) {
+//       fNonZeroBins++;
+//     }
+//  }
   fNFreeFitParams = fit_params.Size(); //fitter->GetNumberFreeParameters();
   fNdof = fNonZeroBins - fNFreeFitParams;
 
@@ -459,11 +460,16 @@ void OscillationFitter::Draw(
      chisq_surf_shift->GetYaxis()->SetTitleSize(0.05);
      chisq_surf_shift->GetXaxis()->SetTitleSize(0.05);
 
-     const int nlev = 2;
+     const int nlev = 1;
      double levels[nlev] = {
-         util::DeltaChisquare(conv::kCL68, fNFreeFitParams),
-         util::DeltaChisquare(conv::kCL90, fNFreeFitParams)
+         util::DeltaChisquare(conv::kCL68, fNFreeFitParams)
      };
+
+//     const int nlev = 2;
+//     double levels[nlev] = {
+//         util::DeltaChisquare(conv::kCL68, fNFreeFitParams),
+//         util::DeltaChisquare(conv::kCL90, fNFreeFitParams)
+//     };
 
      chisq_surf_shift->SetContour(nlev,levels); 
      chisq_surf_shift->Draw("cont2"); 

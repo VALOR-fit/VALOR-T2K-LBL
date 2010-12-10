@@ -6,8 +6,11 @@
 // ------------------------------------------------------------------------------------------------
 //
 
+#include "Conventions.h"
+
+void test_analysis_inputs()
 {
-  TString opt = "SuperK";
+  TString opt = "nd280";
 
   gSystem->Load("libGpad");  
   gSystem->Load("libPhysics");  
@@ -52,10 +55,13 @@
 ///    skexp->GetSuperkInputs()->Draw(new TCanvas(), "EnergyTransferMatrix/OneMuRingTight");
   }//SuperK
 
+
   if(opt.Contains("nd280")) {
     cout << "Nobs(CC-like) = " << skexp->GetND280Inputs()->NObsCCLike() << endl;
     cout << "Nexp(NC-bkg)  = " << skexp->GetND280Inputs()->NExpNCBkg()  << endl;
     cout << "Nexp(CC)      = " << skexp->GetND280Inputs()->NExpCC()     << endl;
+    cout << "Nexp(CCQE)    = " << skexp->GetND280Inputs()->NumOfEvents(conv::kNDmNuMuCCQE) << endl;
+    cout << "Nexp(CCRES)   = " << skexp->GetND280Inputs()->NumOfEvents(conv::kNDmNuMuCCRES) << endl;
     skexp->GetND280Inputs()->Draw(new TCanvas(), "Saclay/EtrueSpectrum/NuMu/CC");
     skexp->GetND280Inputs()->Draw(new TCanvas(), "Saclay/EtrueSpectrum/NuMu/NC");
     skexp->GetND280Inputs()->Draw(new TCanvas(), "Saclay/EtrueSpectrum/NuMuBar/CC");
