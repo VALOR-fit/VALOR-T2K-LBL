@@ -1,6 +1,6 @@
 //
 // ------------------------------------------------------------------------------------------------
-// Calc contour with systematics
+// Calculate oscillation contour with systematics
 //
 // Costas Andreopoulos
 // ------------------------------------------------------------------------------------------------
@@ -8,7 +8,7 @@
 
 #include "Conventions.h"
 
-void run_syst_contour_calc(int run=0, string tag="systcontour")
+void run_oscillation_contour_generator(int run=0, string tag="contour")
 {
   gSystem->Load("libGpad");  
   gSystem->Load("libPhysics");  
@@ -48,8 +48,8 @@ void run_syst_contour_calc(int run=0, string tag="systcontour")
 
   // get superk spectrum observation
   SuperkObservation * skobs = new SuperkObservation;
-  //skobs->CreateMockData(*skexp, *fparm, false);     ///<-- generate mock data now
-  skobs->Read("inputs/analysis_configuration.xml"); ///<-- read mock data stored in file (do that if you run multiple jobs for the same systematic)
+  skobs->CreateMockData(*skexp, *fparm, false);     ///<-- generate mock data now (don't fluctuate)
+//skobs->Read("inputs/analysis_configuration.xml"); ///<-- read mock data stored in file 
 
   // create fit inputs
   OscillationFitter::FitInputs * fit_inputs =
@@ -58,8 +58,10 @@ void run_syst_contour_calc(int run=0, string tag="systcontour")
   for(int iexperiment = 0; iexperiment < nexperiments; iexperiment++) {
      cout << " ******* experiment = " << iexperiment << endl;
 
+     bool def = (run==0 && iexperiment==0);
+
      // tweak source of systematic err
-     skexp->TweakAllSystematics( (iexperiment!=0) );
+     skexp->TweakAllSystematics(!def);
 
      // reset oscillation params following last fit
      fparm->Update(conv::kPhypSinsq2Theta23, input_sinsq2theta23);

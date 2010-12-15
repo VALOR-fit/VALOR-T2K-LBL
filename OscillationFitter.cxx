@@ -30,6 +30,7 @@
 #include "year1_numu_osc_analysis/SuperkExpectation.h" 
 #include "year1_numu_osc_analysis/PhysParamList.h" 
 #include "year1_numu_osc_analysis/Utilities.h"
+#include "year1_numu_osc_analysis/Conventions.h"
 
 using std::cerr; 
 using std::cout; 
@@ -38,6 +39,7 @@ using std::ostringstream;
 
 using namespace t2kana; 
 using namespace t2kana::yr1numu;
+using namespace t2kana::yr1numu::conv;
    
 //____________________________________________________________________________ 
 OscillationFitter::OscillationFitter() 
@@ -65,9 +67,9 @@ void OscillationFitter::Init(void)
   fSinsq2Theta23 = -1;
   fDm23sq = -1;
 
-  fNdof = 0;
+  fNdof           = 0;
   fNFreeFitParams = 0;
-  fNonZeroBins = 0;
+  fNFitBins       = 0;
 
   fChisqSurface = 0;
 }
@@ -118,18 +120,9 @@ void  OscillationFitter::PrepareFitter(Option_t * option)
 
   // calculate degrees of freedom
 
-  const TAxis & ereco_binning = fFitInputs->Observation().ErecoBinning();
-  fNonZeroBins = ereco_binning.GetNbins(); // get all bins instead
-//  fNonZeroBins = 0;
-//  for(int bin = 1; bin <= ereco_binning.GetNbins(); bin++) {
-//     double E = ereco_binning.GetBinCenter(bin);
-//     double nev = fFitInputs->Observation().NumOfEvents(E);
-//     if(nev>0) {
-//       fNonZeroBins++;
-//     }
-//  }
+  fNFitBins = kNvErecoBins;
   fNFreeFitParams = fit_params.Size(); //fitter->GetNumberFreeParameters();
-  fNdof = fNonZeroBins - fNFreeFitParams;
+  fNdof = fNFitBins - fNFreeFitParams;
 
   cout << "OscillationFitter >> ndof = " << fNdof
        << ", nfreeparams = " << fNFreeFitParams << endl;
@@ -364,44 +357,47 @@ void OscillationFitter::Draw(
 
      // get oscillated MC
      fFitInputs->FitParams().Update( conv::kPhypSinsq2Theta23, sinsq2theta23_bestfit );
-     fFitInputs->FitParams().Update( conv::kPhypDm23sq, dm23sq_bestfit );
+     fFitInputs->FitParams().Update( conv::kPhypDm23sq, dm23sq_bestfit               );
+     fFitInputs->Expectation().Generate(fFitInputs->FitParams());
 
-     TH1D * data = fFitInputs->Observation().AsTH1D();
+     TH1D * bestfit_tot       = new TH1D(*fFitInputs->Expectation().CurrPredictedErecoSpectrum(conv::kSKsFCFV1RingMuLike));
+     TH1D * bestfit_numuccqe  = new TH1D(*fFitInputs->Expectation().CurrPredictedErecoSpectrum(conv::kSKsFCFV1RingMuLike, conv::kSKmNuMuCCQE));
+     TH1D * bestfit_numucc1pi = new TH1D(*fFitInputs->Expectation().CurrPredictedErecoSpectrum(conv::kSKsFCFV1RingMuLike, conv::kSKmNuMuCC1pi));
+     TH1D * bestfit_numuccoth = new TH1D(*fFitInputs->Expectation().CurrPredictedErecoSpectrum(conv::kSKsFCFV1RingMuLike, conv::kSKmNuMuCCoth));
+     TH1D * bestfit_nc        = new TH1D(*fFitInputs->Expectation().CurrPredictedErecoSpectrum(conv::kSKsFCFV1RingMuLike, conv::kSKmNC));
+     TH1D * bestfit_numubar   = new TH1D(*fFitInputs->Expectation().CurrPredictedErecoSpectrum(conv::kSKsFCFV1RingMuLike, conv::kSKmNuMuBar));
+     TH1D * bestfit_nue       = new TH1D(*fFitInputs->Expectation().CurrPredictedErecoSpectrum(conv::kSKsFCFV1RingMuLike, conv::kSKmNuE));
 
-     TH1D * bestfit_tot = fFitInputs->Expectation().AsTH1D(fFitInputs->FitParams());
-     TH1D * bestfit_numuccqe = fFitInputs->Expectation().AsTH1D(fFitInputs->FitParams(), conv::kSKmNuMuCCQE);
-     TH1D * bestfit_numucc1pi = fFitInputs->Expectation().AsTH1D(fFitInputs->FitParams(), conv::kSKmNuMuCC1pi);
-     TH1D * bestfit_numuccoth = fFitInputs->Expectation().AsTH1D(fFitInputs->FitParams(), conv::kSKmNuMuCCoth);
-     TH1D * bestfit_nc = fFitInputs->Expectation().AsTH1D(fFitInputs->FitParams(), conv::kSKmNC);
-     TH1D * bestfit_numubar = fFitInputs->Expectation().AsTH1D(fFitInputs->FitParams(), conv::kSKmNuMuBar);
-     TH1D * bestfit_nue = fFitInputs->Expectation().AsTH1D(fFitInputs->FitParams(), conv::kSKmNuE);
+     bestfit_numucc1pi -> SetFillStyle ( 3354 );
+     bestfit_numuccoth -> SetFillStyle ( 3345 );
+     bestfit_nc        -> SetFillStyle ( 3006 );
+     bestfit_numubar   -> SetFillStyle ( 3001 );
+     bestfit_nue       -> SetFillStyle ( 3001 );
+     bestfit_numucc1pi -> SetFillColor ( kBlue );
+     bestfit_numuccoth -> SetFillColor ( kMagenta );
+     bestfit_nc        -> SetFillColor ( kRed );
+     bestfit_numubar   -> SetFillColor ( kYellow );
+     bestfit_nue       -> SetFillColor ( kGreen );
+     bestfit_numuccqe  -> SetLineColor ( kBlack );
+     bestfit_numucc1pi -> SetLineWidth ( 1 );
+     bestfit_numuccoth -> SetLineWidth ( 1 );
+     bestfit_nc        -> SetLineWidth ( 1 );
+     bestfit_numuccqe  -> SetLineWidth ( 1 );
+     bestfit_numubar   -> SetLineWidth ( 1 );
+     bestfit_nue       -> SetLineWidth ( 1 );
+     bestfit_tot       -> SetLineWidth ( 2 );
+     bestfit_nc        -> SetLineStyle ( kDashed );
+
+     // get data
+     TH1D * data = new TH1D(*fFitInputs->Observation().ErecoSpectrum(conv::kSKsFCFV1RingMuLike));
 
      data -> SetMarkerStyle(20);
      data -> SetMarkerSize(1);
 
-     bestfit_numucc1pi -> SetFillStyle ( 3354 );
-     bestfit_numuccoth -> SetFillStyle ( 3345 );
-     bestfit_nc -> SetFillStyle ( 3006 );
-     bestfit_numubar -> SetFillStyle ( 3001 );
-     bestfit_nue -> SetFillStyle ( 3001 );
-     bestfit_numucc1pi -> SetFillColor ( kBlue );
-     bestfit_numuccoth -> SetFillColor ( kMagenta );
-     bestfit_nc -> SetFillColor ( kRed );
-     bestfit_numubar -> SetFillColor ( kYellow );
-     bestfit_nue -> SetFillColor ( kGreen );
-     bestfit_numuccqe -> SetLineColor ( kBlack );
-     bestfit_numucc1pi -> SetLineWidth ( 1 );
-     bestfit_numuccoth -> SetLineWidth ( 1 );
-     bestfit_nc -> SetLineWidth ( 1 );
-     bestfit_numuccqe -> SetLineWidth ( 1 );
-     bestfit_numubar -> SetLineWidth ( 1 );
-     bestfit_nue -> SetLineWidth ( 1 );
-     bestfit_tot -> SetLineWidth ( 2 );
-     bestfit_nc -> SetLineStyle ( kDashed );
-
      data -> GetXaxis()->SetTitle("E_{reco} (GeV)");
      data -> GetYaxis()->SetTitle("Number of events");
-     data -> Draw("PERR");
+     data -> Draw("P");
+//     data -> Draw("PERR");
      bestfit_tot -> Draw("same");
 
      if(opt.Contains("ShowContributions")) {
@@ -460,16 +456,11 @@ void OscillationFitter::Draw(
      chisq_surf_shift->GetYaxis()->SetTitleSize(0.05);
      chisq_surf_shift->GetXaxis()->SetTitleSize(0.05);
 
-     const int nlev = 1;
+     const int nlev = 2;
      double levels[nlev] = {
-         util::DeltaChisquare(conv::kCL68, fNFreeFitParams)
+         util::DeltaChisquare(conv::kCL68, fNFreeFitParams),
+         util::DeltaChisquare(conv::kCL90, fNFreeFitParams)
      };
-
-//     const int nlev = 2;
-//     double levels[nlev] = {
-//         util::DeltaChisquare(conv::kCL68, fNFreeFitParams),
-//         util::DeltaChisquare(conv::kCL90, fNFreeFitParams)
-//     };
 
      chisq_surf_shift->SetContour(nlev,levels); 
      chisq_surf_shift->Draw("cont2"); 
@@ -608,21 +599,25 @@ double  OscillationFitter::FitInputs::Chisquare(Option_t * option)
   double chisq = 0;
   TString opt = option;
 
-  const TAxis & ereco_binning =
-          this->Observation().ErecoBinning();
+  this->Expectation().Generate(this->FitParams());
+  TH1D * obs_ereco_spectrum = this->Observation().ErecoSpectrum();
+  TH1D * exp_ereco_spectrum = this->Expectation().CurrPredictedErecoSpectrum();
 
-  int nbins = ereco_binning.GetNbins();
+  int nbins = exp_ereco_spectrum->GetNbinsX();
+
 #ifdef __debug_level_3__
    cout << "OscillationFitter/Chisquare> nbins = " << nbins << endl;
 #endif
 
   for(int ibin = 1; ibin <= nbins; ibin++) {
-     double Ereco = ereco_binning.GetBinCenter(ibin);
+
+     double nobs = obs_ereco_spectrum->GetBinContent(ibin);
+     double nexp = exp_ereco_spectrum->GetBinContent(ibin);
+
      double delta = 0.;
-     double nobs = this->Observation().NumOfEvents(Ereco);
-     double nexp = this->Expectation().Generate(Ereco, this->FitParams());
-     if (opt.Contains("poisson")) { delta = util::ChisqPoisson(nobs,nexp); }
-     else if (opt.Contains("gauss") ) { delta = util::ChisqGauss (nobs,nexp); }
+     if      (opt.Contains("poisson")) { delta = util::ChisqPoisson(nobs,nexp); }
+     else if (opt.Contains("gauss")  ) { delta = util::ChisqGauss  (nobs,nexp); }
+
      chisq += delta;
 
 #ifdef __debug_level_3__

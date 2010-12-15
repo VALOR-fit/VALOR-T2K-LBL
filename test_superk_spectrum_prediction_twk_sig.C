@@ -27,14 +27,17 @@ void test_superk_spectrum_prediction_twk_sig()
   using namespace t2kana;
   using namespace t2kana::yr1numu;
 
+  double input_sinsq2theta23 = 1.;
+  double input_dm23sq        = 2.4E-3;
+  
   const int ntwkmodes = 5;
   string twklabel[ntwkmodes] = {
-   "CCQE cross section",
-   "CC1#pi/CCQE cross section ratio",
-   "CCother/CCQE cross section ratio",
-   "NC/CCQE cross section ratio",
-   "Nuclear effect"
-  }
+   	"CCQE cross section",
+	"CC1#pi/CCQE cross section ratio",
+        "CCother/CCQE cross section ratio",
+        "NC/CCQE cross section ratio",
+        "Nuclear effect"
+  };
   const int ntwkdials = 5;
   double twkdial[ntwkdials] = { -1.0, -0.5, 0.0, +0.5, +1.0 };
 
@@ -45,55 +48,41 @@ void test_superk_spectrum_prediction_twk_sig()
   int hcolor [ntwkdials] = { kBlue,   kBlue,   kBlack,  kRed,    kRed   };
   int hstyle [ntwkdials] = { kDotted, kDashed, kSolid,  kDashed, kDotted};
 
-  // histogram booking
-  TH1D * hEreco   [ntwkmodes][ntwkdials];
-  TH1D * hErecoErr[ntwkmodes][ntwkdials];
-  for(int imode = 0; imode < ntwkmodes; imode++) {
-    for(int idial = 0; idial < ntwkdials; idial++) {
-       hEreco   [imode][idial] = new TH1D("","",conv::kNvErecoBins,conv::kNvErecoBinEdges);
-       hEreco   [imode][idial]->SetDirectory(0);
-       hEreco   [imode][idial]->SetLineWidth(hwidth[idial]);
-       hEreco   [imode][idial]->SetLineColor(hcolor[idial]);
-       hEreco   [imode][idial]->SetLineStyle(hstyle[idial]);
-       hErecoErr[imode][idial] = new TH1D("","",conv::kNvErecoBins,conv::kNvErecoBinEdges);
-       hErecoErr[imode][idial]->SetDirectory(0);
-       hErecoErr[imode][idial]->SetLineWidth(hwidth[idial]);
-       hErecoErr[imode][idial]->SetLineColor(hcolor[idial]);
-       hErecoErr[imode][idial]->SetLineStyle(hstyle[idial]);
-    }
-  }
-
   // superk spectrum predictor
   SuperkExpectation skexp;
   skexp.Read("inputs/analysis_configuration.xml");
 
   // phys params
   PhysParamList * fparm = PhysParamList::NumuDisapFitNoSyst();
-  fparm->Update(t2kana::yr1numu::conv::kPhypSinsq2Theta23, 1.0);
-  fparm->Update(t2kana::yr1numu::conv::kPhypDm23sq,        2.4E-3);
+  fparm->Update(t2kana::yr1numu::conv::kPhypSinsq2Theta23, input_sinsq2theta23);
+  fparm->Update(t2kana::yr1numu::conv::kPhypDm23sq,        input_dm23sq);
 
-  // generate predictions
+  // calculate spectra
+  TH1D * hEreco   [ntwkmodes][ntwkdials];
   for(int imode = 0; imode < ntwkmodes; imode++) {
     skexp.ResetSystematicVariations(); // reset previously set tweaks
     for(int idial = 0; idial < ntwkdials; idial++) {
+       // tweak spectrum generation model
        if      (imode==0) skexp.GetGeneratorInputs()->TweakCCQEXSec            ( twkdial[idial] );
        else if (imode==1) skexp.GetGeneratorInputs()->TweakCC1piToCCQEXSecRatio( twkdial[idial] );
        else if (imode==2) skexp.GetGeneratorInputs()->TweakCCOthToCCQEXSecRatio( twkdial[idial] );
        else if (imode==3) skexp.GetGeneratorInputs()->TweakNCToCCQEXSecRatio   ( twkdial[idial] );
        else if (imode==4) skexp.GetGeneratorInputs()->TweakNuclEffect          ( twkdial[idial] );
-       for(int ibin=1; ibin <= conv::kNvErecoBins; ibin++) {
-          double Ereco = hEreco[imode][idial]->GetBinCenter(ibin);
-          double Nexp  = skexp.Generate(Ereco, *fparm);
-          //cout << "NumExpSK (Ereco = " << Ereco << ") = " << Nexp << endl;
-          hEreco[imode][idial]->SetBinContent(ibin,Nexp);
-       }//ibin
+       // generate predictions  
+       skexp.Generate(*fparm);
+       // store spectrum
+       hEreco[imode][idial] = new TH1D(*skexp.CurrPredictedErecoSpectrum(conv::kSKsFCFV1RingMuLike));
+       hEreco[imode][idial]->SetDirectory(0);
     }//idial
   }//imode
   // get fractional err
+  TH1D * hErecoErr[ntwkmodes][ntwkdials];
   double maxerrpos = -1.;
   double maxerrneg = +1.;
   for(int imode = 0; imode < ntwkmodes; imode++) {
     for(int idial = 0; idial < ntwkdials; idial++) {
+       hErecoErr[imode][idial] = new TH1D("","",conv::kNvErecoBins,conv::kNvErecoBinEdges);
+       hErecoErr[imode][idial]->SetDirectory(0);
        for(int ibin=1; ibin <= conv::kNvErecoBins; ibin++) {
          double ncurr  = hEreco[imode][idial]->GetBinContent(ibin);
          double ndeflt = hEreco[imode][deflt]->GetBinContent(ibin);
@@ -107,7 +96,19 @@ void test_superk_spectrum_prediction_twk_sig()
     }//idial
   }//imode
 
+  //
   // draw
+  //
+  for(int imode = 0; imode < ntwkmodes; imode++) {
+    for(int idial = 0; idial < ntwkdials; idial++) {
+       hEreco   [imode][idial]->SetLineWidth(hwidth[idial]);
+       hEreco   [imode][idial]->SetLineColor(hcolor[idial]);
+       hEreco   [imode][idial]->SetLineStyle(hstyle[idial]);
+       hErecoErr[imode][idial]->SetLineWidth(hwidth[idial]);
+       hErecoErr[imode][idial]->SetLineColor(hcolor[idial]);
+       hErecoErr[imode][idial]->SetLineStyle(hstyle[idial]);
+    }
+  }
   TCanvas * c[ntwkmodes];
   gStyle->SetOptStat(0);
   for(int imode = 0; imode < ntwkmodes; imode++) {

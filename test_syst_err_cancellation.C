@@ -82,36 +82,54 @@ void test_syst_err_cancellation(string systematic)
   // nominal
   //
 
+  skexp->Generate(*fparm);
+
   double nd280cc_0       = skexp->GetND280Inputs()->NExpCC();
   double nd280ncbkg_0    = skexp->GetND280Inputs()->NExpNCBkg();
   double nd280corr_0     = skexp->GetND280Inputs()->CorrectionFactor();
-  double nsknumuccqe_0   = skexp->AsTH1D(*fparm, conv::kSKsFCFV1RingMuLike, conv::kSKmNuMuCCQE,  false)->Integral();
-  double nsknumucc1pi_0  = skexp->AsTH1D(*fparm, conv::kSKsFCFV1RingMuLike, conv::kSKmNuMuCC1pi, false)->Integral();
-  double nsknumuccoth_0  = skexp->AsTH1D(*fparm, conv::kSKsFCFV1RingMuLike, conv::kSKmNuMuCCoth, false)->Integral();
-  double nsknumunc_0     = skexp->AsTH1D(*fparm, conv::kSKsFCFV1RingMuLike, conv::kSKmNC,        false)->Integral();
-  double nsk_0           = skexp->AsTH1D(*fparm, conv::kSKsFCFV1RingMuLike)->Integral();
+  double nsknumuccqe_0   = skexp->GetSuperkInputs()->CurrErecoSpectrum(conv::kSKsFCFV1RingMuLike, conv::kSKmNuMuCCQE )->Integral();
+  double nsknumucc1pi_0  = skexp->GetSuperkInputs()->CurrErecoSpectrum(conv::kSKsFCFV1RingMuLike, conv::kSKmNuMuCC1pi)->Integral();
+  double nsknumuccoth_0  = skexp->GetSuperkInputs()->CurrErecoSpectrum(conv::kSKsFCFV1RingMuLike, conv::kSKmNuMuCCoth)->Integral();
+  double nsknumunc_0     = skexp->GetSuperkInputs()->CurrErecoSpectrum(conv::kSKsFCFV1RingMuLike, conv::kSKmNC       )->Integral();
+  double nsk_0           = skexp->CurrPredictedErecoSpectrum(conv::kSKsFCFV1RingMuLike)->Integral();
+
+  //
+  // +1 sigma
+  //
 
   skexp->TweakSystematic(systematic,+1.);
+
+  skexp->Generate(*fparm);
 
   double nd280cc_p       = skexp->GetND280Inputs()->NExpCC();
   double nd280ncbkg_p    = skexp->GetND280Inputs()->NExpNCBkg();
   double nd280corr_p     = skexp->GetND280Inputs()->CorrectionFactor();
-  double nsknumuccqe_p   = skexp->AsTH1D(*fparm, conv::kSKsFCFV1RingMuLike, conv::kSKmNuMuCCQE,  false)->Integral();
-  double nsknumucc1pi_p  = skexp->AsTH1D(*fparm, conv::kSKsFCFV1RingMuLike, conv::kSKmNuMuCC1pi, false)->Integral();
-  double nsknumuccoth_p  = skexp->AsTH1D(*fparm, conv::kSKsFCFV1RingMuLike, conv::kSKmNuMuCCoth, false)->Integral();
-  double nsknumunc_p     = skexp->AsTH1D(*fparm, conv::kSKsFCFV1RingMuLike, conv::kSKmNC,        false)->Integral();
-  double nsk_p           = skexp->AsTH1D(*fparm, conv::kSKsFCFV1RingMuLike)->Integral();
+  double nsknumuccqe_p   = skexp->GetSuperkInputs()->CurrErecoSpectrum(conv::kSKsFCFV1RingMuLike, conv::kSKmNuMuCCQE )->Integral();
+  double nsknumucc1pi_p  = skexp->GetSuperkInputs()->CurrErecoSpectrum(conv::kSKsFCFV1RingMuLike, conv::kSKmNuMuCC1pi)->Integral();
+  double nsknumuccoth_p  = skexp->GetSuperkInputs()->CurrErecoSpectrum(conv::kSKsFCFV1RingMuLike, conv::kSKmNuMuCCoth)->Integral();
+  double nsknumunc_p     = skexp->GetSuperkInputs()->CurrErecoSpectrum(conv::kSKsFCFV1RingMuLike, conv::kSKmNC       )->Integral();
+  double nsk_p           = skexp->CurrPredictedErecoSpectrum(conv::kSKsFCFV1RingMuLike)->Integral();
+
+  //
+  // -1 sigma
+  //
 
   skexp->TweakSystematic(systematic,-1.);
+
+  skexp->Generate(*fparm);
 
   double nd280cc_m       = skexp->GetND280Inputs()->NExpCC();
   double nd280ncbkg_m    = skexp->GetND280Inputs()->NExpNCBkg();
   double nd280corr_m     = skexp->GetND280Inputs()->CorrectionFactor();
-  double nsknumuccqe_m   = skexp->AsTH1D(*fparm, conv::kSKsFCFV1RingMuLike, conv::kSKmNuMuCCQE,  false)->Integral();
-  double nsknumucc1pi_m  = skexp->AsTH1D(*fparm, conv::kSKsFCFV1RingMuLike, conv::kSKmNuMuCC1pi, false)->Integral();
-  double nsknumuccoth_m  = skexp->AsTH1D(*fparm, conv::kSKsFCFV1RingMuLike, conv::kSKmNuMuCCoth, false)->Integral();
-  double nsknumunc_m     = skexp->AsTH1D(*fparm, conv::kSKsFCFV1RingMuLike, conv::kSKmNC,        false)->Integral();
-  double nsk_m           = skexp->AsTH1D(*fparm, conv::kSKsFCFV1RingMuLike)->Integral();
+  double nsknumuccqe_m   = skexp->GetSuperkInputs()->CurrErecoSpectrum(conv::kSKsFCFV1RingMuLike, conv::kSKmNuMuCCQE  )->Integral();
+  double nsknumucc1pi_m  = skexp->GetSuperkInputs()->CurrErecoSpectrum(conv::kSKsFCFV1RingMuLike, conv::kSKmNuMuCC1pi )->Integral();
+  double nsknumuccoth_m  = skexp->GetSuperkInputs()->CurrErecoSpectrum(conv::kSKsFCFV1RingMuLike, conv::kSKmNuMuCCoth )->Integral();
+  double nsknumunc_m     = skexp->GetSuperkInputs()->CurrErecoSpectrum(conv::kSKsFCFV1RingMuLike, conv::kSKmNC        )->Integral();
+  double nsk_m           = skexp->CurrPredictedErecoSpectrum(conv::kSKsFCFV1RingMuLike)->Integral();
+
+  //
+  // calc fractional changes
+  //
 
   double frac_nd280cc_p       = (nd280cc_0      > 0) ? (nd280cc_p      - nd280cc_0     ) / nd280cc_0      : 0.;
   double frac_nd280ncbkg_p    = (nd280ncbkg_0   > 0) ? (nd280ncbkg_p   - nd280ncbkg_0  ) / nd280ncbkg_0   : 0.;
@@ -148,6 +166,10 @@ void test_syst_err_cancellation(string systematic)
   effect_mins_1_sigma -> SetBinContent(6, 100*frac_nsknumuccoth_m  ); 
   effect_mins_1_sigma -> SetBinContent(7, 100*frac_nsknumunc_m     ); 
   effect_mins_1_sigma -> SetBinContent(8, 100*frac_nsk_m           ); 
+
+  //
+  // draw
+  //
 
   double max = 1.4 * TMath::Max( effect_plus_1_sigma->GetMaximum(), effect_mins_1_sigma->GetMaximum() );
   double min = 1.4 * TMath::Min( effect_plus_1_sigma->GetMinimum(), effect_mins_1_sigma->GetMinimum() );

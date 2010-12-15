@@ -43,7 +43,7 @@ void run_systematic_study(string systematic, int run=0)
   const double input_sinsq2theta23 = 0.90;
   const double input_dm23sq        = 2.4E-3;
 
-  const int nexperiments = 10;
+  const int nexperiments = 50;
   double output_sinsq2theta23[nexperiments];
   double output_dm23sq       [nexperiments];
 
@@ -60,8 +60,8 @@ void run_systematic_study(string systematic, int run=0)
 
   // get superk spectrum observation
   SuperkObservation * skobs = new SuperkObservation;
-  //skobs->CreateMockData(*skexp, *fparm, false);     ///<-- generate mock data now
-  skobs->Read("inputs/analysis_configuration.xml"); ///<-- read mock data stored in file (do that if you run multiple jobs for the same systematic)
+  skobs->CreateMockData(*skexp, *fparm, false);       ///<-- generate mock data now (don't fluctuate)
+  //skobs->Read("inputs/analysis_configuration.xml"); ///<-- read mock data stored in file 
 
   // create fit inputs
   OscillationFitter::FitInputs * fit_inputs =

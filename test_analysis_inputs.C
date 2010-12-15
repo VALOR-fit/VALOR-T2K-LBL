@@ -50,11 +50,7 @@ void test_analysis_inputs()
   if(opt.Contains("SuperK")) {
     skexp->GetSuperkInputs()->Draw(new TCanvas(), "etrue_spectra");
     skexp->GetSuperkInputs()->Draw(new TCanvas(), "1RingMuLike/ErecoEtrueTemplates");
-///    skexp->GetSuperkInputs()->Draw(new TCanvas(), "ReconstructionEfficiency");
-///    skexp->GetSuperkInputs()->Draw(new TCanvas(), "SelectionEfficiency/OneMuRingTight");
-///    skexp->GetSuperkInputs()->Draw(new TCanvas(), "EnergyTransferMatrix/OneMuRingTight");
   }//SuperK
-
 
   if(opt.Contains("nd280")) {
     cout << "Nobs(CC-like) = " << skexp->GetND280Inputs()->NObsCCLike() << endl;

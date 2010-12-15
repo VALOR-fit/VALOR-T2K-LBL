@@ -42,7 +42,7 @@ void write_out_mock_data(
   SuperkObservation * skobs = new SuperkObservation;
   skobs->CreateMockData(*skexp, *fparm, fluctuate);
 
-  TH1D* mock_data = skobs->AsTH1D(conv::kSKsFCFV1RingMuLike);
+  TH1D* mock_data = skobs->ErecoSpectrum(conv::kSKsFCFV1RingMuLike);
 
   for(int i = 1; i <= mock_data->GetNbinsX(); i++) {
         double n = mock_data->GetBinContent(i);

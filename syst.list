@@ -1,0 +1,12 @@
+nd280_eff
+sk_energy_scale
+sk_ccqe_eff
+sk_ccnonqe_eff
+sk_nc_eff
+flux_norm
+flux_shape
+xsec_ccqe
+xsec_cc1pi_to_ccqe
+xsec_ccoth_to_ccqe
+xsec_nc_to_ccqe
+nuclear_effect

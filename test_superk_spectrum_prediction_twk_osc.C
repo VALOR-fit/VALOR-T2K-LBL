@@ -41,22 +41,6 @@ void test_superk_spectrum_prediction_twk_osc(bool showdata=false)
   int hcolor [ncases] = { kBlack, kBlue,   kGreen,  kRed,    kBlack   };
   int hstyle [ncases] = { kBlack, kDashed, kDashed, kDashed, kDashed  };
 
-  // histogram booking
-  TH1D * hEreco[ncases];
-  TH1D * hErecoFracDeficit[ncases];
-  for(int icase = 0; icase < ncases; icase++) {
-    hEreco[icase] = new TH1D("","",conv::kNvErecoBins,conv::kNvErecoBinEdges);
-    hEreco[icase]->SetDirectory(0);
-    hEreco[icase]->SetLineWidth(hwidth[icase]);
-    hEreco[icase]->SetLineColor(hcolor[icase]);
-    hEreco[icase]->SetLineStyle(hstyle[icase]);
-    hErecoFracDeficit[icase] = new TH1D("","",conv::kNvErecoBins,conv::kNvErecoBinEdges);
-    hErecoFracDeficit[icase]->SetDirectory(0);
-    hErecoFracDeficit[icase]->SetLineWidth(hwidth[icase]);
-    hErecoFracDeficit[icase]->SetLineColor(hcolor[icase]);
-    hErecoFracDeficit[icase]->SetLineStyle(hstyle[icase]);
-  }
-
   // superk spectrum predictor
   SuperkExpectation skexp;
   skexp.Read("inputs/analysis_configuration.xml");
@@ -64,19 +48,23 @@ void test_superk_spectrum_prediction_twk_osc(bool showdata=false)
   // fit params
   PhysParamList * fparm = PhysParamList::NumuDisapFitNoSyst();
 
-  // generate predictions
+  // calculate spectra
+  TH1D * hEreco[ncases];
   for(int icase = 0; icase < ncases; icase++) {
+    // update osc params
     fparm->Update(t2kana::yr1numu::conv::kPhypSinsq2Theta23, sinsq2theta23[icase]);
     fparm->Update(t2kana::yr1numu::conv::kPhypDm23sq,        dm23sq[icase]);
-    for(int ibin=1; ibin <= conv::kNvErecoBins; ibin++) {
-       double Ereco = hEreco[icase]->GetBinCenter(ibin);
-       double Nexp  = skexp.Generate(Ereco, *fparm);
-       cout << "NumExpSK (Ereco = " << Ereco << ") = " << Nexp << endl;
-       hEreco[icase]->SetBinContent(ibin,Nexp);
-    }
+    // generate predictions  
+    skexp.Generate(*fparm);
+    // store spectrum
+    hEreco[icase] = new TH1D(*skexp.CurrPredictedErecoSpectrum(conv::kSKsFCFV1RingMuLike));
+    hEreco[icase]->SetDirectory(0);
   }
   // calculate fractional deficit
-  for(int icase = 1; icase < ncases; icase++) {
+  TH1D * hErecoFracDeficit[ncases];
+  for(int icase = 0; icase < ncases; icase++) {
+    hErecoFracDeficit[icase] = new TH1D("","",conv::kNvErecoBins,conv::kNvErecoBinEdges);
+    hErecoFracDeficit[icase]->SetDirectory(0);
     for(int ibin=1; ibin <= conv::kNvErecoBins; ibin++) {
        double Nunosc = hEreco[0]    ->GetBinContent(ibin); 
        double Nosc   = hEreco[icase]->GetBinContent(ibin);
@@ -87,7 +75,17 @@ void test_superk_spectrum_prediction_twk_osc(bool showdata=false)
     }
   }
 
+  //
   // draw
+  //
+  for(int icase = 0; icase < ncases; icase++) {
+    hEreco[icase]->SetLineWidth(hwidth[icase]);
+    hEreco[icase]->SetLineColor(hcolor[icase]);
+    hEreco[icase]->SetLineStyle(hstyle[icase]);
+    hErecoFracDeficit[icase]->SetLineWidth(hwidth[icase]);
+    hErecoFracDeficit[icase]->SetLineColor(hcolor[icase]);
+    hErecoFracDeficit[icase]->SetLineStyle(hstyle[icase]);
+  }
   gStyle->SetOptStat(0);
   TCanvas * c = new TCanvas("c","",20,20,500,500);
   TPad * upp = new TPad("upp","",0.05,0.35,0.95,0.97);
@@ -119,7 +117,7 @@ void test_superk_spectrum_prediction_twk_osc(bool showdata=false)
      if(showdata) {
        SuperkObservation * skobs = new SuperkObservation;
        skobs->Read("inputs/analysis_configuration.xml");
-       TH1D * data = skobs->AsTH1D();
+       TH1D * data = new TH1D(*skobs->ErecoSpectrum(conv::kSKsFCFV1RingMuLike));
        data->SetMarkerStyle(20);
        data->SetMarkerSize(1);
        data->Draw("PERRSAME");

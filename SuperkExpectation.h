@@ -67,15 +67,12 @@ public:
    bool Read(string config_file);
 
    // Generate SK energy spectrum expectation for the current inputs
-   double Generate(double Ereco, const PhysParamList & fp, bool with_nd_correction=true);
-   double Generate(double Ereco, const PhysParamList & fp, t2kana::yr1numu::conv::SuperkSample_t s, 
-                   t2kana::yr1numu::conv::SuperkMode_t m, bool with_nd_correction=true);
+   void Generate(const PhysParamList & fp);
 
-   TH1D * AsTH1D(const PhysParamList & fp, bool with_nd_correction=true);
-   TH1D * AsTH1D(const PhysParamList & fp, t2kana::yr1numu::conv::SuperkSample_t s, bool with_nd_correction=true);
-   TH1D * AsTH1D(const PhysParamList & fp, t2kana::yr1numu::conv::SuperkMode_t m, bool with_nd_correction=true);
-   TH1D * AsTH1D(const PhysParamList & fp, t2kana::yr1numu::conv::SuperkSample_t s, 
-                 t2kana::yr1numu::conv::SuperkMode_t m, bool with_nd_correction=true);
+   // Access calculated SK energy spectrum 
+   TH1D* CurrPredictedErecoSpectrum (void) const;
+   TH1D* CurrPredictedErecoSpectrum (t2kana::yr1numu::conv::SuperkSample_t s) const;
+   TH1D* CurrPredictedErecoSpectrum (t2kana::yr1numu::conv::SuperkSample_t s, t2kana::yr1numu::conv::SuperkMode_t m) const;
 
    // Access inputs used for building-up the expected spectrum at SK
    ND280Inputs *     GetND280Inputs     (void) { return fND280Inputs;     }
@@ -87,9 +84,6 @@ public:
    void ResetSystematicVariations (void);
    void TweakSystematic           (string systematic, double twkdial=0.);
    void TweakAllSystematics       (bool do_tweak=true);
-
-   //
-   void PreComputeND280CorrectionFactorChanges(void);
 
    //.........................................................................
    // nested class ND280Inputs
@@ -174,18 +168,22 @@ public:
      ~SuperkInputs();
 
       // Get information needed from SK for predicting the SK spectrum
-      double  AnalyzedSamplePOT (void) const;   
-      TTree * MCTree            (t2kana::yr1numu::conv::SuperkSample_t s, t2kana::yr1numu::conv::SuperkMode_t m);
-      double  MCPOT             (t2kana::yr1numu::conv::SuperkSample_t s, t2kana::yr1numu::conv::SuperkMode_t m);
-      double  NumOfEvents       (double Ereco, t2kana::yr1numu::conv::SuperkSample_t s, t2kana::yr1numu::conv::SuperkMode_t m, double sinsq2theta23, double dmsq23, bool ignore_energy_scale_twk=false);
-      double  NumOfEvents_Etrue (double Etrue, t2kana::yr1numu::conv::SuperkSample_t s, t2kana::yr1numu::conv::SuperkMode_t m, double sinsq2theta23, double dmsq23);
-      double  EfficiencyRelErr  (t2kana::yr1numu::conv::SuperkSample_t s, t2kana::yr1numu::conv::SuperkMode_t m) const; ///< rel err on efficiency
-      double  EnergyScaleRelErr (void) const; ///< energy scale err
-      double  EnergyScale       (void) const; ///< energy scale 
-
-      TH1D*  Curr1RmuNuMuEtrue    (double sinsq2theta23, double dmsq23); ///< current (allowing for applied weights) Etrue distribution for numu
-      TH1D*  Curr1RmuNuMuBarEtrue (double sinsq2theta23, double dmsq23); ///<      -//-  for numubar
-      TH1D*  Curr1RmuNuEEtrue     (double sinsq2theta23, double dmsq23); ///<      -//-  for nue
+      double  AnalyzedSamplePOT   (void) const;   
+      TTree * MCTree              (t2kana::yr1numu::conv::SuperkSample_t s, t2kana::yr1numu::conv::SuperkMode_t m);
+      double  MCPOT               (t2kana::yr1numu::conv::SuperkSample_t s, t2kana::yr1numu::conv::SuperkMode_t m);
+      double  NumOfEvents         (double Ereco, t2kana::yr1numu::conv::SuperkSample_t s, t2kana::yr1numu::conv::SuperkMode_t m, double sinsq2theta23, double dmsq23, bool ignore_energy_scale_twk=false);
+      double  NumOfEvents_Etrue   (double Etrue, t2kana::yr1numu::conv::SuperkSample_t s, t2kana::yr1numu::conv::SuperkMode_t m, double sinsq2theta23, double dmsq23);
+      double  EfficiencyRelErr    (t2kana::yr1numu::conv::SuperkSample_t s, t2kana::yr1numu::conv::SuperkMode_t m) const; ///< rel err on efficiency
+      double  EnergyScaleRelErr   (void) const; ///< energy scale err
+      double  EnergyScale         (void) const; ///< energy scale 
+      void    UpdateErecoSpectra  (double sinsq2theta23, double dmsq23);
+      TH1D*   CurrErecoSpectrum   (void) const { return fMCErecoSpectrumGrandTot; }
+      TH1D*   CurrErecoSpectrum   (t2kana::yr1numu::conv::SuperkSample_t s) const { return fMCErecoSpectrumTot[s]; }
+      TH1D*   CurrErecoSpectrum   (t2kana::yr1numu::conv::SuperkSample_t s, t2kana::yr1numu::conv::SuperkMode_t m) const { return fMCErecoSpectrum[s][m]; }
+      void    UpdateEtrueSpectra  (double sinsq2theta23, double dmsq23);
+      TH1D*   Curr1RmuNuMuEtrue   (void) const { return f1RmNuMuEt;    } ///< current (allowing for applied weights) Etrue distribution for numu
+      TH1D*   Curr1RmuNuMuBarEtrue(void) const { return f1RmNuMuBarEt; } ///<      -//-  for numubar
+      TH1D*   Curr1RmuNuEEtrue    (void) const { return f1RmNuEEt;     } ///<      -//-  for nue
 
       // Draw inputs:
       // ...
@@ -211,31 +209,34 @@ public:
       double NumOfEventsReadFromTree(double Ereco, double ErecoBinSz, 
           t2kana::yr1numu::conv::SuperkSample_t s, t2kana::yr1numu::conv::SuperkMode_t m, double sinsq2theta23, double dmsq23);
 
-      double  fPOT;                     ///< Number of POT
-      double  fEnergyScaleRelErr;       ///< Energy scale relative error
-      double  fEnergyScaleTwkDial;      ///< Energy scale tweaking dial
-      double  fEffRelErr[kns][knm];     ///< Efficiency relative error
-      double  fEffTwkDial[kns][knm];    ///< Efficiency tweaking dial
+      double  fPOT;                       ///< Number of POT
+      double  fEnergyScaleRelErr;         ///< Energy scale relative error
+      double  fEnergyScaleTwkDial;        ///< Energy scale tweaking dial
+      double  fEffRelErr[kns][knm];       ///< Efficiency relative error
+      double  fEffTwkDial[kns][knm];      ///< Efficiency tweaking dial
 
-      TH2D *  fMCSpectrum2d[kns][knm];  ///< Ereco-Etrue
-      TH1D *  fMCSpectrum1d[kns][knm];  ///< Etrue
-      TTree*  fMC1Rmu_numu;             ///<
-      double  fMCPOT_numu;              ///<
-      TTree*  fMC1Rmu_numubar;          ///<
-      double  fMCPOT_numubar;           ///<
-      TTree*  fMC1Rmu_nue;              ///<
-      double  fMCPOT_nue;               ///<
-      double  fBrEreco;                 ///<
-      double  fBrEtrue;                 ///<
-      int     fBrPdg;                   ///<
-      int     fBrGenCode;               ///<
+      TH2D *  fMCTemplates[kns][knm];     ///< Ereco-Etrue
+      TH1D *  fMCEtrueSpectrum[kns][knm]; ///< Etrue
+      TH1D *  fMCErecoSpectrum[kns][knm]; ///< Ereco
+      TH1D *  fMCErecoSpectrumTot[kns];   ///< Ereco
+      TH1D *  fMCErecoSpectrumGrandTot;   ///< Ereco
+      TTree*  fMC1Rmu_numu;               ///<
+      double  fMCPOT_numu;                ///<
+      TTree*  fMC1Rmu_numubar;            ///<
+      double  fMCPOT_numubar;             ///<
+      TTree*  fMC1Rmu_nue;                ///<
+      double  fMCPOT_nue;                 ///<
+      double  fBrEreco;                   ///<
+      double  fBrEtrue;                   ///<
+      int     fBrPdg;                     ///<
+      int     fBrGenCode;                 ///<
 
-      TH1D *  f1RmNuMuEt;               ///< fEtrue distribution for 1-Ring mu-like numu    - needed for beam norm err calculation
-      TH1D *  f1RmNuMuBarEt;            ///< fEtrue distribution for 1-Ring mu-like numubar - needed for beam norm err calculation
-      TH1D *  f1RmNuEEt;                ///< fEtrue distribution for 1-Ring mu-like nue     - needed for beam norm err calculation
+      TH1D *  f1RmNuMuEt;                 ///< fEtrue distribution for 1-Ring mu-like numu    - needed for beam norm err calculation
+      TH1D *  f1RmNuMuBarEt;              ///< fEtrue distribution for 1-Ring mu-like numubar - needed for beam norm err calculation
+      TH1D *  f1RmNuEEt;                  ///< fEtrue distribution for 1-Ring mu-like nue     - needed for beam norm err calculation
 
-      BeamInputs *      fBeamInputs;    ///<
-      GeneratorInputs * fGenInputs;     ///<
+      BeamInputs *      fBeamInputs;      ///<
+      GeneratorInputs * fGenInputs;       ///<
    };
 
    //.........................................................................
@@ -339,23 +340,16 @@ public:
       double NCToCCQEXSecRatioWght   (double Etrue) const;
       double XSecRatioWght           (double Etrue, double twkdial, TH1D * hRelErr) const;
 
-//      double SigmaModeSK (double Etrue, t2kana::yr1numu::conv::SuperkMode_t m, bool neglect_twk=false) const; ///< cross section for input mode
-//      double SigmaTotSK  (double Etrue) const;
-//      double FractModeSK (double Etrue, t2kana::yr1numu::conv::SuperkMode_t m) const;
-//
-//      TH1D * fSigmaTotSK;        ///< numu+H20 total cross section as a function of energy
-//      TH1D * fFractModeSK[knm];  ///< fraction of event modes in numu+H20 as a function of energy
-
-      double fCCQEXSecTwkDial;
-      double fCC1piToCCQEXSecRatioTwkDial;
-      double fCCOthToCCQEXSecRatioTwkDial;
-      double fNCToCCQEXSecRatioTwkDial;
-      double fNuclEffectTwkDial;
-      TH1D * fCCQEXSecRelErr;
-      TH1D * fCC1piToCCQEXSecRatioRelErr;
-      TH1D * fCCOthToCCQEXSecRatioRelErr;
-      TH1D * fNCToCCQEXSecRatioRelErr;
-      TH1D * fSuperkNuclearEffectRelErr;
+      double fCCQEXSecTwkDial;               ///<
+      double fCC1piToCCQEXSecRatioTwkDial;   ///<
+      double fCCOthToCCQEXSecRatioTwkDial;   ///<
+      double fNCToCCQEXSecRatioTwkDial;      ///<
+      double fNuclEffectTwkDial;             ///<
+      TH1D * fCCQEXSecRelErr;                ///<
+      TH1D * fCC1piToCCQEXSecRatioRelErr;    ///<
+      TH1D * fCCOthToCCQEXSecRatioRelErr;    ///<
+      TH1D * fNCToCCQEXSecRatioRelErr;       ///<
+      TH1D * fSuperkNuclearEffectRelErr;     ///<
    };
 
 private:
@@ -363,11 +357,15 @@ private:
    void Init    (void);
    void CleanUp (void);
 
-   bool              fIsConfigured;
-   ND280Inputs *     fND280Inputs;
-   SuperkInputs *    fSuperkInputs;
-   BeamInputs *      fBeamInputs;
-   GeneratorInputs * fGeneratorInputs;
+   bool              fIsConfigured;          ///<
+   ND280Inputs *     fND280Inputs;           ///<
+   SuperkInputs *    fSuperkInputs;          ///<
+   BeamInputs *      fBeamInputs;            ///<
+   GeneratorInputs * fGeneratorInputs;       ///<
+
+   TH1D *  fPredictErecoSpectrum[kns][knm];  ///< Ereco
+   TH1D *  fPredictErecoSpectrumTot[kns];    ///< Ereco
+   TH1D *  fPredictErecoSpectrumGrandTot;    ///< Ereco
 
    vector<t2kana::yr1numu::conv::SuperkSample_t> fSamples;
 

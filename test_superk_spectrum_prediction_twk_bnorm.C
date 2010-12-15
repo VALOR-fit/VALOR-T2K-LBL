@@ -27,6 +27,10 @@ void test_superk_spectrum_prediction_twk_bnorm()
   using namespace t2kana;
   using namespace t2kana::yr1numu;
 
+  // oscillation params
+  double input_sinsq2theta23 = 1.00;
+  double input_dm23sq        = 2.4E-3;
+
   const int ntwkdials = 3;
   double twkdial[ntwkdials] = { -1.0, 0.0, +1.0 };
 
@@ -40,45 +44,37 @@ void test_superk_spectrum_prediction_twk_bnorm()
   // histogram booking
   TH1D * hEreco   [ntwkdials];
   TH1D * hErecoErr[ntwkdials];
-  for(int idial = 0; idial < ntwkdials; idial++) {
-     hEreco   [idial] = new TH1D("","",conv::kNvErecoBins,conv::kNvErecoBinEdges);
-     hEreco   [idial]->SetDirectory(0);
-     hEreco   [idial]->SetLineWidth(hwidth[idial]);
-     hEreco   [idial]->SetLineColor(hcolor[idial]);
-     hEreco   [idial]->SetLineStyle(hstyle[idial]);
-     hErecoErr[idial] = new TH1D("","",conv::kNvErecoBins,conv::kNvErecoBinEdges);
-     hErecoErr[idial]->SetDirectory(0);
-     hErecoErr[idial]->SetLineWidth(hwidth[idial]);
-     hErecoErr[idial]->SetLineColor(hcolor[idial]);
-     hErecoErr[idial]->SetLineStyle(hstyle[idial]);
-  }
 
   // superk spectrum predictor
   SuperkExpectation skexp;
   skexp.Read("inputs/analysis_configuration.xml");
 
-  // phys params
+  // fit params
   PhysParamList * fparm = PhysParamList::NumuDisapFitNoSyst();
-  fparm->Update(t2kana::yr1numu::conv::kPhypSinsq2Theta23, 1.);
-  fparm->Update(t2kana::yr1numu::conv::kPhypDm23sq,        2.4E-3);
+  fparm->Update(t2kana::yr1numu::conv::kPhypSinsq2Theta23, input_sinsq2theta23);
+  fparm->Update(t2kana::yr1numu::conv::kPhypDm23sq,        input_dm23sq);
 
-  // generate predictions
   for(int idial = 0; idial < ntwkdials; idial++) {
+
+     // tweak spectrum generation model
      cout << " ** Beam norm tweaking dial = " << twkdial[idial] << endl;
      skexp.GetBeamInputs()->TweakNorm( twkdial[idial] );
-     for(int ibin=1; ibin <= conv::kNvErecoBins; ibin++) {
-        cout << "ibin = " << ibin << endl;
-        double Ereco = hEreco[idial]->GetBinCenter(ibin);
-        cout << "Ereco = " << Ereco << endl;
-        double Nexp  = skexp.Generate(Ereco, *fparm);
-        cout << "NumExpSK (Ereco = " << Ereco << ") = " << Nexp << endl;
-        hEreco[idial]->SetBinContent(ibin,Nexp);
-     }//ibin
+
+     // generate prediction
+     skexp.Generate(*fparm);
+
+     // store spectrum
+     hEreco[idial] = new TH1D(*skexp.CurrPredictedErecoSpectrum(conv::kSKsFCFV1RingMuLike));
+     hEreco[idial]->SetDirectory(0);
   }//idial
 
   // get fractional err
   double maxerrpos = -1.;
   double maxerrneg = +1.;
+  for(int idial = 0; idial < ntwkdials; idial++) {
+     hErecoErr[idial] = new TH1D("","",conv::kNvErecoBins,conv::kNvErecoBinEdges);
+     hErecoErr[idial]->SetDirectory(0);
+  }
   for(int idial = 0; idial < ntwkdials; idial++) {
        for(int ibin=1; ibin <= conv::kNvErecoBins; ibin++) {
          double ncurr  = hEreco[idial]->GetBinContent(ibin);
@@ -92,7 +88,17 @@ void test_superk_spectrum_prediction_twk_bnorm()
        }//ibin
   }//idial
 
+  //
   // draw
+  //
+  for(int idial = 0; idial < ntwkdials; idial++) {
+     hEreco   [idial]->SetLineWidth(hwidth[idial]);
+     hEreco   [idial]->SetLineColor(hcolor[idial]);
+     hEreco   [idial]->SetLineStyle(hstyle[idial]);
+     hErecoErr[idial]->SetLineWidth(hwidth[idial]);
+     hErecoErr[idial]->SetLineColor(hcolor[idial]);
+     hErecoErr[idial]->SetLineStyle(hstyle[idial]);
+  }
   gStyle->SetOptStat(0);
   TCanvas * c = new TCanvas("c","",20,20,500,500);
   c->Divide(1,2);

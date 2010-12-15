@@ -95,7 +95,7 @@ private:
    double               fDm23sq;           ///<
    int                  fNdof;             ///<
    int                  fNFreeFitParams;   ///<
-   int                  fNonZeroBins;      ///<
+   int                  fNFitBins;         ///<
    TH2D *               fChisqSurface;
    TString              fOption;
 };

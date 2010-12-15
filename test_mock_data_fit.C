@@ -40,7 +40,7 @@ void test_mock_data_fit()
 
   // get superk spectrum observation
   SuperkObservation * skobs = new SuperkObservation;
-  skobs->CreateMockData(*skexp, *fparm, true);
+  skobs->CreateMockData(*skexp, *fparm, false);
 
   // create fit inputs
   OscillationFitter::FitInputs * fit_inputs = 
@@ -56,5 +56,5 @@ void test_mock_data_fit()
 
   // draw results
   fitter->Draw(new TCanvas(), "StandardOscFitPlots+Minos90CL");
-//fitter->Draw(new TCanvas(), "MarginalizedChisq");
+  fitter->Draw(new TCanvas(), "MarginalizedChisq");
 }

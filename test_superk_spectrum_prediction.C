@@ -36,12 +36,6 @@ void test_superk_spectrum_prediction()
 
   // histogram booking
   TH1D * hErecoTot[ncases];
-  for(int icase = 0; icase < ncases; icase++) {
-     hErecoTot[icase] = new TH1D("","",conv::kNvErecoBins,conv::kNvErecoBinEdges);
-     hErecoTot[icase]->SetDirectory(0);
-     hErecoTot[icase]->SetLineWidth(line_width[icase]);
-     hErecoTot[icase]->SetLineStyle(line_style[icase]);
-  }
 
   // superk spectrum predictor
   SuperkExpectation skexp;
@@ -53,12 +47,11 @@ void test_superk_spectrum_prediction()
   for(int icase = 0; icase < ncases; icase++) {
     fparm->Update(t2kana::yr1numu::conv::kPhypSinsq2Theta23, input_sinsq2theta23[icase]);
     fparm->Update(t2kana::yr1numu::conv::kPhypDm23sq,        input_dm23sq[icase]);
-    for(int ibin=1; ibin <= conv::kNvErecoBins; ibin++) {
-       double Ereco = hErecoTot[icase]->GetBinCenter(ibin);
-       double Nexp  = skexp.Generate(Ereco, *fparm);
-       cout << "NumExpSK (Ereco = " << Ereco << " / total) = " << Nexp << endl;
-       hErecoTot[icase]->SetBinContent(ibin,Nexp);
-    }//ibin
+    skexp.Generate(*fparm);
+    hErecoTot[icase] = new TH1D(*skexp.CurrPredictedErecoSpectrum());
+    hErecoTot[icase]->SetDirectory(0);
+    hErecoTot[icase]->SetLineWidth(line_width[icase]);
+    hErecoTot[icase]->SetLineStyle(line_style[icase]);
   }//icase
 
   // draw

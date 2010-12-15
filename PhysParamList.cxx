@@ -131,11 +131,8 @@ PhysParamList * PhysParamList::NumuDisapFitNoSyst(void)
   PhysParamList * fparm = new PhysParamList(2);
 
   //                                     init    min   max    step  fix?   name
-  fparm->AddParam(0, kPhypSinsq2Theta23, 1.0,    0.0,  1.0,  0.02, false, "sinsq2theta23");
-  fparm->AddParam(1, kPhypDm23sq,        2.4E-3, 1E-4, 8E-3, 1E-4, false, "dmsq23"); 
-
-//  fparm->AddParam(0, kPhypSinsq2Theta23, 1.0,    0.8,  1.0,  0.005,    false, "sinsq2theta23");
-//  fparm->AddParam(1, kPhypDm23sq,        2.4E-3, 1E-3, 4E-3, 0.000075, false, "dmsq23"); 
+  fparm->AddParam(0, kPhypSinsq2Theta23, 1.0,    0.0,  1.0,  0.01, false, "sinsq2theta23");
+  fparm->AddParam(1, kPhypDm23sq,        2.4E-3, 1E-3, 6E-3, 1E-4, false, "dmsq23"); 
 
   return fparm;
 }

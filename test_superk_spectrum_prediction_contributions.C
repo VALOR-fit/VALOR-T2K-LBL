@@ -42,12 +42,31 @@ void test_superk_spectrum_prediction_contributions()
 
   // histogram booking
   TH1D * hErecoTot = new TH1D("","",conv::kNvErecoBins,conv::kNvErecoBinEdges);
-  hErecoTot->SetDirectory(0);
-  TH1D * hErecoMode[nm]; //< contribution from mode
+  TH1D * hErecoMode[nm]; //< contribution from each mode  
+
+  // superk spectrum predictor
+  SuperkExpectation skexp;
+  skexp.Read("inputs/analysis_configuration.xml");
+
+  // fit params
+  PhysParamList * fparm = PhysParamList::NumuDisapFitNoSyst();
+  fparm->Update(t2kana::yr1numu::conv::kPhypSinsq2Theta23, input_sinsq2theta23);
+  fparm->Update(t2kana::yr1numu::conv::kPhypDm23sq,        input_dm23sq);
+
+  // generate prediction
+  skexp.Generate(*fparm);
+
+  // get energy spectra
   for(int im = 0; im < nm; im++) {
-    hErecoMode[im] = new TH1D("","",conv::kNvErecoBins,conv::kNvErecoBinEdges);
-    hErecoMode[im]->SetDirectory(0);
+    hErecoMode[im] = new TH1D(*skexp.CurrPredictedErecoSpectrum(conv::kSKsFCFV1RingMuLike, modes[im]));
   }
+  hErecoTot = new TH1D(*skexp.CurrPredictedErecoSpectrum(conv::kSKsFCFV1RingMuLike));
+
+  //
+  // draw
+  //
+
+  gStyle->SetOptStat(0);
 
   hErecoTot                       -> SetLineWidth ( 2        );
   hErecoMode[conv::kSKmNuMuCC1pi] -> SetFillStyle ( 3354     );
@@ -68,35 +87,7 @@ void test_superk_spectrum_prediction_contributions()
   hErecoMode[conv::kSKmNuMuBar]   -> SetLineWidth ( 1        );
   hErecoMode[conv::kSKmNuE]       -> SetLineWidth ( 1        );
   hErecoMode[conv::kSKmNC]        -> SetLineStyle ( kDashed  );
-  
 
-  // superk spectrum predictor
-  SuperkExpectation skexp;
-  skexp.Read("inputs/analysis_configuration.xml");
-
-  // fit params
-  PhysParamList * fparm = PhysParamList::NumuDisapFitNoSyst();
-  fparm->Update(t2kana::yr1numu::conv::kPhypSinsq2Theta23, input_sinsq2theta23);
-  fparm->Update(t2kana::yr1numu::conv::kPhypDm23sq,        input_dm23sq);
-
-  // generate predictions
-  for(int im = 0; im < nm; im++) {
-    for(int ibin=1; ibin <= conv::kNvErecoBins; ibin++) {
-       double Ereco = hErecoMode[im]->GetBinCenter(ibin);
-       double Nexp  = skexp.Generate(Ereco, *fparm, conv::kSKsFCFV1RingMuLike, modes[im]);
-       cout << "NumExpSK (Ereco = " << Ereco << " / " << util::AsString(modes[im]) << ") = " << Nexp << endl;
-       hErecoMode[im]->SetBinContent(ibin,Nexp);
-    }
-  }
-  for(int ibin=1; ibin <= conv::kNvErecoBins; ibin++) {
-    double Ereco = hErecoTot->GetBinCenter(ibin);
-    double Nexp  = skexp.Generate(Ereco, *fparm);
-    cout << "NumExpSK (Ereco = " << Ereco << " / total) = " << Nexp << endl;
-    hErecoTot->SetBinContent(ibin,Nexp);
-  }
-
-  // draw
-  gStyle->SetOptStat(0);
   TCanvas * c = new TCanvas("c","",20,20,500,500);
   TLegend * legend = new TLegend(0.3, 0.7, 0.85, 0.9);
   legend->SetFillColor(0);

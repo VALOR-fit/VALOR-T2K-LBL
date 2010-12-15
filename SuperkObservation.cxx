@@ -132,6 +132,17 @@ double SuperkObservation::NumOfEvents(double Er, SuperkSample_t s) const
   return nev;
 }
 //________________________________________________________________________________________
+TH1D* SuperkObservation::ErecoSpectrum (void) const
+{
+  return fErDistrTot;
+}
+//________________________________________________________________________________________
+TH1D* SuperkObservation::ErecoSpectrum (t2kana::yr1numu::conv::SuperkSample_t s) const
+{
+  return fErDistr[s];
+}
+//________________________________________________________________________________________
+/*
 TH1D* SuperkObservation::AsTH1D(SuperkSample_t s) const
 {
   TH1D * hEreco = new TH1D("", "", kNvErecoBins,kNvErecoBinEdges);
@@ -144,12 +155,7 @@ TH1D* SuperkObservation::AsTH1D(SuperkSample_t s) const
   }
 
   return hEreco;
-}
-//________________________________________________________________________________________
-const TAxis & SuperkObservation::ErecoBinning(void) const 
-{ 
-  return *(fErDistr[0]->GetXaxis()); 
-}
+}*/
 //________________________________________________________________________________________
 bool SuperkObservation::Read(string config_file)
 {
@@ -183,6 +189,17 @@ bool SuperkObservation::Read(string config_file)
      }
   }
 
+  fErDistrTot = new TH1D("", "", kNvErecoBins,kNvErecoBinEdges);
+  for(int ibin = 1; ibin <= fErDistrTot->GetNbinsX(); ibin++) {
+    double n = 0;
+    vector<SuperkSample_t>::const_iterator iter = fSamples.begin();
+    for( ; iter != fSamples.end(); ++iter) {
+      SuperkSample_t s = *iter;
+      n += fErDistr[s]->GetBinContent(ibin);
+    }//s
+    fErDistrTot->SetBinContent(ibin,n);
+  }//ibin
+
   // Release memory
   xml->FreeDoc(xmldoc);
   delete xml;
@@ -191,18 +208,26 @@ bool SuperkObservation::Read(string config_file)
 }
 //________________________________________________________________________________________
 void SuperkObservation::CreateMockData(
-      SuperkExpectation & exp, const PhysParamList & fp, bool fluctuate)
+      SuperkExpectation & skexp, const PhysParamList & fp, bool fluctuate)
 {
   // Get observed reconstructed energy distribution
+
+  fErDistrTot                   = new TH1D("", "", kNvErecoBins,kNvErecoBinEdges);
   fErDistr[kSKsFCFV1RingMuLike] = new TH1D("", "", kNvErecoBins,kNvErecoBinEdges);
-  fErDistr[kSKsFCFV1RingMuLike]->SetDirectory(0);
+
+  fErDistrTot                   -> SetDirectory(0);
+  fErDistr[kSKsFCFV1RingMuLike] -> SetDirectory(0);
+
+  skexp.Generate(fp); //generate prediction
+
+  TH1D* h = skexp.CurrPredictedErecoSpectrum(kSKsFCFV1RingMuLike);
 
   TRandom3 rand(0);
-  for(int ibin = 1; ibin <= fErDistr[kSKsFCFV1RingMuLike]->GetNbinsX(); ibin++) {
-     double Ereco = fErDistr[kSKsFCFV1RingMuLike]->GetBinCenter(ibin);
-     double nexp  = exp.Generate(Ereco, fp);
+  for(int ibin = 1; ibin <= h->GetNbinsX(); ibin++) {
+     double nexp  = h->GetBinContent(ibin);
      double nobs  = (fluctuate) ? rand.Poisson(nexp) : nexp;
      fErDistr[kSKsFCFV1RingMuLike]->SetBinContent(ibin,nobs);
+     fErDistrTot                  ->SetBinContent(ibin,nobs);//considering 1 sample in this work
   }
 }
 //________________________________________________________________________________________
@@ -241,6 +266,7 @@ void SuperkObservation::Init(void)
   for(int is=0; is<kns; is++) {
     fErDistr[is] = 0;
   }
+  fErDistrTot = 0;
 }
 //________________________________________________________________________________________
 void SuperkObservation::CleanUp(void)
@@ -250,6 +276,7 @@ void SuperkObservation::CleanUp(void)
   for(int is=0; is<kns; is++) {
     if(fErDistr[is]) delete fErDistr[is];
   }
+  if(fErDistrTot) delete fErDistrTot;
 
   fSamples.clear();
 }

@@ -27,17 +27,11 @@ void test_superk_spectrum_prediction_twk_skeff_many()
   using namespace t2kana;
   using namespace t2kana::yr1numu;
 
-  // histogram booking
+  // oscillation params
+  double input_sinsq2theta23 = 1.;
+  double input_dm23sq        = 2.4E-3;
+
   const int N = 300;
-  TH1D * hEreco   [N];
-  for(int i = 0; i < N; i++) {
-     hEreco[i] = new TH1D("","",conv::kNvErecoBins,conv::kNvErecoBinEdges);
-     hEreco[i]->SetDirectory(0);
-  }
-  TH1D * hErecoErrPos = new TH1D("hErecoErrPos","",conv::kNvErecoBins,conv::kNvErecoBinEdges);
-  hErecoErrPos->SetDirectory(0);
-  TH1D * hErecoErrNeg = new TH1D("hErecoErrNeg","",conv::kNvErecoBins,conv::kNvErecoBinEdges);
-  hErecoErrNeg->SetDirectory(0);
 
   // superk spectrum predictor
   SuperkExpectation skexp;
@@ -45,14 +39,16 @@ void test_superk_spectrum_prediction_twk_skeff_many()
 
   // phys params
   PhysParamList * fparm = PhysParamList::NumuDisapFitNoSyst();
-  fparm->Update(t2kana::yr1numu::conv::kPhypSinsq2Theta23, 0);
-  fparm->Update(t2kana::yr1numu::conv::kPhypDm23sq,        0);
+  fparm->Update(t2kana::yr1numu::conv::kPhypSinsq2Theta23, input_sinsq2theta23);
+  fparm->Update(t2kana::yr1numu::conv::kPhypDm23sq,        input_dm23sq);
 
   TRandom3 rand(0);
 
-  // generate predictions
+  // calc spectra
   double maxNexp = -1;
+  TH1D * hEreco[N];
   for(int i = 0; i < N; i++) {
+     // tweak spectrum generation model
      double ccqe_eff_twk    = rand.Gaus(0.,1.);
      double ccnonqe_eff_twk = rand.Gaus(0.,1.);
      double nc_eff_twk      = rand.Gaus(0.,1.);
@@ -66,17 +62,22 @@ void test_superk_spectrum_prediction_twk_skeff_many()
              << "ccqe eff twk = " << ccqe_eff_twk 
              << ", ccnonqe_eff_twk = " << ccnonqe_eff_twk 
              << ", nc_eff_twk = " << nc_eff_twk << endl;
-     for(int ibin=1; ibin <= conv::kNvErecoBins; ibin++) {
-        double Ereco = hEreco[i]->GetBinCenter(ibin);
-        double Nexp  = skexp.Generate(Ereco, *fparm);
-        maxNexp = TMath::Max(maxNexp,Nexp);
-//      cout << "NumExpSK (Ereco = " << Ereco << ") = " << Nexp << endl;
-        hEreco[i]->SetBinContent(ibin,Nexp);
-     }//ibin
+     // generate predictions  
+     skexp.Generate(*fparm);  
+     // store spectrum
+     hEreco[i] = new TH1D(*skexp.CurrPredictedErecoSpectrum(conv::kSKsFCFV1RingMuLike));
+     hEreco[i]->SetDirectory(0);
+     // max entry in all tweaked spectra
+     maxNexp = TMath::Max(maxNexp, hEreco[i]->GetMaximum());
   }//i
-  // get fractional err
+
+  // get fractional errors
   double global_maxerrpos = -1;
   double global_maxerrneg = +1;
+  TH1D * hErecoErrPos = new TH1D("hErecoErrPos","",conv::kNvErecoBins,conv::kNvErecoBinEdges);
+  TH1D * hErecoErrNeg = new TH1D("hErecoErrNeg","",conv::kNvErecoBins,conv::kNvErecoBinEdges);
+  hErecoErrPos->SetDirectory(0);
+  hErecoErrNeg->SetDirectory(0);
   for(int ibin=1; ibin <= conv::kNvErecoBins; ibin++) {
     double max = -1.;
     double min = +1.;
@@ -101,7 +102,7 @@ void test_superk_spectrum_prediction_twk_skeff_many()
   c->Divide(1,2);
   gStyle->SetOptStat(0);
   c->cd(1);
-  TH1F * hframe1 = (TH1F*) c->DrawFrame(
+  TH1F * hframe1 = (TH1F*) c->GetPad(1)->DrawFrame(
      0., 0., hEreco[0]->GetXaxis()->GetXmax(), 1.2*maxNexp);
   hframe1->GetXaxis()->SetTitle("E_{reco} (GeV)");                                
   hframe1->GetYaxis()->SetTitle("Number of events");
@@ -112,7 +113,7 @@ void test_superk_spectrum_prediction_twk_skeff_many()
     hEreco[i]->Draw("same");
   }//i
   c->cd(2);
-  TH1F * hframe2 = (TH1F*) c->DrawFrame(
+  TH1F * hframe2 = (TH1F*) c->GetPad(2)->DrawFrame(
      0., 1.2*global_maxerrneg, hEreco[0]->GetXaxis()->GetXmax(), 1.2*global_maxerrpos);
   hframe2->GetXaxis()->SetTitle("E_{reco} (GeV)");                                
   hframe2->GetYaxis()->SetTitle("Fractional variation");

@@ -27,22 +27,14 @@ void test_superk_spectrum_prediction_twk_nd280eff()
   using namespace t2kana;
   using namespace t2kana::yr1numu;
 
+  // oscillation params
+  double input_sinsq2theta23 = 1.0;
+  double input_dm23sq        = 2.4E-3;
+
   bool correlated = true;
-
+  
   // n tweaks
-//  const int n = 1000;
-  const int n = 3;
-
-  // histogram booking
-  TH1D * hEreco[n];
-  for(int i = 0; i < n; i++) {
-     hEreco[i] = new TH1D("","",conv::kNvErecoBins,conv::kNvErecoBinEdges);
-     hEreco[i]->SetDirectory(0);
-  }
-  TH1D * alo = new TH1D("alo",  "spectrum err envelope: low  boundary",            conv::kNvErecoBins,conv::kNvErecoBinEdges);
-  TH1D * ahi = new TH1D("ahi",  "spectrum err envelope: high boundary",            conv::kNvErecoBins,conv::kNvErecoBinEdges);
-  TH1D * flo = new TH1D("flo",  "spectrum fractional err envelope: low  boundary", conv::kNvErecoBins,conv::kNvErecoBinEdges);
-  TH1D * fhi = new TH1D("fhi",  "spectrum fractional err envelope: high boundary", conv::kNvErecoBins,conv::kNvErecoBinEdges);
+  const int n = 1000;
 
   // superk spectrum predictor
   SuperkExpectation skexp;
@@ -50,17 +42,23 @@ void test_superk_spectrum_prediction_twk_nd280eff()
 
   // phys params
   PhysParamList * fparm = PhysParamList::NumuDisapFitNoSyst();
-  fparm->Update(t2kana::yr1numu::conv::kPhypSinsq2Theta23, 1.);
-  fparm->Update(t2kana::yr1numu::conv::kPhypDm23sq,        2.4E-3);
+  fparm->Update(t2kana::yr1numu::conv::kPhypSinsq2Theta23, input_sinsq2theta23);
+  fparm->Update(t2kana::yr1numu::conv::kPhypDm23sq,        input_dm23sq);
 
   TRandom3 rand(0);
 
+  //
   // generate predictions
+  //
+
+  TH1D * hEreco[n];
+
   for(int i = 0; i < n; i++) {
      cout << "Generating SuperK spectrum number: " << i << endl;
-
-     // use i=0 as the default (untweaked)
+ 
+     // tweak spectrum generation model
      if(i>0) {
+        // use i=0 as the default (untweaked)
         if(!correlated) {
           skexp.GetND280Inputs()->TweakEfficiency( conv::kNDmNuMuCCQE,     rand.Gaus(0,1) );
           skexp.GetND280Inputs()->TweakEfficiency( conv::kNDmNuMuCCRES,    rand.Gaus(0,1) );
@@ -91,14 +89,20 @@ void test_superk_spectrum_prediction_twk_nd280eff()
           skexp.GetND280Inputs()->TweakEfficiency(twkdial);
        }
      }
-     for(int ibin=1; ibin <= conv::kNvErecoBins; ibin++) {
-        double Ereco = hEreco[i]->GetBinCenter(ibin);
-        double Nexp  = skexp.Generate(Ereco, *fparm);
-      //cout << "NumExpSK_{" << i << "} (Ereco = " << Ereco << ") = " << Nexp << endl;
-        hEreco[i]->SetBinContent(ibin,Nexp);
-     }//ibin
+
+     // generate predictions  
+     skexp.Generate(*fparm);
+  
+     // store spectra
+     hEreco[i] = new TH1D(*skexp.CurrPredictedErecoSpectrum(conv::kSKsFCFV1RingMuLike));
+     hEreco[i]->SetDirectory(0);
   }//i
 
+  // calculate err envelopes
+  TH1D * alo = new TH1D("alo",  "spectrum err envelope: low  boundary",            conv::kNvErecoBins,conv::kNvErecoBinEdges);
+  TH1D * ahi = new TH1D("ahi",  "spectrum err envelope: high boundary",            conv::kNvErecoBins,conv::kNvErecoBinEdges);
+  TH1D * flo = new TH1D("flo",  "spectrum fractional err envelope: low  boundary", conv::kNvErecoBins,conv::kNvErecoBinEdges);
+  TH1D * fhi = new TH1D("fhi",  "spectrum fractional err envelope: high boundary", conv::kNvErecoBins,conv::kNvErecoBinEdges);
   for(int ibin=1; ibin <= conv::kNvErecoBins; ibin++) {
     double nlo =  999999;
     double nhi = -999999;
@@ -114,8 +118,9 @@ void test_superk_spectrum_prediction_twk_nd280eff()
     fhi->SetBinContent(ibin, ((def>0) ? (nhi-def)/def : 0) );
   }
 
-
+  //
   // draw
+  //
   TCanvas * c = new TCanvas("c","",20,20,500,500);
   gStyle->SetOptStat(0);
   c->Divide(1,2);
@@ -128,7 +133,7 @@ void test_superk_spectrum_prediction_twk_nd280eff()
   alo->Draw("same");
   ahi->Draw("same");
   c->cd(2);
-  TH1F * hframe = (TH1F*) c->GetPad(2)->DrawFrame(0,-0.15,conv::kErecoMax,0.15);
+  TH1F * hframe = (TH1F*) c->GetPad(2)->DrawFrame(0,-0.15,conv::kNvErecoBinEdges[conv::kNvErecoBins],0.15);
   hframe->GetXaxis()->SetTitle("E_{reco} (GeV)");
   hframe->Draw();
   flo->Draw("same");

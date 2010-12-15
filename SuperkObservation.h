@@ -55,10 +55,10 @@ public:
   double NumOfEvents (t2kana::yr1numu::conv::SuperkSample_t s = t2kana::yr1numu::conv::kSKsUndefined) const;             
   double NumOfEvents (double Er, t2kana::yr1numu::conv::SuperkSample_t s = t2kana::yr1numu::conv::kSKsUndefined) const;  
 
-  TH1D*  AsTH1D (t2kana::yr1numu::conv::SuperkSample_t s = t2kana::yr1numu::conv::kSKsUndefined) const; 
+  TH1D*  ErecoSpectrum (void) const; 
+  TH1D*  ErecoSpectrum (t2kana::yr1numu::conv::SuperkSample_t s) const; 
 
-  //          
-  const TAxis & ErecoBinning(void) const;
+///  TH1D*  AsTH1D (t2kana::yr1numu::conv::SuperkSample_t s = t2kana::yr1numu::conv::kSKsUndefined) const; 
 
   // Draw.
   // Set option to "Ereco"  to show the reconstructed Ereco distributions
@@ -71,6 +71,7 @@ private:
   void CleanUp (void);
 
   TH1D *  fErDistr[kns];  ///< Reconstructed energy spectrum for each sample
+  TH1D *  fErDistrTot;    ///< Reconstructed energy spectrum for all samples
 
   vector<t2kana::yr1numu::conv::SuperkSample_t> fSamples;  
 
