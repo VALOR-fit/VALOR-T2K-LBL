@@ -21,7 +21,7 @@
 #include <TMarker.h> 
 #include <TLegend.h> 
 #include <TString.h> 
-#include <TGAxis.h> 
+#include <TGaxis.h> 
 #include <TCanvas.h> 
 #include <TFile.h>
 
