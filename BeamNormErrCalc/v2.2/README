@@ -1,7 +1,7 @@
 ***************************************************************************************
     Beam Normalization Error Calculator
-			Version 1.0
-				2010/12/01 H.Kubo
+			Version 2.2
+				2010/12/14 H.Kubo
 ***************************************************************************************
 
 1. Initialization
@@ -60,3 +60,9 @@
 
 
 please see and try "test.cc" as a more practical example.
+
+History:
+   2010/12/01 v1.0 : first release
+   2010/12/09 v2.0 : error tables are updated with jnubeam 10d-tune v.2 MC.
+   2010/12/11 v2.1 : beam Off-axis angle error 1.0mrad -> 0.4mrad
+   2010/12/14 v2.2 : beam Off-axis angle error 1.0mrad -> 0.44mrad

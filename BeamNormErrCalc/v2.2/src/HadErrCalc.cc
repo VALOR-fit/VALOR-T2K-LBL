@@ -1,20 +1,28 @@
 #include <iostream>
 #include <cmath>
+#include <cstdlib>
 #include "HadErrCalc.h"
 
-HadErrCalc::HadErrCalc(const char * input_dir){
+HadErrCalc::HadErrCalc(const char * input_dir, bool ingrid){
   
   // read  p-theta error histograms
   TFile *f[3];
   
   TString dirname = input_dir;
+  if(!ingrid){
+    f[0] = TFile::Open(dirname + "/"+DEF_NUMU_INP);
+    f[1] = TFile::Open(dirname + "/"+DEF_NUMUB_INP);
+    f[2] = TFile::Open(dirname + "/"+DEF_NUE_INP);
+  }
+  else{
+    f[0] = TFile::Open(dirname + "/"+DEF_NUMU_INP_ING);
+    f[1] = TFile::Open(dirname + "/"+DEF_NUMUB_INP_ING);
+    f[2] = TFile::Open(dirname + "/"+DEF_NUE_INP_ING);
+  }
 
-  f[0] = TFile::Open(dirname + "/"+DEF_NUMU_INP);
-  f[1] = TFile::Open(dirname + "/"+DEF_NUMUB_INP);
-  f[2] = TFile::Open(dirname + "/"+DEF_NUE_INP);
 
   if(!f[0]){
-    std::cout << DEF_NUMU_INP << " not found" << std::endl;
+    std::cout << "error database not found" << std::endl;
     std::cout << "please set correct input directory !! " << std::endl;
     exit(1);
   }
@@ -69,23 +77,29 @@ HadErrCalc::HadErrCalc(const char * input_dir){
   }
   
   std::cout << "reading other systematic sources..." << std::endl;
-  nsys = 0;
-  TFile *f_sec = TFile::Open(dirname+"/flux_xsec_1sigma.root");
-  NewSys("had_xsec",f_sec,"xsec_1sigma");
-  TFile *f_hcur = TFile::Open(dirname+"/horn_5kA_unc.root");
-  NewSys("horn_current",f_hcur,"horn_5ka_unc");
   
-  TFile *f_hali = TFile::Open(dirname+"/horn_misalign_unc.root");
-  TFile *f_tali = TFile::Open(dirname+"/target_misalign_unc.root");
-  NewSys("horn_align",f_hali,"horn_misalign_unc");
-  NewSys("target_align",f_tali,"target_misalign_unc");
-
-  TFile *f_oa = TFile::Open(dirname+"/beam_1mrad_unc.root");
-  NewSys("off-axis_angle",f_oa,"beam_1mrad_unc");  
-
-  TFile *f_pb = TFile::Open(dirname+"/pbeam_unc.root");
-  NewSys("proton beam",f_pb,"pbeam_unc");  
-
+  if(!ingrid){
+    nsys = 0;
+    TFile *f_sec = TFile::Open(dirname+"/flux_xsec_1sigma.root");
+    NewSys("had_xsec",f_sec,"xsec_1sigma");
+    TFile *f_hcur = TFile::Open(dirname+"/horn_5kA_unc.root");
+    NewSys("horn_current",f_hcur,"horn_5ka_unc");
+    
+    TFile *f_hali = TFile::Open(dirname+"/horn_misalign_unc.root");
+    TFile *f_tali = TFile::Open(dirname+"/target_misalign_unc.root");
+    NewSys("horn_align",f_hali,"horn_misalign_unc");
+    NewSys("target_align",f_tali,"target_misalign_unc");
+    
+    // 2010/12/11, changed OA angle error size
+    //  TFile *f_oa = TFile::Open(dirname+"/beam_1mrad_unc.root");
+    //  NewSys("off-axis_angle",f_oa,"beam_1mrad_unc");  
+    TFile *f_oa = TFile::Open(dirname+"/beam_0.44mrad_unc.root");
+    NewSys("off-axis_angle",f_oa,"beam_0.44mrad_unc");  
+    
+    TFile *f_pb = TFile::Open(dirname+"/pbeam_unc.root");
+    NewSys("proton beam",f_pb,"pbeam_unc");  
+  }
+  
   std::cout << "initializing..." << std::endl;
   Init();
 

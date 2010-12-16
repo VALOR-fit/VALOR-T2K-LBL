@@ -2,6 +2,10 @@
 #define DEF_NUMUB_INP "delta_flux_nd5_numub.root"
 #define DEF_NUE_INP "delta_flux_nd5_nue.root"
 
+#define DEF_NUMU_INP_ING "delta_flux_ing13_numu.root"
+#define DEF_NUMUB_INP_ING "delta_flux_ing13_numub.root"
+#define DEF_NUE_INP_ING "delta_flux_ing13_nue.root"
+
 #define MAX_NSYS 10 // maximum # of sys. error terms
 #define PBIN 816   // Pion phase space # of bins
 #define KBIN 700   // Kaon phase space # of bins
@@ -51,16 +55,16 @@ class SysErr{
     std::cout <<"\n-------------"<< fName << " error ---------------" << std::endl;
     std::cout << "[befor cancellation]" << std::endl;
     std::cout << "\t\ttotal\tnumu\tnumub\tnue" << std::endl;
-    printf("ND: \t\t%.2f\%\n",syserr_nnd * 100);
-    printf("SK 1Rmu: \t%.2f\%\t%.2f\%\t%.2f\%\t%.2f\%\n",sumsyserr_nsk[0]*100,syserr_nsk[0][0]*100,syserr_nsk[0][1]*100,syserr_nsk[0][2]*100);
-    printf("SK NueSig: \t%.2f\%\n",syserr_nsk[1][0]*100);
-    printf("SK NueBG: \t%.2f\%\t%.2f\%\t%.2f\%\t%.2f\%\n",sumsyserr_nsk[2]*100,syserr_nsk[2][0]*100,syserr_nsk[2][1]*100,syserr_nsk[2][2]*100);
+    printf("ND: \t\t%.2f%%\n",syserr_nnd * 100);
+    printf("SK 1Rmu: \t%.2f%%\t%.2f%%\t%.2f%%\t%.2f%%\n",sumsyserr_nsk[0]*100,syserr_nsk[0][0]*100,syserr_nsk[0][1]*100,syserr_nsk[0][2]*100);
+    printf("SK NueSig: \t%.2f%%\n",syserr_nsk[1][0]*100);
+    printf("SK NueBG: \t%.2f%%\t%.2f%%\t%.2f%%\t%.2f%%\n",sumsyserr_nsk[2]*100,syserr_nsk[2][0]*100,syserr_nsk[2][1]*100,syserr_nsk[2][2]*100);
     std::cout << "[after cancellation]" << std::endl;
     std::cout << "\t\ttotal\tnumu\tnumub\tnue" << std::endl;
-    printf("1Rmu/ND: \t%.2f\%\t%.2f\%\t%.2f\%\t%.2f\%\n",sumsyserr_nsknd[0]*100,syserr_nsknd[0][0]*100,syserr_nsknd[0][1]*100,syserr_nsknd[0][2]*100);
-    printf("NueSig/ND: \t%.2f\%\n",syserr_nsknd[1][0]*100);
-    printf("NueBG/ND: \t%.2f\%\t%.2f\%\t%.2f\%\t%.2f\%\n",sumsyserr_nsknd[2]*100,syserr_nsknd[2][0]*100,syserr_nsknd[2][1]*100,syserr_nsknd[2][2]*100);
-    printf("NueTot/ND: \t%.2f\%\n",sumsyserr_nsknd[3]*100);
+    printf("1Rmu/ND: \t%.2f%%\t%.2f%%\t%.2f%%\t%.2f%%\n",sumsyserr_nsknd[0]*100,syserr_nsknd[0][0]*100,syserr_nsknd[0][1]*100,syserr_nsknd[0][2]*100);
+    printf("NueSig/ND: \t%.2f%%\n",syserr_nsknd[1][0]*100);
+    printf("NueBG/ND: \t%.2f%%\t%.2f%%\t%.2f%%\t%.2f%%\n",sumsyserr_nsknd[2]*100,syserr_nsknd[2][0]*100,syserr_nsknd[2][1]*100,syserr_nsknd[2][2]*100);
+    printf("NueTot/ND: \t%.2f%%\n",sumsyserr_nsknd[3]*100);
   };
 };
 
@@ -145,7 +149,7 @@ class HadErrCalc{
  public:
   
   // prototypes
-  HadErrCalc(const char *input_dir = "../input/");
+  HadErrCalc(const char *input_dir = "../input/", bool ingrid = 0);
   void Calc();
   void SetNueSigHist(TH1D *h_nue_sig);
   void SetNueBGHist(TH1D *h_nue_bg_numu, TH1D *h_nue_bg_numub, TH1D *h_nue_bg_nue);
@@ -175,6 +179,8 @@ class HadErrCalc{
   TH2D * GetContHist(int det, int pik, int mode = 0){
     TString s_pik[2] = {"pi","k"};
     TString s_mode[4] = {"1Rmu", "NueSig", "NueBG", "NueAll"};
+    TString s_x[2] = {"P_{#pi} [GeV/c]", "X_{F}"};
+    TString s_y[2] = {"#theta [mrad]", "P_{T} [GeV/c]"};
     int nbins[2] = {816, 700};
     TH2D *h;
     if(det == 1){//ND
@@ -211,10 +217,16 @@ class HadErrCalc{
 	h->SetTitle(name);
       }
       if(!pik)
-	for(int i=0;i<nbins[pik];i++) h->SetBinContent(i,err_pi_nsknd_all[i][mode]);
+	for(int i=0;i<nbins[pik];i++) h->SetBinContent(i,err_pi_nsk_all[i][mode] - err_pi_nnd[i]);
       else
-	for(int i=0;i<nbins[pik];i++) h->SetBinContent(i,err_k_nsknd_all[i][mode]);
+	for(int i=0;i<nbins[pik];i++) h->SetBinContent(i,err_k_nsk_all[i][mode] - err_k_nnd[i]);
     }
+
+    h->SetLabelSize(0.06,"XYZ");
+    h->SetNdivisions(505,"XYZ");
+    h->GetXaxis()->SetTitle(s_x[pik]);
+    h->GetYaxis()->SetTitle(s_y[pik]);
+    h->SetTitleSize(0.06 ,"XYZ");
     return h;
   };
     
@@ -228,41 +240,41 @@ class HadErrCalc{
     std::cout <<"\n---------- Pion production error ----------" << std::endl;
     std::cout << "[befor cancellation]" << std::endl;
     std::cout << "\t\ttotal\tnumu\tnumub\tnue" << std::endl;
-    printf("ND: \t\t%.2f\% \n",haderr_pi_nnd * 100);
-    printf("SK 1Rmu: \t%.2f\%\t%.2f\%\t%.2f\%\t%.2f\%\n",sumhaderr_pi_nsk[0]*100,haderr_pi_nsk[0][0]*100,haderr_pi_nsk[0][1]*100,haderr_pi_nsk[0][2]*100);
-    printf("SK NueSig: \t%.2f\%\n",haderr_pi_nsk[1][0]*100);
-    printf("SK NueBG: \t%.2f\%\t%.2f\%\t%.2f\%\t%.2f\%\n",sumhaderr_pi_nsk[2]*100,haderr_pi_nsk[2][0]*100,haderr_pi_nsk[2][1]*100,haderr_pi_nsk[2][2]*100);
+    printf("ND: \t\t%.2f%% \n",haderr_pi_nnd * 100);
+    printf("SK 1Rmu: \t%.2f%%\t%.2f%%\t%.2f%%\t%.2f%%\n",sumhaderr_pi_nsk[0]*100,haderr_pi_nsk[0][0]*100,haderr_pi_nsk[0][1]*100,haderr_pi_nsk[0][2]*100);
+    printf("SK NueSig: \t%.2f%%\n",haderr_pi_nsk[1][0]*100);
+    printf("SK NueBG: \t%.2f%%\t%.2f%%\t%.2f%%\t%.2f%%\n",sumhaderr_pi_nsk[2]*100,haderr_pi_nsk[2][0]*100,haderr_pi_nsk[2][1]*100,haderr_pi_nsk[2][2]*100);
     std::cout << "[after cancellation]" << std::endl;
     std::cout << "\t\ttotal\tnumu\tnumub\tnue" << std::endl;
-    printf("1Rmu/ND: \t%.2f\%\t%.2f\%\t%.2f\%\t%.2f\%\n",sumhaderr_pi_nsknd[0]*100,haderr_pi_nsknd[0][0]*100,haderr_pi_nsknd[0][1]*100,haderr_pi_nsknd[0][2]*100);
-    printf("NueSig/ND: \t%.2f\%\n",haderr_pi_nsknd[1][0]*100);
-    printf("NueBG/ND: \t%.2f\%\t%.2f\%\t%.2f\%\t%.2f\%\n",sumhaderr_pi_nsknd[2]*100,haderr_pi_nsknd[2][0]*100,haderr_pi_nsknd[2][1]*100,haderr_pi_nsknd[2][2]*100);
-    printf("NueTot/ND: \t%.2f\%\n",sumhaderr_pi_nsknd[3]*100);
+    printf("1Rmu/ND: \t%.2f%%\t%.2f%%\t%.2f%%\t%.2f%%\n",sumhaderr_pi_nsknd[0]*100,haderr_pi_nsknd[0][0]*100,haderr_pi_nsknd[0][1]*100,haderr_pi_nsknd[0][2]*100);
+    printf("NueSig/ND: \t%.2f%%\n",haderr_pi_nsknd[1][0]*100);
+    printf("NueBG/ND: \t%.2f%%\t%.2f%%\t%.2f%%\t%.2f%%\n",sumhaderr_pi_nsknd[2]*100,haderr_pi_nsknd[2][0]*100,haderr_pi_nsknd[2][1]*100,haderr_pi_nsknd[2][2]*100);
+    printf("NueTot/ND: \t%.2f%%\n",sumhaderr_pi_nsknd[3]*100);
     
     std::cout <<"\n---------- Kaon production error ----------" << std::endl;
     std::cout << "[befor cancellation]" << std::endl;
     std::cout << "\t\ttotal\tnumu\tnumub\tnue" << std::endl;
-    printf("ND: \t\t%.2f\% \n",haderr_k_nnd * 100);
-    printf("SK 1Rmu: \t%.2f\%\t%.2f\%\t%.2f\%\t%.2f\%\n",sumhaderr_k_nsk[0]*100,haderr_k_nsk[0][0]*100,haderr_k_nsk[0][1]*100,haderr_k_nsk[0][2]*100);
-    printf("SK NueSig: \t%.2f\%\n",haderr_k_nsk[1][0]*100);
-    printf("SK NueBG: \t%.2f\%\t%.2f\%\t%.2f\%\t%.2f\%\n",sumhaderr_k_nsk[2]*100,haderr_k_nsk[2][0]*100,haderr_k_nsk[2][1]*100,haderr_k_nsk[2][2]*100);
+    printf("ND: \t\t%.2f%% \n",haderr_k_nnd * 100);
+    printf("SK 1Rmu: \t%.2f%%\t%.2f%%\t%.2f%%\t%.2f%%\n",sumhaderr_k_nsk[0]*100,haderr_k_nsk[0][0]*100,haderr_k_nsk[0][1]*100,haderr_k_nsk[0][2]*100);
+    printf("SK NueSig: \t%.2f%%\n",haderr_k_nsk[1][0]*100);
+    printf("SK NueBG: \t%.2f%%\t%.2f%%\t%.2f%%\t%.2f%%\n",sumhaderr_k_nsk[2]*100,haderr_k_nsk[2][0]*100,haderr_k_nsk[2][1]*100,haderr_k_nsk[2][2]*100);
     std::cout << "[after cancellation]" << std::endl;
     std::cout << "\t\ttotal\tnumu\tnumub\tnue" << std::endl;
-    printf("1Rmu/ND: \t%.2f\%\t%.2f\%\t%.2f\%\t%.2f\%\n",sumhaderr_k_nsknd[0]*100,haderr_k_nsknd[0][0]*100,haderr_k_nsknd[0][1]*100,haderr_k_nsknd[0][2]*100);
-    printf("NueSig/ND: \t%.2f\%\n",haderr_k_nsknd[1][0]*100);
-    printf("NueBG/ND: \t%.2f\%\t%.2f\%\t%.2f\%\t%.2f\%\n",sumhaderr_k_nsknd[2]*100,haderr_k_nsknd[2][0]*100,haderr_k_nsknd[2][1]*100,haderr_k_nsknd[2][2]*100);
-    printf("NueTot/ND: \t%.2f\%\n",sumhaderr_k_nsknd[3]*100);
+    printf("1Rmu/ND: \t%.2f%%\t%.2f%%\t%.2f%%\t%.2f%%\n",sumhaderr_k_nsknd[0]*100,haderr_k_nsknd[0][0]*100,haderr_k_nsknd[0][1]*100,haderr_k_nsknd[0][2]*100);
+    printf("NueSig/ND: \t%.2f%%\n",haderr_k_nsknd[1][0]*100);
+    printf("NueBG/ND: \t%.2f%%\t%.2f%%\t%.2f%%\t%.2f%%\n",sumhaderr_k_nsknd[2]*100,haderr_k_nsknd[2][0]*100,haderr_k_nsknd[2][1]*100,haderr_k_nsknd[2][2]*100);
+    printf("NueTot/ND: \t%.2f%%\n",sumhaderr_k_nsknd[3]*100);
   };
 
   void ErrorComponents(){
     std::cout << "\n------------------- Error components --------------------------------------" << std::endl;
     std::cout << "\t\t1Rmu/ND  \tNueSig/ND\tNueBG/ND\tNueTot/ND" << std::endl;
-    printf("Total \t\t %.2f\%\t\t %.2f\%\t\t %.2f\%\t\t %.2f\%\n",ggtoterr_nsknd[0]*100, ggtoterr_nsknd[1]*100, ggtoterr_nsknd[2]*100, ggtoterr_nsknd[3]*100);
+    printf("Total \t\t %.2f%%\t\t %.2f%%\t\t %.2f%%\t\t %.2f%%\n",ggtoterr_nsknd[0]*100, ggtoterr_nsknd[1]*100, ggtoterr_nsknd[2]*100, ggtoterr_nsknd[3]*100);
     std::cout << "---------------------------------------------------------------------------" << std::endl;
-    printf("Pion Prod.\t %.2f\%\t\t %.2f\%\t\t %.2f\%\t\t %.2f\%\n",sumhaderr_pi_nsknd[0]*100, sumhaderr_pi_nsknd[1]*100, sumhaderr_pi_nsknd[2]*100, sumhaderr_pi_nsknd[3]*100);
-    printf("Kaon Prod.\t %.2f\%\t\t %.2f\%\t\t %.2f\%\t\t %.2f\%\n",sumhaderr_k_nsknd[0]*100, sumhaderr_k_nsknd[1]*100, sumhaderr_k_nsknd[2]*100, sumhaderr_k_nsknd[3]*100);
+    printf("Pion Prod.\t %.2f%%\t\t %.2f%%\t\t %.2f%%\t\t %.2f%%\n",sumhaderr_pi_nsknd[0]*100, sumhaderr_pi_nsknd[1]*100, sumhaderr_pi_nsknd[2]*100, sumhaderr_pi_nsknd[3]*100);
+    printf("Kaon Prod.\t %.2f%%\t\t %.2f%%\t\t %.2f%%\t\t %.2f%%\n",sumhaderr_k_nsknd[0]*100, sumhaderr_k_nsknd[1]*100, sumhaderr_k_nsknd[2]*100, sumhaderr_k_nsknd[3]*100);
     for(int i=0;i<nsys;i++){
-      printf("%s\t %.2f\%\t\t %.2f\%\t\t %.2f\%\t\t %.2f\%\n",Sys[i].GetName(),Sys[i].sumsyserr_nsknd[0]*100, Sys[i].sumsyserr_nsknd[1]*100, Sys[i].sumsyserr_nsknd[2]*100, Sys[i].sumsyserr_nsknd[3]*100);
+      printf("%s\t %.2f%%\t\t %.2f%%\t\t %.2f%%\t\t %.2f%%\n",Sys[i].GetName(),TMath::Abs(Sys[i].sumsyserr_nsknd[0]*100), TMath::Abs(Sys[i].sumsyserr_nsknd[1]*100), TMath::Abs(Sys[i].sumsyserr_nsknd[2]*100), TMath::Abs(Sys[i].sumsyserr_nsknd[3]*100));
     }
   };
   
