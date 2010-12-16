@@ -10,7 +10,7 @@
 
 void test_analysis_inputs()
 {
-  TString opt = "nd280";
+  TString opt = "SuperK";
 
   gSystem->Load("libGpad");  
   gSystem->Load("libPhysics");  
@@ -48,8 +48,9 @@ void test_analysis_inputs()
   }//Flux
 
   if(opt.Contains("SuperK")) {
-    skexp->GetSuperkInputs()->Draw(new TCanvas(), "etrue_spectra");
+  //skexp->GetSuperkInputs()->Draw(new TCanvas(), "etrue_spectra");
     skexp->GetSuperkInputs()->Draw(new TCanvas(), "1RingMuLike/ErecoEtrueTemplates");
+    skexp->GetSuperkInputs()->Draw(new TCanvas(), "1RingMuLike/EtrueSpectra");
   }//SuperK
 
   if(opt.Contains("nd280")) {

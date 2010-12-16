@@ -103,9 +103,11 @@ public:
       double NumOfEvents      (t2kana::yr1numu::conv::ND280Mode_t mode, int bin, bool nominal=false) const;
       double NumOfEvents      (t2kana::yr1numu::conv::ND280Mode_t mode, double Etrue, bool nominal=false) const;
       double EfficiencyRelErr (double Et, t2kana::yr1numu::conv::ND280Mode_t mode, int sign) const; ///< relative uncertainty on efficiency
-      TH1D*  CurrNuMuEtrue    (void); ///< current (allowing for applied weights) Etrue distribution for numu
-      TH1D*  CurrNuMuBarEtrue (void); ///<      -//-  for numubar
-      TH1D*  CurrNuEEtrue     (void); ///<      -//-  for nue
+
+      void   UpdateEtrueSpectra (void);
+      TH1D*  CurrNuMuEtrue      (void) { return fNuMuEt;    } ///< current (allowing for applied weights) Etrue distribution for numu
+      TH1D*  CurrNuMuBarEtrue   (void) { return fNuMuBarEt; } ///<      -//-  for numubar
+      TH1D*  CurrNuEEtrue       (void) { return fNuEEt;     } ///<      -//-  for nue
 
       // Draw inputs:
       // "Saclay/EtrueSpectrum/NuMu/All"
@@ -168,22 +170,28 @@ public:
      ~SuperkInputs();
 
       // Get information needed from SK for predicting the SK spectrum
+
+      void    UseOscillationParams(double sinsq2theta23, double dm23sq) { fCurrSinsq2Theta23 = sinsq2theta23; fCurrDm23sq = dm23sq; }
+
       double  AnalyzedSamplePOT   (void) const;   
       TTree * MCTree              (t2kana::yr1numu::conv::SuperkSample_t s, t2kana::yr1numu::conv::SuperkMode_t m);
       double  MCPOT               (t2kana::yr1numu::conv::SuperkSample_t s, t2kana::yr1numu::conv::SuperkMode_t m);
-      double  NumOfEvents         (double Ereco, t2kana::yr1numu::conv::SuperkSample_t s, t2kana::yr1numu::conv::SuperkMode_t m, double sinsq2theta23, double dmsq23, bool ignore_energy_scale_twk=false);
-      double  NumOfEvents_Etrue   (double Etrue, t2kana::yr1numu::conv::SuperkSample_t s, t2kana::yr1numu::conv::SuperkMode_t m, double sinsq2theta23, double dmsq23);
-      double  EfficiencyRelErr    (t2kana::yr1numu::conv::SuperkSample_t s, t2kana::yr1numu::conv::SuperkMode_t m) const; ///< rel err on efficiency
-      double  EnergyScaleRelErr   (void) const; ///< energy scale err
-      double  EnergyScale         (void) const; ///< energy scale 
-      void    UpdateErecoSpectra  (double sinsq2theta23, double dmsq23);
+      double  NumOfEvents_Ereco   (double Ereco, t2kana::yr1numu::conv::SuperkSample_t s, t2kana::yr1numu::conv::SuperkMode_t m, bool ignore_energy_scale_twk=false);
+      double  NumOfEvents_Etrue   (double Etrue, t2kana::yr1numu::conv::SuperkSample_t s, t2kana::yr1numu::conv::SuperkMode_t m);
+
+      void    UpdateErecoSpectra  (void);
       TH1D*   CurrErecoSpectrum   (void) const { return fMCErecoSpectrumGrandTot; }
       TH1D*   CurrErecoSpectrum   (t2kana::yr1numu::conv::SuperkSample_t s) const { return fMCErecoSpectrumTot[s]; }
       TH1D*   CurrErecoSpectrum   (t2kana::yr1numu::conv::SuperkSample_t s, t2kana::yr1numu::conv::SuperkMode_t m) const { return fMCErecoSpectrum[s][m]; }
-      void    UpdateEtrueSpectra  (double sinsq2theta23, double dmsq23);
+
+      void    UpdateEtrueSpectra  (void);
       TH1D*   Curr1RmuNuMuEtrue   (void) const { return f1RmNuMuEt;    } ///< current (allowing for applied weights) Etrue distribution for numu
       TH1D*   Curr1RmuNuMuBarEtrue(void) const { return f1RmNuMuBarEt; } ///<      -//-  for numubar
       TH1D*   Curr1RmuNuEEtrue    (void) const { return f1RmNuEEt;     } ///<      -//-  for nue
+
+      double  EfficiencyRelErr    (t2kana::yr1numu::conv::SuperkSample_t s, t2kana::yr1numu::conv::SuperkMode_t m) const; ///< rel err on efficiency
+      double  EnergyScaleRelErr   (void) const; ///< energy scale err
+      double  EnergyScale         (void) const; ///< energy scale 
 
       // Draw inputs:
       // ...
@@ -202,12 +210,15 @@ public:
 
     private:
 
-      void Init          (void);
-      void CleanUp       (void);
-      void FillHistogram (t2kana::yr1numu::conv::SuperkSample_t s, t2kana::yr1numu::conv::SuperkMode_t m);
+      void Init           (void);
+      void CleanUp        (void);
+      void CreateTemplate (t2kana::yr1numu::conv::SuperkSample_t s, t2kana::yr1numu::conv::SuperkMode_t m);
 
       double NumOfEventsReadFromTree(double Ereco, double ErecoBinSz, 
-          t2kana::yr1numu::conv::SuperkSample_t s, t2kana::yr1numu::conv::SuperkMode_t m, double sinsq2theta23, double dmsq23);
+          t2kana::yr1numu::conv::SuperkSample_t s, t2kana::yr1numu::conv::SuperkMode_t m);
+
+      double  fCurrSinsq2Theta23;
+      double  fCurrDm23sq;
 
       double  fPOT;                       ///< Number of POT
       double  fEnergyScaleRelErr;         ///< Energy scale relative error
