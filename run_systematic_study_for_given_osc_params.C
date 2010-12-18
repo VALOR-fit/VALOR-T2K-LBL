@@ -1,6 +1,6 @@
 //
 // ------------------------------------------------------------------------------------------------
-// Run numu disappearance systematic study
+// Run numu disappearance systematic study for given oscillation parameters
 //
 // The input (systematic) string can be any of:
 // 	- nd280_eff
@@ -22,7 +22,7 @@
 
 #include "Conventions.h"
 
-void run_systematic_study(string systematic, int run=0)
+void run_systematic_study_for_given_osc_params(string systematic, int run=0)
 {
   gSystem->Load("libGpad");  
   gSystem->Load("libPhysics");  
