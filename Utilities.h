@@ -47,8 +47,10 @@ namespace util {
   double DeltaChisquare   (t2kana::yr1numu::conv::ConfLevel_t cl, int nfitparams);
   double ChisqGauss       (double ndata, double nmc);
   double ChisqPoisson     (double ndata, double nmc);
-  double NuMuSurvProb2D   (double sinsq2theta, double dmsq, double Et);
-  double NuMuSurvProb2D   (double sinsq2theta, double dmsq, double Et, t2kana::yr1numu::conv::SuperkMode_t m);
+  double NuMuSurvProbOsc2D(double sinsq2theta, double dmsq, double Et);
+  double NuMuSurvProbOsc2D(double sinsq2theta, double dmsq, double Et, t2kana::yr1numu::conv::SuperkMode_t m);
+  double NuMuSurvProbDecay(double sinsq2theta, double alpha, double Et);
+  double NuMuSurvProbDecay(double sinsq2theta, double alpha, double Et, t2kana::yr1numu::conv::SuperkMode_t m);
 
   // Cholesky decomposition
 

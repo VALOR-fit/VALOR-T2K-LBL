@@ -89,7 +89,7 @@ public:
 
    // Using the "Named Constructor" C++ idiom for fast creation of typical parameter lists.
    static PhysParamList * NumuDisapFitNoSyst(void);
-   static PhysParamList * NumuDisapFitFloatNormNoSyst(void);
+   static PhysParamList * NumuDecayFitNoSyst(void);
 
 private:
 

@@ -33,13 +33,13 @@
 
   // get superk spectrum observation
   SuperkObservation * skobs = new SuperkObservation;
-  skobs->Read("inputs/analysis_configuration.xml");
+  skobs->Read("inputs/data.xml",0);
 
   // create fit inputs
   OscillationFitter::FitInputs * fit_inputs = new OscillationFitter::FitInputs(skobs,skexp,fparm);
 
   // get fitter
-//  OscillationFitter * fitter = new OscillationFitter(fit_inputs,"minuit");
+  //OscillationFitter * fitter = new OscillationFitter(fit_inputs,"minuit");
   OscillationFitter * fitter = new OscillationFitter(fit_inputs,"custom");
 
   // do the fit
@@ -48,4 +48,5 @@
   // see inputs
   fitter->Draw(new TCanvas(), "StandardOscFitPlots");
   fitter->Draw(new TCanvas(), "ChisqSurface");
+  fitter->Draw(new TCanvas(), "MarginalizedChisq");
 }

@@ -8,11 +8,13 @@
 
 #include <cassert>
 #include <cstdlib>
+#include <iostream>
 #include <iomanip>
 
 #include "year1_numu_osc_analysis/PhysParamList.h"
 #include "year1_numu_osc_analysis/Utilities.h"
 
+using std::cout;
 using std::cerr;
 using std::endl;
 using std::setw;
@@ -76,8 +78,11 @@ void PhysParamList::SetTo(TVirtualFitter * fitter)
 {
   if(!fitter) return;
 
-  for(int iparam = 0; iparam < this->Size(); iparam++) {
-    PhysParamId_t p = (PhysParamId_t) iparam;
+  map<t2kana::yr1numu::conv::PhysParamId_t, int>::const_iterator iter = fIdMap.begin();
+  for ( ; iter != fIdMap.end(); ++iter) {
+    PhysParamId_t p = iter->first;
+    int iparam = iter->second;
+    cout << "Setting param " << iparam << " -> "  << util::AsString(p) << endl;
     fitter->SetParameter(
       iparam,
       this->Name(p).c_str(),
@@ -137,14 +142,13 @@ PhysParamList * PhysParamList::NumuDisapFitNoSyst(void)
   return fparm;
 }
 //________________________________________________________________________________________
-PhysParamList * PhysParamList::NumuDisapFitFloatNormNoSyst(void)
+PhysParamList * PhysParamList::NumuDecayFitNoSyst(void)
 {
-  PhysParamList * fparm = new PhysParamList(3);
+  PhysParamList * fparm = new PhysParamList(2);
 
-  //                                     init   min   max    step  fix?   name
-  fparm->AddParam(0, kPhypSinsq2Theta23, 1.0,    0.0,  1.0,  0.02, false, "sinsq2theta23");
-  fparm->AddParam(1, kPhypDm23sq,        2.4E-3, 1E-4, 1E-2, 1E-4, false, "dmsq23");
-  fparm->AddParam(2, kPhypNorm,          1,      0.5,  1.5,  0.1,  false, "norm");
+  //                                     init    min    max    step   fix?   name
+  fparm->AddParam(0, kPhypSinsq2Theta23, 1.0,    0.0,   1.0,  0.02,   false, "sinsq2theta23");
+  fparm->AddParam(1, kPhypAlphaDecay,    0.01,   0.001, 0.02, 0.001 , false, "alpha"); 
 
   return fparm;
 }

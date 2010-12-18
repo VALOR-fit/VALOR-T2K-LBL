@@ -12,6 +12,8 @@
 #pragma link C++ class t2kana::yr1numu::PhysParamList;
 #pragma link C++ class t2kana::yr1numu::OscillationFitter;
 #pragma link C++ class t2kana::yr1numu::OscillationFitter::FitInputs;
+#pragma link C++ class t2kana::yr1numu::DecayFitter;
+#pragma link C++ class t2kana::yr1numu::DecayFitter::FitInputs;
 #pragma link C++ class t2kana::yr1numu::SuperkObservation;
 #pragma link C++ class t2kana::yr1numu::SuperkExpectation;
 #pragma link C++ class t2kana::yr1numu::SuperkExpectation::ND280Inputs;

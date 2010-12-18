@@ -46,7 +46,7 @@ public:
  ~SuperkObservation();
 
   // Read data
-  bool Read(string config_file);
+  bool Read(string config_file, int data_set_id=0);
 
   // Create mock data
   void CreateMockData(SuperkExpectation & exp, const PhysParamList & fp, bool fluctuate=true);

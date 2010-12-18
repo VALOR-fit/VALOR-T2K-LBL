@@ -12,6 +12,7 @@ Important revisions after version 1.0.0 :
 #include <cassert>
 #include <cstdlib>
 #include <iostream>
+#include <sstream>
 
 #include <TString.h>
 #include <TAxis.h>
@@ -24,6 +25,7 @@ Important revisions after version 1.0.0 :
 #include "year1_numu_osc_analysis/SuperkObservation.h"
 #include "year1_numu_osc_analysis/Utilities.h"
 
+using std::ostringstream;
 using std::cout;
 using std::cerr;
 using std::endl;
@@ -142,22 +144,7 @@ TH1D* SuperkObservation::ErecoSpectrum (t2kana::yr1numu::conv::SuperkSample_t s)
   return fErDistr[s];
 }
 //________________________________________________________________________________________
-/*
-TH1D* SuperkObservation::AsTH1D(SuperkSample_t s) const
-{
-  TH1D * hEreco = new TH1D("", "", kNvErecoBins,kNvErecoBinEdges);
-  hEreco->SetDirectory(0);
-
-  for(int bin=1; bin <= hEreco->GetNbinsX(); bin++) {
-    double Ereco = hEreco->GetBinCenter(bin);
-    double nev   = this->NumOfEvents(Ereco,s);
-    hEreco->SetBinContent(bin,nev);
-  }
-
-  return hEreco;
-}*/
-//________________________________________________________________________________________
-bool SuperkObservation::Read(string config_file)
+bool SuperkObservation::Read(string config_file, int data_set_id)
 {
   cout << "Obs >> " << "Reading config file: " << config_file << endl;
  
@@ -171,17 +158,20 @@ bool SuperkObservation::Read(string config_file)
   }
   XMLNodePointer_t root_node = xml->DocGetRootElement(xmldoc);
 
-  if(util::NodeExists(xml,root_node,"superk/observation/one_mu_ring/ereco")) {
-     // Get observed recosntructed energy distribution
-     fErDistr[kSKsFCFV1RingMuLike] = 
-        util::XML2TH1D(xml,root_node,"superk/observation/one_mu_ring/ereco");
-  }
-  else
-  if(util::NodeExists(xml,root_node,"superk/observation/one_mu_ring/ereco_values")) {
+//  if(util::NodeExists(xml,root_node,"superk/observation/one_mu_ring/ereco")) {
+//     // Get observed recosntructed energy distribution
+//     fErDistr[kSKsFCFV1RingMuLike] = 
+//        util::XML2TH1D(xml,root_node,"superk/observation/one_mu_ring/ereco");
+//  }
+//  else
+
+  ostringstream datanode;
+  datanode << "superk/observation/one_mu_ring/ereco_values" << "/data_set_" << data_set_id;
+
+  if(util::NodeExists(xml,root_node,datanode.str())) {
      fErDistr[kSKsFCFV1RingMuLike] = new TH1D("", "", kNvErecoBins,kNvErecoBinEdges);
      fErDistr[kSKsFCFV1RingMuLike]->SetDirectory(0);
-     vector<double> values = util::XML2DblArray(
-        xml,root_node,"superk/observation/one_mu_ring/ereco_values");
+     vector<double> values = util::XML2DblArray(xml,root_node,datanode.str());
      vector<double>::const_iterator value_iter = values.begin();
      for( ; value_iter != values.end(); ++value_iter) {
        double Ereco = *value_iter;

@@ -365,25 +365,29 @@ void OscillationFitter::Draw(
      TH1D * bestfit_numucc1pi = new TH1D(*fFitInputs->Expectation().CurrPredictedErecoSpectrum(conv::kSKsFCFV1RingMuLike, conv::kSKmNuMuCC1pi));
      TH1D * bestfit_numuccoth = new TH1D(*fFitInputs->Expectation().CurrPredictedErecoSpectrum(conv::kSKsFCFV1RingMuLike, conv::kSKmNuMuCCoth));
      TH1D * bestfit_nc        = new TH1D(*fFitInputs->Expectation().CurrPredictedErecoSpectrum(conv::kSKsFCFV1RingMuLike, conv::kSKmNC));
-     TH1D * bestfit_numubar   = new TH1D(*fFitInputs->Expectation().CurrPredictedErecoSpectrum(conv::kSKsFCFV1RingMuLike, conv::kSKmNuMuBar));
+     TH1D * bestfit_numubarcc = new TH1D(*fFitInputs->Expectation().CurrPredictedErecoSpectrum(conv::kSKsFCFV1RingMuLike, conv::kSKmNuMuBarCC));
+     TH1D * bestfit_numubarnc = new TH1D(*fFitInputs->Expectation().CurrPredictedErecoSpectrum(conv::kSKsFCFV1RingMuLike, conv::kSKmNuMuBarNC));
      TH1D * bestfit_nue       = new TH1D(*fFitInputs->Expectation().CurrPredictedErecoSpectrum(conv::kSKsFCFV1RingMuLike, conv::kSKmNuE));
 
      bestfit_numucc1pi -> SetFillStyle ( 3354 );
      bestfit_numuccoth -> SetFillStyle ( 3345 );
      bestfit_nc        -> SetFillStyle ( 3006 );
-     bestfit_numubar   -> SetFillStyle ( 3001 );
+     bestfit_numubarcc -> SetFillStyle ( 3001 );
+     bestfit_numubarnc -> SetFillStyle ( 3001 );
      bestfit_nue       -> SetFillStyle ( 3001 );
      bestfit_numucc1pi -> SetFillColor ( kBlue );
      bestfit_numuccoth -> SetFillColor ( kMagenta );
      bestfit_nc        -> SetFillColor ( kRed );
-     bestfit_numubar   -> SetFillColor ( kYellow );
+     bestfit_numubarcc -> SetFillColor ( kYellow );
+     bestfit_numubarnc -> SetFillColor ( kYellow );
      bestfit_nue       -> SetFillColor ( kGreen );
      bestfit_numuccqe  -> SetLineColor ( kBlack );
      bestfit_numucc1pi -> SetLineWidth ( 1 );
      bestfit_numuccoth -> SetLineWidth ( 1 );
      bestfit_nc        -> SetLineWidth ( 1 );
      bestfit_numuccqe  -> SetLineWidth ( 1 );
-     bestfit_numubar   -> SetLineWidth ( 1 );
+     bestfit_numubarcc -> SetLineWidth ( 1 );
+     bestfit_numubarnc -> SetLineWidth ( 1 );
      bestfit_nue       -> SetLineWidth ( 1 );
      bestfit_tot       -> SetLineWidth ( 2 );
      bestfit_nc        -> SetLineStyle ( kDashed );
@@ -406,7 +410,8 @@ void OscillationFitter::Draw(
         stack->Add(bestfit_numucc1pi);
         stack->Add(bestfit_numuccoth);
         stack->Add(bestfit_nc);
-        stack->Add(bestfit_numubar);
+        stack->Add(bestfit_numubarcc);
+        stack->Add(bestfit_numubarnc);
         stack->Add(bestfit_nue);
         stack->Draw("same");
         data->Draw("PERRSAME");
@@ -419,7 +424,8 @@ void OscillationFitter::Draw(
         spectrum_legend->AddEntry(bestfit_numucc1pi, "best fit (#nu_{#mu} CC1#pi)", "LF");
         spectrum_legend->AddEntry(bestfit_numuccoth, "best fit (#nu_{#mu} CC other)", "LF");
         spectrum_legend->AddEntry(bestfit_nc, "best fit (#nu_{#mu}/#nu_{#tau} NC)", "LF");
-        spectrum_legend->AddEntry(bestfit_numubar, "best fit (#bar{#nu_{#mu}})", "LF");
+        spectrum_legend->AddEntry(bestfit_numubarcc, "best fit (#bar{#nu_{#mu}} CC)", "LF");
+        spectrum_legend->AddEntry(bestfit_numubarnc, "best fit (#bar{#nu_{#mu}} NC)", "LF");
         spectrum_legend->AddEntry(bestfit_nue, "best fit (#nu_{e})", "LF");
         spectrum_legend->Draw();
      }//ShowContributions?

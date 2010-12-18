@@ -10,7 +10,7 @@
 
 void test_analysis_inputs()
 {
-  TString opt = "SuperK";
+  TString opt = "nd280";
 
   gSystem->Load("libGpad");  
   gSystem->Load("libPhysics");  

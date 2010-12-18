@@ -110,14 +110,11 @@ double t2kana::yr1numu::util::ChisqPoisson(
 {
   //assert(nmc >= 0. && ndata >= 0.);
 
-//  if(nmc <= 0. || ndata <= 0.) return 2. * TMath::Abs(nmc-ndata);
-//  return (2. * TMath::Abs(nmc-ndata) + 2. * ndata * TMath::Log(ndata/nmc));
-
   if(nmc <= 0. || ndata <= 0.) return 2.*(nmc-ndata);
   return (2. * (nmc-ndata) + 2. * ndata * TMath::Log(ndata/nmc));
 }
 //____________________________________________________________________________
-double t2kana::yr1numu::util::NuMuSurvProb2D(
+double t2kana::yr1numu::util::NuMuSurvProbOsc2D(
   double sinsq2theta, double dmsq, double Et)
 {
   if(Et <= 0.) return 0.;
@@ -132,12 +129,13 @@ double t2kana::yr1numu::util::NuMuSurvProb2D(
   return psurv;
 }
 //____________________________________________________________________________
-double t2kana::yr1numu::util::NuMuSurvProb2D(
+double t2kana::yr1numu::util::NuMuSurvProbOsc2D(
   double sinsq2theta, double dmsq, double Et, 
   t2kana::yr1numu::conv::SuperkMode_t m)
 {
-  if(m == kSKmNC || 
-     m == kSKmNuE) 
+  if(m == kSKmNC  || 
+     m == kSKmNuE ||
+     m == kSKmNuMuBarNC)
   {
     return 1.;
   }
@@ -145,12 +143,49 @@ double t2kana::yr1numu::util::NuMuSurvProb2D(
   if(m == kSKmNuMuCCQE  || 
      m == kSKmNuMuCC1pi || 
      m == kSKmNuMuCCoth ||
-     m == kSKmNuMuBar) 
+     m == kSKmNuMuBarCC) 
   {
-    return NuMuSurvProb2D(sinsq2theta, dmsq, Et);
+    return NuMuSurvProbOsc2D(sinsq2theta, dmsq, Et);
   }
   else {
-    cerr << "NuMuSurvProb2D> Can't handle SK mode = " << m << endl;
+    cerr << "NuMuSurvProbOsc2D> Can't handle SK mode = " << m << endl;
+    exit(1);
+  }
+}
+//____________________________________________________________________________
+double t2kana::yr1numu::util::NuMuSurvProbDecay (
+   double sinsq2theta, double alpha, double Et)
+{
+  double cossq2theta = TMath::Sqrt( TMath::Max(0.,1.-sinsq2theta) );
+  double cos2theta   = TMath::Sqrt(cossq2theta);
+  double sinsqtheta  = (1.-cos2theta)/2.;
+  double cossqtheta  = (1.+cos2theta)/2.;
+  double expaL       = TMath::Exp(-0.5*alpha*kBaseline/Et);
+
+  double psurv = TMath::Power(sinsqtheta + cossqtheta*expaL, 2.);
+  return psurv;
+}
+//____________________________________________________________________________
+double t2kana::yr1numu::util::NuMuSurvProbDecay (
+  double sinsq2theta, double alpha, double Et, 
+  t2kana::yr1numu::conv::SuperkMode_t m)
+{
+  if(m == kSKmNuE)
+  {
+    return 1.;
+  }
+  else
+  if(m == kSKmNuMuCCQE  || 
+     m == kSKmNuMuCC1pi || 
+     m == kSKmNuMuCCoth ||
+     m == kSKmNC        ||
+     m == kSKmNuMuBarCC ||
+     m == kSKmNuMuBarNC) 
+  {
+    return NuMuSurvProbDecay(sinsq2theta, alpha, Et);
+  }
+  else {
+    cerr << "NuMuSurvProbDec> Can't handle SK mode = " << m << endl;
     exit(1);
   }
 }
@@ -291,6 +326,8 @@ string t2kana::yr1numu::util::AsString(PhysParamId_t p)
   switch(p) {
     case ( kPhypSinsq2Theta23 ) : return "sinsq2theta23"; break;
     case ( kPhypDm23sq        ) : return "dm23sq";        break;
+    case ( kPhypNorm          ) : return "norm";          break;
+    case ( kPhypAlphaDecay    ) : return "alpha_decay";   break;
     default                     : return "--";
   }
   return "--";
@@ -311,12 +348,13 @@ string t2kana::yr1numu::util::AsString(
      t2kana::yr1numu::conv::SuperkMode_t m)
 {
   switch(m) {
-     case ( kSKmNuMuCCQE    ) : return "numu CCQE";      break;
-     case ( kSKmNuMuCC1pi   ) : return "numu CC1pi";     break;
-     case ( kSKmNuMuCCoth   ) : return "numu CCoth";     break;
-     case ( kSKmNC          ) : return "numu/nutau NC";  break;
-     case ( kSKmNuMuBar     ) : return "numubar";        break;
-     case ( kSKmNuE         ) : return "nue";            break;
+     case ( kSKmNuMuCCQE    ) : return "numu CCQE";            break;
+     case ( kSKmNuMuCC1pi   ) : return "numu CC1pi";           break;
+     case ( kSKmNuMuCCoth   ) : return "numu CCoth";           break;
+     case ( kSKmNC          ) : return "numu/nutau NC";        break;
+     case ( kSKmNuMuBarCC   ) : return "numubar CC";           break;
+     case ( kSKmNuMuBarNC   ) : return "numubar/nutaubar NC";  break;
+     case ( kSKmNuE         ) : return "nue";                  break;
      default                  : return "--";
   }
   return "--";

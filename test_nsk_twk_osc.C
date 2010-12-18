@@ -28,9 +28,9 @@ void test_nsk_twk_osc()
 
   double sinsq2theta23_min  = 0.0;
   double sinsq2theta23_max  = 1.0;
-  double sinsq2theta23_step = 0.02;
-  double dm23sq_min         = 1E-4;
-  double dm23sq_max         = 8E-3;
+  double sinsq2theta23_step = 0.01;
+  double dm23sq_min         = 1E-3;
+  double dm23sq_max         = 6E-3;
   double dm23sq_step        = 1E-4;
 
  // make sure that min and max are at the bin centre

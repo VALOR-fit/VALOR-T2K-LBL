@@ -171,7 +171,11 @@ public:
 
       // Get information needed from SK for predicting the SK spectrum
 
-      void    UseOscillationParams(double sinsq2theta23, double dm23sq) { fCurrSinsq2Theta23 = sinsq2theta23; fCurrDm23sq = dm23sq; }
+      void    UseNeutrinoOscillationModel(bool on_off) { fHaveNuOsc   = on_off; }
+      void    UseNeutrinoDecayModel      (bool on_off) { fHaveNuDecay = on_off; }
+
+      void    UseOscillationParams(double sinsq2theta23, double dm23sq) { fCurrSinsq2Theta23 = sinsq2theta23; fCurrDm23sq     = dm23sq; }
+      void    UseDecayParams      (double sinsq2theta23, double alpha ) { fCurrSinsq2Theta23 = sinsq2theta23; fCurrAlphaDecay = alpha;  }
 
       double  AnalyzedSamplePOT   (void) const;   
       TTree * MCTree              (t2kana::yr1numu::conv::SuperkSample_t s, t2kana::yr1numu::conv::SuperkMode_t m);
@@ -219,6 +223,7 @@ public:
 
       double  fCurrSinsq2Theta23;
       double  fCurrDm23sq;
+      double  fCurrAlphaDecay;
 
       double  fPOT;                       ///< Number of POT
       double  fEnergyScaleRelErr;         ///< Energy scale relative error
@@ -248,6 +253,9 @@ public:
 
       BeamInputs *      fBeamInputs;      ///<
       GeneratorInputs * fGenInputs;       ///<
+
+      bool fHaveNuOsc;
+      bool fHaveNuDecay;
    };
 
    //.........................................................................
@@ -272,6 +280,7 @@ public:
       double              SuperkFluxNorm                (TH1D * hnumu1Rmu, TH1D * hnumubar1Rmu, TH1D * hnue1Rm, 
                                                          TH1D * hnumuND, TH1D * hnumubarND, TH1D * hnueND) const; ///< normalization 
       bool                UsingKuboSansCode             (void) { return (fHEC!=0); }
+      bool                NormTweaked                   (void) { return (fSuperkNuMuFluxNormTwkDial!=0); }
 
       // Drawing option:
       // - "SKFlux/10a/NuMu"              : nominal SuperK numu flux (10a)
