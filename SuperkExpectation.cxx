@@ -2504,6 +2504,7 @@ void SuperkExpectation::GeneratorInputs::Init(void)
   fCCOthToCCQEXSecRatioRelErr  = 0;
   fNCToCCQEXSecRatioRelErr     = 0;
   fSuperkNuclearEffectRelErr   = 0;
+  fCC1piInCCRES                = 0;
 }
 //________________________________________________________________________________________
 void SuperkExpectation::GeneratorInputs::CleanUp(void)
@@ -2529,6 +2530,9 @@ bool SuperkExpectation::GeneratorInputs::Read(TXMLEngine* xml, XMLNodePointer_t 
     util::XML2TH1D(xml,root_node,"niwg/systematics/xsec_ratio_relative_error/nc_ccqe");
   fSuperkNuclearEffectRelErr =
     util::XML2TH1D(xml,root_node,"niwg/systematics/superk_nuclear_effect_relative_error");
+
+  fCC1piInCCRES = util::XML2Dbl(xml,root_node,"neutrino_generator/cc1pi_in_ccres");
+  cout << "Exp/NuGen >> CC1pi in CCRES = " <<  fCC1piInCCRES << endl;
 
   cout << "Exp/NuGen >> Done reading neutrino generator inputs!" << endl;
 
@@ -2557,18 +2561,22 @@ double SuperkExpectation::GeneratorInputs::ND280XSecRatioWght(
    switch(mnd) {
       case ( kNDmNuMuCCQE     ) : return 1.; break;
       case ( kNDmNuMuCCRES    ) : 
+        //
         // There is a mismatch between the event categories in the nd280 sample and the 
         // event categories for which errors are given.
         // I need to propagate errors on CCOther/CCQE and CC1pi/CCQE.
         // The CCRES category contains both CC1pi and CCOther.
         // I estimate that 5% of the CCRES at the T2K energies are not CC1pi,
-        // but something else multi-pi, N+gamma, etc.
+        // but something else (multi-pi, N+gamma, etc.)
         // Use that number ...to weight the weight... so that in every true energy bin
         // we apply the CC1pi/CCQE weight to 95% of events and the CCOth/CCQE to the
         // other 5%. Although approximate, this helps assigning the proper CCOth/CCQE
         // error on nd280
-	return (0.95 * this->CC1piToCCQEXSecRatioWght(Etrue) +
-                0.05 * this->CCOthToCCQEXSecRatioWght(Etrue));
+	// This doesn't apply for NEUT.
+        //
+	return (    fCC1piInCCRES  * this->CC1piToCCQEXSecRatioWght(Etrue) +
+                 (1-fCC1piInCCRES) * this->CCOthToCCQEXSecRatioWght(Etrue)
+               );
 	break;
       case ( kNDmNuMuCCCOH    ) : this->CCOthToCCQEXSecRatioWght(Etrue); break;
       case ( kNDmNuMuCCOth    ) : this->CCOthToCCQEXSecRatioWght(Etrue); break;

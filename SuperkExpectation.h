@@ -370,6 +370,8 @@ public:
       TH1D * fCCOthToCCQEXSecRatioRelErr;    ///<
       TH1D * fNCToCCQEXSecRatioRelErr;       ///<
       TH1D * fSuperkNuclearEffectRelErr;     ///<
+
+      double fCC1piInCCRES;                  ///< correct ND280 interaction mode / NWIG err mis-match
    };
 
 private:

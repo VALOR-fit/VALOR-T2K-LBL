@@ -105,6 +105,7 @@ void run_systematic_study_for_given_osc_params(string systematic, int run=0)
     hp2->Fill( output_dm23sq[iexperiment]        );
   }
 
+/*
   TCanvas * c = new TCanvas("c","",20,20,700,700);
   c->Divide(1,2);
   c->cd(1);
@@ -113,6 +114,7 @@ void run_systematic_study_for_given_osc_params(string systematic, int run=0)
   c->cd(2);
   hp2->Draw();
   hp2->GetXaxis()->SetTitle("|#Delta m^2_{23}|");
+*/
 
   TFile f(Form("syst_%s-sinsq2theta23_%.2f-dm23sq_%.5feV2_%d.root",
           systematic.c_str(),input_sinsq2theta23,input_dm23sq,run), "recreate"); 
