@@ -166,36 +166,13 @@ TH1D* SuperkExpectation::CurrPredictedErecoSpectrum (
 //________________________________________________________________________________________
 void SuperkExpectation::ResetSystematicVariations(void)
 {
-  this->GetND280Inputs()->TweakEfficiency( kNDmNuMuCCQE,      0.);
-  this->GetND280Inputs()->TweakEfficiency( kNDmNuMuCCRES,     0.);
-  this->GetND280Inputs()->TweakEfficiency( kNDmNuMuCCCOH,     0.);
-  this->GetND280Inputs()->TweakEfficiency( kNDmNuMuCCOth,     0.);
-  this->GetND280Inputs()->TweakEfficiency( kNDmNuMuNCEL,      0.);
-  this->GetND280Inputs()->TweakEfficiency( kNDmNuMuNCRES,     0.);
-  this->GetND280Inputs()->TweakEfficiency( kNDmNuMuNCCOH,     0.);
-  this->GetND280Inputs()->TweakEfficiency( kNDmNuMuNCOth,     0.);
-  this->GetND280Inputs()->TweakEfficiency( kNDmNuMuBarCCQE,   0.);
-  this->GetND280Inputs()->TweakEfficiency( kNDmNuMuBarCCRES,  0.);
-  this->GetND280Inputs()->TweakEfficiency( kNDmNuMuBarCCCOH,  0.);
-  this->GetND280Inputs()->TweakEfficiency( kNDmNuMuBarCCOth,  0.);
-  this->GetND280Inputs()->TweakEfficiency( kNDmNuMuBarNCEL,   0.);
-  this->GetND280Inputs()->TweakEfficiency( kNDmNuMuBarNCRES,  0.);
-  this->GetND280Inputs()->TweakEfficiency( kNDmNuMuBarNCCOH,  0.);
-  this->GetND280Inputs()->TweakEfficiency( kNDmNuMuBarNCOth,  0.);
-  this->GetND280Inputs()->TweakEfficiency( kNDmNuECCQE,       0.);
-  this->GetND280Inputs()->TweakEfficiency( kNDmNuECCRES,      0.);
-  this->GetND280Inputs()->TweakEfficiency( kNDmNuECCCOH,      0.);
-  this->GetND280Inputs()->TweakEfficiency( kNDmNuECCOth,      0.);
-  this->GetND280Inputs()->TweakEfficiency( kNDmNuENCEL,       0.);
-  this->GetND280Inputs()->TweakEfficiency( kNDmNuENCRES,      0.);
-  this->GetND280Inputs()->TweakEfficiency( kNDmNuENCCOH,      0.);
-  this->GetND280Inputs()->TweakEfficiency( kNDmNuENCOth,      0.);
+  this->GetND280Inputs()->TweakEfficiency (0.);
 
-  this->GetSuperkInputs()->TweakEnergyScale    (0.);
-  this->GetSuperkInputs()->TweakEfficiency (kSKsFCFV1RingMuLike, kSKmNuMuCCQE,    0.);
-  this->GetSuperkInputs()->TweakEfficiency (kSKsFCFV1RingMuLike, kSKmNuMuCC1pi,   0.);
-  this->GetSuperkInputs()->TweakEfficiency (kSKsFCFV1RingMuLike, kSKmNuMuCCoth,   0.);
-  this->GetSuperkInputs()->TweakEfficiency (kSKsFCFV1RingMuLike, kSKmNC,          0.);
+  this->GetSuperkInputs()->TweakEnergyScale (0.);
+  this->GetSuperkInputs()->TweakEfficiency  (kSKsFCFV1RingMuLike, kSKmNuMuCCQE,    0.);
+  this->GetSuperkInputs()->TweakEfficiency  (kSKsFCFV1RingMuLike, kSKmNuMuCC1pi,   0.);
+  this->GetSuperkInputs()->TweakEfficiency  (kSKsFCFV1RingMuLike, kSKmNuMuCCoth,   0.);
+  this->GetSuperkInputs()->TweakEfficiency  (kSKsFCFV1RingMuLike, kSKmNC,          0.);
 
   this->GetBeamInputs()->TweakNorm (0.);
   this->GetBeamInputs()->TweakShape(false);
@@ -284,30 +261,7 @@ void SuperkExpectation::TweakAllSystematics(bool do_tweak)
   {
      TRandom3 rand(0);
 
-     this->GetND280Inputs()->TweakEfficiency( kNDmNuMuCCQE,      rand.Gaus(0.,1.));
-     this->GetND280Inputs()->TweakEfficiency( kNDmNuMuCCRES,     rand.Gaus(0.,1.));
-     this->GetND280Inputs()->TweakEfficiency( kNDmNuMuCCCOH,     rand.Gaus(0.,1.));
-     this->GetND280Inputs()->TweakEfficiency( kNDmNuMuCCOth,     rand.Gaus(0.,1.));
-     this->GetND280Inputs()->TweakEfficiency( kNDmNuMuNCEL,      rand.Gaus(0.,1.));
-     this->GetND280Inputs()->TweakEfficiency( kNDmNuMuNCRES,     rand.Gaus(0.,1.));
-     this->GetND280Inputs()->TweakEfficiency( kNDmNuMuNCCOH,     rand.Gaus(0.,1.));
-     this->GetND280Inputs()->TweakEfficiency( kNDmNuMuNCOth,     rand.Gaus(0.,1.));
-     this->GetND280Inputs()->TweakEfficiency( kNDmNuMuBarCCQE,   rand.Gaus(0.,1.));
-     this->GetND280Inputs()->TweakEfficiency( kNDmNuMuBarCCRES,  rand.Gaus(0.,1.));
-     this->GetND280Inputs()->TweakEfficiency( kNDmNuMuBarCCCOH,  rand.Gaus(0.,1.));
-     this->GetND280Inputs()->TweakEfficiency( kNDmNuMuBarCCOth,  rand.Gaus(0.,1.));
-     this->GetND280Inputs()->TweakEfficiency( kNDmNuMuBarNCEL,   rand.Gaus(0.,1.));
-     this->GetND280Inputs()->TweakEfficiency( kNDmNuMuBarNCRES,  rand.Gaus(0.,1.));
-     this->GetND280Inputs()->TweakEfficiency( kNDmNuMuBarNCCOH,  rand.Gaus(0.,1.));
-     this->GetND280Inputs()->TweakEfficiency( kNDmNuMuBarNCOth,  rand.Gaus(0.,1.));
-     this->GetND280Inputs()->TweakEfficiency( kNDmNuECCQE,       rand.Gaus(0.,1.));
-     this->GetND280Inputs()->TweakEfficiency( kNDmNuECCRES,      rand.Gaus(0.,1.));
-     this->GetND280Inputs()->TweakEfficiency( kNDmNuECCCOH,      rand.Gaus(0.,1.));
-     this->GetND280Inputs()->TweakEfficiency( kNDmNuECCOth,      rand.Gaus(0.,1.));
-     this->GetND280Inputs()->TweakEfficiency( kNDmNuENCEL,       rand.Gaus(0.,1.));
-     this->GetND280Inputs()->TweakEfficiency( kNDmNuENCRES,      rand.Gaus(0.,1.));
-     this->GetND280Inputs()->TweakEfficiency( kNDmNuENCCOH,      rand.Gaus(0.,1.));
-     this->GetND280Inputs()->TweakEfficiency( kNDmNuENCOth,      rand.Gaus(0.,1.));
+     this->GetND280Inputs()->TweakEfficiency(rand.Gaus(0.,1.));
 
      this->GetSuperkInputs()->TweakEnergyScale(rand.Gaus(0.,1.));
      this->GetSuperkInputs()->TweakEfficiency (kSKsFCFV1RingMuLike, kSKmNuMuCCQE,    rand.Gaus(0.,1.));
@@ -446,8 +400,8 @@ void SuperkExpectation::ND280Inputs::Init(void)
   for(int i = 0; i < knmnd; i++) {
     fNumSelEt[i] = 0;
     fSelEffEt[i] = 0;
-    fSelEffTwkDial[i] = 0;
   }
+  fSelEffTwkDial = 0.;
   fSelEffRelErr  = 0.;
   fGenInputs     = 0; 
 
@@ -744,7 +698,7 @@ bool SuperkExpectation::ND280Inputs::Read(TXMLEngine* xml, XMLNodePointer_t root
   double nobscclike_nd280  = this -> NObsCCLike();
   double nexpncbkg_nd280   = this -> NExpNCBkg (nominal);
   double nexpcc_nd280      = this -> NExpCC    (nominal);
-  fNomCorr = (nobscclike_nd280 - nexpncbkg_nd280) / nexpcc_nd280;
+  fNomCorr = nobscclike_nd280 / (nexpncbkg_nd280 + nexpcc_nd280);
   cout << "Exp/nd280 >> Nominal correction factor from nd280: " << fNomCorr << endl;
 
   return true;
@@ -1001,11 +955,9 @@ double SuperkExpectation::ND280Inputs::CorrectionFactor(void) const
   // avoid looping over all histograms and histogram bins if not needed
   //
   bool xsec_tweaked = fGenInputs->TweakAffectsND280();
-  bool eff_tweaked  = false;
-  for(int i = 0; i < knmnd; i++) {
-    if( TMath::Abs(fSelEffTwkDial[i]) > kASmallNum ) eff_tweaked = true;
-  }
-  bool tweaked = eff_tweaked || xsec_tweaked;
+  bool eff_tweaked  = (TMath::Abs(fSelEffTwkDial) > kASmallNum);
+  bool tweaked      = eff_tweaked || xsec_tweaked;
+
   if(!tweaked) {
 #ifdef __debug_level_2__
     cout << "Exp / nd280 >> nd280 event spectra not tweaked."
@@ -1021,7 +973,7 @@ double SuperkExpectation::ND280Inputs::CorrectionFactor(void) const
   double nexpncbkg_nd280   = this -> NExpNCBkg();
   double nexpcc_nd280      = this -> NExpCC();
 
-  double correction = (nobscclike_nd280 - nexpncbkg_nd280) / nexpcc_nd280;
+  double correction = nobscclike_nd280 / (nexpncbkg_nd280 + nexpcc_nd280);
 
 #ifdef __debug_level_2__
   cout << "Exp / nd280 >> "
@@ -1106,8 +1058,8 @@ double SuperkExpectation::ND280Inputs::NumOfEvents(
   if(nominal) return nev;
 
 //double eff        = efficiency->GetBinContent(ibin);
-  double efftwkdial = fSelEffTwkDial[mode];
-  double efferr     = this->EfficiencyRelErr(Etrue, mode, util::Sign(efftwkdial));
+  double efftwkdial = fSelEffTwkDial;
+  double efferr     = this->EfficiencyRelErr(Etrue, util::Sign(efftwkdial));
 //double twkeff     = eff * (1 + efftwkdial * efferr);
   double effwght    = 1 + efftwkdial * efferr;
   double sigwght    = fGenInputs->ND280XSecRatioWght(Etrue, mode);
@@ -1180,8 +1132,7 @@ void SuperkExpectation::ND280Inputs::UpdateEtrueSpectra(void)
 
 }
 //________________________________________________________________________________________
-double SuperkExpectation::ND280Inputs::EfficiencyRelErr(
-   double /*Et*/, ND280Mode_t /*mode*/, int /*sign*/) const
+double SuperkExpectation::ND280Inputs::EfficiencyRelErr(double /*Et*/, int /*sign*/) const
 {
 // relative uncertainty on efficiency 
 // (can be asymmetric)
@@ -1189,20 +1140,11 @@ double SuperkExpectation::ND280Inputs::EfficiencyRelErr(
   return fSelEffRelErr;
 }
 //________________________________________________________________________________________
-void SuperkExpectation::ND280Inputs::TweakEfficiency(ND280Mode_t mode, double twkdial)
-{
-// tweak efficiency for a particular mode
-//
-  fSelEffTwkDial[mode] = twkdial;
-}
-//________________________________________________________________________________________
 void SuperkExpectation::ND280Inputs::TweakEfficiency(double twkdial)
 {
 // tweak efficiency of all modes by the same amount
 //
-  for(int i = 0; i < knmnd; i++) {
-     fSelEffTwkDial[i] = twkdial;
-  }
+  fSelEffTwkDial = twkdial;
 }
 //________________________________________________________________________________________
 //........................................................................................
@@ -2385,8 +2327,10 @@ double SuperkExpectation::BeamInputs::SuperkFluxNormErr(
   // get relative err on Nsk/Nnd280
   double relative_err = fHEC->GetSumErr(0);
 
+#ifdef __debug_level_1__
   cout << "Exp/Beam >> Nsk/Nnd280 relative err calculated by Beam WG code = " 
        << relative_err << endl;
+#endif
 
   return relative_err;
 }

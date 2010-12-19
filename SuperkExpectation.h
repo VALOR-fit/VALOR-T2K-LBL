@@ -102,7 +102,7 @@ public:
       double NumOfEvents      (t2kana::yr1numu::conv::ND280Mode_t mode, bool nominal=false) const; 
       double NumOfEvents      (t2kana::yr1numu::conv::ND280Mode_t mode, int bin, bool nominal=false) const;
       double NumOfEvents      (t2kana::yr1numu::conv::ND280Mode_t mode, double Etrue, bool nominal=false) const;
-      double EfficiencyRelErr (double Et, t2kana::yr1numu::conv::ND280Mode_t mode, int sign) const; ///< relative uncertainty on efficiency
+      double EfficiencyRelErr (double Et, int sign) const; ///< relative uncertainty on efficiency
 
       void   UpdateEtrueSpectra (void);
       TH1D*  CurrNuMuEtrue      (void) { return fNuMuEt;    } ///< current (allowing for applied weights) Etrue distribution for numu
@@ -127,7 +127,6 @@ public:
       void Draw(TVirtualPad * c, Option_t * opt = "") const;
 
       // Systematic variations
-      void TweakEfficiency (t2kana::yr1numu::conv::ND280Mode_t mode, double twkdial);
       void TweakEfficiency (double twkdial);
 
       //
@@ -148,8 +147,8 @@ public:
       double  fPOTMC;                  ///< number of POT (MC)
       TH1F *  fNumSelEt[knmnd];        ///< number of events passing cuts as function of Etrue for various modes
       TH1F *  fSelEffEt[knmnd];        ///< selection efficiency as function of Etrue for various modes
-      double  fSelEffTwkDial[knmnd];   ///< selection efficiency tweaking dials for various modes
-      double  fSelEffRelErr;           ///< relative error on selection effciencies
+      double  fSelEffTwkDial;          ///< selection efficiency tweaking dial
+      double  fSelEffRelErr;           ///< relative error on selection efficiency
 
       TH1D *  fNuMuEt;                 ///< fEtrue distribution for numu    - needed for beam norm err calculation
       TH1D *  fNuMuBarEt;              ///< fEtrue distribution for numubar - needed for beam norm err calculation

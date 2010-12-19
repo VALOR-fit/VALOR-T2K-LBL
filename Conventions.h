@@ -123,6 +123,7 @@ static const double kNEtrueBins  = (int) ((kEtrueMax - kEtrueMin)/kEtrueBinSz);
 // SuperK Ereco binning
 //
 
+/*
 // 50 MeV bins from 0 to 4 GeV, 1 bin between 4 - 10 GeV
 static const int kNvErecoBins = 81;
 static const double kNvErecoBinEdges[kNvErecoBins+1] = {
@@ -137,10 +138,10 @@ static const double kNvErecoBinEdges[kNvErecoBins+1] = {
    4.000, 
   10.000
 };
+*/
 
-/*
 // 50 MeV bins from 0 to 10 GeV
-static const int kNvErecoBins = 181;
+static const int kNvErecoBins = 200;
 static const double kNvErecoBinEdges[kNvErecoBins+1] = {
    0.000,  0.050,  0.100,  0.150,  0.200,  0.250,  0.300,  0.350,  0.400,  0.450, 
    0.500,  0.550,  0.600,  0.650,  0.700,  0.750,  0.800,  0.850,  0.900,  0.950, 
@@ -164,7 +165,6 @@ static const double kNvErecoBinEdges[kNvErecoBins+1] = {
    9.500,  9.550,  9.600,  9.650,  9.700,  9.750,  9.800,  9.850,  9.900,  9.950, 
   10.000
 };
-*/
 
 } // conv
 } // yr1numu

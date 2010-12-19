@@ -32,7 +32,7 @@ void run_oscillation_contour_generator(int run=0, string tag="contour")
   //
   // ntuple & histograms to store results
   //
-  const int nexperiments = 100;
+  const int nexperiments = 20;
   TH2D * chisq_surf[nexperiments];
   TNtupleD * systnt = new TNtupleD("sysnt","", "iexp:sinsq2theta23:dm23sq:chisq");
 

@@ -31,10 +31,8 @@ void test_superk_spectrum_prediction_twk_nd280eff()
   double input_sinsq2theta23 = 1.0;
   double input_dm23sq        = 2.4E-3;
 
-  bool correlated = true;
-  
   // n tweaks
-  const int n = 1000;
+  const int n = 3;
 
   // superk spectrum predictor
   SuperkExpectation skexp;
@@ -58,36 +56,8 @@ void test_superk_spectrum_prediction_twk_nd280eff()
  
      // tweak spectrum generation model
      if(i>0) {
-        // use i=0 as the default (untweaked)
-        if(!correlated) {
-          skexp.GetND280Inputs()->TweakEfficiency( conv::kNDmNuMuCCQE,     rand.Gaus(0,1) );
-          skexp.GetND280Inputs()->TweakEfficiency( conv::kNDmNuMuCCRES,    rand.Gaus(0,1) );
-          skexp.GetND280Inputs()->TweakEfficiency( conv::kNDmNuMuCCCOH,    rand.Gaus(0,1) );
-          skexp.GetND280Inputs()->TweakEfficiency( conv::kNDmNuMuCCOth,    rand.Gaus(0,1) );
-          skexp.GetND280Inputs()->TweakEfficiency( conv::kNDmNuMuNCEL,     rand.Gaus(0,1) );
-          skexp.GetND280Inputs()->TweakEfficiency( conv::kNDmNuMuNCRES,    rand.Gaus(0,1) );
-          skexp.GetND280Inputs()->TweakEfficiency( conv::kNDmNuMuNCCOH,    rand.Gaus(0,1) );
-          skexp.GetND280Inputs()->TweakEfficiency( conv::kNDmNuMuNCOth,    rand.Gaus(0,1) );
-          skexp.GetND280Inputs()->TweakEfficiency( conv::kNDmNuMuBarCCQE,  rand.Gaus(0,1) );
-          skexp.GetND280Inputs()->TweakEfficiency( conv::kNDmNuMuBarCCRES, rand.Gaus(0,1) );
-          skexp.GetND280Inputs()->TweakEfficiency( conv::kNDmNuMuBarCCCOH, rand.Gaus(0,1) );
-          skexp.GetND280Inputs()->TweakEfficiency( conv::kNDmNuMuBarCCOth, rand.Gaus(0,1) );
-          skexp.GetND280Inputs()->TweakEfficiency( conv::kNDmNuMuBarNCEL,  rand.Gaus(0,1) );
-          skexp.GetND280Inputs()->TweakEfficiency( conv::kNDmNuMuBarNCRES, rand.Gaus(0,1) );
-          skexp.GetND280Inputs()->TweakEfficiency( conv::kNDmNuMuBarNCCOH, rand.Gaus(0,1) );
-          skexp.GetND280Inputs()->TweakEfficiency( conv::kNDmNuMuBarNCOth, rand.Gaus(0,1) );
-          skexp.GetND280Inputs()->TweakEfficiency( conv::kNDmNuECCQE,      rand.Gaus(0,1) );
-          skexp.GetND280Inputs()->TweakEfficiency( conv::kNDmNuECCRES,     rand.Gaus(0,1) );
-          skexp.GetND280Inputs()->TweakEfficiency( conv::kNDmNuECCCOH,     rand.Gaus(0,1) );
-          skexp.GetND280Inputs()->TweakEfficiency( conv::kNDmNuECCOth,     rand.Gaus(0,1) );
-          skexp.GetND280Inputs()->TweakEfficiency( conv::kNDmNuENCEL,      rand.Gaus(0,1) );
-          skexp.GetND280Inputs()->TweakEfficiency( conv::kNDmNuENCRES,     rand.Gaus(0,1) );
-          skexp.GetND280Inputs()->TweakEfficiency( conv::kNDmNuENCCOH,     rand.Gaus(0,1) );
-          skexp.GetND280Inputs()->TweakEfficiency( conv::kNDmNuENCOth,     rand.Gaus(0,1) );
-       } else {
           double twkdial = (i==1) ? +1 : -1;
           skexp.GetND280Inputs()->TweakEfficiency(twkdial);
-       }
      }
 
      // generate predictions  

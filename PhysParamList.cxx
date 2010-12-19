@@ -82,7 +82,6 @@ void PhysParamList::SetTo(TVirtualFitter * fitter)
   for ( ; iter != fIdMap.end(); ++iter) {
     PhysParamId_t p = iter->first;
     int iparam = iter->second;
-    cout << "Setting param " << iparam << " -> "  << util::AsString(p) << endl;
     fitter->SetParameter(
       iparam,
       this->Name(p).c_str(),

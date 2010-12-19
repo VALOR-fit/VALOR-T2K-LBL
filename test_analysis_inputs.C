@@ -29,9 +29,7 @@ void test_analysis_inputs()
   using namespace t2kana::yr1numu;
 
   SuperkExpectation * skexp = new SuperkExpectation;
-  SuperkObservation * skobs = new SuperkObservation;
   skexp->Read("inputs/analysis_configuration.xml");
-  skobs->Read("inputs/analysis_configuration.xml");
 
   // energy range and binning
   const double Emin  = 0;
@@ -78,18 +76,6 @@ void test_analysis_inputs()
 //    skexp->GetGeneratorInputs()->Draw(new TCanvas(), "SKFracMode");
 //    skexp->GetGeneratorInputs()->Draw(new TCanvas(), "SKErrSigMode");
   }//NeutrinoGenerator
-
-  if(opt.Contains("Observation")) {
-    // Draw Ereco spectrum
-    skobs->Draw(new TCanvas(), "Ereco/OneMuRingTight");
-    // Print-out spectrum values
-    double Ereco = Emin;
-    while(Ereco < Emax) {
-       Ereco+=dE;
-       double nev = skobs.NumOfEvents(Ereco);
-       cout << "NObs(SK; Ereco = " << Ereco << ") = " << Ereco << endl;
-    }
-  }//Observation
 
 }
 

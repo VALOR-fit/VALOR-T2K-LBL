@@ -9,7 +9,7 @@
 
 #include "Conventions.h"
 
-void test_nd280_nevents_twk_eff_one()
+void test_nd280_nevents_twk_eff()
 {
   gSystem->Load("libGpad");  
   gSystem->Load("libPhysics");  
@@ -27,8 +27,6 @@ void test_nd280_nevents_twk_eff_one()
   using namespace t2kana;
   using namespace t2kana::yr1numu;
 
-  conv::ND280Mode_t mode_efficiency_to_tweak = conv::kNDmNuMuCCQE;
-
   const int ntwkdials = 5;
   double twkdial[ntwkdials] = { -1.0, -0.5, 0.0, +0.5, +1.0 };
 
@@ -45,13 +43,13 @@ void test_nd280_nevents_twk_eff_one()
 
   for(int idial = 0; idial < ntwkdials; idial++) {
 
-     skexp.GetND280Inputs()->TweakEfficiency(mode_efficiency_to_tweak, twkdial[idial]);
+     skexp.GetND280Inputs()->TweakEfficiency(twkdial[idial]);
 
      double nobscclike_nd280  = skexp.GetND280Inputs()->NObsCCLike();
      double nexpncbkg_nd280   = skexp.GetND280Inputs()->NExpNCBkg();
      double nexpcc_nd280      = skexp.GetND280Inputs()->NExpCC();
 
-     flux_correction_factor[idial] = (nobscclike_nd280 - nexpncbkg_nd280) / nexpcc_nd280;
+     flux_correction_factor[idial] = nobscclike_nd280 / (nexpncbkg_nd280 + nexpcc_nd280);
 
      cout << " > twk_dial = " 
           << setw(6) << setfill(' ') << setprecision(3) << twkdial[idial] 
