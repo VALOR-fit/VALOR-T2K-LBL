@@ -400,8 +400,8 @@ void OscillationFitter::Draw(
 
      data -> GetXaxis()->SetTitle("E_{reco} (GeV)");
      data -> GetYaxis()->SetTitle("Number of events");
-     data -> Draw("P");
-//     data -> Draw("PERR");
+     //data -> Draw("P");
+     data -> Draw("PERR");
      bestfit_tot -> Draw("same");
 
      if(opt.Contains("ShowContributions")) {

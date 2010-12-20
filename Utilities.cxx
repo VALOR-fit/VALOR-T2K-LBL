@@ -148,7 +148,7 @@ double t2kana::yr1numu::util::NuMuSurvProbOsc2D(
     return NuMuSurvProbOsc2D(sinsq2theta, dmsq, Et);
   }
   else {
-    cerr << "NuMuSurvProbOsc2D> Can't handle SK mode = " << m << endl;
+    cerr << "NuMuSurvProbOsc2D > Can't handle SK mode = " << m << endl;
     exit(1);
   }
 }
@@ -156,11 +156,20 @@ double t2kana::yr1numu::util::NuMuSurvProbOsc2D(
 double t2kana::yr1numu::util::NuMuSurvProbDecay (
    double sinsq2theta, double alpha, double Et)
 {
+//
+// Note: In oscillation formula (Dm^2 * L / 4E) in natural units becomes 
+// 1.267 * Dm^2 * L / E where Dm^2 in eV2, L in km, E in GeV. 
+// Apply the same conversion in the decoherence survival prob formula (Eq. 13) 
+// given in Barger et al., astro-ph/9810121v1.
+//
+// a L / E (natural units) --> 4 * 1.267 a (eV^2) L(km) /E (GeV)
+//
+
   double cossq2theta = TMath::Sqrt( TMath::Max(0.,1.-sinsq2theta) );
   double cos2theta   = TMath::Sqrt(cossq2theta);
   double sinsqtheta  = (1.-cos2theta)/2.;
   double cossqtheta  = (1.+cos2theta)/2.;
-  double expaL       = TMath::Exp(-0.5*alpha*kBaseline/Et);
+  double expaL       = TMath::Exp(-4*1.267*alpha*kBaseline/Et);
 
   double psurv = TMath::Power(sinsqtheta + cossqtheta*expaL, 2.);
   return psurv;
@@ -185,7 +194,49 @@ double t2kana::yr1numu::util::NuMuSurvProbDecay (
     return NuMuSurvProbDecay(sinsq2theta, alpha, Et);
   }
   else {
-    cerr << "NuMuSurvProbDec> Can't handle SK mode = " << m << endl;
+    cerr << "NuMuSurvProbDecay > Can't handle SK mode = " << m << endl;
+    exit(1);
+  }
+}
+//____________________________________________________________________________
+double t2kana::yr1numu::util::NuMuSurvProbDecoh (
+   double sinsq2theta, double musq, double Et)
+{
+
+//
+// Note: In oscillation formula (Dm^2 * L / 4E) in natural units becomes 
+// 1.267 * Dm^2 * L / E where Dm^2 in eV2, L in km, E in GeV. 
+// Apply the same conversion in the decoherence survival prob formula (Eq. 5) 
+// given in Fogli et al., PRD67,093006(2003).
+//
+// \mu^2 L / 2 E (natural units) --> 2 * 1.267 \mu^2 (eV^2) L(km) /E (GeV)
+//
+
+  double expmusqLE = TMath::Exp(-2*1.267*musq*kBaseline/Et);
+  double psurv = 1. - 0.5*sinsq2theta * ( 1 - expmusqLE );
+  return psurv;
+}
+//____________________________________________________________________________
+double t2kana::yr1numu::util::NuMuSurvProbDecoh (
+  double sinsq2theta, double musq, double Et, 
+  t2kana::yr1numu::conv::SuperkMode_t m)
+{
+  if(m == kSKmNuE)
+  {
+    return 1.;
+  }
+  else
+  if(m == kSKmNuMuCCQE  || 
+     m == kSKmNuMuCC1pi || 
+     m == kSKmNuMuCCoth ||
+     m == kSKmNC        ||
+     m == kSKmNuMuBarCC ||
+     m == kSKmNuMuBarNC) 
+  {
+    return NuMuSurvProbDecoh(sinsq2theta, musq, Et);
+  }
+  else {
+    cerr << "NuMuSurvProbDecoh > Can't handle SK mode = " << m << endl;
     exit(1);
   }
 }
@@ -324,11 +375,12 @@ TVectorD t2kana::yr1numu::util::CholeskyGenerateCorrelatedParamVariations (
 string t2kana::yr1numu::util::AsString(PhysParamId_t p)
 {
   switch(p) {
-    case ( kPhypSinsq2Theta23 ) : return "sinsq2theta23"; break;
-    case ( kPhypDm23sq        ) : return "dm23sq";        break;
-    case ( kPhypNorm          ) : return "norm";          break;
-    case ( kPhypAlphaDecay    ) : return "alpha_decay";   break;
-    default                     : return "--";
+    case ( kPhypSinsq2Theta23  ) : return "sinsq2theta23"; break;
+    case ( kPhypDm23sq         ) : return "dm23sq";        break;
+    case ( kPhypNorm           ) : return "norm";          break;
+    case ( kPhypAlphaDecay     ) : return "alpha_decay";   break;
+    case ( kPhypMusqDecoherence) : return "musq_decoh";    break;
+    default                      : return "--";
   }
   return "--";
 }

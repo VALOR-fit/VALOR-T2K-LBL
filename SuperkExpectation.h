@@ -172,9 +172,11 @@ public:
 
       void    UseNeutrinoOscillationModel(bool on_off) { fHaveNuOsc   = on_off; }
       void    UseNeutrinoDecayModel      (bool on_off) { fHaveNuDecay = on_off; }
+      void    UseNeutrinoDecoherenceModel(bool on_off) { fHaveNuDecoh = on_off; }
 
       void    UseOscillationParams(double sinsq2theta23, double dm23sq) { fCurrSinsq2Theta23 = sinsq2theta23; fCurrDm23sq     = dm23sq; }
       void    UseDecayParams      (double sinsq2theta23, double alpha ) { fCurrSinsq2Theta23 = sinsq2theta23; fCurrAlphaDecay = alpha;  }
+      void    UseDecoherenceParams(double sinsq2theta23, double musq  ) { fCurrSinsq2Theta23 = sinsq2theta23; fCurrMusqDecoh  = musq;   }
 
       double  AnalyzedSamplePOT   (void) const;   
       TTree * MCTree              (t2kana::yr1numu::conv::SuperkSample_t s, t2kana::yr1numu::conv::SuperkMode_t m);
@@ -223,6 +225,7 @@ public:
       double  fCurrSinsq2Theta23;
       double  fCurrDm23sq;
       double  fCurrAlphaDecay;
+      double  fCurrMusqDecoh;
 
       double  fPOT;                       ///< Number of POT
       double  fEnergyScaleRelErr;         ///< Energy scale relative error
@@ -255,6 +258,7 @@ public:
 
       bool fHaveNuOsc;
       bool fHaveNuDecay;
+      bool fHaveNuDecoh;
    };
 
    //.........................................................................

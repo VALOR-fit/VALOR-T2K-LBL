@@ -79,16 +79,26 @@ void SuperkExpectation::Generate(const PhysParamList & fp)
   if( fp.Exists(kPhypDm23sq) && fp.Exists(kPhypSinsq2Theta23) ) {
     double dmsq23        = fp.CurrValue(kPhypDm23sq);
     double sinsq2theta23 = fp.CurrValue(kPhypSinsq2Theta23);
-    fSuperkInputs->UseNeutrinoOscillationModel(true);
-    fSuperkInputs->UseNeutrinoDecayModel(false);
-    fSuperkInputs->UseOscillationParams(sinsq2theta23, dmsq23);
+    fSuperkInputs -> UseNeutrinoOscillationModel (true);
+    fSuperkInputs -> UseNeutrinoDecayModel       (false);
+    fSuperkInputs -> UseNeutrinoDecoherenceModel (false);
+    fSuperkInputs -> UseOscillationParams(sinsq2theta23, dmsq23);
   } else
   if( fp.Exists(kPhypAlphaDecay) && fp.Exists(kPhypSinsq2Theta23) ) {
      double alpha         = fp.CurrValue(kPhypAlphaDecay);
      double sinsq2theta23 = fp.CurrValue(kPhypSinsq2Theta23);
-     fSuperkInputs->UseNeutrinoOscillationModel(false);
-     fSuperkInputs->UseNeutrinoDecayModel(true);
-     fSuperkInputs->UseDecayParams(sinsq2theta23, alpha);
+     fSuperkInputs -> UseNeutrinoOscillationModel (false);
+     fSuperkInputs -> UseNeutrinoDecayModel       (true);
+     fSuperkInputs -> UseNeutrinoDecoherenceModel (false);
+     fSuperkInputs -> UseDecayParams(sinsq2theta23, alpha);
+  } else
+  if( fp.Exists(kPhypMusqDecoherence) && fp.Exists(kPhypSinsq2Theta23) ) {
+     double musq          = fp.CurrValue(kPhypMusqDecoherence);
+     double sinsq2theta23 = fp.CurrValue(kPhypSinsq2Theta23);
+     fSuperkInputs -> UseNeutrinoOscillationModel (false);
+     fSuperkInputs -> UseNeutrinoDecayModel       (false);
+     fSuperkInputs -> UseNeutrinoDecoherenceModel (true);
+     fSuperkInputs -> UseDecoherenceParams(sinsq2theta23, musq);
   }
 
   // correction factor from ND280
@@ -1201,9 +1211,11 @@ void SuperkExpectation::SuperkInputs::Init(void)
   fCurrSinsq2Theta23 = 0;
   fCurrDm23sq        = 0;
   fCurrAlphaDecay    = 0;
+  fCurrMusqDecoh     = 0;
 
-  this->UseNeutrinoOscillationModel(true);
-  this->UseNeutrinoDecayModel(false);
+  this -> UseNeutrinoOscillationModel (true);
+  this -> UseNeutrinoDecayModel       (false);
+  this -> UseNeutrinoDecoherenceModel (false);
 }
 //________________________________________________________________________________________
 void SuperkExpectation::SuperkInputs::CleanUp(void)
@@ -1551,6 +1563,9 @@ double SuperkExpectation::SuperkInputs::NumOfEvents_Ereco(
       } else
       if(fHaveNuDecay){ 
 	prob_surv = util::NuMuSurvProbDecay(fCurrSinsq2Theta23, fCurrAlphaDecay, Etrue, m);
+      } else
+      if(fHaveNuDecoh){ 
+	prob_surv = util::NuMuSurvProbDecoh(fCurrSinsq2Theta23, fCurrMusqDecoh, Etrue, m);
       }
 
       //
@@ -1693,7 +1708,11 @@ double SuperkExpectation::SuperkInputs::NumOfEvents_Etrue(
   } else
   if(fHaveNuDecay){ 
     prob_surv = util::NuMuSurvProbDecay(fCurrSinsq2Theta23, fCurrAlphaDecay, Etrue, m);
+  } else
+  if(fHaveNuDecoh){ 
+    prob_surv = util::NuMuSurvProbDecoh(fCurrSinsq2Theta23, fCurrMusqDecoh, Etrue, m);
   }
+
 
   nev *= prob_surv;
 
@@ -1952,8 +1971,13 @@ double SuperkExpectation::SuperkInputs::NumOfEventsReadFromTree(
     } else
     if(fHaveNuDecay){ 
       prob_surv = util::NuMuSurvProbDecay(fCurrSinsq2Theta23, fCurrAlphaDecay, fBrEtrue, m);
+    } else
+    if(fHaveNuDecoh){ 
+      prob_surv = util::NuMuSurvProbDecoh(fCurrSinsq2Theta23, fCurrMusqDecoh, fBrEtrue, m);
     }
+
     nev += prob_surv;
+
   }//iev
 
   nev *= (fPOT/mcpot); // MC POT -> DATA POT

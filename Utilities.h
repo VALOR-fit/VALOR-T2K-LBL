@@ -51,6 +51,8 @@ namespace util {
   double NuMuSurvProbOsc2D(double sinsq2theta, double dmsq, double Et, t2kana::yr1numu::conv::SuperkMode_t m);
   double NuMuSurvProbDecay(double sinsq2theta, double alpha, double Et);
   double NuMuSurvProbDecay(double sinsq2theta, double alpha, double Et, t2kana::yr1numu::conv::SuperkMode_t m);
+  double NuMuSurvProbDecoh(double sinsq2theta, double musq, double Et);
+  double NuMuSurvProbDecoh(double sinsq2theta, double musq, double Et, t2kana::yr1numu::conv::SuperkMode_t m);
 
   // Cholesky decomposition
 

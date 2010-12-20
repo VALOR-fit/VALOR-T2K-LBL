@@ -248,8 +248,8 @@ void DecayFitter::BuildChisqSurface(void)
      }//j
    }//i
 
-   fChisqSurface->GetXaxis()->SetTitle("sin^{2}(2#theta_{23})");
-   fChisqSurface->GetYaxis()->SetTitle("|#alpha| (GeV/km)");
+   fChisqSurface->GetXaxis()->SetTitle("sin^{2}(2#theta)");
+   fChisqSurface->GetYaxis()->SetTitle("#alpha (eV^{2})");
    fChisqSurface->GetYaxis()->SetTitleOffset(1);
    fChisqSurface->GetYaxis()->SetTitleSize(0.05);
    fChisqSurface->GetXaxis()->SetTitleSize(0.05);
@@ -394,8 +394,8 @@ void DecayFitter::Draw(
 
      data -> GetXaxis()->SetTitle("E_{reco} (GeV)");
      data -> GetYaxis()->SetTitle("Number of events");
-     data -> Draw("P");
-//     data -> Draw("PERR");
+     //data -> Draw("P");
+     data -> Draw("PERR");
      bestfit_tot -> Draw("same");
 
      if(opt.Contains("ShowContributions")) {
@@ -450,8 +450,8 @@ void DecayFitter::Draw(
 
      TGaxis::SetMaxDigits(2);
   
-     chisq_surf_shift->GetXaxis()->SetTitle("sin^{2}(2#theta_{23})");
-     chisq_surf_shift->GetYaxis()->SetTitle("#alpha (GeV/km)");
+     chisq_surf_shift->GetXaxis()->SetTitle("sin^{2}(2#theta)");
+     chisq_surf_shift->GetYaxis()->SetTitle("#alpha (eV^{2})");
      chisq_surf_shift->GetYaxis()->SetTitleOffset(1);
      chisq_surf_shift->GetYaxis()->SetTitleSize(0.05);
      chisq_surf_shift->GetXaxis()->SetTitleSize(0.05);
@@ -522,7 +522,7 @@ void DecayFitter::Draw(
      ymin = ( gr1->GetY() )[TMath::LocMin(gr1->GetN(),gr1->GetY())];
      ymax = ( gr1->GetY() )[TMath::LocMax(gr1->GetN(),gr1->GetY())];
      TH1F* hframe1 = c->GetPad(3)->DrawFrame(xmin,0.8*ymin,xmax,1.2*ymax);
-     hframe1->GetXaxis()->SetTitle("sin^{2}(2#theta_{23})");
+     hframe1->GetXaxis()->SetTitle("sin^{2}(2#theta)");
      hframe1->GetYaxis()->SetTitle("#chi^{2}");
      gr1->Draw("l");
 
@@ -556,7 +556,7 @@ void DecayFitter::Draw(
      ymin = ( gr2->GetY() )[TMath::LocMin(gr2->GetN(),gr2->GetY())];
      ymax = ( gr2->GetY() )[TMath::LocMax(gr2->GetN(),gr2->GetY())];
      TH1F* hframe2 = c->GetPad(4)->DrawFrame(xmin,0.8*ymin,xmax,1.2*ymax);
-     hframe2->GetXaxis()->SetTitle("#alpha (GeV/km)");
+     hframe2->GetXaxis()->SetTitle("#alpha (eV^{2})");
      hframe2->GetYaxis()->SetTitle("#chi^{2}");
      gr2->Draw("l");
   }
@@ -572,7 +572,7 @@ void DecayFitter::Draw(
      TH1D* hdmsq23 = this->MarginalizeChisqSurface("marginalize_sinsq2theta23+subtract_chisqmin");
      TH1D* hsinsq2theta23 = this->MarginalizeChisqSurface("marginalize_dm23sq+subtract_chisqmin");
      hdmsq23 ->GetXaxis()->SetTitle("|#Deltam_{32}^{2}| (eV^{2}/c^{4})");
-     hsinsq2theta23 ->GetXaxis()->SetTitle("sin^{2}(2#theta_{23})");
+     hsinsq2theta23 ->GetXaxis()->SetTitle("sin^{2}(2#theta)");
      c->Divide(1,2);
      c->cd(1);
      hdmsq23->Draw("c");

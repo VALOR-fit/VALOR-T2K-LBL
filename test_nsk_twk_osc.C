@@ -71,5 +71,14 @@ void test_nsk_twk_osc()
     }//j
   }//i
 
+  gStyle->SetOptStat(0);
+
+  nsk_vs_osc_params->GetXaxis()->SetTitle("sin^{2}2#theta_{23}");
+  nsk_vs_osc_params->GetYaxis()->SetTitle("|#Deltam^{2}_{23}| (eV^{2}/c^{4})");
+
   nsk_vs_osc_params->Draw("colz");
+
+  TFile f("./nsk_vs_osc_params.root","recreate");
+  nsk_vs_osc_params->Write("nsk_vs_osc_params");
+  f.Close();
 }

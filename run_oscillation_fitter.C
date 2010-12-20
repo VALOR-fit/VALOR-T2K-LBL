@@ -33,7 +33,7 @@
 
   // get superk spectrum observation
   SuperkObservation * skobs = new SuperkObservation;
-  skobs->Read("inputs/data.xml",0);
+  skobs->Read("inputs/data.xml",400);
 
   // create fit inputs
   OscillationFitter::FitInputs * fit_inputs = new OscillationFitter::FitInputs(skobs,skexp,fparm);

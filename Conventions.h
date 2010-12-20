@@ -92,7 +92,8 @@ typedef enum EPhysParamId {
    kPhypSinsq2Theta23, 
    kPhypDm23sq,
    kPhypNorm,
-   kPhypAlphaDecay
+   kPhypAlphaDecay,
+   kPhypMusqDecoherence
 } PhysParamId_t;
 
 

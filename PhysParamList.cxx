@@ -145,9 +145,20 @@ PhysParamList * PhysParamList::NumuDecayFitNoSyst(void)
 {
   PhysParamList * fparm = new PhysParamList(2);
 
-  //                                     init    min    max    step   fix?   name
-  fparm->AddParam(0, kPhypSinsq2Theta23, 1.0,    0.0,   1.0,  0.02,   false, "sinsq2theta23");
-  fparm->AddParam(1, kPhypAlphaDecay,    0.01,   0.001, 0.02, 0.001 , false, "alpha"); 
+  //                                     init    min      max    step     fix?   name
+  fparm->AddParam(0, kPhypSinsq2Theta23, 1.0,    0.0,     1.0,   0.02,    false, "sinsq2theta");
+  fparm->AddParam(1, kPhypAlphaDecay,    0.01,   1E-4,   1E-3,   1E-5 ,   false, "alpha"); 
+
+  return fparm;
+}
+//________________________________________________________________________________________
+PhysParamList * PhysParamList::NumuDecohFitNoSyst(void)
+{
+  PhysParamList * fparm = new PhysParamList(2);
+
+  //                                       init    min     max     step    fix?   name
+  fparm->AddParam(0, kPhypSinsq2Theta23,   1.0,    0.0,    1.0,    0.02,   false, "sinsq2theta");
+  fparm->AddParam(1, kPhypMusqDecoherence, 0.01,   0.001,  0.04,   0.001,  false, "musq"); 
 
   return fparm;
 }

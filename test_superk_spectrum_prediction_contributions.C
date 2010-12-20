@@ -27,7 +27,7 @@ void test_superk_spectrum_prediction_contributions()
   using namespace t2kana::yr1numu;
 
   // oscillation params
-  double input_sinsq2theta23 = 0.00;
+  double input_sinsq2theta23 = 1.00;
   double input_dm23sq        = 2.4E-3;
 
   const unsigned int nm = 7;
@@ -131,4 +131,15 @@ void test_superk_spectrum_prediction_contributions()
      cout << "Contrib from mode: " << util::AsString(modes[im]) << " : " << nmode 
           << " events (" << 100*nmode/ntot << " %)" << endl;
   }
+
+  TFile f(Form("sk_ereco_spectrum_components-sinsq2theta23_%.2f-dm23sq_%.5feV2.root",input_sinsq2theta23,input_dm23sq),"recreate");
+  hErecoTot                       -> Write("total");
+  hErecoMode[conv::kSKmNuMuCCQE]  -> Write("numu_ccqe");
+  hErecoMode[conv::kSKmNuMuCC1pi] -> Write("numu_cc1pi"); 
+  hErecoMode[conv::kSKmNuMuCCoth] -> Write("numu_ccoth");
+  hErecoMode[conv::kSKmNC]        -> Write("numu_and_nutau_nc");
+  hErecoMode[conv::kSKmNuMuBarCC] -> Write("numubar_cc");
+  hErecoMode[conv::kSKmNuMuBarNC] -> Write("numubar_and_nutaubar_nc");
+  hErecoMode[conv::kSKmNuE]       -> Write("nue_all");
+  f.Close();
 }
