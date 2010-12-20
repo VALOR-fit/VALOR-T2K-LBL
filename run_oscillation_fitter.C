@@ -6,6 +6,7 @@
 // ------------------------------------------------------------------------------------------------
 //
 
+void run_oscillation_fitter(int dataset_id=0)
 {
   gSystem->Load("libGpad");  
   gSystem->Load("libPhysics");  
@@ -33,7 +34,7 @@
 
   // get superk spectrum observation
   SuperkObservation * skobs = new SuperkObservation;
-  skobs->Read("inputs/data.xml",400);
+  skobs->Read("inputs/data.xml",dataset_id);
 
   // create fit inputs
   OscillationFitter::FitInputs * fit_inputs = new OscillationFitter::FitInputs(skobs,skexp,fparm);
@@ -43,10 +44,10 @@
   OscillationFitter * fitter = new OscillationFitter(fit_inputs,"custom");
 
   // do the fit
-  fitter.DoTheFit();
+  fitter->DoTheFit();
 
   // see inputs
-  fitter->Draw(new TCanvas(), "StandardOscFitPlots");
+  fitter->Draw(new TCanvas(), "StandardOscFitPlots+Minos90CL");
   fitter->Draw(new TCanvas(), "ChisqSurface");
   fitter->Draw(new TCanvas(), "MarginalizedChisq");
 }
