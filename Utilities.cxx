@@ -162,14 +162,14 @@ double t2kana::yr1numu::util::NuMuSurvProbDecay (
 // Apply the same conversion in the decoherence survival prob formula (Eq. 13) 
 // given in Barger et al., astro-ph/9810121v1.
 //
-// a L / E (natural units) --> 4 * 1.267 a (eV^2) L(km) /E (GeV)
+// a L / 2E (natural units) --> 2 * 1.267 a (eV^2) L(km) /E (GeV)
 //
 
   double cossq2theta = TMath::Sqrt( TMath::Max(0.,1.-sinsq2theta) );
   double cos2theta   = TMath::Sqrt(cossq2theta);
   double sinsqtheta  = (1.-cos2theta)/2.;
   double cossqtheta  = (1.+cos2theta)/2.;
-  double expaL       = TMath::Exp(-4*1.267*alpha*kBaseline/Et);
+  double expaL       = TMath::Exp(-2*1.267*alpha*kBaseline/Et);
 
   double psurv = TMath::Power(sinsqtheta + cossqtheta*expaL, 2.);
   return psurv;
