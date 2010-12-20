@@ -1,11 +1,16 @@
 //
 // ------------------------------------------------------------------------------------------------
-// Run numu disappearance oscillation fit
+// Run neutrino decay fit
+//
+// Inputs:
+//      - dataset_id (see inputs/data.xml)
+//      - fitter name ("minuit", "custom" (2-D grid scan))
 //
 // Costas Andreopoulos
 // ------------------------------------------------------------------------------------------------
 //
 
+void run_decay_fitter(int dataset_id=0, const char * fitter_name="custom")
 {
   gSystem->Load("libGpad");  
   gSystem->Load("libPhysics");  
@@ -33,17 +38,16 @@
 
   // get superk spectrum observation
   SuperkObservation * skobs = new SuperkObservation;
-  skobs->Read("inputs/data.xml",400);
+  skobs->Read("inputs/data.xml",dataset_id);
 
   // create fit inputs
   DecayFitter::FitInputs * fit_inputs = new DecayFitter::FitInputs(skobs,skexp,fparm);
 
   // get fitter
-  //DecayFitter * fitter = new DecayFitter(fit_inputs,"minuit");
-  DecayFitter * fitter = new DecayFitter(fit_inputs,"custom");
+  DecayFitter * fitter = new DecayFitter(fit_inputs,fitter_name);
 
   // do the fit
-  fitter.DoTheFit();
+  fitter->DoTheFit();
 
   // see inputs
   fitter->Draw(new TCanvas(), "StandardDecFitPlots");

@@ -38,17 +38,19 @@ void test_surv_prob()
   double l_e[n];
 
   // oscillation & decay params
-  double input_sinsq2theta  = 1.00;
-  double input_dmsq         = 2.4E-3;
-  double input_alpha_decay  = .001;
-  double input_musq_decoh   = 0.003;
+  double input_sinsq2theta_osc    = 1.00;
+  double input_dmsq               = 2.4E-3;
+  double input_sinsq2theta_decay  = 6E-9;
+  double input_alpha_decay        = 6.5E-4;
+  double input_sinsq2theta_decoh  = 1.00;
+  double input_musq_decoh         = 4E-3;
 
   for(int i=0; i<n; i++) {
     e[i] = emin + i*de;
     l_e[i] = TMath::Log10(295.3/e[i]);
-    surv_prob_disap[i] = util::NuMuSurvProbOsc2D(input_sinsq2theta, input_dmsq,        e[i]);
-    surv_prob_decay[i] = util::NuMuSurvProbDecay(input_sinsq2theta, input_alpha_decay, e[i]);
-    surv_prob_decoh[i] = util::NuMuSurvProbDecoh(input_sinsq2theta, input_musq_decoh,  e[i]);
+    surv_prob_disap[i] = util::NuMuSurvProbOsc2D(input_sinsq2theta_osc,   input_dmsq,        e[i]);
+    surv_prob_decay[i] = util::NuMuSurvProbDecay(input_sinsq2theta_decay, input_alpha_decay, e[i]);
+    surv_prob_decoh[i] = util::NuMuSurvProbDecoh(input_sinsq2theta_decoh, input_musq_decoh,  e[i]);
   }
 
   TGraph * gr_surv_prob_disap_e  = new TGraph(n,e,  surv_prob_disap);
@@ -69,9 +71,9 @@ void test_surv_prob()
   gr_surv_prob_disap_e->Draw("al");
   gr_surv_prob_decay_e->Draw("l");
   gr_surv_prob_decoh_e->Draw("l");
-  legend1->AddEntry(gr_surv_prob_disap_e, Form("Oscillations: #Deltam^{2}=%.5f eV^{2}, sin^{2}2#theta=%.2f",input_dmsq,input_sinsq2theta), "L");
-  legend1->AddEntry(gr_surv_prob_decay_e, Form("Decay: #alpha=%.5f eV^{2}, sin^{2}2#theta=%.2f",input_alpha_decay,input_sinsq2theta), "L");
-  legend1->AddEntry(gr_surv_prob_decoh_e, Form("Decoherence: #mu^{2}=%.5f eV^{2}, sin^{2}2#theta=%.2f",input_musq_decoh,input_sinsq2theta), "L");
+  legend1->AddEntry(gr_surv_prob_disap_e, Form("Oscillations: #Deltam^{2}=%.5f eV^{2}, sin^{2}2#theta=%.2f",input_dmsq,input_sinsq2theta_osc), "L");
+  legend1->AddEntry(gr_surv_prob_decay_e, Form("Decay: #alpha=%.5f eV^{2}, sin^{2}2#theta=%.2f",input_alpha_decay,input_sinsq2theta_decay), "L");
+  legend1->AddEntry(gr_surv_prob_decoh_e, Form("Decoherence: #mu^{2}=%.5f eV^{2}, sin^{2}2#theta=%.2f",input_musq_decoh,input_sinsq2theta_decoh), "L");
   legend1->Draw();
   c1->Update();
 
@@ -84,9 +86,9 @@ void test_surv_prob()
   gr_surv_prob_disap_le->Draw("al");
   gr_surv_prob_decay_le->Draw("l");
   gr_surv_prob_decoh_le->Draw("l");
-  legend2->AddEntry(gr_surv_prob_disap_le, Form("Oscillations: #Deltam^{2}=%.5f eV^{2}, sin^{2}2#theta=%.2f",input_dmsq,input_sinsq2theta), "L");
-  legend2->AddEntry(gr_surv_prob_decay_le, Form("Decay: #alpha=%.5f eV^{2}, sin^{2}2#theta=%.2f",input_alpha_decay,input_sinsq2theta), "L");
-  legend2->AddEntry(gr_surv_prob_decoh_le, Form("Decoherence: #mu^{2}=%.5f eV^{2}, sin^{2}2#theta=%.2f",input_musq_decoh,input_sinsq2theta), "L");
+  legend2->AddEntry(gr_surv_prob_disap_le, Form("Oscillations: #Deltam^{2}=%.5f eV^{2}, sin^{2}2#theta=%.2f",input_dmsq,input_sinsq2theta_osc), "L");
+  legend2->AddEntry(gr_surv_prob_decay_le, Form("Decay: #alpha=%.5f eV^{2}, sin^{2}2#theta=%.2f",input_alpha_decay,input_sinsq2theta_decay), "L");
+  legend2->AddEntry(gr_surv_prob_decoh_le, Form("Decoherence: #mu^{2}=%.5f eV^{2}, sin^{2}2#theta=%.2f",input_musq_decoh,input_sinsq2theta_decoh), "L");
   legend2->Draw();
   c2->Update();
 }

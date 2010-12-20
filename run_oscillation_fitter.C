@@ -2,11 +2,15 @@
 // ------------------------------------------------------------------------------------------------
 // Run numu disappearance oscillation fit
 //
+// Inputs: 
+//	- dataset_id (see inputs/data.xml)
+//	- fitter name ("minuit", "custom" (2-D grid scan))
+//
 // Costas Andreopoulos
 // ------------------------------------------------------------------------------------------------
 //
 
-void run_oscillation_fitter(int dataset_id=0)
+void run_oscillation_fitter(int dataset_id=0, const char * fitter_name="custom")
 {
   gSystem->Load("libGpad");  
   gSystem->Load("libPhysics");  
@@ -40,8 +44,7 @@ void run_oscillation_fitter(int dataset_id=0)
   OscillationFitter::FitInputs * fit_inputs = new OscillationFitter::FitInputs(skobs,skexp,fparm);
 
   // get fitter
-  //OscillationFitter * fitter = new OscillationFitter(fit_inputs,"minuit");
-  OscillationFitter * fitter = new OscillationFitter(fit_inputs,"custom");
+  OscillationFitter * fitter = new OscillationFitter(fit_inputs,fitter_name);
 
   // do the fit
   fitter->DoTheFit();
