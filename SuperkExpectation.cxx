@@ -1289,11 +1289,17 @@ bool SuperkExpectation::SuperkInputs::Read(TXMLEngine* xml, XMLNodePointer_t roo
       "superk/systematics/efficiency_relative_error/one_mu_ring/ccqe");
   fEffRelErr[kSKsFCFV1RingMuLike][kSKmNuMuCC1pi] = 
     util::XML2Dbl(xml,root_node,
-      "superk/systematics/efficiency_relative_error/one_mu_ring/cc1pi");
+      "superk/systematics/efficiency_relative_error/one_mu_ring/ccnonqe");
   fEffRelErr[kSKsFCFV1RingMuLike][kSKmNuMuCCoth] = 
     util::XML2Dbl(xml,root_node,
-      "superk/systematics/efficiency_relative_error/one_mu_ring/ccoth");
+      "superk/systematics/efficiency_relative_error/one_mu_ring/ccnonqe");
   fEffRelErr[kSKsFCFV1RingMuLike][kSKmNC] =  
+    util::XML2Dbl(xml,root_node,
+      "superk/systematics/efficiency_relative_error/one_mu_ring/nc");
+  fEffRelErr[kSKsFCFV1RingMuLike][kSKmNuMuBarCC] = 
+    util::XML2Dbl(xml,root_node,
+      "superk/systematics/efficiency_relative_error/one_mu_ring/ccnonqe");
+  fEffRelErr[kSKsFCFV1RingMuLike][kSKmNuMuBarNC] = 
     util::XML2Dbl(xml,root_node,
       "superk/systematics/efficiency_relative_error/one_mu_ring/nc");
 
@@ -2072,9 +2078,39 @@ void SuperkExpectation::SuperkInputs::TweakEfficiency(
 {
   fEffTwkDial[s][m] = twkdial;
 
-  // link CC1pi and CCoth as I have a single efficiency for CCnonQE
-  if      (m == kSKmNuMuCCoth) { fEffTwkDial[s][kSKmNuMuCC1pi] = twkdial; }
-  else if (m == kSKmNuMuCC1pi) { fEffTwkDial[s][kSKmNuMuCCoth] = twkdial; }
+  //
+  // link numu CC1pi, numu CCoth and numubar CC as I have a single efficiency for CCnonQE
+  //
+  if (m == kSKmNuMuCCoth) 
+  { 
+     fEffTwkDial[s][kSKmNuMuCC1pi] = twkdial; 
+     fEffTwkDial[s][kSKmNuMuBarCC] = twkdial; 
+  }
+  else
+  if (m == kSKmNuMuCC1pi) 
+  { 
+     fEffTwkDial[s][kSKmNuMuCCoth] = twkdial; 
+     fEffTwkDial[s][kSKmNuMuBarCC] = twkdial; 
+  }
+  else
+  if (m == kSKmNuMuBarCC) 
+  {
+     fEffTwkDial[s][kSKmNuMuCC1pi] = twkdial; 
+     fEffTwkDial[s][kSKmNuMuCCoth] = twkdial; 
+  }
+
+  //
+  // link numu NC and numubar NC as I have a single efficiency for NC
+  //
+  if (m == kSKmNC) 
+  {
+     fEffTwkDial[s][kSKmNuMuBarNC] = twkdial; 
+  }
+  else
+  if (m == kSKmNuMuBarCC) 
+  {
+     fEffTwkDial[s][kSKmNC] = twkdial; 
+  }
 }
 //________________________________________________________________________________________
 //........................................................................................
