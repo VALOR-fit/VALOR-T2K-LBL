@@ -9,7 +9,7 @@
 #include "Conventions.h"
 
 void run_fc_oscillation_contour_generator(
-  int input_dm23sq_bin, int input_sinsq2theta23_bin, int run=0, string tag="fc")
+  int input_dm23sq_bin, int input_sinsq2theta23_bin, int irun=0, string tag="fc")
 {
   gSystem->Load("libGpad");  
   gSystem->Load("libPhysics");  
@@ -28,7 +28,7 @@ void run_fc_oscillation_contour_generator(
   using namespace t2kana::yr1numu;
 
   // number of pseudo-experiment fits per job
-  const int nexperiments = 200;
+  const int nexperiments = 10;
 
   //
   // The oscillation contour will be constructed using a (dm23sq, sinsq2theta23) 
@@ -61,7 +61,7 @@ void run_fc_oscillation_contour_generator(
        << osc_param_space->GetXaxis()->GetXmax() << ")" << endl;
   cout << " - dm23sq        : " << osc_param_space->GetYaxis()->GetNbins() << " bins in (" 
        << osc_param_space->GetYaxis()->GetXmin() << ", "
-       << osc_param_space->GetYaxis()->GetXmax() << ")" << endl;
+       << osc_param_space->GetYaxis()->GetXmax() << ") eV^2/c^4" << endl;
 
   assert(input_sinsq2theta23_bin >= 1 && input_sinsq2theta23_bin <= sinsq2theta23_nbins);
   assert(input_dm23sq_bin        >= 1 && input_dm23sq_bin        <= dm23sq_nbins       );
@@ -73,39 +73,49 @@ void run_fc_oscillation_contour_generator(
        << "Dm23sq_true = " << input_dm23sq << ", sinsq2theta23_true = " << input_sinsq2theta23 << endl;
 
   // ntuple to store results
-  TNtupleD * systnt = new TNtupleD("sysnt","", 
-     "iexp:run:input_sinsq2theta23_bin:input_dm23sq_bin:input_sinsq2theta23:input_dm23sq:sinsq2theta23:dm23sq:chisq");
+  TNtupleD * fcnt = new TNtupleD("fcnt","", 
+     "iexp:irun:input_sinsq2theta23_bin:input_dm23sq_bin:input_sinsq2theta23:input_dm23sq:chisq_for_input_params:sinsq2theta23:dm23sq:chisq");
 
   // fit params
   PhysParamList * fparm = PhysParamList::NumuDisapFitNoSyst();
   fparm->Update(t2kana::yr1numu::conv::kPhypSinsq2Theta23, input_sinsq2theta23);
   fparm->Update(t2kana::yr1numu::conv::kPhypDm23sq,        input_dm23sq);
 
-  // get superk spectrum predictor & configure
+  // get superk spectrum PDF & configure
   SuperkExpectation * skexp = new SuperkExpectation;
   skexp->Read("inputs/analysis_configuration.xml");
-
-  // get superk spectrum observation
-  SuperkObservation * skobs = new SuperkObservation;
-  skobs->CreateMockData(*skexp, *fparm, true);  ///<-- generate mock data now (+ fluctuate)
-
-  // create fit inputs
-  OscillationFitter::FitInputs * fit_inputs =
-     new OscillationFitter::FitInputs(skobs,skexp,fparm);
-  // good init value so that fitte converges fast to correct oscillation params
-  fparm->SetInitValue(conv::kPhypSinsq2Theta23, input_sinsq2theta23);
-  fparm->SetInitValue(conv::kPhypDm23sq,        input_dm23sq       );
   
   for(int iexperiment = 0; iexperiment < nexperiments; iexperiment++) {
      cout << "\n\n *** Pseudo-experiment = " << iexperiment << endl;
 
-     // tweak sources of systematic err
+     // reset osc. params to desired input values (they now contain the best-(previous)fit values)
+     fparm->Update(t2kana::yr1numu::conv::kPhypSinsq2Theta23, input_sinsq2theta23);
+     fparm->Update(t2kana::yr1numu::conv::kPhypDm23sq,        input_dm23sq);
+
+     // tweak all sources of systematic err (gaussian err)
      skexp->TweakAllSystematics();
 
-     // reset oscillation params following last fit
-     fparm->Update(conv::kPhypSinsq2Theta23, input_sinsq2theta23);
-     fparm->Update(conv::kPhypDm23sq,        input_dm23sq       );
+     // generate mock data using the current PDF (incl. systematic variatios) + fluctuate 
+     // (Poisson fluctuation in each bin)
+     bool fluctuate = true;
+     SuperkObservation * skobs = new SuperkObservation;
+     skobs->CreateMockData(*skexp, *fparm, fluctuate); 
+
+     // reset all systematics so that the PDF used in the fitter is the nominal one
+     skexp->ResetSystematicVariations();
      
+     // create fit inputs
+     OscillationFitter::FitInputs * fit_inputs =
+          new OscillationFitter::FitInputs(skobs,skexp,fparm);
+
+     // get chisq for true (sinsq2theta,dmsq) point 
+     double chisq_for_input_params = fit_inputs->Chisquare();
+     cout << "Chisq(input/true oscillation params) = " << chisq_for_input_params << endl;
+
+     // good init value so that fitte converges fast to correct oscillation params
+     fparm->SetInitValue(conv::kPhypSinsq2Theta23, input_sinsq2theta23);
+     fparm->SetInitValue(conv::kPhypDm23sq,        input_dm23sq       );
+
      // get fitter
      OscillationFitter fitter(fit_inputs,"minuit");
 
@@ -117,22 +127,33 @@ void run_fc_oscillation_contour_generator(
      double bestfit_dm23sq        = fparm->CurrValue(conv::kPhypDm23sq);
      double bestfit_chisq         = fit_inputs->Chisquare();
 
+     cout << "Best-fit:" 
+          << " sinsq2theta23 = " << bestfit_sinsq2theta23
+          << ", dm23sq = " << bestfit_dm23sq << " eV^2/c^4"
+          << " => chisq = " << bestfit_chisq << endl;
+
      // store results for this pseudo-experiment
-     systnt->Fill(iexperiment, 
-                  run, 
-                  input_sinsq2theta23_bin,
-                  input_dm23sq_bin,
-                  input_sinsq2theta23,
-                  input_dm23sq,
-                  bestfit_sinsq2theta23, 
-                  bestfit_dm23sq, 
-                  bestfit_chisq);
+     fcnt->Fill(iexperiment, 
+                irun, 
+                input_sinsq2theta23_bin,
+                input_dm23sq_bin,
+                input_sinsq2theta23,
+                input_dm23sq,
+                chisq_for_input_params,
+                bestfit_sinsq2theta23, 
+                bestfit_dm23sq, 
+                bestfit_chisq);
+
+     // clean-up
+     delete fit_inputs;
+     delete skobs;
+
   }//iexperiment
 
   // write-out results
   TFile f(Form("%s-run_%d-sinsq2theta23bin_%d-dm23sqbin_%d.root",
-               tag.c_str(), run,input_sinsq2theta23_bin,input_dm23sq_bin), "recreate"); 
+               tag.c_str(), irun,input_sinsq2theta23_bin,input_dm23sq_bin), "recreate"); 
 
-  systnt->Write("sysnt");
+  fcnt->Write("fcnt");
   f.Close();
 }
