@@ -9,7 +9,7 @@
 #include "Conventions.h"
 
 void write_out_mock_data(
-  double sinsq2theta23=1.00, double dm23sq=2.4E-3, const char * filename="mock_data_tight.root")
+  double sinsq2theta23=1.00, double dm23sq=2.4E-3, const char * root_filename=0)
 {
   gSystem->Load("libGpad");  
   gSystem->Load("libPhysics");  
@@ -27,34 +27,51 @@ void write_out_mock_data(
   using namespace t2kana;
   using namespace t2kana::yr1numu;
 
+  TRandom rand(0);
+
   bool fluctuate = true;
 
-  // fit params
+  // Oscillation params
   PhysParamList * fparm = PhysParamList::NumuDisapFitNoSyst();
   fparm->Update(t2kana::yr1numu::conv::kPhypSinsq2Theta23, sinsq2theta23);
   fparm->Update(t2kana::yr1numu::conv::kPhypDm23sq,        dm23sq);
 
-  // get superk spectrum predictor & configure
+  // Get superk spectrum PDF & configure
   SuperkExpectation * skexp = new SuperkExpectation;
   skexp->Read("inputs/analysis_configuration.xml");
 
-  // get superk spectrum observation
+  // Generate mock data
   SuperkObservation * skobs = new SuperkObservation;
   skobs->CreateMockData(*skexp, *fparm, fluctuate);
 
   TH1D* mock_data = skobs->ErecoSpectrum(conv::kSKsFCFV1RingMuLike);
 
-  for(int i = 1; i <= mock_data->GetNbinsX(); i++) {
-        double n = mock_data->GetBinContent(i);
-        double e = mock_data->GetBinCenter(i);
-        if(n>0) {
-           cout << e << "\t" << n << endl;
-        }
+  // Print-out Ereco values as a comma separated list.
+  // Assuming uniform distribution within each bin, randomize values within each bin.
+  bool is_first=true;
+  for(int ibin = 1; ibin <= mock_data->GetNbinsX(); ibin++) {
+    double Nb   = mock_data->GetBinContent (ibin); // number of events in this Ereco bin
+  //double Ec   = mock_data->GetXaxis()->GetBinCenter  (ibin); // Ereco bin centre
+    double Emin = mock_data->GetXaxis()->GetBinLowEdge (ibin); // Ereco bin min
+    double Emax = mock_data->GetXaxis()->GetBinUpEdge  (ibin); // Ereco bin max
+    for(int iev = 0; iev < Nb; iev++) {
+      double E = Emin + rand.Uniform() * (Emax-Emin);
+      string delimeter = ",";
+      if(is_first) {
+	delimeter = "";
+        is_first = false;
+      }
+      cout << delimeter << E;
+    }//iev
+  }//ibin
+  cout << endl;
+
+  // If a ROOT filename was specified, save the ROOT histogram
+  if(root_filename) {
+    TFile f(filename, "recreate");
+    mock_data->Write("mock_data");
+    f.Close();
   }
 
-
-  TFile f(filename, "recreate");
-  mock_data->Write("mock_data");
-  f.Close();
 }
 
