@@ -88,9 +88,7 @@ void test_superk_spectrum_prediction_twk_nd280eff()
     fhi->SetBinContent(ibin, ((def>0) ? (nhi-def)/def : 0) );
   }
 
-  //
   // draw
-  //
   TCanvas * c = new TCanvas("c","",20,20,500,500);
   gStyle->SetOptStat(0);
   c->Divide(1,2);
@@ -108,4 +106,12 @@ void test_superk_spectrum_prediction_twk_nd280eff()
   hframe->Draw();
   flo->Draw("same");
   fhi->Draw("same");
+
+  // write-out in file
+  TFile f(Form("sk_ereco_spectrum-tweak_nd280_efficiency-sinsq2theta23_%.2f-dm23sq_%.5feV2.root",input_sinsq2theta23,input_dm23sq),"recreate");
+  hEreco[0]->Write("sk_ereco_spectrum_twk_nd280_efficiency_nominal");
+  hEreco[1]->Write("sk_ereco_spectrum_twk_nd280_efficiency_plus_one_sigma");
+  hEreco[2]->Write("sk_ereco_spectrum_twk_nd280_efficiency_minus_one_sigma");
+  f.Close();
+
 }

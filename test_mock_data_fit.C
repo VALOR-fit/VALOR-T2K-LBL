@@ -57,7 +57,7 @@ void test_mock_data_fit()
   fitter->DoTheFit();
 
   // draw results
-  fitter->Draw(new TCanvas(), "StandardOscFitPlots+Minos90CL");
+  fitter->Draw(new TCanvas(), "StandardOscFitPlots+Minos90CL","mockfit");
   fitter->Draw(new TCanvas(), "ChisqSurface");
   fitter->Draw(new TCanvas(), "MarginalizedChisq");
 }

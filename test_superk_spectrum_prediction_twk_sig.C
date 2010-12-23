@@ -60,8 +60,9 @@ void test_superk_spectrum_prediction_twk_sig()
   // calculate spectra
   TH1D * hEreco   [ntwkmodes][ntwkdials];
   for(int imode = 0; imode < ntwkmodes; imode++) {
-    skexp.ResetSystematicVariations(); // reset previously set tweaks
     for(int idial = 0; idial < ntwkdials; idial++) {
+       // reset previously set tweaks
+       skexp.ResetSystematicVariations(); 
        // tweak spectrum generation model
        if      (imode==0) skexp.GetGeneratorInputs()->TweakCCQEXSec            ( twkdial[idial] );
        else if (imode==1) skexp.GetGeneratorInputs()->TweakCC1piToCCQEXSecRatio( twkdial[idial] );
@@ -144,4 +145,27 @@ void test_superk_spectrum_prediction_twk_sig()
     }
     c[imode]->Update();
   }//imode
+
+  // write-out in file
+  TFile f(Form("sk_ereco_spectrum-tweak_cross_sections-sinsq2theta23_%.2f-dm23sq_%.5feV2.root",input_sinsq2theta23,input_dm23sq),"recreate");
+  for(int imode = 0; imode < ntwkmodes; imode++) {
+     for(int idial = 0; idial < ntwkdials; idial++) {
+       const char * syst = "";
+       if(imode==0) syst="ccqe_xsec";
+       if(imode==1) syst="cc1pi_to_ccqe_xsec_ratio";
+       if(imode==2) syst="ccoth_to_ccqe_xsec_ratio";
+       if(imode==3) syst="nc_to_ccqe_xsec_ratio";
+       if(imode==4) syst="nuclear_effect";
+       const char * dial = "";
+       if( TMath::Abs(twkdial[idial]-1.0) < conv::kASmallNum ) dial="plus_one_sigma";
+       if( TMath::Abs(twkdial[idial]-0.5) < conv::kASmallNum ) dial="plus_half_sigma";
+       if( TMath::Abs(twkdial[idial]    ) < conv::kASmallNum ) dial="nominal";
+       if( TMath::Abs(twkdial[idial]+1.0) < conv::kASmallNum ) dial="minus_one_sigma";
+       if( TMath::Abs(twkdial[idial]+0.5) < conv::kASmallNum ) dial="minus_half_sigma";
+       const char * title = Form("sk_ereco_spectrum_twk_%s_%s",syst,dial);
+       hEreco[imode][idial]->Write(title);
+     }
+  }
+  f.Close();
+
 }

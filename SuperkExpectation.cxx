@@ -409,7 +409,6 @@ void SuperkExpectation::ND280Inputs::Init(void)
   fPOTMC         = 0;
   for(int i = 0; i < knmnd; i++) {
     fNumSelEt[i] = 0;
-    fSelEffEt[i] = 0;
   }
   fSelEffTwkDial = 0.;
   fSelEffRelErr  = 0.;
@@ -426,7 +425,6 @@ void SuperkExpectation::ND280Inputs::CleanUp(void)
 {
   for(int i = 0; i < knmnd; i++) {
     if (fNumSelEt[i]) delete fNumSelEt[i];
-    if (fSelEffEt[i]) delete fSelEffEt[i];
   }
 
   if ( fNuMuEt    ) delete fNuMuEt;
@@ -460,8 +458,6 @@ bool SuperkExpectation::ND280Inputs::Read(TXMLEngine* xml, XMLNodePointer_t root
     util::XML2TH1F(xml,root_node,"nd280/saclay_selection/true_energy_spectrum/numu_cccoh");
   fNumSelEt [kNDmNuMuCCOth]     =
     util::XML2TH1F(xml,root_node,"nd280/saclay_selection/true_energy_spectrum/numu_ccoth");
-  fNumSelEt [kNDmNuMuNCEL]      =
-    util::XML2TH1F(xml,root_node,"nd280/saclay_selection/true_energy_spectrum/numu_ncel");
   fNumSelEt [kNDmNuMuNCRES]     = 
     util::XML2TH1F(xml,root_node,"nd280/saclay_selection/true_energy_spectrum/numu_ncres");
   fNumSelEt [kNDmNuMuNCCOH]     =
@@ -476,8 +472,6 @@ bool SuperkExpectation::ND280Inputs::Read(TXMLEngine* xml, XMLNodePointer_t root
     util::XML2TH1F(xml,root_node,"nd280/saclay_selection/true_energy_spectrum/numubar_cccoh");
   fNumSelEt [kNDmNuMuBarCCOth]  =
     util::XML2TH1F(xml,root_node,"nd280/saclay_selection/true_energy_spectrum/numubar_ccoth");
-  fNumSelEt [kNDmNuMuBarNCEL]   =
-    util::XML2TH1F(xml,root_node,"nd280/saclay_selection/true_energy_spectrum/numubar_ncel");
   fNumSelEt [kNDmNuMuBarNCRES]  = 
     util::XML2TH1F(xml,root_node,"nd280/saclay_selection/true_energy_spectrum/numubar_ncres");
   fNumSelEt [kNDmNuMuBarNCCOH]  =
@@ -492,8 +486,6 @@ bool SuperkExpectation::ND280Inputs::Read(TXMLEngine* xml, XMLNodePointer_t root
     util::XML2TH1F(xml,root_node,"nd280/saclay_selection/true_energy_spectrum/nue_cccoh");
   fNumSelEt [kNDmNuECCOth]      =
     util::XML2TH1F(xml,root_node,"nd280/saclay_selection/true_energy_spectrum/nue_ccoth");
-  fNumSelEt [kNDmNuENCEL]       =
-    util::XML2TH1F(xml,root_node,"nd280/saclay_selection/true_energy_spectrum/nue_ncel");
   fNumSelEt [kNDmNuENCRES]      =
     util::XML2TH1F(xml,root_node,"nd280/saclay_selection/true_energy_spectrum/nue_ncres");
   fNumSelEt [kNDmNuENCCOH]      =
@@ -510,7 +502,6 @@ bool SuperkExpectation::ND280Inputs::Read(TXMLEngine* xml, XMLNodePointer_t root
   fNumSelEt [kNDmNuMuCCRES]    -> Scale (data_to_mc_pot);
   fNumSelEt [kNDmNuMuCCCOH]    -> Scale (data_to_mc_pot);
   fNumSelEt [kNDmNuMuCCOth]    -> Scale (data_to_mc_pot);
-  fNumSelEt [kNDmNuMuNCEL]     -> Scale (data_to_mc_pot);
   fNumSelEt [kNDmNuMuNCRES]    -> Scale (data_to_mc_pot);
   fNumSelEt [kNDmNuMuNCCOH]    -> Scale (data_to_mc_pot);
   fNumSelEt [kNDmNuMuNCOth]    -> Scale (data_to_mc_pot);
@@ -518,7 +509,6 @@ bool SuperkExpectation::ND280Inputs::Read(TXMLEngine* xml, XMLNodePointer_t root
   fNumSelEt [kNDmNuMuBarCCRES] -> Scale (data_to_mc_pot);
   fNumSelEt [kNDmNuMuBarCCCOH] -> Scale (data_to_mc_pot);
   fNumSelEt [kNDmNuMuBarCCOth] -> Scale (data_to_mc_pot);
-  fNumSelEt [kNDmNuMuBarNCEL]  -> Scale (data_to_mc_pot);
   fNumSelEt [kNDmNuMuBarNCRES] -> Scale (data_to_mc_pot);
   fNumSelEt [kNDmNuMuBarNCCOH] -> Scale (data_to_mc_pot);
   fNumSelEt [kNDmNuMuBarNCOth] -> Scale (data_to_mc_pot);
@@ -526,63 +516,11 @@ bool SuperkExpectation::ND280Inputs::Read(TXMLEngine* xml, XMLNodePointer_t root
   fNumSelEt [kNDmNuECCRES]     -> Scale (data_to_mc_pot);
   fNumSelEt [kNDmNuECCCOH]     -> Scale (data_to_mc_pot);
   fNumSelEt [kNDmNuECCOth]     -> Scale (data_to_mc_pot);
-  fNumSelEt [kNDmNuENCEL]      -> Scale (data_to_mc_pot);
   fNumSelEt [kNDmNuENCRES]     -> Scale (data_to_mc_pot);
   fNumSelEt [kNDmNuENCCOH]     -> Scale (data_to_mc_pot);
   fNumSelEt [kNDmNuENCOth]     -> Scale (data_to_mc_pot);
 
   cout << "Exp/nd280 >> Done rescaling NMC_{mode} histograms to the data POT" << endl;
-
-  // Get efficiency_{mode}(Etrue)
-  cout << "Exp/nd280 >> " << "Getting efficiency_{mode}(Etrue) histograms" << endl; 
-  fSelEffEt [kNDmNuMuCCQE]      =
-    util::XML2TH1F(xml,root_node,"nd280/saclay_selection/efficiency_vs_true_energy/numu_ccqe");
-  fSelEffEt [kNDmNuMuCCRES]     =
-    util::XML2TH1F(xml,root_node,"nd280/saclay_selection/efficiency_vs_true_energy/numu_ccres");
-  fSelEffEt [kNDmNuMuCCCOH]     =
-    util::XML2TH1F(xml,root_node,"nd280/saclay_selection/efficiency_vs_true_energy/numu_cccoh");
-  fSelEffEt [kNDmNuMuCCOth]     =
-    util::XML2TH1F(xml,root_node,"nd280/saclay_selection/efficiency_vs_true_energy/numu_ccoth");
-  fSelEffEt [kNDmNuMuNCEL]      =
-    util::XML2TH1F(xml,root_node,"nd280/saclay_selection/efficiency_vs_true_energy/numu_ncel");
-  fSelEffEt [kNDmNuMuNCRES]     = 
-    util::XML2TH1F(xml,root_node,"nd280/saclay_selection/efficiency_vs_true_energy/numu_ncres");
-  fSelEffEt [kNDmNuMuNCCOH]     =
-    util::XML2TH1F(xml,root_node,"nd280/saclay_selection/efficiency_vs_true_energy/numu_nccoh");
-  fSelEffEt [kNDmNuMuNCOth]     =
-    util::XML2TH1F(xml,root_node,"nd280/saclay_selection/efficiency_vs_true_energy/numu_ncoth");
-  fSelEffEt [kNDmNuMuBarCCQE]   = 
-    util::XML2TH1F(xml,root_node,"nd280/saclay_selection/efficiency_vs_true_energy/numubar_ccqe");
-  fSelEffEt [kNDmNuMuBarCCRES]  = 
-    util::XML2TH1F(xml,root_node,"nd280/saclay_selection/efficiency_vs_true_energy/numubar_ccres");
-  fSelEffEt [kNDmNuMuBarCCCOH]  =
-    util::XML2TH1F(xml,root_node,"nd280/saclay_selection/efficiency_vs_true_energy/numubar_cccoh");
-  fSelEffEt [kNDmNuMuBarCCOth]  =
-    util::XML2TH1F(xml,root_node,"nd280/saclay_selection/efficiency_vs_true_energy/numubar_ccoth");
-  fSelEffEt [kNDmNuMuBarNCEL]   =
-    util::XML2TH1F(xml,root_node,"nd280/saclay_selection/efficiency_vs_true_energy/numubar_ncel");
-  fSelEffEt [kNDmNuMuBarNCRES]  = 
-    util::XML2TH1F(xml,root_node,"nd280/saclay_selection/efficiency_vs_true_energy/numubar_ncres");
-  fSelEffEt [kNDmNuMuBarNCCOH]  =
-    util::XML2TH1F(xml,root_node,"nd280/saclay_selection/efficiency_vs_true_energy/numubar_nccoh");
-  fSelEffEt [kNDmNuMuBarNCOth]  =
-    util::XML2TH1F(xml,root_node,"nd280/saclay_selection/efficiency_vs_true_energy/numubar_ncoth");
-  fSelEffEt [kNDmNuECCQE]       =
-    util::XML2TH1F(xml,root_node,"nd280/saclay_selection/efficiency_vs_true_energy/nue_ccqe");
-  fSelEffEt [kNDmNuECCRES]      =
-    util::XML2TH1F(xml,root_node,"nd280/saclay_selection/efficiency_vs_true_energy/nue_ccres");
-  fSelEffEt [kNDmNuECCCOH]      =
-    util::XML2TH1F(xml,root_node,"nd280/saclay_selection/efficiency_vs_true_energy/nue_cccoh");
-  fSelEffEt [kNDmNuECCOth]      =
-    util::XML2TH1F(xml,root_node,"nd280/saclay_selection/efficiency_vs_true_energy/nue_ccoth");
-  fSelEffEt [kNDmNuENCEL]       =
-    util::XML2TH1F(xml,root_node,"nd280/saclay_selection/efficiency_vs_true_energy/nue_ncel");
-  fSelEffEt [kNDmNuENCRES]      =
-    util::XML2TH1F(xml,root_node,"nd280/saclay_selection/efficiency_vs_true_energy/nue_ncres");
-  fSelEffEt [kNDmNuENCCOH]      =
-    util::XML2TH1F(xml,root_node,"nd280/saclay_selection/efficiency_vs_true_energy/nue_nccoh");
-  fSelEffEt [kNDmNuENCOth]      =
-    util::XML2TH1F(xml,root_node,"nd280/saclay_selection/efficiency_vs_true_energy/nue_ncoth");
 
   // Get error on efficiency
   fSelEffRelErr = util::XML2Dbl(xml,root_node,"nd280/saclay_selection/systematics/efficiency_relative_error");
@@ -594,7 +532,6 @@ bool SuperkExpectation::ND280Inputs::Read(TXMLEngine* xml, XMLNodePointer_t root
   fNumSelEt [kNDmNuMuCCRES]    -> SetLineColor (kBlack); 
   fNumSelEt [kNDmNuMuCCCOH]    -> SetLineColor (kBlack); 
   fNumSelEt [kNDmNuMuCCOth]    -> SetLineColor (kBlack); 
-  fNumSelEt [kNDmNuMuNCEL]     -> SetLineColor (kRed); 
   fNumSelEt [kNDmNuMuNCRES]    -> SetLineColor (kRed); 
   fNumSelEt [kNDmNuMuNCCOH]    -> SetLineColor (kRed); 
   fNumSelEt [kNDmNuMuNCOth]    -> SetLineColor (kRed); 
@@ -602,7 +539,6 @@ bool SuperkExpectation::ND280Inputs::Read(TXMLEngine* xml, XMLNodePointer_t root
   fNumSelEt [kNDmNuMuBarCCRES] -> SetLineColor (kBlue); 
   fNumSelEt [kNDmNuMuBarCCCOH] -> SetLineColor (kBlue); 
   fNumSelEt [kNDmNuMuBarCCOth] -> SetLineColor (kBlue); 
-  fNumSelEt [kNDmNuMuBarNCEL]  -> SetLineColor (kMagenta); 
   fNumSelEt [kNDmNuMuBarNCRES] -> SetLineColor (kMagenta); 
   fNumSelEt [kNDmNuMuBarNCCOH] -> SetLineColor (kMagenta); 
   fNumSelEt [kNDmNuMuBarNCOth] -> SetLineColor (kMagenta); 
@@ -610,7 +546,6 @@ bool SuperkExpectation::ND280Inputs::Read(TXMLEngine* xml, XMLNodePointer_t root
   fNumSelEt [kNDmNuECCRES]     -> SetLineColor (kGreen); 
   fNumSelEt [kNDmNuECCCOH]     -> SetLineColor (kGreen); 
   fNumSelEt [kNDmNuECCOth]     -> SetLineColor (kGreen); 
-  fNumSelEt [kNDmNuENCEL]      -> SetLineColor (kPink); 
   fNumSelEt [kNDmNuENCRES]     -> SetLineColor (kPink); 
   fNumSelEt [kNDmNuENCCOH]     -> SetLineColor (kPink); 
   fNumSelEt [kNDmNuENCOth]     -> SetLineColor (kPink); 
@@ -619,7 +554,6 @@ bool SuperkExpectation::ND280Inputs::Read(TXMLEngine* xml, XMLNodePointer_t root
   fNumSelEt [kNDmNuMuCCRES]    -> SetLineStyle (kDashed); 
   fNumSelEt [kNDmNuMuCCCOH]    -> SetLineStyle (kDotted); 
   fNumSelEt [kNDmNuMuCCOth]    -> SetLineStyle (kDashDotted); 
-  fNumSelEt [kNDmNuMuNCEL]     -> SetLineStyle (kSolid); 
   fNumSelEt [kNDmNuMuNCRES]    -> SetLineStyle (kDashed); 
   fNumSelEt [kNDmNuMuNCCOH]    -> SetLineStyle (kDotted); 
   fNumSelEt [kNDmNuMuNCOth]    -> SetLineStyle (kDashDotted); 
@@ -627,7 +561,6 @@ bool SuperkExpectation::ND280Inputs::Read(TXMLEngine* xml, XMLNodePointer_t root
   fNumSelEt [kNDmNuMuBarCCRES] -> SetLineStyle (kDashed); 
   fNumSelEt [kNDmNuMuBarCCCOH] -> SetLineStyle (kDotted); 
   fNumSelEt [kNDmNuMuBarCCOth] -> SetLineStyle (kDashDotted); 
-  fNumSelEt [kNDmNuMuBarNCEL]  -> SetLineStyle (kSolid); 
   fNumSelEt [kNDmNuMuBarNCRES] -> SetLineStyle (kDashed); 
   fNumSelEt [kNDmNuMuBarNCCOH] -> SetLineStyle (kDotted); 
   fNumSelEt [kNDmNuMuBarNCOth] -> SetLineStyle (kDashDotted); 
@@ -635,60 +568,9 @@ bool SuperkExpectation::ND280Inputs::Read(TXMLEngine* xml, XMLNodePointer_t root
   fNumSelEt [kNDmNuECCRES]     -> SetLineStyle (kDashed); 
   fNumSelEt [kNDmNuECCCOH]     -> SetLineStyle (kDotted); 
   fNumSelEt [kNDmNuECCOth]     -> SetLineStyle (kDashDotted); 
-  fNumSelEt [kNDmNuENCEL]      -> SetLineStyle (kSolid); 
   fNumSelEt [kNDmNuENCRES]     -> SetLineStyle (kDashed); 
   fNumSelEt [kNDmNuENCCOH]     -> SetLineStyle (kDotted); 
   fNumSelEt [kNDmNuENCOth]     -> SetLineStyle (kDashDotted); 
-
-  fSelEffEt [kNDmNuMuCCQE]     -> SetLineColor (kBlack);
-  fSelEffEt [kNDmNuMuCCRES]    -> SetLineColor (kBlack); 
-  fSelEffEt [kNDmNuMuCCCOH]    -> SetLineColor (kBlack); 
-  fSelEffEt [kNDmNuMuCCOth]    -> SetLineColor (kBlack); 
-  fSelEffEt [kNDmNuMuNCEL]     -> SetLineColor (kRed); 
-  fSelEffEt [kNDmNuMuNCRES]    -> SetLineColor (kRed); 
-  fSelEffEt [kNDmNuMuNCCOH]    -> SetLineColor (kRed); 
-  fSelEffEt [kNDmNuMuNCOth]    -> SetLineColor (kRed); 
-  fSelEffEt [kNDmNuMuBarCCQE]  -> SetLineColor (kBlue); 
-  fSelEffEt [kNDmNuMuBarCCRES] -> SetLineColor (kBlue); 
-  fSelEffEt [kNDmNuMuBarCCCOH] -> SetLineColor (kBlue); 
-  fSelEffEt [kNDmNuMuBarCCOth] -> SetLineColor (kBlue); 
-  fSelEffEt [kNDmNuMuBarNCEL]  -> SetLineColor (kMagenta); 
-  fSelEffEt [kNDmNuMuBarNCRES] -> SetLineColor (kMagenta); 
-  fSelEffEt [kNDmNuMuBarNCCOH] -> SetLineColor (kMagenta); 
-  fSelEffEt [kNDmNuMuBarNCOth] -> SetLineColor (kMagenta); 
-  fSelEffEt [kNDmNuECCQE]      -> SetLineColor (kGreen); 
-  fSelEffEt [kNDmNuECCRES]     -> SetLineColor (kGreen); 
-  fSelEffEt [kNDmNuECCCOH]     -> SetLineColor (kGreen); 
-  fSelEffEt [kNDmNuECCOth]     -> SetLineColor (kGreen); 
-  fSelEffEt [kNDmNuENCEL]      -> SetLineColor (kPink); 
-  fSelEffEt [kNDmNuENCRES]     -> SetLineColor (kPink); 
-  fSelEffEt [kNDmNuENCCOH]     -> SetLineColor (kPink); 
-  fSelEffEt [kNDmNuENCOth]     -> SetLineColor (kPink); 
-
-  fSelEffEt [kNDmNuMuCCQE]     -> SetLineStyle (kSolid);
-  fSelEffEt [kNDmNuMuCCRES]    -> SetLineStyle (kDashed); 
-  fSelEffEt [kNDmNuMuCCCOH]    -> SetLineStyle (kDotted); 
-  fSelEffEt [kNDmNuMuCCOth]    -> SetLineStyle (kDashDotted); 
-  fSelEffEt [kNDmNuMuNCEL]     -> SetLineStyle (kSolid); 
-  fSelEffEt [kNDmNuMuNCRES]    -> SetLineStyle (kDashed); 
-  fSelEffEt [kNDmNuMuNCCOH]    -> SetLineStyle (kDotted); 
-  fSelEffEt [kNDmNuMuNCOth]    -> SetLineStyle (kDashDotted); 
-  fSelEffEt [kNDmNuMuBarCCQE]  -> SetLineStyle (kSolid); 
-  fSelEffEt [kNDmNuMuBarCCRES] -> SetLineStyle (kDashed); 
-  fSelEffEt [kNDmNuMuBarCCCOH] -> SetLineStyle (kDotted); 
-  fSelEffEt [kNDmNuMuBarCCOth] -> SetLineStyle (kDashDotted); 
-  fSelEffEt [kNDmNuMuBarNCEL]  -> SetLineStyle (kSolid); 
-  fSelEffEt [kNDmNuMuBarNCRES] -> SetLineStyle (kDashed); 
-  fSelEffEt [kNDmNuMuBarNCCOH] -> SetLineStyle (kDotted); 
-  fSelEffEt [kNDmNuMuBarNCOth] -> SetLineStyle (kDashDotted); 
-  fSelEffEt [kNDmNuECCQE]      -> SetLineStyle (kSolid); 
-  fSelEffEt [kNDmNuECCRES]     -> SetLineStyle (kDashed); 
-  fSelEffEt [kNDmNuECCCOH]     -> SetLineStyle (kDotted); 
-  fSelEffEt [kNDmNuECCOth]     -> SetLineStyle (kDashDotted); 
-  fSelEffEt [kNDmNuENCEL]      -> SetLineStyle (kSolid); 
-  fSelEffEt [kNDmNuENCRES]     -> SetLineStyle (kDashed); 
-  fSelEffEt [kNDmNuENCCOH]     -> SetLineStyle (kDotted); 
-  fSelEffEt [kNDmNuENCOth]     -> SetLineStyle (kDashDotted); 
 
   //
   // histograms needed for beam norm err calculation
@@ -750,15 +632,13 @@ void SuperkExpectation::ND280Inputs::Draw(TVirtualPad * c, Option_t * option) co
   if(opt.Contains("Saclay/EtrueSpectrum/NuMu/NC")) { 
     TH1F * hframe = (TH1F*)c->DrawFrame(0,Nmin,Emax,Nmax);
     hframe->Draw();
-    fNumSelEt [kNDmNuMuNCEL]     -> Draw("LPERRSAME");
     fNumSelEt [kNDmNuMuNCRES]    -> Draw("LPERRSAME");
     fNumSelEt [kNDmNuMuNCCOH]    -> Draw("LPERRSAME");
     fNumSelEt [kNDmNuMuNCOth]    -> Draw("LPERRSAME");
-    fNumSelEt [kNDmNuMuNCEL]     -> GetXaxis()->SetTitle("E_{#nu} (GeV)");
-    fNumSelEt [kNDmNuMuNCEL]     -> GetYaxis()->SetTitle(Form("events / %E POT", fPOTData));
+    fNumSelEt [kNDmNuMuNCRES]    -> GetXaxis()->SetTitle("E_{#nu} (GeV)");
+    fNumSelEt [kNDmNuMuNCRES]    -> GetYaxis()->SetTitle(Form("events / %E POT", fPOTData));
     TLegend * l = new TLegend(0.7,0.6,0.9,0.9);
     l->SetFillColor(0);
-    l->AddEntry(fNumSelEt [kNDmNuMuNCEL] , "#nu_{#mu} NCEL",    "LP");
     l->AddEntry(fNumSelEt [kNDmNuMuNCRES], "#nu_{#mu} NCRES",   "LP");
     l->AddEntry(fNumSelEt [kNDmNuMuNCCOH], "#nu_{#mu} NCCOH",   "LP");
     l->AddEntry(fNumSelEt [kNDmNuMuNCOth], "#nu_{#mu} NCOther", "LP");
@@ -788,15 +668,13 @@ void SuperkExpectation::ND280Inputs::Draw(TVirtualPad * c, Option_t * option) co
   if(opt.Contains("Saclay/EtrueSpectrum/NuMuBar/NC")) { 
     TH1F * hframe = (TH1F*)c->DrawFrame(0,Nmin,Emax,Nmax);
     hframe->Draw();
-    fNumSelEt [kNDmNuMuBarNCEL]     -> Draw("LPERRSAME");
     fNumSelEt [kNDmNuMuBarNCRES]    -> Draw("LPERRSAME");
     fNumSelEt [kNDmNuMuBarNCCOH]    -> Draw("LPERRSAME");
     fNumSelEt [kNDmNuMuBarNCOth]    -> Draw("LPERRSAME");
-    fNumSelEt [kNDmNuMuBarNCEL]     -> GetXaxis()->SetTitle("E_{#nu} (GeV)");
-    fNumSelEt [kNDmNuMuBarNCEL]     -> GetYaxis()->SetTitle(Form("events / %E POT", fPOTData));
+    fNumSelEt [kNDmNuMuBarNCRES]    -> GetXaxis()->SetTitle("E_{#nu} (GeV)");
+    fNumSelEt [kNDmNuMuBarNCRES]    -> GetYaxis()->SetTitle(Form("events / %E POT", fPOTData));
     TLegend * l = new TLegend(0.7,0.6,0.9,0.9);
     l->SetFillColor(0);
-    l->AddEntry(fNumSelEt [kNDmNuMuBarNCEL] , "#bar{#nu_{#mu}} NCEL",    "LP");
     l->AddEntry(fNumSelEt [kNDmNuMuBarNCRES], "#bar{#nu_{#mu}} NCRES",   "LP");
     l->AddEntry(fNumSelEt [kNDmNuMuBarNCCOH], "#bar{#nu_{#mu}} NCCOH",   "LP");
     l->AddEntry(fNumSelEt [kNDmNuMuBarNCOth], "#bar{#nu_{#mu}} NCOther", "LP");
@@ -826,132 +704,16 @@ void SuperkExpectation::ND280Inputs::Draw(TVirtualPad * c, Option_t * option) co
   if(opt.Contains("Saclay/EtrueSpectrum/NuE/NC")) { 
     TH1F * hframe = (TH1F*)c->DrawFrame(0,Nmin,Emax,Nmax);
     hframe->Draw();
-    fNumSelEt [kNDmNuENCEL]     -> Draw("LPERRSAME");
     fNumSelEt [kNDmNuENCRES]    -> Draw("LPERRSAME");
     fNumSelEt [kNDmNuENCCOH]    -> Draw("LPERRSAME");
     fNumSelEt [kNDmNuENCOth]    -> Draw("LPERRSAME");
-    fNumSelEt [kNDmNuENCEL]     -> GetXaxis()->SetTitle("E_{#nu} (GeV)");
-    fNumSelEt [kNDmNuENCEL]     -> GetYaxis()->SetTitle(Form("events / %E POT", fPOTData));
+    fNumSelEt [kNDmNuENCRES]    -> GetXaxis()->SetTitle("E_{#nu} (GeV)");
+    fNumSelEt [kNDmNuENCRES]    -> GetYaxis()->SetTitle(Form("events / %E POT", fPOTData));
     TLegend * l = new TLegend(0.7,0.6,0.9,0.9);
     l->SetFillColor(0);
-    l->AddEntry(fNumSelEt [kNDmNuENCEL] , "#nu_{e} NCEL",    "LP");
     l->AddEntry(fNumSelEt [kNDmNuENCRES], "#nu_{e} NCRES",   "LP");
     l->AddEntry(fNumSelEt [kNDmNuENCCOH], "#nu_{e} NCCOH",   "LP");
     l->AddEntry(fNumSelEt [kNDmNuENCOth], "#nu_{e} NCOther", "LP");
-    l->Draw();
-    c->SetLogy();
-  }
-  else
-  if(opt.Contains("Saclay/Efficiency/NuMu/CC")) { 
-    TH1F * hframe = (TH1F*)c->DrawFrame(0,0.01,Emax,1);
-    hframe->Draw();
-    fSelEffEt [kNDmNuMuCCQE]   -> Draw("LPERRSAME");
-    fSelEffEt [kNDmNuMuCCRES]  -> Draw("LPERRSAME");
-    fSelEffEt [kNDmNuMuCCCOH]  -> Draw("LPERRSAME");
-    fSelEffEt [kNDmNuMuCCOth]  -> Draw("LPERRSAME");
-    fSelEffEt [kNDmNuMuCCQE]   -> GetXaxis()->SetTitle("E_{#nu} (GeV)");
-    fSelEffEt [kNDmNuMuCCQE]   -> GetYaxis()->SetTitle("efficiency");
-    TLegend * l = new TLegend(0.7,0.6,0.9,0.9);
-    l->SetFillColor(0);
-    l->AddEntry(fSelEffEt [kNDmNuMuCCQE] , "#nu_{#mu} CCQE",    "LP");
-    l->AddEntry(fSelEffEt [kNDmNuMuCCRES], "#nu_{#mu} CCRES",   "LP");
-    l->AddEntry(fSelEffEt [kNDmNuMuCCCOH], "#nu_{#mu} CCCOH",   "LP");
-    l->AddEntry(fSelEffEt [kNDmNuMuCCOth], "#nu_{#mu} CCOther", "LP");
-    l->Draw();
-    c->SetLogy();
-  }
-  else
-  if(opt.Contains("Saclay/Efficiency/NuMu/NC")) { 
-    TH1F * hframe = (TH1F*)c->DrawFrame(0,.01,Emax,1);
-    hframe->Draw();
-    fSelEffEt [kNDmNuMuNCEL]     -> Draw("LPERRSAME");
-    fSelEffEt [kNDmNuMuNCRES]    -> Draw("LPERRSAME");
-    fSelEffEt [kNDmNuMuNCCOH]    -> Draw("LPERRSAME");
-    fSelEffEt [kNDmNuMuNCOth]    -> Draw("LPERRSAME");
-    fSelEffEt [kNDmNuMuNCEL]     -> GetXaxis()->SetTitle("E_{#nu} (GeV)");
-    fSelEffEt [kNDmNuMuNCEL]     -> GetYaxis()->SetTitle("efficiency");
-    TLegend * l = new TLegend(0.7,0.6,0.9,0.9);
-    l->SetFillColor(0);
-    l->AddEntry(fSelEffEt [kNDmNuMuNCEL] , "#nu_{#mu} NCEL",    "LP");
-    l->AddEntry(fSelEffEt [kNDmNuMuNCRES], "#nu_{#mu} NCRES",   "LP");
-    l->AddEntry(fSelEffEt [kNDmNuMuNCCOH], "#nu_{#mu} NCCOH",   "LP");
-    l->AddEntry(fSelEffEt [kNDmNuMuNCOth], "#nu_{#mu} NCOther", "LP");
-    l->Draw();
-    c->SetLogy();
-  }
-  else
-  if(opt.Contains("Saclay/Efficiency/NuMuBar/CC")) { 
-    TH1F * hframe = (TH1F*)c->DrawFrame(0,0.01,Emax,1);
-    hframe->Draw();
-    fSelEffEt [kNDmNuMuBarCCQE]     -> Draw("LPERRSAME");
-    fSelEffEt [kNDmNuMuBarCCRES]    -> Draw("LPERRSAME");
-    fSelEffEt [kNDmNuMuBarCCCOH]    -> Draw("LPERRSAME");
-    fSelEffEt [kNDmNuMuBarCCOth]    -> Draw("LPERRSAME");
-    fSelEffEt [kNDmNuMuBarCCQE]     -> GetXaxis()->SetTitle("E_{#nu} (GeV)");
-    fSelEffEt [kNDmNuMuBarCCQE]     -> GetYaxis()->SetTitle("efficiency");
-    TLegend * l = new TLegend(0.7,0.6,0.9,0.9);
-    l->SetFillColor(0);
-    l->AddEntry(fSelEffEt [kNDmNuMuBarCCQE] , "#bar{#nu_{#mu}} CCQE",    "LP");
-    l->AddEntry(fSelEffEt [kNDmNuMuBarCCRES], "#bar{#nu_{#mu}} CCRES",   "LP");
-    l->AddEntry(fSelEffEt [kNDmNuMuBarCCCOH], "#bar{#nu_{#mu}} CCCOH",   "LP");
-    l->AddEntry(fSelEffEt [kNDmNuMuBarCCOth], "#bar{#nu_{#mu}} CCOther", "LP");
-    l->Draw();
-    c->SetLogy();
-  }
-  else
-  if(opt.Contains("Saclay/Efficiency/NuMuBar/NC")) { 
-    TH1F * hframe = (TH1F*)c->DrawFrame(0,0.01,Emax,1);
-    hframe->Draw();
-    fSelEffEt [kNDmNuMuBarNCEL]     -> Draw("LPERRSAME");
-    fSelEffEt [kNDmNuMuBarNCRES]    -> Draw("LPERRSAME");
-    fSelEffEt [kNDmNuMuBarNCCOH]    -> Draw("LPERRSAME");
-    fSelEffEt [kNDmNuMuBarNCOth]    -> Draw("LPERRSAME");
-    fSelEffEt [kNDmNuMuBarNCEL]     -> GetXaxis()->SetTitle("E_{#nu} (GeV)");
-    fSelEffEt [kNDmNuMuBarNCEL]     -> GetYaxis()->SetTitle("efficiency");
-    TLegend * l = new TLegend(0.7,0.6,0.9,0.9);
-    l->SetFillColor(0);
-    l->AddEntry(fSelEffEt [kNDmNuMuBarNCEL] , "#bar{#nu_{#mu}} NCEL",    "LP");
-    l->AddEntry(fSelEffEt [kNDmNuMuBarNCRES], "#bar{#nu_{#mu}} NCRES",   "LP");
-    l->AddEntry(fSelEffEt [kNDmNuMuBarNCCOH], "#bar{#nu_{#mu}} NCCOH",   "LP");
-    l->AddEntry(fSelEffEt [kNDmNuMuBarNCOth], "#bar{#nu_{#mu}} NCOther", "LP");
-    l->Draw();
-    c->SetLogy();
-  }
-  else
-  if(opt.Contains("Saclay/Efficiency/NuE/CC")) { 
-    TH1F * hframe = (TH1F*)c->DrawFrame(0,0.01,Emax,1);
-    hframe->Draw();
-    fSelEffEt [kNDmNuECCQE]     -> Draw("LPERRSAME");
-    fSelEffEt [kNDmNuECCRES]    -> Draw("LPERRSAME");
-    fSelEffEt [kNDmNuECCCOH]    -> Draw("LPERRSAME");
-    fSelEffEt [kNDmNuECCOth]    -> Draw("LPERRSAME");
-    fSelEffEt [kNDmNuECCQE]     -> GetXaxis()->SetTitle("E_{#nu} (GeV)");
-    fSelEffEt [kNDmNuECCQE]     -> GetYaxis()->SetTitle("efficiency");
-    TLegend * l = new TLegend(0.7,0.6,0.9,0.9);
-    l->SetFillColor(0);
-    l->AddEntry(fSelEffEt [kNDmNuECCQE] , "#nu_{e} CCQE",    "LP");
-    l->AddEntry(fSelEffEt [kNDmNuECCRES], "#nu_{e} CCRES",   "LP");
-    l->AddEntry(fSelEffEt [kNDmNuECCCOH], "#nu_{e} CCCOH",   "LP");
-    l->AddEntry(fSelEffEt [kNDmNuECCOth], "#nu_{e} CCOther", "LP");
-    l->Draw();
-    c->SetLogy();
-  }
-  else
-  if(opt.Contains("Saclay/Efficiency/NuE/NC")) { 
-    TH1F * hframe = (TH1F*)c->DrawFrame(0,0.01,Emax,1);
-    hframe->Draw();
-    fSelEffEt [kNDmNuENCEL]     -> Draw("LPERRSAME");
-    fSelEffEt [kNDmNuENCRES]    -> Draw("LPERRSAME");
-    fSelEffEt [kNDmNuENCCOH]    -> Draw("LPERRSAME");
-    fSelEffEt [kNDmNuENCOth]    -> Draw("LPERRSAME");
-    fSelEffEt [kNDmNuENCEL]     -> GetXaxis()->SetTitle("E_{#nu} (GeV)");
-    fSelEffEt [kNDmNuENCEL]     -> GetYaxis()->SetTitle("efficiency");
-    TLegend * l = new TLegend(0.7,0.6,0.9,0.9);
-    l->SetFillColor(0);
-    l->AddEntry(fSelEffEt [kNDmNuENCEL] , "#nu_{e} NCEL",    "LP");
-    l->AddEntry(fSelEffEt [kNDmNuENCRES], "#nu_{e} NCRES",   "LP");
-    l->AddEntry(fSelEffEt [kNDmNuENCCOH], "#nu_{e} NCCOH",   "LP");
-    l->AddEntry(fSelEffEt [kNDmNuENCOth], "#nu_{e} NCOther", "LP");
     l->Draw();
     c->SetLogy();
   }
@@ -1008,15 +770,12 @@ double SuperkExpectation::ND280Inputs::NExpNCBkg(bool nominal) const
 // expected NC contamination of CC-like sample
 
   double nexpncbkg = 
-       this->NumOfEvents( kNDmNuMuNCEL,     nominal) +
        this->NumOfEvents( kNDmNuMuNCRES,    nominal) +
        this->NumOfEvents( kNDmNuMuNCCOH,    nominal) +
        this->NumOfEvents( kNDmNuMuNCOth,    nominal) +
-       this->NumOfEvents( kNDmNuMuBarNCEL,  nominal) +
        this->NumOfEvents( kNDmNuMuBarNCRES, nominal) +
        this->NumOfEvents( kNDmNuMuBarNCCOH, nominal) +
        this->NumOfEvents( kNDmNuMuBarNCOth, nominal) +
-       this->NumOfEvents( kNDmNuENCEL,      nominal) +
        this->NumOfEvents( kNDmNuENCRES,     nominal) +
        this->NumOfEvents( kNDmNuENCCOH,     nominal) +
        this->NumOfEvents( kNDmNuENCOth,     nominal);
@@ -1067,10 +826,8 @@ double SuperkExpectation::ND280Inputs::NumOfEvents(
   double nev = spectrum->GetBinContent(ibin);
   if(nominal) return nev;
 
-//double eff        = efficiency->GetBinContent(ibin);
   double efftwkdial = fSelEffTwkDial;
   double efferr     = this->EfficiencyRelErr(Etrue, util::Sign(efftwkdial));
-//double twkeff     = eff * (1 + efftwkdial * efferr);
   double effwght    = 1 + efftwkdial * efferr;
   double sigwght    = fGenInputs->ND280XSecRatioWght(Etrue, mode);
 
@@ -1101,7 +858,6 @@ void SuperkExpectation::ND280Inputs::UpdateEtrueSpectra(void)
          this->NumOfEvents( kNDmNuMuCCRES, ibin) +
          this->NumOfEvents( kNDmNuMuCCCOH, ibin) +
          this->NumOfEvents( kNDmNuMuCCOth, ibin) +
-         this->NumOfEvents( kNDmNuMuNCEL,  ibin) +
          this->NumOfEvents( kNDmNuMuNCRES, ibin) +
          this->NumOfEvents( kNDmNuMuNCCOH, ibin) +
          this->NumOfEvents( kNDmNuMuNCOth, ibin);
@@ -1117,7 +873,6 @@ void SuperkExpectation::ND280Inputs::UpdateEtrueSpectra(void)
          this->NumOfEvents( kNDmNuMuBarCCRES, ibin) +
          this->NumOfEvents( kNDmNuMuBarCCCOH, ibin) +
          this->NumOfEvents( kNDmNuMuBarCCOth, ibin) +
-         this->NumOfEvents( kNDmNuMuBarNCEL,  ibin) +
          this->NumOfEvents( kNDmNuMuBarNCRES, ibin) +
          this->NumOfEvents( kNDmNuMuBarNCCOH, ibin) +
          this->NumOfEvents( kNDmNuMuBarNCOth, ibin);
@@ -1133,7 +888,6 @@ void SuperkExpectation::ND280Inputs::UpdateEtrueSpectra(void)
          this->NumOfEvents( kNDmNuECCRES, ibin) +
          this->NumOfEvents( kNDmNuECCCOH, ibin) +
          this->NumOfEvents( kNDmNuECCOth, ibin) +
-         this->NumOfEvents( kNDmNuENCEL,  ibin) +
          this->NumOfEvents( kNDmNuENCRES, ibin) +
          this->NumOfEvents( kNDmNuENCCOH, ibin) +
          this->NumOfEvents( kNDmNuENCOth, ibin);
@@ -2584,7 +2338,6 @@ double SuperkExpectation::GeneratorInputs::ND280XSecRatioWght(
 	break;
       case ( kNDmNuMuCCCOH    ) : this->CCOthToCCQEXSecRatioWght(Etrue); break;
       case ( kNDmNuMuCCOth    ) : this->CCOthToCCQEXSecRatioWght(Etrue); break;
-      case ( kNDmNuMuNCEL     ) : return 1.; break;
       case ( kNDmNuMuNCRES    ) : this->NCToCCQEXSecRatioWght(Etrue);  break;
       case ( kNDmNuMuNCCOH    ) : this->NCToCCQEXSecRatioWght(Etrue);  break;
       case ( kNDmNuMuNCOth    ) : this->NCToCCQEXSecRatioWght(Etrue);  break;
@@ -2592,7 +2345,6 @@ double SuperkExpectation::GeneratorInputs::ND280XSecRatioWght(
       case ( kNDmNuMuBarCCRES ) : return 1.; break;
       case ( kNDmNuMuBarCCCOH ) : return 1.; break;
       case ( kNDmNuMuBarCCOth ) : return 1.; break;
-      case ( kNDmNuMuBarNCEL  ) : return this->NCToCCQEXSecRatioWght(Etrue); break;
       case ( kNDmNuMuBarNCRES ) : return this->NCToCCQEXSecRatioWght(Etrue); break;
       case ( kNDmNuMuBarNCCOH ) : return this->NCToCCQEXSecRatioWght(Etrue); break;
       case ( kNDmNuMuBarNCOth ) : return this->NCToCCQEXSecRatioWght(Etrue); break;
@@ -2600,7 +2352,6 @@ double SuperkExpectation::GeneratorInputs::ND280XSecRatioWght(
       case ( kNDmNuECCRES     ) : return 1.; break;
       case ( kNDmNuECCCOH     ) : return 1.; break;
       case ( kNDmNuECCOth     ) : return 1.; break;
-      case ( kNDmNuENCEL      ) : return this->NCToCCQEXSecRatioWght(Etrue); break;
       case ( kNDmNuENCRES     ) : return this->NCToCCQEXSecRatioWght(Etrue); break;
       case ( kNDmNuENCCOH     ) : return this->NCToCCQEXSecRatioWght(Etrue); break;
       case ( kNDmNuENCOth     ) : return this->NCToCCQEXSecRatioWght(Etrue); break;

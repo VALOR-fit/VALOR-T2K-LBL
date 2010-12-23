@@ -62,6 +62,8 @@ void test_superk_spectrum_prediction_twk_skeff_one()
   TH1D * hEreco [ntwkmodes][ntwkdials];
   for(int imode = 0; imode < ntwkmodes; imode++) {
      for(int idial = 0; idial < ntwkdials; idial++) {
+        // reset previously set tweaks
+        skexp.ResetSystematicVariations();
         // tweak spectrum generation model
         skexp.GetSuperkInputs()->TweakEfficiency(
            t2kana::yr1numu::conv::kSKsFCFV1RingMuLike, twkmodes[imode], twkdial[idial]);
@@ -115,7 +117,7 @@ void test_superk_spectrum_prediction_twk_skeff_one()
     legend1->SetBorderSize(0);
     legend1->SetHeader(Form("SuperK %s efficiency", util::AsString(twkmodes[imode]).c_str()));
     cout << "*** " << Form("SuperK %s efficiency", util::AsString(twkmodes[imode]).c_str()) << endl;
-    TH1F * hframe1 = (TH1F*) c[imode]->DrawFrame(
+    TH1F * hframe1 = (TH1F*) c[imode]->GetPad(1)->DrawFrame(
        0., 0., hErecoErr[imode][deflt]->GetXaxis()->GetXmax(), maxnev[imode]);
     hframe1->Draw();
     hframe1->GetXaxis()->SetTitle("E_{reco} (GeV)");
@@ -128,7 +130,7 @@ void test_superk_spectrum_prediction_twk_skeff_one()
     }//idial
     legend1->Draw();
     c[imode]->cd(2);
-    TH1F * hframe2 = (TH1F*) c[imode]->DrawFrame(
+    TH1F * hframe2 = (TH1F*) c[imode]->GetPad(2)->DrawFrame(
        0., 1.2*maxerrneg[imode], hErecoErr[imode][deflt]->GetXaxis()->GetXmax(), 1.2*maxerrpos[imode]);
     hframe2->GetXaxis()->SetTitle("E_{reco} (GeV)");                                
     hframe2->GetYaxis()->SetTitle("Fractional variation");
@@ -139,4 +141,24 @@ void test_superk_spectrum_prediction_twk_skeff_one()
      }
      c[imode]->Update();
   }//imode
+
+  // write-out in file
+  TFile f(Form("sk_ereco_spectrum-tweak_sk_efficiency-sinsq2theta23_%.2f-dm23sq_%.5feV2.root",input_sinsq2theta23,input_dm23sq),"recreate");
+  for(int imode = 0; imode < ntwkmodes; imode++) {
+     for(int idial = 0; idial < ntwkdials; idial++) {
+       const char * syst = "";
+       if(imode==0) syst="ccqe_efficiency";
+       if(imode==1) syst="ccnonqe_efficiency";
+       if(imode==2) syst="nc_efficiency";
+       const char * dial = "";
+       if( TMath::Abs(twkdial[idial]-1.0) < conv::kASmallNum ) dial="plus_one_sigma";
+       if( TMath::Abs(twkdial[idial]-0.5) < conv::kASmallNum ) dial="plus_half_sigma";
+       if( TMath::Abs(twkdial[idial]    ) < conv::kASmallNum ) dial="nominal";
+       if( TMath::Abs(twkdial[idial]+1.0) < conv::kASmallNum ) dial="minus_one_sigma";
+       if( TMath::Abs(twkdial[idial]+0.5) < conv::kASmallNum ) dial="minus_half_sigma";
+       const char * title = Form("sk_ereco_spectrum_twk_%s_%s",syst,dial);
+       hEreco[imode][idial]->Write(title);
+     }
+  }
+  f.Close();
 }

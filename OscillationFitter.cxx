@@ -327,6 +327,15 @@ void OscillationFitter::Draw(
 
   TString opt = option;
 
+
+  TFile * file_out = 0;
+  if(outtag) {
+     ostringstream outroot;
+     outroot << outtag << ".root";
+     file_out = new TFile(outroot.str().c_str(), "recreate");
+  }
+
+
 #ifdef __debug_level_1__
   cout << "OscillationFitter/Draw >> Drawing with option = " << opt.Data() << endl;
 #endif
@@ -432,6 +441,18 @@ void OscillationFitter::Draw(
 
      c->Update();
 
+     if(file_out) {
+       data              -> Write("data");
+       bestfit_tot       -> Write("bestfit_tot");
+       bestfit_numuccqe  -> Write("bestfit_numuccqe");
+       bestfit_numucc1pi -> Write("bestfit_numucc1pi");
+       bestfit_numuccoth -> Write("bestfit_numuccoth");
+       bestfit_nc        -> Write("bestfit_numunc");
+       bestfit_numubarcc -> Write("bestfit_numubarcc");
+       bestfit_numubarnc -> Write("bestfit_numubarnc");
+       bestfit_nue       -> Write("bestfit_nue");
+     }
+
      //
      // plot contour
      //
@@ -471,10 +492,18 @@ void OscillationFitter::Draw(
      chisq_surf_shift->SetContour(nlev,levels); 
      chisq_surf_shift->Draw("cont2"); 
 
+     if(file_out) {
+       fChisqSurface    -> Write("chisq_surface");
+       chisq_surf_shift -> Write("chisq_minus_chisqmin_surface");
+     }
+
      TMarker * best_fit_point =
           new TMarker(sinsq2theta23_bestfit, dm23sq_bestfit, 29);
      best_fit_point->SetMarkerSize(1.4);
      best_fit_point->Draw();
+     if(file_out) {
+        best_fit_point->Write("point_best_fit");
+     }
 
      if(fKnowActualParams) {
         TMarker * true_point =
@@ -482,6 +511,9 @@ void OscillationFitter::Draw(
         true_point->SetMarkerSize(1);
         true_point->SetMarkerColor(kRed);
         true_point->Draw();
+        if(file_out) {
+           true_point->Write("point_true");
+        }
      }
      
      if(opt.Contains("Minos90CL")) {
@@ -565,6 +597,11 @@ void OscillationFitter::Draw(
      hframe2->GetXaxis()->SetTitle("|#Deltam_{32}^{2}| (eV^{2}/c^{4})");
      hframe2->GetYaxis()->SetTitle("#chi^{2}");
      gr2->Draw("l");
+
+     if(file_out) {
+        gr1->Write("chisq_vs_sinsq2theta23");
+        gr2->Write("chisq_vs_dm23sq");
+     }
   }
 
   if(opt.Contains("ChisqSurface")) {
@@ -575,15 +612,21 @@ void OscillationFitter::Draw(
   }
 
   if(opt.Contains("MarginalizedChisq")) {
-     TH1D* hdmsq23 = this->MarginalizeChisqSurface("marginalize_sinsq2theta23+subtract_chisqmin");
-     TH1D* hsinsq2theta23 = this->MarginalizeChisqSurface("marginalize_dm23sq+subtract_chisqmin");
-     hdmsq23 ->GetXaxis()->SetTitle("|#Deltam_{32}^{2}| (eV^{2}/c^{4})");
+     TH1D * hdm23sq = 
+        this->MarginalizeChisqSurface("marginalize_sinsq2theta23+subtract_chisqmin");
+     TH1D * hsinsq2theta23 = 
+        this->MarginalizeChisqSurface("marginalize_dm23sq+subtract_chisqmin");
+     hdm23sq ->GetXaxis()->SetTitle("|#Deltam_{32}^{2}| (eV^{2}/c^{4})");
      hsinsq2theta23 ->GetXaxis()->SetTitle("sin^{2}(2#theta_{23})");
      c->Divide(1,2);
      c->cd(1);
-     hdmsq23->Draw("c");
+     hdm23sq->Draw("c");
      c->cd(2);
      hsinsq2theta23->Draw("c");
+     if(file_out) {
+        hdm23sq        -> Write("marginalized_chisq_dm23sq");
+        hsinsq2theta23 -> Write("marginalized_chisq_sinsq2theta23");
+     }
   }
 
   // Save canvas
@@ -591,10 +634,15 @@ void OscillationFitter::Draw(
   if(outtag) {
     ostringstream outgif;
     ostringstream outroot;
-    outgif << outtag << ".gif";
-    outroot << outtag << ".root";
+    outgif << outtag << "_canvas.gif";
+    outroot << outtag << "_canvas.root";
     c->SaveAs( outgif.str().c_str() );
     c->SaveAs( outroot.str().c_str() );
+  }
+
+  if(file_out) {
+    file_out->Close();
+    delete file_out;
   }
 }
 //____________________________________________________________________________ 
@@ -647,7 +695,6 @@ void  t2kana::yr1numu::FitFunc1 (
   OscillationFitter::FitInputs * inputs =
       (OscillationFitter::FitInputs *) gMinuit->GetObjectFit();
 
-//SuperkObservation & skobs = inputs->Observation(); // data //SuperkExpectation & skexp = inputs->Expectation(); // model
   PhysParamList & fpar = inputs->FitParams(); // params
 
   // synchronize PhysParamList with the paramerer array used by MINUIT

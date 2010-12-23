@@ -64,7 +64,6 @@ typedef enum END280Mode {
    kNDmNuMuCCRES, 
    kNDmNuMuCCCOH, 
    kNDmNuMuCCOth, 
-   kNDmNuMuNCEL, 
    kNDmNuMuNCRES, 
    kNDmNuMuNCCOH, 
    kNDmNuMuNCOth, 
@@ -72,7 +71,6 @@ typedef enum END280Mode {
    kNDmNuMuBarCCRES, 
    kNDmNuMuBarCCCOH, 
    kNDmNuMuBarCCOth, 
-   kNDmNuMuBarNCEL, 
    kNDmNuMuBarNCRES, 
    kNDmNuMuBarNCCOH, 
    kNDmNuMuBarNCOth, 
@@ -80,7 +78,6 @@ typedef enum END280Mode {
    kNDmNuECCRES, 
    kNDmNuECCCOH, 
    kNDmNuECCOth, 
-   kNDmNuENCEL, 
    kNDmNuENCRES, 
    kNDmNuENCCOH, 
    kNDmNuENCOth
@@ -106,7 +103,7 @@ static const int kPdgNuTauBar = -16;
 
 static const int kNSuperkSamples  = 1;  // number of samples included in analysis
 static const int kNSuperkModes    = 7;  // number of reaction modes considered separately within each SuperK sample
-static const int kNND280Modes     = 24; // number of reaction modes considered separately within the ND280 sample
+static const int kNND280Modes     = 21; // number of reaction modes considered separately within the ND280 sample
 //shorter names
 static const int kns   = kNSuperkSamples;
 static const int knm   = kNSuperkModes; 

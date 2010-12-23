@@ -130,4 +130,19 @@ void test_superk_spectrum_prediction_twk_bnorm()
       hErecoErr[idial]->Draw("same");
   }
   c->Update();
+
+  // write-out in file
+  TFile f(Form("sk_ereco_spectrum-tweak_beam_norm-sinsq2theta23_%.2f-dm23sq_%.5feV2.root",input_sinsq2theta23,input_dm23sq),"recreate");
+  for(int idial = 0; idial < ntwkdials; idial++) {
+     const char * dial = "";
+     if( TMath::Abs(twkdial[idial]-1.0) < conv::kASmallNum ) dial="plus_one_sigma";
+     if( TMath::Abs(twkdial[idial]-0.5) < conv::kASmallNum ) dial="plus_half_sigma";
+     if( TMath::Abs(twkdial[idial]    ) < conv::kASmallNum ) dial="nominal";
+     if( TMath::Abs(twkdial[idial]+1.0) < conv::kASmallNum ) dial="minus_one_sigma";
+     if( TMath::Abs(twkdial[idial]+0.5) < conv::kASmallNum ) dial="minus_half_sigma";
+     const char * title = Form("sk_ereco_spectrum_twk_beam_norm_%s",dial);
+     hEreco[idial]->Write(title);
+  }
+  f.Close();
+
 }

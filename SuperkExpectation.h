@@ -117,13 +117,6 @@ public:
       // "Saclay/EtrueSpectrum/NuMuBar/NC"
       // "Saclay/EtrueSpectrum/NuMuBar/CC"
       // "Saclay/EtrueSpectrum/NuMuBar/NC"
-      // "Saclay/Efficiency/NuMu/All"
-      // "Saclay/Efficiency/NuMu/CC"
-      // "Saclay/Efficiency/NuMu/NC"
-      // "Saclay/Efficiency/NuMuBar/CC"
-      // "Saclay/Efficiency/NuMuBar/NC"
-      // "Saclay/Efficiency/NuMuBar/CC"
-      // "Saclay/Efficiency/NuMuBar/NC"
       void Draw(TVirtualPad * c, Option_t * opt = "") const;
 
       // Systematic variations
@@ -146,7 +139,6 @@ public:
       double  fNumNExpCCDeflt;         ///<
       double  fPOTMC;                  ///< number of POT (MC)
       TH1F *  fNumSelEt[knmnd];        ///< number of events passing cuts as function of Etrue for various modes
-      TH1F *  fSelEffEt[knmnd];        ///< selection efficiency as function of Etrue for various modes
       double  fSelEffTwkDial;          ///< selection efficiency tweaking dial
       double  fSelEffRelErr;           ///< relative error on selection efficiency
 
