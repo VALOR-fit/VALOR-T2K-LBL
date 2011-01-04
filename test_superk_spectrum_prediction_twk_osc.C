@@ -6,6 +6,8 @@
 // ------------------------------------------------------------------------------------------------
 //
 
+#include <iomanip.h>
+
 #include "Conventions.h"
 
 void test_superk_spectrum_prediction_twk_osc(bool showdata=false)
@@ -27,14 +29,14 @@ void test_superk_spectrum_prediction_twk_osc(bool showdata=false)
   using namespace t2kana::yr1numu;
 
   // oscillation params
-/*
   const int ncases = 5;
   double sinsq2theta23[ncases] = { 0., 1.0,    1.0,    1.0,    1.0  };
   double dm23sq       [ncases] = { 0., 2.0E-3, 2.4E-3, 3.3E-3, 8E-3 };
-*/
+/*
   const int ncases = 5;
   double sinsq2theta23[ncases] = { 0., 1.0,    0.8,    0.6,    0.4    };
   double dm23sq       [ncases] = { 0., 2.4E-3, 2.4E-3, 2.4E-3, 2.4E-3 };
+*/
 
   // histogram drawing options
   int hwidth [ncases] = { 2,      1,       1,       1,       1        };
@@ -87,9 +89,10 @@ void test_superk_spectrum_prediction_twk_osc(bool showdata=false)
     hErecoFracDeficit[icase]->SetLineStyle(hstyle[icase]);
   }
   gStyle->SetOptStat(0);
-  TCanvas * c = new TCanvas("c","",20,20,500,500);
-  TPad * upp = new TPad("upp","",0.05,0.35,0.95,0.97);
-  TPad * low = new TPad("low","",0.05,0.02,0.95,0.30);
+  TCanvas * c = new TCanvas("c","",20,20,500,700);
+  TPad * upp = new TPad("upp","",0.05,0.45,0.95,0.97);
+  TPad * low = new TPad("low","",0.05,0.03,0.95,0.40);
+  low->SetBottomMargin(.2);
   upp->Draw();
   low->Draw();
   upp->cd();
@@ -106,14 +109,22 @@ void test_superk_spectrum_prediction_twk_osc(bool showdata=false)
      }
      hEreco[icase]->Draw(opt);
      legend->AddEntry(hEreco[icase], label, "L");
-     double E1 = 0.75; // GeV
-     double E2 = 1.00; // GeV
-     double E3 = 2.00; // GeV
+
      cout << " *** " << label << " : " << endl;
-     cout << "NumEvents = " << hEreco[icase]->Integral() << endl;
-     cout << "NumEvents (< " << E1 << " GeV): " << hEreco[icase]->Integral(1,hEreco[icase]->FindBin(E1)) << endl;
-     cout << "NumEvents (< " << E2 << " GeV): " << hEreco[icase]->Integral(1,hEreco[icase]->FindBin(E2)) << endl;
-     cout << "NumEvents (<  "<< E3 << " GeV): " << hEreco[icase]->Integral(1,hEreco[icase]->FindBin(E3)) << endl;
+
+     cout << "NumEvents = " 
+          <<  setw(10) << setfill(' ') << setprecision(6) << hEreco[icase]->Integral() << endl;
+
+     const int nemax = 7;
+     double emax[nemax] = { 0.50, 0.75, 1.00, 1.50, 2.00, 4.00, 10.00 };
+
+     for (int iemax = 0; iemax < nemax; iemax++) {
+          cout << "NumEvents (< " 
+               << setw(6)  << setfill(' ') << setprecision(3) 
+               << emax[iemax] << " GeV): " 
+               << setw(10) << setfill(' ') << setprecision(6)
+               << hEreco[icase]->Integral(1,hEreco[icase]->FindBin(emax[iemax])) << endl;
+     }
      if(showdata) {
        SuperkObservation * skobs = new SuperkObservation;
        skobs->Read("inputs/analysis_configuration.xml");
@@ -129,6 +140,11 @@ void test_superk_spectrum_prediction_twk_osc(bool showdata=false)
   TH1F * hframe = (TH1F*) low->DrawFrame(0., 0., hEreco[0]->GetXaxis()->GetXmax(), 1);
   hframe->GetXaxis()->SetTitle("E_{reco} (GeV)");
   hframe->GetYaxis()->SetTitle("Fractional deficit");
+  hframe->GetYaxis()->SetLabelSize(0.08);
+  hframe->GetYaxis()->SetTitleSize(0.08);
+  hframe->GetYaxis()->SetTitleOffset(0.75);
+  hframe->GetXaxis()->SetLabelSize(0.07);
+  hframe->GetXaxis()->SetTitleSize(0.08);
   hframe->Draw();
   for(int icase = 1; icase < ncases; icase++) {
      hErecoFracDeficit[icase]->Draw("same");

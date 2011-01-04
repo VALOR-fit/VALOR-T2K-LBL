@@ -2,13 +2,16 @@
 // ------------------------------------------------------------------------------------------------
 // Run numu disappearance fits for mock-data 
 //
+// Inputs:
+//      - fitter name ("minuit", "custom" (2-D grid scan))
+//
 // Costas Andreopoulos
 // ------------------------------------------------------------------------------------------------
 //
 
 #include "Conventions.h"
 
-void test_mock_data_fit()
+void test_mock_data_fit(const char * fitter_name="custom")
 {
   gSystem->Load("libGpad");  
   gSystem->Load("libPhysics");  
@@ -26,9 +29,6 @@ void test_mock_data_fit()
   using namespace t2kana;
   using namespace t2kana::yr1numu;
 
-//const char * fitter_name = "minuit";
-  const char * fitter_name = "custom";
-
   const double input_sinsq2theta23 = 1.0;
   const double input_dm23sq        = 2.4E-3;
 
@@ -43,7 +43,7 @@ void test_mock_data_fit()
 
   // get superk spectrum observation
   SuperkObservation * skobs = new SuperkObservation;
-  skobs->CreateMockData(*skexp, *fparm, false);
+  skobs->CreateMockData(*skexp, *fparm, true);
 
   // create fit inputs
   OscillationFitter::FitInputs * fit_inputs = 
@@ -57,7 +57,30 @@ void test_mock_data_fit()
   fitter->DoTheFit();
 
   // draw results
-  fitter->Draw(new TCanvas(), "StandardOscFitPlots+Minos90CL","mockfit");
+  fitter->Draw(new TCanvas(), "StandardOscFitPlots+Minos90CL");
+//fitter->Draw(new TCanvas(), "StandardOscFitPlots+Minos90CL","mockfit");
   fitter->Draw(new TCanvas(), "ChisqSurface");
   fitter->Draw(new TCanvas(), "MarginalizedChisq");
+
+  // Print-out mock-data (Ereco values) as a comma separated list.
+  // Assuming uniform distribution within each bin, randomize values within each bin.
+  TH1D* mock_data = skobs->ErecoSpectrum(conv::kSKsFCFV1RingMuLike);
+  TRandom rand(0);
+  bool is_first=true;
+  for(int ibin = 1; ibin <= mock_data->GetNbinsX(); ibin++) {
+    double Nb   = mock_data->GetBinContent (ibin); // number of events in this Ereco bin
+    double Emin = mock_data->GetXaxis()->GetBinLowEdge (ibin); // Ereco bin min
+    double Emax = mock_data->GetXaxis()->GetBinUpEdge  (ibin); // Ereco bin max
+    for(int iev = 0; iev < Nb; iev++) {
+      double E = Emin + rand.Uniform() * (Emax-Emin);
+      string delimeter = ",";
+      if(is_first) {
+        delimeter = "";
+        is_first = false;
+      }
+      cout << delimeter << E;
+    }//iev
+  }//ibin
+  cout << endl;
+
 }

@@ -2,13 +2,16 @@
 // ------------------------------------------------------------------------------------------------
 // Run numu disappearance fits for mock-data / test contour coverage
 //
+// Inputs:
+//      - fitter name ("minuit", "custom" (2-D grid scan))
+//
 // Costas Andreopoulos
 // ------------------------------------------------------------------------------------------------
 //
 
 #include "Conventions.h"
 
-void test_oscillation_contour_coverage()
+void test_oscillation_contour_coverage(const char * fitter_name="minuit")
 {
   gSystem->Load("libGpad");  
   gSystem->Load("libPhysics");  
@@ -26,10 +29,11 @@ void test_oscillation_contour_coverage()
   using namespace t2kana;
   using namespace t2kana::yr1numu;
 
-  const double input_sinsq2theta23 = 0.9;
+  const double input_sinsq2theta23 = 1.0;
   const double input_dm23sq        = 2.4E-3;
 
-  const int nexperiments = 200;
+  const int nexperiments = 5000;
+
   double output_sinsq2theta23[nexperiments];
   double output_dm23sq       [nexperiments];
 
@@ -52,14 +56,15 @@ void test_oscillation_contour_coverage()
 
   for(int iexperiment = 0; iexperiment < nexperiments; iexperiment++) {
 
+     cout << "\n\n *** Pseudo-experiment = " << iexperiment << endl;
+
      fparm->Update(t2kana::yr1numu::conv::kPhypSinsq2Theta23, input_sinsq2theta23);
      fparm->Update(t2kana::yr1numu::conv::kPhypDm23sq,        input_dm23sq);
 
      skobs->CreateMockData(*skexp, *fparm);
 
      // get fitter
-     OscillationFitter * fitter = new OscillationFitter(fit_inputs,"custom");
-   //OscillationFitter * fitter = new OscillationFitter(fit_inputs,"minuit");
+     OscillationFitter * fitter = new OscillationFitter(fit_inputs,fitter_name);
      fitter->ActualOscParams(input_sinsq2theta23, input_dm23sq);
 
      // do the fit
@@ -72,6 +77,11 @@ void test_oscillation_contour_coverage()
 
      nfitnt->Fill(iexperiment, 
          output_sinsq2theta23[iexperiment], output_dm23sq[iexperiment] , bestfit_chisq);
+
+     cout << "Best-fit:"
+          << " sinsq2theta23 = " << output_sinsq2theta23[iexperiment]
+          << ", dm23sq = " << output_dm23sq[iexperiment] << " eV^2/c^4"
+          << " ==> chisq = " << bestfit_chisq << endl;
   }
 
   // show results

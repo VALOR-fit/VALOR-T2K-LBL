@@ -29,15 +29,17 @@ void summarize_nsk_change()
   const double input_sinsq2theta23 = 1.00;
   const double input_dm23sq        = 2.4E-3;
 
-  const int nexperiments = 100;
+  const int nexperiments = 5000;
 
-  const int nsystematics = 10;
+  const int nsystematics = 12;
   string systematic[nsystematics] = {
-	"nd280_eff",
 	"sk_ccqe_eff",
 	"sk_ccnonqe_eff",
 	"sk_nc_eff",
+	"sk_energy_scale",
+	"nd280_eff",
 	"flux_norm",
+	"flux_shape",
 	"xsec_ccqe",
 	"xsec_cc1pi_to_ccqe",
 	"xsec_ccoth_to_ccqe",
@@ -45,16 +47,32 @@ void summarize_nsk_change()
 	"nuclear_effect"
   };
   bool generate_random[nsystematics] = {
-	false,
-	false,
-	false,
-	false,
-	false,
-	false,
-	false,
-	false,
-	false,
-	false
+	false,  /* sk_ccqe_eff        */
+	false,  /* sk_ccnonqe_eff     */
+	false,  /* sk_nc_eff          */
+	false,  /* sk_energy_scale    */
+	false,  /* nd280_eff          */
+	false,  /* flux_norm          */
+	true,   /* flux_shape         */
+	false,  /* xsec_ccqe          */
+	false,  /* xsec_cc1pi_to_ccqe */
+	false,  /* xsec_ccoth_to_ccqe */
+	false,  /* xsec_nc_to_ccqe    */
+	false   /* nuclear_effect     */
+  };
+  bool skip[nsystematics] = {
+	false,  /* sk_ccqe_eff        */
+	false,  /* sk_ccnonqe_eff     */
+	false,  /* sk_nc_eff          */
+	true,   /* sk_energy_scale    (was shown to maintain Nsk) */
+	false,  /* nd280_eff          */
+	false,  /* flux_norm          */
+	true,   /* flux_shape         (was shown to maintain Nsk)*/
+	false,  /* xsec_ccqe          */
+	false,  /* xsec_cc1pi_to_ccqe */
+	false,  /* xsec_ccoth_to_ccqe */
+	false,  /* xsec_nc_to_ccqe    */
+	false   /* nuclear_effect     */
   };
 
   double nsk_min[nsystematics];
@@ -76,11 +94,22 @@ void summarize_nsk_change()
   // get predictions with tweaked systematic params
   for(int isystematic=0; isystematic<nsystematics; isystematic++) {
 
-	if(generate_random[isystematic]) {
+	cout << "Current systematic: " << systematic[isystematic] << endl;
 
+	if(skip[isystematic]) {
+            cout << "... skipping " << endl;
+            nsk_min[isystematic] = nsk_deflt;
+            nsk_max[isystematic] = nsk_deflt;
+	    continue;
+        }
+
+	if(generate_random[isystematic]) {
             nsk_min[isystematic] = 99999999.;
             nsk_max[isystematic] = 0.;
             for(int iexperiment = 0; iexperiment < nexperiments; iexperiment++) {
+                    if(iexperiment%100==0) {
+			cout << "Current experiment: " << iexperiment << endl;
+                    }
 		    skexp->ResetSystematicVariations();
 	     	    skexp->TweakSystematic(systematic[isystematic]);
 	  	    skexp->Generate(*fparm);
@@ -88,9 +117,7 @@ void summarize_nsk_change()
 	            nsk_min[isystematic] = TMath::Min(nsk, nsk_min[isystematic]);
         	    nsk_max[isystematic] = TMath::Max(nsk, nsk_max[isystematic]);
             }//iexperiment
-
 	} else {
-
 	    skexp->ResetSystematicVariations();
      	    skexp->TweakSystematic(systematic[isystematic], +1);
   	    skexp->Generate(*fparm);
@@ -102,7 +129,6 @@ void summarize_nsk_change()
             nsk_min[isystematic] = TMath::Min(nsk1,nsk2);
             nsk_max[isystematic] = TMath::Max(nsk1,nsk2);
 	}	
-
   }//isystematic
 
   cout << endl;
@@ -120,15 +146,25 @@ void summarize_nsk_change()
   }
   cout << endl;
   cout << "Total factional change: " << endl;
-  double tot_pos = 0;
-  double tot_neg = 0;
+  double dnsk_syst_pos = 0;
+  double dnsk_syst_neg = 0;
   for(int isystematic=0; isystematic<nsystematics; isystematic++) {
      double pos = nsk_max[isystematic]-nsk_deflt;
      double neg = nsk_min[isystematic]-nsk_deflt;
-     tot_pos += (pos*pos);
-     tot_neg += (neg*neg);
+     dnsk_syst_pos += (pos*pos);
+     dnsk_syst_neg += (neg*neg);
   }
-  tot_pos = TMath::Sqrt(tot_pos);
-  tot_neg = TMath::Sqrt(tot_neg);
-  cout << "(-" << 100*tot_neg/nsk_deflt << "%, +" << 100*tot_pos/nsk_deflt << ")" << endl;
+  dnsk_syst_pos = TMath::Sqrt(dnsk_syst_pos);
+  dnsk_syst_neg = TMath::Sqrt(dnsk_syst_neg);
+  cout << "(-" << 100*dnsk_syst_neg/nsk_deflt << "%, +" << 100*dnsk_syst_pos/nsk_deflt << ")" << endl;
+
+  double dnsk_stat = TMath::Sqrt(nsk_deflt);
+
+  cout << "Nsk = " << nsk_deflt 
+       << " +/- " << dnsk_stat << " (stat)"
+       << " + " << dnsk_syst_pos 
+       << " - " << dnsk_syst_neg << " (syst)" << endl;
+
+  cout << "+dNsk(total) = " << TMath::Sqrt(dnsk_stat*dnsk_stat + dnsk_syst_pos*dnsk_syst_pos) << endl;
+  cout << "-dNsk(total) = " << TMath::Sqrt(dnsk_stat*dnsk_stat + dnsk_syst_neg*dnsk_syst_neg) << endl;
 }

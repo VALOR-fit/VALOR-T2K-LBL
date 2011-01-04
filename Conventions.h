@@ -52,9 +52,12 @@ typedef enum ESuperkMode {
    kSKmNuMuCC1pi, 
    kSKmNuMuCCoth, 
    kSKmNC,    
-   kSKmNuMuBarCC, 
+   kSKmNuMuBarCCQE, 
+   kSKmNuMuBarCCnonQE, 
    kSKmNuMuBarNC, 
-   kSKmNuE
+   kSKmNuECCQE,
+   kSKmNuECCnonQE,
+   kSKmNuENC
 } SuperkMode_t; 
 
 // (true) reaction modes considered separately in nd280 inputs
@@ -102,7 +105,7 @@ static const int kPdgNuMuBar  = -14;
 static const int kPdgNuTauBar = -16;
 
 static const int kNSuperkSamples  = 1;  // number of samples included in analysis
-static const int kNSuperkModes    = 7;  // number of reaction modes considered separately within each SuperK sample
+static const int kNSuperkModes    = 10; // number of reaction modes considered separately within each SuperK sample
 static const int kNND280Modes     = 21; // number of reaction modes considered separately within the ND280 sample
 //shorter names
 static const int kns   = kNSuperkSamples;

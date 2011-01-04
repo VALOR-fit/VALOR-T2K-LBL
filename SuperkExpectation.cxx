@@ -70,9 +70,11 @@ void SuperkExpectation::Generate(const PhysParamList & fp)
   }
 
   const unsigned int ns = fSamples.size();
-  const unsigned int nm = 7;  
+  const unsigned int nm = 10;  
   SuperkMode_t sk_modes [nm] = { 
-     kSKmNuMuCCQE, kSKmNuMuCC1pi, kSKmNuMuCCoth, kSKmNC, kSKmNuMuBarCC, kSKmNuMuBarNC, kSKmNuE 
+     kSKmNuMuCCQE, kSKmNuMuCC1pi, kSKmNuMuCCoth, kSKmNC, 
+     kSKmNuMuBarCCQE, kSKmNuMuBarCCnonQE, kSKmNuMuBarNC, 
+     kSKmNuECCQE, kSKmNuECCnonQE, kSKmNuENC
   };
 
   // input physics params (params included in the fit / systematics params)
@@ -101,6 +103,14 @@ void SuperkExpectation::Generate(const PhysParamList & fp)
      fSuperkInputs -> UseDecoherenceParams(sinsq2theta23, musq);
   }
 
+  double shape_norm = 1.;
+  if(this->GetBeamInputs()->ShapeTweaked()) {
+     this->GetBeamInputs()->TweakShape(false); // switch-off beam-shape tweaking
+     this->Generate(fp); // generate untweaked predictions
+     shape_norm = fPredictErecoSpectrumGrandTot->Integral(); // get nominal Nsk
+     this->GetBeamInputs()->TweakShape(true); // switch-on beam-shape tweaking
+  }
+
   // correction factor from ND280
   double correction = fND280Inputs->CorrectionFactor();
 
@@ -125,7 +135,7 @@ void SuperkExpectation::Generate(const PhysParamList & fp)
     fPredictErecoSpectrumGrandTot->SetBinContent(ibin, nall);
   }//ibin
 
-  //
+  // include beam normalization err (expressed in terms of Nsk/Nnd280)
   if(this->GetBeamInputs()->NormTweaked()) {
      double beam_norm = 1;
      if( this->GetBeamInputs()->UsingKuboSansCode() ) {
@@ -144,16 +154,37 @@ void SuperkExpectation::Generate(const PhysParamList & fp)
      } else {
         beam_norm = this->GetBeamInputs()->SuperkFluxNorm(0,0,0,0,0,0);
      }
-     fPredictErecoSpectrumGrandTot                             -> Scale (beam_norm);
-     fPredictErecoSpectrumTot[kSKsFCFV1RingMuLike]             -> Scale (beam_norm);
-     fPredictErecoSpectrum[kSKsFCFV1RingMuLike][kSKmNuMuCCQE]  -> Scale (beam_norm);
-     fPredictErecoSpectrum[kSKsFCFV1RingMuLike][kSKmNuMuCC1pi] -> Scale (beam_norm);
-     fPredictErecoSpectrum[kSKsFCFV1RingMuLike][kSKmNuMuCCoth] -> Scale (beam_norm);
-     fPredictErecoSpectrum[kSKsFCFV1RingMuLike][kSKmNC]        -> Scale (beam_norm);
-     fPredictErecoSpectrum[kSKsFCFV1RingMuLike][kSKmNuMuBarCC] -> Scale (beam_norm);
-     fPredictErecoSpectrum[kSKsFCFV1RingMuLike][kSKmNuMuBarNC] -> Scale (beam_norm);
-     fPredictErecoSpectrum[kSKsFCFV1RingMuLike][kSKmNuE]       -> Scale (beam_norm);
+     fPredictErecoSpectrumGrandTot                                  -> Scale (beam_norm);
+     fPredictErecoSpectrumTot[kSKsFCFV1RingMuLike]                  -> Scale (beam_norm);
+     fPredictErecoSpectrum[kSKsFCFV1RingMuLike][kSKmNuMuCCQE]       -> Scale (beam_norm);
+     fPredictErecoSpectrum[kSKsFCFV1RingMuLike][kSKmNuMuCC1pi]      -> Scale (beam_norm);
+     fPredictErecoSpectrum[kSKsFCFV1RingMuLike][kSKmNuMuCCoth]      -> Scale (beam_norm);
+     fPredictErecoSpectrum[kSKsFCFV1RingMuLike][kSKmNC]             -> Scale (beam_norm);
+     fPredictErecoSpectrum[kSKsFCFV1RingMuLike][kSKmNuMuBarCCQE]    -> Scale (beam_norm);
+     fPredictErecoSpectrum[kSKsFCFV1RingMuLike][kSKmNuMuBarCCnonQE] -> Scale (beam_norm);
+     fPredictErecoSpectrum[kSKsFCFV1RingMuLike][kSKmNuMuBarNC]      -> Scale (beam_norm);
+     fPredictErecoSpectrum[kSKsFCFV1RingMuLike][kSKmNuECCQE]        -> Scale (beam_norm);
+     fPredictErecoSpectrum[kSKsFCFV1RingMuLike][kSKmNuECCnonQE]     -> Scale (beam_norm);
+     fPredictErecoSpectrum[kSKsFCFV1RingMuLike][kSKmNuENC]          -> Scale (beam_norm);
   }//norm tweaked?
+
+
+  if(this->GetBeamInputs()->ShapeTweaked()) {
+     double nsktwk = fPredictErecoSpectrumGrandTot->Integral();
+     shape_norm /= nsktwk;
+     fPredictErecoSpectrumGrandTot                                  -> Scale (shape_norm);
+     fPredictErecoSpectrumTot[kSKsFCFV1RingMuLike]                  -> Scale (shape_norm);
+     fPredictErecoSpectrum[kSKsFCFV1RingMuLike][kSKmNuMuCCQE]       -> Scale (shape_norm);
+     fPredictErecoSpectrum[kSKsFCFV1RingMuLike][kSKmNuMuCC1pi]      -> Scale (shape_norm);
+     fPredictErecoSpectrum[kSKsFCFV1RingMuLike][kSKmNuMuCCoth]      -> Scale (shape_norm);
+     fPredictErecoSpectrum[kSKsFCFV1RingMuLike][kSKmNC]             -> Scale (shape_norm);
+     fPredictErecoSpectrum[kSKsFCFV1RingMuLike][kSKmNuMuBarCCQE]    -> Scale (shape_norm);
+     fPredictErecoSpectrum[kSKsFCFV1RingMuLike][kSKmNuMuBarCCnonQE] -> Scale (shape_norm);
+     fPredictErecoSpectrum[kSKsFCFV1RingMuLike][kSKmNuMuBarNC]      -> Scale (shape_norm);
+     fPredictErecoSpectrum[kSKsFCFV1RingMuLike][kSKmNuECCQE]        -> Scale (shape_norm);
+     fPredictErecoSpectrum[kSKsFCFV1RingMuLike][kSKmNuECCnonQE]     -> Scale (shape_norm);
+     fPredictErecoSpectrum[kSKsFCFV1RingMuLike][kSKmNuENC]          -> Scale (shape_norm);
+  }
 
 }
 //________________________________________________________________________________________
@@ -179,10 +210,9 @@ void SuperkExpectation::ResetSystematicVariations(void)
   this->GetND280Inputs()->TweakEfficiency (0.);
 
   this->GetSuperkInputs()->TweakEnergyScale (0.);
-  this->GetSuperkInputs()->TweakEfficiency  (kSKsFCFV1RingMuLike, kSKmNuMuCCQE,    0.);
-  this->GetSuperkInputs()->TweakEfficiency  (kSKsFCFV1RingMuLike, kSKmNuMuCC1pi,   0.);
-  this->GetSuperkInputs()->TweakEfficiency  (kSKsFCFV1RingMuLike, kSKmNuMuCCoth,   0.);
-  this->GetSuperkInputs()->TweakEfficiency  (kSKsFCFV1RingMuLike, kSKmNC,          0.);
+  this->GetSuperkInputs()->TweakEfficiency  (kSKsFCFV1RingMuLike, kSKmNuMuCCQE,    0.); // also resets numubar CCQE
+  this->GetSuperkInputs()->TweakEfficiency  (kSKsFCFV1RingMuLike, kSKmNuMuCC1pi,   0.); // also resets numu CCoth, numubar CCnonQE
+  this->GetSuperkInputs()->TweakEfficiency  (kSKsFCFV1RingMuLike, kSKmNC,          0.); // also resets numubar NC
 
   this->GetBeamInputs()->TweakNorm (0.);
   this->GetBeamInputs()->TweakShape(false);
@@ -311,9 +341,11 @@ bool SuperkExpectation::Read(string config_file)
   fSuperkInputs -> TellMeAboutTheFlux       (fBeamInputs);
 
   const unsigned int ns = fSamples.size();
-  const unsigned int nm = 7;  
+  const unsigned int nm = 10;  
   SuperkMode_t sk_modes [nm] = { 
-     kSKmNuMuCCQE, kSKmNuMuCC1pi, kSKmNuMuCCoth, kSKmNC, kSKmNuMuBarCC, kSKmNuMuBarNC, kSKmNuE 
+     kSKmNuMuCCQE, kSKmNuMuCC1pi, kSKmNuMuCCoth, kSKmNC, 
+     kSKmNuMuBarCCQE, kSKmNuMuBarCCnonQE, kSKmNuMuBarNC, 
+     kSKmNuECCQE, kSKmNuECCnonQE, kSKmNuENC
   };
   fPredictErecoSpectrumGrandTot = new TH1D("","", kNvErecoBins, kNvErecoBinEdges);
   for(unsigned int is = 0; is < ns; is++) {
@@ -1022,13 +1054,16 @@ bool SuperkExpectation::SuperkInputs::Read(TXMLEngine* xml, XMLNodePointer_t roo
   assert(fMC1Rmu_nue);
 
   // create templates
-  this->CreateTemplate (kSKsFCFV1RingMuLike, kSKmNuMuCCQE );
-  this->CreateTemplate (kSKsFCFV1RingMuLike, kSKmNuMuCC1pi);
-  this->CreateTemplate (kSKsFCFV1RingMuLike, kSKmNuMuCCoth);
-  this->CreateTemplate (kSKsFCFV1RingMuLike, kSKmNC       );
-  this->CreateTemplate (kSKsFCFV1RingMuLike, kSKmNuMuBarCC);
-  this->CreateTemplate (kSKsFCFV1RingMuLike, kSKmNuMuBarNC);
-  this->CreateTemplate (kSKsFCFV1RingMuLike, kSKmNuE      );
+  this->CreateTemplate (kSKsFCFV1RingMuLike, kSKmNuMuCCQE      );
+  this->CreateTemplate (kSKsFCFV1RingMuLike, kSKmNuMuCC1pi     );
+  this->CreateTemplate (kSKsFCFV1RingMuLike, kSKmNuMuCCoth     );
+  this->CreateTemplate (kSKsFCFV1RingMuLike, kSKmNC            );
+  this->CreateTemplate (kSKsFCFV1RingMuLike, kSKmNuMuBarCCQE   );
+  this->CreateTemplate (kSKsFCFV1RingMuLike, kSKmNuMuBarCCnonQE);
+  this->CreateTemplate (kSKsFCFV1RingMuLike, kSKmNuMuBarNC     );
+  this->CreateTemplate (kSKsFCFV1RingMuLike, kSKmNuECCQE       );
+  this->CreateTemplate (kSKsFCFV1RingMuLike, kSKmNuECCnonQE    );
+  this->CreateTemplate (kSKsFCFV1RingMuLike, kSKmNuENC         );
 
   //
   // Systematics
@@ -1050,10 +1085,22 @@ bool SuperkExpectation::SuperkInputs::Read(TXMLEngine* xml, XMLNodePointer_t roo
   fEffRelErr[kSKsFCFV1RingMuLike][kSKmNC] =  
     util::XML2Dbl(xml,root_node,
       "superk/systematics/efficiency_relative_error/one_mu_ring/nc");
-  fEffRelErr[kSKsFCFV1RingMuLike][kSKmNuMuBarCC] = 
+  fEffRelErr[kSKsFCFV1RingMuLike][kSKmNuMuBarCCQE] = 
+    util::XML2Dbl(xml,root_node,
+      "superk/systematics/efficiency_relative_error/one_mu_ring/ccqe");
+  fEffRelErr[kSKsFCFV1RingMuLike][kSKmNuMuBarCCnonQE] = 
     util::XML2Dbl(xml,root_node,
       "superk/systematics/efficiency_relative_error/one_mu_ring/ccnonqe");
   fEffRelErr[kSKsFCFV1RingMuLike][kSKmNuMuBarNC] = 
+    util::XML2Dbl(xml,root_node,
+      "superk/systematics/efficiency_relative_error/one_mu_ring/nc");
+  fEffRelErr[kSKsFCFV1RingMuLike][kSKmNuECCQE] = 
+    util::XML2Dbl(xml,root_node,
+      "superk/systematics/efficiency_relative_error/one_mu_ring/ccqe");
+  fEffRelErr[kSKsFCFV1RingMuLike][kSKmNuECCnonQE] = 
+    util::XML2Dbl(xml,root_node,
+      "superk/systematics/efficiency_relative_error/one_mu_ring/ccnonqe");
+  fEffRelErr[kSKsFCFV1RingMuLike][kSKmNuENC] = 
     util::XML2Dbl(xml,root_node,
       "superk/systematics/efficiency_relative_error/one_mu_ring/nc");
 
@@ -1083,23 +1130,29 @@ bool SuperkExpectation::SuperkInputs::Read(TXMLEngine* xml, XMLNodePointer_t roo
   f1RmNuEEt      -> SetDirectory(0);
 
   // Ereco histograms filled-in by SK spectrum prediction code
-  fMCErecoSpectrumGrandTot                              = new TH1D("","", kNvErecoBins, kNvErecoBinEdges);
-  fMCErecoSpectrumTot[kSKsFCFV1RingMuLike]              = new TH1D("","", kNvErecoBins, kNvErecoBinEdges);
-  fMCErecoSpectrum[kSKsFCFV1RingMuLike][kSKmNuMuCCQE]   = new TH1D("","", kNvErecoBins, kNvErecoBinEdges);
-  fMCErecoSpectrum[kSKsFCFV1RingMuLike][kSKmNuMuCC1pi]  = new TH1D("","", kNvErecoBins, kNvErecoBinEdges);
-  fMCErecoSpectrum[kSKsFCFV1RingMuLike][kSKmNuMuCCoth]  = new TH1D("","", kNvErecoBins, kNvErecoBinEdges);
-  fMCErecoSpectrum[kSKsFCFV1RingMuLike][kSKmNC]         = new TH1D("","", kNvErecoBins, kNvErecoBinEdges);
-  fMCErecoSpectrum[kSKsFCFV1RingMuLike][kSKmNuMuBarCC]  = new TH1D("","", kNvErecoBins, kNvErecoBinEdges);
-  fMCErecoSpectrum[kSKsFCFV1RingMuLike][kSKmNuMuBarNC]  = new TH1D("","", kNvErecoBins, kNvErecoBinEdges);
-  fMCErecoSpectrum[kSKsFCFV1RingMuLike][kSKmNuE]        = new TH1D("","", kNvErecoBins, kNvErecoBinEdges);
-  fMCErecoSpectrumTot[kSKsFCFV1RingMuLike]              -> SetDirectory(0);
-  fMCErecoSpectrum[kSKsFCFV1RingMuLike][kSKmNuMuCCQE]   -> SetDirectory(0);
-  fMCErecoSpectrum[kSKsFCFV1RingMuLike][kSKmNuMuCC1pi]  -> SetDirectory(0);
-  fMCErecoSpectrum[kSKsFCFV1RingMuLike][kSKmNuMuCCoth]  -> SetDirectory(0);
-  fMCErecoSpectrum[kSKsFCFV1RingMuLike][kSKmNC]         -> SetDirectory(0);
-  fMCErecoSpectrum[kSKsFCFV1RingMuLike][kSKmNuMuBarCC]  -> SetDirectory(0);
-  fMCErecoSpectrum[kSKsFCFV1RingMuLike][kSKmNuMuBarNC]  -> SetDirectory(0);
-  fMCErecoSpectrum[kSKsFCFV1RingMuLike][kSKmNuE]        -> SetDirectory(0);
+  fMCErecoSpectrumGrandTot                                  = new TH1D("","", kNvErecoBins, kNvErecoBinEdges);
+  fMCErecoSpectrumTot[kSKsFCFV1RingMuLike]                  = new TH1D("","", kNvErecoBins, kNvErecoBinEdges);
+  fMCErecoSpectrum[kSKsFCFV1RingMuLike][kSKmNuMuCCQE]       = new TH1D("","", kNvErecoBins, kNvErecoBinEdges);
+  fMCErecoSpectrum[kSKsFCFV1RingMuLike][kSKmNuMuCC1pi]      = new TH1D("","", kNvErecoBins, kNvErecoBinEdges);
+  fMCErecoSpectrum[kSKsFCFV1RingMuLike][kSKmNuMuCCoth]      = new TH1D("","", kNvErecoBins, kNvErecoBinEdges);
+  fMCErecoSpectrum[kSKsFCFV1RingMuLike][kSKmNC]             = new TH1D("","", kNvErecoBins, kNvErecoBinEdges);
+  fMCErecoSpectrum[kSKsFCFV1RingMuLike][kSKmNuMuBarCCQE]    = new TH1D("","", kNvErecoBins, kNvErecoBinEdges);
+  fMCErecoSpectrum[kSKsFCFV1RingMuLike][kSKmNuMuBarCCnonQE] = new TH1D("","", kNvErecoBins, kNvErecoBinEdges);
+  fMCErecoSpectrum[kSKsFCFV1RingMuLike][kSKmNuMuBarNC]      = new TH1D("","", kNvErecoBins, kNvErecoBinEdges);
+  fMCErecoSpectrum[kSKsFCFV1RingMuLike][kSKmNuECCQE]        = new TH1D("","", kNvErecoBins, kNvErecoBinEdges);
+  fMCErecoSpectrum[kSKsFCFV1RingMuLike][kSKmNuECCnonQE]     = new TH1D("","", kNvErecoBins, kNvErecoBinEdges);
+  fMCErecoSpectrum[kSKsFCFV1RingMuLike][kSKmNuENC]          = new TH1D("","", kNvErecoBins, kNvErecoBinEdges);
+  fMCErecoSpectrumTot[kSKsFCFV1RingMuLike]                  -> SetDirectory(0);
+  fMCErecoSpectrum[kSKsFCFV1RingMuLike][kSKmNuMuCCQE]       -> SetDirectory(0);
+  fMCErecoSpectrum[kSKsFCFV1RingMuLike][kSKmNuMuCC1pi]      -> SetDirectory(0);
+  fMCErecoSpectrum[kSKsFCFV1RingMuLike][kSKmNuMuCCoth]      -> SetDirectory(0);
+  fMCErecoSpectrum[kSKsFCFV1RingMuLike][kSKmNC]             -> SetDirectory(0);
+  fMCErecoSpectrum[kSKsFCFV1RingMuLike][kSKmNuMuBarCCQE]    -> SetDirectory(0);
+  fMCErecoSpectrum[kSKsFCFV1RingMuLike][kSKmNuMuBarCCnonQE] -> SetDirectory(0);
+  fMCErecoSpectrum[kSKsFCFV1RingMuLike][kSKmNuMuBarNC]      -> SetDirectory(0);
+  fMCErecoSpectrum[kSKsFCFV1RingMuLike][kSKmNuECCQE]        -> SetDirectory(0);
+  fMCErecoSpectrum[kSKsFCFV1RingMuLike][kSKmNuECCnonQE]     -> SetDirectory(0);
+  fMCErecoSpectrum[kSKsFCFV1RingMuLike][kSKmNuENC]          -> SetDirectory(0);
 
   cout << "Exp/SK >> Done reading SuperK inputs!" << endl;
 
@@ -1191,8 +1244,15 @@ void SuperkExpectation::SuperkInputs::CreateTemplate(SuperkSample_t s, SuperkMod
              use_it = is_numu && is_nc;
           } 
           else
-          if(m == kSKmNuMuBarCC) {
-             bool is_numubar  = (fBrPdg == kPdgNuMuBar);
+          if(m == kSKmNuMuBarCCQE) {
+             bool is_numubar = (fBrPdg == kPdgNuMuBar);
+             bool is_ccqe    = (fBrGenCode == -1);
+             use_it = is_numubar && is_ccqe;
+          } 
+          else
+          if(m == kSKmNuMuBarCCnonQE) {
+             bool is_numubar = (fBrPdg == kPdgNuMuBar);
+             bool is_ccqe    = (fBrGenCode == -1);
              bool is_nc    = (fBrGenCode == -31 ||
                               fBrGenCode == -32 ||
                               fBrGenCode == -36 ||
@@ -1208,7 +1268,7 @@ void SuperkExpectation::SuperkInputs::CreateTemplate(SuperkSample_t s, SuperkMod
                               fBrGenCode == -46 ||
                               fBrGenCode == -51 ||
                               fBrGenCode == -52);
-             use_it = is_numubar && !is_nc;
+             use_it = is_numubar && !(is_nc||is_ccqe);
           } 
           else
           if(m == kSKmNuMuBarNC) {
@@ -1231,9 +1291,77 @@ void SuperkExpectation::SuperkInputs::CreateTemplate(SuperkSample_t s, SuperkMod
              use_it = is_numubar && is_nc;
           } 
           else
-          if(m == kSKmNuE) {
+          if(m == kSKmNuECCQE) {
              bool is_nue  = (fBrPdg == kPdgNuE || fBrPdg == kPdgNuEBar);
-             use_it = is_nue;
+             bool is_ccqe = (fBrGenCode == 1 || fBrGenCode == -1);
+             use_it = is_nue && is_ccqe;
+          } 
+          else
+          if(m == kSKmNuECCnonQE) {
+             bool is_nue  = (fBrPdg == kPdgNuE || fBrPdg == kPdgNuEBar);
+             bool is_ccqe = (fBrGenCode == 1 || fBrGenCode == -1);
+             bool is_nc    = (fBrGenCode == 31  ||
+                              fBrGenCode == 32  ||
+                              fBrGenCode == 36  ||
+                              fBrGenCode == 33  ||
+                              fBrGenCode == 34  ||
+                              fBrGenCode == 38  ||
+                              fBrGenCode == 39  ||
+                              fBrGenCode == 41  ||
+                              fBrGenCode == 42  ||
+                              fBrGenCode == 43  ||
+                              fBrGenCode == 46  ||
+                              fBrGenCode == 51  ||
+                              fBrGenCode == 52  ||
+                              fBrGenCode == -31 ||
+                              fBrGenCode == -32 ||
+                              fBrGenCode == -36 ||
+                              fBrGenCode == -33 ||
+                              fBrGenCode == -34 ||
+                              fBrGenCode == -38 ||
+                              fBrGenCode == -39 ||
+                              fBrGenCode == -41 ||
+                              fBrGenCode == -42 ||
+                              fBrGenCode == -43 ||
+                              fBrGenCode == -44 ||
+                              fBrGenCode == -45 ||
+                              fBrGenCode == -46 ||
+                              fBrGenCode == -51 ||
+                              fBrGenCode == -52);
+             use_it = is_nue && !(is_ccqe||is_nc);
+          }
+          else
+          if(m == kSKmNuENC) {
+             bool is_nue  = (fBrPdg == kPdgNuE || fBrPdg == kPdgNuEBar);
+             bool is_nc    = (fBrGenCode == 31  ||
+                              fBrGenCode == 32  ||
+                              fBrGenCode == 36  ||
+                              fBrGenCode == 33  ||
+                              fBrGenCode == 34  ||
+                              fBrGenCode == 38  ||
+                              fBrGenCode == 39  ||
+                              fBrGenCode == 41  ||
+                              fBrGenCode == 42  ||
+                              fBrGenCode == 43  ||
+                              fBrGenCode == 46  ||
+                              fBrGenCode == 51  ||
+                              fBrGenCode == 52  ||
+                              fBrGenCode == -31 ||
+                              fBrGenCode == -32 ||
+                              fBrGenCode == -36 ||
+                              fBrGenCode == -33 ||
+                              fBrGenCode == -34 ||
+                              fBrGenCode == -38 ||
+                              fBrGenCode == -39 ||
+                              fBrGenCode == -41 ||
+                              fBrGenCode == -42 ||
+                              fBrGenCode == -43 ||
+                              fBrGenCode == -44 ||
+                              fBrGenCode == -45 ||
+                              fBrGenCode == -46 ||
+                              fBrGenCode == -51 ||
+                              fBrGenCode == -52);
+             use_it = is_nue && is_nc;
           }
           if(!use_it) continue;
 
@@ -1261,26 +1389,136 @@ void SuperkExpectation::SuperkInputs::Draw(TVirtualPad * c, Option_t * option) c
   }
 
   if(opt.Contains("1RingMuLike/ErecoEtrueTemplates")) { 
-    const char * draw_opt = "BOX";
-    c->Divide(2,3);
+    double emin=0;
+    double emax=6;
+    const char * draw_opt = "COLZ";
+    c->Divide(2,5);
     c->cd(1);
+    c->GetPad(1)->SetLogz();
+    c->GetPad(1)->SetBottomMargin(0.32);
+    c->GetPad(1)->SetRightMargin(0.1);
+    fMCTemplates[kSKsFCFV1RingMuLike][kSKmNuMuCCQE]->GetXaxis()->SetLabelSize  (0.12);
+    fMCTemplates[kSKsFCFV1RingMuLike][kSKmNuMuCCQE]->GetXaxis()->SetTitleSize  (0.14);
+    fMCTemplates[kSKsFCFV1RingMuLike][kSKmNuMuCCQE]->GetYaxis()->SetLabelSize  (0.12);
+    fMCTemplates[kSKsFCFV1RingMuLike][kSKmNuMuCCQE]->GetYaxis()->SetTitleSize  (0.14);
+    fMCTemplates[kSKsFCFV1RingMuLike][kSKmNuMuCCQE]->GetYaxis()->SetTitleOffset(0.40);
+    fMCTemplates[kSKsFCFV1RingMuLike][kSKmNuMuCCQE]->GetXaxis()->SetRangeUser(emin,emax);
+    fMCTemplates[kSKsFCFV1RingMuLike][kSKmNuMuCCQE]->GetYaxis()->SetRangeUser(emin,emax);
     fMCTemplates[kSKsFCFV1RingMuLike][kSKmNuMuCCQE]->Draw(draw_opt);
     c->cd(2);
+    c->GetPad(2)->SetLogz();
+    c->GetPad(2)->SetBottomMargin(0.32);
+    c->GetPad(2)->SetRightMargin(0.1);
+    fMCTemplates[kSKsFCFV1RingMuLike][kSKmNuMuCC1pi]->GetXaxis()->SetLabelSize  (0.12);
+    fMCTemplates[kSKsFCFV1RingMuLike][kSKmNuMuCC1pi]->GetXaxis()->SetTitleSize  (0.14);
+    fMCTemplates[kSKsFCFV1RingMuLike][kSKmNuMuCC1pi]->GetYaxis()->SetLabelSize  (0.12);
+    fMCTemplates[kSKsFCFV1RingMuLike][kSKmNuMuCC1pi]->GetYaxis()->SetTitleSize  (0.14);
+    fMCTemplates[kSKsFCFV1RingMuLike][kSKmNuMuCC1pi]->GetYaxis()->SetTitleOffset(0.40);
+    fMCTemplates[kSKsFCFV1RingMuLike][kSKmNuMuCC1pi]->GetXaxis()->SetRangeUser(emin,emax);
+    fMCTemplates[kSKsFCFV1RingMuLike][kSKmNuMuCC1pi]->GetYaxis()->SetRangeUser(emin,emax);
     fMCTemplates[kSKsFCFV1RingMuLike][kSKmNuMuCC1pi]->Draw(draw_opt);
     c->cd(3);
+    c->GetPad(3)->SetLogz();
+    c->GetPad(3)->SetBottomMargin(0.32);
+    c->GetPad(3)->SetRightMargin(0.1);
+    fMCTemplates[kSKsFCFV1RingMuLike][kSKmNuMuCCoth]->GetXaxis()->SetLabelSize  (0.12);
+    fMCTemplates[kSKsFCFV1RingMuLike][kSKmNuMuCCoth]->GetXaxis()->SetTitleSize  (0.14);
+    fMCTemplates[kSKsFCFV1RingMuLike][kSKmNuMuCCoth]->GetYaxis()->SetLabelSize  (0.12);
+    fMCTemplates[kSKsFCFV1RingMuLike][kSKmNuMuCCoth]->GetYaxis()->SetTitleSize  (0.14);
+    fMCTemplates[kSKsFCFV1RingMuLike][kSKmNuMuCCoth]->GetYaxis()->SetTitleOffset(0.40);
+    fMCTemplates[kSKsFCFV1RingMuLike][kSKmNuMuCCoth]->GetXaxis()->SetRangeUser(emin,emax);
+    fMCTemplates[kSKsFCFV1RingMuLike][kSKmNuMuCCoth]->GetYaxis()->SetRangeUser(emin,emax);
     fMCTemplates[kSKsFCFV1RingMuLike][kSKmNuMuCCoth]->Draw(draw_opt);
     c->cd(4);
+    c->GetPad(4)->SetLogz();
+    c->GetPad(4)->SetBottomMargin(0.32);
+    c->GetPad(4)->SetRightMargin(0.1);
+    fMCTemplates[kSKsFCFV1RingMuLike][kSKmNC]->GetXaxis()->SetLabelSize  (0.12);
+    fMCTemplates[kSKsFCFV1RingMuLike][kSKmNC]->GetXaxis()->SetTitleSize  (0.14);
+    fMCTemplates[kSKsFCFV1RingMuLike][kSKmNC]->GetYaxis()->SetLabelSize  (0.12);
+    fMCTemplates[kSKsFCFV1RingMuLike][kSKmNC]->GetYaxis()->SetTitleSize  (0.14);
+    fMCTemplates[kSKsFCFV1RingMuLike][kSKmNC]->GetYaxis()->SetTitleOffset(0.40);
+    fMCTemplates[kSKsFCFV1RingMuLike][kSKmNC]->GetXaxis()->SetRangeUser(emin,emax);
+    fMCTemplates[kSKsFCFV1RingMuLike][kSKmNC]->GetYaxis()->SetRangeUser(emin,emax);
     fMCTemplates[kSKsFCFV1RingMuLike][kSKmNC]->Draw(draw_opt);
     c->cd(5);
-    fMCTemplates[kSKsFCFV1RingMuLike][kSKmNuMuBarCC]->Draw(draw_opt);
+    c->GetPad(5)->SetLogz();
+    c->GetPad(5)->SetBottomMargin(0.32);
+    c->GetPad(5)->SetRightMargin(0.1);
+    fMCTemplates[kSKsFCFV1RingMuLike][kSKmNuMuBarCCQE]->GetXaxis()->SetLabelSize  (0.12);
+    fMCTemplates[kSKsFCFV1RingMuLike][kSKmNuMuBarCCQE]->GetXaxis()->SetTitleSize  (0.14);
+    fMCTemplates[kSKsFCFV1RingMuLike][kSKmNuMuBarCCQE]->GetYaxis()->SetLabelSize  (0.12);
+    fMCTemplates[kSKsFCFV1RingMuLike][kSKmNuMuBarCCQE]->GetYaxis()->SetTitleSize  (0.14);
+    fMCTemplates[kSKsFCFV1RingMuLike][kSKmNuMuBarCCQE]->GetYaxis()->SetTitleOffset(0.40);
+    fMCTemplates[kSKsFCFV1RingMuLike][kSKmNuMuBarCCQE]->GetXaxis()->SetRangeUser(emin,emax);
+    fMCTemplates[kSKsFCFV1RingMuLike][kSKmNuMuBarCCQE]->GetYaxis()->SetRangeUser(emin,emax);
+    fMCTemplates[kSKsFCFV1RingMuLike][kSKmNuMuBarCCQE]->Draw(draw_opt);
     c->cd(6);
-    fMCTemplates[kSKsFCFV1RingMuLike][kSKmNuE]->Draw(draw_opt);
+    c->GetPad(6)->SetLogz();
+    c->GetPad(6)->SetBottomMargin(0.32);
+    c->GetPad(6)->SetRightMargin(0.1);
+    fMCTemplates[kSKsFCFV1RingMuLike][kSKmNuMuBarCCnonQE]->GetXaxis()->SetLabelSize  (0.12);
+    fMCTemplates[kSKsFCFV1RingMuLike][kSKmNuMuBarCCnonQE]->GetXaxis()->SetTitleSize  (0.14);
+    fMCTemplates[kSKsFCFV1RingMuLike][kSKmNuMuBarCCnonQE]->GetYaxis()->SetLabelSize  (0.12);
+    fMCTemplates[kSKsFCFV1RingMuLike][kSKmNuMuBarCCnonQE]->GetYaxis()->SetTitleSize  (0.14);
+    fMCTemplates[kSKsFCFV1RingMuLike][kSKmNuMuBarCCnonQE]->GetYaxis()->SetTitleOffset(0.40);
+    fMCTemplates[kSKsFCFV1RingMuLike][kSKmNuMuBarCCnonQE]->GetXaxis()->SetRangeUser(emin,emax);
+    fMCTemplates[kSKsFCFV1RingMuLike][kSKmNuMuBarCCnonQE]->GetYaxis()->SetRangeUser(emin,emax);
+    fMCTemplates[kSKsFCFV1RingMuLike][kSKmNuMuBarCCnonQE]->Draw(draw_opt);
+    c->cd(7);
+    c->GetPad(7)->SetLogz();
+    c->GetPad(7)->SetBottomMargin(0.32);
+    c->GetPad(7)->SetRightMargin(0.1);
+    fMCTemplates[kSKsFCFV1RingMuLike][kSKmNuMuBarNC]->GetXaxis()->SetLabelSize  (0.12);
+    fMCTemplates[kSKsFCFV1RingMuLike][kSKmNuMuBarNC]->GetXaxis()->SetTitleSize  (0.14);
+    fMCTemplates[kSKsFCFV1RingMuLike][kSKmNuMuBarNC]->GetYaxis()->SetLabelSize  (0.12);
+    fMCTemplates[kSKsFCFV1RingMuLike][kSKmNuMuBarNC]->GetYaxis()->SetTitleSize  (0.14);
+    fMCTemplates[kSKsFCFV1RingMuLike][kSKmNuMuBarNC]->GetYaxis()->SetTitleOffset(0.40);
+    fMCTemplates[kSKsFCFV1RingMuLike][kSKmNuMuBarNC]->GetXaxis()->SetRangeUser(emin,emax);
+    fMCTemplates[kSKsFCFV1RingMuLike][kSKmNuMuBarNC]->GetYaxis()->SetRangeUser(emin,emax);
+    fMCTemplates[kSKsFCFV1RingMuLike][kSKmNuMuBarNC]->Draw(draw_opt);
+    c->cd(8);
+    c->GetPad(8)->SetLogz();
+    c->GetPad(8)->SetBottomMargin(0.32);
+    c->GetPad(8)->SetRightMargin(0.1);
+    fMCTemplates[kSKsFCFV1RingMuLike][kSKmNuECCQE]->GetXaxis()->SetLabelSize  (0.12);
+    fMCTemplates[kSKsFCFV1RingMuLike][kSKmNuECCQE]->GetXaxis()->SetTitleSize  (0.14);
+    fMCTemplates[kSKsFCFV1RingMuLike][kSKmNuECCQE]->GetYaxis()->SetLabelSize  (0.12);
+    fMCTemplates[kSKsFCFV1RingMuLike][kSKmNuECCQE]->GetYaxis()->SetTitleSize  (0.14);
+    fMCTemplates[kSKsFCFV1RingMuLike][kSKmNuECCQE]->GetYaxis()->SetTitleOffset(0.40);
+    fMCTemplates[kSKsFCFV1RingMuLike][kSKmNuECCQE]->GetXaxis()->SetRangeUser(emin,emax);
+    fMCTemplates[kSKsFCFV1RingMuLike][kSKmNuECCQE]->GetYaxis()->SetRangeUser(emin,emax);
+    fMCTemplates[kSKsFCFV1RingMuLike][kSKmNuECCQE]->Draw(draw_opt);
+    c->cd(9);
+    c->GetPad(9)->SetLogz();
+    c->GetPad(9)->SetBottomMargin(0.32);
+    c->GetPad(9)->SetRightMargin(0.1);
+    fMCTemplates[kSKsFCFV1RingMuLike][kSKmNuECCnonQE]->GetXaxis()->SetLabelSize  (0.12);
+    fMCTemplates[kSKsFCFV1RingMuLike][kSKmNuECCnonQE]->GetXaxis()->SetTitleSize  (0.14);
+    fMCTemplates[kSKsFCFV1RingMuLike][kSKmNuECCnonQE]->GetYaxis()->SetLabelSize  (0.12);
+    fMCTemplates[kSKsFCFV1RingMuLike][kSKmNuECCnonQE]->GetYaxis()->SetTitleSize  (0.14);
+    fMCTemplates[kSKsFCFV1RingMuLike][kSKmNuECCnonQE]->GetYaxis()->SetTitleOffset(0.40);
+    fMCTemplates[kSKsFCFV1RingMuLike][kSKmNuECCnonQE]->GetXaxis()->SetRangeUser(emin,emax);
+    fMCTemplates[kSKsFCFV1RingMuLike][kSKmNuECCnonQE]->GetYaxis()->SetRangeUser(emin,emax);
+    fMCTemplates[kSKsFCFV1RingMuLike][kSKmNuECCnonQE]->Draw(draw_opt);
     c->Update();
+    c->cd(10);
+    c->GetPad(10)->SetLogz();
+    c->GetPad(10)->SetBottomMargin(0.32);
+    c->GetPad(10)->SetRightMargin(0.1);
+    fMCTemplates[kSKsFCFV1RingMuLike][kSKmNuENC]->GetXaxis()->SetLabelSize  (0.12);
+    fMCTemplates[kSKsFCFV1RingMuLike][kSKmNuENC]->GetXaxis()->SetTitleSize  (0.14);
+    fMCTemplates[kSKsFCFV1RingMuLike][kSKmNuENC]->GetYaxis()->SetLabelSize  (0.12);
+    fMCTemplates[kSKsFCFV1RingMuLike][kSKmNuENC]->GetYaxis()->SetTitleSize  (0.14);
+    fMCTemplates[kSKsFCFV1RingMuLike][kSKmNuENC]->GetYaxis()->SetTitleOffset(0.40);
+    fMCTemplates[kSKsFCFV1RingMuLike][kSKmNuENC]->GetXaxis()->SetRangeUser(emin,emax);
+    fMCTemplates[kSKsFCFV1RingMuLike][kSKmNuENC]->GetYaxis()->SetRangeUser(emin,emax);
+    fMCTemplates[kSKsFCFV1RingMuLike][kSKmNuENC]->Draw(draw_opt);
   }
 
   if(opt.Contains("1RingMuLike/EtrueSpectra")) { 
     const char * draw_opt = "";
-    c->Divide(2,3);
+    c->Divide(2,5);
     c->cd(1);
     fMCEtrueSpectrum[kSKsFCFV1RingMuLike][kSKmNuMuCCQE]->Draw(draw_opt);
     c->cd(2);
@@ -1290,9 +1528,17 @@ void SuperkExpectation::SuperkInputs::Draw(TVirtualPad * c, Option_t * option) c
     c->cd(4);
     fMCEtrueSpectrum[kSKsFCFV1RingMuLike][kSKmNC]->Draw(draw_opt);
     c->cd(5);
-    fMCEtrueSpectrum[kSKsFCFV1RingMuLike][kSKmNuMuBarCC]->Draw(draw_opt);
+    fMCEtrueSpectrum[kSKsFCFV1RingMuLike][kSKmNuMuBarCCQE]->Draw(draw_opt);
     c->cd(6);
-    fMCEtrueSpectrum[kSKsFCFV1RingMuLike][kSKmNuE]->Draw(draw_opt);
+    fMCEtrueSpectrum[kSKsFCFV1RingMuLike][kSKmNuMuBarCCnonQE]->Draw(draw_opt);
+    c->cd(7);
+    fMCEtrueSpectrum[kSKsFCFV1RingMuLike][kSKmNuMuBarNC]->Draw(draw_opt);
+    c->cd(8);
+    fMCEtrueSpectrum[kSKsFCFV1RingMuLike][kSKmNuECCQE]->Draw(draw_opt);
+    c->cd(9);
+    fMCEtrueSpectrum[kSKsFCFV1RingMuLike][kSKmNuECCnonQE]->Draw(draw_opt);
+    c->cd(10);
+    fMCEtrueSpectrum[kSKsFCFV1RingMuLike][kSKmNuENC]->Draw(draw_opt);
     c->Update();
   }
 
@@ -1313,6 +1559,14 @@ double SuperkExpectation::SuperkInputs::NumOfEvents_Ereco(
   double nevtot = 0;
 
   int reco_bin = nsk2d->GetXaxis()->FindBin(Ereco);
+
+#ifdef __debug_level_2__ 
+  cout << "Exp/SK/NumOfEvents_Ereco() >> "
+       << "Sample = " << util::AsString(s) << " / Mode = " << util::AsString(m) 
+       << ", Ereco = " << Ereco << ", bin = " << reco_bin << endl;
+#endif
+
+
   for(int true_bin = 1; true_bin <= nsk2d->GetYaxis()->GetNbins(); true_bin++) {
 
       double Etrue     = nsk2d->GetYaxis()->GetBinCenter(true_bin);
@@ -1342,11 +1596,14 @@ double SuperkExpectation::SuperkInputs::NumOfEvents_Ereco(
                flux_10d_weight      = fBeamInputs->SuperkNuMuFlux10aTo10dWght(Etrue);
                numu_flux_shape_wght = fBeamInputs->SuperkNuMuFluxShapeWeight (Etrue);
                break;
-           case(kSKmNuMuBarCC):
-           case(kSKmNuMuBarNC):
+           case(kSKmNuMuBarCCQE   ):
+           case(kSKmNuMuBarCCnonQE):
+           case(kSKmNuMuBarNC     ):
                flux_10d_weight = fBeamInputs->SuperkNuMuBarFlux10aTo10dWght(Etrue);
                break;
-           case(kSKmNuE):
+           case(kSKmNuECCQE):
+           case(kSKmNuECCnonQE):
+           case(kSKmNuENC):
                flux_10d_weight = fBeamInputs->SuperkNuEFlux10aTo10dWght(Etrue);
                break;
            default:
@@ -1382,6 +1639,12 @@ double SuperkExpectation::SuperkInputs::NumOfEvents_Ereco(
   }
   nevtot *= nucl_effect_wght;
 
+#ifdef __debug_level_2__ 
+  if(nucl_effect_wght != 1.) {
+    cout << "Exp/SK/NumOfEvents_Ereco() >> Applied nucl. effect weight = " << nucl_effect_wght << endl;
+  }
+#endif
+
   //
   // Plug-in "efficiency" uncertainty due to fiducial volume, 
   // reduction chain, ring-counting and PID
@@ -1390,6 +1653,12 @@ double SuperkExpectation::SuperkInputs::NumOfEvents_Ereco(
   double relerr  = fEffRelErr[s][m];
   double effwght = (1. + twkdial*relerr);
   nevtot *= effwght; 
+
+#ifdef __debug_level_2__ 
+  if(effwght != 1.) {
+    cout << "Exp/SK/NumOfEvents_Ereco() >> Applied efficiency weight = " << effwght << endl;
+  }
+#endif
 
   //
   // Plug-in energy scale systematic.
@@ -1494,11 +1763,14 @@ double SuperkExpectation::SuperkInputs::NumOfEvents_Etrue(
                flux_10d_weight      = fBeamInputs->SuperkNuMuFlux10aTo10dWght(Etrue);
                numu_flux_shape_wght = fBeamInputs->SuperkNuMuFluxShapeWeight (Etrue);
                break;
-           case(kSKmNuMuBarCC):
-           case(kSKmNuMuBarNC):
+           case(kSKmNuMuBarCCQE   ):
+           case(kSKmNuMuBarCCnonQE):
+           case(kSKmNuMuBarNC     ):
                flux_10d_weight = fBeamInputs->SuperkNuMuBarFlux10aTo10dWght(Etrue);
                break;
-           case(kSKmNuE):
+           case(kSKmNuECCQE):
+           case(kSKmNuECCnonQE):
+           case(kSKmNuENC):
                flux_10d_weight = fBeamInputs->SuperkNuEFlux10aTo10dWght(Etrue);
                break;
            default:
@@ -1603,7 +1875,8 @@ void SuperkExpectation::SuperkInputs::UpdateEtrueSpectra(void)
   for(int ibin = 1; ibin <= spectrum->GetNbinsX(); ibin++) {
     double Etrue = spectrum->GetBinCenter(ibin);
     double nev = 
-       this->NumOfEvents_Etrue(Etrue, kSKsFCFV1RingMuLike, kSKmNuMuBarCC) +
+       this->NumOfEvents_Etrue(Etrue, kSKsFCFV1RingMuLike, kSKmNuMuBarCCQE) +
+       this->NumOfEvents_Etrue(Etrue, kSKsFCFV1RingMuLike, kSKmNuMuBarCCnonQE) +
        this->NumOfEvents_Etrue(Etrue, kSKsFCFV1RingMuLike, kSKmNuMuBarNC);
 #ifdef __debug_level_2__
     cout << "Exp/SK/UpdateEtrueSpectra() >> "
@@ -1617,7 +1890,9 @@ void SuperkExpectation::SuperkInputs::UpdateEtrueSpectra(void)
   for(int ibin = 1; ibin <= spectrum->GetNbinsX(); ibin++) {
     double Etrue = spectrum->GetBinCenter(ibin);
     double nev = 
-       this->NumOfEvents_Etrue(Etrue, kSKsFCFV1RingMuLike, kSKmNuE);
+       this->NumOfEvents_Etrue(Etrue, kSKsFCFV1RingMuLike, kSKmNuECCQE) +
+       this->NumOfEvents_Etrue(Etrue, kSKsFCFV1RingMuLike, kSKmNuECCnonQE) +
+       this->NumOfEvents_Etrue(Etrue, kSKsFCFV1RingMuLike, kSKmNuENC);
 #ifdef __debug_level_2__
     cout << "Exp/SK/UpdateEtrueSpectra() >> "
          << "1-ring mu / nuebkg : bin = " << ibin << ", nev = " << nev << endl;
@@ -1683,8 +1958,15 @@ double SuperkExpectation::SuperkInputs::NumOfEventsReadFromTree(
       use_it = is_numu && is_nc;
     } 
     else
-    if(m == kSKmNuMuBarCC) {
-      bool is_numubar  = (fBrPdg == kPdgNuMuBar);
+    if(m == kSKmNuMuBarCCQE) {
+      bool is_numubar = (fBrPdg == kPdgNuMuBar);
+      bool is_ccqe    = (fBrGenCode == -1);
+      use_it = is_numubar && is_ccqe;
+    } 
+    else
+    if(m == kSKmNuMuBarCCnonQE) {
+      bool is_numubar = (fBrPdg == kPdgNuMuBar);
+      bool is_ccqe    = (fBrGenCode == -1);
       bool is_nc    = (fBrGenCode == 31 ||
                        fBrGenCode == 32 ||
                        fBrGenCode == 36 ||
@@ -1698,7 +1980,7 @@ double SuperkExpectation::SuperkInputs::NumOfEventsReadFromTree(
                        fBrGenCode == 46 ||
                        fBrGenCode == 51 ||
                        fBrGenCode == 52);
-      use_it = is_numubar && !is_nc;
+      use_it = is_numubar && !(is_nc||is_ccqe);
     } 
     else
     if(m == kSKmNuMuBarNC) {
@@ -1719,9 +2001,77 @@ double SuperkExpectation::SuperkInputs::NumOfEventsReadFromTree(
       use_it = is_numubar && is_nc;
     } 
     else
-    if(m == kSKmNuE) {
-      bool is_nue  = (fBrPdg == kPdgNuE || fBrPdg == kPdgNuEBar);
-      use_it = is_nue;
+    if(m == kSKmNuECCQE) {
+        bool is_nue  = (fBrPdg == kPdgNuE || fBrPdg == kPdgNuEBar);
+        bool is_ccqe = (fBrGenCode == 1 || fBrGenCode == -1);
+        use_it = is_nue && is_ccqe;
+     } 
+     else
+     if(m == kSKmNuECCnonQE) {
+         bool is_nue  = (fBrPdg == kPdgNuE || fBrPdg == kPdgNuEBar);
+         bool is_ccqe = (fBrGenCode == 1 || fBrGenCode == -1);
+         bool is_nc   = (fBrGenCode == 31  ||
+                         fBrGenCode == 32  ||
+                         fBrGenCode == 36  ||
+                         fBrGenCode == 33  ||
+                         fBrGenCode == 34  ||
+                         fBrGenCode == 38  ||
+                         fBrGenCode == 39  ||
+                         fBrGenCode == 41  ||
+                         fBrGenCode == 42  ||
+                         fBrGenCode == 43  ||
+                         fBrGenCode == 46  ||
+                         fBrGenCode == 51  ||
+                         fBrGenCode == 52  ||
+                         fBrGenCode == -31 ||
+                         fBrGenCode == -32 ||
+                         fBrGenCode == -36 ||
+                         fBrGenCode == -33 ||
+                         fBrGenCode == -34 ||
+                         fBrGenCode == -38 ||
+                         fBrGenCode == -39 ||
+                         fBrGenCode == -41 ||
+                         fBrGenCode == -42 ||
+                         fBrGenCode == -43 ||
+                         fBrGenCode == -44 ||
+                         fBrGenCode == -45 ||
+                         fBrGenCode == -46 ||
+                         fBrGenCode == -51 ||
+                         fBrGenCode == -52);
+        use_it = is_nue && !(is_ccqe||is_nc);
+    }
+    else
+    if(m == kSKmNuENC) {
+        bool is_nue  = (fBrPdg == kPdgNuE || fBrPdg == kPdgNuEBar);
+        bool is_nc   = (fBrGenCode == 31  ||
+                        fBrGenCode == 32  ||
+                        fBrGenCode == 36  ||
+                        fBrGenCode == 33  ||
+                        fBrGenCode == 34  ||
+                        fBrGenCode == 38  ||
+                        fBrGenCode == 39  ||
+                        fBrGenCode == 41  ||
+                        fBrGenCode == 42  ||
+                        fBrGenCode == 43  ||
+                        fBrGenCode == 46  ||
+                        fBrGenCode == 51  ||
+                        fBrGenCode == 52  ||
+                        fBrGenCode == -31 ||
+                        fBrGenCode == -32 ||
+                        fBrGenCode == -36 ||
+                        fBrGenCode == -33 ||
+                        fBrGenCode == -34 ||
+                        fBrGenCode == -38 ||
+                        fBrGenCode == -39 ||
+                        fBrGenCode == -41 ||
+                        fBrGenCode == -42 ||
+                        fBrGenCode == -43 ||
+                        fBrGenCode == -44 ||
+                        fBrGenCode == -45 ||
+                        fBrGenCode == -46 ||
+                        fBrGenCode == -51 ||
+                        fBrGenCode == -52);
+        use_it = is_nue && is_nc;
     }
     if(!use_it) continue;
 
@@ -1761,11 +2111,14 @@ TTree * SuperkExpectation::SuperkInputs::MCTree(SuperkSample_t s, SuperkMode_t m
      case (kSKmNC       ):
         return fMC1Rmu_numu;
         break;
-     case(kSKmNuMuBarCC):
+     case(kSKmNuMuBarCCQE):
+     case(kSKmNuMuBarCCnonQE):
      case(kSKmNuMuBarNC):
         return fMC1Rmu_numubar;
         break;
-     case(kSKmNuE):
+     case(kSKmNuECCQE):
+     case(kSKmNuECCnonQE):
+     case(kSKmNuENC):
         return fMC1Rmu_nue;
         break;
      default:
@@ -1785,11 +2138,14 @@ double SuperkExpectation::SuperkInputs::MCPOT(SuperkSample_t s, SuperkMode_t m)
      case (kSKmNC       ):
         return fMCPOT_numu;
         break;
-     case(kSKmNuMuBarCC):
+     case(kSKmNuMuBarCCQE):
+     case(kSKmNuMuBarCCnonQE):
      case(kSKmNuMuBarNC):
         return fMCPOT_numubar;
         break;
-     case(kSKmNuE):
+     case(kSKmNuECCQE):
+     case(kSKmNuECCnonQE):
+     case(kSKmNuENC):
         return fMCPOT_nue;
         break;
      default:
@@ -1833,37 +2189,76 @@ void SuperkExpectation::SuperkInputs::TweakEfficiency(
   fEffTwkDial[s][m] = twkdial;
 
   //
-  // link numu CC1pi, numu CCoth and numubar CC as I have a single efficiency for CCnonQE
+  // link numu CCQE, numubar CCQE, nue CCQE as I have a single efficiency for CCQE
+  //
+  if (m == kSKmNuMuCCQE) 
+  { 
+     fEffTwkDial[s][kSKmNuMuBarCCQE] = twkdial; 
+     fEffTwkDial[s][kSKmNuECCQE]     = twkdial; 
+  }
+  else
+  if (m == kSKmNuMuBarCCQE) 
+  { 
+     fEffTwkDial[s][kSKmNuMuCCQE] = twkdial; 
+     fEffTwkDial[s][kSKmNuECCQE]  = twkdial; 
+  }
+  else
+  if (m == kSKmNuECCQE) 
+  {
+     fEffTwkDial[s][kSKmNuMuCCQE]    = twkdial; 
+     fEffTwkDial[s][kSKmNuMuBarCCQE] = twkdial; 
+  }
+
+  //
+  // link numu CC1pi, numu CCoth, numubar CCnonQE and nue CCnonQE as I have a single efficiency for CCnonQE
   //
   if (m == kSKmNuMuCCoth) 
   { 
-     fEffTwkDial[s][kSKmNuMuCC1pi] = twkdial; 
-     fEffTwkDial[s][kSKmNuMuBarCC] = twkdial; 
+     fEffTwkDial[s][kSKmNuMuCC1pi]      = twkdial; 
+     fEffTwkDial[s][kSKmNuMuBarCCnonQE] = twkdial; 
+     fEffTwkDial[s][kSKmNuECCnonQE]     = twkdial; 
   }
   else
   if (m == kSKmNuMuCC1pi) 
   { 
-     fEffTwkDial[s][kSKmNuMuCCoth] = twkdial; 
-     fEffTwkDial[s][kSKmNuMuBarCC] = twkdial; 
+     fEffTwkDial[s][kSKmNuMuCCoth]      = twkdial; 
+     fEffTwkDial[s][kSKmNuMuBarCCnonQE] = twkdial; 
+     fEffTwkDial[s][kSKmNuECCnonQE]     = twkdial; 
   }
   else
-  if (m == kSKmNuMuBarCC) 
+  if (m == kSKmNuMuBarCCnonQE) 
   {
-     fEffTwkDial[s][kSKmNuMuCC1pi] = twkdial; 
-     fEffTwkDial[s][kSKmNuMuCCoth] = twkdial; 
+     fEffTwkDial[s][kSKmNuMuCC1pi]  = twkdial; 
+     fEffTwkDial[s][kSKmNuMuCCoth]  = twkdial; 
+     fEffTwkDial[s][kSKmNuECCnonQE] = twkdial; 
+  }
+  else
+  if (m == kSKmNuECCnonQE) 
+  {
+     fEffTwkDial[s][kSKmNuMuCC1pi]      = twkdial; 
+     fEffTwkDial[s][kSKmNuMuCCoth]      = twkdial; 
+     fEffTwkDial[s][kSKmNuMuBarCCnonQE] = twkdial; 
   }
 
   //
-  // link numu NC and numubar NC as I have a single efficiency for NC
+  // link numu NC, numubar NC and nue NC as I have a single efficiency for NC
   //
   if (m == kSKmNC) 
   {
      fEffTwkDial[s][kSKmNuMuBarNC] = twkdial; 
+     fEffTwkDial[s][kSKmNuENC]     = twkdial; 
   }
   else
-  if (m == kSKmNuMuBarCC) 
+  if (m == kSKmNuMuBarNC) 
   {
-     fEffTwkDial[s][kSKmNC] = twkdial; 
+     fEffTwkDial[s][kSKmNC]    = twkdial; 
+     fEffTwkDial[s][kSKmNuENC] = twkdial; 
+  }
+  else
+  if (m == kSKmNuENC) 
+  {
+     fEffTwkDial[s][kSKmNC]        = twkdial; 
+     fEffTwkDial[s][kSKmNuMuBarNC] = twkdial; 
   }
 }
 //________________________________________________________________________________________
@@ -2365,14 +2760,17 @@ double SuperkExpectation::GeneratorInputs::SuperkXSecRatioWght(
    double Etrue, t2kana::yr1numu::conv::SuperkMode_t m) const
 {
    switch(m) {
-      case ( kSKmNuMuCCQE  ) : return 1.; break;
-      case ( kSKmNuMuCC1pi ) : return this->CC1piToCCQEXSecRatioWght(Etrue); break;
-      case ( kSKmNuMuCCoth ) : return this->CCOthToCCQEXSecRatioWght(Etrue); break;
-      case ( kSKmNC        ) : return this->NCToCCQEXSecRatioWght(Etrue);    break;
-      case ( kSKmNuMuBarCC ) : return 1.; break;
-      case ( kSKmNuMuBarNC ) : return 1.; break;
-      case ( kSKmNuE       ) : return 1.; break;
-      default                : return 1.; break;
+      case ( kSKmNuMuCCQE       ) : return 1.; break;
+      case ( kSKmNuMuCC1pi      ) : return this->CC1piToCCQEXSecRatioWght(Etrue); break;
+      case ( kSKmNuMuCCoth      ) : return this->CCOthToCCQEXSecRatioWght(Etrue); break;
+      case ( kSKmNC             ) : return this->NCToCCQEXSecRatioWght(Etrue);    break;
+      case ( kSKmNuMuBarCCQE    ) : return 1.; break;
+      case ( kSKmNuMuBarCCnonQE ) : return this->CC1piToCCQEXSecRatioWght(Etrue); break;//CHECK
+      case ( kSKmNuMuBarNC      ) : return 1.; break;
+      case ( kSKmNuECCQE        ) : return 1.; break;
+      case ( kSKmNuECCnonQE     ) : return 1.; break;
+      case ( kSKmNuENC          ) : return this->NCToCCQEXSecRatioWght(Etrue); break;
+      default                     : return 1.; break;
    }
    return 1.;
 }
@@ -2392,13 +2790,27 @@ double SuperkExpectation::GeneratorInputs::SuperkCCQEXSecWght(
 
           break;
       }
-      case ( kSKmNuMuCC1pi ) : return 1.; break;
-      case ( kSKmNuMuCCoth ) : return 1.; break;
-      case ( kSKmNC        ) : return 1.; break;
-      case ( kSKmNuMuBarCC ) : return 1.; break;
-      case ( kSKmNuMuBarNC ) : return 1.; break;
-      case ( kSKmNuE       ) : return 1.; break;
-      default                : return 1.; break;
+      case ( kSKmNuMuCC1pi      ) : return 1.; break;
+      case ( kSKmNuMuCCoth      ) : return 1.; break;
+      case ( kSKmNC             ) : return 1.; break;
+      case ( kSKmNuMuBarCCQE    ) : 
+      {
+          assert(fCCQEXSecRelErr);
+          Etrue = TMath::Min( Etrue, fCCQEXSecRelErr->GetXaxis()->GetXmax() );
+          int    bin    = fCCQEXSecRelErr->FindBin(Etrue);
+          double relerr = fCCQEXSecRelErr->GetBinContent(bin);
+          double wght   = (1. + fCCQEXSecTwkDial*relerr);
+          return wght;
+
+          break;
+      }
+      case ( kSKmNuMuBarCCnonQE ) : return 1.; break;
+      case ( kSKmNuMuBarNC      ) : return 1.; break;
+      case ( kSKmNuECCQE        ) : return 1.; break;
+      case ( kSKmNuECCnonQE     ) : return 1.; break;
+      case ( kSKmNuENC          ) : return 1.; break;
+
+      default : return 1.; break;
    }
    return 1.;
 }

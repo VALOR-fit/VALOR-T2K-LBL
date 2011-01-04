@@ -133,17 +133,20 @@ double t2kana::yr1numu::util::NuMuSurvProbOsc2D(
   double sinsq2theta, double dmsq, double Et, 
   t2kana::yr1numu::conv::SuperkMode_t m)
 {
-  if(m == kSKmNC  || 
-     m == kSKmNuE ||
+  if(m == kSKmNC         || 
+     m == kSKmNuECCQE    ||
+     m == kSKmNuECCnonQE ||
+     m == kSKmNuENC      ||
      m == kSKmNuMuBarNC)
   {
     return 1.;
   }
   else
-  if(m == kSKmNuMuCCQE  || 
-     m == kSKmNuMuCC1pi || 
-     m == kSKmNuMuCCoth ||
-     m == kSKmNuMuBarCC) 
+  if(m == kSKmNuMuCCQE    || 
+     m == kSKmNuMuCC1pi   || 
+     m == kSKmNuMuCCoth   ||
+     m == kSKmNuMuBarCCQE ||
+     m == kSKmNuMuBarCCnonQE) 
   {
     return NuMuSurvProbOsc2D(sinsq2theta, dmsq, Et);
   }
@@ -179,16 +182,19 @@ double t2kana::yr1numu::util::NuMuSurvProbDecay (
   double sinsq2theta, double alpha, double Et, 
   t2kana::yr1numu::conv::SuperkMode_t m)
 {
-  if(m == kSKmNuE)
+  if(m == kSKmNuECCQE ||
+     m == kSKmNuECCnonQE ||
+     m == kSKmNuENC)
   {
     return 1.;
   }
   else
-  if(m == kSKmNuMuCCQE  || 
-     m == kSKmNuMuCC1pi || 
-     m == kSKmNuMuCCoth ||
-     m == kSKmNC        ||
-     m == kSKmNuMuBarCC ||
+  if(m == kSKmNuMuCCQE       || 
+     m == kSKmNuMuCC1pi      || 
+     m == kSKmNuMuCCoth      ||
+     m == kSKmNC             ||
+     m == kSKmNuMuBarCCQE    ||
+     m == kSKmNuMuBarCCnonQE ||
      m == kSKmNuMuBarNC) 
   {
     return NuMuSurvProbDecay(sinsq2theta, alpha, Et);
@@ -221,16 +227,19 @@ double t2kana::yr1numu::util::NuMuSurvProbDecoh (
   double sinsq2theta, double musq, double Et, 
   t2kana::yr1numu::conv::SuperkMode_t m)
 {
-  if(m == kSKmNuE)
+  if(m == kSKmNuECCQE ||
+     m == kSKmNuECCnonQE ||
+     m == kSKmNuENC)
   {
     return 1.;
   }
   else
-  if(m == kSKmNuMuCCQE  || 
-     m == kSKmNuMuCC1pi || 
-     m == kSKmNuMuCCoth ||
-     m == kSKmNC        ||
-     m == kSKmNuMuBarCC ||
+  if(m == kSKmNuMuCCQE       || 
+     m == kSKmNuMuCC1pi      || 
+     m == kSKmNuMuCCoth      ||
+     m == kSKmNC             ||
+     m == kSKmNuMuBarCCQE    ||
+     m == kSKmNuMuBarCCnonQE ||
      m == kSKmNuMuBarNC) 
   {
     return NuMuSurvProbDecoh(sinsq2theta, musq, Et);
@@ -400,14 +409,17 @@ string t2kana::yr1numu::util::AsString(
      t2kana::yr1numu::conv::SuperkMode_t m)
 {
   switch(m) {
-     case ( kSKmNuMuCCQE    ) : return "numu CCQE";            break;
-     case ( kSKmNuMuCC1pi   ) : return "numu CC1pi";           break;
-     case ( kSKmNuMuCCoth   ) : return "numu CCoth";           break;
-     case ( kSKmNC          ) : return "numu/nutau NC";        break;
-     case ( kSKmNuMuBarCC   ) : return "numubar CC";           break;
-     case ( kSKmNuMuBarNC   ) : return "numubar/nutaubar NC";  break;
-     case ( kSKmNuE         ) : return "nue";                  break;
-     default                  : return "--";
+     case ( kSKmNuMuCCQE      ) : return "numu CCQE";            break;
+     case ( kSKmNuMuCC1pi     ) : return "numu CC1pi";           break;
+     case ( kSKmNuMuCCoth     ) : return "numu CCoth";           break;
+     case ( kSKmNC            ) : return "numu/nutau NC";        break;
+     case ( kSKmNuMuBarCCQE   ) : return "numubar CCQE";         break;
+     case ( kSKmNuMuBarCCnonQE) : return "numubar CCnonQE";      break;
+     case ( kSKmNuMuBarNC     ) : return "numubar/nutaubar NC";  break;
+     case ( kSKmNuECCQE       ) : return "nue CCQE";             break;
+     case ( kSKmNuECCnonQE    ) : return "nue CCnonQE";          break;
+     case ( kSKmNuENC         ) : return "nue NC";               break;
+     default                    : return "--";
   }
   return "--";
 }

@@ -276,6 +276,7 @@ public:
                                                          TH1D * hnumuND, TH1D * hnumubarND, TH1D * hnueND) const; ///< normalization 
       bool                UsingKuboSansCode             (void) { return (fHEC!=0); }
       bool                NormTweaked                   (void) { return (fSuperkNuMuFluxNormTwkDial!=0); }
+      bool                ShapeTweaked                  (void) { return fEnableFluxShapeTweaking; };
 
       // Drawing option:
       // - "SKFlux/10a/NuMu"              : nominal SuperK numu flux (10a)
