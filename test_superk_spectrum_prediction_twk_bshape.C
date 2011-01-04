@@ -29,13 +29,11 @@ void test_superk_spectrum_prediction_twk_bshape()
   const int nexp = 500; // number of 'flux tweaks'
 
   // oscillation params
-  double input_sinsq2theta23 = 0.;
-  double input_dm23sq        = 0.;
+  double input_sinsq2theta23 = 1.;
+  double input_dm23sq        = 2.4E-3;
 
   // histogram booking
   TH1D * hEreco [nexp];
-  TH1D * hErecoMax = 0;
-  TH1D * hErecoMin = 0;
 
   // superk spectrum predictor
   SuperkExpectation skexp;
@@ -68,22 +66,21 @@ void test_superk_spectrum_prediction_twk_bshape()
   TH1D * hErecoMin = new TH1D(*hEreco[0]);
   hErecoMax->SetDirectory(0);
   hErecoMin->SetDirectory(0);
-  for(int iexp = 1; iexp < nexp; iexp++) {
-    for(int ibin=1; ibin <= conv::kNvErecoBins; ibin++) {
-       double N = hEreco[iexp]->GetBinContent(ibin);
-       hErecoMax->SetBinContent(ibin, TMath::Max(N, hErecoMax->GetBinContent(ibin)));
-       hErecoMin->SetBinContent(ibin, TMath::Min(N, hErecoMin->GetBinContent(ibin)));
-     }//ibin
-  }//iexp
   for(int ibin=1; ibin <= conv::kNvErecoBins; ibin++) {
-     double ndef = hEreco[0]->GetBinContent(ibin);
-     double nmax = hErecoMax->GetBinContent(ibin);
-     double nmin = hErecoMin->GetBinContent(ibin);
-     double frac_max = (ndef > 0) ? (nmax-ndef)/ndef : 0;
-     double frac_min = (ndef > 0) ? (nmin-ndef)/ndef : 0;
-     hErecoMax->SetBinContent(ibin, frac_max);
-     hErecoMin->SetBinContent(ibin, frac_min);
-  }
+    double nom   = hEreco[0]->GetBinContent(ibin);
+    double sumsq = 0;
+    for(int iexp = 1; iexp < nexp; iexp++) {
+       double N = hEreco[iexp]->GetBinContent(ibin);
+       sumsq += TMath::Power(N-nom,2);	
+    }//iexp
+    double sig = TMath::Sqrt(sumsq/(nexp-1));
+    double min = nom-sig;
+    double max = nom+sig; 
+    if(nom>0){
+      hErecoMax -> SetBinContent (ibin,  (max-nom)/nom);
+      hErecoMin -> SetBinContent (ibin,  (min-nom)/nom);
+    }
+  }//ibin
   hErecoMax->GetYaxis()->SetRangeUser(-1,1);
   hErecoMin->GetYaxis()->SetRangeUser(-1,1);
 
