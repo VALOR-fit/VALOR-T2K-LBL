@@ -1,6 +1,6 @@
 {
-  //TFile f("./inputs/official/nd280/saclay/neut/10d_v2/ND280NuEnergyHisto_NEUT.root", "read");
-  TFile f("./inputs/official/nd280/saclay/genie/10d_v2/ND280NuEnergyHisto_GENIE.root", "read");
+  TFile f("./inputs/official/nd280/saclay/neut/10d_v2/ND280NuEnergyHisto_NEUT.root", "read");
+  //TFile f("./inputs/official/nd280/saclay/genie/10d_v2/ND280NuEnergyHisto_GENIE.root", "read");
 
   TH1F * h01 = (TH1F*)f.Get("EnergyNuMu_true_QE");
   TH1F * h02 = (TH1F*)f.Get("EnergyNuMu_true_res");
@@ -25,8 +25,8 @@
   TH1F * h21 = (TH1F*)f.Get("EnergyNuE_true_nccoh");
 
   double nd280_data_pot = 2.88E19;
-  //double nd280_mc_pot   = 4.98 * (1.025*0.982) * 1E20; // NEUT
-  double nd280_mc_pot   = 4.94  *(1.025*0.982) * 1E20; // GENIE 
+  double nd280_mc_pot   = 4.98 * (1.025*0.982) * 1E20; // NEUT
+  //double nd280_mc_pot   = 4.94  *(1.025*0.982) * 1E20; // GENIE 
 
   double scale_factor   = nd280_data_pot/nd280_mc_pot;
 
@@ -77,5 +77,5 @@
 	  h20 -> Integral () +
 	  h21 -> Integral ();
 
-  cout << "N_{exp} " << nexp << endl;
+  cout << "N_{exp}             = " << nexp           << endl;
 }

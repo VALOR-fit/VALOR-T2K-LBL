@@ -10,7 +10,7 @@
 
 void test_analysis_inputs()
 {
-  TString opt = "SuperK";
+  TString opt = "nd280";
 
   gSystem->Load("libGpad");  
   gSystem->Load("libPhysics");  
@@ -52,32 +52,32 @@ void test_analysis_inputs()
   }//SuperK
 
   if(opt.Contains("nd280")) {
-    cout << "Nobs(CC-like) = " << skexp->GetND280Inputs()->NObsCCLike() << endl;
-    cout << "Nexp(CC)      = " << skexp->GetND280Inputs()->NExpCC()  << endl;
-    cout << "Nexp(NC-bkg)  = " << skexp->GetND280Inputs()->NExpNCBkg()  << endl;
-    cout << "Nexp(all)     = " <<  skexp->GetND280Inputs()->NExpCC() + skexp->GetND280Inputs()->NExpNCBkg() << endl;
-    cout << "Obs/Exp       = " << skexp->GetND280Inputs()->CorrectionFactor()  << endl;  
-    cout << "Nexp(numu CCQE)     = " << skexp->GetND280Inputs()->NumOfEvents(conv::kNDmNuMuCCQE) << endl;
-    cout << "Nexp(numu CCRES)    = " << skexp->GetND280Inputs()->NumOfEvents(conv::kNDmNuMuCCRES) << endl;
-    cout << "Nexp(numu CCCOH)    = " << skexp->GetND280Inputs()->NumOfEvents(conv::kNDmNuMuCCCOH) << endl;
-    cout << "Nexp(numu CCoth)    = " << skexp->GetND280Inputs()->NumOfEvents(conv::kNDmNuMuCCOth) << endl;
-    cout << "Nexp(numu NCRES)    = " << skexp->GetND280Inputs()->NumOfEvents(conv::kNDmNuMuNCRES) << endl;
-    cout << "Nexp(numu NCCOH)    = " << skexp->GetND280Inputs()->NumOfEvents(conv::kNDmNuMuNCCOH) << endl;
-    cout << "Nexp(numu NCoth)    = " << skexp->GetND280Inputs()->NumOfEvents(conv::kNDmNuMuNCOth) << endl;
-    cout << "Nexp(numubar CCQE)  = " << skexp->GetND280Inputs()->NumOfEvents(conv::kNDmNuMuBarCCQE) << endl;
+    cout << "Nobs(CC-like)       = " << skexp->GetND280Inputs()->NObsCCLike() << endl;
+    cout << "Nexp(CC)            = " << skexp->GetND280Inputs()->NExpCC()  << endl;
+    cout << "Nexp(NC-bkg)        = " << skexp->GetND280Inputs()->NExpNCBkg()  << endl;
+    cout << "Nexp(all)           = " << skexp->GetND280Inputs()->NExpCC() + skexp->GetND280Inputs()->NExpNCBkg() << endl;
+    cout << "Obs/Exp             = " << skexp->GetND280Inputs()->CorrectionFactor()  << endl;  
+    cout << "Nexp(numu CCQE)     = " << skexp->GetND280Inputs()->NumOfEvents(conv::kNDmNuMuCCQE)     << endl;
+    cout << "Nexp(numu CCRES)    = " << skexp->GetND280Inputs()->NumOfEvents(conv::kNDmNuMuCCRES)    << endl;
+    cout << "Nexp(numu CCCOH)    = " << skexp->GetND280Inputs()->NumOfEvents(conv::kNDmNuMuCCCOH)    << endl;
+    cout << "Nexp(numu CCoth)    = " << skexp->GetND280Inputs()->NumOfEvents(conv::kNDmNuMuCCOth)    << endl;
+    cout << "Nexp(numu NCRES)    = " << skexp->GetND280Inputs()->NumOfEvents(conv::kNDmNuMuNCRES)    << endl;
+    cout << "Nexp(numu NCCOH)    = " << skexp->GetND280Inputs()->NumOfEvents(conv::kNDmNuMuNCCOH)    << endl;
+    cout << "Nexp(numu NCoth)    = " << skexp->GetND280Inputs()->NumOfEvents(conv::kNDmNuMuNCOth)    << endl;
+    cout << "Nexp(numubar CCQE)  = " << skexp->GetND280Inputs()->NumOfEvents(conv::kNDmNuMuBarCCQE)  << endl;
     cout << "Nexp(numubar CCRES) = " << skexp->GetND280Inputs()->NumOfEvents(conv::kNDmNuMuBarCCRES) << endl;
     cout << "Nexp(numubar CCCOH) = " << skexp->GetND280Inputs()->NumOfEvents(conv::kNDmNuMuBarCCCOH) << endl;
     cout << "Nexp(numubar CCoth) = " << skexp->GetND280Inputs()->NumOfEvents(conv::kNDmNuMuBarCCOth) << endl;
     cout << "Nexp(numubar NCRES) = " << skexp->GetND280Inputs()->NumOfEvents(conv::kNDmNuMuBarNCRES) << endl;
     cout << "Nexp(numubar NCCOH) = " << skexp->GetND280Inputs()->NumOfEvents(conv::kNDmNuMuBarNCCOH) << endl;
     cout << "Nexp(numubar NCoth) = " << skexp->GetND280Inputs()->NumOfEvents(conv::kNDmNuMuBarNCOth) << endl;
-    cout << "Nexp(nue CCQE)      = " << skexp->GetND280Inputs()->NumOfEvents(conv::kNDmNuECCQE) << endl;
-    cout << "Nexp(nue CCRES)     = " << skexp->GetND280Inputs()->NumOfEvents(conv::kNDmNuECCRES) << endl;
-    cout << "Nexp(nue CCCOH)     = " << skexp->GetND280Inputs()->NumOfEvents(conv::kNDmNuECCCOH) << endl;
-    cout << "Nexp(nue CCoth)     = " << skexp->GetND280Inputs()->NumOfEvents(conv::kNDmNuECCOth) << endl;
-    cout << "Nexp(nue NCRES)     = " << skexp->GetND280Inputs()->NumOfEvents(conv::kNDmNuENCRES) << endl;
-    cout << "Nexp(nue NCCOH)     = " << skexp->GetND280Inputs()->NumOfEvents(conv::kNDmNuENCCOH) << endl;
-    cout << "Nexp(nue NCoth)     = " << skexp->GetND280Inputs()->NumOfEvents(conv::kNDmNuENCOth) << endl;
+    cout << "Nexp(nue CCQE)      = " << skexp->GetND280Inputs()->NumOfEvents(conv::kNDmNuECCQE)      << endl;
+    cout << "Nexp(nue CCRES)     = " << skexp->GetND280Inputs()->NumOfEvents(conv::kNDmNuECCRES)     << endl;
+    cout << "Nexp(nue CCCOH)     = " << skexp->GetND280Inputs()->NumOfEvents(conv::kNDmNuECCCOH)     << endl;
+    cout << "Nexp(nue CCoth)     = " << skexp->GetND280Inputs()->NumOfEvents(conv::kNDmNuECCOth)     << endl;
+    cout << "Nexp(nue NCRES)     = " << skexp->GetND280Inputs()->NumOfEvents(conv::kNDmNuENCRES)     << endl;
+    cout << "Nexp(nue NCCOH)     = " << skexp->GetND280Inputs()->NumOfEvents(conv::kNDmNuENCCOH)     << endl;
+    cout << "Nexp(nue NCoth)     = " << skexp->GetND280Inputs()->NumOfEvents(conv::kNDmNuENCOth)     << endl;
 
     skexp->GetND280Inputs()->Draw(new TCanvas(), "Saclay/EtrueSpectrum/NuMu/CC");
     skexp->GetND280Inputs()->Draw(new TCanvas(), "Saclay/EtrueSpectrum/NuMu/NC");

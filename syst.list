@@ -1,8 +1,9 @@
-nd280_eff
 sk_energy_scale
 sk_ccqe_eff
 sk_ccnonqe_eff
 sk_nc_eff
+sk_nuecc_eff
+nd280_eff
 flux_norm
 flux_shape
 xsec_ccqe

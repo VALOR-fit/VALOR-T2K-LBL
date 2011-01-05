@@ -187,6 +187,8 @@ public:
       TH1D*   Curr1RmuNuEEtrue    (void) const { return f1RmNuEEt;     } ///<      -//-  for nue
 
       double  EfficiencyRelErr    (t2kana::yr1numu::conv::SuperkSample_t s, t2kana::yr1numu::conv::SuperkMode_t m) const; ///< rel err on efficiency
+      double  EfficiencyTwkDial   (t2kana::yr1numu::conv::SuperkSample_t s, t2kana::yr1numu::conv::SuperkMode_t m) const; ///< curr efficiency twk dial
+      double  EfficiencyWeight    (t2kana::yr1numu::conv::SuperkSample_t s, t2kana::yr1numu::conv::SuperkMode_t m) const; ///< efficiency weight
       double  EnergyScaleRelErr   (void) const; ///< energy scale err
       double  EnergyScale         (void) const; ///< energy scale 
 
@@ -195,8 +197,11 @@ public:
       void Draw(TVirtualPad * c, Option_t * opt = "") const;
 
       // Systematic variations
-      void TweakEnergyScale (double twkdial);
-      void TweakEfficiency  (t2kana::yr1numu::conv::SuperkSample_t s, t2kana::yr1numu::conv::SuperkMode_t m, double twkdial); 
+      void TweakEnergyScale       (double twkdial) { fEnergyScaleTwkDial = twkdial; }
+      void TweakEfficiencyCCQE    (double twkdial) { fEffCCQETwkDial     = twkdial; }
+      void TweakEfficiencyCCnonQE (double twkdial) { fEffCCnonQETwkDial  = twkdial; }
+      void TweakEfficiencyNC      (double twkdial) { fEffNCTwkDial       = twkdial; }
+      void TweakEfficiencyNuECC   (double twkdial) { fEffNuECCTwkDial    = twkdial; }
 
       // Read inputs from XML file
       bool Read (TXMLEngine* xml, XMLNodePointer_t root_node); 
@@ -221,9 +226,16 @@ public:
 
       double  fPOT;                       ///< Number of POT
       double  fEnergyScaleRelErr;         ///< Energy scale relative error
+      double  fEffCCQERelErr;             ///< CCQE efficiency relative error
+      double  fEffCCnonQERelErr;          ///< CCnonQE efficiency relative error
+      double  fEffNCRelErr;               ///< NC efficiency relative error
+      double  fEffNuECCRelErr;            ///< nue CC efficiency relative error
+
       double  fEnergyScaleTwkDial;        ///< Energy scale tweaking dial
-      double  fEffRelErr[kns][knm];       ///< Efficiency relative error
-      double  fEffTwkDial[kns][knm];      ///< Efficiency tweaking dial
+      double  fEffCCQETwkDial;            ///< CCQE efficiency tweaking dial
+      double  fEffCCnonQETwkDial;         ///< CCnonQE efficiency tweaking dial
+      double  fEffNCTwkDial;              ///< NC efficiency tweaking dial
+      double  fEffNuECCTwkDial;           ///< nue CC efficiency tweaking dial
 
       TH2D *  fMCTemplates[kns][knm];     ///< Ereco-Etrue
       TH1D *  fMCEtrueSpectrum[kns][knm]; ///< Etrue
@@ -306,10 +318,10 @@ public:
       TH1D *        fSuperkNuMuBarWght10aTo10d;    ///< SuperK numubar flux weights (10a -> 10d)
       TH1D *        fSuperkNuEWght10aTo10d;        ///< SuperK nue     flux weights (10a -> 10d)
       double        fSuperkNuMuFluxNormTwkDial;    ///<
-      bool          fSuperkNuMuFluxHaveCholeskyL;
-      TMatrixD *    fSuperkNuMuFluxCovCholeskyL;
+      bool          fSuperkNuMuFluxHaveCholeskyL;  ///<
+      TMatrixD *    fSuperkNuMuFluxCovCholeskyL;   ///<
       TH1D *        fSuperkNuMuFluxTweaked;        ///< SuperK numu flux estimation (tweaked / 50 MeV binning)
-      bool          fEnableFluxShapeTweaking;
+      bool          fEnableFluxShapeTweaking;      ///<
       HadErrCalc *  fHEC;                          ///< Kubo-san / BEAM WG norm err calc code
       double        fSuperkNormRelErr_simple;      ///< a fixed norm rel error (to use when not using Kubo-san's code)
    };

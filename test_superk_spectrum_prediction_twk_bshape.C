@@ -26,7 +26,7 @@ void test_superk_spectrum_prediction_twk_bshape()
   using namespace t2kana;
   using namespace t2kana::yr1numu;
 
-  const int nexp = 500; // number of 'flux tweaks'
+  const int nexp = 2000; // number of 'flux tweaks'
 
   // oscillation params
   double input_sinsq2theta23 = 1.;
@@ -102,6 +102,8 @@ void test_superk_spectrum_prediction_twk_bshape()
    }
   }//iexp
   c->cd(2);
+  hErecoMax->GetXaxis()->SetTitle("E_{reco} (GeV)");
+  hErecoMax->GetYaxis()->SetTitle("Relative error");
   hErecoMax->Draw();
   hErecoMin->Draw("same");
   c->Update();

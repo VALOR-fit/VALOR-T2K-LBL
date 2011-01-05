@@ -36,12 +36,9 @@ void test_superk_spectrum_prediction_twk_skeff_one()
 
   int deflt = ntwkdials/2; //untweaked case
 
-  const int ntwkmodes = 3;
-  t2kana::yr1numu::conv::SuperkMode_t twkmodes[ntwkmodes] = {
-    t2kana::yr1numu::conv::kSKmNuMuCCQE,
-    t2kana::yr1numu::conv::kSKmNuMuCC1pi,
-    t2kana::yr1numu::conv::kSKmNC
-  };
+  const int ntwkmodes = 4;
+
+  string systematic[ntwkmodes] = { "sk_ccqe_eff", "sk_ccnonqe_eff", "sk_nc_eff", "sk_nuecc_eff" };
 
   // histogram drawing options
   int hwidth [ntwkdials] = { 1,       1,       2,       1,       1      };
@@ -65,8 +62,7 @@ void test_superk_spectrum_prediction_twk_skeff_one()
         // reset previously set tweaks
         skexp.ResetSystematicVariations();
         // tweak spectrum generation model
-        skexp.GetSuperkInputs()->TweakEfficiency(
-           t2kana::yr1numu::conv::kSKsFCFV1RingMuLike, twkmodes[imode], twkdial[idial]);
+        skexp.TweakSystematic(systematic[imode], twkdial[idial]);
         // generate predictions  
         skexp.Generate(*fparm);
         // store spectrum
@@ -115,8 +111,13 @@ void test_superk_spectrum_prediction_twk_skeff_one()
     TLegend * legend1 = new TLegend(0.3, 0.7, 0.85, 0.9);
     legend1->SetFillColor(0);
     legend1->SetBorderSize(0);
-    legend1->SetHeader(Form("SuperK %s efficiency", util::AsString(twkmodes[imode]).c_str()));
-    cout << "*** " << Form("SuperK %s efficiency", util::AsString(twkmodes[imode]).c_str()) << endl;
+    const char * label = "";
+    if(imode==0) label = "CCQE";
+    if(imode==1) label = "CCnonQE";
+    if(imode==2) label = "NC";
+    if(imode==3) label = "#nu_{e} CC";
+    legend1->SetHeader(Form("SuperK %s efficiency", label));
+    cout << "*** " << Form("SuperK %s efficiency", label) << endl;
     TH1F * hframe1 = (TH1F*) c[imode]->GetPad(1)->DrawFrame(
        0., 0., hErecoErr[imode][deflt]->GetXaxis()->GetXmax(), maxnev[imode]);
     hframe1->Draw();
@@ -150,6 +151,7 @@ void test_superk_spectrum_prediction_twk_skeff_one()
        if(imode==0) syst="ccqe_efficiency";
        if(imode==1) syst="ccnonqe_efficiency";
        if(imode==2) syst="nc_efficiency";
+       if(imode==3) syst="nuecc_efficiency";
        const char * dial = "";
        if( TMath::Abs(twkdial[idial]-1.0) < conv::kASmallNum ) dial="plus_one_sigma";
        if( TMath::Abs(twkdial[idial]-0.5) < conv::kASmallNum ) dial="plus_half_sigma";
