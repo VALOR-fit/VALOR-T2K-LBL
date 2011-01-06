@@ -68,7 +68,7 @@ void run_systematic_study_for_given_osc_params(string systematic, int run=0)
      new OscillationFitter::FitInputs(skobs,skexp,fparm);
 
   // ntuple to store results
-  TNtupleD * systnt = new TNtupleD("sysnt","", "iexp:sinsq2theta23:dm23sq:chisq");
+  TNtupleD * systnt = new TNtupleD("sysnt","", "iexp:sinsq2theta23:dm23sq:chisq:status");
 
   for(int iexperiment = 0; iexperiment < nexperiments; iexperiment++) {
 
@@ -85,7 +85,7 @@ void run_systematic_study_for_given_osc_params(string systematic, int run=0)
      OscillationFitter fitter(fit_inputs,"minuit");
 
      // do the fit
-     fitter.DoTheFit();
+     bool ok = fitter.DoTheFit();
 
      // store params
      double bestfit_sinsq2theta23 = fparm->CurrValue(conv::kPhypSinsq2Theta23);
@@ -95,7 +95,9 @@ void run_systematic_study_for_given_osc_params(string systematic, int run=0)
      output_sinsq2theta23[iexperiment] = bestfit_sinsq2theta23;
      output_dm23sq       [iexperiment] = bestfit_dm23sq;
 
-     systnt->Fill(iexperiment, bestfit_sinsq2theta23, bestfit_dm23sq, bestfit_chisq);
+     double fit_status = (ok) ? +1 : -1;
+
+     systnt->Fill(iexperiment, bestfit_sinsq2theta23, bestfit_dm23sq, bestfit_chisq, fit_status);
   }
 
   TH1D * hp1 = new TH1D("hs1","",100,0,1);
