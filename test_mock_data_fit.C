@@ -29,8 +29,9 @@ void test_mock_data_fit(const char * fitter_name="custom")
   using namespace t2kana;
   using namespace t2kana::yr1numu;
 
-  const double input_sinsq2theta23 = 1.0;
+  const double input_sinsq2theta23 = 0.9;
   const double input_dm23sq        = 2.4E-3;
+  bool fluctuate = true;
 
   // fit params
   PhysParamList * fparm = PhysParamList::NumuDisapFitNoSyst();
@@ -43,7 +44,7 @@ void test_mock_data_fit(const char * fitter_name="custom")
 
   // get superk spectrum observation
   SuperkObservation * skobs = new SuperkObservation;
-  skobs->CreateMockData(*skexp, *fparm, true);
+  skobs->CreateMockData(*skexp, *fparm, fluctuate);
 
   // create fit inputs
   OscillationFitter::FitInputs * fit_inputs = 

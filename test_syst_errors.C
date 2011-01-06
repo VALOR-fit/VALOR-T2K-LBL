@@ -57,7 +57,8 @@ void test_syst_errors(string systematic)
   SuperkExpectation * skexp = new SuperkExpectation;
   skexp->Read("inputs/analysis_configuration.xml");
 
-  double alpha = 1;
+  double alpha = skexp->GetGeneratorInputs()->OnePionInRES();
+  cout << "alpha = " << alpha << endl;
 
   //
   // nominal

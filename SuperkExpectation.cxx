@@ -301,6 +301,7 @@ void SuperkExpectation::TweakSystematic(string systematic, double twkdial)
      
   else {
      cerr << "Exp >> Unknown systematic parameter!" << endl;
+     exit(1);
   }   
      
 }

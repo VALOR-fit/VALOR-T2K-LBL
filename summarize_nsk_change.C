@@ -31,11 +31,12 @@ void summarize_nsk_change()
 
   const int nexperiments = 5000;
 
-  const int nsystematics = 12;
+  const int nsystematics = 13;
   string systematic[nsystematics] = {
 	"sk_ccqe_eff",
 	"sk_ccnonqe_eff",
 	"sk_nc_eff",
+	"sk_nuecc_eff",
 	"sk_energy_scale",
 	"nd280_eff",
 	"flux_norm",
@@ -50,6 +51,7 @@ void summarize_nsk_change()
 	false,  /* sk_ccqe_eff        */
 	false,  /* sk_ccnonqe_eff     */
 	false,  /* sk_nc_eff          */
+	false,  /* sk_nuecc_eff       */
 	false,  /* sk_energy_scale    */
 	false,  /* nd280_eff          */
 	false,  /* flux_norm          */
@@ -64,6 +66,7 @@ void summarize_nsk_change()
 	false,  /* sk_ccqe_eff        */
 	false,  /* sk_ccnonqe_eff     */
 	false,  /* sk_nc_eff          */
+	false,  /* sk_nuecc_eff       */
 	true,   /* sk_energy_scale    (was shown to maintain Nsk) */
 	false,  /* nd280_eff          */
 	false,  /* flux_norm          */
@@ -141,8 +144,9 @@ void summarize_nsk_change()
   cout << "Fractional change: " << endl;
   for(int isystematic=0; isystematic<nsystematics; isystematic++) {
 	cout << " * " << systematic[isystematic] << " : dNsk/Nsk = (" 
-             << 100*(nsk_min[isystematic]-nsk_deflt)/nsk_deflt << " %, " 
-             << 100*(nsk_max[isystematic]-nsk_deflt)/nsk_deflt << " %) " << endl;
+             << 100*(nsk_max[isystematic]-nsk_deflt)/nsk_deflt << " %," 
+             << 100*(nsk_min[isystematic]-nsk_deflt)/nsk_deflt << " %)" 
+             << endl;
   }
   cout << endl;
   cout << "Total factional change: " << endl;
@@ -156,7 +160,7 @@ void summarize_nsk_change()
   }
   dnsk_syst_pos = TMath::Sqrt(dnsk_syst_pos);
   dnsk_syst_neg = TMath::Sqrt(dnsk_syst_neg);
-  cout << "(-" << 100*dnsk_syst_neg/nsk_deflt << "%, +" << 100*dnsk_syst_pos/nsk_deflt << ")" << endl;
+  cout << "(+" << 100*dnsk_syst_pos/nsk_deflt << "%, -" << 100*dnsk_syst_neg/nsk_deflt << ")" << endl;
 
   double dnsk_stat = TMath::Sqrt(nsk_deflt);
 

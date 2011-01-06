@@ -355,6 +355,8 @@ public:
       bool TweakAffectsND280 (void) const;
       bool TweakAffectsSuperk(void) const;
 
+      double OnePionInRES(void) { return fCC1piInCCRES; }
+
       // Read inputs from XML file
       bool Read (TXMLEngine* xml, XMLNodePointer_t root_node); 
 
