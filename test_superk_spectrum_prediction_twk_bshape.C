@@ -107,4 +107,15 @@ void test_superk_spectrum_prediction_twk_bshape()
   hErecoMax->Draw();
   hErecoMin->Draw("same");
   c->Update();
+
+  // write-out in file
+  TFile f(Form("sk_ereco_spectrum-tweak_beam_shape-sinsq2theta23_%.2f-dm23sq_%.5feV2.root",input_sinsq2theta23,input_dm23sq),"recreate");
+  hErecoMax->Write("error_envelope_upper_boundary");
+  hErecoMin->Write("error_envelope_lower_boundary");
+  for(int iexp = 0; iexp < nexp; iexp++) {
+     const char * title = Form("sk_ereco_spectrum_twk_beam_shape_try%d",iexp);
+     hEreco[iexp]->Write(title);
+  }
+  f.Close();
+
 }
