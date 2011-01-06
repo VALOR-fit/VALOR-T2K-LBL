@@ -1,6 +1,8 @@
 //
 // ------------------------------------------------------------------------------------------------
-// Generate / store mock data
+// Generate / store mock data.
+// The data can be stored in a ROOT file. By default Ereco values get printed as a comma-separated
+// list so that can be easily copied & pasted in inputs/data.xml
 //
 // Costas Andreopoulos
 // ------------------------------------------------------------------------------------------------
@@ -21,11 +23,11 @@ void write_out_mock_data(
   gSystem->Load("libXMLIO");
   gSystem->Load("libMinuit");   
 
-  gSystem->Load("$T2KANA/lib/libT2KAnaYr1NuMuOscAnalysis.so");
+  gSystem->Load("libT2KDisapp2010a");
 
   using namespace std;
   using namespace t2kana;
-  using namespace t2kana::yr1numu;
+  using namespace t2kana::numu10a;
 
   TRandom rand(0);
 
@@ -33,8 +35,8 @@ void write_out_mock_data(
 
   // Oscillation params
   PhysParamList * fparm = PhysParamList::NumuDisapFitNoSyst();
-  fparm->Update(t2kana::yr1numu::conv::kPhypSinsq2Theta23, sinsq2theta23);
-  fparm->Update(t2kana::yr1numu::conv::kPhypDm23sq,        dm23sq);
+  fparm->Update(t2kana::numu10a::conv::kPhypSinsq2Theta23, sinsq2theta23);
+  fparm->Update(t2kana::numu10a::conv::kPhypDm23sq,        dm23sq);
 
   // Get superk spectrum PDF & configure
   SuperkExpectation * skexp = new SuperkExpectation;

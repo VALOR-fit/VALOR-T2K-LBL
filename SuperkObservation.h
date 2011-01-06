@@ -1,7 +1,7 @@
 //____________________________________________________________________________
 /*!
 
-\class    t2kana::yr1numu::SuperkObservation
+\class    t2kana::numu10a::SuperkObservation
 
 \brief    
 
@@ -27,22 +27,22 @@
 class TH1D;
 class TVirtualPad;
 
-#include "year1_numu_osc_analysis/Conventions.h"
-#include "year1_numu_osc_analysis/SuperkExpectation.h"
-#include "year1_numu_osc_analysis/PhysParamList.h"
+#include "Conventions.h"
+#include "SuperkExpectation.h"
+#include "PhysParamList.h"
 
 using std::string;
 using std::vector;
-using t2kana::yr1numu::conv::kns;
+using t2kana::numu10a::conv::kns;
 
 namespace t2kana {
-namespace yr1numu {
+namespace numu10a {
 
 class SuperkObservation: public TObject
 {
 public:
   SuperkObservation();
-  SuperkObservation(const vector<t2kana::yr1numu::conv::SuperkSample_t> & samples);
+  SuperkObservation(const vector<t2kana::numu10a::conv::SuperkSample_t> & samples);
  ~SuperkObservation();
 
   // Read data
@@ -52,13 +52,11 @@ public:
   void CreateMockData(SuperkExpectation & exp, const PhysParamList & fp, bool fluctuate=true);
 
   // Get data
-  double NumOfEvents (t2kana::yr1numu::conv::SuperkSample_t s = t2kana::yr1numu::conv::kSKsUndefined) const;             
-  double NumOfEvents (double Er, t2kana::yr1numu::conv::SuperkSample_t s = t2kana::yr1numu::conv::kSKsUndefined) const;  
+  double NumOfEvents (t2kana::numu10a::conv::SuperkSample_t s = t2kana::numu10a::conv::kSKsUndefined) const;             
+  double NumOfEvents (double Er, t2kana::numu10a::conv::SuperkSample_t s = t2kana::numu10a::conv::kSKsUndefined) const;  
 
   TH1D*  ErecoSpectrum (void) const; 
-  TH1D*  ErecoSpectrum (t2kana::yr1numu::conv::SuperkSample_t s) const; 
-
-///  TH1D*  AsTH1D (t2kana::yr1numu::conv::SuperkSample_t s = t2kana::yr1numu::conv::kSKsUndefined) const; 
+  TH1D*  ErecoSpectrum (t2kana::numu10a::conv::SuperkSample_t s) const; 
 
   // Draw.
   // Set option to "Ereco"  to show the reconstructed Ereco distributions
@@ -73,12 +71,12 @@ private:
   TH1D *  fErDistr[kns];  ///< Reconstructed energy spectrum for each sample
   TH1D *  fErDistrTot;    ///< Reconstructed energy spectrum for all samples
 
-  vector<t2kana::yr1numu::conv::SuperkSample_t> fSamples;  
+  vector<t2kana::numu10a::conv::SuperkSample_t> fSamples;  
 
 ClassDef(SuperkObservation, 1)
 };
 
-} // yr1numu
+} // numu10a
 } // t2kana
 
 #endif // _t2kana_year1_numu_analysis_sk_observation_h_

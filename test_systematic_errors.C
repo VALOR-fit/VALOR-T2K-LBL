@@ -25,7 +25,7 @@
 
 #include "Conventions.h"
 
-void test_syst_errors(string systematic)
+void test_systematic_errors(string systematic)
 {
   gSystem->Load("libGpad");  
   gSystem->Load("libPhysics");  
@@ -37,11 +37,13 @@ void test_syst_errors(string systematic)
   gSystem->Load("libXMLIO");
   gSystem->Load("libMinuit");   
 
-  gSystem->Load("$T2KANA/lib/libT2KAnaYr1NuMuOscAnalysis.so");
+  gSystem->Load("libT2KDisapp2010a");
 
   using namespace std;
   using namespace t2kana;
-  using namespace t2kana::yr1numu;
+  using namespace t2kana::numu10a;
+
+  bool use_tex = false; ///<-- print-out results as a TeX table (for inclusion in tech. note)
 
   const double input_sinsq2theta23 = 1.00;
   const double input_dm23sq        = 2.4E-3;
@@ -50,8 +52,8 @@ void test_syst_errors(string systematic)
 
   // fit params
   PhysParamList * fparm = PhysParamList::NumuDisapFitNoSyst();
-  fparm->Update(t2kana::yr1numu::conv::kPhypSinsq2Theta23, input_sinsq2theta23);
-  fparm->Update(t2kana::yr1numu::conv::kPhypDm23sq,        input_dm23sq);
+  fparm->Update(t2kana::numu10a::conv::kPhypSinsq2Theta23, input_sinsq2theta23);
+  fparm->Update(t2kana::numu10a::conv::kPhypDm23sq,        input_dm23sq);
 
   // get superk spectrum predictor & configure
   SuperkExpectation * skexp = new SuperkExpectation;
@@ -342,8 +344,6 @@ void test_syst_errors(string systematic)
   //
   // print-out
   //
-
-  bool use_tex = true;
 
   int    nprecisionnev = 4;
   int    nprecisionpct = 2;

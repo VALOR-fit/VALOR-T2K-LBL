@@ -1,7 +1,7 @@
 //____________________________________________________________________________
 /*!
 
-\class    t2kana::yr1numu::conv
+\class    t2kana::numu10a::conv
 
 \brief    Conventions
 
@@ -26,7 +26,7 @@
 #endif
 
 namespace t2kana {
-namespace yr1numu {
+namespace numu10a {
 namespace conv {
 
 // confidence level
@@ -170,7 +170,7 @@ static const double kNvErecoBinEdges[kNvErecoBins+1] = {
 };
 
 } // conv
-} // yr1numu
+} // numu10a
 } // t2kana
   
 #endif 

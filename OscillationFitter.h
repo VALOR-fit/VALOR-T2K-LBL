@@ -1,7 +1,7 @@
 //____________________________________________________________________________
 /*!
 
-\class    t2kana::yr1numu::OscillationFitter
+\class    t2kana::numu10a::OscillationFitter
 
 \brief    MINUIT-based numu oscillation param fitter
 
@@ -26,11 +26,11 @@
 
 class TVirtualPad;
 
-#include "year1_numu_osc_analysis/Conventions.h"
-#include "year1_numu_osc_analysis/PhysParamList.h"
+#include "Conventions.h"
+#include "PhysParamList.h"
 
 namespace t2kana {
-namespace yr1numu {
+namespace numu10a {
 
 class SuperkObservation;
 class SuperkExpectation;
@@ -106,7 +106,7 @@ private:
 void FitFunc1 (
        Int_t &, Double_t *, Double_t &f, Double_t *par, Int_t iflag);
 
-} // yr1numu
+} // numu10a
 } // t2kana
 
 #endif

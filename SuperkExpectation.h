@@ -1,7 +1,7 @@
 //____________________________________________________________________________
 /*!
 
-\class    t2kana::yr1numu::SuperkExpectation
+\class    t2kana::numu10a::SuperkExpectation
 
 \brief    Code for predicting the SuperK reconstructed energy spectrum.
 
@@ -34,20 +34,20 @@
 #include <TVectorD.h>
 #include <TXMLEngine.h>
 
-#include "year1_numu_osc_analysis/PhysParamList.h"
-#include "year1_numu_osc_analysis/Conventions.h"
-#include "year1_numu_osc_analysis/Utilities.h"
+#include "PhysParamList.h"
+#include "Conventions.h"
+#include "Utilities.h"
 
 using std::string;
 using std::vector;
-using t2kana::yr1numu::conv::kns;
-using t2kana::yr1numu::conv::knm;
-using t2kana::yr1numu::conv::knmnd;
+using t2kana::numu10a::conv::kns;
+using t2kana::numu10a::conv::knm;
+using t2kana::numu10a::conv::knmnd;
 
 class HadErrCalc;
 
 namespace t2kana {
-namespace yr1numu {
+namespace numu10a {
 
 class SuperkExpectation: public TObject
 {
@@ -60,7 +60,7 @@ public:
 
    // ctors & dtor
    SuperkExpectation();
-   SuperkExpectation(const vector<t2kana::yr1numu::conv::SuperkSample_t> & samples);
+   SuperkExpectation(const vector<t2kana::numu10a::conv::SuperkSample_t> & samples);
   ~SuperkExpectation();
 
    // Read inputs from input XML file
@@ -71,8 +71,8 @@ public:
 
    // Access calculated SK energy spectrum 
    TH1D* CurrPredictedErecoSpectrum (void) const;
-   TH1D* CurrPredictedErecoSpectrum (t2kana::yr1numu::conv::SuperkSample_t s) const;
-   TH1D* CurrPredictedErecoSpectrum (t2kana::yr1numu::conv::SuperkSample_t s, t2kana::yr1numu::conv::SuperkMode_t m) const;
+   TH1D* CurrPredictedErecoSpectrum (t2kana::numu10a::conv::SuperkSample_t s) const;
+   TH1D* CurrPredictedErecoSpectrum (t2kana::numu10a::conv::SuperkSample_t s, t2kana::numu10a::conv::SuperkMode_t m) const;
 
    // Access inputs used for building-up the expected spectrum at SK
    ND280Inputs *     GetND280Inputs     (void) { return fND280Inputs;     }
@@ -99,9 +99,9 @@ public:
       double NObsCCLike       (void) const; ///< observed number of CC-like events
       double NExpNCBkg        (bool nominal=false) const; ///< expected NC contamination of CC-like sample (by default report tweaked value)
       double NExpCC           (bool nominal=false) const; ///< expected number of CC events  (by default report tweaked value)
-      double NumOfEvents      (t2kana::yr1numu::conv::ND280Mode_t mode, bool nominal=false) const; 
-      double NumOfEvents      (t2kana::yr1numu::conv::ND280Mode_t mode, int bin, bool nominal=false) const;
-      double NumOfEvents      (t2kana::yr1numu::conv::ND280Mode_t mode, double Etrue, bool nominal=false) const;
+      double NumOfEvents      (t2kana::numu10a::conv::ND280Mode_t mode, bool nominal=false) const; 
+      double NumOfEvents      (t2kana::numu10a::conv::ND280Mode_t mode, int bin, bool nominal=false) const;
+      double NumOfEvents      (t2kana::numu10a::conv::ND280Mode_t mode, double Etrue, bool nominal=false) const;
       double EfficiencyRelErr (double Et, int sign) const; ///< relative uncertainty on efficiency
 
       void   UpdateEtrueSpectra (void);
@@ -171,24 +171,24 @@ public:
       void    UseDecoherenceParams(double sinsq2theta23, double musq  ) { fCurrSinsq2Theta23 = sinsq2theta23; fCurrMusqDecoh  = musq;   }
 
       double  AnalyzedSamplePOT   (void) const;   
-      TTree * MCTree              (t2kana::yr1numu::conv::SuperkSample_t s, t2kana::yr1numu::conv::SuperkMode_t m);
-      double  MCPOT               (t2kana::yr1numu::conv::SuperkSample_t s, t2kana::yr1numu::conv::SuperkMode_t m);
-      double  NumOfEvents_Ereco   (double Ereco, t2kana::yr1numu::conv::SuperkSample_t s, t2kana::yr1numu::conv::SuperkMode_t m, bool ignore_energy_scale_twk=false);
-      double  NumOfEvents_Etrue   (double Etrue, t2kana::yr1numu::conv::SuperkSample_t s, t2kana::yr1numu::conv::SuperkMode_t m);
+      TTree * MCTree              (t2kana::numu10a::conv::SuperkSample_t s, t2kana::numu10a::conv::SuperkMode_t m);
+      double  MCPOT               (t2kana::numu10a::conv::SuperkSample_t s, t2kana::numu10a::conv::SuperkMode_t m);
+      double  NumOfEvents_Ereco   (double Ereco, t2kana::numu10a::conv::SuperkSample_t s, t2kana::numu10a::conv::SuperkMode_t m, bool ignore_energy_scale_twk=false);
+      double  NumOfEvents_Etrue   (double Etrue, t2kana::numu10a::conv::SuperkSample_t s, t2kana::numu10a::conv::SuperkMode_t m);
 
       void    UpdateErecoSpectra  (void);
       TH1D*   CurrErecoSpectrum   (void) const { return fMCErecoSpectrumGrandTot; }
-      TH1D*   CurrErecoSpectrum   (t2kana::yr1numu::conv::SuperkSample_t s) const { return fMCErecoSpectrumTot[s]; }
-      TH1D*   CurrErecoSpectrum   (t2kana::yr1numu::conv::SuperkSample_t s, t2kana::yr1numu::conv::SuperkMode_t m) const { return fMCErecoSpectrum[s][m]; }
+      TH1D*   CurrErecoSpectrum   (t2kana::numu10a::conv::SuperkSample_t s) const { return fMCErecoSpectrumTot[s]; }
+      TH1D*   CurrErecoSpectrum   (t2kana::numu10a::conv::SuperkSample_t s, t2kana::numu10a::conv::SuperkMode_t m) const { return fMCErecoSpectrum[s][m]; }
 
       void    UpdateEtrueSpectra  (void);
       TH1D*   Curr1RmuNuMuEtrue   (void) const { return f1RmNuMuEt;    } ///< current (allowing for applied weights) Etrue distribution for numu
       TH1D*   Curr1RmuNuMuBarEtrue(void) const { return f1RmNuMuBarEt; } ///<      -//-  for numubar
       TH1D*   Curr1RmuNuEEtrue    (void) const { return f1RmNuEEt;     } ///<      -//-  for nue
 
-      double  EfficiencyRelErr    (t2kana::yr1numu::conv::SuperkSample_t s, t2kana::yr1numu::conv::SuperkMode_t m) const; ///< rel err on efficiency
-      double  EfficiencyTwkDial   (t2kana::yr1numu::conv::SuperkSample_t s, t2kana::yr1numu::conv::SuperkMode_t m) const; ///< curr efficiency twk dial
-      double  EfficiencyWeight    (t2kana::yr1numu::conv::SuperkSample_t s, t2kana::yr1numu::conv::SuperkMode_t m) const; ///< efficiency weight
+      double  EfficiencyRelErr    (t2kana::numu10a::conv::SuperkSample_t s, t2kana::numu10a::conv::SuperkMode_t m) const; ///< rel err on efficiency
+      double  EfficiencyTwkDial   (t2kana::numu10a::conv::SuperkSample_t s, t2kana::numu10a::conv::SuperkMode_t m) const; ///< curr efficiency twk dial
+      double  EfficiencyWeight    (t2kana::numu10a::conv::SuperkSample_t s, t2kana::numu10a::conv::SuperkMode_t m) const; ///< efficiency weight
       double  EnergyScaleRelErr   (void) const; ///< energy scale err
       double  EnergyScale         (void) const; ///< energy scale 
 
@@ -214,10 +214,10 @@ public:
 
       void Init           (void);
       void CleanUp        (void);
-      void CreateTemplate (t2kana::yr1numu::conv::SuperkSample_t s, t2kana::yr1numu::conv::SuperkMode_t m);
+      void CreateTemplate (t2kana::numu10a::conv::SuperkSample_t s, t2kana::numu10a::conv::SuperkMode_t m);
 
       double NumOfEventsReadFromTree(double Ereco, double ErecoBinSz, 
-          t2kana::yr1numu::conv::SuperkSample_t s, t2kana::yr1numu::conv::SuperkMode_t m);
+          t2kana::numu10a::conv::SuperkSample_t s, t2kana::numu10a::conv::SuperkMode_t m);
 
       double  fCurrSinsq2Theta23;
       double  fCurrDm23sq;
@@ -336,10 +336,10 @@ public:
      ~GeneratorInputs();
   
       // Get neutrino generator oscillation analysis inputs
-      double ND280XSecRatioWght  (double Etrue, t2kana::yr1numu::conv::ND280Mode_t  m) const; 
-      double SuperkXSecRatioWght (double Etrue, t2kana::yr1numu::conv::SuperkMode_t m) const;
-      double SuperkCCQEXSecWght  (double Etrue, t2kana::yr1numu::conv::SuperkMode_t m) const;
-      double SuperkNuclEffectWght(double Ereco, t2kana::yr1numu::conv::SuperkMode_t m) const;
+      double ND280XSecRatioWght  (double Etrue, t2kana::numu10a::conv::ND280Mode_t  m) const; 
+      double SuperkXSecRatioWght (double Etrue, t2kana::numu10a::conv::SuperkMode_t m) const;
+      double SuperkCCQEXSecWght  (double Etrue, t2kana::numu10a::conv::SuperkMode_t m) const;
+      double SuperkNuclEffectWght(double Ereco, t2kana::numu10a::conv::SuperkMode_t m) const;
 
       // Draw inputs:
       //
@@ -399,12 +399,12 @@ private:
    TH1D *  fPredictErecoSpectrumTot[kns];    ///< Ereco
    TH1D *  fPredictErecoSpectrumGrandTot;    ///< Ereco
 
-   vector<t2kana::yr1numu::conv::SuperkSample_t> fSamples;
+   vector<t2kana::numu10a::conv::SuperkSample_t> fSamples;
 
 ClassDef(SuperkExpectation, 1)
 };
 
-} // yr1numu
+} // numu10a
 } // t2kana
 
 #endif // _t2kana_year1_numu_analysis_sk_expectation_h_

@@ -22,14 +22,13 @@ void run_oscillation_fitter(int dataset_id=0, const char * fitter_name="custom")
   gSystem->Load("libXMLIO");
   gSystem->Load("libMinuit");   
 
-  gSystem->Load("$T2KANA/lib/libT2KAnaYr1NuMuOscAnalysis.so");
+  gSystem->Load("libT2KDisapp2010a");
 
   using namespace std;
   using namespace t2kana;
-  using namespace t2kana::yr1numu;
+  using namespace t2kana::numu10a;
 
   // fit params
-  //PhysParamList * fparm = PhysParamList::NumuDisapFitFloatNormNoSyst();
   PhysParamList * fparm = PhysParamList::NumuDisapFitNoSyst();
 
   // get superk spectrum predictor & configure

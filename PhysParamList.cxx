@@ -11,8 +11,8 @@
 #include <iostream>
 #include <iomanip>
 
-#include "year1_numu_osc_analysis/PhysParamList.h"
-#include "year1_numu_osc_analysis/Utilities.h"
+#include "PhysParamList.h"
+#include "Utilities.h"
 
 using std::cout;
 using std::cerr;
@@ -21,12 +21,12 @@ using std::setw;
 using std::setprecision;
 
 using namespace t2kana;
-using namespace t2kana::yr1numu;
-using namespace t2kana::yr1numu::conv;
+using namespace t2kana::numu10a;
+using namespace t2kana::numu10a::conv;
 
 //________________________________________________________________________________________
 namespace t2kana {
-namespace yr1numu {
+namespace numu10a {
   ostream & operator << (ostream & stream, const PhysParamList & plst)
   {
     plst.Print(stream);
@@ -78,7 +78,7 @@ void PhysParamList::SetTo(TVirtualFitter * fitter)
 {
   if(!fitter) return;
 
-  map<t2kana::yr1numu::conv::PhysParamId_t, int>::const_iterator iter = fIdMap.begin();
+  map<t2kana::numu10a::conv::PhysParamId_t, int>::const_iterator iter = fIdMap.begin();
   for ( ; iter != fIdMap.end(); ++iter) {
     PhysParamId_t p = iter->first;
     int iparam = iter->second;

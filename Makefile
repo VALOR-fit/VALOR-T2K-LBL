@@ -8,17 +8,17 @@ MAKEFILE = Makefile
 
 # Include machine specific flags and locations (inc. files & libs)
 #
-include $(T2KANA)/src/make/Make.include
+include Make.include
 
-PACKAGE           = Yr1NuMuOscAnalysis
+PACKAGE           = T2KDisapp2010a
 DICTIONARY        = _RootDict$(PACKAGE)
-LIBNAME           = libT2KAna$(PACKAGE)
+LIBNAME           = lib$(PACKAGE)
 
 all : rootcint lib lib-link
 
 # Include standard package makefile targets
 #
-include $(T2KANA)/src/make/Make.template
+include Make.template
 
 FORCE:
 

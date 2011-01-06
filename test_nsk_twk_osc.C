@@ -20,11 +20,11 @@ void test_nsk_twk_osc()
   gSystem->Load("libXMLIO");
   gSystem->Load("libMinuit");   
 
-  gSystem->Load("$T2KANA/lib/libT2KAnaYr1NuMuOscAnalysis.so");
+  gSystem->Load("libT2KDisapp2010a");
 
   using namespace std;
   using namespace t2kana;
-  using namespace t2kana::yr1numu;
+  using namespace t2kana::numu10a;
 
   double sinsq2theta23_min  = 0.0;
   double sinsq2theta23_max  = 1.0;
@@ -58,8 +58,8 @@ void test_nsk_twk_osc()
     for(int j = 1; j <= nsk_vs_osc_params->GetNbinsY(); j++) {
        double sinsq2theta23 = nsk_vs_osc_params->GetXaxis()->GetBinCenter(i);
        double dm23sq        = nsk_vs_osc_params->GetYaxis()->GetBinCenter(j);
-       fparm->Update(t2kana::yr1numu::conv::kPhypSinsq2Theta23, sinsq2theta23);
-       fparm->Update(t2kana::yr1numu::conv::kPhypDm23sq,        dm23sq);
+       fparm->Update(t2kana::numu10a::conv::kPhypSinsq2Theta23, sinsq2theta23);
+       fparm->Update(t2kana::numu10a::conv::kPhypDm23sq,        dm23sq);
 
        // generate predictions
        skexp.Generate(*fparm);

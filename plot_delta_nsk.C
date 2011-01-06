@@ -1,8 +1,10 @@
 //
+// ----------------------------------------------------------------------------------------------
 // Plot (Nsk_NEUT - Nsk_GENIE) / (Nsk_NEUT + Nsk_GENIE)/2 Nsk as functions of sinsq2theta, dmsq.
 // Input files are the ones produced by test_nsk_twk_osc.C.
 //
-// C.Andreopoulos
+// Costas Andreopoulos
+// ----------------------------------------------------------------------------------------------
 //
 
 void plot_delta_nsk(const char * genie_file, const char * neut_file)

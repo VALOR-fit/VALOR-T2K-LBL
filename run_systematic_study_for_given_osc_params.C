@@ -3,11 +3,12 @@
 // Run numu disappearance systematic study for given oscillation parameters
 //
 // The input (systematic) string can be any of:
-// 	- nd280_eff
 //	- sk_energy_scale
 //	- sk_ccqe_eff
 //	- sk_ccnonqe_eff
 //	- sk_nc_eff
+//	- sk_nuecceff_eff
+// 	- nd280_eff
 //	- flux_norm
 //	- flux_shape
 //      - xsec_ccqe
@@ -34,11 +35,11 @@ void run_systematic_study_for_given_osc_params(string systematic, int run=0)
   gSystem->Load("libXMLIO");
   gSystem->Load("libMinuit");   
 
-  gSystem->Load("$T2KANA/lib/libT2KAnaYr1NuMuOscAnalysis.so");
+  gSystem->Load("libT2KDisapp2010a");
 
   using namespace std;
   using namespace t2kana;
-  using namespace t2kana::yr1numu;
+  using namespace t2kana::numu10a;
 
   const double input_sinsq2theta23 = 0.90;
   const double input_dm23sq        = 2.4E-3;
@@ -51,8 +52,8 @@ void run_systematic_study_for_given_osc_params(string systematic, int run=0)
 
   // fit params
   PhysParamList * fparm = PhysParamList::NumuDisapFitNoSyst();
-  fparm->Update(t2kana::yr1numu::conv::kPhypSinsq2Theta23, input_sinsq2theta23);
-  fparm->Update(t2kana::yr1numu::conv::kPhypDm23sq,        input_dm23sq);
+  fparm->Update(t2kana::numu10a::conv::kPhypSinsq2Theta23, input_sinsq2theta23);
+  fparm->Update(t2kana::numu10a::conv::kPhypDm23sq,        input_dm23sq);
 
   // get superk spectrum predictor & configure
   SuperkExpectation * skexp = new SuperkExpectation;

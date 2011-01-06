@@ -1,6 +1,6 @@
 //
 // ------------------------------------------------------------------------------------------------
-// Run numu disappearance fits for mock-data / test contour coverage
+// Run N numu disappearance fits and store best fit values
 //
 // Inputs:
 //      - fitter name ("minuit", "custom" (2-D grid scan))
@@ -23,11 +23,11 @@ void test_oscillation_contour_coverage(const char * fitter_name="minuit")
   gSystem->Load("libXMLIO");
   gSystem->Load("libMinuit");   
 
-  gSystem->Load("$T2KANA/lib/libT2KAnaYr1NuMuOscAnalysis.so");
+  gSystem->Load("libT2KDisapp2010a");
 
   using namespace std;
   using namespace t2kana;
-  using namespace t2kana::yr1numu;
+  using namespace t2kana::numu10a;
 
   const double input_sinsq2theta23 = 1.0;
   const double input_dm23sq        = 2.4E-3;
@@ -58,8 +58,8 @@ void test_oscillation_contour_coverage(const char * fitter_name="minuit")
 
      cout << "\n\n *** Pseudo-experiment = " << iexperiment << endl;
 
-     fparm->Update(t2kana::yr1numu::conv::kPhypSinsq2Theta23, input_sinsq2theta23);
-     fparm->Update(t2kana::yr1numu::conv::kPhypDm23sq,        input_dm23sq);
+     fparm->Update(t2kana::numu10a::conv::kPhypSinsq2Theta23, input_sinsq2theta23);
+     fparm->Update(t2kana::numu10a::conv::kPhypDm23sq,        input_dm23sq);
 
      skobs->CreateMockData(*skexp, *fparm);
 
@@ -70,8 +70,8 @@ void test_oscillation_contour_coverage(const char * fitter_name="minuit")
      // do the fit
      fitter->DoTheFit();
 
-     output_sinsq2theta23[iexperiment] = fparm->CurrValue(t2kana::yr1numu::conv::kPhypSinsq2Theta23);
-     output_dm23sq       [iexperiment] = fparm->CurrValue(t2kana::yr1numu::conv::kPhypDm23sq);
+     output_sinsq2theta23[iexperiment] = fparm->CurrValue(t2kana::numu10a::conv::kPhypSinsq2Theta23);
+     output_dm23sq       [iexperiment] = fparm->CurrValue(t2kana::numu10a::conv::kPhypDm23sq);
 
      double bestfit_chisq = fit_inputs->Chisquare();
 

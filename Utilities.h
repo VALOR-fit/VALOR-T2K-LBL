@@ -1,9 +1,9 @@
 //____________________________________________________________________________
 /*!
 
-\class    t2kana::yr1numu::utils
+\class    t2kana::numu10a::utils
 
-\brief    Simple util
+\brief    Utilities
 
 \author   Costas Andreopoulos <costas.andreopoulos \at stfc.ac.uk>
           STFC, Rutherford Appleton Laboratory
@@ -33,26 +33,26 @@ class TH2D;
 class TTree;
 class TAxis;
 
-#include "year1_numu_osc_analysis/Conventions.h"
+#include "Conventions.h"
 
 using std::string;
 using std::vector;
 
 namespace t2kana {
-namespace yr1numu {
+namespace numu10a {
 namespace util {
 
   class TH1DErrEnv;
 
-  double DeltaChisquare   (t2kana::yr1numu::conv::ConfLevel_t cl, int nfitparams);
+  double DeltaChisquare   (t2kana::numu10a::conv::ConfLevel_t cl, int nfitparams);
   double ChisqGauss       (double ndata, double nmc);
   double ChisqPoisson     (double ndata, double nmc);
   double NuMuSurvProbOsc2D(double sinsq2theta, double dmsq, double Et);
-  double NuMuSurvProbOsc2D(double sinsq2theta, double dmsq, double Et, t2kana::yr1numu::conv::SuperkMode_t m);
+  double NuMuSurvProbOsc2D(double sinsq2theta, double dmsq, double Et, t2kana::numu10a::conv::SuperkMode_t m);
   double NuMuSurvProbDecay(double sinsq2theta, double alpha, double Et);
-  double NuMuSurvProbDecay(double sinsq2theta, double alpha, double Et, t2kana::yr1numu::conv::SuperkMode_t m);
+  double NuMuSurvProbDecay(double sinsq2theta, double alpha, double Et, t2kana::numu10a::conv::SuperkMode_t m);
   double NuMuSurvProbDecoh(double sinsq2theta, double musq, double Et);
-  double NuMuSurvProbDecoh(double sinsq2theta, double musq, double Et, t2kana::yr1numu::conv::SuperkMode_t m);
+  double NuMuSurvProbDecoh(double sinsq2theta, double musq, double Et, t2kana::numu10a::conv::SuperkMode_t m);
 
   // Cholesky decomposition
 
@@ -60,9 +60,9 @@ namespace util {
   TVectorD CholeskyGenerateCorrelatedParams          (TMatrixD& cholesky_triangular, TVectorD& mean_parm); ///< Generate a vector of correlated params
   TVectorD CholeskyGenerateCorrelatedParamVariations (TMatrixD& cholesky_triangular); ///< Generate a vector of correlated param variations
 
-  string AsString(t2kana::yr1numu::conv::PhysParamId_t  p);
-  string AsString(t2kana::yr1numu::conv::SuperkSample_t s);
-  string AsString(t2kana::yr1numu::conv::SuperkMode_t   m);
+  string AsString(t2kana::numu10a::conv::PhysParamId_t  p);
+  string AsString(t2kana::numu10a::conv::SuperkSample_t s);
+  string AsString(t2kana::numu10a::conv::SuperkMode_t   m);
 
   // string utilities
 
@@ -120,7 +120,7 @@ namespace util {
   };
 
 } // util
-} // yr1numu
+} // numu10a
 } // t2kana
   
 #endif

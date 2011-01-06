@@ -21,11 +21,11 @@ void test_superk_spectrum_prediction_twk_sig()
   gSystem->Load("libXMLIO");
   gSystem->Load("libMinuit");   
 
-  gSystem->Load("$T2KANA/lib/libT2KAnaYr1NuMuOscAnalysis.so");
+  gSystem->Load("libT2KDisapp2010a");
 
   using namespace std;
   using namespace t2kana;
-  using namespace t2kana::yr1numu;
+  using namespace t2kana::numu10a;
 
   double input_sinsq2theta23 = 1.;
   double input_dm23sq        = 2.4E-3;
@@ -54,8 +54,8 @@ void test_superk_spectrum_prediction_twk_sig()
 
   // phys params
   PhysParamList * fparm = PhysParamList::NumuDisapFitNoSyst();
-  fparm->Update(t2kana::yr1numu::conv::kPhypSinsq2Theta23, input_sinsq2theta23);
-  fparm->Update(t2kana::yr1numu::conv::kPhypDm23sq,        input_dm23sq);
+  fparm->Update(t2kana::numu10a::conv::kPhypSinsq2Theta23, input_sinsq2theta23);
+  fparm->Update(t2kana::numu10a::conv::kPhypDm23sq,        input_dm23sq);
 
   // calculate spectra
   TH1D * hEreco   [ntwkmodes][ntwkdials];

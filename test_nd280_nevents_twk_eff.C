@@ -1,5 +1,6 @@
 //
 // ------------------------------------------------------------------------------------------------
+// Tset change in number of ND280 events as we tweak the ND280 efficiency
 //
 // Costas Andreopoulos
 // ------------------------------------------------------------------------------------------------
@@ -21,11 +22,11 @@ void test_nd280_nevents_twk_eff()
   gSystem->Load("libXMLIO");
   gSystem->Load("libMinuit");   
 
-  gSystem->Load("$T2KANA/lib/libT2KAnaYr1NuMuOscAnalysis.so");
+  gSystem->Load("libT2KDisapp2010a");
 
   using namespace std;
   using namespace t2kana;
-  using namespace t2kana::yr1numu;
+  using namespace t2kana::numu10a;
 
   const int ntwkdials = 5;
   double twkdial[ntwkdials] = { -1.0, -0.5, 0.0, +0.5, +1.0 };

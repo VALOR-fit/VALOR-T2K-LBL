@@ -1,8 +1,12 @@
 //
-// Plot contour with / without systematics
+// -----------------------------------------------------------------------------
+// Plot contour with / without systematics.
 //
 // Uses the output of run_oscillation_contour_generator.C
 // and averages chisq surfaces generated over many fitter runs.
+//
+// Costas Andreopoulos
+// -----------------------------------------------------------------------------
 //
 
 #include <iostream>

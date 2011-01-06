@@ -8,7 +8,7 @@
 // Compare the calculated covariance matrix with the one that was used as input 
 // for the Cholesky method.
 //
-// C.Andreopoulos
+// Costas Andreopoulos
 // ------------------------------------------------------------------------------------------------
 //
 
@@ -25,11 +25,12 @@ void test_cholesky_output_covariance(void)
   gSystem->Load("libRIO");   
   gSystem->Load("libMinuit");   
   gSystem->Load("libMathCore");   
-  gSystem->Load("$T2KANA/lib/libT2KAnaYr1NuMuOscAnalysis.so");
+
+  gSystem->Load("libT2KDisapp2010a");
 
   using namespace std;
   using namespace t2kana;
-  using namespace t2kana::yr1numu;
+  using namespace t2kana::numu10a;
 
   //
   // read inputs for the Cholesky method 

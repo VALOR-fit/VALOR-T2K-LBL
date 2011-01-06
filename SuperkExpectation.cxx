@@ -19,18 +19,18 @@
 #include <TSpline.h>
 #include <TRandom3.h>
 
-#include "year1_numu_osc_analysis/SuperkExpectation.h"
-#include "year1_numu_osc_analysis/Conventions.h"
-#include "year1_numu_osc_analysis/Utilities.h"
-#include "year1_numu_osc_analysis/HadErrCalc.h" ///<-- code by Kubo-san
+#include "SuperkExpectation.h"
+#include "Conventions.h"
+#include "Utilities.h"
+#include "HadErrCalc.h" ///<-- code by Kubo-san
 
 using std::cout;
 using std::cerr;
 using std::endl;
 
 using namespace t2kana;
-using namespace t2kana::yr1numu;
-using namespace t2kana::yr1numu::conv;
+using namespace t2kana::numu10a;
+using namespace t2kana::numu10a::conv;
 
 ClassImp(SuperkExpectation)
 
@@ -198,13 +198,13 @@ TH1D* SuperkExpectation::CurrPredictedErecoSpectrum (void) const
 }
 //________________________________________________________________________________________
 TH1D* SuperkExpectation::CurrPredictedErecoSpectrum (
-  t2kana::yr1numu::conv::SuperkSample_t s) const 
+  t2kana::numu10a::conv::SuperkSample_t s) const 
 {
   return fPredictErecoSpectrumTot[s];  
 }
 //________________________________________________________________________________________
 TH1D* SuperkExpectation::CurrPredictedErecoSpectrum (
-  t2kana::yr1numu::conv::SuperkSample_t s, t2kana::yr1numu::conv::SuperkMode_t m) const 
+  t2kana::numu10a::conv::SuperkSample_t s, t2kana::numu10a::conv::SuperkMode_t m) const 
 { 
   return fPredictErecoSpectrum[s][m]; 
 }
@@ -859,7 +859,7 @@ double SuperkExpectation::ND280Inputs::NumOfEvents(ND280Mode_t mode, bool nomina
 }
 //________________________________________________________________________________________
 double SuperkExpectation::ND280Inputs::NumOfEvents(
-       t2kana::yr1numu::conv::ND280Mode_t mode, int ibin, bool nominal) const
+       t2kana::numu10a::conv::ND280Mode_t mode, int ibin, bool nominal) const
 {
   TH1F * spectrum = fNumSelEt[mode];
   assert(spectrum);
@@ -879,7 +879,7 @@ double SuperkExpectation::ND280Inputs::NumOfEvents(
 }
 //________________________________________________________________________________________
 double SuperkExpectation::ND280Inputs::NumOfEvents(
-       t2kana::yr1numu::conv::ND280Mode_t mode, double Etrue, bool nominal) const
+       t2kana::numu10a::conv::ND280Mode_t mode, double Etrue, bool nominal) const
 {
   TH1F * spectrum   = fNumSelEt[mode];
   assert(spectrum);
@@ -2739,7 +2739,7 @@ void SuperkExpectation::GeneratorInputs::Draw(TVirtualPad * c, Option_t * option
 }
 //________________________________________________________________________________________
 double SuperkExpectation::GeneratorInputs::ND280XSecRatioWght(
-    double Etrue, t2kana::yr1numu::conv::ND280Mode_t mnd) const
+    double Etrue, t2kana::numu10a::conv::ND280Mode_t mnd) const
 {
    switch(mnd) {
       case ( kNDmNuMuCCQE     ) : return 1.; break;
@@ -2851,7 +2851,7 @@ double SuperkExpectation::GeneratorInputs::ND280XSecRatioWght(
 }
 //________________________________________________________________________________________
 double SuperkExpectation::GeneratorInputs::SuperkXSecRatioWght(
-   double Etrue, t2kana::yr1numu::conv::SuperkMode_t m) const
+   double Etrue, t2kana::numu10a::conv::SuperkMode_t m) const
 {
    switch(m) {
       case ( kSKmNuMuCCQE       ) : return 1.; break;
@@ -2872,7 +2872,7 @@ double SuperkExpectation::GeneratorInputs::SuperkXSecRatioWght(
 }
 //________________________________________________________________________________________
 double SuperkExpectation::GeneratorInputs::SuperkCCQEXSecWght(
-    double Etrue, t2kana::yr1numu::conv::SuperkMode_t m) const
+    double Etrue, t2kana::numu10a::conv::SuperkMode_t m) const
 {
    switch(m) {
       case ( kSKmNuMuCCQE  ) : 
@@ -2926,7 +2926,7 @@ double SuperkExpectation::GeneratorInputs::SuperkCCQEXSecWght(
 }
 //________________________________________________________________________________________
 double SuperkExpectation::GeneratorInputs::SuperkNuclEffectWght(
-   double Ereco, t2kana::yr1numu::conv::SuperkMode_t /*m*/) const
+   double Ereco, t2kana::numu10a::conv::SuperkMode_t /*m*/) const
 {
    assert(fSuperkNuclearEffectRelErr); //<-- note: units in MeV, all other NIWG histos have units in GeV
    double mev2gev = 1E-3;

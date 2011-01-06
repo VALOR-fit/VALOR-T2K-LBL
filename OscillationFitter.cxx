@@ -25,12 +25,12 @@
 #include <TCanvas.h> 
 #include <TFile.h>
 
-#include "year1_numu_osc_analysis/OscillationFitter.h" 
-#include "year1_numu_osc_analysis/SuperkObservation.h" 
-#include "year1_numu_osc_analysis/SuperkExpectation.h" 
-#include "year1_numu_osc_analysis/PhysParamList.h" 
-#include "year1_numu_osc_analysis/Utilities.h"
-#include "year1_numu_osc_analysis/Conventions.h"
+#include "OscillationFitter.h" 
+#include "SuperkObservation.h" 
+#include "SuperkExpectation.h" 
+#include "PhysParamList.h" 
+#include "Utilities.h"
+#include "Conventions.h"
 
 using std::cerr; 
 using std::cout; 
@@ -38,8 +38,8 @@ using std::endl;
 using std::ostringstream;
 
 using namespace t2kana; 
-using namespace t2kana::yr1numu;
-using namespace t2kana::yr1numu::conv;
+using namespace t2kana::numu10a;
+using namespace t2kana::numu10a::conv;
    
 //____________________________________________________________________________ 
 OscillationFitter::OscillationFitter() 
@@ -724,7 +724,7 @@ double  OscillationFitter::FitInputs::Chisquare(Option_t * option)
 //____________________________________________________________________________ 
 // MINUIT fit functions 
 // 
-void  t2kana::yr1numu::FitFunc1 (
+void  t2kana::numu10a::FitFunc1 (
   Int_t &, Double_t *, Double_t &f, Double_t *par, Int_t /*iflag*/) {
   OscillationFitter::FitInputs * inputs =
       (OscillationFitter::FitInputs *) gMinuit->GetObjectFit();

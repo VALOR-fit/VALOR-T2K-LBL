@@ -8,7 +8,7 @@
 
 #include "Conventions.h"
 
-void test_surv_prob()
+void plot_survival_probability()
 {
   gSystem->Load("libGpad");  
   gSystem->Load("libPhysics");  
@@ -20,11 +20,11 @@ void test_surv_prob()
   gSystem->Load("libXMLIO");
   gSystem->Load("libMinuit");   
 
-  gSystem->Load("$T2KANA/lib/libT2KAnaYr1NuMuOscAnalysis.so");
+  gSystem->Load("libT2KDisapp2010a");
 
   using namespace std;
   using namespace t2kana;
-  using namespace t2kana::yr1numu;
+  using namespace t2kana::numu10a;
 
   const int n = 1000;
   double emin = 0.05;

@@ -21,11 +21,11 @@ void run_fc_oscillation_contour_generator(
   gSystem->Load("libXMLIO");
   gSystem->Load("libMinuit");   
 
-  gSystem->Load("$T2KANA/lib/libT2KAnaYr1NuMuOscAnalysis.so");
+  gSystem->Load("libT2KDisapp2010a");
 
   using namespace std;
   using namespace t2kana;
-  using namespace t2kana::yr1numu;
+  using namespace t2kana::numu10a;
 
   // number of pseudo-experiment fits per job
   const int nexperiments = 10;
@@ -78,8 +78,8 @@ void run_fc_oscillation_contour_generator(
 
   // fit params
   PhysParamList * fparm = PhysParamList::NumuDisapFitNoSyst();
-  fparm->Update(t2kana::yr1numu::conv::kPhypSinsq2Theta23, input_sinsq2theta23);
-  fparm->Update(t2kana::yr1numu::conv::kPhypDm23sq,        input_dm23sq);
+  fparm->Update(t2kana::numu10a::conv::kPhypSinsq2Theta23, input_sinsq2theta23);
+  fparm->Update(t2kana::numu10a::conv::kPhypDm23sq,        input_dm23sq);
 
   // get superk spectrum PDF & configure
   SuperkExpectation * skexp = new SuperkExpectation;
@@ -89,8 +89,8 @@ void run_fc_oscillation_contour_generator(
      cout << "\n\n *** Pseudo-experiment = " << iexperiment << endl;
 
      // reset osc. params to desired input values (they now contain the best-(previous)fit values)
-     fparm->Update(t2kana::yr1numu::conv::kPhypSinsq2Theta23, input_sinsq2theta23);
-     fparm->Update(t2kana::yr1numu::conv::kPhypDm23sq,        input_dm23sq);
+     fparm->Update(t2kana::numu10a::conv::kPhypSinsq2Theta23, input_sinsq2theta23);
+     fparm->Update(t2kana::numu10a::conv::kPhypDm23sq,        input_dm23sq);
 
      // tweak all sources of systematic err (gaussian err)
      skexp->TweakAllSystematics();

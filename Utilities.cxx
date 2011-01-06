@@ -29,7 +29,7 @@
 #include <TXMLEngine.h>
 #include <TFile.h>
 
-#include "year1_numu_osc_analysis/Utilities.h"
+#include "Utilities.h"
 
 using std::cout;
 using std::cerr;
@@ -40,12 +40,12 @@ using std::setprecision;
 using std::ofstream;
 
 using namespace t2kana;
-using namespace t2kana::yr1numu::conv;
+using namespace t2kana::numu10a::conv;
 
 TRandom3 gR(89289281);
 
 //____________________________________________________________________________
-double t2kana::yr1numu::util::DeltaChisquare(
+double t2kana::numu10a::util::DeltaChisquare(
   ConfLevel_t cl, int nfitparams) 
 {
   switch(cl) {
@@ -92,7 +92,7 @@ double t2kana::yr1numu::util::DeltaChisquare(
   return -99999;
 }
 //____________________________________________________________________________
-double t2kana::yr1numu::util::ChisqGauss(
+double t2kana::numu10a::util::ChisqGauss(
   double ndata, double nmc)
 {
   double chisq = 0.;
@@ -105,7 +105,7 @@ double t2kana::yr1numu::util::ChisqGauss(
   return chisq;
 }
 //____________________________________________________________________________
-double t2kana::yr1numu::util::ChisqPoisson(
+double t2kana::numu10a::util::ChisqPoisson(
   double ndata, double nmc)
 {
   //assert(nmc >= 0. && ndata >= 0.);
@@ -114,7 +114,7 @@ double t2kana::yr1numu::util::ChisqPoisson(
   return (2. * (nmc-ndata) + 2. * ndata * TMath::Log(ndata/nmc));
 }
 //____________________________________________________________________________
-double t2kana::yr1numu::util::NuMuSurvProbOsc2D(
+double t2kana::numu10a::util::NuMuSurvProbOsc2D(
   double sinsq2theta, double dmsq, double Et)
 {
   if(Et <= 0.) return 0.;
@@ -129,9 +129,9 @@ double t2kana::yr1numu::util::NuMuSurvProbOsc2D(
   return psurv;
 }
 //____________________________________________________________________________
-double t2kana::yr1numu::util::NuMuSurvProbOsc2D(
+double t2kana::numu10a::util::NuMuSurvProbOsc2D(
   double sinsq2theta, double dmsq, double Et, 
-  t2kana::yr1numu::conv::SuperkMode_t m)
+  t2kana::numu10a::conv::SuperkMode_t m)
 {
   if(m == kSKmNC         || 
      m == kSKmNuECCQE    ||
@@ -158,7 +158,7 @@ double t2kana::yr1numu::util::NuMuSurvProbOsc2D(
   }
 }
 //____________________________________________________________________________
-double t2kana::yr1numu::util::NuMuSurvProbDecay (
+double t2kana::numu10a::util::NuMuSurvProbDecay (
    double sinsq2theta, double alpha, double Et)
 {
 //
@@ -180,9 +180,9 @@ double t2kana::yr1numu::util::NuMuSurvProbDecay (
   return psurv;
 }
 //____________________________________________________________________________
-double t2kana::yr1numu::util::NuMuSurvProbDecay (
+double t2kana::numu10a::util::NuMuSurvProbDecay (
   double sinsq2theta, double alpha, double Et, 
-  t2kana::yr1numu::conv::SuperkMode_t m)
+  t2kana::numu10a::conv::SuperkMode_t m)
 {
   if(m == kSKmNuECCQE  ||
      m == kSKmNuECC1pi ||
@@ -209,7 +209,7 @@ double t2kana::yr1numu::util::NuMuSurvProbDecay (
   }
 }
 //____________________________________________________________________________
-double t2kana::yr1numu::util::NuMuSurvProbDecoh (
+double t2kana::numu10a::util::NuMuSurvProbDecoh (
    double sinsq2theta, double musq, double Et)
 {
 
@@ -227,9 +227,9 @@ double t2kana::yr1numu::util::NuMuSurvProbDecoh (
   return psurv;
 }
 //____________________________________________________________________________
-double t2kana::yr1numu::util::NuMuSurvProbDecoh (
+double t2kana::numu10a::util::NuMuSurvProbDecoh (
   double sinsq2theta, double musq, double Et, 
-  t2kana::yr1numu::conv::SuperkMode_t m)
+  t2kana::numu10a::conv::SuperkMode_t m)
 {
   if(m == kSKmNuECCQE  ||
      m == kSKmNuECC1pi ||
@@ -256,7 +256,7 @@ double t2kana::yr1numu::util::NuMuSurvProbDecoh (
   }
 }
 //____________________________________________________________________________
-TMatrixD t2kana::yr1numu::util::CholeskyDecomposition(TMatrixD& cov_matrix)
+TMatrixD t2kana::numu10a::util::CholeskyDecomposition(TMatrixD& cov_matrix)
 {
 // Perform a Cholesky decomposition of the input covariance matrix and
 // return the lower triangular matrix
@@ -309,7 +309,7 @@ TMatrixD t2kana::yr1numu::util::CholeskyDecomposition(TMatrixD& cov_matrix)
   return LT;
 }
 //____________________________________________________________________________
-TVectorD t2kana::yr1numu::util::CholeskyGenerateCorrelatedParams (
+TVectorD t2kana::numu10a::util::CholeskyGenerateCorrelatedParams (
     TMatrixD& cholesky_triangular, TVectorD& mean_params) 
 {
 // Generate a vector of correlated params
@@ -360,7 +360,7 @@ TVectorD t2kana::yr1numu::util::CholeskyGenerateCorrelatedParams (
   return correlated_params;
 }
 //____________________________________________________________________________
-TVectorD t2kana::yr1numu::util::CholeskyGenerateCorrelatedParamVariations (
+TVectorD t2kana::numu10a::util::CholeskyGenerateCorrelatedParamVariations (
     TMatrixD& cholesky_triangular) 
 {
 // Generate a vector of correlated params
@@ -387,7 +387,7 @@ TVectorD t2kana::yr1numu::util::CholeskyGenerateCorrelatedParamVariations (
   return g;
 }
 //____________________________________________________________________________
-string t2kana::yr1numu::util::AsString(PhysParamId_t p)
+string t2kana::numu10a::util::AsString(PhysParamId_t p)
 {
   switch(p) {
     case ( kPhypSinsq2Theta23  ) : return "sinsq2theta23"; break;
@@ -400,8 +400,8 @@ string t2kana::yr1numu::util::AsString(PhysParamId_t p)
   return "--";
 }
 //____________________________________________________________________________
-string t2kana::yr1numu::util::AsString(
-    t2kana::yr1numu::conv::SuperkSample_t s)
+string t2kana::numu10a::util::AsString(
+    t2kana::numu10a::conv::SuperkSample_t s)
 {
   switch(s) {
      case ( kSKsFCFV1RingMuLike ) : return "FCFV1RingMuLike"; break;
@@ -411,8 +411,8 @@ string t2kana::yr1numu::util::AsString(
   return "--";
 }
 //____________________________________________________________________________
-string t2kana::yr1numu::util::AsString(
-     t2kana::yr1numu::conv::SuperkMode_t m)
+string t2kana::numu10a::util::AsString(
+     t2kana::numu10a::conv::SuperkMode_t m)
 {
   switch(m) {
      case ( kSKmNuMuCCQE      ) : return "numu CCQE";            break;
@@ -432,7 +432,7 @@ string t2kana::yr1numu::util::AsString(
   return "--";
 }
 //____________________________________________________________________________
-void t2kana::yr1numu::util::SetDefaultStyle(bool black_n_white)
+void t2kana::numu10a::util::SetDefaultStyle(bool black_n_white)
 {
   gROOT->SetStyle("Plain");
 
@@ -565,7 +565,7 @@ void t2kana::yr1numu::util::SetDefaultStyle(bool black_n_white)
   gROOT->ForceStyle();
 }
 //___________________________________________________________________________
-void t2kana::yr1numu::util::Format(
+void t2kana::numu10a::util::Format(
    TGraph* gr, int lcol, int lsty, int lwid, int mcol, int msty, double msiz)
 {
   if(!gr) return;
@@ -580,7 +580,7 @@ void t2kana::yr1numu::util::Format(
   if (msiz >= 0) gr -> SetMarkerSize  (msiz);
 }
 //___________________________________________________________________________
-void t2kana::yr1numu::util::Format(
+void t2kana::numu10a::util::Format(
   TH1* hst, int lcol, int lsty, int lwid, int mcol, int msty, double msiz)
 {
   if(!hst) return;
@@ -594,7 +594,7 @@ void t2kana::yr1numu::util::Format(
   if (msiz >= 0) hst -> SetMarkerSize  (msiz);
 }
 //___________________________________________________________________________
-string t2kana::yr1numu::util::TrimSpaces(string input)
+string t2kana::numu10a::util::TrimSpaces(string input)
 {
   if( input.find_first_not_of(" \n") != 0)
     input.erase( 0,  input.find_first_not_of(" \n")  );
@@ -605,7 +605,7 @@ string t2kana::yr1numu::util::TrimSpaces(string input)
   return input;
 }
 //____________________________________________________________________________
-vector<string> t2kana::yr1numu::util::Tokens (string input, string delimiter)
+vector<string> t2kana::numu10a::util::Tokens (string input, string delimiter)
 {
 // split a string of 'delimiter' separated values and return each string
 // part as a vector<string> element.
@@ -621,7 +621,7 @@ vector<string> t2kana::yr1numu::util::Tokens (string input, string delimiter)
   return tokens;
 }
 //___________________________________________________________________________
-int t2kana::yr1numu::util::FluxFix2VarBinNumber(int fixBinNo)
+int t2kana::numu10a::util::FluxFix2VarBinNumber(int fixBinNo)
 {
   // Given flux cov matrix is 19x19, made for a variable binning scheme:
   // (0.0, 0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 1.0, 1.2, 1.5, 2.0, 
@@ -675,7 +675,7 @@ int t2kana::yr1numu::util::FluxFix2VarBinNumber(int fixBinNo)
   return -1;
 }
 //___________________________________________________________________________
-double t2kana::yr1numu::util::FluxFractionsFixedBinRelToVarBin (
+double t2kana::numu10a::util::FluxFractionsFixedBinRelToVarBin (
   int fixBinNo, TH1D* fixBinFluxHisto, TH1D* varBinFluxHisto)
 {
 // ratio 50 MeV bin content relative to the larger bin content (in the 
@@ -697,7 +697,7 @@ double t2kana::yr1numu::util::FluxFractionsFixedBinRelToVarBin (
    return 1;
 }
 //___________________________________________________________________________
-int t2kana::yr1numu::util::Sign(double tweaking_dial)
+int t2kana::numu10a::util::Sign(double tweaking_dial)
 {
   if(TMath::Abs(tweaking_dial) < kASmallNum) return 0;
 
@@ -705,7 +705,7 @@ int t2kana::yr1numu::util::Sign(double tweaking_dial)
   return +1;
 }
 //___________________________________________________________________________
-XMLNodePointer_t t2kana::yr1numu::util::FindNode(
+XMLNodePointer_t t2kana::numu10a::util::FindNode(
   TXMLEngine * xmleng, XMLNodePointer_t topnode, string path)
 {
 // Find & return the XMLNodePointer_t at the specified path
@@ -732,7 +732,7 @@ XMLNodePointer_t t2kana::yr1numu::util::FindNode(
   return 0;
 }
 //___________________________________________________________________________
-bool t2kana::yr1numu::util::NodeExists(
+bool t2kana::numu10a::util::NodeExists(
   TXMLEngine * xmleng, XMLNodePointer_t topnode, string path)
 {
 // Find & return the XMLNodePointer_t at the specified path
@@ -759,7 +759,7 @@ bool t2kana::yr1numu::util::NodeExists(
   return false;
 }
 //___________________________________________________________________________
-TH1F * t2kana::yr1numu::util::XML2TH1F(
+TH1F * t2kana::numu10a::util::XML2TH1F(
   TXMLEngine * xmleng, XMLNodePointer_t top_node, string path)
 {
 // Get a TH1F instance from the info in the input XML config file
@@ -814,7 +814,7 @@ TH1F * t2kana::yr1numu::util::XML2TH1F(
   return hcopy;
 }
 //___________________________________________________________________________
-TH1D * t2kana::yr1numu::util::XML2TH1D(
+TH1D * t2kana::numu10a::util::XML2TH1D(
   TXMLEngine * xmleng, XMLNodePointer_t top_node, string path)
 {
 // Get a TH1D instance from the info in the input XML config file
@@ -869,7 +869,7 @@ TH1D * t2kana::yr1numu::util::XML2TH1D(
   return hcopy;
 }
 //___________________________________________________________________________
-TH2D * t2kana::yr1numu::util::XML2TH2D(
+TH2D * t2kana::numu10a::util::XML2TH2D(
   TXMLEngine * xmleng, XMLNodePointer_t top_node, string path)
 {
 // Get a TH2D instance from the info in the input XML config file
@@ -924,7 +924,7 @@ TH2D * t2kana::yr1numu::util::XML2TH2D(
   return h2copy;
 }
 //___________________________________________________________________________
-TTree * t2kana::yr1numu::util::XML2TTree(
+TTree * t2kana::numu10a::util::XML2TTree(
    TXMLEngine * xmleng, XMLNodePointer_t top_node, string path)
 {
 // Get a TH2D instance from the info in the input XML config file
@@ -981,7 +981,7 @@ TTree * t2kana::yr1numu::util::XML2TTree(
 //  return treecopy;
 }
 //___________________________________________________________________________
-TAxis *  t2kana::yr1numu::util::XML2BinInfo(
+TAxis *  t2kana::numu10a::util::XML2BinInfo(
   TXMLEngine * xmleng, XMLNodePointer_t top_node, string path)
 {
 //
@@ -1035,7 +1035,7 @@ TAxis *  t2kana::yr1numu::util::XML2BinInfo(
   return 0;
 }
 //___________________________________________________________________________
-double t2kana::yr1numu::util::XML2Dbl(
+double t2kana::numu10a::util::XML2Dbl(
   TXMLEngine * xmleng, XMLNodePointer_t top_node, string path)
 {
 // Get the specified node content as a floating-point number
@@ -1056,7 +1056,7 @@ double t2kana::yr1numu::util::XML2Dbl(
   return value;
 }
 //___________________________________________________________________________
-vector<double> t2kana::yr1numu::util::XML2DblArray(
+vector<double> t2kana::numu10a::util::XML2DblArray(
   TXMLEngine * xmleng, XMLNodePointer_t top_node, string path)
 {
 // Get the specified node content as a vector floating-point number
@@ -1084,7 +1084,7 @@ vector<double> t2kana::yr1numu::util::XML2DblArray(
   return array;
 }
 //___________________________________________________________________________
-string t2kana::yr1numu::util::XML2String(
+string t2kana::numu10a::util::XML2String(
   TXMLEngine * xmleng, XMLNodePointer_t top_node, string path)
 {
 // Get the specified node content as a floating-point number
@@ -1104,8 +1104,8 @@ string t2kana::yr1numu::util::XML2String(
   return TrimSpaces(content);
 }
 //___________________________________________________________________________
-t2kana::yr1numu::util::TH1DErrEnv *    
-  t2kana::yr1numu::util::XML2TH1DErrEnv(
+t2kana::numu10a::util::TH1DErrEnv *    
+  t2kana::numu10a::util::XML2TH1DErrEnv(
      TXMLEngine * eng, XMLNodePointer_t topnode, string path)
 {
   TH1D * low  = XML2TH1D(eng,topnode,path + "/low" );
@@ -1119,7 +1119,7 @@ t2kana::yr1numu::util::TH1DErrEnv *
   return error_envelope;
 }
 //___________________________________________________________________________
-TMatrixDSym * t2kana::yr1numu::util::XML2TMatrixDSym(
+TMatrixDSym * t2kana::numu10a::util::XML2TMatrixDSym(
      TXMLEngine * xmleng, XMLNodePointer_t top_node, string path)
 {
 // Get a TMatrixDSym instance from the info in the input XML config file
@@ -1172,7 +1172,7 @@ TMatrixDSym * t2kana::yr1numu::util::XML2TMatrixDSym(
   return matrix_copy;
 }
 //___________________________________________________________________________
-TMatrixD * t2kana::yr1numu::util::XML2TMatrixD(
+TMatrixD * t2kana::numu10a::util::XML2TMatrixD(
      TXMLEngine * xmleng, XMLNodePointer_t top_node, string path)
 {
 // Get a TMatrixD instance from the info in the input XML config file

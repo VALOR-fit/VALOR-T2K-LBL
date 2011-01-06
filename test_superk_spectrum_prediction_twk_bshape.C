@@ -1,6 +1,8 @@
 //
 // ------------------------------------------------------------------------------------------------
-// Plot predicted SuperK reconstructed neutrino energy spectrum for various flux shape tweaks.
+// Calculate SuperK Ereco spectrum error envelope due to flux shape systematic.
+// Flux systematic variations generated using the Cholseky method.
+// The error in each Ereco bin is 1 standard deviation from N random fluxes
 //
 // Costas Andreopoulos
 // ------------------------------------------------------------------------------------------------
@@ -20,11 +22,11 @@ void test_superk_spectrum_prediction_twk_bshape()
   gSystem->Load("libXMLIO");
   gSystem->Load("libMinuit");   
 
-  gSystem->Load("$T2KANA/lib/libT2KAnaYr1NuMuOscAnalysis.so");
+  gSystem->Load("libT2KDisapp2010a");
 
   using namespace std;
   using namespace t2kana;
-  using namespace t2kana::yr1numu;
+  using namespace t2kana::numu10a;
 
   const int nexp = 2000; // number of 'flux tweaks'
 
@@ -41,8 +43,8 @@ void test_superk_spectrum_prediction_twk_bshape()
 
   // phys params
   PhysParamList * fparm = PhysParamList::NumuDisapFitNoSyst();
-  fparm->Update(t2kana::yr1numu::conv::kPhypSinsq2Theta23, input_sinsq2theta23);
-  fparm->Update(t2kana::yr1numu::conv::kPhypDm23sq,        input_dm23sq);
+  fparm->Update(t2kana::numu10a::conv::kPhypSinsq2Theta23, input_sinsq2theta23);
+  fparm->Update(t2kana::numu10a::conv::kPhypDm23sq,        input_dm23sq);
 
   for(int iexp = 0; iexp < nexp; iexp++) {
 
