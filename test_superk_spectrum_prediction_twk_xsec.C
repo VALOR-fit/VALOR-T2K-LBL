@@ -9,7 +9,7 @@
 
 #include "Conventions.h"
 
-void test_superk_spectrum_prediction_twk_sig()
+void test_superk_spectrum_prediction_twk_xsec()
 {
   gSystem->Load("libGpad");  
   gSystem->Load("libPhysics");  

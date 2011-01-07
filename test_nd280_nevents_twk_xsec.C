@@ -10,7 +10,7 @@
 
 #include "Conventions.h"
 
-void test_nd280_nevents_twk_sig()
+void test_nd280_nevents_twk_xsec()
 {
   gSystem->Load("libGpad");  
   gSystem->Load("libPhysics");  
