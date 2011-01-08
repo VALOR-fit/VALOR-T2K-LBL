@@ -120,7 +120,7 @@ static const double kBaseline    = 295.335; // Tokai->Kamioka (km)
 static const double kEtrueMin    = 0;
 static const double kEtrueMax    = 12;
 static const double kEtrueBinSz  = 0.05;
-static const double kNEtrueBins  = (int) ((kEtrueMax - kEtrueMin)/kEtrueBinSz);
+static const int    kNEtrueBins  = (int) ((kEtrueMax - kEtrueMin)/kEtrueBinSz);
 
 //
 // SuperK Ereco binning
