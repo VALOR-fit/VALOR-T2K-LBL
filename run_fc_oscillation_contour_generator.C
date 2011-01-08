@@ -28,7 +28,7 @@ void run_fc_oscillation_contour_generator(
   using namespace t2kana::numu10a;
 
   // number of pseudo-experiment fits per job
-  const int nexperiments = 10;
+  const int nexperiments = 1000;
 
   //
   // The oscillation contour will be constructed using a (dm23sq, sinsq2theta23) 
