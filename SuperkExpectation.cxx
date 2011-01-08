@@ -1170,15 +1170,18 @@ void SuperkExpectation::SuperkInputs::CreateTemplate(SuperkSample_t s, SuperkMod
   int is = (int)s;
   int im = (int)m;
 
+  double etrue_min = kEtrueMin;
+  double etrue_max = kEtrueMax;
+
   fMCTemplates[is][im] = new TH2D(
      Form("nsk_%d_%d",is,im), util::AsString(m).c_str(), 
-       kNvErecoBins, kNvErecoBinEdges, kNEtrueBins, (double)kEtrueMin, (double)kEtrueMax);
+       kNvErecoBins, kNvErecoBinEdges, kNEtrueBins, etrue_min, etrue_max);
   fMCTemplates[is][im]->SetDirectory(0);
   fMCTemplates[is][im]->GetXaxis()->SetTitle("E_{reco} (GeV)");
   fMCTemplates[is][im]->GetYaxis()->SetTitle("E_{true} (GeV)");
 
   fMCEtrueSpectrum[is][im] = new TH1D(
-     Form("nsketrue_%d_%d",is,im), "", kNEtrueBins, (double)kEtrueMin, (double)kEtrueMax);
+     Form("nsketrue_%d_%d",is,im), "", kNEtrueBins, etrue_min, etrue_max);
   fMCEtrueSpectrum[is][im]->SetDirectory(0);
   fMCEtrueSpectrum[is][im]->GetXaxis()->SetTitle("E_{true} (GeV)");
 
