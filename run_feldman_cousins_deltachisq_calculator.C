@@ -8,7 +8,7 @@
 
 #include "Conventions.h"
 
-void run_fc_oscillation_contour_generator(
+void run_feldman_cousins_deltachisq_calculator(
   int input_dm23sq_bin, int input_sinsq2theta23_bin, int irun=0, string tag="fc")
 {
   gSystem->Load("libGpad");  
