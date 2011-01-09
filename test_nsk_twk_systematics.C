@@ -8,7 +8,7 @@
 
 #include "Conventions.h"
 
-void summarize_nsk_change()
+void test_nsk_twk_systematics()
 {
   gSystem->Load("libGpad");  
   gSystem->Load("libPhysics");  
