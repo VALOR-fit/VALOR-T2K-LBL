@@ -28,7 +28,7 @@ void run_feldman_cousins_deltachisq_calculator(
   using namespace t2kana::numu10a;
 
   // number of pseudo-experiment fits per job
-  const int nexperiments = 1000;
+  const int nexperiments = 500;
 
   //
   // The oscillation contour will be constructed using a (dm23sq, sinsq2theta23) 
