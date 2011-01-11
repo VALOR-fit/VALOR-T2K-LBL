@@ -302,6 +302,10 @@ public:
       void TweakNorm  (double twkdial) { fSuperkNuMuFluxNormTwkDial = twkdial; }
       void TweakShape (bool enable_tweaking=true);
 
+      // Validation-mode only systematic variations (tweak flux in a single etrue bin; Bin numbers inn Beam WG's variable binning scheme)
+      void TweakShapeSetValidationMode         (bool mode)               { fTweakShapeVldMode = mode; }
+      void TweakShapeValidationSetBinVariation (int bin, double twkdial) { fTweakShapeVldModeBin = bin; fTweakShapeVldModeDial = twkdial; }
+
       // Read inputs from XML file
       bool Read (TXMLEngine* xml, XMLNodePointer_t root_node); 
 
@@ -310,8 +314,8 @@ public:
       void Init    (void);
       void CleanUp (void);
 
-      TH1D *        fSuperkNuMuFlux;               ///< SuperK numu flux estimation (50 MeV binning)
-      TH1D *        fSuperkNuMuFluxVarBin;         ///< SuperK numu flux estimation (beam group var binning scheme)
+      TH1D *        fSuperkNuMuFlux10a;            ///< 10a SuperK numu flux estimation (50 MeV binning)
+      TH1D *        fSuperkNuMuFlux10aVarBin;      ///< 10a SuperK numu flux estimation (beam group var binning scheme)
       double        fSuperkNuMuFluxPOT;            ///< integrated POT for numu flux simulation
       TMatrixD *    fSuperkNuMuFluxCov;            ///< SuperK numu flux estimation
       TH1D *        fSuperkNuMuWght10aTo10d;       ///< SuperK numu    flux weights (10a -> 10d)
@@ -324,6 +328,10 @@ public:
       bool          fEnableFluxShapeTweaking;      ///<
       HadErrCalc *  fHEC;                          ///< Kubo-san / BEAM WG norm err calc code
       double        fSuperkNormRelErr_simple;      ///< a fixed norm rel error (to use when not using Kubo-san's code)
+
+      bool   fTweakShapeVldMode;     ///< validation-mode systematic variation enabled
+      int    fTweakShapeVldModeBin;  ///< Etrue variable size bin tweaked
+      double fTweakShapeVldModeDial; ///< flux bin tweaking dial
    };
 
    //.........................................................................

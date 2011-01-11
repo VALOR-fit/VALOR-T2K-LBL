@@ -2308,8 +2308,8 @@ SuperkExpectation::BeamInputs::~BeamInputs()
 //________________________________________________________________________________________
 void SuperkExpectation::BeamInputs::Init(void)
 {
-  fSuperkNuMuFlux              = 0; 
-  fSuperkNuMuFluxVarBin        = 0; 
+  fSuperkNuMuFlux10a           = 0; 
+  fSuperkNuMuFlux10aVarBin     = 0; 
   fSuperkNuMuFluxPOT           = 0;
   fSuperkNuMuFluxCov           = 0;
   fSuperkNuMuWght10aTo10d      = 0;
@@ -2322,12 +2322,15 @@ void SuperkExpectation::BeamInputs::Init(void)
   fEnableFluxShapeTweaking     = false;
   fHEC                         = 0;
   fSuperkNormRelErr_simple     = 0;
+  fTweakShapeVldMode           = false; 
+  fTweakShapeVldModeBin        = 0; 
+  fTweakShapeVldModeDial       = 0; 
 }
 //________________________________________________________________________________________
 void SuperkExpectation::BeamInputs::CleanUp(void)
 {
-  if ( fSuperkNuMuFlux             ) delete fSuperkNuMuFlux;
-  if ( fSuperkNuMuFluxVarBin       ) delete fSuperkNuMuFluxVarBin;
+  if ( fSuperkNuMuFlux10a          ) delete fSuperkNuMuFlux10a;
+  if ( fSuperkNuMuFlux10aVarBin    ) delete fSuperkNuMuFlux10aVarBin;
   if ( fSuperkNuMuFluxCov          ) delete fSuperkNuMuFluxCov;
   if ( fSuperkNuMuWght10aTo10d     ) delete fSuperkNuMuWght10aTo10d;
   if ( fSuperkNuMuBarWght10aTo10d  ) delete fSuperkNuMuBarWght10aTo10d;
@@ -2344,14 +2347,14 @@ bool SuperkExpectation::BeamInputs::Read(TXMLEngine* xml, XMLNodePointer_t root_
   cout << "Exp/Beam >> Reading beam inputs from input XML file." << endl;
 
   // Get SuperK numu flux
-  fSuperkNuMuFlux = util::XML2TH1D(xml,root_node,"beam/superk_flux/v10a/numu");
-  if(!fSuperkNuMuFlux) {
+  fSuperkNuMuFlux10a = util::XML2TH1D(xml,root_node,"beam/superk_flux/v10a/numu");
+  if(!fSuperkNuMuFlux10a) {
     cerr << "Exp/Beam >> No input SuperK numu flux histogram!" << endl;
     exit(1);
   }
   // Get SuperK numu flux (var binning)
-  fSuperkNuMuFluxVarBin = util::XML2TH1D(xml,root_node,"beam/superk_flux/v10a/numu_varbin");
-  if(!fSuperkNuMuFluxVarBin) {
+  fSuperkNuMuFlux10aVarBin = util::XML2TH1D(xml,root_node,"beam/superk_flux/v10a/numu_varbin");
+  if(!fSuperkNuMuFlux10aVarBin) {
     cerr << "Exp/Beam >> No input SuperK numu (var binning) flux histogram!" << endl;
     exit(1);
   }
@@ -2428,14 +2431,14 @@ void SuperkExpectation::BeamInputs::Draw(TVirtualPad * c, Option_t * option) con
   }
   else
   if(opt.Contains("SKFlux/10a/NuMu")) { 
-    fSuperkNuMuFlux->Draw();
-    fSuperkNuMuFlux->GetXaxis()->SetTitle("E_{#nu} (GeV)");
-    fSuperkNuMuFlux->GetYaxis()->SetTitle("SuperK numu flux (#neutrinos /cm2 /POT)");
+    fSuperkNuMuFlux10a->Draw();
+    fSuperkNuMuFlux10a->GetXaxis()->SetTitle("E_{#nu} (GeV)");
+    fSuperkNuMuFlux10a->GetYaxis()->SetTitle("SuperK numu flux (#neutrinos /cm2 /POT)");
     c->Update();
   } 
   else
   if(opt.Contains("SKFlux/10d/NuMu")) { 
-    TH1D * weighted_flux = new TH1D(*fSuperkNuMuFlux);
+    TH1D * weighted_flux = new TH1D(*fSuperkNuMuFlux10a);
     weighted_flux->SetDirectory(0);
     for(int bin=1; bin <= weighted_flux->GetNbinsX(); bin++) {
 	double Et = weighted_flux->GetBinCenter(bin);
@@ -2449,7 +2452,7 @@ void SuperkExpectation::BeamInputs::Draw(TVirtualPad * c, Option_t * option) con
   }
   else
   if(opt.Contains("SKFlux/Both10a10d/NuMu")) { 
-    TH1D * weighted_flux = new TH1D(*fSuperkNuMuFlux);
+    TH1D * weighted_flux = new TH1D(*fSuperkNuMuFlux10a);
     weighted_flux->SetDirectory(0);
     for(int bin=1; bin <= weighted_flux->GetNbinsX(); bin++) {
 	double Et = weighted_flux->GetBinCenter(bin);
@@ -2457,10 +2460,10 @@ void SuperkExpectation::BeamInputs::Draw(TVirtualPad * c, Option_t * option) con
         weighted_flux->SetBinContent(bin,f);
     }
     weighted_flux->SetLineStyle(kDashed);
-    fSuperkNuMuFlux->Draw();
+    fSuperkNuMuFlux10a->Draw();
     weighted_flux->Draw("same");
-    fSuperkNuMuFlux->GetXaxis()->SetTitle("E_{#nu} (GeV)");
-    fSuperkNuMuFlux->GetYaxis()->SetTitle("SuperK numu flux (#neutrinos /cm2 /POT)");
+    fSuperkNuMuFlux10a->GetXaxis()->SetTitle("E_{#nu} (GeV)");
+    fSuperkNuMuFlux10a->GetYaxis()->SetTitle("SuperK numu flux (#neutrinos /cm2 /POT)");
     c->Update();
   }
   else
@@ -2502,10 +2505,10 @@ double SuperkExpectation::BeamInputs::SuperkNuEFlux10aTo10dWght(double Etrue) co
 //________________________________________________________________________________________
 double SuperkExpectation::BeamInputs::SuperkNuMuFlux(double Etrue, bool wght_to_10d) const
 {
-  assert(fSuperkNuMuFlux);
+  assert(fSuperkNuMuFlux10a);
 
-  int flux_bin = fSuperkNuMuFlux->FindBin(Etrue);
-  double flux  = fSuperkNuMuFlux->GetBinContent(flux_bin);
+  int flux_bin = fSuperkNuMuFlux10a->FindBin(Etrue);
+  double flux  = fSuperkNuMuFlux10a->GetBinContent(flux_bin);
  
   if(wght_to_10d) {
     double wght = this->SuperkNuMuFlux10aTo10dWght(Etrue);
@@ -2596,26 +2599,32 @@ double SuperkExpectation::BeamInputs::SuperkFluxNorm(
   return norm;
 }
 //________________________________________________________________________________________
-double  SuperkExpectation::BeamInputs::SuperkNuMuFluxShapeWeight(double Etrue)
+double SuperkExpectation::BeamInputs::SuperkNuMuFluxShapeWeight(double Etrue)
 {
   if(!fEnableFluxShapeTweaking) return 1;
 
   if(!fSuperkNuMuFluxHaveCholeskyL) {
 	exit(1);
   }
-  if(!fSuperkNuMuFluxTweaked || !fSuperkNuMuFlux) {
+  if(!fSuperkNuMuFluxTweaked || !fSuperkNuMuFlux10a) {
 	exit(1);
   }
 
-  int bin = fSuperkNuMuFlux->FindBin(Etrue);
+  int bin = fSuperkNuMuFlux10a->FindBin(Etrue);
 
-  double flux_nom = fSuperkNuMuFlux        ->GetBinContent(bin);
-  double flux_twk = fSuperkNuMuFluxTweaked ->GetBinContent(bin);
+  double flux_nom = this->SuperkNuMuFlux(Etrue, true);            //10d nominal
+  double flux_twk = fSuperkNuMuFluxTweaked ->GetBinContent(bin);  //10d tweaked
 
   double wght = 1.;
   if(flux_nom > 0) {
 	wght = flux_twk/flux_nom;
   }
+
+#ifdef __debug_level_3__
+  cout << "Exp/Beam/SuperkNuMuFluxShapeWeight >> weight(Etrue = " 
+       << Etrue << ") = " << wght << endl;
+#endif
+
   return wght;
 }
 //________________________________________________________________________________________
@@ -2637,26 +2646,54 @@ void SuperkExpectation::BeamInputs::TweakShape(bool enable_tweaking)
     fSuperkNuMuFluxCovCholeskyL->Print();
 #endif
     fSuperkNuMuFluxHaveCholeskyL = true;
-    fSuperkNuMuFluxTweaked = new TH1D(*fSuperkNuMuFlux);
+    fSuperkNuMuFluxTweaked = new TH1D(*fSuperkNuMuFlux10a);
   }
 
 #ifdef __debug_level_3__
   cout << "Exp/Beam >> Tweaking SuperK flux shape" << endl;
 #endif
  
+  //
+  //
+  //
+
+  if(fTweakShapeVldMode && fTweakShapeVldModeBin>0) {
+
+    // fill in the tweaked histo
+    //int nbins = fSuperkNuMuFlux10a->GetXaxis()->GetNbins();
+    //for(int j=1; j <= nbins; j++){
+      for(int j=1; j <= 200; j++){ ///TODO
+         double Etrue = fSuperkNuMuFlux10a->GetBinCenter(j);
+         double fixBinFlux10d = this->SuperkNuMuFlux(Etrue,true); // include 10a->10d weight
+         int varbin_curr = util::FluxFix2VarBinNumber(j);
+         if(varbin_curr == fTweakShapeVldModeBin) {
+           fSuperkNuMuFluxTweaked->SetBinContent(j, fixBinFlux10d*(1+fTweakShapeVldModeDial));
+         } else {
+           fSuperkNuMuFluxTweaked->SetBinContent(j, fixBinFlux10d);
+         }
+      }//end of bin loop
+
+      return;
+  }
+
+  //
+  // Use Cholseky method to generate random fluxes
+  //
+
   //get the variations
   TVectorD tweek_vec = 
      util::CholeskyGenerateCorrelatedParamVariations(*fSuperkNuMuFluxCovCholeskyL);
 
-  // fill in the histo
-//int nbins = fSuperkNuMuFlux->GetXaxis()->GetNbins();
+  // fill in the tweaked histo
+//int nbins = fSuperkNuMuFlux10a->GetXaxis()->GetNbins();
 //for(int j=1; j <= nbins; j++){
   for(int j=1; j <= 200; j++){ ///TODO
      double rto = util::FluxFractionsFixedBinRelToVarBin(
-         j, fSuperkNuMuFlux, fSuperkNuMuFluxVarBin);
-     double fixBinFlux = fSuperkNuMuFlux->GetBinContent(j);
+         j, fSuperkNuMuFlux10a, fSuperkNuMuFlux10aVarBin);
+     double Etrue = fSuperkNuMuFlux10a->GetBinCenter(j);
+     double fixBinFlux10d = this->SuperkNuMuFlux(Etrue,true); // include 10a->10d weight
      int varBin = util::FluxFix2VarBinNumber(j);
-     fSuperkNuMuFluxTweaked->SetBinContent(j, fixBinFlux + tweek_vec[varBin - 1]*rto );
+     fSuperkNuMuFluxTweaked->SetBinContent(j, fixBinFlux10d + tweek_vec[varBin - 1]*rto );
   }//end of bin loop
 
 }

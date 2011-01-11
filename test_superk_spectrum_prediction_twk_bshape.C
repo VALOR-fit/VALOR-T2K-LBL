@@ -28,14 +28,24 @@ void test_superk_spectrum_prediction_twk_bshape()
   using namespace t2kana;
   using namespace t2kana::numu10a;
 
-  const int nexp = 2000; // number of 'flux tweaks'
-
   // oscillation params
   double input_sinsq2theta23 = 1.;
   double input_dm23sq        = 2.4E-3;
 
-  // histogram booking
-  TH1D * hEreco [nexp];
+  const int nexp       = 1000; // number of 'flux tweaks'
+  const int netruebins = 20;   // number of Etrue (variable size) bins in flux covariance matrix
+  // beam WG binning:
+  double bin_edges[netruebins+1] = {0.0, 0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 1.0, 1.2, 1.5, 2.0, 2.5, 3.0, 3.5, 4.0, 5.0, 7.0, 10.0, 9999999.9};
+
+  // output histograms and graphs
+  TH1D * hEreco [nexp];  //
+  TH1D * hErecoMax = 0;  //
+  TH1D * hErecoMin = 0;  //
+  TH1D * hErecoRatio1EtrueBinVarMax[netruebins+1]; //
+  TH1D * hErecoRatio1EtrueBinVarMin[netruebins+1]; //
+  TGraph * grNumEvtVersusToyExpId = 0;
+  double nev  [nexp];
+  double expid[nexp];
 
   // superk spectrum predictor
   SuperkExpectation skexp;
@@ -46,26 +56,24 @@ void test_superk_spectrum_prediction_twk_bshape()
   fparm->Update(t2kana::numu10a::conv::kPhypSinsq2Theta23, input_sinsq2theta23);
   fparm->Update(t2kana::numu10a::conv::kPhypDm23sq,        input_dm23sq);
 
+  // generate nexp random spectra
   for(int iexp = 0; iexp < nexp; iexp++) {
-
      // tweak spectrum generation model
      cout << "*** twk.nu: " << iexp << endl;
      if(iexp>0) {
        // use 0^th entry to store the untweaked SK reco energy spectrum
        skexp.GetBeamInputs()->TweakShape();       
      }
-
      // generate predictions
      skexp.Generate(*fparm);
-
      // store spectrum
      hEreco[iexp] = new TH1D(*skexp.CurrPredictedErecoSpectrum(conv::kSKsFCFV1RingMuLike));
      hEreco[iexp]->SetDirectory(0);
   }
 
   // find min/max and calculate fractional deviation from nominal
-  TH1D * hErecoMax = new TH1D(*hEreco[0]);
-  TH1D * hErecoMin = new TH1D(*hEreco[0]);
+  hErecoMax = new TH1D(*hEreco[0]);
+  hErecoMin = new TH1D(*hEreco[0]);
   hErecoMax->SetDirectory(0);
   hErecoMin->SetDirectory(0);
   for(int ibin=1; ibin <= conv::kNvErecoBins; ibin++) {
@@ -85,6 +93,52 @@ void test_superk_spectrum_prediction_twk_bshape()
   }//ibin
   hErecoMax->GetYaxis()->SetRangeUser(-1,1);
   hErecoMin->GetYaxis()->SetRangeUser(-1,1);
+
+  // get number of events vs toy experiment id to illustrate that there is no
+  // normalization change
+  for(int iexp = 1; iexp < nexp; iexp++) {
+    nev  [iexp] = hEreco[iexp]->Integral();
+    expid[iexp] = iexp;
+  }
+  grNumEvtVersusToyExpId = new TGraph(nexp,expid,nev);
+
+  //
+  // check the effect in Ereco distributions by modifying each of the variable Etrue bins
+  // (in the Beam WG variable binning scheme used in the flux covariance matrix) by +/-100%
+  //
+  for(int ietrue_bin = 1; ietrue_bin <= netruebins; ietrue_bin++)
+  {
+       cout << "Number of events (nominal) = " << hEreco[0]->Integral() << endl;
+       skexp.GetBeamInputs()->TweakShapeSetValidationMode(true);
+
+       // tweak given Etrue bin only
+       skexp.GetBeamInputs()->TweakShapeValidationSetBinVariation (ietrue_bin, +1.); //+100%
+       skexp.GetBeamInputs()->TweakShape();       
+
+       // generate predictions
+       skexp.Generate(*fparm);
+
+       // store spectrum
+       hErecoRatio1EtrueBinVarMax[ietrue_bin] = new TH1D(*skexp.CurrPredictedErecoSpectrum(conv::kSKsFCFV1RingMuLike));
+       hErecoRatio1EtrueBinVarMax[ietrue_bin]->SetDirectory(0);
+       hErecoRatio1EtrueBinVarMax[ietrue_bin]->SetTitle(Form("Flux shape, %.3f - %.3f GeV, +100 percent change",bin_edges[ietrue_bin-1],bin_edges[ietrue_bin]));
+       cout << "Number of events (Etrue variable bin " << ietrue_bin << ", +100%) = " << hErecoRatio1EtrueBinVarMax[ietrue_bin]->Integral() << endl;
+       hErecoRatio1EtrueBinVarMax[ietrue_bin]->Divide(hEreco[0]);
+
+       // tweak given Etrue bin only
+       skexp.GetBeamInputs()->TweakShapeValidationSetBinVariation (ietrue_bin, -1.); //-100%
+       skexp.GetBeamInputs()->TweakShape();       
+
+       // generate predictions
+       skexp.Generate(*fparm);
+
+       // store spectrum
+       hErecoRatio1EtrueBinVarMin[ietrue_bin] = new TH1D(*skexp.CurrPredictedErecoSpectrum(conv::kSKsFCFV1RingMuLike));
+       hErecoRatio1EtrueBinVarMin[ietrue_bin]->SetDirectory(0);
+       hErecoRatio1EtrueBinVarMin[ietrue_bin]->SetTitle(Form("Flux shape, %.3f - %.3f GeV, -100 percent change",bin_edges[ietrue_bin-1],bin_edges[ietrue_bin]));
+       cout << "Number of events (Etrue variable bin " << ietrue_bin << ", -100%) = " << hErecoRatio1EtrueBinVarMin[ietrue_bin]->Integral() << endl;
+       hErecoRatio1EtrueBinVarMin[ietrue_bin]->Divide(hEreco[0]);
+  }
 
   //
   // draw
@@ -109,7 +163,17 @@ void test_superk_spectrum_prediction_twk_bshape()
   hErecoMax->Draw();
   hErecoMin->Draw("same");
   c->Update();
-
+  TCanvas * c2 = new TCanvas("c2","",20,20,500,500);
+  c2->Divide(5,4);
+  for(int ietrue_bin = 1; ietrue_bin <= netruebins; ietrue_bin++)
+  {
+     c2->cd(ietrue_bin);
+     hErecoRatio1EtrueBinVarMax[ietrue_bin]->SetLineColor(kBlue);
+     hErecoRatio1EtrueBinVarMin[ietrue_bin]->SetLineColor(kRed);
+     hErecoRatio1EtrueBinVarMax[ietrue_bin]->Draw();
+     hErecoRatio1EtrueBinVarMin[ietrue_bin]->Draw("same");
+  }
+  
   // write-out in file
   TFile f(Form("sk_ereco_spectrum-tweak_beam_shape-sinsq2theta23_%.2f-dm23sq_%.5feV2.root",input_sinsq2theta23,input_dm23sq),"recreate");
   hErecoMax->Write("error_envelope_upper_boundary");
@@ -118,6 +182,12 @@ void test_superk_spectrum_prediction_twk_bshape()
      const char * title = Form("sk_ereco_spectrum_twk_beam_shape_try%d",iexp);
      hEreco[iexp]->Write(title);
   }
-  f.Close();
+  grNumEvtVersusToyExpId->Write("num_of_events_vs_toy_experiment");
+  for(int ietrue_bin = 1; ietrue_bin <= netruebins; ietrue_bin++)
+  {
+     hErecoRatio1EtrueBinVarMax[ietrue_bin]->Write(Form("ereco_spectrum_ratio_twk_etrue_varbin_%d_by_plus_100pct", ietrue_bin));
+     hErecoRatio1EtrueBinVarMin[ietrue_bin]->Write(Form("ereco_spectrum_ratio_twk_etrue_varbin_%d_by_minus_100pct",ietrue_bin));
+  }
 
+  f.Close();
 }
