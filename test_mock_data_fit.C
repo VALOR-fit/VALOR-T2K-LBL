@@ -58,8 +58,8 @@ void test_mock_data_fit(const char * fitter_name="custom")
   fitter->DoTheFit();
 
   // draw results
-  fitter->Draw(new TCanvas(), "StandardOscFitPlots+Minos90CL");
-//fitter->Draw(new TCanvas(), "StandardOscFitPlots+Minos90CL","mockfit");
+//fitter->Draw(new TCanvas(), "StandardOscFitPlots+Minos90CL");
+  fitter->Draw(new TCanvas(), "StandardOscFitPlots+Minos90CL","mockfit");
   fitter->Draw(new TCanvas(), "ChisqSurface");
   fitter->Draw(new TCanvas(), "MarginalizedChisq");
 

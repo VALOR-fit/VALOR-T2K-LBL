@@ -49,7 +49,8 @@ void run_oscillation_fitter(int dataset_id=0, const char * fitter_name="custom")
   fitter->DoTheFit();
 
   // see inputs
-  fitter->Draw(new TCanvas(), "StandardOscFitPlots+Minos90CL");
+  const char * outfile = Form("fit%d",dataset_id);
+  fitter->Draw(new TCanvas(), "StandardOscFitPlots+Minos90CL",outfile);
   fitter->Draw(new TCanvas(), "ChisqSurface");
   fitter->Draw(new TCanvas(), "MarginalizedChisq");
 }

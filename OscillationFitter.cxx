@@ -238,6 +238,7 @@ void  OscillationFitter::BuildChisqSurface(void)
       "fChisqSurface","#delta{#chi^{2}} surface",
          sinsq2theta23_nbins, sinsq2theta23_min - 0.5*sinsq2theta23_step, sinsq2theta23_max + 0.5*sinsq2theta23_step,
          dm23sq_nbins, dm23sq_min - 0.5*dm23sq_step, dm23sq_max + 0.5*dm23sq_step);
+   fChisqSurface->SetDirectory(0);
    fChisqSurface->GetXaxis()->SetRangeUser(0.,1.);
 
    for(int i = 1; i <= fChisqSurface->GetNbinsX(); i++) {
@@ -383,6 +384,20 @@ void OscillationFitter::Draw(
      TH1D * bestfit_nueccoth       = new TH1D(*fFitInputs->Expectation().CurrPredictedErecoSpectrum(conv::kSKsFCFV1RingMuLike, conv::kSKmNuECCoth));
      TH1D * bestfit_nuenc          = new TH1D(*fFitInputs->Expectation().CurrPredictedErecoSpectrum(conv::kSKsFCFV1RingMuLike, conv::kSKmNuENC));
 
+     bestfit_tot            -> SetDirectory ( 0        );
+     bestfit_numuccqe       -> SetDirectory ( 0        );
+     bestfit_numucc1pi      -> SetDirectory ( 0        );
+     bestfit_numuccoth      -> SetDirectory ( 0        );
+     bestfit_nc             -> SetDirectory ( 0        );
+     bestfit_numubarccqe    -> SetDirectory ( 0        );
+     bestfit_numubarcc1pi   -> SetDirectory ( 0        );
+     bestfit_numubarccoth   -> SetDirectory ( 0        );
+     bestfit_numubarnc      -> SetDirectory ( 0        );
+     bestfit_nueccqe        -> SetDirectory ( 0        );
+     bestfit_nuecc1pi       -> SetDirectory ( 0        );
+     bestfit_nueccoth       -> SetDirectory ( 0        );
+     bestfit_nuenc          -> SetDirectory ( 0        );
+
      bestfit_numucc1pi      -> SetFillStyle ( 3544     );
      bestfit_numuccoth      -> SetFillStyle ( 3244     );
      bestfit_nc             -> SetFillStyle ( 3006     );
@@ -422,7 +437,7 @@ void OscillationFitter::Draw(
 
      // get data
      TH1D * data = new TH1D(*fFitInputs->Observation().ErecoSpectrum(conv::kSKsFCFV1RingMuLike));
-
+     data -> SetDirectory(0);
      data -> SetMarkerStyle(20);
      data -> SetMarkerSize(1);
 
@@ -502,6 +517,7 @@ void OscillationFitter::Draw(
      int bin_dmsq_bestfit = fChisqSurface->GetYaxis()->FindBin(dm23sq_bestfit);
      double chisq_min = fChisqSurface->GetBinContent(bin_sinsq_bestfit,bin_dmsq_bestfit);
      TH2D * chisq_surf_shift = new TH2D(*fChisqSurface); 
+     chisq_surf_shift->SetDirectory(0); 
      for(int i = 1; i <= fChisqSurface->GetNbinsX(); i++) {
           for(int j = 1; j <= fChisqSurface->GetNbinsY(); j++) {
              double chisq = fChisqSurface->GetBinContent(i,j); 
