@@ -1,10 +1,14 @@
 //
 // ------------------------------------------------------------------------------------------------
-// Run numu disappearance fits to N toy experiments and store best fit values
+// Run numu disappearance fits to N toy experiments and store best fit values.
+// The toy experiments are generated on the fly.
 //
 // Inputs:
+//      - nexperiments, 
+//      - input_sinsq2theta23,
+//      - input_dm23sq,
 //      - fitter name ("minuit", "custom" (2-D grid scan))
-//      - include_systematics
+//      - include_systematics (include systematic variations in generated toy experiments)
 //
 // Costas Andreopoulos
 // ------------------------------------------------------------------------------------------------
@@ -12,7 +16,12 @@
 
 #include "Conventions.h"
 
-void test_mock_data_fit_ntimes(const char * fitter_name="minuit", bool include_systematics=false)
+void test_mock_data_fit_ntimes(
+  int nexperiments=1000, 
+  double input_sinsq2theta23 = 1.0,
+  double input_dm23sq = 2.4E-3,
+  const char * fitter_name="minuit", 
+  bool include_systematics=false)
 {
   gSystem->Load("libGpad");  
   gSystem->Load("libPhysics");  
@@ -29,11 +38,6 @@ void test_mock_data_fit_ntimes(const char * fitter_name="minuit", bool include_s
   using namespace std;
   using namespace t2kana;
   using namespace t2kana::numu10a;
-
-  const double input_sinsq2theta23 = 1.0;
-  const double input_dm23sq        = 2.4E-3;
-
-  const int nexperiments = 1000;
 
   cout << "Job configuration" << endl;
   cout << "Fitter : " << fitter_name << endl;
