@@ -9,7 +9,8 @@
 #include "Conventions.h"
 
 void run_feldman_cousins_deltachisq_calculator(
-  int input_dm23sq_bin, int input_sinsq2theta23_bin, int irun=0, string tag="fc")
+  int input_dm23sq_bin, int input_sinsq2theta23_bin, int irun=0, 
+  string tag="fc", bool include_systematics=true)
 {
   gSystem->Load("libGpad");  
   gSystem->Load("libPhysics");  
@@ -92,18 +93,26 @@ void run_feldman_cousins_deltachisq_calculator(
      fparm->Update(t2kana::numu10a::conv::kPhypSinsq2Theta23, input_sinsq2theta23);
      fparm->Update(t2kana::numu10a::conv::kPhypDm23sq,        input_dm23sq);
 
-     // tweak all sources of systematic err (gaussian err)
-     skexp->TweakAllSystematics();
-
-     // generate mock data using the current PDF (incl. systematic variatios) + fluctuate 
-     // (Poisson fluctuation in each bin)
-     bool fluctuate = true;
+     //
+     // get superk spectrum observation (toy experiment)
+     //
      SuperkObservation * skobs = new SuperkObservation;
-     skobs->CreateMockData(*skexp, *fparm, fluctuate); 
+     if(include_systematics) {   
+        // tweak all sources of systematic err (gaussian err)
+        skexp->TweakAllSystematics();
+        // generate mock data using the current PDF (incl. systematic variations)
+        // + statistical fluctuations (Poisson fluctuation in each bin)
+        bool fluctuate = true;
+        skobs->CreateMockData(*skexp, *fparm, fluctuate);
+        // reset all systematics so that the PDF used in the fitter is the nominal one
+        skexp->ResetSystematicVariations();
+     } else {
+        // generate mock data using the current PDF (without systematic variations)
+        // with statistical fluctuations (Poisson fluctuation in each bin)
+        bool fluctuate = true;
+        skobs->CreateMockData(*skexp, *fparm, fluctuate);
+     }
 
-     // reset all systematics so that the PDF used in the fitter is the nominal one
-     skexp->ResetSystematicVariations();
-     
      // create fit inputs
      OscillationFitter::FitInputs * fit_inputs =
           new OscillationFitter::FitInputs(skobs,skexp,fparm);
