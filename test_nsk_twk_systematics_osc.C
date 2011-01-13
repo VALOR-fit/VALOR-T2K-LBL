@@ -36,12 +36,12 @@ void test_nsk_twk_systematics_osc()
   double dm23sq_max         = 6E-3;
   double dm23sq_step        = 1E-4;
 
- // make sure that min and max are at the bin centre
- int sinsq2theta23_nbins = 1 + (int) ((sinsq2theta23_max - sinsq2theta23_min) / sinsq2theta23_step);
- int dm23sq_nbins        = 1 + (int) ((dm23sq_max        - dm23sq_min       ) / dm23sq_step       );
+  // make sure that min and max are at the bin centre
+  int sinsq2theta23_nbins = 1 + (int) ((sinsq2theta23_max - sinsq2theta23_min) / sinsq2theta23_step);
+  int dm23sq_nbins        = 1 + (int) ((dm23sq_max        - dm23sq_min       ) / dm23sq_step       );
 
- TH2D * frac_nsk_err = 
-   new TH2D("frac_nsk_err", "",
+  TH2D * frac_nsk_err = 
+    new TH2D("frac_nsk_err", "",
        sinsq2theta23_nbins, 
        sinsq2theta23_min - 0.5*sinsq2theta23_step, 
        sinsq2theta23_max + 0.5*sinsq2theta23_step,

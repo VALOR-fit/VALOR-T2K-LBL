@@ -99,10 +99,11 @@ void test_nsk_twk_systematics()
 
 	cout << "Current systematic: " << systematic[isystematic] << endl;
 
+        nsk_min[isystematic] = nsk_deflt;
+        nsk_max[isystematic] = nsk_deflt;
+
 	if(skip[isystematic]) {
             cout << "... skipping " << endl;
-            nsk_min[isystematic] = nsk_deflt;
-            nsk_max[isystematic] = nsk_deflt;
 	    continue;
         }
 
