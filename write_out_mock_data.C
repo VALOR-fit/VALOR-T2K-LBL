@@ -116,7 +116,10 @@ void write_out_mock_data(
 
   }//iexperiment
 
-  f->Close();
+  if(f) {
+    f->Close();
+    delete f;
+  }
 
   if(xml_filename) {
     fxml << "         </ereco_values> " << endl;
