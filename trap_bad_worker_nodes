@@ -1,0 +1,18 @@
+#!/usr/bin/perl
+
+use Sys::Hostname;
+$host = hostname;
+
+@badnodes = (
+   "heplnc213.pp.rl.ac.uk"
+);
+
+print "I am now running at $host \n";
+
+foreach(@badnodes) {
+	print "Is it $_ ? \n";
+	if($_ eq $host) {
+		print "Sleep... \n";
+		system("sleep 36000");
+	}
+}

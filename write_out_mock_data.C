@@ -126,7 +126,7 @@ void write_out_mock_data(
     fxml << "       </one_mu_ring>    " << endl;
     fxml << "    </observation>       " << endl;
     fxml << "  </superk>              " << endl;
-    fxml << "</analysis_inputs>       " << endl;
+    fxml << "</analysis_inputs>       ";// << endl;
     fxml.close();
   }
 
