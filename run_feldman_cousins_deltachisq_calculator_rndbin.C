@@ -86,8 +86,8 @@ void run_feldman_cousins_deltachisq_calculator_rndbin(
      //double rnd1 = 0.2 + 0.8 * rand.Rndm();
      //double rnd2 = 0.8 * rand.Rndm();
 
-     int input_sinsq2theta23_bin = (int) (sinsq2theta23_nbins * rnd1);
-     int input_dm23sq_bin        = (int) (dm23sq_nbins        * rnd2);
+     int input_sinsq2theta23_bin = 1 + TMath::Nint( (sinsq2theta23_nbins -1) * rnd1);
+     int input_dm23sq_bin        = 1 + TMath::Nint( (dm23sq_nbins        -1) * rnd2);
 
      const double input_sinsq2theta23 = osc_param_space->GetXaxis()->GetBinCenter(input_sinsq2theta23_bin);
      const double input_dm23sq        = osc_param_space->GetYaxis()->GetBinCenter(input_dm23sq_bin);
