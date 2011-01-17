@@ -13,6 +13,7 @@
 use Sys::Hostname;
 $host = hostname;
 
+# list of bad worker nodes
 @badnodes = (
    "heplnc213.pp.rl.ac.uk"
 );
