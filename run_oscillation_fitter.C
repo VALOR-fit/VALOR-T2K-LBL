@@ -3,14 +3,16 @@
 // Run numu disappearance oscillation fit
 //
 // Inputs: 
-//	- dataset_id (see inputs/data.xml)
-//	- fitter name ("minuit", "custom" (2-D grid scan))
+//	- dataset_id (number in <data_set_%d> XML tag, see inputs/data.xml)
+//      - data_file  
+//	- fitter_name ("minuit", "custom" (2-D grid scan))
 //
 // Costas Andreopoulos
 // ------------------------------------------------------------------------------------------------
 //
 
-void run_oscillation_fitter(int dataset_id=0, const char * fitter_name="custom")
+void run_oscillation_fitter(
+  int dataset_id=0, const char * data_file="inputs/data.xml", const char * fitter_name="custom")
 {
   gSystem->Load("libGpad");  
   gSystem->Load("libPhysics");  
@@ -37,7 +39,7 @@ void run_oscillation_fitter(int dataset_id=0, const char * fitter_name="custom")
 
   // get superk spectrum observation
   SuperkObservation * skobs = new SuperkObservation;
-  skobs->Read("inputs/data.xml",dataset_id);
+  skobs->Read(data_file, dataset_id);
 
   // create fit inputs
   OscillationFitter::FitInputs * fit_inputs = new OscillationFitter::FitInputs(skobs,skexp,fparm);
