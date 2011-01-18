@@ -220,8 +220,8 @@ void plot_feldman_cousins_contour(
   gPad->SetBottomMargin(0.15);
 
   TH2D * hframe = (TH2D*) gPad->DrawFrame(sinsq2theta23_min, dm23sq_min, sinsq2theta23_max, dm23sq_max);
-  hframe->GetXaxis()->SetTitle("sin^{2}(2#theta_{23})");
-  hframe->GetYaxis()->SetTitle("#Deltam_{23}^{2} (eV^{2})");
+  hframe->GetXaxis()->SetTitle("sin^{2}2#theta_{23}");
+  hframe->GetYaxis()->SetTitle("|#Deltam_{23}^{2}| (eV^{2}/c^{4})");
   hframe->GetXaxis()->SetLimits(0.5,1.002);
   hframe->GetYaxis()->SetLimits(0.001,0.004);
   hframe->GetXaxis()->SetTitleOffset(1.2);
@@ -279,14 +279,14 @@ void plot_feldman_cousins_contour(
 
   TLegend * legend = new TLegend(0.17,0.72,0.36,0.9);
   legend->SetFillColor(0);
-  if(show_68cl) { legend->AddEntry(hCL68StatOnly, "Feldman-Cousins 68% CL (stat)");      }
-  if(show_90cl) { legend->AddEntry(hCL90StatOnly, "Feldman-Cousins 90% CL (stat)");      }
-  if(show_95cl) { legend->AddEntry(hCL95StatOnly, "Feldman-Cousins 95% CL (stat)");      }
-  if(show_99cl) { legend->AddEntry(hCL99StatOnly, "Feldman-Cousins 99% CL (stat)");      }
   if(show_68cl) { legend->AddEntry(hCL68StatSyst, "Feldman-Cousins 68% CL (stat+syst)"); }
   if(show_90cl) { legend->AddEntry(hCL90StatSyst, "Feldman-Cousins 90% CL (stat+syst)"); }
   if(show_95cl) { legend->AddEntry(hCL95StatSyst, "Feldman-Cousins 95% CL (stat+syst)"); }
   if(show_99cl) { legend->AddEntry(hCL99StatSyst, "Feldman-Cousins 99% CL (stat+syst)"); }
+  if(show_68cl) { legend->AddEntry(hCL68StatOnly, "Feldman-Cousins 68% CL (stat)");      }
+  if(show_90cl) { legend->AddEntry(hCL90StatOnly, "Feldman-Cousins 90% CL (stat)");      }
+  if(show_95cl) { legend->AddEntry(hCL95StatOnly, "Feldman-Cousins 95% CL (stat)");      }
+  if(show_99cl) { legend->AddEntry(hCL99StatOnly, "Feldman-Cousins 99% CL (stat)");      }
   if(show_constant_dchisq_contours) {
     if(show_68cl) { legend->AddEntry(hCL68StatOnlyNonFC, "Plain (constant #Delta#chi^{2}_{crit.}(=2.30)) 68% CL (stat)");      }
     if(show_90cl) { legend->AddEntry(hCL90StatOnlyNonFC, "Plain (constant #Delta#chi^{2}_{crit.}(=4.61)) 90% CL (stat)");      }
