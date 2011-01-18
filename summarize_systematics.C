@@ -34,29 +34,31 @@ void summarize_systematics(string file_path="./")
 
   // chain together files for each systematic
 
-  const int nsyst = 12;
+  const int nsyst = 13;
 
   double dm23sq_frac_err        [nsyst];
   double sinsq2theta23_frac_err [nsyst];
 
   TH1D * h_dm23sq_frac_err        = new TH1D("h_dm23sq_frac_err",        "", nsyst, 0, nsyst);
   TH1D * h_sinsq2theta23_frac_err = new TH1D("h_sinsq2theta23_frac_err", "", nsyst, 0, nsyst);
+  TH1D * h_nfits                  = new TH1D("h_nfits",                  "", nsyst, 0, nsyst);
 
   for(int isyst = 0; isyst < nsyst; isyst++) {
 
     string syst_label="";
-    if (isyst==0)  syst_label = "nd280_eff";
-    if (isyst==1)  syst_label = "sk_energy_scale";
-    if (isyst==2)  syst_label = "sk_ccqe_eff";
-    if (isyst==3)  syst_label = "sk_ccnonqe_eff";
-    if (isyst==4)  syst_label = "sk_nc_eff";
-    if (isyst==5)  syst_label = "flux_norm";
-    if (isyst==6)  syst_label = "flux_shape";
-    if (isyst==7)  syst_label = "xsec_ccqe";
-    if (isyst==8)  syst_label = "xsec_cc1pi_to_ccqe";
-    if (isyst==9)  syst_label = "xsec_ccoth_to_ccqe";
-    if (isyst==10) syst_label = "xsec_nc_to_ccqe";
-    if (isyst==11) syst_label = "nuclear_effect";
+    if (isyst ==  0)  syst_label = "sk_ccqe_eff";
+    if (isyst ==  1)  syst_label = "sk_ccnonqe_eff";
+    if (isyst ==  2)  syst_label = "sk_nc_eff";
+    if (isyst ==  3)  syst_label = "sk_nuecc_eff";
+    if (isyst ==  4)  syst_label = "sk_energy_scale";
+    if (isyst ==  5)  syst_label = "nd280_eff";
+    if (isyst ==  6)  syst_label = "flux_norm";
+    if (isyst ==  7)  syst_label = "flux_shape";
+    if (isyst ==  8)  syst_label = "xsec_ccqe";
+    if (isyst ==  9)  syst_label = "xsec_cc1pi_to_ccqe";
+    if (isyst == 10)  syst_label = "xsec_ccoth_to_ccqe";
+    if (isyst == 11)  syst_label = "xsec_nc_to_ccqe";
+    if (isyst == 12)  syst_label = "nuclear_effect";
 
     TChain * chain = new TChain("sysnt");
     chain->Add(
@@ -73,7 +75,7 @@ void summarize_systematics(string file_path="./")
     TH1D * hdm23sq        = new TH1D("hdm23sq",        "", 1000, 0.1*input_dm23sq, 3*input_dm23sq);
     TH1D * hsinsq2theta23 = new TH1D("hsinsq2theta23", "",  100, 0., 1.);
 
-    chain->Draw("dm23sq>>hdm23sq", "", "goff");
+    chain->Draw("dm23sq>>hdm23sq",               "", "goff");
     chain->Draw("sinsq2theta23>>hsinsq2theta23", "", "goff");
 
     dm23sq_frac_err       [isyst] = hdm23sq       ->GetRMS() / input_dm23sq;
@@ -87,8 +89,10 @@ void summarize_systematics(string file_path="./")
     int syst_bin = isyst+1;
     h_dm23sq_frac_err        -> SetBinContent(syst_bin, 100*dm23sq_frac_err[isyst]); 
     h_sinsq2theta23_frac_err -> SetBinContent(syst_bin, 100*sinsq2theta23_frac_err[isyst]);
+    h_nfits                  -> SetBinContent(syst_bin, nfits);
     h_dm23sq_frac_err        -> GetXaxis() -> SetBinLabel(syst_bin, syst_label.c_str());
     h_sinsq2theta23_frac_err -> GetXaxis() -> SetBinLabel(syst_bin, syst_label.c_str());
+    h_nfits                  -> GetXaxis() -> SetBinLabel(syst_bin, syst_label.c_str());
 
     delete chain;
     delete hdm23sq;
@@ -105,6 +109,8 @@ void summarize_systematics(string file_path="./")
   h_dm23sq_frac_err->Draw();
   TCanvas * c2 = new TCanvas("c2","",100,100,500,500);
   h_sinsq2theta23_frac_err->Draw();
+  TCanvas * c3 = new TCanvas("c3","",200,200,600,600);
+  h_nfits->Draw();
 
   double dm23sq_combined_frac_err        = 0;
   double sinsq2theta23_combined_frac_err = 0;
