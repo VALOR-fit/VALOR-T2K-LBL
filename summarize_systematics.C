@@ -2,7 +2,13 @@
 // ------------------------------------------------------------------------------------------------
 // Systematics summary
 //
-// Inputs: Files produced by run_systematic_study.C
+// Inputs
+// - file_path:
+//     Files produced by run_systematic_study_for_given_osc_params.C
+// - input_sinsq2theta23:
+//     True sinsq2theta23 used in run_systematic_study_for_given_osc_params.C
+// - input_dm23sq:
+//     True dm23sq used in run_systematic_study_for_given_osc_params.C
 //
 // Costas Andreopoulos
 // ------------------------------------------------------------------------------------------------
@@ -10,7 +16,8 @@
 
 #include "Conventions.h"
 
-void summarize_systematics(string file_path="./")
+void summarize_systematics(
+  string file_path, double input_sinsq2theta23, double input_dm23sq)
 {
   gSystem->Load("libGpad");  
   gSystem->Load("libPhysics");  
@@ -27,10 +34,6 @@ void summarize_systematics(string file_path="./")
   using namespace std;
   using namespace t2kana;
   using namespace t2kana::numu10a;
-
-  // systematics were evaluated for these oscillation params
-  const double input_sinsq2theta23 = 0.90;
-  const double input_dm23sq        = 2.4E-3;
 
   // chain together files for each systematic
 
@@ -61,10 +64,13 @@ void summarize_systematics(string file_path="./")
     if (isyst == 12)  syst_label = "nuclear_effect";
 
     TChain * chain = new TChain("sysnt");
-    chain->Add(
+
+    TString filename_template = 
        Form("%s/syst_%s-sinsq2theta23_%.2f-dm23sq_%.5feV2_*.root",
-            file_path.c_str(), syst_label.c_str(),input_sinsq2theta23,input_dm23sq)
-    );
+            file_path.c_str(), syst_label.c_str(),input_sinsq2theta23,input_dm23sq);
+
+    chain->Add(filename_template.Data());
+    cout << "Adding files :  " << filename_template << endl;
 
     int nfits = chain->GetEntries();
     if(nfits==0) {
