@@ -20,6 +20,8 @@
 //  - show_90cl : (boolean) Show the 90% CL contour?
 //  - show_95cl : (boolean) Show the 95% CL contour?
 //  - show_99cl : (boolean) Show the 99% CL contour?
+//  - dmsq_frac_syst_err_bestfit
+//  - sinsq2theta_frac_syst_err_bestfit
 //
 // Initial version by N.Grant
 //
@@ -44,7 +46,9 @@ void plot_feldman_cousins_contour(
   bool show_68cl=true,
   bool show_90cl=true,
   bool show_95cl=true,
-  bool show_99cl=false)
+  bool show_99cl=false,
+  double dmsq_frac_syst_err_bestfit=-1.,
+  double sinsq2theta_frac_syst_err_bestfit=-1.)
 {
   gROOT->Reset();
 
@@ -201,8 +205,8 @@ void plot_feldman_cousins_contour(
 	hCL95StatSyst->SetBinContent(sinsq2theta23_bin, dm23sq_bin, dchisq_data - dchisq95_crit_statsyst);
 	hCL99StatSyst->SetBinContent(sinsq2theta23_bin, dm23sq_bin, dchisq_data - dchisq99_crit_statsyst);
 
-        cout << "Critical DeltaChiSq (68% CL) : (stat only) = " << dchisq68_crit_statonly << ", (stat+syst) = " << dchisq68_crit_statsyst << endl;
-        cout << "Critical DeltaChiSq (90% CL) : (stat only) = " << dchisq90_crit_statonly << ", (stat+syst) = " << dchisq90_crit_statsyst << endl;
+      //cout << "Critical DeltaChiSq (68% CL) : (stat only) = " << dchisq68_crit_statonly << ", (stat+syst) = " << dchisq68_crit_statsyst << endl;
+      //cout << "Critical DeltaChiSq (90% CL) : (stat only) = " << dchisq90_crit_statonly << ", (stat+syst) = " << dchisq90_crit_statsyst << endl;
 
       }//dm23sq_bin
   }//sinsq2theta23_bin
@@ -296,6 +300,20 @@ void plot_feldman_cousins_contour(
   legend->SetBorderSize(0);
   legend->Draw();
 
+
+  if(sinsq2theta_frac_syst_err_bestfit > 0 && dmsq_frac_syst_err_bestfit > 0) {
+    TLine * line1 = new TLine(sinsq2theta23_bestfit-sinsq2theta23_bestfit*sinsq2theta_frac_syst_err_bestfit,
+                              dm23sq_bestfit,
+                              sinsq2theta23_bestfit+sinsq2theta23_bestfit*sinsq2theta_frac_syst_err_bestfit,
+                              dm23sq_bestfit);
+    TLine * line2 = new TLine(sinsq2theta23_bestfit,
+                              dm23sq_bestfit-dm23sq_bestfit*dmsq_frac_syst_err_bestfit,
+                              sinsq2theta23_bestfit,
+                              dm23sq_bestfit+dm23sq_bestfit*dmsq_frac_syst_err_bestfit);
+
+    line1->Draw("same");
+    line2->Draw("same");
+  }
   ConfidenceContour->SaveAs("ConfidenceContours.png");
 }
 
