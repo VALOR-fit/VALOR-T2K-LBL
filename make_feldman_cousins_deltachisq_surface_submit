@@ -1,0 +1,42 @@
+#!/usr/bin/perl
+
+$iarg=0;
+foreach (@ARGV) {
+  if($_ eq '--inputs') { $inputdir = $ARGV[$iarg+1]; }
+  if($_ eq '--name'  ) { $name     = $ARGV[$iarg+1]; }
+  $iarg++;
+}
+
+$curr_dir = `pwd`;
+
+$queue = "prod";
+$cput  = "6:00:00";
+
+$njobs = 10;
+$ijob  = 0;
+
+while($ijob < $njobs) {
+  $batch_script  = "$name$ijob.pbs";
+  $outputfile    = "$name$ijob.root";
+  $bin_min       = 1 + $ijob * 10;
+  $bin_max       = $bin_min + 9;
+  if($ijob == $njobs-1) {
+	$bin_max++; #odd number of bins, last job has 1 more
+  }
+  $command       = "root -l -b -q \'make_feldman_cousins_deltachisq_surface.C(\"$inputdir\", \"$outputfile\", $bin_min, $bin_max)\'"; 
+  open(PBS, ">$batch_script") or die("Can not create the PBS batch script");
+  print PBS "#!/bin/bash \n";
+  print PBS "#PBS -N $name$ijob \n";
+  print PBS "#PBS -l cput=$cput \n";
+  print PBS "#PBS -o $name$ijob.pbs.out \n";
+  print PBS "#PBS -e $name$ijob.pbs.err \n";
+  print PBS "cd $curr_dir \n";
+  print PBS "source setup_at_ral_batch_farm.sh \n";
+  print PBS "$command \n";
+  close(PBS);
+
+  print "Submitting job... $ijob \n";
+  `qsub -q $queue $batch_script`;
+
+  $ijob++;
+}
