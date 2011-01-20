@@ -1,0 +1,97 @@
+#!/usr/bin/perl
+
+#---------------------------------------------------------------------------------------- 
+# Inputs
+#  --resource               : <RAL, IN2P3, interactive>, default: interactive
+#  --tag                    :
+#  --nruns                  :
+#  --nexpts                 :
+#  --cpu-time               : default: "6:00:00" for RAL, "1500000" for IN2P3
+#  --include-systematics    : 
+#  --min-dm23sq-bin'        : default:   1
+#  --max-dm23sq-bin'        : default:  51
+#  --min-sinsq2theta23-bin' : default:   1
+#  --max-sinsq2theta23-bin' : default: 101
+#
+# C.Andreopoulos
+#---------------------------------------------------------------------------------------- 
+
+$iarg=0;
+foreach (@ARGV) {
+  if($_ eq '--resource'              ) { $resource              = $ARGV[$iarg+1]; }
+  if($_ eq '--tag'                   ) { $tag                   = $ARGV[$iarg+1]; }
+  if($_ eq '--nruns'                 ) { $nruns                 = $ARGV[$iarg+1]; }
+  if($_ eq '--nexpts'                ) { $nexpts                = $ARGV[$iarg+1]; }
+  if($_ eq '--cpu-time'              ) { $cput                  = $ARGV[$iarg+1]; }
+  if($_ eq '--include-systematics'   ) { $systematics           = 1;              }
+  if($_ eq '--min-dm23sq-bin'        ) { $min_dm23sq_bin        = $ARGV[$iarg+1]; }
+  if($_ eq '--max-dm23sq-bin'        ) { $max_dm23sq_bin        = $ARGV[$iarg+1]; }
+  if($_ eq '--min-sinsq2theta23-bin' ) { $min_sinsq2theta23_bin = $ARGV[$iarg+1]; }
+  if($_ eq '--max-sinsq2theta23-bin' ) { $max_sinsq2theta23_bin = $ARGV[$iarg+1]; }
+  $iarg++;
+}
+$min_dm23sq_bin         = 1             unless defined $min_dm23sq_bin;
+$max_dm23sq_bin         = 51            unless defined $max_dm23sq_bin; 
+$min_sinsq2theta23_bin  = 1             unless defined $min_sinsq2theta23_bin;
+$max_sinsq2theta23_bin  = 101           unless defined $max_sinsq2theta23_bin;
+$resource               = "interactive" unless defined $resource;
+$tag                    = "fc"          unless defined $tag;
+$nruns                  = 1             unless defined $nruns;
+$nexpts                 = 1000          unless defined $nexpts;
+$systematics            = 0             unless defined $systematics;
+
+if( !defined $cput) {
+  if($resource eq "RAL"  ) { $cput = "6:00:00"; }
+  if($resource eq "IN2P3") { $cput = 1500000;   }
+}
+
+$curr_dir = `pwd`;
+$irun     = 0;
+
+while($irun < $nruns) {
+
+  print "Submitting $tag run: $irun \n";
+
+  $batch_script  = "$tag-$irun.pbs";
+  $command  = "root -l -b -q \'feldman_cousins_deltachisq_job.C($min_dm23sq_bin,$max_dm23sq_bin,$min_sinsq2theta23_bin,$max_sinsq2theta23_bin,\"$tag\", $irun, $nexpts, $systematics)\'";
+
+  print "$command \n";
+
+  #
+  # RAL
+  #
+  if($resource eq "RAL") {
+     open(PBS, ">$batch_script") or die("Can not create the PBS batch script");
+     print PBS "#!/bin/bash \n";
+     print PBS "#PBS -N $tag-$irun \n";
+     print PBS "#PBS -l cput=$cput \n";
+     print PBS "#PBS -o $tag-$irun.pbs.out \n";
+     print PBS "#PBS -e $tag-$irun.pbs.err \n";
+     print PBS "cd $curr_dir \n";
+     print PBS "source setup_at_ral_batch_farm.sh \n";
+     print PBS "$command \n";
+     close(PBS);
+     `qsub -q prod $batch_script`;
+  }
+  #
+  # IN2P3
+  #
+  if($resource eq "IN2P3") {
+     open(PBS, ">$batch_script") or die("Can not create the PBS batch script");
+     print PBS "#!/bin/tcsh \n";
+     print PBS "cd $curr_dir \n";
+     print PBS "source setup_at_in2p3.csh \n";
+     print PBS "$command \n";
+     close(PBS);
+     `chmod +x $batch_script`;
+     `qsub -eo -V -l platform=LINUX,t=$cput,M=2200MB,scratch=500MB,u_sps_babar -o $tag-$irun.pbs.out -N $tag-$irun ./$tag-$irun.pbs`;
+  }
+  #
+  # interactive
+  #
+  if($resource eq "interactive") {
+     system($command);
+  }
+
+  $irun++;
+}
