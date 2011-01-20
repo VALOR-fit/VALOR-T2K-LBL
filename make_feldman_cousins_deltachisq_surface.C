@@ -1,7 +1,8 @@
 //
 //-----------------------------------------------------------------------------------------------------
-// Calculate \Delta\chi^{2}_{critical} for constructing 68%, 90%, 95%, 99% CL regions according to 
-// Feldman-Cousins method. The \Delta\chi^{2}_{critical} values are saved as T2HD histograms,
+// Process Feldman-Cousins job putputs and calculate \Delta\chi^{2}_{critical} for constructing
+// 68%, 90%, 95%, 99% CL regions.
+// The \Delta\chi^{2}_{critical} values are saved as T2HD histograms,
 // where the x axis is sinsq2theta and the y axis is \Deltam^{2}
 //
 // Inputs
@@ -11,6 +12,8 @@
 //     run_feldman_cousins_deltachisq_calculator_*.C scripts.
 // - output_data_file:
 //     Name of the output file with \Delta\chisq histograms
+// - sinsq2theta_min_bin
+// - sinsq2theta_max_bin
 //
 // Initial version by N.Grant
 //
@@ -22,6 +25,8 @@
 //   grids (under certain conditions) and makes the script much easier to maintain and re-use.
 //   On the other hand the script runs much more slowly now. This should be OK now as this script is
 //   only run once at the end of the analysis.
+// @ 15/01/2011, Costas 
+//   Added input sinsq2theta23 bin range so that (if needed) task can be parallelized in a batch farm
 //
 //-----------------------------------------------------------------------------------------------------
 //
@@ -37,7 +42,10 @@
 using namespace std;
 
 void make_feldman_cousins_deltachisq_surface(
-  const char * input_data_directory, const char * output_data_file="delta_chisq.root")
+  const char * input_data_directory, 
+  const char * output_data_file="delta_chisq.root",
+  int sinsq2theta_min_bin=-1, 
+  int sinsq2theta_max_bin=999999)
 {
   const int nConfidenceLevel = 4;
  
@@ -50,11 +58,11 @@ void make_feldman_cousins_deltachisq_surface(
   //
 
   // dm23sq, sinsq2theta23 range and step
-  double sinsq2theta23_min   = 0.5;
+  double sinsq2theta23_min   = 0.0;
   double sinsq2theta23_max   = 1.0;
   double sinsq2theta23_step  = 0.01;
   double dm23sq_min          = 1E-3;
-  double dm23sq_max          = 4E-3;
+  double dm23sq_max          = 6E-3;
   double dm23sq_step         = 1E-4;
   // make sure that min and max are at the bin centre and not at the low/high edge of the first/last bin
   int sinsq2theta23_nbins = 1 + (int) ((sinsq2theta23_max - sinsq2theta23_min) / sinsq2theta23_step);
@@ -89,10 +97,17 @@ void make_feldman_cousins_deltachisq_surface(
   TChain chain("fcnt");
   chain.Add(Form("%s/*root", input_data_directory));
 
-  int ntot2dbins = sinsq2theta23_nbins * dm23sq_nbins;
+  int nx1 = TMath::Max(1,                   sinsq2theta_min_bin);
+  int nx2 = TMath::Min(sinsq2theta23_nbins, sinsq2theta_max_bin);
+  int ntot2dbins = (nx2-nx1+1) * dm23sq_nbins;
   int n2dbins    = 0;
 
   for(int isinsq2theta23_bin = 1; isinsq2theta23_bin <= sinsq2theta23_nbins; isinsq2theta23_bin++) {
+
+    bool in_range = (isinsq2theta23_bin >= sinsq2theta_min_bin && 
+                     isinsq2theta23_bin <= sinsq2theta_max_bin);
+    if(!in_range) continue;
+
     for(int idm23sq_bin = 1; idm23sq_bin <= dm23sq_nbins; idm23sq_bin++) {
 
       n2dbins++;
