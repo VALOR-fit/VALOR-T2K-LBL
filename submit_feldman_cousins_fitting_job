@@ -1,10 +1,11 @@
 #!/usr/bin/perl
 
-#---------------------------------------------------------------------------------------- 
+#
+#---------------------------------------------------------------------------------------------------- 
 # Submit a batch of feldman_cousins_fitting_job.C jobs
 #
 # Inputs
-#  --resource               : <RAL, IN2P3, interactive>, default: interactive
+#  --resource               : <RAL, IN2P3, Oxford, Grid, interactive>, default: interactive
 #  --tag                    :
 #  --nruns                  :
 #  --nexpts                 :
@@ -16,7 +17,8 @@
 #  --max-sinsq2theta23-bin' : default: 101
 #
 # C.Andreopoulos
-#---------------------------------------------------------------------------------------- 
+#---------------------------------------------------------------------------------------------------- 
+#
 
 $iarg=0;
 foreach (@ARGV) {
@@ -87,6 +89,18 @@ while($irun < $nruns) {
      close(PBS);
      `chmod +x $batch_script`;
      `qsub -eo -V -l platform=LINUX,t=$cput,M=2200MB,scratch=500MB,u_sps_babar -o $tag-$irun.pbs.out -N $tag-$irun ./$tag-$irun.pbs`;
+  }
+  #
+  # Oxford
+  #
+  if($resource eq "Oxford") {
+     print "Not supported just yet!\n";
+  }
+  #
+  # Grid
+  #
+  if($resource eq "Grid") {
+     print "Not supported just yet!\n";
   }
   #
   # interactive
