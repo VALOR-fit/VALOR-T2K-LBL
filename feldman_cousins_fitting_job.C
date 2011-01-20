@@ -1,6 +1,7 @@
 //
 // ------------------------------------------------------------------------------------------------
-// Run job needed to calculate the oscillation contour using the Feldman-Cousins method.
+// Run a job with some of the toy expts fits needed to calculate the \Delta\chi^{2} values
+// for constructing a Feldman-Cousins contour
 //
 // Inputs
 //   - min_dm23sq_bin :
@@ -18,7 +19,7 @@
 
 #include "Conventions.h"
 
-void feldman_cousins_deltachisq_job
+void feldman_cousins_fitting_job
 (
   int    min_dm23sq_bin        =   1, 
   int    max_dm23sq_bin        =  51, 

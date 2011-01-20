@@ -1,6 +1,8 @@
 #!/usr/bin/perl
 
 #---------------------------------------------------------------------------------------- 
+# Submit a batch of feldman_cousins_fitting_job.C jobs
+#
 # Inputs
 #  --resource               : <RAL, IN2P3, interactive>, default: interactive
 #  --tag                    :
@@ -53,7 +55,7 @@ while($irun < $nruns) {
   print "Submitting $tag run: $irun \n";
 
   $batch_script  = "$tag-$irun.pbs";
-  $command  = "root -l -b -q \'feldman_cousins_deltachisq_job.C($min_dm23sq_bin,$max_dm23sq_bin,$min_sinsq2theta23_bin,$max_sinsq2theta23_bin,\"$tag\", $irun, $nexpts, $systematics)\'";
+  $command  = "root -l -b -q \'feldman_cousins_fitting_job.C($min_dm23sq_bin,$max_dm23sq_bin,$min_sinsq2theta23_bin,$max_sinsq2theta23_bin,\"$tag\", $irun, $nexpts, $systematics)\'";
 
   print "$command \n";
 

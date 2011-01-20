@@ -1,7 +1,16 @@
 //
+// --------------------------------------------------------------------------------------------------------
+// Merge the output of make_feldman_cousins_deltachisq_surface.C
+// in case the task was parallelized to many jobs submitted to a batch farm for faster results.
+// Each such job would have computed \Delta\chi^{2} for part of the oscillation parameter space.
 //
-//
-//
+// Inputs
+//  - nruns      : number of runs submitted by
+//  - inpname    : part of the input file name (<inpname><job_number>.root)
+//  - outputfile : name of output ROOT file with merged \Delta\chi^{2} surfaces
+//              
+// C.Andreopoulos
+// --------------------------------------------------------------------------------------------------------
 //
 
 void merge_feldman_cousins_deltachisq_surfaces(int nruns, const char * inpname, const char * outputfile)
