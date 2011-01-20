@@ -71,7 +71,7 @@ foreach(@systlist) {
        print PBS "source setup_at_ral.sh \n";
        print PBS "$command \n";
        close(PBS);
-#      `qsub -q prod $batch_script`;
+       `qsub -q prod $batch_script`;
     }
     #
     # IN2P3
