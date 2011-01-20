@@ -15,13 +15,16 @@
 //	    \chi^{2} surface for the actual fit.
 //  - nsmoothings :
 //          How many times to smooth the critical \Delta\chi^{2} histograms.
-//  - show_constant_dchisq_contours : Show non-Feldman-Cousins contours
+//  - show_constant_dchisq_contours : (boolean) Show non-Feldman-Cousins contours
+//  - show_contours_with_systematics : (boolean)
 //  - show_68cl : (boolean) Show the 68% CL contour?
 //  - show_90cl : (boolean) Show the 90% CL contour?
 //  - show_95cl : (boolean) Show the 95% CL contour?
 //  - show_99cl : (boolean) Show the 99% CL contour?
-//  - dmsq_frac_syst_err_bestfit
-//  - sinsq2theta_frac_syst_err_bestfit
+//  - dmsq_frac_syst_err_bestfit : 
+//      Include this Dmsq systematic err at best-fit point (determined-separately)
+//  - sinsq2theta_frac_syst_err_bestfit :
+//      Include this sinsq2theta systematic err at best-fit point (determined-separately)
 //
 // Initial version by N.Grant
 //
@@ -43,6 +46,7 @@ void plot_feldman_cousins_contour(
   const char * chisq_file_data,
   int nsmoothings = 2,
   bool show_constant_dchisq_contours=false,
+  bool show_contours_with_systematics=true,
   bool show_68cl=true,
   bool show_90cl=true,
   bool show_95cl=true,
@@ -55,11 +59,11 @@ void plot_feldman_cousins_contour(
   //
   // Define dm23sq, sinsq2theta23 range and step  
   //
-  double sinsq2theta23_min   = 0.5;
+  double sinsq2theta23_min   = 0.0;
   double sinsq2theta23_max   = 1.0;
   double sinsq2theta23_step  = 0.01;
   double dm23sq_min          = 1E-3;
-  double dm23sq_max          = 4E-3;
+  double dm23sq_max          = 5E-3;
   double dm23sq_step         = 1E-4;
 
   //
@@ -226,8 +230,8 @@ void plot_feldman_cousins_contour(
   TH2D * hframe = (TH2D*) gPad->DrawFrame(sinsq2theta23_min, dm23sq_min, sinsq2theta23_max, dm23sq_max);
   hframe->GetXaxis()->SetTitle("sin^{2}2#theta_{23}");
   hframe->GetYaxis()->SetTitle("|#Deltam_{23}^{2}| (eV^{2}/c^{4})");
-  hframe->GetXaxis()->SetLimits(0.5,1.002);
-  hframe->GetYaxis()->SetLimits(0.001,0.004);
+//hframe->GetXaxis()->SetLimits(0.,1.002);
+//hframe->GetYaxis()->SetLimits(0.001,0.004);
   hframe->GetXaxis()->SetTitleOffset(1.2);
   hframe->GetYaxis()->SetTitleOffset(1.4);
   hframe->GetXaxis()->CenterTitle();
@@ -248,28 +252,36 @@ void plot_feldman_cousins_contour(
   set_contour_style(hCL99StatSyst,      kBlack, 2, 1);
 
   if(show_68cl) {
-    hCL68StatSyst->Draw("cont3same");
+    if(show_contours_with_systematics) {
+       hCL68StatSyst->Draw("cont3same");
+    }
     hCL68StatOnly->Draw("cont3same");
     if(show_constant_dchisq_contours) {
        hCL68StatOnlyNonFC->Draw("cont3same");
     }
   }
   if(show_90cl) {
-    hCL90StatSyst->Draw("cont3same");
+    if(show_contours_with_systematics) {
+       hCL90StatSyst->Draw("cont3same");
+    }
     hCL90StatOnly->Draw("cont3same");
     if(show_constant_dchisq_contours) {
        hCL90StatOnlyNonFC->Draw("cont3same");
     }
   }
   if(show_95cl) {
-    hCL95StatSyst->Draw("cont3same");
+    if(show_contours_with_systematics) {
+       hCL95StatSyst->Draw("cont3same");
+    }
     hCL95StatOnly->Draw("cont3same");
     if(show_constant_dchisq_contours) {
        hCL95StatOnlyNonFC->Draw("cont3same");
     }
   }
   if(show_99cl) {
-    hCL99StatSyst->Draw("cont3same");
+    if(show_contours_with_systematics) {
+       hCL99StatSyst->Draw("cont3same");
+    }
     hCL99StatOnly->Draw("cont3same");
     if(show_constant_dchisq_contours) {
        hCL99StatOnlyNonFC->Draw("cont3same");
@@ -283,10 +295,12 @@ void plot_feldman_cousins_contour(
 
   TLegend * legend = new TLegend(0.17,0.72,0.36,0.9);
   legend->SetFillColor(0);
-  if(show_68cl) { legend->AddEntry(hCL68StatSyst, "Feldman-Cousins 68% CL (stat+syst)"); }
-  if(show_90cl) { legend->AddEntry(hCL90StatSyst, "Feldman-Cousins 90% CL (stat+syst)"); }
-  if(show_95cl) { legend->AddEntry(hCL95StatSyst, "Feldman-Cousins 95% CL (stat+syst)"); }
-  if(show_99cl) { legend->AddEntry(hCL99StatSyst, "Feldman-Cousins 99% CL (stat+syst)"); }
+  if(show_contours_with_systematics) {
+    if(show_68cl) { legend->AddEntry(hCL68StatSyst, "Feldman-Cousins 68% CL (stat+syst)"); }
+    if(show_90cl) { legend->AddEntry(hCL90StatSyst, "Feldman-Cousins 90% CL (stat+syst)"); }
+    if(show_95cl) { legend->AddEntry(hCL95StatSyst, "Feldman-Cousins 95% CL (stat+syst)"); }
+    if(show_99cl) { legend->AddEntry(hCL99StatSyst, "Feldman-Cousins 99% CL (stat+syst)"); }
+  }
   if(show_68cl) { legend->AddEntry(hCL68StatOnly, "Feldman-Cousins 68% CL (stat)");      }
   if(show_90cl) { legend->AddEntry(hCL90StatOnly, "Feldman-Cousins 90% CL (stat)");      }
   if(show_95cl) { legend->AddEntry(hCL95StatOnly, "Feldman-Cousins 95% CL (stat)");      }
@@ -300,7 +314,9 @@ void plot_feldman_cousins_contour(
   legend->SetBorderSize(0);
   legend->Draw();
 
-
+  //
+  // plot systematics at best-fit point?
+  //
   if(sinsq2theta_frac_syst_err_bestfit > 0 && dmsq_frac_syst_err_bestfit > 0) {
     TLine * line1 = new TLine(sinsq2theta23_bestfit-sinsq2theta23_bestfit*sinsq2theta_frac_syst_err_bestfit,
                               dm23sq_bestfit,
@@ -310,7 +326,6 @@ void plot_feldman_cousins_contour(
                               dm23sq_bestfit-dm23sq_bestfit*dmsq_frac_syst_err_bestfit,
                               sinsq2theta23_bestfit,
                               dm23sq_bestfit+dm23sq_bestfit*dmsq_frac_syst_err_bestfit);
-
     line1->Draw("same");
     line2->Draw("same");
   }

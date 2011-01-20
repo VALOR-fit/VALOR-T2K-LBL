@@ -3,7 +3,10 @@
 // Run numu disappearance fits for mock-data 
 //
 // Inputs:
-//      - fitter name ("minuit", "custom" (2-D grid scan))
+//      - input_sinsq2theta23 :
+//      - input_dm23sq        :
+//      - fluctuate_stat      : include stat. fluctautions?
+//      - fitter name         : oscillation fitter <"minuit", "custom" (2-D grid scan)>
 //
 // Costas Andreopoulos
 // ------------------------------------------------------------------------------------------------
@@ -11,7 +14,13 @@
 
 #include "Conventions.h"
 
-void test_mock_data_fit(const char * fitter_name="custom")
+void test_mock_data_fit
+(
+   double       input_sinsq2theta23 = 0.9,
+   double       input_dm23sq        = 2.4E-3,
+   bool         fluctuate_stat      = true,
+   const char * fitter_name         = "custom"
+)
 {
   gSystem->Load("libGpad");  
   gSystem->Load("libPhysics");  
@@ -29,10 +38,6 @@ void test_mock_data_fit(const char * fitter_name="custom")
   using namespace t2kana;
   using namespace t2kana::numu10a;
 
-  const double input_sinsq2theta23 = 0.9;
-  const double input_dm23sq        = 2.4E-3;
-  bool fluctuate = true;
-
   // fit params
   PhysParamList * fparm = PhysParamList::NumuDisapFitNoSyst();
   fparm->Update(t2kana::numu10a::conv::kPhypSinsq2Theta23, input_sinsq2theta23);
@@ -44,7 +49,7 @@ void test_mock_data_fit(const char * fitter_name="custom")
 
   // get superk spectrum observation
   SuperkObservation * skobs = new SuperkObservation;
-  skobs->CreateMockData(*skexp, *fparm, fluctuate);
+  skobs->CreateMockData(*skexp, *fparm, fluctuate_stat);
 
   // create fit inputs
   OscillationFitter::FitInputs * fit_inputs = 
@@ -58,7 +63,6 @@ void test_mock_data_fit(const char * fitter_name="custom")
   fitter->DoTheFit();
 
   // draw results
-//fitter->Draw(new TCanvas(), "StandardOscFitPlots+Minos90CL");
   fitter->Draw(new TCanvas(), "StandardOscFitPlots+Minos90CL","mockfit");
   fitter->Draw(new TCanvas(), "ChisqSurface");
   fitter->Draw(new TCanvas(), "MarginalizedChisq");
