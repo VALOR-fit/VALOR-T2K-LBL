@@ -1,5 +1,11 @@
 #!/usr/bin/perl
 
+#----------------------------------------------------------------------------------------
+# Split make_feldman_cousins_deltachisq_surface.C in many jobs for faster results
+#
+# C.Andreopoulos
+#----------------------------------------------------------------------------------------
+
 $iarg=0;
 foreach (@ARGV) {
   if($_ eq '--inputs') { $inputdir = $ARGV[$iarg+1]; }
