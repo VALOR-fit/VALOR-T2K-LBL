@@ -32,8 +32,8 @@
 void bestfit_systematic_study_fitting_job(
    string systematic, 
    int    irun                = 0, 
-   double input_sinsq2theta23 = 0.90;
-   double input_dm23sq        = 2.4E-3;
+   double input_sinsq2theta23 = 0.90,
+   double input_dm23sq        = 2.4E-3,
    int    nexperiments        = 500
 )
 {
