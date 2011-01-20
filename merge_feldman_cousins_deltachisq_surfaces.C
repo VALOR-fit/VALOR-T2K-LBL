@@ -4,10 +4,8 @@
 //
 //
 
-void combine_feldman_cousins_deltachisq_surface(const char * name, const char * outputfile)
+void merge_feldman_cousins_deltachisq_surfaces(int nruns, const char * inpname, const char * outputfile)
 {
-  const int nruns = 10;
-
   const int nConfidenceLevel = 4;
   int confidenceLevel [nConfidenceLevel] = {68, 90, 95, 99 };
 
@@ -48,8 +46,8 @@ void combine_feldman_cousins_deltachisq_surface(const char * name, const char * 
   TFile * fin[nruns];
   TH2D * hDeltaChi2SurfacePartial[nruns][nConfidenceLevel];
   for(int irun = 0; irun < nruns; irun++) {
-    fin[irun] = new TFile( Form("%s%d.root",name,irun), "read");
-    cout << "Getting histograms from file: " <<  Form("%s%d.root",name,irun) << endl;
+    fin[irun] = new TFile( Form("%s%d.root",inpname,irun), "read");
+    cout << "Getting histograms from file: " <<  Form("%s%d.root",inpname,irun) << endl;
     fin[irun]->cd();
     hDeltaChi2SurfacePartial[irun][0] = (TH2D*) fin[irun]->Get("hDeltaChi2Surface68");
     hDeltaChi2SurfacePartial[irun][1] = (TH2D*) fin[irun]->Get("hDeltaChi2Surface90");
