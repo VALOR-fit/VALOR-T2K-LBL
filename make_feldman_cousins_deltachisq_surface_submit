@@ -12,18 +12,21 @@ $curr_dir = `pwd`;
 $queue = "prod";
 $cput  = "6:00:00";
 
-$njobs = 10;
+$njobs = 20;
 $ijob  = 0;
+
+$nbins_per_job = 5;
+
+$bin_min = 1;
+$bin_max = $nbins_per_job;
 
 while($ijob < $njobs) {
   $batch_script  = "$name$ijob.pbs";
   $outputfile    = "$name$ijob.root";
-  $bin_min       = 1 + $ijob * 10;
-  $bin_max       = $bin_min + 9;
   if($ijob == $njobs-1) {
 	$bin_max++; #odd number of bins, last job has 1 more
   }
-  $command       = "root -l -b -q \'make_feldman_cousins_deltachisq_surface.C(\"$inputdir\", \"$outputfile\", $bin_min, $bin_max)\'"; 
+  $command = "root -l -b -q \'make_feldman_cousins_deltachisq_surface.C(\"$inputdir\", \"$outputfile\", $bin_min, $bin_max)\'"; 
   open(PBS, ">$batch_script") or die("Can not create the PBS batch script");
   print PBS "#!/bin/bash \n";
   print PBS "#PBS -N $name$ijob \n";
@@ -36,7 +39,12 @@ while($ijob < $njobs) {
   close(PBS);
 
   print "Submitting job... $ijob \n";
+  print "  $command \n";
+
   `qsub -q $queue $batch_script`;
+
+  $bin_min = $bin_max + 1;
+  $bin_max = $bin_max + $nbins_per_job;
 
   $ijob++;
 }
