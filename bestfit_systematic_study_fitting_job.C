@@ -2,7 +2,9 @@
 // ------------------------------------------------------------------------------------------------
 // Run numu disappearance systematic study for given oscillation parameters
 //
-// The input (systematic) string can be any of:
+// Inputs
+// - systematic:
+//    Any of
 //	- sk_energy_scale
 //	- sk_ccqe_eff
 //	- sk_ccnonqe_eff
@@ -16,6 +18,10 @@
 //      - xsec_ccoth_to_ccqe
 //      - xsec_nc_to_ccqe
 //      - nuclear_effect
+// - irun :
+// - input_sinsq2theta23 :
+// - input_dm23sq :
+// - nexperiments :
 //
 // Costas Andreopoulos
 // ------------------------------------------------------------------------------------------------
@@ -23,7 +29,13 @@
 
 #include "Conventions.h"
 
-void run_systematic_study_for_given_osc_params(string systematic, int irun=0)
+void bestfit_systematic_study_fitting_job(
+   string systematic, 
+   int    irun                = 0, 
+   double input_sinsq2theta23 = 0.90;
+   double input_dm23sq        = 2.4E-3;
+   int    nexperiments        = 500
+)
 {
   gSystem->Load("libGpad");  
   gSystem->Load("libPhysics");  
@@ -40,11 +52,6 @@ void run_systematic_study_for_given_osc_params(string systematic, int irun=0)
   using namespace std;
   using namespace t2kana;
   using namespace t2kana::numu10a;
-
-  const double input_sinsq2theta23 = 0.90;
-  const double input_dm23sq        = 2.4E-3;
-
-  const int nexperiments = 500;
 
   TRandom3 rand(0);
 

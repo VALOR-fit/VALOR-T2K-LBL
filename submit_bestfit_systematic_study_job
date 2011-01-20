@@ -1,0 +1,110 @@
+#!/usr/bin/perl
+
+#
+#---------------------------------------------------------------------------------------------------- 
+# Submit a batch of jobs to study systematic at the best fit point
+#
+# Inputs
+#  --resource               : <RAL, IN2P3, Oxford, Grid, interactive> (default: interactive)
+#  --nruns                  : number of runs (jobs) per systematic (default: 10)
+#  --nexpts                 : number of experiments per run (default: 1000)
+#  --cpu-time               : CPU time (default: "6:00:00" for RAL, "1500000" for IN2P3)
+#  --dm23sq                 : value of \Delta m^{2}_{23}   (default: 2.4E-3 eV2)
+#  --sinsq2theta23          : value of sin^{2}2\theta_{23} (default: 0.9) 
+#  --list-of-systematics    : file with list of systematic (default: syst.list)
+#
+# C.Andreopoulos
+#---------------------------------------------------------------------------------------------------- 
+#
+
+$iarg=0;
+foreach (@ARGV) {
+  if($_ eq '--resource'            ) { $resource      = $ARGV[$iarg+1]; }
+  if($_ eq '--nruns'               ) { $nruns         = $ARGV[$iarg+1]; }
+  if($_ eq '--nexpts'              ) { $nexpts        = $ARGV[$iarg+1]; }
+  if($_ eq '--cpu-time'            ) { $cput          = $ARGV[$iarg+1]; }
+  if($_ eq '--dm23sq'              ) { $dm23sq        = $ARGV[$iarg+1]; }
+  if($_ eq '--sinsq2theta23'       ) { $sinsq2theta23 = $ARGV[$iarg+1]; }
+  if($_ eq '--list-of-systematics' ) { $systlistfile  = $ARGV[$iarg+1]; }
+  $iarg++;
+}
+$resource       = "interactive" unless defined $resource;
+$nruns          = 10            unless defined $nruns;
+$nexpts         = 1000          unless defined $nexpts;
+$dm23sq         = 0.0024        unless defined $max_dm23sq_bin; 
+$sinsq2theta23  = 0.90          unless defined $max_sinsq2theta23_bin;
+$systlistfile   = "syst.list"   unless defined $systlistfile;
+
+if( !defined $cput) {
+  if($resource eq "RAL"  ) { $cput = "6:00:00"; }
+  if($resource eq "IN2P3") { $cput = 1500000;   }
+}
+
+$curr_dir = `pwd`;
+
+open(FSYSTLIST, $systlistfile) || die("Could not open file with list of systematics: $systlistfile!");
+@systlist=<FSYSTLIST>; 
+
+#loop over systematics
+foreach(@systlist) {
+  chomp;
+  $systematic = $_;
+  #loop over runs
+  $irun = 0;
+  while($irun < $nruns) {
+    print "Submitting $systematic run: $irun \n";
+    $batch_script  = "syst-$systematic-$irun.pbs";
+    $command  = "root -l -b -q \'bestfit_systematic_study_fitting_job.C(\"$systematic\", $irun, $sinsq2theta23, $dm23sq, $nexpts)\'";
+    print "$command \n";
+
+    #
+    # RAL
+    #
+    if($resource eq "RAL") {
+       open(PBS, ">$batch_script") or die("Can not create the PBS batch script");
+       print PBS "#!/bin/bash \n";
+       print PBS "#PBS -N syst-$systematic-$irun \n";
+       print PBS "#PBS -l cput=$cput \n";
+       print PBS "#PBS -o syst-$systematic-$irun.pbs.out \n";
+       print PBS "#PBS -e syst-$systematic-$irun.pbs.err \n";
+       print PBS "cd $curr_dir \n";
+       print PBS "source setup_at_ral.sh \n";
+       print PBS "$command \n";
+       close(PBS);
+#      `qsub -q prod $batch_script`;
+    }
+    #
+    # IN2P3
+    #
+    if($resource eq "IN2P3") {
+       open(PBS, ">$batch_script") or die("Can not create the PBS batch script");
+       print PBS "#!/bin/tcsh \n";
+       print PBS "cd $curr_dir \n";
+       print PBS "source setup_at_in2p3.csh \n";
+       print PBS "$command \n";
+       close(PBS);
+       `chmod +x $batch_script`;
+       `qsub -eo -V -l platform=LINUX,t=$cput,M=2200MB,scratch=500MB,u_sps_babar -o syst-$systematic-$irun.pbs.out -N syst-$systematic-$irun ./syst-$systematic-$irun.pbs`;
+    }
+    #
+    # Oxford
+    #
+    if($resource eq "Oxford") {
+       print "Not supported just yet!\n";
+    }
+    #
+    # Grid
+    #
+    if($resource eq "Grid") {
+       print "Not supported just yet!\n";
+    }
+    #
+    # interactive
+    #
+    if($resource eq "interactive") {
+       system($command);
+    }
+
+    $irun++;
+  }#loop over runs for given systematic 
+}#loop over systematics in input list
