@@ -34,7 +34,7 @@ while($ijob < $njobs) {
   print PBS "#PBS -o $name$ijob.pbs.out \n";
   print PBS "#PBS -e $name$ijob.pbs.err \n";
   print PBS "cd $curr_dir \n";
-  print PBS "source setup_at_ral_batch_farm.sh \n";
+  print PBS "source setup_at_ral.sh \n";
   print PBS "$command \n";
   close(PBS);
 
