@@ -119,8 +119,8 @@ void feldman_cousins_fitting_job
      //     
      // get dmsq and sinsq2theta at bin centre
      //     
-     const double input_sinsq2theta23 = osc_param_space->GetXaxis()->GetBinCenter(input_sinsq2theta23_bin);
-     const double input_dm23sq        = osc_param_space->GetYaxis()->GetBinCenter(input_dm23sq_bin       );
+     double input_sinsq2theta23 = osc_param_space->GetXaxis()->GetBinCenter(input_sinsq2theta23_bin);
+     double input_dm23sq        = osc_param_space->GetYaxis()->GetBinCenter(input_dm23sq_bin       );
 
      input_sinsq2theta23 = TMath::Min(0.,input_sinsq2theta23); // protection from rnd-err
      input_sinsq2theta23 = TMath::Max(1.,input_sinsq2theta23); // protection from rnd-err
