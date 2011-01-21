@@ -1,0 +1,64 @@
+#!/usr/bin/perl
+
+#
+#---------------------------------------------------------------------------------------------------- 
+# Bulk-delete of batch farm jobs
+#
+# Inputs
+#  --resource   : <RAL, IN2P3, Oxford, Grid>
+#  --user       : 
+#  --min-job-id :
+#  --max-job-id :
+#
+# Costas Andreopoulos
+#---------------------------------------------------------------------------------------------------- 
+#
+
+$iarg=0;
+foreach (@ARGV) {
+  if($_ eq '--resource'   ) { $resource = $ARGV[$iarg+1]; }
+  if($_ eq '--user'       ) { $user     = $ARGV[$iarg+1]; }
+  if($_ eq '--min-job-id' ) { $minjobid = $ARGV[$iarg+1]; }
+  if($_ eq '--max-job-id' ) { $maxjobid = $ARGV[$iarg+1]; }
+   $iarg++;
+}
+die("** Aborting [You need to specify the resource using the --resource option]")
+unless defined $resource;
+die("** Aborting [You need to specify your username using the --user option]")
+unless defined $user;
+die("** Aborting [You need to specify a minimum job ID using the --min-job-id option]")
+unless defined $minjobid;
+die("** Aborting [You need to specify a maximum job ID using the --max-job-id option]")
+unless defined $maxjobid;
+
+#
+# RAL
+#
+if($resource eq "RAL") {
+  @myjobs = `qstat -u $user`;
+  foreach(@myjobs) {
+    chomp($_);
+    if( /candreop/ ) {
+      /(\d+)/;
+      $jobid = $1;
+      if($jobid >= $minjobid && $jobid <= $maxjobid) {
+           print "deleting $user's job: $jobid\n";
+           `qdel $jobid`
+      }#job number in input range
+    }#username matched
+  }#loop over jobs
+}#RAL
+
+#
+# IN2P3
+#
+if($resource eq "IN2P3") {
+}
+
+#
+# IN2P3
+#
+if($resource eq "Oxford") {
+  print "Not supported just yet!\n";
+}
+
