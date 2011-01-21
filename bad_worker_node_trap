@@ -3,8 +3,7 @@
 #-----------------------------------------------------------------------------------------------------------
 # Occassionally, bad worker nodes attract and kill submitted jobs.
 # A single bad worker node can wipe-out a long list of queued jobs quite fast...
-# It is a well-documented fact of life that comp. admins are always away when you need them most.
-# With no one around to reboot the bad worker node, take the matter in your own hands.
+# If no admin person can be found to reboot the bad worker node, take the matter in your own hands.
 # Identify the bad node IPs and send them this small gift so that they stop attracting more jobs!
 #
 # C.Andreopoulos
