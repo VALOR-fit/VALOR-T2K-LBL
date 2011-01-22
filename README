@@ -1,0 +1,23 @@
++--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+
+RUTHERFORD/OXFORD T2K DISAPPEARANCE ANALYSIS PACKAGE
+
+(c) 2010-11 All Rights Reserved
++--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+
+
+- Andreopoulos, Costas <costas.andreopoulos \at stfc.ac.uk>
+- Dealtry, Thomas <Thomas.Dealtry \at physics.ox.ac.uk>
+- Dobson, James <j.dobson07 \at imperial.ac.uk>
+- Grant, Nick <nick.grant \at stfc.ac.uk>
+- Haigh, Martin <m.haigh1 \at physics.ox.ac.uk>
+- Ilic, Jelena <Jelena.Ilic \at stfc.ac.uk>
+- Pearce, Geoff <geoff.pearce \at stfc.ac.uk>
+- Weber, Alfons <alfons.weber \at stfc.ac.uk>
+
+For additonal documentation, see also the RAL/PPD internal wiki:
+https://twiki.pp.rl.ac.uk/twiki/bin/view/T2K/WebHome/Analysis/
+
++--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+
+
+BUILDING THE ANALYSIS PACKAGE
+
+Just type `make'. You need ROOT.
