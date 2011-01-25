@@ -8,7 +8,7 @@
 #  --resource               : <RAL, IN2P3, Oxford, Grid, interactive> (default: interactive)
 #  --nruns                  : number of runs (jobs) per systematic (default: 10)
 #  --nexpts                 : number of experiments per run (default: 1000)
-#  --cpu-time               : CPU time (default: "6:00:00" for RAL, "1500000" for IN2P3)
+#  --cpu-time               : CPU time (default: "6:00:00" for RAL, "1500000" for IN2P3, "11:50:00" for Oxford)
 #  --dm23sq                 : value of \Delta m^{2}_{23}   (default: 2.4E-3 eV2)
 #  --sinsq2theta23          : value of sin^{2}2\theta_{23} (default: 0.9) 
 #  --list-of-systematics    : file with list of systematic (default: syst.list)
@@ -38,6 +38,7 @@ $systlistfile   = "syst.list"   unless defined $systlistfile;
 if( !defined $cput) {
   if($resource eq "RAL"  ) { $cput = "6:00:00"; }
   if($resource eq "IN2P3") { $cput = 1500000;   }
+  if($resource eq "Oxford"  ) { $cput = "11:50:00"; }
 }
 
 $curr_dir = `pwd`;
@@ -90,7 +91,17 @@ foreach(@systlist) {
     # Oxford
     #
     if($resource eq "Oxford") {
-       print "Not supported just yet!\n";
+       open(PBS, ">$batch_script") or die("Can not create the PBS batch script");
+       print PBS "#!/bin/bash \n";
+       print PBS "#PBS -N syst-$systematic-$irun \n";
+       print PBS "#PBS -l cput=$cput \n";
+       print PBS "#PBS -o syst-$systematic-$irun.pbs.out \n";
+       print PBS "#PBS -e syst-$systematic-$irun.pbs.err \n";
+       print PBS "cd $curr_dir \n";
+       print PBS "source setup_at_oxford.sh \n";
+       print PBS "$command \n";
+       close(PBS);
+       `qsub $batch_script`;
     }
     #
     # Grid
