@@ -9,7 +9,7 @@
 #  --tag                    :
 #  --nruns                  :
 #  --nexpts                 :
-#  --cpu-time               : default: "6:00:00" for RAL, "1500000" for IN2P3
+#  --cpu-time               : default: "6:00:00" for RAL, "1500000" for IN2P3, "11:50:00" for Oxford
 #  --include-systematics    : 
 #  --min-dm23sq-bin'        : default:   1
 #  --max-dm23sq-bin'        : default:  51
@@ -47,6 +47,7 @@ $systematics            = 0             unless defined $systematics;
 if( !defined $cput) {
   if($resource eq "RAL"  ) { $cput = "6:00:00"; }
   if($resource eq "IN2P3") { $cput = 1500000;   }
+  if($resource eq "Oxford") { $cput = "11:50:00"; }
 }
 
 $curr_dir = `pwd`;
@@ -94,7 +95,17 @@ while($irun < $nruns) {
   # Oxford
   #
   if($resource eq "Oxford") {
-     print "Not supported just yet!\n";
+      open(PBS, ">$batch_script") or die("Can not create the PBS batch script");
+      print PBS "#!/bin/bash \n";
+      print PBS "#PBS -N $tag-$irun \n";
+      print PBS "#PBS -l cput=$cput \n";
+      print PBS "#PBS -o $tag-$irun.pbs.out \n";
+      print PBS "#PBS -e $tag-$irun.pbs.err \n";
+      print PBS "cd $curr_dir \n";
+      print PBS "source setup_at_oxford.sh \n";
+      print PBS "$command \n";
+      close(PBS);
+     `qsub $batch_script`;
   }
   #
   # Grid
