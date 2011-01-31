@@ -3,54 +3,108 @@
 #----------------------------------------------------------------------------------------
 # Split make_feldman_cousins_deltachisq_surface.C in many jobs for faster results
 #
+# Arguments
+#
+# --resource : 
+#      <RAL, IN2P3, Oxford, Grid>, default: RAL
+# --fit-results :
+#      Specify the directory where output ntuples from the Feldman-Cousins fitting 
+#      jobs can be found.
+# --tag :
+#      A tag (eg. genie-statsyst, neut-statonly-v2, ...) to be used as prefix for the
+#      output ROOT files and the batch scripts and error logs.
+# --num-sinsq2theta23-bins-per-job :
+#      In this analysis there are 101 sinsq2theta23 bins. The first bin is centered at 0
+#      and the last bin is centered at 1. The bin width is 0.01.
+#      To parallelize the \Delta\chi^{2} surface making tasks, each job will process a
+#      few sinsq2theta23 bins only. Use this argument to specify the number of bins per
+#      job. Use a number that divides 100. As there are 101 bins, the last job will 
+#      handle 1 extra bin. Default value is 5 (therefore, 20 jobs will be submitted).
+#  --cpu-time : 
+#      CPU time. 
+#      Default: "6:00:00" for RAL
+# 
 # C.Andreopoulos
 #----------------------------------------------------------------------------------------
 
 $iarg=0;
 foreach (@ARGV) {
-  if($_ eq '--inputs') { $inputdir = $ARGV[$iarg+1]; }
-  if($_ eq '--name'  ) { $name     = $ARGV[$iarg+1]; }
+  if($_ eq '--resource'                      ) { $resource      = $ARGV[$iarg+1]; }
+  if($_ eq '--cpu-time'                      ) { $cput          = $ARGV[$iarg+1]; }
+  if($_ eq '--fit-results'                   ) { $inputdir      = $ARGV[$iarg+1]; }
+  if($_ eq '--tag'                           ) { $tag           = $ARGV[$iarg+1]; }
+  if($_ eq '--num-sinsq2theta23-bins-per-job') { $nbins_per_job = $ARGV[$iarg+1]; }
   $iarg++;
+}
+$resource      = "RAL" unless defined $resource;
+$nbins_per_job = 5     unless defined $nbins_per_job;
+
+if( !defined $cput) {
+  if($resource eq "RAL"    )  { $cput = "6:00:00";  }
+  if($resource eq "IN2P3"  )  { $cput = "1500000";  }
+  if($resource eq "Oxford" )  { $cput = "11:50:00"; }
+  if($resource eq "Grid"   )  { $cput = "??";       }
 }
 
 $curr_dir = `pwd`;
 
-$queue = "prod";
-$cput  = "6:00:00";
-
-$njobs = 20;
-$ijob  = 0;
-
-$nbins_per_job = 5;
-
-$bin_min = 1;
-$bin_max = $nbins_per_job;
+$njobs            = 100 / $nbins_per_job;
+$ijob             = 0;
+$curr_job_bin_min = 1;
+$curr_job_bin_max = $nbins_per_job;
 
 while($ijob < $njobs) {
-  $batch_script  = "$name$ijob.pbs";
-  $outputfile    = "$name$ijob.root";
+
   if($ijob == $njobs-1) {
-	$bin_max++; #odd number of bins, last job has 1 more
+	$curr_job_bin_max++; #odd number of bins, last job has 1 more
   }
-  $command = "root -l -b -q \'make_feldman_cousins_deltachisq_surface.C(\"$inputdir\", \"$outputfile\", $bin_min, $bin_max)\'"; 
-  open(PBS, ">$batch_script") or die("Can not create the PBS batch script");
-  print PBS "#!/bin/bash \n";
-  print PBS "#PBS -N $name$ijob \n";
-  print PBS "#PBS -l cput=$cput \n";
-  print PBS "#PBS -o $name$ijob.pbs.out \n";
-  print PBS "#PBS -e $name$ijob.pbs.err \n";
-  print PBS "cd $curr_dir \n";
-  print PBS "source setup_at_ral.sh \n";
-  print PBS "$command \n";
-  close(PBS);
+  $command = "root -l -b -q \'make_feldman_cousins_deltachisq_surface.C(\"$inputdir\", \"$outputfile\", $curr_job_bin_min, $curr_job_bin_max)\'"; 
 
   print "Submitting job... $ijob \n";
   print "  $command \n";
 
-  `qsub -q $queue $batch_script`;
+  #
+  # RAL
+  #
+  if($resource eq "RAL") {
+       $batch_script  = "$tag$ijob.pbs";
+       $outputfile    = "$tag$ijob.root";
+       open(PBS, ">$batch_script") or die("Can not create the PBS batch script");
+       print PBS "#!/bin/bash \n";
+       print PBS "#PBS -N $tag$ijob \n";
+       print PBS "#PBS -l cput=$cput \n";
+       print PBS "#PBS -o $tag$ijob.pbs.out \n";
+       print PBS "#PBS -e $tag$ijob.pbs.err \n";
+       print PBS "cd $curr_dir \n";
+       print PBS "source setup_at_ral.sh \n";
+       print PBS "$command \n";
+       close(PBS);
+      `qsub -q prod $batch_script`;
+  }#RAL
 
-  $bin_min = $bin_max + 1;
-  $bin_max = $bin_max + $nbins_per_job;
+  # 
+  # IN2P3
+  #
+  if($resource eq "IN2P3") {
+     print "$resource not supported just yet!\n"; 
+  }#IN2P3
 
+  #   
+  # Oxford
+  #   
+  if($resource eq "Oxford") {
+     print "$resource not supported just yet!\n"; 
+  }#Oxford
+
+  #   
+  # Grid
+  #   
+  if($resource eq "Grid") {
+     print "$resource not supported just yet!\n"; 
+  }#Grid
+
+
+  $curr_job_bin_min = $curr_job_bin_max + 1;
+  $curr_job_bin_max = $curr_job_bin_max + $nbins_per_job;
   $ijob++;
 }
