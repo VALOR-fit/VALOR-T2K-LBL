@@ -13,7 +13,7 @@
 // --------------------------------------------------------------------------------------------------------
 //
 
-void merge_feldman_cousins_deltachisq_surfaces(int nruns, const char * inpname, const char * outputfile)
+void merge_feldman_cousins_deltachisq_surfaces(const int nruns, const char * inpname, const char * outputfile)
 {
   const int nConfidenceLevel = 4;
   int confidenceLevel [nConfidenceLevel] = {68, 90, 95, 99 };
