@@ -58,6 +58,7 @@ while($ijob < $njobs) {
   if($ijob == $njobs-1) {
 	$curr_job_bin_max++; #odd number of bins, last job has 1 more
   }
+  $outputfile    = "$tag$ijob.root";
   $command = "root -l -b -q \'make_feldman_cousins_deltachisq_surface.C(\"$inputdir\", \"$outputfile\", $curr_job_bin_min, $curr_job_bin_max)\'"; 
 
   print "Submitting job... $ijob \n";
@@ -68,7 +69,6 @@ while($ijob < $njobs) {
   #
   if($resource eq "RAL") {
        $batch_script  = "$tag$ijob.pbs";
-       $outputfile    = "$tag$ijob.root";
        open(PBS, ">$batch_script") or die("Can not create the PBS batch script");
        print PBS "#!/bin/bash \n";
        print PBS "#PBS -N $tag$ijob \n";
