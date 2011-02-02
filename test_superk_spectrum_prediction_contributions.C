@@ -9,7 +9,11 @@
 #include <iomanip.h>
 #include "Conventions.h"
 
-void test_superk_spectrum_prediction_contributions()
+void test_superk_spectrum_prediction_contributions
+(
+  double input_sinsq2theta23 = 1.00,
+  double input_dm23sq        = 2.4E-3
+)
 {
   gSystem->Load("libGpad");  
   gSystem->Load("libPhysics");  
@@ -26,10 +30,6 @@ void test_superk_spectrum_prediction_contributions()
   using namespace std;
   using namespace t2kana;
   using namespace t2kana::numu10a;
-
-  // oscillation params
-  double input_sinsq2theta23 = 0.00;
-  double input_dm23sq        = 2.4E-3;
 
   const unsigned int nm = 12;
   conv::SuperkMode_t modes [nm] = {
@@ -148,21 +148,17 @@ void test_superk_spectrum_prediction_contributions()
   legend->AddEntry(hErecoMode[conv::kSKmNuENC],          "#nu_{e} NC",                           "LF");
   legend->Draw();
   c->Update();
-  double E0 = 0.50; // GeV
-  double E1 = 0.75; // GeV
-  double E2 = 1.00; // GeV
-  double E3 = 2.00; // GeV
+  cout << fixed;
   double ntot = hErecoTot->Integral();
   cout << "Total number of events: " 
        << setw(10) << setfill(' ') << setprecision(6) << ntot << endl;
-  cout << "Total number of events (< " << setw(8) << setfill(' ') << setprecision(4) << E0 << " GeV): " 
-       << setw(10) << setfill(' ') << setprecision(6) << hErecoTot->Integral(1,hErecoTot->FindBin(E0)) << endl;
-  cout << "Total number of events (< " << setw(8) << setfill(' ') << setprecision(4) << E1 << " GeV): " 
-       << setw(10) << setfill(' ') << setprecision(6) << hErecoTot->Integral(1,hErecoTot->FindBin(E1)) << endl;
-  cout << "Total number of events (< " << setw(8) << setfill(' ') << setprecision(4) << E2 << " GeV): " 
-       << setw(10) << setfill(' ') << setprecision(6) << hErecoTot->Integral(1,hErecoTot->FindBin(E2)) << endl;
-  cout << "Total number of events (< " << setw(8) << setfill(' ') << setprecision(4) << E3 << " GeV): " 
-       << setw(10) << setfill(' ') << setprecision(6) << hErecoTot->Integral(1,hErecoTot->FindBin(E3)) << endl;
+  const int nslices=6;
+  double slice_max[nslices] = { 0.50, 0.75, 1.00, 1.25, 1.50, 2.00 };
+  for(int islice=0; islice<nslices; islice++) {
+    double esmax = slice_max[islice];
+    cout << "Total number of events (< " << setw(8) << setfill(' ') << setprecision(4) << esmax << " GeV): " 
+         << setw(10) << setfill(' ') << setprecision(6) << hErecoTot->Integral(1,hErecoTot->FindBin(esmax)) << endl;
+  }
   for(int im = 0; im < nm; im++) {
      double nmode = hErecoMode[im]->Integral();
      cout << "Contrib from mode: " 
@@ -170,6 +166,10 @@ void test_superk_spectrum_prediction_contributions()
           << setw(15) << setfill(' ') << setprecision(6) << nmode << " events ("
           << setw(10) << setfill(' ') << setprecision(6) << 100*nmode/ntot << " %)" << endl;
   }
+
+  //
+  // save histograms in a ROOT file
+  //
 
   TFile f(Form("sk_ereco_spectrum_components-sinsq2theta23_%.2f-dm23sq_%.5feV2.root",input_sinsq2theta23,input_dm23sq),"recreate");
   hErecoTot                            -> Write("total");
@@ -186,4 +186,27 @@ void test_superk_spectrum_prediction_contributions()
   hErecoMode[conv::kSKmNuECCoth]       -> Write("nue_ccoth");
   hErecoMode[conv::kSKmNuENC]          -> Write("nue_nc");
   f.Close();
+
+/*
+  //
+  // print-out numbers requested during the analysis review
+  //
+
+  if( TMath::Abs(input_sinsq2theta23) < 1E-10 ) {
+    cout << "No oscillation" << endl;
+  } else {
+    cout << "sin^{2}(2*theta23) = " << input_sinsq2theta23 
+         << ", Deltam23^{2} = " << input_dm23sq  << " eV^{2}/c^{4}" << endl;
+  } 
+  cout << fixed;
+  for(int ibin = 1; ibin <= hErecoTot->GetXaxis()->GetNbins(); ibin++) {
+    cout << setw(6) << setfill(' ') << setprecision(3) << hErecoTot->GetXaxis()->GetBinLowEdge(ibin) 
+         << " - " 
+         << setw(6) << setfill(' ') << setprecision(3) << hErecoTot->GetXaxis()->GetBinUpEdge(ibin) 
+         << " GeV : " 
+         << setw(6) << setfill(' ') << setprecision(6) << hErecoTot->GetBinContent(ibin) 
+         << " events" << endl;
+  }//ibin
+*/
+
 }
