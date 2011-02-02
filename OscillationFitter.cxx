@@ -267,41 +267,82 @@ TH1D* OscillationFitter::MarginalizeChisqSurface(Option_t * option)
 
   TH1D * marginalized_chisq = 0;
 
-  //double sinsq2theta23_bestfit = fFitInputs->FitParams().CurrValue( conv::kPhypSinsq2Theta23 );
-  //double dm23sq_bestfit = fFitInputs->FitParams().CurrValue( conv::kPhypDm23sq );
-  //int bin_sinsq_bestfit = fChisqSurface->GetXaxis()->FindBin(sinsq2theta23_bestfit);
-  //int bin_dmsq_bestfit = fChisqSurface->GetYaxis()->FindBin(dm23sq_bestfit);
-  //double chisq_min = fChisqSurface->GetBinContent(bin_sinsq_bestfit,bin_dmsq_bestfit);
+  int    sinsq2theta23_nbins = fChisqSurface->GetXaxis()->GetNbins();
+  double sinsq2theta23_min   = fChisqSurface->GetXaxis()->GetXmin();
+  double sinsq2theta23_max   = fChisqSurface->GetXaxis()->GetXmax();
+  int    dm23sq_nbins        = fChisqSurface->GetYaxis()->GetNbins();
+  double dm23sq_min          = fChisqSurface->GetYaxis()->GetXmin();
+  double dm23sq_max          = fChisqSurface->GetYaxis()->GetXmax();
 
-  if(opt.Contains("marginalize_dm23sq")) {
-     int dm23sq_nbins = fChisqSurface->GetXaxis()->GetNbins();
-     double dm23sq_min = fChisqSurface->GetXaxis()->GetXmin();
-     double dm23sq_max = fChisqSurface->GetXaxis()->GetXmax();
-     marginalized_chisq = new TH1D("","", dm23sq_nbins, dm23sq_min, dm23sq_max);
-     for(int ibin = 1; ibin <= dm23sq_nbins; ibin++) {
-        double chisq = 0;
-	for(int jbin = 1; jbin <= fChisqSurface->GetYaxis()->GetNbins(); jbin++) {
-	    chisq += fChisqSurface->GetBinContent(ibin,jbin);
+  //
+  // pick minimum chisq along marginalised parameter
+  //
+  if(opt.Contains("marginalize_dm23sq")) 
+  {
+     //
+     // integrate out Dm23sq
+     //
+     marginalized_chisq = new TH1D("","", sinsq2theta23_nbins, sinsq2theta23_min, sinsq2theta23_max);
+     for(int ibin = 1; ibin <= sinsq2theta23_nbins; ibin++) {
+        double chisq = 999999999;
+	for(int jbin = 1; jbin <= dm23sq_nbins; jbin++) {
+	    chisq = TMath::Min(chisq, fChisqSurface->GetBinContent(ibin,jbin));
         }//jbin
-        chisq /= fChisqSurface->GetYaxis()->GetNbins();
 	marginalized_chisq->SetBinContent(ibin, chisq);
      }//ibin
   } 
   else
-  if(opt.Contains("marginalize_sinsq2theta23")) {
-     int sinsq2theta23_nbins = fChisqSurface->GetYaxis()->GetNbins();
-     double sinsq2theta23_min = fChisqSurface->GetYaxis()->GetXmin();
-     double sinsq2theta23_max = fChisqSurface->GetYaxis()->GetXmax();
+  if(opt.Contains("marginalize_sinsq2theta23")) 
+  {
+     //
+     // integrate out sinsq2theta23
+     //
+     marginalized_chisq = new TH1D("","", dm23sq_nbins, dm23sq_min, dm23sq_max);
+     for(int jbin = 1; jbin <= dm23sq_nbins; jbin++) {
+        double chisq = 999999999;
+	for(int ibin = 1; ibin <= sinsq2theta23_nbins; ibin++) {
+	    chisq = TMath::Min(chisq, fChisqSurface->GetBinContent(ibin,jbin));
+        }//ibin
+	marginalized_chisq->SetBinContent(jbin, chisq);
+     }//jbin
+  } 
+
+/*
+  //
+  // takes average chisq over the marginalized parameter
+  //
+  if(opt.Contains("marginalize_dm23sq")) 
+  {
+     //
+     // integrate out Dm23sq
+     //
      marginalized_chisq = new TH1D("","", sinsq2theta23_nbins, sinsq2theta23_min, sinsq2theta23_max);
      for(int ibin = 1; ibin <= sinsq2theta23_nbins; ibin++) {
         double chisq = 0;
-	for(int jbin = 1; jbin <= fChisqSurface->GetXaxis()->GetNbins(); jbin++) {
-	    chisq += fChisqSurface->GetBinContent(jbin,ibin);
+	for(int jbin = 1; jbin <= dm23sq_nbins; jbin++) {
+	    chisq += fChisqSurface->GetBinContent(ibin,jbin);
         }//jbin
-        chisq /= fChisqSurface->GetXaxis()->GetNbins();
+        chisq /= dm23sq_nbins;
 	marginalized_chisq->SetBinContent(ibin, chisq);
      }//ibin
   } 
+  else
+  if(opt.Contains("marginalize_sinsq2theta23")) 
+  {
+     //
+     // integrate out sinsq2theta23
+     //
+     marginalized_chisq = new TH1D("","", dm23sq_nbins, dm23sq_min, dm23sq_max);
+     for(int jbin = 1; jbin <= dm23sq_nbins; jbin++) {
+        double chisq = 0;
+	for(int ibin = 1; ibin <= sinsq2theta23_nbins; ibin++) {
+	    chisq += fChisqSurface->GetBinContent(ibin,jbin);
+        }//ibin
+        chisq /= sinsq2theta23_nbins;
+	marginalized_chisq->SetBinContent(jbin, chisq);
+     }//jbin
+  } 
+*/
 
   if(opt.Contains("subtract_chisqmin")) {
     double chisqmin = marginalized_chisq->GetMinimum();
