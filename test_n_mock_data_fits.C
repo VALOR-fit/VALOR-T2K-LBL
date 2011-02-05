@@ -17,12 +17,13 @@
 #include "Conventions.h"
 
 void test_n_mock_data_fits(
+  const char * tag = "toyexptfits",
+  int run=0,
   int nexperiments=1000, 
   double input_sinsq2theta23 = 1.0,
   double input_dm23sq = 2.4E-3,
   const char * fitter_name="minuit", 
-  bool include_systematics=false,
-  int run=0)
+  bool include_systematics=false)
 {
   gSystem->Load("libGpad");  
   gSystem->Load("libPhysics");  
@@ -111,8 +112,8 @@ void test_n_mock_data_fits(
   //
   // store results
   //
-  TFile f(Form("Nfits-sinsq2theta23_%.2f-dm23sq_%.5feV2-run_%d.root",
-          input_sinsq2theta23,input_dm23sq,run), "recreate");
+  TFile f(Form("%s-sinsq2theta23_%.2f-dm23sq_%.5feV2-run_%d.root",
+          tag, input_sinsq2theta23,input_dm23sq,run), "recreate");
   nfitnt->Write("nfitnt");
   f.Close();
 }
