@@ -1,0 +1,121 @@
+#!/usr/bin/perl
+
+#
+#---------------------------------------------------------------------------------------------------- 
+# Submit a batch of test_n_mock_data_fits.C jobs
+#
+# Inputs
+#  --resource               : <RAL, IN2P3, Oxford, Grid, interactive>, default: interactive
+#  --tag                    : default: toyexptfits
+#  --nruns                  :
+#  --nexpts                 :
+#  --cpu-time               : default: "6:00:00" for RAL, "1500000" for IN2P3, "11:50:00" for Oxford
+#  --include-systematics    : 
+#  --dm23sq                 : default: 2.35E-3
+#  --sinsq2theta23          : default: 1
+#  --fitter                 : default: minuit
+#
+# C.Andreopoulos
+#---------------------------------------------------------------------------------------------------- 
+#
+
+$iarg=0;
+foreach (@ARGV) {
+  if($_ eq '--resource'              ) { $resource      = $ARGV[$iarg+1]; }
+  if($_ eq '--tag'                   ) { $tag           = $ARGV[$iarg+1]; }
+  if($_ eq '--nruns'                 ) { $nruns         = $ARGV[$iarg+1]; }
+  if($_ eq '--nexpts'                ) { $nexpts        = $ARGV[$iarg+1]; }
+  if($_ eq '--cpu-time'              ) { $cput          = $ARGV[$iarg+1]; }
+  if($_ eq '--include-systematics'   ) { $systematics   = 1;              }
+  if($_ eq '--dm23sq'                ) { $dm23sq        = $ARGV[$iarg+1]; }
+  if($_ eq '--sinsq2theta23'         ) { $sinsq2theta23 = $ARGV[$iarg+1]; }
+  if($_ eq '--fitter'                ) { $fitter        = $ARGV[$iarg+1]; }
+  $iarg++;
+}
+$dm23sq                 = 0.00235       unless defined $dm23sq; 
+$sinsq2theta23          = 1             unless defined $sinsq2theta23;
+$resource               = "interactive" unless defined $resource;
+$nruns                  = 1             unless defined $nruns;
+$nexpts                 = 1000          unless defined $nexpts;
+$systematics            = 0             unless defined $systematics;
+$fitter                 = "minuit"      unless defined $fitter;
+$tag                    = "toyexptfits" unless defined $tag;
+
+if( !defined $cput) {
+  if($resource eq "RAL"  ) { $cput = "6:00:00"; }
+  if($resource eq "IN2P3") { $cput = 1500000;   }
+  if($resource eq "Oxford") { $cput = "11:50:00"; }
+}
+
+$curr_dir = `pwd`;
+$irun     = 0;
+
+while($irun < $nruns) {
+
+  print "Submitting run: $irun \n";
+
+  $batch_script  = "$tag-$irun.pbs";
+  $command = "root -l -b -q \'test_n_mock_data_fits.C(\"$tag\", $irun, $nexpts, $sinsq2theta23, $dm23sq,\"$fitter\", $systematics)\'";
+
+  print "$command \n";
+
+  #
+  # RAL
+  #
+  if($resource eq "RAL") {
+     open(PBS, ">$batch_script") or die("Can not create the PBS batch script");
+     print PBS "#!/bin/bash \n";
+     print PBS "#PBS -N $tag-$irun \n";
+     print PBS "#PBS -l cput=$cput \n";
+     print PBS "#PBS -o $tag-$irun.pbs.out \n";
+     print PBS "#PBS -e $tag-$irun.pbs.err \n";
+     print PBS "cd $curr_dir \n";
+     print PBS "source setup_at_ral.sh \n";
+     print PBS "$command \n";
+     close(PBS);
+     `qsub -q prod $batch_script`;
+  }
+  #
+  # IN2P3
+  #
+  if($resource eq "IN2P3") {
+     open(PBS, ">$batch_script") or die("Can not create the PBS batch script");
+     print PBS "#!/bin/tcsh \n";
+     print PBS "cd $curr_dir \n";
+     print PBS "source setup_at_in2p3.csh \n";
+     print PBS "$command \n";
+     close(PBS);
+     `chmod +x $batch_script`;
+     `qsub -eo -V -l platform=LINUX,t=$cput,M=2200MB,scratch=500MB,u_sps_babar -o $tag-$irun.pbs.out -N $tag-$irun ./$tag-$irun.pbs`;
+  }
+  #
+  # Oxford
+  #
+  if($resource eq "Oxford") {
+      open(PBS, ">$batch_script") or die("Can not create the PBS batch script");
+      print PBS "#!/bin/bash \n";
+      print PBS "#PBS -N $tag-$irun \n";
+      print PBS "#PBS -l cput=$cput \n";
+      print PBS "#PBS -o $tag-$irun.pbs.out \n";
+      print PBS "#PBS -e $tag-$irun.pbs.err \n";
+      print PBS "cd $curr_dir \n";
+      print PBS "source setup_at_oxford.sh \n";
+      print PBS "$command \n";
+      close(PBS);
+     `qsub $batch_script`;
+  }
+  #
+  # Grid
+  #
+  if($resource eq "Grid") {
+     print "Not supported just yet!\n";
+  }
+  #
+  # interactive
+  #
+  if($resource eq "interactive") {
+     system($command);
+  }
+
+  $irun++;
+}
