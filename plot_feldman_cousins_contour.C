@@ -63,7 +63,7 @@ void plot_feldman_cousins_contour(
   double sinsq2theta23_max   = 1.0;
   double sinsq2theta23_step  = 0.01;
   double dm23sq_min          = 1E-3;
-  double dm23sq_max          = 5E-3;
+  double dm23sq_max          = 6E-3;
   double dm23sq_step         = 1E-4;
 
   //
