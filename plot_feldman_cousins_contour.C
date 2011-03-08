@@ -329,7 +329,8 @@ void plot_feldman_cousins_contour(
     line1->Draw("same");
     line2->Draw("same");
   }
-  ConfidenceContour->SaveAs("ConfidenceContours.png");
+
+//ConfidenceContour->SaveAs("ConfidenceContours.png");
 }
 
 void set_contour_style(TH2D *contour, Int_t color, Int_t width, Int_t style)
