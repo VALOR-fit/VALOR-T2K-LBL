@@ -127,13 +127,12 @@ void test_superk_spectrum_prediction_twk_osc(bool showdata=false)
      }
      if(showdata) {
        SuperkObservation * skobs = new SuperkObservation;
-       skobs->Read("inputs/analysis_configuration.xml");
+       skobs->Read("inputs/data.xml",0);
        TH1D * data = new TH1D(*skobs->ErecoSpectrum(conv::kSKsFCFV1RingMuLike));
        data->SetMarkerStyle(20);
        data->SetMarkerSize(1);
        data->Draw("PERRSAME");
      }
-
   }
   legend->Draw();
   low->cd();
