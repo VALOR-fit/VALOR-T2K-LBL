@@ -127,6 +127,12 @@ static const int    kNEtrueBins  = (int) ((kEtrueMax - kEtrueMin)/kEtrueBinSz);
 //
 
 /*
+// 1 bin from 0 to 10 GeV (counting expt)
+static const int kNvErecoBins = 2;
+static const double kNvErecoBinEdges[kNvErecoBins+1] = { 0., 10. };
+*/
+
+/*
 // 50 MeV bins from 0 to 4 GeV, 1 bin between 4 - 10 GeV
 static const int kNvErecoBins = 81;
 static const double kNvErecoBinEdges[kNvErecoBins+1] = {
