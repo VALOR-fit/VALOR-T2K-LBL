@@ -9,7 +9,11 @@
 
 #include "Conventions.h"
 
-void test_superk_spectrum_prediction_twk_nd280eff()
+void test_superk_spectrum_prediction_twk_nd280eff
+(
+  double input_sinsq2theta23 = 1.0,
+  double input_dm23sq        = 2.4E-3
+)
 {
   gSystem->Load("libGpad");  
   gSystem->Load("libPhysics");  
@@ -26,10 +30,6 @@ void test_superk_spectrum_prediction_twk_nd280eff()
   using namespace std;
   using namespace t2kana;
   using namespace t2kana::numu10a;
-
-  // oscillation params
-  double input_sinsq2theta23 = 1.0;
-  double input_dm23sq        = 2.4E-3;
 
   // n tweaks
   const int n = 3;

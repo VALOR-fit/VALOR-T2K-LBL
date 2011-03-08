@@ -9,7 +9,11 @@
 
 #include "Conventions.h"
 
-void test_superk_spectrum_prediction_twk_skescale()
+void test_superk_spectrum_prediction_twk_skescale
+(
+  double input_sinsq2theta23 = 1.0,
+  double input_dm23sq        = 2.4E-3
+)
 {
   gSystem->Load("libGpad");  
   gSystem->Load("libPhysics");  
@@ -26,10 +30,6 @@ void test_superk_spectrum_prediction_twk_skescale()
   using namespace std;
   using namespace t2kana;
   using namespace t2kana::numu10a;
-
-  // oscillation params
-  double input_sinsq2theta23 = 1.;
-  double input_dm23sq        = 2.4E-3;
 
   const int ntwkdials = 3;
   double twkdial[ntwkdials] = { -1.0, 0.0, +1.0 };

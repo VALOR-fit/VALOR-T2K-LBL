@@ -10,7 +10,11 @@
 
 #include "Conventions.h"
 
-void test_superk_spectrum_prediction_twk_bshape()
+void test_superk_spectrum_prediction_twk_bshape
+(
+  double input_sinsq2theta23 = 1.0,
+  double input_dm23sq        = 2.4E-3
+)
 {
   gSystem->Load("libGpad");  
   gSystem->Load("libPhysics");  
@@ -27,10 +31,6 @@ void test_superk_spectrum_prediction_twk_bshape()
   using namespace std;
   using namespace t2kana;
   using namespace t2kana::numu10a;
-
-  // oscillation params
-  double input_sinsq2theta23 = 1.;
-  double input_dm23sq        = 2.4E-3;
 
   const int nexp       = 1000; // number of 'flux tweaks'
   const int netruebins = 20;   // number of Etrue (variable size) bins in flux covariance matrix
