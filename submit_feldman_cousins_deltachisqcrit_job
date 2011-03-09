@@ -1,7 +1,7 @@
 #!/usr/bin/perl
 
 #----------------------------------------------------------------------------------------
-# Split make_feldman_cousins_deltachisq_surface.C in many jobs for faster results
+# Split make_feldman_cousins_deltachisqcrit_surface.C in many jobs for faster results
 #
 # Arguments
 #
@@ -59,7 +59,7 @@ while($ijob < $njobs) {
 	$curr_job_bin_max++; #odd number of bins, last job has 1 more
   }
   $outputfile    = "$tag$ijob.root";
-  $command = "root -l -b -q \'make_feldman_cousins_deltachisq_surface.C(\"$inputdir\", \"$outputfile\", $curr_job_bin_min, $curr_job_bin_max)\'"; 
+  $command = "root -l -b -q \'make_feldman_cousins_deltachisqcrit_surface.C(\"$inputdir\", \"$outputfile\", $curr_job_bin_min, $curr_job_bin_max)\'"; 
 
   print "Submitting job... $ijob \n";
   print "  $command \n";

@@ -1,6 +1,6 @@
 //
 // --------------------------------------------------------------------------------------------------------
-// Merge the output of make_feldman_cousins_deltachisq_surface.C
+// Merge the output of make_feldman_cousins_deltachisqcrit_surface.C
 // in case the task was parallelized to many jobs submitted to a batch farm for faster results.
 // Each such job would have computed \Delta\chi^{2} for part of the oscillation parameter space.
 //
@@ -13,7 +13,10 @@
 // --------------------------------------------------------------------------------------------------------
 //
 
-void merge_feldman_cousins_deltachisq_surfaces(const int nruns, const char * inpname, const char * outputfile)
+void merge_feldman_cousins_deltachisqcrit_surfaces(
+  const int nruns, 
+  const char * inpname, 
+  const char * outputfile)
 {
   const int nConfidenceLevel = 4;
   int confidenceLevel [nConfidenceLevel] = {68, 90, 95, 99 };
