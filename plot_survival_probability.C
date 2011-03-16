@@ -20,11 +20,10 @@ void plot_survival_probability()
   gSystem->Load("libXMLIO");
   gSystem->Load("libMinuit");   
 
-  gSystem->Load("libT2KDisapp2010a");
+  gSystem->Load("libT2KNuOsc");
 
   using namespace std;
   using namespace t2kana;
-  using namespace t2kana::numu10a;
 
   const int n = 1000;
   double emin = 0.05;

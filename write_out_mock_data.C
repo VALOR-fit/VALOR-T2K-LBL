@@ -27,11 +27,10 @@ void write_out_mock_data(
   gSystem->Load("libXMLIO");
   gSystem->Load("libMinuit");   
 
-  gSystem->Load("libT2KDisapp2010a");
+  gSystem->Load("libT2KNuOsc");
 
   using namespace std;
   using namespace t2kana;
-  using namespace t2kana::numu10a;
 
   TRandom rand(0);
 
@@ -55,8 +54,8 @@ void write_out_mock_data(
 
   // Oscillation params
   PhysParamList * fparm = PhysParamList::NumuDisapFitNoSyst();
-  fparm->Update(t2kana::numu10a::conv::kPhypSinsq2Theta23, sinsq2theta23);
-  fparm->Update(t2kana::numu10a::conv::kPhypDm23sq,        dm23sq);
+  fparm->Update(t2kana::conv::kPhypSinsq2Theta23, sinsq2theta23);
+  fparm->Update(t2kana::conv::kPhypDm23sq,        dm23sq);
 
   // Get superk spectrum PDF & configure
   SuperkExpectation * skexp = new SuperkExpectation;

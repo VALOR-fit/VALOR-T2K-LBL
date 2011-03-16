@@ -1,9 +1,9 @@
 //____________________________________________________________________________
 /*!
 
-\class    t2kana::numu10a::DecayFitter
+\class    t2kana::DecayFitter
 
-\brief    MINUIT-based numu decay param fitter
+\brief    Muon neutrino decay fitter
 
 \author   STFC, Rutherford Appleton Laboratory / Oxford T2K groups
 
@@ -18,8 +18,8 @@
 */
 //____________________________________________________________________________
 
-#ifndef _t2kana_year1_numu_analysis_decay_fitter_minuit_h_
-#define _t2kana_year1_numu_analysis_decay_fitter_minuit_h_
+#ifndef _t2kana_numu_decay_fitter_h_
+#define _t2kana_numu_decay_fitter_h_
 
 #include <TMinuit.h>
 #include <TString.h>
@@ -32,7 +32,6 @@ class TH2D;
 #include "PhysParamList.h"
 
 namespace t2kana {
-namespace numu10a {
 
 class SuperkObservation;
 class SuperkExpectation;
@@ -108,7 +107,6 @@ private:
 void FitFunc2 (
        Int_t &, Double_t *, Double_t &f, Double_t *par, Int_t iflag);
 
-} // numu10a
 } // t2kana
 
 #endif

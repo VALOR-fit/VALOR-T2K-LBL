@@ -22,11 +22,10 @@ void test_nd280_nevents_twk_eff()
   gSystem->Load("libXMLIO");
   gSystem->Load("libMinuit");   
 
-  gSystem->Load("libT2KDisapp2010a");
+  gSystem->Load("libT2KNuOsc");
 
   using namespace std;
   using namespace t2kana;
-  using namespace t2kana::numu10a;
 
   const int ntwkdials = 5;
   double twkdial[ntwkdials] = { -1.0, -0.5, 0.0, +0.5, +1.0 };
@@ -44,11 +43,11 @@ void test_nd280_nevents_twk_eff()
 
   for(int idial = 0; idial < ntwkdials; idial++) {
 
-     skexp.GetND280Inputs()->TweakEfficiency(twkdial[idial]);
+     skexp.GetND280Measurement()->TweakEfficiency(twkdial[idial]);
 
-     double nobscclike_nd280  = skexp.GetND280Inputs()->NObsCCLike();
-     double nexpncbkg_nd280   = skexp.GetND280Inputs()->NExpNCBkg();
-     double nexpcc_nd280      = skexp.GetND280Inputs()->NExpCC();
+     double nobscclike_nd280  = skexp.GetND280Measurement()->NObsCCLike();
+     double nexpncbkg_nd280   = skexp.GetND280Measurement()->NExpNCBkg();
+     double nexpcc_nd280      = skexp.GetND280Measurement()->NExpCC();
 
      flux_correction_factor[idial] = nobscclike_nd280 / (nexpncbkg_nd280 + nexpcc_nd280);
 

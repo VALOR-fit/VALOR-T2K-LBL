@@ -31,8 +31,7 @@ using std::cerr;
 using std::endl;
 
 using namespace t2kana;
-using namespace t2kana::numu10a;
-using namespace t2kana::numu10a::conv;
+using namespace t2kana::conv;
 
 ClassImp(SuperkObservation)
 
@@ -139,7 +138,7 @@ TH1D* SuperkObservation::ErecoSpectrum (void) const
   return fErDistrTot;
 }
 //________________________________________________________________________________________
-TH1D* SuperkObservation::ErecoSpectrum (t2kana::numu10a::conv::SuperkSample_t s) const
+TH1D* SuperkObservation::ErecoSpectrum (t2kana::conv::SuperkSample_t s) const
 {
   return fErDistr[s];
 }

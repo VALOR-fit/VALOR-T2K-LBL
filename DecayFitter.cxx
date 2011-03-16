@@ -1,5 +1,9 @@
 //____________________________________________________________________________ 
 /*
+ Changes since v1.0.0:
+
+ @ 16/03/2011 - CA
+   Removed the numu10a namespace.
 
 */ 
 //____________________________________________________________________________
@@ -38,8 +42,7 @@ using std::endl;
 using std::ostringstream;
 
 using namespace t2kana; 
-using namespace t2kana::numu10a;
-using namespace t2kana::numu10a::conv;
+using namespace t2kana::conv;
    
 //____________________________________________________________________________ 
 DecayFitter::DecayFitter() 
@@ -665,12 +668,11 @@ double DecayFitter::FitInputs::Chisquare(Option_t * option)
 //____________________________________________________________________________ 
 // MINUIT fit functions 
 // 
-void  t2kana::numu10a::FitFunc2 (
+void  t2kana::FitFunc2 (
   Int_t &, Double_t *, Double_t &f, Double_t *par, Int_t /*iflag*/) {
   DecayFitter::FitInputs * inputs =
       (DecayFitter::FitInputs *) gMinuit->GetObjectFit();
 
-//SuperkObservation & skobs = inputs->Observation(); // data //SuperkExpectation & skexp = inputs->Expectation(); // model
   PhysParamList & fpar = inputs->FitParams(); // params
 
   // synchronize PhysParamList with the paramerer array used by MINUIT

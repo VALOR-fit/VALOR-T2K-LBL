@@ -41,11 +41,10 @@ void feldman_cousins_fitting_job
   gSystem->Load("libXMLIO");
   gSystem->Load("libMinuit");   
 
-  gSystem->Load("libT2KDisapp2010a");
+  gSystem->Load("libT2KNuOsc");
 
   using namespace std;
   using namespace t2kana;
-  using namespace t2kana::numu10a;
 
   //
   // The oscillation contour will be constructed using a (dm23sq, sinsq2theta23) 
@@ -130,8 +129,8 @@ void feldman_cousins_fitting_job
      //
      // reset osc. params to desired input values (they now contain the best-(previous)fit values)
      //
-     fparm->Update(t2kana::numu10a::conv::kPhypSinsq2Theta23, input_sinsq2theta23);
-     fparm->Update(t2kana::numu10a::conv::kPhypDm23sq,        input_dm23sq);
+     fparm->Update(t2kana::conv::kPhypSinsq2Theta23, input_sinsq2theta23);
+     fparm->Update(t2kana::conv::kPhypDm23sq,        input_dm23sq);
 
      //
      // get superk spectrum observation (toy experiment)

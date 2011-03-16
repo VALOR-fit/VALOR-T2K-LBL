@@ -37,11 +37,10 @@ void test_systematic_errors(string systematic)
   gSystem->Load("libXMLIO");
   gSystem->Load("libMinuit");   
 
-  gSystem->Load("libT2KDisapp2010a");
+  gSystem->Load("libT2KNuOsc");
 
   using namespace std;
   using namespace t2kana;
-  using namespace t2kana::numu10a;
 
   bool use_tex = false; ///<-- print-out results as a TeX table (for inclusion in tech. note)
 
@@ -52,14 +51,14 @@ void test_systematic_errors(string systematic)
 
   // fit params
   PhysParamList * fparm = PhysParamList::NumuDisapFitNoSyst();
-  fparm->Update(t2kana::numu10a::conv::kPhypSinsq2Theta23, input_sinsq2theta23);
-  fparm->Update(t2kana::numu10a::conv::kPhypDm23sq,        input_dm23sq);
+  fparm->Update(t2kana::conv::kPhypSinsq2Theta23, input_sinsq2theta23);
+  fparm->Update(t2kana::conv::kPhypDm23sq,        input_dm23sq);
 
   // get superk spectrum predictor & configure
   SuperkExpectation * skexp = new SuperkExpectation;
   skexp->Read("inputs/analysis_configuration.xml");
 
-  double alpha = skexp->GetGeneratorInputs()->OnePionInRES();
+  double alpha = skexp->GetNuXSec()->OnePionInRES();
   cout << "alpha = " << alpha << endl;
 
   //
@@ -70,59 +69,59 @@ void test_systematic_errors(string systematic)
 
   double nsk_0                 = skexp->CurrPredictedErecoSpectrum(conv::kSKsFCFV1RingMuLike)->Integral();
 
-  double nsknumuccqe_0         = skexp->GetSuperkInputs()->CurrErecoSpectrum(conv::kSKsFCFV1RingMuLike, conv::kSKmNuMuCCQE      )->Integral();
-  double nsknumucc1pi_0        = skexp->GetSuperkInputs()->CurrErecoSpectrum(conv::kSKsFCFV1RingMuLike, conv::kSKmNuMuCC1pi     )->Integral();
-  double nsknumuccoth_0        = skexp->GetSuperkInputs()->CurrErecoSpectrum(conv::kSKsFCFV1RingMuLike, conv::kSKmNuMuCCoth     )->Integral();
+  double nsknumuccqe_0         = skexp->GetSuperkMC()->CurrErecoSpectrum(conv::kSKsFCFV1RingMuLike, conv::kSKmNuMuCCQE      )->Integral();
+  double nsknumucc1pi_0        = skexp->GetSuperkMC()->CurrErecoSpectrum(conv::kSKsFCFV1RingMuLike, conv::kSKmNuMuCC1pi     )->Integral();
+  double nsknumuccoth_0        = skexp->GetSuperkMC()->CurrErecoSpectrum(conv::kSKsFCFV1RingMuLike, conv::kSKmNuMuCCoth     )->Integral();
   double nsknumucc_0           = nsknumuccqe_0 + nsknumucc1pi_0 + nsknumuccoth_0;
-  double nsknumunc_0           = skexp->GetSuperkInputs()->CurrErecoSpectrum(conv::kSKsFCFV1RingMuLike, conv::kSKmNC            )->Integral();
-  double nsknumubarccqe_0      = skexp->GetSuperkInputs()->CurrErecoSpectrum(conv::kSKsFCFV1RingMuLike, conv::kSKmNuMuBarCCQE   )->Integral();
-  double nsknumubarcc1pi_0     = skexp->GetSuperkInputs()->CurrErecoSpectrum(conv::kSKsFCFV1RingMuLike, conv::kSKmNuMuBarCC1pi  )->Integral();
-  double nsknumubarccoth_0     = skexp->GetSuperkInputs()->CurrErecoSpectrum(conv::kSKsFCFV1RingMuLike, conv::kSKmNuMuBarCCoth  )->Integral();
+  double nsknumunc_0           = skexp->GetSuperkMC()->CurrErecoSpectrum(conv::kSKsFCFV1RingMuLike, conv::kSKmNC            )->Integral();
+  double nsknumubarccqe_0      = skexp->GetSuperkMC()->CurrErecoSpectrum(conv::kSKsFCFV1RingMuLike, conv::kSKmNuMuBarCCQE   )->Integral();
+  double nsknumubarcc1pi_0     = skexp->GetSuperkMC()->CurrErecoSpectrum(conv::kSKsFCFV1RingMuLike, conv::kSKmNuMuBarCC1pi  )->Integral();
+  double nsknumubarccoth_0     = skexp->GetSuperkMC()->CurrErecoSpectrum(conv::kSKsFCFV1RingMuLike, conv::kSKmNuMuBarCCoth  )->Integral();
   double nsknumubarcc_0        = nsknumubarccqe_0 + nsknumubarcc1pi_0 + nsknumubarccoth_0;
-  double nsknumubarnc_0        = skexp->GetSuperkInputs()->CurrErecoSpectrum(conv::kSKsFCFV1RingMuLike, conv::kSKmNuMuBarNC     )->Integral();
-  double nsknueccqe_0          = skexp->GetSuperkInputs()->CurrErecoSpectrum(conv::kSKsFCFV1RingMuLike, conv::kSKmNuECCQE       )->Integral();
-  double nsknuecc1pi_0         = skexp->GetSuperkInputs()->CurrErecoSpectrum(conv::kSKsFCFV1RingMuLike, conv::kSKmNuECC1pi      )->Integral();
-  double nsknueccoth_0         = skexp->GetSuperkInputs()->CurrErecoSpectrum(conv::kSKsFCFV1RingMuLike, conv::kSKmNuECCoth      )->Integral();
+  double nsknumubarnc_0        = skexp->GetSuperkMC()->CurrErecoSpectrum(conv::kSKsFCFV1RingMuLike, conv::kSKmNuMuBarNC     )->Integral();
+  double nsknueccqe_0          = skexp->GetSuperkMC()->CurrErecoSpectrum(conv::kSKsFCFV1RingMuLike, conv::kSKmNuECCQE       )->Integral();
+  double nsknuecc1pi_0         = skexp->GetSuperkMC()->CurrErecoSpectrum(conv::kSKsFCFV1RingMuLike, conv::kSKmNuECC1pi      )->Integral();
+  double nsknueccoth_0         = skexp->GetSuperkMC()->CurrErecoSpectrum(conv::kSKsFCFV1RingMuLike, conv::kSKmNuECCoth      )->Integral();
   double nsknuecc_0            = nsknueccqe_0 + nsknuecc1pi_0 + nsknueccoth_0;
-  double nsknuenc_0            = skexp->GetSuperkInputs()->CurrErecoSpectrum(conv::kSKsFCFV1RingMuLike, conv::kSKmNuENC         )->Integral();
+  double nsknuenc_0            = skexp->GetSuperkMC()->CurrErecoSpectrum(conv::kSKsFCFV1RingMuLike, conv::kSKmNuENC         )->Integral();
   double nskall_0              = nsknumucc_0 + nsknumunc_0 + nsknumubarcc_0 + nsknumubarnc_0 + nsknuecc_0 + nsknuenc_0;
 
-  double nd280obs_0            = skexp->GetND280Inputs()->NObsCCLike();
-  double nd280cc_0             = skexp->GetND280Inputs()->NExpCC();
-  double nd280ncbkg_0          = skexp->GetND280Inputs()->NExpNCBkg();
+  double nd280obs_0            = skexp->GetND280Measurement()->NObsCCLike();
+  double nd280cc_0             = skexp->GetND280Measurement()->NExpCC();
+  double nd280ncbkg_0          = skexp->GetND280Measurement()->NExpNCBkg();
   double nd280mccclike_0       = nd280cc_0 + nd280ncbkg_0;
-  double nd280corr_0           = skexp->GetND280Inputs()->CorrectionFactor();
+  double nd280corr_0           = skexp->GetND280Measurement()->CorrectionFactor();
 
-  double nd280numuccqe_0       =             skexp->GetND280Inputs()->NumOfEvents(conv::kNDmNuMuCCQE);
-  double nd280numucc1pi_0      =     alpha * skexp->GetND280Inputs()->NumOfEvents(conv::kNDmNuMuCCRES);
-  double nd280numuccoth_0      =  (1-alpha)* skexp->GetND280Inputs()->NumOfEvents(conv::kNDmNuMuCCRES) +   
-                                             skexp->GetND280Inputs()->NumOfEvents(conv::kNDmNuMuCCCOH) +
-                                             skexp->GetND280Inputs()->NumOfEvents(conv::kNDmNuMuCCOth);
-  double nd280numunc_0         =             skexp->GetND280Inputs()->NumOfEvents(conv::kNDmNuMuNCRES) +
-                                             skexp->GetND280Inputs()->NumOfEvents(conv::kNDmNuMuNCCOH) +
-                                             skexp->GetND280Inputs()->NumOfEvents(conv::kNDmNuMuNCOth);
+  double nd280numuccqe_0       =             skexp->GetND280Measurement()->NumOfEvents(conv::kNDmNuMuCCQE);
+  double nd280numucc1pi_0      =     alpha * skexp->GetND280Measurement()->NumOfEvents(conv::kNDmNuMuCCRES);
+  double nd280numuccoth_0      =  (1-alpha)* skexp->GetND280Measurement()->NumOfEvents(conv::kNDmNuMuCCRES) +   
+                                             skexp->GetND280Measurement()->NumOfEvents(conv::kNDmNuMuCCCOH) +
+                                             skexp->GetND280Measurement()->NumOfEvents(conv::kNDmNuMuCCOth);
+  double nd280numunc_0         =             skexp->GetND280Measurement()->NumOfEvents(conv::kNDmNuMuNCRES) +
+                                             skexp->GetND280Measurement()->NumOfEvents(conv::kNDmNuMuNCCOH) +
+                                             skexp->GetND280Measurement()->NumOfEvents(conv::kNDmNuMuNCOth);
   double nd280numucc_0         = nd280numuccqe_0 + nd280numucc1pi_0 + nd280numuccoth_0; 
   double nd280numu_0           = nd280numucc_0 + nd280numunc_0;
 
-  double nd280numubarccqe_0    =             skexp->GetND280Inputs()->NumOfEvents(conv::kNDmNuMuBarCCQE);
-  double nd280numubarcc1pi_0   =     alpha * skexp->GetND280Inputs()->NumOfEvents(conv::kNDmNuMuBarCCRES);
-  double nd280numubarccoth_0   =  (1-alpha)* skexp->GetND280Inputs()->NumOfEvents(conv::kNDmNuMuBarCCRES) +
-                                             skexp->GetND280Inputs()->NumOfEvents(conv::kNDmNuMuBarCCCOH) +
-                                             skexp->GetND280Inputs()->NumOfEvents(conv::kNDmNuMuBarCCOth);
-  double nd280numubarnc_0      =             skexp->GetND280Inputs()->NumOfEvents(conv::kNDmNuMuBarNCRES) +
-                                             skexp->GetND280Inputs()->NumOfEvents(conv::kNDmNuMuBarNCCOH) +
-                                             skexp->GetND280Inputs()->NumOfEvents(conv::kNDmNuMuBarNCOth);
+  double nd280numubarccqe_0    =             skexp->GetND280Measurement()->NumOfEvents(conv::kNDmNuMuBarCCQE);
+  double nd280numubarcc1pi_0   =     alpha * skexp->GetND280Measurement()->NumOfEvents(conv::kNDmNuMuBarCCRES);
+  double nd280numubarccoth_0   =  (1-alpha)* skexp->GetND280Measurement()->NumOfEvents(conv::kNDmNuMuBarCCRES) +
+                                             skexp->GetND280Measurement()->NumOfEvents(conv::kNDmNuMuBarCCCOH) +
+                                             skexp->GetND280Measurement()->NumOfEvents(conv::kNDmNuMuBarCCOth);
+  double nd280numubarnc_0      =             skexp->GetND280Measurement()->NumOfEvents(conv::kNDmNuMuBarNCRES) +
+                                             skexp->GetND280Measurement()->NumOfEvents(conv::kNDmNuMuBarNCCOH) +
+                                             skexp->GetND280Measurement()->NumOfEvents(conv::kNDmNuMuBarNCOth);
   double nd280numubarcc_0      = nd280numubarccqe_0 + nd280numubarcc1pi_0 + nd280numubarccoth_0;
   double nd280numubar_0        = nd280numubarcc_0 + nd280numubarnc_0;
 
-  double nd280nueccqe_0        =            skexp->GetND280Inputs()->NumOfEvents(conv::kNDmNuECCQE);
-  double nd280nuecc1pi_0       =    alpha * skexp->GetND280Inputs()->NumOfEvents(conv::kNDmNuECCRES);
-  double nd280nueccoth_0       = (1-alpha)* skexp->GetND280Inputs()->NumOfEvents(conv::kNDmNuECCRES)  +
-                                            skexp->GetND280Inputs()->NumOfEvents(conv::kNDmNuECCCOH)  +
-                                            skexp->GetND280Inputs()->NumOfEvents(conv::kNDmNuECCOth);
-  double nd280nuenc_0          =            skexp->GetND280Inputs()->NumOfEvents(conv::kNDmNuENCRES)  +
-                                            skexp->GetND280Inputs()->NumOfEvents(conv::kNDmNuENCCOH)  +
-                                            skexp->GetND280Inputs()->NumOfEvents(conv::kNDmNuENCOth);
+  double nd280nueccqe_0        =            skexp->GetND280Measurement()->NumOfEvents(conv::kNDmNuECCQE);
+  double nd280nuecc1pi_0       =    alpha * skexp->GetND280Measurement()->NumOfEvents(conv::kNDmNuECCRES);
+  double nd280nueccoth_0       = (1-alpha)* skexp->GetND280Measurement()->NumOfEvents(conv::kNDmNuECCRES)  +
+                                            skexp->GetND280Measurement()->NumOfEvents(conv::kNDmNuECCCOH)  +
+                                            skexp->GetND280Measurement()->NumOfEvents(conv::kNDmNuECCOth);
+  double nd280nuenc_0          =            skexp->GetND280Measurement()->NumOfEvents(conv::kNDmNuENCRES)  +
+                                            skexp->GetND280Measurement()->NumOfEvents(conv::kNDmNuENCCOH)  +
+                                            skexp->GetND280Measurement()->NumOfEvents(conv::kNDmNuENCOth);
   double nd280nuecc_0          = nd280nueccqe_0 + nd280nuecc1pi_0 + nd280nueccoth_0;
   double nd280nue_0            = nd280nuecc_0 + nd280nuenc_0;
 
@@ -138,59 +137,59 @@ void test_systematic_errors(string systematic)
 
   double nsk_p                 = skexp->CurrPredictedErecoSpectrum(conv::kSKsFCFV1RingMuLike)->Integral();
 
-  double nsknumuccqe_p         = skexp->GetSuperkInputs()->CurrErecoSpectrum(conv::kSKsFCFV1RingMuLike, conv::kSKmNuMuCCQE      )->Integral();
-  double nsknumucc1pi_p        = skexp->GetSuperkInputs()->CurrErecoSpectrum(conv::kSKsFCFV1RingMuLike, conv::kSKmNuMuCC1pi     )->Integral();
-  double nsknumuccoth_p        = skexp->GetSuperkInputs()->CurrErecoSpectrum(conv::kSKsFCFV1RingMuLike, conv::kSKmNuMuCCoth     )->Integral();
+  double nsknumuccqe_p         = skexp->GetSuperkMC()->CurrErecoSpectrum(conv::kSKsFCFV1RingMuLike, conv::kSKmNuMuCCQE      )->Integral();
+  double nsknumucc1pi_p        = skexp->GetSuperkMC()->CurrErecoSpectrum(conv::kSKsFCFV1RingMuLike, conv::kSKmNuMuCC1pi     )->Integral();
+  double nsknumuccoth_p        = skexp->GetSuperkMC()->CurrErecoSpectrum(conv::kSKsFCFV1RingMuLike, conv::kSKmNuMuCCoth     )->Integral();
   double nsknumucc_p           = nsknumuccqe_p + nsknumucc1pi_p + nsknumuccoth_p;
-  double nsknumunc_p           = skexp->GetSuperkInputs()->CurrErecoSpectrum(conv::kSKsFCFV1RingMuLike, conv::kSKmNC            )->Integral();
-  double nsknumubarccqe_p      = skexp->GetSuperkInputs()->CurrErecoSpectrum(conv::kSKsFCFV1RingMuLike, conv::kSKmNuMuBarCCQE   )->Integral();
-  double nsknumubarcc1pi_p     = skexp->GetSuperkInputs()->CurrErecoSpectrum(conv::kSKsFCFV1RingMuLike, conv::kSKmNuMuBarCC1pi  )->Integral();
-  double nsknumubarccoth_p     = skexp->GetSuperkInputs()->CurrErecoSpectrum(conv::kSKsFCFV1RingMuLike, conv::kSKmNuMuBarCCoth  )->Integral();
+  double nsknumunc_p           = skexp->GetSuperkMC()->CurrErecoSpectrum(conv::kSKsFCFV1RingMuLike, conv::kSKmNC            )->Integral();
+  double nsknumubarccqe_p      = skexp->GetSuperkMC()->CurrErecoSpectrum(conv::kSKsFCFV1RingMuLike, conv::kSKmNuMuBarCCQE   )->Integral();
+  double nsknumubarcc1pi_p     = skexp->GetSuperkMC()->CurrErecoSpectrum(conv::kSKsFCFV1RingMuLike, conv::kSKmNuMuBarCC1pi  )->Integral();
+  double nsknumubarccoth_p     = skexp->GetSuperkMC()->CurrErecoSpectrum(conv::kSKsFCFV1RingMuLike, conv::kSKmNuMuBarCCoth  )->Integral();
   double nsknumubarcc_p        = nsknumubarccqe_p + nsknumubarcc1pi_p + nsknumubarccoth_p;
-  double nsknumubarnc_p        = skexp->GetSuperkInputs()->CurrErecoSpectrum(conv::kSKsFCFV1RingMuLike, conv::kSKmNuMuBarNC     )->Integral();
-  double nsknueccqe_p          = skexp->GetSuperkInputs()->CurrErecoSpectrum(conv::kSKsFCFV1RingMuLike, conv::kSKmNuECCQE       )->Integral();
-  double nsknuecc1pi_p         = skexp->GetSuperkInputs()->CurrErecoSpectrum(conv::kSKsFCFV1RingMuLike, conv::kSKmNuECC1pi      )->Integral();
-  double nsknueccoth_p         = skexp->GetSuperkInputs()->CurrErecoSpectrum(conv::kSKsFCFV1RingMuLike, conv::kSKmNuECCoth      )->Integral();
+  double nsknumubarnc_p        = skexp->GetSuperkMC()->CurrErecoSpectrum(conv::kSKsFCFV1RingMuLike, conv::kSKmNuMuBarNC     )->Integral();
+  double nsknueccqe_p          = skexp->GetSuperkMC()->CurrErecoSpectrum(conv::kSKsFCFV1RingMuLike, conv::kSKmNuECCQE       )->Integral();
+  double nsknuecc1pi_p         = skexp->GetSuperkMC()->CurrErecoSpectrum(conv::kSKsFCFV1RingMuLike, conv::kSKmNuECC1pi      )->Integral();
+  double nsknueccoth_p         = skexp->GetSuperkMC()->CurrErecoSpectrum(conv::kSKsFCFV1RingMuLike, conv::kSKmNuECCoth      )->Integral();
   double nsknuecc_p            = nsknueccqe_p + nsknuecc1pi_p + nsknueccoth_p;
-  double nsknuenc_p            = skexp->GetSuperkInputs()->CurrErecoSpectrum(conv::kSKsFCFV1RingMuLike, conv::kSKmNuENC         )->Integral();
+  double nsknuenc_p            = skexp->GetSuperkMC()->CurrErecoSpectrum(conv::kSKsFCFV1RingMuLike, conv::kSKmNuENC         )->Integral();
   double nskall_p              = nsknumucc_p + nsknumunc_p + nsknumubarcc_p + nsknumubarnc_p + nsknuecc_p + nsknuenc_p;
 
-  double nd280obs_p            = skexp->GetND280Inputs()->NObsCCLike();
-  double nd280cc_p             = skexp->GetND280Inputs()->NExpCC();
-  double nd280ncbkg_p          = skexp->GetND280Inputs()->NExpNCBkg();
+  double nd280obs_p            = skexp->GetND280Measurement()->NObsCCLike();
+  double nd280cc_p             = skexp->GetND280Measurement()->NExpCC();
+  double nd280ncbkg_p          = skexp->GetND280Measurement()->NExpNCBkg();
   double nd280mccclike_p       = nd280cc_p + nd280ncbkg_p;
-  double nd280corr_p           = skexp->GetND280Inputs()->CorrectionFactor();
+  double nd280corr_p           = skexp->GetND280Measurement()->CorrectionFactor();
 
-  double nd280numuccqe_p       =             skexp->GetND280Inputs()->NumOfEvents(conv::kNDmNuMuCCQE);
-  double nd280numucc1pi_p      =     alpha * skexp->GetND280Inputs()->NumOfEvents(conv::kNDmNuMuCCRES);
-  double nd280numuccoth_p      =  (1-alpha)* skexp->GetND280Inputs()->NumOfEvents(conv::kNDmNuMuCCRES) +   
-                                             skexp->GetND280Inputs()->NumOfEvents(conv::kNDmNuMuCCCOH) +
-                                             skexp->GetND280Inputs()->NumOfEvents(conv::kNDmNuMuCCOth);
-  double nd280numunc_p         =             skexp->GetND280Inputs()->NumOfEvents(conv::kNDmNuMuNCRES) +
-                                             skexp->GetND280Inputs()->NumOfEvents(conv::kNDmNuMuNCCOH) +
-                                             skexp->GetND280Inputs()->NumOfEvents(conv::kNDmNuMuNCOth);
+  double nd280numuccqe_p       =             skexp->GetND280Measurement()->NumOfEvents(conv::kNDmNuMuCCQE);
+  double nd280numucc1pi_p      =     alpha * skexp->GetND280Measurement()->NumOfEvents(conv::kNDmNuMuCCRES);
+  double nd280numuccoth_p      =  (1-alpha)* skexp->GetND280Measurement()->NumOfEvents(conv::kNDmNuMuCCRES) +   
+                                             skexp->GetND280Measurement()->NumOfEvents(conv::kNDmNuMuCCCOH) +
+                                             skexp->GetND280Measurement()->NumOfEvents(conv::kNDmNuMuCCOth);
+  double nd280numunc_p         =             skexp->GetND280Measurement()->NumOfEvents(conv::kNDmNuMuNCRES) +
+                                             skexp->GetND280Measurement()->NumOfEvents(conv::kNDmNuMuNCCOH) +
+                                             skexp->GetND280Measurement()->NumOfEvents(conv::kNDmNuMuNCOth);
   double nd280numucc_p         = nd280numuccqe_p + nd280numucc1pi_p + nd280numuccoth_p; 
   double nd280numu_p           = nd280numucc_p + nd280numunc_p;
 
-  double nd280numubarccqe_p    =             skexp->GetND280Inputs()->NumOfEvents(conv::kNDmNuMuBarCCQE);
-  double nd280numubarcc1pi_p   =     alpha * skexp->GetND280Inputs()->NumOfEvents(conv::kNDmNuMuBarCCRES);
-  double nd280numubarccoth_p   =  (1-alpha)* skexp->GetND280Inputs()->NumOfEvents(conv::kNDmNuMuBarCCRES) +
-                                             skexp->GetND280Inputs()->NumOfEvents(conv::kNDmNuMuBarCCCOH) +
-                                             skexp->GetND280Inputs()->NumOfEvents(conv::kNDmNuMuBarCCOth);
-  double nd280numubarnc_p      =             skexp->GetND280Inputs()->NumOfEvents(conv::kNDmNuMuBarNCRES) +
-                                             skexp->GetND280Inputs()->NumOfEvents(conv::kNDmNuMuBarNCCOH) +
-                                             skexp->GetND280Inputs()->NumOfEvents(conv::kNDmNuMuBarNCOth);
+  double nd280numubarccqe_p    =             skexp->GetND280Measurement()->NumOfEvents(conv::kNDmNuMuBarCCQE);
+  double nd280numubarcc1pi_p   =     alpha * skexp->GetND280Measurement()->NumOfEvents(conv::kNDmNuMuBarCCRES);
+  double nd280numubarccoth_p   =  (1-alpha)* skexp->GetND280Measurement()->NumOfEvents(conv::kNDmNuMuBarCCRES) +
+                                             skexp->GetND280Measurement()->NumOfEvents(conv::kNDmNuMuBarCCCOH) +
+                                             skexp->GetND280Measurement()->NumOfEvents(conv::kNDmNuMuBarCCOth);
+  double nd280numubarnc_p      =             skexp->GetND280Measurement()->NumOfEvents(conv::kNDmNuMuBarNCRES) +
+                                             skexp->GetND280Measurement()->NumOfEvents(conv::kNDmNuMuBarNCCOH) +
+                                             skexp->GetND280Measurement()->NumOfEvents(conv::kNDmNuMuBarNCOth);
   double nd280numubarcc_p      = nd280numubarccqe_p + nd280numubarcc1pi_p + nd280numubarccoth_p;
   double nd280numubar_p        = nd280numubarcc_p + nd280numubarnc_p;
 
-  double nd280nueccqe_p        =            skexp->GetND280Inputs()->NumOfEvents(conv::kNDmNuECCQE);
-  double nd280nuecc1pi_p       =    alpha * skexp->GetND280Inputs()->NumOfEvents(conv::kNDmNuECCRES);
-  double nd280nueccoth_p       = (1-alpha)* skexp->GetND280Inputs()->NumOfEvents(conv::kNDmNuECCRES)  +
-                                            skexp->GetND280Inputs()->NumOfEvents(conv::kNDmNuECCCOH)  +
-                                            skexp->GetND280Inputs()->NumOfEvents(conv::kNDmNuECCOth);
-  double nd280nuenc_p          =            skexp->GetND280Inputs()->NumOfEvents(conv::kNDmNuENCRES)  +
-                                            skexp->GetND280Inputs()->NumOfEvents(conv::kNDmNuENCCOH)  +
-                                            skexp->GetND280Inputs()->NumOfEvents(conv::kNDmNuENCOth);
+  double nd280nueccqe_p        =            skexp->GetND280Measurement()->NumOfEvents(conv::kNDmNuECCQE);
+  double nd280nuecc1pi_p       =    alpha * skexp->GetND280Measurement()->NumOfEvents(conv::kNDmNuECCRES);
+  double nd280nueccoth_p       = (1-alpha)* skexp->GetND280Measurement()->NumOfEvents(conv::kNDmNuECCRES)  +
+                                            skexp->GetND280Measurement()->NumOfEvents(conv::kNDmNuECCCOH)  +
+                                            skexp->GetND280Measurement()->NumOfEvents(conv::kNDmNuECCOth);
+  double nd280nuenc_p          =            skexp->GetND280Measurement()->NumOfEvents(conv::kNDmNuENCRES)  +
+                                            skexp->GetND280Measurement()->NumOfEvents(conv::kNDmNuENCCOH)  +
+                                            skexp->GetND280Measurement()->NumOfEvents(conv::kNDmNuENCOth);
   double nd280nuecc_p          = nd280nueccqe_p + nd280nuecc1pi_p + nd280nueccoth_p;
   double nd280nue_p            = nd280nuecc_p + nd280nuenc_p;
 
@@ -204,59 +203,59 @@ void test_systematic_errors(string systematic)
 
   double nsk_m                 = skexp->CurrPredictedErecoSpectrum(conv::kSKsFCFV1RingMuLike)->Integral();
 
-  double nsknumuccqe_m         = skexp->GetSuperkInputs()->CurrErecoSpectrum(conv::kSKsFCFV1RingMuLike, conv::kSKmNuMuCCQE      )->Integral();
-  double nsknumucc1pi_m        = skexp->GetSuperkInputs()->CurrErecoSpectrum(conv::kSKsFCFV1RingMuLike, conv::kSKmNuMuCC1pi     )->Integral();
-  double nsknumuccoth_m        = skexp->GetSuperkInputs()->CurrErecoSpectrum(conv::kSKsFCFV1RingMuLike, conv::kSKmNuMuCCoth     )->Integral();
+  double nsknumuccqe_m         = skexp->GetSuperkMC()->CurrErecoSpectrum(conv::kSKsFCFV1RingMuLike, conv::kSKmNuMuCCQE      )->Integral();
+  double nsknumucc1pi_m        = skexp->GetSuperkMC()->CurrErecoSpectrum(conv::kSKsFCFV1RingMuLike, conv::kSKmNuMuCC1pi     )->Integral();
+  double nsknumuccoth_m        = skexp->GetSuperkMC()->CurrErecoSpectrum(conv::kSKsFCFV1RingMuLike, conv::kSKmNuMuCCoth     )->Integral();
   double nsknumucc_m           = nsknumuccqe_m + nsknumucc1pi_m + nsknumuccoth_m;
-  double nsknumunc_m           = skexp->GetSuperkInputs()->CurrErecoSpectrum(conv::kSKsFCFV1RingMuLike, conv::kSKmNC            )->Integral();
-  double nsknumubarccqe_m      = skexp->GetSuperkInputs()->CurrErecoSpectrum(conv::kSKsFCFV1RingMuLike, conv::kSKmNuMuBarCCQE   )->Integral();
-  double nsknumubarcc1pi_m     = skexp->GetSuperkInputs()->CurrErecoSpectrum(conv::kSKsFCFV1RingMuLike, conv::kSKmNuMuBarCC1pi  )->Integral();
-  double nsknumubarccoth_m     = skexp->GetSuperkInputs()->CurrErecoSpectrum(conv::kSKsFCFV1RingMuLike, conv::kSKmNuMuBarCCoth  )->Integral();
+  double nsknumunc_m           = skexp->GetSuperkMC()->CurrErecoSpectrum(conv::kSKsFCFV1RingMuLike, conv::kSKmNC            )->Integral();
+  double nsknumubarccqe_m      = skexp->GetSuperkMC()->CurrErecoSpectrum(conv::kSKsFCFV1RingMuLike, conv::kSKmNuMuBarCCQE   )->Integral();
+  double nsknumubarcc1pi_m     = skexp->GetSuperkMC()->CurrErecoSpectrum(conv::kSKsFCFV1RingMuLike, conv::kSKmNuMuBarCC1pi  )->Integral();
+  double nsknumubarccoth_m     = skexp->GetSuperkMC()->CurrErecoSpectrum(conv::kSKsFCFV1RingMuLike, conv::kSKmNuMuBarCCoth  )->Integral();
   double nsknumubarcc_m        = nsknumubarccqe_m + nsknumubarcc1pi_m + nsknumubarccoth_m;
-  double nsknumubarnc_m        = skexp->GetSuperkInputs()->CurrErecoSpectrum(conv::kSKsFCFV1RingMuLike, conv::kSKmNuMuBarNC     )->Integral();
-  double nsknueccqe_m          = skexp->GetSuperkInputs()->CurrErecoSpectrum(conv::kSKsFCFV1RingMuLike, conv::kSKmNuECCQE       )->Integral();
-  double nsknuecc1pi_m         = skexp->GetSuperkInputs()->CurrErecoSpectrum(conv::kSKsFCFV1RingMuLike, conv::kSKmNuECC1pi      )->Integral();
-  double nsknueccoth_m         = skexp->GetSuperkInputs()->CurrErecoSpectrum(conv::kSKsFCFV1RingMuLike, conv::kSKmNuECCoth      )->Integral();
+  double nsknumubarnc_m        = skexp->GetSuperkMC()->CurrErecoSpectrum(conv::kSKsFCFV1RingMuLike, conv::kSKmNuMuBarNC     )->Integral();
+  double nsknueccqe_m          = skexp->GetSuperkMC()->CurrErecoSpectrum(conv::kSKsFCFV1RingMuLike, conv::kSKmNuECCQE       )->Integral();
+  double nsknuecc1pi_m         = skexp->GetSuperkMC()->CurrErecoSpectrum(conv::kSKsFCFV1RingMuLike, conv::kSKmNuECC1pi      )->Integral();
+  double nsknueccoth_m         = skexp->GetSuperkMC()->CurrErecoSpectrum(conv::kSKsFCFV1RingMuLike, conv::kSKmNuECCoth      )->Integral();
   double nsknuecc_m            = nsknueccqe_m + nsknuecc1pi_m + nsknueccoth_m;
-  double nsknuenc_m            = skexp->GetSuperkInputs()->CurrErecoSpectrum(conv::kSKsFCFV1RingMuLike, conv::kSKmNuENC         )->Integral();
+  double nsknuenc_m            = skexp->GetSuperkMC()->CurrErecoSpectrum(conv::kSKsFCFV1RingMuLike, conv::kSKmNuENC         )->Integral();
   double nskall_m              = nsknumucc_m + nsknumunc_m + nsknumubarcc_m + nsknumubarnc_m + nsknuecc_m + nsknuenc_m;
 
-  double nd280obs_m            = skexp->GetND280Inputs()->NObsCCLike();
-  double nd280cc_m             = skexp->GetND280Inputs()->NExpCC();
-  double nd280ncbkg_m          = skexp->GetND280Inputs()->NExpNCBkg();
+  double nd280obs_m            = skexp->GetND280Measurement()->NObsCCLike();
+  double nd280cc_m             = skexp->GetND280Measurement()->NExpCC();
+  double nd280ncbkg_m          = skexp->GetND280Measurement()->NExpNCBkg();
   double nd280mccclike_m       = nd280cc_m + nd280ncbkg_m;
-  double nd280corr_m           = skexp->GetND280Inputs()->CorrectionFactor();
+  double nd280corr_m           = skexp->GetND280Measurement()->CorrectionFactor();
 
-  double nd280numuccqe_m       =             skexp->GetND280Inputs()->NumOfEvents(conv::kNDmNuMuCCQE);
-  double nd280numucc1pi_m      =     alpha * skexp->GetND280Inputs()->NumOfEvents(conv::kNDmNuMuCCRES);
-  double nd280numuccoth_m      =  (1-alpha)* skexp->GetND280Inputs()->NumOfEvents(conv::kNDmNuMuCCRES) +   
-                                             skexp->GetND280Inputs()->NumOfEvents(conv::kNDmNuMuCCCOH) +
-                                             skexp->GetND280Inputs()->NumOfEvents(conv::kNDmNuMuCCOth);
-  double nd280numunc_m         =             skexp->GetND280Inputs()->NumOfEvents(conv::kNDmNuMuNCRES) +
-                                             skexp->GetND280Inputs()->NumOfEvents(conv::kNDmNuMuNCCOH) +
-                                             skexp->GetND280Inputs()->NumOfEvents(conv::kNDmNuMuNCOth);
+  double nd280numuccqe_m       =             skexp->GetND280Measurement()->NumOfEvents(conv::kNDmNuMuCCQE);
+  double nd280numucc1pi_m      =     alpha * skexp->GetND280Measurement()->NumOfEvents(conv::kNDmNuMuCCRES);
+  double nd280numuccoth_m      =  (1-alpha)* skexp->GetND280Measurement()->NumOfEvents(conv::kNDmNuMuCCRES) +   
+                                             skexp->GetND280Measurement()->NumOfEvents(conv::kNDmNuMuCCCOH) +
+                                             skexp->GetND280Measurement()->NumOfEvents(conv::kNDmNuMuCCOth);
+  double nd280numunc_m         =             skexp->GetND280Measurement()->NumOfEvents(conv::kNDmNuMuNCRES) +
+                                             skexp->GetND280Measurement()->NumOfEvents(conv::kNDmNuMuNCCOH) +
+                                             skexp->GetND280Measurement()->NumOfEvents(conv::kNDmNuMuNCOth);
   double nd280numucc_m         = nd280numuccqe_m + nd280numucc1pi_m + nd280numuccoth_m; 
   double nd280numu_m           = nd280numucc_m + nd280numunc_m;
 
-  double nd280numubarccqe_m    =             skexp->GetND280Inputs()->NumOfEvents(conv::kNDmNuMuBarCCQE);
-  double nd280numubarcc1pi_m   =     alpha * skexp->GetND280Inputs()->NumOfEvents(conv::kNDmNuMuBarCCRES);
-  double nd280numubarccoth_m   =  (1-alpha)* skexp->GetND280Inputs()->NumOfEvents(conv::kNDmNuMuBarCCRES) +
-                                             skexp->GetND280Inputs()->NumOfEvents(conv::kNDmNuMuBarCCCOH) +
-                                             skexp->GetND280Inputs()->NumOfEvents(conv::kNDmNuMuBarCCOth);
-  double nd280numubarnc_m      =             skexp->GetND280Inputs()->NumOfEvents(conv::kNDmNuMuBarNCRES) +
-                                             skexp->GetND280Inputs()->NumOfEvents(conv::kNDmNuMuBarNCCOH) +
-                                             skexp->GetND280Inputs()->NumOfEvents(conv::kNDmNuMuBarNCOth);
+  double nd280numubarccqe_m    =             skexp->GetND280Measurement()->NumOfEvents(conv::kNDmNuMuBarCCQE);
+  double nd280numubarcc1pi_m   =     alpha * skexp->GetND280Measurement()->NumOfEvents(conv::kNDmNuMuBarCCRES);
+  double nd280numubarccoth_m   =  (1-alpha)* skexp->GetND280Measurement()->NumOfEvents(conv::kNDmNuMuBarCCRES) +
+                                             skexp->GetND280Measurement()->NumOfEvents(conv::kNDmNuMuBarCCCOH) +
+                                             skexp->GetND280Measurement()->NumOfEvents(conv::kNDmNuMuBarCCOth);
+  double nd280numubarnc_m      =             skexp->GetND280Measurement()->NumOfEvents(conv::kNDmNuMuBarNCRES) +
+                                             skexp->GetND280Measurement()->NumOfEvents(conv::kNDmNuMuBarNCCOH) +
+                                             skexp->GetND280Measurement()->NumOfEvents(conv::kNDmNuMuBarNCOth);
   double nd280numubarcc_m      = nd280numubarccqe_m + nd280numubarcc1pi_m + nd280numubarccoth_m;
   double nd280numubar_m        = nd280numubarcc_m + nd280numubarnc_m;
 
-  double nd280nueccqe_m        =             skexp->GetND280Inputs()->NumOfEvents(conv::kNDmNuECCQE);
-  double nd280nuecc1pi_m       =    alpha * skexp->GetND280Inputs()->NumOfEvents(conv::kNDmNuECCRES);
-  double nd280nueccoth_m       = (1-alpha)* skexp->GetND280Inputs()->NumOfEvents(conv::kNDmNuECCRES)  +
-                                            skexp->GetND280Inputs()->NumOfEvents(conv::kNDmNuECCCOH)  +
-                                            skexp->GetND280Inputs()->NumOfEvents(conv::kNDmNuECCOth);
-  double nd280nuenc_m          =            skexp->GetND280Inputs()->NumOfEvents(conv::kNDmNuENCRES)  +
-                                            skexp->GetND280Inputs()->NumOfEvents(conv::kNDmNuENCCOH)  +
-                                            skexp->GetND280Inputs()->NumOfEvents(conv::kNDmNuENCOth);
+  double nd280nueccqe_m        =             skexp->GetND280Measurement()->NumOfEvents(conv::kNDmNuECCQE);
+  double nd280nuecc1pi_m       =    alpha * skexp->GetND280Measurement()->NumOfEvents(conv::kNDmNuECCRES);
+  double nd280nueccoth_m       = (1-alpha)* skexp->GetND280Measurement()->NumOfEvents(conv::kNDmNuECCRES)  +
+                                            skexp->GetND280Measurement()->NumOfEvents(conv::kNDmNuECCCOH)  +
+                                            skexp->GetND280Measurement()->NumOfEvents(conv::kNDmNuECCOth);
+  double nd280nuenc_m          =            skexp->GetND280Measurement()->NumOfEvents(conv::kNDmNuENCRES)  +
+                                            skexp->GetND280Measurement()->NumOfEvents(conv::kNDmNuENCCOH)  +
+                                            skexp->GetND280Measurement()->NumOfEvents(conv::kNDmNuENCOth);
   double nd280nuecc_m          = nd280nueccqe_m + nd280nuecc1pi_m + nd280nueccoth_m;
   double nd280nue_m            = nd280nuecc_m + nd280nuenc_m;
 

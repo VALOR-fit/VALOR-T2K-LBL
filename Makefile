@@ -10,7 +10,7 @@ MAKEFILE = Makefile
 #
 include Make.include
 
-PACKAGE           = T2KDisapp2010a
+PACKAGE           = T2KNuOsc
 DICTIONARY        = _RootDict$(PACKAGE)
 LIBNAME           = lib$(PACKAGE)
 

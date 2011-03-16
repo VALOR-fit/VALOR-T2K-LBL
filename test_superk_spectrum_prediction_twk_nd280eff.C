@@ -25,11 +25,10 @@ void test_superk_spectrum_prediction_twk_nd280eff
   gSystem->Load("libXMLIO");
   gSystem->Load("libMinuit");   
 
-  gSystem->Load("libT2KDisapp2010a");
+  gSystem->Load("libT2KNuOsc");
 
   using namespace std;
   using namespace t2kana;
-  using namespace t2kana::numu10a;
 
   // n tweaks
   const int n = 3;
@@ -40,8 +39,8 @@ void test_superk_spectrum_prediction_twk_nd280eff
 
   // phys params
   PhysParamList * fparm = PhysParamList::NumuDisapFitNoSyst();
-  fparm->Update(t2kana::numu10a::conv::kPhypSinsq2Theta23, input_sinsq2theta23);
-  fparm->Update(t2kana::numu10a::conv::kPhypDm23sq,        input_dm23sq);
+  fparm->Update(t2kana::conv::kPhypSinsq2Theta23, input_sinsq2theta23);
+  fparm->Update(t2kana::conv::kPhypDm23sq,        input_dm23sq);
 
   TRandom3 rand(0);
 
@@ -57,7 +56,7 @@ void test_superk_spectrum_prediction_twk_nd280eff
      // tweak spectrum generation model
      if(i>0) {
           double twkdial = (i==1) ? +1 : -1;
-          skexp.GetND280Inputs()->TweakEfficiency(twkdial);
+          skexp.GetND280Measurement()->TweakEfficiency(twkdial);
      }
 
      // generate predictions  

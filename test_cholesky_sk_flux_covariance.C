@@ -17,16 +17,15 @@
   gSystem->Load("libXMLIO");
   gSystem->Load("libMinuit");   
 
-  gSystem->Load("libT2KDisapp2010a");
+  gSystem->Load("libT2KNuOsc");
 
   using namespace std;
   using namespace t2kana;
-  using namespace t2kana::numu10a;
 
   SuperkExpectation * skexp = new SuperkExpectation;
   skexp->Read("inputs/analysis_configuration.xml");
 
-  TMatrixD & sk_flux_cov = skexp->GetBeamInputs()->SuperkNuMuFluxCov();
+  TMatrixD & sk_flux_cov = skexp->GetNuFlux()->SuperkNuMuFluxCov();
 
   sk_flux_cov.Invert().Print();
 

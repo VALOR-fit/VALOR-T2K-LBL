@@ -23,11 +23,10 @@ void test_nsk_twk_systematics_osc()
   gSystem->Load("libXMLIO");
   gSystem->Load("libMinuit");   
 
-  gSystem->Load("libT2KDisapp2010a");
+  gSystem->Load("libT2KNuOsc");
 
   using namespace std;
   using namespace t2kana;
-  using namespace t2kana::numu10a;
 
   double sinsq2theta23_min  = 0.0;
   double sinsq2theta23_max  = 1.0;
@@ -91,8 +90,8 @@ void test_nsk_twk_systematics_osc()
        double sinsq2theta23 = frac_nsk_err->GetXaxis()->GetBinCenter(i);
        double dm23sq        = frac_nsk_err->GetYaxis()->GetBinCenter(j);
        sinsq2theta23 = TMath::Max(0.,sinsq2theta23);
-       fparm->Update(t2kana::numu10a::conv::kPhypSinsq2Theta23, sinsq2theta23);
-       fparm->Update(t2kana::numu10a::conv::kPhypDm23sq,        dm23sq);
+       fparm->Update(t2kana::conv::kPhypSinsq2Theta23, sinsq2theta23);
+       fparm->Update(t2kana::conv::kPhypDm23sq,        dm23sq);
 
        cout << "* Dm23^2 = " << dm23sq 
             << " eV^2, sin^2(2theta) = " << sinsq2theta23 << endl;

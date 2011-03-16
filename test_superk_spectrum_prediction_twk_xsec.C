@@ -25,11 +25,10 @@ void test_superk_spectrum_prediction_twk_xsec
   gSystem->Load("libXMLIO");
   gSystem->Load("libMinuit");   
 
-  gSystem->Load("libT2KDisapp2010a");
+  gSystem->Load("libT2KNuOsc");
 
   using namespace std;
   using namespace t2kana;
-  using namespace t2kana::numu10a;
   
   const int ntwkmodes = 5;
   string twklabel[ntwkmodes] = {
@@ -55,8 +54,8 @@ void test_superk_spectrum_prediction_twk_xsec
 
   // phys params
   PhysParamList * fparm = PhysParamList::NumuDisapFitNoSyst();
-  fparm->Update(t2kana::numu10a::conv::kPhypSinsq2Theta23, input_sinsq2theta23);
-  fparm->Update(t2kana::numu10a::conv::kPhypDm23sq,        input_dm23sq);
+  fparm->Update(t2kana::conv::kPhypSinsq2Theta23, input_sinsq2theta23);
+  fparm->Update(t2kana::conv::kPhypDm23sq,        input_dm23sq);
 
   // calculate spectra
   TH1D * hEreco   [ntwkmodes][ntwkdials];
@@ -65,11 +64,11 @@ void test_superk_spectrum_prediction_twk_xsec
        // reset previously set tweaks
        skexp.ResetSystematicVariations(); 
        // tweak spectrum generation model
-       if      (imode==0) skexp.GetGeneratorInputs()->TweakCCQEXSec            ( twkdial[idial] );
-       else if (imode==1) skexp.GetGeneratorInputs()->TweakCC1piToCCQEXSecRatio( twkdial[idial] );
-       else if (imode==2) skexp.GetGeneratorInputs()->TweakCCOthToCCQEXSecRatio( twkdial[idial] );
-       else if (imode==3) skexp.GetGeneratorInputs()->TweakNCToCCQEXSecRatio   ( twkdial[idial] );
-       else if (imode==4) skexp.GetGeneratorInputs()->TweakNuclEffect          ( twkdial[idial] );
+       if      (imode==0) skexp.GetNuXSec()->TweakCCQEXSec            ( twkdial[idial] );
+       else if (imode==1) skexp.GetNuXSec()->TweakCC1piToCCQEXSecRatio( twkdial[idial] );
+       else if (imode==2) skexp.GetNuXSec()->TweakCCOthToCCQEXSecRatio( twkdial[idial] );
+       else if (imode==3) skexp.GetNuXSec()->TweakNCToCCQEXSecRatio   ( twkdial[idial] );
+       else if (imode==4) skexp.GetNuXSec()->TweakNuclEffect          ( twkdial[idial] );
        // generate predictions  
        skexp.Generate(*fparm);
        // store spectrum

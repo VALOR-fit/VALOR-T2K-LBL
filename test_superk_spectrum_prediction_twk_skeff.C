@@ -25,12 +25,11 @@ void test_superk_spectrum_prediction_twk_skeff
   gSystem->Load("libXMLIO");
   gSystem->Load("libMinuit");   
 
-  gSystem->Load("libT2KDisapp2010a");
+  gSystem->Load("libT2KNuOsc");
 
   using namespace std;
   using namespace t2kana;
-  using namespace t2kana::numu10a;
-
+	
   const int ntwkdials = 5;
   double twkdial[ntwkdials] = { -1.0, -0.5, 0.0, +0.5, +1.0 };
 
@@ -51,8 +50,8 @@ void test_superk_spectrum_prediction_twk_skeff
 
   // phys params
   PhysParamList * fparm = PhysParamList::NumuDisapFitNoSyst();
-  fparm->Update(t2kana::numu10a::conv::kPhypSinsq2Theta23, input_sinsq2theta23);
-  fparm->Update(t2kana::numu10a::conv::kPhypDm23sq,        input_dm23sq);
+  fparm->Update(t2kana::conv::kPhypSinsq2Theta23, input_sinsq2theta23);
+  fparm->Update(t2kana::conv::kPhypDm23sq,        input_dm23sq);
 
   // calc spectra
   double maxnev[ntwkmodes] = {-1.};

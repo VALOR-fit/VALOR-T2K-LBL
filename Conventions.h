@@ -1,7 +1,7 @@
 //____________________________________________________________________________
 /*!
 
-\class    t2kana::numu10a::conv
+\class    t2kana::conv
 
 \brief    Conventions
 
@@ -18,16 +18,15 @@
 */
 //____________________________________________________________________________
 
-#ifndef _t2kana_year1_numu_analysis_conv_h_
-#define _t2kana_year1_numu_analysis_conv_h_
+#ifndef _t2kana_conv_h_
+#define _t2kana_conv_h_
 
 #ifndef ROOT_Rtypes
 #include "Rtypes.h"
 #endif
 
 namespace t2kana {
-namespace numu10a {
-namespace conv {
+namespace conv   {
 
 // confidence level
 typedef enum EConfLevel {
@@ -176,7 +175,6 @@ static const double kNvErecoBinEdges[kNvErecoBins+1] = {
 };
 
 } // conv
-} // numu10a
 } // t2kana
   
 #endif 

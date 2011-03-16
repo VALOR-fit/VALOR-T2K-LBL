@@ -22,11 +22,10 @@ void test_nd280_nevents_twk_xsec()
   gSystem->Load("libXMLIO");
   gSystem->Load("libMinuit");   
 
-  gSystem->Load("libT2KDisapp2010a");
+  gSystem->Load("libT2KNuOsc");
 
   using namespace std;
   using namespace t2kana;
-  using namespace t2kana::numu10a;
 
   // superk spectrum predictor
   SuperkExpectation skexp;
@@ -41,13 +40,13 @@ void test_nd280_nevents_twk_xsec()
   for(int i = 0; i < n; i++) {
 
      double twkdial = rand.Gaus(0,1);
-   //skexp.GetGeneratorInputs()->TweakCC1piToCCQEXSecRatio(twkdial);
-   //skexp.GetGeneratorInputs()->TweakCCOthToCCQEXSecRatio(twkdial);
-   skexp.GetGeneratorInputs()->TweakNCToCCQEXSecRatio   (twkdial);
+   //skexp.GetNuXSec()->TweakCC1piToCCQEXSecRatio(twkdial);
+   //skexp.GetNuXSec()->TweakCCOthToCCQEXSecRatio(twkdial);
+   skexp.GetNuXSec()->TweakNCToCCQEXSecRatio   (twkdial);
 
-     double nobscclike_nd280  = skexp.GetND280Inputs()->NObsCCLike();
-     double nexpncbkg_nd280   = skexp.GetND280Inputs()->NExpNCBkg();
-     double nexpcc_nd280      = skexp.GetND280Inputs()->NExpCC();
+     double nobscclike_nd280  = skexp.GetND280Measurement()->NObsCCLike();
+     double nexpncbkg_nd280   = skexp.GetND280Measurement()->NExpNCBkg();
+     double nexpcc_nd280      = skexp.GetND280Measurement()->NExpCC();
 
      flux_correction_factor = (nobscclike_nd280 - nexpncbkg_nd280) / nexpcc_nd280;
 

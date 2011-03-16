@@ -1,5 +1,6 @@
 //________________________________________________________________________________________
 /*
+ Changes since v1.0.0:
 
 */
 //________________________________________________________________________________________
@@ -21,18 +22,15 @@ using std::setw;
 using std::setprecision;
 
 using namespace t2kana;
-using namespace t2kana::numu10a;
-using namespace t2kana::numu10a::conv;
+using namespace t2kana::conv;
 
 //________________________________________________________________________________________
 namespace t2kana {
-namespace numu10a {
   ostream & operator << (ostream & stream, const PhysParamList & plst)
   {
     plst.Print(stream);
     return stream;
   }
-}
 }
 //________________________________________________________________________________________
 PhysParamList::PhysParamList(int nparams)
@@ -78,7 +76,7 @@ void PhysParamList::SetTo(TVirtualFitter * fitter)
 {
   if(!fitter) return;
 
-  map<t2kana::numu10a::conv::PhysParamId_t, int>::const_iterator iter = fIdMap.begin();
+  map<t2kana::conv::PhysParamId_t, int>::const_iterator iter = fIdMap.begin();
   for ( ; iter != fIdMap.end(); ++iter) {
     PhysParamId_t p = iter->first;
     int iparam = iter->second;

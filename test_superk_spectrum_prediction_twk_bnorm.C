@@ -25,11 +25,10 @@ void test_superk_spectrum_prediction_twk_bnorm
   gSystem->Load("libXMLIO");
   gSystem->Load("libMinuit");   
 
-  gSystem->Load("libT2KDisapp2010a");
+  gSystem->Load("libT2KNuOsc");
 
   using namespace std;
   using namespace t2kana;
-  using namespace t2kana::numu10a;
 
   const int ntwkdials = 3;
   double twkdial[ntwkdials] = { -1.0, 0.0, +1.0 };
@@ -51,14 +50,14 @@ void test_superk_spectrum_prediction_twk_bnorm
 
   // fit params
   PhysParamList * fparm = PhysParamList::NumuDisapFitNoSyst();
-  fparm->Update(t2kana::numu10a::conv::kPhypSinsq2Theta23, input_sinsq2theta23);
-  fparm->Update(t2kana::numu10a::conv::kPhypDm23sq,        input_dm23sq);
+  fparm->Update(t2kana::conv::kPhypSinsq2Theta23, input_sinsq2theta23);
+  fparm->Update(t2kana::conv::kPhypDm23sq,        input_dm23sq);
 
   for(int idial = 0; idial < ntwkdials; idial++) {
 
      // tweak spectrum generation model
      cout << " ** Beam norm tweaking dial = " << twkdial[idial] << endl;
-     skexp.GetBeamInputs()->TweakNorm( twkdial[idial] );
+     skexp.GetNuFlux()->TweakNorm( twkdial[idial] );
 
      // generate prediction
      skexp.Generate(*fparm);

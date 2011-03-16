@@ -35,11 +35,10 @@ void test_n_mock_data_fits(
   gSystem->Load("libXMLIO");
   gSystem->Load("libMinuit");   
 
-  gSystem->Load("libT2KDisapp2010a");
+  gSystem->Load("libT2KNuOsc");
 
   using namespace std;
   using namespace t2kana;
-  using namespace t2kana::numu10a;
 
   cout << "Job configuration" << endl;
   cout << "Fitter : " << fitter_name << endl;
@@ -62,8 +61,8 @@ void test_n_mock_data_fits(
 
      cout << "\n\n *** Pseudo-experiment = " << iexperiment << endl;
 
-     fparm->Update(t2kana::numu10a::conv::kPhypSinsq2Theta23, input_sinsq2theta23);
-     fparm->Update(t2kana::numu10a::conv::kPhypDm23sq,        input_dm23sq);
+     fparm->Update(t2kana::conv::kPhypSinsq2Theta23, input_sinsq2theta23);
+     fparm->Update(t2kana::conv::kPhypDm23sq,        input_dm23sq);
 
      //
      // get superk spectrum observation (toy experiment)
@@ -93,8 +92,8 @@ void test_n_mock_data_fits(
      // do the fit
      fitter->DoTheFit();
 
-     double bestfit_sinsq2theta23 = fparm->CurrValue(t2kana::numu10a::conv::kPhypSinsq2Theta23);
-     double bestfit_dm23sq        = fparm->CurrValue(t2kana::numu10a::conv::kPhypDm23sq);
+     double bestfit_sinsq2theta23 = fparm->CurrValue(t2kana::conv::kPhypSinsq2Theta23);
+     double bestfit_dm23sq        = fparm->CurrValue(t2kana::conv::kPhypDm23sq);
      double bestfit_chisq         = fit_inputs->Chisquare();
 
      nfitnt->Fill(iexperiment, bestfit_sinsq2theta23, bestfit_dm23sq, bestfit_chisq);

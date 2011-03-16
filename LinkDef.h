@@ -5,27 +5,26 @@
 #pragma link off all functions;
 
 #pragma link C++ namespace t2kana;
-#pragma link C++ namespace t2kana::numu10a;
-//#pragma link C++ namespace t2kana::numu10a::conv;
-#pragma link C++ namespace t2kana::numu10a::util;
+//#pragma link C++ namespace t2kana::conv;
+#pragma link C++ namespace t2kana::util;
 
-#pragma link C++ enum  t2kana::numu10a::conv::PhysParamId_t;
-#pragma link C++ enum  t2kana::numu10a::conv::ConfLevel_t;
-#pragma link C++ enum  t2kana::numu10a::conv::SuperkSample_t;
-#pragma link C++ enum  t2kana::numu10a::conv::SuperkMode_t;
+#pragma link C++ enum  t2kana::conv::PhysParamId_t;
+#pragma link C++ enum  t2kana::conv::ConfLevel_t;
+#pragma link C++ enum  t2kana::conv::SuperkSample_t;
+#pragma link C++ enum  t2kana::conv::SuperkMode_t;
 
-#pragma link C++ class t2kana::numu10a::SuperkObservation;
-#pragma link C++ class t2kana::numu10a::SuperkExpectation;
-#pragma link C++ class t2kana::numu10a::SuperkExpectation::ND280Inputs;
-#pragma link C++ class t2kana::numu10a::SuperkExpectation::SuperkInputs;
-#pragma link C++ class t2kana::numu10a::SuperkExpectation::BeamInputs;
-#pragma link C++ class t2kana::numu10a::SuperkExpectation::GeneratorInputs;
-#pragma link C++ class t2kana::numu10a::PhysParamList;
-#pragma link C++ class t2kana::numu10a::OscillationFitter;
-#pragma link C++ class t2kana::numu10a::OscillationFitter::FitInputs;
-#pragma link C++ class t2kana::numu10a::DecayFitter;
-#pragma link C++ class t2kana::numu10a::DecayFitter::FitInputs;
-#pragma link C++ class t2kana::numu10a::DecohFitter;
-#pragma link C++ class t2kana::numu10a::DecohFitter::FitInputs;
+#pragma link C++ class t2kana::SuperkObservation;
+#pragma link C++ class t2kana::SuperkExpectation;
+#pragma link C++ class t2kana::SuperkMC;
+#pragma link C++ class t2kana::ND280Measurement;
+#pragma link C++ class t2kana::NuFlux;
+#pragma link C++ class t2kana::NuXSec;
+#pragma link C++ class t2kana::PhysParamList;
+#pragma link C++ class t2kana::OscillationFitter;
+#pragma link C++ class t2kana::DecayFitter;
+#pragma link C++ class t2kana::DecohFitter;
+#pragma link C++ class t2kana::OscillationFitter::FitInputs;
+#pragma link C++ class t2kana::DecayFitter::FitInputs;
+#pragma link C++ class t2kana::DecohFitter::FitInputs;
 
 #endif

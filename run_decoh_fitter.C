@@ -22,11 +22,10 @@ void run_decoh_fitter(int dataset_id=0, const char * fitter_name="custom")
   gSystem->Load("libXMLIO");
   gSystem->Load("libMinuit");   
 
-  gSystem->Load("libT2KDisapp2010a");
+  gSystem->Load("libT2KNuOsc");
 
   using namespace std;
   using namespace t2kana;
-  using namespace t2kana::numu10a;
 
   // fit params
   PhysParamList * fparm = PhysParamList::NumuDecohFitNoSyst();

@@ -20,11 +20,10 @@ void test_superk_spectrum_prediction()
   gSystem->Load("libXMLIO");
   gSystem->Load("libMinuit");   
 
-  gSystem->Load("libT2KDisapp2010a");
+  gSystem->Load("libT2KNuOsc");
 
   using namespace std;
   using namespace t2kana;
-  using namespace t2kana::numu10a;
 
   // oscillation params
   const int ncases = 2;
@@ -45,8 +44,8 @@ void test_superk_spectrum_prediction()
   PhysParamList * fparm = PhysParamList::NumuDisapFitNoSyst();
 
   for(int icase = 0; icase < ncases; icase++) {
-    fparm->Update(t2kana::numu10a::conv::kPhypSinsq2Theta23, input_sinsq2theta23[icase]);
-    fparm->Update(t2kana::numu10a::conv::kPhypDm23sq,        input_dm23sq[icase]);
+    fparm->Update(t2kana::conv::kPhypSinsq2Theta23, input_sinsq2theta23[icase]);
+    fparm->Update(t2kana::conv::kPhypDm23sq,        input_dm23sq[icase]);
     skexp.Generate(*fparm);
     hErecoTot[icase] = new TH1D(*skexp.CurrPredictedErecoSpectrum());
     hErecoTot[icase]->SetDirectory(0);

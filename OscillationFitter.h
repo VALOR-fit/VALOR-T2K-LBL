@@ -1,9 +1,9 @@
 //____________________________________________________________________________
 /*!
 
-\class    t2kana::numu10a::OscillationFitter
+\class    t2kana::OscillationFitter
 
-\brief    MINUIT-based numu oscillation param fitter
+\brief    Muon neutrino disapperance fitter
 
 \author   STFC, Rutherford Appleton Laboratory / Oxford T2K groups
 
@@ -18,8 +18,8 @@
 */
 //____________________________________________________________________________
 
-#ifndef _t2kana_year1_numu_analysis_fitter_minuit_h_
-#define _t2kana_year1_numu_analysis_fitter_minuit_h_
+#ifndef _t2kana_disapp_fitter_h_
+#define _t2kana_disapp_fitter_h_
 
 #include <TMinuit.h>
 #include <TString.h>
@@ -30,7 +30,6 @@ class TVirtualPad;
 #include "PhysParamList.h"
 
 namespace t2kana {
-namespace numu10a {
 
 class SuperkObservation;
 class SuperkExpectation;
@@ -106,7 +105,6 @@ private:
 void FitFunc1 (
        Int_t &, Double_t *, Double_t &f, Double_t *par, Int_t iflag);
 
-} // numu10a
 } // t2kana
 
 #endif

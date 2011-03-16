@@ -22,11 +22,10 @@ void test_superk_spectrum_prediction_twk_osc(bool showdata=false)
   gSystem->Load("libXMLIO");
   gSystem->Load("libMinuit");   
 
-  gSystem->Load("libT2KDisapp2010a");
+  gSystem->Load("libT2KNuOsc");
 
   using namespace std;
   using namespace t2kana;
-  using namespace t2kana::numu10a;
 
   // oscillation params
   const int ncases = 5;
@@ -54,8 +53,8 @@ void test_superk_spectrum_prediction_twk_osc(bool showdata=false)
   TH1D * hEreco[ncases];
   for(int icase = 0; icase < ncases; icase++) {
     // update osc params
-    fparm->Update(t2kana::numu10a::conv::kPhypSinsq2Theta23, sinsq2theta23[icase]);
-    fparm->Update(t2kana::numu10a::conv::kPhypDm23sq,        dm23sq[icase]);
+    fparm->Update(t2kana::conv::kPhypSinsq2Theta23, sinsq2theta23[icase]);
+    fparm->Update(t2kana::conv::kPhypDm23sq,        dm23sq[icase]);
     // generate predictions  
     skexp.Generate(*fparm);
     // store spectrum

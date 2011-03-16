@@ -26,11 +26,10 @@ void test_superk_spectrum_prediction_twk_bshape
   gSystem->Load("libXMLIO");
   gSystem->Load("libMinuit");   
 
-  gSystem->Load("libT2KDisapp2010a");
+  gSystem->Load("libT2KNuOsc");
 
   using namespace std;
   using namespace t2kana;
-  using namespace t2kana::numu10a;
 
   const int nexp       = 1000; // number of 'flux tweaks'
   const int netruebins = 20;   // number of Etrue (variable size) bins in flux covariance matrix
@@ -53,8 +52,8 @@ void test_superk_spectrum_prediction_twk_bshape
 
   // phys params
   PhysParamList * fparm = PhysParamList::NumuDisapFitNoSyst();
-  fparm->Update(t2kana::numu10a::conv::kPhypSinsq2Theta23, input_sinsq2theta23);
-  fparm->Update(t2kana::numu10a::conv::kPhypDm23sq,        input_dm23sq);
+  fparm->Update(t2kana::conv::kPhypSinsq2Theta23, input_sinsq2theta23);
+  fparm->Update(t2kana::conv::kPhypDm23sq,        input_dm23sq);
 
   // generate nexp random spectra
   for(int iexp = 0; iexp < nexp; iexp++) {
@@ -62,7 +61,7 @@ void test_superk_spectrum_prediction_twk_bshape
      cout << "*** twk.nu: " << iexp << endl;
      if(iexp>0) {
        // use 0^th entry to store the untweaked SK reco energy spectrum
-       skexp.GetBeamInputs()->TweakShape();       
+       skexp.GetNuFlux()->TweakShape();       
      }
      // generate predictions
      skexp.Generate(*fparm);
@@ -109,11 +108,11 @@ void test_superk_spectrum_prediction_twk_bshape
   for(int ietrue_bin = 1; ietrue_bin <= netruebins; ietrue_bin++)
   {
        cout << "Number of events (nominal) = " << hEreco[0]->Integral() << endl;
-       skexp.GetBeamInputs()->TweakShapeSetValidationMode(true);
+       skexp.GetNuFlux()->TweakShapeSetValidationMode(true);
 
        // tweak given Etrue bin only
-       skexp.GetBeamInputs()->TweakShapeValidationSetBinVariation (ietrue_bin, +1.); //+100%
-       skexp.GetBeamInputs()->TweakShape();       
+       skexp.GetNuFlux()->TweakShapeValidationSetBinVariation (ietrue_bin, +1.); //+100%
+       skexp.GetNuFlux()->TweakShape();       
 
        // generate predictions
        skexp.Generate(*fparm);
@@ -126,8 +125,8 @@ void test_superk_spectrum_prediction_twk_bshape
        hErecoRatio1EtrueBinVarMax[ietrue_bin]->Divide(hEreco[0]);
 
        // tweak given Etrue bin only
-       skexp.GetBeamInputs()->TweakShapeValidationSetBinVariation (ietrue_bin, -1.); //-100%
-       skexp.GetBeamInputs()->TweakShape();       
+       skexp.GetNuFlux()->TweakShapeValidationSetBinVariation (ietrue_bin, -1.); //-100%
+       skexp.GetNuFlux()->TweakShape();       
 
        // generate predictions
        skexp.Generate(*fparm);
