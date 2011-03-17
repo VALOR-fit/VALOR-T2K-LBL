@@ -43,7 +43,7 @@ void run_decay_fitter(int dataset_id=0, const char * fitter_name="custom")
   FitInputs * fit_inputs = new FitInputs(skobs,skexp,fparm);
 
   // get fitter
-  DecayFitter * fitter = new DecayFitter(fit_inputs,fitter_name);
+  NuMuDecayFitter * fitter = new NuMuDecayFitter(fit_inputs,fitter_name);
 
   // do the fit
   fitter->DoTheFit();

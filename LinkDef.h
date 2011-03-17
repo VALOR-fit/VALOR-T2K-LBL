@@ -20,9 +20,9 @@
 #pragma link C++ class t2kana::NuFlux;
 #pragma link C++ class t2kana::NuXSec;
 #pragma link C++ class t2kana::PhysParamList;
-#pragma link C++ class t2kana::OscillationFitter;
-#pragma link C++ class t2kana::DecayFitter;
-#pragma link C++ class t2kana::DecohFitter;
+#pragma link C++ class t2kana::NuMuDisappFitter;
+#pragma link C++ class t2kana::NuMuDecayFitter;
+#pragma link C++ class t2kana::NuMuDecohFitter;
 #pragma link C++ class t2kana::FitInputs;
 
 #endif

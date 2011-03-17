@@ -1,9 +1,9 @@
 //____________________________________________________________________________
 /*!
 
-\class    t2kana::DecohFitter
+\class    t2kana::NuMuDecayFitter
 
-\brief    Muon neutrino decoherence fitter
+\brief    Muon neutrino decay fitter
 
 \author   STFC, Rutherford Appleton Laboratory / Oxford T2K groups
 
@@ -18,8 +18,8 @@
 */
 //____________________________________________________________________________
 
-#ifndef _t2kana_decoh_fitter_h_
-#define _t2kana_decoh_fitter_h_
+#ifndef _t2kana_numu_decay_fitter_h_
+#define _t2kana_numu_decay_fitter_h_
 
 #include <TMinuit.h>
 #include <TString.h>
@@ -37,16 +37,16 @@ class SuperkObservation;
 class SuperkExpectation;
 class FitInputs;
 
-class DecohFitter
+class NuMuDecayFitter
 {
 public:
-   DecohFitter();
-   DecohFitter(FitInputs * inputs, Option_t * option = "minuit");
-  ~DecohFitter();
+   NuMuDecayFitter();
+   NuMuDecayFitter(FitInputs * inputs, Option_t * option = "minuit");
+  ~NuMuDecayFitter();
 
    bool      DoTheFit          (void);
    void      Draw              (TVirtualPad * c, Option_t * option = "results", const char * outtag = 0);
-   void      ActualDecohParams (double sinsq2theta23, double alpha);
+   void      ActualDecayParams (double sinsq2theta23, double alpha);
    TMinuit * Minuit            (void) { return gMinuit; }
    TH2D *    GetChisqSurface   (void) { return fChisqSurface; }
 
@@ -60,10 +60,11 @@ private:
    void  BuildChisqSurface       (void);
    TH1D* MarginalizeChisqSurface (Option_t * option);
 
+
    FitInputs*           fFitInputs;
    bool                 fKnowActualParams; ///<
    double               fSinsq2Theta23;    ///<
-   double               fMusq;             ///<
+   double               fAlpha;            ///<
    int                  fNdof;             ///<
    int                  fNFreeFitParams;   ///<
    int                  fNFitBins;         ///<

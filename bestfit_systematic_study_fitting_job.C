@@ -85,7 +85,7 @@ void bestfit_systematic_study_fitting_job(
 
      // get fitter
      FitInputs fit_inputs(&skobs, &skexp, fparm);
-     OscillationFitter fitter(&fit_inputs,"minuit");
+     NuMuDisappFitter fitter(&fit_inputs,"minuit");
 
      // do the fit
      bool ok = fitter.DoTheFit();

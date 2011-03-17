@@ -43,7 +43,7 @@ void run_decoh_fitter(int dataset_id=0, const char * fitter_name="custom")
   FitInputs * fit_inputs = new FitInputs(skobs,skexp,fparm);
 
   // get fitter
-  DecohFitter * fitter = new DecohFitter(fit_inputs, fitter_name);
+  NuMuDecohFitter * fitter = new NuMuDecohFitter(fit_inputs, fitter_name);
 
   // do the fit
   fitter->DoTheFit();

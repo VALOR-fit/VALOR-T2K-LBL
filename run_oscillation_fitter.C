@@ -44,7 +44,7 @@ void run_oscillation_fitter(
   FitInputs * fit_inputs = new FitInputs(skobs,skexp,fparm);
 
   // get fitter
-  OscillationFitter * fitter = new OscillationFitter(fit_inputs,fitter_name);
+  NuMuDisappFitter * fitter = new NuMuDisappFitter(fit_inputs,fitter_name);
 
   // do the fit
   fitter->DoTheFit();

@@ -3,8 +3,8 @@
  Changes since v1.0.0:
 
  @ 16/03/2011 - CA
-   Removed the numu10a namespace. The FitInputs classs is no longer nested
-   in DecayFitter and shared with all other fitters.
+   Removed the numu10a namespace. Renamed: DecayFitter->NuMuDecayFitter.
+   The FitInputs classs is no longer nested in the fitter class.
 
 */ 
 //____________________________________________________________________________
@@ -30,7 +30,7 @@
 #include <TCanvas.h> 
 #include <TFile.h>
 
-#include "DecayFitter.h" 
+#include "NuMuDecayFitter.h" 
 #include "SuperkObservation.h" 
 #include "SuperkExpectation.h" 
 #include "FitInputs.h" 
@@ -47,12 +47,12 @@ using namespace t2kana;
 using namespace t2kana::conv;
    
 //____________________________________________________________________________ 
-DecayFitter::DecayFitter() 
+NuMuDecayFitter::NuMuDecayFitter() 
 {
   this->Init();
 }
 //____________________________________________________________________________ 
-DecayFitter::DecayFitter(
+NuMuDecayFitter::NuMuDecayFitter(
    FitInputs * fit_inputs, Option_t * option) 
 {
   this->Init();
@@ -60,12 +60,12 @@ DecayFitter::DecayFitter(
   this->PrepareFitter(option);
 }
 //____________________________________________________________________________ 
-DecayFitter::~DecayFitter() 
+NuMuDecayFitter::~NuMuDecayFitter() 
 {
 
 }
 //____________________________________________________________________________ 
-void DecayFitter::Init(void) 
+void NuMuDecayFitter::Init(void) 
 {
   fFitInputs        = 0;
 
@@ -80,26 +80,26 @@ void DecayFitter::Init(void)
   fChisqSurface     = 0;
 }
 //____________________________________________________________________________ 
-void  DecayFitter::ActualDecayParams (double sinsq2theta23, double alpha) 
+void  NuMuDecayFitter::ActualDecayParams (double sinsq2theta23, double alpha) 
 {
   fKnowActualParams = true;
   fSinsq2Theta23    = sinsq2theta23;
   fAlpha            = alpha;
 }
 //____________________________________________________________________________ 
-void DecayFitter::SetInputs(FitInputs * fit_inputs) 
+void NuMuDecayFitter::SetInputs(FitInputs * fit_inputs) 
 {
   fFitInputs = fit_inputs;
 }
 //____________________________________________________________________________ 
-void DecayFitter::PrepareFitter(Option_t * option) 
+void NuMuDecayFitter::PrepareFitter(Option_t * option) 
 {
 #ifdef __debug_level_1__
-  cout << "DecayFitter >> Fitter initialization..." << endl;
+  cout << "NuMuDecayFitter >> Fitter initialization..." << endl;
 #endif
 
   if(!fFitInputs) {
-     cerr << "DecayFitter >> ** Null fit inputs!" << endl;
+     cerr << "NuMuDecayFitter >> ** Null fit inputs!" << endl;
      return;
   }
 
@@ -130,11 +130,11 @@ void DecayFitter::PrepareFitter(Option_t * option)
   fNFreeFitParams = fit_params.Size(); //fitter->GetNumberFreeParameters();
   fNdof = fNFitBins - fNFreeFitParams;
 
-  cout << "DecayFitter >> ndof = " << fNdof
+  cout << "NuMuDecayFitter >> ndof = " << fNdof
        << ", nfreeparams = " << fNFreeFitParams << endl;
 }
 //____________________________________________________________________________ 
-bool DecayFitter::DoTheFit(void) 
+bool NuMuDecayFitter::DoTheFit(void) 
 {
   if(fOption.Contains("minuit")) {
     return this->DoTheFitMinuit();
@@ -146,10 +146,10 @@ bool DecayFitter::DoTheFit(void)
   return false;
 }
 //____________________________________________________________________________ 
-bool DecayFitter::DoTheFitMinuit(void) 
+bool NuMuDecayFitter::DoTheFitMinuit(void) 
 {
 #ifdef __debug_level_1__
-  cout << "DecayFitter/DoTheFit >> Running the fitter..." << endl;
+  cout << "NuMuDecayFitter/DoTheFit >> Running the fitter..." << endl;
 #endif
 
   TVirtualFitter * fitter = TVirtualFitter::GetFitter();
@@ -159,7 +159,7 @@ bool DecayFitter::DoTheFitMinuit(void)
 
   // MINUIT's minimization step
 #ifdef __debug_level_1__
-  cout << "DecayFitter/DoTheFit >> Running MIGRAD..." << endl;
+  cout << "NuMuDecayFitter/DoTheFit >> Running MIGRAD..." << endl;
 #endif
   Double_t arglist[100];
   arglist[0] = 5000; // num of func calls
@@ -181,16 +181,16 @@ bool DecayFitter::DoTheFitMinuit(void)
 #endif
 
 #ifdef __debug_level_1__
-  cout << "DecayFitter/DoTheFit >> Done!" << endl;
+  cout << "NuMuDecayFitter/DoTheFit >> Done!" << endl;
 #endif
 
    return (errMatrixStatus == 3);
 }
 //____________________________________________________________________________ 
-bool DecayFitter::DoTheFitCustom(void) 
+bool NuMuDecayFitter::DoTheFitCustom(void) 
 {
 #ifdef __debug_level_1__
-  cout << "DecayFitter/DoTheFit >> Running the fitter..." << endl;
+  cout << "NuMuDecayFitter/DoTheFit >> Running the fitter..." << endl;
 #endif
 
   double sinsq2theta23_bestfit = 0;
@@ -213,15 +213,15 @@ bool DecayFitter::DoTheFitCustom(void)
   fFitInputs->FitParams().Update( conv::kPhypSinsq2Theta23, sinsq2theta23_bestfit );
   fFitInputs->FitParams().Update( conv::kPhypAlphaDecay,    alpha_bestfit );
 
-  cout << "DecayFitter >> Best fit params: " << endl;
-  cout << "DecayFitter >> alpha = "         << alpha_bestfit << endl;
-  cout << "DecayFitter >> sinsq2theta = "   << sinsq2theta23_bestfit << endl;
-  cout << "DecayFitter >> chisqmin/ndof = " << chisq_min/fNdof << endl;
+  cout << "NuMuDecayFitter >> Best fit params: " << endl;
+  cout << "NuMuDecayFitter >> alpha = "         << alpha_bestfit << endl;
+  cout << "NuMuDecayFitter >> sinsq2theta = "   << sinsq2theta23_bestfit << endl;
+  cout << "NuMuDecayFitter >> chisqmin/ndof = " << chisq_min/fNdof << endl;
 
   return true;
 }
 //____________________________________________________________________________ 
-void DecayFitter::BuildChisqSurface(void) 
+void NuMuDecayFitter::BuildChisqSurface(void) 
 {
    if(fChisqSurface) delete fChisqSurface;
 
@@ -265,7 +265,7 @@ void DecayFitter::BuildChisqSurface(void)
   fFitInputs->FitParams().Update( conv::kPhypAlphaDecay,    alpha_save         );
 }
 //____________________________________________________________________________ 
-TH1D* DecayFitter::MarginalizeChisqSurface(Option_t * option) 
+TH1D* NuMuDecayFitter::MarginalizeChisqSurface(Option_t * option) 
 {
 
   TString opt = option;
@@ -315,7 +315,7 @@ TH1D* DecayFitter::MarginalizeChisqSurface(Option_t * option)
   return marginalized_chisq;
 }
 //____________________________________________________________________________ 
-void DecayFitter::Draw(
+void NuMuDecayFitter::Draw(
   TVirtualPad * c, Option_t * option, const char * outtag) 
 {
   util::SetDefaultStyle();
@@ -328,7 +328,7 @@ void DecayFitter::Draw(
   TString opt = option;
 
 #ifdef __debug_level_1__
-  cout << "DecayFitter/Draw >> Drawing with option = " << opt.Data() << endl;
+  cout << "NuMuDecayFitter/Draw >> Drawing with option = " << opt.Data() << endl;
 #endif
 
   //
@@ -341,7 +341,7 @@ void DecayFitter::Draw(
      double sinsq2theta23_bestfit = fFitInputs->FitParams().CurrValue( conv::kPhypSinsq2Theta23 );
      double alpha_bestfit         = fFitInputs->FitParams().CurrValue( conv::kPhypAlphaDecay    );
 
-     cout << "DecayFitter/Draw >> Best fit results: "
+     cout << "NuMuDecayFitter/Draw >> Best fit results: "
           << "sinsq2theta23 = " << sinsq2theta23_bestfit
           << ", alpha = " << alpha_bestfit << endl;
 

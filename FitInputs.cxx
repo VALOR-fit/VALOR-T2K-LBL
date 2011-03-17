@@ -3,8 +3,8 @@
  Changes since v1.0.0:
 
  @ 16/03/2011 - CA
-   Created from the old OscillationFitter::FitInputs nested class. Also replaces similar
-   nested classes which were located in the DecayFitter and DecohFitter classes.
+   Created from the old NuMuDisappFitter::FitInputs nested class. Also replaces similar
+   nested classes which were located in the NuMuDecayFitter and NuMuDecohFitter classes.
 */
 //________________________________________________________________________________________
 

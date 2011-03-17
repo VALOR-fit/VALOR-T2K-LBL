@@ -1,7 +1,7 @@
 //____________________________________________________________________________
 /*!
 
-\class    t2kana::OscillationFitter
+\class    t2kana::NuMuDisappFitter
 
 \brief    Muon neutrino disapperance fitter
 
@@ -35,12 +35,12 @@ class SuperkObservation;
 class SuperkExpectation;
 class FitInputs;
 
-class OscillationFitter
+class NuMuDisappFitter
 {
 public:
-   OscillationFitter();
-   OscillationFitter(FitInputs * inputs, Option_t * option = "minuit");
-  ~OscillationFitter();
+   NuMuDisappFitter();
+   NuMuDisappFitter(FitInputs * inputs, Option_t * option = "minuit");
+  ~NuMuDisappFitter();
 
    bool      DoTheFit        (void);
    void      Draw            (TVirtualPad * c, Option_t * option = "results", const char * outtag = 0);

@@ -164,7 +164,7 @@ void feldman_cousins_fitting_job
      fparm->SetInitValue(conv::kPhypDm23sq,        input_dm23sq       );
 
      // get fitter
-     OscillationFitter fitter(fit_inputs,"minuit");
+     NuMuDisappFitter fitter(fit_inputs,"minuit");
 
      // do the fit
      fitter.DoTheFit();
