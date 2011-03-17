@@ -53,8 +53,7 @@ void print_dataset_chisq(
   TH1D * hObs = new TH1D(*skobs->ErecoSpectrum());
 
   // get fit inputs object (chisq is calculated there)
-  OscillationFitter::FitInputs * fit_inputs =
-          new OscillationFitter::FitInputs(skobs,skexp,fparm);
+  FitInputs * fit_inputs = new FitInputs(skobs,skexp,fparm);
 
   double chisq = fit_inputs->Chisquare();
   cout << "Chisq(dm23sq = " << input_dm23sq << ", sinsq2theta23 = " << input_sinsq2theta23 << ") = " << chisq << endl;

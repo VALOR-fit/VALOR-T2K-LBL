@@ -3,7 +3,8 @@
  Changes since v1.0.0:
 
  @ 16/03/2011 - CA
-   Removed the numu10a namespace.
+   Removed the numu10a namespace. The FitInputs classs is no longer nested
+   in DecayFitter and shared with all other fitters.
 
 */ 
 //____________________________________________________________________________
@@ -32,6 +33,7 @@
 #include "DecayFitter.h" 
 #include "SuperkObservation.h" 
 #include "SuperkExpectation.h" 
+#include "FitInputs.h" 
 #include "PhysParamList.h" 
 #include "Utilities.h"
 #include "Conventions.h"
@@ -51,7 +53,8 @@ DecayFitter::DecayFitter()
 }
 //____________________________________________________________________________ 
 DecayFitter::DecayFitter(
-   FitInputs * fit_inputs, Option_t * option) {
+   FitInputs * fit_inputs, Option_t * option) 
+{
   this->Init();
   this->SetInputs(fit_inputs);
   this->PrepareFitter(option);
@@ -64,24 +67,24 @@ DecayFitter::~DecayFitter()
 //____________________________________________________________________________ 
 void DecayFitter::Init(void) 
 {
-  fFitInputs = 0;
+  fFitInputs        = 0;
 
   fKnowActualParams = false;
-  fSinsq2Theta23 = -1;
-  fAlpha = -1;
+  fSinsq2Theta23    = -1;
+  fAlpha            = -1;
 
-  fNdof           = 0;
-  fNFreeFitParams = 0;
-  fNFitBins       = 0;
+  fNdof             = 0;
+  fNFreeFitParams   = 0;
+  fNFitBins         = 0;
 
-  fChisqSurface = 0;
+  fChisqSurface     = 0;
 }
 //____________________________________________________________________________ 
-void  DecayFitter::ActualDecayParams 
-(double sinsq2theta23, double alpha) {
+void  DecayFitter::ActualDecayParams (double sinsq2theta23, double alpha) 
+{
   fKnowActualParams = true;
-  fSinsq2Theta23 = sinsq2theta23;
-  fAlpha = alpha;
+  fSinsq2Theta23    = sinsq2theta23;
+  fAlpha            = alpha;
 }
 //____________________________________________________________________________ 
 void DecayFitter::SetInputs(FitInputs * fit_inputs) 
@@ -89,7 +92,7 @@ void DecayFitter::SetInputs(FitInputs * fit_inputs)
   fFitInputs = fit_inputs;
 }
 //____________________________________________________________________________ 
-void  DecayFitter::PrepareFitter(Option_t * option) 
+void DecayFitter::PrepareFitter(Option_t * option) 
 {
 #ifdef __debug_level_1__
   cout << "DecayFitter >> Fitter initialization..." << endl;
@@ -113,7 +116,7 @@ void  DecayFitter::PrepareFitter(Option_t * option)
    fit_params.SetTo(fitter);
 
    // set minimization function
-   fitter->SetFCN(FitFunc2);
+   fitter->SetFCN(FitFunc);
 
    // set print level
    Double_t arglist[100];
@@ -624,62 +627,3 @@ void DecayFitter::Draw(
   }
 }
 //____________________________________________________________________________ 
-// FitInputs utility class 
-// 
-double DecayFitter::FitInputs::Chisquare(Option_t * option) 
-{
-  double chisq = 0;
-  TString opt = option;
-
-  this->Expectation().Generate(this->FitParams());
-  TH1D * obs_ereco_spectrum = this->Observation().ErecoSpectrum();
-  TH1D * exp_ereco_spectrum = this->Expectation().CurrPredictedErecoSpectrum();
-
-  int nbins = exp_ereco_spectrum->GetNbinsX();
-
-#ifdef __debug_level_3__
-   cout << "DecayFitter/Chisquare> nbins = " << nbins << endl;
-#endif
-
-  for(int ibin = 1; ibin <= nbins; ibin++) {
-
-     double nobs = obs_ereco_spectrum->GetBinContent(ibin);
-     double nexp = exp_ereco_spectrum->GetBinContent(ibin);
-
-     double delta = 0.;
-     if      (opt.Contains("poisson")) { delta = util::ChisqPoisson(nobs,nexp); }
-     else if (opt.Contains("gauss")  ) { delta = util::ChisqGauss  (nobs,nexp); }
-
-     chisq += delta;
-
-#ifdef __debug_level_3__
-     cout << "DecayFitter/Chisquare> chisq (bin = "
-          << ibin << " / Ereco = " << Ereco << " GeV) = " << delta << endl;
-#endif
-
-  }//ibin
-
-#ifdef __debug_level_2__
-  cout << "DecayFitter> chisq = " << chisq << endl;
-#endif
-
-  return chisq;
-}
-//____________________________________________________________________________ 
-// MINUIT fit functions 
-// 
-void  t2kana::FitFunc2 (
-  Int_t &, Double_t *, Double_t &f, Double_t *par, Int_t /*iflag*/) {
-  DecayFitter::FitInputs * inputs =
-      (DecayFitter::FitInputs *) gMinuit->GetObjectFit();
-
-  PhysParamList & fpar = inputs->FitParams(); // params
-
-  // synchronize PhysParamList with the paramerer array used by MINUIT
-  fpar.Sync(par);
-
-  // judge the agreement between the data and the current prediction
-  f = inputs->Chisquare("poisson");
-}
-//____________________________________________________________________________
-

@@ -84,7 +84,7 @@ void bestfit_systematic_study_fitting_job(
      skexp.ResetSystematicVariations();
 
      // get fitter
-     OscillationFitter::FitInputs fit_inputs(&skobs, &skexp, fparm);
+     FitInputs fit_inputs(&skobs, &skexp, fparm);
      OscillationFitter fitter(&fit_inputs,"minuit");
 
      // do the fit

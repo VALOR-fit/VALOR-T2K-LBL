@@ -40,7 +40,7 @@ void run_decoh_fitter(int dataset_id=0, const char * fitter_name="custom")
   skobs->Read("inputs/data.xml",dataset_id);
 
   // create fit inputs
-  DecohFitter::FitInputs * fit_inputs = new DecohFitter::FitInputs(skobs,skexp,fparm);
+  FitInputs * fit_inputs = new FitInputs(skobs,skexp,fparm);
 
   // get fitter
   DecohFitter * fitter = new DecohFitter(fit_inputs, fitter_name);

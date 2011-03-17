@@ -40,7 +40,7 @@ void run_decay_fitter(int dataset_id=0, const char * fitter_name="custom")
   skobs->Read("inputs/data.xml",dataset_id);
 
   // create fit inputs
-  DecayFitter::FitInputs * fit_inputs = new DecayFitter::FitInputs(skobs,skexp,fparm);
+  FitInputs * fit_inputs = new FitInputs(skobs,skexp,fparm);
 
   // get fitter
   DecayFitter * fitter = new DecayFitter(fit_inputs,fitter_name);

@@ -3,7 +3,8 @@
  Changes since v1.0.0:
 
  @ 16/03/2011 - CA
-   Removed the numu10a namespace.
+   Removed the numu10a namespace. The FitInputs classs is no longer nested
+   in OscillationFitter and shared with all other fitters.
 
 */ 
 //____________________________________________________________________________
@@ -32,6 +33,7 @@
 #include "OscillationFitter.h" 
 #include "SuperkObservation.h" 
 #include "SuperkExpectation.h" 
+#include "FitInputs.h" 
 #include "PhysParamList.h" 
 #include "Utilities.h"
 #include "Conventions.h"
@@ -51,7 +53,8 @@ OscillationFitter::OscillationFitter()
 }
 //____________________________________________________________________________ 
 OscillationFitter::OscillationFitter(
-   FitInputs * fit_inputs, Option_t * option) {
+  FitInputs * fit_inputs, Option_t * option) 
+{
   this->Init();
   this->SetInputs(fit_inputs);
   this->PrepareFitter(option);
@@ -113,7 +116,7 @@ void  OscillationFitter::PrepareFitter(Option_t * option)
    fit_params.SetTo(fitter);
 
    // set minimization function
-   fitter->SetFCN(FitFunc1);
+   fitter->SetFCN(FitFunc);
 
    // set print level
    Double_t arglist[100];
@@ -152,7 +155,6 @@ bool OscillationFitter::DoTheFitMinuit(void)
   TVirtualFitter * fitter = TVirtualFitter::GetFitter();
 
   // pass fitted data & expectation to MINUIT
-  //OscillationFitter::FitInputs fit_inputs(fObs,fExp,fFitParams);
   gMinuit->SetObjectFit(fFitInputs);
 
   // MINUIT's minimization step
@@ -740,62 +742,3 @@ void OscillationFitter::Draw(
   }
 }
 //____________________________________________________________________________ 
-// FitInputs utility class 
-// 
-double  OscillationFitter::FitInputs::Chisquare(Option_t * option) 
-{
-  double chisq = 0;
-  TString opt = option;
-
-  this->Expectation().Generate(this->FitParams());
-  TH1D * obs_ereco_spectrum = this->Observation().ErecoSpectrum();
-  TH1D * exp_ereco_spectrum = this->Expectation().CurrPredictedErecoSpectrum();
-
-  int nbins = exp_ereco_spectrum->GetNbinsX();
-
-#ifdef __debug_level_3__
-   cout << "OscillationFitter/Chisquare> nbins = " << nbins << endl;
-#endif
-
-  for(int ibin = 1; ibin <= nbins; ibin++) {
-
-     double nobs = obs_ereco_spectrum->GetBinContent(ibin);
-     double nexp = exp_ereco_spectrum->GetBinContent(ibin);
-
-     double delta = 0.;
-     if      (opt.Contains("poisson")) { delta = util::ChisqPoisson(nobs,nexp); }
-     else if (opt.Contains("gauss")  ) { delta = util::ChisqGauss  (nobs,nexp); }
-
-     chisq += delta;
-
-#ifdef __debug_level_3__
-     cout << "OscillationFitter/Chisquare> chisq (bin = "
-          << ibin << " / Ereco = " << Ereco << " GeV) = " << delta << endl;
-#endif
-
-  }//ibin
-
-#ifdef __debug_level_2__
-  cout << "OscillationFitter> chisq = " << chisq << endl;
-#endif
-
-  return chisq;
-}
-//____________________________________________________________________________ 
-// MINUIT fit functions 
-// 
-void  t2kana::FitFunc1 (
-  Int_t &, Double_t *, Double_t &f, Double_t *par, Int_t /*iflag*/) {
-  OscillationFitter::FitInputs * inputs =
-      (OscillationFitter::FitInputs *) gMinuit->GetObjectFit();
-
-  PhysParamList & fpar = inputs->FitParams(); // params
-
-  // synchronize PhysParamList with the paramerer array used by MINUIT
-  fpar.Sync(par);
-
-  // judge the agreement between the data and the current prediction
-  f = inputs->Chisquare("poisson");
-}
-//____________________________________________________________________________
-

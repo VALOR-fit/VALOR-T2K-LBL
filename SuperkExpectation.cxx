@@ -350,14 +350,14 @@ bool SuperkExpectation::Read(string config_file)
     this->CleanUp();
   } 
 
-  fND280Measurement     = new ND280Measurement;
-  fSuperkMC    = new SuperkMC;
-  fNuFlux      = new NuFlux; 
-  fNuXSec = new NuXSec; 
+  fND280Measurement  = new ND280Measurement;
+  fSuperkMC          = new SuperkMC;
+  fNuFlux            = new NuFlux; 
+  fNuXSec            = new NuXSec; 
 
   fND280Measurement  -> TellMeAboutCrossSections (fNuXSec);
-  fSuperkMC -> TellMeAboutCrossSections (fNuXSec);
-  fSuperkMC -> TellMeAboutTheFlux       (fNuFlux);
+  fSuperkMC          -> TellMeAboutCrossSections (fNuXSec);
+  fSuperkMC          -> TellMeAboutTheFlux       (fNuFlux);
 
   const unsigned int ns = fSamples.size();
   const unsigned int nm = 12;  
@@ -388,10 +388,10 @@ bool SuperkExpectation::Read(string config_file)
   }
   XMLNodePointer_t root_node = xml->DocGetRootElement(xmldoc);
 
-  if ( ! this->GetND280Measurement    ()->Read(xml, root_node) ) return false;
-  if ( ! this->GetSuperkMC   ()->Read(xml, root_node) ) return false;
-  if ( ! this->GetNuFlux     ()->Read(xml, root_node) ) return false;
-  if ( ! this->GetNuXSec()->Read(xml, root_node) ) return false;
+  if ( ! this->GetND280Measurement()->Read(xml, root_node) ) return false;
+  if ( ! this->GetSuperkMC        ()->Read(xml, root_node) ) return false;
+  if ( ! this->GetNuFlux          ()->Read(xml, root_node) ) return false;
+  if ( ! this->GetNuXSec          ()->Read(xml, root_node) ) return false;
 
   // Release memory
   xml->FreeDoc(xmldoc);
@@ -406,10 +406,10 @@ void SuperkExpectation::Init(void)
 {
   fIsConfigured    = false;
 
-  fND280Measurement     = 0;
-  fSuperkMC    = 0;
-  fNuFlux      = 0;
-  fNuXSec = 0;
+  fND280Measurement = 0;
+  fSuperkMC         = 0;
+  fNuFlux           = 0;
+  fNuXSec           = 0;
 
   fSamples.clear();
 
@@ -423,10 +423,10 @@ void SuperkExpectation::Init(void)
 //________________________________________________________________________________________
 void SuperkExpectation::CleanUp(void)
 {
-  if (fND280Measurement    ) delete fND280Measurement;
-  if (fSuperkMC   ) delete fSuperkMC;
-  if (fNuFlux     ) delete fNuFlux; 
-  if (fNuXSec) delete fNuXSec;
+  if (fND280Measurement) delete fND280Measurement;
+  if (fSuperkMC        ) delete fSuperkMC;
+  if (fNuFlux          ) delete fNuFlux; 
+  if (fNuXSec          ) delete fNuXSec;
 
   fSamples.clear();
 

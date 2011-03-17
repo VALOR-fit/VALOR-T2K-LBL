@@ -153,8 +153,7 @@ void feldman_cousins_fitting_job
      }
 
      // create fit inputs
-     OscillationFitter::FitInputs * fit_inputs =
-          new OscillationFitter::FitInputs(skobs,skexp,fparm);
+     FitInputs * fit_inputs = new FitInputs(skobs,skexp,fparm);
 
      // get chisq for true (sinsq2theta,dmsq) point 
      double chisq_for_input_params = fit_inputs->Chisquare();

@@ -51,8 +51,7 @@ void test_mock_data_fit
   skobs->CreateMockData(*skexp, *fparm, fluctuate_stat);
 
   // create fit inputs
-  OscillationFitter::FitInputs * fit_inputs = 
-      new OscillationFitter::FitInputs(skobs,skexp,fparm);
+  FitInputs * fit_inputs = new FitInputs(skobs,skexp,fparm);
 
   // get fitter
   OscillationFitter * fitter = new OscillationFitter(fit_inputs,fitter_name);

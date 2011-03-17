@@ -23,8 +23,6 @@
 #pragma link C++ class t2kana::OscillationFitter;
 #pragma link C++ class t2kana::DecayFitter;
 #pragma link C++ class t2kana::DecohFitter;
-#pragma link C++ class t2kana::OscillationFitter::FitInputs;
-#pragma link C++ class t2kana::DecayFitter::FitInputs;
-#pragma link C++ class t2kana::DecohFitter::FitInputs;
+#pragma link C++ class t2kana::FitInputs;
 
 #endif

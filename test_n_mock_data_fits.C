@@ -85,7 +85,7 @@ void test_n_mock_data_fits(
      }
 
      // get fitter
-     OscillationFitter::FitInputs * fit_inputs = new OscillationFitter::FitInputs(skobs,skexp,fparm);
+     FitInputs * fit_inputs = new FitInputs(skobs,skexp,fparm);
      OscillationFitter * fitter = new OscillationFitter(fit_inputs,fitter_name);
      fitter->ActualOscParams(input_sinsq2theta23, input_dm23sq);
 

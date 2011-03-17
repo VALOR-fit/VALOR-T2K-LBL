@@ -41,7 +41,7 @@ void run_oscillation_fitter(
   skobs->Read(data_file, dataset_id);
 
   // create fit inputs
-  OscillationFitter::FitInputs * fit_inputs = new OscillationFitter::FitInputs(skobs,skexp,fparm);
+  FitInputs * fit_inputs = new FitInputs(skobs,skexp,fparm);
 
   // get fitter
   OscillationFitter * fitter = new OscillationFitter(fit_inputs,fitter_name);
