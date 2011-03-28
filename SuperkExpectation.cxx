@@ -6,6 +6,11 @@
    Old SuperkInputs, ND280Inputs, BeamInputs and GeneratorInputs nested classes were moved 
    outside SuperkExpectation.h/cxx files and were renamed to SuperkMC, ND280Measurement,
    NuFlux and NuXSec.
+ @ 28/03/2011 - CA
+   Remove CurrPredictedErecoSpectrum() as it doesn't make sense using the combined spectrum 
+   for all the different samples considered. The default was to return the spectrum for the 
+   `1-R mu-like' sample but not typing this explicitly could lead to confusion. From now only
+   CurrPredictedErecoSpectrum(s) and CurrPredictedErecoSpectrum(s,m) will be used.
 
 */
 //________________________________________________________________________________________
@@ -115,7 +120,8 @@ void SuperkExpectation::Generate(const PhysParamList & fp)
   if(this->GetNuFlux()->ShapeTweaked()) {
      this->GetNuFlux()->TweakShape(false); // switch-off beam-shape tweaking
      this->Generate(fp); // generate untweaked predictions
-     shape_norm = fPredictErecoSpectrumGrandTot->Integral(); // get nominal Nsk
+     // get nominal Nsk
+     shape_norm = fPredictErecoSpectrumTot[kSKsFCFV1RingMuLike]->Integral(); 
      this->GetNuFlux()->TweakShape(true); // switch-on beam-shape tweaking
   }
 
@@ -126,7 +132,7 @@ void SuperkExpectation::Generate(const PhysParamList & fp)
   fSuperkMC->UpdateErecoSpectra();
 
   // update prediction
-  for(int ibin = 1; ibin <= fPredictErecoSpectrumGrandTot->GetNbinsX(); ibin++) {
+  for(int ibin = 1; ibin <= kNvErecoBins; ibin++) {
     double n = 0;
     for(unsigned int is = 0; is < ns; is++) {
        SuperkSample_t s = fSamples[is];
@@ -139,8 +145,6 @@ void SuperkExpectation::Generate(const PhysParamList & fp)
            fPredictErecoSpectrum[s][m]->SetBinContent(ibin, nsm);       
        }//m	
     }//s
-    double nall = correction * fSuperkMC->CurrErecoSpectrum()->GetBinContent(ibin);
-    fPredictErecoSpectrumGrandTot->SetBinContent(ibin, nall);
   }//ibin
 
   // include beam normalization err (expressed in terms of Nsk/Nnd280)
@@ -149,20 +153,19 @@ void SuperkExpectation::Generate(const PhysParamList & fp)
      if( this->GetNuFlux()->UsingKuboSansCode() ) {
         // input physics params (params included in the fit / systematics params)
         this -> GetSuperkMC() -> UpdateEtrueSpectra();
-        this -> GetND280Measurement()  -> UpdateEtrueSpectra();
+        this -> GetND280Measurement() -> UpdateEtrueSpectra();
         TH1D*  hnumu1Rmu     = this -> GetSuperkMC() -> Curr1RmuNuMuEtrue    ();
         TH1D*  hnumubar1Rmu  = this -> GetSuperkMC() -> Curr1RmuNuMuBarEtrue ();
         TH1D*  hnue1Rm       = this -> GetSuperkMC() -> Curr1RmuNuEEtrue     ();
-        TH1D*  hnumuND       = this -> GetND280Measurement()  -> CurrNuMuEtrue        ();
-        TH1D*  hnumubarND    = this -> GetND280Measurement()  -> CurrNuMuBarEtrue     ();
-        TH1D*  hnueND        = this -> GetND280Measurement()  -> CurrNuEEtrue         ();
+        TH1D*  hnumuND       = this -> GetND280Measurement() -> CurrNuMuEtrue    ();
+        TH1D*  hnumubarND    = this -> GetND280Measurement() -> CurrNuMuBarEtrue ();
+        TH1D*  hnueND        = this -> GetND280Measurement() -> CurrNuEEtrue     ();
 
         beam_norm = this->GetNuFlux()->SuperkFluxNorm(
                    hnumu1Rmu, hnumubar1Rmu, hnue1Rm, hnumuND, hnumubarND, hnueND);
      } else {
         beam_norm = this->GetNuFlux()->SuperkFluxNorm(0,0,0,0,0,0);
      }
-     fPredictErecoSpectrumGrandTot                                  -> Scale (beam_norm);
      fPredictErecoSpectrumTot[kSKsFCFV1RingMuLike]                  -> Scale (beam_norm);
      fPredictErecoSpectrum[kSKsFCFV1RingMuLike][kSKmNuMuCCQE]       -> Scale (beam_norm);
      fPredictErecoSpectrum[kSKsFCFV1RingMuLike][kSKmNuMuCC1pi]      -> Scale (beam_norm);
@@ -178,11 +181,9 @@ void SuperkExpectation::Generate(const PhysParamList & fp)
      fPredictErecoSpectrum[kSKsFCFV1RingMuLike][kSKmNuENC]          -> Scale (beam_norm);
   }//norm tweaked?
 
-
   if(this->GetNuFlux()->ShapeTweaked()) {
-     double nsktwk = fPredictErecoSpectrumGrandTot->Integral();
+     double nsktwk = fPredictErecoSpectrumTot[kSKsFCFV1RingMuLike]->Integral();
      shape_norm /= nsktwk;
-     fPredictErecoSpectrumGrandTot                                  -> Scale (shape_norm);
      fPredictErecoSpectrumTot[kSKsFCFV1RingMuLike]                  -> Scale (shape_norm);
      fPredictErecoSpectrum[kSKsFCFV1RingMuLike][kSKmNuMuCCQE]       -> Scale (shape_norm);
      fPredictErecoSpectrum[kSKsFCFV1RingMuLike][kSKmNuMuCC1pi]      -> Scale (shape_norm);
@@ -200,18 +201,12 @@ void SuperkExpectation::Generate(const PhysParamList & fp)
 
 }
 //________________________________________________________________________________________
-TH1D* SuperkExpectation::CurrPredictedErecoSpectrum (void) const
-{
-  return fPredictErecoSpectrumGrandTot;  
-}
-//________________________________________________________________________________________
-TH1D* SuperkExpectation::CurrPredictedErecoSpectrum (
-  t2kana::conv::SuperkSample_t s) const 
+TH1D* SuperkExpectation::CurrPredictedErecoSpectrum(t2kana::conv::SuperkSample_t s) const 
 {
   return fPredictErecoSpectrumTot[s];  
 }
 //________________________________________________________________________________________
-TH1D* SuperkExpectation::CurrPredictedErecoSpectrum (
+TH1D* SuperkExpectation::CurrPredictedErecoSpectrum(
   t2kana::conv::SuperkSample_t s, t2kana::conv::SuperkMode_t m) const 
 { 
   return fPredictErecoSpectrum[s][m]; 
@@ -366,7 +361,6 @@ bool SuperkExpectation::Read(string config_file)
      kSKmNuMuBarCCQE, kSKmNuMuBarCC1pi, kSKmNuMuBarCCoth, kSKmNuMuBarNC, 
      kSKmNuECCQE,     kSKmNuECC1pi,     kSKmNuECCoth,     kSKmNuENC
   };
-  fPredictErecoSpectrumGrandTot = new TH1D("","", kNvErecoBins, kNvErecoBinEdges);
   for(unsigned int is = 0; is < ns; is++) {
     SuperkSample_t s = fSamples[is];
     fPredictErecoSpectrumTot[s] = new TH1D("","", kNvErecoBins, kNvErecoBinEdges);
@@ -430,7 +424,6 @@ void SuperkExpectation::CleanUp(void)
 
   fSamples.clear();
 
-  if (fPredictErecoSpectrumGrandTot) delete fPredictErecoSpectrumGrandTot;
   for(int is=0; is<kns; is++) {
     if (fPredictErecoSpectrumTot[is]) delete fPredictErecoSpectrumTot[is];
     for(int im=0; im<knm; im++) {

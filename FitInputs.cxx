@@ -5,6 +5,9 @@
  @ 16/03/2011 - CA
    Created from the old NuMuDisappFitter::FitInputs nested class. Also replaces similar
    nested classes which were located in the NuMuDecayFitter and NuMuDecohFitter classes.
+ @ 28/03/2011 - CA
+   In Chisquare(), make it clear that we are fitting only the 1-R mu-like sample at this
+   point.
 */
 //________________________________________________________________________________________
 
@@ -19,6 +22,7 @@
 #include <TMinuit.h>
 #include <TString.h>
 
+#include "Conventions.h"
 #include "SuperkObservation.h"
 #include "SuperkExpectation.h"
 #include "FitInputs.h"
@@ -28,6 +32,7 @@ using std::cerr;
 using std::endl;
 
 using namespace t2kana;
+using namespace t2kana::conv;
 
 ClassImp(FitInputs)
 
@@ -67,8 +72,8 @@ double FitInputs::Chisquare(Option_t * option)
   TString opt = option;
 
   this->Expectation().Generate(this->FitParams());
-  TH1D * obs_ereco_spectrum = this->Observation().ErecoSpectrum();
-  TH1D * exp_ereco_spectrum = this->Expectation().CurrPredictedErecoSpectrum();
+  TH1D * obs_ereco_spectrum = this->Observation().ErecoSpectrum(kSKsFCFV1RingMuLike);
+  TH1D * exp_ereco_spectrum = this->Expectation().CurrPredictedErecoSpectrum(kSKsFCFV1RingMuLike);
 
   int nbins = exp_ereco_spectrum->GetNbinsX();
 

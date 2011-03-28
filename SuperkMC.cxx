@@ -5,6 +5,13 @@
  @ 16/03/2011 - CA
    Created from the old SuperkExpectation::SuperkInputs nested class. Removed the numu10a 
    namespace.
+ @ 28/03/2011 - CA
+   Remove CurrErecoSpectrum() as it doesn't make sense using the combined spectrum
+   for all the different samples considered. The default was to return the spectrum for the
+   `1-R mu-like' sample but not typing this explicitly could lead to confusion. From now only
+   CurrErecoSpectrum(s) and CurrErecoSpectrum(s,m) will be used.
+   Similar changes were make to SuperkExpectation and SuperkObservation classes.
+
 */
 //________________________________________________________________________________________
 
@@ -51,7 +58,6 @@ void SuperkMC::Init(void)
 {
   fPOT = 0;
 
-  fMCErecoSpectrumGrandTot = 0;
   for(int is=0; is<kns; is++) {
     fMCErecoSpectrumTot[is] = 0;
     for(int im=0; im<knm; im++) {
@@ -107,7 +113,6 @@ void SuperkMC::CleanUp(void)
   if(fMC1Rmu_numubar) delete fMC1Rmu_numubar;
   if(fMC1Rmu_nue    ) delete fMC1Rmu_nue;
 
-  if( fMCErecoSpectrumGrandTot ) delete fMCErecoSpectrumGrandTot;
   for(int is=0; is<kns; is++) {
     if( fMCErecoSpectrumTot[is] ) delete fMCErecoSpectrumTot[is];
     for(int im=0; im<knm; im++) {
@@ -208,7 +213,6 @@ bool SuperkMC::Read(TXMLEngine* xml, XMLNodePointer_t root_node)
   f1RmNuEEt      -> SetDirectory(0);
     
   // Ereco histograms filled-in by SK spectrum prediction code
-  fMCErecoSpectrumGrandTot                                  = new TH1D("","", kNvErecoBins, kNvErecoBinEdges);
   fMCErecoSpectrumTot[kSKsFCFV1RingMuLike]                  = new TH1D("","", kNvErecoBins, kNvErecoBinEdges);
   fMCErecoSpectrum[kSKsFCFV1RingMuLike][kSKmNuMuCCQE]       = new TH1D("","", kNvErecoBins, kNvErecoBinEdges);
   fMCErecoSpectrum[kSKsFCFV1RingMuLike][kSKmNuMuCC1pi]      = new TH1D("","", kNvErecoBins, kNvErecoBinEdges);
@@ -953,21 +957,15 @@ double SuperkMC::NumOfEvents_Etrue(
 //________________________________________________________________________________________
 void SuperkMC::UpdateErecoSpectra(void)
 {
-  TH1D * reco_spectrum_grand_tot =  fMCErecoSpectrumGrandTot;
-  assert(reco_spectrum_grand_tot);
+  for(int is = 0; is < kns; is++) {
+    TH1D * reco_spectrum_tot =  fMCErecoSpectrumTot[is];
+    if(!reco_spectrum_tot) continue; /// loop only over samples included in osc fit
 
-  for(int ibin = 1; ibin  <= reco_spectrum_grand_tot->GetNbinsX(); ibin++) {
-     double Ereco = reco_spectrum_grand_tot->GetBinCenter(ibin);
+    for(int ibin = 1; ibin <= reco_spectrum_tot->GetNbinsX(); ibin++) {
+      double Ereco  = reco_spectrum_tot->GetBinCenter(ibin);
+      double NevTot = 0;
 
-     double NevGrandTot = 0;    
-
-     for(int is = 0; is < kns; is++) {
-       TH1D * reco_spectrum_tot =  fMCErecoSpectrumTot[is];
-       if(!reco_spectrum_tot) continue; /// loop only over samples included in osc fit
-
-       double NevTot = 0;
-
-       for(int im = 0; im < knm; im++) { 
+      for(int im = 0; im < knm; im++) { 
             TH1D * reco_spectrum =  fMCErecoSpectrum[is][im];
             assert(reco_spectrum);
             SuperkSample_t s = (SuperkSample_t) is;
@@ -975,14 +973,10 @@ void SuperkMC::UpdateErecoSpectra(void)
             double Nev = this->NumOfEvents_Ereco(Ereco,s,m);
             reco_spectrum->SetBinContent(ibin,Nev);
             NevTot += Nev;
-        }//im
-        reco_spectrum_tot->SetBinContent(ibin,NevTot);
-        NevGrandTot += NevTot;
-     }//is
-
-     reco_spectrum_grand_tot->SetBinContent(ibin,NevGrandTot);
-
-  }//bin
+      }//im
+      reco_spectrum_tot->SetBinContent(ibin,NevTot);
+    }//bin
+ }//is
 }
 //________________________________________________________________________________________
 void SuperkMC::UpdateEtrueSpectra(void)

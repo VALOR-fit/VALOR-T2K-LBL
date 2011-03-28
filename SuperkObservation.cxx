@@ -1,9 +1,14 @@
-//____________________________________________________________________________
+//________________________________________________________________________________________
 /*
 Important revisions after version 1.0.0 :
 
+ @ 28/03/2011 - CA
+   Remove ErecoSpectrum() as it doesn't make sense using the combined spectrum for all 
+   different samples considered. The default was ErecoSpectrum(1-R mu-like) but not typing 
+   this explicitly could lead to confusion. 
+
 */
-//____________________________________________________________________________
+//________________________________________________________________________________________
 
 //#define __debug_level_1__
 //#define __debug_level_2__
@@ -133,11 +138,6 @@ double SuperkObservation::NumOfEvents(double Er, SuperkSample_t s) const
   return nev;
 }
 //________________________________________________________________________________________
-TH1D* SuperkObservation::ErecoSpectrum (void) const
-{
-  return fErDistrTot;
-}
-//________________________________________________________________________________________
 TH1D* SuperkObservation::ErecoSpectrum (t2kana::conv::SuperkSample_t s) const
 {
   return fErDistr[s];
@@ -178,17 +178,6 @@ bool SuperkObservation::Read(string config_file, int data_set_id)
      }
   }
 
-  fErDistrTot = new TH1D("", "", kNvErecoBins,kNvErecoBinEdges);
-  for(int ibin = 1; ibin <= fErDistrTot->GetNbinsX(); ibin++) {
-    double n = 0;
-    vector<SuperkSample_t>::const_iterator iter = fSamples.begin();
-    for( ; iter != fSamples.end(); ++iter) {
-      SuperkSample_t s = *iter;
-      n += fErDistr[s]->GetBinContent(ibin);
-    }//s
-    fErDistrTot->SetBinContent(ibin,n);
-  }//ibin
-
   // Release memory
   xml->FreeDoc(xmldoc);
   delete xml;
@@ -201,10 +190,7 @@ void SuperkObservation::CreateMockData(
 {
   // Get observed reconstructed energy distribution
 
-  fErDistrTot                   = new TH1D("", "", kNvErecoBins,kNvErecoBinEdges);
   fErDistr[kSKsFCFV1RingMuLike] = new TH1D("", "", kNvErecoBins,kNvErecoBinEdges);
-
-  fErDistrTot                   -> SetDirectory(0);
   fErDistr[kSKsFCFV1RingMuLike] -> SetDirectory(0);
 
   skexp.Generate(fp); //generate prediction
@@ -216,7 +202,6 @@ void SuperkObservation::CreateMockData(
      double nexp  = h->GetBinContent(ibin);
      double nobs  = (fluctuate) ? rand.Poisson(nexp) : nexp;
      fErDistr[kSKsFCFV1RingMuLike]->SetBinContent(ibin,nobs);
-     fErDistrTot                  ->SetBinContent(ibin,nobs);//considering 1 sample in this work
   }
 }
 //________________________________________________________________________________________
@@ -255,7 +240,6 @@ void SuperkObservation::Init(void)
   for(int is=0; is<kns; is++) {
     fErDistr[is] = 0;
   }
-  fErDistrTot = 0;
 }
 //________________________________________________________________________________________
 void SuperkObservation::CleanUp(void)
@@ -265,7 +249,6 @@ void SuperkObservation::CleanUp(void)
   for(int is=0; is<kns; is++) {
     if(fErDistr[is]) delete fErDistr[is];
   }
-  if(fErDistrTot) delete fErDistrTot;
 
   fSamples.clear();
 }

@@ -54,7 +54,6 @@ public:
   double NumOfEvents (t2kana::conv::SuperkSample_t s = t2kana::conv::kSKsUndefined) const;             
   double NumOfEvents (double Er, t2kana::conv::SuperkSample_t s = t2kana::conv::kSKsUndefined) const;  
 
-  TH1D*  ErecoSpectrum (void) const; 
   TH1D*  ErecoSpectrum (t2kana::conv::SuperkSample_t s) const; 
 
   // Draw.
@@ -68,11 +67,10 @@ private:
   void CleanUp (void);
 
   TH1D *  fErDistr[kns];  ///< Reconstructed energy spectrum for each sample
-  TH1D *  fErDistrTot;    ///< Reconstructed energy spectrum for all samples
 
   vector<t2kana::conv::SuperkSample_t> fSamples;  
 
-ClassDef(SuperkObservation, 1)
+ClassDef(SuperkObservation, 2)
 };
 
 } // t2kana

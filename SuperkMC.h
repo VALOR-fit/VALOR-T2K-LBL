@@ -62,7 +62,6 @@ public:
   double  NumOfEvents_Etrue   (double Etrue, t2kana::conv::SuperkSample_t s, t2kana::conv::SuperkMode_t m);
 
   void    UpdateErecoSpectra  (void);
-  TH1D*   CurrErecoSpectrum   (void) const { return fMCErecoSpectrumGrandTot; }
   TH1D*   CurrErecoSpectrum   (t2kana::conv::SuperkSample_t s) const { return fMCErecoSpectrumTot[s]; }
   TH1D*   CurrErecoSpectrum   (t2kana::conv::SuperkSample_t s, t2kana::conv::SuperkMode_t m) const { return fMCErecoSpectrum[s][m]; }
 
@@ -92,8 +91,8 @@ public:
   bool Read (TXMLEngine* xml, XMLNodePointer_t root_node);
       
   //
-  void TellMeAboutTheFlux       (NuFlux *      bi) { fNuFlux = bi; }
-  void TellMeAboutCrossSections (NuXSec * gi) { fGenInputs  = gi; }
+  void TellMeAboutTheFlux       (NuFlux * flux) { fNuFlux     = flux; }
+  void TellMeAboutCrossSections (NuXSec * xsec) { fGenInputs  = xsec; }
       
 
 private:
@@ -127,7 +126,6 @@ private:
   TH1D *  fMCEtrueSpectrum[kns][knm]; ///< Etrue
   TH1D *  fMCErecoSpectrum[kns][knm]; ///< Ereco
   TH1D *  fMCErecoSpectrumTot[kns];   ///< Ereco
-  TH1D *  fMCErecoSpectrumGrandTot;   ///< Ereco
   TTree*  fMC1Rmu_numu;               ///<
   double  fMCPOT_numu;                ///<
   TTree*  fMC1Rmu_numubar;            ///<

@@ -66,7 +66,6 @@ public:
    void Generate(const PhysParamList & fp);
 
    // Access calculated SK energy spectrum 
-   TH1D* CurrPredictedErecoSpectrum (void) const;
    TH1D* CurrPredictedErecoSpectrum (t2kana::conv::SuperkSample_t s) const;
    TH1D* CurrPredictedErecoSpectrum (t2kana::conv::SuperkSample_t s, t2kana::conv::SuperkMode_t m) const;
 
@@ -94,7 +93,6 @@ private:
 
    TH1D *  fPredictErecoSpectrum[kns][knm];  ///< Ereco
    TH1D *  fPredictErecoSpectrumTot[kns];    ///< Ereco
-   TH1D *  fPredictErecoSpectrumGrandTot;    ///< Ereco
 
    vector<t2kana::conv::SuperkSample_t> fSamples;
 
