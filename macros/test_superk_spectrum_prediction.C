@@ -10,20 +10,9 @@
 
 void test_superk_spectrum_prediction()
 {
-  gSystem->Load("libGpad");  
-  gSystem->Load("libPhysics");  
-  gSystem->Load("libMatrix");   
-  gSystem->Load("libHist");     
-  gSystem->Load("libGraf");     
-  gSystem->Load("libTree");     
-  gSystem->Load("libRIO");   
-  gSystem->Load("libXMLIO");
-  gSystem->Load("libMinuit");   
-
-  gSystem->Load("libT2KNuOsc");
-
   using namespace std;
   using namespace t2kana;
+  using namespace t2kana::conv;
 
   // oscillation params
   const int ncases = 2;
@@ -47,7 +36,7 @@ void test_superk_spectrum_prediction()
     fparm->Update(t2kana::conv::kPhypSinsq2Theta23, input_sinsq2theta23[icase]);
     fparm->Update(t2kana::conv::kPhypDm23sq,        input_dm23sq[icase]);
     skexp.Generate(*fparm);
-    hErecoTot[icase] = new TH1D(*skexp.CurrPredictedErecoSpectrum());
+    hErecoTot[icase] = new TH1D(*skexp.CurrPredictedErecoSpectrum(kSKsFCFV1RingMuLike));
     hErecoTot[icase]->SetDirectory(0);
     hErecoTot[icase]->SetLineWidth(line_width[icase]);
     hErecoTot[icase]->SetLineStyle(line_style[icase]);
