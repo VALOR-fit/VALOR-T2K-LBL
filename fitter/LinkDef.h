@@ -5,7 +5,7 @@
 #pragma link off all functions;
 
 #pragma link C++ namespace t2kana;
-//#pragma link C++ namespace t2kana::conv;
+#pragma link C++ namespace t2kana::conv;
 #pragma link C++ namespace t2kana::util;
 
 #pragma link C++ enum  t2kana::conv::PhysParamId_t;
