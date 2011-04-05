@@ -17,18 +17,6 @@ void write_out_mock_data(
   const char * xml_filename=0,
   const char * root_filename=0)
 {
-  gSystem->Load("libGpad");  
-  gSystem->Load("libPhysics");  
-  gSystem->Load("libMatrix");   
-  gSystem->Load("libHist");     
-  gSystem->Load("libGraf");     
-  gSystem->Load("libTree");     
-  gSystem->Load("libRIO");   
-  gSystem->Load("libXMLIO");
-  gSystem->Load("libMinuit");   
-
-  gSystem->Load("libT2KNuOsc");
-
   using namespace std;
   using namespace t2kana;
 

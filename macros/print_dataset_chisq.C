@@ -21,18 +21,6 @@ void print_dataset_chisq(
   int          dataset_id          = 0, 
   const char * data_file           = "inputs/data.xml")
 {
-  gSystem->Load("libGpad");  
-  gSystem->Load("libPhysics");  
-  gSystem->Load("libMatrix");   
-  gSystem->Load("libHist");     
-  gSystem->Load("libGraf");     
-  gSystem->Load("libTree");     
-  gSystem->Load("libRIO");   
-  gSystem->Load("libXMLIO");
-  gSystem->Load("libMinuit");   
-
-  gSystem->Load("libT2KNuOsc");
-
   using namespace std;
   using namespace t2kana;
 

@@ -16,18 +16,6 @@
 
 void test_cholesky_output_covariance(void)
 {
-  gSystem->Load("libGpad");  
-  gSystem->Load("libPhysics");  
-  gSystem->Load("libMatrix");   
-  gSystem->Load("libHist");     
-  gSystem->Load("libGraf");     
-  gSystem->Load("libTree");     
-  gSystem->Load("libRIO");   
-  gSystem->Load("libMinuit");   
-  gSystem->Load("libMathCore");   
-
-  gSystem->Load("libT2KNuOsc");
-
   using namespace std;
   using namespace t2kana;
 

@@ -20,18 +20,6 @@ void test_n_mock_data_fits_xml(
   double input_dm23sq = 2.4E-3,
   const char * fitter_name="minuit")
 {
-  gSystem->Load("libGpad");  
-  gSystem->Load("libPhysics");  
-  gSystem->Load("libMatrix");   
-  gSystem->Load("libHist");     
-  gSystem->Load("libGraf");     
-  gSystem->Load("libTree");     
-  gSystem->Load("libRIO");   
-  gSystem->Load("libXMLIO");
-  gSystem->Load("libMinuit");   
-
-  gSystem->Load("libT2KNuOsc");
-
   using namespace std;
   using namespace t2kana;
 
