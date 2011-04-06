@@ -28,7 +28,7 @@ void test_n_mock_data_fits(
   using namespace std;
   using namespace t2kana;
 
-  cout << "Job configuration" << endl;
+  cout << "[Job configuration]" << endl;
   cout << "Fitter : " << fitter_name << endl;
   cout << "Systematics : " << ((include_systematics) ? "YES " : "NO") << endl;
   cout << "Number of toy experiments : " << nexperiments << endl; 
@@ -40,7 +40,8 @@ void test_n_mock_data_fits(
 
   // get superk spectrum predictor & configure
   SuperkExpectation * skexp = new SuperkExpectation;
-  skexp->Read("inputs/analysis_configuration.xml");
+//skexp->Read("inputs/analysis_configuration.xml");
+  skexp->Read( Form("%s/inputs/analysis_configuration.xml", gSystem->GetEnv("T2KOSCANA")));
 
   // store results
   TNtupleD * nfitnt = new TNtupleD("nfitnt","", "iexp:sinsq2theta23:dm23sq:chisq");
