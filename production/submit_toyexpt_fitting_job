@@ -79,36 +79,36 @@ while($irun < $nruns) {
      print PBS "source $softw_dir/setup_at_ral.sh $softw_dir\n";
      print PBS "$command \n";
      close(PBS);
-     `qsub -q prod $batch_script`;
+     `qsub -q prod $job_dir/$batch_script`;
   }
   #
   # IN2P3
   #
   if($resource eq "IN2P3") {
-     open(PBS, ">$batch_script") or die("Can not create the PBS batch script");
+     open(PBS, ">$job_dir/$batch_script") or die("Can not create the PBS batch script");
      print PBS "#!/bin/tcsh \n";
-     print PBS "cd $curr_dir \n";
-     print PBS "source setup/setup_at_in2p3.csh \n";
+     print PBS "cd $job_dir \n";
+     print PBS "source $softw_dir/setup/setup_at_in2p3.csh $softw_dir\n";
      print PBS "$command \n";
      close(PBS);
-     `chmod +x $batch_script`;
-     `qsub -eo -V -l platform=LINUX,t=$cput,M=2200MB,scratch=500MB,u_sps_babar -o $tag-$irun.pbs.out -N $tag-$irun ./$tag-$irun.pbs`;
+     `chmod +x $job_dir/$batch_script`;
+     `qsub -eo -V -l platform=LINUX,t=$cput,M=2200MB,scratch=500MB,u_sps_babar -o $job_dir/$tag-$irun.pbs.out -N $tag-$irun $job_dir/$batch_script`;
   }
   #
   # Oxford
   #
   if($resource eq "Oxford") {
-      open(PBS, ">$batch_script") or die("Can not create the PBS batch script");
-      print PBS "#!/bin/bash \n";
-      print PBS "#PBS -N $tag-$irun \n";
-      print PBS "#PBS -l cput=$cput \n";
-      print PBS "#PBS -o $tag-$irun.pbs.out \n";
-      print PBS "#PBS -e $tag-$irun.pbs.err \n";
-      print PBS "cd $curr_dir \n";
-      print PBS "source setup/setup_at_oxford.sh \n";
-      print PBS "$command \n";
-      close(PBS);
-     `qsub $batch_script`;
+     open(PBS, ">$job_dir/$batch_script") or die("Can not create the PBS batch script");
+     print PBS "#!/bin/bash \n";
+     print PBS "#PBS -N $tag-$irun \n";
+     print PBS "#PBS -l cput=$cput \n";
+     print PBS "#PBS -o $job_dir/$tag-$irun.pbs.out \n";
+     print PBS "#PBS -e $job_dir/$tag-$irun.pbs.err \n";
+     print PBS "cd $job_dir \n";
+     print PBS "source $softw_dir/setup_at_oxford.sh $softw_dir\n";
+     print PBS "$command \n";
+     close(PBS);
+     `qsub $job_dir/$batch_script`;
   }
   #
   # Grid
