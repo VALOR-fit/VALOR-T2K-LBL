@@ -3,6 +3,8 @@
 #
 # T2KANA oscillation analysis code setup script for Costas' MacBookPro
 #
+# Input argument: oscillation analysis code top-level directory
+#
 
 export T2KOSCANA=$1
 export ROOTSYS=/usr/local/hepsoft/root/v5.28.00a/

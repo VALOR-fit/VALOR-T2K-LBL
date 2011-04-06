@@ -3,6 +3,8 @@
 #
 # T2KANA oscillation analysis code setup script for Oxford batch farm
 #
+# Input argument: oscillation analysis code top-level directory
+#
 
 export T2KOSCANA=$1
 

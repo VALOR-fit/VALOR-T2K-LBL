@@ -3,6 +3,8 @@
 #
 # T2KANA oscillation analysis code setup script for RAL/PPD Tier2
 #
+# Input argument: oscillation analysis code top-level directory
+#
 
 export T2KOSCANA=$1
 export ROOTSYS=/opt/ppd/t2k/GENIE/builds/SL5_64bit/ext/root-v5.28.00a/
