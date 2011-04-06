@@ -16,7 +16,7 @@ while($ijob < $njobs) {
   print PBS "#PBS -o trap$ijob.pbs.out \n";
   print PBS "#PBS -e trap$ijob.pbs.err \n";
   print PBS "cd $curr_dir \n";
-  print PBS "perl bad_worker_node_trap \n";
+  print PBS "perl production/bad_worker_node_trap \n";
   close(PBS);
 
   `qsub -q $queue $batch_script`;

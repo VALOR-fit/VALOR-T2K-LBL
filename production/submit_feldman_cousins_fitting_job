@@ -58,7 +58,7 @@ while($irun < $nruns) {
   print "Submitting $tag run: $irun \n";
 
   $batch_script  = "$tag-$irun.pbs";
-  $command  = "root -l -b -q \'feldman_cousins_fitting_job.C($min_dm23sq_bin,$max_dm23sq_bin,$min_sinsq2theta23_bin,$max_sinsq2theta23_bin,\"$tag\", $irun, $nexpts, $systematics)\'";
+  $command  = "root2k -l -b -q \'feldman_cousins_fitting_job.C($min_dm23sq_bin,$max_dm23sq_bin,$min_sinsq2theta23_bin,$max_sinsq2theta23_bin,\"$tag\",$irun,$nexpts,$systematics)\'";
 
   print "$command \n";
 
@@ -73,7 +73,7 @@ while($irun < $nruns) {
      print PBS "#PBS -o $tag-$irun.pbs.out \n";
      print PBS "#PBS -e $tag-$irun.pbs.err \n";
      print PBS "cd $curr_dir \n";
-     print PBS "source setup_at_ral.sh \n";
+     print PBS "source setup/setup_at_ral.sh \n";
      print PBS "$command \n";
      close(PBS);
      `qsub -q prod $batch_script`;
@@ -85,7 +85,7 @@ while($irun < $nruns) {
      open(PBS, ">$batch_script") or die("Can not create the PBS batch script");
      print PBS "#!/bin/tcsh \n";
      print PBS "cd $curr_dir \n";
-     print PBS "source setup_at_in2p3.csh \n";
+     print PBS "source setup/setup_at_in2p3.csh \n";
      print PBS "$command \n";
      close(PBS);
      `chmod +x $batch_script`;
@@ -102,7 +102,7 @@ while($irun < $nruns) {
       print PBS "#PBS -o $tag-$irun.pbs.out \n";
       print PBS "#PBS -e $tag-$irun.pbs.err \n";
       print PBS "cd $curr_dir \n";
-      print PBS "source setup_at_oxford.sh \n";
+      print PBS "source setup/setup_at_oxford.sh \n";
       print PBS "$command \n";
       close(PBS);
      `qsub $batch_script`;

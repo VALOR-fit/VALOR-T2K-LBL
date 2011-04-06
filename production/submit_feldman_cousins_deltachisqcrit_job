@@ -59,7 +59,7 @@ while($ijob < $njobs) {
 	$curr_job_bin_max++; #odd number of bins, last job has 1 more
   }
   $outputfile    = "$tag$ijob.root";
-  $command = "root -l -b -q \'make_feldman_cousins_deltachisqcrit_surface.C(\"$inputdir\", \"$outputfile\", $curr_job_bin_min, $curr_job_bin_max)\'"; 
+  $command = "root2k -l -b -q \'make_feldman_cousins_deltachisqcrit_surface.C(\"$inputdir\",\"$outputfile\",$curr_job_bin_min,$curr_job_bin_max)\'"; 
 
   print "Submitting job... $ijob \n";
   print "  $command \n";
@@ -76,7 +76,7 @@ while($ijob < $njobs) {
        print PBS "#PBS -o $tag$ijob.pbs.out \n";
        print PBS "#PBS -e $tag$ijob.pbs.err \n";
        print PBS "cd $curr_dir \n";
-       print PBS "source setup_at_ral.sh \n";
+       print PBS "source setup/setup_at_ral.sh \n";
        print PBS "$command \n";
        close(PBS);
       `qsub -q prod $batch_script`;

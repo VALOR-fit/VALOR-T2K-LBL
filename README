@@ -18,6 +18,9 @@ https://twiki.pp.rl.ac.uk/twiki/bin/view/T2K/WebHome/Analysis/
 
 +--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+
 
-BUILDING THE ANALYSIS PACKAGE
+BUILDING THE OSCILLATION ANALYSIS CODE
 
-Just type `make'. You need ROOT.
+1) % source setup/setup_at_XYZ.sh <top_level_source_code_directory>
+2) % make
+
+

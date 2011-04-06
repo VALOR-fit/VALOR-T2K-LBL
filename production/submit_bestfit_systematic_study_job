@@ -36,9 +36,9 @@ $sinsq2theta23  = 0.90          unless defined $max_sinsq2theta23_bin;
 $systlistfile   = "syst.list"   unless defined $systlistfile;
 
 if( !defined $cput) {
-  if($resource eq "RAL"  ) { $cput = "6:00:00"; }
-  if($resource eq "IN2P3") { $cput = 1500000;   }
-  if($resource eq "Oxford"  ) { $cput = "11:50:00"; }
+  if($resource eq "RAL"    ) { $cput = "6:00:00";  }
+  if($resource eq "IN2P3"  ) { $cput = 1500000;    }
+  if($resource eq "Oxford" ) { $cput = "11:50:00"; }
 }
 
 $curr_dir = `pwd`;
@@ -55,7 +55,7 @@ foreach(@systlist) {
   while($irun < $nruns) {
     print "Submitting $systematic run: $irun \n";
     $batch_script  = "syst-$systematic-$irun.pbs";
-    $command  = "root -l -b -q \'bestfit_systematic_study_fitting_job.C(\"$systematic\", $irun, $sinsq2theta23, $dm23sq, $nexpts)\'";
+    $command  = "root2k -l -b -q \'bestfit_systematic_study_fitting_job.C(\"$systematic\",$irun,$sinsq2theta23,$dm23sq,$nexpts)\'";
     print "$command \n";
 
     #
@@ -69,7 +69,7 @@ foreach(@systlist) {
        print PBS "#PBS -o syst-$systematic-$irun.pbs.out \n";
        print PBS "#PBS -e syst-$systematic-$irun.pbs.err \n";
        print PBS "cd $curr_dir \n";
-       print PBS "source setup_at_ral.sh \n";
+       print PBS "source setup/setup_at_ral.sh \n";
        print PBS "$command \n";
        close(PBS);
        `qsub -q prod $batch_script`;
@@ -81,7 +81,7 @@ foreach(@systlist) {
        open(PBS, ">$batch_script") or die("Can not create the PBS batch script");
        print PBS "#!/bin/tcsh \n";
        print PBS "cd $curr_dir \n";
-       print PBS "source setup_at_in2p3.csh \n";
+       print PBS "source setup/setup_at_in2p3.csh \n";
        print PBS "$command \n";
        close(PBS);
        `chmod +x $batch_script`;
@@ -98,7 +98,7 @@ foreach(@systlist) {
        print PBS "#PBS -o syst-$systematic-$irun.pbs.out \n";
        print PBS "#PBS -e syst-$systematic-$irun.pbs.err \n";
        print PBS "cd $curr_dir \n";
-       print PBS "source setup_at_oxford.sh \n";
+       print PBS "source setup/setup_at_oxford.sh \n";
        print PBS "$command \n";
        close(PBS);
        `qsub $batch_script`;
