@@ -11,9 +11,9 @@
 
 void test_superk_spectrum_prediction_twk_skeff
 (
-  double input_sinsq2theta23 = 1.0,
-  double input_dm23sq        = 2.4E-3,
-  const char * config_file   = "analysis_configuration.xml"
+  double       input_sinsq2theta23 = 1.0,
+  double       input_dm23sq        = 2.32E-3,
+  const char * config_file         = "analysis_configuration.xml"
 )
 {
   using namespace std;

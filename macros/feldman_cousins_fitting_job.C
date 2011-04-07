@@ -3,16 +3,6 @@
 // Run a job with some of the toy expts fits needed to calculate the \Delta\chi^{2} values
 // for constructing a Feldman-Cousins contour
 //
-// Inputs
-//   - min_dm23sq_bin :
-//   - max_dm23sq_bin :
-//   - min_sinsq2theta23_bin :
-//   - max_sinsq2theta23_bin :
-//   - tag :
-//   - irun :
-//   - nexperiments :
-//   - include_systematics :
-//
 // Costas Andreopoulos
 // ------------------------------------------------------------------------------------------------
 //
@@ -21,22 +11,19 @@
 
 void feldman_cousins_fitting_job
 (
-  int    min_dm23sq_bin        =   1, 
-  int    max_dm23sq_bin        =  51, 
-  int    min_sinsq2theta23_bin =   1, 
-  int    max_sinsq2theta23_bin = 101,
-  string tag                   = "fc", 
-  int    irun                  = 0, 
-  int    nexperiments          = 1000,
-  bool   include_systematics   = true,
-  const char * config_file     = "analysis_configuration.xml"
+  int          min_dm23sq_bin        =   1,                          /* */
+  int          max_dm23sq_bin        =  51,                          /* */
+  int          min_sinsq2theta23_bin =   1,                          /* */
+  int          max_sinsq2theta23_bin = 101,                          /* */
+  const char * tag                   = "fc",                         /* */ 
+  int          irun                  = 0,                            /* */
+  int          nexperiments          = 1000,                         /* */
+  bool         include_systematics   = true,                         /* */
+  const char * config_file           = "analysis_configuration.xml"  /* analysis configuration file */
 )
 {
   using namespace std;
   using namespace t2kana;
-
-  const char * config = Form("%s/config/%s", gSystem->Getenv("T2KOSCANA"), config_file);
-  cout << "Reading analysis configuration from: " << config << endl;
 
   //
   // The oscillation contour will be constructed using a (dm23sq, sinsq2theta23) 
@@ -79,6 +66,9 @@ void feldman_cousins_fitting_job
   cout << "** Input bin range: " << endl;
   cout << " - sinsq2theta23 : [" << min_sinsq2theta23_bin << ", " << max_sinsq2theta23_bin << "]" << endl;
   cout << " - dm23sq        : [" << min_dm23sq_bin        << ", " << max_dm23sq_bin        << "]" << endl;
+
+  const char * config = Form("%s/config/%s", gSystem->Getenv("T2KOSCANA"), config_file);
+  cout << "Reading analysis configuration from: " << config << endl;
 
   // ntuple to store results
   TNtupleD * fcnt = new TNtupleD("fcnt","", 
@@ -190,7 +180,7 @@ void feldman_cousins_fitting_job
   }//iexperiment
 
   // write-out results
-  TFile f(Form("%s-run_%d.root",tag.c_str(), irun), "recreate"); 
+  TFile f(Form("%s-run_%d.root",tag, irun), "recreate"); 
   fcnt->Write("fcnt");
   f.Close();
 }

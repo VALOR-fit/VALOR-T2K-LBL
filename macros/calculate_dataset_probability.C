@@ -1,12 +1,6 @@
 //
 // ------------------------------------------------------------------------------------------------
-// Calculate the probability of a dataset under the given oscillation parameter hypothesis
-//
-// Inputs: 
-//	- sinsq2theta23
-//	- dm23sq
-//	- dataset_id (number in <data_set_%d> XML tag, see inputs/data.xml)
-//      - data_file  
+// Calculate the probability of a dataset under the given oscillation parameter hypothesis.
 //
 // Costas Andreopoulos
 // ------------------------------------------------------------------------------------------------
@@ -16,11 +10,11 @@
 #include "Conventions.h"
 
 void calculate_dataset_probability(
-  double       input_sinsq2theta23 = 1.,
-  double       input_dm23sq        = 2.4E-3,
-  const char * config_file         = "analysis_configuration.xml",
-  int          dataset_id          = 0, 
-  const char * data_file           = "inputs/data.xml")
+  double       input_sinsq2theta23 = 1.,                            /* */
+  double       input_dm23sq        = 2.32E-3,                       /* */
+  const char * config_file         = "analysis_configuration.xml",  /* analysis configuration */
+  int          dataset_id          = 0,                             /* number in <data_set_%d> XML tag, see inputs/data.xml */
+  const char * data_file           = "inputs/data.xml")             /* input data file */
 {
   using namespace std;
   using namespace t2kana;

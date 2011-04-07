@@ -10,10 +10,16 @@
 
 #include "Conventions.h"
 
-void test_nd280_nevents_twk_eff()
+void test_nd280_nevents_twk_eff
+(
+   const char * config_file = "analysis_configuration.xml"  /* analysis configuration file */
+)
 {
   using namespace std;
   using namespace t2kana;
+
+  const char * config = Form("%s/config/%s", gSystem->Getenv("T2KOSCANA"), config_file);
+  cout << "Reading analysis configuration from: " << config << endl;
 
   const int ntwkdials = 5;
   double twkdial[ntwkdials] = { -1.0, -0.5, 0.0, +0.5, +1.0 };
@@ -27,7 +33,7 @@ void test_nd280_nevents_twk_eff()
 
   // superk spectrum predictor
   SuperkExpectation skexp;
-  skexp.Read("inputs/analysis_configuration.xml");
+  skexp.Read(config);
 
   for(int idial = 0; idial < ntwkdials; idial++) {
 

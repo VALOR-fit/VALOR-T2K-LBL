@@ -10,14 +10,20 @@
 
 #include "Conventions.h"
 
-void test_nd280_nevents_twk_xsec()
+void test_nd280_nevents_twk_xsec
+(
+   const char * config_file = "analysis_configuration.xml"  /* analysis configuration file */
+)
 {
   using namespace std;
   using namespace t2kana;
 
+  const char * config = Form("%s/config/%s", gSystem->Getenv("T2KOSCANA"), config_file);
+  cout << "Reading analysis configuration from: " << config << endl;
+
   // superk spectrum predictor
   SuperkExpectation skexp;
-  skexp.Read("inputs/analysis_configuration.xml");
+  skexp.Read(config);
 
   TRandom3 rand(0);
 

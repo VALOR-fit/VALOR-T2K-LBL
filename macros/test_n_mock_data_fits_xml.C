@@ -3,9 +3,6 @@
 // Run numu disappearance fits to N toy experiments and store best fit values.
 // The toy experiments are read from the input XML file.
 //
-// Inputs:
-//      - fitter name ("minuit", "custom" (2-D grid scan))
-//
 // Costas Andreopoulos
 // ------------------------------------------------------------------------------------------------
 //
@@ -15,12 +12,12 @@
 void test_n_mock_data_fits_xml
 (
   const char * xmlfile,
-  int          first_experiment, 
-  int          last_experiment, 
-  double       input_sinsq2theta23 = 1.0,
-  double       input_dm23sq        = 2.4E-3,
-  const char * fitter_name         = "minuit",
-  const char * config_file         = "analysis_configuration.xml"
+  int          first_experiment,                                   /* */
+  int          last_experiment,                                    /* */
+  double       input_sinsq2theta23 = 1.0,                          /* */
+  double       input_dm23sq        = 2.32E-3,                      /* */
+  const char * fitter_name         = "minuit",                     /* fitter name ("minuit", "custom" (2-D grid scan)) */
+  const char * config_file         = "analysis_configuration.xml"  /* analysis configuration file */
 )
 {
   using namespace std;

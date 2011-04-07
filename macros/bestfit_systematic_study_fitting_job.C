@@ -1,10 +1,7 @@
 //
 // ------------------------------------------------------------------------------------------------
-// Run numu disappearance systematic study for given oscillation parameters
-//
-// Inputs
-// - systematic:
-//    Any of
+// Run numu disappearance systematic study for given oscillation parameters.
+// The input `systematic' parameter can take any of the following values:
 //	- sk_energy_scale
 //	- sk_ccqe_eff
 //	- sk_ccnonqe_eff
@@ -18,10 +15,6 @@
 //      - xsec_ccoth_to_ccqe
 //      - xsec_nc_to_ccqe
 //      - nuclear_effect
-// - irun :
-// - input_sinsq2theta23 :
-// - input_dm23sq :
-// - nexperiments :
 //
 // Costas Andreopoulos
 // ------------------------------------------------------------------------------------------------
@@ -30,12 +23,12 @@
 #include "Conventions.h"
 
 void bestfit_systematic_study_fitting_job(
-   string       systematic, 
-   int          irun                = 0, 
-   double       input_sinsq2theta23 = 0.90,
-   double       input_dm23sq        = 2.4E-3,
-   int          nexperiments        = 500,
-   const char * config_file         = "analysis_configuration.xml"
+   string       systematic,                                          /* tweaked systematic param */
+   int          irun                = 0,                             /* run # */
+   double       input_sinsq2theta23 = 0.90,                          /* */
+   double       input_dm23sq        = 2.32E-3,                       /* */
+   int          nexperiments        = 500,                           /* number of toy MC expt fits in this run */
+   const char * config_file         = "analysis_configuration.xml"   /* analysis configuration */
 )
 {
   using namespace std;

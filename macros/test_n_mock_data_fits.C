@@ -3,13 +3,6 @@
 // Run numu disappearance fits to N toy experiments and store best fit values.
 // The toy experiments are generated on the fly.
 //
-// Inputs:
-//      - nexperiments, 
-//      - input_sinsq2theta23,
-//      - input_dm23sq,
-//      - fitter name ("minuit", "custom" (2-D grid scan))
-//      - include_systematics (include systematic variations in generated toy experiments)
-//
 // Costas Andreopoulos
 // ------------------------------------------------------------------------------------------------
 //
@@ -17,14 +10,15 @@
 #include "Conventions.h"
 
 void test_n_mock_data_fits(
-  const char * tag                 = "toyexptfits",
-  int          run                 = 0,
-  int          nexperiments        = 1000, 
-  double       input_sinsq2theta23 = 1.0,
-  double       input_dm23sq        = 2.4E-3,
-  const char * fitter_name         = "minuit", 
-  bool         include_systematics = false,
-  const char * config_file         = "analysis_configuration.xml"
+  const char * tag                 = "toyexptfits",                  /* */
+  int          run                 = 0,                              /* */
+  int          nexperiments        = 1000,                           /* */
+  double       input_sinsq2theta23 = 1.0,                            /* */
+  double       input_dm23sq        = 2.32E-3,                        /* */
+  const char * fitter_name         = "minuit",                       /* fitter name ("minuit", "custom" (2-D grid scan) */
+  bool         fluctuate_stat      = true,                           /* include statistical fluctuations? */
+  bool         include_systematics = false,                          /* include systematic variation in generated toy MC expt? */
+  const char * config_file         = "analysis_configuration.xml"    /* analysis configuration file */
 )
 {
   using namespace std;
@@ -33,6 +27,7 @@ void test_n_mock_data_fits(
   cout << "[Job inputs]" << endl;
   cout << "Fitter : " << fitter_name << endl;
   cout << "Systematics : " << ((include_systematics) ? "YES " : "NO") << endl;
+  cout << "Statistical fluctuations : " << ((fluctuate_stat) ? "YES " : "NO") << endl;
   cout << "Number of toy experiments : " << nexperiments << endl; 
   cout << "True oscillation parameters : (sinsq2theta23 = " 
        << input_sinsq2theta23 << ", dm23sq = " << input_dm23sq << " eV^2/c^4" << ")" << endl;
@@ -66,15 +61,13 @@ void test_n_mock_data_fits(
         skexp->TweakAllSystematics();     
         // generate mock data using the current PDF (incl. systematic variations) 
         // + statistical fluctuations (Poisson fluctuation in each bin)
-        bool fluctuate = true;
-        skobs->CreateMockData(*skexp, *fparm, fluctuate);
+        skobs->CreateMockData(*skexp, *fparm, fluctuate_stat);
         // reset all systematics so that the PDF used in the fitter is the nominal one
         skexp->ResetSystematicVariations();
      } else {       
         // generate mock data using the current PDF (without systematic variations) 
         // with statistical fluctuations (Poisson fluctuation in each bin)
-        bool fluctuate = true;
-        skobs->CreateMockData(*skexp, *fparm, fluctuate); 
+        skobs->CreateMockData(*skexp, *fparm, fluctuate_stat); 
      }
 
      // get fitter

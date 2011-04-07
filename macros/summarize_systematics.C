@@ -1,14 +1,6 @@
 //
 // ------------------------------------------------------------------------------------------------
-// Systematics summary
-//
-// Inputs
-// - file_path:
-//     Files produced by run_systematic_study_for_given_osc_params.C
-// - input_sinsq2theta23:
-//     True sinsq2theta23 used in run_systematic_study_for_given_osc_params.C
-// - input_dm23sq:
-//     True dm23sq used in run_systematic_study_for_given_osc_params.C
+// Generate systematics summary.
 //
 // Costas Andreopoulos
 // ------------------------------------------------------------------------------------------------
@@ -16,8 +8,12 @@
 
 #include "Conventions.h"
 
-void summarize_systematics(
-  string file_path, double input_sinsq2theta23, double input_dm23sq)
+void summarize_systematics
+(
+  string  file_path,            /* Path to data files produced by bestfit_systematic_study_fitting_job.C */
+  double  input_sinsq2theta23,  /* True sinsq2theta23 used in bestfit_systematic_study_fitting_job.C  */
+  double  input_dm23sq          /* True dm23sq used in bestfit_systematic_study_fitting_job.C  */
+)
 {
   using namespace std;
   using namespace t2kana;

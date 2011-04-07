@@ -22,8 +22,8 @@ void test_superk_spectrum_prediction
 
   // oscillation params
   const int ncases = 2;
-  double input_sinsq2theta23[ncases] = { 0.00, 1.00   };
-  double input_dm23sq[ncases]        = { 0.00, 2.4E-3 };
+  double input_sinsq2theta23[ncases] = { 0.00, 1.00    };
+  double input_dm23sq[ncases]        = { 0.00, 2.32E-3 };
 
   double line_width[ncases] = {      2,       2 };
   double line_style[ncases] = { kSolid, kDashed };

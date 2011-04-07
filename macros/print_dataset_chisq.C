@@ -2,12 +2,6 @@
 // ------------------------------------------------------------------------------------------------
 // Print chi^2 for the given dataset using the prediction with the input oscillation params
 //
-// Inputs: 
-//	- sinsq2theta23
-//	- dm23sq
-//	- dataset_id (number in <data_set_%d> XML tag, see inputs/data.xml)
-//      - data_file  
-//
 // Costas Andreopoulos
 // ------------------------------------------------------------------------------------------------
 //
@@ -16,11 +10,11 @@
 #include "Conventions.h"
 
 void print_dataset_chisq(
-  double       input_sinsq2theta23 = 1.,
-  double       input_dm23sq        = 2.4E-3,
-  const char * config_file         = "analysis_configuration.xml",
-  int          dataset_id          = 0, 
-  const char * data_file           = "inputs/data.xml")
+  double       input_sinsq2theta23 = 1.,                            /* */
+  double       input_dm23sq        = 2.32E-3,                       /* */
+  const char * config_file         = "analysis_configuration.xml",  /* analysis configuration file */
+  int          dataset_id          = 0,                             /* number in <data_set_%d> XML tag, see inputs/data.xml */
+  const char * data_file           = "inputs/data.xml")             /* */
 {
   using namespace std;
   using namespace t2kana;
