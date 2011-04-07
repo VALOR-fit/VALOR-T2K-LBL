@@ -79,7 +79,7 @@ while($irun < $nruns) {
      print PBS "#PBS -o $job_dir/$tag-$irun.pbs.out \n";
      print PBS "#PBS -e $job_dir/$tag-$irun.pbs.err \n";
      print PBS "cd $job_dir \n";
-     print PBS "source $softw_dir/setup_at_ral.sh $softw_dir\n";
+     print PBS "source $softw_dir/setup/setup_at_ral.sh $softw_dir\n";
      print PBS "$command \n";
      close(PBS);
      `qsub -q prod $job_dir/$batch_script`;
@@ -108,7 +108,7 @@ while($irun < $nruns) {
      print PBS "#PBS -o $job_dir/$tag-$irun.pbs.out \n";
      print PBS "#PBS -e $job_dir/$tag-$irun.pbs.err \n";
      print PBS "cd $job_dir \n";
-     print PBS "source $softw_dir/setup_at_oxford.sh $softw_dir\n";
+     print PBS "source $softw_dir/setup/setup_at_oxford.sh $softw_dir\n";
      print PBS "$command \n";
      close(PBS);
      `qsub $job_dir/$batch_script`;
