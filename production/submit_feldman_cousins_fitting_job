@@ -70,7 +70,7 @@ while($irun < $nruns) {
   print "Submitting $tag run: $irun \n";
 
   $batch_script = "$tag-$irun.pbs";
-  $command  = "root2k -l -b -q \'$softw_dir/macros/feldman_cousins_fitting_job.C($min_dm23sq_bin,$max_dm23sq_bin,$min_sinsq2theta23_bin,$max_sinsq2theta23_bin,\"$tag\",$irun,$nexpts,$systematics,$config_file)\'";
+  $command  = "root2k -l -b -q \'$softw_dir/macros/feldman_cousins_fitting_job.C($min_dm23sq_bin,$max_dm23sq_bin,$min_sinsq2theta23_bin,$max_sinsq2theta23_bin,\"$tag\",$irun,$nexpts,$systematics,\"$config_file\")\'";
 
   print "$command \n";
 

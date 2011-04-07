@@ -65,7 +65,7 @@ $irun = 0;
 while($irun < $nruns) {
   print "Submitting run: $irun \n";
   $batch_script  = "$tag-$irun.pbs";
-  $command = "root2k -l -b -q \'$softw_dir/macros/test_n_mock_data_fits.C(\"$tag\",$irun,$nexpts,$sinsq2theta23,$dm23sq,\"$fitter\",$systematics,$config_file)\'";
+  $command = "root2k -l -b -q \'$softw_dir/macros/test_n_mock_data_fits.C(\"$tag\",$irun,$nexpts,$sinsq2theta23,$dm23sq,\"$fitter\",$systematics,\"$config_file\")\'";
   print "$command \n";
 
   #
