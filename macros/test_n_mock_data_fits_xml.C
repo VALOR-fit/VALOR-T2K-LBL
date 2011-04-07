@@ -12,30 +12,36 @@
 
 #include "Conventions.h"
 
-void test_n_mock_data_fits_xml(
+void test_n_mock_data_fits_xml
+(
   const char * xmlfile,
-  int first_experiment, 
-  int last_experiment, 
-  double input_sinsq2theta23 = 1.0,
-  double input_dm23sq = 2.4E-3,
-  const char * fitter_name="minuit")
+  int          first_experiment, 
+  int          last_experiment, 
+  double       input_sinsq2theta23 = 1.0,
+  double       input_dm23sq        = 2.4E-3,
+  const char * fitter_name         = "minuit",
+  const char * config_file         = "analysis_configuration.xml"
+)
 {
   using namespace std;
   using namespace t2kana;
 
-  cout << "Job configuration" << endl;
+  cout << "[Job inputs]" << endl;
   cout << "Fitter : " << fitter_name << endl;
   cout << "Reading experiments from : " << xmlfile << endl; 
   cout << "Fitting experiments : [" << first_experiment << ", " << last_experiment << "]" << endl; 
   cout << "True oscillation parameters : (sinsq2theta23 = " 
        << input_sinsq2theta23 << ", dm23sq = " << input_dm23sq << " eV^2/c^4" << ")" << endl;
 
+  const char * config = Form("%s/config/%s", gSystem->Getenv("T2KOSCANA"), config_file);
+  cout << "Reading analysis configuration from: " << config << endl;
+
   // fit params
   PhysParamList * fparm = PhysParamList::NumuDisapFitNoSyst();
 
   // get superk spectrum predictor & configure
   SuperkExpectation * skexp = new SuperkExpectation;
-  skexp->Read("inputs/analysis_configuration.xml");
+  skexp->Read(config);
 
   // store results
   TNtupleD * nfitnt = new TNtupleD("nfitnt","", "iexp:sinsq2theta23:dm23sq:chisq");

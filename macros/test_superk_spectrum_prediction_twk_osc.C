@@ -10,10 +10,19 @@
 
 #include "Conventions.h"
 
-void test_superk_spectrum_prediction_twk_osc(bool showdata=false)
+void test_superk_spectrum_prediction_twk_osc
+(
+  const char * config_file = "analysis_configuration.xml",
+  bool         showdata    = false,
+  int          dataset_id  = 0, 
+  const char * data_file   = "inputs/data.xml"
+)
 {
   using namespace std;
   using namespace t2kana;
+
+  const char * config = Form("%s/config/%s", gSystem->Getenv("T2KOSCANA"), config_file);
+  cout << "Reading analysis configuration from: " << config << endl;
 
   // oscillation params
   const int ncases = 5;
@@ -32,7 +41,7 @@ void test_superk_spectrum_prediction_twk_osc(bool showdata=false)
 
   // superk spectrum predictor
   SuperkExpectation skexp;
-  skexp.Read("inputs/analysis_configuration.xml");
+  skexp.Read(config);
 
   // fit params
   PhysParamList * fparm = PhysParamList::NumuDisapFitNoSyst();
@@ -114,7 +123,7 @@ void test_superk_spectrum_prediction_twk_osc(bool showdata=false)
      }
      if(showdata) {
        SuperkObservation * skobs = new SuperkObservation;
-       skobs->Read("inputs/data.xml",0);
+       skobs->Read(data_file, dataset_id);
        TH1D * data = new TH1D(*skobs->ErecoSpectrum(conv::kSKsFCFV1RingMuLike));
        data->SetMarkerStyle(20);
        data->SetMarkerSize(1);

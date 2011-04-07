@@ -11,19 +11,23 @@
 
 void test_superk_spectrum_prediction_twk_nd280eff
 (
-  double input_sinsq2theta23 = 1.0,
-  double input_dm23sq        = 2.4E-3
+  double       input_sinsq2theta23 = 1.0,
+  double       input_dm23sq        = 2.4E-3,
+  const char * config_file         = "analysis_configuration.xml"
 )
 {
   using namespace std;
   using namespace t2kana;
+
+  const char * config = Form("%s/config/%s", gSystem->Getenv("T2KOSCANA"), config_file);
+  cout << "Reading analysis configuration from: " << config << endl;
 
   // n tweaks
   const int n = 3;
 
   // superk spectrum predictor
   SuperkExpectation skexp;
-  skexp.Read("inputs/analysis_configuration.xml");
+  skexp.Read(config);
 
   // phys params
   PhysParamList * fparm = PhysParamList::NumuDisapFitNoSyst();

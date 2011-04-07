@@ -28,6 +28,7 @@
 #include <TRandom3.h>
 #include <TXMLEngine.h>
 #include <TFile.h>
+#include <TSystem.h>
 
 #include "Utilities.h"
 
@@ -797,7 +798,8 @@ TH1F * t2kana::util::XML2TH1F(
   cout << "utils/XML2TH1F >> objname  : " << objname  << endl;
 #endif
 
-  TFile file(filename.c_str(), "read");
+  TFile file(
+    Form("%s/%s", gSystem->Getenv("T2KOSCANA"), filename.c_str()), "read");
   TH1F * h = (TH1F*)file.Get(objname.c_str());
   if(!h) {
     cerr << "utils/XML2TH1F >> No " << objname << " in " << filename << endl;
@@ -852,7 +854,8 @@ TH1D * t2kana::util::XML2TH1D(
   cout << "utils/XML2TH1D >> objname  : " << objname  << endl;
 #endif
 
-  TFile file(filename.c_str(), "read");
+  TFile file(
+    Form("%s/%s", gSystem->Getenv("T2KOSCANA"), filename.c_str()), "read");
   TH1D * h = (TH1D*)file.Get(objname.c_str());
   if(!h) {
     cerr << "utils/XML2TH1D >> No " << objname << " in " << filename << endl;
@@ -907,7 +910,8 @@ TH2D * t2kana::util::XML2TH2D(
   cout << "utils/XML2TH1D >> objname  : " << objname  << endl;
 #endif
 
-  TFile file(filename.c_str(), "read");
+  TFile file(
+     Form("%s/%s", gSystem->Getenv("T2KOSCANA"), filename.c_str()), "read");    
   TH2D * h2 = (TH2D*)file.Get(objname.c_str());
   if(!h2) {
     cerr << "utils/XML2TH2D >> No " << objname << " in " << filename << endl;
@@ -966,7 +970,8 @@ TTree * t2kana::util::XML2TTree(
 /////  TTree * tree = (TTree*)file.Get(objname.c_str());
 
 
-  TFile * file = new TFile(filename.c_str(), "read");
+  TFile * file = new TFile(
+     Form("%s/%s", gSystem->Getenv("T2KOSCANA"), filename.c_str()), "read");
   TTree * tree = (TTree*)file->Get(objname.c_str());
   if(!tree) {
     cerr << "utils/XML2TTree >> No " << objname << " in " << filename << endl;
@@ -1104,6 +1109,7 @@ string t2kana::util::XML2String(
   return TrimSpaces(content);
 }
 //___________________________________________________________________________
+/*
 t2kana::util::TH1DErrEnv *    
   t2kana::util::XML2TH1DErrEnv(
      TXMLEngine * eng, XMLNodePointer_t topnode, string path)
@@ -1117,10 +1123,10 @@ t2kana::util::TH1DErrEnv *
   TH1DErrEnv * error_envelope = new TH1DErrEnv(low,high);
 
   return error_envelope;
-}
+}*/
 //___________________________________________________________________________
 TMatrixDSym * t2kana::util::XML2TMatrixDSym(
-     TXMLEngine * xmleng, XMLNodePointer_t top_node, string path)
+   TXMLEngine * xmleng, XMLNodePointer_t top_node, string path)
 {
 // Get a TMatrixDSym instance from the info in the input XML config file
 //
@@ -1155,7 +1161,8 @@ TMatrixDSym * t2kana::util::XML2TMatrixDSym(
   cout << "utils/XML2TMatrixDSym >> objname  : " << objname  << endl;
 #endif
 
-  TFile file(filename.c_str(), "read");
+  TFile file(
+    Form("%s/%s", gSystem->Getenv("T2KOSCANA"), filename.c_str()), "read");
   TMatrixDSym * matrix = (TMatrixDSym*)file.Get(objname.c_str());
   if(!matrix) {
     cerr << "utils/XML2TMatrixDSym >> No " 
@@ -1173,7 +1180,7 @@ TMatrixDSym * t2kana::util::XML2TMatrixDSym(
 }
 //___________________________________________________________________________
 TMatrixD * t2kana::util::XML2TMatrixD(
-     TXMLEngine * xmleng, XMLNodePointer_t top_node, string path)
+    TXMLEngine * xmleng, XMLNodePointer_t top_node, string path)
 {
 // Get a TMatrixD instance from the info in the input XML config file
 //
@@ -1208,7 +1215,8 @@ TMatrixD * t2kana::util::XML2TMatrixD(
   cout << "utils/XML2TMatrixD >> objname  : " << objname  << endl;
 #endif
 
-  TFile * file = new TFile(filename.c_str(), "read");
+  TFile * file = new TFile( 
+    Form("%s/%s", gSystem->Getenv("T2KOSCANA"), filename.c_str()), "read");
   TMatrixD * matrix = (TMatrixD*) file->Get(objname.c_str());
   if(!matrix) {
     cerr << "utils/XML2TMatrixD >> No " 

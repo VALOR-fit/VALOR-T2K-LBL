@@ -18,9 +18,24 @@ https://twiki.pp.rl.ac.uk/twiki/bin/view/T2K/WebHome/Analysis/
 
 +--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+
 
+
+SETTING-UP
+
+Use the appropriate script from the setup directory.
+The setup script expects a single argument (top-level source code directory).
+
+Example:
+% source setup/setup_at_XYZ.sh /path/to/t2kana/nuosc/top/level/dir
+
+
 BUILDING THE OSCILLATION ANALYSIS CODE
 
-1) % source setup/setup_at_XYZ.sh <top_level_source_code_directory>
-2) % make
+% cd /path/to/t2kana/nuosc/top/level/dir (or % cd $T2KOSCANA)
+% make
 
+
+RUNNING THE ANALYSIS MACROS
+
+Use `root2k' instead of `root'.
+root2k is root + T2K oscillation analysis library.
 

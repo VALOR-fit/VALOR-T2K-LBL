@@ -8,14 +8,19 @@
 
 #include "Conventions.h"
 
-void test_nsk_twk_systematics()
+void test_nsk_twk_systematics
+(
+  const double input_sinsq2theta23 = 0.00,
+  const double input_dm23sq        = 2.4E-3,
+  const char * config_file         = "analysis_configuration.xml"
+)
 {
   using namespace std;
   using namespace t2kana;
 
-  const double input_sinsq2theta23 = 0.00;
-  const double input_dm23sq        = 2.4E-3;
-
+  const char * config = Form("%s/config/%s", gSystem->Getenv("T2KOSCANA"), config_file);
+  cout << "Reading analysis configuration from: " << config << endl;
+ 
   const int nexperiments = 5000;
 
   const int nsystematics = 13;
@@ -75,7 +80,7 @@ void test_nsk_twk_systematics()
 
   // get superk spectrum predictor & configure
   SuperkExpectation * skexp = new SuperkExpectation;
-  skexp->Read("inputs/analysis_configuration.xml");
+  skexp->Read(config);
 
   // get default prediction
   skexp->Generate(*fparm);

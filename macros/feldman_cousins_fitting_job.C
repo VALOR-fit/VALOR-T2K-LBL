@@ -28,11 +28,15 @@ void feldman_cousins_fitting_job
   string tag                   = "fc", 
   int    irun                  = 0, 
   int    nexperiments          = 1000,
-  bool   include_systematics   = true
+  bool   include_systematics   = true,
+  const char * config_file     = "analysis_configuration.xml"
 )
 {
   using namespace std;
   using namespace t2kana;
+
+  const char * config = Form("%s/config/%s", gSystem->Getenv("T2KOSCANA"), config_file);
+  cout << "Reading analysis configuration from: " << config << endl;
 
   //
   // The oscillation contour will be constructed using a (dm23sq, sinsq2theta23) 
@@ -85,7 +89,7 @@ void feldman_cousins_fitting_job
 
   // get superk spectrum PDF & configure
   SuperkExpectation * skexp = new SuperkExpectation;
-  skexp->Read("inputs/analysis_configuration.xml");
+  skexp->Read(config);
 
   TRandom3 rand(0);
   

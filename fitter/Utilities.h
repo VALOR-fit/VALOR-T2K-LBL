@@ -80,7 +80,7 @@ namespace util {
   double           XML2Dbl         (TXMLEngine * eng, XMLNodePointer_t topnode, string path);
   vector<double>   XML2DblArray    (TXMLEngine * eng, XMLNodePointer_t topnode, string path);
   string           XML2String      (TXMLEngine * eng, XMLNodePointer_t topnode, string path);
-  TH1DErrEnv *     XML2TH1DErrEnv  (TXMLEngine * eng, XMLNodePointer_t topnode, string path);
+//TH1DErrEnv *     XML2TH1DErrEnv  (TXMLEngine * eng, XMLNodePointer_t topnode, string path);
   TMatrixDSym *    XML2TMatrixDSym (TXMLEngine * eng, XMLNodePointer_t topnode, string path);
   TMatrixD *       XML2TMatrixD    (TXMLEngine * eng, XMLNodePointer_t topnode, string path);
   
@@ -103,8 +103,8 @@ namespace util {
 
   int Sign (double tweaking_dial);
 
+/*
   // utility classes
-
   class TH1DErrEnv
   {
    public:
@@ -117,7 +117,7 @@ namespace util {
      TH1D * fLow;
      TH1D * fHigh;
   };
-
+*/
 } // util
 } // t2kana
   

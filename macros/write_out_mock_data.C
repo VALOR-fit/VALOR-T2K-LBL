@@ -9,16 +9,22 @@
 
 #include "Conventions.h"
 
-void write_out_mock_data(
-  double sinsq2theta23=1.00, 
-  double dm23sq=2.4E-3, 
-  bool include_systematics=false, 
-  double nexperiments=1,
-  const char * xml_filename=0,
-  const char * root_filename=0)
+void write_out_mock_data
+(
+  double       sinsq2theta23       = 1.00, 
+  double       dm23sq              = 2.4E-3, 
+  bool         include_systematics = false, 
+  double       nexperiments        = 1,
+  const char * xml_filename        = 0,
+  const char * root_filename       = 0,
+  const char * config_file         = "analysis_configuration.xml"
+)
 {
   using namespace std;
   using namespace t2kana;
+
+  const char * config = Form("%s/config/%s", gSystem->Getenv("T2KOSCANA"), config_file);
+  cout << "Reading analysis configuration from: " << config << endl;
 
   TRandom rand(0);
 
@@ -47,7 +53,7 @@ void write_out_mock_data(
 
   // Get superk spectrum PDF & configure
   SuperkExpectation * skexp = new SuperkExpectation;
-  skexp->Read("inputs/analysis_configuration.xml");
+  skexp->Read(config);
 
   for(int iexperiment=0; iexperiment < nexperiments; iexperiment++) {
 

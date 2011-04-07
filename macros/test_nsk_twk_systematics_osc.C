@@ -11,10 +11,16 @@
 
 #include "Conventions.h"
 
-void test_nsk_twk_systematics_osc()
+void test_nsk_twk_systematics_osc
+(
+  const char * config_file = "analysis_configuration.xml"
+)
 {
   using namespace std;
   using namespace t2kana;
+
+  const char * config = Form("%s/config/%s", gSystem->Getenv("T2KOSCANA"), config_file);
+  cout << "Reading analysis configuration from: " << config << endl;
 
   double sinsq2theta23_min  = 0.0;
   double sinsq2theta23_max  = 1.0;
@@ -67,7 +73,7 @@ void test_nsk_twk_systematics_osc()
 
   // superk spectrum predictor
   SuperkExpectation skexp;
-  skexp.Read("inputs/analysis_configuration.xml");
+  skexp.Read(config);
 
   // fit params
   PhysParamList * fparm = PhysParamList::NumuDisapFitNoSyst();

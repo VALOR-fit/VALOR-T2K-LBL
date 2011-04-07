@@ -8,11 +8,17 @@
 
 #include "Conventions.h"
 
-void test_superk_spectrum_prediction()
+void test_superk_spectrum_prediction
+(
+  const char * config_file = "analysis_configuration.xml"
+)
 {
   using namespace std;
   using namespace t2kana;
   using namespace t2kana::conv;
+
+  const char * config = Form("%s/config/%s", gSystem->Getenv("T2KOSCANA"), config_file);
+  cout << "Reading analysis configuration from: " << config << endl;
 
   // oscillation params
   const int ncases = 2;
@@ -27,7 +33,7 @@ void test_superk_spectrum_prediction()
 
   // superk spectrum predictor
   SuperkExpectation skexp;
-  skexp.Read("inputs/analysis_configuration.xml");
+  skexp.Read(config);
 
   // oscillation params
   PhysParamList * fparm = PhysParamList::NumuDisapFitNoSyst();

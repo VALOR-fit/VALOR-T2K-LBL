@@ -29,6 +29,7 @@
 #include <TLegend.h>
 #include <TSpline.h>
 #include <TRandom3.h>
+#include <TSystem.h>
 
 #include "SuperkExpectation.h"
 #include "ND280Measurement.h"

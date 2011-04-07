@@ -30,15 +30,19 @@
 #include "Conventions.h"
 
 void bestfit_systematic_study_fitting_job(
-   string systematic, 
-   int    irun                = 0, 
-   double input_sinsq2theta23 = 0.90,
-   double input_dm23sq        = 2.4E-3,
-   int    nexperiments        = 500
+   string       systematic, 
+   int          irun                = 0, 
+   double       input_sinsq2theta23 = 0.90,
+   double       input_dm23sq        = 2.4E-3,
+   int          nexperiments        = 500,
+   const char * config_file         = "analysis_configuration.xml"
 )
 {
   using namespace std;
   using namespace t2kana;
+
+  const char * config = Form("%s/config/%s", gSystem->Getenv("T2KOSCANA"), config_file);
+  cout << "Reading analysis configuration from: " << config << endl;
 
   TRandom3 rand(0);
 
@@ -48,7 +52,7 @@ void bestfit_systematic_study_fitting_job(
 
   // get superk spectrum predictor & configure
   SuperkExpectation skexp;
-  skexp.Read("inputs/analysis_configuration.xml");
+  skexp.Read(config);
 
   // fit params
   PhysParamList * fparm = PhysParamList::NumuDisapFitNoSyst();

@@ -18,11 +18,15 @@
 void print_dataset_chisq(
   double       input_sinsq2theta23 = 1.,
   double       input_dm23sq        = 2.4E-3,
+  const char * config_file         = "analysis_configuration.xml",
   int          dataset_id          = 0, 
   const char * data_file           = "inputs/data.xml")
 {
   using namespace std;
   using namespace t2kana;
+
+  const char * config = Form("%s/config/%s", gSystem->Getenv("T2KOSCANA"), config_file);
+  cout << "Reading analysis configuration from: " << config << endl;
 
   // fit params
   PhysParamList * fparm = PhysParamList::NumuDisapFitNoSyst();
@@ -31,7 +35,7 @@ void print_dataset_chisq(
 
   // get superk spectrum predictor & configure
   SuperkExpectation * skexp = new SuperkExpectation;
-  skexp->Read("inputs/analysis_configuration.xml");
+  skexp->Read(config);
   skexp->Generate(*fparm);
   TH1D * hExp = new TH1D(*skexp->CurrPredictedErecoSpectrum());
 

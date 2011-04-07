@@ -13,16 +13,21 @@
 void test_superk_spectrum_prediction_twk_bshape
 (
   double input_sinsq2theta23 = 1.0,
-  double input_dm23sq        = 2.4E-3
+  double input_dm23sq        = 2.4E-3,
+  const char * config_file   = "analysis_configuration.xml"
 )
 {
   using namespace std;
   using namespace t2kana;
 
+  const char * config = Form("%s/config/%s", gSystem->Getenv("T2KOSCANA"), config_file);
+  cout << "Reading analysis configuration from: " << config << endl;
+
   const int nexp       = 1000; // number of 'flux tweaks'
   const int netruebins = 20;   // number of Etrue (variable size) bins in flux covariance matrix
   // beam WG binning:
-  double bin_edges[netruebins+1] = {0.0, 0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 1.0, 1.2, 1.5, 2.0, 2.5, 3.0, 3.5, 4.0, 5.0, 7.0, 10.0, 9999999.9};
+  double bin_edges[netruebins+1] = {
+    0.0, 0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 1.0, 1.2, 1.5, 2.0, 2.5, 3.0, 3.5, 4.0, 5.0, 7.0, 10.0, 9999999.9};
 
   // output histograms and graphs
   TH1D * hEreco [nexp];  //
@@ -36,7 +41,7 @@ void test_superk_spectrum_prediction_twk_bshape
 
   // superk spectrum predictor
   SuperkExpectation skexp;
-  skexp.Read("inputs/analysis_configuration.xml");
+  skexp.Read(config);
 
   // phys params
   PhysParamList * fparm = PhysParamList::NumuDisapFitNoSyst();

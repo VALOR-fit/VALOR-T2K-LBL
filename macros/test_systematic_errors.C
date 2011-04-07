@@ -25,15 +25,20 @@
 
 #include "Conventions.h"
 
-void test_systematic_errors(string systematic)
+void test_systematic_errors
+(
+  const char * systematic,
+  const double input_sinsq2theta23 = 1.00,
+  const double input_dm23sq        = 2.4E-3,
+  bool         use_tex             = false,  /* print-out results as a TeX table (for inclusion in tech. note)*/
+  const char * config_file         = "analysis_configuration.xml"
+)
 {
   using namespace std;
   using namespace t2kana;
 
-  bool use_tex = false; ///<-- print-out results as a TeX table (for inclusion in tech. note)
-
-  const double input_sinsq2theta23 = 1.00;
-  const double input_dm23sq        = 2.4E-3;
+  const char * config = Form("%s/config/%s", gSystem->Getenv("T2KOSCANA"), config_file);
+  cout << "Reading analysis configuration from: " << config << endl;
 
   TRandom3 rand(0);
 
@@ -44,7 +49,7 @@ void test_systematic_errors(string systematic)
 
   // get superk spectrum predictor & configure
   SuperkExpectation * skexp = new SuperkExpectation;
-  skexp->Read("inputs/analysis_configuration.xml");
+  skexp->Read(config);
 
   double alpha = skexp->GetNuXSec()->OnePionInRES();
   cout << "alpha = " << alpha << endl;

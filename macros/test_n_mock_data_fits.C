@@ -17,31 +17,35 @@
 #include "Conventions.h"
 
 void test_n_mock_data_fits(
-  const char * tag = "toyexptfits",
-  int run=0,
-  int nexperiments=1000, 
-  double input_sinsq2theta23 = 1.0,
-  double input_dm23sq = 2.4E-3,
-  const char * fitter_name="minuit", 
-  bool include_systematics=false)
+  const char * tag                 = "toyexptfits",
+  int          run                 = 0,
+  int          nexperiments        = 1000, 
+  double       input_sinsq2theta23 = 1.0,
+  double       input_dm23sq        = 2.4E-3,
+  const char * fitter_name         = "minuit", 
+  bool         include_systematics = false,
+  const char * config_file         = "analysis_configuration.xml"
+)
 {
   using namespace std;
   using namespace t2kana;
 
-  cout << "[Job configuration]" << endl;
+  cout << "[Job inputs]" << endl;
   cout << "Fitter : " << fitter_name << endl;
   cout << "Systematics : " << ((include_systematics) ? "YES " : "NO") << endl;
   cout << "Number of toy experiments : " << nexperiments << endl; 
   cout << "True oscillation parameters : (sinsq2theta23 = " 
        << input_sinsq2theta23 << ", dm23sq = " << input_dm23sq << " eV^2/c^4" << ")" << endl;
 
+  const char * config = Form("%s/config/%s", gSystem->Getenv("T2KOSCANA"), config_file);
+  cout << "Reading analysis configuration from: " << config << endl;
+
   // fit params
   PhysParamList * fparm = PhysParamList::NumuDisapFitNoSyst();
 
   // get superk spectrum predictor & configure
   SuperkExpectation * skexp = new SuperkExpectation;
-//skexp->Read("inputs/analysis_configuration.xml");
-  skexp->Read( Form("%s/inputs/analysis_configuration.xml", gSystem->GetEnv("T2KOSCANA")));
+  skexp->Read(config);
 
   // store results
   TNtupleD * nfitnt = new TNtupleD("nfitnt","", "iexp:sinsq2theta23:dm23sq:chisq");
