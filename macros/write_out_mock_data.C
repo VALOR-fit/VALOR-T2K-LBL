@@ -11,24 +11,33 @@
 
 void write_out_mock_data
 (
-  double       sinsq2theta23       = 1.00, 
-  double       dm23sq              = 2.4E-3, 
-  bool         include_systematics = false, 
-  double       nexperiments        = 1,
-  const char * xml_filename        = 0,
-  const char * root_filename       = 0,
-  const char * config_file         = "analysis_configuration.xml"
+  double       sinsq2theta23       = 1.00,                            /* */
+  double       dm23sq              = 2.32E-3,                         /* */
+  bool         include_systematics = false,                           /* */
+  double       nexperiments        = 1,                               /* */
+  const char * xml_filename        = 0,                               /* */
+  const char * root_filename       = 0,                               /* */
+  const char * config_file         = "analysis_configuration.xml",    /* analysis configuration file */
+  const char * points_to_add       = 0                                /* comma separated-list of data-points to add, eg when creating hybrid data/toy-MC experiments */
 )
 {
   using namespace std;
   using namespace t2kana;
+
+  //
+  // Print out job summary
+  //
+  cout << "** Number of toy MC experiments: " << nexperiments << endl;
+  cout << "True oscillation parameters : (sinsq2theta23 = "
+       << sinsq2theta23 << ", dm23sq = " << dm23sq << " eV^2/c^4" << ")" << endl;
+  cout << "** Including systematics: " << ((include_systematics) ? "YES" : "NO") << endl;
 
   const char * config = Form("%s/config/%s", gSystem->Getenv("T2KOSCANA"), config_file);
   cout << "Reading analysis configuration from: " << config << endl;
 
   TRandom rand(0);
 
-  bool fluctuate = true;
+  bool fluctuate = true; // <- statistical fluctuations
 
   TFile * f = 0;
   if(root_filename) {
@@ -71,49 +80,56 @@ void write_out_mock_data
      TH1D* mock_data = skobs->ErecoSpectrum(conv::kSKsFCFV1RingMuLike);
      mock_data->SetDirectory(0);
 
-     // Print-out Ereco values as a comma separated list.
-     // Assuming uniform distribution within each bin, randomize values within each bin.
+     //
+     // If an XML file was specified, add an entry
+     //
      if(xml_filename) {
        fxml << "           " << Form("<data_set_%d>",iexperiment) << endl;
-     }
-     bool is_first=true;
-     for(int ibin = 1; ibin <= mock_data->GetNbinsX(); ibin++) {
-       double Nb   = mock_data->GetBinContent (ibin); // number of events in this Ereco bin
-     //double Ec   = mock_data->GetXaxis()->GetBinCenter  (ibin); // Ereco bin centre
-       double Emin = mock_data->GetXaxis()->GetBinLowEdge (ibin); // Ereco bin min
-       double Emax = mock_data->GetXaxis()->GetBinUpEdge  (ibin); // Ereco bin max
-       for(int iev = 0; iev < Nb; iev++) {
-         double E = Emin + rand.Uniform() * (Emax-Emin);
-         string delimeter = ",";
-         if(is_first) {
-            delimeter = "\t\t";
-            is_first = false;
-         }
-         cout << delimeter << E;
-         if(xml_filename) {
-            fxml << delimeter << E;           
-         }
-       }//iev
-     }//ibin
-     cout << endl;
-     if(xml_filename) {
+       fxml << "\t\t";
+       // Adding Ereco values as a comma separated list.
+       // Assuming uniform distribution within each bin, randomize values within each bin.
+       int ievtot = 0;
+       for(int ibin = 1; ibin <= mock_data->GetNbinsX(); ibin++) {
+         double Nb   = mock_data->GetBinContent (ibin); // number of events in this Ereco bin
+         double Emin = mock_data->GetXaxis()->GetBinLowEdge (ibin); // Ereco bin min
+         double Emax = mock_data->GetXaxis()->GetBinUpEdge  (ibin); // Ereco bin max
+         for(int iev = 0; iev < Nb; iev++) {
+            double E = Emin + rand.Uniform() * (Emax-Emin);
+            if(ievtot > 0) {
+              fxml << ","; 
+            }
+            fxml << E; 
+            ievtot++;
+         }//iev
+       }//ibin
+       // add extra data-points, if any
+       if(points_to_add) {
+         fxml << "," << points_to_add;
+       }
        fxml << endl;
        fxml << "           " << Form("</data_set_%d>",iexperiment) << endl;
-     }
+     }//xml
 
+     //
      // If a ROOT filename was specified, save the ROOT histogram too
+     //
      if(f) {
+       if(points_to_add) {
+          vector<string> vecp = util::Tokens(points_to_add,",");
+          assert(vecp.size()>0);
+          for(int ip=0; ip < vecp.size(); ip++) {
+            mock_data->Fill(atof(vecp[ip].c_str()));
+          }
+       }
        f->cd();
        mock_data->Write(Form("mock_data_%d",iexperiment));
      }
 
   }//iexperiment
 
-  if(f) {
-    f->Close();
-    delete f;
-  }
-
+  //
+  // Close files
+  //
   if(xml_filename) {
     fxml << "         </ereco_values> " << endl;
     fxml << "       </one_mu_ring>    " << endl;
@@ -121,6 +137,10 @@ void write_out_mock_data
     fxml << "  </superk>              " << endl;
     fxml << "</analysis_inputs>       ";// << endl;
     fxml.close();
+  }
+  if(f) {
+    f->Close();
+    delete f;
   }
 
 }
