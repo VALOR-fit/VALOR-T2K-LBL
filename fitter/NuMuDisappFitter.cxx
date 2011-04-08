@@ -5,6 +5,8 @@
  @ 16/03/2011 - CA
    Removed the numu10a namespace. Renamed: OscillationFitter->NuMuDisappFitter.
    The FitInputs classs is no longer nested in the fitter class.
+ @ 08/04/2011 - CA
+   Update MINOS contour 
 
 */ 
 //____________________________________________________________________________
@@ -29,6 +31,7 @@
 #include <TGaxis.h> 
 #include <TCanvas.h> 
 #include <TFile.h>
+#include <TSystem.h>
 
 #include "NuMuDisappFitter.h" 
 #include "SuperkObservation.h" 
@@ -613,14 +616,15 @@ void NuMuDisappFitter::Draw(
      }
      
      if(opt.Contains("Minos90CL")) {
-         TFile f("./inputs/test/minos_90cl_contour.root","read");
-         TGraph * gr = (TGraph*)f.Get("Graph");
-	 TGraph * minos_90cl = new TGraph(*gr);
-         minos_90cl->SetLineColor(kRed);
-         minos_90cl->SetLineStyle(kSolid);
-         minos_90cl->SetLineWidth(1);
-         minos_90cl->Draw("l");
-	 f.Close();
+        string contour_file = gSystem->Getenv("T2KOSCANA") + string("/inputs/external/contours/numu_disappearance.root");
+        TFile f(contour_file.c_str(),"read");
+        TGraph * gr = (TGraph*)f.Get("minos2011_90cl");
+        TGraph * minos_90cl = new TGraph(*gr);
+        minos_90cl->SetLineColor(kRed);
+        minos_90cl->SetLineStyle(kSolid);
+        minos_90cl->SetLineWidth(1);
+        minos_90cl->Draw("l");
+	f.Close();
      }
 
      c->GetPad(2)->Update();
