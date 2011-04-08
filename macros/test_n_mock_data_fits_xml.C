@@ -11,7 +11,9 @@
 
 void test_n_mock_data_fits_xml
 (
-  const char * xmlfile,
+  const char * tag,                                                /* */
+  int          run,                                                /* */
+  const char * xmlfile,                                            /* input XML file with toy MC experiments */
   int          first_experiment,                                   /* */
   int          last_experiment,                                    /* */
   double       input_sinsq2theta23 = 1.0,                          /* */
@@ -24,6 +26,7 @@ void test_n_mock_data_fits_xml
   using namespace t2kana;
 
   cout << "[Job inputs]" << endl;
+  cout << "Job: " << tag << "/" << run << endl;
   cout << "Fitter : " << fitter_name << endl;
   cout << "Reading experiments from : " << xmlfile << endl; 
   cout << "Fitting experiments : [" << first_experiment << ", " << last_experiment << "]" << endl; 
@@ -59,7 +62,7 @@ void test_n_mock_data_fits_xml
      // get fitter
      FitInputs * fit_inputs = new FitInputs(skobs,skexp,fparm);
      NuMuDisappFitter * fitter = new NuMuDisappFitter(fit_inputs,fitter_name);
-     fitter->ActualOscParams(input_sinsq2theta23, input_dm23sq);
+     //fitter->ActualOscParams(input_sinsq2theta23, input_dm23sq);
 
      // do the fit
      fitter->DoTheFit();
@@ -83,8 +86,8 @@ void test_n_mock_data_fits_xml
   //
   // store results
   //
-  TFile f(Form("Nfits-sinsq2theta23_%.2f-dm23sq_%.5feV2.root",
-          input_sinsq2theta23,input_dm23sq), "recreate");
+  TFile f(Form("%s-sinsq2theta23_%.2f-dm23sq_%.5feV2-run_%d.root",
+               tag, input_sinsq2theta23,input_dm23sq, run), "recreate");
   nfitnt->Write("nfitnt");
   f.Close();
 }

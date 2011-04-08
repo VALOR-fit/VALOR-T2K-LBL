@@ -25,6 +25,7 @@ void test_n_mock_data_fits(
   using namespace t2kana;
 
   cout << "[Job inputs]" << endl;
+  cout << "Job: " << tag << "/" << run << endl;
   cout << "Fitter : " << fitter_name << endl;
   cout << "Systematics : " << ((include_systematics) ? "YES " : "NO") << endl;
   cout << "Statistical fluctuations : " << ((fluctuate_stat) ? "YES " : "NO") << endl;
