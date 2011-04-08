@@ -141,7 +141,7 @@ bool NuFlux::Read(TXMLEngine* xml, XMLNodePointer_t root_node)
   string kubo_data_path =
       util::XML2String(xml,root_node,"beam/superk_flux/systematics/norm_error_inputs");
   if(kubo_data_path != "none") {
-     string full_kubo_data_path = gSystem->Getenv("T2KOSCANA") + kubo_data_path;
+     string full_kubo_data_path = gSystem->Getenv("T2KOSCANA") + string("/") + kubo_data_path;
      cout << "Exp/Beam >> Using input files from: " << full_kubo_data_path << endl;
      fHEC = new HadErrCalc(full_kubo_data_path.c_str());
   } else {
