@@ -1,8 +1,8 @@
-+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+
++--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+
 RUTHERFORD/OXFORD T2K OSCILLATION ANALYSIS PACKAGE
 
 (c) 2010-11 All Rights Reserved
-+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+
++--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+
 
 - Andreopoulos, Costas <costas.andreopoulos \at stfc.ac.uk>
 - Dealtry, Thomas <Thomas.Dealtry \at physics.ox.ac.uk>
@@ -16,10 +16,39 @@ RUTHERFORD/OXFORD T2K OSCILLATION ANALYSIS PACKAGE
 For additonal documentation, see also the RAL/PPD internal wiki:
 https://twiki.pp.rl.ac.uk/twiki/bin/view/T2K/WebHome/Analysis/
 
-+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+
++--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+
+
+* WHAT IS INCLUDED IN THIS PACKAGE?
+
+<top_level>
+    |
+    |-- config                    : Analysis configuration XML files
+    |
+    |-- external                  : External softw. packages
+    |      |-- Prob++             : * SuperK's 3-flavour neutrino oscillation package 
+    |
+    |-- fitter                    : Our main analysis code
+    |
+    |-- inputs                    : Analysis inputs / data-files
+    |      |-- official           
+    |            |-- 2010         : Official inputs for 2010 analysis
+    |            |    |-- flux    :  from the Beam WG (flux + inputs for norm and shape errors)
+    |            |    |-- nd280   :  from the ND280 group (Saclay analysis MC templates for both NEUT/GENIE)
+    |            |    |-- niwg    :  from the NIWG (agreed interaction systematics)
+    |            |    |-- superk  :  from SuperK (MC templates for both NEUT/GENIE for various selections)
+    |            |       
+    |            |-- 2011         :
+    |
+    |-- macros                    : Our analysis procedures
+    |
+    |-- production                : Batch production scripts for RAL/IN2P3/Oxford farms
+    |
+    |-- root                      : The `root2k' (ROOT + T2KANA libraries) environment for our analysis macros
+    |
+    |-- setup                     : Environment setup scripts for various locations
 
 
-SETTING-UP
+* SETTING-UP YOUR ENVIRONMENT
 
 Use the appropriate script from the setup directory.
 The setup script expects a single argument (top-level source code directory).
@@ -28,13 +57,13 @@ Example:
 % source setup/setup_at_XYZ.sh /path/to/t2kana/nuosc/top/level/dir
 
 
-BUILDING THE OSCILLATION ANALYSIS CODE
+* BUILDING THE OSCILLATION ANALYSIS CODE
 
 % cd /path/to/t2kana/nuosc/top/level/dir (or % cd $T2KOSCANA)
 % make
 
 
-RUNNING THE ANALYSIS MACROS
+* RUNNING THE ANALYSIS MACROS
 
 Use `root2k' instead of `root'.
 root2k is root + T2K oscillation analysis library.
