@@ -39,8 +39,8 @@ foreach (@ARGV) {
 $resource               = "interactive"                                unless defined $resource;
 $nruns                  = 10                                           unless defined $nruns;
 $nexpts                 = 1000                                         unless defined $nexpts;
-$dm23sq                 = 0.00232                                      unless defined $max_dm23sq_bin; 
-$sinsq2theta23          = 0.90                                         unless defined $max_sinsq2theta23_bin;
+$dm23sq                 = 0.00232                                      unless defined $dm23sq; 
+$sinsq2theta23          = 0.90                                         unless defined $sinsq2theta23;
 $job_dir                = `pwd`                                        unless defined $job_dir;
 $softw_dir              = `pwd`                                        unless defined $softw_dir;
 $config_file            = "analysis_configuration.xml"                 unless defined $config_file;
