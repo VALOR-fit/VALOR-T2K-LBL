@@ -86,8 +86,8 @@ void test_n_mock_data_fits_xml
   //
   // store results
   //
-  TFile f(Form("%s-sinsq2theta23_%.2f-dm23sq_%.5feV2-run_%d.root",
-               tag, input_sinsq2theta23,input_dm23sq, run), "recreate");
+  TFile f(Form("%s-run_%d-expts_%d_%d.root",
+               tag, run, first_experiment, last_experiment), "recreate");
   nfitnt->Write("nfitnt");
   f.Close();
 }
