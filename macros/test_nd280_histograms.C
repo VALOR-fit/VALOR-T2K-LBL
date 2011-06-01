@@ -1,6 +1,51 @@
+//
+// ------------------------------------------------------------------------------------------------
+// Test histograms provided by the ND280 / Saclay group
+//
+// Costas Andreopoulos
+// ------------------------------------------------------------------------------------------------
+//
+
+void test_nd280_histograms
+(
+   string generator = "neut",     /*  "neut" or "genie" */
+   int    flux10dvrs = 2          /*   2 --> 10d_v2, 3 --> 10d_v3 */
+)
+
 {
-  TFile f("./inputs/official/nd280/saclay/neut/10d_v2/ND280NuEnergyHisto_NEUT.root", "read");
-  //TFile f("./inputs/official/nd280/saclay/genie/10d_v2/ND280NuEnergyHisto_GENIE.root", "read");
+  double nd280_data_pot     = 2.88E19;
+  double nd280_mc_pot       = 0;
+  double nd280_mc_pot_neut  = 4.98 * (1.025*0.982) * 1E20; // NEUT
+  double nd280_mc_pot_genie = 4.94  *(1.025*0.982) * 1E20; // GENIE 
+
+  string filename = "";
+
+  if(generator == "neut" && flux10dvrs == 2) {
+     filename = "inputs/official/2010/nd280/saclay/10d_v2/ND280NuEnergyHisto_NEUT.root";
+     nd280_mc_pot = nd280_mc_pot_neut;
+  }
+  if(generator == "neut" && flux10dvrs == 3) {
+     filename = "inputs/official/2010/nd280/saclay/10d_v3/ND280NuEnergyHisto_NEUT10d_v3.root";
+     nd280_mc_pot = nd280_mc_pot_neut;
+  }
+  if(generator == "genie" && flux10dvrs == 2) {
+     filename = "inputs/official/2010/nd280/saclay/10d_v2/ND280NuEnergyHisto_GENIE.root";
+     nd280_mc_pot = nd280_mc_pot_genie;
+  }
+  if(generator == "genie" && flux10dvrs == 3) {
+     filename = "inputs/official/2010/nd280/saclay/10d_v3/ND280NuEnergyHisto_GENIE10d_v3.root";
+     nd280_mc_pot = nd280_mc_pot_genie;
+  }
+
+  if(filename == "") {
+     cout << "Can't find nd280 histograms" << endl;
+     return;
+  }
+
+  string topdir   = gSystem->Getenv("T2KOSCANA");
+  filename = topdir + "/" + filename;
+
+  TFile f(filename.c_str(),  "read");
 
   TH1F * h01 = (TH1F*)f.Get("EnergyNuMu_true_QE");
   TH1F * h02 = (TH1F*)f.Get("EnergyNuMu_true_res");
@@ -23,10 +68,6 @@
   TH1F * h19 = (TH1F*)f.Get("EnergyNuE_true_ncres");
   TH1F * h20 = (TH1F*)f.Get("EnergyNuE_true_ncoth");
   TH1F * h21 = (TH1F*)f.Get("EnergyNuE_true_nccoh");
-
-  double nd280_data_pot = 2.88E19;
-  double nd280_mc_pot   = 4.98 * (1.025*0.982) * 1E20; // NEUT
-  //double nd280_mc_pot   = 4.94  *(1.025*0.982) * 1E20; // GENIE 
 
   double scale_factor   = nd280_data_pot/nd280_mc_pot;
 
