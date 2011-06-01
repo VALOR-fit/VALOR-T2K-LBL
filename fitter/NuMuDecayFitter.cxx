@@ -512,18 +512,6 @@ void NuMuDecayFitter::Draw(
         true_point->SetMarkerColor(kRed);
         true_point->Draw();
      }
-/*     
-     if(opt.Contains("Minos90CL")) {
-         TFile f("./inputs/test/minos_90cl_contour.root","read");
-         TGraph * gr = (TGraph*)f.Get("Graph");
-	 TGraph * minos_90cl = new TGraph(*gr);
-         minos_90cl->SetLineColor(kRed);
-         minos_90cl->SetLineStyle(kSolid);
-         minos_90cl->SetLineWidth(1);
-         minos_90cl->Draw("l");
-	 f.Close();
-     }
-*/
      c->GetPad(2)->Update();
 
      //
