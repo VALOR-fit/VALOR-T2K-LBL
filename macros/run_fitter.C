@@ -40,11 +40,15 @@ void run_fitter
   SuperkObservation * skobs = new SuperkObservation;
   skobs->Read(data_file, dataset_id);
 
-  // fit params
-  PhysParamList * fparm = 0;
+///  // fit params
+//  PhysParamList * fparm = 0;
+
+  //
+  // disappearance fit
+  //
 
   if(hypothesis == "disappearance") {
-    fparm = PhysParamList::NumuDisapFitNoSyst();
+    PhysParamList * fparm = PhysParamList::NumuDisapFitNoSyst();
     FitInputs * fit_inputs = new FitInputs(skobs,skexp,fparm);
     NuMuDisappFitter * fitter = new NuMuDisappFitter(fit_inputs,fitter_name);
 
@@ -52,9 +56,48 @@ void run_fitter
     fitter->DoTheFit();
 
     // see inputs
-    const char * outfile = Form("fit%d",dataset_id);
+    const char * outfile = Form("disap_fit_%d",dataset_id);
     fitter->Draw(new TCanvas(), "StandardOscFitPlots+Minos90CL",outfile);
     fitter->Draw(new TCanvas(), "ChisqSurface");
     fitter->Draw(new TCanvas(), "MarginalizedChisq");
   }
+
+  //
+  // decoherence fit
+  //
+
+  if(hypothesis == "decoherence") {
+    PhysParamList * fparm = PhysParamList::NumuDecohFitNoSyst();
+    FitInputs * fit_inputs = new FitInputs(skobs,skexp,fparm);
+    NuMuDecohFitter * fitter = new NuMuDecohFitter(fit_inputs,fitter_name);
+
+    // do the fit
+    fitter->DoTheFit();
+
+    // see inputs
+    const char * outfile = Form("decoh_fit_%d",dataset_id);
+    fitter->Draw(new TCanvas(), "StandardOscFitPlots",outfile);
+    fitter->Draw(new TCanvas(), "ChisqSurface");
+    fitter->Draw(new TCanvas(), "MarginalizedChisq");
+  }
+
+  //
+  // decay fit
+  //
+
+  if(hypothesis == "decay") {
+    PhysParamList * fparm = PhysParamList::NumuDecayFitNoSyst();
+    FitInputs * fit_inputs = new FitInputs(skobs,skexp,fparm);
+    NuMuDecayFitter * fitter = new NuMuDecayFitter(fit_inputs,fitter_name);
+
+    // do the fit
+    fitter->DoTheFit();
+
+    // see inputs
+    const char * outfile = Form("decay_fit_%d",dataset_id);
+    fitter->Draw(new TCanvas(), "StandardOscFitPlots",outfile);
+    fitter->Draw(new TCanvas(), "ChisqSurface");
+    fitter->Draw(new TCanvas(), "MarginalizedChisq");
+  }
+
 }
