@@ -193,22 +193,22 @@ from the GENIE/NEUT physics monte carlo groups.
               numu CC
          -->
          <numu_ccqe>
-            <filename>   inputs/official/2010/nd280/saclay/neut/10d_v2/ND280NuEnergyHisto_NEUT.root  </filename>
+            <filename>   inputs/official/2010/nd280/saclay/10d_v2/ND280NuEnergyHisto_NEUT.root  </filename>
             <objname>    EnergyNuMu_true_QE       </objname>
             <objtype>    TH1F                     </objtype>
          </numu_ccqe>
          <numu_ccres>
-            <filename>   inputs/official/2010/nd280/saclay/neut/10d_v2/ND280NuEnergyHisto_NEUT.root  </filename>
+            <filename>   inputs/official/2010/nd280/saclay/10d_v2/ND280NuEnergyHisto_NEUT.root  </filename>
             <objname>    EnergyNuMu_true_res      </objname>
             <objtype>    TH1F                     </objtype>
          </numu_ccres>
          <numu_cccoh>
-            <filename>   inputs/official/2010/nd280/saclay/neut/10d_v2/ND280NuEnergyHisto_NEUT.root  </filename>
+            <filename>   inputs/official/2010/nd280/saclay/10d_v2/ND280NuEnergyHisto_NEUT.root  </filename>
             <objname>    EnergyNuMu_true_coh      </objname>
             <objtype>    TH1F                     </objtype>
          </numu_cccoh>
          <numu_ccoth>
-            <filename>   inputs/official/2010/nd280/saclay/neut/10d_v2/ND280NuEnergyHisto_NEUT.root  </filename>
+            <filename>   inputs/official/2010/nd280/saclay/10d_v2/ND280NuEnergyHisto_NEUT.root  </filename>
             <objname>    EnergyNuMu_true_oth      </objname>
             <objtype>    TH1F                     </objtype>
          </numu_ccoth>
@@ -216,17 +216,17 @@ from the GENIE/NEUT physics monte carlo groups.
               numu NC
          -->
          <numu_ncres>
-            <filename>   inputs/official/2010/nd280/saclay/neut/10d_v2/ND280NuEnergyHisto_NEUT.root  </filename>
+            <filename>   inputs/official/2010/nd280/saclay/10d_v2/ND280NuEnergyHisto_NEUT.root  </filename>
             <objname>    EnergyNuMu_true_ncres    </objname>
             <objtype>    TH1F                     </objtype>
          </numu_ncres>
          <numu_nccoh>
-            <filename>   inputs/official/2010/nd280/saclay/neut/10d_v2/ND280NuEnergyHisto_NEUT.root  </filename>
+            <filename>   inputs/official/2010/nd280/saclay/10d_v2/ND280NuEnergyHisto_NEUT.root  </filename>
             <objname>    EnergyNuMu_true_nccoh    </objname>
             <objtype>    TH1F                     </objtype>
          </numu_nccoh>
          <numu_ncoth>
-            <filename>   inputs/official/2010/nd280/saclay/neut/10d_v2/ND280NuEnergyHisto_NEUT.root  </filename>
+            <filename>   inputs/official/2010/nd280/saclay/10d_v2/ND280NuEnergyHisto_NEUT.root  </filename>
             <objname>    EnergyNuMu_true_ncoth    </objname>
             <objtype>    TH1F                     </objtype>
          </numu_ncoth>
@@ -234,22 +234,22 @@ from the GENIE/NEUT physics monte carlo groups.
               numubar CC
          -->
          <numubar_ccqe>
-            <filename>   inputs/official/2010/nd280/saclay/neut/10d_v2/ND280NuEnergyHisto_NEUT.root  </filename>
+            <filename>   inputs/official/2010/nd280/saclay/10d_v2/ND280NuEnergyHisto_NEUT.root  </filename>
             <objname>    EnergyANuMu_true_QE      </objname>
             <objtype>    TH1F                     </objtype>
          </numubar_ccqe>
          <numubar_ccres>
-            <filename>   inputs/official/2010/nd280/saclay/neut/10d_v2/ND280NuEnergyHisto_NEUT.root  </filename>
+            <filename>   inputs/official/2010/nd280/saclay/10d_v2/ND280NuEnergyHisto_NEUT.root  </filename>
             <objname>    EnergyANuMu_true_res     </objname>
             <objtype>    TH1F                     </objtype>
          </numubar_ccres>
          <numubar_cccoh>
-            <filename>   inputs/official/2010/nd280/saclay/neut/10d_v2/ND280NuEnergyHisto_NEUT.root  </filename>
+            <filename>   inputs/official/2010/nd280/saclay/10d_v2/ND280NuEnergyHisto_NEUT.root  </filename>
             <objname>    EnergyANuMu_true_coh     </objname>
             <objtype>    TH1F                     </objtype>
          </numubar_cccoh>
          <numubar_ccoth>
-            <filename>   inputs/official/2010/nd280/saclay/neut/10d_v2/ND280NuEnergyHisto_NEUT.root  </filename>
+            <filename>   inputs/official/2010/nd280/saclay/10d_v2/ND280NuEnergyHisto_NEUT.root  </filename>
             <objname>    EnergyANuMu_true_oth     </objname>
             <objtype>    TH1F                     </objtype>
          </numubar_ccoth>
@@ -257,17 +257,17 @@ from the GENIE/NEUT physics monte carlo groups.
               numubar NC
          -->
          <numubar_ncres>
-            <filename>   inputs/official/2010/nd280/saclay/neut/10d_v2/ND280NuEnergyHisto_NEUT.root  </filename>
+            <filename>   inputs/official/2010/nd280/saclay/10d_v2/ND280NuEnergyHisto_NEUT.root  </filename>
             <objname>    EnergyANuMu_true_ncres   </objname>
             <objtype>    TH1F                     </objtype>
          </numubar_ncres>
          <numubar_nccoh>
-            <filename>   inputs/official/2010/nd280/saclay/neut/10d_v2/ND280NuEnergyHisto_NEUT.root  </filename>
+            <filename>   inputs/official/2010/nd280/saclay/10d_v2/ND280NuEnergyHisto_NEUT.root  </filename>
             <objname>    EnergyANuMu_true_nccoh   </objname>
             <objtype>    TH1F                     </objtype>
          </numubar_nccoh>
          <numubar_ncoth>
-            <filename>   inputs/official/2010/nd280/saclay/neut/10d_v2/ND280NuEnergyHisto_NEUT.root  </filename>
+            <filename>   inputs/official/2010/nd280/saclay/10d_v2/ND280NuEnergyHisto_NEUT.root  </filename>
             <objname>    EnergyANuMu_true_ncoth   </objname>
             <objtype>    TH1F                     </objtype>
          </numubar_ncoth>
@@ -275,22 +275,22 @@ from the GENIE/NEUT physics monte carlo groups.
               nue CC
          -->
          <nue_ccqe>
-            <filename>   inputs/official/2010/nd280/saclay/neut/10d_v2/ND280NuEnergyHisto_NEUT.root  </filename>
+            <filename>   inputs/official/2010/nd280/saclay/10d_v2/ND280NuEnergyHisto_NEUT.root  </filename>
             <objname>    EnergyNuE_true_QE        </objname>
             <objtype>    TH1F                     </objtype>
          </nue_ccqe>
          <nue_ccres>
-            <filename>   inputs/official/2010/nd280/saclay/neut/10d_v2/ND280NuEnergyHisto_NEUT.root  </filename>
+            <filename>   inputs/official/2010/nd280/saclay/10d_v2/ND280NuEnergyHisto_NEUT.root  </filename>
             <objname>    EnergyNuE_true_res      </objname>
             <objtype>    TH1F                    </objtype>
          </nue_ccres>
          <nue_cccoh>
-            <filename>   inputs/official/2010/nd280/saclay/neut/10d_v2/ND280NuEnergyHisto_NEUT.root  </filename>
+            <filename>   inputs/official/2010/nd280/saclay/10d_v2/ND280NuEnergyHisto_NEUT.root  </filename>
             <objname>    EnergyNuE_true_coh      </objname>
             <objtype>    TH1F                    </objtype>
          </nue_cccoh>
          <nue_ccoth>
-            <filename>   inputs/official/2010/nd280/saclay/neut/10d_v2/ND280NuEnergyHisto_NEUT.root  </filename>
+            <filename>   inputs/official/2010/nd280/saclay/10d_v2/ND280NuEnergyHisto_NEUT.root  </filename>
             <objname>    EnergyNuE_true_oth      </objname>
             <objtype>    TH1F                    </objtype>
          </nue_ccoth>
@@ -298,17 +298,17 @@ from the GENIE/NEUT physics monte carlo groups.
               nue NC
          -->
          <nue_ncres>
-            <filename>   inputs/official/2010/nd280/saclay/neut/10d_v2/ND280NuEnergyHisto_NEUT.root  </filename>
+            <filename>   inputs/official/2010/nd280/saclay/10d_v2/ND280NuEnergyHisto_NEUT.root  </filename>
             <objname>    EnergyNuE_true_ncres    </objname>
             <objtype>    TH1F                    </objtype>
          </nue_ncres>
          <nue_nccoh>
-            <filename>   inputs/official/2010/nd280/saclay/neut/10d_v2/ND280NuEnergyHisto_NEUT.root  </filename>
+            <filename>   inputs/official/2010/nd280/saclay/10d_v2/ND280NuEnergyHisto_NEUT.root  </filename>
             <objname>    EnergyNuE_true_nccoh   </objname>
             <objtype>    TH1F                   </objtype>
          </nue_nccoh>
          <nue_ncoth>
-            <filename>   inputs/official/2010/nd280/saclay/neut/10d_v2/ND280NuEnergyHisto_NEUT.root  </filename>
+            <filename>   inputs/official/2010/nd280/saclay/10d_v2/ND280NuEnergyHisto_NEUT.root  </filename>
             <objname>    EnergyNuE_true_ncoth   </objname>
             <objtype>    TH1F                   </objtype>
          </nue_ncoth>
