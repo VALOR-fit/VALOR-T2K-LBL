@@ -6,7 +6,7 @@
 // ------------------------------------------------------------------------------------------------
 //
 
-void test_cholesky_sk_flux_covariance
+void test_cholesky_decomp_sk_flux_covariance
 (
   const char * config_file = "analysis_configuration.xml", /* analysis configuration file */
 )
