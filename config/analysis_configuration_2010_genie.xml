@@ -124,7 +124,7 @@ from the GENIE/NEUT physics monte carlo groups.
        <!--
         POT for analysis sample
         -->
-        <pot> 3.23E+19 </pot> 
+        <pot> 1.431E+20 </pot> 
      </observation>
 
      <!--

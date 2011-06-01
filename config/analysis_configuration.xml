@@ -6,7 +6,7 @@ from the ND280, Superk, Beam, NIWG support groups and
 from the GENIE/NEUT physics monte carlo groups.
 -->
 
-<analysis_inputs analysis="RutherfordOxford/T2KNuMu" mc="GENIE">
+<analysis_inputs analysis="RutherfordOxford/T2KNuMu" mc="NEUT">
 
   <!--
   ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -61,13 +61,13 @@ from the GENIE/NEUT physics monte carlo groups.
          <covariance>     
              <numu>
                  <filename>   inputs/official/2010/flux/shape_error/v2.2/sk_covariance_and_correlation_10d.v2.root </filename>
-                 <objname>    cov_matrix  </objname>
-                 <objtype>    TMatrixD    </objtype>
+                 <objname>    cov_matrix    </objname>
+                 <objtype>    TMatrixD      </objtype>
              </numu>
          </covariance> 
          <norm_error_inputs>
                 ./inputs/official/2010/flux/norm_error/v2.2/share/
-<!--		none-->
+<!--            none-->
          </norm_error_inputs>
          <norm_error_simple_version>
 		0.05
@@ -81,14 +81,28 @@ from the GENIE/NEUT physics monte carlo groups.
   Inputs from SuperK
   ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
   -->
-  <superk>
+  <!-- 
+   The NEUT MC normalization numbers come from Kameda-san.
+   Unlike GENIE, we can not easily verify. Kameda-san got #no.events/22.5kt/1E+21POT from
+   Hayato-san and original document/calculation could not be traced.
+   Kameda's numbers (to normalize MC to 3.23E+19 POT / no ND280 correction) were:
+   - numu    = 0.00227666  * (0.0323)
+   - numubar = 0.000222234 * (0.0323)
+   - nuebeam = 4.5953E-5   * (0.0323)
+   Therefore, NEUT-folks must have estimated that their MC samples correspond to:
+   - numu    = (1. / 0.00227666 ) x 1E+21 = 4.3923994 x 1E+23
+   - numubar = (1. / 0.000222234) x 1E+21 = 4.4997615 x 1E+24
+   - nuebeam = (1. / 4.5953E-5  ) x 1E+21 = 2.1761365 x 1E+25
+  -->
+
+  <superk>     
      <mc>
         <numu>
            <pot>
-              4.56E+23
+		4.3923994E+23
            </pot>
            <one_mu_ring>
-              <filename>   inputs/official/2010/superk/genie/superk_1RmuT_numu_10a.root  </filename>
+              <filename>   inputs/official/2010/superk/neut/superk_1RmuT_numu_10a.root  </filename>
               <objname>    selection_tree   </objname>
               <objtype>    TTree            </objtype>
            </one_mu_ring>
@@ -96,10 +110,10 @@ from the GENIE/NEUT physics monte carlo groups.
 
         <numubar>
            <pot>
-              4.66568E+24
+              4.4997615E+24
            </pot>
            <one_mu_ring>
-              <filename>   inputs/official/2010/superk/genie/superk_1RmuT_numubar_10a.root  </filename>
+              <filename>   inputs/official/2010/superk/neut/superk_1RmuT_numubar_10a.root  </filename>
               <objname>    selection_tree   </objname>
               <objtype>    TTree            </objtype>
            </one_mu_ring>
@@ -107,10 +121,10 @@ from the GENIE/NEUT physics monte carlo groups.
 
         <nuebeam>
            <pot>
-              2.394164E+25
+              2.1761365E+25
            </pot>
            <one_mu_ring>
-              <filename>   inputs/official/2010/superk/genie/superk_1RmuT_nuebeam_10a.root  </filename>
+              <filename>   inputs/official/2010/superk/neut/superk_1RmuT_nuebeam_10a.root  </filename>
               <objname>    selection_tree   </objname>
               <objtype>    TTree            </objtype>
            </one_mu_ring>
@@ -124,7 +138,7 @@ from the GENIE/NEUT physics monte carlo groups.
        <!--
         POT for analysis sample
         -->
-        <pot> 3.23E+19 </pot> 
+        <pot> 1.431E+20 </pot> 
      </observation>
 
      <!--
@@ -166,11 +180,11 @@ from the GENIE/NEUT physics monte carlo groups.
        <!--
         Observed number of CC-like events
        -->
-       <nobs_cclike> 1445 </nobs_cclike>
+       <nobs_cclike> 1456 </nobs_cclike>
        <!--
         POT for MC sample
        -->
-       <pot_mc> 4.972357E+20 </pot_mc>
+       <pot_mc> 5.012619E+20 </pot_mc>
        <!--
           Number of events passing selection as a function of Etrue for various modes
        -->
@@ -179,22 +193,22 @@ from the GENIE/NEUT physics monte carlo groups.
               numu CC
          -->
          <numu_ccqe>
-            <filename>   inputs/official/2010/nd280/saclay/genie/10d_v2/ND280NuEnergyHisto_GENIE.root  </filename>
+            <filename>   inputs/official/2010/nd280/saclay/neut/10d_v2/ND280NuEnergyHisto_NEUT.root  </filename>
             <objname>    EnergyNuMu_true_QE       </objname>
             <objtype>    TH1F                     </objtype>
          </numu_ccqe>
          <numu_ccres>
-            <filename>   inputs/official/2010/nd280/saclay/genie/10d_v2/ND280NuEnergyHisto_GENIE.root  </filename>
+            <filename>   inputs/official/2010/nd280/saclay/neut/10d_v2/ND280NuEnergyHisto_NEUT.root  </filename>
             <objname>    EnergyNuMu_true_res      </objname>
             <objtype>    TH1F                     </objtype>
          </numu_ccres>
          <numu_cccoh>
-            <filename>   inputs/official/2010/nd280/saclay/genie/10d_v2/ND280NuEnergyHisto_GENIE.root  </filename>
+            <filename>   inputs/official/2010/nd280/saclay/neut/10d_v2/ND280NuEnergyHisto_NEUT.root  </filename>
             <objname>    EnergyNuMu_true_coh      </objname>
             <objtype>    TH1F                     </objtype>
          </numu_cccoh>
          <numu_ccoth>
-            <filename>   inputs/official/2010/nd280/saclay/genie/10d_v2/ND280NuEnergyHisto_GENIE.root  </filename>
+            <filename>   inputs/official/2010/nd280/saclay/neut/10d_v2/ND280NuEnergyHisto_NEUT.root  </filename>
             <objname>    EnergyNuMu_true_oth      </objname>
             <objtype>    TH1F                     </objtype>
          </numu_ccoth>
@@ -202,17 +216,17 @@ from the GENIE/NEUT physics monte carlo groups.
               numu NC
          -->
          <numu_ncres>
-            <filename>   inputs/official/2010/nd280/saclay/genie/10d_v2/ND280NuEnergyHisto_GENIE.root  </filename>
+            <filename>   inputs/official/2010/nd280/saclay/neut/10d_v2/ND280NuEnergyHisto_NEUT.root  </filename>
             <objname>    EnergyNuMu_true_ncres    </objname>
             <objtype>    TH1F                     </objtype>
          </numu_ncres>
          <numu_nccoh>
-            <filename>   inputs/official/2010/nd280/saclay/genie/10d_v2/ND280NuEnergyHisto_GENIE.root  </filename>
+            <filename>   inputs/official/2010/nd280/saclay/neut/10d_v2/ND280NuEnergyHisto_NEUT.root  </filename>
             <objname>    EnergyNuMu_true_nccoh    </objname>
             <objtype>    TH1F                     </objtype>
          </numu_nccoh>
          <numu_ncoth>
-            <filename>   inputs/official/2010/nd280/saclay/genie/10d_v2/ND280NuEnergyHisto_GENIE.root  </filename>
+            <filename>   inputs/official/2010/nd280/saclay/neut/10d_v2/ND280NuEnergyHisto_NEUT.root  </filename>
             <objname>    EnergyNuMu_true_ncoth    </objname>
             <objtype>    TH1F                     </objtype>
          </numu_ncoth>
@@ -220,22 +234,22 @@ from the GENIE/NEUT physics monte carlo groups.
               numubar CC
          -->
          <numubar_ccqe>
-            <filename>   inputs/official/2010/nd280/saclay/genie/10d_v2/ND280NuEnergyHisto_GENIE.root  </filename>
+            <filename>   inputs/official/2010/nd280/saclay/neut/10d_v2/ND280NuEnergyHisto_NEUT.root  </filename>
             <objname>    EnergyANuMu_true_QE      </objname>
             <objtype>    TH1F                     </objtype>
          </numubar_ccqe>
          <numubar_ccres>
-            <filename>   inputs/official/2010/nd280/saclay/genie/10d_v2/ND280NuEnergyHisto_GENIE.root  </filename>
+            <filename>   inputs/official/2010/nd280/saclay/neut/10d_v2/ND280NuEnergyHisto_NEUT.root  </filename>
             <objname>    EnergyANuMu_true_res     </objname>
             <objtype>    TH1F                     </objtype>
          </numubar_ccres>
          <numubar_cccoh>
-            <filename>   inputs/official/2010/nd280/saclay/genie/10d_v2/ND280NuEnergyHisto_GENIE.root  </filename>
+            <filename>   inputs/official/2010/nd280/saclay/neut/10d_v2/ND280NuEnergyHisto_NEUT.root  </filename>
             <objname>    EnergyANuMu_true_coh     </objname>
             <objtype>    TH1F                     </objtype>
          </numubar_cccoh>
          <numubar_ccoth>
-            <filename>   inputs/official/2010/nd280/saclay/genie/10d_v2/ND280NuEnergyHisto_GENIE.root  </filename>
+            <filename>   inputs/official/2010/nd280/saclay/neut/10d_v2/ND280NuEnergyHisto_NEUT.root  </filename>
             <objname>    EnergyANuMu_true_oth     </objname>
             <objtype>    TH1F                     </objtype>
          </numubar_ccoth>
@@ -243,17 +257,17 @@ from the GENIE/NEUT physics monte carlo groups.
               numubar NC
          -->
          <numubar_ncres>
-            <filename>   inputs/official/2010/nd280/saclay/genie/10d_v2/ND280NuEnergyHisto_GENIE.root  </filename>
+            <filename>   inputs/official/2010/nd280/saclay/neut/10d_v2/ND280NuEnergyHisto_NEUT.root  </filename>
             <objname>    EnergyANuMu_true_ncres   </objname>
             <objtype>    TH1F                     </objtype>
          </numubar_ncres>
          <numubar_nccoh>
-            <filename>   inputs/official/2010/nd280/saclay/genie/10d_v2/ND280NuEnergyHisto_GENIE.root  </filename>
+            <filename>   inputs/official/2010/nd280/saclay/neut/10d_v2/ND280NuEnergyHisto_NEUT.root  </filename>
             <objname>    EnergyANuMu_true_nccoh   </objname>
             <objtype>    TH1F                     </objtype>
          </numubar_nccoh>
          <numubar_ncoth>
-            <filename>   inputs/official/2010/nd280/saclay/genie/10d_v2/ND280NuEnergyHisto_GENIE.root  </filename>
+            <filename>   inputs/official/2010/nd280/saclay/neut/10d_v2/ND280NuEnergyHisto_NEUT.root  </filename>
             <objname>    EnergyANuMu_true_ncoth   </objname>
             <objtype>    TH1F                     </objtype>
          </numubar_ncoth>
@@ -261,22 +275,22 @@ from the GENIE/NEUT physics monte carlo groups.
               nue CC
          -->
          <nue_ccqe>
-            <filename>   inputs/official/2010/nd280/saclay/genie/10d_v2/ND280NuEnergyHisto_GENIE.root  </filename>
+            <filename>   inputs/official/2010/nd280/saclay/neut/10d_v2/ND280NuEnergyHisto_NEUT.root  </filename>
             <objname>    EnergyNuE_true_QE        </objname>
             <objtype>    TH1F                     </objtype>
          </nue_ccqe>
          <nue_ccres>
-            <filename>   inputs/official/2010/nd280/saclay/genie/10d_v2/ND280NuEnergyHisto_GENIE.root  </filename>
+            <filename>   inputs/official/2010/nd280/saclay/neut/10d_v2/ND280NuEnergyHisto_NEUT.root  </filename>
             <objname>    EnergyNuE_true_res      </objname>
             <objtype>    TH1F                    </objtype>
          </nue_ccres>
          <nue_cccoh>
-            <filename>   inputs/official/2010/nd280/saclay/genie/10d_v2/ND280NuEnergyHisto_GENIE.root  </filename>
+            <filename>   inputs/official/2010/nd280/saclay/neut/10d_v2/ND280NuEnergyHisto_NEUT.root  </filename>
             <objname>    EnergyNuE_true_coh      </objname>
             <objtype>    TH1F                    </objtype>
          </nue_cccoh>
          <nue_ccoth>
-            <filename>   inputs/official/2010/nd280/saclay/genie/10d_v2/ND280NuEnergyHisto_GENIE.root  </filename>
+            <filename>   inputs/official/2010/nd280/saclay/neut/10d_v2/ND280NuEnergyHisto_NEUT.root  </filename>
             <objname>    EnergyNuE_true_oth      </objname>
             <objtype>    TH1F                    </objtype>
          </nue_ccoth>
@@ -284,17 +298,17 @@ from the GENIE/NEUT physics monte carlo groups.
               nue NC
          -->
          <nue_ncres>
-            <filename>   inputs/official/2010/nd280/saclay/genie/10d_v2/ND280NuEnergyHisto_GENIE.root  </filename>
+            <filename>   inputs/official/2010/nd280/saclay/neut/10d_v2/ND280NuEnergyHisto_NEUT.root  </filename>
             <objname>    EnergyNuE_true_ncres    </objname>
             <objtype>    TH1F                    </objtype>
          </nue_ncres>
          <nue_nccoh>
-            <filename>   inputs/official/2010/nd280/saclay/genie/10d_v2/ND280NuEnergyHisto_GENIE.root  </filename>
+            <filename>   inputs/official/2010/nd280/saclay/neut/10d_v2/ND280NuEnergyHisto_NEUT.root  </filename>
             <objname>    EnergyNuE_true_nccoh   </objname>
             <objtype>    TH1F                   </objtype>
          </nue_nccoh>
          <nue_ncoth>
-            <filename>   inputs/official/2010/nd280/saclay/genie/10d_v2/ND280NuEnergyHisto_GENIE.root  </filename>
+            <filename>   inputs/official/2010/nd280/saclay/neut/10d_v2/ND280NuEnergyHisto_NEUT.root  </filename>
             <objname>    EnergyNuE_true_ncoth   </objname>
             <objtype>    TH1F                   </objtype>
          </nue_ncoth>
@@ -353,7 +367,7 @@ from the GENIE/NEUT physics monte carlo groups.
 
   <neutrino_generator>
      <cc1pi_in_ccres>
-	0.95
+        1.00
      </cc1pi_in_ccres>
   </neutrino_generator>
 
