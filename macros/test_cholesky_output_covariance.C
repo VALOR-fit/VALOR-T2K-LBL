@@ -14,7 +14,8 @@
 
 #include <iomanip.h>
 
-void test_cholesky_output_covariance(void)
+void test_cholesky_output_covariance(
+  const int np=6, const char * inpfile="inputs/test/cholesky_inputs_6dim_1.txt")
 {
   using namespace std;
   using namespace t2kana;
@@ -23,12 +24,11 @@ void test_cholesky_output_covariance(void)
   // read inputs for the Cholesky method 
   //
 
-  const int np = 6;
-
   TVectorD input_mean_params (np);
   TMatrixD input_cov_matrix  (np,np);
 
-  ifstream finp("inputs/test/cholesky_inputs_6dim_1.txt");
+  ifstream finp(inpfile);
+//  ifstream finp("inputs/test/cholesky_inputs_6dim_1.txt");
   int iline=0;
   while(1) {
     char c = finp.peek();
