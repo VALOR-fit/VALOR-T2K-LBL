@@ -28,7 +28,6 @@ void test_cholesky_output_covariance(
   TMatrixD input_cov_matrix  (np,np);
 
   ifstream finp(inpfile);
-//  ifstream finp("inputs/test/cholesky_inputs_6dim_1.txt");
   int iline=0;
   while(1) {
     char c = finp.peek();
