@@ -6,6 +6,8 @@
 // ------------------------------------------------------------------------------------------------
 //
 
+#include <iomanip.h>
+
 void test_cholesky_decomp_sk_ccqe_rc_covariance(void)
 {
   using namespace std;
@@ -36,5 +38,24 @@ void test_cholesky_decomp_sk_ccqe_rc_covariance(void)
 
   TMatrixD L = util::CholeskyDecomposition(V);
   L.Print();
+
+  TVectorD mean_RCeff_twk(3);
+  mean_RCeff_twk(0)=1.;
+  mean_RCeff_twk(1)=1.;
+  mean_RCeff_twk(2)=1.;
+
+  const int N = 50;
+ 
+  for(int i=0; i<N; i++) {
+    TVectorD RCeff_twk = util::CholeskyGenerateCorrelatedParams(L, mean_RCeff_twk);
+    cout << "CCQE RC efficiency tweaking vector " 
+         << setw(6) << setfill(' ') << setprecision(3) << i << " : (";
+    for(int ip=0; ip<3; ip++) {
+       cout << setw(8) << setfill(' ') << setprecision(4) << RCeff_twk(ip);
+       if ( ip <  2) { cout << ", "; }
+    }//ip
+    cout << ")" << endl;
+  }//i
+
 }
 
