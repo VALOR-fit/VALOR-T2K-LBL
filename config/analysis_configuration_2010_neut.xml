@@ -66,7 +66,7 @@ from the GENIE/NEUT physics monte carlo groups.
              </numu>
          </covariance> 
          <norm_error_inputs>
-                ./inputs/official/2010/flux/norm_error/v2.2/share/
+                ./inputs/official/2010/flux/norm_error/v3.1/share/
 <!--            none-->
          </norm_error_inputs>
          <norm_error_simple_version>
@@ -138,7 +138,7 @@ from the GENIE/NEUT physics monte carlo groups.
        <!--
         POT for analysis sample
         -->
-        <pot> 1.431E+20 </pot> 
+        <pot> 0.323E+20 </pot> 
      </observation>
 
      <!--
