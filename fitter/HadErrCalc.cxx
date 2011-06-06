@@ -6,22 +6,18 @@
 HadErrCalc::HadErrCalc(const char * input_dir, bool ingrid){
   
   // read  p-theta error histograms
-  TFile *f[3];
+  TFile *f;
   
   TString dirname = input_dir;
   if(!ingrid){
-    f[0] = TFile::Open(dirname + "/"+DEF_NUMU_INP);
-    f[1] = TFile::Open(dirname + "/"+DEF_NUMUB_INP);
-    f[2] = TFile::Open(dirname + "/"+DEF_NUE_INP);
+    f = TFile::Open(dirname + "/"+DEF_ND5_INP);
   }
   else{
-    f[0] = TFile::Open(dirname + "/"+DEF_NUMU_INP_ING);
-    f[1] = TFile::Open(dirname + "/"+DEF_NUMUB_INP_ING);
-    f[2] = TFile::Open(dirname + "/"+DEF_NUE_INP_ING);
+    f = TFile::Open(dirname + "/"+DEF_ING_INP);
   }
 
-
-  if(!f[0]){
+  
+  if(!f){
     std::cout << "error database not found" << std::endl;
     std::cout << "please set correct input directory !! " << std::endl;
     exit(1);
@@ -29,24 +25,38 @@ HadErrCalc::HadErrCalc(const char * input_dir, bool ingrid){
   
   TString pi_name[2] = {"pip","pim"};
   TString k_name[3] = {"kp","km","k0"};
+  TString f_name[3] = {"numu","numub","nue"};
   TString hname;
   
   std::cout << "reading hadpro p-theta error table..." << std::endl;
-
+  int PBIN, KBIN;
+  
   for(int c=0;c<2;c++){
-    if(!c)   std::cout << "pi plus table " << std::endl;
-    else   std::cout << "pi minus table " << std::endl;
+    if(!c){
+      std::cout << "pi plus table " << std::endl;
+      PBIN = PIPBIN;
+    }
+    else{
+      std::cout << "pi minus table " << std::endl;
+      PBIN = PIMBIN;
+    }
     for(int m=0;m<3;m++){
       for(int i=0; i<PBIN; i++){
 	TH1D *hsk;
 	TH1D *hnd;
-	hname.Form("hsk_%s_%d",pi_name[c].Data(),i);
-	hsk = (TH1D*)f[m]->Get(hname);
-	hname.Form("hnd_%s_%d",pi_name[c].Data(),i);
-	hnd = (TH1D*)f[m]->Get(hname);
+	hname.Form("hsk_%s_%s_%d",pi_name[c].Data(),f_name[m].Data(),i);
+	hsk = (TH1D*)f->Get(hname);
+	hname.Form("hnd_%s_%s_%d",pi_name[c].Data(),f_name[m].Data(),i);
+	hnd = (TH1D*)f->Get(hname);
 	for(int b=0;b<20;b++){
-	  pi_econt_sk[c][i].data[m][b] = hsk->GetBinContent(b+1);
-	  pi_econt_nd[c][i].data[m][b] = hnd->GetBinContent(b+1);
+	  if(!c){
+	    pip_econt_sk[i].data[m][b] = hsk->GetBinContent(b+1);
+	    pip_econt_nd[i].data[m][b] = hnd->GetBinContent(b+1);
+	  }
+	  else{
+	    pim_econt_sk[i].data[m][b] = hsk->GetBinContent(b+1);
+	    pim_econt_nd[i].data[m][b] = hnd->GetBinContent(b+1);
+	  }
 	}
 	delete hsk;
 	delete hnd;
@@ -55,20 +65,39 @@ HadErrCalc::HadErrCalc(const char * input_dir, bool ingrid){
   }
   
   for(int c=0;c<3;c++){
-    if(!c)   std::cout << "K plus table " << std::endl;
-    else if(c==1) std::cout << "K minus table " << std::endl;
-    else std::cout << "K0L table " << std::endl;
+    if(!c){
+      std::cout << "K plus table " << std::endl;
+      KBIN = KPBIN;
+    }
+    else if(c==1){
+      std::cout << "K minus table " << std::endl;
+      KBIN = KMBIN;
+    }
+    else{
+      std::cout << "K0L table " << std::endl;
+      KBIN = K0BIN;
+    }
     for(int m=0;m<3;m++){
       for(int i=0; i<KBIN; i++){
 	TH1D *hsk;
 	TH1D *hnd;
-	hname.Form("hsk_%s_%d",k_name[c].Data(),i);
-	hsk = (TH1D*)f[m]->Get(hname);
-	hname.Form("hnd_%s_%d",k_name[c].Data(),i);
-	hnd = (TH1D*)f[m]->Get(hname);
+	hname.Form("hsk_%s_%s_%d",k_name[c].Data(),f_name[m].Data(),i);
+	hsk = (TH1D*)f->Get(hname);
+	hname.Form("hnd_%s_%s_%d",k_name[c].Data(),f_name[m].Data(),i);
+	hnd = (TH1D*)f->Get(hname);
 	for(int b=0;b<20;b++){
-	  k_econt_sk[c][i].data[m][b] = hsk->GetBinContent(b+1);
-	  k_econt_nd[c][i].data[m][b] = hnd->GetBinContent(b+1);
+	  if(!c){
+	    kp_econt_sk[i].data[m][b] = hsk->GetBinContent(b+1);
+	    kp_econt_nd[i].data[m][b] = hnd->GetBinContent(b+1);
+	  }
+	  else if(c==1){
+	    km_econt_sk[i].data[m][b] = hsk->GetBinContent(b+1);
+	    km_econt_nd[i].data[m][b] = hnd->GetBinContent(b+1);
+	  }
+	  else{
+	    k0_econt_sk[i].data[m][b] = hsk->GetBinContent(b+1);
+	    k0_econt_nd[i].data[m][b] = hnd->GetBinContent(b+1);
+	  }
 	}
 	delete hsk;
 	delete hnd;
@@ -93,27 +122,42 @@ HadErrCalc::HadErrCalc(const char * input_dir, bool ingrid){
     // 2010/12/11, changed OA angle error size
     //  TFile *f_oa = TFile::Open(dirname+"/beam_1mrad_unc.root");
     //  NewSys("off-axis_angle",f_oa,"beam_1mrad_unc");  
+    // 2011/5/23, changed OA angle error size
     TFile *f_oa = TFile::Open(dirname+"/beam_0.44mrad_unc.root");
     NewSys("off-axis_angle",f_oa,"beam_0.44mrad_unc");  
-    
-    TFile *f_pb = TFile::Open(dirname+"/pbeam_unc.root");
+    //TFile *f_oa = TFile::Open(dirname+"/beam_0.4mrad_unc.root");
+    //NewSys("off-axis_angle",f_oa,"beam_0.4mrad_unc");      
+
+    // 2011/5/25, scaled pbeam error by 0.62/0.58
+    //    TFile *f_pb = TFile::Open(dirname+"/pbeam_unc.root");
+    TFile *f_pb = TFile::Open(dirname+"/pbeam_unc_run2.root");
     NewSys("proton beam",f_pb,"pbeam_unc");  
+
+    TFile *f_pi_tert = TFile::Open(dirname+"/pion_tert_unc.root");
+    NewSys("Pi x Scaling",f_pi_tert,"pitert_unc");
+
+    //TFile *f_pi_bin = TFile::Open(dirname+"/pion_bin_unc.root");
+    //NewSys("Pi Binning",f_pi_bin,"pibin_unc");
+
+    TFile *f_k_norm = TFile::Open(dirname+"/k_norm_unc.root");
+    NewSys("K norm 15%",f_k_norm,"k_norm_unc");
+
+    TFile *f_sec_hixf2 = TFile::Open(dirname+"/sec_hixfp_2p0.root");
+    NewSys("Hi xf proton",f_sec_hixf2,"sec_hixfp_unc");
+
+    TFile *f_sec_nucl = TFile::Open(dirname+"/sec_nucl_prod_unc.root");
+    NewSys("Sec. p,n prod.",f_sec_nucl,"sec_nucl_unc");
+
   }
   
   std::cout << "initializing..." << std::endl;
   Init();
 
-  TFile *fpi = TFile::Open(dirname + "/na61weight-fluka.root");
+  pibin = new NA61PiBin(dirname + "/na61_final.root");
   TFile *fk = TFile::Open(dirname + "/eichtenweight-fluka_rebin.root");
-
-  hphase[0] = (TH2D*)fpi->Get("h_pip_pth_weight");
-  hphase[1] = (TH2D*)fk->Get("h_kp_xpt_weight");
-
-
-  f[0]->Close();
-  f[1]->Close();
-  f[2]->Close();
-
+  hphase_k = (TH2D*)fk->Get("h_kp_xpt_weight");
+  
+  f->Close();
   std::cout << " done. " << std::endl;
 };
 
@@ -151,55 +195,129 @@ void HadErrCalc::CalcSKSum(){
   double s = 0;
   double ss = 0;
   
-  // pion
-  for(int j=0;j<PBIN;j++){ // pion-bin loop
+  // pion +
+  for(int j=0;j<PIPBIN;j++){ // pion-bin loop
     ss = 0;
     for(int mode=0;mode<3;mode++){
       if(mode==1) nflav = 1;
       else nflav = 3;
       s = 0;
       for(int m=0;m<nflav;m++){ // flavor loop
-	s += err_pi_nsk[j][mode][m] * int_nsk[mode][m];
+	s += err_pip_nsk[j][mode][m] * int_nsk[mode][m];
       }
-      err_pi_nsk_all[j][mode] = s*inv_nsk[mode][3]; 
-      err_pi_nsknd_all[j][mode] = fabs(err_pi_nsk_all[j][mode]-err_pi_nnd[j]);
-      sumhaderr_pi_nsk[mode] += err_pi_nsk_all[j][mode];
-      sumhaderr_pi_nsknd[mode] += err_pi_nsknd_all[j][mode];
+      err_pip_nsk_all[j][mode] = s*inv_nsk[mode][3]; 
+      err_pip_nsknd_all[j][mode] = fabs(err_pip_nsk_all[j][mode]-err_pip_nnd[j]);
+      sumhaderr_pi_nsk[mode] += err_pip_nsk_all[j][mode];
+      sumhaderr_pi_nsknd[mode] += err_pip_nsknd_all[j][mode];
       if(mode) ss += s;
       if(mode ==2){
-	err_pi_nsk_all[j][3] = ss/(int_nsk[1][3]+int_nsk[2][3]);
-	err_pi_nsknd_all[j][3] = fabs(err_pi_nsk_all[j][3]-err_pi_nnd[j]);
-	sumhaderr_pi_nsk[3] += err_pi_nsk_all[j][3];
-	sumhaderr_pi_nsknd[3] += err_pi_nsknd_all[j][3];
+	err_pip_nsk_all[j][3] = ss/(int_nsk[1][3]+int_nsk[2][3]);
+	err_pip_nsknd_all[j][3] = fabs(err_pip_nsk_all[j][3]-err_pip_nnd[j]);
+	sumhaderr_pi_nsk[3] += err_pip_nsk_all[j][3];
+	sumhaderr_pi_nsknd[3] += err_pip_nsknd_all[j][3];
+      }
+    }
+  }
+  // pion -
+  for(int j=0;j<PIMBIN;j++){ // pion-bin loop
+    ss = 0;
+    for(int mode=0;mode<3;mode++){
+      if(mode==1) nflav = 1;
+      else nflav = 3;
+      s = 0;
+      for(int m=0;m<nflav;m++){ // flavor loop
+	s += err_pim_nsk[j][mode][m] * int_nsk[mode][m];
+      }
+      err_pim_nsk_all[j][mode] = s*inv_nsk[mode][3]; 
+      err_pim_nsknd_all[j][mode] = fabs(err_pim_nsk_all[j][mode]-err_pim_nnd[j]);
+      sumhaderr_pi_nsk[mode] += err_pim_nsk_all[j][mode];
+      sumhaderr_pi_nsknd[mode] += err_pim_nsknd_all[j][mode];
+      if(mode) ss += s;
+      if(mode ==2){
+	err_pim_nsk_all[j][3] = ss/(int_nsk[1][3]+int_nsk[2][3]);
+	err_pim_nsknd_all[j][3] = fabs(err_pim_nsk_all[j][3]-err_pim_nnd[j]);
+	sumhaderr_pi_nsk[3] += err_pim_nsk_all[j][3];
+	sumhaderr_pi_nsknd[3] += err_pim_nsknd_all[j][3];
       }
     }
   }
 
-  // kaon
-  for(int j=0;j<KBIN;j++){ // kaon-bin loop
+  // kaon +
+  for(int j=0;j<KPBIN;j++){ // kaon-bin loop
     ss = 0;
     for(int mode=0;mode<3;mode++){
       if(mode==1) nflav = 1;
       else nflav = 3;
       s = 0;
       for(int m=0;m<nflav;m++){ // flavor loop
-	s += err_k_nsk[j][mode][m] * int_nsk[mode][m];
+	s += err_kp_nsk[j][mode][m] * int_nsk[mode][m];
       }
-      err_k_nsk_all[j][mode] = s*inv_nsk[mode][3]; 
-      err_k_nsknd_all[j][mode] = fabs(err_k_nsk_all[j][mode]-err_k_nnd[j]);
-      sumhaderr_k_nsk[mode] += err_k_nsk_all[j][mode];
-      sumhaderr_k_nsknd[mode] += err_k_nsknd_all[j][mode];
+      err_kp_nsk_all[j][mode] = s*inv_nsk[mode][3]; 
+      err_kp_nsknd_all[j][mode] = fabs(err_kp_nsk_all[j][mode]-err_kp_nnd[j]);
+      sumhaderr_k_nsk[mode] += err_kp_nsk_all[j][mode];
+      sumhaderr_k_nsknd[mode] += err_kp_nsknd_all[j][mode];
       if(mode) ss += s;
       if(mode ==2){
-	err_k_nsk_all[j][3] = ss/(int_nsk[1][3]+int_nsk[2][3]);
-	err_k_nsknd_all[j][3] = fabs(err_k_nsk_all[j][3]-err_k_nnd[j]);
-	sumhaderr_k_nsk[3] += err_k_nsk_all[j][3];
-	sumhaderr_k_nsknd[3] += err_k_nsknd_all[j][3];
+	err_kp_nsk_all[j][3] = ss/(int_nsk[1][3]+int_nsk[2][3]);
+	err_kp_nsknd_all[j][3] = fabs(err_kp_nsk_all[j][3]-err_kp_nnd[j]);
+	sumhaderr_k_nsk[3] += err_kp_nsk_all[j][3];
+	sumhaderr_k_nsknd[3] += err_kp_nsknd_all[j][3];
+      }
+    }
+  }
+
+  // kaon -
+  for(int j=0;j<KMBIN;j++){ // kaon-bin loop
+    ss = 0;
+    for(int mode=0;mode<3;mode++){
+      if(mode==1) nflav = 1;
+      else nflav = 3;
+      s = 0;
+      for(int m=0;m<nflav;m++){ // flavor loop
+	s += err_km_nsk[j][mode][m] * int_nsk[mode][m];
+      }
+      err_km_nsk_all[j][mode] = s*inv_nsk[mode][3]; 
+      err_km_nsknd_all[j][mode] = fabs(err_km_nsk_all[j][mode]-err_km_nnd[j]);
+      sumhaderr_k_nsk[mode] += err_km_nsk_all[j][mode];
+      sumhaderr_k_nsknd[mode] += err_km_nsknd_all[j][mode];
+      if(mode) ss += s;
+      if(mode ==2){
+	err_km_nsk_all[j][3] = ss/(int_nsk[1][3]+int_nsk[2][3]);
+	err_km_nsknd_all[j][3] = fabs(err_km_nsk_all[j][3]-err_km_nnd[j]);
+	sumhaderr_k_nsk[3] += err_km_nsk_all[j][3];
+	sumhaderr_k_nsknd[3] += err_km_nsknd_all[j][3];
+      }
+    }
+  }
+
+  // kaon 0
+  for(int j=0;j<K0BIN;j++){ // kaon-bin loop
+    ss = 0;
+    for(int mode=0;mode<3;mode++){
+      if(mode==1) nflav = 1;
+      else nflav = 3;
+      s = 0;
+      for(int m=0;m<nflav;m++){ // flavor loop
+	s += err_k0_nsk[j][mode][m] * int_nsk[mode][m];
+      }
+      err_k0_nsk_all[j][mode] = s*inv_nsk[mode][3]; 
+      err_k0_nsknd_all[j][mode] = fabs(err_k0_nsk_all[j][mode]-err_k0_nnd[j]);
+      sumhaderr_k_nsk[mode] += err_k0_nsk_all[j][mode];
+      sumhaderr_k_nsknd[mode] += err_k0_nsknd_all[j][mode];
+      if(mode) ss += s;
+      if(mode ==2){
+	err_k0_nsk_all[j][3] = ss/(int_nsk[1][3]+int_nsk[2][3]);
+	err_k0_nsknd_all[j][3] = fabs(err_k0_nsk_all[j][3]-err_k0_nnd[j]);
+	sumhaderr_k_nsk[3] += err_k0_nsk_all[j][3];
+	sumhaderr_k_nsknd[3] += err_k0_nsknd_all[j][3];
       }
     }
   }
   
   for(int m=0;m<4;m++){ // mode
+    AddNeutronErr(sumhaderr_pi_nsk[m]);
+    AddNeutronErr(sumhaderr_pi_nsknd[m]);
+    
     sumhaderr_nsknd[m] = 
       sqrt(sumhaderr_pi_nsknd[m]*sumhaderr_pi_nsknd[m]
 	   +sumhaderr_k_nsknd[m]*sumhaderr_k_nsknd[m]);
@@ -221,42 +339,83 @@ void HadErrCalc::CalcSK(int mode){
     haderr_k_nsknd[mode][i] = 0;
   }
 
-  // pion
-  for(int j=0;j<PBIN;j++){ // pion-bin loop
+  // pion +
+  for(int j=0;j<PIPBIN;j++){ // pion-bin loop
     for(int m=0;m<nflav;m++){ // flavor loop
-      err_pi_nsk[j][mode][m] =0 ;
-      err_pi_nsknd[j][mode][m] =0 ;
+      err_pip_nsk[j][mode][m] =0 ;
+      err_pip_nsknd[j][mode][m] =0 ;
       for(int n=0;n<20;n++){ // enu loop
-	for(int i=0;i<2;i++){ // charge loop
-	  err_pi_nsk[j][mode][m] += pi_econt_sk[i][j].data[m][n]*input_nsk[mode][m][n];
-	}
+	err_pip_nsk[j][mode][m] += pip_econt_sk[j].data[m][n]*input_nsk[mode][m][n];
       }
-      err_pi_nsk[j][mode][m] *= inv_nsk[mode][m];
-      err_pi_nsknd[j][mode][m] = fabs(err_pi_nsk[j][mode][m]-err_pi_nnd[j]);
-      haderr_pi_nsk[mode][m] += err_pi_nsk[j][mode][m];
-      haderr_pi_nsknd[mode][m] += err_pi_nsknd[j][mode][m];
+      err_pip_nsk[j][mode][m] *= inv_nsk[mode][m];
+      err_pip_nsknd[j][mode][m] = fabs(err_pip_nsk[j][mode][m]-err_pip_nnd[j]);
+      haderr_pi_nsk[mode][m] += err_pip_nsk[j][mode][m];
+      haderr_pi_nsknd[mode][m] += err_pip_nsknd[j][mode][m];
     }
   }
   
-  // kaon
-  
-  for(int j=0;j<KBIN;j++){ // kaon-bin loop
+  // pion -
+  for(int j=0;j<PIMBIN;j++){ // pion-bin loop
     for(int m=0;m<nflav;m++){ // flavor loop
-      err_k_nsk[j][mode][m] = 0;
-      err_k_nsknd[j][mode][m] =0 ;
+      err_pim_nsk[j][mode][m] =0 ;
+      err_pim_nsknd[j][mode][m] =0 ;
       for(int n=0;n<20;n++){ // enu loop
-	for(int i=0;i<3;i++){ // charge loop
-	  err_k_nsk[j][mode][m] += k_econt_sk[i][j].data[m][n]*input_nsk[mode][m][n];
-	}
+	err_pim_nsk[j][mode][m] += pim_econt_sk[j].data[m][n]*input_nsk[mode][m][n];
       }
-      err_k_nsk[j][mode][m] *= inv_nsk[mode][m];
-      err_k_nsknd[j][mode][m] = fabs(err_k_nsk[j][mode][m]-err_k_nnd[j]);
-      haderr_k_nsk[mode][m] += err_k_nsk[j][mode][m];
-      haderr_k_nsknd[mode][m] += err_k_nsknd[j][mode][m];
+      err_pim_nsk[j][mode][m] *= inv_nsk[mode][m];
+      err_pim_nsknd[j][mode][m] = fabs(err_pim_nsk[j][mode][m]-err_pim_nnd[j]);
+      haderr_pi_nsk[mode][m] += err_pim_nsk[j][mode][m];
+      haderr_pi_nsknd[mode][m] += err_pim_nsknd[j][mode][m];
+    }
+  }
+  
+  // kaon +  
+  for(int j=0;j<KPBIN;j++){ // kaon-bin loop
+    for(int m=0;m<nflav;m++){ // flavor loop
+      err_kp_nsk[j][mode][m] = 0;
+      err_kp_nsknd[j][mode][m] =0 ;
+      for(int n=0;n<20;n++){ // enu loop
+	err_kp_nsk[j][mode][m] += kp_econt_sk[j].data[m][n]*input_nsk[mode][m][n];
+      }
+      err_kp_nsk[j][mode][m] *= inv_nsk[mode][m];
+      err_kp_nsknd[j][mode][m] = fabs(err_kp_nsk[j][mode][m]-err_kp_nnd[j]);
+      haderr_k_nsk[mode][m] += err_kp_nsk[j][mode][m];
+      haderr_k_nsknd[mode][m] += err_kp_nsknd[j][mode][m];
+    }
+  }
+  // kaon -
+  for(int j=0;j<KMBIN;j++){ // kaon-bin loop
+    for(int m=0;m<nflav;m++){ // flavor loop
+      err_km_nsk[j][mode][m] = 0;
+      err_km_nsknd[j][mode][m] =0 ;
+      for(int n=0;n<20;n++){ // enu loop
+	err_km_nsk[j][mode][m] += km_econt_sk[j].data[m][n]*input_nsk[mode][m][n];
+      }
+      err_km_nsk[j][mode][m] *= inv_nsk[mode][m];
+      err_km_nsknd[j][mode][m] = fabs(err_km_nsk[j][mode][m]-err_km_nnd[j]);
+      haderr_k_nsk[mode][m] += err_km_nsk[j][mode][m];
+      haderr_k_nsknd[mode][m] += err_km_nsknd[j][mode][m];
+    }
+  }
+  // kaon 0  
+  for(int j=0;j<K0BIN;j++){ // kaon-bin loop
+    for(int m=0;m<nflav;m++){ // flavor loop
+      err_k0_nsk[j][mode][m] = 0;
+      err_k0_nsknd[j][mode][m] =0 ;
+      for(int n=0;n<20;n++){ // enu loop
+	err_k0_nsk[j][mode][m] += k0_econt_sk[j].data[m][n]*input_nsk[mode][m][n];
+      }
+      err_k0_nsk[j][mode][m] *= inv_nsk[mode][m];
+      err_k0_nsknd[j][mode][m] = fabs(err_k0_nsk[j][mode][m]-err_k0_nnd[j]);
+      haderr_k_nsk[mode][m] += err_k0_nsk[j][mode][m];
+      haderr_k_nsknd[mode][m] += err_k0_nsknd[j][mode][m];
     }
   }
   
   for(int m=0;m<nflav;m++){ // flavor loop
+    AddNeutronErr(haderr_pi_nsk[mode][m]);
+    AddNeutronErr(haderr_pi_nsknd[mode][m]);
+    
     haderr_nsknd[mode][m] = 
       sqrt(haderr_pi_nsknd[mode][m]*haderr_pi_nsknd[mode][m]
 	   +haderr_k_nsknd[mode][m]*haderr_k_nsknd[mode][m]);
@@ -268,35 +427,63 @@ void HadErrCalc::CalcND(){
   haderr_pi_nnd = 0;
   haderr_k_nnd = 0;
 
-  // pion
-
-  for(int j=0;j<PBIN;j++){ // pion-bin loop
-    err_pi_nnd[j] =0 ;
+  // pion+
+  for(int j=0;j<PIPBIN;j++){ // pion-bin loop
+    err_pip_nnd[j] =0 ;
     for(int m=0;m<3;m++){ // flavor loop
       for(int n=0;n<20;n++){ // enu loop
-	for(int i=0;i<2;i++){ // charge loop
-	  err_pi_nnd[j] += pi_econt_nd[i][j].data[m][n]*input_nnd[m][n];
-	}
+	err_pip_nnd[j] += pip_econt_nd[j].data[m][n]*input_nnd[m][n];
       }
     }
-    err_pi_nnd[j] *= inv_nnd[3];
-    haderr_pi_nnd += err_pi_nnd[j];
+    err_pip_nnd[j] *= inv_nnd[3];
+    haderr_pi_nnd += err_pip_nnd[j];
+  }
+  // pion-
+  for(int j=0;j<PIMBIN;j++){ // pion-bin loop
+    err_pim_nnd[j] =0 ;
+    for(int m=0;m<3;m++){ // flavor loop
+      for(int n=0;n<20;n++){ // enu loop
+	err_pim_nnd[j] += pim_econt_nd[j].data[m][n]*input_nnd[m][n];
+      }
+    }
+    err_pim_nnd[j] *= inv_nnd[3];
+    haderr_pi_nnd += err_pim_nnd[j];
   }
   
-  // kaon
-
-  for(int j=0;j<KBIN;j++){ // kaon-bin loop
-    err_k_nnd[j] = 0;
+  // kaon+
+  for(int j=0;j<KPBIN;j++){ // kaon-bin loop
+    err_kp_nnd[j] = 0;
     for(int m=0;m<3;m++){ // flavor loop
       for(int n=0;n<20;n++){ // enu loop
-	for(int i=0;i<3;i++){ // charge loop
-	  err_k_nnd[j] += k_econt_nd[i][j].data[m][n]*input_nnd[m][n];
-	}
+	err_kp_nnd[j] += kp_econt_nd[j].data[m][n]*input_nnd[m][n];
       }
     }
-    err_k_nnd[j] *= inv_nnd[3];
-    haderr_k_nnd += err_k_nnd[j];
+    err_kp_nnd[j] *= inv_nnd[3];
+    haderr_k_nnd += err_kp_nnd[j];
   }
+  // kaon-
+  for(int j=0;j<KMBIN;j++){ // kaon-bin loop
+    err_km_nnd[j] = 0;
+    for(int m=0;m<3;m++){ // flavor loop
+      for(int n=0;n<20;n++){ // enu loop
+	err_km_nnd[j] += km_econt_nd[j].data[m][n]*input_nnd[m][n];
+      }
+    }
+    err_km_nnd[j] *= inv_nnd[3];
+    haderr_k_nnd += err_km_nnd[j];
+  }
+  // kaon+
+  for(int j=0;j<K0BIN;j++){ // kaon-bin loop
+    err_k0_nnd[j] = 0;
+    for(int m=0;m<3;m++){ // flavor loop
+      for(int n=0;n<20;n++){ // enu loop
+	err_k0_nnd[j] += k0_econt_nd[j].data[m][n]*input_nnd[m][n];
+      }
+    }
+    err_k0_nnd[j] *= inv_nnd[3];
+    haderr_k_nnd += err_k0_nnd[j];
+  }
+  AddNeutronErr(haderr_pi_nnd);
 };
 
 void HadErrCalc::CalcSys(int id){

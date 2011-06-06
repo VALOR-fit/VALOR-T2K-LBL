@@ -91,6 +91,35 @@ void SuperkExpectation::Generate(const PhysParamList & fp)
      kSKmNuECCQE,     kSKmNuECC1pi,     kSKmNuECCoth,     kSKmNuENC
   };
 
+
+  // input physics params (params included in the fit / systematics params)
+  if( fp.Exists(kPhypDm23sq) && fp.Exists(kPhypSinsq2Theta23) ) {
+    double dmsq23        = fp.CurrValue(kPhypDm23sq);
+    double sinsq2theta23 = fp.CurrValue(kPhypSinsq2Theta23);
+    fSuperkMC->Hypothesis().EnableOscillations(true);
+    fSuperkMC->Hypothesis().EnableDecay(false);
+    fSuperkMC->Hypothesis().EnableDecoherence(false);
+    fSuperkMC->Hypothesis().UseOscillationParams(sinsq2theta23, dmsq23);
+  } else
+  if( fp.Exists(kPhypAlphaDecay) && fp.Exists(kPhypSinsq2Theta23) ) {
+    double alpha         = fp.CurrValue(kPhypAlphaDecay);
+    double sinsq2theta23 = fp.CurrValue(kPhypSinsq2Theta23);
+    fSuperkMC->Hypothesis().EnableOscillations(false);
+    fSuperkMC->Hypothesis().EnableDecay(true);
+    fSuperkMC->Hypothesis().EnableDecoherence(false);
+    fSuperkMC->Hypothesis().UseDecayParams(sinsq2theta23, alpha);
+  } else
+  if( fp.Exists(kPhypMusqDecoherence) && fp.Exists(kPhypSinsq2Theta23) ) {
+    double musq          = fp.CurrValue(kPhypMusqDecoherence);
+    double sinsq2theta23 = fp.CurrValue(kPhypSinsq2Theta23);
+    fSuperkMC->Hypothesis().EnableOscillations(false);
+    fSuperkMC->Hypothesis().EnableDecay(false);
+    fSuperkMC->Hypothesis().EnableDecoherence(true);
+    fSuperkMC->Hypothesis().UseDecoherenceParams(sinsq2theta23, musq);
+  }
+
+
+/*
   // input physics params (params included in the fit / systematics params)
   if( fp.Exists(kPhypDm23sq) && fp.Exists(kPhypSinsq2Theta23) ) {
     double dmsq23        = fp.CurrValue(kPhypDm23sq);
@@ -116,6 +145,7 @@ void SuperkExpectation::Generate(const PhysParamList & fp)
      fSuperkMC -> UseNeutrinoDecoherenceModel (true);
      fSuperkMC -> UseDecoherenceParams(sinsq2theta23, musq);
   }
+*/
 
   double shape_norm = 1.;
   if(this->GetNuFlux()->ShapeTweaked()) {
@@ -215,11 +245,12 @@ TH1D* SuperkExpectation::CurrPredictedErecoSpectrum(
 //________________________________________________________________________________________
 void SuperkExpectation::ResetSystematicVariations(void)
 {
-  this->GetSuperkMC()->TweakEnergyScale      (0.);
-  this->GetSuperkMC()->TweakEfficiencyCCQE   (0.);
-  this->GetSuperkMC()->TweakEfficiencyCCnonQE(0.);
-  this->GetSuperkMC()->TweakEfficiencyNC     (0.);     
-  this->GetSuperkMC()->TweakEfficiencyNuECC  (0.);
+  this->GetSuperkMC()->TweakEnergyScale                (0.);
+  this->GetSuperkMC()->TweakOtherEfficiencyCCQE        (0.);
+  this->GetSuperkMC()->TweakRingCountingEfficiencyCCQE (true,1,1,1); /////HERE
+  this->GetSuperkMC()->TweakEfficiencyCCnonQE          (0.);
+  this->GetSuperkMC()->TweakEfficiencyNC               (0.);     
+  this->GetSuperkMC()->TweakEfficiencyNuECC            (0.);
 
   this->GetND280Measurement()->TweakEfficiency (0.);
 
@@ -242,8 +273,12 @@ void SuperkExpectation::TweakSystematic(string systematic, double twkdial)
      this->GetSuperkMC()->TweakEnergyScale(twkdial);
   }
   else
-  if(systematic == "sk_ccqe_eff") {
-     this->GetSuperkMC()->TweakEfficiencyCCQE(twkdial);
+  if(systematic == "sk_ccqe_other_eff") {
+     this->GetSuperkMC()->TweakOtherEfficiencyCCQE(twkdial);
+  }
+  else
+  if(systematic == "sk_ccqe_ring_counting_eff") {
+     this->GetSuperkMC()->TweakRingCountingEfficiencyCCQE(); //< Cholesky method
   }
   else
   if(systematic == "sk_ccnonqe_eff") {
@@ -276,7 +311,7 @@ void SuperkExpectation::TweakSystematic(string systematic, double twkdial)
   }
   else
   if(systematic == "flux_shape") {
-     this->GetNuFlux()->TweakShape();
+     this->GetNuFlux()->TweakShape(); //< Cholesky method
   }
 
   //
@@ -316,17 +351,22 @@ void SuperkExpectation::TweakAllSystematics(bool do_tweak)
   {
      TRandom3 rand(0);
 
-     this->GetSuperkMC()->TweakEnergyScale      (rand.Gaus(0.,1.));
-     this->GetSuperkMC()->TweakEfficiencyCCQE   (rand.Gaus(0.,1.));
-     this->GetSuperkMC()->TweakEfficiencyCCnonQE(rand.Gaus(0.,1.));
-     this->GetSuperkMC()->TweakEfficiencyNC     (rand.Gaus(0.,1.));     
-     this->GetSuperkMC()->TweakEfficiencyNuECC  (rand.Gaus(0.,1.));
+     // SuperK detector response
+     this->GetSuperkMC()->TweakEnergyScale                 (rand.Gaus(0.,1.));
+     this->GetSuperkMC()->TweakOtherEfficiencyCCQE         (rand.Gaus(0.,1.));
+     this->GetSuperkMC()->TweakRingCountingEfficiencyCCQE  (); //< Cholesky method
+     this->GetSuperkMC()->TweakEfficiencyCCnonQE           (rand.Gaus(0.,1.));
+     this->GetSuperkMC()->TweakEfficiencyNC                (rand.Gaus(0.,1.));     
+     this->GetSuperkMC()->TweakEfficiencyNuECC             (rand.Gaus(0.,1.));
 
+     // ND280 detector response
      this->GetND280Measurement()->TweakEfficiency(rand.Gaus(0.,1.));
 
+     // neutrino flux
      this->GetNuFlux()->TweakNorm (rand.Gaus(0.,1.));
-     this->GetNuFlux()->TweakShape();
+     this->GetNuFlux()->TweakShape(); //< Cholesky method
 
+     // neutrino cross sections
      this->GetNuXSec()->TweakCCQEXSec             (rand.Gaus(0.,1.));
      this->GetNuXSec()->TweakCC1piToCCQEXSecRatio (rand.Gaus(0.,1.));
      this->GetNuXSec()->TweakCCOthToCCQEXSecRatio (rand.Gaus(0.,1.));

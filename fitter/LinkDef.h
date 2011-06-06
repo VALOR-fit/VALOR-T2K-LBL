@@ -24,5 +24,6 @@
 #pragma link C++ class t2kana::NuMuDecayFitter;
 #pragma link C++ class t2kana::NuMuDecohFitter;
 #pragma link C++ class t2kana::FitInputs;
+#pragma link C++ class t2kana::PhysHypothesis;
 
 #endif

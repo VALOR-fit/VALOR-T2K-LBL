@@ -23,8 +23,10 @@
 
 #include <TObject.h>
 #include <TXMLEngine.h>
+#include <TMatrixD.h>
 
 #include "Conventions.h"
+#include "PhysHypothesis.h"
 
 class TVirtualPad;
 class TTree;
@@ -47,14 +49,6 @@ public:
 
   // Get information needed from SK for predicting the SK spectrum
 
-  void    UseNeutrinoOscillationModel(bool on_off) { fHaveNuOsc   = on_off; }
-  void    UseNeutrinoDecayModel      (bool on_off) { fHaveNuDecay = on_off; }
-  void    UseNeutrinoDecoherenceModel(bool on_off) { fHaveNuDecoh = on_off; }
-
-  void    UseOscillationParams(double sinsq2theta23, double dm23sq) { fCurrSinsq2Theta23 = sinsq2theta23; fCurrDm23sq     = dm23sq; }
-  void    UseDecayParams      (double sinsq2theta23, double alpha ) { fCurrSinsq2Theta23 = sinsq2theta23; fCurrAlphaDecay = alpha;  }
-  void    UseDecoherenceParams(double sinsq2theta23, double musq  ) { fCurrSinsq2Theta23 = sinsq2theta23; fCurrMusqDecoh  = musq;   }
-      
   double  AnalyzedSamplePOT   (void) const;
   TTree * MCTree              (t2kana::conv::SuperkSample_t s, t2kana::conv::SuperkMode_t m);
   double  MCPOT               (t2kana::conv::SuperkSample_t s, t2kana::conv::SuperkMode_t m);
@@ -70,31 +64,33 @@ public:
   TH1D*   Curr1RmuNuMuBarEtrue(void) const { return f1RmNuMuBarEt; } ///<      -//-  for numubar
   TH1D*   Curr1RmuNuEEtrue    (void) const { return f1RmNuEEt;     } ///<      -//-  for nue
       
-  double  EfficiencyRelErr    (t2kana::conv::SuperkSample_t s, t2kana::conv::SuperkMode_t m) const; ///< rel err on efficiency
-  double  EfficiencyTwkDial   (t2kana::conv::SuperkSample_t s, t2kana::conv::SuperkMode_t m) const; ///< curr efficiency twk dial
-  double  EfficiencyWeight    (t2kana::conv::SuperkSample_t s, t2kana::conv::SuperkMode_t m) const; ///< efficiency weight
+  // Systematic variations
+  void TweakEnergyScale                 (double twkdial);
+  void TweakOtherEfficiencyCCQE         (double twkdial); ///< all but ring-counting
+  void TweakRingCountingEfficiencyCCQE  (bool force_input_twkdials=false, double twkdial1=0, double twkdial2=0, double twkdial3=0); 
+  void TweakEfficiencyCCnonQE           (double twkdial);
+  void TweakEfficiencyNC                (double twkdial);
+  void TweakEfficiencyNuECC             (double twkdial);
+
+  double  EfficiencyWeight    (t2kana::conv::SuperkSample_t s, t2kana::conv::SuperkMode_t m, double Ereco) const;
   double  EnergyScaleRelErr   (void) const; ///< energy scale err
   double  EnergyScale         (void) const; ///< energy scale
 
-  // Draw inputs:
-  // ...
-  void Draw(TVirtualPad * c, Option_t * opt = "") const;
-
-  // Systematic variations
-  void TweakEnergyScale       (double twkdial) { fEnergyScaleTwkDial = twkdial; }
-  void TweakEfficiencyCCQE    (double twkdial) { fEffCCQETwkDial     = twkdial; }
-  void TweakEfficiencyCCnonQE (double twkdial) { fEffCCnonQETwkDial  = twkdial; }
-  void TweakEfficiencyNC      (double twkdial) { fEffNCTwkDial       = twkdial; }
-  void TweakEfficiencyNuECC   (double twkdial) { fEffNuECCTwkDial    = twkdial; }
-      
   // Read inputs from XML file
   bool Read (TXMLEngine* xml, XMLNodePointer_t root_node);
       
   //
+  PhysHypothesis & Hypothesis(void);
+  double SurvivalProbability(double Etrue, t2kana::conv::SuperkMode_t m) const;
+
+  //
   void TellMeAboutTheFlux       (NuFlux * flux) { fNuFlux     = flux; }
   void TellMeAboutCrossSections (NuXSec * xsec) { fGenInputs  = xsec; }
-      
 
+  // Draw inputs:
+  // ...
+  void Draw(TVirtualPad * c, Option_t * opt = "") const;
+      
 private:
 
   void Init           (void);
@@ -104,51 +100,52 @@ private:
   double NumOfEventsReadFromTree(double Ereco, double ErecoBinSz,
           t2kana::conv::SuperkSample_t s, t2kana::conv::SuperkMode_t m);
       
-  double  fCurrSinsq2Theta23;
-  double  fCurrDm23sq;
-  double  fCurrAlphaDecay;
-  double  fCurrMusqDecoh;
+  double     fPOT;                         ///< Number of POT
+  double     fEnergyScaleRelErr;           ///< Energy scale relative error
+  double     fOthEffCCQERelErr;            ///< CCQE other (all but ring-counting) efficiency relative error 
+  TMatrixD * fEffCCQERelErrCovarRC;        ///< CCQE ring-counting efficiency relative error covariance matrix (3x3)
+  double     fEreco1RCCCQE;                ///< ~0.4 GeV (RC cov matrix is 3x3, 3 Ereco bins: (0, fEreco1RCCCQE, fEreco2RCCCQE, oo))
+  double     fEreco2RCCCQE;                ///< ~1.1 GeV (RC cov matrix is 3x3, 3 Ereco bins: (0, fEreco1RCCCQE, fEreco2RCCCQE, oo))
+  double     fEffCCnonQERelErr;            ///< CCnonQE efficiency relative error
+  double     fEffNCRelErr;                 ///< NC efficiency relative error
+  double     fEffNuECCRelErr;              ///< nue CC efficiency relative error
 
-  double  fPOT;                       ///< Number of POT
-  double  fEnergyScaleRelErr;         ///< Energy scale relative error
-  double  fEffCCQERelErr;             ///< CCQE efficiency relative error
-  double  fEffCCnonQERelErr;          ///< CCnonQE efficiency relative error
-  double  fEffNCRelErr;               ///< NC efficiency relative error
-  double  fEffNuECCRelErr;            ///< nue CC efficiency relative error
+  double     fEnergyScaleTwkDial;          ///< Energy scale tweaking dial
+  double     fOthEffCCQETwkDial;           ///< CCQE other (all-but-ring-counting) efficiency tweaking dial
+  double     fRC1EffCCQETwkDial;           ///< CCQE ring-counting efficiency tweaking dial 1 (Ereco < fEreco1RCCCQE)
+  double     fRC2EffCCQETwkDial;           ///< CCQE ring-counting efficiency tweaking dial 2 (fEreco1RCCCQE <= Ereco <= fEreco2RCCCQE)
+  double     fRC3EffCCQETwkDial;           ///< CCQE ring-counting efficiency tweaking dial 3 (Ereco > fEreco2RCCCQE)
+  double     fEffCCnonQETwkDial;           ///< CCnonQE efficiency tweaking dial
+  double     fEffNCTwkDial;                ///< NC efficiency tweaking dial
+  double     fEffNuECCTwkDial;             ///< nue CC efficiency tweaking dial
+  TMatrixD * fEffCCQERelErrCovarCholeskyL; ///< Cholesky decomposition (trangular matrix L) of fEffCCQERelErrCovarRC covariance matrix
 
-  double  fEnergyScaleTwkDial;        ///< Energy scale tweaking dial
-  double  fEffCCQETwkDial;            ///< CCQE efficiency tweaking dial
-  double  fEffCCnonQETwkDial;         ///< CCnonQE efficiency tweaking dial
-  double  fEffNCTwkDial;              ///< NC efficiency tweaking dial
-  double  fEffNuECCTwkDial;           ///< nue CC efficiency tweaking dial
+  TH2D *     fMCTemplates[kns][knm];       ///< MC template (sample,mode): Ereco-Etrue
+///  TH1D *     fMCEtrueSpectrum[kns][knm];   ///< spectrum(sample,mode): Etrue
+  TH1D *     fMCErecoSpectrum[kns][knm];   ///< spectrum(sample,mode): Ereco
+  TH1D *     fMCErecoSpectrumTot[kns];     ///< total Ereco spectrum (sample)
 
-  TH2D *  fMCTemplates[kns][knm];     ///< Ereco-Etrue
-  TH1D *  fMCEtrueSpectrum[kns][knm]; ///< Etrue
-  TH1D *  fMCErecoSpectrum[kns][knm]; ///< Ereco
-  TH1D *  fMCErecoSpectrumTot[kns];   ///< Ereco
-  TTree*  fMC1Rmu_numu;               ///<
-  double  fMCPOT_numu;                ///<
-  TTree*  fMC1Rmu_numubar;            ///<
-  double  fMCPOT_numubar;             ///<
-  TTree*  fMC1Rmu_nue;                ///<
-  double  fMCPOT_nue;                 ///<
-  double  fBrEreco;                   ///<
-  double  fBrEtrue;                   ///<
-  int     fBrPdg;                     ///<
-  int     fBrGenCode;                 ///<
+  TTree*     fMC1Rmu_numu;                 ///< input numu MC event sample
+  double     fMCPOT_numu;                  ///< numu MC sample POT
+  TTree*     fMC1Rmu_numubar;              ///< input numubar MC event sample
+  double     fMCPOT_numubar;               ///< numubar MC sample POT
+  TTree*     fMC1Rmu_nue;                  ///< input nue MC event sample
+  double     fMCPOT_nue;                   ///< nue MC sample POT
+  double     fBrEreco;                     ///< branch var for reading input event sample tree
+  double     fBrEtrue;                     ///< branch var for reading input event sample tree
+  int        fBrPdg;                       ///< branch var for reading input event sample tree
+  int        fBrGenCode;                   ///< branch var for reading input event sample tree
 
-  TH1D *  f1RmNuMuEt;                 ///< fEtrue distribution for 1-Ring mu-like numu    - needed for beam norm err calculation
-  TH1D *  f1RmNuMuBarEt;              ///< fEtrue distribution for 1-Ring mu-like numubar - needed for beam norm err calculation
-  TH1D *  f1RmNuEEt;                  ///< fEtrue distribution for 1-Ring mu-like nue     - needed for beam norm err calculation
+  TH1D *     f1RmNuMuEt;                   ///< fEtrue distribution for 1-Ring mu-like numu    - needed for beam norm err calculation
+  TH1D *     f1RmNuMuBarEt;                ///< fEtrue distribution for 1-Ring mu-like numubar - needed for beam norm err calculation
+  TH1D *     f1RmNuEEt;                    ///< fEtrue distribution for 1-Ring mu-like nue     - needed for beam norm err calculation
       
-  NuFlux * fNuFlux;                   ///<
-  NuXSec * fGenInputs;                ///<
-      
-  bool fHaveNuOsc;
-  bool fHaveNuDecay;
-  bool fHaveNuDecoh;
+  NuFlux *   fNuFlux;                      ///<
+  NuXSec *   fGenInputs;                   ///<
 
-ClassDef(SuperkMC, 2);
+  PhysHypothesis fPhysHypothesis;          ///<
+
+ClassDef(SuperkMC, 3);
 };
 
 } //t2kana

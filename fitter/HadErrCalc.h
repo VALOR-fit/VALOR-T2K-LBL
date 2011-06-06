@@ -1,23 +1,24 @@
-#include <iostream>
-
-#define DEF_NUMU_INP "delta_flux_nd5_numu.root"
-#define DEF_NUMUB_INP "delta_flux_nd5_numub.root"
-#define DEF_NUE_INP "delta_flux_nd5_nue.root"
-
-#define DEF_NUMU_INP_ING "delta_flux_ing13_numu.root"
-#define DEF_NUMUB_INP_ING "delta_flux_ing13_numub.root"
-#define DEF_NUE_INP_ING "delta_flux_ing13_nue.root"
-
+#define DEF_ND5_INP "delta_flux_nd5_v3.root"
+#define DEF_ING_INP "delta_flux_ing_v3.root"
 #define MAX_NSYS 10 // maximum # of sys. error terms
-#define PBIN 816   // Pion phase space # of bins
-#define KBIN 700   // Kaon phase space # of bins
+
+#define PIPBIN 309   // Pion+ phase space # of bins
+#define PIMBIN 361   // Pion- phase space # of bins
+#define KPBIN 700    // Kaon+ phase space # of bins
+#define KMBIN 700    // Kaon- phase space # of bins
+#define K0BIN 700    // Kaon0 phase space # of bins
+
+//#define NEUTRON_ERR 0.0015 // neutron production error size
+//#define ISOSPIN_ERR 0.0045 // uncertainty on isospin symmetry
+#define NEUTRON_ERR 0. // neutron production error size
+#define ISOSPIN_ERR 0. // uncertainty on isospin symmetry
 
 #include <TFile.h>
 #include <TH1D.h>
 #include <TH2D.h>
+#include <TMath.h>
 #include <TString.h>
-
-using namespace std;
+#include "na61_pibin.h"
 
 class BinErr{
  public:
@@ -25,11 +26,13 @@ class BinErr{
 };
 
 class SysErr{
+  // class for individual sys. error sources treated by 1sigma covariances
  private:
   TString fName;
  public:
   TH1D *herrsk[3];
   TH1D *herrnd[3];
+  
   double syserr_nnd;
   double syserr_nsk[3][3]; // [mode][flavor]
   double syserr_nsknd[3][3]; // [mode][flavor]
@@ -57,7 +60,7 @@ class SysErr{
 
   void Show(){
     std::cout <<"\n-------------"<< fName << " error ---------------" << std::endl;
-    std::cout << "[befor cancellation]" << std::endl;
+    std::cout << "[before cancellation]" << std::endl;
     std::cout << "\t\ttotal\tnumu\tnumub\tnue" << std::endl;
     printf("ND: \t\t%.2f%%\n",syserr_nnd * 100);
     printf("SK 1Rmu: \t%.2f%%\t%.2f%%\t%.2f%%\t%.2f%%\n",sumsyserr_nsk[0]*100,syserr_nsk[0][0]*100,syserr_nsk[0][1]*100,syserr_nsk[0][2]*100);
@@ -75,13 +78,19 @@ class SysErr{
 class HadErrCalc{
  private:
   int nsys;
-  SysErr Sys[MAX_NSYS]; // sys. errors other than primary pi/K
+  SysErr Sys[MAX_NSYS]; // sys. errors other than  pi/K
   
   // error contribution inputs
-  BinErr pi_econt_sk[2][PBIN]; // [+/-],[pion]
-  BinErr k_econt_sk[3][KBIN];  // [+/-/0],[kaon]
-  BinErr pi_econt_nd[2][PBIN]; // [+/-],[pion]
-  BinErr k_econt_nd[3][KBIN];  // [+/-/0],[kaon]
+  BinErr pip_econt_sk[PIPBIN]; // [pion+]
+  BinErr pim_econt_sk[PIMBIN]; // [pion-]
+  BinErr kp_econt_sk[KPBIN];  // [kaon+]
+  BinErr km_econt_sk[KMBIN];  // [kaon-]
+  BinErr k0_econt_sk[K0BIN];  // [kaon0]
+  BinErr pip_econt_nd[PIPBIN]; // [pion+]
+  BinErr pim_econt_nd[PIMBIN]; // [pion-]
+  BinErr kp_econt_nd[KPBIN];  // [kaon+]
+  BinErr km_econt_nd[KMBIN];  // [kaon-]
+  BinErr k0_econt_nd[K0BIN];  // [kaon0]
   
   bool fFlag[4]; // [nd, 1rmu, nue_sig, nue_bkg]
   
@@ -96,26 +105,46 @@ class HadErrCalc{
   double input_nnd[3][20];    // [numu, numub, nue][enu]
 
   // error contribution outputs
-  double err_pi_nsk[PBIN][3][3]; // [pion],[1rmu, nue_sig, nue_bkg],[numu,numub,nue]
-  double err_pi_nnd[PBIN]; // [pion]
-  double err_k_nsk[KBIN][3][3]; // [kaon],[1rmu, nue_sig, nue_bkg],[numu,numub,nue]
-  double err_k_nnd[KBIN]; // [kaon]
+  double err_pip_nsk[PIPBIN][3][3]; // [pion+],[1rmu, nue_sig, nue_bkg],[numu,numub,nue]
+  double err_pim_nsk[PIMBIN][3][3]; // [pion-],[1rmu, nue_sig, nue_bkg],[numu,numub,nue]
+  double err_kp_nsk[KPBIN][3][3]; // [kaon+],[1rmu, nue_sig, nue_bkg],[numu,numub,nue]
+  double err_km_nsk[KMBIN][3][3]; // [kaon-],[1rmu, nue_sig, nue_bkg],[numu,numub,nue]
+  double err_k0_nsk[K0BIN][3][3]; // [kaon0],[1rmu, nue_sig, nue_bkg],[numu,numub,nue]
   
+  double err_pip_nnd[PIPBIN]; // [pion+],[1rmu, nue_sig, nue_bkg],[numu,numub,nue]
+  double err_pim_nnd[PIMBIN]; // [pion-],[1rmu, nue_sig, nue_bkg],[numu,numub,nue]
+  double err_kp_nnd[KPBIN]; // [kaon+],[1rmu, nue_sig, nue_bkg],[numu,numub,nue]
+  double err_km_nnd[KMBIN]; // [kaon-],[1rmu, nue_sig, nue_bkg],[numu,numub,nue]
+  double err_k0_nnd[K0BIN]; // [kaon0],[1rmu, nue_sig, nue_bkg],[numu,numub,nue]
+
   // Nsk/Nnd error outputs
-  double err_pi_nsknd[PBIN][3][3]; // [pion],[1rmu, nue_sig, nue_bkg][numu,numub,nue]
-  double err_k_nsknd[KBIN][3][3]; // [kaon],[1rmu, nue_sig, nue_bkg][numu,numub,nue]
+  double err_pip_nsknd[PIPBIN][3][3]; // [pion+],[1rmu, nue_sig, nue_bkg][numu,numub,nue]
+  double err_pim_nsknd[PIMBIN][3][3]; // [pion+],[1rmu, nue_sig, nue_bkg][numu,numub,nue]
+  double err_kp_nsknd[KPBIN][3][3]; // [kaon],[1rmu, nue_sig, nue_bkg][numu,numub,nue]
+  double err_km_nsknd[KMBIN][3][3]; // [kaon],[1rmu, nue_sig, nue_bkg][numu,numub,nue]
+  double err_k0_nsknd[K0BIN][3][3]; // [kaon],[1rmu, nue_sig, nue_bkg][numu,numub,nue]
+  
   
   // error contribution histograms //
-  TH2D * hphase[2]; // {pi,K}
-  TH2D * hcontnd[2]; // {pi,K}
-  TH2D * hcontsk[2][4]; // {pi,K}{1rmu, nue_sig, nue_bg, nue_all}
-  TH2D * hcontsknd[2][4];  // {pi,K}{1rmu, nue_sig, nue_bg, nue_all}
+  TH2D * hphase_k;
+  NA61PiBin *pibin;
   
-  double err_pi_nsk_all[PBIN][4];
-  double err_pi_nsknd_all[PBIN][4];
-  double err_k_nsk_all[KBIN][4];
-  double err_k_nsknd_all[KBIN][4];
+  TH2D * hcontnd[3]; //{pip, pim, k}
+  TH2D * hcontsk[3][4]; // {pip,pim.k}{1rmu, nue_sig, nue_bg, nue_all}
+  TH2D * hcontsknd[3][4]; // {pip,pim,k}{1rmu, nue_sig, nue_bg, nue_all}
   
+  // sum of all flavors
+  double err_pip_nsk_all[PIPBIN][4];
+  double err_pip_nsknd_all[PIPBIN][4];
+  double err_pim_nsk_all[PIMBIN][4];
+  double err_pim_nsknd_all[PIMBIN][4];
+  double err_kp_nsk_all[KPBIN][4];
+  double err_kp_nsknd_all[KPBIN][4];
+  double err_km_nsk_all[KMBIN][4];
+  double err_km_nsknd_all[KMBIN][4];
+  double err_k0_nsk_all[K0BIN][4];
+  double err_k0_nsknd_all[K0BIN][4];
+
   // hadpro total error (mode by mode, flavor by flavor)
   double haderr_pi_nnd;
   double haderr_k_nnd;
@@ -149,6 +178,12 @@ class HadErrCalc{
   void ResetFlag();
   int ChkHist(TH1D *h);
   void SetHist(int mode, int flav, TH1D *h = 0);
+
+  void AddNeutronErr(double &val){
+    //    val += NEUTRON_ERR;
+    //    val = TMath::Sqrt(val*val + ISOSPIN_ERR*ISOSPIN_ERR);
+    val *= 1.05;
+  }
   
  public:
   
@@ -179,53 +214,131 @@ class HadErrCalc{
     return ggtoterr_nnd;
   };
 
+  void ShowPIPErr(int mode){
+    double sk =0, nd=0, sknd=0;
+    for(int i=0;i<PIPBIN;i++){
+      sk += err_pip_nsk_all[i][mode];
+      sknd += err_pip_nsknd_all[i][mode];
+      nd += err_pip_nnd[i];
+    }
+    std::cout << sk << " " << nd <<  " " << sknd << std::endl;
+  };
+  void ShowPIMErr(int mode){
+    double sk =0, nd=0, sknd=0;
+    for(int i=0;i<PIMBIN;i++){
+      sk += err_pim_nsk_all[i][mode];
+      sknd += err_pim_nsknd_all[i][mode];
+      nd += err_pim_nnd[i];
+    }
+    std::cout << sk << " " << nd <<  " " << sknd << std::endl;
+  };
 
   TH2D * GetContHist(int det, int pik, int mode = 0){
-    TString s_pik[2] = {"pi","k"};
+    TString s_pik[3] = {"pip","pim","k"};
     TString s_mode[4] = {"1Rmu", "NueSig", "NueBG", "NueAll"};
     TString s_x[2] = {"P_{#pi} [GeV/c]", "X_{F}"};
     TString s_y[2] = {"#theta [mrad]", "P_{T} [GeV/c]"};
-    int nbins[2] = {816, 700};
+    int nbins[3] = {PIPBIN, PIMBIN, KPBIN};
     TH2D *h;
     if(det == 1){//ND
       h = hcontnd[pik];
       if(!h){
-	TString name = "h_nd_" + s_pik[pik]; 
-	h = (TH2D*)hphase[pik]->Clone(name);
-	h->SetTitle(name);
+	TString name = "h_nd_" + s_pik[pik];
+	if(pik ==2)
+	  h = (TH2D*)hphase_k->Clone(name);
+	else
+	  h = new TH2D(name,name,201,0,20.1,22,0,440);
       }
-      if(!pik)
-	for(int i=0;i<nbins[pik];i++) h->SetBinContent(i,err_pi_nnd[i]);
+      
+      if(!pik){ // pip
+	for(int x =0;x<201;x++){
+	  for(int y=0;y<22;y++){
+	    double cx = h->GetXaxis()->GetBinCenter(x+1);
+	    double cy = h->GetYaxis()->GetBinCenter(y+1);
+	    h->SetBinContent(x+1, y+1, err_pip_nnd[pibin->get_binID_pip(cy,cx)]);
+	  }
+	}
+      }
+      else if(pik==1){ // pim
+	for(int x =0;x<201;x++){
+	  for(int y=0;y<22;y++){
+	    double cx = h->GetXaxis()->GetBinCenter(x+1);
+	    double cy = h->GetYaxis()->GetBinCenter(y+1);
+	    h->SetBinContent(x+1, y+1, err_pim_nnd[pibin->get_binID_pim(cy,cx)]);
+	  }
+	}
+      }
       else
-	for(int i=0;i<nbins[pik];i++) h->SetBinContent(i,err_k_nnd[i]);
+	for(int i=0;i<nbins[pik];i++) h->SetBinContent(i,err_kp_nnd[i] + err_km_nnd[i] + err_k0_nnd[i]);
     }
     
     if(det == 0){//SK
       h = hcontsk[pik][mode];
       if(!h){
 	TString name = "h_sk_" + s_mode[mode]+ "_" + s_pik[pik]; 
-	h = (TH2D*)hphase[pik]->Clone(name);
-	h->SetTitle(name);
+	if(pik ==2)
+	  h = (TH2D*)hphase_k->Clone(name);
+	else
+	  h = new TH2D(name,name,201,0,20.1,22,0,440);
       }
-      if(!pik)
-	for(int i=0;i<nbins[pik];i++) h->SetBinContent(i,err_pi_nsk_all[i][mode]);
+      if(!pik){ // pip
+	for(int x =0;x<201;x++){
+	  for(int y=0;y<22;y++){
+	    double cx = h->GetXaxis()->GetBinCenter(x+1);
+	    double cy = h->GetYaxis()->GetBinCenter(y+1);
+	    h->SetBinContent(x+1, y+1, err_pip_nsk_all[pibin->get_binID_pip(cy,cx)][mode]);
+	  }
+	}
+      }
+      else if(pik==1){ // pim
+	for(int x =0;x<201;x++){
+	  for(int y=0;y<22;y++){
+	    double cx = h->GetXaxis()->GetBinCenter(x+1);
+	    double cy = h->GetYaxis()->GetBinCenter(y+1);
+	    h->SetBinContent(x+1, y+1, err_pim_nsk_all[pibin->get_binID_pim(cy,cx)][mode]);
+	  }
+	}
+      }
       else
-	for(int i=0;i<nbins[pik];i++) h->SetBinContent(i,err_k_nsk_all[i][mode]);
+	for(int i=0;i<nbins[pik];i++) h->SetBinContent(i,err_kp_nsk_all[i][mode] + 
+						       err_km_nsk_all[i][mode] + err_k0_nsk_all[i][mode]);
     }
     
     if(det == 2){//SK/ND
       h = hcontsknd[pik][mode];
       if(!h){
 	TString name = "h_sk_" + s_mode[mode]+ "_" + s_pik[pik]+"/nd"; 
-	h = (TH2D*)hphase[pik]->Clone(name);
-	h->SetTitle(name);
+	if(pik ==2)
+	  h = (TH2D*)hphase_k->Clone(name);
+	else
+	  h = new TH2D(name,name,201,0,20.1,22,0,440);
       }
-      if(!pik)
-	for(int i=0;i<nbins[pik];i++) h->SetBinContent(i,err_pi_nsk_all[i][mode] - err_pi_nnd[i]);
+      if(!pik){ // pip
+	for(int x =0;x<201;x++){
+	  for(int y=0;y<22;y++){
+	    double cx = h->GetXaxis()->GetBinCenter(x+1);
+	    double cy = h->GetYaxis()->GetBinCenter(y+1);
+	    h->SetBinContent(x+1, y+1, err_pip_nsk_all[pibin->get_binID_pip(cy,cx)][mode]
+			     - err_pip_nnd[pibin->get_binID_pip(cy,cx)]);
+	  }
+	}
+      }
+      else if(pik==1){ // pim
+	for(int x =0;x<201;x++){
+	  for(int y=0;y<22;y++){
+	    double cx = h->GetXaxis()->GetBinCenter(x+1);
+	    double cy = h->GetYaxis()->GetBinCenter(y+1);
+	    h->SetBinContent(x+1, y+1, err_pim_nsk_all[pibin->get_binID_pim(cy,cx)][mode]
+			     - err_pim_nnd[pibin->get_binID_pim(cy,cx)]);
+	  }
+	}
+      }
       else
-	for(int i=0;i<nbins[pik];i++) h->SetBinContent(i,err_k_nsk_all[i][mode] - err_k_nnd[i]);
+	for(int i=0;i<nbins[pik];i++) h->SetBinContent(i,err_kp_nsk_all[i][mode] - err_kp_nnd[i]
+						       +err_km_nsk_all[i][mode] - err_km_nnd[i]
+						       +err_k0_nsk_all[i][mode] - err_k0_nnd[i]);
     }
-
+    
     h->SetLabelSize(0.06,"XYZ");
     h->SetNdivisions(505,"XYZ");
     h->GetXaxis()->SetTitle(s_x[pik]);
@@ -233,7 +346,7 @@ class HadErrCalc{
     h->SetTitleSize(0.06 ,"XYZ");
     return h;
   };
-    
+  
   void ShowSys(){
     for(int i=0;i<nsys;i++){
       Sys[i].Show();

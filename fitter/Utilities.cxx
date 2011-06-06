@@ -2,6 +2,10 @@
 /*
  Changes since v1.0.0:
 
+ @ 06/06/11
+ Added UseEventToFillInTemplate(SuperkMode_t m, int pdg, int reaction_mode)
+ to simplify SuperkMC class.
+ 
 */
 //____________________________________________________________________________
 
@@ -1109,22 +1113,6 @@ string t2kana::util::XML2String(
   return TrimSpaces(content);
 }
 //___________________________________________________________________________
-/*
-t2kana::util::TH1DErrEnv *    
-  t2kana::util::XML2TH1DErrEnv(
-     TXMLEngine * eng, XMLNodePointer_t topnode, string path)
-{
-  TH1D * low  = XML2TH1D(eng,topnode,path + "/low" );
-  TH1D * high = XML2TH1D(eng,topnode,path + "/high");
-
-  assert(low);
-  assert(high);
-
-  TH1DErrEnv * error_envelope = new TH1DErrEnv(low,high);
-
-  return error_envelope;
-}*/
-//___________________________________________________________________________
 TMatrixDSym * t2kana::util::XML2TMatrixDSym(
    TXMLEngine * xmleng, XMLNodePointer_t top_node, string path)
 {
@@ -1230,6 +1218,234 @@ TMatrixD * t2kana::util::XML2TMatrixD(
   file->Close();
 
   return matrix_copy;
+}
+//___________________________________________________________________________
+bool t2kana::util::UseEventToFillInTemplate(
+  SuperkMode_t m, int nu_pdg_code, int neut_reaction_mode)
+{
+  bool use_it = false;
+
+  if(m == kSKmNuMuCCQE) 
+  {
+     bool is_numu = (nu_pdg_code == kPdgNuMu);
+     bool is_ccqe = (neut_reaction_mode == 1);
+     use_it = is_numu && is_ccqe;
+  } 
+
+  else
+  if(m == kSKmNuMuCC1pi) 
+  {
+     bool is_numu  = (nu_pdg_code == kPdgNuMu);
+     bool is_cc1pi = (neut_reaction_mode == 11 || 
+                      neut_reaction_mode == 12 || 
+                      neut_reaction_mode == 13);
+     use_it = is_numu && is_cc1pi;
+  } 
+
+  else
+  if(m == kSKmNuMuCCoth) 
+  {
+     bool is_numu  = (nu_pdg_code == kPdgNuMu);
+     bool is_ccoth = (neut_reaction_mode == 16 || 
+                      neut_reaction_mode == 17 || 
+                      neut_reaction_mode == 21 ||
+                      neut_reaction_mode == 22 || 
+                      neut_reaction_mode == 23 || 
+                      neut_reaction_mode == 26);
+     use_it = is_numu && is_ccoth;
+  } 
+
+  else
+  if(m == kSKmNC) 
+  {
+     bool is_numu  = (nu_pdg_code == kPdgNuMu);
+     bool is_nc    = (neut_reaction_mode == 31 ||
+                      neut_reaction_mode == 32 ||
+                      neut_reaction_mode == 36 ||
+                      neut_reaction_mode == 33 ||
+                      neut_reaction_mode == 34 ||
+                      neut_reaction_mode == 38 ||
+                      neut_reaction_mode == 39 ||
+                      neut_reaction_mode == 41 ||
+                      neut_reaction_mode == 42 ||
+                      neut_reaction_mode == 43 ||
+                      neut_reaction_mode == 46 ||
+                      neut_reaction_mode == 51 ||
+                      neut_reaction_mode == 52);
+     use_it = is_numu && is_nc;
+  } 
+
+  else
+  if(m == kSKmNuMuBarCCQE) 
+  {
+     bool is_numubar = (nu_pdg_code == kPdgNuMuBar);
+     bool is_ccqe    = (neut_reaction_mode == -1);
+     use_it = is_numubar && is_ccqe;
+  } 
+
+  else
+  if(m == kSKmNuMuBarCC1pi) 
+  {
+     bool is_numubar = (nu_pdg_code == kPdgNuMuBar);
+     bool is_cc1pi   = (neut_reaction_mode == -11 || 
+                        neut_reaction_mode == -12 || 
+                        neut_reaction_mode == -13);
+     use_it = is_numubar && is_cc1pi;
+  } 
+
+  else
+  if(m == kSKmNuMuBarCCoth) 
+  {
+     bool is_numubar = (nu_pdg_code == kPdgNuMuBar);
+     bool is_ccqe    = (neut_reaction_mode == -1);
+     bool is_cc1pi   = (neut_reaction_mode == -11 || 
+                        neut_reaction_mode == -12 || 
+                        neut_reaction_mode == -13);
+     bool is_nc      = (neut_reaction_mode == -31 ||
+                        neut_reaction_mode == -32 ||
+                        neut_reaction_mode == -36 ||
+                        neut_reaction_mode == -33 ||
+                        neut_reaction_mode == -34 ||
+                        neut_reaction_mode == -38 ||
+                        neut_reaction_mode == -39 ||
+                        neut_reaction_mode == -41 ||
+                        neut_reaction_mode == -42 ||
+                        neut_reaction_mode == -43 ||
+                        neut_reaction_mode == -44 ||
+                        neut_reaction_mode == -45 ||
+                        neut_reaction_mode == -46 ||
+                        neut_reaction_mode == -51 ||
+                        neut_reaction_mode == -52);
+     use_it = is_numubar && !(is_nc||is_ccqe||is_cc1pi);
+  } 
+
+  else
+  if(m == kSKmNuMuBarNC) 
+  {
+     bool is_numubar  = (nu_pdg_code == kPdgNuMuBar);
+     bool is_nc       = (neut_reaction_mode == -31 ||
+                         neut_reaction_mode == -32 ||
+                         neut_reaction_mode == -36 ||
+                         neut_reaction_mode == -33 ||
+                         neut_reaction_mode == -34 ||
+                         neut_reaction_mode == -38 ||
+                         neut_reaction_mode == -39 ||
+                         neut_reaction_mode == -41 ||
+                         neut_reaction_mode == -42 ||
+                         neut_reaction_mode == -43 ||
+                         neut_reaction_mode == -44 ||
+                         neut_reaction_mode == -45 ||
+                         neut_reaction_mode == -46 ||
+                         neut_reaction_mode == -51 ||
+                         neut_reaction_mode == -52);
+     use_it = is_numubar && is_nc;
+  } 
+
+  else
+  if(m == kSKmNuECCQE) 
+  {
+     bool is_nue  = (nu_pdg_code == kPdgNuE || 
+                     nu_pdg_code == kPdgNuEBar);
+     bool is_ccqe = (neut_reaction_mode == 1 || 
+                     neut_reaction_mode == -1);
+     use_it = is_nue && is_ccqe;
+  } 
+
+  else
+  if(m == kSKmNuECC1pi) 
+  {
+     bool is_nue   = (nu_pdg_code == kPdgNuE || 
+                      nu_pdg_code == kPdgNuEBar);
+     bool is_cc1pi = (neut_reaction_mode ==  11 || 
+                      neut_reaction_mode ==  12 || 
+                      neut_reaction_mode ==  13 ||
+                      neut_reaction_mode == -11 || 
+                      neut_reaction_mode == -12 || 
+                      neut_reaction_mode == -13);
+     use_it = is_nue && is_cc1pi;
+  }
+
+  else
+  if(m == kSKmNuECCoth) 
+  {
+     bool is_nue    = (nu_pdg_code == kPdgNuE || 
+                       nu_pdg_code == kPdgNuEBar);
+     bool is_ccqe   = (neut_reaction_mode == 1   || 
+                       neut_reaction_mode == -1);
+     bool is_cc1pi  = (neut_reaction_mode ==  11 || 
+                       neut_reaction_mode ==  12 || 
+                       neut_reaction_mode ==  13 ||
+                       neut_reaction_mode == -11 || 
+                       neut_reaction_mode == -12 || 
+                       neut_reaction_mode == -13);
+     bool is_nc     = (neut_reaction_mode ==  31 ||
+                       neut_reaction_mode ==  32 ||
+                       neut_reaction_mode ==  36 ||
+                       neut_reaction_mode ==  33 ||
+                       neut_reaction_mode ==  34 ||
+                       neut_reaction_mode ==  38 ||
+                       neut_reaction_mode ==  39 ||
+                       neut_reaction_mode ==  41 ||
+                       neut_reaction_mode ==  42 ||
+                       neut_reaction_mode ==  43 ||
+                       neut_reaction_mode ==  46 ||
+                       neut_reaction_mode ==  51 ||
+                       neut_reaction_mode ==  52 ||
+                       neut_reaction_mode == -31 ||
+                       neut_reaction_mode == -32 ||
+                       neut_reaction_mode == -36 ||
+                       neut_reaction_mode == -33 ||
+                       neut_reaction_mode == -34 ||
+                       neut_reaction_mode == -38 ||
+                       neut_reaction_mode == -39 ||
+                       neut_reaction_mode == -41 ||
+                       neut_reaction_mode == -42 ||
+                       neut_reaction_mode == -43 ||
+                       neut_reaction_mode == -44 ||
+                       neut_reaction_mode == -45 ||
+                       neut_reaction_mode == -46 ||
+                       neut_reaction_mode == -51 ||
+                       neut_reaction_mode == -52);
+     use_it = is_nue && !(is_ccqe||is_cc1pi||is_nc);
+  }
+
+  else
+  if(m == kSKmNuENC) 
+  {
+     bool is_nue  = (nu_pdg_code == kPdgNuE || 
+                     nu_pdg_code == kPdgNuEBar);
+     bool is_nc   = (neut_reaction_mode ==  31 ||
+                     neut_reaction_mode ==  32 ||
+                     neut_reaction_mode ==  36 ||
+                     neut_reaction_mode ==  33 ||
+                     neut_reaction_mode ==  34 ||
+                     neut_reaction_mode ==  38 ||
+                     neut_reaction_mode ==  39 ||
+                     neut_reaction_mode ==  41 ||
+                     neut_reaction_mode ==  42 ||
+                     neut_reaction_mode ==  43 ||
+                     neut_reaction_mode ==  46 ||
+                     neut_reaction_mode ==  51 ||
+                     neut_reaction_mode ==  52 ||
+                     neut_reaction_mode == -31 ||
+                     neut_reaction_mode == -32 ||
+                     neut_reaction_mode == -36 ||
+                     neut_reaction_mode == -33 ||
+                     neut_reaction_mode == -34 ||
+                     neut_reaction_mode == -38 ||
+                     neut_reaction_mode == -39 ||
+                     neut_reaction_mode == -41 ||
+                     neut_reaction_mode == -42 ||
+                     neut_reaction_mode == -43 ||
+                     neut_reaction_mode == -44 ||
+                     neut_reaction_mode == -45 ||
+                     neut_reaction_mode == -46 ||
+                     neut_reaction_mode == -51 ||
+                     neut_reaction_mode == -52);
+     use_it = is_nue && is_nc;
+  }
+ 
+  return use_it;
 }
 //___________________________________________________________________________
 

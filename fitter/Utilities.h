@@ -41,8 +41,6 @@ using std::vector;
 namespace t2kana {
 namespace util {
 
-  class TH1DErrEnv;
-
   double DeltaChisquare   (t2kana::conv::ConfLevel_t cl, int nfitparams);
   double ChisqGauss       (double ndata, double nmc);
   double ChisqPoisson     (double ndata, double nmc);
@@ -80,10 +78,13 @@ namespace util {
   double           XML2Dbl         (TXMLEngine * eng, XMLNodePointer_t topnode, string path);
   vector<double>   XML2DblArray    (TXMLEngine * eng, XMLNodePointer_t topnode, string path);
   string           XML2String      (TXMLEngine * eng, XMLNodePointer_t topnode, string path);
-//TH1DErrEnv *     XML2TH1DErrEnv  (TXMLEngine * eng, XMLNodePointer_t topnode, string path);
   TMatrixDSym *    XML2TMatrixDSym (TXMLEngine * eng, XMLNodePointer_t topnode, string path);
   TMatrixD *       XML2TMatrixD    (TXMLEngine * eng, XMLNodePointer_t topnode, string path);
   
+  // reaction modes etc
+
+  bool UseEventToFillInTemplate(t2kana::conv::SuperkMode_t m, int nu_pdg_code, int neut_reaction_mode);
+
   // ROOT style/formatting
 
   void SetDefaultStyle(bool black_n_white=false);
@@ -103,21 +104,6 @@ namespace util {
 
   int Sign (double tweaking_dial);
 
-/*
-  // utility classes
-  class TH1DErrEnv
-  {
-   public:
-     TH1DErrEnv() : fLow(0), fHigh(0) { }
-     TH1DErrEnv(TH1D * low, TH1D * high) : fLow(low), fHigh(high) { }
-    ~TH1DErrEnv() { 
-       if(fLow ) delete fLow;
-       if(fHigh) delete fHigh;
-     }
-     TH1D * fLow;
-     TH1D * fHigh;
-  };
-*/
 } // util
 } // t2kana
   

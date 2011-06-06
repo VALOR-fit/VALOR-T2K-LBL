@@ -11,7 +11,9 @@
    `1-R mu-like' sample but not typing this explicitly could lead to confusion. From now only
    CurrErecoSpectrum(s) and CurrErecoSpectrum(s,m) will be used.
    Similar changes were make to SuperkExpectation and SuperkObservation classes.
-
+ @ 06/06/2011 - CA
+   Added PhysHypothesis class
+   Added util::UseEventToFillInTemplate(SuperkMode_t m, int pdg, int reaction_mode)
 */
 //________________________________________________________________________________________
 
@@ -62,22 +64,30 @@ void SuperkMC::Init(void)
     fMCErecoSpectrumTot[is] = 0;
     for(int im=0; im<knm; im++) {
       fMCTemplates     [is][im] = 0;
-      fMCEtrueSpectrum [is][im] = 0;
+      ///////////////////////fMCEtrueSpectrum [is][im] = 0;
       fMCErecoSpectrum [is][im] = 0;
     }
   }
   
-  fEnergyScaleRelErr  = 0.;
-  fEffCCQERelErr      = 0.;
-  fEffCCnonQERelErr   = 0.;
-  fEffNCRelErr        = 0.;
-  fEffNuECCRelErr     = 0.;
-         
-  fEnergyScaleTwkDial = 0.;
-  fEffCCQETwkDial     = 0.;
-  fEffCCnonQETwkDial  = 0.;
-  fEffNCTwkDial       = 0.;
-  fEffNuECCTwkDial    = 0.;
+  fEnergyScaleRelErr    = 0.;
+  fOthEffCCQERelErr     = 0.;
+  fEffCCQERelErrCovarRC = 0;
+  fEreco1RCCCQE         = 0.;
+  fEreco2RCCCQE         = 0.;      
+  fEffCCnonQERelErr     = 0.;
+  fEffNCRelErr          = 0.;
+  fEffNuECCRelErr       = 0.;
+
+  fEnergyScaleTwkDial   = 0.;
+  fOthEffCCQETwkDial    = 0.;
+  fRC1EffCCQETwkDial    = 0.;
+  fRC2EffCCQETwkDial    = 0.;
+  fRC3EffCCQETwkDial    = 0.;
+  fEffCCnonQETwkDial    = 0.;
+  fEffNCTwkDial         = 0.;
+  fEffNuECCTwkDial      = 0.;
+
+  fEffCCQERelErrCovarCholeskyL  = 0;
   
   fMCPOT_numu     = 0;
   fMC1Rmu_numu    = 0;
@@ -90,21 +100,12 @@ void SuperkMC::Init(void)
   fBrPdg          = 0;
   fBrGenCode      = 0;
          
-  fNuFlux     = 0;
+  fNuFlux         = 0;
   fGenInputs      = 0;
   
   f1RmNuMuEt      = 0;
   f1RmNuMuBarEt   = 0;
   f1RmNuEEt       = 0;
-
-  fCurrSinsq2Theta23 = 0;
-  fCurrDm23sq        = 0;
-  fCurrAlphaDecay    = 0;
-  fCurrMusqDecoh     = 0;
-  
-  this -> UseNeutrinoOscillationModel (true);
-  this -> UseNeutrinoDecayModel       (false);
-  this -> UseNeutrinoDecoherenceModel (false);
 }
 //________________________________________________________________________________________
 void SuperkMC::CleanUp(void)
@@ -117,7 +118,7 @@ void SuperkMC::CleanUp(void)
     if( fMCErecoSpectrumTot[is] ) delete fMCErecoSpectrumTot[is];
     for(int im=0; im<knm; im++) {
       if( fMCTemplates[is][im]     ) delete fMCTemplates[is][im];
-      if( fMCEtrueSpectrum[is][im] ) delete fMCEtrueSpectrum[is][im];
+/////////////////////      if( fMCEtrueSpectrum[is][im] ) delete fMCEtrueSpectrum[is][im];
       if( fMCErecoSpectrum[is][im] ) delete fMCErecoSpectrum[is][im];
     }
   }
@@ -177,9 +178,18 @@ bool SuperkMC::Read(TXMLEngine* xml, XMLNodePointer_t root_node)
   fEnergyScaleRelErr = util::XML2Dbl(
      xml,root_node,"superk/systematics/energy_scale_relative_error");
   // Get combined relative error on efficiencies
-  fEffCCQERelErr      =
+  fOthEffCCQERelErr =
     util::XML2Dbl(xml,root_node,
-      "superk/systematics/efficiency_relative_error/one_mu_ring/ccqe");
+      "superk/systematics/efficiency_relative_error/one_mu_ring/ccqe/other_error");
+  fEffCCQERelErrCovarRC = 
+    util::XML2TMatrixD(xml,root_node,
+      "superk/systematics/efficiency_relative_error/one_mu_ring/ccqe/rc_error");
+  fEreco1RCCCQE =
+    util::XML2Dbl(xml,root_node,
+      "superk/systematics/efficiency_relative_error/one_mu_ring/ccqe/rc_ereco_high_bin1");
+  fEreco2RCCCQE =
+    util::XML2Dbl(xml,root_node,
+      "superk/systematics/efficiency_relative_error/one_mu_ring/ccqe/rc_ereco_high_bin2");
   fEffCCnonQERelErr   =
     util::XML2Dbl(xml,root_node,
       "superk/systematics/efficiency_relative_error/one_mu_ring/ccnonqe");
@@ -191,14 +201,26 @@ bool SuperkMC::Read(TXMLEngine* xml, XMLNodePointer_t root_node)
       "superk/systematics/efficiency_relative_error/one_mu_ring/nuecc");
       
       
-  cout << "Exp/SK >> " << "RelErr {EnergyScale}                : " << fEnergyScaleRelErr << endl;
-  cout << "Exp/SK >> " << "RelErr {Efficiency/1RingMu/CCQE}    : " << fEffCCQERelErr     << endl;
+  cout << "Exp/SK >> " << "RelErr {EnergyScale} : " << fEnergyScaleRelErr << endl;
+
+  cout << "Exp/SK >> " << "RelErr {Efficiency/1RingMu/CCQE/Other} : " << fOthEffCCQERelErr << endl;
+  cout << "Exp/SK >> " << "RelErr {Efficiency/1RingMu/CCQE/RingCounting} : " << endl;
+  fEffCCQERelErrCovarRC->Print();
+  cout << "Exp/SK >> " << "Ring-counting error matrix is given for the following 3 Ereco bins : " << endl;
+  cout << "(0, " << fEreco1RCCCQE << " GeV), "
+       << "[" << fEreco1RCCCQE << " GeV, " << fEreco2RCCCQE << " GeV], "
+       << "(" << fEreco2RCCCQE << " GeV, oo)" << endl;
   cout << "Exp/SK >> " << "RelErr {Efficiency/1RingMu/CCnonQE} : " << fEffCCnonQERelErr  << endl;
-  cout << "Exp/SK >> " << "RelErr {Efficiency/1RingMu/NC}      : " << fEffNCRelErr       << endl;
-  cout << "Exp/SK >> " << "RelErr {Efficiency/1RingMu/NuECC}   : " << fEffNuECCRelErr    << endl;
+  cout << "Exp/SK >> " << "RelErr {Efficiency/1RingMu/NC} : "      << fEffNCRelErr       << endl;
+  cout << "Exp/SK >> " << "RelErr {Efficiency/1RingMu/NuECC} : "   << fEffNuECCRelErr    << endl;
+
+  if(!fEffCCQERelErrCovarRC) {
+    cerr << "Exp/SK >> No input SuperK CCQE ring-counting error covariance matrix!" << endl;
+    exit(1);
+  }
   
   // Reset osc params
-  this->UseOscillationParams(0., 0.);
+  fPhysHypothesis.UseOscillationParams(0., 0.);
 
   //
   // Create histograms
@@ -260,10 +282,10 @@ void SuperkMC::CreateTemplate(SuperkSample_t s, SuperkMode_t m)
   fMCTemplates[is][im]->GetXaxis()->SetTitle("E_{reco} (GeV)");
   fMCTemplates[is][im]->GetYaxis()->SetTitle("E_{true} (GeV)");
       
-  fMCEtrueSpectrum[is][im] = new TH1D(
-     Form("nsketrue_%d_%d",is,im), "", kNEtrueBins, kEtrueMin, kEtrueMax);
-  fMCEtrueSpectrum[is][im]->SetDirectory(0);
-  fMCEtrueSpectrum[is][im]->GetXaxis()->SetTitle("E_{true} (GeV)");
+  /////////fMCEtrueSpectrum[is][im] = new TH1D(
+  /////////   Form("nsketrue_%d_%d",is,im), "", kNEtrueBins, kEtrueMin, kEtrueMax);
+  /////////fMCEtrueSpectrum[is][im]->SetDirectory(0);
+  /////////fMCEtrueSpectrum[is][im]->GetXaxis()->SetTitle("E_{true} (GeV)");
   
   TTree * mctree = this->MCTree(s,m);
   double  mcpot  = this->MCPOT(s,m);
@@ -284,203 +306,16 @@ void SuperkMC::CreateTemplate(SuperkSample_t s, SuperkMode_t m)
   
   for(int iev = 0; iev < mctree->GetEntries(); iev++) 
   {
-          mctree->GetEntry(iev);
+     mctree->GetEntry(iev);
 
-          bool use_it = false;
+     // use current entry for mode m template?
+     bool use_it = util::UseEventToFillInTemplate(m,fBrPdg,fBrGenCode);
+     if(!use_it) continue;
 
-          if(m == kSKmNuMuCCQE) {
-             bool is_numu = (fBrPdg == kPdgNuMu);
-             bool is_ccqe = (fBrGenCode == 1);
-             use_it = is_numu && is_ccqe;
-          } 
-          else
-          if(m == kSKmNuMuCC1pi) {
-             bool is_numu  = (fBrPdg == kPdgNuMu);
-             bool is_cc1pi = (fBrGenCode == 11 || 
-                              fBrGenCode == 12 || 
-                              fBrGenCode == 13);
-            use_it = is_numu && is_cc1pi;
-          } 
-          else
-          if(m == kSKmNuMuCCoth) {
-             bool is_numu  = (fBrPdg == kPdgNuMu);
-             bool is_ccoth = (fBrGenCode == 16 || 
-                              fBrGenCode == 17 || 
-                              fBrGenCode == 21 ||
-                              fBrGenCode == 22 || 
-                              fBrGenCode == 23 || 
-                              fBrGenCode == 26);
-             use_it = is_numu && is_ccoth;
-          } 
-          else
-          if(m == kSKmNC) {
-             bool is_numu  = (fBrPdg == kPdgNuMu);
-             bool is_nc    = (fBrGenCode == 31 ||
-                              fBrGenCode == 32 ||
-                              fBrGenCode == 36 ||
-                              fBrGenCode == 33 ||
-                              fBrGenCode == 34 ||
-                              fBrGenCode == 38 ||
-                              fBrGenCode == 39 ||
-                              fBrGenCode == 41 ||
-                              fBrGenCode == 42 ||
-                              fBrGenCode == 43 ||
-                              fBrGenCode == 46 ||
-                              fBrGenCode == 51 ||
-                              fBrGenCode == 52);
-             use_it = is_numu && is_nc;
-          } 
-          else
-          if(m == kSKmNuMuBarCCQE) {
-             bool is_numubar = (fBrPdg == kPdgNuMuBar);
-             bool is_ccqe    = (fBrGenCode == -1);
-             use_it = is_numubar && is_ccqe;
-          } 
-          else
-          if(m == kSKmNuMuBarCC1pi) {
-             bool is_numubar = (fBrPdg == kPdgNuMuBar);
-             bool is_cc1pi   = (fBrGenCode == -11 || fBrGenCode == -12 || fBrGenCode == -13);
-             use_it = is_numubar && is_cc1pi;
-          } 
-          else
-          if(m == kSKmNuMuBarCCoth) {
-             bool is_numubar = (fBrPdg == kPdgNuMuBar);
-             bool is_ccqe    = (fBrGenCode == -1);
-             bool is_cc1pi   = (fBrGenCode == -11 || fBrGenCode == -12 || fBrGenCode == -13);
-             bool is_nc      = (fBrGenCode == -31 ||
-                                fBrGenCode == -32 ||
-                                fBrGenCode == -36 ||
-                                fBrGenCode == -33 ||
-                                fBrGenCode == -34 ||
-                                fBrGenCode == -38 ||
-                                fBrGenCode == -39 ||
-                                fBrGenCode == -41 ||
-                                fBrGenCode == -42 ||
-                                fBrGenCode == -43 ||
-                                fBrGenCode == -44 ||
-                                fBrGenCode == -45 ||
-                                fBrGenCode == -46 ||
-                                fBrGenCode == -51 ||
-                                fBrGenCode == -52);
-             use_it = is_numubar && !(is_nc||is_ccqe||is_cc1pi);
-          } 
-          else
-          if(m == kSKmNuMuBarNC) {
-             bool is_numubar  = (fBrPdg == kPdgNuMuBar);
-             bool is_nc    = (fBrGenCode == -31 ||
-                              fBrGenCode == -32 ||
-                              fBrGenCode == -36 ||
-                              fBrGenCode == -33 ||
-                              fBrGenCode == -34 ||
-                              fBrGenCode == -38 ||
-                              fBrGenCode == -39 ||
-                              fBrGenCode == -41 ||
-                              fBrGenCode == -42 ||
-                              fBrGenCode == -43 ||
-                              fBrGenCode == -44 ||
-                              fBrGenCode == -45 ||
-                              fBrGenCode == -46 ||
-                              fBrGenCode == -51 ||
-                              fBrGenCode == -52);
-             use_it = is_numubar && is_nc;
-          } 
-          else
-          if(m == kSKmNuECCQE) {
-             bool is_nue  = (fBrPdg == kPdgNuE || fBrPdg == kPdgNuEBar);
-             bool is_ccqe = (fBrGenCode == 1 || fBrGenCode == -1);
-             use_it = is_nue && is_ccqe;
-          } 
-          else
-          if(m == kSKmNuECC1pi) {
-             bool is_nue    = (fBrPdg == kPdgNuE || fBrPdg == kPdgNuEBar);
-             bool is_cc1pi  = (fBrGenCode ==  11 || 
-                               fBrGenCode ==  12 || 
-                               fBrGenCode ==  13 ||
-                               fBrGenCode == -11 || 
-                               fBrGenCode == -12 || 
-                               fBrGenCode == -13);
-             use_it = is_nue && is_cc1pi;
-          }
-          else
-          if(m == kSKmNuECCoth) {
-             bool is_nue    = (fBrPdg == kPdgNuE || fBrPdg == kPdgNuEBar);
-             bool is_ccqe   = (fBrGenCode == 1 || 
-                               fBrGenCode == -1);
-             bool is_cc1pi  = (fBrGenCode ==  11 || 
-                               fBrGenCode ==  12 || 
-                               fBrGenCode ==  13 ||
-                               fBrGenCode == -11 || 
-                               fBrGenCode == -12 || 
-                               fBrGenCode == -13);
-             bool is_nc    =  (fBrGenCode == 31  ||
-                               fBrGenCode == 32  ||
-                               fBrGenCode == 36  ||
-                               fBrGenCode == 33  ||
-                               fBrGenCode == 34  ||
-                               fBrGenCode == 38  ||
-                               fBrGenCode == 39  ||
-                               fBrGenCode == 41  ||
-                               fBrGenCode == 42  ||
-                               fBrGenCode == 43  ||
-                               fBrGenCode == 46  ||
-                               fBrGenCode == 51  ||
-                               fBrGenCode == 52  ||
-                               fBrGenCode == -31 ||
-                               fBrGenCode == -32 ||
-                               fBrGenCode == -36 ||
-                               fBrGenCode == -33 ||
-                               fBrGenCode == -34 ||
-                               fBrGenCode == -38 ||
-                               fBrGenCode == -39 ||
-                               fBrGenCode == -41 ||
-                               fBrGenCode == -42 ||
-                               fBrGenCode == -43 ||
-                               fBrGenCode == -44 ||
-                               fBrGenCode == -45 ||
-                               fBrGenCode == -46 ||
-                               fBrGenCode == -51 ||
-                               fBrGenCode == -52);
-             use_it = is_nue && !(is_ccqe||is_cc1pi||is_nc);
-          }
-          else
-          if(m == kSKmNuENC) {
-             bool is_nue  = (fBrPdg == kPdgNuE || fBrPdg == kPdgNuEBar);
-             bool is_nc    = (fBrGenCode == 31  ||
-                              fBrGenCode == 32  ||
-                              fBrGenCode == 36  ||
-                              fBrGenCode == 33  ||
-                              fBrGenCode == 34  ||
-                              fBrGenCode == 38  ||
-                              fBrGenCode == 39  ||
-                              fBrGenCode == 41  ||
-                              fBrGenCode == 42  ||
-                              fBrGenCode == 43  ||
-                              fBrGenCode == 46  ||
-                              fBrGenCode == 51  ||
-                              fBrGenCode == 52  ||
-                              fBrGenCode == -31 ||
-                              fBrGenCode == -32 ||
-                              fBrGenCode == -36 ||
-                              fBrGenCode == -33 ||
-                              fBrGenCode == -34 ||
-                              fBrGenCode == -38 ||
-                              fBrGenCode == -39 ||
-                              fBrGenCode == -41 ||
-                              fBrGenCode == -42 ||
-                              fBrGenCode == -43 ||
-                              fBrGenCode == -44 ||
-                              fBrGenCode == -45 ||
-                              fBrGenCode == -46 ||
-                              fBrGenCode == -51 ||
-                              fBrGenCode == -52);
-             use_it = is_nue && is_nc;
-          }
-          if(!use_it) continue;
+   //cout << "Exp/SK >> Ereco = " << fBrEreco << ", Etrue = " << fBrEtrue << ", wght = " << wght << endl;
 
-        //cout << "Exp/SK >> Ereco = " << fBrEreco << ", Etrue = " << fBrEtrue << ", wght = " << wght << endl;
-
-          fMCTemplates    [is][im] -> Fill (fBrEreco, fBrEtrue, wght);
-          fMCEtrueSpectrum[is][im] -> Fill (fBrEtrue, wght);
+     fMCTemplates    [is][im] -> Fill (fBrEreco, fBrEtrue, wght);
+     /////////////////fMCEtrueSpectrum[is][im] -> Fill (fBrEtrue, wght);
   }//iev
 }
 //________________________________________________________________________________________
@@ -654,6 +489,7 @@ void SuperkMC::Draw(TVirtualPad * c, Option_t * option) const
   }
 
   if(opt.Contains("1RingMuLike/EtrueSpectra")) { 
+/*
     const char * draw_opt = "";
     c->Divide(2,6);
     c->cd(1);
@@ -681,6 +517,7 @@ void SuperkMC::Draw(TVirtualPad * c, Option_t * option) const
     c->cd(12);
     fMCEtrueSpectrum[kSKsFCFV1RingMuLike][kSKmNuENC]->Draw(draw_opt);
     c->Update();
+*/
   }
 
   c->Update();
@@ -689,10 +526,13 @@ void SuperkMC::Draw(TVirtualPad * c, Option_t * option) const
 double SuperkMC::NumOfEvents_Ereco(
     double Ereco, SuperkSample_t s, SuperkMode_t m, bool ignore_energy_scale_twk)
 {
-// Count events
-// Apply oscillations, apply flux 10a->10d weights, 
-// apply SuperK efficiency tweaks (if any) and SuperK energy scale tweaks (if any),
-// apply flux systematic (shape + norm) tweaks.
+// Count events in the given Ereco bin (integrate template over Etrue)
+// - Apply oscillations.
+// - Apply flux 10a->10d weights.
+// - Apply SuperK efficiency tweaks (if any). 
+// - Apply SuperK energy scale tweaks (if any).
+// - Apply flux tweaks (if any).
+// - Apply cross section tweaks (if any).
 
   TH2D * nsk2d = fMCTemplates[s][m];
   assert(nsk2d);
@@ -707,24 +547,21 @@ double SuperkMC::NumOfEvents_Ereco(
        << ", Ereco = " << Ereco << ", bin = " << reco_bin << endl;
 #endif
 
-
+  //
+  // loop over Etrue bins
+  //
   for(int true_bin = 1; true_bin <= nsk2d->GetYaxis()->GetNbins(); true_bin++) {
 
-      double Etrue     = nsk2d->GetYaxis()->GetBinCenter(true_bin);
-      double nev       = nsk2d->GetBinContent(reco_bin, true_bin);
-      double prob_surv = 1.;
-      if(fHaveNuOsc){ 
-	prob_surv = util::NuMuSurvProbOsc2D(fCurrSinsq2Theta23, fCurrDm23sq, Etrue, m);
-      } else
-      if(fHaveNuDecay){ 
-	prob_surv = util::NuMuSurvProbDecay(fCurrSinsq2Theta23, fCurrAlphaDecay, Etrue, m);
-      } else
-      if(fHaveNuDecoh){ 
-	prob_surv = util::NuMuSurvProbDecoh(fCurrSinsq2Theta23, fCurrMusqDecoh, Etrue, m);
-      }
+      double Etrue  = nsk2d->GetYaxis()->GetBinCenter(true_bin);
+      double nev    = nsk2d->GetBinContent(reco_bin, true_bin);
+        
+      //
+      // Oscillation, decay, decoherence surv probability = f(Etrue)
+      //
+      double prob_surv = this->SurvivalProbability(Etrue, m);
 
       //
-      // Flux weights & systematics
+      // Flux weights & systematics = f(Etrue)
       //
       double flux_10d_weight      = 1.; // 10a->10d weight
       double numu_flux_shape_wght = 1.; // systematic variation (flux shape)
@@ -771,7 +608,8 @@ double SuperkMC::NumOfEvents_Ereco(
                   xsec_ccqe_wght *
                   xsec_ratio_wght
                 );
-  }//Etrue
+
+  }//end of Etrue bin loop
 
   //
   // Cross section systematics = f(Ereco)
@@ -789,10 +627,11 @@ double SuperkMC::NumOfEvents_Ereco(
 #endif
 
   //
-  // Plug-in "efficiency" uncertainty due to fiducial volume, 
-  // reduction chain, ring-counting and PID
+  // Plug-in "efficiency" uncertainty due to fiducial volume, reduction chain, OD cut,
+  // ring-counting, PID, momentum cut and decay e- cut.
+  // The ring-counting error for CCQE has Ereco-dependence.
   //
-  double effwght = this->EfficiencyWeight(s,m);
+  double effwght = this->EfficiencyWeight(s,m,Ereco);
   nevtot *= effwght; 
 
 #ifdef __debug_level_2__ 
@@ -809,7 +648,7 @@ double SuperkMC::NumOfEvents_Ereco(
   // then bin i loses dE/EbinSz fraction of its events to bin i+1.
   // But it gains dE'/EbinSz from bin i-1, where dE' is the shift of the lower bin
   // boundary. Vice-versa if the shift is downwards to lower energies.
-
+  //
   if(!ignore_energy_scale_twk) {
      double escale = this->EnergyScale();
      if( TMath::Abs(escale-1) > kASmallNum) {
@@ -849,6 +688,119 @@ double SuperkMC::NumOfEvents_Ereco(
 double SuperkMC::NumOfEvents_Etrue(
     double Etrue, SuperkSample_t s, SuperkMode_t m)
 {
+// Count events in the given Ereco bin (integrate template over Ereco)
+// - Apply oscillations.
+// - Apply flux 10a->10d weights.
+// - Apply SuperK efficiency tweaks (if any).
+// - Don't apply SuperK energy scale tweaks (if any): Moves events between Ereco bins so 
+//   it doesn't change results since we are integrating over Ereco.
+// - Apply flux tweaks (if any).
+// - Apply cross sections tweak (if any).
+
+  TH2D * nsk2d = fMCTemplates[s][m];
+  assert(nsk2d);
+
+  double nevtot = 0;
+
+  int true_bin = nsk2d->GetYaxis()->FindBin(Etrue);
+
+#ifdef __debug_level_2__ 
+  cout << "Exp/SK/NumOfEvents_Ereco() >> "
+       << "Sample = " << util::AsString(s) << " / Mode = " << util::AsString(m) 
+       << ", Etrue = " << Etrue << ", bin = " << true_bin << endl;
+#endif
+
+  //
+  // loop over Ereco bins
+  //
+  for(int reco_bin = 1; reco_bin <= nsk2d->GetXaxis()->GetNbins(); reco_bin++) {
+
+      double Ereco = nsk2d->GetXaxis()->GetBinCenter(reco_bin);
+      double nev   = nsk2d->GetBinContent(reco_bin, true_bin);
+
+      //
+      // Cross section systematics = f(Ereco)
+      //
+      double nucl_effect_wght = 1;
+      if(fGenInputs) {
+         nucl_effect_wght = fGenInputs->SuperkNuclEffectWght(Ereco,m);
+      }
+      nev *= nucl_effect_wght;
+
+      //
+      // Plug-in "efficiency" uncertainty due to fiducial volume, reduction chain, OD cut,
+      // ring-counting, PID, momentum cut and decay e- cut.
+      // The ring-counting error for CCQE has Ereco-dependence.
+      //
+      double effwght = this->EfficiencyWeight(s,m,Ereco);
+      nev *= effwght; 
+
+      nevtot += nev;
+
+  }//end of Ereco bin loop
+
+  //
+  // Oscillation, decay, decoherence surv probability = f(Etrue)
+  //
+  double prob_surv = this->SurvivalProbability(Etrue, m);
+
+
+  //
+  // Flux weights & systematics = f(Etrue)
+  //
+  double flux_10d_weight      = 1.; // 10a->10d weight
+  double numu_flux_shape_wght = 1.; // systematic variation (flux shape)
+  if(fNuFlux) {
+     switch(m) {
+        case (kSKmNuMuCCQE ):
+        case (kSKmNuMuCC1pi):
+        case (kSKmNuMuCCoth):
+        case (kSKmNC       ):
+            flux_10d_weight      = fNuFlux->SuperkNuMuFlux10aTo10dWght(Etrue);
+            numu_flux_shape_wght = fNuFlux->SuperkNuMuFluxShapeWeight (Etrue);
+            break;
+        case(kSKmNuMuBarCCQE ):
+        case(kSKmNuMuBarCC1pi):
+        case(kSKmNuMuBarCCoth):
+        case(kSKmNuMuBarNC   ):
+            flux_10d_weight = fNuFlux->SuperkNuMuBarFlux10aTo10dWght(Etrue);
+            break;
+        case(kSKmNuECCQE ):
+        case(kSKmNuECC1pi):
+        case(kSKmNuECCoth):
+        case(kSKmNuENC   ):
+            flux_10d_weight = fNuFlux->SuperkNuEFlux10aTo10dWght(Etrue);
+            break;
+        default:
+            return 0;
+      }//m switch
+  }
+
+  //
+  // Cross section systematics = f(Etrue)
+  //
+  double xsec_ccqe_wght  = 1.;
+  double xsec_ratio_wght = 1.;
+  if(fGenInputs) {
+      xsec_ccqe_wght  = fGenInputs->SuperkCCQEXSecWght (Etrue, m);
+      xsec_ratio_wght = fGenInputs->SuperkXSecRatioWght(Etrue, m);
+  }
+
+
+  nevtot *= ( prob_surv * 
+              flux_10d_weight * 
+              numu_flux_shape_wght * 
+              xsec_ccqe_wght *
+              xsec_ratio_wght
+            );
+
+  return nevtot;
+}
+//________________________________________________________________________________________
+/*
+double SuperkMC::NumOfEvents_Etrue2(
+    double Etrue, SuperkSample_t s, SuperkMode_t m)
+{
 // Count events in Etrue bin.
 // + apply oscillations
 // + apply flux 10a->10d weights
@@ -870,20 +822,9 @@ double SuperkMC::NumOfEvents_Etrue(
 #endif
 
   // 
-  // Oscillations
+  // Oscillations, decay or decoherence..
   //
-  double prob_surv = 1;
-  if(fHaveNuOsc){ 
-    prob_surv = util::NuMuSurvProbOsc2D(fCurrSinsq2Theta23, fCurrDm23sq, Etrue, m);
-  } else
-  if(fHaveNuDecay){ 
-    prob_surv = util::NuMuSurvProbDecay(fCurrSinsq2Theta23, fCurrAlphaDecay, Etrue, m);
-  } else
-  if(fHaveNuDecoh){ 
-    prob_surv = util::NuMuSurvProbDecoh(fCurrSinsq2Theta23, fCurrMusqDecoh, Etrue, m);
-  }
-
-
+  double prob_surv = this->SurvivalProbability(Etrue, m);
   nev *= prob_surv;
 
 #ifdef __debug_level_2__
@@ -954,6 +895,7 @@ double SuperkMC::NumOfEvents_Etrue(
 
   return nev;
 }
+*/
 //________________________________________________________________________________________
 void SuperkMC::UpdateErecoSpectra(void)
 {
@@ -1034,201 +976,6 @@ void SuperkMC::UpdateEtrueSpectra(void)
   }//bins
 }
 //________________________________________________________________________________________
-/*
-double SuperkMC::NumOfEventsReadFromTree(
-    double Ereco, double ErecoBinSz, SuperkSample_t s, SuperkMode_t m)
-{
-  double nev = 0;
-
-  TTree * mctree = this->MCTree(s,m);
-  double  mcpot  = this->MCPOT(s,m);  
-
-  for(int iev = 0; iev < mctree->GetEntries(); iev++) {
-    mctree->GetEntry(iev);
-
-    if(fBrEreco <  Ereco - 0.5*ErecoBinSz) continue;
-    if(fBrEreco >= Ereco + 0.5*ErecoBinSz) continue;
-
-    bool use_it = false;
-
-    if(m == kSKmNuMuCCQE) {
-      bool is_numu = (fBrPdg == kPdgNuMu);
-      bool is_ccqe = (fBrGenCode == 1);
-      use_it = is_numu && is_ccqe;
-    } 
-    else
-    if(m == kSKmNuMuCC1pi) {
-      bool is_numu  = (fBrPdg == kPdgNuMu);
-      bool is_cc1pi = (fBrGenCode == 11 || fBrGenCode == 12 || fBrGenCode == 13);
-      use_it = is_numu && is_cc1pi;
-    } 
-    else
-    if(m == kSKmNuMuCCoth) {
-      bool is_numu  = (fBrPdg == kPdgNuMu);
-      bool is_ccoth = (fBrGenCode == 16 || 
-                       fBrGenCode == 17 || 
-                       fBrGenCode == 21 ||
-                       fBrGenCode == 22 || 
-                       fBrGenCode == 23 || 
-                       fBrGenCode == 26);
-      use_it = is_numu && is_ccoth;
-    } 
-    else
-    if(m == kSKmNC) {
-      bool is_numu  = (fBrPdg == kPdgNuMu);
-      bool is_nc    = (fBrGenCode == 31 ||
-                       fBrGenCode == 32 ||
-                       fBrGenCode == 36 ||
-                       fBrGenCode == 33 ||
-                       fBrGenCode == 34 ||
-                       fBrGenCode == 38 ||
-                       fBrGenCode == 39 ||
-                       fBrGenCode == 41 ||
-                       fBrGenCode == 42 ||
-                       fBrGenCode == 43 ||
-                       fBrGenCode == 46 ||
-                       fBrGenCode == 51 ||
-                       fBrGenCode == 52);
-      use_it = is_numu && is_nc;
-    } 
-    else
-    if(m == kSKmNuMuBarCCQE) {
-      bool is_numubar = (fBrPdg == kPdgNuMuBar);
-      bool is_ccqe    = (fBrGenCode == -1);
-      use_it = is_numubar && is_ccqe;
-    } 
-    else
-    if(m == kSKmNuMuBarCCnonQE) {
-      bool is_numubar = (fBrPdg == kPdgNuMuBar);
-      bool is_ccqe    = (fBrGenCode == -1);
-      bool is_nc    = (fBrGenCode == 31 ||
-                       fBrGenCode == 32 ||
-                       fBrGenCode == 36 ||
-                       fBrGenCode == 33 ||
-                       fBrGenCode == 34 ||
-                       fBrGenCode == 38 ||
-                       fBrGenCode == 39 ||
-                       fBrGenCode == 41 ||
-                       fBrGenCode == 42 ||
-                       fBrGenCode == 43 ||
-                       fBrGenCode == 46 ||
-                       fBrGenCode == 51 ||
-                       fBrGenCode == 52);
-      use_it = is_numubar && !(is_nc||is_ccqe);
-    } 
-    else
-    if(m == kSKmNuMuBarNC) {
-      bool is_numubar  = (fBrPdg == kPdgNuMuBar);
-      bool is_nc    = (fBrGenCode == 31 ||
-                       fBrGenCode == 32 ||
-                       fBrGenCode == 36 ||
-                       fBrGenCode == 33 ||
-                       fBrGenCode == 34 ||
-                       fBrGenCode == 38 ||
-                       fBrGenCode == 39 ||
-                       fBrGenCode == 41 ||
-                       fBrGenCode == 42 ||
-                       fBrGenCode == 43 ||
-                       fBrGenCode == 46 ||
-                       fBrGenCode == 51 ||
-                       fBrGenCode == 52);
-      use_it = is_numubar && is_nc;
-    } 
-    else
-    if(m == kSKmNuECCQE) {
-        bool is_nue  = (fBrPdg == kPdgNuE || fBrPdg == kPdgNuEBar);
-        bool is_ccqe = (fBrGenCode == 1 || fBrGenCode == -1);
-        use_it = is_nue && is_ccqe;
-     } 
-     else
-     if(m == kSKmNuECCnonQE) {
-         bool is_nue  = (fBrPdg == kPdgNuE || fBrPdg == kPdgNuEBar);
-         bool is_ccqe = (fBrGenCode == 1 || fBrGenCode == -1);
-         bool is_nc   = (fBrGenCode == 31  ||
-                         fBrGenCode == 32  ||
-                         fBrGenCode == 36  ||
-                         fBrGenCode == 33  ||
-                         fBrGenCode == 34  ||
-                         fBrGenCode == 38  ||
-                         fBrGenCode == 39  ||
-                         fBrGenCode == 41  ||
-                         fBrGenCode == 42  ||
-                         fBrGenCode == 43  ||
-                         fBrGenCode == 46  ||
-                         fBrGenCode == 51  ||
-                         fBrGenCode == 52  ||
-                         fBrGenCode == -31 ||
-                         fBrGenCode == -32 ||
-                         fBrGenCode == -36 ||
-                         fBrGenCode == -33 ||
-                         fBrGenCode == -34 ||
-                         fBrGenCode == -38 ||
-                         fBrGenCode == -39 ||
-                         fBrGenCode == -41 ||
-                         fBrGenCode == -42 ||
-                         fBrGenCode == -43 ||
-                         fBrGenCode == -44 ||
-                         fBrGenCode == -45 ||
-                         fBrGenCode == -46 ||
-                         fBrGenCode == -51 ||
-                         fBrGenCode == -52);
-        use_it = is_nue && !(is_ccqe||is_nc);
-    }
-    else
-    if(m == kSKmNuENC) {
-        bool is_nue  = (fBrPdg == kPdgNuE || fBrPdg == kPdgNuEBar);
-        bool is_nc   = (fBrGenCode == 31  ||
-                        fBrGenCode == 32  ||
-                        fBrGenCode == 36  ||
-                        fBrGenCode == 33  ||
-                        fBrGenCode == 34  ||
-                        fBrGenCode == 38  ||
-                        fBrGenCode == 39  ||
-                        fBrGenCode == 41  ||
-                        fBrGenCode == 42  ||
-                        fBrGenCode == 43  ||
-                        fBrGenCode == 46  ||
-                        fBrGenCode == 51  ||
-                        fBrGenCode == 52  ||
-                        fBrGenCode == -31 ||
-                        fBrGenCode == -32 ||
-                        fBrGenCode == -36 ||
-                        fBrGenCode == -33 ||
-                        fBrGenCode == -34 ||
-                        fBrGenCode == -38 ||
-                        fBrGenCode == -39 ||
-                        fBrGenCode == -41 ||
-                        fBrGenCode == -42 ||
-                        fBrGenCode == -43 ||
-                        fBrGenCode == -44 ||
-                        fBrGenCode == -45 ||
-                        fBrGenCode == -46 ||
-                        fBrGenCode == -51 ||
-                        fBrGenCode == -52);
-        use_it = is_nue && is_nc;
-    }
-    if(!use_it) continue;
-
-    double prob_surv = 1.;
-    if(fHaveNuOsc){ 
-      prob_surv = util::NuMuSurvProbOsc2D(fCurrSinsq2Theta23, fCurrDm23sq, fBrEtrue, m);
-    } else
-    if(fHaveNuDecay){ 
-      prob_surv = util::NuMuSurvProbDecay(fCurrSinsq2Theta23, fCurrAlphaDecay, fBrEtrue, m);
-    } else
-    if(fHaveNuDecoh){ 
-      prob_surv = util::NuMuSurvProbDecoh(fCurrSinsq2Theta23, fCurrMusqDecoh, fBrEtrue, m);
-    }
-
-    nev += prob_surv;
-
-  }//iev
-
-  nev *= (fPOT/mcpot); // MC POT -> DATA POT
-
-  return nev;
-}*/
-//________________________________________________________________________________________
 double SuperkMC::AnalyzedSamplePOT(void) const
 {
   return fPOT;  
@@ -1292,61 +1039,162 @@ double SuperkMC::MCPOT(SuperkSample_t s, SuperkMode_t m)
   return 0;
 }
 //________________________________________________________________________________________
-double SuperkMC::EfficiencyRelErr(
-    SuperkSample_t s, SuperkMode_t m) const
-{
-  if(s == kSKsFCFV1RingMuLike) {
-    switch(m) {
-       case (kSKmNuMuCCQE      ) : return fEffCCQERelErr;    break;
-       case (kSKmNuMuCC1pi     ) : return fEffCCnonQERelErr; break;
-       case (kSKmNuMuCCoth     ) : return fEffCCnonQERelErr; break;
-       case (kSKmNC            ) : return fEffNCRelErr;      break;
-       case (kSKmNuMuBarCCQE   ) : return fEffCCQERelErr;    break;
-       case (kSKmNuMuBarCC1pi  ) : return fEffCCnonQERelErr; break;
-       case (kSKmNuMuBarCCoth  ) : return fEffCCnonQERelErr; break;
-       case (kSKmNuMuBarNC     ) : return fEffNCRelErr;      break;
-       case (kSKmNuECCQE       ) : return fEffNuECCRelErr;   break;
-       case (kSKmNuECC1pi      ) : return fEffNuECCRelErr;   break;
-       case (kSKmNuECCoth      ) : return fEffNuECCRelErr;   break;
-       case (kSKmNuENC         ) : return fEffNCRelErr;      break;
-       default                   : return 0.;                break;
-    }
-  }
-
-  return 0.;
+void SuperkMC::TweakEnergyScale(double twkdial) 
+{ 
+  fEnergyScaleTwkDial = twkdial; 
 }
 //________________________________________________________________________________________
-double SuperkMC::EfficiencyTwkDial(
-    SuperkSample_t s, SuperkMode_t m) const
+void SuperkMC::TweakOtherEfficiencyCCQE(double twkdial) 
+{ 
+  fOthEffCCQETwkDial = twkdial; 
+}
+//________________________________________________________________________________________
+void SuperkMC::TweakRingCountingEfficiencyCCQE(
+   bool force_input_twkdials, double twkdial1, double twkdial2, double twkdial3)
 {
-  if(s == kSKsFCFV1RingMuLike) {
-    switch(m) {
-       case (kSKmNuMuCCQE      ) : return fEffCCQETwkDial;    break;
-       case (kSKmNuMuCC1pi     ) : return fEffCCnonQETwkDial; break;
-       case (kSKmNuMuCCoth     ) : return fEffCCnonQETwkDial; break;
-       case (kSKmNC            ) : return fEffNCTwkDial;      break;
-       case (kSKmNuMuBarCCQE   ) : return fEffCCQETwkDial;    break;
-       case (kSKmNuMuBarCC1pi  ) : return fEffCCnonQETwkDial; break;
-       case (kSKmNuMuBarCCoth  ) : return fEffCCnonQETwkDial; break;
-       case (kSKmNuMuBarNC     ) : return fEffNCTwkDial;      break;
-       case (kSKmNuECCQE       ) : return fEffNuECCTwkDial;   break;
-       case (kSKmNuECC1pi      ) : return fEffNuECCTwkDial;   break;
-       case (kSKmNuECCoth      ) : return fEffNuECCTwkDial;   break;
-       case (kSKmNuENC         ) : return fEffNCTwkDial;      break;
-       default                   : return 0.;                 break;
-    }
+  // check whether RC1,RC2,RC3 tweaking dials are forced
+  if(force_input_twkdials) {
+    fRC1EffCCQETwkDial = twkdial1;
+    fRC2EffCCQETwkDial = twkdial2;
+    fRC3EffCCQETwkDial = twkdial3;
+    return;
   }
 
-  return 0.;
+  //
+  // if RC1,RC2,RC3 tweaking dials were not forced, generate random values that have
+  // the input correlations (use Cholesky method)
+  //
+
+  // if this is the first time, then run the Cholesky decomposition of the ring-counting
+  // error matrix (covariance matrix)
+  if(!fEffCCQERelErrCovarCholeskyL) {
+    cout << "Exp/SK/TweakRingCountingEffCCQE >> Running Cholesky's method." << endl;
+    TMatrixD ccqe_rc_err_matrix(*fEffCCQERelErrCovarRC);
+//#ifdef __debug_level_3__
+    cout << "Exp/SK/TweakRingCountingEffCCQE >> RC error matrix" << endl;
+    ccqe_rc_err_matrix.Print();
+//#endif
+
+    TMatrixD L = util::CholeskyDecomposition(ccqe_rc_err_matrix);
+//#ifdef __debug_level_3__
+    cout << "Exp/SK/TweakRingCountingEffCCQE >> "
+         << "Cholesky decomposition of RC error matrix" << endl;
+    L.Print();
+//#endif
+
+    fEffCCQERelErrCovarCholeskyL = new TMatrixD(L);
+//#ifdef __debug_level_3__
+    fEffCCQERelErrCovarCholeskyL->Print();
+//#endif
+  }
+
+  TMatrixD & L = *fEffCCQERelErrCovarCholeskyL;
+
+  TVectorD meanv(3);
+  meanv(0)=1.;
+  meanv(1)=1.;
+  meanv(2)=1.;
+  TVectorD twkv = util::CholeskyGenerateCorrelatedParams(L, meanv);
+
+  fRC1EffCCQETwkDial = twkv(0);
+  fRC1EffCCQETwkDial = twkv(1);
+  fRC1EffCCQETwkDial = twkv(2);
+}
+//________________________________________________________________________________________
+void SuperkMC::TweakEfficiencyCCnonQE(double twkdial) 
+{ 
+  fEffCCnonQETwkDial = twkdial; 
+}
+//________________________________________________________________________________________
+void SuperkMC::TweakEfficiencyNC(double twkdial) 
+{ 
+  fEffNCTwkDial = twkdial; 
+}
+//________________________________________________________________________________________
+void SuperkMC::TweakEfficiencyNuECC(double twkdial) 
+{ 
+  fEffNuECCTwkDial = twkdial; 
 }
 //________________________________________________________________________________________
 double SuperkMC::EfficiencyWeight(
-    SuperkSample_t s, SuperkMode_t m) const
+    SuperkSample_t s, SuperkMode_t m, double Ereco) const
 {
-  double relerr  = this->EfficiencyRelErr (s,m);
-  double twkdial = this->EfficiencyTwkDial(s,m);
-  double weight  = (1. + twkdial*relerr);
-  return weight;
+  //
+  // 1-ring mu-like sample
+  //
+  if(s == kSKsFCFV1RingMuLike) {
+    switch(m) {
+
+       // numu CCQE, numubar CCQE:
+       // (1) Apply the CCQE other efficiency error. No energy dependence.
+       // (2) Apply the CCQE ring-counting efficiency error. Ereco-dependence.
+       //
+       case (kSKmNuMuCCQE)    : 
+       case (kSKmNuMuBarCCQE) : 
+       {
+          double relerr_oth  = fOthEffCCQERelErr;
+          double twkdial_oth = fOthEffCCQETwkDial;
+          double weight_oth  = (1. + twkdial_oth*relerr_oth);
+          double weight_rc   = 1.;
+          double weight      = weight_oth * weight_rc;
+          return weight;
+       }
+
+       //
+       // numu CC1pi, numu CCoth, numubar CC1pi, numubar CCoth:
+       // Apply the CCnonQE efficiency error. No energy dependence.
+       //
+       case (kSKmNuMuCC1pi)    :
+       case (kSKmNuMuCCoth)    : 
+       case (kSKmNuMuBarCC1pi) : 
+       case (kSKmNuMuBarCCoth) : 
+       {
+          double relerr  = fEffCCnonQERelErr;
+          double twkdial = fEffCCnonQETwkDial;
+          double weight  = (1. + twkdial*relerr);
+          return weight;
+          break;
+       }
+
+       //
+       // numu/nutau NC, numubar/nutaubar NC, nue NC:
+       // Apply the NC efficiency error. No energy dependence.
+       //
+       case (kSKmNC)        : 
+       case (kSKmNuMuBarNC) : 
+       case (kSKmNuENC)     : 
+       {
+          double relerr  = fEffNCRelErr;
+          double twkdial = fEffNCTwkDial;
+          double weight  = (1. + twkdial*relerr);
+          return weight;
+          break;
+       }
+
+       //
+       // nue CCQE, nue CC1pi, nue CCoth:
+       // Apply the nue CC efficiency error. No energy dependence.
+       //
+       case (kSKmNuECCQE)  : 
+       case (kSKmNuECC1pi) : 
+       case (kSKmNuECCoth) : 
+       {
+          double relerr  = fEffNuECCRelErr;
+          double twkdial = fEffNuECCTwkDial;
+          double weight  = (1. + twkdial*relerr);
+          return weight;
+          break;
+       }
+
+       default : 
+       {
+          return 0.;                 
+          break;
+       }
+    }//mode
+  }//1-ring mu-like sample
+
+  return 0.;
 }
 //________________________________________________________________________________________
 double SuperkMC::EnergyScaleRelErr(void) const
@@ -1364,6 +1212,40 @@ double SuperkMC::EnergyScale(void) const
   double err     = this->EnergyScaleRelErr();
   double scale   = 1. + twkdial * err;
   return scale;
+}
+//________________________________________________________________________________________
+PhysHypothesis & SuperkMC::Hypothesis(void) 
+{ 
+  return fPhysHypothesis; 
+}
+//________________________________________________________________________________________
+double SuperkMC::SurvivalProbability(double Etrue, SuperkMode_t m) const
+{
+  if(fPhysHypothesis.Oscillations())
+  {
+     double sinsq2theta23 = fPhysHypothesis.CurrSinsq2Theta23();
+     double dm23sq        = fPhysHypothesis.CurrDm23sq();
+     double prob_surv = util::NuMuSurvProbOsc2D(sinsq2theta23, dm23sq, Etrue, m);
+     return prob_surv;
+  } 
+  else
+  if(fPhysHypothesis.Decay())
+  {
+     double sinsq2theta = fPhysHypothesis.CurrSinsq2Theta23();
+     double alpha       = fPhysHypothesis.CurrAlphaDecay();
+     double prob_surv   = util::NuMuSurvProbDecay(sinsq2theta, alpha, Etrue, m);
+     return prob_surv;
+  } 
+  else
+  if(fPhysHypothesis.Decoherence())
+  {
+     double sinsq2theta = fPhysHypothesis.CurrSinsq2Theta23();
+     double musq        = fPhysHypothesis.CurrMusqDecoh();
+     double prob_surv   = util::NuMuSurvProbDecay(sinsq2theta, musq, Etrue, m);
+     return prob_surv;
+  }
+
+  return 1.;
 }
 //________________________________________________________________________________________
 

@@ -81,15 +81,15 @@ private:
 
   TH1D *        fSuperkNuMuFlux10a;            ///< 10a SuperK numu flux estimation (50 MeV binning)
   TH1D *        fSuperkNuMuFlux10aVarBin;      ///< 10a SuperK numu flux estimation (beam group var binning scheme)
-  double        fSuperkNuMuFluxPOT;            ///< integrated POT for numu flux simulation
-  TMatrixD *    fSuperkNuMuFluxCov;            ///< SuperK numu flux estimation
+  double        fSuperkNuMuFluxPOT;            ///< integrated POT for files used for numu flux simulation
+  TMatrixD *    fSuperkNuMuFluxCov;            ///< SuperK numu flux covariance matrix (beam group var binning scheme)
   TH1D *        fSuperkNuMuWght10aTo10d;       ///< SuperK numu    flux weights (10a -> 10d)
   TH1D *        fSuperkNuMuBarWght10aTo10d;    ///< SuperK numubar flux weights (10a -> 10d)
   TH1D *        fSuperkNuEWght10aTo10d;        ///< SuperK nue     flux weights (10a -> 10d)
   double        fSuperkNuMuFluxNormTwkDial;    ///<
   bool          fSuperkNuMuFluxHaveCholeskyL;  ///<
   TMatrixD *    fSuperkNuMuFluxCovCholeskyL;   ///<
-  TH1D *        fSuperkNuMuFluxTweaked;        ///< SuperK numu flux estimation (tweaked / 50 MeV binning)
+  TH1D *        fSuperkNuMuFluxTweaked;        ///< Tweaked SuperK numu flux estimation (50 MeV binning)
   bool          fEnableFluxShapeTweaking;      ///<
   HadErrCalc *  fHEC;                          ///< Kubo-san / BEAM WG norm err calc code
   double        fSuperkNormRelErr_simple;      ///< a fixed norm rel error (to use when not using Kubo-san's code)
