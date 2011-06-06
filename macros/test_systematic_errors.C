@@ -366,11 +366,11 @@ void test_systematic_errors
        << endcolumn
        << setw(15)  << setfill(' ') << setprecision(nprecisionnev) << nsk_p
        << endcolumn
-       << setw (5)  << setfill(' ') << setprecision(nprecisionpct) << frac_nsk_p << pctsymbol 
+       << setw (8)  << setfill(' ') << setprecision(nprecisionpct) << frac_nsk_p << pctsymbol 
        << endcolumn
        << setw(15)  << setfill(' ') << setprecision(nprecisionnev) << nsk_m 
        << endcolumn
-       << setw (5)  << setfill(' ') << setprecision(nprecisionpct) << frac_nsk_m << pctsymbol 
+       << setw (8)  << setfill(' ') << setprecision(nprecisionpct) << frac_nsk_m << pctsymbol 
        << endrow
        << endl;
 
@@ -386,11 +386,11 @@ void test_systematic_errors
        << endcolumn
        << setw(15)  << setfill(' ') << setprecision(nprecisionnev) << nskall_p
        << endcolumn
-       << setw (5)  << setfill(' ') << setprecision(nprecisionpct) << frac_nskall_p << pctsymbol 
+       << setw (8)  << setfill(' ') << setprecision(nprecisionpct) << frac_nskall_p << pctsymbol 
        << endcolumn
        << setw(15)  << setfill(' ') << setprecision(nprecisionnev) << nskall_m 
        << endcolumn
-       << setw (5)  << setfill(' ') << setprecision(nprecisionpct) << frac_nskall_m << pctsymbol 
+       << setw (8)  << setfill(' ') << setprecision(nprecisionpct) << frac_nskall_m << pctsymbol 
        << endrow
        << endl;
 
@@ -406,11 +406,11 @@ void test_systematic_errors
        << endcolumn
        << setw(15)  << setfill(' ') << setprecision(nprecisionnev) << nsknumuccqe_p
        << endcolumn
-       << setw (5)  << setfill(' ') << setprecision(nprecisionpct) << frac_nsknumuccqe_p << pctsymbol 
+       << setw (8)  << setfill(' ') << setprecision(nprecisionpct) << frac_nsknumuccqe_p << pctsymbol 
        << endcolumn
        << setw(15)  << setfill(' ') << setprecision(nprecisionnev) << nsknumuccqe_m 
        << endcolumn
-       << setw (5)  << setfill(' ') << setprecision(nprecisionpct) << frac_nsknumuccqe_m << pctsymbol 
+       << setw (8)  << setfill(' ') << setprecision(nprecisionpct) << frac_nsknumuccqe_m << pctsymbol 
        << endrow
        << endl;
   cout << setw(70)  << setfill(' ') << "SK MC (1 $\\mu$-like ring): $\\nu_{\\mu}$ CC1$\\pi$" 
@@ -419,11 +419,11 @@ void test_systematic_errors
        << endcolumn
        << setw(15)  << setfill(' ') << setprecision(nprecisionnev) << nsknumucc1pi_p
        << endcolumn
-       << setw (5)  << setfill(' ') << setprecision(nprecisionpct) << frac_nsknumucc1pi_p << pctsymbol 
+       << setw (8)  << setfill(' ') << setprecision(nprecisionpct) << frac_nsknumucc1pi_p << pctsymbol 
        << endcolumn
        << setw(15)  << setfill(' ') << setprecision(nprecisionnev) << nsknumucc1pi_m 
        << endcolumn
-       << setw (5)  << setfill(' ') << setprecision(nprecisionpct) << frac_nsknumucc1pi_m << pctsymbol 
+       << setw (8)  << setfill(' ') << setprecision(nprecisionpct) << frac_nsknumucc1pi_m << pctsymbol 
        << endrow
        << endl;
   cout << setw(70)  << setfill(' ') << "SK MC (1 $\\mu$-like ring): $\\nu_{\\mu}$ CC other" 
@@ -432,11 +432,11 @@ void test_systematic_errors
        << endcolumn
        << setw(15)  << setfill(' ') << setprecision(nprecisionnev) << nsknumuccoth_p
        << endcolumn
-       << setw (5)  << setfill(' ') << setprecision(nprecisionpct) << frac_nsknumuccoth_p << pctsymbol 
+       << setw (8)  << setfill(' ') << setprecision(nprecisionpct) << frac_nsknumuccoth_p << pctsymbol 
        << endcolumn
        << setw(15)  << setfill(' ') << setprecision(nprecisionnev) << nsknumuccoth_m 
        << endcolumn
-       << setw (5)  << setfill(' ') << setprecision(nprecisionpct) << frac_nsknumuccoth_m << pctsymbol 
+       << setw (8)  << setfill(' ') << setprecision(nprecisionpct) << frac_nsknumuccoth_m << pctsymbol 
        << endrow
        << endl;
   cout << setw(70)  << setfill(' ') << "SK MC (1 $\\mu$-like ring): $\\nu_{\\mu}$ CC all" 
@@ -445,11 +445,11 @@ void test_systematic_errors
        << endcolumn
        << setw(15)  << setfill(' ') << setprecision(nprecisionnev) << nsknumucc_p
        << endcolumn
-       << setw (5)  << setfill(' ') << setprecision(nprecisionpct) << frac_nsknumucc_p << pctsymbol 
+       << setw (8)  << setfill(' ') << setprecision(nprecisionpct) << frac_nsknumucc_p << pctsymbol 
        << endcolumn
        << setw(15)  << setfill(' ') << setprecision(nprecisionnev) << nsknumucc_m 
        << endcolumn
-       << setw (5)  << setfill(' ') << setprecision(nprecisionpct) << frac_nsknumucc_m << pctsymbol 
+       << setw (8)  << setfill(' ') << setprecision(nprecisionpct) << frac_nsknumucc_m << pctsymbol 
        << endrow
        << endl;
   cout << setw(70)  << setfill(' ') << "SK MC (1 $\\mu$-like ring): $\\nu_{\\mu}$ NC all" 
@@ -458,11 +458,11 @@ void test_systematic_errors
        << endcolumn
        << setw(15)  << setfill(' ') << setprecision(nprecisionnev) << nsknumunc_p
        << endcolumn
-       << setw (5)  << setfill(' ') << setprecision(nprecisionpct) << frac_nsknumunc_p << pctsymbol 
+       << setw (8)  << setfill(' ') << setprecision(nprecisionpct) << frac_nsknumunc_p << pctsymbol 
        << endcolumn
        << setw(15)  << setfill(' ') << setprecision(nprecisionnev) << nsknumunc_m 
        << endcolumn
-       << setw (5)  << setfill(' ') << setprecision(nprecisionpct) << frac_nsknumunc_m << pctsymbol 
+       << setw (8)  << setfill(' ') << setprecision(nprecisionpct) << frac_nsknumunc_m << pctsymbol 
        << endrow
        << endl;
   cout << setw(70)  << setfill(' ') << "SK MC (1 $\\mu$-like ring): $\\bar{\\nu_{\\mu}}$ CCQE" 
@@ -471,11 +471,11 @@ void test_systematic_errors
        << endcolumn
        << setw(15)  << setfill(' ') << setprecision(nprecisionnev) << nsknumubarccqe_p
        << endcolumn
-       << setw (5)  << setfill(' ') << setprecision(nprecisionpct) << frac_nsknumubarccqe_p << pctsymbol 
+       << setw (8)  << setfill(' ') << setprecision(nprecisionpct) << frac_nsknumubarccqe_p << pctsymbol 
        << endcolumn
        << setw(15)  << setfill(' ') << setprecision(nprecisionnev) << nsknumubarccqe_m 
        << endcolumn
-       << setw (5)  << setfill(' ') << setprecision(nprecisionpct) << frac_nsknumubarccqe_m << pctsymbol 
+       << setw (8)  << setfill(' ') << setprecision(nprecisionpct) << frac_nsknumubarccqe_m << pctsymbol 
        << endrow
        << endl;
   cout << setw(70)  << setfill(' ') << "SK MC (1 $\\mu$-like ring): $\\bar{\\nu_{\\mu}}$ CC1$\\pi$" 
@@ -484,11 +484,11 @@ void test_systematic_errors
        << endcolumn
        << setw(15)  << setfill(' ') << setprecision(nprecisionnev) << nsknumubarcc1pi_p
        << endcolumn
-       << setw (5)  << setfill(' ') << setprecision(nprecisionpct) << frac_nsknumubarcc1pi_p << pctsymbol 
+       << setw (8)  << setfill(' ') << setprecision(nprecisionpct) << frac_nsknumubarcc1pi_p << pctsymbol 
        << endcolumn
        << setw(15)  << setfill(' ') << setprecision(nprecisionnev) << nsknumubarcc1pi_m 
        << endcolumn
-       << setw (5)  << setfill(' ') << setprecision(nprecisionpct) << frac_nsknumubarcc1pi_m << pctsymbol 
+       << setw (8)  << setfill(' ') << setprecision(nprecisionpct) << frac_nsknumubarcc1pi_m << pctsymbol 
        << endrow
        << endl;
   cout << setw(70)  << setfill(' ') << "SK MC (1 $\\mu$-like ring): $\\bar{\\nu_{\\mu}}$ CC other" 
@@ -497,11 +497,11 @@ void test_systematic_errors
        << endcolumn
        << setw(15)  << setfill(' ') << setprecision(nprecisionnev) << nsknumubarccoth_p
        << endcolumn
-       << setw (5)  << setfill(' ') << setprecision(nprecisionpct) << frac_nsknumubarccoth_p << pctsymbol 
+       << setw (8)  << setfill(' ') << setprecision(nprecisionpct) << frac_nsknumubarccoth_p << pctsymbol 
        << endcolumn
        << setw(15)  << setfill(' ') << setprecision(nprecisionnev) << nsknumubarccoth_m 
        << endcolumn
-       << setw (5)  << setfill(' ') << setprecision(nprecisionpct) << frac_nsknumubarccoth_m << pctsymbol 
+       << setw (8)  << setfill(' ') << setprecision(nprecisionpct) << frac_nsknumubarccoth_m << pctsymbol 
        << endrow
        << endl;
   cout << setw(70)  << setfill(' ') << "SK MC (1 $\\mu$-like ring): $\\bar{\\nu_{\\mu}}$ CC all" 
@@ -510,11 +510,11 @@ void test_systematic_errors
        << endcolumn
        << setw(15)  << setfill(' ') << setprecision(nprecisionnev) << nsknumubarcc_p
        << endcolumn
-       << setw (5)  << setfill(' ') << setprecision(nprecisionpct) << frac_nsknumubarcc_p << pctsymbol 
+       << setw (8)  << setfill(' ') << setprecision(nprecisionpct) << frac_nsknumubarcc_p << pctsymbol 
        << endcolumn
        << setw(15)  << setfill(' ') << setprecision(nprecisionnev) << nsknumubarcc_m 
        << endcolumn
-       << setw (5)  << setfill(' ') << setprecision(nprecisionpct) << frac_nsknumubarcc_m << pctsymbol 
+       << setw (8)  << setfill(' ') << setprecision(nprecisionpct) << frac_nsknumubarcc_m << pctsymbol 
        << endrow
        << endl;
   cout << setw(70)  << setfill(' ') << "SK MC (1 $\\mu$-like ring): $\\bar{\\nu_{\\mu}}$ NC all"
@@ -523,11 +523,11 @@ void test_systematic_errors
        << endcolumn
        << setw(15)  << setfill(' ') << setprecision(nprecisionnev) << nsknumubarnc_p
        << endcolumn
-       << setw (5)  << setfill(' ') << setprecision(nprecisionpct) << frac_nsknumubarnc_p << pctsymbol 
+       << setw (8)  << setfill(' ') << setprecision(nprecisionpct) << frac_nsknumubarnc_p << pctsymbol 
        << endcolumn
        << setw(15)  << setfill(' ') << setprecision(nprecisionnev) << nsknumubarnc_m 
        << endcolumn
-       << setw (5)  << setfill(' ') << setprecision(nprecisionpct) << frac_nsknumubarnc_m << pctsymbol 
+       << setw (8)  << setfill(' ') << setprecision(nprecisionpct) << frac_nsknumubarnc_m << pctsymbol 
        << endrow
        << endl;
   cout << setw(70)  << setfill(' ') << "SK MC (1 $\\mu$-like ring): $\\nu_{e}$ CCQE" 
@@ -536,11 +536,11 @@ void test_systematic_errors
        << endcolumn
        << setw(15)  << setfill(' ') << setprecision(nprecisionnev) << nsknueccqe_p
        << endcolumn
-       << setw (5)  << setfill(' ') << setprecision(nprecisionpct) << frac_nsknueccqe_p << pctsymbol 
+       << setw (8)  << setfill(' ') << setprecision(nprecisionpct) << frac_nsknueccqe_p << pctsymbol 
        << endcolumn
        << setw(15)  << setfill(' ') << setprecision(nprecisionnev) << nsknueccqe_m 
        << endcolumn
-       << setw (5)  << setfill(' ') << setprecision(nprecisionpct) << frac_nsknueccqe_m << pctsymbol 
+       << setw (8)  << setfill(' ') << setprecision(nprecisionpct) << frac_nsknueccqe_m << pctsymbol 
        << endrow
        << endl;
   cout << setw(70)  << setfill(' ') << "SK MC (1 $\\mu$-like ring): $\\nu_{e}$ CC1$\\pi$" 
@@ -549,11 +549,11 @@ void test_systematic_errors
        << endcolumn
        << setw(15)  << setfill(' ') << setprecision(nprecisionnev) << nsknuecc1pi_p
        << endcolumn
-       << setw (5)  << setfill(' ') << setprecision(nprecisionpct) << frac_nsknuecc1pi_p << pctsymbol 
+       << setw (8)  << setfill(' ') << setprecision(nprecisionpct) << frac_nsknuecc1pi_p << pctsymbol 
        << endcolumn
        << setw(15)  << setfill(' ') << setprecision(nprecisionnev) << nsknuecc1pi_m 
        << endcolumn
-       << setw (5)  << setfill(' ') << setprecision(nprecisionpct) << frac_nsknuecc1pi_m << pctsymbol 
+       << setw (8)  << setfill(' ') << setprecision(nprecisionpct) << frac_nsknuecc1pi_m << pctsymbol 
        << endrow
        << endl;
   cout << setw(70)  << setfill(' ') << "SK MC (1 $\\mu$-like ring): $\\nu_{e}$ CC other" 
@@ -562,11 +562,11 @@ void test_systematic_errors
        << endcolumn
        << setw(15)  << setfill(' ') << setprecision(nprecisionnev) << nsknueccoth_p
        << endcolumn
-       << setw (5)  << setfill(' ') << setprecision(nprecisionpct) << frac_nsknueccoth_p << pctsymbol 
+       << setw (8)  << setfill(' ') << setprecision(nprecisionpct) << frac_nsknueccoth_p << pctsymbol 
        << endcolumn
        << setw(15)  << setfill(' ') << setprecision(nprecisionnev) << nsknueccoth_m 
        << endcolumn
-       << setw (5)  << setfill(' ') << setprecision(nprecisionpct) << frac_nsknueccoth_m << pctsymbol 
+       << setw (8)  << setfill(' ') << setprecision(nprecisionpct) << frac_nsknueccoth_m << pctsymbol 
        << endrow
        << endl;
   cout << setw(70)  << setfill(' ') << "SK MC (1 $\\mu$-like ring): $\\nu_{e}$ CC all" 
@@ -575,11 +575,11 @@ void test_systematic_errors
        << endcolumn
        << setw(15)  << setfill(' ') << setprecision(nprecisionnev) << nsknuecc_p
        << endcolumn
-       << setw (5)  << setfill(' ') << setprecision(nprecisionpct) << frac_nsknuecc_p << pctsymbol 
+       << setw (8)  << setfill(' ') << setprecision(nprecisionpct) << frac_nsknuecc_p << pctsymbol 
        << endcolumn
        << setw(15)  << setfill(' ') << setprecision(nprecisionnev) << nsknuecc_m 
        << endcolumn
-       << setw (5)  << setfill(' ') << setprecision(nprecisionpct) << frac_nsknuecc_m << pctsymbol 
+       << setw (8)  << setfill(' ') << setprecision(nprecisionpct) << frac_nsknuecc_m << pctsymbol 
        << endrow
        << endl;
   cout << setw(70)  << setfill(' ') << "SK MC (1 $\\mu$-like ring): $\\nu_{e}$ NC all" 
@@ -588,11 +588,11 @@ void test_systematic_errors
        << endcolumn
        << setw(15)  << setfill(' ') << setprecision(nprecisionnev) << nsknuenc_p
        << endcolumn
-       << setw (5)  << setfill(' ') << setprecision(nprecisionpct) << frac_nsknuenc_p << pctsymbol 
+       << setw (8)  << setfill(' ') << setprecision(nprecisionpct) << frac_nsknuenc_p << pctsymbol 
        << endcolumn
        << setw(15)  << setfill(' ') << setprecision(nprecisionnev) << nsknuenc_m 
        << endcolumn
-       << setw (5)  << setfill(' ') << setprecision(nprecisionpct) << frac_nsknuenc_m << pctsymbol 
+       << setw (8)  << setfill(' ') << setprecision(nprecisionpct) << frac_nsknuenc_m << pctsymbol 
        << endrow
        << endl;
 
@@ -608,11 +608,11 @@ void test_systematic_errors
        << endcolumn
        << setw(15)  << setfill(' ') << setprecision(nprecisionnev) << nd280corr_p
        << endcolumn
-       << setw (5)  << setfill(' ') << setprecision(nprecisionpct) << frac_nd280corr_p << pctsymbol 
+       << setw (8)  << setfill(' ') << setprecision(nprecisionpct) << frac_nd280corr_p << pctsymbol 
        << endcolumn
        << setw(15)  << setfill(' ') << setprecision(nprecisionnev) << nd280corr_m 
        << endcolumn
-       << setw (5)  << setfill(' ') << setprecision(nprecisionpct) << frac_nd280corr_m << pctsymbol 
+       << setw (8)  << setfill(' ') << setprecision(nprecisionpct) << frac_nd280corr_m << pctsymbol 
        << endrow
        << endl;
   cout << setw(70)  << setfill(' ') << "ND280 Observed CC-like" 
@@ -621,11 +621,11 @@ void test_systematic_errors
        << endcolumn
        << setw(15)  << setfill(' ') << setprecision(nprecisionnev) << nd280obs_p
        << endcolumn
-       << setw (5)  << setfill(' ') << setprecision(nprecisionpct) << frac_nd280obs_p << pctsymbol 
+       << setw (8)  << setfill(' ') << setprecision(nprecisionpct) << frac_nd280obs_p << pctsymbol 
        << endcolumn
        << setw(15)  << setfill(' ') << setprecision(nprecisionnev) << nd280obs_m 
        << endcolumn
-       << setw (5)  << setfill(' ') << setprecision(nprecisionpct) << frac_nd280obs_m << pctsymbol 
+       << setw (8)  << setfill(' ') << setprecision(nprecisionpct) << frac_nd280obs_m << pctsymbol 
        << endrow
        << endl;
   cout << setw(70)  << setfill(' ') << "ND280 MC: Total CC-like" 
@@ -634,11 +634,11 @@ void test_systematic_errors
        << endcolumn
        << setw(15)  << setfill(' ') << setprecision(nprecisionnev) << nd280mccclike_p
        << endcolumn
-       << setw (5)  << setfill(' ') << setprecision(nprecisionpct) << frac_nd280mccclike_p << pctsymbol 
+       << setw (8)  << setfill(' ') << setprecision(nprecisionpct) << frac_nd280mccclike_p << pctsymbol 
        << endcolumn
        << setw(15)  << setfill(' ') << setprecision(nprecisionnev) << nd280mccclike_m 
        << endcolumn
-       << setw (5)  << setfill(' ') << setprecision(nprecisionpct) << frac_nd280mccclike_m << pctsymbol 
+       << setw (8)  << setfill(' ') << setprecision(nprecisionpct) << frac_nd280mccclike_m << pctsymbol 
        << endrow
        << endl;
   cout << setw(70)  << setfill(' ') << "ND280 MC: Total CC" 
@@ -647,11 +647,11 @@ void test_systematic_errors
        << endcolumn
        << setw(15)  << setfill(' ') << setprecision(nprecisionnev) << nd280cc_p
        << endcolumn
-       << setw (5)  << setfill(' ') << setprecision(nprecisionpct) << frac_nd280cc_p << pctsymbol 
+       << setw (8)  << setfill(' ') << setprecision(nprecisionpct) << frac_nd280cc_p << pctsymbol 
        << endcolumn
        << setw(15)  << setfill(' ') << setprecision(nprecisionnev) << nd280cc_m 
        << endcolumn
-       << setw (5)  << setfill(' ') << setprecision(nprecisionpct) << frac_nd280cc_m << pctsymbol 
+       << setw (8)  << setfill(' ') << setprecision(nprecisionpct) << frac_nd280cc_m << pctsymbol 
        << endrow
        << endl;
   cout << setw(70)  << setfill(' ') << "ND280 MC: Total NC background" 
@@ -660,11 +660,11 @@ void test_systematic_errors
        << endcolumn
        << setw(15)  << setfill(' ') << setprecision(nprecisionnev) << nd280ncbkg_p
        << endcolumn
-       << setw (5)  << setfill(' ') << setprecision(nprecisionpct) << frac_nd280ncbkg_p << pctsymbol 
+       << setw (8)  << setfill(' ') << setprecision(nprecisionpct) << frac_nd280ncbkg_p << pctsymbol 
        << endcolumn
        << setw(15)  << setfill(' ') << setprecision(nprecisionnev) << nd280ncbkg_m 
        << endcolumn
-       << setw (5)  << setfill(' ') << setprecision(nprecisionpct) << frac_nd280ncbkg_m << pctsymbol 
+       << setw (8)  << setfill(' ') << setprecision(nprecisionpct) << frac_nd280ncbkg_m << pctsymbol 
        << endrow
        << endl;
 
@@ -680,11 +680,11 @@ void test_systematic_errors
        << endcolumn
        << setw(15)  << setfill(' ') << setprecision(nprecisionnev) << nd280numuccqe_p
        << endcolumn
-       << setw (5)  << setfill(' ') << setprecision(nprecisionpct) << frac_nd280numuccqe_p << pctsymbol 
+       << setw (8)  << setfill(' ') << setprecision(nprecisionpct) << frac_nd280numuccqe_p << pctsymbol 
        << endcolumn
        << setw(15)  << setfill(' ') << setprecision(nprecisionnev) << nd280numuccqe_m 
        << endcolumn
-       << setw (5)  << setfill(' ') << setprecision(nprecisionpct) << frac_nd280numuccqe_m << pctsymbol 
+       << setw (8)  << setfill(' ') << setprecision(nprecisionpct) << frac_nd280numuccqe_m << pctsymbol 
        << endrow
        << endl;
   cout << setw(70)  << setfill(' ') << "ND280 MC: $\\nu_{\\mu}$ CC1$\\pi$" 
@@ -693,11 +693,11 @@ void test_systematic_errors
        << endcolumn
        << setw(15)  << setfill(' ') << setprecision(nprecisionnev) << nd280numucc1pi_p
        << endcolumn
-       << setw (5)  << setfill(' ') << setprecision(nprecisionpct) << frac_nd280numucc1pi_p << pctsymbol 
+       << setw (8)  << setfill(' ') << setprecision(nprecisionpct) << frac_nd280numucc1pi_p << pctsymbol 
        << endcolumn
        << setw(15)  << setfill(' ') << setprecision(nprecisionnev) << nd280numucc1pi_m 
        << endcolumn
-       << setw (5)  << setfill(' ') << setprecision(nprecisionpct) << frac_nd280numucc1pi_m << pctsymbol 
+       << setw (8)  << setfill(' ') << setprecision(nprecisionpct) << frac_nd280numucc1pi_m << pctsymbol 
        << endrow
        << endl;
   cout << setw(70)  << setfill(' ') << "ND280 MC: $\\nu_{\\mu}$ CC other" 
@@ -706,11 +706,11 @@ void test_systematic_errors
        << endcolumn
        << setw(15)  << setfill(' ') << setprecision(nprecisionnev) << nd280numuccoth_p
        << endcolumn
-       << setw (5)  << setfill(' ') << setprecision(nprecisionpct) << frac_nd280numuccoth_p << pctsymbol 
+       << setw (8)  << setfill(' ') << setprecision(nprecisionpct) << frac_nd280numuccoth_p << pctsymbol 
        << endcolumn
        << setw(15)  << setfill(' ') << setprecision(nprecisionnev) << nd280numuccoth_m 
        << endcolumn
-       << setw (5)  << setfill(' ') << setprecision(nprecisionpct) << frac_nd280numuccoth_m << pctsymbol 
+       << setw (8)  << setfill(' ') << setprecision(nprecisionpct) << frac_nd280numuccoth_m << pctsymbol 
        << endrow
        << endl;
   cout << setw(70)  << setfill(' ') << "ND280 MC: $\\nu_{\\mu}$ CC all" 
@@ -719,11 +719,11 @@ void test_systematic_errors
        << endcolumn
        << setw(15)  << setfill(' ') << setprecision(nprecisionnev) << nd280numucc_p
        << endcolumn
-       << setw (5)  << setfill(' ') << setprecision(nprecisionpct) << frac_nd280numucc_p << pctsymbol 
+       << setw (8)  << setfill(' ') << setprecision(nprecisionpct) << frac_nd280numucc_p << pctsymbol 
        << endcolumn
        << setw(15)  << setfill(' ') << setprecision(nprecisionnev) << nd280numucc_m 
        << endcolumn
-       << setw (5)  << setfill(' ') << setprecision(nprecisionpct) << frac_nd280numucc_m << pctsymbol 
+       << setw (8)  << setfill(' ') << setprecision(nprecisionpct) << frac_nd280numucc_m << pctsymbol 
        << endrow
        << endl;
   cout << setw(70)  << setfill(' ') << "ND280 MC: $\\nu_{\\mu}$ NC all" 
@@ -732,11 +732,11 @@ void test_systematic_errors
        << endcolumn
        << setw(15)  << setfill(' ') << setprecision(nprecisionnev) << nd280numunc_p
        << endcolumn
-       << setw (5)  << setfill(' ') << setprecision(nprecisionpct) << frac_nd280numunc_p << pctsymbol 
+       << setw (8)  << setfill(' ') << setprecision(nprecisionpct) << frac_nd280numunc_p << pctsymbol 
        << endcolumn
        << setw(15)  << setfill(' ') << setprecision(nprecisionnev) << nd280numunc_m 
        << endcolumn
-       << setw (5)  << setfill(' ') << setprecision(nprecisionpct) << frac_nd280numunc_m << pctsymbol 
+       << setw (8)  << setfill(' ') << setprecision(nprecisionpct) << frac_nd280numunc_m << pctsymbol 
        << endrow
        << endl;
   cout << setw(70)  << setfill(' ') << "ND280 MC: $\\bar{\\nu_{\\mu}}$ CCQE" 
@@ -745,11 +745,11 @@ void test_systematic_errors
        << endcolumn
        << setw(15)  << setfill(' ') << setprecision(nprecisionnev) << nd280numubarccqe_p
        << endcolumn
-       << setw (5)  << setfill(' ') << setprecision(nprecisionpct) << frac_nd280numubarccqe_p << pctsymbol 
+       << setw (8)  << setfill(' ') << setprecision(nprecisionpct) << frac_nd280numubarccqe_p << pctsymbol 
        << endcolumn
        << setw(15)  << setfill(' ') << setprecision(nprecisionnev) << nd280numubarccqe_m 
        << endcolumn
-       << setw (5)  << setfill(' ') << setprecision(nprecisionpct) << frac_nd280numubarccqe_m << pctsymbol 
+       << setw (8)  << setfill(' ') << setprecision(nprecisionpct) << frac_nd280numubarccqe_m << pctsymbol 
        << endrow
        << endl;
   cout << setw(70)  << setfill(' ') << "ND280 MC: $\\bar{\\nu_{\\mu}}$ CC1$\\pi$" 
@@ -758,11 +758,11 @@ void test_systematic_errors
        << endcolumn
        << setw(15)  << setfill(' ') << setprecision(nprecisionnev) << nd280numubarcc1pi_p
        << endcolumn
-       << setw (5)  << setfill(' ') << setprecision(nprecisionpct) << frac_nd280numubarcc1pi_p << pctsymbol 
+       << setw (8)  << setfill(' ') << setprecision(nprecisionpct) << frac_nd280numubarcc1pi_p << pctsymbol 
        << endcolumn
        << setw(15)  << setfill(' ') << setprecision(nprecisionnev) << nd280numubarcc1pi_m 
        << endcolumn
-       << setw (5)  << setfill(' ') << setprecision(nprecisionpct) << frac_nd280numubarcc1pi_m << pctsymbol 
+       << setw (8)  << setfill(' ') << setprecision(nprecisionpct) << frac_nd280numubarcc1pi_m << pctsymbol 
        << endrow
        << endl;
   cout << setw(70)  << setfill(' ') << "ND280 MC: $\\bar{\\nu_{\\mu}}$ CC other" 
@@ -771,11 +771,11 @@ void test_systematic_errors
        << endcolumn
        << setw(15)  << setfill(' ') << setprecision(nprecisionnev) << nd280numubarccoth_p
        << endcolumn
-       << setw (5)  << setfill(' ') << setprecision(nprecisionpct) << frac_nd280numubarccoth_p << pctsymbol 
+       << setw (8)  << setfill(' ') << setprecision(nprecisionpct) << frac_nd280numubarccoth_p << pctsymbol 
        << endcolumn
        << setw(15)  << setfill(' ') << setprecision(nprecisionnev) << nd280numubarccoth_m 
        << endcolumn
-       << setw (5)  << setfill(' ') << setprecision(nprecisionpct) << frac_nd280numubarccoth_m << pctsymbol 
+       << setw (8)  << setfill(' ') << setprecision(nprecisionpct) << frac_nd280numubarccoth_m << pctsymbol 
        << endrow
        << endl;
   cout << setw(70)  << setfill(' ') << "ND280 MC: $\\bar{\\nu_{\\mu}}$ CC all" 
@@ -784,11 +784,11 @@ void test_systematic_errors
        << endcolumn
        << setw(15)  << setfill(' ') << setprecision(nprecisionnev) << nd280numubarcc_p
        << endcolumn
-       << setw (5)  << setfill(' ') << setprecision(nprecisionpct) << frac_nd280numubarcc_p << pctsymbol 
+       << setw (8)  << setfill(' ') << setprecision(nprecisionpct) << frac_nd280numubarcc_p << pctsymbol 
        << endcolumn
        << setw(15)  << setfill(' ') << setprecision(nprecisionnev) << nd280numubarcc_m 
        << endcolumn
-       << setw (5)  << setfill(' ') << setprecision(nprecisionpct) << frac_nd280numubarcc_m << pctsymbol 
+       << setw (8)  << setfill(' ') << setprecision(nprecisionpct) << frac_nd280numubarcc_m << pctsymbol 
        << endrow
        << endl;
   cout << setw(70)  << setfill(' ') << "ND280 MC: $\\bar{\\nu_{\\mu}}$ NC all" 
@@ -797,11 +797,11 @@ void test_systematic_errors
        << endcolumn
        << setw(15)  << setfill(' ') << setprecision(nprecisionnev) << nd280numubarnc_p
        << endcolumn
-       << setw (5)  << setfill(' ') << setprecision(nprecisionpct) << frac_nd280numubarnc_p << pctsymbol 
+       << setw (8)  << setfill(' ') << setprecision(nprecisionpct) << frac_nd280numubarnc_p << pctsymbol 
        << endcolumn
        << setw(15)  << setfill(' ') << setprecision(nprecisionnev) << nd280numubarnc_m 
        << endcolumn
-       << setw (5)  << setfill(' ') << setprecision(nprecisionpct) << frac_nd280numubarnc_m << pctsymbol 
+       << setw (8)  << setfill(' ') << setprecision(nprecisionpct) << frac_nd280numubarnc_m << pctsymbol 
        << endrow
        << endl;
   cout << setw(70)  << setfill(' ') << "ND280 MC: $\\nu_{e}$ CCQE" 
@@ -810,11 +810,11 @@ void test_systematic_errors
        << endcolumn
        << setw(15)  << setfill(' ') << setprecision(nprecisionnev) << nd280nueccqe_p
        << endcolumn
-       << setw (5)  << setfill(' ') << setprecision(nprecisionpct) << frac_nd280nueccqe_p << pctsymbol 
+       << setw (8)  << setfill(' ') << setprecision(nprecisionpct) << frac_nd280nueccqe_p << pctsymbol 
        << endcolumn
        << setw(15)  << setfill(' ') << setprecision(nprecisionnev) << nd280nueccqe_m 
        << endcolumn
-       << setw (5)  << setfill(' ') << setprecision(nprecisionpct) << frac_nd280nueccqe_m << pctsymbol 
+       << setw (8)  << setfill(' ') << setprecision(nprecisionpct) << frac_nd280nueccqe_m << pctsymbol 
        << endrow
        << endl;
   cout << setw(70)  << setfill(' ') << "ND280 MC: $\\nu_{e}$ CC1$\\pi$" 
@@ -823,11 +823,11 @@ void test_systematic_errors
        << endcolumn
        << setw(15)  << setfill(' ') << setprecision(nprecisionnev) << nd280nuecc1pi_p
        << endcolumn
-       << setw (5)  << setfill(' ') << setprecision(nprecisionpct) << frac_nd280nuecc1pi_p << pctsymbol 
+       << setw (8)  << setfill(' ') << setprecision(nprecisionpct) << frac_nd280nuecc1pi_p << pctsymbol 
        << endcolumn
        << setw(15)  << setfill(' ') << setprecision(nprecisionnev) << nd280nuecc1pi_m 
        << endcolumn
-       << setw (5)  << setfill(' ') << setprecision(nprecisionpct) << frac_nd280nuecc1pi_m << pctsymbol 
+       << setw (8)  << setfill(' ') << setprecision(nprecisionpct) << frac_nd280nuecc1pi_m << pctsymbol 
        << endrow
        << endl;
   cout << setw(70)  << setfill(' ') << "ND280 MC: $\\nu_{e}$ CC other" 
@@ -836,11 +836,11 @@ void test_systematic_errors
        << endcolumn
        << setw(15)  << setfill(' ') << setprecision(nprecisionnev) << nd280nueccoth_p
        << endcolumn
-       << setw (5)  << setfill(' ') << setprecision(nprecisionpct) << frac_nd280nueccoth_p << pctsymbol 
+       << setw (8)  << setfill(' ') << setprecision(nprecisionpct) << frac_nd280nueccoth_p << pctsymbol 
        << endcolumn
        << setw(15)  << setfill(' ') << setprecision(nprecisionnev) << nd280nueccoth_m 
        << endcolumn
-       << setw (5)  << setfill(' ') << setprecision(nprecisionpct) << frac_nd280nueccoth_m << pctsymbol 
+       << setw (8)  << setfill(' ') << setprecision(nprecisionpct) << frac_nd280nueccoth_m << pctsymbol 
        << endrow
        << endl;
   cout << setw(70)  << setfill(' ') << "ND280 MC: $\\nu_{e}$ CC all" 
@@ -849,11 +849,11 @@ void test_systematic_errors
        << endcolumn
        << setw(15)  << setfill(' ') << setprecision(nprecisionnev) << nd280nuecc_p
        << endcolumn
-       << setw (5)  << setfill(' ') << setprecision(nprecisionpct) << frac_nd280nuecc_p << pctsymbol 
+       << setw (8)  << setfill(' ') << setprecision(nprecisionpct) << frac_nd280nuecc_p << pctsymbol 
        << endcolumn
        << setw(15)  << setfill(' ') << setprecision(nprecisionnev) << nd280nuecc_m 
        << endcolumn
-       << setw (5)  << setfill(' ') << setprecision(nprecisionpct) << frac_nd280nuecc_m << pctsymbol 
+       << setw (8)  << setfill(' ') << setprecision(nprecisionpct) << frac_nd280nuecc_m << pctsymbol 
        << endrow
        << endl;
   cout << setw(70)  << setfill(' ') << "ND280 MC: $\\nu_{e}$ NC all" 
@@ -862,11 +862,11 @@ void test_systematic_errors
        << endcolumn
        << setw(15)  << setfill(' ') << setprecision(nprecisionnev) << nd280nuenc_p
        << endcolumn
-       << setw (5)  << setfill(' ') << setprecision(nprecisionpct) << frac_nd280nuenc_p << pctsymbol 
+       << setw (8)  << setfill(' ') << setprecision(nprecisionpct) << frac_nd280nuenc_p << pctsymbol 
        << endcolumn
        << setw(15)  << setfill(' ') << setprecision(nprecisionnev) << nd280nuenc_m 
        << endcolumn
-       << setw (5)  << setfill(' ') << setprecision(nprecisionpct) << frac_nd280nuenc_m << pctsymbol 
+       << setw (8)  << setfill(' ') << setprecision(nprecisionpct) << frac_nd280nuenc_m << pctsymbol 
        << endrow
        << endl;
 

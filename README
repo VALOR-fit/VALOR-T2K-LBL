@@ -85,6 +85,8 @@ The following changes were installed (wrt 2010_v1.0.0) :
   The official 10d_v3 flux was obtained from: http://www.t2k.org/beam/NuFlux/FluxRelease/10d/10dtunev3
 > Upgraded Nsk/Nnd error calculation code (v2.2 -> v3.1).
   The updated error calculation code was downloaded from: http://www.t2k.org/beam/NuFlux/FluxRelease/10d/nsknnderrv3
+> Upgraded flux shape error (v2.2 -> v3.1).
+  The updated flux fractional covariance matrix was downloaded from: ....???...
 > Used the updated ND280 event histograms (updated with 10d_v3 flux)
   The histograms were downloaded from: http://www.t2k.org/asg/oagroup/nd280-offaxis/
 > Used revised SuperK ring-counting (RC) efficiency errors computed by M.Otani and J.Kameda.
@@ -107,6 +109,8 @@ The following changes were installed (wrt 2010_v1.0.0) :
     115.1% --> 111.0%
   Details are given in:
   http://www-he.scphys.kyoto-u.ac.jp/member/masashi.o/SK/doc/RCerror_technote/SKnumuRCerror_v2.1.pdf
+> Used revised SuperK energy scale error?
+  ??
 
 In addition, the code structure was modified significantly (to allow for future 2011 analysis improvements).
 Details may be found in T2K-TN-???.

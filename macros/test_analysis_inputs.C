@@ -8,15 +8,21 @@
 
 #include "Conventions.h"
 
-void test_analysis_inputs()
+void test_analysis_inputs
+(
+  const char * config_file = "analysis_configuration.xml"
+)
 {
   TString opt = "SuperK";
 
   using namespace std;
   using namespace t2kana;
 
+  const char * config = Form("%s/config/%s", gSystem->Getenv("T2KOSCANA"), config_file);
+  cout << "Reading analysis configuration from: " << config << endl;
+
   SuperkExpectation * skexp = new SuperkExpectation;
-  skexp->Read("inputs/analysis_configuration.xml");
+  skexp.Read(config);
 
   // energy range and binning
   const double Emin  = 0;
@@ -35,7 +41,7 @@ void test_analysis_inputs()
   if(opt.Contains("SuperK")) {
   //skexp->GetSuperkMC()->Draw(new TCanvas(), "etrue_spectra");
     skexp->GetSuperkMC()->Draw(new TCanvas(), "1RingMuLike/ErecoEtrueTemplates");
-    skexp->GetSuperkMC()->Draw(new TCanvas(), "1RingMuLike/EtrueSpectra");
+  //skexp->GetSuperkMC()->Draw(new TCanvas(), "1RingMuLike/EtrueSpectra");
   }//SuperK
 
   if(opt.Contains("nd280")) {
