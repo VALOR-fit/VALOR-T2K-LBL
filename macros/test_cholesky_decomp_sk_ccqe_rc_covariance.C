@@ -8,7 +8,7 @@
 
 #include <iomanip.h>
 
-void test_cholesky_decomp_sk_ccqe_rc_covariance(void)
+void test_cholesky_decomp_sk_ccqe_rc_covariance(bool save_cov_matrix=false)
 {
   using namespace std;
   using namespace t2kana;
@@ -33,6 +33,12 @@ void test_cholesky_decomp_sk_ccqe_rc_covariance(void)
 
   V.Print();
 //V.Invert().Print();
+
+  if(save_cov_matrix) {
+     TFile f("./sk_ccqe_rc_err_covariance.root","recreate");
+     V.Write("ccqe_rc_err_covariance");
+     f.Close();
+  }
 
   cout << "Running Cholesky decomposition: " << endl;
 
