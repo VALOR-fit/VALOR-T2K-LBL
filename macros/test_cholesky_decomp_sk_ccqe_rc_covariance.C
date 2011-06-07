@@ -59,9 +59,16 @@ void test_cholesky_decomp_sk_ccqe_rc_covariance
   mean(2)=0.;
  
   for(int i=0; i<N; i++) {
-    // generate correlated tweaking dials
+    // Generate correlated tweaking dials
     TVectorD twkdial = util::CholeskyGenerateCorrelatedParams(L, mean);
-    // print-out a few
+    // These tweaking dials are distributed around 0 and have the input
+    // sig0, sig1 and sig2 spread (and correlations).
+    // Divide with sig0,sig1,sig2 so that they have a `canonical' definition
+    // (as with all other systematic tweaking dials used in GENIE)
+    twkdial(0) /= sig0; 
+    twkdial(1) /= sig1;
+    twkdial(2) /= sig2;
+    // Print-out a few
     if(i%50==0) {
        cout << "CCQE RC efficiency tweaking vector " 
          << setw(6) << setfill(' ') << setprecision(3) << i << " : (";
@@ -71,12 +78,12 @@ void test_cholesky_decomp_sk_ccqe_rc_covariance
        }//ip
        cout << ")" << endl;
     }
-    // calc weights
+    // Calc weights
     TVector3 wght(3);
-    wght(0) = 1 + twkdial(0);
-    wght(1) = 1 + twkdial(1);
-    wght(2) = 1 + twkdial(2);
-    // store
+    wght(0) = 1 + twkdial(0) * sig0;
+    wght(1) = 1 + twkdial(1) * sig1;
+    wght(2) = 1 + twkdial(2) * sig2;
+    // Store
     ntfRC->Fill(twkdial(0),twkdial(1),twkdial(2),wght(0),wght(1),wght(2));
   }//i
 

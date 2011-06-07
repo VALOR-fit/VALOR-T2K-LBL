@@ -64,6 +64,8 @@ Example:
 
 Use `root2k' instead of `root'.
 root2k is root + T2K oscillation analysis library.
+When running a root2k script: % root2k 'macros/some_script.C("/some/path/some/file.root",some_number)'
+make sure there are NO spaces within ''.
 
 +--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+
 

@@ -14,6 +14,11 @@
  @ 06/06/2011 - CA
    Added PhysHypothesis class
    Added util::UseEventToFillInTemplate(SuperkMode_t m, int pdg, int reaction_mode)
+   Added new (Ereco-dependent) `CCQE ring-counting efficiency error' using the Choleslky method.
+   Renamed old `CCQE efficiency err' to `CCQE other efficiency err' (it now includes all
+   sources of errors except ring-counting).
+   NumOfEvents_Ereco(), NumOfEvents_Etrue() were modified accordingly to take the new
+   Ereco-dependent error into account.
 */
 //________________________________________________________________________________________
 
@@ -1091,14 +1096,14 @@ void SuperkMC::TweakRingCountingEfficiencyCCQE(
   TMatrixD & L = *fEffCCQERelErrCovarCholeskyL;
 
   TVectorD meanv(3);
-  meanv(0)=1.;
-  meanv(1)=1.;
-  meanv(2)=1.;
+  meanv(0)=0.;
+  meanv(1)=0.;
+  meanv(2)=0.;
   TVectorD twkv = util::CholeskyGenerateCorrelatedParams(L, meanv);
 
-  fRC1EffCCQETwkDial = twkv(0);
-  fRC1EffCCQETwkDial = twkv(1);
-  fRC1EffCCQETwkDial = twkv(2);
+  fRC1EffCCQETwkDial = twkv(0) / 0.017; ///<-- don't hardcode
+  fRC2EffCCQETwkDial = twkv(1) / 0.035; ///<-- don't hardcode
+  fRC3EffCCQETwkDial = twkv(2) / 0.093; ///<-- don't hardcode
 }
 //________________________________________________________________________________________
 void SuperkMC::TweakEfficiencyCCnonQE(double twkdial) 
@@ -1132,11 +1137,20 @@ double SuperkMC::EfficiencyWeight(
        case (kSKmNuMuCCQE)    : 
        case (kSKmNuMuBarCCQE) : 
        {
+          // other efficiency err
           double relerr_oth  = fOthEffCCQERelErr;
           double twkdial_oth = fOthEffCCQETwkDial;
           double weight_oth  = (1. + twkdial_oth*relerr_oth);
-          double weight_rc   = 1.;
-          double weight      = weight_oth * weight_rc;
+          // ring-counting efficiency err
+          double weight_rc1 = 1 + fRC1EffCCQETwkDial * 0.017; ///<-- don't hardcode
+          double weight_rc2 = 1 + fRC2EffCCQETwkDial * 0.035; ///<-- don't hardcode
+          double weight_rc3 = 1 + fRC3EffCCQETwkDial * 0.093; ///<-- don't hardcode
+          double weight_rc  = 1.;
+          if      (Ereco < fEreco1RCCCQE) { weight_rc = weight_rc1; }
+          else if (Ereco > fEreco2RCCCQE) { weight_rc = weight_rc3; }
+          else                            { weight_rc = weight_rc2; }
+          // combined weight
+          double weight     = weight_oth * weight_rc;
           return weight;
        }
 
