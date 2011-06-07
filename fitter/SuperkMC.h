@@ -72,7 +72,10 @@ public:
   void TweakEfficiencyNC                (double twkdial);
   void TweakEfficiencyNuECC             (double twkdial);
 
-  double  EfficiencyWeight    (t2kana::conv::SuperkSample_t s, t2kana::conv::SuperkMode_t m, double Ereco) const;
+  // Calculate weight due to efficiency tweaks
+  double  EfficiencyWeight (t2kana::conv::SuperkSample_t s, t2kana::conv::SuperkMode_t m, double Ereco) const;
+
+  // Info about the energy scale error and current energy scale tweaking factor
   double  EnergyScaleRelErr   (void) const; ///< energy scale err
   double  EnergyScale         (void) const; ///< energy scale
 
@@ -112,9 +115,9 @@ private:
 
   double     fEnergyScaleTwkDial;          ///< Energy scale tweaking dial
   double     fOthEffCCQETwkDial;           ///< CCQE other (all-but-ring-counting) efficiency tweaking dial
-  double     fRC1EffCCQETwkDial;           ///< CCQE ring-counting efficiency tweaking dial 1 (Ereco < fEreco1RCCCQE)
-  double     fRC2EffCCQETwkDial;           ///< CCQE ring-counting efficiency tweaking dial 2 (fEreco1RCCCQE <= Ereco <= fEreco2RCCCQE)
-  double     fRC3EffCCQETwkDial;           ///< CCQE ring-counting efficiency tweaking dial 3 (Ereco > fEreco2RCCCQE)
+  double     fRC0EffCCQETwkDial;           ///< CCQE ring-counting efficiency tweaking dial 0 (Ereco < fEreco1RCCCQE)
+  double     fRC1EffCCQETwkDial;           ///< CCQE ring-counting efficiency tweaking dial 1 (fEreco1RCCCQE <= Ereco <= fEreco2RCCCQE)
+  double     fRC2EffCCQETwkDial;           ///< CCQE ring-counting efficiency tweaking dial 2 (Ereco > fEreco2RCCCQE)
   double     fEffCCnonQETwkDial;           ///< CCnonQE efficiency tweaking dial
   double     fEffNCTwkDial;                ///< NC efficiency tweaking dial
   double     fEffNuECCTwkDial;             ///< nue CC efficiency tweaking dial

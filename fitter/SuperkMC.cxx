@@ -34,6 +34,7 @@
 #include <TH2D.h>
 #include <TVirtualPad.h>
 #include <TLegend.h>
+#include <TMath.h>
 
 #include "SuperkMC.h"
 #include "NuXSec.h"
@@ -85,9 +86,9 @@ void SuperkMC::Init(void)
 
   fEnergyScaleTwkDial   = 0.;
   fOthEffCCQETwkDial    = 0.;
+  fRC0EffCCQETwkDial    = 0.;
   fRC1EffCCQETwkDial    = 0.;
   fRC2EffCCQETwkDial    = 0.;
-  fRC3EffCCQETwkDial    = 0.;
   fEffCCnonQETwkDial    = 0.;
   fEffNCTwkDial         = 0.;
   fEffNuECCTwkDial      = 0.;
@@ -1055,18 +1056,18 @@ void SuperkMC::TweakOtherEfficiencyCCQE(double twkdial)
 }
 //________________________________________________________________________________________
 void SuperkMC::TweakRingCountingEfficiencyCCQE(
-   bool force_input_twkdials, double twkdial1, double twkdial2, double twkdial3)
+   bool force_input_twkdials, double twkdial0, double twkdial1, double twkdial2)
 {
-  // check whether RC1,RC2,RC3 tweaking dials are forced
+  // check whether RC0,RC1,RC2 tweaking dials are forced
   if(force_input_twkdials) {
+    fRC0EffCCQETwkDial = twkdial0;
     fRC1EffCCQETwkDial = twkdial1;
     fRC2EffCCQETwkDial = twkdial2;
-    fRC3EffCCQETwkDial = twkdial3;
     return;
   }
 
   //
-  // if RC1,RC2,RC3 tweaking dials were not forced, generate random values that have
+  // if RC0,RC1,RC2 tweaking dials were not forced, generate random values that have
   // the input correlations (use Cholesky method)
   //
 
@@ -1093,17 +1094,29 @@ void SuperkMC::TweakRingCountingEfficiencyCCQE(
 //#endif
   }
 
+  // Cholesky decomposition of the CCQE ring-counting err covariance matrix
   TMatrixD & L = *fEffCCQERelErrCovarCholeskyL;
 
+  // Mean tweaking dial
   TVectorD meanv(3);
   meanv(0)=0.;
   meanv(1)=0.;
   meanv(2)=0.;
+
+  // Generate correlated tweaking dials
   TVectorD twkv = util::CholeskyGenerateCorrelatedParams(L, meanv);
 
-  fRC1EffCCQETwkDial = twkv(0) / 0.017; ///<-- don't hardcode
-  fRC2EffCCQETwkDial = twkv(1) / 0.035; ///<-- don't hardcode
-  fRC3EffCCQETwkDial = twkv(2) / 0.093; ///<-- don't hardcode
+  // These tweaking dials are distributed around 0 and have the spread and correlation
+  // described by the input fEffCCQERelErrCovarRC error matrix.
+  // Divide these tweaking dials with the sqrt(diagonal error matrix elements) so that
+  // they have a `canonical' definition (similar with all other systematic tweaking dials 
+  // used in GENIE: mean = 0, sigma = 1.
+
+  TMatrixD & rc_err_matrix = *fEffCCQERelErrCovarRC;
+
+  fRC0EffCCQETwkDial = twkv(0) / TMath::Sqrt(rc_err_matrix(0,0)); 
+  fRC1EffCCQETwkDial = twkv(1) / TMath::Sqrt(rc_err_matrix(1,1));
+  fRC2EffCCQETwkDial = twkv(2) / TMath::Sqrt(rc_err_matrix(2,2));
 }
 //________________________________________________________________________________________
 void SuperkMC::TweakEfficiencyCCnonQE(double twkdial) 
@@ -1142,13 +1155,14 @@ double SuperkMC::EfficiencyWeight(
           double twkdial_oth = fOthEffCCQETwkDial;
           double weight_oth  = (1. + twkdial_oth*relerr_oth);
           // ring-counting efficiency err
-          double weight_rc1 = 1 + fRC1EffCCQETwkDial * 0.017; ///<-- don't hardcode
-          double weight_rc2 = 1 + fRC2EffCCQETwkDial * 0.035; ///<-- don't hardcode
-          double weight_rc3 = 1 + fRC3EffCCQETwkDial * 0.093; ///<-- don't hardcode
+          TMatrixD & rc_err_matrix = *fEffCCQERelErrCovarRC;
+          double weight_rc0 = 1 + fRC0EffCCQETwkDial * TMath::Sqrt(rc_err_matrix(0,0));
+          double weight_rc1 = 1 + fRC1EffCCQETwkDial * TMath::Sqrt(rc_err_matrix(1,1));
+          double weight_rc2 = 1 + fRC2EffCCQETwkDial * TMath::Sqrt(rc_err_matrix(2,2));
           double weight_rc  = 1.;
-          if      (Ereco < fEreco1RCCCQE) { weight_rc = weight_rc1; }
-          else if (Ereco > fEreco2RCCCQE) { weight_rc = weight_rc3; }
-          else                            { weight_rc = weight_rc2; }
+          if      (Ereco < fEreco1RCCCQE) { weight_rc = weight_rc0; }
+          else if (Ereco > fEreco2RCCCQE) { weight_rc = weight_rc2; }
+          else                            { weight_rc = weight_rc1; }
           // combined weight
           double weight     = weight_oth * weight_rc;
           return weight;
