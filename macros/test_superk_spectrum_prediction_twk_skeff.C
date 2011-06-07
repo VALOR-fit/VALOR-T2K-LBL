@@ -29,7 +29,7 @@ void test_superk_spectrum_prediction_twk_skeff
 
   const int ntwkmodes = 4;
 
-  string systematic[ntwkmodes] = { "sk_ccqe_eff", "sk_ccnonqe_eff", "sk_nc_eff", "sk_nuecc_eff" };
+  string systematic[ntwkmodes] = { "sk_ccqe_other_eff", "sk_ccnonqe_eff", "sk_nc_eff", "sk_nuecc_eff" };
 
   // histogram drawing options
   int hwidth [ntwkdials] = { 1,       1,       2,       1,       1      };

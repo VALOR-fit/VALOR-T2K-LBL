@@ -11,7 +11,19 @@
    for all the different samples considered. The default was to return the spectrum for the 
    `1-R mu-like' sample but not typing this explicitly could lead to confusion. From now only
    CurrPredictedErecoSpectrum(s) and CurrPredictedErecoSpectrum(s,m) will be used.
-
+ @ 06/06/2011 - CA
+   Switched to using SuperkMC::PhysHypothesis() method for setting one of disappearance, 
+   decay or decoherence models. Added the `CCQE ring-counting efficiency' systematic err in
+   ResetSystematicVariations(), TweakSystematic() and TweakAllSystematics() methods.
+   This is an Ereco-dependent error (3 Ereco bins are considered by SK) with Ereco bin-to-bin 
+   correlations included/ The old Ereco-independent CCQE efficieny error was kept and renamed 
+   to `CCQE other efficiency error' (includes all error sources except ring-counting). 
+   There were corresponding modifications in SuperkMC.
+ @ 07/06/2011 - CA
+   Added systematic params "sk_ccqe_ring_counting_eff_0", "sk_ccqe_ring_counting_eff_1" and 
+   "sk_ccqe_ring_counting_eff_2" in TweakSystematic(). They can be used for tweaking the
+   CCQE ring-counting efficiency in single Ereco bins neglecting correlations. 
+   For validation purposes only.
 */
 //________________________________________________________________________________________
 
@@ -119,34 +131,6 @@ void SuperkExpectation::Generate(const PhysParamList & fp)
   }
 
 
-/*
-  // input physics params (params included in the fit / systematics params)
-  if( fp.Exists(kPhypDm23sq) && fp.Exists(kPhypSinsq2Theta23) ) {
-    double dmsq23        = fp.CurrValue(kPhypDm23sq);
-    double sinsq2theta23 = fp.CurrValue(kPhypSinsq2Theta23);
-    fSuperkMC -> UseNeutrinoOscillationModel (true);
-    fSuperkMC -> UseNeutrinoDecayModel       (false);
-    fSuperkMC -> UseNeutrinoDecoherenceModel (false);
-    fSuperkMC -> UseOscillationParams(sinsq2theta23, dmsq23);
-  } else
-  if( fp.Exists(kPhypAlphaDecay) && fp.Exists(kPhypSinsq2Theta23) ) {
-     double alpha         = fp.CurrValue(kPhypAlphaDecay);
-     double sinsq2theta23 = fp.CurrValue(kPhypSinsq2Theta23);
-     fSuperkMC -> UseNeutrinoOscillationModel (false);
-     fSuperkMC -> UseNeutrinoDecayModel       (true);
-     fSuperkMC -> UseNeutrinoDecoherenceModel (false);
-     fSuperkMC -> UseDecayParams(sinsq2theta23, alpha);
-  } else
-  if( fp.Exists(kPhypMusqDecoherence) && fp.Exists(kPhypSinsq2Theta23) ) {
-     double musq          = fp.CurrValue(kPhypMusqDecoherence);
-     double sinsq2theta23 = fp.CurrValue(kPhypSinsq2Theta23);
-     fSuperkMC -> UseNeutrinoOscillationModel (false);
-     fSuperkMC -> UseNeutrinoDecayModel       (false);
-     fSuperkMC -> UseNeutrinoDecoherenceModel (true);
-     fSuperkMC -> UseDecoherenceParams(sinsq2theta23, musq);
-  }
-*/
-
   double shape_norm = 1.;
   if(this->GetNuFlux()->ShapeTweaked()) {
      this->GetNuFlux()->TweakShape(false); // switch-off beam-shape tweaking
@@ -247,7 +231,7 @@ void SuperkExpectation::ResetSystematicVariations(void)
 {
   this->GetSuperkMC()->TweakEnergyScale                (0.);
   this->GetSuperkMC()->TweakOtherEfficiencyCCQE        (0.);
-  this->GetSuperkMC()->TweakRingCountingEfficiencyCCQE (true,1,1,1); /////HERE
+  this->GetSuperkMC()->TweakRingCountingEfficiencyCCQE (true,0.,0.,0.); 
   this->GetSuperkMC()->TweakEfficiencyCCnonQE          (0.);
   this->GetSuperkMC()->TweakEfficiencyNC               (0.);     
   this->GetSuperkMC()->TweakEfficiencyNuECC            (0.);
@@ -277,8 +261,21 @@ void SuperkExpectation::TweakSystematic(string systematic, double twkdial)
      this->GetSuperkMC()->TweakOtherEfficiencyCCQE(twkdial);
   }
   else
+  // tweak CCQE energy-dependent ring-counting efficiency generating random
+  // efficiency tweaks and taking into account bin-to-bin correlations
   if(systematic == "sk_ccqe_ring_counting_eff") {
      this->GetSuperkMC()->TweakRingCountingEfficiencyCCQE(); //< Cholesky method
+  }
+  //... or tweak the CCQE ring-counting efficiency in single Ereco bins only
+  // neglecting correlations (for validation purposes only)
+  else if(systematic == "sk_ccqe_ring_counting_eff_0") {
+     this->GetSuperkMC()->TweakRingCountingEfficiencyCCQE(true,twkdial,0.,0.); 
+  }
+  else if(systematic == "sk_ccqe_ring_counting_eff_1") {
+     this->GetSuperkMC()->TweakRingCountingEfficiencyCCQE(true,0.,twkdial,0.); 
+  }
+  else if(systematic == "sk_ccqe_ring_counting_eff_2") {
+     this->GetSuperkMC()->TweakRingCountingEfficiencyCCQE(true,0.,0.,twkdial); 
   }
   else
   if(systematic == "sk_ccnonqe_eff") {

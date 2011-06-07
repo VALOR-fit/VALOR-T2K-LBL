@@ -70,7 +70,6 @@ void SuperkMC::Init(void)
     fMCErecoSpectrumTot[is] = 0;
     for(int im=0; im<knm; im++) {
       fMCTemplates     [is][im] = 0;
-      ///////////////////////fMCEtrueSpectrum [is][im] = 0;
       fMCErecoSpectrum [is][im] = 0;
     }
   }
@@ -124,7 +123,6 @@ void SuperkMC::CleanUp(void)
     if( fMCErecoSpectrumTot[is] ) delete fMCErecoSpectrumTot[is];
     for(int im=0; im<knm; im++) {
       if( fMCTemplates[is][im]     ) delete fMCTemplates[is][im];
-/////////////////////      if( fMCEtrueSpectrum[is][im] ) delete fMCEtrueSpectrum[is][im];
       if( fMCErecoSpectrum[is][im] ) delete fMCErecoSpectrum[is][im];
     }
   }
@@ -288,11 +286,6 @@ void SuperkMC::CreateTemplate(SuperkSample_t s, SuperkMode_t m)
   fMCTemplates[is][im]->GetXaxis()->SetTitle("E_{reco} (GeV)");
   fMCTemplates[is][im]->GetYaxis()->SetTitle("E_{true} (GeV)");
       
-  /////////fMCEtrueSpectrum[is][im] = new TH1D(
-  /////////   Form("nsketrue_%d_%d",is,im), "", kNEtrueBins, kEtrueMin, kEtrueMax);
-  /////////fMCEtrueSpectrum[is][im]->SetDirectory(0);
-  /////////fMCEtrueSpectrum[is][im]->GetXaxis()->SetTitle("E_{true} (GeV)");
-  
   TTree * mctree = this->MCTree(s,m);
   double  mcpot  = this->MCPOT(s,m);
 
@@ -320,8 +313,8 @@ void SuperkMC::CreateTemplate(SuperkSample_t s, SuperkMode_t m)
 
    //cout << "Exp/SK >> Ereco = " << fBrEreco << ", Etrue = " << fBrEtrue << ", wght = " << wght << endl;
 
-     fMCTemplates    [is][im] -> Fill (fBrEreco, fBrEtrue, wght);
-     /////////////////fMCEtrueSpectrum[is][im] -> Fill (fBrEtrue, wght);
+     fMCTemplates[is][im] -> Fill (fBrEreco, fBrEtrue, wght);
+
   }//iev
 }
 //________________________________________________________________________________________
@@ -495,42 +488,37 @@ void SuperkMC::Draw(TVirtualPad * c, Option_t * option) const
   }
 
   if(opt.Contains("1RingMuLike/EtrueSpectra")) { 
-/*
-    const char * draw_opt = "";
-    c->Divide(2,6);
-    c->cd(1);
-    fMCEtrueSpectrum[kSKsFCFV1RingMuLike][kSKmNuMuCCQE]->Draw(draw_opt);
-    c->cd(2);
-    fMCEtrueSpectrum[kSKsFCFV1RingMuLike][kSKmNuMuCC1pi]->Draw(draw_opt);
-    c->cd(3);
-    fMCEtrueSpectrum[kSKsFCFV1RingMuLike][kSKmNuMuCCoth]->Draw(draw_opt);
-    c->cd(4);
-    fMCEtrueSpectrum[kSKsFCFV1RingMuLike][kSKmNC]->Draw(draw_opt);
-    c->cd(5);
-    fMCEtrueSpectrum[kSKsFCFV1RingMuLike][kSKmNuMuBarCCQE]->Draw(draw_opt);
-    c->cd(6);
-    fMCEtrueSpectrum[kSKsFCFV1RingMuLike][kSKmNuMuBarCC1pi]->Draw(draw_opt);
-    c->cd(7);
-    fMCEtrueSpectrum[kSKsFCFV1RingMuLike][kSKmNuMuBarCCoth]->Draw(draw_opt);
-    c->cd(8);
-    fMCEtrueSpectrum[kSKsFCFV1RingMuLike][kSKmNuMuBarNC]->Draw(draw_opt);
-    c->cd(9);
-    fMCEtrueSpectrum[kSKsFCFV1RingMuLike][kSKmNuECCQE]->Draw(draw_opt);
-    c->cd(10);
-    fMCEtrueSpectrum[kSKsFCFV1RingMuLike][kSKmNuECC1pi]->Draw(draw_opt);
-    c->cd(11);
-    fMCEtrueSpectrum[kSKsFCFV1RingMuLike][kSKmNuECCoth]->Draw(draw_opt);
-    c->cd(12);
-    fMCEtrueSpectrum[kSKsFCFV1RingMuLike][kSKmNuENC]->Draw(draw_opt);
-    c->Update();
-*/
+     const char * draw_opt = "";
+     c->Divide(2,6);
+     TH1D * hEtrueSpectrum[knm];
+     SuperkMode_t sk_modes[knm] = {
+        kSKmNuMuCCQE,    kSKmNuMuCC1pi,    kSKmNuMuCCoth,    kSKmNC,
+        kSKmNuMuBarCCQE, kSKmNuMuBarCC1pi, kSKmNuMuBarCCoth, kSKmNuMuBarNC,
+        kSKmNuECCQE,     kSKmNuECC1pi,     kSKmNuECCoth,     kSKmNuENC
+     };
+     for(int im=0; im<knm; im++) {
+        hEtrueSpectrum[im] = new TH1D(
+          Form("nsketrue_%d",im), "", kNEtrueBins, kEtrueMin, kEtrueMax);
+        hEtrueSpectrum[im]->SetDirectory(0);
+        hEtrueSpectrum[im]->GetXaxis()->SetTitle("E_{true} (GeV)");
+
+        for(int ibin = 1; ibin <= hEtrueSpectrum[im]->GetNbinsX(); ibin++) {
+          double Etrue = hEtrueSpectrum[im]->GetBinCenter(ibin);
+          double nev = this->NumOfEvents_Etrue(Etrue,kSKsFCFV1RingMuLike,sk_modes[im]);
+          hEtrueSpectrum[im]->SetBinContent(ibin,nev);
+        }//ibin
+        c->cd(1+im);
+        hEtrueSpectrum[im]->Draw(draw_opt);
+     }//im
+     c->Update();
+
   }
 
   c->Update();
 }
 //________________________________________________________________________________________
 double SuperkMC::NumOfEvents_Ereco(
-    double Ereco, SuperkSample_t s, SuperkMode_t m, bool ignore_energy_scale_twk)
+    double Ereco, SuperkSample_t s, SuperkMode_t m, bool ignore_energy_scale_twk) const
 {
 // Count events in the given Ereco bin (integrate template over Etrue)
 // - Apply oscillations.
@@ -692,7 +680,7 @@ double SuperkMC::NumOfEvents_Ereco(
 }
 //________________________________________________________________________________________
 double SuperkMC::NumOfEvents_Etrue(
-    double Etrue, SuperkSample_t s, SuperkMode_t m)
+    double Etrue, SuperkSample_t s, SuperkMode_t m) const
 {
 // Count events in the given Ereco bin (integrate template over Ereco)
 // - Apply oscillations.
@@ -792,7 +780,6 @@ double SuperkMC::NumOfEvents_Etrue(
       xsec_ratio_wght = fGenInputs->SuperkXSecRatioWght(Etrue, m);
   }
 
-
   nevtot *= ( prob_surv * 
               flux_10d_weight * 
               numu_flux_shape_wght * 
@@ -802,106 +789,6 @@ double SuperkMC::NumOfEvents_Etrue(
 
   return nevtot;
 }
-//________________________________________________________________________________________
-/*
-double SuperkMC::NumOfEvents_Etrue2(
-    double Etrue, SuperkSample_t s, SuperkMode_t m)
-{
-// Count events in Etrue bin.
-// + apply oscillations
-// + apply flux 10a->10d weights
-// + apply SuperK efficiency tweaks
-// + apply flux systematic (shape + norm) tweaks
-
-  int is = (int)s;
-  int im = (int)m;
-
-  TH1D * nsk1d = fMCEtrueSpectrum[is][im];
-  assert(nsk1d);
-
-  int true_bin = nsk1d->GetXaxis()->FindBin(Etrue);
-  double nev = nsk1d->GetBinContent(true_bin);
-
-#ifdef __debug_level_2__
-  cout << "Exp/SK/NumOfEvents_Etrue() >> Etrue = " << Etrue << ", bin = " << true_bin << endl;
-  cout << "Exp/SK/NumOfEvents_Etrue() >> Nev [unweighted] = " << nev  << endl;
-#endif
-
-  // 
-  // Oscillations, decay or decoherence..
-  //
-  double prob_surv = this->SurvivalProbability(Etrue, m);
-  nev *= prob_surv;
-
-#ifdef __debug_level_2__
-  cout << "Exp/SK/NumOfEvents_Etrue() >> Nev [wght:osc] = " << nev  << endl;
-#endif
-
-  //
-  // Flux weights & systematics
-  //
-  double flux_10d_weight      = 1.; // 10a->10d weight
-  double numu_flux_shape_wght = 1.; // systematic variation (flux shape)
-  if(fNuFlux) {
-         switch(m) {
-           case (kSKmNuMuCCQE ):
-           case (kSKmNuMuCC1pi):
-           case (kSKmNuMuCCoth):
-           case (kSKmNC       ):
-               flux_10d_weight      = fNuFlux->SuperkNuMuFlux10aTo10dWght(Etrue);
-               numu_flux_shape_wght = fNuFlux->SuperkNuMuFluxShapeWeight (Etrue);
-               break;
-           case(kSKmNuMuBarCCQE ):
-           case(kSKmNuMuBarCC1pi):
-           case(kSKmNuMuBarCCoth):
-           case(kSKmNuMuBarNC   ):
-               flux_10d_weight = fNuFlux->SuperkNuMuBarFlux10aTo10dWght(Etrue);
-               break;
-           case(kSKmNuECCQE ):
-           case(kSKmNuECC1pi):
-           case(kSKmNuECCoth):
-           case(kSKmNuENC   ):
-               flux_10d_weight = fNuFlux->SuperkNuEFlux10aTo10dWght(Etrue);
-               break;
-           default:
-               return 0;
-         }//m switch
-  }
-  nev *= (flux_10d_weight*numu_flux_shape_wght);
-
-#ifdef __debug_level_2__
-  cout << "Exp/SK/NumOfEvents_Etrue() >> Nev [wght:osc+flux] = " << nev  << endl;
-#endif
-
-  //
-  // Cross section systematics = f(Etrue)
-  //
-  double xsec_ccqe_wght  = 1.;
-  double xsec_ratio_wght = 1.;
-  if(fGenInputs) {
-      xsec_ccqe_wght  = fGenInputs->SuperkCCQEXSecWght (Etrue, m);
-      xsec_ratio_wght = fGenInputs->SuperkXSecRatioWght(Etrue, m);
-  }
-  nev *= (xsec_ccqe_wght*xsec_ratio_wght);
-
-#ifdef __debug_level_2__
-  cout << "Exp/SK/NumOfEvents_Etrue() >> Nev [wght:osc+flux+xsec] = " << nev  << endl;
-#endif
-
-  //
-  // Plug-in "efficiency" uncertainty due to fiducial volume, 
-  // reduction chain, ring-counting and PID
-  //
-  double effwght = this->EfficiencyWeight(s,m);
-  nev *= effwght; 
-
-#ifdef __debug_level_2__
-  cout << "Exp/SK/NumOfEvents_Etrue() >> Nev [wght:osc+flux+xsec+eff] = " << nev  << endl;
-#endif
-
-  return nev;
-}
-*/
 //________________________________________________________________________________________
 void SuperkMC::UpdateErecoSpectra(void)
 {
@@ -1076,22 +963,18 @@ void SuperkMC::TweakRingCountingEfficiencyCCQE(
   if(!fEffCCQERelErrCovarCholeskyL) {
     cout << "Exp/SK/TweakRingCountingEffCCQE >> Running Cholesky's method." << endl;
     TMatrixD ccqe_rc_err_matrix(*fEffCCQERelErrCovarRC);
-//#ifdef __debug_level_3__
+#ifdef __debug_level_3__
     cout << "Exp/SK/TweakRingCountingEffCCQE >> RC error matrix" << endl;
     ccqe_rc_err_matrix.Print();
-//#endif
+#endif
 
     TMatrixD L = util::CholeskyDecomposition(ccqe_rc_err_matrix);
-//#ifdef __debug_level_3__
+    fEffCCQERelErrCovarCholeskyL = new TMatrixD(L);
+
     cout << "Exp/SK/TweakRingCountingEffCCQE >> "
          << "Cholesky decomposition of RC error matrix" << endl;
-    L.Print();
-//#endif
-
-    fEffCCQERelErrCovarCholeskyL = new TMatrixD(L);
-//#ifdef __debug_level_3__
     fEffCCQERelErrCovarCholeskyL->Print();
-//#endif
+
   }
 
   // Cholesky decomposition of the CCQE ring-counting err covariance matrix

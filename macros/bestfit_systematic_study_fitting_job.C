@@ -3,7 +3,8 @@
 // Run numu disappearance systematic study for given oscillation parameters.
 // The input `systematic' parameter can take any of the following values:
 //	- sk_energy_scale
-//	- sk_ccqe_eff
+//	- sk_ccqe_other_eff
+//	- sk_ccqe_ring_counting_eff
 //	- sk_ccnonqe_eff
 //	- sk_nc_eff
 //	- sk_nuecceff_eff

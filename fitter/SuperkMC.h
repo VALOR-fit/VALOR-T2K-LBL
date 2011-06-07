@@ -52,8 +52,8 @@ public:
   double  AnalyzedSamplePOT   (void) const;
   TTree * MCTree              (t2kana::conv::SuperkSample_t s, t2kana::conv::SuperkMode_t m);
   double  MCPOT               (t2kana::conv::SuperkSample_t s, t2kana::conv::SuperkMode_t m);
-  double  NumOfEvents_Ereco   (double Ereco, t2kana::conv::SuperkSample_t s, t2kana::conv::SuperkMode_t m, bool ignore_energy_scale_twk=false);
-  double  NumOfEvents_Etrue   (double Etrue, t2kana::conv::SuperkSample_t s, t2kana::conv::SuperkMode_t m);
+  double  NumOfEvents_Ereco   (double Ereco, t2kana::conv::SuperkSample_t s, t2kana::conv::SuperkMode_t m, bool ignore_energy_scale_twk=false) const;
+  double  NumOfEvents_Etrue   (double Etrue, t2kana::conv::SuperkSample_t s, t2kana::conv::SuperkMode_t m) const;
 
   void    UpdateErecoSpectra  (void);
   TH1D*   CurrErecoSpectrum   (t2kana::conv::SuperkSample_t s) const { return fMCErecoSpectrumTot[s]; }
@@ -82,7 +82,7 @@ public:
   // Read inputs from XML file
   bool Read (TXMLEngine* xml, XMLNodePointer_t root_node);
       
-  //
+  // Physics hypothesis and calculation of survival probability for each hypothesis
   PhysHypothesis & Hypothesis(void);
   double SurvivalProbability(double Etrue, t2kana::conv::SuperkMode_t m) const;
 
@@ -124,7 +124,6 @@ private:
   TMatrixD * fEffCCQERelErrCovarCholeskyL; ///< Cholesky decomposition (trangular matrix L) of fEffCCQERelErrCovarRC covariance matrix
 
   TH2D *     fMCTemplates[kns][knm];       ///< MC template (sample,mode): Ereco-Etrue
-///  TH1D *     fMCEtrueSpectrum[kns][knm];   ///< spectrum(sample,mode): Etrue
   TH1D *     fMCErecoSpectrum[kns][knm];   ///< spectrum(sample,mode): Ereco
   TH1D *     fMCErecoSpectrumTot[kns];     ///< total Ereco spectrum (sample)
 
@@ -139,14 +138,14 @@ private:
   int        fBrPdg;                       ///< branch var for reading input event sample tree
   int        fBrGenCode;                   ///< branch var for reading input event sample tree
 
-  TH1D *     f1RmNuMuEt;                   ///< fEtrue distribution for 1-Ring mu-like numu    - needed for beam norm err calculation
-  TH1D *     f1RmNuMuBarEt;                ///< fEtrue distribution for 1-Ring mu-like numubar - needed for beam norm err calculation
-  TH1D *     f1RmNuEEt;                    ///< fEtrue distribution for 1-Ring mu-like nue     - needed for beam norm err calculation
+  TH1D *     f1RmNuMuEt;                   ///< Etrue distribution for 1-Ring mu-like numu    - needed for beam norm err calculation
+  TH1D *     f1RmNuMuBarEt;                ///< Etrue distribution for 1-Ring mu-like numubar - needed for beam norm err calculation
+  TH1D *     f1RmNuEEt;                    ///< Etrue distribution for 1-Ring mu-like nue     - needed for beam norm err calculation
       
-  NuFlux *   fNuFlux;                      ///<
-  NuXSec *   fGenInputs;                   ///<
+  NuFlux *   fNuFlux;                      ///< Neutrino flux analysis inputs
+  NuXSec *   fGenInputs;                   ///< Neutrino cross section analysis inputs
 
-  PhysHypothesis fPhysHypothesis;          ///<
+  PhysHypothesis fPhysHypothesis;          ///< Hypothesis for observed deficit: disappearance, decay, decoherence
 
 ClassDef(SuperkMC, 3);
 };

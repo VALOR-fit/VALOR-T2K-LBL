@@ -1,16 +1,23 @@
 //
 // ------------------------------------------------------------------------------------------------
-// Test systematic err cancellation.
+// Test systematic errors.
 //
-// The input (systematic) string can be any of:
-//	- sk_energy_scale
-//	- sk_ccqe_eff
+// The input (systematic) string can be:
+//	- sk_energy_scale 
+//	- sk_ccqe_other_eff
+//	- sk_ccqe_ring_counting_eff : 
+//             This energy-dependent correlated error can not be used in this test macro. Instead,
+//             you can tweak specific components of the efficiency tweaking vector (neglecting,
+//             correlation which, in the fitter, are handled using the Cholesky method). Use:
+//	       - sk_ccqe_ring_counting_eff_0 
+//	       - sk_ccqe_ring_counting_eff_1
+//	       - sk_ccqe_ring_counting_eff_2
 //	- sk_ccnonqe_eff
 //	- sk_nc_eff
 //	- sk_nuecc_eff
 // 	- nd280_eff
 //	- flux_norm
-//	- flux_shape
+//	- flux_shape : Can not be used in this test macro
 //      - xsec_ccqe
 //      - xsec_cc1pi_to_ccqe
 //      - xsec_ccoth_to_ccqe
@@ -27,11 +34,11 @@
 
 void test_systematic_errors
 (
-  const char * systematic,
-  const double input_sinsq2theta23 = 1.00,
-  const double input_dm23sq        = 2.4E-3,
-  bool         use_tex             = false,  /* print-out results as a TeX table (for inclusion in tech. note)*/
-  const char * config_file         = "analysis_configuration.xml"
+  const char * systematic,                                         /* */
+  const double input_sinsq2theta23 = 1.00,                         /* */
+  const double input_dm23sq        = 2.4E-3,                       /* */
+  bool         use_tex             = false,                        /* print-out results as a TeX table (for inclusion in tech. note)*/
+  const char * config_file         = "analysis_configuration.xml", /* */
 )
 {
   using namespace std;

@@ -23,9 +23,10 @@ void test_nsk_twk_systematics
  
   const int nexperiments = 5000;
 
-  const int nsystematics = 13;
+  const int nsystematics = 14;
   string systematic[nsystematics] = {
-	"sk_ccqe_eff",
+	"sk_ccqe_other_eff",
+	"sk_ccqe_ring_counting_eff",
 	"sk_ccnonqe_eff",
 	"sk_nc_eff",
 	"sk_nuecc_eff",
@@ -40,34 +41,36 @@ void test_nsk_twk_systematics
 	"nuclear_effect"
   };
   bool generate_random[nsystematics] = {
-	false,  /* sk_ccqe_eff        */
-	false,  /* sk_ccnonqe_eff     */
-	false,  /* sk_nc_eff          */
-	false,  /* sk_nuecc_eff       */
-	false,  /* sk_energy_scale    */
-	false,  /* nd280_eff          */
-	false,  /* flux_norm          */
-	true,   /* flux_shape         */
-	false,  /* xsec_ccqe          */
-	false,  /* xsec_cc1pi_to_ccqe */
-	false,  /* xsec_ccoth_to_ccqe */
-	false,  /* xsec_nc_to_ccqe    */
-	false   /* nuclear_effect     */
+	false,  /* sk_ccqe_other_eff          */
+	true,   /* sk_ccqe_ring_counting_eff  */
+	false,  /* sk_ccnonqe_eff             */
+	false,  /* sk_nc_eff                  */
+	false,  /* sk_nuecc_eff               */
+	false,  /* sk_energy_scale            */
+	false,  /* nd280_eff                  */
+	false,  /* flux_norm                  */
+	true,   /* flux_shape                 */
+	false,  /* xsec_ccqe                  */
+	false,  /* xsec_cc1pi_to_ccqe         */
+	false,  /* xsec_ccoth_to_ccqe         */
+	false,  /* xsec_nc_to_ccqe            */
+	false   /* nuclear_effect             */
   };
   bool skip[nsystematics] = {
-	false,  /* sk_ccqe_eff        */
-	false,  /* sk_ccnonqe_eff     */
-	false,  /* sk_nc_eff          */
-	false,  /* sk_nuecc_eff       */
-	true,   /* sk_energy_scale    (was shown to maintain Nsk) */
-	false,  /* nd280_eff          */
-	false,  /* flux_norm          */
-	true,   /* flux_shape         (was shown to maintain Nsk)*/
-	false,  /* xsec_ccqe          */
-	false,  /* xsec_cc1pi_to_ccqe */
-	false,  /* xsec_ccoth_to_ccqe */
-	false,  /* xsec_nc_to_ccqe    */
-	false   /* nuclear_effect     */
+	false,  /* sk_ccqe_other_eff                  */
+	false,  /* sk_ccqe_ring_counting_eff          */
+	false,  /* sk_ccnonqe_eff                     */
+	false,  /* sk_nc_eff                          */
+	false,  /* sk_nuecc_eff                       */
+	true,   /* sk_energy_scale (no effect on Nsk) */
+	false,  /* nd280_eff                          */
+	false,  /* flux_norm                          */
+	true,   /* flux_shape (no effect on Nsk)      */
+	false,  /* xsec_ccqe                          */
+	false,  /* xsec_cc1pi_to_ccqe                 */
+	false,  /* xsec_ccoth_to_ccqe                 */
+	false,  /* xsec_nc_to_ccqe                    */
+	false   /* nuclear_effect                     */
   };
 
   double nsk_min[nsystematics];
@@ -102,6 +105,8 @@ void test_nsk_twk_systematics
 	if(generate_random[isystematic]) {
             nsk_min[isystematic] = 99999999.;
             nsk_max[isystematic] = 0.;
+            // generate toy MC expts and calculate Nsk
+            double nskexp[nexperiments];
             for(int iexperiment = 0; iexperiment < nexperiments; iexperiment++) {
                     if(iexperiment%100==0) {
 			cout << "Current experiment: " << iexperiment << endl;
@@ -110,9 +115,21 @@ void test_nsk_twk_systematics
 	     	    skexp->TweakSystematic(systematic[isystematic]);
 	  	    skexp->Generate(*fparm);
   		    double nsk = skexp->CurrPredictedErecoSpectrum(conv::kSKsFCFV1RingMuLike)->Integral();
-	            nsk_min[isystematic] = TMath::Min(nsk, nsk_min[isystematic]);
-        	    nsk_max[isystematic] = TMath::Max(nsk, nsk_max[isystematic]);
+                    nskexp[iexperiment] = nsk;
             }//iexperiment
+            // calculate standard deviation
+            double nsk_sigma = 0;
+            for(int iexperiment = 0; iexperiment < nexperiments; iexperiment++) {
+                nsk_sigma += TMath::Power(nskexp[iexperiment] - nsk_deflt, 2.);
+            }
+            nsk_sigma = TMath::Sqrt(nsk_sigma/nexperiments);
+            // set Nsk range
+	    nsk_min[isystematic] = nsk_deflt - nsk_sigma;
+            nsk_max[isystematic] = nsk_deflt + nsk_sigma;
+
+//	    nsk_min[isystematic] = TMath::Min(nsk, nsk_min[isystematic]);
+//          nsk_max[isystematic] = TMath::Max(nsk, nsk_max[isystematic]);
+
 	} else {
 	    skexp->ResetSystematicVariations();
      	    skexp->TweakSystematic(systematic[isystematic], +1);
