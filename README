@@ -81,7 +81,7 @@ Details may be found in T2K-TN-36 (v4).
 This is the code which was used for the 2010 1.431E+20 POT muon-disappearance analysis.
 
 The following changes were installed (wrt 2010_v1.0.0) :
-> Upgraded SK flux (10d_v2 --> Run1+Run2 POT-weighted 10d_v3).
+> Upgraded SK flux (10d_v2 --> 10d_v3).
   The official 10d_v3 flux was obtained from: http://www.t2k.org/beam/NuFlux/FluxRelease/10d/10dtunev3
 > Upgraded Nsk/Nnd error calculation code (v2.2 -> v3.1).
   The updated error calculation code was downloaded from: http://www.t2k.org/beam/NuFlux/FluxRelease/10d/nsknnderrv3
@@ -111,6 +111,9 @@ The following changes were installed (wrt 2010_v1.0.0) :
   http://www-he.scphys.kyoto-u.ac.jp/member/masashi.o/SK/doc/RCerror_technote/SKnumuRCerror_v2.1.pdf
 > Used revised SuperK energy scale error?
   ??
+> Added analysis configuration files for Run1-only, Run2-only and Run1+Run2 analysis,
+  both for NEUT and GENIE. The Run1+Run2 flux is a POT-weighted 10d_v3 flux (taking into account
+  differences in Run1 and Run2 flux).
 
 In addition, the code structure was modified significantly (to allow for future 2011 analysis improvements).
 Details may be found in T2K-TN-???.
