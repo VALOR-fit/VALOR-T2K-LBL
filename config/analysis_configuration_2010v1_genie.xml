@@ -134,6 +134,8 @@ from the GENIE/NEUT physics monte carlo groups.
          <energy_scale_relative_error>              
             0.01  
          </energy_scale_relative_error>
+
+<!--
          <efficiency_relative_error>
             <one_mu_ring>
                <ccqe>      0.078 </ccqe>
@@ -142,6 +144,25 @@ from the GENIE/NEUT physics monte carlo groups.
                <nuecc>     1.000 </nuecc>
             </one_mu_ring>
          </efficiency_relative_error>  
+-->
+         <efficiency_relative_error>
+            <one_mu_ring>
+               <ccqe>
+                  <other_error>   0.078  </other_error>
+                  <rc_error>
+                     <filename>  inputs/official/2010/superk/err/sk_ccqe_rc_err_covariance.root </filename>
+                     <objname>   ccqe_rc_err_covariance  </objname>
+                     <objtype>   TMatrixD </objtype>
+                  </rc_error>
+                  <rc_ereco_high_bin1>   0.4  </rc_ereco_high_bin1>
+                  <rc_ereco_high_bin2>   1.1  </rc_ereco_high_bin2>
+               </ccqe> 
+               <ccnonqe>   0.255 </ccnonqe>
+               <nc>        1.151 </nc>   
+               <nuecc>     1.000 </nuecc>
+            </one_mu_ring>
+         </efficiency_relative_error>
+
      </systematics>
 
   </superk>

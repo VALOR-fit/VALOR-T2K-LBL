@@ -24,12 +24,12 @@ from the GENIE/NEUT physics monte carlo groups.
        -->
        <v10a>
          <numu>
-            <filename>   inputs/official/2010/flux/10a/sk_10a.root </filename>
+            <filename>   inputs/official/2010/flux/10a/sk_10a_allmodes.root </filename>
             <objname>    numu_flux  </objname>
             <objtype>    TH1D       </objtype>
          </numu>
          <numu_varbin>
-            <filename>   inputs/official/2010/flux/10a/sk_10a_varbin19.root </filename>
+            <filename>   inputs/official/2010/flux/10a/sk_10a_varbin19_allmodes.root </filename>
             <objname>    numu_flux  </objname>
             <objtype>    TH1D       </objtype>
          </numu_varbin>
