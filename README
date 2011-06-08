@@ -84,13 +84,17 @@ This is the code which was used for the 2010 1.431E+20 POT muon-disappearance an
 
 The following changes were installed (wrt 2010_v1.0.0) :
 > Upgraded SK flux (10d_v2 --> 10d_v3).
-  The official 10d_v3 flux was obtained from: http://www.t2k.org/beam/NuFlux/FluxRelease/10d/10dtunev3
+  The official 10d_v3 flux was obtained from: 
+  http://www.t2k.org/beam/NuFlux/FluxRelease/10d/10dtunev3
 > Upgraded Nsk/Nnd error calculation code (v2.2 -> v3.1).
-  The updated error calculation code was downloaded from: http://www.t2k.org/beam/NuFlux/FluxRelease/10d/nsknnderrv3
+  The updated error calculation code was downloaded from: 
+  http://www.t2k.org/beam/NuFlux/FluxRelease/10d/nsknnderrv3
 > Upgraded flux shape error (v2.2 -> v3.1).
-  The updated flux fractional covariance matrix was downloaded from: ....???...
+  The updated flux fractional covariance matrix was downloaded from: 
+  ???
 > Used the updated ND280 event histograms (updated with 10d_v3 flux)
-  The histograms were downloaded from: http://www.t2k.org/asg/oagroup/nd280-offaxis/
+  The histograms were downloaded from: 
+  http://www.t2k.org/asg/oagroup/nd280-offaxis/
 > Used revised SuperK ring-counting (RC) efficiency errors computed by M.Otani and J.Kameda.
   numu CCQE RC eff. err.:   
     7.6% --> 1.7% (Ereco<0.4GeV), 3.5% (0.4GeV<Ereco<1.1GeV), 9.3% (Ereco>1.1GeV)
@@ -113,11 +117,21 @@ The following changes were installed (wrt 2010_v1.0.0) :
   http://www-he.scphys.kyoto-u.ac.jp/member/masashi.o/SK/doc/RCerror_technote/SKnumuRCerror_v2.1.pdf
 > Used revised SuperK energy scale error?
   ??
-> Added analysis configuration files for Run1-only, Run2-only and Run1+Run2 analysis,
-  both for NEUT and GENIE. The Run1+Run2 flux is a POT-weighted 10d_v3 flux (taking into account
-  differences in Run1 and Run2 flux).
+> Added analysis configuration files for Run1-only, Run2-only and Run1+Run2 analysis, both for NEUT and GENIE. 
+   The Run1+Run2 flux is a POT-weighted 10d_v3 flux (taking into account Run1 and Run2 flux differences).
 
 In addition, the code structure was modified significantly (to allow for future 2011 analysis improvements).
 Details may be found in T2K-TN-???.
 
+
+
+Planned *future* releases:
+
+- 2010_v3.0.0 
+
+2010 1.431E+20-POT 3-flavour muon-disappearance analysis.
+
+- 2010_v4.0.0 
+
+2010 1.431E+20-POT joint 3-flavour muon-disappearance / electron-appearance analysis.
 
