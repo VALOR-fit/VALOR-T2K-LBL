@@ -22,6 +22,8 @@ void test_nsk_twk_systematics_osc
   const char * config = Form("%s/config/%s", gSystem->Getenv("T2KOSCANA"), config_file);
   cout << "Reading analysis configuration from: " << config << endl;
 
+  const int nexperiments = 1000;
+
   double sinsq2theta23_min  = 0.0;
   double sinsq2theta23_max  = 1.0;
   double sinsq2theta23_step = 0.01;
@@ -42,9 +44,10 @@ void test_nsk_twk_systematics_osc
        dm23sq_min - 0.5*dm23sq_step, 
        dm23sq_max + 0.5*dm23sq_step);
 
-  const int nsystematics = 11;
+  const int nsystematics = 12;
   string systematic[nsystematics] = {
-        "sk_ccqe_eff",
+        "sk_ccqe_other_eff",
+        "sk_ccqe_ring_counting_eff",
         "sk_ccnonqe_eff",
         "sk_nc_eff",
         "sk_nuecc_eff",
@@ -56,18 +59,33 @@ void test_nsk_twk_systematics_osc
         "xsec_nc_to_ccqe",
         "nuclear_effect"
   };
+  bool generate_random[nsystematics] = {
+        false,  /* sk_ccqe_other_eff          */
+        true,   /* sk_ccqe_ring_counting_eff  */
+        false,  /* sk_ccnonqe_eff             */
+        false,  /* sk_nc_eff                  */
+        false,  /* sk_nuecc_eff               */
+        false,  /* nd280_eff                  */
+        false,  /* flux_norm                  */
+        false,  /* xsec_ccqe                  */
+        false,  /* xsec_cc1pi_to_ccqe         */
+        false,  /* xsec_ccoth_to_ccqe         */
+        false,  /* xsec_nc_to_ccqe            */
+        false   /* nuclear_effect             */
+  };
   bool skip[nsystematics] = {
-        true,   /* sk_ccqe_eff        */
-        true,   /* sk_ccnonqe_eff     */
-        true,   /* sk_nc_eff          */
-        true,   /* sk_nuecc_eff       */
-        true,   /* nd280_eff          */
-        true,   /* flux_norm          */
-        false,  /* xsec_ccqe          */
-        false,  /* xsec_cc1pi_to_ccqe */
-        false,  /* xsec_ccoth_to_ccqe */
-        false,  /* xsec_nc_to_ccqe    */
-        false   /* nuclear_effect     */
+        true,   /* sk_ccqe_other_eff         */
+        true,   /* sk_ccqe_ring_counting_eff */
+        true,   /* sk_ccnonqe_eff            */
+        true,   /* sk_nc_eff                 */
+        true,   /* sk_nuecc_eff              */
+        true,   /* nd280_eff                 */
+        true,   /* flux_norm                 */
+        false,  /* xsec_ccqe                 */
+        false,  /* xsec_cc1pi_to_ccqe        */
+        false,  /* xsec_ccoth_to_ccqe        */
+        false,  /* xsec_nc_to_ccqe           */
+        false   /* nuclear_effect            */
   };
 
 
@@ -81,6 +99,7 @@ void test_nsk_twk_systematics_osc
   // generate predictions
   for(int i = 1; i <= frac_nsk_err->GetNbinsX(); i++) {
     for(int j = 1; j <= frac_nsk_err->GetNbinsY(); j++) {
+
        double sinsq2theta23 = frac_nsk_err->GetXaxis()->GetBinCenter(i);
        double dm23sq        = frac_nsk_err->GetYaxis()->GetBinCenter(j);
        sinsq2theta23 = TMath::Max(0.,sinsq2theta23);
@@ -111,16 +130,41 @@ void test_nsk_twk_systematics_osc
               continue;
             }
 
-            skexp.ResetSystematicVariations();
-            skexp.TweakSystematic(systematic[isystematic], +1);
-            skexp.Generate(*fparm);
-            double nsk1 = skexp.CurrPredictedErecoSpectrum(conv::kSKsFCFV1RingMuLike)->Integral();
-            skexp.ResetSystematicVariations();
-            skexp.TweakSystematic(systematic[isystematic], -1);
-            skexp.Generate(*fparm);
-            double nsk2 = skexp.CurrPredictedErecoSpectrum(conv::kSKsFCFV1RingMuLike)->Integral();
-            nsk_min[isystematic] = TMath::Min(nsk1,nsk2);
-            nsk_max[isystematic] = TMath::Max(nsk1,nsk2);
+            if(generate_random[isystematic]) {
+                // generate toy MC expts and calculate Nsk  
+                double nskexp[nexperiments];
+                for(int iexperiment = 0; iexperiment < nexperiments; iexperiment++) {
+                    if(iexperiment%100==0) {
+                        cout << "Current experiment: " << iexperiment << endl;
+                    }
+                    skexp.ResetSystematicVariations(); 
+                    skexp.TweakSystematic(systematic[isystematic]);
+                    skexp.Generate(*fparm);
+                    double nsk = skexp.CurrPredictedErecoSpectrum(conv::kSKsFCFV1RingMuLike)->Integral();
+                    nskexp[iexperiment] = nsk;
+                }//iexperiment
+                // calculate standard deviation
+                double nsk_sigma = 0;
+                for(int iexperiment = 0; iexperiment < nexperiments; iexperiment++) {
+                    nsk_sigma += TMath::Power(nskexp[iexperiment] - nsk, 2.);
+                }
+                nsk_sigma = TMath::Sqrt(nsk_sigma/nexperiments);
+                // set Nsk range
+                nsk_min[isystematic] = nsk - nsk_sigma;
+                nsk_max[isystematic] = nsk + nsk_sigma;
+            }
+            else {
+                skexp.ResetSystematicVariations();
+                skexp.TweakSystematic(systematic[isystematic], +1);
+                skexp.Generate(*fparm);
+                double nsk1 = skexp.CurrPredictedErecoSpectrum(conv::kSKsFCFV1RingMuLike)->Integral();
+                skexp.ResetSystematicVariations();
+                skexp.TweakSystematic(systematic[isystematic], -1);
+                skexp.Generate(*fparm);
+                double nsk2 = skexp.CurrPredictedErecoSpectrum(conv::kSKsFCFV1RingMuLike)->Integral();
+                nsk_min[isystematic] = TMath::Min(nsk1,nsk2);
+                nsk_max[isystematic] = TMath::Max(nsk1,nsk2);
+            }
 	    cout << "\t " << systematic[isystematic] 
                  << " -> (" << nsk_min[isystematic] << ", " << nsk_max[isystematic] << ")" << endl;
        }//isystematic

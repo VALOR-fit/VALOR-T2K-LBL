@@ -27,9 +27,17 @@ void test_superk_spectrum_prediction_twk_skeff
 
   int deflt = ntwkdials/2; //untweaked case
 
-  const int ntwkmodes = 4;
+  const int ntwkmodes = 7;
 
-  string systematic[ntwkmodes] = { "sk_ccqe_other_eff", "sk_ccnonqe_eff", "sk_nc_eff", "sk_nuecc_eff" };
+  string systematic[ntwkmodes] = { 
+     "sk_ccqe_other_eff", 
+     "sk_ccqe_ring_counting_eff_0", /* change RC efficiency < 0.4 GeV,        ignore correlations with other bins (for validation purposes only) */
+     "sk_ccqe_ring_counting_eff_1", /* change RC efficiency in 0.4 - 1.1 GeV, ignore correlations with other bins (for validation purposes only) */
+     "sk_ccqe_ring_counting_eff_2", /* change RC efficiency > 1.1 GeV,        ignore correlations with other bins (for validation purposes only) */
+     "sk_ccnonqe_eff", 
+     "sk_nc_eff", 
+     "sk_nuecc_eff" 
+  };
 
   // histogram drawing options
   int hwidth [ntwkdials] = { 1,       1,       2,       1,       1      };
@@ -76,6 +84,7 @@ void test_superk_spectrum_prediction_twk_skeff
             double err = (ncurr-ndeflt)/ndeflt;
             maxerrpos[imode] = TMath::Max(maxerrpos[imode], err);
             maxerrneg[imode] = TMath::Min(maxerrneg[imode], err);
+            maxnev[imode]    = TMath::Max(maxnev[imode], ncurr);
             hErecoErr[imode][idial]->SetBinContent(ibin, (ncurr-ndeflt)/ndeflt);
          }
       }//ibin
@@ -103,14 +112,17 @@ void test_superk_spectrum_prediction_twk_skeff
     legend1->SetFillColor(0);
     legend1->SetBorderSize(0);
     const char * label = "";
-    if(imode==0) label = "CCQE";
-    if(imode==1) label = "CCnonQE";
-    if(imode==2) label = "NC";
-    if(imode==3) label = "#nu_{e} CC";
+    if(imode==0) label = "CCQE (other)";
+    if(imode==1) label = "CCQE (RC0)";
+    if(imode==2) label = "CCQE (RC1)";
+    if(imode==3) label = "CCQE (RC2)";
+    if(imode==4) label = "CCnonQE";
+    if(imode==5) label = "NC";
+    if(imode==6) label = "#nu_{e} CC";
     legend1->SetHeader(Form("SuperK %s efficiency", label));
     cout << "*** " << Form("SuperK %s efficiency", label) << endl;
     TH1F * hframe1 = (TH1F*) c[imode]->GetPad(1)->DrawFrame(
-       0., 0., hErecoErr[imode][deflt]->GetXaxis()->GetXmax(), maxnev[imode]);
+       0., 0., hErecoErr[imode][deflt]->GetXaxis()->GetXmax(), 1.15*maxnev[imode]);
     hframe1->Draw();
     hframe1->GetXaxis()->SetTitle("E_{reco} (GeV)");
     hframe1->GetYaxis()->SetTitle("Number of events");
@@ -149,7 +161,8 @@ void test_superk_spectrum_prediction_twk_skeff
        if( TMath::Abs(twkdial[idial]    ) < conv::kASmallNum ) dial="nominal";
        if( TMath::Abs(twkdial[idial]+1.0) < conv::kASmallNum ) dial="minus_one_sigma";
        if( TMath::Abs(twkdial[idial]+0.5) < conv::kASmallNum ) dial="minus_half_sigma";
-       const char * title = Form("sk_ereco_spectrum_twk_%s_%s",syst,dial);
+       const char * title = Form("sk_ereco_spectrum_twk_%s_%s",systematic[imode].c_str(),dial);
+//       const char * title = Form("sk_ereco_spectrum_twk_%s_%s",syst,dial);
        hEreco[imode][idial]->Write(title);
      }
   }
