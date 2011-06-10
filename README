@@ -83,17 +83,13 @@ Details may be found in T2K-TN-36 (v4).
 This is the code which was used for the 2010 1.431E+20 POT muon-disappearance analysis.
 
 The following changes were installed (wrt 2010_v1.0.0) :
-> Upgraded SK flux (10d_v2 --> 10d_v3).
-  The official 10d_v3 flux was obtained from: 
+> Upgraded SK flux (10d_v2 --> 10d_v3). The official 10d_v3 flux was obtained from: 
   http://www.t2k.org/beam/NuFlux/FluxRelease/10d/10dtunev3
-> Upgraded Nsk/Nnd error calculation code (v2.2 -> v3.1).
-  The updated error calculation code was downloaded from: 
+> Upgraded Nsk/Nnd error calculation code (v2.2 -> v3.1). The updated error calculation code was downloaded from: 
   http://www.t2k.org/beam/NuFlux/FluxRelease/10d/nsknnderrv3
-> Upgraded flux shape error (v2.2 -> v3.1).
-  The updated flux fractional covariance matrix was downloaded from: 
-  ???
-> Used the updated ND280 event histograms (updated with 10d_v3 flux)
-  The histograms were downloaded from: 
+> Upgraded flux shape error (v2.2 -> v3.1). The updated flux fractional covariance matrix was downloaded from: 
+  http://www.t2k.org/beam/NuFlux/FluxRelease/10d/shapeerrorv31
+> Used the updated ND280 event histograms (updated with 10d_v3 flux). The histograms were downloaded from: 
   http://www.t2k.org/asg/oagroup/nd280-offaxis/
 > Used revised SuperK ring-counting (RC) efficiency errors computed by M.Otani and J.Kameda.
   numu CCQE RC eff. err.:   
@@ -108,17 +104,17 @@ The following changes were installed (wrt 2010_v1.0.0) :
   The updated RC efficiency error brings the total FC 1-ring mu-like efficiency err 
   (fiducial + reduction + OD cut + RC + PID + momentum cut + decay e cut) is
   numu CCQE eff. err.:   
-    7.8% -->   1.8% + RC shape error given above.
+    7.8% -->   1.7% + RC shape error given above.
   numu CCnonQE eff. err.:  
     25.5% -->  20.0%
   numu/nutau NC eff. err.: 
     115.1% --> 111.0%
   Details are given in:
   http://www-he.scphys.kyoto-u.ac.jp/member/masashi.o/SK/doc/RCerror_technote/SKnumuRCerror_v2.1.pdf
-> Used revised SuperK energy scale error?
-  ??
+> Used revised SuperK energy scale error (1% --> 2.3%) computed by Obayashi.
+  ??ref??
 > Added analysis configuration files for Run1-only, Run2-only and Run1+Run2 analysis, both for NEUT and GENIE. 
-   The Run1+Run2 flux is a POT-weighted 10d_v3 flux (taking into account Run1 and Run2 flux differences).
+  The Run1+Run2 flux is a POT-weighted 10d_v3 flux (taking into account Run1 and Run2 flux differences).
 
 In addition, the code structure was modified significantly (to allow for future 2011 analysis improvements).
 Details may be found in T2K-TN-???.
