@@ -211,6 +211,9 @@ void NuFlux::BuildNuMuFluxCovMatrix(TH2D * fractional_covariance)
 #ifdef __debug_level_3__
   fSuperkNuMuFluxCov->Print();
 #endif
+
+  delete flux10d;
+  delete flux10d_varbin;
 }
 //________________________________________________________________________________________
 void NuFlux::Draw(TVirtualPad * c, Option_t * option) const
