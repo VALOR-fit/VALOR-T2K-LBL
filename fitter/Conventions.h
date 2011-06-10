@@ -116,6 +116,21 @@ static const int knmnd = kNND280Modes;
 static const double kASmallNum   = 1E-10;
 static const double kBaseline    = 295.335; // Tokai->Kamioka (km)
 
+//
+// Variable Etrue binning scheme used by the Beam WG.
+// Certain Beam WG inputs (such as the numu flux covariance matrix) use this variable binning.
+//
+
+static const int kNEtrueBinsBeamWG = 19;
+static const double kEtrueBinEdgesBeamWG[kNEtrueBinsBeamWG+1] = {
+   0.000, 0.100, 0.200, 0.300, 0.400, 0.500, 0.600, 0.700, 0.800,  1.000, 
+   1.200, 1.500, 2.000, 2.500, 3.000, 3.500, 4.000, 5.000, 7.000, 10.000
+};
+
+//
+// Binning for SK MC templates
+//
+
 static const double kEtrueMin    = 0;
 static const double kEtrueMax    = 12;
 static const double kEtrueBinSz  = 0.05;

@@ -27,6 +27,7 @@
 #include <TXMLEngine.h>
 
 class TH1D;
+class TH2D;
 class TVirtualPad;
 
 class HadErrCalc;
@@ -79,6 +80,8 @@ private:
   void Init    (void);
   void CleanUp (void);
 
+  void BuildNuMuFluxCovMatrix(TH2D * fractional_covariance);
+
   TH1D *        fSuperkNuMuFlux10a;            ///< 10a SuperK numu flux estimation (50 MeV binning)
   TH1D *        fSuperkNuMuFlux10aVarBin;      ///< 10a SuperK numu flux estimation (beam group var binning scheme)
   double        fSuperkNuMuFluxPOT;            ///< integrated POT for files used for numu flux simulation
@@ -98,7 +101,7 @@ private:
   int    fTweakShapeVldModeBin;  ///< Etrue variable size bin tweaked
   double fTweakShapeVldModeDial; ///< flux bin tweaking dial	
 
-ClassDef(NuFlux, 2)
+ClassDef(NuFlux, 3)
 };
 
 } //t2kana

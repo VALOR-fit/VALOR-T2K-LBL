@@ -643,27 +643,6 @@ int t2kana::util::FluxFix2VarBinNumber(int fixBinNo)
   // 5(40)7 =>40 50MeV bins
   // 7(40)10 =>60 50MeV bins
 
-/*      
-  std::vector<int> binMapping;
-            
-  //lets zero element to be 0
-  binMapping.push_back(0);
-  for( int i=1  ;  i<=16; i++){binMapping.push_back((i+1)/2);}
-  for( int i=17 ; i<=20; i++){ binMapping.push_back( 9);}
-  for( int i=21 ; i<=24; i++){ binMapping.push_back( 10);}
-  for( int i=25 ; i<=30; i++){ binMapping.push_back( 11);}
-  for( int i=31 ; i<=40; i++){ binMapping.push_back( 12);}
-  for( int i=41 ; i<=50; i++){ binMapping.push_back( 13);}
-  for( int i=51 ; i<=60; i++){ binMapping.push_back( 14);}
-  for( int i=61 ; i<=70; i++){ binMapping.push_back( 15);}
-  for( int i=71 ; i<=80; i++){ binMapping.push_back( 16);}
-  for( int i=81 ; i<=100; i++){ binMapping.push_back( 17);}
-  for( int i=101;i<=140; i++){ binMapping.push_back( 18);}
-  for( int i=141;i<=200; i++){ binMapping.push_back( 19);}
-      
-  return binMapping[fixBinNo];
-*/
-
   if (fixBinNo >=   1 && fixBinNo <=  16) return (fixBinNo+1)/2;
   if (fixBinNo >=  17 && fixBinNo <=  20) return 9;
   if (fixBinNo >=  21 && fixBinNo <=  24) return 10;

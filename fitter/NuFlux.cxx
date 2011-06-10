@@ -4,7 +4,10 @@
 
  @ 16/03/2011 - CA
    Created from the old SuperkExpectation::BeamInputs nested class. Rm numu10a namespace.
-
+ @ 10/06/2011 - CA
+   Modified code so as to use directly the numu flux fractional covariance matrix provided 
+   by the Beam WG. The flux covariance matrix needed for applying the Cholesky method is
+   now constructed on the fly during initialisation. 
 */
 //________________________________________________________________________________________
 
@@ -87,6 +90,10 @@ bool NuFlux::Read(TXMLEngine* xml, XMLNodePointer_t root_node)
 //
   cout << "Exp/Beam >> Reading beam inputs from input XML file." << endl;
 
+  //
+  // 10a flux
+  //
+
   // Get SuperK numu flux
   fSuperkNuMuFlux10a = util::XML2TH1D(xml,root_node,"beam/superk_flux/v10a/numu");
   if(!fSuperkNuMuFlux10a) {
@@ -103,18 +110,10 @@ bool NuFlux::Read(TXMLEngine* xml, XMLNodePointer_t root_node)
   fSuperkNuMuFluxPOT = util::XML2Dbl(xml,root_node,"beam/superk_flux/pot_mc");
   cout << "Exp/Beam >> SK flux simulation POT = " << fSuperkNuMuFluxPOT << endl;
 
-  // Get SuperK numu flux covariance matrix
-  fSuperkNuMuFluxCov = util::XML2TMatrixD(
-      xml,root_node,"beam/superk_flux/systematics/covariance/numu");
-  if(!fSuperkNuMuFluxCov) {
-    cerr << "Exp/Beam >> No input SuperK numu flux covariance matrix!" << endl;
-    exit(1);
-  }
-#ifdef __debug_level_3__
-  fSuperkNuMuFluxCov->Print();
-#endif
-
+  //
   // 10a->10d weights
+  //
+
   fSuperkNuMuWght10aTo10d = 
      util::XML2TH1D(xml,root_node,"beam/superk_flux/weight_v10a_to_v10d/numu");
   if(!fSuperkNuMuWght10aTo10d) {
@@ -134,7 +133,11 @@ bool NuFlux::Read(TXMLEngine* xml, XMLNodePointer_t root_node)
     exit(1);
   }
 
-  cout << "Exp/Beam >> Loading Kubo-san's norm err inputs!" << endl;
+  //
+  // flux normalisation err
+  //
+
+  cout << "Exp/Beam >> Loading Kubo-san's flux norm err (Nsk/Nnd) inputs!" << endl;
 
   fSuperkNormRelErr_simple = 0;
 
@@ -151,9 +154,63 @@ bool NuFlux::Read(TXMLEngine* xml, XMLNodePointer_t root_node)
      cout << "Exp/Beam >> Norm relative err (simple) : " << fSuperkNormRelErr_simple << endl;
   }
 
+  //
+  // flux shape err
+  //
+
+  cout << "Exp/Beam >> Loading flux shape err inputs!" << endl;
+
+  TH2D * sk_numu_flux_fractional_covar = util::XML2TH2D(
+       xml,root_node,"beam/superk_flux/systematics/fractional_covariance/numu");
+  this->BuildNuMuFluxCovMatrix(sk_numu_flux_fractional_covar);
+  delete sk_numu_flux_fractional_covar;
+
   cout << "Exp/Beam >> Done reading beam inputs!" << endl;
 
   return true;
+}
+//________________________________________________________________________________________
+void NuFlux::BuildNuMuFluxCovMatrix(TH2D * fractional_covariance)
+{
+  // Build 10d numu flux (50 MeV binning)
+  int    nbins = fSuperkNuMuFlux10a->GetXaxis()->GetNbins();
+  double emin  = fSuperkNuMuFlux10a->GetXaxis()->GetXmin();
+  double emax  = fSuperkNuMuFlux10a->GetXaxis()->GetXmax();
+  TH1D * flux10d = new TH1D("flux10d","",nbins,emin,emax);
+  bool wght_to_10d = true;
+  for(int ibin = 1; ibin <= nbins; ibin++) {
+     double Etrue = flux10d->GetBinCenter(ibin);
+     double flux  = this->SuperkNuMuFlux(Etrue,wght_to_10d);
+     flux10d->SetBinContent(ibin,flux);
+  }
+  
+  // Re-bin using the Beam WG variable binning scheme
+  TH1D * flux10d_varbin = (TH1D*) flux10d->Rebin(
+        conv::kNEtrueBinsBeamWG,"10dvarbin",conv::kEtrueBinEdgesBeamWG);
+       
+ // Now build the flux covariance matrix from this histogram 
+ fSuperkNuMuFluxCov = new TMatrixD(conv::kNEtrueBinsBeamWG,conv::kNEtrueBinsBeamWG);   
+ TMatrixD & cov = *fSuperkNuMuFluxCov;
+ for(int ibin = 1; ibin <= conv::kNEtrueBinsBeamWG; ibin++) {
+   double flux_i = flux10d_varbin->GetBinContent(ibin);
+   for(int jbin = 1; jbin <= conv::kNEtrueBinsBeamWG; jbin++) {
+      double flux_j = flux10d_varbin->GetBinContent(jbin);
+      double frac_cov = fractional_covariance->GetBinContent(ibin,jbin);
+      cov[ibin-1][jbin-1] = (flux_i*flux_j) * frac_cov;
+#ifdef __debug_level_3__
+      cout << "Exp/Beam/BuildCovarianceMatrix >> " 
+           << "CovFrac(" << ibin << ", " << jbin << ") = " << frac_cov
+           << ", F(" << ibin << ") = " << flux_i 
+           << ", F(" << jbin << ") = " << flux_j
+           << " => Cov(" << ibin << ", " << jbin << ") = " << cov[ibin-1][jbin-1]
+           << endl;
+#endif
+    }
+  }
+
+#ifdef __debug_level_3__
+  fSuperkNuMuFluxCov->Print();
+#endif
 }
 //________________________________________________________________________________________
 void NuFlux::Draw(TVirtualPad * c, Option_t * option) const
