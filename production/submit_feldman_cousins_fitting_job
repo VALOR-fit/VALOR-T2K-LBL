@@ -69,7 +69,6 @@ while($irun < $nruns) {
 
   print "Submitting $tag run: $irun \n";
 
-  $batch_script = "$tag-$irun.pbs";
   $command  = "root2k -l -b -q \'$softw_dir/macros/feldman_cousins_fitting_job.C($min_dm23sq_bin,$max_dm23sq_bin,$min_sinsq2theta23_bin,$max_sinsq2theta23_bin,\"$tag\",$irun,$nexpts,$systematics,\"$config_file\")\'";
 
   print "$command \n";
@@ -78,7 +77,7 @@ while($irun < $nruns) {
   # RAL
   #
   if($resource eq "RAL") {
-     open(PBS, ">$job_dir/$batch_script") or die("Can not create the PBS batch script");
+     open(PBS, ">$job_dir/$tag-$irun.pbs") or die("Can not create the PBS batch script");
      print PBS "#!/bin/bash \n";
      print PBS "#PBS -N $tag-$irun \n";
      print PBS "#PBS -l cput=$cput \n";
@@ -88,26 +87,26 @@ while($irun < $nruns) {
      print PBS "source $softw_dir/setup/setup_at_ral.sh $softw_dir\n";
      print PBS "$command \n";
      close(PBS);
-     `qsub -q prod $job_dir/$batch_script`;
+     `qsub -q prod $job_dir/$tag-$irun.pbs`;
   }
   #
   # IN2P3
   #
   if($resource eq "IN2P3") {
-     open(PBS, ">$job_dir/$batch_script") or die("Can not create the PBS batch script");
+     open(PBS, ">$job_dir/$tag-$irun.pbs") or die("Can not create the PBS batch script");
      print PBS "#!/bin/tcsh \n";
      print PBS "cd $job_dir/ \n";
      print PBS "source $softw_dir/setup/setup_at_in2p3.csh $softw_dir\n";
      print PBS "$command \n";
      close(PBS);
-     `chmod +x $job_dir/$batch_script`;
-     `qsub -eo -V -l platform=LINUX,t=$cput,M=2200MB,scratch=500MB,u_sps_babar -o $job_dir/$tag-$irun.pbs.out -N $tag-$irun $job_dir/$batch_script`;
+     `chmod +x $job_dir/$tag-$irun.pbs`;
+     `qsub -eo -V -l platform=LINUX,t=$cput,M=2200MB,scratch=500MB,u_sps_babar -o $job_dir/$tag-$irun.pbs.out -N $tag-$irun $job_dir/$tag-$irun.pbs`;
   }
   #
   # Oxford
   #
   if($resource eq "Oxford") {
-      open(PBS, ">$job_dir/$batch_script") or die("Can not create the PBS batch script");
+      open(PBS, ">$job_dir/$tag-$irun.pbs") or die("Can not create the PBS batch script");
       print PBS "#!/bin/bash \n";
       print PBS "#PBS -N $tag-$irun \n";
       print PBS "#PBS -l cput=$cput \n";
@@ -117,7 +116,7 @@ while($irun < $nruns) {
       print PBS "source $softw_dir/setup/setup_at_oxford.sh $softw_dir\n";
       print PBS "$command \n";
       close(PBS);
-     `qsub $job_dir/$batch_script`;
+     `qsub $job_dir/$tag-$irun.pbs`;
   }
   #
   # Grid
