@@ -58,13 +58,13 @@ from the GENIE/NEUT physics monte carlo groups.
         Inputs for systematic studies
        -->
        <systematics>
-         <covariance>     
+        <fractional_covariance>
              <numu>
-                 <filename>   inputs/official/2010/flux/shape_error/v2.2/sk_covariance_and_correlation_10d.v2.root </filename>
-                 <objname>    cov_matrix  </objname>
-                 <objtype>    TMatrixD    </objtype>
+                 <filename>   inputs/official/2010/flux/shape_error/v3.1/sk_shape_cov_v31.root </filename>
+                 <objname>    sk_shape_cov_numu_hist </objname>
+                 <objtype>    TH2D  </objtype>
              </numu>
-         </covariance> 
+         </fractional_covariance>
          <norm_error_inputs>
                 ./inputs/official/2010/flux/norm_error/v3.1/share/
 <!--		none-->
@@ -132,10 +132,9 @@ from the GENIE/NEUT physics monte carlo groups.
      -->
      <systematics>
          <energy_scale_relative_error>              
-            0.01  
+            0.023
          </energy_scale_relative_error>
-
-       <efficiency_relative_error>
+         <efficiency_relative_error>
             <one_mu_ring>
                <ccqe>
                   <other_error>   0.017  </other_error>
@@ -148,7 +147,7 @@ from the GENIE/NEUT physics monte carlo groups.
                   <rc_ereco_high_bin2>   1.1  </rc_ereco_high_bin2>
                </ccqe>
                <ccnonqe>   0.200 </ccnonqe>
-               <nc>        0.483 </nc>   
+               <nc>        1.110 </nc>   
                <nuecc>     1.000 </nuecc>
             </one_mu_ring>
          </efficiency_relative_error>

@@ -58,6 +58,14 @@ from the GENIE/NEUT physics monte carlo groups.
         Inputs for systematic studies
        -->
        <systematics>
+        <fractional_covariance>
+             <numu>
+                 <filename>   inputs/official/2010/flux/shape_error/v2.2/sk_shape_cov_v2.2.root </filename>
+                 <objname>    sk_shape_cov_numu_hist </objname>
+                 <objtype>    TH2D  </objtype>
+             </numu>
+         </fractional_covariance>
+<!--
          <covariance>     
              <numu>
                  <filename>   inputs/official/2010/flux/shape_error/v2.2/sk_covariance_and_correlation_10d.v2.root </filename>
@@ -65,6 +73,7 @@ from the GENIE/NEUT physics monte carlo groups.
                  <objtype>    TMatrixD      </objtype>
              </numu>
          </covariance> 
+-->
          <norm_error_inputs>
                 ./inputs/official/2010/flux/norm_error/v3.1/share/
 <!--            none-->
