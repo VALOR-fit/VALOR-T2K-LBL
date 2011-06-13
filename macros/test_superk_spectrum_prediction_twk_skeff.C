@@ -22,27 +22,50 @@ void test_superk_spectrum_prediction_twk_skeff
   const char * config = Form("%s/config/%s", gSystem->Getenv("T2KOSCANA"), config_file);
   cout << "Reading analysis configuration from: " << config << endl;
 
+  const int nexperiments = 100;
+
   const int ntwkdials = 5;
   double twkdial[ntwkdials] = { -1.0, -0.5, 0.0, +0.5, +1.0 };
 
   int deflt = ntwkdials/2; //untweaked case
 
-  const int ntwkmodes = 7;
+  const int ntwkmodes = 8;
 
   string systematic[ntwkmodes] = { 
      "sk_ccqe_other_eff", 
      "sk_ccqe_ring_counting_eff_0", /* change RC efficiency < 0.4 GeV,        ignore correlations with other bins (for validation purposes only) */
      "sk_ccqe_ring_counting_eff_1", /* change RC efficiency in 0.4 - 1.1 GeV, ignore correlations with other bins (for validation purposes only) */
      "sk_ccqe_ring_counting_eff_2", /* change RC efficiency > 1.1 GeV,        ignore correlations with other bins (for validation purposes only) */
+     "sk_ccqe_ring_counting_eff",   /* change all RC effiencies + include correlations */
      "sk_ccnonqe_eff", 
      "sk_nc_eff", 
      "sk_nuecc_eff" 
   };
+  bool generate_toy_expts[ntwkmodes] = { 
+     false,    /* sk_ccqe_other_eff              */
+     false,    /* sk_ccqe_ring_counting_eff_0    */
+     false,    /* sk_ccqe_ring_counting_eff_1    */ 
+     false,    /* sk_ccqe_ring_counting_eff_2    */
+     true,     /* sk_ccqe_ring_counting_eff      */
+     false,    /* sk_ccnonqe_eff                 */
+     false,    /* sk_nc_eff                      */
+     false     /* sk_nuecc_eff                   */
+  };
+  string legend_label[ntwkmodes] = { 
+    "CCQE (other)",
+    "CCQE (RC0 only)",
+    "CCQE (RC1 only)",
+    "CCQE (RC2 only)",
+    "CCQE (RC)",
+    "CCnonQE",
+    "NC",
+    "#nu_{e} CC"
+  };
 
   // histogram drawing options
-  int hwidth [ntwkdials] = { 1,       1,       2,       1,       1      };
-  int hcolor [ntwkdials] = { kBlue,   kBlue,   kBlack,  kRed,    kRed   };
-  int hstyle [ntwkdials] = { kDotted, kDashed, kSolid,  kDashed, kDotted};
+  int hwidth [ntwkdials] = { 1,       1,       2,       1,       1       };
+  int hcolor [ntwkdials] = { kBlue,   kBlue,   kBlack,  kRed,    kRed    };
+  int hstyle [ntwkdials] = { kDotted, kDashed, kSolid,  kDashed, kDotted };
 
   // superk spectrum predictor
   SuperkExpectation skexp;
@@ -53,21 +76,66 @@ void test_superk_spectrum_prediction_twk_skeff
   fparm->Update(t2kana::conv::kPhypSinsq2Theta23, input_sinsq2theta23);
   fparm->Update(t2kana::conv::kPhypDm23sq,        input_dm23sq);
 
+  cout << "\n\nCalculating effects of SuperK efficiency uncertainties\n" << endl;
+
   // calc spectra
   double maxnev[ntwkmodes] = {-1.};
   TH1D * hEreco [ntwkmodes][ntwkdials];
   for(int imode = 0; imode < ntwkmodes; imode++) {
-     for(int idial = 0; idial < ntwkdials; idial++) {
-        // reset previously set tweaks
-        skexp.ResetSystematicVariations();
-        // tweak spectrum generation model
-        skexp.TweakSystematic(systematic[imode], twkdial[idial]);
-        // generate predictions  
-        skexp.Generate(*fparm);
-        // store spectrum
-        hEreco[imode][idial] = new TH1D(*skexp.CurrPredictedErecoSpectrum(conv::kSKsFCFV1RingMuLike));
-        hEreco[imode][idial]->SetDirectory(0);
-     }//idial
+     cout << "*Calculating effect of " << systematic[imode] << " systematic..." << endl;
+     if(!generate_toy_expts[imode]) 
+     {
+        for(int idial = 0; idial < ntwkdials; idial++) {
+           // reset previously set tweaks
+           skexp.ResetSystematicVariations();
+           // tweak spectrum generation model
+           skexp.TweakSystematic(systematic[imode], twkdial[idial]);
+           // generate predictions  
+           skexp.Generate(*fparm);
+           // store spectrum
+           hEreco[imode][idial] = new TH1D(*skexp.CurrPredictedErecoSpectrum(conv::kSKsFCFV1RingMuLike));
+           hEreco[imode][idial]->SetDirectory(0);
+        }//idial
+     } 
+     else {
+        cout << "Generating toy MC... " << endl;
+        TH1D * hErecoToyMC[nexperiments]; 
+        for(int iexp = 0; iexp < nexperiments; iexp++) {
+           if(iexp%100==0) {
+               cout << "Generated " << iexp << " toy MC experiments so far... " << endl;
+           }
+           // reset previously set tweaks
+           skexp.ResetSystematicVariations();
+           // tweak spectrum generation model
+           if(iexp>0) {
+               skexp.TweakSystematic(systematic[imode]);
+           }
+           // generate predictions  
+           skexp.Generate(*fparm);
+           // store spectrum
+           hErecoToyMC[iexp] = new TH1D(*skexp.CurrPredictedErecoSpectrum(conv::kSKsFCFV1RingMuLike));
+           hErecoToyMC[iexp]->SetDirectory(0);
+        }//iexp
+        // Initialise Ereco distributions for all twk dials to nominal distribution
+        for(int idial = 0; idial < ntwkdials; idial++) {
+           hEreco[imode][idial] = new TH1D(*skexp.CurrPredictedErecoSpectrum(conv::kSKsFCFV1RingMuLike));
+        } // idial
+        // Caluclate 1-sigma for each bin 
+        for(int ibin=1; ibin <= conv::kNvErecoBins; ibin++) {
+           double nom   = hErecoToyMC[0]->GetBinContent(ibin);
+           double sumsq = 0;
+           for(int iexp = 1; iexp < nexperiments; iexp++) {
+              double N = hErecoToyMC[iexp]->GetBinContent(ibin);
+              sumsq += TMath::Power(N-nom,2);	
+           }//iexp
+           double sig = TMath::Sqrt(sumsq/(nexperiments-1));   
+           for(int idial = 0; idial < ntwkdials; idial++) {
+              double nevtwk = nom + twkdial[idial] * sig;
+              hEreco[imode][idial]->SetBinContent(ibin, nevtwk);
+           } //idial          
+        }//ibin
+        //delete [] hErecoToyMC;
+     }//generate toy MC?
   }//imode
   // get fractional err
   double maxerrpos[ntwkmodes] = {-1.};
@@ -111,16 +179,8 @@ void test_superk_spectrum_prediction_twk_skeff
     TLegend * legend1 = new TLegend(0.3, 0.7, 0.85, 0.9);
     legend1->SetFillColor(0);
     legend1->SetBorderSize(0);
-    const char * label = "";
-    if(imode==0) label = "CCQE (other)";
-    if(imode==1) label = "CCQE (RC0)";
-    if(imode==2) label = "CCQE (RC1)";
-    if(imode==3) label = "CCQE (RC2)";
-    if(imode==4) label = "CCnonQE";
-    if(imode==5) label = "NC";
-    if(imode==6) label = "#nu_{e} CC";
-    legend1->SetHeader(Form("SuperK %s efficiency", label));
-    cout << "*** " << Form("SuperK %s efficiency", label) << endl;
+    legend1->SetHeader(Form("SuperK %s efficiency", legend_label[imode].c_str()));
+    cout << "*** " << Form("SuperK %s efficiency", legend_label[imode].c_str()) << endl;
     TH1F * hframe1 = (TH1F*) c[imode]->GetPad(1)->DrawFrame(
        0., 0., hErecoErr[imode][deflt]->GetXaxis()->GetXmax(), 1.15*maxnev[imode]);
     hframe1->Draw();
@@ -150,11 +210,6 @@ void test_superk_spectrum_prediction_twk_skeff
   TFile f(Form("sk_ereco_spectrum-tweak_sk_efficiency-sinsq2theta23_%.2f-dm23sq_%.5feV2.root",input_sinsq2theta23,input_dm23sq),"recreate");
   for(int imode = 0; imode < ntwkmodes; imode++) {
      for(int idial = 0; idial < ntwkdials; idial++) {
-       const char * syst = "";
-       if(imode==0) syst="ccqe_efficiency";
-       if(imode==1) syst="ccnonqe_efficiency";
-       if(imode==2) syst="nc_efficiency";
-       if(imode==3) syst="nuecc_efficiency";
        const char * dial = "";
        if( TMath::Abs(twkdial[idial]-1.0) < conv::kASmallNum ) dial="plus_one_sigma";
        if( TMath::Abs(twkdial[idial]-0.5) < conv::kASmallNum ) dial="plus_half_sigma";
@@ -162,7 +217,6 @@ void test_superk_spectrum_prediction_twk_skeff
        if( TMath::Abs(twkdial[idial]+1.0) < conv::kASmallNum ) dial="minus_one_sigma";
        if( TMath::Abs(twkdial[idial]+0.5) < conv::kASmallNum ) dial="minus_half_sigma";
        const char * title = Form("sk_ereco_spectrum_twk_%s_%s",systematic[imode].c_str(),dial);
-//       const char * title = Form("sk_ereco_spectrum_twk_%s_%s",syst,dial);
        hEreco[imode][idial]->Write(title);
      }
   }
