@@ -1,0 +1,369 @@
+<?xml version="1.0"?>
+
+<!--
+Inputs to the Rutherford-Oxford T2K NuMu Disappearance Analysis 
+from the ND280, Superk, Beam, NIWG support groups and 
+from the GENIE/NEUT physics monte carlo groups.
+-->
+
+<analysis_inputs analysis="RutherfordOxford/T2KNuMu" mc="GENIE">
+
+  <!--
+  ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+  Inputs from the Beam WG
+  ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+  -->
+  <beam>
+     <superk_flux>
+       <!--
+        POT for flux simulation (100 flux files x 1E+21 POT each)
+       -->
+       <pot_mc>  1E+23  </pot_mc>
+       <!--
+        Nominal SuperK flux
+       -->
+       <v10a>
+         <numu>
+            <filename>   inputs/official/2010/flux/10a/sk_10a_allmodes.root </filename>
+            <objname>    numu_flux  </objname>
+            <objtype>    TH1D       </objtype>
+         </numu>
+         <numu_varbin>
+            <filename>   inputs/official/2010/flux/10a/sk_10a_varbin19_allmodes.root </filename>
+            <objname>    numu_flux  </objname>
+            <objtype>    TH1D       </objtype>
+         </numu_varbin>
+       </v10a>
+       <!--
+        Flux weights 10a -> 10d(v3.1)
+       -->
+       <weight_v10a_to_v10d>
+         <numu>
+            <filename>   inputs/official/2010/flux/10d_v3/sk_tuned_10dv3_1_runII_fine.root </filename>
+            <objname>    enu_sk_tune10d_numu_ratio   </objname>
+            <objtype>    TH1D                        </objtype>
+         </numu>
+         <numubar>
+            <filename>   inputs/official/2010/flux/10d_v3/sk_tuned_10dv3_1_runII_fine.root </filename>
+            <objname>    enu_sk_tune10d_numub_ratio  </objname>
+            <objtype>    TH1D                        </objtype>
+         </numubar>
+         <nue>
+            <filename>   inputs/official/2010/flux/10d_v3/sk_tuned_10dv3_1_runII_fine.root </filename>
+            <objname>    enu_sk_tune10d_nue_ratio    </objname>
+            <objtype>    TH1D                        </objtype>
+         </nue>
+       </weight_v10a_to_v10d>
+       <!--
+        Inputs for systematic studies
+       -->
+       <systematics>
+        <fractional_covariance>
+             <numu>
+                 <filename>   inputs/official/2010/flux/shape_error/v3.1/sk_shape_cov_v31.root </filename>
+                 <objname>    sk_shape_cov_numu_hist </objname>
+                 <objtype>    TH2D  </objtype>
+             </numu>
+         </fractional_covariance>
+         <norm_error_inputs>
+                ./inputs/official/2010/flux/norm_error/v3.1/share/
+<!--		none-->
+         </norm_error_inputs>
+         <norm_error_simple_version>
+		0.05
+         </norm_error_simple_version>
+       </systematics>
+     </superk_flux>     
+  </beam>
+
+  <!--
+  ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+  Inputs from SuperK
+  ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+  -->
+  <superk>
+     <mc>
+        <numu>
+           <pot>
+              4.56E+23
+           </pot>
+           <one_mu_ring>
+              <filename>   inputs/official/2010/superk/genie/superk_1RmuT_numu_10a.root  </filename>
+              <objname>    selection_tree   </objname>
+              <objtype>    TTree            </objtype>
+           </one_mu_ring>
+        </numu>
+
+        <numubar>
+           <pot>
+              4.66568E+24
+           </pot>
+           <one_mu_ring>
+              <filename>   inputs/official/2010/superk/genie/superk_1RmuT_numubar_10a.root  </filename>
+              <objname>    selection_tree   </objname>
+              <objtype>    TTree            </objtype>
+           </one_mu_ring>
+        </numubar>
+
+        <nuebeam>
+           <pot>
+              2.394164E+25
+           </pot>
+           <one_mu_ring>
+              <filename>   inputs/official/2010/superk/genie/superk_1RmuT_nuebeam_10a.root  </filename>
+              <objname>    selection_tree   </objname>
+              <objtype>    TTree            </objtype>
+           </one_mu_ring>
+        </nuebeam>
+     </mc>
+
+     <!--
+      Actual data (see data.xml)
+     -->
+     <observation>
+       <!--
+        POT for analysis sample
+        -->
+        <pot> 1.108E+20 </pot> 
+     </observation>
+
+     <!--
+      Inputs for systematic studies
+     -->
+     <systematics>
+         <energy_scale_relative_error>              
+            0.023
+         </energy_scale_relative_error>
+         <efficiency_relative_error>
+            <one_mu_ring>
+               <ccqe>
+                  <other_error>   0.017  </other_error>
+                  <rc_error>
+                     <filename>  inputs/official/2010/superk/err/sk_ccqe_rc_err_covariance.root </filename>
+                     <objname>   ccqe_rc_err_covariance  </objname>
+                     <objtype>   TMatrixD </objtype>
+                  </rc_error>
+                  <rc_ereco_high_bin1>   0.4  </rc_ereco_high_bin1>
+                  <rc_ereco_high_bin2>   1.1  </rc_ereco_high_bin2>
+               </ccqe>
+               <ccnonqe>   0.200 </ccnonqe>
+               <nc>        1.110 </nc>   
+               <nuecc>     1.000 </nuecc>
+            </one_mu_ring>
+         </efficiency_relative_error>
+     </systematics>
+
+  </superk>
+
+
+  <!--
+  ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+  Inputs from ND280
+  ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+  -->
+
+  <nd280>
+
+     <!--
+      POT for data sample
+     -->
+     <pot_data> 2.88E+19 </pot_data>
+     <!--
+      Inputs from the Saclay ND280 analysis
+     -->
+     <saclay_selection>
+       <!--
+        Observed number of CC-like events
+       -->
+       <nobs_cclike> 1445 </nobs_cclike>
+       <!--
+        POT for MC sample
+       -->
+       <pot_mc> 4.972357E+20 </pot_mc>
+       <!--
+          Number of events passing selection as a function of Etrue for various modes
+       -->
+       <true_energy_spectrum>
+         <!--
+              numu CC
+         -->
+         <numu_ccqe>
+            <filename>   inputs/official/2010/nd280/saclay/10d_v3/ND280NuEnergyHisto_GENIE10d_v3.root  </filename>
+            <objname>    EnergyNuMu_true_QE       </objname>
+            <objtype>    TH1F                     </objtype>
+         </numu_ccqe>
+         <numu_ccres>
+            <filename>   inputs/official/2010/nd280/saclay/10d_v3/ND280NuEnergyHisto_GENIE10d_v3.root  </filename>
+            <objname>    EnergyNuMu_true_res      </objname>
+            <objtype>    TH1F                     </objtype>
+         </numu_ccres>
+         <numu_cccoh>
+            <filename>   inputs/official/2010/nd280/saclay/10d_v3/ND280NuEnergyHisto_GENIE10d_v3.root  </filename>
+            <objname>    EnergyNuMu_true_coh      </objname>
+            <objtype>    TH1F                     </objtype>
+         </numu_cccoh>
+         <numu_ccoth>
+            <filename>   inputs/official/2010/nd280/saclay/10d_v3/ND280NuEnergyHisto_GENIE10d_v3.root  </filename>
+            <objname>    EnergyNuMu_true_oth      </objname>
+            <objtype>    TH1F                     </objtype>
+         </numu_ccoth>
+         <!--
+              numu NC
+         -->
+         <numu_ncres>
+            <filename>   inputs/official/2010/nd280/saclay/10d_v3/ND280NuEnergyHisto_GENIE10d_v3.root  </filename>
+            <objname>    EnergyNuMu_true_ncres    </objname>
+            <objtype>    TH1F                     </objtype>
+         </numu_ncres>
+         <numu_nccoh>
+            <filename>   inputs/official/2010/nd280/saclay/10d_v3/ND280NuEnergyHisto_GENIE10d_v3.root  </filename>
+            <objname>    EnergyNuMu_true_nccoh    </objname>
+            <objtype>    TH1F                     </objtype>
+         </numu_nccoh>
+         <numu_ncoth>
+            <filename>   inputs/official/2010/nd280/saclay/10d_v3/ND280NuEnergyHisto_GENIE10d_v3.root  </filename>
+            <objname>    EnergyNuMu_true_ncoth    </objname>
+            <objtype>    TH1F                     </objtype>
+         </numu_ncoth>
+         <!--
+              numubar CC
+         -->
+         <numubar_ccqe>
+            <filename>   inputs/official/2010/nd280/saclay/10d_v3/ND280NuEnergyHisto_GENIE10d_v3.root  </filename>
+            <objname>    EnergyANuMu_true_QE      </objname>
+            <objtype>    TH1F                     </objtype>
+         </numubar_ccqe>
+         <numubar_ccres>
+            <filename>   inputs/official/2010/nd280/saclay/10d_v3/ND280NuEnergyHisto_GENIE10d_v3.root  </filename>
+            <objname>    EnergyANuMu_true_res     </objname>
+            <objtype>    TH1F                     </objtype>
+         </numubar_ccres>
+         <numubar_cccoh>
+            <filename>   inputs/official/2010/nd280/saclay/10d_v3/ND280NuEnergyHisto_GENIE10d_v3.root  </filename>
+            <objname>    EnergyANuMu_true_coh     </objname>
+            <objtype>    TH1F                     </objtype>
+         </numubar_cccoh>
+         <numubar_ccoth>
+            <filename>   inputs/official/2010/nd280/saclay/10d_v3/ND280NuEnergyHisto_GENIE10d_v3.root  </filename>
+            <objname>    EnergyANuMu_true_oth     </objname>
+            <objtype>    TH1F                     </objtype>
+         </numubar_ccoth>
+         <!--
+              numubar NC
+         -->
+         <numubar_ncres>
+            <filename>   inputs/official/2010/nd280/saclay/10d_v3/ND280NuEnergyHisto_GENIE10d_v3.root  </filename>
+            <objname>    EnergyANuMu_true_ncres   </objname>
+            <objtype>    TH1F                     </objtype>
+         </numubar_ncres>
+         <numubar_nccoh>
+            <filename>   inputs/official/2010/nd280/saclay/10d_v3/ND280NuEnergyHisto_GENIE10d_v3.root  </filename>
+            <objname>    EnergyANuMu_true_nccoh   </objname>
+            <objtype>    TH1F                     </objtype>
+         </numubar_nccoh>
+         <numubar_ncoth>
+            <filename>   inputs/official/2010/nd280/saclay/10d_v3/ND280NuEnergyHisto_GENIE10d_v3.root  </filename>
+            <objname>    EnergyANuMu_true_ncoth   </objname>
+            <objtype>    TH1F                     </objtype>
+         </numubar_ncoth>
+         <!--
+              nue CC
+         -->
+         <nue_ccqe>
+            <filename>   inputs/official/2010/nd280/saclay/10d_v3/ND280NuEnergyHisto_GENIE10d_v3.root  </filename>
+            <objname>    EnergyNuE_true_QE        </objname>
+            <objtype>    TH1F                     </objtype>
+         </nue_ccqe>
+         <nue_ccres>
+            <filename>   inputs/official/2010/nd280/saclay/10d_v3/ND280NuEnergyHisto_GENIE10d_v3.root  </filename>
+            <objname>    EnergyNuE_true_res      </objname>
+            <objtype>    TH1F                    </objtype>
+         </nue_ccres>
+         <nue_cccoh>
+            <filename>   inputs/official/2010/nd280/saclay/10d_v3/ND280NuEnergyHisto_GENIE10d_v3.root  </filename>
+            <objname>    EnergyNuE_true_coh      </objname>
+            <objtype>    TH1F                    </objtype>
+         </nue_cccoh>
+         <nue_ccoth>
+            <filename>   inputs/official/2010/nd280/saclay/10d_v3/ND280NuEnergyHisto_GENIE10d_v3.root  </filename>
+            <objname>    EnergyNuE_true_oth      </objname>
+            <objtype>    TH1F                    </objtype>
+         </nue_ccoth>
+         <!--
+              nue NC
+         -->
+         <nue_ncres>
+            <filename>   inputs/official/2010/nd280/saclay/10d_v3/ND280NuEnergyHisto_GENIE10d_v3.root  </filename>
+            <objname>    EnergyNuE_true_ncres    </objname>
+            <objtype>    TH1F                    </objtype>
+         </nue_ncres>
+         <nue_nccoh>
+            <filename>   inputs/official/2010/nd280/saclay/10d_v3/ND280NuEnergyHisto_GENIE10d_v3.root  </filename>
+            <objname>    EnergyNuE_true_nccoh   </objname>
+            <objtype>    TH1F                   </objtype>
+         </nue_nccoh>
+         <nue_ncoth>
+            <filename>   inputs/official/2010/nd280/saclay/10d_v3/ND280NuEnergyHisto_GENIE10d_v3.root  </filename>
+            <objname>    EnergyNuE_true_ncoth   </objname>
+            <objtype>    TH1F                   </objtype>
+         </nue_ncoth>
+       </true_energy_spectrum>
+       <!--
+        Inputs for systematic studies
+       -->
+       <systematics>
+          <efficiency_relative_error>
+             0.05
+          </efficiency_relative_error>
+       </systematics>
+     </saclay_selection>
+
+  </nd280>
+
+  <!--
+  ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+  Agreed errors on cross sections
+  ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+  -->
+
+  <niwg>
+    <systematics>
+        <xsec_relative_error>
+           <ccqe>
+               <filename>   inputs/official/2010/niwg/niwg_errors_10a_v1.root </filename>
+               <objname>    h_ccqe_xsec_err    </objname>
+               <objtype>    TH1D               </objtype>
+           </ccqe>
+        </xsec_relative_error>
+        <xsec_ratio_relative_error>
+            <cc1pi_ccqe>
+                <filename>   inputs/official/2010/niwg/niwg_errors_10a_v1.root </filename>
+                <objname>    h_cc1pi_rat_err    </objname>
+                <objtype>    TH1D               </objtype>
+            </cc1pi_ccqe>
+            <ccother_ccqe>
+                <filename>   inputs/official/2010/niwg/niwg_errors_10a_v1.root </filename>
+                <objname>    h_ccoth_rat_err    </objname>
+                <objtype>    TH1D               </objtype>
+            </ccother_ccqe>
+            <nc_ccqe>
+                <filename>   inputs/official/2010/niwg/niwg_errors_10a_v1.root </filename>
+                <objname>    h_nc_rat_err       </objname>
+                <objtype>    TH1D               </objtype>
+            </nc_ccqe>
+        </xsec_ratio_relative_error>
+        <superk_nuclear_effect_relative_error>
+            <filename>   inputs/official/2010/niwg/niwg_errors_10a_v1.root </filename>
+            <objname>    sk_nuceff_fc1mu_osc0  </objname>
+            <objtype>    TH1D                 </objtype>
+        </superk_nuclear_effect_relative_error>
+    </systematics>
+  </niwg>
+
+  <neutrino_generator>
+     <cc1pi_in_ccres>
+	0.95
+     </cc1pi_in_ccres>
+  </neutrino_generator>
+
+</analysis_inputs>
