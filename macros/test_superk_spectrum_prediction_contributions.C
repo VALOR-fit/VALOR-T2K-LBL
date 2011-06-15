@@ -78,6 +78,7 @@ void test_superk_spectrum_prediction_contributions
   hErecoMode[conv::kSKmNuECC1pi]       -> SetFillStyle ( 3345     );
   hErecoMode[conv::kSKmNuECCoth]       -> SetFillStyle ( 3354     );
   hErecoMode[conv::kSKmNuENC]          -> SetFillStyle ( 3006     );
+  hErecoMode[conv::kSKmNuMuCCQE]       -> SetFillColor ( kWhite   );
   hErecoMode[conv::kSKmNuMuCC1pi]      -> SetFillColor ( kBlack   );
   hErecoMode[conv::kSKmNuMuCCoth]      -> SetFillColor ( kBlack   );
   hErecoMode[conv::kSKmNC]             -> SetFillColor ( kRed     );
@@ -125,7 +126,7 @@ void test_superk_spectrum_prediction_contributions
   stack->Add(hErecoMode[conv::kSKmNuMuCCQE]);
   stack->Draw("same");
   legend->AddEntry(hErecoTot,                            "total",                                "L" );
-  legend->AddEntry(hErecoMode[conv::kSKmNuMuCCQE],       "#nu_{#mu} CCQE",                       "L" );
+  legend->AddEntry(hErecoMode[conv::kSKmNuMuCCQE],       "#nu_{#mu} CCQE",                       "LF");
   legend->AddEntry(hErecoMode[conv::kSKmNuMuCC1pi],      "#nu_{#mu} CC1#pi",                     "LF");
   legend->AddEntry(hErecoMode[conv::kSKmNuMuCCoth],      "#nu_{#mu} CC other",                   "LF");
   legend->AddEntry(hErecoMode[conv::kSKmNC],             "#nu_{#mu}(#nu_{#tau}) NC",             "LF");
@@ -134,7 +135,7 @@ void test_superk_spectrum_prediction_contributions
   legend->AddEntry(hErecoMode[conv::kSKmNuMuBarCCoth],   "#bar{#nu_{#mu}} CC other",             "LF");
   legend->AddEntry(hErecoMode[conv::kSKmNuMuBarNC],      "#bar{#nu_{#mu}}(#bar{#nu_{#tau}}) NC", "LF");
   legend->AddEntry(hErecoMode[conv::kSKmNuECCQE],        "#nu_{e} CCQE",                         "LF");
-  legend->AddEntry(hErecoMode[conv::kSKmNuECC1pi],       "#nu_{e} CC#1pi",                       "LF");
+  legend->AddEntry(hErecoMode[conv::kSKmNuECC1pi],       "#nu_{e} CC1#pi",                       "LF");
   legend->AddEntry(hErecoMode[conv::kSKmNuECCoth],       "#nu_{e} CC other",                     "LF");
   legend->AddEntry(hErecoMode[conv::kSKmNuENC],          "#nu_{e} NC",                           "LF");
   legend->Draw();

@@ -8,17 +8,23 @@
 
 #include "Conventions.h"
 
-void test_nsk_twk_osc()
+void test_nsk_twk_osc
+(
+  const char * config_file = "analysis_configuration.xml"
+)
 {
   using namespace std;
   using namespace t2kana;
 
-  double sinsq2theta23_min  = 0.0;
-  double sinsq2theta23_max  = 1.0;
-  double sinsq2theta23_step = 0.01;
-  double dm23sq_min         = 1E-3;
-  double dm23sq_max         = 6E-3;
-  double dm23sq_step        = 1E-4;
+  const char * config = Form("%s/config/%s", gSystem->Getenv("T2KOSCANA"), config_file);
+  cout << "Reading analysis configuration from: " << config << endl;
+
+  double sinsq2theta23_min  =  0.0;
+  double sinsq2theta23_max  =  1.0;
+  double sinsq2theta23_step =  0.01;
+  double dm23sq_min         =  1E-3;
+  double dm23sq_max         = 30E-3;
+  double dm23sq_step        =  1E-4;
 
  // make sure that min and max are at the bin centre
  int sinsq2theta23_nbins = 1 + (int) ((sinsq2theta23_max - sinsq2theta23_min) / sinsq2theta23_step);
@@ -35,7 +41,7 @@ void test_nsk_twk_osc()
 
   // superk spectrum predictor
   SuperkExpectation skexp;
-  skexp.Read("inputs/analysis_configuration.xml");
+  skexp.Read(config);
 
   // fit params
   PhysParamList * fparm = PhysParamList::NumuDisapFitNoSyst();
