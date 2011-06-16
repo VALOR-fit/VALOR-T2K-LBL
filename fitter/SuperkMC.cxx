@@ -1049,6 +1049,7 @@ double SuperkMC::EfficiencyWeight(
           // combined weight
           double weight     = weight_oth * weight_rc;
           return weight;
+          break;
        }
 
        //
