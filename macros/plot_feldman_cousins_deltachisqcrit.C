@@ -21,10 +21,10 @@ void plot_feldman_cousins_deltachisqcrit(
   const char * delta_chisq_critical_file_mc_statsyst,
   int nsmoothings=1)
 {
-  const double sinsq2theta_min = 0.0;
-  const double sinsq2theta_max = 1.0;
-  const double dmsq_min        = 1.0E-3;
-  const double dmsq_max        = 6.0E-3;
+  const double sinsq2theta_min = 0.82;
+  const double sinsq2theta_max = 1.00;
+  const double dmsq_min        = 1.8E-3;
+  const double dmsq_max        = 3.5E-3;
   const double dchisq_2p_68    = 2.30; /// canonical 68% CL \delta\chi^{2} for 2 parameters
   const double dchisq_2p_90    = 4.61; /// canonical 90% CL \delta\chi^{2} for 2 parameters
 
@@ -69,20 +69,27 @@ void plot_feldman_cousins_deltachisqcrit(
   c1->cd(1);
   c1->GetPad(1)->SetLeftMargin(0.3);
   c1->GetPad(1)->SetRightMargin(0.15);
-  
   hdchisq68_statonly->Draw("colz");
+  hdchisq68_statonly->GetXaxis()->SetRangeUser(sinsq2theta_min,sinsq2theta_max);
+  hdchisq68_statonly->GetYaxis()->SetRangeUser(dmsq_min,dmsq_max);
   c1->cd(2);
   c1->GetPad(2)->SetLeftMargin(0.15);
   c1->GetPad(2)->SetRightMargin(0.3);
   hdchisq90_statonly->Draw("colz");
+  hdchisq90_statonly->GetXaxis()->SetRangeUser(sinsq2theta_min,sinsq2theta_max);
+  hdchisq90_statonly->GetYaxis()->SetRangeUser(dmsq_min,dmsq_max);
   c1->cd(3);
   c1->GetPad(3)->SetLeftMargin(0.3);
   c1->GetPad(3)->SetRightMargin(0.15);
   hdchisq68_statsyst->Draw("colz");
+  hdchisq68_statsyst->GetXaxis()->SetRangeUser(sinsq2theta_min,sinsq2theta_max);
+  hdchisq68_statsyst->GetYaxis()->SetRangeUser(dmsq_min,dmsq_max);
   c1->cd(4);
   c1->GetPad(4)->SetLeftMargin(0.15);
   c1->GetPad(4)->SetRightMargin(0.3);
   hdchisq90_statsyst->Draw("colz");
+  hdchisq90_statsyst->GetXaxis()->SetRangeUser(sinsq2theta_min,sinsq2theta_max);
+  hdchisq90_statsyst->GetYaxis()->SetRangeUser(dmsq_min,dmsq_max);
   c1->Update();
 
 
@@ -174,9 +181,9 @@ void plot_feldman_cousins_deltachisqcrit(
   // Plot critical \delta\chi^{2}_{68} and \delta\chi^{2}_{90} vs dmsq for 3 sinsq2theta.
   //
 
-  double sinsq2theta1 = 1.0;
-  double sinsq2theta2 = 0.9;
-  double sinsq2theta3 = 0.8;
+  double sinsq2theta1 = 1.00;
+  double sinsq2theta2 = 0.95;
+  double sinsq2theta3 = 0.92;
 
   int n2 = hdchisq90_statonly->GetYaxis()->GetNbins();
 
@@ -189,7 +196,6 @@ void plot_feldman_cousins_deltachisqcrit(
   double * dchisq3_dmsq_68 = new double[n2];
 
   int isinsq2theta1 = hdchisq90_statonly->GetXaxis()->FindBin(sinsq2theta1);
-
   for(int i=0; i<n2; i++) {
     dchisq1_dmsq_90[i] = hdchisq90_statonly->GetBinContent(isinsq2theta1,i+1);
     dchisq1_dmsq_68[i] = hdchisq68_statonly->GetBinContent(isinsq2theta1,i+1);
@@ -200,7 +206,7 @@ void plot_feldman_cousins_deltachisqcrit(
     dchisq2_dmsq_90[i] = hdchisq90_statonly->GetBinContent(isinsq2theta2,i+1);
     dchisq2_dmsq_68[i] = hdchisq68_statonly->GetBinContent(isinsq2theta2,i+1);
   }
-  int isinsq2theta3 = hdchisq90_statonly->GetYaxis()->FindBin(sinsq2theta3);
+  int isinsq2theta3 = hdchisq90_statonly->GetXaxis()->FindBin(sinsq2theta3);
   for(int i=0; i<n2; i++) {
     dchisq3_dmsq_90[i] = hdchisq90_statonly->GetBinContent(isinsq2theta3,i+1);
     dchisq3_dmsq_68[i] = hdchisq68_statonly->GetBinContent(isinsq2theta3,i+1);
