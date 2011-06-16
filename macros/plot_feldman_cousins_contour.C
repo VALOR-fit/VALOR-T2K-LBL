@@ -45,22 +45,6 @@
 //-----------------------------------------------------------------------------------------------------
 //
 
-#include <iostream>
-
-#include <TROOT.h>
-#include <TSystem.h>
-#include <TFile.h>
-#include <TH2D.h>
-#include <TGraph.h>
-#include <TCanvas.h>
-#include <TGAxis.h>
-#include <TMarker.h>
-#include <TLine.h>
-#include <TLegend.h>
-#include <TString.h>
-
-using namespace std;
-
 void set_contour_style(TH2D *contour, Int_t color, Int_t width, Int_t style);
 void set_contour_style(TGraph*contour, Int_t color, Int_t width, Int_t style);
 
