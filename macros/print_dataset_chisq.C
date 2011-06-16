@@ -21,6 +21,8 @@ void print_dataset_chisq
   using namespace std;
   using namespace t2kana;
 
+  const int ndof = 198;
+
   const char * config = Form("%s/config/%s", gSystem->Getenv("T2KOSCANA"), config_file);
   cout << "Reading analysis configuration from: " << config << endl;
 
@@ -45,5 +47,6 @@ void print_dataset_chisq
   // get fit inputs object (chisq is calculated there)
   FitInputs * fit_inputs = new FitInputs(skobs,skexp,fparm);
   double chisq = fit_inputs->Chisquare();
-  cout << "Chisq(dm23sq = " << input_dm23sq << ", sinsq2theta23 = " << input_sinsq2theta23 << ") = " << chisq << endl;
+  cout << "Chisq(dm23sq = " << input_dm23sq << ", sinsq2theta23 = " << input_sinsq2theta23 << ") = " 
+       << chisq << " (/ndof = " << chisq/ndof << ")" << endl;
 }
