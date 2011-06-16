@@ -15,6 +15,8 @@ void test_nsk_twk_systematics
   const char * config_file         = "analysis_configuration.xml"
 )
 {
+  gROOT->Reset();
+
   using namespace std;
   using namespace t2kana;
 
@@ -22,8 +24,8 @@ void test_nsk_twk_systematics
 
   const int nsystematics = 14;
   string systematic[nsystematics] = {
-	"sk_ccqe_other_eff",
 	"sk_ccqe_ring_counting_eff",
+	"sk_ccqe_other_eff",
 	"sk_ccnonqe_eff",
 	"sk_nc_eff",
 	"sk_nuecc_eff",
@@ -38,8 +40,8 @@ void test_nsk_twk_systematics
 	"nuclear_effect"
   };
   bool generate_random[nsystematics] = {
-	false,  /* sk_ccqe_other_eff          */
 	true,   /* sk_ccqe_ring_counting_eff  */
+	false,  /* sk_ccqe_other_eff          */
 	false,  /* sk_ccnonqe_eff             */
 	false,  /* sk_nc_eff                  */
 	false,  /* sk_nuecc_eff               */
@@ -54,8 +56,8 @@ void test_nsk_twk_systematics
 	false   /* nuclear_effect             */
   };
   bool skip[nsystematics] = {
-	false,  /* sk_ccqe_other_eff                  */
 	false,  /* sk_ccqe_ring_counting_eff          */
+	false,  /* sk_ccqe_other_eff                  */
 	false,  /* sk_ccnonqe_eff                     */
 	false,  /* sk_nc_eff                          */
 	false,  /* sk_nuecc_eff                       */
