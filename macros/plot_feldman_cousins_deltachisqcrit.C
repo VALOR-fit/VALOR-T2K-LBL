@@ -55,14 +55,14 @@ void plot_feldman_cousins_deltachisqcrit(
   hdchisq90_statonly  -> GetXaxis() -> SetTitle("sin^{2}2#theta_{23}");
   hdchisq68_statsyst  -> GetXaxis() -> SetTitle("sin^{2}2#theta_{23}");
   hdchisq90_statsyst  -> GetXaxis() -> SetTitle("sin^{2}2#theta_{23}");
-  hdchisq68_statonly  -> GetYaxis() -> SetTitle("|#Deltam^{2}_{23}| (eV^{2}/c^{4}");
-  hdchisq90_statonly  -> GetYaxis() -> SetTitle("|#Deltam^{2}_{23}| (eV^{2}/c^{4}");
-  hdchisq68_statsyst  -> GetYaxis() -> SetTitle("|#Deltam^{2}_{23}| (eV^{2}/c^{4}");
-  hdchisq90_statsyst  -> GetYaxis() -> SetTitle("|#Deltam^{2}_{23}| (eV^{2}/c^{4}");
-  hdchisq68_statonly  -> GetYaxis() -> SetTitleOffset(1.6);
-  hdchisq90_statonly  -> GetYaxis() -> SetTitleOffset(1.6);
-  hdchisq68_statsyst  -> GetYaxis() -> SetTitleOffset(1.6);
-  hdchisq90_statsyst  -> GetYaxis() -> SetTitleOffset(1.6);
+  hdchisq68_statonly  -> GetYaxis() -> SetTitle("|#Deltam^{2}_{23}| (eV^{2}/c^{4})");
+  hdchisq90_statonly  -> GetYaxis() -> SetTitle("|#Deltam^{2}_{23}| (eV^{2}/c^{4})");
+  hdchisq68_statsyst  -> GetYaxis() -> SetTitle("|#Deltam^{2}_{23}| (eV^{2}/c^{4})");
+  hdchisq90_statsyst  -> GetYaxis() -> SetTitle("|#Deltam^{2}_{23}| (eV^{2}/c^{4})");
+  hdchisq68_statonly  -> GetYaxis() -> SetTitleOffset(2.0);
+  hdchisq90_statonly  -> GetYaxis() -> SetTitleOffset(2.0);
+  hdchisq68_statsyst  -> GetYaxis() -> SetTitleOffset(2.0);
+  hdchisq90_statsyst  -> GetYaxis() -> SetTitleOffset(2.0);
 
   TCanvas * c1 = new TCanvas("c1","",10,20,500,500);
   c1->Divide(2,2);
@@ -183,7 +183,7 @@ void plot_feldman_cousins_deltachisqcrit(
 
   double sinsq2theta1 = 1.00;
   double sinsq2theta2 = 0.95;
-  double sinsq2theta3 = 0.92;
+  double sinsq2theta3 = 0.90;
 
   int n2 = hdchisq90_statonly->GetYaxis()->GetNbins();
 
