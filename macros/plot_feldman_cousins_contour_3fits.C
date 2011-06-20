@@ -4,9 +4,14 @@
 //
 // Allows drawing FC contours for up to 3 different fits allowing for different critical 
 // \Delta\chi^{2} values for each fit.
-// Eg. use to superimpose fits from different T2K datasets.
+// This macro can be used, for example, in order to superimpose fits from different T2K datasets.
 //
 // C.Andreopoulos
+//
+// ChangeLog:
+// @ 30/05/2011, Costas
+//   Added macro during Run1+2 analysis.            
+//
 //-----------------------------------------------------------------------------------------------------
 //
 
