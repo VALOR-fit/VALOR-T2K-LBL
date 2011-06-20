@@ -38,11 +38,11 @@ void plot_feldman_cousins_contour_3fits
   //
   // Define dm23sq, sinsq2theta23 range and step  
   //
-  double sinsq2theta23_min   = 0.75;
+  double sinsq2theta23_min   = 0.3;
   double sinsq2theta23_max   = 1.00;
   double sinsq2theta23_step  = 0.01;
-  double dm23sq_min          = 1.5E-3;
-  double dm23sq_max          = 4.0E-3;
+  double dm23sq_min          = 1.0E-3;
+  double dm23sq_max          = 6.0E-3;
   double dm23sq_step         = 1.0E-4;
 
   //
