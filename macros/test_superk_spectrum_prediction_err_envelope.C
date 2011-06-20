@@ -23,7 +23,7 @@ void test_superk_spectrum_prediction_err_envelope
   const char * config = Form("%s/config/%s", gSystem->Getenv("T2KOSCANA"), config_file);
   cout << "Reading analysis configuration from: " << config << endl;
 
-  const int nexp = 2500; // number of toy MC experiments
+  const int nexp = 5000; // number of toy MC experiments
 
   // output histograms and graphs
   TH1D * hEreco [nexp];        //
