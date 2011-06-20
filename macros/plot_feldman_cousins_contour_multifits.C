@@ -22,13 +22,14 @@
 //          input_sinsq2theta  input_dm23sq  path/to/the/output/fit/file.root 
 //  - nfits :
 //          Number of entries in fit_result_list
-//  - show_constant_dchisq_contours : (boolean) Show non-Feldman-Cousins contours
-//  - show_contours_with_systematics : (boolean)
+//  - show_constant_dchisq_contours     : (boolean) Show non-Feldman-Cousins contours
+//  - show_contours_with_systematics    : (boolean)
+//  - show_contours_without_systematics : (boolean)
+//  - show_external_contours            : (boolean)
 //  - show_68cl : (boolean) Show the 68% CL contour?
 //  - show_90cl : (boolean) Show the 90% CL contour?
 //  - show_95cl : (boolean) Show the 95% CL contour?
 //  - show_99cl : (boolean) Show the 99% CL contour?
-//  - show_external_contours:
 //
 // ChangeLog:
 // @ 29/03/2011, Costas 
@@ -49,11 +50,12 @@ void plot_feldman_cousins_contour_multifits
   int nfits,
   bool show_constant_dchisq_contours=false,
   bool show_contours_with_systematics=true,
+  bool show_contours_without_systematics=true,
+  bool show_external_contours=false
   bool show_68cl=true,
   bool show_90cl=true,
   bool show_95cl=true,
-  bool show_99cl=false,
-  bool show_external_contours=true
+  bool show_99cl=false
 )
 {
   gROOT->Reset();
@@ -292,89 +294,122 @@ void plot_feldman_cousins_contour_multifits
      bestfit_point [ifit] -> SetMarkerSize(1.8);
      bestfit_point [ifit] -> SetMarkerColor(kBlack);
 
-     if(show_68cl) {
-       if(show_contours_with_systematics) {
-          hCL68StatSyst[ifit]->Draw("cont3same");
-       }
-       hCL68StatOnly[ifit]->Draw("cont3same");
-       if(show_constant_dchisq_contours) {
-          hCL68StatOnlyNonFC[ifit]->Draw("cont3same");
-       }
-     }
-     if(show_90cl) {
-       if(show_contours_with_systematics) {
-          hCL90StatSyst[ifit]->Draw("cont3same");
-       }
-       hCL90StatOnly[ifit]->Draw("cont3same");
-       if(show_constant_dchisq_contours) {
-          hCL90StatOnlyNonFC[ifit]->Draw("cont3same");
-       }
+     if(show_99cl) {
+       if (show_contours_with_systematics   ) { hCL99StatSyst[ifit]      -> Draw("cont3same");  }
+       if (show_contours_without_systematics) { hCL99StatOnly[ifit]      -> Draw("cont3same");  }
+       if (show_constant_dchisq_contours    ) { hCL99StatOnlyNonFC[ifit] -> Draw("cont3same");  }
      }
      if(show_95cl) {
-       if(show_contours_with_systematics) {
-          hCL95StatSyst[ifit]->Draw("cont3same");
-       }
-       hCL95StatOnly[ifit]->Draw("cont3same");
-       if(show_constant_dchisq_contours) {
-          hCL95StatOnlyNonFC[ifit]->Draw("cont3same");
-       }
+       if (show_contours_with_systematics   ) { hCL95StatSyst[ifit]      -> Draw("cont3same");  }
+       if (show_contours_without_systematics) { hCL95StatOnly[ifit]      -> Draw("cont3same");  }
+       if (show_constant_dchisq_contours    ) { hCL95StatOnlyNonFC[ifit] -> Draw("cont3same");  }
      }
-     if(show_99cl) {
-       if(show_contours_with_systematics) {
-          hCL99StatSyst[ifit]->Draw("cont3same");
-       }
-       hCL99StatOnly[ifit]->Draw("cont3same");
-       if(show_constant_dchisq_contours) {
-          hCL99StatOnlyNonFC[ifit]->Draw("cont3same");
-       }
-     }    
+     if(show_90cl) {
+       if (show_contours_with_systematics   ) { hCL90StatSyst[ifit]      -> Draw("cont3same");  }
+       if (show_contours_without_systematics) { hCL90StatOnly[ifit]      -> Draw("cont3same");  }
+       if (show_constant_dchisq_contours    ) { hCL90StatOnlyNonFC[ifit] -> Draw("cont3same");  }
+     }
+     if(show_68cl) {   
+       if (show_contours_with_systematics   ) { hCL68StatSyst[ifit]      -> Draw("cont3same");  }
+       if (show_contours_without_systematics) { hCL68StatOnly[ifit]      -> Draw("cont3same");  }
+       if (show_constant_dchisq_contours    ) { hCL68StatOnlyNonFC[ifit] -> Draw("cont3same");  }
+     }
 
      //input_point   [ifit] -> Draw("same");
      //bestfit_point [ifit] -> Draw("same");
 
   }//ifit
 
+
+  // Plot external contours
+  TGraph * minos2011_68cl = 0;
+  TGraph * minos2011_90cl = 0;
+  TGraph * skle_90cl      = 0;
+  TGraph * sk_90cl        = 0;
   if(show_external_contours) {
-     string contour_file = gSystem->Getenv("T2KOSCANA") + string("/inputs/external/contours/numu_disappearance.root");
-     TFile f(contour_file.c_str(),"read");
-     TGraph * minos2011_68cl = new TGraph(* (TGraph*)f.Get("minos2011_68cl") );
-     TGraph * minos2011_90cl = new TGraph(* (TGraph*)f.Get("minos2011_90cl") );
-     TGraph * skle_90cl      = new TGraph(* (TGraph*)f.Get("skle_90cl")      );
-     TGraph * sk_90cl        = new TGraph(* (TGraph*)f.Get("sk_90cl")        );
+     const char * extcontourfile = Form("%s/inputs/external/contours/numu_disappearance.root", gSystem->Getenv("T2KOSCANA"));
+     TFile f(extcontourfile,"read");
+     minos2011_68cl = new TGraph(* (TGraph*)f.Get("minos2011_68cl") );
+     minos2011_90cl = new TGraph(* (TGraph*)f.Get("minos2011_90cl") );
+     skle_90cl      = new TGraph(* (TGraph*)f.Get("skle_90cl")      );
+     sk_90cl        = new TGraph(* (TGraph*)f.Get("sk_90cl")        );
      set_contour_style(minos2011_68cl, kBlack,     2, 3);
      set_contour_style(minos2011_90cl, kBlack,     2, 1);
      set_contour_style(skle_90cl,      kMagenta-3, 2, 1);
      set_contour_style(sk_90cl,        kGreen+2,   2, 1);
-     minos2011_90cl->Draw("l");
-     minos2011_68cl->Draw("l");
-     skle_90cl->Draw("l");
-     sk_90cl->Draw("l");
+     if(show_68cl) {
+       minos2011_68cl->Draw("l");
+     }
+     if(show_90cl) {
+       minos2011_90cl->Draw("l");
+       skle_90cl->Draw("l");
+       sk_90cl->Draw("l");
+     }
      f.Close();
   }
+    
+
+  // build legend labels
+  TString fc_68cl_statsyst = "Feldman-Cousins 68% CL (stat+syst)";
+  TString fc_90cl_statsyst = "Feldman-Cousins 90% CL (stat+syst)";
+  TString fc_95cl_statsyst = "Feldman-Cousins 95% CL (stat+syst)";
+  TString fc_99cl_statsyst = "Feldman-Cousins 99% CL (stat+syst)";
+  TString fc_68cl_statonly = "Feldman-Cousins 68% CL (stat)";
+  TString fc_90cl_statonly = "Feldman-Cousins 90% CL (stat)";
+  TString fc_95cl_statonly = "Feldman-Cousins 95% CL (stat)";
+  TString fc_99cl_statonly = "Feldman-Cousins 99% CL (stat)";
+  TString pl_68cl_statonly = "Plain (const. #Delta#chi^{2}_{crit.}(=2.30)) 68% CL (stat)";
+  TString pl_90cl_statonly = "Plain (const. #Delta#chi^{2}_{crit.}(=4.61)) 90% CL (stat)";
+  TString pl_95cl_statonly = "Plain (const. #Delta#chi^{2}_{crit.}(=5.99)) 95% CL (stat)";
+  TString pl_99cl_statonly = "Plain (const. #Delta#chi^{2}_{crit.}(=9.21)) 99% CL (stat)";
+    
+  const char * label = 0;
+  if(label) {
+    fc_68cl_statsyst = TString(label) + TString(", ") + fc_68cl_statsyst;
+    fc_90cl_statsyst = TString(label) + TString(", ") + fc_90cl_statsyst;
+    fc_95cl_statsyst = TString(label) + TString(", ") + fc_95cl_statsyst;
+    fc_99cl_statsyst = TString(label) + TString(", ") + fc_99cl_statsyst;
+    fc_68cl_statonly = TString(label) + TString(", ") + fc_68cl_statonly;
+    fc_90cl_statonly = TString(label) + TString(", ") + fc_90cl_statonly;
+    fc_95cl_statonly = TString(label) + TString(", ") + fc_95cl_statonly;
+    fc_99cl_statonly = TString(label) + TString(", ") + fc_99cl_statonly;
+    pl_68cl_statonly = TString(label) + TString(", ") + pl_68cl_statonly;
+    pl_90cl_statonly = TString(label) + TString(", ") + pl_90cl_statonly;     
+    pl_95cl_statonly = TString(label) + TString(", ") + pl_95cl_statonly;
+    pl_99cl_statonly = TString(label) + TString(", ") + pl_99cl_statonly;
+  }  
+
 
   TLegend * legend = new TLegend(0.17,0.72,0.36,0.9);
   legend->SetFillColor(0);
+
   if(show_contours_with_systematics) {
-    if(show_68cl) { legend->AddEntry(hCL68StatSyst[0], "T2K 1.459E+20 POT, Feldman-Cousins 68% CL (stat+syst)"); }
-    if(show_90cl) { legend->AddEntry(hCL90StatSyst[0], "T2K 1.459E+20 POT, Feldman-Cousins 90% CL (stat+syst)"); }
-    if(show_95cl) { legend->AddEntry(hCL95StatSyst[0], "T2K 1.459E+20 POT, Feldman-Cousins 95% CL (stat+syst)"); }
-    if(show_99cl) { legend->AddEntry(hCL99StatSyst[0], "T2K 1.459E+20 POT, Feldman-Cousins 99% CL (stat+syst)"); }
+    if(show_99cl) { legend->AddEntry(hCL99StatSyst[0], fc_99cl_statsyst.Data(), "L");  }
+    if(show_95cl) { legend->AddEntry(hCL95StatSyst[0], fc_95cl_statsyst.Data(), "L");  }
+    if(show_90cl) { legend->AddEntry(hCL90StatSyst[0], fc_90cl_statsyst.Data(), "L");  }
+    if(show_68cl) { legend->AddEntry(hCL68StatSyst[0], fc_68cl_statsyst.Data(), "L");  }
   }
-  if(show_68cl) { legend->AddEntry(hCL68StatOnly[0], "T2K 1.459E+20 POT, Feldman-Cousins 68% CL (stat)");      }
-  if(show_90cl) { legend->AddEntry(hCL90StatOnly[0], "T2K 1.459E+20 POT, Feldman-Cousins 90% CL (stat)");      }
-  if(show_95cl) { legend->AddEntry(hCL95StatOnly[0], "T2K 1.459E+20 POT, Feldman-Cousins 95% CL (stat)");      }
-  if(show_99cl) { legend->AddEntry(hCL99StatOnly[0], "T2K 1.459E+20 POT, Feldman-Cousins 99% CL (stat)");      }
+  if(show_contours_without_systematics) {
+    if(show_99cl) { legend->AddEntry(hCL99StatOnly[0], fc_99cl_statonly.Data(), "L");  }
+    if(show_95cl) { legend->AddEntry(hCL95StatOnly[0], fc_95cl_statonly.Data(), "L");  }
+    if(show_90cl) { legend->AddEntry(hCL90StatOnly[0], fc_90cl_statonly.Data(), "L");  }
+    if(show_68cl) { legend->AddEntry(hCL68StatOnly[0], fc_68cl_statonly.Data(), "L");  }
+  }
   if(show_constant_dchisq_contours) {
-    if(show_68cl) { legend->AddEntry(hCL68StatOnlyNonFC[0], "T2K 1.459E+20 POT, Plain (constant #Delta#chi^{2}_{crit.}(=2.30)) 68% CL (stat)");      }
-    if(show_90cl) { legend->AddEntry(hCL90StatOnlyNonFC[0], "T2K 1.459E+20 POT, Plain (constant #Delta#chi^{2}_{crit.}(=4.61)) 90% CL (stat)");      }
-    if(show_95cl) { legend->AddEntry(hCL95StatOnlyNonFC[0], "T2K 1.459E+20 POT, Plain (constant #Delta#chi^{2}_{crit.}(=5.99)) 95% CL (stat)");      }
-    if(show_99cl) { legend->AddEntry(hCL99StatOnlyNonFC[0], "T2K 1.459E+20 POT, Plain (constant #Delta#chi^{2}_{crit.}(=9.21)) 99% CL (stat)");      }
+    if(show_99cl) { legend->AddEntry(hCL99StatOnlyNonFC[0], pl_68cl_statonly.Data(), "L");  }
+    if(show_95cl) { legend->AddEntry(hCL95StatOnlyNonFC[0], pl_68cl_statonly.Data(), "L");  }
+    if(show_90cl) { legend->AddEntry(hCL90StatOnlyNonFC[0], pl_68cl_statonly.Data(), "L");  }
+    if(show_68cl) { legend->AddEntry(hCL68StatOnlyNonFC[0], pl_68cl_statonly.Data(), "L");  }
   }
   if(show_external_contours) {
-    legend->AddEntry(minos2011_68cl, "MINOS 2011 (7.25E+20 POT), 68% CL");
-    legend->AddEntry(minos2011_90cl, "MINOS 2011 (7.25E+20 POT), 90% CL");
-    legend->AddEntry(sk_90cl,        "Super-K, 90% CL");
-    legend->AddEntry(skle_90cl,      "Super-K L/E, 90% CL");
+    if(show_90cl) {
+      legend->AddEntry(minos2011_90cl, "MINOS 2011 (7.25E+20 POT), 90% CL");
+      legend->AddEntry(sk_90cl,        "Super-K, 90% CL");
+      legend->AddEntry(skle_90cl,      "Super-K L/E, 90% CL");
+    }
+    if(show_68cl) {
+      legend->AddEntry(minos2011_68cl, "MINOS 2011 (7.25E+20 POT), 68% CL");
+    }
   }
   legend->SetBorderSize(0);
   legend->Draw();
