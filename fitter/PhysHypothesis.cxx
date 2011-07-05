@@ -4,102 +4,107 @@
 
  @ 06/06/2011 - CA
    PhysHypothesis class added so as to simplify SuperMC
-
+ @ 21/06/2011 - CA
+   Add PhysHypothesis::Copy(const PhysHypothesis & ph).
+ @ 05/07/2011 - CA
+   The class was restructured, using the conv::PhysHypothesis_t enumeration and an STL
+   map to store the actual params. The interface for setting/getting param values matched 
+   the one in FitParamList.
 */
 //________________________________________________________________________________________
 
 #include "PhysHypothesis.h"
 
 using namespace t2kana;
+using namespace t2kana::conv;
 
 //________________________________________________________________________________________
-PhysHypothesis::PhysHypothesis()
+PhysHypothesis::PhysHypothesis(PhysHypothesis_t h)
 {
-  this->Init();
+  this->Init(h);
+}
+//________________________________________________________________________________________
+PhysHypothesis::PhysHypothesis(const FitParamList & fp)
+{
+  if( fp.Exists(kPhypDm23sq) && fp.Exists(kPhypSinsq2Theta23) ) 
+  {
+    this->Init(kHypNuMuDisapp2F);
+    this->SetCurrValue(kPhypDm23sq,        fp.CurrValue(kPhypDm23sq));
+    this->SetCurrValue(kPhypSinsq2Theta23, fp.CurrValue(kPhypSinsq2Theta23));
+  }
+  else
+  if( fp.Exists(kPhypAlphaDecay) && fp.Exists(kPhypSinsq2Theta23) )
+  {
+    this->Init(kHypDecay);
+    this->SetCurrValue(kPhypAlphaDecay,    fp.CurrValue(kPhypAlphaDecay));
+    this->SetCurrValue(kPhypSinsq2Theta23, fp.CurrValue(kPhypSinsq2Theta23));
+  }
+  else
+  if( fp.Exists(kPhypMusqDecoherence) && fp.Exists(kPhypSinsq2Theta23) )
+  {
+    this->Init(kHypDecoh);
+    this->SetCurrValue(kPhypMusqDecoherence, fp.CurrValue(kPhypMusqDecoherence));
+    this->SetCurrValue(kPhypSinsq2Theta23,   fp.CurrValue(kPhypSinsq2Theta23));
+  }
+  else {  
+    this->Init(kHypUndefined);
+  }
 }
 //________________________________________________________________________________________
 PhysHypothesis::~PhysHypothesis()
 {
+  fHypothesis = kHypUndefined;
+  fParams.clear();
+}
+//________________________________________________________________________________________
+double PhysHypothesis::CurrValue(PhysParamId_t p) const
+{
+  map<int,double>::const_iterator it = fParams.find(p);
+  if(it == fParams.end()) {
+     exit(1);
+  } 
+  return it->second;
+}
+//________________________________________________________________________________________
+void PhysHypothesis::SetCurrValue(PhysParamId_t p, double v)
+{
+  fParams[p] = v;
+}
+//________________________________________________________________________________________
+void PhysHypothesis::Copy(const PhysHypothesis & ph)
+{
+  this->Init(ph.fHypothesis);
+  map<int,double>::const_iterator it = ph.fParams.begin();
+  for( ; it != ph.fParams.end(); ++it) {
+     fParams[it->first] = it->second;
+  }
+}
+//________________________________________________________________________________________
+void PhysHypothesis::Init(PhysHypothesis_t h)
+{
+  fHypothesis = h;
 
-}
-//________________________________________________________________________________________
-void PhysHypothesis::EnableOscillations(bool on_off) 
-{ 
-  fHaveNuOsc   = on_off; 
-}
-//________________________________________________________________________________________
-void PhysHypothesis::EnableDecay(bool on_off) 
-{ 
-  fHaveNuDecay = on_off; 
-}
-//________________________________________________________________________________________
-void PhysHypothesis::EnableDecoherence(bool on_off) 
-{ 
-  fHaveNuDecoh = on_off; 
-}
-//________________________________________________________________________________________
-void PhysHypothesis::UseOscillationParams(double sinsq2theta23, double dm23sq) 
-{ 
-  fCurrSinsq2Theta23 = sinsq2theta23; 
-  fCurrDm23sq        = dm23sq; 
-}
-//________________________________________________________________________________________
-void PhysHypothesis::UseDecayParams(double sinsq2theta23, double alpha ) 
-{ 
-  fCurrSinsq2Theta23 = sinsq2theta23;
-  fCurrAlphaDecay    = alpha;  
-}
-//________________________________________________________________________________________
-void PhysHypothesis::UseDecoherenceParams(double sinsq2theta23, double musq) 
-{ 
-  fCurrSinsq2Theta23 = sinsq2theta23; 
-  fCurrMusqDecoh     = musq;   
-}
-//________________________________________________________________________________________
-bool PhysHypothesis::Oscillations(void) const
-{
-  return fHaveNuOsc;
-}
-//________________________________________________________________________________________
-bool PhysHypothesis::Decay(void) const
-{
-  return fHaveNuDecay;
-}
-//________________________________________________________________________________________
-bool PhysHypothesis::Decoherence(void) const
-{
-  return fHaveNuDecoh;
-}
-//________________________________________________________________________________________
-double PhysHypothesis::CurrSinsq2Theta23(void) const
-{
-  return fCurrSinsq2Theta23;
-}
-//________________________________________________________________________________________
-double PhysHypothesis::CurrDm23sq(void) const
-{
-  return fCurrDm23sq;
-}
-//________________________________________________________________________________________
-double PhysHypothesis::CurrAlphaDecay(void) const
-{
-  return fCurrAlphaDecay;
-}
-//________________________________________________________________________________________
-double PhysHypothesis::CurrMusqDecoh(void) const
-{
-  return fCurrMusqDecoh;
-}
-//________________________________________________________________________________________
-void PhysHypothesis::Init(void)
-{
-  fHaveNuOsc         = true;
-  fHaveNuDecay       = false;
-  fHaveNuDecoh       = false;
-  fCurrSinsq2Theta23 = 0.;
-  fCurrDm23sq        = 0.;
-  fCurrAlphaDecay    = 0.;
-  fCurrMusqDecoh     = 0.;  
+  fParams.clear();
+
+  // neutrino decay 
+  if(fHypothesis == kHypDecay) {
+    fParams[kPhypSinsq2Theta23]   = 0;
+    fParams[kPhypAlphaDecay]      = 0;
+  }
+  // neutrino decoherence 
+  if(fHypothesis == kHypDecoh) {
+    fParams[kPhypSinsq2Theta23]   = 0;
+    fParams[kPhypMusqDecoherence] = 0;
+  }
+  // numu disappearance, 2-flavour neutrino oscillation framework 
+  if(fHypothesis == kHypNuMuDisapp2F) {
+    fParams[kPhypSinsq2Theta23] = 0;
+    fParams[kPhypDm23sq]        = 0;
+  }
+  // neutrino oscillations (3-flavour framework)
+  if(fHypothesis == kHypOsc3F) {
+  }
+
 }
 //________________________________________________________________________________________
 

@@ -7,13 +7,8 @@
           they can be passed to the minuit fitting function via 
           TMinuit::Set/GetObjectFit();
 
-\author   STFC, Rutherford Appleton Laboratory / Oxford T2K groups
-
-          Costas Andreopoulos <costas.andreopoulos \at stfc.ac.uk>
-          Jelena Ilic         <Jelena.Ilic \at stfc.ac.uk>
-          Nick Grant          <nick.grant \at stfc.ac.uk>
-          Geoff Pearce        <geoff.pearce \at stfc.ac.uk>
-          Alfons Weber        <alfons.weber \at stfc.ac.uk>
+\author   Costas Andreopoulos <costas.andreopoulos \at stfc.ac.uk>
+          STFC, Rutherford Appleton Laboratory
 
 \created  October 20, 2010
 
@@ -25,7 +20,7 @@
 
 #include <TObject.h>
 
-#include "PhysParamList.h"
+#include "FitParamList.h"
 
 namespace t2kana {
 
@@ -35,23 +30,23 @@ class SuperkExpectation;
 class FitInputs: public TObject 
 {
 public :
-  FitInputs(SuperkObservation * o, SuperkExpectation * e, PhysParamList * p);
+  FitInputs(SuperkObservation * o, SuperkExpectation * e, FitParamList * p);
  ~FitInputs();
 
   SuperkObservation & Observation(void);
   SuperkExpectation & Expectation(void);
-  PhysParamList &     FitParams  (void);
+  FitParamList &      FitParams  (void);
 
   // judge the agreement between the input data and the current prediction
-  double Chisquare(Option_t * opt = "poisson");
+  double Chisquare (Option_t * opt = "poisson");
       
 private:
 
   SuperkObservation * fObs;
   SuperkExpectation * fExp;
-  PhysParamList *     fFitParams;
+  FitParamList *      fFitParams;
 
-ClassDef(FitInputs, 2)
+ClassDef(FitInputs, 3)
 
 };
 

@@ -186,7 +186,7 @@ bool SuperkObservation::Read(string config_file, int data_set_id)
 }
 //________________________________________________________________________________________
 void SuperkObservation::CreateMockData(
-      SuperkExpectation & skexp, const PhysParamList & fp, bool fluctuate)
+      SuperkExpectation & skexp, const FitParamList & fp, bool fluctuate)
 {
   // Get observed reconstructed energy distribution
 

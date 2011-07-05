@@ -23,7 +23,7 @@ void calculate_dataset_probability(
   cout << "Reading analysis configuration from: " << config << endl;
 
   // fit params
-  PhysParamList * fparm = PhysParamList::NumuDisapFitNoSyst();
+  FitParamList * fparm = FitParamList::NumuDisapFitNoSyst();
   fparm->Update(t2kana::conv::kPhypSinsq2Theta23, input_sinsq2theta23);
   fparm->Update(t2kana::conv::kPhypDm23sq,        input_dm23sq);
 

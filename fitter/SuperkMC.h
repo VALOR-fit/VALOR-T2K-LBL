@@ -5,13 +5,8 @@
 
 \brief    SuperK Monte Carlo templates
 
-\author   STFC, Rutherford Appleton Laboratory / Oxford T2K groups
-
-          Costas Andreopoulos <costas.andreopoulos \at stfc.ac.uk>
-          Jelena Ilic         <Jelena.Ilic \at stfc.ac.uk>
-          Nick Grant          <nick.grant \at stfc.ac.uk>
-          Geoff Pearce        <geoff.pearce \at stfc.ac.uk>
-          Alfons Weber        <alfons.weber \at stfc.ac.uk>
+\author   Costas Andreopoulos <costas.andreopoulos \at stfc.ac.uk>
+          STFC, Rutherford Appleton Laboratory
 
 \created  March 15, 2011
 
@@ -67,7 +62,7 @@ public:
   // Systematic variations
   void TweakEnergyScale                 (double twkdial);
   void TweakOtherEfficiencyCCQE         (double twkdial); ///< all but ring-counting
-  void TweakRingCountingEfficiencyCCQE  (bool force_input_twkdials=false, double twkdial1=0, double twkdial2=0, double twkdial3=0); 
+  void TweakRingCountingEfficiencyCCQE  (bool force_input_twkdials=false, double twkdial1=0, double twkdial2=0, double twkdial3=0, bool correlated=true); 
   void TweakEfficiencyCCnonQE           (double twkdial);
   void TweakEfficiencyNC                (double twkdial);
   void TweakEfficiencyNuECC             (double twkdial);

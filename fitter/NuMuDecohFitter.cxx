@@ -5,6 +5,10 @@
  @ 16/03/2011 - CA
    Removed the numu10a namespace. Renamed: DecohFitter->NuMuDecohFitter.
    The FitInputs classs is no longer nested in the fitter class.
+ @ 05/07/2011 - CA
+   PhysParamList was renamed to FitParamList so that distinction between the two
+   SuperkExpectation interfaces is clear. Adapt the fitter.
+   Use FitterABC as base class.
 
 */ 
 //____________________________________________________________________________
@@ -34,7 +38,7 @@
 #include "SuperkObservation.h" 
 #include "SuperkExpectation.h" 
 #include "FitInputs.h" 
-#include "PhysParamList.h" 
+#include "FitParamList.h" 
 #include "Utilities.h"
 #include "Conventions.h"
 
@@ -47,13 +51,16 @@ using namespace t2kana;
 using namespace t2kana::conv;
    
 //____________________________________________________________________________ 
-NuMuDecohFitter::NuMuDecohFitter() 
+NuMuDecohFitter::NuMuDecohFitter() :
+FitterABC()
 {
   this->Init();
 }
 //____________________________________________________________________________ 
 NuMuDecohFitter::NuMuDecohFitter(
-   FitInputs * fit_inputs, Option_t * option) {
+   FitInputs * fit_inputs, Option_t * option) :
+FitterABC()
+{
   this->Init();
   this->SetInputs(fit_inputs);
   this->PrepareFitter(option);
@@ -104,7 +111,7 @@ void NuMuDecohFitter::PrepareFitter(Option_t * option)
 
   fOption = option;
 
-  PhysParamList & fit_params = fFitInputs->FitParams();
+  FitParamList & fit_params = fFitInputs->FitParams();
 
   if(fOption.Contains("minuit")) {
     // get fitter

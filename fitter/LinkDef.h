@@ -19,10 +19,11 @@
 #pragma link C++ class t2kana::ND280Measurement;
 #pragma link C++ class t2kana::NuFlux;
 #pragma link C++ class t2kana::NuXSec;
-#pragma link C++ class t2kana::PhysParamList;
 #pragma link C++ class t2kana::NuMuDisappFitter;
 #pragma link C++ class t2kana::NuMuDecayFitter;
 #pragma link C++ class t2kana::NuMuDecohFitter;
+#pragma link C++ class t2kana::FitterABC;
+#pragma link C++ class t2kana::FitParamList;
 #pragma link C++ class t2kana::FitInputs;
 #pragma link C++ class t2kana::PhysHypothesis;
 

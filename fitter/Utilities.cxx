@@ -3,9 +3,14 @@
  Changes since v1.0.0:
 
  @ 06/06/11
- Added UseEventToFillInTemplate(SuperkMode_t m, int pdg, int reaction_mode)
- to simplify SuperkMC class.
- 
+   Added UseEventToFillInTemplate(SuperkMode_t m, int pdg, int reaction_mode)
+   to simplify SuperkMC class.
+ @ 05/07/11
+   Added CholeskyCalculateCorrelatedParamVariations (TMatrixD& L, TVectorD & 
+   g_uncorrelated) to allow fitting for systematics handled using the Cholesky
+   method (fitting for the de-correlated params).
+   Added nuisance params in AsString(PhysParamId_t p).
+
 */
 //____________________________________________________________________________
 
@@ -101,9 +106,6 @@ double t2kana::util::ChisqGauss(
   double ndata, double nmc)
 {
   double chisq = 0.;
-//  if(ndata>0) {
-//    chisq = TMath::Power(ndata-nmc,2.)/ndata;
-//  }
   if(nmc>0) {
     chisq = TMath::Power(ndata-nmc,2.)/nmc;
   }
@@ -113,8 +115,6 @@ double t2kana::util::ChisqGauss(
 double t2kana::util::ChisqPoisson(
   double ndata, double nmc)
 {
-  //assert(nmc >= 0. && ndata >= 0.);
-
   if(nmc <= 0. || ndata <= 0.) return 2.*(nmc-ndata);
   return (2. * (nmc-ndata) + 2. * ndata * TMath::Log(ndata/nmc));
 }
@@ -392,15 +392,73 @@ TVectorD t2kana::util::CholeskyGenerateCorrelatedParamVariations (
   return g;
 }
 //____________________________________________________________________________
+TVectorD t2kana::util::CholeskyCalculateCorrelatedParamVariations (
+    TMatrixD& cholesky_triangular, TVectorD & g_uncorrelated) 
+{
+// Generate a vector of correlated params
+
+  int ncols = cholesky_triangular.GetNcols();
+  int nrows = cholesky_triangular.GetNrows();
+  int npars = g_uncorrelated.GetNrows();
+
+  assert(ncols==nrows);
+  assert(npars==nrows);
+
+  // create a vector of unit Gaussian variables
+  // and multiply by Lt to introduce the appropriate correlations
+  TVectorD g(g_uncorrelated);
+  g *= cholesky_triangular;
+
+#ifdef __debug_level_3__
+  cout << "Util >> Tweak vector size = " << g.GetNrows() << endl;
+#endif
+
+  return g;
+}
+//____________________________________________________________________________
 string t2kana::util::AsString(PhysParamId_t p)
 {
   switch(p) {
-    case ( kPhypSinsq2Theta23  ) : return "sinsq2theta23"; break;
-    case ( kPhypDm23sq         ) : return "dm23sq";        break;
-    case ( kPhypNorm           ) : return "norm";          break;
-    case ( kPhypAlphaDecay     ) : return "alpha_decay";   break;
-    case ( kPhypMusqDecoherence) : return "musq_decoh";    break;
-    default                      : return "--";
+    case ( kPhypSinsq2Theta23     ) : return "sinsq2theta23";        break;
+    case ( kPhypDm23sq            ) : return "|dm23sq|";             break;
+    case ( kPhypAlphaDecay        ) : return "alpha_decay";          break;
+    case ( kPhypMusqDecoherence   ) : return "musq_decoh";           break;
+    case ( kNuisSuperkEffCCQEoth  ) : return "sk_eff_ccqe_oth";      break;
+    case ( kNuisSuperkEffCCQErc0u ) : return "sk_eff_ccqe_rc_0u";    break;
+    case ( kNuisSuperkEffCCQErc1u ) : return "sk_eff_ccqe_rc_1u";    break;
+    case ( kNuisSuperkEffCCQErc2u ) : return "sk_eff_ccqe_rc_2u";    break;
+    case ( kNuisSuperkEffCCnonQE  ) : return "sk_eff_ccnonqe";       break;
+    case ( kNuisSuperkEffNC       ) : return "sk_eff_nc";            break;
+    case ( kNuisSuperkEffNueCC    ) : return "sk_eff_nuecc";         break;
+    case ( kNuisSuperkEnergyScale ) : return "sk_energy_scale";      break;
+    case ( kNuisNd280Eff          ) : return "nd280_eff";            break;
+    case ( kNuisFluxNorm          ) : return "flux_norm";            break;
+    case ( kNuisFluxShapeNuMu0u   ) : return "flux_shape_numu_0u";   break;
+    case ( kNuisFluxShapeNuMu1u   ) : return "flux_shape_numu_1u";   break;
+    case ( kNuisFluxShapeNuMu2u   ) : return "flux_shape_numu_2u";   break;
+    case ( kNuisFluxShapeNuMu3u   ) : return "flux_shape_numu_3u";   break;
+    case ( kNuisFluxShapeNuMu4u   ) : return "flux_shape_numu_4u";   break;
+    case ( kNuisFluxShapeNuMu5u   ) : return "flux_shape_numu_5u";   break;
+    case ( kNuisFluxShapeNuMu6u   ) : return "flux_shape_numu_6u";   break;
+    case ( kNuisFluxShapeNuMu7u   ) : return "flux_shape_numu_7u";   break;
+    case ( kNuisFluxShapeNuMu8u   ) : return "flux_shape_numu_8u";   break;
+    case ( kNuisFluxShapeNuMu9u   ) : return "flux_shape_numu_9u";   break;
+    case ( kNuisFluxShapeNuMu10u  ) : return "flux_shape_numu_10u";  break;
+    case ( kNuisFluxShapeNuMu11u  ) : return "flux_shape_numu_11u";  break;
+    case ( kNuisFluxShapeNuMu12u  ) : return "flux_shape_numu_12u";  break;
+    case ( kNuisFluxShapeNuMu13u  ) : return "flux_shape_numu_13u";  break;
+    case ( kNuisFluxShapeNuMu14u  ) : return "flux_shape_numu_14u";  break;
+    case ( kNuisFluxShapeNuMu15u  ) : return "flux_shape_numu_15u";  break;
+    case ( kNuisFluxShapeNuMu16u  ) : return "flux_shape_numu_16u";  break;
+    case ( kNuisFluxShapeNuMu17u  ) : return "flux_shape_numu_17u";  break;
+    case ( kNuisFluxShapeNuMu18u  ) : return "flux_shape_numu_18u";  break;
+    case ( kNuisXSecCCQE          ) : return "xsec_ccqe";            break;
+    case ( kNuisXSecCC1piToCCQE   ) : return "xsec_cc1pi_ccqe";      break;
+    case ( kNuisXSecCCothToCCQE   ) : return "xsec_ccoth_ccqe";      break;
+    case ( kNuisXSecNCToCCQE      ) : return "xsec_nc_ccqe";         break;
+    case ( kNuisXSecNuclEffect    ) : return "xsec_nucl_effect";     break;
+    default : 
+      return "--";
   }
   return "--";
 }

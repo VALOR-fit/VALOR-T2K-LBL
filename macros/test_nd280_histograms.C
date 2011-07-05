@@ -118,5 +118,13 @@ void test_nd280_histograms
 	  h20 -> Integral () +
 	  h21 -> Integral ();
 
-  cout << "N_{exp}             = " << nexp           << endl;
+  cout << "N_{exp} = " << nexp << endl;
+
+  double nexp_qe = 
+   	  h01 -> Integral () +
+   	  h08 -> Integral () +
+   	  h15 -> Integral ();
+
+  cout << "N_{exp;QE} = " << nexp_qe << endl;
+
 }

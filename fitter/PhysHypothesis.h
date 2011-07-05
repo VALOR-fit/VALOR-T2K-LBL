@@ -3,16 +3,10 @@
    
 \class    t2kana::PhysHypothesis
       
-\brief    An hypothesis for the fitted SuperK distributions (oscillation,
-          decay, decoherence)
+\brief    A physics hypothesis (oscillations, decay, decoherence, ...)
    
-\author   STFC, Rutherford Appleton Laboratory / Oxford T2K groups
-  
-          Costas Andreopoulos <costas.andreopoulos \at stfc.ac.uk>
-          Jelena Ilic         <Jelena.Ilic \at stfc.ac.uk>
-          Nick Grant          <nick.grant \at stfc.ac.uk>
-          Geoff Pearce        <geoff.pearce \at stfc.ac.uk>
-          Alfons Weber        <alfons.weber \at stfc.ac.uk>   
+\author   Costas Andreopoulos <costas.andreopoulos \at stfc.ac.uk>
+          STFC, Rutherford Appleton Laboratory
 
 \created  June 06, 2011
 
@@ -22,42 +16,34 @@
 #ifndef _t2kana_phys_hypothesis_h_
 #define _t2kana_phys_hypothesis_h_
 
+#include <map>
+
 #include "Conventions.h"
+#include "FitParamList.h"
+
+using std::map;
 
 namespace t2kana {
 
 class PhysHypothesis
 {
 public:
-   PhysHypothesis();
+   PhysHypothesis(conv::PhysHypothesis_t h = conv::kHypUndefined);
+   PhysHypothesis(const FitParamList & fp);
   ~PhysHypothesis();
 
-  void EnableOscillations   (bool on_off);
-  void EnableDecay          (bool on_off);
-  void EnableDecoherence    (bool on_off);
-  void UseOscillationParams (double sinsq2theta23, double dm23sq); 
-  void UseDecayParams       (double sinsq2theta23, double alpha ); 
-  void UseDecoherenceParams (double sinsq2theta23, double musq  ); 
+   void Init (conv::PhysHypothesis_t h);
+   void Copy (const PhysHypothesis & ph);
 
-  bool   Oscillations      (void) const; ///<
-  bool   Decay             (void) const; ///<
-  bool   Decoherence       (void) const; ///<
-  double CurrSinsq2Theta23 (void) const; ///<
-  double CurrDm23sq        (void) const; ///<
-  double CurrAlphaDecay    (void) const; ///<
-  double CurrMusqDecoh     (void) const; ///<
+   conv::PhysHypothesis_t Hypothesis (void) const { return fHypothesis; }
+
+   double CurrValue    (conv::PhysParamId_t p) const;
+   void   SetCurrValue (conv::PhysParamId_t p, double v);
 
 private:
 
-  void Init(void);
-
-  bool    fHaveNuOsc;
-  bool    fHaveNuDecay;
-  bool    fHaveNuDecoh;
-  double  fCurrSinsq2Theta23;
-  double  fCurrDm23sq;
-  double  fCurrAlphaDecay;
-  double  fCurrMusqDecoh;  
+   conv::PhysHypothesis_t fHypothesis;
+   map<int,double>        fParams;
 };
 
 } // t2kana

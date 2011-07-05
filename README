@@ -71,14 +71,16 @@ make sure there are NO spaces within ''.
 
 * RELEASES & CHANGELOG
 
-Version:
 
-- 2010_v1.0.0
-
+Version: 2010_v1.0.0
+............................................................................................................................
 This is the code which was used for the 2010 0.323E+20 POT muon-disappearance analysis.
 Details may be found in T2K-TN-36 (v4).
 
-- 2010_v2.0.0 (<-- currently the `trunk')
+
+
+Version: 2010_v2.0.0 
+............................................................................................................................
 
 This is the code which was used for the 2010 1.431E+20 POT muon-disappearance analysis.
 
@@ -109,25 +111,19 @@ The following changes were installed (wrt 2010_v1.0.0) :
     25.5% -->  20.0%
   numu/nutau NC eff. err.: 
     115.1% --> 111.0%
-  Details are given in:
-  http://www-he.scphys.kyoto-u.ac.jp/member/masashi.o/SK/doc/RCerror_technote/SKnumuRCerror_v2.1.pdf
+  Details are given in: T2K-TN-65
 > Used revised SuperK energy scale error (1% --> 2.3%) computed by Obayashi.
-  ??ref??
+  Details are given in: ?
 > Added analysis configuration files for Run1-only, Run2-only and Run1+Run2 analysis, both for NEUT and GENIE. 
   The Run1+Run2 flux is a POT-weighted 10d_v3 flux (taking into account Run1 and Run2 flux differences).
 
 In addition, the code structure was modified significantly (to allow for future 2011 analysis improvements).
-Details may be found in T2K-TN-???.
+Details may be found in T2K-TN-64.
 
 
+Version: 2010_v2.1.0 (current trunk)
+............................................................................................................................
 
-Planned *future* releases:
-
-- 2010_v3.0.0 
-
-2010 1.431E+20-POT 3-flavour muon-disappearance analysis.
-
-- 2010_v4.0.0 
-
-2010 1.431E+20-POT joint 3-flavour muon-disappearance / electron-appearance analysis.
+Similar to 2010_v2.0.0 with the added capability to fit for systematics
+Some structural changes.
 

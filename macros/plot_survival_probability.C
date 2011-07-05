@@ -15,7 +15,7 @@ void plot_survival_probability()
 
   const int n = 1000;
   double emin = 0.05;
-  double emax = 4.00;
+  double emax = 10.00;
   double de   = (emax-emin)/(n-1);
 
   double surv_prob_disap[n];

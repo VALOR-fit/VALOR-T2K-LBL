@@ -8,6 +8,9 @@
  @ 28/03/2011 - CA
    In Chisquare(), make it clear that we are fitting only the 1-R mu-like sample at this
    point.
+ @ 05/07/2011 - CA
+   Adapt code since PhysParamList was renamed to FitParamList. Added penalty term in
+   chi^2 since fitting for systematics in now enabled.
 */
 //________________________________________________________________________________________
 
@@ -38,7 +41,7 @@ ClassImp(FitInputs)
 
 //________________________________________________________________________________________
 FitInputs::FitInputs(
-  SuperkObservation * skobs, SuperkExpectation * skexp, PhysParamList * fpar) :
+  SuperkObservation * skobs, SuperkExpectation * skexp, FitParamList * fpar) :
 fObs(skobs), 
 fExp(skexp), 
 fFitParams(fpar) 
@@ -61,7 +64,7 @@ SuperkExpectation & FitInputs::Expectation(void)
   return *fExp;       
 }
 //________________________________________________________________________________________
-PhysParamList & FitInputs::FitParams(void) 
+FitParamList & FitInputs::FitParams(void) 
 { 
   return *fFitParams; 
 }
@@ -99,9 +102,16 @@ double FitInputs::Chisquare(Option_t * option)
 
   }//ibin
 
-#ifdef __debug_level_2__
-  cout << "FitInputs::Chisquare()> chisq = " << chisq << endl;
-#endif
+  // add penalty term for parameters declared as nuisance (and having values
+  // in units of sigma)
+  double chisq_penalty = this->FitParams().ChisquarePenaltyTerm();
+  chisq += chisq_penalty;
+
+//#ifdef __debug_level_2__
+  cout << "FitInputs::Chisquare()> chisq = " << chisq 
+       << " (contribution from penalty term = " << chisq_penalty << ")" 
+       << endl;
+//#endif
 
   return chisq;
 }
@@ -114,9 +124,9 @@ void t2kana::FitFunc (
   FitInputs * inputs = (FitInputs *) gMinuit->GetObjectFit();
 
   // get fit params
-  PhysParamList & fpar = inputs->FitParams(); 
+  FitParamList & fpar = inputs->FitParams(); 
 
-  // synchronize PhysParamList with the paramerer array used by MINUIT
+  // synchronize FitParamList with the paramerer array used by MINUIT
   fpar.Sync(par);
 
   // judge the agreement between the data and the current prediction

@@ -24,10 +24,10 @@ void test_superk_spectrum_prediction_twk_bshape
   cout << "Reading analysis configuration from: " << config << endl;
 
   const int nexp       = 1000; // number of 'flux tweaks'
-  const int netruebins = 20;   // number of Etrue (variable size) bins in flux covariance matrix
+  const int netruebins = 19;   // number of Etrue (variable size) bins in flux covariance matrix
   // beam WG binning:
   double bin_edges[netruebins+1] = {
-    0.0, 0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 1.0, 1.2, 1.5, 2.0, 2.5, 3.0, 3.5, 4.0, 5.0, 7.0, 10.0, 9999999.9};
+    0.0, 0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 1.0, 1.2, 1.5, 2.0, 2.5, 3.0, 3.5, 4.0, 5.0, 7.0, 10.0 };
 
   // output histograms and graphs
   TH1D * hEreco [nexp];  //
@@ -43,21 +43,22 @@ void test_superk_spectrum_prediction_twk_bshape
   SuperkExpectation skexp;
   skexp.Read(config);
 
-  // phys params
-  PhysParamList * fparm = PhysParamList::NumuDisapFitNoSyst();
-  fparm->Update(t2kana::conv::kPhypSinsq2Theta23, input_sinsq2theta23);
-  fparm->Update(t2kana::conv::kPhypDm23sq,        input_dm23sq);
+  // physics hypothesis 
+  PhysHypothesis ph(t2kana::conv::kHypNuMuDisapp2F);
+  ph.SetCurrValue(t2kana::conv::kPhypSinsq2Theta23, input_sinsq2theta23);
+  ph.SetCurrValue(t2kana::conv::kPhypDm23sq,        input_dm23sq);
 
   // generate nexp random spectra
   for(int iexp = 0; iexp < nexp; iexp++) {
      // tweak spectrum generation model
-     cout << "*** twk.nu: " << iexp << endl;
+     cout << "** iteration: " << iexp << endl;
      if(iexp>0) {
        // use 0^th entry to store the untweaked SK reco energy spectrum
        skexp.GetNuFlux()->TweakShape();       
      }
      // generate predictions
-     skexp.Generate(*fparm);
+     cout << "Generating SK predictions " << endl;
+     skexp.Generate(ph);
      // store spectrum
      hEreco[iexp] = new TH1D(*skexp.CurrPredictedErecoSpectrum(conv::kSKsFCFV1RingMuLike));
      hEreco[iexp]->SetDirectory(0);
@@ -98,17 +99,27 @@ void test_superk_spectrum_prediction_twk_bshape
   // check the effect in Ereco distributions by modifying each of the variable Etrue bins
   // (in the Beam WG variable binning scheme used in the flux covariance matrix) by +/-100%
   //
+
+  bool force_input_twk_dials = true;
+  bool correlated            = true;
+  bool fractional            = true;
+
   for(int ietrue_bin = 1; ietrue_bin <= netruebins; ietrue_bin++)
   {
        cout << "Number of events (nominal) = " << hEreco[0]->Integral() << endl;
-       skexp.GetNuFlux()->TweakShapeSetValidationMode(true);
+
+       // init
+       TVectorD twkv(netruebins);
+       for(int k = 0; k < netruebins; k++) {
+         twkv[k] = 0.;
+       }
 
        // tweak given Etrue bin only
-       skexp.GetNuFlux()->TweakShapeValidationSetBinVariation (ietrue_bin, +1.); //+100%
-       skexp.GetNuFlux()->TweakShape();       
+       twkv[ietrue_bin-1] = +1; // +100%
+       skexp.GetNuFlux()->TweakShape(force_input_twk_dials,&twkv,correlated,fractional);       
 
        // generate predictions
-       skexp.Generate(*fparm);
+       skexp.Generate(ph);
 
        // store spectrum
        hErecoRatio1EtrueBinVarMax[ietrue_bin] = new TH1D(*skexp.CurrPredictedErecoSpectrum(conv::kSKsFCFV1RingMuLike));
@@ -118,11 +129,11 @@ void test_superk_spectrum_prediction_twk_bshape
        hErecoRatio1EtrueBinVarMax[ietrue_bin]->Divide(hEreco[0]);
 
        // tweak given Etrue bin only
-       skexp.GetNuFlux()->TweakShapeValidationSetBinVariation (ietrue_bin, -1.); //-100%
-       skexp.GetNuFlux()->TweakShape();       
+       twkv[ietrue_bin-1] = -1; // -100%
+       skexp.GetNuFlux()->TweakShape(force_input_twk_dials,&twkv,correlated,fractional);       
 
        // generate predictions
-       skexp.Generate(*fparm);
+       skexp.Generate(ph);
 
        // store spectrum
        hErecoRatio1EtrueBinVarMin[ietrue_bin] = new TH1D(*skexp.CurrPredictedErecoSpectrum(conv::kSKsFCFV1RingMuLike));

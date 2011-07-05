@@ -31,11 +31,14 @@ void test_n_mock_data_fits(
   cout << "[Job inputs]" << endl;
   cout << "Job: " << tag << "/" << run << endl;
   cout << "Fitter : " << fitter_name << endl;
-  cout << "Systematics : " << ((include_systematics) ? "YES " : "NO") << endl;
-  cout << "Statistical fluctuations : " << ((fluctuate_stat) ? "YES " : "NO") << endl;
   cout << "Number of toy experiments : " << nexperiments << endl; 
   cout << "True oscillation parameters : (sinsq2theta23 = " 
        << input_sinsq2theta23 << ", dm23sq = " << input_dm23sq << " eV^2/c^4" << ")" << endl;
+  cout << "Systematics : "                << ((include_systematics) ?    "YES " : "NO") << endl;
+  cout << "Statistical fluctuations : "   << ((fluctuate_stat) ?         "YES " : "NO") << endl;
+  cout << "Storing chisq surfaces : "     << ((store_chisq_surf) ?       "YES " : "NO") << endl;
+  cout << "Storing toy MC experiments : " << ((store_toy_expts) ?        "YES " : "NO") << endl;
+  cout << "Storing best-fit spectra : "   << ((store_bestfit_spectrum) ? "YES " : "NO") << endl;
 
   const char * config = Form("%s/config/%s", gSystem->Getenv("T2KOSCANA"), config_file);
   cout << "Reading analysis configuration from: " << config << endl;

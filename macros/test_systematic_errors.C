@@ -39,7 +39,7 @@ void test_systematic_errors
   const double input_dm23sq               = 2.4E-3,                       /* */
   bool         use_tex                    = false,                        /* print-out results as a TeX table (for inclusion in tech. note)*/
   bool         show_sk_ccqe_spectral_info = false,                        /* */
-  const char * config_file                = "analysis_configuration.xml", /* */
+  const char * config_file                = "analysis_configuration.xml"  /* */
 )
 {
   using namespace std;
@@ -51,10 +51,10 @@ void test_systematic_errors
 
   TRandom3 rand(0);
 
-  // fit params
-  PhysParamList * fparm = PhysParamList::NumuDisapFitNoSyst();
-  fparm->Update(t2kana::conv::kPhypSinsq2Theta23, input_sinsq2theta23);
-  fparm->Update(t2kana::conv::kPhypDm23sq,        input_dm23sq);
+  // phys hypothesis
+  PhysHypothesis ph(t2kana::conv::kHypNuMuDisapp2F);
+  ph.SetCurrValue(t2kana::conv::kPhypSinsq2Theta23, input_sinsq2theta23);
+  ph.SetCurrValue(t2kana::conv::kPhypDm23sq,        input_dm23sq);
 
   // get superk spectrum predictor & configure
   SuperkExpectation * skexp = new SuperkExpectation;
@@ -70,7 +70,7 @@ void test_systematic_errors
   // nominal
   //
 
-  skexp->Generate(*fparm);
+  skexp->Generate(ph);
 
   double nsk_0                 = skexp->CurrPredictedErecoSpectrum(conv::kSKsFCFV1RingMuLike)->Integral();
 
@@ -143,7 +143,7 @@ void test_systematic_errors
 
   skexp->TweakSystematic(systematic,+1.);
 
-  skexp->Generate(*fparm);
+  skexp->Generate(ph);
 
 
   double nsk_p                 = skexp->CurrPredictedErecoSpectrum(conv::kSKsFCFV1RingMuLike)->Integral();
@@ -216,7 +216,7 @@ void test_systematic_errors
 
   skexp->TweakSystematic(systematic,-1.);
 
-  skexp->Generate(*fparm);
+  skexp->Generate(ph);
 
   double nsk_m                 = skexp->CurrPredictedErecoSpectrum(conv::kSKsFCFV1RingMuLike)->Integral();
 

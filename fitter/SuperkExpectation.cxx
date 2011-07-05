@@ -24,6 +24,18 @@
    "sk_ccqe_ring_counting_eff_2" in TweakSystematic(). They can be used for tweaking the
    CCQE ring-counting efficiency in single Ereco bins neglecting correlations. 
    For validation purposes only.
+ @ 05/07/2011 - CA
+   Adapted code to use the modified FitParamList and PhysHypothesis classes.
+   Adapted code to changes in SuperkMC and NuFlux for including correlated systematics in
+   the oscillation fit. Added SetNuisanceParams(const FitParamList &) method.
+   There are now 2 interfaces to the SuperkExpectation code: One in which the pdfs can 
+   be tweaked using the various TweakXYZ() methods and the extrapolated spectra can be 
+   generated via Generate(const PhysHypothesis &). There is also another interface where 
+   pdf tweaking and spectrum generation take place by invoking the single 
+   Generate(const FitParamList &) method. The inpout FitParamList can contain parameters
+   that describe the physics hypothesis and the systematic tweaks to the pdfs. The former
+   interface is the one that was installed initially and used in validation. The latter 
+   interface is meant to be used in the fits.
 */
 //________________________________________________________________________________________
 
@@ -83,17 +95,19 @@ SuperkExpectation::~SuperkExpectation(void)
   this->CleanUp();
 }
 //________________________________________________________________________________________
-void SuperkExpectation::Generate(const PhysParamList & fp)
+void SuperkExpectation::Generate(const PhysHypothesis & ph)
 {
 // Calculate dN^{exp}_{SuperK}(E_{reco}) / dE_{reco} for the input E_{reco} and 
-// the input physics parameter list.
+// the input physics hypothesis
 //
 
   if(!fIsConfigured) {
     cerr << "Exp >> Not configured properly! " << endl;
-  //return -1;
     exit(1);
   }
+
+  // set params driving the oscillation, decoherence or decay model
+  fSuperkMC->Hypothesis().Copy(ph);
 
   const unsigned int ns = fSamples.size();
   const unsigned int nm = 12;  
@@ -103,41 +117,26 @@ void SuperkExpectation::Generate(const PhysParamList & fp)
      kSKmNuECCQE,     kSKmNuECC1pi,     kSKmNuECCoth,     kSKmNuENC
   };
 
-
-  // input physics params (params included in the fit / systematics params)
-  if( fp.Exists(kPhypDm23sq) && fp.Exists(kPhypSinsq2Theta23) ) {
-    double dmsq23        = fp.CurrValue(kPhypDm23sq);
-    double sinsq2theta23 = fp.CurrValue(kPhypSinsq2Theta23);
-    fSuperkMC->Hypothesis().EnableOscillations(true);
-    fSuperkMC->Hypothesis().EnableDecay(false);
-    fSuperkMC->Hypothesis().EnableDecoherence(false);
-    fSuperkMC->Hypothesis().UseOscillationParams(sinsq2theta23, dmsq23);
-  } else
-  if( fp.Exists(kPhypAlphaDecay) && fp.Exists(kPhypSinsq2Theta23) ) {
-    double alpha         = fp.CurrValue(kPhypAlphaDecay);
-    double sinsq2theta23 = fp.CurrValue(kPhypSinsq2Theta23);
-    fSuperkMC->Hypothesis().EnableOscillations(false);
-    fSuperkMC->Hypothesis().EnableDecay(true);
-    fSuperkMC->Hypothesis().EnableDecoherence(false);
-    fSuperkMC->Hypothesis().UseDecayParams(sinsq2theta23, alpha);
-  } else
-  if( fp.Exists(kPhypMusqDecoherence) && fp.Exists(kPhypSinsq2Theta23) ) {
-    double musq          = fp.CurrValue(kPhypMusqDecoherence);
-    double sinsq2theta23 = fp.CurrValue(kPhypSinsq2Theta23);
-    fSuperkMC->Hypothesis().EnableOscillations(false);
-    fSuperkMC->Hypothesis().EnableDecay(false);
-    fSuperkMC->Hypothesis().EnableDecoherence(true);
-    fSuperkMC->Hypothesis().UseDecoherenceParams(sinsq2theta23, musq);
-  }
-
-
+  // Ignore flux shape tweak and calculate the number of 1Rmu events.
+  // Use that number of events to normalise the prediction obtain when the flux shape tweaking 
+  // is taken into account.
   double shape_norm = 1.;
   if(this->GetNuFlux()->ShapeTweaked()) {
-     this->GetNuFlux()->TweakShape(false); // switch-off beam-shape tweaking
-     this->Generate(fp); // generate untweaked predictions
+#ifdef __debug_level_2__
+     cout << "Exp >> Flux shape was tweaked! Ignoring temporarily and generating SK spectra..." << endl;
+#endif
+     this->GetNuFlux()->IgnoreShapeTweaking(true); 
+     this->Generate(ph); // generate untweaked predictions
      // get nominal Nsk
      shape_norm = fPredictErecoSpectrumTot[kSKsFCFV1RingMuLike]->Integral(); 
-     this->GetNuFlux()->TweakShape(true); // switch-on beam-shape tweaking
+#ifdef __debug_level_2__
+     cout << "Exp >> Number of 1Rmu events ignoring flux shape tweak (used for normalisation) = " 
+          << shape_norm << endl;
+#endif
+     this->GetNuFlux()->IgnoreShapeTweaking(false); 
+#ifdef __debug_level_2__
+     cout << "Exp >> Flux shape tweaking was re-enabled..." << endl;
+#endif
   }
 
   // correction factor from ND280
@@ -213,7 +212,25 @@ void SuperkExpectation::Generate(const PhysParamList & fp)
      fPredictErecoSpectrum[kSKsFCFV1RingMuLike][kSKmNuECCoth]       -> Scale (shape_norm);
      fPredictErecoSpectrum[kSKsFCFV1RingMuLike][kSKmNuENC]          -> Scale (shape_norm);
   }
+}
+//________________________________________________________________________________________
+void SuperkExpectation::Generate(const FitParamList & fp)
+{
+// SuperkExpectation interface method for fitters.
+// Calculate dN^{exp}_{SuperK}(E_{reco}) / dE_{reco} for the input E_{reco} and 
+// the input physics + nuisance parameter list.
+//
 
+  // set values of nuisance parameters 
+  // (if any nuisance parameter is included in the fit)
+  this->SetNuisanceParams(fp);
+
+  // extract the values of params driving the oscillation, decoherence or decay model
+  PhysHypothesis ph(fp);
+
+  // call main Generate() method to generate SuperK predictions for the input
+  // physics hypothesis using the (potentially) tweaked p.d.fs
+  this->Generate(ph);
 }
 //________________________________________________________________________________________
 TH1D* SuperkExpectation::CurrPredictedErecoSpectrum(t2kana::conv::SuperkSample_t s) const 
@@ -239,7 +256,7 @@ void SuperkExpectation::ResetSystematicVariations(void)
   this->GetND280Measurement()->TweakEfficiency (0.);
 
   this->GetNuFlux()->TweakNorm (0.);
-  this->GetNuFlux()->TweakShape(false);
+  this->GetNuFlux()->TweakShape(true,0);  
 
   this->GetNuXSec()->TweakCCQEXSec             (0.);
   this->GetNuXSec()->TweakCC1piToCCQEXSecRatio (0.);
@@ -468,6 +485,112 @@ void SuperkExpectation::CleanUp(void)
       if (fPredictErecoSpectrum[is][im]) delete fPredictErecoSpectrum[is][im];
     }//im
   }//is
+}
+//________________________________________________________________________________________
+void SuperkExpectation::SetNuisanceParams(const FitParamList & fp)
+{
+   this->ResetSystematicVariations();
+
+   if(fp.Exists(kNuisSuperkEffCCQEoth)) {
+     double twk = fp.CurrValue(kNuisSuperkEffCCQEoth);
+     this->GetSuperkMC()->TweakOtherEfficiencyCCQE(twk);
+   }
+   if(fp.Exists(kNuisSuperkEffCCQErc0u) &&
+      fp.Exists(kNuisSuperkEffCCQErc1u) &&
+      fp.Exists(kNuisSuperkEffCCQErc2u)) {
+     double twk0 = fp.CurrValue(kNuisSuperkEffCCQErc0u);
+     double twk1 = fp.CurrValue(kNuisSuperkEffCCQErc1u);
+     double twk2 = fp.CurrValue(kNuisSuperkEffCCQErc2u);
+     this->GetSuperkMC()->TweakRingCountingEfficiencyCCQE(true,twk0,twk1,twk2,false);
+   }
+   if(fp.Exists(kNuisSuperkEffCCnonQE)) {
+     double twk = fp.CurrValue(kNuisSuperkEffCCnonQE);
+     this->GetSuperkMC()->TweakEfficiencyCCnonQE(twk);
+   }
+   if(fp.Exists(kNuisSuperkEffNC)) {
+     double twk = fp.CurrValue(kNuisSuperkEffNC);
+     this->GetSuperkMC()->TweakEfficiencyNC(twk);     
+   }
+   if(fp.Exists(kNuisSuperkEffNueCC)) {
+     double twk = fp.CurrValue(kNuisSuperkEffNueCC);
+     this->GetSuperkMC()->TweakEfficiencyNuECC(twk);
+   }
+   if(fp.Exists(kNuisSuperkEnergyScale)) {
+     double twk = fp.CurrValue(kNuisSuperkEnergyScale);
+     this->GetSuperkMC()->TweakEnergyScale(twk);
+   }
+   if(fp.Exists(kNuisNd280Eff)) {
+     double twk = fp.CurrValue(kNuisNd280Eff);
+     this->GetND280Measurement()->TweakEfficiency(twk);
+   }
+   if(fp.Exists(kNuisFluxNorm)) {
+     double twk = fp.CurrValue(kNuisFluxNorm);
+     this->GetNuFlux()->TweakNorm(twk);
+   }
+   if(fp.Exists(kNuisFluxShapeNuMu0u ) &&
+      fp.Exists(kNuisFluxShapeNuMu1u ) &&
+      fp.Exists(kNuisFluxShapeNuMu2u ) &&
+      fp.Exists(kNuisFluxShapeNuMu3u ) &&
+      fp.Exists(kNuisFluxShapeNuMu4u ) &&
+      fp.Exists(kNuisFluxShapeNuMu5u ) &&
+      fp.Exists(kNuisFluxShapeNuMu6u ) &&
+      fp.Exists(kNuisFluxShapeNuMu7u ) &&
+      fp.Exists(kNuisFluxShapeNuMu8u ) &&
+      fp.Exists(kNuisFluxShapeNuMu9u ) &&
+      fp.Exists(kNuisFluxShapeNuMu10u) &&
+      fp.Exists(kNuisFluxShapeNuMu11u) &&
+      fp.Exists(kNuisFluxShapeNuMu12u) &&
+      fp.Exists(kNuisFluxShapeNuMu13u) &&
+      fp.Exists(kNuisFluxShapeNuMu14u) &&
+      fp.Exists(kNuisFluxShapeNuMu15u) &&
+      fp.Exists(kNuisFluxShapeNuMu16u) &&
+      fp.Exists(kNuisFluxShapeNuMu17u) &&
+      fp.Exists(kNuisFluxShapeNuMu18u)) {
+     TVectorD twk(19);
+     twk[0]  = fp.CurrValue(kNuisFluxShapeNuMu0u);
+     twk[1]  = fp.CurrValue(kNuisFluxShapeNuMu1u);
+     twk[2]  = fp.CurrValue(kNuisFluxShapeNuMu2u);
+     twk[3]  = fp.CurrValue(kNuisFluxShapeNuMu3u);
+     twk[4]  = fp.CurrValue(kNuisFluxShapeNuMu4u);
+     twk[5]  = fp.CurrValue(kNuisFluxShapeNuMu5u);
+     twk[6]  = fp.CurrValue(kNuisFluxShapeNuMu6u);
+     twk[7]  = fp.CurrValue(kNuisFluxShapeNuMu7u);
+     twk[8]  = fp.CurrValue(kNuisFluxShapeNuMu8u);
+     twk[9]  = fp.CurrValue(kNuisFluxShapeNuMu9u);
+     twk[10] = fp.CurrValue(kNuisFluxShapeNuMu10u);
+     twk[11] = fp.CurrValue(kNuisFluxShapeNuMu11u);
+     twk[12] = fp.CurrValue(kNuisFluxShapeNuMu12u);
+     twk[13] = fp.CurrValue(kNuisFluxShapeNuMu13u);
+     twk[14] = fp.CurrValue(kNuisFluxShapeNuMu14u);
+     twk[15] = fp.CurrValue(kNuisFluxShapeNuMu15u);
+     twk[16] = fp.CurrValue(kNuisFluxShapeNuMu16u);
+     twk[17] = fp.CurrValue(kNuisFluxShapeNuMu17u);
+     twk[18] = fp.CurrValue(kNuisFluxShapeNuMu18u);
+     bool force=true;
+     bool correlated=false;
+     this->GetNuFlux()->TweakShape(force,&twk,correlated);
+   }
+   if(fp.Exists(kNuisXSecCCQE)) {
+     double twk = fp.CurrValue(kNuisXSecCCQE);
+     this->GetNuXSec()->TweakCCQEXSec(twk);
+   }
+   if(fp.Exists(kNuisXSecCC1piToCCQE)) {
+     double twk = fp.CurrValue(kNuisXSecCC1piToCCQE);
+     this->GetNuXSec()->TweakCC1piToCCQEXSecRatio(twk);
+   }
+   if(fp.Exists(kNuisXSecCCothToCCQE)) {
+     double twk = fp.CurrValue(kNuisXSecCCothToCCQE);
+     this->GetNuXSec()->TweakCCOthToCCQEXSecRatio(twk);
+   }
+   if(fp.Exists(kNuisXSecNCToCCQE)) {
+     double twk = fp.CurrValue(kNuisXSecNCToCCQE);
+     this->GetNuXSec()->TweakNCToCCQEXSecRatio(twk);
+   }
+   if(fp.Exists(kNuisXSecNuclEffect)) {
+     double twk = fp.CurrValue(kNuisXSecNuclEffect);
+     this->GetNuXSec()->TweakNuclEffect(twk);
+   }
+
 }
 //________________________________________________________________________________________
 

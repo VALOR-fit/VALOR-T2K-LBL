@@ -46,13 +46,13 @@ void test_superk_spectrum_prediction_contributions
   SuperkExpectation skexp;
   skexp.Read(config);
 
-  // fit params
-  PhysParamList * fparm = PhysParamList::NumuDisapFitNoSyst();
-  fparm->Update(t2kana::conv::kPhypSinsq2Theta23, input_sinsq2theta23);
-  fparm->Update(t2kana::conv::kPhypDm23sq,        input_dm23sq);
+  // physics hypothesis 
+  PhysHypothesis ph(t2kana::conv::kHypNuMuDisapp2F);
+  ph.SetCurrValue(t2kana::conv::kPhypSinsq2Theta23, input_sinsq2theta23);
+  ph.SetCurrValue(t2kana::conv::kPhypDm23sq,        input_dm23sq);
 
   // generate prediction
-  skexp.Generate(*fparm);
+  skexp.Generate(ph);
 
   // get energy spectra
   for(int im = 0; im < nm; im++) {
@@ -78,6 +78,7 @@ void test_superk_spectrum_prediction_contributions
   hErecoMode[conv::kSKmNuECC1pi]       -> SetFillStyle ( 3345     );
   hErecoMode[conv::kSKmNuECCoth]       -> SetFillStyle ( 3354     );
   hErecoMode[conv::kSKmNuENC]          -> SetFillStyle ( 3006     );
+  hErecoMode[conv::kSKmNuMuCCQE]       -> SetFillColor ( kWhite   );
   hErecoMode[conv::kSKmNuMuCC1pi]      -> SetFillColor ( kBlack   );
   hErecoMode[conv::kSKmNuMuCCoth]      -> SetFillColor ( kBlack   );
   hErecoMode[conv::kSKmNC]             -> SetFillColor ( kRed     );
@@ -125,7 +126,7 @@ void test_superk_spectrum_prediction_contributions
   stack->Add(hErecoMode[conv::kSKmNuMuCCQE]);
   stack->Draw("same");
   legend->AddEntry(hErecoTot,                            "total",                                "L" );
-  legend->AddEntry(hErecoMode[conv::kSKmNuMuCCQE],       "#nu_{#mu} CCQE",                       "L" );
+  legend->AddEntry(hErecoMode[conv::kSKmNuMuCCQE],       "#nu_{#mu} CCQE",                       "LF");
   legend->AddEntry(hErecoMode[conv::kSKmNuMuCC1pi],      "#nu_{#mu} CC1#pi",                     "LF");
   legend->AddEntry(hErecoMode[conv::kSKmNuMuCCoth],      "#nu_{#mu} CC other",                   "LF");
   legend->AddEntry(hErecoMode[conv::kSKmNC],             "#nu_{#mu}(#nu_{#tau}) NC",             "LF");
@@ -134,7 +135,7 @@ void test_superk_spectrum_prediction_contributions
   legend->AddEntry(hErecoMode[conv::kSKmNuMuBarCCoth],   "#bar{#nu_{#mu}} CC other",             "LF");
   legend->AddEntry(hErecoMode[conv::kSKmNuMuBarNC],      "#bar{#nu_{#mu}}(#bar{#nu_{#tau}}) NC", "LF");
   legend->AddEntry(hErecoMode[conv::kSKmNuECCQE],        "#nu_{e} CCQE",                         "LF");
-  legend->AddEntry(hErecoMode[conv::kSKmNuECC1pi],       "#nu_{e} CC#1pi",                       "LF");
+  legend->AddEntry(hErecoMode[conv::kSKmNuECC1pi],       "#nu_{e} CC1#pi",                       "LF");
   legend->AddEntry(hErecoMode[conv::kSKmNuECCoth],       "#nu_{e} CC other",                     "LF");
   legend->AddEntry(hErecoMode[conv::kSKmNuENC],          "#nu_{e} NC",                           "LF");
   legend->Draw();
@@ -178,26 +179,28 @@ void test_superk_spectrum_prediction_contributions
   hErecoMode[conv::kSKmNuENC]          -> Write("nue_nc");
   f.Close();
 
-/*
   //
   // print-out numbers requested during the analysis review
   //
+  
+  int nprec=5;
 
   if( TMath::Abs(input_sinsq2theta23) < 1E-10 ) {
     cout << "No oscillation" << endl;
   } else {
-    cout << "sin^{2}(2*theta23) = " << input_sinsq2theta23 
+    cout << "sin^{2}(2*theta23) = " << input_sinsq2theta23
          << ", Deltam23^{2} = " << input_dm23sq  << " eV^{2}/c^{4}" << endl;
-  } 
+  }
   cout << fixed;
   for(int ibin = 1; ibin <= hErecoTot->GetXaxis()->GetNbins(); ibin++) {
-    cout << setw(6) << setfill(' ') << setprecision(3) << hErecoTot->GetXaxis()->GetBinLowEdge(ibin) 
-         << " - " 
-         << setw(6) << setfill(' ') << setprecision(3) << hErecoTot->GetXaxis()->GetBinUpEdge(ibin) 
-         << " GeV : " 
-         << setw(6) << setfill(' ') << setprecision(6) << hErecoTot->GetBinContent(ibin) 
-         << " events" << endl;
+    cout << setw(6) << setfill(' ') << ibin
+         << " : "
+         << setw(6) << setfill(' ') << setprecision(3) << hErecoTot->GetXaxis()->GetBinLowEdge(ibin)
+         << " - "
+         << setw(6) << setfill(' ') << setprecision(3) << hErecoTot->GetXaxis()->GetBinUpEdge(ibin)
+         << " : "
+         << setw(6) << setfill(' ') << setprecision(nprec) << hErecoTot->GetBinContent(ibin)
+         << endl;
   }//ibin
-*/
 
 }

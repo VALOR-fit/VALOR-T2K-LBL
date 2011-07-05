@@ -44,10 +44,10 @@ void test_superk_spectrum_prediction_twk_xsec
   SuperkExpectation skexp;
   skexp.Read(config);
 
-  // phys params
-  PhysParamList * fparm = PhysParamList::NumuDisapFitNoSyst();
-  fparm->Update(t2kana::conv::kPhypSinsq2Theta23, input_sinsq2theta23);
-  fparm->Update(t2kana::conv::kPhypDm23sq,        input_dm23sq);
+  // physics hypothesis 
+  PhysHypothesis ph(t2kana::conv::kHypNuMuDisapp2F);
+  ph.SetCurrValue(t2kana::conv::kPhypSinsq2Theta23, input_sinsq2theta23);
+  ph.SetCurrValue(t2kana::conv::kPhypDm23sq,        input_dm23sq);
 
   // calculate spectra
   TH1D * hEreco   [ntwkmodes][ntwkdials];
@@ -62,7 +62,7 @@ void test_superk_spectrum_prediction_twk_xsec
        else if (imode==3) skexp.GetNuXSec()->TweakNCToCCQEXSecRatio   ( twkdial[idial] );
        else if (imode==4) skexp.GetNuXSec()->TweakNuclEffect          ( twkdial[idial] );
        // generate predictions  
-       skexp.Generate(*fparm);
+       skexp.Generate(ph);
        // store spectrum
        hEreco[imode][idial] = new TH1D(*skexp.CurrPredictedErecoSpectrum(conv::kSKsFCFV1RingMuLike));
        hEreco[imode][idial]->SetDirectory(0);

@@ -29,10 +29,10 @@ void test_superk_spectrum_prediction_twk_nd280eff
   SuperkExpectation skexp;
   skexp.Read(config);
 
-  // phys params
-  PhysParamList * fparm = PhysParamList::NumuDisapFitNoSyst();
-  fparm->Update(t2kana::conv::kPhypSinsq2Theta23, input_sinsq2theta23);
-  fparm->Update(t2kana::conv::kPhypDm23sq,        input_dm23sq);
+  // physics hypothesis 
+  PhysHypothesis ph(t2kana::conv::kHypNuMuDisapp2F);
+  ph.SetCurrValue(t2kana::conv::kPhypSinsq2Theta23, input_sinsq2theta23);
+  ph.SetCurrValue(t2kana::conv::kPhypDm23sq,        input_dm23sq);
 
   TRandom3 rand(0);
 
@@ -52,7 +52,7 @@ void test_superk_spectrum_prediction_twk_nd280eff
      }
 
      // generate predictions  
-     skexp.Generate(*fparm);
+     skexp.Generate(ph);
   
      // store spectra
      hEreco[i] = new TH1D(*skexp.CurrPredictedErecoSpectrum(conv::kSKsFCFV1RingMuLike));

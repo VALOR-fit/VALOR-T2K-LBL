@@ -75,7 +75,7 @@ void feldman_cousins_fitting_job
      "iexp:irun:input_sinsq2theta23_bin:input_dm23sq_bin:input_sinsq2theta23:input_dm23sq:chisq_for_input_params:sinsq2theta23:dm23sq:chisq");
 
   // fit params
-  PhysParamList * fparm = PhysParamList::NumuDisapFitNoSyst();
+  FitParamList * fparm = FitParamList::NumuDisapFitNoSyst();
 
   // get superk spectrum PDF & configure
   SuperkExpectation * skexp = new SuperkExpectation;

@@ -5,13 +5,8 @@
 
 \brief    Muon neutrino decoherence fitter
 
-\author   STFC, Rutherford Appleton Laboratory / Oxford T2K groups
-
-          Costas Andreopoulos <costas.andreopoulos \at stfc.ac.uk>
-          Jelena Ilic         <Jelena.Ilic \at stfc.ac.uk>
-          Nick Grant          <nick.grant \at stfc.ac.uk>
-          Geoff Pearce        <geoff.pearce \at stfc.ac.uk>
-          Alfons Weber        <alfons.weber \at stfc.ac.uk>
+\author   Costas Andreopoulos <costas.andreopoulos \at stfc.ac.uk>
+          STFC, Rutherford Appleton Laboratory
 
 \created  October 20, 2010
 
@@ -29,7 +24,7 @@ class TH1D;
 class TH2D;
 
 #include "Conventions.h"
-#include "PhysParamList.h"
+#include "FitterABC.h"
 
 namespace t2kana {
 
@@ -37,7 +32,7 @@ class SuperkObservation;
 class SuperkExpectation;
 class FitInputs;
 
-class NuMuDecohFitter
+class NuMuDecohFitter : public FitterABC
 {
 public:
    NuMuDecohFitter();

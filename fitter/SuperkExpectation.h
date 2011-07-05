@@ -5,13 +5,8 @@
 
 \brief    Code for predicting the SuperK reconstructed energy spectrum.
 
-\author   STFC, Rutherford Appleton Laboratory / Oxford T2K groups
-
-          Costas Andreopoulos <costas.andreopoulos \at stfc.ac.uk>
-          Jelena Ilic         <Jelena.Ilic \at stfc.ac.uk> 
-          Nick Grant          <nick.grant \at stfc.ac.uk>
-          Geoff Pearce        <geoff.pearce \at stfc.ac.uk>
-          Alfons Weber        <alfons.weber \at stfc.ac.uk>
+\author   Costas Andreopoulos <costas.andreopoulos \at stfc.ac.uk>
+          STFC, Rutherford Appleton Laboratory
 
 \created  October 20, 2010
 
@@ -34,7 +29,8 @@
 #include <TVectorD.h>
 #include <TXMLEngine.h>
 
-#include "PhysParamList.h"
+#include "FitParamList.h"
+#include "PhysHypothesis.h"
 #include "Conventions.h"
 #include "Utilities.h"
 
@@ -62,10 +58,18 @@ public:
    // Read inputs from input XML file
    bool Read(string config_file);
 
-   // Generate SK energy spectrum expectation for the current inputs
-   void Generate(const PhysParamList & fp);
+   // Methods to generate SuperK spectra for a physics hypothesis (oscillations,decay,decoherence) 
+   // and tweak systematics (tweak the p.d.fs used for generating the SuperK spectra).
+   void Generate                  (const PhysHypothesis & ph);
+   void ResetSystematicVariations (void);                                 ///< reset all systematics
+   void TweakSystematic           (string systematic, double twkdial=0.); ///< set systematic variation (from top level)
+   void TweakAllSystematics       (bool do_tweak=true);                   ///< random variation of all systematics
 
-   // Access calculated SK energy spectrum 
+   // Main class interface for fitters. The fit parameter list can contain info for both the 
+   // physics hypothesis and the systematic variations.
+   void Generate (const FitParamList & fp);
+
+   // Access calculated SK reconstructed energy spectrum for each sample/mode
    TH1D* CurrPredictedErecoSpectrum (t2kana::conv::SuperkSample_t s) const;
    TH1D* CurrPredictedErecoSpectrum (t2kana::conv::SuperkSample_t s, t2kana::conv::SuperkMode_t m) const;
 
@@ -75,28 +79,27 @@ public:
    NuFlux *           GetNuFlux            (void) { return fNuFlux;            }
    NuXSec *           GetNuXSec            (void) { return fNuXSec;            }
 
-   // Reset all systematic variations
-   void ResetSystematicVariations (void);
-   void TweakSystematic           (string systematic, double twkdial=0.);
-   void TweakAllSystematics       (bool do_tweak=true);
-
 private:
 
+   // Initialise and clean-up
    void Init    (void);
    void CleanUp (void);
 
-   bool               fIsConfigured;      ///< properly configured?
-   ND280Measurement * fND280Measurement;  ///< ND280 inputs
-   SuperkMC *         fSuperkMC;          ///< SuperK MC templates
-   NuFlux *           fNuFlux;            ///< Neutrino flux simulation inputs
-   NuXSec *           fNuXSec;            ///< Neutrino generator / cross section inputs
+   // Use the nuisance param values in the input FitParamList to tweak the pdfs.
+   void SetNuisanceParams (const FitParamList & fp);
 
-   TH1D *  fPredictErecoSpectrum[kns][knm];  ///< Ereco
-   TH1D *  fPredictErecoSpectrumTot[kns];    ///< Ereco
+   bool               fIsConfigured;         ///< Is this object properly configured?
+   ND280Measurement * fND280Measurement;     ///< ND280 inputs
+   SuperkMC *         fSuperkMC;             ///< SuperK MC templates
+   NuFlux *           fNuFlux;               ///< Neutrino flux simulation inputs
+   NuXSec *           fNuXSec;               ///< Neutrino generator / cross section inputs
+
+   TH1D *  fPredictErecoSpectrum[kns][knm];  ///< Ereco spectrum = f(sample,mode)
+   TH1D *  fPredictErecoSpectrumTot[kns];    ///< Ereco spectrum = f(sample), sum over modes
 
    vector<t2kana::conv::SuperkSample_t> fSamples;
 
-ClassDef(SuperkExpectation, 2)
+ClassDef(SuperkExpectation, 3)
 };
 
 } // t2kana

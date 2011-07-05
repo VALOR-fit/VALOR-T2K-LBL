@@ -8,6 +8,20 @@
    Modified code so as to use directly the numu flux fractional covariance matrix provided 
    by the Beam WG. The flux covariance matrix needed for applying the Cholesky method is
    now constructed on the fly during initialisation. 
+ @ 05/07/2011 - CA
+   Modified TweakShape() method to allow fitting for flux shape systematics. Using the
+   same strategy as with the SK CCQE ring-counting err. The TweakShape() method can 
+   generate random variations (as we were doing before in order to include errors in the
+   contour using the Cousins-Highland methd) but one can also force externally specified 
+   variations (as we would need to do if we are fitting for flux shape systematics).
+   The forced tweak dials can be the correlated or de-correlated ones. Forcing the values
+   of de-correlated tweak dials is employed in the fit. Forcing the values of the 
+   correlated tweak dials is employed in certain validation tests (hence this capability
+   was retained). Added method to IgnoreShapeTweaking() so as to inhibit effect and
+   calculate the appropriate normalisation factor in SuperkExpectation (before modifying
+   the TweakShape() method this was accomplished by running TweakShape(false) but now
+   the TweakShape() arguments are used for different purpose). In order to simplify the
+   TweakShape() method, I added the FillInTweakedNuMuFluxHisto().
 */
 //________________________________________________________________________________________
 
@@ -63,12 +77,10 @@ void NuFlux::Init(void)
   fSuperkNuMuFluxCovCholeskyL  = 0;
   fSuperkNuMuFluxHaveCholeskyL = false;
   fSuperkNuMuFluxTweaked       = 0;
-  fEnableFluxShapeTweaking     = false;
+  fFluxShapeWasTweaked         = false;
+  fIgnoreFluxShapeTweaks       = false;
   fHEC                         = 0;
   fSuperkNormRelErr_simple     = 0;
-  fTweakShapeVldMode           = false; 
-  fTweakShapeVldModeBin        = 0; 
-  fTweakShapeVldModeDial       = 0; 
 }
 //________________________________________________________________________________________
 void NuFlux::CleanUp(void)
@@ -403,13 +415,20 @@ double NuFlux::SuperkFluxNorm(
 //________________________________________________________________________________________
 double NuFlux::SuperkNuMuFluxShapeWeight(double Etrue)
 {
-  if(!fEnableFluxShapeTweaking) return 1;
+  // was forced to ignore shape tweaks?
+  if(fIgnoreFluxShapeTweaks) {
+     return 1.;
+  }
+
+  if(!fFluxShapeWasTweaked) {
+     return 1;
+  }
 
   if(!fSuperkNuMuFluxHaveCholeskyL) {
-	exit(1);
+     exit(1);
   }
   if(!fSuperkNuMuFluxTweaked || !fSuperkNuMuFlux10a) {
-	exit(1);
+     exit(1);
   }
 
   int bin = fSuperkNuMuFlux10a->FindBin(Etrue);
@@ -419,7 +438,7 @@ double NuFlux::SuperkNuMuFluxShapeWeight(double Etrue)
 
   double wght = 1.;
   if(flux_nom > 0) {
-	wght = flux_twk/flux_nom;
+     wght = flux_twk/flux_nom;
   }
 
 #ifdef __debug_level_3__
@@ -430,11 +449,26 @@ double NuFlux::SuperkNuMuFluxShapeWeight(double Etrue)
   return wght;
 }
 //________________________________________________________________________________________
-void NuFlux::TweakShape(bool enable_tweaking)    
+void NuFlux::TweakNorm (double twkdial) 
 { 
-  fEnableFluxShapeTweaking = enable_tweaking;
-  if(!fEnableFluxShapeTweaking) return;
+  fSuperkNuMuFluxNormTwkDial = twkdial; 
+}
+//________________________________________________________________________________________
+void NuFlux::TweakShape(
+  bool       force_input_twkdials,  /* force the input twk dials or generate twk dials internally */
+  TVectorD * input_twkv,            /* input twk dials (if forced) - set 0 to reset */
+  bool       correlated,            /* twk dials are the correlated or uncorrelated ones? */
+  bool       fractional             /* twk dials expressing a fractional or absolute flux change? */
+)    
+{ 
+#ifdef __debug_level_3__
+  cout << "Exp/Beam/TweakShape >> Tweaking SuperK nu_mu flux shape" << endl;
+#endif
 
+  //
+  // If this is the first time this function is called, then run the Cholesky 
+  // decomposition of the flux covariance matrix
+  //
   if(!fSuperkNuMuFluxHaveCholeskyL) {
     cout << "Exp/Beam/TweakShape >> Running Cholesky's method." << endl;
     TMatrixD  sk_flux_cov(this->SuperkNuMuFluxCov());
@@ -451,54 +485,118 @@ void NuFlux::TweakShape(bool enable_tweaking)
     fSuperkNuMuFluxTweaked = new TH1D(*fSuperkNuMuFlux10a);
   }
 
+  //
+  // Forcing null tweaking dials.
+  // Reset tweaked flux to nominal flux.
+  //
+  if(force_input_twkdials && input_twkv==0) {
 #ifdef __debug_level_3__
-  cout << "Exp/Beam >> Tweaking SuperK flux shape" << endl;
+     cout << "Exp/Beam/TweakShape >> RESET! " << endl;
 #endif
- 
-  //
-  //
-  //
-
-  if(fTweakShapeVldMode && fTweakShapeVldModeBin>0) {
-
-    // fill in the tweaked histo
-    //int nbins = fSuperkNuMuFlux10a->GetXaxis()->GetNbins();
-    //for(int j=1; j <= nbins; j++){
-      for(int j=1; j <= 200; j++){ ///TODO
-         double Etrue = fSuperkNuMuFlux10a->GetBinCenter(j);
-         double fixBinFlux10d = this->SuperkNuMuFlux(Etrue,true); // include 10a->10d weight
-         int varbin_curr = util::FluxFix2VarBinNumber(j);
-         if(varbin_curr == fTweakShapeVldModeBin) {
-           fSuperkNuMuFluxTweaked->SetBinContent(j, fixBinFlux10d*(1+fTweakShapeVldModeDial));
-         } else {
-           fSuperkNuMuFluxTweaked->SetBinContent(j, fixBinFlux10d);
-         }
-      }//end of bin loop
-
-      return;
+     this->FillInTweakedNuMuFluxHisto(0);
+     return;
   }
 
   //
+  // Check whether the values of the tweaking dials are forced.
+  // If the forced tweaking dials are supposed to be the correlated ones then we don't
+  // need to use the Cholesky decomposition of the flux covariance matrix.
+  //
+  if(force_input_twkdials && correlated) {
+#ifdef __debug_level_3__
+     cout << "Exp/Beam/TweakShape >> Forcing input twk dials (correlated)! " << endl;
+#endif
+     this->FillInTweakedNuMuFluxHisto(input_twkv,fractional);
+     return;
+  }
+
+  //
+  // Check whether the values of the tweaking dials are forced.
+  // If the forced tweaking dials are supposed to be the un-correlated ones then use
+  // the Cholesky decomposition of the flux covariance matrix to generate
+  // correlated tweaking dials.
+  //
+  if(force_input_twkdials && !correlated) {
+#ifdef __debug_level_3__
+     cout << "Exp/Beam/TweakShape >> Forcing input twk dials (uncorrelated)! " << endl;
+#endif
+     TMatrixD & L = *fSuperkNuMuFluxCovCholeskyL;
+     TVectorD twkv = util::CholeskyCalculateCorrelatedParamVariations(L,*input_twkv);
+     this->FillInTweakedNuMuFluxHisto(&twkv,false);
+     return;
+  }
+
+  //
+  // If the tweaking dials were not forced, generate correlated tweaking dials
+  // using the Cholesky method
+  //
   // Use Cholseky method to generate random fluxes
   //
-
-  //get the variations
-  TVectorD tweek_vec = 
-     util::CholeskyGenerateCorrelatedParamVariations(*fSuperkNuMuFluxCovCholeskyL);
-
-  // fill in the tweaked histo
-//int nbins = fSuperkNuMuFlux10a->GetXaxis()->GetNbins();
-//for(int j=1; j <= nbins; j++){
-  for(int j=1; j <= 200; j++){ ///TODO
-     double rto = util::FluxFractionsFixedBinRelToVarBin(
-         j, fSuperkNuMuFlux10a, fSuperkNuMuFlux10aVarBin);
-     double Etrue = fSuperkNuMuFlux10a->GetBinCenter(j);
-     double fixBinFlux10d = this->SuperkNuMuFlux(Etrue,true); // include 10a->10d weight
-     int varBin = util::FluxFix2VarBinNumber(j);
-     fSuperkNuMuFluxTweaked->SetBinContent(j, fixBinFlux10d + tweek_vec[varBin - 1]*rto );
-  }//end of bin loop
+  if(!force_input_twkdials) {
+#ifdef __debug_level_3__
+    cout << "Exp/Beam/TweakShape >> Generating random twk dials (correlated)! " << endl;
+#endif
+    TMatrixD & L = *fSuperkNuMuFluxCovCholeskyL;
+    TVectorD twkv = util::CholeskyGenerateCorrelatedParamVariations(L);
+    this->FillInTweakedNuMuFluxHisto(&twkv,false);
+    return;
+  }
 
 }
 //________________________________________________________________________________________
+void NuFlux::FillInTweakedNuMuFluxHisto(TVectorD * ptwkv, bool fractional)
+{
+// Fill-in the tweaked flux histogram
+//
 
+ // reset to nominal
+ if(ptwkv==0) {
+    fFluxShapeWasTweaked = false;
+    for(int j=1; j <= 200; j++){ ///TODO
+       double Etrue = fSuperkNuMuFlux10a->GetBinCenter(j);
+       double nominal_flux = this->SuperkNuMuFlux(Etrue,true); // include 10a->10d weight
+       fSuperkNuMuFluxTweaked->SetBinContent(j, nominal_flux);
+    }//end of bin loop
+    return;
+ } 
+
+ // apply tweak 
+ TVectorD & twkv = *ptwkv;
+ assert(twkv.GetNrows() == kNEtrueBinsBeamWG);
+
+ fFluxShapeWasTweaked = true;
+
+ //int nbins = fSuperkNuMuFlux10a->GetXaxis()->GetNbins();
+ //for(int j=1; j <= nbins; j++){
+ for(int j=1; j <= 200; j++){ ///TODO
+     // true energy and nominal flux in the current bin
+     double Etrue = fSuperkNuMuFlux10a->GetBinCenter(j);
+     double nominal_flux = this->SuperkNuMuFlux(Etrue,true); // include 10a->10d weight
+
+     // which bin (in the BeamWG binning scheme) contains the j^th 50-MeV bin?
+     int varBin = util::FluxFix2VarBinNumber(j);
+
+     // calculate contribution of the j^th 50-MeV bin in the BeamWG bin which contains it
+     double rto = util::FluxFractionsFixedBinRelToVarBin(
+                         j, fSuperkNuMuFlux10a, fSuperkNuMuFlux10aVarBin);
+
+     // calculate the tweaked flux
+     double tweaked_flux = 0;
+     if(fractional) {
+        // input tweak vector describes fractional flux change in each bin 
+        // BeamWG binning scheme)       
+        double fractional_change_beamwg_bin = twkv[varBin - 1];
+        tweaked_flux = nominal_flux * (1 + fractional_change_beamwg_bin);
+     } else {
+        // input tweak vector describes absolute flux change in each bin 
+        // (in the BeamWG binning scheme)
+        double absolute_change_beamwg_bin = twkv[varBin - 1];
+        tweaked_flux = nominal_flux + absolute_change_beamwg_bin * rto;
+     }
+
+     // update tweaked flux histogram
+     fSuperkNuMuFluxTweaked->SetBinContent(j, tweaked_flux);
+  }//end of bin loop
+}
+//________________________________________________________________________________________
 

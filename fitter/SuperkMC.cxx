@@ -12,13 +12,18 @@
    CurrErecoSpectrum(s) and CurrErecoSpectrum(s,m) will be used.
    Similar changes were make to SuperkExpectation and SuperkObservation classes.
  @ 06/06/2011 - CA
-   Added PhysHypothesis class
-   Added util::UseEventToFillInTemplate(SuperkMode_t m, int pdg, int reaction_mode)
-   Added new (Ereco-dependent) `CCQE ring-counting efficiency error' using the Choleslky method.
-   Renamed old `CCQE efficiency err' to `CCQE other efficiency err' (it now includes all
+   Added PhysHypothesis class.
+   Added util::UseEventToFillInTemplate(SuperkMode_t m, int pdg, int reaction_mode).
+   Added new (Ereco-dependent) `CCQE ring-counting eff. error' using the Choleslky method.
+   Renamed old `CCQE efficiency err' to `CCQE other eff. err' (it now includes all
    sources of errors except ring-counting).
    NumOfEvents_Ereco(), NumOfEvents_Etrue() were modified accordingly to take the new
    Ereco-dependent error into account.
+ @ 05/07/2011 - CA
+   Modified TweakRingCountingEfficiencyCCQE() to allow specifying whether the forced tweak
+   dials are the correlated or de-correlated ones. The de-correlated ones are used if the
+   CCQE ring-counting nuisance params are included in the fit. The correlated ones are
+   used for certain validation programs. Used the updated PhysHypothesis class.
 */
 //________________________________________________________________________________________
 
@@ -223,8 +228,8 @@ bool SuperkMC::Read(TXMLEngine* xml, XMLNodePointer_t root_node)
     exit(1);
   }
   
-  // Reset osc params
-  fPhysHypothesis.UseOscillationParams(0., 0.);
+  // initialise physics hypothesis
+  fPhysHypothesis.Init(kHypUndefined);
 
   //
   // Create histograms
@@ -943,23 +948,22 @@ void SuperkMC::TweakOtherEfficiencyCCQE(double twkdial)
 }
 //________________________________________________________________________________________
 void SuperkMC::TweakRingCountingEfficiencyCCQE(
-   bool force_input_twkdials, double twkdial0, double twkdial1, double twkdial2)
+   bool   force_input_twkdials, /* Force input twk dials? If not, generate using the Cholesky method */
+   double twkdial0,             /* Value of 1st twk dial, needed if values are forced */
+   double twkdial1,             /* Value of 2nd twk dial, needed if values are forced */
+   double twkdial2,             /* Value of 3rd twk dial, needed if values are forced */
+   bool   corellated            /* Are forced twk dials the correlated or uncorrelated ones */
+)
 {
-  // check whether RC0,RC1,RC2 tweaking dials are forced
-  if(force_input_twkdials) {
-    fRC0EffCCQETwkDial = twkdial0;
-    fRC1EffCCQETwkDial = twkdial1;
-    fRC2EffCCQETwkDial = twkdial2;
-    return;
-  }
+
+#ifdef __debug_level_3__
+  cout << "Exp/SK >> Tweaking CCQE ring-counting efficiency" << endl;
+#endif
 
   //
-  // if RC0,RC1,RC2 tweaking dials were not forced, generate random values that have
-  // the input correlations (use Cholesky method)
+  // If this is the first time this function is called, then run the Cholesky 
+  // decomposition of the ring-counting error matrix (covariance matrix)
   //
-
-  // if this is the first time, then run the Cholesky decomposition of the ring-counting
-  // error matrix (covariance matrix)
   if(!fEffCCQERelErrCovarCholeskyL) {
     cout << "Exp/SK/TweakRingCountingEffCCQE >> Running Cholesky's method." << endl;
     TMatrixD ccqe_rc_err_matrix(*fEffCCQERelErrCovarRC);
@@ -974,29 +978,58 @@ void SuperkMC::TweakRingCountingEfficiencyCCQE(
     cout << "Exp/SK/TweakRingCountingEffCCQE >> "
          << "Cholesky decomposition of RC error matrix" << endl;
     fEffCCQERelErrCovarCholeskyL->Print();
-
   }
 
-  // Cholesky decomposition of the CCQE ring-counting err covariance matrix
+
+  //
+  // Check whether the values of the tweaking dials are forced. 
+  // If the forced tweaking dials are supposed to be the correlated ones then we don't
+  // need to use the Cholesky decomposition of the  ring-counting error matrix.
+  //
+  if(force_input_twkdials && corellated) {
+    fRC0EffCCQETwkDial = twkdial0;
+    fRC1EffCCQETwkDial = twkdial1;
+    fRC2EffCCQETwkDial = twkdial2;
+    return;
+  }
+
   TMatrixD & L = *fEffCCQERelErrCovarCholeskyL;
+  TVectorD twkv(3);
 
-  // Mean tweaking dial
-  TVectorD meanv(3);
-  meanv(0)=0.;
-  meanv(1)=0.;
-  meanv(2)=0.;
+  //
+  // Check whether the values of the tweaking dials are forced. 
+  // If the forced tweaking dials are supposed to be the un-correlated ones then use
+  // the Cholesky decomposition of the ring-counting error matrix to generate
+  // correlated tweaking dials.
+  //
 
-  // Generate correlated tweaking dials
-  TVectorD twkv = util::CholeskyGenerateCorrelatedParams(L, meanv);
+  if(force_input_twkdials && !corellated) {
+    TVectorD twkv_uncorrelated(3);
+    twkv_uncorrelated[0] = twkdial0;
+    twkv_uncorrelated[1] = twkdial1;
+    twkv_uncorrelated[2] = twkdial2;
+    twkv = util::CholeskyCalculateCorrelatedParamVariations(L,twkv_uncorrelated);
+  } 
 
-  // These tweaking dials are distributed around 0 and have the spread and correlation
-  // described by the input fEffCCQERelErrCovarRC error matrix.
+  //
+  // If the tweaking dials were not forced, generate gaussian correlated tweaking dials.
+  // Then use the Cholesky decomposition of the ring-counting error matrix to generate
+  // correlated tweaking dials.
+  //
+
+  else {
+    twkv = util::CholeskyGenerateCorrelatedParamVariations(L);
+  }
+
+  //
+  // These generated tweaking dials are distributed around 0 and have the spread and 
+  // correlation described by the input fEffCCQERelErrCovarRC error matrix.
   // Divide these tweaking dials with the sqrt(diagonal error matrix elements) so that
   // they have a `canonical' definition (similar with all other systematic tweaking dials 
   // used in GENIE: mean = 0, sigma = 1.
+  //
 
   TMatrixD & rc_err_matrix = *fEffCCQERelErrCovarRC;
-
   fRC0EffCCQETwkDial = twkv(0) / TMath::Sqrt(rc_err_matrix(0,0)); 
   fRC1EffCCQETwkDial = twkv(1) / TMath::Sqrt(rc_err_matrix(1,1));
   fRC2EffCCQETwkDial = twkv(2) / TMath::Sqrt(rc_err_matrix(2,2));
@@ -1049,6 +1082,7 @@ double SuperkMC::EfficiencyWeight(
           // combined weight
           double weight     = weight_oth * weight_rc;
           return weight;
+          break;
        }
 
        //
@@ -1132,26 +1166,26 @@ PhysHypothesis & SuperkMC::Hypothesis(void)
 //________________________________________________________________________________________
 double SuperkMC::SurvivalProbability(double Etrue, SuperkMode_t m) const
 {
-  if(fPhysHypothesis.Oscillations())
+  if(fPhysHypothesis.Hypothesis() == kHypNuMuDisapp2F)
   {
-     double sinsq2theta23 = fPhysHypothesis.CurrSinsq2Theta23();
-     double dm23sq        = fPhysHypothesis.CurrDm23sq();
+     double sinsq2theta23 = fPhysHypothesis.CurrValue(kPhypSinsq2Theta23);
+     double dm23sq        = fPhysHypothesis.CurrValue(kPhypDm23sq);
      double prob_surv = util::NuMuSurvProbOsc2D(sinsq2theta23, dm23sq, Etrue, m);
      return prob_surv;
   } 
   else
-  if(fPhysHypothesis.Decay())
+  if(fPhysHypothesis.Hypothesis() == kHypDecay)
   {
-     double sinsq2theta = fPhysHypothesis.CurrSinsq2Theta23();
-     double alpha       = fPhysHypothesis.CurrAlphaDecay();
+     double sinsq2theta = fPhysHypothesis.CurrValue(kPhypSinsq2Theta23);
+     double alpha       = fPhysHypothesis.CurrValue(kPhypAlphaDecay);
      double prob_surv   = util::NuMuSurvProbDecay(sinsq2theta, alpha, Etrue, m);
      return prob_surv;
   } 
   else
-  if(fPhysHypothesis.Decoherence())
+  if(fPhysHypothesis.Hypothesis() == kHypDecoh)
   {
-     double sinsq2theta = fPhysHypothesis.CurrSinsq2Theta23();
-     double musq        = fPhysHypothesis.CurrMusqDecoh();
+     double sinsq2theta = fPhysHypothesis.CurrValue(kPhypSinsq2Theta23);
+     double musq        = fPhysHypothesis.CurrValue(kPhypMusqDecoherence);
      double prob_surv   = util::NuMuSurvProbDecay(sinsq2theta, musq, Etrue, m);
      return prob_surv;
   }

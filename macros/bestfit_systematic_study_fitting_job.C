@@ -49,7 +49,7 @@ void bestfit_systematic_study_fitting_job(
   skexp.Read(config);
 
   // fit params
-  PhysParamList * fparm = PhysParamList::NumuDisapFitNoSyst();
+  FitParamList * fparm = FitParamList::NumuDisapFitNoSyst();
 
   for(int iexperiment = 0; iexperiment < nexperiments; iexperiment++) {
 

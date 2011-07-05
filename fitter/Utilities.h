@@ -56,6 +56,7 @@ namespace util {
   TMatrixD CholeskyDecomposition                     (TMatrixD& cov_matrix); ///< Cholesky decomposition. Return lower triangular matrix.
   TVectorD CholeskyGenerateCorrelatedParams          (TMatrixD& cholesky_triangular, TVectorD& mean_parm); ///< Generate a vector of correlated params
   TVectorD CholeskyGenerateCorrelatedParamVariations (TMatrixD& cholesky_triangular); ///< Generate a vector of correlated param variations
+  TVectorD CholeskyCalculateCorrelatedParamVariations(TMatrixD& cholesky_triangular, TVectorD& g_uncorrelated);
 
   string AsString(t2kana::conv::PhysParamId_t  p);
   string AsString(t2kana::conv::SuperkSample_t s);

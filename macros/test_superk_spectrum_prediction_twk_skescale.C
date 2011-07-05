@@ -36,10 +36,10 @@ void test_superk_spectrum_prediction_twk_skescale
   SuperkExpectation skexp;
   skexp.Read(config);
 
-  // phys params
-  PhysParamList * fparm = PhysParamList::NumuDisapFitNoSyst();
-  fparm->Update(t2kana::conv::kPhypSinsq2Theta23, input_sinsq2theta23);
-  fparm->Update(t2kana::conv::kPhypDm23sq,        input_dm23sq);
+  // physics hypothesis 
+  PhysHypothesis ph(t2kana::conv::kHypNuMuDisapp2F);
+  ph.SetCurrValue(t2kana::conv::kPhypSinsq2Theta23, input_sinsq2theta23);
+  ph.SetCurrValue(t2kana::conv::kPhypDm23sq,        input_dm23sq);
   
   // calc spectra
   TH1D * hEreco[ntwkdials];
@@ -47,7 +47,7 @@ void test_superk_spectrum_prediction_twk_skescale
      // tweak spectrum generation model
      skexp.GetSuperkMC()->TweakEnergyScale( twkdial[idial] );
      // generate predictions
-     skexp.Generate(*fparm);
+     skexp.Generate(ph);
      // store spectrum
      hEreco[idial] = new TH1D(*skexp.CurrPredictedErecoSpectrum(conv::kSKsFCFV1RingMuLike));
      hEreco[idial]->SetDirectory(0);

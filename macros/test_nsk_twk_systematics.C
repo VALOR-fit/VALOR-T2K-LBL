@@ -10,23 +10,22 @@
 
 void test_nsk_twk_systematics
 (
-  const double input_sinsq2theta23 = 0.00,
-  const double input_dm23sq        = 2.4E-3,
+  const double input_sinsq2theta23 = 1.00,
+  const double input_dm23sq        = 2.32E-3,
   const char * config_file         = "analysis_configuration.xml"
 )
 {
+  gROOT->Reset();
+
   using namespace std;
   using namespace t2kana;
 
-  const char * config = Form("%s/config/%s", gSystem->Getenv("T2KOSCANA"), config_file);
-  cout << "Reading analysis configuration from: " << config << endl;
- 
   const int nexperiments = 5000;
 
   const int nsystematics = 14;
   string systematic[nsystematics] = {
-	"sk_ccqe_other_eff",
 	"sk_ccqe_ring_counting_eff",
+	"sk_ccqe_other_eff",
 	"sk_ccnonqe_eff",
 	"sk_nc_eff",
 	"sk_nuecc_eff",
@@ -41,8 +40,8 @@ void test_nsk_twk_systematics
 	"nuclear_effect"
   };
   bool generate_random[nsystematics] = {
-	false,  /* sk_ccqe_other_eff          */
 	true,   /* sk_ccqe_ring_counting_eff  */
+	false,  /* sk_ccqe_other_eff          */
 	false,  /* sk_ccnonqe_eff             */
 	false,  /* sk_nc_eff                  */
 	false,  /* sk_nuecc_eff               */
@@ -57,8 +56,8 @@ void test_nsk_twk_systematics
 	false   /* nuclear_effect             */
   };
   bool skip[nsystematics] = {
-	false,  /* sk_ccqe_other_eff                  */
 	false,  /* sk_ccqe_ring_counting_eff          */
+	false,  /* sk_ccqe_other_eff                  */
 	false,  /* sk_ccnonqe_eff                     */
 	false,  /* sk_nc_eff                          */
 	false,  /* sk_nuecc_eff                       */
@@ -81,10 +80,12 @@ void test_nsk_twk_systematics
   fparm->Update(t2kana::conv::kPhypSinsq2Theta23, input_sinsq2theta23);
   fparm->Update(t2kana::conv::kPhypDm23sq,        input_dm23sq);
 
-  // get superk spectrum predictor & configure
+  // get & configure spectrum predictor
+  const char * config = Form("%s/config/%s", gSystem->Getenv("T2KOSCANA"), config_file);
+  cout << "Reading analysis configuration from: " << config << endl;
   SuperkExpectation * skexp = new SuperkExpectation;
   skexp->Read(config);
-
+ 
   // get default prediction
   skexp->Generate(*fparm);
   double nsk_deflt = skexp->CurrPredictedErecoSpectrum(conv::kSKsFCFV1RingMuLike)->Integral();

@@ -14,7 +14,7 @@ void test_mock_data_fit
    double       input_dm23sq        = 2.32E-3,                      /* */
    bool         fluctuate_stat      = true,                         /* include statistical fluctuations? */
    bool         include_systematics = false,                        /* include systematic variation in generated toy MC expt? */
-   const char * fitter_name         = "custom"                      /* oscillation fitter <"minuit", "custom" (2-D grid scan)> */
+   const char * fitter_name         = "custom",                     /* oscillation fitter <"minuit", "custom" (2-D grid scan)> */
    const char * config_file         = "analysis_configuration.xml"  /* analysis configuration file */
 )
 {
@@ -32,7 +32,7 @@ void test_mock_data_fit
   cout << "Reading analysis configuration from: " << config << endl;
 
   // fit params
-  PhysParamList * fparm = PhysParamList::NumuDisapFitNoSyst();
+  FitParamList * fparm = FitParamList::NumuDisapFitNoSyst();
   fparm->Update(t2kana::conv::kPhypSinsq2Theta23, input_sinsq2theta23);
   fparm->Update(t2kana::conv::kPhypDm23sq,        input_dm23sq);
 

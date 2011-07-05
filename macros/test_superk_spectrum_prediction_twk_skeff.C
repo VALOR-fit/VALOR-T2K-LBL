@@ -71,10 +71,10 @@ void test_superk_spectrum_prediction_twk_skeff
   SuperkExpectation skexp;
   skexp.Read(config);
 
-  // phys params
-  PhysParamList * fparm = PhysParamList::NumuDisapFitNoSyst();
-  fparm->Update(t2kana::conv::kPhypSinsq2Theta23, input_sinsq2theta23);
-  fparm->Update(t2kana::conv::kPhypDm23sq,        input_dm23sq);
+  // physics hypothesis 
+  PhysHypothesis ph(t2kana::conv::kHypNuMuDisapp2F);
+  ph.SetCurrValue(t2kana::conv::kPhypSinsq2Theta23, input_sinsq2theta23);
+  ph.SetCurrValue(t2kana::conv::kPhypDm23sq,        input_dm23sq);
 
   cout << "\n\nCalculating effects of SuperK efficiency uncertainties\n" << endl;
 
@@ -91,7 +91,7 @@ void test_superk_spectrum_prediction_twk_skeff
            // tweak spectrum generation model
            skexp.TweakSystematic(systematic[imode], twkdial[idial]);
            // generate predictions  
-           skexp.Generate(*fparm);
+           skexp.Generate(ph);
            // store spectrum
            hEreco[imode][idial] = new TH1D(*skexp.CurrPredictedErecoSpectrum(conv::kSKsFCFV1RingMuLike));
            hEreco[imode][idial]->SetDirectory(0);
@@ -111,7 +111,7 @@ void test_superk_spectrum_prediction_twk_skeff
                skexp.TweakSystematic(systematic[imode]);
            }
            // generate predictions  
-           skexp.Generate(*fparm);
+           skexp.Generate(ph);
            // store spectrum
            hErecoToyMC[iexp] = new TH1D(*skexp.CurrPredictedErecoSpectrum(conv::kSKsFCFV1RingMuLike));
            hErecoToyMC[iexp]->SetDirectory(0);

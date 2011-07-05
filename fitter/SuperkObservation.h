@@ -5,13 +5,8 @@
 
 \brief    
 
-\author   STFC, Rutherford Appleton Laboratory / Oxford T2K groups
-
-          Costas Andreopoulos <costas.andreopoulos \at stfc.ac.uk>
-          Jelena Ilic         <Jelena.Ilic \at stfc.ac.uk>
-          Nick Grant          <nick.grant \at stfc.ac.uk>
-          Geoff Pearce        <geoff.pearce \at stfc.ac.uk>
-          Alfons Weber        <alfons.weber \at stfc.ac.uk>
+\author   Costas Andreopoulos <costas.andreopoulos \at stfc.ac.uk>
+          STFC, Rutherford Appleton Laboratory
 
 \created  October 20, 2010
 
@@ -29,7 +24,7 @@ class TVirtualPad;
 
 #include "Conventions.h"
 #include "SuperkExpectation.h"
-#include "PhysParamList.h"
+#include "FitParamList.h"
 
 using std::string;
 using std::vector;
@@ -48,7 +43,7 @@ public:
   bool Read(string config_file, int data_set_id=0);
 
   // Create mock data
-  void CreateMockData(SuperkExpectation & exp, const PhysParamList & fp, bool fluctuate=true);
+  void CreateMockData(SuperkExpectation & exp, const FitParamList & fp, bool fluctuate=true);
 
   // Get data
   double NumOfEvents (t2kana::conv::SuperkSample_t s = t2kana::conv::kSKsUndefined) const;             
