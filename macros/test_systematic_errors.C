@@ -39,7 +39,7 @@ void test_systematic_errors
   const double input_dm23sq               = 2.4E-3,                       /* */
   bool         use_tex                    = false,                        /* print-out results as a TeX table (for inclusion in tech. note)*/
   bool         show_sk_ccqe_spectral_info = false,                        /* */
-  const char * config_file                = "analysis_configuration.xml", /* */
+  const char * config_file                = "analysis_configuration.xml"  /* */
 )
 {
   using namespace std;
