@@ -21,10 +21,10 @@ void plot_feldman_cousins_deltachisqcrit(
   const char * delta_chisq_critical_file_mc_statsyst,
   int nsmoothings=1)
 {
-  const double sinsq2theta_min = 0.82;
+  const double sinsq2theta_min = 0.83;
   const double sinsq2theta_max = 1.00;
-  const double dmsq_min        = 1.8E-3;
-  const double dmsq_max        = 3.5E-3;
+  const double dmsq_min        = 2.1E-3;
+  const double dmsq_max        = 3.2E-3;
   const double dchisq_2p_68    = 2.30; /// canonical 68% CL \delta\chi^{2} for 2 parameters
   const double dchisq_2p_90    = 4.61; /// canonical 90% CL \delta\chi^{2} for 2 parameters
 
