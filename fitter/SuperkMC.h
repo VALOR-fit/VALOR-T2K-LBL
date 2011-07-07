@@ -42,23 +42,28 @@ public:
   SuperkMC();
  ~SuperkMC();
 
-  // Get information needed from SK for predicting the SK spectrum
-
-  double  AnalyzedSamplePOT   (void) const;
-  TTree * MCTree              (t2kana::conv::SuperkSample_t s, t2kana::conv::SuperkMode_t m);
-  double  MCPOT               (t2kana::conv::SuperkSample_t s, t2kana::conv::SuperkMode_t m);
-  double  NumOfEvents_Ereco   (double Ereco, t2kana::conv::SuperkSample_t s, t2kana::conv::SuperkMode_t m, bool ignore_energy_scale_twk=false) const;
-  double  NumOfEvents_Etrue   (double Etrue, t2kana::conv::SuperkSample_t s, t2kana::conv::SuperkMode_t m) const;
-
+  // Update and get Ereco spectra (needed for fitting the data)
   void    UpdateErecoSpectra  (void);
   TH1D*   CurrErecoSpectrum   (t2kana::conv::SuperkSample_t s) const { return fMCErecoSpectrumTot[s]; }
   TH1D*   CurrErecoSpectrum   (t2kana::conv::SuperkSample_t s, t2kana::conv::SuperkMode_t m) const { return fMCErecoSpectrum[s][m]; }
 
+  // Update and get Etrue spectra (needed for flux normalisation error calculation)
   void    UpdateEtrueSpectra  (void);
   TH1D*   Curr1RmuNuMuEtrue   (void) const { return f1RmNuMuEt;    } ///< current (allowing for applied weights) Etrue distribution for numu
   TH1D*   Curr1RmuNuMuBarEtrue(void) const { return f1RmNuMuBarEt; } ///<      -//-  for numubar
   TH1D*   Curr1RmuNuEEtrue    (void) const { return f1RmNuEEt;     } ///<      -//-  for nue
       
+  // Loop over templates and calculate the number of events in given Ereco or Etrue bin
+  double  NumOfEvents_Ereco   (double Ereco, t2kana::conv::SuperkSample_t s, t2kana::conv::SuperkMode_t m, bool ignore_energy_scale_twk=false) const;
+  double  NumOfEvents_Etrue   (double Etrue, t2kana::conv::SuperkSample_t s, t2kana::conv::SuperkMode_t m) const;
+
+  // MC event samples used to fill-in MC templates and POT exposure for each
+  TTree * MCTree (t2kana::conv::SuperkSample_t s, t2kana::conv::SuperkMode_t m);
+  double  MCPOT  (t2kana::conv::SuperkSample_t s, t2kana::conv::SuperkMode_t m);
+
+  // POT of analysed sample (MC scaled to that POT-figure)
+  double AnalyzedSamplePOT(void) const;
+
   // Systematic variations
   void TweakEnergyScale                 (double twkdial);
   void TweakOtherEfficiencyCCQE         (double twkdial); ///< all but ring-counting
@@ -81,7 +86,7 @@ public:
   PhysHypothesis & Hypothesis(void);
   double SurvivalProbability(double Etrue, t2kana::conv::SuperkMode_t m) const;
 
-  //
+  // Hooks for obtaining necessary flux and cross-section information
   void TellMeAboutTheFlux       (NuFlux * flux) { fNuFlux     = flux; }
   void TellMeAboutCrossSections (NuXSec * xsec) { fGenInputs  = xsec; }
 

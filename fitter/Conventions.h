@@ -16,6 +16,8 @@
 #ifndef _t2kana_conv_h_
 #define _t2kana_conv_h_
 
+#include <cmath>
+
 #ifndef ROOT_Rtypes
 #include "Rtypes.h"
 #endif
@@ -35,8 +37,10 @@ typedef enum EConfLevel {
 // samples included in analysis
 typedef enum ESuperkSample {
    kSKsUndefined = -1, 
-   kSKsFCFV1RingMuLike, 
-   kSKsFCFVmRingMuLike
+   kSKsFCFV1RingMuLike, // fully-contained fiducial-volume single-ring mu-like
+   kSKsFCFVmRingMuLike, // fully-contained fiducial-volume multi-ring  mu-like
+   kSKsFCFV1RingELike,  // fully-contained fiducial-volume single-ring e-like
+   kSKsFCFVmRingELike   // fully-contained fiducial-volume multi-ring  e-like
 } SuperkSample_t; 
 
 // (true) reaction modes considered separately within each SuperK sample
@@ -179,8 +183,20 @@ static const int kns   = kNSuperkSamples;
 static const int knm   = kNSuperkModes; 
 static const int knmnd = kNND280Modes; 
 
-static const double kASmallNum   = 1E-10;
-static const double kBaseline    = 295.335; // Tokai->Kamioka (km)
+// Some constants
+static const double kASmallNum         = 1E-10;                   // 
+static const double kBaseline          = 295.335;                 // Tokai->Kamioka (km)
+static const double kOscDimensFactor   = 1.26693281;              // Dimensional factor (GeV/eV^2/km) appearing in netrino oscillation formula
+static const double kCrustDensity      = 2.7;                     // Average density of Earth's continental crust (gr / cm^3)
+static const double khbar_SI           = 6.582119e-16;            // hbar (eV s)
+static const double kc_SI              = 2.9979246e10;            // c (cm/s)
+static const double khbarc_SI          = khbar_SI*kc_SI;          // hbar*c (eV * cm)
+static const double khbarc3_SI         = pow(khbarc_SI,3.);       // (hbar*c)^3 (eV^3 * cm^3)
+static const double kGF                = 1.16637e-5;              // Fermi coupling constant, (GeV^-2, natural units)
+static const double kGF_SI             = kGF*khbarc3_SI*1.0e-18;  // Fermi coupling constant, (eV cm^3, SI units), 1e-18 is used for GeV^-2 -> eV^-2
+static const double kNA                = 6.022142e23;             // Avogadro number (mol^-1)
+static const double kCrustElecDensity  = kCrustDensity*kNA*0.5;   // Convert Earth crust density (g cm^-3) to number density of electrons Ne (cm^-3) 
+                                                                  // Ne = density * N_A * Z/A. Take Z/A = 1/2 since most elements in Earth's crust are light.
 
 //
 // Variable Etrue binning scheme used by the Beam WG.
