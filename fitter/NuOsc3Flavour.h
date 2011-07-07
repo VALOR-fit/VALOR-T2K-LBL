@@ -40,8 +40,8 @@ public:
   void SetOscParameters (double sinsq2theta12, /* sin^2(2*theta_{12}) */
                          double sinsq2theta13, /* sin^2(2*theta_{13}) */
                          double sinsq2theta23, /* sin^2(2*theta_{23}) */
-                         double dmsq12_in,     /*  Dm^2_{12} in eV^2/c^4 */
-                         double dmsq23_in,     /* |Dm^2_{23}| (always positive) in eV^2/c^4 */
+                         double dmsq12,        /*  Dm^2_{12} in eV^2/c^4 */
+                         double dmsq23,        /* |Dm^2_{23}| (always positive) in eV^2/c^4 */
                          double deltaCP        /* delta_{CP} phase in radians */
                         );
 
