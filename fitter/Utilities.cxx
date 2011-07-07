@@ -463,8 +463,7 @@ string t2kana::util::AsString(PhysParamId_t p)
   return "--";
 }
 //____________________________________________________________________________
-string t2kana::util::AsString(
-    t2kana::conv::SuperkSample_t s)
+string t2kana::util::AsString(t2kana::conv::SuperkSample_t s)
 {
   switch(s) {
      case ( kSKsFCFV1RingMuLike ) : return "FCFV1RingMuLike"; break;
@@ -474,8 +473,7 @@ string t2kana::util::AsString(
   return "--";
 }
 //____________________________________________________________________________
-string t2kana::util::AsString(
-     t2kana::conv::SuperkMode_t m)
+string t2kana::util::AsString(t2kana::conv::SuperkMode_t m)
 {
   switch(m) {
      case ( kSKmNuMuCCQE      ) : return "numu CCQE";            break;
@@ -493,6 +491,58 @@ string t2kana::util::AsString(
      default                    : return "--";
   }
   return "--";
+}
+//____________________________________________________________________________
+string t2kana::util::AsString(t2kana::conv::OscChannelId_t osch)
+{
+  switch(osch) {
+     case ( kOscNuE2NuE           ) : return "nue -> nue";            break;
+     case ( kOscNuE2NuMu          ) : return "nue -> numu";           break;
+     case ( kOscNuE2NuTau         ) : return "nue -> nutau";          break;
+     case ( kOscNuMu2NuE          ) : return "numu -> nue";           break;
+     case ( kOscNuMu2NuMu         ) : return "numu -> numu";          break;
+     case ( kOscNuMu2NuTau        ) : return "numu -> nutau";         break;
+     case ( kOscNuTau2NuE         ) : return "nutau -> nue";          break;
+     case ( kOscNuTau2NuMu        ) : return "nutau -> numu";         break;
+     case ( kOscNuTau2NuTau       ) : return "nutau -> nutau";        break;
+     case ( kOscNuEBar2NuEBar     ) : return "nuebar -> nuebar";      break;
+     case ( kOscNuEBar2NuMuBar    ) : return "nuebar -> numubar";     break;
+     case ( kOscNuEBar2NuTauBar   ) : return "nuebar -> nutaubar";    break;
+     case ( kOscNuMuBar2NuEBar    ) : return "numubar -> nuebar";     break;
+     case ( kOscNuMuBar2NuMuBar   ) : return "numubar -> numubar";    break;
+     case ( kOscNuMuBar2NuTauBar  ) : return "numubar -> nutaubar";   break;
+     case ( kOscNuTauBar2NuEBar   ) : return "nutaubar -> nuebar";    break;
+     case ( kOscNuTauBar2NuMuBar  ) : return "nutaubar -> numubar";   break;
+     case ( kOscNuTauBar2NuTauBar ) : return "nutaubar -> nutaubar";  break;
+     default                        : return "--";
+  }
+  return "--";
+} 
+//____________________________________________________________________________
+t2kana::conv::OscChannelId_t 
+  t2kana::util::GetOscChannel(int nu_start, int nu_end)
+{
+  if ( nu_start == kPdgNuE      && nu_end == kPdgNuE      ) return kOscNuE2NuE;
+  if ( nu_start == kPdgNuE      && nu_end == kPdgNuMu     ) return kOscNuE2NuMu;
+  if ( nu_start == kPdgNuE      && nu_end == kPdgNuTau    ) return kOscNuE2NuTau;
+  if ( nu_start == kPdgNuMu     && nu_end == kPdgNuE      ) return kOscNuMu2NuE;
+  if ( nu_start == kPdgNuMu     && nu_end == kPdgNuMu     ) return kOscNuMu2NuMu;
+  if ( nu_start == kPdgNuMu     && nu_end == kPdgNuTau    ) return kOscNuMu2NuTau;
+  if ( nu_start == kPdgNuTau    && nu_end == kPdgNuE      ) return kOscNuTau2NuE;
+  if ( nu_start == kPdgNuTau    && nu_end == kPdgNuMu     ) return kOscNuTau2NuMu;
+  if ( nu_start == kPdgNuTau    && nu_end == kPdgNuTau    ) return kOscNuTau2NuTau;
+  
+  if ( nu_start == kPdgNuEBar   && nu_end == kPdgNuEBar   ) return kOscNuEBar2NuEBar;
+  if ( nu_start == kPdgNuEBar   && nu_end == kPdgNuMuBar  ) return kOscNuEBar2NuMuBar;
+  if ( nu_start == kPdgNuEBar   && nu_end == kPdgNuTauBar ) return kOscNuEBar2NuTauBar;
+  if ( nu_start == kPdgNuMuBar  && nu_end == kPdgNuEBar   ) return kOscNuMuBar2NuEBar;
+  if ( nu_start == kPdgNuMuBar  && nu_end == kPdgNuMuBar  ) return kOscNuMuBar2NuMuBar;
+  if ( nu_start == kPdgNuMuBar  && nu_end == kPdgNuTauBar ) return kOscNuMuBar2NuTauBar;
+  if ( nu_start == kPdgNuTauBar && nu_end == kPdgNuEBar   ) return kOscNuTauBar2NuEBar;
+  if ( nu_start == kPdgNuTauBar && nu_end == kPdgNuMuBar  ) return kOscNuTauBar2NuMuBar;
+  if ( nu_start == kPdgNuTauBar && nu_end == kPdgNuTauBar ) return kOscNuTauBar2NuTauBar;
+
+  return kOscUndefined;
 }
 //____________________________________________________________________________
 void t2kana::util::SetDefaultStyle(bool black_n_white)
@@ -1483,6 +1533,28 @@ bool t2kana::util::UseEventToFillInTemplate(
   }
  
   return use_it;
+}
+//___________________________________________________________________________
+bool t2kana::util::IsNeutrino(int pdg_code)
+{
+  if ( pdg_code == kPdgNuE   ||
+       pdg_code == kPdgNuMu  ||
+       pdg_code == kPdgNuTau ) 
+  {
+    return true;
+  }
+  return false;
+}
+//___________________________________________________________________________
+bool t2kana::util::IsAntiNeutrino(int pdg_code)
+{
+  if ( pdg_code == kPdgNuEBar   ||
+       pdg_code == kPdgNuMuBar  ||
+       pdg_code == kPdgNuTauBar ) 
+  {
+    return true;
+  }
+  return false;
 }
 //___________________________________________________________________________
 

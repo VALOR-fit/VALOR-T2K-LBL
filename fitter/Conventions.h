@@ -134,6 +134,36 @@ typedef enum EPhysHypothesis {
    kHypOsc3F              /* neutrino oscillations, 3-flavour framework */
 } PhysHypothesis_t;
 
+// oscillation channels
+typedef enum EOscChannelId {   
+   kOscUndefined = -1, 
+   kOscNuE2NuE,
+   kOscNuE2NuMu,
+   kOscNuE2NuTau,
+   kOscNuMu2NuE,
+   kOscNuMu2NuMu,
+   kOscNuMu2NuTau,
+   kOscNuTau2NuE,
+   kOscNuTau2NuMu,
+   kOscNuTau2NuTau,
+   kOscNuEBar2NuEBar,
+   kOscNuEBar2NuMuBar,
+   kOscNuEBar2NuTauBar,
+   kOscNuMuBar2NuEBar,
+   kOscNuMuBar2NuMuBar,
+   kOscNuMuBar2NuTauBar,
+   kOscNuTauBar2NuEBar,
+   kOscNuTauBar2NuMuBar,
+   kOscNuTauBar2NuTauBar
+} OscChannelId_t;
+
+// neutrino mass hierarchy
+typedef enum ENuMassHierarchy {   
+   kNmhUndefined = -1, 
+   kNmhNormal,
+   kNmhInverted
+} NuMassHierarchy_t;
+
 static const int kPdgNuE      =  12;
 static const int kPdgNuMu     =  14;
 static const int kPdgNuTau    =  16;

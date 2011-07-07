@@ -58,9 +58,14 @@ namespace util {
   TVectorD CholeskyGenerateCorrelatedParamVariations (TMatrixD& cholesky_triangular); ///< Generate a vector of correlated param variations
   TVectorD CholeskyCalculateCorrelatedParamVariations(TMatrixD& cholesky_triangular, TVectorD& g_uncorrelated);
 
-  string AsString(t2kana::conv::PhysParamId_t  p);
-  string AsString(t2kana::conv::SuperkSample_t s);
-  string AsString(t2kana::conv::SuperkMode_t   m);
+  //
+
+  string AsString (t2kana::conv::PhysParamId_t  p);
+  string AsString (t2kana::conv::SuperkSample_t s);
+  string AsString (t2kana::conv::SuperkMode_t   m);
+  string AsString (t2kana::conv::OscChannelId_t o);
+
+  t2kana::conv::OscChannelId_t GetOscChannel(int nu_start, int nu_end);
 
   // string utilities
 
@@ -85,6 +90,9 @@ namespace util {
   // reaction modes etc
 
   bool UseEventToFillInTemplate(t2kana::conv::SuperkMode_t m, int nu_pdg_code, int neut_reaction_mode);
+
+  bool IsNeutrino    (int pdg_code);
+  bool IsAntiNeutrino(int pdg_code);
 
   // ROOT style/formatting
 

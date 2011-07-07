@@ -178,6 +178,9 @@ bool SuperkObservation::Read(string config_file, int data_set_id)
      }
   }
 
+  cout << "Obs >> Read: " << fErDistr[kSKsFCFV1RingMuLike]->GetEntries() 
+       << " " << util::AsString(kSKsFCFV1RingMuLike) << " events." << endl;
+
   // Release memory
   xml->FreeDoc(xmldoc);
   delete xml;

@@ -39,8 +39,8 @@ void test_superk_spectrum_prediction
   PhysHypothesis ph(t2kana::conv::kHypNuMuDisapp2F);
 
   for(int icase = 0; icase < ncases; icase++) {
-    ph.SetCurrValue(t2kana::conv::kPhypSinsq2Theta23, input_sinsq2theta23);
-    ph.SetCurrValue(t2kana::conv::kPhypDm23sq,        input_dm23sq);
+    ph.SetCurrValue(t2kana::conv::kPhypSinsq2Theta23, input_sinsq2theta23[icase]);
+    ph.SetCurrValue(t2kana::conv::kPhypDm23sq,        input_dm23sq[icase]);
     skexp.Generate(ph);
     hErecoTot[icase] = new TH1D(*skexp.CurrPredictedErecoSpectrum(kSKsFCFV1RingMuLike));
     hErecoTot[icase]->SetDirectory(0);
