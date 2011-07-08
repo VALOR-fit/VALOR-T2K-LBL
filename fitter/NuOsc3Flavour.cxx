@@ -77,6 +77,15 @@ void NuOsc3Flavour::SetOscParameters(
 
   // The input values of dmsq23 and dmsq12  uniquely define the value of dmsq13
   dmsq13 = dmsq12 + dmsq23;
+
+  // Code returns NaN if sin^2(mixing angle) is unphysical.
+  // Don't let sin^2(mixing angle) be below 0 or above 1.
+  sinsq2theta12 = TMath::Min(1.,sinsq2theta12);
+  sinsq2theta12 = TMath::Max(0.,sinsq2theta12);
+  sinsq2theta13 = TMath::Min(1.,sinsq2theta13);
+  sinsq2theta13 = TMath::Max(0.,sinsq2theta13);
+  sinsq2theta23 = TMath::Min(1.,sinsq2theta23);
+  sinsq2theta23 = TMath::Max(0.,sinsq2theta23);
  
   // Calculate sin(mixingAngle) from sin^2(2*mixingAngle) 
   double s12 = sqrt(0.5 * (1 - sqrt(1 - sinsq2theta12)));
