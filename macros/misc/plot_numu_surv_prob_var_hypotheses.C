@@ -1,6 +1,7 @@
 //
 // ------------------------------------------------------------------------------------------------
-// Plot contributions from various event modes in the predicted SuperK spectrum.
+// Plot numu survival probability as function of Ev and L/Ev for various physics
+// hypotheses (2-flavour oscillations, decay, decoherence)
 //
 // Costas Andreopoulos
 // ------------------------------------------------------------------------------------------------
@@ -8,7 +9,7 @@
 
 #include "Conventions.h"
 
-void plot_survival_probability()
+void plot_numu_surv_prob_var_hypotheses()
 {
   using namespace std;
   using namespace t2kana;
