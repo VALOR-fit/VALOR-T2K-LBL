@@ -63,15 +63,16 @@ private:
 
  void Init(void);
 
- t2kana::conv::NuMassHierarchy_t fMassHierarchy;
+ t2kana::conv::NuMassHierarchy_t fMassHierarchy; ///< mass hierarchy
+ double fBaseline; ///< baseline (km)
+ double fNe;       ///< number density of electrons in Earth's crust (cm^-3)
 
- double baseline;    //km
- double dmsqFactor;  //constant in (dmsq L / E) 
- double dmsq23;      //eV2
- double dmsq12;      //eV2
- double dmsq13;      //eV2 
+ // Squared mass splittings
+ double dmsq23;    //< eV^2
+ double dmsq12;    //< eV^2
+ double dmsq13;    //< eV^2 
 
- //moduli squared of PMNS matrix elements
+ // Moduli squared of PMNS matrix elements
  double modUe1sq;
  double modUe2sq;
  double modUe3sq;
@@ -92,15 +93,11 @@ private:
  double Im23;
  double arg23;
 
- //the mass squared matrix has diagonal elements 0, dmsq12, dmsq13
- //and all off-diagonal elements are zero
- //UMassUdaggerVacuum is the product of the PMNS matrix, the mass 
- //squared matrix and the dagger of the PMNS matrix in vacuum
- double UMassUdaggerVacuum[3][3][2];
- 
- double GF;   //Fermi coupling constant
- double Ne;   //number density of electrons in Earth's crust
-		
+ // The mass squared matrix has diagonal elements 0, dmsq12, dmsq13
+ // and all off-diagonal elements are zero
+ // UMassUdaggerVacuum is the product of the PMNS matrix, the mass 
+ // squared matrix and the dagger of the PMNS matrix in vacuum.
+ double UMassUdaggerVacuum[3][3][2];		
 };
 
 }//end of namespace t2kana

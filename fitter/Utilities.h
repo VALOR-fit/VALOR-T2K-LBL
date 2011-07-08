@@ -67,6 +67,10 @@ namespace util {
 
   t2kana::conv::OscChannelId_t GetOscChannel(int nu_start, int nu_end);
 
+  bool IsSystematic   (t2kana::conv::PhysParamId_t p);
+  bool IsNeutrino     (int pdg_code);
+  bool IsAntiNeutrino (int pdg_code);
+
   // string utilities
 
   vector<string> Tokens     (string input, string delimiter);
@@ -90,9 +94,6 @@ namespace util {
   // reaction modes etc
 
   bool UseEventToFillInTemplate(t2kana::conv::SuperkMode_t m, int nu_pdg_code, int neut_reaction_mode);
-
-  bool IsNeutrino    (int pdg_code);
-  bool IsAntiNeutrino(int pdg_code);
 
   // ROOT style/formatting
 

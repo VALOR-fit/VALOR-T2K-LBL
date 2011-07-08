@@ -32,32 +32,29 @@ NuOsc3Flavour::~NuOsc3Flavour( )
 //________________________________________________________________________________________
 void NuOsc3Flavour::Init()
 {
-  fMassHierarchy = kNmhNormal;
+  // set default baseline
+  this->SetBaseline(kBaseline);
 
-  //T2K baseline length taken from email from Kameda-san on 16-12-2010      
-  //Kameda-san took this value from Nakadaira-san's code       
-  baseline = 295.335;   //km      
-  dmsqFactor = 1.26693281;
+  // set a default mass hierarchy
+  this->SetMassHierarchy(kNmhNormal);
 
-  GF = 1.16637e-5;   //Fermi coupling constant, GeV^-2 (natural units)
-  //convert GF to eV^-2
-  GF = GF * 1.0e-18;
-  //convert GF to SI units (eV cm^3) by multiplying by (hbar c)^3
-  //hbar is in units of eV s, c is in units of cm/s
-  GF = GF * 6.582119e-16 * 2.9979246e10 * 6.582119e-16 * 2.9979246e10 * 6.582119e-16 * 2.9979246e10;
-
-  double density = 2.7;  //g cm-3, average density of Earth's continental crust
-
-  //convert Earth crust density (g cm^-3) to number density of electrons Ne (cm^-3) 
-  //Ne = density * N_A * Z / A 
-  //where N_A = Avogadro number (mol^-1) , Z = atomic number, A = atomic weight (g/mol)    
-  //take Z/A = 1/2 since most elements in Earth's crust are light                  
-  Ne = density * 6.022142e23 * 0.5;
+  // set default density 
+  this->SetDensity(kCrustDensity);
 }
 //________________________________________________________________________________________
 void NuOsc3Flavour::SetBaseline(double length)
 {
-  baseline = length;
+  fBaseline = length;
+}
+//________________________________________________________________________________________
+void NuOsc3Flavour::SetDensity(double density)
+{
+// Convert input Earth crust density (g cm^-3) to number density of electrons Ne (cm^-3)
+// Ne = density * N_A * Z / A
+// where N_A = Avogadro number (mol^-1) , Z = atomic number, A = atomic weight (g/mol)
+// take Z/A = 1/2 since most elements in Earth's crust are light 
+
+  fNe = density * kNA * 0.5;
 }
 //________________________________________________________________________________________
 void NuOsc3Flavour::SetMassHierarchy(NuMassHierarchy_t h)
@@ -135,15 +132,6 @@ void NuOsc3Flavour::SetOscParameters(
   UMassUdaggerVacuum[2][2][im] = 0.0;
 }
 //________________________________________________________________________________________
-void NuOsc3Flavour::SetDensity(double density)
-{
-  //convert Earth crust density (g cm^-3) to number density of electrons Ne (cm^-3)
-  //Ne = density * N_A * Z / A
-  //where N_A = Avogadro number (mol^-1) , Z = atomic number, A = atomic weight (g/mol)
-  //take Z/A = 1/2 since most elements in Earth's crust are light 
-  Ne = density * 6.022142e23 * 0.5;
-}
-//________________________________________________________________________________________
 double NuOsc3Flavour::CalcVacuumOscProb(int nu_start, int nu_end, double energy)
 {
 // This method calculates the 3-flavour oscillation probabilities in vacuum.
@@ -160,16 +148,16 @@ double NuOsc3Flavour::CalcVacuumOscProb(int nu_start, int nu_end, double energy)
 
   double oscProb = 0.0;
   
-  double sinsqDelta23 = sin((dmsqFactor * dmsq23 * baseline) / energy) 
-                      * sin((dmsqFactor * dmsq23 * baseline) / energy);
-  double sinsqDelta12 = sin((dmsqFactor * dmsq12 * baseline) / energy) 
-                      * sin((dmsqFactor * dmsq12 * baseline) / energy);
-  double sinsqDelta13 = sin((dmsqFactor * dmsq13 * baseline) / energy) 
-                      * sin((dmsqFactor * dmsq13 * baseline) / energy);
+  double sinsqDelta23 = sin((kOscDimensFactor * dmsq23 * fBaseline) / energy) 
+                      * sin((kOscDimensFactor * dmsq23 * fBaseline) / energy);
+  double sinsqDelta12 = sin((kOscDimensFactor * dmsq12 * fBaseline) / energy) 
+                      * sin((kOscDimensFactor * dmsq12 * fBaseline) / energy);
+  double sinsqDelta13 = sin((kOscDimensFactor * dmsq13 * fBaseline) / energy) 
+                      * sin((kOscDimensFactor * dmsq13 * fBaseline) / energy);
 
-  double sinDelta23 = sin((2.0 * dmsqFactor * dmsq23 * baseline) / energy);
-  double sinDelta12 = sin((2.0 * dmsqFactor * dmsq12 * baseline) / energy);
-  double sinDelta13 = sin((2.0 * dmsqFactor * dmsq13 * baseline) / energy);
+  double sinDelta23 = sin((2.0 * kOscDimensFactor * dmsq23 * fBaseline) / energy);
+  double sinDelta12 = sin((2.0 * kOscDimensFactor * dmsq12 * fBaseline) / energy);
+  double sinDelta13 = sin((2.0 * kOscDimensFactor * dmsq13 * fBaseline) / energy);
 
   // nue->nue, nuebar->nuebar
   if(osch == kOscNuE2NuE || osch == kOscNuEBar2NuEBar)
@@ -286,25 +274,25 @@ double NuOsc3Flavour::CalcVacuumOscProbPDG(int nu_start, int nu_end, double ener
       osch == kOscNuTau2NuTau     || 
       osch == kOscNuTauBar2NuTauBar  )
   {
-    cosDelta12 = cos((2 * dmsqFactor * dmsq12 * baseline) / energy);
-    cosDelta13 = cos((2 * dmsqFactor * dmsq13 * baseline) / energy);
-    cosDelta23 = cos((2 * dmsqFactor * dmsq23 * baseline) / energy);
+    cosDelta12 = cos((2 * kOscDimensFactor * dmsq12 * fBaseline) / energy);
+    cosDelta13 = cos((2 * kOscDimensFactor * dmsq13 * fBaseline) / energy);
+    cosDelta23 = cos((2 * kOscDimensFactor * dmsq23 * fBaseline) / energy);
   }
   else 
   if( osch == kOscNuMu2NuE ||
       osch == kOscNuEBar2NuMuBar )
   {
-    cosDelta12 = cos(((2 * dmsqFactor * dmsq12 * baseline) / energy) - arg12);
-    cosDelta13 = cos(((2 * dmsqFactor * dmsq13 * baseline) / energy) - arg13);
-    cosDelta23 = cos(((2 * dmsqFactor * dmsq23 * baseline) / energy) - arg23);
+    cosDelta12 = cos(((2 * kOscDimensFactor * dmsq12 * fBaseline) / energy) - arg12);
+    cosDelta13 = cos(((2 * kOscDimensFactor * dmsq13 * fBaseline) / energy) - arg13);
+    cosDelta23 = cos(((2 * kOscDimensFactor * dmsq23 * fBaseline) / energy) - arg23);
   }
   else 
   if( osch == kOscNuMuBar2NuEBar ||
       osch == kOscNuE2NuMu )
   {
-    cosDelta12 = cos(((2 * dmsqFactor * dmsq12 * baseline) / energy) + arg12);
-    cosDelta13 = cos(((2 * dmsqFactor * dmsq13 * baseline) / energy) + arg13);
-    cosDelta23 = cos(((2 * dmsqFactor * dmsq23 * baseline) / energy) + arg23);
+    cosDelta12 = cos(((2 * kOscDimensFactor * dmsq12 * fBaseline) / energy) + arg12);
+    cosDelta13 = cos(((2 * kOscDimensFactor * dmsq13 * fBaseline) / energy) + arg13);
+    cosDelta23 = cos(((2 * kOscDimensFactor * dmsq23 * fBaseline) / energy) + arg23);
   }
 
   if( osch == kOscNuE2NuE ||
@@ -341,16 +329,16 @@ double NuOsc3Flavour::CalcVacuumOscProbPDG(int nu_start, int nu_end, double ener
   if( osch == kOscNuE2NuTau ||
       osch == kOscNuTauBar2NuEBar )
   {
-    cosDelta12 = cos((2 * dmsqFactor * dmsq12 * baseline) / energy);
-    cosDelta13 = cos((2 * dmsqFactor * dmsq13 * baseline) / energy);
-    cosDelta23 = cos((2 * dmsqFactor * dmsq23 * baseline) / energy);
+    cosDelta12 = cos((2 * kOscDimensFactor * dmsq12 * fBaseline) / energy);
+    cosDelta13 = cos((2 * kOscDimensFactor * dmsq13 * fBaseline) / energy);
+    cosDelta23 = cos((2 * kOscDimensFactor * dmsq23 * fBaseline) / energy);
       
     oscProb += modUe1sq*modUe1sq + modUe2sq*modUe2sq + modUe3sq*modUe3sq + 2*modUe2sq*modUe1sq*cosDelta12
             + 2*modUe3sq*modUe1sq*cosDelta13 + 2*modUe2sq*modUe3sq*cosDelta23;
 
-    cosDelta12 = cos(((2 * dmsqFactor * dmsq12 * baseline) / energy) + arg12);
-    cosDelta13 = cos(((2 * dmsqFactor * dmsq13 * baseline) / energy) + arg13);
-    cosDelta23 = cos(((2 * dmsqFactor * dmsq23 * baseline) / energy) + arg23);
+    cosDelta12 = cos(((2 * kOscDimensFactor * dmsq12 * fBaseline) / energy) + arg12);
+    cosDelta13 = cos(((2 * kOscDimensFactor * dmsq13 * fBaseline) / energy) + arg13);
+    cosDelta23 = cos(((2 * kOscDimensFactor * dmsq23 * fBaseline) / energy) + arg23);
 
     oscProb += modUe1sq*modUmu1sq + modUe2sq*modUmu2sq + modUe3sq*modUmu3sq
             + 2*sqrt(Re12*Re12 + Im12*Im12)*cosDelta12 + 2*sqrt(Re13*Re13 + Im13*Im13)*cosDelta13
@@ -362,17 +350,17 @@ double NuOsc3Flavour::CalcVacuumOscProbPDG(int nu_start, int nu_end, double ener
   if( osch == kOscNuEBar2NuTauBar ||
       osch == kOscNuTau2NuE )
   {
-    cosDelta12 = cos((2 * dmsqFactor * dmsq12 * baseline) / energy);
-    cosDelta13 = cos((2 * dmsqFactor * dmsq13 * baseline) / energy);
-    cosDelta23 = cos((2 * dmsqFactor * dmsq23 * baseline) / energy);
+    cosDelta12 = cos((2 * kOscDimensFactor * dmsq12 * fBaseline) / energy);
+    cosDelta13 = cos((2 * kOscDimensFactor * dmsq13 * fBaseline) / energy);
+    cosDelta23 = cos((2 * kOscDimensFactor * dmsq23 * fBaseline) / energy);
 
     oscProb += modUe1sq*modUe1sq + modUe2sq*modUe2sq 
              + modUe3sq*modUe3sq + 2*modUe2sq*modUe1sq*cosDelta12
              + 2*modUe3sq*modUe1sq*cosDelta13 + 2*modUe2sq*modUe3sq*cosDelta23;
 
-    cosDelta12 = cos(((2 * dmsqFactor * dmsq12 * baseline) / energy) - arg12);
-    cosDelta13 = cos(((2 * dmsqFactor * dmsq13 * baseline) / energy) - arg13);
-    cosDelta23 = cos(((2 * dmsqFactor * dmsq23 * baseline) / energy) - arg23);
+    cosDelta12 = cos(((2 * kOscDimensFactor * dmsq12 * fBaseline) / energy) - arg12);
+    cosDelta13 = cos(((2 * kOscDimensFactor * dmsq13 * fBaseline) / energy) - arg13);
+    cosDelta23 = cos(((2 * kOscDimensFactor * dmsq23 * fBaseline) / energy) - arg23);
 
     oscProb += modUe1sq*modUmu1sq + modUe2sq*modUmu2sq + modUe3sq*modUmu3sq
            + 2*sqrt(Re12*Re12 + Im12*Im12)*cosDelta12 + 2*sqrt(Re13*Re13 + Im13*Im13)*cosDelta13
@@ -384,17 +372,17 @@ double NuOsc3Flavour::CalcVacuumOscProbPDG(int nu_start, int nu_end, double ener
   if( osch == kOscNuMu2NuTau ||
       osch == kOscNuTauBar2NuMuBar )
   {
-    cosDelta12 = cos(((2 * dmsqFactor * dmsq12 * baseline) / energy) - arg12);
-    cosDelta13 = cos(((2 * dmsqFactor * dmsq13 * baseline) / energy) - arg13);
-    cosDelta23 = cos(((2 * dmsqFactor * dmsq23 * baseline) / energy) - arg23);
+    cosDelta12 = cos(((2 * kOscDimensFactor * dmsq12 * fBaseline) / energy) - arg12);
+    cosDelta13 = cos(((2 * kOscDimensFactor * dmsq13 * fBaseline) / energy) - arg13);
+    cosDelta23 = cos(((2 * kOscDimensFactor * dmsq23 * fBaseline) / energy) - arg23);
 
     oscProb += modUe1sq*modUmu1sq + modUe2sq*modUmu2sq + modUe3sq*modUmu3sq
             + 2*sqrt(Re12*Re12 + Im12*Im12)*cosDelta12 + 2*sqrt(Re13*Re13 + Im13*Im13)*cosDelta13
             + 2*sqrt(Re23*Re23 + Im23*Im23)*cosDelta23;
       
-    cosDelta12 = cos((2 * dmsqFactor * dmsq12 * baseline) / energy);
-    cosDelta13 = cos((2 * dmsqFactor * dmsq13 * baseline) / energy);
-    cosDelta23 = cos((2 * dmsqFactor * dmsq23 * baseline) / energy);
+    cosDelta12 = cos((2 * kOscDimensFactor * dmsq12 * fBaseline) / energy);
+    cosDelta13 = cos((2 * kOscDimensFactor * dmsq13 * fBaseline) / energy);
+    cosDelta23 = cos((2 * kOscDimensFactor * dmsq23 * fBaseline) / energy);
 
     oscProb += modUmu1sq*modUmu1sq + modUmu2sq*modUmu2sq + modUmu3sq*modUmu3sq + 2*modUmu2sq*modUmu1sq*cosDelta12
             + 2*modUmu3sq*modUmu1sq*cosDelta13 + 2*modUmu2sq*modUmu3sq*cosDelta23;
@@ -405,18 +393,18 @@ double NuOsc3Flavour::CalcVacuumOscProbPDG(int nu_start, int nu_end, double ener
   if( osch == kOscNuMuBar2NuTauBar ||
       osch == kOscNuTau2NuMu )
   {
-    cosDelta12 = cos(((2 * dmsqFactor * dmsq12 * baseline) / energy) + arg12);
-    cosDelta13 = cos(((2 * dmsqFactor * dmsq13 * baseline) / energy) + arg13);
-    cosDelta23 = cos(((2 * dmsqFactor * dmsq23 * baseline) / energy) + arg23);
+    cosDelta12 = cos(((2 * kOscDimensFactor * dmsq12 * fBaseline) / energy) + arg12);
+    cosDelta13 = cos(((2 * kOscDimensFactor * dmsq13 * fBaseline) / energy) + arg13);
+    cosDelta23 = cos(((2 * kOscDimensFactor * dmsq23 * fBaseline) / energy) + arg23);
 
     oscProb += modUe1sq*modUmu1sq + modUe2sq*modUmu2sq + modUe3sq*modUmu3sq
             + 2*sqrt(Re12*Re12 + Im12*Im12)*cosDelta12 + 2*sqrt(Re13*Re13 + Im13*Im13)*cosDelta13
             + 2*sqrt(Re23*Re23 + Im23*Im23)*cosDelta23;    
 
 
-    cosDelta12 = cos((2 * dmsqFactor * dmsq12 * baseline) / energy);
-    cosDelta13 = cos((2 * dmsqFactor * dmsq13 * baseline) / energy);
-    cosDelta23 = cos((2 * dmsqFactor * dmsq23 * baseline) / energy);
+    cosDelta12 = cos((2 * kOscDimensFactor * dmsq12 * fBaseline) / energy);
+    cosDelta13 = cos((2 * kOscDimensFactor * dmsq13 * fBaseline) / energy);
+    cosDelta23 = cos((2 * kOscDimensFactor * dmsq23 * fBaseline) / energy);
 
     oscProb += modUmu1sq*modUmu1sq + modUmu2sq*modUmu2sq + 
                modUmu3sq*modUmu3sq + 2*modUmu2sq*modUmu1sq*cosDelta12 + 
@@ -471,12 +459,12 @@ double NuOsc3Flavour::CalcMatterOscProb(int nu_start, int nu_end, double energy)
   // The factor of 1.0e9 is to convert the energy from GeV to eV.
   if( util::IsNeutrino(nu_start) )
   {
-    UMassUdagger[0][0][re] = UMassUdaggerVacuum[0][0][re] + 2.0*1.0e9*energy*sqrt(2.0)*GF*Ne;
+    UMassUdagger[0][0][re] = UMassUdaggerVacuum[0][0][re] + 2.0*1.0e9*energy*sqrt(2.0)*kGF_SI*fNe;
   }
   else 
   if( util::IsAntiNeutrino(nu_start) )
   {
-    UMassUdagger[0][0][re] = UMassUdaggerVacuum[0][0][re] - 2.0*1.0e9*energy*sqrt(2.0)*GF*Ne;
+    UMassUdagger[0][0][re] = UMassUdaggerVacuum[0][0][re] - 2.0*1.0e9*energy*sqrt(2.0)*kGF_SI*fNe;
   }
 
   // Calculate the eigenvalues of UMassUdagger by solving the characteristic equation, which is a cubic.
@@ -764,14 +752,14 @@ double NuOsc3Flavour::CalcMatterOscProb(int nu_start, int nu_end, double energy)
  // Therefore only retain terms multiplied by cos(0), and drop those multiplied by sin(0).
  finalMassState[0][re] = initialMassState[0][re];
  finalMassState[0][im] = initialMassState[0][im];
- finalMassState[1][re] = initialMassState[1][re] *  cos((2.0 * dmsqFactor * (eigenvalues[1] - eigenvalues[0]) * baseline) / energy)
-                       - initialMassState[1][im] * -sin((2.0 * dmsqFactor * (eigenvalues[1] - eigenvalues[0]) * baseline) / energy);  
- finalMassState[1][im] = initialMassState[1][re] * -sin((2.0 * dmsqFactor * (eigenvalues[1] - eigenvalues[0]) * baseline) / energy)
-                       + initialMassState[1][im] *  cos((2.0 * dmsqFactor * (eigenvalues[1] - eigenvalues[0]) * baseline) / energy);
- finalMassState[2][re] = initialMassState[2][re] *  cos((2.0 * dmsqFactor * (eigenvalues[2] - eigenvalues[0]) * baseline) / energy)
-                       - initialMassState[2][im] * -sin((2.0 * dmsqFactor * (eigenvalues[2] - eigenvalues[0]) * baseline) / energy);
- finalMassState[2][im] = initialMassState[2][re] * -sin((2.0 * dmsqFactor * (eigenvalues[2] - eigenvalues[0]) * baseline) / energy)
-                       + initialMassState[2][im] *  cos((2.0 * dmsqFactor * (eigenvalues[2] - eigenvalues[0]) * baseline) / energy);
+ finalMassState[1][re] = initialMassState[1][re] *  cos((2.0 * kOscDimensFactor * (eigenvalues[1] - eigenvalues[0]) * fBaseline) / energy)
+                       - initialMassState[1][im] * -sin((2.0 * kOscDimensFactor * (eigenvalues[1] - eigenvalues[0]) * fBaseline) / energy);  
+ finalMassState[1][im] = initialMassState[1][re] * -sin((2.0 * kOscDimensFactor * (eigenvalues[1] - eigenvalues[0]) * fBaseline) / energy)
+                       + initialMassState[1][im] *  cos((2.0 * kOscDimensFactor * (eigenvalues[1] - eigenvalues[0]) * fBaseline) / energy);
+ finalMassState[2][re] = initialMassState[2][re] *  cos((2.0 * kOscDimensFactor * (eigenvalues[2] - eigenvalues[0]) * fBaseline) / energy)
+                       - initialMassState[2][im] * -sin((2.0 * kOscDimensFactor * (eigenvalues[2] - eigenvalues[0]) * fBaseline) / energy);
+ finalMassState[2][im] = initialMassState[2][re] * -sin((2.0 * kOscDimensFactor * (eigenvalues[2] - eigenvalues[0]) * fBaseline) / energy)
+                       + initialMassState[2][im] *  cos((2.0 * kOscDimensFactor * (eigenvalues[2] - eigenvalues[0]) * fBaseline) / energy);
 
  double finalFlavourState[3][2];
  for(int i=0; i<3; i++)

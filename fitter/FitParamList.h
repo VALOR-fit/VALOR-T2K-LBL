@@ -72,6 +72,12 @@ public:
      fIsFixed [this->Id(p)] = true;  
    }
 
+   // Set as nuisance parameter (contributes to \chi^{2}_{penalty})
+   void SetNuisance (t2kana::conv::PhysParamId_t p, bool tf) 
+   { 
+     fIsNuisance [this->Id(p)] = tf;  
+   }
+
    // Set parameter list to input TVirtualFitter 
    void SetTo (TVirtualFitter * fitter);
    
@@ -86,11 +92,22 @@ public:
    friend ostream & operator << (ostream & stream, const FitParamList & plst);
 
    // Using the "Named Constructor" C++ idiom for fast creation of typical parameter lists.
-   static FitParamList * NamedParameterList (string name);
-   static FitParamList * NumuDisapFitNoSyst (void);
-   static FitParamList * NumuDisapFitAllSyst(void);
-   static FitParamList * NumuDecayFitNoSyst (void);
-   static FitParamList * NumuDecohFitNoSyst (void);
+   // The string argument of NamedParameterList() can take the following values:
+   // - "nuosc3f"                        : Fit for sin^2(2theta12), sin^2(2theta13), sin^2(2theta23), delta_CP, |Dm23^2| and Dm12^2 (3-flavour formalism).
+   // - "nuosc3f_numudisapp_fix"         : As "nuosc3f" but fixing  sin^2(2theta12), sin^2(2theta13), delta_CP and Dm12^2.
+   // - "nuosc3f_numudisapp_marginalize" : As "nuosc3f" but setting sin^2(2theta12), sin^2(2theta13), delta_CP and Dm12^2 as nuisance params.
+   // - "nuosc3f_nueapp_fix"             : As "nuosc3f" but fixing  sin^2(2theta12), sin^2(2theta23), |Dm23^2| and Dm12^2.
+   // - "nuosc3f_nueapp_marginalize"     : As "nuosc3f" but setting sin^2(2theta12), sin^2(2theta23), |Dm23^2| and Dm12^2 as nuisance params.
+   // - "numudisapp2f"                   : Fit for sin^2(2theta23) and |Dm23^2| (2-flavour formalism)
+   // - "numudisapp2f+nuisance"          : As "numudisapp2f" + the 34 nuisance parameters of 2010 analysis
+   // - "decay"                          : Fit for sin^2(2theta) and \alpha_{decay}
+   // - "decoh"                          : Fit for sin^2(2theta) and \mu_{decoherence}
+   static FitParamList * NamedParameterList     (string name);
+   static FitParamList * NuOsc3FlavourFitNoSyst (void);
+   static FitParamList * NumuDisapFitNoSyst     (void);
+   static FitParamList * NumuDisapFitAllSyst    (void);
+   static FitParamList * NumuDecayFitNoSyst     (void);
+   static FitParamList * NumuDecohFitNoSyst     (void);
 
 private:
 

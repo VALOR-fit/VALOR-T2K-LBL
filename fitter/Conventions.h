@@ -16,8 +16,6 @@
 #ifndef _t2kana_conv_h_
 #define _t2kana_conv_h_
 
-#include <cmath>
-
 #ifndef ROOT_Rtypes
 #include "Rtypes.h"
 #endif
@@ -89,53 +87,57 @@ typedef enum END280Mode {
 // fit parameters
 typedef enum EPhysParamId {   
    kPhypUndefined = -1, 
-   kPhypSinsq2Theta23, 
-   kPhypDm23sq,
-   kPhypAlphaDecay,
-   kPhypMusqDecoherence,
-   kNuisSuperkEffCCQEoth,
-   kNuisSuperkEffCCQErc0u,
-   kNuisSuperkEffCCQErc1u,
-   kNuisSuperkEffCCQErc2u,
-   kNuisSuperkEffCCnonQE,
-   kNuisSuperkEffNC,
-   kNuisSuperkEffNueCC,
-   kNuisSuperkEnergyScale,
-   kNuisNd280Eff,
-   kNuisFluxNorm,
-   kNuisFluxShapeNuMu0u,
-   kNuisFluxShapeNuMu1u,
-   kNuisFluxShapeNuMu2u,
-   kNuisFluxShapeNuMu3u,
-   kNuisFluxShapeNuMu4u,
-   kNuisFluxShapeNuMu5u,
-   kNuisFluxShapeNuMu6u,
-   kNuisFluxShapeNuMu7u,
-   kNuisFluxShapeNuMu8u,
-   kNuisFluxShapeNuMu9u,
-   kNuisFluxShapeNuMu10u,
-   kNuisFluxShapeNuMu11u,
-   kNuisFluxShapeNuMu12u,
-   kNuisFluxShapeNuMu13u,
-   kNuisFluxShapeNuMu14u,
-   kNuisFluxShapeNuMu15u,
-   kNuisFluxShapeNuMu16u,
-   kNuisFluxShapeNuMu17u,
-   kNuisFluxShapeNuMu18u,
-   kNuisXSecCCQE,
-   kNuisXSecCC1piToCCQE,
-   kNuisXSecCCothToCCQE,
-   kNuisXSecNCToCCQE,
-   kNuisXSecNuclEffect
+   kPhypSinsq2Theta23,       // mixing angle sin^2(2*\theta_{23}) 
+   kPhypSinsq2Theta13,       // mixing angle sin^2(2*\theta_{13}) 
+   kPhypSinsq2Theta12,       // mixing angle sin^2(2*\theta_{12}) 
+   kPhypDeltaCP,             // CP-invariance violating phase 
+   kPhypDm23sq,              // modulus of squared-mass splitting \Deltam_{23}^{2} (always positive independent of mass hierarchy) 
+   kPhypDm12sq,              // squared-mass splitting \Deltam_{12}^{2} 
+   kPhypAlphaDecay,          //
+   kPhypMusqDecoherence,     //
+   kNuisSuperkEffCCQEoth,    //
+   kNuisSuperkEffCCQErc0u,   //
+   kNuisSuperkEffCCQErc1u,   //
+   kNuisSuperkEffCCQErc2u,   //
+   kNuisSuperkEffCCnonQE,    //
+   kNuisSuperkEffNC,         //
+   kNuisSuperkEffNueCC,      //
+   kNuisSuperkEnergyScale,   //
+   kNuisNd280Eff,            //
+   kNuisFluxNorm,            //
+   kNuisFluxShapeNuMu0u,     //
+   kNuisFluxShapeNuMu1u,     //
+   kNuisFluxShapeNuMu2u,     //
+   kNuisFluxShapeNuMu3u,     //
+   kNuisFluxShapeNuMu4u,     //
+   kNuisFluxShapeNuMu5u,     //
+   kNuisFluxShapeNuMu6u,     //
+   kNuisFluxShapeNuMu7u,     //
+   kNuisFluxShapeNuMu8u,     //
+   kNuisFluxShapeNuMu9u,     //
+   kNuisFluxShapeNuMu10u,    //
+   kNuisFluxShapeNuMu11u,    //
+   kNuisFluxShapeNuMu12u,    //
+   kNuisFluxShapeNuMu13u,    //
+   kNuisFluxShapeNuMu14u,    //
+   kNuisFluxShapeNuMu15u,    //
+   kNuisFluxShapeNuMu16u,    //
+   kNuisFluxShapeNuMu17u,    //
+   kNuisFluxShapeNuMu18u,    //
+   kNuisXSecCCQE,            //  
+   kNuisXSecCC1piToCCQE,     //
+   kNuisXSecCCothToCCQE,     //
+   kNuisXSecNCToCCQE,        //
+   kNuisXSecNuclEffect       //
 } PhysParamId_t;
 
 // physics hypotheses
 typedef enum EPhysHypothesis {   
    kHypUndefined = -1,
-   kHypDecay,             /* neutrino decay */
-   kHypDecoh,             /* neutrino decoherence */
-   kHypNuMuDisapp2F,      /* muon-neutrino disappearance, simple 2-flavour oscillation framework */
-   kHypOsc3F              /* neutrino oscillations, 3-flavour framework */
+   kHypDecay,             // neutrino decay 
+   kHypDecoh,             // neutrino decoherence 
+   kHypNuMuDisapp2F,      // muon-neutrino disappearance, simple 2-flavour oscillation framework 
+   kHypOsc3F              // neutrino oscillations, 3-flavour framework 
 } PhysHypothesis_t;
 
 // oscillation channels
@@ -184,19 +186,25 @@ static const int knm   = kNSuperkModes;
 static const int knmnd = kNND280Modes; 
 
 // Some constants
-static const double kASmallNum         = 1E-10;                   // 
-static const double kBaseline          = 295.335;                 // Tokai->Kamioka (km)
-static const double kOscDimensFactor   = 1.26693281;              // Dimensional factor (GeV/eV^2/km) appearing in netrino oscillation formula
-static const double kCrustDensity      = 2.7;                     // Average density of Earth's continental crust (gr / cm^3)
-static const double khbar_SI           = 6.582119e-16;            // hbar (eV s)
-static const double kc_SI              = 2.9979246e10;            // c (cm/s)
-static const double khbarc_SI          = khbar_SI*kc_SI;          // hbar*c (eV * cm)
-static const double khbarc3_SI         = pow(khbarc_SI,3.);       // (hbar*c)^3 (eV^3 * cm^3)
-static const double kGF                = 1.16637e-5;              // Fermi coupling constant, (GeV^-2, natural units)
-static const double kGF_SI             = kGF*khbarc3_SI*1.0e-18;  // Fermi coupling constant, (eV cm^3, SI units), 1e-18 is used for GeV^-2 -> eV^-2
-static const double kNA                = 6.022142e23;             // Avogadro number (mol^-1)
-static const double kCrustElecDensity  = kCrustDensity*kNA*0.5;   // Convert Earth crust density (g cm^-3) to number density of electrons Ne (cm^-3) 
-                                                                  // Ne = density * N_A * Z/A. Take Z/A = 1/2 since most elements in Earth's crust are light.
+static const double kASmallNum      = 1E-10;                         // 
+static const double kBaseline       = 295.335;                       // Tokai->Kamioka (km)
+static const double kOscDimensFactor= 1.26693281;                    // Dimensional factor (GeV/eV^2/km) appearing in netrino oscillation formula
+static const double kCrustDensity   = 2.7;                           // Average density of Earth's continental crust (gr / cm^3)
+static const double kpi             = 3.141592653589793;             // pi
+static const double khbar_SI        = 6.582119e-16;                  // hbar (eV s)
+static const double kc_SI           = 2.9979246e10;                  // c (cm/s)
+static const double khbarc_SI       = khbar_SI*kc_SI;                // hbar*c (eV * cm)
+static const double khbarc3_SI      = khbarc_SI*khbarc_SI*khbarc_SI; // (hbar*c)^3 (eV^3 * cm^3)
+static const double kGF             = 1.16637e-5;                    // Fermi coupling constant, (GeV^-2, natural units)
+static const double kGF_SI          = kGF*khbarc3_SI*1.0e-18;        // Fermi coupling constant, (eV cm^3, SI units), 1e-18 is used for GeV^-2 -> eV^-2
+static const double kNA             = 6.022142e23;                   // Avogadro number (mol^-1)
+
+// Oscillation parameters, recent global fit values
+static const double kGlobFitSinsq2Theta23 = 1.00;
+static const double kGlobFitSinsq2Theta13 = 0.10;
+static const double kGlobFitSinsq2Theta12 = 0.86;
+static const double kGlobFitDm23sq        = 2.35E-3;
+static const double kGlobFitDm12sq        = 7.58E-5;
 
 //
 // Variable Etrue binning scheme used by the Beam WG.
