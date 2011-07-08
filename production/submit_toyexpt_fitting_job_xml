@@ -77,7 +77,7 @@ while($irun < $nruns) {
   $batch_script  = "$tag-$irun.pbs";
   $job_name      = "$tag-$irun";
 
-  $command = "root2k -l -b -q \'$softw_dir/macros/test_n_mock_data_fits_xml.C(\"$tag\",$irun,\"$toyexptsfile\",$first,$last,$sinsq2theta23,$dm23sq,\"$fitter\",\"$config_file\")\'";
+  $command = "root2k -l -b -q \'$softw_dir/macros/fit/test_n_mock_data_fits_xml.C(\"$tag\",$irun,\"$toyexptsfile\",$first,$last,$sinsq2theta23,$dm23sq,\"$fitter\",\"$config_file\")\'";
 
   $first = $last  + 1;
   $last  = $first + $nexpts - 1;

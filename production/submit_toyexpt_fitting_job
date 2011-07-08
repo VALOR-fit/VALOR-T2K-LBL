@@ -76,7 +76,7 @@ die("$job_dir doesn't exist") unless -d $job_dir;
 $irun = 0;
 while($irun < $nruns) {
   print "Submitting run: $irun \n";
-  $command = "root2k -l -b -q \'$softw_dir/macros/test_n_mock_data_fits.C(\"$tag\",$irun,$nexpts,$sinsq2theta23,$dm23sq,\"$fitter\",$stat_fluctuation,$systematics,$store_chisq_surf,$store_toy_expts,$store_bestfit_spectra,\"$config_file\")\'";
+  $command = "root2k -l -b -q \'$softw_dir/macros/fit/test_n_mock_data_fits.C(\"$tag\",$irun,$nexpts,$sinsq2theta23,$dm23sq,\"$fitter\",$stat_fluctuation,$systematics,$store_chisq_surf,$store_toy_expts,$store_bestfit_spectra,\"$config_file\")\'";
   print "$command \n";
 
   #
