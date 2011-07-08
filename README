@@ -24,19 +24,23 @@ https://twiki.pp.rl.ac.uk/twiki/bin/view/T2K/WebHome/Analysis/
     |
     |-- config                    : Analysis configuration XML files
     |
-    |-- fitter                    : Oscillation fitter
+    |-- fitter                    : SuperK spectrum prediction / fitting code
     |
     |-- inputs                    : Analysis inputs / data-files
     |      |-- official           
     |            |-- 2010         : Official inputs for 2010 analysis
-    |            |    |-- flux    :  from the Beam WG (flux + inputs for norm and shape errors)
-    |            |    |-- nd280   :  from the ND280 group (Saclay analysis MC templates for both NEUT/GENIE)
-    |            |    |-- niwg    :  from the NIWG (agreed interaction systematics)
-    |            |    |-- superk  :  from SuperK (MC templates for both NEUT/GENIE for various selections)
+    |            |    |-- flux    :  - from the Beam WG (flux + inputs for norm and shape errors)
+    |            |    |-- nd280   :  - from the ND280 group (Saclay analysis MC templates for both NEUT/GENIE)
+    |            |    |-- niwg    :  - from the NIWG (agreed interaction systematics)
+    |            |    |-- superk  :  - from SuperK (MC templates for both NEUT/GENIE for various selections)
     |            |       
     |            |-- 2011         :
     |
     |-- macros                    : Our analysis procedures
+    |     |------ fit             :  - macros used for fitting data or toy MC expts
+    |     |------ fc              :  - macros used for implementing the Feldman-Cousins method
+    |     |------ physin          :  - macros used for testing analysis physics inputs (spectra/systematics)
+    |     |------ misc            :  - misc. macros such as those used for preparing various plots shown in T2K-TN-36/64
     |
     |-- production                : Batch production scripts for RAL/IN2P3/Oxford farms
     |
@@ -121,9 +125,17 @@ In addition, the code structure was modified significantly (to allow for future 
 Details may be found in T2K-TN-64.
 
 
-Version: 2010_v2.1.0 (current trunk)
+Version: (current trunk)
 ............................................................................................................................
 
-Similar to 2010_v2.0.0 with the added capability to fit for systematics
-Some structural changes.
+Similar to 2010_v2.0.0 but with the following additions: 
+> Can fit for systematics (any/all of the 34 systematic parameters considered in 2010 analysis).
+> Added code to calculate oscillation probability in vacuum and matter in a 3-flavour framework.
+> Modified disappearance fit and scripts to work in 3-flavour framework (dmsm_{12},theta_{12},theta_{13} and delta_{cp}
+  are marginalised). Capability to perform analysis in 2-flavour framework retained for backward-compatibility.
+Lots of structural changes to allow the extensions mentioned above.
+Also comitted a bunch of macros used to prepare plots for T2K-TN-64.
+
+More details for the 3-flavour disappearance analysis may be found in T2K-TN-??
+
 
