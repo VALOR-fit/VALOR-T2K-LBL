@@ -48,7 +48,7 @@ void plot_numu_surv_prob_2f_vs_3frange(double sinsq2theta23=1.0, double dm23sq=2
        double delta_cp      = rand.Uniform() * 2*conv::kpi;
 
        calc_osc3f.SetOscParameters(sinsq2theta12,sinsq2theta13,sinsq2theta23,dm12sq,dm23sq,delta_cp);
-       double p3f = calc_osc3f.CalcVacuumOscProbPDG(numu,numu,e[i]);
+       double p3f = calc_osc3f.CalcVacuumOscProb(numu,numu,e[i]);
        if(p3f < 0. || p3f > 1. || TMath::IsNaN(p3f)) {
 	 cout << "WARNING! P_{numu->numu} (sinsq2theta12 = " << sinsq2theta12 
               << ", sinsq2theta13 = " << sinsq2theta13 
