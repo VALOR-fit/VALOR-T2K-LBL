@@ -8,6 +8,8 @@
 */
 //________________________________________________________________________________________
 
+#include <TMath.h>
+
 #include "NuOsc3Flavour.h"
 #include "Conventions.h"
 #include "Utilities.h"
@@ -64,9 +66,11 @@ void NuOsc3Flavour::SetMassHierarchy(NuMassHierarchy_t h)
 //________________________________________________________________________________________
 void NuOsc3Flavour::SetOscParameters(
   double sinsq2theta12, double sinsq2theta13, double sinsq2theta23,
-  double dmsq12, double dmsq23, 
+  double dmsq12_in, double dmsq23_in, 
   double deltaCP)
 {
+  dmsq12 = dmsq12_in;
+  dmsq23 = dmsq23_in;
 
   // Note: The input value of dmsq23 is the absolute one. The sign of dmsq23 depends on 
   // the mass hierarchy. In the normal mass hierarchy, dmsq23 is positive. In the inverted
