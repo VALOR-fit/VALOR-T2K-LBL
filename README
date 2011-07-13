@@ -116,17 +116,7 @@ The following changes were installed (wrt 2010_v1.0.0) :
   The Run1+Run2 flux is a POT-weighted 10d_v3 flux (taking into account Run1 and Run2 flux differences).
 
 In addition, the code structure was modified significantly (to allow for future 2011 analysis improvements).
-Details may be found in T2K-TN-???.
+Details may be found in T2K-TN-64.
 
 
-
-Planned *future* releases:
-
-- 2010_v3.0.0 
-
-2010 1.431E+20-POT 3-flavour muon-disappearance analysis.
-
-- 2010_v4.0.0 
-
-2010 1.431E+20-POT joint 3-flavour muon-disappearance / electron-appearance analysis.
 
