@@ -38,6 +38,7 @@ void test_nd280_nevents_twk_eff
   for(int idial = 0; idial < ntwkdials; idial++) {
 
      skexp.GetND280Measurement()->TweakEfficiency(twkdial[idial]);
+   //skexp.GetND280Measurement()->FluctuateNObsCCLike(twkdial[idial]);
 
      double nobscclike_nd280  = skexp.GetND280Measurement()->NObsCCLike();
      double nexpncbkg_nd280   = skexp.GetND280Measurement()->NExpNCBkg();

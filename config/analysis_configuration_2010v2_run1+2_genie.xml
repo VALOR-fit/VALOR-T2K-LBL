@@ -313,7 +313,8 @@ from the GENIE/NEUT physics monte carlo groups.
        -->
        <systematics>
           <efficiency_relative_error>
-             0.05
+              <plus>  0.056 </plus>
+              <minus> 0.052 </minus>             
           </efficiency_relative_error>
        </systematics>
      </saclay_selection>

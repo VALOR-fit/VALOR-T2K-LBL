@@ -24,6 +24,9 @@
    "sk_ccqe_ring_counting_eff_2" in TweakSystematic(). They can be used for tweaking the
    CCQE ring-counting efficiency in single Ereco bins neglecting correlations. 
    For validation purposes only.
+ @ 13/07/2011 - CA
+   Take into account the statistical error on the measured number of ND280 CC-like events
+   and propagate it to SuperK.
 */
 //________________________________________________________________________________________
 
@@ -237,6 +240,7 @@ void SuperkExpectation::ResetSystematicVariations(void)
   this->GetSuperkMC()->TweakEfficiencyNuECC            (0.);
 
   this->GetND280Measurement()->TweakEfficiency (0.);
+  this->GetND280Measurement()->FluctuateNObsCCLike(0.);
 
   this->GetNuFlux()->TweakNorm (0.);
   this->GetNuFlux()->TweakShape(false);
@@ -298,6 +302,10 @@ void SuperkExpectation::TweakSystematic(string systematic, double twkdial)
      this->GetND280Measurement()->TweakEfficiency(twkdial);
   }
 
+  else
+  if(systematic == "nd280_norm") {
+     this->GetND280Measurement()->FluctuateNObsCCLike(twkdial);
+  }
 
   //
   // flux systematics
@@ -357,7 +365,8 @@ void SuperkExpectation::TweakAllSystematics(bool do_tweak)
      this->GetSuperkMC()->TweakEfficiencyNuECC             (rand.Gaus(0.,1.));
 
      // ND280 detector response
-     this->GetND280Measurement()->TweakEfficiency(rand.Gaus(0.,1.));
+     this->GetND280Measurement()->TweakEfficiency     (rand.Gaus(0.,1.));
+     this->GetND280Measurement()->FluctuateNObsCCLike (rand.Gaus(0.,1.));
 
      // neutrino flux
      this->GetNuFlux()->TweakNorm (rand.Gaus(0.,1.));

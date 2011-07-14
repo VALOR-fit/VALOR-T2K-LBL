@@ -5,7 +5,9 @@
  @ 16/03/2011 - CA
    Created from the old SuperkExpectation::ND280Inputs nested class. Removed the numu10a 
    namespace.
-
+ @ 13/07/11 - CA
+   Take into account the statistical error on the measured number of CC-like events.
+   Update the efficiency error from +/- 5% to +5.6% -5.2%.
 */
 //________________________________________________________________________________________
 
@@ -21,6 +23,7 @@
 #include <TH2D.h>
 #include <TVirtualPad.h>
 #include <TLegend.h>
+#include <TMath.h>
 
 #include "ND280Measurement.h"
 #include "Utilities.h"
@@ -54,9 +57,12 @@ void ND280Measurement::Init(void)
   for(int i = 0; i < knmnd; i++) {
     fNumSelEt[i] = 0;
   }
-  fSelEffTwkDial = 0.;
-  fSelEffRelErr  = 0.;
-  fGenInputs     = 0;
+  fSelEffTwkDial     = 0.;
+  fSelEffRelErrPlus  = 0.;
+  fSelEffRelErrMinus = 0.;
+  fNObsCCLikeTwkDial = 0.;
+  fRelStatErr        = 0.;
+  fGenInputs         = 0;
      
   fNuMuEt    = 0;  
   fNuMuBarEt = 0;
@@ -167,8 +173,15 @@ bool ND280Measurement::Read(TXMLEngine* xml, XMLNodePointer_t root_node)
   cout << "Exp/nd280 >> Done rescaling NMC_{mode} histograms to the data POT" << endl;
   
   // Get error on efficiency
-  fSelEffRelErr = util::XML2Dbl(xml,root_node,"nd280/saclay_selection/systematics/efficiency_relative_error");
-  cout << "Exp/nd280 >> delta{efficiency} : " << fSelEffRelErr << endl;
+  fSelEffRelErrPlus  = util::XML2Dbl(xml,root_node,"nd280/saclay_selection/systematics/efficiency_relative_error/plus");
+  fSelEffRelErrMinus = util::XML2Dbl(xml,root_node,"nd280/saclay_selection/systematics/efficiency_relative_error/minus");
+  cout << "Exp/nd280 >> Efficiency error : "
+       << "+ " << 100.*fSelEffRelErrPlus  << " %, "
+       << "- " << 100.*fSelEffRelErrMinus << " %" << endl;
+
+  // Get statistical error
+  fRelStatErr = TMath::Sqrt(fNumObsCCLike)/fNumObsCCLike;
+  cout << "Exp/nd280 >> Statistical error : " << 100.*fRelStatErr << " %" << endl;
     
   // Set colors and line styles for drawing
     
@@ -231,7 +244,7 @@ bool ND280Measurement::Read(TXMLEngine* xml, XMLNodePointer_t root_node)
   //
   
   bool nominal = true;
-  double nobscclike_nd280  = this -> NObsCCLike();
+  double nobscclike_nd280  = this -> NObsCCLike(nominal);
   double nexpncbkg_nd280   = this -> NExpNCBkg (nominal);
   double nexpcc_nd280      = this -> NExpCC    (nominal);
   fNomCorr = nobscclike_nd280 / (nexpncbkg_nd280 + nexpcc_nd280);
@@ -372,7 +385,8 @@ double ND280Measurement::CorrectionFactor(void) const
   //
   bool xsec_tweaked = fGenInputs->TweakAffectsND280();
   bool eff_tweaked  = (TMath::Abs(fSelEffTwkDial) > kASmallNum);
-  bool tweaked      = eff_tweaked || xsec_tweaked;
+  bool norm_tweaked = (TMath::Abs(fNObsCCLikeTwkDial) > kASmallNum);
+  bool tweaked      = eff_tweaked || xsec_tweaked || norm_tweaked;
 
   if(!tweaked) {
 #ifdef __debug_level_2__
@@ -402,11 +416,14 @@ double ND280Measurement::CorrectionFactor(void) const
   return correction;
 }
 //________________________________________________________________________________________
-double ND280Measurement::NObsCCLike(void) const 
+double ND280Measurement::NObsCCLike(bool nominal) const 
 {
 // observed number of CC-like events
 
-  return fNumObsCCLike;
+  if(nominal) return fNumObsCCLike;
+
+  double n = fNumObsCCLike * (1. + fNObsCCLikeTwkDial * fRelStatErr);
+  return n;
 }
 //________________________________________________________________________________________
 double ND280Measurement::NExpNCBkg(bool nominal) const
@@ -540,12 +557,14 @@ void ND280Measurement::UpdateEtrueSpectra(void)
 
 }
 //________________________________________________________________________________________
-double ND280Measurement::EfficiencyRelErr(double /*Et*/, int /*sign*/) const
+double ND280Measurement::EfficiencyRelErr(double /*Et*/, int sign) const
 {
 // relative uncertainty on efficiency 
 // (can be asymmetric)
 
-  return fSelEffRelErr;
+  if(sign > 0) return fSelEffRelErrPlus;
+  if(sign < 0) return fSelEffRelErrMinus;
+  return 0;
 }
 //________________________________________________________________________________________
 void ND280Measurement::TweakEfficiency(double twkdial)
@@ -555,3 +574,9 @@ void ND280Measurement::TweakEfficiency(double twkdial)
   fSelEffTwkDial = twkdial;
 }
 //________________________________________________________________________________________
+void ND280Measurement::FluctuateNObsCCLike(double twkdial)
+{
+  fNObsCCLikeTwkDial = twkdial;
+}
+//________________________________________________________________________________________
+

@@ -22,7 +22,7 @@ void test_nsk_twk_systematics
 
   const int nexperiments = 5000;
 
-  const int nsystematics = 14;
+  const int nsystematics = 15;
   string systematic[nsystematics] = {
 	"sk_ccqe_ring_counting_eff",
 	"sk_ccqe_other_eff",
@@ -31,6 +31,7 @@ void test_nsk_twk_systematics
 	"sk_nuecc_eff",
 	"sk_energy_scale",
 	"nd280_eff",
+	"nd280_norm",
 	"flux_norm",
 	"flux_shape",
 	"xsec_ccqe",
@@ -47,6 +48,7 @@ void test_nsk_twk_systematics
 	false,  /* sk_nuecc_eff               */
 	false,  /* sk_energy_scale            */
 	false,  /* nd280_eff                  */
+	false,  /* nd280_norm                 */
 	false,  /* flux_norm                  */
 	true,   /* flux_shape                 */
 	false,  /* xsec_ccqe                  */
@@ -63,6 +65,7 @@ void test_nsk_twk_systematics
 	false,  /* sk_nuecc_eff                       */
 	true,   /* sk_energy_scale (no effect on Nsk) */
 	false,  /* nd280_eff                          */
+	false,  /* nd280_norm                         */
 	false,  /* flux_norm                          */
 	true,   /* flux_shape (no effect on Nsk)      */
 	false,  /* xsec_ccqe                          */

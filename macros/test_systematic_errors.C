@@ -16,6 +16,7 @@
 //	- sk_nc_eff
 //	- sk_nuecc_eff
 // 	- nd280_eff
+// 	- nd280_norm
 //	- flux_norm
 //	- flux_shape : Can not be used in this test macro
 //      - xsec_ccqe

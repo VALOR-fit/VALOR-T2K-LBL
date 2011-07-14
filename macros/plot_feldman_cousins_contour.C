@@ -370,11 +370,13 @@ void plot_feldman_cousins_contour(
   if(show_external_contours) {
     if(show_90cl) {
       legend->AddEntry(minos2011_90cl, "MINOS 2011 (7.25E+20 POT), 90% CL");
-      legend->AddEntry(sk_90cl,        "Super-K, 90% CL");
-      legend->AddEntry(skle_90cl,      "Super-K L/E, 90% CL");
     }
     if(show_68cl) {
       legend->AddEntry(minos2011_68cl, "MINOS 2011 (7.25E+20 POT), 68% CL");
+    }
+    if(show_90cl) {
+      legend->AddEntry(sk_90cl,        "Super-K, 90% CL");
+      legend->AddEntry(skle_90cl,      "Super-K L/E, 90% CL");
     }
   }
   legend->SetBorderSize(0);

@@ -9,6 +9,7 @@
 //	- sk_nc_eff
 //	- sk_nuecceff_eff
 // 	- nd280_eff
+//	- nd280_norm
 //	- flux_norm
 //	- flux_shape
 //      - xsec_ccqe
