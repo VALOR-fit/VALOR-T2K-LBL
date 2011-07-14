@@ -31,15 +31,25 @@ void plot_numu_surv_prob_2f_vs_3frange(double sinsq2theta23=1.0, double dm23sq=2
 
   double e[ne];
   double numu_surv_prob_2f[ne];
-  double numu_surv_prob_3f_upper[ne];
-  double numu_surv_prob_3f_lower[ne];
+  double numu_surv_prob_3fv_upper[ne];
+  double numu_surv_prob_3fv_lower[ne];
+  double numu_surv_prob_3fm_upper[ne];
+  double numu_surv_prob_3fm_lower[ne];
 
   for(int i = 0; i < ne; i++) {
+
     e[i] = emin + i*de;
+    //cout << "E = " << e[i] << " GeV" << endl;
+
     numu_surv_prob_2f[i] = util::NuMuSurvProbOsc2D(sinsq2theta23, dm23sq, e[i]);
-    numu_surv_prob_3f_upper[i] = -999;
-    numu_surv_prob_3f_lower[i] = +999;
+
+    numu_surv_prob_3fv_upper[i] = -999;
+    numu_surv_prob_3fv_lower[i] = +999;
+    numu_surv_prob_3fm_upper[i] = -999;
+    numu_surv_prob_3fm_lower[i] = +999;
+
     for(int irand = 0; irand < nrand; irand++) {
+
        double dm12sq        = (1. + rand.Gaus(0.,1.) * dm12sq_frcerr       )  * conv::kGlobFitDm12sq;
        double sinsq2theta12 = (1. + rand.Gaus(0.,1.) * sinsq2theta12_frcerr)  * conv::kGlobFitSinsq2Theta12;
        sinsq2theta12 = TMath::Min(1.,sinsq2theta12);
@@ -48,24 +58,40 @@ void plot_numu_surv_prob_2f_vs_3frange(double sinsq2theta23=1.0, double dm23sq=2
        double delta_cp      = rand.Uniform() * 2*conv::kpi;
 
        calc_osc3f.SetOscParameters(sinsq2theta12,sinsq2theta13,sinsq2theta23,dm12sq,dm23sq,delta_cp);
-       double p3f = calc_osc3f.CalcVacuumOscProb(numu,numu,e[i]);
-       if(p3f < 0. || p3f > 1. || TMath::IsNaN(p3f)) {
+
+       double p3fv = calc_osc3f.CalcVacuumOscProb(numu,numu,e[i]);
+       if(p3fv < 0. || p3fv > 1. || TMath::IsNaN(p3fv)) {
 	 cout << "WARNING! P_{numu->numu} (sinsq2theta12 = " << sinsq2theta12 
               << ", sinsq2theta13 = " << sinsq2theta13 
               << ", sinsq2theta23 = " << sinsq2theta23 
               << ", Dm12^2 = "  << dm12sq << " eV^2"
               << ", |Dm23^2| = "  << dm23sq << " eV^2"
-              << ", delta_cp = "  << delta_cp << " rad) = " << p3f << endl;
+              << ", delta_cp = "  << delta_cp << " rad) = " << p3fv << endl;
          continue;
        }
-       numu_surv_prob_3f_upper[i] = TMath::Max(numu_surv_prob_3f_upper[i], p3f);
-       numu_surv_prob_3f_lower[i] = TMath::Min(numu_surv_prob_3f_lower[i], p3f);
+       numu_surv_prob_3fv_upper[i] = TMath::Max(numu_surv_prob_3fv_upper[i], p3fv);
+       numu_surv_prob_3fv_lower[i] = TMath::Min(numu_surv_prob_3fv_lower[i], p3fv);
+
+       double p3fm = calc_osc3f.CalcMatterOscProb(numu,numu,e[i]);
+       if(p3fm < 0. || p3fm > 1. || TMath::IsNaN(p3fm)) {
+	 cout << "WARNING! P_{numu->numu} (sinsq2theta12 = " << sinsq2theta12 
+              << ", sinsq2theta13 = " << sinsq2theta13 
+              << ", sinsq2theta23 = " << sinsq2theta23 
+              << ", Dm12^2 = "  << dm12sq << " eV^2"
+              << ", |Dm23^2| = "  << dm23sq << " eV^2"
+              << ", delta_cp = "  << delta_cp << " rad) = " << p3fm << endl;
+         continue;
+       }
+       numu_surv_prob_3fm_upper[i] = TMath::Max(numu_surv_prob_3fm_upper[i], p3fm);
+       numu_surv_prob_3fm_lower[i] = TMath::Min(numu_surv_prob_3fm_lower[i], p3fm);
     }//irand
   }//i
 
-  TGraph * gr_numu_surv_prob_2f        = new TGraph(ne, e, numu_surv_prob_2f);
-  TGraph * gr_numu_surv_prob_3f_upper  = new TGraph(ne, e, numu_surv_prob_3f_upper);
-  TGraph * gr_numu_surv_prob_3f_lower  = new TGraph(ne, e, numu_surv_prob_3f_lower);
+  TGraph * gr_numu_surv_prob_2f         = new TGraph(ne, e, numu_surv_prob_2f);
+  TGraph * gr_numu_surv_prob_3fv_upper  = new TGraph(ne, e, numu_surv_prob_3fv_upper);
+  TGraph * gr_numu_surv_prob_3fv_lower  = new TGraph(ne, e, numu_surv_prob_3fv_lower);
+  TGraph * gr_numu_surv_prob_3fm_upper  = new TGraph(ne, e, numu_surv_prob_3fm_upper);
+  TGraph * gr_numu_surv_prob_3fm_lower  = new TGraph(ne, e, numu_surv_prob_3fm_lower);
 
   TCanvas * c1 = new TCanvas("c","",10,10,800,600);
   TLegend * legend1 = new TLegend(0.3, 0.2, 0.85, 0.5);
@@ -74,13 +100,20 @@ void plot_numu_surv_prob_2f_vs_3frange(double sinsq2theta23=1.0, double dm23sq=2
   TH1F * h1 = (TH1F*) c1->DrawFrame(emin,0.,emax,1.);
   h1->GetXaxis()->SetTitle("E_{#nu} (GeV)");
   h1->GetYaxis()->SetTitle("P_{#nu_{#mu} #rightarrow #nu_{#mu}}");
-  gr_numu_surv_prob_3f_upper->SetLineStyle(kDashed);
-  gr_numu_surv_prob_3f_lower->SetLineStyle(kDashed);
+  gr_numu_surv_prob_3fv_upper->SetLineStyle(kDashed);
+  gr_numu_surv_prob_3fv_lower->SetLineStyle(kDashed);
+  gr_numu_surv_prob_3fm_upper->SetLineColor(kRed);
+  gr_numu_surv_prob_3fm_lower->SetLineColor(kRed);
+  gr_numu_surv_prob_3fm_upper->SetLineStyle(kDotted);
+  gr_numu_surv_prob_3fm_lower->SetLineStyle(kDotted);
   legend1->SetHeader(Form("|#Deltam_{23}^{2}|=%.3e eV^{2}, sin^{2}2#theta_{23}=%.3e",dm23sq,sinsq2theta23));
-  legend1->AddEntry(gr_numu_surv_prob_2f,       "2-flavour", "L");
-  legend1->AddEntry(gr_numu_surv_prob_3f_upper, "3-flavour (range for #theta_{12}, #theta_{13}, #delta_{CP}, #Deltam_{12}^{2} variation)", "L");
+  legend1->AddEntry(gr_numu_surv_prob_2f,        "2-flavour", "L");
+  legend1->AddEntry(gr_numu_surv_prob_3fv_upper, "3-flavour vaccum (range for #theta_{12}, #theta_{13}, #delta_{CP}, #Deltam_{12}^{2} variation)", "L");
+  legend1->AddEntry(gr_numu_surv_prob_3fm_upper, "3-flavour matter (range for #theta_{12}, #theta_{13}, #delta_{CP}, #Deltam_{12}^{2} variation)", "L");
   legend1->Draw();
   gr_numu_surv_prob_2f->Draw("l");
-  gr_numu_surv_prob_3f_upper->Draw("l");
-  gr_numu_surv_prob_3f_lower->Draw("l");
+  gr_numu_surv_prob_3fv_upper->Draw("l");
+  gr_numu_surv_prob_3fv_lower->Draw("l");
+  gr_numu_surv_prob_3fm_upper->Draw("l");
+  gr_numu_surv_prob_3fm_lower->Draw("l");
 }
