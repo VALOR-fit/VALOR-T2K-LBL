@@ -3,7 +3,7 @@ void change_prompt()
     TRint* rint = dynamic_cast<TRint*>(gApplication);
     if (!rint) return;
 
-    rint->SetPrompt("RooT2K [%d] ");
+    rint->SetPrompt("RooT2K: What can I do for you master? [%d] ");
 }
 
 void root2k()
