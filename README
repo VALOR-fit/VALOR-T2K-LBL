@@ -125,14 +125,25 @@ In addition, the code structure was modified significantly (to allow for future 
 Details may be found in T2K-TN-64.
 
 
+2010_v2.1.0
+............................................................................................................................
+
+Similar to 2010_v2.0.0 but with the following change requested during the analysis review:
+
+> The nd280 efficiency error was increased from +/-5% to +5.6% -5.2% to match the one used in the nue analysis.
+> The statistical error of the ND280 CC inclusive measurement was propagated to SK.
+
+
 Version: (current trunk)
 ............................................................................................................................
 
-Similar to 2010_v2.0.0 but with the following additions: 
+Similar to 2010_v2.1.0 but with the following additions: 
+
 > Can fit for systematics (any/all of the 34 systematic parameters considered in 2010 analysis).
 > Added code to calculate oscillation probability in vacuum and matter in a 3-flavour framework.
 > Modified disappearance fit and scripts to work in 3-flavour framework (dmsm_{12},theta_{12},theta_{13} and delta_{cp}
   are marginalised). Capability to perform analysis in 2-flavour framework retained for backward-compatibility.
+
 Lots of structural changes to allow the extensions mentioned above.
 Also comitted a bunch of macros used to prepare plots for T2K-TN-64.
 

@@ -20,7 +20,7 @@ void summarize_systematics
 
   // chain together files for each systematic
 
-  const int nsyst = 14;
+  const int nsyst = 15;
 
   double dm23sq_frac_err        [nsyst];
   double sinsq2theta23_frac_err [nsyst];
@@ -39,13 +39,14 @@ void summarize_systematics
     if (isyst ==  4)  syst_label = "sk_nuecc_eff";
     if (isyst ==  5)  syst_label = "sk_energy_scale";
     if (isyst ==  6)  syst_label = "nd280_eff";
-    if (isyst ==  7)  syst_label = "flux_norm";
-    if (isyst ==  8)  syst_label = "flux_shape";
-    if (isyst ==  9)  syst_label = "xsec_ccqe";
-    if (isyst == 10)  syst_label = "xsec_cc1pi_to_ccqe";
-    if (isyst == 11)  syst_label = "xsec_ccoth_to_ccqe";
-    if (isyst == 12)  syst_label = "xsec_nc_to_ccqe";
-    if (isyst == 13)  syst_label = "nuclear_effect";
+    if (isyst ==  7)  syst_label = "nd280_norm";
+    if (isyst ==  8)  syst_label = "flux_norm";
+    if (isyst ==  9)  syst_label = "flux_shape";
+    if (isyst == 10)  syst_label = "xsec_ccqe";
+    if (isyst == 11)  syst_label = "xsec_cc1pi_to_ccqe";
+    if (isyst == 12)  syst_label = "xsec_ccoth_to_ccqe";
+    if (isyst == 13)  syst_label = "xsec_nc_to_ccqe";
+    if (isyst == 14)  syst_label = "nuclear_effect";
 
     TChain * chain = new TChain("sysnt");
 

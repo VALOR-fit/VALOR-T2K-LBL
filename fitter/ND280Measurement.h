@@ -5,8 +5,13 @@
 
 \brief    Encapsulate the ND280 measurements
 
-\author   Costas Andreopoulos <costas.andreopoulos \at stfc.ac.uk>
-          STFC, Rutherford Appleton Laboratory
+\author   STFC, Rutherford Appleton Laboratory / Oxford T2K groups
+
+          Costas Andreopoulos <costas.andreopoulos \at stfc.ac.uk>
+          Jelena Ilic         <Jelena.Ilic \at stfc.ac.uk>
+          Nick Grant          <nick.grant \at stfc.ac.uk>
+          Geoff Pearce        <geoff.pearce \at stfc.ac.uk>
+          Alfons Weber        <alfons.weber \at stfc.ac.uk>
    
 \created  October 20, 2010
    
@@ -39,9 +44,9 @@ public:
 
   // Get nd280 oscillation analysis inputs
   double CorrectionFactor (void) const;
-  double NObsCCLike       (void) const; ///< observed number of CC-like events
-  double NExpNCBkg        (bool nominal=false) const; ///< expected NC contamination of CC-like sample (by default report tweaked value)
-  double NExpCC           (bool nominal=false) const; ///< expected number of CC events  (by default report tweaked value)
+  double NObsCCLike       (bool nominal=false) const; ///< observed number of CC-like events (by default report tweaked value, if tweaked)
+  double NExpNCBkg        (bool nominal=false) const; ///< expected NC contamination of CC-like sample (by default report tweaked value, if tweaked)
+  double NExpCC           (bool nominal=false) const; ///< expected number of CC events  (by default report tweaked value, if tweaked)
   double NumOfEvents      (t2kana::conv::ND280Mode_t mode, bool nominal=false) const;
   double NumOfEvents      (t2kana::conv::ND280Mode_t mode, int bin, bool nominal=false) const;
   double NumOfEvents      (t2kana::conv::ND280Mode_t mode, double Etrue, bool nominal=false) const;
@@ -65,6 +70,9 @@ public:
   // Systematic variations
   void TweakEfficiency (double twkdial);
 
+  // Statistical fluctuations
+  void FluctuateNObsCCLike(double twkdial);
+
   //
   void TellMeAboutCrossSections(NuXSec * geninp) { fGenInputs = geninp; }
    
@@ -83,7 +91,10 @@ private:
   double  fPOTMC;                  ///< number of POT (MC)
   TH1F *  fNumSelEt[knmnd];        ///< number of events passing cuts as function of Etrue for various modes
   double  fSelEffTwkDial;          ///< selection efficiency tweaking dial
-  double  fSelEffRelErr;           ///< relative error on selection efficiency
+  double  fSelEffRelErrPlus;       ///< relative error on selection efficiency
+  double  fSelEffRelErrMinus;      ///< relative error on selection efficiency
+  double  fNObsCCLikeTwkDial;      ///< tweak observed number of CC-like events within statistical error
+  double  fRelStatErr;             ///< relative statistical error on observed number of CC-like events
 
   TH1D *  fNuMuEt;                 ///< fEtrue distribution for numu    - needed for beam norm err calculation
   TH1D *  fNuMuBarEt;              ///< fEtrue distribution for numubar - needed for beam norm err calculation

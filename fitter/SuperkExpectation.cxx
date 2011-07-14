@@ -36,6 +36,9 @@
    that describe the physics hypothesis and the systematic tweaks to the pdfs. The former
    interface is the one that was installed initially and used in validation. The latter 
    interface is meant to be used in the fits.
+ @ 13/07/2011 - CA
+   Take into account the statistical error on the measured number of ND280 CC-like events
+   and propagate it to SuperK.
 */
 //________________________________________________________________________________________
 
@@ -254,6 +257,7 @@ void SuperkExpectation::ResetSystematicVariations(void)
   this->GetSuperkMC()->TweakEfficiencyNuECC            (0.);
 
   this->GetND280Measurement()->TweakEfficiency (0.);
+  this->GetND280Measurement()->FluctuateNObsCCLike(0.);
 
   this->GetNuFlux()->TweakNorm (0.);
   this->GetNuFlux()->TweakShape(true,0);  
@@ -308,11 +312,15 @@ void SuperkExpectation::TweakSystematic(string systematic, double twkdial)
   }
 
   //
-  // ND280 detector systematics
+  // ND280 detector systematics & statistical err on measured CC event count
   //
   else
   if(systematic == "nd280_eff") {
      this->GetND280Measurement()->TweakEfficiency(twkdial);
+  }
+  else
+  if(systematic == "nd280_norm") {
+     this->GetND280Measurement()->FluctuateNObsCCLike(twkdial);
   }
 
 
@@ -374,7 +382,8 @@ void SuperkExpectation::TweakAllSystematics(bool do_tweak)
      this->GetSuperkMC()->TweakEfficiencyNuECC             (rand.Gaus(0.,1.));
 
      // ND280 detector response
-     this->GetND280Measurement()->TweakEfficiency(rand.Gaus(0.,1.));
+     this->GetND280Measurement()->TweakEfficiency     (rand.Gaus(0.,1.));
+     this->GetND280Measurement()->FluctuateNObsCCLike (rand.Gaus(0.,1.));
 
      // neutrino flux
      this->GetNuFlux()->TweakNorm (rand.Gaus(0.,1.));

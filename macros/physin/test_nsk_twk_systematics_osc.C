@@ -44,7 +44,7 @@ void test_nsk_twk_systematics_osc
        dm23sq_min - 0.5*dm23sq_step, 
        dm23sq_max + 0.5*dm23sq_step);
 
-  const int nsystematics = 12;
+  const int nsystematics = 13;
   string systematic[nsystematics] = {
         "sk_ccqe_other_eff",
         "sk_ccqe_ring_counting_eff",
@@ -52,6 +52,7 @@ void test_nsk_twk_systematics_osc
         "sk_nc_eff",
         "sk_nuecc_eff",
         "nd280_eff",
+        "nd280_norm",
         "flux_norm",
         "xsec_ccqe",
         "xsec_cc1pi_to_ccqe",
@@ -66,6 +67,7 @@ void test_nsk_twk_systematics_osc
         false,  /* sk_nc_eff                  */
         false,  /* sk_nuecc_eff               */
         false,  /* nd280_eff                  */
+        false,  /* nd280_norm                 */
         false,  /* flux_norm                  */
         false,  /* xsec_ccqe                  */
         false,  /* xsec_cc1pi_to_ccqe         */
@@ -80,6 +82,7 @@ void test_nsk_twk_systematics_osc
         true,   /* sk_nc_eff                 */
         true,   /* sk_nuecc_eff              */
         true,   /* nd280_eff                 */
+        true,   /* nd280_norm                */
         true,   /* flux_norm                 */
         false,  /* xsec_ccqe                 */
         false,  /* xsec_cc1pi_to_ccqe        */

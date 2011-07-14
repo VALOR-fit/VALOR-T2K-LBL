@@ -307,13 +307,13 @@ void plot_feldman_cousins_contour(
      set_contour_style(minos2011_90cl, kBlack,     2, 1);
      set_contour_style(skle_90cl,      kMagenta-3, 2, 1);
      set_contour_style(sk_90cl,        kGreen+2,   2, 1);
-     if(show_68cl) {
-       minos2011_68cl->Draw("l");
-     }
      if(show_90cl) {
        minos2011_90cl->Draw("l");
        skle_90cl->Draw("l");
        sk_90cl->Draw("l");
+     }
+     if(show_68cl) {
+       minos2011_68cl->Draw("l");
      }
      f.Close();
   }
@@ -370,11 +370,13 @@ void plot_feldman_cousins_contour(
   if(show_external_contours) {
     if(show_90cl) {
       legend->AddEntry(minos2011_90cl, "MINOS 2011 (7.25E+20 POT), 90% CL");
-      legend->AddEntry(sk_90cl,        "Super-K, 90% CL");
-      legend->AddEntry(skle_90cl,      "Super-K L/E, 90% CL");
     }
     if(show_68cl) {
       legend->AddEntry(minos2011_68cl, "MINOS 2011 (7.25E+20 POT), 68% CL");
+    }
+    if(show_90cl) {
+      legend->AddEntry(sk_90cl,        "Super-K, 90% CL");
+      legend->AddEntry(skle_90cl,      "Super-K L/E, 90% CL");
     }
   }
   legend->SetBorderSize(0);
