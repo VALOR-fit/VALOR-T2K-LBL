@@ -707,13 +707,13 @@ double NuOsc3Flavour::CalcMatterOscProb(int nu_start, int nu_end, double energy)
 
  for(int i=0; i<3; i++)
    {
-   if(fabs(scalarProduct[i][re]) > 1.0e-4)
+   if(fabs(scalarProduct[i][re]) > 1.0e-3)
      {
      cerr<<"NuOsc3Flavour::CalcMatterOscProb() : eigenvectors may not be orthogonal."<<endl;
      cerr<<"Real part of scalar product is "<<scalarProduct[i][re]<<"."<<endl;
      return 0.0;
      }        
-   if(fabs(scalarProduct[i][im]) > 1.0e-4)
+   if(fabs(scalarProduct[i][im]) > 1.0e-3)
      {
      cerr<<"NuOsc3Flavour::CalcMatterOscProb() : eigenvectors may not be orthogonal."<<endl;
      cerr<<"Imaginary part of scalar product is "<<scalarProduct[i][im]<<"."<<endl;
