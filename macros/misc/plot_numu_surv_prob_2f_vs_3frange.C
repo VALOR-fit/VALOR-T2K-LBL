@@ -17,10 +17,10 @@ void plot_numu_surv_prob_2f_vs_3frange(double sinsq2theta23=1.0, double dm23sq=2
   using namespace t2kana;
 
   const int    numu                 = conv::kPdgNuMu;
-  const int    nrand                = 500;
-  const int    ne                   = 200;
+  const int    nrand                = 4000;
+  const int    ne                   = 500;
   const double emin                 = 0.250;
-  const double emax                 = 5.000;
+  const double emax                 = 10.000;
   const double de                   = (emax-emin)/(ne-1);
   const double dm12sq_frcerr        = 0.05;
   const double sinsq2theta12_frcerr = 0.08;
@@ -61,7 +61,9 @@ void plot_numu_surv_prob_2f_vs_3frange(double sinsq2theta23=1.0, double dm23sq=2
 
        double p3fv = calc_osc3f.CalcVacuumOscProb(numu,numu,e[i]);
        if(p3fv < 0. || p3fv > 1. || TMath::IsNaN(p3fv)) {
-	 cout << "WARNING! P_{numu->numu} (sinsq2theta12 = " << sinsq2theta12 
+	 cout << "WARNING! P_{numu->numu} ("
+              << "E = " << e[i] << " GeV"
+              << ", sinsq2theta12 = " << sinsq2theta12 
               << ", sinsq2theta13 = " << sinsq2theta13 
               << ", sinsq2theta23 = " << sinsq2theta23 
               << ", Dm12^2 = "  << dm12sq << " eV^2"
@@ -74,7 +76,9 @@ void plot_numu_surv_prob_2f_vs_3frange(double sinsq2theta23=1.0, double dm23sq=2
 
        double p3fm = calc_osc3f.CalcMatterOscProb(numu,numu,e[i]);
        if(p3fm < 0. || p3fm > 1. || TMath::IsNaN(p3fm)) {
-	 cout << "WARNING! P_{numu->numu} (sinsq2theta12 = " << sinsq2theta12 
+	 cout << "WARNING! P_{numu->numu} ("
+              << "E = " << e[i] << " GeV"
+              << ", sinsq2theta12 = " << sinsq2theta12 
               << ", sinsq2theta13 = " << sinsq2theta13 
               << ", sinsq2theta23 = " << sinsq2theta23 
               << ", Dm12^2 = "  << dm12sq << " eV^2"
@@ -112,8 +116,8 @@ void plot_numu_surv_prob_2f_vs_3frange(double sinsq2theta23=1.0, double dm23sq=2
   legend1->AddEntry(gr_numu_surv_prob_3fm_upper, "3-flavour matter (range for #theta_{12}, #theta_{13}, #delta_{CP}, #Deltam_{12}^{2} variation)", "L");
   legend1->Draw();
   gr_numu_surv_prob_2f->Draw("l");
-  gr_numu_surv_prob_3fv_upper->Draw("l");
-  gr_numu_surv_prob_3fv_lower->Draw("l");
+//  gr_numu_surv_prob_3fv_upper->Draw("l");
+//  gr_numu_surv_prob_3fv_lower->Draw("l");
   gr_numu_surv_prob_3fm_upper->Draw("l");
   gr_numu_surv_prob_3fm_lower->Draw("l");
 }
