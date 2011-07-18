@@ -12,10 +12,22 @@
    the one in FitParamList.
  @ 11/07/2011 - CA
    Implemented kHypOsc3F case.
+ @ 18/07/2011 - CA
+   Bug fix: Reverse order of kHypOsc3F and kHypNuMuDisapp2F cases (kHypOsc3F now first) 
+   in PhysHypothesis(const FitParamList &) ctor so that kHypOsc3F case can be picked.
 */
 //________________________________________________________________________________________
 
+//#define __debug_level_1__
+//#define __debug_level_2__
+
+#include <iostream>
+
 #include "PhysHypothesis.h"
+#include "Utilities.h"
+
+using std::cout;
+using std::endl;
 
 using namespace t2kana;
 using namespace t2kana::conv;
@@ -28,17 +40,8 @@ PhysHypothesis::PhysHypothesis(PhysHypothesis_t h)
 //________________________________________________________________________________________
 PhysHypothesis::PhysHypothesis(const FitParamList & fp)
 {
-  // numu disappearance, 2-flavour neutrino oscillation framework 
-  if( fp.Exists(kPhypDm23sq) && 
-      fp.Exists(kPhypSinsq2Theta23) ) 
-  {
-    this->Init(kHypNuMuDisapp2F);
-    this->SetCurrValue(kPhypDm23sq,        fp.CurrValue(kPhypDm23sq));
-    this->SetCurrValue(kPhypSinsq2Theta23, fp.CurrValue(kPhypSinsq2Theta23));
-  }
 
   // neutrino oscillations (3-flavour framework)
-  else 
   if( fp.Exists(kPhypDm12sq) && 
       fp.Exists(kPhypDm23sq) && 
       fp.Exists(kPhypSinsq2Theta13) &&
@@ -53,6 +56,16 @@ PhysHypothesis::PhysHypothesis(const FitParamList & fp)
     this->SetCurrValue(kPhypSinsq2Theta13, fp.CurrValue(kPhypSinsq2Theta13));
     this->SetCurrValue(kPhypSinsq2Theta23, fp.CurrValue(kPhypSinsq2Theta23));
     this->SetCurrValue(kPhypDeltaCP,       fp.CurrValue(kPhypDeltaCP));
+  }
+
+  else 
+  // numu disappearance, 2-flavour neutrino oscillation framework 
+  if( fp.Exists(kPhypDm23sq) && 
+      fp.Exists(kPhypSinsq2Theta23) ) 
+  {
+    this->Init(kHypNuMuDisapp2F);
+    this->SetCurrValue(kPhypDm23sq,        fp.CurrValue(kPhypDm23sq));
+    this->SetCurrValue(kPhypSinsq2Theta23, fp.CurrValue(kPhypSinsq2Theta23));
   }
 
   // neutrino decay
@@ -79,6 +92,11 @@ PhysHypothesis::PhysHypothesis(const FitParamList & fp)
   else {  
     this->Init(kHypUndefined);
   }
+
+#ifdef __debug_level_2__
+  cout << " PhysHypothesis ctor > "
+       << "Input physics hypothesis = " << util::AsString(fHypothesis) << endl;
+#endif
 }
 //________________________________________________________________________________________
 PhysHypothesis::~PhysHypothesis()

@@ -39,6 +39,11 @@
  @ 13/07/2011 - CA
    Take into account the statistical error on the measured number of ND280 CC-like events
    and propagate it to SuperK.
+ @ 18/07/2011 - CA
+   In the 3-flavour analysis, applying systematics and oscillations in the SuperK MC
+   templates takes place in separate steps. The SuperkMC interface has changed slightly.
+   Call SuperkMC::UpdateTemplates() in SuperkExpectation::Generate(const PhysHypothesis &)
+   before updating the Ereco and Etrue spectra.
 */
 //________________________________________________________________________________________
 
@@ -145,10 +150,11 @@ void SuperkExpectation::Generate(const PhysHypothesis & ph)
   // correction factor from ND280
   double correction = fND280Measurement->CorrectionFactor();
 
-  // update SK MC
-  fSuperkMC->UpdateErecoSpectra();
+  // update SK MC templates
+  fSuperkMC->UpdateTemplates();
 
-  // update prediction
+  // update Ereco spectrum prediction
+  fSuperkMC->UpdateErecoSpectra();
   for(int ibin = 1; ibin <= kNvErecoBins; ibin++) {
     double n = 0;
     for(unsigned int is = 0; is < ns; is++) {

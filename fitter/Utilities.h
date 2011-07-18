@@ -60,10 +60,11 @@ namespace util {
 
   //
 
-  string AsString (t2kana::conv::PhysParamId_t  p);
-  string AsString (t2kana::conv::SuperkSample_t s);
-  string AsString (t2kana::conv::SuperkMode_t   m);
-  string AsString (t2kana::conv::OscChannelId_t o);
+  string AsString (t2kana::conv::PhysHypothesis_t h);
+  string AsString (t2kana::conv::PhysParamId_t    p);
+  string AsString (t2kana::conv::SuperkSample_t   s);
+  string AsString (t2kana::conv::SuperkMode_t     m);
+  string AsString (t2kana::conv::OscChannelId_t   o);
 
   t2kana::conv::OscChannelId_t GetOscChannel(int nu_start, int nu_end);
 

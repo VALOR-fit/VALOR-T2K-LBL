@@ -10,7 +10,13 @@
    g_uncorrelated) to allow fitting for systematics handled using the Cholesky
    method (fitting for the de-correlated params).
    Added nuisance params in AsString(PhysParamId_t p).
-
+   Added IsSystematic(PhysParamId_t p).
+ @ 12/07/11
+   Minor changes to facilitate 3-flavour oscillation analysis:
+   Added AsString(OscChannelId_t) and OscChannelId_t GetOscChannel(int,int).
+   Added IsNeutrino(int) and IsAntiNeutrino(int).
+ @ 18/07/11
+   Added AsString(PhysHypothesis_t)
 */
 //____________________________________________________________________________
 
@@ -414,6 +420,28 @@ TVectorD t2kana::util::CholeskyCalculateCorrelatedParamVariations (
 #endif
 
   return g;
+}
+//____________________________________________________________________________
+string t2kana::util::AsString(t2kana::conv::PhysHypothesis_t h)
+{
+  switch(h) {
+    case (kHypDecay) : 
+       return "< neutrino decay >"; 
+       break;
+    case (kHypDecoh) : 
+       return "< neutrino decoherence >"; 
+       break;
+    case (kHypNuMuDisapp2F) : 
+       return "< 2-flavour oscillations / numu disappearance >"; 
+       break;
+    case (kHypOsc3F) : 
+       return "< 3-flavour oscillations >"; 
+       break;
+    default:                
+      return "undefined"; 
+      break;
+  }
+  return "";
 }
 //____________________________________________________________________________
 string t2kana::util::AsString(PhysParamId_t p)
