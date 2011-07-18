@@ -22,6 +22,7 @@
 
 #include "Conventions.h"
 #include "PhysHypothesis.h"
+#include "NuOsc3Flavour.h"
 
 class TVirtualPad;
 class TTree;
@@ -42,20 +43,24 @@ public:
   SuperkMC();
  ~SuperkMC();
 
-  // Update and get Ereco spectra (needed for fitting the data)
+  // Apply tuning, systematic variations + oscillations (,decay,decoherence) to nominal MC templates
+  void UpdateTemplates(void);
+
+  // Integrate current MC templates and get Ereco spectra (needed for fitting the data)
   void    UpdateErecoSpectra  (void);
-  TH1D*   CurrErecoSpectrum   (t2kana::conv::SuperkSample_t s) const { return fMCErecoSpectrumTot[s]; }
+  TH1D*   CurrErecoSpectrum   (t2kana::conv::SuperkSample_t s) const                               { return fMCErecoSpectrumTot[s]; }
   TH1D*   CurrErecoSpectrum   (t2kana::conv::SuperkSample_t s, t2kana::conv::SuperkMode_t m) const { return fMCErecoSpectrum[s][m]; }
 
-  // Update and get Etrue spectra (needed for flux normalisation error calculation)
+  // Integrate current MC templates and get Etrue spectra (needed for flux normalisation error calculation)
   void    UpdateEtrueSpectra  (void);
   TH1D*   Curr1RmuNuMuEtrue   (void) const { return f1RmNuMuEt;    } ///< current (allowing for applied weights) Etrue distribution for numu
   TH1D*   Curr1RmuNuMuBarEtrue(void) const { return f1RmNuMuBarEt; } ///<      -//-  for numubar
   TH1D*   Curr1RmuNuEEtrue    (void) const { return f1RmNuEEt;     } ///<      -//-  for nue
       
   // Loop over templates and calculate the number of events in given Ereco or Etrue bin
-  double  NumOfEvents_Ereco   (double Ereco, t2kana::conv::SuperkSample_t s, t2kana::conv::SuperkMode_t m, bool ignore_energy_scale_twk=false) const;
-  double  NumOfEvents_Etrue   (double Etrue, t2kana::conv::SuperkSample_t s, t2kana::conv::SuperkMode_t m) const;
+  double  NumOfEvents         (double Ereco, double Etrue,  t2kana::conv::SuperkSample_t s,  t2kana::conv::SuperkMode_t m) const;
+  //double  NumOfEvents_Ereco   (double Ereco, t2kana::conv::SuperkSample_t s, t2kana::conv::SuperkMode_t m, bool ignore_energy_scale_twk=false) const;
+  //double  NumOfEvents_Etrue   (double Etrue, t2kana::conv::SuperkSample_t s, t2kana::conv::SuperkMode_t m) const;
 
   // MC event samples used to fill-in MC templates and POT exposure for each
   TTree * MCTree (t2kana::conv::SuperkSample_t s, t2kana::conv::SuperkMode_t m);
@@ -84,7 +89,7 @@ public:
       
   // Physics hypothesis and calculation of survival probability for each hypothesis
   PhysHypothesis & Hypothesis(void);
-  double SurvivalProbability(double Etrue, t2kana::conv::SuperkMode_t m) const;
+  //double SurvivalProbability(double Etrue, t2kana::conv::SuperkMode_t m) const;
 
   // Hooks for obtaining necessary flux and cross-section information
   void TellMeAboutTheFlux       (NuFlux * flux) { fNuFlux     = flux; }
@@ -99,11 +104,16 @@ private:
   void Init           (void);
   void CleanUp        (void);
   void CreateTemplate (t2kana::conv::SuperkSample_t s, t2kana::conv::SuperkMode_t m);
+
+  void ApplySystematicsToTemplates (void);    ///< apply systematic variations to MC templates
+  void ApplyPhysHypothesisToTemplates (void); ///< apply physics hypothesis (oscillations,...) to MC templates
       
-  double NumOfEventsReadFromTree(double Ereco, double ErecoBinSz,
-          t2kana::conv::SuperkSample_t s, t2kana::conv::SuperkMode_t m);
-      
-  double     fPOT;                         ///< Number of POT
+  //
+  // private data members
+  //
+
+  double     fPOT;                         ///< POT for actual data-set (MC is scaled to that exposure)
+
   double     fEnergyScaleRelErr;           ///< Energy scale relative error
   double     fOthEffCCQERelErr;            ///< CCQE other (all but ring-counting) efficiency relative error 
   TMatrixD * fEffCCQERelErrCovarRC;        ///< CCQE ring-counting efficiency relative error covariance matrix (3x3)
@@ -123,9 +133,11 @@ private:
   double     fEffNuECCTwkDial;             ///< nue CC efficiency tweaking dial
   TMatrixD * fEffCCQERelErrCovarCholeskyL; ///< Cholesky decomposition (trangular matrix L) of fEffCCQERelErrCovarRC covariance matrix
 
-  TH2D *     fMCTemplates[kns][knm];       ///< MC template (sample,mode): Ereco-Etrue
-  TH1D *     fMCErecoSpectrum[kns][knm];   ///< spectrum(sample,mode): Ereco
-  TH1D *     fMCErecoSpectrumTot[kns];     ///< total Ereco spectrum (sample)
+  TH2D *     fMCTemplates[kns][knm];       ///< MC template(sample,mode): Ereco-Etrue (nominal / no oscillations)
+  TH2D *     fMCTemplatesSyst[kns][knm];   ///< MC template(sample,mode): Ereco-Etrue (systematically varied / no oscillations)
+  TH2D *     fMCTemplatesCurr[kns][knm];   ///< MC template(sample,mode): Ereco-Etrue (systematically varied + oscillations)
+  TH1D *     fMCErecoSpectrum[kns][knm];   ///< MC Ereco spectrum(sample,mode)        (systematically varied + oscillations)
+  TH1D *     fMCErecoSpectrumTot[kns];     ///< MC total Ereco spectrum (sample)      (systematically varied + oscillations)
 
   TTree*     fMC1Rmu_numu;                 ///< input numu MC event sample
   double     fMCPOT_numu;                  ///< numu MC sample POT
@@ -146,6 +158,7 @@ private:
   NuXSec *   fGenInputs;                   ///< Neutrino cross section analysis inputs
 
   PhysHypothesis fPhysHypothesis;          ///< Hypothesis for observed deficit: disappearance, decay, decoherence
+  NuOsc3Flavour  fNuOsc3Flavour;           ///< 3-flavour neutrino osc. probability calculations
 
 ClassDef(SuperkMC, 3);
 };
