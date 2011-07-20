@@ -396,10 +396,11 @@ void SuperkMC::ApplySystematicsToTemplates(void)
     }//im
   }//is
 
-
   //
-  // Now that all simple multiplicative systematics were applied,
-  // apply the reconstructed energy scale systematic.
+  // Now that all simple multiplicative systematics were applied, apply the reconstructed 
+  // energy scale systematic. This systematic is applied by scaling the Ereco bin edges
+  // and, by assuming uniform distribution of events within each bin, calculating how many
+  // events a lost to / gained from neighbouring bins.
   //
 
   // loop over samples
