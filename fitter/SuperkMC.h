@@ -57,11 +57,6 @@ public:
   TH1D*   Curr1RmuNuMuBarEtrue(void) const { return f1RmNuMuBarEt; } ///<      -//-  for numubar
   TH1D*   Curr1RmuNuEEtrue    (void) const { return f1RmNuEEt;     } ///<      -//-  for nue
       
-  // Loop over templates and calculate the number of events in given Ereco or Etrue bin
-  double  NumOfEvents         (double Ereco, double Etrue,  t2kana::conv::SuperkSample_t s,  t2kana::conv::SuperkMode_t m) const;
-  //double  NumOfEvents_Ereco   (double Ereco, t2kana::conv::SuperkSample_t s, t2kana::conv::SuperkMode_t m, bool ignore_energy_scale_twk=false) const;
-  //double  NumOfEvents_Etrue   (double Etrue, t2kana::conv::SuperkSample_t s, t2kana::conv::SuperkMode_t m) const;
-
   // MC event samples used to fill-in MC templates and POT exposure for each
   TTree * MCTree (t2kana::conv::SuperkSample_t s, t2kana::conv::SuperkMode_t m);
   double  MCPOT  (t2kana::conv::SuperkSample_t s, t2kana::conv::SuperkMode_t m);
@@ -105,8 +100,11 @@ private:
   void CleanUp        (void);
   void CreateTemplate (t2kana::conv::SuperkSample_t s, t2kana::conv::SuperkMode_t m);
 
-  void ApplySystematicsToTemplates (void);    ///< apply systematic variations to MC templates
+  void ApplySystematicsToTemplates    (void); ///< apply systematic variations to MC templates
   void ApplyPhysHypothesisToTemplates (void); ///< apply physics hypothesis (oscillations,...) to MC templates
+
+  // Loop over templates and calculate the number of events in given (Ereco, Etrue) bin
+  double  NumOfEvents (double Ereco, double Etrue, t2kana::conv::SuperkSample_t s, t2kana::conv::SuperkMode_t m) const;
       
   //
   // private data members
@@ -133,11 +131,11 @@ private:
   double     fEffNuECCTwkDial;             ///< nue CC efficiency tweaking dial
   TMatrixD * fEffCCQERelErrCovarCholeskyL; ///< Cholesky decomposition (trangular matrix L) of fEffCCQERelErrCovarRC covariance matrix
 
-  TH2D *     fMCTemplates[kns][knm];       ///< MC template(sample,mode): Ereco-Etrue (nominal / no oscillations)
-  TH2D *     fMCTemplatesSyst[kns][knm];   ///< MC template(sample,mode): Ereco-Etrue (systematically varied / no oscillations)
-  TH2D *     fMCTemplatesCurr[kns][knm];   ///< MC template(sample,mode): Ereco-Etrue (systematically varied + oscillations)
-  TH1D *     fMCErecoSpectrum[kns][knm];   ///< MC Ereco spectrum(sample,mode)        (systematically varied + oscillations)
-  TH1D *     fMCErecoSpectrumTot[kns];     ///< MC total Ereco spectrum (sample)      (systematically varied + oscillations)
+  TH2D *     fMCTemplNom[kns][knm];        ///< MC template(sample,mode): Ereco-Etrue (nominal)
+  TH2D *     fMCTemplSys[kns][knm];        ///< MC template(sample,mode): Ereco-Etrue (+ systematic variation)
+  TH2D *     fMCTemplSysHyp[kns][knm];     ///< MC template(sample,mode): Ereco-Etrue (+ systematic variation + physics hypothesis)
+  TH1D *     fMCErecoSpectrum[kns][knm];   ///< MC Ereco spectrum(sample,mode)        (+ systematic variation + physics hypothesis)
+  TH1D *     fMCErecoSpectrumTot[kns];     ///< MC total Ereco spectrum (sample)      (+ systematic variation + physics hypothesis)
 
   TTree*     fMC1Rmu_numu;                 ///< input numu MC event sample
   double     fMCPOT_numu;                  ///< numu MC sample POT
