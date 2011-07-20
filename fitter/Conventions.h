@@ -199,12 +199,16 @@ static const double kGF             = 1.16637e-5;                    // Fermi co
 static const double kGF_SI          = kGF*khbarc3_SI*1.0e-18;        // Fermi coupling constant, (eV cm^3, SI units), 1e-18 is used for GeV^-2 -> eV^-2
 static const double kNA             = 6.022142e23;                   // Avogadro number (mol^-1)
 
-// Oscillation parameters, recent global fit values
-static const double kGlobFitSinsq2Theta23 = 1.00;
-static const double kGlobFitSinsq2Theta13 = 0.10;
-static const double kGlobFitSinsq2Theta12 = 0.86;
-static const double kGlobFitDm23sq        = 2.35E-3;
-static const double kGlobFitDm12sq        = 7.58E-5;
+// Oscillation parameters, recent global fit values & 1 sigma errors
+static const double kGlobFitSinsq2Theta23    = 1.00;
+static const double kGlobFitSinsq2Theta13    = 0.10;
+static const double kGlobFitSinsq2Theta12    = 0.86;
+static const double kGlobFitDm23sq           = 2.35E-3;
+static const double kGlobFitDm12sq           = 7.58E-5;
+static const double kGlobFitErrSinsq2Theta23 = 0.15; // ~15%
+static const double kGlobFitErrSinsq2Theta12 = 0.06; // ~6%
+static const double kGlobFitErrDm23sq        = 0.05; // ~5%
+static const double kGlobFitErrDm12sq        = 0.03; // ~3%
 
 //
 // Variable Etrue binning scheme used by the Beam WG.

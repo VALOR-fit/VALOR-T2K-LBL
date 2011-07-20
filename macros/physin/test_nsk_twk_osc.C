@@ -44,18 +44,18 @@ void test_nsk_twk_osc
   skexp.Read(config);
 
   // fit params
-  PhysParamList * fparm = PhysParamList::NumuDisapFitNoSyst();
+  PhysHypothesis ph(t2kana::conv::kHypNuMuDisapp2F);
 
   // generate predictions
   for(int i = 1; i <= nsk_vs_osc_params->GetNbinsX(); i++) {
     for(int j = 1; j <= nsk_vs_osc_params->GetNbinsY(); j++) {
        double sinsq2theta23 = nsk_vs_osc_params->GetXaxis()->GetBinCenter(i);
        double dm23sq        = nsk_vs_osc_params->GetYaxis()->GetBinCenter(j);
-       fparm->Update(t2kana::conv::kPhypSinsq2Theta23, sinsq2theta23);
-       fparm->Update(t2kana::conv::kPhypDm23sq,        dm23sq);
+       ph.SetCurrValue(t2kana::conv::kPhypSinsq2Theta23, sinsq2theta23);
+       ph.SetCurrValue(t2kana::conv::kPhypDm23sq,        dm23sq);
 
        // generate predictions
-       skexp.Generate(*fparm);
+       skexp.Generate(ph);
 
        // integrate Ereco distribution
        double nsk = skexp.CurrPredictedErecoSpectrum(conv::kSKsFCFV1RingMuLike)->Integral();

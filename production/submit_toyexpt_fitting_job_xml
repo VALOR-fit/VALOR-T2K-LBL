@@ -5,19 +5,18 @@
 # Submit a batch of test_n_mock_data_fits_xml.C jobs
 #
 # Inputs
-#  --resource               : <RAL, IN2P3, Oxford, Grid, interactive>, default: interactive
-#  --tag                    : default: toyexptfits
-#  --nruns                  : Number of runs (jobs)
-#  --nexpts                 : Number of experiments to fit per run.
+#  --resource               : Computer resource, <RAL, IN2P3, Oxford, Grid, interactive>. Default: interactive
+#  --tag                    : Tag for output files. Default: toyexptfits
+#  --nruns                  : Number of runs (jobs). Default: 1.
+#  --nexpts                 : Number of experiments to fit per run. . Default: 1000.
 #  --first-expt             : ID of first toy MC expt to fit in first job
 #  --cpu-time               : default: "6:00:00" for RAL, "1500000" for IN2P3, "11:50:00" for Oxford
-#  --fitter                 : default: minuit
-#  --dm23sq                 : default: 2.32E-3
-#  --sinsq2theta23          : default: 1
+#  --fit-param-list         : Fit patameter list. Default: numudisapp2f. See FitParamList.h for allowed options.
+#  --fitter                 : Which fitter to use. Default: minuit.
 #  --toy-expts-file         : XML file with toy MC experiments (including full path)
-#  --job-dir               : Directory for job scripts and outputs, default: `pwd`
-#  --softw-dir             : Oscillation code top-level directory, default: `pwd`
-#  --config-file           : Analysis configuration file from the config/ directory, default: analysis_configuration.xml
+#  --job-dir                : Directory for job scripts and outputs, default: `pwd`
+#  --softw-dir              : Oscillation code top-level directory, default: `pwd`
+#  --config-file            : Analysis configuration file from the config/ directory, default: analysis_configuration.xml
 #
 # C.Andreopoulos
 #---------------------------------------------------------------------------------------------------------------------------- 
@@ -33,9 +32,8 @@ foreach (@ARGV) {
   if($_ eq '--nexpts'         ) { $nexpts        = $ARGV[$iarg+1]; }
   if($_ eq '--first-expt'     ) { $firstexpt     = $ARGV[$iarg+1]; }
   if($_ eq '--cpu-time'       ) { $cput          = $ARGV[$iarg+1]; }
+  if($_ eq '--fit-param-list' ) { $fitparamlist  = $ARGV[$iarg+1]; }
   if($_ eq '--fitter'         ) { $fitter        = $ARGV[$iarg+1]; }
-  if($_ eq '--dm23sq'         ) { $dm23sq        = $ARGV[$iarg+1]; }
-  if($_ eq '--sinsq2theta23'  ) { $sinsq2theta23 = $ARGV[$iarg+1]; }
   if($_ eq '--toy-expts-file' ) { $toyexptsfile  = $ARGV[$iarg+1]; }
   if($_ eq '--job-dir'        ) { $job_dir       = $ARGV[$iarg+1]; }
   if($_ eq '--softw-dir'      ) { $softw_dir     = $ARGV[$iarg+1]; }
@@ -50,9 +48,8 @@ $tag                    = "toyexptfits"                 unless defined $tag;
 $nruns                  = 1                             unless defined $nruns;
 $nexpts                 = 1000                          unless defined $nexpts;
 $firstexpt              = 0                             unless defined $firstexpt;
+$fitparamlist           = "numudisapp2f"                unless defined $fitparamlist;
 $fitter                 = "minuit"                      unless defined $fitter;
-$dm23sq                 = 0.00232                       unless defined $dm23sq;
-$sinsq2theta23          = 1                             unless defined $sinsq2theta23;
 $job_dir                = `pwd`                         unless defined $job_dir;
 $softw_dir              = `pwd`                         unless defined $softw_dir;
 $config_file            = "analysis_configuration.xml"  unless defined $config_file;
@@ -77,7 +74,7 @@ while($irun < $nruns) {
   $batch_script  = "$tag-$irun.pbs";
   $job_name      = "$tag-$irun";
 
-  $command = "root2k -l -b -q \'$softw_dir/macros/fit/test_n_mock_data_fits_xml.C(\"$tag\",$irun,\"$toyexptsfile\",$first,$last,$sinsq2theta23,$dm23sq,\"$fitter\",\"$config_file\")\'";
+  $command = "root2k -l -b -q \'$softw_dir/macros/fit/test_n_mock_data_fits_xml.C(\"$tag\",$irun,\"$toyexptsfile\",$first,$last,\"$fitparamlist\",\"$fitter\",\"$config_file\")\'";
 
   $first = $last  + 1;
   $last  = $first + $nexpts - 1;

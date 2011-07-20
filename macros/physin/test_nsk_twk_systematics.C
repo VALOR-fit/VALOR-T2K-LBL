@@ -78,10 +78,10 @@ void test_nsk_twk_systematics
   double nsk_min[nsystematics];
   double nsk_max[nsystematics];
 
-  // osc params
-  PhysParamList * fparm = PhysParamList::NumuDisapFitNoSyst();
-  fparm->Update(t2kana::conv::kPhypSinsq2Theta23, input_sinsq2theta23);
-  fparm->Update(t2kana::conv::kPhypDm23sq,        input_dm23sq);
+  // phys hypothesis
+  PhysHypothesis ph(t2kana::conv::kHypNuMuDisapp2F);
+  ph.SetCurrValue(t2kana::conv::kPhypSinsq2Theta23, input_sinsq2theta23);
+  ph.SetCurrValue(t2kana::conv::kPhypDm23sq,        input_dm23sq);
 
   // get & configure spectrum predictor
   const char * config = Form("%s/config/%s", gSystem->Getenv("T2KOSCANA"), config_file);
@@ -90,7 +90,7 @@ void test_nsk_twk_systematics
   skexp->Read(config);
  
   // get default prediction
-  skexp->Generate(*fparm);
+  skexp->Generate(ph);
   double nsk_deflt = skexp->CurrPredictedErecoSpectrum(conv::kSKsFCFV1RingMuLike)->Integral();
   
   // get predictions with tweaked systematic params
@@ -117,7 +117,7 @@ void test_nsk_twk_systematics
                     }
 		    skexp->ResetSystematicVariations();
 	     	    skexp->TweakSystematic(systematic[isystematic]);
-	  	    skexp->Generate(*fparm);
+	  	    skexp->Generate(ph);
   		    double nsk = skexp->CurrPredictedErecoSpectrum(conv::kSKsFCFV1RingMuLike)->Integral();
                     nskexp[iexperiment] = nsk;
             }//iexperiment
@@ -137,11 +137,11 @@ void test_nsk_twk_systematics
 	} else {
 	    skexp->ResetSystematicVariations();
      	    skexp->TweakSystematic(systematic[isystematic], +1);
-  	    skexp->Generate(*fparm);
+  	    skexp->Generate(ph);
   	    double nsk1 = skexp->CurrPredictedErecoSpectrum(conv::kSKsFCFV1RingMuLike)->Integral();
 	    skexp->ResetSystematicVariations();
      	    skexp->TweakSystematic(systematic[isystematic], -1);
-  	    skexp->Generate(*fparm);
+  	    skexp->Generate(ph);
   	    double nsk2 = skexp->CurrPredictedErecoSpectrum(conv::kSKsFCFV1RingMuLike)->Integral();
             nsk_min[isystematic] = TMath::Min(nsk1,nsk2);
             nsk_max[isystematic] = TMath::Max(nsk1,nsk2);

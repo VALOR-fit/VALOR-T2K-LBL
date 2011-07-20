@@ -17,6 +17,10 @@
    Added IsNeutrino(int) and IsAntiNeutrino(int).
  @ 18/07/11
    Added AsString(PhysHypothesis_t)
+ @ 20/07/11
+   Added RandomizeSinsq2Theta12(),RandomizeSinsq2Theta13(),RandomizeDeltaCP(),
+   and RandomizeDm12sq().
+
 */
 //____________________________________________________________________________
 
@@ -420,6 +424,38 @@ TVectorD t2kana::util::CholeskyCalculateCorrelatedParamVariations (
 #endif
 
   return g;
+}
+//____________________________________________________________________________
+double t2kana::util::RandomizeSinsq2Theta12(void)
+{
+  TRandom3 rand(0);
+  double mean  = conv::kGlobFitSinsq2Theta12; 
+  double sigma = conv::kGlobFitSinsq2Theta12 * conv::kGlobFitErrSinsq2Theta12;
+  return rand.Gaus(mean,sigma);
+}
+//____________________________________________________________________________
+double t2kana::util::RandomizeSinsq2Theta13(void)
+{
+  TRandom3 rand(0);
+  double min = 0;
+  double max = conv::kGlobFitSinsq2Theta13;
+  return rand.Uniform(min,max);
+}
+//____________________________________________________________________________
+double t2kana::util::RandomizeDeltaCP(void)
+{
+  TRandom3 rand(0);
+  double min = 0;
+  double max = 2.*conv::kpi;
+  return rand.Uniform(min,max);
+}
+//____________________________________________________________________________
+double t2kana::util::RandomizeDm12sq(void)
+{
+  TRandom3 rand(0);
+  double mean  = conv::kGlobFitDm12sq; 
+  double sigma = conv::kGlobFitDm12sq * conv::kGlobFitErrDm12sq;
+  return rand.Gaus(mean,sigma);
 }
 //____________________________________________________________________________
 string t2kana::util::AsString(t2kana::conv::PhysHypothesis_t h)

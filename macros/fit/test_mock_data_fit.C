@@ -10,31 +10,64 @@
 
 void test_mock_data_fit
 (
-   double       input_sinsq2theta23 = 1.0,                          /* */
+   double       input_sinsq2theta12 = 0.86,                         /* if -1 then randomize */
+   double       input_sinsq2theta13 = 0.10,                         /* if -1 then randomize */
+   double       input_sinsq2theta23 = 1.00,                         /* */
+   double       input_deltacp       = 0.00,                         /* if -1 then randomize */
+   double       input_dm12sq        = 7.58E-5,                      /* if -1 then randomize */
    double       input_dm23sq        = 2.32E-3,                      /* */
    bool         fluctuate_stat      = true,                         /* include statistical fluctuations? */
    bool         include_systematics = false,                        /* include systematic variation in generated toy MC expt? */
-   const char * fitter_name         = "custom",                     /* oscillation fitter <"minuit", "custom" (2-D grid scan)> */
+   const char * fit_param_list      = "numudisapp2f",               /* fit parameter list for the given physics hypothesis (see run_fitter.C) */
+   const char * fitter_name         = "custom",                     /* oscillation fitter (see run_fitter.C) */
    const char * config_file         = "analysis_configuration.xml"  /* analysis configuration file */
 )
 {
   using namespace std;
   using namespace t2kana;
 
+  TRandom3 rand(0);
+
+  if (input_sinsq2theta12 < 0) { input_sinsq2theta12 = util::RandomizeSinsq2Theta12(); }
+  if (input_sinsq2theta13 < 0) { input_sinsq2theta13 = util::RandomizeSinsq2Theta13(); }
+  if (input_deltacp       < 0) { input_deltacp       = util::RandomizeDeltaCP();       }
+  if (input_dm12sq        < 0) { input_dm12sq        = util::RandomizeDm12sq();        }
+
   cout << "[Job inputs]" << endl;
+  cout << "Fit Parameter List : " << fit_param_list << endl;
   cout << "Fitter : " << fitter_name << endl;
   cout << "Systematics : " << ((include_systematics) ? "YES " : "NO") << endl;
   cout << "Statistical fluctuations : " << ((fluctuate_stat) ? "YES " : "NO") << endl;
-  cout << "True oscillation parameters : (sinsq2theta23 = "
-       << input_sinsq2theta23 << ", dm23sq = " << input_dm23sq << " eV^2/c^4" << ")" << endl;
+  cout << "True oscillation parameters : " << endl;
+  cout << " > sinsq2theta12 = " << input_sinsq2theta12 << endl;
+  cout << " > sinsq2theta13 = " << input_sinsq2theta13 << endl;
+  cout << " > sinsq2theta23 = " << input_sinsq2theta23 << endl;
+  cout << " > delta_cp      = " << input_deltacp << endl;
+  cout << " > Dm12sq        = " << input_dm12sq << " eV^2/c^4" << endl;
+  cout << " > |Dm23sq|      = " << input_dm23sq << " eV^2/c^4" << endl;
 
   const char * config = Form("%s/config/%s", gSystem->Getenv("T2KOSCANA"), config_file);
   cout << "Reading analysis configuration from: " << config << endl;
 
-  // fit params
-  FitParamList * fparm = FitParamList::NumuDisapFitNoSyst();
-  fparm->Update(t2kana::conv::kPhypSinsq2Theta23, input_sinsq2theta23);
-  fparm->Update(t2kana::conv::kPhypDm23sq,        input_dm23sq);
+  // instantiate fit params & set specified inputs as necessary
+  FitParamList * fparm = FitParamList::NamedParameterList(fit_param_list);
+  conv::PhysHypothesis_t hyp = fparm->PhysicsHypothesis();
+  if(hyp == conv::kHypOsc3F) {
+    fparm->Update(t2kana::conv::kPhypSinsq2Theta12, input_sinsq2theta12);
+    fparm->Update(t2kana::conv::kPhypSinsq2Theta13, input_sinsq2theta13);
+    fparm->Update(t2kana::conv::kPhypSinsq2Theta23, input_sinsq2theta23);
+    fparm->Update(t2kana::conv::kPhypDeltaCP,       input_deltacp);
+    fparm->Update(t2kana::conv::kPhypDm12sq,        input_dm12sq);
+    fparm->Update(t2kana::conv::kPhypDm23sq,        input_dm23sq);
+  }
+  else 
+  if(hyp == conv::kHypNuMuDisapp2F) {
+    fparm->Update(t2kana::conv::kPhypSinsq2Theta23, input_sinsq2theta23);
+    fparm->Update(t2kana::conv::kPhypDm23sq,        input_dm23sq);
+  } 
+  else {
+    return;
+  }
 
   // get superk spectrum predictor & configure
   SuperkExpectation * skexp = new SuperkExpectation;
@@ -72,7 +105,6 @@ void test_mock_data_fit
   // Print-out mock-data (Ereco values) as a comma separated list.
   // Assuming uniform distribution within each bin, randomize values within each bin.
   TH1D* mock_data = skobs->ErecoSpectrum(conv::kSKsFCFV1RingMuLike);
-  TRandom rand(0);
   bool is_first=true;
   for(int ibin = 1; ibin <= mock_data->GetNbinsX(); ibin++) {
     double Nb   = mock_data->GetBinContent (ibin); // number of events in this Ereco bin

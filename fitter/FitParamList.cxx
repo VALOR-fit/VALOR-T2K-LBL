@@ -299,6 +299,47 @@ FitParamList * FitParamList::NumuDecohFitNoSyst(void)
   return fparm;
 }
 //________________________________________________________________________________________
+PhysHypothesis_t FitParamList::PhysicsHypothesis(void) const
+{
+  // neutrino oscillations (3-flavour framework)
+  if( this->Exists(kPhypDm12sq) &&
+      this->Exists(kPhypDm23sq) &&
+      this->Exists(kPhypSinsq2Theta13) &&
+      this->Exists(kPhypSinsq2Theta12) &&
+      this->Exists(kPhypSinsq2Theta23) &&
+      this->Exists(kPhypDeltaCP) )
+  {
+    return kHypOsc3F;
+  }
+
+  // numu disappearance, 2-flavour neutrino oscillation framework
+  else
+  if( this->Exists(kPhypDm23sq) &&
+      this->Exists(kPhypSinsq2Theta23) )
+  {
+    return kHypNuMuDisapp2F;
+  }
+  
+  // neutrino decay   
+  else
+  if( this->Exists(kPhypAlphaDecay) &&
+      this->Exists(kPhypSinsq2Theta23) )
+  {
+    return kHypDecay;
+  }
+   
+  // neutrino decoherence
+  else
+  if( this->Exists(kPhypMusqDecoherence) &&
+      this->Exists(kPhypSinsq2Theta23) )
+  {
+    return kHypDecoh;
+  }
+
+  // undefined
+  return kHypUndefined;
+}
+//________________________________________________________________________________________
 void FitParamList::Init(int nparams)
 {
    assert(nparams>0);

@@ -58,6 +58,12 @@ namespace util {
   TVectorD CholeskyGenerateCorrelatedParamVariations (TMatrixD& cholesky_triangular); ///< Generate a vector of correlated param variations
   TVectorD CholeskyCalculateCorrelatedParamVariations(TMatrixD& cholesky_triangular, TVectorD& g_uncorrelated);
 
+  // Functions randomizing oscillation params (for use when params are marginalized)
+  double RandomizeSinsq2Theta12 (void); ///< pull random from gaussian with mean and sigma taken from global fit
+  double RandomizeSinsq2Theta13 (void); ///< uniform from 0 up to CHOOZ limit 
+  double RandomizeDeltaCP       (void); ///< uniform from 0 to 2*pi
+  double RandomizeDm12sq        (void); ///< pull random from gaussian with mean and sigma taken from global fit
+
   //
 
   string AsString (t2kana::conv::PhysHypothesis_t h);

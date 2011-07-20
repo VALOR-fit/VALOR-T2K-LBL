@@ -40,14 +40,10 @@ PhysHypothesis::PhysHypothesis(PhysHypothesis_t h)
 //________________________________________________________________________________________
 PhysHypothesis::PhysHypothesis(const FitParamList & fp)
 {
+  PhysHypothesis_t hyp = fp.PhysicsHypothesis();
 
   // neutrino oscillations (3-flavour framework)
-  if( fp.Exists(kPhypDm12sq) && 
-      fp.Exists(kPhypDm23sq) && 
-      fp.Exists(kPhypSinsq2Theta13) &&
-      fp.Exists(kPhypSinsq2Theta12) &&
-      fp.Exists(kPhypSinsq2Theta23) &&
-      fp.Exists(kPhypDeltaCP) )
+  if(hyp == kHypOsc3F)
   {
     this->Init(kHypOsc3F);
     this->SetCurrValue(kPhypDm12sq,        fp.CurrValue(kPhypDm12sq));
@@ -58,10 +54,8 @@ PhysHypothesis::PhysHypothesis(const FitParamList & fp)
     this->SetCurrValue(kPhypDeltaCP,       fp.CurrValue(kPhypDeltaCP));
   }
 
-  else 
   // numu disappearance, 2-flavour neutrino oscillation framework 
-  if( fp.Exists(kPhypDm23sq) && 
-      fp.Exists(kPhypSinsq2Theta23) ) 
+  else if(hyp == kHypNuMuDisapp2F) 
   {
     this->Init(kHypNuMuDisapp2F);
     this->SetCurrValue(kPhypDm23sq,        fp.CurrValue(kPhypDm23sq));
@@ -69,9 +63,7 @@ PhysHypothesis::PhysHypothesis(const FitParamList & fp)
   }
 
   // neutrino decay
-  else
-  if( fp.Exists(kPhypAlphaDecay) && 
-      fp.Exists(kPhypSinsq2Theta23) )
+  else if(hyp == kHypDecay) 
   {
     this->Init(kHypDecay);
     this->SetCurrValue(kPhypAlphaDecay,    fp.CurrValue(kPhypAlphaDecay));
@@ -79,9 +71,7 @@ PhysHypothesis::PhysHypothesis(const FitParamList & fp)
   }
 
   // neutrino decoherence
-  else
-  if( fp.Exists(kPhypMusqDecoherence) && 
-      fp.Exists(kPhypSinsq2Theta23) )
+  else if(hyp == kHypDecoh) 
   {
     this->Init(kHypDecoh);
     this->SetCurrValue(kPhypMusqDecoherence, fp.CurrValue(kPhypMusqDecoherence));

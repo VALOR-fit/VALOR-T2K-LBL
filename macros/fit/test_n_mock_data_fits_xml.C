@@ -16,9 +16,8 @@ void test_n_mock_data_fits_xml
   const char * xmlfile,                                            /* input XML file with toy MC experiments */
   int          first_experiment,                                   /* */
   int          last_experiment,                                    /* */
-  double       input_sinsq2theta23 = 1.0,                          /* */
-  double       input_dm23sq        = 2.32E-3,                      /* */
-  const char * fitter_name         = "minuit",                     /* fitter name ("minuit", "custom" (2-D grid scan)) */
+  const char * fitparamlist        = "numudisapp2f",               /* fit parameter list for the given physics hypothesis (see run_fitter.C) */
+  const char * fitter_name         = "minuit",                     /* fitter name (see run_fitter.C) */
   const char * config_file         = "analysis_configuration.xml"  /* analysis configuration file */
 )
 {
@@ -30,14 +29,13 @@ void test_n_mock_data_fits_xml
   cout << "Fitter : " << fitter_name << endl;
   cout << "Reading experiments from : " << xmlfile << endl; 
   cout << "Fitting experiments : [" << first_experiment << ", " << last_experiment << "]" << endl; 
-  cout << "True oscillation parameters : (sinsq2theta23 = " 
-       << input_sinsq2theta23 << ", dm23sq = " << input_dm23sq << " eV^2/c^4" << ")" << endl;
 
   const char * config = Form("%s/config/%s", gSystem->Getenv("T2KOSCANA"), config_file);
   cout << "Reading analysis configuration from: " << config << endl;
 
-  // fit params
-  PhysParamList * fparm = PhysParamList::NumuDisapFitNoSyst();
+  // fit param list
+  FitParamList * fparm = FitParamList::NamedParameterList(fitparamlist);
+  conv::PhysHypothesis_t hyp = fparm->PhysicsHypothesis();
 
   // get superk spectrum predictor & configure
   SuperkExpectation * skexp = new SuperkExpectation;
@@ -50,8 +48,20 @@ void test_n_mock_data_fits_xml
 
      cout << "\n\n *** Pseudo-experiment = " << iexperiment << endl;
 
-     fparm->Update(t2kana::conv::kPhypSinsq2Theta23, input_sinsq2theta23);
-     fparm->Update(t2kana::conv::kPhypDm23sq,        input_dm23sq);
+     // seed fitter
+     if(hyp == conv::kHypOsc3F) {
+       fparm->Update(conv::kPhypSinsq2Theta12, conv::kGlobFitSinsq2Theta12);
+       fparm->Update(conv::kPhypSinsq2Theta13, conv::kGlobFitSinsq2Theta13);
+       fparm->Update(conv::kPhypSinsq2Theta23, conv::kGlobFitSinsq2Theta23);  
+       fparm->Update(conv::kPhypDeltaCP,       0.);
+       fparm->Update(conv::kPhypDm12sq,        conv::kGlobFitDm12sq);
+       fparm->Update(conv::kPhypDm23sq,        conv::kGlobFitDm23sq);
+     }
+     else
+     if(hyp == conv::kHypNuMuDisapp2F) {
+       fparm->Update(conv::kPhypSinsq2Theta23, conv::kGlobFitSinsq2Theta23);
+       fparm->Update(conv::kPhypDm23sq,        conv::kGlobFitDm23sq);
+     }
 
      //
      // get superk spectrum observation (toy experiment)
@@ -62,7 +72,6 @@ void test_n_mock_data_fits_xml
      // get fitter
      FitInputs * fit_inputs = new FitInputs(skobs,skexp,fparm);
      NuMuDisappFitter * fitter = new NuMuDisappFitter(fit_inputs,fitter_name);
-     //fitter->ActualOscParams(input_sinsq2theta23, input_dm23sq);
 
      // do the fit
      fitter->DoTheFit();

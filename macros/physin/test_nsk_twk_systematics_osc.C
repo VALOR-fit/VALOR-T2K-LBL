@@ -96,8 +96,8 @@ void test_nsk_twk_systematics_osc
   SuperkExpectation skexp;
   skexp.Read(config);
 
-  // fit params
-  PhysParamList * fparm = PhysParamList::NumuDisapFitNoSyst();
+  // phys hypothesis
+  PhysHypothesis ph(t2kana::conv::kHypNuMuDisapp2F);
 
   // generate predictions
   for(int i = 1; i <= frac_nsk_err->GetNbinsX(); i++) {
@@ -106,15 +106,15 @@ void test_nsk_twk_systematics_osc
        double sinsq2theta23 = frac_nsk_err->GetXaxis()->GetBinCenter(i);
        double dm23sq        = frac_nsk_err->GetYaxis()->GetBinCenter(j);
        sinsq2theta23 = TMath::Max(0.,sinsq2theta23);
-       fparm->Update(t2kana::conv::kPhypSinsq2Theta23, sinsq2theta23);
-       fparm->Update(t2kana::conv::kPhypDm23sq,        dm23sq);
+       ph.SetCurrValue(t2kana::conv::kPhypSinsq2Theta23, sinsq2theta23);
+       ph.SetCurrValue(t2kana::conv::kPhypDm23sq,        dm23sq);
 
        cout << "* Dm23^2 = " << dm23sq 
             << " eV^2, sin^2(2theta) = " << sinsq2theta23 << endl;
 
        // generate predictions
        skexp.ResetSystematicVariations();
-       skexp.Generate(*fparm);
+       skexp.Generate(ph);
 
        // integrate Ereco distribution & get nominal nsk
        double nsk = skexp.CurrPredictedErecoSpectrum(conv::kSKsFCFV1RingMuLike)->Integral();
@@ -142,7 +142,7 @@ void test_nsk_twk_systematics_osc
                     }
                     skexp.ResetSystematicVariations(); 
                     skexp.TweakSystematic(systematic[isystematic]);
-                    skexp.Generate(*fparm);
+                    skexp.Generate(ph);
                     double nsk = skexp.CurrPredictedErecoSpectrum(conv::kSKsFCFV1RingMuLike)->Integral();
                     nskexp[iexperiment] = nsk;
                 }//iexperiment
@@ -159,11 +159,11 @@ void test_nsk_twk_systematics_osc
             else {
                 skexp.ResetSystematicVariations();
                 skexp.TweakSystematic(systematic[isystematic], +1);
-                skexp.Generate(*fparm);
+                skexp.Generate(ph);
                 double nsk1 = skexp.CurrPredictedErecoSpectrum(conv::kSKsFCFV1RingMuLike)->Integral();
                 skexp.ResetSystematicVariations();
                 skexp.TweakSystematic(systematic[isystematic], -1);
-                skexp.Generate(*fparm);
+                skexp.Generate(ph);
                 double nsk2 = skexp.CurrPredictedErecoSpectrum(conv::kSKsFCFV1RingMuLike)->Integral();
                 nsk_min[isystematic] = TMath::Min(nsk1,nsk2);
                 nsk_max[isystematic] = TMath::Max(nsk1,nsk2);

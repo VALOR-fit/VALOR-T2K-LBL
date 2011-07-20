@@ -109,6 +109,9 @@ public:
    static FitParamList * NumuDecayFitNoSyst     (void);
    static FitParamList * NumuDecohFitNoSyst     (void);
 
+   //
+   conv::PhysHypothesis_t PhysicsHypothesis(void) const;
+
 private:
 
    void CleanUp (void);
