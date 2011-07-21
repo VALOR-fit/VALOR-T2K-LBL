@@ -26,42 +26,43 @@ void test_n_mock_data_fits_xml
 
   cout << "[Job inputs]" << endl;
   cout << "Job: " << tag << "/" << run << endl;
-  cout << "Fitter : " << fitter_name << endl;
-  cout << "Reading experiments from : " << xmlfile << endl; 
-  cout << "Fitting experiments : [" << first_experiment << ", " << last_experiment << "]" << endl; 
+  cout << "Fitter: " << fitter_name << endl;
+  cout << "Reading experiments from: " << xmlfile << endl; 
+  cout << "Fitting experiments: [" << first_experiment << ", " << last_experiment << "]" << endl; 
 
   const char * config = Form("%s/config/%s", gSystem->Getenv("T2KOSCANA"), config_file);
   cout << "Reading analysis configuration from: " << config << endl;
 
   // fit param list
   FitParamList * fparm = FitParamList::NamedParameterList(fitparamlist);
+
   conv::PhysHypothesis_t hyp = fparm->PhysicsHypothesis();
+  cout << "Specified physics hypothesis: " << util::AsString(hyp) << endl;
 
   // get superk spectrum predictor & configure
   SuperkExpectation * skexp = new SuperkExpectation;
   skexp->Read(config);
 
-  // store results
-  TNtupleD * nfitnt = new TNtupleD("nfitnt","", "iexp:sinsq2theta23:dm23sq:chisq");
+  // store oscillation fit results
+  TNtupleD * nfitnt = new TNtupleD("nfitnt","", 
+     "iexp:sinsq2theta12:sinsq2theta13:sinsq2theta23:deltacp:dm12sq:dm23sq:chisq");
 
+  // init best-fit values
+  double bestfit_sinsq2theta12 = -1;
+  double bestfit_sinsq2theta13 = -1;
+  double bestfit_sinsq2theta23 = -1;
+  double bestfit_deltacp       = -1;
+  double bestfit_dm12sq        = -1;
+  double bestfit_dm23sq        = -1;
+  double bestfit_chisq         = -1;
+
+  // loop over toy-MC experiments
   for(int iexperiment = first_experiment; iexperiment <= last_experiment; iexperiment++) {
 
      cout << "\n\n *** Pseudo-experiment = " << iexperiment << endl;
 
-     // seed fitter
-     if(hyp == conv::kHypOsc3F) {
-       fparm->Update(conv::kPhypSinsq2Theta12, conv::kGlobFitSinsq2Theta12);
-       fparm->Update(conv::kPhypSinsq2Theta13, conv::kGlobFitSinsq2Theta13);
-       fparm->Update(conv::kPhypSinsq2Theta23, conv::kGlobFitSinsq2Theta23);  
-       fparm->Update(conv::kPhypDeltaCP,       0.);
-       fparm->Update(conv::kPhypDm12sq,        conv::kGlobFitDm12sq);
-       fparm->Update(conv::kPhypDm23sq,        conv::kGlobFitDm23sq);
-     }
-     else
-     if(hyp == conv::kHypNuMuDisapp2F) {
-       fparm->Update(conv::kPhypSinsq2Theta23, conv::kGlobFitSinsq2Theta23);
-       fparm->Update(conv::kPhypDm23sq,        conv::kGlobFitDm23sq);
-     }
+     // re-seed fitter (reset current values to specified init values)
+     fparm->Reset();
 
      //
      // get superk spectrum observation (toy experiment)
@@ -76,16 +77,37 @@ void test_n_mock_data_fits_xml
      // do the fit
      fitter->DoTheFit();
 
-     double bestfit_sinsq2theta23 = fparm->CurrValue(t2kana::conv::kPhypSinsq2Theta23);
-     double bestfit_dm23sq        = fparm->CurrValue(t2kana::conv::kPhypDm23sq);
-     double bestfit_chisq         = fit_inputs->Chisquare();
+     // get best-fit params
+     bestfit_chisq = fit_inputs->Chisquare();
+     if(hyp == conv::kHypOsc3F) {
+        bestfit_sinsq2theta12 = fparm->CurrValue(t2kana::conv::kPhypSinsq2Theta12);
+        bestfit_sinsq2theta13 = fparm->CurrValue(t2kana::conv::kPhypSinsq2Theta13);
+        bestfit_sinsq2theta23 = fparm->CurrValue(t2kana::conv::kPhypSinsq2Theta23);
+        bestfit_deltacp       = fparm->CurrValue(t2kana::conv::kPhypDeltaCP);
+        bestfit_dm12sq        = fparm->CurrValue(t2kana::conv::kPhypDm12sq);
+        bestfit_dm23sq        = fparm->CurrValue(t2kana::conv::kPhypDm23sq);
+        cout << "Best-fit:"
+             << " sinsq2theta12 = "  << bestfit_sinsq2theta12
+             << ", sinsq2theta13 = " << bestfit_sinsq2theta13
+             << ", sinsq2theta23 = " << bestfit_sinsq2theta23
+             << ", delta_cp = " << bestfit_deltacp
+             << ", Dm12^2 = "   << bestfit_dm12sq << " eV^2/c^4"
+             << ", |Dm23^2| = " << bestfit_dm23sq << " eV^2/c^4"
+             << " ==> chisq = " << bestfit_chisq << endl;
+     } else
+     if(hyp == conv::kHypNuMuDisapp2F) {
+        bestfit_sinsq2theta23 = fparm->CurrValue(t2kana::conv::kPhypSinsq2Theta23);
+        bestfit_dm23sq        = fparm->CurrValue(t2kana::conv::kPhypDm23sq);
+        cout << "Best-fit:"
+             << " sinsq2theta23 = " << bestfit_sinsq2theta23
+             << ", |Dm23^2| = " << bestfit_dm23sq << " eV^2/c^4"
+             << " ==> chisq = " << bestfit_chisq << endl;
+     }
 
-     nfitnt->Fill(iexperiment, bestfit_sinsq2theta23, bestfit_dm23sq, bestfit_chisq);
-
-     cout << "Best-fit:"
-          << " sinsq2theta23 = " << bestfit_sinsq2theta23
-          << ", dm23sq = " << bestfit_dm23sq << " eV^2/c^4"
-          << " ==> chisq = " << bestfit_chisq << endl;
+     // store best-fit values
+     nfitnt->Fill(iexperiment, 
+                  bestfit_sinsq2theta12, bestfit_sinsq2theta13, bestfit_sinsq2theta23,
+                  bestfit_deltacp, bestfit_dm12sq, bestfit_dm23sq, bestfit_chisq);
 
      delete skobs;
      delete fit_inputs;

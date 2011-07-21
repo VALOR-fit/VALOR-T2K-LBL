@@ -11,14 +11,16 @@
 
 void feldman_cousins_fitting_job
 (
+  const char * tag                   = "fc",                         /* */ 
+  int          irun                  = 0,                            /* */
+  int          nexperiments          = 1000,                         /* */
   int          min_dm23sq_bin        =   1,                          /* */
   int          max_dm23sq_bin        =  51,                          /* */
   int          min_sinsq2theta23_bin =   1,                          /* */
   int          max_sinsq2theta23_bin = 101,                          /* */
-  const char * tag                   = "fc",                         /* */ 
-  int          irun                  = 0,                            /* */
-  int          nexperiments          = 1000,                         /* */
   bool         include_systematics   = true,                         /* */
+  const char * fit_param_list        = "numudisapp2f",               /* fit parameter list for the given physics hypothesis (see run_fitter.C) */
+  const char * fitter_name           = "minuit",                     /* fitter name (see run_fitter.C) */
   const char * config_file           = "analysis_configuration.xml"  /* analysis configuration file */
 )
 {
@@ -56,6 +58,8 @@ void feldman_cousins_fitting_job
   cout << "** Job: " << tag << "/" << irun << endl;
   cout << "** Number of toy MC experiments: " << nexperiments << endl;
   cout << "** Including systematics: " << ((include_systematics) ? "YES" : "NO") << endl;
+  cout << "** Fit Parameter List: " << fit_param_list << endl;
+  cout << "** Fitter: " << fitter_name << endl;
   cout << "** Oscillation param space: " << endl;
   cout << " - sinsq2theta23 : " << osc_param_space->GetXaxis()->GetNbins() << " bins in (" 
        << osc_param_space->GetXaxis()->GetXmin() << ", "
@@ -75,7 +79,9 @@ void feldman_cousins_fitting_job
      "iexp:irun:input_sinsq2theta23_bin:input_dm23sq_bin:input_sinsq2theta23:input_dm23sq:chisq_for_input_params:sinsq2theta23:dm23sq:chisq");
 
   // fit params
-  FitParamList * fparm = FitParamList::NumuDisapFitNoSyst();
+  FitParamList * fparm = FitParamList::NamedParameterList(fit_param_list);
+  conv::PhysHypothesis_t hyp = fparm->PhysicsHypothesis();
+  cout << "Specified physics hypothesis: " << util::AsString(hyp) << endl;
 
   // get superk spectrum PDF & configure
   SuperkExpectation * skexp = new SuperkExpectation;
@@ -91,7 +97,6 @@ void feldman_cousins_fitting_job
      //
      int input_sinsq2theta23_bin = min_sinsq2theta23_bin + rand.Integer(1 + max_sinsq2theta23_bin - min_sinsq2theta23_bin);
      int input_dm23sq_bin        = min_dm23sq_bin        + rand.Integer(1 + max_dm23sq_bin        - min_dm23sq_bin       );
-
      input_sinsq2theta23_bin = TMath::Max(1,                   input_sinsq2theta23_bin);
      input_sinsq2theta23_bin = TMath::Min(sinsq2theta23_nbins, input_sinsq2theta23_bin);
      input_dm23sq_bin        = TMath::Max(1,                   input_dm23sq_bin       );
@@ -102,17 +107,37 @@ void feldman_cousins_fitting_job
      //     
      double input_sinsq2theta23 = osc_param_space->GetXaxis()->GetBinCenter(input_sinsq2theta23_bin);
      double input_dm23sq        = osc_param_space->GetYaxis()->GetBinCenter(input_dm23sq_bin       );
-
      input_sinsq2theta23 = TMath::Max(0.,input_sinsq2theta23); // protection from rnd-err
      input_sinsq2theta23 = TMath::Min(1.,input_sinsq2theta23); // protection from rnd-err
 
      cout << "* Dm23sq_{true} = " << input_dm23sq << ", sinsq2theta23_{true} = " << input_sinsq2theta23 << endl;
 
      //
+     // if we are working in 3-flavour framework, randomize sinsq2theta12,sinsq2theta13,deltacp and dm12sq
+     // (these parameters are marginalised in the 3-flavour numu disappearance analysis)
+     //
+     double input_sinsq2theta12 = -1;
+     double input_sinsq2theta13 = -1;
+     double input_deltacp       = -1;
+     double input_dm12sq        = -1;
+     if(hyp == conv::kHypOsc3F) {
+         input_sinsq2theta12 = util::RandomizeSinsq2Theta12(); 
+         input_sinsq2theta13 = util::RandomizeSinsq2Theta13(); 
+         input_deltacp       = util::RandomizeDeltaCP();
+         input_dm12sq        = util::RandomizeDm12sq(); 
+     }
+
+     //
      // reset osc. params to desired input values (they now contain the best-(previous)fit values)
      //
      fparm->Update(t2kana::conv::kPhypSinsq2Theta23, input_sinsq2theta23);
      fparm->Update(t2kana::conv::kPhypDm23sq,        input_dm23sq);
+     if(hyp == conv::kHypOsc3F) {
+       fparm->Update(t2kana::conv::kPhypSinsq2Theta12, input_sinsq2theta12);
+       fparm->Update(t2kana::conv::kPhypSinsq2Theta13, input_sinsq2theta13);
+       fparm->Update(t2kana::conv::kPhypDeltaCP,       input_deltacp);
+       fparm->Update(t2kana::conv::kPhypDm12sq,        input_dm12sq);
+     }
 
      //
      // get superk spectrum observation (toy experiment)
@@ -141,12 +166,18 @@ void feldman_cousins_fitting_job
      double chisq_for_input_params = fit_inputs->Chisquare();
      cout << "Chisq(input/true oscillation params) = " << chisq_for_input_params << endl;
 
-     // good init value so that fitte converges fast to correct oscillation params
+     // good init value so that the fitter converges fast to correct oscillation params
      fparm->SetInitValue(conv::kPhypSinsq2Theta23, input_sinsq2theta23);
      fparm->SetInitValue(conv::kPhypDm23sq,        input_dm23sq       );
+     if(hyp == conv::kHypOsc3F) {
+       fparm->SetInitValue(t2kana::conv::kPhypSinsq2Theta12, input_sinsq2theta12);
+       fparm->SetInitValue(t2kana::conv::kPhypSinsq2Theta13, input_sinsq2theta13);
+       fparm->SetInitValue(t2kana::conv::kPhypDeltaCP,       input_deltacp);
+       fparm->SetInitValue(t2kana::conv::kPhypDm12sq,        input_dm12sq);
+     }
 
      // get fitter
-     NuMuDisappFitter fitter(fit_inputs,"minuit");
+     NuMuDisappFitter fitter(fit_inputs,fitter_name);
 
      // do the fit
      fitter.DoTheFit();

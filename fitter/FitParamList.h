@@ -81,8 +81,11 @@ public:
    // Set parameter list to input TVirtualFitter 
    void SetTo (TVirtualFitter * fitter);
    
-   //
+   // Sync fit param values stored this object with the values stored in the input array.
    void Sync (double * par);
+
+   // Reset all current param values to their specified initial values
+   void Reset (void);
 
    // Chisq penalty term
    double ChisquarePenaltyTerm(void);
@@ -117,6 +120,8 @@ private:
    void CleanUp (void);
    void Init    (int nparams);
    int  Id      (t2kana::conv::PhysParamId_t p) const; // PhysParamId_t --> array slot
+
+   t2kana::conv::PhysParamId_t WhichParam(int id) const; // array slot --> PhysParamId_t
 
    map<t2kana::conv::PhysParamId_t, int> fIdMap;
 

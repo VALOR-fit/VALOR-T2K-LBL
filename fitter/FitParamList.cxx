@@ -10,6 +10,11 @@
    to mark which of the fit params are nuisance params. Added ChisquarePenaltyTerm() 
    method to return the penalty chisq term when nuisance params are included in the fit.
    All nuisance params are de-correlated (see Cholesky)
+ @ 15/07/2011 - CA
+   Added 3-flavour fit parameter lists and added NamedParameterList(string name) method.
+ @ 21/07/2011 - CA
+   Added Reset() and WhichParam(int id). Implemented ChisquarePenaltyTerm() for 
+   marginalised oscillation parameters.
 */
 //________________________________________________________________________________________
 
@@ -111,16 +116,72 @@ void FitParamList::Sync(double * par)
   }
 }
 //________________________________________________________________________________________
+void FitParamList::Reset(void)
+{
+  for(int ip = 0; ip < fNParams; ip++) {
+     fCurrValue[ip] = fInitValue[ip];
+  }
+}
+//________________________________________________________________________________________
 double FitParamList::ChisquarePenaltyTerm(void)
 {
   double chisq_penalty = 0;
   for(int ip=0; ip<fNParams;  ip++) {
+    // is the current param marked as a nuisance one?
     if( fIsNuisance[ip] ) {
-//      if( util::IsSystematic() ) {
-         double twk = fCurrValue[ip];
-         chisq_penalty += (twk*twk);
-//      }
-    }
+        // what is the actual param at array slot ip?
+        PhysParamId_t p = this->WhichParam(ip);
+        assert(p != kPhypUndefined);
+        // if it is one of the systematics, include the (tweaking dial)^2 in the
+        // penalty term; tweaking dials are given in units of the corresponding standard
+        // deviation, 0 corresponds to nominal and they are the un-correllated inputs to
+        // Cholesky method (wherever correlations are taken into account).
+        if( util::IsSystematic(p) ) {
+           double twk = fCurrValue[ip];
+           chisq_penalty += (twk*twk);
+        }
+        // if the nuiance param is one of the oscillation params that get marginalised
+        // in this particular fit, do one of the following:
+        else if(p == kPhypSinsq2Theta23) 
+        { 
+           // penalize deviations from global analysis best-fit value
+           double sinsq2theta23 = fCurrValue[ip];
+           double twk = (sinsq2theta23 - kGlobFitSinsq2Theta23) / 
+                        (kGlobFitSinsq2Theta23 * kGlobFitErrSinsq2Theta23);
+           chisq_penalty += (twk*twk);
+        }
+        else if(p == kPhypSinsq2Theta13) 
+        { 
+          // no contribution to \chi^2_{penalty}
+        }
+        else if(p == kPhypSinsq2Theta12) 
+        { 
+           // penalize deviations from global analysis best-fit value
+           double sinsq2theta12 = fCurrValue[ip];
+           double twk = (sinsq2theta12 - kGlobFitSinsq2Theta12) / 
+                        (kGlobFitSinsq2Theta12 * kGlobFitErrSinsq2Theta12);
+           chisq_penalty += (twk*twk);
+        }
+        else if(p == kPhypDeltaCP) 
+        { 
+          // no contribution to \chi^2_{penalty}
+        }
+        else if(p == kPhypDm23sq) 
+        { 
+           // penalize deviations from global analysis best-fit value
+           double dmsq = fCurrValue[ip];     
+           double twk = (dmsq - kGlobFitDm23sq) / (kGlobFitDm23sq * kGlobFitErrDm23sq);
+           chisq_penalty += (twk*twk);
+        }
+        else if(p == kPhypDm12sq) 
+        { 
+           // penalize deviations from global analysis best-fit value
+           double dmsq = fCurrValue[ip];     
+           double twk = (dmsq - kGlobFitDm12sq) / (kGlobFitDm12sq * kGlobFitErrDm12sq);
+           chisq_penalty += (twk*twk);
+        }
+
+    }//nuisance
   }
   return chisq_penalty;
 }
@@ -382,3 +443,14 @@ int FitParamList::Id(PhysParamId_t p) const
    return id;
 }
 //________________________________________________________________________________________
+t2kana::conv::PhysParamId_t FitParamList::WhichParam(int id) const
+{
+   map<PhysParamId_t, int>::const_iterator it = fIdMap.begin();
+   for( ; it != fIdMap.end(); ++it) {
+      int curr_id = it->second;
+      if(curr_id == id) return it->first;
+   }
+   return kPhypUndefined;
+}
+//________________________________________________________________________________________
+

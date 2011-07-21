@@ -20,13 +20,12 @@ void test_mock_data_fit
    bool         include_systematics = false,                        /* include systematic variation in generated toy MC expt? */
    const char * fit_param_list      = "numudisapp2f",               /* fit parameter list for the given physics hypothesis (see run_fitter.C) */
    const char * fitter_name         = "custom",                     /* oscillation fitter (see run_fitter.C) */
-   const char * config_file         = "analysis_configuration.xml"  /* analysis configuration file */
+   const char * config_file         = "analysis_configuration.xml", /* analysis configuration file */
+   bool         plot                = false                         /* */
 )
 {
   using namespace std;
   using namespace t2kana;
-
-  TRandom3 rand(0);
 
   if (input_sinsq2theta12 < 0) { input_sinsq2theta12 = util::RandomizeSinsq2Theta12(); }
   if (input_sinsq2theta13 < 0) { input_sinsq2theta13 = util::RandomizeSinsq2Theta13(); }
@@ -34,11 +33,11 @@ void test_mock_data_fit
   if (input_dm12sq        < 0) { input_dm12sq        = util::RandomizeDm12sq();        }
 
   cout << "[Job inputs]" << endl;
-  cout << "Fit Parameter List : " << fit_param_list << endl;
-  cout << "Fitter : " << fitter_name << endl;
-  cout << "Systematics : " << ((include_systematics) ? "YES " : "NO") << endl;
-  cout << "Statistical fluctuations : " << ((fluctuate_stat) ? "YES " : "NO") << endl;
-  cout << "True oscillation parameters : " << endl;
+  cout << "Fit Parameter List: " << fit_param_list << endl;
+  cout << "Fitter: " << fitter_name << endl;
+  cout << "Systematics: " << ((include_systematics) ? "YES " : "NO") << endl;
+  cout << "Statistical fluctuations: " << ((fluctuate_stat) ? "YES " : "NO") << endl;
+  cout << "True oscillation parameters: " << endl;
   cout << " > sinsq2theta12 = " << input_sinsq2theta12 << endl;
   cout << " > sinsq2theta13 = " << input_sinsq2theta13 << endl;
   cout << " > sinsq2theta23 = " << input_sinsq2theta23 << endl;
@@ -52,6 +51,7 @@ void test_mock_data_fit
   // instantiate fit params & set specified inputs as necessary
   FitParamList * fparm = FitParamList::NamedParameterList(fit_param_list);
   conv::PhysHypothesis_t hyp = fparm->PhysicsHypothesis();
+  cout << "Specified physics hypothesis: " << util::AsString(hyp) << endl;
   if(hyp == conv::kHypOsc3F) {
     fparm->Update(t2kana::conv::kPhypSinsq2Theta12, input_sinsq2theta12);
     fparm->Update(t2kana::conv::kPhypSinsq2Theta13, input_sinsq2theta13);
@@ -98,12 +98,15 @@ void test_mock_data_fit
   fitter->DoTheFit();
 
   // draw results
-  fitter->Draw(new TCanvas(), "StandardOscFitPlots+Minos90CL","mockfit");
-  fitter->Draw(new TCanvas(), "ChisqSurface");
-  fitter->Draw(new TCanvas(), "MarginalizedChisq");
+  if(plot) {
+     fitter->Draw(new TCanvas(), "StandardOscFitPlots+Minos90CL","mockfit");
+     fitter->Draw(new TCanvas(), "ChisqSurface");
+     fitter->Draw(new TCanvas(), "MarginalizedChisq");
+  }
 
   // Print-out mock-data (Ereco values) as a comma separated list.
   // Assuming uniform distribution within each bin, randomize values within each bin.
+  TRandom3 rand(0);
   TH1D* mock_data = skobs->ErecoSpectrum(conv::kSKsFCFV1RingMuLike);
   bool is_first=true;
   for(int ibin = 1; ibin <= mock_data->GetNbinsX(); ibin++) {

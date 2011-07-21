@@ -35,15 +35,15 @@ void test_n_mock_data_fits(
 
   cout << "[Job inputs]" << endl;
   cout << "Job: " << tag << "/" << run << endl;
-  cout << "Fit Parameter List : " << fit_param_list << endl;
-  cout << "Fitter : " << fitter_name << endl;
-  cout << "Number of toy experiments : " << nexperiments << endl; 
+  cout << "Fit Parameter List: " << fit_param_list << endl;
+  cout << "Fitter: " << fitter_name << endl;
+  cout << "Number of toy experiments: " << nexperiments << endl; 
   cout << "Systematics : "                << ((include_systematics) ?    "YES " : "NO") << endl;
-  cout << "Statistical fluctuations : "   << ((fluctuate_stat) ?         "YES " : "NO") << endl;
-  cout << "Storing chisq surfaces : "     << ((store_chisq_surf) ?       "YES " : "NO") << endl;
-  cout << "Storing toy MC experiments : " << ((store_toy_expts) ?        "YES " : "NO") << endl;
-  cout << "Storing best-fit spectra : "   << ((store_bestfit_spectrum) ? "YES " : "NO") << endl;
-  cout << "True oscillation parameters : " << endl;
+  cout << "Statistical fluctuations: "    << ((fluctuate_stat) ?         "YES " : "NO") << endl;
+  cout << "Storing chisq surfaces: "      << ((store_chisq_surf) ?       "YES " : "NO") << endl;
+  cout << "Storing toy MC experiments:  " << ((store_toy_expts) ?        "YES " : "NO") << endl;
+  cout << "Storing best-fit spectra: "    << ((store_bestfit_spectrum) ? "YES " : "NO") << endl;
+  cout << "True oscillation parameters: " << endl;
   cout << " > sinsq2theta12 = " << input_sinsq2theta12 << endl;
   cout << " > sinsq2theta13 = " << input_sinsq2theta13 << endl;
   cout << " > sinsq2theta23 = " << input_sinsq2theta23 << endl;
@@ -61,14 +61,26 @@ void test_n_mock_data_fits(
   // fit parameter list
   FitParamList * fparm = FitParamList::NamedParameterList(fit_param_list);
   conv::PhysHypothesis_t hyp = fparm->PhysicsHypothesis();
+  cout << "Specified physics hypothesis: " << util::AsString(hyp) << endl;
 
   // get superk spectrum predictor & configure
   SuperkExpectation * skexp = new SuperkExpectation;
   skexp->Read(config);
 
-  // store results
-  TNtupleD * nfitnt = new TNtupleD("nfitnt","", "iexp:sinsq2theta23:dm23sq:chisq");
+  // store oscillation fit results
+  TNtupleD * nfitnt = new TNtupleD("nfitnt","",
+     "iexp:sinsq2theta12:sinsq2theta13:sinsq2theta23:deltacp:dm12sq:dm23sq:chisq");
 
+  // init best-fit values
+  double bestfit_sinsq2theta12 = -1;
+  double bestfit_sinsq2theta13 = -1;
+  double bestfit_sinsq2theta23 = -1;
+  double bestfit_deltacp       = -1;
+  double bestfit_dm12sq        = -1;
+  double bestfit_dm23sq        = -1;
+  double bestfit_chisq         = -1;
+
+  // loop over toy-MC experiments
   for(int iexperiment = 0; iexperiment < nexperiments; iexperiment++) {
 
      cout << "\n\n *** Pseudo-experiment = " << iexperiment << endl;
@@ -79,7 +91,7 @@ void test_n_mock_data_fits(
      if (input_deltacp       < 0) { input_deltacp       = util::RandomizeDeltaCP();       }
      if (input_dm12sq        < 0) { input_dm12sq        = util::RandomizeDm12sq();        }
 
-     // set oscillation parameter inputs as necessary
+     // set oscillation parameter inputs as necessary (used to generate toy-MC expt)
      if(hyp == conv::kHypOsc3F) {
        fparm->Update(t2kana::conv::kPhypSinsq2Theta12, input_sinsq2theta12);
        fparm->Update(t2kana::conv::kPhypSinsq2Theta13, input_sinsq2theta13);
@@ -120,17 +132,37 @@ void test_n_mock_data_fits(
      // do the fit
      fitter->DoTheFit();
 
-     double bestfit_sinsq2theta23 = fparm->CurrValue(t2kana::conv::kPhypSinsq2Theta23);
-     double bestfit_dm23sq        = fparm->CurrValue(t2kana::conv::kPhypDm23sq);
-     double bestfit_chisq         = fit_inputs->Chisquare();
+     // get best-fit params
+     bestfit_chisq = fit_inputs->Chisquare();
+     if(hyp == conv::kHypOsc3F) {
+        bestfit_sinsq2theta12 = fparm->CurrValue(t2kana::conv::kPhypSinsq2Theta12);
+        bestfit_sinsq2theta13 = fparm->CurrValue(t2kana::conv::kPhypSinsq2Theta13);
+        bestfit_sinsq2theta23 = fparm->CurrValue(t2kana::conv::kPhypSinsq2Theta23);
+        bestfit_deltacp       = fparm->CurrValue(t2kana::conv::kPhypDeltaCP);
+        bestfit_dm12sq        = fparm->CurrValue(t2kana::conv::kPhypDm12sq);
+        bestfit_dm23sq        = fparm->CurrValue(t2kana::conv::kPhypDm23sq);
+        cout << "Best-fit:"
+             << " sinsq2theta12 = "  << bestfit_sinsq2theta12
+             << ", sinsq2theta13 = " << bestfit_sinsq2theta13
+             << ", sinsq2theta23 = " << bestfit_sinsq2theta23
+             << ", delta_cp = " << bestfit_deltacp      
+             << ", Dm12^2 = "   << bestfit_dm12sq << " eV^2/c^4"
+             << ", |Dm23^2| = " << bestfit_dm23sq << " eV^2/c^4"
+             << " ==> chisq = " << bestfit_chisq << endl;
+     } else
+     if(hyp == conv::kHypNuMuDisapp2F) {
+        bestfit_sinsq2theta23 = fparm->CurrValue(t2kana::conv::kPhypSinsq2Theta23);
+        bestfit_dm23sq        = fparm->CurrValue(t2kana::conv::kPhypDm23sq);
+        cout << "Best-fit:"
+             << " sinsq2theta23 = " << bestfit_sinsq2theta23
+             << ", |Dm23^2| = " << bestfit_dm23sq << " eV^2/c^4"
+             << " ==> chisq = " << bestfit_chisq << endl;
+     }
 
-     cout << "Best-fit:"
-          << " sinsq2theta23 = " << bestfit_sinsq2theta23
-          << ", dm23sq = " << bestfit_dm23sq << " eV^2/c^4"
-          << " ==> chisq = " << bestfit_chisq << endl;
-
-     // store best-fit values for the current toy-MC expt
-     nfitnt->Fill(iexperiment, bestfit_sinsq2theta23, bestfit_dm23sq, bestfit_chisq);
+     // store best-fit values
+     nfitnt->Fill(iexperiment, 
+                  bestfit_sinsq2theta12, bestfit_sinsq2theta13, bestfit_sinsq2theta23, 
+                  bestfit_deltacp, bestfit_dm12sq, bestfit_dm23sq, bestfit_chisq);
 
      // store toy-MC expt (if asked)
      if(store_toy_expts) {
