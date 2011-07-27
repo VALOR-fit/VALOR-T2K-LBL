@@ -20,7 +20,10 @@
  @ 20/07/11
    Added RandomizeSinsq2Theta12(),RandomizeSinsq2Theta13(),RandomizeDeltaCP(),
    and RandomizeDm12sq().
-
+ @ 26/07/11
+   Took `nue signal' templates into account in AsString(SuperkMode_t m)
+   Added bool IsSignalNuE(SuperkMode_t m).
+   Included `nue signal' templates in UseEventToFillInTemplate().
 */
 //____________________________________________________________________________
 
@@ -540,7 +543,7 @@ string t2kana::util::AsString(t2kana::conv::SuperkSample_t s)
      case ( kSKsFCFVmRingELike  ) : return "FCFV_mR_e";  break;
      default                      : return "--";
   }
-  return "--";
+  return "";
 }
 //____________________________________________________________________________
 string t2kana::util::AsString(t2kana::conv::SuperkMode_t m)
@@ -554,13 +557,16 @@ string t2kana::util::AsString(t2kana::conv::SuperkMode_t m)
      case ( kSKmNuMuBarCC1pi  ) : return "numubar CC1pi";        break;
      case ( kSKmNuMuBarCCoth  ) : return "numubar CCoth";        break;
      case ( kSKmNuMuBarNC     ) : return "numubar/nutaubar NC";  break;
-     case ( kSKmNuECCQE       ) : return "nue CCQE";             break;
-     case ( kSKmNuECC1pi      ) : return "nue CC1pi";            break;
-     case ( kSKmNuECCoth      ) : return "nue CCoth";            break;
-     case ( kSKmNuENC         ) : return "nue NC";               break;
+     case ( kSKmNuECCQE       ) : return "nue CCQE (bkg)";       break;
+     case ( kSKmNuECC1pi      ) : return "nue CC1pi (bkg)";      break;
+     case ( kSKmNuECCoth      ) : return "nue CCoth (bkg)";      break;
+     case ( kSKmNuENC         ) : return "nue NC (bkg)";         break;
+     case ( kSKmSigNuECCQE    ) : return "nue CCQE (sig)";       break;
+     case ( kSKmSigNuECC1pi   ) : return "nue CC1pi (sig)";      break;
+     case ( kSKmSigNuECCoth   ) : return "nue CCoth (sig)";      break;
      default                    : return "--";
   }
-  return "--";
+  return "";
 }
 //____________________________________________________________________________
 string t2kana::util::AsString(t2kana::conv::OscChannelId_t osch)
@@ -613,6 +619,21 @@ t2kana::conv::OscChannelId_t
   if ( nu_start == kPdgNuTauBar && nu_end == kPdgNuTauBar ) return kOscNuTauBar2NuTauBar;
 
   return kOscUndefined;
+}
+//____________________________________________________________________________
+bool t2kana::util::IsSignalNuE(t2kana::conv::SuperkMode_t m)
+{
+  switch(m) {
+     case ( kSKmSigNuECCQE  ) :
+     case ( kSKmSigNuECC1pi ) :
+     case ( kSKmSigNuECCoth ) :
+       return true;
+       break;
+     default :                
+       return false;
+       break;
+  }
+  return false;
 }
 //____________________________________________________________________________
 bool t2kana::util::IsSystematic(PhysParamId_t p)
@@ -1572,7 +1593,7 @@ bool t2kana::util::UseEventToFillInTemplate(
   } 
 
   else
-  if(m == kSKmNuECCQE) 
+  if(m == kSKmNuECCQE || m == kSKmSigNuECCQE) 
   {
      bool is_nue  = (nu_pdg_code == kPdgNuE || 
                      nu_pdg_code == kPdgNuEBar);
@@ -1582,7 +1603,7 @@ bool t2kana::util::UseEventToFillInTemplate(
   } 
 
   else
-  if(m == kSKmNuECC1pi) 
+  if(m == kSKmNuECC1pi || m == kSKmSigNuECC1pi) 
   {
      bool is_nue   = (nu_pdg_code == kPdgNuE || 
                       nu_pdg_code == kPdgNuEBar);
@@ -1596,7 +1617,7 @@ bool t2kana::util::UseEventToFillInTemplate(
   }
 
   else
-  if(m == kSKmNuECCoth) 
+  if(m == kSKmNuECCoth || m == kSKmSigNuECCoth) 
   {
      bool is_nue    = (nu_pdg_code == kPdgNuE || 
                        nu_pdg_code == kPdgNuEBar);

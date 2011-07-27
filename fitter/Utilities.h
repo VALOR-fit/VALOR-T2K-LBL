@@ -74,6 +74,7 @@ namespace util {
 
   t2kana::conv::OscChannelId_t GetOscChannel(int nu_start, int nu_end);
 
+  bool IsSignalNuE    (t2kana::conv::SuperkMode_t  m);
   bool IsSystematic   (t2kana::conv::PhysParamId_t p);
   bool IsNeutrino     (int pdg_code);
   bool IsAntiNeutrino (int pdg_code);
