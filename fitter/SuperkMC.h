@@ -47,26 +47,26 @@ public:
   void UpdateTemplates(void);
 
   // Integrate current MC templates and get Ereco spectra (needed for fitting the data)
-  void    UpdateErecoSpectra  (void);
-  TH1D*   CurrErecoSpectrum   (t2kana::conv::SuperkSample_t s) const                               { return fMCErecoSpectrumTot[s]; }
-  TH1D*   CurrErecoSpectrum   (t2kana::conv::SuperkSample_t s, t2kana::conv::SuperkMode_t m) const { return fMCErecoSpectrum[s][m]; }
+  void  UpdateErecoSpectra  (void);
+  TH1D* CurrErecoSpectrum   (t2kana::conv::SuperkSample_t s) const                               { return fMCErecoSpectrumTot[s]; }
+  TH1D* CurrErecoSpectrum   (t2kana::conv::SuperkSample_t s, t2kana::conv::SuperkMode_t m) const { return fMCErecoSpectrum[s][m]; }
 
   // Integrate current MC templates and get Etrue spectra (needed for flux normalisation error calculation)
-  void    UpdateEtrueSpectra  (void);
-  TH1D*   Curr1RmuNuMuEtrue   (void) const { return f1RmNuMuEt;    } ///< current (allowing for applied weights) Etrue distribution for numu
-  TH1D*   Curr1RmuNuMuBarEtrue(void) const { return f1RmNuMuBarEt; } ///<      -//-  for numubar
-  TH1D*   Curr1RmuNuEEtrue    (void) const { return f1RmNuEEt;     } ///<      -//-  for nue
+  void  UpdateEtrueSpectra  (void);
+  TH1D* Curr1RmuNuMuEtrue   (void) const { return f1RmNuMuEt;    } ///< current (allowing for applied weights) Etrue distribution for numu
+  TH1D* Curr1RmuNuMuBarEtrue(void) const { return f1RmNuMuBarEt; } ///<      -//-  for numubar
+  TH1D* Curr1RmuNuEEtrue    (void) const { return f1RmNuEEt;     } ///<      -//-  for nue
       
   // MC event samples used to fill-in MC templates and POT exposure for each
   TTree * MCTree (t2kana::conv::SuperkSample_t s, t2kana::conv::SuperkMode_t m);
   double  MCPOT  (t2kana::conv::SuperkSample_t s, t2kana::conv::SuperkMode_t m);
 
-  // POT of analysed sample (MC scaled to that POT-figure)
+  // POT of analysed data sample (MC is scaled to that POT value)
   double AnalyzedSamplePOT(void) const;
 
   // Systematic variations
   void TweakEnergyScale                 (double twkdial);
-  void TweakOtherEfficiencyCCQE         (double twkdial); ///< all but ring-counting
+  void TweakOtherEfficiencyCCQE         (double twkdial); ///< "other": all but ring-counting
   void TweakRingCountingEfficiencyCCQE  (bool force_input_twkdials=false, double twkdial1=0, double twkdial2=0, double twkdial3=0, bool correlated=true); 
   void TweakEfficiencyCCnonQE           (double twkdial);
   void TweakEfficiencyNC                (double twkdial);
@@ -100,11 +100,17 @@ private:
   void CleanUp        (void);
   void CreateTemplate (t2kana::conv::SuperkSample_t s, t2kana::conv::SuperkMode_t m);
 
-  void ApplySystematicsToTemplates    (void); ///< apply systematic variations to MC templates
-  void ApplyPhysHypothesisToTemplates (void); ///< apply physics hypothesis (oscillations,...) to MC templates
+  ///< Apply systematic variations to MC templates
+  void ApplySystematicsToTemplates (void); 
 
-  // Loop over templates and calculate the number of events in given (Ereco, Etrue) bin
-  double  NumOfEvents (double Ereco, double Etrue, t2kana::conv::SuperkSample_t s, t2kana::conv::SuperkMode_t m) const;
+  // Apply physics hypothesis (oscillations,...) to MC templates
+  void ApplyPhysHypothesisToTemplates (void); 
+
+  // Calculate the number of events in given (Ereco, Etrue) bin (applying all multiplicative systematics; i.e. all but energy scale)
+  double NumOfEvents (double Ereco, double Etrue, t2kana::conv::SuperkSample_t s, t2kana::conv::SuperkMode_t m) const;
+
+  // Ignore nue_signal templates for all but the 3-flavour oscillation hypothesis
+  bool SkipTemplate(t2kana::conv::SuperkMode_t m);
       
   //
   // private data members
@@ -137,12 +143,14 @@ private:
   TH1D *     fMCErecoSpectrum[kns][knm];   ///< MC Ereco spectrum(sample,mode)        (+ systematic variation + physics hypothesis)
   TH1D *     fMCErecoSpectrumTot[kns];     ///< MC total Ereco spectrum (sample)      (+ systematic variation + physics hypothesis)
 
-  TTree*     fMC1Rmu_numu;                 ///< input numu MC event sample
-  double     fMCPOT_numu;                  ///< numu MC sample POT
-  TTree*     fMC1Rmu_numubar;              ///< input numubar MC event sample
-  double     fMCPOT_numubar;               ///< numubar MC sample POT
-  TTree*     fMC1Rmu_nue;                  ///< input nue MC event sample
-  double     fMCPOT_nue;                   ///< nue MC sample POT
+  TTree*     fMC1Rmu_numu;                 ///< input MC event sample tree: 1-ring mu-like / numu
+  TTree*     fMC1Rmu_numubar;              ///< input MC event sample tree: 1-ring mu-like / numubar
+  TTree*     fMC1Rmu_nue;                  ///< input MC event sample tree: 1-ring mu-like / nue (intrinsic beam background)
+  TTree*     fMC1Rmu_nuesig;               ///< input MC event sample tree: 1-ring mu-like / nue (signal assuming 100% numu->nue)
+  double     fMCPOT_numu;                  ///< input MC event sample POT : 1-ring mu-like / numu
+  double     fMCPOT_numubar;               ///< input MC event sample POT : 1-ring mu-like / numubar
+  double     fMCPOT_nue;                   ///< input MC event sample POT : 1-ring mu-like / nue (bkg)
+  double     fMCPOT_nuesig;                ///< input MC event sample POT : 1-ring mu-like / nue (sig)
   double     fBrEreco;                     ///< branch var for reading input event sample tree
   double     fBrEtrue;                     ///< branch var for reading input event sample tree
   int        fBrPdg;                       ///< branch var for reading input event sample tree
@@ -158,7 +166,7 @@ private:
   PhysHypothesis fPhysHypothesis;          ///< Hypothesis for observed deficit: disappearance, decay, decoherence
   NuOsc3Flavour  fNuOsc3Flavour;           ///< 3-flavour neutrino osc. probability calculations
 
-ClassDef(SuperkMC, 3);
+ClassDef(SuperkMC, 4);
 };
 
 } //t2kana
