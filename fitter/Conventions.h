@@ -10,6 +10,17 @@
           
 \created  Oct 20, 2010
 
+Changes since v1.0.0:
+
+ @ 01-20/07/11
+   Added nuisance and 12-, 13-sector osc params in PhysParamId_t.
+   Added PhysHypothesis_t, OscChannelId_t and NuMassHierarchy_t.
+   Added some constants (GF,hbar,...) used in calculations and added values 
+   and uncertainties of oscillation params from a global analysis.
+ @ 26/07/11
+   Took `nue signal' templates into account in AsString(SuperkMode_t m)
+   Added bool IsSignalNuE(SuperkMode_t m).
+
 */
 //____________________________________________________________________________
 
@@ -55,7 +66,10 @@ typedef enum ESuperkMode {
    kSKmNuECCQE,
    kSKmNuECC1pi,
    kSKmNuECCoth,
-   kSKmNuENC
+   kSKmNuENC,
+   kSKmSigNuECCQE,
+   kSKmSigNuECC1pi,
+   kSKmSigNuECCoth
 } SuperkMode_t; 
 
 // (true) reaction modes considered separately in nd280 inputs
@@ -178,7 +192,7 @@ static const int kPdgNuMuBar  = -14;
 static const int kPdgNuTauBar = -16;
 
 static const int kNSuperkSamples  = 1;  // number of samples included in analysis
-static const int kNSuperkModes    = 12; // number of reaction modes considered separately within each SuperK sample
+static const int kNSuperkModes    = 15; // number of reaction modes considered separately within each SuperK sample
 static const int kNND280Modes     = 21; // number of reaction modes considered separately within the ND280 sample
 //shorter names
 static const int kns   = kNSuperkSamples;
@@ -264,7 +278,8 @@ static const double kNvErecoBinEdges[kNvErecoBins+1] = {
 
 
 /*
-// A scheme with fewer bins at higher energies for improved speed
+//
+// Fewer bins at higher energies for improved speed
 // -  50 MeV bins in 0-3 GeV
 // - 200 MeV bins in 3-4 GeV
 // - 500 MeV bins in 4-6 GeV
