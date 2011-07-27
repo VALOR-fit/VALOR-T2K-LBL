@@ -62,6 +62,7 @@ private:
    void Init    (void);
    void CleanUp (void);
 
+   double CCQEWght                (double Etrue) const;
    double CC1piToCCQEXSecRatioWght(double Etrue) const;
    double CCOthToCCQEXSecRatioWght(double Etrue) const;
    double NCToCCQEXSecRatioWght   (double Etrue) const;
@@ -79,7 +80,7 @@ private:
    TH1D * fSuperkNuclearEffectRelErr;     ///<
    double fCC1piInCCRES;                  ///< correct ND280 interaction mode / NWIG err mis-match
 
-ClassDef(NuXSec, 2);
+ClassDef(NuXSec, 3);
 };
 
 } // t2kana

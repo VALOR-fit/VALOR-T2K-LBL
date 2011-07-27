@@ -5,7 +5,10 @@
  @ 16/03/2011 - CA
    Created from the old SuperkExpectation::GeneratorInputs nested class. Removed the 
    numu10a namespace.
-
+ @ 27/07/2011 - CA
+   Take into account the newly added `nue signal' templates when systematic parameters
+   are tweaked. Added `CCQEWght(double Etrue) const' to avoid code-repetition in 
+   `SuperkCCQEXSecWght(double Etrue, SuperkMode_t m) const'
 */
 //________________________________________________________________________________________
 
@@ -235,7 +238,10 @@ double NuXSec::SuperkXSecRatioWght(
       case ( kSKmNuECCQE        ) : return 1.; break;
       case ( kSKmNuECC1pi       ) : return this->CC1piToCCQEXSecRatioWght(Etrue); break;
       case ( kSKmNuECCoth       ) : return this->CCOthToCCQEXSecRatioWght(Etrue); break;
-      case ( kSKmNuENC          ) : return this->NCToCCQEXSecRatioWght(Etrue); break;
+      case ( kSKmNuENC          ) : return this->NCToCCQEXSecRatioWght(Etrue);    break;
+      case ( kSKmSigNuECCQE     ) : return 1.; break;
+      case ( kSKmSigNuECC1pi    ) : return this->CC1piToCCQEXSecRatioWght(Etrue); break;
+      case ( kSKmSigNuECCoth    ) : return this->CCOthToCCQEXSecRatioWght(Etrue); break;
       default                     : return 1.; break;
    }
    return 1.;
@@ -245,52 +251,22 @@ double NuXSec::SuperkCCQEXSecWght(
     double Etrue, t2kana::conv::SuperkMode_t m) const
 {
    switch(m) {
-      case ( kSKmNuMuCCQE  ) : 
-      {
-          assert(fCCQEXSecRelErr);
-          Etrue = TMath::Min( Etrue, fCCQEXSecRelErr->GetXaxis()->GetXmax() );
-          int    bin    = fCCQEXSecRelErr->FindBin(Etrue);
-          double relerr = fCCQEXSecRelErr->GetBinContent(bin);
-          double wght   = (1. + fCCQEXSecTwkDial*relerr);
-          return wght;
-
-          break;
-      }
-      case ( kSKmNuMuCC1pi      ) : return 1.; break;
-      case ( kSKmNuMuCCoth      ) : return 1.; break;
-      case ( kSKmNC             ) : return 1.; break;
-
-      case ( kSKmNuMuBarCCQE    ) : 
-      {
-          assert(fCCQEXSecRelErr);
-          Etrue = TMath::Min( Etrue, fCCQEXSecRelErr->GetXaxis()->GetXmax() );
-          int    bin    = fCCQEXSecRelErr->FindBin(Etrue);
-          double relerr = fCCQEXSecRelErr->GetBinContent(bin);
-          double wght   = (1. + fCCQEXSecTwkDial*relerr);
-          return wght;
-
-          break;
-      }
-      case ( kSKmNuMuBarCC1pi   ) : return 1.; break;
-      case ( kSKmNuMuBarCCoth   ) : return 1.; break;
-      case ( kSKmNuMuBarNC      ) : return 1.; break;
-
-      case ( kSKmNuECCQE        ) : 
-      {
-          assert(fCCQEXSecRelErr);
-          Etrue = TMath::Min( Etrue, fCCQEXSecRelErr->GetXaxis()->GetXmax() );
-          int    bin    = fCCQEXSecRelErr->FindBin(Etrue);
-          double relerr = fCCQEXSecRelErr->GetBinContent(bin);
-          double wght   = (1. + fCCQEXSecTwkDial*relerr);
-          return wght;
-
-          break;
-      }
-      case ( kSKmNuECC1pi       ) : return 1.; break;
-      case ( kSKmNuECCoth       ) : return 1.; break;
-      case ( kSKmNuENC          ) : return 1.; break;
-
-      default : return 1.; break;
+      case ( kSKmNuMuCCQE     ) : return this->CCQEWght(Etrue); break;
+      case ( kSKmNuMuCC1pi    ) : return 1.;                    break;
+      case ( kSKmNuMuCCoth    ) : return 1.;                    break;
+      case ( kSKmNC           ) : return 1.;                    break;
+      case ( kSKmNuMuBarCCQE  ) : return this->CCQEWght(Etrue); break;
+      case ( kSKmNuMuBarCC1pi ) : return 1.;                    break;
+      case ( kSKmNuMuBarCCoth ) : return 1.;                    break;
+      case ( kSKmNuMuBarNC    ) : return 1.;                    break;
+      case ( kSKmNuECCQE      ) : return this->CCQEWght(Etrue); break;
+      case ( kSKmNuECC1pi     ) : return 1.;                    break;
+      case ( kSKmNuECCoth     ) : return 1.;                    break;
+      case ( kSKmNuENC        ) : return 1.;                    break;
+      case ( kSKmSigNuECCQE   ) : return this->CCQEWght(Etrue); break;
+      case ( kSKmSigNuECC1pi  ) : return 1.;                    break;
+      case ( kSKmSigNuECCoth  ) : return 1.;                    break;
+      default                   : return 1.;                    break;
    }
    return 1.;
 }
@@ -305,6 +281,16 @@ double NuXSec::SuperkNuclEffectWght(
    double relerr  = fSuperkNuclearEffectRelErr->GetBinContent(bin);
    double twk     = fNuclEffectTwkDial;
    double wght    = (1. + twk*relerr);
+   return wght;
+}
+//________________________________________________________________________________________
+double NuXSec::CCQEWght(double Etrue) const
+{
+   assert(fCCQEXSecRelErr);
+   Etrue = TMath::Min( Etrue, fCCQEXSecRelErr->GetXaxis()->GetXmax() );
+   int    bin    = fCCQEXSecRelErr->FindBin(Etrue);
+   double relerr = fCCQEXSecRelErr->GetBinContent(bin);
+   double wght   = (1. + fCCQEXSecTwkDial*relerr);
    return wght;
 }
 //________________________________________________________________________________________
