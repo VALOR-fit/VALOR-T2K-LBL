@@ -11,9 +11,11 @@
 
 void test_superk_spectrum_prediction_contributions
 (
-  double       input_sinsq2theta23 = 1.00,
-  double       input_dm23sq        = 2.32E-3,
-  const char * config_file         = "analysis_configuration.xml"
+  int          nflavours           = 2,
+  double       input_sinsq2theta23 = 1.00,                         
+  double       input_dm23sq        = 2.32E-3,                      
+  const char * config_file         = "analysis_configuration.xml",
+  bool         print               = false
 )
 {
   using namespace std;
@@ -22,7 +24,7 @@ void test_superk_spectrum_prediction_contributions
   const char * config = Form("%s/config/%s", gSystem->Getenv("T2KOSCANA"), config_file);
   cout << "Reading analysis configuration from: " << config << endl;
 
-  const unsigned int nm = 12;
+  const unsigned int nm = 15;
   conv::SuperkMode_t modes [nm] = {
      conv::kSKmNuMuCCQE, 
      conv::kSKmNuMuCC1pi,
@@ -35,7 +37,10 @@ void test_superk_spectrum_prediction_contributions
      conv::kSKmNuECCQE,
      conv::kSKmNuECC1pi,
      conv::kSKmNuECCoth,
-     conv::kSKmNuENC
+     conv::kSKmNuENC,
+     conv::kSKmSigNuECCQE,
+     conv::kSKmSigNuECC1pi,
+     conv::kSKmSigNuECCoth
   };
 
   // histogram booking
@@ -46,10 +51,23 @@ void test_superk_spectrum_prediction_contributions
   SuperkExpectation skexp;
   skexp.Read(config);
 
-  // physics hypothesis 
-  PhysHypothesis ph(t2kana::conv::kHypNuMuDisapp2F);
-  ph.SetCurrValue(t2kana::conv::kPhypSinsq2Theta23, input_sinsq2theta23);
-  ph.SetCurrValue(t2kana::conv::kPhypDm23sq,        input_dm23sq);
+  // set physics hypothesis
+  PhysHypothesis ph;
+  if(nflavours==2) {
+    ph.Init(t2kana::conv::kHypNuMuDisapp2F);
+    ph.SetCurrValue(t2kana::conv::kPhypSinsq2Theta23, input_sinsq2theta23);
+    ph.SetCurrValue(t2kana::conv::kPhypDm23sq,        input_dm23sq);
+  } else
+  if(nflavours==3) {
+    ph.Init(t2kana::conv::kHypOsc3F);
+    ph.SetCurrValue(t2kana::conv::kPhypSinsq2Theta12,  conv::kGlobFitSinsq2Theta12);
+    ph.SetCurrValue(t2kana::conv::kPhypSinsq2Theta13,  conv::kGlobFitSinsq2Theta13);
+    ph.SetCurrValue(t2kana::conv::kPhypSinsq2Theta23,  input_sinsq2theta23);
+    ph.SetCurrValue(t2kana::conv::kPhypDeltaCP,        0.);
+    ph.SetCurrValue(t2kana::conv::kPhypDm12sq,         conv::kGlobFitDm12sq);
+    ph.SetCurrValue(t2kana::conv::kPhypDm23sq,         input_dm23sq);
+  }
+  cout << ph;
 
   // generate prediction
   skexp.Generate(ph);
@@ -78,6 +96,9 @@ void test_superk_spectrum_prediction_contributions
   hErecoMode[conv::kSKmNuECC1pi]       -> SetFillStyle ( 3345     );
   hErecoMode[conv::kSKmNuECCoth]       -> SetFillStyle ( 3354     );
   hErecoMode[conv::kSKmNuENC]          -> SetFillStyle ( 3006     );
+  hErecoMode[conv::kSKmSigNuECCQE]     -> SetFillStyle ( 3001     );
+  hErecoMode[conv::kSKmSigNuECC1pi]    -> SetFillStyle ( 3345     );
+  hErecoMode[conv::kSKmSigNuECCoth]    -> SetFillStyle ( 3354     );
   hErecoMode[conv::kSKmNuMuCCQE]       -> SetFillColor ( kWhite   );
   hErecoMode[conv::kSKmNuMuCC1pi]      -> SetFillColor ( kBlack   );
   hErecoMode[conv::kSKmNuMuCCoth]      -> SetFillColor ( kBlack   );
@@ -90,6 +111,9 @@ void test_superk_spectrum_prediction_contributions
   hErecoMode[conv::kSKmNuECC1pi]       -> SetFillColor ( kGreen+1 );
   hErecoMode[conv::kSKmNuECCoth]       -> SetFillColor ( kGreen+1 );
   hErecoMode[conv::kSKmNuENC]          -> SetFillColor ( kGreen+1 );
+  hErecoMode[conv::kSKmSigNuECCQE]     -> SetFillColor ( kGreen+3 );
+  hErecoMode[conv::kSKmSigNuECC1pi]    -> SetFillColor ( kGreen+3 );
+  hErecoMode[conv::kSKmSigNuECCoth]    -> SetFillColor ( kGreen+3 );
   hErecoMode[conv::kSKmNuMuCCQE]       -> SetLineColor ( kBlack   );
   hErecoMode[conv::kSKmNuMuCC1pi]      -> SetLineWidth ( 1        );
   hErecoMode[conv::kSKmNuMuCCoth]      -> SetLineWidth ( 1        );
@@ -103,6 +127,9 @@ void test_superk_spectrum_prediction_contributions
   hErecoMode[conv::kSKmNuECC1pi]       -> SetLineWidth ( 1        );
   hErecoMode[conv::kSKmNuECCoth]       -> SetLineWidth ( 1        );
   hErecoMode[conv::kSKmNuENC]          -> SetLineWidth ( 1        );
+  hErecoMode[conv::kSKmSigNuECCQE]     -> SetLineWidth ( 1        );
+  hErecoMode[conv::kSKmSigNuECC1pi]    -> SetLineWidth ( 1        );
+  hErecoMode[conv::kSKmSigNuECCoth]    -> SetLineWidth ( 1        );
 
   TCanvas * c = new TCanvas("c","",20,20,500,500);
   TLegend * legend = new TLegend(0.3, 0.7, 0.85, 0.9);
@@ -112,6 +139,9 @@ void test_superk_spectrum_prediction_contributions
   hErecoTot->GetXaxis()->SetTitle("E_{reco} (GeV)");
   hErecoTot->GetYaxis()->SetTitle("Number of events");
   THStack * stack = new THStack("stack","spectrum contributions");
+  stack->Add(hErecoMode[conv::kSKmSigNuECC1pi]);
+  stack->Add(hErecoMode[conv::kSKmSigNuECCoth]);
+  stack->Add(hErecoMode[conv::kSKmSigNuECCQE]);
   stack->Add(hErecoMode[conv::kSKmNuENC]);
   stack->Add(hErecoMode[conv::kSKmNuECC1pi]);
   stack->Add(hErecoMode[conv::kSKmNuECCoth]);
@@ -138,6 +168,9 @@ void test_superk_spectrum_prediction_contributions
   legend->AddEntry(hErecoMode[conv::kSKmNuECC1pi],       "#nu_{e} CC1#pi",                       "LF");
   legend->AddEntry(hErecoMode[conv::kSKmNuECCoth],       "#nu_{e} CC other",                     "LF");
   legend->AddEntry(hErecoMode[conv::kSKmNuENC],          "#nu_{e} NC",                           "LF");
+  legend->AddEntry(hErecoMode[conv::kSKmSigNuECCQE],     "#nu_{e} (sig) CCQE",                   "LF");
+  legend->AddEntry(hErecoMode[conv::kSKmSigNuECC1pi],    "#nu_{e} (sig) CC1#pi",                 "LF");
+  legend->AddEntry(hErecoMode[conv::kSKmSigNuECCoth],    "#nu_{e} (sig) CC other",               "LF");
   legend->Draw();
   c->Update();
   cout << fixed;
@@ -177,30 +210,28 @@ void test_superk_spectrum_prediction_contributions
   hErecoMode[conv::kSKmNuECC1pi]       -> Write("nue_cc1pi");
   hErecoMode[conv::kSKmNuECCoth]       -> Write("nue_ccoth");
   hErecoMode[conv::kSKmNuENC]          -> Write("nue_nc");
+  hErecoMode[conv::kSKmSigNuECCQE]     -> Write("nuesig_ccqe");
+  hErecoMode[conv::kSKmSigNuECC1pi]    -> Write("nuesig_cc1pi");
+  hErecoMode[conv::kSKmSigNuECCoth]    -> Write("nuesig_ccoth");
   f.Close();
 
   //
   // print-out numbers requested during the analysis review
   //
-  
-  int nprec=5;
 
-  if( TMath::Abs(input_sinsq2theta23) < 1E-10 ) {
-    cout << "No oscillation" << endl;
-  } else {
-    cout << "sin^{2}(2*theta23) = " << input_sinsq2theta23
-         << ", Deltam23^{2} = " << input_dm23sq  << " eV^{2}/c^{4}" << endl;
+  if(print) {  
+    int nprec=5;
+    cout << fixed;
+    for(int ibin = 1; ibin <= hErecoTot->GetXaxis()->GetNbins(); ibin++) {
+      cout << setw(6) << setfill(' ') << ibin
+           << " : "
+           << setw(6) << setfill(' ') << setprecision(3) << hErecoTot->GetXaxis()->GetBinLowEdge(ibin)
+           << " - "
+           << setw(6) << setfill(' ') << setprecision(3) << hErecoTot->GetXaxis()->GetBinUpEdge(ibin)
+           << " : "
+           << setw(6) << setfill(' ') << setprecision(nprec) << hErecoTot->GetBinContent(ibin)
+           << endl;
+    }//ibin
   }
-  cout << fixed;
-  for(int ibin = 1; ibin <= hErecoTot->GetXaxis()->GetNbins(); ibin++) {
-    cout << setw(6) << setfill(' ') << ibin
-         << " : "
-         << setw(6) << setfill(' ') << setprecision(3) << hErecoTot->GetXaxis()->GetBinLowEdge(ibin)
-         << " - "
-         << setw(6) << setfill(' ') << setprecision(3) << hErecoTot->GetXaxis()->GetBinUpEdge(ibin)
-         << " : "
-         << setw(6) << setfill(' ') << setprecision(nprec) << hErecoTot->GetBinContent(ibin)
-         << endl;
-  }//ibin
 
 }

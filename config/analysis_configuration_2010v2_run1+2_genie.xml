@@ -85,7 +85,7 @@ from the GENIE/NEUT physics monte carlo groups.
      <mc>
         <numu>
            <pot>
-              4.56E+23
+              4.56618E+23
            </pot>
            <one_mu_ring>
               <filename>   inputs/official/2010/superk/genie/superk_1RmuT_numu_10a.root  </filename>
@@ -96,7 +96,7 @@ from the GENIE/NEUT physics monte carlo groups.
 
         <numubar>
            <pot>
-              4.66568E+24
+              4.5897E+24
            </pot>
            <one_mu_ring>
               <filename>   inputs/official/2010/superk/genie/superk_1RmuT_numubar_10a.root  </filename>
@@ -107,7 +107,7 @@ from the GENIE/NEUT physics monte carlo groups.
 
         <nuebeam>
            <pot>
-              2.394164E+25
+              2.37899E+25
            </pot>
            <one_mu_ring>
               <filename>   inputs/official/2010/superk/genie/superk_1RmuT_nuebeam_10a.root  </filename>
@@ -115,6 +115,17 @@ from the GENIE/NEUT physics monte carlo groups.
               <objtype>    TTree            </objtype>
            </one_mu_ring>
         </nuebeam>
+
+        <nuesignal>
+           <pot>
+              2.22199E+23
+           </pot>
+           <one_mu_ring>
+              <filename>   inputs/official/2010/superk/genie/superk_1RmuT_nuesig_10a.root  </filename>
+              <objname>    selection_tree   </objname>
+              <objtype>    TTree            </objtype>
+           </one_mu_ring>
+        </nuesignal>
      </mc>
 
      <!--

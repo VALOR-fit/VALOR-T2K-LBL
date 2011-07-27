@@ -131,7 +131,7 @@ Details may be found in T2K-TN-64.
 Similar to 2010_v2.0.0 but with the following change requested during the analysis review:
 
 > The nd280 efficiency error was increased from +/-5% to +5.6% -5.2% to match the one used in the nue analysis.
-> The statistical error of the ND280 CC inclusive measurement was propagated to SK.
+> The statistical error of the ND280 CC inclusive measurement (~2.7%) was also propagated to SK.
 
 
 Version: (current trunk)
@@ -140,9 +140,22 @@ Version: (current trunk)
 Similar to 2010_v2.1.0 but with the following additions: 
 
 > Can fit for systematics (any/all of the 34 systematic parameters considered in 2010 analysis).
-> Added code to calculate oscillation probability in vacuum and matter in a 3-flavour framework.
-> Modified disappearance fit and scripts to work in 3-flavour framework (dmsm_{12},theta_{12},theta_{13} and delta_{cp}
-  are marginalised). Capability to perform analysis in 2-flavour framework retained for backward-compatibility.
+> Added code to calculate oscillation probabilities in vacuum and matter in a 3-flavour framework.
+> Modified disappearance fit and scripts to work in 3-flavour framework.
+  Capability to perform analysis in 2-flavour framework was retained for backward-compatibility.
+  In the 3-flavour disappearance fit, oscillation parameters Dm^2_{12}, sin^2(2theta_{12}), sin^2(2theta_{13}) 
+  and delta_{cp} can either a) be considered on equal footing as |Dm^2_{23}|, sin^2(2theta_{23}), b) fixed or
+  c) treated as nuisance parameters and be marginalised. The latter option is used in our analysis (marginalization).
+> Added event templates from the `nue signal' MC (nue interactions generated with the numu flux). 
+  Adding the new templates allows taking into account the P(numu->nue) probability we compure in the 3-flavour framework.
+> Minor update to the GENIE MC normalization, using flux histograms which were not affected by the `ignored decay modes'
+  bug. The normalization factors were updated as follows:
+    numu      : 1325.4200 --> 1323.6500 events / 1E+21 POT / 22.5 kt fiducial mass
+    numubar   :   65.1023 -->   66.1802 events / 1E+21 POT / 22.5 kt fiducial mass
+    nue(beam) :   25.9600 -->   26.1256 events / 1E+21 POT / 22.5 kt fiducial mass
+  The normalization factor for the sample used for the newly added `nue signal' templates is:
+    nue(signal) / GENIE  :  1376.9700 events / 1E+21 POT / 22.5 kt fiducial mass
+    nue(signal) / NEUT   :  ????.???? events / 1E+21 POT / 22.5 kt fiducial mass
 
 Lots of structural changes to allow the extensions mentioned above.
 Also comitted a bunch of macros used to prepare plots for T2K-TN-64.

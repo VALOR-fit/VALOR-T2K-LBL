@@ -129,6 +129,17 @@ from the GENIE/NEUT physics monte carlo groups.
               <objtype>    TTree            </objtype>
            </one_mu_ring>
         </nuebeam>
+
+        <nuesignal>
+           <pot>
+              2.22199e+23 <!-- this is the GENIE number - ask Josh -->
+           </pot>
+           <one_mu_ring>
+              <filename>   inputs/official/2010/superk/neut/superk_1RmuT_nuesig_10a.root  </filename>
+              <objname>    selection_tree   </objname>
+              <objtype>    TTree            </objtype>
+           </one_mu_ring>
+        </nuesignal>
      </mc>
 
      <!--
