@@ -15,23 +15,36 @@
  @ 18/07/2011 - CA
    Bug fix: Reverse order of kHypOsc3F and kHypNuMuDisapp2F cases (kHypOsc3F now first) 
    in PhysHypothesis(const FitParamList &) ctor so that kHypOsc3F case can be picked.
+ @ 27/07/2011 - CA
+   Added Print(ostream &) and `<<' operator.
 */
 //________________________________________________________________________________________
 
 //#define __debug_level_1__
 //#define __debug_level_2__
 
-#include <iostream>
+#include <iomanip>
 
 #include "PhysHypothesis.h"
 #include "Utilities.h"
 
 using std::cout;
 using std::endl;
+using std::setw;
+using std::setprecision;
 
 using namespace t2kana;
 using namespace t2kana::conv;
 
+//________________________________________________________________________________________
+
+namespace t2kana {
+  ostream & operator << (ostream & stream, const PhysHypothesis & ph)
+  {
+    ph.Print(stream);
+    return stream;
+  }
+}
 //________________________________________________________________________________________
 PhysHypothesis::PhysHypothesis(PhysHypothesis_t h)
 {
@@ -149,6 +162,24 @@ void PhysHypothesis::Init(PhysHypothesis_t h)
     fParams[kPhypMusqDecoherence] = 0;
   }
 
+}
+//________________________________________________________________________________________
+void PhysHypothesis::Print(ostream & stream) const
+{
+  stream << "................................................................." << endl;
+  stream << "Hypothesis: \n" 
+         << util::AsString(fHypothesis) << endl;
+  stream << "Parameters: " << endl;
+  map<int,double>::const_iterator it = fParams.begin();
+  for( ; it != fParams.end(); ++it) {
+     PhysParamId_t p = (PhysParamId_t) it->first;
+     double        v = it->second;
+     stream << " - "
+            << setw(15)  << util::AsString(p) << " = "
+            << setprecision(8) << setw(12) << v
+            << endl;
+  }
+  stream << "................................................................." << endl;
 }
 //________________________________________________________________________________________
 

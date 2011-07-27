@@ -16,11 +16,13 @@
 #ifndef _t2kana_phys_hypothesis_h_
 #define _t2kana_phys_hypothesis_h_
 
+#include <iostream>
 #include <map>
 
 #include "Conventions.h"
 #include "FitParamList.h"
 
+using std::ostream;
 using std::map;
 
 namespace t2kana {
@@ -39,6 +41,10 @@ public:
 
    double CurrValue    (conv::PhysParamId_t p) const;
    void   SetCurrValue (conv::PhysParamId_t p, double v);
+
+   // Print
+   void Print (ostream & stream) const;
+   friend ostream & operator << (ostream & stream, const PhysHypothesis & ph);
 
 private:
 
