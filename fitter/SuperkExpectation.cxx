@@ -44,6 +44,9 @@
    templates takes place in separate steps. The SuperkMC interface has changed slightly.
    Call SuperkMC::UpdateTemplates() in SuperkExpectation::Generate(const PhysHypothesis &)
    before updating the Ereco and Etrue spectra.
+ @ 26/07/2011 - CA
+   Took newly-added `nue signal' templates into account. They should be neglected under all 
+   but the 3-flavour oscillation hypothesis. 
 */
 //________________________________________________________________________________________
 
@@ -118,11 +121,12 @@ void SuperkExpectation::Generate(const PhysHypothesis & ph)
   fSuperkMC->Hypothesis().Copy(ph);
 
   const unsigned int ns = fSamples.size();
-  const unsigned int nm = 12;  
+  const unsigned int nm = 15;  
   SuperkMode_t sk_modes [nm] = { 
      kSKmNuMuCCQE,    kSKmNuMuCC1pi,    kSKmNuMuCCoth,    kSKmNC, 
      kSKmNuMuBarCCQE, kSKmNuMuBarCC1pi, kSKmNuMuBarCCoth, kSKmNuMuBarNC, 
-     kSKmNuECCQE,     kSKmNuECC1pi,     kSKmNuECCoth,     kSKmNuENC
+     kSKmNuECCQE,     kSKmNuECC1pi,     kSKmNuECCoth,     kSKmNuENC,
+     kSKmSigNuECCQE,  kSKmSigNuECC1pi,  kSKmSigNuECCoth
   };
 
   // Ignore flux shape tweak and calculate the number of 1Rmu events.
@@ -425,11 +429,12 @@ bool SuperkExpectation::Read(string config_file)
   fSuperkMC          -> TellMeAboutTheFlux       (fNuFlux);
 
   const unsigned int ns = fSamples.size();
-  const unsigned int nm = 12;  
+  const unsigned int nm = 15;  
   SuperkMode_t sk_modes [nm] = { 
      kSKmNuMuCCQE,    kSKmNuMuCC1pi,    kSKmNuMuCCoth,    kSKmNC, 
      kSKmNuMuBarCCQE, kSKmNuMuBarCC1pi, kSKmNuMuBarCCoth, kSKmNuMuBarNC, 
-     kSKmNuECCQE,     kSKmNuECC1pi,     kSKmNuECCoth,     kSKmNuENC
+     kSKmNuECCQE,     kSKmNuECC1pi,     kSKmNuECCoth,     kSKmNuENC,
+     kSKmSigNuECCQE,  kSKmSigNuECC1pi,  kSKmSigNuECCoth
   };
   for(unsigned int is = 0; is < ns; is++) {
     SuperkSample_t s = fSamples[is];
