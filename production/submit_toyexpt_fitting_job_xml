@@ -89,6 +89,7 @@ while($irun < $nruns) {
      print PBS "#!/bin/bash \n";
      print PBS "#PBS -N $job_name \n";
      print PBS "#PBS -l cput=$cput \n";
+     print PBS "#PBS -l walltime=$cput \n";
      print PBS "#PBS -o $job_dir/$tag-$irun.pbs.out \n";
      print PBS "#PBS -e $job_dir/$tag-$irun.pbs.err \n";
      print PBS "cd $job_dir \n";

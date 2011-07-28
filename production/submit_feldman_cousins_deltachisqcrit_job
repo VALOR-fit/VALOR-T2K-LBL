@@ -83,6 +83,7 @@ while($ijob < $njobs) {
        print PBS "#!/bin/bash \n";
        print PBS "#PBS -N $tag-$ijob \n";
        print PBS "#PBS -l cput=$cput \n";
+       print PBS "#PBS -l walltime=$cput \n";
        print PBS "#PBS -o $job_dir/$tag-$ijob.pbs.out \n";
        print PBS "#PBS -e $job_dir/$tag-$ijob.pbs.err \n";
        print PBS "cd $job_dir/ \n";

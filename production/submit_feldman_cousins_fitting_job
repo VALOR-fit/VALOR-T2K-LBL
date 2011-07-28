@@ -86,6 +86,7 @@ while($irun < $nruns) {
      open(PBS, ">$job_dir/$tag-$irun.pbs") or die("Can not create the PBS batch script");
      print PBS "#!/bin/bash \n";
      print PBS "#PBS -N $tag-$irun \n";
+     print PBS "#PBS -l walltime=$cput \n";
      print PBS "#PBS -l cput=$cput \n";
      print PBS "#PBS -o $job_dir/$tag-$irun.pbs.out \n";
      print PBS "#PBS -e $job_dir/$tag-$irun.pbs.err \n";

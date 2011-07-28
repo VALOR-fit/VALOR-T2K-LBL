@@ -78,6 +78,7 @@ foreach(@systlist) {
        print PBS "#!/bin/bash \n";
        print PBS "#PBS -N syst-$systematic-$irun \n";
        print PBS "#PBS -l cput=$cput \n";
+       print PBS "#PBS -l walltime=$cput \n";
        print PBS "#PBS -o $job_dir/syst-$systematic-$irun.pbs.out \n";
        print PBS "#PBS -e $job_dir/syst-$systematic-$irun.pbs.err \n";
        print PBS "cd $job_dir/ \n";

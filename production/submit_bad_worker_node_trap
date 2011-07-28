@@ -13,6 +13,7 @@ while($ijob < $njobs) {
   print PBS "#!/bin/bash \n";
   print PBS "#PBS -N trap$ijob \n";
   print PBS "#PBS -l cput=12:00:00 \n";
+  print PBS "#PBS -l walltime=12:00:00 \n";
   print PBS "#PBS -o trap$ijob.pbs.out \n";
   print PBS "#PBS -e trap$ijob.pbs.err \n";
   print PBS "cd $curr_dir \n";
