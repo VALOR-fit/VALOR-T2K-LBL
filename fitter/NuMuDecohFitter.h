@@ -40,6 +40,7 @@ public:
   ~NuMuDecohFitter();
 
    bool      DoTheFit          (void);
+   int       FitStatusCode     (void) { return fStatusCode; }
    void      Draw              (TVirtualPad * c, Option_t * option = "results", const char * outtag = 0);
    void      ActualDecohParams (double sinsq2theta23, double alpha);
    TMinuit * Minuit            (void) { return gMinuit; }
@@ -55,15 +56,17 @@ private:
    void  BuildChisqSurface       (void);
    TH1D* MarginalizeChisqSurface (Option_t * option);
 
-   FitInputs*           fFitInputs;
-   bool                 fKnowActualParams; ///<
-   double               fSinsq2Theta23;    ///<
-   double               fMusq;             ///<
-   int                  fNdof;             ///<
-   int                  fNFreeFitParams;   ///<
-   int                  fNFitBins;         ///<
-   TH2D *               fChisqSurface;
-   TString              fOption;
+   FitInputs*  fFitInputs;        ///<
+   bool        fKnowActualParams; ///<
+   double      fSinsq2Theta23;    ///<
+   double      fMusq;             ///<
+   int         fNdof;             ///<
+   int         fNFreeFitParams;   ///<
+   int         fNFitBins;         ///<
+   TH2D *      fChisqSurface;     ///<
+   TString     fOption;           ///<
+   int         fStatusCode;       ///<
+
 };
 
 } // t2kana

@@ -11,6 +11,8 @@
    PhysParamList was renamed to FitParamList so that distinction between the two
    SuperkExpectation interfaces is clear. Adapt the fitter.
    Use FitterABC as base class.
+ @ 28/07/2011 - CA
+   Added method to get MINUIT err matrix status code.
 
 */ 
 //____________________________________________________________________________
@@ -178,12 +180,12 @@ bool NuMuDisappFitter::DoTheFitMinuit(void)
   Double_t amin = 0;
   fitter->PrintResults(3,amin);
 
-  // Dummy variables - need to feed them to the function
-  // used for getting error matrix status
-  double ha(0.0);
-  double edm, errdef;
-  int nvpar, nparx;
+  // Get error matrix status
+  double ha(0.0);     // dummy vars
+  double edm, errdef; // dummy vars
+  int nvpar, nparx;   // dummy vars
   int errMatrixStatus = fitter->GetStats(ha, edm, errdef, nvpar, nparx);
+  fStatusCode = errMatrixStatus;
 
 #ifdef __debug_level_2__
   cout << "Final error matrix status = " << errMatrixStatus << endl;
@@ -221,6 +223,8 @@ bool NuMuDisappFitter::DoTheFitCustom(void)
 
   fFitInputs->FitParams().Update( conv::kPhypSinsq2Theta23, sinsq2theta23_bestfit );
   fFitInputs->FitParams().Update( conv::kPhypDm23sq, dm23sq_bestfit );
+
+  fStatusCode = 3;
 
   cout << "NuMuDisappFitter >> Best fit params: " << endl;
   cout << "NuMuDisappFitter >> Dmsq = " << dm23sq_bestfit << endl;

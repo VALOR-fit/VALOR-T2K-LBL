@@ -69,7 +69,7 @@ void test_n_mock_data_fits(
 
   // store oscillation fit results
   TNtupleD * nfitnt = new TNtupleD("nfitnt","",
-     "iexp:sinsq2theta12:sinsq2theta13:sinsq2theta23:deltacp:dm12sq:dm23sq:chisq");
+     "iexp:sinsq2theta12:sinsq2theta13:sinsq2theta23:deltacp:dm12sq:dm23sq:chisq:fitstatus");
 
   // init best-fit values
   double bestfit_sinsq2theta12 = -1;
@@ -131,6 +131,7 @@ void test_n_mock_data_fits(
 
      // do the fit
      fitter->DoTheFit();
+     int fitstatus = fitter->FitStatusCode();
 
      // get best-fit params
      bestfit_chisq = fit_inputs->Chisquare();
@@ -162,7 +163,7 @@ void test_n_mock_data_fits(
      // store best-fit values
      nfitnt->Fill(iexperiment, 
                   bestfit_sinsq2theta12, bestfit_sinsq2theta13, bestfit_sinsq2theta23, 
-                  bestfit_deltacp, bestfit_dm12sq, bestfit_dm23sq, bestfit_chisq);
+                  bestfit_deltacp, bestfit_dm12sq, bestfit_dm23sq, bestfit_chisq, fitstatus);
 
      // store toy-MC expt (if asked)
      if(store_toy_expts) {

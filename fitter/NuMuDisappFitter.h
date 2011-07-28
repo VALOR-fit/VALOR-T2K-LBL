@@ -39,6 +39,7 @@ public:
   ~NuMuDisappFitter();
 
    bool      DoTheFit        (void);
+   int       FitStatusCode   (void) { return fStatusCode; }
    void      Draw            (TVirtualPad * c, Option_t * option = "results", const char * outtag = 0);
    void      ActualOscParams (double sinsq2theta23, double dmsq23);
    TMinuit * Minuit          (void) { return gMinuit; }
@@ -55,15 +56,16 @@ private:
    TH1D* MarginalizeChisqSurface (Option_t * option);
 
 
-   FitInputs*           fFitInputs;
-   bool                 fKnowActualParams; ///<
-   double               fSinsq2Theta23;    ///<
-   double               fDm23sq;           ///<
-   int                  fNdof;             ///<
-   int                  fNFreeFitParams;   ///<
-   int                  fNFitBins;         ///<
-   TH2D *               fChisqSurface;
-   TString              fOption;
+   FitInputs*  fFitInputs;        ///<
+   bool        fKnowActualParams; ///<
+   double      fSinsq2Theta23;    ///<
+   double      fDm23sq;           ///<
+   int         fNdof;             ///<
+   int         fNFreeFitParams;   ///<
+   int         fNFitBins;         ///<
+   TH2D *      fChisqSurface;     ///<
+   TString     fOption;           ///<
+   int         fStatusCode;       ///<
 };
 
 } // t2kana
