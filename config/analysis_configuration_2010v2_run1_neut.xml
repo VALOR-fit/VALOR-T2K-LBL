@@ -90,9 +90,15 @@ from the GENIE/NEUT physics monte carlo groups.
    - numubar = 0.000222234 * (0.0323)
    - nuebeam = 4.5953E-5   * (0.0323)
    Therefore, NEUT-folks must have estimated that their MC samples correspond to:
-   - numu    = (1. / 0.00227666 ) x 1E+21 = 4.3923994 x 1E+23
-   - numubar = (1. / 0.000222234) x 1E+21 = 4.4997615 x 1E+24
-   - nuebeam = (1. / 4.5953E-5  ) x 1E+21 = 2.1761365 x 1E+25
+   - numu    = (1. / 0.00227666 ) x 1E+21 = 4.3923994 x 1E+23 POT
+   - numubar = (1. / 0.000222234) x 1E+21 = 4.4997615 x 1E+24 POT
+   - nuebeam = (1. / 4.5953E-5  ) x 1E+21 = 2.1761365 x 1E+25 POT
+
+   When the 3-flavour analysis was implemented, we had to include the nuesignal sample so
+   we asked Josh for the nuesignal sample normalization. Josh said that, for Run-1 (before flux
+   and ND280 corrections) he used a normalization factor of 1.545359471E-4.
+   Therefore his nuesignal MC sample must correspond to 3.23E+19 POT / 1.545359471E-4 =
+   2.090128583E+23 POT.
   -->
 
   <superk>     
@@ -132,7 +138,7 @@ from the GENIE/NEUT physics monte carlo groups.
 
         <nuesignal>
            <pot>
-              2.22199e+23 <!-- this is the GENIE number - ask Josh -->
+              2.090128583E+23
            </pot>
            <one_mu_ring>
               <filename>   inputs/official/2010/superk/neut/superk_1RmuT_nuesig_10a.root  </filename>
