@@ -94,6 +94,8 @@ while($irun < $nruns) {
      print PBS "#PBS -l cput=$cput \n";
      print PBS "#PBS -o $job_dir/$tag-$irun.pbs.out \n";
      print PBS "#PBS -e $job_dir/$tag-$irun.pbs.err \n";
+     print PBS "#PBS -q prod \n";
+     print PBS "#PBS -l walltime=$cput \n";
      print PBS "cd $job_dir \n";
      print PBS "source $softw_dir/setup/setup_at_ral.sh $softw_dir\n";
      print PBS "$command \n";
