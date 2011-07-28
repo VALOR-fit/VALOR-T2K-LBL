@@ -36,6 +36,7 @@
 void test_systematic_errors
 (
   const char * systematic,                                                /* */
+  int          nflavours                  = 2,                            /* 2 for effective 2-flavour fmwk, 3 for 3-flavour fmwk */
   const double input_sinsq2theta23        = 1.00,                         /* */
   const double input_dm23sq               = 2.4E-3,                       /* */
   bool         use_tex                    = false,                        /* print-out results as a TeX table (for inclusion in tech. note)*/
@@ -45,17 +46,30 @@ void test_systematic_errors
 {
   using namespace std;
   using namespace t2kana;
-  using namespace t2kana::conv;
 
   const char * config = Form("%s/config/%s", gSystem->Getenv("T2KOSCANA"), config_file);
   cout << "Reading analysis configuration from: " << config << endl;
 
-  TRandom3 rand(0);
-
-  // phys hypothesis
-  PhysHypothesis ph(t2kana::conv::kHypNuMuDisapp2F);
-  ph.SetCurrValue(t2kana::conv::kPhypSinsq2Theta23, input_sinsq2theta23);
-  ph.SetCurrValue(t2kana::conv::kPhypDm23sq,        input_dm23sq);
+  // set physics hypothesis
+  PhysHypothesis ph;
+  if(nflavours==2) {
+    ph.Init(conv::kHypNuMuDisapp2F);
+    // set input values
+    ph.SetCurrValue(conv::kPhypSinsq2Theta23, input_sinsq2theta23);
+    ph.SetCurrValue(conv::kPhypDm23sq,        input_dm23sq);
+  } else
+  if(nflavours==3) {
+    ph.Init(conv::kHypOsc3F);
+    // set input values
+    ph.SetCurrValue(conv::kPhypDm23sq,         input_dm23sq);
+    ph.SetCurrValue(conv::kPhypSinsq2Theta23,  input_sinsq2theta23);
+    // set standard values for 13 and 12-sector params
+    ph.SetCurrValue(conv::kPhypSinsq2Theta12,  conv::kGlobFitSinsq2Theta12);
+    ph.SetCurrValue(conv::kPhypSinsq2Theta13,  conv::kGlobFitSinsq2Theta13);
+    ph.SetCurrValue(conv::kPhypDm12sq,         conv::kGlobFitDm12sq);
+    ph.SetCurrValue(conv::kPhypDeltaCP,        0.);
+  }
+  cout << ph;
 
   // get superk spectrum predictor & configure
   SuperkExpectation * skexp = new SuperkExpectation;
@@ -64,7 +78,7 @@ void test_systematic_errors
   double alpha = skexp->GetNuXSec()->OnePionInRES();
   cout << "alpha = " << alpha << endl;
 
-  int ErecoBin1 = 9;  // 0.4 GeV (incl.)
+  int ErecoBin1 =  9; // 0.4 GeV (incl.)
   int ErecoBin2 = 22; // 1.1 GeV (incl.)
 
   //
@@ -78,7 +92,7 @@ void test_systematic_errors
   double nsknumuccqe_0         = skexp->GetSuperkMC()->CurrErecoSpectrum(conv::kSKsFCFV1RingMuLike, conv::kSKmNuMuCCQE      )->Integral();
   double nsknumuccqe_0a        = skexp->GetSuperkMC()->CurrErecoSpectrum(conv::kSKsFCFV1RingMuLike, conv::kSKmNuMuCCQE      )->Integral(1,           ErecoBin1-1 );
   double nsknumuccqe_0b        = skexp->GetSuperkMC()->CurrErecoSpectrum(conv::kSKsFCFV1RingMuLike, conv::kSKmNuMuCCQE      )->Integral(ErecoBin1,   ErecoBin2   );
-  double nsknumuccqe_0c        = skexp->GetSuperkMC()->CurrErecoSpectrum(conv::kSKsFCFV1RingMuLike, conv::kSKmNuMuCCQE      )->Integral(ErecoBin2+1, kNvErecoBins);
+  double nsknumuccqe_0c        = skexp->GetSuperkMC()->CurrErecoSpectrum(conv::kSKsFCFV1RingMuLike, conv::kSKmNuMuCCQE      )->Integral(ErecoBin2+1, conv::kNvErecoBins);
   double nsknumucc1pi_0        = skexp->GetSuperkMC()->CurrErecoSpectrum(conv::kSKsFCFV1RingMuLike, conv::kSKmNuMuCC1pi     )->Integral();
   double nsknumuccoth_0        = skexp->GetSuperkMC()->CurrErecoSpectrum(conv::kSKsFCFV1RingMuLike, conv::kSKmNuMuCCoth     )->Integral();
   double nsknumucc_0           = nsknumuccqe_0 + nsknumucc1pi_0 + nsknumuccoth_0;
@@ -86,7 +100,7 @@ void test_systematic_errors
   double nsknumubarccqe_0      = skexp->GetSuperkMC()->CurrErecoSpectrum(conv::kSKsFCFV1RingMuLike, conv::kSKmNuMuBarCCQE   )->Integral();
   double nsknumubarccqe_0a     = skexp->GetSuperkMC()->CurrErecoSpectrum(conv::kSKsFCFV1RingMuLike, conv::kSKmNuMuBarCCQE   )->Integral(1,           ErecoBin1-1 );
   double nsknumubarccqe_0b     = skexp->GetSuperkMC()->CurrErecoSpectrum(conv::kSKsFCFV1RingMuLike, conv::kSKmNuMuBarCCQE   )->Integral(ErecoBin1,   ErecoBin2   );
-  double nsknumubarccqe_0c     = skexp->GetSuperkMC()->CurrErecoSpectrum(conv::kSKsFCFV1RingMuLike, conv::kSKmNuMuBarCCQE   )->Integral(ErecoBin2+1, kNvErecoBins);
+  double nsknumubarccqe_0c     = skexp->GetSuperkMC()->CurrErecoSpectrum(conv::kSKsFCFV1RingMuLike, conv::kSKmNuMuBarCCQE   )->Integral(ErecoBin2+1, conv::kNvErecoBins);
   double nsknumubarcc1pi_0     = skexp->GetSuperkMC()->CurrErecoSpectrum(conv::kSKsFCFV1RingMuLike, conv::kSKmNuMuBarCC1pi  )->Integral();
   double nsknumubarccoth_0     = skexp->GetSuperkMC()->CurrErecoSpectrum(conv::kSKsFCFV1RingMuLike, conv::kSKmNuMuBarCCoth  )->Integral();
   double nsknumubarcc_0        = nsknumubarccqe_0 + nsknumubarcc1pi_0 + nsknumubarccoth_0;
@@ -96,7 +110,11 @@ void test_systematic_errors
   double nsknueccoth_0         = skexp->GetSuperkMC()->CurrErecoSpectrum(conv::kSKsFCFV1RingMuLike, conv::kSKmNuECCoth      )->Integral();
   double nsknuecc_0            = nsknueccqe_0 + nsknuecc1pi_0 + nsknueccoth_0;
   double nsknuenc_0            = skexp->GetSuperkMC()->CurrErecoSpectrum(conv::kSKsFCFV1RingMuLike, conv::kSKmNuENC         )->Integral();
-  double nskall_0              = nsknumucc_0 + nsknumunc_0 + nsknumubarcc_0 + nsknumubarnc_0 + nsknuecc_0 + nsknuenc_0;
+  double nsksignueccqe_0       = skexp->GetSuperkMC()->CurrErecoSpectrum(conv::kSKsFCFV1RingMuLike, conv::kSKmSigNuECCQE    )->Integral();
+  double nsksignuecc1pi_0      = skexp->GetSuperkMC()->CurrErecoSpectrum(conv::kSKsFCFV1RingMuLike, conv::kSKmSigNuECC1pi   )->Integral();
+  double nsksignueccoth_0      = skexp->GetSuperkMC()->CurrErecoSpectrum(conv::kSKsFCFV1RingMuLike, conv::kSKmSigNuECCoth   )->Integral();
+  double nsksignuecc_0         = nsksignueccqe_0 + nsksignuecc1pi_0 + nsksignueccoth_0;
+  double nskall_0              = nsknumucc_0 + nsknumunc_0 + nsknumubarcc_0 + nsknumubarnc_0 + nsknuecc_0 + nsknuenc_0 + nsksignuecc_0;
 
   double nd280obs_0            = skexp->GetND280Measurement()->NObsCCLike();
   double nd280cc_0             = skexp->GetND280Measurement()->NExpCC();
@@ -152,7 +170,7 @@ void test_systematic_errors
   double nsknumuccqe_p         = skexp->GetSuperkMC()->CurrErecoSpectrum(conv::kSKsFCFV1RingMuLike, conv::kSKmNuMuCCQE      )->Integral();
   double nsknumuccqe_pa        = skexp->GetSuperkMC()->CurrErecoSpectrum(conv::kSKsFCFV1RingMuLike, conv::kSKmNuMuCCQE      )->Integral(1,           ErecoBin1-1 );
   double nsknumuccqe_pb        = skexp->GetSuperkMC()->CurrErecoSpectrum(conv::kSKsFCFV1RingMuLike, conv::kSKmNuMuCCQE      )->Integral(ErecoBin1,   ErecoBin2   );
-  double nsknumuccqe_pc        = skexp->GetSuperkMC()->CurrErecoSpectrum(conv::kSKsFCFV1RingMuLike, conv::kSKmNuMuCCQE      )->Integral(ErecoBin2+1, kNvErecoBins);
+  double nsknumuccqe_pc        = skexp->GetSuperkMC()->CurrErecoSpectrum(conv::kSKsFCFV1RingMuLike, conv::kSKmNuMuCCQE      )->Integral(ErecoBin2+1, conv::kNvErecoBins);
   double nsknumucc1pi_p        = skexp->GetSuperkMC()->CurrErecoSpectrum(conv::kSKsFCFV1RingMuLike, conv::kSKmNuMuCC1pi     )->Integral();
   double nsknumuccoth_p        = skexp->GetSuperkMC()->CurrErecoSpectrum(conv::kSKsFCFV1RingMuLike, conv::kSKmNuMuCCoth     )->Integral();
   double nsknumucc_p           = nsknumuccqe_p + nsknumucc1pi_p + nsknumuccoth_p;
@@ -160,7 +178,7 @@ void test_systematic_errors
   double nsknumubarccqe_p      = skexp->GetSuperkMC()->CurrErecoSpectrum(conv::kSKsFCFV1RingMuLike, conv::kSKmNuMuBarCCQE   )->Integral();
   double nsknumubarccqe_pa     = skexp->GetSuperkMC()->CurrErecoSpectrum(conv::kSKsFCFV1RingMuLike, conv::kSKmNuMuBarCCQE   )->Integral(1,           ErecoBin1-1 );
   double nsknumubarccqe_pb     = skexp->GetSuperkMC()->CurrErecoSpectrum(conv::kSKsFCFV1RingMuLike, conv::kSKmNuMuBarCCQE   )->Integral(ErecoBin1,   ErecoBin2   );
-  double nsknumubarccqe_pc     = skexp->GetSuperkMC()->CurrErecoSpectrum(conv::kSKsFCFV1RingMuLike, conv::kSKmNuMuBarCCQE   )->Integral(ErecoBin2+1, kNvErecoBins);
+  double nsknumubarccqe_pc     = skexp->GetSuperkMC()->CurrErecoSpectrum(conv::kSKsFCFV1RingMuLike, conv::kSKmNuMuBarCCQE   )->Integral(ErecoBin2+1, conv::kNvErecoBins);
   double nsknumubarcc1pi_p     = skexp->GetSuperkMC()->CurrErecoSpectrum(conv::kSKsFCFV1RingMuLike, conv::kSKmNuMuBarCC1pi  )->Integral();
   double nsknumubarccoth_p     = skexp->GetSuperkMC()->CurrErecoSpectrum(conv::kSKsFCFV1RingMuLike, conv::kSKmNuMuBarCCoth  )->Integral();
   double nsknumubarcc_p        = nsknumubarccqe_p + nsknumubarcc1pi_p + nsknumubarccoth_p;
@@ -170,7 +188,11 @@ void test_systematic_errors
   double nsknueccoth_p         = skexp->GetSuperkMC()->CurrErecoSpectrum(conv::kSKsFCFV1RingMuLike, conv::kSKmNuECCoth      )->Integral();
   double nsknuecc_p            = nsknueccqe_p + nsknuecc1pi_p + nsknueccoth_p;
   double nsknuenc_p            = skexp->GetSuperkMC()->CurrErecoSpectrum(conv::kSKsFCFV1RingMuLike, conv::kSKmNuENC         )->Integral();
-  double nskall_p              = nsknumucc_p + nsknumunc_p + nsknumubarcc_p + nsknumubarnc_p + nsknuecc_p + nsknuenc_p;
+  double nsksignueccqe_p       = skexp->GetSuperkMC()->CurrErecoSpectrum(conv::kSKsFCFV1RingMuLike, conv::kSKmSigNuECCQE    )->Integral();
+  double nsksignuecc1pi_p      = skexp->GetSuperkMC()->CurrErecoSpectrum(conv::kSKsFCFV1RingMuLike, conv::kSKmSigNuECC1pi   )->Integral();
+  double nsksignueccoth_p      = skexp->GetSuperkMC()->CurrErecoSpectrum(conv::kSKsFCFV1RingMuLike, conv::kSKmSigNuECCoth   )->Integral();
+  double nsksignuecc_p         = nsksignueccqe_p + nsksignuecc1pi_p + nsksignueccoth_p;
+  double nskall_p              = nsknumucc_p + nsknumunc_p + nsknumubarcc_p + nsknumubarnc_p + nsknuecc_p + nsknuenc_p + nsksignuecc_p;
 
   double nd280obs_p            = skexp->GetND280Measurement()->NObsCCLike();
   double nd280cc_p             = skexp->GetND280Measurement()->NExpCC();
@@ -224,7 +246,7 @@ void test_systematic_errors
   double nsknumuccqe_m         = skexp->GetSuperkMC()->CurrErecoSpectrum(conv::kSKsFCFV1RingMuLike, conv::kSKmNuMuCCQE      )->Integral();
   double nsknumuccqe_ma        = skexp->GetSuperkMC()->CurrErecoSpectrum(conv::kSKsFCFV1RingMuLike, conv::kSKmNuMuCCQE      )->Integral(1,           ErecoBin1-1 );
   double nsknumuccqe_mb        = skexp->GetSuperkMC()->CurrErecoSpectrum(conv::kSKsFCFV1RingMuLike, conv::kSKmNuMuCCQE      )->Integral(ErecoBin1,   ErecoBin2   );
-  double nsknumuccqe_mc        = skexp->GetSuperkMC()->CurrErecoSpectrum(conv::kSKsFCFV1RingMuLike, conv::kSKmNuMuCCQE      )->Integral(ErecoBin2+1, kNvErecoBins);
+  double nsknumuccqe_mc        = skexp->GetSuperkMC()->CurrErecoSpectrum(conv::kSKsFCFV1RingMuLike, conv::kSKmNuMuCCQE      )->Integral(ErecoBin2+1, conv::kNvErecoBins);
   double nsknumucc1pi_m        = skexp->GetSuperkMC()->CurrErecoSpectrum(conv::kSKsFCFV1RingMuLike, conv::kSKmNuMuCC1pi     )->Integral();
   double nsknumuccoth_m        = skexp->GetSuperkMC()->CurrErecoSpectrum(conv::kSKsFCFV1RingMuLike, conv::kSKmNuMuCCoth     )->Integral();
   double nsknumucc_m           = nsknumuccqe_m + nsknumucc1pi_m + nsknumuccoth_m;
@@ -232,7 +254,7 @@ void test_systematic_errors
   double nsknumubarccqe_m      = skexp->GetSuperkMC()->CurrErecoSpectrum(conv::kSKsFCFV1RingMuLike, conv::kSKmNuMuBarCCQE   )->Integral();
   double nsknumubarccqe_ma     = skexp->GetSuperkMC()->CurrErecoSpectrum(conv::kSKsFCFV1RingMuLike, conv::kSKmNuMuBarCCQE   )->Integral(1,           ErecoBin1-1 );
   double nsknumubarccqe_mb     = skexp->GetSuperkMC()->CurrErecoSpectrum(conv::kSKsFCFV1RingMuLike, conv::kSKmNuMuBarCCQE   )->Integral(ErecoBin1,   ErecoBin2   );
-  double nsknumubarccqe_mc     = skexp->GetSuperkMC()->CurrErecoSpectrum(conv::kSKsFCFV1RingMuLike, conv::kSKmNuMuBarCCQE   )->Integral(ErecoBin2+1, kNvErecoBins);
+  double nsknumubarccqe_mc     = skexp->GetSuperkMC()->CurrErecoSpectrum(conv::kSKsFCFV1RingMuLike, conv::kSKmNuMuBarCCQE   )->Integral(ErecoBin2+1, conv::kNvErecoBins);
   double nsknumubarcc1pi_m     = skexp->GetSuperkMC()->CurrErecoSpectrum(conv::kSKsFCFV1RingMuLike, conv::kSKmNuMuBarCC1pi  )->Integral();
   double nsknumubarccoth_m     = skexp->GetSuperkMC()->CurrErecoSpectrum(conv::kSKsFCFV1RingMuLike, conv::kSKmNuMuBarCCoth  )->Integral();
   double nsknumubarcc_m        = nsknumubarccqe_m + nsknumubarcc1pi_m + nsknumubarccoth_m;
@@ -242,7 +264,11 @@ void test_systematic_errors
   double nsknueccoth_m         = skexp->GetSuperkMC()->CurrErecoSpectrum(conv::kSKsFCFV1RingMuLike, conv::kSKmNuECCoth      )->Integral();
   double nsknuecc_m            = nsknueccqe_m + nsknuecc1pi_m + nsknueccoth_m;
   double nsknuenc_m            = skexp->GetSuperkMC()->CurrErecoSpectrum(conv::kSKsFCFV1RingMuLike, conv::kSKmNuENC         )->Integral();
-  double nskall_m              = nsknumucc_m + nsknumunc_m + nsknumubarcc_m + nsknumubarnc_m + nsknuecc_m + nsknuenc_m;
+  double nsksignueccqe_m       = skexp->GetSuperkMC()->CurrErecoSpectrum(conv::kSKsFCFV1RingMuLike, conv::kSKmSigNuECCQE    )->Integral();
+  double nsksignuecc1pi_m      = skexp->GetSuperkMC()->CurrErecoSpectrum(conv::kSKsFCFV1RingMuLike, conv::kSKmSigNuECC1pi   )->Integral();
+  double nsksignueccoth_m      = skexp->GetSuperkMC()->CurrErecoSpectrum(conv::kSKsFCFV1RingMuLike, conv::kSKmSigNuECCoth   )->Integral();
+  double nsksignuecc_m         = nsksignueccqe_m + nsksignuecc1pi_m + nsksignueccoth_m;
+  double nskall_m              = nsknumucc_m + nsknumunc_m + nsknumubarcc_m + nsknumubarnc_m + nsknuecc_m + nsknuenc_m + nsksignuecc_m;
 
   double nd280obs_m            = skexp->GetND280Measurement()->NObsCCLike();
   double nd280cc_m             = skexp->GetND280Measurement()->NExpCC();
@@ -311,6 +337,10 @@ void test_systematic_errors
   double frac_nsknueccoth_p          = (nsknueccoth_0          > 0) ? 100.*(nsknueccoth_p         - nsknueccoth_0        ) / nsknueccoth_0         : 0.;
   double frac_nsknuecc_p             = (nsknuecc_0             > 0) ? 100.*(nsknuecc_p            - nsknuecc_0           ) / nsknuecc_0            : 0.;
   double frac_nsknuenc_p             = (nsknuenc_0             > 0) ? 100.*(nsknuenc_p            - nsknuenc_0           ) / nsknuenc_0            : 0.;
+  double frac_nsksignueccqe_p        = (nsksignueccqe_0        > 0) ? 100.*(nsksignueccqe_p       - nsksignueccqe_0      ) / nsksignueccqe_0       : 0.;
+  double frac_nsksignuecc1pi_p       = (nsksignuecc1pi_0       > 0) ? 100.*(nsksignuecc1pi_p      - nsksignuecc1pi_0     ) / nsksignuecc1pi_0      : 0.;
+  double frac_nsksignueccoth_p       = (nsksignueccoth_0       > 0) ? 100.*(nsksignueccoth_p      - nsksignueccoth_0     ) / nsksignueccoth_0      : 0.;
+  double frac_nsksignuecc_p          = (nsksignuecc_0          > 0) ? 100.*(nsksignuecc_p         - nsksignuecc_0        ) / nsksignuecc_0         : 0.;
   double frac_nd280obs_p             = (nd280obs_0             > 0) ? 100.*(nd280obs_p            - nd280obs_0           ) / nd280obs_0            : 0.;
   double frac_nd280mccclike_p        = (nd280mccclike_0        > 0) ? 100.*(nd280mccclike_p       - nd280mccclike_0      ) / nd280mccclike_0       : 0.;
   double frac_nd280cc_p              = (nd280cc_0              > 0) ? 100.*(nd280cc_p             - nd280cc_0            ) / nd280cc_0             : 0.;
@@ -355,6 +385,10 @@ void test_systematic_errors
   double frac_nsknueccoth_m          = (nsknueccoth_0          > 0) ? 100.*(nsknueccoth_m         - nsknueccoth_0        ) / nsknueccoth_0         : 0.;
   double frac_nsknuecc_m             = (nsknuecc_0             > 0) ? 100.*(nsknuecc_m            - nsknuecc_0           ) / nsknuecc_0            : 0.;
   double frac_nsknuenc_m             = (nsknuenc_0             > 0) ? 100.*(nsknuenc_m            - nsknuenc_0           ) / nsknuenc_0            : 0.;
+  double frac_nsksignueccqe_m        = (nsksignueccqe_0        > 0) ? 100.*(nsksignueccqe_m       - nsksignueccqe_0      ) / nsksignueccqe_0       : 0.;
+  double frac_nsksignuecc1pi_m       = (nsksignuecc1pi_0       > 0) ? 100.*(nsksignuecc1pi_m      - nsksignuecc1pi_0     ) / nsksignuecc1pi_0      : 0.;
+  double frac_nsksignueccoth_m       = (nsksignueccoth_0       > 0) ? 100.*(nsksignueccoth_m      - nsksignueccoth_0     ) / nsksignueccoth_0      : 0.;
+  double frac_nsksignuecc_m          = (nsksignuecc_0          > 0) ? 100.*(nsksignuecc_m         - nsksignuecc_0        ) / nsksignuecc_0         : 0.;
   double frac_nd280obs_m             = (nd280obs_0             > 0) ? 100.*(nd280obs_m            - nd280obs_0           ) / nd280obs_0            : 0.;
   double frac_nd280mccclike_m        = (nd280mccclike_0        > 0) ? 100.*(nd280mccclike_m       - nd280mccclike_0      ) / nd280mccclike_0       : 0.;
   double frac_nd280cc_m              = (nd280cc_0              > 0) ? 100.*(nd280cc_m             - nd280cc_0            ) / nd280cc_0             : 0.;
@@ -722,6 +756,58 @@ void test_systematic_errors
        << setw(ncolnev)  << setfill(' ') << setprecision(nprecisionnev) << nsknuenc_m 
        << endcolumn
        << setw(ncolfrc)  << setfill(' ') << setprecision(nprecisionpct) << frac_nsknuenc_m << pctsymbol 
+       << endrow
+       << endl;
+  cout << setw(ncol1)  << setfill(' ') << "SK MC (1 $\\mu$-like ring): $\\nu_{e}$ (signal) CCQE" 
+       << endcolumn
+       << setw(ncolnev)  << setfill(' ') << setprecision(nprecisionnev) << nsksignueccqe_0
+       << endcolumn
+       << setw(ncolnev)  << setfill(' ') << setprecision(nprecisionnev) << nsksignueccqe_p
+       << endcolumn
+       << setw(ncolfrc)  << setfill(' ') << setprecision(nprecisionpct) << frac_nsksignueccqe_p << pctsymbol 
+       << endcolumn
+       << setw(ncolnev)  << setfill(' ') << setprecision(nprecisionnev) << nsksignueccqe_m 
+       << endcolumn
+       << setw(ncolfrc)  << setfill(' ') << setprecision(nprecisionpct) << frac_nsksignueccqe_m << pctsymbol 
+       << endrow
+       << endl;
+  cout << setw(ncol1)  << setfill(' ') << "SK MC (1 $\\mu$-like ring): $\\nu_{e}$ (signal) CC1$\\pi$" 
+       << endcolumn
+       << setw(ncolnev)  << setfill(' ') << setprecision(nprecisionnev) << nsksignuecc1pi_0
+       << endcolumn
+       << setw(ncolnev)  << setfill(' ') << setprecision(nprecisionnev) << nsksignuecc1pi_p
+       << endcolumn
+       << setw(ncolfrc)  << setfill(' ') << setprecision(nprecisionpct) << frac_nsksignuecc1pi_p << pctsymbol 
+       << endcolumn
+       << setw(ncolnev)  << setfill(' ') << setprecision(nprecisionnev) << nsksignuecc1pi_m 
+       << endcolumn
+       << setw(ncolfrc)  << setfill(' ') << setprecision(nprecisionpct) << frac_nsksignuecc1pi_m << pctsymbol 
+       << endrow
+       << endl;
+  cout << setw(ncol1)  << setfill(' ') << "SK MC (1 $\\mu$-like ring): $\\nu_{e}$ (signal) CC other" 
+       << endcolumn
+       << setw(ncolnev)  << setfill(' ') << setprecision(nprecisionnev) << nsksignueccoth_0
+       << endcolumn
+       << setw(ncolnev)  << setfill(' ') << setprecision(nprecisionnev) << nsksignueccoth_p
+       << endcolumn
+       << setw(ncolfrc)  << setfill(' ') << setprecision(nprecisionpct) << frac_nsksignueccoth_p << pctsymbol 
+       << endcolumn
+       << setw(ncolnev)  << setfill(' ') << setprecision(nprecisionnev) << nsksignueccoth_m 
+       << endcolumn
+       << setw(ncolfrc)  << setfill(' ') << setprecision(nprecisionpct) << frac_nsksignueccoth_m << pctsymbol 
+       << endrow
+       << endl;
+  cout << setw(ncol1)  << setfill(' ') << "SK MC (1 $\\mu$-like ring): $\\nu_{e}$ (signal) CC all" 
+       << endcolumn
+       << setw(ncolnev)  << setfill(' ') << setprecision(nprecisionnev) << nsksignuecc_0
+       << endcolumn
+       << setw(ncolnev)  << setfill(' ') << setprecision(nprecisionnev) << nsksignuecc_p
+       << endcolumn
+       << setw(ncolfrc)  << setfill(' ') << setprecision(nprecisionpct) << frac_nsksignuecc_p << pctsymbol 
+       << endcolumn
+       << setw(ncolnev)  << setfill(' ') << setprecision(nprecisionnev) << nsksignuecc_m 
+       << endcolumn
+       << setw(ncolfrc)  << setfill(' ') << setprecision(nprecisionpct) << frac_nsksignuecc_m << pctsymbol 
        << endrow
        << endl;
 

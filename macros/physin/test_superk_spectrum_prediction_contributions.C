@@ -11,7 +11,7 @@
 
 void test_superk_spectrum_prediction_contributions
 (
-  int          nflavours           = 2,
+  int          nflavours           = 2,                             /* 2 for effective 2-flavour fmwk, 3 for 3-flavour fmwk */
   double       input_sinsq2theta23 = 1.00,                         
   double       input_dm23sq        = 2.32E-3,                      
   const char * config_file         = "analysis_configuration.xml",
@@ -54,18 +54,21 @@ void test_superk_spectrum_prediction_contributions
   // set physics hypothesis
   PhysHypothesis ph;
   if(nflavours==2) {
-    ph.Init(t2kana::conv::kHypNuMuDisapp2F);
-    ph.SetCurrValue(t2kana::conv::kPhypSinsq2Theta23, input_sinsq2theta23);
-    ph.SetCurrValue(t2kana::conv::kPhypDm23sq,        input_dm23sq);
+    ph.Init(conv::kHypNuMuDisapp2F);
+    // set input values
+    ph.SetCurrValue(conv::kPhypSinsq2Theta23, input_sinsq2theta23);
+    ph.SetCurrValue(conv::kPhypDm23sq,        input_dm23sq);
   } else
   if(nflavours==3) {
-    ph.Init(t2kana::conv::kHypOsc3F);
-    ph.SetCurrValue(t2kana::conv::kPhypSinsq2Theta12,  conv::kGlobFitSinsq2Theta12);
-    ph.SetCurrValue(t2kana::conv::kPhypSinsq2Theta13,  conv::kGlobFitSinsq2Theta13);
-    ph.SetCurrValue(t2kana::conv::kPhypSinsq2Theta23,  input_sinsq2theta23);
-    ph.SetCurrValue(t2kana::conv::kPhypDeltaCP,        0.);
-    ph.SetCurrValue(t2kana::conv::kPhypDm12sq,         conv::kGlobFitDm12sq);
-    ph.SetCurrValue(t2kana::conv::kPhypDm23sq,         input_dm23sq);
+    ph.Init(conv::kHypOsc3F);
+    // set input values
+    ph.SetCurrValue(conv::kPhypDm23sq,         input_dm23sq);
+    ph.SetCurrValue(conv::kPhypSinsq2Theta23,  input_sinsq2theta23);
+    // set standard values for 13 and 12-sector params
+    ph.SetCurrValue(conv::kPhypSinsq2Theta12,  conv::kGlobFitSinsq2Theta12);
+    ph.SetCurrValue(conv::kPhypSinsq2Theta13,  conv::kGlobFitSinsq2Theta13);
+    ph.SetCurrValue(conv::kPhypDm12sq,         conv::kGlobFitDm12sq);
+    ph.SetCurrValue(conv::kPhypDeltaCP,        0.);
   }
   cout << ph;
 
