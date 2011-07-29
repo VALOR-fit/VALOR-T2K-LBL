@@ -135,7 +135,7 @@ void NuMuDecohFitter::PrepareFitter(Option_t * option)
   // calculate degrees of freedom
 
   fNFitBins = kNvErecoBins;
-  fNFreeFitParams = fit_params.Size(); //fitter->GetNumberFreeParameters();
+  fNFreeFitParams = fit_params.GetNumberFreeParameters();
   fNdof = fNFitBins - fNFreeFitParams;
 
   cout << "NuMuDecohFitter >> ndof = " << fNdof

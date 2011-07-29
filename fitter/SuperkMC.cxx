@@ -36,6 +36,8 @@
    all but the  3-flavour oscillation hypothesis. Added bool SkipTemplate(SuperkMode_t m) 
    to decide whether a template should be neglected. 
    Added some comments and removed commented-out code.
+ @ 29/07/11
+   Include matter effects in 3-flavour osc probabilities.
 
 */
 //________________________________________________________________________________________
@@ -578,22 +580,19 @@ void SuperkMC::ApplyPhysHypothesisToTemplates(void)
 
         // calculate oscillation probabilities (incl. matter effects) for the current Etrue value
         double Etrue = fMCTemplSys[s][kSKmNuMuCCQE]->GetYaxis()->GetBinCenter(it);
-/*
-        ////Due to numerous `Hermitian conjugate of matter mixing matrix may not be its inverse.'
-        ////err mesgs, matter effects are not included. Nick tries to understand what is going on
-        ////for delta_{cp} around pi.
+
         double p_numu_numu       = fNuOsc3Flavour.CalcMatterOscProb(kPdgNuMu,    kPdgNuMu,    Etrue);
       //double p_nue_numu        = fNuOsc3Flavour.CalcMatterOscProb(kPdgNuE,     kPdgNuMu,    Etrue);
         double p_numubar_numubar = fNuOsc3Flavour.CalcMatterOscProb(kPdgNuMuBar, kPdgNuMuBar, Etrue);
         double p_nue_nue         = fNuOsc3Flavour.CalcMatterOscProb(kPdgNuE,     kPdgNuE,     Etrue);
         double p_numu_nue        = fNuOsc3Flavour.CalcMatterOscProb(kPdgNuMu,    kPdgNuE,     Etrue);
-*/
+/*
         double p_numu_numu       = fNuOsc3Flavour.CalcVacuumOscProb(kPdgNuMu,    kPdgNuMu,    Etrue);
       //double p_nue_numu        = fNuOsc3Flavour.CalcVacuumOscProb(kPdgNuE,     kPdgNuMu,    Etrue);
         double p_numubar_numubar = fNuOsc3Flavour.CalcVacuumOscProb(kPdgNuMuBar, kPdgNuMuBar, Etrue);
         double p_nue_nue         = fNuOsc3Flavour.CalcVacuumOscProb(kPdgNuE,     kPdgNuE,     Etrue);
         double p_numu_nue        = fNuOsc3Flavour.CalcVacuumOscProb(kPdgNuMu,    kPdgNuE,     Etrue);
-
+*/
 #ifdef __debug_level_3__
         cout << "Exp/SKMC >>  E = " << Etrue << " GeV" << endl;
         cout << "Exp/SKMC >>  * P (numu     -> numu)    = " << p_numu_numu       << endl;

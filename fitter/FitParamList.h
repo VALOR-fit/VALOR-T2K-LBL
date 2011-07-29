@@ -90,6 +90,9 @@ public:
    // Chisq penalty term
    double ChisquarePenaltyTerm(void);
 
+   // Get number of free (not fixed) parameters
+   int GetNumberFreeParameters(void);
+
    // Print
    void Print (ostream & stream) const;
    friend ostream & operator << (ostream & stream, const FitParamList & plst);

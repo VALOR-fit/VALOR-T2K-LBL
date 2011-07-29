@@ -138,7 +138,7 @@ void  NuMuDisappFitter::PrepareFitter(Option_t * option)
   // calculate degrees of freedom
 
   fNFitBins = kNvErecoBins;
-  fNFreeFitParams = fit_params.Size(); //fitter->GetNumberFreeParameters();
+  fNFreeFitParams = fit_params.GetNumberFreeParameters();
   fNdof = fNFitBins - fNFreeFitParams;
 
   cout << "NuMuDisappFitter >> ndof = " << fNdof

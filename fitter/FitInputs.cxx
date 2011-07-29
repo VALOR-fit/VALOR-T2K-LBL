@@ -107,11 +107,11 @@ double FitInputs::Chisquare(Option_t * option)
   double chisq_penalty = this->FitParams().ChisquarePenaltyTerm();
   chisq += chisq_penalty;
 
-//#ifdef __debug_level_2__
+#ifdef __debug_level_2__
   cout << "FitInputs::Chisquare()> chisq = " << chisq 
        << " (contribution from penalty term = " << chisq_penalty << ")" 
        << endl;
-//#endif
+#endif
 
   return chisq;
 }

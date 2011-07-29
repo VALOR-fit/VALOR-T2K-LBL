@@ -15,6 +15,8 @@
  @ 21/07/2011 - CA
    Added Reset() and WhichParam(int id). Implemented ChisquarePenaltyTerm() for 
    marginalised oscillation parameters.
+ @ 29/07/2011 - CA
+   Added GetNumberFreeParameters()
 */
 //________________________________________________________________________________________
 
@@ -184,6 +186,19 @@ double FitParamList::ChisquarePenaltyTerm(void)
     }//nuisance
   }
   return chisq_penalty;
+}
+//________________________________________________________________________________________
+int FitParamList::GetNumberFreeParameters(void)
+{
+  int nparams = 0;
+
+  for(int ip=0; ip<fNParams;  ip++) {
+    bool is_fixed = fIsFixed[ip];
+    if(!is_fixed) {
+      nparams++;
+    }
+  }
+  return nparams;
 }
 //________________________________________________________________________________________
 void FitParamList::Print(ostream & stream) const
