@@ -555,10 +555,9 @@ double NuOsc3Flavour::CalcMatterOscProb(int nu_start, int nu_end, double energy)
 
   if(fabs((eigenvalueSum - trace) / trace) > 1.0e-4)
     {
-    cerr<<"NuOsc3Flavour::CalcMatterOscProb() : eigenvalues may not be correct."<<endl;
+    cerr<<"Warning in NuOsc3Flavour::CalcMatterOscProb() : eigenvalues may not be correct."<<endl;
     cerr<<"Fractional difference of sum of eigenvalues and trace of matrix is "
 	<<fabs((eigenvalueSum - trace) / trace)<<"."<<endl;
-    //return 0.0;
     }
 
 
@@ -600,28 +599,28 @@ double NuOsc3Flavour::CalcMatterOscProb(int nu_start, int nu_end, double energy)
     // Take the second component of each eigenvector to be 1.0 (real).
     // Calculate the first and third components in terms of the second component.
     // This calculation uses the Hermitian nature of UMassUdagger 
-    numerator1[re]  = UMassUdaggerMinusEv[1][1][re]   * UMassUdaggerMinusEv[0][2][re]
-                    - UMassUdaggerMinusEv[1][1][im]   * UMassUdaggerMinusEv[0][2][im]
-                    - (UMassUdaggerMinusEv[1][2][re]  * UMassUdaggerMinusEv[0][1][re]
-                    - UMassUdaggerMinusEv[1][2][im]   * UMassUdaggerMinusEv[0][1][im]);
-    numerator1[im]  = UMassUdaggerMinusEv[1][1][re]   * UMassUdaggerMinusEv[0][2][im]
-                    + UMassUdaggerMinusEv[1][1][im]   * UMassUdaggerMinusEv[0][2][re]
-                    - (UMassUdaggerMinusEv[1][2][re]  * UMassUdaggerMinusEv[0][1][im]
-                    + UMassUdaggerMinusEv[1][2][im]   * UMassUdaggerMinusEv[0][1][re]);
-    numerator3[re]  = UMassUdaggerMinusEv[0][1][re]   * UMassUdaggerMinusEv[0][1][re]
-                    + UMassUdaggerMinusEv[0][1][im]   * UMassUdaggerMinusEv[0][1][im]
-                    - (UMassUdaggerMinusEv[0][0][re]  * UMassUdaggerMinusEv[1][1][re]
-                    - UMassUdaggerMinusEv[0][0][im]   * UMassUdaggerMinusEv[1][1][im]);
-    numerator3[im]  = -(UMassUdaggerMinusEv[0][0][re] * UMassUdaggerMinusEv[1][1][im]
-	            + UMassUdaggerMinusEv[0][0][im]   * UMassUdaggerMinusEv[1][1][re]);
-    denominator[re] = UMassUdaggerMinusEv[0][0][re]   * UMassUdaggerMinusEv[1][2][re]
-                    - UMassUdaggerMinusEv[0][0][im]   * UMassUdaggerMinusEv[1][2][im]
-                    - (UMassUdaggerMinusEv[0][2][re]  * UMassUdaggerMinusEv[0][1][re]
-                    + UMassUdaggerMinusEv[0][2][im]   * UMassUdaggerMinusEv[0][1][im]);
-    denominator[im] = UMassUdaggerMinusEv[0][0][re]   * UMassUdaggerMinusEv[1][2][im]
-                    + UMassUdaggerMinusEv[0][0][im]   * UMassUdaggerMinusEv[1][2][re]
-                    - (-UMassUdaggerMinusEv[0][2][re] * UMassUdaggerMinusEv[0][1][im]
-                    + UMassUdaggerMinusEv[0][2][im]   * UMassUdaggerMinusEv[0][1][re]);
+    numerator1[re] = UMassUdaggerMinusEv[1][1][re] * UMassUdaggerMinusEv[2][2][re]
+                   - UMassUdaggerMinusEv[1][1][im] * UMassUdaggerMinusEv[2][2][im]
+                   - (UMassUdaggerMinusEv[1][2][re] * UMassUdaggerMinusEv[1][2][re]
+	           + UMassUdaggerMinusEv[1][2][im] * UMassUdaggerMinusEv[1][2][im]);
+    numerator1[im] = UMassUdaggerMinusEv[1][1][re] * UMassUdaggerMinusEv[2][2][im]
+	           + UMassUdaggerMinusEv[1][1][im] * UMassUdaggerMinusEv[2][2][re];
+    numerator3[re] = UMassUdaggerMinusEv[0][1][re] * UMassUdaggerMinusEv[1][2][re]
+                   - UMassUdaggerMinusEv[0][1][im] * UMassUdaggerMinusEv[1][2][im]
+	           - (UMassUdaggerMinusEv[1][1][re] * UMassUdaggerMinusEv[0][2][re]
+	           + UMassUdaggerMinusEv[1][1][im] * UMassUdaggerMinusEv[0][2][im]);
+    numerator3[im] = -UMassUdaggerMinusEv[0][1][re] * UMassUdaggerMinusEv[1][2][im]               
+                   - UMassUdaggerMinusEv[0][1][im] * UMassUdaggerMinusEv[1][2][re]
+	           - (-UMassUdaggerMinusEv[1][1][re] * UMassUdaggerMinusEv[0][2][im]
+	           + UMassUdaggerMinusEv[1][1][im] * UMassUdaggerMinusEv[0][2][re]);
+    denominator[re] = UMassUdaggerMinusEv[1][2][re] * UMassUdaggerMinusEv[0][2][re]
+                    + UMassUdaggerMinusEv[1][2][im] * UMassUdaggerMinusEv[0][2][im]
+	            - (UMassUdaggerMinusEv[2][2][re] * UMassUdaggerMinusEv[0][1][re]
+	            + UMassUdaggerMinusEv[2][2][im] * UMassUdaggerMinusEv[0][1][im]);
+    denominator[im] = -UMassUdaggerMinusEv[1][2][re] * UMassUdaggerMinusEv[0][2][im]
+                    + UMassUdaggerMinusEv[1][2][im] * UMassUdaggerMinusEv[0][2][re]
+	            - (-UMassUdaggerMinusEv[2][2][re] * UMassUdaggerMinusEv[0][1][im]
+	            + UMassUdaggerMinusEv[2][2][im] * UMassUdaggerMinusEv[0][1][re]);
 
     // The columns of UMatter are the eigenvectors of UMassUdagger
     UMatter[0][i][re] = (numerator1[re]  * denominator[re] + numerator1[im]  * denominator[im])
@@ -659,17 +658,15 @@ double NuOsc3Flavour::CalcMatterOscProb(int nu_start, int nu_end, double energy)
 
  for(int i=0; i<3; i++)
    {
-   if(fabs(eigenvectorCheck[i][re]) > 1.0e-10)
+   if(fabs(eigenvectorCheck[i][re]) > 1.0e-8)
      {
-     cerr<<"NuOsc3Flavour::CalcMatterOscProb() : eigenvector may not be correct."<<endl;
+     cerr<<"Warning in NuOsc3Flavour::CalcMatterOscProb() : eigenvector may not be correct."<<endl;
      cerr<<"Real part of check is "<<eigenvectorCheck[i][re]<<"."<<endl;
-     //return 0.0;
      }
-   if(fabs(eigenvectorCheck[i][im]) > 1.0e-10)
+   if(fabs(eigenvectorCheck[i][im]) > 1.0e-8)
      {
-     cerr<<"NuOsc3Flavour::CalcMatterOscProb() : eigenvector may not be correct."<<endl;
+     cerr<<"Warning in NuOsc3Flavour::CalcMatterOscProb() : eigenvector may not be correct."<<endl;
      cerr<<"Imaginary part of check is "<<eigenvectorCheck[i][im]<<"."<<endl;
-     //return 0.0;
      }
    }//end of for(int i=0; i<3; i++)
 
@@ -677,12 +674,12 @@ double NuOsc3Flavour::CalcMatterOscProb(int nu_start, int nu_end, double energy)
  // Check that the complex eigenvectors are orthogonal  
  double scalarProduct[3][2];
  for(int i=0; i<3; i++)
- {
-    for(int j=0; j<2; j++)
-    {
-      scalarProduct[i][j] = 0.0;
-    }      
- }
+   {
+     for(int j=0; j<2; j++)
+       {
+       scalarProduct[i][j] = 0.0;
+       }      
+   }
 
  // For complex vectors, the scalar product is defined as the complex product 
  // of the first vector and the complex conjugate of the second vector
@@ -709,15 +706,13 @@ double NuOsc3Flavour::CalcMatterOscProb(int nu_start, int nu_end, double energy)
    {
    if(fabs(scalarProduct[i][re]) > 1.0e-4)
      {
-     cerr<<"NuOsc3Flavour::CalcMatterOscProb() : eigenvectors may not be orthogonal."<<endl;
+     cerr<<"Warning in NuOsc3Flavour::CalcMatterOscProb() : eigenvectors may not be orthogonal."<<endl;
      cerr<<"Real part of scalar product is "<<scalarProduct[i][re]<<"."<<endl;
-     //return 0.0;
      }        
    if(fabs(scalarProduct[i][im]) > 1.0e-4)
      {
-     cerr<<"NuOsc3Flavour::CalcMatterOscProb() : eigenvectors may not be orthogonal."<<endl;
+     cerr<<"Warning in NuOsc3Flavour::CalcMatterOscProb() : eigenvectors may not be orthogonal."<<endl;
      cerr<<"Imaginary part of scalar product is "<<scalarProduct[i][im]<<"."<<endl;
-     //return 0.0;
      }
    }//end of for(int i=0; i<3; i++)
 
@@ -765,30 +760,26 @@ double NuOsc3Flavour::CalcMatterOscProb(int nu_start, int nu_end, double energy)
        {
        if(fabs(inverseCheck[i][j][re] - 1.0) > 1.0e-4)
 	 {
-//	 cerr<<"NuOsc3Flavour::CalcMatterOscProb() : Hermitian conjugate of matter mixing matrix may not be its inverse."<<endl;
-//	 cerr<<"Real part of diagonal element of product - 1.0 = "<<fabs(inverseCheck[i][j][re] - 1.0)<<"."<<endl;
-	 //return 0.0;
+         cerr<<"Warning in NuOsc3Flavour::CalcMatterOscProb() : Hermitian conjugate of matter mixing matrix may not be its inverse."<<endl;
+         cerr<<"Real part of diagonal element of product - 1.0 = "<<fabs(inverseCheck[i][j][re] - 1.0)<<"."<<endl;
 	 }
        if(fabs(inverseCheck[i][j][im]) > 1.0e-4)
 	 {
-//	 cerr<<"NuOsc3Flavour::CalcMatterOscProb() : Hermitian conjugate of matter mixing matrix may not be its inverse."<<endl;
-//	 cerr<<"Imaginary part of diagonal element of product = "<<inverseCheck[i][j][im]<<"."<<endl;
-	 //return 0.0;
+         cerr<<"Warning in NuOsc3Flavour::CalcMatterOscProb() : Hermitian conjugate of matter mixing matrix may not be its inverse."<<endl;
+         cerr<<"Imaginary part of diagonal element of product = "<<inverseCheck[i][j][im]<<"."<<endl;
 	 }      
        }
      else
        {
        if(fabs(inverseCheck[i][j][re]) > 1.0e-4)
 	 {
-//	 cerr<<"NuOsc3Flavour::CalcMatterOscProb() : Hermitian conjugate of matter mixing matrix may not be its inverse."<<endl;
-//	 cerr<<"Real part of off-diagonal element of product = "<<inverseCheck[i][j][re]<<"."<<endl;
-	 //return 0.0;
+         cerr<<"Warning in NuOsc3Flavour::CalcMatterOscProb() : Hermitian conjugate of matter mixing matrix may not be its inverse."<<endl;
+         cerr<<"Real part of off-diagonal element of product = "<<inverseCheck[i][j][re]<<"."<<endl;
 	 }
        if(fabs(inverseCheck[i][j][im]) > 1.0e-4)
 	 {
-//	 cerr<<"NuOsc3Flavour::CalcMatterOscProb() : Hermitian conjugate of matter mixing matrix may not be its inverse."<<endl; 
-//	 cerr<<"Imaginary part of off-diagonal element of product = "<<inverseCheck[i][j][im]<<"."<<endl;
-	 //return 0.0;
+         cerr<<"Warning in NuOsc3Flavour::CalcMatterOscProb() : Hermitian conjugate of matter mixing matrix may not be its inverse."<<endl; 
+         cerr<<"Imaginary part of off-diagonal element of product = "<<inverseCheck[i][j][im]<<"."<<endl;
 	 }              
        }  
      }//end of for(int j=0; j<3; j++)
