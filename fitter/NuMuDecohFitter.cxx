@@ -139,7 +139,7 @@ void NuMuDecohFitter::PrepareFitter(Option_t * option)
   fNdof = fNFitBins - fNFreeFitParams;
 
   cout << "NuMuDecohFitter >> ndof = " << fNdof
-       << ", nfreeparams = " << fNFreeFitParams << endl;
+       << ", nfreeparams = " << fNFreeFitParams << ", nfitbins = " << fNFitBins << endl;
 }
 //____________________________________________________________________________ 
 bool NuMuDecohFitter::DoTheFit(void) 

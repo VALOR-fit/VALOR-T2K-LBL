@@ -142,7 +142,7 @@ void  NuMuDisappFitter::PrepareFitter(Option_t * option)
   fNdof = fNFitBins - fNFreeFitParams;
 
   cout << "NuMuDisappFitter >> ndof = " << fNdof
-       << ", nfreeparams = " << fNFreeFitParams << endl;
+       << ", nfreeparams = " << fNFreeFitParams << ", nfitbins = " << fNFitBins << endl;
 }
 //____________________________________________________________________________ 
 bool NuMuDisappFitter::DoTheFit(void) 
