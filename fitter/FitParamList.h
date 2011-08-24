@@ -72,6 +72,13 @@ public:
      fIsFixed [this->Id(p)] = true;  
    }
 
+   // Free a parameter
+   void FreeParameter (t2kana::conv::PhysParamId_t p) 
+   { 
+     fIsFixed [this->Id(p)] = false;  
+   }
+
+
    // Set as nuisance parameter (contributes to \chi^{2}_{penalty})
    void SetNuisance (t2kana::conv::PhysParamId_t p, bool tf) 
    { 
@@ -114,6 +121,7 @@ public:
    static FitParamList * NumuDisapFitAllSyst    (void);
    static FitParamList * NumuDecayFitNoSyst     (void);
    static FitParamList * NumuDecohFitNoSyst     (void);
+   static FitParamList * NuOsc3FlavourFitNoSystLoose (void);
 
    //
    conv::PhysHypothesis_t PhysicsHypothesis(void) const;

@@ -234,6 +234,22 @@ FitParamList * FitParamList::NamedParameterList(string name)
   if(name == "nuosc3f") {
     return FitParamList::NuOsc3FlavourFitNoSyst();
   }
+  if(name == "nuosc3f_loose_marginalize") {
+    FitParamList * fp = FitParamList::NuOsc3FlavourFitNoSystLoose();
+    fp -> SetNuisance (kPhypSinsq2Theta13, true);
+    fp -> SetNuisance (kPhypSinsq2Theta12, true);
+    fp -> SetNuisance (kPhypDeltaCP,       true);
+    fp -> SetNuisance (kPhypDm12sq,        true);
+    return fp;
+  }
+  if(name == "nuosc3f_loose_fix") {
+    FitParamList * fp = FitParamList::NuOsc3FlavourFitNoSystLoose();
+    fp -> FixParameter (kPhypSinsq2Theta13);
+    fp -> FixParameter (kPhypSinsq2Theta12);
+    fp -> FixParameter (kPhypDeltaCP);
+    fp -> FixParameter (kPhypDm12sq);
+    return fp;
+  }
   if(name == "nuosc3f_numudisapp_fix") {
     FitParamList * fp = FitParamList::NuOsc3FlavourFitNoSyst();
     fp -> FixParameter (kPhypSinsq2Theta13);
@@ -296,6 +312,22 @@ FitParamList * FitParamList::NuOsc3FlavourFitNoSyst(void)
 
   return fparm;
 }
+//________________________________________________________________________________________
+FitParamList * FitParamList::NuOsc3FlavourFitNoSystLoose(void)
+{
+  FitParamList * fparm = new FitParamList(6);
+
+  //                                     init     min     max     step     fix?   nuis?
+  fparm->AddParam(0, kPhypSinsq2Theta23, 0.99,    0.00,   1.00,   1.0E-2,  false, false);
+  fparm->AddParam(1, kPhypSinsq2Theta13, 0.03,    0.00,   1.00,   1.0E-3,  false, false);
+  fparm->AddParam(2, kPhypSinsq2Theta12, 0.85,    0.00,   1.00,   1.0E-2,  false, false);
+  fparm->AddParam(3, kPhypDeltaCP,       kpi,     -10*kpi,   10*kpi,  1.0E-2,  false, false);
+  fparm->AddParam(4, kPhypDm23sq,        2.3E-3,  0.1E-3, 40.0E-3, 1.0E-4,  false, false);
+  fparm->AddParam(5, kPhypDm12sq,        8.0E-5,  0.7E-5, 90.0E-5, 2.0E-6,  false, false);
+
+  return fparm;
+}
+
 //________________________________________________________________________________________
 FitParamList * FitParamList::NumuDisapFitNoSyst(void)
 {
