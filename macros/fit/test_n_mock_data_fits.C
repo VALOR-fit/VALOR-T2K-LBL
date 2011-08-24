@@ -184,10 +184,21 @@ void test_n_mock_data_fits(
      }
      // store chisq surface (if asked)
      if(store_chisq_surf) {
+        //custom mode builds chisqsurf automatically, need to tell minuit mode to build it
+        if(fitter_name=="minuit") {
+	  cout << "Building chisqsurf" << endl;
+	  //need to use Draw since BuildChisqSurface is a private method
+	  fitter->Draw(new TCanvas(),"ChisqSurface");
+	}
         TH2D * chisqsurf = new TH2D(*fitter->GetChisqSurface()); 
-        chisqsurf->SetName(Form("chisqsurf_%d",iexperiment)); 
-        f.cd();
-        chisqsurf->Write();
+	if(chisqsurf) {
+	  cout << "got the chisqsurf" << endl;
+	  chisqsurf->SetName(Form("chisqsurf_%d",iexperiment)); 
+	  f.cd();
+	  chisqsurf->Write();
+	}
+	else
+	  cout << "problem getting the chisqsurf" << endl;
      }
 
      delete skobs;
