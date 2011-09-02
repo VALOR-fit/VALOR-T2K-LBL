@@ -26,7 +26,8 @@ void test_n_mock_data_fits(
   bool         store_chisq_surf        = false,                          /* by default storing only best-fit values, enable this to store the chisq surfaces   */
   bool         store_toy_expts         = false,                          /* by default storing only best-fit values, enable this to store the toy MC expts     */
   bool         store_bestfit_spectrum  = false,                          /* by default storing only best-fit values, enable this to store the best-fit spectra */
-  const char * config_file             = "analysis_configuration.xml"    /* analysis configuration file */
+  const char * config_file             = "analysis_configuration.xml",   /* analysis configuration file */
+  bool         randomize_once          = false                            /* randomize non-23 parameters every experiment or every file? */
 )
 {
   using namespace std;
@@ -69,7 +70,7 @@ void test_n_mock_data_fits(
 
   // store oscillation fit results
   TNtupleD * nfitnt = new TNtupleD("nfitnt","",
-     "iexp:sinsq2theta12:sinsq2theta13:sinsq2theta23:deltacp:dm12sq:dm23sq:chisq:fitstatus");
+     "iexp:bestfit_sinsq2theta12:bestfit_sinsq2theta13:bestfit_sinsq2theta23:bestfit_deltacp:bestfit_dm12sq:bestfit_dm23sq:chisq:fitstatus:input_sinsq2theta12:input_sinsq2theta13:input_sinsq2theta23:input_deltacp:input_dm12sq:input_dm23sq");
 
   // init best-fit values
   double bestfit_sinsq2theta12 = -1;
@@ -80,16 +81,32 @@ void test_n_mock_data_fits(
   double bestfit_dm23sq        = -1;
   double bestfit_chisq         = -1;
 
+  //remember what the user started with
+  double user_input_sinsq2theta12 = input_sinsq2theta12;
+  double user_input_sinsq2theta13 = input_sinsq2theta13;
+  double user_input_sinsq2theta23 = input_sinsq2theta23;
+  double user_input_deltacp = input_deltacp;
+  double user_input_dm12sq = input_dm12sq;
+  double user_input_dm23sq = input_dm23sq;
+
   // loop over toy-MC experiments
   for(int iexperiment = 0; iexperiment < nexperiments; iexperiment++) {
 
      cout << "\n\n *** Pseudo-experiment = " << iexperiment << endl;
 
      // randomize specified osc params for current toy MC expt
-     if (input_sinsq2theta12 < 0) { input_sinsq2theta12 = util::RandomizeSinsq2Theta12(); }
-     if (input_sinsq2theta13 < 0) { input_sinsq2theta13 = util::RandomizeSinsq2Theta13(); }
-     if (input_deltacp       < 0) { input_deltacp       = util::RandomizeDeltaCP();       }
-     if (input_dm12sq        < 0) { input_dm12sq        = util::RandomizeDm12sq();        }
+     if ( randomize_once ) {
+       if (input_sinsq2theta12 < 0) { input_sinsq2theta12 = util::RandomizeSinsq2Theta12(); }
+       if (input_sinsq2theta13 < 0) { input_sinsq2theta13 = util::RandomizeSinsq2Theta13(); }
+       if (input_deltacp       < 0) { input_deltacp       = util::RandomizeDeltaCP();       }
+       if (input_dm12sq        < 0) { input_dm12sq        = util::RandomizeDm12sq();        }
+     }
+     else {
+       if (user_input_sinsq2theta12 < 0) { input_sinsq2theta12 = util::RandomizeSinsq2Theta12(); }
+       if (user_input_sinsq2theta13 < 0) { input_sinsq2theta13 = util::RandomizeSinsq2Theta13(); }
+       if (user_input_deltacp       < 0) { input_deltacp       = util::RandomizeDeltaCP();       }
+       if (user_input_dm12sq        < 0) { input_dm12sq        = util::RandomizeDm12sq();        }
+     }
 
      // set oscillation parameter inputs as necessary (used to generate toy-MC expt)
      if(hyp == conv::kHypOsc3F) {
@@ -129,6 +146,16 @@ void test_n_mock_data_fits(
      NuMuDisappFitter * fitter = new NuMuDisappFitter(fit_inputs,fitter_name);
      fitter->ActualOscParams(input_sinsq2theta23, input_dm23sq);
 
+     double true_chisq = fit_inputs->Chisquare();
+     cout << "True-fit:"
+	  << " sinsq2theta12 = "  << input_sinsq2theta12
+	  << ", sinsq2theta13 = " << input_sinsq2theta13
+	  << ", sinsq2theta23 = " << input_sinsq2theta23
+	  << ", delta_cp = " << input_deltacp      
+	  << ", Dm12^2 = "   << input_dm12sq << " eV^2/c^4"
+	  << ", |Dm23^2| = " << input_dm23sq << " eV^2/c^4"
+	  << " ==> chisq = " << true_chisq << endl;
+
      // do the fit
      fitter->DoTheFit();
      int fitstatus = fitter->FitStatusCode();
@@ -163,7 +190,9 @@ void test_n_mock_data_fits(
      // store best-fit values
      nfitnt->Fill(iexperiment, 
                   bestfit_sinsq2theta12, bestfit_sinsq2theta13, bestfit_sinsq2theta23, 
-                  bestfit_deltacp, bestfit_dm12sq, bestfit_dm23sq, bestfit_chisq, fitstatus);
+                  bestfit_deltacp, bestfit_dm12sq, bestfit_dm23sq, bestfit_chisq, fitstatus,
+		  input_sinsq2theta12, input_sinsq2theta13, input_sinsq2theta23, 
+                  input_deltacp, input_dm12sq, input_dm23sq);
 
      // store toy-MC expt (if asked)
      if(store_toy_expts) {
