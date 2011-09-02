@@ -116,11 +116,19 @@ void test_n_mock_data_fits(
        fparm->Update(t2kana::conv::kPhypDeltaCP,       input_deltacp);
        fparm->Update(t2kana::conv::kPhypDm12sq,        input_dm12sq);
        fparm->Update(t2kana::conv::kPhypDm23sq,        input_dm23sq);
+       fparm->SetInitValue(t2kana::conv::kPhypSinsq2Theta12, input_sinsq2theta12);
+       fparm->SetInitValue(t2kana::conv::kPhypSinsq2Theta13, input_sinsq2theta13);
+       fparm->SetInitValue(t2kana::conv::kPhypSinsq2Theta23, input_sinsq2theta23);
+       fparm->SetInitValue(t2kana::conv::kPhypDeltaCP,       input_deltacp);
+       fparm->SetInitValue(t2kana::conv::kPhypDm12sq,        input_dm12sq);
+       fparm->SetInitValue(t2kana::conv::kPhypDm23sq,        input_dm23sq);
      }
      else
      if(hyp == conv::kHypNuMuDisapp2F) {
        fparm->Update(t2kana::conv::kPhypSinsq2Theta23, input_sinsq2theta23);
        fparm->Update(t2kana::conv::kPhypDm23sq,        input_dm23sq);
+       fparm->SetInitValue(t2kana::conv::kPhypSinsq2Theta23, input_sinsq2theta23);
+       fparm->SetInitValue(t2kana::conv::kPhypDm23sq,        input_dm23sq);
      }
 
      //
