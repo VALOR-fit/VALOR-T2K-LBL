@@ -17,6 +17,7 @@
 #  --store-bestfit-spectra  : Store the best-fit spectra? Default: No, only best-fit values are stored.
 #  --dm23sq                 : Value of Dm^2_{23} for toy MC expts. Default: 2.32E-3 eV^2.
 #  --sinsq2theta23          : Value of sin^2(2theta_{23} for toy MC expts. Default: 1.
+#  --randomize-once         : Randomize the non-23 parameters only once per file? Default: randomize once per toy expt.
 #  --fit-param-list         : Fit patameter list. Default: numudisapp2f. See FitParamList.h for allowed options.
 #  --fitter                 : Which fitter to use. Default: minuit.
 #  --job-dir                : Directory for job scripts and outputs. Default: `pwd`.
@@ -43,6 +44,7 @@ foreach (@ARGV) {
   if($_ eq '--store-bestfit-spectra'  ) { $store_bestfit_spectra = 1;              }
   if($_ eq '--dm23sq'                 ) { $dm23sq                = $ARGV[$iarg+1]; }
   if($_ eq '--sinsq2theta23'          ) { $sinsq2theta23         = $ARGV[$iarg+1]; }
+  if($_ eq '--randomize-once'         ) { $randomize_once        = 1;              }
   if($_ eq '--fit-param-list'         ) { $fitparamlist          = $ARGV[$iarg+1]; }
   if($_ eq '--fitter'                 ) { $fitter                = $ARGV[$iarg+1]; }
   if($_ eq '--job-dir'                ) { $job_dir               = $ARGV[$iarg+1]; }
@@ -52,6 +54,7 @@ foreach (@ARGV) {
 }
 $dm23sq                 = 0.00232                       unless defined $dm23sq; 
 $sinsq2theta23          = 1                             unless defined $sinsq2theta23;
+$randomize_once         = 0                             unless defined $randomize_once;
 $resource               = "interactive"                 unless defined $resource;
 $nruns                  = 1                             unless defined $nruns;
 $nexpts                 = 1000                          unless defined $nexpts;
@@ -81,7 +84,7 @@ $mo = -1;
 $irun = 0;
 while($irun < $nruns) {
   print "Submitting run: $irun \n";
-  $command = "root2k -l -b -q \'$softw_dir/macros/fit/test_n_mock_data_fits.C(\"$tag\",$irun,$nexpts,$mo,$mo,$sinsq2theta23,$mo,$mo,$dm23sq,\"$fitparamlist\",\"$fitter\",$stat_fluctuation,$systematics,$store_chisq_surf,$store_toy_expts,$store_bestfit_spectra,\"$config_file\")\'";
+  $command = "root2k -l -b -q \'$softw_dir/macros/fit/test_n_mock_data_fits.C(\"$tag\",$irun,$nexpts,$mo,$mo,$sinsq2theta23,$mo,$mo,$dm23sq,\"$fitparamlist\",\"$fitter\",$stat_fluctuation,$systematics,$store_chisq_surf,$store_toy_expts,$store_bestfit_spectra,\"$config_file\",$randomize_once)\'";
   print "$command \n";
 
   #
