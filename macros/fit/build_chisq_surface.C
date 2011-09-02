@@ -10,7 +10,10 @@
 
 #include "Conventions.h"
 using namespace t2kana;
+
 FitInputs & makeFitInputs(
+  const char * fit_param_list          = "nuosc3f_numudisapp_marginalize",/* fit parameter list for the given physics hypothesis (see run_fitter.C) */
+  bool         calculatebestfit        = true,                            /* if true, calculate best fit */
   bool         usexml                  = false,                           /* if true, read xml file, otherwise make toy expts*/
   double       input_sinsq2theta12     = 0.86,                            /* if -1 then randomize */
   double       input_sinsq2theta13     = 0.10,                            /* if -1 then randomize */
@@ -20,7 +23,6 @@ FitInputs & makeFitInputs(
   double       input_dm23sq            = 2.32E-3,                         /* */
   int          dataset_id              = 0,                               /* number in <data_set_%d> XML tag, see inputs/data.xml */
   const char * data_file               = "inputs/data.xml",               /* input SK data */
-  const char * fit_param_list          = "nuosc3f_numudisapp_marginalize",/* fit parameter list for the given physics hypothesis (see run_fitter.C) */
   const char * fitter_name             = "minuit",                        /* fitter name (see run_fitter.C) */
   bool         fluctuate_stat          = true,                            /* include statistical fluctuations? */
   bool         include_systematics     = false,                           /* include systematic variation in generated toy MC expt? */
@@ -77,41 +79,10 @@ FitInputs & makeFitInputs(
 
   // get fitter
   FitInputs * fit_inputs = new FitInputs(skobs,skexp,fparam);
-  NuMuDisappFitter * fitter = new NuMuDisappFitter(fit_inputs,fitter_name);
-  fitter->ActualOscParams(input_sinsq2theta23, input_dm23sq);
 
   // get specified fit parameter list & build fit inputs
-  FitParamList * fparam = FitParamList::NamedParameterList(fit_param_list);
-  FitInputs * fit_inputs = new FitInputs(skobs,skexp,fparam);
-
-  return *fit_inputs;
-}
-
-
-void build_chisq_surface(
- 		  const char * tag                     = "chisq_surface",                    /* */
- 		  double       sinsq2theta_min_bin     = 81,                               /*4 variables to define the size of the chisq surface you want to build*/
- 		  double       sinsq2theta_max_bin     = 101,                              /* */
- 		  double       dmsq_min_bin            = 11,                               /* */
- 		  double       dmsq_max_bin            = 29,                               /* */
- 		  const char * fit_param_list          = "nuosc3f_numudisapp_marginalize", /* fit parameter list for the given physics hypothesis (see run_fitter.C) */
- 		  const char * fitter_name             = "minuit",                         /* fitter name (see run_fitter.C) */
- 		  const char * config_file             = "analysis_configuration.xml"      /* analysis configuration file */
-		  ) 
-{
-  using namespace std;
-  using namespace t2kana;
-  using namespace t2kana::conv;
-  
-  // get the fit inputs and fitter
-  FitInputs         * fit_inputs = 0;
-  fit_inputs = makeFitInputs();
-  FitParamList      * fparam      = 0;
-  fparam      = fit_inputs->FitParams();
-  SuperkExpectation * skexp      = 0;
-  skexp      = fit_inputs->Expectation();
-  SuperkObservation * skobs      = 0;
-  skobs      = fit_inputs->Observation();
+//   FitParamList * fparam = FitParamList::NamedParameterList(fit_param_list);
+//   FitInputs * fit_inputs = new FitInputs(skobs,skexp,fparam);
 
   if(calculatebestfit) {
     // get the fitter
@@ -129,13 +100,14 @@ void build_chisq_surface(
     double bestfit_dm12sq        = -1;
     double bestfit_dm23sq        = -1;
     double bestfit_chisq         = -1;
+    conv::PhysHypothesis_t hyp = fparam->PhysicsHypothesis();
     if(hyp == conv::kHypOsc3F) {
-      bestfit_sinsq2theta12 = fparm->CurrValue(t2kana::conv::kPhypSinsq2Theta12);
-      bestfit_sinsq2theta13 = fparm->CurrValue(t2kana::conv::kPhypSinsq2Theta13);
-      bestfit_sinsq2theta23 = fparm->CurrValue(t2kana::conv::kPhypSinsq2Theta23);
-      bestfit_deltacp       = fparm->CurrValue(t2kana::conv::kPhypDeltaCP);
-      bestfit_dm12sq        = fparm->CurrValue(t2kana::conv::kPhypDm12sq);
-      bestfit_dm23sq        = fparm->CurrValue(t2kana::conv::kPhypDm23sq);
+      bestfit_sinsq2theta12 = fparam->CurrValue(t2kana::conv::kPhypSinsq2Theta12);
+      bestfit_sinsq2theta13 = fparam->CurrValue(t2kana::conv::kPhypSinsq2Theta13);
+      bestfit_sinsq2theta23 = fparam->CurrValue(t2kana::conv::kPhypSinsq2Theta23);
+      bestfit_deltacp       = fparam->CurrValue(t2kana::conv::kPhypDeltaCP);
+      bestfit_dm12sq        = fparam->CurrValue(t2kana::conv::kPhypDm12sq);
+      bestfit_dm23sq        = fparam->CurrValue(t2kana::conv::kPhypDm23sq);
       cout << "Best-fit:"
 	   << " sinsq2theta12 = "  << bestfit_sinsq2theta12
 	   << ", sinsq2theta13 = " << bestfit_sinsq2theta13
@@ -144,16 +116,48 @@ void build_chisq_surface(
 	   << ", Dm12^2 = "   << bestfit_dm12sq << " eV^2/c^4"
 	   << ", |Dm23^2| = " << bestfit_dm23sq << " eV^2/c^4"
 	   << " ==> chisq = " << bestfit_chisq << endl;
-    } else
-    if(hyp == conv::kHypNuMuDisapp2F) {
-      bestfit_sinsq2theta23 = fparm->CurrValue(t2kana::conv::kPhypSinsq2Theta23);
-      bestfit_dm23sq        = fparm->CurrValue(t2kana::conv::kPhypDm23sq);
+    }//3f?
+    else if(hyp == conv::kHypNuMuDisapp2F) {
+      bestfit_sinsq2theta23 = fparam->CurrValue(t2kana::conv::kPhypSinsq2Theta23);
+      bestfit_dm23sq        = fparam->CurrValue(t2kana::conv::kPhypDm23sq);
       cout << "Best-fit:"
 	   << " sinsq2theta23 = " << bestfit_sinsq2theta23
 	   << ", |Dm23^2| = " << bestfit_dm23sq << " eV^2/c^4"
 	   << " ==> chisq = " << bestfit_chisq << endl;
-    }
+    }//2f?
+  }//calculatebestfit?
 
+
+
+  return *fit_inputs;
+}
+
+
+void build_chisq_surface(
+ 		  const char * tag                     = "chisq_surface",                    /* */
+ 		  double       sinsq2theta_min_bin     = 81,                               /*4 variables to define the size of the chisq surface you want to build*/
+ 		  double       sinsq2theta_max_bin     = 101,                              /* */
+ 		  double       dmsq_min_bin            = 11,                               /* */
+ 		  double       dmsq_max_bin            = 29,                               /* */
+ 		  const char * fit_param_list          = "nuosc3f_numudisapp_marginalize", /* fit parameter list for the given physics hypothesis (see run_fitter.C) */
+		  bool         calculatebestfit        = true,
+ 		  const char * fitter_name             = "minuit",                         /* fitter name (see run_fitter.C) */
+ 		  const char * config_file             = "analysis_configuration.xml"      /* analysis configuration file */
+		  ) 
+{
+  using namespace std;
+  using namespace t2kana;
+  using namespace t2kana::conv;
+  
+  // get the fit inputs and fitter
+  FitInputs         * fit_inputs = 0;
+  fit_inputs = makeFitInputs(fit_param_list);
+  FitParamList      * fparam      = 0;
+  fparam      = fit_inputs->FitParams();
+  SuperkExpectation * skexp      = 0;
+  skexp      = fit_inputs->Expectation();
+  SuperkObservation * skobs      = 0;
+  skobs      = fit_inputs->Observation();
 
   // create file to store results
   TFile f(Form("%s.root",tag), "recreate");
@@ -176,9 +180,10 @@ void build_chisq_surface(
 
   //fix the oscillation parameters of the grid points
   fparam->FixParameter( t2kana::conv::kPhypSinsq2Theta23 );
-  fparam->FixParameter( t2kana::conv::kPhypDm23sq);
+  fparam->FixParameter( t2kana::conv::kPhypDm23sq );
 
   bool needtofit = fparam->GetNumberFreeParameters() > 0;
+  cout << fparam->GetNumberFreeParameters() << " free parameters to fit" << endl;
 
   for(int i = 1; i <= ChisqSurface->GetNbinsX(); i++) {
     bool in_range_theta = (i >= sinsq2theta_min_bin && i <= sinsq2theta_max_bin);
@@ -188,6 +193,8 @@ void build_chisq_surface(
     for(int j = 1; j <= ChisqSurface->GetNbinsY(); j++) {
       bool in_range_dm = (j >= dmsq_min_bin && j <= dmsq_max_bin);
       if(!in_range_dm) continue;
+
+      int fitstatus = 0;
       fparam->Update( t2kana::conv::kPhypSinsq2Theta23, ChisqSurface->GetXaxis()->GetBinCenter(i) );
       fparam->Update( t2kana::conv::kPhypDm23sq, ChisqSurface->GetYaxis()->GetBinCenter(j) );
       if (needtofit) {
@@ -201,10 +208,10 @@ void build_chisq_surface(
 	FitInputs * surfacefit_inputs = new FitInputs(skobs,skexp,fparam);
 	NuMuDisappFitter * surfacefitter = new NuMuDisappFitter(surfacefit_inputs,fitter_name);
 	surfacefitter->DoTheFit();
-	int fitstatus = surfacefitter->FitStatusCode(), refitcount = 0;
+	fitstatus = surfacefitter->FitStatusCode(), refitcount = 0;
 
 	//refit if we need to
-	while( fitstatus!=3 && refitcount<10) {
+	while( fitstatus!=3 && refitcount<10 ) {
 	  cout << "______________refitting____________" << endl;
 	  fparam->SetInitValue( t2kana::conv::kPhypSinsq2Theta13, util::RandomizeSinsq2Theta13() );
 	  fparam->SetInitValue( t2kana::conv::kPhypSinsq2Theta12, util::RandomizeSinsq2Theta12() );
@@ -219,14 +226,18 @@ void build_chisq_surface(
 	  refitcount++;
 	}//refitting loop
       }//needtofit?
+      else
+	fitstatus = 3;
 
       double chisq = fit_inputs->Chisquare();
       if(fitstatus!=3)
 	cout << "Fit failure " << fitstatus << "for sin:dm = " << ChisqSurface->GetXaxis()->GetBinCenter(i) << ":" 
 	     << ChisqSurface->GetYaxis()->GetBinCenter(i) << endl;
       ChisqSurface->SetBinContent(i,j,chisq);
-      delete surfacefit_inputs;
-      delete surfacefitter;
+      if(needtofit) {
+	delete surfacefit_inputs;
+	delete surfacefitter;
+      }//needtofit?
     }//j
   }//i
 
