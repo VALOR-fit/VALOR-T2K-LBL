@@ -127,8 +127,6 @@ FitInputs & makeFitInputs(
     }//2f?
   }//calculatebestfit?
 
-
-
   return *fit_inputs;
 }
 
@@ -151,7 +149,7 @@ void build_chisq_surface(
   
   // get the fit inputs and fitter
   FitInputs         * fit_inputs = 0;
-  fit_inputs = makeFitInputs(fit_param_list);
+  fit_inputs = makeFitInputs(fit_param_list, calculatebestfit);
   FitParamList      * fparam      = 0;
   fparam      = fit_inputs->FitParams();
   SuperkExpectation * skexp      = 0;
@@ -185,6 +183,22 @@ void build_chisq_surface(
   bool needtofit = fparam->GetNumberFreeParameters() > 0;
   cout << fparam->GetNumberFreeParameters() << " free parameters to fit" << endl;
 
+  double bestfit_sinsq2theta12 = -1;
+  double bestfit_sinsq2theta13 = -1;
+  double bestfit_sinsq2theta23 = -1;
+  double bestfit_deltacp       = -1;
+  double bestfit_dm12sq        = -1;
+  double bestfit_dm23sq        = -1;
+  double bestfit_chisq         = -1;
+  if( calculatebestfit) {
+    bestfit_sinsq2theta12 = fparam->CurrValue(t2kana::conv::kPhypSinsq2Theta12);
+    bestfit_sinsq2theta13 = fparam->CurrValue(t2kana::conv::kPhypSinsq2Theta13);
+    bestfit_sinsq2theta23 = fparam->CurrValue(t2kana::conv::kPhypSinsq2Theta23);
+    bestfit_deltacp       = fparam->CurrValue(t2kana::conv::kPhypDeltaCP);
+    bestfit_dm12sq        = fparam->CurrValue(t2kana::conv::kPhypDm12sq);
+    bestfit_dm23sq        = fparam->CurrValue(t2kana::conv::kPhypDm23sq);
+  }
+
   for(int i = 1; i <= ChisqSurface->GetNbinsX(); i++) {
     bool in_range_theta = (i >= sinsq2theta_min_bin && i <= sinsq2theta_max_bin);
     if(!in_range_theta) continue;
@@ -200,15 +214,24 @@ void build_chisq_surface(
       if (needtofit) {
 	fparam->SetInitValue( conv::kPhypSinsq2Theta23, ChisqSurface->GetXaxis()->GetBinCenter(i) );
 	fparam->SetInitValue( conv::kPhypDm23sq, ChisqSurface->GetYaxis()->GetBinCenter(j) );
-	fparam->SetInitValue( t2kana::conv::kPhypSinsq2Theta13, bestfit_sinsq2theta13);
-	fparam->SetInitValue( t2kana::conv::kPhypSinsq2Theta12, bestfit_sinsq2theta12);
-	fparam->SetInitValue( t2kana::conv::kPhypDeltaCP, bestfit_deltacp);
-	fparam->SetInitValue( t2kana::conv::kPhypDm12sq, bestfit_dm23sq);
+	if ( calculatebestfit ) {
+	  fparam->SetInitValue( t2kana::conv::kPhypSinsq2Theta13, bestfit_sinsq2theta13);
+	  fparam->SetInitValue( t2kana::conv::kPhypSinsq2Theta12, bestfit_sinsq2theta12);
+	  fparam->SetInitValue( t2kana::conv::kPhypDeltaCP, bestfit_deltacp);
+	  fparam->SetInitValue( t2kana::conv::kPhypDm12sq, bestfit_dm12sq);
+	}
+	else {
+	  fparam->SetInitValue( t2kana::conv::kPhypSinsq2Theta13, util::RandomizeSinsq2Theta13() );
+	  fparam->SetInitValue( t2kana::conv::kPhypSinsq2Theta12, util::RandomizeSinsq2Theta12() );
+	  fparam->SetInitValue( t2kana::conv::kPhypDeltaCP, util::RandomizeDeltaCP() );
+	  fparam->SetInitValue( t2kana::conv::kPhypDm12sq, util::RandomizeDm12sq() );
+	}
 
 	FitInputs * surfacefit_inputs = new FitInputs(skobs,skexp,fparam);
 	NuMuDisappFitter * surfacefitter = new NuMuDisappFitter(surfacefit_inputs,fitter_name);
 	surfacefitter->DoTheFit();
-	fitstatus = surfacefitter->FitStatusCode(), refitcount = 0;
+	fitstatus = surfacefitter->FitStatusCode();
+	int refitcount = 0;
 
 	//refit if we need to
 	while( fitstatus!=3 && refitcount<10 ) {
