@@ -553,7 +553,7 @@ double NuOsc3Flavour::CalcMatterOscProb(int nu_start, int nu_end, double energy)
   double eigenvalueSum = eigenvalues[0] + eigenvalues[1] + eigenvalues[2];
   double trace = UMassUdagger[0][0][re] + UMassUdagger[1][1][re] + UMassUdagger[2][2][re];
 
-  if(fabs((eigenvalueSum - trace) / trace) > 1.0e-3)
+  if(fabs((eigenvalueSum - trace) / trace) > 1.0e-4)
     {
     cerr<<"Warning in NuOsc3Flavour::CalcMatterOscProb() : eigenvalues may not be correct."<<endl;
     cerr<<"Fractional difference of sum of eigenvalues and trace of matrix is "
