@@ -555,8 +555,7 @@ double NuOsc3Flavour::CalcMatterOscProb(int nu_start, int nu_end, double energy)
 
   if(fabs((eigenvalueSum - trace) / trace) > 1.0e-4)
     {
-    cerr<<"Warning in NuOsc3Flavour::CalcMatterOscProb() : eigenvalues may not be correct."<<endl;
-    cerr<<"Fractional difference of sum of eigenvalues and trace of matrix is "
+    cerr<<"Warning in NuOsc3Flavour::CalcMatterOscProb() : fractional difference between sum of eigenvalues and trace of matrix = "
 	<<fabs((eigenvalueSum - trace) / trace)<<"."<<endl;
     }
 
@@ -660,13 +659,13 @@ double NuOsc3Flavour::CalcMatterOscProb(int nu_start, int nu_end, double energy)
    {
    if(fabs(eigenvectorCheck[i][re]) > 1.0e-8)
      {
-     cerr<<"Warning in NuOsc3Flavour::CalcMatterOscProb() : eigenvector may not be correct."<<endl;
-     cerr<<"Real part of check is "<<eigenvectorCheck[i][re]<<"."<<endl;
+     cerr<<"Warning in NuOsc3Flavour::CalcMatterOscProb() : real part of eigenvector check = "
+         <<eigenvectorCheck[i][re]<<"."<<endl;
      }
    if(fabs(eigenvectorCheck[i][im]) > 1.0e-8)
      {
-     cerr<<"Warning in NuOsc3Flavour::CalcMatterOscProb() : eigenvector may not be correct."<<endl;
-     cerr<<"Imaginary part of check is "<<eigenvectorCheck[i][im]<<"."<<endl;
+     cerr<<"Warning in NuOsc3Flavour::CalcMatterOscProb() : imaginary part of eigenvector check = "
+         <<eigenvectorCheck[i][im]<<"."<<endl;
      }
    }//end of for(int i=0; i<3; i++)
 
@@ -706,13 +705,13 @@ double NuOsc3Flavour::CalcMatterOscProb(int nu_start, int nu_end, double energy)
    {
    if(fabs(scalarProduct[i][re]) > 1.0e-4)
      {
-     cerr<<"Warning in NuOsc3Flavour::CalcMatterOscProb() : eigenvectors may not be orthogonal."<<endl;
-     cerr<<"Real part of scalar product is "<<scalarProduct[i][re]<<"."<<endl;
+     cerr<<"Warning in NuOsc3Flavour::CalcMatterOscProb() : in eigenvector orthogonality check, real part of scalar product = "
+         <<scalarProduct[i][re]<<"."<<endl;
      }        
    if(fabs(scalarProduct[i][im]) > 1.0e-4)
      {
-     cerr<<"Warning in NuOsc3Flavour::CalcMatterOscProb() : eigenvectors may not be orthogonal."<<endl;
-     cerr<<"Imaginary part of scalar product is "<<scalarProduct[i][im]<<"."<<endl;
+     cerr<<"Warning in NuOsc3Flavour::CalcMatterOscProb() : in eigenvector orthogonality check, imaginary part of scalar product = "
+         <<scalarProduct[i][im]<<"."<<endl;
      }
    }//end of for(int i=0; i<3; i++)
 
@@ -760,26 +759,26 @@ double NuOsc3Flavour::CalcMatterOscProb(int nu_start, int nu_end, double energy)
        {
        if(fabs(inverseCheck[i][j][re] - 1.0) > 1.0e-4)
 	 {
-         cerr<<"Warning in NuOsc3Flavour::CalcMatterOscProb() : Hermitian conjugate of matter mixing matrix may not be its inverse."<<endl;
-         cerr<<"Real part of diagonal element of product - 1.0 = "<<fabs(inverseCheck[i][j][re] - 1.0)<<"."<<endl;
+         cerr<<"Warning in NuOsc3Flavour::CalcMatterOscProb() : in product of matter mixing matrix and its Hermitian conjugate, real part of diagonal element - 1.0 = "
+             <<fabs(inverseCheck[i][j][re] - 1.0)<<"."<<endl;
 	 }
        if(fabs(inverseCheck[i][j][im]) > 1.0e-4)
 	 {
-         cerr<<"Warning in NuOsc3Flavour::CalcMatterOscProb() : Hermitian conjugate of matter mixing matrix may not be its inverse."<<endl;
-         cerr<<"Imaginary part of diagonal element of product = "<<inverseCheck[i][j][im]<<"."<<endl;
+         cerr<<"Warning in NuOsc3Flavour::CalcMatterOscProb() : in product of matter mixing matrix and its Hermitian conjugate, imaginary part of diagonal element = "
+             <<inverseCheck[i][j][im]<<"."<<endl;
 	 }      
        }
      else
        {
        if(fabs(inverseCheck[i][j][re]) > 1.0e-4)
 	 {
-         cerr<<"Warning in NuOsc3Flavour::CalcMatterOscProb() : Hermitian conjugate of matter mixing matrix may not be its inverse."<<endl;
-         cerr<<"Real part of off-diagonal element of product = "<<inverseCheck[i][j][re]<<"."<<endl;
+         cerr<<"Warning in NuOsc3Flavour::CalcMatterOscProb() : in product of matter mixing matrix and its Hermitian conjugate, real part of off-diagonal element = "
+             <<inverseCheck[i][j][re]<<"."<<endl;
 	 }
        if(fabs(inverseCheck[i][j][im]) > 1.0e-4)
 	 {
-         cerr<<"Warning in NuOsc3Flavour::CalcMatterOscProb() : Hermitian conjugate of matter mixing matrix may not be its inverse."<<endl; 
-         cerr<<"Imaginary part of off-diagonal element of product = "<<inverseCheck[i][j][im]<<"."<<endl;
+         cerr<<"Warning in NuOsc3Flavour::CalcMatterOscProb() : in product of matter mixing matrix and its Hermitian conjugate, imaginary part of off-diagonal element = "
+             <<inverseCheck[i][j][im]<<"."<<endl;
 	 }              
        }  
      }//end of for(int j=0; j<3; j++)
