@@ -9,7 +9,7 @@
 
 #include "Conventions.h"
 
-void test_sk_ereco_spectrum_twk_bnorm
+void test_sk_ereco_spectrum_twk_beam_norm
 (
   const char * hypothesis              = "3f_osc",                       /* options: "2f_numu_disap", "3f_osc" */
   double       input_sinsq2theta12     = 0.86,                           /* */
