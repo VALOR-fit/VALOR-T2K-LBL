@@ -9,7 +9,7 @@
 #include <iomanip.h>
 #include "Conventions.h"
 
-void test_superk_spectrum_prediction_contributions
+void test_sk_ereco_spectrum_nominal
 (
   const char * hypothesis              = "3f_osc",                       /* options: "2f_numu_disap", "3f_osc" */
   double       input_sinsq2theta12     = 0.86,                           /* */

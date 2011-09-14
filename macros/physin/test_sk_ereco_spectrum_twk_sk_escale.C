@@ -1,7 +1,7 @@
 //
 // ------------------------------------------------------------------------------------------------
-// Plot predicted SuperK reconstructed neutrino energy spectrum for various flux normalization
-// tweaking dials.
+// Plot predicted SuperK reconstructed neutrino energy spectrum for various sets of SuperK
+// energy scale variations.
 //
 // Costas Andreopoulos
 // ------------------------------------------------------------------------------------------------
@@ -9,7 +9,7 @@
 
 #include "Conventions.h"
 
-void test_superk_spectrum_prediction_twk_bnorm
+void test_sk_ereco_spectrum_twk_sk_escale
 (
   const char * hypothesis              = "3f_osc",                       /* options: "2f_numu_disap", "3f_osc" */
   double       input_sinsq2theta12     = 0.86,                           /* */
@@ -34,10 +34,6 @@ void test_superk_spectrum_prediction_twk_bnorm
   int hcolor [ntwkdials] = { kBlue,   kBlack,  kRed   };
   int hstyle [ntwkdials] = { kDashed, kSolid, kDashed };
 
-  // histogram booking
-  TH1D * hEreco   [ntwkdials];
-  TH1D * hErecoErr[ntwkdials];
-
   // set physics hypothesis
   PhysHypothesis ph(hypothesis);
   if(ph.Hypothesis() == conv::kHypNuMuDisapp2F) {
@@ -60,39 +56,35 @@ void test_superk_spectrum_prediction_twk_bnorm
   cout << "Reading analysis configuration from: " << config << endl;
   SuperkExpectation skexp;
   skexp.Read(config);
-
+  
+  // calc spectra
+  TH1D * hEreco[ntwkdials];
   for(int idial = 0; idial < ntwkdials; idial++) {
-
      // tweak spectrum generation model
-     cout << " ** Beam norm tweaking dial = " << twkdial[idial] << endl;
-     skexp.GetNuFlux()->TweakNorm( twkdial[idial] );
-
-     // generate prediction
+     skexp.GetSuperkMC()->TweakEnergyScale( twkdial[idial] );
+     // generate predictions
      skexp.Generate(ph);
-
      // store spectrum
      hEreco[idial] = new TH1D(*skexp.CurrPredictedErecoSpectrum(conv::kSKsFCFV1RingMuLike));
      hEreco[idial]->SetDirectory(0);
   }//idial
-
   // get fractional err
   double maxerrpos = -1.;
   double maxerrneg = +1.;
+  TH1D * hErecoErr[ntwkdials];
   for(int idial = 0; idial < ntwkdials; idial++) {
-     hErecoErr[idial] = new TH1D("","",conv::kNvErecoBins,conv::kNvErecoBinEdges);
-     hErecoErr[idial]->SetDirectory(0);
-  }
-  for(int idial = 0; idial < ntwkdials; idial++) {
-       for(int ibin=1; ibin <= conv::kNvErecoBins; ibin++) {
-         double ncurr  = hEreco[idial]->GetBinContent(ibin);
-         double ndeflt = hEreco[deflt]->GetBinContent(ibin);
-         if(ndeflt>0) {
-           double err = (ncurr-ndeflt)/ndeflt;
-           maxerrpos = TMath::Max(maxerrpos, err);
-           maxerrneg = TMath::Min(maxerrneg, err);
-           hErecoErr[idial]->SetBinContent(ibin, (ncurr-ndeflt)/ndeflt);
-         }
-       }//ibin
+    hErecoErr[idial] = new TH1D("","",conv::kNvErecoBins,conv::kNvErecoBinEdges);
+    hErecoErr[idial]->SetDirectory(0);
+    for(int ibin=1; ibin <= conv::kNvErecoBins; ibin++) {
+      double ncurr  = hEreco[idial]->GetBinContent(ibin);
+      double ndeflt = hEreco[deflt]->GetBinContent(ibin);
+      if(ndeflt>0) {
+        double err = (ncurr-ndeflt)/ndeflt;
+        maxerrpos = TMath::Max(maxerrpos, err);
+        maxerrneg = TMath::Min(maxerrneg, err);          
+        hErecoErr[idial]->SetBinContent(ibin, (ncurr-ndeflt)/ndeflt);
+      }
+    }//ibin
   }//idial
 
   //
@@ -113,7 +105,7 @@ void test_superk_spectrum_prediction_twk_bnorm
   TLegend * legend = new TLegend(0.3, 0.7, 0.85, 0.9);
   legend->SetFillColor(0);
   legend->SetBorderSize(0);
-  legend->SetHeader("Beam normalization");
+  legend->SetHeader("SuperK energy scale");
   for(int idial = 0; idial < ntwkdials; idial++) {
     const char * opt   = (idial==0) ? "" : "same";
     const char * label = Form("Tweaking dial = %.2f", twkdial[idial]);
@@ -128,20 +120,20 @@ void test_superk_spectrum_prediction_twk_bnorm
   legend->Draw();
   c->cd(2);
   TH1F * hframe = (TH1F*) c->GetPad(2)->DrawFrame(
-       0., 1.2*maxerrneg, hErecoErr[deflt]->GetXaxis()->GetXmax(), 1.2*maxerrpos);
-    hframe->GetXaxis()->SetTitle("E_{reco} (GeV)");
-    hframe->GetYaxis()->SetTitle("Fractional variation");
-    hframe->Draw();
-    for(int idial = 0; idial < ntwkdials; idial++) {
-      if(idial==deflt) continue;
-      hErecoErr[idial]->Draw("same");
+     0., 1.2*maxerrneg, hErecoErr[deflt]->GetXaxis()->GetXmax(), 1.2*maxerrpos);
+  hframe->GetXaxis()->SetTitle("E_{reco} (GeV)");
+  hframe->GetYaxis()->SetTitle("Fractional variation");
+  hframe->Draw();
+  for(int idial = 0; idial < ntwkdials; idial++) {
+    if(idial==deflt) continue;
+    hErecoErr[idial]->Draw("same");
   }
   c->Update();
 
   // write-out in file
   string oscparams = util::AsString(hypothesis,
      input_sinsq2theta12,input_sinsq2theta13,input_sinsq2theta23,input_deltacp,input_dm12sq,input_dm23sq);
-  TFile f(Form("sk_ereco_spectrum-twk_beam_norm-%s.root",oscparams.c_str()),"recreate");
+  TFile f(Form("sk_ereco_spectrum-twk_sk_escale-%s.root",oscparams.c_str()),"recreate");
   for(int idial = 0; idial < ntwkdials; idial++) {
      const char * dial = "";
      if( TMath::Abs(twkdial[idial]-1.0) < conv::kASmallNum ) dial="plus_one_sigma";
@@ -149,7 +141,7 @@ void test_superk_spectrum_prediction_twk_bnorm
      if( TMath::Abs(twkdial[idial]    ) < conv::kASmallNum ) dial="nominal";
      if( TMath::Abs(twkdial[idial]+1.0) < conv::kASmallNum ) dial="minus_one_sigma";
      if( TMath::Abs(twkdial[idial]+0.5) < conv::kASmallNum ) dial="minus_half_sigma";
-     const char * title = Form("sk_ereco_spectrum_twk_beam_norm_%s",dial);
+     const char * title = Form("sk_ereco_spectrum_twk_sk_energy_scale_%s",dial);
      hEreco[idial]->Write(title);
   }
   f.Close();

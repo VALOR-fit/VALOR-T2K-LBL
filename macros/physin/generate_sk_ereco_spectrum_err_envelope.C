@@ -8,7 +8,7 @@
 
 #include "Conventions.h"
 
-void test_superk_spectrum_prediction_err_envelope
+void generate_sk_ereco_spectrum_err_envelope
 (
   double       input_sinsq2theta23 = 1.0,
   double       input_dm23sq        = 2.32E-3,

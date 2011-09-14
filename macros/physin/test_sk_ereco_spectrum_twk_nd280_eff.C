@@ -9,7 +9,7 @@
 
 #include "Conventions.h"
 
-void test_superk_spectrum_prediction_twk_nd280eff
+void test_sk_ereco_spectrum_twk_nd280_eff
 (
   const char * hypothesis              = "3f_osc",                       /* options: "2f_numu_disap", "3f_osc" */
   double       input_sinsq2theta12     = 0.86,                           /* */

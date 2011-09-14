@@ -33,7 +33,7 @@
 
 #include "Conventions.h"
 
-void test_systematic_errors
+void test_systematic_error_propagation
 (
   const char * systematic,                                                  /* options: see above */
   const char * hypothesis                 = "3f_osc",                       /* options: "2f_numu_disap", "3f_osc" */
