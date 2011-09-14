@@ -11,19 +11,21 @@
 
 void test_superk_spectrum_prediction_contributions
 (
-  int          nflavours           = 2,                             /* 2 for effective 2-flavour fmwk, 3 for 3-flavour fmwk */
-  double       input_sinsq2theta23 = 1.00,                         
-  double       input_dm23sq        = 2.32E-3,                      
-  const char * config_file         = "analysis_configuration.xml",
-  bool         print               = false
+  const char * hypothesis              = "3f_osc",                       /* options: "2f_numu_disap", "3f_osc" */
+  double       input_sinsq2theta12     = 0.86,                           /* */
+  double       input_sinsq2theta13     = 0.10,                           /* */
+  double       input_sinsq2theta23     = 1.00,                           /* */
+  double       input_deltacp           = 0.00,                           /* */
+  double       input_dm12sq            = 7.58E-5,                        /* */
+  double       input_dm23sq            = 2.32E-3,                        /* */
+  const char * config_file             = "analysis_configuration.xml",   /* */
+  bool         print_spectrum          = false                           /* */
 )
 {
   using namespace std;
   using namespace t2kana;
 
-  const char * config = Form("%s/config/%s", gSystem->Getenv("T2KOSCANA"), config_file);
-  cout << "Reading analysis configuration from: " << config << endl;
-
+  // define list of contributing modes
   const unsigned int nm = 15;
   conv::SuperkMode_t modes [nm] = {
      conv::kSKmNuMuCCQE, 
@@ -47,30 +49,28 @@ void test_superk_spectrum_prediction_contributions
   TH1D * hErecoTot = new TH1D("","",conv::kNvErecoBins,conv::kNvErecoBinEdges);
   TH1D * hErecoMode[nm]; //< contribution from each mode  
 
-  // superk spectrum predictor
+  // set physics hypothesis
+  PhysHypothesis ph(hypothesis);
+  if(ph.Hypothesis() == conv::kHypNuMuDisapp2F) {
+    ph.SetCurrValue(conv::kPhypSinsq2Theta23,  input_sinsq2theta23);
+    ph.SetCurrValue(conv::kPhypDm23sq,         input_dm23sq);
+  } else
+  if(ph.Hypothesis() == conv::kHypOsc3F) {
+    ph.SetCurrValue(conv::kPhypSinsq2Theta12,  input_sinsq2theta12);
+    ph.SetCurrValue(conv::kPhypSinsq2Theta13,  input_sinsq2theta13);
+    ph.SetCurrValue(conv::kPhypSinsq2Theta23,  input_sinsq2theta23);
+    ph.SetCurrValue(conv::kPhypDeltaCP,        input_deltacp);
+    ph.SetCurrValue(conv::kPhypDm12sq,         input_dm12sq);
+    ph.SetCurrValue(conv::kPhypDm23sq,         input_dm23sq);
+  }
+  cout << "Physics hypothesis set: " << endl;
+  cout << ph;
+
+  // create & config superk spectrum predictor
+  const char * config = Form("%s/config/%s", gSystem->Getenv("T2KOSCANA"), config_file);
+  cout << "Reading analysis configuration from: " << config << endl;
   SuperkExpectation skexp;
   skexp.Read(config);
-
-  // set physics hypothesis
-  PhysHypothesis ph;
-  if(nflavours==2) {
-    ph.Init(conv::kHypNuMuDisapp2F);
-    // set input values
-    ph.SetCurrValue(conv::kPhypSinsq2Theta23, input_sinsq2theta23);
-    ph.SetCurrValue(conv::kPhypDm23sq,        input_dm23sq);
-  } else
-  if(nflavours==3) {
-    ph.Init(conv::kHypOsc3F);
-    // set input values
-    ph.SetCurrValue(conv::kPhypDm23sq,         input_dm23sq);
-    ph.SetCurrValue(conv::kPhypSinsq2Theta23,  input_sinsq2theta23);
-    // set standard values for 13 and 12-sector params
-    ph.SetCurrValue(conv::kPhypSinsq2Theta12,  conv::kGlobFitSinsq2Theta12);
-    ph.SetCurrValue(conv::kPhypSinsq2Theta13,  conv::kGlobFitSinsq2Theta13);
-    ph.SetCurrValue(conv::kPhypDm12sq,         conv::kGlobFitDm12sq);
-    ph.SetCurrValue(conv::kPhypDeltaCP,        0.);
-  }
-  cout << ph;
 
   // generate prediction
   skexp.Generate(ph);
@@ -198,8 +198,9 @@ void test_superk_spectrum_prediction_contributions
   //
   // save histograms in a ROOT file
   //
-
-  TFile f(Form("sk_ereco_spectrum_components-sinsq2theta23_%.2f-dm23sq_%.5feV2.root",input_sinsq2theta23,input_dm23sq),"recreate");
+  string oscparams = util::AsString(hypothesis,
+     input_sinsq2theta12,input_sinsq2theta13,input_sinsq2theta23,input_deltacp,input_dm12sq,input_dm23sq);
+  TFile f(Form("sk_ereco_spectrum-%s.root",oscparams.c_str()),"recreate");
   hErecoTot                            -> Write("total");
   hErecoMode[conv::kSKmNuMuCCQE]       -> Write("numu_ccqe");
   hErecoMode[conv::kSKmNuMuCC1pi]      -> Write("numu_cc1pi"); 
@@ -222,7 +223,7 @@ void test_superk_spectrum_prediction_contributions
   // print-out numbers requested during the analysis review
   //
 
-  if(print) {  
+  if(print_spectrum) {  
     int nprec=5;
     cout << fixed;
     for(int ibin = 1; ibin <= hErecoTot->GetXaxis()->GetNbins(); ibin++) {

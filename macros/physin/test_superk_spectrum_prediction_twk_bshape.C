@@ -12,16 +12,18 @@
 
 void test_superk_spectrum_prediction_twk_bshape
 (
-  double       input_sinsq2theta23 = 1.0,
-  double       input_dm23sq        = 2.32E-3,
-  const char * config_file         = "analysis_configuration.xml"
+  const char * hypothesis              = "3f_osc",                       /* options: "2f_numu_disap", "3f_osc" */
+  double       input_sinsq2theta12     = 0.86,                           /* */
+  double       input_sinsq2theta13     = 0.10,                           /* */
+  double       input_sinsq2theta23     = 1.00,                           /* */
+  double       input_deltacp           = 0.00,                           /* */
+  double       input_dm12sq            = 7.58E-5,                        /* */
+  double       input_dm23sq            = 2.32E-3,                        /* */
+  const char * config_file             = "analysis_configuration.xml"    /* */
 )
 {
   using namespace std;
   using namespace t2kana;
-
-  const char * config = Form("%s/config/%s", gSystem->Getenv("T2KOSCANA"), config_file);
-  cout << "Reading analysis configuration from: " << config << endl;
 
   const int nexp       = 1000; // number of 'flux tweaks'
   const int netruebins = 19;   // number of Etrue (variable size) bins in flux covariance matrix
@@ -39,15 +41,29 @@ void test_superk_spectrum_prediction_twk_bshape
   double nev  [nexp];
   double expid[nexp];
 
-  // superk spectrum predictor
+  // set physics hypothesis
+  PhysHypothesis ph(hypothesis);
+  if(ph.Hypothesis() == conv::kHypNuMuDisapp2F) {
+    ph.SetCurrValue(conv::kPhypSinsq2Theta23,  input_sinsq2theta23);
+    ph.SetCurrValue(conv::kPhypDm23sq,         input_dm23sq);
+  } else
+  if(ph.Hypothesis() == conv::kHypOsc3F) {
+    ph.SetCurrValue(conv::kPhypSinsq2Theta12,  input_sinsq2theta12);
+    ph.SetCurrValue(conv::kPhypSinsq2Theta13,  input_sinsq2theta13);
+    ph.SetCurrValue(conv::kPhypSinsq2Theta23,  input_sinsq2theta23);
+    ph.SetCurrValue(conv::kPhypDeltaCP,        input_deltacp);
+    ph.SetCurrValue(conv::kPhypDm12sq,         input_dm12sq);
+    ph.SetCurrValue(conv::kPhypDm23sq,         input_dm23sq);
+  }
+  cout << "Physics hypothesis set: " << endl;
+  cout << ph;
+  
+  // create & config superk spectrum predictor
+  const char * config = Form("%s/config/%s", gSystem->Getenv("T2KOSCANA"), config_file);
+  cout << "Reading analysis configuration from: " << config << endl;
   SuperkExpectation skexp;
   skexp.Read(config);
-
-  // physics hypothesis 
-  PhysHypothesis ph(t2kana::conv::kHypNuMuDisapp2F);
-  ph.SetCurrValue(t2kana::conv::kPhypSinsq2Theta23, input_sinsq2theta23);
-  ph.SetCurrValue(t2kana::conv::kPhypDm23sq,        input_dm23sq);
-
+  
   // generate nexp random spectra
   for(int iexp = 0; iexp < nexp; iexp++) {
      // tweak spectrum generation model
@@ -178,7 +194,9 @@ void test_superk_spectrum_prediction_twk_bshape
   }
   
   // write-out in file
-  TFile f(Form("sk_ereco_spectrum-tweak_beam_shape-sinsq2theta23_%.2f-dm23sq_%.5feV2.root",input_sinsq2theta23,input_dm23sq),"recreate");
+  string oscparams = util::AsString(hypothesis,
+     input_sinsq2theta12,input_sinsq2theta13,input_sinsq2theta23,input_deltacp,input_dm12sq,input_dm23sq);
+  TFile f(Form("sk_ereco_spectrum-twk_beam_shape-%s.root",oscparams.c_str()),"recreate");
   hErecoMax->Write("error_envelope_upper_boundary");
   hErecoMin->Write("error_envelope_lower_boundary");
   for(int iexp = 0; iexp < nexp; iexp++) {

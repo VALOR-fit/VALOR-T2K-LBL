@@ -11,16 +11,18 @@
 
 void test_superk_spectrum_prediction_twk_bnorm
 (
-  double       input_sinsq2theta23 = 1.00,
-  double       input_dm23sq        = 2.32E-3,
-  const char * config_file         = "analysis_configuration.xml"
+  const char * hypothesis              = "3f_osc",                       /* options: "2f_numu_disap", "3f_osc" */
+  double       input_sinsq2theta12     = 0.86,                           /* */
+  double       input_sinsq2theta13     = 0.10,                           /* */
+  double       input_sinsq2theta23     = 1.00,                           /* */
+  double       input_deltacp           = 0.00,                           /* */
+  double       input_dm12sq            = 7.58E-5,                        /* */
+  double       input_dm23sq            = 2.32E-3,                        /* */
+  const char * config_file             = "analysis_configuration.xml"    /* */
 )
 {
   using namespace std;
   using namespace t2kana;
-
-  const char * config = Form("%s/config/%s", gSystem->Getenv("T2KOSCANA"), config_file);
-  cout << "Reading analysis configuration from: " << config << endl;
 
   const int ntwkdials = 3;
   double twkdial[ntwkdials] = { -1.0, 0.0, +1.0 };
@@ -36,14 +38,28 @@ void test_superk_spectrum_prediction_twk_bnorm
   TH1D * hEreco   [ntwkdials];
   TH1D * hErecoErr[ntwkdials];
 
-  // superk spectrum predictor
+  // set physics hypothesis
+  PhysHypothesis ph(hypothesis);
+  if(ph.Hypothesis() == conv::kHypNuMuDisapp2F) {
+    ph.SetCurrValue(conv::kPhypSinsq2Theta23,  input_sinsq2theta23);
+    ph.SetCurrValue(conv::kPhypDm23sq,         input_dm23sq);
+  } else
+  if(ph.Hypothesis() == conv::kHypOsc3F) {
+    ph.SetCurrValue(conv::kPhypSinsq2Theta12,  input_sinsq2theta12);
+    ph.SetCurrValue(conv::kPhypSinsq2Theta13,  input_sinsq2theta13);
+    ph.SetCurrValue(conv::kPhypSinsq2Theta23,  input_sinsq2theta23);
+    ph.SetCurrValue(conv::kPhypDeltaCP,        input_deltacp);
+    ph.SetCurrValue(conv::kPhypDm12sq,         input_dm12sq);
+    ph.SetCurrValue(conv::kPhypDm23sq,         input_dm23sq);
+  }
+  cout << "Physics hypothesis set: " << endl;
+  cout << ph;
+  
+  // create & config superk spectrum predictor
+  const char * config = Form("%s/config/%s", gSystem->Getenv("T2KOSCANA"), config_file);
+  cout << "Reading analysis configuration from: " << config << endl;
   SuperkExpectation skexp;
   skexp.Read(config);
-
-  // physics hypothesis 
-  PhysHypothesis ph(t2kana::conv::kHypNuMuDisapp2F);
-  ph.SetCurrValue(t2kana::conv::kPhypSinsq2Theta23, input_sinsq2theta23);
-  ph.SetCurrValue(t2kana::conv::kPhypDm23sq,        input_dm23sq);
 
   for(int idial = 0; idial < ntwkdials; idial++) {
 
@@ -123,7 +139,9 @@ void test_superk_spectrum_prediction_twk_bnorm
   c->Update();
 
   // write-out in file
-  TFile f(Form("sk_ereco_spectrum-tweak_beam_norm-sinsq2theta23_%.2f-dm23sq_%.5feV2.root",input_sinsq2theta23,input_dm23sq),"recreate");
+  string oscparams = util::AsString(hypothesis,
+     input_sinsq2theta12,input_sinsq2theta13,input_sinsq2theta23,input_deltacp,input_dm12sq,input_dm23sq);
+  TFile f(Form("sk_ereco_spectrum-twk_beam_norm-%s.root",oscparams.c_str()),"recreate");
   for(int idial = 0; idial < ntwkdials; idial++) {
      const char * dial = "";
      if( TMath::Abs(twkdial[idial]-1.0) < conv::kASmallNum ) dial="plus_one_sigma";

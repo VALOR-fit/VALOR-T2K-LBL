@@ -35,45 +35,45 @@
 
 void test_systematic_errors
 (
-  const char * systematic,                                                /* */
-  int          nflavours                  = 2,                            /* 2 for effective 2-flavour fmwk, 3 for 3-flavour fmwk */
-  const double input_sinsq2theta23        = 1.00,                         /* */
-  const double input_dm23sq               = 2.4E-3,                       /* */
-  bool         use_tex                    = false,                        /* print-out results as a TeX table (for inclusion in tech. note)*/
-  bool         show_sk_ccqe_spectral_info = false,                        /* */
-  const char * config_file                = "analysis_configuration.xml"  /* */
+  const char * systematic,                                                  /* options: see above */
+  const char * hypothesis                 = "3f_osc",                       /* options: "2f_numu_disap", "3f_osc" */
+  double       input_sinsq2theta12        = 0.86,                           /* */
+  double       input_sinsq2theta13        = 0.10,                           /* */
+  double       input_sinsq2theta23        = 1.00,                           /* */
+  double       input_deltacp              = 0.00,                           /* */
+  double       input_dm12sq               = 7.58E-5,                        /* */
+  double       input_dm23sq               = 2.32E-3,                        /* */
+  bool         use_tex                    = false,                          /* print-out results as a TeX table (for inclusion in tech. note)*/
+  bool         show_sk_ccqe_spectral_info = false,                          /* */
+  const char * config_file                = "analysis_configuration.xml"    /* */
 )
 {
   using namespace std;
   using namespace t2kana;
 
-  const char * config = Form("%s/config/%s", gSystem->Getenv("T2KOSCANA"), config_file);
-  cout << "Reading analysis configuration from: " << config << endl;
-
   // set physics hypothesis
-  PhysHypothesis ph;
-  if(nflavours==2) {
-    ph.Init(conv::kHypNuMuDisapp2F);
-    // set input values
-    ph.SetCurrValue(conv::kPhypSinsq2Theta23, input_sinsq2theta23);
-    ph.SetCurrValue(conv::kPhypDm23sq,        input_dm23sq);
-  } else
-  if(nflavours==3) {
-    ph.Init(conv::kHypOsc3F);
-    // set input values
-    ph.SetCurrValue(conv::kPhypDm23sq,         input_dm23sq);
+  PhysHypothesis ph(hypothesis);
+  if(ph.Hypothesis() == conv::kHypNuMuDisapp2F) {
     ph.SetCurrValue(conv::kPhypSinsq2Theta23,  input_sinsq2theta23);
-    // set standard values for 13 and 12-sector params
-    ph.SetCurrValue(conv::kPhypSinsq2Theta12,  conv::kGlobFitSinsq2Theta12);
-    ph.SetCurrValue(conv::kPhypSinsq2Theta13,  conv::kGlobFitSinsq2Theta13);
-    ph.SetCurrValue(conv::kPhypDm12sq,         conv::kGlobFitDm12sq);
-    ph.SetCurrValue(conv::kPhypDeltaCP,        0.);
+    ph.SetCurrValue(conv::kPhypDm23sq,         input_dm23sq);
+  } else
+  if(ph.Hypothesis() == conv::kHypOsc3F) {
+    ph.SetCurrValue(conv::kPhypSinsq2Theta12,  input_sinsq2theta12);
+    ph.SetCurrValue(conv::kPhypSinsq2Theta13,  input_sinsq2theta13);
+    ph.SetCurrValue(conv::kPhypSinsq2Theta23,  input_sinsq2theta23);
+    ph.SetCurrValue(conv::kPhypDeltaCP,        input_deltacp);
+    ph.SetCurrValue(conv::kPhypDm12sq,         input_dm12sq);
+    ph.SetCurrValue(conv::kPhypDm23sq,         input_dm23sq);
   }
+  cout << "Physics hypothesis set: " << endl;
   cout << ph;
 
-  // get superk spectrum predictor & configure
+  // create & config superk spectrum predictor
+  const char * config = Form("%s/config/%s", gSystem->Getenv("T2KOSCANA"), config_file);
+  cout << "Reading analysis configuration from: " << config << endl;
   SuperkExpectation * skexp = new SuperkExpectation;
   skexp->Read(config);
+
 
   double alpha = skexp->GetNuXSec()->OnePionInRES();
   cout << "alpha = " << alpha << endl;
