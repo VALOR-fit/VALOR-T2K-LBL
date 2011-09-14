@@ -17,6 +17,10 @@
    in PhysHypothesis(const FitParamList &) ctor so that kHypOsc3F case can be picked.
  @ 27/07/2011 - CA
    Added Print(ostream &) and `<<' operator.
+ @ 14/09/2011 - CA
+   Added PhysHypothesis::PhysHypothesis(string h) constructor so as to simplify some of
+   the test macros.
+
 */
 //________________________________________________________________________________________
 
@@ -48,6 +52,12 @@ namespace t2kana {
 //________________________________________________________________________________________
 PhysHypothesis::PhysHypothesis(PhysHypothesis_t h)
 {
+  this->Init(h);
+}
+//________________________________________________________________________________________
+PhysHypothesis::PhysHypothesis(string sh)
+{
+  PhysHypothesis_t h = util::FromString(sh);
   this->Init(h);
 }
 //________________________________________________________________________________________

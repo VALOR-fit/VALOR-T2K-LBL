@@ -24,6 +24,11 @@
    Took `nue signal' templates into account in AsString(SuperkMode_t m)
    Added bool IsSignalNuE(SuperkMode_t m).
    Included `nue signal' templates in UseEventToFillInTemplate().
+ @ 14/09/11
+   Added `string AsString (string hypothesis, list of osc params)' to simplify
+   formation of output filename in test macros.
+   Added `PhysHypothesis_t FromString(string h)' to simplify running certain
+   test macros.
 */
 //____________________________________________________________________________
 
@@ -461,6 +466,27 @@ double t2kana::util::RandomizeDm12sq(void)
   return rand.Gaus(mean,sigma);
 }
 //____________________________________________________________________________
+string t2kana::util::AsString (
+  string hypothesis, 
+  double sinsq2theta12, double sinsq2theta13, double sinsq2theta23, 
+  double deltacp, double dm12sq, double dm23sq)
+{
+//
+  string s = "?";
+
+  if( t2kana::util::FromString(hypothesis) == t2kana::conv::kHypNuMuDisapp2F )
+  {
+    s = Form("sinsq2theta23_%.3f,dm23sq_%.5feV2",sinsq2theta23,dm23sq);
+  }
+  if( t2kana::util::FromString(hypothesis) == t2kana::conv::kHypOsc3F )
+  {
+    s = Form("sinsq2theta[12_%.3f,13_%.3f,23_%.3f],dcp_%.3f,dmsq[12_%.8f,23_%.6f]eV2",
+       sinsq2theta12, sinsq2theta13, sinsq2theta23, deltacp, dm12sq, dm23sq);
+  }
+
+  return s;
+}
+//____________________________________________________________________________
 string t2kana::util::AsString(t2kana::conv::PhysHypothesis_t h)
 {
   switch(h) {
@@ -594,6 +620,16 @@ string t2kana::util::AsString(t2kana::conv::OscChannelId_t osch)
   }
   return "--";
 } 
+//____________________________________________________________________________
+t2kana::conv::PhysHypothesis_t t2kana::util::FromString(string sh)
+{
+  if(sh == "decay"         ) return kHypDecay;
+  if(sh == "decoh"         ) return kHypDecoh;
+  if(sh == "2f_numu_disap" ) return kHypNuMuDisapp2F;
+  if(sh == "3f_osc"        ) return kHypOsc3F;
+
+  return kHypUndefined;
+}
 //____________________________________________________________________________
 t2kana::conv::OscChannelId_t 
   t2kana::util::GetOscChannel(int nu_start, int nu_end)

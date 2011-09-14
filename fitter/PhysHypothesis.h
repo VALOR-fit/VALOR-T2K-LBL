@@ -17,12 +17,14 @@
 #define _t2kana_phys_hypothesis_h_
 
 #include <iostream>
+#include <string>
 #include <map>
 
 #include "Conventions.h"
 #include "FitParamList.h"
 
 using std::ostream;
+using std::string;
 using std::map;
 
 namespace t2kana {
@@ -30,7 +32,8 @@ namespace t2kana {
 class PhysHypothesis
 {
 public:
-   PhysHypothesis(conv::PhysHypothesis_t h = conv::kHypUndefined);
+   PhysHypothesis(conv::PhysHypothesis_t hypothesis = conv::kHypUndefined);
+   PhysHypothesis(string hypothesis);
    PhysHypothesis(const FitParamList & fp);
   ~PhysHypothesis();
 
