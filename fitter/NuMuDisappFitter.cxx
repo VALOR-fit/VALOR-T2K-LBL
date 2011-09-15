@@ -119,20 +119,20 @@ void  NuMuDisappFitter::PrepareFitter(Option_t * option)
   FitParamList & fit_params = fFitInputs->FitParams();
 
   if(fOption.Contains("minuit")) {
-    // get fitter
-    TVirtualFitter::SetDefaultFitter("Minuit");
-    TVirtualFitter * fitter = TVirtualFitter::Fitter(0,fit_params.Size());
+   // get fitter
+   TVirtualFitter::SetDefaultFitter("Minuit");
+   TVirtualFitter * fitter = TVirtualFitter::Fitter(0,fit_params.Size());
+
+   // set print level
+   Double_t arglist[5];
+   arglist[0] = -1;
+   fitter->ExecuteCommand("SET PRINT",arglist,1);
 
    // set params
    fit_params.SetTo(fitter);
 
    // set minimization function
    fitter->SetFCN(FitFunc);
-
-   // set print level
-   Double_t arglist[100];
-   arglist[0] = 0;
-   fitter->ExecuteCommand("SET PRINT",arglist,2);
   }
 
   // calculate degrees of freedom
