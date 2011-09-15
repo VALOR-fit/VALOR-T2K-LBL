@@ -1116,7 +1116,8 @@ void SuperkMC::TweakRingCountingEfficiencyCCQE(
   // decomposition of the ring-counting error matrix (covariance matrix)
   //
   if(!fEffCCQERelErrCovarCholeskyL) {
-    cout << "Exp/SKMC/TweakRingCountingEffCCQE >> Running Cholesky's method." << endl;
+    cout << "Exp/SKMC/TweakRingCountingEffCCQE >> "
+         << "Run Cholesky's decomposition method on the CCQE RC error matrix." << endl;
     TMatrixD ccqe_rc_err_matrix(*fEffCCQERelErrCovarRC);
 #ifdef __debug_level_3__
     cout << "Exp/SKMC/TweakRingCountingEffCCQE >> RC error matrix" << endl;
