@@ -60,11 +60,15 @@ public:
      fCurrValue [this->Id(p)] = v; 
    }
 
-   // allow modifying the initial value (minimization may be sensitive to this choice)
+   // Allow modifying the initial value (minimization may be sensitive to this choice)
    void SetInitValue(t2kana::conv::PhysParamId_t p, double v) 
    { 
      fInitValue [this->Id(p)] = v; 
+     fCurrValue [this->Id(p)] = v; 
    }
+
+   // Reset all current param values to their specified initial values
+   void ResetCurrToInitValues (void);
 
    // Fix a parameter
    void FixParameter (t2kana::conv::PhysParamId_t p) 
@@ -78,7 +82,6 @@ public:
      fIsFixed [this->Id(p)] = false;  
    }
 
-
    // Set as nuisance parameter (contributes to \chi^{2}_{penalty})
    void SetNuisance (t2kana::conv::PhysParamId_t p, bool tf) 
    { 
@@ -91,9 +94,6 @@ public:
    // Sync fit param values stored this object with the values stored in the input array.
    void Sync (double * par);
 
-   // Reset all current param values to their specified initial values
-   void Reset (void);
-
    // Chisq penalty term
    double ChisquarePenaltyTerm(void);
 
@@ -102,15 +102,15 @@ public:
 
    // Print
    void Print (ostream & stream) const;
+   void ShowOnlyCurrValuesInNextPrint(void) const { fShowCurrValuesOnly = true; }
    friend ostream & operator << (ostream & stream, const FitParamList & plst);
 
    // Using the "Named Constructor" C++ idiom for fast creation of typical parameter lists.
    // The string argument of NamedParameterList() can take the following values:
    // - "nuosc3f"                        : Fit for sin^2(2theta12), sin^2(2theta13), sin^2(2theta23), delta_CP, |Dm23^2| and Dm12^2 (3-flavour formalism).
-   // - "nuosc3f_numudisapp_fix"         : As "nuosc3f" but fixing  sin^2(2theta12), sin^2(2theta13), delta_CP and Dm12^2.
-   // - "nuosc3f_numudisapp_marginalize" : As "nuosc3f" but setting sin^2(2theta12), sin^2(2theta13), delta_CP and Dm12^2 as nuisance params.
-   // - "nuosc3f_nueapp_fix"             : As "nuosc3f" but fixing  sin^2(2theta12), sin^2(2theta23), |Dm23^2| and Dm12^2.
-   // - "nuosc3f_nueapp_marginalize"     : As "nuosc3f" but setting sin^2(2theta12), sin^2(2theta23), |Dm23^2| and Dm12^2 as nuisance params.
+   // - "nuosc3f_12constrain"            : As "nuosc3f", but penalizing sin^2(2theta12), Dm12^2 devations from values measured in solar/reactor expts.
+   // - "nuosc3f_numudisapp_fix4"        : As "nuosc3f" but fixing  sin^2(2theta12), sin^2(2theta13), delta_CP and Dm12^2.
+   // - "nuosc3f_nueapp_fix4"            : As "nuosc3f" but fixing  sin^2(2theta12), sin^2(2theta23), |Dm23^2| and Dm12^2.
    // - "numudisapp2f"                   : Fit for sin^2(2theta23) and |Dm23^2| (2-flavour formalism)
    // - "numudisapp2f+nuisance"          : As "numudisapp2f" + the 34 nuisance parameters of 2010 analysis
    // - "decay"                          : Fit for sin^2(2theta) and \alpha_{decay}
@@ -121,7 +121,6 @@ public:
    static FitParamList * NumuDisapFitAllSyst    (void);
    static FitParamList * NumuDecayFitNoSyst     (void);
    static FitParamList * NumuDecohFitNoSyst     (void);
-   static FitParamList * NuOsc3FlavourFitNoSystLoose (void);
 
    //
    conv::PhysHypothesis_t PhysicsHypothesis(void) const;
@@ -145,6 +144,8 @@ private:
    string * fName;       //[fNParams]
    bool *   fIsFixed;    //[fNParams]
    bool *   fIsNuisance; //[fNParams]
+
+   mutable bool fShowCurrValuesOnly;
 };
 
 } // t2kana

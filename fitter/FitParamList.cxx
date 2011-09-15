@@ -17,6 +17,14 @@
    marginalised oscillation parameters.
  @ 29/07/2011 - CA
    Added GetNumberFreeParameters()
+ @ 15/09/2011 - CA
+   Renamed Reset() to ResetCurrToInitValues() to avoid confusion.
+   Added mutable flag fShowCurrValuesOnly and a setter (ShowOnlyCurrValuesInNextPrint())
+   method. The flag affects the 'next' print-out only and then it is reset to false.
+   Method SetInitValue(PhysParamId_t p, double value) also gets the current value in sync
+   with the initial value. Calling TVirtualFitter::Clear() before setting the fit params
+   to the fitter in SetTo(TVirtualFitter *). Modified the default, named fit param lists.
+
 */
 //________________________________________________________________________________________
 
@@ -91,7 +99,7 @@ bool FitParamList::Exists(PhysParamId_t p) const
 void FitParamList::SetTo(TVirtualFitter * fitter)
 {
   if(!fitter) return;
-
+  fitter->Clear();
   map<t2kana::conv::PhysParamId_t, int>::const_iterator iter = fIdMap.begin();
   for ( ; iter != fIdMap.end(); ++iter) {
     PhysParamId_t p = iter->first;
@@ -118,7 +126,7 @@ void FitParamList::Sync(double * par)
   }
 }
 //________________________________________________________________________________________
-void FitParamList::Reset(void)
+void FitParamList::ResetCurrToInitValues(void)
 {
   for(int ip = 0; ip < fNParams; ip++) {
      fCurrValue[ip] = fInitValue[ip];
@@ -203,30 +211,47 @@ int FitParamList::GetNumberFreeParameters(void)
 //________________________________________________________________________________________
 void FitParamList::Print(ostream & stream) const
 {
-  stream << endl
-         << setw(6)  << "id"
-         << setw(20) << "name"
-         << setw(10) << "curr"
-         << setw(10) << "init"
-         << setw(10) << "min"
-         << setw(10) << "max"
-         << setw(8)  << "step"
-         << setw(8)  << "fixed?"
-         << setw(10) << "nuisance?"
-         << endl;
-  for(int ip=0; ip<fNParams;  ip++) {
-    stream << setw(6)  << ip 
-           << setw(20) << fName[ip]
-           << setprecision(6)
-           << setw(10) << fCurrValue[ip]
-           << setw(10) << fInitValue[ip]
-           << setw(10) << fMinValue[ip]
-           << setw(10) << fMaxValue[ip]
-           << setw(8) << fStepSize[ip]
-           << setw(8) << ((fIsFixed[ip]) ? " **yes** " : "no")
-           << setw(8) << ((fIsNuisance[ip]) ? " **yes** " : "no")
-           << endl;
+  if(fShowCurrValuesOnly) {
+     stream << endl
+            << setw(6)  << "id"
+            << setw(20) << "name"
+            << setw(15) << "curr"
+            << endl;
+     for(int ip=0; ip<fNParams;  ip++) {
+       stream << setw(6)  << ip 
+              << setw(20) << fName[ip]
+              << setprecision(6)
+              << setw(15) << fCurrValue[ip]
+              << endl;
+     }
+  } else {
+     stream << endl
+            << setw(6)  << "id"
+            << setw(20) << "name"
+            << setw(15) << "curr"
+            << setw(15) << "init"
+            << setw(15) << "min"
+            << setw(15) << "max"
+            << setw(8)  << "step"
+            << setw(8)  << "fixed?"
+            << setw(10) << "nuisance?"
+            << endl;
+     for(int ip=0; ip<fNParams;  ip++) {
+       stream << setw(6)  << ip 
+              << setw(20) << fName[ip]
+              << setprecision(6)
+              << setw(15) << fCurrValue[ip]
+              << setw(15) << fInitValue[ip]
+              << setw(15) << fMinValue[ip]
+              << setw(15) << fMaxValue[ip]
+              << setw(8) << fStepSize[ip]
+              << setw(8) << ((fIsFixed[ip])    ? " **yes** " : "no")
+              << setw(8) << ((fIsNuisance[ip]) ? " **yes** " : "no")
+              << endl;
+     }
   }
+
+  fShowCurrValuesOnly = false; // has one-off effect
 }
 //________________________________________________________________________________________
 FitParamList * FitParamList::NamedParameterList(string name)
@@ -234,23 +259,12 @@ FitParamList * FitParamList::NamedParameterList(string name)
   if(name == "nuosc3f") {
     return FitParamList::NuOsc3FlavourFitNoSyst();
   }
-  if(name == "nuosc3f_loose_marginalize") {
-    FitParamList * fp = FitParamList::NuOsc3FlavourFitNoSystLoose();
-    fp -> SetNuisance (kPhypSinsq2Theta13, true);
+  if(name == "nuosc3f_12constrain") {
+    FitParamList * fp = FitParamList::NuOsc3FlavourFitNoSyst();
     fp -> SetNuisance (kPhypSinsq2Theta12, true);
-    fp -> SetNuisance (kPhypDeltaCP,       true);
-    fp -> SetNuisance (kPhypDm12sq,        true);
-    return fp;
+    fp -> SetNuisance (kPhypDm12sq, true);
   }
-  if(name == "nuosc3f_loose_fix") {
-    FitParamList * fp = FitParamList::NuOsc3FlavourFitNoSystLoose();
-    fp -> FixParameter (kPhypSinsq2Theta13);
-    fp -> FixParameter (kPhypSinsq2Theta12);
-    fp -> FixParameter (kPhypDeltaCP);
-    fp -> FixParameter (kPhypDm12sq);
-    return fp;
-  }
-  if(name == "nuosc3f_numudisapp_fix") {
+  if(name == "nuosc3f_numudisapp_fix4") {
     FitParamList * fp = FitParamList::NuOsc3FlavourFitNoSyst();
     fp -> FixParameter (kPhypSinsq2Theta13);
     fp -> FixParameter (kPhypSinsq2Theta12);
@@ -258,28 +272,12 @@ FitParamList * FitParamList::NamedParameterList(string name)
     fp -> FixParameter (kPhypDm12sq);
     return fp;
   }
-  if(name == "nuosc3f_numudisapp_marginalize") {
-    FitParamList * fp = FitParamList::NuOsc3FlavourFitNoSyst();
-    fp -> SetNuisance (kPhypSinsq2Theta13, true);
-    fp -> SetNuisance (kPhypSinsq2Theta12, true);
-    fp -> SetNuisance (kPhypDeltaCP,       true);
-    fp -> SetNuisance (kPhypDm12sq,        true);
-    return fp;
-  }
-  if(name == "nuosc3f_nueapp_fix") {
+  if(name == "nuosc3f_nueapp_fix4") {
     FitParamList * fp = FitParamList::NuOsc3FlavourFitNoSyst();
     fp -> FixParameter (kPhypSinsq2Theta23);
     fp -> FixParameter (kPhypSinsq2Theta12);
     fp -> FixParameter (kPhypDm23sq);
     fp -> FixParameter (kPhypDm12sq);
-    return fp;
-  }
-  if(name == "nuosc3f_nue_marginalize") {
-    FitParamList * fp = FitParamList::NuOsc3FlavourFitNoSyst();
-    fp -> SetNuisance (kPhypSinsq2Theta23, true);
-    fp -> SetNuisance (kPhypSinsq2Theta12, true);
-    fp -> SetNuisance (kPhypDm23sq,        true);
-    fp -> SetNuisance (kPhypDm12sq,        true);
     return fp;
   }
   if(name == "numudisapp2f") {
@@ -303,7 +301,7 @@ FitParamList * FitParamList::NuOsc3FlavourFitNoSyst(void)
   FitParamList * fparm = new FitParamList(6);
 
   //                                     init     min     max     step     fix?   nuis?
-  fparm->AddParam(0, kPhypSinsq2Theta23, 0.99,    0.50,   1.00,   1.0E-2,  false, false);
+  fparm->AddParam(0, kPhypSinsq2Theta23, 0.95,    0.50,   1.00,   1.0E-2,  false, false);
   fparm->AddParam(1, kPhypSinsq2Theta13, 0.03,    0.00,   0.15,   1.0E-3,  false, false);
   fparm->AddParam(2, kPhypSinsq2Theta12, 0.85,    0.70,   1.00,   1.0E-2,  false, false);
   fparm->AddParam(3, kPhypDeltaCP,       kpi,     0.00,   2*kpi,  1.0E-2,  false, false);
@@ -312,22 +310,6 @@ FitParamList * FitParamList::NuOsc3FlavourFitNoSyst(void)
 
   return fparm;
 }
-//________________________________________________________________________________________
-FitParamList * FitParamList::NuOsc3FlavourFitNoSystLoose(void)
-{
-  FitParamList * fparm = new FitParamList(6);
-
-  //                                     init     min     max     step     fix?   nuis?
-  fparm->AddParam(0, kPhypSinsq2Theta23, 0.99,    0.00,   1.00,   1.0E-2,  false, false);
-  fparm->AddParam(1, kPhypSinsq2Theta13, 0.03,    0.00,   1.00,   1.0E-3,  false, false);
-  fparm->AddParam(2, kPhypSinsq2Theta12, 0.85,    0.00,   1.00,   1.0E-2,  false, false);
-  fparm->AddParam(3, kPhypDeltaCP,       kpi,     -10*kpi,   10*kpi,  1.0E-2,  false, false);
-  fparm->AddParam(4, kPhypDm23sq,        2.3E-3,  0.1E-3, 40.0E-3, 1.0E-4,  false, false);
-  fparm->AddParam(5, kPhypDm12sq,        8.0E-5,  0.7E-5, 90.0E-5, 2.0E-6,  false, false);
-
-  return fparm;
-}
-
 //________________________________________________________________________________________
 FitParamList * FitParamList::NumuDisapFitNoSyst(void)
 {
@@ -462,6 +444,8 @@ void FitParamList::Init(int nparams)
    fName       = new string[fNParams];
    fIsFixed    = new bool  [fNParams];
    fIsNuisance = new bool  [fNParams];
+
+   fShowCurrValuesOnly = false;
 }
 //________________________________________________________________________________________
 void FitParamList::CleanUp(void)
