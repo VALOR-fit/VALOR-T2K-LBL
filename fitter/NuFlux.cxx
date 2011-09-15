@@ -470,7 +470,8 @@ void NuFlux::TweakShape(
   // decomposition of the flux covariance matrix
   //
   if(!fSuperkNuMuFluxHaveCholeskyL) {
-    cout << "Exp/Beam/TweakShape >> Running Cholesky's method." << endl;
+    cout << "Exp/Beam/TweakShape >> "
+         << "Running Cholesky's decomposition method on the flux covariance matrix." << endl;
     TMatrixD  sk_flux_cov(this->SuperkNuMuFluxCov());
     TMatrixD L = util::CholeskyDecomposition(sk_flux_cov);
 #ifdef __debug_level_3__
