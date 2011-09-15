@@ -6,6 +6,8 @@ Important revisions after version 1.0.0 :
    Remove ErecoSpectrum() as it doesn't make sense using the combined spectrum for all 
    different samples considered. The default was ErecoSpectrum(1-R mu-like) but not typing 
    this explicitly could lead to confusion. 
+ @ 15/09/2011 - CA
+   Print-out a list of all parameters used for each pseudo-expt generation.
 
 */
 //________________________________________________________________________________________
@@ -191,7 +193,11 @@ bool SuperkObservation::Read(string config_file, int data_set_id)
 void SuperkObservation::CreateMockData(
       SuperkExpectation & skexp, const FitParamList & fp, bool fluctuate)
 {
-  // Get observed reconstructed energy distribution
+// Get observed reconstructed energy distribution
+
+  fp.ShowOnlyCurrValuesInNextPrint();
+  cout << "Obs >> Generating a toy-MC expt with the following params: " << fp;
+  cout << "Obs >> Stat. fluctuations are turned-" << ((fluctuate)? "ON" : "OFF") << endl;
 
   fErDistr[kSKsFCFV1RingMuLike] = new TH1D("", "", kNvErecoBins,kNvErecoBinEdges);
   fErDistr[kSKsFCFV1RingMuLike] -> SetDirectory(0);
