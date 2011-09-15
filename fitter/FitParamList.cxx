@@ -300,13 +300,13 @@ FitParamList * FitParamList::NuOsc3FlavourFitNoSyst(void)
 {
   FitParamList * fparm = new FitParamList(6);
 
-  //                                     init     min     max     step     fix?   nuis?
-  fparm->AddParam(0, kPhypSinsq2Theta23, 0.95,    0.50,   1.00,   1.0E-2,  false, false);
-  fparm->AddParam(1, kPhypSinsq2Theta13, 0.03,    0.00,   0.15,   1.0E-3,  false, false);
-  fparm->AddParam(2, kPhypSinsq2Theta12, 0.85,    0.70,   1.00,   1.0E-2,  false, false);
-  fparm->AddParam(3, kPhypDeltaCP,       kpi,     0.00,   2*kpi,  1.0E-2,  false, false);
-  fparm->AddParam(4, kPhypDm23sq,        2.3E-3,  1.0E-3, 4.0E-3, 1.0E-4,  false, false);
-  fparm->AddParam(5, kPhypDm12sq,        8.0E-5,  7.0E-5, 9.0E-5, 2.0E-6,  false, false);
+  //                                     init            min     max     step     fix?   nuis?
+  fparm->AddParam(0, kPhypSinsq2Theta23, 0.95,           0.50,   1.00,   1.0E-2,  false, false);
+  fparm->AddParam(1, kPhypSinsq2Theta13, 0.10,           0.00,   0.20,   1.0E-3,  false, false);
+  fparm->AddParam(2, kPhypSinsq2Theta12, kGlobFitDm12sq, 0.70,   1.00,   1.0E-2,  false, false);
+  fparm->AddParam(3, kPhypDeltaCP,       kpi,            0.00,   2*kpi,  1.0E-2,  false, false);
+  fparm->AddParam(4, kPhypDm23sq,        kGlobFitDm23sq, 1.0E-3, 4.0E-3, 1.0E-4,  false, false);
+  fparm->AddParam(5, kPhypDm12sq,        kGlobFitDm12sq, 7.0E-5, 9.0E-5, 2.0E-6,  false, false);
 
   return fparm;
 }
