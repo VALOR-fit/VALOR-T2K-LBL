@@ -10,8 +10,8 @@
 #  --nruns                  : Number of runs (jobs) to submit. Default: 1.
 #  --nexpts                 : Number of toy MC expt fits per run. Default: 1000.
 #  --cpu-time               : Required CPU time. Default: "6:00:00" for RAL, "1500000" for IN2P3, "11:50:00" for Oxford.
-#  --include-systematics    : Include systematic variations? Default: Systematics will not be applied unless this flag is set.
-#  --no-stat-fluctuations   : Include statistical fluctuations? Default: Fluctuations will be applied unless this flag is set.
+#  --stat-fluctuations      : include statistical fluctuation in toy MC expts
+#  --tweak-systematics      : generate toy MC with randomized systematics
 #  --store-chisq-surf       : Store chisq surfaces? Default: No, only best-fit values are stored.
 #  --store-toy-expts        : Store the generated toy MC expts? Default: No, only best-fit values are stored.
 #  --store-bestfit-spectra  : Store the best-fit spectra? Default: No, only best-fit values are stored.
@@ -37,8 +37,8 @@ foreach (@ARGV) {
   if($_ eq '--nruns'                  ) { $nruns                 = $ARGV[$iarg+1]; }
   if($_ eq '--nexpts'                 ) { $nexpts                = $ARGV[$iarg+1]; }
   if($_ eq '--cpu-time'               ) { $cput                  = $ARGV[$iarg+1]; }
-  if($_ eq '--include-systematics'    ) { $systematics           = 1;              }
-  if($_ eq '--no-stat-fluctuations'   ) { $stat_fluctuation      = 0;              }
+  if($_ eq '--stat-fluctuations'      ) { $stat_fluct            = 1;              }
+  if($_ eq '--tweak-systematics'      ) { $twk_systematics       = 1;              }
   if($_ eq '--store-chisq-surf'       ) { $store_chisq_surf      = 1;              }
   if($_ eq '--store-toy-expts'        ) { $store_toy_expts       = 1;              }
   if($_ eq '--store-bestfit-spectra'  ) { $store_bestfit_spectra = 1;              }
@@ -58,8 +58,8 @@ $randomize_once         = 0                             unless defined $randomiz
 $resource               = "interactive"                 unless defined $resource;
 $nruns                  = 1                             unless defined $nruns;
 $nexpts                 = 1000                          unless defined $nexpts;
-$systematics            = 0                             unless defined $systematics;
-$stat_fluctuation       = 1                             unless defined $stat_fluctuation;
+$stat_fluct             = 0                             unless defined $stat_fluct;
+$twk_systematics        = 0                             unless defined $twk_systematics;
 $store_chisq_surf       = 0                             unless defined $store_chisq_surf;
 $store_toy_expts        = 0                             unless defined $store_toy_expts;
 $store_bestfit_spectra  = 0                             unless defined $store_bestfit_spectra;
@@ -84,7 +84,7 @@ $mo = -1;
 $irun = 0;
 while($irun < $nruns) {
   print "Submitting run: $irun \n";
-  $command = "root2k -l -b -q \'$softw_dir/macros/fit/test_n_mock_data_fits.C(\"$tag\",$irun,$nexpts,$mo,$mo,$sinsq2theta23,$mo,$mo,$dm23sq,\"$fitparamlist\",\"$fitter\",$stat_fluctuation,$systematics,$store_chisq_surf,$store_toy_expts,$store_bestfit_spectra,\"$config_file\",$randomize_once)\'";
+  $command = "root2k -l -b -q \'$softw_dir/macros/fit/test_n_mock_data_fits.C(\"$tag\",$irun,$nexpts,$mo,$mo,$sinsq2theta23,$mo,$mo,$dm23sq,\"$fitparamlist\",\"$fitter\",$stat_fluct,$twk_systematics,$store_chisq_surf,$store_toy_expts,$store_bestfit_spectra,\"$config_file\",$randomize_once)\'";
   print "$command \n";
 
   #
