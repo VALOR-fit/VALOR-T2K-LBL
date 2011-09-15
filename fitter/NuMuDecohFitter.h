@@ -40,7 +40,9 @@ public:
   ~NuMuDecohFitter();
 
    bool      DoTheFit          (void);
-   int       FitStatusCode     (void) { return fStatusCode; }
+   int       FitStatusCode     (void) { return fStatusCode;     }
+   int       NBinsInFit        (void) { return fNFitBins;       }
+   int       NFitParams        (void) { return fNFreeFitParams; }
    void      Draw              (TVirtualPad * c, Option_t * option = "results", const char * outtag = 0);
    void      ActualDecohParams (double sinsq2theta23, double alpha);
    TMinuit * Minuit            (void) { return gMinuit; }

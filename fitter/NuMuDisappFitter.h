@@ -39,7 +39,9 @@ public:
   ~NuMuDisappFitter();
 
    bool      DoTheFit        (void);
-   int       FitStatusCode   (void) { return fStatusCode; }
+   int       FitStatusCode   (void) { return fStatusCode;     }
+   int       NBinsInFit      (void) { return fNFitBins;       }
+   int       NFitParams      (void) { return fNFreeFitParams; }
    void      Draw            (TVirtualPad * c, Option_t * option = "results", const char * outtag = 0);
    void      ActualOscParams (double sinsq2theta23, double dmsq23);
    TMinuit * Minuit          (void) { return gMinuit; }

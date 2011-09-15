@@ -10,7 +10,9 @@
 #  --nruns                  :
 #  --nexpts                 :
 #  --cpu-time               : default: "6:00:00" for RAL, "1500000" for IN2P3, "11:50:00" for Oxford
-#  --include-systematics    : 
+#  --stat-fluctuations      : include statistical fluctuation in toy MC expts
+#  --tweak-systematics      : generate toy MC with randomized systematics 
+#  --tweak-non23oscparams   : generate toy MC with randomized dmsq12,theta12,theta13,delta_cp (only in 3-flavour analysis)
 #  --min-dm23sq-bin         : default:   1
 #  --max-dm23sq-bin         : default:  51
 #  --min-sinsq2theta23-bin  : default:   1
@@ -34,7 +36,9 @@ foreach (@ARGV) {
   if($_ eq '--nruns'                 ) { $nruns                 = $ARGV[$iarg+1]; }
   if($_ eq '--nexpts'                ) { $nexpts                = $ARGV[$iarg+1]; }
   if($_ eq '--cpu-time'              ) { $cput                  = $ARGV[$iarg+1]; }
-  if($_ eq '--include-systematics'   ) { $systematics           = 1;              }
+  if($_ eq '--stat-fluctuations'     ) { $stat_fluct            = 1;              }
+  if($_ eq '--tweak-systematics'     ) { $twk_systematics       = 1;              }
+  if($_ eq '--tweak-non23oscparams'  ) { $twk_non23osc          = 1;              }
   if($_ eq '--min-dm23sq-bin'        ) { $min_dm23sq_bin        = $ARGV[$iarg+1]; }
   if($_ eq '--max-dm23sq-bin'        ) { $max_dm23sq_bin        = $ARGV[$iarg+1]; }
   if($_ eq '--min-sinsq2theta23-bin' ) { $min_sinsq2theta23_bin = $ARGV[$iarg+1]; }
@@ -54,7 +58,9 @@ $resource               = "interactive"                 unless defined $resource
 $tag                    = "fc"                          unless defined $tag;
 $nruns                  = 1                             unless defined $nruns;
 $nexpts                 = 1000                          unless defined $nexpts;
-$systematics            = 0                             unless defined $systematics;
+$stat_fluct             = 0                             unless defined $stat_fluct;
+$twk_systematics        = 0                             unless defined $twk_systematics;
+$twk_non23osc           = 0                             unless defined $twk_non23osc;
 $fitparamlist           = "numudisapp2f"                unless defined $fitparamlist;
 $fitter                 = "minuit"                      unless defined $fitter;
 $job_dir                = `pwd`                         unless defined $job_dir;
@@ -75,8 +81,7 @@ while($irun < $nruns) {
 
   print "Submitting $tag run: $irun \n";
 
-  $command  = "root2k -l -b -q \'$softw_dir/macros/fit/feldman_cousins_fitting_job.C(\"$tag\",$irun,$nexpts,$min_dm23sq_bin,$max_dm23sq_bin,$min_sinsq2theta23_bin,$max_sinsq2theta23_bin,$systematics,\"$fitparamlist\",\"$fitter\",\"$config_file\")\'";
-
+  $command  = "root2k -l -b -q \'$softw_dir/macros/fit/feldman_cousins_fitting_job.C(\"$tag\",$irun,$nexpts,$min_dm23sq_bin,$max_dm23sq_bin,$min_sinsq2theta23_bin,$max_sinsq2theta23_bin,$stat_fluct,$twk_systematics,$twk_non23osc,\"$fitparamlist\",\"$fitter\",\"$config_file\")\'";
   print "$command \n";
 
   #

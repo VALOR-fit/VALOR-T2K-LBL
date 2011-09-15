@@ -10,33 +10,56 @@
 #include "Conventions.h"
 
 void calculate_dataset_probability(
-  double       input_sinsq2theta23 = 1.,                            /* */
-  double       input_dm23sq        = 2.32E-3,                       /* */
-  const char * config_file         = "analysis_configuration.xml",  /* analysis configuration */
-  int          dataset_id          = 0,                             /* number in <data_set_%d> XML tag, see inputs/data.xml */
-  const char * data_file           = "inputs/data.xml")             /* input data file */
+  double       input_sinsq2theta12 = 0.86,                         /* */
+  double       input_sinsq2theta13 = 0.10,                         /* */
+  double       input_sinsq2theta23 = 1.00,                         /* */
+  double       input_deltacp       = 0.00,                         /* */
+  double       input_dm12sq        = 7.58E-5,                      /* */
+  double       input_dm23sq        = 2.32E-3,                      /* */
+  const char * fit_param_list      = "numudisapp2f",               /* fit parameter list for the given physics hypothesis (see run_fitter.C) */
+  int          dataset_id          = 0,                            /* number in <data_set_%d> XML tag, see inputs/data.xml */
+  const char * data_file           = "inputs/data.xml",            /* input data file */
+  const char * config_file         = "analysis_configuration.xml"  /* analysis configuration */
+)
 {
   using namespace std;
   using namespace t2kana;
 
+  // get superk spectrum predictor & configure
   const char * config = Form("%s/config/%s", gSystem->Getenv("T2KOSCANA"), config_file);
   cout << "Reading analysis configuration from: " << config << endl;
-
-  // fit params
-  FitParamList * fparm = FitParamList::NumuDisapFitNoSyst();
-  fparm->Update(t2kana::conv::kPhypSinsq2Theta23, input_sinsq2theta23);
-  fparm->Update(t2kana::conv::kPhypDm23sq,        input_dm23sq);
-
-  // get superk spectrum predictor & configure
   SuperkExpectation * skexp = new SuperkExpectation;
   skexp->Read(config);
+
+  // set osc params
+  FitParamList * fparm = FitParamList::NamedParameterList(fit_param_list);
+  conv::PhysHypothesis_t hyp = fparm->PhysicsHypothesis();
+  cout << "Specified physics hypothesis: " << util::AsString(hyp) << endl;
+  if(hyp == conv::kHypOsc3F) {
+    fparm->Update(t2kana::conv::kPhypSinsq2Theta12, input_sinsq2theta12);
+    fparm->Update(t2kana::conv::kPhypSinsq2Theta13, input_sinsq2theta13);
+    fparm->Update(t2kana::conv::kPhypSinsq2Theta23, input_sinsq2theta23);
+    fparm->Update(t2kana::conv::kPhypDeltaCP,       input_deltacp);
+    fparm->Update(t2kana::conv::kPhypDm12sq,        input_dm12sq);
+    fparm->Update(t2kana::conv::kPhypDm23sq,        input_dm23sq);
+  }
+  else
+  if(hyp == conv::kHypNuMuDisapp2F) {
+    fparm->Update(t2kana::conv::kPhypSinsq2Theta23, input_sinsq2theta23);
+    fparm->Update(t2kana::conv::kPhypDm23sq,        input_dm23sq);
+  }
+  else {
+    return;
+  }
+
+  // generate prediction
   skexp->Generate(*fparm);
-  TH1D * hExp = new TH1D(*skexp->CurrPredictedErecoSpectrum());
+  TH1D * hExp = new TH1D(*skexp->CurrPredictedErecoSpectrum(conv::kSKsFCFV1RingMuLike));
 
   // get superk spectrum observation
   SuperkObservation * skobs = new SuperkObservation;
   skobs->Read(data_file, dataset_id);
-  TH1D * hObs = new TH1D(*skobs->ErecoSpectrum());
+  TH1D * hObs = new TH1D(*skobs->ErecoSpectrum(conv::kSKsFCFV1RingMuLike));
 
   cout << fixed;
   double prob = 1.;

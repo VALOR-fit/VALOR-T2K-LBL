@@ -29,6 +29,9 @@ public:
 
    virtual bool DoTheFit      (void) = 0;
    virtual int  FitStatusCode (void) = 0;
+   virtual int  NDOF          (void) { return this->NBinsInFit() - this->NFitParams(); }
+   virtual int  NBinsInFit    (void) = 0;
+   virtual int  NFitParams    (void) = 0;
    virtual void Draw          (TVirtualPad * c, Option_t * option, const char * outtag) = 0;
 
 protected:
