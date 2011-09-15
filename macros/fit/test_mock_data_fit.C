@@ -10,27 +10,22 @@
 
 void test_mock_data_fit
 (
-   double       input_sinsq2theta12 = 0.86,                         /* if -1 then randomize */
-   double       input_sinsq2theta13 = 0.10,                         /* if -1 then randomize */
+   double       input_sinsq2theta12 = 0.86,                         /* */
+   double       input_sinsq2theta13 = 0.10,                         /* */
    double       input_sinsq2theta23 = 1.00,                         /* */
-   double       input_deltacp       = 0.00,                         /* if -1 then randomize */
-   double       input_dm12sq        = 7.58E-5,                      /* if -1 then randomize */
+   double       input_deltacp       = 0.00,                         /* */
+   double       input_dm12sq        = 7.58E-5,                      /* */
    double       input_dm23sq        = 2.32E-3,                      /* */
    bool         fluctuate_stat      = true,                         /* include statistical fluctuations? */
    bool         include_systematics = false,                        /* include systematic variation in generated toy MC expt? */
    const char * fit_param_list      = "numudisapp2f",               /* fit parameter list for the given physics hypothesis (see run_fitter.C) */
-   const char * fitter_name         = "custom",                     /* oscillation fitter (see run_fitter.C) */
+   const char * fitter_name         = "minuit",                     /* oscillation fitter (see run_fitter.C) */
    const char * config_file         = "analysis_configuration.xml", /* analysis configuration file */
    bool         plot                = false                         /* */
 )
 {
   using namespace std;
   using namespace t2kana;
-
-  if (input_sinsq2theta12 < 0) { input_sinsq2theta12 = util::RandomizeSinsq2Theta12(); }
-  if (input_sinsq2theta13 < 0) { input_sinsq2theta13 = util::RandomizeSinsq2Theta13(); }
-  if (input_deltacp       < 0) { input_deltacp       = util::RandomizeDeltaCP();       }
-  if (input_dm12sq        < 0) { input_dm12sq        = util::RandomizeDm12sq();        }
 
   cout << "[Job inputs]" << endl;
   cout << "Fit Parameter List: " << fit_param_list << endl;
@@ -106,6 +101,7 @@ void test_mock_data_fit
 
   // Print-out mock-data (Ereco values) as a comma separated list.
   // Assuming uniform distribution within each bin, randomize values within each bin.
+  cout << "\nToy-MC experiment, E_reco values: " << endl;
   TRandom3 rand(0);
   TH1D* mock_data = skobs->ErecoSpectrum(conv::kSKsFCFV1RingMuLike);
   bool is_first=true;

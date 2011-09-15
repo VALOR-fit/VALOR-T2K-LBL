@@ -8,10 +8,9 @@
 //                 (see FitParamList.h)
 // ..................................................................
 // nuosc3f         nuosc3f                         minuit
-// nuosc3f         nuosc3f_numudisapp_fix          minuit
-// nuosc3f         nuosc3f_numudisapp_marginalize  minuit
-// nuosc3f         nuosc3f_nueapp_fix              minuit
-// nuosc3f         nuosc3f_nueapp_marginalize      minuit
+// nuosc3f         nuosc3f_12constrain             minuit
+// nuosc3f         nuosc3f_numudisapp_fix4         minuit
+// nuosc3f         nuosc3f_nueapp_fix4             minuit
 // numudisapp2f    numudisapp2f                    minuit, custom
 // numudisapp2f    numudisapp2f+nuisance           minuit
 // decay           decay                           minuit, custom

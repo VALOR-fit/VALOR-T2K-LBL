@@ -21,13 +21,12 @@ void test_n_mock_data_fits(
   double       input_dm23sq            = 2.32E-3,                        /* */
   const char * fit_param_list          = "numudisapp2f",                 /* fit parameter list for the given physics hypothesis (see run_fitter.C) */
   const char * fitter_name             = "minuit",                       /* fitter name (see run_fitter.C) */
-  bool         fluctuate_stat          = true,                           /* include statistical fluctuations? */
-  bool         include_systematics     = false,                          /* include systematic variation in generated toy MC expt? */
+  bool         stat_fluctuations       = true,                           /* include statistical fluctuation in toy MC expts? */
+  bool         tweak_systematics       = true,                           /* generate toy MC with randomized systematics? */
   bool         store_chisq_surf        = false,                          /* by default storing only best-fit values, enable this to store the chisq surfaces   */
   bool         store_toy_expts         = false,                          /* by default storing only best-fit values, enable this to store the toy MC expts     */
   bool         store_bestfit_spectrum  = false,                          /* by default storing only best-fit values, enable this to store the best-fit spectra */
-  const char * config_file             = "analysis_configuration.xml",   /* analysis configuration file */
-  bool         randomize_once          = false                            /* randomize non-23 parameters every experiment or every file? */
+  const char * config_file             = "analysis_configuration.xml"    /* analysis configuration file */
 )
 {
   using namespace std;
@@ -39,8 +38,8 @@ void test_n_mock_data_fits(
   cout << "Fit Parameter List: " << fit_param_list << endl;
   cout << "Fitter: " << fitter_name << endl;
   cout << "Number of toy experiments: " << nexperiments << endl; 
-  cout << "Systematics : "                << ((include_systematics) ?    "YES " : "NO") << endl;
-  cout << "Statistical fluctuations: "    << ((fluctuate_stat) ?         "YES " : "NO") << endl;
+  cout << "Randomize systematics : "      << ((tweak_systematics) ?      "YES " : "NO") << endl;
+  cout << "Statistical fluctuations: "    << ((stat_fluctuations) ?      "YES " : "NO") << endl;
   cout << "Storing chisq surfaces: "      << ((store_chisq_surf) ?       "YES " : "NO") << endl;
   cout << "Storing toy MC experiments:  " << ((store_toy_expts) ?        "YES " : "NO") << endl;
   cout << "Storing best-fit spectra: "    << ((store_bestfit_spectrum) ? "YES " : "NO") << endl;
@@ -52,12 +51,13 @@ void test_n_mock_data_fits(
   cout << " > Dm12sq        = " << input_dm12sq << " eV^2/c^4" << endl;
   cout << " > |Dm23sq|      = " << input_dm23sq << " eV^2/c^4" << endl;
 
-  const char * config = Form("%s/config/%s", gSystem->Getenv("T2KOSCANA"), config_file);
-  cout << "Reading analysis configuration from: " << config << endl;
-
   // create file to store results
   TFile f(Form("%s-sinsq2theta23_%.2f-dm23sq_%.5feV2-run_%d.root",
           tag, input_sinsq2theta23,input_dm23sq,run), "recreate");
+
+  // create ntuple to store oscillation fit results
+  TNtupleD * nfitnt = new TNtupleD("nfitnt","",
+     "iexp:bestfit_sinsq2theta12:bestfit_sinsq2theta13:bestfit_sinsq2theta23:bestfit_deltacp:bestfit_dm12sq:bestfit_dm23sq:chisq:fitstatus:input_sinsq2theta12:input_sinsq2theta13:input_sinsq2theta23:input_deltacp:input_dm12sq:input_dm23sq");
 
   // fit parameter list
   FitParamList * fparm = FitParamList::NamedParameterList(fit_param_list);
@@ -65,12 +65,10 @@ void test_n_mock_data_fits(
   cout << "Specified physics hypothesis: " << util::AsString(hyp) << endl;
 
   // get superk spectrum predictor & configure
+  const char * config = Form("%s/config/%s", gSystem->Getenv("T2KOSCANA"), config_file);
+  cout << "Reading analysis configuration from: " << config << endl;
   SuperkExpectation * skexp = new SuperkExpectation;
   skexp->Read(config);
-
-  // store oscillation fit results
-  TNtupleD * nfitnt = new TNtupleD("nfitnt","",
-     "iexp:bestfit_sinsq2theta12:bestfit_sinsq2theta13:bestfit_sinsq2theta23:bestfit_deltacp:bestfit_dm12sq:bestfit_dm23sq:chisq:fitstatus:input_sinsq2theta12:input_sinsq2theta13:input_sinsq2theta23:input_deltacp:input_dm12sq:input_dm23sq");
 
   // init best-fit values
   double bestfit_sinsq2theta12 = -1;
@@ -81,32 +79,16 @@ void test_n_mock_data_fits(
   double bestfit_dm23sq        = -1;
   double bestfit_chisq         = -1;
 
-  //remember what the user started with
-  double user_input_sinsq2theta12 = input_sinsq2theta12;
-  double user_input_sinsq2theta13 = input_sinsq2theta13;
-  double user_input_sinsq2theta23 = input_sinsq2theta23;
-  double user_input_deltacp = input_deltacp;
-  double user_input_dm12sq = input_dm12sq;
-  double user_input_dm23sq = input_dm23sq;
-
   // loop over toy-MC experiments
   for(int iexperiment = 0; iexperiment < nexperiments; iexperiment++) {
 
      cout << "\n\n *** Pseudo-experiment = " << iexperiment << endl;
 
      // randomize specified osc params for current toy MC expt
-     if ( randomize_once ) {
-       if (input_sinsq2theta12 < 0) { input_sinsq2theta12 = util::RandomizeSinsq2Theta12(); }
-       if (input_sinsq2theta13 < 0) { input_sinsq2theta13 = util::RandomizeSinsq2Theta13(); }
-       if (input_deltacp       < 0) { input_deltacp       = util::RandomizeDeltaCP();       }
-       if (input_dm12sq        < 0) { input_dm12sq        = util::RandomizeDm12sq();        }
-     }
-     else {
-       if (user_input_sinsq2theta12 < 0) { input_sinsq2theta12 = util::RandomizeSinsq2Theta12(); }
-       if (user_input_sinsq2theta13 < 0) { input_sinsq2theta13 = util::RandomizeSinsq2Theta13(); }
-       if (user_input_deltacp       < 0) { input_deltacp       = util::RandomizeDeltaCP();       }
-       if (user_input_dm12sq        < 0) { input_dm12sq        = util::RandomizeDm12sq();        }
-     }
+     if (input_sinsq2theta12 < 0) { input_sinsq2theta12 = util::RandomizeSinsq2Theta12(); }
+     if (input_sinsq2theta13 < 0) { input_sinsq2theta13 = util::RandomizeSinsq2Theta13(); }
+     if (input_deltacp       < 0) { input_deltacp       = util::RandomizeDeltaCP();       }
+     if (input_dm12sq        < 0) { input_dm12sq        = util::RandomizeDm12sq();        }
 
      // set oscillation parameter inputs as necessary (used to generate toy-MC expt)
      if(hyp == conv::kHypOsc3F) {
@@ -116,38 +98,33 @@ void test_n_mock_data_fits(
        fparm->Update(t2kana::conv::kPhypDeltaCP,       input_deltacp);
        fparm->Update(t2kana::conv::kPhypDm12sq,        input_dm12sq);
        fparm->Update(t2kana::conv::kPhypDm23sq,        input_dm23sq);
-       fparm->SetInitValue(t2kana::conv::kPhypSinsq2Theta12, input_sinsq2theta12);
-       fparm->SetInitValue(t2kana::conv::kPhypSinsq2Theta13, input_sinsq2theta13);
-       fparm->SetInitValue(t2kana::conv::kPhypSinsq2Theta23, input_sinsq2theta23);
-       fparm->SetInitValue(t2kana::conv::kPhypDeltaCP,       input_deltacp);
-       fparm->SetInitValue(t2kana::conv::kPhypDm12sq,        input_dm12sq);
-       fparm->SetInitValue(t2kana::conv::kPhypDm23sq,        input_dm23sq);
      }
      else
      if(hyp == conv::kHypNuMuDisapp2F) {
        fparm->Update(t2kana::conv::kPhypSinsq2Theta23, input_sinsq2theta23);
        fparm->Update(t2kana::conv::kPhypDm23sq,        input_dm23sq);
-       fparm->SetInitValue(t2kana::conv::kPhypSinsq2Theta23, input_sinsq2theta23);
-       fparm->SetInitValue(t2kana::conv::kPhypDm23sq,        input_dm23sq);
      }
 
      //
      // get superk spectrum observation (toy experiment)
      //
      SuperkObservation * skobs = new SuperkObservation;
-     if(include_systematics) {
+     if(tweak_systematics) {
         // tweak all sources of systematic err (gaussian err)
         skexp->TweakAllSystematics();     
         // generate mock data using the current PDF (incl. systematic variations) 
-        // + statistical fluctuations (Poisson fluctuation in each bin)
-        skobs->CreateMockData(*skexp, *fparm, fluctuate_stat);
+        // + statistical fluctuations if requested (Poisson fluctuation in each bin)
+        skobs->CreateMockData(*skexp, *fparm, stat_fluctuations);
         // reset all systematics so that the PDF used in the fitter is the nominal one
         skexp->ResetSystematicVariations();
      } else {       
         // generate mock data using the current PDF (without systematic variations) 
-        // with statistical fluctuations (Poisson fluctuation in each bin)
-        skobs->CreateMockData(*skexp, *fparm, fluctuate_stat); 
+        // with statistical fluctuations if requested (Poisson fluctuation in each bin)
+        skobs->CreateMockData(*skexp, *fparm, stat_fluctuations); 
      }
+
+     // reset osc params
+     fparm->ResetCurrToInitValues();
 
      // get fitter
      FitInputs * fit_inputs = new FitInputs(skobs,skexp,fparm);
@@ -155,7 +132,7 @@ void test_n_mock_data_fits(
      fitter->ActualOscParams(input_sinsq2theta23, input_dm23sq);
 
      double true_chisq = fit_inputs->Chisquare();
-     cout << "True-fit:"
+     cout << "True osc. params:"
 	  << " sinsq2theta12 = "  << input_sinsq2theta12
 	  << ", sinsq2theta13 = " << input_sinsq2theta13
 	  << ", sinsq2theta23 = " << input_sinsq2theta23
@@ -177,7 +154,7 @@ void test_n_mock_data_fits(
         bestfit_deltacp       = fparm->CurrValue(t2kana::conv::kPhypDeltaCP);
         bestfit_dm12sq        = fparm->CurrValue(t2kana::conv::kPhypDm12sq);
         bestfit_dm23sq        = fparm->CurrValue(t2kana::conv::kPhypDm23sq);
-        cout << "Best-fit:"
+        cout << "Best-fit osc. params:"
              << " sinsq2theta12 = "  << bestfit_sinsq2theta12
              << ", sinsq2theta13 = " << bestfit_sinsq2theta13
              << ", sinsq2theta23 = " << bestfit_sinsq2theta23
@@ -189,7 +166,7 @@ void test_n_mock_data_fits(
      if(hyp == conv::kHypNuMuDisapp2F) {
         bestfit_sinsq2theta23 = fparm->CurrValue(t2kana::conv::kPhypSinsq2Theta23);
         bestfit_dm23sq        = fparm->CurrValue(t2kana::conv::kPhypDm23sq);
-        cout << "Best-fit:"
+        cout << "Best-fit osc. params:"
              << " sinsq2theta23 = " << bestfit_sinsq2theta23
              << ", |Dm23^2| = " << bestfit_dm23sq << " eV^2/c^4"
              << " ==> chisq = " << bestfit_chisq << endl;
@@ -198,7 +175,8 @@ void test_n_mock_data_fits(
      // store best-fit values
      nfitnt->Fill(iexperiment, 
                   bestfit_sinsq2theta12, bestfit_sinsq2theta13, bestfit_sinsq2theta23, 
-                  bestfit_deltacp, bestfit_dm12sq, bestfit_dm23sq, bestfit_chisq, fitstatus,
+                  bestfit_deltacp, bestfit_dm12sq, bestfit_dm23sq, 
+                  bestfit_chisq, fitstatus,
 		  input_sinsq2theta12, input_sinsq2theta13, input_sinsq2theta23, 
                   input_deltacp, input_dm12sq, input_dm23sq);
 
