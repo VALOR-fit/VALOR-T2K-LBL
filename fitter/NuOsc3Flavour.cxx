@@ -8,6 +8,9 @@
 */
 //________________________________________________________________________________________
 
+//#define __show_debug_mesg__
+//#define __show_warning__
+
 #include <TMath.h>
 
 #include "NuOsc3Flavour.h"
@@ -553,11 +556,13 @@ double NuOsc3Flavour::CalcMatterOscProb(int nu_start, int nu_end, double energy)
   double eigenvalueSum = eigenvalues[0] + eigenvalues[1] + eigenvalues[2];
   double trace = UMassUdagger[0][0][re] + UMassUdagger[1][1][re] + UMassUdagger[2][2][re];
 
-  if(fabs((eigenvalueSum - trace) / trace) > 1.0e-4)
-    {
-    cerr<<"Warning in NuOsc3Flavour::CalcMatterOscProb() : fractional difference between sum of eigenvalues and trace of matrix = "
-	<<fabs((eigenvalueSum - trace) / trace)<<"."<<endl;
-    }
+  if(fabs((eigenvalueSum - trace) / trace) > 1.0e-4) 
+  {
+#ifdef __show_warning__
+    cerr << "Warning in NuOsc3Flavour::CalcMatterOscProb() : fractional difference between sum of eigenvalues and trace of matrix = "
+	 << fabs((eigenvalueSum - trace) / trace) << "." << endl;
+#endif
+  }
 
 
   double UMassUdaggerMinusEv[3][3][2];
@@ -655,19 +660,23 @@ double NuOsc3Flavour::CalcMatterOscProb(int nu_start, int nu_end, double energy)
 
  }//end of for(int i=0; i<3; i++)
 
- for(int i=0; i<3; i++)
+ for(int i=0; i<3; i++) 
+ {
+   if(fabs(eigenvectorCheck[i][re]) > 1.0e-8) 
    {
-   if(fabs(eigenvectorCheck[i][re]) > 1.0e-8)
-     {
-     cerr<<"Warning in NuOsc3Flavour::CalcMatterOscProb() : real part of eigenvector check = "
-         <<eigenvectorCheck[i][re]<<"."<<endl;
-     }
-   if(fabs(eigenvectorCheck[i][im]) > 1.0e-8)
-     {
-     cerr<<"Warning in NuOsc3Flavour::CalcMatterOscProb() : imaginary part of eigenvector check = "
-         <<eigenvectorCheck[i][im]<<"."<<endl;
-     }
-   }//end of for(int i=0; i<3; i++)
+#ifdef __show_warning__
+     cerr << "Warning in NuOsc3Flavour::CalcMatterOscProb() : real part of eigenvector check = "
+          << eigenvectorCheck[i][re] <<"." << endl;
+#endif
+   }
+   if(fabs(eigenvectorCheck[i][im]) > 1.0e-8) 
+   {
+#ifdef __show_warning__
+     cerr << "Warning in NuOsc3Flavour::CalcMatterOscProb() : imaginary part of eigenvector check = "
+          << eigenvectorCheck[i][im] << "." << endl;
+#endif
+   }
+ }//end of for(int i=0; i<3; i++)
 
 
  // Check that the complex eigenvectors are orthogonal  
@@ -702,18 +711,22 @@ double NuOsc3Flavour::CalcMatterOscProb(int nu_start, int nu_end, double energy)
  }
 
  for(int i=0; i<3; i++)
-   {
+ {
    if(fabs(scalarProduct[i][re]) > 1.0e-4)
-     {
-     cerr<<"Warning in NuOsc3Flavour::CalcMatterOscProb() : in eigenvector orthogonality check, real part of scalar product = "
-         <<scalarProduct[i][re]<<"."<<endl;
-     }        
+   {
+#ifdef __show_warning__
+     cerr << "Warning in NuOsc3Flavour::CalcMatterOscProb() : in eigenvector orthogonality check, real part of scalar product = "
+          << scalarProduct[i][re] << "." << endl;
+#endif
+   }        
    if(fabs(scalarProduct[i][im]) > 1.0e-4)
-     {
-     cerr<<"Warning in NuOsc3Flavour::CalcMatterOscProb() : in eigenvector orthogonality check, imaginary part of scalar product = "
-         <<scalarProduct[i][im]<<"."<<endl;
-     }
-   }//end of for(int i=0; i<3; i++)
+   {
+#ifdef __show_warning__
+     cerr << "Warning in NuOsc3Flavour::CalcMatterOscProb() : in eigenvector orthogonality check, imaginary part of scalar product = "
+          << scalarProduct[i][im] << "." << endl;
+#endif
+   }
+ }//end of for(int i=0; i<3; i++)
 
  double UMatterDagger[3][3][2];
 
@@ -752,36 +765,44 @@ double NuOsc3Flavour::CalcMatterOscProb(int nu_start, int nu_end, double energy)
    }
 
  for(int i=0; i<3; i++)
-   {
+ {
    for(int j=0; j<3; j++)
-     {
+   {
      if(i == j)
        {
        if(fabs(inverseCheck[i][j][re] - 1.0) > 1.0e-4)
-	 {
-         cerr<<"Warning in NuOsc3Flavour::CalcMatterOscProb() : in product of matter mixing matrix and its Hermitian conjugate, real part of diagonal element - 1.0 = "
-             <<fabs(inverseCheck[i][j][re] - 1.0)<<"."<<endl;
-	 }
-       if(fabs(inverseCheck[i][j][im]) > 1.0e-4)
-	 {
-         cerr<<"Warning in NuOsc3Flavour::CalcMatterOscProb() : in product of matter mixing matrix and its Hermitian conjugate, imaginary part of diagonal element = "
-             <<inverseCheck[i][j][im]<<"."<<endl;
-	 }      
-       }
-     else
        {
-       if(fabs(inverseCheck[i][j][re]) > 1.0e-4)
-	 {
-         cerr<<"Warning in NuOsc3Flavour::CalcMatterOscProb() : in product of matter mixing matrix and its Hermitian conjugate, real part of off-diagonal element = "
-             <<inverseCheck[i][j][re]<<"."<<endl;
-	 }
+#ifdef __show_warning__
+         cerr << "Warning in NuOsc3Flavour::CalcMatterOscProb() : in product of matter mixing matrix and its Hermitian conjugate, real part of diagonal element - 1.0 = "
+              << fabs(inverseCheck[i][j][re] - 1.0) << "." << endl;
+#endif
+       }
        if(fabs(inverseCheck[i][j][im]) > 1.0e-4)
-	 {
-         cerr<<"Warning in NuOsc3Flavour::CalcMatterOscProb() : in product of matter mixing matrix and its Hermitian conjugate, imaginary part of off-diagonal element = "
-             <<inverseCheck[i][j][im]<<"."<<endl;
-	 }              
-       }  
-     }//end of for(int j=0; j<3; j++)
+       {
+#ifdef __show_warning__
+         cerr << "Warning in NuOsc3Flavour::CalcMatterOscProb() : in product of matter mixing matrix and its Hermitian conjugate, imaginary part of diagonal element = "
+              << inverseCheck[i][j][im] << "." << endl;
+#endif
+       }      
+     }
+     else
+     {
+       if(fabs(inverseCheck[i][j][re]) > 1.0e-4)
+       {
+#ifdef __show_warning__
+         cerr << "Warning in NuOsc3Flavour::CalcMatterOscProb() : in product of matter mixing matrix and its Hermitian conjugate, real part of off-diagonal element = "
+              << inverseCheck[i][j][re] << "." << endl;
+#endif
+       }
+       if(fabs(inverseCheck[i][j][im]) > 1.0e-4)
+       {
+#ifdef __show_warning__
+         cerr << "Warning in NuOsc3Flavour::CalcMatterOscProb() : in product of matter mixing matrix and its Hermitian conjugate, imaginary part of off-diagonal element = "
+              << inverseCheck[i][j][im] << "." << endl;
+#endif
+       }              
+     }  
+ }//end of for(int j=0; j<3; j++)
    }//end of for(int i=0; i<3; i++)
 
  double initialFlavourState[3][2];

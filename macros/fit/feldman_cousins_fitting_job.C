@@ -168,17 +168,18 @@ void feldman_cousins_fitting_job
      // create fit inputs
      FitInputs * fit_inputs = new FitInputs(skobs,skexp,fparm);
 
-     // get chisq for true (sinsq2theta,dmsq) point 
+     // get chisq for true (input) "23"-sector point (sinsq2theta,dmsq) 
+     // (marginalised non-"23"-sector params are treared as systematics and in the chisq_true calculation
+     // they are set to nominal (constant) values used in the fit).
+     fparm->ResetCurrToInitValues();
+     fparm->Update(t2kana::conv::kPhypSinsq2Theta23, input_sinsq2theta23);
+     fparm->Update(t2kana::conv::kPhypDm23sq,        input_dm23sq);
      double chisq_for_input_params = fit_inputs->Chisquare();
      cout << "Chisq(input/true oscillation params) = " << chisq_for_input_params << endl;
 
-     // reset current values to specified init-values
+     // get the specified fitter and perform the fit
      fparm->ResetCurrToInitValues();
-
-     // get fitter
      NuMuDisappFitter fitter(fit_inputs,fitter_name);
-
-     // do the fit
      fitter.DoTheFit();
 
      // get best-fit params
@@ -190,6 +191,8 @@ void feldman_cousins_fitting_job
           << " sinsq2theta23 = " << bestfit_sinsq2theta23
           << ", dm23sq = " << bestfit_dm23sq << " eV^2/c^4"
           << " => chisq = " << bestfit_chisq << endl;
+
+     cout << "Delta\chisq = " << chisq_for_input_params - bestfit_chisq << endl;
 
      // store results for this pseudo-experiment
      fcnt->Fill(iexperiment, 
