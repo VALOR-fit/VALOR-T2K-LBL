@@ -8,6 +8,10 @@ Important revisions after version 1.0.0 :
    this explicitly could lead to confusion. 
  @ 15/09/2011 - CA
    Print-out a list of all parameters used for each pseudo-expt generation.
+ @ 21/09/2011 - CA
+   Added CreateMockData(SuperkExpectation &, const PhysHypothesis &, bool fluctuate) 
+   so that toy-MC expts can be generated without using the fitting interface / an input 
+   FitParamList object.
 
 */
 //________________________________________________________________________________________
@@ -203,6 +207,29 @@ void SuperkObservation::CreateMockData(
   fErDistr[kSKsFCFV1RingMuLike] -> SetDirectory(0);
 
   skexp.Generate(fp); //generate prediction
+
+  TH1D* h = skexp.CurrPredictedErecoSpectrum(kSKsFCFV1RingMuLike);
+
+  TRandom3 rand(0);
+  for(int ibin = 1; ibin <= h->GetNbinsX(); ibin++) {
+     double nexp  = h->GetBinContent(ibin);
+     double nobs  = (fluctuate) ? rand.Poisson(nexp) : nexp;
+     fErDistr[kSKsFCFV1RingMuLike]->SetBinContent(ibin,nobs);
+  }
+}
+//________________________________________________________________________________________
+void SuperkObservation::CreateMockData(
+     SuperkExpectation & skexp, const PhysHypothesis & ph, bool fluctuate)
+{
+// Get observed reconstructed energy distribution
+
+  cout << "Obs >> Generating a toy-MC expt with the following params: " << ph;
+  cout << "Obs >> Stat. fluctuations are turned-" << ((fluctuate)? "ON" : "OFF") << endl;
+
+  fErDistr[kSKsFCFV1RingMuLike] = new TH1D("", "", kNvErecoBins,kNvErecoBinEdges);
+  fErDistr[kSKsFCFV1RingMuLike] -> SetDirectory(0);
+
+  skexp.Generate(ph); //generate prediction
 
   TH1D* h = skexp.CurrPredictedErecoSpectrum(kSKsFCFV1RingMuLike);
 

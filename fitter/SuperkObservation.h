@@ -43,7 +43,8 @@ public:
   bool Read(string config_file, int data_set_id=0);
 
   // Create mock data
-  void CreateMockData(SuperkExpectation & exp, const FitParamList & fp, bool fluctuate=true);
+  void CreateMockData(SuperkExpectation & exp, const FitParamList & fp,   bool fluctuate=true);
+  void CreateMockData(SuperkExpectation & exp, const PhysHypothesis & ph, bool fluctuate=true);
 
   // Get data
   double NumOfEvents (t2kana::conv::SuperkSample_t s = t2kana::conv::kSKsUndefined) const;             
