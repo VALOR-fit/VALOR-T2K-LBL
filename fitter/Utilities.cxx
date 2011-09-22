@@ -29,6 +29,8 @@
    formation of output filename in test macros.
    Added `PhysHypothesis_t FromString(string h)' to simplify running certain
    test macros.
+ @ 22/09/11
+   Added Option_t * argument in `AsString(string hypothesis, osc params)'
 */
 //____________________________________________________________________________
 
@@ -469,10 +471,11 @@ double t2kana::util::RandomizeDm12sq(void)
 string t2kana::util::AsString (
   string hypothesis, 
   double sinsq2theta12, double sinsq2theta13, double sinsq2theta23, 
-  double deltacp, double dm12sq, double dm23sq)
+  double deltacp, double dm12sq, double dm23sq, Option_t * option)
 {
 //
   string s = "?";
+  string opt = option;
 
   if( t2kana::util::FromString(hypothesis) == t2kana::conv::kHypNuMuDisapp2F )
   {
@@ -480,8 +483,18 @@ string t2kana::util::AsString (
   }
   if( t2kana::util::FromString(hypothesis) == t2kana::conv::kHypOsc3F )
   {
-    s = Form("sinsq2theta[12_%.3f,13_%.3f,23_%.3f],dcp_%.3f,dmsq[12_%.8f,23_%.6f]eV2",
-       sinsq2theta12, sinsq2theta13, sinsq2theta23, deltacp, dm12sq, dm23sq);
+    if(opt.find("all") != string::npos) {
+      s = Form("sinsq2theta[12_%.3f,13_%.3f,23_%.3f],dcp_%.3f,dmsq[12_%.8f,23_%.6f]eV2",
+                sinsq2theta12, sinsq2theta13, sinsq2theta23, deltacp, dm12sq, dm23sq);
+    } else
+    if(opt.find("no-theta13-deltacp") != string::npos) {
+      s = Form("sinsq2theta[12_%.3f,23_%.3f],dmsq[12_%.8f,23_%.6f]eV2",
+                sinsq2theta12, sinsq2theta23, dm12sq, dm23sq);
+    } else
+    if(opt.find("no-theta12-dm12sq") != string::npos) {
+      s = Form("sinsq2theta[13_%.3f,23_%.3f],dcp_%.3f,dmsq23_%.6feV2",
+                sinsq2theta13, sinsq2theta23, deltacp, dm23sq);
+    }
   }
 
   return s;
