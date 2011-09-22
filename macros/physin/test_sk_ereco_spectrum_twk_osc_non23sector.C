@@ -32,7 +32,7 @@ void test_sk_ereco_spectrum_twk_osc_non23sector
   double dm12sq_fix        = 7.58E-5;
   double sinsq2theta12_fix = 0.86;
   double sinsq2theta13_fix = 0.10;
-  double deltacp_fix       = 0.10;
+  double deltacp_fix       = pi/2;
   double dm12sq_var        [ncases-1] = { 6.50E-5, 7.58E-5, 8.50E-5 };
   double sinsq2theta12_var [ncases-1] = { 0.700,   0.860,   1.000   };
   double sinsq2theta13_var [ncases-1] = { 0.000,   0.100,   0.200   };
@@ -118,6 +118,8 @@ void test_sk_ereco_spectrum_twk_osc_non23sector
        hEreco[icase]->GetXaxis()->SetTitle("E_{reco} (GeV)");
        hEreco[icase]->GetYaxis()->SetTitle("Number of events");
      }
+     //hEreco[icase]->GetXaxis()->SetRangeUser(0.,2.);
+     //hEreco[icase]->GetYaxis()->SetRangeUser(0.,2.);
      hEreco[icase]->Draw(opt);
      legend->AddEntry(hEreco[icase], label, "L");
      cout << " *** " << label << " : " << endl;
@@ -152,6 +154,8 @@ void test_sk_ereco_spectrum_twk_osc_non23sector
        hErecoRatio[icase]->GetXaxis()->SetTitle("E_{reco} (GeV)");
        hErecoRatio[icase]->GetYaxis()->SetTitle("3-flavour / 2-flavour hypothesis ratio");
      }
+     //hErecoRatio[icase]->GetXaxis()->SetRangeUser(0.0,2.0);
+     //hErecoRatio[icase]->GetYaxis()->SetRangeUser(0.7,1.3);
      hErecoRatio[icase]->Draw(opt);
      legendr->AddEntry(hErecoRatio[icase], label, "L");
   }
