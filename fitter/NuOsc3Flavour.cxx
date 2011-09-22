@@ -146,6 +146,10 @@ void NuOsc3Flavour::SetOscParameters(
   UMassUdaggerVacuum[2][2][re] = (s23*s23*c12*c12 + s12*s12*c23*c23*s13*s13 + 2.0*s23*c12*s12*c23*s13*cos(deltaCP)) * dmsq12
                                + c13*c13*c23*c23*dmsq13;
   UMassUdaggerVacuum[2][2][im] = 0.0;
+
+  useEquations12 = true;
+  if(deltaCP > 3.10 && deltaCP < 3.18 && sinsq2theta13 > 1.0e-8)
+    useEquations12 = false;
 }
 //________________________________________________________________________________________
 double NuOsc3Flavour::CalcVacuumOscProb(int nu_start, int nu_end, double energy)
@@ -603,28 +607,59 @@ double NuOsc3Flavour::CalcMatterOscProb(int nu_start, int nu_end, double energy)
     // Take the second component of each eigenvector to be 1.0 (real).
     // Calculate the first and third components in terms of the second component.
     // This calculation uses the Hermitian nature of UMassUdagger 
-    numerator1[re] = UMassUdaggerMinusEv[1][1][re] * UMassUdaggerMinusEv[2][2][re]
-                   - UMassUdaggerMinusEv[1][1][im] * UMassUdaggerMinusEv[2][2][im]
-                   - (UMassUdaggerMinusEv[1][2][re] * UMassUdaggerMinusEv[1][2][re]
-	           + UMassUdaggerMinusEv[1][2][im] * UMassUdaggerMinusEv[1][2][im]);
-    numerator1[im] = UMassUdaggerMinusEv[1][1][re] * UMassUdaggerMinusEv[2][2][im]
-	           + UMassUdaggerMinusEv[1][1][im] * UMassUdaggerMinusEv[2][2][re];
-    numerator3[re] = UMassUdaggerMinusEv[0][1][re] * UMassUdaggerMinusEv[1][2][re]
-                   - UMassUdaggerMinusEv[0][1][im] * UMassUdaggerMinusEv[1][2][im]
-	           - (UMassUdaggerMinusEv[1][1][re] * UMassUdaggerMinusEv[0][2][re]
-	           + UMassUdaggerMinusEv[1][1][im] * UMassUdaggerMinusEv[0][2][im]);
-    numerator3[im] = -UMassUdaggerMinusEv[0][1][re] * UMassUdaggerMinusEv[1][2][im]               
-                   - UMassUdaggerMinusEv[0][1][im] * UMassUdaggerMinusEv[1][2][re]
-	           - (-UMassUdaggerMinusEv[1][1][re] * UMassUdaggerMinusEv[0][2][im]
-	           + UMassUdaggerMinusEv[1][1][im] * UMassUdaggerMinusEv[0][2][re]);
-    denominator[re] = UMassUdaggerMinusEv[1][2][re] * UMassUdaggerMinusEv[0][2][re]
-                    + UMassUdaggerMinusEv[1][2][im] * UMassUdaggerMinusEv[0][2][im]
-	            - (UMassUdaggerMinusEv[2][2][re] * UMassUdaggerMinusEv[0][1][re]
-	            + UMassUdaggerMinusEv[2][2][im] * UMassUdaggerMinusEv[0][1][im]);
-    denominator[im] = -UMassUdaggerMinusEv[1][2][re] * UMassUdaggerMinusEv[0][2][im]
-                    + UMassUdaggerMinusEv[1][2][im] * UMassUdaggerMinusEv[0][2][re]
-	            - (-UMassUdaggerMinusEv[2][2][re] * UMassUdaggerMinusEv[0][1][im]
-	            + UMassUdaggerMinusEv[2][2][im] * UMassUdaggerMinusEv[0][1][re]);
+
+    if(useEquations12)
+      {  
+      //this version calculates the eigenvectors using the first and second simultaneous equations 
+      numerator1[re] = UMassUdaggerMinusEv[1][1][re] * UMassUdaggerMinusEv[0][2][re]
+                     - UMassUdaggerMinusEv[1][1][im] * UMassUdaggerMinusEv[0][2][im]
+                     - (UMassUdaggerMinusEv[1][2][re] * UMassUdaggerMinusEv[0][1][re]
+	             - UMassUdaggerMinusEv[1][2][im] * UMassUdaggerMinusEv[0][1][im]);
+      numerator1[im] = UMassUdaggerMinusEv[1][1][re] * UMassUdaggerMinusEv[0][2][im]
+                     + UMassUdaggerMinusEv[1][1][im] * UMassUdaggerMinusEv[0][2][re]
+                     - (UMassUdaggerMinusEv[1][2][re] * UMassUdaggerMinusEv[0][1][im]
+	             + UMassUdaggerMinusEv[1][2][im] * UMassUdaggerMinusEv[0][1][re]);
+      numerator3[re] = UMassUdaggerMinusEv[0][1][re] * UMassUdaggerMinusEv[0][1][re]
+                     + UMassUdaggerMinusEv[0][1][im] * UMassUdaggerMinusEv[0][1][im]
+                     - (UMassUdaggerMinusEv[0][0][re] * UMassUdaggerMinusEv[1][1][re]
+	             - UMassUdaggerMinusEv[0][0][im] * UMassUdaggerMinusEv[1][1][im]);
+      numerator3[im] = -(UMassUdaggerMinusEv[0][0][re] * UMassUdaggerMinusEv[1][1][im]
+		     + UMassUdaggerMinusEv[0][0][im] * UMassUdaggerMinusEv[1][1][re]);
+      denominator[re] = UMassUdaggerMinusEv[0][0][re] * UMassUdaggerMinusEv[1][2][re]
+                      - UMassUdaggerMinusEv[0][0][im] * UMassUdaggerMinusEv[1][2][im]
+                      - (UMassUdaggerMinusEv[0][2][re] * UMassUdaggerMinusEv[0][1][re]
+	              + UMassUdaggerMinusEv[0][2][im] * UMassUdaggerMinusEv[0][1][im]);
+      denominator[im] = UMassUdaggerMinusEv[0][0][re] * UMassUdaggerMinusEv[1][2][im]
+                      + UMassUdaggerMinusEv[0][0][im] * UMassUdaggerMinusEv[1][2][re]
+                      - (-UMassUdaggerMinusEv[0][2][re] * UMassUdaggerMinusEv[0][1][im]
+	              + UMassUdaggerMinusEv[0][2][im] * UMassUdaggerMinusEv[0][1][re]);
+      }
+    else
+      {
+      //this version calculates the eigenvectors using the second and third simultaneous equations
+      numerator1[re] = UMassUdaggerMinusEv[1][1][re] * UMassUdaggerMinusEv[2][2][re]
+                     - UMassUdaggerMinusEv[1][1][im] * UMassUdaggerMinusEv[2][2][im]
+                     - (UMassUdaggerMinusEv[1][2][re] * UMassUdaggerMinusEv[1][2][re]
+	             + UMassUdaggerMinusEv[1][2][im] * UMassUdaggerMinusEv[1][2][im]);
+      numerator1[im] = UMassUdaggerMinusEv[1][1][re] * UMassUdaggerMinusEv[2][2][im]
+	             + UMassUdaggerMinusEv[1][1][im] * UMassUdaggerMinusEv[2][2][re];
+      numerator3[re] = UMassUdaggerMinusEv[0][1][re] * UMassUdaggerMinusEv[1][2][re]
+                     - UMassUdaggerMinusEv[0][1][im] * UMassUdaggerMinusEv[1][2][im]
+	             - (UMassUdaggerMinusEv[1][1][re] * UMassUdaggerMinusEv[0][2][re]
+	             + UMassUdaggerMinusEv[1][1][im] * UMassUdaggerMinusEv[0][2][im]);
+      numerator3[im] = -UMassUdaggerMinusEv[0][1][re] * UMassUdaggerMinusEv[1][2][im]               
+                     - UMassUdaggerMinusEv[0][1][im] * UMassUdaggerMinusEv[1][2][re]
+	             - (-UMassUdaggerMinusEv[1][1][re] * UMassUdaggerMinusEv[0][2][im]
+	             + UMassUdaggerMinusEv[1][1][im] * UMassUdaggerMinusEv[0][2][re]);
+      denominator[re] = UMassUdaggerMinusEv[1][2][re] * UMassUdaggerMinusEv[0][2][re]
+                      + UMassUdaggerMinusEv[1][2][im] * UMassUdaggerMinusEv[0][2][im]
+	              - (UMassUdaggerMinusEv[2][2][re] * UMassUdaggerMinusEv[0][1][re]
+	              + UMassUdaggerMinusEv[2][2][im] * UMassUdaggerMinusEv[0][1][im]);
+      denominator[im] = -UMassUdaggerMinusEv[1][2][re] * UMassUdaggerMinusEv[0][2][im]
+                      + UMassUdaggerMinusEv[1][2][im] * UMassUdaggerMinusEv[0][2][re]
+	              - (-UMassUdaggerMinusEv[2][2][re] * UMassUdaggerMinusEv[0][1][im]
+	              + UMassUdaggerMinusEv[2][2][im] * UMassUdaggerMinusEv[0][1][re]);
+      }
 
     // The columns of UMatter are the eigenvectors of UMassUdagger
     UMatter[0][i][re] = (numerator1[re]  * denominator[re] + numerator1[im]  * denominator[im])

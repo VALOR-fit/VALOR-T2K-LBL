@@ -98,6 +98,8 @@ private:
  // UMassUdaggerVacuum is the product of the PMNS matrix, the mass 
  // squared matrix and the dagger of the PMNS matrix in vacuum.
  double UMassUdaggerVacuum[3][3][2];		
+
+ bool useEquations12;
 };
 
 }//end of namespace t2kana
