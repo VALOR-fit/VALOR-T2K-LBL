@@ -244,7 +244,7 @@ static const double kEtrueMax    = 12;
 static const double kEtrueBinSz  = 0.05;
 static const int    kNEtrueBins  = (int) ((kEtrueMax - kEtrueMin)/kEtrueBinSz);
 
-/*
+
 //
 // SuperK Ereco binning
 //
@@ -276,9 +276,9 @@ static const double kNvErecoBinEdges[kNvErecoBins+1] = {
    9.500,  9.550,  9.600,  9.650,  9.700,  9.750,  9.800,  9.850,  9.900,  9.950, 
   10.000
 };
-*/
 
 
+/*
 //
 // Fewer bins at higher energies for improved speed
 // -  50 MeV bins in 0-3 GeV
@@ -298,7 +298,7 @@ static const double kNvErecoBinEdges[kNvErecoBins+1] = {
    4.000,  4.500,  5.000,  5.500,  
    6.000,  7.000,  8.000,  9.000, 10.000
 };
-
+*/
 
 /*
 //

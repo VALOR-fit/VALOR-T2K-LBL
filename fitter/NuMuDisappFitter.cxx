@@ -204,8 +204,6 @@ bool NuMuDisappFitter::DoTheFitCustom(void)
   cout << "NuMuDisappFitter/DoTheFit >> Running the fitter..." << endl;
 #endif
 
-  cout<<"Nick NuMuDisappFitter::DoTheFitCustom()"<<endl;
-
   double sinsq2theta23_bestfit = 0;
   double dm23sq_bestfit = 0;
 
