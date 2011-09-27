@@ -47,6 +47,11 @@
  @ 26/07/2011 - CA
    Took newly-added `nue signal' templates into account. They should be neglected under all 
    but the 3-flavour oscillation hypothesis. 
+ @ 27/09/2011 - CA
+   In SetNuisanceParams(const FitParamList & fp) don't call ResetSystematicVariations()
+   as this messes things-up in the case where nuisance params are not included in the fit
+   but are tweaked externally (via one of the TweakXYZ() methods).
+
 */
 //________________________________________________________________________________________
 
@@ -259,6 +264,8 @@ TH1D* SuperkExpectation::CurrPredictedErecoSpectrum(
 //________________________________________________________________________________________
 void SuperkExpectation::ResetSystematicVariations(void)
 {
+  cout << "Exp >> Reseting all systematic variations." << endl;
+
   this->GetSuperkMC()->TweakEnergyScale                (0.);
   this->GetSuperkMC()->TweakOtherEfficiencyCCQE        (0.);
   this->GetSuperkMC()->TweakRingCountingEfficiencyCCQE (true,0.,0.,0.); 
@@ -381,6 +388,8 @@ void SuperkExpectation::TweakAllSystematics(bool do_tweak)
 {
   if(do_tweak) 
   {
+     cout << "Exp >> Generating random variations of all systematic params." << endl;
+
      TRandom3 rand(0);
 
      // SuperK detector response
@@ -509,7 +518,7 @@ void SuperkExpectation::CleanUp(void)
 //________________________________________________________________________________________
 void SuperkExpectation::SetNuisanceParams(const FitParamList & fp)
 {
-   this->ResetSystematicVariations();
+   //this->ResetSystematicVariations();
 
    if(fp.Exists(kNuisSuperkEffCCQEoth)) {
      double twk = fp.CurrValue(kNuisSuperkEffCCQEoth);

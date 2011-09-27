@@ -586,13 +586,6 @@ void SuperkMC::ApplyPhysHypothesisToTemplates(void)
         double p_numubar_numubar = fNuOsc3Flavour.CalcMatterOscProb(kPdgNuMuBar, kPdgNuMuBar, Etrue);
         double p_nue_nue         = fNuOsc3Flavour.CalcMatterOscProb(kPdgNuE,     kPdgNuE,     Etrue);
         double p_numu_nue        = fNuOsc3Flavour.CalcMatterOscProb(kPdgNuMu,    kPdgNuE,     Etrue);
-/*
-        double p_numu_numu       = fNuOsc3Flavour.CalcVacuumOscProb(kPdgNuMu,    kPdgNuMu,    Etrue);
-      //double p_nue_numu        = fNuOsc3Flavour.CalcVacuumOscProb(kPdgNuE,     kPdgNuMu,    Etrue);
-        double p_numubar_numubar = fNuOsc3Flavour.CalcVacuumOscProb(kPdgNuMuBar, kPdgNuMuBar, Etrue);
-        double p_nue_nue         = fNuOsc3Flavour.CalcVacuumOscProb(kPdgNuE,     kPdgNuE,     Etrue);
-        double p_numu_nue        = fNuOsc3Flavour.CalcVacuumOscProb(kPdgNuMu,    kPdgNuE,     Etrue);
-*/
 #ifdef __debug_level_3__
         cout << "Exp/SKMC >>  E = " << Etrue << " GeV" << endl;
         cout << "Exp/SKMC >>  * P (numu     -> numu)    = " << p_numu_numu       << endl;
