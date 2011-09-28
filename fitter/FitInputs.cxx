@@ -14,9 +14,8 @@
 */
 //________________________________________________________________________________________
 
-//#define __debug_level_1__
-//#define __debug_level_2__
-//#define __debug_level_3__
+#define __show_bin_contributions_to_chisq__
+#define __show_chisq__
 
 #include <cassert>
 #include <cstdlib>
@@ -80,7 +79,7 @@ double FitInputs::Chisquare(Option_t * option)
 
   int nbins = exp_ereco_spectrum->GetNbinsX();
 
-#ifdef __debug_level_3__
+#ifdef __show_bin_contributions_to_chisq__
    cout << "FitInputs::Chisquare()> nbins = " << nbins << endl;
 #endif
 
@@ -89,15 +88,17 @@ double FitInputs::Chisquare(Option_t * option)
      double nobs = obs_ereco_spectrum->GetBinContent(ibin);
      double nexp = exp_ereco_spectrum->GetBinContent(ibin);
 
-     double delta = 0.;
-     if      (opt.Contains("poisson")) { delta = util::ChisqPoisson(nobs,nexp); }
-     else if (opt.Contains("gauss")  ) { delta = util::ChisqGauss  (nobs,nexp); }
+     double delta_chisq = 0.;
+     if      (opt.Contains("poisson")) { delta_chisq = util::ChisqPoisson(nobs,nexp); }
+     else if (opt.Contains("gauss")  ) { delta_chisq = util::ChisqGauss  (nobs,nexp); }
 
-     chisq += delta;
+     chisq += delta_chisq;
 
-#ifdef __debug_level_3__
-     cout << "FitInputs::Chisquare()> chisq (bin = "
-          << ibin << " / Ereco = " << Ereco << " GeV) = " << delta << endl;
+#ifdef __show_bin_contributions_to_chisq__
+     double xlo = obs_ereco_spectrum->GetXaxis()->GetBinLowEdge(ibin);  
+     double xup = obs_ereco_spectrum->GetXaxis()->GetBinUpEdge(ibin);
+     cout << "FitInputs::Chisquare()> delta_chisq (bin = " << ibin 
+          << "; [" << xlo << ", " << xup << "] GeV) = " << delta_chisq << endl;
 #endif
 
   }//ibin
@@ -107,7 +108,7 @@ double FitInputs::Chisquare(Option_t * option)
   double chisq_penalty = this->FitParams().ChisquarePenaltyTerm();
   chisq += chisq_penalty;
 
-#ifdef __debug_level_2__
+#ifdef __show_chisq__
   cout << "FitInputs::Chisquare()> chisq = " << chisq 
        << " (contribution from penalty term = " << chisq_penalty << ")" 
        << endl;

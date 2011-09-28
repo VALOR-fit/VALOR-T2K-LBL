@@ -24,11 +24,16 @@
    Method SetInitValue(PhysParamId_t p, double value) also gets the current value in sync
    with the initial value. Calling TVirtualFitter::Clear() before setting the fit params
    to the fitter in SetTo(TVirtualFitter *). Modified the default, named fit param lists.
+ @ 28/09/2011 - CA
+   Tweak init values. Add array to hold best-fit values so as to remove need potential 
+   error from not looking-up the current/running values immediately after the chisquare
+   minimum was reached. Added `CopyCurrToBestFitValues()', `CopyBestFitToCurrValues()' 
+   and `BestFitValue(PhysParamId_t)' methods.
 
 */
 //________________________________________________________________________________________
 
-//#define _debug_
+//#define __show_contributions_to_penalty_term__
 
 #include <cassert>
 #include <cstdlib>
@@ -77,14 +82,15 @@ bool FitParamList::AddParam (int ip, PhysParamId_t p,
     name = util::AsString(p);
   }
 
-  fCurrValue [ip] = init;
-  fInitValue [ip] = init;
-  fMinValue  [ip] = min; 
-  fMaxValue  [ip] = max; 
-  fStepSize  [ip] = step; 
-  fIsFixed   [ip] = fix;  
-  fIsNuisance[ip] = nuis;  
-  fName      [ip] = ( (name == "") ? util::AsString(p) : name );
+  fBestFitValue [ip] = -99999999;
+  fCurrValue    [ip] = init;
+  fInitValue    [ip] = init;
+  fMinValue     [ip] = min; 
+  fMaxValue     [ip] = max; 
+  fStepSize     [ip] = step; 
+  fIsFixed      [ip] = fix;  
+  fIsNuisance   [ip] = nuis;  
+  fName         [ip] = ( (name == "") ? util::AsString(p) : name );
 
   return true;
 }
@@ -94,6 +100,53 @@ bool FitParamList::Exists(PhysParamId_t p) const
   map<PhysParamId_t, int>::const_iterator iter = fIdMap.find(p);
   if(iter != fIdMap.end()) return true;
   return false;
+}
+//________________________________________________________________________________________
+void FitParamList::Update(PhysParamId_t p, double v)
+{
+  fCurrValue [this->Id(p)] = v;
+}
+//________________________________________________________________________________________
+void FitParamList::SetInitValue(PhysParamId_t p, double v)
+{
+  fInitValue [this->Id(p)] = v;
+  fCurrValue [this->Id(p)] = v;
+}                  
+//________________________________________________________________________________________
+void FitParamList::ResetCurrToInitValues(void)
+{
+  for(int ip = 0; ip < fNParams; ip++) {
+     fCurrValue[ip] = fInitValue[ip];
+  }
+}
+//________________________________________________________________________________________
+void FitParamList::CopyCurrToBestFitValues(void)
+{
+  for(int ip = 0; ip < fNParams; ip++) {
+     fBestFitValue[ip] = fCurrValue[ip];
+  }
+}
+//________________________________________________________________________________________
+void FitParamList::CopyBestFitToCurrValues(void)
+{
+  for(int ip = 0; ip < fNParams; ip++) {
+     fCurrValue[ip] = fBestFitValue[ip];
+  }
+}
+//________________________________________________________________________________________
+void FitParamList::FixParameter(PhysParamId_t p)
+{
+  fIsFixed [this->Id(p)] = true;
+}
+//________________________________________________________________________________________
+void FitParamList::FreeParameter(PhysParamId_t p)
+{
+  fIsFixed [this->Id(p)] = false;
+}
+//________________________________________________________________________________________
+void FitParamList::SetNuisance(PhysParamId_t p, bool tf)
+{
+  fIsNuisance [this->Id(p)] = tf;
 }
 //________________________________________________________________________________________
 void FitParamList::SetTo(TVirtualFitter * fitter)
@@ -126,13 +179,6 @@ void FitParamList::Sync(double * par)
   }
 }
 //________________________________________________________________________________________
-void FitParamList::ResetCurrToInitValues(void)
-{
-  for(int ip = 0; ip < fNParams; ip++) {
-     fCurrValue[ip] = fInitValue[ip];
-  }
-}
-//________________________________________________________________________________________
 double FitParamList::ChisquarePenaltyTerm(void)
 {
   double chisq_penalty = 0;
@@ -148,17 +194,30 @@ double FitParamList::ChisquarePenaltyTerm(void)
         // Cholesky method (wherever correlations are taken into account).
         if( util::IsSystematic(p) ) {
            double twk = fCurrValue[ip];
-           chisq_penalty += (twk*twk);
+           double dchisq_penalty = twk*twk;
+           chisq_penalty += dchisq_penalty;
+#ifdef __show_contributions_to_penalty_term__
+           cout << "FitParamList::ChisquarePenaltyTerm >> " 
+                << util::AsString(p) << " = " << twk 
+                << " ==> deltachi^2_{penalty} = " << dchisq_penalty << endl;
+#endif
         }
-        // if the nuiance param is one of the oscillation params that get marginalised
+        // if the nuisance param is one of the oscillation params that get marginalised
         // in this particular fit, do one of the following:
         else if(p == kPhypSinsq2Theta23) 
         { 
            // penalize deviations from global analysis best-fit value
-           double sinsq2theta23 = fCurrValue[ip];
-           double twk = (sinsq2theta23 - kGlobFitSinsq2Theta23) / 
-                        (kGlobFitSinsq2Theta23 * kGlobFitErrSinsq2Theta23);
-           chisq_penalty += (twk*twk);
+           double sinsq2q = fCurrValue[ip];
+           double nom = kGlobFitSinsq2Theta23;
+           double err = kGlobFitSinsq2Theta23 * kGlobFitErrSinsq2Theta23;
+           double twk = (sinsq2q - nom) / err;
+           double dchisq_penalty = twk*twk;
+           chisq_penalty += dchisq_penalty;
+#ifdef __show_contributions_to_penalty_term__
+           cout << "FitParamList::ChisquarePenaltyTerm >> sinsq2theta23 = " << sinsq2q
+                << " (nominal = " << nom << ", error = " << err << ", twk = " << twk << ")"
+                << " ==> deltachi^2_{penalty} = " << dchisq_penalty << endl;
+#endif
         }
         else if(p == kPhypSinsq2Theta13) 
         { 
@@ -167,10 +226,17 @@ double FitParamList::ChisquarePenaltyTerm(void)
         else if(p == kPhypSinsq2Theta12) 
         { 
            // penalize deviations from global analysis best-fit value
-           double sinsq2theta12 = fCurrValue[ip];
-           double twk = (sinsq2theta12 - kGlobFitSinsq2Theta12) / 
-                        (kGlobFitSinsq2Theta12 * kGlobFitErrSinsq2Theta12);
-           chisq_penalty += (twk*twk);
+           double sinsq2q = fCurrValue[ip];
+           double nom = kGlobFitSinsq2Theta12;
+           double err = kGlobFitSinsq2Theta12 * kGlobFitErrSinsq2Theta12;
+           double twk = (sinsq2q - nom) / err;
+           double dchisq_penalty = twk*twk;
+           chisq_penalty += dchisq_penalty;
+#ifdef __show_contributions_to_penalty_term__
+           cout << "FitParamList::ChisquarePenaltyTerm >> sinsq2theta12 = " << sinsq2q
+                << " (nominal = " << nom << ", error = " << err << ", twk = " << twk << ")"
+                << " ==> deltachi^2_{penalty} = " << dchisq_penalty << endl;
+#endif
         }
         else if(p == kPhypDeltaCP) 
         { 
@@ -179,16 +245,32 @@ double FitParamList::ChisquarePenaltyTerm(void)
         else if(p == kPhypDm23sq) 
         { 
            // penalize deviations from global analysis best-fit value
-           double dmsq = fCurrValue[ip];     
-           double twk = (dmsq - kGlobFitDm23sq) / (kGlobFitDm23sq * kGlobFitErrDm23sq);
-           chisq_penalty += (twk*twk);
+           double dmsq = fCurrValue[ip];    
+           double nom  = kGlobFitDm23sq; 
+           double err  = kGlobFitDm23sq * kGlobFitErrDm23sq;
+           double twk  = (dmsq - nom) / err;
+           double dchisq_penalty = twk*twk;
+           chisq_penalty += dchisq_penalty;
+#ifdef __show_contributions_to_penalty_term__
+           cout << "FitParamList::ChisquarePenaltyTerm >> |dm23sq| = " << dmsq
+                << " (nominal = " << nom << ", error = " << err << ", twk = " << twk << ")"
+                << " ==> deltachi^2_{penalty} = " << dchisq_penalty << endl;
+#endif
         }
         else if(p == kPhypDm12sq) 
         { 
            // penalize deviations from global analysis best-fit value
            double dmsq = fCurrValue[ip];     
-           double twk = (dmsq - kGlobFitDm12sq) / (kGlobFitDm12sq * kGlobFitErrDm12sq);
-           chisq_penalty += (twk*twk);
+           double nom  = kGlobFitDm12sq;
+           double err  = kGlobFitDm12sq * kGlobFitErrDm12sq;
+           double twk  = (dmsq - nom) / err;
+           double dchisq_penalty = twk*twk;
+           chisq_penalty += dchisq_penalty;
+#ifdef __show_contributions_to_penalty_term__
+           cout << "FitParamList::ChisquarePenaltyTerm >> dm12sq = " << dmsq
+                << " (nominal = " << nom << ", error = " << err << ", twk = " << twk << ")"
+                << " ==> deltachi^2_{penalty} = " << dchisq_penalty << endl;
+#endif
         }
 
     }//nuisance
@@ -262,7 +344,8 @@ FitParamList * FitParamList::NamedParameterList(string name)
   if(name == "nuosc3f_12constrain") {
     FitParamList * fp = FitParamList::NuOsc3FlavourFitNoSyst();
     fp -> SetNuisance (kPhypSinsq2Theta12, true);
-    fp -> SetNuisance (kPhypDm12sq, true);
+    fp -> SetNuisance (kPhypDm12sq,        true);
+    return fp;
   }
   if(name == "nuosc3f_numudisapp_fix4") {
     FitParamList * fp = FitParamList::NuOsc3FlavourFitNoSyst();
@@ -300,13 +383,13 @@ FitParamList * FitParamList::NuOsc3FlavourFitNoSyst(void)
 {
   FitParamList * fparm = new FitParamList(6);
 
-  //                                     init            min     max     step     fix?   nuis?
-  fparm->AddParam(0, kPhypSinsq2Theta23, 0.95,           0.50,   1.00,   1.0E-2,  false, false);
-  fparm->AddParam(1, kPhypSinsq2Theta13, 0.10,           0.00,   0.20,   1.0E-3,  false, false);
-  fparm->AddParam(2, kPhypSinsq2Theta12, kGlobFitDm12sq, 0.70,   1.00,   1.0E-2,  false, false);
-  fparm->AddParam(3, kPhypDeltaCP,       kpi,            0.00,   2*kpi,  1.0E-2,  false, false);
-  fparm->AddParam(4, kPhypDm23sq,        kGlobFitDm23sq, 1.0E-3, 4.0E-3, 1.0E-4,  false, false);
-  fparm->AddParam(5, kPhypDm12sq,        kGlobFitDm12sq, 7.0E-5, 9.0E-5, 2.0E-6,  false, false);
+  //                                     init                    min     max     step     fix?   nuis?
+  fparm->AddParam(0, kPhypSinsq2Theta23, 0.95,                   0.50,   1.00,   1.0E-2,  false, false);
+  fparm->AddParam(1, kPhypSinsq2Theta13, 0.10,                   0.00,   0.25,   1.0E-3,  false, false);
+  fparm->AddParam(2, kPhypSinsq2Theta12, kGlobFitSinsq2Theta12,  0.70,   1.00,   1.0E-2,  false, false);
+  fparm->AddParam(3, kPhypDeltaCP,       0,                      -kpi,   kpi,    1.0E-2,  false, false);
+  fparm->AddParam(4, kPhypDm23sq,        kGlobFitDm23sq,         1.0E-3, 4.0E-3, 1.0E-4,  false, false);
+  fparm->AddParam(5, kPhypDm12sq,        kGlobFitDm12sq,         6.0E-5, 9.0E-5, 2.0E-6,  false, false);
 
   return fparm;
 }
@@ -315,9 +398,9 @@ FitParamList * FitParamList::NumuDisapFitNoSyst(void)
 {
   FitParamList * fparm = new FitParamList(2);
 
-  //                                     init     min   max    step  fix?   nuis?
-  fparm->AddParam(0, kPhypSinsq2Theta23, 0.99,    0.0,  1.0,  0.01,  false, false);
-  fparm->AddParam(1, kPhypDm23sq,        2.32E-3, 1E-3, 6E-3, 1E-4,  false, false);
+  //                                     init            min   max    step  fix?   nuis?
+  fparm->AddParam(0, kPhypSinsq2Theta23, 0.95,           0.0,  1.0,  0.01,  false, false);
+  fparm->AddParam(1, kPhypDm23sq,        kGlobFitDm23sq, 1E-3, 6E-3, 1E-4,  false, false);
 
   return fparm;
 }
@@ -326,43 +409,43 @@ FitParamList * FitParamList::NumuDisapFitAllSyst(void)
 {
   FitParamList * fparm = new FitParamList(36);
 
-  //                                          init     min   max    step  fix?   nuis?
-  fparm->AddParam( 0, kPhypSinsq2Theta23,     0.99,    0.0,  1.0,  0.01,  false, false);
-  fparm->AddParam( 1, kPhypDm23sq,            2.32E-3, 1E-3, 6E-3, 1E-4,  false, false);
-  fparm->AddParam( 2, kNuisSuperkEffCCQEoth,  0.0,    -1,    1,    1E-1,  false, true);
-  fparm->AddParam( 3, kNuisSuperkEffCCQErc0u, 0.0,    -1,    1,    1E-1,  false, true);
-  fparm->AddParam( 4, kNuisSuperkEffCCQErc1u, 0.0,    -1,    1,    1E-1,  false, true);
-  fparm->AddParam( 5, kNuisSuperkEffCCQErc2u, 0.0,    -1,    1,    1E-1,  false, true);
-  fparm->AddParam( 6, kNuisSuperkEffCCnonQE,  0.0,    -1,    1,    1E-1,  false, true);
-  fparm->AddParam( 7, kNuisSuperkEffNC,       0.0,    -1,    1,    1E-1,  false, true);
-  fparm->AddParam( 8, kNuisSuperkEffNueCC,    0.0,    -1,    1,    1E-1,  false, true);
-  fparm->AddParam( 9, kNuisSuperkEnergyScale, 0.0,    -1,    1,    1E-1,  false, true);
-  fparm->AddParam(10, kNuisNd280Eff,          0.0,    -1,    1,    1E-1,  false, true);
-  fparm->AddParam(11, kNuisFluxNorm,          0.0,    -1,    1,    1E-1,  false, true);
-  fparm->AddParam(12, kNuisFluxShapeNuMu0u,   0.0,    -1,    1,    1E-1,  false, true);
-  fparm->AddParam(13, kNuisFluxShapeNuMu1u,   0.0,    -1,    1,    1E-1,  false, true);
-  fparm->AddParam(14, kNuisFluxShapeNuMu2u,   0.0,    -1,    1,    1E-1,  false, true);
-  fparm->AddParam(15, kNuisFluxShapeNuMu3u,   0.0,    -1,    1,    1E-1,  false, true);
-  fparm->AddParam(16, kNuisFluxShapeNuMu4u,   0.0,    -1,    1,    1E-1,  false, true);
-  fparm->AddParam(17, kNuisFluxShapeNuMu5u,   0.0,    -1,    1,    1E-1,  false, true);
-  fparm->AddParam(18, kNuisFluxShapeNuMu6u,   0.0,    -1,    1,    1E-1,  false, true);
-  fparm->AddParam(19, kNuisFluxShapeNuMu7u,   0.0,    -1,    1,    1E-1,  false, true);
-  fparm->AddParam(20, kNuisFluxShapeNuMu8u,   0.0,    -1,    1,    1E-1,  false, true);
-  fparm->AddParam(21, kNuisFluxShapeNuMu9u,   0.0,    -1,    1,    1E-1,  false, true);
-  fparm->AddParam(22, kNuisFluxShapeNuMu10u,  0.0,    -1,    1,    1E-1,  false, true);
-  fparm->AddParam(23, kNuisFluxShapeNuMu11u,  0.0,    -1,    1,    1E-1,  false, true);
-  fparm->AddParam(24, kNuisFluxShapeNuMu12u,  0.0,    -1,    1,    1E-1,  false, true);
-  fparm->AddParam(25, kNuisFluxShapeNuMu13u,  0.0,    -1,    1,    1E-1,  false, true);
-  fparm->AddParam(26, kNuisFluxShapeNuMu14u,  0.0,    -1,    1,    1E-1,  false, true);
-  fparm->AddParam(27, kNuisFluxShapeNuMu15u,  0.0,    -1,    1,    1E-1,  false, true);
-  fparm->AddParam(28, kNuisFluxShapeNuMu16u,  0.0,    -1,    1,    1E-1,  false, true);
-  fparm->AddParam(29, kNuisFluxShapeNuMu17u,  0.0,    -1,    1,    1E-1,  false, true);
-  fparm->AddParam(30, kNuisFluxShapeNuMu18u,  0.0,    -1,    1,    1E-1,  false, true);
-  fparm->AddParam(31, kNuisXSecCCQE,          0.0,    -1,    1,    1E-1,  false, true);
-  fparm->AddParam(32, kNuisXSecCC1piToCCQE,   0.0,    -1,    1,    1E-1,  false, true);
-  fparm->AddParam(33, kNuisXSecCCothToCCQE,   0.0,    -1,    1,    1E-1,  false, true);
-  fparm->AddParam(34, kNuisXSecNCToCCQE,      0.0,    -1,    1,    1E-1,  false, true);
-  fparm->AddParam(35, kNuisXSecNuclEffect,    0.0,    -1,    1,    1E-1,  false, true);
+  //                                          init            min   max    step  fix?   nuis?
+  fparm->AddParam( 0, kPhypSinsq2Theta23,     0.99,           0.0,  1.0,  0.01,  false, false);
+  fparm->AddParam( 1, kPhypDm23sq,            kGlobFitDm23sq, 1E-3, 6E-3, 1E-4,  false, false);
+  fparm->AddParam( 2, kNuisSuperkEffCCQEoth,  0.0,           -1,    1,    1E-1,  false, true);
+  fparm->AddParam( 3, kNuisSuperkEffCCQErc0u, 0.0,           -1,    1,    1E-1,  false, true);
+  fparm->AddParam( 4, kNuisSuperkEffCCQErc1u, 0.0,           -1,    1,    1E-1,  false, true);
+  fparm->AddParam( 5, kNuisSuperkEffCCQErc2u, 0.0,           -1,    1,    1E-1,  false, true);
+  fparm->AddParam( 6, kNuisSuperkEffCCnonQE,  0.0,           -1,    1,    1E-1,  false, true);
+  fparm->AddParam( 7, kNuisSuperkEffNC,       0.0,           -1,    1,    1E-1,  false, true);
+  fparm->AddParam( 8, kNuisSuperkEffNueCC,    0.0,           -1,    1,    1E-1,  false, true);
+  fparm->AddParam( 9, kNuisSuperkEnergyScale, 0.0,           -1,    1,    1E-1,  false, true);
+  fparm->AddParam(10, kNuisNd280Eff,          0.0,           -1,    1,    1E-1,  false, true);
+  fparm->AddParam(11, kNuisFluxNorm,          0.0,           -1,    1,    1E-1,  false, true);
+  fparm->AddParam(12, kNuisFluxShapeNuMu0u,   0.0,           -1,    1,    1E-1,  false, true);
+  fparm->AddParam(13, kNuisFluxShapeNuMu1u,   0.0,           -1,    1,    1E-1,  false, true);
+  fparm->AddParam(14, kNuisFluxShapeNuMu2u,   0.0,           -1,    1,    1E-1,  false, true);
+  fparm->AddParam(15, kNuisFluxShapeNuMu3u,   0.0,           -1,    1,    1E-1,  false, true);
+  fparm->AddParam(16, kNuisFluxShapeNuMu4u,   0.0,           -1,    1,    1E-1,  false, true);
+  fparm->AddParam(17, kNuisFluxShapeNuMu5u,   0.0,           -1,    1,    1E-1,  false, true);
+  fparm->AddParam(18, kNuisFluxShapeNuMu6u,   0.0,           -1,    1,    1E-1,  false, true);
+  fparm->AddParam(19, kNuisFluxShapeNuMu7u,   0.0,           -1,    1,    1E-1,  false, true);
+  fparm->AddParam(20, kNuisFluxShapeNuMu8u,   0.0,           -1,    1,    1E-1,  false, true);
+  fparm->AddParam(21, kNuisFluxShapeNuMu9u,   0.0,           -1,    1,    1E-1,  false, true);
+  fparm->AddParam(22, kNuisFluxShapeNuMu10u,  0.0,           -1,    1,    1E-1,  false, true);
+  fparm->AddParam(23, kNuisFluxShapeNuMu11u,  0.0,           -1,    1,    1E-1,  false, true);
+  fparm->AddParam(24, kNuisFluxShapeNuMu12u,  0.0,           -1,    1,    1E-1,  false, true);
+  fparm->AddParam(25, kNuisFluxShapeNuMu13u,  0.0,           -1,    1,    1E-1,  false, true);
+  fparm->AddParam(26, kNuisFluxShapeNuMu14u,  0.0,           -1,    1,    1E-1,  false, true);
+  fparm->AddParam(27, kNuisFluxShapeNuMu15u,  0.0,           -1,    1,    1E-1,  false, true);
+  fparm->AddParam(28, kNuisFluxShapeNuMu16u,  0.0,           -1,    1,    1E-1,  false, true);
+  fparm->AddParam(29, kNuisFluxShapeNuMu17u,  0.0,           -1,    1,    1E-1,  false, true);
+  fparm->AddParam(30, kNuisFluxShapeNuMu18u,  0.0,           -1,    1,    1E-1,  false, true);
+  fparm->AddParam(31, kNuisXSecCCQE,          0.0,           -1,    1,    1E-1,  false, true);
+  fparm->AddParam(32, kNuisXSecCC1piToCCQE,   0.0,           -1,    1,    1E-1,  false, true);
+  fparm->AddParam(33, kNuisXSecCCothToCCQE,   0.0,           -1,    1,    1E-1,  false, true);
+  fparm->AddParam(34, kNuisXSecNCToCCQE,      0.0,           -1,    1,    1E-1,  false, true);
+  fparm->AddParam(35, kNuisXSecNuclEffect,    0.0,           -1,    1,    1E-1,  false, true);
 
   return fparm;
 }
@@ -436,14 +519,15 @@ void FitParamList::Init(int nparams)
 
    fNParams = nparams; 
 
-   fCurrValue  = new double[fNParams];
-   fInitValue  = new double[fNParams];
-   fMinValue   = new double[fNParams];
-   fMaxValue   = new double[fNParams];
-   fStepSize   = new double[fNParams];
-   fName       = new string[fNParams];
-   fIsFixed    = new bool  [fNParams];
-   fIsNuisance = new bool  [fNParams];
+   fBestFitValue = new double[fNParams];
+   fCurrValue    = new double[fNParams];
+   fInitValue    = new double[fNParams];
+   fMinValue     = new double[fNParams];
+   fMaxValue     = new double[fNParams];
+   fStepSize     = new double[fNParams];
+   fName         = new string[fNParams];
+   fIsFixed      = new bool  [fNParams];
+   fIsNuisance   = new bool  [fNParams];
 
    fShowCurrValuesOnly = false;
 }
@@ -451,6 +535,7 @@ void FitParamList::Init(int nparams)
 void FitParamList::CleanUp(void)
 {
    fIdMap.clear();
+   delete [] fBestFitValue;
    delete [] fCurrValue;
    delete [] fInitValue;
    delete [] fMinValue;

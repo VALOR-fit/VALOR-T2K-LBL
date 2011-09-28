@@ -36,15 +36,16 @@ public:
   ~FitParamList();
 
    // Get information for the fit parameters
-   int    Size       (void)                          const { return fNParams;                   }
-   string Name       (t2kana::conv::PhysParamId_t p) const { return fName      [this->Id(p)];   }
-   double CurrValue  (t2kana::conv::PhysParamId_t p) const { return fCurrValue [this->Id(p)];   }
-   double InitValue  (t2kana::conv::PhysParamId_t p) const { return fInitValue [this->Id(p)];   }
-   double MinValue   (t2kana::conv::PhysParamId_t p) const { return fMinValue  [this->Id(p)];   }
-   double MaxValue   (t2kana::conv::PhysParamId_t p) const { return fMaxValue  [this->Id(p)];   }
-   double StepSize   (t2kana::conv::PhysParamId_t p) const { return fStepSize  [this->Id(p)];   }
-   bool   IsFixed    (t2kana::conv::PhysParamId_t p) const { return fIsFixed   [this->Id(p)];   }
-   bool   IsNuisance (t2kana::conv::PhysParamId_t p) const { return fIsNuisance[this->Id(p)];   }
+   int    Size         (void)                          const { return fNParams;                      }
+   string Name         (t2kana::conv::PhysParamId_t p) const { return fName         [this->Id(p)];   }
+   double BestFitValue (t2kana::conv::PhysParamId_t p) const { return fBestFitValue [this->Id(p)];   }
+   double CurrValue    (t2kana::conv::PhysParamId_t p) const { return fCurrValue    [this->Id(p)];   }
+   double InitValue    (t2kana::conv::PhysParamId_t p) const { return fInitValue    [this->Id(p)];   }
+   double MinValue     (t2kana::conv::PhysParamId_t p) const { return fMinValue     [this->Id(p)];   }
+   double MaxValue     (t2kana::conv::PhysParamId_t p) const { return fMaxValue     [this->Id(p)];   }
+   double StepSize     (t2kana::conv::PhysParamId_t p) const { return fStepSize     [this->Id(p)];   }
+   bool   IsFixed      (t2kana::conv::PhysParamId_t p) const { return fIsFixed      [this->Id(p)];   }
+   bool   IsNuisance   (t2kana::conv::PhysParamId_t p) const { return fIsNuisance   [this->Id(p)];   }
 
    // Add a parameter
    bool AddParam (
@@ -55,38 +56,26 @@ public:
    bool Exists (t2kana::conv::PhysParamId_t p) const;
 
    // Update current/running value for the given parameter
-   void Update(t2kana::conv::PhysParamId_t p, double v) 
-   { 
-     fCurrValue [this->Id(p)] = v; 
-   }
+   void Update(t2kana::conv::PhysParamId_t p, double v);
 
    // Allow modifying the initial value (minimization may be sensitive to this choice)
-   void SetInitValue(t2kana::conv::PhysParamId_t p, double v) 
-   { 
-     fInitValue [this->Id(p)] = v; 
-     fCurrValue [this->Id(p)] = v; 
-   }
+   void SetInitValue(t2kana::conv::PhysParamId_t p, double v);
 
    // Reset all current param values to their specified initial values
    void ResetCurrToInitValues (void);
 
+   // Copy current param values to best-fit values & vice-versa
+   void CopyCurrToBestFitValues (void);
+   void CopyBestFitToCurrValues (void);
+
    // Fix a parameter
-   void FixParameter (t2kana::conv::PhysParamId_t p) 
-   { 
-     fIsFixed [this->Id(p)] = true;  
-   }
+   void FixParameter (t2kana::conv::PhysParamId_t p); 
 
    // Free a parameter
-   void FreeParameter (t2kana::conv::PhysParamId_t p) 
-   { 
-     fIsFixed [this->Id(p)] = false;  
-   }
+   void FreeParameter (t2kana::conv::PhysParamId_t p); 
 
    // Set as nuisance parameter (contributes to \chi^{2}_{penalty})
-   void SetNuisance (t2kana::conv::PhysParamId_t p, bool tf) 
-   { 
-     fIsNuisance [this->Id(p)] = tf;  
-   }
+   void SetNuisance (t2kana::conv::PhysParamId_t p, bool tf);
 
    // Set parameter list to input TVirtualFitter 
    void SetTo (TVirtualFitter * fitter);
@@ -122,7 +111,7 @@ public:
    static FitParamList * NumuDecayFitNoSyst     (void);
    static FitParamList * NumuDecohFitNoSyst     (void);
 
-   //
+   // Work-out the physics hypothesis
    conv::PhysHypothesis_t PhysicsHypothesis(void) const;
 
 private:
@@ -136,14 +125,15 @@ private:
    map<t2kana::conv::PhysParamId_t, int> fIdMap;
 
    int      fNParams;   
-   double * fCurrValue;  //[fNParams]
-   double * fInitValue;  //[fNParams]
-   double * fMinValue;   //[fNParams]
-   double * fMaxValue;   //[fNParams]
-   double * fStepSize;   //[fNParams]
-   string * fName;       //[fNParams]
-   bool *   fIsFixed;    //[fNParams]
-   bool *   fIsNuisance; //[fNParams]
+   double * fBestFitValue; //[fNParams]
+   double * fCurrValue;    //[fNParams]
+   double * fInitValue;    //[fNParams]
+   double * fMinValue;     //[fNParams]
+   double * fMaxValue;     //[fNParams]
+   double * fStepSize;     //[fNParams]
+   string * fName;         //[fNParams]
+   bool *   fIsFixed;      //[fNParams]
+   bool *   fIsNuisance;   //[fNParams]
 
    mutable bool fShowCurrValuesOnly;
 };
