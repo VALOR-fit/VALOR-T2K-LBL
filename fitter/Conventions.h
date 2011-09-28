@@ -184,6 +184,8 @@ typedef enum ENuMassHierarchy {
    kNmhInverted
 } NuMassHierarchy_t;
 
+static const NuMassHierarchy_t kMassHierarchyAssumed = kNmhInverted; // mass hierarchy used in T2KAna build
+
 static const int kPdgNuE      =  12;
 static const int kPdgNuMu     =  14;
 static const int kPdgNuTau    =  16;
