@@ -31,6 +31,9 @@
    test macros.
  @ 22/09/11
    Added Option_t * argument in `AsString(string hypothesis, osc params)'
+ @ 27/09/11
+   Added `AsString (t2kana::conv::NuMassHierarchy_t m)'
+
 */
 //____________________________________________________________________________
 
@@ -498,6 +501,22 @@ string t2kana::util::AsString (
   }
 
   return s;
+}
+//____________________________________________________________________________
+string t2kana::util::AsString(t2kana::conv::NuMassHierarchy_t m)
+{
+  switch(m) {
+   case (kNmhNormal) :
+     return "< normal >";
+     break;
+   case (kNmhInverted) :
+     return "< inverted >";
+     break;
+   default :
+     return "undefined"; 
+     break;
+  }
+  return "";
 }
 //____________________________________________________________________________
 string t2kana::util::AsString(t2kana::conv::PhysHypothesis_t h)

@@ -67,11 +67,12 @@ namespace util {
   //
 
   string AsString (string hypothesis, double sinsq2theta12, double sinsq2theta13, double sinsq2theta23, double deltacp, double dm12sq, double dm23sq, Option_t * option="all");
-  string AsString (t2kana::conv::PhysHypothesis_t h);
-  string AsString (t2kana::conv::PhysParamId_t    p);
-  string AsString (t2kana::conv::SuperkSample_t   s);
-  string AsString (t2kana::conv::SuperkMode_t     m);
-  string AsString (t2kana::conv::OscChannelId_t   o);
+  string AsString (t2kana::conv::NuMassHierarchy_t m);
+  string AsString (t2kana::conv::PhysHypothesis_t  h);
+  string AsString (t2kana::conv::PhysParamId_t     p);
+  string AsString (t2kana::conv::SuperkSample_t    s);
+  string AsString (t2kana::conv::SuperkMode_t      m);
+  string AsString (t2kana::conv::OscChannelId_t    o);
 
   t2kana::conv::PhysHypothesis_t FromString(string h);
 
