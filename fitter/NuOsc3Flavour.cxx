@@ -4,6 +4,8 @@
 
  @ 05/07/2011 - NG
    First added in in v2.0.1
+ @ 27/07/2011 - CA
+   Get selected mass hierarchy from Conventions.h
 
 */
 //________________________________________________________________________________________
@@ -41,7 +43,7 @@ void NuOsc3Flavour::Init()
   this->SetBaseline(kBaseline);
 
   // set a default mass hierarchy
-  this->SetMassHierarchy(kNmhNormal);
+  this->SetMassHierarchy(kMassHierarchyAssumed);
 
   // set default density 
   this->SetDensity(kCrustDensity);
@@ -64,6 +66,8 @@ void NuOsc3Flavour::SetDensity(double density)
 //________________________________________________________________________________________
 void NuOsc3Flavour::SetMassHierarchy(NuMassHierarchy_t h)
 {
+  cout << "NuOsc3Flavour >> Mass hierarchy assumed: " << util::AsString(h) << endl;
+
   fMassHierarchy = h;
 }
 //________________________________________________________________________________________
