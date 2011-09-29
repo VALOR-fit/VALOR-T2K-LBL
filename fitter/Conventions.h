@@ -12,15 +12,15 @@
 
 Changes since v1.0.0:
 
- @ 01-20/07/11
+ @ 01-20/07/11 - CA
    Added nuisance and 12-, 13-sector osc params in PhysParamId_t.
    Added PhysHypothesis_t, OscChannelId_t and NuMassHierarchy_t.
    Added some constants (GF,hbar,...) used in calculations and added values 
    and uncertainties of oscillation params from a global analysis.
- @ 26/07/11
-   Took `nue signal' templates into account in AsString(SuperkMode_t m)
-   Added bool IsSignalNuE(SuperkMode_t m).
-
+ @ 28/09/11 - CA
+   Added kMassHierarchyAssumed constant to specify the mass hierarchy to be
+   used in the t2kana library build. Used separate PhysParamId_t for the
+   decoherence and decay sinsq2theta parameter.
 */
 //____________________________________________________________________________
 
@@ -108,7 +108,9 @@ typedef enum EPhysParamId {
    kPhypDm23sq,              // modulus of squared-mass splitting \Deltam_{23}^{2} (always positive independent of mass hierarchy) 
    kPhypDm12sq,              // squared-mass splitting \Deltam_{12}^{2} 
    kPhypAlphaDecay,          //
-   kPhypMusqDecoherence,     //
+   kPhypSinsq2ThetaDecay,    // 
+   kPhypMusqDecoh,           //
+   kPhypSinsq2ThetaDecoh,    // 
    kNuisSuperkEffCCQEoth,    //
    kNuisSuperkEffCCQErc0u,   //
    kNuisSuperkEffCCQErc1u,   //

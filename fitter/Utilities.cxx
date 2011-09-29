@@ -2,37 +2,39 @@
 /*
  Changes since v1.0.0:
 
- @ 06/06/11
+ @ 06/06/11 - CA
    Added UseEventToFillInTemplate(SuperkMode_t m, int pdg, int reaction_mode)
    to simplify SuperkMC class.
- @ 05/07/11
+ @ 05/07/11 - CA
    Added CholeskyCalculateCorrelatedParamVariations (TMatrixD& L, TVectorD & 
    g_uncorrelated) to allow fitting for systematics handled using the Cholesky
    method (fitting for the de-correlated params).
    Added nuisance params in AsString(PhysParamId_t p).
    Added IsSystematic(PhysParamId_t p).
- @ 12/07/11
+ @ 12/07/11 - CA
    Minor changes to facilitate 3-flavour oscillation analysis:
    Added AsString(OscChannelId_t) and OscChannelId_t GetOscChannel(int,int).
    Added IsNeutrino(int) and IsAntiNeutrino(int).
- @ 18/07/11
+ @ 18/07/11 - CA
    Added AsString(PhysHypothesis_t)
- @ 20/07/11
+ @ 20/07/11 - CA
    Added RandomizeSinsq2Theta12(),RandomizeSinsq2Theta13(),RandomizeDeltaCP(),
    and RandomizeDm12sq().
- @ 26/07/11
+ @ 26/07/11 - CA
    Took `nue signal' templates into account in AsString(SuperkMode_t m)
    Added bool IsSignalNuE(SuperkMode_t m).
    Included `nue signal' templates in UseEventToFillInTemplate().
- @ 14/09/11
+ @ 14/09/11 - CA
    Added `string AsString (string hypothesis, list of osc params)' to simplify
    formation of output filename in test macros.
    Added `PhysHypothesis_t FromString(string h)' to simplify running certain
    test macros.
- @ 22/09/11
+ @ 22/09/11 - CA
    Added Option_t * argument in `AsString(string hypothesis, osc params)'
- @ 27/09/11
+ @ 27/09/11 - CA
    Added `AsString (t2kana::conv::NuMassHierarchy_t m)'
+ @ 28/09/11 - CA
+   Used separate PhysParamId_t for the decoh. and decay sinsq2theta parameter.
 
 */
 //____________________________________________________________________________
@@ -551,7 +553,9 @@ string t2kana::util::AsString(PhysParamId_t p)
     case ( kPhypDm23sq            ) : return "|dm23sq|";               break;
     case ( kPhypDm12sq            ) : return "dm12sq";                 break;
     case ( kPhypAlphaDecay        ) : return "alpha_decay";            break;
-    case ( kPhypMusqDecoherence   ) : return "musq_decoh";             break;
+    case ( kPhypSinsq2ThetaDecay  ) : return "sinsq2theta_decay";      break;
+    case ( kPhypMusqDecoh         ) : return "musq_decoh";             break;
+    case ( kPhypSinsq2ThetaDecoh  ) : return "sinsq2theta_decoh";      break;
     case ( kNuisSuperkEffCCQEoth  ) : return "f_sk_eff_ccqe_oth";      break;
     case ( kNuisSuperkEffCCQErc0u ) : return "f_sk_eff_ccqe_rc_0u";    break;
     case ( kNuisSuperkEffCCQErc1u ) : return "f_sk_eff_ccqe_rc_1u";    break;
@@ -714,7 +718,9 @@ bool t2kana::util::IsSystematic(PhysParamId_t p)
     case ( kPhypDm23sq            ) : return false; break;
     case ( kPhypDm12sq            ) : return false; break;
     case ( kPhypAlphaDecay        ) : return false; break;
-    case ( kPhypMusqDecoherence   ) : return false; break;
+    case ( kPhypSinsq2ThetaDecay  ) : return false; break;
+    case ( kPhypMusqDecoh         ) : return false; break;
+    case ( kPhypSinsq2ThetaDecoh  ) : return false; break;
     case ( kNuisSuperkEffCCQEoth  ) : return true;  break;
     case ( kNuisSuperkEffCCQErc0u ) : return true;  break;
     case ( kNuisSuperkEffCCQErc1u ) : return true;  break;

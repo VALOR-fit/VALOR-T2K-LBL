@@ -89,16 +89,16 @@ PhysHypothesis::PhysHypothesis(const FitParamList & fp)
   else if(hyp == kHypDecay) 
   {
     this->Init(kHypDecay);
-    this->SetCurrValue(kPhypAlphaDecay,    fp.CurrValue(kPhypAlphaDecay));
-    this->SetCurrValue(kPhypSinsq2Theta23, fp.CurrValue(kPhypSinsq2Theta23));
+    this->SetCurrValue(kPhypAlphaDecay,       fp.CurrValue(kPhypAlphaDecay));
+    this->SetCurrValue(kPhypSinsq2ThetaDecay, fp.CurrValue(kPhypSinsq2ThetaDecay));
   }
 
   // neutrino decoherence
   else if(hyp == kHypDecoh) 
   {
     this->Init(kHypDecoh);
-    this->SetCurrValue(kPhypMusqDecoherence, fp.CurrValue(kPhypMusqDecoherence));
-    this->SetCurrValue(kPhypSinsq2Theta23,   fp.CurrValue(kPhypSinsq2Theta23));
+    this->SetCurrValue(kPhypMusqDecoh,          fp.CurrValue(kPhypMusqDecoh));
+    this->SetCurrValue(kPhypSinsq2ThetaDecoh,   fp.CurrValue(kPhypSinsq2ThetaDecoh));
   }
 
   // undefined
@@ -149,27 +149,27 @@ void PhysHypothesis::Init(PhysHypothesis_t h)
 
   // numu disappearance, 2-flavour neutrino oscillation framework 
   if(fHypothesis == kHypNuMuDisapp2F) {
-    fParams[kPhypSinsq2Theta23] = 0;
-    fParams[kPhypDm23sq]        = 0;
+    fParams[kPhypSinsq2Theta23]    = 0;
+    fParams[kPhypDm23sq]           = 0;
   }
   // neutrino oscillations (3-flavour framework)
   if(fHypothesis == kHypOsc3F) {
-    fParams[kPhypSinsq2Theta12]   = 0;
-    fParams[kPhypSinsq2Theta13]   = 0;
-    fParams[kPhypSinsq2Theta23]   = 0;
-    fParams[kPhypDeltaCP]         = 0;
-    fParams[kPhypDm23sq]          = 0;
-    fParams[kPhypDm12sq]          = 0;
+    fParams[kPhypSinsq2Theta12]    = 0;
+    fParams[kPhypSinsq2Theta13]    = 0;
+    fParams[kPhypSinsq2Theta23]    = 0;
+    fParams[kPhypDeltaCP]          = 0;
+    fParams[kPhypDm23sq]           = 0;
+    fParams[kPhypDm12sq]           = 0;
   }
   // neutrino decay 
   if(fHypothesis == kHypDecay) {
-    fParams[kPhypSinsq2Theta23]   = 0;
-    fParams[kPhypAlphaDecay]      = 0;
+    fParams[kPhypSinsq2ThetaDecay] = 0;
+    fParams[kPhypAlphaDecay]       = 0;
   }
   // neutrino decoherence 
   if(fHypothesis == kHypDecoh) {
-    fParams[kPhypSinsq2Theta23]   = 0;
-    fParams[kPhypMusqDecoherence] = 0;
+    fParams[kPhypSinsq2ThetaDecoh] = 0;
+    fParams[kPhypMusqDecoh]        = 0;
   }
 
 }

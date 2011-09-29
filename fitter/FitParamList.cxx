@@ -28,7 +28,7 @@
    Tweak init values. Add array to hold best-fit values so as to remove need potential 
    error from not looking-up the current/running values immediately after the chisquare
    minimum was reached. Added `CopyCurrToBestFitValues()', `CopyBestFitToCurrValues()' 
-   and `BestFitValue(PhysParamId_t)' methods.
+   `BestFitValue(PhysParamId_t)' and `ShowOnlyBestFitValuesInNextPrint()' methods.
 
 */
 //________________________________________________________________________________________
@@ -293,7 +293,25 @@ int FitParamList::GetNumberFreeParameters(void)
 //________________________________________________________________________________________
 void FitParamList::Print(ostream & stream) const
 {
+  if(fShowBestFitValuesOnly) {
+     fShowBestFitValuesOnly = false; // has one-off effect
+     stream << endl
+            << setw(6)  << "id"
+            << setw(20) << "name"
+            << setw(15) << "best-fit"
+            << endl;
+     for(int ip=0; ip<fNParams;  ip++) {
+       stream << setw(6)  << ip 
+              << setw(20) << fName[ip]
+              << setprecision(6)
+              << setw(15) << fBestFitValue[ip]
+              << endl;
+     }
+  } 
+
+  else
   if(fShowCurrValuesOnly) {
+     fShowCurrValuesOnly = false; // has one-off effect
      stream << endl
             << setw(6)  << "id"
             << setw(20) << "name"
@@ -306,7 +324,10 @@ void FitParamList::Print(ostream & stream) const
               << setw(15) << fCurrValue[ip]
               << endl;
      }
-  } else {
+  } 
+ 
+  else 
+  {
      stream << endl
             << setw(6)  << "id"
             << setw(20) << "name"
@@ -333,7 +354,6 @@ void FitParamList::Print(ostream & stream) const
      }
   }
 
-  fShowCurrValuesOnly = false; // has one-off effect
 }
 //________________________________________________________________________________________
 FitParamList * FitParamList::NamedParameterList(string name)
@@ -454,9 +474,9 @@ FitParamList * FitParamList::NumuDecayFitNoSyst(void)
 {
   FitParamList * fparm = new FitParamList(2);
 
-  //                                     init    min      max    step   fix?   nuis?
-  fparm->AddParam(0, kPhypSinsq2Theta23, 1.0,    0.0,     1.0,   0.02,  false, false);
-  fparm->AddParam(1, kPhypAlphaDecay,    0.01,   1E-4,   1E-3,   1E-5,  false, false);
+  //                                         init    min      max    step   fix?   nuis?
+  fparm->AddParam(0, kPhypSinsq2ThetaDecay,  1.0,    0.0,     1.0,   0.02,  false, false);
+  fparm->AddParam(1, kPhypAlphaDecay,        0.01,   1E-4,   1E-3,   1E-5,  false, false);
 
   return fparm;
 }
@@ -465,9 +485,9 @@ FitParamList * FitParamList::NumuDecohFitNoSyst(void)
 {
   FitParamList * fparm = new FitParamList(2);
 
-  //                                       init    min     max     step    fix?   nuis?  
-  fparm->AddParam(0, kPhypSinsq2Theta23,   1.0,    0.0,    1.0,    0.02,   false, false);
-  fparm->AddParam(1, kPhypMusqDecoherence, 0.01,   0.001,  0.04,   0.001,  false, false);
+  //                                          init    min     max     step    fix?   nuis?  
+  fparm->AddParam(0, kPhypSinsq2ThetaDecoh,   1.0,    0.0,    1.0,    0.02,   false, false);
+  fparm->AddParam(1, kPhypMusqDecoh,          0.01,   0.001,  0.04,   0.001,  false, false);
 
   return fparm;
 }
@@ -496,15 +516,15 @@ PhysHypothesis_t FitParamList::PhysicsHypothesis(void) const
   // neutrino decay   
   else
   if( this->Exists(kPhypAlphaDecay) &&
-      this->Exists(kPhypSinsq2Theta23) )
+      this->Exists(kPhypSinsq2ThetaDecay) )
   {
     return kHypDecay;
   }
    
   // neutrino decoherence
   else
-  if( this->Exists(kPhypMusqDecoherence) &&
-      this->Exists(kPhypSinsq2Theta23) )
+  if( this->Exists(kPhypMusqDecoh) &&
+      this->Exists(kPhypSinsq2ThetaDecoh) )
   {
     return kHypDecoh;
   }

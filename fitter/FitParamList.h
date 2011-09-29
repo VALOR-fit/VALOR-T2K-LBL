@@ -91,8 +91,12 @@ public:
 
    // Print
    void Print (ostream & stream) const;
-   void ShowOnlyCurrValuesInNextPrint(void) const { fShowCurrValuesOnly = true; }
    friend ostream & operator << (ostream & stream, const FitParamList & plst);
+
+   // Methods with an one-off effect in Print()
+   void ShowOnlyCurrValuesInNextPrint   (void) const { fShowCurrValuesOnly    = true; }
+   void ShowOnlyBestFitValuesInNextPrint(void) const { fShowBestFitValuesOnly = true; }
+
 
    // Using the "Named Constructor" C++ idiom for fast creation of typical parameter lists.
    // The string argument of NamedParameterList() can take the following values:
@@ -136,6 +140,7 @@ private:
    bool *   fIsNuisance;   //[fNParams]
 
    mutable bool fShowCurrValuesOnly;
+   mutable bool fShowBestFitValuesOnly;
 };
 
 } // t2kana
