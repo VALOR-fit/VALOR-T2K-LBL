@@ -19,37 +19,43 @@ void test_n_mock_data_fits(
   double       input_deltacp           = 0.00,                           /* if -1 then randomize */
   double       input_dm12sq            = 7.58E-5,                        /* if -1 then randomize */
   double       input_dm23sq            = 2.32E-3,                        /* */
-  const char * fit_param_list          = "numudisapp2f",                 /* fit parameter list for the given physics hypothesis (see run_fitter.C) */
-  const char * fitter_name             = "minuit",                       /* fitter name (see run_fitter.C) */
+  const char * config_file             = "analysis_configuration.xml",   /* analysis configuration file */
   bool         stat_fluctuations       = true,                           /* include statistical fluctuation in toy MC expts? */
   bool         tweak_systematics       = true,                           /* generate toy MC with randomized systematics? */
+  const char * fit_param_list          = "numudisapp2f",                 /* fit parameter list for the given physics hypothesis (see run_fitter.C) */
+  const char * fit_option              = "minuit",                       /* fitter option (see run_fitter.C) */
   bool         store_chisq_surf        = false,                          /* by default storing only best-fit values, enable this to store the chisq surfaces   */
   bool         store_toy_expts         = false,                          /* by default storing only best-fit values, enable this to store the toy MC expts     */
   bool         store_bestfit_spectrum  = false,                          /* by default storing only best-fit values, enable this to store the best-fit spectra */
-  const char * config_file             = "analysis_configuration.xml"    /* analysis configuration file */
 )
 {
   using namespace std;
   using namespace t2kana;
   using namespace t2kana::conv;
 
+  const char * config = Form("%s/config/%s", gSystem->Getenv("T2KOSCANA"), config_file);
+
   cout << "[Job inputs]" << endl;
-  cout << "Job: " << tag << "/" << run << endl;
-  cout << "Fit Parameter List: " << fit_param_list << endl;
-  cout << "Fitter: " << fitter_name << endl;
-  cout << "Number of toy experiments: " << nexperiments << endl; 
-  cout << "Randomize systematics : "      << ((tweak_systematics) ?      "YES " : "NO") << endl;
-  cout << "Statistical fluctuations: "    << ((stat_fluctuations) ?      "YES " : "NO") << endl;
-  cout << "Storing chisq surfaces: "      << ((store_chisq_surf) ?       "YES " : "NO") << endl;
-  cout << "Storing toy MC experiments:  " << ((store_toy_expts) ?        "YES " : "NO") << endl;
-  cout << "Storing best-fit spectra: "    << ((store_bestfit_spectrum) ? "YES " : "NO") << endl;
-  cout << "True oscillation parameters: " << endl;
-  cout << " > sinsq2theta12 = " << input_sinsq2theta12 << endl;
-  cout << " > sinsq2theta13 = " << input_sinsq2theta13 << endl;
-  cout << " > sinsq2theta23 = " << input_sinsq2theta23 << endl;
-  cout << " > delta_cp      = " << input_deltacp << endl;
-  cout << " > Dm12sq        = " << input_dm12sq << " eV^2/c^4" << endl;
-  cout << " > |Dm23sq|      = " << input_dm23sq << " eV^2/c^4" << endl;
+  cout << "- Job: " << tag << "/" << run << endl;
+  cout << "- Reading analysis configuration from: " << config << endl;
+  cout << "- Toy-MC generation" << endl;
+  cout << "   - Number of toy experiments: " << nexperiments << endl; 
+  cout << "   - Randomize systematics : "      << ((tweak_systematics) ?      "YES " : "NO") << endl;
+  cout << "   - Statistical fluctuations: "    << ((stat_fluctuations) ?      "YES " : "NO") << endl;
+  cout << "   - True oscillation parameters: " << endl;
+  cout << "       > sinsq2theta12 = " << input_sinsq2theta12 << endl;
+  cout << "       > sinsq2theta13 = " << input_sinsq2theta13 << endl;
+  cout << "       > sinsq2theta23 = " << input_sinsq2theta23 << endl;
+  cout << "       > delta_cp      = " << input_deltacp << endl;
+  cout << "       > Dm12sq        = " << input_dm12sq << " eV^2/c^4" << endl;
+  cout << "       > |Dm23sq|      = " << input_dm23sq << " eV^2/c^4" << endl;
+  cout << "- Fit" << endl;
+  cout << "   - Fit Parameter List: " << fit_param_list << endl;
+  cout << "   - Fitter option: " << fit_option << endl;
+  cout << "- Outputs" << endl;
+  cout << "     - Storing chisq surfaces: "      << ((store_chisq_surf) ?       "YES " : "NO") << endl;
+  cout << "     - Storing toy MC experiments:  " << ((store_toy_expts) ?        "YES " : "NO") << endl;
+  cout << "     - Storing best-fit spectra: "    << ((store_bestfit_spectrum) ? "YES " : "NO") << endl;
 
   // create file to store results
   TFile f(Form("%s-sinsq2theta23_%.2f-dm23sq_%.5feV2-run_%d.root",
@@ -65,8 +71,6 @@ void test_n_mock_data_fits(
   cout << "Specified physics hypothesis: " << util::AsString(hyp) << endl;
 
   // get superk spectrum predictor & configure
-  const char * config = Form("%s/config/%s", gSystem->Getenv("T2KOSCANA"), config_file);
-  cout << "Reading analysis configuration from: " << config << endl;
   SuperkExpectation * skexp = new SuperkExpectation;
   skexp->Read(config);
 
@@ -128,8 +132,7 @@ void test_n_mock_data_fits(
 
      // get fitter
      FitInputs * fit_inputs = new FitInputs(skobs,skexp,fparm);
-     NuMuDisappFitter * fitter = new NuMuDisappFitter(fit_inputs,fitter_name);
-     fitter->ActualOscParams(input_sinsq2theta23, input_dm23sq);
+     FitterABC * fitter = new Superk1RmuErecoFitter(fit_inputs,fit_option);
 
      double true_chisq = fit_inputs->Chisquare();
      cout << "True osc. params:"
@@ -148,12 +151,12 @@ void test_n_mock_data_fits(
      // get best-fit params
      bestfit_chisq = fit_inputs->Chisquare();
      if(hyp == conv::kHypOsc3F) {
-        bestfit_sinsq2theta12 = fparm->CurrValue(t2kana::conv::kPhypSinsq2Theta12);
-        bestfit_sinsq2theta13 = fparm->CurrValue(t2kana::conv::kPhypSinsq2Theta13);
-        bestfit_sinsq2theta23 = fparm->CurrValue(t2kana::conv::kPhypSinsq2Theta23);
-        bestfit_deltacp       = fparm->CurrValue(t2kana::conv::kPhypDeltaCP);
-        bestfit_dm12sq        = fparm->CurrValue(t2kana::conv::kPhypDm12sq);
-        bestfit_dm23sq        = fparm->CurrValue(t2kana::conv::kPhypDm23sq);
+        bestfit_sinsq2theta12 = fparm->BestFitValue(t2kana::conv::kPhypSinsq2Theta12);
+        bestfit_sinsq2theta13 = fparm->BestFitValue(t2kana::conv::kPhypSinsq2Theta13);
+        bestfit_sinsq2theta23 = fparm->BestFitValue(t2kana::conv::kPhypSinsq2Theta23);
+        bestfit_deltacp       = fparm->BestFitValue(t2kana::conv::kPhypDeltaCP);
+        bestfit_dm12sq        = fparm->BestFitValue(t2kana::conv::kPhypDm12sq);
+        bestfit_dm23sq        = fparm->BestFitValue(t2kana::conv::kPhypDm23sq);
         cout << "Best-fit osc. params:"
              << " sinsq2theta12 = "  << bestfit_sinsq2theta12
              << ", sinsq2theta13 = " << bestfit_sinsq2theta13
@@ -164,8 +167,8 @@ void test_n_mock_data_fits(
              << " ==> chisq = " << bestfit_chisq << endl;
      } else
      if(hyp == conv::kHypNuMuDisapp2F) {
-        bestfit_sinsq2theta23 = fparm->CurrValue(t2kana::conv::kPhypSinsq2Theta23);
-        bestfit_dm23sq        = fparm->CurrValue(t2kana::conv::kPhypDm23sq);
+        bestfit_sinsq2theta23 = fparm->BestFitValue(t2kana::conv::kPhypSinsq2Theta23);
+        bestfit_dm23sq        = fparm->BestFitValue(t2kana::conv::kPhypDm23sq);
         cout << "Best-fit osc. params:"
              << " sinsq2theta23 = " << bestfit_sinsq2theta23
              << ", |Dm23^2| = " << bestfit_dm23sq << " eV^2/c^4"
@@ -189,14 +192,16 @@ void test_n_mock_data_fits(
      }
      // store best-fit spectrum (if asked)
      if(store_bestfit_spectrum) {
-        fparm->Update(t2kana::conv::kPhypSinsq2Theta23, bestfit_sinsq2theta23);
-        fparm->Update(t2kana::conv::kPhypDm23sq,        bestfit_dm23sq);
+        fparm->CopyBestFitToCurrValues();
+      //fparm->Update(t2kana::conv::kPhypSinsq2Theta23, bestfit_sinsq2theta23);
+      //fparm->Update(t2kana::conv::kPhypDm23sq,        bestfit_dm23sq);
         skexp->Generate(*fparm);
         TH1D * bestfitspectrum = new TH1D(*skexp->CurrPredictedErecoSpectrum(kSKsFCFV1RingMuLike));
         bestfitspectrum->SetName(Form("bestfit_ereco_spectrum_1Rmu_%d",iexperiment));
         f.cd();
         bestfitspectrum->Write();
      }
+/*
      // store chisq surface (if asked)
      if(store_chisq_surf) {
         //custom mode builds chisqsurf automatically, need to tell minuit mode to build it
@@ -220,6 +225,7 @@ void test_n_mock_data_fits(
      delete fit_inputs;
      delete fitter;
   }
+*/
 
   // store ntuple with best-fit results
   f.cd();

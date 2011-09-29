@@ -248,7 +248,7 @@ bool SuperkMC::Read(TXMLEngine* xml, XMLNodePointer_t root_node)
     exit(1);
   }
   fEffCCQERelErrCovarRC->Print();
-  cout << "Exp/SKMC >> " << "Ring-counting error matrix is given for the following 3 Ereco bins : " << endl;
+  cout << "Exp/SKMC >> " << "Ring-counting error matrix is given for the following 3 Ereco bins : ";
   cout << "(0, " << fEreco1RCCCQE << " GeV), "
        << "[" << fEreco1RCCCQE << " GeV, " << fEreco2RCCCQE << " GeV], "
        << "(" << fEreco2RCCCQE << " GeV, oo)" << endl;

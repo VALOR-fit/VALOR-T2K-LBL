@@ -1,5 +1,6 @@
 //
 // Compare an identically-named 1-D histogram from 2 different ROOT files.
+// Ratio shown is: histogram in 2nd file / histogram in 1st file
 //
 
 void compare_1dhist(
@@ -36,11 +37,11 @@ void compare_1dhist(
   }
       
   TCanvas * c = new TCanvas("c","",10,10,600,600);
-  c->Divide(1,2);
-  c->cd(1);
-  h1->Draw("p");
-  h2->Draw("same");
-  c->cd(2);
+//  c->Divide(1,2);
+//  c->cd(1);
+//  h1->Draw("p");
+//  h2->Draw("same");
+//  c->cd(2);
   ratio->Draw();
   c->Update();
 }

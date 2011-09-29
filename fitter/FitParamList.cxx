@@ -308,7 +308,6 @@ void FitParamList::Print(ostream & stream) const
               << endl;
      }
   } 
-
   else
   if(fShowCurrValuesOnly) {
      fShowCurrValuesOnly = false; // has one-off effect
@@ -325,7 +324,6 @@ void FitParamList::Print(ostream & stream) const
               << endl;
      }
   } 
- 
   else 
   {
      stream << endl
@@ -549,7 +547,8 @@ void FitParamList::Init(int nparams)
    fIsFixed      = new bool  [fNParams];
    fIsNuisance   = new bool  [fNParams];
 
-   fShowCurrValuesOnly = false;
+   fShowCurrValuesOnly    = false;
+   fShowBestFitValuesOnly = false;
 }
 //________________________________________________________________________________________
 void FitParamList::CleanUp(void)

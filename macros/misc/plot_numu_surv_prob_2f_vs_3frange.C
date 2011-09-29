@@ -9,8 +9,6 @@
 // ------------------------------------------------------------------------------------------------
 //
 
-#include "Conventions.h"
-
 void plot_numu_surv_prob_2f_vs_3frange(double sinsq2theta23=1.0, double dm23sq=2.32E-3)
 {
   using namespace std;

@@ -2,19 +2,19 @@
 // ------------------------------------------------------------------------------------------------
 // Run fitter on data
 //
-// The following combinations of physics hypothesis / parameter list / fitter may be used:
+// The following fit parameter list / fitter options may be used:
 // ..................................................................
-// Hypothesis      Fit param list                  Fitter
-//                 (see FitParamList.h)
+// Fit parameter list              Fitter option
+// (see FitParamList.h)
 // ..................................................................
-// nuosc3f         nuosc3f                         minuit
-// nuosc3f         nuosc3f_12constrain             minuit
-// nuosc3f         nuosc3f_numudisapp_fix4         minuit
-// nuosc3f         nuosc3f_nueapp_fix4             minuit
-// numudisapp2f    numudisapp2f                    minuit, custom
-// numudisapp2f    numudisapp2f+nuisance           minuit
-// decay           decay                           minuit, custom
-// decoh           decoh                           minuit, custom
+// nuosc3f                         minuit
+// nuosc3f_12constrain             minuit
+// nuosc3f_numudisapp_fix4         minuit
+// nuosc3f_nueapp_fix4             minuit
+// numudisapp2f                    minuit
+// numudisapp2f+nuisance           minuit
+// decay                           minuit
+// decoh                           minuit
 // ..................................................................
 //
 // Costas Andreopoulos
@@ -23,71 +23,48 @@
 
 void run_fitter
 (
-  int          dataset_id   = 0,                            /* number in <data_set_%d> XML tag, see inputs/data.xml */
-  const char * data_file    = "inputs/data.xml",            /* input SK data */
-  const char * config_file  = "analysis_configuration.xml", /* analysis configuration file */
-  const char * hypothesis   = "numudisapp2f",               /* physics hypothesis  */
-  const char * fitparamlist = "numudisapp2f",               /* fit parameter list for the given physics hypothesis  */
-  const char * fitter_name  = "minuit",                     /* fitter name */
-  bool         plot         = false
+  int          dataset_id     = 0,                            /* number in <data_set_%d> XML tag, see inputs/data.xml */
+  const char * data_file      = "inputs/data.xml",            /* input SK data */
+  const char * config_file    = "analysis_configuration.xml", /* analysis configuration file */
+  const char * fit_param_list = "numudisapp2f",               /* fit parameter list  */
+  const char * fit_option     = "minuit",                     /* fitter option */
+  const char * output_option  = "Observation+BestFitSpectra+ChisqSurface+Canvases"  /* what to write-out once the fit is done */
 )
 {
   using namespace std;
   using namespace t2kana;
 
-  cout << "Fit configration:" << endl;
-  cout << "* Hypothesis...........: " << hypothesis   << endl;
-  cout << "* Fit parameter list...: " << fitparamlist << endl;
-  cout << "* Fitter...............: " << fitter_name  << endl;
+  const char * config  = Form("%s/config/%s", gSystem->Getenv("T2KOSCANA"), config_file);
+  const char * data_file_fullpath = Form("%s/%s", gSystem->Getenv("T2KOSCANA"), data_file);
+
+  cout << "[Job inputs]" << endl;
+  cout << "  Reading analysis configuration from: " << config << endl;
+  cout << "  Reading dataset: " << dataset_id << " from: " << data_file_fullpath << endl;
+  cout << "  Fit parameter list: " << fit_param_list << endl;
+  cout << "  Fitter option: " << fit_option << endl;
+  cout << "  Output option: " << output_option  << endl;
 
   // get superk spectrum predictor & configure
-
-  const char * config = Form("%s/config/%s", gSystem->Getenv("T2KOSCANA"), config_file);
-  cout << "Reading analysis configuration from: " << config << endl;
-
   SuperkExpectation * skexp = new SuperkExpectation;
   skexp->Read(config);
 
   // get superk spectrum observation
-
-  const char * data_file_fullpath = Form("%s/%s", gSystem->Getenv("T2KOSCANA"), data_file);
-  cout << "Reading dataset: " << dataset_id << " from: " << data_file_fullpath << endl;
-
   SuperkObservation * skobs = new SuperkObservation;
   skobs->Read(data_file, dataset_id);
 
   // get specified fit parameter list & build fit inputs
-  FitParamList * fparm = FitParamList::NamedParameterList(fitparamlist);
+  FitParamList * fparm = FitParamList::NamedParameterList(fit_param_list);
+  assert(fparm);
   FitInputs * fit_inputs = new FitInputs(skobs,skexp,fparm);
 
   // get specified fitter
-  FitterABC * fitter = 0;
-  //... 2-flavour oscillation / numu disappearance
-  if(hypothesis == "numudisapp2f" || hypothesis == "nuosc3f") { fitter = new NuMuDisappFitter(fit_inputs,fitter_name); }
-  // ... neutrino decay
-  if(hypothesis == "decay")        { fitter = new NuMuDecayFitter (fit_inputs,fitter_name); }
-  // ... neutrino decoherence
-  if(hypothesis == "decoh")        { fitter = new NuMuDecohFitter (fit_inputs,fitter_name); }
+  FitterABC * fitter = new Superk1RmuErecoFitter(fit_inputs,fit_option);
   assert(fitter);
 
   // do the fit
-
-  TStopwatch w;
-  w.Start();
-
   fitter->DoTheFit();
 
-  w.Stop();
-  cout << "Fit performed in " << w.CpuTime() << " sec." << endl;
-
-  // draw/save outputs
-  if(plot) {
-    const char * outfile = Form("fit_%d",dataset_id);
-    fitter->Draw(new TCanvas(), "StandardOscFitPlots",outfile);
-  //fitter->Draw(new TCanvas(), "StandardOscFitPlots+Minos90CL",outfile);
-    fitter->Draw(new TCanvas(), "ChisqSurface");
-    fitter->Draw(new TCanvas(), "MarginalizedChisq");
-  }
-
-
+  // save fit results
+  const char * outfile = Form("fit_%d",dataset_id);
+  fitter->Write(output_option,outfile);
 }

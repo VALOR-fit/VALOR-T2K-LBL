@@ -16,25 +16,28 @@ void test_n_mock_data_fits_xml
   const char * xmlfile,                                            /* input XML file with toy MC experiments */
   int          first_experiment,                                   /* */
   int          last_experiment,                                    /* */
-  const char * fitparamlist        = "numudisapp2f",               /* fit parameter list for the given physics hypothesis (see run_fitter.C) */
-  const char * fitter_name         = "minuit",                     /* fitter name (see run_fitter.C) */
-  const char * config_file         = "analysis_configuration.xml"  /* analysis configuration file */
+  const char * config_file         = "analysis_configuration.xml", /* analysis configuration file */
+  const char * fit_param_list      = "numudisapp2f",               /* fit parameter list for the given physics hypothesis (see run_fitter.C) */
+  const char * fit_option          = "minuit"                      /* fitter option (see run_fitter.C) */
 )
 {
   using namespace std;
   using namespace t2kana;
 
-  cout << "[Job inputs]" << endl;
-  cout << "Job: " << tag << "/" << run << endl;
-  cout << "Fitter: " << fitter_name << endl;
-  cout << "Reading experiments from: " << xmlfile << endl; 
-  cout << "Fitting experiments: [" << first_experiment << ", " << last_experiment << "]" << endl; 
-
   const char * config = Form("%s/config/%s", gSystem->Getenv("T2KOSCANA"), config_file);
-  cout << "Reading analysis configuration from: " << config << endl;
+
+  cout << "[Job inputs]" << endl;
+  cout << "- Job: " << tag << "/" << run << endl;
+  cout << "- Reading analysis configuration from: " << config << endl;
+  cout << "- Toy-MC" << endl;
+  cout << "   - Reading experiments from: " << xmlfile << endl; 
+  cout << "   - Using experiments in range: [" << first_experiment << ", " << last_experiment << "]" << endl; 
+  cout << "- Fit" << endl;
+  cout << "   - Fit param list: " << fit_param_list << endl;
+  cout << "   - Fitter option: " << fit_option << endl;
 
   // fit param list
-  FitParamList * fparm = FitParamList::NamedParameterList(fitparamlist);
+  FitParamList * fparm = FitParamList::NamedParameterList(fit_param_list);
 
   conv::PhysHypothesis_t hyp = fparm->PhysicsHypothesis();
   cout << "Specified physics hypothesis: " << util::AsString(hyp) << endl;
@@ -72,7 +75,7 @@ void test_n_mock_data_fits_xml
 
      // get fitter
      FitInputs * fit_inputs = new FitInputs(skobs,skexp,fparm);
-     NuMuDisappFitter * fitter = new NuMuDisappFitter(fit_inputs,fitter_name);
+     FitterABC * fitter = new Superk1RmuErecoFitter(fit_inputs,fit_option);
 
      // do the fit
      fitter->DoTheFit();
@@ -81,12 +84,12 @@ void test_n_mock_data_fits_xml
      // get best-fit params
      bestfit_chisq = fit_inputs->Chisquare();
      if(hyp == conv::kHypOsc3F) {
-        bestfit_sinsq2theta12 = fparm->CurrValue(t2kana::conv::kPhypSinsq2Theta12);
-        bestfit_sinsq2theta13 = fparm->CurrValue(t2kana::conv::kPhypSinsq2Theta13);
-        bestfit_sinsq2theta23 = fparm->CurrValue(t2kana::conv::kPhypSinsq2Theta23);
-        bestfit_deltacp       = fparm->CurrValue(t2kana::conv::kPhypDeltaCP);
-        bestfit_dm12sq        = fparm->CurrValue(t2kana::conv::kPhypDm12sq);
-        bestfit_dm23sq        = fparm->CurrValue(t2kana::conv::kPhypDm23sq);
+        bestfit_sinsq2theta12 = fparm->BestFitValue(t2kana::conv::kPhypSinsq2Theta12);
+        bestfit_sinsq2theta13 = fparm->BestFitValue(t2kana::conv::kPhypSinsq2Theta13);
+        bestfit_sinsq2theta23 = fparm->BestFitValue(t2kana::conv::kPhypSinsq2Theta23);
+        bestfit_deltacp       = fparm->BestFitValue(t2kana::conv::kPhypDeltaCP);
+        bestfit_dm12sq        = fparm->BestFitValue(t2kana::conv::kPhypDm12sq);
+        bestfit_dm23sq        = fparm->BestFitValue(t2kana::conv::kPhypDm23sq);
         cout << "Best-fit:"
              << " sinsq2theta12 = "  << bestfit_sinsq2theta12
              << ", sinsq2theta13 = " << bestfit_sinsq2theta13
@@ -97,8 +100,8 @@ void test_n_mock_data_fits_xml
              << " ==> chisq = " << bestfit_chisq << endl;
      } else
      if(hyp == conv::kHypNuMuDisapp2F) {
-        bestfit_sinsq2theta23 = fparm->CurrValue(t2kana::conv::kPhypSinsq2Theta23);
-        bestfit_dm23sq        = fparm->CurrValue(t2kana::conv::kPhypDm23sq);
+        bestfit_sinsq2theta23 = fparm->BestFitValue(t2kana::conv::kPhypSinsq2Theta23);
+        bestfit_dm23sq        = fparm->BestFitValue(t2kana::conv::kPhypDm23sq);
         cout << "Best-fit:"
              << " sinsq2theta23 = " << bestfit_sinsq2theta23
              << ", |Dm23^2| = " << bestfit_dm23sq << " eV^2/c^4"

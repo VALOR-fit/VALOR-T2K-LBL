@@ -21,6 +21,7 @@ Changes since v1.0.0:
    Added kMassHierarchyAssumed constant to specify the mass hierarchy to be
    used in the t2kana library build. Used separate PhysParamId_t for the
    decoherence and decay sinsq2theta parameter.
+
 */
 //____________________________________________________________________________
 

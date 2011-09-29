@@ -18,30 +18,33 @@ void test_mock_data_fit
    double       input_dm23sq        = 2.32E-3,                      /* */
    bool         fluctuate_stat      = true,                         /* include statistical fluctuations? */
    bool         include_systematics = false,                        /* include systematic variation in generated toy MC expt? */
-   const char * fit_param_list      = "numudisapp2f",               /* fit parameter list for the given physics hypothesis (see run_fitter.C) */
-   const char * fitter_name         = "minuit",                     /* oscillation fitter (see run_fitter.C) */
    const char * config_file         = "analysis_configuration.xml", /* analysis configuration file */
-   bool         plot                = false                         /* */
+   const char * fit_param_list      = "numudisapp2f",               /* fit parameter list for the given physics hypothesis (see run_fitter.C) */
+   const char * fit_option          = "minuit",                     /* oscillation fitter (see run_fitter.C) */
+   const char * output_option       = "Observation+BestFitSpectra+ChisqSurface+Canvases"  /* what to write-out once the fit is done */
 )
 {
   using namespace std;
   using namespace t2kana;
 
-  cout << "[Job inputs]" << endl;
-  cout << "Fit Parameter List: " << fit_param_list << endl;
-  cout << "Fitter: " << fitter_name << endl;
-  cout << "Systematics: " << ((include_systematics) ? "YES " : "NO") << endl;
-  cout << "Statistical fluctuations: " << ((fluctuate_stat) ? "YES " : "NO") << endl;
-  cout << "True oscillation parameters: " << endl;
-  cout << " > sinsq2theta12 = " << input_sinsq2theta12 << endl;
-  cout << " > sinsq2theta13 = " << input_sinsq2theta13 << endl;
-  cout << " > sinsq2theta23 = " << input_sinsq2theta23 << endl;
-  cout << " > delta_cp      = " << input_deltacp << endl;
-  cout << " > Dm12sq        = " << input_dm12sq << " eV^2/c^4" << endl;
-  cout << " > |Dm23sq|      = " << input_dm23sq << " eV^2/c^4" << endl;
-
   const char * config = Form("%s/config/%s", gSystem->Getenv("T2KOSCANA"), config_file);
-  cout << "Reading analysis configuration from: " << config << endl;
+
+  cout << "[Job inputs]" << endl;
+  cout << "- Reading analysis configuration from: " << config << endl;
+  cout << "- Toy-MC generation" << endl;
+  cout << "   - Systematic variations: "    << ((include_systematics) ? "YES " : "NO") << endl;
+  cout << "   - Statistical fluctuations: " << ((fluctuate_stat) ? "YES " : "NO") << endl;
+  cout << "   - True oscillation parameters: " << endl;
+  cout << "       > sinsq2theta12 = " << input_sinsq2theta12 << endl;
+  cout << "       > sinsq2theta13 = " << input_sinsq2theta13 << endl;
+  cout << "       > sinsq2theta23 = " << input_sinsq2theta23 << endl;
+  cout << "       > delta_cp      = " << input_deltacp << endl;
+  cout << "       > Dm12sq        = " << input_dm12sq << " eV^2/c^4" << endl;
+  cout << "       > |Dm23sq|      = " << input_dm23sq << " eV^2/c^4" << endl;
+  cout << "- Fit" << endl;
+  cout << "   - Fit parameter list: " << fit_param_list << endl;
+  cout << "   - Fitter option: " << fit_option << endl;
+  cout << "- Output option: " << output_option << endl;
 
   // instantiate fit params & set specified inputs as necessary
   FitParamList * fparm = FitParamList::NamedParameterList(fit_param_list);
@@ -86,18 +89,13 @@ void test_mock_data_fit
 
   // get fitter
   FitInputs * fit_inputs = new FitInputs(skobs,skexp,fparm);
-  NuMuDisappFitter * fitter = new NuMuDisappFitter(fit_inputs,fitter_name);
-  fitter->ActualOscParams(input_sinsq2theta23, input_dm23sq);
+  FitterABC * fitter = new Superk1RmuErecoFitter(fit_inputs,fit_option);
 
   // do the fit
   fitter->DoTheFit();
 
-  // draw results
-  if(plot) {
-     fitter->Draw(new TCanvas(), "StandardOscFitPlots+Minos90CL","mockfit");
-     fitter->Draw(new TCanvas(), "ChisqSurface");
-     fitter->Draw(new TCanvas(), "MarginalizedChisq");
-  }
+  // write-out results
+  fitter->Write(output_option,"mockfit");
 
   // Print-out mock-data (Ereco values) as a comma separated list.
   // Assuming uniform distribution within each bin, randomize values within each bin.
