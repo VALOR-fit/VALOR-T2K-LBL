@@ -207,6 +207,8 @@ bool FitterKernel::RunOnce(void)
   fitter->PrintResults(3,amin);
   cout << "FitterKernel/RunOnce >> Final error matrix status = " 
        << fStatusCode << endl;
+  cout << "FitterKernel/RunOnce >> Final chisq = " 
+       << fFitInputs->Chisquare() << endl;
 #endif
 
 #ifdef __show_fit_steps__
