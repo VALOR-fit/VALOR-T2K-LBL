@@ -39,6 +39,9 @@ public :
 
   // judge the agreement between the input data and the current prediction
   double Chisquare (Option_t * opt = "poisson");
+
+  // get chisquare for the best fit prediction
+  double BestFitChisquare (Option_t * opt = "poisson");
       
 private:
 
@@ -46,7 +49,7 @@ private:
   SuperkExpectation * fExp;
   FitParamList *      fFitParams;
 
-ClassDef(FitInputs, 3)
+ClassDef(FitInputs, 4)
 
 };
 

@@ -25,7 +25,7 @@
    with the initial value. Calling TVirtualFitter::Clear() before setting the fit params
    to the fitter in SetTo(TVirtualFitter *). Modified the default, named fit param lists.
  @ 28/09/2011 - CA
-   Tweak init values. Add array to hold best-fit values so as to remove need potential 
+   Tweak init values. Add array to hold best-fit values so as to remove the potential 
    error from not looking-up the current/running values immediately after the chisquare
    minimum was reached. Added `CopyCurrToBestFitValues()', `CopyBestFitToCurrValues()' 
    `BestFitValue(PhysParamId_t)' and `ShowOnlyBestFitValuesInNextPrint()' methods.

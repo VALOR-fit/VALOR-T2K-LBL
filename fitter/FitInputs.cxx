@@ -11,6 +11,9 @@
  @ 05/07/2011 - CA
    Adapt code since PhysParamList was renamed to FitParamList. Added penalty term in
    chi^2 since fitting for systematics in now enabled.
+ @ 29/09/2011 - CA
+   Added `BestFitChisquare(Option_t * opt = "poisson")' method to help making the code
+   more clear. The best-fit values must be set first.
 */
 //________________________________________________________________________________________
 
@@ -115,6 +118,12 @@ double FitInputs::Chisquare(Option_t * option)
 #endif
 
   return chisq;
+}
+//____________________________________________________________________________ 
+double FitInputs::BestFitChisquare(Option_t * opt)
+{
+  fFitParams->CopyBestFitToCurrValues();
+  return this->Chisquare(opt);
 }
 //____________________________________________________________________________ 
 // MINUIT fit functions 
