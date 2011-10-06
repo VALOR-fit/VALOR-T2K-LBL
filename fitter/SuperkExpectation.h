@@ -65,7 +65,7 @@ public:
    void TweakSystematic           (string systematic, double twkdial=0.); ///< set systematic variation (from top level)
    void TweakAllSystematics       (bool do_tweak=true);                   ///< random variation of all systematics
 
-   // Main class interface for fitters. The fit parameter list can contain info for both the 
+   // Interface method for fitters. The fit parameter list can contain info for both the 
    // physics hypothesis and the systematic variations.
    void Generate (const FitParamList & fp);
 
@@ -78,6 +78,9 @@ public:
    SuperkMC *         GetSuperkMC          (void) { return fSuperkMC;          }
    NuFlux *           GetNuFlux            (void) { return fNuFlux;            }
    NuXSec *           GetNuXSec            (void) { return fNuXSec;            }
+
+   // Print
+   void PrintSystematicVariations(void) const;
 
 private:
 

@@ -7,8 +7,6 @@
 // ------------------------------------------------------------------------------------------------
 //
 
-#include "Conventions.h"
-
 void test_n_mock_data_fits(
   const char * tag                     = "toyexptfits",                  /* */
   int          run                     = 0,                              /* */
@@ -115,15 +113,21 @@ void test_n_mock_data_fits(
      SuperkObservation * skobs = new SuperkObservation;
      if(tweak_systematics) {
         // tweak all sources of systematic err (gaussian err)
+        cout << "- Randomizing all systematic params in pdf..." << endl;
         skexp->TweakAllSystematics();     
+        skexp->PrintSystematicVariations();
         // generate mock data using the current PDF (incl. systematic variations) 
         // + statistical fluctuations if requested (Poisson fluctuation in each bin)
+        cout << "- Generating toy-MC..." << endl;
         skobs->CreateMockData(*skexp, *fparm, stat_fluctuations);
         // reset all systematics so that the PDF used in the fitter is the nominal one
+        cout << "- Reseting all systematic params in pdf..." << endl;
         skexp->ResetSystematicVariations();
+        //skexp->PrintSystematicVariations();
      } else {       
         // generate mock data using the current PDF (without systematic variations) 
         // with statistical fluctuations if requested (Poisson fluctuation in each bin)
+        cout << "- Generating toy-MC..." << endl;
         skobs->CreateMockData(*skexp, *fparm, stat_fluctuations); 
      }
 
@@ -135,7 +139,7 @@ void test_n_mock_data_fits(
      FitterABC * fitter = new Superk1RmuErecoFitter(fit_inputs,fit_option);
 
      double true_chisq = fit_inputs->Chisquare();
-     cout << "True osc. params:"
+     cout << " - True osc. params:"
 	  << " sinsq2theta12 = "  << input_sinsq2theta12
 	  << ", sinsq2theta13 = " << input_sinsq2theta13
 	  << ", sinsq2theta23 = " << input_sinsq2theta23
@@ -149,7 +153,7 @@ void test_n_mock_data_fits(
      int fitstatus = fitter->FitStatusCode();
 
      // get best-fit params
-     bestfit_chisq = fit_inputs->Chisquare();
+     bestfit_chisq = fit_inputs->BestFitChisquare();
      if(hyp == conv::kHypOsc3F) {
         bestfit_sinsq2theta12 = fparm->BestFitValue(t2kana::conv::kPhypSinsq2Theta12);
         bestfit_sinsq2theta13 = fparm->BestFitValue(t2kana::conv::kPhypSinsq2Theta13);
@@ -157,7 +161,7 @@ void test_n_mock_data_fits(
         bestfit_deltacp       = fparm->BestFitValue(t2kana::conv::kPhypDeltaCP);
         bestfit_dm12sq        = fparm->BestFitValue(t2kana::conv::kPhypDm12sq);
         bestfit_dm23sq        = fparm->BestFitValue(t2kana::conv::kPhypDm23sq);
-        cout << "Best-fit osc. params:"
+        cout << "- Best-fit osc. params:"
              << " sinsq2theta12 = "  << bestfit_sinsq2theta12
              << ", sinsq2theta13 = " << bestfit_sinsq2theta13
              << ", sinsq2theta23 = " << bestfit_sinsq2theta23
@@ -169,13 +173,13 @@ void test_n_mock_data_fits(
      if(hyp == conv::kHypNuMuDisapp2F) {
         bestfit_sinsq2theta23 = fparm->BestFitValue(t2kana::conv::kPhypSinsq2Theta23);
         bestfit_dm23sq        = fparm->BestFitValue(t2kana::conv::kPhypDm23sq);
-        cout << "Best-fit osc. params:"
+        cout << "- Best-fit osc. params:"
              << " sinsq2theta23 = " << bestfit_sinsq2theta23
              << ", |Dm23^2| = " << bestfit_dm23sq << " eV^2/c^4"
              << " ==> chisq = " << bestfit_chisq << endl;
      }
 
-     // store best-fit values
+     // store true & best-fit values
      nfitnt->Fill(iexperiment, 
                   bestfit_sinsq2theta12, bestfit_sinsq2theta13, bestfit_sinsq2theta23, 
                   bestfit_deltacp, bestfit_dm12sq, bestfit_dm23sq, 
@@ -183,49 +187,43 @@ void test_n_mock_data_fits(
 		  input_sinsq2theta12, input_sinsq2theta13, input_sinsq2theta23, 
                   input_deltacp, input_dm12sq, input_dm23sq);
 
+     string output_option = "";
+     if ( store_toy_expts        ) { output_option += "Observation";     }
+     if ( store_bestfit_spectrum ) { output_option += "+BestFitSpectra"; }
+     if ( store_chisq_surf       ) { output_option += "+ChisqSurface";   }
+     fitter->Analyze(output_option.c_str());
+
+
      // store toy-MC expt (if asked)
      if(store_toy_expts) {
-        TH1D * toyexpspectrum = new TH1D(*skobs->ErecoSpectrum(kSKsFCFV1RingMuLike));
+        TH1D * h = (TH1D*) fitter->GetResults().FindObject("data");
+        TH1D * toyexpspectrum = new TH1D(*h);
         f.cd();
         toyexpspectrum->SetName(Form("toyexp_ereco_spectrum_1Rmu_%d",iexperiment));
         toyexpspectrum->Write();
      }
+
      // store best-fit spectrum (if asked)
      if(store_bestfit_spectrum) {
-        fparm->CopyBestFitToCurrValues();
-      //fparm->Update(t2kana::conv::kPhypSinsq2Theta23, bestfit_sinsq2theta23);
-      //fparm->Update(t2kana::conv::kPhypDm23sq,        bestfit_dm23sq);
-        skexp->Generate(*fparm);
-        TH1D * bestfitspectrum = new TH1D(*skexp->CurrPredictedErecoSpectrum(kSKsFCFV1RingMuLike));
+        TH1D * h = (TH1D*) fitter->GetResults().FindObject("bestfit_tot");
+        TH1D * bestfitspectrum = new TH1D(*h);
         bestfitspectrum->SetName(Form("bestfit_ereco_spectrum_1Rmu_%d",iexperiment));
         f.cd();
         bestfitspectrum->Write();
      }
-/*
      // store chisq surface (if asked)
      if(store_chisq_surf) {
-        //custom mode builds chisqsurf automatically, need to tell minuit mode to build it
-        if(fitter_name=="minuit") {
-	  cout << "Building chisqsurf" << endl;
-	  //need to use Draw since BuildChisqSurface is a private method
-	  fitter->Draw(new TCanvas(),"ChisqSurface");
-	}
-        TH2D * chisqsurf = new TH2D(*fitter->GetChisqSurface()); 
-	if(chisqsurf) {
-	  cout << "got the chisqsurf" << endl;
-	  chisqsurf->SetName(Form("chisqsurf_%d",iexperiment)); 
-	  f.cd();
-	  chisqsurf->Write();
-	}
-	else
-	  cout << "problem getting the chisqsurf" << endl;
+        TH2D * h2 = (TH2D*) fitter->GetResults().FindObject("chisq_surface");
+        TH2D * chisqsurf = new TH2D(*h2); 
+	chisqsurf->SetName(Form("chisqsurf_%d",iexperiment)); 
+	f.cd();
+	chisqsurf->Write();
      }
 
      delete skobs;
      delete fit_inputs;
      delete fitter;
   }
-*/
 
   // store ntuple with best-fit results
   f.cd();

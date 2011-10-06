@@ -73,6 +73,9 @@ public:
   // Statistical fluctuations
   void FluctuateNObsCCLike(double twkdial);
 
+  // Print systematic variations
+  void PrintSystematicVariations(void) const;
+
   //
   void TellMeAboutCrossSections(NuXSec * geninp) { fGenInputs = geninp; }
    

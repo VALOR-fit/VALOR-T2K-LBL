@@ -75,15 +75,21 @@ void test_mock_data_fit
   SuperkObservation * skobs = new SuperkObservation;
   if(include_systematics) {
      // tweak all sources of systematic err (gaussian err)
+     cout << "- Randomizing all systematic params in pdf..." << endl;
      skexp->TweakAllSystematics();
+   //skexp->PrintSystematicVariations();
      // generate mock data using the current PDF (incl. systematic variations)
      // + statistical fluctuations (Poisson fluctuation in each bin)
+     cout << "- Generating toy-MC..." << endl;
      skobs->CreateMockData(*skexp, *fparm, fluctuate_stat);
      // reset all systematics so that the PDF used in the fitter is the nominal one
+     cout << "- Reseting all systematic params in pdf..." << endl;
      skexp->ResetSystematicVariations();
+     //skexp->PrintSystematicVariations();
   } else {
      // generate mock data using the current PDF (without systematic variations)
      // with statistical fluctuations (Poisson fluctuation in each bin)
+     cout << "- Generating toy-MC..." << endl;
      skobs->CreateMockData(*skexp, *fparm, fluctuate_stat);
   }
 
@@ -95,7 +101,8 @@ void test_mock_data_fit
   fitter->DoTheFit();
 
   // write-out results
-  fitter->Write(output_option,"mockfit");
+  fitter->Analyze(output_option);
+  fitter->Save("mockfit.root");
 
   // Print-out mock-data (Ereco values) as a comma separated list.
   // Assuming uniform distribution within each bin, randomize values within each bin.

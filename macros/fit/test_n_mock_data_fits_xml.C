@@ -7,8 +7,6 @@
 // ------------------------------------------------------------------------------------------------
 //
 
-#include "Conventions.h"
-
 void test_n_mock_data_fits_xml
 (
   const char * tag,                                                /* */
@@ -82,7 +80,7 @@ void test_n_mock_data_fits_xml
      int fitstatus = fitter->FitStatusCode();
 
      // get best-fit params
-     bestfit_chisq = fit_inputs->Chisquare();
+     bestfit_chisq = fit_inputs->BestFitChisquare();
      if(hyp == conv::kHypOsc3F) {
         bestfit_sinsq2theta12 = fparm->BestFitValue(t2kana::conv::kPhypSinsq2Theta12);
         bestfit_sinsq2theta13 = fparm->BestFitValue(t2kana::conv::kPhypSinsq2Theta13);
@@ -90,7 +88,7 @@ void test_n_mock_data_fits_xml
         bestfit_deltacp       = fparm->BestFitValue(t2kana::conv::kPhypDeltaCP);
         bestfit_dm12sq        = fparm->BestFitValue(t2kana::conv::kPhypDm12sq);
         bestfit_dm23sq        = fparm->BestFitValue(t2kana::conv::kPhypDm23sq);
-        cout << "Best-fit:"
+        cout << "- Best-fit:"
              << " sinsq2theta12 = "  << bestfit_sinsq2theta12
              << ", sinsq2theta13 = " << bestfit_sinsq2theta13
              << ", sinsq2theta23 = " << bestfit_sinsq2theta23
@@ -102,7 +100,7 @@ void test_n_mock_data_fits_xml
      if(hyp == conv::kHypNuMuDisapp2F) {
         bestfit_sinsq2theta23 = fparm->BestFitValue(t2kana::conv::kPhypSinsq2Theta23);
         bestfit_dm23sq        = fparm->BestFitValue(t2kana::conv::kPhypDm23sq);
-        cout << "Best-fit:"
+        cout << "- Best-fit:"
              << " sinsq2theta23 = " << bestfit_sinsq2theta23
              << ", |Dm23^2| = " << bestfit_dm23sq << " eV^2/c^4"
              << " ==> chisq = " << bestfit_chisq << endl;

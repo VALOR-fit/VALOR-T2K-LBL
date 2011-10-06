@@ -51,6 +51,15 @@ public:
   bool                NormTweaked                   (void) { return (fSuperkNuMuFluxNormTwkDial!=0); }
   bool                ShapeTweaked                  (void) { return (fFluxShapeWasTweaked && !fIgnoreFluxShapeTweaks); }
    
+  // Systematic variations (norm + shape)
+  void TweakNorm  (double twkdial);
+  void TweakShape (bool force_input_twkdials = false, TVectorD * input_twkv = 0, bool correlated = true, bool fractional = false);
+
+  void IgnoreShapeTweaking(bool ignore) { fIgnoreFluxShapeTweaks = ignore; }
+   
+  // Read inputs from XML file
+  bool Read (TXMLEngine* xml, XMLNodePointer_t root_node);
+
   // Drawing option:
   // - "SKFlux/10a/NuMu"              : nominal SuperK numu flux (10a)
   // - "SKFlux/10d/NuMu"              : weighted SuperK numu flux (10d)
@@ -58,15 +67,9 @@ public:
   // - "SKFlux/Weights/10aTo10d/NuMu" : 10a->10d numu flux weights
   // - "SKFlux/CovarianceMatrix/NuMu" : SK numu flux covariance matrix
   void Draw(TVirtualPad * c, Option_t * opt = "SKFlux/10d") const;
-   
-  // Systematic variations (norm + shape)
-  void TweakNorm  (double twkdial);
-  void TweakShape (bool force_input_twkdials = false, TVectorD * input_twkv = 0, bool correlated = true, bool fractional = false);
 
-  void IgnoreShapeTweaking(bool ignore) { fIgnoreFluxShapeTweaks = ignore; }
-
-  // Read inputs from XML file
-  bool Read (TXMLEngine* xml, XMLNodePointer_t root_node);
+  // Print
+  void PrintSystematicVariations (void) const;
 
 private:
 

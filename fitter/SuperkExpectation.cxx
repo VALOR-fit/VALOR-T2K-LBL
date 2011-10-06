@@ -51,6 +51,8 @@
    In SetNuisanceParams(const FitParamList & fp) don't call ResetSystematicVariations()
    as this messes things-up in the case where nuisance params are not included in the fit
    but are tweaked externally (via one of the TweakXYZ() methods).
+@  06/10/11 - CA
+   Added `PrintSystematicVariations()'.
 
 */
 //________________________________________________________________________________________
@@ -418,6 +420,15 @@ void SuperkExpectation::TweakAllSystematics(bool do_tweak)
   } else {
     cout << "Exp >> No SuperkExpectation tweak" << endl;
   }
+}
+//________________________________________________________________________________________
+void SuperkExpectation::PrintSystematicVariations(void) const
+{
+  cout << "Exp >> SuperK PDF tweaks: " << endl;
+  fND280Measurement -> PrintSystematicVariations();
+  fSuperkMC         -> PrintSystematicVariations();
+  fNuFlux           -> PrintSystematicVariations();
+  fNuXSec           -> PrintSystematicVariations();
 }
 //________________________________________________________________________________________
 bool SuperkExpectation::Read(string config_file)

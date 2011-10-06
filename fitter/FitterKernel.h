@@ -31,11 +31,14 @@ class FitterKernel: public FitterABC
 public:
    virtual ~FitterKernel();
 
-   virtual bool DoTheFit      (void);
-   virtual int  FitStatusCode (void) { return fStatusCode;     }
-   virtual int  NBinsInFit    (void) { return fNFitBins;       }
-   virtual int  NFitParams    (void) { return fNFreeFitParams; }
-   virtual void Write         (Option_t *, const char *) { }
+   virtual bool       DoTheFit      (void);
+   virtual int        FitStatusCode (void)        { return fStatusCode;                 }
+   virtual int        NDOF          (void)        { return fNFitBins - fNFreeFitParams; }
+   virtual int        NBinsInFit    (void)        { return fNFitBins;                   }
+   virtual int        NFitParams    (void)        { return fNFreeFitParams;             }
+   virtual TObjArray& GetResults    (void) const  { return *fResults;                   }
+   virtual void       Analyze       (Option_t*)   { }
+   virtual void       Save          (const char*) { }
 
 protected:
    FitterKernel();
@@ -50,7 +53,7 @@ protected:
    int         fStatusCode;       ///< fit status code
    int         fNFitBins;         ///< number of bins in fit
    int         fNFreeFitParams;   ///< number of free params in fit
-   int         fNdof;             ///< number of degrees of freedom
+   TObjArray*  fResults;          ///<
 };
 
 } // t2kana

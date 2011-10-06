@@ -82,9 +82,8 @@ public:
   // Read inputs from XML file
   bool Read (TXMLEngine* xml, XMLNodePointer_t root_node);
       
-  // Physics hypothesis and calculation of survival probability for each hypothesis
+  // Physics hypothesis 
   PhysHypothesis & Hypothesis(void);
-  //double SurvivalProbability(double Etrue, t2kana::conv::SuperkMode_t m) const;
 
   // Hooks for obtaining necessary flux and cross-section information
   void TellMeAboutTheFlux       (NuFlux * flux) { fNuFlux     = flux; }
@@ -93,7 +92,10 @@ public:
   // Draw inputs:
   // ...
   void Draw(TVirtualPad * c, Option_t * opt = "") const;
-      
+
+  // Print      
+  void PrintSystematicVariations (void) const;
+
 private:
 
   void Init           (void);

@@ -9,12 +9,14 @@
    Take into account the newly added `nue signal' templates when systematic parameters
    are tweaked. Added `CCQEWght(double Etrue) const' to avoid code-repetition in 
    `SuperkCCQEXSecWght(double Etrue, SuperkMode_t m) const'
+ @ 06/10/11 - CA
+   Added `PrintSystematicVariations()'. Tweaked output messages.
+
 */
 //________________________________________________________________________________________
 
-//#define __debug_level_1__
-//#define __debug_level_2__
-//#define __debug_level_3__
+#define __show_init_mesg_info__
+//#define __show_xsec_ratio_mesg_debug__
 
 #include <cassert>
 #include <cstdlib>
@@ -74,7 +76,9 @@ void NuXSec::CleanUp(void)
 //________________________________________________________________________________________
 bool NuXSec::Read(TXMLEngine* xml, XMLNodePointer_t root_node)
 {
-  cout << "Exp/NuGen >> Reading neutrino generator inputs from input XML file." << endl;
+#ifdef __show_init_mesg_info__
+  cout << "Exp/XSec >> Reading neutrino generator inputs from input XML file." << endl;
+#endif
 
   fCCQEXSecRelErr = 
     util::XML2TH1D(xml,root_node,"niwg/systematics/xsec_relative_error/ccqe");
@@ -88,10 +92,13 @@ bool NuXSec::Read(TXMLEngine* xml, XMLNodePointer_t root_node)
     util::XML2TH1D(xml,root_node,"niwg/systematics/superk_nuclear_effect_relative_error");
 
   fCC1piInCCRES = util::XML2Dbl(xml,root_node,"neutrino_generator/cc1pi_in_ccres");
-  cout << "Exp/NuGen >> CC1pi in CCRES = " <<  fCC1piInCCRES << endl;
+#ifdef __show_init_mesg_info__
+  cout << "Exp/XSec >> CC1pi in CCRES = " <<  fCC1piInCCRES << endl;
+#endif
 
-  cout << "Exp/NuGen >> Done reading neutrino generator inputs!" << endl;
-
+#ifdef __show_init_mesg_info__
+  cout << "Exp/XSec >> Done reading neutrino generator inputs!" << endl;
+#endif
   return true;  
 }
 //________________________________________________________________________________________
@@ -324,13 +331,22 @@ double NuXSec::XSecRatioWght(
 
    double wght = (1. + twk*relerr);
 
-#ifdef __debug_level_3__
-   cout << "Exp/NuGen/XSecRatioWght >> E = " << E 
+#ifdef __show_xsec_ratio_mesg_debug__
+   cout << "Exp/XSec/XSecRatioWght >> E = " << E 
         << ", relerr = " << relerr << ", twkdial = " << twk << ", wght = " << wght 
         << endl;
 #endif
 
    return wght; 
+}
+//________________________________________________________________________________________
+void NuXSec::PrintSystematicVariations(void) const
+{
+  cout << "Exp/XSec >> Twk CCQE xsec = "             << fCCQEXSecTwkDial             << endl;
+  cout << "Exp/XSec >> Twk CC1pi/CCQE xsec ratio = " << fCC1piToCCQEXSecRatioTwkDial << endl;
+  cout << "Exp/XSec >> Twk CCoth/CCQE xsec ratio = " << fCCOthToCCQEXSecRatioTwkDial << endl;
+  cout << "Exp/XSec >> Twk NC/CCQE xsec ratio = "    << fNCToCCQEXSecRatioTwkDial    << endl;
+  cout << "Exp/XSec >> Twk FSI = "                   << fNuclEffectTwkDial           << endl;
 }
 //________________________________________________________________________________________
 bool NuXSec::TweakAffectsND280 (void) const

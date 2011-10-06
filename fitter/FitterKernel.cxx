@@ -74,16 +74,16 @@ FitterABC()
 //____________________________________________________________________________ 
 FitterKernel::~FitterKernel() 
 {
-
+//  if(fResults) { delete fResults; }
 }
 //____________________________________________________________________________ 
 void FitterKernel::Init(void) 
 {
   fFitInputs      = 0;
   fOption         = "";
-  fNdof           = 0;
   fNFreeFitParams = 0;
   fNFitBins       = 0;
+  fResults        = 0;
 }
 //____________________________________________________________________________ 
 void FitterKernel::Init(FitInputs * fit_inputs, Option_t * option) 
@@ -93,6 +93,8 @@ void FitterKernel::Init(FitInputs * fit_inputs, Option_t * option)
 #endif
 
   this->Init();
+
+  fResults = new TObjArray();
 
   fFitInputs = fit_inputs;
   if(!fFitInputs) {
@@ -129,14 +131,13 @@ void FitterKernel::Init(FitInputs * fit_inputs, Option_t * option)
 
   // calculate degrees of freedom
 
-  fNFitBins = kNvErecoBins;
+  fNFitBins       = kNvErecoBins;
   fNFreeFitParams = fit_params.GetNumberFreeParameters();
-  fNdof = fNFitBins - fNFreeFitParams;
 
 #ifdef __show_fit_init_info__
-  cout << "FitterKernel/Init >> NDoF = " << fNdof
-       << " (Number of bins = " << fNFitBins 
-       << ", Number of free parameters = " << fNFreeFitParams << ")"
+  cout << "FitterKernel/Init >> NDoF = " << this->NDOF()
+       << " (Number of bins = " << this->NBinsInFit()
+       << ", Number of free parameters = " << this->NFitParams() << ")"
        << endl;
 #endif
 }

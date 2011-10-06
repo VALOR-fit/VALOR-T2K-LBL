@@ -22,12 +22,20 @@
    the TweakShape() method this was accomplished by running TweakShape(false) but now
    the TweakShape() arguments are used for different purpose). In order to simplify the
    TweakShape() method, I added the FillInTweakedNuMuFluxHisto().
+ @ 06/10/11 - CA
+   Added `PrintSystematicVariations()'. Tweaked output messages.
+
 */
 //________________________________________________________________________________________
 
-//#define __debug_level_1__
-//#define __debug_level_2__
-//#define __debug_level_3__
+#define __show_init_mesg_info__  
+#define __show_init_mesg_debug__   
+//#define __show_norm_err_mesg_info__
+//#define __show_norm_err_mesg_debug__
+//#define __show_build_covar_marix_mesg_debug__
+#define __show_shape_cholesky_mesg_info__
+//#define __show_shape_cholesky_mesg_debug__
+//#define __show_tweak_shape_mesg_debug__
 
 #include <cassert>
 #include <cstdlib>
@@ -100,7 +108,9 @@ bool NuFlux::Read(TXMLEngine* xml, XMLNodePointer_t root_node)
 {
 // Read beam inputs to disappearance analysis
 //
+#ifdef __show_init_mesg_info__
   cout << "Exp/Beam >> Reading beam inputs from input XML file." << endl;
+#endif
 
   //
   // 10a flux
@@ -120,7 +130,9 @@ bool NuFlux::Read(TXMLEngine* xml, XMLNodePointer_t root_node)
   }
   // Integrated POT for numu flux simulation
   fSuperkNuMuFluxPOT = util::XML2Dbl(xml,root_node,"beam/superk_flux/pot_mc");
-  cout << "Exp/Beam >> SK flux simulation POT = " << fSuperkNuMuFluxPOT << endl;
+#ifdef __show_init_mesg_info__
+  cout << "Exp/Beam >> POT_{SK flux simulation} = " << fSuperkNuMuFluxPOT << endl;
+#endif
 
   //
   // 10a->10d weights
@@ -149,35 +161,46 @@ bool NuFlux::Read(TXMLEngine* xml, XMLNodePointer_t root_node)
   // flux normalisation err
   //
 
-  cout << "Exp/Beam >> Loading Kubo-san's flux norm err (Nsk/Nnd) inputs!" << endl;
-
-  fSuperkNormRelErr_simple = 0;
+#ifdef __show_init_mesg_info__
+     cout << "Exp/Beam >> Loading flux norm err (Nsk/Nnd) inputs." << endl;
+#endif
 
   string kubo_data_path =
       util::XML2String(xml,root_node,"beam/superk_flux/systematics/norm_error_inputs");
+
   if(kubo_data_path != "none") {
      string full_kubo_data_path = gSystem->Getenv("T2KOSCANA") + string("/") + kubo_data_path;
-     cout << "Exp/Beam >> Using input files from: " << full_kubo_data_path << endl;
+#ifdef __show_init_mesg_info__
+     cout << "Exp/Beam >> Using Kubo-san's flux norm err inputs from: " 
+          << full_kubo_data_path << endl;
+#endif
      fHEC = new HadErrCalc(full_kubo_data_path.c_str());
-  } else {
-     cout << "Exp/Beam >> Not using Kubo's code / Use a fixed Nsk/Nd280 err instead." << endl;
+  } 
+  else {
      fSuperkNormRelErr_simple = util::XML2Dbl(
          xml,root_node,"beam/superk_flux/systematics/norm_error_simple_version");
+#ifdef __show_init_mesg_info__
+     cout << "Exp/Beam >> Disabling Kubo-san's code. Using a simple fixed Nsk/Nnd err instead." << endl;
      cout << "Exp/Beam >> Norm relative err (simple) : " << fSuperkNormRelErr_simple << endl;
+#endif
   }
 
   //
   // flux shape err
   //
 
+#ifdef __show_init_mesg_info__
   cout << "Exp/Beam >> Loading flux shape err inputs!" << endl;
+#endif
 
   TH2D * sk_numu_flux_fractional_covar = util::XML2TH2D(
        xml,root_node,"beam/superk_flux/systematics/fractional_covariance/numu");
   this->BuildNuMuFluxCovMatrix(sk_numu_flux_fractional_covar);
   delete sk_numu_flux_fractional_covar;
 
+#ifdef __show_init_mesg_info__
   cout << "Exp/Beam >> Done reading beam inputs!" << endl;
+#endif
 
   return true;
 }
@@ -209,7 +232,7 @@ void NuFlux::BuildNuMuFluxCovMatrix(TH2D * fractional_covariance)
       double flux_j = flux10d_varbin->GetBinContent(jbin);
       double frac_cov = fractional_covariance->GetBinContent(ibin,jbin);
       cov[ibin-1][jbin-1] = (flux_i*flux_j) * frac_cov;
-#ifdef __debug_level_3__
+#ifdef __show_build_covar_marix_mesg_debug__
       cout << "Exp/Beam/BuildCovarianceMatrix >> " 
            << "CovFrac(" << ibin << ", " << jbin << ") = " << frac_cov
            << ", F(" << ibin << ") = " << flux_i 
@@ -220,7 +243,7 @@ void NuFlux::BuildNuMuFluxCovMatrix(TH2D * fractional_covariance)
     }
   }
 
-#ifdef __debug_level_3__
+#ifdef __show_build_covar_marix_mesg_debug__
   fSuperkNuMuFluxCov->Print();
 #endif
 
@@ -375,7 +398,7 @@ double NuFlux::SuperkFluxNormErr(
   fHEC->SetNDHist  (hNdNuMu,         hNdNuMuBar,         hNdNuE);
   fHEC->Calc();
 
-#ifdef __debug_level_3__
+#ifdef __show_norm_err_mesg_debug__
   fHEC->ErrorComponents();
   fHEC->ShowDetail();
 #endif
@@ -383,7 +406,7 @@ double NuFlux::SuperkFluxNormErr(
   // get relative err on Nsk/Nnd280
   double relative_err = fHEC->GetSumErr(0);
 
-#ifdef __debug_level_1__
+#ifdef __show_norm_err_mesg_info__
   cout << "Exp/Beam >> Nsk/Nnd280 relative err calculated by Beam WG code = " 
        << relative_err << endl;
 #endif
@@ -461,7 +484,7 @@ void NuFlux::TweakShape(
   bool       fractional             /* twk dials expressing a fractional or absolute flux change? */
 )    
 { 
-#ifdef __debug_level_3__
+#ifdef __show_shape_cholesky_mesg_debug__
   cout << "Exp/Beam/TweakShape >> Tweaking SuperK nu_mu flux shape" << endl;
 #endif
 
@@ -469,19 +492,26 @@ void NuFlux::TweakShape(
   // If this is the first time this function is called, then run the Cholesky 
   // decomposition of the flux covariance matrix
   //
-  if(!fSuperkNuMuFluxHaveCholeskyL) {
+  if(!fSuperkNuMuFluxHaveCholeskyL) 
+  {
+#ifdef __show_shape_cholesky_mesg_info__  
     cout << "Exp/Beam/TweakShape >> "
          << "Running Cholesky's decomposition method on the flux covariance matrix." << endl;
-    TMatrixD  sk_flux_cov(this->SuperkNuMuFluxCov());
-    TMatrixD L = util::CholeskyDecomposition(sk_flux_cov);
-#ifdef __debug_level_3__
-    L.Print();
 #endif
 
+    TMatrixD sk_flux_cov(this->SuperkNuMuFluxCov());
+#ifdef __show_shape_cholesky_mesg_debug__
+    cout << "Exp/Beam/TweakShape >> SK flux covar. matrix: " << endl;
+    sk_flux_cov.Print();
+#endif
+
+    TMatrixD L = util::CholeskyDecomposition(sk_flux_cov);
     fSuperkNuMuFluxCovCholeskyL = new TMatrixD(L);
-#ifdef __debug_level_3__
+#ifdef __show_shape_cholesky_mesg_debug__
+    cout << "Exp/Beam/TweakShape >> Cholesky decomposition of SK flux covar. matrix: " << endl;
     fSuperkNuMuFluxCovCholeskyL->Print();
 #endif
+
     fSuperkNuMuFluxHaveCholeskyL = true;
     fSuperkNuMuFluxTweaked = new TH1D(*fSuperkNuMuFlux10a);
   }
@@ -491,8 +521,8 @@ void NuFlux::TweakShape(
   // Reset tweaked flux to nominal flux.
   //
   if(force_input_twkdials && input_twkv==0) {
-#ifdef __debug_level_3__
-     cout << "Exp/Beam/TweakShape >> RESET! " << endl;
+#ifdef __show_tweak_shape_mesg_debug__
+    cout << "Exp/Beam/TweakShape >> Reset tweaked numu flux histogram to nominal values " << endl;
 #endif
      this->FillInTweakedNuMuFluxHisto(0);
      return;
@@ -504,7 +534,7 @@ void NuFlux::TweakShape(
   // need to use the Cholesky decomposition of the flux covariance matrix.
   //
   if(force_input_twkdials && correlated) {
-#ifdef __debug_level_3__
+#ifdef __show_tweak_shape_mesg_debug__
      cout << "Exp/Beam/TweakShape >> Forcing input twk dials (correlated)! " << endl;
 #endif
      this->FillInTweakedNuMuFluxHisto(input_twkv,fractional);
@@ -518,7 +548,7 @@ void NuFlux::TweakShape(
   // correlated tweaking dials.
   //
   if(force_input_twkdials && !correlated) {
-#ifdef __debug_level_3__
+#ifdef __show_tweak_shape_mesg_debug__
      cout << "Exp/Beam/TweakShape >> Forcing input twk dials (uncorrelated)! " << endl;
 #endif
      TMatrixD & L = *fSuperkNuMuFluxCovCholeskyL;
@@ -534,7 +564,7 @@ void NuFlux::TweakShape(
   // Use Cholseky method to generate random fluxes
   //
   if(!force_input_twkdials) {
-#ifdef __debug_level_3__
+#ifdef __show_tweak_shape_mesg_debug__
     cout << "Exp/Beam/TweakShape >> Generating random twk dials (correlated)! " << endl;
 #endif
     TMatrixD & L = *fSuperkNuMuFluxCovCholeskyL;
@@ -543,6 +573,11 @@ void NuFlux::TweakShape(
     return;
   }
 
+}
+//________________________________________________________________________________________
+void NuFlux::PrintSystematicVariations(void) const
+{
+  cout << "Exp/Beam >> Twk Nsk/Nnd normalization = " << fSuperkNuMuFluxNormTwkDial << endl;
 }
 //________________________________________________________________________________________
 void NuFlux::FillInTweakedNuMuFluxHisto(TVectorD * ptwkv, bool fractional)

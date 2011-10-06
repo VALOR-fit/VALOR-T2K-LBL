@@ -38,24 +38,27 @@ public:
    double SuperkCCQEXSecWght  (double Etrue, t2kana::conv::SuperkMode_t m) const;
    double SuperkNuclEffectWght(double Ereco, t2kana::conv::SuperkMode_t m) const;
 
-   // Draw inputs:
-   //
-   void Draw(TVirtualPad * c, Option_t * opt = "") const;
-
    // Systematic variations
    void TweakCCQEXSec             (double twkdial) { fCCQEXSecTwkDial             = twkdial; } ///< tweak CCQE (far only)
    void TweakCC1piToCCQEXSecRatio (double twkdial) { fCC1piToCCQEXSecRatioTwkDial = twkdial; } ///< tweak CC1pi/CCQE (both near & far)
    void TweakCCOthToCCQEXSecRatio (double twkdial) { fCCOthToCCQEXSecRatioTwkDial = twkdial; } ///< tweak CCoth/CCQE (both near & far)
    void TweakNCToCCQEXSecRatio    (double twkdial) { fNCToCCQEXSecRatioTwkDial    = twkdial; } ///< tweak NC/CCQE (both near & far)
    void TweakNuclEffect           (double twkdial) { fNuclEffectTwkDial           = twkdial; } ///< tweak nuclear effect (far only)
-   
-   bool TweakAffectsND280 (void) const;
-   bool TweakAffectsSuperk(void) const;
-   
-   double OnePionInRES(void) { return fCC1piInCCRES; }
+   bool TweakAffectsND280         (void) const;
+   bool TweakAffectsSuperk        (void) const;
   
    // Read inputs from XML file
    bool Read (TXMLEngine* xml, XMLNodePointer_t root_node);
+
+   // Draw inputs:
+   //
+   void Draw(TVirtualPad * c, Option_t * opt = "") const;
+
+   // Print
+   void PrintSystematicVariations (void) const;
+
+   // Etc 
+   double OnePionInRES(void) { return fCC1piInCCRES; }
    
 private:
 

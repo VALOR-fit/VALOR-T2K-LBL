@@ -38,13 +38,22 @@
    Added some comments and removed commented-out code.
  @ 29/07/11
    Include matter effects in 3-flavour osc probabilities.
+ @ 06/10/11 - CA
+   Added `PrintSystematicVariations()'. Tweaked output messages.
 
 */
 //________________________________________________________________________________________
 
-//#define __debug_level_1__
-//#define __debug_level_2__
-//#define __debug_level_3__
+#define __show_init_mesg_info__
+#define __show_init_mesg_debug__
+//#define __show_hypothesis__ 
+//#define __show_hypothesis_probabilities__ 
+//#define __show_num_of_events_mesg_info__ 
+//#define __show_num_of_events_mesg_debug__ 
+#define __show_rc_cholesky_mesg_info__
+//#define __show_rc_cholesky_mesg_debug__ 
+//#define __show_spectra_update_mesg_debug__ 
+//#define __show_skipped_templates__ 
 
 #include <cassert>
 #include <cstdlib>
@@ -163,35 +172,44 @@ bool SuperkMC::Read(TXMLEngine* xml, XMLNodePointer_t root_node)
 {
 // Read SuperK inputs to disappearance analysis
 //
+#ifdef __show_init_mesg_info__
   cout << "Exp/SKMC >> Reading SuperK inputs from input XML file." << endl;
+#endif
 
   //
   // Get data POT
   // 
   fPOT = util::XML2Dbl(xml,root_node,"superk/observation/pot");
-  cout << "Exp/SKMC >> " << "N_{POT}|data : " << fPOT << endl;
+#ifdef __show_init_mesg_info__
+  cout << "Exp/SKMC >> " << "POT_{data} = " << fPOT << endl;
+#endif
   
   //
   // Get MC trees and MC POT
   //
   fMCPOT_numu = util::XML2Dbl(xml,root_node,"superk/mc/numu/pot");
   fMC1Rmu_numu = util::XML2TTree(xml,root_node,"superk/mc/numu/one_mu_ring");
-  cout << "Exp/SKMC >> " << "N_{POT}|(numu MC) : " << fMCPOT_numu << endl;
   assert(fMC1Rmu_numu);
   fMCPOT_numubar = util::XML2Dbl(xml,root_node,"superk/mc/numubar/pot");
   fMC1Rmu_numubar = util::XML2TTree(xml,root_node,"superk/mc/numubar/one_mu_ring");
-  cout << "Exp/SKMC >> " << "N_{POT}|(numubar MC) : " << fMCPOT_numubar << endl;
   assert(fMC1Rmu_numubar);
   fMCPOT_nue = util::XML2Dbl(xml,root_node,"superk/mc/nuebeam/pot");
   fMC1Rmu_nue = util::XML2TTree(xml,root_node,"superk/mc/nuebeam/one_mu_ring");
-  cout << "Exp/SKMC >> " << "N_{POT}|(beam nue MC) : " << fMCPOT_nue << endl;
   assert(fMC1Rmu_nue);
   fMCPOT_nuesig = util::XML2Dbl(xml,root_node,"superk/mc/nuesignal/pot");
   fMC1Rmu_nuesig = util::XML2TTree(xml,root_node,"superk/mc/nuesignal/one_mu_ring");
-  cout << "Exp/SKMC >> " << "N_{POT}|(signal nue MC) : " << fMCPOT_nuesig << endl;
   assert(fMC1Rmu_nuesig);
+#ifdef __show_init_mesg_info__
+  cout << "Exp/SKMC >> " << "POT_{MC; numu MC} = " << fMCPOT_numu << endl;
+  cout << "Exp/SKMC >> " << "POT_{MC; numubar} = " << fMCPOT_numubar << endl;
+  cout << "Exp/SKMC >> " << "POT_{MC; nue}     = " << fMCPOT_nue << endl;
+  cout << "Exp/SKMC >> " << "POT_{MC; sig-nue} = " << fMCPOT_nuesig << endl;
+#endif
   
   // create templates 
+#ifdef __show_init_mesg_info__
+  cout << "Exp/SKMC >> Filling-in SuperK MC templates... " << endl;
+#endif
   this->CreateTemplate (kSKsFCFV1RingMuLike, kSKmNuMuCCQE      );
   this->CreateTemplate (kSKsFCFV1RingMuLike, kSKmNuMuCC1pi     );
   this->CreateTemplate (kSKsFCFV1RingMuLike, kSKmNuMuCCoth     );
@@ -237,16 +255,16 @@ bool SuperkMC::Read(TXMLEngine* xml, XMLNodePointer_t root_node)
   fEffNuECCRelErr     =
     util::XML2Dbl(xml,root_node, 
       "superk/systematics/efficiency_relative_error/one_mu_ring/nuecc");
-      
-      
-  cout << "Exp/SKMC >> " << "Error {EnergyScale} : " << fEnergyScaleRelErr  << endl;
 
-  cout << "Exp/SKMC >> " << "Error {Efficiency/1RingMu/CCQE/Other} : " << fOthEffCCQERelErr << endl;
-  cout << "Exp/SKMC >> " << "Error {Efficiency/1RingMu/CCQE/RingCounting} : " << endl;
   if(!fEffCCQERelErrCovarRC) {
     cerr << "Exp/SK >> No input SuperK CCQE ring-counting error covariance matrix!" << endl;
     exit(1);
   }
+      
+#ifdef __show_init_mesg_info__      
+  cout << "Exp/SKMC >> " << "Error {EnergyScale} : " << fEnergyScaleRelErr  << endl;
+  cout << "Exp/SKMC >> " << "Error {Efficiency/1RingMu/CCQE/Other} : " << fOthEffCCQERelErr << endl;
+  cout << "Exp/SKMC >> " << "Error {Efficiency/1RingMu/CCQE/RingCounting} : " << endl;
   fEffCCQERelErrCovarRC->Print();
   cout << "Exp/SKMC >> " << "Ring-counting error matrix is given for the following 3 Ereco bins : ";
   cout << "(0, " << fEreco1RCCCQE << " GeV), "
@@ -255,6 +273,7 @@ bool SuperkMC::Read(TXMLEngine* xml, XMLNodePointer_t root_node)
   cout << "Exp/SKMC >> " << "Error {Efficiency/1RingMu/CCnonQE} : " << fEffCCnonQERelErr  << endl;
   cout << "Exp/SKMC >> " << "Error {Efficiency/1RingMu/NC} : "      << fEffNCRelErr       << endl;
   cout << "Exp/SKMC >> " << "Error {Efficiency/1RingMu/NuECC} : "   << fEffNuECCRelErr    << endl;
+#endif
   
   // initialise physics hypothesis
   fPhysHypothesis.Init(kHypUndefined);
@@ -305,15 +324,19 @@ bool SuperkMC::Read(TXMLEngine* xml, XMLNodePointer_t root_node)
   fMCErecoSpectrum[kSKsFCFV1RingMuLike][kSKmSigNuECC1pi]    -> SetDirectory(0);
   fMCErecoSpectrum[kSKsFCFV1RingMuLike][kSKmSigNuECCoth]    -> SetDirectory(0);
 
+#ifdef __show_init_mesg_info__      
   cout << "Exp/SKMC >> Done reading SuperK inputs!" << endl;
+#endif
   
   return true;
 }
 //________________________________________________________________________________________
 void SuperkMC::CreateTemplate(SuperkSample_t s, SuperkMode_t m)
 {
-  cout << "Exp/SKMC >> Filling Ereco-Etrue event template for : "
-       << util::AsString(s) << "/" << util::AsString(m) << endl;
+#ifdef __show_init_mesg_debug__      
+  cout << "Exp/SKMC/CreateTemplate >> Creating MC template for: "
+       << util::AsString(s) << " / " << util::AsString(m) << endl;
+#endif
     
   int is = (int)s;
   int im = (int)m;
@@ -343,8 +366,16 @@ void SuperkMC::CreateTemplate(SuperkSample_t s, SuperkMode_t m)
   double  mcpot  = this->MCPOT(s,m);
 
   double wght = this->AnalyzedSamplePOT() / mcpot;
-  
-  cout << "Exp/SKMC >> Weight (data POT / MC POT) = " << wght << endl;
+#ifdef __show_init_mesg_debug__        
+  cout << "Exp/SKMC/CreateTemplate >>  - Weight (data POT / MC POT) = " 
+       << wght << endl;
+#endif
+  if(wght <= 0) {
+     cerr << "Exp/SKMC/CreateTemplate >> Weight (data POT / MC POT) for " 
+          << util::AsString(s) << "/" << util::AsString(m)
+          << " is " << wght << endl;
+     exit(1);
+  }
 
   TBranch * branchEreco   = mctree->GetBranch("EnuReco");    
   TBranch * branchEtrue   = mctree->GetBranch("Enu");
@@ -373,8 +404,10 @@ void SuperkMC::CreateTemplate(SuperkSample_t s, SuperkMode_t m)
 
   }//iev
 
-  cout << "Exp/SKMC >> Filled template with " 
+#ifdef __show_init_mesg_debug__        
+  cout << "Exp/SKMC/CreateTemplate >>  - MC template was filled with " 
        << fMCTemplNom[is][im]->GetEntries() << " entries." << endl;
+#endif
 }
 //________________________________________________________________________________________
 //void SuperkMC::Update(void)
@@ -560,7 +593,7 @@ void SuperkMC::ApplyPhysHypothesisToTemplates(void)
     double dm12sq        = fPhysHypothesis.CurrValue(kPhypDm12sq);
     double dm23sq        = fPhysHypothesis.CurrValue(kPhypDm23sq);
     double delta_cp      = fPhysHypothesis.CurrValue(kPhypDeltaCP);
-#ifdef __debug_level_2__
+#ifdef __show_hypothesis__
     cout << "**  Exp/SKMC >> sin^2(2theta12) = " << sinsq2theta12
          <<   ", sin^2(2theta13) = " << sinsq2theta13
          <<   ", sin^2(2theta23) = " << sinsq2theta23
@@ -586,7 +619,7 @@ void SuperkMC::ApplyPhysHypothesisToTemplates(void)
         double p_numubar_numubar = fNuOsc3Flavour.CalcMatterOscProb(kPdgNuMuBar, kPdgNuMuBar, Etrue);
         double p_nue_nue         = fNuOsc3Flavour.CalcMatterOscProb(kPdgNuE,     kPdgNuE,     Etrue);
         double p_numu_nue        = fNuOsc3Flavour.CalcMatterOscProb(kPdgNuMu,    kPdgNuE,     Etrue);
-#ifdef __debug_level_3__
+#ifdef __show_hypothesis_probabilities__
         cout << "Exp/SKMC >>  E = " << Etrue << " GeV" << endl;
         cout << "Exp/SKMC >>  * P (numu     -> numu)    = " << p_numu_numu       << endl;
       //cout << "Exp/SKMC >>  * P (nue      -> numu)    = " << p_nue_numu        << endl;
@@ -779,7 +812,7 @@ double SuperkMC::NumOfEvents(
   int reco_bin = nsk2d->GetXaxis()->FindBin(Ereco);
   int true_bin = nsk2d->GetYaxis()->FindBin(Etrue);
 
-#ifdef __debug_level_2__ 
+#ifdef __show_num_of_events_mesg_info__ 
   cout << "Exp/SKMC/NumOfEvents >> "
        << "Sample = " << util::AsString(s) << " / Mode = " << util::AsString(m) 
        << ", Ereco = " << Ereco << " GeV (bin = " << reco_bin << ")" 
@@ -823,9 +856,18 @@ double SuperkMC::NumOfEvents(
            numu_flux_shape_wght = fNuFlux->SuperkNuMuFluxShapeWeight (Etrue);
            break;
        default:
-           return 0;
+           cerr << "Exp/SKMC/NumOfEvents >> Can't handle mode = " << util::AsString(m) << endl;
+           exit(1);
      }//m switch
   }
+#ifdef __show_num_of_events_mesg_debug__
+  if(flux_10d_weight != 1) {
+    cout << "Exp/SKMC/NumOfEvents >> Applied flux tuning weight = " << flux_10d_weight << endl;
+  }
+  if(numu_flux_shape_wght != 1) {
+    cout << "Exp/SKMC/NumOfEvents >> Applied flux-shape-systematic weight = " << numu_flux_shape_wght << endl;
+  }
+#endif
 
   //
   // Apply cross section systematics = f(Etrue)
@@ -836,6 +878,14 @@ double SuperkMC::NumOfEvents(
      xsec_ccqe_wght  = fGenInputs->SuperkCCQEXSecWght (Etrue, m);
      xsec_ratio_wght = fGenInputs->SuperkXSecRatioWght(Etrue, m);
   }
+#ifdef __show_num_of_events_mesg_debug__
+  if(xsec_ccqe_wght != 1.) {
+    cout << "Exp/SKMC/NumOfEvents >> Applied CCQE-xsec-systematic weight = " << xsec_ccqe_wght << endl;
+  }
+  if(xsec_ratio_wght != 1.) {
+    cout << "Exp/SKMC/NumOfEvents >> Applied mode/CCQE-xsec-ratio-systematic weight = " << xsec_ratio_wght << endl;
+  }
+#endif
 
   //
   // Apply cross section systematics = f(Ereco)
@@ -844,10 +894,9 @@ double SuperkMC::NumOfEvents(
   if(fGenInputs) {
      nucl_effect_wght = fGenInputs->SuperkNuclEffectWght(Ereco,m);
   }
-
-#ifdef __debug_level_2__ 
+#ifdef __show_num_of_events_mesg_debug__ 
   if(nucl_effect_wght != 1.) {
-    cout << "Exp/SKMC/NumOfEvents >> Applied nucl. effect weight = " << nucl_effect_wght << endl;
+    cout << "Exp/SKMC/NumOfEvents >> Applied nucl.-effect-systematic weight = " << nucl_effect_wght << endl;
   }
 #endif
 
@@ -857,10 +906,9 @@ double SuperkMC::NumOfEvents(
   // The ring-counting error for CCQE has Ereco-dependence.
   //
   double effwght = this->EfficiencyWeight(s,m,Ereco);
-
-#ifdef __debug_level_2__ 
+#ifdef __show_num_of_events_mesg_debug__
   if(effwght != 1.) {
-    cout << "Exp/SKMC/NumOfEvents >> Applied efficiency weight = " << effwght << endl;
+    cout << "Exp/SKMC/NumOfEvents >> Applied efficiency-systematic weight = " << effwght << endl;
   }
 #endif
 
@@ -876,6 +924,11 @@ double SuperkMC::NumOfEvents(
        nucl_effect_wght *
        effwght
      );
+
+#ifdef __show_num_of_events_mesg_info__ 
+  cout << "Exp/SKMC/NumOfEvents >> " << nev << " events (nominal) --> " 
+       << nevtwk << " events (current / tweaked)" << endl;
+#endif
 
   return nevtwk;
 }
@@ -953,9 +1006,9 @@ void SuperkMC::UpdateEtrueSpectra(void)
                 mctempl4->GetBinContent(ir,it)
               );
     }//ir
-#ifdef __debug_level_2__
+#ifdef __show_spectra_update_mesg_debug__
     cout << "Exp/SKMC/UpdateEtrueSpectra >> "
-         << "1-ring mu / numu : true bin = " << ibin << ", nev = " << nev << endl;
+         << "1-ring mu / numu : true bin = " << it << ", nev = " << nev << endl;
 #endif
     spectrum->SetBinContent(it,nev);
   }//true bins
@@ -976,9 +1029,9 @@ void SuperkMC::UpdateEtrueSpectra(void)
                 mctempl4->GetBinContent(ir,it)
               );
     }//ir
-#ifdef __debug_level_2__
+#ifdef __show_spectra_update_mesg_debug__
     cout << "Exp/SKMC/UpdateEtrueSpectra >> "
-         << "1-ring mu / numubar : true bin = " << ibin << ", nev = " << nev << endl;
+         << "1-ring mu / numubar : true bin = " << it << ", nev = " << nev << endl;
 #endif
     spectrum->SetBinContent(it,nev);
   }//true bins
@@ -1000,9 +1053,9 @@ void SuperkMC::UpdateEtrueSpectra(void)
                 mctempl4->GetBinContent(ir,it)
               );
     }//ir
-#ifdef __debug_level_2__
+#ifdef __show_spectra_update_mesg_debug__
     cout << "Exp/SKMC/UpdateEtrueSpectra() >> "
-         << "1-ring mu / nuebkg : true bin = " << ibin << ", nev = " << nev << endl;
+         << "1-ring mu / nuebkg : true bin = " << it << ", nev = " << nev << endl;
 #endif
     spectrum->SetBinContent(it,nev);
   }//true bins
@@ -1100,7 +1153,7 @@ void SuperkMC::TweakRingCountingEfficiencyCCQE(
    bool   corellated            /* Are forced twk dials the correlated or uncorrelated ones */
 )
 {
-#ifdef __debug_level_3__
+#ifdef __show_rc_cholesky_mesg_debug__
   cout << "Exp/SKMC >> Tweaking CCQE ring-counting efficiency" << endl;
 #endif
 
@@ -1108,21 +1161,26 @@ void SuperkMC::TweakRingCountingEfficiencyCCQE(
   // If this is the first time this function is called, then run the Cholesky 
   // decomposition of the ring-counting error matrix (covariance matrix)
   //
-  if(!fEffCCQERelErrCovarCholeskyL) {
+  if(!fEffCCQERelErrCovarCholeskyL) 
+  {
+#ifdef __show_rc_cholesky_mesg_info__
     cout << "Exp/SKMC/TweakRingCountingEffCCQE >> "
          << "Run Cholesky's decomposition method on the CCQE RC error matrix." << endl;
+#endif
+
     TMatrixD ccqe_rc_err_matrix(*fEffCCQERelErrCovarRC);
-#ifdef __debug_level_3__
-    cout << "Exp/SKMC/TweakRingCountingEffCCQE >> RC error matrix" << endl;
+#ifdef __show_rc_cholesky_mesg_debug__
+    cout << "Exp/SKMC/TweakRingCountingEffCCQE >> RC error matrix:" << endl;
     ccqe_rc_err_matrix.Print();
 #endif
 
     TMatrixD L = util::CholeskyDecomposition(ccqe_rc_err_matrix);
     fEffCCQERelErrCovarCholeskyL = new TMatrixD(L);
-
+#ifdef __show_rc_cholesky_mesg_info__
     cout << "Exp/SKMC/TweakRingCountingEffCCQE >> "
-         << "Cholesky decomposition of RC error matrix" << endl;
+         << "Cholesky decomposition of RC error matrix:" << endl;
     fEffCCQERelErrCovarCholeskyL->Print();
+#endif
   }
 
 
@@ -1193,6 +1251,18 @@ void SuperkMC::TweakEfficiencyNC(double twkdial)
 void SuperkMC::TweakEfficiencyNuECC(double twkdial) 
 { 
   fEffNuECCTwkDial = twkdial; 
+}
+//________________________________________________________________________________________
+void SuperkMC::PrintSystematicVariations(void) const
+{
+  cout << "Exp/SKMC >> Twk energy scale = "        << fEnergyScaleTwkDial << endl;
+  cout << "Exp/SKMC >> Twk CCQE RC0 efficiency = " << fRC0EffCCQETwkDial  << endl;
+  cout << "Exp/SKMC >> Twk CCQE RC1 efficiency = " << fRC1EffCCQETwkDial  << endl;
+  cout << "Exp/SKMC >> Twk CCQE RC2 efficiency = " << fRC2EffCCQETwkDial  << endl;
+  cout << "Exp/SKMC >> Twk CCQE Oth efficiency = " << fOthEffCCQETwkDial  << endl;
+  cout << "Exp/SKMC >> Twk CCnonQE efficiency = "  << fEffCCnonQETwkDial  << endl;
+  cout << "Exp/SKMC >> Twk NC efficiency = "       << fEffNCTwkDial       << endl;
+  cout << "Exp/SKMC >> Twk nu_e CC efficiency = "  << fEffNuECCTwkDial    << endl;
 }
 //________________________________________________________________________________________
 double SuperkMC::EfficiencyWeight(
@@ -1495,7 +1565,7 @@ bool SuperkMC::SkipTemplate(t2kana::conv::SuperkMode_t m)
 
   bool skip = (mode_is_nuesig && hyp_is_not_3flavour_osc);
 
-#ifdef __debug_level_2__ 
+#ifdef __show_skipped_templates__
   if(skip) {
     cout << "Exp/SKMC >> Skipping template: " << util::AsString(m) << endl;
   }

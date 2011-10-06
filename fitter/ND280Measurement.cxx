@@ -8,13 +8,15 @@
  @ 13/07/11 - CA
    Take into account the statistical error on the measured number of CC-like events.
    Update the efficiency error from +/- 5% to +5.6% -5.2%. 
+ @ 06/10/11 - CA
+   Added `PrintSystematicVariations()'. Tweaked output messages.
 
 */
 //________________________________________________________________________________________
 
-//#define __debug_level_1__
-//#define __debug_level_2__
-//#define __debug_level_3__
+#define __show_init_mesg_info__
+//#define __show_init_mesg_debug__
+//#define __correction_factor_mesg_debug__
 
 #include <cassert>
 #include <cstdlib>
@@ -85,22 +87,32 @@ void ND280Measurement::CleanUp(void)
 //________________________________________________________________________________________
 bool ND280Measurement::Read(TXMLEngine* xml, XMLNodePointer_t root_node)
 {
-  cout << "Exp/nd280 >> Reading nd280 inputs from input XML file." << endl;
-    
-  // Get Data POT
-  fPOTData = util::XML2Dbl(xml,root_node,"nd280/pot_data");
-  cout << "Exp/nd280 >> " << "N_{POT;data} : " << fPOTData << endl;
-  
+#ifdef __show_init_mesg_info__
+  cout << "Exp/ND280 >> Reading nd280 inputs from input XML file." << endl;
+#endif
+
   // Get observed number of CC-like events
   fNumObsCCLike = util::XML2Dbl(xml,root_node,"nd280/saclay_selection/nobs_cclike");
-  cout << "Exp/nd280 >> " << "N^{obs}_{CClike} : " << fNumObsCCLike << endl;
- 
+#ifdef __show_init_mesg_info__
+  cout << "Exp/ND280 >> " << "N^{obs}_{CClike} = " << fNumObsCCLike << endl;
+#endif
+
+  // Get Data POT
+  fPOTData = util::XML2Dbl(xml,root_node,"nd280/pot_data");
+#ifdef __show_init_mesg_info__
+  cout << "Exp/ND280 >> " << "POT_{data} = " << fPOTData << endl;
+#endif
+  
   // Get MC POT
   fPOTMC = util::XML2Dbl(xml,root_node,"nd280/saclay_selection/pot_mc");
-  cout << "Exp/nd280 >> " << "N_{POT;mc} : " << fPOTMC << endl;
-
+#ifdef __show_init_mesg_info__
+  cout << "Exp/ND280 >> " << "POT_{MC} : " << fPOTMC << endl;
+#endif
+ 
   // Get NMC_{mode}(Etrue) after cuts
-  cout << "Exp/nd280 >> " << "Getting NMC_{mode}(Etrue) histograms" << endl;
+#ifdef __show_init_mesg_debug__
+  cout << "Exp/ND280 >> " << "Getting NMC_{mode}(Etrue) histograms" << endl;
+#endif
   fNumSelEt [kNDmNuMuCCQE]      =
     util::XML2TH1F(xml,root_node,"nd280/saclay_selection/true_energy_spectrum/numu_ccqe");
   fNumSelEt [kNDmNuMuCCRES]     =
@@ -143,12 +155,14 @@ bool ND280Measurement::Read(TXMLEngine* xml, XMLNodePointer_t root_node)
     util::XML2TH1F(xml,root_node,"nd280/saclay_selection/true_energy_spectrum/nue_nccoh");
   fNumSelEt [kNDmNuENCOth]      =
     util::XML2TH1F(xml,root_node,"nd280/saclay_selection/true_energy_spectrum/nue_ncoth");
+#ifdef __show_init_mesg_debug__
+  cout << "Exp/ND280 >> Done loading histograms" << endl;
+#endif
 
-  cout << "Exp/nd280 >> Done loading NMC_{mode}(Etrue) histograms" << endl;
- 
   double data_to_mc_pot = fPOTData/fPOTMC;
-  cout << "Exp/nd280 >> " << "MC POT scaling factor : " << data_to_mc_pot << endl;
-   
+#ifdef __show_init_mesg_info__
+  cout << "Exp/ND280 >> " << "MC POT scaling factor : " << data_to_mc_pot << endl;
+#endif   
   fNumSelEt [kNDmNuMuCCQE]     -> Scale (data_to_mc_pot);
   fNumSelEt [kNDmNuMuCCRES]    -> Scale (data_to_mc_pot);
   fNumSelEt [kNDmNuMuCCCOH]    -> Scale (data_to_mc_pot);
@@ -171,18 +185,24 @@ bool ND280Measurement::Read(TXMLEngine* xml, XMLNodePointer_t root_node)
   fNumSelEt [kNDmNuENCCOH]     -> Scale (data_to_mc_pot);
   fNumSelEt [kNDmNuENCOth]     -> Scale (data_to_mc_pot);
 
-  cout << "Exp/nd280 >> Done rescaling NMC_{mode} histograms to the data POT" << endl;
+#ifdef __show_init_mesg_debug__
+  cout << "Exp/ND280 >> Done rescaling NMC_{mode} histograms to the data POT" << endl;
+#endif
   
   // Get error on efficiency
   fSelEffRelErrPlus  = util::XML2Dbl(xml,root_node,"nd280/saclay_selection/systematics/efficiency_relative_error/plus");
   fSelEffRelErrMinus = util::XML2Dbl(xml,root_node,"nd280/saclay_selection/systematics/efficiency_relative_error/minus");
-  cout << "Exp/nd280 >> Efficiency error : "
+#ifdef __show_init_mesg_info__
+  cout << "Exp/ND280 >> Efficiency error : "
        << "+ " << 100.*fSelEffRelErrPlus  << " %, "
        << "- " << 100.*fSelEffRelErrMinus << " %" << endl;
+#endif
 
   // Get statistical error
   fRelStatErr = TMath::Sqrt(fNumObsCCLike)/fNumObsCCLike;
-  cout << "Exp/nd280 >> Statistical error : " << 100.*fRelStatErr << " %" << endl;
+#ifdef __show_init_mesg_info__
+  cout << "Exp/ND280 >> Statistical error : " << 100.*fRelStatErr << " %" << endl;
+#endif
     
   // Set colors and line styles for drawing
     
@@ -237,9 +257,7 @@ bool ND280Measurement::Read(TXMLEngine* xml, XMLNodePointer_t root_node)
   fNuMuEt    = new TH1D("fNuMuEt",    "Etrue for numu",    200, 0, 10); /// binning expected by Kubo's code
   fNuMuBarEt = new TH1D("fNuMuBarEt", "Etrue for numubar", 200, 0, 10);
   fNuEEt     = new TH1D("fNuMuEEt",   "Etrue for nue",     200, 0, 10);
-  
-  cout << "Exp/nd280 >> Done reading nd280 inputs!" << endl;
-  
+    
   //
   // store nominal correction factor
   //
@@ -249,8 +267,14 @@ bool ND280Measurement::Read(TXMLEngine* xml, XMLNodePointer_t root_node)
   double nexpncbkg_nd280   = this -> NExpNCBkg (nominal);
   double nexpcc_nd280      = this -> NExpCC    (nominal);
   fNomCorr = nobscclike_nd280 / (nexpncbkg_nd280 + nexpcc_nd280);
-  cout << "Exp/nd280 >> Nominal correction factor from nd280: " << fNomCorr << endl;
-  
+#ifdef __show_init_mesg_info__
+  cout << "Exp/ND280 >> Nominal correction factor from ND280: " << fNomCorr << endl;
+#endif
+
+#ifdef __show_init_mesg_info__
+  cout << "Exp/ND280 >> Done reading nd280 inputs!" << endl;
+#endif
+
   return true;
 }
 //________________________________________________________________________________________
@@ -390,8 +414,8 @@ double ND280Measurement::CorrectionFactor(void) const
   bool tweaked      = eff_tweaked || xsec_tweaked || norm_tweaked;
 
   if(!tweaked) {
-#ifdef __debug_level_2__
-    cout << "Exp / nd280 >> nd280 event spectra not tweaked."
+#ifdef __correction_factor_mesg_debug__
+    cout << "Exp/ND280 >> ND280 event spectra not tweaked."
          << "Returning nominal value = " << fNomCorr << endl;
 #endif
     return fNomCorr;
@@ -406,11 +430,11 @@ double ND280Measurement::CorrectionFactor(void) const
 
   double correction = nobscclike_nd280 / (nexpncbkg_nd280 + nexpcc_nd280);
 
-#ifdef __debug_level_2__
-  cout << "Exp / nd280 >> "
-       << "nobscclike_nd280 = "  << nobscclike_nd280
-       << ", nexpncbkg_nd280 = " << nexpncbkg_nd280
-       << ", nexpcc_nd280 = " << nexpcc_nd280
+#ifdef __correction_factor_mesg_debug__
+  cout << "Exp/ND280 >> "
+       << "Nobs_{CC-like;ND280} = " << nobscclike_nd280
+       << ", Nexp{NC-bkg;ND280} = " << nexpncbkg_nd280
+       << ", Nexp{CC;ND280} = "     << nexpcc_nd280
        << " ==> correction factor = " << correction << endl;
 #endif
 
@@ -578,6 +602,12 @@ void ND280Measurement::TweakEfficiency(double twkdial)
 void ND280Measurement::FluctuateNObsCCLike(double twkdial)
 {
   fNObsCCLikeTwkDial = twkdial;
+}
+//________________________________________________________________________________________
+void ND280Measurement::PrintSystematicVariations(void) const
+{
+  cout << "Exp/ND280 >> Twk efficiency = "    << fSelEffTwkDial     << endl;
+  cout << "Exp/ND280 >> Twk normalization = " << fNObsCCLikeTwkDial << endl;
 }
 //________________________________________________________________________________________
 

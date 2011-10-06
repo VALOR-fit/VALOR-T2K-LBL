@@ -64,7 +64,10 @@ void run_fitter
   // do the fit
   fitter->DoTheFit();
 
-  // save fit results
-  const char * outfile = Form("fit_%d",dataset_id);
-  fitter->Write(output_option,outfile);
+  // post-fit analysis
+  fitter->Analyze(output_option);
+
+  // save results
+  const char * outfile = Form("fit_%d.root",dataset_id);
+  fitter->Save(outfile);
 }

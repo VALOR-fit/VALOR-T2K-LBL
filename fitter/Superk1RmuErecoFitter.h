@@ -29,7 +29,8 @@ public:
    Superk1RmuErecoFitter(FitInputs * inputs, Option_t * option = "minuit");
   ~Superk1RmuErecoFitter();
 
-   void Write (Option_t * option, const char * outtag = 0);
+   void Analyze (Option_t * option);
+   void Save    (const char * filename);
 
 private:
 

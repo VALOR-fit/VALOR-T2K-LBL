@@ -16,7 +16,9 @@
  @ 28/09/2011 - CA
    Actual fitting code factorized out of the existing fitters and put in
    FitterKernel class.  
-
+ @ 06/10/2011 - CA
+   Functionality of Write() was spread to Analyze(), GetResults(), Save() to
+   better serve the different needs of various toy-MC fitting studies.
 */ 
 //____________________________________________________________________________
 
@@ -72,29 +74,19 @@ Superk1RmuErecoFitter::~Superk1RmuErecoFitter()
 
 }
 //____________________________________________________________________________ 
-void Superk1RmuErecoFitter::Write(Option_t * option, const char * outtag) 
+void Superk1RmuErecoFitter::Analyze(Option_t * option) 
 {
   util::SetDefaultStyle();
 
   TString opt = option;
-  cout << "Superk1RmuErecoFitter/Write >> Input option: " 
-       << opt.Data() << endl;
-
-  TFile * file_out = 0;
-  if(outtag) {
-     ostringstream outroot;
-     outroot << outtag << ".root";
-     cout << "Superk1RmuErecoFitter/Write >> Writing fit results in: " 
-          << outroot.str() << endl; 
-     file_out = new TFile(outroot.str().c_str(), "recreate");
-  }
+  cout << "Superk1RmuErecoFitter/Analyze >> Option: " << opt.Data() << endl;
 
   //
   // Print best-fit results used for generating the plots
   //
   fFitInputs->FitParams().ShowOnlyBestFitValuesInNextPrint();
-  cout << "Superk1RmuErecoFitter/Write >> Using the following best-fit results: " 
-       << fFitInputs->FitParams();
+  cout << "Superk1RmuErecoFitter/Analyze >> "
+       << "Using the following best-fit results: " << fFitInputs->FitParams();
 
   //
   // Declare (potential) outpts
@@ -215,41 +207,53 @@ void Superk1RmuErecoFitter::Write(Option_t * option, const char * outtag)
      bestfit_signuecc1pi    -> SetLineWidth ( 1 );
      bestfit_signueccoth    -> SetLineWidth ( 1 );
 
-     if(file_out) {
-       bestfit_tot            -> Write("bestfit_tot");
-       bestfit_numuccqe       -> Write("bestfit_numuccqe");
-       bestfit_numucc1pi      -> Write("bestfit_numucc1pi");
-       bestfit_numuccoth      -> Write("bestfit_numuccoth");
-       bestfit_nc             -> Write("bestfit_numunc");
-       bestfit_numubarccqe    -> Write("bestfit_numubarcc");
-       bestfit_numubarcc1pi   -> Write("bestfit_numubarcc1pi");
-       bestfit_numubarccoth   -> Write("bestfit_numubarccoth");
-       bestfit_numubarnc      -> Write("bestfit_numubarnc");
-       bestfit_nueccqe        -> Write("bestfit_nueccqe");
-       bestfit_nuecc1pi       -> Write("bestfit_nuecc1pi");
-       bestfit_nueccoth       -> Write("bestfit_nueccoth");
-       bestfit_nuenc          -> Write("bestfit_nuenc");
-       bestfit_signueccqe     -> Write("bestfit_signueccqe");
-       bestfit_signuecc1pi    -> Write("bestfit_signuecc1pi");
-       bestfit_signueccoth    -> Write("bestfit_signueccoth");
-     }
+     bestfit_tot            -> SetName("bestfit_tot");
+     bestfit_numuccqe       -> SetName("bestfit_numuccqe");
+     bestfit_numucc1pi      -> SetName("bestfit_numucc1pi");
+     bestfit_numuccoth      -> SetName("bestfit_numuccoth");
+     bestfit_nc             -> SetName("bestfit_numunc");
+     bestfit_numubarccqe    -> SetName("bestfit_numubarcc");
+     bestfit_numubarcc1pi   -> SetName("bestfit_numubarcc1pi");
+     bestfit_numubarccoth   -> SetName("bestfit_numubarccoth");
+     bestfit_numubarnc      -> SetName("bestfit_numubarnc");
+     bestfit_nueccqe        -> SetName("bestfit_nueccqe");
+     bestfit_nuecc1pi       -> SetName("bestfit_nuecc1pi");
+     bestfit_nueccoth       -> SetName("bestfit_nueccoth");
+     bestfit_nuenc          -> SetName("bestfit_nuenc");
+     bestfit_signueccqe     -> SetName("bestfit_signueccqe");
+     bestfit_signuecc1pi    -> SetName("bestfit_signuecc1pi");
+     bestfit_signueccoth    -> SetName("bestfit_signueccoth");
+
+     fResults -> Add (bestfit_tot);
+     fResults -> Add (bestfit_numuccqe);
+     fResults -> Add (bestfit_numucc1pi);
+     fResults -> Add (bestfit_numuccoth);
+     fResults -> Add (bestfit_nc);
+     fResults -> Add (bestfit_numubarccqe);
+     fResults -> Add (bestfit_numubarcc1pi);
+     fResults -> Add (bestfit_numubarccoth);
+     fResults -> Add (bestfit_numubarnc);
+     fResults -> Add (bestfit_nueccqe);
+     fResults -> Add (bestfit_nuecc1pi);
+     fResults -> Add (bestfit_nueccoth);
+     fResults -> Add (bestfit_nuenc);
+     fResults -> Add (bestfit_signueccqe);
+     fResults -> Add (bestfit_signuecc1pi);
+     fResults -> Add (bestfit_signueccoth);
   }
 
   //
   // Write the fit data
   //
   if(opt.Contains("Observation")) {
-
-     // get & format data
      data = new TH1D(*fFitInputs->Observation().ErecoSpectrum(kSKsFCFV1RingMuLike));
      data -> SetDirectory(0);
      data -> SetMarkerStyle(20);
      data -> SetMarkerSize(1);
      data -> GetXaxis()->SetTitle("E_{reco} (GeV)");
      data -> GetYaxis()->SetTitle("Number of 1Rmu events");
-     if(file_out) {
-        data -> Write("data");
-     }
+     data -> SetName("data");
+     fResults -> Add(data);
   }
 
   //
@@ -260,13 +264,11 @@ void Superk1RmuErecoFitter::Write(Option_t * option, const char * outtag)
 
      PhysHypothesis_t phyp = fFitInputs->FitParams().PhysicsHypothesis();
 
-     if(phyp == kHypNuMuDisapp2F || phyp == kHypOsc3F) 
-     {
+     if(phyp == kHypNuMuDisapp2F || phyp == kHypOsc3F) {
         chisq_surface = this->BuildChisqSurfaceNuMuDisap2ParamFit();
      }
      else
-     if(phyp == kHypDecay) 
-     {   
+     if(phyp == kHypDecay) {   
         chisq_surface = this->BuildChisqSurfaceNuMuDecay2ParamFit();
      }
      else
@@ -275,14 +277,13 @@ void Superk1RmuErecoFitter::Write(Option_t * option, const char * outtag)
      } 
      else 
      {
-        cerr << "Superk1RmuErecoFitter/Write >> Can not handle hypothesis: " 
+        cerr << "Superk1RmuErecoFitter/Analyze >> Can't handle hypothesis: " 
              << util::AsString(phyp) << endl;
         exit(1);
      }
 
-     if(file_out) {
-       chisq_surface -> Write("chisq_surface");
-     }
+     chisq_surface -> SetName("chisq_surface");
+     fResults -> Add(chisq_surface);
   }
 
   //
@@ -344,18 +345,69 @@ void Superk1RmuErecoFitter::Write(Option_t * option, const char * outtag)
         spectrum_legend->Draw();
         c2->Update();
 
-        if(file_out) {
-          c1->Write("c1");
-          c2->Write("c2");
-        }
+        c1->SetName("c1");
+        c2->SetName("c2");
+
+        fResults->Add(c1);
+        fResults->Add(c2);
 
    } // BestFitSpectra & Observation
   } // Canvases
 
-  if(file_out) {
-    file_out->Close();
-    delete file_out;
-  }
+}
+//____________________________________________________________________________ 
+void Superk1RmuErecoFitter::Save(const char * filename) 
+{
+  util::SetDefaultStyle();
+
+  cout << "Superk1RmuErecoFitter/Save >> Writing fit results in: " 
+       << filename << endl;
+  TFile * file_out = new TFile(filename, "recreate");
+
+  TH1D * data                   = (TH1D*) fResults->FindObject("data");
+  TH1D * bestfit_tot            = (TH1D*) fResults->FindObject("bestfit_tot");
+  TH1D * bestfit_numuccqe       = (TH1D*) fResults->FindObject("bestfit_numuccqe");
+  TH1D * bestfit_numucc1pi      = (TH1D*) fResults->FindObject("bestfit_numucc1pi");
+  TH1D * bestfit_numuccoth      = (TH1D*) fResults->FindObject("bestfit_numuccoth");
+  TH1D * bestfit_nc             = (TH1D*) fResults->FindObject("bestfit_nc");
+  TH1D * bestfit_numubarccqe    = (TH1D*) fResults->FindObject("bestfit_numubarccqe");
+  TH1D * bestfit_numubarcc1pi   = (TH1D*) fResults->FindObject("bestfit_numubarcc1pi");
+  TH1D * bestfit_numubarccoth   = (TH1D*) fResults->FindObject("bestfit_numubarccoth");
+  TH1D * bestfit_numubarnc      = (TH1D*) fResults->FindObject("bestfit_numubarnc");
+  TH1D * bestfit_nueccqe        = (TH1D*) fResults->FindObject("bestfit_nueccqe");
+  TH1D * bestfit_nuecc1pi       = (TH1D*) fResults->FindObject("bestfit_nuecc1pi");
+  TH1D * bestfit_nueccoth       = (TH1D*) fResults->FindObject("bestfit_nueccoth");
+  TH1D * bestfit_nuenc          = (TH1D*) fResults->FindObject("bestfit_nuenc");
+  TH1D * bestfit_signueccqe     = (TH1D*) fResults->FindObject("bestfit_signueccqe");
+  TH1D * bestfit_signuecc1pi    = (TH1D*) fResults->FindObject("bestfit_signuecc1pi");
+  TH1D * bestfit_signueccoth    = (TH1D*) fResults->FindObject("bestfit_signueccoth");
+  TH2D * chisq_surface          = (TH2D*) fResults->FindObject("chisq_surface");
+  TCanvas * c1 = (TCanvas*) fResults->FindObject("c1");
+  TCanvas * c2 = (TCanvas*) fResults->FindObject("c2");
+
+  if ( bestfit_tot          ) { bestfit_tot            -> Write(); }
+  if ( bestfit_numuccqe     ) { bestfit_numuccqe       -> Write(); }
+  if ( bestfit_numucc1pi    ) { bestfit_numucc1pi      -> Write(); }
+  if ( bestfit_numuccoth    ) { bestfit_numuccoth      -> Write(); }
+  if ( bestfit_nc           ) { bestfit_nc             -> Write(); }
+  if ( bestfit_numubarccqe  ) { bestfit_numubarccqe    -> Write(); }
+  if ( bestfit_numubarcc1pi ) { bestfit_numubarcc1pi   -> Write(); }
+  if ( bestfit_numubarccoth ) { bestfit_numubarccoth   -> Write(); }
+  if ( bestfit_numubarnc    ) { bestfit_numubarnc      -> Write(); }
+  if ( bestfit_nueccqe      ) { bestfit_nueccqe        -> Write(); }
+  if ( bestfit_nuecc1pi     ) { bestfit_nuecc1pi       -> Write(); }
+  if ( bestfit_nueccoth     ) { bestfit_nueccoth       -> Write(); }
+  if ( bestfit_nuenc        ) { bestfit_nuenc          -> Write(); }
+  if ( bestfit_signueccqe   ) { bestfit_signueccqe     -> Write(); }
+  if ( bestfit_signuecc1pi  ) { bestfit_signuecc1pi    -> Write(); }
+  if ( bestfit_signueccoth  ) { bestfit_signueccoth    -> Write(); }
+  if ( data                 ) { data                   -> Write(); }
+  if ( chisq_surface        ) { chisq_surface          -> Write(); }
+  if ( c1                   ) { c1                     -> Write(); }
+  if ( c2                   ) { c2                     -> Write(); }
+
+  file_out->Close();
+  delete file_out;
 }
 //____________________________________________________________________________ 
 TH2D * Superk1RmuErecoFitter::BuildChisqSurfaceNuMuDisap2ParamFit(void) 

@@ -158,17 +158,19 @@ void feldman_cousins_fitting_job
      SuperkObservation * skobs = new SuperkObservation;
      if(tweak_systematics) {   
         // tweak all sources of systematic err (gaussian err)
-        cout << "- Toy-MC > Randomizing all systematic params..." << endl; 
+        cout << "- Randomizing all systematic params in pdf..." << endl; 
         skexp->TweakAllSystematics();
+        skexp->PrintSystematicVariations();
         // generate mock data using the current PDF (incl. systematic variations)
-        cout << "- Toy-MC > Generating..." << endl; 
+        cout << "- Generating toy-MC..." << endl; 
         skobs->CreateMockData(*skexp, *fparm, stat_fluctuations);
         // reset all systematics so that the PDF used in the fitter is the nominal one
         cout << "- Reseting all systematic params in pdf..." << endl; 
         skexp->ResetSystematicVariations();
+        //skexp->PrintSystematicVariations();
      } else {
         // generate mock data using the current PDF (without systematic variations)
-        cout << "- Toy-MC > Generating..." << endl; 
+        cout << "- Generating toy-MC..." << endl; 
         skobs->CreateMockData(*skexp, *fparm, stat_fluctuations);
      }
 
