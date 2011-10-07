@@ -35,6 +35,8 @@
    Added `AsString (t2kana::conv::NuMassHierarchy_t m)'
  @ 28/09/11 - CA
    Used separate PhysParamId_t for the decoh. and decay sinsq2theta parameter.
+ @ 07/10/11 - CA
+   In RandomizeDeltaCP() use a range from [-pi,pi) rather than [0,2pi)
 
 */
 //____________________________________________________________________________
@@ -460,8 +462,8 @@ double t2kana::util::RandomizeSinsq2Theta13(void)
 double t2kana::util::RandomizeDeltaCP(void)
 {
   TRandom3 rand(0);
-  double min = 0;
-  double max = 2.*conv::kpi;
+  double min = -conv::kpi;
+  double max =  conv::kpi;
   return rand.Uniform(min,max);
 }
 //____________________________________________________________________________

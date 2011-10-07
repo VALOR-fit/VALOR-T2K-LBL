@@ -11,11 +11,11 @@ void test_n_mock_data_fits(
   const char * tag                     = "toyexptfits",                  /* */
   int          run                     = 0,                              /* */
   int          nexperiments            = 1000,                           /* */
-  double       input_sinsq2theta12     = 0.86,                           /* if -1 then randomize */
-  double       input_sinsq2theta13     = 0.10,                           /* if -1 then randomize */
+  double       input_sinsq2theta12     = 0.86,                           /* if -999 then randomize */
+  double       input_sinsq2theta13     = 0.10,                           /* if -999 then randomize */
   double       input_sinsq2theta23     = 1.00,                           /* */
-  double       input_deltacp           = 0.00,                           /* if -1 then randomize */
-  double       input_dm12sq            = 7.58E-5,                        /* if -1 then randomize */
+  double       input_deltacp           = 0.00,                           /* if -999 then randomize */
+  double       input_dm12sq            = 7.58E-5,                        /* if -999 then randomize */
   double       input_dm23sq            = 2.32E-3,                        /* */
   const char * config_file             = "analysis_configuration.xml",   /* analysis configuration file */
   bool         stat_fluctuations       = true,                           /* include statistical fluctuation in toy MC expts? */
@@ -33,7 +33,13 @@ void test_n_mock_data_fits(
 
   const char * config = Form("%s/config/%s", gSystem->Getenv("T2KOSCANA"), config_file);
 
-  cout << "[Job inputs]" << endl;
+  // check whether some osc. params need to be randomized
+  bool randomize_sinsq2theta12 = (TMath::Abs(input_sinsq2theta12 + 999) < kASmallNum);
+  bool randomize_sinsq2theta13 = (TMath::Abs(input_sinsq2theta13 + 999) < kASmallNum);
+  bool randomize_deltacp       = (TMath::Abs(input_deltacp       + 999) < kASmallNum);
+  bool randomize_dm12sq        = (TMath::Abs(input_dm12sq        + 999) < kASmallNum);
+
+  cout << "\n[Job inputs]" << endl;
   cout << "- Job: " << tag << "/" << run << endl;
   cout << "- Reading analysis configuration from: " << config << endl;
   cout << "- Toy-MC generation" << endl;
@@ -41,11 +47,11 @@ void test_n_mock_data_fits(
   cout << "   - Randomize systematics : "      << ((tweak_systematics) ?      "YES " : "NO") << endl;
   cout << "   - Statistical fluctuations: "    << ((stat_fluctuations) ?      "YES " : "NO") << endl;
   cout << "   - True oscillation parameters: " << endl;
-  cout << "       > sinsq2theta12 = " << input_sinsq2theta12 << endl;
-  cout << "       > sinsq2theta13 = " << input_sinsq2theta13 << endl;
+  cout << "       > sinsq2theta12 = " << ((randomize_sinsq2theta12) ? "* randomized *" : input_sinsq2theta12) << endl;
+  cout << "       > sinsq2theta13 = " << ((randomize_sinsq2theta13) ? "* randomized *" : input_sinsq2theta13) << endl;
   cout << "       > sinsq2theta23 = " << input_sinsq2theta23 << endl;
-  cout << "       > delta_cp      = " << input_deltacp << endl;
-  cout << "       > Dm12sq        = " << input_dm12sq << " eV^2/c^4" << endl;
+  cout << "       > delta_cp      = " << ((randomize_deltacp) ? "* randomized *" : input_deltacp) << endl;
+  cout << "       > Dm12sq        = " << ((randomize_dm12sq)  ? "* randomized *" : input_dm12sq ) << " eV^2/c^4" << endl;
   cout << "       > |Dm23sq|      = " << input_dm23sq << " eV^2/c^4" << endl;
   cout << "- Fit" << endl;
   cout << "   - Fit Parameter List: " << fit_param_list << endl;
@@ -54,6 +60,7 @@ void test_n_mock_data_fits(
   cout << "     - Storing chisq surfaces: "      << ((store_chisq_surf) ?       "YES " : "NO") << endl;
   cout << "     - Storing toy MC experiments:  " << ((store_toy_expts) ?        "YES " : "NO") << endl;
   cout << "     - Storing best-fit spectra: "    << ((store_bestfit_spectrum) ? "YES " : "NO") << endl;
+  cout << endl;
 
   // create file to store results
   TFile f(Form("%s-sinsq2theta23_%.2f-dm23sq_%.5feV2-run_%d.root",
@@ -66,31 +73,31 @@ void test_n_mock_data_fits(
   // fit parameter list
   FitParamList * fparm = FitParamList::NamedParameterList(fit_param_list);
   conv::PhysHypothesis_t hyp = fparm->PhysicsHypothesis();
-  cout << "Specified physics hypothesis: " << util::AsString(hyp) << endl;
+  cout << "- The following physics hypothesis is used in the fit: " << util::AsString(hyp) << endl;
 
   // get superk spectrum predictor & configure
   SuperkExpectation * skexp = new SuperkExpectation;
   skexp->Read(config);
-
-  // init best-fit values
-  double bestfit_sinsq2theta12 = -1;
-  double bestfit_sinsq2theta13 = -1;
-  double bestfit_sinsq2theta23 = -1;
-  double bestfit_deltacp       = -1;
-  double bestfit_dm12sq        = -1;
-  double bestfit_dm23sq        = -1;
-  double bestfit_chisq         = -1;
 
   // loop over toy-MC experiments
   for(int iexperiment = 0; iexperiment < nexperiments; iexperiment++) {
 
      cout << "\n\n *** Pseudo-experiment = " << iexperiment << endl;
 
+     // init best-fit values
+     double bestfit_sinsq2theta12 = -1;
+     double bestfit_sinsq2theta13 = -1;
+     double bestfit_sinsq2theta23 = -1;
+     double bestfit_deltacp       = -1;
+     double bestfit_dm12sq        = -1;
+     double bestfit_dm23sq        = -1;
+     double bestfit_chisq         = -1;
+
      // randomize specified osc params for current toy MC expt
-     if (input_sinsq2theta12 < 0) { input_sinsq2theta12 = util::RandomizeSinsq2Theta12(); }
-     if (input_sinsq2theta13 < 0) { input_sinsq2theta13 = util::RandomizeSinsq2Theta13(); }
-     if (input_deltacp       < 0) { input_deltacp       = util::RandomizeDeltaCP();       }
-     if (input_dm12sq        < 0) { input_dm12sq        = util::RandomizeDm12sq();        }
+     if (randomize_sinsq2theta12) { input_sinsq2theta12 = util::RandomizeSinsq2Theta12(); }
+     if (randomize_sinsq2theta13) { input_sinsq2theta13 = util::RandomizeSinsq2Theta13(); }
+     if (randomize_deltacp      ) { input_deltacp       = util::RandomizeDeltaCP();       }
+     if (randomize_dm12sq       ) { input_dm12sq        = util::RandomizeDm12sq();        }
 
      // set oscillation parameter inputs as necessary (used to generate toy-MC expt)
      if(hyp == conv::kHypOsc3F) {
@@ -139,7 +146,7 @@ void test_n_mock_data_fits(
      FitterABC * fitter = new Superk1RmuErecoFitter(fit_inputs,fit_option);
 
      double true_chisq = fit_inputs->Chisquare();
-     cout << " - True osc. params:"
+     cout << "- True osc. params:"
 	  << " sinsq2theta12 = "  << input_sinsq2theta12
 	  << ", sinsq2theta13 = " << input_sinsq2theta13
 	  << ", sinsq2theta23 = " << input_sinsq2theta23

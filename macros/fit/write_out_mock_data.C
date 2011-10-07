@@ -7,46 +7,75 @@
 // ------------------------------------------------------------------------------------------------
 //
 
-#include "Conventions.h"
-
 void write_out_mock_data
 (
-  double       sinsq2theta23       = 1.00,                            /* */
-  double       dm23sq              = 2.32E-3,                         /* */
-  bool         include_systematics = false,                           /* */
-  double       nexperiments        = 1,                               /* */
-  const char * xml_filename        = 0,                               /* */
-  const char * root_filename       = 0,                               /* */
-  const char * config_file         = "analysis_configuration.xml",    /* analysis configuration file */
-  const char * points_to_add       = 0                                /* comma separated-list of data-points to add, eg when creating hybrid data/toy-MC experiments */
+  const char * tag                     = "toymc",                        /* */
+  int          run                     = 0,                              /* */
+  double       nexperiments            = 10,                             /* number of toy-MC expts to generate */
+  const char * hypothesis              = "3f_osc",                       /* options: "2f_numu_disap", "3f_osc" */
+  double       input_sinsq2theta12     = 0.86,                           /* if -999 then randomize */
+  double       input_sinsq2theta13     = 0.10,                           /* if -999 then randomize */
+  double       input_sinsq2theta23     = 1.00,                           /* */
+  double       input_deltacp           = 0.00,                           /* if -999 then randomize */
+  double       input_dm12sq            = 7.58E-5,                        /* if -999 then randomize */
+  double       input_dm23sq            = 2.32E-3,                        /* */
+  const char * config_file             = "analysis_configuration.xml",   /* analysis configuration file */
+  bool         tweak_systematics       = true,                           /* generate toy MC with randomized systematics? */
+  bool         save_in_xml_format      = true,                           /* */
+  bool         save_in_root_format     = false,                          /* */
+  const char * points_to_add           = 0                               /* comma separated-list of data-points to add, eg when creating hybrid data/toy-MC experiments */
 )
 {
   using namespace std;
   using namespace t2kana;
-
-  //
-  // Print out job summary
-  //
-  cout << "** Number of toy MC experiments: " << nexperiments << endl;
-  cout << "True oscillation parameters : (sinsq2theta23 = "
-       << sinsq2theta23 << ", dm23sq = " << dm23sq << " eV^2/c^4" << ")" << endl;
-  cout << "** Including systematics: " << ((include_systematics) ? "YES" : "NO") << endl;
+  using namespace t2kana::conv;
 
   const char * config = Form("%s/config/%s", gSystem->Getenv("T2KOSCANA"), config_file);
-  cout << "Reading analysis configuration from: " << config << endl;
 
   TRandom rand(0);
+  bool include_statistical_fluctuations = true; // <- statistical fluctuations
 
-  bool fluctuate = true; // <- statistical fluctuations
+  // Check whether some osc. params need to be randomized
+  bool randomize_sinsq2theta12 = (TMath::Abs(input_sinsq2theta12 + 999) < kASmallNum);
+  bool randomize_sinsq2theta13 = (TMath::Abs(input_sinsq2theta13 + 999) < kASmallNum);
+  bool randomize_deltacp       = (TMath::Abs(input_deltacp       + 999) < kASmallNum);
+  bool randomize_dm12sq        = (TMath::Abs(input_dm12sq        + 999) < kASmallNum);
+  bool randomized_osc_params   = (randomize_sinsq2theta12 || randomize_sinsq2theta13 || randomize_deltacp || randomize_dm12sq);
 
+  // Print out job summary
+  cout << "\n[Job inputs]" << endl;
+  cout << "- Job: " << tag << "/" << run << endl;
+  cout << "- Reading analysis configuration from: " << config << endl;
+  cout << "- Input physics hypothesis: " << hypothesis << endl;
+  cout << "- Toy-MC generation" << endl;
+  cout << "   - Number of toy experiments: " << nexperiments << endl;
+  cout << "   - Randomize systematics : "      << ((tweak_systematics) ? "YES " : "NO") << endl;
+  cout << "   - True oscillation parameters: " << endl;
+  cout << "       > sinsq2theta12 = " << ((randomize_sinsq2theta12) ? "* randomized *" : input_sinsq2theta12) << endl;
+  cout << "       > sinsq2theta13 = " << ((randomize_sinsq2theta13) ? "* randomized *" : input_sinsq2theta13) << endl;
+  cout << "       > sinsq2theta23 = " << input_sinsq2theta23 << endl;
+  cout << "       > delta_cp      = " << ((randomize_deltacp) ? "* randomized *" : input_deltacp) << endl;
+  cout << "       > Dm12sq        = " << ((randomize_dm12sq)  ? "* randomized *" : input_dm12sq ) << " eV^2/c^4" << endl;
+  cout << "       > |Dm23sq|      = " << input_dm23sq << " eV^2/c^4" << endl;
+  cout << "   - Adding the following data-points in each toy-MC expt: " << ((points_to_add) ? points_to_add : "* none *") << endl;
+  cout << "- Outputs" << endl;
+  cout << "     - Storing toy-MC expts in XML format: "   << ((save_in_xml_format) ?   "YES " : "NO") << endl;
+  cout << "     - Storing toy-MC expts in ROOT format:  " << ((save_in_root_format) ?  "YES " : "NO") << endl;
+  cout << endl;
+
+  // Open files
   TFile * f = 0;
-  if(root_filename) {
-    f = new TFile(root_filename, "recreate");
+  if(save_in_root_format) {
+    ostringstream root_filename;
+    root_filename << tag << "-" << run << ".root";
+    f = new TFile(root_filename.str().c_str(), "recreate");
   }
 
   ofstream fxml;
-  if(xml_filename) {
-    fxml.open(xml_filename);
+  if(save_in_xml_format) {
+    ostringstream xml_filename;
+    xml_filename << tag << "-" << run << ".xml";
+    fxml.open(xml_filename.str().c_str());
     fxml << "<?xml version=\"1.0\"?> " << endl;
     fxml << "<analysis_inputs>       " << endl;
     fxml << "  <superk>              " << endl;
@@ -55,35 +84,54 @@ void write_out_mock_data
     fxml << "         <ereco_values> " << endl;
   }
 
-  // Oscillation params
-  PhysParamList * fparm = PhysParamList::NumuDisapFitNoSyst();
-  fparm->Update(t2kana::conv::kPhypSinsq2Theta23, sinsq2theta23);
-  fparm->Update(t2kana::conv::kPhypDm23sq,        dm23sq);
-
-  // Get superk spectrum PDF & configure
+  // Create & config superk spectrum predictor
   SuperkExpectation * skexp = new SuperkExpectation;
   skexp->Read(config);
 
   for(int iexperiment=0; iexperiment < nexperiments; iexperiment++) {
 
-     cout << " **** toy experiment : " << iexperiment << endl;
+     cout << "\n\n *** Pseudo-experiment = " << iexperiment << endl;
 
-     if(include_systematics) {
+     // Randomize specified osc params for current toy MC expt
+     if (randomize_sinsq2theta12) { input_sinsq2theta12 = util::RandomizeSinsq2Theta12(); }
+     if (randomize_sinsq2theta13) { input_sinsq2theta13 = util::RandomizeSinsq2Theta13(); }
+     if (randomize_deltacp      ) { input_deltacp       = util::RandomizeDeltaCP();       }
+     if (randomize_dm12sq       ) { input_dm12sq        = util::RandomizeDm12sq();        }
+
+     // Set physics hypothesis
+     PhysHypothesis ph(hypothesis);
+     if(ph.Hypothesis() == conv::kHypNuMuDisapp2F) {
+       ph.SetCurrValue(conv::kPhypSinsq2Theta23,  input_sinsq2theta23);
+       ph.SetCurrValue(conv::kPhypDm23sq,         input_dm23sq);
+     } else
+     if(ph.Hypothesis() == conv::kHypOsc3F) {  
+       ph.SetCurrValue(conv::kPhypSinsq2Theta12,  input_sinsq2theta12);
+       ph.SetCurrValue(conv::kPhypSinsq2Theta13,  input_sinsq2theta13);
+       ph.SetCurrValue(conv::kPhypSinsq2Theta23,  input_sinsq2theta23);
+       ph.SetCurrValue(conv::kPhypDeltaCP,        input_deltacp);
+       ph.SetCurrValue(conv::kPhypDm12sq,         input_dm12sq);
+       ph.SetCurrValue(conv::kPhypDm23sq,         input_dm23sq);
+     }
+     //cout << "- Physics hypothesis set: " << ph << endl;
+
+     if(tweak_systematics) {
         // tweak all sources of systematic err (gaussian err)
+        cout << "- Randomizing all systematic params in pdf..." << endl;
         skexp->TweakAllSystematics();
+        skexp->PrintSystematicVariations();
      }
 
      // Generate mock data
+     cout << "- Generating toy-MC..." << endl;
      SuperkObservation * skobs = new SuperkObservation;
-     skobs->CreateMockData(*skexp, *fparm, fluctuate);
+     skobs->CreateMockData(*skexp, ph, include_statistical_fluctuations);
 
+     // Get 1-ring mu-like Ereco spectrum
      TH1D* mock_data = skobs->ErecoSpectrum(conv::kSKsFCFV1RingMuLike);
      mock_data->SetDirectory(0);
 
-     //
      // If an XML file was specified, add an entry
-     //
-     if(xml_filename) {
+     if(save_in_xml_format) {
        fxml << "           " << Form("<data_set_%d>",iexperiment) << endl;
        fxml << "\t\t";
        // Adding Ereco values as a comma separated list.
@@ -110,11 +158,9 @@ void write_out_mock_data
        fxml << "           " << Form("</data_set_%d>",iexperiment) << endl;
      }//xml
 
-     //
      // If a ROOT filename was specified, save the ROOT histogram too
-     //
      if(f) {
-       if(points_to_add) {
+       if(save_in_root_format) {
           vector<string> vecp = util::Tokens(points_to_add,",");
           assert(vecp.size()>0);
           for(int ip=0; ip < vecp.size(); ip++) {
@@ -130,7 +176,7 @@ void write_out_mock_data
   //
   // Close files
   //
-  if(xml_filename) {
+  if(save_in_xml_format) {
     fxml << "         </ereco_values> " << endl;
     fxml << "       </one_mu_ring>    " << endl;
     fxml << "    </observation>       " << endl;

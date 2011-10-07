@@ -24,7 +24,7 @@ void test_n_mock_data_fits_xml
 
   const char * config = Form("%s/config/%s", gSystem->Getenv("T2KOSCANA"), config_file);
 
-  cout << "[Job inputs]" << endl;
+  cout << "\n[Job inputs]" << endl;
   cout << "- Job: " << tag << "/" << run << endl;
   cout << "- Reading analysis configuration from: " << config << endl;
   cout << "- Toy-MC" << endl;
@@ -33,12 +33,13 @@ void test_n_mock_data_fits_xml
   cout << "- Fit" << endl;
   cout << "   - Fit param list: " << fit_param_list << endl;
   cout << "   - Fitter option: " << fit_option << endl;
+  cout << endl;
 
   // fit param list
   FitParamList * fparm = FitParamList::NamedParameterList(fit_param_list);
 
   conv::PhysHypothesis_t hyp = fparm->PhysicsHypothesis();
-  cout << "Specified physics hypothesis: " << util::AsString(hyp) << endl;
+  cout << "- The following physics hypothesis is used in the fit: " << util::AsString(hyp) << endl;
 
   // get superk spectrum predictor & configure
   SuperkExpectation * skexp = new SuperkExpectation;

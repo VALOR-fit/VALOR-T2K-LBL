@@ -6,8 +6,6 @@
 // ------------------------------------------------------------------------------------------------
 //
 
-#include "Conventions.h"
-
 void test_mock_data_fit
 (
    double       input_sinsq2theta12 = 0.86,                         /* */
@@ -21,7 +19,8 @@ void test_mock_data_fit
    const char * config_file         = "analysis_configuration.xml", /* analysis configuration file */
    const char * fit_param_list      = "numudisapp2f",               /* fit parameter list for the given physics hypothesis (see run_fitter.C) */
    const char * fit_option          = "minuit",                     /* oscillation fitter (see run_fitter.C) */
-   const char * output_option       = "Observation+BestFitSpectra+ChisqSurface+Canvases"  /* what to write-out once the fit is done */
+   const char * output_option       = "Observation+BestFitSpectra+ChisqSurface+Canvases",  /* what to write-out once the fit is done */
+   bool         print_toy_mc        = false                         /* print-out toy-MC E_reco values? */
 )
 {
   using namespace std;
@@ -29,7 +28,7 @@ void test_mock_data_fit
 
   const char * config = Form("%s/config/%s", gSystem->Getenv("T2KOSCANA"), config_file);
 
-  cout << "[Job inputs]" << endl;
+  cout << "\n[Job inputs]" << endl;
   cout << "- Reading analysis configuration from: " << config << endl;
   cout << "- Toy-MC generation" << endl;
   cout << "   - Systematic variations: "    << ((include_systematics) ? "YES " : "NO") << endl;
@@ -45,11 +44,12 @@ void test_mock_data_fit
   cout << "   - Fit parameter list: " << fit_param_list << endl;
   cout << "   - Fitter option: " << fit_option << endl;
   cout << "- Output option: " << output_option << endl;
+  cout << endl;
 
   // instantiate fit params & set specified inputs as necessary
   FitParamList * fparm = FitParamList::NamedParameterList(fit_param_list);
   conv::PhysHypothesis_t hyp = fparm->PhysicsHypothesis();
-  cout << "Specified physics hypothesis: " << util::AsString(hyp) << endl;
+  cout << "- The following physics hypothesis is used in the fit: " << util::AsString(hyp) << endl;
   if(hyp == conv::kHypOsc3F) {
     fparm->Update(t2kana::conv::kPhypSinsq2Theta12, input_sinsq2theta12);
     fparm->Update(t2kana::conv::kPhypSinsq2Theta13, input_sinsq2theta13);
@@ -104,26 +104,28 @@ void test_mock_data_fit
   fitter->Analyze(output_option);
   fitter->Save("mockfit.root");
 
-  // Print-out mock-data (Ereco values) as a comma separated list.
-  // Assuming uniform distribution within each bin, randomize values within each bin.
-  cout << "\nToy-MC experiment, E_reco values: " << endl;
-  TRandom3 rand(0);
-  TH1D* mock_data = skobs->ErecoSpectrum(conv::kSKsFCFV1RingMuLike);
-  bool is_first=true;
-  for(int ibin = 1; ibin <= mock_data->GetNbinsX(); ibin++) {
-    double Nb   = mock_data->GetBinContent (ibin); // number of events in this Ereco bin
-    double Emin = mock_data->GetXaxis()->GetBinLowEdge (ibin); // Ereco bin min
-    double Emax = mock_data->GetXaxis()->GetBinUpEdge  (ibin); // Ereco bin max
-    for(int iev = 0; iev < Nb; iev++) {
-      double E = Emin + rand.Uniform() * (Emax-Emin);
-      string delimeter = ",";
-      if(is_first) {
-        delimeter = "";
-        is_first = false;
-      }
-      cout << delimeter << E;
-    }//iev
-  }//ibin
-  cout << endl;
+  if(print_toy_mc) {
+    // Print-out mock-data (Ereco values) as a comma separated list.
+    // Assuming uniform distribution within each bin, randomize values within each bin.  
+    cout << "\nToy-MC experiment, E_reco values: " << endl;
+    TRandom3 rand(0);
+    TH1D* mock_data = skobs->ErecoSpectrum(conv::kSKsFCFV1RingMuLike);
+    bool is_first=true;
+    for(int ibin = 1; ibin <= mock_data->GetNbinsX(); ibin++) {
+      double Nb   = mock_data->GetBinContent (ibin); // number of events in this Ereco bin
+      double Emin = mock_data->GetXaxis()->GetBinLowEdge (ibin); // Ereco bin min
+      double Emax = mock_data->GetXaxis()->GetBinUpEdge  (ibin); // Ereco bin max
+      for(int iev = 0; iev < Nb; iev++) {
+        double E = Emin + rand.Uniform() * (Emax-Emin);
+        string delimeter = ",";
+        if(is_first) {
+          delimeter = "";
+          is_first = false;
+        }
+        cout << delimeter << E;
+      }//iev
+    }//ibin
+    cout << endl;
+  }//print?
 
 }

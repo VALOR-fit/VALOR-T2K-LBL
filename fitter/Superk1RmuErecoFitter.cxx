@@ -369,7 +369,7 @@ void Superk1RmuErecoFitter::Save(const char * filename)
   TH1D * bestfit_numuccqe       = (TH1D*) fResults->FindObject("bestfit_numuccqe");
   TH1D * bestfit_numucc1pi      = (TH1D*) fResults->FindObject("bestfit_numucc1pi");
   TH1D * bestfit_numuccoth      = (TH1D*) fResults->FindObject("bestfit_numuccoth");
-  TH1D * bestfit_nc             = (TH1D*) fResults->FindObject("bestfit_nc");
+  TH1D * bestfit_nc             = (TH1D*) fResults->FindObject("bestfit_numunc");
   TH1D * bestfit_numubarccqe    = (TH1D*) fResults->FindObject("bestfit_numubarccqe");
   TH1D * bestfit_numubarcc1pi   = (TH1D*) fResults->FindObject("bestfit_numubarcc1pi");
   TH1D * bestfit_numubarccoth   = (TH1D*) fResults->FindObject("bestfit_numubarccoth");

@@ -176,6 +176,7 @@ void PhysHypothesis::Init(PhysHypothesis_t h)
 //________________________________________________________________________________________
 void PhysHypothesis::Print(ostream & stream) const
 {
+  stream << endl;
   stream << "................................................................." << endl;
   stream << "Hypothesis: \n" 
          << util::AsString(fHypothesis) << endl;
