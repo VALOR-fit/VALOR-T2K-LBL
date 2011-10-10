@@ -37,7 +37,9 @@
    Used separate PhysParamId_t for the decoh. and decay sinsq2theta parameter.
  @ 07/10/11 - CA
    In RandomizeDeltaCP() use a range from [-pi,pi) rather than [0,2pi)
-
+ @ 10/10/11 - CA
+   In RandomizeSinsq2Theta12(), make sure that the generated value is always
+   physical.
 */
 //____________________________________________________________________________
 
@@ -448,7 +450,15 @@ double t2kana::util::RandomizeSinsq2Theta12(void)
   TRandom3 rand(0);
   double mean  = conv::kGlobFitSinsq2Theta12; 
   double sigma = conv::kGlobFitSinsq2Theta12 * conv::kGlobFitErrSinsq2Theta12;
-  return rand.Gaus(mean,sigma);
+  double sinsq2theta = rand.Gaus(mean,sigma);
+
+  // return if a physical value was generated
+  if(sinsq2theta >=0. && sinsq2theta <= 1.) {
+     return sinsq2theta;
+  }
+
+  // or try again
+  return util::RandomizeSinsq2Theta12();
 }
 //____________________________________________________________________________
 double t2kana::util::RandomizeSinsq2Theta13(void)

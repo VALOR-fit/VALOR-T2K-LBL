@@ -5,23 +5,23 @@
 # Submit a batch of feldman_cousins_fitting_job.C jobs
 #
 # Inputs
-#  --resource               : <RAL, IN2P3, Oxford, Grid, interactive>, default: interactive
+#  --resource               : <RAL, IN2P3, Oxford, Grid, interactive>. Default: "interactive".
 #  --tag                    :
 #  --nruns                  :
 #  --nexpts                 :
-#  --cpu-time               : default: "6:00:00" for RAL, "1500000" for IN2P3, "11:50:00" for Oxford
-#  --stat-fluctuations      : include statistical fluctuation in toy MC expts
-#  --tweak-systematics      : generate toy MC with randomized systematics 
-#  --tweak-non23oscparams   : generate toy MC with randomized dmsq12,theta12,theta13,delta_cp (only in 3-flavour analysis)
-#  --min-dm23sq-bin         : default:   1
-#  --max-dm23sq-bin         : default:  51
-#  --min-sinsq2theta23-bin  : default:   1
-#  --max-sinsq2theta23-bin  : default: 101
-#  --fit-param-list         : Fit patameter list. Default: numudisapp2f. See FitParamList.h for allowed options.
-#  --fitter                 : Which fitter to use. Default: minuit.
-#  --job-dir                : Directory for job scripts and outputs, default: `pwd`
-#  --softw-dir              : Oscillation code top-level directory, default: `pwd`
-#  --config-file            : Analysis configuration file from the config/ directory, default: analysis_configuration.xml
+#  --cpu-time               : Default: "6:00:00" for RAL, "1500000" for IN2P3, "11:50:00" for Oxford.
+#  --stat-fluctuations      : include statistical fluctuation in toy MC expts.
+#  --tweak-systematics      : generate toy MC with randomized systematics.
+#  --tweak-non23oscparams   : generate toy MC with randomized dmsq12,theta12,theta13,delta_cp (only in 3-flavour analysis).
+#  --min-dm23sq-bin         : Default:   1.
+#  --max-dm23sq-bin         : Default:  51.
+#  --min-sinsq2theta23-bin  : Default:   1.
+#  --max-sinsq2theta23-bin  : Default: 101.
+#  --fit-param-list         : Fit parameter list. Default: "numudisapp2f". See FitParamList.h for allowed options.
+#  --fit-option             : Option passed to fitter. Default: "minuit".
+#  --job-dir                : Directory for job scripts and outputs. Default: `pwd`.
+#  --softw-dir              : Oscillation code top-level directory. Default: `pwd`.
+#  --config-file            : Analysis configuration file from the config/ directory. Default: "analysis_configuration.xml".
 #
 # C.Andreopoulos
 #----------------------------------------------------------------------------------------------------------------------------- 
@@ -44,7 +44,7 @@ foreach (@ARGV) {
   if($_ eq '--min-sinsq2theta23-bin' ) { $min_sinsq2theta23_bin = $ARGV[$iarg+1]; }
   if($_ eq '--max-sinsq2theta23-bin' ) { $max_sinsq2theta23_bin = $ARGV[$iarg+1]; }
   if($_ eq '--fit-param-list'        ) { $fitparamlist          = $ARGV[$iarg+1]; }
-  if($_ eq '--fitter'                ) { $fitter                = $ARGV[$iarg+1]; }
+  if($_ eq '--fit-option'            ) { $fitoption             = $ARGV[$iarg+1]; }
   if($_ eq '--job-dir'               ) { $job_dir               = $ARGV[$iarg+1]; }
   if($_ eq '--softw-dir'             ) { $softw_dir             = $ARGV[$iarg+1]; }
   if($_ eq '--config-file'           ) { $config_file           = $ARGV[$iarg+1]; }
@@ -62,7 +62,7 @@ $stat_fluct             = 0                             unless defined $stat_flu
 $twk_systematics        = 0                             unless defined $twk_systematics;
 $twk_non23osc           = 0                             unless defined $twk_non23osc;
 $fitparamlist           = "numudisapp2f"                unless defined $fitparamlist;
-$fitter                 = "minuit"                      unless defined $fitter;
+$fitoption              = "minuit"                      unless defined $fitoption;
 $job_dir                = `pwd`                         unless defined $job_dir;
 $softw_dir              = `pwd`                         unless defined $softw_dir;
 $config_file            = "analysis_configuration.xml"  unless defined $config_file;
@@ -81,7 +81,7 @@ while($irun < $nruns) {
 
   print "Submitting $tag run: $irun \n";
 
-  $command  = "root2k -l -b -q \'$softw_dir/macros/fit/feldman_cousins_fitting_job.C(\"$tag\",$irun,$nexpts,$min_dm23sq_bin,$max_dm23sq_bin,$min_sinsq2theta23_bin,$max_sinsq2theta23_bin,$stat_fluct,$twk_systematics,$twk_non23osc,\"$fitparamlist\",\"$fitter\",\"$config_file\")\'";
+  $command  = "root2k -l -b -q \'$softw_dir/macros/fit/feldman_cousins_fitting_job.C(\"$tag\",$irun,$nexpts,$min_dm23sq_bin,$max_dm23sq_bin,$min_sinsq2theta23_bin,$max_sinsq2theta23_bin,\"$config_file\",$stat_fluct,$twk_systematics,$twk_non23osc,\"$fitparamlist\",\"$fitoption\")\'";
   print "$command \n";
 
   #

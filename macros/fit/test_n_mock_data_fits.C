@@ -24,7 +24,7 @@ void test_n_mock_data_fits(
   const char * fit_option              = "minuit",                       /* fitter option (see run_fitter.C) */
   bool         store_chisq_surf        = false,                          /* by default storing only best-fit values, enable this to store the chisq surfaces   */
   bool         store_toy_expts         = false,                          /* by default storing only best-fit values, enable this to store the toy MC expts     */
-  bool         store_bestfit_spectrum  = false,                          /* by default storing only best-fit values, enable this to store the best-fit spectra */
+  bool         store_bestfit_spectrum  = false                           /* by default storing only best-fit values, enable this to store the best-fit spectra */
 )
 {
   using namespace std;

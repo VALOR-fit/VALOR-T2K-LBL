@@ -16,10 +16,10 @@ void feldman_cousins_fitting_job
   int          max_dm23sq_bin        =  51,                          /* */
   int          min_sinsq2theta23_bin =   1,                          /* */
   int          max_sinsq2theta23_bin = 101,                          /* */
+  const char * config_file           = "analysis_configuration.xml", /* analysis configuration file */
   bool         stat_fluctuations     = true,                         /* include statistical fluctuation in toy MC expts? */
   bool         tweak_systematics     = true,                         /* generate toy MC with randomized systematics? */
   bool         tweak_non23oscparams  = true,                         /* generate toy MC with randomized dmsq12,theta12,theta13,dcp / only in 3-flavour fmwk */
-  const char * config_file           = "analysis_configuration.xml", /* analysis configuration file */
   const char * fit_param_list        = "numudisapp2f",               /* fit parameter list for the given physics hypothesis (see run_fitter.C) */
   const char * fit_option            = "minuit"                      /* fitter option (see run_fitter.C) */
 )

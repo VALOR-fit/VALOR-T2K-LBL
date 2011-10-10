@@ -1,13 +1,13 @@
 //
 // ------------------------------------------------------------------------------------------------
-// Generate / store mock data.
-// The data can be stored in an XML (formatted like inputs/data.xml) or a ROOT file. 
+// Generate / store toy-MC experiments.
+// The data can be stored in an XML and/or ROOT format.
 //
 // Costas Andreopoulos
 // ------------------------------------------------------------------------------------------------
 //
 
-void write_out_mock_data
+void generate_toymc_ensemble
 (
   const char * tag                     = "toymc",                        /* */
   int          run                     = 0,                              /* */
@@ -90,7 +90,7 @@ void write_out_mock_data
 
   for(int iexperiment=0; iexperiment < nexperiments; iexperiment++) {
 
-     cout << "\n\n *** Pseudo-experiment = " << iexperiment << endl;
+     cout << "\n\n*** Pseudo-experiment = " << iexperiment << endl;
 
      // Randomize specified osc params for current toy MC expt
      if (randomize_sinsq2theta12) { input_sinsq2theta12 = util::RandomizeSinsq2Theta12(); }
