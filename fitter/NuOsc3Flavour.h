@@ -36,6 +36,7 @@ public:
 
   void SetBaseline      (double length);
   void SetDensity       (double density);
+  void SetTheta23Octant (int octant);
   void SetMassHierarchy (t2kana::conv::NuMassHierarchy_t h); 
   void SetOscParameters (double sinsq2theta12, /* sin^2(2*theta_{12}) */
                          double sinsq2theta13, /* sin^2(2*theta_{13}) */
@@ -50,9 +51,10 @@ public:
  // The neutrino codes are the PDG ones and the neutrino energy is in GeV.
  //         
 
- double CalcVacuumOscProb    (int nu_start, int nu_end, double energy);                
- double CalcVacuumOscProbPDG (int nu_start, int nu_end, double energy);
- double CalcMatterOscProb    (int nu_start, int nu_end, double energy);
+ double CalcVacuumOscProb      (int nu_start, int nu_end, double energy);                
+ double CalcVacuumOscProbPDG   (int nu_start, int nu_end, double energy);
+ double CalcMatterOscProb      (int nu_start, int nu_end, double energy);
+ double Calc2FlavMatterOscProb (int nu_start, int nu_end, double energy, int index);
  
 private:
 
@@ -100,6 +102,8 @@ private:
  double UMassUdaggerVacuum[3][3][2];		
 
  bool useEquations12;
+ int nFlavourIndex;
+ int theta23Octant;
 };
 
 }//end of namespace t2kana
