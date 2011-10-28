@@ -471,13 +471,26 @@ void plot_feldman_cousins_contour_3fits
   TGraph * minos2011_90cl = 0;
   TGraph * skle_90cl      = 0;
   TGraph * sk_90cl        = 0;
+  double sk_90cl_sinsq2theta[27] = {1.0,0.992857,0.991747,0.985714,0.978571,0.975489,0.971429,0.967109,0.964286,0.961218,0.957143,0.956349,
+                                    0.952912,0.950173,0.950867,0.95322,0.956397,0.957143,0.962394,0.964286,0.970629,0.971429,0.978571,
+                                    0.985714,0.986626,0.992857,1.0};
+  double sk_90cl_dmsq[27] = {0.00252342,0.00251499,0.00251215,0.00249424,0.00246071,0.00244087,0.0024114,0.00237162,0.00234248,0.00230433,
+                             0.00225104,0.00223895,0.00217543,0.00211371,0.00205374,0.00199547,0.00193885,0.00193125,0.00188384,0.00187013,
+                             0.0018304,0.00182693,0.00180104,0.00178044,0.00177846,0.00176761,0.00175943};
+  double skle_90cl_sinsq2theta[32] = {1.0,0.994963,0.988889,0.983704,0.979259,0.974815,0.971111,0.966815,0.962815,0.958519,0.954815,
+                                      0.950963,0.949259,0.947037,0.944593,0.942963,0.94237,0.943333,0.945556,0.948519,0.952,0.956148,
+                                      0.960593,0.964815,0.969482,0.974445,0.979111,0.983556,0.988519,0.993333,0.996667,1.00015};
+  double skle_90cl_dmsq[32] = {0.00191758,0.00191758,0.0019271,0.00192948,0.00194146,0.0019511,0.00196929,0.0019754,0.00198766,0.00200248,
+                               0.0020224,0.00204379,0.00206286,0.00208596,0.00211718,0.00216086,0.00218372,0.00222464,0.00227054,0.00231309,
+                               0.00234916,0.00239022,0.00242299,0.00245013,0.00248679,0.00251776,0.00254597,0.00256177,0.00258087,0.00260655,
+                               0.00261301,0.00262273};
   if(show_external_contours) {
      const char * extcontourfile = Form("%s/inputs/external/contours/numu_disappearance.root", gSystem->Getenv("T2KOSCANA"));
      TFile f(extcontourfile,"read");
      minos2011_68cl = new TGraph(* (TGraph*)f.Get("minos2011_68cl") );
      minos2011_90cl = new TGraph(* (TGraph*)f.Get("minos2011_90cl") );
-     skle_90cl      = new TGraph(* (TGraph*)f.Get("skle_90cl")      );
-     sk_90cl        = new TGraph(* (TGraph*)f.Get("sk_90cl")        );
+     sk_90cl        = new TGraph(27, sk_90cl_sinsq2theta, sk_90cl_dmsq);
+     skle_90cl      = new TGraph(32, skle_90cl_sinsq2theta,skle_90cl_dmsq);
      set_contour_style(minos2011_68cl, kBlack,     2, 3);
      set_contour_style(minos2011_90cl, kBlack,     2, 1);
      set_contour_style(skle_90cl,      kMagenta-3, 2, 1);
@@ -487,8 +500,8 @@ void plot_feldman_cousins_contour_3fits
 //     }
 //     if(show_90cl) {
        minos2011_90cl->Draw("l");
-//       skle_90cl->Draw("l");
 //       sk_90cl->Draw("l");
+//       skle_90cl->Draw("l");
 //     }
      f.Close();
   }
@@ -515,10 +528,10 @@ void plot_feldman_cousins_contour_3fits
   }
 
   if(show_external_contours) {
-  //legend->AddEntry(minos2011_68cl, "MINOS 2011 (7.25E+20 POT), 68% CL");
-    legend->AddEntry(minos2011_90cl, "MINOS 2011 (7.25E+20 POT), 90% CL");
-  //legend->AddEntry(sk_90cl,        "Super-K, 90% CL");
-  //legend->AddEntry(skle_90cl,      "Super-K L/E, 90% CL");
+  //legend->AddEntry(minos2011_68cl, "MINOS 2011 (7.25E+20 POT), 68% CL", "L");
+    legend->AddEntry(minos2011_90cl, "MINOS 2011 (7.25E+20 POT), 90% CL", "L");
+  //legend->AddEntry(sk_90cl,        "SuperK Zenith, 90% CL", "L");
+  //legend->AddEntry(skle_90cl,      "SuperK L/E, 90% CL", "L");
   }
   legend->SetBorderSize(0);
   legend->Draw();
