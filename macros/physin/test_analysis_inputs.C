@@ -6,7 +6,7 @@
 // ------------------------------------------------------------------------------------------------
 //
 
-#include "Conventions.h"
+//#include "Conventions.h"
 
 void test_analysis_inputs
 (
@@ -40,7 +40,7 @@ void test_analysis_inputs
 
   if(opt.Contains("SuperK")) {
     skexp->GetSuperkMC()->Draw(new TCanvas(), "1RingMuLike/ErecoEtrueTemplates");
-    skexp->GetSuperkMC()->Draw(new TCanvas(), "1RingMuLike/EtrueSpectra");
+    skexp->GetSuperkMC()->Draw(new TCanvas(), "EtrueSpectra/NuMu");
   }//SuperK
 
   if(opt.Contains("nd280")) {

@@ -8,7 +8,7 @@
 
 export T2KOSCANA=$1
 
-source /system/SL5/cern/root/x86_64/OxfordSetup-current-pro.sh
+source /system/SL5/cern/root/x86_64/OxfordSetup-5.30.00.sh
 
 export LD_LIBRARY_PATH=${T2KOSCANA}/fitter:${LD_LIBRARY_PATH}
 export PATH=${T2KOSCANA}/root:${T2KOSCANA}/production:${PATH}
