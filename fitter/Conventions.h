@@ -56,21 +56,36 @@ typedef enum ESuperkSample {
 // (true) reaction modes considered separately within each SuperK sample
 typedef enum ESuperkMode {
    kSKmUndefined = -1, 
-   kSKmNuMuCCQE, 
-   kSKmNuMuCC1pi, 
-   kSKmNuMuCCoth, 
-   kSKmNC,    
-   kSKmNuMuBarCCQE, 
-   kSKmNuMuBarCC1pi, 
-   kSKmNuMuBarCCoth, 
-   kSKmNuMuBarNC, 
-   kSKmNuECCQE,
-   kSKmNuECC1pi,
-   kSKmNuECCoth,
-   kSKmNuENC,
-   kSKmSigNuECCQE,
-   kSKmSigNuECC1pi,
-   kSKmSigNuECCoth
+   kSKmNuMuCCQE,         // numu CC QE
+   kSKmNuMuCC1pi,        // numu CC 1pi
+   kSKmNuMuCCcoh,        // numu CC coherent
+   kSKmNuMuCCoth_mu,     // numu CC other, nu_mu disappearance analysis definition
+   kSKmNuMuCCoth_e,      // numu CC other, nu_e appearance analysis definition
+   kSKmNuMuNC,           // numu NC (all)
+   kSKmNuMuNC1pi0,       // numu NC 1pi0
+   kSKmNuMuNCcoh,        // numu NC coherent
+   kSKmNuMuNCoth_e,      // numu NC other, nu_e appearance analysis definition
+   kSKmNuMuBarCCQE,      // numubar CCQE
+   kSKmNuMuBarCC1pi,     // numubar CC 1pi
+   kSKmNuMuBarCCcoh,     // numubar CC coh
+   kSKmNuMuBarCCoth_mu,  // numubar CC other, nu_mu disappearance analysis definition
+   kSKmNuMuBarCCoth_e,   // numubar CC other, nu_e appearance analysis definition
+   kSKmNuMuBarNC,        // numubar NC (all)
+   kSKmNuMuBarNC1pi0,    // numubar NC 1pi0
+   kSKmNuMuBarNCcoh,     // numubar NC coherent
+   kSKmNuMuBarNCoth_e,   // numubar NC other, nu_e appearance analysis definition
+   kSKmNuECCQE,          // nue CC QE
+   kSKmNuECC1pi,         // nue CC 1pi
+   kSKmNuECCcoh,         // nue CC coherent
+   kSKmNuECCoth_mu,      // nue CC other, nu_mu disappearance analysis definition
+   kSKmNuECCoth_e,       // nue CC other, nu_e appearance analysis definition
+   kSKmNuENC,            // nue NC (all)
+   kSKmNuENC1pi0,        // nue NC 1pi0
+   kSKmNuENCcoh,         // nue NC coherent
+   kSKmNuENCoth_e,       // nue NC other, nu_e appearance analysis definition
+   kSKmSigNuECCQE,       // sig nue
+   kSKmSigNuECC1pi,      // sig nue
+   kSKmSigNuECCoth       // sig nue
 } SuperkMode_t; 
 
 // (true) reaction modes considered separately in nd280 inputs
@@ -197,7 +212,7 @@ static const int kPdgNuMuBar  = -14;
 static const int kPdgNuTauBar = -16;
 
 static const int kNSuperkSamples  = 1;  // number of samples included in analysis
-static const int kNSuperkModes    = 15; // number of reaction modes considered separately within each SuperK sample
+static const int kNSuperkModes    = 30; // number of reaction modes considered separately within each SuperK sample
 static const int kNND280Modes     = 21; // number of reaction modes considered separately within the ND280 sample
 //shorter names
 static const int kns   = kNSuperkSamples;

@@ -98,7 +98,7 @@ void SuperkMC::Init(void)
   for(int is=0; is<kns; is++) {
     fMCErecoSpectrumTot[is] = 0;
     for(int im=0; im<knm; im++) {
-      fMCTemplNom     [is][im] = 0;
+      fMCTemplNom      [is][im] = 0;
       fMCErecoSpectrum [is][im] = 0;
     }
   }
@@ -123,15 +123,23 @@ void SuperkMC::Init(void)
 
   fEffCCQERelErrCovarCholeskyL  = 0;
   
-  fMC1Rmu_numu    = 0;
-  fMC1Rmu_numubar = 0;
-  fMC1Rmu_nue     = 0;
-  fMC1Rmu_nuesig  = 0;
+  fMCTree1Rmu_numu    = 0;
+  fMCTree1Rmu_numubar = 0;
+  fMCTree1Rmu_nue     = 0;
+  fMCTree1Rmu_nuesig  = 0;
+  fMCTree1Re_numu     = 0;
+  fMCTree1Re_numubar  = 0;
+  fMCTree1Re_nue      = 0;
+  fMCTree1Re_nuesig   = 0;
 
-  fMCPOT_numu     = 0;
-  fMCPOT_numubar  = 0;
-  fMCPOT_nue      = 0;
-  fMCPOT_nuesig   = 0;
+  fMCPOT1Rmu_numu     = 0;
+  fMCPOT1Rmu_numubar  = 0;
+  fMCPOT1Rmu_nue      = 0;
+  fMCPOT1Rmu_nuesig   = 0;
+  fMCPOT1Re_numu      = 0;
+  fMCPOT1Re_numubar   = 0;
+  fMCPOT1Re_nue       = 0;
+  fMCPOT1Re_nuesig    = 0;
 
   fBrEreco        = 0;
   fBrEtrue        = 0;
@@ -148,10 +156,14 @@ void SuperkMC::Init(void)
 //________________________________________________________________________________________
 void SuperkMC::CleanUp(void)
 {
-  if(fMC1Rmu_numu   ) delete fMC1Rmu_numu;
-  if(fMC1Rmu_numubar) delete fMC1Rmu_numubar;
-  if(fMC1Rmu_nue    ) delete fMC1Rmu_nue;
-  if(fMC1Rmu_nuesig ) delete fMC1Rmu_nuesig;
+  if(fMCTree1Rmu_numu   ) delete fMCTree1Rmu_numu;
+  if(fMCTree1Rmu_numubar) delete fMCTree1Rmu_numubar;
+  if(fMCTree1Rmu_nue    ) delete fMCTree1Rmu_nue;
+  if(fMCTree1Rmu_nuesig ) delete fMCTree1Rmu_nuesig;
+  if(fMCTree1Re_numu    ) delete fMCTree1Re_numu;
+  if(fMCTree1Re_numubar ) delete fMCTree1Re_numubar;
+  if(fMCTree1Re_nue     ) delete fMCTree1Re_nue;
+  if(fMCTree1Re_nuesig  ) delete fMCTree1Re_nuesig;
 
   for(int is=0; is<kns; is++) {
     if( fMCErecoSpectrumTot[is] ) delete fMCErecoSpectrumTot[is];
@@ -187,45 +199,82 @@ bool SuperkMC::Read(TXMLEngine* xml, XMLNodePointer_t root_node)
   //
   // Get MC trees and MC POT
   //
-  fMCPOT_numu = util::XML2Dbl(xml,root_node,"superk/mc/numu/pot");
-  fMC1Rmu_numu = util::XML2TTree(xml,root_node,"superk/mc/numu/one_mu_ring");
-  assert(fMC1Rmu_numu);
-  fMCPOT_numubar = util::XML2Dbl(xml,root_node,"superk/mc/numubar/pot");
-  fMC1Rmu_numubar = util::XML2TTree(xml,root_node,"superk/mc/numubar/one_mu_ring");
-  assert(fMC1Rmu_numubar);
-  fMCPOT_nue = util::XML2Dbl(xml,root_node,"superk/mc/nuebeam/pot");
-  fMC1Rmu_nue = util::XML2TTree(xml,root_node,"superk/mc/nuebeam/one_mu_ring");
-  assert(fMC1Rmu_nue);
-  fMCPOT_nuesig = util::XML2Dbl(xml,root_node,"superk/mc/nuesignal/pot");
-  fMC1Rmu_nuesig = util::XML2TTree(xml,root_node,"superk/mc/nuesignal/one_mu_ring");
-  assert(fMC1Rmu_nuesig);
+
+  fMCPOT1Rmu_numu  = util::XML2Dbl  (xml,root_node,"superk/mc/numu/pot");
+  fMCTree1Rmu_numu = util::XML2TTree(xml,root_node,"superk/mc/numu/one_mu_ring");
+  assert(fMCTree1Rmu_numu);
+  fMCPOT1Rmu_numubar  = util::XML2Dbl  (xml,root_node,"superk/mc/numubar/pot");
+  fMCTree1Rmu_numubar = util::XML2TTree(xml,root_node,"superk/mc/numubar/one_mu_ring");
+  assert(fMCTree1Rmu_numubar);
+  fMCPOT1Rmu_nue  = util::XML2Dbl  (xml,root_node,"superk/mc/nuebeam/pot");
+  fMCTree1Rmu_nue = util::XML2TTree(xml,root_node,"superk/mc/nuebeam/one_mu_ring");
+  assert(fMCTree1Rmu_nue);
+  fMCPOT1Rmu_nuesig  = util::XML2Dbl  (xml,root_node,"superk/mc/nuesignal/pot");
+  fMCTree1Rmu_nuesig = util::XML2TTree(xml,root_node,"superk/mc/nuesignal/one_mu_ring");
+  assert(fMCTree1Rmu_nuesig);
+
+/*
+  fMCPOT1Re_numu  = util::XML2Dbl  (xml,root_node,"superk/mc/numu/pot");
+  fMCTree1Re_numu = util::XML2TTree(xml,root_node,"superk/mc/numu/one_mu_ring");
+  assert(fMCTree1Re_numu);
+  fMCPOT1Re_numubar  = util::XML2Dbl  (xml,root_node,"superk/mc/numubar/pot");
+  fMCTree1Re_numubar = util::XML2TTree(xml,root_node,"superk/mc/numubar/one_mu_ring");
+  assert(fMCTree1Re_numubar);
+  fMCPOT1Re_nue  = util::XML2Dbl  (xml,root_node,"superk/mc/nuebeam/pot");
+  fMCTree1Re_nue = util::XML2TTree(xml,root_node,"superk/mc/nuebeam/one_mu_ring");
+  assert(fMCTree1Re_nue);
+  fMCPOT1Re_nuesig  = util::XML2Dbl  (xml,root_node,"superk/mc/nuesignal/pot");
+  fMCTree1Re_nuesig = util::XML2TTree(xml,root_node,"superk/mc/nuesignal/one_mu_ring");
+  assert(fMCTree1Re_nuesig);
+*/
+
 #ifdef __show_init_mesg_info__
-  cout << "Exp/SKMC >> " << "POT_{MC; numu MC} = " << fMCPOT_numu << endl;
-  cout << "Exp/SKMC >> " << "POT_{MC; numubar} = " << fMCPOT_numubar << endl;
-  cout << "Exp/SKMC >> " << "POT_{MC; nue}     = " << fMCPOT_nue << endl;
-  cout << "Exp/SKMC >> " << "POT_{MC; sig-nue} = " << fMCPOT_nuesig << endl;
+  cout << "Exp/SKMC >> " << "POT_{MC; 1Rmu; numu}    = " << fMCPOT1Rmu_numu    << endl;
+  cout << "Exp/SKMC >> " << "POT_{MC; 1Rmu; numubar} = " << fMCPOT1Rmu_numubar << endl;
+  cout << "Exp/SKMC >> " << "POT_{MC; 1Rmu; nue}     = " << fMCPOT1Rmu_nue     << endl;
+  cout << "Exp/SKMC >> " << "POT_{MC; 1Rmu; sig-nue} = " << fMCPOT1Rmu_nuesig  << endl;
+  cout << "Exp/SKMC >> " << "POT_{MC; 1Re;  numu}    = " << fMCPOT1Re_numu     << endl;
+  cout << "Exp/SKMC >> " << "POT_{MC; 1Re;  numubar} = " << fMCPOT1Re_numubar  << endl;
+  cout << "Exp/SKMC >> " << "POT_{MC; 1Re;  nue}     = " << fMCPOT1Re_nue      << endl;
+  cout << "Exp/SKMC >> " << "POT_{MC; 1Re;  sig-nue} = " << fMCPOT1Re_nuesig   << endl;
 #endif
   
   // create templates 
 #ifdef __show_init_mesg_info__
   cout << "Exp/SKMC >> Filling-in SuperK MC templates... " << endl;
 #endif
-  this->CreateTemplate (kSKsFCFV1RingMuLike, kSKmNuMuCCQE      );
-  this->CreateTemplate (kSKsFCFV1RingMuLike, kSKmNuMuCC1pi     );
-  this->CreateTemplate (kSKsFCFV1RingMuLike, kSKmNuMuCCoth     );
-  this->CreateTemplate (kSKsFCFV1RingMuLike, kSKmNC            );
-  this->CreateTemplate (kSKsFCFV1RingMuLike, kSKmNuMuBarCCQE   );
-  this->CreateTemplate (kSKsFCFV1RingMuLike, kSKmNuMuBarCC1pi  );
-  this->CreateTemplate (kSKsFCFV1RingMuLike, kSKmNuMuBarCCoth  );
-  this->CreateTemplate (kSKsFCFV1RingMuLike, kSKmNuMuBarNC     );
-  this->CreateTemplate (kSKsFCFV1RingMuLike, kSKmNuECCQE       );
-  this->CreateTemplate (kSKsFCFV1RingMuLike, kSKmNuECC1pi      );
-  this->CreateTemplate (kSKsFCFV1RingMuLike, kSKmNuECCoth      );
-  this->CreateTemplate (kSKsFCFV1RingMuLike, kSKmNuENC         );
-  this->CreateTemplate (kSKsFCFV1RingMuLike, kSKmSigNuECCQE    );
-  this->CreateTemplate (kSKsFCFV1RingMuLike, kSKmSigNuECC1pi   );
-  this->CreateTemplate (kSKsFCFV1RingMuLike, kSKmSigNuECCoth   );
-
+  this->CreateTemplate (kSKsFCFV1RingMuLike, kSKmNuMuCCQE        );
+  this->CreateTemplate (kSKsFCFV1RingMuLike, kSKmNuMuCC1pi       );
+  this->CreateTemplate (kSKsFCFV1RingMuLike, kSKmNuMuCCoth_mu    );
+  this->CreateTemplate (kSKsFCFV1RingMuLike, kSKmNuMuNC          );
+  this->CreateTemplate (kSKsFCFV1RingMuLike, kSKmNuMuBarCCQE     );
+  this->CreateTemplate (kSKsFCFV1RingMuLike, kSKmNuMuBarCC1pi    );
+  this->CreateTemplate (kSKsFCFV1RingMuLike, kSKmNuMuBarCCoth_mu );
+  this->CreateTemplate (kSKsFCFV1RingMuLike, kSKmNuMuBarNC       );
+  this->CreateTemplate (kSKsFCFV1RingMuLike, kSKmNuECCQE         );
+  this->CreateTemplate (kSKsFCFV1RingMuLike, kSKmNuECC1pi        );
+  this->CreateTemplate (kSKsFCFV1RingMuLike, kSKmNuECCoth_mu     );
+  this->CreateTemplate (kSKsFCFV1RingMuLike, kSKmNuENC           );
+  this->CreateTemplate (kSKsFCFV1RingMuLike, kSKmSigNuECCQE      );
+  this->CreateTemplate (kSKsFCFV1RingMuLike, kSKmSigNuECC1pi     );
+  this->CreateTemplate (kSKsFCFV1RingMuLike, kSKmSigNuECCoth     );
+/*
+  this->CreateTemplate (kSKsFCFV1RingELike, kSKmNuMuCCQE         );
+  this->CreateTemplate (kSKsFCFV1RingELike, kSKmNuMuCC1pi        );
+  this->CreateTemplate (kSKsFCFV1RingELike, kSKmNuMuCCoth_mu     );
+  this->CreateTemplate (kSKsFCFV1RingELike, kSKmNuMuNC           );
+  this->CreateTemplate (kSKsFCFV1RingELike, kSKmNuMuBarCCQE      );
+  this->CreateTemplate (kSKsFCFV1RingELike, kSKmNuMuBarCC1pi     );
+  this->CreateTemplate (kSKsFCFV1RingELike, kSKmNuMuBarCCoth_mu  );
+  this->CreateTemplate (kSKsFCFV1RingELike, kSKmNuMuBarNC        );
+  this->CreateTemplate (kSKsFCFV1RingELike, kSKmNuECCQE          );
+  this->CreateTemplate (kSKsFCFV1RingELike, kSKmNuECC1pi         );
+  this->CreateTemplate (kSKsFCFV1RingELike, kSKmNuECCoth_mu      );
+  this->CreateTemplate (kSKsFCFV1RingELike, kSKmNuENC            );
+  this->CreateTemplate (kSKsFCFV1RingELike, kSKmSigNuECCQE       );
+  this->CreateTemplate (kSKsFCFV1RingELike, kSKmSigNuECC1pi      );
+  this->CreateTemplate (kSKsFCFV1RingELike, kSKmSigNuECCoth      );
+*/
   //
   // Systematics
   //
@@ -294,15 +343,15 @@ bool SuperkMC::Read(TXMLEngine* xml, XMLNodePointer_t root_node)
   fMCErecoSpectrumTot[kSKsFCFV1RingMuLike]                  = new TH1D("","", kNvErecoBins, kNvErecoBinEdges);
   fMCErecoSpectrum[kSKsFCFV1RingMuLike][kSKmNuMuCCQE]       = new TH1D("","", kNvErecoBins, kNvErecoBinEdges);
   fMCErecoSpectrum[kSKsFCFV1RingMuLike][kSKmNuMuCC1pi]      = new TH1D("","", kNvErecoBins, kNvErecoBinEdges);
-  fMCErecoSpectrum[kSKsFCFV1RingMuLike][kSKmNuMuCCoth]      = new TH1D("","", kNvErecoBins, kNvErecoBinEdges);
-  fMCErecoSpectrum[kSKsFCFV1RingMuLike][kSKmNC]             = new TH1D("","", kNvErecoBins, kNvErecoBinEdges);
+  fMCErecoSpectrum[kSKsFCFV1RingMuLike][kSKmNuMuCCoth_mu]      = new TH1D("","", kNvErecoBins, kNvErecoBinEdges);
+  fMCErecoSpectrum[kSKsFCFV1RingMuLike][kSKmNuMuNC]             = new TH1D("","", kNvErecoBins, kNvErecoBinEdges);
   fMCErecoSpectrum[kSKsFCFV1RingMuLike][kSKmNuMuBarCCQE]    = new TH1D("","", kNvErecoBins, kNvErecoBinEdges);
   fMCErecoSpectrum[kSKsFCFV1RingMuLike][kSKmNuMuBarCC1pi]   = new TH1D("","", kNvErecoBins, kNvErecoBinEdges);
-  fMCErecoSpectrum[kSKsFCFV1RingMuLike][kSKmNuMuBarCCoth]   = new TH1D("","", kNvErecoBins, kNvErecoBinEdges);
+  fMCErecoSpectrum[kSKsFCFV1RingMuLike][kSKmNuMuBarCCoth_mu]   = new TH1D("","", kNvErecoBins, kNvErecoBinEdges);
   fMCErecoSpectrum[kSKsFCFV1RingMuLike][kSKmNuMuBarNC]      = new TH1D("","", kNvErecoBins, kNvErecoBinEdges);
   fMCErecoSpectrum[kSKsFCFV1RingMuLike][kSKmNuECCQE]        = new TH1D("","", kNvErecoBins, kNvErecoBinEdges);
   fMCErecoSpectrum[kSKsFCFV1RingMuLike][kSKmNuECC1pi]       = new TH1D("","", kNvErecoBins, kNvErecoBinEdges);
-  fMCErecoSpectrum[kSKsFCFV1RingMuLike][kSKmNuECCoth]       = new TH1D("","", kNvErecoBins, kNvErecoBinEdges);
+  fMCErecoSpectrum[kSKsFCFV1RingMuLike][kSKmNuECCoth_mu]       = new TH1D("","", kNvErecoBins, kNvErecoBinEdges);
   fMCErecoSpectrum[kSKsFCFV1RingMuLike][kSKmNuENC]          = new TH1D("","", kNvErecoBins, kNvErecoBinEdges);
   fMCErecoSpectrum[kSKsFCFV1RingMuLike][kSKmSigNuECCQE]     = new TH1D("","", kNvErecoBins, kNvErecoBinEdges);
   fMCErecoSpectrum[kSKsFCFV1RingMuLike][kSKmSigNuECC1pi]    = new TH1D("","", kNvErecoBins, kNvErecoBinEdges);
@@ -310,19 +359,52 @@ bool SuperkMC::Read(TXMLEngine* xml, XMLNodePointer_t root_node)
   fMCErecoSpectrumTot[kSKsFCFV1RingMuLike]                  -> SetDirectory(0);
   fMCErecoSpectrum[kSKsFCFV1RingMuLike][kSKmNuMuCCQE]       -> SetDirectory(0);
   fMCErecoSpectrum[kSKsFCFV1RingMuLike][kSKmNuMuCC1pi]      -> SetDirectory(0);
-  fMCErecoSpectrum[kSKsFCFV1RingMuLike][kSKmNuMuCCoth]      -> SetDirectory(0);
-  fMCErecoSpectrum[kSKsFCFV1RingMuLike][kSKmNC]             -> SetDirectory(0);
+  fMCErecoSpectrum[kSKsFCFV1RingMuLike][kSKmNuMuCCoth_mu]      -> SetDirectory(0);
+  fMCErecoSpectrum[kSKsFCFV1RingMuLike][kSKmNuMuNC]             -> SetDirectory(0);
   fMCErecoSpectrum[kSKsFCFV1RingMuLike][kSKmNuMuBarCCQE]    -> SetDirectory(0);
   fMCErecoSpectrum[kSKsFCFV1RingMuLike][kSKmNuMuBarCC1pi]   -> SetDirectory(0);
-  fMCErecoSpectrum[kSKsFCFV1RingMuLike][kSKmNuMuBarCCoth]   -> SetDirectory(0);
+  fMCErecoSpectrum[kSKsFCFV1RingMuLike][kSKmNuMuBarCCoth_mu]   -> SetDirectory(0);
   fMCErecoSpectrum[kSKsFCFV1RingMuLike][kSKmNuMuBarNC]      -> SetDirectory(0);
   fMCErecoSpectrum[kSKsFCFV1RingMuLike][kSKmNuECCQE]        -> SetDirectory(0);
   fMCErecoSpectrum[kSKsFCFV1RingMuLike][kSKmNuECC1pi]       -> SetDirectory(0);
-  fMCErecoSpectrum[kSKsFCFV1RingMuLike][kSKmNuECCoth]       -> SetDirectory(0);
+  fMCErecoSpectrum[kSKsFCFV1RingMuLike][kSKmNuECCoth_mu]       -> SetDirectory(0);
   fMCErecoSpectrum[kSKsFCFV1RingMuLike][kSKmNuENC]          -> SetDirectory(0);
   fMCErecoSpectrum[kSKsFCFV1RingMuLike][kSKmSigNuECCQE]     -> SetDirectory(0);
   fMCErecoSpectrum[kSKsFCFV1RingMuLike][kSKmSigNuECC1pi]    -> SetDirectory(0);
   fMCErecoSpectrum[kSKsFCFV1RingMuLike][kSKmSigNuECCoth]    -> SetDirectory(0);
+
+  fMCErecoSpectrumTot[kSKsFCFV1RingELike]                  = new TH1D("","", kNvErecoBins, kNvErecoBinEdges);
+  fMCErecoSpectrum[kSKsFCFV1RingELike][kSKmNuMuCCQE]       = new TH1D("","", kNvErecoBins, kNvErecoBinEdges);
+  fMCErecoSpectrum[kSKsFCFV1RingELike][kSKmNuMuCC1pi]      = new TH1D("","", kNvErecoBins, kNvErecoBinEdges);
+  fMCErecoSpectrum[kSKsFCFV1RingELike][kSKmNuMuCCoth_mu]      = new TH1D("","", kNvErecoBins, kNvErecoBinEdges);
+  fMCErecoSpectrum[kSKsFCFV1RingELike][kSKmNuMuNC]             = new TH1D("","", kNvErecoBins, kNvErecoBinEdges);
+  fMCErecoSpectrum[kSKsFCFV1RingELike][kSKmNuMuBarCCQE]    = new TH1D("","", kNvErecoBins, kNvErecoBinEdges);
+  fMCErecoSpectrum[kSKsFCFV1RingELike][kSKmNuMuBarCC1pi]   = new TH1D("","", kNvErecoBins, kNvErecoBinEdges);
+  fMCErecoSpectrum[kSKsFCFV1RingELike][kSKmNuMuBarCCoth_mu]   = new TH1D("","", kNvErecoBins, kNvErecoBinEdges);
+  fMCErecoSpectrum[kSKsFCFV1RingELike][kSKmNuMuBarNC]      = new TH1D("","", kNvErecoBins, kNvErecoBinEdges);
+  fMCErecoSpectrum[kSKsFCFV1RingELike][kSKmNuECCQE]        = new TH1D("","", kNvErecoBins, kNvErecoBinEdges);
+  fMCErecoSpectrum[kSKsFCFV1RingELike][kSKmNuECC1pi]       = new TH1D("","", kNvErecoBins, kNvErecoBinEdges);
+  fMCErecoSpectrum[kSKsFCFV1RingELike][kSKmNuECCoth_mu]       = new TH1D("","", kNvErecoBins, kNvErecoBinEdges);
+  fMCErecoSpectrum[kSKsFCFV1RingELike][kSKmNuENC]          = new TH1D("","", kNvErecoBins, kNvErecoBinEdges);
+  fMCErecoSpectrum[kSKsFCFV1RingELike][kSKmSigNuECCQE]     = new TH1D("","", kNvErecoBins, kNvErecoBinEdges);
+  fMCErecoSpectrum[kSKsFCFV1RingELike][kSKmSigNuECC1pi]    = new TH1D("","", kNvErecoBins, kNvErecoBinEdges);
+  fMCErecoSpectrum[kSKsFCFV1RingELike][kSKmSigNuECCoth]    = new TH1D("","", kNvErecoBins, kNvErecoBinEdges);
+  fMCErecoSpectrumTot[kSKsFCFV1RingELike]                  -> SetDirectory(0);
+  fMCErecoSpectrum[kSKsFCFV1RingELike][kSKmNuMuCCQE]       -> SetDirectory(0);
+  fMCErecoSpectrum[kSKsFCFV1RingELike][kSKmNuMuCC1pi]      -> SetDirectory(0);
+  fMCErecoSpectrum[kSKsFCFV1RingELike][kSKmNuMuCCoth_mu]      -> SetDirectory(0);
+  fMCErecoSpectrum[kSKsFCFV1RingELike][kSKmNuMuNC]             -> SetDirectory(0);
+  fMCErecoSpectrum[kSKsFCFV1RingELike][kSKmNuMuBarCCQE]    -> SetDirectory(0);
+  fMCErecoSpectrum[kSKsFCFV1RingELike][kSKmNuMuBarCC1pi]   -> SetDirectory(0);
+  fMCErecoSpectrum[kSKsFCFV1RingELike][kSKmNuMuBarCCoth_mu]   -> SetDirectory(0);
+  fMCErecoSpectrum[kSKsFCFV1RingELike][kSKmNuMuBarNC]      -> SetDirectory(0);
+  fMCErecoSpectrum[kSKsFCFV1RingELike][kSKmNuECCQE]        -> SetDirectory(0);
+  fMCErecoSpectrum[kSKsFCFV1RingELike][kSKmNuECC1pi]       -> SetDirectory(0);
+  fMCErecoSpectrum[kSKsFCFV1RingELike][kSKmNuECCoth_mu]       -> SetDirectory(0);
+  fMCErecoSpectrum[kSKsFCFV1RingELike][kSKmNuENC]          -> SetDirectory(0);
+  fMCErecoSpectrum[kSKsFCFV1RingELike][kSKmSigNuECCQE]     -> SetDirectory(0);
+  fMCErecoSpectrum[kSKsFCFV1RingELike][kSKmSigNuECC1pi]    -> SetDirectory(0);
+  fMCErecoSpectrum[kSKsFCFV1RingELike][kSKmSigNuECCoth]    -> SetDirectory(0);
 
 #ifdef __show_init_mesg_info__      
   cout << "Exp/SKMC >> Done reading SuperK inputs!" << endl;
@@ -634,15 +716,15 @@ void SuperkMC::ApplyPhysHypothesisToTemplates(void)
            // number of events in (Ereco,Etrue) bin (systematics applied)
            double n_numu_ccqe     = fMCTemplSys[s][kSKmNuMuCCQE]     -> GetBinContent(ir,it);
            double n_numu_cc1pi    = fMCTemplSys[s][kSKmNuMuCC1pi]    -> GetBinContent(ir,it);
-           double n_numu_ccoth    = fMCTemplSys[s][kSKmNuMuCCoth]    -> GetBinContent(ir,it);
-           double n_numu_nc       = fMCTemplSys[s][kSKmNC]           -> GetBinContent(ir,it);
+           double n_numu_ccoth    = fMCTemplSys[s][kSKmNuMuCCoth_mu]    -> GetBinContent(ir,it);
+           double n_numu_nc       = fMCTemplSys[s][kSKmNuMuNC]           -> GetBinContent(ir,it);
            double n_numubar_ccqe  = fMCTemplSys[s][kSKmNuMuBarCCQE]  -> GetBinContent(ir,it);
            double n_numubar_cc1pi = fMCTemplSys[s][kSKmNuMuBarCC1pi] -> GetBinContent(ir,it);
-           double n_numubar_ccoth = fMCTemplSys[s][kSKmNuMuBarCCoth] -> GetBinContent(ir,it);
+           double n_numubar_ccoth = fMCTemplSys[s][kSKmNuMuBarCCoth_mu] -> GetBinContent(ir,it);
            double n_numubar_nc    = fMCTemplSys[s][kSKmNuMuBarNC]    -> GetBinContent(ir,it);
            double n_nue_ccqe      = fMCTemplSys[s][kSKmNuECCQE]      -> GetBinContent(ir,it);
            double n_nue_cc1pi     = fMCTemplSys[s][kSKmNuECC1pi]     -> GetBinContent(ir,it);
-           double n_nue_ccoth     = fMCTemplSys[s][kSKmNuECCoth]     -> GetBinContent(ir,it);
+           double n_nue_ccoth     = fMCTemplSys[s][kSKmNuECCoth_mu]     -> GetBinContent(ir,it);
            double n_nue_nc        = fMCTemplSys[s][kSKmNuENC]        -> GetBinContent(ir,it);
            double n_signue_ccqe   = fMCTemplSys[s][kSKmSigNuECCQE]   -> GetBinContent(ir,it);
            double n_signue_cc1pi  = fMCTemplSys[s][kSKmSigNuECC1pi]  -> GetBinContent(ir,it);
@@ -668,15 +750,15 @@ void SuperkMC::ApplyPhysHypothesisToTemplates(void)
            // store oscillated number of events in current (Ereco,Etrue) bin
            fMCTemplSysHyp[s][kSKmNuMuCCQE]     -> SetBinContent(ir,it, n_numu_ccqe_osc    );
            fMCTemplSysHyp[s][kSKmNuMuCC1pi]    -> SetBinContent(ir,it, n_numu_cc1pi_osc   );
-           fMCTemplSysHyp[s][kSKmNuMuCCoth]    -> SetBinContent(ir,it, n_numu_ccoth_osc   );
-           fMCTemplSysHyp[s][kSKmNC]           -> SetBinContent(ir,it, n_numu_nc_osc      );
+           fMCTemplSysHyp[s][kSKmNuMuCCoth_mu]    -> SetBinContent(ir,it, n_numu_ccoth_osc   );
+           fMCTemplSysHyp[s][kSKmNuMuNC]           -> SetBinContent(ir,it, n_numu_nc_osc      );
            fMCTemplSysHyp[s][kSKmNuMuBarCCQE]  -> SetBinContent(ir,it, n_numubar_ccqe_osc );
            fMCTemplSysHyp[s][kSKmNuMuBarCC1pi] -> SetBinContent(ir,it, n_numubar_cc1pi_osc);
-           fMCTemplSysHyp[s][kSKmNuMuBarCCoth] -> SetBinContent(ir,it, n_numubar_ccoth_osc);
+           fMCTemplSysHyp[s][kSKmNuMuBarCCoth_mu] -> SetBinContent(ir,it, n_numubar_ccoth_osc);
            fMCTemplSysHyp[s][kSKmNuMuBarNC]    -> SetBinContent(ir,it, n_numubar_nc_osc   );
            fMCTemplSysHyp[s][kSKmNuECCQE]      -> SetBinContent(ir,it, n_nue_ccqe_osc     );
            fMCTemplSysHyp[s][kSKmNuECC1pi]     -> SetBinContent(ir,it, n_nue_cc1pi_osc    );
-           fMCTemplSysHyp[s][kSKmNuECCoth]     -> SetBinContent(ir,it, n_nue_ccoth_osc    );
+           fMCTemplSysHyp[s][kSKmNuECCoth_mu]     -> SetBinContent(ir,it, n_nue_ccoth_osc    );
            fMCTemplSysHyp[s][kSKmNuENC]        -> SetBinContent(ir,it, n_nue_nc_osc       );
            fMCTemplSysHyp[s][kSKmSigNuECCQE]   -> SetBinContent(ir,it, n_signue_ccqe_osc  );
            fMCTemplSysHyp[s][kSKmSigNuECC1pi]  -> SetBinContent(ir,it, n_signue_cc1pi_osc );
@@ -831,20 +913,20 @@ double SuperkMC::NumOfEvents(
      switch(m) {
        case (kSKmNuMuCCQE ):
        case (kSKmNuMuCC1pi):
-       case (kSKmNuMuCCoth):
-       case (kSKmNC       ):
+       case (kSKmNuMuCCoth_mu):
+       case (kSKmNuMuNC       ):
            flux_10d_weight      = fNuFlux->SuperkNuMuFlux10aTo10dWght(Etrue);
            numu_flux_shape_wght = fNuFlux->SuperkNuMuFluxShapeWeight (Etrue);
            break;
        case(kSKmNuMuBarCCQE ):
        case(kSKmNuMuBarCC1pi):
-       case(kSKmNuMuBarCCoth):
+       case(kSKmNuMuBarCCoth_mu):
        case(kSKmNuMuBarNC   ):
            flux_10d_weight = fNuFlux->SuperkNuMuBarFlux10aTo10dWght(Etrue);
            break;
        case(kSKmNuECCQE ):
        case(kSKmNuECC1pi):
-       case(kSKmNuECCoth):
+       case(kSKmNuECCoth_mu):
        case(kSKmNuENC   ):
            flux_10d_weight = fNuFlux->SuperkNuEFlux10aTo10dWght(Etrue);
            break;
@@ -994,8 +1076,8 @@ void SuperkMC::UpdateEtrueSpectra(void)
   spectrum = f1RmNuMuEt;
   mctempl1 = fMCTemplSysHyp[kSKsFCFV1RingMuLike][kSKmNuMuCCQE];
   mctempl2 = fMCTemplSysHyp[kSKsFCFV1RingMuLike][kSKmNuMuCC1pi];
-  mctempl3 = fMCTemplSysHyp[kSKsFCFV1RingMuLike][kSKmNuMuCCoth];
-  mctempl4 = fMCTemplSysHyp[kSKsFCFV1RingMuLike][kSKmNC];
+  mctempl3 = fMCTemplSysHyp[kSKsFCFV1RingMuLike][kSKmNuMuCCoth_mu];
+  mctempl4 = fMCTemplSysHyp[kSKsFCFV1RingMuLike][kSKmNuMuNC];
   for(int it = 1; it <= spectrum->GetNbinsX(); it++) {
 //  double Etrue = spectrum->GetBinCenter(ibin);
     double nev = 0;
@@ -1017,7 +1099,7 @@ void SuperkMC::UpdateEtrueSpectra(void)
   spectrum = f1RmNuMuBarEt;
   mctempl1 = fMCTemplSysHyp[kSKsFCFV1RingMuLike][kSKmNuMuBarCCQE];
   mctempl2 = fMCTemplSysHyp[kSKsFCFV1RingMuLike][kSKmNuMuBarCC1pi];
-  mctempl3 = fMCTemplSysHyp[kSKsFCFV1RingMuLike][kSKmNuMuBarCCoth];
+  mctempl3 = fMCTemplSysHyp[kSKsFCFV1RingMuLike][kSKmNuMuBarCCoth_mu];
   mctempl4 = fMCTemplSysHyp[kSKsFCFV1RingMuLike][kSKmNuMuBarNC];
   for(int it = 1; it <= spectrum->GetNbinsX(); it++) {
 //  double Etrue = spectrum->GetBinCenter(ibin);
@@ -1041,7 +1123,7 @@ void SuperkMC::UpdateEtrueSpectra(void)
   spectrum = f1RmNuEEt;
   mctempl1 = fMCTemplSysHyp[kSKsFCFV1RingMuLike][kSKmNuECCQE];
   mctempl2 = fMCTemplSysHyp[kSKsFCFV1RingMuLike][kSKmNuECC1pi];
-  mctempl3 = fMCTemplSysHyp[kSKsFCFV1RingMuLike][kSKmNuECCoth];
+  mctempl3 = fMCTemplSysHyp[kSKsFCFV1RingMuLike][kSKmNuECCoth_mu];
   mctempl4 = fMCTemplSysHyp[kSKsFCFV1RingMuLike][kSKmNuENC];
   for(int it = 1; it <= spectrum->GetNbinsX(); it++) {
 //  double Etrue = spectrum->GetBinCenter(ibin);
@@ -1069,69 +1151,135 @@ double SuperkMC::AnalyzedSamplePOT(void) const
 //________________________________________________________________________________________
 TTree * SuperkMC::MCTree(SuperkSample_t s, SuperkMode_t m)
 {
-  assert(s==kSKsFCFV1RingMuLike);
+  if (s==kSKsFCFV1RingMuLike)
+  {
+     switch(m) {
+        case (kSKmNuMuCCQE ):
+        case (kSKmNuMuCC1pi):
+        case (kSKmNuMuCCoth_mu):
+        case (kSKmNuMuNC       ):
+           return fMCTree1Rmu_numu;
+           break;
+        case(kSKmNuMuBarCCQE ):
+        case(kSKmNuMuBarCC1pi):
+        case(kSKmNuMuBarCCoth_mu):
+        case(kSKmNuMuBarNC   ):
+           return fMCTree1Rmu_numubar;
+           break;
+        case(kSKmNuECCQE ):
+        case(kSKmNuECC1pi):
+        case(kSKmNuECCoth_mu):
+        case(kSKmNuENC   ):
+           return fMCTree1Rmu_nue;
+           break;
+        case(kSKmSigNuECCQE ):
+        case(kSKmSigNuECC1pi):
+        case(kSKmSigNuECCoth):
+           return fMCTree1Rmu_nuesig;
+           break;
+        default:
+           return 0;
+     }
+  }//1Rmu
 
-  switch(m) {
-     case (kSKmNuMuCCQE ):
-     case (kSKmNuMuCC1pi):
-     case (kSKmNuMuCCoth):
-     case (kSKmNC       ):
-        return fMC1Rmu_numu;
-        break;
-     case(kSKmNuMuBarCCQE ):
-     case(kSKmNuMuBarCC1pi):
-     case(kSKmNuMuBarCCoth):
-     case(kSKmNuMuBarNC   ):
-        return fMC1Rmu_numubar;
-        break;
-     case(kSKmNuECCQE ):
-     case(kSKmNuECC1pi):
-     case(kSKmNuECCoth):
-     case(kSKmNuENC   ):
-        return fMC1Rmu_nue;
-        break;
-     case(kSKmSigNuECCQE ):
-     case(kSKmSigNuECC1pi):
-     case(kSKmSigNuECCoth):
-        return fMC1Rmu_nuesig;
-        break;
-     default:
-        return 0;
-  }
+  if (s==kSKsFCFV1RingELike)
+  {
+     switch(m) {
+        case (kSKmNuMuCCQE ):
+        case (kSKmNuMuCC1pi):
+        case (kSKmNuMuCCoth_mu):
+        case (kSKmNuMuNC       ):
+           return fMCTree1Re_numu;
+           break;
+        case(kSKmNuMuBarCCQE ):
+        case(kSKmNuMuBarCC1pi):
+        case(kSKmNuMuBarCCoth_mu):
+        case(kSKmNuMuBarNC   ):
+           return fMCTree1Re_numubar;
+           break;
+        case(kSKmNuECCQE ):
+        case(kSKmNuECC1pi):
+        case(kSKmNuECCoth_mu):
+        case(kSKmNuENC   ):
+           return fMCTree1Re_nue;
+           break;
+        case(kSKmSigNuECCQE ):
+        case(kSKmSigNuECC1pi):
+        case(kSKmSigNuECCoth):
+           return fMCTree1Re_nuesig;
+           break;
+        default:
+           return 0;
+     }
+  }//1Re
+
   return 0;
 }
 //________________________________________________________________________________________
 double SuperkMC::MCPOT(SuperkSample_t s, SuperkMode_t m)
 {
-  assert(s==kSKsFCFV1RingMuLike);
+  if(s==kSKsFCFV1RingMuLike)
+  {
+     switch(m) {
+        case (kSKmNuMuCCQE ):
+        case (kSKmNuMuCC1pi):
+        case (kSKmNuMuCCoth_mu):
+        case (kSKmNuMuNC       ):
+           return fMCPOT1Rmu_numu;
+           break;
+        case(kSKmNuMuBarCCQE ):
+        case(kSKmNuMuBarCC1pi):
+        case(kSKmNuMuBarCCoth_mu):
+        case(kSKmNuMuBarNC   ):
+           return fMCPOT1Rmu_numubar;
+           break;
+        case(kSKmNuECCQE ):
+        case(kSKmNuECC1pi):
+        case(kSKmNuECCoth_mu):
+        case(kSKmNuENC   ):
+           return fMCPOT1Rmu_nue;
+           break;
+        case(kSKmSigNuECCQE ):
+        case(kSKmSigNuECC1pi):
+        case(kSKmSigNuECCoth):
+           return fMCPOT1Rmu_nuesig;
+           break;
+        default:
+           return 0;
+     }
+  }//1Rmu
 
-  switch(m) {
-     case (kSKmNuMuCCQE ):
-     case (kSKmNuMuCC1pi):
-     case (kSKmNuMuCCoth):
-     case (kSKmNC       ):
-        return fMCPOT_numu;
-        break;
-     case(kSKmNuMuBarCCQE ):
-     case(kSKmNuMuBarCC1pi):
-     case(kSKmNuMuBarCCoth):
-     case(kSKmNuMuBarNC   ):
-        return fMCPOT_numubar;
-        break;
-     case(kSKmNuECCQE ):
-     case(kSKmNuECC1pi):
-     case(kSKmNuECCoth):
-     case(kSKmNuENC   ):
-        return fMCPOT_nue;
-        break;
-     case(kSKmSigNuECCQE ):
-     case(kSKmSigNuECC1pi):
-     case(kSKmSigNuECCoth):
-        return fMCPOT_nuesig;
-        break;
-     default:
-        return 0;
-  }
+  if(s==kSKsFCFV1RingELike)
+  {
+     switch(m) {
+        case (kSKmNuMuCCQE ):
+        case (kSKmNuMuCC1pi):
+        case (kSKmNuMuCCoth_mu):
+        case (kSKmNuMuNC       ):
+           return fMCPOT1Re_numu;
+           break;
+        case(kSKmNuMuBarCCQE ):
+        case(kSKmNuMuBarCC1pi):
+        case(kSKmNuMuBarCCoth_mu):
+        case(kSKmNuMuBarNC   ):
+           return fMCPOT1Re_numubar;
+           break;
+        case(kSKmNuECCQE ):
+        case(kSKmNuECC1pi):
+        case(kSKmNuECCoth_mu):
+        case(kSKmNuENC   ):
+           return fMCPOT1Re_nue;
+           break;
+        case(kSKmSigNuECCQE ):
+        case(kSKmSigNuECC1pi):
+        case(kSKmSigNuECCoth):
+           return fMCPOT1Re_nuesig;
+           break;
+        default:
+           return 0;
+     }
+  }//1Re
+
   return 0;
 }
 //________________________________________________________________________________________
@@ -1305,9 +1453,9 @@ double SuperkMC::EfficiencyWeight(
        // Apply the CCnonQE efficiency error. No energy dependence.
        //
        case (kSKmNuMuCC1pi)    :
-       case (kSKmNuMuCCoth)    : 
+       case (kSKmNuMuCCoth_mu)    : 
        case (kSKmNuMuBarCC1pi) : 
-       case (kSKmNuMuBarCCoth) : 
+       case (kSKmNuMuBarCCoth_mu) : 
        {
           double relerr  = fEffCCnonQERelErr;
           double twkdial = fEffCCnonQETwkDial;
@@ -1320,7 +1468,7 @@ double SuperkMC::EfficiencyWeight(
        // numu/nutau NC, numubar/nutaubar NC, nue NC:
        // Apply the NC efficiency error. No energy dependence.
        //
-       case (kSKmNC)        : 
+       case (kSKmNuMuNC)        : 
        case (kSKmNuMuBarNC) : 
        case (kSKmNuENC)     : 
        {
@@ -1337,7 +1485,7 @@ double SuperkMC::EfficiencyWeight(
        //
        case (kSKmNuECCQE)     : 
        case (kSKmNuECC1pi)    : 
-       case (kSKmNuECCoth)    : 
+       case (kSKmNuECCoth_mu)    : 
        case (kSKmSigNuECCQE)  : 
        case (kSKmSigNuECC1pi) : 
        case (kSKmSigNuECCoth) : 
@@ -1392,9 +1540,9 @@ void SuperkMC::Draw(TVirtualPad * c, Option_t * option) const
   util::SetDefaultStyle();
 
   if(opt.Contains("EtrueSpectra/NuMu")) { 
-      fMC1Rmu_numu->Draw("Enu");
-      fMC1Rmu_numu->Draw("Enu","Mode==1","same");
-      fMC1Rmu_numu->Draw("Enu","Mode==11||Mode==12||Mode==13","same");
+      fMCTree1Rmu_numu->Draw("Enu");
+      fMCTree1Rmu_numu->Draw("Enu","Mode==1","same");
+      fMCTree1Rmu_numu->Draw("Enu","Mode==11||Mode==12||Mode==13","same");
       c->Update();
   }
 
@@ -1431,26 +1579,26 @@ void SuperkMC::Draw(TVirtualPad * c, Option_t * option) const
     c->GetPad(3)->SetLogz();
     c->GetPad(3)->SetBottomMargin(0.32);
     c->GetPad(3)->SetRightMargin(0.1);
-    fMCTemplNom[kSKsFCFV1RingMuLike][kSKmNuMuCCoth]->GetXaxis()->SetLabelSize  (0.12);
-    fMCTemplNom[kSKsFCFV1RingMuLike][kSKmNuMuCCoth]->GetXaxis()->SetTitleSize  (0.14);
-    fMCTemplNom[kSKsFCFV1RingMuLike][kSKmNuMuCCoth]->GetYaxis()->SetLabelSize  (0.12);
-    fMCTemplNom[kSKsFCFV1RingMuLike][kSKmNuMuCCoth]->GetYaxis()->SetTitleSize  (0.14);
-    fMCTemplNom[kSKsFCFV1RingMuLike][kSKmNuMuCCoth]->GetYaxis()->SetTitleOffset(0.40);
-    fMCTemplNom[kSKsFCFV1RingMuLike][kSKmNuMuCCoth]->GetXaxis()->SetRangeUser(emin,emax);
-    fMCTemplNom[kSKsFCFV1RingMuLike][kSKmNuMuCCoth]->GetYaxis()->SetRangeUser(emin,emax);
-    fMCTemplNom[kSKsFCFV1RingMuLike][kSKmNuMuCCoth]->Draw(draw_opt);
+    fMCTemplNom[kSKsFCFV1RingMuLike][kSKmNuMuCCoth_mu]->GetXaxis()->SetLabelSize  (0.12);
+    fMCTemplNom[kSKsFCFV1RingMuLike][kSKmNuMuCCoth_mu]->GetXaxis()->SetTitleSize  (0.14);
+    fMCTemplNom[kSKsFCFV1RingMuLike][kSKmNuMuCCoth_mu]->GetYaxis()->SetLabelSize  (0.12);
+    fMCTemplNom[kSKsFCFV1RingMuLike][kSKmNuMuCCoth_mu]->GetYaxis()->SetTitleSize  (0.14);
+    fMCTemplNom[kSKsFCFV1RingMuLike][kSKmNuMuCCoth_mu]->GetYaxis()->SetTitleOffset(0.40);
+    fMCTemplNom[kSKsFCFV1RingMuLike][kSKmNuMuCCoth_mu]->GetXaxis()->SetRangeUser(emin,emax);
+    fMCTemplNom[kSKsFCFV1RingMuLike][kSKmNuMuCCoth_mu]->GetYaxis()->SetRangeUser(emin,emax);
+    fMCTemplNom[kSKsFCFV1RingMuLike][kSKmNuMuCCoth_mu]->Draw(draw_opt);
     c->cd(4);
     c->GetPad(4)->SetLogz();
     c->GetPad(4)->SetBottomMargin(0.32);
     c->GetPad(4)->SetRightMargin(0.1);
-    fMCTemplNom[kSKsFCFV1RingMuLike][kSKmNC]->GetXaxis()->SetLabelSize  (0.12);
-    fMCTemplNom[kSKsFCFV1RingMuLike][kSKmNC]->GetXaxis()->SetTitleSize  (0.14);
-    fMCTemplNom[kSKsFCFV1RingMuLike][kSKmNC]->GetYaxis()->SetLabelSize  (0.12);
-    fMCTemplNom[kSKsFCFV1RingMuLike][kSKmNC]->GetYaxis()->SetTitleSize  (0.14);
-    fMCTemplNom[kSKsFCFV1RingMuLike][kSKmNC]->GetYaxis()->SetTitleOffset(0.40);
-    fMCTemplNom[kSKsFCFV1RingMuLike][kSKmNC]->GetXaxis()->SetRangeUser(emin,emax);
-    fMCTemplNom[kSKsFCFV1RingMuLike][kSKmNC]->GetYaxis()->SetRangeUser(emin,emax);
-    fMCTemplNom[kSKsFCFV1RingMuLike][kSKmNC]->Draw(draw_opt);
+    fMCTemplNom[kSKsFCFV1RingMuLike][kSKmNuMuNC]->GetXaxis()->SetLabelSize  (0.12);
+    fMCTemplNom[kSKsFCFV1RingMuLike][kSKmNuMuNC]->GetXaxis()->SetTitleSize  (0.14);
+    fMCTemplNom[kSKsFCFV1RingMuLike][kSKmNuMuNC]->GetYaxis()->SetLabelSize  (0.12);
+    fMCTemplNom[kSKsFCFV1RingMuLike][kSKmNuMuNC]->GetYaxis()->SetTitleSize  (0.14);
+    fMCTemplNom[kSKsFCFV1RingMuLike][kSKmNuMuNC]->GetYaxis()->SetTitleOffset(0.40);
+    fMCTemplNom[kSKsFCFV1RingMuLike][kSKmNuMuNC]->GetXaxis()->SetRangeUser(emin,emax);
+    fMCTemplNom[kSKsFCFV1RingMuLike][kSKmNuMuNC]->GetYaxis()->SetRangeUser(emin,emax);
+    fMCTemplNom[kSKsFCFV1RingMuLike][kSKmNuMuNC]->Draw(draw_opt);
     c->cd(5);
     c->GetPad(5)->SetLogz();
     c->GetPad(5)->SetBottomMargin(0.32);
@@ -1479,14 +1627,14 @@ void SuperkMC::Draw(TVirtualPad * c, Option_t * option) const
     c->GetPad(7)->SetLogz();
     c->GetPad(7)->SetBottomMargin(0.32);
     c->GetPad(7)->SetRightMargin(0.1);
-    fMCTemplNom[kSKsFCFV1RingMuLike][kSKmNuMuBarCCoth]->GetXaxis()->SetLabelSize  (0.12);
-    fMCTemplNom[kSKsFCFV1RingMuLike][kSKmNuMuBarCCoth]->GetXaxis()->SetTitleSize  (0.14);
-    fMCTemplNom[kSKsFCFV1RingMuLike][kSKmNuMuBarCCoth]->GetYaxis()->SetLabelSize  (0.12);
-    fMCTemplNom[kSKsFCFV1RingMuLike][kSKmNuMuBarCCoth]->GetYaxis()->SetTitleSize  (0.14);
-    fMCTemplNom[kSKsFCFV1RingMuLike][kSKmNuMuBarCCoth]->GetYaxis()->SetTitleOffset(0.40);
-    fMCTemplNom[kSKsFCFV1RingMuLike][kSKmNuMuBarCCoth]->GetXaxis()->SetRangeUser(emin,emax);
-    fMCTemplNom[kSKsFCFV1RingMuLike][kSKmNuMuBarCCoth]->GetYaxis()->SetRangeUser(emin,emax);
-    fMCTemplNom[kSKsFCFV1RingMuLike][kSKmNuMuBarCCoth]->Draw(draw_opt);
+    fMCTemplNom[kSKsFCFV1RingMuLike][kSKmNuMuBarCCoth_mu]->GetXaxis()->SetLabelSize  (0.12);
+    fMCTemplNom[kSKsFCFV1RingMuLike][kSKmNuMuBarCCoth_mu]->GetXaxis()->SetTitleSize  (0.14);
+    fMCTemplNom[kSKsFCFV1RingMuLike][kSKmNuMuBarCCoth_mu]->GetYaxis()->SetLabelSize  (0.12);
+    fMCTemplNom[kSKsFCFV1RingMuLike][kSKmNuMuBarCCoth_mu]->GetYaxis()->SetTitleSize  (0.14);
+    fMCTemplNom[kSKsFCFV1RingMuLike][kSKmNuMuBarCCoth_mu]->GetYaxis()->SetTitleOffset(0.40);
+    fMCTemplNom[kSKsFCFV1RingMuLike][kSKmNuMuBarCCoth_mu]->GetXaxis()->SetRangeUser(emin,emax);
+    fMCTemplNom[kSKsFCFV1RingMuLike][kSKmNuMuBarCCoth_mu]->GetYaxis()->SetRangeUser(emin,emax);
+    fMCTemplNom[kSKsFCFV1RingMuLike][kSKmNuMuBarCCoth_mu]->Draw(draw_opt);
     c->cd(8);
     c->GetPad(8)->SetLogz();
     c->GetPad(8)->SetBottomMargin(0.32);
@@ -1527,14 +1675,14 @@ void SuperkMC::Draw(TVirtualPad * c, Option_t * option) const
     c->GetPad(11)->SetLogz();
     c->GetPad(11)->SetBottomMargin(0.32);
     c->GetPad(11)->SetRightMargin(0.1);
-    fMCTemplNom[kSKsFCFV1RingMuLike][kSKmNuECCoth]->GetXaxis()->SetLabelSize  (0.12);
-    fMCTemplNom[kSKsFCFV1RingMuLike][kSKmNuECCoth]->GetXaxis()->SetTitleSize  (0.14);
-    fMCTemplNom[kSKsFCFV1RingMuLike][kSKmNuECCoth]->GetYaxis()->SetLabelSize  (0.12);
-    fMCTemplNom[kSKsFCFV1RingMuLike][kSKmNuECCoth]->GetYaxis()->SetTitleSize  (0.14);
-    fMCTemplNom[kSKsFCFV1RingMuLike][kSKmNuECCoth]->GetYaxis()->SetTitleOffset(0.40);
-    fMCTemplNom[kSKsFCFV1RingMuLike][kSKmNuECCoth]->GetXaxis()->SetRangeUser(emin,emax);
-    fMCTemplNom[kSKsFCFV1RingMuLike][kSKmNuECCoth]->GetYaxis()->SetRangeUser(emin,emax);
-    fMCTemplNom[kSKsFCFV1RingMuLike][kSKmNuECCoth]->Draw(draw_opt);
+    fMCTemplNom[kSKsFCFV1RingMuLike][kSKmNuECCoth_mu]->GetXaxis()->SetLabelSize  (0.12);
+    fMCTemplNom[kSKsFCFV1RingMuLike][kSKmNuECCoth_mu]->GetXaxis()->SetTitleSize  (0.14);
+    fMCTemplNom[kSKsFCFV1RingMuLike][kSKmNuECCoth_mu]->GetYaxis()->SetLabelSize  (0.12);
+    fMCTemplNom[kSKsFCFV1RingMuLike][kSKmNuECCoth_mu]->GetYaxis()->SetTitleSize  (0.14);
+    fMCTemplNom[kSKsFCFV1RingMuLike][kSKmNuECCoth_mu]->GetYaxis()->SetTitleOffset(0.40);
+    fMCTemplNom[kSKsFCFV1RingMuLike][kSKmNuECCoth_mu]->GetXaxis()->SetRangeUser(emin,emax);
+    fMCTemplNom[kSKsFCFV1RingMuLike][kSKmNuECCoth_mu]->GetYaxis()->SetRangeUser(emin,emax);
+    fMCTemplNom[kSKsFCFV1RingMuLike][kSKmNuECCoth_mu]->Draw(draw_opt);
     c->Update();
     c->cd(12);
     c->GetPad(12)->SetLogz();

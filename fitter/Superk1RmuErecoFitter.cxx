@@ -96,7 +96,7 @@ void Superk1RmuErecoFitter::Analyze(Option_t * option)
   TH1D * bestfit_numuccqe       = 0;
   TH1D * bestfit_numucc1pi      = 0;
   TH1D * bestfit_numuccoth      = 0;
-  TH1D * bestfit_nc             = 0;
+  TH1D * bestfit_numunc         = 0;
   TH1D * bestfit_numubarccqe    = 0;
   TH1D * bestfit_numubarcc1pi   = 0;
   TH1D * bestfit_numubarccoth   = 0;
@@ -127,15 +127,15 @@ void Superk1RmuErecoFitter::Analyze(Option_t * option)
      bestfit_tot            = new TH1D(*fFitInputs->Expectation().CurrPredictedErecoSpectrum(kSKsFCFV1RingMuLike));
      bestfit_numuccqe       = new TH1D(*fFitInputs->Expectation().CurrPredictedErecoSpectrum(kSKsFCFV1RingMuLike, kSKmNuMuCCQE));
      bestfit_numucc1pi      = new TH1D(*fFitInputs->Expectation().CurrPredictedErecoSpectrum(kSKsFCFV1RingMuLike, kSKmNuMuCC1pi));
-     bestfit_numuccoth      = new TH1D(*fFitInputs->Expectation().CurrPredictedErecoSpectrum(kSKsFCFV1RingMuLike, kSKmNuMuCCoth));
-     bestfit_nc             = new TH1D(*fFitInputs->Expectation().CurrPredictedErecoSpectrum(kSKsFCFV1RingMuLike, kSKmNC));
+     bestfit_numuccoth      = new TH1D(*fFitInputs->Expectation().CurrPredictedErecoSpectrum(kSKsFCFV1RingMuLike, kSKmNuMuCCoth_mu));
+     bestfit_numunc         = new TH1D(*fFitInputs->Expectation().CurrPredictedErecoSpectrum(kSKsFCFV1RingMuLike, kSKmNuMuNC));
      bestfit_numubarccqe    = new TH1D(*fFitInputs->Expectation().CurrPredictedErecoSpectrum(kSKsFCFV1RingMuLike, kSKmNuMuBarCCQE));
      bestfit_numubarcc1pi   = new TH1D(*fFitInputs->Expectation().CurrPredictedErecoSpectrum(kSKsFCFV1RingMuLike, kSKmNuMuBarCC1pi));
-     bestfit_numubarccoth   = new TH1D(*fFitInputs->Expectation().CurrPredictedErecoSpectrum(kSKsFCFV1RingMuLike, kSKmNuMuBarCCoth));
+     bestfit_numubarccoth   = new TH1D(*fFitInputs->Expectation().CurrPredictedErecoSpectrum(kSKsFCFV1RingMuLike, kSKmNuMuBarCCoth_mu));
      bestfit_numubarnc      = new TH1D(*fFitInputs->Expectation().CurrPredictedErecoSpectrum(kSKsFCFV1RingMuLike, kSKmNuMuBarNC));
      bestfit_nueccqe        = new TH1D(*fFitInputs->Expectation().CurrPredictedErecoSpectrum(kSKsFCFV1RingMuLike, kSKmNuECCQE));
      bestfit_nuecc1pi       = new TH1D(*fFitInputs->Expectation().CurrPredictedErecoSpectrum(kSKsFCFV1RingMuLike, kSKmNuECC1pi));
-     bestfit_nueccoth       = new TH1D(*fFitInputs->Expectation().CurrPredictedErecoSpectrum(kSKsFCFV1RingMuLike, kSKmNuECCoth));
+     bestfit_nueccoth       = new TH1D(*fFitInputs->Expectation().CurrPredictedErecoSpectrum(kSKsFCFV1RingMuLike, kSKmNuECCoth_mu));
      bestfit_nuenc          = new TH1D(*fFitInputs->Expectation().CurrPredictedErecoSpectrum(kSKsFCFV1RingMuLike, kSKmNuENC));
      bestfit_signueccqe     = new TH1D(*fFitInputs->Expectation().CurrPredictedErecoSpectrum(kSKsFCFV1RingMuLike, kSKmSigNuECCQE));
      bestfit_signuecc1pi    = new TH1D(*fFitInputs->Expectation().CurrPredictedErecoSpectrum(kSKsFCFV1RingMuLike, kSKmSigNuECC1pi));
@@ -145,7 +145,7 @@ void Superk1RmuErecoFitter::Analyze(Option_t * option)
      bestfit_numuccqe       -> SetDirectory ( 0        );
      bestfit_numucc1pi      -> SetDirectory ( 0        );
      bestfit_numuccoth      -> SetDirectory ( 0        );
-     bestfit_nc             -> SetDirectory ( 0        );
+     bestfit_numunc         -> SetDirectory ( 0        );
      bestfit_numubarccqe    -> SetDirectory ( 0        );
      bestfit_numubarcc1pi   -> SetDirectory ( 0        );
      bestfit_numubarccoth   -> SetDirectory ( 0        );
@@ -160,7 +160,7 @@ void Superk1RmuErecoFitter::Analyze(Option_t * option)
 
      bestfit_numucc1pi      -> SetFillStyle ( 3544     );
      bestfit_numuccoth      -> SetFillStyle ( 3244     );
-     bestfit_nc             -> SetFillStyle ( 3006     );
+     bestfit_numunc         -> SetFillStyle ( 3006     );
      bestfit_numubarccqe    -> SetFillStyle ( 3001     );
      bestfit_numubarcc1pi   -> SetFillStyle ( 3345     );
      bestfit_numubarccoth   -> SetFillStyle ( 3354     );
@@ -177,7 +177,7 @@ void Superk1RmuErecoFitter::Analyze(Option_t * option)
 
      bestfit_numucc1pi      -> SetFillColor ( kBlack   );
      bestfit_numuccoth      -> SetFillColor ( kBlack   );
-     bestfit_nc             -> SetFillColor ( kRed     );
+     bestfit_numunc         -> SetFillColor ( kRed     );
      bestfit_numubarccqe    -> SetFillColor ( kAzure-3 );
      bestfit_numubarcc1pi   -> SetFillColor ( kAzure-3 );
      bestfit_numubarccoth   -> SetFillColor ( kAzure-3 );
@@ -194,7 +194,7 @@ void Superk1RmuErecoFitter::Analyze(Option_t * option)
      bestfit_numuccqe       -> SetLineWidth ( 1 );
      bestfit_numucc1pi      -> SetLineWidth ( 1 );
      bestfit_numuccoth      -> SetLineWidth ( 1 );
-     bestfit_nc             -> SetLineWidth ( 1 );
+     bestfit_numunc         -> SetLineWidth ( 1 );
      bestfit_numubarccqe    -> SetLineWidth ( 1 );
      bestfit_numubarcc1pi   -> SetLineWidth ( 1 );
      bestfit_numubarccoth   -> SetLineWidth ( 1 );
@@ -211,7 +211,7 @@ void Superk1RmuErecoFitter::Analyze(Option_t * option)
      bestfit_numuccqe       -> SetName("bestfit_numuccqe");
      bestfit_numucc1pi      -> SetName("bestfit_numucc1pi");
      bestfit_numuccoth      -> SetName("bestfit_numuccoth");
-     bestfit_nc             -> SetName("bestfit_numunc");
+     bestfit_numunc         -> SetName("bestfit_numunc");
      bestfit_numubarccqe    -> SetName("bestfit_numubarcc");
      bestfit_numubarcc1pi   -> SetName("bestfit_numubarcc1pi");
      bestfit_numubarccoth   -> SetName("bestfit_numubarccoth");
@@ -228,7 +228,7 @@ void Superk1RmuErecoFitter::Analyze(Option_t * option)
      fResults -> Add (bestfit_numuccqe);
      fResults -> Add (bestfit_numucc1pi);
      fResults -> Add (bestfit_numuccoth);
-     fResults -> Add (bestfit_nc);
+     fResults -> Add (bestfit_numunc);
      fResults -> Add (bestfit_numubarccqe);
      fResults -> Add (bestfit_numubarcc1pi);
      fResults -> Add (bestfit_numubarccoth);
@@ -304,7 +304,7 @@ void Superk1RmuErecoFitter::Analyze(Option_t * option)
         contrib_stack->Add(bestfit_numubarcc1pi);
         contrib_stack->Add(bestfit_numubarccoth);
         contrib_stack->Add(bestfit_numubarccqe);
-        contrib_stack->Add(bestfit_nc);
+        contrib_stack->Add(bestfit_numunc);
         contrib_stack->Add(bestfit_numuccoth);
         contrib_stack->Add(bestfit_numucc1pi);
         contrib_stack->Add(bestfit_numuccqe);
@@ -330,7 +330,7 @@ void Superk1RmuErecoFitter::Analyze(Option_t * option)
         spectrum_legend->AddEntry(bestfit_numuccqe,        "best fit (#nu_{#mu} CCQE)",                      "L" );
         spectrum_legend->AddEntry(bestfit_numucc1pi,       "best fit (#nu_{#mu} CC1#pi)",                    "LF");
         spectrum_legend->AddEntry(bestfit_numuccoth,       "best fit (#nu_{#mu} CC other)",                  "LF");
-        spectrum_legend->AddEntry(bestfit_nc,              "best fit (#nu_{#mu}/#nu_{#tau} NC)",             "LF");
+        spectrum_legend->AddEntry(bestfit_numunc,          "best fit (#nu_{#mu}/#nu_{#tau} NC)",             "LF");
         spectrum_legend->AddEntry(bestfit_numubarccqe,     "best fit (#bar{#nu_{#mu}} CCQE)",                "LF");
         spectrum_legend->AddEntry(bestfit_numubarcc1pi,    "best fit (#bar{#nu_{#mu}} CC1#pi)",              "LF");
         spectrum_legend->AddEntry(bestfit_numubarccoth,    "best fit (#bar{#nu_{#mu}} CC other)",            "LF");
@@ -369,7 +369,7 @@ void Superk1RmuErecoFitter::Save(const char * filename)
   TH1D * bestfit_numuccqe       = (TH1D*) fResults->FindObject("bestfit_numuccqe");
   TH1D * bestfit_numucc1pi      = (TH1D*) fResults->FindObject("bestfit_numucc1pi");
   TH1D * bestfit_numuccoth      = (TH1D*) fResults->FindObject("bestfit_numuccoth");
-  TH1D * bestfit_nc             = (TH1D*) fResults->FindObject("bestfit_numunc");
+  TH1D * bestfit_numunc         = (TH1D*) fResults->FindObject("bestfit_numunc");
   TH1D * bestfit_numubarccqe    = (TH1D*) fResults->FindObject("bestfit_numubarccqe");
   TH1D * bestfit_numubarcc1pi   = (TH1D*) fResults->FindObject("bestfit_numubarcc1pi");
   TH1D * bestfit_numubarccoth   = (TH1D*) fResults->FindObject("bestfit_numubarccoth");
@@ -389,7 +389,7 @@ void Superk1RmuErecoFitter::Save(const char * filename)
   if ( bestfit_numuccqe     ) { bestfit_numuccqe       -> Write(); }
   if ( bestfit_numucc1pi    ) { bestfit_numucc1pi      -> Write(); }
   if ( bestfit_numuccoth    ) { bestfit_numuccoth      -> Write(); }
-  if ( bestfit_nc           ) { bestfit_nc             -> Write(); }
+  if ( bestfit_numunc       ) { bestfit_numunc         -> Write(); }
   if ( bestfit_numubarccqe  ) { bestfit_numubarccqe    -> Write(); }
   if ( bestfit_numubarcc1pi ) { bestfit_numubarcc1pi   -> Write(); }
   if ( bestfit_numubarccoth ) { bestfit_numubarccoth   -> Write(); }

@@ -236,15 +236,15 @@ double NuXSec::SuperkXSecRatioWght(
    switch(m) {
       case ( kSKmNuMuCCQE       ) : return 1.; break;
       case ( kSKmNuMuCC1pi      ) : return this->CC1piToCCQEXSecRatioWght(Etrue); break;
-      case ( kSKmNuMuCCoth      ) : return this->CCOthToCCQEXSecRatioWght(Etrue); break;
-      case ( kSKmNC             ) : return this->NCToCCQEXSecRatioWght(Etrue);    break;
+      case ( kSKmNuMuCCoth_mu      ) : return this->CCOthToCCQEXSecRatioWght(Etrue); break;
+      case ( kSKmNuMuNC             ) : return this->NCToCCQEXSecRatioWght(Etrue);    break;
       case ( kSKmNuMuBarCCQE    ) : return 1.; break;
       case ( kSKmNuMuBarCC1pi   ) : return this->CC1piToCCQEXSecRatioWght(Etrue); break;
-      case ( kSKmNuMuBarCCoth   ) : return this->CCOthToCCQEXSecRatioWght(Etrue); break;
+      case ( kSKmNuMuBarCCoth_mu   ) : return this->CCOthToCCQEXSecRatioWght(Etrue); break;
       case ( kSKmNuMuBarNC      ) : return this->NCToCCQEXSecRatioWght(Etrue);    break;
       case ( kSKmNuECCQE        ) : return 1.; break;
       case ( kSKmNuECC1pi       ) : return this->CC1piToCCQEXSecRatioWght(Etrue); break;
-      case ( kSKmNuECCoth       ) : return this->CCOthToCCQEXSecRatioWght(Etrue); break;
+      case ( kSKmNuECCoth_mu       ) : return this->CCOthToCCQEXSecRatioWght(Etrue); break;
       case ( kSKmNuENC          ) : return this->NCToCCQEXSecRatioWght(Etrue);    break;
       case ( kSKmSigNuECCQE     ) : return 1.; break;
       case ( kSKmSigNuECC1pi    ) : return this->CC1piToCCQEXSecRatioWght(Etrue); break;
@@ -260,15 +260,15 @@ double NuXSec::SuperkCCQEXSecWght(
    switch(m) {
       case ( kSKmNuMuCCQE     ) : return this->CCQEWght(Etrue); break;
       case ( kSKmNuMuCC1pi    ) : return 1.;                    break;
-      case ( kSKmNuMuCCoth    ) : return 1.;                    break;
-      case ( kSKmNC           ) : return 1.;                    break;
+      case ( kSKmNuMuCCoth_mu    ) : return 1.;                    break;
+      case ( kSKmNuMuNC           ) : return 1.;                    break;
       case ( kSKmNuMuBarCCQE  ) : return this->CCQEWght(Etrue); break;
       case ( kSKmNuMuBarCC1pi ) : return 1.;                    break;
-      case ( kSKmNuMuBarCCoth ) : return 1.;                    break;
+      case ( kSKmNuMuBarCCoth_mu ) : return 1.;                    break;
       case ( kSKmNuMuBarNC    ) : return 1.;                    break;
       case ( kSKmNuECCQE      ) : return this->CCQEWght(Etrue); break;
       case ( kSKmNuECC1pi     ) : return 1.;                    break;
-      case ( kSKmNuECCoth     ) : return 1.;                    break;
+      case ( kSKmNuECCoth_mu     ) : return 1.;                    break;
       case ( kSKmNuENC        ) : return 1.;                    break;
       case ( kSKmSigNuECCQE   ) : return this->CCQEWght(Etrue); break;
       case ( kSKmSigNuECC1pi  ) : return 1.;                    break;

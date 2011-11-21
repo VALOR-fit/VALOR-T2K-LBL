@@ -167,22 +167,24 @@ double t2kana::util::NuMuSurvProbOsc2D(
   double sinsq2theta, double dmsq, double Et, 
   t2kana::conv::SuperkMode_t m)
 {
-  if(m == kSKmNC         || 
-     m == kSKmNuECCQE    ||
-     m == kSKmNuECC1pi   ||
-     m == kSKmNuECCoth   ||
-     m == kSKmNuENC      ||
+// Note: Using only the numu disappearance analysis modes
+//
+  if(m == kSKmNuMuNC          || 
+     m == kSKmNuECCQE     ||
+     m == kSKmNuECC1pi    ||
+     m == kSKmNuECCoth_mu ||
+     m == kSKmNuENC       ||
      m == kSKmNuMuBarNC)
   {
     return 1.;
   }
   else
-  if(m == kSKmNuMuCCQE     || 
-     m == kSKmNuMuCC1pi    || 
-     m == kSKmNuMuCCoth    ||
-     m == kSKmNuMuBarCCQE  ||
-     m == kSKmNuMuBarCC1pi ||
-     m == kSKmNuMuBarCCoth) 
+  if(m == kSKmNuMuCCQE        || 
+     m == kSKmNuMuCC1pi       || 
+     m == kSKmNuMuCCoth_mu    ||
+     m == kSKmNuMuBarCCQE     ||
+     m == kSKmNuMuBarCC1pi    ||
+     m == kSKmNuMuBarCCoth_mu) 
   {
     return NuMuSurvProbOsc2D(sinsq2theta, dmsq, Et);
   }
@@ -195,7 +197,6 @@ double t2kana::util::NuMuSurvProbOsc2D(
 double t2kana::util::NuMuSurvProbDecay (
    double sinsq2theta, double alpha, double Et)
 {
-//
 // Note: In oscillation formula (Dm^2 * L / 4E) in natural units becomes 
 // 1.267 * Dm^2 * L / E where Dm^2 in eV2, L in km, E in GeV. 
 // Apply the same conversion in the decoherence survival prob formula (Eq. 13) 
@@ -218,21 +219,23 @@ double t2kana::util::NuMuSurvProbDecay (
   double sinsq2theta, double alpha, double Et, 
   t2kana::conv::SuperkMode_t m)
 {
-  if(m == kSKmNuECCQE  ||
-     m == kSKmNuECC1pi ||
-     m == kSKmNuECCoth ||
+// Note: Using only the numu disappearance analysis modes
+//
+  if(m == kSKmNuECCQE     ||
+     m == kSKmNuECC1pi    ||
+     m == kSKmNuECCoth_mu ||
      m == kSKmNuENC)
   {
     return 1.;
   }
   else
-  if(m == kSKmNuMuCCQE       || 
-     m == kSKmNuMuCC1pi      || 
-     m == kSKmNuMuCCoth      ||
-     m == kSKmNC             ||
-     m == kSKmNuMuBarCCQE    ||
-     m == kSKmNuMuBarCC1pi   ||
-     m == kSKmNuMuBarCCoth   ||
+  if(m == kSKmNuMuCCQE        || 
+     m == kSKmNuMuCC1pi       || 
+     m == kSKmNuMuCCoth_mu    ||
+     m == kSKmNuMuNC              ||
+     m == kSKmNuMuBarCCQE     ||
+     m == kSKmNuMuBarCC1pi    ||
+     m == kSKmNuMuBarCCoth_mu ||
      m == kSKmNuMuBarNC) 
   {
     return NuMuSurvProbDecay(sinsq2theta, alpha, Et);
@@ -246,7 +249,6 @@ double t2kana::util::NuMuSurvProbDecay (
 double t2kana::util::NuMuSurvProbDecoh (
    double sinsq2theta, double musq, double Et)
 {
-
 //
 // Note: In oscillation formula (Dm^2 * L / 4E) in natural units becomes 
 // 1.267 * Dm^2 * L / E where Dm^2 in eV2, L in km, E in GeV. 
@@ -265,21 +267,23 @@ double t2kana::util::NuMuSurvProbDecoh (
   double sinsq2theta, double musq, double Et, 
   t2kana::conv::SuperkMode_t m)
 {
-  if(m == kSKmNuECCQE  ||
-     m == kSKmNuECC1pi ||
-     m == kSKmNuECCoth ||
+// Note: Using only the numu disappearance analysis modes
+//
+  if(m == kSKmNuECCQE     ||
+     m == kSKmNuECC1pi    ||
+     m == kSKmNuECCoth_mu ||
      m == kSKmNuENC)
   {
     return 1.;
   }
   else
-  if(m == kSKmNuMuCCQE       || 
-     m == kSKmNuMuCC1pi      || 
-     m == kSKmNuMuCCoth      ||
-     m == kSKmNC             ||
-     m == kSKmNuMuBarCCQE    ||
-     m == kSKmNuMuBarCC1pi   ||
-     m == kSKmNuMuBarCCoth   ||
+  if(m == kSKmNuMuCCQE        || 
+     m == kSKmNuMuCC1pi       || 
+     m == kSKmNuMuCCoth_mu    ||
+     m == kSKmNuMuNC              ||
+     m == kSKmNuMuBarCCQE     ||
+     m == kSKmNuMuBarCC1pi    ||
+     m == kSKmNuMuBarCCoth_mu ||
      m == kSKmNuMuBarNC) 
   {
     return NuMuSurvProbDecoh(sinsq2theta, musq, Et);
@@ -623,22 +627,37 @@ string t2kana::util::AsString(t2kana::conv::SuperkSample_t s)
 string t2kana::util::AsString(t2kana::conv::SuperkMode_t m)
 {
   switch(m) {
-     case ( kSKmNuMuCCQE      ) : return "numu CCQE";            break;
-     case ( kSKmNuMuCC1pi     ) : return "numu CC1pi";           break;
-     case ( kSKmNuMuCCoth     ) : return "numu CCoth";           break;
-     case ( kSKmNC            ) : return "numu/nutau NC";        break;
-     case ( kSKmNuMuBarCCQE   ) : return "numubar CCQE";         break;
-     case ( kSKmNuMuBarCC1pi  ) : return "numubar CC1pi";        break;
-     case ( kSKmNuMuBarCCoth  ) : return "numubar CCoth";        break;
-     case ( kSKmNuMuBarNC     ) : return "numubar/nutaubar NC";  break;
-     case ( kSKmNuECCQE       ) : return "nue CCQE (bkg)";       break;
-     case ( kSKmNuECC1pi      ) : return "nue CC1pi (bkg)";      break;
-     case ( kSKmNuECCoth      ) : return "nue CCoth (bkg)";      break;
-     case ( kSKmNuENC         ) : return "nue NC (bkg)";         break;
-     case ( kSKmSigNuECCQE    ) : return "nue CCQE (sig)";       break;
-     case ( kSKmSigNuECC1pi   ) : return "nue CC1pi (sig)";      break;
-     case ( kSKmSigNuECCoth   ) : return "nue CCoth (sig)";      break;
-     default                    : return "--";
+     case ( kSKmNuMuCCQE        ) : return "numu CC QE";                        break;
+     case ( kSKmNuMuCC1pi       ) : return "numu CC 1pi";                       break;
+     case ( kSKmNuMuCCcoh       ) : return "numu CC coh";                       break;
+     case ( kSKmNuMuCCoth_mu    ) : return "numu CC oth (numu disap)";          break;
+     case ( kSKmNuMuCCoth_e     ) : return "numu CC oth (nue app)";             break;
+     case ( kSKmNuMuNC          ) : return "numu/nutau NC";                     break;
+     case ( kSKmNuMuNC1pi0      ) : return "numu/nutau NC 1pi0";                break;
+     case ( kSKmNuMuNCcoh       ) : return "numu/nutau NC coh";                 break;
+     case ( kSKmNuMuNCoth_e     ) : return "numu/nutau NC oth (nue app)";       break;
+     case ( kSKmNuMuBarCCQE     ) : return "numubar CC QE";                     break;
+     case ( kSKmNuMuBarCC1pi    ) : return "numubar CC 1pi";                    break;
+     case ( kSKmNuMuBarCCcoh    ) : return "numubar CC coh";                    break;
+     case ( kSKmNuMuBarCCoth_mu ) : return "numubar CC oth (numu disap)";       break;
+     case ( kSKmNuMuBarCCoth_e  ) : return "numubar CC oth (nue app)";          break;
+     case ( kSKmNuMuBarNC       ) : return "numubar/nutaubar NC";               break;
+     case ( kSKmNuMuBarNC1pi0   ) : return "numubar/nutaubar NC 1pi0";          break;
+     case ( kSKmNuMuBarNCcoh    ) : return "numubar/nutaubar NC coh";           break;
+     case ( kSKmNuMuBarNCoth_e  ) : return "numubar/nutaubar NC oth (nue app)"; break;
+     case ( kSKmNuECCQE         ) : return "bkg nue CC QE";                     break;
+     case ( kSKmNuECC1pi        ) : return "bkg nue CC 1pi";                    break;
+     case ( kSKmNuECCcoh        ) : return "bkg nue CC coh";                    break;
+     case ( kSKmNuECCoth_mu     ) : return "bkg nue CC oth (numu disap)";       break;
+     case ( kSKmNuECCoth_e      ) : return "bkg nue CC oth (nue app)";          break;
+     case ( kSKmNuENC           ) : return "bkg nue NC";                        break;
+     case ( kSKmNuENC1pi0       ) : return "bkg nue NC 1pi0";                   break;
+     case ( kSKmNuENCcoh        ) : return "bkg nue NC coh";                    break;
+     case ( kSKmNuENCoth_e      ) : return "bkg nue NC oth (nue app)";          break;
+     case ( kSKmSigNuECCQE      ) : return "sig nue CC QE";                     break;
+     case ( kSKmSigNuECC1pi     ) : return "sig nue CC 1pi";                    break;
+     case ( kSKmSigNuECCoth     ) : return "sig nue CC oth";                    break;
+     default                      : return "--";
   }
   return "";
 }
@@ -1580,7 +1599,7 @@ bool t2kana::util::UseEventToFillInTemplate(
   } 
 
   else
-  if(m == kSKmNuMuCCoth) 
+  if(m == kSKmNuMuCCoth_mu) 
   {
      bool is_numu  = (nu_pdg_code == kPdgNuMu);
      bool is_ccoth = (neut_reaction_mode == 16 || 
@@ -1593,7 +1612,7 @@ bool t2kana::util::UseEventToFillInTemplate(
   } 
 
   else
-  if(m == kSKmNC) 
+  if(m == kSKmNuMuNC) 
   {
      bool is_numu  = (nu_pdg_code == kPdgNuMu);
      bool is_nc    = (neut_reaction_mode == 31 ||
@@ -1633,7 +1652,7 @@ bool t2kana::util::UseEventToFillInTemplate(
   } 
 
   else
-  if(m == kSKmNuMuBarCCoth) 
+  if(m == kSKmNuMuBarCCoth_mu) 
   {
      bool is_numubar = (nu_pdg_code == kPdgNuMuBar);
      bool is_ccoth   = (neut_reaction_mode == -16 || 
@@ -1692,7 +1711,7 @@ bool t2kana::util::UseEventToFillInTemplate(
   }
 
   else
-  if(m == kSKmNuECCoth || m == kSKmSigNuECCoth) 
+  if(m == kSKmNuECCoth_mu || m == kSKmSigNuECCoth) 
   {
      bool is_nue    = (nu_pdg_code == kPdgNuE || 
                        nu_pdg_code == kPdgNuEBar);

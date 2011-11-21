@@ -130,9 +130,9 @@ void SuperkExpectation::Generate(const PhysHypothesis & ph)
   const unsigned int ns = fSamples.size();
   const unsigned int nm = 15;  
   SuperkMode_t sk_modes [nm] = { 
-     kSKmNuMuCCQE,    kSKmNuMuCC1pi,    kSKmNuMuCCoth,    kSKmNC, 
-     kSKmNuMuBarCCQE, kSKmNuMuBarCC1pi, kSKmNuMuBarCCoth, kSKmNuMuBarNC, 
-     kSKmNuECCQE,     kSKmNuECC1pi,     kSKmNuECCoth,     kSKmNuENC,
+     kSKmNuMuCCQE,    kSKmNuMuCC1pi,    kSKmNuMuCCoth_mu,    kSKmNuMuNC, 
+     kSKmNuMuBarCCQE, kSKmNuMuBarCC1pi, kSKmNuMuBarCCoth_mu, kSKmNuMuBarNC, 
+     kSKmNuECCQE,     kSKmNuECC1pi,     kSKmNuECCoth_mu,     kSKmNuENC,
      kSKmSigNuECCQE,  kSKmSigNuECC1pi,  kSKmSigNuECCoth
   };
 
@@ -203,15 +203,15 @@ void SuperkExpectation::Generate(const PhysHypothesis & ph)
      fPredictErecoSpectrumTot[kSKsFCFV1RingMuLike]                  -> Scale (beam_norm);
      fPredictErecoSpectrum[kSKsFCFV1RingMuLike][kSKmNuMuCCQE]       -> Scale (beam_norm);
      fPredictErecoSpectrum[kSKsFCFV1RingMuLike][kSKmNuMuCC1pi]      -> Scale (beam_norm);
-     fPredictErecoSpectrum[kSKsFCFV1RingMuLike][kSKmNuMuCCoth]      -> Scale (beam_norm);
-     fPredictErecoSpectrum[kSKsFCFV1RingMuLike][kSKmNC]             -> Scale (beam_norm);
+     fPredictErecoSpectrum[kSKsFCFV1RingMuLike][kSKmNuMuCCoth_mu]      -> Scale (beam_norm);
+     fPredictErecoSpectrum[kSKsFCFV1RingMuLike][kSKmNuMuNC]             -> Scale (beam_norm);
      fPredictErecoSpectrum[kSKsFCFV1RingMuLike][kSKmNuMuBarCCQE]    -> Scale (beam_norm);
      fPredictErecoSpectrum[kSKsFCFV1RingMuLike][kSKmNuMuBarCC1pi]   -> Scale (beam_norm);
-     fPredictErecoSpectrum[kSKsFCFV1RingMuLike][kSKmNuMuBarCCoth]   -> Scale (beam_norm);
+     fPredictErecoSpectrum[kSKsFCFV1RingMuLike][kSKmNuMuBarCCoth_mu]   -> Scale (beam_norm);
      fPredictErecoSpectrum[kSKsFCFV1RingMuLike][kSKmNuMuBarNC]      -> Scale (beam_norm);
      fPredictErecoSpectrum[kSKsFCFV1RingMuLike][kSKmNuECCQE]        -> Scale (beam_norm);
      fPredictErecoSpectrum[kSKsFCFV1RingMuLike][kSKmNuECC1pi]       -> Scale (beam_norm);
-     fPredictErecoSpectrum[kSKsFCFV1RingMuLike][kSKmNuECCoth]       -> Scale (beam_norm);
+     fPredictErecoSpectrum[kSKsFCFV1RingMuLike][kSKmNuECCoth_mu]       -> Scale (beam_norm);
      fPredictErecoSpectrum[kSKsFCFV1RingMuLike][kSKmNuENC]          -> Scale (beam_norm);
   }//norm tweaked?
 
@@ -221,15 +221,15 @@ void SuperkExpectation::Generate(const PhysHypothesis & ph)
      fPredictErecoSpectrumTot[kSKsFCFV1RingMuLike]                  -> Scale (shape_norm);
      fPredictErecoSpectrum[kSKsFCFV1RingMuLike][kSKmNuMuCCQE]       -> Scale (shape_norm);
      fPredictErecoSpectrum[kSKsFCFV1RingMuLike][kSKmNuMuCC1pi]      -> Scale (shape_norm);
-     fPredictErecoSpectrum[kSKsFCFV1RingMuLike][kSKmNuMuCCoth]      -> Scale (shape_norm);
-     fPredictErecoSpectrum[kSKsFCFV1RingMuLike][kSKmNC]             -> Scale (shape_norm);
+     fPredictErecoSpectrum[kSKsFCFV1RingMuLike][kSKmNuMuCCoth_mu]      -> Scale (shape_norm);
+     fPredictErecoSpectrum[kSKsFCFV1RingMuLike][kSKmNuMuNC]             -> Scale (shape_norm);
      fPredictErecoSpectrum[kSKsFCFV1RingMuLike][kSKmNuMuBarCCQE]    -> Scale (shape_norm);
      fPredictErecoSpectrum[kSKsFCFV1RingMuLike][kSKmNuMuBarCC1pi]   -> Scale (shape_norm);
-     fPredictErecoSpectrum[kSKsFCFV1RingMuLike][kSKmNuMuBarCCoth]   -> Scale (shape_norm);
+     fPredictErecoSpectrum[kSKsFCFV1RingMuLike][kSKmNuMuBarCCoth_mu]   -> Scale (shape_norm);
      fPredictErecoSpectrum[kSKsFCFV1RingMuLike][kSKmNuMuBarNC]      -> Scale (shape_norm);
      fPredictErecoSpectrum[kSKsFCFV1RingMuLike][kSKmNuECCQE]        -> Scale (shape_norm);
      fPredictErecoSpectrum[kSKsFCFV1RingMuLike][kSKmNuECC1pi]       -> Scale (shape_norm);
-     fPredictErecoSpectrum[kSKsFCFV1RingMuLike][kSKmNuECCoth]       -> Scale (shape_norm);
+     fPredictErecoSpectrum[kSKsFCFV1RingMuLike][kSKmNuECCoth_mu]       -> Scale (shape_norm);
      fPredictErecoSpectrum[kSKsFCFV1RingMuLike][kSKmNuENC]          -> Scale (shape_norm);
   }
 }
@@ -451,9 +451,9 @@ bool SuperkExpectation::Read(string config_file)
   const unsigned int ns = fSamples.size();
   const unsigned int nm = 15;  
   SuperkMode_t sk_modes [nm] = { 
-     kSKmNuMuCCQE,    kSKmNuMuCC1pi,    kSKmNuMuCCoth,    kSKmNC, 
-     kSKmNuMuBarCCQE, kSKmNuMuBarCC1pi, kSKmNuMuBarCCoth, kSKmNuMuBarNC, 
-     kSKmNuECCQE,     kSKmNuECC1pi,     kSKmNuECCoth,     kSKmNuENC,
+     kSKmNuMuCCQE,    kSKmNuMuCC1pi,    kSKmNuMuCCoth_mu,    kSKmNuMuNC, 
+     kSKmNuMuBarCCQE, kSKmNuMuBarCC1pi, kSKmNuMuBarCCoth_mu, kSKmNuMuBarNC, 
+     kSKmNuECCQE,     kSKmNuECC1pi,     kSKmNuECCoth_mu,     kSKmNuENC,
      kSKmSigNuECCQE,  kSKmSigNuECC1pi,  kSKmSigNuECCoth
   };
   for(unsigned int is = 0; is < ns; is++) {

@@ -145,14 +145,22 @@ private:
   TH1D *     fMCErecoSpectrum[kns][knm];   ///< MC Ereco spectrum(sample,mode)        (+ systematic variation + physics hypothesis)
   TH1D *     fMCErecoSpectrumTot[kns];     ///< MC total Ereco spectrum (sample)      (+ systematic variation + physics hypothesis)
 
-  TTree*     fMC1Rmu_numu;                 ///< input MC event sample tree: 1-ring mu-like / numu
-  TTree*     fMC1Rmu_numubar;              ///< input MC event sample tree: 1-ring mu-like / numubar
-  TTree*     fMC1Rmu_nue;                  ///< input MC event sample tree: 1-ring mu-like / nue (intrinsic beam background)
-  TTree*     fMC1Rmu_nuesig;               ///< input MC event sample tree: 1-ring mu-like / nue (signal assuming 100% numu->nue)
-  double     fMCPOT_numu;                  ///< input MC event sample POT : 1-ring mu-like / numu
-  double     fMCPOT_numubar;               ///< input MC event sample POT : 1-ring mu-like / numubar
-  double     fMCPOT_nue;                   ///< input MC event sample POT : 1-ring mu-like / nue (bkg)
-  double     fMCPOT_nuesig;                ///< input MC event sample POT : 1-ring mu-like / nue (sig)
+  TTree*     fMCTree1Rmu_numu;             ///< input MC event sample tree: 1-ring mu-like / numu
+  TTree*     fMCTree1Rmu_numubar;          ///< input MC event sample tree: 1-ring mu-like / numubar
+  TTree*     fMCTree1Rmu_nue;              ///< input MC event sample tree: 1-ring mu-like / nue (intrinsic beam background)
+  TTree*     fMCTree1Rmu_nuesig;           ///< input MC event sample tree: 1-ring mu-like / nue (signal assuming 100% numu->nue)
+  TTree*     fMCTree1Re_numu;              ///< input MC event sample tree: 1-ring e-like / numu
+  TTree*     fMCTree1Re_numubar;           ///< input MC event sample tree: 1-ring e-like / numubar
+  TTree*     fMCTree1Re_nue;               ///< input MC event sample tree: 1-ring e-like / nue (intrinsic beam background)
+  TTree*     fMCTree1Re_nuesig;            ///< input MC event sample tree: 1-ring e-like / nue (signal assuming 100% numu->nue)
+  double     fMCPOT1Rmu_numu;              ///< input MC event sample POT : 1-ring mu-like / numu
+  double     fMCPOT1Rmu_numubar;           ///< input MC event sample POT : 1-ring mu-like / numubar
+  double     fMCPOT1Rmu_nue;               ///< input MC event sample POT : 1-ring mu-like / nue (bkg)
+  double     fMCPOT1Rmu_nuesig;            ///< input MC event sample POT : 1-ring mu-like / nue (sig)
+  double     fMCPOT1Re_numu;               ///< input MC event sample POT : 1-ring e-like / numu
+  double     fMCPOT1Re_numubar;            ///< input MC event sample POT : 1-ring e-like / numubar
+  double     fMCPOT1Re_nue;                ///< input MC event sample POT : 1-ring e-like / nue (bkg)
+  double     fMCPOT1Re_nuesig;             ///< input MC event sample POT : 1-ring e-like / nue (sig)
   double     fBrEreco;                     ///< branch var for reading input event sample tree
   double     fBrEtrue;                     ///< branch var for reading input event sample tree
   int        fBrPdg;                       ///< branch var for reading input event sample tree
