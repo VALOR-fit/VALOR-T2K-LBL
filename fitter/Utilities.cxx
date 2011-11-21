@@ -1606,6 +1606,8 @@ bool t2kana::util::UseEventToFillInTemplate(
                       neut_reaction_mode == 41 ||
                       neut_reaction_mode == 42 ||
                       neut_reaction_mode == 43 ||
+                      neut_reaction_mode == 44 ||
+                      neut_reaction_mode == 45 ||
                       neut_reaction_mode == 46 ||
                       neut_reaction_mode == 51 ||
                       neut_reaction_mode == 52);
@@ -1634,26 +1636,13 @@ bool t2kana::util::UseEventToFillInTemplate(
   if(m == kSKmNuMuBarCCoth) 
   {
      bool is_numubar = (nu_pdg_code == kPdgNuMuBar);
-     bool is_ccqe    = (neut_reaction_mode == -1);
-     bool is_cc1pi   = (neut_reaction_mode == -11 || 
-                        neut_reaction_mode == -12 || 
-                        neut_reaction_mode == -13);
-     bool is_nc      = (neut_reaction_mode == -31 ||
-                        neut_reaction_mode == -32 ||
-                        neut_reaction_mode == -36 ||
-                        neut_reaction_mode == -33 ||
-                        neut_reaction_mode == -34 ||
-                        neut_reaction_mode == -38 ||
-                        neut_reaction_mode == -39 ||
-                        neut_reaction_mode == -41 ||
-                        neut_reaction_mode == -42 ||
-                        neut_reaction_mode == -43 ||
-                        neut_reaction_mode == -44 ||
-                        neut_reaction_mode == -45 ||
-                        neut_reaction_mode == -46 ||
-                        neut_reaction_mode == -51 ||
-                        neut_reaction_mode == -52);
-     use_it = is_numubar && !(is_nc||is_ccqe||is_cc1pi);
+     bool is_ccoth   = (neut_reaction_mode == -16 || 
+                        neut_reaction_mode == -17 || 
+                        neut_reaction_mode == -21 ||
+                        neut_reaction_mode == -22 || 
+                        neut_reaction_mode == -23 || 
+                        neut_reaction_mode == -26);
+     use_it = is_numubar && is_ccoth;
   } 
 
   else
@@ -1707,43 +1696,19 @@ bool t2kana::util::UseEventToFillInTemplate(
   {
      bool is_nue    = (nu_pdg_code == kPdgNuE || 
                        nu_pdg_code == kPdgNuEBar);
-     bool is_ccqe   = (neut_reaction_mode == 1   || 
-                       neut_reaction_mode == -1);
-     bool is_cc1pi  = (neut_reaction_mode ==  11 || 
-                       neut_reaction_mode ==  12 || 
-                       neut_reaction_mode ==  13 ||
-                       neut_reaction_mode == -11 || 
-                       neut_reaction_mode == -12 || 
-                       neut_reaction_mode == -13);
-     bool is_nc     = (neut_reaction_mode ==  31 ||
-                       neut_reaction_mode ==  32 ||
-                       neut_reaction_mode ==  36 ||
-                       neut_reaction_mode ==  33 ||
-                       neut_reaction_mode ==  34 ||
-                       neut_reaction_mode ==  38 ||
-                       neut_reaction_mode ==  39 ||
-                       neut_reaction_mode ==  41 ||
-                       neut_reaction_mode ==  42 ||
-                       neut_reaction_mode ==  43 ||
-                       neut_reaction_mode ==  46 ||
-                       neut_reaction_mode ==  51 ||
-                       neut_reaction_mode ==  52 ||
-                       neut_reaction_mode == -31 ||
-                       neut_reaction_mode == -32 ||
-                       neut_reaction_mode == -36 ||
-                       neut_reaction_mode == -33 ||
-                       neut_reaction_mode == -34 ||
-                       neut_reaction_mode == -38 ||
-                       neut_reaction_mode == -39 ||
-                       neut_reaction_mode == -41 ||
-                       neut_reaction_mode == -42 ||
-                       neut_reaction_mode == -43 ||
-                       neut_reaction_mode == -44 ||
-                       neut_reaction_mode == -45 ||
-                       neut_reaction_mode == -46 ||
-                       neut_reaction_mode == -51 ||
-                       neut_reaction_mode == -52);
-     use_it = is_nue && !(is_ccqe||is_cc1pi||is_nc);
+     bool is_ccoth = (neut_reaction_mode ==  16 || 
+                      neut_reaction_mode ==  17 || 
+                      neut_reaction_mode ==  21 ||
+                      neut_reaction_mode ==  22 || 
+                      neut_reaction_mode ==  23 || 
+                      neut_reaction_mode ==  26 ||
+		      neut_reaction_mode == -16 || 
+		      neut_reaction_mode == -17 || 
+		      neut_reaction_mode == -21 ||
+		      neut_reaction_mode == -22 || 
+		      neut_reaction_mode == -23 || 
+		      neut_reaction_mode == -26);
+     use_it = is_nue && is_ccoth;
   }
 
   else
@@ -1761,6 +1726,8 @@ bool t2kana::util::UseEventToFillInTemplate(
                      neut_reaction_mode ==  41 ||
                      neut_reaction_mode ==  42 ||
                      neut_reaction_mode ==  43 ||
+                     neut_reaction_mode ==  44 ||
+                     neut_reaction_mode ==  45 ||
                      neut_reaction_mode ==  46 ||
                      neut_reaction_mode ==  51 ||
                      neut_reaction_mode ==  52 ||
