@@ -1575,125 +1575,215 @@ TMatrixD * t2kana::util::XML2TMatrixD(
 
   return matrix_copy;
 }
+
+
+
+//___________________________________________________________________________
+//a few helper functions for use in UseEventToFillInTemplate
+//that make swapping mode definitions a little easier
+
+bool IsCCQE(int neut_reaction_mode) {
+  return neut_reaction_mode ==  1;
+}
+
+bool IsCC1pi(int neut_reaction_mode) {
+  bool is_cc1pi = (neut_reaction_mode == 11 || 
+		   neut_reaction_mode == 12 || 
+		   neut_reaction_mode == 13);
+  return is_cc1pi;
+}
+
+bool IsCCcoh(int neut_reaction_mode) {
+  return neut_reaction_mode ==  16;
+}
+
+bool IsCCoth_e(int neut_reaction_mode) {
+  bool is_ccoth_e = (neut_reaction_mode == 17 ||
+		     neut_reaction_mode == 21 ||
+		     neut_reaction_mode == 22 || 
+		     neut_reaction_mode == 23 || 
+		     neut_reaction_mode == 26);
+  return is_ccoth_e;
+}
+
+bool IsCCoth_mu(int neut_reaction_mode) {
+  return IsCCcoh(neut_reaction_mode) || IsCCoth_e(neut_reaction_mode);
+}
+
+bool IsNC1pi0(int neut_reaction_mode) {
+  bool is_cc1pi0 = (neut_reaction_mode == 31 ||
+		    neut_reaction_mode == 32);
+  return is_cc1pi0;
+}
+
+bool IsNCcoh(int neut_reaction_mode) {
+  return neut_reaction_mode == 36;
+}
+
+bool IsNCoth_e(int neut_reaction_mode) {
+  bool is_ncoth_e = (neut_reaction_mode == 33 ||
+		     neut_reaction_mode == 34 ||
+		     neut_reaction_mode == 38 ||
+		     neut_reaction_mode == 39 ||
+		     neut_reaction_mode == 41 ||
+		     neut_reaction_mode == 42 ||
+		     neut_reaction_mode == 43 ||
+		     neut_reaction_mode == 44 ||
+		     neut_reaction_mode == 45 ||
+		     neut_reaction_mode == 46 ||
+		     neut_reaction_mode == 51 ||
+		     neut_reaction_mode == 52);
+  return is_ncoth_e;
+}
+
+bool IsNCall(int neut_reaction_mode) {
+  bool is_ncall = (IsNC1pi0 (neut_reaction_mode) ||
+		   IsNCcoh  (neut_reaction_mode) ||
+		   IsNCoth_e(neut_reaction_mode));
+  return is_ncall;
+}
+
 //___________________________________________________________________________
 bool t2kana::util::UseEventToFillInTemplate(
   SuperkMode_t m, int nu_pdg_code, int neut_reaction_mode)
 {
+
   bool use_it = false;
 
+  //NuMu templates
   if(m == kSKmNuMuCCQE) 
   {
      bool is_numu = (nu_pdg_code == kPdgNuMu);
-     bool is_ccqe = (neut_reaction_mode == 1);
-     use_it = is_numu && is_ccqe;
+     use_it = is_numu && IsCCQE(neut_reaction_mode);
   } 
 
   else
   if(m == kSKmNuMuCC1pi) 
   {
      bool is_numu  = (nu_pdg_code == kPdgNuMu);
-     bool is_cc1pi = (neut_reaction_mode == 11 || 
-                      neut_reaction_mode == 12 || 
-                      neut_reaction_mode == 13);
-     use_it = is_numu && is_cc1pi;
+     use_it = is_numu && IsCC1pi(neut_reaction_mode);
   } 
+
+  else
+  if(m == kSKmNuMuCCcoh)
+  {
+    bool is_numu  = (nu_pdg_code == kPdgNuMu);
+    use_it = is_numu && IsCCcoh(neut_reaction_mode);
+  }
 
   else
   if(m == kSKmNuMuCCoth_mu) 
   {
-     bool is_numu  = (nu_pdg_code == kPdgNuMu);
-     bool is_ccoth = (neut_reaction_mode == 16 || 
-                      neut_reaction_mode == 17 || 
-                      neut_reaction_mode == 21 ||
-                      neut_reaction_mode == 22 || 
-                      neut_reaction_mode == 23 || 
-                      neut_reaction_mode == 26);
-     use_it = is_numu && is_ccoth;
+     bool is_numu     = (nu_pdg_code == kPdgNuMu);
+     use_it = is_numu && IsCCoth_mu(neut_reaction_mode);
   } 
+
+  else
+  if(m == kSKmNuMuCCoth_e)
+  {
+    bool is_numu    = (nu_pdg_code == kPdgNuMu);
+    use_it = is_numu && IsCCoth_e(neut_reaction_mode);
+  }
 
   else
   if(m == kSKmNuMuNC) 
   {
-     bool is_numu  = (nu_pdg_code == kPdgNuMu);
-     bool is_nc    = (neut_reaction_mode == 31 ||
-                      neut_reaction_mode == 32 ||
-                      neut_reaction_mode == 36 ||
-                      neut_reaction_mode == 33 ||
-                      neut_reaction_mode == 34 ||
-                      neut_reaction_mode == 38 ||
-                      neut_reaction_mode == 39 ||
-                      neut_reaction_mode == 41 ||
-                      neut_reaction_mode == 42 ||
-                      neut_reaction_mode == 43 ||
-                      neut_reaction_mode == 44 ||
-                      neut_reaction_mode == 45 ||
-                      neut_reaction_mode == 46 ||
-                      neut_reaction_mode == 51 ||
-                      neut_reaction_mode == 52);
-     use_it = is_numu && is_nc;
+     bool is_numu   = (nu_pdg_code == kPdgNuMu);
+     use_it = is_numu && IsNCall(neut_reaction_mode);
   } 
 
+  else
+  if(m == kSKmNuMuNC1pi0) 
+  {
+     bool is_numu   = (nu_pdg_code == kPdgNuMu);
+     use_it = is_numu && IsNC1pi0(neut_reaction_mode);
+  } 
+
+  else
+  if(m == kSKmNuMuNCcoh) 
+  {
+     bool is_numu  = (nu_pdg_code == kPdgNuMu);
+     use_it = is_numu && IsNCcoh(neut_reaction_mode);
+  } 
+
+  else
+  if(m == kSKmNuMuNCoth_e) 
+  {
+     bool is_numu    = (nu_pdg_code == kPdgNuMu);
+     use_it = is_numu && IsNCoth_e(neut_reaction_mode);
+  } 
+
+  //NuMuBar templates
   else
   if(m == kSKmNuMuBarCCQE) 
   {
      bool is_numubar = (nu_pdg_code == kPdgNuMuBar);
-     bool is_ccqe    = (neut_reaction_mode == -1);
-     use_it = is_numubar && is_ccqe;
+     use_it = is_numubar && IsCCQE(-neut_reaction_mode);
   } 
 
   else
   if(m == kSKmNuMuBarCC1pi) 
   {
      bool is_numubar = (nu_pdg_code == kPdgNuMuBar);
-     bool is_cc1pi   = (neut_reaction_mode == -11 || 
-                        neut_reaction_mode == -12 || 
-                        neut_reaction_mode == -13);
-     use_it = is_numubar && is_cc1pi;
+     use_it = is_numubar && IsCC1pi(-neut_reaction_mode);
+  } 
+
+  else
+  if(m == kSKmNuMuBarCCcoh) 
+  {
+     bool is_numubar = (nu_pdg_code == kPdgNuMuBar);
+     use_it = is_numubar && IsCCcoh(-neut_reaction_mode);
   } 
 
   else
   if(m == kSKmNuMuBarCCoth_mu) 
   {
+     bool is_numubar  = (nu_pdg_code == kPdgNuMuBar);
+     use_it = is_numubar && IsCCoth_mu(-neut_reaction_mode);
+  } 
+
+  else
+  if(m == kSKmNuMuBarCCoth_e) 
+  {
      bool is_numubar = (nu_pdg_code == kPdgNuMuBar);
-     bool is_ccoth   = (neut_reaction_mode == -16 || 
-                        neut_reaction_mode == -17 || 
-                        neut_reaction_mode == -21 ||
-                        neut_reaction_mode == -22 || 
-                        neut_reaction_mode == -23 || 
-                        neut_reaction_mode == -26);
-     use_it = is_numubar && is_ccoth;
+     use_it = is_numubar && IsCCoth_e(-neut_reaction_mode);
   } 
 
   else
   if(m == kSKmNuMuBarNC) 
   {
      bool is_numubar  = (nu_pdg_code == kPdgNuMuBar);
-     bool is_nc       = (neut_reaction_mode == -31 ||
-                         neut_reaction_mode == -32 ||
-                         neut_reaction_mode == -36 ||
-                         neut_reaction_mode == -33 ||
-                         neut_reaction_mode == -34 ||
-                         neut_reaction_mode == -38 ||
-                         neut_reaction_mode == -39 ||
-                         neut_reaction_mode == -41 ||
-                         neut_reaction_mode == -42 ||
-                         neut_reaction_mode == -43 ||
-                         neut_reaction_mode == -44 ||
-                         neut_reaction_mode == -45 ||
-                         neut_reaction_mode == -46 ||
-                         neut_reaction_mode == -51 ||
-                         neut_reaction_mode == -52);
-     use_it = is_numubar && is_nc;
+     use_it = is_numubar && IsNCall(-neut_reaction_mode);
   } 
 
+  else
+  if(m == kSKmNuMuBarNC1pi0) 
+  {
+     bool is_numubar  = (nu_pdg_code == kPdgNuMuBar);
+     use_it = is_numubar && IsNC1pi0(-neut_reaction_mode);
+  } 
+
+  else
+  if(m == kSKmNuMuBarNCcoh) 
+  {
+     bool is_numubar  = (nu_pdg_code == kPdgNuMuBar);
+     use_it = is_numubar && IsNCcoh(-neut_reaction_mode);
+  } 
+
+  else
+  if(m == kSKmNuMuBarNCoth_e) 
+  {
+     bool is_numubar  = (nu_pdg_code == kPdgNuMuBar);
+     use_it = is_numubar && IsNCoth_e(-neut_reaction_mode);
+  } 
+
+  //NuE (signal and beam) templates
   else
   if(m == kSKmNuECCQE || m == kSKmSigNuECCQE) 
   {
      bool is_nue  = (nu_pdg_code == kPdgNuE || 
                      nu_pdg_code == kPdgNuEBar);
-     bool is_ccqe = (neut_reaction_mode == 1 || 
-                     neut_reaction_mode == -1);
-     use_it = is_nue && is_ccqe;
+     use_it = is_nue && (IsCCQE(neut_reaction_mode) || IsCCQE(-neut_reaction_mode));
   } 
 
   else
@@ -1701,33 +1791,32 @@ bool t2kana::util::UseEventToFillInTemplate(
   {
      bool is_nue   = (nu_pdg_code == kPdgNuE || 
                       nu_pdg_code == kPdgNuEBar);
-     bool is_cc1pi = (neut_reaction_mode ==  11 || 
-                      neut_reaction_mode ==  12 || 
-                      neut_reaction_mode ==  13 ||
-                      neut_reaction_mode == -11 || 
-                      neut_reaction_mode == -12 || 
-                      neut_reaction_mode == -13);
-     use_it = is_nue && is_cc1pi;
+     use_it = is_nue && (IsCC1pi(neut_reaction_mode) || IsCC1pi(-neut_reaction_mode));
   }
+
+  else
+  if(m == kSKmNuECCcoh) 
+  {
+     bool is_nue   = (nu_pdg_code == kPdgNuE || 
+		      nu_pdg_code == kPdgNuEBar);
+     use_it = is_nue && (IsCCcoh(neut_reaction_mode) || IsCCcoh(-neut_reaction_mode));
+  } 
+
 
   else
   if(m == kSKmNuECCoth_mu || m == kSKmSigNuECCoth) 
   {
-     bool is_nue    = (nu_pdg_code == kPdgNuE || 
-                       nu_pdg_code == kPdgNuEBar);
-     bool is_ccoth = (neut_reaction_mode ==  16 || 
-                      neut_reaction_mode ==  17 || 
-                      neut_reaction_mode ==  21 ||
-                      neut_reaction_mode ==  22 || 
-                      neut_reaction_mode ==  23 || 
-                      neut_reaction_mode ==  26 ||
-		      neut_reaction_mode == -16 || 
-		      neut_reaction_mode == -17 || 
-		      neut_reaction_mode == -21 ||
-		      neut_reaction_mode == -22 || 
-		      neut_reaction_mode == -23 || 
-		      neut_reaction_mode == -26);
-     use_it = is_nue && is_ccoth;
+     bool is_nue      = (nu_pdg_code == kPdgNuE || 
+			 nu_pdg_code == kPdgNuEBar);
+     use_it = is_nue && (IsCCoth_mu(neut_reaction_mode) || IsCCoth_mu(-neut_reaction_mode));
+  }
+
+  else
+  if(m == kSKmNuECCoth_e) 
+  {
+     bool is_nue     = (nu_pdg_code == kPdgNuE || 
+			nu_pdg_code == kPdgNuEBar);
+     use_it = is_nue && (IsCCoth_e(neut_reaction_mode) || IsCCoth_e(-neut_reaction_mode));
   }
 
   else
@@ -1735,37 +1824,31 @@ bool t2kana::util::UseEventToFillInTemplate(
   {
      bool is_nue  = (nu_pdg_code == kPdgNuE || 
                      nu_pdg_code == kPdgNuEBar);
-     bool is_nc   = (neut_reaction_mode ==  31 ||
-                     neut_reaction_mode ==  32 ||
-                     neut_reaction_mode ==  36 ||
-                     neut_reaction_mode ==  33 ||
-                     neut_reaction_mode ==  34 ||
-                     neut_reaction_mode ==  38 ||
-                     neut_reaction_mode ==  39 ||
-                     neut_reaction_mode ==  41 ||
-                     neut_reaction_mode ==  42 ||
-                     neut_reaction_mode ==  43 ||
-                     neut_reaction_mode ==  44 ||
-                     neut_reaction_mode ==  45 ||
-                     neut_reaction_mode ==  46 ||
-                     neut_reaction_mode ==  51 ||
-                     neut_reaction_mode ==  52 ||
-                     neut_reaction_mode == -31 ||
-                     neut_reaction_mode == -32 ||
-                     neut_reaction_mode == -36 ||
-                     neut_reaction_mode == -33 ||
-                     neut_reaction_mode == -34 ||
-                     neut_reaction_mode == -38 ||
-                     neut_reaction_mode == -39 ||
-                     neut_reaction_mode == -41 ||
-                     neut_reaction_mode == -42 ||
-                     neut_reaction_mode == -43 ||
-                     neut_reaction_mode == -44 ||
-                     neut_reaction_mode == -45 ||
-                     neut_reaction_mode == -46 ||
-                     neut_reaction_mode == -51 ||
-                     neut_reaction_mode == -52);
-     use_it = is_nue && is_nc;
+     use_it = is_nue && (IsNCall(neut_reaction_mode) || IsNCall(-neut_reaction_mode));
+  }
+
+  else
+  if(m == kSKmNuENC1pi0) 
+  {
+     bool is_nue    = (nu_pdg_code == kPdgNuE || 
+		       nu_pdg_code == kPdgNuEBar);
+     use_it = is_nue && (IsNC1pi0(neut_reaction_mode) || IsNC1pi0(-neut_reaction_mode));
+  }
+
+  else
+  if(m == kSKmNuENCcoh) 
+  {
+     bool is_nue   = (nu_pdg_code == kPdgNuE || 
+                      nu_pdg_code == kPdgNuEBar);
+     use_it = is_nue && (IsNCcoh(neut_reaction_mode) || IsNCcoh(-neut_reaction_mode));
+  }
+
+  else
+  if(m == kSKmNuENCoth_e) 
+  {
+     bool is_nue     = (nu_pdg_code == kPdgNuE || 
+			nu_pdg_code == kPdgNuEBar);
+     use_it = is_nue && (IsNCoth_e(neut_reaction_mode) || IsNCoth_e(-neut_reaction_mode));
   }
  
   return use_it;

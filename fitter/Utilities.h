@@ -106,6 +106,18 @@ namespace util {
   // reaction modes etc
 
   bool UseEventToFillInTemplate(t2kana::conv::SuperkMode_t m, int nu_pdg_code, int neut_reaction_mode);
+  //a few helper functions for use in UseEventToFillInTemplate
+  //for some reason??? when these are uncommented it compiles without error or warning, but root2k doesn't like the library
+/*   bool IsCCQE(int neut_reaction_mode); */
+/*   bool IsCC1pi(int neut_reaction_mode); */
+/*   bool IsCCcoh(int neut_reaction_mode); */
+/*   bool IsCCoth_e(int neut_reaction_mode); */
+/*   bool IsCCoth_mu(int neut_reaction_mode); */
+/*   bool IsNC1pi0(int neut_reaction_mode); */
+/*   bool IsNCcoh(int neut_reaction_mode); */
+/*   bool IsNCoth_e(int neut_reaction_mode); */
+/*   bool IsNCall(int neut_reaction_mode); */
+
 
   // ROOT style/formatting
 
