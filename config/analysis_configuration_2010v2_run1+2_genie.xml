@@ -83,49 +83,66 @@ from the GENIE/NEUT physics monte carlo groups.
   -->
   <superk>
      <mc>
-        <numu>
-           <pot>
-              4.56618E+23
-           </pot>
-           <one_mu_ring>
-              <filename>   inputs/official/2010/superk/genie/superk_1RmuT_numu_10a.root  </filename>
-              <objname>    selection_tree   </objname>
-              <objtype>    TTree            </objtype>
-           </one_mu_ring>
-        </numu>
-
-        <numubar>
-           <pot>
-              4.5897E+24
-           </pot>
-           <one_mu_ring>
-              <filename>   inputs/official/2010/superk/genie/superk_1RmuT_numubar_10a.root  </filename>
-              <objname>    selection_tree   </objname>
-              <objtype>    TTree            </objtype>
-           </one_mu_ring>
-        </numubar>
-
-        <nuebeam>
-           <pot>
-              2.37899E+25
-           </pot>
-           <one_mu_ring>
-              <filename>   inputs/official/2010/superk/genie/superk_1RmuT_nuebeam_10a.root  </filename>
-              <objname>    selection_tree   </objname>
-              <objtype>    TTree            </objtype>
-           </one_mu_ring>
-        </nuebeam>
-
-        <nuesignal>
-           <pot>
-              2.22199E+23
-           </pot>
-           <one_mu_ring>
-              <filename>   inputs/official/2010/superk/genie/superk_1RmuT_nuesig_10a.root  </filename>
-              <objname>    selection_tree   </objname>
-              <objtype>    TTree            </objtype>
-           </one_mu_ring>
-        </nuesignal>
+          <numu>
+             <pot> 
+                 4.56618E+23 
+             </pot>
+             <one_mu_ring>
+                 <filename>   inputs/official/2010/superk/genie/superk_1RmuT_numu_10a.root  </filename>
+                 <objname>    selection_tree   </objname>
+                 <objtype>    TTree            </objtype>
+              </one_mu_ring>
+             <one_e_ring>
+                 <filename>   inputs/official/2010/superk/genie/superk_1ReT_numu_10a.root  </filename>
+                 <objname>    selection_tree   </objname>
+                 <objtype>    TTree            </objtype>
+              </one_e_ring>
+          </numu>
+          <numubar>
+             <pot> 
+                 4.5897E+24 
+             </pot>
+             <one_mu_ring>
+                 <filename>   inputs/official/2010/superk/genie/superk_1RmuT_numubar_10a.root  </filename>
+                 <objname>    selection_tree   </objname>
+                 <objtype>    TTree            </objtype>
+             </one_mu_ring>
+             <one_e_ring>
+                 <filename>   inputs/official/2010/superk/genie/superk_1ReT_numubar_10a.root  </filename>
+                 <objname>    selection_tree   </objname>
+                 <objtype>    TTree            </objtype>
+             </one_e_ring>
+          </numubar>
+          <nuebeam>
+             <pot> 
+                 2.37899E+25 
+             </pot>
+             <one_mu_ring>
+                 <filename>   inputs/official/2010/superk/genie/superk_1RmuT_nuebeam_10a.root  </filename>
+                 <objname>    selection_tree   </objname>
+                 <objtype>    TTree            </objtype>
+             </one_mu_ring>
+             <one_e_ring>
+                 <filename>   inputs/official/2010/superk/genie/superk_1ReT_nuebeam_10a.root  </filename>
+                 <objname>    selection_tree   </objname>
+                 <objtype>    TTree            </objtype>
+             </one_e_ring>
+          </nuebeam>
+          <nuesignal>
+             <pot> 
+                 2.22199E+23 
+             </pot>
+             <one_mu_ring>
+                 <filename>   inputs/official/2010/superk/genie/superk_1RmuT_nuesig_10a.root  </filename>
+                 <objname>    selection_tree   </objname>
+                 <objtype>    TTree            </objtype>
+             </one_mu_ring>
+             <one_e_ring>
+                 <filename>   inputs/official/2010/superk/genie/superk_1ReT_nuesig_10a.root  </filename>
+                 <objname>    selection_tree   </objname>
+                 <objtype>    TTree            </objtype>
+             </one_e_ring>
+          </nuesignal>
      </mc>
 
      <!--
