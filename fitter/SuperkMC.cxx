@@ -230,6 +230,8 @@ bool SuperkMC::Read(TXMLEngine* xml, XMLNodePointer_t root_node)
 #ifdef __show_init_mesg_info__
   cout << "Exp/SKMC >> Filling-in SuperK MC templates... " << endl;
 #endif
+
+  // ... for numu disappearance analysis
   this->CreateTemplate (kSKsFCFV1RingMuLike, kSKmNuMuCCQE        );
   this->CreateTemplate (kSKsFCFV1RingMuLike, kSKmNuMuCC1pi       );
   this->CreateTemplate (kSKsFCFV1RingMuLike, kSKmNuMuCCoth_mu    );
@@ -245,23 +247,33 @@ bool SuperkMC::Read(TXMLEngine* xml, XMLNodePointer_t root_node)
   this->CreateTemplate (kSKsFCFV1RingMuLike, kSKmSigNuECCQE      );
   this->CreateTemplate (kSKsFCFV1RingMuLike, kSKmSigNuECC1pi     );
   this->CreateTemplate (kSKsFCFV1RingMuLike, kSKmSigNuECCoth     );
-/*
+
+  // ... for nue appearance analysis
   this->CreateTemplate (kSKsFCFV1RingELike, kSKmNuMuCCQE         );
   this->CreateTemplate (kSKsFCFV1RingELike, kSKmNuMuCC1pi        );
-  this->CreateTemplate (kSKsFCFV1RingELike, kSKmNuMuCCoth_mu     );
-  this->CreateTemplate (kSKsFCFV1RingELike, kSKmNuMuNC           );
+  this->CreateTemplate (kSKsFCFV1RingELike, kSKmNuMuCCcoh        );
+  this->CreateTemplate (kSKsFCFV1RingELike, kSKmNuMuCCoth_e      );
+  this->CreateTemplate (kSKsFCFV1RingELike, kSKmNuMuNC1pi0       );
+  this->CreateTemplate (kSKsFCFV1RingELike, kSKmNuMuNCcoh        );
+  this->CreateTemplate (kSKsFCFV1RingELike, kSKmNuMuNCoth_e      );
   this->CreateTemplate (kSKsFCFV1RingELike, kSKmNuMuBarCCQE      );
   this->CreateTemplate (kSKsFCFV1RingELike, kSKmNuMuBarCC1pi     );
-  this->CreateTemplate (kSKsFCFV1RingELike, kSKmNuMuBarCCoth_mu  );
-  this->CreateTemplate (kSKsFCFV1RingELike, kSKmNuMuBarNC        );
+  this->CreateTemplate (kSKsFCFV1RingELike, kSKmNuMuBarCCcoh     );
+  this->CreateTemplate (kSKsFCFV1RingELike, kSKmNuMuBarCCoth_e   );
+  this->CreateTemplate (kSKsFCFV1RingELike, kSKmNuMuBarNC1pi0    );
+  this->CreateTemplate (kSKsFCFV1RingELike, kSKmNuMuBarNCcoh     );
+  this->CreateTemplate (kSKsFCFV1RingELike, kSKmNuMuBarNCoth_e   );
   this->CreateTemplate (kSKsFCFV1RingELike, kSKmNuECCQE          );
   this->CreateTemplate (kSKsFCFV1RingELike, kSKmNuECC1pi         );
-  this->CreateTemplate (kSKsFCFV1RingELike, kSKmNuECCoth_mu      );
-  this->CreateTemplate (kSKsFCFV1RingELike, kSKmNuENC            );
+  this->CreateTemplate (kSKsFCFV1RingELike, kSKmNuECCcoh         );
+  this->CreateTemplate (kSKsFCFV1RingELike, kSKmNuECCoth_e       );
+  this->CreateTemplate (kSKsFCFV1RingELike, kSKmNuENC1pi0        );
+  this->CreateTemplate (kSKsFCFV1RingELike, kSKmNuENCcoh         );
+  this->CreateTemplate (kSKsFCFV1RingELike, kSKmNuENCoth_e       );
   this->CreateTemplate (kSKsFCFV1RingELike, kSKmSigNuECCQE       );
   this->CreateTemplate (kSKsFCFV1RingELike, kSKmSigNuECC1pi      );
   this->CreateTemplate (kSKsFCFV1RingELike, kSKmSigNuECCoth      );
-*/
+
   //
   // Systematics
   //
