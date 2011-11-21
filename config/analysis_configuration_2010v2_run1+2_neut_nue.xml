@@ -1,0 +1,400 @@
+<?xml version="1.0"?>
+
+<!--
+Inputs to the Rutherford-Oxford T2K NuMu Disappearance Analysis 
+from the ND280, Superk, Beam, NIWG support groups and 
+from the GENIE/NEUT physics monte carlo groups.
+-->
+
+<analysis_inputs analysis="RutherfordOxford/T2KNuMu" mc="NEUT">
+
+  <!--
+  ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+  Inputs from the Beam WG
+  ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+  -->
+  <beam>
+     <superk_flux>
+       <!--
+        POT for flux simulation (100 flux files x 1E+21 POT each)
+       -->
+       <pot_mc>  1E+23  </pot_mc>
+       <!--
+        Nominal SuperK flux
+       -->
+       <v10a>
+         <numu>
+            <filename>   inputs/official/2010/flux/10a/sk_10a_allmodes.root </filename>
+            <objname>    numu_flux  </objname>
+            <objtype>    TH1D       </objtype>
+         </numu>
+         <numu_varbin>
+            <filename>   inputs/official/2010/flux/10a/sk_10a_varbin19_allmodes.root </filename>
+            <objname>    numu_flux  </objname>
+            <objtype>    TH1D       </objtype>
+         </numu_varbin>
+       </v10a>
+       <!--
+        Flux weights 10a -> 10d(v3.1)
+       -->
+       <weight_v10a_to_v10d>
+         <numu>
+            <filename>   inputs/official/2010/flux/10d_v3/sk_tuned_10dv3_1_runIandII_fine.root </filename>
+            <objname>    enu_sk_tune10d_numu_ratio   </objname>
+            <objtype>    TH1D                        </objtype>
+         </numu>
+         <numubar>
+            <filename>   inputs/official/2010/flux/10d_v3/sk_tuned_10dv3_1_runIandII_fine.root </filename>
+            <objname>    enu_sk_tune10d_numub_ratio  </objname>
+            <objtype>    TH1D                        </objtype>
+         </numubar>
+         <nue>
+            <filename>   inputs/official/2010/flux/10d_v3/sk_tuned_10dv3_1_runIandII_fine.root </filename>
+            <objname>    enu_sk_tune10d_nue_ratio    </objname>
+            <objtype>    TH1D                        </objtype>
+         </nue>
+       </weight_v10a_to_v10d>
+       <!--
+        Inputs for systematic studies
+       -->
+       <systematics>
+        <fractional_covariance>
+             <numu>
+                 <filename>   inputs/official/2010/flux/shape_error/v3.1/sk_shape_cov_v31.root </filename>
+                 <objname>    sk_shape_cov_numu_hist </objname>
+                 <objtype>    TH2D  </objtype>
+             </numu>
+         </fractional_covariance>
+         <norm_error_inputs>
+                ./inputs/official/2010/flux/norm_error/v3.1/share/
+<!--            none-->
+         </norm_error_inputs>
+         <norm_error_simple_version>
+		0.05
+         </norm_error_simple_version>
+       </systematics>
+     </superk_flux>     
+  </beam>
+
+  <!--
+  ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+  Inputs from SuperK
+  ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+  -->
+  <!-- 
+   The NEUT MC normalization numbers come from Kameda-san.
+   Unlike GENIE, we can not easily verify. Kameda-san got #no.events/22.5kt/1E+21POT from
+   Hayato-san and original document/calculation could not be traced.
+   Kameda's numbers (to normalize MC to 3.23E+19 POT / no ND280 correction) were:
+   - numu    = 0.00227666  * (0.0323)
+   - numubar = 0.000222234 * (0.0323)
+   - nuebeam = 4.5953E-5   * (0.0323)
+   Therefore, NEUT-folks must have estimated that their MC samples correspond to:
+   - numu    = (1. / 0.00227666 ) x 1E+21 = 4.3923994 x 1E+23 POT
+   - numubar = (1. / 0.000222234) x 1E+21 = 4.4997615 x 1E+24 POT
+   - nuebeam = (1. / 4.5953E-5  ) x 1E+21 = 2.1761365 x 1E+25 POT
+
+   When the 3-flavour analysis was implemented, we had to include the nuesignal sample so
+   we asked Josh for the nuesignal sample normalization. Josh said that, for Run-1 (before flux
+   and ND280 corrections) he used a normalization factor of 1.545359471E-4.
+   Therefore his nuesignal MC sample must correspond to 3.23E+19 POT / 1.545359471E-4 =
+   2.090128583E+23 POT.
+  -->
+
+  <superk>     
+     <mc>
+        <numu>
+           <pot>
+		4.3923994E+23
+           </pot>
+           <one_mu_ring>
+              <filename>   inputs/official/2010/superk/neut/superk_1ReT_numu_10a.root  </filename>
+              <objname>    selection_tree   </objname>
+              <objtype>    TTree            </objtype>
+           </one_mu_ring>
+        </numu>
+
+        <numubar>
+           <pot>
+              4.4997615E+24
+           </pot>
+           <one_mu_ring>
+              <filename>   inputs/official/2010/superk/neut/superk_1ReT_numubar_10a.root  </filename>
+              <objname>    selection_tree   </objname>
+              <objtype>    TTree            </objtype>
+           </one_mu_ring>
+        </numubar>
+
+        <nuebeam>
+           <pot>
+              2.1761365E+25
+           </pot>
+           <one_mu_ring>
+              <filename>   inputs/official/2010/superk/neut/superk_1ReT_nuebeam_10a.root  </filename>
+              <objname>    selection_tree   </objname>
+              <objtype>    TTree            </objtype>
+           </one_mu_ring>
+        </nuebeam>
+
+        <nuesignal>
+           <pot>
+              2.090128583E+23
+           </pot>
+           <one_mu_ring>
+              <filename>   inputs/official/2010/superk/neut/superk_1ReT_nuesig_10a.root  </filename>
+              <objname>    selection_tree   </objname>
+              <objtype>    TTree            </objtype>
+           </one_mu_ring>
+        </nuesignal>
+     </mc>
+
+     <!--
+      Actual data (see data.xml)
+     -->
+     <observation>
+       <!--
+        POT for analysis sample
+        -->
+        <pot> 1.431E+20 </pot> 
+     </observation>
+
+     <!--
+      Inputs for systematic studies
+     -->
+     <systematics>
+         <energy_scale_relative_error>              
+            0.023  
+         </energy_scale_relative_error>
+         <efficiency_relative_error>  
+            <one_mu_ring>
+               <ccqe>
+                  <other_error>   0.017  </other_error>          
+                  <rc_error>          
+                     <filename>  inputs/official/2010/superk/err/sk_ccqe_rc_err_covariance.root </filename>
+                     <objname>   ccqe_rc_err_covariance  </objname>
+                     <objtype>   TMatrixD </objtype>
+                  </rc_error>                     
+                  <rc_ereco_high_bin1>   0.4  </rc_ereco_high_bin1>          
+                  <rc_ereco_high_bin2>   1.1  </rc_ereco_high_bin2>   
+               </ccqe>
+               <ccnonqe>   0.200 </ccnonqe>
+               <nc>        1.110 </nc>
+               <nuecc>     1.000 </nuecc>
+            </one_mu_ring>
+         </efficiency_relative_error>  
+     </systematics>
+
+  </superk>
+
+  <!--
+  ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+  Inputs from ND280
+  ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+  -->
+
+  <nd280>
+
+     <!--
+      POT for data sample
+     -->
+     <pot_data> 2.88E+19 </pot_data>
+     <!--
+      Inputs from the Saclay ND280 analysis
+     -->
+     <saclay_selection>
+       <!--
+        Observed number of CC-like events
+       -->
+       <nobs_cclike> 1456 </nobs_cclike>
+       <!--
+        POT for MC sample
+       -->
+       <pot_mc> 5.012619E+20 </pot_mc>
+       <!--
+          Number of events passing selection as a function of Etrue for various modes
+       -->
+       <true_energy_spectrum>
+         <!--
+              numu CC
+         -->
+         <numu_ccqe>
+            <filename>   inputs/official/2010/nd280/saclay/10d_v3/ND280NuEnergyHisto_NEUT10d_v3.root  </filename>
+            <objname>    EnergyNuMu_true_QE       </objname>
+            <objtype>    TH1F                     </objtype>
+         </numu_ccqe>
+         <numu_ccres>
+            <filename>   inputs/official/2010/nd280/saclay/10d_v3/ND280NuEnergyHisto_NEUT10d_v3.root  </filename>
+            <objname>    EnergyNuMu_true_res      </objname>
+            <objtype>    TH1F                     </objtype>
+         </numu_ccres>
+         <numu_cccoh>
+            <filename>   inputs/official/2010/nd280/saclay/10d_v3/ND280NuEnergyHisto_NEUT10d_v3.root  </filename>
+            <objname>    EnergyNuMu_true_coh      </objname>
+            <objtype>    TH1F                     </objtype>
+         </numu_cccoh>
+         <numu_ccoth>
+            <filename>   inputs/official/2010/nd280/saclay/10d_v3/ND280NuEnergyHisto_NEUT10d_v3.root  </filename>
+            <objname>    EnergyNuMu_true_oth      </objname>
+            <objtype>    TH1F                     </objtype>
+         </numu_ccoth>
+         <!--
+              numu NC
+         -->
+         <numu_ncres>
+            <filename>   inputs/official/2010/nd280/saclay/10d_v3/ND280NuEnergyHisto_NEUT10d_v3.root  </filename>
+            <objname>    EnergyNuMu_true_ncres    </objname>
+            <objtype>    TH1F                     </objtype>
+         </numu_ncres>
+         <numu_nccoh>
+            <filename>   inputs/official/2010/nd280/saclay/10d_v3/ND280NuEnergyHisto_NEUT10d_v3.root  </filename>
+            <objname>    EnergyNuMu_true_nccoh    </objname>
+            <objtype>    TH1F                     </objtype>
+         </numu_nccoh>
+         <numu_ncoth>
+            <filename>   inputs/official/2010/nd280/saclay/10d_v3/ND280NuEnergyHisto_NEUT10d_v3.root  </filename>
+            <objname>    EnergyNuMu_true_ncoth    </objname>
+            <objtype>    TH1F                     </objtype>
+         </numu_ncoth>
+         <!--
+              numubar CC
+         -->
+         <numubar_ccqe>
+            <filename>   inputs/official/2010/nd280/saclay/10d_v3/ND280NuEnergyHisto_NEUT10d_v3.root  </filename>
+            <objname>    EnergyANuMu_true_QE      </objname>
+            <objtype>    TH1F                     </objtype>
+         </numubar_ccqe>
+         <numubar_ccres>
+            <filename>   inputs/official/2010/nd280/saclay/10d_v3/ND280NuEnergyHisto_NEUT10d_v3.root  </filename>
+            <objname>    EnergyANuMu_true_res     </objname>
+            <objtype>    TH1F                     </objtype>
+         </numubar_ccres>
+         <numubar_cccoh>
+            <filename>   inputs/official/2010/nd280/saclay/10d_v3/ND280NuEnergyHisto_NEUT10d_v3.root  </filename>
+            <objname>    EnergyANuMu_true_coh     </objname>
+            <objtype>    TH1F                     </objtype>
+         </numubar_cccoh>
+         <numubar_ccoth>
+            <filename>   inputs/official/2010/nd280/saclay/10d_v3/ND280NuEnergyHisto_NEUT10d_v3.root  </filename>
+            <objname>    EnergyANuMu_true_oth     </objname>
+            <objtype>    TH1F                     </objtype>
+         </numubar_ccoth>
+         <!--
+              numubar NC
+         -->
+         <numubar_ncres>
+            <filename>   inputs/official/2010/nd280/saclay/10d_v3/ND280NuEnergyHisto_NEUT10d_v3.root  </filename>
+            <objname>    EnergyANuMu_true_ncres   </objname>
+            <objtype>    TH1F                     </objtype>
+         </numubar_ncres>
+         <numubar_nccoh>
+            <filename>   inputs/official/2010/nd280/saclay/10d_v3/ND280NuEnergyHisto_NEUT10d_v3.root  </filename>
+            <objname>    EnergyANuMu_true_nccoh   </objname>
+            <objtype>    TH1F                     </objtype>
+         </numubar_nccoh>
+         <numubar_ncoth>
+            <filename>   inputs/official/2010/nd280/saclay/10d_v3/ND280NuEnergyHisto_NEUT10d_v3.root  </filename>
+            <objname>    EnergyANuMu_true_ncoth   </objname>
+            <objtype>    TH1F                     </objtype>
+         </numubar_ncoth>
+         <!--
+              nue CC
+         -->
+         <nue_ccqe>
+            <filename>   inputs/official/2010/nd280/saclay/10d_v3/ND280NuEnergyHisto_NEUT10d_v3.root  </filename>
+            <objname>    EnergyNuE_true_QE        </objname>
+            <objtype>    TH1F                     </objtype>
+         </nue_ccqe>
+         <nue_ccres>
+            <filename>   inputs/official/2010/nd280/saclay/10d_v3/ND280NuEnergyHisto_NEUT10d_v3.root  </filename>
+            <objname>    EnergyNuE_true_res      </objname>
+            <objtype>    TH1F                    </objtype>
+         </nue_ccres>
+         <nue_cccoh>
+            <filename>   inputs/official/2010/nd280/saclay/10d_v3/ND280NuEnergyHisto_NEUT10d_v3.root  </filename>
+            <objname>    EnergyNuE_true_coh      </objname>
+            <objtype>    TH1F                    </objtype>
+         </nue_cccoh>
+         <nue_ccoth>
+            <filename>   inputs/official/2010/nd280/saclay/10d_v3/ND280NuEnergyHisto_NEUT10d_v3.root  </filename>
+            <objname>    EnergyNuE_true_oth      </objname>
+            <objtype>    TH1F                    </objtype>
+         </nue_ccoth>
+         <!--
+              nue NC
+         -->
+         <nue_ncres>
+            <filename>   inputs/official/2010/nd280/saclay/10d_v3/ND280NuEnergyHisto_NEUT10d_v3.root  </filename>
+            <objname>    EnergyNuE_true_ncres    </objname>
+            <objtype>    TH1F                    </objtype>
+         </nue_ncres>
+         <nue_nccoh>
+            <filename>   inputs/official/2010/nd280/saclay/10d_v3/ND280NuEnergyHisto_NEUT10d_v3.root  </filename>
+            <objname>    EnergyNuE_true_nccoh   </objname>
+            <objtype>    TH1F                   </objtype>
+         </nue_nccoh>
+         <nue_ncoth>
+            <filename>   inputs/official/2010/nd280/saclay/10d_v3/ND280NuEnergyHisto_NEUT10d_v3.root  </filename>
+            <objname>    EnergyNuE_true_ncoth   </objname>
+            <objtype>    TH1F                   </objtype>
+         </nue_ncoth>
+       </true_energy_spectrum>
+       <!--
+        Inputs for systematic studies
+       -->
+       <systematics>
+          <efficiency_relative_error>
+              <plus>  0.056 </plus>
+              <minus> 0.052 </minus>
+          </efficiency_relative_error>
+       </systematics>
+     </saclay_selection>
+
+  </nd280>
+
+  <!--
+  ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+  Agreed errors on cross sections
+  ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+  -->
+
+  <niwg>
+    <systematics>
+        <xsec_relative_error>
+           <ccqe>
+               <filename>   inputs/official/2010/niwg/niwg_errors_10a_v1.root </filename>
+               <objname>    h_ccqe_xsec_err    </objname>
+               <objtype>    TH1D               </objtype>
+           </ccqe>
+        </xsec_relative_error>
+        <xsec_ratio_relative_error>
+            <cc1pi_ccqe>
+                <filename>   inputs/official/2010/niwg/niwg_errors_10a_v1.root </filename>
+                <objname>    h_cc1pi_rat_err    </objname>
+                <objtype>    TH1D               </objtype>
+            </cc1pi_ccqe>
+            <ccother_ccqe>
+                <filename>   inputs/official/2010/niwg/niwg_errors_10a_v1.root </filename>
+                <objname>    h_ccoth_rat_err    </objname>
+                <objtype>    TH1D               </objtype>
+            </ccother_ccqe>
+            <nc_ccqe>
+                <filename>   inputs/official/2010/niwg/niwg_errors_10a_v1.root </filename>
+                <objname>    h_nc_rat_err       </objname>
+                <objtype>    TH1D               </objtype>
+            </nc_ccqe>
+        </xsec_ratio_relative_error>
+        <superk_nuclear_effect_relative_error>
+            <filename>   inputs/official/2010/niwg/niwg_errors_10a_v1.root </filename>
+            <objname>    sk_nuceff_fc1mu_osc0  </objname>
+            <objtype>    TH1D                 </objtype>
+        </superk_nuclear_effect_relative_error>
+    </systematics>
+  </niwg>
+
+  <neutrino_generator>
+     <cc1pi_in_ccres>
+        1.00
+     </cc1pi_in_ccres>
+  </neutrino_generator>
+
+</analysis_inputs>
