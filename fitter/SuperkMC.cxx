@@ -220,18 +220,36 @@ bool SuperkMC::Read(TXMLEngine* xml, XMLNodePointer_t root_node)
   assert(fMCTreeNuESig1Re);
 
 #ifdef __show_init_mesg_info__
-  cout << "Exp/SKMC >> " << "POT_{MC; numu}    = " << fMCPOTNuMu    << endl;
-  cout << "Exp/SKMC >> " << "POT_{MC; numubar} = " << fMCPOTNuMuBar << endl;
-  cout << "Exp/SKMC >> " << "POT_{MC; nue}     = " << fMCPOTNuE     << endl;
-  cout << "Exp/SKMC >> " << "POT_{MC; sig-nue} = " << fMCPOTNuESig  << endl;
+  cout << "Exp/SKMC >> " << "POT {MC; numu}    = " << fMCPOTNuMu    << endl;
+  cout << "Exp/SKMC >> " << "POT {MC; numubar} = " << fMCPOTNuMuBar << endl;
+  cout << "Exp/SKMC >> " << "POT {MC; nue_bkg} = " << fMCPOTNuE     << endl;
+  cout << "Exp/SKMC >> " << "POT {MC; nue_sig} = " << fMCPOTNuESig  << endl;
+  cout << "Exp/SKMC >> " << "Nev {MC; numu;    1Rmu} = " << fMCTreeNuMu1Rmu    -> GetEntries()  << endl;
+  cout << "Exp/SKMC >> " << "Nev {MC; numubar; 1Rmu} = " << fMCTreeNuMuBar1Rmu -> GetEntries()  << endl;
+  cout << "Exp/SKMC >> " << "Nev {MC; nue_bkg; 1Rmu} = " << fMCTreeNuE1Rmu     -> GetEntries()  << endl;
+  cout << "Exp/SKMC >> " << "Nev {MC; nue_sig; 1Rmu} = " << fMCTreeNuESig1Rmu  -> GetEntries()  << endl;
+  cout << "Exp/SKMC >> " << "Nev {MC; numu;    1Re } = " << fMCTreeNuMu1Re     -> GetEntries()  << endl;
+  cout << "Exp/SKMC >> " << "Nev {MC; numubar; 1Re } = " << fMCTreeNuMuBar1Re  -> GetEntries()  << endl;
+  cout << "Exp/SKMC >> " << "Nev {MC; nue_bkg; 1Re } = " << fMCTreeNuE1Re      -> GetEntries()  << endl;
+  cout << "Exp/SKMC >> " << "Nev {MC; nue_sig; 1Re } = " << fMCTreeNuESig1Re   -> GetEntries()  << endl;
 #endif
   
   // create templates 
 #ifdef __show_init_mesg_info__
   cout << "Exp/SKMC >> Filling-in SuperK MC templates... " << endl;
 #endif
-
   // ... for numu disappearance analysis
+  for(int im=0; im < kNumSK1RingMuLikeModes; im++) {
+    SuperkMode_t m = kSK1RingMuLikeModes[im];
+    this->CreateTemplate(kSKsFCFV1RingMuLike, m);
+  }
+  // ... for nue appearance analysis
+  for(int im=0; im < kNumSK1RingELikeModes; im++) {
+    SuperkMode_t m = kSK1RingELikeModes[im];
+    this->CreateTemplate(kSKsFCFV1RingELike, m);
+  }
+
+/*
   this->CreateTemplate (kSKsFCFV1RingMuLike, kSKmNuMuCCQE        );
   this->CreateTemplate (kSKsFCFV1RingMuLike, kSKmNuMuCC1pi       );
   this->CreateTemplate (kSKsFCFV1RingMuLike, kSKmNuMuCCoth_mu    );
@@ -248,7 +266,6 @@ bool SuperkMC::Read(TXMLEngine* xml, XMLNodePointer_t root_node)
   this->CreateTemplate (kSKsFCFV1RingMuLike, kSKmSigNuECC1pi     );
   this->CreateTemplate (kSKsFCFV1RingMuLike, kSKmSigNuECCoth     );
 
-  // ... for nue appearance analysis
   this->CreateTemplate (kSKsFCFV1RingELike, kSKmNuMuCCQE         );
   this->CreateTemplate (kSKsFCFV1RingELike, kSKmNuMuCC1pi        );
   this->CreateTemplate (kSKsFCFV1RingELike, kSKmNuMuCCcoh        );
@@ -273,6 +290,7 @@ bool SuperkMC::Read(TXMLEngine* xml, XMLNodePointer_t root_node)
   this->CreateTemplate (kSKsFCFV1RingELike, kSKmSigNuECCQE       );
   this->CreateTemplate (kSKsFCFV1RingELike, kSKmSigNuECC1pi      );
   this->CreateTemplate (kSKsFCFV1RingELike, kSKmSigNuECCoth      );
+*/
 
   //
   // Systematics
@@ -339,71 +357,95 @@ bool SuperkMC::Read(TXMLEngine* xml, XMLNodePointer_t root_node)
   f1RmNuEEt      -> SetDirectory(0);
     
   // Ereco histograms filled-in by SK spectrum prediction code
-  fMCErecoSpectrumTot[kSKsFCFV1RingMuLike]                  = new TH1D("","", kNvErecoBins, kNvErecoBinEdges);
-  fMCErecoSpectrum[kSKsFCFV1RingMuLike][kSKmNuMuCCQE]       = new TH1D("","", kNvErecoBins, kNvErecoBinEdges);
-  fMCErecoSpectrum[kSKsFCFV1RingMuLike][kSKmNuMuCC1pi]      = new TH1D("","", kNvErecoBins, kNvErecoBinEdges);
-  fMCErecoSpectrum[kSKsFCFV1RingMuLike][kSKmNuMuCCoth_mu]      = new TH1D("","", kNvErecoBins, kNvErecoBinEdges);
-  fMCErecoSpectrum[kSKsFCFV1RingMuLike][kSKmNuMuNC]             = new TH1D("","", kNvErecoBins, kNvErecoBinEdges);
-  fMCErecoSpectrum[kSKsFCFV1RingMuLike][kSKmNuMuBarCCQE]    = new TH1D("","", kNvErecoBins, kNvErecoBinEdges);
-  fMCErecoSpectrum[kSKsFCFV1RingMuLike][kSKmNuMuBarCC1pi]   = new TH1D("","", kNvErecoBins, kNvErecoBinEdges);
-  fMCErecoSpectrum[kSKsFCFV1RingMuLike][kSKmNuMuBarCCoth_mu]   = new TH1D("","", kNvErecoBins, kNvErecoBinEdges);
-  fMCErecoSpectrum[kSKsFCFV1RingMuLike][kSKmNuMuBarNC]      = new TH1D("","", kNvErecoBins, kNvErecoBinEdges);
-  fMCErecoSpectrum[kSKsFCFV1RingMuLike][kSKmNuECCQE]        = new TH1D("","", kNvErecoBins, kNvErecoBinEdges);
-  fMCErecoSpectrum[kSKsFCFV1RingMuLike][kSKmNuECC1pi]       = new TH1D("","", kNvErecoBins, kNvErecoBinEdges);
-  fMCErecoSpectrum[kSKsFCFV1RingMuLike][kSKmNuECCoth_mu]       = new TH1D("","", kNvErecoBins, kNvErecoBinEdges);
-  fMCErecoSpectrum[kSKsFCFV1RingMuLike][kSKmNuENC]          = new TH1D("","", kNvErecoBins, kNvErecoBinEdges);
-  fMCErecoSpectrum[kSKsFCFV1RingMuLike][kSKmSigNuECCQE]     = new TH1D("","", kNvErecoBins, kNvErecoBinEdges);
-  fMCErecoSpectrum[kSKsFCFV1RingMuLike][kSKmSigNuECC1pi]    = new TH1D("","", kNvErecoBins, kNvErecoBinEdges);
-  fMCErecoSpectrum[kSKsFCFV1RingMuLike][kSKmSigNuECCoth]    = new TH1D("","", kNvErecoBins, kNvErecoBinEdges);
-  fMCErecoSpectrumTot[kSKsFCFV1RingMuLike]                  -> SetDirectory(0);
-  fMCErecoSpectrum[kSKsFCFV1RingMuLike][kSKmNuMuCCQE]       -> SetDirectory(0);
-  fMCErecoSpectrum[kSKsFCFV1RingMuLike][kSKmNuMuCC1pi]      -> SetDirectory(0);
-  fMCErecoSpectrum[kSKsFCFV1RingMuLike][kSKmNuMuCCoth_mu]      -> SetDirectory(0);
-  fMCErecoSpectrum[kSKsFCFV1RingMuLike][kSKmNuMuNC]             -> SetDirectory(0);
-  fMCErecoSpectrum[kSKsFCFV1RingMuLike][kSKmNuMuBarCCQE]    -> SetDirectory(0);
-  fMCErecoSpectrum[kSKsFCFV1RingMuLike][kSKmNuMuBarCC1pi]   -> SetDirectory(0);
-  fMCErecoSpectrum[kSKsFCFV1RingMuLike][kSKmNuMuBarCCoth_mu]   -> SetDirectory(0);
-  fMCErecoSpectrum[kSKsFCFV1RingMuLike][kSKmNuMuBarNC]      -> SetDirectory(0);
-  fMCErecoSpectrum[kSKsFCFV1RingMuLike][kSKmNuECCQE]        -> SetDirectory(0);
-  fMCErecoSpectrum[kSKsFCFV1RingMuLike][kSKmNuECC1pi]       -> SetDirectory(0);
-  fMCErecoSpectrum[kSKsFCFV1RingMuLike][kSKmNuECCoth_mu]       -> SetDirectory(0);
-  fMCErecoSpectrum[kSKsFCFV1RingMuLike][kSKmNuENC]          -> SetDirectory(0);
-  fMCErecoSpectrum[kSKsFCFV1RingMuLike][kSKmSigNuECCQE]     -> SetDirectory(0);
-  fMCErecoSpectrum[kSKsFCFV1RingMuLike][kSKmSigNuECC1pi]    -> SetDirectory(0);
-  fMCErecoSpectrum[kSKsFCFV1RingMuLike][kSKmSigNuECCoth]    -> SetDirectory(0);
 
-  fMCErecoSpectrumTot[kSKsFCFV1RingELike]                  = new TH1D("","", kNvErecoBins, kNvErecoBinEdges);
-  fMCErecoSpectrum[kSKsFCFV1RingELike][kSKmNuMuCCQE]       = new TH1D("","", kNvErecoBins, kNvErecoBinEdges);
-  fMCErecoSpectrum[kSKsFCFV1RingELike][kSKmNuMuCC1pi]      = new TH1D("","", kNvErecoBins, kNvErecoBinEdges);
-  fMCErecoSpectrum[kSKsFCFV1RingELike][kSKmNuMuCCoth_mu]      = new TH1D("","", kNvErecoBins, kNvErecoBinEdges);
-  fMCErecoSpectrum[kSKsFCFV1RingELike][kSKmNuMuNC]             = new TH1D("","", kNvErecoBins, kNvErecoBinEdges);
-  fMCErecoSpectrum[kSKsFCFV1RingELike][kSKmNuMuBarCCQE]    = new TH1D("","", kNvErecoBins, kNvErecoBinEdges);
-  fMCErecoSpectrum[kSKsFCFV1RingELike][kSKmNuMuBarCC1pi]   = new TH1D("","", kNvErecoBins, kNvErecoBinEdges);
-  fMCErecoSpectrum[kSKsFCFV1RingELike][kSKmNuMuBarCCoth_mu]   = new TH1D("","", kNvErecoBins, kNvErecoBinEdges);
-  fMCErecoSpectrum[kSKsFCFV1RingELike][kSKmNuMuBarNC]      = new TH1D("","", kNvErecoBins, kNvErecoBinEdges);
-  fMCErecoSpectrum[kSKsFCFV1RingELike][kSKmNuECCQE]        = new TH1D("","", kNvErecoBins, kNvErecoBinEdges);
-  fMCErecoSpectrum[kSKsFCFV1RingELike][kSKmNuECC1pi]       = new TH1D("","", kNvErecoBins, kNvErecoBinEdges);
-  fMCErecoSpectrum[kSKsFCFV1RingELike][kSKmNuECCoth_mu]       = new TH1D("","", kNvErecoBins, kNvErecoBinEdges);
-  fMCErecoSpectrum[kSKsFCFV1RingELike][kSKmNuENC]          = new TH1D("","", kNvErecoBins, kNvErecoBinEdges);
-  fMCErecoSpectrum[kSKsFCFV1RingELike][kSKmSigNuECCQE]     = new TH1D("","", kNvErecoBins, kNvErecoBinEdges);
-  fMCErecoSpectrum[kSKsFCFV1RingELike][kSKmSigNuECC1pi]    = new TH1D("","", kNvErecoBins, kNvErecoBinEdges);
-  fMCErecoSpectrum[kSKsFCFV1RingELike][kSKmSigNuECCoth]    = new TH1D("","", kNvErecoBins, kNvErecoBinEdges);
-  fMCErecoSpectrumTot[kSKsFCFV1RingELike]                  -> SetDirectory(0);
-  fMCErecoSpectrum[kSKsFCFV1RingELike][kSKmNuMuCCQE]       -> SetDirectory(0);
-  fMCErecoSpectrum[kSKsFCFV1RingELike][kSKmNuMuCC1pi]      -> SetDirectory(0);
-  fMCErecoSpectrum[kSKsFCFV1RingELike][kSKmNuMuCCoth_mu]      -> SetDirectory(0);
-  fMCErecoSpectrum[kSKsFCFV1RingELike][kSKmNuMuNC]             -> SetDirectory(0);
-  fMCErecoSpectrum[kSKsFCFV1RingELike][kSKmNuMuBarCCQE]    -> SetDirectory(0);
-  fMCErecoSpectrum[kSKsFCFV1RingELike][kSKmNuMuBarCC1pi]   -> SetDirectory(0);
-  fMCErecoSpectrum[kSKsFCFV1RingELike][kSKmNuMuBarCCoth_mu]   -> SetDirectory(0);
-  fMCErecoSpectrum[kSKsFCFV1RingELike][kSKmNuMuBarNC]      -> SetDirectory(0);
-  fMCErecoSpectrum[kSKsFCFV1RingELike][kSKmNuECCQE]        -> SetDirectory(0);
-  fMCErecoSpectrum[kSKsFCFV1RingELike][kSKmNuECC1pi]       -> SetDirectory(0);
-  fMCErecoSpectrum[kSKsFCFV1RingELike][kSKmNuECCoth_mu]       -> SetDirectory(0);
-  fMCErecoSpectrum[kSKsFCFV1RingELike][kSKmNuENC]          -> SetDirectory(0);
-  fMCErecoSpectrum[kSKsFCFV1RingELike][kSKmSigNuECCQE]     -> SetDirectory(0);
-  fMCErecoSpectrum[kSKsFCFV1RingELike][kSKmSigNuECC1pi]    -> SetDirectory(0);
-  fMCErecoSpectrum[kSKsFCFV1RingELike][kSKmSigNuECCoth]    -> SetDirectory(0);
+  // numu disappearance:
+  // > total
+  fMCErecoSpectrumTot[kSKsFCFV1RingMuLike] = new TH1D("","", kNvErecoBins, kNvErecoBinEdges);
+  fMCErecoSpectrumTot[kSKsFCFV1RingMuLike] -> SetDirectory(0);
+  // > and for each mode
+  for(int im=0; im < kNumSK1RingMuLikeModes; im++) {
+    SuperkMode_t m = kSK1RingMuLikeModes[im];
+    fMCErecoSpectrum[kSKsFCFV1RingMuLike][m] = new TH1D("","", kNvErecoBins, kNvErecoBinEdges);
+    fMCErecoSpectrum[kSKsFCFV1RingMuLike][m] -> SetDirectory(0);
+  }
+  // nue appearance:
+  // > total
+  fMCErecoSpectrumTot[kSKsFCFV1RingELike] = new TH1D("","", kNvErecoBins, kNvErecoBinEdges);
+  fMCErecoSpectrumTot[kSKsFCFV1RingELike] -> SetDirectory(0);
+  // > and for each mode
+  for(int im=0; im < kNumSK1RingELikeModes; im++) {
+    SuperkMode_t m = kSK1RingELikeModes[im];
+    fMCErecoSpectrum[kSKsFCFV1RingELike][m] = new TH1D("","", kNvErecoBins, kNvErecoBinEdges);
+    fMCErecoSpectrum[kSKsFCFV1RingELike][m] -> SetDirectory(0);
+  }
+
+/*
+  fMCErecoSpectrumTot[kSKsFCFV1RingMuLike]                   = new TH1D("","", kNvErecoBins, kNvErecoBinEdges);
+  fMCErecoSpectrum[kSKsFCFV1RingMuLike][kSKmNuMuCCQE]        = new TH1D("","", kNvErecoBins, kNvErecoBinEdges);
+  fMCErecoSpectrum[kSKsFCFV1RingMuLike][kSKmNuMuCC1pi]       = new TH1D("","", kNvErecoBins, kNvErecoBinEdges);
+  fMCErecoSpectrum[kSKsFCFV1RingMuLike][kSKmNuMuCCoth_mu]    = new TH1D("","", kNvErecoBins, kNvErecoBinEdges);
+  fMCErecoSpectrum[kSKsFCFV1RingMuLike][kSKmNuMuNC]          = new TH1D("","", kNvErecoBins, kNvErecoBinEdges);
+  fMCErecoSpectrum[kSKsFCFV1RingMuLike][kSKmNuMuBarCCQE]     = new TH1D("","", kNvErecoBins, kNvErecoBinEdges);
+  fMCErecoSpectrum[kSKsFCFV1RingMuLike][kSKmNuMuBarCC1pi]    = new TH1D("","", kNvErecoBins, kNvErecoBinEdges);
+  fMCErecoSpectrum[kSKsFCFV1RingMuLike][kSKmNuMuBarCCoth_mu] = new TH1D("","", kNvErecoBins, kNvErecoBinEdges);
+  fMCErecoSpectrum[kSKsFCFV1RingMuLike][kSKmNuMuBarNC]       = new TH1D("","", kNvErecoBins, kNvErecoBinEdges);
+  fMCErecoSpectrum[kSKsFCFV1RingMuLike][kSKmNuECCQE]         = new TH1D("","", kNvErecoBins, kNvErecoBinEdges);
+  fMCErecoSpectrum[kSKsFCFV1RingMuLike][kSKmNuECC1pi]        = new TH1D("","", kNvErecoBins, kNvErecoBinEdges);
+  fMCErecoSpectrum[kSKsFCFV1RingMuLike][kSKmNuECCoth_mu]     = new TH1D("","", kNvErecoBins, kNvErecoBinEdges);
+  fMCErecoSpectrum[kSKsFCFV1RingMuLike][kSKmNuENC]           = new TH1D("","", kNvErecoBins, kNvErecoBinEdges);
+  fMCErecoSpectrum[kSKsFCFV1RingMuLike][kSKmSigNuECCQE]      = new TH1D("","", kNvErecoBins, kNvErecoBinEdges);
+  fMCErecoSpectrum[kSKsFCFV1RingMuLike][kSKmSigNuECC1pi]     = new TH1D("","", kNvErecoBins, kNvErecoBinEdges);
+  fMCErecoSpectrum[kSKsFCFV1RingMuLike][kSKmSigNuECCoth]     = new TH1D("","", kNvErecoBins, kNvErecoBinEdges);
+  fMCErecoSpectrumTot[kSKsFCFV1RingMuLike]                   -> SetDirectory(0);
+  fMCErecoSpectrum[kSKsFCFV1RingMuLike][kSKmNuMuCCQE]        -> SetDirectory(0);
+  fMCErecoSpectrum[kSKsFCFV1RingMuLike][kSKmNuMuCC1pi]       -> SetDirectory(0);
+  fMCErecoSpectrum[kSKsFCFV1RingMuLike][kSKmNuMuCCoth_mu]    -> SetDirectory(0);
+  fMCErecoSpectrum[kSKsFCFV1RingMuLike][kSKmNuMuNC]          -> SetDirectory(0);
+  fMCErecoSpectrum[kSKsFCFV1RingMuLike][kSKmNuMuBarCCQE]     -> SetDirectory(0);
+  fMCErecoSpectrum[kSKsFCFV1RingMuLike][kSKmNuMuBarCC1pi]    -> SetDirectory(0);
+  fMCErecoSpectrum[kSKsFCFV1RingMuLike][kSKmNuMuBarCCoth_mu] -> SetDirectory(0);
+  fMCErecoSpectrum[kSKsFCFV1RingMuLike][kSKmNuMuBarNC]       -> SetDirectory(0);
+  fMCErecoSpectrum[kSKsFCFV1RingMuLike][kSKmNuECCQE]         -> SetDirectory(0);
+  fMCErecoSpectrum[kSKsFCFV1RingMuLike][kSKmNuECC1pi]        -> SetDirectory(0);
+  fMCErecoSpectrum[kSKsFCFV1RingMuLike][kSKmNuECCoth_mu]     -> SetDirectory(0);
+  fMCErecoSpectrum[kSKsFCFV1RingMuLike][kSKmNuENC]           -> SetDirectory(0);
+  fMCErecoSpectrum[kSKsFCFV1RingMuLike][kSKmSigNuECCQE]      -> SetDirectory(0);
+  fMCErecoSpectrum[kSKsFCFV1RingMuLike][kSKmSigNuECC1pi]     -> SetDirectory(0);
+  fMCErecoSpectrum[kSKsFCFV1RingMuLike][kSKmSigNuECCoth]     -> SetDirectory(0);
+
+  fMCErecoSpectrumTot[kSKsFCFV1RingELike]                    = new TH1D("","", kNvErecoBins, kNvErecoBinEdges);
+  fMCErecoSpectrum[kSKsFCFV1RingELike][kSKmNuMuCCQE]         = new TH1D("","", kNvErecoBins, kNvErecoBinEdges);
+  fMCErecoSpectrum[kSKsFCFV1RingELike][kSKmNuMuCC1pi]        = new TH1D("","", kNvErecoBins, kNvErecoBinEdges);
+  fMCErecoSpectrum[kSKsFCFV1RingELike][kSKmNuMuCCoth_mu]     = new TH1D("","", kNvErecoBins, kNvErecoBinEdges);
+  fMCErecoSpectrum[kSKsFCFV1RingELike][kSKmNuMuNC]           = new TH1D("","", kNvErecoBins, kNvErecoBinEdges);
+  fMCErecoSpectrum[kSKsFCFV1RingELike][kSKmNuMuBarCCQE]      = new TH1D("","", kNvErecoBins, kNvErecoBinEdges);
+  fMCErecoSpectrum[kSKsFCFV1RingELike][kSKmNuMuBarCC1pi]     = new TH1D("","", kNvErecoBins, kNvErecoBinEdges);
+  fMCErecoSpectrum[kSKsFCFV1RingELike][kSKmNuMuBarCCoth_mu]  = new TH1D("","", kNvErecoBins, kNvErecoBinEdges);
+  fMCErecoSpectrum[kSKsFCFV1RingELike][kSKmNuMuBarNC]        = new TH1D("","", kNvErecoBins, kNvErecoBinEdges);
+  fMCErecoSpectrum[kSKsFCFV1RingELike][kSKmNuECCQE]          = new TH1D("","", kNvErecoBins, kNvErecoBinEdges);
+  fMCErecoSpectrum[kSKsFCFV1RingELike][kSKmNuECC1pi]         = new TH1D("","", kNvErecoBins, kNvErecoBinEdges);
+  fMCErecoSpectrum[kSKsFCFV1RingELike][kSKmNuECCoth_mu]      = new TH1D("","", kNvErecoBins, kNvErecoBinEdges);
+  fMCErecoSpectrum[kSKsFCFV1RingELike][kSKmNuENC]            = new TH1D("","", kNvErecoBins, kNvErecoBinEdges);
+  fMCErecoSpectrum[kSKsFCFV1RingELike][kSKmSigNuECCQE]       = new TH1D("","", kNvErecoBins, kNvErecoBinEdges);
+  fMCErecoSpectrum[kSKsFCFV1RingELike][kSKmSigNuECC1pi]      = new TH1D("","", kNvErecoBins, kNvErecoBinEdges);
+  fMCErecoSpectrum[kSKsFCFV1RingELike][kSKmSigNuECCoth]      = new TH1D("","", kNvErecoBins, kNvErecoBinEdges);
+  fMCErecoSpectrumTot[kSKsFCFV1RingELike]                    -> SetDirectory(0);
+  fMCErecoSpectrum[kSKsFCFV1RingELike][kSKmNuMuCCQE]         -> SetDirectory(0);
+  fMCErecoSpectrum[kSKsFCFV1RingELike][kSKmNuMuCC1pi]        -> SetDirectory(0);
+  fMCErecoSpectrum[kSKsFCFV1RingELike][kSKmNuMuCCoth_mu]     -> SetDirectory(0);
+  fMCErecoSpectrum[kSKsFCFV1RingELike][kSKmNuMuNC]           -> SetDirectory(0);
+  fMCErecoSpectrum[kSKsFCFV1RingELike][kSKmNuMuBarCCQE]      -> SetDirectory(0);
+  fMCErecoSpectrum[kSKsFCFV1RingELike][kSKmNuMuBarCC1pi]     -> SetDirectory(0);
+  fMCErecoSpectrum[kSKsFCFV1RingELike][kSKmNuMuBarCCoth_mu]  -> SetDirectory(0);
+  fMCErecoSpectrum[kSKsFCFV1RingELike][kSKmNuMuBarNC]        -> SetDirectory(0);
+  fMCErecoSpectrum[kSKsFCFV1RingELike][kSKmNuECCQE]          -> SetDirectory(0);
+  fMCErecoSpectrum[kSKsFCFV1RingELike][kSKmNuECC1pi]         -> SetDirectory(0);
+  fMCErecoSpectrum[kSKsFCFV1RingELike][kSKmNuECCoth_mu]      -> SetDirectory(0);
+  fMCErecoSpectrum[kSKsFCFV1RingELike][kSKmNuENC]            -> SetDirectory(0);
+  fMCErecoSpectrum[kSKsFCFV1RingELike][kSKmSigNuECCQE]       -> SetDirectory(0);
+  fMCErecoSpectrum[kSKsFCFV1RingELike][kSKmSigNuECC1pi]      -> SetDirectory(0);
+  fMCErecoSpectrum[kSKsFCFV1RingELike][kSKmSigNuECCoth]      -> SetDirectory(0);
+*/
 
 #ifdef __show_init_mesg_info__      
   cout << "Exp/SKMC >> Done reading SuperK inputs!" << endl;
@@ -446,7 +488,14 @@ void SuperkMC::CreateTemplate(SuperkSample_t s, SuperkMode_t m)
   TTree * mctree = this->MCTree(s,m);
   double  mcpot  = this->MCPOT (s,m);
 
+  if(!mctree) {
+     cerr << "Exp/SKMC/CreateTemplate >> Couldn't find event tree for template: " 
+          << util::AsString(s) << "/" << util::AsString(m) << endl;
+     exit(1);
+  }
+
   double wght = this->AnalyzedSamplePOT() / mcpot;
+
 #ifdef __show_init_mesg_debug__        
   cout << "Exp/SKMC/CreateTemplate >>  - Weight (data POT / MC POT) = " 
        << wght << endl;
@@ -713,21 +762,21 @@ void SuperkMC::ApplyPhysHypothesisToTemplates(void)
         for(int ir = 1; ir <= fMCTemplSys[s][kSKmNuMuCCQE]->GetXaxis()->GetNbins(); ir++) {
 
            // number of events in (Ereco,Etrue) bin (systematics applied)
-           double n_numu_ccqe     = fMCTemplSys[s][kSKmNuMuCCQE]     -> GetBinContent(ir,it);
-           double n_numu_cc1pi    = fMCTemplSys[s][kSKmNuMuCC1pi]    -> GetBinContent(ir,it);
+           double n_numu_ccqe     = fMCTemplSys[s][kSKmNuMuCCQE]        -> GetBinContent(ir,it);
+           double n_numu_cc1pi    = fMCTemplSys[s][kSKmNuMuCC1pi]       -> GetBinContent(ir,it);
            double n_numu_ccoth    = fMCTemplSys[s][kSKmNuMuCCoth_mu]    -> GetBinContent(ir,it);
-           double n_numu_nc       = fMCTemplSys[s][kSKmNuMuNC]           -> GetBinContent(ir,it);
-           double n_numubar_ccqe  = fMCTemplSys[s][kSKmNuMuBarCCQE]  -> GetBinContent(ir,it);
-           double n_numubar_cc1pi = fMCTemplSys[s][kSKmNuMuBarCC1pi] -> GetBinContent(ir,it);
+           double n_numu_nc       = fMCTemplSys[s][kSKmNuMuNC]          -> GetBinContent(ir,it);
+           double n_numubar_ccqe  = fMCTemplSys[s][kSKmNuMuBarCCQE]     -> GetBinContent(ir,it);
+           double n_numubar_cc1pi = fMCTemplSys[s][kSKmNuMuBarCC1pi]    -> GetBinContent(ir,it);
            double n_numubar_ccoth = fMCTemplSys[s][kSKmNuMuBarCCoth_mu] -> GetBinContent(ir,it);
-           double n_numubar_nc    = fMCTemplSys[s][kSKmNuMuBarNC]    -> GetBinContent(ir,it);
-           double n_nue_ccqe      = fMCTemplSys[s][kSKmNuECCQE]      -> GetBinContent(ir,it);
-           double n_nue_cc1pi     = fMCTemplSys[s][kSKmNuECC1pi]     -> GetBinContent(ir,it);
+           double n_numubar_nc    = fMCTemplSys[s][kSKmNuMuBarNC]       -> GetBinContent(ir,it);
+           double n_nue_ccqe      = fMCTemplSys[s][kSKmNuECCQE]         -> GetBinContent(ir,it);
+           double n_nue_cc1pi     = fMCTemplSys[s][kSKmNuECC1pi]        -> GetBinContent(ir,it);
            double n_nue_ccoth     = fMCTemplSys[s][kSKmNuECCoth_mu]     -> GetBinContent(ir,it);
-           double n_nue_nc        = fMCTemplSys[s][kSKmNuENC]        -> GetBinContent(ir,it);
-           double n_signue_ccqe   = fMCTemplSys[s][kSKmSigNuECCQE]   -> GetBinContent(ir,it);
-           double n_signue_cc1pi  = fMCTemplSys[s][kSKmSigNuECC1pi]  -> GetBinContent(ir,it);
-           double n_signue_ccoth  = fMCTemplSys[s][kSKmSigNuECCoth]  -> GetBinContent(ir,it);
+           double n_nue_nc        = fMCTemplSys[s][kSKmNuENC]           -> GetBinContent(ir,it);
+           double n_signue_ccqe   = fMCTemplSys[s][kSKmSigNuECCQE]      -> GetBinContent(ir,it);
+           double n_signue_cc1pi  = fMCTemplSys[s][kSKmSigNuECC1pi]     -> GetBinContent(ir,it);
+           double n_signue_ccoth  = fMCTemplSys[s][kSKmSigNuECCoth]     -> GetBinContent(ir,it);
 
            // apply 3-flavour oscillations
            double n_numu_ccqe_osc     = n_numu_ccqe  * p_numu_numu; 
@@ -747,21 +796,21 @@ void SuperkMC::ApplyPhysHypothesisToTemplates(void)
            double n_signue_ccoth_osc  = n_signue_ccoth * p_numu_nue; 
 
            // store oscillated number of events in current (Ereco,Etrue) bin
-           fMCTemplSysHyp[s][kSKmNuMuCCQE]     -> SetBinContent(ir,it, n_numu_ccqe_osc    );
-           fMCTemplSysHyp[s][kSKmNuMuCC1pi]    -> SetBinContent(ir,it, n_numu_cc1pi_osc   );
+           fMCTemplSysHyp[s][kSKmNuMuCCQE]        -> SetBinContent(ir,it, n_numu_ccqe_osc    );
+           fMCTemplSysHyp[s][kSKmNuMuCC1pi]       -> SetBinContent(ir,it, n_numu_cc1pi_osc   );
            fMCTemplSysHyp[s][kSKmNuMuCCoth_mu]    -> SetBinContent(ir,it, n_numu_ccoth_osc   );
-           fMCTemplSysHyp[s][kSKmNuMuNC]           -> SetBinContent(ir,it, n_numu_nc_osc      );
-           fMCTemplSysHyp[s][kSKmNuMuBarCCQE]  -> SetBinContent(ir,it, n_numubar_ccqe_osc );
-           fMCTemplSysHyp[s][kSKmNuMuBarCC1pi] -> SetBinContent(ir,it, n_numubar_cc1pi_osc);
+           fMCTemplSysHyp[s][kSKmNuMuNC]          -> SetBinContent(ir,it, n_numu_nc_osc      );
+           fMCTemplSysHyp[s][kSKmNuMuBarCCQE]     -> SetBinContent(ir,it, n_numubar_ccqe_osc );
+           fMCTemplSysHyp[s][kSKmNuMuBarCC1pi]    -> SetBinContent(ir,it, n_numubar_cc1pi_osc);
            fMCTemplSysHyp[s][kSKmNuMuBarCCoth_mu] -> SetBinContent(ir,it, n_numubar_ccoth_osc);
-           fMCTemplSysHyp[s][kSKmNuMuBarNC]    -> SetBinContent(ir,it, n_numubar_nc_osc   );
-           fMCTemplSysHyp[s][kSKmNuECCQE]      -> SetBinContent(ir,it, n_nue_ccqe_osc     );
-           fMCTemplSysHyp[s][kSKmNuECC1pi]     -> SetBinContent(ir,it, n_nue_cc1pi_osc    );
+           fMCTemplSysHyp[s][kSKmNuMuBarNC]       -> SetBinContent(ir,it, n_numubar_nc_osc   );
+           fMCTemplSysHyp[s][kSKmNuECCQE]         -> SetBinContent(ir,it, n_nue_ccqe_osc     );
+           fMCTemplSysHyp[s][kSKmNuECC1pi]        -> SetBinContent(ir,it, n_nue_cc1pi_osc    );
            fMCTemplSysHyp[s][kSKmNuECCoth_mu]     -> SetBinContent(ir,it, n_nue_ccoth_osc    );
-           fMCTemplSysHyp[s][kSKmNuENC]        -> SetBinContent(ir,it, n_nue_nc_osc       );
-           fMCTemplSysHyp[s][kSKmSigNuECCQE]   -> SetBinContent(ir,it, n_signue_ccqe_osc  );
-           fMCTemplSysHyp[s][kSKmSigNuECC1pi]  -> SetBinContent(ir,it, n_signue_cc1pi_osc );
-           fMCTemplSysHyp[s][kSKmSigNuECCoth]  -> SetBinContent(ir,it, n_signue_ccoth_osc );
+           fMCTemplSysHyp[s][kSKmNuENC]           -> SetBinContent(ir,it, n_nue_nc_osc       );
+           fMCTemplSysHyp[s][kSKmSigNuECCQE]      -> SetBinContent(ir,it, n_signue_ccqe_osc  );
+           fMCTemplSysHyp[s][kSKmSigNuECC1pi]     -> SetBinContent(ir,it, n_signue_cc1pi_osc );
+           fMCTemplSysHyp[s][kSKmSigNuECCoth]     -> SetBinContent(ir,it, n_signue_ccoth_osc );
        }//ir
      }//it
    }//is

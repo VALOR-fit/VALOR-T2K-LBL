@@ -45,15 +45,17 @@ typedef enum EConfLevel {
 } ConfLevel_t; 
 
 // samples included in analysis
+static const int kNSuperkSamples  = 2;  // number of samples included in analysis
+static const int kns = kNSuperkSamples;
 typedef enum ESuperkSample {
    kSKsUndefined = -1, 
    kSKsFCFV1RingMuLike, // fully-contained fiducial-volume single-ring mu-like
-   kSKsFCFVmRingMuLike, // fully-contained fiducial-volume multi-ring  mu-like
    kSKsFCFV1RingELike,  // fully-contained fiducial-volume single-ring e-like
-   kSKsFCFVmRingELike   // fully-contained fiducial-volume multi-ring  e-like
 } SuperkSample_t; 
 
 // (true) reaction modes considered separately within each SuperK sample
+static const int kNSuperkModes = 30; // number of reaction modes considered separately within each SuperK sample
+static const int knm = kNSuperkModes; 
 typedef enum ESuperkMode {
    kSKmUndefined = -1, 
    kSKmNuMuCCQE,         // numu CC QE
@@ -88,7 +90,62 @@ typedef enum ESuperkMode {
    kSKmSigNuECCoth       // sig nue
 } SuperkMode_t; 
 
+//
+// Define which modes are kept track of for each sample included in the analysis
+//
+
+// > numu disappearance
+static const int kNumSK1RingMuLikeModes = 15;
+static const SuperkMode_t  kSK1RingMuLikeModes[kNumSK1RingMuLikeModes] = {
+   kSKmNuMuCCQE,         
+   kSKmNuMuCC1pi, 
+   kSKmNuMuCCoth_mu,                      
+   kSKmNuMuNC,          
+   kSKmNuMuBarCCQE,      
+   kSKmNuMuBarCC1pi, 
+   kSKmNuMuBarCCoth_mu,                  
+   kSKmNuMuBarNC,       
+   kSKmNuECCQE, 
+   kSKmNuECC1pi, 
+   kSKmNuECCoth_mu,                                
+   kSKmNuENC,                                                               
+   kSKmSigNuECCQE, 
+   kSKmSigNuECC1pi, 
+  kSKmSigNuECCoth      
+};
+
+// > nue appearance
+static const int kNumSK1RingELikeModes = 24;
+static const SuperkMode_t kSK1RingELikeModes[kNumSK1RingELikeModes] = {
+  kSKmNuMuCCQE, 
+  kSKmNuMuCC1pi, 
+  kSKmNuMuCCcoh, 
+  kSKmNuMuCCoth_e, 
+  kSKmNuMuNC1pi0, 
+  kSKmNuMuNCcoh, 
+  kSKmNuMuNCoth_e,                            
+  kSKmNuMuBarCCQE, 
+  kSKmNuMuBarCC1pi, 
+  kSKmNuMuBarCCcoh, 
+  kSKmNuMuBarCCoth_e,  
+  kSKmNuMuBarNC1pi0, 
+  kSKmNuMuBarNCcoh, 
+  kSKmNuMuBarNCoth_e,
+  kSKmNuECCQE, 
+  kSKmNuECC1pi, 
+  kSKmNuECCcoh, 
+  kSKmNuECCoth_e,
+  kSKmNuENC1pi0,  
+  kSKmNuENCcoh, 
+  kSKmNuENCoth_e,
+  kSKmSigNuECCQE,  
+  kSKmSigNuECC1pi,  
+  kSKmSigNuECCoth 
+};
+
 // (true) reaction modes considered separately in nd280 inputs
+static const int kNND280Modes = 21; // number of reaction modes considered separately within the ND280 sample
+static const int knmnd = kNND280Modes; 
 typedef enum END280Mode {
    kNDmUndefined = -1, 
    kNDmNuMuCCQE, 
@@ -211,14 +268,6 @@ static const int kPdgNuEBar   = -12;
 static const int kPdgNuMuBar  = -14;
 static const int kPdgNuTauBar = -16;
 
-static const int kNSuperkSamples  = 4;  // number of samples included in analysis
-static const int kNSuperkModes    = 30; // number of reaction modes considered separately within each SuperK sample
-static const int kNND280Modes     = 21; // number of reaction modes considered separately within the ND280 sample
-//shorter names
-static const int kns   = kNSuperkSamples;
-static const int knm   = kNSuperkModes; 
-static const int knmnd = kNND280Modes; 
-
 // Some constants
 static const double kASmallNum      = 1E-10;                         // 
 static const double kBaseline       = 295.335;                       // Tokai->Kamioka (km)
@@ -263,7 +312,6 @@ static const double kEtrueMin    = 0;
 static const double kEtrueMax    = 12;
 static const double kEtrueBinSz  = 0.05;
 static const int    kNEtrueBins  = (int) ((kEtrueMax - kEtrueMin)/kEtrueBinSz);
-
 
 //
 // SuperK Ereco binning

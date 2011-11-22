@@ -616,9 +616,7 @@ string t2kana::util::AsString(t2kana::conv::SuperkSample_t s)
 {
   switch(s) {
      case ( kSKsFCFV1RingMuLike ) : return "FCFV_1R_mu"; break;
-     case ( kSKsFCFVmRingMuLike ) : return "FCFV_mR_mu"; break;
      case ( kSKsFCFV1RingELike  ) : return "FCFV_1R_e";  break;
-     case ( kSKsFCFVmRingELike  ) : return "FCFV_mR_e";  break;
      default                      : return "--";
   }
   return "";
