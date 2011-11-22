@@ -19,7 +19,7 @@ void test_nsk
   double dm12sq = 0.000076,
   double deltacp = 0,
   t2kana::conv::NuMassHierarchy_t hier = t2kana::conv::kNmhNormal, //or t2kana::conv::kNMhInverted
-  const char * config_file = "analysis_configuration_2010v2_run1+2_neut_nue.xml"
+  const char * config_file = "analysis_configuration.xml"
 )
 {
   using namespace std;

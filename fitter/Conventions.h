@@ -211,7 +211,7 @@ static const int kPdgNuEBar   = -12;
 static const int kPdgNuMuBar  = -14;
 static const int kPdgNuTauBar = -16;
 
-static const int kNSuperkSamples  = 1;  // number of samples included in analysis
+static const int kNSuperkSamples  = 2;  // number of samples included in analysis
 static const int kNSuperkModes    = 30; // number of reaction modes considered separately within each SuperK sample
 static const int kNND280Modes     = 21; // number of reaction modes considered separately within the ND280 sample
 //shorter names
