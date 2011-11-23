@@ -154,7 +154,7 @@ void SuperkExpectation::Generate(const PhysHypothesis & ph)
        n += ns;
        fPredictErecoSpectrumTot[s]->SetBinContent(ibin, ns);
        for(int im = 0; im < knm; im++) {
-           SuperkMode_t m = kSKReactionModes[s][im];
+           SuperkMode_t m = kSKReactionModes[is][im];
            if(m == kSKmUndefined) continue;
            double nsm = correction * fSuperkMC->CurrErecoSpectrum(s,m)->GetBinContent(ibin);
            fPredictErecoSpectrum[s][m]->SetBinContent(ibin, nsm);       
@@ -187,7 +187,7 @@ void SuperkExpectation::Generate(const PhysHypothesis & ph)
         if(s == kSKsUndefined) continue;
         fPredictErecoSpectrumTot[s] -> Scale (beam_norm);
         for(int im = 0; im < knm; im++) {
-            SuperkMode_t m = kSKReactionModes[s][im];
+            SuperkMode_t m = kSKReactionModes[is][im];
             if(m == kSKmUndefined) continue;
             fPredictErecoSpectrum[s][m] -> Scale (beam_norm);
         }//m	
@@ -202,7 +202,7 @@ void SuperkExpectation::Generate(const PhysHypothesis & ph)
         if(s == kSKsUndefined) continue;
         fPredictErecoSpectrumTot[s] -> Scale (shape_norm);
         for(int im = 0; im < knm; im++) {
-            SuperkMode_t m = kSKReactionModes[s][im];
+            SuperkMode_t m = kSKReactionModes[is][im];
             if(m == kSKmUndefined) continue;
             fPredictErecoSpectrum[s][m] -> Scale (shape_norm);
         }//m	
@@ -471,7 +471,7 @@ bool SuperkExpectation::Read(string config_file)
      fPredictErecoSpectrumTot[s] = new TH1D("","", kNvErecoBins, kNvErecoBinEdges);
      fPredictErecoSpectrumTot[s]->SetDirectory(0);
      for(int im = 0; im < knm; im++) {
-         SuperkMode_t m = kSKReactionModes[s][im];
+         SuperkMode_t m = kSKReactionModes[is][im];
          if(m == kSKmUndefined) continue;
          fPredictErecoSpectrum[s][m] = new TH1D("","", kNvErecoBins, kNvErecoBinEdges);
          fPredictErecoSpectrum[s][m]->SetDirectory(0);

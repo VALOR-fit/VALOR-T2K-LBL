@@ -40,6 +40,10 @@
    Include matter effects in 3-flavour osc probabilities.
  @ 06/10/11 - CA
    Added `PrintSystematicVariations()'. Tweaked output messages.
+ @ 20-25/10/11 - CA,TD
+   Substantial structural modifications so that the code can predict both the 1Rmu and 
+   1Re distributions. The list of reaction modes kept track of for each sample may be
+   different and it is defined in Conventions.h. Implemented 1Re detector systematics.
 
 */
 //________________________________________________________________________________________
@@ -246,8 +250,8 @@ bool SuperkMC::Read(TXMLEngine* xml, XMLNodePointer_t root_node)
   for(int is = 0; is < kns; is++) {
      SuperkSample_t s = kSKSamples[is];
      if(s == kSKsUndefined) continue;
-     for(int im=0; im < knm; im++) {
-       SuperkMode_t m = kSKReactionModes[s][im];
+     for(int im = 0; im < knm; im++) {
+       SuperkMode_t m = kSKReactionModes[is][im];
        if(m == kSKmUndefined) continue;
        this->CreateTemplate(s, m);
      }
@@ -326,14 +330,13 @@ bool SuperkMC::Read(TXMLEngine* xml, XMLNodePointer_t root_node)
   f1RmNuEEt      -> SetDirectory(0);
     
   // Ereco histograms filled-in by SK spectrum prediction code
-
   for(int is = 0; is < kns; is++) {
      SuperkSample_t s = kSKSamples[is];
      if(s == kSKsUndefined) continue;
      fMCErecoSpectrumTot[s] = new TH1D("","", kNvErecoBins, kNvErecoBinEdges);
      fMCErecoSpectrumTot[s] -> SetDirectory(0);
      for(int im=0; im < knm; im++) {
-       SuperkMode_t m = kSKReactionModes[s][im];
+       SuperkMode_t m = kSKReactionModes[is][im];
        if(m == kSKmUndefined) continue;
        fMCErecoSpectrum[s][m] = new TH1D("","", kNvErecoBins, kNvErecoBinEdges);
        fMCErecoSpectrum[s][m] -> SetDirectory(0);
@@ -461,11 +464,12 @@ void SuperkMC::ApplySystematicsToTemplates(void)
 
   // loop over samples
   for(int is = 0; is < kns; is++) {
+    SuperkSample_t s = kSKSamples[is];
+    if(s == kSKsUndefined) continue;
     // loop over sample modes
     for(int im = 0; im < knm; im++) { 
-       // get sample/mode id
-       SuperkSample_t s = kSKSamples[is];
-       SuperkMode_t   m = kSKReactionModes[s][im];
+       SuperkMode_t m = kSKReactionModes[is][im];
+       if(m == kSKmUndefined) continue;
        // consider template?
        bool skip = this->SkipTemplate(m);
        if(skip) continue;
@@ -500,11 +504,12 @@ void SuperkMC::ApplySystematicsToTemplates(void)
 
   // loop over samples
   for(int is = 0; is < kns; is++) {
+    SuperkSample_t s = kSKSamples[is];
+    if(s == kSKsUndefined) continue;
     // loop over sample modes
     for(int im = 0; im < knm; im++) { 
-       // get sample/mode id
-       SuperkSample_t s = (SuperkSample_t) is;
-       SuperkMode_t   m = (SuperkMode_t  ) im;
+       SuperkMode_t m = kSKReactionModes[is][im];
+       if(m == kSKmUndefined) continue;
        // consider template?
        bool skip = this->SkipTemplate(m);
        if(skip) continue;
@@ -664,7 +669,7 @@ void SuperkMC::ApplyPhysHypothesisToTemplates(void)
 
            // loop over modes
            for(int im=0; im < knm; im++) {
-              SuperkMode_t m = kSKReactionModes[s][im];
+              SuperkMode_t m = kSKReactionModes[is][im];
               if(m == kSKmUndefined) continue;
               // number of events in (Ereco,Etrue) bin (systematics applied)
               double nev = fMCTemplSys[s][m] -> GetBinContent(ir,it);
@@ -695,7 +700,8 @@ void SuperkMC::ApplyPhysHypothesisToTemplates(void)
     double dm23sq        = fPhysHypothesis.CurrValue(kPhypDm23sq);
     // loop over samples
     for(int is = 0; is < kns; is++) {
-      SuperkSample_t s = (SuperkSample_t) is;
+      SuperkSample_t s = kSKSamples[is];
+      if(s != kSKsFCFV1RingMuLike) continue;
       // loop over sample modes
       for(int im = 0; im < knm; im++) { 
          SuperkMode_t m = (SuperkMode_t) im;
@@ -731,7 +737,8 @@ void SuperkMC::ApplyPhysHypothesisToTemplates(void)
     double alpha       = fPhysHypothesis.CurrValue(kPhypAlphaDecay);
     // loop over samples
     for(int is = 0; is < kns; is++) {
-      SuperkSample_t s = (SuperkSample_t) is;
+      SuperkSample_t s = kSKSamples[is];
+      if(s != kSKsFCFV1RingMuLike) continue;
       // loop over sample modes
       for(int im = 0; im < knm; im++) { 
          SuperkMode_t m = (SuperkMode_t) im;
@@ -768,7 +775,8 @@ void SuperkMC::ApplyPhysHypothesisToTemplates(void)
     double musq        = fPhysHypothesis.CurrValue(kPhypMusqDecoh);
     // loop over samples
     for(int is = 0; is < kns; is++) {
-      SuperkSample_t s = (SuperkSample_t) is;
+      SuperkSample_t s = kSKSamples[is];
+      if(s != kSKsFCFV1RingMuLike) continue;
       // loop over sample modes
       for(int im = 0; im < knm; im++) { 
          SuperkMode_t m = (SuperkMode_t) im;
