@@ -116,7 +116,7 @@ bool NuXSec::Read(TXMLEngine* xml, XMLNodePointer_t root_node)
     util::XML2TH1D(xml,root_node,"niwg/systematics/xsec_ratio_relative_error/nccoh_ccqe");
   fNCOthToCCQEXSecRatioRelErr = 
     util::XML2TH1D(xml,root_node,"niwg/systematics/xsec_ratio_relative_error/ncother_ccqe");
-  fNCOthToCCQEXSecRatioRelErr = 
+  fNuEToNuMuXSecRatioRelErr =
     util::XML2TH1D(xml,root_node,"niwg/systematics/xsec_ratio_relative_error/nue_numu");
   fSuperkNuclearEffectRelErr1RmuT =
     util::XML2TH1D(xml,root_node,"niwg/systematics/superk_nuclear_effect_relative_error_1RmuT");
