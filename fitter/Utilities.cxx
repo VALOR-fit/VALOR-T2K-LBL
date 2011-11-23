@@ -1690,29 +1690,31 @@ TMatrixD * t2kana::util::XML2TMatrixD(
 
   return matrix_copy;
 }
-
-
-
 //___________________________________________________________________________
-//a few helper functions for use in UseEventToFillInTemplate
-//that make swapping mode definitions a little easier
 
-bool IsCCQE(int neut_reaction_mode) {
+// A few helper functions for use in UseEventToFillInTemplate
+// that make swapping mode definitions a little easier
+
+bool t2kana::util::IsCCQE(int neut_reaction_mode) 
+{
   return neut_reaction_mode ==  1;
 }
-
-bool IsCC1pi(int neut_reaction_mode) {
+//___________________________________________________________________________
+bool t2kana::util::IsCC1pi(int neut_reaction_mode) 
+{
   bool is_cc1pi = (neut_reaction_mode == 11 || 
 		   neut_reaction_mode == 12 || 
 		   neut_reaction_mode == 13);
   return is_cc1pi;
 }
-
-bool IsCCcoh(int neut_reaction_mode) {
+//___________________________________________________________________________
+bool t2kana::util::IsCCcoh(int neut_reaction_mode) 
+{
   return neut_reaction_mode ==  16;
 }
-
-bool IsCCoth_e(int neut_reaction_mode) {
+//___________________________________________________________________________
+bool t2kana::util::IsCCoth_e(int neut_reaction_mode) 
+{
   bool is_ccoth_e = (neut_reaction_mode == 17 ||
 		     neut_reaction_mode == 21 ||
 		     neut_reaction_mode == 22 || 
@@ -1720,22 +1722,26 @@ bool IsCCoth_e(int neut_reaction_mode) {
 		     neut_reaction_mode == 26);
   return is_ccoth_e;
 }
-
-bool IsCCoth_mu(int neut_reaction_mode) {
+//___________________________________________________________________________
+bool t2kana::util::IsCCoth_mu(int neut_reaction_mode) 
+{
   return IsCCcoh(neut_reaction_mode) || IsCCoth_e(neut_reaction_mode);
 }
-
-bool IsNC1pi0(int neut_reaction_mode) {
+//___________________________________________________________________________
+bool t2kana::util::IsNC1pi0(int neut_reaction_mode) 
+{
   bool is_cc1pi0 = (neut_reaction_mode == 31 ||
 		    neut_reaction_mode == 32);
   return is_cc1pi0;
 }
-
-bool IsNCcoh(int neut_reaction_mode) {
+//___________________________________________________________________________
+bool t2kana::util::IsNCcoh(int neut_reaction_mode) 
+{
   return neut_reaction_mode == 36;
 }
-
-bool IsNCoth_e(int neut_reaction_mode) {
+//___________________________________________________________________________
+bool t2kana::util::IsNCoth_e(int neut_reaction_mode) 
+{
   bool is_ncoth_e = (neut_reaction_mode == 33 ||
 		     neut_reaction_mode == 34 ||
 		     neut_reaction_mode == 38 ||
@@ -1750,14 +1756,14 @@ bool IsNCoth_e(int neut_reaction_mode) {
 		     neut_reaction_mode == 52);
   return is_ncoth_e;
 }
-
-bool IsNCall(int neut_reaction_mode) {
+//___________________________________________________________________________
+bool t2kana::util::IsNCall(int neut_reaction_mode) 
+{
   bool is_ncall = (IsNC1pi0 (neut_reaction_mode) ||
 		   IsNCcoh  (neut_reaction_mode) ||
 		   IsNCoth_e(neut_reaction_mode));
   return is_ncall;
 }
-
 //___________________________________________________________________________
 bool t2kana::util::UseEventToFillInTemplate(
   SuperkMode_t m, int nu_pdg_code, int neut_reaction_mode)
