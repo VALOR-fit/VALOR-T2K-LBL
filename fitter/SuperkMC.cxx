@@ -111,6 +111,9 @@ void SuperkMC::Init(void)
   fEffCCnonQERelErr     = 0.;
   fEffNCRelErr          = 0.;
   fEffNuECCRelErr       = 0.;
+  fEff1ReTSigRelErr     = 0.;
+  fEff1ReTBkgRelErr     = 0.;
+  
 
   fEnergyScaleTwkDial   = 0.;
   fOthEffCCQETwkDial    = 0.;
@@ -120,6 +123,8 @@ void SuperkMC::Init(void)
   fEffCCnonQETwkDial    = 0.;
   fEffNCTwkDial         = 0.;
   fEffNuECCTwkDial      = 0.;
+  fEff1ReTSigTwkDial    = 0.;
+  fEff1ReTBkgTwkDial    = 0.;
 
   fEffCCQERelErrCovarCholeskyL  = 0;
   
@@ -277,6 +282,12 @@ bool SuperkMC::Read(TXMLEngine* xml, XMLNodePointer_t root_node)
   fEffNuECCRelErr     =
     util::XML2Dbl(xml,root_node, 
       "superk/systematics/efficiency_relative_error/one_mu_ring/nuecc");
+  fEff1ReTSigRelErr      =
+    util::XML2Dbl(xml,root_node, 
+      "superk/systematics/efficiency_relative_error/one_e_ring/sig");
+  fEff1ReTBkgRelErr      =
+    util::XML2Dbl(xml,root_node, 
+      "superk/systematics/efficiency_relative_error/one_e_ring/bkg");
 
   if(!fEffCCQERelErrCovarRC) {
     cerr << "Exp/SK >> No input SuperK CCQE ring-counting error covariance matrix!" << endl;
@@ -295,6 +306,8 @@ bool SuperkMC::Read(TXMLEngine* xml, XMLNodePointer_t root_node)
   cout << "Exp/SKMC >> " << "Error {Efficiency/1RingMu/CCnonQE} : " << fEffCCnonQERelErr  << endl;
   cout << "Exp/SKMC >> " << "Error {Efficiency/1RingMu/NC} : "      << fEffNCRelErr       << endl;
   cout << "Exp/SKMC >> " << "Error {Efficiency/1RingMu/NuECC} : "   << fEffNuECCRelErr    << endl;
+  cout << "Exp/SKMC >> " << "Error {Efficiency/1RingE/Sig} : "      << fEff1ReTSigRelErr    << endl;
+  cout << "Exp/SKMC >> " << "Error {Efficiency/1RingE/Bkg} : "      << fEff1ReTBkgRelErr    << endl;
 #endif
   
   // initialise physics hypothesis
@@ -451,11 +464,14 @@ void SuperkMC::ApplySystematicsToTemplates(void)
     // loop over sample modes
     for(int im = 0; im < knm; im++) { 
        // get sample/mode id
-       SuperkSample_t s = (SuperkSample_t) is;
-       SuperkMode_t   m = (SuperkMode_t  ) im;
+       SuperkSample_t s = kSKSamples[is];
+       SuperkMode_t   m = kSKReactionModes[s][im];
        // consider template?
        bool skip = this->SkipTemplate(m);
        if(skip) continue;
+       // another check
+       if(m == kSKmUndefined) {cout << "contunye" << endl; continue;}
+       cout << util::AsString(m) << endl;
        // get corresponding template
        TH2D * mctempl = fMCTemplSys[s][m];
        if(!mctempl) continue; 
@@ -850,8 +866,8 @@ double SuperkMC::NumOfEvents(
   double xsec_ccqe_wght  = 1.;
   double xsec_ratio_wght = 1.;
   if(fGenInputs) {
-     xsec_ccqe_wght  = fGenInputs->SuperkCCQEXSecWght (Etrue, m);
-     xsec_ratio_wght = fGenInputs->SuperkXSecRatioWght(Etrue, m);
+     xsec_ccqe_wght  = fGenInputs->SuperkCCQEXSecWght (Etrue, s, m);
+     xsec_ratio_wght = fGenInputs->SuperkXSecRatioWght(Etrue, s, m);
   }
 #ifdef __show_num_of_events_mesg_debug__
   if(xsec_ccqe_wght != 1.) {
@@ -867,7 +883,7 @@ double SuperkMC::NumOfEvents(
   //
   double nucl_effect_wght = 1;
   if(fGenInputs) {
-     nucl_effect_wght = fGenInputs->SuperkNuclEffectWght(Ereco,m);
+     nucl_effect_wght = fGenInputs->SuperkNuclEffectWght(Ereco, s, m);
   }
 #ifdef __show_num_of_events_mesg_debug__ 
   if(nucl_effect_wght != 1.) {
@@ -1193,6 +1209,16 @@ void SuperkMC::TweakEfficiencyNuECC(double twkdial)
   fEffNuECCTwkDial = twkdial; 
 }
 //________________________________________________________________________________________
+void SuperkMC::TweakEfficiency1ReTSig(double twkdial) 
+{ 
+  fEff1ReTSigTwkDial = twkdial; 
+}
+//________________________________________________________________________________________
+void SuperkMC::TweakEfficiency1ReTBkg(double twkdial) 
+{ 
+  fEff1ReTBkgTwkDial = twkdial; 
+}
+//________________________________________________________________________________________
 void SuperkMC::PrintSystematicVariations(void) const
 {
   cout << "Exp/SKMC >> Twk energy scale = "        << fEnergyScaleTwkDial << endl;
@@ -1203,6 +1229,9 @@ void SuperkMC::PrintSystematicVariations(void) const
   cout << "Exp/SKMC >> Twk CCnonQE efficiency = "  << fEffCCnonQETwkDial  << endl;
   cout << "Exp/SKMC >> Twk NC efficiency = "       << fEffNCTwkDial       << endl;
   cout << "Exp/SKMC >> Twk nu_e CC efficiency = "  << fEffNuECCTwkDial    << endl;
+  cout << "Exp/SKMC >> Twk 1ReT signal efficiency = "  << fEff1ReTSigTwkDial    << endl;
+  cout << "Exp/SKMC >> Twk 1ReT background efficiency = "  << fEff1ReTBkgTwkDial    << endl;
+
 }
 //________________________________________________________________________________________
 double SuperkMC::EfficiencyWeight(
@@ -1296,6 +1325,53 @@ double SuperkMC::EfficiencyWeight(
        }
     }//mode
   }//1-ring mu-like sample
+  //
+  // 1-ring e-like sample
+  //
+  else if ( s == kSKsFCFV1RingMuLike ) {
+    switch(m) {
+       case ( kSKmNuMuCCQE        ) : 
+       case ( kSKmNuMuCC1pi       ) : 
+       case ( kSKmNuMuCCcoh       ) : 
+       case ( kSKmNuMuCCoth_e     ) : 
+       case ( kSKmNuMuNC1pi0      ) : 
+       case ( kSKmNuMuNCcoh       ) : 
+       case ( kSKmNuMuNCoth_e     ) : 
+       case ( kSKmNuMuBarCCQE     ) : 
+       case ( kSKmNuMuBarCC1pi    ) : 
+       case ( kSKmNuMuBarCCcoh    ) : 
+       case ( kSKmNuMuBarCCoth_e  ) : 
+       case ( kSKmNuMuBarNC1pi0   ) : 
+       case ( kSKmNuMuBarNCcoh    ) : 
+       case ( kSKmNuMuBarNCoth_e  ) : 
+       case ( kSKmNuECCQE         ) : 
+       case ( kSKmNuECC1pi        ) : 
+       case ( kSKmNuECCcoh        ) : 
+       case ( kSKmNuECCoth_e      ) : 
+       case ( kSKmNuENC1pi0       ) : 
+       case ( kSKmNuENCcoh        ) : 
+       case ( kSKmNuENCoth_e      ) : 
+	 {
+	   double relerr  = fEff1ReTBkgRelErr;
+	   double twkdial = fEff1ReTBkgTwkDial;
+	   double weight  = (1. + twkdial*relerr);
+	   return weight;
+	   break;
+	 }
+       case ( kSKmSigNuECCQE      ) : 
+       case ( kSKmSigNuECC1pi     ) : 
+       case ( kSKmSigNuECCoth     ) : 
+	 {
+	   double relerr  = fEff1ReTSigRelErr;
+	   double twkdial = fEff1ReTSigTwkDial;
+	   double weight  = (1. + twkdial*relerr);
+	   return weight;
+	   break;
+	 }
+       default:
+	 return 0.;
+    }//mode
+  }//1-ring e-like sample
 
   return 0.;
 }

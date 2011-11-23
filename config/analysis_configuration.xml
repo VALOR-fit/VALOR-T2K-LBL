@@ -198,6 +198,10 @@ from the GENIE/NEUT physics monte carlo groups.
                <nc>        1.110 </nc>
                <nuecc>     1.000 </nuecc>
             </one_mu_ring>
+            <one_e_ring>
+               <sig>     0.076 </sig>
+               <bkg>     0.150 </bkg>
+            </one_e_ring>
          </efficiency_relative_error>  
      </systematics>
 
@@ -389,6 +393,11 @@ from the GENIE/NEUT physics monte carlo groups.
                 <objname>    h_cc1pi_rat_err    </objname>
                 <objtype>    TH1D               </objtype>
             </cc1pi_ccqe>
+            <cccoh_ccqe>
+                <filename>   inputs/official/2010/niwg/niwg_errors_10a_v1.root </filename>
+                <objname>    h_cccoh_rat_err    </objname>
+                <objtype>    TH1D               </objtype>
+            </cccoh_ccqe>
             <ccother_ccqe>
                 <filename>   inputs/official/2010/niwg/niwg_errors_10a_v1.root </filename>
                 <objname>    h_ccoth_rat_err    </objname>
@@ -399,12 +408,42 @@ from the GENIE/NEUT physics monte carlo groups.
                 <objname>    h_nc_rat_err       </objname>
                 <objtype>    TH1D               </objtype>
             </nc_ccqe>
+            <nc1pi0_ccqe>
+                <filename>   inputs/official/2010/niwg/niwg_errors_10a_v1.root </filename>
+                <objname>    h_nc1pi0_rat_err   </objname>
+                <objtype>    TH1D               </objtype>
+            </nc1pi0_ccqe>
+            <nccoh_ccqe>
+                <filename>   inputs/official/2010/niwg/niwg_errors_10a_v1.root </filename>
+                <objname>    h_nccoh_rat_err    </objname>
+                <objtype>    TH1D               </objtype>
+            </nccoh_ccqe>
+            <ncother_ccqe>
+                <filename>   inputs/official/2010/niwg/niwg_errors_10a_v1.root </filename>
+                <objname>    h_ncoth_rat_err    </objname>
+                <objtype>    TH1D               </objtype>
+            </ncother_ccqe>
+            <nue_numu>
+                <filename>   inputs/official/2010/niwg/niwg_errors_10a_v1.root </filename>
+                <objname>    h_nue_rat_err      </objname>
+                <objtype>    TH1D               </objtype>
+            </nue_numu>
         </xsec_ratio_relative_error>
-        <superk_nuclear_effect_relative_error>
+        <superk_nuclear_effect_relative_error_1RmuT>
             <filename>   inputs/official/2010/niwg/niwg_errors_10a_v1.root </filename>
             <objname>    sk_nuceff_fc1mu_osc0  </objname>
-            <objtype>    TH1D                 </objtype>
-        </superk_nuclear_effect_relative_error>
+            <objtype>    TH1D                  </objtype>
+        </superk_nuclear_effect_relative_error_1RmuT>
+        <superk_nuclear_effect_relative_error_1ReTbkg>
+            <filename>   inputs/official/2010/niwg/niwg_errors_10a_v1.root </filename>
+            <objname>    sk_nuceff_nuebkg_osc1 </objname>
+            <objtype>    TH1D                  </objtype>
+        </superk_nuclear_effect_relative_error_1ReTbkg>
+        <superk_nuclear_effect_relative_error_1ReTsig>
+            <filename>   inputs/official/2010/niwg/niwg_errors_10a_v1.root </filename>
+            <objname>    sk_nuceff_nuesig_osc1 </objname>
+            <objtype>    TH1D                  </objtype>
+        </superk_nuclear_effect_relative_error_1ReTsig>
     </systematics>
   </niwg>
 

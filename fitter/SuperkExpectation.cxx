@@ -250,6 +250,8 @@ void SuperkExpectation::ResetSystematicVariations(void)
   this->GetSuperkMC()->TweakEfficiencyCCnonQE          (0.);
   this->GetSuperkMC()->TweakEfficiencyNC               (0.);     
   this->GetSuperkMC()->TweakEfficiencyNuECC            (0.);
+  this->GetSuperkMC()->TweakEfficiency1ReTSig          (0.);
+  this->GetSuperkMC()->TweakEfficiency1ReTBkg          (0.);
 
   this->GetND280Measurement()->TweakEfficiency (0.);
   this->GetND280Measurement()->FluctuateNObsCCLike(0.);
@@ -259,8 +261,13 @@ void SuperkExpectation::ResetSystematicVariations(void)
 
   this->GetNuXSec()->TweakCCQEXSec             (0.);
   this->GetNuXSec()->TweakCC1piToCCQEXSecRatio (0.);
+  this->GetNuXSec()->TweakCCCohToCCQEXSecRatio (0.);
   this->GetNuXSec()->TweakCCOthToCCQEXSecRatio (0.);
   this->GetNuXSec()->TweakNCToCCQEXSecRatio    (0.);
+  this->GetNuXSec()->TweakNC1pi0ToCCQEXSecRatio(0.);
+  this->GetNuXSec()->TweakNCCohToCCQEXSecRatio (0.);
+  this->GetNuXSec()->TweakNCOthToCCQEXSecRatio (0.);
+  this->GetNuXSec()->TweakNuEToNuMuXSecRatio   (0.);
   this->GetNuXSec()->TweakNuclEffect           (0.);
 }
 //________________________________________________________________________________________
@@ -305,7 +312,14 @@ void SuperkExpectation::TweakSystematic(string systematic, double twkdial)
   if(systematic == "sk_nuecc_eff") {
      this->GetSuperkMC()->TweakEfficiencyNuECC(twkdial);
   }
-
+  else
+  if(systematic == "sk_1ReTsig_eff") {
+     this->GetSuperkMC()->TweakEfficiency1ReTSig(twkdial);
+  }
+  else
+  if(systematic == "sk_1ReTbkg_eff") {
+     this->GetSuperkMC()->TweakEfficiency1ReTBkg(twkdial);
+  }
   //
   // ND280 detector systematics & statistical err on measured CC event count
   //
@@ -343,12 +357,32 @@ void SuperkExpectation::TweakSystematic(string systematic, double twkdial)
      this->GetNuXSec()->TweakCC1piToCCQEXSecRatio(twkdial);
   }
   else
+  if(systematic == "xsec_cccoh_to_ccqe") {
+     this->GetNuXSec()->TweakCCCohToCCQEXSecRatio(twkdial);
+  }
+  else
   if(systematic == "xsec_ccoth_to_ccqe") {
      this->GetNuXSec()->TweakCCOthToCCQEXSecRatio(twkdial);
   }
   else
   if(systematic == "xsec_nc_to_ccqe") {
      this->GetNuXSec()->TweakNCToCCQEXSecRatio(twkdial);
+  }
+  else
+  if(systematic == "xsec_nc1pi0_to_ccqe") {
+     this->GetNuXSec()->TweakNC1pi0ToCCQEXSecRatio(twkdial);
+  }
+  else
+  if(systematic == "xsec_nccoh_to_ccqe") {
+     this->GetNuXSec()->TweakNCCohToCCQEXSecRatio(twkdial);
+  }
+  else
+  if(systematic == "xsec_ncoth_to_ccqe") {
+     this->GetNuXSec()->TweakNCOthToCCQEXSecRatio(twkdial);
+  }
+  else
+  if(systematic == "xsec_nue_to_numu") {
+     this->GetNuXSec()->TweakNuEToNuMuXSecRatio(twkdial);
   }
   else
   if(systematic == "nuclear_effect") {
@@ -377,6 +411,8 @@ void SuperkExpectation::TweakAllSystematics(bool do_tweak)
      this->GetSuperkMC()->TweakEfficiencyCCnonQE           (rand.Gaus(0.,1.));
      this->GetSuperkMC()->TweakEfficiencyNC                (rand.Gaus(0.,1.));     
      this->GetSuperkMC()->TweakEfficiencyNuECC             (rand.Gaus(0.,1.));
+     this->GetSuperkMC()->TweakEfficiency1ReTSig           (rand.Gaus(0.,1.));
+     this->GetSuperkMC()->TweakEfficiency1ReTBkg           (rand.Gaus(0.,1.));
 
      // ND280 detector response
      this->GetND280Measurement()->TweakEfficiency     (rand.Gaus(0.,1.));
@@ -389,8 +425,13 @@ void SuperkExpectation::TweakAllSystematics(bool do_tweak)
      // neutrino cross sections
      this->GetNuXSec()->TweakCCQEXSec             (rand.Gaus(0.,1.));
      this->GetNuXSec()->TweakCC1piToCCQEXSecRatio (rand.Gaus(0.,1.));
+     this->GetNuXSec()->TweakCCCohToCCQEXSecRatio (rand.Gaus(0.,1.));
      this->GetNuXSec()->TweakCCOthToCCQEXSecRatio (rand.Gaus(0.,1.));
      this->GetNuXSec()->TweakNCToCCQEXSecRatio    (rand.Gaus(0.,1.));
+     this->GetNuXSec()->TweakNC1pi0ToCCQEXSecRatio(rand.Gaus(0.,1.));
+     this->GetNuXSec()->TweakNCCohToCCQEXSecRatio (rand.Gaus(0.,1.));
+     this->GetNuXSec()->TweakNCOthToCCQEXSecRatio (rand.Gaus(0.,1.));
+     this->GetNuXSec()->TweakNuEToNuMuXSecRatio   (rand.Gaus(0.,1.));
      this->GetNuXSec()->TweakNuclEffect           (rand.Gaus(0.,1.));
 
   } else {
@@ -496,6 +537,8 @@ void SuperkExpectation::CleanUp(void)
 void SuperkExpectation::SetNuisanceParams(const FitParamList & fp)
 {
    //this->ResetSystematicVariations();
+
+   //Note that this function has NOT been updated with the new systematics errors for the nue analysis
 
    if(fp.Exists(kNuisSuperkEffCCQEoth)) {
      double twk = fp.CurrValue(kNuisSuperkEffCCQEoth);

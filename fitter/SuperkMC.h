@@ -71,6 +71,8 @@ public:
   void TweakEfficiencyCCnonQE           (double twkdial);
   void TweakEfficiencyNC                (double twkdial);
   void TweakEfficiencyNuECC             (double twkdial);
+  void TweakEfficiency1ReTSig           (double twkdial);
+  void TweakEfficiency1ReTBkg           (double twkdial);
 
   // Calculate weight due to efficiency tweaks
   double  EfficiencyWeight (t2kana::conv::SuperkSample_t s, t2kana::conv::SuperkMode_t m, double Ereco) const;
@@ -128,6 +130,8 @@ private:
   double     fEffCCnonQERelErr;            ///< CCnonQE efficiency relative error
   double     fEffNCRelErr;                 ///< NC efficiency relative error
   double     fEffNuECCRelErr;              ///< nue CC efficiency relative error
+  double     fEff1ReTSigRelErr;            ///< 1ReT signal efficiency relative error
+  double     fEff1ReTBkgRelErr;            ///< 1ReT background efficiency relative error
 
   double     fEnergyScaleTwkDial;          ///< Energy scale tweaking dial
   double     fOthEffCCQETwkDial;           ///< CCQE other (all-but-ring-counting) efficiency tweaking dial
@@ -137,6 +141,8 @@ private:
   double     fEffCCnonQETwkDial;           ///< CCnonQE efficiency tweaking dial
   double     fEffNCTwkDial;                ///< NC efficiency tweaking dial
   double     fEffNuECCTwkDial;             ///< nue CC efficiency tweaking dial
+  double     fEff1ReTSigTwkDial;           ///< 1ReT signal effiency tweaking dial
+  double     fEff1ReTBkgTwkDial;           ///< 1ReT background effiency tweaking dial
   TMatrixD * fEffCCQERelErrCovarCholeskyL; ///< Cholesky decomposition (trangular matrix L) of fEffCCQERelErrCovarRC covariance matrix
 
   TH2D *     fMCTemplNom[kns][knm];        ///< MC template(sample,mode): Ereco-Etrue (nominal)
