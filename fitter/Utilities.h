@@ -82,6 +82,8 @@ namespace util {
   bool IsNuMuBar      (t2kana::conv::SuperkMode_t  m);
   bool IsBeamNuE      (t2kana::conv::SuperkMode_t  m);
   bool IsSignalNuE    (t2kana::conv::SuperkMode_t  m);
+  bool IsCC           (t2kana::conv::SuperkMode_t  m);
+  bool IsNC           (t2kana::conv::SuperkMode_t  m);
   bool IsSystematic   (t2kana::conv::PhysParamId_t p);
   bool IsNeutrino     (int pdg_code);
   bool IsAntiNeutrino (int pdg_code);

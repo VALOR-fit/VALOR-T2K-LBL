@@ -44,7 +44,7 @@ typedef enum EConfLevel {
    kCL99
 } ConfLevel_t; 
 
-// samples included in analysis
+// enumeration of event samples 
 static const int kNSuperkSamples  = 2;  // number of samples included in analysis
 static const int kns = kNSuperkSamples;
 typedef enum ESuperkSample {
@@ -53,7 +53,7 @@ typedef enum ESuperkSample {
    kSKsFCFV1RingELike,  // fully-contained fiducial-volume single-ring e-like
 } SuperkSample_t; 
 
-// (true) reaction modes considered separately within each SuperK sample
+// enumeration of (true) reaction modes that may be considered separately within each SuperK sample
 static const int kNSuperkModes = 30; // number of reaction modes considered separately within each SuperK sample
 static const int knm = kNSuperkModes; 
 typedef enum ESuperkMode {
@@ -91,10 +91,91 @@ typedef enum ESuperkMode {
 } SuperkMode_t; 
 
 //
-// Define which modes are kept track of for each sample included in the analysis
+// Define which SK samples are considered
 //
 
-// > numu disappearance
+static const SuperkSample_t kSKSamples[kns] = {
+    kSKsFCFV1RingMuLike,
+    kSKsFCFV1RingELike
+};
+
+//
+// Define which SK modes are considered for each SK sample included in the analysis
+//
+
+static const SuperkMode_t kSKReactionModes[kns][knm] = {
+
+  // > 1 muon-like ring (numu disappearance)
+  {
+    kSKmNuMuCCQE,         
+    kSKmNuMuCC1pi, 
+    kSKmNuMuCCoth_mu,                      
+    kSKmNuMuNC,          
+    kSKmNuMuBarCCQE,      
+    kSKmNuMuBarCC1pi, 
+    kSKmNuMuBarCCoth_mu,                  
+    kSKmNuMuBarNC,       
+    kSKmNuECCQE, 
+    kSKmNuECC1pi, 
+    kSKmNuECCoth_mu,                                
+    kSKmNuENC,                                                               
+    kSKmSigNuECCQE, 
+    kSKmSigNuECC1pi, 
+    kSKmSigNuECCoth,
+    kSKmUndefined,
+    kSKmUndefined,
+    kSKmUndefined,
+    kSKmUndefined,
+    kSKmUndefined,
+    kSKmUndefined,
+    kSKmUndefined,
+    kSKmUndefined,
+    kSKmUndefined,
+    kSKmUndefined,
+    kSKmUndefined,
+    kSKmUndefined,
+    kSKmUndefined,
+    kSKmUndefined,
+    kSKmUndefined
+  },
+
+  // > 1 electron-like ring (nue appearance)
+  {
+    kSKmNuMuCCQE, 
+    kSKmNuMuCC1pi, 
+    kSKmNuMuCCcoh, 
+    kSKmNuMuCCoth_e, 
+    kSKmNuMuNC1pi0, 
+    kSKmNuMuNCcoh, 
+    kSKmNuMuNCoth_e,                            
+    kSKmNuMuBarCCQE, 
+    kSKmNuMuBarCC1pi, 
+    kSKmNuMuBarCCcoh, 
+    kSKmNuMuBarCCoth_e,  
+    kSKmNuMuBarNC1pi0, 
+    kSKmNuMuBarNCcoh, 
+    kSKmNuMuBarNCoth_e,
+    kSKmNuECCQE, 
+    kSKmNuECC1pi, 
+    kSKmNuECCcoh, 
+    kSKmNuECCoth_e,
+    kSKmNuENC1pi0,  
+    kSKmNuENCcoh, 
+    kSKmNuENCoth_e,
+    kSKmSigNuECCQE,  
+    kSKmSigNuECC1pi,  
+    kSKmSigNuECCoth,
+    kSKmUndefined,
+    kSKmUndefined,
+    kSKmUndefined,
+    kSKmUndefined,
+    kSKmUndefined,
+    kSKmUndefined
+  }
+};
+
+
+/*
 static const int kNumSK1RingMuLikeModes = 15;
 static const SuperkMode_t  kSK1RingMuLikeModes[kNumSK1RingMuLikeModes] = {
    kSKmNuMuCCQE,         
@@ -142,6 +223,7 @@ static const SuperkMode_t kSK1RingELikeModes[kNumSK1RingELikeModes] = {
   kSKmSigNuECC1pi,  
   kSKmSigNuECCoth 
 };
+*/
 
 // (true) reaction modes considered separately in nd280 inputs
 static const int kNND280Modes = 21; // number of reaction modes considered separately within the ND280 sample

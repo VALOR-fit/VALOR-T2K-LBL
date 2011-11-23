@@ -800,6 +800,60 @@ bool t2kana::util::IsSignalNuE(t2kana::conv::SuperkMode_t m)
   return false;
 }
 //____________________________________________________________________________
+bool t2kana::util::IsCC(t2kana::conv::SuperkMode_t m)
+{
+  switch(m) {
+     case ( kSKmNuMuCCQE        ) : 
+     case ( kSKmNuMuCC1pi       ) : 
+     case ( kSKmNuMuCCcoh       ) : 
+     case ( kSKmNuMuCCoth_mu    ) : 
+     case ( kSKmNuMuCCoth_e     ) : 
+     case ( kSKmNuMuBarCCQE     ) : 
+     case ( kSKmNuMuBarCC1pi    ) : 
+     case ( kSKmNuMuBarCCcoh    ) : 
+     case ( kSKmNuMuBarCCoth_mu ) : 
+     case ( kSKmNuMuBarCCoth_e  ) : 
+     case ( kSKmNuECCQE         ) : 
+     case ( kSKmNuECC1pi        ) : 
+     case ( kSKmNuECCcoh        ) : 
+     case ( kSKmNuECCoth_mu     ) : 
+     case ( kSKmNuECCoth_e      ) : 
+     case ( kSKmSigNuECCQE      ) : 
+     case ( kSKmSigNuECC1pi     ) : 
+     case ( kSKmSigNuECCoth     ) : 
+	return true;
+	break;
+     default: 
+	return false;
+	break;
+  }
+  return false;
+}
+//____________________________________________________________________________
+bool t2kana::util::IsNC(t2kana::conv::SuperkMode_t m)
+{
+  switch(m) {
+     case ( kSKmNuMuNC          ) : 
+     case ( kSKmNuMuNC1pi0      ) : 
+     case ( kSKmNuMuNCcoh       ) : 
+     case ( kSKmNuMuNCoth_e     ) : 
+     case ( kSKmNuMuBarNC       ) : 
+     case ( kSKmNuMuBarNC1pi0   ) : 
+     case ( kSKmNuMuBarNCcoh    ) : 
+     case ( kSKmNuMuBarNCoth_e  ) : 
+     case ( kSKmNuENC           ) : 
+     case ( kSKmNuENC1pi0       ) : 
+     case ( kSKmNuENCcoh        ) : 
+     case ( kSKmNuENCoth_e      ) : 
+	return true;
+        break;
+     default: 
+	return false;
+	break;
+  }
+  return false;
+}
+//____________________________________________________________________________
 bool t2kana::util::IsSystematic(PhysParamId_t p)
 {
   switch(p) {

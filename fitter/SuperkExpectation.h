@@ -17,7 +17,6 @@
 #define _t2kana_sk_expectation_h_
 
 #include <string>
-#include <vector>
 
 #include <TObject.h>
 #include <TAxis.h>
@@ -35,7 +34,6 @@
 #include "Utilities.h"
 
 using std::string;
-using std::vector;
 using t2kana::conv::kns;
 using t2kana::conv::knm;
 using t2kana::conv::knmnd;
@@ -52,7 +50,6 @@ class SuperkExpectation: public TObject
 public:
    // ctors & dtor
    SuperkExpectation();
-   SuperkExpectation(const vector<t2kana::conv::SuperkSample_t> & samples);
   ~SuperkExpectation();
 
    // Read inputs from input XML file
@@ -100,9 +97,7 @@ private:
    TH1D *  fPredictErecoSpectrum[kns][knm];  ///< Ereco spectrum = f(sample,mode)
    TH1D *  fPredictErecoSpectrumTot[kns];    ///< Ereco spectrum = f(sample), sum over modes
 
-   vector<t2kana::conv::SuperkSample_t> fSamples;
-
-ClassDef(SuperkExpectation, 3)
+ClassDef(SuperkExpectation, 4)
 };
 
 } // t2kana

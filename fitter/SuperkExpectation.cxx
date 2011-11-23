@@ -94,18 +94,6 @@ ClassImp(SuperkExpectation)
 SuperkExpectation::SuperkExpectation()
 {
   this->Init();
-
-  fSamples.push_back(kSKsFCFV1RingMuLike);
-}
-//________________________________________________________________________________________
-SuperkExpectation::SuperkExpectation(const vector<SuperkSample_t> & samples)
-{
-  this->Init();
-
-  vector<SuperkSample_t>::const_iterator iter = samples.begin();
-  for( ; iter != samples.end(); ++iter) {
-    fSamples.push_back(*iter);
-  }
 }
 //________________________________________________________________________________________
 SuperkExpectation::~SuperkExpectation(void)
@@ -126,15 +114,6 @@ void SuperkExpectation::Generate(const PhysHypothesis & ph)
 
   // set params driving the oscillation, decoherence or decay model
   fSuperkMC->Hypothesis().Copy(ph);
-
-  const unsigned int ns = fSamples.size();
-  const unsigned int nm = 15;  
-  SuperkMode_t sk_modes [nm] = { 
-     kSKmNuMuCCQE,    kSKmNuMuCC1pi,    kSKmNuMuCCoth_mu,    kSKmNuMuNC, 
-     kSKmNuMuBarCCQE, kSKmNuMuBarCC1pi, kSKmNuMuBarCCoth_mu, kSKmNuMuBarNC, 
-     kSKmNuECCQE,     kSKmNuECC1pi,     kSKmNuECCoth_mu,     kSKmNuENC,
-     kSKmSigNuECCQE,  kSKmSigNuECC1pi,  kSKmSigNuECCoth
-  };
 
   // Ignore flux shape tweak and calculate the number of 1Rmu events.
   // Use that number of events to normalise the prediction obtain when the flux shape tweaking 
@@ -168,13 +147,15 @@ void SuperkExpectation::Generate(const PhysHypothesis & ph)
   fSuperkMC->UpdateErecoSpectra();
   for(int ibin = 1; ibin <= kNvErecoBins; ibin++) {
     double n = 0;
-    for(unsigned int is = 0; is < ns; is++) {
-       SuperkSample_t s = fSamples[is];
+    for(int is = 0; is < kns; is++) {
+       SuperkSample_t s = kSKSamples[is];
+       if(s == kSKsUndefined) continue;
        double ns = correction * fSuperkMC->CurrErecoSpectrum(s)->GetBinContent(ibin);
        n += ns;
        fPredictErecoSpectrumTot[s]->SetBinContent(ibin, ns);
-       for(unsigned int im = 0; im < nm; im++) {
-           SuperkMode_t m = sk_modes[im];
+       for(int im = 0; im < knm; im++) {
+           SuperkMode_t m = kSKReactionModes[s][im];
+           if(m == kSKmUndefined) continue;
            double nsm = correction * fSuperkMC->CurrErecoSpectrum(s,m)->GetBinContent(ibin);
            fPredictErecoSpectrum[s][m]->SetBinContent(ibin, nsm);       
        }//m	
@@ -200,37 +181,32 @@ void SuperkExpectation::Generate(const PhysHypothesis & ph)
      } else {
         beam_norm = this->GetNuFlux()->SuperkFluxNorm(0,0,0,0,0,0);
      }
-     fPredictErecoSpectrumTot[kSKsFCFV1RingMuLike]                  -> Scale (beam_norm);
-     fPredictErecoSpectrum[kSKsFCFV1RingMuLike][kSKmNuMuCCQE]       -> Scale (beam_norm);
-     fPredictErecoSpectrum[kSKsFCFV1RingMuLike][kSKmNuMuCC1pi]      -> Scale (beam_norm);
-     fPredictErecoSpectrum[kSKsFCFV1RingMuLike][kSKmNuMuCCoth_mu]      -> Scale (beam_norm);
-     fPredictErecoSpectrum[kSKsFCFV1RingMuLike][kSKmNuMuNC]             -> Scale (beam_norm);
-     fPredictErecoSpectrum[kSKsFCFV1RingMuLike][kSKmNuMuBarCCQE]    -> Scale (beam_norm);
-     fPredictErecoSpectrum[kSKsFCFV1RingMuLike][kSKmNuMuBarCC1pi]   -> Scale (beam_norm);
-     fPredictErecoSpectrum[kSKsFCFV1RingMuLike][kSKmNuMuBarCCoth_mu]   -> Scale (beam_norm);
-     fPredictErecoSpectrum[kSKsFCFV1RingMuLike][kSKmNuMuBarNC]      -> Scale (beam_norm);
-     fPredictErecoSpectrum[kSKsFCFV1RingMuLike][kSKmNuECCQE]        -> Scale (beam_norm);
-     fPredictErecoSpectrum[kSKsFCFV1RingMuLike][kSKmNuECC1pi]       -> Scale (beam_norm);
-     fPredictErecoSpectrum[kSKsFCFV1RingMuLike][kSKmNuECCoth_mu]       -> Scale (beam_norm);
-     fPredictErecoSpectrum[kSKsFCFV1RingMuLike][kSKmNuENC]          -> Scale (beam_norm);
+
+     for(int is = 0; is < kns; is++) {
+        SuperkSample_t s = kSKSamples[is];
+        if(s == kSKsUndefined) continue;
+        fPredictErecoSpectrumTot[s] -> Scale (beam_norm);
+        for(int im = 0; im < knm; im++) {
+            SuperkMode_t m = kSKReactionModes[s][im];
+            if(m == kSKmUndefined) continue;
+            fPredictErecoSpectrum[s][m] -> Scale (beam_norm);
+        }//m	
+     }//s
   }//norm tweaked?
 
   if(this->GetNuFlux()->ShapeTweaked()) {
      double nsktwk = fPredictErecoSpectrumTot[kSKsFCFV1RingMuLike]->Integral();
      shape_norm /= nsktwk;
-     fPredictErecoSpectrumTot[kSKsFCFV1RingMuLike]                  -> Scale (shape_norm);
-     fPredictErecoSpectrum[kSKsFCFV1RingMuLike][kSKmNuMuCCQE]       -> Scale (shape_norm);
-     fPredictErecoSpectrum[kSKsFCFV1RingMuLike][kSKmNuMuCC1pi]      -> Scale (shape_norm);
-     fPredictErecoSpectrum[kSKsFCFV1RingMuLike][kSKmNuMuCCoth_mu]      -> Scale (shape_norm);
-     fPredictErecoSpectrum[kSKsFCFV1RingMuLike][kSKmNuMuNC]             -> Scale (shape_norm);
-     fPredictErecoSpectrum[kSKsFCFV1RingMuLike][kSKmNuMuBarCCQE]    -> Scale (shape_norm);
-     fPredictErecoSpectrum[kSKsFCFV1RingMuLike][kSKmNuMuBarCC1pi]   -> Scale (shape_norm);
-     fPredictErecoSpectrum[kSKsFCFV1RingMuLike][kSKmNuMuBarCCoth_mu]   -> Scale (shape_norm);
-     fPredictErecoSpectrum[kSKsFCFV1RingMuLike][kSKmNuMuBarNC]      -> Scale (shape_norm);
-     fPredictErecoSpectrum[kSKsFCFV1RingMuLike][kSKmNuECCQE]        -> Scale (shape_norm);
-     fPredictErecoSpectrum[kSKsFCFV1RingMuLike][kSKmNuECC1pi]       -> Scale (shape_norm);
-     fPredictErecoSpectrum[kSKsFCFV1RingMuLike][kSKmNuECCoth_mu]       -> Scale (shape_norm);
-     fPredictErecoSpectrum[kSKsFCFV1RingMuLike][kSKmNuENC]          -> Scale (shape_norm);
+     for(int is = 0; is < kns; is++) {
+        SuperkSample_t s = kSKSamples[is];
+        if(s == kSKsUndefined) continue;
+        fPredictErecoSpectrumTot[s] -> Scale (shape_norm);
+        for(int im = 0; im < knm; im++) {
+            SuperkMode_t m = kSKReactionModes[s][im];
+            if(m == kSKmUndefined) continue;
+            fPredictErecoSpectrum[s][m] -> Scale (shape_norm);
+        }//m	
+     }//s
   }
 }
 //________________________________________________________________________________________
@@ -448,23 +424,17 @@ bool SuperkExpectation::Read(string config_file)
   fSuperkMC          -> TellMeAboutCrossSections (fNuXSec);
   fSuperkMC          -> TellMeAboutTheFlux       (fNuFlux);
 
-  const unsigned int ns = fSamples.size();
-  const unsigned int nm = 15;  
-  SuperkMode_t sk_modes [nm] = { 
-     kSKmNuMuCCQE,    kSKmNuMuCC1pi,    kSKmNuMuCCoth_mu,    kSKmNuMuNC, 
-     kSKmNuMuBarCCQE, kSKmNuMuBarCC1pi, kSKmNuMuBarCCoth_mu, kSKmNuMuBarNC, 
-     kSKmNuECCQE,     kSKmNuECC1pi,     kSKmNuECCoth_mu,     kSKmNuENC,
-     kSKmSigNuECCQE,  kSKmSigNuECC1pi,  kSKmSigNuECCoth
-  };
-  for(unsigned int is = 0; is < ns; is++) {
-    SuperkSample_t s = fSamples[is];
-    fPredictErecoSpectrumTot[s] = new TH1D("","", kNvErecoBins, kNvErecoBinEdges);
-    fPredictErecoSpectrumTot[s]->SetDirectory(0);
-    for(unsigned int im = 0; im < nm; im++) {
-       SuperkMode_t m = sk_modes[im];
-       fPredictErecoSpectrum[s][m] = new TH1D("","", kNvErecoBins, kNvErecoBinEdges);
-       fPredictErecoSpectrum[s][m]->SetDirectory(0);
-    }//m
+  for(int is = 0; is < kns; is++) {
+     SuperkSample_t s = kSKSamples[is];
+     if(s == kSKsUndefined) continue;
+     fPredictErecoSpectrumTot[s] = new TH1D("","", kNvErecoBins, kNvErecoBinEdges);
+     fPredictErecoSpectrumTot[s]->SetDirectory(0);
+     for(int im = 0; im < knm; im++) {
+         SuperkMode_t m = kSKReactionModes[s][im];
+         if(m == kSKmUndefined) continue;
+         fPredictErecoSpectrum[s][m] = new TH1D("","", kNvErecoBins, kNvErecoBinEdges);
+         fPredictErecoSpectrum[s][m]->SetDirectory(0);
+     }//m	
   }//s
 
   // Parse the input configuration file
@@ -500,8 +470,6 @@ void SuperkExpectation::Init(void)
   fNuFlux           = 0;
   fNuXSec           = 0;
 
-  fSamples.clear();
-
   for(int is=0; is<kns; is++) {
     fPredictErecoSpectrumTot[is] = 0;
     for(int im=0; im<knm; im++) {
@@ -516,8 +484,6 @@ void SuperkExpectation::CleanUp(void)
   if (fSuperkMC        ) delete fSuperkMC;
   if (fNuFlux          ) delete fNuFlux; 
   if (fNuXSec          ) delete fNuXSec;
-
-  fSamples.clear();
 
   for(int is=0; is<kns; is++) {
     if (fPredictErecoSpectrumTot[is]) delete fPredictErecoSpectrumTot[is];
