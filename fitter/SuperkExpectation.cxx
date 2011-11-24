@@ -526,12 +526,16 @@ void SuperkExpectation::CleanUp(void)
   if (fNuFlux          ) delete fNuFlux; 
   if (fNuXSec          ) delete fNuXSec;
 
-  for(int is=0; is<kns; is++) {
-    if (fPredictErecoSpectrumTot[is]) delete fPredictErecoSpectrumTot[is];
-    for(int im=0; im<knm; im++) {
-      if (fPredictErecoSpectrum[is][im]) delete fPredictErecoSpectrum[is][im];
-    }//im
-  }//is
+  for(int is = 0; is < kns; is++) {
+     SuperkSample_t s = kSKSamples[is];
+     if(s == kSKsUndefined) continue;
+     if (fPredictErecoSpectrumTot[s]) delete fPredictErecoSpectrumTot[s];
+     for(int im = 0; im < knm; im++) {
+       SuperkMode_t m = kSKReactionModes[is][im];
+       if(m == kSKmUndefined) continue;
+       if (fPredictErecoSpectrum[s][m]) delete fPredictErecoSpectrum[s][m];
+     }
+  }
 }
 //________________________________________________________________________________________
 void SuperkExpectation::SetNuisanceParams(const FitParamList & fp)

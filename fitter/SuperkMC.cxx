@@ -170,16 +170,19 @@ void SuperkMC::CleanUp(void)
   if(fMCTreeNuE1Re      ) delete fMCTreeNuE1Re;
   if(fMCTreeNuESig1Re   ) delete fMCTreeNuESig1Re;
 
-  for(int is=0; is<kns; is++) {
-    if( fMCErecoSpectrumTot[is] ) delete fMCErecoSpectrumTot[is];
-    for(int im=0; im<knm; im++) {
-      if( fMCTemplNom     [is][im] ) delete fMCTemplNom     [is][im];
-      if( fMCTemplSys     [is][im] ) delete fMCTemplSys     [is][im];
-      if( fMCTemplSysHyp  [is][im] ) delete fMCTemplSysHyp  [is][im];
-      if( fMCErecoSpectrum[is][im] ) delete fMCErecoSpectrum[is][im];
-    }
+  for(int is = 0; is < kns; is++) {
+     SuperkSample_t s = kSKSamples[is];
+     if(s == kSKsUndefined) continue;
+     for(int im = 0; im < knm; im++) {
+       SuperkMode_t m = kSKReactionModes[is][im];
+       if(m == kSKmUndefined) continue;
+       if( fMCTemplNom     [s][m] ) delete fMCTemplNom     [s][m];
+       if( fMCTemplSys     [s][m] ) delete fMCTemplSys     [s][m];
+       if( fMCTemplSysHyp  [s][m] ) delete fMCTemplSysHyp  [s][m];
+       if( fMCErecoSpectrum[s][m] ) delete fMCErecoSpectrum[s][m];
+     }
   }
-  
+
   if (f1RmNuMuEt   ) delete f1RmNuMuEt;
   if (f1RmNuMuBarEt) delete f1RmNuMuBarEt;
   if (f1RmNuEEt    ) delete f1RmNuEEt;
@@ -473,9 +476,6 @@ void SuperkMC::ApplySystematicsToTemplates(void)
        // consider template?
        bool skip = this->SkipTemplate(m);
        if(skip) continue;
-       // another check
-       if(m == kSKmUndefined) {cout << "contunye" << endl; continue;}
-       cout << util::AsString(m) << endl;
        // get corresponding template
        TH2D * mctempl = fMCTemplSys[s][m];
        if(!mctempl) continue; 
