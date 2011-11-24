@@ -227,7 +227,7 @@ double NuXSec::ND280XSecRatioWght(
         break;
 
       case (kNDmNuECCQE)  : 
-        return 1.; 
+        return 1.;
         break;
 
       case (kNDmNuECCRES) :
@@ -473,7 +473,7 @@ double NuXSec::CC1piToCCQEXSecRatioWght(double Etrue) const
 double NuXSec::CCCohToCCQEXSecRatioWght(double Etrue) const
 {
    return this->XSecRatioWght(
-     Etrue, fCCOthToCCQEXSecRatioTwkDial, fCCOthToCCQEXSecRatioRelErr);
+     Etrue, fCCCohToCCQEXSecRatioTwkDial, fCCCohToCCQEXSecRatioRelErr);
 }
 //________________________________________________________________________________________
 double NuXSec::CCOthToCCQEXSecRatioWght(double Etrue) const
@@ -550,13 +550,9 @@ void NuXSec::PrintSystematicVariations(void) const
 bool NuXSec::TweakAffectsND280 (void) const
 {
   if ( TMath::Abs(fCC1piToCCQEXSecRatioTwkDial ) > kASmallNum ) return true;
-  if ( TMath::Abs(fCCCohToCCQEXSecRatioTwkDial ) > kASmallNum ) return true;
   if ( TMath::Abs(fCCOthToCCQEXSecRatioTwkDial ) > kASmallNum ) return true;
   if ( TMath::Abs(fNCToCCQEXSecRatioTwkDial    ) > kASmallNum ) return true;
-  if ( TMath::Abs(fNC1pi0ToCCQEXSecRatioTwkDial) > kASmallNum ) return true;
-  if ( TMath::Abs(fNCCohToCCQEXSecRatioTwkDial ) > kASmallNum ) return true;
-  if ( TMath::Abs(fNCOthToCCQEXSecRatioTwkDial ) > kASmallNum ) return true;
-  if ( TMath::Abs(fNuEToNuMuXSecRatioTwkDial   ) > kASmallNum ) return true;
+  //if ( TMath::Abs(fNuEToNuMuXSecRatioTwkDial   ) > kASmallNum ) return true;
   return false;
 }
 //________________________________________________________________________________________
