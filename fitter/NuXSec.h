@@ -39,18 +39,18 @@ public:
    double SuperkNuclEffectWght(double Ereco, t2kana::conv::SuperkSample_t s, t2kana::conv::SuperkMode_t m) const;
 
    // Systematic variations
-   void TweakCCQEXSec             (double twkdial) { fCCQEXSecTwkDial             = twkdial; } ///< tweak CCQE (far only)
-   void TweakCC1piToCCQEXSecRatio (double twkdial) { fCC1piToCCQEXSecRatioTwkDial = twkdial; } ///< tweak CC1pi/CCQE (both near & far)
-   void TweakCCCohToCCQEXSecRatio (double twkdial) { fCCCohToCCQEXSecRatioTwkDial = twkdial; } ///< tweak CCcoh/CCQE (both near & far)
-   void TweakCCOthToCCQEXSecRatio (double twkdial) { fCCOthToCCQEXSecRatioTwkDial = twkdial; } ///< tweak CCoth/CCQE (both near & far)
-   void TweakNCToCCQEXSecRatio    (double twkdial) { fNCToCCQEXSecRatioTwkDial    = twkdial; } ///< tweak NC/CCQE (both near & far)
-   void TweakNC1pi0ToCCQEXSecRatio(double twkdial) { fNC1pi0ToCCQEXSecRatioTwkDial= twkdial; } ///< tweak NC1pi0/CCQE (both near & far)
-   void TweakNCCohToCCQEXSecRatio (double twkdial) { fNCCohToCCQEXSecRatioTwkDial = twkdial; } ///< tweak NCCoh/CCQE (both near & far)
-   void TweakNCOthToCCQEXSecRatio (double twkdial) { fNCOthToCCQEXSecRatioTwkDial = twkdial; } ///< tweak NCOth/CCQE (both near & far)
-   void TweakNuEToNuMuXSecRatio   (double twkdial) { fNuEToNuMuXSecRatioTwkDial   = twkdial; } ///< tweak sigma(nue)/sigma(numu) (both near & far) - only apply to nueCC templates (TN52, pg20)
-   void TweakNuclEffect           (double twkdial) { fNuclEffectTwkDial           = twkdial; } ///< tweak nuclear effect (far only)
-   bool TweakAffectsND280         (void) const;
-   bool TweakAffectsSuperk        (void) const;
+   void TweakCCQE          (double twkdial) { fCCQETwkDial             = twkdial; } ///< tweak CCQE (far only)
+   void TweakCC1piToCCQE   (double twkdial) { fCC1piToCCQETwkDial = twkdial; } ///< tweak CC1pi/CCQE (both near & far)
+   void TweakCCCohToCCQE   (double twkdial) { fCCCohToCCQETwkDial = twkdial; } ///< tweak CCcoh/CCQE (both near & far)
+   void TweakCCOthToCCQE   (double twkdial) { fCCOthToCCQETwkDial = twkdial; } ///< tweak CCoth/CCQE (both near & far)
+   void TweakNCToCCQE      (double twkdial) { fNCToCCQETwkDial    = twkdial; } ///< tweak NC/CCQE (both near & far)
+   void TweakNC1pi0ToCCQE  (double twkdial) { fNC1pi0ToCCQETwkDial= twkdial; } ///< tweak NC1pi0/CCQE (both near & far)
+   void TweakNCCohToCCQE   (double twkdial) { fNCCohToCCQETwkDial = twkdial; } ///< tweak NCCoh/CCQE (both near & far)
+   void TweakNCOthToCCQE   (double twkdial) { fNCOthToCCQETwkDial = twkdial; } ///< tweak NCOth/CCQE (both near & far)
+   void TweakNuEToNuMu     (double twkdial) { fNuEToNuMuTwkDial   = twkdial; } ///< tweak sigma(nue)/sigma(numu) (both near & far) - only apply to nueCC templates (TN52, pg20)
+   void TweakSKFSI         (double twkdial) { fSKFSITwkDial           = twkdial; } ///< tweak nuclear effect (far only)
+   bool TweakAffectsND280  (void) const;
+   bool TweakAffectsSuperk (void) const;
   
    // Read inputs from XML file
    bool Read (TXMLEngine* xml, XMLNodePointer_t root_node);
@@ -70,40 +70,40 @@ private:
    void Init    (void);
    void CleanUp (void);
 
-   double CCQEWght                  (double Etrue) const;
-   double CC1piToCCQEXSecRatioWght  (double Etrue) const;
-   double CCCohToCCQEXSecRatioWght  (double Etrue) const;
-   double CCOthToCCQEXSecRatioWght  (double Etrue) const;
-   double NCToCCQEXSecRatioWght     (double Etrue) const;
-   double NC1pi0ToCCQEXSecRatioWght (double Etrue) const;
-   double NCCohToCCQEXSecRatioWght  (double Etrue) const;
-   double NCOthToCCQEXSecRatioWght  (double Etrue) const;
-   double NuEToNuMuXSecRatioWght    (double Etrue) const;
-   double XSecRatioWght             (double Etrue, double twkdial, TH1D * hRelErr) const;
+   double CCQEWght         (double Etrue) const;
+   double CC1piToCCQEWght  (double Etrue) const;
+   double CCCohToCCQEWght  (double Etrue) const;
+   double CCOthToCCQEWght  (double Etrue) const;
+   double NCToCCQEWght     (double Etrue) const;
+   double NC1pi0ToCCQEWght (double Etrue) const;
+   double NCCohToCCQEWght  (double Etrue) const;
+   double NCOthToCCQEWght  (double Etrue) const;
+   double NuEToNuMuWght    (double Etrue) const;
+   double XSecRatioWght    (double Etrue, double twkdial, TH1D * hRelErr) const;
 
-   double fCCQEXSecTwkDial;               ///<
-   double fCC1piToCCQEXSecRatioTwkDial;   ///<
-   double fCCCohToCCQEXSecRatioTwkDial;   ///<
-   double fCCOthToCCQEXSecRatioTwkDial;   ///<
-   double fNCToCCQEXSecRatioTwkDial;      ///<
-   double fNC1pi0ToCCQEXSecRatioTwkDial;  ///<
-   double fNCCohToCCQEXSecRatioTwkDial;   ///<
-   double fNCOthToCCQEXSecRatioTwkDial;   ///<
-   double fNuEToNuMuXSecRatioTwkDial;     ///<
-   double fNuclEffectTwkDial;             ///<
-   TH1D * fCCQEXSecRelErr;                ///<
-   TH1D * fCC1piToCCQEXSecRatioRelErr;    ///<
-   TH1D * fCCCohToCCQEXSecRatioRelErr;    ///<
-   TH1D * fCCOthToCCQEXSecRatioRelErr;    ///<
-   TH1D * fNCToCCQEXSecRatioRelErr;       ///<
-   TH1D * fNC1pi0ToCCQEXSecRatioRelErr;   ///<
-   TH1D * fNCCohToCCQEXSecRatioRelErr;    ///<
-   TH1D * fNCOthToCCQEXSecRatioRelErr;    ///<
-   TH1D * fNuEToNuMuXSecRatioRelErr;      ///<
-   TH1D * fSuperkNuclearEffectRelErr1RmuT;///<
-   TH1D * fSuperkNuclearEffectRelErr1ReTbkg;///<
-   TH1D * fSuperkNuclearEffectRelErr1ReTsig;///<
-   double fCC1piInCCRES;                  ///< correct ND280 interaction mode / NWIG err mis-match
+   double fCCQETwkDial;          ///<
+   double fCC1piToCCQETwkDial;   ///<
+   double fCCCohToCCQETwkDial;   ///<
+   double fCCOthToCCQETwkDial;   ///<
+   double fNCToCCQETwkDial;      ///<
+   double fNC1pi0ToCCQETwkDial;  ///<
+   double fNCCohToCCQETwkDial;   ///<
+   double fNCOthToCCQETwkDial;   ///<
+   double fNuEToNuMuTwkDial;     ///<
+   double fSKFSITwkDial;         ///<
+   TH1D * fCCQERelErr;           ///<
+   TH1D * fCC1piToCCQERelErr;    ///<
+   TH1D * fCCCohToCCQERelErr;    ///<
+   TH1D * fCCOthToCCQERelErr;    ///<
+   TH1D * fNCToCCQERelErr;       ///<
+   TH1D * fNC1pi0ToCCQERelErr;   ///<
+   TH1D * fNCCohToCCQERelErr;    ///<
+   TH1D * fNCOthToCCQERelErr;    ///<
+   TH1D * fNuEToNuMuRelErr;      ///<
+   TH1D * fSKFSIRelErr1RmuT;     ///<
+   TH1D * fSKFSIRelErr1ReTbkg;   ///<
+   TH1D * fSKFSIRelErr1ReTsig;   ///<
+   double fCC1piInCCRES;         ///< correct ND280 interaction mode / NWIG err mis-match
 
 ClassDef(NuXSec, 3);
 };

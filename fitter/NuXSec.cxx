@@ -11,6 +11,13 @@
    `SuperkCCQEXSecWght(double Etrue, SuperkMode_t m) const'
  @ 06/10/11 - CA
    Added `PrintSystematicVariations()'. Tweaked output messages.
+ @ 25/11/11 - TD
+   Over a few iterations have:
+    added new sample (e.g. NC1pi0) xsec tweaks
+    changed methods 'Superk*Wght()' to take in samples as well as modes
+    changed 'SuperkNuclEffectWght()' to act with different histograms for different samples/modes
+    changed names: dropped XSec from CCQEXSec, dropped XSecRatio from e.g. CC1piToCCQEXSecRatio
+                   changed NuclEffect to SKFSI
 
 */
 //________________________________________________________________________________________
@@ -53,45 +60,45 @@ NuXSec::~NuXSec()
 //________________________________________________________________________________________
 void NuXSec::Init(void)
 {
-  fCCQEXSecTwkDial             = 0;
-  fCC1piToCCQEXSecRatioTwkDial = 0;
-  fCCCohToCCQEXSecRatioTwkDial = 0;
-  fCCOthToCCQEXSecRatioTwkDial = 0;
-  fNCToCCQEXSecRatioTwkDial    = 0;
-  fNC1pi0ToCCQEXSecRatioTwkDial= 0;
-  fNCCohToCCQEXSecRatioTwkDial = 0;
-  fNCOthToCCQEXSecRatioTwkDial = 0;
-  fNuEToNuMuXSecRatioTwkDial   = 0;
-  fNuclEffectTwkDial           = 0;
-  fCCQEXSecRelErr              = 0;
-  fCC1piToCCQEXSecRatioRelErr  = 0;
-  fCCCohToCCQEXSecRatioRelErr  = 0;
-  fCCOthToCCQEXSecRatioRelErr  = 0;
-  fNCToCCQEXSecRatioRelErr     = 0;
-  fNC1pi0ToCCQEXSecRatioRelErr = 0;
-  fNCCohToCCQEXSecRatioRelErr  = 0;
-  fNCOthToCCQEXSecRatioRelErr  = 0;
-  fNuEToNuMuXSecRatioRelErr    = 0;
-  fSuperkNuclearEffectRelErr1RmuT   = 0;
-  fSuperkNuclearEffectRelErr1ReTbkg = 0;
-  fSuperkNuclearEffectRelErr1ReTsig = 0;
-  fCC1piInCCRES                = 0;
+  fCCQETwkDial        = 0;
+  fCC1piToCCQETwkDial = 0;
+  fCCCohToCCQETwkDial = 0;
+  fCCOthToCCQETwkDial = 0;
+  fNCToCCQETwkDial    = 0;
+  fNC1pi0ToCCQETwkDial= 0;
+  fNCCohToCCQETwkDial = 0;
+  fNCOthToCCQETwkDial = 0;
+  fNuEToNuMuTwkDial   = 0;
+  fSKFSITwkDial       = 0;
+  fCCQERelErr         = 0;
+  fCC1piToCCQERelErr  = 0;
+  fCCCohToCCQERelErr  = 0;
+  fCCOthToCCQERelErr  = 0;
+  fNCToCCQERelErr     = 0;
+  fNC1pi0ToCCQERelErr = 0;
+  fNCCohToCCQERelErr  = 0;
+  fNCOthToCCQERelErr  = 0;
+  fNuEToNuMuRelErr    = 0;
+  fSKFSIRelErr1RmuT   = 0;
+  fSKFSIRelErr1ReTbkg = 0;
+  fSKFSIRelErr1ReTsig = 0;
+  fCC1piInCCRES       = 0;
 }
 //________________________________________________________________________________________
 void NuXSec::CleanUp(void)
 {
-  if ( fCCQEXSecRelErr             ) delete fCCQEXSecRelErr;
-  if ( fCC1piToCCQEXSecRatioRelErr ) delete fCC1piToCCQEXSecRatioRelErr;
-  if ( fCCCohToCCQEXSecRatioRelErr ) delete fCCCohToCCQEXSecRatioRelErr;
-  if ( fCCOthToCCQEXSecRatioRelErr ) delete fCCOthToCCQEXSecRatioRelErr;
-  if ( fNCToCCQEXSecRatioRelErr    ) delete fNCToCCQEXSecRatioRelErr;
-  if ( fNC1pi0ToCCQEXSecRatioRelErr) delete fNC1pi0ToCCQEXSecRatioRelErr;
-  if ( fNCCohToCCQEXSecRatioRelErr ) delete fNCCohToCCQEXSecRatioRelErr;
-  if ( fNCOthToCCQEXSecRatioRelErr ) delete fNCOthToCCQEXSecRatioRelErr;
-  if ( fNuEToNuMuXSecRatioRelErr   ) delete fNuEToNuMuXSecRatioRelErr;
-  if ( fSuperkNuclearEffectRelErr1RmuT   ) delete fSuperkNuclearEffectRelErr1RmuT;
-  if ( fSuperkNuclearEffectRelErr1ReTbkg ) delete fSuperkNuclearEffectRelErr1ReTbkg;
-  if ( fSuperkNuclearEffectRelErr1ReTsig ) delete fSuperkNuclearEffectRelErr1ReTsig;
+  if ( fCCQERelErr        ) delete fCCQERelErr;
+  if ( fCC1piToCCQERelErr ) delete fCC1piToCCQERelErr;
+  if ( fCCCohToCCQERelErr ) delete fCCCohToCCQERelErr;
+  if ( fCCOthToCCQERelErr ) delete fCCOthToCCQERelErr;
+  if ( fNCToCCQERelErr    ) delete fNCToCCQERelErr;
+  if ( fNC1pi0ToCCQERelErr) delete fNC1pi0ToCCQERelErr;
+  if ( fNCCohToCCQERelErr ) delete fNCCohToCCQERelErr;
+  if ( fNCOthToCCQERelErr ) delete fNCOthToCCQERelErr;
+  if ( fNuEToNuMuRelErr   ) delete fNuEToNuMuRelErr;
+  if ( fSKFSIRelErr1RmuT  ) delete fSKFSIRelErr1RmuT;
+  if ( fSKFSIRelErr1ReTbkg) delete fSKFSIRelErr1ReTbkg;
+  if ( fSKFSIRelErr1ReTsig) delete fSKFSIRelErr1ReTsig;
 }
 //________________________________________________________________________________________
 bool NuXSec::Read(TXMLEngine* xml, XMLNodePointer_t root_node)
@@ -100,29 +107,29 @@ bool NuXSec::Read(TXMLEngine* xml, XMLNodePointer_t root_node)
   cout << "Exp/XSec >> Reading neutrino generator inputs from input XML file." << endl;
 #endif
 
-  fCCQEXSecRelErr = 
+  fCCQERelErr = 
     util::XML2TH1D(xml,root_node,"niwg/systematics/xsec_relative_error/ccqe");
-  fCC1piToCCQEXSecRatioRelErr = 
+  fCC1piToCCQERelErr = 
     util::XML2TH1D(xml,root_node,"niwg/systematics/xsec_ratio_relative_error/cc1pi_ccqe");
-  fCCCohToCCQEXSecRatioRelErr = 
+  fCCCohToCCQERelErr = 
     util::XML2TH1D(xml,root_node,"niwg/systematics/xsec_ratio_relative_error/cccoh_ccqe");
-  fCCOthToCCQEXSecRatioRelErr = 
+  fCCOthToCCQERelErr = 
     util::XML2TH1D(xml,root_node,"niwg/systematics/xsec_ratio_relative_error/ccother_ccqe");
-  fNCToCCQEXSecRatioRelErr = 
+  fNCToCCQERelErr = 
     util::XML2TH1D(xml,root_node,"niwg/systematics/xsec_ratio_relative_error/nc_ccqe");
-  fNC1pi0ToCCQEXSecRatioRelErr = 
+  fNC1pi0ToCCQERelErr = 
     util::XML2TH1D(xml,root_node,"niwg/systematics/xsec_ratio_relative_error/nc1pi0_ccqe");
-  fNCCohToCCQEXSecRatioRelErr = 
+  fNCCohToCCQERelErr = 
     util::XML2TH1D(xml,root_node,"niwg/systematics/xsec_ratio_relative_error/nccoh_ccqe");
-  fNCOthToCCQEXSecRatioRelErr = 
+  fNCOthToCCQERelErr = 
     util::XML2TH1D(xml,root_node,"niwg/systematics/xsec_ratio_relative_error/ncother_ccqe");
-  fNuEToNuMuXSecRatioRelErr =
+  fNuEToNuMuRelErr =
     util::XML2TH1D(xml,root_node,"niwg/systematics/xsec_ratio_relative_error/nue_numu");
-  fSuperkNuclearEffectRelErr1RmuT =
+  fSKFSIRelErr1RmuT =
     util::XML2TH1D(xml,root_node,"niwg/systematics/superk_nuclear_effect_relative_error_1RmuT");
-  fSuperkNuclearEffectRelErr1ReTbkg =
+  fSKFSIRelErr1ReTbkg =
     util::XML2TH1D(xml,root_node,"niwg/systematics/superk_nuclear_effect_relative_error_1ReTbkg");
-  fSuperkNuclearEffectRelErr1ReTsig =
+  fSKFSIRelErr1ReTsig =
     util::XML2TH1D(xml,root_node,"niwg/systematics/superk_nuclear_effect_relative_error_1ReTsig");
 
   fCC1piInCCRES = util::XML2Dbl(xml,root_node,"neutrino_generator/cc1pi_in_ccres");
@@ -171,29 +178,29 @@ double NuXSec::ND280XSecRatioWght(
         // error on nd280
 	// This doesn't apply for NEUT.
         //
-	return (    fCC1piInCCRES  * this->CC1piToCCQEXSecRatioWght(Etrue) +
-                 (1-fCC1piInCCRES) * this->CCOthToCCQEXSecRatioWght(Etrue)
+	return (    fCC1piInCCRES  * this->CC1piToCCQEWght(Etrue) +
+                 (1-fCC1piInCCRES) * this->CCOthToCCQEWght(Etrue)
                );
 	break;
 
       case (kNDmNuMuCCCOH) : 
-        return this->CCOthToCCQEXSecRatioWght(Etrue); 
+        return this->CCOthToCCQEWght(Etrue); 
         break;
 
       case (kNDmNuMuCCOth) : 
-        return this->CCOthToCCQEXSecRatioWght(Etrue); 
+        return this->CCOthToCCQEWght(Etrue); 
         break;
 
       case (kNDmNuMuNCRES) : 
-        return this->NCToCCQEXSecRatioWght(Etrue);  
+        return this->NCToCCQEWght(Etrue);  
         break;
 
       case (kNDmNuMuNCCOH) : 
-        return this->NCToCCQEXSecRatioWght(Etrue);  
+        return this->NCToCCQEWght(Etrue);  
         break;
 
       case (kNDmNuMuNCOth) : 
-        return this->NCToCCQEXSecRatioWght(Etrue);  
+        return this->NCToCCQEWght(Etrue);  
         break;
 
       case (kNDmNuMuBarCCQE) : 
@@ -201,59 +208,64 @@ double NuXSec::ND280XSecRatioWght(
         break;
 
       case (kNDmNuMuBarCCRES) : 
-	return (    fCC1piInCCRES  * this->CC1piToCCQEXSecRatioWght(Etrue) +
-                 (1-fCC1piInCCRES) * this->CCOthToCCQEXSecRatioWght(Etrue)
+	return (    fCC1piInCCRES  * this->CC1piToCCQEWght(Etrue) +
+                 (1-fCC1piInCCRES) * this->CCOthToCCQEWght(Etrue)
                );
 	break;
 
       case (kNDmNuMuBarCCCOH) :
-        return this->CCOthToCCQEXSecRatioWght(Etrue); 
+        return this->CCOthToCCQEWght(Etrue); 
         break;
 
       case (kNDmNuMuBarCCOth) : 
-        return this->CCOthToCCQEXSecRatioWght(Etrue); 
+        return this->CCOthToCCQEWght(Etrue); 
         break;
 
       case (kNDmNuMuBarNCRES) : 
-        return this->NCToCCQEXSecRatioWght(Etrue); 
+        return this->NCToCCQEWght(Etrue); 
         break;
 
       case (kNDmNuMuBarNCCOH) : 
-        return this->NCToCCQEXSecRatioWght(Etrue); 
+        return this->NCToCCQEWght(Etrue); 
         break;
 
       case (kNDmNuMuBarNCOth) : 
-        return this->NCToCCQEXSecRatioWght(Etrue); 
+        return this->NCToCCQEWght(Etrue); 
         break;
 
       case (kNDmNuECCQE)  : 
-        return 1.;
+        return this->NuEToNuMuWght(Etrue);
         break;
 
       case (kNDmNuECCRES) :
-	return (    fCC1piInCCRES  * this->CC1piToCCQEXSecRatioWght(Etrue) +
-                 (1-fCC1piInCCRES) * this->CCOthToCCQEXSecRatioWght(Etrue)
-               );
-        break;
+	{
+	  double ccres   = (     fCC1piInCCRES  * this->CC1piToCCQEWght(Etrue) +
+			      (1-fCC1piInCCRES) * this->CCOthToCCQEWght(Etrue) );
+	  double nuenumu = this->NuEToNuMuWght(Etrue);
+	  return ccres *  nuenumu;
+	  break;
+	}
 
       case (kNDmNuECCCOH) :
-         return this->CCOthToCCQEXSecRatioWght(Etrue); 
+	 return ( this->CCOthToCCQEWght(Etrue) *
+	          this->NuEToNuMuWght  (Etrue) );
          break;
 
       case (kNDmNuECCOth) : 
-         return this->CCOthToCCQEXSecRatioWght(Etrue); 
+	 return ( this->CCOthToCCQEWght(Etrue) *
+	          this->NuEToNuMuWght  (Etrue) );
          break;
 
       case (kNDmNuENCRES) : 
-         return this->NCToCCQEXSecRatioWght(Etrue); 
+         return this->NCToCCQEWght(Etrue); 
          break;
 
       case (kNDmNuENCCOH) : 
-         return this->NCToCCQEXSecRatioWght(Etrue); 
+         return this->NCToCCQEWght(Etrue); 
          break;
 
       case (kNDmNuENCOth) : 
-         return this->NCToCCQEXSecRatioWght(Etrue); 
+         return this->NCToCCQEWght(Etrue); 
          break;
 
       default: 
@@ -268,73 +280,69 @@ double NuXSec::SuperkXSecRatioWght(
    double Etrue, t2kana::conv::SuperkSample_t s, t2kana::conv::SuperkMode_t m) const
 {
    // a check to make sure the sample-mode combination exists
-   bool mode_in_sample = false;
-   for ( int im=0; im<knm; im++ )
-     if ( m == kSKReactionModes[s][im] ) {
-       mode_in_sample = true;
-       break;
-     }
-   if ( !mode_in_sample )
-     return 1.;
+   // a check to make sure the sample-mode combination exists
+   if(s == kSKsUndefined) return 1.;
+   SuperkMode_t modecheck = kSKReactionModes[(int)s][(int)m];
+   if(modecheck == kSKmUndefined) return 1.;
      
    switch(m) {
       case ( kSKmNuMuCCQE        ) : return 1.; break;
-      case ( kSKmNuMuCC1pi       ) : return this->CC1piToCCQEXSecRatioWght(Etrue); break;
-      case ( kSKmNuMuCCcoh       ) : return this->CCCohToCCQEXSecRatioWght(Etrue); break;
+      case ( kSKmNuMuCC1pi       ) : return this->CC1piToCCQEWght(Etrue); break;
+      case ( kSKmNuMuCCcoh       ) : return this->CCCohToCCQEWght(Etrue); break;
       case ( kSKmNuMuCCoth_mu    ) :
-      case ( kSKmNuMuCCoth_e     ) : return this->CCOthToCCQEXSecRatioWght(Etrue); break;
-      case ( kSKmNuMuNC          ) : return this->NCToCCQEXSecRatioWght(Etrue);    break;
-      case ( kSKmNuMuNC1pi0      ) : return this->NC1pi0ToCCQEXSecRatioWght(Etrue);break;
-      case ( kSKmNuMuNCcoh       ) : return this->NCCohToCCQEXSecRatioWght(Etrue); break;
-      case ( kSKmNuMuNCoth_e     ) : return this->NCOthToCCQEXSecRatioWght(Etrue); break;
+      case ( kSKmNuMuCCoth_e     ) : return this->CCOthToCCQEWght(Etrue); break;
+      case ( kSKmNuMuNC          ) : return this->NCToCCQEWght(Etrue);    break;
+      case ( kSKmNuMuNC1pi0      ) : return this->NC1pi0ToCCQEWght(Etrue);break;
+      case ( kSKmNuMuNCcoh       ) : return this->NCCohToCCQEWght(Etrue); break;
+      case ( kSKmNuMuNCoth_e     ) : return this->NCOthToCCQEWght(Etrue); break;
       case ( kSKmNuMuBarCCQE     ) : return 1.; break;
-      case ( kSKmNuMuBarCC1pi    ) : return this->CC1piToCCQEXSecRatioWght(Etrue); break;
-      case ( kSKmNuMuBarCCcoh    ) : return this->CCCohToCCQEXSecRatioWght(Etrue); break;
+      case ( kSKmNuMuBarCC1pi    ) : return this->CC1piToCCQEWght(Etrue); break;
+      case ( kSKmNuMuBarCCcoh    ) : return this->CCCohToCCQEWght(Etrue); break;
       case ( kSKmNuMuBarCCoth_mu ) :
-      case ( kSKmNuMuBarCCoth_e  ) : return this->CCOthToCCQEXSecRatioWght(Etrue); break;
-      case ( kSKmNuMuBarNC       ) : return this->NCToCCQEXSecRatioWght(Etrue);    break;
-      case ( kSKmNuMuBarNC1pi0   ) : return this->NC1pi0ToCCQEXSecRatioWght(Etrue);break;
-      case ( kSKmNuMuBarNCcoh    ) : return this->NCCohToCCQEXSecRatioWght(Etrue); break;
-      case ( kSKmNuMuBarNCoth_e  ) : return this->NCOthToCCQEXSecRatioWght(Etrue); break;
-      case ( kSKmNuECCQE         ) : return this->NuEToNuMuXSecRatioWght(Etrue);   break;
+      case ( kSKmNuMuBarCCoth_e  ) : return this->CCOthToCCQEWght(Etrue); break;
+      case ( kSKmNuMuBarNC       ) : return this->NCToCCQEWght(Etrue);    break;
+      case ( kSKmNuMuBarNC1pi0   ) : return this->NC1pi0ToCCQEWght(Etrue);break;
+      case ( kSKmNuMuBarNCcoh    ) : return this->NCCohToCCQEWght(Etrue); break;
+      case ( kSKmNuMuBarNCoth_e  ) : return this->NCOthToCCQEWght(Etrue); break;
+      case ( kSKmNuECCQE         ) : return this->NuEToNuMuWght(Etrue);   break;
       case ( kSKmNuECC1pi        ) :
 	{
-	  double cc1pi   = this->CC1piToCCQEXSecRatioWght(Etrue);
-	  double nuenumu = this->NuEToNuMuXSecRatioWght(Etrue);
+	  double cc1pi   = this->CC1piToCCQEWght(Etrue);
+	  double nuenumu = this->NuEToNuMuWght(Etrue);
 	  return cc1pi * nuenumu;
 	  break;
 	}
       case ( kSKmNuECCcoh        ) :
 	{
-	  double cccoh = this->CCCohToCCQEXSecRatioWght(Etrue);
-	  double nuenumu  = this->NuEToNuMuXSecRatioWght(Etrue);
+	  double cccoh    = this->CCCohToCCQEWght(Etrue);
+	  double nuenumu  = this->NuEToNuMuWght(Etrue);
 	  return cccoh * nuenumu;
 	  break;
 	}
       case ( kSKmNuECCoth_mu     ) : 
       case ( kSKmNuECCoth_e      ) :
 	{
-	  double ccoth = this->CCOthToCCQEXSecRatioWght(Etrue);
-	  double nuenumu  = this->NuEToNuMuXSecRatioWght(Etrue);
+	  double ccoth    = this->CCOthToCCQEWght(Etrue);
+	  double nuenumu  = this->NuEToNuMuWght(Etrue);
 	  return ccoth * nuenumu;
 	  break;
 	}
-      case ( kSKmNuENC           ) : return this->NCToCCQEXSecRatioWght(Etrue);    break;
-      case ( kSKmNuENC1pi0       ) : return this->NC1pi0ToCCQEXSecRatioWght(Etrue);break;
-      case ( kSKmNuENCcoh        ) : return this->NCCohToCCQEXSecRatioWght(Etrue); break;
-      case ( kSKmNuENCoth_e      ) : return this->NCOthToCCQEXSecRatioWght(Etrue); break;
-      case ( kSKmSigNuECCQE      ) : return this->NuEToNuMuXSecRatioWght(Etrue);   break;
+      case ( kSKmNuENC           ) : return this->NCToCCQEWght(Etrue);    break;
+      case ( kSKmNuENC1pi0       ) : return this->NC1pi0ToCCQEWght(Etrue);break;
+      case ( kSKmNuENCcoh        ) : return this->NCCohToCCQEWght(Etrue); break;
+      case ( kSKmNuENCoth_e      ) : return this->NCOthToCCQEWght(Etrue); break;
+      case ( kSKmSigNuECCQE      ) : return this->NuEToNuMuWght(Etrue);   break;
       case ( kSKmSigNuECC1pi     ) :
 	{
-	  double cc1pi = this->CC1piToCCQEXSecRatioWght(Etrue);
-	  double nuenumu  = this->NuEToNuMuXSecRatioWght(Etrue);
+	  double cc1pi    = this->CC1piToCCQEWght(Etrue);
+	  double nuenumu  = this->NuEToNuMuWght(Etrue);
 	  return cc1pi * nuenumu;
 	  break;
 	}
       case ( kSKmSigNuECCoth     ) :
 	{
-	  double ccoth = this->CCOthToCCQEXSecRatioWght(Etrue);
-	  double nuenumu  = this->NuEToNuMuXSecRatioWght(Etrue);
+	  double ccoth    = this->CCOthToCCQEWght(Etrue);
+	  double nuenumu  = this->NuEToNuMuWght(Etrue);
 	  return ccoth * nuenumu;
 	  break;
 	}
@@ -347,14 +355,9 @@ double NuXSec::SuperkCCQEXSecWght(
     double Etrue, t2kana::conv::SuperkSample_t s, t2kana::conv::SuperkMode_t m) const
 {
    // a check to make sure the sample-mode combination exists
-   bool mode_in_sample = false;
-   for ( int im=0; im<knm; im++ )
-     if ( m == kSKReactionModes[s][im] ) {
-       mode_in_sample = true;
-       break;
-     }
-   if ( !mode_in_sample )
-     return 1.;
+   if(s == kSKsUndefined) return 1.;
+   SuperkMode_t modecheck = kSKReactionModes[(int)s][(int)m];
+   if(modecheck == kSKmUndefined) return 1.;
 
    switch(m) {
       case ( kSKmNuMuCCQE        ) : return this->CCQEWght(Etrue); break;
@@ -400,8 +403,8 @@ double NuXSec::SuperkNuclEffectWght(
    //get the appropriate sk fsi histogram for the sample,mode pair
    switch(s) {
       case ( kSKsFCFV1RingMuLike ) :
-	assert(fSuperkNuclearEffectRelErr1RmuT); 
-	nucleff = fSuperkNuclearEffectRelErr1RmuT;
+	assert(fSKFSIRelErr1RmuT); 
+	nucleff = fSKFSIRelErr1RmuT;
 	break;
       case ( kSKsFCFV1RingELike ) :
 	switch(m) {
@@ -432,14 +435,14 @@ double NuXSec::SuperkNuclEffectWght(
            case ( kSKmNuENC1pi0       ) : 
            case ( kSKmNuENCcoh        ) : 
            case ( kSKmNuENCoth_e      ) : 
-	     assert(fSuperkNuclearEffectRelErr1ReTbkg); 
-	     nucleff = fSuperkNuclearEffectRelErr1ReTbkg;
+	     assert(fSKFSIRelErr1ReTbkg); 
+	     nucleff = fSKFSIRelErr1ReTbkg;
 	     break;
 	   case ( kSKmSigNuECCQE      ) : 
 	   case ( kSKmSigNuECC1pi     ) : 
 	   case ( kSKmSigNuECCoth     ) : 
-	     assert(fSuperkNuclearEffectRelErr1ReTsig); 
-	     nucleff = fSuperkNuclearEffectRelErr1ReTsig;
+	     assert(fSKFSIRelErr1ReTsig); 
+	     nucleff = fSKFSIRelErr1ReTsig;
 	     break;	     
    	   default                      : return 1.; break;
 	}//m
@@ -449,67 +452,67 @@ double NuXSec::SuperkNuclEffectWght(
    double E       = TMath::Min( Ereco, nucleff->GetXaxis()->GetXmax() * mev2gev);
    int    bin     = nucleff->FindBin(E/mev2gev);
    double relerr  = nucleff->GetBinContent(bin);
-   double twk     = fNuclEffectTwkDial;
+   double twk     = fSKFSITwkDial;
    double wght    = (1. + twk*relerr);
    return wght;
 }
 //________________________________________________________________________________________
 double NuXSec::CCQEWght(double Etrue) const
 {
-   assert(fCCQEXSecRelErr);
-   Etrue = TMath::Min( Etrue, fCCQEXSecRelErr->GetXaxis()->GetXmax() );
-   int    bin    = fCCQEXSecRelErr->FindBin(Etrue);
-   double relerr = fCCQEXSecRelErr->GetBinContent(bin);
-   double wght   = (1. + fCCQEXSecTwkDial*relerr);
+   assert(fCCQERelErr);
+   Etrue = TMath::Min( Etrue, fCCQERelErr->GetXaxis()->GetXmax() );
+   int    bin    = fCCQERelErr->FindBin(Etrue);
+   double relerr = fCCQERelErr->GetBinContent(bin);
+   double wght   = (1. + fCCQETwkDial*relerr);
    return wght;
 }
 //________________________________________________________________________________________
-double NuXSec::CC1piToCCQEXSecRatioWght(double Etrue) const
+double NuXSec::CC1piToCCQEWght(double Etrue) const
 {
    return this->XSecRatioWght(
-     Etrue, fCC1piToCCQEXSecRatioTwkDial, fCC1piToCCQEXSecRatioRelErr);
+     Etrue, fCC1piToCCQETwkDial, fCC1piToCCQERelErr);
 }
 //________________________________________________________________________________________
-double NuXSec::CCCohToCCQEXSecRatioWght(double Etrue) const
+double NuXSec::CCCohToCCQEWght(double Etrue) const
 {
    return this->XSecRatioWght(
-     Etrue, fCCCohToCCQEXSecRatioTwkDial, fCCCohToCCQEXSecRatioRelErr);
+     Etrue, fCCCohToCCQETwkDial, fCCCohToCCQERelErr);
 }
 //________________________________________________________________________________________
-double NuXSec::CCOthToCCQEXSecRatioWght(double Etrue) const
+double NuXSec::CCOthToCCQEWght(double Etrue) const
 {
    return this->XSecRatioWght(
-     Etrue, fCCOthToCCQEXSecRatioTwkDial, fCCOthToCCQEXSecRatioRelErr);
+     Etrue, fCCOthToCCQETwkDial, fCCOthToCCQERelErr);
 }
 //________________________________________________________________________________________
-double NuXSec::NCToCCQEXSecRatioWght(double Etrue) const
+double NuXSec::NCToCCQEWght(double Etrue) const
 {
    return this->XSecRatioWght(
-     Etrue, fNCToCCQEXSecRatioTwkDial, fNCToCCQEXSecRatioRelErr);
+     Etrue, fNCToCCQETwkDial, fNCToCCQERelErr);
 }
 //________________________________________________________________________________________
-double NuXSec::NC1pi0ToCCQEXSecRatioWght(double Etrue) const
+double NuXSec::NC1pi0ToCCQEWght(double Etrue) const
 {
    return this->XSecRatioWght(
-     Etrue, fNC1pi0ToCCQEXSecRatioTwkDial, fNC1pi0ToCCQEXSecRatioRelErr);
+     Etrue, fNC1pi0ToCCQETwkDial, fNC1pi0ToCCQERelErr);
 }
 //________________________________________________________________________________________
-double NuXSec::NCCohToCCQEXSecRatioWght(double Etrue) const
+double NuXSec::NCCohToCCQEWght(double Etrue) const
 {
    return this->XSecRatioWght(
-     Etrue, fNCCohToCCQEXSecRatioTwkDial, fNCCohToCCQEXSecRatioRelErr);
+     Etrue, fNCCohToCCQETwkDial, fNCCohToCCQERelErr);
 }
 //________________________________________________________________________________________
-double NuXSec::NCOthToCCQEXSecRatioWght(double Etrue) const
+double NuXSec::NCOthToCCQEWght(double Etrue) const
 {
    return this->XSecRatioWght(
-     Etrue, fNCOthToCCQEXSecRatioTwkDial, fNCOthToCCQEXSecRatioRelErr);
+     Etrue, fNCOthToCCQETwkDial, fNCOthToCCQERelErr);
 }
 //________________________________________________________________________________________
-double NuXSec::NuEToNuMuXSecRatioWght(double Etrue) const
+double NuXSec::NuEToNuMuWght(double Etrue) const
 {
    return this->XSecRatioWght(
-     Etrue, fNuEToNuMuXSecRatioTwkDial, fNuEToNuMuXSecRatioRelErr);
+     Etrue, fNuEToNuMuTwkDial, fNuEToNuMuRelErr);
 }
 //________________________________________________________________________________________
 double NuXSec::XSecRatioWght(
@@ -535,39 +538,39 @@ double NuXSec::XSecRatioWght(
 //________________________________________________________________________________________
 void NuXSec::PrintSystematicVariations(void) const
 {
-  cout << "Exp/XSec >> Twk CCQE xsec = "             << fCCQEXSecTwkDial             << endl;
-  cout << "Exp/XSec >> Twk CC1pi/CCQE xsec ratio = " << fCC1piToCCQEXSecRatioTwkDial << endl;
-  cout << "Exp/XSec >> Twk CCcoh/CCQE xsec ratio = " << fCCCohToCCQEXSecRatioTwkDial << endl;
-  cout << "Exp/XSec >> Twk CCoth/CCQE xsec ratio = " << fCCOthToCCQEXSecRatioTwkDial << endl;
-  cout << "Exp/XSec >> Twk NC/CCQE xsec ratio = "    << fNCToCCQEXSecRatioTwkDial    << endl;
-  cout << "Exp/XSec >> Twk NC1pi0/CCQE xsec ratio = "<< fNC1pi0ToCCQEXSecRatioTwkDial<< endl;
-  cout << "Exp/XSec >> Twk NCCoh/CCQE xsec ratio = " << fNCCohToCCQEXSecRatioTwkDial << endl;
-  cout << "Exp/XSec >> Twk NCOth/CCQE xsec ratio = " << fNCOthToCCQEXSecRatioTwkDial << endl;
-  cout << "Exp/XSec >> Twk NCOth/CCQE xsec ratio = " << fNuEToNuMuXSecRatioTwkDial   << endl;
-  cout << "Exp/XSec >> Twk FSI = "                   << fNuclEffectTwkDial           << endl;
+  cout << "Exp/XSec >> Twk CCQE xsec = "             << fCCQETwkDial        << endl;
+  cout << "Exp/XSec >> Twk CC1pi/CCQE xsec ratio = " << fCC1piToCCQETwkDial << endl;
+  cout << "Exp/XSec >> Twk CCcoh/CCQE xsec ratio = " << fCCCohToCCQETwkDial << endl;
+  cout << "Exp/XSec >> Twk CCoth/CCQE xsec ratio = " << fCCOthToCCQETwkDial << endl;
+  cout << "Exp/XSec >> Twk NC/CCQE xsec ratio = "    << fNCToCCQETwkDial    << endl;
+  cout << "Exp/XSec >> Twk NC1pi0/CCQE xsec ratio = "<< fNC1pi0ToCCQETwkDial<< endl;
+  cout << "Exp/XSec >> Twk NCCoh/CCQE xsec ratio = " << fNCCohToCCQETwkDial << endl;
+  cout << "Exp/XSec >> Twk NCOth/CCQE xsec ratio = " << fNCOthToCCQETwkDial << endl;
+  cout << "Exp/XSec >> Twk NCOth/CCQE xsec ratio = " << fNuEToNuMuTwkDial   << endl;
+  cout << "Exp/XSec >> Twk FSI = "                   << fSKFSITwkDial       << endl;
 }
 //________________________________________________________________________________________
 bool NuXSec::TweakAffectsND280 (void) const
 {
-  if ( TMath::Abs(fCC1piToCCQEXSecRatioTwkDial ) > kASmallNum ) return true;
-  if ( TMath::Abs(fCCOthToCCQEXSecRatioTwkDial ) > kASmallNum ) return true;
-  if ( TMath::Abs(fNCToCCQEXSecRatioTwkDial    ) > kASmallNum ) return true;
-  //if ( TMath::Abs(fNuEToNuMuXSecRatioTwkDial   ) > kASmallNum ) return true;
+  if ( TMath::Abs(fCC1piToCCQETwkDial ) > kASmallNum ) return true;
+  if ( TMath::Abs(fCCOthToCCQETwkDial ) > kASmallNum ) return true;
+  if ( TMath::Abs(fNCToCCQETwkDial    ) > kASmallNum ) return true;
+  if ( TMath::Abs(fNuEToNuMuTwkDial   ) > kASmallNum ) return true;
   return false;
 }
 //________________________________________________________________________________________
 bool NuXSec::TweakAffectsSuperk(void) const
 {
-  if ( TMath::Abs(fCCQEXSecTwkDial             ) > kASmallNum ) return true;
-  if ( TMath::Abs(fCC1piToCCQEXSecRatioTwkDial ) > kASmallNum ) return true;
-  if ( TMath::Abs(fCCCohToCCQEXSecRatioTwkDial ) > kASmallNum ) return true;
-  if ( TMath::Abs(fCCOthToCCQEXSecRatioTwkDial ) > kASmallNum ) return true;
-  if ( TMath::Abs(fNCToCCQEXSecRatioTwkDial    ) > kASmallNum ) return true;
-  if ( TMath::Abs(fNC1pi0ToCCQEXSecRatioTwkDial) > kASmallNum ) return true;
-  if ( TMath::Abs(fNCCohToCCQEXSecRatioTwkDial ) > kASmallNum ) return true;
-  if ( TMath::Abs(fNCOthToCCQEXSecRatioTwkDial ) > kASmallNum ) return true;
-  if ( TMath::Abs(fNuEToNuMuXSecRatioTwkDial   ) > kASmallNum ) return true;
-  if ( TMath::Abs(fNuclEffectTwkDial           ) > kASmallNum ) return true;
+  if ( TMath::Abs(fCCQETwkDial        ) > kASmallNum ) return true;
+  if ( TMath::Abs(fCC1piToCCQETwkDial ) > kASmallNum ) return true;
+  if ( TMath::Abs(fCCCohToCCQETwkDial ) > kASmallNum ) return true;
+  if ( TMath::Abs(fCCOthToCCQETwkDial ) > kASmallNum ) return true;
+  if ( TMath::Abs(fNCToCCQETwkDial    ) > kASmallNum ) return true;
+  if ( TMath::Abs(fNC1pi0ToCCQETwkDial) > kASmallNum ) return true;
+  if ( TMath::Abs(fNCCohToCCQETwkDial ) > kASmallNum ) return true;
+  if ( TMath::Abs(fNCOthToCCQETwkDial ) > kASmallNum ) return true;
+  if ( TMath::Abs(fNuEToNuMuTwkDial   ) > kASmallNum ) return true;
+  if ( TMath::Abs(fSKFSITwkDial       ) > kASmallNum ) return true;
   return false;
 }
 //________________________________________________________________________________________

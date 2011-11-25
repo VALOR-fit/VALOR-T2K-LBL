@@ -259,16 +259,16 @@ void SuperkExpectation::ResetSystematicVariations(void)
   this->GetNuFlux()->TweakNorm (0.);
   this->GetNuFlux()->TweakShape(true,0);  
 
-  this->GetNuXSec()->TweakCCQEXSec             (0.);
-  this->GetNuXSec()->TweakCC1piToCCQEXSecRatio (0.);
-  this->GetNuXSec()->TweakCCCohToCCQEXSecRatio (0.);
-  this->GetNuXSec()->TweakCCOthToCCQEXSecRatio (0.);
-  this->GetNuXSec()->TweakNCToCCQEXSecRatio    (0.);
-  this->GetNuXSec()->TweakNC1pi0ToCCQEXSecRatio(0.);
-  this->GetNuXSec()->TweakNCCohToCCQEXSecRatio (0.);
-  this->GetNuXSec()->TweakNCOthToCCQEXSecRatio (0.);
-  this->GetNuXSec()->TweakNuEToNuMuXSecRatio   (0.);
-  this->GetNuXSec()->TweakNuclEffect           (0.);
+  this->GetNuXSec()->TweakCCQE        (0.);
+  this->GetNuXSec()->TweakCC1piToCCQE (0.);
+  this->GetNuXSec()->TweakCCCohToCCQE (0.);
+  this->GetNuXSec()->TweakCCOthToCCQE (0.);
+  this->GetNuXSec()->TweakNCToCCQE    (0.);
+  this->GetNuXSec()->TweakNC1pi0ToCCQE(0.);
+  this->GetNuXSec()->TweakNCCohToCCQE (0.);
+  this->GetNuXSec()->TweakNCOthToCCQE (0.);
+  this->GetNuXSec()->TweakNuEToNuMu   (0.);
+  this->GetNuXSec()->TweakSKFSI       (0.);
 }
 //________________________________________________________________________________________
 void SuperkExpectation::TweakSystematic(string systematic, double twkdial)
@@ -350,43 +350,43 @@ void SuperkExpectation::TweakSystematic(string systematic, double twkdial)
   //
   else
   if(systematic == "xsec_ccqe") {
-     this->GetNuXSec()->TweakCCQEXSec(twkdial);
+     this->GetNuXSec()->TweakCCQE(twkdial);
   }
   else
   if(systematic == "xsec_cc1pi_to_ccqe") {
-     this->GetNuXSec()->TweakCC1piToCCQEXSecRatio(twkdial);
+     this->GetNuXSec()->TweakCC1piToCCQE(twkdial);
   }
   else
   if(systematic == "xsec_cccoh_to_ccqe") {
-     this->GetNuXSec()->TweakCCCohToCCQEXSecRatio(twkdial);
+     this->GetNuXSec()->TweakCCCohToCCQE(twkdial);
   }
   else
   if(systematic == "xsec_ccoth_to_ccqe") {
-     this->GetNuXSec()->TweakCCOthToCCQEXSecRatio(twkdial);
+     this->GetNuXSec()->TweakCCOthToCCQE(twkdial);
   }
   else
   if(systematic == "xsec_nc_to_ccqe") {
-     this->GetNuXSec()->TweakNCToCCQEXSecRatio(twkdial);
+     this->GetNuXSec()->TweakNCToCCQE(twkdial);
   }
   else
   if(systematic == "xsec_nc1pi0_to_ccqe") {
-     this->GetNuXSec()->TweakNC1pi0ToCCQEXSecRatio(twkdial);
+     this->GetNuXSec()->TweakNC1pi0ToCCQE(twkdial);
   }
   else
   if(systematic == "xsec_nccoh_to_ccqe") {
-     this->GetNuXSec()->TweakNCCohToCCQEXSecRatio(twkdial);
+     this->GetNuXSec()->TweakNCCohToCCQE(twkdial);
   }
   else
   if(systematic == "xsec_ncoth_to_ccqe") {
-     this->GetNuXSec()->TweakNCOthToCCQEXSecRatio(twkdial);
+     this->GetNuXSec()->TweakNCOthToCCQE(twkdial);
   }
   else
   if(systematic == "xsec_nue_to_numu") {
-     this->GetNuXSec()->TweakNuEToNuMuXSecRatio(twkdial);
+     this->GetNuXSec()->TweakNuEToNuMu(twkdial);
   }
   else
   if(systematic == "nuclear_effect") {
-     this->GetNuXSec()->TweakNuclEffect(twkdial);
+     this->GetNuXSec()->TweakSKFSI(twkdial);
   }   
      
   else {
@@ -423,16 +423,16 @@ void SuperkExpectation::TweakAllSystematics(bool do_tweak)
      this->GetNuFlux()->TweakShape(); //< Cholesky method
 
      // neutrino cross sections
-     this->GetNuXSec()->TweakCCQEXSec             (rand.Gaus(0.,1.));
-     this->GetNuXSec()->TweakCC1piToCCQEXSecRatio (rand.Gaus(0.,1.));
-     this->GetNuXSec()->TweakCCCohToCCQEXSecRatio (rand.Gaus(0.,1.));
-     this->GetNuXSec()->TweakCCOthToCCQEXSecRatio (rand.Gaus(0.,1.));
-     this->GetNuXSec()->TweakNCToCCQEXSecRatio    (rand.Gaus(0.,1.));
-     this->GetNuXSec()->TweakNC1pi0ToCCQEXSecRatio(rand.Gaus(0.,1.));
-     this->GetNuXSec()->TweakNCCohToCCQEXSecRatio (rand.Gaus(0.,1.));
-     this->GetNuXSec()->TweakNCOthToCCQEXSecRatio (rand.Gaus(0.,1.));
-     this->GetNuXSec()->TweakNuEToNuMuXSecRatio   (rand.Gaus(0.,1.));
-     this->GetNuXSec()->TweakNuclEffect           (rand.Gaus(0.,1.));
+     this->GetNuXSec()->TweakCCQE        (rand.Gaus(0.,1.));
+     this->GetNuXSec()->TweakCC1piToCCQE (rand.Gaus(0.,1.));
+     this->GetNuXSec()->TweakCCCohToCCQE (rand.Gaus(0.,1.));
+     this->GetNuXSec()->TweakCCOthToCCQE (rand.Gaus(0.,1.));
+     this->GetNuXSec()->TweakNCToCCQE    (rand.Gaus(0.,1.));
+     this->GetNuXSec()->TweakNC1pi0ToCCQE(rand.Gaus(0.,1.));
+     this->GetNuXSec()->TweakNCCohToCCQE (rand.Gaus(0.,1.));
+     this->GetNuXSec()->TweakNCOthToCCQE (rand.Gaus(0.,1.));
+     this->GetNuXSec()->TweakNuEToNuMu   (rand.Gaus(0.,1.));
+     this->GetNuXSec()->TweakSKFSI       (rand.Gaus(0.,1.));
 
   } else {
     cout << "Exp >> No SuperkExpectation tweak" << endl;
@@ -625,23 +625,23 @@ void SuperkExpectation::SetNuisanceParams(const FitParamList & fp)
    }
    if(fp.Exists(kNuisXSecCCQE)) {
      double twk = fp.CurrValue(kNuisXSecCCQE);
-     this->GetNuXSec()->TweakCCQEXSec(twk);
+     this->GetNuXSec()->TweakCCQE(twk);
    }
    if(fp.Exists(kNuisXSecCC1piToCCQE)) {
      double twk = fp.CurrValue(kNuisXSecCC1piToCCQE);
-     this->GetNuXSec()->TweakCC1piToCCQEXSecRatio(twk);
+     this->GetNuXSec()->TweakCC1piToCCQE(twk);
    }
    if(fp.Exists(kNuisXSecCCothToCCQE)) {
      double twk = fp.CurrValue(kNuisXSecCCothToCCQE);
-     this->GetNuXSec()->TweakCCOthToCCQEXSecRatio(twk);
+     this->GetNuXSec()->TweakCCOthToCCQE(twk);
    }
    if(fp.Exists(kNuisXSecNCToCCQE)) {
      double twk = fp.CurrValue(kNuisXSecNCToCCQE);
-     this->GetNuXSec()->TweakNCToCCQEXSecRatio(twk);
+     this->GetNuXSec()->TweakNCToCCQE(twk);
    }
    if(fp.Exists(kNuisXSecNuclEffect)) {
      double twk = fp.CurrValue(kNuisXSecNuclEffect);
-     this->GetNuXSec()->TweakNuclEffect(twk);
+     this->GetNuXSec()->TweakSKFSI(twk);
    }
 
 }
