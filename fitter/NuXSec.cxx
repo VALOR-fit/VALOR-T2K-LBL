@@ -301,14 +301,14 @@ double NuXSec::SuperkXSecRatioWght(
 	{
 	  double cc1pi   = this->CC1piToCCQEXSecRatioWght(Etrue);
 	  double nuenumu = this->NuEToNuMuXSecRatioWght(Etrue);
-	  return TMath::Sqrt( (cc1pi*cc1pi) + (nuenumu*nuenumu) );
+	  return cc1pi * nuenumu;
 	  break;
 	}
       case ( kSKmNuECCcoh        ) :
 	{
 	  double cccoh = this->CCCohToCCQEXSecRatioWght(Etrue);
 	  double nuenumu  = this->NuEToNuMuXSecRatioWght(Etrue);
-	  return TMath::Sqrt( (cccoh*cccoh) + (nuenumu*nuenumu) );
+	  return cccoh * nuenumu;
 	  break;
 	}
       case ( kSKmNuECCoth_mu     ) : 
@@ -316,7 +316,7 @@ double NuXSec::SuperkXSecRatioWght(
 	{
 	  double ccoth = this->CCOthToCCQEXSecRatioWght(Etrue);
 	  double nuenumu  = this->NuEToNuMuXSecRatioWght(Etrue);
-	  return TMath::Sqrt( (ccoth*ccoth) + (nuenumu*nuenumu) );
+	  return ccoth * nuenumu;
 	  break;
 	}
       case ( kSKmNuENC           ) : return this->NCToCCQEXSecRatioWght(Etrue);    break;
@@ -328,14 +328,14 @@ double NuXSec::SuperkXSecRatioWght(
 	{
 	  double cc1pi = this->CC1piToCCQEXSecRatioWght(Etrue);
 	  double nuenumu  = this->NuEToNuMuXSecRatioWght(Etrue);
-	  return TMath::Sqrt( (cc1pi*cc1pi) + (nuenumu*nuenumu) );
+	  return cc1pi * nuenumu;
 	  break;
 	}
       case ( kSKmSigNuECCoth     ) :
 	{
 	  double ccoth = this->CCOthToCCQEXSecRatioWght(Etrue);
 	  double nuenumu  = this->NuEToNuMuXSecRatioWght(Etrue);
-	  return TMath::Sqrt( (ccoth*ccoth) + (nuenumu*nuenumu) );
+	  return ccoth * nuenumu;
 	  break;
 	}
       default                      : return 1.; break;
