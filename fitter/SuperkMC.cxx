@@ -1336,7 +1336,7 @@ double SuperkMC::EfficiencyWeight(
   //
   // 1-ring e-like sample
   //
-  else if ( s == kSKsFCFV1RingMuLike ) {
+  else if ( s == kSKsFCFV1RingELike ) {
     switch(m) {
        case ( kSKmNuMuCCQE        ) : 
        case ( kSKmNuMuCC1pi       ) : 
