@@ -39,7 +39,7 @@ public:
    double SuperkNuclEffectWght(double Ereco, t2kana::conv::SuperkSample_t s, t2kana::conv::SuperkMode_t m) const;
 
    // Systematic variations
-   void TweakCCQE          (double twkdial) { fCCQETwkDial             = twkdial; } ///< tweak CCQE (far only)
+   void TweakCCQE          (double twkdial) { fCCQETwkDial        = twkdial; } ///< tweak CCQE (far only)
    void TweakCC1piToCCQE   (double twkdial) { fCC1piToCCQETwkDial = twkdial; } ///< tweak CC1pi/CCQE (both near & far)
    void TweakCCCohToCCQE   (double twkdial) { fCCCohToCCQETwkDial = twkdial; } ///< tweak CCcoh/CCQE (both near & far)
    void TweakCCOthToCCQE   (double twkdial) { fCCOthToCCQETwkDial = twkdial; } ///< tweak CCoth/CCQE (both near & far)
@@ -48,7 +48,7 @@ public:
    void TweakNCCohToCCQE   (double twkdial) { fNCCohToCCQETwkDial = twkdial; } ///< tweak NCCoh/CCQE (both near & far)
    void TweakNCOthToCCQE   (double twkdial) { fNCOthToCCQETwkDial = twkdial; } ///< tweak NCOth/CCQE (both near & far)
    void TweakNuEToNuMu     (double twkdial) { fNuEToNuMuTwkDial   = twkdial; } ///< tweak sigma(nue)/sigma(numu) (both near & far) - only apply to nueCC templates (TN52, pg20)
-   void TweakSKFSI         (double twkdial) { fSKFSITwkDial           = twkdial; } ///< tweak nuclear effect (far only)
+   void TweakSKFSI         (double twkdial) { fSKFSITwkDial       = twkdial; } ///< tweak nuclear effect (far only)
    bool TweakAffectsND280  (void) const;
    bool TweakAffectsSuperk (void) const;
   
@@ -100,9 +100,9 @@ private:
    TH1D * fNCCohToCCQERelErr;    ///<
    TH1D * fNCOthToCCQERelErr;    ///<
    TH1D * fNuEToNuMuRelErr;      ///<
-   TH1D * fSKFSIRelErr1Rmu;     ///<
-   TH1D * fSKFSIRelErr1Rebkg;   ///<
-   TH1D * fSKFSIRelErr1Resig;   ///<
+   TH1D * fSKFSIRelErr1Rmu;      ///<
+   TH1D * fSKFSIRelErr1Rebkg;    ///<
+   TH1D * fSKFSIRelErr1Resig;    ///<
    double fCC1piInCCRES;         ///< correct ND280 interaction mode / NWIG err mis-match
 
 ClassDef(NuXSec, 3);
