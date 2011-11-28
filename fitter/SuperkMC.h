@@ -71,15 +71,15 @@ public:
   void TweakEfficiencyCCnonQE           (double twkdial);
   void TweakEfficiencyNC                (double twkdial);
   void TweakEfficiencyNuECC             (double twkdial);
-  void TweakEfficiency1ReTSig           (double twkdial);
-  void TweakEfficiency1ReTBkg           (double twkdial);
+  void TweakEfficiency1ReSig            (double twkdial);
+  void TweakEfficiency1ReBkg            (double twkdial);
 
   // Calculate weight due to efficiency tweaks
   double  EfficiencyWeight (t2kana::conv::SuperkSample_t s, t2kana::conv::SuperkMode_t m, double Ereco) const;
 
   // Info about the energy scale error and current energy scale tweaking factor
-  double  EnergyScaleRelErr   (void) const; ///< energy scale err
-  double  EnergyScale         (void) const; ///< energy scale
+  double  EnergyScaleRelErr   (t2kana::conv::SuperkSample_t s, t2kana::conv::SuperkMode_t m) const; ///< energy scale err
+  double  EnergyScale         (t2kana::conv::SuperkSample_t s, t2kana::conv::SuperkMode_t m) const; ///< energy scale
 
   // Read inputs from XML file
   bool Read (TXMLEngine* xml, XMLNodePointer_t root_node);
@@ -122,27 +122,29 @@ private:
 
   double     fPOT;                         ///< POT for actual data-set (MC is scaled to that exposure)
 
-  double     fEnergyScaleRelErr;           ///< Energy scale relative error
-  double     fOthEffCCQERelErr;            ///< CCQE other (all but ring-counting) efficiency relative error 
-  TMatrixD * fEffCCQERelErrCovarRC;        ///< CCQE ring-counting efficiency relative error covariance matrix (3x3)
-  double     fEreco1RCCCQE;                ///< ~0.4 GeV (RC cov matrix is 3x3, 3 Ereco bins: (0, fEreco1RCCCQE, fEreco2RCCCQE, oo))
-  double     fEreco2RCCCQE;                ///< ~1.1 GeV (RC cov matrix is 3x3, 3 Ereco bins: (0, fEreco1RCCCQE, fEreco2RCCCQE, oo))
-  double     fEffCCnonQERelErr;            ///< CCnonQE efficiency relative error
-  double     fEffNCRelErr;                 ///< NC efficiency relative error
-  double     fEffNuECCRelErr;              ///< nue CC efficiency relative error
-  double     fEff1ReTSigRelErr;            ///< 1ReT signal efficiency relative error
-  double     fEff1ReTBkgRelErr;            ///< 1ReT background efficiency relative error
+  double     fEnergyScale1RmuRelErr;       ///< 1Rmu energy scale relative error
+  double     fOthEffCCQERelErr;            ///< 1Rmu CCQE other (all but ring-counting) efficiency relative error 
+  TMatrixD * fEffCCQERelErrCovarRC;        ///< 1Rmu CCQE ring-counting efficiency relative error covariance matrix (3x3)
+  double     fEreco1RCCCQE;                ///<   ~0.4 GeV (RC cov matrix is 3x3, 3 Ereco bins: (0, fEreco1RCCCQE, fEreco2RCCCQE, oo))
+  double     fEreco2RCCCQE;                ///<   ~1.1 GeV (RC cov matrix is 3x3, 3 Ereco bins: (0, fEreco1RCCCQE, fEreco2RCCCQE, oo))
+  double     fEffCCnonQERelErr;            ///< 1Rmu CCnonQE efficiency relative error
+  double     fEffNCRelErr;                 ///< 1Rmu NC efficiency relative error
+  double     fEffNuECCRelErr;              ///< 1Rmu nue CC efficiency relative error
+  double     fEnergyScale1ReSigRelErr;     ///< 1Re signal energy scale relative error
+  double     fEnergyScale1ReBkgRelErr;     ///< 1Re background energy scale relative error
+  double     fEff1ReSigRelErr;             ///< 1Re signal efficiency relative error
+  double     fEff1ReBkgRelErr;             ///< 1Re background efficiency relative error
 
-  double     fEnergyScaleTwkDial;          ///< Energy scale tweaking dial
-  double     fOthEffCCQETwkDial;           ///< CCQE other (all-but-ring-counting) efficiency tweaking dial
-  double     fRC0EffCCQETwkDial;           ///< CCQE ring-counting efficiency tweaking dial 0 (Ereco < fEreco1RCCCQE)
-  double     fRC1EffCCQETwkDial;           ///< CCQE ring-counting efficiency tweaking dial 1 (fEreco1RCCCQE <= Ereco <= fEreco2RCCCQE)
-  double     fRC2EffCCQETwkDial;           ///< CCQE ring-counting efficiency tweaking dial 2 (Ereco > fEreco2RCCCQE)
-  double     fEffCCnonQETwkDial;           ///< CCnonQE efficiency tweaking dial
-  double     fEffNCTwkDial;                ///< NC efficiency tweaking dial
-  double     fEffNuECCTwkDial;             ///< nue CC efficiency tweaking dial
-  double     fEff1ReTSigTwkDial;           ///< 1ReT signal effiency tweaking dial
-  double     fEff1ReTBkgTwkDial;           ///< 1ReT background effiency tweaking dial
+  double     fEnergyScaleTwkDial;          ///< 1Rmu/1Re Energy scale tweaking dial
+  double     fOthEffCCQETwkDial;           ///< 1Rmu CCQE other (all-but-ring-counting) efficiency tweaking dial
+  double     fRC0EffCCQETwkDial;           ///< 1Rmu CCQE ring-counting efficiency tweaking dial 0 (Ereco < fEreco1RCCCQE)
+  double     fRC1EffCCQETwkDial;           ///< 1Rmu CCQE ring-counting efficiency tweaking dial 1 (fEreco1RCCCQE <= Ereco <= fEreco2RCCCQE)
+  double     fRC2EffCCQETwkDial;           ///< 1Rmu CCQE ring-counting efficiency tweaking dial 2 (Ereco > fEreco2RCCCQE)
+  double     fEffCCnonQETwkDial;           ///< 1Rmu CCnonQE efficiency tweaking dial
+  double     fEffNCTwkDial;                ///< 1Rmu NC efficiency tweaking dial
+  double     fEffNuECCTwkDial;             ///< 1Rmu nue CC efficiency tweaking dial
+  double     fEff1ReSigTwkDial;            ///< 1Re signal effiency tweaking dial
+  double     fEff1ReBkgTwkDial;            ///< 1Re background effiency tweaking dial
   TMatrixD * fEffCCQERelErrCovarCholeskyL; ///< Cholesky decomposition (trangular matrix L) of fEffCCQERelErrCovarRC covariance matrix
 
   TH2D *     fMCTemplNom[kns][knm];        ///< MC template(sample,mode): Ereco-Etrue (nominal)

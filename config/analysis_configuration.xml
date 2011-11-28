@@ -180,7 +180,17 @@ from the GENIE/NEUT physics monte carlo groups.
      -->
      <systematics>
          <energy_scale_relative_error>              
-            0.023  
+            <one_mu_ring>
+               0.023  
+            </one_mu_ring>
+            <one_e_ring>
+               <sig>
+                 0.04
+               </sig>
+               <bkg>
+                 1.1
+               </bkg>
+            </one_e_ring>
          </energy_scale_relative_error>
          <efficiency_relative_error>  
             <one_mu_ring>
