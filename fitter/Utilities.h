@@ -73,6 +73,8 @@ namespace util {
   string AsString (t2kana::conv::SuperkSample_t    s);
   string AsString (t2kana::conv::SuperkMode_t      m);
   string AsString (t2kana::conv::OscChannelId_t    o);
+  string AsStringTex (t2kana::conv::SuperkSample_t    s);
+  string AsStringTex (t2kana::conv::SuperkMode_t      m);
 
   t2kana::conv::PhysHypothesis_t FromString(string h);
 

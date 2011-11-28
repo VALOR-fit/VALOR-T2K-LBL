@@ -708,14 +708,16 @@ void test_systematic_error_propagation_nue
   int ncolnev = 15;
   int ncolfrc =  8;
 
-  stringstream streamer;
 
-  streamer << "\n\nSystematic: " << systematic << endl;
-  streamer << endl;
-  streamer << fixed;
+  cout << "\n\nSystematic: " << systematic << endl;
+  cout << endl;
+  cout << fixed;
+
+  stringstream streamer;
 
   if(use_tex) {
      streamer << "\\begin{table}"   << endl;
+     streamer << "\\footnotesize" << endl;
      streamer << "\\centering"     << endl;
      streamer << "\\begin{tabular}{| l | r | r  r | r  r |}" << endl;
      streamer << "\\hline" << endl;
@@ -726,8 +728,8 @@ void test_systematic_error_propagation_nue
           << endl;
      streamer << "\\hline" << endl;
   }
-
-  string temp = "$N_{SK}$ (" + util::AsString(s) + ")";
+ 
+  string temp = "$N_{SK}$ (" + util::AsStringTex(s) + ")";
   streamer << setw(ncol1)  << setfill(' ') << temp
        << endcolumn
        << setw(ncolnev)  << setfill(' ') << setprecision(nprecisionnev) << nsk_0 
@@ -748,7 +750,7 @@ void test_systematic_error_propagation_nue
      streamer << setw(150)  << setfill('-') << " " << endl;
   }
 
-  temp = "SK MC (" + util::AsString(s) + ")";
+  temp = "SK MC (" + util::AsStringTex(s) + ")";
   streamer << setw(ncol1)  << setfill(' ') << temp
        << endcolumn
        << setw(ncolnev)  << setfill(' ') << setprecision(nprecisionnev) << nskall_0
@@ -774,9 +776,9 @@ void test_systematic_error_propagation_nue
     if(m == conv::kSKmUndefined) continue;
     //a normal individual mode table fill
     string component = "SK MC (";
-    component += util::AsString(s);
+    component += util::AsStringTex(s);
     component += "): ";
-    component +=  util::AsString(m);
+    component +=  util::AsStringTex(m);
     streamer << setw(ncol1)  << setfill(' ') << component
 	 << endcolumn
 	 << setw(ncolnev)  << setfill(' ') << setprecision(nprecisionnev) << nskmodes_0[m]
@@ -792,7 +794,7 @@ void test_systematic_error_propagation_nue
 	 << endl;
     //spectral ccqe
     if ( m == conv::kSKmNuMuCCQE && show_sk_ccqe_spectral_info) {
-      temp = component + "($E_{r}$ < 0.4 GeV)";
+      temp = component + " ($E_{r} <$ 0.4 GeV)";
       streamer << setw(ncol1)  << setfill(' ') << temp
            << endcolumn
            << setw(ncolnev)  << setfill(' ') << setprecision(nprecisionnev) << nsknumuccqe_0a
@@ -806,7 +808,7 @@ void test_systematic_error_propagation_nue
            << setw(ncolfrc)  << setfill(' ') << setprecision(nprecisionpct) << frac_nsknumuccqe_ma << pctsymbol 
            << endrow
            << endl;
-      temp = component + "(0.4 <= $E_{r}$ <= 1.1 GeV)";
+      temp = component + " (0.4 $\leq E_{r} \geq$ 1.1 GeV)";
       streamer << setw(ncol1)  << setfill(' ') << temp
 	   << endcolumn
            << setw(ncolnev)  << setfill(' ') << setprecision(nprecisionnev) << nsknumuccqe_0b
@@ -820,7 +822,7 @@ void test_systematic_error_propagation_nue
            << setw(ncolfrc)  << setfill(' ') << setprecision(nprecisionpct) << frac_nsknumuccqe_mb << pctsymbol 
            << endrow
            << endl;
-      temp = component + "($E_{r}$ > 1.1 GeV)";
+      temp = component + " ($E_{r} >$ 1.1 GeV)";
       streamer << setw(ncol1)  << setfill(' ') << temp
            << endcolumn
            << setw(ncolnev)  << setfill(' ') << setprecision(nprecisionnev) << nsknumuccqe_0c
@@ -836,7 +838,7 @@ void test_systematic_error_propagation_nue
            << endl;
     }//numu ccqe spectral
     if ( m == conv::kSKmNuMuBarCCQE && show_sk_ccqe_spectral_info) {
-      temp = component + "($E_{r}$ < 0.4 GeV)";
+      temp = component + " ($E_{r} <$ 0.4 GeV)";
       streamer << setw(ncol1)  << setfill(' ') << temp
            << endcolumn
            << setw(ncolnev)  << setfill(' ') << setprecision(nprecisionnev) << nsknumubarccqe_0a
@@ -850,7 +852,7 @@ void test_systematic_error_propagation_nue
            << setw(ncolfrc)  << setfill(' ') << setprecision(nprecisionpct) << frac_nsknumubarccqe_ma << pctsymbol 
            << endrow
            << endl;
-      temp = component + "(0.4 <= $E_{r}$ <= 1.1 GeV)";
+      temp = component + " (0.4 $\leq E_{r} \geq$ 1.1 GeV)";
       streamer << setw(ncol1)  << setfill(' ') << temp
            << endcolumn
            << setw(ncolnev)  << setfill(' ') << setprecision(nprecisionnev) << nsknumubarccqe_0b
@@ -864,7 +866,7 @@ void test_systematic_error_propagation_nue
            << setw(ncolfrc)  << setfill(' ') << setprecision(nprecisionpct) << frac_nsknumubarccqe_mb << pctsymbol 
            << endrow
            << endl;
-      temp = component + "($E_{r}$ > 1.1 GeV)";
+      temp = component + " ($E_{r} >$ 1.1 GeV)";
       streamer << setw(ncol1)  << setfill(' ') << temp
            << endcolumn
            << setw(ncolnev)  << setfill(' ') << setprecision(nprecisionnev) << nsknumubarccqe_0c
@@ -881,7 +883,7 @@ void test_systematic_error_propagation_nue
     }//numbar ccqe spectral
     //total flavour-nc/cc
     if (sknumuccall_printat > 0 && m == conv::kSKReactionModes[s][sknumuccall_printat]) {
-      temp = "SK MC (" + util::AsString(s) + "): $\\nu_{\\mu}$ CC all";
+      temp = "SK MC (" + util::AsStringTex(s) + "): $\\nu_{\\mu}$ CC all";
       streamer << setw(ncol1)  << setfill(' ') << temp
 	   << endcolumn
 	   << setw(ncolnev)  << setfill(' ') << setprecision(nprecisionnev) << nsknumucc_0
@@ -897,7 +899,7 @@ void test_systematic_error_propagation_nue
 	   << endl;
     }
     if (sknumuncall_printat > 0 && m == conv::kSKReactionModes[s][sknumuncall_printat]) {
-      temp = "SK MC (" + util::AsString(s) + "): $\\nu_{\\mu}$ NC all";
+      temp = "SK MC (" + util::AsStringTex(s) + "): $\\nu_{\\mu}$ NC all";
       streamer << setw(ncol1)  << setfill(' ') << temp
 	   << endcolumn
 	   << setw(ncolnev)  << setfill(' ') << setprecision(nprecisionnev) << nsknumunc_0
@@ -913,7 +915,7 @@ void test_systematic_error_propagation_nue
 	   << endl;
     }
     if (sknumubarccall_printat > 0 && m == conv::kSKReactionModes[s][sknumubarccall_printat]) {
-      temp = "SK MC (" + util::AsString(s) + "): $\\bar{\\nu_{\\mu}}$ CC all";
+      temp = "SK MC (" + util::AsStringTex(s) + "): $\\bar{\\nu_{\\mu}}$ CC all";
       streamer << setw(ncol1)  << setfill(' ') << temp
 	   << endcolumn
 	   << setw(ncolnev)  << setfill(' ') << setprecision(nprecisionnev) << nsknumubarcc_0
@@ -929,7 +931,7 @@ void test_systematic_error_propagation_nue
 	   << endl;
     }
     if (sknumubarncall_printat > 0 && m == conv::kSKReactionModes[s][sknumubarncall_printat]) {
-      temp = "SK MC (" + util::AsString(s) + "): $\\bar{\\nu_{\\mu}}$ NC all";
+      temp = "SK MC (" + util::AsStringTex(s) + "): $\\bar{\\nu_{\\mu}}$ NC all";
       streamer << setw(ncol1)  << setfill(' ') << temp
 	   << endcolumn
 	   << setw(ncolnev)  << setfill(' ') << setprecision(nprecisionnev) << nsknumubarnc_0
@@ -945,7 +947,7 @@ void test_systematic_error_propagation_nue
 	   << endl;
     }
     if (sknueccall_printat > 0 && m == conv::kSKReactionModes[s][sknueccall_printat]) {
-      temp = "SK MC (" + util::AsString(s) + "): $\\nu_{e}$ CC all";
+      temp = "SK MC (" + util::AsStringTex(s) + "): $\\nu_{e}$ CC all";
       streamer << setw(ncol1)  << setfill(' ') << temp
 	   << endcolumn
 	   << setw(ncolnev)  << setfill(' ') << setprecision(nprecisionnev) << nsknuecc_0
@@ -961,7 +963,7 @@ void test_systematic_error_propagation_nue
 	   << endl;
     }
     if (sknuencall_printat > 0 && m == conv::kSKReactionModes[s][sknuencall_printat]) {
-      temp = "SK MC (" + util::AsString(s) + "): $\\nu_{e}$ NC all";
+      temp = "SK MC (" + util::AsStringTex(s) + "): $\\nu_{e}$ NC all";
       streamer << setw(ncol1)  << setfill(' ') << temp
 	   << endcolumn
 	   << setw(ncolnev)  << setfill(' ') << setprecision(nprecisionnev) << nsknuenc_0
@@ -977,7 +979,7 @@ void test_systematic_error_propagation_nue
 	   << endl;
     }
     if (sknuesigall_printat > 0 && m == conv::kSKReactionModes[s][sknuesigall_printat]) {
-      temp = "SK MC (" + util::AsString(s) + "): $\\nu_{e}$ (signal) CC all";
+      temp = "SK MC (" + util::AsStringTex(s) + "): $\\nu_{e}$ (signal) CC all";
       streamer << setw(ncol1)  << setfill(' ') << temp
 	   << endcolumn
 	   << setw(ncolnev)  << setfill(' ') << setprecision(nprecisionnev) << nsknuesig_0
@@ -1271,9 +1273,34 @@ void test_systematic_error_propagation_nue
   if(use_tex) {
      streamer << "\\hline" << endl;
      streamer << "\\end{tabular}" << endl;
-     streamer << "\\caption{ Effect of " << systematic << " }" << endl;
-     streamer << "\\label{tab:num_" << systematic << "}" << endl;
+     string systematicstr(systematic), hypothesisstr(hypothesis);
+     size_t found;
+     found=systematicstr.find_first_of("_");
+     while(found!=string::npos) {
+       systematicstr[found]='-';
+       found=systematicstr.find_first_of("_",found+1);
+     }
+     found=hypothesisstr.find_first_of("_");
+     while(found!=string::npos) {
+       hypothesisstr[found]='-';
+       found=hypothesisstr.find_first_of("_",found+1);
+     }
+     streamer << "\\caption{ Effect of " << systematicstr << " for sample " << util::AsStringTex(s) 
+	      << " with oscillation hypothesis " <<  hypothesisstr
+	      << " using oscillation parameters " 
+	      << " $\\sin^22\\theta_{12} = $" << input_sinsq2theta12
+	      << " $\\sin^22\\theta_{13} = $" << input_sinsq2theta13
+	      << " $\\sin^22\\theta_{23} = $" << input_sinsq2theta23
+	      << " $\\delta_{CP} = $        " << input_deltacp
+	      << " $\\Delta m^2_{12} = $    " << input_dm12sq
+	      << " $\\Delta m^2_{23} = $    " << input_dm23sq
+	      << " }" << endl;
+     string shortsamplestr = s==conv::kSKsFCFV1RingMuLike ? "1RmuT_" : "1ReT_";
+     string spectralstr = show_sk_ccqe_spectral_info ? "_spectral" : "";
+     streamer << "\\label{tab:num_" << systematic << "_" << shortsamplestr << hypothesis 
+	      << "_t13:" << input_sinsq2theta13 << spectralstr << "}" << endl;
      streamer << "\\end{table}" << endl;
+     streamer << "\\clearpage" << endl;
   }
 
   cout << streamer.str() << endl;
