@@ -79,9 +79,9 @@ void NuXSec::Init(void)
   fNCCohToCCQERelErr  = 0;
   fNCOthToCCQERelErr  = 0;
   fNuEToNuMuRelErr    = 0;
-  fSKFSIRelErr1RmuT   = 0;
-  fSKFSIRelErr1ReTbkg = 0;
-  fSKFSIRelErr1ReTsig = 0;
+  fSKFSIRelErr1Rmu    = 0;
+  fSKFSIRelErr1Rebkg  = 0;
+  fSKFSIRelErr1Resig  = 0;
   fCC1piInCCRES       = 0;
 }
 //________________________________________________________________________________________
@@ -96,9 +96,9 @@ void NuXSec::CleanUp(void)
   if ( fNCCohToCCQERelErr ) delete fNCCohToCCQERelErr;
   if ( fNCOthToCCQERelErr ) delete fNCOthToCCQERelErr;
   if ( fNuEToNuMuRelErr   ) delete fNuEToNuMuRelErr;
-  if ( fSKFSIRelErr1RmuT  ) delete fSKFSIRelErr1RmuT;
-  if ( fSKFSIRelErr1ReTbkg) delete fSKFSIRelErr1ReTbkg;
-  if ( fSKFSIRelErr1ReTsig) delete fSKFSIRelErr1ReTsig;
+  if ( fSKFSIRelErr1Rmu   ) delete fSKFSIRelErr1Rmu;
+  if ( fSKFSIRelErr1Rebkg ) delete fSKFSIRelErr1Rebkg;
+  if ( fSKFSIRelErr1Resig ) delete fSKFSIRelErr1Resig;
 }
 //________________________________________________________________________________________
 bool NuXSec::Read(TXMLEngine* xml, XMLNodePointer_t root_node)
@@ -125,12 +125,12 @@ bool NuXSec::Read(TXMLEngine* xml, XMLNodePointer_t root_node)
     util::XML2TH1D(xml,root_node,"niwg/systematics/xsec_ratio_relative_error/ncother_ccqe");
   fNuEToNuMuRelErr =
     util::XML2TH1D(xml,root_node,"niwg/systematics/xsec_ratio_relative_error/nue_numu");
-  fSKFSIRelErr1RmuT =
-    util::XML2TH1D(xml,root_node,"niwg/systematics/superk_nuclear_effect_relative_error_1RmuT");
-  fSKFSIRelErr1ReTbkg =
-    util::XML2TH1D(xml,root_node,"niwg/systematics/superk_nuclear_effect_relative_error_1ReTbkg");
-  fSKFSIRelErr1ReTsig =
-    util::XML2TH1D(xml,root_node,"niwg/systematics/superk_nuclear_effect_relative_error_1ReTsig");
+  fSKFSIRelErr1Rmu =
+    util::XML2TH1D(xml,root_node,"niwg/systematics/superk_nuclear_effect_relative_error/one_mu_ring");
+  fSKFSIRelErr1Rebkg =
+    util::XML2TH1D(xml,root_node,"niwg/systematics/superk_nuclear_effect_relative_error/one_e_ring/bkg");
+  fSKFSIRelErr1Resig =
+    util::XML2TH1D(xml,root_node,"niwg/systematics/superk_nuclear_effect_relative_error/one_e_ring/sig");
 
   fCC1piInCCRES = util::XML2Dbl(xml,root_node,"neutrino_generator/cc1pi_in_ccres");
 #ifdef __show_init_mesg_info__
@@ -403,8 +403,8 @@ double NuXSec::SuperkNuclEffectWght(
    //get the appropriate sk fsi histogram for the sample,mode pair
    switch(s) {
       case ( kSKsFCFV1RingMuLike ) :
-	assert(fSKFSIRelErr1RmuT); 
-	nucleff = fSKFSIRelErr1RmuT;
+	assert(fSKFSIRelErr1Rmu); 
+	nucleff = fSKFSIRelErr1Rmu;
 	break;
       case ( kSKsFCFV1RingELike ) :
 	switch(m) {
@@ -435,14 +435,14 @@ double NuXSec::SuperkNuclEffectWght(
            case ( kSKmNuENC1pi0       ) : 
            case ( kSKmNuENCcoh        ) : 
            case ( kSKmNuENCoth_e      ) : 
-	     assert(fSKFSIRelErr1ReTbkg); 
-	     nucleff = fSKFSIRelErr1ReTbkg;
+	     assert(fSKFSIRelErr1Rebkg); 
+	     nucleff = fSKFSIRelErr1Rebkg;
 	     break;
 	   case ( kSKmSigNuECCQE      ) : 
 	   case ( kSKmSigNuECC1pi     ) : 
 	   case ( kSKmSigNuECCoth     ) : 
-	     assert(fSKFSIRelErr1ReTsig); 
-	     nucleff = fSKFSIRelErr1ReTsig;
+	     assert(fSKFSIRelErr1Resig); 
+	     nucleff = fSKFSIRelErr1Resig;
 	     break;	     
    	   default                      : return 1.; break;
 	}//m

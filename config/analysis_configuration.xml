@@ -439,21 +439,25 @@ from the GENIE/NEUT physics monte carlo groups.
                 <objtype>    TH1D               </objtype>
             </nue_numu>
         </xsec_ratio_relative_error>
-        <superk_nuclear_effect_relative_error_1RmuT>
-            <filename>   inputs/official/2010/niwg/niwg_errors_10a_v1.root </filename>
-            <objname>    sk_nuceff_fc1mu_osc0  </objname>
-            <objtype>    TH1D                  </objtype>
-        </superk_nuclear_effect_relative_error_1RmuT>
-        <superk_nuclear_effect_relative_error_1ReTbkg>
-            <filename>   inputs/official/2010/niwg/niwg_errors_10a_v1.root </filename>
-            <objname>    sk_nuceff_nuebkg_osc1 </objname>
-            <objtype>    TH1D                  </objtype>
-        </superk_nuclear_effect_relative_error_1ReTbkg>
-        <superk_nuclear_effect_relative_error_1ReTsig>
-            <filename>   inputs/official/2010/niwg/niwg_errors_10a_v1.root </filename>
-            <objname>    sk_nuceff_nuesig_osc1 </objname>
-            <objtype>    TH1D                  </objtype>
-        </superk_nuclear_effect_relative_error_1ReTsig>
+        <superk_nuclear_effect_relative_error>
+	    <one_mu_ring>
+	        <filename>   inputs/official/2010/niwg/niwg_errors_10a_v1.root </filename>
+                <objname>    sk_nuceff_fc1mu_osc0  </objname>
+                <objtype>    TH1D                  </objtype>
+	    </one_mu_ring>
+            <one_e_ring>
+	        <bkg>
+                    <filename>   inputs/official/2010/niwg/niwg_errors_10a_v1.root </filename>
+                    <objname>    sk_nuceff_nuebkg_osc1 </objname>
+                    <objtype>    TH1D                  </objtype>
+                </bkg>
+	        <sig>
+                    <filename>   inputs/official/2010/niwg/niwg_errors_10a_v1.root </filename>
+		    <objname>    sk_nuceff_nuesig_osc1 </objname>
+                    <objtype>    TH1D                  </objtype>
+	        </sig>
+	    </one_e_ring>
+        </superk_nuclear_effect_relative_error>
     </systematics>
   </niwg>
 

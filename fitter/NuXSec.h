@@ -100,9 +100,9 @@ private:
    TH1D * fNCCohToCCQERelErr;    ///<
    TH1D * fNCOthToCCQERelErr;    ///<
    TH1D * fNuEToNuMuRelErr;      ///<
-   TH1D * fSKFSIRelErr1RmuT;     ///<
-   TH1D * fSKFSIRelErr1ReTbkg;   ///<
-   TH1D * fSKFSIRelErr1ReTsig;   ///<
+   TH1D * fSKFSIRelErr1Rmu;     ///<
+   TH1D * fSKFSIRelErr1Rebkg;   ///<
+   TH1D * fSKFSIRelErr1Resig;   ///<
    double fCC1piInCCRES;         ///< correct ND280 interaction mode / NWIG err mis-match
 
 ClassDef(NuXSec, 3);
