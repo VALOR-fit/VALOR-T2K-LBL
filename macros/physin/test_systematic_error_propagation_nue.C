@@ -15,8 +15,8 @@
 //	- sk_ccnonqe_eff
 //	- sk_nc_eff
 //	- sk_nuecc_eff
-//      - sk_1ReTsig_eff
-//      - sk_1ReTbkg_eff
+//      - sk_1Resig_eff
+//      - sk_1Rebkg_eff
 // 	- nd280_eff
 // 	- nd280_norm
 //	- flux_norm

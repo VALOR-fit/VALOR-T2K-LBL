@@ -250,8 +250,8 @@ void SuperkExpectation::ResetSystematicVariations(void)
   this->GetSuperkMC()->TweakEfficiencyCCnonQE          (0.);
   this->GetSuperkMC()->TweakEfficiencyNC               (0.);     
   this->GetSuperkMC()->TweakEfficiencyNuECC            (0.);
-  this->GetSuperkMC()->TweakEfficiency1ReTSig          (0.);
-  this->GetSuperkMC()->TweakEfficiency1ReTBkg          (0.);
+  this->GetSuperkMC()->TweakEfficiency1ReSig          (0.);
+  this->GetSuperkMC()->TweakEfficiency1ReBkg          (0.);
 
   this->GetND280Measurement()->TweakEfficiency (0.);
   this->GetND280Measurement()->FluctuateNObsCCLike(0.);
@@ -313,12 +313,12 @@ void SuperkExpectation::TweakSystematic(string systematic, double twkdial)
      this->GetSuperkMC()->TweakEfficiencyNuECC(twkdial);
   }
   else
-  if(systematic == "sk_1ReTsig_eff") {
-     this->GetSuperkMC()->TweakEfficiency1ReTSig(twkdial);
+  if(systematic == "sk_1Resig_eff") {
+     this->GetSuperkMC()->TweakEfficiency1ReSig(twkdial);
   }
   else
-  if(systematic == "sk_1ReTbkg_eff") {
-     this->GetSuperkMC()->TweakEfficiency1ReTBkg(twkdial);
+  if(systematic == "sk_1Rebkg_eff") {
+     this->GetSuperkMC()->TweakEfficiency1ReBkg(twkdial);
   }
   //
   // ND280 detector systematics & statistical err on measured CC event count
@@ -411,8 +411,8 @@ void SuperkExpectation::TweakAllSystematics(bool do_tweak)
      this->GetSuperkMC()->TweakEfficiencyCCnonQE           (rand.Gaus(0.,1.));
      this->GetSuperkMC()->TweakEfficiencyNC                (rand.Gaus(0.,1.));     
      this->GetSuperkMC()->TweakEfficiencyNuECC             (rand.Gaus(0.,1.));
-     this->GetSuperkMC()->TweakEfficiency1ReTSig           (rand.Gaus(0.,1.));
-     this->GetSuperkMC()->TweakEfficiency1ReTBkg           (rand.Gaus(0.,1.));
+     this->GetSuperkMC()->TweakEfficiency1ReSig           (rand.Gaus(0.,1.));
+     this->GetSuperkMC()->TweakEfficiency1ReBkg           (rand.Gaus(0.,1.));
 
      // ND280 detector response
      this->GetND280Measurement()->TweakEfficiency     (rand.Gaus(0.,1.));
