@@ -165,10 +165,10 @@ from the GENIE/NEUT physics monte carlo groups.
             </one_mu_ring>
             <one_e_ring>
                <sig>
-                 0.04
+                 0.004
                </sig>
                <bkg>
-                 1.1
+                 0.011
                </bkg>
             </one_e_ring>      
          </energy_scale_relative_error>
