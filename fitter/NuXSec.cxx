@@ -465,8 +465,9 @@ double NuXSec::SuperkNuclEffectWght(
 	     assert(fSKFSIRelErr1Resig); 
 	     nucleff = fSKFSIRelErr1Resig;
 	     break;	     
-   	   default                      : return 1.; break;
+ 	   default                      : return 1.; break;
 	}//m
+	break;
      default : return 1.; break;
    }//s
 
