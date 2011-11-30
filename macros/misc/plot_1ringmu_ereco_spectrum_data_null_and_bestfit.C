@@ -22,8 +22,8 @@ void plot_1ringmu_ereco_spectrum_data_null_and_bestfit
   double nmax          = 20.0      /* max of N_{events} axis in plot  */
 )
 {
-  const int kNvErecoBins = 15;
-  const double kNvErecoBinEdges[kNvErecoBins+1] = {
+  const int kNErecoBins1Rmu = 15;
+  const double kErecoBinEdges1Rmu[kNErecoBins1Rmu+1] = {
    0.000,  0.300,  0.400,  0.500,  0.600,  0.700,  0.800, 0.900,  
    1.000,  1.200,  1.500,  2.000,  3.000,  4.000,  6.000, 10.000 
   };
@@ -35,9 +35,9 @@ void plot_1ringmu_ereco_spectrum_data_null_and_bestfit
   TH1D * hdata       = 0;
   ffit->cd();
   if(rebin) {
-     hmcall      = (TH1D*) bestfit_tot       -> Rebin(kNvErecoBins, "hmcall",      kNvErecoBinEdges);
-     hmcnumuccqe = (TH1D*) bestfit_numuccqe  -> Rebin(kNvErecoBins, "hmcnumuccqe", kNvErecoBinEdges);
-     hdata       = (TH1D*) data              -> Rebin(kNvErecoBins, "hdata",       kNvErecoBinEdges);
+     hmcall      = (TH1D*) bestfit_tot       -> Rebin(kNErecoBins1Rmu, "hmcall",      kErecoBinEdges1Rmu);
+     hmcnumuccqe = (TH1D*) bestfit_numuccqe  -> Rebin(kNErecoBins1Rmu, "hmcnumuccqe", kErecoBinEdges1Rmu);
+     hdata       = (TH1D*) data              -> Rebin(kNErecoBins1Rmu, "hdata",       kErecoBinEdges1Rmu);
   } else {
      hmcall      = new TH1D(*bestfit_tot);
      hmcnumuccqe = new TH1D(*bestfit_numuccqe);
@@ -53,7 +53,7 @@ void plot_1ringmu_ereco_spectrum_data_null_and_bestfit
      fnull = new TFile(nullpredictionfile, "read");
      fnull->cd();
      if(rebin) {
-        hmcnull = (TH1D*) total -> Rebin(kNvErecoBins, "hmcnull",  kNvErecoBinEdges);
+        hmcnull = (TH1D*) total -> Rebin(kNErecoBins1Rmu, "hmcnull",  kErecoBinEdges1Rmu);
      } else {
         hmcnull = new TH1D(*total);
      }

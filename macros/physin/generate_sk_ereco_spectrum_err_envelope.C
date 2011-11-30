@@ -89,7 +89,7 @@ void generate_sk_ereco_spectrum_err_envelope
   hErecoMax      -> SetDirectory(0);
   hErecoMin      -> SetDirectory(0);
   
-  for(int ibin=1; ibin <= conv::kNvErecoBins; ibin++) {
+  for(int ibin=1; ibin <= conv::kNErecoBins1Rmu; ibin++) {
     double nom   = hErecoDef->GetBinContent(ibin);
     double sumsq = 0;
     for(int iexp = 1; iexp < nexp; iexp++) {

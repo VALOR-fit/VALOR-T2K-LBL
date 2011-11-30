@@ -174,7 +174,7 @@ bool SuperkObservation::Read(string config_file, int data_set_id)
   datanode << "superk/observation/one_mu_ring/ereco_values" << "/data_set_" << data_set_id;
 
   if(util::NodeExists(xml,root_node,datanode.str())) {
-     fErDistr[kSKsFCFV1RingMuLike] = new TH1D("", "", kNvErecoBins,kNvErecoBinEdges);
+     fErDistr[kSKsFCFV1RingMuLike] = new TH1D("", "", kNErecoBins1Rmu,kErecoBinEdges1Rmu);
      fErDistr[kSKsFCFV1RingMuLike]->SetDirectory(0);
      vector<double> values = util::XML2DblArray(xml,root_node,datanode.str());
      vector<double>::const_iterator value_iter = values.begin();
@@ -203,7 +203,7 @@ void SuperkObservation::CreateMockData(
   cout << "Obs >> Generating a toy-MC expt with the following params: " << fp;
   cout << "Obs >> Stat. fluctuations are turned-" << ((fluctuate)? "ON" : "OFF") << endl;
 
-  fErDistr[kSKsFCFV1RingMuLike] = new TH1D("", "", kNvErecoBins,kNvErecoBinEdges);
+  fErDistr[kSKsFCFV1RingMuLike] = new TH1D("", "", kNErecoBins1Rmu,kErecoBinEdges1Rmu);
   fErDistr[kSKsFCFV1RingMuLike] -> SetDirectory(0);
 
   skexp.Generate(fp); //generate prediction
@@ -226,7 +226,7 @@ void SuperkObservation::CreateMockData(
   cout << "Obs >> Generating a toy-MC expt with the following params: " << ph;
   cout << "Obs >> Stat. fluctuations are turned-" << ((fluctuate)? "ON" : "OFF") << endl;
 
-  fErDistr[kSKsFCFV1RingMuLike] = new TH1D("", "", kNvErecoBins,kNvErecoBinEdges);
+  fErDistr[kSKsFCFV1RingMuLike] = new TH1D("", "", kNErecoBins1Rmu,kErecoBinEdges1Rmu);
   fErDistr[kSKsFCFV1RingMuLike] -> SetDirectory(0);
 
   skexp.Generate(ph); //generate prediction

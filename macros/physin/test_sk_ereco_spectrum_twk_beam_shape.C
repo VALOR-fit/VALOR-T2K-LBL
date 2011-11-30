@@ -85,7 +85,7 @@ void test_sk_ereco_spectrum_twk_beam_shape
   hErecoMin = new TH1D(*hEreco[0]);
   hErecoMax->SetDirectory(0);
   hErecoMin->SetDirectory(0);
-  for(int ibin=1; ibin <= conv::kNvErecoBins; ibin++) {
+  for(int ibin=1; ibin <= conv::kNErecoBins1Rmu; ibin++) {
     double nom   = hEreco[0]->GetBinContent(ibin);
     double sumsq = 0;
     for(int iexp = 1; iexp < nexp; iexp++) {

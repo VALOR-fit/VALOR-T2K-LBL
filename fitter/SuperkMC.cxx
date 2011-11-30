@@ -341,18 +341,41 @@ bool SuperkMC::Read(TXMLEngine* xml, XMLNodePointer_t root_node)
   f1RmNuEEt      -> SetDirectory(0);
     
   // Ereco histograms filled-in by SK spectrum prediction code
-  for(int is = 0; is < kns; is++) {
+  // Histograms corresponding to different samples can have different binning
+
+  for(int is = 0; is < kns; is++) 
+  {
      SuperkSample_t s = kSKSamples[is];
      if(s == kSKsUndefined) continue;
-     fMCErecoSpectrumTot[s] = new TH1D("","", kNvErecoBins, kNvErecoBinEdges);
+
+     if(s == kSKsFCFV1RingMuLike) {
+       fMCErecoSpectrumTot[s] = new TH1D("","", kNErecoBins1Rmu, kErecoBinEdges1Rmu);
+     }
+     else
+     if(s == kSKsFCFV1RingELike) {
+       fMCErecoSpectrumTot[s] = new TH1D("","", kNErecoBins1Re, kErecoBinEdges1Re);
+     }
+
+     assert(fMCErecoSpectrumTot[s]);
      fMCErecoSpectrumTot[s] -> SetDirectory(0);
-     for(int im=0; im < knm; im++) {
+
+     for(int im=0; im < knm; im++) 
+     {
        SuperkMode_t m = kSKReactionModes[is][im];
        if(m == kSKmUndefined) continue;
-       fMCErecoSpectrum[s][m] = new TH1D("","", kNvErecoBins, kNvErecoBinEdges);
+
+       if(s == kSKsFCFV1RingMuLike) {
+         fMCErecoSpectrum[s][m] = new TH1D("","", kNErecoBins1Rmu, kErecoBinEdges1Rmu);
+       }
+       else
+       if(s == kSKsFCFV1RingELike) {
+         fMCErecoSpectrum[s][m] = new TH1D("","", kNErecoBins1Re, kErecoBinEdges1Re);
+       }
+
+       assert(fMCErecoSpectrum[s][m]);
        fMCErecoSpectrum[s][m] -> SetDirectory(0);
-     }
-  }
+     }//m
+  }//s
 
 #ifdef __show_init_mesg_info__      
   cout << "Exp/SKMC >> Done reading SuperK inputs!" << endl;
@@ -370,24 +393,44 @@ void SuperkMC::CreateTemplate(SuperkSample_t s, SuperkMode_t m)
     
   int is = (int)s;
   int im = (int)m;
-    
-  fMCTemplNom[is][im] = new TH2D(
-     Form("nsk_%d_%d",is,im), util::AsString(m).c_str(),
-       kNvErecoBins, kNvErecoBinEdges, kNEtrueBins, kEtrueMin, kEtrueMax);
+
+  if(s == kSKsFCFV1RingMuLike) {
+     fMCTemplNom[is][im] = new TH2D(
+          Form("nsk_%d_%d",is,im), util::AsString(m).c_str(),
+               kNErecoBins1Rmu, kErecoBinEdges1Rmu, kNEtrueBins, kEtrueMin, kEtrueMax);
+     fMCTemplSys[is][im] = new TH2D(
+          Form("nsksyst_%d_%d",is,im), util::AsString(m).c_str(),
+               kNErecoBins1Rmu, kErecoBinEdges1Rmu, kNEtrueBins, kEtrueMin, kEtrueMax);
+     fMCTemplSysHyp[is][im] = new TH2D(
+          Form("nskcurr_%d_%d",is,im), util::AsString(m).c_str(),
+               kNErecoBins1Rmu, kErecoBinEdges1Rmu, kNEtrueBins, kEtrueMin, kEtrueMax);
+  }
+  else    
+  if(s == kSKsFCFV1RingELike) {
+     fMCTemplNom[is][im] = new TH2D(
+          Form("nsk_%d_%d",is,im), util::AsString(m).c_str(),
+               kNErecoBins1Re, kErecoBinEdges1Re, kNEtrueBins, kEtrueMin, kEtrueMax);
+     fMCTemplSys[is][im] = new TH2D(
+          Form("nsksyst_%d_%d",is,im), util::AsString(m).c_str(),
+               kNErecoBins1Re, kErecoBinEdges1Re, kNEtrueBins, kEtrueMin, kEtrueMax);
+     fMCTemplSysHyp[is][im] = new TH2D(
+          Form("nskcurr_%d_%d",is,im), util::AsString(m).c_str(),
+               kNErecoBins1Re, kErecoBinEdges1Re, kNEtrueBins, kEtrueMin, kEtrueMax);
+  }
+  else {
+    cerr << "Exp/SKMC/CreateTemplate >> Can't handle sample: "
+         << util::AsString(s) << endl;
+    exit(1);
+  }
+      
   fMCTemplNom[is][im]->SetDirectory(0);
   fMCTemplNom[is][im]->GetXaxis()->SetTitle("E_{reco} (GeV)");
   fMCTemplNom[is][im]->GetYaxis()->SetTitle("E_{true} (GeV)");
 
-  fMCTemplSys[is][im] = new TH2D(
-     Form("nsksyst_%d_%d",is,im), util::AsString(m).c_str(),
-       kNvErecoBins, kNvErecoBinEdges, kNEtrueBins, kEtrueMin, kEtrueMax);
   fMCTemplSys[is][im]->SetDirectory(0);
   fMCTemplSys[is][im]->GetXaxis()->SetTitle("E_{reco} (GeV)");
   fMCTemplSys[is][im]->GetYaxis()->SetTitle("E_{true} (GeV)");
 
-  fMCTemplSysHyp[is][im] = new TH2D(
-     Form("nskcurr_%d_%d",is,im), util::AsString(m).c_str(),
-       kNvErecoBins, kNvErecoBinEdges, kNEtrueBins, kEtrueMin, kEtrueMax);
   fMCTemplSysHyp[is][im]->SetDirectory(0);
   fMCTemplSysHyp[is][im]->GetXaxis()->SetTitle("E_{reco} (GeV)");
   fMCTemplSysHyp[is][im]->GetYaxis()->SetTitle("E_{true} (GeV)");

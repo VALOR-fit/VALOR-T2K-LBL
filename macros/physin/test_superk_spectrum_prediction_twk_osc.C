@@ -61,9 +61,9 @@ void test_superk_spectrum_prediction_twk_osc
   // calculate fractional deficit
   TH1D * hErecoFracDeficit[ncases];
   for(int icase = 0; icase < ncases; icase++) {
-    hErecoFracDeficit[icase] = new TH1D("","",conv::kNvErecoBins,conv::kNvErecoBinEdges);
+    hErecoFracDeficit[icase] = new TH1D("","",conv::kNErecoBins1Rmu,conv::kErecoBinEdges1Rmu);
     hErecoFracDeficit[icase]->SetDirectory(0);
-    for(int ibin=1; ibin <= conv::kNvErecoBins; ibin++) {
+    for(int ibin=1; ibin <= conv::kNErecoBins1Rmu; ibin++) {
        double Nunosc = hEreco[0]    ->GetBinContent(ibin); 
        double Nosc   = hEreco[icase]->GetBinContent(ibin);
        if(Nunosc>0) {

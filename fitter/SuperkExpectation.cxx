@@ -145,7 +145,7 @@ void SuperkExpectation::Generate(const PhysHypothesis & ph)
 
   // update Ereco spectrum prediction
   fSuperkMC->UpdateErecoSpectra();
-  for(int ibin = 1; ibin <= kNvErecoBins; ibin++) {
+  for(int ibin = 1; ibin <= kNErecoBins1Rmu; ibin++) {
     double n = 0;
     for(int is = 0; is < kns; is++) {
        SuperkSample_t s = kSKSamples[is];
@@ -468,12 +468,12 @@ bool SuperkExpectation::Read(string config_file)
   for(int is = 0; is < kns; is++) {
      SuperkSample_t s = kSKSamples[is];
      if(s == kSKsUndefined) continue;
-     fPredictErecoSpectrumTot[s] = new TH1D("","", kNvErecoBins, kNvErecoBinEdges);
+     fPredictErecoSpectrumTot[s] = new TH1D("","", kNErecoBins1Rmu, kErecoBinEdges1Rmu);
      fPredictErecoSpectrumTot[s]->SetDirectory(0);
      for(int im = 0; im < knm; im++) {
          SuperkMode_t m = kSKReactionModes[is][im];
          if(m == kSKmUndefined) continue;
-         fPredictErecoSpectrum[s][m] = new TH1D("","", kNvErecoBins, kNvErecoBinEdges);
+         fPredictErecoSpectrum[s][m] = new TH1D("","", kNErecoBins1Rmu, kErecoBinEdges1Rmu);
          fPredictErecoSpectrum[s][m]->SetDirectory(0);
      }//m	
   }//s

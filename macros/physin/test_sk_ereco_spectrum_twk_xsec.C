@@ -90,9 +90,9 @@ void test_sk_ereco_spectrum_twk_xsec
   double maxerrneg = +1.;
   for(int imode = 0; imode < ntwkmodes; imode++) {
     for(int idial = 0; idial < ntwkdials; idial++) {
-       hErecoErr[imode][idial] = new TH1D("","",conv::kNvErecoBins,conv::kNvErecoBinEdges);
+       hErecoErr[imode][idial] = new TH1D("","",conv::kNErecoBins1Rmu,conv::kErecoBinEdges1Rmu);
        hErecoErr[imode][idial]->SetDirectory(0);
-       for(int ibin=1; ibin <= conv::kNvErecoBins; ibin++) {
+       for(int ibin=1; ibin <= conv::kNErecoBins1Rmu; ibin++) {
          double ncurr  = hEreco[imode][idial]->GetBinContent(ibin);
          double ndeflt = hEreco[imode][deflt]->GetBinContent(ibin);
          if(ndeflt>0) {

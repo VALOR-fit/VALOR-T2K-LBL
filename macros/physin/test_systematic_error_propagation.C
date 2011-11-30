@@ -92,7 +92,7 @@ void test_systematic_error_propagation
   double nsknumuccqe_0         = skexp->GetSuperkMC()->CurrErecoSpectrum(conv::kSKsFCFV1RingMuLike, conv::kSKmNuMuCCQE       )->Integral();
   double nsknumuccqe_0a        = skexp->GetSuperkMC()->CurrErecoSpectrum(conv::kSKsFCFV1RingMuLike, conv::kSKmNuMuCCQE       )->Integral(1,           ErecoBin1-1 );
   double nsknumuccqe_0b        = skexp->GetSuperkMC()->CurrErecoSpectrum(conv::kSKsFCFV1RingMuLike, conv::kSKmNuMuCCQE       )->Integral(ErecoBin1,   ErecoBin2   );
-  double nsknumuccqe_0c        = skexp->GetSuperkMC()->CurrErecoSpectrum(conv::kSKsFCFV1RingMuLike, conv::kSKmNuMuCCQE       )->Integral(ErecoBin2+1, conv::kNvErecoBins);
+  double nsknumuccqe_0c        = skexp->GetSuperkMC()->CurrErecoSpectrum(conv::kSKsFCFV1RingMuLike, conv::kSKmNuMuCCQE       )->Integral(ErecoBin2+1, conv::kNErecoBins1Rmu);
   double nsknumucc1pi_0        = skexp->GetSuperkMC()->CurrErecoSpectrum(conv::kSKsFCFV1RingMuLike, conv::kSKmNuMuCC1pi      )->Integral();
   double nsknumuccoth_0        = skexp->GetSuperkMC()->CurrErecoSpectrum(conv::kSKsFCFV1RingMuLike, conv::kSKmNuMuCCoth_mu   )->Integral();
   double nsknumucc_0           = nsknumuccqe_0 + nsknumucc1pi_0 + nsknumuccoth_0;
@@ -100,7 +100,7 @@ void test_systematic_error_propagation
   double nsknumubarccqe_0      = skexp->GetSuperkMC()->CurrErecoSpectrum(conv::kSKsFCFV1RingMuLike, conv::kSKmNuMuBarCCQE    )->Integral();
   double nsknumubarccqe_0a     = skexp->GetSuperkMC()->CurrErecoSpectrum(conv::kSKsFCFV1RingMuLike, conv::kSKmNuMuBarCCQE    )->Integral(1,           ErecoBin1-1 );
   double nsknumubarccqe_0b     = skexp->GetSuperkMC()->CurrErecoSpectrum(conv::kSKsFCFV1RingMuLike, conv::kSKmNuMuBarCCQE    )->Integral(ErecoBin1,   ErecoBin2   );
-  double nsknumubarccqe_0c     = skexp->GetSuperkMC()->CurrErecoSpectrum(conv::kSKsFCFV1RingMuLike, conv::kSKmNuMuBarCCQE    )->Integral(ErecoBin2+1, conv::kNvErecoBins);
+  double nsknumubarccqe_0c     = skexp->GetSuperkMC()->CurrErecoSpectrum(conv::kSKsFCFV1RingMuLike, conv::kSKmNuMuBarCCQE    )->Integral(ErecoBin2+1, conv::kNErecoBins1Rmu);
   double nsknumubarcc1pi_0     = skexp->GetSuperkMC()->CurrErecoSpectrum(conv::kSKsFCFV1RingMuLike, conv::kSKmNuMuBarCC1pi   )->Integral();
   double nsknumubarccoth_0     = skexp->GetSuperkMC()->CurrErecoSpectrum(conv::kSKsFCFV1RingMuLike, conv::kSKmNuMuBarCCoth_mu)->Integral();
   double nsknumubarcc_0        = nsknumubarccqe_0 + nsknumubarcc1pi_0 + nsknumubarccoth_0;
@@ -170,7 +170,7 @@ void test_systematic_error_propagation
   double nsknumuccqe_p         = skexp->GetSuperkMC()->CurrErecoSpectrum(conv::kSKsFCFV1RingMuLike, conv::kSKmNuMuCCQE       )->Integral();
   double nsknumuccqe_pa        = skexp->GetSuperkMC()->CurrErecoSpectrum(conv::kSKsFCFV1RingMuLike, conv::kSKmNuMuCCQE       )->Integral(1,           ErecoBin1-1 );
   double nsknumuccqe_pb        = skexp->GetSuperkMC()->CurrErecoSpectrum(conv::kSKsFCFV1RingMuLike, conv::kSKmNuMuCCQE       )->Integral(ErecoBin1,   ErecoBin2   );
-  double nsknumuccqe_pc        = skexp->GetSuperkMC()->CurrErecoSpectrum(conv::kSKsFCFV1RingMuLike, conv::kSKmNuMuCCQE       )->Integral(ErecoBin2+1, conv::kNvErecoBins);
+  double nsknumuccqe_pc        = skexp->GetSuperkMC()->CurrErecoSpectrum(conv::kSKsFCFV1RingMuLike, conv::kSKmNuMuCCQE       )->Integral(ErecoBin2+1, conv::kNErecoBins1Rmu);
   double nsknumucc1pi_p        = skexp->GetSuperkMC()->CurrErecoSpectrum(conv::kSKsFCFV1RingMuLike, conv::kSKmNuMuCC1pi      )->Integral();
   double nsknumuccoth_p        = skexp->GetSuperkMC()->CurrErecoSpectrum(conv::kSKsFCFV1RingMuLike, conv::kSKmNuMuCCoth_mu   )->Integral();
   double nsknumucc_p           = nsknumuccqe_p + nsknumucc1pi_p + nsknumuccoth_p;
@@ -178,7 +178,7 @@ void test_systematic_error_propagation
   double nsknumubarccqe_p      = skexp->GetSuperkMC()->CurrErecoSpectrum(conv::kSKsFCFV1RingMuLike, conv::kSKmNuMuBarCCQE    )->Integral();
   double nsknumubarccqe_pa     = skexp->GetSuperkMC()->CurrErecoSpectrum(conv::kSKsFCFV1RingMuLike, conv::kSKmNuMuBarCCQE    )->Integral(1,           ErecoBin1-1 );
   double nsknumubarccqe_pb     = skexp->GetSuperkMC()->CurrErecoSpectrum(conv::kSKsFCFV1RingMuLike, conv::kSKmNuMuBarCCQE    )->Integral(ErecoBin1,   ErecoBin2   );
-  double nsknumubarccqe_pc     = skexp->GetSuperkMC()->CurrErecoSpectrum(conv::kSKsFCFV1RingMuLike, conv::kSKmNuMuBarCCQE    )->Integral(ErecoBin2+1, conv::kNvErecoBins);
+  double nsknumubarccqe_pc     = skexp->GetSuperkMC()->CurrErecoSpectrum(conv::kSKsFCFV1RingMuLike, conv::kSKmNuMuBarCCQE    )->Integral(ErecoBin2+1, conv::kNErecoBins1Rmu);
   double nsknumubarcc1pi_p     = skexp->GetSuperkMC()->CurrErecoSpectrum(conv::kSKsFCFV1RingMuLike, conv::kSKmNuMuBarCC1pi   )->Integral();
   double nsknumubarccoth_p     = skexp->GetSuperkMC()->CurrErecoSpectrum(conv::kSKsFCFV1RingMuLike, conv::kSKmNuMuBarCCoth_mu)->Integral();
   double nsknumubarcc_p        = nsknumubarccqe_p + nsknumubarcc1pi_p + nsknumubarccoth_p;
@@ -246,7 +246,7 @@ void test_systematic_error_propagation
   double nsknumuccqe_m         = skexp->GetSuperkMC()->CurrErecoSpectrum(conv::kSKsFCFV1RingMuLike, conv::kSKmNuMuCCQE       )->Integral();
   double nsknumuccqe_ma        = skexp->GetSuperkMC()->CurrErecoSpectrum(conv::kSKsFCFV1RingMuLike, conv::kSKmNuMuCCQE       )->Integral(1,           ErecoBin1-1 );
   double nsknumuccqe_mb        = skexp->GetSuperkMC()->CurrErecoSpectrum(conv::kSKsFCFV1RingMuLike, conv::kSKmNuMuCCQE       )->Integral(ErecoBin1,   ErecoBin2   );
-  double nsknumuccqe_mc        = skexp->GetSuperkMC()->CurrErecoSpectrum(conv::kSKsFCFV1RingMuLike, conv::kSKmNuMuCCQE       )->Integral(ErecoBin2+1, conv::kNvErecoBins);
+  double nsknumuccqe_mc        = skexp->GetSuperkMC()->CurrErecoSpectrum(conv::kSKsFCFV1RingMuLike, conv::kSKmNuMuCCQE       )->Integral(ErecoBin2+1, conv::kNErecoBins1Rmu);
   double nsknumucc1pi_m        = skexp->GetSuperkMC()->CurrErecoSpectrum(conv::kSKsFCFV1RingMuLike, conv::kSKmNuMuCC1pi      )->Integral();
   double nsknumuccoth_m        = skexp->GetSuperkMC()->CurrErecoSpectrum(conv::kSKsFCFV1RingMuLike, conv::kSKmNuMuCCoth_mu   )->Integral();
   double nsknumucc_m           = nsknumuccqe_m + nsknumucc1pi_m + nsknumuccoth_m;
@@ -254,7 +254,7 @@ void test_systematic_error_propagation
   double nsknumubarccqe_m      = skexp->GetSuperkMC()->CurrErecoSpectrum(conv::kSKsFCFV1RingMuLike, conv::kSKmNuMuBarCCQE    )->Integral();
   double nsknumubarccqe_ma     = skexp->GetSuperkMC()->CurrErecoSpectrum(conv::kSKsFCFV1RingMuLike, conv::kSKmNuMuBarCCQE    )->Integral(1,           ErecoBin1-1 );
   double nsknumubarccqe_mb     = skexp->GetSuperkMC()->CurrErecoSpectrum(conv::kSKsFCFV1RingMuLike, conv::kSKmNuMuBarCCQE    )->Integral(ErecoBin1,   ErecoBin2   );
-  double nsknumubarccqe_mc     = skexp->GetSuperkMC()->CurrErecoSpectrum(conv::kSKsFCFV1RingMuLike, conv::kSKmNuMuBarCCQE    )->Integral(ErecoBin2+1, conv::kNvErecoBins);
+  double nsknumubarccqe_mc     = skexp->GetSuperkMC()->CurrErecoSpectrum(conv::kSKsFCFV1RingMuLike, conv::kSKmNuMuBarCCQE    )->Integral(ErecoBin2+1, conv::kNErecoBins1Rmu);
   double nsknumubarcc1pi_m     = skexp->GetSuperkMC()->CurrErecoSpectrum(conv::kSKsFCFV1RingMuLike, conv::kSKmNuMuBarCC1pi   )->Integral();
   double nsknumubarccoth_m     = skexp->GetSuperkMC()->CurrErecoSpectrum(conv::kSKsFCFV1RingMuLike, conv::kSKmNuMuBarCCoth_mu)->Integral();
   double nsknumubarcc_m        = nsknumubarccqe_m + nsknumubarcc1pi_m + nsknumubarccoth_m;

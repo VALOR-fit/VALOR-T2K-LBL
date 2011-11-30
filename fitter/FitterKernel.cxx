@@ -131,7 +131,7 @@ void FitterKernel::Init(FitInputs * fit_inputs, Option_t * option)
 
   // calculate degrees of freedom
 
-  fNFitBins       = kNvErecoBins;
+  fNFitBins       = kNErecoBins1Rmu;
   fNFreeFitParams = fit_params.GetNumberFreeParameters();
 
 #ifdef __show_fit_init_info__

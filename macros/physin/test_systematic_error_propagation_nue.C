@@ -279,10 +279,10 @@ void test_systematic_error_propagation_nue
   //spectral numu ccqe
   double nsknumuccqe_0a        = skexp->GetSuperkMC()->CurrErecoSpectrum(s, conv::kSKmNuMuCCQE       )->Integral(1,           ErecoBin1-1 );
   double nsknumuccqe_0b        = skexp->GetSuperkMC()->CurrErecoSpectrum(s, conv::kSKmNuMuCCQE       )->Integral(ErecoBin1,   ErecoBin2   );
-  double nsknumuccqe_0c        = skexp->GetSuperkMC()->CurrErecoSpectrum(s, conv::kSKmNuMuCCQE       )->Integral(ErecoBin2+1, conv::kNvErecoBins);
+  double nsknumuccqe_0c        = skexp->GetSuperkMC()->CurrErecoSpectrum(s, conv::kSKmNuMuCCQE       )->Integral(ErecoBin2+1, conv::kNErecoBins1Rmu);
   double nsknumubarccqe_0a     = skexp->GetSuperkMC()->CurrErecoSpectrum(s, conv::kSKmNuMuBarCCQE    )->Integral(1,           ErecoBin1-1 );
   double nsknumubarccqe_0b     = skexp->GetSuperkMC()->CurrErecoSpectrum(s, conv::kSKmNuMuBarCCQE    )->Integral(ErecoBin1,   ErecoBin2   );
-  double nsknumubarccqe_0c     = skexp->GetSuperkMC()->CurrErecoSpectrum(s, conv::kSKmNuMuBarCCQE    )->Integral(ErecoBin2+1, conv::kNvErecoBins);
+  double nsknumubarccqe_0c     = skexp->GetSuperkMC()->CurrErecoSpectrum(s, conv::kSKmNuMuBarCCQE    )->Integral(ErecoBin2+1, conv::kNErecoBins1Rmu);
 
   //nd280
   double nd280obs_0            = skexp->GetND280Measurement()->NObsCCLike();
@@ -413,10 +413,10 @@ void test_systematic_error_propagation_nue
   //spectral numu ccqe
   double nsknumuccqe_pa        = skexp->GetSuperkMC()->CurrErecoSpectrum(s, conv::kSKmNuMuCCQE       )->Integral(1,           ErecoBin1-1 );
   double nsknumuccqe_pb        = skexp->GetSuperkMC()->CurrErecoSpectrum(s, conv::kSKmNuMuCCQE       )->Integral(ErecoBin1,   ErecoBin2   );
-  double nsknumuccqe_pc        = skexp->GetSuperkMC()->CurrErecoSpectrum(s, conv::kSKmNuMuCCQE       )->Integral(ErecoBin2+1, conv::kNvErecoBins);
+  double nsknumuccqe_pc        = skexp->GetSuperkMC()->CurrErecoSpectrum(s, conv::kSKmNuMuCCQE       )->Integral(ErecoBin2+1, conv::kNErecoBins1Rmu);
   double nsknumubarccqe_pa     = skexp->GetSuperkMC()->CurrErecoSpectrum(s, conv::kSKmNuMuBarCCQE    )->Integral(1,           ErecoBin1-1 );
   double nsknumubarccqe_pb     = skexp->GetSuperkMC()->CurrErecoSpectrum(s, conv::kSKmNuMuBarCCQE    )->Integral(ErecoBin1,   ErecoBin2   );
-  double nsknumubarccqe_pc     = skexp->GetSuperkMC()->CurrErecoSpectrum(s, conv::kSKmNuMuBarCCQE    )->Integral(ErecoBin2+1, conv::kNvErecoBins);
+  double nsknumubarccqe_pc     = skexp->GetSuperkMC()->CurrErecoSpectrum(s, conv::kSKmNuMuBarCCQE    )->Integral(ErecoBin2+1, conv::kNErecoBins1Rmu);
 
   //nd280
   double nd280obs_p            = skexp->GetND280Measurement()->NObsCCLike();
@@ -546,10 +546,10 @@ void test_systematic_error_propagation_nue
   //spectral numu ccqe
   double nsknumuccqe_ma        = skexp->GetSuperkMC()->CurrErecoSpectrum(s, conv::kSKmNuMuCCQE       )->Integral(1,           ErecoBin1-1 );
   double nsknumuccqe_mb        = skexp->GetSuperkMC()->CurrErecoSpectrum(s, conv::kSKmNuMuCCQE       )->Integral(ErecoBin1,   ErecoBin2   );
-  double nsknumuccqe_mc        = skexp->GetSuperkMC()->CurrErecoSpectrum(s, conv::kSKmNuMuCCQE       )->Integral(ErecoBin2+1, conv::kNvErecoBins);
+  double nsknumuccqe_mc        = skexp->GetSuperkMC()->CurrErecoSpectrum(s, conv::kSKmNuMuCCQE       )->Integral(ErecoBin2+1, conv::kNErecoBins1Rmu);
   double nsknumubarccqe_ma     = skexp->GetSuperkMC()->CurrErecoSpectrum(s, conv::kSKmNuMuBarCCQE    )->Integral(1,           ErecoBin1-1 );
   double nsknumubarccqe_mb     = skexp->GetSuperkMC()->CurrErecoSpectrum(s, conv::kSKmNuMuBarCCQE    )->Integral(ErecoBin1,   ErecoBin2   );
-  double nsknumubarccqe_mc     = skexp->GetSuperkMC()->CurrErecoSpectrum(s, conv::kSKmNuMuBarCCQE    )->Integral(ErecoBin2+1, conv::kNvErecoBins);
+  double nsknumubarccqe_mc     = skexp->GetSuperkMC()->CurrErecoSpectrum(s, conv::kSKmNuMuBarCCQE    )->Integral(ErecoBin2+1, conv::kNErecoBins1Rmu);
 
   //nd280
   double nd280obs_m            = skexp->GetND280Measurement()->NObsCCLike();

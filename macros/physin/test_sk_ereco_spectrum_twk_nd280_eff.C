@@ -71,11 +71,11 @@ void test_sk_ereco_spectrum_twk_nd280_eff
   }//i
 
   // calculate err envelopes
-  TH1D * alo = new TH1D("alo",  "spectrum err envelope: low  boundary",            conv::kNvErecoBins,conv::kNvErecoBinEdges);
-  TH1D * ahi = new TH1D("ahi",  "spectrum err envelope: high boundary",            conv::kNvErecoBins,conv::kNvErecoBinEdges);
-  TH1D * flo = new TH1D("flo",  "spectrum fractional err envelope: low  boundary", conv::kNvErecoBins,conv::kNvErecoBinEdges);
-  TH1D * fhi = new TH1D("fhi",  "spectrum fractional err envelope: high boundary", conv::kNvErecoBins,conv::kNvErecoBinEdges);
-  for(int ibin=1; ibin <= conv::kNvErecoBins; ibin++) {
+  TH1D * alo = new TH1D("alo",  "spectrum err envelope: low  boundary",            conv::kNErecoBins1Rmu,conv::kErecoBinEdges1Rmu);
+  TH1D * ahi = new TH1D("ahi",  "spectrum err envelope: high boundary",            conv::kNErecoBins1Rmu,conv::kErecoBinEdges1Rmu);
+  TH1D * flo = new TH1D("flo",  "spectrum fractional err envelope: low  boundary", conv::kNErecoBins1Rmu,conv::kErecoBinEdges1Rmu);
+  TH1D * fhi = new TH1D("fhi",  "spectrum fractional err envelope: high boundary", conv::kNErecoBins1Rmu,conv::kErecoBinEdges1Rmu);
+  for(int ibin=1; ibin <= conv::kNErecoBins1Rmu; ibin++) {
     double nlo =  999999;
     double nhi = -999999;
     double def = hEreco[0]->GetBinContent(ibin);
@@ -103,7 +103,7 @@ void test_sk_ereco_spectrum_twk_nd280_eff
   alo->Draw("same");
   ahi->Draw("same");
   c->cd(2);
-  TH1F * hframe = (TH1F*) c->GetPad(2)->DrawFrame(0,-0.15,conv::kNvErecoBinEdges[conv::kNvErecoBins],0.15);
+  TH1F * hframe = (TH1F*) c->GetPad(2)->DrawFrame(0,-0.15,conv::kErecoBinEdges1Rmu[conv::kNErecoBins1Rmu],0.15);
   hframe->GetXaxis()->SetTitle("E_{reco} (GeV)");
   hframe->Draw();
   flo->Draw("same");

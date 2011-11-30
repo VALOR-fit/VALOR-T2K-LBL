@@ -79,11 +79,11 @@ void test_sk_ereco_spectrum_twk_beam_norm
   double maxerrpos = -1.;
   double maxerrneg = +1.;
   for(int idial = 0; idial < ntwkdials; idial++) {
-     hErecoErr[idial] = new TH1D("","",conv::kNvErecoBins,conv::kNvErecoBinEdges);
+     hErecoErr[idial] = new TH1D("","",conv::kNErecoBins1Rmu,conv::kErecoBinEdges1Rmu);
      hErecoErr[idial]->SetDirectory(0);
   }
   for(int idial = 0; idial < ntwkdials; idial++) {
-       for(int ibin=1; ibin <= conv::kNvErecoBins; ibin++) {
+       for(int ibin=1; ibin <= conv::kNErecoBins1Rmu; ibin++) {
          double ncurr  = hEreco[idial]->GetBinContent(ibin);
          double ndeflt = hEreco[deflt]->GetBinContent(ibin);
          if(ndeflt>0) {

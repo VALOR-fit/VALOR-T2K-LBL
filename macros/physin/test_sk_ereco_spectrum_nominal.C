@@ -45,7 +45,7 @@ void test_sk_ereco_spectrum_nominal
   };
 
   // histogram booking
-  TH1D * hErecoTot = new TH1D("","",conv::kNvErecoBins,conv::kNvErecoBinEdges);
+  TH1D * hErecoTot = new TH1D("","",conv::kNErecoBins1Rmu,conv::kErecoBinEdges1Rmu);
   TH1D * hErecoMode[conv::knm]; //< contribution from each mode  
 
   // set physics hypothesis
