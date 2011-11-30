@@ -40,6 +40,8 @@
  @ 10/10/11 - CA
    In RandomizeSinsq2Theta12(), make sure that the generated value is always
    physical.
+ @ 30/11/11 - TD
+   Added SKSampleAsString() to simplify running certain test macros.
 */
 //____________________________________________________________________________
 
@@ -742,6 +744,14 @@ t2kana::conv::PhysHypothesis_t t2kana::util::FromString(string sh)
   if(sh == "3f_osc"        ) return kHypOsc3F;
 
   return kHypUndefined;
+}
+//____________________________________________________________________________
+t2kana::conv::SuperkSample_t t2kana::util::SKSampleFromString(string sh)
+{
+  if(sh == "1Rmu") return kSKsFCFV1RingMuLike;
+  if(sh == "1Re" ) return kSKsFCFV1RingELike;
+
+  return kSKsUndefined;
 }
 //____________________________________________________________________________
 t2kana::conv::OscChannelId_t 

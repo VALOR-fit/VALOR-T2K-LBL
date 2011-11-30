@@ -50,7 +50,7 @@ using namespace t2kana; //need to put this here, to allow a SuperkSample_t as in
 void test_systematic_error_propagation_nue
 (
   const char * systematic,                                                  /* options: see above */
-  conv::SuperkSample_t s                  = conv::kSKsFCFV1RingMuLike,      /* */
+  const string sample_str                 = "1Rmu",                         /* options: "1Rmu", "1Re" */
   const char * hypothesis                 = "3f_osc",                       /* options: "2f_numu_disap", "3f_osc" */
   double       input_sinsq2theta12        = 0.86,                           /* */
   double       input_sinsq2theta13        = 0.10,                           /* */
@@ -70,6 +70,8 @@ void test_systematic_error_propagation_nue
 
   using namespace std;
   using namespace t2kana;
+
+  conv::SuperkSample_t s = util::SKSampleFromString(sample_str);
 
   // set physics hypothesis
   PhysHypothesis ph(hypothesis);
