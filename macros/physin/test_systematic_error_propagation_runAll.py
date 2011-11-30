@@ -64,8 +64,8 @@ systematics.append("xsec_nue_to_numu")
 systematics.append("nuclear_effect")
 
 samples = []
-samples.append("conv::kSKsFCFV1RingMuLike")
-samples.append("conv::kSKsFCFV1RingELike")
+samples.append("1Rmu")
+samples.append("1Re")
    
 oscparams = [] #fill with oscillation parameters, in order sinsq2theta12, theta13, theta23, deltacp, dmsq12, dmsq23hypothesis 
 oscparams.append([0.86, 0.1,  1,  0,  7.58E-5,  2.32E-3])
@@ -84,7 +84,7 @@ for osc in oscparams:
 
        for sys in systematics:
 
-          command = 'root2k -l -b -q \'$T2KOSCANA/macros/physin/test_systematic_error_propagation_nue.C("'+sys+'",'+sam+',"3f_osc",'+str(osc[0])+','+str(osc[1])+','+str(osc[2])+','+str(osc[3])+','+str(osc[4])+','+str(osc[5])+',true,'+spe+',"'+filename+'")\''
+          command = 'root2k -l -b -q \'$T2KOSCANA/macros/physin/test_systematic_error_propagation_nue.C("'+sys+'","'+sam+'","3f_osc",'+str(osc[0])+','+str(osc[1])+','+str(osc[2])+','+str(osc[3])+','+str(osc[4])+','+str(osc[5])+',true,'+spe+',"'+filename+'")\''
           print command
           os.system(command)
           
