@@ -122,37 +122,46 @@ private:
 
   double     fPOT;                         ///< POT for actual data-set (MC is scaled to that exposure)
 
+  // systematic uncertainties: 1 sigma fractional errors & covariance matrices
+  // > 1Rmu
   double     fEnergyScale1RmuRelErr;       ///< 1Rmu energy scale relative error
-  double     fOthEffCCQERelErr;            ///< 1Rmu CCQE other (all but ring-counting) efficiency relative error 
-  TMatrixD * fEffCCQERelErrCovarRC;        ///< 1Rmu CCQE ring-counting efficiency relative error covariance matrix (3x3)
-  double     fEreco1RCCCQE;                ///<   ~0.4 GeV (RC cov matrix is 3x3, 3 Ereco bins: (0, fEreco1RCCCQE, fEreco2RCCCQE, oo))
-  double     fEreco2RCCCQE;                ///<   ~1.1 GeV (RC cov matrix is 3x3, 3 Ereco bins: (0, fEreco1RCCCQE, fEreco2RCCCQE, oo))
-  double     fEffCCnonQERelErr;            ///< 1Rmu CCnonQE efficiency relative error
-  double     fEffNCRelErr;                 ///< 1Rmu NC efficiency relative error
-  double     fEffNuECCRelErr;              ///< 1Rmu nue CC efficiency relative error
+  double     fEffOth1RmuCCQERelErr;        ///< 1Rmu CCQE other (all but ring-counting) efficiency relative error 
+  TMatrixD * fEffRC1RmuCCQERelErrCovar;    ///< 1Rmu CCQE ring-counting efficiency relative error covariance matrix (3x3)
+  double     fEffRC1RmuCCQERelErrCovarE1;  ///<  -  ~0.4 GeV (above RC cov matrix is 3x3, 3 Ereco bins: (0, fEffRC1RmuCCQERelErrCovarE1, fEffRC1RmuCCQERelErrCovarE2, oo))
+  double     fEffRC1RmuCCQERelErrCovarE2;  ///<  -  ~1.1 GeV (above RC cov matrix is 3x3, 3 Ereco bins: (0, fEffRC1RmuCCQERelErrCovarE1, fEffRC1RmuCCQERelErrCovarE2, oo))
+  TMatrixD * fEffRC1RmuCCQERelErrCovarChoL;///<  -  Cholesky decomposition (trangular matrix L) of fEffCCQERelErrCovarRC covariance matrix
+  double     fEff1RmuCCnonQERelErr;        ///< 1Rmu CCnonQE efficiency relative error
+  double     fEff1RmuNCRelErr;             ///< 1Rmu NC efficiency relative error
+  double     fEff1RmuNuECCRelErr;          ///< 1Rmu nue CC efficiency relative error
+  // > 1Re
   double     fEnergyScale1ReSigRelErr;     ///< 1Re signal energy scale relative error
   double     fEnergyScale1ReBkgRelErr;     ///< 1Re background energy scale relative error
   double     fEff1ReSigRelErr;             ///< 1Re signal efficiency relative error
   double     fEff1ReBkgRelErr;             ///< 1Re background efficiency relative error
 
+  // systematic uncertainties: tweaking dials
+  // > 1Rmu + 1Re
   double     fEnergyScaleTwkDial;          ///< 1Rmu/1Re Energy scale tweaking dial
-  double     fOthEffCCQETwkDial;           ///< 1Rmu CCQE other (all-but-ring-counting) efficiency tweaking dial
-  double     fRC0EffCCQETwkDial;           ///< 1Rmu CCQE ring-counting efficiency tweaking dial 0 (Ereco < fEreco1RCCCQE)
-  double     fRC1EffCCQETwkDial;           ///< 1Rmu CCQE ring-counting efficiency tweaking dial 1 (fEreco1RCCCQE <= Ereco <= fEreco2RCCCQE)
-  double     fRC2EffCCQETwkDial;           ///< 1Rmu CCQE ring-counting efficiency tweaking dial 2 (Ereco > fEreco2RCCCQE)
-  double     fEffCCnonQETwkDial;           ///< 1Rmu CCnonQE efficiency tweaking dial
-  double     fEffNCTwkDial;                ///< 1Rmu NC efficiency tweaking dial
-  double     fEffNuECCTwkDial;             ///< 1Rmu nue CC efficiency tweaking dial
+  // > 1Rmu 
+  double     fEffOth1RmuCCQETwkDial;       ///< 1Rmu CCQE other (all-but-ring-counting) efficiency tweaking dial
+  double     fEffRC01RmuCCQETwkDial;       ///< 1Rmu CCQE ring-counting efficiency tweaking dial 0 (Ereco < fEffRC1RmuCCQERelErrCovarE1)
+  double     fEffRC11RmuCCQETwkDial;       ///< 1Rmu CCQE ring-counting efficiency tweaking dial 1 (fEffRC1RmuCCQERelErrCovarE1 <= Ereco <= fEffRC1RmuCCQERelErrCovarE2)
+  double     fEffRC21RmuCCQETwkDial;       ///< 1Rmu CCQE ring-counting efficiency tweaking dial 2 (Ereco > fEffRC1RmuCCQERelErrCovarE2)
+  double     fEff1RmuCCnonQETwkDial;       ///< 1Rmu CCnonQE efficiency tweaking dial
+  double     fEff1RmuNCTwkDial;            ///< 1Rmu NC efficiency tweaking dial
+  double     fEff1RmuNuECCTwkDial;         ///< 1Rmu nue CC efficiency tweaking dial
+  // > 1Re
   double     fEff1ReSigTwkDial;            ///< 1Re signal effiency tweaking dial
   double     fEff1ReBkgTwkDial;            ///< 1Re background effiency tweaking dial
-  TMatrixD * fEffCCQERelErrCovarCholeskyL; ///< Cholesky decomposition (trangular matrix L) of fEffCCQERelErrCovarRC covariance matrix
 
+  // input MC templates (nominal, nominal + systematics, nominal + systematics + physics hypothesis) and Ereco spectra
   TH2D *     fMCTemplNom[kns][knm];        ///< MC template(sample,mode): Ereco-Etrue (nominal)
   TH2D *     fMCTemplSys[kns][knm];        ///< MC template(sample,mode): Ereco-Etrue (+ systematic variation)
   TH2D *     fMCTemplSysHyp[kns][knm];     ///< MC template(sample,mode): Ereco-Etrue (+ systematic variation + physics hypothesis)
   TH1D *     fMCErecoSpectrum[kns][knm];   ///< MC Ereco spectrum(sample,mode)        (+ systematic variation + physics hypothesis)
   TH1D *     fMCErecoSpectrumTot[kns];     ///< MC total Ereco spectrum (sample)      (+ systematic variation + physics hypothesis)
 
+  // input event trees and normalisation factors
   TTree*     fMCTreeNuMu1Rmu;              ///< input MC event tree /  sample: numu                        / cuts: 1-ring mu-like 
   TTree*     fMCTreeNuMuBar1Rmu;           ///< input MC event tree /  sample: numubar                     / cuts: 1-ring mu-like 
   TTree*     fMCTreeNuE1Rmu;               ///< input MC event tree /  sample: nue (intrinsic)             / cuts: 1-ring mu-like 
@@ -170,9 +179,10 @@ private:
   int        fBrPdg;                       ///< branch var for reading input event sample tree
   int        fBrGenCode;                   ///< branch var for reading input event sample tree
 
-  TH1D *     f1RmNuMuEt;                   ///< Etrue distribution for 1-Ring mu-like numu    - needed for beam norm err calculation
-  TH1D *     f1RmNuMuBarEt;                ///< Etrue distribution for 1-Ring mu-like numubar - needed for beam norm err calculation
-  TH1D *     f1RmNuEEt;                    ///< Etrue distribution for 1-Ring mu-like nue     - needed for beam norm err calculation
+  // histograms for Nsk/Nnd280 (beam norm) error calc
+  TH1D *     f1RmNuMuEt;                   ///< Etrue distribution for 1-Ring mu-like numu    
+  TH1D *     f1RmNuMuBarEt;                ///< Etrue distribution for 1-Ring mu-like numubar 
+  TH1D *     f1RmNuEEt;                    ///< Etrue distribution for 1-Ring mu-like nue     
       
   NuFlux *   fNuFlux;                      ///< Neutrino flux analysis inputs
   NuXSec *   fGenInputs;                   ///< Neutrino cross section analysis inputs
