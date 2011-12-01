@@ -1,20 +1,28 @@
 +--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+
-RUTHERFORD/OXFORD T2K OSCILLATION ANALYSIS PACKAGE
+T2K OSCILLATION ANALYSIS 
+
+Developed at Rutherford Appleton Lab + Oxford Univ + Lancs Univ + Valencia Univ.
 
 (c) 2010-11 All Rights Reserved
 +--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+
 
-- Andreopoulos, Costas <costas.andreopoulos \at stfc.ac.uk>
+Current authors:
+
+- Andreopoulos, Costas <costas.andreopoulos \at stfc.ac.uk> [*]
 - Dealtry, Thomas <Thomas.Dealtry \at physics.ox.ac.uk>
-- Dobson, James <j.dobson07 \at imperial.ac.uk>
+- Escudero, Lorena <loressa \at ific.uv.es>
 - Grant, Nick <nick.grant \at stfc.ac.uk>
-- Haigh, Martin <m.haigh1 \at physics.ox.ac.uk>
 - Ilic, Jelena <Jelena.Ilic \at stfc.ac.uk>
 - Pearce, Geoff <geoff.pearce \at stfc.ac.uk>
 - Weber, Alfons <alfons.weber \at stfc.ac.uk>
 
-For additonal documentation, see also the RAL/PPD internal wiki:
-https://twiki.pp.rl.ac.uk/twiki/bin/view/T2K/WebHome/Analysis/
+Legacy authors:
+
+- Dobson, James <j.dobson07 \at imperial.ac.uk>
+- Haigh, Martin <m.haigh1 \at physics.ox.ac.uk>
+
+
+[*] Primary contact
 
 +--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+
 
@@ -38,7 +46,10 @@ https://twiki.pp.rl.ac.uk/twiki/bin/view/T2K/WebHome/Analysis/
     |
     |-- macros                    : Our analysis procedures
     |     |------ fit             :  - macros used for fitting data or toy MC expts
-    |     |------ fc              :  - macros used for implementing the Feldman-Cousins method
+    |     |------ fc              :  - macros used for implementing the Feldman-Cousins (FC) method
+    |     |        |-- numu       :     > FC macros specific to the numu disappearance analysis
+    |     |        |-- nue        :     > FC macros specific to the nue appearance analysis
+    |     |        |-- global     :     > FC macros specific to the global (numu disappearance + nue appearance) analysis
     |     |------ physin          :  - macros used for testing analysis physics inputs (spectra/systematics)
     |     |------ misc            :  - misc. macros such as those used for preparing various plots shown in T2K-TN-36/64
     |
@@ -134,32 +145,34 @@ Similar to 2010_v2.0.0 but with the following change requested during the analys
 > The statistical error of the ND280 CC inclusive measurement (~2.7%) was also propagated to SK.
 
 
-Version: (current trunk)
+Version: (current trunk, intention is to tag as 2010_v3.0.0)
 ............................................................................................................................
 
 Similar to 2010_v2.1.0 but with the following additions: 
 
-> Can fit for systematics (any/all of the 34 systematic parameters considered in 2010 analysis).
+> Added option to fit for systematics (any/all of the ~30-40 systematic parameters considered in 2010 analysis).
 > Added code to calculate oscillation probabilities in vacuum and matter in a 3-flavour framework.
-> Modified disappearance fit and scripts to work in 3-flavour framework.
+> Modified numu disappearance analysis to work in 3-flavour framework.
   Capability to perform analysis in 2-flavour framework was retained for backward-compatibility.
   In the 3-flavour disappearance fit, oscillation parameters Dm^2_{12}, sin^2(2theta_{12}), sin^2(2theta_{13}) 
   and delta_{cp} can either a) be considered on equal footing as |Dm^2_{23}|, sin^2(2theta_{23}), b) fixed or
   c) treated as nuisance parameters and be marginalised. The latter option is used in our analysis (marginalization).
+> Extended code so that it can also predict SK 1Re distributions and perform a 3-flavour nue appearance analysis.
+> Extected code so it can perform a global numu disappearance + nue appearance analysis.
 > Added event templates from the `nue signal' MC (nue interactions generated with the numu flux). 
-  Adding the new templates allows taking into account the P(numu->nue) probability we compure in the 3-flavour framework.
+  Needed for the 3-flavour numu disappearance analysis and for the nue appearance analysis.
+  The normalization factor for the sample used for the newly added `nue signal' templates is:
+    nue(signal) / GENIE  :  1376.9700 events / 1E+21 POT / 22.5 kt fiducial mass
+    nue(signal) / NEUT   :  ????.???? events / 1E+21 POT / 22.5 kt fiducial mass
 > Minor update to the GENIE MC normalization, using flux histograms which were not affected by the `ignored decay modes'
   bug. The normalization factors were updated as follows:
     numu      : 1325.4200 --> 1323.6500 events / 1E+21 POT / 22.5 kt fiducial mass
     numubar   :   65.1023 -->   66.1802 events / 1E+21 POT / 22.5 kt fiducial mass
     nue(beam) :   25.9600 -->   26.1256 events / 1E+21 POT / 22.5 kt fiducial mass
-  The normalization factor for the sample used for the newly added `nue signal' templates is:
-    nue(signal) / GENIE  :  1376.9700 events / 1E+21 POT / 22.5 kt fiducial mass
-    nue(signal) / NEUT   :  ????.???? events / 1E+21 POT / 22.5 kt fiducial mass
-
-Lots of structural changes to allow the extensions mentioned above.
-Also comitted a bunch of macros used to prepare plots for T2K-TN-64.
+> Many structural changes to allow the 3-flavour numu analysis and the global nue+numu 3-flavour analysis
+> Committed a various macros used to prepare plots for T2K-TN-64 which previously weren't under version control
 
 More details for the 3-flavour disappearance analysis may be found in T2K-TN-??
+More details for the combined 3-flavour disappearance + appearance analysis may be found in T2K-TN-??
 
 
