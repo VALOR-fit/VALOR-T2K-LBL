@@ -67,6 +67,7 @@ namespace util {
   //
 
   int FindSampleSlot(t2kana::conv::SuperkSample_t s);
+  int FindModeSlot  (t2kana::conv::SuperkSample_t s, t2kana::conv::SuperkMode_t m);
 
   string AsString (string hypothesis, double sinsq2theta12, double sinsq2theta13, double sinsq2theta23, double deltacp, double dm12sq, double dm23sq, Option_t * option="all");
   string AsString (t2kana::conv::NuMassHierarchy_t m);

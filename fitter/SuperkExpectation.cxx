@@ -145,13 +145,15 @@ void SuperkExpectation::Generate(const PhysHypothesis & ph)
 
   // update Ereco spectrum prediction
   fSuperkMC->UpdateErecoSpectra();
-  for(int ibin = 1; ibin <= kNErecoBins1Rmu; ibin++) {
-    double n = 0;
-    for(int is = 0; is < kns; is++) {
-       SuperkSample_t s = kSKSamples[is];
-       if(s == kSKsUndefined) continue;
+
+  for(int is = 0; is < kns; is++) {
+    SuperkSample_t s = kSKSamples[is];
+    if(s == kSKsUndefined) continue;
+    int nbins = 0; 
+    if(s == kSKsFCFV1RingMuLike) nbins = kNErecoBins1Rmu;
+    if(s == kSKsFCFV1RingELike)  nbins = kNErecoBins1Re;
+    for(int ibin = 1; ibin <= nbins; ibin++) {
        double ns = correction * fSuperkMC->CurrErecoSpectrum(s)->GetBinContent(ibin);
-       n += ns;
        fPredictErecoSpectrumTot[s]->SetBinContent(ibin, ns);
        for(int im = 0; im < knm; im++) {
            SuperkMode_t m = kSKReactionModes[is][im];
@@ -159,8 +161,9 @@ void SuperkExpectation::Generate(const PhysHypothesis & ph)
            double nsm = correction * fSuperkMC->CurrErecoSpectrum(s,m)->GetBinContent(ibin);
            fPredictErecoSpectrum[s][m]->SetBinContent(ibin, nsm);       
        }//m	
-    }//s
-  }//ibin
+    }//ibin
+  }//s
+
 
   // include beam normalization err (expressed in terms of Nsk/Nnd280)
   if(this->GetNuFlux()->NormTweaked()) {
@@ -195,7 +198,8 @@ void SuperkExpectation::Generate(const PhysHypothesis & ph)
   }//norm tweaked?
 
   if(this->GetNuFlux()->ShapeTweaked()) {
-     double nsktwk = fPredictErecoSpectrumTot[kSKsFCFV1RingMuLike]->Integral();
+     int idx = util::FindSampleSlot(kSKsFCFV1RingMuLike);
+     double nsktwk = fPredictErecoSpectrumTot[idx]->Integral();
      shape_norm /= nsktwk;
      for(int is = 0; is < kns; is++) {
         SuperkSample_t s = kSKSamples[is];
@@ -231,13 +235,26 @@ void SuperkExpectation::Generate(const FitParamList & fp)
 //________________________________________________________________________________________
 TH1D* SuperkExpectation::CurrPredictedErecoSpectrum(t2kana::conv::SuperkSample_t s) const 
 {
-  return fPredictErecoSpectrumTot[s];  
+  int sidx = util::FindSampleSlot(s);
+  if(sidx == -1) {
+    return 0;
+  }
+  return fPredictErecoSpectrumTot[sidx];  
 }
 //________________________________________________________________________________________
 TH1D* SuperkExpectation::CurrPredictedErecoSpectrum(
   t2kana::conv::SuperkSample_t s, t2kana::conv::SuperkMode_t m) const 
 { 
-  return fPredictErecoSpectrum[s][m]; 
+  int sidx = util::FindSampleSlot(s);
+  if(sidx == -1) {
+    return 0;
+  }
+  int midx = util::FindModeSlot(s,m);
+  if(midx == -1) {
+    return 0;
+  }
+
+  return fPredictErecoSpectrum[sidx][midx]; 
 }
 //________________________________________________________________________________________
 void SuperkExpectation::ResetSystematicVariations(void)
@@ -468,12 +485,28 @@ bool SuperkExpectation::Read(string config_file)
   for(int is = 0; is < kns; is++) {
      SuperkSample_t s = kSKSamples[is];
      if(s == kSKsUndefined) continue;
-     fPredictErecoSpectrumTot[s] = new TH1D("","", kNErecoBins1Rmu, kErecoBinEdges1Rmu);
+     if(s == kSKsFCFV1RingMuLike ) 
+     {
+       fPredictErecoSpectrumTot[s] = new TH1D("","", kNErecoBins1Rmu, kErecoBinEdges1Rmu);
+     }
+     else
+     if(s == kSKsFCFV1RingELike)  
+     {
+       fPredictErecoSpectrumTot[s] = new TH1D("","", kNErecoBins1Re, kErecoBinEdges1Re);
+     }
      fPredictErecoSpectrumTot[s]->SetDirectory(0);
      for(int im = 0; im < knm; im++) {
          SuperkMode_t m = kSKReactionModes[is][im];
          if(m == kSKmUndefined) continue;
-         fPredictErecoSpectrum[s][m] = new TH1D("","", kNErecoBins1Rmu, kErecoBinEdges1Rmu);
+         if(s == kSKsFCFV1RingMuLike ) 
+         {
+           fPredictErecoSpectrum[s][m] = new TH1D("","", kNErecoBins1Rmu, kErecoBinEdges1Rmu);
+         }
+         else
+         if(s == kSKsFCFV1RingELike)  
+         { 
+           fPredictErecoSpectrum[s][m] = new TH1D("","", kNErecoBins1Re, kErecoBinEdges1Re);
+         }    
          fPredictErecoSpectrum[s][m]->SetDirectory(0);
      }//m	
   }//s
