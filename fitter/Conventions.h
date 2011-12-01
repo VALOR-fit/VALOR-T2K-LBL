@@ -406,7 +406,7 @@ static const double kErecoBinEdges1Rmu[kNErecoBins1Rmu+1] =
 //
 
 // 1 bin from 0 to 10 GeV (counting expt)
-static const int kNErecoBins1Re = 2;
+static const int kNErecoBins1Re = 1;
 static const double kErecoBinEdges1Re[kNErecoBins1Re+1] = 
 { 
    0., 10. 
