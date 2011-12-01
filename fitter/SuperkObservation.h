@@ -17,7 +17,6 @@
 #define _t2kana_sk_observation_h_
 
 #include <string>
-#include <vector>
 
 class TH1D;
 class TVirtualPad;
@@ -27,7 +26,6 @@ class TVirtualPad;
 #include "FitParamList.h"
 
 using std::string;
-using std::vector;
 using t2kana::conv::kns;
 
 namespace t2kana {
@@ -36,7 +34,6 @@ class SuperkObservation: public TObject
 {
 public:
   SuperkObservation();
-  SuperkObservation(const vector<t2kana::conv::SuperkSample_t> & samples);
  ~SuperkObservation();
 
   // Read data
@@ -53,7 +50,7 @@ public:
   TH1D*  ErecoSpectrum (t2kana::conv::SuperkSample_t s) const; 
 
   // Draw.
-  // Set option to "Ereco"  to show the reconstructed Ereco distributions
+  // Set option to "1RmuEreco"  to show the reconstructed Ereco distributions
   // Set option to ... to show ...
   void Draw(TVirtualPad * c, Option_t * opt = "Ereco") const;
 
@@ -64,9 +61,7 @@ private:
 
   TH1D *  fErDistr[kns];  ///< Reconstructed energy spectrum for each sample
 
-  vector<t2kana::conv::SuperkSample_t> fSamples;  
-
-ClassDef(SuperkObservation, 2)
+ClassDef(SuperkObservation, 3)
 };
 
 } // t2kana

@@ -42,6 +42,9 @@
    physical.
  @ 30/11/11 - TD
    Added SKSampleAsString() to simplify running certain test macros.
+ @ 01/12/11 - CA,LE
+   Added `int FindSampleSlot(SuperkSample_t s)'
+
 */
 //____________________________________________________________________________
 
@@ -489,6 +492,15 @@ double t2kana::util::RandomizeDm12sq(void)
   double mean  = conv::kGlobFitDm12sq; 
   double sigma = conv::kGlobFitDm12sq * conv::kGlobFitErrDm12sq;
   return rand.Gaus(mean,sigma);
+}
+//____________________________________________________________________________
+int t2kana::util::FindSampleSlot(t2kana::conv::SuperkSample_t s)
+{
+  for(int is = 0; is < conv::kns; is++) {
+     SuperkSample_t scurr = kSKSamples[is];
+     if(scurr == s) return is;
+  }
+  return -1;
 }
 //____________________________________________________________________________
 string t2kana::util::AsString (
