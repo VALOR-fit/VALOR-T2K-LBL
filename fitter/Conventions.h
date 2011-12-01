@@ -404,13 +404,26 @@ static const double kErecoBinEdges1Rmu[kNErecoBins1Rmu+1] =
 //
 // Ereco binning for SK 1Re sample
 //
-
+// 50 bins from 0 to 10 GeV (same as the 2010a NIWG input for SKFSI)
+static const int kNErecoBins1Re = 50;
+static const double kErecoBinEdges1Re[kNErecoBins1Re+1] = 
+{
+  0.000,  0.200,  0.400, 0.600, 0.800,  1.000,  1.200,  1.400, 1.600, 1.800,
+  2.000,  2.200,  2.400, 2.600, 2.800,  3.000,  3.200,  3.400, 3.600, 3.800,
+  4.000,  4.200,  4.400, 4.600, 4.800,  5.000,  5.200,  5.400, 5.600, 5.800,
+  6.000,  6.200,  6.400, 6.600, 6.800,  7.000,  7.200,  7.400, 7.600, 7.800,
+  8.000,  8.200,  8.400, 8.600, 8.800,  9.000,  9.200,  9.400, 9.600, 9.800,
+  10.000
+};
+/*
 // 1 bin from 0 to 10 GeV (counting expt)
+//WARNING this gives wrong errors for anything that is Ereco dependant (SKFSI)
 static const int kNErecoBins1Re = 1;
 static const double kErecoBinEdges1Re[kNErecoBins1Re+1] = 
 { 
    0., 10. 
 };
+*/
 /*
 // Same binning as the standard 1Rmu one: 200 50-MeV bins from 0 to 10 GeV
 static const int kNErecoBins1Re = 200;

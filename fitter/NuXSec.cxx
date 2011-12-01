@@ -282,18 +282,7 @@ double NuXSec::SuperkXSecRatioWght(
    // a check to make sure the sample-mode combination exists
    if(s == kSKsUndefined) return 1.;
    if(m == kSKmUndefined) return 1.;
-   bool exists = false;
-   for (int a = 0; a < t2kana::conv::kns; a++) {
-     if(s != (t2kana::conv::SuperkSample_t)t2kana::conv::kSKSamples[a]) continue;
-     for (int b = 0; b < t2kana::conv::knm; b++) {
-       if(m == (t2kana::conv::SuperkMode_t)t2kana::conv::kSKReactionModes[a][b]){
-	 exists = true;
-	 break;
-       }
-     }//b
-     if (exists) break;
-   }//a
-   if (!exists) return 1.;
+   if(util::FindModeSlot(s, m) < 0) return 1.;
 
    switch(m) {
       case ( kSKmNuMuCCQE        ) : return 1.; break;
@@ -367,18 +356,7 @@ double NuXSec::SuperkCCQEXSecWght(
    // a check to make sure the sample-mode combination exists
    if(s == kSKsUndefined) return 1.;
    if(m == kSKmUndefined) return 1.;
-   bool exists = false;
-   for (int a = 0; a < t2kana::conv::kns; a++) {
-     if(s != (t2kana::conv::SuperkSample_t)t2kana::conv::kSKSamples[a]) continue;
-     for (int b = 0; b < t2kana::conv::knm; b++) {
-       if(m == (t2kana::conv::SuperkMode_t)t2kana::conv::kSKReactionModes[a][b]){
-	 exists = true;
-	 break;
-       }
-     }//b
-     if (exists) break;
-   }//a
-   if (!exists) return 1.;
+   if(util::FindModeSlot(s, m) < 0) return 1.;
 
    switch(m) {
       case ( kSKmNuMuCCQE        ) : return this->CCQEWght(Etrue); break;
