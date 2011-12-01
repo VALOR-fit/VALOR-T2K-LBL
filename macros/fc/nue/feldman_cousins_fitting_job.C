@@ -1,7 +1,8 @@
 //
 // ------------------------------------------------------------------------------------------------
 // Run a job with some of the toy expts fits needed to calculate the \Delta\chi^{2} values
-// for constructing a Feldman-Cousins contour
+// for constructing a Feldman-Cousins contour.
+// This is the nue appearance analysis version of the script.
 //
 // Costas Andreopoulos
 // ------------------------------------------------------------------------------------------------
@@ -19,8 +20,8 @@ void feldman_cousins_fitting_job
   const char * config_file           = "analysis_configuration.xml", /* analysis configuration file */
   bool         stat_fluctuations     = true,                         /* include statistical fluctuation in toy MC expts? */
   bool         tweak_systematics     = true,                         /* generate toy MC with randomized systematics? */
-  bool         tweak_oth_osc_params  = true,                         /* generate toy MC with randomized dm12sq,|dm23sq|,theta12,theta23 or fix them to global-best fit values?  */
-  const char * fit_param_list        = "numudisapp2f",               /* fit parameter list for the given physics hypothesis (see run_fitter.C) */
+  bool         tweak_oth_osc_params  = false,                        /* generate toy MC with randomized dm12sq,|dm23sq|,theta12,theta23 or fix them to global-best fit values?  */
+  const char * fit_param_list        = "nuosc3f_nueapp_fix4",        /* fit parameter list for the given physics hypothesis (see run_fitter.C) */
   const char * fit_option            = "minuit"                      /* fitter option (see run_fitter.C) */
 )
 {
