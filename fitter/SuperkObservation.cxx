@@ -144,7 +144,7 @@ bool SuperkObservation::Read(string config_file, int data_set_id)
        double Ereco = *value_iter;
        fErDistr[idx]->Fill(Ereco);
      }
-     cout << "Obs >> Read: " << fErDistr[idx]->GetEntries() 
+     cout << "Obs >> Read: " << fErDistr[idx]->Integral() 
        << " " << util::AsString(kSKsFCFV1RingMuLike) << " events." << endl;
   } else {
      cerr << "Obs >> Node " << datanode1Rmu.str() << " does not exist!" << endl;
@@ -156,12 +156,11 @@ bool SuperkObservation::Read(string config_file, int data_set_id)
 
   if(util::NodeExists(xml,root_node,datanode1Re.str())) {
      int idx = util::FindSampleSlot(kSKsFCFV1RingELike);
-     assert(kNErecoBins1Re==1);
      fErDistr[idx] = new TH1D("", "", kNErecoBins1Re,kErecoBinEdges1Re);
      fErDistr[idx]->SetDirectory(0);
      double nev = util::XML2Dbl (xml,root_node,datanode1Re.str());
-     fErDistr[idx]->Fill(kErecoBinEdges1Re[0]+conv::kASmallNum,nev);
-     cout << "Obs >> Read: " << fErDistr[idx]->GetEntries() 
+     fErDistr[idx]->SetBinContent(1,nev); ///// just put the number in the 1st bin
+     cout << "Obs >> Read: " << fErDistr[idx]->Integral() 
        << " " << util::AsString(kSKsFCFV1RingELike) << " events." << endl;
   } else {
      cerr << "Obs >> Node " << datanode1Re.str() << " does not exist!" << endl;
