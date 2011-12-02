@@ -14,6 +14,8 @@
  @ 29/09/2011 - CA
    Added `BestFitChisquare(Option_t * opt = "poisson")' method to help making the code
    more clear. The best-fit values must be set first.
+ @ 02/12/2011 - LE
+   Consider both 1Re and 1Rmu in Chisquare()
 */
 //________________________________________________________________________________________
 
@@ -43,10 +45,10 @@ ClassImp(FitInputs)
 
 //________________________________________________________________________________________
 FitInputs::FitInputs(
-  SuperkObservation * skobs, SuperkExpectation * skexp, FitParamList * fpar) :
+       SuperkObservation * skobs, SuperkExpectation * skexp, FitParamList * fpar) :
 fObs(skobs), 
 fExp(skexp), 
-fFitParams(fpar) 
+fFitParams(fpar)
 { 
 
 }
@@ -71,52 +73,86 @@ FitParamList & FitInputs::FitParams(void)
   return *fFitParams; 
 }
 //________________________________________________________________________________________
-double FitInputs::Chisquare(Option_t * option)
+double FitInputs::Chisquare(Option_t * option, conv::SuperkSample_t s0)
 {
-  double chisq = 0;
   TString opt = option;
 
-  this->Expectation().Generate(this->FitParams());
-  TH1D * obs_ereco_spectrum = this->Observation().ErecoSpectrum(kSKsFCFV1RingMuLike);
-  TH1D * exp_ereco_spectrum = this->Expectation().CurrPredictedErecoSpectrum(kSKsFCFV1RingMuLike);
+  double chisq = 0;
 
-  int nbins = exp_ereco_spectrum->GetNbinsX();
+  // loop over samples (activated)
+  for(int is = 0; is < kns; is++) {
+    SuperkSample_t s = kSKSamples[is];
 
+    if(s0 != conv::kSKsUndefined && s != s0) continue;
+
+    // 1Rmu
+    if (s == conv::kSKsFCFV1RingMuLike)
+    {
+      this->Expectation().Generate(this->FitParams());
+      TH1D * obs_ereco_spectrum = this->Observation().ErecoSpectrum(s);
+      TH1D * exp_ereco_spectrum = this->Expectation().CurrPredictedErecoSpectrum(s);
+      int nbins = exp_ereco_spectrum->GetNbinsX();
+    
 #ifdef __show_bin_contributions_to_chisq__
-   cout << "FitInputs::Chisquare()> nbins = " << nbins << endl;
+      cout << "FitInputs::Chisquare()> nbins = " << nbins << endl;
 #endif
-
-  for(int ibin = 1; ibin <= nbins; ibin++) {
-
-     double nobs = obs_ereco_spectrum->GetBinContent(ibin);
-     double nexp = exp_ereco_spectrum->GetBinContent(ibin);
-
-     double delta_chisq = 0.;
-     if      (opt.Contains("poisson")) { delta_chisq = util::ChisqPoisson(nobs,nexp); }
-     else if (opt.Contains("gauss")  ) { delta_chisq = util::ChisqGauss  (nobs,nexp); }
-
-     chisq += delta_chisq;
+      //loop over Ereco bins
+      for(int ibin = 1; ibin <= nbins; ibin++) {
+      	double nobs = obs_ereco_spectrum->GetBinContent(ibin);
+	double nexp = exp_ereco_spectrum->GetBinContent(ibin);
+	
+	double delta_chisq = 0.;
+	if      (opt.Contains("poisson")) { delta_chisq = util::ChisqPoisson(nobs,nexp); }
+	else if (opt.Contains("gauss")  ) { delta_chisq = util::ChisqGauss  (nobs,nexp); }
+	chisq += delta_chisq;
 
 #ifdef __show_bin_contributions_to_chisq__
-     double xlo = obs_ereco_spectrum->GetXaxis()->GetBinLowEdge(ibin);  
-     double xup = obs_ereco_spectrum->GetXaxis()->GetBinUpEdge(ibin);
+	double xlo = obs_ereco_spectrum->GetXaxis()->GetBinLowEdge(ibin);  
+	double xup = obs_ereco_spectrum->GetXaxis()->GetBinUpEdge(ibin);
      cout << "FitInputs::Chisquare()> delta_chisq (bin = " << ibin 
           << "; [" << xlo << ", " << xup << "] GeV) = " << delta_chisq << endl;
 #endif
+      }//ibin
 
-  }//ibin
+      // add penalty term for parameters declared as nuisance (and having values
+      // in units of sigma)
+      double chisq_penalty = this->FitParams().ChisquarePenaltyTerm();
+      chisq += chisq_penalty;
+      
+#ifdef __show_chisq__
+      cout << "FitInputs::Chisquare()> chisq = " << chisq 
+	   << " (contribution from penalty term = " << chisq_penalty << ")" 
+	   << endl;
+#endif
+    }
 
-  // add penalty term for parameters declared as nuisance (and having values
-  // in units of sigma)
-  double chisq_penalty = this->FitParams().ChisquarePenaltyTerm();
-  chisq += chisq_penalty;
+    // 1Re
+    else 
+    if (s == conv::kSKsFCFV1RingELike)
+    {
+      this->Expectation().Generate(this->FitParams());
+      double nobs = this->Observation().ErecoSpectrum(s)->Integral();
+      double nexp = this->Expectation().CurrPredictedErecoSpectrum(s)->Integral();
+      
+      double delta_chisq = 0.;
+      if      (opt.Contains("poisson")) { delta_chisq = util::ChisqPoisson(nobs,nexp); }
+      else if (opt.Contains("gauss")  ) { delta_chisq = util::ChisqGauss  (nobs,nexp); }
+
+      chisq += delta_chisq;
 
 #ifdef __show_chisq__
-  cout << "FitInputs::Chisquare()> chisq = " << chisq 
-       << " (contribution from penalty term = " << chisq_penalty << ")" 
-       << endl;
+      cout << "FitInputs::Chisquare()> chisq = " << chisq 
+	   << " (contribution from penalty term = " << chisq_penalty << ")" 
+	   << endl;
 #endif
-
+      }//third case: undefined
+      else 
+	if ( s == conv::kSKsUndefined){
+	  //cout << "Undefined sample" << endl;   
+	}
+  
+  }//loop over samples
+  
   return chisq;
 }
 //____________________________________________________________________________ 
@@ -140,7 +176,7 @@ void t2kana::FitFunc (
   fpar.Sync(par);
 
   // judge the agreement between the data and the current prediction
-  f = inputs->Chisquare("poisson");
+  f = inputs->Chisquare("poisson"); 
 }
 //____________________________________________________________________________
 

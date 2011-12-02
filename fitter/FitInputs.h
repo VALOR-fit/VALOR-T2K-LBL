@@ -21,6 +21,7 @@
 #include <TObject.h>
 
 #include "FitParamList.h"
+#include "Conventions.h"
 
 namespace t2kana {
 
@@ -38,7 +39,7 @@ public :
   FitParamList &      FitParams  (void);
 
   // judge the agreement between the input data and the current prediction
-  double Chisquare (Option_t * opt = "poisson");
+  double Chisquare (Option_t * opt = "poisson", conv::SuperkSample_t s = conv::kSKsUndefined);
 
   // get chisquare for the best fit prediction
   double BestFitChisquare (Option_t * opt = "poisson");
