@@ -2,7 +2,7 @@
 
 #
 #-----------------------------------------------------------------------------------------------------------------------------
-# Submit a batch of numu feldman_cousins_fitting_job.C jobs
+# Submit a batch of nue feldman_cousins_fitting_job.C jobs
 #
 # Inputs
 #  --resource               : <RAL, IN2P3, Oxford, Grid, interactive>. Default: "interactive".
