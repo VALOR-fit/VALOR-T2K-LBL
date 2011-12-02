@@ -14,7 +14,7 @@
 #  --tweak-systematics      : generate toy MC with randomized systematics.
 #  --tweak-oth-osc-params   : generate toy MC with randomized dmsq12,theta12,|dm23sq|,theta23.
 #  --min-deltacp-bin        : Default:   1.
-#  --max-deltacp-bin        : Default: 361.
+#  --max-deltacp-bin        : Default:  91.
 #  --min-sinsq2theta13-bin  : Default:   1.
 #  --max-sinsq2theta13-bin  : Default: 101.
 #  --fit-param-list         : Fit parameter list. Default: "nuosc3f_nueapp_fix4". See FitParamList.h for allowed options.
@@ -51,7 +51,7 @@ foreach (@ARGV) {
   $iarg++;
 }
 $min_deltacp_bin        = 1                             unless defined $min_deltacp_bin;
-$max_deltacp_bin        = 361                           unless defined $max_deltacp_bin; 
+$max_deltacp_bin        = 91                            unless defined $max_deltacp_bin; 
 $min_sinsq2theta13_bin  = 1                             unless defined $min_sinsq2theta13_bin;
 $max_sinsq2theta13_bin  = 101                           unless defined $max_sinsq2theta13_bin;
 $resource               = "interactive"                 unless defined $resource;

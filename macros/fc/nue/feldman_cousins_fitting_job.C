@@ -14,7 +14,7 @@ void feldman_cousins_fitting_job
   int          irun                  = 0,                            /* */
   int          nexperiments          = 1000,                         /* */
   int          min_deltacp_bin       =   1,                          /* */
-  int          max_deltacp_bin       =  51,                          /* */
+  int          max_deltacp_bin       =  91,                          /* */
   int          min_sinsq2theta13_bin =   1,                          /* */
   int          max_sinsq2theta13_bin = 101,                          /* */
   const char * config_file           = "analysis_configuration.xml", /* analysis configuration file */
@@ -42,7 +42,7 @@ void feldman_cousins_fitting_job
   double sinsq2theta13_step  = 0.004;
   double deltacp_min         = -1 * conv::kpi;
   double deltacp_max         = conv::kpi;
-  double deltacp_step        = 2*conv::kpi/360.;
+  double deltacp_step        = 2*conv::kpi/90.;
   // make sure that min and max are at the bin centre and not at the low/high edge of the first/last bin
   int sinsq2theta13_nbins = 1 + (int) ((sinsq2theta13_max - sinsq2theta13_min) / sinsq2theta13_step);
   int deltacp_nbins       = 1 + (int) ((deltacp_max       - deltacp_min      ) / deltacp_step      );

@@ -2,7 +2,7 @@
 
 #
 #-----------------------------------------------------------------------------------------------------------------------------
-# Submit a batch of feldman_cousins_fitting_job.C jobs
+# Submit a batch of numu feldman_cousins_fitting_job.C jobs
 #
 # Inputs
 #  --resource               : <RAL, IN2P3, Oxford, Grid, interactive>. Default: "interactive".
@@ -81,7 +81,7 @@ while($irun < $nruns) {
 
   print "Submitting $tag run: $irun \n";
 
-  $command  = "root2k -l -b -q \'$softw_dir/macros/fit/feldman_cousins_fitting_job.C(\"$tag\",$irun,$nexpts,$min_dm23sq_bin,$max_dm23sq_bin,$min_sinsq2theta23_bin,$max_sinsq2theta23_bin,\"$config_file\",$stat_fluct,$twk_systematics,$twk_non23osc,\"$fitparamlist\",\"$fitoption\")\'";
+  $command  = "root2k -l -b -q \'$softw_dir/macros/fc/numu/feldman_cousins_fitting_job.C(\"$tag\",$irun,$nexpts,$min_dm23sq_bin,$max_dm23sq_bin,$min_sinsq2theta23_bin,$max_sinsq2theta23_bin,\"$config_file\",$stat_fluct,$twk_systematics,$twk_non23osc,\"$fitparamlist\",\"$fitoption\")\'";
   print "$command \n";
 
   #
