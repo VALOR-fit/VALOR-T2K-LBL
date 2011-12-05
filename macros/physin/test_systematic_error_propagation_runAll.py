@@ -84,7 +84,7 @@ for osc in oscparams:
 
        for sys in systematics:
 
-          command = 'root2k -l -b -q \'$T2KOSCANA/macros/physin/test_systematic_error_propagation_nue.C("'+sys+'","'+sam+'","3f_osc",'+str(osc[0])+','+str(osc[1])+','+str(osc[2])+','+str(osc[3])+','+str(osc[4])+','+str(osc[5])+',true,'+spe+',"'+filename+'")\''
+          command = 'root2k -l -b -q \'$T2KOSCANA/macros/physin/test_systematic_error_propagation.C("'+sys+'","'+sam+'","3f_osc",'+str(osc[0])+','+str(osc[1])+','+str(osc[2])+','+str(osc[3])+','+str(osc[4])+','+str(osc[5])+',true,'+spe+',"'+filename+'")\''
           print command
           os.system(command)
           

@@ -11,10 +11,10 @@
 void test_nsk_twk_systematics
 (
   const string sample_str          = "1Rmu",
-  const char * hyp                 = "3f_osc",
-  const double input_mixing23 = 1.00,
-  const double input_mixing13 = 0.1,
-  const double input_mixing12 = 0.8704,
+  const char * hyp_str             = "3f_osc",
+  const double input_mixing23      = 1.00,
+  const double input_mixing13      = 0.1,
+  const double input_mixing12      = 0.8704,
   const double input_dm23sq        = 2.4E-3,
   const double input_dm12sq        = 7.6E-5,
   const double input_deltacp       = 0,
@@ -28,7 +28,7 @@ void test_nsk_twk_systematics
 
   conv::SuperkSample_t s = util::SKSampleFromString(sample_str);
 
-  const int nexperiments = 10;//5000;
+  const int nexperiments = 5000;
 
   const int nsystematics = 22;
   string systematic[nsystematics] = {
@@ -87,11 +87,11 @@ void test_nsk_twk_systematics
 	false,  /* sk_nuecc_eff                       */
 	false,  /* sk_1Resig_eff                      */
 	false,  /* sk_1Rebkg_eff                      */
-	true,   /* sk_energy_scale (no effect on Nsk) */
+	false,  /* sk_energy_scale (no effect on Nsk) */
 	false,  /* nd280_eff                          */
 	false,  /* nd280_norm                         */
 	false,  /* flux_norm                          */
-	true,   /* flux_shape (no effect on Nsk)      */
+	false,  /* flux_shape                         */
 	false,  /* xsec_ccqe                          */
 	false,  /* xsec_cc1pi_to_ccqe                 */
 	false,  /* xsec_cccoh_to_ccqe                 */
@@ -111,7 +111,6 @@ void test_nsk_twk_systematics
     skip[17] = true;
     skip[18] = true;
     skip[19] = true;
-    skip[20] = true;
   }
   else if (s == conv::kSKsFCFV1RingELike) {
     skip[0]  = true;
@@ -119,7 +118,7 @@ void test_nsk_twk_systematics
     skip[2]  = true;
     skip[3]  = true;
     skip[4]  = true;
-    skip[16] = true;
+    //skip[16] = true; //xsec_nc_to_ccqe is used for nd280 systematics
   }
   else if (s == conv::kSKsUndefined) {
     cout << "Sample undefined" << endl;
@@ -130,10 +129,15 @@ void test_nsk_twk_systematics
     return;
   }
 
+  double nsknnd_min[nsystematics];
+  double nsknnd_max[nsystematics];
   double nsk_min[nsystematics];
   double nsk_max[nsystematics];
+  double nnd_min[nsystematics];
+  double nnd_max[nsystematics];
 
   // phys hypothesis
+  conv::PhysHypothesis_t hyp = util::FromString(hyp_str);
   PhysHypothesis ph(hyp);
   ph.SetCurrValue(t2kana::conv::kPhypMixing23, input_mixing23);
   ph.SetCurrValue(t2kana::conv::kPhypDm23sq,        input_dm23sq);
@@ -152,15 +156,26 @@ void test_nsk_twk_systematics
  
   // get default prediction
   skexp->Generate(ph);
-  double nsk_deflt = skexp->CurrPredictedErecoSpectrum(s)->Integral();
+  double nsknnd_deflt = skexp->CurrPredictedErecoSpectrum(s)->Integral();
+  double nsk_deflt = 0;
+  for (int im = 0; im < conv::knm; im++) {
+    conv::SuperkMode_t m = conv::kSKReactionModes[s][im];
+    if(m == conv::kSKmUndefined) continue;
+    nsk_deflt += skexp->GetSuperkMC()->CurrErecoSpectrum(s,m)->Integral();
+  }
+  double nnd_deflt = skexp->GetND280Measurement()->NExpCC() + skexp->GetND280Measurement()->NExpNCBkg();
   
   // get predictions with tweaked systematic params
   for(int isystematic=0; isystematic<nsystematics; isystematic++) {
 
 	cout << "Current systematic: " << systematic[isystematic] << endl;
 
+        nsknnd_min[isystematic] = nsknnd_deflt;
+        nsknnd_max[isystematic] = nsknnd_deflt;
         nsk_min[isystematic] = nsk_deflt;
         nsk_max[isystematic] = nsk_deflt;
+        nnd_min[isystematic] = nnd_deflt;
+        nnd_max[isystematic] = nnd_deflt;
 
 	if(skip[isystematic]) {
             cout << "... skipping " << endl;
@@ -168,10 +183,16 @@ void test_nsk_twk_systematics
         }
 
 	if(generate_random[isystematic]) {
+            nsknnd_min[isystematic] = 99999999.;
+            nsknnd_max[isystematic] = 0.;
             nsk_min[isystematic] = 99999999.;
             nsk_max[isystematic] = 0.;
-            // generate toy MC expts and calculate Nsk
+            nnd_min[isystematic] = 99999999.;
+            nnd_max[isystematic] = 0.;
+            // generate toy MC expts and calculate Nsknnd
+            double nsknndexp[nexperiments];
             double nskexp[nexperiments];
+            double nndexp[nexperiments];
             for(int iexperiment = 0; iexperiment < nexperiments; iexperiment++) {
                     if(iexperiment%100==0) {
 			cout << "Current experiment: " << iexperiment << endl;
@@ -179,73 +200,154 @@ void test_nsk_twk_systematics
 		    skexp->ResetSystematicVariations();
 	     	    skexp->TweakSystematic(systematic[isystematic]);
 	  	    skexp->Generate(ph);
-  		    double nsk = skexp->CurrPredictedErecoSpectrum(s)->Integral();
+  		    double nsknnd = skexp->CurrPredictedErecoSpectrum(s)->Integral();
+                    nsknndexp[iexperiment] = nsknnd;
+		    double nsk = 0;
+		    for (int im = 0; im < conv::knm; im++) {
+		      conv::SuperkMode_t m = conv::kSKReactionModes[s][im];
+		      if(m == conv::kSKmUndefined) continue;
+		      nsk += skexp->GetSuperkMC()->CurrErecoSpectrum(s,m)->Integral();
+		    }
                     nskexp[iexperiment] = nsk;
+  		    double nnd = skexp->GetND280Measurement()->NExpCC() + skexp->GetND280Measurement()->NExpNCBkg();
+                    nndexp[iexperiment] = nnd;
             }//iexperiment
             // calculate standard deviation
+            double nsknnd_sigma = 0;
             double nsk_sigma = 0;
+            double nnd_sigma = 0;
             for(int iexperiment = 0; iexperiment < nexperiments; iexperiment++) {
+                nsknnd_sigma += TMath::Power(nsknndexp[iexperiment] - nsknnd_deflt, 2.);
                 nsk_sigma += TMath::Power(nskexp[iexperiment] - nsk_deflt, 2.);
+                nnd_sigma += TMath::Power(nndexp[iexperiment] - nnd_deflt, 2.);
             }
+            nsknnd_sigma = TMath::Sqrt(nsknnd_sigma/nexperiments);
             nsk_sigma = TMath::Sqrt(nsk_sigma/nexperiments);
-            // set Nsk range
+            nnd_sigma = TMath::Sqrt(nnd_sigma/nexperiments);
+            // set Nsknnd range
+	    nsknnd_min[isystematic] = nsknnd_deflt - nsknnd_sigma;
+            nsknnd_max[isystematic] = nsknnd_deflt + nsknnd_sigma;
 	    nsk_min[isystematic] = nsk_deflt - nsk_sigma;
             nsk_max[isystematic] = nsk_deflt + nsk_sigma;
+	    nnd_min[isystematic] = nnd_deflt - nnd_sigma;
+            nnd_max[isystematic] = nnd_deflt + nnd_sigma;
 
+//	    nsknnd_min[isystematic] = TMath::Min(nsknnd, nsknnd_min[isystematic]);
+//          nsknnd_max[isystematic] = TMath::Max(nsknnd, nsknnd_max[isystematic]);
 //	    nsk_min[isystematic] = TMath::Min(nsk, nsk_min[isystematic]);
 //          nsk_max[isystematic] = TMath::Max(nsk, nsk_max[isystematic]);
+//	    nnd_min[isystematic] = TMath::Min(nnd, nnd_min[isystematic]);
+//          nnd_max[isystematic] = TMath::Max(nnd, nnd_max[isystematic]);
 
 	} else {
 	    skexp->ResetSystematicVariations();
      	    skexp->TweakSystematic(systematic[isystematic], +1);
   	    skexp->Generate(ph);
-  	    double nsk1 = skexp->CurrPredictedErecoSpectrum(s)->Integral();
+  	    double nsknnd1 = skexp->CurrPredictedErecoSpectrum(s)->Integral();
+  	    double nsk1 = 0;
+	    for (int im = 0; im < conv::knm; im++) {
+	      conv::SuperkMode_t m = conv::kSKReactionModes[s][im];
+	      if(m == conv::kSKmUndefined) continue;
+	      nsk1 += skexp->GetSuperkMC()->CurrErecoSpectrum(s,m)->Integral();
+	    }
+  	    double nnd1 = skexp->GetND280Measurement()->NExpCC() + skexp->GetND280Measurement()->NExpNCBkg();
 	    skexp->ResetSystematicVariations();
      	    skexp->TweakSystematic(systematic[isystematic], -1);
   	    skexp->Generate(ph);
-  	    double nsk2 = skexp->CurrPredictedErecoSpectrum(s)->Integral();
+  	    double nsknnd2 = skexp->CurrPredictedErecoSpectrum(s)->Integral();
+            nsknnd_min[isystematic] = TMath::Min(nsknnd1,nsknnd2);
+            nsknnd_max[isystematic] = TMath::Max(nsknnd1,nsknnd2);
+  	    double nsk2 = 0;
+	    for (int im = 0; im < conv::knm; im++) {
+	      conv::SuperkMode_t m = conv::kSKReactionModes[s][im];
+	      if(m == conv::kSKmUndefined) continue;
+	      nsk2 += skexp->GetSuperkMC()->CurrErecoSpectrum(s,m)->Integral();
+	    }
             nsk_min[isystematic] = TMath::Min(nsk1,nsk2);
             nsk_max[isystematic] = TMath::Max(nsk1,nsk2);
+  	    double nnd2 = skexp->GetND280Measurement()->NExpCC() + skexp->GetND280Measurement()->NExpNCBkg();
+            nnd_min[isystematic] = TMath::Min(nnd1,nnd2);
+            nnd_max[isystematic] = TMath::Max(nnd1,nnd2);
 	}	
   }//isystematic
 
   cout << endl;
+  cout << "Nsk/Nnd(default) = " << nsknnd_deflt << endl;
   cout << "Nsk(default) = " << nsk_deflt << endl;
+  cout << "Nnd(default) = " << nnd_deflt << endl;
   for(int isystematic=0; isystematic<nsystematics; isystematic++) {
         if(skip[isystematic] == true) continue;
-	cout << " * " << systematic[isystematic] << " : Nsk = (" 
-	     << nsk_min[isystematic] << ", " << nsk_max[isystematic] << ")" << endl;
+	cout << " * " << systematic[isystematic] << " :  \tNsk/Nnd = (" 
+	     << nsknnd_min[isystematic] << ", " << nsknnd_max[isystematic] << ") \tNsk = ("
+	     << nsk_min[isystematic] << ", " << nsk_max[isystematic] << ") \tNnd = ("
+	     << nnd_min[isystematic] << ", " << nnd_max[isystematic] << ")" << endl;
   }
   cout << endl;
   cout << "Fractional change: " << endl;
   for(int isystematic=0; isystematic<nsystematics; isystematic++) {
         if(skip[isystematic] == true) continue;
-	cout << " * " << systematic[isystematic] << " : dNsk/Nsk = (" 
+	cout << " * " << systematic[isystematic] << " :  \tdNnd/Nsk = (" 
+             << 100*(nsknnd_max[isystematic]-nsknnd_deflt)/nsknnd_deflt << " %," 
+             << 100*(nsknnd_min[isystematic]-nsknnd_deflt)/nsknnd_deflt << " %) \tdNsk = (" 
              << 100*(nsk_max[isystematic]-nsk_deflt)/nsk_deflt << " %," 
-             << 100*(nsk_min[isystematic]-nsk_deflt)/nsk_deflt << " %)" 
+             << 100*(nsk_min[isystematic]-nsk_deflt)/nsk_deflt << " %) \tdNnd = (" 
+             << 100*(nnd_max[isystematic]-nnd_deflt)/nnd_deflt << " %," 
+             << 100*(nnd_min[isystematic]-nnd_deflt)/nnd_deflt << " %)" 
              << endl;
   }
   cout << endl;
   cout << "Total factional change: " << endl;
+  double dnsknnd_syst_pos = 0;
+  double dnsknnd_syst_neg = 0;
   double dnsk_syst_pos = 0;
   double dnsk_syst_neg = 0;
+  double dnnd_syst_pos = 0;
+  double dnnd_syst_neg = 0;
   for(int isystematic=0; isystematic<nsystematics; isystematic++) {
+     double pos = nsknnd_max[isystematic]-nsknnd_deflt;
+     double neg = nsknnd_min[isystematic]-nsknnd_deflt;
+     dnsknnd_syst_pos += (pos*pos);
+     dnsknnd_syst_neg += (neg*neg);
      double pos = nsk_max[isystematic]-nsk_deflt;
      double neg = nsk_min[isystematic]-nsk_deflt;
      dnsk_syst_pos += (pos*pos);
      dnsk_syst_neg += (neg*neg);
+     double pos = nnd_max[isystematic]-nnd_deflt;
+     double neg = nnd_min[isystematic]-nnd_deflt;
+     dnnd_syst_pos += (pos*pos);
+     dnnd_syst_neg += (neg*neg);
   }
+  dnsknnd_syst_pos = TMath::Sqrt(dnsknnd_syst_pos);
+  dnsknnd_syst_neg = TMath::Sqrt(dnsknnd_syst_neg);
+  cout << "dNsk/Nnd = (+" << 100*dnsknnd_syst_pos/nsknnd_deflt << "%, -" << 100*dnsknnd_syst_neg/nsknnd_deflt << ")" << endl;
   dnsk_syst_pos = TMath::Sqrt(dnsk_syst_pos);
   dnsk_syst_neg = TMath::Sqrt(dnsk_syst_neg);
-  cout << "(+" << 100*dnsk_syst_pos/nsk_deflt << "%, -" << 100*dnsk_syst_neg/nsk_deflt << ")" << endl;
+  cout << "dNsk = (+" << 100*dnsk_syst_pos/nsk_deflt << "%, -" << 100*dnsk_syst_neg/nsk_deflt << ")" << endl;
+  dnnd_syst_pos = TMath::Sqrt(dnnd_syst_pos);
+  dnnd_syst_neg = TMath::Sqrt(dnnd_syst_neg);
+  cout << "dNnd = (+" << 100*dnnd_syst_pos/nnd_deflt << "%, -" << 100*dnnd_syst_neg/nnd_deflt << ")" << endl;
 
+  double dnsknnd_stat = TMath::Sqrt(nsknnd_deflt);
   double dnsk_stat = TMath::Sqrt(nsk_deflt);
+  double dnnd_stat = TMath::Sqrt(nnd_deflt);
 
+  cout << "Nsk/Nnd = " << nsknnd_deflt 
+       << " +/- " << dnsknnd_stat << " (stat)"
+       << " + " << dnsknnd_syst_pos 
+       << " - " << dnsknnd_syst_neg << " (syst)" << endl;
   cout << "Nsk = " << nsk_deflt 
        << " +/- " << dnsk_stat << " (stat)"
        << " + " << dnsk_syst_pos 
        << " - " << dnsk_syst_neg << " (syst)" << endl;
+  cout << "Nnd = " << nnd_deflt 
+       << " +/- " << dnnd_stat << " (stat)"
+       << " + " << dnnd_syst_pos 
+       << " - " << dnnd_syst_neg << " (syst)" << endl;
 
+  cout << "+dNsk/Nnd(total) = " << TMath::Sqrt(dnsknnd_stat*dnsknnd_stat + dnsknnd_syst_pos*dnsknnd_syst_pos) << endl;
+  cout << "-dNsk/Nnd(total) = " << TMath::Sqrt(dnsknnd_stat*dnsknnd_stat + dnsknnd_syst_neg*dnsknnd_syst_neg) << endl;
   cout << "+dNsk(total) = " << TMath::Sqrt(dnsk_stat*dnsk_stat + dnsk_syst_pos*dnsk_syst_pos) << endl;
   cout << "-dNsk(total) = " << TMath::Sqrt(dnsk_stat*dnsk_stat + dnsk_syst_neg*dnsk_syst_neg) << endl;
+  cout << "+dNnd(total) = " << TMath::Sqrt(dnnd_stat*dnnd_stat + dnnd_syst_pos*dnnd_syst_pos) << endl;
+  cout << "-dNnd(total) = " << TMath::Sqrt(dnnd_stat*dnnd_stat + dnnd_syst_neg*dnnd_syst_neg) << endl;
 }
