@@ -10,9 +10,9 @@
 #include "Conventions.h"
 
 void calculate_dataset_probability(
-  double       input_sinsq2theta12 = 0.86,                         /* */
-  double       input_sinsq2theta13 = 0.10,                         /* */
-  double       input_sinsq2theta23 = 1.00,                         /* */
+  double       input_mixing12      = 0.86,                         /* */
+  double       input_mixing13      = 0.10,                         /* */
+  double       input_mixing23      = 1.00,                         /* */
   double       input_deltacp       = 0.00,                         /* */
   double       input_dm12sq        = 7.58E-5,                      /* */
   double       input_dm23sq        = 2.32E-3,                      /* */
@@ -36,17 +36,17 @@ void calculate_dataset_probability(
   conv::PhysHypothesis_t hyp = fparm->PhysicsHypothesis();
   cout << "Specified physics hypothesis: " << util::AsString(hyp) << endl;
   if(hyp == conv::kHypOsc3F) {
-    fparm->Update(t2kana::conv::kPhypSinsq2Theta12, input_sinsq2theta12);
-    fparm->Update(t2kana::conv::kPhypSinsq2Theta13, input_sinsq2theta13);
-    fparm->Update(t2kana::conv::kPhypSinsq2Theta23, input_sinsq2theta23);
-    fparm->Update(t2kana::conv::kPhypDeltaCP,       input_deltacp);
-    fparm->Update(t2kana::conv::kPhypDm12sq,        input_dm12sq);
-    fparm->Update(t2kana::conv::kPhypDm23sq,        input_dm23sq);
+    fparm->Update(t2kana::conv::kPhypMixing12, input_mixing12);
+    fparm->Update(t2kana::conv::kPhypMixing13, input_mixing13);
+    fparm->Update(t2kana::conv::kPhypMixing23, input_mixing23);
+    fparm->Update(t2kana::conv::kPhypDeltaCP,  input_deltacp);
+    fparm->Update(t2kana::conv::kPhypDm12sq,   input_dm12sq);
+    fparm->Update(t2kana::conv::kPhypDm23sq,   input_dm23sq);
   }
   else
   if(hyp == conv::kHypNuMuDisapp2F) {
-    fparm->Update(t2kana::conv::kPhypSinsq2Theta23, input_sinsq2theta23);
-    fparm->Update(t2kana::conv::kPhypDm23sq,        input_dm23sq);
+    fparm->Update(t2kana::conv::kPhypMixing23, input_mixing23);
+    fparm->Update(t2kana::conv::kPhypDm23sq,   input_dm23sq);
   }
   else {
     return;

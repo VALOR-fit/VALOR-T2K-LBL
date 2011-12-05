@@ -67,7 +67,7 @@ samples = []
 samples.append("1Rmu")
 samples.append("1Re")
    
-oscparams = [] #fill with oscillation parameters, in order sinsq2theta12, theta13, theta23, deltacp, dmsq12, dmsq23hypothesis 
+oscparams = [] #fill with oscillation parameters, in order mixing12, theta13, theta23, deltacp, dmsq12, dmsq23hypothesis 
 oscparams.append([0.86, 0.1,  1,  0,  7.58E-5,  2.32E-3])
 #oscparams.append([0.86, 0,    1,  0,  7.58E-5,  2.32E-3])
 

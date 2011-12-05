@@ -10,9 +10,9 @@
 
 void summarize_systematics
 (
-  string  file_path,            /* Path to data files produced by bestfit_systematic_study_fitting_job.C */
-  double  input_sinsq2theta23,  /* True sinsq2theta23 used in bestfit_systematic_study_fitting_job.C     */
-  double  input_dm23sq          /* True dm23sq used in bestfit_systematic_study_fitting_job.C            */
+  string  file_path,       /* Path to data files produced by bestfit_systematic_study_fitting_job.C */
+  double  input_mixing23,  /* True mixing23 used in bestfit_systematic_study_fitting_job.C     */
+  double  input_dm23sq     /* True dm23sq used in bestfit_systematic_study_fitting_job.C            */
 )
 {
   using namespace std;
@@ -22,12 +22,12 @@ void summarize_systematics
 
   const int nsyst = 15;
 
-  double dm23sq_frac_err        [nsyst];
-  double sinsq2theta23_frac_err [nsyst];
+  double dm23sq_frac_err   [nsyst];
+  double mixing23_frac_err [nsyst];
 
-  TH1D * h_dm23sq_frac_err        = new TH1D("h_dm23sq_frac_err",        "", nsyst, 0, nsyst);
-  TH1D * h_sinsq2theta23_frac_err = new TH1D("h_sinsq2theta23_frac_err", "", nsyst, 0, nsyst);
-  TH1D * h_nfits                  = new TH1D("h_nfits",                  "", nsyst, 0, nsyst);
+  TH1D * h_dm23sq_frac_err   = new TH1D("h_dm23sq_frac_err",   "", nsyst, 0, nsyst);
+  TH1D * h_mixing23_frac_err = new TH1D("h_mixing23_frac_err", "", nsyst, 0, nsyst);
+  TH1D * h_nfits             = new TH1D("h_nfits",             "", nsyst, 0, nsyst);
 
   for(int isyst = 0; isyst < nsyst; isyst++) {
 
@@ -51,8 +51,8 @@ void summarize_systematics
     TChain * chain = new TChain("sysnt");
 
     TString filename_template = 
-       Form("%s/syst_%s-sinsq2theta23_%.2f-dm23sq_%.5feV2_*.root",
-            file_path.c_str(), syst_label.c_str(),input_sinsq2theta23,input_dm23sq);
+       Form("%s/syst_%s-mixing23_%.2f-dm23sq_%.5feV2_*.root",
+            file_path.c_str(), syst_label.c_str(),input_mixing23,input_dm23sq);
 
     chain->Add(filename_template.Data());
     cout << "Adding files :  " << filename_template << endl;
@@ -63,57 +63,57 @@ void summarize_systematics
 	continue;
     }
 
-    TH1D * hdm23sq        = new TH1D("hdm23sq",        "", 1000, 0.1*input_dm23sq, 3*input_dm23sq);
-    TH1D * hsinsq2theta23 = new TH1D("hsinsq2theta23", "",  100, 0., 1.);
+    TH1D * hdm23sq   = new TH1D("hdm23sq",   "", 1000, 0.1*input_dm23sq, 3*input_dm23sq);
+    TH1D * hmixing23 = new TH1D("hmixing23", "",  100, 0., 1.);
 
-    chain->Draw("dm23sq>>hdm23sq",               "", "goff");
-    chain->Draw("sinsq2theta23>>hsinsq2theta23", "", "goff");
+    chain->Draw("dm23sq>>hdm23sq",     "", "goff");
+    chain->Draw("mixing23>>hmixing23", "", "goff");
 
-    dm23sq_frac_err       [isyst] = hdm23sq       ->GetRMS() / input_dm23sq;
-    sinsq2theta23_frac_err[isyst] = hsinsq2theta23->GetRMS() / input_sinsq2theta23;
+    dm23sq_frac_err  [isyst] = hdm23sq  ->GetRMS() / input_dm23sq;
+    mixing23_frac_err[isyst] = hmixing23->GetRMS() / input_mixing23;
 
     cout << "* Systematic: " << syst_label << endl;
     cout << "  - number of fits = " << nfits << endl;
-    cout << "  - syst_err(dmsq) = "          << 100*dm23sq_frac_err[isyst] << " %" << endl;
-    cout << "  - syst_err(sinsq2theta23) = " << 100*sinsq2theta23_frac_err[isyst] << " %" << endl;
+    cout << "  - syst_err(dmsq) = "     << 100*dm23sq_frac_err[isyst]   << " %" << endl;
+    cout << "  - syst_err(mixing23) = " << 100*mixing23_frac_err[isyst] << " %" << endl;
 
     int syst_bin = isyst+1;
-    h_dm23sq_frac_err        -> SetBinContent(syst_bin, 100*dm23sq_frac_err[isyst]); 
-    h_sinsq2theta23_frac_err -> SetBinContent(syst_bin, 100*sinsq2theta23_frac_err[isyst]);
-    h_nfits                  -> SetBinContent(syst_bin, nfits);
-    h_dm23sq_frac_err        -> GetXaxis() -> SetBinLabel(syst_bin, syst_label.c_str());
-    h_sinsq2theta23_frac_err -> GetXaxis() -> SetBinLabel(syst_bin, syst_label.c_str());
-    h_nfits                  -> GetXaxis() -> SetBinLabel(syst_bin, syst_label.c_str());
+    h_dm23sq_frac_err   -> SetBinContent(syst_bin, 100*dm23sq_frac_err[isyst]); 
+    h_mixing23_frac_err -> SetBinContent(syst_bin, 100*mixing23_frac_err[isyst]);
+    h_nfits             -> SetBinContent(syst_bin, nfits);
+    h_dm23sq_frac_err   -> GetXaxis() -> SetBinLabel(syst_bin, syst_label.c_str());
+    h_mixing23_frac_err -> GetXaxis() -> SetBinLabel(syst_bin, syst_label.c_str());
+    h_nfits             -> GetXaxis() -> SetBinLabel(syst_bin, syst_label.c_str());
 
     delete chain;
     delete hdm23sq;
-    delete hsinsq2theta23;
+    delete hmixing23;
 
   }//isyst
 
   gStyle->SetOptStat(0);
-//h_dm23sq_frac_err        -> GetXaxis() -> SetTitle("Systematic");
-//h_sinsq2theta23_frac_err -> GetXaxis() -> SetTitle("Systematic");
-  h_dm23sq_frac_err        -> GetYaxis() -> SetTitle("#delta#Deltam^{2}_{23}/#Deltam^{2}_{23} (%)");
-  h_sinsq2theta23_frac_err -> GetYaxis() -> SetTitle("#deltasin^{2}2#theta_{23}/sin^{2}2#theta_{23} (%)");
+//h_dm23sq_frac_err   -> GetXaxis() -> SetTitle("Systematic");
+//h_mixing23_frac_err -> GetXaxis() -> SetTitle("Systematic");
+  h_dm23sq_frac_err   -> GetYaxis() -> SetTitle("#delta#Deltam^{2}_{23}/#Deltam^{2}_{23} (%)");
+  h_mixing23_frac_err -> GetYaxis() -> SetTitle("#deltasin^{2}2#theta_{23}/sin^{2}2#theta_{23} (%)");
   TCanvas * c1 = new TCanvas("c1","",10,10,400,400);
   h_dm23sq_frac_err->Draw();
   TCanvas * c2 = new TCanvas("c2","",100,100,500,500);
-  h_sinsq2theta23_frac_err->Draw();
+  h_mixing23_frac_err->Draw();
   TCanvas * c3 = new TCanvas("c3","",200,200,600,600);
   h_nfits->Draw();
 
   double dm23sq_combined_frac_err        = 0;
-  double sinsq2theta23_combined_frac_err = 0;
+  double mixing23_combined_frac_err = 0;
 
   for(int isyst = 0; isyst < nsyst; isyst++) {
-      dm23sq_combined_frac_err        += TMath::Power(dm23sq_frac_err[isyst]  ,      2.);
-      sinsq2theta23_combined_frac_err += TMath::Power(sinsq2theta23_frac_err[isyst], 2.);
+      dm23sq_combined_frac_err   += TMath::Power(dm23sq_frac_err[isyst]  , 2.);
+      mixing23_combined_frac_err += TMath::Power(mixing23_frac_err[isyst], 2.);
   }
-  dm23sq_combined_frac_err        += TMath::Sqrt(dm23sq_combined_frac_err);
-  sinsq2theta23_combined_frac_err += TMath::Sqrt(sinsq2theta23_combined_frac_err);
+  dm23sq_combined_frac_err   += TMath::Sqrt(dm23sq_combined_frac_err);
+  mixing23_combined_frac_err += TMath::Sqrt(mixing23_combined_frac_err);
 
   cout << "* Combined systematics: " << endl;
-  cout << "  - syst_err(dmsq) = "          << 100*dm23sq_combined_frac_err << " %" << endl;
-  cout << "  - syst_err(sinsq2theta23) = " << 100*sinsq2theta23_combined_frac_err << " %" << endl;
+  cout << "  - syst_err(dmsq) = "    << 100*dm23sq_combined_frac_err << " %" << endl;
+  cout << "  - syst_err(mixing23) = " << 100*mixing23_combined_frac_err << " %" << endl;
 }

@@ -44,17 +44,15 @@
 
 #include <iomanip.h>
 
-//#include "Conventions.h"
-
 using namespace t2kana; //need to put this here, to allow a SuperkSample_t as input
 void test_systematic_error_propagation_nue
 (
   const char * systematic,                                                  /* options: see above */
   const string sample_str                 = "1Rmu",                         /* options: "1Rmu", "1Re" */
   const char * hypothesis                 = "3f_osc",                       /* options: "2f_numu_disap", "3f_osc" */
-  double       input_sinsq2theta12        = 0.86,                           /* */
-  double       input_sinsq2theta13        = 0.10,                           /* */
-  double       input_sinsq2theta23        = 1.00,                           /* */
+  double       input_mixing12             = 0.86,                           /* */
+  double       input_mixing13             = 0.10,                           /* */
+  double       input_mixing23             = 1.00,                           /* */
   double       input_deltacp              = 0.00,                           /* */
   double       input_dm12sq               = 7.58E-5,                        /* */
   double       input_dm23sq               = 2.32E-3,                        /* */
@@ -76,16 +74,16 @@ void test_systematic_error_propagation_nue
   // set physics hypothesis
   PhysHypothesis ph(hypothesis);
   if(ph.Hypothesis() == conv::kHypNuMuDisapp2F) {
-    ph.SetCurrValue(conv::kPhypSinsq2Theta23,  input_sinsq2theta23);
-    ph.SetCurrValue(conv::kPhypDm23sq,         input_dm23sq);
+    ph.SetCurrValue(conv::kPhypMixing23,  input_mixing23);
+    ph.SetCurrValue(conv::kPhypDm23sq,    input_dm23sq);
   } else
   if(ph.Hypothesis() == conv::kHypOsc3F) {
-    ph.SetCurrValue(conv::kPhypSinsq2Theta12,  input_sinsq2theta12);
-    ph.SetCurrValue(conv::kPhypSinsq2Theta13,  input_sinsq2theta13);
-    ph.SetCurrValue(conv::kPhypSinsq2Theta23,  input_sinsq2theta23);
-    ph.SetCurrValue(conv::kPhypDeltaCP,        input_deltacp);
-    ph.SetCurrValue(conv::kPhypDm12sq,         input_dm12sq);
-    ph.SetCurrValue(conv::kPhypDm23sq,         input_dm23sq);
+    ph.SetCurrValue(conv::kPhypMixing12,  input_mixing12);
+    ph.SetCurrValue(conv::kPhypMixing13,  input_mixing13);
+    ph.SetCurrValue(conv::kPhypMixing23,  input_mixing23);
+    ph.SetCurrValue(conv::kPhypDeltaCP,   input_deltacp);
+    ph.SetCurrValue(conv::kPhypDm12sq,    input_dm12sq);
+    ph.SetCurrValue(conv::kPhypDm23sq,    input_dm23sq);
   }
   cout << "Physics hypothesis set: " << endl;
   cout << ph;
@@ -1290,9 +1288,9 @@ void test_systematic_error_propagation_nue
      streamer << "\\caption{ Effect of " << systematicstr << " for sample " << util::AsStringTex(s) 
 	      << " with oscillation hypothesis " <<  hypothesisstr
 	      << " using oscillation parameters " 
-	      << " $\\sin^22\\theta_{12} = $" << input_sinsq2theta12
-	      << " $\\sin^22\\theta_{13} = $" << input_sinsq2theta13
-	      << " $\\sin^22\\theta_{23} = $" << input_sinsq2theta23
+	      << " $\\sin^22\\theta_{12} = $" << input_mixing12
+	      << " $\\sin^22\\theta_{13} = $" << input_mixing13
+	      << " $\\sin^22\\theta_{23} = $" << input_mixing23
 	      << " $\\delta_{CP} = $        " << input_deltacp
 	      << " $\\Delta m^2_{12} = $    " << input_dm12sq
 	      << " $\\Delta m^2_{23} = $    " << input_dm23sq
@@ -1300,7 +1298,7 @@ void test_systematic_error_propagation_nue
      string shortsamplestr = s==conv::kSKsFCFV1RingMuLike ? "1RmuT_" : "1ReT_";
      string spectralstr = show_sk_ccqe_spectral_info ? "_spectral" : "";
      streamer << "\\label{tab:num_" << systematic << "_" << shortsamplestr << hypothesis 
-	      << "_t13:" << input_sinsq2theta13 << spectralstr << "}" << endl;
+	      << "_t13:" << input_mixing13 << spectralstr << "}" << endl;
      streamer << "\\end{table}" << endl;
      streamer << "\\clearpage" << endl;
   }

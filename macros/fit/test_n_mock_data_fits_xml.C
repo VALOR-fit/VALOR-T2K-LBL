@@ -47,16 +47,16 @@ void test_n_mock_data_fits_xml
 
   // store oscillation fit results
   TNtupleD * nfitnt = new TNtupleD("nfitnt","", 
-     "iexp:sinsq2theta12:sinsq2theta13:sinsq2theta23:deltacp:dm12sq:dm23sq:chisq:fitstatus");
+     "iexp:mixing12:mixing13:mixing23:deltacp:dm12sq:dm23sq:chisq:fitstatus");
 
   // init best-fit values
-  double bestfit_sinsq2theta12 = -1;
-  double bestfit_sinsq2theta13 = -1;
-  double bestfit_sinsq2theta23 = -1;
-  double bestfit_deltacp       = -1;
-  double bestfit_dm12sq        = -1;
-  double bestfit_dm23sq        = -1;
-  double bestfit_chisq         = -1;
+  double bestfit_mixing12 = -1;
+  double bestfit_mixing13 = -1;
+  double bestfit_mixing23 = -1;
+  double bestfit_deltacp  = -1;
+  double bestfit_dm12sq   = -1;
+  double bestfit_dm23sq   = -1;
+  double bestfit_chisq    = -1;
 
   // loop over toy-MC experiments
   for(int iexperiment = first_experiment; iexperiment <= last_experiment; iexperiment++) {
@@ -83,33 +83,33 @@ void test_n_mock_data_fits_xml
      // get best-fit params
      bestfit_chisq = fit_inputs->BestFitChisquare();
      if(hyp == conv::kHypOsc3F) {
-        bestfit_sinsq2theta12 = fparm->BestFitValue(t2kana::conv::kPhypSinsq2Theta12);
-        bestfit_sinsq2theta13 = fparm->BestFitValue(t2kana::conv::kPhypSinsq2Theta13);
-        bestfit_sinsq2theta23 = fparm->BestFitValue(t2kana::conv::kPhypSinsq2Theta23);
-        bestfit_deltacp       = fparm->BestFitValue(t2kana::conv::kPhypDeltaCP);
-        bestfit_dm12sq        = fparm->BestFitValue(t2kana::conv::kPhypDm12sq);
-        bestfit_dm23sq        = fparm->BestFitValue(t2kana::conv::kPhypDm23sq);
+        bestfit_mixing12 = fparm->BestFitValue(t2kana::conv::kPhypMixing12);
+        bestfit_mixing13 = fparm->BestFitValue(t2kana::conv::kPhypMixing13);
+        bestfit_mixing23 = fparm->BestFitValue(t2kana::conv::kPhypMixing23);
+        bestfit_deltacp  = fparm->BestFitValue(t2kana::conv::kPhypDeltaCP);
+        bestfit_dm12sq   = fparm->BestFitValue(t2kana::conv::kPhypDm12sq);
+        bestfit_dm23sq   = fparm->BestFitValue(t2kana::conv::kPhypDm23sq);
         cout << "- Best-fit:"
-             << " sinsq2theta12 = "  << bestfit_sinsq2theta12
-             << ", sinsq2theta13 = " << bestfit_sinsq2theta13
-             << ", sinsq2theta23 = " << bestfit_sinsq2theta23
+             << " mixing12 = "  << bestfit_mixing12
+             << ", mixing13 = " << bestfit_mixing13
+             << ", mixing23 = " << bestfit_mixing23
              << ", delta_cp = " << bestfit_deltacp
              << ", Dm12^2 = "   << bestfit_dm12sq << " eV^2/c^4"
              << ", |Dm23^2| = " << bestfit_dm23sq << " eV^2/c^4"
              << " ==> chisq = " << bestfit_chisq << endl;
      } else
      if(hyp == conv::kHypNuMuDisapp2F) {
-        bestfit_sinsq2theta23 = fparm->BestFitValue(t2kana::conv::kPhypSinsq2Theta23);
-        bestfit_dm23sq        = fparm->BestFitValue(t2kana::conv::kPhypDm23sq);
+        bestfit_mixing23 = fparm->BestFitValue(t2kana::conv::kPhypMixing23);
+        bestfit_dm23sq   = fparm->BestFitValue(t2kana::conv::kPhypDm23sq);
         cout << "- Best-fit:"
-             << " sinsq2theta23 = " << bestfit_sinsq2theta23
+             << " mixing23 = " << bestfit_mixing23
              << ", |Dm23^2| = " << bestfit_dm23sq << " eV^2/c^4"
              << " ==> chisq = " << bestfit_chisq << endl;
      }
 
      // store best-fit values
      nfitnt->Fill(iexperiment, 
-                  bestfit_sinsq2theta12, bestfit_sinsq2theta13, bestfit_sinsq2theta23,
+                  bestfit_mixing12, bestfit_mixing13, bestfit_mixing23,
                   bestfit_deltacp, bestfit_dm12sq, bestfit_dm23sq, bestfit_chisq, fitstatus);
 
      delete skobs;

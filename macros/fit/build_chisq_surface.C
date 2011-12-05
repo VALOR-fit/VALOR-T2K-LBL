@@ -15,9 +15,9 @@ FitInputs & makeFitInputs(
   const char * fit_param_list          = "nuosc3f_numudisapp_marginalize",/* fit parameter list for the given physics hypothesis (see run_fitter.C) */
   bool         calculatebestfit        = true,                            /* if true, calculate best fit */
   bool         usexml                  = false,                           /* if true, read xml file, otherwise make toy expts*/
-  double       input_sinsq2theta12     = 0.86,                            /* if -1 then randomize */
-  double       input_sinsq2theta13     = 0.10,                            /* if -1 then randomize */
-  double       input_sinsq2theta23     = 1.00,                            /* */
+  double       input_mixing12     = 0.86,                            /* if -1 then randomize */
+  double       input_mixing13     = 0.10,                            /* if -1 then randomize */
+  double       input_mixing23     = 1.00,                            /* */
   double       input_deltacp           = 0.00,                            /* if -1 then randomize */
   double       input_dm12sq            = 7.58E-5,                         /* if -1 then randomize */
   double       input_dm23sq            = 2.32E-3,                         /* */
@@ -44,15 +44,15 @@ FitInputs & makeFitInputs(
   else {
     // set oscillation parameter inputs as necessary (used to generate toy-MC expt)
     if(hyp == conv::kHypOsc3F) {
-      fparam->Update(t2kana::conv::kPhypSinsq2Theta12, input_sinsq2theta12);
-      fparam->Update(t2kana::conv::kPhypSinsq2Theta13, input_sinsq2theta13);
-      fparam->Update(t2kana::conv::kPhypSinsq2Theta23, input_sinsq2theta23);
+      fparam->Update(t2kana::conv::kPhypMixing12, input_mixing12);
+      fparam->Update(t2kana::conv::kPhypMixing13, input_mixing13);
+      fparam->Update(t2kana::conv::kPhypMixing23, input_mixing23);
       fparam->Update(t2kana::conv::kPhypDeltaCP,       input_deltacp);
       fparam->Update(t2kana::conv::kPhypDm12sq,        input_dm12sq);
       fparam->Update(t2kana::conv::kPhypDm23sq,        input_dm23sq);
     }//3flavour?
     else if(hyp == conv::kHypNuMuDisapp2F) {
-      fparam->Update(t2kana::conv::kPhypSinsq2Theta23, input_sinsq2theta23);
+      fparam->Update(t2kana::conv::kPhypMixing23, input_mixing23);
       fparam->Update(t2kana::conv::kPhypDm23sq,        input_dm23sq);
     }//2flavour?
     else {
@@ -93,35 +93,35 @@ FitInputs & makeFitInputs(
     int bestfit_fitstatus = fitter->FitStatusCode();
 
     // get the best-fit values
-    double bestfit_sinsq2theta12 = -1;
-    double bestfit_sinsq2theta13 = -1;
-    double bestfit_sinsq2theta23 = -1;
+    double bestfit_mixing12 = -1;
+    double bestfit_mixing13 = -1;
+    double bestfit_mixing23 = -1;
     double bestfit_deltacp       = -1;
     double bestfit_dm12sq        = -1;
     double bestfit_dm23sq        = -1;
     double bestfit_chisq         = -1;
     conv::PhysHypothesis_t hyp = fparam->PhysicsHypothesis();
     if(hyp == conv::kHypOsc3F) {
-      bestfit_sinsq2theta12 = fparam->CurrValue(t2kana::conv::kPhypSinsq2Theta12);
-      bestfit_sinsq2theta13 = fparam->CurrValue(t2kana::conv::kPhypSinsq2Theta13);
-      bestfit_sinsq2theta23 = fparam->CurrValue(t2kana::conv::kPhypSinsq2Theta23);
+      bestfit_mixing12 = fparam->CurrValue(t2kana::conv::kPhypMixing12);
+      bestfit_mixing13 = fparam->CurrValue(t2kana::conv::kPhypMixing13);
+      bestfit_mixing23 = fparam->CurrValue(t2kana::conv::kPhypMixing23);
       bestfit_deltacp       = fparam->CurrValue(t2kana::conv::kPhypDeltaCP);
       bestfit_dm12sq        = fparam->CurrValue(t2kana::conv::kPhypDm12sq);
       bestfit_dm23sq        = fparam->CurrValue(t2kana::conv::kPhypDm23sq);
       cout << "Best-fit:"
-	   << " sinsq2theta12 = "  << bestfit_sinsq2theta12
-	   << ", sinsq2theta13 = " << bestfit_sinsq2theta13
-	   << ", sinsq2theta23 = " << bestfit_sinsq2theta23
+	   << " mixing12 = "  << bestfit_mixing12
+	   << ", mixing13 = " << bestfit_mixing13
+	   << ", mixing23 = " << bestfit_mixing23
 	   << ", delta_cp = " << bestfit_deltacp      
 	   << ", Dm12^2 = "   << bestfit_dm12sq << " eV^2/c^4"
 	   << ", |Dm23^2| = " << bestfit_dm23sq << " eV^2/c^4"
 	   << " ==> chisq = " << bestfit_chisq << endl;
     }//3f?
     else if(hyp == conv::kHypNuMuDisapp2F) {
-      bestfit_sinsq2theta23 = fparam->CurrValue(t2kana::conv::kPhypSinsq2Theta23);
+      bestfit_mixing23 = fparam->CurrValue(t2kana::conv::kPhypMixing23);
       bestfit_dm23sq        = fparam->CurrValue(t2kana::conv::kPhypDm23sq);
       cout << "Best-fit:"
-	   << " sinsq2theta23 = " << bestfit_sinsq2theta23
+	   << " mixing23 = " << bestfit_mixing23
 	   << ", |Dm23^2| = " << bestfit_dm23sq << " eV^2/c^4"
 	   << " ==> chisq = " << bestfit_chisq << endl;
     }//2f?
@@ -161,39 +161,39 @@ void build_chisq_surface(
   TFile f(Form("%s.root",tag), "recreate");
 
   //make a histogram to store the chisqsurface
-  double sinsq2theta23_min = 0.;//fit_inputs->FitParams().MinValue(t2kana::conv::kPhypSinsq2Theta23);
-  double sinsq2theta23_max = 1.;//fit_inputs->FitParams().MaxValue(t2kana::conv::kPhypSinsq2Theta23);
-  double sinsq2theta23_step = 0.01;//fit_inputs->FitParams().StepSize(t2kana::conv::kPhypSinsq2Theta23);
+  double mixing23_min = 0.;//fit_inputs->FitParams().MinValue(t2kana::conv::kPhypMixing23);
+  double mixing23_max = 1.;//fit_inputs->FitParams().MaxValue(t2kana::conv::kPhypMixing23);
+  double mixing23_step = 0.01;//fit_inputs->FitParams().StepSize(t2kana::conv::kPhypMixing23);
   double dm23sq_min = 1e-3;//fit_inputs->FitParams().MinValue(t2kana::conv::kPhypDm23sq);
   double dm23sq_max = 6e-3;//fit_inputs->FitParams().MaxValue(t2kana::conv::kPhypDm23sq);
   double dm23sq_step = 1e-4;//fit_inputs->FitParams().StepSize(t2kana::conv::kPhypDm23sq);
   // make sure that min and max are at the bin centre
-  int sinsq2theta23_nbins = 1 + (int) ((sinsq2theta23_max - sinsq2theta23_min) / sinsq2theta23_step);
+  int mixing23_nbins = 1 + (int) ((mixing23_max - mixing23_min) / mixing23_step);
   int dm23sq_nbins = 1 + (int) ((dm23sq_max - dm23sq_min ) / dm23sq_step );
   TH2D *ChisqSurface = new TH2D("chisqsurf","#chi^{2} surface",
-	 sinsq2theta23_nbins, sinsq2theta23_min - 0.5*sinsq2theta23_step, sinsq2theta23_max + 0.5*sinsq2theta23_step,
+	 mixing23_nbins, mixing23_min - 0.5*mixing23_step, mixing23_max + 0.5*mixing23_step,
 	 dm23sq_nbins, dm23sq_min - 0.5*dm23sq_step, dm23sq_max + 0.5*dm23sq_step);
   ChisqSurface->SetDirectory(0);
   ChisqSurface->GetXaxis()->SetRangeUser(0.,1.);
 
   //fix the oscillation parameters of the grid points
-  fparam->FixParameter( t2kana::conv::kPhypSinsq2Theta23 );
+  fparam->FixParameter( t2kana::conv::kPhypMixing23 );
   fparam->FixParameter( t2kana::conv::kPhypDm23sq );
 
   bool needtofit = fparam->GetNumberFreeParameters() > 0;
   cout << fparam->GetNumberFreeParameters() << " free parameters to fit" << endl;
 
-  double bestfit_sinsq2theta12 = -1;
-  double bestfit_sinsq2theta13 = -1;
-  double bestfit_sinsq2theta23 = -1;
+  double bestfit_mixing12 = -1;
+  double bestfit_mixing13 = -1;
+  double bestfit_mixing23 = -1;
   double bestfit_deltacp       = -1;
   double bestfit_dm12sq        = -1;
   double bestfit_dm23sq        = -1;
   double bestfit_chisq         = -1;
   if( calculatebestfit) {
-    bestfit_sinsq2theta12 = fparam->CurrValue(t2kana::conv::kPhypSinsq2Theta12);
-    bestfit_sinsq2theta13 = fparam->CurrValue(t2kana::conv::kPhypSinsq2Theta13);
-    bestfit_sinsq2theta23 = fparam->CurrValue(t2kana::conv::kPhypSinsq2Theta23);
+    bestfit_mixing12 = fparam->CurrValue(t2kana::conv::kPhypMixing12);
+    bestfit_mixing13 = fparam->CurrValue(t2kana::conv::kPhypMixing13);
+    bestfit_mixing23 = fparam->CurrValue(t2kana::conv::kPhypMixing23);
     bestfit_deltacp       = fparam->CurrValue(t2kana::conv::kPhypDeltaCP);
     bestfit_dm12sq        = fparam->CurrValue(t2kana::conv::kPhypDm12sq);
     bestfit_dm23sq        = fparam->CurrValue(t2kana::conv::kPhypDm23sq);
@@ -209,20 +209,20 @@ void build_chisq_surface(
       if(!in_range_dm) continue;
 
       int fitstatus = 0;
-      fparam->Update( t2kana::conv::kPhypSinsq2Theta23, ChisqSurface->GetXaxis()->GetBinCenter(i) );
+      fparam->Update( t2kana::conv::kPhypMixing23, ChisqSurface->GetXaxis()->GetBinCenter(i) );
       fparam->Update( t2kana::conv::kPhypDm23sq, ChisqSurface->GetYaxis()->GetBinCenter(j) );
       if (needtofit) {
-	fparam->SetInitValue( conv::kPhypSinsq2Theta23, ChisqSurface->GetXaxis()->GetBinCenter(i) );
+	fparam->SetInitValue( conv::kPhypMixing23, ChisqSurface->GetXaxis()->GetBinCenter(i) );
 	fparam->SetInitValue( conv::kPhypDm23sq, ChisqSurface->GetYaxis()->GetBinCenter(j) );
 	if ( calculatebestfit ) {
-	  fparam->SetInitValue( t2kana::conv::kPhypSinsq2Theta13, bestfit_sinsq2theta13);
-	  fparam->SetInitValue( t2kana::conv::kPhypSinsq2Theta12, bestfit_sinsq2theta12);
+	  fparam->SetInitValue( t2kana::conv::kPhypMixing13, bestfit_mixing13);
+	  fparam->SetInitValue( t2kana::conv::kPhypMixing12, bestfit_mixing12);
 	  fparam->SetInitValue( t2kana::conv::kPhypDeltaCP, bestfit_deltacp);
 	  fparam->SetInitValue( t2kana::conv::kPhypDm12sq, bestfit_dm12sq);
 	}
 	else {
-	  fparam->SetInitValue( t2kana::conv::kPhypSinsq2Theta13, util::RandomizeSinsq2Theta13() );
-	  fparam->SetInitValue( t2kana::conv::kPhypSinsq2Theta12, util::RandomizeSinsq2Theta12() );
+	  fparam->SetInitValue( t2kana::conv::kPhypMixing13, util::Randomizemixing13() );
+	  fparam->SetInitValue( t2kana::conv::kPhypMixing12, util::Randomizemixing12() );
 	  fparam->SetInitValue( t2kana::conv::kPhypDeltaCP, util::RandomizeDeltaCP() );
 	  fparam->SetInitValue( t2kana::conv::kPhypDm12sq, util::RandomizeDm12sq() );
 	}
@@ -236,8 +236,8 @@ void build_chisq_surface(
 	//refit if we need to
 	while( fitstatus!=3 && refitcount<10 ) {
 	  cout << "______________refitting____________" << endl;
-	  fparam->SetInitValue( t2kana::conv::kPhypSinsq2Theta13, util::RandomizeSinsq2Theta13() );
-	  fparam->SetInitValue( t2kana::conv::kPhypSinsq2Theta12, util::RandomizeSinsq2Theta12() );
+	  fparam->SetInitValue( t2kana::conv::kPhypMixing13, util::Randomizemixing13() );
+	  fparam->SetInitValue( t2kana::conv::kPhypMixing12, util::Randomizemixing12() );
 	  fparam->SetInitValue( t2kana::conv::kPhypDeltaCP, util::RandomizeDeltaCP() );
 	  fparam->SetInitValue( t2kana::conv::kPhypDm12sq, util::RandomizeDm12sq() );
 	  delete surfacefit_inputs;

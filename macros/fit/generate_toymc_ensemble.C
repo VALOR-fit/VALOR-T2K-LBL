@@ -13,9 +13,9 @@ void generate_toymc_ensemble
   int          run                     = 0,                              /* */
   double       nexperiments            = 10,                             /* number of toy-MC expts to generate */
   const char * hypothesis              = "3f_osc",                       /* options: "2f_numu_disap", "3f_osc" */
-  double       input_sinsq2theta12     = 0.86,                           /* if -999 then randomize */
-  double       input_sinsq2theta13     = 0.10,                           /* if -999 then randomize */
-  double       input_sinsq2theta23     = 1.00,                           /* */
+  double       input_mixing12          = 0.86,                           /* if -999 then randomize */
+  double       input_mixing13          = 0.10,                           /* if -999 then randomize */
+  double       input_mixing23          = 1.00,                           /* */
   double       input_deltacp           = 0.00,                           /* if -999 then randomize */
   double       input_dm12sq            = 7.58E-5,                        /* if -999 then randomize */
   double       input_dm23sq            = 2.32E-3,                        /* */
@@ -36,11 +36,11 @@ void generate_toymc_ensemble
   bool include_statistical_fluctuations = true; // <- statistical fluctuations
 
   // Check whether some osc. params need to be randomized
-  bool randomize_sinsq2theta12 = (TMath::Abs(input_sinsq2theta12 + 999) < kASmallNum);
-  bool randomize_sinsq2theta13 = (TMath::Abs(input_sinsq2theta13 + 999) < kASmallNum);
-  bool randomize_deltacp       = (TMath::Abs(input_deltacp       + 999) < kASmallNum);
-  bool randomize_dm12sq        = (TMath::Abs(input_dm12sq        + 999) < kASmallNum);
-  bool randomized_osc_params   = (randomize_sinsq2theta12 || randomize_sinsq2theta13 || randomize_deltacp || randomize_dm12sq);
+  bool randomize_mixing12      = (TMath::Abs(input_mixing12 + 999) < kASmallNum);
+  bool randomize_mixing13      = (TMath::Abs(input_mixing13 + 999) < kASmallNum);
+  bool randomize_deltacp       = (TMath::Abs(input_deltacp  + 999) < kASmallNum);
+  bool randomize_dm12sq        = (TMath::Abs(input_dm12sq   + 999) < kASmallNum);
+  bool randomized_osc_params   = (randomize_mixing12 || randomize_mixing13 || randomize_deltacp || randomize_dm12sq);
 
   // Print out job summary
   cout << "\n[Job inputs]" << endl;
@@ -51,9 +51,9 @@ void generate_toymc_ensemble
   cout << "   - Number of toy experiments: " << nexperiments << endl;
   cout << "   - Randomize systematics : "      << ((tweak_systematics) ? "YES " : "NO") << endl;
   cout << "   - True oscillation parameters: " << endl;
-  cout << "       > sinsq2theta12 = " << ((randomize_sinsq2theta12) ? "* randomized *" : input_sinsq2theta12) << endl;
-  cout << "       > sinsq2theta13 = " << ((randomize_sinsq2theta13) ? "* randomized *" : input_sinsq2theta13) << endl;
-  cout << "       > sinsq2theta23 = " << input_sinsq2theta23 << endl;
+  cout << "       > mixing12 = " << ((randomize_mixing12) ? "* randomized *" : input_mixing12) << endl;
+  cout << "       > mixing13 = " << ((randomize_mixing13) ? "* randomized *" : input_mixing13) << endl;
+  cout << "       > mixing23 = " << input_mixing23 << endl;
   cout << "       > delta_cp      = " << ((randomize_deltacp) ? "* randomized *" : input_deltacp) << endl;
   cout << "       > Dm12sq        = " << ((randomize_dm12sq)  ? "* randomized *" : input_dm12sq ) << " eV^2/c^4" << endl;
   cout << "       > |Dm23sq|      = " << input_dm23sq << " eV^2/c^4" << endl;
@@ -93,24 +93,24 @@ void generate_toymc_ensemble
      cout << "\n\n*** Pseudo-experiment = " << iexperiment << endl;
 
      // Randomize specified osc params for current toy MC expt
-     if (randomize_sinsq2theta12) { input_sinsq2theta12 = util::RandomizeSinsq2Theta12(); }
-     if (randomize_sinsq2theta13) { input_sinsq2theta13 = util::RandomizeSinsq2Theta13(); }
-     if (randomize_deltacp      ) { input_deltacp       = util::RandomizeDeltaCP();       }
-     if (randomize_dm12sq       ) { input_dm12sq        = util::RandomizeDm12sq();        }
+     if (randomize_mixing12) { input_mixing12 = util::RandomizeMixing12(); }
+     if (randomize_mixing13) { input_mixing13 = util::RandomizeMixing13(); }
+     if (randomize_deltacp ) { input_deltacp  = util::RandomizeDeltaCP();       }
+     if (randomize_dm12sq  ) { input_dm12sq   = util::RandomizeDm12sq();        }
 
      // Set physics hypothesis
      PhysHypothesis ph(hypothesis);
      if(ph.Hypothesis() == conv::kHypNuMuDisapp2F) {
-       ph.SetCurrValue(conv::kPhypSinsq2Theta23,  input_sinsq2theta23);
-       ph.SetCurrValue(conv::kPhypDm23sq,         input_dm23sq);
+       ph.SetCurrValue(conv::kPhypMixing23,  input_mixing23);
+       ph.SetCurrValue(conv::kPhypDm23sq,    input_dm23sq);
      } else
      if(ph.Hypothesis() == conv::kHypOsc3F) {  
-       ph.SetCurrValue(conv::kPhypSinsq2Theta12,  input_sinsq2theta12);
-       ph.SetCurrValue(conv::kPhypSinsq2Theta13,  input_sinsq2theta13);
-       ph.SetCurrValue(conv::kPhypSinsq2Theta23,  input_sinsq2theta23);
-       ph.SetCurrValue(conv::kPhypDeltaCP,        input_deltacp);
-       ph.SetCurrValue(conv::kPhypDm12sq,         input_dm12sq);
-       ph.SetCurrValue(conv::kPhypDm23sq,         input_dm23sq);
+       ph.SetCurrValue(conv::kPhypMixing12,  input_mixing12);
+       ph.SetCurrValue(conv::kPhypMixing13,  input_mixing13);
+       ph.SetCurrValue(conv::kPhypMixing23,  input_mixing23);
+       ph.SetCurrValue(conv::kPhypDeltaCP,   input_deltacp);
+       ph.SetCurrValue(conv::kPhypDm12sq,    input_dm12sq);
+       ph.SetCurrValue(conv::kPhypDm23sq,    input_dm23sq);
      }
      //cout << "- Physics hypothesis set: " << ph << endl;
 

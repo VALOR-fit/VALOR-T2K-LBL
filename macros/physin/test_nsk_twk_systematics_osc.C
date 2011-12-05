@@ -24,22 +24,22 @@ void test_nsk_twk_systematics_osc
 
   const int nexperiments = 1000;
 
-  double sinsq2theta23_min  = 0.0;
-  double sinsq2theta23_max  = 1.0;
-  double sinsq2theta23_step = 0.01;
+  double mixing23_min  = 0.0;
+  double mixing23_max  = 1.0;
+  double mixing23_step = 0.01;
   double dm23sq_min         = 1E-3;
   double dm23sq_max         = 6E-3;
   double dm23sq_step        = 1E-4;
 
   // make sure that min and max are at the bin centre
-  int sinsq2theta23_nbins = 1 + (int) ((sinsq2theta23_max - sinsq2theta23_min) / sinsq2theta23_step);
+  int mixing23_nbins = 1 + (int) ((mixing23_max - mixing23_min) / mixing23_step);
   int dm23sq_nbins        = 1 + (int) ((dm23sq_max        - dm23sq_min       ) / dm23sq_step       );
 
   TH2D * frac_nsk_err = 
     new TH2D("frac_nsk_err", "",
-       sinsq2theta23_nbins, 
-       sinsq2theta23_min - 0.5*sinsq2theta23_step, 
-       sinsq2theta23_max + 0.5*sinsq2theta23_step,
+       mixing23_nbins, 
+       mixing23_min - 0.5*mixing23_step, 
+       mixing23_max + 0.5*mixing23_step,
        dm23sq_nbins, 
        dm23sq_min - 0.5*dm23sq_step, 
        dm23sq_max + 0.5*dm23sq_step);
@@ -103,14 +103,14 @@ void test_nsk_twk_systematics_osc
   for(int i = 1; i <= frac_nsk_err->GetNbinsX(); i++) {
     for(int j = 1; j <= frac_nsk_err->GetNbinsY(); j++) {
 
-       double sinsq2theta23 = frac_nsk_err->GetXaxis()->GetBinCenter(i);
+       double mixing23 = frac_nsk_err->GetXaxis()->GetBinCenter(i);
        double dm23sq        = frac_nsk_err->GetYaxis()->GetBinCenter(j);
-       sinsq2theta23 = TMath::Max(0.,sinsq2theta23);
-       ph.SetCurrValue(t2kana::conv::kPhypSinsq2Theta23, sinsq2theta23);
+       mixing23 = TMath::Max(0.,mixing23);
+       ph.SetCurrValue(t2kana::conv::kPhypMixing23, mixing23);
        ph.SetCurrValue(t2kana::conv::kPhypDm23sq,        dm23sq);
 
        cout << "* Dm23^2 = " << dm23sq 
-            << " eV^2, sin^2(2theta) = " << sinsq2theta23 << endl;
+            << " eV^2, sin^2(2theta) = " << mixing23 << endl;
 
        // generate predictions
        skexp.ResetSystematicVariations();

@@ -11,9 +11,9 @@ void test_n_mock_data_fits(
   const char * tag                     = "toyexptfits",                  /* */
   int          run                     = 0,                              /* */
   int          nexperiments            = 1000,                           /* */
-  double       input_sinsq2theta12     = 0.86,                           /* if -999 then randomize */
-  double       input_sinsq2theta13     = 0.10,                           /* if -999 then randomize */
-  double       input_sinsq2theta23     = 1.00,                           /* */
+  double       input_mixing12          = 0.86,                           /* if -999 then randomize */
+  double       input_mixing13          = 0.10,                           /* if -999 then randomize */
+  double       input_mixing23          = 1.00,                           /* */
   double       input_deltacp           = 0.00,                           /* if -999 then randomize */
   double       input_dm12sq            = 7.58E-5,                        /* if -999 then randomize */
   double       input_dm23sq            = 2.32E-3,                        /* */
@@ -34,10 +34,10 @@ void test_n_mock_data_fits(
   const char * config = Form("%s/config/%s", gSystem->Getenv("T2KOSCANA"), config_file);
 
   // check whether some osc. params need to be randomized
-  bool randomize_sinsq2theta12 = (TMath::Abs(input_sinsq2theta12 + 999) < kASmallNum);
-  bool randomize_sinsq2theta13 = (TMath::Abs(input_sinsq2theta13 + 999) < kASmallNum);
-  bool randomize_deltacp       = (TMath::Abs(input_deltacp       + 999) < kASmallNum);
-  bool randomize_dm12sq        = (TMath::Abs(input_dm12sq        + 999) < kASmallNum);
+  bool randomize_mixing12 = (TMath::Abs(input_mixing12 + 999) < kASmallNum);
+  bool randomize_mixing13 = (TMath::Abs(input_mixing13 + 999) < kASmallNum);
+  bool randomize_deltacp  = (TMath::Abs(input_deltacp       + 999) < kASmallNum);
+  bool randomize_dm12sq   = (TMath::Abs(input_dm12sq        + 999) < kASmallNum);
 
   cout << "\n[Job inputs]" << endl;
   cout << "- Job: " << tag << "/" << run << endl;
@@ -47,9 +47,9 @@ void test_n_mock_data_fits(
   cout << "   - Randomize systematics : "      << ((tweak_systematics) ?      "YES " : "NO") << endl;
   cout << "   - Statistical fluctuations: "    << ((stat_fluctuations) ?      "YES " : "NO") << endl;
   cout << "   - True oscillation parameters: " << endl;
-  cout << "       > sinsq2theta12 = " << ((randomize_sinsq2theta12) ? "* randomized *" : input_sinsq2theta12) << endl;
-  cout << "       > sinsq2theta13 = " << ((randomize_sinsq2theta13) ? "* randomized *" : input_sinsq2theta13) << endl;
-  cout << "       > sinsq2theta23 = " << input_sinsq2theta23 << endl;
+  cout << "       > mixing12 = " << ((randomize_mixing12) ? "* randomized *" : input_mixing12) << endl;
+  cout << "       > mixing13 = " << ((randomize_mixing13) ? "* randomized *" : input_mixing13) << endl;
+  cout << "       > mixing23 = " << input_mixing23 << endl;
   cout << "       > delta_cp      = " << ((randomize_deltacp) ? "* randomized *" : input_deltacp) << endl;
   cout << "       > Dm12sq        = " << ((randomize_dm12sq)  ? "* randomized *" : input_dm12sq ) << " eV^2/c^4" << endl;
   cout << "       > |Dm23sq|      = " << input_dm23sq << " eV^2/c^4" << endl;
@@ -63,12 +63,12 @@ void test_n_mock_data_fits(
   cout << endl;
 
   // create file to store results
-  TFile f(Form("%s-sinsq2theta23_%.2f-dm23sq_%.5feV2-run_%d.root",
-          tag, input_sinsq2theta23,input_dm23sq,run), "recreate");
+  TFile f(Form("%s-mixing23_%.2f-dm23sq_%.5feV2-run_%d.root",
+          tag, input_mixing23,input_dm23sq,run), "recreate");
 
   // create ntuple to store oscillation fit results
   TNtupleD * nfitnt = new TNtupleD("nfitnt","",
-     "iexp:bestfit_sinsq2theta12:bestfit_sinsq2theta13:bestfit_sinsq2theta23:bestfit_deltacp:bestfit_dm12sq:bestfit_dm23sq:chisq:fitstatus:input_sinsq2theta12:input_sinsq2theta13:input_sinsq2theta23:input_deltacp:input_dm12sq:input_dm23sq");
+     "iexp:bestfit_mixing12:bestfit_mixing13:bestfit_mixing23:bestfit_deltacp:bestfit_dm12sq:bestfit_dm23sq:chisq:fitstatus:input_mixing12:input_mixing13:input_mixing23:input_deltacp:input_dm12sq:input_dm23sq");
 
   // fit parameter list
   FitParamList * fparm = FitParamList::NamedParameterList(fit_param_list);
@@ -85,33 +85,33 @@ void test_n_mock_data_fits(
      cout << "\n\n *** Pseudo-experiment = " << iexperiment << endl;
 
      // init best-fit values
-     double bestfit_sinsq2theta12 = -1;
-     double bestfit_sinsq2theta13 = -1;
-     double bestfit_sinsq2theta23 = -1;
-     double bestfit_deltacp       = -1;
-     double bestfit_dm12sq        = -1;
-     double bestfit_dm23sq        = -1;
-     double bestfit_chisq         = -1;
+     double bestfit_mixing12 = -1;
+     double bestfit_mixing13 = -1;
+     double bestfit_mixing23 = -1;
+     double bestfit_deltacp  = -1;
+     double bestfit_dm12sq   = -1;
+     double bestfit_dm23sq   = -1;
+     double bestfit_chisq    = -1;
 
      // randomize specified osc params for current toy MC expt
-     if (randomize_sinsq2theta12) { input_sinsq2theta12 = util::RandomizeSinsq2Theta12(); }
-     if (randomize_sinsq2theta13) { input_sinsq2theta13 = util::RandomizeSinsq2Theta13(); }
-     if (randomize_deltacp      ) { input_deltacp       = util::RandomizeDeltaCP();       }
-     if (randomize_dm12sq       ) { input_dm12sq        = util::RandomizeDm12sq();        }
+     if (randomize_mixing12) { input_mixing12 = util::RandomizeMixing12(); }
+     if (randomize_mixing13) { input_mixing13 = util::RandomizeMixing13(); }
+     if (randomize_deltacp ) { input_deltacp  = util::RandomizeDeltaCP();       }
+     if (randomize_dm12sq  ) { input_dm12sq   = util::RandomizeDm12sq();        }
 
      // set oscillation parameter inputs as necessary (used to generate toy-MC expt)
      if(hyp == conv::kHypOsc3F) {
-       fparm->Update(t2kana::conv::kPhypSinsq2Theta12, input_sinsq2theta12);
-       fparm->Update(t2kana::conv::kPhypSinsq2Theta13, input_sinsq2theta13);
-       fparm->Update(t2kana::conv::kPhypSinsq2Theta23, input_sinsq2theta23);
-       fparm->Update(t2kana::conv::kPhypDeltaCP,       input_deltacp);
-       fparm->Update(t2kana::conv::kPhypDm12sq,        input_dm12sq);
-       fparm->Update(t2kana::conv::kPhypDm23sq,        input_dm23sq);
+       fparm->Update(t2kana::conv::kPhypMixing12, input_mixing12);
+       fparm->Update(t2kana::conv::kPhypMixing13, input_mixing13);
+       fparm->Update(t2kana::conv::kPhypMixing23, input_mixing23);
+       fparm->Update(t2kana::conv::kPhypDeltaCP,  input_deltacp);
+       fparm->Update(t2kana::conv::kPhypDm12sq,   input_dm12sq);
+       fparm->Update(t2kana::conv::kPhypDm23sq,   input_dm23sq);
      }
      else
      if(hyp == conv::kHypNuMuDisapp2F) {
-       fparm->Update(t2kana::conv::kPhypSinsq2Theta23, input_sinsq2theta23);
-       fparm->Update(t2kana::conv::kPhypDm23sq,        input_dm23sq);
+       fparm->Update(t2kana::conv::kPhypMixing23, input_mixing23);
+       fparm->Update(t2kana::conv::kPhypDm23sq,   input_dm23sq);
      }
 
      //
@@ -147,9 +147,9 @@ void test_n_mock_data_fits(
 
      double true_chisq = fit_inputs->Chisquare();
      cout << "- True osc. params:"
-	  << " sinsq2theta12 = "  << input_sinsq2theta12
-	  << ", sinsq2theta13 = " << input_sinsq2theta13
-	  << ", sinsq2theta23 = " << input_sinsq2theta23
+	  << " mixing12 = "  << input_mixing12
+	  << ", mixing13 = " << input_mixing13
+	  << ", mixing23 = " << input_mixing23
 	  << ", delta_cp = " << input_deltacp      
 	  << ", Dm12^2 = "   << input_dm12sq << " eV^2/c^4"
 	  << ", |Dm23^2| = " << input_dm23sq << " eV^2/c^4"
@@ -162,36 +162,36 @@ void test_n_mock_data_fits(
      // get best-fit params
      bestfit_chisq = fit_inputs->BestFitChisquare();
      if(hyp == conv::kHypOsc3F) {
-        bestfit_sinsq2theta12 = fparm->BestFitValue(t2kana::conv::kPhypSinsq2Theta12);
-        bestfit_sinsq2theta13 = fparm->BestFitValue(t2kana::conv::kPhypSinsq2Theta13);
-        bestfit_sinsq2theta23 = fparm->BestFitValue(t2kana::conv::kPhypSinsq2Theta23);
-        bestfit_deltacp       = fparm->BestFitValue(t2kana::conv::kPhypDeltaCP);
-        bestfit_dm12sq        = fparm->BestFitValue(t2kana::conv::kPhypDm12sq);
-        bestfit_dm23sq        = fparm->BestFitValue(t2kana::conv::kPhypDm23sq);
+        bestfit_mixing12 = fparm->BestFitValue(t2kana::conv::kPhypMixing12);
+        bestfit_mixing13 = fparm->BestFitValue(t2kana::conv::kPhypMixing13);
+        bestfit_mixing23 = fparm->BestFitValue(t2kana::conv::kPhypMixing23);
+        bestfit_deltacp  = fparm->BestFitValue(t2kana::conv::kPhypDeltaCP);
+        bestfit_dm12sq   = fparm->BestFitValue(t2kana::conv::kPhypDm12sq);
+        bestfit_dm23sq   = fparm->BestFitValue(t2kana::conv::kPhypDm23sq);
         cout << "- Best-fit osc. params:"
-             << " sinsq2theta12 = "  << bestfit_sinsq2theta12
-             << ", sinsq2theta13 = " << bestfit_sinsq2theta13
-             << ", sinsq2theta23 = " << bestfit_sinsq2theta23
+             << " mixing12 = "  << bestfit_mixing12
+             << ", mixing13 = " << bestfit_mixing13
+             << ", mixing23 = " << bestfit_mixing23
              << ", delta_cp = " << bestfit_deltacp      
              << ", Dm12^2 = "   << bestfit_dm12sq << " eV^2/c^4"
              << ", |Dm23^2| = " << bestfit_dm23sq << " eV^2/c^4"
              << " ==> chisq = " << bestfit_chisq << endl;
      } else
      if(hyp == conv::kHypNuMuDisapp2F) {
-        bestfit_sinsq2theta23 = fparm->BestFitValue(t2kana::conv::kPhypSinsq2Theta23);
+        bestfit_mixing23 = fparm->BestFitValue(t2kana::conv::kPhypMixing23);
         bestfit_dm23sq        = fparm->BestFitValue(t2kana::conv::kPhypDm23sq);
         cout << "- Best-fit osc. params:"
-             << " sinsq2theta23 = " << bestfit_sinsq2theta23
+             << " mixing23 = " << bestfit_mixing23
              << ", |Dm23^2| = " << bestfit_dm23sq << " eV^2/c^4"
              << " ==> chisq = " << bestfit_chisq << endl;
      }
 
      // store true & best-fit values
      nfitnt->Fill(iexperiment, 
-                  bestfit_sinsq2theta12, bestfit_sinsq2theta13, bestfit_sinsq2theta23, 
+                  bestfit_mixing12, bestfit_mixing13, bestfit_mixing23, 
                   bestfit_deltacp, bestfit_dm12sq, bestfit_dm23sq, 
                   bestfit_chisq, fitstatus,
-		  input_sinsq2theta12, input_sinsq2theta13, input_sinsq2theta23, 
+		  input_mixing12, input_mixing13, input_mixing23, 
                   input_deltacp, input_dm12sq, input_dm23sq);
 
      string output_option = "";

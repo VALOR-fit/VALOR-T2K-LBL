@@ -19,7 +19,7 @@ void plot_toymc_bestfitparam_distribution_and_highlight_input
    double bestfit_dmsq23,          
 
    /* value of sin^{2}(2theta_{23}) to be highlighted */
-   double bestfit_sinsq2theta23    
+   double bestfit_mixing23    
 )
 {
   gStyle->SetOptStat(0);
@@ -27,9 +27,9 @@ void plot_toymc_bestfitparam_distribution_and_highlight_input
   double dmsq23min        = 0.0010;
   double dmsq23max        = 0.0045;
   int    ndmsq23          = 100;
-  double sinsq2theta23min = 0.80;
-  double sinsq2theta23max = 1.00;
-  int    nsinsq2theta23   = 150;
+  double mixing23min = 0.80;
+  double mixing23max = 1.00;
+  int    nmixing23   = 150;
 
   TFile * f = new TFile(fitfile,"read");
   TNtupleD * nfitnt = (TNtupleD*)f->Get("nfitnt");
@@ -42,12 +42,12 @@ void plot_toymc_bestfitparam_distribution_and_highlight_input
   pad2d->SetBorderSize(0);
   pad2d->Draw();
   pad2d->cd();
-  TH2D * h2d = new TH2D("h2d","",nsinsq2theta23,sinsq2theta23min,sinsq2theta23max,ndmsq23,dmsq23min,dmsq23max);
-  nfitnt->Draw("dm23sq:sinsq2theta23>>h2d");
+  TH2D * h2d = new TH2D("h2d","",nmixing23,mixing23min,mixing23max,ndmsq23,dmsq23min,dmsq23max);
+  nfitnt->Draw("dm23sq:mixing23>>h2d");
   h2d->GetXaxis()->SetTitle("sin^{2}2#theta_{23}");
   h2d->GetYaxis()->SetTitle("|#Deltam^{2}_{23}| (eV^{2}/c^{4})");
   h2d->Draw("contz");
-  TMarker * m = new TMarker(bestfit_sinsq2theta23,bestfit_dmsq23,20);
+  TMarker * m = new TMarker(bestfit_mixing23,bestfit_dmsq23,20);
   m->SetMarkerColor(kRed);
   m->SetMarkerSize(1.2);
   m->Draw();
@@ -74,13 +74,13 @@ void plot_toymc_bestfitparam_distribution_and_highlight_input
   padx->SetBorderSize(0);
   padx->Draw();
   padx->cd();
-  TH1D * hx = new TH1D("hx","",nsinsq2theta23,sinsq2theta23min,sinsq2theta23max);
-  nfitnt->Draw("sinsq2theta23>>hx","","goff");
+  TH1D * hx = new TH1D("hx","",nmixing23,mixing23min,mixing23max);
+  nfitnt->Draw("mixing23>>hx","","goff");
   hx->SetFillColor(kGray);
   hx->GetXaxis()->SetTitle("sin^{2}2#theta_{23}");
   hx->Draw();
   padx->SetLogy();
-  TLine * lx = new TLine(bestfit_sinsq2theta23,0,bestfit_sinsq2theta23,hx->GetMaximum());
+  TLine * lx = new TLine(bestfit_mixing23,0,bestfit_mixing23,hx->GetMaximum());
   lx->SetLineColor(kRed);
   lx->Draw();
 }

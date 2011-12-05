@@ -1,15 +1,15 @@
 //
 // ------------------------------------------------------------------------------------------------
 // Plot numu -> numu survival probability (computed in 2-flavour framework) as a function of
-// neutrino energy for the given sinsq2theta23 and dm23sq parameters.
-// Superimpose the range of 3-flavour framework predictions obtained for the same sinsq2theta23 and 
-// dm23sq params and for random variations of sinsq2theta12, sinsq2theta13, dm23sq and delta_cp.
+// neutrino energy for the given mixing23 and dm23sq parameters.
+// Superimpose the range of 3-flavour framework predictions obtained for the same mixing23 and 
+// dm23sq params and for random variations of mixing12, mixing13, dm23sq and delta_cp.
 //
 // C.Andreopoulos
 // ------------------------------------------------------------------------------------------------
 //
 
-void plot_numu_surv_prob_2f_vs_3frange(double sinsq2theta23=1.0, double dm23sq=2.32E-3)
+void plot_numu_surv_prob_2f_vs_3frange(double mixing23=1.0, double dm23sq=2.32E-3)
 {
   using namespace std;
   using namespace t2kana;
@@ -21,7 +21,7 @@ void plot_numu_surv_prob_2f_vs_3frange(double sinsq2theta23=1.0, double dm23sq=2
   const double emax                 = 10.000;
   const double de                   = (emax-emin)/(ne-1);
   const double dm12sq_frcerr        = 0.05;
-  const double sinsq2theta12_frcerr = 0.08;
+  const double mixing12_frcerr = 0.08;
 
   TRandom rand(0);
 
@@ -39,7 +39,7 @@ void plot_numu_surv_prob_2f_vs_3frange(double sinsq2theta23=1.0, double dm23sq=2
     e[i] = emin + i*de;
     //cout << "E = " << e[i] << " GeV" << endl;
 
-    numu_surv_prob_2f[i] = util::NuMuSurvProbOsc2D(sinsq2theta23, dm23sq, e[i]);
+    numu_surv_prob_2f[i] = util::NuMuSurvProbOsc2D(mixing23, dm23sq, e[i]);
 
     numu_surv_prob_3fv_upper[i] = -999;
     numu_surv_prob_3fv_lower[i] = +999;
@@ -49,21 +49,21 @@ void plot_numu_surv_prob_2f_vs_3frange(double sinsq2theta23=1.0, double dm23sq=2
     for(int irand = 0; irand < nrand; irand++) {
 
        double dm12sq        = (1. + rand.Gaus(0.,1.) * dm12sq_frcerr       )  * conv::kGlobFitDm12sq;
-       double sinsq2theta12 = (1. + rand.Gaus(0.,1.) * sinsq2theta12_frcerr)  * conv::kGlobFitSinsq2Theta12;
-       sinsq2theta12 = TMath::Min(1.,sinsq2theta12);
-       sinsq2theta12 = TMath::Max(0.,sinsq2theta12);
-       double sinsq2theta13 = rand.Uniform() * conv::kGlobFitSinsq2Theta13;
+       double mixing12 = (1. + rand.Gaus(0.,1.) * mixing12_frcerr)  * conv::kGlobFitmixing12;
+       mixing12 = TMath::Min(1.,mixing12);
+       mixing12 = TMath::Max(0.,mixing12);
+       double mixing13 = rand.Uniform() * conv::kGlobFitmixing13;
        double delta_cp      = rand.Uniform() * 2*conv::kpi;
 
-       calc_osc3f.SetOscParameters(sinsq2theta12,sinsq2theta13,sinsq2theta23,dm12sq,dm23sq,delta_cp);
+       calc_osc3f.SetOscParameters(mixing12,mixing13,mixing23,dm12sq,dm23sq,delta_cp);
 
        double p3fv = calc_osc3f.CalcVacuumOscProb(numu,numu,e[i]);
        if(p3fv < 0. || p3fv > 1. || TMath::IsNaN(p3fv)) {
 	 cout << "WARNING! P_{numu->numu} ("
               << "E = " << e[i] << " GeV"
-              << ", sinsq2theta12 = " << sinsq2theta12 
-              << ", sinsq2theta13 = " << sinsq2theta13 
-              << ", sinsq2theta23 = " << sinsq2theta23 
+              << ", mixing12 = " << mixing12 
+              << ", mixing13 = " << mixing13 
+              << ", mixing23 = " << mixing23 
               << ", Dm12^2 = "  << dm12sq << " eV^2"
               << ", |Dm23^2| = "  << dm23sq << " eV^2"
               << ", delta_cp = "  << delta_cp << " rad) = " << p3fv << endl;
@@ -76,9 +76,9 @@ void plot_numu_surv_prob_2f_vs_3frange(double sinsq2theta23=1.0, double dm23sq=2
        if(p3fm < 0. || p3fm > 1. || TMath::IsNaN(p3fm)) {
 	 cout << "WARNING! P_{numu->numu} ("
               << "E = " << e[i] << " GeV"
-              << ", sinsq2theta12 = " << sinsq2theta12 
-              << ", sinsq2theta13 = " << sinsq2theta13 
-              << ", sinsq2theta23 = " << sinsq2theta23 
+              << ", mixing12 = " << mixing12 
+              << ", mixing13 = " << mixing13 
+              << ", mixing23 = " << mixing23 
               << ", Dm12^2 = "  << dm12sq << " eV^2"
               << ", |Dm23^2| = "  << dm23sq << " eV^2"
               << ", delta_cp = "  << delta_cp << " rad) = " << p3fm << endl;
@@ -108,7 +108,7 @@ void plot_numu_surv_prob_2f_vs_3frange(double sinsq2theta23=1.0, double dm23sq=2
   gr_numu_surv_prob_3fm_lower->SetLineColor(kRed);
   gr_numu_surv_prob_3fm_upper->SetLineStyle(kDotted);
   gr_numu_surv_prob_3fm_lower->SetLineStyle(kDotted);
-  legend1->SetHeader(Form("|#Deltam_{23}^{2}|=%.3e eV^{2}, sin^{2}2#theta_{23}=%.3e",dm23sq,sinsq2theta23));
+  legend1->SetHeader(Form("|#Deltam_{23}^{2}|=%.3e eV^{2}, sin^{2}2#theta_{23}=%.3e",dm23sq,mixing23));
   legend1->AddEntry(gr_numu_surv_prob_2f,        "2-flavour", "L");
   legend1->AddEntry(gr_numu_surv_prob_3fv_upper, "3-flavour vaccum (range for #theta_{12}, #theta_{13}, #delta_{CP}, #Deltam_{12}^{2} variation)", "L");
   legend1->AddEntry(gr_numu_surv_prob_3fm_upper, "3-flavour matter (range for #theta_{12}, #theta_{13}, #delta_{CP}, #Deltam_{12}^{2} variation)", "L");

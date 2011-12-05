@@ -11,14 +11,14 @@
 
 void test_sk_ereco_spectrum_twk_beam_norm
 (
-  const char * hypothesis              = "3f_osc",                       /* options: "2f_numu_disap", "3f_osc" */
-  double       input_sinsq2theta12     = 0.86,                           /* */
-  double       input_sinsq2theta13     = 0.10,                           /* */
-  double       input_sinsq2theta23     = 1.00,                           /* */
-  double       input_deltacp           = 0.00,                           /* */
-  double       input_dm12sq            = 7.58E-5,                        /* */
-  double       input_dm23sq            = 2.32E-3,                        /* */
-  const char * config_file             = "analysis_configuration.xml"    /* */
+  const char * hypothesis         = "3f_osc",                       /* options: "2f_numu_disap", "3f_osc" */
+  double       input_mixing12     = 0.86,                           /* */
+  double       input_mixing13     = 0.10,                           /* */
+  double       input_mixing23     = 1.00,                           /* */
+  double       input_deltacp      = 0.00,                           /* */
+  double       input_dm12sq       = 7.58E-5,                        /* */
+  double       input_dm23sq       = 2.32E-3,                        /* */
+  const char * config_file        = "analysis_configuration.xml"    /* */
 )
 {
   using namespace std;
@@ -41,16 +41,16 @@ void test_sk_ereco_spectrum_twk_beam_norm
   // set physics hypothesis
   PhysHypothesis ph(hypothesis);
   if(ph.Hypothesis() == conv::kHypNuMuDisapp2F) {
-    ph.SetCurrValue(conv::kPhypSinsq2Theta23,  input_sinsq2theta23);
-    ph.SetCurrValue(conv::kPhypDm23sq,         input_dm23sq);
+    ph.SetCurrValue(conv::kPhypMixing23,  input_mixing23);
+    ph.SetCurrValue(conv::kPhypDm23sq,    input_dm23sq);
   } else
   if(ph.Hypothesis() == conv::kHypOsc3F) {
-    ph.SetCurrValue(conv::kPhypSinsq2Theta12,  input_sinsq2theta12);
-    ph.SetCurrValue(conv::kPhypSinsq2Theta13,  input_sinsq2theta13);
-    ph.SetCurrValue(conv::kPhypSinsq2Theta23,  input_sinsq2theta23);
-    ph.SetCurrValue(conv::kPhypDeltaCP,        input_deltacp);
-    ph.SetCurrValue(conv::kPhypDm12sq,         input_dm12sq);
-    ph.SetCurrValue(conv::kPhypDm23sq,         input_dm23sq);
+    ph.SetCurrValue(conv::kPhypMixing12,  input_mixing12);
+    ph.SetCurrValue(conv::kPhypMixing13,  input_mixing13);
+    ph.SetCurrValue(conv::kPhypMixing23,  input_mixing23);
+    ph.SetCurrValue(conv::kPhypDeltaCP,   input_deltacp);
+    ph.SetCurrValue(conv::kPhypDm12sq,    input_dm12sq);
+    ph.SetCurrValue(conv::kPhypDm23sq,    input_dm23sq);
   }
   cout << "Physics hypothesis set: " << endl;
   cout << ph;
@@ -140,7 +140,7 @@ void test_sk_ereco_spectrum_twk_beam_norm
 
   // write-out in file
   string oscparams = util::AsString(hypothesis,
-     input_sinsq2theta12,input_sinsq2theta13,input_sinsq2theta23,input_deltacp,input_dm12sq,input_dm23sq);
+     input_mixing12,input_mixing13,input_mixing23,input_deltacp,input_dm12sq,input_dm23sq);
   TFile f(Form("sk_ereco_spectrum-twk_beam_norm-%s.root",oscparams.c_str()),"recreate");
   for(int idial = 0; idial < ntwkdials; idial++) {
      const char * dial = "";

@@ -36,14 +36,14 @@ void make_pvalue_ntuple(
   conv::PhysHypothesis_t hyp = fparm->PhysicsHypothesis();
   cout << "Specified physics hypothesis: " << util::AsString(hyp) << endl;
   if(hyp == conv::kHypOsc3F) {
-  //fparm->Update(t2kana::conv::kPhypSinsq2Theta12, 0.);
-    fparm->Update(t2kana::conv::kPhypSinsq2Theta13, 0.);
-    fparm->Update(t2kana::conv::kPhypSinsq2Theta23, 0.);
-    fparm->Update(t2kana::conv::kPhypDeltaCP,       0.);
+  //fparm->Update(t2kana::conv::kPhypMixing12, 0.);
+    fparm->Update(t2kana::conv::kPhypMixing13, 0.);
+    fparm->Update(t2kana::conv::kPhypMixing23, 0.);
+    fparm->Update(t2kana::conv::kPhypDeltaCP,  0.);
   }
   else
   if(hyp == conv::kHypNuMuDisapp2F) {
-    fparm->Update(t2kana::conv::kPhypSinsq2Theta23, 0.);
+    fparm->Update(t2kana::conv::kPhypMixing23, 0.);
   }
   else {
     return;

@@ -15,8 +15,8 @@ void feldman_cousins_fitting_job
   int          nexperiments          = 1000,                         /* */
   int          min_deltacp_bin       =   1,                          /* */
   int          max_deltacp_bin       =  91,                          /* */
-  int          min_sinsq2theta13_bin =   1,                          /* */
-  int          max_sinsq2theta13_bin = 101,                          /* */
+  int          min_mixing13_bin =   1,                          /* */
+  int          max_mixing13_bin = 101,                          /* */
   const char * config_file           = "analysis_configuration.xml", /* analysis configuration file */
   bool         stat_fluctuations     = true,                         /* include statistical fluctuation in toy MC expts? */
   bool         tweak_systematics     = true,                         /* generate toy MC with randomized systematics? */
@@ -31,26 +31,26 @@ void feldman_cousins_fitting_job
   const char * config = Form("%s/config/%s", gSystem->Getenv("T2KOSCANA"), config_file);
 
   //
-  // The oscillation contour will be constructed using a (deltacp, sinsq2theta13) 
+  // The oscillation contour will be constructed using a (deltacp, mixing13) 
   // 2-D histogram with the following binning.
-  // Look-up the bin centre values for the input_deltacp_bin and input_sinsq2theta13_bin.
+  // Look-up the bin centre values for the input_deltacp_bin and input_mixing13_bin.
   //
 
-  // deltacp, sinsq2theta13 range and step
-  double sinsq2theta13_min   = 0.0;
-  double sinsq2theta13_max   = 0.4;
-  double sinsq2theta13_step  = 0.004;
+  // deltacp, mixing13 range and step
+  double mixing13_min   = 0.0;
+  double mixing13_max   = 0.4;
+  double mixing13_step  = 0.004;
   double deltacp_min         = -1 * conv::kpi;
   double deltacp_max         = conv::kpi;
   double deltacp_step        = 2*conv::kpi/90.;
   // make sure that min and max are at the bin centre and not at the low/high edge of the first/last bin
-  int sinsq2theta13_nbins = 1 + (int) ((sinsq2theta13_max - sinsq2theta13_min) / sinsq2theta13_step);
+  int mixing13_nbins = 1 + (int) ((mixing13_max - mixing13_min) / mixing13_step);
   int deltacp_nbins       = 1 + (int) ((deltacp_max       - deltacp_min      ) / deltacp_step      );
   // param space
   TH2D * osc_param_space = new TH2D("nue_osc_param_space", "",
-       sinsq2theta13_nbins, 
-       sinsq2theta13_min - 0.5*sinsq2theta13_step, 
-       sinsq2theta13_max + 0.5*sinsq2theta13_step,
+       mixing13_nbins, 
+       mixing13_min - 0.5*mixing13_step, 
+       mixing13_max + 0.5*mixing13_step,
        deltacp_nbins, 
        deltacp_min - 0.5*deltacp_step, 
        deltacp_max + 0.5*deltacp_step);
@@ -70,14 +70,14 @@ void feldman_cousins_fitting_job
   cout << "   - Fit Parameter List: " << fit_param_list << endl;
   cout << "   - Fitter option: " << fit_option << endl;
   cout << "- Oscillation parameter space binning" << endl;
-  cout << "   - sinsq2theta13 : " << osc_param_space->GetXaxis()->GetNbins() << " bins in (" 
+  cout << "   - mixing13 : " << osc_param_space->GetXaxis()->GetNbins() << " bins in (" 
        << osc_param_space->GetXaxis()->GetXmin() << ", "
        << osc_param_space->GetXaxis()->GetXmax() << ")" << endl;
   cout << "   - deltacp       : " << osc_param_space->GetYaxis()->GetNbins() << " bins in (" 
        << osc_param_space->GetYaxis()->GetXmin() << ", "
        << osc_param_space->GetYaxis()->GetXmax() << ") eV^2/c^4" << endl;
   cout << "- Input bin range " << endl;
-  cout << "   - sinsq2theta13 : [" << min_sinsq2theta13_bin << ", " << max_sinsq2theta13_bin << "]" << endl;
+  cout << "   - mixing13 : [" << min_mixing13_bin << ", " << max_mixing13_bin << "]" << endl;
   cout << "   - deltacp       : [" << min_deltacp_bin       << ", " << max_deltacp_bin       << "]" << endl;
 
   // get superk spectrum PDF & configure
@@ -88,7 +88,7 @@ void feldman_cousins_fitting_job
 
   // ntuple to store results
   TNtupleD * fcnt = new TNtupleD("fcnt","", 
-     "iexp:irun:input_sinsq2theta13_bin:input_deltacp_bin:input_sinsq2theta13:input_deltacp:chisq_for_input_params:sinsq2theta13:deltacp:chisq");
+     "iexp:irun:input_mixing13_bin:input_deltacp_bin:input_mixing13:input_deltacp:chisq_for_input_params:mixing13:deltacp:chisq");
   
   for(int iexperiment = 0; iexperiment < nexperiments; iexperiment++) {
      cout << "\n\n** Pseudo-experiment = " << iexperiment << endl;
@@ -104,49 +104,49 @@ void feldman_cousins_fitting_job
      }
 
      //     
-     // get deltacp and sinsq2theta13 at the centre of a bin randomly selected within the input range
+     // get deltacp and mixing13 at the centre of a bin randomly selected within the input range
      //     
 
-     int input_sinsq2theta13_bin = min_sinsq2theta13_bin + rand.Integer(1 + max_sinsq2theta13_bin - min_sinsq2theta13_bin);
+     int input_mixing13_bin = min_mixing13_bin + rand.Integer(1 + max_mixing13_bin - min_mixing13_bin);
      int input_deltacp_bin       = min_deltacp_bin       + rand.Integer(1 + max_deltacp_bin       - min_deltacp_bin      );
-     input_sinsq2theta13_bin = TMath::Max(1,                   input_sinsq2theta13_bin);
-     input_sinsq2theta13_bin = TMath::Min(sinsq2theta13_nbins, input_sinsq2theta13_bin);
+     input_mixing13_bin = TMath::Max(1,                   input_mixing13_bin);
+     input_mixing13_bin = TMath::Min(mixing13_nbins, input_mixing13_bin);
      input_deltacp_bin       = TMath::Max(1,                   input_deltacp_bin      );
      input_deltacp_bin       = TMath::Min(deltacp_nbins,       input_deltacp_bin      );
 
-     double input_sinsq2theta13 = osc_param_space->GetXaxis()->GetBinCenter(input_sinsq2theta13_bin);
+     double input_mixing13 = osc_param_space->GetXaxis()->GetBinCenter(input_mixing13_bin);
      double input_deltacp       = osc_param_space->GetYaxis()->GetBinCenter(input_deltacp_bin      );
-     input_sinsq2theta13 = TMath::Max(0.,input_sinsq2theta13); // protection from rnd-err
-     input_sinsq2theta13 = TMath::Min(1.,input_sinsq2theta13); // protection from rnd-err
+     input_mixing13 = TMath::Max(0.,input_mixing13); // protection from rnd-err
+     input_mixing13 = TMath::Min(1.,input_mixing13); // protection from rnd-err
      input_deltacp       = TMath::Max(-1*conv::kpi,input_deltacp); // protection from rnd-err
      input_deltacp       = TMath::Min(   conv::kpi,input_deltacp); // protection from rnd-err
 
      cout << "- Toy-MC > deltacp_{true} = " 
-          << input_deltacp << ", sinsq2theta13_{true} = " << input_sinsq2theta13 << endl;
+          << input_deltacp << ", mixing13_{true} = " << input_mixing13 << endl;
 
-     fparm->Update(t2kana::conv::kPhypSinsq2Theta13, input_sinsq2theta13);
+     fparm->Update(t2kana::conv::kPhypMixing13, input_mixing13);
      fparm->Update(t2kana::conv::kPhypDeltaCP,       input_deltacp);
 
      //
-     // if requested, randomize sinsq2theta12,sinsq2theta23,|dm23sq| and dm12sq
+     // if requested, randomize mixing12,mixing23,|dm23sq| and dm12sq
      // (nue appearance analysis, these parameters are either marginalised or fixed)
      //
 
      if(tweak_oth_osc_params) 
      {
-         double input_sinsq2theta12 = util::RandomizeSinsq2Theta12(); 
-         double input_sinsq2theta23 = util::RandomizeSinsq2Theta23(); 
+         double input_mixing12 = util::Randomizemixing12(); 
+         double input_mixing23 = util::Randomizemixing23(); 
          double input_dm23sq        = util::RandomizeDm23sq();
          double input_dm12sq        = util::RandomizeDm12sq(); 
 
          cout << "- Toy-MC > Randomized oscillation params for current toy-MC: " 
-              << "Dm12sq_{true} = "   << input_dm12sq  << " eV^2, sinsq2theta12_{true} = " << input_sinsq2theta12 
-              << ", Dm23sq_{true} = " << input_dm23sq  << " eV^2, sinsq2theta23_{true} = " << input_sinsq2theta23 
+              << "Dm12sq_{true} = "   << input_dm12sq  << " eV^2, mixing12_{true} = " << input_mixing12 
+              << ", Dm23sq_{true} = " << input_dm23sq  << " eV^2, mixing23_{true} = " << input_mixing23 
               << endl;
 
-         fparm->Update(t2kana::conv::kPhypSinsq2Theta23, input_sinsq2theta23);
+         fparm->Update(t2kana::conv::kPhypMixing23, input_mixing23);
          fparm->Update(t2kana::conv::kPhypDm23sq,        input_dm23sq);
-         fparm->Update(t2kana::conv::kPhypSinsq2Theta12, input_sinsq2theta12);
+         fparm->Update(t2kana::conv::kPhypMixing12, input_mixing12);
          fparm->Update(t2kana::conv::kPhypDm12sq,        input_dm12sq);
      }
 
@@ -175,11 +175,11 @@ void feldman_cousins_fitting_job
      // create fit inputs
      FitInputs * fit_inputs = new FitInputs(skobs,skexp,fparm);
 
-     // get chisq for true (input) oscillation point (deltacp, sinsq2theta13) 
+     // get chisq for true (input) oscillation point (deltacp, mixing13) 
      // (marginalised / other oscillation params are treared as systematics and in the chisq_true calculation
      // they are set to nominal (constant) values used in the fit).
      fparm->ResetCurrToInitValues();
-     fparm->Update(t2kana::conv::kPhypSinsq2Theta13, input_sinsq2theta13);
+     fparm->Update(t2kana::conv::kPhypMixing13, input_mixing13);
      fparm->Update(t2kana::conv::kPhypDeltaCP,       input_deltacp);
      double chisq_for_input_params = fit_inputs->Chisquare();
      cout << "- Chisq (input/true oscillation params) = " << chisq_for_input_params << endl;
@@ -190,12 +190,12 @@ void feldman_cousins_fitting_job
      fitter.DoTheFit();
 
      // get best-fit params
-     double bestfit_sinsq2theta13 = fparm->BestFitValue(conv::kPhypSinsq2Theta13);
+     double bestfit_mixing13 = fparm->BestFitValue(conv::kPhypMixing13);
      double bestfit_deltacp       = fparm->BestFitValue(conv::kPhypDeltaCP);
      double bestfit_chisq         = fit_inputs->BestFitChisquare();
 
      cout << "- Chisq (Best-fit params:" 
-          << " sinsq2theta13 = " << bestfit_sinsq2theta13
+          << " mixing13 = " << bestfit_mixing13
           << ", deltacp = " << bestfit_deltacp << ") = " << bestfit_chisq << endl;
 
      cout << "- DeltaChisq = " << chisq_for_input_params - bestfit_chisq << endl;
@@ -203,12 +203,12 @@ void feldman_cousins_fitting_job
      // store results for this pseudo-experiment
      fcnt->Fill(iexperiment, 
                 irun, 
-                input_sinsq2theta13_bin,
+                input_mixing13_bin,
                 input_deltacp_bin,
-                input_sinsq2theta13,
+                input_mixing13,
                 input_deltacp,
                 chisq_for_input_params,
-                bestfit_sinsq2theta13, 
+                bestfit_mixing13, 
                 bestfit_deltacp, 
                 bestfit_chisq);
 

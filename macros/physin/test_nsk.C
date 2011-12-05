@@ -12,9 +12,9 @@
 
 void test_nsk
 (
-  double sinsq2theta13 = 0,
-  double sinsq2theta23 = 1,
-  double sinsq2theta12 = 0.8704,
+  double mixing13 = 0,
+  double mixing23 = 1,
+  double mixing12 = 0.8704,
   double dm23sq = 0.0024,
   double dm12sq = 0.000076,
   double deltacp = 0,
@@ -39,9 +39,9 @@ void test_nsk
   PhysHypothesis ph(t2kana::conv::kHypOsc3F);
 
   // generate predictions
-  ph.SetCurrValue(t2kana::conv::kPhypSinsq2Theta23, sinsq2theta23);
-  ph.SetCurrValue(t2kana::conv::kPhypSinsq2Theta13, sinsq2theta13);
-  ph.SetCurrValue(t2kana::conv::kPhypSinsq2Theta12, sinsq2theta12);
+  ph.SetCurrValue(t2kana::conv::kPhypMixing23, mixing23);
+  ph.SetCurrValue(t2kana::conv::kPhypMixing13, mixing13);
+  ph.SetCurrValue(t2kana::conv::kPhypMixing12, mixing12);
   ph.SetCurrValue(t2kana::conv::kPhypDm23sq,        dm23sq);
   ph.SetCurrValue(t2kana::conv::kPhypDm12sq,        dm12sq);
   ph.SetCurrValue(t2kana::conv::kPhypDeltaCP,       deltacp);

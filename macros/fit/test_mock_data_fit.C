@@ -8,9 +8,9 @@
 
 void test_mock_data_fit
 (
-   double       input_sinsq2theta12 = 0.86,                         /* */
-   double       input_sinsq2theta13 = 0.10,                         /* */
-   double       input_sinsq2theta23 = 1.00,                         /* */
+   double       input_mixing12      = 0.86,                         /* */
+   double       input_mixing13      = 0.10,                         /* */
+   double       input_mixing23      = 1.00,                         /* */
    double       input_deltacp       = 0.00,                         /* */
    double       input_dm12sq        = 7.58E-5,                      /* */
    double       input_dm23sq        = 2.32E-3,                      /* */
@@ -34,12 +34,12 @@ void test_mock_data_fit
   cout << "   - Systematic variations: "    << ((include_systematics) ? "YES " : "NO") << endl;
   cout << "   - Statistical fluctuations: " << ((fluctuate_stat) ? "YES " : "NO") << endl;
   cout << "   - True oscillation parameters: " << endl;
-  cout << "       > sinsq2theta12 = " << input_sinsq2theta12 << endl;
-  cout << "       > sinsq2theta13 = " << input_sinsq2theta13 << endl;
-  cout << "       > sinsq2theta23 = " << input_sinsq2theta23 << endl;
-  cout << "       > delta_cp      = " << input_deltacp << endl;
-  cout << "       > Dm12sq        = " << input_dm12sq << " eV^2/c^4" << endl;
-  cout << "       > |Dm23sq|      = " << input_dm23sq << " eV^2/c^4" << endl;
+  cout << "       > mixing12 = " << input_mixing12 << endl;
+  cout << "       > mixing13 = " << input_mixing13 << endl;
+  cout << "       > mixing23 = " << input_mixing23 << endl;
+  cout << "       > delta_cp = " << input_deltacp << endl;
+  cout << "       > Dm12sq   = " << input_dm12sq << " eV^2/c^4" << endl;
+  cout << "       > |Dm23sq| = " << input_dm23sq << " eV^2/c^4" << endl;
   cout << "- Fit" << endl;
   cout << "   - Fit parameter list: " << fit_param_list << endl;
   cout << "   - Fitter option: " << fit_option << endl;
@@ -51,17 +51,17 @@ void test_mock_data_fit
   conv::PhysHypothesis_t hyp = fparm->PhysicsHypothesis();
   cout << "- The following physics hypothesis is used in the fit: " << util::AsString(hyp) << endl;
   if(hyp == conv::kHypOsc3F) {
-    fparm->Update(t2kana::conv::kPhypSinsq2Theta12, input_sinsq2theta12);
-    fparm->Update(t2kana::conv::kPhypSinsq2Theta13, input_sinsq2theta13);
-    fparm->Update(t2kana::conv::kPhypSinsq2Theta23, input_sinsq2theta23);
-    fparm->Update(t2kana::conv::kPhypDeltaCP,       input_deltacp);
-    fparm->Update(t2kana::conv::kPhypDm12sq,        input_dm12sq);
-    fparm->Update(t2kana::conv::kPhypDm23sq,        input_dm23sq);
+    fparm->Update(t2kana::conv::kPhypMixing12, input_mixing12);
+    fparm->Update(t2kana::conv::kPhypMixing13, input_mixing13);
+    fparm->Update(t2kana::conv::kPhypMixing23, input_mixing23);
+    fparm->Update(t2kana::conv::kPhypDeltaCP,  input_deltacp);
+    fparm->Update(t2kana::conv::kPhypDm12sq,   input_dm12sq);
+    fparm->Update(t2kana::conv::kPhypDm23sq,   input_dm23sq);
   }
   else 
   if(hyp == conv::kHypNuMuDisapp2F) {
-    fparm->Update(t2kana::conv::kPhypSinsq2Theta23, input_sinsq2theta23);
-    fparm->Update(t2kana::conv::kPhypDm23sq,        input_dm23sq);
+    fparm->Update(t2kana::conv::kPhypMixing23, input_mixing23);
+    fparm->Update(t2kana::conv::kPhypDm23sq,   input_dm23sq);
   } 
   else {
     return;

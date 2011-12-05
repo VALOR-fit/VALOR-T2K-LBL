@@ -25,27 +25,27 @@ void merge_feldman_cousins_deltachisqcrit_surfaces(
   // Define grid
   //
           
-  // dm23sq, sinsq2theta23 range and step
-  double sinsq2theta23_min   = 0.0;
-  double sinsq2theta23_max   = 1.0;
-  double sinsq2theta23_step  = 0.01;
+  // dm23sq, mixing23 range and step
+  double mixing23_min   = 0.0;
+  double mixing23_max   = 1.0;
+  double mixing23_step  = 0.01;
   double dm23sq_min          = 1E-3;
   double dm23sq_max          = 6E-3;
   double dm23sq_step         = 1E-4;
   // make sure that min and max are at the bin centre and not at the low/high edge of the first/last bin
-  int sinsq2theta23_nbins = 1 + (int) ((sinsq2theta23_max - sinsq2theta23_min) / sinsq2theta23_step);
+  int mixing23_nbins = 1 + (int) ((mixing23_max - mixing23_min) / mixing23_step);
   int dm23sq_nbins        = 1 + (int) ((dm23sq_max        - dm23sq_min       ) / dm23sq_step       );
   
-  cout << "sinsq2theta23_nbins = " << sinsq2theta23_nbins << ", dm23sq_nbins = " << dm23sq_nbins<<endl;
+  cout << "mixing23_nbins = " << mixing23_nbins << ", dm23sq_nbins = " << dm23sq_nbins<<endl;
   
   TH2D * hDeltaChi2Surface[nConfidenceLevel];
   for(int icl = 0; icl < nConfidenceLevel; icl++) { 
     const char * histname = Form("hDeltaChi2Surface%02d", confidenceLevel[icl]);
     hDeltaChi2Surface[icl] =
        new TH2D(histname, "",
-          sinsq2theta23_nbins,
-          sinsq2theta23_min - 0.5*sinsq2theta23_step,
-          sinsq2theta23_max + 0.5*sinsq2theta23_step,
+          mixing23_nbins,
+          mixing23_min - 0.5*mixing23_step,
+          mixing23_max + 0.5*mixing23_step,
           dm23sq_nbins,
           dm23sq_min - 0.5*dm23sq_step,
           dm23sq_max + 0.5*dm23sq_step);
@@ -72,17 +72,17 @@ void merge_feldman_cousins_deltachisqcrit_surfaces(
   //
   // Add histograms (each covers part of the sinsq2theta, dmsq space)
   //
-  for(int isinsq2theta23_bin = 1; isinsq2theta23_bin <= sinsq2theta23_nbins; isinsq2theta23_bin++) {
+  for(int imixing23_bin = 1; imixing23_bin <= mixing23_nbins; imixing23_bin++) {
     for(int idm23sq_bin = 1; idm23sq_bin <= dm23sq_nbins; idm23sq_bin++) {
       for(int icl = 0; icl < nConfidenceLevel; icl++) {
           double dchisq = 0;
           for(int irun = 0; irun < nruns; irun++) {
-             dchisq += hDeltaChi2SurfacePartial[irun][icl]->GetBinContent(isinsq2theta23_bin,idm23sq_bin);
+             dchisq += hDeltaChi2SurfacePartial[irun][icl]->GetBinContent(imixing23_bin,idm23sq_bin);
           }//irun
-          hDeltaChi2Surface[icl]->SetBinContent(isinsq2theta23_bin,idm23sq_bin,dchisq);
+          hDeltaChi2Surface[icl]->SetBinContent(imixing23_bin,idm23sq_bin,dchisq);
       }//icl
     }//idm23sq_bin
-  }//isinsq2theta23_bin
+  }//imixing23_bin
 
   //
   // Save combined histograms

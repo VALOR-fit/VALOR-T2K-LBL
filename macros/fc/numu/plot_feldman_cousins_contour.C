@@ -68,12 +68,12 @@ void plot_feldman_cousins_contour(
   gROOT->Reset();
 
   //
-  // Define dm23sq, sinsq2theta23 range and step  
+  // Define dm23sq, mixing23 range and step  
   //
-  double sinsq2theta23_min   = 0.75;
-//double sinsq2theta23_min   = 0.0;
-  double sinsq2theta23_max   = 1.0;
-  double sinsq2theta23_step  = 0.01;
+  double mixing23_min   = 0.75;
+//double mixing23_min   = 0.0;
+  double mixing23_max   = 1.0;
+  double mixing23_step  = 0.01;
   double dm23sq_min          = 1.5E-3;
 //double dm23sq_min          = 1.0E-3;
   double dm23sq_max          = 4.0E-3;
@@ -84,11 +84,11 @@ void plot_feldman_cousins_contour(
   // Define grid so that min and max are at the bin centre 
   // and not at the low/high edge of the first/last bin                                                                                                                               
   //
-  const int sinsq2theta23_nbins = 1 + (int) ((sinsq2theta23_max - sinsq2theta23_min) / sinsq2theta23_step);
+  const int mixing23_nbins = 1 + (int) ((mixing23_max - mixing23_min) / mixing23_step);
   const int dm23sq_nbins        = 1 + (int) ((dm23sq_max        - dm23sq_min       ) / dm23sq_step       );
   
-  double sinsq2theta23_grid_min = sinsq2theta23_min - 0.5*sinsq2theta23_step;
-  double sinsq2theta23_grid_max = sinsq2theta23_max + 0.5*sinsq2theta23_step;
+  double mixing23_grid_min = mixing23_min - 0.5*mixing23_step;
+  double mixing23_grid_max = mixing23_max + 0.5*mixing23_step;
   double dm23sq_grid_min        = dm23sq_min        - 0.5*dm23sq_step;
   double dm23sq_grid_max        = dm23sq_max        + 0.5*dm23sq_step;
 
@@ -97,31 +97,31 @@ void plot_feldman_cousins_contour(
   //
 
   TH2D *hCL68StatOnlyNonFC = new TH2D("hCL68StatOnlyNonFC", "",
-            sinsq2theta23_nbins, sinsq2theta23_grid_min, sinsq2theta23_grid_max, dm23sq_nbins, dm23sq_grid_min, dm23sq_grid_max);
+            mixing23_nbins, mixing23_grid_min, mixing23_grid_max, dm23sq_nbins, dm23sq_grid_min, dm23sq_grid_max);
   TH2D *hCL90StatOnlyNonFC = new TH2D("hCL90StatOnlyNonFC", "",
-            sinsq2theta23_nbins, sinsq2theta23_grid_min, sinsq2theta23_grid_max, dm23sq_nbins, dm23sq_grid_min, dm23sq_grid_max);
+            mixing23_nbins, mixing23_grid_min, mixing23_grid_max, dm23sq_nbins, dm23sq_grid_min, dm23sq_grid_max);
   TH2D *hCL95StatOnlyNonFC = new TH2D("hCL95StatOnlyNonFC", "",
-            sinsq2theta23_nbins, sinsq2theta23_grid_min, sinsq2theta23_grid_max, dm23sq_nbins, dm23sq_grid_min, dm23sq_grid_max);
+            mixing23_nbins, mixing23_grid_min, mixing23_grid_max, dm23sq_nbins, dm23sq_grid_min, dm23sq_grid_max);
   TH2D *hCL99StatOnlyNonFC = new TH2D("hCL99StatOnlyNonFC", "",
-            sinsq2theta23_nbins, sinsq2theta23_grid_min, sinsq2theta23_grid_max, dm23sq_nbins, dm23sq_grid_min, dm23sq_grid_max);
+            mixing23_nbins, mixing23_grid_min, mixing23_grid_max, dm23sq_nbins, dm23sq_grid_min, dm23sq_grid_max);
 
   TH2D *hCL68StatOnly = new TH2D("hCL68StatOnly", "",
-            sinsq2theta23_nbins, sinsq2theta23_grid_min, sinsq2theta23_grid_max, dm23sq_nbins, dm23sq_grid_min, dm23sq_grid_max);
+            mixing23_nbins, mixing23_grid_min, mixing23_grid_max, dm23sq_nbins, dm23sq_grid_min, dm23sq_grid_max);
   TH2D *hCL90StatOnly = new TH2D("hCL90StatOnly", "",
-            sinsq2theta23_nbins, sinsq2theta23_grid_min, sinsq2theta23_grid_max, dm23sq_nbins, dm23sq_grid_min, dm23sq_grid_max);
+            mixing23_nbins, mixing23_grid_min, mixing23_grid_max, dm23sq_nbins, dm23sq_grid_min, dm23sq_grid_max);
   TH2D *hCL95StatOnly = new TH2D("hCL95StatOnly", "",
-            sinsq2theta23_nbins, sinsq2theta23_grid_min, sinsq2theta23_grid_max, dm23sq_nbins, dm23sq_grid_min, dm23sq_grid_max);
+            mixing23_nbins, mixing23_grid_min, mixing23_grid_max, dm23sq_nbins, dm23sq_grid_min, dm23sq_grid_max);
   TH2D *hCL99StatOnly = new TH2D("hCL99StatOnly", "",
-            sinsq2theta23_nbins, sinsq2theta23_grid_min, sinsq2theta23_grid_max, dm23sq_nbins, dm23sq_grid_min, dm23sq_grid_max);
+            mixing23_nbins, mixing23_grid_min, mixing23_grid_max, dm23sq_nbins, dm23sq_grid_min, dm23sq_grid_max);
 
   TH2D *hCL68StatSyst = new TH2D("hCL68StatSyst", "",
-            sinsq2theta23_nbins, sinsq2theta23_grid_min, sinsq2theta23_grid_max, dm23sq_nbins, dm23sq_grid_min, dm23sq_grid_max);
+            mixing23_nbins, mixing23_grid_min, mixing23_grid_max, dm23sq_nbins, dm23sq_grid_min, dm23sq_grid_max);
   TH2D *hCL90StatSyst = new TH2D("hCL90StatSyst", "",
-            sinsq2theta23_nbins, sinsq2theta23_grid_min, sinsq2theta23_grid_max, dm23sq_nbins, dm23sq_grid_min, dm23sq_grid_max);
+            mixing23_nbins, mixing23_grid_min, mixing23_grid_max, dm23sq_nbins, dm23sq_grid_min, dm23sq_grid_max);
   TH2D *hCL95StatSyst = new TH2D("hCL95StatSyst", "",
-            sinsq2theta23_nbins, sinsq2theta23_grid_min, sinsq2theta23_grid_max, dm23sq_nbins, dm23sq_grid_min, dm23sq_grid_max);
+            mixing23_nbins, mixing23_grid_min, mixing23_grid_max, dm23sq_nbins, dm23sq_grid_min, dm23sq_grid_max);
   TH2D *hCL99StatSyst = new TH2D("hCL99StatSyst", "",
-            sinsq2theta23_nbins, sinsq2theta23_grid_min, sinsq2theta23_grid_max, dm23sq_nbins, dm23sq_grid_min, dm23sq_grid_max);
+            mixing23_nbins, mixing23_grid_min, mixing23_grid_max, dm23sq_nbins, dm23sq_grid_min, dm23sq_grid_max);
 
   //
   //
@@ -162,7 +162,7 @@ void plot_feldman_cousins_contour(
   TH2D * fChisqSurface = new TH2D(*h2);
 
   double chisq_min = 999999.0;
-  double sinsq2theta23_bestfit = -1;
+  double mixing23_bestfit = -1;
   double dm23sq_bestfit        = -1;
 
   for(int i = 1; i <= fChisqSurface->GetNbinsX(); i++) {
@@ -170,7 +170,7 @@ void plot_feldman_cousins_contour(
       double chisq = fChisqSurface->GetBinContent(i,j);
       if(chisq < chisq_min) {
          chisq_min = chisq;
-         sinsq2theta23_bestfit = fChisqSurface->GetXaxis()->GetBinCenter(i);
+         mixing23_bestfit = fChisqSurface->GetXaxis()->GetBinCenter(i);
 	 dm23sq_bestfit        = fChisqSurface->GetYaxis()->GetBinCenter(j);
       }
     }//j loop
@@ -183,51 +183,51 @@ void plot_feldman_cousins_contour(
   }//i loop
   cout << "chi\2_{min} = " << chisq_min << endl;
   cout << "dm23sq_{bestfit} = " << dm23sq_bestfit << endl;
-  cout << "sinsq2theta_{bestfit} = " << sinsq2theta23_bestfit << endl;
+  cout << "sinsq2theta_{bestfit} = " << mixing23_bestfit << endl;
 
 //TCanvas * c00 = new TCanvas("c00","",10,10,600,600);
 //fChisqSurface->Draw("colz");
 
-  for(int sinsq2theta23_bin = 1; sinsq2theta23_bin <= sinsq2theta23_nbins; sinsq2theta23_bin++) {
+  for(int mixing23_bin = 1; mixing23_bin <= mixing23_nbins; mixing23_bin++) {
       for(int dm23sq_bin = 1; dm23sq_bin <= dm23sq_nbins; dm23sq_bin++) {
 
-        double sinsq2theta23 = hCL68StatOnly->GetXaxis()->GetBinCenter(sinsq2theta23_bin);
+        double mixing23 = hCL68StatOnly->GetXaxis()->GetBinCenter(mixing23_bin);
         double dm23sq        = hCL68StatOnly->GetYaxis()->GetBinCenter(dm23sq_bin);
 
-        double dchisq_data = fChisqSurface->GetBinContent(  fChisqSurface->GetXaxis()->FindBin(sinsq2theta23), fChisqSurface->GetYaxis()->FindBin(dm23sq) );
+        double dchisq_data = fChisqSurface->GetBinContent(  fChisqSurface->GetXaxis()->FindBin(mixing23), fChisqSurface->GetYaxis()->FindBin(dm23sq) );
 
         double dchisq68_crit_statonly_nonfc = 2.30;
         double dchisq90_crit_statonly_nonfc = 4.61;
         double dchisq95_crit_statonly_nonfc = 5.99;
         double dchisq99_crit_statonly_nonfc = 9.21;
-	hCL68StatOnlyNonFC->SetBinContent(sinsq2theta23_bin, dm23sq_bin, dchisq_data - dchisq68_crit_statonly_nonfc);
-	hCL90StatOnlyNonFC->SetBinContent(sinsq2theta23_bin, dm23sq_bin, dchisq_data - dchisq90_crit_statonly_nonfc);
-	hCL95StatOnlyNonFC->SetBinContent(sinsq2theta23_bin, dm23sq_bin, dchisq_data - dchisq95_crit_statonly_nonfc);
-	hCL99StatOnlyNonFC->SetBinContent(sinsq2theta23_bin, dm23sq_bin, dchisq_data - dchisq99_crit_statonly_nonfc);
+	hCL68StatOnlyNonFC->SetBinContent(mixing23_bin, dm23sq_bin, dchisq_data - dchisq68_crit_statonly_nonfc);
+	hCL90StatOnlyNonFC->SetBinContent(mixing23_bin, dm23sq_bin, dchisq_data - dchisq90_crit_statonly_nonfc);
+	hCL95StatOnlyNonFC->SetBinContent(mixing23_bin, dm23sq_bin, dchisq_data - dchisq95_crit_statonly_nonfc);
+	hCL99StatOnlyNonFC->SetBinContent(mixing23_bin, dm23sq_bin, dchisq_data - dchisq99_crit_statonly_nonfc);
 
-        double dchisq68_crit_statonly = hDeltaChisqCrit68StatOnly->GetBinContent( hDeltaChisqCrit68StatOnly->GetXaxis()->FindBin(sinsq2theta23), hDeltaChisqCrit68StatOnly->GetYaxis()->FindBin(dm23sq) );
-        double dchisq90_crit_statonly = hDeltaChisqCrit90StatOnly->GetBinContent( hDeltaChisqCrit90StatOnly->GetXaxis()->FindBin(sinsq2theta23), hDeltaChisqCrit90StatOnly->GetYaxis()->FindBin(dm23sq) ); 
-        double dchisq95_crit_statonly = hDeltaChisqCrit95StatOnly->GetBinContent( hDeltaChisqCrit95StatOnly->GetXaxis()->FindBin(sinsq2theta23), hDeltaChisqCrit95StatOnly->GetYaxis()->FindBin(dm23sq) );
-        double dchisq99_crit_statonly = hDeltaChisqCrit99StatOnly->GetBinContent( hDeltaChisqCrit99StatOnly->GetXaxis()->FindBin(sinsq2theta23), hDeltaChisqCrit99StatOnly->GetYaxis()->FindBin(dm23sq) );
-	hCL68StatOnly->SetBinContent(sinsq2theta23_bin, dm23sq_bin, dchisq_data - dchisq68_crit_statonly);
-	hCL90StatOnly->SetBinContent(sinsq2theta23_bin, dm23sq_bin, dchisq_data - dchisq90_crit_statonly);
-	hCL95StatOnly->SetBinContent(sinsq2theta23_bin, dm23sq_bin, dchisq_data - dchisq95_crit_statonly);
-	hCL99StatOnly->SetBinContent(sinsq2theta23_bin, dm23sq_bin, dchisq_data - dchisq99_crit_statonly);
+        double dchisq68_crit_statonly = hDeltaChisqCrit68StatOnly->GetBinContent( hDeltaChisqCrit68StatOnly->GetXaxis()->FindBin(mixing23), hDeltaChisqCrit68StatOnly->GetYaxis()->FindBin(dm23sq) );
+        double dchisq90_crit_statonly = hDeltaChisqCrit90StatOnly->GetBinContent( hDeltaChisqCrit90StatOnly->GetXaxis()->FindBin(mixing23), hDeltaChisqCrit90StatOnly->GetYaxis()->FindBin(dm23sq) ); 
+        double dchisq95_crit_statonly = hDeltaChisqCrit95StatOnly->GetBinContent( hDeltaChisqCrit95StatOnly->GetXaxis()->FindBin(mixing23), hDeltaChisqCrit95StatOnly->GetYaxis()->FindBin(dm23sq) );
+        double dchisq99_crit_statonly = hDeltaChisqCrit99StatOnly->GetBinContent( hDeltaChisqCrit99StatOnly->GetXaxis()->FindBin(mixing23), hDeltaChisqCrit99StatOnly->GetYaxis()->FindBin(dm23sq) );
+	hCL68StatOnly->SetBinContent(mixing23_bin, dm23sq_bin, dchisq_data - dchisq68_crit_statonly);
+	hCL90StatOnly->SetBinContent(mixing23_bin, dm23sq_bin, dchisq_data - dchisq90_crit_statonly);
+	hCL95StatOnly->SetBinContent(mixing23_bin, dm23sq_bin, dchisq_data - dchisq95_crit_statonly);
+	hCL99StatOnly->SetBinContent(mixing23_bin, dm23sq_bin, dchisq_data - dchisq99_crit_statonly);
 
-        double dchisq68_crit_statsyst = hDeltaChisqCrit68StatSyst->GetBinContent( hDeltaChisqCrit68StatSyst->GetXaxis()->FindBin(sinsq2theta23), hDeltaChisqCrit68StatSyst->GetYaxis()->FindBin(dm23sq) );
-        double dchisq90_crit_statsyst = hDeltaChisqCrit90StatSyst->GetBinContent( hDeltaChisqCrit90StatSyst->GetXaxis()->FindBin(sinsq2theta23), hDeltaChisqCrit90StatSyst->GetYaxis()->FindBin(dm23sq) ); 
-        double dchisq95_crit_statsyst = hDeltaChisqCrit95StatSyst->GetBinContent( hDeltaChisqCrit95StatSyst->GetXaxis()->FindBin(sinsq2theta23), hDeltaChisqCrit95StatSyst->GetYaxis()->FindBin(dm23sq) );
-        double dchisq99_crit_statsyst = hDeltaChisqCrit99StatSyst->GetBinContent( hDeltaChisqCrit99StatSyst->GetXaxis()->FindBin(sinsq2theta23), hDeltaChisqCrit99StatSyst->GetYaxis()->FindBin(dm23sq) );
-	hCL68StatSyst->SetBinContent(sinsq2theta23_bin, dm23sq_bin, dchisq_data - dchisq68_crit_statsyst);
-	hCL90StatSyst->SetBinContent(sinsq2theta23_bin, dm23sq_bin, dchisq_data - dchisq90_crit_statsyst);
-	hCL95StatSyst->SetBinContent(sinsq2theta23_bin, dm23sq_bin, dchisq_data - dchisq95_crit_statsyst);
-	hCL99StatSyst->SetBinContent(sinsq2theta23_bin, dm23sq_bin, dchisq_data - dchisq99_crit_statsyst);
+        double dchisq68_crit_statsyst = hDeltaChisqCrit68StatSyst->GetBinContent( hDeltaChisqCrit68StatSyst->GetXaxis()->FindBin(mixing23), hDeltaChisqCrit68StatSyst->GetYaxis()->FindBin(dm23sq) );
+        double dchisq90_crit_statsyst = hDeltaChisqCrit90StatSyst->GetBinContent( hDeltaChisqCrit90StatSyst->GetXaxis()->FindBin(mixing23), hDeltaChisqCrit90StatSyst->GetYaxis()->FindBin(dm23sq) ); 
+        double dchisq95_crit_statsyst = hDeltaChisqCrit95StatSyst->GetBinContent( hDeltaChisqCrit95StatSyst->GetXaxis()->FindBin(mixing23), hDeltaChisqCrit95StatSyst->GetYaxis()->FindBin(dm23sq) );
+        double dchisq99_crit_statsyst = hDeltaChisqCrit99StatSyst->GetBinContent( hDeltaChisqCrit99StatSyst->GetXaxis()->FindBin(mixing23), hDeltaChisqCrit99StatSyst->GetYaxis()->FindBin(dm23sq) );
+	hCL68StatSyst->SetBinContent(mixing23_bin, dm23sq_bin, dchisq_data - dchisq68_crit_statsyst);
+	hCL90StatSyst->SetBinContent(mixing23_bin, dm23sq_bin, dchisq_data - dchisq90_crit_statsyst);
+	hCL95StatSyst->SetBinContent(mixing23_bin, dm23sq_bin, dchisq_data - dchisq95_crit_statsyst);
+	hCL99StatSyst->SetBinContent(mixing23_bin, dm23sq_bin, dchisq_data - dchisq99_crit_statsyst);
 
       //cout << "Critical DeltaChiSq (68% CL) : (stat only) = " << dchisq68_crit_statonly << ", (stat+syst) = " << dchisq68_crit_statsyst << endl;
       //cout << "Critical DeltaChiSq (90% CL) : (stat only) = " << dchisq90_crit_statonly << ", (stat+syst) = " << dchisq90_crit_statsyst << endl;
 
       }//dm23sq_bin
-  }//sinsq2theta23_bin
+  }//mixing23_bin
 
   //
   // Plot contours
@@ -241,7 +241,7 @@ void plot_feldman_cousins_contour(
   gPad->SetLeftMargin(0.15);
   gPad->SetBottomMargin(0.15);
 
-  TH2D * hframe = (TH2D*) gPad->DrawFrame(sinsq2theta23_min, dm23sq_min, sinsq2theta23_max, dm23sq_max);
+  TH2D * hframe = (TH2D*) gPad->DrawFrame(mixing23_min, dm23sq_min, mixing23_max, dm23sq_max);
   hframe->GetXaxis()->SetTitle("sin^{2}2#theta_{23}");
   hframe->GetYaxis()->SetTitle("|#Deltam_{23}^{2}| (eV^{2}/c^{4})");
 //hframe->GetXaxis()->SetLimits(0.,1.002);
@@ -286,7 +286,7 @@ void plot_feldman_cousins_contour(
     if (show_constant_dchisq_contours    ) { hCL68StatOnlyNonFC -> Draw("cont3same");  }
   }
 
-  TMarker *bestFit = new TMarker(sinsq2theta23_bestfit, dm23sq_bestfit, 29);
+  TMarker *bestFit = new TMarker(mixing23_bestfit, dm23sq_bestfit, 29);
   bestFit->SetMarkerSize(1.8);
   bestFit->SetMarkerColor(1);
   bestFit->Draw("same");
@@ -386,13 +386,13 @@ void plot_feldman_cousins_contour(
   // plot systematics at best-fit point?
   //
   if(sinsq2theta_frac_syst_err_bestfit > 0 && dmsq_frac_syst_err_bestfit > 0) {
-    TLine * line1 = new TLine(sinsq2theta23_bestfit-sinsq2theta23_bestfit*sinsq2theta_frac_syst_err_bestfit,
+    TLine * line1 = new TLine(mixing23_bestfit-mixing23_bestfit*sinsq2theta_frac_syst_err_bestfit,
                               dm23sq_bestfit,
-                              sinsq2theta23_bestfit+sinsq2theta23_bestfit*sinsq2theta_frac_syst_err_bestfit,
+                              mixing23_bestfit+mixing23_bestfit*sinsq2theta_frac_syst_err_bestfit,
                               dm23sq_bestfit);
-    TLine * line2 = new TLine(sinsq2theta23_bestfit,
+    TLine * line2 = new TLine(mixing23_bestfit,
                               dm23sq_bestfit-dm23sq_bestfit*dmsq_frac_syst_err_bestfit,
-                              sinsq2theta23_bestfit,
+                              mixing23_bestfit,
                               dm23sq_bestfit+dm23sq_bestfit*dmsq_frac_syst_err_bestfit);
     line1->Draw("same");
     line2->Draw("same");

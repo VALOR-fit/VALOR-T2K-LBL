@@ -12,9 +12,9 @@ void test_nsk_twk_systematics
 (
   const string sample_str          = "1Rmu",
   const char * hyp                 = "3f_osc",
-  const double input_sinsq2theta23 = 1.00,
-  const double input_sinsq2theta13 = 0.1,
-  const double input_sinsq2theta12 = 0.8704,
+  const double input_mixing23 = 1.00,
+  const double input_mixing13 = 0.1,
+  const double input_mixing12 = 0.8704,
   const double input_dm23sq        = 2.4E-3,
   const double input_dm12sq        = 7.6E-5,
   const double input_deltacp       = 0,
@@ -135,11 +135,11 @@ void test_nsk_twk_systematics
 
   // phys hypothesis
   PhysHypothesis ph(hyp);
-  ph.SetCurrValue(t2kana::conv::kPhypSinsq2Theta23, input_sinsq2theta23);
+  ph.SetCurrValue(t2kana::conv::kPhypMixing23, input_mixing23);
   ph.SetCurrValue(t2kana::conv::kPhypDm23sq,        input_dm23sq);
   if(hyp == conv::kHypOsc3F) {
-    ph.SetCurrValue(t2kana::conv::kPhypSinsq2Theta13, input_sinsq2theta13);
-    ph.SetCurrValue(t2kana::conv::kPhypSinsq2Theta12, input_sinsq2theta12);
+    ph.SetCurrValue(t2kana::conv::kPhypMixing13, input_mixing13);
+    ph.SetCurrValue(t2kana::conv::kPhypMixing12, input_mixing12);
     ph.SetCurrValue(t2kana::conv::kPhypDm12sq,        input_dm12sq);
     ph.SetCurrValue(t2kana::conv::kPhypDeltaCP,       input_deltacp);
   }

@@ -26,7 +26,7 @@
 //   On the other hand the script runs much more slowly now. This should be OK now as this script is
 //   only run once at the end of the analysis.
 // @ 15/01/2011, Costas 
-//   Added input sinsq2theta23 bin range so that (if needed) task can be parallelized in a batch farm
+//   Added input mixing23 bin range so that (if needed) task can be parallelized in a batch farm
 //
 //-----------------------------------------------------------------------------------------------------
 //
@@ -57,35 +57,35 @@ void make_feldman_cousins_deltachisqcrit_surface(
   // Define grid
   //
 
-  // dm23sq, sinsq2theta23 range and step
-  double sinsq2theta23_min   = 0.0;
-  double sinsq2theta23_max   = 1.0;
-  double sinsq2theta23_step  = 0.01;
+  // dm23sq, mixing23 range and step
+  double mixing23_min   = 0.0;
+  double mixing23_max   = 1.0;
+  double mixing23_step  = 0.01;
   double dm23sq_min          = 1E-3;
   double dm23sq_max          = 6E-3;
   double dm23sq_step         = 1E-4;
   // make sure that min and max are at the bin centre and not at the low/high edge of the first/last bin
-  int sinsq2theta23_nbins = 1 + (int) ((sinsq2theta23_max - sinsq2theta23_min) / sinsq2theta23_step);
+  int mixing23_nbins = 1 + (int) ((mixing23_max - mixing23_min) / mixing23_step);
   int dm23sq_nbins        = 1 + (int) ((dm23sq_max        - dm23sq_min       ) / dm23sq_step       );
 
-  cout << "sinsq2theta23_nbins = " << sinsq2theta23_nbins << ", dm23sq_nbins = " << dm23sq_nbins<<endl;
+  cout << "mixing23_nbins = " << mixing23_nbins << ", dm23sq_nbins = " << dm23sq_nbins<<endl;
 
   TH2D * hDeltaChi2Surface[nConfidenceLevel];
   for(int i = 0; i < nConfidenceLevel; i++) {
     const char * histname = Form("hDeltaChi2Surface%02d", confidenceLevel[i]);
     hDeltaChi2Surface[i] =
        new TH2D(histname, "",
-          sinsq2theta23_nbins,
-          sinsq2theta23_min - 0.5*sinsq2theta23_step,
-          sinsq2theta23_max + 0.5*sinsq2theta23_step,
+          mixing23_nbins,
+          mixing23_min - 0.5*mixing23_step,
+          mixing23_max + 0.5*mixing23_step,
           dm23sq_nbins,
           dm23sq_min - 0.5*dm23sq_step,
           dm23sq_max + 0.5*dm23sq_step);
   } 
   TH2D* hNFitsVsOscPar = new TH2D("hNFitsVsOscPar", "",
-          sinsq2theta23_nbins, 
-          sinsq2theta23_min - 0.5*sinsq2theta23_step,
-          sinsq2theta23_max + 0.5*sinsq2theta23_step,
+          mixing23_nbins, 
+          mixing23_min - 0.5*mixing23_step,
+          mixing23_max + 0.5*mixing23_step,
           dm23sq_nbins,
           dm23sq_min - 0.5*dm23sq_step,
           dm23sq_max + 0.5*dm23sq_step);
@@ -98,14 +98,14 @@ void make_feldman_cousins_deltachisqcrit_surface(
   chain.Add(Form("%s/*root", input_data_directory));
 
   int nx1 = TMath::Max(1,                   sinsq2theta_min_bin);
-  int nx2 = TMath::Min(sinsq2theta23_nbins, sinsq2theta_max_bin);
+  int nx2 = TMath::Min(mixing23_nbins, sinsq2theta_max_bin);
   int ntot2dbins = (nx2-nx1+1) * dm23sq_nbins;
   int n2dbins    = 0;
 
-  for(int isinsq2theta23_bin = 1; isinsq2theta23_bin <= sinsq2theta23_nbins; isinsq2theta23_bin++) {
+  for(int imixing23_bin = 1; imixing23_bin <= mixing23_nbins; imixing23_bin++) {
 
-    bool in_range = (isinsq2theta23_bin >= sinsq2theta_min_bin && 
-                     isinsq2theta23_bin <= sinsq2theta_max_bin);
+    bool in_range = (imixing23_bin >= sinsq2theta_min_bin && 
+                     imixing23_bin <= sinsq2theta_max_bin);
     if(!in_range) continue;
 
     for(int idm23sq_bin = 1; idm23sq_bin <= dm23sq_nbins; idm23sq_bin++) {
@@ -113,16 +113,16 @@ void make_feldman_cousins_deltachisqcrit_surface(
       n2dbins++;
       cout << "Macro is " << 100 * (double)n2dbins / (double)ntot2dbins << "% done..." << endl;
 
-    //double sinsq2theta23       = hDeltaChi2Surface[0]->GetXaxis()->GetBinCenter(isinsq2theta23_bin);
+    //double mixing23       = hDeltaChi2Surface[0]->GetXaxis()->GetBinCenter(imixing23_bin);
     //double dm23sq              = hDeltaChi2Surface[0]->GetYaxis()->GetBinCenter(idm23sq_bin);
-      double sinsq2theta23_low   = hDeltaChi2Surface[0]->GetXaxis()->GetBinLowEdge(isinsq2theta23_bin);
+      double mixing23_low   = hDeltaChi2Surface[0]->GetXaxis()->GetBinLowEdge(imixing23_bin);
       double dm23sq_low          = hDeltaChi2Surface[0]->GetYaxis()->GetBinLowEdge(idm23sq_bin);
-      double sinsq2theta23_high  = hDeltaChi2Surface[0]->GetXaxis()->GetBinUpEdge(isinsq2theta23_bin);
+      double mixing23_high  = hDeltaChi2Surface[0]->GetXaxis()->GetBinUpEdge(imixing23_bin);
       double dm23sq_high         = hDeltaChi2Surface[0]->GetYaxis()->GetBinUpEdge(idm23sq_bin);
 
       const char * cut = Form(
-          "input_sinsq2theta23 >= %f && input_sinsq2theta23 <= %f && input_dm23sq >= %f && input_dm23sq <= %f",
-          sinsq2theta23_low, sinsq2theta23_high, dm23sq_low, dm23sq_high);
+          "input_mixing23 >= %f && input_mixing23 <= %f && input_dm23sq >= %f && input_dm23sq <= %f",
+          mixing23_low, mixing23_high, dm23sq_low, dm23sq_high);
 
       cout << "Looking for fits in 2-D bin defined by: " << cut << endl;
 
@@ -132,7 +132,7 @@ void make_feldman_cousins_deltachisqcrit_surface(
 
       cout << "Found " << nfits << " toy experiment fits" << endl;
 
-      hNFitsVsOscPar->SetBinContent(isinsq2theta23_bin, idm23sq_bin, nfits);
+      hNFitsVsOscPar->SetBinContent(imixing23_bin, idm23sq_bin, nfits);
 
       if(nfits > 0) {
          vector<double> deltaChi2;
@@ -146,28 +146,28 @@ void make_feldman_cousins_deltachisqcrit_surface(
 
          for(int i=0; i<nConfidenceLevel; i++) {
            percentile[i] = (int)(0.01*confidenceLevel[i]*deltaChi2.size());
-           if(isinsq2theta23_bin<4) {
+           if(imixing23_bin<4) {
              cout<<"Size / percentile / critical value = "<<deltaChi2.size()<<" / "<<percentile[i];
            }
            deltaChi2Iter = deltaChi2.begin() + percentile[i];
-           if(isinsq2theta23_bin<4) {
+           if(imixing23_bin<4) {
              cout<<" / "<<(*deltaChi2Iter)<<endl;
            }
-           hDeltaChi2Surface[i]->SetBinContent(isinsq2theta23_bin, idm23sq_bin, (*deltaChi2Iter));    
+           hDeltaChi2Surface[i]->SetBinContent(imixing23_bin, idm23sq_bin, (*deltaChi2Iter));    
          }  
-         if(isinsq2theta23_bin<4) {
+         if(imixing23_bin<4) {
            cout<<endl;
          }
          deltaChi2.clear();
       }//>0 fits
       else {
          for(int i=0; i<nConfidenceLevel; i++) {
-           hDeltaChi2Surface[i]->SetBinContent(isinsq2theta23_bin, idm23sq_bin, stdDeltaChi2[i]);    
+           hDeltaChi2Surface[i]->SetBinContent(imixing23_bin, idm23sq_bin, stdDeltaChi2[i]);    
          }
       }//=0 fits
 
     }//end of for(int idm23sq_bin=1; idm23sq_bin<dm23sq_nbins; idm23sq_bin++)
-  }//end of for(int isinsq2theta23_bin=1; isinsq2theta23_bin<sinsq2theta23_nbins;isinsq2theta23_bin++)
+  }//end of for(int imixing23_bin=1; imixing23_bin<mixing23_nbins;imixing23_bin++)
 
   TCanvas *DeltaChi2Surface = new TCanvas("DeltaChi2Surface", "DeltaChi2Surface", 600, 600);
   DeltaChi2Surface->Divide(1);

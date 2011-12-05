@@ -44,7 +44,7 @@ void plot_marginalised_chisq(
        f[i] = new TFile(fitfile[i],"read");
        TH2D * h2d = (TH2D*) f[i]->Get("chisq_surface");
        chisqsurf[i] = new TH2D(*h2d);
-       mrgchisq_dm23sq   [i] = marginalise_chisq(chisqsurf[i], "marginalize_sinsq2theta23 + subtract_chisqmin",max_dmsq_bin);
+       mrgchisq_dm23sq   [i] = marginalise_chisq(chisqsurf[i], "marginalize_mixing23 + subtract_chisqmin",max_dmsq_bin);
        mrgchisq_sinsq2q23[i] = marginalise_chisq(chisqsurf[i], "marginalize_dm23sq + subtract_chisqmin");
        mrgchisq_dm23sq   [i] -> SetLineWidth (lwidth[i]);
        mrgchisq_sinsq2q23[i] -> SetLineWidth (lwidth[i]);
@@ -99,9 +99,9 @@ TH1D * marginalise_chisq(TH2D * chisqsurf, Option_t * option, int max_bin)
 
   TString opt = option;
 
-  int    sinsq2theta23_nbins = chisqsurf->GetXaxis()->GetNbins();
-  double sinsq2theta23_min   = chisqsurf->GetXaxis()->GetXmin();
-  double sinsq2theta23_max   = chisqsurf->GetXaxis()->GetXmax();
+  int    mixing23_nbins = chisqsurf->GetXaxis()->GetNbins();
+  double mixing23_min   = chisqsurf->GetXaxis()->GetXmin();
+  double mixing23_max   = chisqsurf->GetXaxis()->GetXmax();
   int    dm23sq_nbins        = chisqsurf->GetYaxis()->GetNbins();
   double dm23sq_min          = chisqsurf->GetYaxis()->GetXmin();
   double dm23sq_max          = chisqsurf->GetYaxis()->GetXmax();
@@ -114,8 +114,8 @@ TH1D * marginalise_chisq(TH2D * chisqsurf, Option_t * option, int max_bin)
      //
      // integrate out Dm23sq
      //
-     mchisq = new TH1D("","", sinsq2theta23_nbins, sinsq2theta23_min, sinsq2theta23_max);
-     for(int ibin = 1; ibin <= sinsq2theta23_nbins; ibin++) {
+     mchisq = new TH1D("","", mixing23_nbins, mixing23_min, mixing23_max);
+     for(int ibin = 1; ibin <= mixing23_nbins; ibin++) {
         double chisq = 999999999;        
         for(int jbin = 1; jbin <= dm23sq_nbins; jbin++) {
             chisq = TMath::Min(chisq, chisqsurf->GetBinContent(ibin,jbin));
@@ -124,16 +124,16 @@ TH1D * marginalise_chisq(TH2D * chisqsurf, Option_t * option, int max_bin)
      }//ibin   
   }
   else
-  if(opt.Contains("marginalize_sinsq2theta23"))
+  if(opt.Contains("marginalize_mixing23"))
   {
      //
-     // integrate out sinsq2theta23
+     // integrate out mixing23
      //
      mchisq = new TH1D("","", dm23sq_nbins, dm23sq_min, dm23sq_max);
      for(int jbin = 1; jbin <= dm23sq_nbins; jbin++) {
         if(max_bin>0 && jbin>max_bin) { mchisq->SetBinContent(jbin, 9999999); continue; }
         double chisq = 999999999;
-        for(int ibin = 1; ibin <= sinsq2theta23_nbins; ibin++) {
+        for(int ibin = 1; ibin <= mixing23_nbins; ibin++) {
             chisq = TMath::Min(chisq, chisqsurf->GetBinContent(ibin,jbin));
         }//ibin
         mchisq->SetBinContent(jbin, chisq);

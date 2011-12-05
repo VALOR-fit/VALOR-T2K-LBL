@@ -27,7 +27,7 @@
 void bestfit_systematic_study_fitting_job(
    string       systematic,                                          /* tweaked systematic param */
    int          irun                = 0,                             /* run # */
-   double       input_sinsq2theta23 = 0.90,                          /* */
+   double       input_mixing23 = 0.90,                          /* */
    double       input_dm23sq        = 2.32E-3,                       /* */
    int          nexperiments        = 500,                           /* number of toy MC expt fits in this run */
    const char * config_file         = "analysis_configuration.xml"   /* analysis configuration */
@@ -43,7 +43,7 @@ void bestfit_systematic_study_fitting_job(
 
   // create ntuple to store results
   TNtupleD * systnt = new TNtupleD("sysnt","", 
-      "irun:iexp:input_sinsq2theta23:input_dm23sq:sinsq2theta23:dm23sq:chisq:status");
+      "irun:iexp:input_mixing23:input_dm23sq:mixing23:dm23sq:chisq:status");
 
   // get superk spectrum predictor & configure
   SuperkExpectation skexp;
@@ -57,7 +57,7 @@ void bestfit_systematic_study_fitting_job(
      cout << " ******* experiment = " << iexperiment << endl;
 
      // reset oscillation params following last fit
-     fparm->Update(conv::kPhypSinsq2Theta23, input_sinsq2theta23);
+     fparm->Update(conv::kPhypMixing23, input_mixing23);
      fparm->Update(conv::kPhypDm23sq,        input_dm23sq);
 
      // tweak systematic in spectrum predictor
@@ -78,23 +78,23 @@ void bestfit_systematic_study_fitting_job(
      bool ok = fitter.DoTheFit();
 
      // store params
-     double bestfit_sinsq2theta23 = fparm->CurrValue(conv::kPhypSinsq2Theta23);
+     double bestfit_mixing23 = fparm->CurrValue(conv::kPhypMixing23);
      double bestfit_dm23sq        = fparm->CurrValue(conv::kPhypDm23sq);
      double bestfit_chisq         = fit_inputs.Chisquare();
      double fit_status            = (ok) ? +1 : -1;
 
      systnt->Fill(irun, 
                   iexperiment, 
-                  input_sinsq2theta23, 
+                  input_mixing23, 
                   input_dm23sq,
-                  bestfit_sinsq2theta23, 
+                  bestfit_mixing23, 
                   bestfit_dm23sq, 
                   bestfit_chisq, 
                   fit_status);
   }
 
-  TFile f(Form("syst_%s-sinsq2theta23_%.2f-dm23sq_%.5feV2_%d.root",
-          systematic.c_str(),input_sinsq2theta23,input_dm23sq,irun), "recreate"); 
+  TFile f(Form("syst_%s-mixing23_%.2f-dm23sq_%.5feV2_%d.root",
+          systematic.c_str(),input_mixing23,input_dm23sq,irun), "recreate"); 
   systnt->Write("sysnt");
   f.Close();
 }
