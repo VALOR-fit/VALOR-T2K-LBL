@@ -45,6 +45,9 @@
  @ 01/12/11 - CA,LE
    Added `int FindSampleSlot(SuperkSample_t s)' and 
   `FindModeSlot(SuperkSample_t s, SuperkMode_t m)'
+ @ 05/12/2011 - CA
+   Add capability to use either sin^2(2*theta_ij) or sin^2(theta_ij) as the
+   parameter of choice for describing neutrino mixing.
 
 */
 //____________________________________________________________________________
@@ -455,27 +458,102 @@ TVectorD t2kana::util::CholeskyCalculateCorrelatedParamVariations (
   return g;
 }
 //____________________________________________________________________________
-double t2kana::util::RandomizeSinsq2Theta12(void)
+double t2kana::util::RandomizeMixing12(void)
 {
   TRandom3 rand(0);
-  double mean  = conv::kGlobFitSinsq2Theta12; 
-  double sigma = conv::kGlobFitSinsq2Theta12 * conv::kGlobFitErrSinsq2Theta12;
-  double sinsq2theta = rand.Gaus(mean,sigma);
+
+  double mix = 0;
+
+  switch(kOscMixingParamChoice) {
+   case(kNuMixSinsq2Theta):
+   {
+     double mean  = conv::kGlobFitSinsq2Theta12; 
+     double sigma = conv::kGlobFitSinsq2Theta12 * conv::kGlobFitErrSinsq2Theta12;
+     double sinsq2theta = rand.Gaus(mean,sigma);
+     mix = sinsq2theta;
+     break;
+   }
+   case(kNuMixSinsqTheta):
+   {
+     double mean  = conv::kGlobFitSinsqTheta12; 
+     double sigma = conv::kGlobFitSinsqTheta12 * conv::kGlobFitErrSinsqTheta12;
+     double sinsqtheta = rand.Gaus(mean,sigma);
+     mix = sinsqtheta;
+     break;
+   }
+   default:
+     exit(1);
+  }
 
   // return if a physical value was generated
-  if(sinsq2theta >=0. && sinsq2theta <= 1.) {
-     return sinsq2theta;
+  if(mix >=0. && mix <= 1.) {
+     return mix;
   }
 
   // or try again
-  return util::RandomizeSinsq2Theta12();
+  return util::RandomizeMixing12();
 }
 //____________________________________________________________________________
-double t2kana::util::RandomizeSinsq2Theta13(void)
+double t2kana::util::RandomizeMixing23(void)
 {
   TRandom3 rand(0);
+
+  double mix = 0;
+
+  switch(kOscMixingParamChoice) {
+   case(kNuMixSinsq2Theta):
+   {
+     double mean  = conv::kGlobFitSinsq2Theta23; 
+     double sigma = conv::kGlobFitSinsq2Theta23 * conv::kGlobFitErrSinsq2Theta23;
+     double sinsq2theta = rand.Gaus(mean,sigma);
+     mix = sinsq2theta;
+     break;
+   }
+   case(kNuMixSinsqTheta):
+   {
+     double mean  = conv::kGlobFitSinsqTheta23; 
+     double sigma = conv::kGlobFitSinsqTheta23 * conv::kGlobFitErrSinsqTheta23;
+     double sinsqtheta = rand.Gaus(mean,sigma);
+     mix = sinsqtheta;
+     break;
+   }
+   default:
+     exit(1);
+  }
+
+  // return if a physical value was generated
+  if(mix >=0. && mix <= 1.) {
+     return mix;
+  }
+
+  // or try again
+  return util::RandomizeMixing23();
+}
+//____________________________________________________________________________
+double t2kana::util::RandomizeMixing13(void)
+{
+  TRandom3 rand(0);
+
+  double thirty_deg = 30.*kpi/180.;
+
   double min = 0;
-  double max = conv::kGlobFitSinsq2Theta13;
+  double max = 0;
+
+  switch(kOscMixingParamChoice) {
+   case(kNuMixSinsq2Theta):
+   {
+     max = TMath::Power( TMath::Sin(2*thirty_deg), 2. );
+     break;
+   }
+   case(kNuMixSinsqTheta):
+   {
+     max = TMath::Power( TMath::Sin(thirty_deg), 2. );
+     break;
+   }
+   default:
+     exit(1);
+  }
+
   return rand.Uniform(min,max);
 }
 //____________________________________________________________________________
@@ -520,30 +598,46 @@ int t2kana::util::FindModeSlot(
 //____________________________________________________________________________
 string t2kana::util::AsString (
   string hypothesis, 
-  double sinsq2theta12, double sinsq2theta13, double sinsq2theta23, 
+  double mix12, double mix13, double mix23, 
   double deltacp, double dm12sq, double dm23sq, Option_t * option)
 {
 //
   string s = "?";
   string opt = option;
 
+
   if( t2kana::util::FromString(hypothesis) == t2kana::conv::kHypNuMuDisapp2F )
   {
-    s = Form("sinsq2theta23_%.3f,dm23sq_%.5feV2",sinsq2theta23,dm23sq);
+    s = Form("sinsq2theta23_%.3f,dm23sq_%.5feV2",mix23,dm23sq);
   }
+
   if( t2kana::util::FromString(hypothesis) == t2kana::conv::kHypOsc3F )
   {
+    const char * mixparam = "?";
+    switch(kOscMixingParamChoice) {
+      case(kNuMixSinsq2Theta):
+         mixparam = "sinsq2theta";
+         break;
+      case(kNuMixSinsqTheta):
+         mixparam = "sinsqtheta";
+         break;
+      default:
+         return "";
+    }
+
     if(opt.find("all") != string::npos) {
-      s = Form("sinsq2theta[12_%.3f,13_%.3f,23_%.3f],dcp_%.3f,dmsq[12_%.8f,23_%.6f]eV2",
-                sinsq2theta12, sinsq2theta13, sinsq2theta23, deltacp, dm12sq, dm23sq);
+         s = Form("%s[12_%.3f,13_%.3f,23_%.3f],dcp_%.3f,dmsq[12_%.8f,23_%.6f]eV2",
+                   mixparam, mix12, mix13, mix23, deltacp, dm12sq, dm23sq);
+
     } else
     if(opt.find("no-theta13-deltacp") != string::npos) {
-      s = Form("sinsq2theta[12_%.3f,23_%.3f],dmsq[12_%.8f,23_%.6f]eV2",
-                sinsq2theta12, sinsq2theta23, dm12sq, dm23sq);
+         s = Form("%s[12_%.3f,23_%.3f],dmsq[12_%.8f,23_%.6f]eV2",
+                   mixparam, mix12, mix23, dm12sq, dm23sq);
+
     } else
     if(opt.find("no-theta12-dm12sq") != string::npos) {
-      s = Form("sinsq2theta[13_%.3f,23_%.3f],dcp_%.3f,dmsq23_%.6feV2",
-                sinsq2theta13, sinsq2theta23, deltacp, dm23sq);
+         s = Form("%s[13_%.3f,23_%.3f],dcp_%.3f,dmsq23_%.6feV2",
+                   mixparam, mix13, mix23, deltacp, dm23sq);
     }
   }
 
@@ -591,9 +685,31 @@ string t2kana::util::AsString(t2kana::conv::PhysHypothesis_t h)
 string t2kana::util::AsString(PhysParamId_t p)
 {
   switch(p) {
-    case ( kPhypSinsq2Theta23     ) : return "sinsq2theta23";          break;
-    case ( kPhypSinsq2Theta13     ) : return "sinsq2theta13";          break;
-    case ( kPhypSinsq2Theta12     ) : return "sinsq2theta12";          break;
+
+    case ( kPhypMixing23 ) : 
+    {
+        switch(kOscMixingParamChoice) {
+           case(kNuMixSinsq2Theta) : return "sinsq2theta23";  break;
+           case(kNuMixSinsqTheta ) : return "sinsqtheta23";   break;
+           default                 : return "--";             break;
+         }
+    }
+    break;
+    case ( kPhypMixing13 ) : 
+        switch(kOscMixingParamChoice) {
+           case(kNuMixSinsq2Theta) : return "sinsq2theta13";  break;
+           case(kNuMixSinsqTheta ) : return "sinsqtheta13";   break;
+           default                 : return "--";             break;
+         }
+    break;
+    case ( kPhypMixing12 ) :      
+        switch(kOscMixingParamChoice) {
+           case(kNuMixSinsq2Theta) : return "sinsq2theta12";  break;
+           case(kNuMixSinsqTheta ) : return "sinsqtheta12";   break;
+           default                 : return "--";             break;
+         }
+    break;
+
     case ( kPhypDeltaCP           ) : return "delta_cp";               break;
     case ( kPhypDm23sq            ) : return "|dm23sq|";               break;
     case ( kPhypDm12sq            ) : return "dm12sq";                 break;
@@ -942,9 +1058,9 @@ bool t2kana::util::IsNC(t2kana::conv::SuperkMode_t m)
 bool t2kana::util::IsSystematic(PhysParamId_t p)
 {
   switch(p) {
-    case ( kPhypSinsq2Theta23     ) : return false; break;
-    case ( kPhypSinsq2Theta13     ) : return false; break;
-    case ( kPhypSinsq2Theta12     ) : return false; break;
+    case ( kPhypMixing23          ) : return false; break;
+    case ( kPhypMixing13          ) : return false; break;
+    case ( kPhypMixing12          ) : return false; break;
     case ( kPhypDeltaCP           ) : return false; break;
     case ( kPhypDm23sq            ) : return false; break;
     case ( kPhypDm12sq            ) : return false; break;

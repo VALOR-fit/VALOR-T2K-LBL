@@ -20,6 +20,9 @@
  @ 14/09/2011 - CA
    Added PhysHypothesis::PhysHypothesis(string h) constructor so as to simplify some of
    the test macros.
+ @ 05/12/2011 - CA
+   Add capability to use either sin^2(2*theta_ij) or sin^2(theta_ij) as the
+   parameter of choice for describing neutrino mixing.
 
 */
 //________________________________________________________________________________________
@@ -69,20 +72,20 @@ PhysHypothesis::PhysHypothesis(const FitParamList & fp)
   if(hyp == kHypOsc3F)
   {
     this->Init(kHypOsc3F);
-    this->SetCurrValue(kPhypDm12sq,        fp.CurrValue(kPhypDm12sq));
-    this->SetCurrValue(kPhypDm23sq,        fp.CurrValue(kPhypDm23sq));
-    this->SetCurrValue(kPhypSinsq2Theta12, fp.CurrValue(kPhypSinsq2Theta12));
-    this->SetCurrValue(kPhypSinsq2Theta13, fp.CurrValue(kPhypSinsq2Theta13));
-    this->SetCurrValue(kPhypSinsq2Theta23, fp.CurrValue(kPhypSinsq2Theta23));
-    this->SetCurrValue(kPhypDeltaCP,       fp.CurrValue(kPhypDeltaCP));
+    this->SetCurrValue(kPhypDm12sq,   fp.CurrValue(kPhypDm12sq));
+    this->SetCurrValue(kPhypDm23sq,   fp.CurrValue(kPhypDm23sq));
+    this->SetCurrValue(kPhypMixing12, fp.CurrValue(kPhypMixing12));
+    this->SetCurrValue(kPhypMixing13, fp.CurrValue(kPhypMixing13));
+    this->SetCurrValue(kPhypMixing23, fp.CurrValue(kPhypMixing23));
+    this->SetCurrValue(kPhypDeltaCP,  fp.CurrValue(kPhypDeltaCP));
   }
 
   // numu disappearance, 2-flavour neutrino oscillation framework 
   else if(hyp == kHypNuMuDisapp2F) 
   {
     this->Init(kHypNuMuDisapp2F);
-    this->SetCurrValue(kPhypDm23sq,        fp.CurrValue(kPhypDm23sq));
-    this->SetCurrValue(kPhypSinsq2Theta23, fp.CurrValue(kPhypSinsq2Theta23));
+    this->SetCurrValue(kPhypDm23sq,   fp.CurrValue(kPhypDm23sq));
+    this->SetCurrValue(kPhypMixing23, fp.CurrValue(kPhypMixing23));
   }
 
   // neutrino decay
@@ -149,17 +152,17 @@ void PhysHypothesis::Init(PhysHypothesis_t h)
 
   // numu disappearance, 2-flavour neutrino oscillation framework 
   if(fHypothesis == kHypNuMuDisapp2F) {
-    fParams[kPhypSinsq2Theta23]    = 0;
-    fParams[kPhypDm23sq]           = 0;
+    fParams[kPhypMixing23] = 0;
+    fParams[kPhypDm23sq]   = 0;
   }
   // neutrino oscillations (3-flavour framework)
   if(fHypothesis == kHypOsc3F) {
-    fParams[kPhypSinsq2Theta12]    = 0;
-    fParams[kPhypSinsq2Theta13]    = 0;
-    fParams[kPhypSinsq2Theta23]    = 0;
-    fParams[kPhypDeltaCP]          = 0;
-    fParams[kPhypDm23sq]           = 0;
-    fParams[kPhypDm12sq]           = 0;
+    fParams[kPhypMixing12]  = 0;
+    fParams[kPhypMixing13]  = 0;
+    fParams[kPhypMixing23]  = 0;
+    fParams[kPhypDeltaCP]   = 0;
+    fParams[kPhypDm23sq]    = 0;
+    fParams[kPhypDm12sq]    = 0;
   }
   // neutrino decay 
   if(fHypothesis == kHypDecay) {

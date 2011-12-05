@@ -35,28 +35,40 @@ Changes since v1.0.0:
 namespace t2kana {
 namespace conv   {
 
-// confidence level
+//
+// ------------------------------------------------------------------------
+// Enumerations
+// ------------------------------------------------------------------------
+//
+
+// Confidence level
 typedef enum EConfLevel {
    kCLUndefined = -1, 
    kCL68, 
    kCL90, 
    kCL95, 
    kCL99
-} ConfLevel_t; 
+} 
+ConfLevel_t; 
 
-// enumeration of event samples 
-static const int kNSuperkSamples  = 2;  // number of samples included in analysis
-static const int kns = kNSuperkSamples;
-typedef enum ESuperkSample {
+// Enumeration of event samples that may be included in the analysis
+// Actual choice for current analysis is given in `Configuration' section.
+static const int kNSuperkSamples  = 2;  // number of samples 
+static const int kns = kNSuperkSamples; // 
+typedef enum ESuperkSample 
+{
    kSKsUndefined = -1, 
    kSKsFCFV1RingMuLike, // fully-contained fiducial-volume single-ring mu-like
    kSKsFCFV1RingELike,  // fully-contained fiducial-volume single-ring e-like
-} SuperkSample_t; 
+} 
+SuperkSample_t; 
 
-// enumeration of (true) reaction modes that may be considered separately within each SuperK sample
-static const int kNSuperkModes = 30; // number of reaction modes considered separately within each SuperK sample
+// Enumeration of (true) reaction modes that may be considered separately within each SuperK sample
+// Actual choice for current analysis is given in `Configuration' section.
+static const int kNSuperkModes = 30; // number of reaction modes 
 static const int knm = kNSuperkModes; 
-typedef enum ESuperkMode {
+typedef enum ESuperkMode 
+{
    kSKmUndefined = -1, 
    kSKmNuMuCCQE,         // numu CC QE
    kSKmNuMuCC1pi,        // numu CC 1pi
@@ -88,7 +100,156 @@ typedef enum ESuperkMode {
    kSKmSigNuECCQE,       // sig nue
    kSKmSigNuECC1pi,      // sig nue
    kSKmSigNuECCoth       // sig nue
-} SuperkMode_t; 
+} 
+SuperkMode_t; 
+
+// (True) reaction modes considered separately in nd280 inputs
+static const int kNND280Modes = 21; // number of reaction modes considered separately within the ND280 sample
+static const int knmnd = kNND280Modes; 
+typedef enum END280Mode 
+{
+   kNDmUndefined = -1, 
+   kNDmNuMuCCQE, 
+   kNDmNuMuCCRES, 
+   kNDmNuMuCCCOH, 
+   kNDmNuMuCCOth, 
+   kNDmNuMuNCRES, 
+   kNDmNuMuNCCOH, 
+   kNDmNuMuNCOth, 
+   kNDmNuMuBarCCQE, 
+   kNDmNuMuBarCCRES, 
+   kNDmNuMuBarCCCOH, 
+   kNDmNuMuBarCCOth, 
+   kNDmNuMuBarNCRES, 
+   kNDmNuMuBarNCCOH, 
+   kNDmNuMuBarNCOth, 
+   kNDmNuECCQE, 
+   kNDmNuECCRES, 
+   kNDmNuECCCOH, 
+   kNDmNuECCOth, 
+   kNDmNuENCRES, 
+   kNDmNuENCCOH, 
+   kNDmNuENCOth
+} 
+ND280Mode_t; 
+
+// Fit parameters
+typedef enum EPhysParamId 
+{   
+   kPhypUndefined = -1, 
+   kPhypMixing23,            // 23-mixing parameter (either sin^2(2*\theta_{23}) or sin^2(\theta_{23}) depending on config choices)
+   kPhypMixing13,            // 13-mixing parameter (either sin^2(2*\theta_{13}) or sin^2(\theta_{13}) depending on config choices)
+   kPhypMixing12,            // 12-mixing parameter (either sin^2(2*\theta_{12}) or sin^2(\theta_{12}) depending on config choices)
+   kPhypDeltaCP,             // CP-invariance violating phase 
+   kPhypDm23sq,              // modulus of squared-mass splitting \Deltam_{23}^{2} (always positive independent of mass hierarchy) 
+   kPhypDm12sq,              // squared-mass splitting \Deltam_{12}^{2} 
+   kPhypAlphaDecay,          //
+   kPhypSinsq2ThetaDecay,    // 
+   kPhypMusqDecoh,           //
+   kPhypSinsq2ThetaDecoh,    // 
+   kNuisSuperkEffCCQEoth,    //
+   kNuisSuperkEffCCQErc0u,   //
+   kNuisSuperkEffCCQErc1u,   //
+   kNuisSuperkEffCCQErc2u,   //
+   kNuisSuperkEffCCnonQE,    //
+   kNuisSuperkEffNC,         //
+   kNuisSuperkEffNueCC,      //
+   kNuisSuperkEnergyScale,   //
+   kNuisNd280Eff,            //
+   kNuisFluxNorm,            //
+   kNuisFluxShapeNuMu0u,     //
+   kNuisFluxShapeNuMu1u,     //
+   kNuisFluxShapeNuMu2u,     //
+   kNuisFluxShapeNuMu3u,     //
+   kNuisFluxShapeNuMu4u,     //
+   kNuisFluxShapeNuMu5u,     //
+   kNuisFluxShapeNuMu6u,     //
+   kNuisFluxShapeNuMu7u,     //
+   kNuisFluxShapeNuMu8u,     //
+   kNuisFluxShapeNuMu9u,     //
+   kNuisFluxShapeNuMu10u,    //
+   kNuisFluxShapeNuMu11u,    //
+   kNuisFluxShapeNuMu12u,    //
+   kNuisFluxShapeNuMu13u,    //
+   kNuisFluxShapeNuMu14u,    //
+   kNuisFluxShapeNuMu15u,    //
+   kNuisFluxShapeNuMu16u,    //
+   kNuisFluxShapeNuMu17u,    //
+   kNuisFluxShapeNuMu18u,    //
+   kNuisXSecCCQE,            //  
+   kNuisXSecCC1piToCCQE,     //
+   kNuisXSecCCothToCCQE,     //
+   kNuisXSecNCToCCQE,        //
+   kNuisXSecNuclEffect       //
+} 
+PhysParamId_t;
+
+// Physics hypotheses
+typedef enum EPhysHypothesis 
+{   
+   kHypUndefined = -1,
+   kHypDecay,             // neutrino decay 
+   kHypDecoh,             // neutrino decoherence 
+   kHypNuMuDisapp2F,      // muon-neutrino disappearance, simple 2-flavour oscillation framework 
+   kHypOsc3F              // neutrino oscillations, 3-flavour framework 
+} 
+PhysHypothesis_t;
+
+// Oscillation channels
+typedef enum EOscChannelId 
+{   
+   kOscUndefined = -1, 
+   kOscNuE2NuE,
+   kOscNuE2NuMu,
+   kOscNuE2NuTau,
+   kOscNuMu2NuE,
+   kOscNuMu2NuMu,
+   kOscNuMu2NuTau,
+   kOscNuTau2NuE,
+   kOscNuTau2NuMu,
+   kOscNuTau2NuTau,
+   kOscNuEBar2NuEBar,
+   kOscNuEBar2NuMuBar,
+   kOscNuEBar2NuTauBar,
+   kOscNuMuBar2NuEBar,
+   kOscNuMuBar2NuMuBar,
+   kOscNuMuBar2NuTauBar,
+   kOscNuTauBar2NuEBar,
+   kOscNuTauBar2NuMuBar,
+   kOscNuTauBar2NuTauBar
+} 
+OscChannelId_t;
+
+// Neutrino mass hierarchy
+typedef enum ENuMassHierarchy 
+{   
+   kNmhUndefined = -1, 
+   kNmhNormal,
+   kNmhInverted
+} 
+NuMassHierarchy_t;
+
+// Choices of oscillation mixing parameter
+typedef enum ENuOscMixParam
+{   
+   kNuMixUndefined = -1, 
+   kNuMixSinsq2Theta,      // sin^2(2*theta)
+   kNuMixSinsqTheta        // sin^2(theta), preferred choice in globa nue appearance + numu disappearance fit
+} 
+NuOscMixParam_t;
+
+//
+// ------------------------------------------------------------------------
+// Configuration
+// ------------------------------------------------------------------------
+//
+
+// mass hierarchy used in T2KAna build
+static const NuMassHierarchy_t kMassHierarchyAssumed = kNmhNormal; 
+
+// choice of mixing parameter
+static const NuOscMixParam_t kOscMixingParamChoice = kNuMixSinsq2Theta; 
+
 
 //
 // Define which SK samples are considered
@@ -174,124 +335,13 @@ static const SuperkMode_t kSKReactionModes[kns][knm] = {
   }
 };
 
-// (true) reaction modes considered separately in nd280 inputs
-static const int kNND280Modes = 21; // number of reaction modes considered separately within the ND280 sample
-static const int knmnd = kNND280Modes; 
-typedef enum END280Mode {
-   kNDmUndefined = -1, 
-   kNDmNuMuCCQE, 
-   kNDmNuMuCCRES, 
-   kNDmNuMuCCCOH, 
-   kNDmNuMuCCOth, 
-   kNDmNuMuNCRES, 
-   kNDmNuMuNCCOH, 
-   kNDmNuMuNCOth, 
-   kNDmNuMuBarCCQE, 
-   kNDmNuMuBarCCRES, 
-   kNDmNuMuBarCCCOH, 
-   kNDmNuMuBarCCOth, 
-   kNDmNuMuBarNCRES, 
-   kNDmNuMuBarNCCOH, 
-   kNDmNuMuBarNCOth, 
-   kNDmNuECCQE, 
-   kNDmNuECCRES, 
-   kNDmNuECCCOH, 
-   kNDmNuECCOth, 
-   kNDmNuENCRES, 
-   kNDmNuENCCOH, 
-   kNDmNuENCOth
-} ND280Mode_t; 
+//
+// ------------------------------------------------------------------------
+// Constants & commonly used codes
+// ------------------------------------------------------------------------
+//
 
-// fit parameters
-typedef enum EPhysParamId {   
-   kPhypUndefined = -1, 
-   kPhypSinsq2Theta23,       // mixing angle sin^2(2*\theta_{23}) 
-   kPhypSinsq2Theta13,       // mixing angle sin^2(2*\theta_{13}) 
-   kPhypSinsq2Theta12,       // mixing angle sin^2(2*\theta_{12}) 
-   kPhypDeltaCP,             // CP-invariance violating phase 
-   kPhypDm23sq,              // modulus of squared-mass splitting \Deltam_{23}^{2} (always positive independent of mass hierarchy) 
-   kPhypDm12sq,              // squared-mass splitting \Deltam_{12}^{2} 
-   kPhypAlphaDecay,          //
-   kPhypSinsq2ThetaDecay,    // 
-   kPhypMusqDecoh,           //
-   kPhypSinsq2ThetaDecoh,    // 
-   kNuisSuperkEffCCQEoth,    //
-   kNuisSuperkEffCCQErc0u,   //
-   kNuisSuperkEffCCQErc1u,   //
-   kNuisSuperkEffCCQErc2u,   //
-   kNuisSuperkEffCCnonQE,    //
-   kNuisSuperkEffNC,         //
-   kNuisSuperkEffNueCC,      //
-   kNuisSuperkEnergyScale,   //
-   kNuisNd280Eff,            //
-   kNuisFluxNorm,            //
-   kNuisFluxShapeNuMu0u,     //
-   kNuisFluxShapeNuMu1u,     //
-   kNuisFluxShapeNuMu2u,     //
-   kNuisFluxShapeNuMu3u,     //
-   kNuisFluxShapeNuMu4u,     //
-   kNuisFluxShapeNuMu5u,     //
-   kNuisFluxShapeNuMu6u,     //
-   kNuisFluxShapeNuMu7u,     //
-   kNuisFluxShapeNuMu8u,     //
-   kNuisFluxShapeNuMu9u,     //
-   kNuisFluxShapeNuMu10u,    //
-   kNuisFluxShapeNuMu11u,    //
-   kNuisFluxShapeNuMu12u,    //
-   kNuisFluxShapeNuMu13u,    //
-   kNuisFluxShapeNuMu14u,    //
-   kNuisFluxShapeNuMu15u,    //
-   kNuisFluxShapeNuMu16u,    //
-   kNuisFluxShapeNuMu17u,    //
-   kNuisFluxShapeNuMu18u,    //
-   kNuisXSecCCQE,            //  
-   kNuisXSecCC1piToCCQE,     //
-   kNuisXSecCCothToCCQE,     //
-   kNuisXSecNCToCCQE,        //
-   kNuisXSecNuclEffect       //
-} PhysParamId_t;
-
-// physics hypotheses
-typedef enum EPhysHypothesis {   
-   kHypUndefined = -1,
-   kHypDecay,             // neutrino decay 
-   kHypDecoh,             // neutrino decoherence 
-   kHypNuMuDisapp2F,      // muon-neutrino disappearance, simple 2-flavour oscillation framework 
-   kHypOsc3F              // neutrino oscillations, 3-flavour framework 
-} PhysHypothesis_t;
-
-// oscillation channels
-typedef enum EOscChannelId {   
-   kOscUndefined = -1, 
-   kOscNuE2NuE,
-   kOscNuE2NuMu,
-   kOscNuE2NuTau,
-   kOscNuMu2NuE,
-   kOscNuMu2NuMu,
-   kOscNuMu2NuTau,
-   kOscNuTau2NuE,
-   kOscNuTau2NuMu,
-   kOscNuTau2NuTau,
-   kOscNuEBar2NuEBar,
-   kOscNuEBar2NuMuBar,
-   kOscNuEBar2NuTauBar,
-   kOscNuMuBar2NuEBar,
-   kOscNuMuBar2NuMuBar,
-   kOscNuMuBar2NuTauBar,
-   kOscNuTauBar2NuEBar,
-   kOscNuTauBar2NuMuBar,
-   kOscNuTauBar2NuTauBar
-} OscChannelId_t;
-
-// neutrino mass hierarchy
-typedef enum ENuMassHierarchy {   
-   kNmhUndefined = -1, 
-   kNmhNormal,
-   kNmhInverted
-} NuMassHierarchy_t;
-
-static const NuMassHierarchy_t kMassHierarchyAssumed = kNmhNormal; // mass hierarchy used in T2KAna build
-
+// PDG Codes
 static const int kPdgNuE      =  12;
 static const int kPdgNuMu     =  14;
 static const int kPdgNuTau    =  16;
@@ -299,7 +349,62 @@ static const int kPdgNuEBar   = -12;
 static const int kPdgNuMuBar  = -14;
 static const int kPdgNuTauBar = -16;
 
-// Some constants
+//
+// Oscillation parameters, recent global fit values & 1 sigma errors and
+// typical initialization and range values for fitter
+//
+
+// Dm^2 global fit results
+static const double kGlobFitDm23sq           = 2.35E-3;
+static const double kGlobFitDm12sq           = 7.58E-5;
+static const double kGlobFitErrDm23sq        = 0.05; // ~5%
+static const double kGlobFitErrDm12sq        = 0.03; // ~3%
+// sinsq2theta global fit results
+static const double kGlobFitSinsq2Theta23    = 1.00;
+static const double kGlobFitSinsq2Theta13    = 0.10;
+static const double kGlobFitSinsq2Theta12    = 0.86;
+static const double kGlobFitErrSinsq2Theta23 = 0.15; // ~15%
+static const double kGlobFitErrSinsq2Theta12 = 0.06; // ~6%
+// sinsqtheta global fit results
+static const double kGlobFitSinsqTheta23    = 0.420;
+static const double kGlobFitSinsqTheta13    = 0.025;
+static const double kGlobFitSinsqTheta12    = 0.312;
+static const double kGlobFitErrSinsqTheta23 = 0.261;  // ~26% (1 sigma range)
+static const double kGlobFitErrSinsqTheta12 = 0.110;  // ~11% (1 sigma range)
+static const double kGlobFitErrSinsqTheta13 = 0.560;  // ~56% (1 sigma range)
+
+// Dm^2 fitter init values and range
+static const double kInitFitDm23sq           = kGlobFitDm23sq;
+static const double kMinFitDm23sq            = 1.0E-3;
+static const double kMaxFitDm23sq            = 4.0E-3;
+static const double kInitFitDm12sq           = kGlobFitDm12sq;
+static const double kMinFitDm12sq            = 6.0E-5;
+static const double kMaxFitDm12sq            = 9.0E-5;
+// sinsq2theta fitter init values and range
+static const double kInitFitSinsq2Theta23    = 0.90;
+static const double kMinFitSinsq2Theta23     = 0.60;
+static const double kMaxFitSinsq2Theta23     = 1.00;
+static const double kInitFitSinsq2Theta13    = kGlobFitSinsq2Theta13;
+static const double kMinFitSinsq2Theta13     = 0.00;
+static const double kMaxFitSinsq2Theta13     = 0.40;
+static const double kInitFitSinsq2Theta12    = kGlobFitSinsq2Theta12;
+static const double kMinFitSinsq2Theta12     = 0.70;
+static const double kMaxFitSinsq2Theta12     = 1.00;
+// sinsqtheta fitter init values and range
+static const double kInitFitSinsqTheta23     = 0.90;
+static const double kMinFitSinsqTheta23      = 0.60;
+static const double kMaxFitSinsqTheta23      = 1.00;
+static const double kInitFitSinsqTheta13     = kGlobFitSinsqTheta13;
+static const double kMinFitSinsqTheta13      = 0.00;
+static const double kMaxFitSinsqTheta13      = 0.40;
+static const double kInitFitSinsqTheta12     = kGlobFitSinsqTheta12;
+static const double kMinFitSinsqTheta12      = 0.70;
+static const double kMaxFitSinsqTheta12      = 1.00;
+
+
+//
+// Other constants
+//
 static const double kASmallNum      = 1E-10;                         // 
 static const double kBaseline       = 295.335;                       // Tokai->Kamioka (km)
 static const double kOscDimensFactor= 1.26693281;                    // Dimensional factor (GeV/eV^2/km) appearing in netrino oscillation formula
@@ -313,16 +418,6 @@ static const double kGF             = 1.16637e-5;                    // Fermi co
 static const double kGF_SI          = kGF*khbarc3_SI*1.0e-18;        // Fermi coupling constant, (eV cm^3, SI units), 1e-18 is used for GeV^-2 -> eV^-2
 static const double kNA             = 6.022142e23;                   // Avogadro number (mol^-1)
 
-// Oscillation parameters, recent global fit values & 1 sigma errors
-static const double kGlobFitSinsq2Theta23    = 1.00;
-static const double kGlobFitSinsq2Theta13    = 0.10;
-static const double kGlobFitSinsq2Theta12    = 0.86;
-static const double kGlobFitDm23sq           = 2.35E-3;
-static const double kGlobFitDm12sq           = 7.58E-5;
-static const double kGlobFitErrSinsq2Theta23 = 0.15; // ~15%
-static const double kGlobFitErrSinsq2Theta12 = 0.06; // ~6%
-static const double kGlobFitErrDm23sq        = 0.05; // ~5%
-static const double kGlobFitErrDm12sq        = 0.03; // ~3%
 
 //
 // ------------------------------------------------------------------------
@@ -334,6 +429,7 @@ static const double kGlobFitErrDm12sq        = 0.03; // ~3%
 // Variable Etrue binning scheme used by the Beam WG.
 // Used in certain Beam WG inputs (eg numu flux covariance matrix) 
 //
+
 static const int kNEtrueBinsBeamWG = 19;
 static const double kEtrueBinEdgesBeamWG[kNEtrueBinsBeamWG+1] = 
 {

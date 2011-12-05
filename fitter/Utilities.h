@@ -59,23 +59,25 @@ namespace util {
   TVectorD CholeskyCalculateCorrelatedParamVariations(TMatrixD& cholesky_triangular, TVectorD& g_uncorrelated);
 
   // Functions randomizing oscillation params (for use when params are marginalized)
-  double RandomizeSinsq2Theta12 (void); ///< pull random from gaussian with mean and sigma taken from global fit
-  double RandomizeSinsq2Theta13 (void); ///< uniform from 0 up to CHOOZ limit 
-  double RandomizeDeltaCP       (void); ///< uniform from 0 to 2*pi
-  double RandomizeDm12sq        (void); ///< pull random from gaussian with mean and sigma taken from global fit
+  double RandomizeMixing23 (void); ///< pull from gaussian with mean & sigma from global fit (mixing param is either sinsq2theta or sinsqtheta depending on config)
+  double RandomizeMixing12 (void); ///< pull from gaussian with mean & sigma from global fit
+  double RandomizeMixing13 (void); ///< uniform from 0 up to CHOOZ limit 
+  double RandomizeDeltaCP  (void); ///< uniform from 0 to 2*pi
+  double RandomizeDm12sq   (void); ///< pull from gaussian with mean & sigma from global fit
+  double RandomizeDm23sq   (void); ///< pull from gaussian with mean & sigma from global fit
 
   //
 
   int FindSampleSlot(t2kana::conv::SuperkSample_t s);
   int FindModeSlot  (t2kana::conv::SuperkSample_t s, t2kana::conv::SuperkMode_t m);
 
-  string AsString (string hypothesis, double sinsq2theta12, double sinsq2theta13, double sinsq2theta23, double deltacp, double dm12sq, double dm23sq, Option_t * option="all");
-  string AsString (t2kana::conv::NuMassHierarchy_t m);
-  string AsString (t2kana::conv::PhysHypothesis_t  h);
-  string AsString (t2kana::conv::PhysParamId_t     p);
-  string AsString (t2kana::conv::SuperkSample_t    s);
-  string AsString (t2kana::conv::SuperkMode_t      m);
-  string AsString (t2kana::conv::OscChannelId_t    o);
+  string AsString    (string hypothesis, double mix12, double mix13, double mix23, double deltacp, double dm12sq, double dm23sq, Option_t * option="all");
+  string AsString    (t2kana::conv::NuMassHierarchy_t m);
+  string AsString    (t2kana::conv::PhysHypothesis_t  h);
+  string AsString    (t2kana::conv::PhysParamId_t     p);
+  string AsString    (t2kana::conv::SuperkSample_t    s);
+  string AsString    (t2kana::conv::SuperkMode_t      m);
+  string AsString    (t2kana::conv::OscChannelId_t    o);
   string AsStringTex (t2kana::conv::SuperkSample_t    s);
   string AsStringTex (t2kana::conv::SuperkMode_t      m);
 

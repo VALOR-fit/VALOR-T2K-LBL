@@ -29,6 +29,9 @@
    error from not looking-up the current/running values immediately after the chisquare
    minimum was reached. Added `CopyCurrToBestFitValues()', `CopyBestFitToCurrValues()' 
    `BestFitValue(PhysParamId_t)' and `ShowOnlyBestFitValuesInNextPrint()' methods.
+ @ 05/12/2011 - CA
+   Add capability to use either sin^2(2*theta_ij) or sin^2(theta_ij) as the
+   parameter of choice for describing neutrino mixing.
 
 */
 //________________________________________________________________________________________
@@ -204,36 +207,60 @@ double FitParamList::ChisquarePenaltyTerm(void)
         }
         // if the nuisance param is one of the oscillation params that get marginalised
         // in this particular fit, do one of the following:
-        else if(p == kPhypSinsq2Theta23) 
+        else if(p == kPhypMixing23) 
         { 
            // penalize deviations from global analysis best-fit value
-           double sinsq2q = fCurrValue[ip];
-           double nom = kGlobFitSinsq2Theta23;
-           double err = kGlobFitSinsq2Theta23 * kGlobFitErrSinsq2Theta23;
-           double twk = (sinsq2q - nom) / err;
+           double mix = fCurrValue[ip];
+           double nom = 0;
+           double err = 0;
+           switch(kOscMixingParamChoice) {
+              case(kNuMixSinsq2Theta):
+                nom = kGlobFitSinsq2Theta23;
+                err = kGlobFitSinsq2Theta23 * kGlobFitErrSinsq2Theta23;
+                break;
+              case(kNuMixSinsqTheta):
+                nom = kGlobFitSinsqTheta23;
+                err = kGlobFitSinsqTheta23 * kGlobFitErrSinsqTheta23;
+                break;
+              default:
+                exit(1);
+           }
+           double twk = (mix - nom) / err;
            double dchisq_penalty = twk*twk;
            chisq_penalty += dchisq_penalty;
 #ifdef __show_contributions_to_penalty_term__
-           cout << "FitParamList::ChisquarePenaltyTerm >> sinsq2theta23 = " << sinsq2q
+           cout << "FitParamList::ChisquarePenaltyTerm >> mixing23 = " << mix
                 << " (nominal = " << nom << ", error = " << err << ", twk = " << twk << ")"
                 << " ==> deltachi^2_{penalty} = " << dchisq_penalty << endl;
 #endif
         }
-        else if(p == kPhypSinsq2Theta13) 
+        else if(p == kPhypMixing13) 
         { 
           // no contribution to \chi^2_{penalty}
         }
-        else if(p == kPhypSinsq2Theta12) 
+        else if(p == kPhypMixing12) 
         { 
            // penalize deviations from global analysis best-fit value
-           double sinsq2q = fCurrValue[ip];
-           double nom = kGlobFitSinsq2Theta12;
-           double err = kGlobFitSinsq2Theta12 * kGlobFitErrSinsq2Theta12;
-           double twk = (sinsq2q - nom) / err;
+           double mix = fCurrValue[ip];
+           double nom = 0;
+           double err = 0;
+           switch(kOscMixingParamChoice) {
+              case(kNuMixSinsq2Theta):
+                  nom = kGlobFitSinsq2Theta12;
+                  err = kGlobFitSinsq2Theta12 * kGlobFitErrSinsq2Theta12;
+                  break;
+              case(kNuMixSinsqTheta):
+                  nom = kGlobFitSinsqTheta12;
+                  err = kGlobFitSinsqTheta12 * kGlobFitErrSinsqTheta12;
+                  break;
+              default:
+                exit(1);
+           }
+           double twk = (mix - nom) / err;
            double dchisq_penalty = twk*twk;
            chisq_penalty += dchisq_penalty;
 #ifdef __show_contributions_to_penalty_term__
-           cout << "FitParamList::ChisquarePenaltyTerm >> sinsq2theta12 = " << sinsq2q
+           cout << "FitParamList::ChisquarePenaltyTerm >> mixing12 = " << mix
                 << " (nominal = " << nom << ", error = " << err << ", twk = " << twk << ")"
                 << " ==> deltachi^2_{penalty} = " << dchisq_penalty << endl;
 #endif
@@ -361,22 +388,22 @@ FitParamList * FitParamList::NamedParameterList(string name)
   }
   if(name == "nuosc3f_12constrain") {
     FitParamList * fp = FitParamList::NuOsc3FlavourFitNoSyst();
-    fp -> SetNuisance (kPhypSinsq2Theta12, true);
-    fp -> SetNuisance (kPhypDm12sq,        true);
+    fp -> SetNuisance (kPhypMixing12, true);
+    fp -> SetNuisance (kPhypDm12sq,   true);
     return fp;
   }
   if(name == "nuosc3f_numudisapp_fix4") {
     FitParamList * fp = FitParamList::NuOsc3FlavourFitNoSyst();
-    fp -> FixParameter (kPhypSinsq2Theta13);
-    fp -> FixParameter (kPhypSinsq2Theta12);
+    fp -> FixParameter (kPhypMixing13);
+    fp -> FixParameter (kPhypMixing12);
     fp -> FixParameter (kPhypDeltaCP);
     fp -> FixParameter (kPhypDm12sq);
     return fp;
   }
   if(name == "nuosc3f_nueapp_fix4") {
     FitParamList * fp = FitParamList::NuOsc3FlavourFitNoSyst();
-    fp -> FixParameter (kPhypSinsq2Theta23);
-    fp -> FixParameter (kPhypSinsq2Theta12);
+    fp -> FixParameter (kPhypMixing23);
+    fp -> FixParameter (kPhypMixing12);
     fp -> FixParameter (kPhypDm23sq);
     fp -> FixParameter (kPhypDm12sq);
     return fp;
@@ -401,35 +428,52 @@ FitParamList * FitParamList::NuOsc3FlavourFitNoSyst(void)
 {
   FitParamList * fparm = new FitParamList(6);
 
-  //                                     init                    min     max     step     fix?   nuis?
-  fparm->AddParam(0, kPhypSinsq2Theta23, 0.95,                   0.50,   1.00,   1.0E-2,  false, false);
-  fparm->AddParam(1, kPhypSinsq2Theta13, 0.10,                   0.00,   0.25,   1.0E-3,  false, false);
-  fparm->AddParam(2, kPhypSinsq2Theta12, kGlobFitSinsq2Theta12,  0.70,   1.00,   1.0E-2,  false, false);
-  fparm->AddParam(3, kPhypDeltaCP,       0,                      -kpi,   kpi,    1.0E-2,  false, false);
-  fparm->AddParam(4, kPhypDm23sq,        kGlobFitDm23sq,         1.0E-3, 4.0E-3, 1.0E-4,  false, false);
-  fparm->AddParam(5, kPhypDm12sq,        kGlobFitDm12sq,         6.0E-5, 9.0E-5, 2.0E-6,  false, false);
+  switch(kOscMixingParamChoice) {
+  case(kNuMixSinsq2Theta):
+    fparm->AddParam(0, kPhypMixing23,  kInitFitSinsq2Theta23,  kMinFitSinsq2Theta23,  kMaxFitSinsq2Theta23,  1.0E-2,  false, false);
+    fparm->AddParam(1, kPhypMixing13,  kInitFitSinsq2Theta13,  kMinFitSinsq2Theta13,  kMaxFitSinsq2Theta13,  1.0E-3,  false, false);
+    fparm->AddParam(2, kPhypMixing12,  kInitFitSinsq2Theta12,  kMinFitSinsq2Theta12,  kMaxFitSinsq2Theta12,  1.0E-2,  false, false);
+    break;
+  case(kNuMixSinsqTheta):
+    fparm->AddParam(0, kPhypMixing23,  kInitFitSinsqTheta23,   kMinFitSinsqTheta23,   kMaxFitSinsqTheta23,   1.0E-2,  false, false);
+    fparm->AddParam(1, kPhypMixing13,  kInitFitSinsqTheta13,   kMinFitSinsqTheta13,   kMaxFitSinsqTheta13,   1.0E-3,  false, false);
+    fparm->AddParam(2, kPhypMixing12,  kInitFitSinsqTheta12,   kMinFitSinsqTheta12,   kMaxFitSinsqTheta12,   1.0E-2,  false, false);
+    break;
+  default:
+    delete fparm;
+    return 0;
+  }
+
+  fparm->AddParam(3, kPhypDeltaCP,   0,                -kpi,          kpi,           1.0E-2,  false, false);
+  fparm->AddParam(4, kPhypDm23sq,    kInitFitDm23sq,   kMinFitDm23sq, kMaxFitDm23sq, 1.0E-4,  false, false);
+  fparm->AddParam(5, kPhypDm12sq,    kInitFitDm12sq,   kMinFitDm12sq, kMaxFitDm12sq, 2.0E-6,  false, false);
 
   return fparm;
 }
 //________________________________________________________________________________________
 FitParamList * FitParamList::NumuDisapFitNoSyst(void)
 {
+  assert(kOscMixingParamChoice == kNuMixSinsq2Theta); // for simplicity, allow only this option for the effective 2-flavour analysis
+
   FitParamList * fparm = new FitParamList(2);
 
-  //                                     init            min   max    step  fix?   nuis?
-  fparm->AddParam(0, kPhypSinsq2Theta23, 0.95,           0.0,  1.0,  0.01,  false, false);
-  fparm->AddParam(1, kPhypDm23sq,        kGlobFitDm23sq, 1E-3, 6E-3, 1E-4,  false, false);
+  fparm->AddParam(0, kPhypMixing23, kInitFitSinsq2Theta23, kMinFitSinsq2Theta23,  kMaxFitSinsq2Theta23,  0.01,  false, false);
+  fparm->AddParam(1, kPhypDm23sq,   kInitFitDm23sq,        kMinFitDm23sq,         kMaxFitDm23sq,         1E-4,  false, false);
 
   return fparm;
 }
 //________________________________________________________________________________________
 FitParamList * FitParamList::NumuDisapFitAllSyst(void)
 {
+  assert(kOscMixingParamChoice == kNuMixSinsq2Theta); // for simplicity, allow only this option for the effective 2-flavour analysis
+
   FitParamList * fparm = new FitParamList(36);
 
-  //                                          init            min   max    step  fix?   nuis?
-  fparm->AddParam( 0, kPhypSinsq2Theta23,     0.99,           0.0,  1.0,  0.01,  false, false);
-  fparm->AddParam( 1, kPhypDm23sq,            kGlobFitDm23sq, 1E-3, 6E-3, 1E-4,  false, false);
+  // add osc params
+  fparm->AddParam(0, kPhypMixing23, kInitFitSinsq2Theta23, kMinFitSinsq2Theta23,  kMaxFitSinsq2Theta23,  0.01,  false, false);
+  fparm->AddParam(1, kPhypDm23sq,   kInitFitDm23sq,        kMinFitDm23sq,         kMaxFitDm23sq,         1E-4,  false, false);
+
+  // add nuisance params
   fparm->AddParam( 2, kNuisSuperkEffCCQEoth,  0.0,           -1,    1,    1E-1,  false, true);
   fparm->AddParam( 3, kNuisSuperkEffCCQErc0u, 0.0,           -1,    1,    1E-1,  false, true);
   fparm->AddParam( 4, kNuisSuperkEffCCQErc1u, 0.0,           -1,    1,    1E-1,  false, true);
@@ -493,11 +537,11 @@ FitParamList * FitParamList::NumuDecohFitNoSyst(void)
 PhysHypothesis_t FitParamList::PhysicsHypothesis(void) const
 {
   // neutrino oscillations (3-flavour framework)
-  if( this->Exists(kPhypDm12sq) &&
-      this->Exists(kPhypDm23sq) &&
-      this->Exists(kPhypSinsq2Theta13) &&
-      this->Exists(kPhypSinsq2Theta12) &&
-      this->Exists(kPhypSinsq2Theta23) &&
+  if( this->Exists(kPhypDm12sq)   &&
+      this->Exists(kPhypDm23sq)   &&
+      this->Exists(kPhypMixing13) &&
+      this->Exists(kPhypMixing12) &&
+      this->Exists(kPhypMixing23) &&
       this->Exists(kPhypDeltaCP) )
   {
     return kHypOsc3F;
@@ -506,7 +550,7 @@ PhysHypothesis_t FitParamList::PhysicsHypothesis(void) const
   // numu disappearance, 2-flavour neutrino oscillation framework
   else
   if( this->Exists(kPhypDm23sq) &&
-      this->Exists(kPhypSinsq2Theta23) )
+      this->Exists(kPhypMixing23) )
   {
     return kHypNuMuDisapp2F;
   }

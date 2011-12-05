@@ -19,6 +19,9 @@
  @ 06/10/2011 - CA
    Functionality of Write() was spread to Analyze(), GetResults(), Save() to
    better serve the different needs of various toy-MC fitting studies.
+ @ 05/12/2011 - CA
+   Add capability to use either sin^2(2*theta_ij) or sin^2(theta_ij) as the
+   parameter of choice for describing neutrino mixing.
 */ 
 //____________________________________________________________________________
 
@@ -414,30 +417,30 @@ TH2D * Superk1RmuErecoFitter::BuildChisqSurfaceNuMuDisap2ParamFit(void)
 {
    FitParamList & fp = fFitInputs->FitParams();
 
-   double sinsq2theta23_min  = fp.MinValue(conv::kPhypSinsq2Theta23);
-   double sinsq2theta23_max  = fp.MaxValue(conv::kPhypSinsq2Theta23);
-   double sinsq2theta23_step = fp.StepSize(conv::kPhypSinsq2Theta23);
-   double dm23sq_min         = fp.MinValue(conv::kPhypDm23sq);
-   double dm23sq_max         = fp.MaxValue(conv::kPhypDm23sq);
-   double dm23sq_step        = fp.StepSize(conv::kPhypDm23sq);
+   double mixing23_min  = fp.MinValue(conv::kPhypMixing23);
+   double mixing23_max  = fp.MaxValue(conv::kPhypMixing23);
+   double mixing23_step = fp.StepSize(conv::kPhypMixing23);
+   double dm23sq_min    = fp.MinValue(conv::kPhypDm23sq);
+   double dm23sq_max    = fp.MaxValue(conv::kPhypDm23sq);
+   double dm23sq_step   = fp.StepSize(conv::kPhypDm23sq);
 
    // make sure that min and max are at the bin centre
-   int sinsq2theta23_nbins = 1 + (int) ((sinsq2theta23_max - sinsq2theta23_min) / sinsq2theta23_step);
-   int dm23sq_nbins        = 1 + (int) ((dm23sq_max -        dm23sq_min )       / dm23sq_step );
+   int mixing23_nbins = 1 + (int) ((mixing23_max - mixing23_min) / mixing23_step);
+   int dm23sq_nbins   = 1 + (int) ((dm23sq_max -   dm23sq_min )  / dm23sq_step );
 
    TH2D * chisq_surface = new TH2D(
       "chisq_surface","#chi^{2} surface",
-         sinsq2theta23_nbins, sinsq2theta23_min - 0.5*sinsq2theta23_step, sinsq2theta23_max + 0.5*sinsq2theta23_step,
+         mixing23_nbins, mixing23_min - 0.5*mixing23_step, mixing23_max + 0.5*mixing23_step,
          dm23sq_nbins, dm23sq_min - 0.5*dm23sq_step, dm23sq_max + 0.5*dm23sq_step);
    chisq_surface->SetDirectory(0);
    chisq_surface->GetXaxis()->SetRangeUser(0.,1.);
 
    for(int i = 1; i <= chisq_surface->GetNbinsX(); i++) {
      for(int j = 1; j <= chisq_surface->GetNbinsY(); j++) {
-         double sinsq2theta23 = chisq_surface->GetXaxis()->GetBinCenter(i);
-         double dm23sq        = chisq_surface->GetYaxis()->GetBinCenter(j);
-         fp.Update( conv::kPhypSinsq2Theta23, sinsq2theta23 );
-         fp.Update( conv::kPhypDm23sq,        dm23sq        );
+         double mixing23 = chisq_surface->GetXaxis()->GetBinCenter(i);
+         double dm23sq   = chisq_surface->GetYaxis()->GetBinCenter(j);
+         fp.Update( conv::kPhypMixing23, mixing23 );
+         fp.Update( conv::kPhypDm23sq,   dm23sq   );
          double chisq = fFitInputs->Chisquare();
          chisq_surface->SetBinContent(i,j,chisq);
      }//j
@@ -538,179 +541,4 @@ TH2D * Superk1RmuErecoFitter::BuildChisqSurfaceNuMuDecoh2ParamFit(void)
 //____________________________________________________________________________ 
 
 
-
-/*
-
-//
-// SOME OLD CODE - REMOVE
-//
-
-
-     int bin_sinsq_bestfit = fChisqSurface->GetXaxis()->FindBin(sinsq2theta23_bestfit);
-     int bin_dmsq_bestfit = fChisqSurface->GetYaxis()->FindBin(dm23sq_bestfit);
-     double chisq_min = fChisqSurface->GetBinContent(bin_sinsq_bestfit,bin_dmsq_bestfit);
-     TH2D * chisq_surf_shift = new TH2D(*fChisqSurface); 
-     chisq_surf_shift->SetDirectory(0); 
-     for(int i = 1; i <= fChisqSurface->GetNbinsX(); i++) {
-          for(int j = 1; j <= fChisqSurface->GetNbinsY(); j++) {
-             double chisq = fChisqSurface->GetBinContent(i,j); 
-             chisq_surf_shift->SetBinContent(i,j, TMath::Max(0., chisq-chisq_min));
-          }//j
-     }//i
-
-     TGaxis::SetMaxDigits(2);
-  
-     chisq_surf_shift->GetXaxis()->SetTitle("sin^{2}(2#theta_{23})");
-     chisq_surf_shift->GetYaxis()->SetTitle("|#Deltam_{32}^{2}| (eV^{2}/c^{4})");
-     chisq_surf_shift->GetYaxis()->SetTitleOffset(1);
-     chisq_surf_shift->GetYaxis()->SetTitleSize(0.05);
-     chisq_surf_shift->GetXaxis()->SetTitleSize(0.05);
-
-     const int nlev = 2;
-     double levels[nlev] = {
-         util::DeltaChisquare(conv::kCL68, fNFreeFitParams),
-         util::DeltaChisquare(conv::kCL90, fNFreeFitParams)
-     };
-
-     chisq_surf_shift->SetContour(nlev,levels); 
-     chisq_surf_shift->Draw("cont2"); 
-
-     if(file_out) {
-       fChisqSurface    -> Write("chisq_surface");
-       chisq_surf_shift -> Write("chisq_minus_chisqmin_surface");
-     }
-
-     TMarker * best_fit_point =
-          new TMarker(sinsq2theta23_bestfit, dm23sq_bestfit, 29);
-     best_fit_point->SetMarkerSize(1.4);
-     best_fit_point->Draw();
-     if(file_out) {
-        best_fit_point->Write("point_best_fit");
-     }
-     
-     if(opt.Contains("Minos90CL")) {
-        string contour_file = gSystem->Getenv("T2KOSCANA") + string("/inputs/external/contours/numu_disappearance.root");
-        TFile f(contour_file.c_str(),"read");
-        TGraph * gr = (TGraph*)f.Get("minos2011_90cl");
-        TGraph * minos_90cl = new TGraph(*gr);
-        minos_90cl->SetLineColor(kRed);
-        minos_90cl->SetLineStyle(kSolid);
-        minos_90cl->SetLineWidth(1);
-        minos_90cl->Draw("l");
-	f.Close();
-     }
-
-   }
-
-     //
-     // plot chisq = f (sinsq2theta23)
-     //
-
-     c->cd(3);
-     TGraph * gr1 = 0;
-     if(fOption.Contains("minuit")) {
-        gMinuit->Command("SCAn 1");
-        gr1 = (TGraph *) gMinuit->GetPlot();
-         for(int i=0; i < gr1->GetN(); i++) {
-             double x,y;
-             gr1->GetPoint(i,x,y);
-             gr1->SetPoint(i,x,y/fNdof);
-         }
-     }//minuit?
-     else
-     if(fOption.Contains("custom")) {
-        int n = chisq_surf_shift->GetXaxis()->GetNbins();
-        double * lchisq = new double[n];
-        double * lsinsq = new double[n];
-        for(int i=1; i<=n; i++) {
-	    lchisq[i-1] = (fChisqSurface->GetBinContent(i,bin_dmsq_bestfit))/fNdof;
-	    lsinsq[i-1] = fChisqSurface->GetXaxis()->GetBinCenter(i);
-        }
-        gr1 = new TGraph(n,lsinsq,lchisq);
-     }//custom?
-     xmin = ( gr1->GetX() )[TMath::LocMin(gr1->GetN(),gr1->GetX())];
-     xmax = ( gr1->GetX() )[TMath::LocMax(gr1->GetN(),gr1->GetX())];
-     ymin = ( gr1->GetY() )[TMath::LocMin(gr1->GetN(),gr1->GetY())];
-     ymax = ( gr1->GetY() )[TMath::LocMax(gr1->GetN(),gr1->GetY())];
-     TH1F* hframe1 = c->GetPad(3)->DrawFrame(xmin,0.8*ymin,xmax,1.2*ymax);
-     hframe1->GetXaxis()->SetTitle("sin^{2}(2#theta_{23})");
-     hframe1->GetYaxis()->SetTitle("#chi^{2}/ndof");
-     gr1->Draw("l");
-
-     //
-     // plot chisq = f (Dm23sq)
-     //
-     c->cd(4);
-     TGraph * gr2 = 0;
-     if(fOption.Contains("minuit")) {
-        gMinuit->Command("SCAn 2");
-        gr2 = (TGraph *) gMinuit->GetPlot();
-        for(int i=0; i < gr2->GetN(); i++) {
-            double x,y;
-            gr2->GetPoint(i,x,y);
-            gr2->SetPoint(i,x,y/fNdof);
-        }
-     }//minuit?
-     if(fOption.Contains("custom")) {
-        int n = fChisqSurface->GetYaxis()->GetNbins();
-        double * lchisq = new double[n];
-        double * ldmsq = new double[n];
-        for(int i=1; i<=n; i++) {
-	    lchisq[i-1] = (fChisqSurface->GetBinContent(bin_sinsq_bestfit,i))/fNdof;
-	    ldmsq [i-1] = fChisqSurface->GetYaxis()->GetBinCenter(i);
-	
-        }
-        gr2 = new TGraph(n,ldmsq,lchisq);
-     }//custom?
-     xmin = ( gr2->GetX() )[TMath::LocMin(gr2->GetN(),gr2->GetX())];
-     xmax = ( gr2->GetX() )[TMath::LocMax(gr2->GetN(),gr2->GetX())];
-     ymin = ( gr2->GetY() )[TMath::LocMin(gr2->GetN(),gr2->GetY())];
-     ymax = ( gr2->GetY() )[TMath::LocMax(gr2->GetN(),gr2->GetY())];
-     TH1F* hframe2 = c->GetPad(4)->DrawFrame(xmin,0.8*ymin,xmax,1.2*ymax);
-     hframe2->GetXaxis()->SetTitle("|#Deltam_{32}^{2}| (eV^{2}/c^{4})");
-     hframe2->GetYaxis()->SetTitle("#chi^{2}/ndof");
-     gr2->Draw("l");
-
-     if(file_out) {
-        gr1->Write("chisq_vs_sinsq2theta23");
-        gr2->Write("chisq_vs_dm23sq");
-     }
-  }
-
-  if(opt.Contains("ChisqSurface")) {
-     if(fOption.Contains("minuit")) {
-       this->BuildChisqSurface();
-     } //minuit?
-     fChisqSurface->Draw("colz");
-  }
-
-  if(opt.Contains("MarginalizedChisq")) {
-     TH1D * hdm23sq = 
-        this->MarginalizeChisqSurface("marginalize_sinsq2theta23+subtract_chisqmin");
-     TH1D * hsinsq2theta23 = 
-        this->MarginalizeChisqSurface("marginalize_dm23sq+subtract_chisqmin");
-     hdm23sq ->GetXaxis()->SetTitle("|#Deltam_{32}^{2}| (eV^{2}/c^{4})");
-     hsinsq2theta23 ->GetXaxis()->SetTitle("sin^{2}(2#theta_{23})");
-     c->Divide(1,2);
-     c->cd(1);
-     hdm23sq->Draw("c");
-     c->cd(2);
-     hsinsq2theta23->Draw("c");
-     if(file_out) {
-        hdm23sq        -> Write("marginalized_chisq_dm23sq");
-        hsinsq2theta23 -> Write("marginalized_chisq_sinsq2theta23");
-     }
-  }
-
-  // Save canvas
-  c->Update();
-  if(outtag) {
-    ostringstream outgif;
-    ostringstream outroot;
-    outgif << outtag << "_canvas.gif";
-    outroot << outtag << "_canvas.root";
-    c->SaveAs( outgif.str().c_str() );
-    c->SaveAs( outroot.str().c_str() );
-  }
-*/
 

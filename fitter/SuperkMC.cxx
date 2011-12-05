@@ -48,6 +48,10 @@
    Added option to use different Ereco binning for the 1Re and 1Rmu histograms.
    Renamed various variables for consistency and for avoiding confusion between 
    1Rmu and 1Re systematics.
+ @ 05/12/2011 - CA
+   Add capability to use either sin^2(2*theta_ij) or sin^2(theta_ij) as the
+   parameter of choice for describing neutrino mixing.
+
 */
 //________________________________________________________________________________________
 
@@ -672,23 +676,30 @@ void SuperkMC::ApplyPhysHypothesisToTemplates(void)
   if(hyp == kHypOsc3F) 
   {
     // set oscillation parameters to the oscillation probability calculation code
-    double sinsq2theta12 = fPhysHypothesis.CurrValue(kPhypSinsq2Theta12);
-    double sinsq2theta13 = fPhysHypothesis.CurrValue(kPhypSinsq2Theta13);
-    double sinsq2theta23 = fPhysHypothesis.CurrValue(kPhypSinsq2Theta23);
-    double dm12sq        = fPhysHypothesis.CurrValue(kPhypDm12sq);
-    double dm23sq        = fPhysHypothesis.CurrValue(kPhypDm23sq);
-    double delta_cp      = fPhysHypothesis.CurrValue(kPhypDeltaCP);
+    double mixing12 = fPhysHypothesis.CurrValue(kPhypMixing12);
+    double mixing13 = fPhysHypothesis.CurrValue(kPhypMixing13);
+    double mixing23 = fPhysHypothesis.CurrValue(kPhypMixing23);
+    double dm12sq   = fPhysHypothesis.CurrValue(kPhypDm12sq);
+    double dm23sq   = fPhysHypothesis.CurrValue(kPhypDm23sq);
+    double delta_cp = fPhysHypothesis.CurrValue(kPhypDeltaCP);
 #ifdef __show_hypothesis__
-    cout << "**  Exp/SKMC >> sin^2(2theta12) = " << sinsq2theta12
-         <<   ", sin^2(2theta13) = " << sinsq2theta13
-         <<   ", sin^2(2theta23) = " << sinsq2theta23
-         <<   ", delta_cp = " << delta_cp
-         <<   ", Dm^2_{12} = "   << dm12sq << " eV^2"
-         <<   ", |Dm^2_{23}| = " << dm23sq << " eV^2"
-         << endl;
+    cout << "**  Exp/SKMC >> " << fPhysHypothesis;
 #endif
-    fNuOsc3Flavour.SetOscParameters(sinsq2theta12,sinsq2theta13,sinsq2theta23,dm12sq,dm23sq,delta_cp);
-
+    switch(kOscMixingParamChoice) {
+       // mixing params are sin^2(2*theta)
+       case(kNuMixSinsq2Theta) : 
+         fNuOsc3Flavour.SetOscParameters(mixing12,mixing13,mixing23,dm12sq,dm23sq,delta_cp);
+         break;
+       // mixing params are sin^2(theta)
+       case(kNuMixSinsqTheta) : 
+         fNuOsc3Flavour.SetOscParametersSinSqTAll(mixing12,mixing13,mixing23,dm12sq,dm23sq,delta_cp);
+         break;
+       default : 
+         cerr << "**  Exp/SKMC >> Can't handle choice of oscillation mixing params (" 
+              << kOscMixingParamChoice << ")" << endl;
+         exit(1);
+    }
+    
     // loop over samples
     for(int is = 0; is < kns; is++) {
      SuperkSample_t s = kSKSamples[is];
@@ -750,7 +761,8 @@ void SuperkMC::ApplyPhysHypothesisToTemplates(void)
   //
   else
   if(hyp == kHypNuMuDisapp2F) {
-    double sinsq2theta23 = fPhysHypothesis.CurrValue(kPhypSinsq2Theta23);
+    assert(kOscMixingParamChoice == kNuMixSinsq2Theta); // for simplicity, allow only this option for the effective 2-flavour analysis
+    double sinsq2theta23 = fPhysHypothesis.CurrValue(kPhypMixing23);
     double dm23sq        = fPhysHypothesis.CurrValue(kPhypDm23sq);
     // loop over samples
     for(int is = 0; is < kns; is++) {
