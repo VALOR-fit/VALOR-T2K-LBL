@@ -573,6 +573,14 @@ double t2kana::util::RandomizeDm12sq(void)
   return rand.Gaus(mean,sigma);
 }
 //____________________________________________________________________________
+double t2kana::util::RandomizeDm23sq(void)
+{
+  TRandom3 rand(0);
+  double mean  = conv::kGlobFitDm23sq; 
+  double sigma = conv::kGlobFitDm23sq * conv::kGlobFitErrDm23sq;
+  return rand.Gaus(mean,sigma);
+}
+//____________________________________________________________________________
 int t2kana::util::FindSampleSlot(t2kana::conv::SuperkSample_t s)
 {
   for(int is = 0; is < conv::kns; is++) {
