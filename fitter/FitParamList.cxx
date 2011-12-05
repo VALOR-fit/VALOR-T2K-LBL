@@ -613,9 +613,8 @@ int FitParamList::Id(PhysParamId_t p) const
 {
    map<PhysParamId_t, int>::const_iterator it = fIdMap.find(p);
    if(it == fIdMap.end()) {
-     cerr << "Parameter : " << util::AsString(p) 
-          << " was not included in current FitParamList" 
-         << endl;
+     cerr << "FitParamList::Id() >> Parameter: " << util::AsString(p) 
+          << " was not included in current fit parameter list" << endl;
      exit(1);
    }
    int id = it->second;

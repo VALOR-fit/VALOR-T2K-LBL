@@ -25,6 +25,8 @@
 */ 
 //____________________________________________________________________________
 
+//#define __show_bestfit_values_used_for_postfit_analysis__
+
 #include <cassert> 
 #include <cstdlib> 
 #include <iostream> 
@@ -87,9 +89,11 @@ void Superk1RmuErecoFitter::Analyze(Option_t * option)
   //
   // Print best-fit results used for generating the plots
   //
+#ifdef __show_bestfit_values_used_for_postfit_analysis__
   fFitInputs->FitParams().ShowOnlyBestFitValuesInNextPrint();
   cout << "Superk1RmuErecoFitter/Analyze >> "
        << "Using the following best-fit results: " << fFitInputs->FitParams();
+#endif
 
   //
   // Declare (potential) outpts

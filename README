@@ -159,6 +159,8 @@ Similar to 2010_v2.1.0 but with the following additions:
   c) treated as nuisance parameters and be marginalised. The latter option is used in our analysis (marginalization).
 > Extended code so that it can also predict SK 1Re distributions and perform a 3-flavour nue appearance analysis.
 > Extected code so it can perform a global numu disappearance + nue appearance analysis.
+> For the oscillation analyses, add capability to fit for either sin^2(2*theta_ij) or sin^2(theta_ij) 
+  depending on configuration options. Fitting for sin^2(theta_ij) is preferred for the global 3-flavour analysis.
 > Added event templates from the `nue signal' MC (nue interactions generated with the numu flux). 
   Needed for the 3-flavour numu disappearance analysis and for the nue appearance analysis.
   The normalization factor for the sample used for the newly added `nue signal' templates is:
