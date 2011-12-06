@@ -69,7 +69,7 @@ namespace util {
   int FindSampleSlot(t2kana::conv::SuperkSample_t s);
   int FindModeSlot  (t2kana::conv::SuperkSample_t s, t2kana::conv::SuperkMode_t m);
 
-  string AsString    (string hypothesis, double mix12, double mix13, double mix23, double deltacp, double dm12sq, double dm23sq, Option_t * option="all");
+  string AsString    (t2kana::conv::PhysHypothesis_t hyp, double mix12, double mix13, double mix23, double deltacp, double dm12sq, double dm23sq);
   string AsString    (t2kana::conv::NuMassHierarchy_t m);
   string AsString    (t2kana::conv::NuOscMixParam_t   p);
   string AsString    (t2kana::conv::PhysHypothesis_t  h);

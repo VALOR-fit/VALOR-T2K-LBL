@@ -62,6 +62,7 @@
 #include <cstdlib>
 #include <fstream>
 #include <iostream>
+#include <sstream>
 #include <iomanip>
 
 #include <TROOT.h>
@@ -89,6 +90,7 @@ using std::setw;
 using std::setfill;
 using std::setprecision;
 using std::ofstream;
+using std::ostringstream;
 
 using namespace t2kana;
 using namespace t2kana::conv;
@@ -465,25 +467,17 @@ int t2kana::util::FindModeSlot(
 }
 //____________________________________________________________________________
 string t2kana::util::AsString (
-  string hypothesis, 
+  t2kana::conv::PhysHypothesis_t hyp, 
   double mix12, double mix13, double mix23, 
-  double deltacp, double dm12sq, double dm23sq, Option_t * option)
+  double deltacp, double dm12sq, double dm23sq)
 {
+// The code builds strings which are typically used in building names of
+// files containing t2kana results
 //
-  string s = "?";
-  string opt = option;
 
-
-  if( t2kana::util::FromString(hypothesis) == t2kana::conv::kHypNuMuDisapp2F)
-  {
-    s = Form("sinsq2theta23_%.3f,dm23sq_%.5feV2",mix23,dm23sq);
-  }
-
-  if( t2kana::util::FromString(hypothesis) == t2kana::conv::kHypOsc3F )
-  {
-    const char * mixparam = "?";
-    NuOscMixParam_t omp = Opt::Instance()->gOscMixingParamChoice;
-    switch(omp) {
+  NuOscMixParam_t omp = Opt::Instance()->gOscMixingParamChoice;
+  string mixparam = "?";
+  switch(omp) {
       case(kNuMixSinsq2Theta):
          mixparam = "sinsq2theta";
          break;
@@ -492,25 +486,95 @@ string t2kana::util::AsString (
          break;
       default:
          return "";
-    }
-
-    if(opt.find("all") != string::npos) {
-         s = Form("%s[12_%.3f,13_%.3f,23_%.3f],dcp_%.3f,dmsq[12_%.8f,23_%.6f]eV2",
-                   mixparam, mix12, mix13, mix23, deltacp, dm12sq, dm23sq);
-
-    } else
-    if(opt.find("no-theta13-deltacp") != string::npos) {
-         s = Form("%s[12_%.3f,23_%.3f],dmsq[12_%.8f,23_%.6f]eV2",
-                   mixparam, mix12, mix23, dm12sq, dm23sq);
-
-    } else
-    if(opt.find("no-theta12-dm12sq") != string::npos) {
-         s = Form("%s[13_%.3f,23_%.3f],dcp_%.3f,dmsq23_%.6feV2",
-                   mixparam, mix13, mix23, deltacp, dm23sq);
-    }
   }
 
-  return s;
+  ostringstream out;
+
+  //
+  // 3-flavour oscillations
+  // Build the string as mix[12_nnn,13_nnn,23_nnn],dcp_nnn,dmsq[12_nnn,23_nnn]eV2
+  // where mix is either sinsqtheta or sinsq2theta and nnn is the parameter
+  // value with the specified numerical accuracy.
+  // Params with value of -999 (randomized during toy-MC generation) will not be 
+  // included in the output string
+  //
+  if( hyp == t2kana::conv::kHypOsc3F )
+  {
+    double rndmz = -900;
+    bool show_mix12   = (mix12   > rndmz);
+    bool show_mix13   = (mix13   > rndmz);
+    bool show_mix23   = (mix23   > rndmz);
+    bool show_mix     = show_mix12 || show_mix13 || show_mix23;
+    bool show_deltacp = (deltacp > rndmz);
+    bool show_dm12sq  = (dm12sq  > rndmz);
+    bool show_dm23sq  = (dm23sq  > rndmz);
+    bool show_dmsq    = show_dm12sq || show_dm23sq;
+
+    if(show_mix) 
+    {
+       out << mixparam << "[";
+       if(show_mix12) {
+          out << "12_" << Form("%.3f",mix12);
+       }
+       if(show_mix13) {
+          if(show_mix12) { 
+             out << ","; 
+          }
+          out << "13_" << Form("%.3f",mix13);
+       }
+       if(show_mix23) {
+          if(show_mix13 || (!show_mix13 && show_mix12)) {
+             out << ",";
+          }
+          out << "23_" << Form("%.3f",mix23);
+       }
+       out << "]";
+    }
+
+    if(show_mix && (show_deltacp || show_dmsq)) 
+    {
+      out << ",";
+    } 
+
+    if(show_deltacp)
+    {
+      out << "dcp_" << Form("%.3f",deltacp);
+    }
+
+    if(show_deltacp && show_dmsq)
+    {
+      out << ",";
+    } 
+
+    if(show_dmsq) 
+    {
+       out << "dmsq[";
+       if(show_dm12sq) {
+          out << "12_" << Form("%.8f",dm12sq);
+       }
+       if(show_dm23sq) {
+          if(show_dm12sq) { 
+             out << ","; 
+          }
+          out << "23_" << Form("%.6f",dm23sq);
+       }
+       out << "]eV2";
+    }
+
+  }//3f
+
+  //
+  // 2-flavour oscillations, numu disappearance
+  // Build the string as mix23_nnn,dm23sq_nnneV2
+  // where mix is either sinsqtheta or sinsq2theta and nnn is the parameter
+  // value with the specified numerical accuracy.
+  //
+  if( hyp == t2kana::conv::kHypNuMuDisapp2F)
+  {
+    out << mixparam << "23_" << Form("%.3f",mix23) << ",dm23sq_" << Form("%.5f",dm23sq) << "eV2";
+  } 
+
+  return out.str();
 }
 //____________________________________________________________________________
 string t2kana::util::AsString(t2kana::conv::NuMassHierarchy_t m)
