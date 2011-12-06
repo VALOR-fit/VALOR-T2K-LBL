@@ -27,7 +27,16 @@ void generate_sk_ereco_spectrum_err_envelope
 
   const int nexp = 5000; // number of toy MC experiments
 
-  // output histograms and graphs
+  // Analysis confifuration
+  const char * config = Form("%s/config/%s", gSystem->Getenv("T2KOSCANA"), config_file);
+  cout << "Reading analysis configuration from: " << config << endl;
+
+  // Global options
+  Opt::Instance()->gOscMixingParamChoice = conv::kNuMixSinsq2Theta;
+  Opt::Instance()->gMassHierarchyAssumed = conv::kNmhNormal;
+  cout << *Opt::Instance() << endl;
+
+  // Output histograms and graphs
   TH1D * hEreco [nexp];        //
   TH1D * hErecoFracErrP  = 0;  //
   TH1D * hErecoFracErrM = 0;   //
@@ -35,7 +44,7 @@ void generate_sk_ereco_spectrum_err_envelope
   TH1D * hErecoMax = 0;        //
   TH1D * hErecoMin = 0;        //
 
-  // set physics hypothesis
+  // Set physics hypothesis
   PhysHypothesis ph(hypothesis);
   if(ph.Hypothesis() == conv::kHypNuMuDisapp2F) {
     ph.SetCurrValue(conv::kPhypMixing23,  input_mixing23);
@@ -52,13 +61,11 @@ void generate_sk_ereco_spectrum_err_envelope
   cout << "Physics hypothesis set: " << endl;
   cout << ph;
   
-  // create & config superk spectrum predictor
-  const char * config = Form("%s/config/%s", gSystem->Getenv("T2KOSCANA"), config_file);
-  cout << "Reading analysis configuration from: " << config << endl;
+  // Create & config superk spectrum predictor
   SuperkExpectation skexp;
   skexp.Read(config);
 
-  // generate nexp random spectra
+  // Generate nexp random spectra
   for(int iexp = 0; iexp < nexp; iexp++) {
      // tweak spectrum generation model
      if(iexp%50==0) {
@@ -75,11 +82,11 @@ void generate_sk_ereco_spectrum_err_envelope
      hEreco[iexp]->SetDirectory(0);
   }
 
-  // store nominal
+  // Store nominal
   hErecoDef = new TH1D(*hEreco[0]);
   hErecoDef->SetDirectory(0);
 
-  // find min/max and calculate fractional deviation from nominal
+  // Find min/max and calculate fractional deviation from nominal
   hErecoFracErrP = new  TH1D(*hEreco[0]);
   hErecoFracErrM = new  TH1D(*hEreco[0]);
   hErecoMax      = new TH1D(*hEreco[0]);
@@ -113,7 +120,7 @@ void generate_sk_ereco_spectrum_err_envelope
   hErecoFracErrP->GetYaxis()->SetRangeUser(-1,1);
   hErecoFracErrM->GetYaxis()->SetRangeUser(-1,1);
 
-  // draw
+  // Draw
   hErecoDef->SetLineStyle(kDashed);
   hErecoMin->SetLineStyle(kSolid);
   hErecoMax->SetLineStyle(kSolid);
@@ -137,7 +144,7 @@ void generate_sk_ereco_spectrum_err_envelope
   hErecoFracErrP->GetYaxis()->SetTitle("Fractional error");
   c->Update();
 
-  // write-out in file
+  // Write-out in file
   string oscparams = util::AsString(hypothesis,
      input_mixing12,input_mixing13,input_mixing23,input_deltacp,input_dm12sq,input_dm23sq);
   TFile f(Form("sk_ereco_spectrum-err_envelope-%s.root",oscparams.c_str()),"recreate");

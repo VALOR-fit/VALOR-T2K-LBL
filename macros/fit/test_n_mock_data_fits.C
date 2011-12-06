@@ -36,8 +36,8 @@ void test_n_mock_data_fits
   const char * config = Form("%s/config/%s", gSystem->Getenv("T2KOSCANA"), config_file);
 
   // Global options
-  Opt::Instance()->gOscMixingParamChoice = conv::kNuMixSinsq2Theta;
-  Opt::Instance()->gMassHierarchyAssumed = conv::kNmhNormal;
+  Opt::Instance()->gOscMixingParamChoice = kNuMixSinsq2Theta;
+  Opt::Instance()->gMassHierarchyAssumed = kNmhNormal;
 
   // Check whether some osc. params need to be randomized
   bool randomize_mixing12 = (TMath::Abs(input_mixing12 + 999) < kASmallNum);
