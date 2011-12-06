@@ -7,8 +7,6 @@
 // ------------------------------------------------------------------------------------------------
 //
 
-#include "Conventions.h"
-
 void test_sk_ereco_spectrum_twk_beam_norm
 (
   const char * hypothesis         = "3f_osc",                       /* options: "2f_numu_disap", "3f_osc" */
@@ -24,21 +22,14 @@ void test_sk_ereco_spectrum_twk_beam_norm
   using namespace std;
   using namespace t2kana;
 
-  const int ntwkdials = 3;
-  double twkdial[ntwkdials] = { -1.0, 0.0, +1.0 };
+  // Analysis configuration
+  const char * config  = Form("%s/config/%s", gSystem->Getenv("T2KOSCANA"), config_file);
 
-  int deflt = ntwkdials/2; //untweaked case
+  // Global options
+  Opt::Instance()->gOscMixingParamChoice = conv::kNuMixSinsq2Theta;
+  Opt::Instance()->gMassHierarchyAssumed = conv::kNmhNormal;
 
-  // histogram drawing options
-  int hwidth [ntwkdials] = { 1,       1,       2      };
-  int hcolor [ntwkdials] = { kBlue,   kBlack,  kRed   };
-  int hstyle [ntwkdials] = { kDashed, kSolid, kDashed };
-
-  // histogram booking
-  TH1D * hEreco   [ntwkdials];
-  TH1D * hErecoErr[ntwkdials];
-
-  // set physics hypothesis
+  // Set physics hypothesis
   PhysHypothesis ph(hypothesis);
   if(ph.Hypothesis() == conv::kHypNuMuDisapp2F) {
     ph.SetCurrValue(conv::kPhypMixing23,  input_mixing23);
@@ -52,12 +43,28 @@ void test_sk_ereco_spectrum_twk_beam_norm
     ph.SetCurrValue(conv::kPhypDm12sq,    input_dm12sq);
     ph.SetCurrValue(conv::kPhypDm23sq,    input_dm23sq);
   }
-  cout << "Physics hypothesis set: " << endl;
-  cout << ph;
+
+  // Print options
+  cout << "\n[Job inputs]" << endl;
+  cout << "- Reading analysis configuration from: " << config << endl;
+  cout << "- Physics hypothesis: \n" << ph << endl;
+  cout << *Opt::Instance() << endl;
+
+  const int ntwkdials = 3;
+  double twkdial[ntwkdials] = { -1.0, 0.0, +1.0 };
+
+  int deflt = ntwkdials/2; //untweaked case
+
+  // Histogram drawing options
+  int hwidth [ntwkdials] = { 1,       1,       2      };
+  int hcolor [ntwkdials] = { kBlue,   kBlack,  kRed   };
+  int hstyle [ntwkdials] = { kDashed, kSolid, kDashed };
+
+  // Histogram booking
+  TH1D * hEreco   [ntwkdials];
+  TH1D * hErecoErr[ntwkdials];
   
-  // create & config superk spectrum predictor
-  const char * config = Form("%s/config/%s", gSystem->Getenv("T2KOSCANA"), config_file);
-  cout << "Reading analysis configuration from: " << config << endl;
+  // Create & config superk spectrum predictor
   SuperkExpectation skexp;
   skexp.Read(config);
 
@@ -96,7 +103,7 @@ void test_sk_ereco_spectrum_twk_beam_norm
   }//idial
 
   //
-  // draw
+  // Draw
   //
   for(int idial = 0; idial < ntwkdials; idial++) {
      hEreco   [idial]->SetLineWidth(hwidth[idial]);
@@ -139,7 +146,7 @@ void test_sk_ereco_spectrum_twk_beam_norm
   c->Update();
 
   // write-out in file
-  string oscparams = util::AsString(hypothesis,
+  string oscparams = util::AsString(ph.Hypothesis(),
      input_mixing12,input_mixing13,input_mixing23,input_deltacp,input_dm12sq,input_dm23sq);
   TFile f(Form("sk_ereco_spectrum-twk_beam_norm-%s.root",oscparams.c_str()),"recreate");
   for(int idial = 0; idial < ntwkdials; idial++) {

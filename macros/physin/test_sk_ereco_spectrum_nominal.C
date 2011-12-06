@@ -24,7 +24,35 @@ void test_sk_ereco_spectrum_nominal
   using namespace std;
   using namespace t2kana;
 
-  // define list of contributing modes
+  // Analysis configuration
+  const char * config  = Form("%s/config/%s", gSystem->Getenv("T2KOSCANA"), config_file);
+
+  // Global options
+  Opt::Instance()->gOscMixingParamChoice = conv::kNuMixSinsq2Theta;
+  Opt::Instance()->gMassHierarchyAssumed = conv::kNmhNormal;
+
+  // Set physics hypothesis
+  PhysHypothesis ph(hypothesis);
+  if(ph.Hypothesis() == conv::kHypNuMuDisapp2F) {
+    ph.SetCurrValue(conv::kPhypMixing23,  input_mixing23);
+    ph.SetCurrValue(conv::kPhypDm23sq,    input_dm23sq);
+  } else
+  if(ph.Hypothesis() == conv::kHypOsc3F) {
+    ph.SetCurrValue(conv::kPhypMixing12,  input_mixing12);
+    ph.SetCurrValue(conv::kPhypMixing13,  input_mixing13);
+    ph.SetCurrValue(conv::kPhypMixing23,  input_mixing23);
+    ph.SetCurrValue(conv::kPhypDeltaCP,   input_deltacp);
+    ph.SetCurrValue(conv::kPhypDm12sq,    input_dm12sq);
+    ph.SetCurrValue(conv::kPhypDm23sq,    input_dm23sq);
+  }
+
+  // Print options
+  cout << "\n[Job inputs]" << endl;
+  cout << "- Reading analysis configuration from: " << config << endl;
+  cout << "- Physics hypothesis: \n" << ph << endl;
+  cout << *Opt::Instance() << endl;
+
+  // Define list of contributing modes
   const unsigned int nm = 15;
   conv::SuperkMode_t modes [nm] = {
      conv::kSKmNuMuCCQE, 
@@ -44,45 +72,33 @@ void test_sk_ereco_spectrum_nominal
      conv::kSKmSigNuECCoth
   };
 
-  // histogram booking
+  // Histogram booking
   TH1D * hErecoTot = new TH1D("","",conv::kNErecoBins1Rmu,conv::kErecoBinEdges1Rmu);
   TH1D * hErecoMode[conv::knm]; //< contribution from each mode  
 
-  // set physics hypothesis
-  PhysHypothesis ph(hypothesis);
-  if(ph.Hypothesis() == conv::kHypNuMuDisapp2F) {
-    ph.SetCurrValue(conv::kPhypMixing23,  input_mixing23);
-    ph.SetCurrValue(conv::kPhypDm23sq,    input_dm23sq);
-  } else
-  if(ph.Hypothesis() == conv::kHypOsc3F) {
-    ph.SetCurrValue(conv::kPhypMixing12,  input_mixing12);
-    ph.SetCurrValue(conv::kPhypMixing13,  input_mixing13);
-    ph.SetCurrValue(conv::kPhypMixing23,  input_mixing23);
-    ph.SetCurrValue(conv::kPhypDeltaCP,   input_deltacp);
-    ph.SetCurrValue(conv::kPhypDm12sq,    input_dm12sq);
-    ph.SetCurrValue(conv::kPhypDm23sq,    input_dm23sq);
-  }
-  cout << "Physics hypothesis set: " << endl;
-  cout << ph;
-
-  // create & config superk spectrum predictor
-  const char * config = Form("%s/config/%s", gSystem->Getenv("T2KOSCANA"), config_file);
-  cout << "Reading analysis configuration from: " << config << endl;
+  // Create & config superk spectrum predictor
   SuperkExpectation skexp;
   skexp.Read(config);
 
-  // generate prediction
+  // Generate prediction
+  cout << "- Generating predictions..." << endl;
   skexp.Generate(ph);
 
-  // get energy spectra
+  // Get energy spectra
   for(int im = 0; im < nm; im++) {
     conv::SuperkMode_t m = modes[im];
-    hErecoMode[m] = new TH1D(*skexp.CurrPredictedErecoSpectrum(conv::kSKsFCFV1RingMuLike, m));
+    cout << "- Retrieving spectrum prediction for 1Rmu mode: " 
+         << util::AsString(m) << endl;
+    TH1D * h = skexp.CurrPredictedErecoSpectrum(conv::kSKsFCFV1RingMuLike, m);  
+    assert(h);
+    hErecoMode[m] = new TH1D(*h);
   }
   hErecoTot = new TH1D(*skexp.CurrPredictedErecoSpectrum(conv::kSKsFCFV1RingMuLike));
 
+
+  cout << "- Done..2." << endl;
   //
-  // draw
+  // Draw
   //
 
   gStyle->SetOptStat(0);
@@ -197,9 +213,10 @@ void test_sk_ereco_spectrum_nominal
   }
 
   //
-  // save histograms in a ROOT file
+  // Save histograms in a ROOT file
   //
-  string oscparams = util::AsString(hypothesis,
+
+  string oscparams = util::AsString(ph.Hypothesis(),
      input_mixing12,input_mixing13,input_mixing23,input_deltacp,input_dm12sq,input_dm23sq);
   TFile f(Form("sk_ereco_spectrum-%s.root",oscparams.c_str()),"recreate");
   hErecoTot                             -> Write("total");
@@ -221,7 +238,7 @@ void test_sk_ereco_spectrum_nominal
   f.Close();
 
   //
-  // print-out numbers requested during the analysis review
+  // Print-out numbers requested during the analysis review
   //
 
   if(print_spectrum) {  
