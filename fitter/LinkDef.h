@@ -26,5 +26,6 @@
 #pragma link C++ class t2kana::FitInputs;
 #pragma link C++ class t2kana::PhysHypothesis;
 #pragma link C++ class t2kana::NuOsc3Flavour;
+#pragma link C++ class t2kana::Opt;
 
 #endif

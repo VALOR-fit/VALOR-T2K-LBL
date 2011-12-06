@@ -48,6 +48,8 @@
  @ 05/12/2011 - CA
    Add capability to use either sin^2(2*theta_ij) or sin^2(theta_ij) as the
    parameter of choice for describing neutrino mixing.
+ @ 05/12/2011 - CA
+   Added `AsString(NuOscMixParam_t)'
 
 */
 //____________________________________________________________________________
@@ -656,13 +658,29 @@ string t2kana::util::AsString(t2kana::conv::NuMassHierarchy_t m)
 {
   switch(m) {
    case (kNmhNormal) :
-     return "< normal >";
+     return "Normal";
      break;
    case (kNmhInverted) :
-     return "< inverted >";
+     return "Inverted";
      break;
    default :
-     return "undefined"; 
+     return "Undefined"; 
+     break;
+  }
+  return "";
+}
+//____________________________________________________________________________
+string t2kana::util::AsString(t2kana::conv::NuOscMixParam_t p)
+{
+  switch(p) {   
+   case (kNuMixSinsq2Theta) :
+     return "sin^2(2*theta_{ij})";
+     break;
+   case (kNuMixSinsqTheta) :
+     return "sin^2(theta_{ij})";
+     break;
+   default :
+     return "Undefined"; 
      break;
   }
   return "";
@@ -672,16 +690,16 @@ string t2kana::util::AsString(t2kana::conv::PhysHypothesis_t h)
 {
   switch(h) {
     case (kHypDecay) : 
-       return "< neutrino decay >"; 
+       return "<Neutrino Decay>"; 
        break;
     case (kHypDecoh) : 
-       return "< neutrino decoherence >"; 
+       return "<Neutrino Decoherence>"; 
        break;
     case (kHypNuMuDisapp2F) : 
-       return "< 2-flavour oscillations / numu disappearance >"; 
+       return "<2-Flavour Neutrino Oscillations: nu_mu disappearance>"; 
        break;
     case (kHypOsc3F) : 
-       return "< 3-flavour oscillations >"; 
+       return "<3-flavour Neutrino Oscillations>"; 
        break;
     default:                
       return "undefined"; 
