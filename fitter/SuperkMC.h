@@ -48,8 +48,8 @@ public:
 
   // Integrate current MC templates and get Ereco spectra (needed for fitting the data)
   void  UpdateErecoSpectra  (void);
-  TH1D* CurrErecoSpectrum   (t2kana::conv::SuperkSample_t s) const                               { return fMCErecoSpectrumTot[s]; }
-  TH1D* CurrErecoSpectrum   (t2kana::conv::SuperkSample_t s, t2kana::conv::SuperkMode_t m) const { return fMCErecoSpectrum[s][m]; }
+  TH1D* CurrErecoSpectrum   (t2kana::conv::SuperkSample_t s) const;
+  TH1D* CurrErecoSpectrum   (t2kana::conv::SuperkSample_t s, t2kana::conv::SuperkMode_t m) const;
 
   // Integrate current MC templates and get Etrue spectra (needed for flux normalisation error calculation)
   void  UpdateEtrueSpectra  (void);
@@ -60,6 +60,9 @@ public:
   // MC event samples used to fill-in MC templates and POT exposure for each
   TTree * MCTree (t2kana::conv::SuperkSample_t s, t2kana::conv::SuperkMode_t m);
   double  MCPOT  (t2kana::conv::SuperkSample_t s, t2kana::conv::SuperkMode_t m);
+
+  // Actual MC templates
+  TH2D * Template (t2kana::conv::SuperkSample_t s, t2kana::conv::SuperkMode_t m, t2kana::conv::SKMCTemplateType_t type) const;
 
   // POT of analysed data sample (MC is scaled to that POT value)
   double AnalyzedSamplePOT(void) const;
@@ -100,9 +103,10 @@ public:
 
 private:
 
-  void Init           (void);
-  void CleanUp        (void);
-  void CreateTemplate (t2kana::conv::SuperkSample_t s, t2kana::conv::SuperkMode_t m);
+  void Init         (void);
+  void CleanUp      (void);
+  void Book         (void);
+  void FillTemplate (t2kana::conv::SuperkSample_t s, t2kana::conv::SuperkMode_t m);
 
   ///< Apply systematic variations to MC templates
   void ApplySystematicsToTemplates (void); 
@@ -156,10 +160,10 @@ private:
 
   // input MC templates (nominal, nominal + systematics, nominal + systematics + physics hypothesis) and Ereco spectra
   TH2D *     fMCTemplNom[kns][knm];        ///< MC template(sample,mode): Ereco-Etrue (nominal)
-  TH2D *     fMCTemplSys[kns][knm];        ///< MC template(sample,mode): Ereco-Etrue (+ systematic variation)
-  TH2D *     fMCTemplSysHyp[kns][knm];     ///< MC template(sample,mode): Ereco-Etrue (+ systematic variation + physics hypothesis)
-  TH1D *     fMCErecoSpectrum[kns][knm];   ///< MC Ereco spectrum(sample,mode)        (+ systematic variation + physics hypothesis)
-  TH1D *     fMCErecoSpectrumTot[kns];     ///< MC total Ereco spectrum (sample)      (+ systematic variation + physics hypothesis)
+  TH2D *     fMCTemplSys[kns][knm];        ///< MC template(sample,mode): Ereco-Etrue + systematic variations only
+  TH2D *     fMCTemplFin[kns][knm];        ///< MC template(sample,mode): Ereco-Etrue + systematic variations + physics hypothesis (final)
+  TH1D *     fMCErecoSpectrum[kns][knm];   ///< MC Ereco spectrum(sample,mode)        + systematic variations + physics hypothesis (final)
+  TH1D *     fMCErecoSpectrumTot[kns];     ///< MC total Ereco spectrum (sample)      + systematic variations + physics hypothesis (final)
 
   // input event trees and normalisation factors
   TTree*     fMCTreeNuMu1Rmu;              ///< input MC event tree /  sample: numu                        / cuts: 1-ring mu-like 

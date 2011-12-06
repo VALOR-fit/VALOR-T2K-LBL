@@ -54,7 +54,8 @@
 @  06/10/11 - CA
    Added `PrintSystematicVariations()'.
 @  01-06/12/11 - CA,LE,TD
-   Updated so that it can be used for both 1Re and 1Rmu samples.
+   Updated so that it can be used for both 1Re and 1Rmu samples. Some re-structuring and
+   taking care of indexing issues.
 */
 //________________________________________________________________________________________
 

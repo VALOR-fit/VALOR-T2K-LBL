@@ -51,6 +51,11 @@
  @ 05/12/2011 - CA
    Add capability to use either sin^2(2*theta_ij) or sin^2(theta_ij) as the
    parameter of choice for describing neutrino mixing.
+@  06/12/11 - CA,LE,TD
+   Some re-structuring and taking care of indexing issues introduced when code was
+   extended to handle both 1Re and 1Rmu samples. Added Book() functions and accessing
+   arrays of 1-D and 2-D spectra only via the CurrErecoSpectrum(s,m) and newly-added
+   Template(s,m,type) functions which look-up the proper array indices for the (s,m) pair.
 
 */
 //________________________________________________________________________________________
@@ -115,32 +120,31 @@ void SuperkMC::Init(void)
     }
   }
   
-  fEnergyScale1RmuRelErr    = 0.;
-  fEffOth1RmuCCQERelErr     = 0.;
-  fEffRC1RmuCCQERelErrCovar = 0;
-  fEffRC1RmuCCQERelErrCovarE1             = 0.;
-  fEffRC1RmuCCQERelErrCovarE2             = 0.;      
-  fEff1RmuCCnonQERelErr     = 0.;
-  fEff1RmuNCRelErr          = 0.;
-  fEff1RmuNuECCRelErr       = 0.;
-  fEnergyScale1ReSigRelErr  = 0.;
-  fEnergyScale1ReBkgRelErr  = 0.;
-  fEff1ReSigRelErr          = 0.;
-  fEff1ReBkgRelErr          = 0.;
+  fEnergyScale1RmuRelErr      = 0.;
+  fEffOth1RmuCCQERelErr       = 0.;
+  fEffRC1RmuCCQERelErrCovar   = 0;
+  fEffRC1RmuCCQERelErrCovarE1 = 0.;
+  fEffRC1RmuCCQERelErrCovarE2 = 0.;      
+  fEff1RmuCCnonQERelErr       = 0.;
+  fEff1RmuNCRelErr            = 0.;
+  fEff1RmuNuECCRelErr         = 0.;
+  fEnergyScale1ReSigRelErr    = 0.;
+  fEnergyScale1ReBkgRelErr    = 0.;
+  fEff1ReSigRelErr            = 0.;
+  fEff1ReBkgRelErr            = 0.;
   
+  fEnergyScaleTwkDial         = 0.;
+  fEffOth1RmuCCQETwkDial      = 0.;
+  fEffRC01RmuCCQETwkDial      = 0.;
+  fEffRC11RmuCCQETwkDial      = 0.;
+  fEffRC21RmuCCQETwkDial      = 0.;
+  fEff1RmuCCnonQETwkDial      = 0.;
+  fEff1RmuNCTwkDial           = 0.;
+  fEff1RmuNuECCTwkDial        = 0.;
+  fEff1ReSigTwkDial           = 0.;
+  fEff1ReBkgTwkDial           = 0.;
 
-  fEnergyScaleTwkDial       = 0.;
-  fEffOth1RmuCCQETwkDial    = 0.;
-  fEffRC01RmuCCQETwkDial    = 0.;
-  fEffRC11RmuCCQETwkDial    = 0.;
-  fEffRC21RmuCCQETwkDial    = 0.;
-  fEff1RmuCCnonQETwkDial    = 0.;
-  fEff1RmuNCTwkDial         = 0.;
-  fEff1RmuNuECCTwkDial      = 0.;
-  fEff1ReSigTwkDial         = 0.;
-  fEff1ReBkgTwkDial         = 0.;
-
-  fEffRC1RmuCCQERelErrCovarChoL  = 0;
+  fEffRC1RmuCCQERelErrCovarChoL = 0;
   
   fMCTreeNuMu1Rmu      = 0;
   fMCTreeNuMuBar1Rmu   = 0;
@@ -181,15 +185,11 @@ void SuperkMC::CleanUp(void)
   if(fMCTreeNuESig1Re   ) delete fMCTreeNuESig1Re;
 
   for(int is = 0; is < kns; is++) {
-     SuperkSample_t s = kSKSamples[is];
-     if(s == kSKsUndefined) continue;
      for(int im = 0; im < knm; im++) {
-       SuperkMode_t m = kSKReactionModes[is][im];
-       if(m == kSKmUndefined) continue;
-       if( fMCTemplNom     [s][m] ) delete fMCTemplNom     [s][m];
-       if( fMCTemplSys     [s][m] ) delete fMCTemplSys     [s][m];
-       if( fMCTemplSysHyp  [s][m] ) delete fMCTemplSysHyp  [s][m];
-       if( fMCErecoSpectrum[s][m] ) delete fMCErecoSpectrum[s][m];
+       if( fMCTemplNom     [is][im] ) delete fMCTemplNom     [is][im];
+       if( fMCTemplSys     [is][im] ) delete fMCTemplSys     [is][im];
+       if( fMCTemplFin     [is][im] ) delete fMCTemplFin     [is][im];
+       if( fMCErecoSpectrum[is][im] ) delete fMCErecoSpectrum[is][im];
      }
   }
 
@@ -200,8 +200,11 @@ void SuperkMC::CleanUp(void)
 //________________________________________________________________________________________
 bool SuperkMC::Read(TXMLEngine* xml, XMLNodePointer_t root_node)
 {
-// Read SuperK inputs to disappearance analysis
-//
+  this->CleanUp();
+
+  // instantiate all necessary histograms
+  this->Book();
+
 #ifdef __show_init_mesg_info__
   cout << "Exp/SKMC >> Reading SuperK inputs from input XML file." << endl;
 #endif
@@ -217,35 +220,36 @@ bool SuperkMC::Read(TXMLEngine* xml, XMLNodePointer_t root_node)
   //
   // Get MC trees and MC POT
   //
-
   fMCPOTNuMu    = util::XML2Dbl  (xml,root_node,"superk/mc/numu/pot");
   fMCPOTNuMuBar = util::XML2Dbl  (xml,root_node,"superk/mc/numubar/pot");
   fMCPOTNuE     = util::XML2Dbl  (xml,root_node,"superk/mc/nuebeam/pot");
   fMCPOTNuESig  = util::XML2Dbl  (xml,root_node,"superk/mc/nuesignal/pot");
 
-  fMCTreeNuMu1Rmu = util::XML2TTree(xml,root_node,"superk/mc/numu/one_mu_ring");
-  assert(fMCTreeNuMu1Rmu);
-  fMCTreeNuMuBar1Rmu = util::XML2TTree(xml,root_node,"superk/mc/numubar/one_mu_ring");
-  assert(fMCTreeNuMuBar1Rmu);
-  fMCTreeNuE1Rmu = util::XML2TTree(xml,root_node,"superk/mc/nuebeam/one_mu_ring");
-  assert(fMCTreeNuE1Rmu);
-  fMCTreeNuESig1Rmu = util::XML2TTree(xml,root_node,"superk/mc/nuesignal/one_mu_ring");
-  assert(fMCTreeNuESig1Rmu);
+  fMCTreeNuMu1Rmu    = util::XML2TTree (xml,root_node,"superk/mc/numu/one_mu_ring");
+  fMCTreeNuMuBar1Rmu = util::XML2TTree (xml,root_node,"superk/mc/numubar/one_mu_ring");
+  fMCTreeNuE1Rmu     = util::XML2TTree (xml,root_node,"superk/mc/nuebeam/one_mu_ring");
+  fMCTreeNuESig1Rmu  = util::XML2TTree (xml,root_node,"superk/mc/nuesignal/one_mu_ring");
+  fMCTreeNuMu1Re     = util::XML2TTree (xml,root_node,"superk/mc/numu/one_e_ring");
+  fMCTreeNuMuBar1Re  = util::XML2TTree (xml,root_node,"superk/mc/numubar/one_e_ring");
+  fMCTreeNuE1Re      = util::XML2TTree (xml,root_node,"superk/mc/nuebeam/one_e_ring");
+  fMCTreeNuESig1Re   = util::XML2TTree (xml,root_node,"superk/mc/nuesignal/one_e_ring");
 
-  fMCTreeNuMu1Re = util::XML2TTree(xml,root_node,"superk/mc/numu/one_e_ring");
-  assert(fMCTreeNuMu1Re);
-  fMCTreeNuMuBar1Re = util::XML2TTree(xml,root_node,"superk/mc/numubar/one_e_ring");
-  assert(fMCTreeNuMuBar1Re);
-  fMCTreeNuE1Re = util::XML2TTree(xml,root_node,"superk/mc/nuebeam/one_e_ring");
-  assert(fMCTreeNuE1Re);
-  fMCTreeNuESig1Re = util::XML2TTree(xml,root_node,"superk/mc/nuesignal/one_e_ring");
-  assert(fMCTreeNuESig1Re);
+  assert (fMCTreeNuMu1Rmu   );
+  assert (fMCTreeNuMuBar1Rmu);
+  assert (fMCTreeNuE1Rmu    );
+  assert (fMCTreeNuESig1Rmu );
+  assert (fMCTreeNuMu1Re    );
+  assert (fMCTreeNuMuBar1Re );
+  assert (fMCTreeNuE1Re     );
+  assert (fMCTreeNuESig1Re  );
 
 #ifdef __show_init_mesg_info__
+
   cout << "Exp/SKMC >> " << "POT {MC; numu}    = " << fMCPOTNuMu    << endl;
   cout << "Exp/SKMC >> " << "POT {MC; numubar} = " << fMCPOTNuMuBar << endl;
   cout << "Exp/SKMC >> " << "POT {MC; nue_bkg} = " << fMCPOTNuE     << endl;
   cout << "Exp/SKMC >> " << "POT {MC; nue_sig} = " << fMCPOTNuESig  << endl;
+
   cout << "Exp/SKMC >> " << "Nev {MC; numu;    1Rmu} = " << fMCTreeNuMu1Rmu    -> GetEntries()  << endl;
   cout << "Exp/SKMC >> " << "Nev {MC; numubar; 1Rmu} = " << fMCTreeNuMuBar1Rmu -> GetEntries()  << endl;
   cout << "Exp/SKMC >> " << "Nev {MC; nue_bkg; 1Rmu} = " << fMCTreeNuE1Rmu     -> GetEntries()  << endl;
@@ -256,20 +260,6 @@ bool SuperkMC::Read(TXMLEngine* xml, XMLNodePointer_t root_node)
   cout << "Exp/SKMC >> " << "Nev {MC; nue_sig; 1Re } = " << fMCTreeNuESig1Re   -> GetEntries()  << endl;
 #endif
   
-  // create templates 
-#ifdef __show_init_mesg_info__
-  cout << "Exp/SKMC >> Filling-in SuperK MC templates... " << endl;
-#endif
-  for(int is = 0; is < kns; is++) {
-     SuperkSample_t s = kSKSamples[is];
-     if(s == kSKsUndefined) continue;
-     for(int im = 0; im < knm; im++) {
-       SuperkMode_t m = kSKReactionModes[is][im];
-       if(m == kSKmUndefined) continue;
-       this->CreateTemplate(s, m);
-     }
-  }
-
   //
   // Systematics
   //
@@ -319,8 +309,8 @@ bool SuperkMC::Read(TXMLEngine* xml, XMLNodePointer_t root_node)
   cout << "Exp/SKMC >> " << "Error {EnergyScale;1Rmu}    : " << fEnergyScale1RmuRelErr  << endl;
   cout << "Exp/SKMC >> " << "Error {EnergyScale;1Re/Sig} : " << fEnergyScale1ReSigRelErr  << endl;
   cout << "Exp/SKMC >> " << "Error {EnergyScale;1Re/Bkg} : " << fEnergyScale1ReBkgRelErr  << endl;
-  cout << "Exp/SKMC >> " << "Error {Efficiency;1Rmu/CCQE/Other} : " << fEffOth1RmuCCQERelErr << endl;
-  cout << "Exp/SKMC >> " << "Error {Efficiency;1Rmu/CCQE/RingCounting} : " << endl;
+  cout << "Exp/SKMC >> " << "Error {Efficiency;1Rmu/CCQE/Oth} : " << fEffOth1RmuCCQERelErr << endl;
+  cout << "Exp/SKMC >> " << "Error {Efficiency;1Rmu/CCQE/RC}  : " << endl;
   fEffRC1RmuCCQERelErrCovar->Print();
   cout << "Exp/SKMC >> " << "Ring-counting error matrix is given for the following 3 Ereco bins : ";
   cout << "(0, " << fEffRC1RmuCCQERelErrCovarE1 << " GeV), "
@@ -336,55 +326,18 @@ bool SuperkMC::Read(TXMLEngine* xml, XMLNodePointer_t root_node)
   // initialise physics hypothesis
   fPhysHypothesis.Init(kHypUndefined);
 
-  //
-  // Create histograms
-  //
-
-  // Etrue histograms needed for beam norm err calculation
-  f1RmNuMuEt    = new TH1D("f1RmNuMuEt",    "Etrue for 1-ring mu-like numu",    200, 0, 10); /// binning expected by Kubo's code
-  f1RmNuMuBarEt = new TH1D("f1RmNuMuBarEt", "Etrue for 1-ring mu-like numubar", 200, 0, 10);
-  f1RmNuEEt     = new TH1D("f1RmNuMuEEt",   "Etrue for 1-ring mu-like nue",     200, 0, 10);
-  f1RmNuMuEt     -> SetDirectory(0);
-  f1RmNuMuBarEt  -> SetDirectory(0);
-  f1RmNuEEt      -> SetDirectory(0);
-    
-  // Ereco histograms filled-in by SK spectrum prediction code
-  // Histograms corresponding to different samples can have different binning
-
-  for(int is = 0; is < kns; is++) 
-  {
+  // fill-in MC templates from the input event tree
+  for(int is = 0; is < kns; is++) {
      SuperkSample_t s = kSKSamples[is];
      if(s == kSKsUndefined) continue;
-
-     if(s == kSKsFCFV1RingMuLike) {
-       fMCErecoSpectrumTot[s] = new TH1D("","", kNErecoBins1Rmu, kErecoBinEdges1Rmu);
-     }
-     else
-     if(s == kSKsFCFV1RingELike) {
-       fMCErecoSpectrumTot[s] = new TH1D("","", kNErecoBins1Re, kErecoBinEdges1Re);
-     }
-
-     assert(fMCErecoSpectrumTot[s]);
-     fMCErecoSpectrumTot[s] -> SetDirectory(0);
-
-     for(int im=0; im < knm; im++) 
-     {
+     for(int im = 0; im < knm; im++) {
        SuperkMode_t m = kSKReactionModes[is][im];
        if(m == kSKmUndefined) continue;
+       this->FillTemplate(s,m);
+     }
+  }
 
-       if(s == kSKsFCFV1RingMuLike) {
-         fMCErecoSpectrum[s][m] = new TH1D("","", kNErecoBins1Rmu, kErecoBinEdges1Rmu);
-       }
-       else
-       if(s == kSKsFCFV1RingELike) {
-         fMCErecoSpectrum[s][m] = new TH1D("","", kNErecoBins1Re, kErecoBinEdges1Re);
-       }
-
-       assert(fMCErecoSpectrum[s][m]);
-       fMCErecoSpectrum[s][m] -> SetDirectory(0);
-     }//m
-  }//s
-
+     
 #ifdef __show_init_mesg_info__      
   cout << "Exp/SKMC >> Done reading SuperK inputs!" << endl;
 #endif
@@ -392,57 +345,84 @@ bool SuperkMC::Read(TXMLEngine* xml, XMLNodePointer_t root_node)
   return true;
 }
 //________________________________________________________________________________________
-void SuperkMC::CreateTemplate(SuperkSample_t s, SuperkMode_t m)
+void SuperkMC::Book(void)
+{
+  //
+  // Etrue histograms needed for beam norm err calculation
+  //
+
+  f1RmNuMuEt    = new TH1D("f1RmNuMuEt",    "Etrue for 1-ring mu-like numu",    200, 0, 10); /// binning expected by Kubo's code
+  f1RmNuMuBarEt = new TH1D("f1RmNuMuBarEt", "Etrue for 1-ring mu-like numubar", 200, 0, 10);
+  f1RmNuEEt     = new TH1D("f1RmNuMuEEt",   "Etrue for 1-ring mu-like nue",     200, 0, 10);
+  f1RmNuMuEt     -> SetDirectory(0);
+  f1RmNuMuBarEt  -> SetDirectory(0);
+  f1RmNuEEt      -> SetDirectory(0);
+
+  //
+  // Ereco histograms filled-in by SK spectrum prediction code
+  // Histograms corresponding to different samples can have different binning
+  //
+
+  for(int is = 0; is < kns; is++) 
+  {
+     SuperkSample_t s = kSKSamples[is];
+     if(s == kSKsUndefined) continue;
+     const int      n_ereco_bins    = util::NumErecoBins (s);
+     const double * ereco_bin_edges = util::ErecoBinEdges(s);
+     fMCErecoSpectrumTot[is] = new TH1D("","", n_ereco_bins, ereco_bin_edges);
+     fMCErecoSpectrumTot[is] -> SetDirectory(0);
+     for(int im=0; im < knm; im++) 
+     {
+       SuperkMode_t m = kSKReactionModes[is][im];
+       if(m == kSKmUndefined) continue;
+       fMCErecoSpectrum[is][im] = new TH1D("","", n_ereco_bins, ereco_bin_edges);
+       fMCErecoSpectrum[is][im] -> SetDirectory(0);
+     }//m
+  }//s
+
+  //
+  // 2-D(Ereco,Etrue) MC templates
+  // Histograms corresponding to different samples can have different binning
+  //
+
+  for(int is = 0; is < kns; is++) {
+     SuperkSample_t s = kSKSamples[is];
+     if(s == kSKsUndefined) continue;
+     const int      n_ereco_bins    = util::NumErecoBins (s);
+     const double * ereco_bin_edges = util::ErecoBinEdges(s);
+     for(int im = 0; im < knm; im++) {
+       SuperkMode_t m = kSKReactionModes[is][im];
+       if(m == kSKmUndefined) continue;
+       fMCTemplNom[is][im] = new TH2D(
+          Form("nsk_%d_%d",is,im), util::AsString(m).c_str(),
+               n_ereco_bins, ereco_bin_edges, kNEtrueBins, kEtrueMin, kEtrueMax);
+       fMCTemplSys[is][im] = new TH2D(
+          Form("nsksyst_%d_%d",is,im), util::AsString(m).c_str(),
+               n_ereco_bins, ereco_bin_edges, kNEtrueBins, kEtrueMin, kEtrueMax);
+       fMCTemplFin[is][im] = new TH2D(
+          Form("nskcurr_%d_%d",is,im), util::AsString(m).c_str(),
+               n_ereco_bins, ereco_bin_edges, kNEtrueBins, kEtrueMin, kEtrueMax);
+       fMCTemplNom[is][im]->SetDirectory(0);
+       fMCTemplNom[is][im]->GetXaxis()->SetTitle("E_{reco} (GeV)");
+       fMCTemplNom[is][im]->GetYaxis()->SetTitle("E_{true} (GeV)");
+       fMCTemplSys[is][im]->SetDirectory(0);
+       fMCTemplSys[is][im]->GetXaxis()->SetTitle("E_{reco} (GeV)");
+       fMCTemplSys[is][im]->GetYaxis()->SetTitle("E_{true} (GeV)");
+       fMCTemplFin[is][im]->SetDirectory(0);
+       fMCTemplFin[is][im]->GetXaxis()->SetTitle("E_{reco} (GeV)");
+       fMCTemplFin[is][im]->GetYaxis()->SetTitle("E_{true} (GeV)");
+     }
+  }
+
+}
+//________________________________________________________________________________________
+void SuperkMC::FillTemplate(SuperkSample_t s, SuperkMode_t m)
 {
 #ifdef __show_init_mesg_debug__      
   cout << "Exp/SKMC/CreateTemplate >> Creating MC template for: "
        << util::AsString(s) << " / " << util::AsString(m) << endl;
 #endif
     
-  int is = (int)s;
-  int im = (int)m;
-
-  if(s == kSKsFCFV1RingMuLike) {
-     fMCTemplNom[is][im] = new TH2D(
-          Form("nsk_%d_%d",is,im), util::AsString(m).c_str(),
-               kNErecoBins1Rmu, kErecoBinEdges1Rmu, kNEtrueBins, kEtrueMin, kEtrueMax);
-     fMCTemplSys[is][im] = new TH2D(
-          Form("nsksyst_%d_%d",is,im), util::AsString(m).c_str(),
-               kNErecoBins1Rmu, kErecoBinEdges1Rmu, kNEtrueBins, kEtrueMin, kEtrueMax);
-     fMCTemplSysHyp[is][im] = new TH2D(
-          Form("nskcurr_%d_%d",is,im), util::AsString(m).c_str(),
-               kNErecoBins1Rmu, kErecoBinEdges1Rmu, kNEtrueBins, kEtrueMin, kEtrueMax);
-  }
-  else    
-  if(s == kSKsFCFV1RingELike) {
-     fMCTemplNom[is][im] = new TH2D(
-          Form("nsk_%d_%d",is,im), util::AsString(m).c_str(),
-               kNErecoBins1Re, kErecoBinEdges1Re, kNEtrueBins, kEtrueMin, kEtrueMax);
-     fMCTemplSys[is][im] = new TH2D(
-          Form("nsksyst_%d_%d",is,im), util::AsString(m).c_str(),
-               kNErecoBins1Re, kErecoBinEdges1Re, kNEtrueBins, kEtrueMin, kEtrueMax);
-     fMCTemplSysHyp[is][im] = new TH2D(
-          Form("nskcurr_%d_%d",is,im), util::AsString(m).c_str(),
-               kNErecoBins1Re, kErecoBinEdges1Re, kNEtrueBins, kEtrueMin, kEtrueMax);
-  }
-  else {
-    cerr << "Exp/SKMC/CreateTemplate >> Can't handle sample: "
-         << util::AsString(s) << endl;
-    exit(1);
-  }
-      
-  fMCTemplNom[is][im]->SetDirectory(0);
-  fMCTemplNom[is][im]->GetXaxis()->SetTitle("E_{reco} (GeV)");
-  fMCTemplNom[is][im]->GetYaxis()->SetTitle("E_{true} (GeV)");
-
-  fMCTemplSys[is][im]->SetDirectory(0);
-  fMCTemplSys[is][im]->GetXaxis()->SetTitle("E_{reco} (GeV)");
-  fMCTemplSys[is][im]->GetYaxis()->SetTitle("E_{true} (GeV)");
-
-  fMCTemplSysHyp[is][im]->SetDirectory(0);
-  fMCTemplSysHyp[is][im]->GetXaxis()->SetTitle("E_{reco} (GeV)");
-  fMCTemplSysHyp[is][im]->GetYaxis()->SetTitle("E_{true} (GeV)");
-      
   TTree * mctree = this->MCTree(s,m);
   double  mcpot  = this->MCPOT (s,m);
 
@@ -486,16 +466,70 @@ void SuperkMC::CreateTemplate(SuperkSample_t s, SuperkMode_t m)
    //cout << "Exp/SKMC >> Ereco = " << fBrEreco << " GeV, Etrue = " 
    //     << fBrEtrue << " GeV, wght = " << wght << endl;
 
-     fMCTemplNom    [is][im] -> Fill (fBrEreco, fBrEtrue, wght);
-     fMCTemplSys    [is][im] -> Fill (fBrEreco, fBrEtrue, wght);
-     fMCTemplSysHyp [is][im] -> Fill (fBrEreco, fBrEtrue, wght);
+     this -> Template(s,m,kSKMCtNom) -> Fill (fBrEreco, fBrEtrue, wght);
+     this -> Template(s,m,kSKMCtSys) -> Fill (fBrEreco, fBrEtrue, wght);
+     this -> Template(s,m,kSKMCtFin) -> Fill (fBrEreco, fBrEtrue, wght);
 
   }//iev
 
 #ifdef __show_init_mesg_debug__        
-  cout << "Exp/SKMC/CreateTemplate >>  - MC template was filled with " 
-       << fMCTemplNom[is][im]->GetEntries() << " entries." << endl;
+  cout << "Exp/SKMC >> MC template was filled-in with " 
+       << this -> Template(s,m,kSKMCtNom) -> GetEntries() << " entries." 
+       << endl;
 #endif
+}
+//________________________________________________________________________________________
+TH1D* SuperkMC::CurrErecoSpectrum(SuperkSample_t s) const                               
+{ 
+  int sidx = util::FindSampleSlot(s);
+  if(sidx == -1) {
+    return 0;
+  }
+  return fMCErecoSpectrumTot[sidx]; 
+}
+//________________________________________________________________________________________
+TH1D* SuperkMC::CurrErecoSpectrum(SuperkSample_t s, SuperkMode_t m) const 
+{ 
+  int sidx = util::FindSampleSlot(s);
+  if(sidx == -1) {
+    return 0;
+  }
+  int midx = util::FindModeSlot(s,m);
+  if(midx == -1) {
+    return 0;
+  }            
+  return fMCErecoSpectrum[sidx][midx]; 
+}
+//________________________________________________________________________________________
+TH2D * SuperkMC::Template(SuperkSample_t s, SuperkMode_t m, SKMCTemplateType_t type) const
+{
+  int sidx = util::FindSampleSlot(s);
+  if(sidx == -1) {
+    return 0;
+  }
+  int midx = util::FindModeSlot(s,m);
+  if(midx == -1) {
+    return 0;
+  }            
+
+  TH2D * h = 0;
+
+  switch(type) {
+   case (kSKMCtNom) : 
+     h = fMCTemplNom[sidx][midx]; 
+     break;
+   case (kSKMCtSys) : 
+     h = fMCTemplSys[sidx][midx];
+     break;
+   case (kSKMCtFin) : 
+     h = fMCTemplFin[sidx][midx];
+     break;
+   default:
+     return 0;
+  }
+  assert(h);
+
+  return h;
 }
 //________________________________________________________________________________________
 //void SuperkMC::Update(void)
@@ -536,7 +570,7 @@ void SuperkMC::ApplySystematicsToTemplates(void)
        bool skip = this->SkipTemplate(m);
        if(skip) continue;
        // get corresponding template
-       TH2D * mctempl = fMCTemplSys[s][m];
+       TH2D * mctempl = this -> Template(s,m,kSKMCtSys);
        if(!mctempl) continue; 
        // loop over Ereco
        for(int ir = 1; ir <= mctempl->GetXaxis()->GetNbins(); ir++) {
@@ -573,7 +607,7 @@ void SuperkMC::ApplySystematicsToTemplates(void)
        bool skip = this->SkipTemplate(m);
        if(skip) continue;
        // get corresponding template
-       TH2D * mctempl = fMCTemplSys[s][m];
+       TH2D * mctempl = this -> Template(s,m,kSKMCtSys);
        if(!mctempl) continue; 
        // clone
        TH2D * mctempl_no_ereco_scale = new TH2D(*mctempl);
@@ -707,9 +741,9 @@ void SuperkMC::ApplyPhysHypothesisToTemplates(void)
      SuperkSample_t s = kSKSamples[is];
      if(s == kSKsUndefined) continue;
 
-     assert(fMCTemplSys[s][kSKmNuMuCCQE]);
-     TAxis * ereco_axis = fMCTemplSys[s][kSKmNuMuCCQE]->GetXaxis(); 
-     TAxis * etrue_axis = fMCTemplSys[s][kSKmNuMuCCQE]->GetYaxis(); 
+     assert(this -> Template(s,kSKmNuMuCCQE,kSKMCtSys));
+     TAxis * ereco_axis = this->Template(s,kSKmNuMuCCQE,kSKMCtSys)->GetXaxis(); 
+     TAxis * etrue_axis = this->Template(s,kSKmNuMuCCQE,kSKMCtSys)->GetYaxis(); 
 
      // loop over Etrue
      for(int it = 1; it <= etrue_axis->GetNbins(); it++) {
@@ -739,7 +773,7 @@ void SuperkMC::ApplyPhysHypothesisToTemplates(void)
               SuperkMode_t m = kSKReactionModes[is][im];
               if(m == kSKmUndefined) continue;
               // number of events in (Ereco,Etrue) bin (systematics applied)
-              double nev = fMCTemplSys[s][m] -> GetBinContent(ir,it);
+              double nev = this -> Template(s,m,kSKMCtSys) -> GetBinContent(ir,it);
               // osc. probability
               double posc = 1.;
               if( util::IsCC(m) ) 
@@ -751,7 +785,7 @@ void SuperkMC::ApplyPhysHypothesisToTemplates(void)
               }
               // number of events in (Ereco,Etrue) bin (oscillations + systematics applied)
               double nev_osc = nev * posc;
-              fMCTemplSysHyp[s][m] -> SetBinContent(ir,it, nev_osc);
+              this -> Template(s,m,kSKMCtFin) -> SetBinContent(ir,it, nev_osc);
            }//im
        }//ir
      }//it
@@ -776,9 +810,9 @@ void SuperkMC::ApplyPhysHypothesisToTemplates(void)
          bool skip = this->SkipTemplate(m);
          if(skip) continue;
          // get source (systematics) and target (systematics + phys.hypothesis) template
-         TH2D * mctempl_src = fMCTemplSys[s][m];
+         TH2D * mctempl_src = this -> Template(s,m,kSKMCtSys);
          if(!mctempl_src) continue; 
-         TH2D * mctempl_tgt = fMCTemplSysHyp[s][m];
+         TH2D * mctempl_tgt = this -> Template(s,m,kSKMCtFin);
          if(!mctempl_tgt) continue; 
          // loop over Etrue
          for(int it = 1; it <= mctempl_src->GetYaxis()->GetNbins(); it++) {
@@ -813,9 +847,9 @@ void SuperkMC::ApplyPhysHypothesisToTemplates(void)
          bool skip = this->SkipTemplate(m);
          if(skip) continue;
          // get source (systematics) and target (systematics + phys.hypothesis) template
-         TH2D * mctempl_src = fMCTemplSys[s][m];
+         TH2D * mctempl_src = this -> Template(s,m,kSKMCtSys);
          if(!mctempl_src) continue; 
-         TH2D * mctempl_tgt = fMCTemplSysHyp[s][m];
+         TH2D * mctempl_tgt = this -> Template(s,m,kSKMCtFin);
          if(!mctempl_tgt) continue; 
          // loop over Etrue
          for(int it = 1; it <= mctempl_src->GetYaxis()->GetNbins(); it++) {
@@ -851,9 +885,9 @@ void SuperkMC::ApplyPhysHypothesisToTemplates(void)
          bool skip = this->SkipTemplate(m);
          if(skip) continue;
          // get source (systematics) and target (systematics + phys.hypothesis) template
-         TH2D * mctempl_src = fMCTemplSys[s][m];
+         TH2D * mctempl_src = this -> Template(s,m,kSKMCtSys);
          if(!mctempl_src) continue; 
-         TH2D * mctempl_tgt = fMCTemplSysHyp[s][m];
+         TH2D * mctempl_tgt = this -> Template(s,m,kSKMCtFin);
          if(!mctempl_tgt) continue; 
          // loop over Etrue
          for(int it = 1; it <= mctempl_src->GetYaxis()->GetNbins(); it++) {
@@ -881,7 +915,7 @@ double SuperkMC::NumOfEvents(
 // - Apply flux tweaks (if any).
 // - Apply cross section tweaks (if any).
 
-  TH2D * nsk2d = fMCTemplNom[s][m];
+  TH2D * nsk2d = this -> Template(s,m,kSKMCtNom);
   assert(nsk2d);
 
   int reco_bin = nsk2d->GetXaxis()->FindBin(Ereco);
@@ -1003,28 +1037,24 @@ void SuperkMC::UpdateErecoSpectra(void)
 {
   // loop over samples
   for(int is = 0; is < kns; is++) {
-    SuperkSample_t s = (SuperkSample_t) is;
-
-    TH1D * reco_spectrum_tot =  fMCErecoSpectrumTot[is];
-    if(!reco_spectrum_tot) continue; 
+    SuperkSample_t s = kSKSamples[is];
+    if(s == kSKsUndefined) continue;
+    TH1D * reco_spectrum_tot = this->CurrErecoSpectrum(s);
 
     // loop over Ereco
     for(int ir = 1; ir <= reco_spectrum_tot->GetNbinsX(); ir++) {
-       //double Ereco = mctempl->GetXaxis()->GetBinCenter(ir);
        double nev_tot = 0;
 
        // loop over modes
        for(int im = 0; im < knm; im++) { 
-          SuperkMode_t m = (SuperkMode_t) im;
-
+          SuperkMode_t m = kSKReactionModes[is][im];
+          if(m == kSKmUndefined) continue;
           // consider template?
           bool skip = this->SkipTemplate(m);
           if(skip) continue;
 
-          TH2D * mctempl = fMCTemplSysHyp[s][m];
-          if(!mctempl) continue; 
-          TH1D * reco_spectrum =  fMCErecoSpectrum[is][im];
-          if(!reco_spectrum) continue;
+          TH2D * mctempl = this -> Template(s,m,kSKMCtFin);
+          TH1D * reco_spectrum = this->CurrErecoSpectrum(s,m);
 
           // loop over Etrue
           double nev = 0;
@@ -1037,95 +1067,48 @@ void SuperkMC::UpdateErecoSpectra(void)
        reco_spectrum_tot->SetBinContent(ir,nev_tot);
     }//ir
   }//is
-
 }
 //________________________________________________________________________________________
 void SuperkMC::UpdateEtrueSpectra(void)
 {
-//cout << "Exp/SKMC/UpdateEtrueSpectra >> Updating Etrue spectra for beam norm err" << endl;
+  f1RmNuMuEt    -> Reset();
+  f1RmNuMuBarEt -> Reset();
+  f1RmNuEEt     -> Reset();
 
-  TH1D * spectrum = 0;
-  TH2D * mctempl1 = 0;
-  TH2D * mctempl2 = 0;
-  TH2D * mctempl3 = 0;
-  TH2D * mctempl4 = 0;
-
-//
-//
-// NOTE  REQUIRE SAME ETRUE BINNING 
-//
-//
-
-  // update 1-ring mu-like numu
-  spectrum = f1RmNuMuEt;
-  mctempl1 = fMCTemplSysHyp[kSKsFCFV1RingMuLike][kSKmNuMuCCQE];
-  mctempl2 = fMCTemplSysHyp[kSKsFCFV1RingMuLike][kSKmNuMuCC1pi];
-  mctempl3 = fMCTemplSysHyp[kSKsFCFV1RingMuLike][kSKmNuMuCCoth_mu];
-  mctempl4 = fMCTemplSysHyp[kSKsFCFV1RingMuLike][kSKmNuMuNC];
-  for(int it = 1; it <= spectrum->GetNbinsX(); it++) {
-//  double Etrue = spectrum->GetBinCenter(ibin);
-    double nev = 0;
-    for(int ir = 1; ir <= mctempl1->GetXaxis()->GetNbins(); ir++) {
-       nev += ( mctempl1->GetBinContent(ir,it)  +
-                mctempl2->GetBinContent(ir,it) +
-                mctempl3->GetBinContent(ir,it) +
-                mctempl4->GetBinContent(ir,it)
-              );
-    }//ir
-#ifdef __show_spectra_update_mesg_debug__
-    cout << "Exp/SKMC/UpdateEtrueSpectra >> "
-         << "1-ring mu / numu : true bin = " << it << ", nev = " << nev << endl;
-#endif
-    spectrum->SetBinContent(it,nev);
-  }//true bins
-
-  // update 1-ring mu-like numubar
-  spectrum = f1RmNuMuBarEt;
-  mctempl1 = fMCTemplSysHyp[kSKsFCFV1RingMuLike][kSKmNuMuBarCCQE];
-  mctempl2 = fMCTemplSysHyp[kSKsFCFV1RingMuLike][kSKmNuMuBarCC1pi];
-  mctempl3 = fMCTemplSysHyp[kSKsFCFV1RingMuLike][kSKmNuMuBarCCoth_mu];
-  mctempl4 = fMCTemplSysHyp[kSKsFCFV1RingMuLike][kSKmNuMuBarNC];
-  for(int it = 1; it <= spectrum->GetNbinsX(); it++) {
-//  double Etrue = spectrum->GetBinCenter(ibin);
-    double nev = 0;
-    for(int ir = 1; ir <= mctempl1->GetXaxis()->GetNbins(); ir++) {
-       nev += ( mctempl1->GetBinContent(ir,it)  +
-                mctempl2->GetBinContent(ir,it) +
-                mctempl3->GetBinContent(ir,it) +
-                mctempl4->GetBinContent(ir,it)
-              );
-    }//ir
-#ifdef __show_spectra_update_mesg_debug__
-    cout << "Exp/SKMC/UpdateEtrueSpectra >> "
-         << "1-ring mu / numubar : true bin = " << it << ", nev = " << nev << endl;
-#endif
-    spectrum->SetBinContent(it,nev);
-  }//true bins
-
-
-  // update 1-ring mu-like nue
-  spectrum = f1RmNuEEt;
-  mctempl1 = fMCTemplSysHyp[kSKsFCFV1RingMuLike][kSKmNuECCQE];
-  mctempl2 = fMCTemplSysHyp[kSKsFCFV1RingMuLike][kSKmNuECC1pi];
-  mctempl3 = fMCTemplSysHyp[kSKsFCFV1RingMuLike][kSKmNuECCoth_mu];
-  mctempl4 = fMCTemplSysHyp[kSKsFCFV1RingMuLike][kSKmNuENC];
-  for(int it = 1; it <= spectrum->GetNbinsX(); it++) {
-//  double Etrue = spectrum->GetBinCenter(ibin);
-    double nev = 0;
-    for(int ir = 1; ir <= mctempl1->GetXaxis()->GetNbins(); ir++) {
-       nev += ( mctempl1->GetBinContent(ir,it)  +
-                mctempl2->GetBinContent(ir,it) +
-                mctempl3->GetBinContent(ir,it) +
-                mctempl4->GetBinContent(ir,it)
-              );
-    }//ir
-#ifdef __show_spectra_update_mesg_debug__
-    cout << "Exp/SKMC/UpdateEtrueSpectra() >> "
-         << "1-ring mu / nuebkg : true bin = " << it << ", nev = " << nev << endl;
-#endif
-    spectrum->SetBinContent(it,nev);
-  }//true bins
-
+  // loop over samples
+  for(int is = 0; is < kns; is++) {
+    SuperkSample_t s = kSKSamples[is];
+    if(s == kSKsUndefined) continue;
+    if(s != kSKsFCFV1RingMuLike) continue; /// NOTE: change for 1Re analysis
+    // loop over modes
+    for(int im = 0; im < knm; im++) { 
+       SuperkMode_t m = kSKReactionModes[is][im];
+       if(m == kSKmUndefined) continue;
+       // get Etrue spectrum
+       TH1D * etrue_spectrum = 0;
+       if      ( util::IsNuMu    (m)) { etrue_spectrum = f1RmNuMuEt;    }
+       else if ( util::IsNuMuBar (m)) { etrue_spectrum = f1RmNuMuBarEt; }
+       else if ( util::IsBeamNuE (m)) { etrue_spectrum = f1RmNuEEt;     }
+       else {
+         continue;
+       }
+       // get current Etrue,Ereco MC template
+       TH2D * mctempl = this->Template(s,m,kSKMCtFin);
+       // integrate MC template over Ereco bins and fill-in Etrue spectrum
+       // NOTE: nothing enforces the Ereco spectra and the MC templates to have
+       // identical Etrue binning. Add a check here.
+       for(int it = 1; it <= etrue_spectrum->GetNbinsX(); it++) {
+          // double Etrue = spectrum->GetBinCenter(ibin);
+          double dn = 0;
+          for(int ir = 1; ir <= mctempl->GetXaxis()->GetNbins(); ir++) {
+              dn += mctempl->GetBinContent(ir,it);
+          }//ir
+          double ncurr = etrue_spectrum->GetBinContent(it);
+          ncurr += dn;
+          etrue_spectrum->SetBinContent(it, ncurr);
+       }//it
+    }//im
+  }//is
 }
 //________________________________________________________________________________________
 double SuperkMC::AnalyzedSamplePOT(void) const
@@ -1500,7 +1483,7 @@ void SuperkMC::Draw(TVirtualPad * c, Option_t * option) const
       fMCTreeNuMu1Rmu->Draw("Enu","Mode==11||Mode==12||Mode==13","same");
       c->Update();
   }
-
+/*
   if(opt.Contains("1RingMuLike/ErecoEtrueTemplates")) { 
     double emin=0;
     double emax=6;
@@ -1653,11 +1636,11 @@ void SuperkMC::Draw(TVirtualPad * c, Option_t * option) const
     fMCTemplNom[kSKsFCFV1RingMuLike][kSKmNuENC]->Draw(draw_opt);
     c->Update();
   }
-
+*/
   c->Update();
 }
 //________________________________________________________________________________________
-bool SuperkMC::SkipTemplate(t2kana::conv::SuperkMode_t m) 
+bool SuperkMC::SkipTemplate(SuperkMode_t m) 
 {
 // ignore nue_signal templates for all but the 3-flavour oscillation hypothesis
 

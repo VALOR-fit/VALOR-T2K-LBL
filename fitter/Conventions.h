@@ -238,6 +238,16 @@ typedef enum ENuOscMixParam
 } 
 NuOscMixParam_t;
 
+// Type of SK MC template
+typedef enum ESKMCTemplateType
+{   
+   kSKMCtUndefined = -1, 
+   kSKMCtNom,   // nominal MC
+   kSKMCtSys,   // nominal MC + systematic variations only
+   kSKMCtFin,   // nominal MC + systematic variations + physics hypothesis (final)
+} 
+SKMCTemplateType_t;
+
 //
 // ------------------------------------------------------------------------
 // Choice of samples included in the analysis and
