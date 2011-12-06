@@ -26,52 +26,59 @@ void test_mock_data_fit
   using namespace std;
   using namespace t2kana;
 
+  // Analysis configuration
   const char * config = Form("%s/config/%s", gSystem->Getenv("T2KOSCANA"), config_file);
 
+  // Global options
+  Opt::Instance()->gOscMixingParamChoice = conv::kNuMixSinsq2Theta;
+  Opt::Instance()->gMassHierarchyAssumed = conv::kNmhNormal;
+
+  // Print options
   cout << "\n[Job inputs]" << endl;
   cout << "- Reading analysis configuration from: " << config << endl;
   cout << "- Toy-MC generation" << endl;
   cout << "   - Systematic variations: "    << ((include_systematics) ? "YES " : "NO") << endl;
   cout << "   - Statistical fluctuations: " << ((fluctuate_stat) ? "YES " : "NO") << endl;
   cout << "   - True oscillation parameters: " << endl;
-  cout << "       > mixing12 = " << input_mixing12 << endl;
-  cout << "       > mixing13 = " << input_mixing13 << endl;
-  cout << "       > mixing23 = " << input_mixing23 << endl;
-  cout << "       > delta_cp = " << input_deltacp << endl;
-  cout << "       > Dm12sq   = " << input_dm12sq << " eV^2/c^4" << endl;
-  cout << "       > |Dm23sq| = " << input_dm23sq << " eV^2/c^4" << endl;
+  cout << "       > " << util::AsString(kPhypMixing12) << " = " << input_mixing12 << endl;
+  cout << "       > " << util::AsString(kPhypMixing13) << " = " << input_mixing13 << endl;
+  cout << "       > " << util::AsString(kPhypMixing23) << " = " << input_mixing23 << endl;
+  cout << "       > " << util::AsString(kPhypDeltaCP)  << " = " << input_deltacp << endl;
+  cout << "       > " << util::AsString(kPhypDm12sq)   << " = " << input_dm12sq << " eV^2/c^4" << endl;
+  cout << "       > " << util::AsString(kPhypDm23sq)   << " = " << input_dm23sq << " eV^2/c^4" << endl;
   cout << "- Fit" << endl;
   cout << "   - Fit parameter list: " << fit_param_list << endl;
   cout << "   - Fitter option: " << fit_option << endl;
   cout << "- Output option: " << output_option << endl;
   cout << endl;
+  cout << *Opt::Instance() << endl;
 
-  // instantiate fit params & set specified inputs as necessary
+  // Instantiate fit params & set specified inputs as necessary
   FitParamList * fparm = FitParamList::NamedParameterList(fit_param_list);
   conv::PhysHypothesis_t hyp = fparm->PhysicsHypothesis();
   cout << "- The following physics hypothesis is used in the fit: " << util::AsString(hyp) << endl;
   if(hyp == conv::kHypOsc3F) {
-    fparm->Update(t2kana::conv::kPhypMixing12, input_mixing12);
-    fparm->Update(t2kana::conv::kPhypMixing13, input_mixing13);
-    fparm->Update(t2kana::conv::kPhypMixing23, input_mixing23);
-    fparm->Update(t2kana::conv::kPhypDeltaCP,  input_deltacp);
-    fparm->Update(t2kana::conv::kPhypDm12sq,   input_dm12sq);
-    fparm->Update(t2kana::conv::kPhypDm23sq,   input_dm23sq);
+    fparm->Update(conv::kPhypMixing12, input_mixing12);
+    fparm->Update(conv::kPhypMixing13, input_mixing13);
+    fparm->Update(conv::kPhypMixing23, input_mixing23);
+    fparm->Update(conv::kPhypDeltaCP,  input_deltacp);
+    fparm->Update(conv::kPhypDm12sq,   input_dm12sq);
+    fparm->Update(conv::kPhypDm23sq,   input_dm23sq);
   }
   else 
   if(hyp == conv::kHypNuMuDisapp2F) {
-    fparm->Update(t2kana::conv::kPhypMixing23, input_mixing23);
-    fparm->Update(t2kana::conv::kPhypDm23sq,   input_dm23sq);
+    fparm->Update(conv::kPhypMixing23, input_mixing23);
+    fparm->Update(conv::kPhypDm23sq,   input_dm23sq);
   } 
   else {
     return;
   }
 
-  // get superk spectrum predictor & configure
+  // Get superk spectrum predictor & configure
   SuperkExpectation * skexp = new SuperkExpectation;
   skexp->Read(config);
 
-  // get superk spectrum observation
+  // Get superk spectrum observation
   SuperkObservation * skobs = new SuperkObservation;
   if(include_systematics) {
      // tweak all sources of systematic err (gaussian err)
@@ -93,14 +100,14 @@ void test_mock_data_fit
      skobs->CreateMockData(*skexp, *fparm, fluctuate_stat);
   }
 
-  // get fitter
+  // Get fitter
   FitInputs * fit_inputs = new FitInputs(skobs,skexp,fparm);
   FitterABC * fitter = new Superk1RmuErecoFitter(fit_inputs,fit_option);
 
-  // do the fit
+  // Do the fit
   fitter->DoTheFit();
 
-  // write-out results
+  // Write-out results
   fitter->Analyze(output_option);
   fitter->Save("mockfit.root");
 

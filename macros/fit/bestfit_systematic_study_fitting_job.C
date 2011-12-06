@@ -1,33 +1,20 @@
 //
 // ------------------------------------------------------------------------------------------------
 // Run numu disappearance systematic study for given oscillation parameters.
-// The input `systematic' parameter can take any of the following values:
-//	- sk_energy_scale
-//	- sk_ccqe_other_eff
-//	- sk_ccqe_ring_counting_eff
-//	- sk_ccnonqe_eff
-//	- sk_nc_eff
-//	- sk_nuecceff_eff
-// 	- nd280_eff
-// 	- nd280_norm
-//	- flux_norm
-//	- flux_shape
-//      - xsec_ccqe
-//      - xsec_cc1pi_to_ccqe
-//      - xsec_ccoth_to_ccqe
-//      - xsec_nc_to_ccqe
-//      - nuclear_effect
-//
+// Note: Currently this macro works only for the effective 2-flavour disappearance analysis,
+// not the 3-flavour disappearance or the 3-flavour global (disappearance + appearance) analysis.
+//	
 // Costas Andreopoulos
 // ------------------------------------------------------------------------------------------------
 //
 
 #include "Conventions.h"
 
-void bestfit_systematic_study_fitting_job(
+void bestfit_systematic_study_fitting_job
+(
    string       systematic,                                          /* tweaked systematic param */
    int          irun                = 0,                             /* run # */
-   double       input_mixing23 = 0.90,                          /* */
+   double       input_mixing23      = 0.90,                          /* */
    double       input_dm23sq        = 2.32E-3,                       /* */
    int          nexperiments        = 500,                           /* number of toy MC expt fits in this run */
    const char * config_file         = "analysis_configuration.xml"   /* analysis configuration */
@@ -36,20 +23,26 @@ void bestfit_systematic_study_fitting_job(
   using namespace std;
   using namespace t2kana;
 
+  TRandom3 rand(0);
+
+  // Analysis configuration
   const char * config = Form("%s/config/%s", gSystem->Getenv("T2KOSCANA"), config_file);
   cout << "Reading analysis configuration from: " << config << endl;
 
-  TRandom3 rand(0);
+  // Global options
+  //Opt::Instance()->gOscMixingParamChoice = conv::kNuMixSinsq2Theta;
+  //Opt::Instance()->gMassHierarchyAssumed = conv::kNmhNormal;
+  //cout << *Opt::Instance() << endl;
 
-  // create ntuple to store results
+  // Create ntuple to store results
   TNtupleD * systnt = new TNtupleD("sysnt","", 
       "irun:iexp:input_mixing23:input_dm23sq:mixing23:dm23sq:chisq:status");
 
-  // get superk spectrum predictor & configure
+  // Get superk spectrum predictor & configure
   SuperkExpectation skexp;
   skexp.Read(config);
 
-  // fit params
+  // Fit params
   FitParamList * fparm = FitParamList::NumuDisapFitNoSyst();
 
   for(int iexperiment = 0; iexperiment < nexperiments; iexperiment++) {
@@ -58,7 +51,7 @@ void bestfit_systematic_study_fitting_job(
 
      // reset oscillation params following last fit
      fparm->Update(conv::kPhypMixing23, input_mixing23);
-     fparm->Update(conv::kPhypDm23sq,        input_dm23sq);
+     fparm->Update(conv::kPhypDm23sq,   input_dm23sq);
 
      // tweak systematic in spectrum predictor
      skexp.TweakSystematic(systematic, rand.Gaus(0.,1.));
@@ -79,9 +72,9 @@ void bestfit_systematic_study_fitting_job(
 
      // store params
      double bestfit_mixing23 = fparm->CurrValue(conv::kPhypMixing23);
-     double bestfit_dm23sq        = fparm->CurrValue(conv::kPhypDm23sq);
-     double bestfit_chisq         = fit_inputs.Chisquare();
-     double fit_status            = (ok) ? +1 : -1;
+     double bestfit_dm23sq   = fparm->CurrValue(conv::kPhypDm23sq);
+     double bestfit_chisq    = fit_inputs.Chisquare();
+     double fit_status       = (ok) ? +1 : -1;
 
      systnt->Fill(irun, 
                   iexperiment, 

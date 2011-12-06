@@ -9,25 +9,31 @@
 
 void feldman_cousins_fitting_job
 (
-  const char * tag                   = "fc",                         /* */ 
-  int          irun                  = 0,                            /* */
-  int          nexperiments          = 1000,                         /* */
-  int          min_dm23sq_bin        =   1,                          /* */
-  int          max_dm23sq_bin        =  51,                          /* */
-  int          min_mixing23_bin      =   1,                          /* */
-  int          max_mixing23_bin      = 101,                          /* */
+  const char * tag                   = "fc",                         /* tag for output filename */ 
+  int          irun                  = 0,                            /* run number */
+  int          nexperiments          = 1000,                         /* number of toy MC expt fits in current run */
+  int          min_dm23sq_bin        =   1,                          /* generate toy MC with this range of Dm^2_{23} */
+  int          max_dm23sq_bin        =  51,                          /* -//- */
+  int          min_mixing23_bin      =   1,                          /* generate toy MC with this range of 23 mixing (expressed in terms of either sinsq2theta, sinsqtheta, ...) */
+  int          max_mixing23_bin      = 101,                          /* -//- */
   const char * config_file           = "analysis_configuration.xml", /* analysis configuration file */
   bool         stat_fluctuations     = true,                         /* include statistical fluctuation in toy MC expts? */
   bool         tweak_systematics     = true,                         /* generate toy MC with randomized systematics? */
   bool         tweak_non23oscparams  = true,                         /* generate toy MC with randomized dmsq12,theta12,theta13,dcp / only in 3-flavour fmwk */
-  const char * fit_param_list        = "numudisapp2f",               /* fit parameter list for the given physics hypothesis (see run_fitter.C) */
+  const char * fit_param_list        = "nuosc3f_numudisapp_fix4",    /* fit parameter list for the given physics hypothesis (see run_fitter.C) */
   const char * fit_option            = "minuit"                      /* fitter option (see run_fitter.C) */
 )
 {
   using namespace std;
   using namespace t2kana;
 
+  // Analysis configuration
   const char * config = Form("%s/config/%s", gSystem->Getenv("T2KOSCANA"), config_file);
+
+  // Global options
+  Opt::Instance()->gOscMixingParamChoice = conv::kNuMixSinsq2Theta;
+  Opt::Instance()->gMassHierarchyAssumed = conv::kNmhNormal;
+  cout << *Opt::Instance() << endl;
 
   //
   // The oscillation contour will be constructed using a (dm23sq, mixing23) 
@@ -69,15 +75,19 @@ void feldman_cousins_fitting_job
   cout << "   - Fit Parameter List: " << fit_param_list << endl;
   cout << "   - Fitter option: " << fit_option << endl;
   cout << "- Oscillation parameter space binning" << endl;
-  cout << "   - mixing23 : " << osc_param_space->GetXaxis()->GetNbins() << " bins in (" 
+  cout << "   - " << util::AsString(conv::kPhypMixing23) << " : " 
+       << osc_param_space->GetXaxis()->GetNbins() << " bins in (" 
        << osc_param_space->GetXaxis()->GetXmin() << ", "
        << osc_param_space->GetXaxis()->GetXmax() << ")" << endl;
-  cout << "   - dm23sq   : " << osc_param_space->GetYaxis()->GetNbins() << " bins in (" 
+  cout << "   - " << util::AsString(conv::kPhypDm23sq) << " : " 
+       << osc_param_space->GetYaxis()->GetNbins() << " bins in (" 
        << osc_param_space->GetYaxis()->GetXmin() << ", "
        << osc_param_space->GetYaxis()->GetXmax() << ") eV^2/c^4" << endl;
   cout << "- Input bin range " << endl;
-  cout << "   - mixing23 : [" << min_mixing23_bin << ", " << max_mixing23_bin << "]" << endl;
-  cout << "   - dm23sq   : [" << min_dm23sq_bin   << ", " << max_dm23sq_bin   << "]" << endl;
+  cout << "   - " << util::AsString(conv::kPhypMixing23) 
+       << " : [" << min_mixing23_bin << ", " << max_mixing23_bin << "]" << endl;
+  cout << "   - " << util::AsString(conv::kPhypDm23sq) 
+       << " : [" << min_dm23sq_bin   << ", " << max_dm23sq_bin   << "]" << endl;
 
   // get superk spectrum PDF & configure
   SuperkExpectation * skexp = new SuperkExpectation;
@@ -104,7 +114,6 @@ void feldman_cousins_fitting_job
      //     
      // get dm23sq and mixing23 at the centre of a bin randomly selected within the input range
      //     
-
      int input_mixing23_bin = min_mixing23_bin + rand.Integer(1 + max_mixing23_bin - min_mixing23_bin);
      int input_dm23sq_bin   = min_dm23sq_bin   + rand.Integer(1 + max_dm23sq_bin   - min_dm23sq_bin  );
      input_mixing23_bin = TMath::Max(1,              input_mixing23_bin);
@@ -113,12 +122,14 @@ void feldman_cousins_fitting_job
      input_dm23sq_bin   = TMath::Min(dm23sq_nbins,   input_dm23sq_bin  );
 
      double input_mixing23 = osc_param_space->GetXaxis()->GetBinCenter(input_mixing23_bin);
-     double input_dm23sq        = osc_param_space->GetYaxis()->GetBinCenter(input_dm23sq_bin       );
+     double input_dm23sq   = osc_param_space->GetYaxis()->GetBinCenter(input_dm23sq_bin  );
      input_mixing23 = TMath::Max(0.,input_mixing23); // protection from rnd-err
      input_mixing23 = TMath::Min(1.,input_mixing23); // protection from rnd-err
 
-     cout << "- Toy-MC > Dm23sq_{true} = " 
-          << input_dm23sq << " eV^2, mixing23_{true} = " << input_mixing23 << endl;
+     cout << "- Toy-MC > True 23-sector params: " 
+          << util::AsString(conv::kPhypDm23sq)   << " = " << input_dm23sq << " eV^2, "
+          << util::AsString(conv::kPhypMixing23) << " = " << input_mixing23 
+          << endl;
 
      //
      // if we are working in 3-flavour framework, randomize mixing12,mixing13,deltacp and dm12sq
@@ -132,24 +143,26 @@ void feldman_cousins_fitting_job
      if(hyp == conv::kHypOsc3F) {
          input_mixing12 = util::RandomizeMixing12(); 
          input_mixing13 = util::RandomizeMixing13(); 
-         input_deltacp       = util::RandomizeDeltaCP();
-         input_dm12sq        = util::RandomizeDm12sq(); 
-         cout << "- Toy-MC > Randomized non-'23'-sector params for current toy-MC: " 
-              << "Dm12sq_{true} = " << input_dm12sq  << " eV^2, mixing12_{true} = " << input_mixing12 
-              << ", d_cp_{true} = " << input_deltacp      << ", mixing13_{true} = " << input_mixing13 
+         input_deltacp  = util::RandomizeDeltaCP();
+         input_dm12sq   = util::RandomizeDm12sq(); 
+         cout << "- Toy-MC > True (randomized) non-23-sector params: " 
+              << util::AsString(conv::kPhypDm12sq)   << " = " << input_dm12sq   << " eV^2, "
+              << util::AsString(conv::kPhypMixing12) << " = " << input_mixing12 << ", "
+              << util::AsString(conv::kPhypDeltaCP)  << " = " << input_deltacp  << " rad, "
+              << util::AsString(conv::kPhypMixing12) << " = " << input_mixing13 
               << endl;
      }
 
      //
      // Set the generated oscillation parameter values
      //
-     fparm->Update(t2kana::conv::kPhypMixing23, input_mixing23);
-     fparm->Update(t2kana::conv::kPhypDm23sq,   input_dm23sq);
+     fparm->Update(conv::kPhypMixing23, input_mixing23);
+     fparm->Update(conv::kPhypDm23sq,   input_dm23sq);
      if(hyp == conv::kHypOsc3F) {
-       fparm->Update(t2kana::conv::kPhypMixing12, input_mixing12);
-       fparm->Update(t2kana::conv::kPhypMixing13, input_mixing13);
-       fparm->Update(t2kana::conv::kPhypDeltaCP,  input_deltacp);
-       fparm->Update(t2kana::conv::kPhypDm12sq,   input_dm12sq);
+       fparm->Update(conv::kPhypMixing12, input_mixing12);
+       fparm->Update(conv::kPhypMixing13, input_mixing13);
+       fparm->Update(conv::kPhypDeltaCP,  input_deltacp);
+       fparm->Update(conv::kPhypDm12sq,   input_dm12sq);
      }
 
      //
@@ -181,8 +194,8 @@ void feldman_cousins_fitting_job
      // (marginalised non-"23"-sector params are treared as systematics and in the chisq_true calculation
      // they are set to nominal (constant) values used in the fit).
      fparm->ResetCurrToInitValues();
-     fparm->Update(t2kana::conv::kPhypMixing23, input_mixing23);
-     fparm->Update(t2kana::conv::kPhypDm23sq,        input_dm23sq);
+     fparm->Update(conv::kPhypMixing23, input_mixing23);
+     fparm->Update(conv::kPhypDm23sq,   input_dm23sq);
      double chisq_for_input_params = fit_inputs->Chisquare();
      cout << "- Chisq (input/true oscillation params) = " << chisq_for_input_params << endl;
 
@@ -197,8 +210,8 @@ void feldman_cousins_fitting_job
      double bestfit_chisq    = fit_inputs->BestFitChisquare();
 
      cout << "- Chisq (Best-fit params:" 
-          << " mixing23 = " << bestfit_mixing23
-          << ", dm23sq = " << bestfit_dm23sq << " eV^2/c^4"
+          << util::AsString(conv::kPhypDm23sq)   << " = " << bestfit_dm23sq   << " eV^2, "
+          << util::AsString(conv::kPhypMixing23) << " = " << bestfit_mixing23 
           << ") = " << bestfit_chisq << endl;
 
      cout << "- DeltaChisq = " << chisq_for_input_params - bestfit_chisq << endl;

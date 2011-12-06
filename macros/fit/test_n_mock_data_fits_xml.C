@@ -22,8 +22,14 @@ void test_n_mock_data_fits_xml
   using namespace std;
   using namespace t2kana;
 
+  // Analysis configuration
   const char * config = Form("%s/config/%s", gSystem->Getenv("T2KOSCANA"), config_file);
 
+  // Global options
+  Opt::Instance()->gOscMixingParamChoice = conv::kNuMixSinsq2Theta;
+  Opt::Instance()->gMassHierarchyAssumed = conv::kNmhNormal;
+
+  // Print settings
   cout << "\n[Job inputs]" << endl;
   cout << "- Job: " << tag << "/" << run << endl;
   cout << "- Reading analysis configuration from: " << config << endl;
@@ -34,54 +40,53 @@ void test_n_mock_data_fits_xml
   cout << "   - Fit param list: " << fit_param_list << endl;
   cout << "   - Fitter option: " << fit_option << endl;
   cout << endl;
+  cout << *Opt::Instance() << endl;
 
-  // fit param list
+  // Fit param list
   FitParamList * fparm = FitParamList::NamedParameterList(fit_param_list);
 
   conv::PhysHypothesis_t hyp = fparm->PhysicsHypothesis();
   cout << "- The following physics hypothesis is used in the fit: " << util::AsString(hyp) << endl;
 
-  // get superk spectrum predictor & configure
+  // Get superk spectrum predictor & configure
   SuperkExpectation * skexp = new SuperkExpectation;
   skexp->Read(config);
 
-  // store oscillation fit results
+  // Store oscillation fit results
   TNtupleD * nfitnt = new TNtupleD("nfitnt","", 
      "iexp:mixing12:mixing13:mixing23:deltacp:dm12sq:dm23sq:chisq:fitstatus");
 
-  // init best-fit values
-  double bestfit_mixing12 = -1;
-  double bestfit_mixing13 = -1;
-  double bestfit_mixing23 = -1;
-  double bestfit_deltacp  = -1;
-  double bestfit_dm12sq   = -1;
-  double bestfit_dm23sq   = -1;
-  double bestfit_chisq    = -1;
-
-  // loop over toy-MC experiments
+  // Loop over toy-MC experiments
   for(int iexperiment = first_experiment; iexperiment <= last_experiment; iexperiment++) {
 
      cout << "\n\n *** Pseudo-experiment = " << iexperiment << endl;
 
-     // re-seed fitter (reset current values to specified init values)
+     // Re-seed fitter (reset current values to specified init values)
      fparm->Reset();
 
-     //
-     // get superk spectrum observation (toy experiment)
-     //
+     // Get superk spectrum observation (toy experiment)
      SuperkObservation * skobs = new SuperkObservation;
      skobs->Read(xmlfile,iexperiment);
 
-     // get fitter
+     // Get fitter
      FitInputs * fit_inputs = new FitInputs(skobs,skexp,fparm);
      FitterABC * fitter = new Superk1RmuErecoFitter(fit_inputs,fit_option);
 
-     // do the fit
+     // Do the fit
      fitter->DoTheFit();
      int fitstatus = fitter->FitStatusCode();
 
-     // get best-fit params
+     // Get best-fit chisquare
      bestfit_chisq = fit_inputs->BestFitChisquare();
+
+     // Get best-fit params
+     double bestfit_mixing12 = -1;
+     double bestfit_mixing13 = -1;
+     double bestfit_mixing23 = -1;
+     double bestfit_deltacp  = -1;
+     double bestfit_dm12sq   = -1;
+     double bestfit_dm23sq   = -1;
+     double bestfit_chisq    = -1;
      if(hyp == conv::kHypOsc3F) {
         bestfit_mixing12 = fparm->BestFitValue(t2kana::conv::kPhypMixing12);
         bestfit_mixing13 = fparm->BestFitValue(t2kana::conv::kPhypMixing13);
@@ -89,28 +94,24 @@ void test_n_mock_data_fits_xml
         bestfit_deltacp  = fparm->BestFitValue(t2kana::conv::kPhypDeltaCP);
         bestfit_dm12sq   = fparm->BestFitValue(t2kana::conv::kPhypDm12sq);
         bestfit_dm23sq   = fparm->BestFitValue(t2kana::conv::kPhypDm23sq);
-        cout << "- Best-fit:"
-             << " mixing12 = "  << bestfit_mixing12
-             << ", mixing13 = " << bestfit_mixing13
-             << ", mixing23 = " << bestfit_mixing23
-             << ", delta_cp = " << bestfit_deltacp
-             << ", Dm12^2 = "   << bestfit_dm12sq << " eV^2/c^4"
-             << ", |Dm23^2| = " << bestfit_dm23sq << " eV^2/c^4"
-             << " ==> chisq = " << bestfit_chisq << endl;
-     } else
+     } 
+     else
      if(hyp == conv::kHypNuMuDisapp2F) {
         bestfit_mixing23 = fparm->BestFitValue(t2kana::conv::kPhypMixing23);
         bestfit_dm23sq   = fparm->BestFitValue(t2kana::conv::kPhypDm23sq);
-        cout << "- Best-fit:"
-             << " mixing23 = " << bestfit_mixing23
-             << ", |Dm23^2| = " << bestfit_dm23sq << " eV^2/c^4"
-             << " ==> chisq = " << bestfit_chisq << endl;
      }
 
-     // store best-fit values
-     nfitnt->Fill(iexperiment, 
-                  bestfit_mixing12, bestfit_mixing13, bestfit_mixing23,
-                  bestfit_deltacp, bestfit_dm12sq, bestfit_dm23sq, bestfit_chisq, fitstatus);
+     // Print-out best-fit params
+     fparm->ShowOnlyBestFitValuesInNextPrint();
+     cout << "- Best-fit oscillation params (below) yield chisq = " << bestfit_chisq 
+          << *fparm;
+
+     // Store best-fit values
+     nfitnt->Fill(
+           iexperiment, 
+           bestfit_mixing12, bestfit_mixing13, bestfit_mixing23,
+           bestfit_deltacp, bestfit_dm12sq, bestfit_dm23sq, 
+           bestfit_chisq, fitstatus);
 
      delete skobs;
      delete fit_inputs;
@@ -118,7 +119,7 @@ void test_n_mock_data_fits_xml
   }
 
   //
-  // store results
+  // Store results
   //
   TFile f(Form("%s-run_%d-expts_%d_%d.root",
                tag, run, first_experiment, last_experiment), "recreate");

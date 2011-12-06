@@ -13,13 +13,14 @@ void generate_toymc_ensemble
   int          run                     = 0,                              /* */
   double       nexperiments            = 10,                             /* number of toy-MC expts to generate */
   const char * hypothesis              = "3f_osc",                       /* options: "2f_numu_disap", "3f_osc" */
-  double       input_mixing12          = 0.86,                           /* if -999 then randomize */
-  double       input_mixing13          = 0.10,                           /* if -999 then randomize */
-  double       input_mixing23          = 1.00,                           /* */
-  double       input_deltacp           = 0.00,                           /* if -999 then randomize */
-  double       input_dm12sq            = 7.58E-5,                        /* if -999 then randomize */
-  double       input_dm23sq            = 2.32E-3,                        /* */
+  double       input_mixing12          = 0.86,                           /* 12-mixing, sinq2theta or sinsqtheta depending on config choice, if -999 then randomize  */
+  double       input_mixing13          = 0.10,                           /* 13-mixing, sinq2theta or sinsqtheta depending on config choice, if -999 then randomize  */
+  double       input_mixing23          = 1.00,                           /* 23-mixing, sinq2theta or sinsqtheta depending on config choice */
+  double       input_deltacp           = 0.00,                           /* deltacp, if -999 then randomize */
+  double       input_dm12sq            = 7.58E-5,                        /* Dm^2_{12}, if -999 then randomize */
+  double       input_dm23sq            = 2.32E-3,                        /* |Dm^2_{23}| */
   const char * config_file             = "analysis_configuration.xml",   /* analysis configuration file */
+  bool         stat_fluctuations       = true,                           /* include statistical fluctuation in toy MC expts? */
   bool         tweak_systematics       = true,                           /* generate toy MC with randomized systematics? */
   bool         save_in_xml_format      = true,                           /* */
   bool         save_in_root_format     = false,                          /* */
@@ -30,10 +31,14 @@ void generate_toymc_ensemble
   using namespace t2kana;
   using namespace t2kana::conv;
 
+  TRandom rand(0);
+
+  // Analysis configuration
   const char * config = Form("%s/config/%s", gSystem->Getenv("T2KOSCANA"), config_file);
 
-  TRandom rand(0);
-  bool include_statistical_fluctuations = true; // <- statistical fluctuations
+  // Global options
+  Opt::Instance()->gOscMixingParamChoice = kNuMixSinsq2Theta;
+  Opt::Instance()->gMassHierarchyAssumed = kNmhNormal;
 
   // Check whether some osc. params need to be randomized
   bool randomize_mixing12      = (TMath::Abs(input_mixing12 + 999) < kASmallNum);
@@ -50,18 +55,20 @@ void generate_toymc_ensemble
   cout << "- Toy-MC generation" << endl;
   cout << "   - Number of toy experiments: " << nexperiments << endl;
   cout << "   - Randomize systematics : "      << ((tweak_systematics) ? "YES " : "NO") << endl;
+  cout << "   - Statistical fluctuations: "    << ((stat_fluctuations) ? "YES " : "NO") << endl;
   cout << "   - True oscillation parameters: " << endl;
-  cout << "       > mixing12 = " << ((randomize_mixing12) ? "* randomized *" : input_mixing12) << endl;
-  cout << "       > mixing13 = " << ((randomize_mixing13) ? "* randomized *" : input_mixing13) << endl;
-  cout << "       > mixing23 = " << input_mixing23 << endl;
-  cout << "       > delta_cp      = " << ((randomize_deltacp) ? "* randomized *" : input_deltacp) << endl;
-  cout << "       > Dm12sq        = " << ((randomize_dm12sq)  ? "* randomized *" : input_dm12sq ) << " eV^2/c^4" << endl;
-  cout << "       > |Dm23sq|      = " << input_dm23sq << " eV^2/c^4" << endl;
+  cout << "       > " << util::AsString(kPhypMixing12) << " = " << ((randomize_mixing12) ? "* randomized *" : input_mixing12) << endl;
+  cout << "       > " << util::AsString(kPhypMixing13) << " = " << ((randomize_mixing13) ? "* randomized *" : input_mixing13) << endl;
+  cout << "       > " << util::AsString(kPhypMixing23) << " = " << input_mixing23 << endl;
+  cout << "       > " << util::AsString(kPhypDeltaCP)  << " = " << ((randomize_deltacp) ? "* randomized *" : input_deltacp) << endl;
+  cout << "       > " << util::AsString(kPhypDm12sq)   << " = " << ((randomize_dm12sq)  ? "* randomized *" : input_dm12sq ) << " eV^2/c^4" << endl;
+  cout << "       > " << util::AsString(kPhypDm23sq)   << " = " << input_dm23sq << " eV^2/c^4" << endl;
   cout << "   - Adding the following data-points in each toy-MC expt: " << ((points_to_add) ? points_to_add : "* none *") << endl;
   cout << "- Outputs" << endl;
   cout << "     - Storing toy-MC expts in XML format: "   << ((save_in_xml_format) ?   "YES " : "NO") << endl;
   cout << "     - Storing toy-MC expts in ROOT format:  " << ((save_in_root_format) ?  "YES " : "NO") << endl;
   cout << endl;
+  cout << *Opt::Instance() << endl;
 
   // Open files
   TFile * f = 0;
@@ -100,17 +107,17 @@ void generate_toymc_ensemble
 
      // Set physics hypothesis
      PhysHypothesis ph(hypothesis);
-     if(ph.Hypothesis() == conv::kHypNuMuDisapp2F) {
-       ph.SetCurrValue(conv::kPhypMixing23,  input_mixing23);
-       ph.SetCurrValue(conv::kPhypDm23sq,    input_dm23sq);
+     if(ph.Hypothesis() == kHypNuMuDisapp2F) {
+       ph.SetCurrValue(kPhypMixing23,  input_mixing23);
+       ph.SetCurrValue(kPhypDm23sq,    input_dm23sq);
      } else
-     if(ph.Hypothesis() == conv::kHypOsc3F) {  
-       ph.SetCurrValue(conv::kPhypMixing12,  input_mixing12);
-       ph.SetCurrValue(conv::kPhypMixing13,  input_mixing13);
-       ph.SetCurrValue(conv::kPhypMixing23,  input_mixing23);
-       ph.SetCurrValue(conv::kPhypDeltaCP,   input_deltacp);
-       ph.SetCurrValue(conv::kPhypDm12sq,    input_dm12sq);
-       ph.SetCurrValue(conv::kPhypDm23sq,    input_dm23sq);
+     if(ph.Hypothesis() == kHypOsc3F) {  
+       ph.SetCurrValue(kPhypMixing12,  input_mixing12);
+       ph.SetCurrValue(kPhypMixing13,  input_mixing13);
+       ph.SetCurrValue(kPhypMixing23,  input_mixing23);
+       ph.SetCurrValue(kPhypDeltaCP,   input_deltacp);
+       ph.SetCurrValue(kPhypDm12sq,    input_dm12sq);
+       ph.SetCurrValue(kPhypDm23sq,    input_dm23sq);
      }
      //cout << "- Physics hypothesis set: " << ph << endl;
 
@@ -124,10 +131,10 @@ void generate_toymc_ensemble
      // Generate mock data
      cout << "- Generating toy-MC..." << endl;
      SuperkObservation * skobs = new SuperkObservation;
-     skobs->CreateMockData(*skexp, ph, include_statistical_fluctuations);
+     skobs->CreateMockData(*skexp, ph, stat_fluctuations);
 
      // Get 1-ring mu-like Ereco spectrum
-     TH1D* mock_data = skobs->ErecoSpectrum(conv::kSKsFCFV1RingMuLike);
+     TH1D* mock_data = skobs->ErecoSpectrum(kSKsFCFV1RingMuLike);
      mock_data->SetDirectory(0);
 
      // If an XML file was specified, add an entry

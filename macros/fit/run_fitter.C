@@ -34,40 +34,49 @@ void run_fitter
   using namespace std;
   using namespace t2kana;
 
+  // Analysis configuration
   const char * config  = Form("%s/config/%s", gSystem->Getenv("T2KOSCANA"), config_file);
+
+  // Data file
   const char * data_file_fullpath = Form("%s/%s", gSystem->Getenv("T2KOSCANA"), data_file);
 
+  // Global options
+  Opt::Instance()->gOscMixingParamChoice = conv::kNuMixSinsq2Theta;
+  Opt::Instance()->gMassHierarchyAssumed = conv::kNmhNormal;
+
+  // Print settings
   cout << "[Job inputs]" << endl;
   cout << "  Reading analysis configuration from: " << config << endl;
   cout << "  Reading dataset: " << dataset_id << " from: " << data_file_fullpath << endl;
   cout << "  Fit parameter list: " << fit_param_list << endl;
   cout << "  Fitter option: " << fit_option << endl;
   cout << "  Output option: " << output_option  << endl;
+  cout << *Opt::Instance() << endl;
 
-  // get superk spectrum predictor & configure
+  // Get superk spectrum predictor & configure
   SuperkExpectation * skexp = new SuperkExpectation;
   skexp->Read(config);
 
-  // get superk spectrum observation
+  // Get superk spectrum observation
   SuperkObservation * skobs = new SuperkObservation;
   skobs->Read(data_file, dataset_id);
 
-  // get specified fit parameter list & build fit inputs
+  // Get specified fit parameter list & build fit inputs
   FitParamList * fparm = FitParamList::NamedParameterList(fit_param_list);
   assert(fparm);
   FitInputs * fit_inputs = new FitInputs(skobs,skexp,fparm);
 
-  // get specified fitter
+  // Get specified fitter
   FitterABC * fitter = new Superk1RmuErecoFitter(fit_inputs,fit_option);
   assert(fitter);
 
-  // do the fit
+  // Do the fit
   fitter->DoTheFit();
 
-  // post-fit analysis
+  // Post-fit analysis
   fitter->Analyze(output_option);
 
-  // save results
+  // Save results
   const char * outfile = Form("fit_%d.root",dataset_id);
   fitter->Save(outfile);
 }

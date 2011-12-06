@@ -19,43 +19,51 @@ void make_pvalue_ntuple(
   using namespace t2kana;
   using namespace t2kana::conv;
 
+  // Analysis configuration
+  const char * config = Form("%s/config/%s", gSystem->Getenv("T2KOSCANA"), config_file);
+
+  // Global options
+  Opt::Instance()->gOscMixingParamChoice = conv::kNuMixSinsq2Theta;
+  Opt::Instance()->gMassHierarchyAssumed = conv::kNmhNormal;
+
+  // Print settings
   cout << "[Job inputs]" << endl;
   cout << "Job: " << tag << "/" << run << endl;
   cout << "Number of toy experiments : " << nexperiments << endl; 
   cout << "Systematic variations : "      << ((tweak_systematics) ?    "YES " : "NO") << endl;
   cout << "Statistical fluctuations : "   << ((stat_fluctuations) ?    "YES " : "NO") << endl;
-
-  const char * config = Form("%s/config/%s", gSystem->Getenv("T2KOSCANA"), config_file);
   cout << "Reading analysis configuration from: " << config << endl;
+  cout << *Opt::Instance() << endl;
 
-  // create file to store results
+  // Create file & ntuple to store results
   TFile f(Form("%s-run_%d.root",tag,run), "recreate");
 
-  // fit params - specify appropriate null hypothesis
+  // Fit params - specify appropriate null hypothesis
   FitParamList * fparm = FitParamList::NamedParameterList(fit_param_list);
   conv::PhysHypothesis_t hyp = fparm->PhysicsHypothesis();
   cout << "Specified physics hypothesis: " << util::AsString(hyp) << endl;
-  if(hyp == conv::kHypOsc3F) {
-  //fparm->Update(t2kana::conv::kPhypMixing12, 0.);
-    fparm->Update(t2kana::conv::kPhypMixing13, 0.);
-    fparm->Update(t2kana::conv::kPhypMixing23, 0.);
-    fparm->Update(t2kana::conv::kPhypDeltaCP,  0.);
+  if(hyp == kHypOsc3F) {
+  //fparm->Update(kPhypMixing12, 0.);
+    fparm->Update(kPhypMixing13, 0.);
+    fparm->Update(kPhypMixing23, 0.);
+    fparm->Update(kPhypDeltaCP,  0.);
   }
   else
-  if(hyp == conv::kHypNuMuDisapp2F) {
-    fparm->Update(t2kana::conv::kPhypMixing23, 0.);
+  if(hyp == kHypNuMuDisapp2F) {
+    fparm->Update(kPhypMixing23, 0.);
   }
   else {
     return;
   }
 
-  // get superk spectrum predictor & configure
+  // Get superk spectrum predictor & configure
   SuperkExpectation * skexp = new SuperkExpectation;
   skexp->Read(config);
 
-  // store results
+  // Output ntuple
   TNtupleD * pvnt = new TNtupleD("pvnt","", "iexp:chisq");
 
+  // Toy MC expt loop
   for(int iexperiment = 0; iexperiment < nexperiments; iexperiment++) {
 
      cout << "\n\n *** Pseudo-experiment = " << iexperiment << endl;
@@ -81,7 +89,7 @@ void make_pvalue_ntuple(
         skobs->CreateMockData(*skexp, *fparm, stat_fluctuations);
      }
 
-     // calc & store chisq
+     // Calc & store chisq
      FitInputs * fit_inputs = new FitInputs(skobs,skexp,fparm);
      double chisq = fit_inputs->Chisquare();
      cout << "Chisq = " << chisq << endl;

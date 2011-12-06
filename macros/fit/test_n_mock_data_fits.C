@@ -32,14 +32,20 @@ void test_n_mock_data_fits
   using namespace t2kana;
   using namespace t2kana::conv;
 
+  // Analysis configuration
   const char * config = Form("%s/config/%s", gSystem->Getenv("T2KOSCANA"), config_file);
 
-  // check whether some osc. params need to be randomized
+  // Global options
+  Opt::Instance()->gOscMixingParamChoice = conv::kNuMixSinsq2Theta;
+  Opt::Instance()->gMassHierarchyAssumed = conv::kNmhNormal;
+
+  // Check whether some osc. params need to be randomized
   bool randomize_mixing12 = (TMath::Abs(input_mixing12 + 999) < kASmallNum);
   bool randomize_mixing13 = (TMath::Abs(input_mixing13 + 999) < kASmallNum);
   bool randomize_deltacp  = (TMath::Abs(input_deltacp  + 999) < kASmallNum);
   bool randomize_dm12sq   = (TMath::Abs(input_dm12sq   + 999) < kASmallNum);
 
+  // Print settings
   cout << "\n[Job inputs]" << endl;
   cout << "- Job: " << tag << "/" << run << endl;
   cout << "- Reading analysis configuration from: " << config << endl;
@@ -62,25 +68,26 @@ void test_n_mock_data_fits
   cout << "     - Storing toy MC experiments:  " << ((store_toy_expts) ?        "YES " : "NO") << endl;
   cout << "     - Storing best-fit spectra: "    << ((store_bestfit_spectrum) ? "YES " : "NO") << endl;
   cout << endl;
+  cout << *Opt::Instance() << endl;
 
-  // create file to store results
+  // Create file to store results
   TFile f(Form("%s-mixing23_%.2f-dm23sq_%.5feV2-run_%d.root",
           tag, input_mixing23,input_dm23sq,run), "recreate");
 
-  // create ntuple to store oscillation fit results
+  // Create ntuple to store oscillation fit results
   TNtupleD * nfitnt = new TNtupleD("nfitnt","",
      "iexp:bestfit_mixing12:bestfit_mixing13:bestfit_mixing23:bestfit_deltacp:bestfit_dm12sq:bestfit_dm23sq:chisq:fitstatus:input_mixing12:input_mixing13:input_mixing23:input_deltacp:input_dm12sq:input_dm23sq");
 
-  // fit parameter list
+  // Fit parameter list
   FitParamList * fparm = FitParamList::NamedParameterList(fit_param_list);
   PhysHypothesis_t hyp = fparm->PhysicsHypothesis();
   cout << "- The following physics hypothesis is used in the fit: " << util::AsString(hyp) << endl;
 
-  // get superk spectrum predictor & configure
+  // Get superk spectrum predictor & configure
   SuperkExpectation * skexp = new SuperkExpectation;
   skexp->Read(config);
 
-  // loop over toy-MC experiments
+  // Loop over toy-MC experiments
   for(int iexperiment = 0; iexperiment < nexperiments; iexperiment++) {
 
      cout << "\n\n *** Pseudo-experiment = " << iexperiment << endl;
@@ -130,31 +137,31 @@ void test_n_mock_data_fits
         skobs->CreateMockData(*skexp, *fparm, stat_fluctuations); 
      }
 
-     // get fitter
+     // Get fitter
      FitInputs * fit_inputs = new FitInputs(skobs,skexp,fparm);
      FitterABC * fitter = new Superk1RmuErecoFitter(fit_inputs,fit_option);
 
-     // chisq for true (input) params
+     // Chisq for true (input) params
      double true_chisq = fit_inputs->Chisquare();
 
-     // print-out true params
+     // Print-out true params
      fparm->ShowOnlyCurrValuesInNextPrint();
      cout << "- True oscillation params (below) yield chisq = " << true_chisq
           << *fparm;
 
-     // do the fit
+     // Do the fit
      fparm->ResetCurrToInitValues(); // reset osc params
      fitter->DoTheFit();
      int fitstatus = fitter->FitStatusCode();
      bestfit_chisq = fit_inputs->BestFitChisquare();
 
-     // print-out best-fit params
+     // Print-out best-fit params
      fparm->ShowOnlyBestFitValuesInNextPrint();
      cout << "- Best-fit oscillation params (below) yield chisq = " << bestfit_chisq 
           << *fparm;
 
-     // get & store best-fit params
-     // init best-fit values
+     // Get & store best-fit params
+     // Init best-fit values
      double bestfit_mixing12 = -1;
      double bestfit_mixing13 = -1;
      double bestfit_mixing23 = -1;
@@ -187,8 +194,7 @@ void test_n_mock_data_fits
      if ( store_chisq_surf       ) { output_option += "+ChisqSurface";   }
      fitter->Analyze(output_option.c_str());
 
-
-     // store toy-MC expt (if asked)
+     // Store toy-MC expt (if asked)
      if(store_toy_expts) {
         TH1D * h = (TH1D*) fitter->GetResults().FindObject("data");
         TH1D * toyexpspectrum = new TH1D(*h);
@@ -197,7 +203,7 @@ void test_n_mock_data_fits
         toyexpspectrum->Write();
      }
 
-     // store best-fit spectrum (if asked)
+     // Store best-fit spectrum (if asked)
      if(store_bestfit_spectrum) {
         TH1D * h = (TH1D*) fitter->GetResults().FindObject("bestfit_tot");
         TH1D * bestfitspectrum = new TH1D(*h);
@@ -205,7 +211,7 @@ void test_n_mock_data_fits
         f.cd();
         bestfitspectrum->Write();
      }
-     // store chisq surface (if asked)
+     // Store chisq surface (if asked)
      if(store_chisq_surf) {
         TH2D * h2 = (TH2D*) fitter->GetResults().FindObject("chisq_surface");
         TH2D * chisqsurf = new TH2D(*h2); 
@@ -219,7 +225,7 @@ void test_n_mock_data_fits
      delete fitter;
   }
 
-  // store ntuple with best-fit results
+  // Store ntuple with best-fit results
   f.cd();
   nfitnt->Write("nfitnt");
 
