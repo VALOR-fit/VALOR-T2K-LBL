@@ -457,29 +457,52 @@ FitParamList * FitParamList::NuOsc3FlavourFitNoSyst(void)
 //________________________________________________________________________________________
 FitParamList * FitParamList::NumuDisapFitNoSyst(void)
 {
-  NuOscMixParam_t omp = Opt::Instance()->gOscMixingParamChoice;
-  assert(omp == kNuMixSinsq2Theta); // for simplicity, allow only this option for the effective 2-flavour analysis
-
   FitParamList * fparm = new FitParamList(2);
 
-  fparm->AddParam(0, kPhypMixing23, kInitFitSinsq2Theta23, kMinFitSinsq2Theta23,  kMaxFitSinsq2Theta23,  0.01,  false, false);
-  fparm->AddParam(1, kPhypDm23sq,   kInitFitDm23sq,        kMinFitDm23sq,         kMaxFitDm23sq,         1E-4,  false, false);
+  NuOscMixParam_t omp = Opt::Instance()->gOscMixingParamChoice;
+  switch(omp) {
+  case(kNuMixSinsq2Theta):
+    fparm->AddParam(0, kPhypMixing23, kInitFitSinsq2Theta23, kMinFitSinsq2Theta23,  kMaxFitSinsq2Theta23,  0.01,  false, false);
+    break;
+  case(kNuMixSinsqTheta):
+    fparm->AddParam(0, kPhypMixing23, kInitFitSinsqTheta23,  kMinFitSinsqTheta23,   kMaxFitSinsqTheta23,   0.01,  false, false);
+    break;
+  default:
+    delete fparm;
+    return 0;
+  }
+
+  fparm->AddParam(1, kPhypDm23sq, kInitFitDm23sq, kMinFitDm23sq, kMaxFitDm23sq, 1E-4, false, false);
 
   return fparm;
 }
 //________________________________________________________________________________________
 FitParamList * FitParamList::NumuDisapFitAllSyst(void)
 {
-  NuOscMixParam_t omp = Opt::Instance()->gOscMixingParamChoice;
-  assert(omp == kNuMixSinsq2Theta); // for simplicity, allow only this option for the effective 2-flavour analysis
-
   FitParamList * fparm = new FitParamList(36);
 
+  //
   // add osc params
-  fparm->AddParam(0, kPhypMixing23, kInitFitSinsq2Theta23, kMinFitSinsq2Theta23,  kMaxFitSinsq2Theta23,  0.01,  false, false);
-  fparm->AddParam(1, kPhypDm23sq,   kInitFitDm23sq,        kMinFitDm23sq,         kMaxFitDm23sq,         1E-4,  false, false);
+  //
+  NuOscMixParam_t omp = Opt::Instance()->gOscMixingParamChoice;
+  switch(omp) {
+  case(kNuMixSinsq2Theta):
+    fparm->AddParam(0, kPhypMixing23, kInitFitSinsq2Theta23, kMinFitSinsq2Theta23,  kMaxFitSinsq2Theta23,  0.01,  false, false);
+    break;
+  case(kNuMixSinsqTheta):
+    fparm->AddParam(0, kPhypMixing23, kInitFitSinsqTheta23,  kMinFitSinsqTheta23,   kMaxFitSinsqTheta23,   0.01,  false, false);
+    break;
+  default:
+    delete fparm;
+    return 0;
+  }
 
+  fparm->AddParam(1, kPhypDm23sq, kInitFitDm23sq, kMinFitDm23sq, kMaxFitDm23sq, 1E-4, false, false);
+
+  //
   // add nuisance params
+  //
+
   fparm->AddParam( 2, kNuisSuperkEffCCQEoth,  0.0,           -1,    1,    1E-1,  false, true);
   fparm->AddParam( 3, kNuisSuperkEffCCQErc0u, 0.0,           -1,    1,    1E-1,  false, true);
   fparm->AddParam( 4, kNuisSuperkEffCCQErc1u, 0.0,           -1,    1,    1E-1,  false, true);

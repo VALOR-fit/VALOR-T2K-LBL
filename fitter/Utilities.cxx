@@ -160,152 +160,6 @@ double t2kana::util::ChisqPoisson(
   return (2. * (nmc-ndata) + 2. * ndata * TMath::Log(ndata/nmc));
 }
 //____________________________________________________________________________
-double t2kana::util::NuMuSurvProbOsc2D(
-  double sinsq2theta, double dmsq, double Et)
-{
-  if(Et <= 0.) return 0.;
-
-  double osc   = TMath::Sin(1.267*dmsq*kBaseline/Et);
-  double posc  = sinsq2theta * TMath::Power(osc,2);
-  double psurv = 1-posc;
-
-  psurv = TMath::Min(1.,psurv);
-  psurv = TMath::Max(0.,psurv);
-
-  return psurv;
-}
-//____________________________________________________________________________
-double t2kana::util::NuMuSurvProbOsc2D(
-  double sinsq2theta, double dmsq, double Et, 
-  t2kana::conv::SuperkMode_t m)
-{
-// Note: Using only the numu disappearance analysis modes
-//
-  if(m == kSKmNuMuNC          || 
-     m == kSKmNuECCQE     ||
-     m == kSKmNuECC1pi    ||
-     m == kSKmNuECCoth_mu ||
-     m == kSKmNuENC       ||
-     m == kSKmNuMuBarNC)
-  {
-    return 1.;
-  }
-  else
-  if(m == kSKmNuMuCCQE        || 
-     m == kSKmNuMuCC1pi       || 
-     m == kSKmNuMuCCoth_mu    ||
-     m == kSKmNuMuBarCCQE     ||
-     m == kSKmNuMuBarCC1pi    ||
-     m == kSKmNuMuBarCCoth_mu) 
-  {
-    return NuMuSurvProbOsc2D(sinsq2theta, dmsq, Et);
-  }
-  else {
-    cerr << "NuMuSurvProbOsc2D > Can't handle SK mode = " << m << endl;
-    exit(1);
-  }
-}
-//____________________________________________________________________________
-double t2kana::util::NuMuSurvProbDecay (
-   double sinsq2theta, double alpha, double Et)
-{
-// Note: In oscillation formula (Dm^2 * L / 4E) in natural units becomes 
-// 1.267 * Dm^2 * L / E where Dm^2 in eV2, L in km, E in GeV. 
-// Apply the same conversion in the decoherence survival prob formula (Eq. 13) 
-// given in Barger et al., astro-ph/9810121v1.
-//
-// a L / 2E (natural units) --> 2 * 1.267 a (eV^2) L(km) /E (GeV)
-//
-
-  double cossq2theta = TMath::Sqrt( TMath::Max(0.,1.-sinsq2theta) );
-  double cos2theta   = TMath::Sqrt(cossq2theta);
-  double sinsqtheta  = (1.-cos2theta)/2.;
-  double cossqtheta  = (1.+cos2theta)/2.;
-  double expaL       = TMath::Exp(-2*1.267*alpha*kBaseline/Et);
-
-  double psurv = TMath::Power(sinsqtheta + cossqtheta*expaL, 2.);
-  return psurv;
-}
-//____________________________________________________________________________
-double t2kana::util::NuMuSurvProbDecay (
-  double sinsq2theta, double alpha, double Et, 
-  t2kana::conv::SuperkMode_t m)
-{
-// Note: Using only the numu disappearance analysis modes
-//
-  if(m == kSKmNuECCQE     ||
-     m == kSKmNuECC1pi    ||
-     m == kSKmNuECCoth_mu ||
-     m == kSKmNuENC)
-  {
-    return 1.;
-  }
-  else
-  if(m == kSKmNuMuCCQE        || 
-     m == kSKmNuMuCC1pi       || 
-     m == kSKmNuMuCCoth_mu    ||
-     m == kSKmNuMuNC              ||
-     m == kSKmNuMuBarCCQE     ||
-     m == kSKmNuMuBarCC1pi    ||
-     m == kSKmNuMuBarCCoth_mu ||
-     m == kSKmNuMuBarNC) 
-  {
-    return NuMuSurvProbDecay(sinsq2theta, alpha, Et);
-  }
-  else {
-    cerr << "NuMuSurvProbDecay > Can't handle SK mode = " << m << endl;
-    exit(1);
-  }
-}
-//____________________________________________________________________________
-double t2kana::util::NuMuSurvProbDecoh (
-   double sinsq2theta, double musq, double Et)
-{
-//
-// Note: In oscillation formula (Dm^2 * L / 4E) in natural units becomes 
-// 1.267 * Dm^2 * L / E where Dm^2 in eV2, L in km, E in GeV. 
-// Apply the same conversion in the decoherence survival prob formula (Eq. 5) 
-// given in Fogli et al., PRD67,093006(2003).
-//
-// \mu^2 L / 2 E (natural units) --> 2 * 1.267 \mu^2 (eV^2) L(km) /E (GeV)
-//
-
-  double expmusqLE = TMath::Exp(-2*1.267*musq*kBaseline/Et);
-  double psurv = 1. - 0.5*sinsq2theta * ( 1 - expmusqLE );
-  return psurv;
-}
-//____________________________________________________________________________
-double t2kana::util::NuMuSurvProbDecoh (
-  double sinsq2theta, double musq, double Et, 
-  t2kana::conv::SuperkMode_t m)
-{
-// Note: Using only the numu disappearance analysis modes
-//
-  if(m == kSKmNuECCQE     ||
-     m == kSKmNuECC1pi    ||
-     m == kSKmNuECCoth_mu ||
-     m == kSKmNuENC)
-  {
-    return 1.;
-  }
-  else
-  if(m == kSKmNuMuCCQE        || 
-     m == kSKmNuMuCC1pi       || 
-     m == kSKmNuMuCCoth_mu    ||
-     m == kSKmNuMuNC              ||
-     m == kSKmNuMuBarCCQE     ||
-     m == kSKmNuMuBarCC1pi    ||
-     m == kSKmNuMuBarCCoth_mu ||
-     m == kSKmNuMuBarNC) 
-  {
-    return NuMuSurvProbDecoh(sinsq2theta, musq, Et);
-  }
-  else {
-    cerr << "NuMuSurvProbDecoh > Can't handle SK mode = " << m << endl;
-    exit(1);
-  }
-}
-//____________________________________________________________________________
 TMatrixD t2kana::util::CholeskyDecomposition(TMatrixD& cov_matrix)
 {
 // Perform a Cholesky decomposition of the input covariance matrix and
@@ -620,7 +474,7 @@ string t2kana::util::AsString (
   string opt = option;
 
 
-  if( t2kana::util::FromString(hypothesis) == t2kana::conv::kHypNuMuDisapp2F )
+  if( t2kana::util::FromString(hypothesis) == t2kana::conv::kHypNuMuDisapp2F)
   {
     s = Form("sinsq2theta23_%.3f,dm23sq_%.5feV2",mix23,dm23sq);
   }
@@ -2214,3 +2068,165 @@ bool t2kana::util::UseEventToFillInTemplate(
   return use_it;
 }
 //___________________________________________________________________________
+double t2kana::util::NuMuSurvProbOsc2Flavour(
+  double mixing23, double dm23sq, double Et)
+{
+  if(Et <= 0.) return 0.;
+
+  double sinsq2theta23 = 0.;
+
+  NuOscMixParam_t omp = Opt::Instance()->gOscMixingParamChoice;
+  switch(omp) {
+   case(kNuMixSinsq2Theta):
+       // mixing23 parameter is sinsq2theta23
+       sinsq2theta23 = mixing23;
+       break;
+   case(kNuMixSinsqTheta):
+       // mixing23 parameter is sinsqtheta23
+       // convert to sinsq2theta23
+       sinsq2theta23 = 4*mixing23*(1-mixing23);
+       break;
+   default:
+       return 0.;
+  }
+
+  double osc   = TMath::Sin(1.267*dm23sq*kBaseline/Et);
+  double posc  = sinsq2theta23 * TMath::Power(osc,2);
+  double psurv = 1-posc;
+
+  psurv = TMath::Min(1.,psurv);
+  psurv = TMath::Max(0.,psurv);
+
+  return psurv;
+}
+//____________________________________________________________________________
+double t2kana::util::NuMuSurvProbOsc2Flavour(
+  double mixing23, double dm23sq, double Et, t2kana::conv::SuperkMode_t m)
+{
+// Note: Using only the numu disappearance analysis modes
+//
+  if(m == kSKmNuMuNC          || 
+     m == kSKmNuECCQE     ||
+     m == kSKmNuECC1pi    ||
+     m == kSKmNuECCoth_mu ||
+     m == kSKmNuENC       ||
+     m == kSKmNuMuBarNC)
+  {
+    return 1.;
+  }
+  else
+  if(m == kSKmNuMuCCQE        || 
+     m == kSKmNuMuCC1pi       || 
+     m == kSKmNuMuCCoth_mu    ||
+     m == kSKmNuMuBarCCQE     ||
+     m == kSKmNuMuBarCC1pi    ||
+     m == kSKmNuMuBarCCoth_mu) 
+  {
+    return NuMuSurvProbOsc2Flavour(mixing23, dm23sq, Et);
+  }
+  else {
+    cerr << "NuMuSurvProbOsc2D > Can't handle SK mode = " << m << endl;
+    exit(1);
+  }
+}
+//____________________________________________________________________________
+double t2kana::util::NuMuSurvProbDecay (
+   double sinsq2theta, double alpha, double Et)
+{
+// Note: In oscillation formula (Dm^2 * L / 4E) in natural units becomes 
+// 1.267 * Dm^2 * L / E where Dm^2 in eV2, L in km, E in GeV. 
+// Apply the same conversion in the decoherence survival prob formula (Eq. 13) 
+// given in Barger et al., astro-ph/9810121v1.
+//
+// a L / 2E (natural units) --> 2 * 1.267 a (eV^2) L(km) /E (GeV)
+//
+
+  double cossq2theta = TMath::Sqrt( TMath::Max(0.,1.-sinsq2theta) );
+  double cos2theta   = TMath::Sqrt(cossq2theta);
+  double sinsqtheta  = (1.-cos2theta)/2.;
+  double cossqtheta  = (1.+cos2theta)/2.;
+  double expaL       = TMath::Exp(-2*1.267*alpha*kBaseline/Et);
+
+  double psurv = TMath::Power(sinsqtheta + cossqtheta*expaL, 2.);
+  return psurv;
+}
+//____________________________________________________________________________
+double t2kana::util::NuMuSurvProbDecay (
+  double sinsq2theta, double alpha, double Et, 
+  t2kana::conv::SuperkMode_t m)
+{
+// Note: Using only the numu disappearance analysis modes
+//
+  if(m == kSKmNuECCQE     ||
+     m == kSKmNuECC1pi    ||
+     m == kSKmNuECCoth_mu ||
+     m == kSKmNuENC)
+  {
+    return 1.;
+  }
+  else
+  if(m == kSKmNuMuCCQE        || 
+     m == kSKmNuMuCC1pi       || 
+     m == kSKmNuMuCCoth_mu    ||
+     m == kSKmNuMuNC              ||
+     m == kSKmNuMuBarCCQE     ||
+     m == kSKmNuMuBarCC1pi    ||
+     m == kSKmNuMuBarCCoth_mu ||
+     m == kSKmNuMuBarNC) 
+  {
+    return NuMuSurvProbDecay(sinsq2theta, alpha, Et);
+  }
+  else {
+    cerr << "NuMuSurvProbDecay > Can't handle SK mode = " << m << endl;
+    exit(1);
+  }
+}
+//____________________________________________________________________________
+double t2kana::util::NuMuSurvProbDecoh (
+   double sinsq2theta, double musq, double Et)
+{
+//
+// Note: In oscillation formula (Dm^2 * L / 4E) in natural units becomes 
+// 1.267 * Dm^2 * L / E where Dm^2 in eV2, L in km, E in GeV. 
+// Apply the same conversion in the decoherence survival prob formula (Eq. 5) 
+// given in Fogli et al., PRD67,093006(2003).
+//
+// \mu^2 L / 2 E (natural units) --> 2 * 1.267 \mu^2 (eV^2) L(km) /E (GeV)
+//
+
+  double expmusqLE = TMath::Exp(-2*1.267*musq*kBaseline/Et);
+  double psurv = 1. - 0.5*sinsq2theta * ( 1 - expmusqLE );
+  return psurv;
+}
+//____________________________________________________________________________
+double t2kana::util::NuMuSurvProbDecoh (
+  double sinsq2theta, double musq, double Et, 
+  t2kana::conv::SuperkMode_t m)
+{
+// Note: Using only the numu disappearance analysis modes
+//
+  if(m == kSKmNuECCQE     ||
+     m == kSKmNuECC1pi    ||
+     m == kSKmNuECCoth_mu ||
+     m == kSKmNuENC)
+  {
+    return 1.;
+  }
+  else
+  if(m == kSKmNuMuCCQE        || 
+     m == kSKmNuMuCC1pi       || 
+     m == kSKmNuMuCCoth_mu    ||
+     m == kSKmNuMuNC              ||
+     m == kSKmNuMuBarCCQE     ||
+     m == kSKmNuMuBarCC1pi    ||
+     m == kSKmNuMuBarCCoth_mu ||
+     m == kSKmNuMuBarNC) 
+  {
+    return NuMuSurvProbDecoh(sinsq2theta, musq, Et);
+  }
+  else {
+    cerr << "NuMuSurvProbDecoh > Can't handle SK mode = " << m << endl;
+    exit(1);
+  }
+}
+//____________________________________________________________________________

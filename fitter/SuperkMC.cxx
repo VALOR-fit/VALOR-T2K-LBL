@@ -763,10 +763,8 @@ void SuperkMC::ApplyPhysHypothesisToTemplates(void)
   //
   else
   if(hyp == kHypNuMuDisapp2F) {
-    NuOscMixParam_t omp = Opt::Instance()->gOscMixingParamChoice;
-    assert(omp == kNuMixSinsq2Theta); // for simplicity, allow only this option for the effective 2-flavour analysis
-    double sinsq2theta23 = fPhysHypothesis.CurrValue(kPhypMixing23);
-    double dm23sq        = fPhysHypothesis.CurrValue(kPhypDm23sq);
+    double mixing23 = fPhysHypothesis.CurrValue(kPhypMixing23);
+    double dm23sq   = fPhysHypothesis.CurrValue(kPhypDm23sq);
     // loop over samples
     for(int is = 0; is < kns; is++) {
       SuperkSample_t s = kSKSamples[is];
@@ -785,7 +783,7 @@ void SuperkMC::ApplyPhysHypothesisToTemplates(void)
          // loop over Etrue
          for(int it = 1; it <= mctempl_src->GetYaxis()->GetNbins(); it++) {
            double Etrue = mctempl_src->GetYaxis()->GetBinCenter(it);
-           double psurv = util::NuMuSurvProbOsc2D(sinsq2theta23, dm23sq, Etrue, m);
+           double psurv = util::NuMuSurvProbOsc2Flavour(mixing23, dm23sq, Etrue, m);
            // loop over Ereco
            for(int ir = 1; ir <= mctempl_src->GetXaxis()->GetNbins(); ir++) {
               double nev = mctempl_src->GetBinContent(ir,it);

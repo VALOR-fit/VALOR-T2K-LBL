@@ -41,28 +41,26 @@ using std::vector;
 namespace t2kana {
 namespace util {
 
+  //
+  // Statistics
+  //
+
   double DeltaChisquare   (t2kana::conv::ConfLevel_t cl, int nfitparams);
   double ChisqGauss       (double ndata, double nmc);
   double ChisqPoisson     (double ndata, double nmc);
-  double NuMuSurvProbOsc2D(double sinsq2theta, double dmsq, double Et);
-  double NuMuSurvProbOsc2D(double sinsq2theta, double dmsq, double Et, t2kana::conv::SuperkMode_t m);
-  double NuMuSurvProbDecay(double sinsq2theta, double alpha, double Et);
-  double NuMuSurvProbDecay(double sinsq2theta, double alpha, double Et, t2kana::conv::SuperkMode_t m);
-  double NuMuSurvProbDecoh(double sinsq2theta, double musq, double Et);
-  double NuMuSurvProbDecoh(double sinsq2theta, double musq, double Et, t2kana::conv::SuperkMode_t m);
 
   // Cholesky decomposition
 
-  TMatrixD CholeskyDecomposition                     (TMatrixD& cov_matrix); ///< Cholesky decomposition. Return lower triangular matrix.
-  TVectorD CholeskyGenerateCorrelatedParams          (TMatrixD& cholesky_triangular, TVectorD& mean_parm); ///< Generate a vector of correlated params
-  TVectorD CholeskyGenerateCorrelatedParamVariations (TMatrixD& cholesky_triangular); ///< Generate a vector of correlated param variations
-  TVectorD CholeskyCalculateCorrelatedParamVariations(TMatrixD& cholesky_triangular, TVectorD& g_uncorrelated);
+  TMatrixD CholeskyDecomposition                     (TMatrixD& cov);                 ///< Cholesky decomposition. Return lower triangular matrix.
+  TVectorD CholeskyGenerateCorrelatedParams          (TMatrixD& Lch, TVectorD& mean); ///< Generate a vector of correlated params
+  TVectorD CholeskyGenerateCorrelatedParamVariations (TMatrixD& Lch);                 ///< Generate a vector of correlated param variations
+  TVectorD CholeskyCalculateCorrelatedParamVariations(TMatrixD& Lch, TVectorD& g);    ///<
 
   // Functions randomizing oscillation params (for use when params are marginalized)
   double RandomizeMixing23 (void); ///< pull from gaussian with mean & sigma from global fit (mixing param is either sinsq2theta or sinsqtheta depending on config)
-  double RandomizeMixing12 (void); ///< pull from gaussian with mean & sigma from global fit
-  double RandomizeMixing13 (void); ///< uniform from 0 up to CHOOZ limit 
-  double RandomizeDeltaCP  (void); ///< uniform from 0 to 2*pi
+  double RandomizeMixing12 (void); ///< pull from gaussian with mean & sigma from global fit ( -//- )
+  double RandomizeMixing13 (void); ///< uniform from 0 up to ~ small_factor x CHOOZ limit    ( -//- )
+  double RandomizeDeltaCP  (void); ///< uniform from -pi to pi
   double RandomizeDm12sq   (void); ///< pull from gaussian with mean & sigma from global fit
   double RandomizeDm23sq   (void); ///< pull from gaussian with mean & sigma from global fit
 
@@ -97,12 +95,16 @@ namespace util {
   bool IsNeutrino     (int pdg_code);
   bool IsAntiNeutrino (int pdg_code);
 
-  // string utilities
+  //
+  // String utilities
+  //
 
   vector<string> Tokens     (string input, string delimiter);
   string         TrimSpaces (string input);
 
+  //
   // XML utilities
+  //
 
   XMLNodePointer_t FindNode        (TXMLEngine * eng, XMLNodePointer_t topnode, string path);
   bool             NodeExists      (TXMLEngine * eng, XMLNodePointer_t topnode, string path);
@@ -117,7 +119,9 @@ namespace util {
   TMatrixDSym *    XML2TMatrixDSym (TXMLEngine * eng, XMLNodePointer_t topnode, string path);
   TMatrixD *       XML2TMatrixD    (TXMLEngine * eng, XMLNodePointer_t topnode, string path);
   
-  // reaction modes etc
+  //
+  // Reaction mode utilities etc
+  //
 
   bool UseEventToFillInTemplate(t2kana::conv::SuperkMode_t m, int nu_pdg_code, int neut_reaction_mode);
 
@@ -131,7 +135,21 @@ namespace util {
   bool IsNCoth_e  (int neut_reaction_mode);
   bool IsNCall    (int neut_reaction_mode); 
 
-  // ROOT style/formatting
+  //
+  // Simple physics hypotheses (effective 2-flavour oscillation, decay and decoherence).
+  // Code for 3-flavour oscillations incl. matter effects is in NuOsc3Flavour.cxx
+  //
+
+  double NuMuSurvProbOsc2Flavour (double mixing23, double dm23sq, double Et);
+  double NuMuSurvProbOsc2Flavour (double mixing23, double dm23sq, double Et, t2kana::conv::SuperkMode_t m);
+  double NuMuSurvProbDecay       (double sinsq2thetadecay, double alpha, double Et);
+  double NuMuSurvProbDecay       (double sinsq2thetadecay, double alpha, double Et, t2kana::conv::SuperkMode_t m);
+  double NuMuSurvProbDecoh       (double sinsq2thetadecoh, double musq, double Et);
+  double NuMuSurvProbDecoh       (double sinsq2thetadecoh, double musq, double Et, t2kana::conv::SuperkMode_t m);
+
+  //
+  // ROOT style & formatting
+  //
 
   void SetDefaultStyle(bool black_n_white=false);
 
@@ -140,13 +158,16 @@ namespace util {
   void Format(TH1* hst, 
         int lcol, int lsty, int lwid, int mcol, int msty, double msiz);
 
-
-  // handle variable binning in fluc covariance matrices
+  //
+  // Handle variable binning in fluc covariance matrices
+  //
 
   int    FluxFix2VarBinNumber             (int fixBinNo);
   double FluxFractionsFixedBinRelToVarBin (int fixBinNo, TH1D* fixBinFluxHisto, TH1D* varBinFluxHisto);
 
-  // etc
+  //
+  // Etc
+  //
 
   int Sign (double tweaking_dial);
 
