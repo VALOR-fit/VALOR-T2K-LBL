@@ -45,6 +45,7 @@
 
 #include "FitParamList.h"
 #include "Utilities.h"
+#include "Opt.h"
 
 using std::cout;
 using std::cerr;
@@ -213,7 +214,8 @@ double FitParamList::ChisquarePenaltyTerm(void)
            double mix = fCurrValue[ip];
            double nom = 0;
            double err = 0;
-           switch(kOscMixingParamChoice) {
+           NuOscMixParam_t omp = Opt::Instance()->gOscMixingParamChoice;
+           switch(omp) {
               case(kNuMixSinsq2Theta):
                 nom = kGlobFitSinsq2Theta23;
                 err = kGlobFitSinsq2Theta23 * kGlobFitErrSinsq2Theta23;
@@ -244,7 +246,8 @@ double FitParamList::ChisquarePenaltyTerm(void)
            double mix = fCurrValue[ip];
            double nom = 0;
            double err = 0;
-           switch(kOscMixingParamChoice) {
+           NuOscMixParam_t omp = Opt::Instance()->gOscMixingParamChoice;
+           switch(omp) {
               case(kNuMixSinsq2Theta):
                   nom = kGlobFitSinsq2Theta12;
                   err = kGlobFitSinsq2Theta12 * kGlobFitErrSinsq2Theta12;
@@ -428,7 +431,8 @@ FitParamList * FitParamList::NuOsc3FlavourFitNoSyst(void)
 {
   FitParamList * fparm = new FitParamList(6);
 
-  switch(kOscMixingParamChoice) {
+  NuOscMixParam_t omp = Opt::Instance()->gOscMixingParamChoice;
+  switch(omp) {
   case(kNuMixSinsq2Theta):
     fparm->AddParam(0, kPhypMixing23,  kInitFitSinsq2Theta23,  kMinFitSinsq2Theta23,  kMaxFitSinsq2Theta23,  1.0E-2,  false, false);
     fparm->AddParam(1, kPhypMixing13,  kInitFitSinsq2Theta13,  kMinFitSinsq2Theta13,  kMaxFitSinsq2Theta13,  1.0E-3,  false, false);
@@ -453,7 +457,8 @@ FitParamList * FitParamList::NuOsc3FlavourFitNoSyst(void)
 //________________________________________________________________________________________
 FitParamList * FitParamList::NumuDisapFitNoSyst(void)
 {
-  assert(kOscMixingParamChoice == kNuMixSinsq2Theta); // for simplicity, allow only this option for the effective 2-flavour analysis
+  NuOscMixParam_t omp = Opt::Instance()->gOscMixingParamChoice;
+  assert(omp == kNuMixSinsq2Theta); // for simplicity, allow only this option for the effective 2-flavour analysis
 
   FitParamList * fparm = new FitParamList(2);
 
@@ -465,7 +470,8 @@ FitParamList * FitParamList::NumuDisapFitNoSyst(void)
 //________________________________________________________________________________________
 FitParamList * FitParamList::NumuDisapFitAllSyst(void)
 {
-  assert(kOscMixingParamChoice == kNuMixSinsq2Theta); // for simplicity, allow only this option for the effective 2-flavour analysis
+  NuOscMixParam_t omp = Opt::Instance()->gOscMixingParamChoice;
+  assert(omp == kNuMixSinsq2Theta); // for simplicity, allow only this option for the effective 2-flavour analysis
 
   FitParamList * fparm = new FitParamList(36);
 

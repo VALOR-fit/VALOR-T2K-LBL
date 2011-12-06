@@ -20,7 +20,7 @@ using namespace t2kana;
 using namespace t2kana::conv;
 
 //____________________________________________________________________________
-namespace twkana {
+namespace t2kana {
   ostream & operator<<(ostream & stream, const Opt & opt)
   {
     opt.Print(stream);
@@ -59,12 +59,12 @@ void Opt::SetDefaults(void)
 //____________________________________________________________________________
 void Opt::Print(ostream & stream) const
 {
-  stream << "Opt >> Global analysis options: " 
+  stream << "[Global analysis options]" 
          << endl;
-  stream << "  - Hierarchy: " 
+  stream << " - Hierarchy: " 
          << util::AsString(gMassHierarchyAssumed) 
          << endl;
-  stream << "  - Mixing param choice: " 
+  stream << " - Mixing param choice: " 
          << util::AsString(gOscMixingParamChoice) 
          << endl;
 }

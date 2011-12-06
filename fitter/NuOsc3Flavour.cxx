@@ -6,6 +6,12 @@
    First added in in v2.0.1
  @ 27/07/2011 - CA
    Get selected mass hierarchy from Conventions.h
+ @ 01/12/2011 - NG
+   Add option to use sinsqtheta (instead of sinsq2theta) as mixing param choice 
+ @ 06/12/2011 - CA
+   Read mass hierarchy from global options (stored in Opt). This is no longer a build
+   setting. Hierarchy choice has to be set in Opt before NuOsc3Flavour is initialized.
+   For the time being, further changes in Opt are not propagated to NuOsc3Flavour.
 
 */
 //________________________________________________________________________________________
@@ -18,6 +24,7 @@
 #include "NuOsc3Flavour.h"
 #include "Conventions.h"
 #include "Utilities.h"
+#include "Opt.h"
 
 using std::cout;
 using std::cerr;
@@ -42,8 +49,9 @@ void NuOsc3Flavour::Init()
   // set default baseline
   this->SetBaseline(kBaseline);
 
-  // set a default mass hierarchy
-  this->SetMassHierarchy(kMassHierarchyAssumed);
+  // set the default mass hierarchy 
+  NuMassHierarchy_t nmh = Opt::Instance()->gMassHierarchyAssumed;
+  this->SetMassHierarchy(nmh);
 
   // set default density 
   this->SetDensity(kCrustDensity);

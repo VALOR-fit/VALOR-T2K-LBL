@@ -43,7 +43,7 @@ public:
 private:
 
   Opt();
-  Opt(const Opt & opt);
+  Opt(const Opt &) {}
  ~Opt();
 
   static Opt * fInstance;

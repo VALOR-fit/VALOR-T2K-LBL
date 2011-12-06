@@ -240,16 +240,10 @@ NuOscMixParam_t;
 
 //
 // ------------------------------------------------------------------------
-// Configuration
+// Choice of samples included in the analysis and
+// choice of modes (per sample) we are going to keep track of
 // ------------------------------------------------------------------------
 //
-
-// mass hierarchy used in T2KAna build
-static const NuMassHierarchy_t kMassHierarchyAssumed = kNmhNormal; 
-
-// choice of mixing parameter
-static const NuOscMixParam_t kOscMixingParamChoice = kNuMixSinsq2Theta; 
-
 
 //
 // Define which SK samples are considered

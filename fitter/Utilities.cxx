@@ -80,6 +80,7 @@
 #include <TSystem.h>
 
 #include "Utilities.h"
+#include "Opt.h"
 
 using std::cout;
 using std::cerr;
@@ -466,7 +467,8 @@ double t2kana::util::RandomizeMixing12(void)
 
   double mix = 0;
 
-  switch(kOscMixingParamChoice) {
+  NuOscMixParam_t omp = Opt::Instance()->gOscMixingParamChoice;
+  switch(omp) {
    case(kNuMixSinsq2Theta):
    {
      double mean  = conv::kGlobFitSinsq2Theta12; 
@@ -502,7 +504,8 @@ double t2kana::util::RandomizeMixing23(void)
 
   double mix = 0;
 
-  switch(kOscMixingParamChoice) {
+  NuOscMixParam_t omp = Opt::Instance()->gOscMixingParamChoice;
+  switch(omp) {
    case(kNuMixSinsq2Theta):
    {
      double mean  = conv::kGlobFitSinsq2Theta23; 
@@ -541,7 +544,8 @@ double t2kana::util::RandomizeMixing13(void)
   double min = 0;
   double max = 0;
 
-  switch(kOscMixingParamChoice) {
+  NuOscMixParam_t omp = Opt::Instance()->gOscMixingParamChoice;
+  switch(omp) {
    case(kNuMixSinsq2Theta):
    {
      max = TMath::Power( TMath::Sin(2*thirty_deg), 2. );
@@ -624,7 +628,8 @@ string t2kana::util::AsString (
   if( t2kana::util::FromString(hypothesis) == t2kana::conv::kHypOsc3F )
   {
     const char * mixparam = "?";
-    switch(kOscMixingParamChoice) {
+    NuOscMixParam_t omp = Opt::Instance()->gOscMixingParamChoice;
+    switch(omp) {
       case(kNuMixSinsq2Theta):
          mixparam = "sinsq2theta";
          break;
@@ -714,7 +719,8 @@ string t2kana::util::AsString(PhysParamId_t p)
 
     case ( kPhypMixing23 ) : 
     {
-        switch(kOscMixingParamChoice) {
+        NuOscMixParam_t omp = Opt::Instance()->gOscMixingParamChoice;
+        switch(omp) {
            case(kNuMixSinsq2Theta) : return "sinsq2theta23";  break;
            case(kNuMixSinsqTheta ) : return "sinsqtheta23";   break;
            default                 : return "--";             break;
@@ -722,18 +728,24 @@ string t2kana::util::AsString(PhysParamId_t p)
     }
     break;
     case ( kPhypMixing13 ) : 
-        switch(kOscMixingParamChoice) {
+    {
+        NuOscMixParam_t omp = Opt::Instance()->gOscMixingParamChoice;
+        switch(omp) {
            case(kNuMixSinsq2Theta) : return "sinsq2theta13";  break;
            case(kNuMixSinsqTheta ) : return "sinsqtheta13";   break;
            default                 : return "--";             break;
          }
+    }
     break;
     case ( kPhypMixing12 ) :      
-        switch(kOscMixingParamChoice) {
+    {
+        NuOscMixParam_t omp = Opt::Instance()->gOscMixingParamChoice;
+        switch(omp) {
            case(kNuMixSinsq2Theta) : return "sinsq2theta12";  break;
            case(kNuMixSinsqTheta ) : return "sinsqtheta12";   break;
            default                 : return "--";             break;
          }
+    }
     break;
 
     case ( kPhypDeltaCP           ) : return "delta_cp";               break;

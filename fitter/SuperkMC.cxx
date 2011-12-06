@@ -80,6 +80,7 @@
 #include "NuXSec.h"
 #include "NuFlux.h"
 #include "Utilities.h"
+#include "Opt.h"
 
 using std::cout;
 using std::cerr;
@@ -685,7 +686,8 @@ void SuperkMC::ApplyPhysHypothesisToTemplates(void)
 #ifdef __show_hypothesis__
     cout << "**  Exp/SKMC >> " << fPhysHypothesis;
 #endif
-    switch(kOscMixingParamChoice) {
+    NuOscMixParam_t omp = Opt::Instance()->gOscMixingParamChoice;
+    switch(omp) {
        // mixing params are sin^2(2*theta)
        case(kNuMixSinsq2Theta) : 
          fNuOsc3Flavour.SetOscParameters(mixing12,mixing13,mixing23,dm12sq,dm23sq,delta_cp);
@@ -696,7 +698,7 @@ void SuperkMC::ApplyPhysHypothesisToTemplates(void)
          break;
        default : 
          cerr << "**  Exp/SKMC >> Can't handle choice of oscillation mixing params (" 
-              << kOscMixingParamChoice << ")" << endl;
+              << util::AsString(omp) << ")" << endl;
          exit(1);
     }
     
@@ -761,7 +763,8 @@ void SuperkMC::ApplyPhysHypothesisToTemplates(void)
   //
   else
   if(hyp == kHypNuMuDisapp2F) {
-    assert(kOscMixingParamChoice == kNuMixSinsq2Theta); // for simplicity, allow only this option for the effective 2-flavour analysis
+    NuOscMixParam_t omp = Opt::Instance()->gOscMixingParamChoice;
+    assert(omp == kNuMixSinsq2Theta); // for simplicity, allow only this option for the effective 2-flavour analysis
     double sinsq2theta23 = fPhysHypothesis.CurrValue(kPhypMixing23);
     double dm23sq        = fPhysHypothesis.CurrValue(kPhypDm23sq);
     // loop over samples
