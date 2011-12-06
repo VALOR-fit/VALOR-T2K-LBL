@@ -49,7 +49,8 @@
    Add capability to use either sin^2(2*theta_ij) or sin^2(theta_ij) as the
    parameter of choice for describing neutrino mixing.
  @ 05/12/2011 - CA
-   Added `AsString(NuOscMixParam_t)'
+   Added `string AsString(NuOscMixParam_t)', `const int NumErecoBins(SuperkSample_t)'
+   and `const double * ErecoBinEdges (SuperkSample_t s)'.
 
 */
 //____________________________________________________________________________
@@ -1084,6 +1085,26 @@ bool t2kana::util::IsAntiNeutrino(int pdg_code)
     return true;
   }
   return false;
+}
+//___________________________________________________________________________
+const int t2kana::util::NumErecoBins(t2kana::conv::SuperkSample_t s)
+{
+  switch(s) {
+     case ( kSKsFCFV1RingMuLike ) : return kNErecoBins1Rmu; break;
+     case ( kSKsFCFV1RingELike  ) : return kNErecoBins1Re;  break;
+     default                      : return 0;
+  }
+  return 0;
+}
+//___________________________________________________________________________
+const double * t2kana::util::ErecoBinEdges(t2kana::conv::SuperkSample_t s)
+{
+  switch(s) {
+     case ( kSKsFCFV1RingMuLike ) : return kErecoBinEdges1Rmu; break;
+     case ( kSKsFCFV1RingELike  ) : return kErecoBinEdges1Re;  break;
+     default                      : return 0;
+  }
+  return 0;
 }
 //___________________________________________________________________________
 void t2kana::util::SetDefaultStyle(bool black_n_white)

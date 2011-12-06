@@ -95,6 +95,9 @@ namespace util {
   bool IsNeutrino     (int pdg_code);
   bool IsAntiNeutrino (int pdg_code);
 
+  const int      NumErecoBins  (t2kana::conv::SuperkSample_t s);
+  const double * ErecoBinEdges (t2kana::conv::SuperkSample_t s);
+
   //
   // String utilities
   //
