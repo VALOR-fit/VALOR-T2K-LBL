@@ -8,12 +8,12 @@
 
 void test_mock_data_fit
 (
-   double       input_mixing12      = 0.86,                         /* */
-   double       input_mixing13      = 0.10,                         /* */
-   double       input_mixing23      = 1.00,                         /* */
-   double       input_deltacp       = 0.00,                         /* */
-   double       input_dm12sq        = 7.58E-5,                      /* */
-   double       input_dm23sq        = 2.32E-3,                      /* */
+   double       input_mixing12      = 0.86,                         /* 12-mixing, sinq2theta or sinsqtheta depending on user choice */
+   double       input_mixing13      = 0.10,                         /* 13-mixing, sinq2theta or sinsqtheta depending on user choice */
+   double       input_mixing23      = 1.00,                         /* 23-mixing, sinq2theta or sinsqtheta depending on user choice */
+   double       input_deltacp       = 0.00,                         /* deltacp   */
+   double       input_dm12sq        = 7.58E-5,                      /* Dm^2_{12} */
+   double       input_dm23sq        = 2.32E-3,                      /* Dm^2_{23} */
    bool         fluctuate_stat      = true,                         /* include statistical fluctuations? */
    bool         include_systematics = false,                        /* include systematic variation in generated toy MC expt? */
    const char * config_file         = "analysis_configuration.xml", /* analysis configuration file */

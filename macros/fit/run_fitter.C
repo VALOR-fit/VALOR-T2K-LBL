@@ -23,11 +23,11 @@
 
 void run_fitter
 (
-  int          dataset_id     = 0,                            /* number in <data_set_%d> XML tag, see inputs/data.xml */
-  const char * data_file      = "inputs/data.xml",            /* input SK data */
-  const char * config_file    = "analysis_configuration.xml", /* analysis configuration file */
-  const char * fit_param_list = "numudisapp2f",               /* fit parameter list  */
-  const char * fit_option     = "minuit",                     /* fitter option */
+  int          dataset_id     = 0,                                                  /* number in <data_set_%d> XML tag, see inputs/data.xml */
+  const char * data_file      = "inputs/data.xml",                                  /* input SK data */
+  const char * config_file    = "analysis_configuration.xml",                       /* analysis configuration file */
+  const char * fit_param_list = "numudisapp2f",                                     /* fit parameter list  */
+  const char * fit_option     = "minuit",                                           /* fitter option */
   const char * output_option  = "Observation+BestFitSpectra+ChisqSurface+Canvases"  /* what to write-out once the fit is done */
 )
 {

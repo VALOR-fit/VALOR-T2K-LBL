@@ -12,16 +12,16 @@ void test_n_mock_data_fits
   const char * tag                     = "toyexptfits",                  /* tag for output file */
   int          run                     = 0,                              /* run number */
   int          nexperiments            = 1000,                           /* number of toy MC experiment fits */
-  double       input_mixing12          = 0.86,                           /* 12-mixing, sinq2theta or sinsqtheta depending on config choice, if -999 then randomize */
-  double       input_mixing13          = 0.10,                           /* 13-mixing, sinq2theta or sinsqtheta depending on config choice, if -999 then randomize */
-  double       input_mixing23          = 1.00,                           /* 23-mixing, sinq2theta or sinsqtheta depending on config choice */
+  double       input_mixing12          = 0.86,                           /* 12-mixing, sinq2theta or sinsqtheta depending on user choice, if -999 then randomize */
+  double       input_mixing13          = 0.10,                           /* 13-mixing, sinq2theta or sinsqtheta depending on user choice, if -999 then randomize */
+  double       input_mixing23          = 1.00,                           /* 23-mixing, sinq2theta or sinsqtheta depending on user choice */
   double       input_deltacp           = 0.00,                           /* deltacp, if -999 then randomize */
   double       input_dm12sq            = 7.58E-5,                        /* Dm^2_{12}, if -999 then randomize */
   double       input_dm23sq            = 2.32E-3,                        /* |Dm^2_{23}| */
   const char * config_file             = "analysis_configuration.xml",   /* analysis configuration file */
   bool         stat_fluctuations       = true,                           /* include statistical fluctuation in toy MC expts? */
   bool         tweak_systematics       = true,                           /* generate toy MC with randomized systematics? */
-  const char * fit_param_list          = "numudisapp2f",                 /* fit parameter list for the given physics hypothesis (see run_fitter.C) */
+  const char * fit_param_list          = "nuosc3f_numudisapp_fix4",      /* fit parameter list for the given physics hypothesis (see run_fitter.C) */
   const char * fit_option              = "minuit",                       /* fitter option (see run_fitter.C) */
   bool         store_chisq_surf        = false,                          /* by default storing only best-fit values, enable this to store the chisq surfaces   */
   bool         store_toy_expts         = false,                          /* by default storing only best-fit values, enable this to store the toy MC expts     */
@@ -70,14 +70,6 @@ void test_n_mock_data_fits
   cout << endl;
   cout << *Opt::Instance() << endl;
 
-  // Create file to store results
-  TFile f(Form("%s-mixing23_%.2f-dm23sq_%.5feV2-run_%d.root",
-          tag, input_mixing23,input_dm23sq,run), "recreate");
-
-  // Create ntuple to store oscillation fit results
-  TNtupleD * nfitnt = new TNtupleD("nfitnt","",
-     "iexp:bestfit_mixing12:bestfit_mixing13:bestfit_mixing23:bestfit_deltacp:bestfit_dm12sq:bestfit_dm23sq:chisq:fitstatus:input_mixing12:input_mixing13:input_mixing23:input_deltacp:input_dm12sq:input_dm23sq");
-
   // Fit parameter list
   FitParamList * fparm = FitParamList::NamedParameterList(fit_param_list);
   PhysHypothesis_t hyp = fparm->PhysicsHypothesis();
@@ -86,6 +78,14 @@ void test_n_mock_data_fits
   // Get superk spectrum predictor & configure
   SuperkExpectation * skexp = new SuperkExpectation;
   skexp->Read(config);
+
+  // Create file to store results
+  string oscstr = util::AsString(hyp,input_mixing12,input_mixing13,input_mixing23,input_deltacp,input_dm12sq,input_dm23sq);
+  TFile f(Form("%s-run_%d-%s.root", tag, run, oscstr.c_str()), "recreate");
+
+  // Create ntuple to store oscillation fit results
+  TNtupleD * nfitnt = new TNtupleD("nfitnt","",
+     "iexp:bestfit_mixing12:bestfit_mixing13:bestfit_mixing23:bestfit_deltacp:bestfit_dm12sq:bestfit_dm23sq:chisq:fitstatus:input_mixing12:input_mixing13:input_mixing23:input_deltacp:input_dm12sq:input_dm23sq");
 
   // Loop over toy-MC experiments
   for(int iexperiment = 0; iexperiment < nexperiments; iexperiment++) {
