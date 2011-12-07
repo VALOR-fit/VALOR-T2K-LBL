@@ -60,7 +60,7 @@ PhysHypothesis::PhysHypothesis(PhysHypothesis_t h)
 //________________________________________________________________________________________
 PhysHypothesis::PhysHypothesis(string sh)
 {
-  PhysHypothesis_t h = util::FromString(sh);
+  PhysHypothesis_t h = util::PhysHypFromString(sh);
   this->Init(h);
 }
 //________________________________________________________________________________________
