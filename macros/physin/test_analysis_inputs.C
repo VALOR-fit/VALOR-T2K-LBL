@@ -10,11 +10,10 @@
 
 void test_analysis_inputs
 (
+  TString      opt         = "SuperK", //The information to test. Can be combinations of:  SuperK Flux nd280
   const char * config_file = "analysis_configuration.xml"
 )
 {
-  TString opt = "SuperK";
-
   using namespace std;
   using namespace t2kana;
 
@@ -39,7 +38,9 @@ void test_analysis_inputs
   }//Flux
 
   if(opt.Contains("SuperK")) {
+    /* Not currently implemented
     skexp->GetSuperkMC()->Draw(new TCanvas(), "1RingMuLike/ErecoEtrueTemplates");
+    */
     skexp->GetSuperkMC()->Draw(new TCanvas(), "EtrueSpectra/NuMu");
   }//SuperK
 
@@ -77,12 +78,14 @@ void test_analysis_inputs
     skexp->GetND280Measurement()->Draw(new TCanvas(), "Saclay/EtrueSpectrum/NuMuBar/NC");
     skexp->GetND280Measurement()->Draw(new TCanvas(), "Saclay/EtrueSpectrum/NuE/CC");
     skexp->GetND280Measurement()->Draw(new TCanvas(), "Saclay/EtrueSpectrum/NuE/NC");
+    /* Not currently implemented
     skexp->GetND280Measurement()->Draw(new TCanvas(), "Saclay/Efficiency/NuMu/CC");
     skexp->GetND280Measurement()->Draw(new TCanvas(), "Saclay/Efficiency/NuMu/NC");
     skexp->GetND280Measurement()->Draw(new TCanvas(), "Saclay/Efficiency/NuMuBar/CC");
     skexp->GetND280Measurement()->Draw(new TCanvas(), "Saclay/Efficiency/NuMuBar/NC");
     skexp->GetND280Measurement()->Draw(new TCanvas(), "Saclay/Efficiency/NuE/CC");
     skexp->GetND280Measurement()->Draw(new TCanvas(), "Saclay/Efficiency/NuE/NC");
+    */
   }
   if(opt.Contains("NeutrinoGenerator")) {
     //

@@ -116,6 +116,8 @@ void SuperkMC::Init(void)
     fMCErecoSpectrumTot[is] = 0;
     for(int im=0; im<knm; im++) {
       fMCTemplNom      [is][im] = 0;
+      fMCTemplSys      [is][im] = 0;
+      fMCTemplFin      [is][im] = 0;
       fMCErecoSpectrum [is][im] = 0;
     }
   }
