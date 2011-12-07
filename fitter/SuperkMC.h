@@ -129,11 +129,11 @@ private:
   // systematic uncertainties: 1 sigma fractional errors & covariance matrices
   // > 1Rmu
   double     fEnergyScale1RmuRelErr;       ///< 1Rmu energy scale relative error
-  double     fEffOth1RmuCCQERelErr;        ///< 1Rmu CCQE other (all but ring-counting) efficiency relative error 
-  TMatrixD * fEffRC1RmuCCQERelErrCovar;    ///< 1Rmu CCQE ring-counting efficiency relative error covariance matrix (3x3)
-  double     fEffRC1RmuCCQERelErrCovarE1;  ///<  -  ~0.4 GeV (above RC cov matrix is 3x3, 3 Ereco bins: (0, fEffRC1RmuCCQERelErrCovarE1, fEffRC1RmuCCQERelErrCovarE2, oo))
-  double     fEffRC1RmuCCQERelErrCovarE2;  ///<  -  ~1.1 GeV (above RC cov matrix is 3x3, 3 Ereco bins: (0, fEffRC1RmuCCQERelErrCovarE1, fEffRC1RmuCCQERelErrCovarE2, oo))
-  TMatrixD * fEffRC1RmuCCQERelErrCovarChoL;///<  -  Cholesky decomposition (trangular matrix L) of fEffCCQERelErrCovarRC covariance matrix
+  double     fEff1RmuCCQEOthRelErr;        ///< 1Rmu CCQE other (all but ring-counting) efficiency relative error 
+  TMatrixD * fEff1RmuCCQERCCovarRelErr;    ///< 1Rmu CCQE ring-counting efficiency relative error covariance matrix (3x3)
+  double     fEff1RmuCCQERCCovarE1RelErr;  ///<  -  ~0.4 GeV (above RC cov matrix is 3x3, 3 Ereco bins: (0, fEff1RmuCCQERCCovarE1RelErr, fEff1RmuCCQERCCovarE2RelErr, oo))
+  double     fEff1RmuCCQERCCovarE2RelErr;  ///<  -  ~1.1 GeV (above RC cov matrix is 3x3, 3 Ereco bins: (0, fEff1RmuCCQERCCovarE1RelErr, fEff1RmuCCQERCCovarE2RelErr, oo))
+  TMatrixD * fEff1RmuCCQERCCovarChoLRelErr;///<  -  Cholesky decomposition (trangular matrix L) of fEff1RmuCCQERCCovarRelErr covariance matrix
   double     fEff1RmuCCnonQERelErr;        ///< 1Rmu CCnonQE efficiency relative error
   double     fEff1RmuNCRelErr;             ///< 1Rmu NC efficiency relative error
   double     fEff1RmuNuECCRelErr;          ///< 1Rmu nue CC efficiency relative error
@@ -147,10 +147,10 @@ private:
   // > 1Rmu + 1Re
   double     fEnergyScaleTwkDial;          ///< 1Rmu/1Re Energy scale tweaking dial
   // > 1Rmu 
-  double     fEffOth1RmuCCQETwkDial;       ///< 1Rmu CCQE other (all-but-ring-counting) efficiency tweaking dial
-  double     fEffRC01RmuCCQETwkDial;       ///< 1Rmu CCQE ring-counting efficiency tweaking dial 0 (Ereco < fEffRC1RmuCCQERelErrCovarE1)
-  double     fEffRC11RmuCCQETwkDial;       ///< 1Rmu CCQE ring-counting efficiency tweaking dial 1 (fEffRC1RmuCCQERelErrCovarE1 <= Ereco <= fEffRC1RmuCCQERelErrCovarE2)
-  double     fEffRC21RmuCCQETwkDial;       ///< 1Rmu CCQE ring-counting efficiency tweaking dial 2 (Ereco > fEffRC1RmuCCQERelErrCovarE2)
+  double     fEff1RmuCCQEOthTwkDial;       ///< 1Rmu CCQE other (all-but-ring-counting) efficiency tweaking dial
+  double     fEff1RmuCCQERC0TwkDial;       ///< 1Rmu CCQE ring-counting efficiency tweaking dial 0 (Ereco < fEff1RmuCCQERCCovarE1RelErr)
+  double     fEff1RmuCCQERC1TwkDial;       ///< 1Rmu CCQE ring-counting efficiency tweaking dial 1 (fEff1RmuCCQERCCovarE1RelErr <= Ereco <= fEff1RmuCCQERCCovarE2RelErr)
+  double     fEff1RmuCCQERC2TwkDial;       ///< 1Rmu CCQE ring-counting efficiency tweaking dial 2 (Ereco > fEff1RmuCCQERCCovarE2RelErr)
   double     fEff1RmuCCnonQETwkDial;       ///< 1Rmu CCnonQE efficiency tweaking dial
   double     fEff1RmuNCTwkDial;            ///< 1Rmu NC efficiency tweaking dial
   double     fEff1RmuNuECCTwkDial;         ///< 1Rmu nue CC efficiency tweaking dial

@@ -121,10 +121,10 @@ void SuperkMC::Init(void)
   }
   
   fEnergyScale1RmuRelErr      = 0.;
-  fEffOth1RmuCCQERelErr       = 0.;
-  fEffRC1RmuCCQERelErrCovar   = 0;
-  fEffRC1RmuCCQERelErrCovarE1 = 0.;
-  fEffRC1RmuCCQERelErrCovarE2 = 0.;      
+  fEff1RmuCCQEOthRelErr       = 0.;
+  fEff1RmuCCQERCCovarRelErr   = 0;
+  fEff1RmuCCQERCCovarE1RelErr = 0.;
+  fEff1RmuCCQERCCovarE2RelErr = 0.;      
   fEff1RmuCCnonQERelErr       = 0.;
   fEff1RmuNCRelErr            = 0.;
   fEff1RmuNuECCRelErr         = 0.;
@@ -134,17 +134,17 @@ void SuperkMC::Init(void)
   fEff1ReBkgRelErr            = 0.;
   
   fEnergyScaleTwkDial         = 0.;
-  fEffOth1RmuCCQETwkDial      = 0.;
-  fEffRC01RmuCCQETwkDial      = 0.;
-  fEffRC11RmuCCQETwkDial      = 0.;
-  fEffRC21RmuCCQETwkDial      = 0.;
+  fEff1RmuCCQEOthTwkDial      = 0.;
+  fEff1RmuCCQERC0TwkDial      = 0.;
+  fEff1RmuCCQERC1TwkDial      = 0.;
+  fEff1RmuCCQERC2TwkDial      = 0.;
   fEff1RmuCCnonQETwkDial      = 0.;
   fEff1RmuNCTwkDial           = 0.;
   fEff1RmuNuECCTwkDial        = 0.;
   fEff1ReSigTwkDial           = 0.;
   fEff1ReBkgTwkDial           = 0.;
 
-  fEffRC1RmuCCQERelErrCovarChoL = 0;
+  fEff1RmuCCQERCCovarChoLRelErr = 0;
   
   fMCTreeNuMu1Rmu      = 0;
   fMCTreeNuMuBar1Rmu   = 0;
@@ -272,16 +272,16 @@ bool SuperkMC::Read(TXMLEngine* xml, XMLNodePointer_t root_node)
   fEnergyScale1ReBkgRelErr = util::XML2Dbl(
      xml,root_node,"superk/systematics/energy_scale_relative_error/one_e_ring/bkg");
   // Get relative error on various efficiencies
-  fEffOth1RmuCCQERelErr =
+  fEff1RmuCCQEOthRelErr =
     util::XML2Dbl(xml,root_node,
       "superk/systematics/efficiency_relative_error/one_mu_ring/ccqe/other_error");
-  fEffRC1RmuCCQERelErrCovar = 
+  fEff1RmuCCQERCCovarRelErr = 
     util::XML2TMatrixD(xml,root_node,
       "superk/systematics/efficiency_relative_error/one_mu_ring/ccqe/rc_error");
-  fEffRC1RmuCCQERelErrCovarE1 =
+  fEff1RmuCCQERCCovarE1RelErr =
     util::XML2Dbl(xml,root_node,
       "superk/systematics/efficiency_relative_error/one_mu_ring/ccqe/rc_ereco_high_bin1");
-  fEffRC1RmuCCQERelErrCovarE2 =
+  fEff1RmuCCQERCCovarE2RelErr =
     util::XML2Dbl(xml,root_node,
       "superk/systematics/efficiency_relative_error/one_mu_ring/ccqe/rc_ereco_high_bin2");
   fEff1RmuCCnonQERelErr   =
@@ -300,7 +300,7 @@ bool SuperkMC::Read(TXMLEngine* xml, XMLNodePointer_t root_node)
     util::XML2Dbl(xml,root_node, 
       "superk/systematics/efficiency_relative_error/one_e_ring/bkg");
 
-  if(!fEffRC1RmuCCQERelErrCovar) {
+  if(!fEff1RmuCCQERCCovarRelErr) {
     cerr << "Exp/SK >> No input SuperK CCQE ring-counting error covariance matrix!" << endl;
     exit(1);
   }
@@ -309,13 +309,13 @@ bool SuperkMC::Read(TXMLEngine* xml, XMLNodePointer_t root_node)
   cout << "Exp/SKMC >> " << "Error {EnergyScale;1Rmu}    : " << fEnergyScale1RmuRelErr  << endl;
   cout << "Exp/SKMC >> " << "Error {EnergyScale;1Re/Sig} : " << fEnergyScale1ReSigRelErr  << endl;
   cout << "Exp/SKMC >> " << "Error {EnergyScale;1Re/Bkg} : " << fEnergyScale1ReBkgRelErr  << endl;
-  cout << "Exp/SKMC >> " << "Error {Efficiency;1Rmu/CCQE/Oth} : " << fEffOth1RmuCCQERelErr << endl;
+  cout << "Exp/SKMC >> " << "Error {Efficiency;1Rmu/CCQE/Oth} : " << fEff1RmuCCQEOthRelErr << endl;
   cout << "Exp/SKMC >> " << "Error {Efficiency;1Rmu/CCQE/RC}  : " << endl;
-  fEffRC1RmuCCQERelErrCovar->Print();
+  fEff1RmuCCQERCCovarRelErr->Print();
   cout << "Exp/SKMC >> " << "Ring-counting error matrix is given for the following 3 Ereco bins : ";
-  cout << "(0, " << fEffRC1RmuCCQERelErrCovarE1 << " GeV), "
-       << "[" << fEffRC1RmuCCQERelErrCovarE1 << " GeV, " << fEffRC1RmuCCQERelErrCovarE2 << " GeV], "
-       << "(" << fEffRC1RmuCCQERelErrCovarE2 << " GeV, oo)" << endl;
+  cout << "(0, " << fEff1RmuCCQERCCovarE1RelErr << " GeV), "
+       << "[" << fEff1RmuCCQERCCovarE1RelErr << " GeV, " << fEff1RmuCCQERCCovarE2RelErr << " GeV], "
+       << "(" << fEff1RmuCCQERCCovarE2RelErr << " GeV, oo)" << endl;
   cout << "Exp/SKMC >> " << "Error {Efficiency;1Rmu/CCnonQE} : " << fEff1RmuCCnonQERelErr  << endl;
   cout << "Exp/SKMC >> " << "Error {Efficiency;1Rmu/NC} : "      << fEff1RmuNCRelErr       << endl;
   cout << "Exp/SKMC >> " << "Error {Efficiency;1Rmu/NuECC} : "   << fEff1RmuNuECCRelErr    << endl;
@@ -1156,7 +1156,7 @@ void SuperkMC::TweakEnergyScale(double twkdial)
 //________________________________________________________________________________________
 void SuperkMC::TweakEfficiency1RmuCCQEOther(double twkdial) 
 { 
-  fEffOth1RmuCCQETwkDial = twkdial; 
+  fEff1RmuCCQEOthTwkDial = twkdial; 
 }
 //________________________________________________________________________________________
 void SuperkMC::TweakEfficiency1RmuCCQERingCounting(
@@ -1175,25 +1175,25 @@ void SuperkMC::TweakEfficiency1RmuCCQERingCounting(
   // If this is the first time this function is called, then run the Cholesky 
   // decomposition of the ring-counting error matrix (covariance matrix)
   //
-  if(!fEffRC1RmuCCQERelErrCovarChoL) 
+  if(!fEff1RmuCCQERCCovarChoLRelErr) 
   {
 #ifdef __show_rc_cholesky_mesg_info__
     cout << "Exp/SKMC/TweakRingCountingEffCCQE >> "
          << "Run Cholesky's decomposition method on the CCQE RC error matrix." << endl;
 #endif
 
-    TMatrixD ccqe_rc_err_matrix(*fEffRC1RmuCCQERelErrCovar);
+    TMatrixD ccqe_rc_err_matrix(*fEff1RmuCCQERCCovarRelErr);
 #ifdef __show_rc_cholesky_mesg_debug__
     cout << "Exp/SKMC/TweakRingCountingEffCCQE >> RC error matrix:" << endl;
     ccqe_rc_err_matrix.Print();
 #endif
 
     TMatrixD L = util::CholeskyDecomposition(ccqe_rc_err_matrix);
-    fEffRC1RmuCCQERelErrCovarChoL = new TMatrixD(L);
+    fEff1RmuCCQERCCovarChoLRelErr = new TMatrixD(L);
 #ifdef __show_rc_cholesky_mesg_info__
     cout << "Exp/SKMC/TweakRingCountingEffCCQE >> "
          << "Cholesky decomposition of RC error matrix:" << endl;
-    fEffRC1RmuCCQERelErrCovarChoL->Print();
+    fEff1RmuCCQERCCovarChoLRelErr->Print();
 #endif
   }
 
@@ -1204,13 +1204,13 @@ void SuperkMC::TweakEfficiency1RmuCCQERingCounting(
   // need to use the Cholesky decomposition of the  ring-counting error matrix.
   //
   if(force_input_twkdials && corellated) {
-    fEffRC01RmuCCQETwkDial = twkdial0;
-    fEffRC11RmuCCQETwkDial = twkdial1;
-    fEffRC21RmuCCQETwkDial = twkdial2;
+    fEff1RmuCCQERC0TwkDial = twkdial0;
+    fEff1RmuCCQERC1TwkDial = twkdial1;
+    fEff1RmuCCQERC2TwkDial = twkdial2;
     return;
   }
 
-  TMatrixD & L = *fEffRC1RmuCCQERelErrCovarChoL;
+  TMatrixD & L = *fEff1RmuCCQERCCovarChoLRelErr;
   TVectorD twkv(3);
 
   //
@@ -1246,10 +1246,10 @@ void SuperkMC::TweakEfficiency1RmuCCQERingCounting(
   // used in GENIE: mean = 0, sigma = 1.
   //
 
-  TMatrixD & rc_err_matrix = *fEffRC1RmuCCQERelErrCovar;
-  fEffRC01RmuCCQETwkDial = twkv(0) / TMath::Sqrt(rc_err_matrix(0,0)); 
-  fEffRC11RmuCCQETwkDial = twkv(1) / TMath::Sqrt(rc_err_matrix(1,1));
-  fEffRC21RmuCCQETwkDial = twkv(2) / TMath::Sqrt(rc_err_matrix(2,2));
+  TMatrixD & rc_err_matrix = *fEff1RmuCCQERCCovarRelErr;
+  fEff1RmuCCQERC0TwkDial = twkv(0) / TMath::Sqrt(rc_err_matrix(0,0)); 
+  fEff1RmuCCQERC1TwkDial = twkv(1) / TMath::Sqrt(rc_err_matrix(1,1));
+  fEff1RmuCCQERC2TwkDial = twkv(2) / TMath::Sqrt(rc_err_matrix(2,2));
 }
 //________________________________________________________________________________________
 void SuperkMC::TweakEfficiency1RmuCCnonQE(double twkdial) 
@@ -1280,10 +1280,10 @@ void SuperkMC::TweakEfficiency1ReBkg(double twkdial)
 void SuperkMC::PrintSystematicVariations(void) const
 {
   cout << "Exp/SKMC >> Twk 1Rmu/1Re energy scales = "     << fEnergyScaleTwkDial      << endl;
-  cout << "Exp/SKMC >> Twk 1Rmu CCQE RC0 efficiency = "   << fEffRC01RmuCCQETwkDial   << endl;
-  cout << "Exp/SKMC >> Twk 1Rmu CCQE RC1 efficiency = "   << fEffRC11RmuCCQETwkDial   << endl;
-  cout << "Exp/SKMC >> Twk 1Rmu CCQE RC2 efficiency = "   << fEffRC21RmuCCQETwkDial   << endl;
-  cout << "Exp/SKMC >> Twk 1Rmu CCQE Oth efficiency = "   << fEffOth1RmuCCQETwkDial   << endl;
+  cout << "Exp/SKMC >> Twk 1Rmu CCQE RC0 efficiency = "   << fEff1RmuCCQERC0TwkDial   << endl;
+  cout << "Exp/SKMC >> Twk 1Rmu CCQE RC1 efficiency = "   << fEff1RmuCCQERC1TwkDial   << endl;
+  cout << "Exp/SKMC >> Twk 1Rmu CCQE RC2 efficiency = "   << fEff1RmuCCQERC2TwkDial   << endl;
+  cout << "Exp/SKMC >> Twk 1Rmu CCQE Oth efficiency = "   << fEff1RmuCCQEOthTwkDial   << endl;
   cout << "Exp/SKMC >> Twk 1Rmu CCnonQE efficiency = "    << fEff1RmuCCnonQETwkDial   << endl;
   cout << "Exp/SKMC >> Twk 1Rmu NC efficiency = "         << fEff1RmuNCTwkDial        << endl;
   cout << "Exp/SKMC >> Twk 1Rmu nu_e CC efficiency = "    << fEff1RmuNuECCTwkDial     << endl;
@@ -1308,17 +1308,17 @@ double SuperkMC::EfficiencyWeight(
        case (kSKmNuMuBarCCQE) : 
        {
           // other efficiency err
-          double relerr_oth  = fEffOth1RmuCCQERelErr;
-          double twkdial_oth = fEffOth1RmuCCQETwkDial;
+          double relerr_oth  = fEff1RmuCCQEOthRelErr;
+          double twkdial_oth = fEff1RmuCCQEOthTwkDial;
           double weight_oth  = (1. + twkdial_oth*relerr_oth);
           // ring-counting efficiency err
-          TMatrixD & rc_err_matrix = *fEffRC1RmuCCQERelErrCovar;
-          double weight_rc0 = 1 + fEffRC01RmuCCQETwkDial * TMath::Sqrt(rc_err_matrix(0,0));
-          double weight_rc1 = 1 + fEffRC11RmuCCQETwkDial * TMath::Sqrt(rc_err_matrix(1,1));
-          double weight_rc2 = 1 + fEffRC21RmuCCQETwkDial * TMath::Sqrt(rc_err_matrix(2,2));
+          TMatrixD & rc_err_matrix = *fEff1RmuCCQERCCovarRelErr;
+          double weight_rc0 = 1 + fEff1RmuCCQERC0TwkDial * TMath::Sqrt(rc_err_matrix(0,0));
+          double weight_rc1 = 1 + fEff1RmuCCQERC1TwkDial * TMath::Sqrt(rc_err_matrix(1,1));
+          double weight_rc2 = 1 + fEff1RmuCCQERC2TwkDial * TMath::Sqrt(rc_err_matrix(2,2));
           double weight_rc  = 1.;
-          if      (Ereco < fEffRC1RmuCCQERelErrCovarE1) { weight_rc = weight_rc0; }
-          else if (Ereco > fEffRC1RmuCCQERelErrCovarE2) { weight_rc = weight_rc2; }
+          if      (Ereco < fEff1RmuCCQERCCovarE1RelErr) { weight_rc = weight_rc0; }
+          else if (Ereco > fEff1RmuCCQERCCovarE2RelErr) { weight_rc = weight_rc2; }
           else                            { weight_rc = weight_rc1; }
           // combined weight
           double weight     = weight_oth * weight_rc;
