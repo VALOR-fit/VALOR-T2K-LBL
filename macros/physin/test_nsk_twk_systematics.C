@@ -6,12 +6,10 @@
 // ------------------------------------------------------------------------------------------------
 //
 
-//#include "Conventions.h"
-
 void test_nsk_twk_systematics
 (
-  const string sample_str          = "1Rmu",
-  const char * hyp_str             = "3f_osc",
+  const char * sksample            = "1Rmu",
+  const char * hypothesis          = "3f_osc",
   const double input_mixing23      = 1.00,
   const double input_mixing13      = 0.1,
   const double input_mixing12      = 0.8704,
@@ -26,8 +24,39 @@ void test_nsk_twk_systematics
   using namespace std;
   using namespace t2kana;
 
-  conv::SuperkSample_t s = util::SKSampleFromString(sample_str);
+  // Analysis configuration
+  const char * config  = Form("%s/config/%s", gSystem->Getenv("T2KOSCANA"), config_file);
 
+  // Global options
+  Opt::Instance()->gOscMixingParamChoice = conv::kNuMixSinsq2Theta;
+  Opt::Instance()->gMassHierarchyAssumed = conv::kNmhNormal;
+
+  // Get requested sample
+  conv::SuperkSample_t s = util::SKSampleFromString(sksample);
+  assert(s != conv::kSKsUndefined);
+
+  // Set physics hypothesis
+  PhysHypothesis ph(hypothesis);
+  if(ph.Hypothesis() == conv::kHypNuMuDisapp2F) {
+    ph.SetCurrValue(conv::kPhypMixing23,  input_mixing23);
+    ph.SetCurrValue(conv::kPhypDm23sq,    input_dm23sq);
+  } else
+  if(ph.Hypothesis() == conv::kHypOsc3F) {
+    ph.SetCurrValue(conv::kPhypMixing12,  input_mixing12);
+    ph.SetCurrValue(conv::kPhypMixing13,  input_mixing13);
+    ph.SetCurrValue(conv::kPhypMixing23,  input_mixing23);
+    ph.SetCurrValue(conv::kPhypDeltaCP,   input_deltacp);
+    ph.SetCurrValue(conv::kPhypDm12sq,    input_dm12sq);
+    ph.SetCurrValue(conv::kPhypDm23sq,    input_dm23sq);
+  }
+
+  // Print options
+  cout << "\n[Job inputs]" << endl;
+  cout << "- Reading analysis configuration from: " << config << endl;
+  cout << "- SuperK sample: " << util::AsString(s) << endl;
+  cout << "- Physics hypothesis: " << ph << endl;
+  cout << *Opt::Instance() << endl;
+  
   const int nexperiments = 5000;
 
   const int nsystematics = 22;
@@ -136,18 +165,6 @@ void test_nsk_twk_systematics
   double nnd_min[nsystematics];
   double nnd_max[nsystematics];
 
-  // phys hypothesis
-  conv::PhysHypothesis_t hyp = util::FromString(hyp_str);
-  PhysHypothesis ph(hyp);
-  ph.SetCurrValue(t2kana::conv::kPhypMixing23, input_mixing23);
-  ph.SetCurrValue(t2kana::conv::kPhypDm23sq,        input_dm23sq);
-  if(hyp == conv::kHypOsc3F) {
-    ph.SetCurrValue(t2kana::conv::kPhypMixing13, input_mixing13);
-    ph.SetCurrValue(t2kana::conv::kPhypMixing12, input_mixing12);
-    ph.SetCurrValue(t2kana::conv::kPhypDm12sq,        input_dm12sq);
-    ph.SetCurrValue(t2kana::conv::kPhypDeltaCP,       input_deltacp);
-  }
-
   // get & configure spectrum predictor
   const char * config = Form("%s/config/%s", gSystem->Getenv("T2KOSCANA"), config_file);
   cout << "Reading analysis configuration from: " << config << endl;
@@ -231,14 +248,6 @@ void test_nsk_twk_systematics
             nsk_max[isystematic] = nsk_deflt + nsk_sigma;
 	    nnd_min[isystematic] = nnd_deflt - nnd_sigma;
             nnd_max[isystematic] = nnd_deflt + nnd_sigma;
-
-//	    nsknnd_min[isystematic] = TMath::Min(nsknnd, nsknnd_min[isystematic]);
-//          nsknnd_max[isystematic] = TMath::Max(nsknnd, nsknnd_max[isystematic]);
-//	    nsk_min[isystematic] = TMath::Min(nsk, nsk_min[isystematic]);
-//          nsk_max[isystematic] = TMath::Max(nsk, nsk_max[isystematic]);
-//	    nnd_min[isystematic] = TMath::Min(nnd, nnd_min[isystematic]);
-//          nnd_max[isystematic] = TMath::Max(nnd, nnd_max[isystematic]);
-
 	} else {
 	    skexp->ResetSystematicVariations();
      	    skexp->TweakSystematic(systematic[isystematic], +1);
