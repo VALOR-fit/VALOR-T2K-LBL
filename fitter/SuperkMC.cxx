@@ -1154,12 +1154,12 @@ void SuperkMC::TweakEnergyScale(double twkdial)
   fEnergyScaleTwkDial = twkdial; 
 }
 //________________________________________________________________________________________
-void SuperkMC::TweakOtherEfficiencyCCQE(double twkdial) 
+void SuperkMC::TweakEfficiency1RmuCCQEOther(double twkdial) 
 { 
   fEffOth1RmuCCQETwkDial = twkdial; 
 }
 //________________________________________________________________________________________
-void SuperkMC::TweakRingCountingEfficiencyCCQE(
+void SuperkMC::TweakEfficiency1RmuCCQERingCounting(
    bool   force_input_twkdials, /* Force input twk dials? If not, generate using the Cholesky method */
    double twkdial0,             /* Value of 1st twk dial, needed if values are forced */
    double twkdial1,             /* Value of 2nd twk dial, needed if values are forced */
@@ -1252,17 +1252,17 @@ void SuperkMC::TweakRingCountingEfficiencyCCQE(
   fEffRC21RmuCCQETwkDial = twkv(2) / TMath::Sqrt(rc_err_matrix(2,2));
 }
 //________________________________________________________________________________________
-void SuperkMC::TweakEfficiencyCCnonQE(double twkdial) 
+void SuperkMC::TweakEfficiency1RmuCCnonQE(double twkdial) 
 { 
   fEff1RmuCCnonQETwkDial = twkdial; 
 }
 //________________________________________________________________________________________
-void SuperkMC::TweakEfficiencyNC(double twkdial) 
+void SuperkMC::TweakEfficiency1RmuNC(double twkdial) 
 { 
   fEff1RmuNCTwkDial = twkdial; 
 }
 //________________________________________________________________________________________
-void SuperkMC::TweakEfficiencyNuECC(double twkdial) 
+void SuperkMC::TweakEfficiency1RmuNuECC(double twkdial) 
 { 
   fEff1RmuNuECCTwkDial = twkdial; 
 }

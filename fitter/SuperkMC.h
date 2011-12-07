@@ -68,14 +68,14 @@ public:
   double AnalyzedSamplePOT(void) const;
 
   // Systematic variations
-  void TweakEnergyScale                 (double twkdial);
-  void TweakOtherEfficiencyCCQE         (double twkdial); ///< "other": all but ring-counting
-  void TweakRingCountingEfficiencyCCQE  (bool force_input_twkdials=false, double twkdial1=0, double twkdial2=0, double twkdial3=0, bool correlated=true); 
-  void TweakEfficiencyCCnonQE           (double twkdial);
-  void TweakEfficiencyNC                (double twkdial);
-  void TweakEfficiencyNuECC             (double twkdial);
-  void TweakEfficiency1ReSig            (double twkdial);
-  void TweakEfficiency1ReBkg            (double twkdial);
+  void TweakEnergyScale                    (double twkdial);
+  void TweakEfficiency1RmuCCQEOther        (double twkdial); ///< "other": all but ring-counting
+  void TweakEfficiency1RmuCCQERingCounting (bool force_input_twkdials=false, double twkdial1=0, double twkdial2=0, double twkdial3=0, bool correlated=true); 
+  void TweakEfficiency1RmuCCnonQE          (double twkdial);
+  void TweakEfficiency1RmuNC               (double twkdial);
+  void TweakEfficiency1RmuNuECC            (double twkdial);
+  void TweakEfficiency1ReSig               (double twkdial);
+  void TweakEfficiency1ReBkg               (double twkdial);
 
   // Calculate weight due to efficiency tweaks
   double  EfficiencyWeight (t2kana::conv::SuperkSample_t s, t2kana::conv::SuperkMode_t m, double Ereco) const;

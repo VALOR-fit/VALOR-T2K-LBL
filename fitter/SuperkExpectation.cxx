@@ -259,14 +259,14 @@ void SuperkExpectation::ResetSystematicVariations(void)
 {
   cout << "Exp >> Reseting all systematic variations." << endl;
 
-  this->GetSuperkMC()->TweakEnergyScale                (0.);
-  this->GetSuperkMC()->TweakOtherEfficiencyCCQE        (0.);
-  this->GetSuperkMC()->TweakRingCountingEfficiencyCCQE (true,0.,0.,0.); 
-  this->GetSuperkMC()->TweakEfficiencyCCnonQE          (0.);
-  this->GetSuperkMC()->TweakEfficiencyNC               (0.);     
-  this->GetSuperkMC()->TweakEfficiencyNuECC            (0.);
-  this->GetSuperkMC()->TweakEfficiency1ReSig           (0.);
-  this->GetSuperkMC()->TweakEfficiency1ReBkg           (0.);
+  this->GetSuperkMC()->TweakEnergyScale                    (0.);
+  this->GetSuperkMC()->TweakEfficiency1RmuCCQEOther        (0.);
+  this->GetSuperkMC()->TweakEfficiency1RmuCCQERingCounting (true,0.,0.,0.); 
+  this->GetSuperkMC()->TweakEfficiency1RmuCCnonQE          (0.);
+  this->GetSuperkMC()->TweakEfficiency1RmuNC               (0.);     
+  this->GetSuperkMC()->TweakEfficiency1RmuNuECC            (0.);
+  this->GetSuperkMC()->TweakEfficiency1ReSig               (0.);
+  this->GetSuperkMC()->TweakEfficiency1ReBkg               (0.);
 
   this->GetND280Measurement()->TweakEfficiency (0.);
   this->GetND280Measurement()->FluctuateNObsCCLike(0.);
@@ -296,36 +296,36 @@ void SuperkExpectation::TweakSystematic(string systematic, double twkdial)
   }
   else
   if(systematic == "sk_ccqe_other_eff") {
-     this->GetSuperkMC()->TweakOtherEfficiencyCCQE(twkdial);
+     this->GetSuperkMC()->TweakEfficiency1RmuCCQEOther(twkdial);
   }
   else
   // tweak CCQE energy-dependent ring-counting efficiency generating random
   // efficiency tweaks and taking into account bin-to-bin correlations
   if(systematic == "sk_ccqe_ring_counting_eff") {
-     this->GetSuperkMC()->TweakRingCountingEfficiencyCCQE(); //< Cholesky method
+     this->GetSuperkMC()->TweakEfficiency1RmuCCQERingCounting(); //< Cholesky method
   }
   //... or tweak the CCQE ring-counting efficiency in single Ereco bins only
   // neglecting correlations (for validation purposes only)
   else if(systematic == "sk_ccqe_ring_counting_eff_0") {
-     this->GetSuperkMC()->TweakRingCountingEfficiencyCCQE(true,twkdial,0.,0.); 
+     this->GetSuperkMC()->TweakEfficiency1RmuCCQERingCounting(true,twkdial,0.,0.); 
   }
   else if(systematic == "sk_ccqe_ring_counting_eff_1") {
-     this->GetSuperkMC()->TweakRingCountingEfficiencyCCQE(true,0.,twkdial,0.); 
+     this->GetSuperkMC()->TweakEfficiency1RmuCCQERingCounting(true,0.,twkdial,0.); 
   }
   else if(systematic == "sk_ccqe_ring_counting_eff_2") {
-     this->GetSuperkMC()->TweakRingCountingEfficiencyCCQE(true,0.,0.,twkdial); 
+     this->GetSuperkMC()->TweakEfficiency1RmuCCQERingCounting(true,0.,0.,twkdial); 
   }
   else
   if(systematic == "sk_ccnonqe_eff") {
-     this->GetSuperkMC()->TweakEfficiencyCCnonQE(twkdial);
+     this->GetSuperkMC()->TweakEfficiency1RmuCCnonQE(twkdial);
   }
   else
   if(systematic == "sk_nc_eff") {
-     this->GetSuperkMC()->TweakEfficiencyNC(twkdial);
+     this->GetSuperkMC()->TweakEfficiency1RmuNC(twkdial);
   }
   else
   if(systematic == "sk_nuecc_eff") {
-     this->GetSuperkMC()->TweakEfficiencyNuECC(twkdial);
+     this->GetSuperkMC()->TweakEfficiency1RmuNuECC(twkdial);
   }
   else
   if(systematic == "sk_1Resig_eff") {
@@ -420,14 +420,14 @@ void SuperkExpectation::TweakAllSystematics(bool do_tweak)
      TRandom3 rand(0);
 
      // SuperK detector response
-     this->GetSuperkMC()->TweakEnergyScale                 (rand.Gaus(0.,1.));
-     this->GetSuperkMC()->TweakOtherEfficiencyCCQE         (rand.Gaus(0.,1.));
-     this->GetSuperkMC()->TweakRingCountingEfficiencyCCQE  (); //< Cholesky method
-     this->GetSuperkMC()->TweakEfficiencyCCnonQE           (rand.Gaus(0.,1.));
-     this->GetSuperkMC()->TweakEfficiencyNC                (rand.Gaus(0.,1.));     
-     this->GetSuperkMC()->TweakEfficiencyNuECC             (rand.Gaus(0.,1.));
-     this->GetSuperkMC()->TweakEfficiency1ReSig            (rand.Gaus(0.,1.));
-     this->GetSuperkMC()->TweakEfficiency1ReBkg            (rand.Gaus(0.,1.));
+     this->GetSuperkMC()->TweakEnergyScale                     (rand.Gaus(0.,1.));
+     this->GetSuperkMC()->TweakEfficiency1RmuCCQEOther         (rand.Gaus(0.,1.));
+     this->GetSuperkMC()->TweakEfficiency1RmuCCQERingCounting  (); //< Cholesky method
+     this->GetSuperkMC()->TweakEfficiency1RmuCCnonQE           (rand.Gaus(0.,1.));
+     this->GetSuperkMC()->TweakEfficiency1RmuNC                (rand.Gaus(0.,1.));     
+     this->GetSuperkMC()->TweakEfficiency1RmuNuECC             (rand.Gaus(0.,1.));
+     this->GetSuperkMC()->TweakEfficiency1ReSig                (rand.Gaus(0.,1.));
+     this->GetSuperkMC()->TweakEfficiency1ReBkg                (rand.Gaus(0.,1.));
 
      // ND280 detector response
      this->GetND280Measurement()->TweakEfficiency     (rand.Gaus(0.,1.));
@@ -559,7 +559,7 @@ void SuperkExpectation::SetNuisanceParams(const FitParamList & fp)
 
    if(fp.Exists(kNuisSuperkEff1RmuCCQEoth)) {
      double twk = fp.CurrValue(kNuisSuperkEff1RmuCCQEoth);
-     this->GetSuperkMC()->TweakOtherEfficiencyCCQE(twk);
+     this->GetSuperkMC()->TweakEfficiency1RmuCCQEOther(twk);
    }
    if(fp.Exists(kNuisSuperkEff1RmuCCQErc0u) &&
       fp.Exists(kNuisSuperkEff1RmuCCQErc1u) &&
@@ -567,19 +567,19 @@ void SuperkExpectation::SetNuisanceParams(const FitParamList & fp)
      double twk0 = fp.CurrValue(kNuisSuperkEff1RmuCCQErc0u);
      double twk1 = fp.CurrValue(kNuisSuperkEff1RmuCCQErc1u);
      double twk2 = fp.CurrValue(kNuisSuperkEff1RmuCCQErc2u);
-     this->GetSuperkMC()->TweakRingCountingEfficiencyCCQE(true,twk0,twk1,twk2,false);
+     this->GetSuperkMC()->TweakEfficiency1RmuCCQERingCounting(true,twk0,twk1,twk2,false);
    }
    if(fp.Exists(kNuisSuperkEff1RmuCCnonQE)) {
      double twk = fp.CurrValue(kNuisSuperkEff1RmuCCnonQE);
-     this->GetSuperkMC()->TweakEfficiencyCCnonQE(twk);
+     this->GetSuperkMC()->TweakEfficiency1RmuCCnonQE(twk);
    }
    if(fp.Exists(kNuisSuperkEff1RmuNC)) {
      double twk = fp.CurrValue(kNuisSuperkEff1RmuNC);
-     this->GetSuperkMC()->TweakEfficiencyNC(twk);     
+     this->GetSuperkMC()->TweakEfficiency1RmuNC(twk);     
    }
    if(fp.Exists(kNuisSuperkEff1RmuNueCC)) {
      double twk = fp.CurrValue(kNuisSuperkEff1RmuNueCC);
-     this->GetSuperkMC()->TweakEfficiencyNuECC(twk);
+     this->GetSuperkMC()->TweakEfficiency1RmuNuECC(twk);
    }
    if(fp.Exists(kNuisSuperkEff1ReSig)) {
      double twk = fp.CurrValue(kNuisSuperkEff1ReSig);

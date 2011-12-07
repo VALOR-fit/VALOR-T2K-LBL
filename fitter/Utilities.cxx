@@ -844,7 +844,7 @@ string t2kana::util::AsStringTex(t2kana::conv::SuperkMode_t m)
   return "";
 }
 //____________________________________________________________________________
-t2kana::conv::PhysHypothesis_t t2kana::util::FromString(string sh)
+t2kana::conv::PhysHypothesis_t t2kana::util::PhysHypFromString(string sh)
 {
   if(sh == "decay"         ) return kHypDecay;
   if(sh == "decoh"         ) return kHypDecoh;
