@@ -1038,8 +1038,8 @@ bool t2kana::util::IsSystematic(PhysParamId_t p)
     case ( kNuisSuperkEff1RmuCCQErc1u ) : return true;  break;
     case ( kNuisSuperkEff1RmuCCQErc2u ) : return true;  break;
     case ( kNuisSuperkEff1RmuCCnonQE  ) : return true;  break;
-    case ( kNuisSuperkEffNC           ) : return true;  break;
-    case ( kNuisSuperkEffNueCC        ) : return true;  break;
+    case ( kNuisSuperkEff1RmuNC       ) : return true;  break;
+    case ( kNuisSuperkEff1RmuNueCC    ) : return true;  break;
     case ( kNuisSuperkEff1ReSig       ) : return true;  break;
     case ( kNuisSuperkEff1ReBkg       ) : return true;  break;
     case ( kNuisSuperkEnergyScale     ) : return true;  break;

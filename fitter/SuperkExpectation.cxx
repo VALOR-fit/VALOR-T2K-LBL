@@ -558,7 +558,7 @@ void SuperkExpectation::SetNuisanceParams(const FitParamList & fp)
    //Note that this function has NOT been updated with the new systematics errors for the nue analysis
 
    if(fp.Exists(kNuisSuperkEff1RmuCCQEoth)) {
-     double twk = fp.CurrValue(kNuisSuperkEffCCQEoth);
+     double twk = fp.CurrValue(kNuisSuperkEff1RmuCCQEoth);
      this->GetSuperkMC()->TweakOtherEfficiencyCCQE(twk);
    }
    if(fp.Exists(kNuisSuperkEff1RmuCCQErc0u) &&
