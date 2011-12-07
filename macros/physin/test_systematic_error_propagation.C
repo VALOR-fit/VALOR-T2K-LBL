@@ -44,11 +44,10 @@
 
 #include <iomanip.h>
 
-using namespace t2kana; //need to put this here, to allow a SuperkSample_t as input
-void test_systematic_error_propagation_nue
+void test_systematic_error_propagation
 (
   const char * systematic,                                                  /* options: see above */
-  const string sample_str                 = "1Rmu",                         /* options: "1Rmu", "1Re" */
+  const char * sksample                   = "1Rmu",                         /* options: "1Rmu", "1Re" */
   const char * hypothesis                 = "3f_osc",                       /* options: "2f_numu_disap", "3f_osc" */
   double       input_mixing12             = 0.86,                           /* */
   double       input_mixing13             = 0.10,                           /* */
@@ -69,9 +68,18 @@ void test_systematic_error_propagation_nue
   using namespace std;
   using namespace t2kana;
 
-  conv::SuperkSample_t s = util::SKSampleFromString(sample_str);
+  // Analysis configuration
+  const char * config  = Form("%s/config/%s", gSystem->Getenv("T2KOSCANA"), config_file);
+    
+  // Global options
+  Opt::Instance()->gOscMixingParamChoice = conv::kNuMixSinsq2Theta;
+  Opt::Instance()->gMassHierarchyAssumed = conv::kNmhNormal;
 
-  // set physics hypothesis
+  // Get requested sample
+  conv::SuperkSample_t s = util::SKSampleFromString(sksample);
+  assert(s != conv::kSKsUndefined);
+
+  // Set physics hypothesis
   PhysHypothesis ph(hypothesis);
   if(ph.Hypothesis() == conv::kHypNuMuDisapp2F) {
     ph.SetCurrValue(conv::kPhypMixing23,  input_mixing23);
@@ -85,23 +93,31 @@ void test_systematic_error_propagation_nue
     ph.SetCurrValue(conv::kPhypDm12sq,    input_dm12sq);
     ph.SetCurrValue(conv::kPhypDm23sq,    input_dm23sq);
   }
-  cout << "Physics hypothesis set: " << endl;
-  cout << ph;
 
-  // create & config superk spectrum predictor
-  const char * config = Form("%s/config/%s", gSystem->Getenv("T2KOSCANA"), config_file);
-  cout << "Reading analysis configuration from: " << config << endl;
+  // Print options
+  cout << "\n[Job inputs]" << endl;
+  cout << "- Reading analysis configuration from: " << config << endl;
+  cout << "- SuperK sample: " << util::AsString(s) << endl;
+  cout << "- Varied systematic parameter: " << systematic << endl;
+  cout << "- Physics hypothesis: " << ph << endl;
+  cout << *Opt::Instance() << endl;
+
+  // Precison for printed-out numerical results
+  int nprecisionnev = 4; // <-- for number of events
+  int nprecisionpct = 2; // <-- for % changes
+
+  // Create & config superk spectrum predictor
   SuperkExpectation * skexp = new SuperkExpectation;
   skexp->Read(config);
 
+  //
   double alpha = skexp->GetNuXSec()->OnePionInRES();
   cout << "alpha = " << alpha << endl;
-
   int ErecoBin1 =  9; // 0.4 GeV (incl.)
   int ErecoBin2 = 22; // 1.1 GeV (incl.)
 
-  // setup for the superk code
-  //these are arrays with entries the modes that make up the total nc/cc-flavour category
+  // Define arrays with entries the modes that make up the total nc/cc-flavour category.
+  // This makes the code easier to adapt if the list of modes considered for each sample changes.
   int insknumuccall   [nmodesallmax];
   int insknumuncall   [nmodesallmax];
   int insknumubarccall[nmodesallmax];
@@ -109,7 +125,7 @@ void test_systematic_error_propagation_nue
   int insknueccall    [nmodesallmax];
   int insknuencall    [nmodesallmax];
   int insknuesigall   [nmodesallmax];
-  //initialize arrays
+  // initialize arrays
   for (int i = 0; i < nmodesallmax; i++) {
        insknumuccall   [i] = -1;
        insknumuncall   [i] = -1;
@@ -119,7 +135,7 @@ void test_systematic_error_propagation_nue
        insknuencall    [i] = -1;
        insknuesigall   [i] = -1;
   }
-  //fill arrays
+  // fill arrays
   switch(s) {
      case (conv::kSKsFCFV1RingMuLike): {
        insknumuccall   [0] = 0;
@@ -163,8 +179,9 @@ void test_systematic_error_propagation_nue
        insknuesigall   [2] = 23;
        break;
      }
-     case (conv::kSKsUndefined): cout << "Sample undefined" << endl; exit(1); break;
-     default: cout << "Sample not supported yet" << endl; exit(1); break;
+     default: 
+       cout << "*** Sample " << util::AsString(s) << " not supported yet" << endl; 
+       exit(1); 
   }
   //and get the last non zero entry in the array (for use to tell you when to print the total)
   int sknumuccall_printat=-1;
@@ -332,7 +349,7 @@ void test_systematic_error_propagation_nue
   skexp->Generate(ph);
 
   //sk total * nd280 ratio
-  double nsk_p                 = skexp->CurrPredictedErecoSpectrum(s)->Integral();
+  double nsk_p = skexp->CurrPredictedErecoSpectrum(s)->Integral();
 
   //individual modes (and total sk)
   double nskmodes_p[conv::knm];
@@ -465,7 +482,7 @@ void test_systematic_error_propagation_nue
   skexp->Generate(ph);
 
   //sk total * nd280 ratio
-  double nsk_m                 = skexp->CurrPredictedErecoSpectrum(s)->Integral();
+  double nsk_m = skexp->CurrPredictedErecoSpectrum(s)->Integral();
 
   //individual modes (and total sk)
   double nskmodes_m[conv::knm];
@@ -695,11 +712,9 @@ void test_systematic_error_propagation_nue
   double frac_nd280nuenc_m           = (nd280nuenc_0           > 0) ? 100.*(nd280nuenc_m          - nd280nuenc_0         ) / nd280nuenc_0          : 0.;
 
   //
-  // print-out
+  // Print-out
   //
 
-  int    nprecisionnev = 4;
-  int    nprecisionpct = 2;
   string pctsymbol  = (use_tex) ? " \\% "   : "% ";
   string endcolumn  = (use_tex) ? " & "     : "" ;
   string endrow     = (use_tex) ? " \\\\ "  : "" ;
@@ -707,7 +722,6 @@ void test_systematic_error_propagation_nue
   int ncol1   = 80;
   int ncolnev = 15;
   int ncolfrc =  8;
-
 
   cout << "\n\nSystematic: " << systematic << endl;
   cout << endl;

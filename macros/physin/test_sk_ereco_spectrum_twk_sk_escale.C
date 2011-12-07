@@ -7,8 +7,6 @@
 // ------------------------------------------------------------------------------------------------
 //
 
-#include "Conventions.h"
-
 void test_sk_ereco_spectrum_twk_sk_escale
 (
   const char * hypothesis         = "3f_osc",                       /* options: "2f_numu_disap", "3f_osc" */
@@ -24,17 +22,14 @@ void test_sk_ereco_spectrum_twk_sk_escale
   using namespace std;
   using namespace t2kana;
 
-  const int ntwkdials = 3;
-  double twkdial[ntwkdials] = { -1.0, 0.0, +1.0 };
+  // Analysis configuration
+  const char * config  = Form("%s/config/%s", gSystem->Getenv("T2KOSCANA"), config_file);
+    
+  // Global options
+  Opt::Instance()->gOscMixingParamChoice = conv::kNuMixSinsq2Theta;
+  Opt::Instance()->gMassHierarchyAssumed = conv::kNmhNormal;
 
-  int deflt = ntwkdials/2; //untweaked case
-
-  // histogram drawing options
-  int hwidth [ntwkdials] = { 1,       1,       2      };
-  int hcolor [ntwkdials] = { kBlue,   kBlack,  kRed   };
-  int hstyle [ntwkdials] = { kDashed, kSolid, kDashed };
-
-  // set physics hypothesis
+  // Set physics hypothesis
   PhysHypothesis ph(hypothesis);
   if(ph.Hypothesis() == conv::kHypNuMuDisapp2F) {
     ph.SetCurrValue(conv::kPhypMixing23,  input_mixing23);
@@ -48,16 +43,29 @@ void test_sk_ereco_spectrum_twk_sk_escale
     ph.SetCurrValue(conv::kPhypDm12sq,    input_dm12sq);
     ph.SetCurrValue(conv::kPhypDm23sq,    input_dm23sq);
   }
-  cout << "Physics hypothesis set: " << endl;
-  cout << ph;
+
+  // Print options
+  cout << "\n[Job inputs]" << endl;
+  cout << "- Reading analysis configuration from: " << config << endl;
+  cout << "- Physics hypothesis: \n" << ph << endl;
+  cout << *Opt::Instance() << endl;
+
+  // Tweaks  
+  const int ntwkdials = 3;
+  double twkdial[ntwkdials] = { -1.0, 0.0, +1.0 };
+
+  int deflt = ntwkdials/2; //untweaked case
+
+  // Histogram drawing options
+  int hwidth [ntwkdials] = { 1,       1,       2      };
+  int hcolor [ntwkdials] = { kBlue,   kBlack,  kRed   };
+  int hstyle [ntwkdials] = { kDashed, kSolid, kDashed };
   
-  // create & config superk spectrum predictor
-  const char * config = Form("%s/config/%s", gSystem->Getenv("T2KOSCANA"), config_file);
-  cout << "Reading analysis configuration from: " << config << endl;
+  // Create & config superk spectrum predictor
   SuperkExpectation skexp;
   skexp.Read(config);
   
-  // calc spectra
+  // Calc spectra
   TH1D * hEreco[ntwkdials];
   for(int idial = 0; idial < ntwkdials; idial++) {
      // tweak spectrum generation model
@@ -88,7 +96,7 @@ void test_sk_ereco_spectrum_twk_sk_escale
   }//idial
 
   //
-  // draw
+  // Draw
   //
   for(int idial = 0; idial < ntwkdials; idial++) {
      hEreco   [idial]->SetLineWidth(hwidth[idial]);
@@ -131,7 +139,7 @@ void test_sk_ereco_spectrum_twk_sk_escale
   c->Update();
 
   // write-out in file
-  string oscparams = util::AsString(hypothesis,
+  string oscparams = util::AsString(ph.Hypothesis(),
      input_mixing12,input_mixing13,input_mixing23,input_deltacp,input_dm12sq,input_dm23sq);
   TFile f(Form("sk_ereco_spectrum-twk_sk_escale-%s.root",oscparams.c_str()),"recreate");
   for(int idial = 0; idial < ntwkdials; idial++) {

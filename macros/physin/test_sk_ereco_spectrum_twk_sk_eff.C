@@ -7,8 +7,6 @@
 // ------------------------------------------------------------------------------------------------
 //
 
-#include "Conventions.h"
-
 void test_sk_ereco_spectrum_twk_sk_eff
 (
   const char * hypothesis         = "3f_osc",                       /* options: "2f_numu_disap", "3f_osc" */
@@ -24,6 +22,34 @@ void test_sk_ereco_spectrum_twk_sk_eff
   using namespace std;
   using namespace t2kana;
 	
+  // Analysis configuration
+  const char * config  = Form("%s/config/%s", gSystem->Getenv("T2KOSCANA"), config_file);
+
+  // Global options
+  Opt::Instance()->gOscMixingParamChoice = conv::kNuMixSinsq2Theta;
+  Opt::Instance()->gMassHierarchyAssumed = conv::kNmhNormal;
+
+  // Set physics hypothesis
+  PhysHypothesis ph(hypothesis);
+  if(ph.Hypothesis() == conv::kHypNuMuDisapp2F) {
+    ph.SetCurrValue(conv::kPhypMixing23,  input_mixing23);
+    ph.SetCurrValue(conv::kPhypDm23sq,    input_dm23sq);
+  } else
+  if(ph.Hypothesis() == conv::kHypOsc3F) {
+    ph.SetCurrValue(conv::kPhypMixing12,  input_mixing12);
+    ph.SetCurrValue(conv::kPhypMixing13,  input_mixing13);
+    ph.SetCurrValue(conv::kPhypMixing23,  input_mixing23);
+    ph.SetCurrValue(conv::kPhypDeltaCP,   input_deltacp);
+    ph.SetCurrValue(conv::kPhypDm12sq,    input_dm12sq);
+    ph.SetCurrValue(conv::kPhypDm23sq,    input_dm23sq);
+  }
+
+  // Print options
+  cout << "\n[Job inputs]" << endl;
+  cout << "- Reading analysis configuration from: " << config << endl;
+  cout << "- Physics hypothesis: \n" << ph << endl;
+  cout << *Opt::Instance() << endl;
+
   const int nexperiments = 100;
 
   const int ntwkdials = 5;
@@ -64,38 +90,18 @@ void test_sk_ereco_spectrum_twk_sk_eff
     "#nu_{e} CC"
   };
 
-  // histogram drawing options
+  // Histogram drawing options
   int hwidth [ntwkdials] = { 1,       1,       2,       1,       1       };
   int hcolor [ntwkdials] = { kBlue,   kBlue,   kBlack,  kRed,    kRed    };
   int hstyle [ntwkdials] = { kDotted, kDashed, kSolid,  kDashed, kDotted };
-
-  // set physics hypothesis
-  PhysHypothesis ph(hypothesis);
-  if(ph.Hypothesis() == conv::kHypNuMuDisapp2F) {
-    ph.SetCurrValue(conv::kPhypMixing23,  input_mixing23);
-    ph.SetCurrValue(conv::kPhypDm23sq,    input_dm23sq);
-  } else
-  if(ph.Hypothesis() == conv::kHypOsc3F) {
-    ph.SetCurrValue(conv::kPhypMixing12,  input_mixing12);
-    ph.SetCurrValue(conv::kPhypMixing13,  input_mixing13);
-    ph.SetCurrValue(conv::kPhypMixing23,  input_mixing23);
-    ph.SetCurrValue(conv::kPhypDeltaCP,   input_deltacp);
-    ph.SetCurrValue(conv::kPhypDm12sq,    input_dm12sq);
-    ph.SetCurrValue(conv::kPhypDm23sq,    input_dm23sq);
-  }
-  cout << "Physics hypothesis set: " << endl;
-  cout << ph;
   
-  // create & config superk spectrum predictor
-  const char * config = Form("%s/config/%s", gSystem->Getenv("T2KOSCANA"), config_file);
-  cout << "Reading analysis configuration from: " << config << endl;
+  // Create & config superk spectrum predictor
   SuperkExpectation skexp;
   skexp.Read(config);
 
-
   cout << "\n\nCalculating effects of SuperK efficiency uncertainties\n" << endl;
 
-  // calc spectra
+  // Calc spectra
   double maxnev[ntwkmodes] = {-1.};
   TH1D * hEreco [ntwkmodes][ntwkdials];
   for(int imode = 0; imode < ntwkmodes; imode++) {
@@ -107,6 +113,7 @@ void test_sk_ereco_spectrum_twk_sk_eff
            skexp.ResetSystematicVariations();
            // tweak spectrum generation model
            skexp.TweakSystematic(systematic[imode], twkdial[idial]);
+           skexp.PrintSystematicVariations();
            // generate predictions  
            skexp.Generate(ph);
            // store spectrum
@@ -118,15 +125,14 @@ void test_sk_ereco_spectrum_twk_sk_eff
         cout << "Generating toy MC... " << endl;
         TH1D * hErecoToyMC[nexperiments]; 
         for(int iexp = 0; iexp < nexperiments; iexp++) {
-           if(iexp%100==0) {
-               cout << "Generated " << iexp << " toy MC experiments so far... " << endl;
-           }
+           cout << " ** Toy-MC experiment = " << iexp << endl;
            // reset previously set tweaks
            skexp.ResetSystematicVariations();
            // tweak spectrum generation model
            if(iexp>0) {
                skexp.TweakSystematic(systematic[imode]);
            }
+           skexp.PrintSystematicVariations();
            // generate predictions  
            skexp.Generate(ph);
            // store spectrum
@@ -154,7 +160,7 @@ void test_sk_ereco_spectrum_twk_sk_eff
         //delete [] hErecoToyMC;
      }//generate toy MC?
   }//imode
-  // get fractional err
+  // Get fractional err
   double maxerrpos[ntwkmodes] = {-1.};
   double maxerrneg[ntwkmodes] = {+1.};
   TH1D * hErecoErr[ntwkmodes][ntwkdials];
@@ -176,7 +182,7 @@ void test_sk_ereco_spectrum_twk_sk_eff
     }//idial
   }//imode
 
-  // draw
+  // Draw
   for(int imode = 0; imode < ntwkmodes; imode++) {
      for(int idial = 0; idial < ntwkdials; idial++) {
        hEreco   [imode][idial]->SetLineWidth(hwidth[idial]);
@@ -223,8 +229,8 @@ void test_sk_ereco_spectrum_twk_sk_eff
      c[imode]->Update();
   }//imode
 
-  // write-out in file
-  string oscparams = util::AsString(hypothesis,
+  // Write-out in file
+  string oscparams = util::AsString(ph.Hypothesis(),
      input_mixing12,input_mixing13,input_mixing23,input_deltacp,input_dm12sq,input_dm23sq);
   TFile f(Form("sk_ereco_spectrum-twk_sk_eff-%s.root",oscparams.c_str()),"recreate");
   for(int imode = 0; imode < ntwkmodes; imode++) {

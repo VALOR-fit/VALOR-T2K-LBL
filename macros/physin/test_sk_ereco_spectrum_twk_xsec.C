@@ -7,8 +7,6 @@
 // ------------------------------------------------------------------------------------------------
 //
 
-#include "Conventions.h"
-
 void test_sk_ereco_spectrum_twk_xsec
 (
   const char * hypothesis         = "3f_osc",                       /* options: "2f_numu_disap", "3f_osc" */
@@ -23,26 +21,15 @@ void test_sk_ereco_spectrum_twk_xsec
 {
   using namespace std;
   using namespace t2kana;
-  
-  const int ntwkmodes = 5;
-  string twklabel[ntwkmodes] = {
-   	"CCQE cross section",
-	"CC1#pi/CCQE cross section ratio",
-        "CCother/CCQE cross section ratio",
-        "NC/CCQE cross section ratio",
-        "Nuclear effect"
-  };
-  const int ntwkdials = 5;
-  double twkdial[ntwkdials] = { -1.0, -0.5, 0.0, +0.5, +1.0 };
 
-  int deflt = ntwkdials/2; //untweaked case
+  // Analysis configuration
+  const char * config  = Form("%s/config/%s", gSystem->Getenv("T2KOSCANA"), config_file);
+    
+  // Global options
+  Opt::Instance()->gOscMixingParamChoice = conv::kNuMixSinsq2Theta;
+  Opt::Instance()->gMassHierarchyAssumed = conv::kNmhNormal;
 
-  // histogram drawing options
-  int hwidth [ntwkdials] = { 1,       1,       2,       1,       1      };
-  int hcolor [ntwkdials] = { kBlue,   kBlue,   kBlack,  kRed,    kRed   };
-  int hstyle [ntwkdials] = { kDotted, kDashed, kSolid,  kDashed, kDotted};
-
-  // set physics hypothesis
+  // Set physics hypothesis
   PhysHypothesis ph(hypothesis);
   if(ph.Hypothesis() == conv::kHypNuMuDisapp2F) {
     ph.SetCurrValue(conv::kPhypMixing23,  input_mixing23);
@@ -56,27 +43,48 @@ void test_sk_ereco_spectrum_twk_xsec
     ph.SetCurrValue(conv::kPhypDm12sq,    input_dm12sq);
     ph.SetCurrValue(conv::kPhypDm23sq,    input_dm23sq);
   }
-  cout << "Physics hypothesis set: " << endl;
-  cout << ph;
   
-  // create & config superk spectrum predictor
-  const char * config = Form("%s/config/%s", gSystem->Getenv("T2KOSCANA"), config_file);
-  cout << "Reading analysis configuration from: " << config << endl;
+  // Print options
+  cout << "\n[Job inputs]" << endl;
+  cout << "- Reading analysis configuration from: " << config << endl;
+  cout << "- Physics hypothesis: \n" << ph << endl;
+  cout << *Opt::Instance() << endl;
+
+  // Tweaks
+  const int ntwkmodes = 5;
+  string twklabel[ntwkmodes] = {
+   	"CCQE cross-section",
+	"CC1#pi/CCQE cross-section ratio",
+        "CCoth/CCQE cross-section ratio",
+        "NC/CCQE cross-section ratio",
+        "FSI"
+  };
+  const int ntwkdials = 5;
+  double twkdial[ntwkdials] = { -1.0, -0.5, 0.0, +0.5, +1.0 };
+
+  int deflt = ntwkdials/2; //untweaked case
+
+  // histogram drawing options
+  int hwidth [ntwkdials] = { 1,       1,       2,       1,       1      };
+  int hcolor [ntwkdials] = { kBlue,   kBlue,   kBlack,  kRed,    kRed   };
+  int hstyle [ntwkdials] = { kDotted, kDashed, kSolid,  kDashed, kDotted};
+  
+  // Create & config superk spectrum predictor
   SuperkExpectation skexp;
   skexp.Read(config);
   
-  // calculate spectra
+  // Calculate spectra
   TH1D * hEreco   [ntwkmodes][ntwkdials];
   for(int imode = 0; imode < ntwkmodes; imode++) {
     for(int idial = 0; idial < ntwkdials; idial++) {
        // reset previously set tweaks
        skexp.ResetSystematicVariations(); 
        // tweak spectrum generation model
-       if      (imode==0) skexp.GetNuXSec()->TweakCCQEXSec            ( twkdial[idial] );
-       else if (imode==1) skexp.GetNuXSec()->TweakCC1piToCCQEXSecRatio( twkdial[idial] );
-       else if (imode==2) skexp.GetNuXSec()->TweakCCOthToCCQEXSecRatio( twkdial[idial] );
-       else if (imode==3) skexp.GetNuXSec()->TweakNCToCCQEXSecRatio   ( twkdial[idial] );
-       else if (imode==4) skexp.GetNuXSec()->TweakNuclEffect          ( twkdial[idial] );
+       if      (imode==0) skexp.GetNuXSec()->TweakCCQE        ( twkdial[idial] );
+       else if (imode==1) skexp.GetNuXSec()->TweakCC1piToCCQE ( twkdial[idial] );
+       else if (imode==2) skexp.GetNuXSec()->TweakCCOthToCCQE ( twkdial[idial] );
+       else if (imode==3) skexp.GetNuXSec()->TweakNCToCCQE    ( twkdial[idial] );
+       else if (imode==4) skexp.GetNuXSec()->TweakSKFSI       ( twkdial[idial] );
        // generate predictions  
        skexp.Generate(ph);
        // store spectrum
@@ -106,7 +114,7 @@ void test_sk_ereco_spectrum_twk_xsec
   }//imode
 
   //
-  // draw
+  // Draw
   //
   for(int imode = 0; imode < ntwkmodes; imode++) {
     for(int idial = 0; idial < ntwkdials; idial++) {
@@ -154,8 +162,8 @@ void test_sk_ereco_spectrum_twk_xsec
     c[imode]->Update();
   }//imode
 
-  // write-out in file
-  string oscparams = util::AsString(hypothesis,
+  // Write-out in file
+  string oscparams = util::AsString(ph.Hypothesis(),
      input_mixing12,input_mixing13,input_mixing23,input_deltacp,input_dm12sq,input_dm23sq);
   TFile f(Form("sk_ereco_spectrum-twk_xsec-%s.root",oscparams.c_str()),"recreate");
   for(int imode = 0; imode < ntwkmodes; imode++) {

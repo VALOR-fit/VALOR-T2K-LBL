@@ -13,8 +13,6 @@
 
 #include <iomanip.h>
 
-#include "Conventions.h"
-
 void test_sk_ereco_spectrum_twk_osc_non23sector
 (
   int          varied_osc_param   = 0,                              /* 0: vary dmsq12, 1: vary theta12, 2: vary theta13, 3: vary deltacp */
@@ -26,7 +24,14 @@ void test_sk_ereco_spectrum_twk_osc_non23sector
   using namespace std;
   using namespace t2kana;
 
-  // define oscillation hypotheses
+  // Analysis configuration
+  const char * config  = Form("%s/config/%s", gSystem->Getenv("T2KOSCANA"), config_file);
+
+  // Global options
+  Opt::Instance()->gOscMixingParamChoice = conv::kNuMixSinsq2Theta;
+  Opt::Instance()->gMassHierarchyAssumed = conv::kNmhNormal;
+
+  // Define oscillation hypotheses
   const  int ncases = 4; // one 2-flavour case (0) + three 3-flavour cases (1,2,3)
   const  double pi = TMath::Pi();
 
@@ -50,18 +55,16 @@ void test_sk_ereco_spectrum_twk_osc_non23sector
     deltacp  [icase] = (varied_osc_param == 3) ? deltacp_var  [icase-1] : deltacp_fix;
   }
 
-  // histogram drawing options
+  // Histogram drawing options
   int hwidth [ncases] = { 2,       1,      1,       1      };
   int hcolor [ncases] = { kBlack,  kRed,   kGreen,  kBlue  };
   int hstyle [ncases] = { kDashed, kSolid, kSolid,  kSolid };
 
-  // create & config superk spectrum predictor
-  const char * config = Form("%s/config/%s", gSystem->Getenv("T2KOSCANA"), config_file);
-  cout << "Reading analysis configuration from: " << config << endl;
+  // Create & config superk spectrum predictor
   SuperkExpectation skexp;
   skexp.Read(config);
   
-  // calculate spectra
+  // Calculate spectra
   TH1D * hEreco[ncases] = {0};
   for(int icase = 0; icase < ncases; icase++) {
     conv::PhysHypothesis_t phid = 
@@ -87,7 +90,7 @@ void test_sk_ereco_spectrum_twk_osc_non23sector
     hEreco[icase]->SetLineStyle(hstyle[icase]);
   }
 
-  // form ratios of 3-flavour hypotheses to the 2-flavou hypothesis
+  // Form ratios of 3-flavour hypotheses to the 2-flavou hypothesis
   TH1D * hErecoRatio[ncases] = {0};
   for(int icase = 1; icase < ncases; icase++) {
     hErecoRatio[icase] = new TH1D(*hEreco[icase]);
@@ -98,13 +101,17 @@ void test_sk_ereco_spectrum_twk_osc_non23sector
     hErecoRatio[icase]->SetLineStyle(hstyle[icase]);
   }
 
-  // draw
+  // Draw
+  const char * mixing_param = 0;
+  if( Opt::Instance()->gOscMixingParamChoice == conv::kNuMixSinsq2Theta ) { mixing_param = "sin^{2}2#theta"; }
+  if( Opt::Instance()->gOscMixingParamChoice == conv::kNuMixSinsqTheta  ) { mixing_param = "sin^{2}#theta";  }
+
   gStyle->SetOptStat(0);
   TCanvas * c = new TCanvas("c","",20,20,700,500);
   TLegend * legend = new TLegend(0.3, 0.7, 0.85, 0.9);
   legend->SetFillColor(0);
   legend->SetBorderSize(0);
-  legend->SetHeader(Form("|#Deltam_{23}^{2}| = %.5f eV^{2}/c^{4}, sin^{2}2#theta_{23} = %.2f",input_dm23sq,input_mixing23));
+  legend->SetHeader(Form("|#Deltam_{23}^{2}| = %.5f eV^{2}/c^{4}, %s_{23} = %.2f",input_dm23sq,mixing_param,input_mixing23));
   for(int icase = 0; icase < ncases; icase++) {
      const char * opt = 
         (icase == 0) ? 
@@ -113,8 +120,8 @@ void test_sk_ereco_spectrum_twk_osc_non23sector
      const char * label = 
         (icase == 0) ? 
            "2-flavour" : 
-           Form("3-flavour: #Deltam_{12}^{2} = %.5f eV^{2}/c^{4}, sin^{2}2#theta_{12} = %.2f, sin^{2}2#theta_{13} = %.2f, #delta_{CP} = %.3f", 
-           dm12sq[icase], mixing12[icase], mixing13[icase], deltacp[icase]);
+           Form("3-flavour: #Deltam_{12}^{2} = %.5f eV^{2}/c^{4}, %s_{12} = %.2f, %s_{13} = %.2f, #delta_{CP} = %.3f", 
+           dm12sq[icase], mixing_param, mixing12[icase], mixing_param, mixing13[icase], deltacp[icase]);
      if(icase==0) {
        hEreco[icase]->GetXaxis()->SetTitle("E_{reco} (GeV)");
        hEreco[icase]->GetYaxis()->SetTitle("Number of events");
@@ -142,15 +149,15 @@ void test_sk_ereco_spectrum_twk_osc_non23sector
   TLegend * legendr = new TLegend(0.3, 0.7, 0.85, 0.9);
   legendr->SetFillColor(0);
   legendr->SetBorderSize(0);
-  legendr->SetHeader(Form("|#Deltam_{23}^{2}| = %.5f eV^{2}/c^{4}, sin^{2}2#theta_{23} = %.2f",input_dm23sq,input_mixing23));
+  legendr->SetHeader(Form("|#Deltam_{23}^{2}| = %.5f eV^{2}/c^{4}, %s_{23} = %.2f",input_dm23sq,mixing_param,input_mixing23));
   for(int icase = 1; icase < ncases; icase++) {
      const char * opt = 
         (icase == 1) ? 
            "" : 
            "same";
      const char * label = 
-           Form("#Deltam_{12}^{2} = %.5f eV^{2}/c^{4}, sin^{2}2#theta_{12} = %.2f, sin^{2}2#theta_{13} = %.2f, #delta_{CP} = %.3f", 
-           dm12sq[icase], mixing12[icase], mixing13[icase], deltacp[icase]);
+           Form("#Deltam_{12}^{2} = %.5f eV^{2}/c^{4}, %s_{12} = %.2f, %s_{13} = %.2f, #delta_{CP} = %.3f", 
+           dm12sq[icase], mixing_param, mixing12[icase], mixing_param, mixing13[icase], deltacp[icase]);
      if(icase==1) {
        hErecoRatio[icase]->GetXaxis()->SetTitle("E_{reco} (GeV)");
        hErecoRatio[icase]->GetYaxis()->SetTitle("3-flavour / 2-flavour hypothesis ratio");

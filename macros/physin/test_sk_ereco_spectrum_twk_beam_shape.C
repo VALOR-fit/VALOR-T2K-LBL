@@ -23,23 +23,14 @@ void test_sk_ereco_spectrum_twk_beam_shape
   using namespace std;
   using namespace t2kana;
 
-  const int nexp       = 1000; // number of 'flux tweaks'
-  const int netruebins = 19;   // number of Etrue (variable size) bins in flux covariance matrix
-  // beam WG binning:
-  double bin_edges[netruebins+1] = {
-    0.0, 0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 1.0, 1.2, 1.5, 2.0, 2.5, 3.0, 3.5, 4.0, 5.0, 7.0, 10.0 };
+  // Analysis configuration
+  const char * config  = Form("%s/config/%s", gSystem->Getenv("T2KOSCANA"), config_file);
+    
+  // Global options
+  Opt::Instance()->gOscMixingParamChoice = conv::kNuMixSinsq2Theta;
+  Opt::Instance()->gMassHierarchyAssumed = conv::kNmhNormal;
 
-  // output histograms and graphs
-  TH1D * hEreco [nexp];  //
-  TH1D * hErecoMax = 0;  //
-  TH1D * hErecoMin = 0;  //
-  TH1D * hErecoRatio1EtrueBinVarMax[netruebins+1]; //
-  TH1D * hErecoRatio1EtrueBinVarMin[netruebins+1]; //
-  TGraph * grNumEvtVersusToyExpId = 0;
-  double nev  [nexp];
-  double expid[nexp];
-
-  // set physics hypothesis
+  // Set physics hypothesis
   PhysHypothesis ph(hypothesis);
   if(ph.Hypothesis() == conv::kHypNuMuDisapp2F) {
     ph.SetCurrValue(conv::kPhypMixing23,  input_mixing23);
@@ -53,16 +44,34 @@ void test_sk_ereco_spectrum_twk_beam_shape
     ph.SetCurrValue(conv::kPhypDm12sq,    input_dm12sq);
     ph.SetCurrValue(conv::kPhypDm23sq,    input_dm23sq);
   }
-  cout << "Physics hypothesis set: " << endl;
-  cout << ph;
-  
-  // create & config superk spectrum predictor
-  const char * config = Form("%s/config/%s", gSystem->Getenv("T2KOSCANA"), config_file);
-  cout << "Reading analysis configuration from: " << config << endl;
+
+  // Print options
+  cout << "\n[Job inputs]" << endl;
+  cout << "- Reading analysis configuration from: " << config << endl;
+  cout << "- Physics hypothesis: \n" << ph << endl;
+  cout << *Opt::Instance() << endl;
+
+  const int nexp       = 1000; // number of 'flux tweaks'
+  const int netruebins = 19;   // number of Etrue (variable size) bins in flux covariance matrix
+  // beam WG binning:
+  double bin_edges[netruebins+1] = {
+    0.0, 0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 1.0, 1.2, 1.5, 2.0, 2.5, 3.0, 3.5, 4.0, 5.0, 7.0, 10.0 };
+
+  // Output histograms and graphs
+  TH1D * hEreco [nexp];  //
+  TH1D * hErecoMax = 0;  //
+  TH1D * hErecoMin = 0;  //
+  TH1D * hErecoRatio1EtrueBinVarMax[netruebins+1]; //
+  TH1D * hErecoRatio1EtrueBinVarMin[netruebins+1]; //
+  TGraph * grNumEvtVersusToyExpId = 0;
+  double nev  [nexp];
+  double expid[nexp];
+
+  // Create & config superk spectrum predictor
   SuperkExpectation skexp;
   skexp.Read(config);
   
-  // generate nexp random spectra
+  // Generate nexp random spectra
   for(int iexp = 0; iexp < nexp; iexp++) {
      // tweak spectrum generation model
      cout << "** iteration: " << iexp << endl;
@@ -78,7 +87,7 @@ void test_sk_ereco_spectrum_twk_beam_shape
      hEreco[iexp]->SetDirectory(0);
   }
 
-  // find min/max and calculate fractional deviation from nominal
+  // Find min/max and calculate fractional deviation from nominal
   hErecoMax = new TH1D(*hEreco[0]);
   hErecoMin = new TH1D(*hEreco[0]);
   hErecoMax->SetDirectory(0);
@@ -101,7 +110,7 @@ void test_sk_ereco_spectrum_twk_beam_shape
   hErecoMax->GetYaxis()->SetRangeUser(-1,1);
   hErecoMin->GetYaxis()->SetRangeUser(-1,1);
 
-  // get number of events vs toy experiment id to illustrate that there is no
+  // Get number of events vs toy experiment id to illustrate that there is no
   // normalization change
   for(int iexp = 1; iexp < nexp; iexp++) {
     nev  [iexp] = hEreco[iexp]->Integral();
@@ -110,7 +119,7 @@ void test_sk_ereco_spectrum_twk_beam_shape
   grNumEvtVersusToyExpId = new TGraph(nexp,expid,nev);
 
   //
-  // check the effect in Ereco distributions by modifying each of the variable Etrue bins
+  // Check the effect in Ereco distributions by modifying each of the variable Etrue bins
   // (in the Beam WG variable binning scheme used in the flux covariance matrix) by +/-100%
   //
 
@@ -158,7 +167,7 @@ void test_sk_ereco_spectrum_twk_beam_shape
   }
 
   //
-  // draw
+  // Draw
   //
   TCanvas * c = new TCanvas("c","",20,20,500,500);
   gStyle->SetOptStat(0);
@@ -191,8 +200,8 @@ void test_sk_ereco_spectrum_twk_beam_shape
      hErecoRatio1EtrueBinVarMin[ietrue_bin]->Draw("same");
   }
   
-  // write-out in file
-  string oscparams = util::AsString(hypothesis,
+  // Write-out in file
+  string oscparams = util::AsString(ph.Hypothesis(),
      input_mixing12,input_mixing13,input_mixing23,input_deltacp,input_dm12sq,input_dm23sq);
   TFile f(Form("sk_ereco_spectrum-twk_beam_shape-%s.root",oscparams.c_str()),"recreate");
   hErecoMax->Write("error_envelope_upper_boundary");

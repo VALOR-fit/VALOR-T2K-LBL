@@ -7,8 +7,6 @@
 // ------------------------------------------------------------------------------------------------
 //
 
-#include "Conventions.h"
-
 void test_sk_ereco_spectrum_twk_nd280_eff
 (
   const char * hypothesis         = "3f_osc",                       /* options: "2f_numu_disap", "3f_osc" */
@@ -26,13 +24,14 @@ void test_sk_ereco_spectrum_twk_nd280_eff
 
   TRandom3 rand(0);
 
-  // n tweaks
-  const int n = 3;
+  // Analysis configuration
+  const char * config  = Form("%s/config/%s", gSystem->Getenv("T2KOSCANA"), config_file);
 
-  // book histograms
-  TH1D * hEreco[n];
+  // Global options
+  Opt::Instance()->gOscMixingParamChoice = conv::kNuMixSinsq2Theta;
+  Opt::Instance()->gMassHierarchyAssumed = conv::kNmhNormal;
 
-  // set physics hypothesis
+  // Set physics hypothesis
   PhysHypothesis ph(hypothesis);
   if(ph.Hypothesis() == conv::kHypNuMuDisapp2F) {
     ph.SetCurrValue(conv::kPhypMixing23,  input_mixing23);
@@ -46,16 +45,26 @@ void test_sk_ereco_spectrum_twk_nd280_eff
     ph.SetCurrValue(conv::kPhypDm12sq,    input_dm12sq);
     ph.SetCurrValue(conv::kPhypDm23sq,    input_dm23sq);
   }
-  cout << "Physics hypothesis set: " << endl;
-  cout << ph;
+
+  // Print options
+  cout << "\n[Job inputs]" << endl;
+  cout << "- Reading analysis configuration from: " << config << endl;
+  cout << "- Physics hypothesis: \n" << ph << endl;
+  cout << *Opt::Instance() << endl;
   
-  // create & config superk spectrum predictor
+  // n tweaks
+  const int n = 3;
+
+  // Book histograms
+  TH1D * hEreco[n];
+
+  // Create & config superk spectrum predictor
   const char * config = Form("%s/config/%s", gSystem->Getenv("T2KOSCANA"), config_file);
   cout << "Reading analysis configuration from: " << config << endl;
   SuperkExpectation skexp;
   skexp.Read(config);
 
-  // generate predictions
+  // Generate predictions
   for(int i = 0; i < n; i++) {
      cout << "Generating SuperK spectrum number: " << i << endl; 
      // tweak spectrum generation model
@@ -70,7 +79,7 @@ void test_sk_ereco_spectrum_twk_nd280_eff
      hEreco[i]->SetDirectory(0);
   }//i
 
-  // calculate err envelopes
+  // Calculate err envelopes
   TH1D * alo = new TH1D("alo",  "spectrum err envelope: low  boundary",            conv::kNErecoBins1Rmu,conv::kErecoBinEdges1Rmu);
   TH1D * ahi = new TH1D("ahi",  "spectrum err envelope: high boundary",            conv::kNErecoBins1Rmu,conv::kErecoBinEdges1Rmu);
   TH1D * flo = new TH1D("flo",  "spectrum fractional err envelope: low  boundary", conv::kNErecoBins1Rmu,conv::kErecoBinEdges1Rmu);
@@ -109,8 +118,8 @@ void test_sk_ereco_spectrum_twk_nd280_eff
   flo->Draw("same");
   fhi->Draw("same");
 
-  // write-out in file
-  string oscparams = util::AsString(hypothesis,
+  // Write-out in file
+  string oscparams = util::AsString(ph.Hypothesis(),
      input_mixing12,input_mixing13,input_mixing23,input_deltacp,input_dm12sq,input_dm23sq);
   TFile f(Form("sk_ereco_spectrum-twk_nd280_eff-%s.root",oscparams.c_str()),"recreate");
   hEreco[0]->Write("sk_ereco_spectrum_twk_nd280_eff_nominal");
