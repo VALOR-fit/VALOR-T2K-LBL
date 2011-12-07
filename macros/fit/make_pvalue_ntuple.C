@@ -1,11 +1,14 @@
 //
 // ------------------------------------------------------------------------------------------------
+// Make an ntuple used for estimating p-values for the null hypothesis
+// Save two test-statistics: \chi^2 and Nsk
 //
 // Costas Andreopoulos
 // ------------------------------------------------------------------------------------------------
 //
 
-void make_pvalue_ntuple(
+void make_pvalue_ntuple
+(
   const char * tag                     = "pv",                           /* */
   int          run                     = 0,                              /* */
   int          nexperiments            = 10,                             /* */
@@ -23,8 +26,8 @@ void make_pvalue_ntuple(
   const char * config = Form("%s/config/%s", gSystem->Getenv("T2KOSCANA"), config_file);
 
   // Global options
-  Opt::Instance()->gOscMixingParamChoice = conv::kNuMixSinsq2Theta;
-  Opt::Instance()->gMassHierarchyAssumed = conv::kNmhNormal;
+  Opt::Instance()->gOscMixingParamChoice = kNuMixSinsq2Theta;
+  Opt::Instance()->gMassHierarchyAssumed = kNmhNormal;
 
   // Print settings
   cout << "[Job inputs]" << endl;
@@ -40,10 +43,10 @@ void make_pvalue_ntuple(
 
   // Fit params - specify appropriate null hypothesis
   FitParamList * fparm = FitParamList::NamedParameterList(fit_param_list);
-  conv::PhysHypothesis_t hyp = fparm->PhysicsHypothesis();
+  PhysHypothesis_t hyp = fparm->PhysicsHypothesis();
   cout << "Specified physics hypothesis: " << util::AsString(hyp) << endl;
   if(hyp == kHypOsc3F) {
-  //fparm->Update(kPhypMixing12, 0.);
+  //fparm->Update(kPhypMixing12, 0.); // allow solar osc. as part of the null hypothesis
     fparm->Update(kPhypMixing13, 0.);
     fparm->Update(kPhypMixing23, 0.);
     fparm->Update(kPhypDeltaCP,  0.);
@@ -61,7 +64,7 @@ void make_pvalue_ntuple(
   skexp->Read(config);
 
   // Output ntuple
-  TNtupleD * pvnt = new TNtupleD("pvnt","", "iexp:chisq");
+  TNtupleD * pvnt = new TNtupleD("pvnt","", "chisq_1Rmu:nsk_1Rmu");
 
   // Toy MC expt loop
   for(int iexperiment = 0; iexperiment < nexperiments; iexperiment++) {
@@ -89,11 +92,17 @@ void make_pvalue_ntuple(
         skobs->CreateMockData(*skexp, *fparm, stat_fluctuations);
      }
 
-     // Calc & store chisq
+     // Calc chisq
      FitInputs * fit_inputs = new FitInputs(skobs,skexp,fparm);
      double chisq = fit_inputs->Chisquare();
-     cout << "Chisq = " << chisq << endl;
-     pvnt->Fill(iexperiment, chisq);
+
+     // Calc Nsk
+     double nsk = skobs->NumOfEvents(kSKsFCFV1RingMuLike);
+
+     // Print test statistics
+     cout << "1Rmu: chisq = " << chisq << ", Nsk = " << nsk << endl;
+
+     pvnt->Fill(chisq,nsk);
 
      delete skobs;
      delete fit_inputs;
