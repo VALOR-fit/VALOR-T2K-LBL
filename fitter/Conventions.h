@@ -137,50 +137,58 @@ ND280Mode_t;
 typedef enum EPhysParamId 
 {   
    kPhypUndefined = -1, 
-   kPhypMixing23,            // 23-mixing parameter (either sin^2(2*\theta_{23}) or sin^2(\theta_{23}) depending on config choices)
-   kPhypMixing13,            // 13-mixing parameter (either sin^2(2*\theta_{13}) or sin^2(\theta_{13}) depending on config choices)
-   kPhypMixing12,            // 12-mixing parameter (either sin^2(2*\theta_{12}) or sin^2(\theta_{12}) depending on config choices)
-   kPhypDeltaCP,             // CP-invariance violating phase 
-   kPhypDm23sq,              // modulus of squared-mass splitting \Deltam_{23}^{2} (always positive independent of mass hierarchy) 
-   kPhypDm12sq,              // squared-mass splitting \Deltam_{12}^{2} 
-   kPhypAlphaDecay,          //
-   kPhypSinsq2ThetaDecay,    // 
-   kPhypMusqDecoh,           //
-   kPhypSinsq2ThetaDecoh,    // 
-   kNuisSuperkEffCCQEoth,    //
-   kNuisSuperkEffCCQErc0u,   //
-   kNuisSuperkEffCCQErc1u,   //
-   kNuisSuperkEffCCQErc2u,   //
-   kNuisSuperkEffCCnonQE,    //
-   kNuisSuperkEffNC,         //
-   kNuisSuperkEffNueCC,      //
-   kNuisSuperkEnergyScale,   //
-   kNuisNd280Eff,            //
-   kNuisFluxNorm,            //
-   kNuisFluxShapeNuMu0u,     //
-   kNuisFluxShapeNuMu1u,     //
-   kNuisFluxShapeNuMu2u,     //
-   kNuisFluxShapeNuMu3u,     //
-   kNuisFluxShapeNuMu4u,     //
-   kNuisFluxShapeNuMu5u,     //
-   kNuisFluxShapeNuMu6u,     //
-   kNuisFluxShapeNuMu7u,     //
-   kNuisFluxShapeNuMu8u,     //
-   kNuisFluxShapeNuMu9u,     //
-   kNuisFluxShapeNuMu10u,    //
-   kNuisFluxShapeNuMu11u,    //
-   kNuisFluxShapeNuMu12u,    //
-   kNuisFluxShapeNuMu13u,    //
-   kNuisFluxShapeNuMu14u,    //
-   kNuisFluxShapeNuMu15u,    //
-   kNuisFluxShapeNuMu16u,    //
-   kNuisFluxShapeNuMu17u,    //
-   kNuisFluxShapeNuMu18u,    //
-   kNuisXSecCCQE,            //  
-   kNuisXSecCC1piToCCQE,     //
-   kNuisXSecCCothToCCQE,     //
-   kNuisXSecNCToCCQE,        //
-   kNuisXSecNuclEffect       //
+   kPhypMixing23,              // 23-mixing parameter (either sin^2(2*\theta_{23}) or sin^2(\theta_{23}) depending on config choices)
+   kPhypMixing13,              // 13-mixing parameter (either sin^2(2*\theta_{13}) or sin^2(\theta_{13}) depending on config choices)
+   kPhypMixing12,              // 12-mixing parameter (either sin^2(2*\theta_{12}) or sin^2(\theta_{12}) depending on config choices)
+   kPhypDeltaCP,               // CP-invariance violating phase 
+   kPhypDm23sq,                // modulus of squared-mass splitting \Deltam_{23}^{2} (always positive independent of mass hierarchy) 
+   kPhypDm12sq,                // squared-mass splitting \Deltam_{12}^{2} 
+   kPhypAlphaDecay,            //
+   kPhypSinsq2ThetaDecay,      // 
+   kPhypMusqDecoh,             //
+   kPhypSinsq2ThetaDecoh,      // 
+   kNuisSuperkEff1RmuCCQEoth,  //
+   kNuisSuperkEff1RmuCCQErc0u, //
+   kNuisSuperkEff1RmuCCQErc1u, //
+   kNuisSuperkEff1RmuCCQErc2u, //
+   kNuisSuperkEff1RmuCCnonQE,  //
+   kNuisSuperkEff1RmuNC,       //
+   kNuisSuperkEff1RmuNueCC,    //
+   kNuisSuperkEff1ReSig,       //
+   kNuisSuperkEff1ReBkg,       //
+   kNuisSuperkEnergyScale,     //
+   kNuisNd280Eff,              //
+   kNuisNd280Norm,             //
+   kNuisFluxNorm,              //
+   kNuisFluxShapeNuMu0u,       //
+   kNuisFluxShapeNuMu1u,       //
+   kNuisFluxShapeNuMu2u,       //
+   kNuisFluxShapeNuMu3u,       //
+   kNuisFluxShapeNuMu4u,       //
+   kNuisFluxShapeNuMu5u,       //
+   kNuisFluxShapeNuMu6u,       //
+   kNuisFluxShapeNuMu7u,       //
+   kNuisFluxShapeNuMu8u,       //
+   kNuisFluxShapeNuMu9u,       //
+   kNuisFluxShapeNuMu10u,      //
+   kNuisFluxShapeNuMu11u,      //
+   kNuisFluxShapeNuMu12u,      //
+   kNuisFluxShapeNuMu13u,      //
+   kNuisFluxShapeNuMu14u,      //
+   kNuisFluxShapeNuMu15u,      //
+   kNuisFluxShapeNuMu16u,      //
+   kNuisFluxShapeNuMu17u,      //
+   kNuisFluxShapeNuMu18u,      //
+   kNuisXSecCCQE,              //  
+   kNuisXSecCC1piToCCQE,       //
+   kNuisXSecCCcohToCCQE,       //
+   kNuisXSecCCothToCCQE,       //
+   kNuisXSecNCToCCQE,          //
+   kNuisXSecNC1pi0ToCCQE,      //
+   kNuisXSecNCcohToCCQE,       //
+   kNuisXSecNCothToCCQE,       //
+   kNuisXSecNuEToNuMu,         //
+   kNuisXSecNuclEffect         //
 } 
 PhysParamId_t;
 

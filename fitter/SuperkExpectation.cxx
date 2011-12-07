@@ -557,29 +557,37 @@ void SuperkExpectation::SetNuisanceParams(const FitParamList & fp)
 
    //Note that this function has NOT been updated with the new systematics errors for the nue analysis
 
-   if(fp.Exists(kNuisSuperkEffCCQEoth)) {
+   if(fp.Exists(kNuisSuperkEff1RmuCCQEoth)) {
      double twk = fp.CurrValue(kNuisSuperkEffCCQEoth);
      this->GetSuperkMC()->TweakOtherEfficiencyCCQE(twk);
    }
-   if(fp.Exists(kNuisSuperkEffCCQErc0u) &&
-      fp.Exists(kNuisSuperkEffCCQErc1u) &&
-      fp.Exists(kNuisSuperkEffCCQErc2u)) {
-     double twk0 = fp.CurrValue(kNuisSuperkEffCCQErc0u);
-     double twk1 = fp.CurrValue(kNuisSuperkEffCCQErc1u);
-     double twk2 = fp.CurrValue(kNuisSuperkEffCCQErc2u);
+   if(fp.Exists(kNuisSuperkEff1RmuCCQErc0u) &&
+      fp.Exists(kNuisSuperkEff1RmuCCQErc1u) &&
+      fp.Exists(kNuisSuperkEff1RmuCCQErc2u)) {
+     double twk0 = fp.CurrValue(kNuisSuperkEff1RmuCCQErc0u);
+     double twk1 = fp.CurrValue(kNuisSuperkEff1RmuCCQErc1u);
+     double twk2 = fp.CurrValue(kNuisSuperkEff1RmuCCQErc2u);
      this->GetSuperkMC()->TweakRingCountingEfficiencyCCQE(true,twk0,twk1,twk2,false);
    }
-   if(fp.Exists(kNuisSuperkEffCCnonQE)) {
-     double twk = fp.CurrValue(kNuisSuperkEffCCnonQE);
+   if(fp.Exists(kNuisSuperkEff1RmuCCnonQE)) {
+     double twk = fp.CurrValue(kNuisSuperkEff1RmuCCnonQE);
      this->GetSuperkMC()->TweakEfficiencyCCnonQE(twk);
    }
-   if(fp.Exists(kNuisSuperkEffNC)) {
-     double twk = fp.CurrValue(kNuisSuperkEffNC);
+   if(fp.Exists(kNuisSuperkEff1RmuNC)) {
+     double twk = fp.CurrValue(kNuisSuperkEff1RmuNC);
      this->GetSuperkMC()->TweakEfficiencyNC(twk);     
    }
-   if(fp.Exists(kNuisSuperkEffNueCC)) {
-     double twk = fp.CurrValue(kNuisSuperkEffNueCC);
+   if(fp.Exists(kNuisSuperkEff1RmuNueCC)) {
+     double twk = fp.CurrValue(kNuisSuperkEff1RmuNueCC);
      this->GetSuperkMC()->TweakEfficiencyNuECC(twk);
+   }
+   if(fp.Exists(kNuisSuperkEff1ReSig)) {
+     double twk = fp.CurrValue(kNuisSuperkEff1ReSig);
+     this->GetSuperkMC()->TweakEfficiency1ReSig(twk);
+   }
+   if(fp.Exists(kNuisSuperkEff1ReBkg)) {
+     double twk = fp.CurrValue(kNuisSuperkEff1ReBkg);
+     this->GetSuperkMC()->TweakEfficiency1ReBkg(twk);
    }
    if(fp.Exists(kNuisSuperkEnergyScale)) {
      double twk = fp.CurrValue(kNuisSuperkEnergyScale);
@@ -644,6 +652,10 @@ void SuperkExpectation::SetNuisanceParams(const FitParamList & fp)
      double twk = fp.CurrValue(kNuisXSecCC1piToCCQE);
      this->GetNuXSec()->TweakCC1piToCCQE(twk);
    }
+   if(fp.Exists(kNuisXSecCCcohToCCQE)) {
+     double twk = fp.CurrValue(kNuisXSecCCcohToCCQE);
+     this->GetNuXSec()->TweakCCCohToCCQE(twk);
+   }
    if(fp.Exists(kNuisXSecCCothToCCQE)) {
      double twk = fp.CurrValue(kNuisXSecCCothToCCQE);
      this->GetNuXSec()->TweakCCOthToCCQE(twk);
@@ -651,6 +663,22 @@ void SuperkExpectation::SetNuisanceParams(const FitParamList & fp)
    if(fp.Exists(kNuisXSecNCToCCQE)) {
      double twk = fp.CurrValue(kNuisXSecNCToCCQE);
      this->GetNuXSec()->TweakNCToCCQE(twk);
+   }
+   if(fp.Exists(kNuisXSecNC1pi0ToCCQE)) {
+     double twk = fp.CurrValue(kNuisXSecNC1pi0ToCCQE);
+     this->GetNuXSec()->TweakNC1pi0ToCCQE(twk);
+   }
+   if(fp.Exists(kNuisXSecNCcohToCCQE)) {
+     double twk = fp.CurrValue(kNuisXSecNCcohToCCQE);
+     this->GetNuXSec()->TweakNCCohToCCQE(twk);
+   }
+   if(fp.Exists(kNuisXSecNCothToCCQE)) {
+     double twk = fp.CurrValue(kNuisXSecNCothToCCQE);
+     this->GetNuXSec()->TweakNCOthToCCQE(twk);
+   }
+   if(fp.Exists(kNuisXSecNuEToNuMu)) {
+     double twk = fp.CurrValue(kNuisXSecNuEToNuMu);
+     this->GetNuXSec()->TweakNuEToNuMu(twk);
    }
    if(fp.Exists(kNuisXSecNuclEffect)) {
      double twk = fp.CurrValue(kNuisXSecNuclEffect);
