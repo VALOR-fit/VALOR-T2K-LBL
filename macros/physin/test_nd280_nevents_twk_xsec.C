@@ -8,10 +8,12 @@
 
 #include <iomanip.h>
 
-#include "Conventions.h"
+//#include "Conventions.h"
 
 void test_nd280_nevents_twk_xsec
 (
+   const char * systematic  = "cc1pi_to_ccqe",                          /* xsec systematic to tweak. allowed values are:*/
+								       //cc1pi_to_ccqe ccoth_to_ccqe nc_to_ccqe nue_to_numu
    const char * config_file = "analysis_configuration.xml"  /* analysis configuration file */
 )
 {
@@ -34,9 +36,19 @@ void test_nd280_nevents_twk_xsec
   for(int i = 0; i < n; i++) {
 
      double twkdial = rand.Gaus(0,1);
-   //skexp.GetNuXSec()->TweakCC1piToCCQEXSecRatio(twkdial);
-   //skexp.GetNuXSec()->TweakCCOthToCCQEXSecRatio(twkdial);
-   skexp.GetNuXSec()->TweakNCToCCQEXSecRatio   (twkdial);
+     if(systematic == "cc1pi_to_ccqe")
+       skexp.GetNuXSec()->TweakCC1piToCCQE(twkdial);
+     else if(systematic == "ccoth_to_ccqe")
+       skexp.GetNuXSec()->TweakCCOthToCCQE(twkdial);
+     else if(systematic == "nc_to_ccqe")
+       skexp.GetNuXSec()->TweakNCToCCQE   (twkdial);
+     else if(systematic == "nue_to_numu")
+       skexp.GetNuXSec()->TweakNuEToNuMu  (twkdial);
+     else {
+       cout << "\nUnknown systematic parameter " << systematic 
+	    << ". Valid values are: cc1pi_to_ccqe ccoth_to_ccqe nc_to_ccqe nue_to_numu\n" << endl;
+       return;
+     }
 
      double nobscclike_nd280  = skexp.GetND280Measurement()->NObsCCLike();
      double nexpncbkg_nd280   = skexp.GetND280Measurement()->NExpNCBkg();

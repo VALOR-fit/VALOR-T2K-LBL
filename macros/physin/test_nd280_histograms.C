@@ -9,7 +9,7 @@
 void test_nd280_histograms
 (
    string generator = "neut",     /*  "neut" or "genie" */
-   int    flux10dvrs = 2          /*   2 --> 10d_v2, 3 --> 10d_v3 */
+   int    flux10dvrs = 3          /*   2 --> 10d_v2, 3 --> 10d_v3 */
 )
 
 {

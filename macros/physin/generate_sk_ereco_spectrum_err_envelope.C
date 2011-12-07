@@ -6,11 +6,13 @@
 // ------------------------------------------------------------------------------------------------
 //
 
-#include "Conventions.h"
+//#include "Conventions.h"
 
 void generate_sk_ereco_spectrum_err_envelope
 (
   const char * hypothesis         = "3f_osc",                       /* options: "2f_numu_disap", "3f_osc" */
+  const char * mixing             = "sinsq2theta",                  /* options: "sinsq2theta", "sinsqtheta" */
+  const char * hierarchy          = "normal",                       /* options: "normal", "inverted" */
   double       input_mixing12     = 0.86,                           /* */
   double       input_mixing13     = 0.10,                           /* */
   double       input_mixing23     = 1.00,                           /* */
@@ -25,15 +27,15 @@ void generate_sk_ereco_spectrum_err_envelope
   using namespace std;
   using namespace t2kana;
 
-  const int nexp = 5000; // number of toy MC experiments
+  const int nexp = 5; // number of toy MC experiments
 
   // Analysis confifuration
   const char * config = Form("%s/config/%s", gSystem->Getenv("T2KOSCANA"), config_file);
   cout << "Reading analysis configuration from: " << config << endl;
 
   // Global options
-  Opt::Instance()->gOscMixingParamChoice = conv::kNuMixSinsq2Theta;
-  Opt::Instance()->gMassHierarchyAssumed = conv::kNmhNormal;
+  Opt::Instance()->gOscMixingParamChoice = util::MixingTypeFromString(mixing);
+  Opt::Instance()->gMassHierarchyAssumed = util::HierarchyFromString(hierarchy);
   cout << *Opt::Instance() << endl;
 
   // Output histograms and graphs
@@ -145,7 +147,7 @@ void generate_sk_ereco_spectrum_err_envelope
   c->Update();
 
   // Write-out in file
-  string oscparams = util::AsString(hypothesis,
+  string oscparams = util::AsString(ph.Hypothesis(),
      input_mixing12,input_mixing13,input_mixing23,input_deltacp,input_dm12sq,input_dm23sq);
   TFile f(Form("sk_ereco_spectrum-err_envelope-%s.root",oscparams.c_str()),"recreate");
   hErecoFracErrP -> Write("spectrum_frac_err_plus");

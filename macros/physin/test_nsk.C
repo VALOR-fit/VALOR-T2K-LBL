@@ -12,11 +12,11 @@
 
 void test_nsk
 (
-  double mixing13 = 0,
+  double mixing13 = 0.1,
   double mixing23 = 1,
-  double mixing12 = 0.8704,
-  double dm23sq = 0.0024,
-  double dm12sq = 0.000076,
+  double mixing12 = 0.86,
+  double dm23sq = 2.32E-3,
+  double dm12sq = 7.58E-5,
   double deltacp = 0,
   t2kana::conv::NuMassHierarchy_t hier = t2kana::conv::kNmhNormal, //or t2kana::conv::kNMhInverted
   const char * config_file = "analysis_configuration.xml"

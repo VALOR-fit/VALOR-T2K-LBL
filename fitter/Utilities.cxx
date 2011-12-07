@@ -51,6 +51,8 @@
  @ 05/12/2011 - CA
    Added `string AsString(NuOscMixParam_t)', `const int NumErecoBins(SuperkSample_t)'
    and `const double * ErecoBinEdges (SuperkSample_t s)'.
+ @ 07/12/2011 - TD
+   Added 'NuMassHierarchy_t HierarchyFromString(string)' and 'NuOscMixParam_t MixingTypeFromString(string)'
 
 */
 //____________________________________________________________________________
@@ -860,6 +862,20 @@ t2kana::conv::SuperkSample_t t2kana::util::SKSampleFromString(string sh)
   if(sh == "1Re" ) return kSKsFCFV1RingELike;
 
   return kSKsUndefined;
+}
+//____________________________________________________________________________
+t2kana::conv::NuMassHierarchy_t  t2kana::util::HierarchyFromString(string sh) {
+  if(sh == "normal"   ) return kNmhNormal;
+  if(sh == "inverted" ) return kNmhInverted;
+  
+  return kNmhUndefined;
+}
+//____________________________________________________________________________
+t2kana::conv::NuOscMixParam_t    t2kana::util::MixingTypeFromString(string sh) {
+  if(sh == "sinsq2theta") return kNuMixSinsq2Theta;
+  if(sh == "sinsqtheta" ) return kNuMixSinsqTheta;
+  
+  return kNuMixUndefined;
 }
 //____________________________________________________________________________
 t2kana::conv::OscChannelId_t 
