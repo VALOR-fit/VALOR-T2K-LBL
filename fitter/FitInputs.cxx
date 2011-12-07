@@ -79,13 +79,20 @@ double FitInputs::Chisquare(Option_t * option, conv::SuperkSample_t s0)
 
   double chisq = 0;
 
-  // loop over samples (activated)
-  for(int is = 0; is < kns; is++) {
+  // loop over samples included in the analysis
+  for(int is = 0; is < kns; is++) 
+  {
     SuperkSample_t s = kSKSamples[is];
+    if (s == conv::kSKsUndefined) continue;
 
+    // If input is s0 = kSKsUndefined then go ahead and calculate a chisq which
+    // is the sum of chisq for all samples included in the analysis.
+    // If a s0 is specified, then calculate the chisq only for this sample
     if(s0 != conv::kSKsUndefined && s != s0) continue;
 
+    //
     // 1Rmu
+    //
     if (s == conv::kSKsFCFV1RingMuLike)
     {
       this->Expectation().Generate(this->FitParams());
@@ -113,24 +120,16 @@ double FitInputs::Chisquare(Option_t * option, conv::SuperkSample_t s0)
           << "; [" << xlo << ", " << xup << "] GeV) = " << delta_chisq << endl;
 #endif
       }//ibin
-
-      // add penalty term for parameters declared as nuisance (and having values
-      // in units of sigma)
-      double chisq_penalty = this->FitParams().ChisquarePenaltyTerm();
-      chisq += chisq_penalty;
-      
-#ifdef __show_chisq__
-      cout << "FitInputs::Chisquare()> chisq = " << chisq 
-	   << " (contribution from penalty term = " << chisq_penalty << ")" 
-	   << endl;
-#endif
     }
 
+    //
     // 1Re
+    //
     else 
     if (s == conv::kSKsFCFV1RingELike)
     {
       this->Expectation().Generate(this->FitParams());
+      // Note: Counting experiment for the time-being
       double nobs = this->Observation().ErecoSpectrum(s)->Integral();
       double nexp = this->Expectation().CurrPredictedErecoSpectrum(s)->Integral();
       
@@ -145,14 +144,22 @@ double FitInputs::Chisquare(Option_t * option, conv::SuperkSample_t s0)
 	   << " (contribution from penalty term = " << chisq_penalty << ")" 
 	   << endl;
 #endif
-      }//third case: undefined
-      else 
-	if ( s == conv::kSKsUndefined){
-	  //cout << "Undefined sample" << endl;   
-	}
+      }
   
   }//loop over samples
   
+  //
+  // Add penalty term for parameters declared as nuisance 
+  //
+  double chisq_penalty = this->FitParams().ChisquarePenaltyTerm();
+  chisq += chisq_penalty;      
+#ifdef __show_chisq__
+  cout << "FitInputs::Chisquare()> chisq = " << chisq 
+       << " (contribution from penalty term = " << chisq_penalty << ")" 
+       << endl;
+#endif
+
+
   return chisq;
 }
 //____________________________________________________________________________ 
