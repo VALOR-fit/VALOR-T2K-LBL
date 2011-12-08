@@ -36,7 +36,6 @@ public:
 
   void SetBaseline      (double length);
   void SetDensity       (double density);
-  void SetTheta23Octant (int octant);
   void SetMassHierarchy (t2kana::conv::NuMassHierarchy_t h); 
   void SetOscParameters (double sinsq2theta12, /* sin^2(2*theta_{12}) */
                          double sinsq2theta13, /* sin^2(2*theta_{13}) */
@@ -118,7 +117,6 @@ private:
 
  bool useEquations12;
  int nFlavourIndex;
- int theta23Octant;
 };
 
 }//end of namespace t2kana

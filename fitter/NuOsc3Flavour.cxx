@@ -55,8 +55,6 @@ void NuOsc3Flavour::Init()
 
   // set default density 
   this->SetDensity(kCrustDensity);
-
-  this->SetTheta23Octant(1);
 }
 //________________________________________________________________________________________
 void NuOsc3Flavour::SetBaseline(double length)
@@ -79,11 +77,6 @@ void NuOsc3Flavour::SetMassHierarchy(NuMassHierarchy_t h)
   cout << "NuOsc3Flavour >> Mass hierarchy assumed: " << util::AsString(h) << endl;
 
   fMassHierarchy = h;
-}
-//________________________________________________________________________________________                                                                                                           
-void NuOsc3Flavour::SetTheta23Octant(int octant)
-{
-  theta23Octant = octant;
 }
 //________________________________________________________________________________________
 void NuOsc3Flavour::SetOscParameters(
@@ -121,13 +114,6 @@ void NuOsc3Flavour::SetOscParameters(
   double c12 = sqrt(1 - s12 * s12);
   double c13 = sqrt(1 - s13 * s13);
   double c23 = sqrt(1 - s23 * s23);
-
-  double theta23Octant2 = 1.57079632675 - asin(s23);
-  if(theta23Octant == 2)  
-    {
-    s23 = sin(theta23Octant2);
-    c23 = cos(theta23Octant2);
-    }
 
   modUe1sq = c12*c12*c13*c13;
   modUe2sq = c13*c13*s12*s12;
@@ -229,13 +215,6 @@ void NuOsc3Flavour::SetOscParametersSinSqTAll(
   double c13 = sqrt(1 - s13 * s13);
   double c23 = sqrt(1 - s23 * s23);
 
-  double theta23Octant2 = 1.57079632675 - asin(s23);
-  if(theta23Octant == 2)
-    {
-      s23 = sin(theta23Octant2);
-      c23 = cos(theta23Octant2);
-    }
-
   modUe1sq = c12*c12*c13*c13;
   modUe2sq = c13*c13*s12*s12;
   modUe3sq = s13*s13;
@@ -336,13 +315,6 @@ void NuOsc3Flavour::SetOscParametersSinSqT23(
   double c12 = sqrt(1 - s12 * s12);
   double c13 = sqrt(1 - s13 * s13);
   double c23 = sqrt(1 - s23 * s23);
-
-  double theta23Octant2 = 1.57079632675 - asin(s23);
-  if(theta23Octant == 2)
-    {
-      s23 = sin(theta23Octant2);
-      c23 = cos(theta23Octant2);
-    }
 
   modUe1sq = c12*c12*c13*c13;
   modUe2sq = c13*c13*s12*s12;
