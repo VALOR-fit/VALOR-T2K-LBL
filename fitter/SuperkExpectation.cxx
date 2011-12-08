@@ -214,7 +214,7 @@ void SuperkExpectation::Generate(const PhysHypothesis & ph)
          if(m == kSKmUndefined) continue;
          FluxNormErrIdx_t smerridx = util::FindFluxNormErrIdx(s,m);
          if(smerridx == kFlxnUndefined) continue;
-         this->CurrPredictedErecoSpectrum(s,m)-> Scale (beam_norm[1]);
+         this->CurrPredictedErecoSpectrum(s,m)-> Scale (beam_norm[smerridx]);
        }
      }
 
