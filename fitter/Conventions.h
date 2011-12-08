@@ -256,6 +256,19 @@ typedef enum ESKMCTemplateType
 } 
 SKMCTemplateType_t;
 
+// Flux normalization error for (1Rmu, 1Re total, 1Re sig, 1Re bkg) is stored in an array.
+// Use this enumeration so as not to have to remember the indices.
+static const int kNFluxNormErrs = 4; 
+typedef enum EFluxNormErrIdx
+{   
+   kFlxnUndefined = -1, 
+   kFlxn1Rmu      =  0, 
+   kFlxn1ReSig    =  1, 
+   kFlxn1ReBkg    =  2, 
+   kFlxn1ReTot    =  3
+} 
+FluxNormErrIdx_t;
+
 //
 // ------------------------------------------------------------------------
 // Choice of samples included in the analysis and

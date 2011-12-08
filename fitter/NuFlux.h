@@ -43,12 +43,14 @@ public:
   double              SuperkNuMuFluxPOT             (void) const;
   const TMatrixD &    SuperkNuMuFluxCov             (void) const; ///< Superk flux covariance matrix
   double              SuperkNuMuFluxShapeWeight     (double Etrue);
-  double              SuperkFluxNormErr             (TH1D * hnumu1Rmu, TH1D * hnumubar1Rmu, TH1D * hnue1Rm,
+  double*             SuperkFluxNormErr             (TH1D * hnumu1Rmu, TH1D * hnumubar1Rmu, TH1D * hnue1Rmu,
+                                                     TH1D * hnumu1Re, TH1D * hnumubar1Re, TH1D * hnue1Re, TH1D * hnuesig1Re,
                                                      TH1D * hnumuND, TH1D * hnumubarND, TH1D * hnueND) const; ///< normalization err
-  double              SuperkFluxNorm                (TH1D * hnumu1Rmu, TH1D * hnumubar1Rmu, TH1D * hnue1Rm,
+  double*             SuperkFluxNorm                (TH1D * hnumu1Rmu, TH1D * hnumubar1Rmu, TH1D * hnue1Rmu,
+                                                     TH1D * hnumu1Re, TH1D * hnumubar1Re, TH1D * hnue1Re, TH1D * hnuesig1Re,
                                                      TH1D * hnumuND, TH1D * hnumubarND, TH1D * hnueND) const; ///< normalization
   bool                UsingKuboSansCode             (void) { return (fHEC!=0); }
-  bool                NormTweaked                   (void) { return (fSuperkNuMuFluxNormTwkDial!=0); }
+  bool                NormTweaked                   (void) { return (fSuperkFluxNormTwkDial!=0); }
   bool                ShapeTweaked                  (void) { return (fFluxShapeWasTweaked && !fIgnoreFluxShapeTweaks); }
    
   // Systematic variations (norm + shape)
@@ -86,7 +88,7 @@ private:
   TH1D *        fSuperkNuMuWght10aTo10d;       ///< SuperK numu    flux weights (10a -> 10d)
   TH1D *        fSuperkNuMuBarWght10aTo10d;    ///< SuperK numubar flux weights (10a -> 10d)
   TH1D *        fSuperkNuEWght10aTo10d;        ///< SuperK nue     flux weights (10a -> 10d)
-  double        fSuperkNuMuFluxNormTwkDial;    ///<
+  double        fSuperkFluxNormTwkDial;        ///< flux normalization tweaking dial (1Re and 1Rmu tweaked coherently)
   bool          fSuperkNuMuFluxHaveCholeskyL;  ///<
   TMatrixD *    fSuperkNuMuFluxCovCholeskyL;   ///<
   TH1D *        fSuperkNuMuFluxTweaked;        ///< Tweaked SuperK numu flux estimation (50 MeV binning)

@@ -53,7 +53,10 @@
    and `const double * ErecoBinEdges (SuperkSample_t s)'.
  @ 07/12/2011 - TD
    Added 'NuMassHierarchy_t HierarchyFromString(string)' and 'NuOscMixParam_t MixingTypeFromString(string)'
-
+ @ 08/12/2011 - CA
+   Added 'FluxNormErrIdx_t FindFluxNormErrIdx (SuperkSample_t)' and
+   'FluxNormErrIdx_t FindFluxNormErrIdx (SuperkSample_t, SuperkMode_t)'
+   Added AsString(FluxNormErrIdx_t)
 */
 //____________________________________________________________________________
 
@@ -469,6 +472,35 @@ int t2kana::util::FindModeSlot(
   return -1;
 }
 //____________________________________________________________________________
+FluxNormErrIdx_t t2kana::util::FindFluxNormErrIdx (
+  t2kana::conv::SuperkSample_t s)
+{
+  if(s == kSKsFCFV1RingMuLike) {
+     return conv::kFlxn1Rmu;
+  }
+  else
+  if(s == kSKsFCFV1RingELike) {
+     return conv::kFlxn1ReTot;
+  }
+  return conv::kFlxnUndefined;
+}
+//____________________________________________________________________________
+FluxNormErrIdx_t t2kana::util::FindFluxNormErrIdx (
+  t2kana::conv::SuperkSample_t s, t2kana::conv::SuperkMode_t m)
+{
+  if(s == kSKsFCFV1RingMuLike) {
+     if(m == kSKmUndefined) return conv::kFlxnUndefined;
+     return conv::kFlxn1Rmu;
+  }
+  else
+  if(s == kSKsFCFV1RingELike) {
+     if (m == kSKmUndefined   ) return conv::kFlxnUndefined;
+     if (util::IsSignalNuE(m) ) return conv::kFlxn1ReSig;
+     return conv::kFlxn1ReBkg;
+  }
+  return conv::kFlxnUndefined;
+}
+//____________________________________________________________________________
 string t2kana::util::AsString (
   t2kana::conv::PhysHypothesis_t hyp, 
   double mix12, double mix13, double mix23, 
@@ -797,6 +829,18 @@ string t2kana::util::AsString(t2kana::conv::OscChannelId_t osch)
   }
   return "--";
 } 
+//____________________________________________________________________________
+string t2kana::util::AsString(t2kana::conv::FluxNormErrIdx_t idx)
+{
+  switch(idx) {
+    case ( kFlxn1Rmu   ) : return "1Rmu";     break;
+    case ( kFlxn1ReSig ) : return "1Re[sig]"; break;
+    case ( kFlxn1ReBkg ) : return "1Re[bkg]"; break;
+    case ( kFlxn1ReTot ) : return "1Re[tot]"; break;
+    default:               return "--";       break;
+  }
+  return "";
+}
 //____________________________________________________________________________
 string t2kana::util::AsStringTex(t2kana::conv::SuperkSample_t s)
 {

@@ -53,9 +53,13 @@ public:
 
   // Integrate current MC templates and get Etrue spectra (needed for flux normalisation error calculation)
   void  UpdateEtrueSpectra  (void);
-  TH1D* Curr1RmuNuMuEtrue   (void) const { return f1RmNuMuEt;    } ///< current (allowing for applied weights) Etrue distribution for numu
+  TH1D* Curr1RmuNuMuEtrue   (void) const { return f1RmNuMuEt;    } ///< current 1Rmu (allowing for applied weights) Etrue distribution for numu
   TH1D* Curr1RmuNuMuBarEtrue(void) const { return f1RmNuMuBarEt; } ///<      -//-  for numubar
   TH1D* Curr1RmuNuEEtrue    (void) const { return f1RmNuEEt;     } ///<      -//-  for nue
+  TH1D* Curr1ReNuMuEtrue    (void) const { return f1ReNuMuEt;    } ///< current 1Re (allowing for applied weights) Etrue distribution for numu
+  TH1D* Curr1ReNuMuBarEtrue (void) const { return f1ReNuMuBarEt; } ///<      -//-  for numubar
+  TH1D* Curr1ReNuEEtrue     (void) const { return f1ReNuEEt;     } ///<      -//-  for nue
+  TH1D* Curr1ReNuESigEtrue  (void) const { return f1ReNuESigEt;  } ///<      -//-  for nue signal
       
   // MC event samples used to fill-in MC templates and POT exposure for each
   TTree * MCTree (t2kana::conv::SuperkSample_t s, t2kana::conv::SuperkMode_t m);
@@ -187,6 +191,10 @@ private:
   TH1D *     f1RmNuMuEt;                   ///< Etrue distribution for 1-Ring mu-like numu    
   TH1D *     f1RmNuMuBarEt;                ///< Etrue distribution for 1-Ring mu-like numubar 
   TH1D *     f1RmNuEEt;                    ///< Etrue distribution for 1-Ring mu-like nue     
+  TH1D *     f1ReNuMuEt;                   ///< Etrue distribution for 1-Ring mu-like numu
+  TH1D *     f1ReNuMuBarEt;                ///< Etrue distribution for 1-Ring mu-like numubar
+  TH1D *     f1ReNuEEt;                    ///< Etrue distribution for 1-Ring mu-like nue (bkg)
+  TH1D *     f1ReNuESigEt;                 ///< Etrue distribution for 1-Ring mu-like nue (sig)
       
   NuFlux *   fNuFlux;                      ///< Neutrino flux analysis inputs
   NuXSec *   fGenInputs;                   ///< Neutrino cross section analysis inputs

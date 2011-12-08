@@ -69,6 +69,9 @@ namespace util {
   int FindSampleSlot(t2kana::conv::SuperkSample_t s);
   int FindModeSlot  (t2kana::conv::SuperkSample_t s, t2kana::conv::SuperkMode_t m);
 
+  t2kana::conv::FluxNormErrIdx_t FindFluxNormErrIdx (t2kana::conv::SuperkSample_t s);
+  t2kana::conv::FluxNormErrIdx_t FindFluxNormErrIdx (t2kana::conv::SuperkSample_t s, t2kana::conv::SuperkMode_t m);
+
   string AsString    (t2kana::conv::PhysHypothesis_t hyp, double mix12, double mix13, double mix23, double deltacp, double dm12sq, double dm23sq);
   string AsString    (t2kana::conv::NuMassHierarchy_t m);
   string AsString    (t2kana::conv::NuOscMixParam_t   p);
@@ -77,6 +80,7 @@ namespace util {
   string AsString    (t2kana::conv::SuperkSample_t    s);
   string AsString    (t2kana::conv::SuperkMode_t      m);
   string AsString    (t2kana::conv::OscChannelId_t    o);
+  string AsString    (t2kana::conv::FluxNormErrIdx_t  i);
   string AsStringTex (t2kana::conv::SuperkSample_t    s);
   string AsStringTex (t2kana::conv::SuperkMode_t      m);
 

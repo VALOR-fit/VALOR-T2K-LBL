@@ -56,6 +56,9 @@
 @  01-06/12/11 - CA,LE,TD
    Updated so that it can be used for both 1Re and 1Rmu samples. Some re-structuring and
    taking care of indexing issues.
+ @ 08/12/11 - LE
+   Add flux norm err for 1Re.
+
 */
 //________________________________________________________________________________________
 
@@ -117,9 +120,9 @@ void SuperkExpectation::Generate(const PhysHypothesis & ph)
   // set params driving the oscillation, decoherence or decay model
   fSuperkMC->Hypothesis().Copy(ph);
 
-  // Ignore flux shape tweak and calculate the number of 1Rmu events.
+  // Ignore flux shape tweak and calculate the number of events.
   // Use that number of events to normalise the prediction obtain when the flux shape tweaking 
-  // is taken into account.
+  // is taken into account. ** Flux shape error applies only to 1Rmu **
   double shape_norm = 1.;
   if(this->GetNuFlux()->ShapeTweaked()) {
 #ifdef __debug_level_2__
@@ -128,7 +131,13 @@ void SuperkExpectation::Generate(const PhysHypothesis & ph)
      this->GetNuFlux()->IgnoreShapeTweaking(true); 
      this->Generate(ph); // generate untweaked predictions
      // get nominal Nsk
-     shape_norm = this->CurrPredictedErecoSpectrum(kSKsFCFV1RingMuLike)->Integral();
+     for(int is = 0; is < kns; is++) {
+       SuperkSample_t s = kSKSamples[is];
+       if(s == kSKsUndefined) continue;
+       if(s == kSKsFCFV1RingMuLike) { 
+         shape_norm = fPredictErecoSpectrumTot[s]->Integral();
+       }
+     }
 #ifdef __debug_level_2__
      cout << "Exp >> Number of 1Rmu events ignoring flux shape tweak (used for normalisation) = " 
           << shape_norm << endl;
@@ -166,42 +175,61 @@ void SuperkExpectation::Generate(const PhysHypothesis & ph)
 
   // include beam normalization err (expressed in terms of Nsk/Nnd280)
   if(this->GetNuFlux()->NormTweaked()) {
-     double beam_norm = 1;
+     double * beam_norm = 0;
      if( this->GetNuFlux()->UsingKuboSansCode() ) {
         // input physics params (params included in the fit / systematics params)
         this -> GetSuperkMC()         -> UpdateEtrueSpectra();
         this -> GetND280Measurement() -> UpdateEtrueSpectra();
         TH1D*  hnumu1Rmu     = this -> GetSuperkMC()         -> Curr1RmuNuMuEtrue    ();
         TH1D*  hnumubar1Rmu  = this -> GetSuperkMC()         -> Curr1RmuNuMuBarEtrue ();
-        TH1D*  hnue1Rm       = this -> GetSuperkMC()         -> Curr1RmuNuEEtrue     ();
+        TH1D*  hnue1Rmu      = this -> GetSuperkMC()         -> Curr1RmuNuEEtrue     ();
+        TH1D*  hnumu1Re      = this -> GetSuperkMC()         -> Curr1ReNuMuEtrue     ();
+        TH1D*  hnumubar1Re   = this -> GetSuperkMC()         -> Curr1ReNuMuBarEtrue  ();
+        TH1D*  hnue1Re       = this -> GetSuperkMC()         -> Curr1ReNuEEtrue      ();
+        TH1D*  hnuesig1Re    = this -> GetSuperkMC()         -> Curr1ReNuESigEtrue   ();
         TH1D*  hnumuND       = this -> GetND280Measurement() -> CurrNuMuEtrue        ();
         TH1D*  hnumubarND    = this -> GetND280Measurement() -> CurrNuMuBarEtrue     ();
         TH1D*  hnueND        = this -> GetND280Measurement() -> CurrNuEEtrue         ();
 
         beam_norm = this->GetNuFlux()->SuperkFluxNorm(
-                   hnumu1Rmu, hnumubar1Rmu, hnue1Rm, hnumuND, hnumubarND, hnueND);
+             hnumu1Rmu, hnumubar1Rmu, hnue1Rmu, 
+             hnumu1Re, hnumubar1Re, hnue1Re, hnuesig1Re,  
+             hnumuND, hnumubarND, hnueND);
      } else {
-        beam_norm = this->GetNuFlux()->SuperkFluxNorm(0,0,0,0,0,0);
+        beam_norm = this->GetNuFlux()->SuperkFluxNorm(0,0,0,0,0,0,0,0,0,0);
      }
 
+     // Apply normalization error
+     // NOTE for nue analysis: The way the BeamWG err calculation code works (different scaling factor for 
+     // tot, and sig/bkg components) means that (once fux norm is tweaked) the sum of sig and bkg spectra 
+     // doesn't equal the total spectrum! This is not relevent for the fitter since only the total is used.
      for(int is = 0; is < kns; is++) {
-        SuperkSample_t s = kSKSamples[is];
-        if(s == kSKsUndefined) continue;
-        this->CurrPredictedErecoSpectrum(s)->Scale(beam_norm);
-        for(int im = 0; im < knm; im++) {
-            SuperkMode_t m = kSKReactionModes[is][im];
-            if(m == kSKmUndefined) continue;
-            this->CurrPredictedErecoSpectrum(s,m)->Scale(beam_norm);
-        }//m	
-     }//s
+       SuperkSample_t s = kSKSamples[is];
+       if(s == kSKsUndefined) continue;
+       FluxNormErrIdx_t serridx = util::FindFluxNormErrIdx(s);
+       if(serridx == kFlxnUndefined) continue;
+       this->CurrPredictedErecoSpectrum(s)->Scale (beam_norm[serridx]);
+       for(int im = 0; im < knm; im++) {
+         SuperkMode_t m = kSKReactionModes[is][im];
+         if(m == kSKmUndefined) continue;
+         FluxNormErrIdx_t smerridx = util::FindFluxNormErrIdx(s,m);
+         if(smerridx == kFlxnUndefined) continue;
+         this->CurrPredictedErecoSpectrum(s,m)-> Scale (beam_norm[1]);
+       }
+     }
+
+     if(beam_norm) {
+       delete [] beam_norm;
+     }
   }//norm tweaked?
 
   if(this->GetNuFlux()->ShapeTweaked()) {
-     double nsktwk = this->CurrPredictedErecoSpectrum(kSKsFCFV1RingMuLike)->Integral();
-     shape_norm /= nsktwk;
      for(int is = 0; is < kns; is++) {
         SuperkSample_t s = kSKSamples[is];
         if(s == kSKsUndefined) continue;
+        if(s != kSKsFCFV1RingMuLike) continue;
+        double nsktwk = this->CurrPredictedErecoSpectrum(kSKsFCFV1RingMuLike)->Integral();
+        shape_norm /= nsktwk;
         this->CurrPredictedErecoSpectrum(s)->Scale(shape_norm);
         for(int im = 0; im < knm; im++) {
             SuperkMode_t m = kSKReactionModes[is][im];

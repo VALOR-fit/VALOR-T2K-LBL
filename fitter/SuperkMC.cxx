@@ -56,6 +56,8 @@
    extended to handle both 1Re and 1Rmu samples. Added Book() functions and accessing
    arrays of 1-D and 2-D spectra only via the CurrErecoSpectrum(s,m) and newly-added
    Template(s,m,type) functions which look-up the proper array indices for the (s,m) pair.
+ @ 08/12/11 - LE
+   Add 4 Etrue histograms needed for calculating flux norm err for 1Re.
 
 */
 //________________________________________________________________________________________
@@ -173,6 +175,10 @@ void SuperkMC::Init(void)
   f1RmNuMuEt      = 0;
   f1RmNuMuBarEt   = 0;
   f1RmNuEEt       = 0;
+  f1ReNuMuEt      = 0;
+  f1ReNuMuBarEt   = 0;
+  f1ReNuEEt       = 0;
+  f1ReNuESigEt    = 0;
 }
 //________________________________________________________________________________________
 void SuperkMC::CleanUp(void)
@@ -198,6 +204,10 @@ void SuperkMC::CleanUp(void)
   if (f1RmNuMuEt   ) delete f1RmNuMuEt;
   if (f1RmNuMuBarEt) delete f1RmNuMuBarEt;
   if (f1RmNuEEt    ) delete f1RmNuEEt;
+  if (f1ReNuMuEt   ) delete f1ReNuMuEt;
+  if (f1ReNuMuBarEt) delete f1ReNuMuBarEt;
+  if (f1ReNuEEt    ) delete f1ReNuEEt;
+  if (f1ReNuESigEt ) delete f1ReNuESigEt;
 }
 //________________________________________________________________________________________
 bool SuperkMC::Read(TXMLEngine* xml, XMLNodePointer_t root_node)
@@ -353,12 +363,20 @@ void SuperkMC::Book(void)
   // Etrue histograms needed for beam norm err calculation
   //
 
-  f1RmNuMuEt    = new TH1D("f1RmNuMuEt",    "Etrue for 1-ring mu-like numu",    200, 0, 10); /// binning expected by Kubo's code
-  f1RmNuMuBarEt = new TH1D("f1RmNuMuBarEt", "Etrue for 1-ring mu-like numubar", 200, 0, 10);
-  f1RmNuEEt     = new TH1D("f1RmNuMuEEt",   "Etrue for 1-ring mu-like nue",     200, 0, 10);
+  f1RmNuMuEt    = new TH1D("f1RmNuMuEt",       "Etrue for 1-ring mu-like numu",      200, 0, 10); /// binning expected by Kubo's code
+  f1RmNuMuBarEt = new TH1D("f1RmNuMuBarEt",    "Etrue for 1-ring mu-like numubar",   200, 0, 10);
+  f1RmNuEEt     = new TH1D("f1RmNuMuEEt",      "Etrue for 1-ring mu-like nue",       200, 0, 10);
+  f1ReNuMuEt    = new TH1D("f1ReNuMuEt",       "Etrue for 1-ring e-like numu",       200, 0, 10); 
+  f1ReNuMuBarEt = new TH1D("f1ReNuMuBarEt",    "Etrue for 1-ring e-like numubar",    200, 0, 10);
+  f1ReNuEEt     = new TH1D("f1ReNuMuEEt",      "Etrue for 1-ring e-like nue",        200, 0, 10);
+  f1ReNuESigEt  = new TH1D("f1ReNuMuESigEt",   "Etrue for 1-ring e-like nue signal", 200, 0, 10);
   f1RmNuMuEt     -> SetDirectory(0);
   f1RmNuMuBarEt  -> SetDirectory(0);
   f1RmNuEEt      -> SetDirectory(0);
+  f1ReNuMuEt     -> SetDirectory(0);
+  f1ReNuMuBarEt  -> SetDirectory(0);
+  f1ReNuEEt      -> SetDirectory(0);
+  f1ReNuESigEt   -> SetDirectory(0);
 
   //
   // Ereco histograms filled-in by SK spectrum prediction code
@@ -1076,23 +1094,37 @@ void SuperkMC::UpdateEtrueSpectra(void)
   f1RmNuMuEt    -> Reset();
   f1RmNuMuBarEt -> Reset();
   f1RmNuEEt     -> Reset();
+  f1ReNuMuEt    -> Reset();
+  f1ReNuMuBarEt -> Reset();
+  f1ReNuEEt     -> Reset();
+  f1ReNuESigEt  -> Reset();
 
   // loop over samples
   for(int is = 0; is < kns; is++) {
     SuperkSample_t s = kSKSamples[is];
     if(s == kSKsUndefined) continue;
-    if(s != kSKsFCFV1RingMuLike) continue; /// NOTE: change for 1Re analysis
     // loop over modes
     for(int im = 0; im < knm; im++) { 
        SuperkMode_t m = kSKReactionModes[is][im];
        if(m == kSKmUndefined) continue;
        // get Etrue spectrum
        TH1D * etrue_spectrum = 0;
-       if      ( util::IsNuMu    (m)) { etrue_spectrum = f1RmNuMuEt;    }
-       else if ( util::IsNuMuBar (m)) { etrue_spectrum = f1RmNuMuBarEt; }
-       else if ( util::IsBeamNuE (m)) { etrue_spectrum = f1RmNuEEt;     }
-       else {
-         continue;
+       if (s == kSKsFCFV1RingMuLike){
+         if      ( util::IsNuMu    (m)) { etrue_spectrum = f1RmNuMuEt;    }
+         else if ( util::IsNuMuBar (m)) { etrue_spectrum = f1RmNuMuBarEt; }
+         else if ( util::IsBeamNuE (m)) { etrue_spectrum = f1RmNuEEt;     }
+         else {
+           continue;
+         }
+       }
+       else if (s == kSKsFCFV1RingELike){
+         if      ( util::IsNuMu      (m)) { etrue_spectrum = f1ReNuMuEt;    }
+         else if ( util::IsNuMuBar   (m)) { etrue_spectrum = f1ReNuMuBarEt; }
+         else if ( util::IsBeamNuE   (m)) { etrue_spectrum = f1ReNuEEt;     }
+         else if ( util::IsSignalNuE (m)) { etrue_spectrum = f1ReNuESigEt;  }
+         else {
+           continue;
+         }
        }
        // get current Etrue,Ereco MC template
        TH2D * mctempl = this->Template(s,m,kSKMCtFin);

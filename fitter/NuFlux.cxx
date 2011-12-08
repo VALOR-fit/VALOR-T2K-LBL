@@ -24,6 +24,8 @@
    TweakShape() method, I added the FillInTweakedNuMuFluxHisto().
  @ 06/10/11 - CA
    Added `PrintSystematicVariations()'. Tweaked output messages.
+ @ 08/12/11 - LE
+   Add flux norm err for 1Re.
 
 */
 //________________________________________________________________________________________
@@ -81,7 +83,7 @@ void NuFlux::Init(void)
   fSuperkNuMuWght10aTo10d      = 0;
   fSuperkNuMuBarWght10aTo10d   = 0;
   fSuperkNuEWght10aTo10d       = 0;
-  fSuperkNuMuFluxNormTwkDial   = 0;
+  fSuperkFluxNormTwkDial       = 0;
   fSuperkNuMuFluxCovCholeskyL  = 0;
   fSuperkNuMuFluxHaveCholeskyL = false;
   fSuperkNuMuFluxTweaked       = 0;
@@ -365,15 +367,20 @@ const TMatrixD &  NuFlux::SuperkNuMuFluxCov(void) const
   return *fSuperkNuMuFluxCov; 
 } 
 //________________________________________________________________________________________
-double NuFlux::SuperkFluxNormErr(
+double* NuFlux::SuperkFluxNormErr(
   TH1D * hSkNuMu_1RingMu, TH1D * hSkNuMuBar_1RingMu, TH1D * hSkNuE_1RingMu,
+  TH1D * hSkNuMu_1RingE,  TH1D * hSkNuMuBar_1RingE,  TH1D * hSkNuE_1RingE,  TH1D * hSkNuESig_1RingE, 
   TH1D * hNdNuMu,         TH1D * hNdNuMuBar,         TH1D * hNdNuE) const
 {
 // normalization err Nsk/Nd280
 
+  double * flux_norm_err = new double[conv::kNFluxNormErrs];
+
   // don't  use Kubo-san's code. 
   if(!fHEC) {
-    return fSuperkNormRelErr_simple;
+    for(int ierr = 0; ierr < conv::kNFluxNormErrs; ierr++) {
+      flux_norm_err[ierr] = fSuperkNormRelErr_simple;
+    }
   }
 
 #ifdef __debug_level_3__
@@ -381,21 +388,31 @@ double NuFlux::SuperkFluxNormErr(
   TH1D * h1 = new TH1D(*hSkNuMu_1RingMu);
   TH1D * h2 = new TH1D(*hSkNuMuBar_1RingMu);
   TH1D * h3 = new TH1D(*hSkNuE_1RingMu);
-  TH1D * h4 = new TH1D(*hNdNuMu);
-  TH1D * h5 = new TH1D(*hNdNuMuBar);
-  TH1D * h6 = new TH1D(*hNdNuE);
+  TH1D * h4 = new TH1D(*hSkNuMu_1RingE);//lorena
+  TH1D * h5 = new TH1D(*hSkNuMuBar_1RingE);
+  TH1D * h6 = new TH1D(*hSkNuE_1RingE);
+  TH1D * h7 = new TH1D(*hSkNuESig_1RingE);
+  TH1D * h8 = new TH1D(*hNdNuMu);
+  TH1D * h9 = new TH1D(*hNdNuMuBar);
+  TH1D * h10= new TH1D(*hNdNuE);
   h1 -> Write("sk1rmu_numu");
   h2 -> Write("sk1rmu_numubar");
   h3 -> Write("sk1rmu_nue");
-  h4 -> Write("nd_numu");
-  h5 -> Write("nd_numubar");
-  h6 -> Write("nd_nue");
+  h4 -> Write("sk1re_numu");//lorena
+  h5 -> Write("sk1re_numubar");
+  h6 -> Write("sk1re_nue");
+  h7 -> Write("sk1re_nue");
+  h8 -> Write("nd_numu");
+  h9 -> Write("nd_numubar");
+  h10-> Write("nd_nue");
   f.Close();
 #endif
 
   // use code contributed by Kubo-san's on behalf of the Beam WG
-  fHEC->Set1RmuHist(hSkNuMu_1RingMu, hSkNuMuBar_1RingMu, hSkNuE_1RingMu);
-  fHEC->SetNDHist  (hNdNuMu,         hNdNuMuBar,         hNdNuE);
+  fHEC->Set1RmuHist   (hSkNuMu_1RingMu, hSkNuMuBar_1RingMu, hSkNuE_1RingMu);
+  fHEC->SetNueSigHist (hSkNuESig_1RingE);
+  fHEC->SetNueBGHist  (hSkNuMu_1RingE, hSkNuMuBar_1RingE, hSkNuE_1RingE);
+  fHEC->SetNDHist     (hNdNuMu, hNdNuMuBar, hNdNuE);
   fHEC->Calc();
 
 #ifdef __show_norm_err_mesg_debug__
@@ -404,35 +421,46 @@ double NuFlux::SuperkFluxNormErr(
 #endif
 
   // get relative err on Nsk/Nnd280
-  double relative_err = fHEC->GetSumErr(0);
+  for(int ierr = 0; ierr < conv::kNFluxNormErrs; ierr++) {
+     flux_norm_err[ierr] =  fHEC->GetSumErr(ierr);//mode 1Rmu
+  }
 
 #ifdef __show_norm_err_mesg_info__
-  cout << "Exp/Beam >> Nsk/Nnd280 relative err calculated by Beam WG code = " 
-       << relative_err << endl;
+  for(int ierr = 0; ierr < conv::kNFluxNormErrs; ierr++) {
+     cout << "Exp/Beam >> Nsk/Nnd280 relative err calculated by Beam WG code ("
+          << util::AsString((FluxNormErrIdx_t)ierr) << ") = " 
+          << flux_norm_err[ierr] << endl;
 #endif
 
-  return relative_err;
+  return flux_norm_err;
 }
 //________________________________________________________________________________________
-double NuFlux::SuperkFluxNorm(
+double * NuFlux::SuperkFluxNorm(
   TH1D * hSkNuMu_1RingMu, TH1D * hSkNuMuBar_1RingMu, TH1D * hSkNuE_1RingMu,
+  TH1D * hSkNuMu_1RingE,  TH1D * hSkNuMuBar_1RingE,  TH1D * hSkNuE_1RingE,  TH1D * hSkNuESig_1RingE, 
   TH1D * hNdNuMu,         TH1D * hNdNuMuBar,         TH1D * hNdNuE) const
 {
 // normalization
 
-  double twkdial = fSuperkNuMuFluxNormTwkDial;
+  double* norm = new double[conv::kNFluxNormErrs];
+  for(int ierr = 0; ierr < conv::kNFluxNormErrs; ierr++) {
+    norm[ierr] = 1.;
+  }
 
-  if(TMath::Abs(twkdial) < kASmallNum) return 1; // untweaked - skip calculation
+  double twkdial = fSuperkFluxNormTwkDial;
 
-  double relerr  = this->SuperkFluxNormErr(
-     hSkNuMu_1RingMu,hSkNuMuBar_1RingMu,hSkNuE_1RingMu,hNdNuMu,hNdNuMuBar,hNdNuE);
+  if(TMath::Abs(twkdial) < kASmallNum) return norm; // untweaked - skip calculation
 
-#ifdef __debug_level_3__
-  cout << "Exp/Beam/SuperkFluxNorm() >> "
-       << "Normalization relative error = " << relerr << endl;
-#endif
-	
-  double norm = 1 + twkdial * relerr;
+  double * relerr  = this->SuperkFluxNormErr(
+     hSkNuMu_1RingMu,hSkNuMuBar_1RingMu,hSkNuE_1RingMu,
+     hSkNuMu_1RingE, hSkNuMuBar_1RingE, hSkNuE_1RingE, hSkNuESig_1RingE,  
+     hNdNuMu, hNdNuMuBar,hNdNuE);
+
+  for(int ierr = 0; ierr < conv::kNFluxNormErrs; ierr++) {
+    norm[ierr] = 1 + twkdial * relerr[ierr];
+  }
+
+  delete [] relerr;
   return norm;
 }
 //________________________________________________________________________________________
@@ -474,7 +502,7 @@ double NuFlux::SuperkNuMuFluxShapeWeight(double Etrue)
 //________________________________________________________________________________________
 void NuFlux::TweakNorm (double twkdial) 
 { 
-  fSuperkNuMuFluxNormTwkDial = twkdial; 
+  fSuperkFluxNormTwkDial = twkdial; 
 }
 //________________________________________________________________________________________
 void NuFlux::TweakShape(
@@ -577,7 +605,7 @@ void NuFlux::TweakShape(
 //________________________________________________________________________________________
 void NuFlux::PrintSystematicVariations(void) const
 {
-  cout << "Exp/Beam >> Twk Nsk/Nnd normalization = " << fSuperkNuMuFluxNormTwkDial << endl;
+  cout << "Exp/Beam >> Twk Nsk/Nnd normalization = " << fSuperkFluxNormTwkDial << endl;
 }
 //________________________________________________________________________________________
 void NuFlux::FillInTweakedNuMuFluxHisto(TVectorD * ptwkv, bool fractional)
