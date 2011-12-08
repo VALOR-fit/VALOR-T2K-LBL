@@ -8,7 +8,7 @@ Developed at Rutherford Appleton Lab + Oxford Univ + Lancs Univ + Valencia Univ.
 
 Current authors:
 
-- Andreopoulos, Costas <costas.andreopoulos \at stfc.ac.uk> [*]
+- Andreopoulos, Costas <costas.andreopoulos \at stfc.ac.uk> 
 - Dealtry, Thomas <Thomas.Dealtry \at physics.ox.ac.uk>
 - Escudero, Lorena <loressa \at ific.uv.es>
 - Grant, Nick <nick.grant \at stfc.ac.uk>
@@ -20,9 +20,6 @@ Legacy authors:
 
 - Dobson, James <j.dobson07 \at imperial.ac.uk>
 - Haigh, Martin <m.haigh1 \at physics.ox.ac.uk>
-
-
-[*] Primary contact
 
 +--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+
 
@@ -45,12 +42,12 @@ Legacy authors:
     |            |-- 2011         :
     |
     |-- macros                    : Our analysis procedures
+    |     |------ physin          :  - macros used for testing analysis physics inputs (spectra/systematics)
     |     |------ fit             :  - macros used for fitting data or toy MC expts
     |     |------ fc              :  - macros used for implementing the Feldman-Cousins (FC) method
     |     |        |-- numu       :     > FC macros specific to the numu disappearance analysis
     |     |        |-- nue        :     > FC macros specific to the nue appearance analysis
     |     |        |-- global     :     > FC macros specific to the global (numu disappearance + nue appearance) analysis
-    |     |------ physin          :  - macros used for testing analysis physics inputs (spectra/systematics)
     |     |------ misc            :  - misc. macros such as those used for preparing various plots shown in T2K-TN-36/64
     |
     |-- production                : Batch production scripts for RAL/IN2P3/Oxford farms
