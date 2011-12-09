@@ -49,14 +49,19 @@ namespace util {
   double ChisqGauss       (double ndata, double nmc);
   double ChisqPoisson     (double ndata, double nmc);
 
+  //
   // Cholesky decomposition
+  //
 
   TMatrixD CholeskyDecomposition                     (TMatrixD& cov);                 ///< Cholesky decomposition. Return lower triangular matrix.
   TVectorD CholeskyGenerateCorrelatedParams          (TMatrixD& Lch, TVectorD& mean); ///< Generate a vector of correlated params
   TVectorD CholeskyGenerateCorrelatedParamVariations (TMatrixD& Lch);                 ///< Generate a vector of correlated param variations
   TVectorD CholeskyCalculateCorrelatedParamVariations(TMatrixD& Lch, TVectorD& g);    ///<
 
+  //
   // Functions randomizing oscillation params (for use when params are marginalized)
+  //
+
   double RandomizeMixing23 (void); ///< pull from gaussian with mean & sigma from global fit (mixing param is either sinsq2theta or sinsqtheta depending on config)
   double RandomizeMixing12 (void); ///< pull from gaussian with mean & sigma from global fit ( -//- )
   double RandomizeMixing13 (void); ///< uniform from 0 up to ~ small_factor x CHOOZ limit    ( -//- )
@@ -65,12 +70,16 @@ namespace util {
   double RandomizeDm23sq   (void); ///< pull from gaussian with mean & sigma from global fit
 
   //
+  // Utility functions for T2KAna enumerations
+  //
 
   int FindSampleSlot(t2kana::conv::SuperkSample_t s);
   int FindModeSlot  (t2kana::conv::SuperkSample_t s, t2kana::conv::SuperkMode_t m);
 
   t2kana::conv::FluxNormErrIdx_t FindFluxNormErrIdx (t2kana::conv::SuperkSample_t s);
   t2kana::conv::FluxNormErrIdx_t FindFluxNormErrIdx (t2kana::conv::SuperkSample_t s, t2kana::conv::SuperkMode_t m);
+
+  void SetDefaultSKSpectrumStyle (t2kana::conv::SuperkSample_t s, t2kana::conv::SuperkMode_t m, TH1D * histogram);
 
   string AsString    (t2kana::conv::PhysHypothesis_t hyp, double mix12, double mix13, double mix23, double deltacp, double dm12sq, double dm23sq);
   string AsString    (t2kana::conv::NuMassHierarchy_t m);
@@ -84,10 +93,10 @@ namespace util {
   string AsStringTex (t2kana::conv::SuperkSample_t    s);
   string AsStringTex (t2kana::conv::SuperkMode_t      m);
 
-  t2kana::conv::PhysHypothesis_t   PhysHypFromString(string h);
-  t2kana::conv::SuperkSample_t     SKSampleFromString(string h);
-  t2kana::conv::NuMassHierarchy_t  HierarchyFromString(string h);
-  t2kana::conv::NuOscMixParam_t    MixingTypeFromString(string h);
+  t2kana::conv::PhysHypothesis_t   PhysHypFromString   (string h);
+  t2kana::conv::SuperkSample_t     SKSampleFromString   (string h);
+  t2kana::conv::NuMassHierarchy_t  HierarchyFromString  (string h);
+  t2kana::conv::NuOscMixParam_t    MixingTypeFromString (string h);
 
   t2kana::conv::OscChannelId_t GetOscChannel(int nu_start, int nu_end);
 

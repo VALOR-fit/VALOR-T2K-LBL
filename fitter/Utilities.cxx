@@ -57,6 +57,10 @@
    Added 'FluxNormErrIdx_t FindFluxNormErrIdx (SuperkSample_t)' and
    'FluxNormErrIdx_t FindFluxNormErrIdx (SuperkSample_t, SuperkMode_t)'
    Added AsString(FluxNormErrIdx_t)
+ @ 09/12/2011 - CA
+   Added SetDefaultSKSpectrumStyle(SuperkSample_t,SuperkMode_t,TH1D*) so as
+   to simplify macros. Default graphics attributed are set in Conventions.h
+
 */
 //____________________________________________________________________________
 
@@ -499,6 +503,42 @@ FluxNormErrIdx_t t2kana::util::FindFluxNormErrIdx (
      return conv::kFlxn1ReBkg;
   }
   return conv::kFlxnUndefined;
+}
+//____________________________________________________________________________
+void t2kana::util::SetDefaultSKSpectrumStyle (
+   t2kana::conv::SuperkSample_t s, t2kana::conv::SuperkMode_t m, TH1D * hist)
+{
+  if(!hist) return;
+
+  if(s == kSKsUndefined) return;
+  if(m == kSKmUndefined) return;
+
+  int sidx = util::FindSampleSlot (s);
+  int midx = util::FindModeSlot   (s,m);
+
+  if(sidx == -1 || midx == -1) return;
+
+  int fill_style  = conv::kSKHistoAttributes[sidx][midx][conv::kGrAttFillStyle];
+  int fill_colour = conv::kSKHistoAttributes[sidx][midx][conv::kGrAttFillColour];
+  int line_style  = conv::kSKHistoAttributes[sidx][midx][conv::kGrAttLineStyle];
+  int line_width  = conv::kSKHistoAttributes[sidx][midx][conv::kGrAttLineWidth];
+  int line_colour = conv::kSKHistoAttributes[sidx][midx][conv::kGrAttLineColour];
+
+  if(fill_style != -1) {
+    hist->SetFillStyle(fill_style);
+  }
+  if(fill_colour != -1) {
+    hist->SetFillColor(fill_colour);
+  }
+  if(line_style != -1) {
+    hist->SetLineStyle(line_style);
+  }
+  if(line_width != -1) {
+    hist->SetLineWidth(line_width);
+  }
+  if(line_colour != -1) {
+    hist->SetLineColor(line_colour);
+  }
 }
 //____________________________________________________________________________
 string t2kana::util::AsString (

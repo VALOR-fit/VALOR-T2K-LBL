@@ -83,6 +83,7 @@ private:
 
    // Initialise and clean-up
    void Init    (void);
+   void Book    (void);
    void CleanUp (void);
 
    // Use the nuisance param values in the input FitParamList to tweak the pdfs.

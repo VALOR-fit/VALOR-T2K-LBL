@@ -391,12 +391,15 @@ void SuperkMC::Book(void)
      const double * ereco_bin_edges = util::ErecoBinEdges(s);
      fMCErecoSpectrumTot[is] = new TH1D("","", n_ereco_bins, ereco_bin_edges);
      fMCErecoSpectrumTot[is] -> SetDirectory(0);
+     fMCErecoSpectrumTot[is]->SetLineWidth(2);
+     fMCErecoSpectrumTot[is]->SetLineColor(kBlack);
      for(int im=0; im < knm; im++) 
      {
        SuperkMode_t m = kSKReactionModes[is][im];
        if(m == kSKmUndefined) continue;
        fMCErecoSpectrum[is][im] = new TH1D("","", n_ereco_bins, ereco_bin_edges);
        fMCErecoSpectrum[is][im] -> SetDirectory(0);
+       util::SetDefaultSKSpectrumStyle(s,m,fMCErecoSpectrum[is][im]);
      }//m
   }//s
 

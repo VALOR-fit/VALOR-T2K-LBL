@@ -58,7 +58,8 @@
    taking care of indexing issues.
  @ 08/12/11 - LE
    Add flux norm err for 1Re.
-
+ @ 09/12/11 - CA
+   Added Book() and default graphics formatting to simplify macros.
 */
 //________________________________________________________________________________________
 
@@ -499,31 +500,20 @@ bool SuperkExpectation::Read(string config_file)
     this->CleanUp();
   } 
 
+  // Instantiate all necessary histograms
+  this->Book();
+
+  // Create components used for building-up the p.d.f.
+  // Configure inter-dependencies.
   fND280Measurement  = new ND280Measurement;
   fSuperkMC          = new SuperkMC;
   fNuFlux            = new NuFlux; 
   fNuXSec            = new NuXSec; 
-
   fND280Measurement  -> TellMeAboutCrossSections (fNuXSec);
   fSuperkMC          -> TellMeAboutCrossSections (fNuXSec);
   fSuperkMC          -> TellMeAboutTheFlux       (fNuFlux);
 
-  for(int is = 0; is < kns; is++) {
-     SuperkSample_t s = kSKSamples[is];
-     if(s == kSKsUndefined) continue;
-     const int      n_ereco_bins    = util::NumErecoBins (s);
-     const double * ereco_bin_edges = util::ErecoBinEdges(s);
-     fPredictErecoSpectrumTot[is] = new TH1D("","", n_ereco_bins, ereco_bin_edges);
-     fPredictErecoSpectrumTot[is]->SetDirectory(0);
-     for(int im = 0; im < knm; im++) {
-         SuperkMode_t m = kSKReactionModes[is][im];
-         if(m == kSKmUndefined) continue;
-         fPredictErecoSpectrum[is][im] = new TH1D("","", n_ereco_bins, ereco_bin_edges);
-         fPredictErecoSpectrum[is][im]->SetDirectory(0);
-     }//m	
-  }//s
-
-  // Parse the input configuration file
+  // Parse the input XML configuration file
   TXMLEngine* xml = new TXMLEngine;   
   XMLDocPointer_t xmldoc = xml->ParseFile(config_file.c_str());
   if (xmldoc==0) {
@@ -533,6 +523,7 @@ bool SuperkExpectation::Read(string config_file)
   }
   XMLNodePointer_t root_node = xml->DocGetRootElement(xmldoc);
 
+  // Configure each of the components 
   if ( ! this->GetND280Measurement()->Read(xml, root_node) ) return false;
   if ( ! this->GetSuperkMC        ()->Read(xml, root_node) ) return false;
   if ( ! this->GetNuFlux          ()->Read(xml, root_node) ) return false;
@@ -562,6 +553,27 @@ void SuperkExpectation::Init(void)
       fPredictErecoSpectrum[is][im] = 0;
     }//im
   }//is
+}
+//________________________________________________________________________________________
+void SuperkExpectation::Book(void)
+{
+  for(int is = 0; is < kns; is++) {
+     SuperkSample_t s = kSKSamples[is];
+     if(s == kSKsUndefined) continue;
+     const int      n_ereco_bins    = util::NumErecoBins (s);
+     const double * ereco_bin_edges = util::ErecoBinEdges(s);
+     fPredictErecoSpectrumTot[is] = new TH1D("","", n_ereco_bins, ereco_bin_edges);
+     fPredictErecoSpectrumTot[is]->SetDirectory(0);
+     fPredictErecoSpectrumTot[is]->SetLineWidth(2);
+     fPredictErecoSpectrumTot[is]->SetLineColor(kBlack);
+     for(int im = 0; im < knm; im++) {
+         SuperkMode_t m = kSKReactionModes[is][im];
+         if(m == kSKmUndefined) continue;
+         fPredictErecoSpectrum[is][im] = new TH1D("","", n_ereco_bins, ereco_bin_edges);
+         fPredictErecoSpectrum[is][im]->SetDirectory(0);
+         util::SetDefaultSKSpectrumStyle(s,m,fPredictErecoSpectrum[is][im]);
+     }//m	
+  }//s
 }
 //________________________________________________________________________________________
 void SuperkExpectation::CleanUp(void)

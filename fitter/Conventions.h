@@ -37,6 +37,89 @@ namespace conv   {
 
 //
 // ------------------------------------------------------------------------
+// Constants & commonly used codes
+// ------------------------------------------------------------------------
+//
+
+// PDG Codes
+static const int kPdgNuE      =  12;
+static const int kPdgNuMu     =  14;
+static const int kPdgNuTau    =  16;
+static const int kPdgNuEBar   = -12;
+static const int kPdgNuMuBar  = -14;
+static const int kPdgNuTauBar = -16;
+
+//
+// Oscillation parameters, recent global fit values & 1 sigma errors and
+// typical initialization and range values for fitter
+//
+
+// Dm^2 global fit results
+static const double kGlobFitDm23sq           = 2.35E-3;
+static const double kGlobFitDm12sq           = 7.58E-5;
+static const double kGlobFitErrDm23sq        = 0.05; // ~5%
+static const double kGlobFitErrDm12sq        = 0.03; // ~3%
+// sinsq2theta global fit results
+static const double kGlobFitSinsq2Theta23    = 1.00;
+static const double kGlobFitSinsq2Theta13    = 0.10;
+static const double kGlobFitSinsq2Theta12    = 0.86;
+static const double kGlobFitErrSinsq2Theta23 = 0.15; // ~15%
+static const double kGlobFitErrSinsq2Theta12 = 0.06; // ~6%
+// sinsqtheta global fit results
+static const double kGlobFitSinsqTheta23    = 0.420;
+static const double kGlobFitSinsqTheta13    = 0.025;
+static const double kGlobFitSinsqTheta12    = 0.312;
+static const double kGlobFitErrSinsqTheta23 = 0.261;  // ~26% (1 sigma range)
+static const double kGlobFitErrSinsqTheta12 = 0.110;  // ~11% (1 sigma range)
+static const double kGlobFitErrSinsqTheta13 = 0.560;  // ~56% (1 sigma range)
+
+// Dm^2 fitter init values and range
+static const double kInitFitDm23sq           = kGlobFitDm23sq;
+static const double kMinFitDm23sq            = 1.0E-3;
+static const double kMaxFitDm23sq            = 4.0E-3;
+static const double kInitFitDm12sq           = kGlobFitDm12sq;
+static const double kMinFitDm12sq            = 6.0E-5;
+static const double kMaxFitDm12sq            = 9.0E-5;
+// sinsq2theta fitter init values and range
+static const double kInitFitSinsq2Theta23    = 0.90;
+static const double kMinFitSinsq2Theta23     = 0.60;
+static const double kMaxFitSinsq2Theta23     = 1.00;
+static const double kInitFitSinsq2Theta13    = kGlobFitSinsq2Theta13;
+static const double kMinFitSinsq2Theta13     = 0.00;
+static const double kMaxFitSinsq2Theta13     = 0.40;
+static const double kInitFitSinsq2Theta12    = kGlobFitSinsq2Theta12;
+static const double kMinFitSinsq2Theta12     = 0.70;
+static const double kMaxFitSinsq2Theta12     = 1.00;
+// sinsqtheta fitter init values and range
+static const double kInitFitSinsqTheta23     = 0.90;
+static const double kMinFitSinsqTheta23      = 0.60;
+static const double kMaxFitSinsqTheta23      = 1.00;
+static const double kInitFitSinsqTheta13     = kGlobFitSinsqTheta13;
+static const double kMinFitSinsqTheta13      = 0.00;
+static const double kMaxFitSinsqTheta13      = 0.40;
+static const double kInitFitSinsqTheta12     = kGlobFitSinsqTheta12;
+static const double kMinFitSinsqTheta12      = 0.70;
+static const double kMaxFitSinsqTheta12      = 1.00;
+
+
+//
+// Other constants
+//
+static const double kASmallNum      = 1E-10;                         // 
+static const double kBaseline       = 295.335;                       // Tokai->Kamioka (km)
+static const double kOscDimensFactor= 1.26693281;                    // Dimensional factor (GeV/eV^2/km) appearing in netrino oscillation formula
+static const double kCrustDensity   = 2.7;                           // Average density of Earth's continental crust (gr / cm^3)
+static const double kpi             = 3.141592653589793;             // pi
+static const double khbar_SI        = 6.582119e-16;                  // hbar (eV s)
+static const double kc_SI           = 2.9979246e10;                  // c (cm/s)
+static const double khbarc_SI       = khbar_SI*kc_SI;                // hbar*c (eV * cm)
+static const double khbarc3_SI      = khbarc_SI*khbarc_SI*khbarc_SI; // (hbar*c)^3 (eV^3 * cm^3)
+static const double kGF             = 1.16637e-5;                    // Fermi coupling constant, (GeV^-2, natural units)
+static const double kGF_SI          = kGF*khbarc3_SI*1.0e-18;        // Fermi coupling constant, (eV cm^3, SI units), 1e-18 is used for GeV^-2 -> eV^-2
+static const double kNA             = 6.022142e23;                   // Avogadro number (mol^-1)
+
+//
+// ------------------------------------------------------------------------
 // Enumerations
 // ------------------------------------------------------------------------
 //
@@ -269,6 +352,19 @@ typedef enum EFluxNormErrIdx
 } 
 FluxNormErrIdx_t;
 
+// Indices for array with default graphic attributes (see below)
+static const int kNGraphicAttributes = 5; 
+typedef enum EGraphicAttributeIdx
+{   
+   kGrAttUndefined  = -1, 
+   kGrAttFillStyle  =  0, 
+   kGrAttFillColour =  1, 
+   kGrAttLineStyle  =  2, 
+   kGrAttLineWidth  =  3, 
+   kGrAttLineColour =  4 
+} 
+GraphicAttributeIdx_t;
+
 //
 // ------------------------------------------------------------------------
 // Choice of samples included in the analysis and
@@ -362,87 +458,85 @@ static const SuperkMode_t kSKReactionModes[kns][knm] = {
 
 //
 // ------------------------------------------------------------------------
-// Constants & commonly used codes
+// Formatting etc
 // ------------------------------------------------------------------------
 //
 
-// PDG Codes
-static const int kPdgNuE      =  12;
-static const int kPdgNuMu     =  14;
-static const int kPdgNuTau    =  16;
-static const int kPdgNuEBar   = -12;
-static const int kPdgNuMuBar  = -14;
-static const int kPdgNuTauBar = -16;
-
 //
-// Oscillation parameters, recent global fit values & 1 sigma errors and
-// typical initialization and range values for fitter
+// Default graphic attributes for output spectra. Each line refers to a mode of a given sample.
+// List of samples and modes should match the one given in kSKReactionModes[kns][knm] above.
+// The 5 listed attributes for each sample are: Fill style, Fill color, Line style, Line width, Line color.
 //
+static const int kSKHistoAttributes[kns][knm][kNGraphicAttributes] = {
 
-// Dm^2 global fit results
-static const double kGlobFitDm23sq           = 2.35E-3;
-static const double kGlobFitDm12sq           = 7.58E-5;
-static const double kGlobFitErrDm23sq        = 0.05; // ~5%
-static const double kGlobFitErrDm12sq        = 0.03; // ~3%
-// sinsq2theta global fit results
-static const double kGlobFitSinsq2Theta23    = 1.00;
-static const double kGlobFitSinsq2Theta13    = 0.10;
-static const double kGlobFitSinsq2Theta12    = 0.86;
-static const double kGlobFitErrSinsq2Theta23 = 0.15; // ~15%
-static const double kGlobFitErrSinsq2Theta12 = 0.06; // ~6%
-// sinsqtheta global fit results
-static const double kGlobFitSinsqTheta23    = 0.420;
-static const double kGlobFitSinsqTheta13    = 0.025;
-static const double kGlobFitSinsqTheta12    = 0.312;
-static const double kGlobFitErrSinsqTheta23 = 0.261;  // ~26% (1 sigma range)
-static const double kGlobFitErrSinsqTheta12 = 0.110;  // ~11% (1 sigma range)
-static const double kGlobFitErrSinsqTheta13 = 0.560;  // ~56% (1 sigma range)
+  // > 1 muon-like ring (numu disappearance)
+  {
+    {   -1,  kWhite,    1,  1,  kBlack}, //kSKmNuMuCCQE
+    { 3544,  kBlack,    1,  1,  kBlack}, //kSKmNuMuCC1pi
+    { 3244,  kBlack,    1,  1,  kBlack}, //kSKmNuMuCCoth_mu
+    { 3006,  kRed,      1,  1,  kBlack}, //kSKmNuMuNC
+    { 3001,  kAzure-3,  1,  1,  kBlack}, //kSKmNuMuBarCCQE
+    { 3345,  kAzure-3,  1,  1,  kBlack}, //kSKmNuMuBarCC1pi
+    { 3354,  kAzure-3,  1,  1,  kBlack}, //kSKmNuMuBarCCoth_mu
+    { 3006,  kAzure-3,  1,  1,  kBlack}, //kSKmNuMuBarNC
+    { 3001,  kGreen+1,  1,  1,  kBlack}, //kSKmNuECCQE
+    { 3345,  kGreen+1,  1,  1,  kBlack}, //kSKmNuECC1pi
+    { 3354,  kGreen+1,  1,  1,  kBlack}, //kSKmNuECCoth_mu
+    { 3006,  kGreen+1,  1,  1,  kBlack}, //kSKmNuENC
+    { 3001,  kGreen-3,  1,  1,  kBlack}, //kSKmSigNuECCQE
+    { 3345,  kGreen-3,  1,  1,  kBlack}, //kSKmSigNuECC1pi
+    { 3354,  kGreen-3,  1,  1,  kBlack}, //kSKmSigNuECCoth
+    {   -1,        -1, -1, -1,     -1 }, //kSKmUndefined
+    {   -1,        -1, -1, -1,     -1 }, //kSKmUndefined
+    {   -1,        -1, -1, -1,     -1 }, //kSKmUndefined
+    {   -1,        -1, -1, -1,     -1 }, //kSKmUndefined
+    {   -1,        -1, -1, -1,     -1 }, //kSKmUndefined
+    {   -1,        -1, -1, -1,     -1 }, //kSKmUndefined
+    {   -1,        -1, -1, -1,     -1 }, //kSKmUndefined
+    {   -1,        -1, -1, -1,     -1 }, //kSKmUndefined
+    {   -1,        -1, -1, -1,     -1 }, //kSKmUndefined
+    {   -1,        -1, -1, -1,     -1 }, //kSKmUndefined
+    {   -1,        -1, -1, -1,     -1 }, //kSKmUndefined
+    {   -1,        -1, -1, -1,     -1 }, //kSKmUndefined
+    {   -1,        -1, -1, -1,     -1 }, //kSKmUndefined
+    {   -1,        -1, -1, -1,     -1 }, //kSKmUndefined
+    {   -1,        -1, -1, -1,     -1 }  //kSKmUndefined
+  },
 
-// Dm^2 fitter init values and range
-static const double kInitFitDm23sq           = kGlobFitDm23sq;
-static const double kMinFitDm23sq            = 1.0E-3;
-static const double kMaxFitDm23sq            = 4.0E-3;
-static const double kInitFitDm12sq           = kGlobFitDm12sq;
-static const double kMinFitDm12sq            = 6.0E-5;
-static const double kMaxFitDm12sq            = 9.0E-5;
-// sinsq2theta fitter init values and range
-static const double kInitFitSinsq2Theta23    = 0.90;
-static const double kMinFitSinsq2Theta23     = 0.60;
-static const double kMaxFitSinsq2Theta23     = 1.00;
-static const double kInitFitSinsq2Theta13    = kGlobFitSinsq2Theta13;
-static const double kMinFitSinsq2Theta13     = 0.00;
-static const double kMaxFitSinsq2Theta13     = 0.40;
-static const double kInitFitSinsq2Theta12    = kGlobFitSinsq2Theta12;
-static const double kMinFitSinsq2Theta12     = 0.70;
-static const double kMaxFitSinsq2Theta12     = 1.00;
-// sinsqtheta fitter init values and range
-static const double kInitFitSinsqTheta23     = 0.90;
-static const double kMinFitSinsqTheta23      = 0.60;
-static const double kMaxFitSinsqTheta23      = 1.00;
-static const double kInitFitSinsqTheta13     = kGlobFitSinsqTheta13;
-static const double kMinFitSinsqTheta13      = 0.00;
-static const double kMaxFitSinsqTheta13      = 0.40;
-static const double kInitFitSinsqTheta12     = kGlobFitSinsqTheta12;
-static const double kMinFitSinsqTheta12      = 0.70;
-static const double kMaxFitSinsqTheta12      = 1.00;
-
-
-//
-// Other constants
-//
-static const double kASmallNum      = 1E-10;                         // 
-static const double kBaseline       = 295.335;                       // Tokai->Kamioka (km)
-static const double kOscDimensFactor= 1.26693281;                    // Dimensional factor (GeV/eV^2/km) appearing in netrino oscillation formula
-static const double kCrustDensity   = 2.7;                           // Average density of Earth's continental crust (gr / cm^3)
-static const double kpi             = 3.141592653589793;             // pi
-static const double khbar_SI        = 6.582119e-16;                  // hbar (eV s)
-static const double kc_SI           = 2.9979246e10;                  // c (cm/s)
-static const double khbarc_SI       = khbar_SI*kc_SI;                // hbar*c (eV * cm)
-static const double khbarc3_SI      = khbarc_SI*khbarc_SI*khbarc_SI; // (hbar*c)^3 (eV^3 * cm^3)
-static const double kGF             = 1.16637e-5;                    // Fermi coupling constant, (GeV^-2, natural units)
-static const double kGF_SI          = kGF*khbarc3_SI*1.0e-18;        // Fermi coupling constant, (eV cm^3, SI units), 1e-18 is used for GeV^-2 -> eV^-2
-static const double kNA             = 6.022142e23;                   // Avogadro number (mol^-1)
-
+  // > 1 electron-like ring (nue appearance)
+  {
+    {   -1,        -1, -1, -1,     -1 }, //kSKmNuMuCCQE 
+    {   -1,        -1, -1, -1,     -1 }, //kSKmNuMuCC1pi 
+    {   -1,        -1, -1, -1,     -1 }, //kSKmNuMuCCcoh 
+    {   -1,        -1, -1, -1,     -1 }, //kSKmNuMuCCoth_e 
+    {   -1,        -1, -1, -1,     -1 }, //kSKmNuMuNC1pi0 
+    {   -1,        -1, -1, -1,     -1 }, //kSKmNuMuNCcoh 
+    {   -1,        -1, -1, -1,     -1 }, //kSKmNuMuNCoth_e                            
+    {   -1,        -1, -1, -1,     -1 }, //kSKmNuMuBarCCQE 
+    {   -1,        -1, -1, -1,     -1 }, //kSKmNuMuBarCC1pi 
+    {   -1,        -1, -1, -1,     -1 }, //kSKmNuMuBarCCcoh 
+    {   -1,        -1, -1, -1,     -1 }, //kSKmNuMuBarCCoth_e  
+    {   -1,        -1, -1, -1,     -1 }, //kSKmNuMuBarNC1pi0 
+    {   -1,        -1, -1, -1,     -1 }, //kSKmNuMuBarNCcoh 
+    {   -1,        -1, -1, -1,     -1 }, //kSKmNuMuBarNCoth_e
+    {   -1,        -1, -1, -1,     -1 }, //kSKmNuECCQE 
+    {   -1,        -1, -1, -1,     -1 }, //kSKmNuECC1pi 
+    {   -1,        -1, -1, -1,     -1 }, //kSKmNuECCcoh 
+    {   -1,        -1, -1, -1,     -1 }, //kSKmNuECCoth_e
+    {   -1,        -1, -1, -1,     -1 }, //kSKmNuENC1pi0  
+    {   -1,        -1, -1, -1,     -1 }, //kSKmNuENCcoh 
+    {   -1,        -1, -1, -1,     -1 }, //kSKmNuENCoth_e
+    {   -1,        -1, -1, -1,     -1 }, //kSKmSigNuECCQE  
+    {   -1,        -1, -1, -1,     -1 }, //kSKmSigNuECC1pi  
+    {   -1,        -1, -1, -1,     -1 }, //kSKmSigNuECCoth
+    {   -1,        -1, -1, -1,     -1 }, //kSKmUndefined
+    {   -1,        -1, -1, -1,     -1 }, //kSKmUndefined
+    {   -1,        -1, -1, -1,     -1 }, //kSKmUndefined
+    {   -1,        -1, -1, -1,     -1 }, //kSKmUndefined
+    {   -1,        -1, -1, -1,     -1 }, //kSKmUndefined
+    {   -1,        -1, -1, -1,     -1 }  //kSKmUndefined
+  }
+};
 
 //
 // ------------------------------------------------------------------------
