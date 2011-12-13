@@ -133,12 +133,12 @@ void Superk1RmuErecoFitter::Analyze(Option_t * option)
      }//imode
 
      // add spectra to the results array
-     bestfit_tot->SetName(util::AsStringCompact(kSKsFCFV1RingMuLike,kSKmUndefined,"bestfit_").c_str());
+     bestfit_tot->SetName(util::AsStringCompact(s,kSKmUndefined,"bestfit_").c_str());
      fResults->Add(bestfit_tot);
      for(int imode = 0; imode < knm; imode++) {
         SuperkMode_t m = kSKReactionModes[isample][imode];
         if(m == kSKmUndefined) continue;
-        bestfit_mode[imode]->SetName(util::AsStringCompact(kSKsFCFV1RingMuLike,m,"bestfit_").c_str());
+        bestfit_mode[imode]->SetName(util::AsStringCompact(s,m,"bestfit_").c_str());
         fResults->Add(bestfit_mode[imode]);
      }//imode
   }
@@ -147,7 +147,7 @@ void Superk1RmuErecoFitter::Analyze(Option_t * option)
   // Write the fit data
   //
   if(opt.Contains("Observation")) {
-     data = new TH1D(*fFitInputs->Observation().ErecoSpectrum(kSKsFCFV1RingMuLike));
+     data = new TH1D(*fFitInputs->Observation().ErecoSpectrum(s));
      data -> SetDirectory(0);
      data -> SetMarkerStyle(20);
      data -> SetMarkerSize(1);
@@ -250,7 +250,7 @@ void Superk1RmuErecoFitter::Save(const char * filename)
     data->Write(); 
   }
 
-  TH1D * bestfit_tot = (TH1D*) fResults->FindObject(util::AsStringCompact(kSKsFCFV1RingMuLike,kSKmUndefined,"bestfit_").c_str());
+  TH1D * bestfit_tot = (TH1D*) fResults->FindObject(util::AsStringCompact(s,kSKmUndefined,"bestfit_").c_str());
   if(bestfit_tot) {
    bestfit_tot->Write();
   }
@@ -259,7 +259,7 @@ void Superk1RmuErecoFitter::Save(const char * filename)
   for(int imode = 0; imode < knm; imode++) {
      SuperkMode_t m = kSKReactionModes[isample][imode];
      if(m == kSKmUndefined) continue;
-     bestfit_mode[imode] = (TH1D*) fResults->FindObject(util::AsStringCompact(kSKsFCFV1RingMuLike,m,"bestfit_").c_str());
+     bestfit_mode[imode] = (TH1D*) fResults->FindObject(util::AsStringCompact(s,m,"bestfit_").c_str());
      if(bestfit_mode[imode]) {
        bestfit_mode[imode]->Write();
      }
