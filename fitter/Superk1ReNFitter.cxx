@@ -256,31 +256,31 @@ void Superk1ReNFitter::Analyze(Option_t * option)
      bestfit_signuecc1pi    -> SetLineWidth ( 1 );
      bestfit_signueccoth    -> SetLineWidth ( 1 );
 
-     bestfit_tot            -> SetName("bestfit_tot");
-     bestfit_numuccqe       -> SetName("bestfit_numuccqe");
-     bestfit_numucc1pi      -> SetName("bestfit_numucc1pi");
-     bestfit_numucccoh      -> SetName("bestfit_numucccoh");
-     bestfit_numuccoth      -> SetName("bestfit_numuccoth");
-     bestfit_numunc1pi0     -> SetName("bestfit_numunc1pi0");
-     bestfit_numunccoh      -> SetName("bestfit_numunccoh");
-     bestfit_numuncoth      -> SetName("bestfit_numuncoth");
-     bestfit_numubarccqe    -> SetName("bestfit_numubarcc");
-     bestfit_numubarcc1pi   -> SetName("bestfit_numubarcc1pi");
-     bestfit_numubarcccoh   -> SetName("bestfit_numubarcccoh");
-     bestfit_numubarccoth   -> SetName("bestfit_numubarccoth");
-     bestfit_numubarnc1pi0  -> SetName("bestfit_numubarnc1pi0");
-     bestfit_numubarnccoh   -> SetName("bestfit_numubarnccoh");
-     bestfit_numubarncoth   -> SetName("bestfit_numubarncoth");
-     bestfit_nueccqe        -> SetName("bestfit_nueccqe");
-     bestfit_nuecc1pi       -> SetName("bestfit_nuecc1pi");
-     bestfit_nuecccoh       -> SetName("bestfit_nuecccoh");
-     bestfit_nueccoth       -> SetName("bestfit_nueccoth");
-     bestfit_nuenc1pi0      -> SetName("bestfit_nuenc1pi0");
-     bestfit_nuenccoh       -> SetName("bestfit_nuenccoh");
-     bestfit_nuencoth       -> SetName("bestfit_nuencoth");
-     bestfit_signueccqe     -> SetName("bestfit_signueccqe");
-     bestfit_signuecc1pi    -> SetName("bestfit_signuecc1pi");
-     bestfit_signueccoth    -> SetName("bestfit_signueccoth");
+     bestfit_tot            -> SetName("bestfit_1Re_tot");
+     bestfit_numuccqe       -> SetName("bestfit_1Re_numuccqe");
+     bestfit_numucc1pi      -> SetName("bestfit_1Re_numucc1pi");
+     bestfit_numucccoh      -> SetName("bestfit_1Re_numucccoh");
+     bestfit_numuccoth      -> SetName("bestfit_1Re_numuccoth");
+     bestfit_numunc1pi0     -> SetName("bestfit_1Re_numunc1pi0");
+     bestfit_numunccoh      -> SetName("bestfit_1Re_numunccoh");
+     bestfit_numuncoth      -> SetName("bestfit_1Re_numuncoth");
+     bestfit_numubarccqe    -> SetName("bestfit_1Re_numubarcc");
+     bestfit_numubarcc1pi   -> SetName("bestfit_1Re_numubarcc1pi");
+     bestfit_numubarcccoh   -> SetName("bestfit_1Re_numubarcccoh");
+     bestfit_numubarccoth   -> SetName("bestfit_1Re_numubarccoth");
+     bestfit_numubarnc1pi0  -> SetName("bestfit_1Re_numubarnc1pi0");
+     bestfit_numubarnccoh   -> SetName("bestfit_1Re_numubarnccoh");
+     bestfit_numubarncoth   -> SetName("bestfit_1Re_numubarncoth");
+     bestfit_nueccqe        -> SetName("bestfit_1Re_nueccqe");
+     bestfit_nuecc1pi       -> SetName("bestfit_1Re_nuecc1pi");
+     bestfit_nuecccoh       -> SetName("bestfit_1Re_nuecccoh");
+     bestfit_nueccoth       -> SetName("bestfit_1Re_nueccoth");
+     bestfit_nuenc1pi0      -> SetName("bestfit_1Re_nuenc1pi0");
+     bestfit_nuenccoh       -> SetName("bestfit_1Re_nuenccoh");
+     bestfit_nuencoth       -> SetName("bestfit_1Re_nuencoth");
+     bestfit_signueccqe     -> SetName("bestfit_1Re_signueccqe");
+     bestfit_signuecc1pi    -> SetName("bestfit_1Re_signuecc1pi");
+     bestfit_signueccoth    -> SetName("bestfit_1Re_signueccoth");
 
      fResults -> Add (bestfit_tot);
      fResults -> Add (bestfit_numuccqe);
@@ -323,7 +323,7 @@ void Superk1ReNFitter::Analyze(Option_t * option)
 	 exit(1);
        }
      
-     chisq_surface -> SetName("chisq_surface");
+     chisq_surface -> SetName("chisq_surface_1Re");
      fResults -> Add(chisq_surface);
   }
 
@@ -484,10 +484,10 @@ void Superk1ReNFitter::Analyze(Option_t * option)
       spectrum_legend_back->Draw();
       c4->Update();
 	
-      c1->SetName("c1");
-      c2->SetName("c2");
-      c3->SetName("c3");
-      c4->SetName("c4");
+      c1->SetName("canvas_1Re_1");
+      c2->SetName("canvas_1Re_2");
+      c3->SetName("canvas_1Re_3");
+      c4->SetName("canvas_1Re_4");
 
       fResults->Add(c1);
       fResults->Add(c2);
@@ -507,36 +507,36 @@ void Superk1ReNFitter::Save(const char * filename)
        << filename << endl;
   TFile * file_out = new TFile(filename, "recreate");
 
-  TH1D * bestfit_tot            = (TH1D*) fResults->FindObject("bestfit_tot");
-  TH1D * bestfit_numuccqe       = (TH1D*) fResults->FindObject("bestfit_numuccqe");
-  TH1D * bestfit_numucc1pi      = (TH1D*) fResults->FindObject("bestfit_numucc1pi");
-  TH1D * bestfit_numucccoh      = (TH1D*) fResults->FindObject("bestfit_numucccoh");
-  TH1D * bestfit_numuccoth      = (TH1D*) fResults->FindObject("bestfit_numuccoth");
-  TH1D * bestfit_numunc1pi0     = (TH1D*) fResults->FindObject("bestfit_numunc1pi0");
-  TH1D * bestfit_numunccoh      = (TH1D*) fResults->FindObject("bestfit_numunccoh");
-  TH1D * bestfit_numuncoth      = (TH1D*) fResults->FindObject("bestfit_numuncoth");
-  TH1D * bestfit_numubarccqe    = (TH1D*) fResults->FindObject("bestfit_numubarccqe");
-  TH1D * bestfit_numubarcc1pi   = (TH1D*) fResults->FindObject("bestfit_numubarcc1pi");
-  TH1D * bestfit_numubarcccoh   = (TH1D*) fResults->FindObject("bestfit_numubarcccoh");
-  TH1D * bestfit_numubarccoth   = (TH1D*) fResults->FindObject("bestfit_numubarccoth");
-  TH1D * bestfit_numubarnc1pi0  = (TH1D*) fResults->FindObject("bestfit_numubarnc1pi0");
-  TH1D * bestfit_numubarnccoh   = (TH1D*) fResults->FindObject("bestfit_numubarnccoh");
-  TH1D * bestfit_numubarncoth   = (TH1D*) fResults->FindObject("bestfit_numubarncoth");
-  TH1D * bestfit_nueccqe        = (TH1D*) fResults->FindObject("bestfit_nueccqe");
-  TH1D * bestfit_nuecc1pi       = (TH1D*) fResults->FindObject("bestfit_nuecc1pi");
-  TH1D * bestfit_nuecccoh       = (TH1D*) fResults->FindObject("bestfit_nuecccoh");
-  TH1D * bestfit_nueccoth       = (TH1D*) fResults->FindObject("bestfit_nueccoth");
-  TH1D * bestfit_nuenc1pi0      = (TH1D*) fResults->FindObject("bestfit_nuenc1pi0");
-  TH1D * bestfit_nuenccoh       = (TH1D*) fResults->FindObject("bestfit_nuenccoh");
-  TH1D * bestfit_nuencoth       = (TH1D*) fResults->FindObject("bestfit_nuencoth");
-  TH1D * bestfit_signueccqe     = (TH1D*) fResults->FindObject("bestfit_signueccqe");
-  TH1D * bestfit_signuecc1pi    = (TH1D*) fResults->FindObject("bestfit_signuecc1pi");
-  TH1D * bestfit_signueccoth    = (TH1D*) fResults->FindObject("bestfit_signueccoth");
-  TH2D * chisq_surface          = (TH2D*) fResults->FindObject("chisq_surface");
-  TCanvas * c1 = (TCanvas*) fResults->FindObject("c1");
-  TCanvas * c2 = (TCanvas*) fResults->FindObject("c2");
-  TCanvas * c3 = (TCanvas*) fResults->FindObject("c3");
-  TCanvas * c4 = (TCanvas*) fResults->FindObject("c4");
+  TH1D * bestfit_tot            = (TH1D*) fResults->FindObject("bestfit_1Re_tot");
+  TH1D * bestfit_numuccqe       = (TH1D*) fResults->FindObject("bestfit_1Re_numuccqe");
+  TH1D * bestfit_numucc1pi      = (TH1D*) fResults->FindObject("bestfit_1Re_numucc1pi");
+  TH1D * bestfit_numucccoh      = (TH1D*) fResults->FindObject("bestfit_1Re_numucccoh");
+  TH1D * bestfit_numuccoth      = (TH1D*) fResults->FindObject("bestfit_1Re_numuccoth");
+  TH1D * bestfit_numunc1pi0     = (TH1D*) fResults->FindObject("bestfit_1Re_numunc1pi0");
+  TH1D * bestfit_numunccoh      = (TH1D*) fResults->FindObject("bestfit_1Re_numunccoh");
+  TH1D * bestfit_numuncoth      = (TH1D*) fResults->FindObject("bestfit_1Re_numuncoth");
+  TH1D * bestfit_numubarccqe    = (TH1D*) fResults->FindObject("bestfit_1Re_numubarccqe");
+  TH1D * bestfit_numubarcc1pi   = (TH1D*) fResults->FindObject("bestfit_1Re_numubarcc1pi");
+  TH1D * bestfit_numubarcccoh   = (TH1D*) fResults->FindObject("bestfit_1Re_numubarcccoh");
+  TH1D * bestfit_numubarccoth   = (TH1D*) fResults->FindObject("bestfit_1Re_numubarccoth");
+  TH1D * bestfit_numubarnc1pi0  = (TH1D*) fResults->FindObject("bestfit_1Re_numubarnc1pi0");
+  TH1D * bestfit_numubarnccoh   = (TH1D*) fResults->FindObject("bestfit_1Re_numubarnccoh");
+  TH1D * bestfit_numubarncoth   = (TH1D*) fResults->FindObject("bestfit_1Re_numubarncoth");
+  TH1D * bestfit_nueccqe        = (TH1D*) fResults->FindObject("bestfit_1Re_nueccqe");
+  TH1D * bestfit_nuecc1pi       = (TH1D*) fResults->FindObject("bestfit_1Re_nuecc1pi");
+  TH1D * bestfit_nuecccoh       = (TH1D*) fResults->FindObject("bestfit_1Re_nuecccoh");
+  TH1D * bestfit_nueccoth       = (TH1D*) fResults->FindObject("bestfit_1Re_nueccoth");
+  TH1D * bestfit_nuenc1pi0      = (TH1D*) fResults->FindObject("bestfit_1Re_nuenc1pi0");
+  TH1D * bestfit_nuenccoh       = (TH1D*) fResults->FindObject("bestfit_1Re_nuenccoh");
+  TH1D * bestfit_nuencoth       = (TH1D*) fResults->FindObject("bestfit_1Re_nuencoth");
+  TH1D * bestfit_signueccqe     = (TH1D*) fResults->FindObject("bestfit_1Re_signueccqe");
+  TH1D * bestfit_signuecc1pi    = (TH1D*) fResults->FindObject("bestfit_1Re_signuecc1pi");
+  TH1D * bestfit_signueccoth    = (TH1D*) fResults->FindObject("bestfit_1Re_signueccoth");
+  TH2D * chisq_surface          = (TH2D*) fResults->FindObject("chisq_surface_1Re");
+  TCanvas * c1 = (TCanvas*) fResults->FindObject("canvas_1Re_1");
+  TCanvas * c2 = (TCanvas*) fResults->FindObject("canvas_1Re_2");
+  TCanvas * c3 = (TCanvas*) fResults->FindObject("canvas_1Re_3");
+  TCanvas * c4 = (TCanvas*) fResults->FindObject("canvas_1Re_4");
 
   if ( bestfit_tot          ) { bestfit_tot            -> Write(); }
   if ( bestfit_numuccqe     ) { bestfit_numuccqe       -> Write(); }

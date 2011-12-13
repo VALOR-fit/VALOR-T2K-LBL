@@ -539,6 +539,82 @@ static const int kSKHistoAttributes[kns][knm][kNGraphicAttributes] = {
 };
 
 //
+// Define the order in which TH1D spectra are added in a THStack.
+// The order is chosen to increase visibility of smaller components.
+//
+
+static const SuperkMode_t kSKReactionModesOrderInStack[kns][knm] = {
+
+  // > 1 muon-like ring (numu disappearance)
+  {
+    kSKmSigNuECC1pi, 
+    kSKmSigNuECCoth,
+    kSKmSigNuECCQE, 
+    kSKmNuENC,                                                               
+    kSKmNuECC1pi, 
+    kSKmNuECCoth_mu,                                
+    kSKmNuECCQE, 
+    kSKmNuMuBarNC,       
+    kSKmNuMuBarCC1pi, 
+    kSKmNuMuBarCCoth_mu,                  
+    kSKmNuMuBarCCQE,      
+    kSKmNuMuNC,          
+    kSKmNuMuCCoth_mu,                      
+    kSKmNuMuCC1pi, 
+    kSKmNuMuCCQE,         
+    kSKmUndefined,
+    kSKmUndefined,
+    kSKmUndefined,
+    kSKmUndefined,
+    kSKmUndefined,
+    kSKmUndefined,
+    kSKmUndefined,
+    kSKmUndefined,
+    kSKmUndefined,
+    kSKmUndefined,
+    kSKmUndefined,
+    kSKmUndefined,
+    kSKmUndefined,
+    kSKmUndefined,
+    kSKmUndefined
+  },
+
+  // > 1 electron-like ring (nue appearance)
+  {
+    kSKmNuMuCCQE, 
+    kSKmNuMuCC1pi, 
+    kSKmNuMuCCcoh, 
+    kSKmNuMuCCoth_e, 
+    kSKmNuMuNC1pi0, 
+    kSKmNuMuNCcoh, 
+    kSKmNuMuNCoth_e,                            
+    kSKmNuMuBarCCQE, 
+    kSKmNuMuBarCC1pi, 
+    kSKmNuMuBarCCcoh, 
+    kSKmNuMuBarCCoth_e,  
+    kSKmNuMuBarNC1pi0, 
+    kSKmNuMuBarNCcoh, 
+    kSKmNuMuBarNCoth_e,
+    kSKmNuECCQE, 
+    kSKmNuECC1pi, 
+    kSKmNuECCcoh, 
+    kSKmNuECCoth_e,
+    kSKmNuENC1pi0,  
+    kSKmNuENCcoh, 
+    kSKmNuENCoth_e,
+    kSKmSigNuECCQE,  
+    kSKmSigNuECC1pi,  
+    kSKmSigNuECCoth,
+    kSKmUndefined,
+    kSKmUndefined,
+    kSKmUndefined,
+    kSKmUndefined,
+    kSKmUndefined,
+    kSKmUndefined
+  }
+};
+
+//
 // ------------------------------------------------------------------------
 // Binning
 // ------------------------------------------------------------------------
