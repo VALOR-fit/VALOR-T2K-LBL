@@ -55,7 +55,7 @@ die("$job_dir doesn't exist") unless -d $job_dir;
 while($ijob < $njobs) {
 
   $dcp_min_bin = $ijob+1;
-  $dcp_max_bin = $dcp_min_bin+1;
+  $dcp_max_bin = $dcp_min_bin;
 
   $command = "root2k -l -b -q \'$softw_dir/macros/fit/build_chisq_surface_4d.C(0,\"$data_file\",\"$config_file\",\"$fit_param_list\",$dcp_min_bin,$dcp_max_bin)\'"; 
 
