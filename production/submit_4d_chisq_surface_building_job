@@ -43,8 +43,8 @@ $data_file       = "inputs/data.xml";
 $config_file     = "analysis_configuration.xml";
 $fit_param_list  = "nuosc3f";
 
-$njobs            = 91;
-$ijob             = 0;
+$njobs    = 90;
+$ijob     = 0;
 
 mkpath ($job_dir, {verbose => 1, mode=>0777});
 die("$job_dir doesn't exist") unless -d $job_dir;
@@ -54,7 +54,7 @@ while($ijob < $njobs) {
   $dcp_min_bin = $ijob+1;
   $dcp_max_bin = $dcp_min_bin+1;
 
-  $command = "root2k -l -b -q \'$softw_dir/macros/fit/build_chisq_surface_4d.C(0,\"$data_file\",\"$config_file\","\$fit_param_list\",$dcp_min_bin,$dec_max_bin)\'"; 
+  $command = "root2k -l -b -q \'$softw_dir/macros/fit/build_chisq_surface_4d.C(0,\"$data_file\",\"$config_file\",\"$fit_param_list\",$dcp_min_bin,$dcp_max_bin)\'"; 
 
   print "Submitting job... $ijob \n";
   print "  $command \n";
@@ -62,19 +62,19 @@ while($ijob < $njobs) {
   #
   # RAL
   #
-#  if($resource eq "RAL") {
-#       open(PBS, ">$job_dir/$tag-$ijob.pbs") or die("Can not create the PBS batch script");
-#       print PBS "#!/bin/bash \n";
-#       print PBS "#PBS -N $tag-$ijob \n";
-#       print PBS "#PBS -l cput=$cput \n";
-#       print PBS "#PBS -l walltime=$cput \n";
-#¢       print PBS "#PBS -o $job_dir/$tag-$ijob.pbs.out \n";
-#¢      print PBS "#PBS -e $job_dir/$tag-$ijob.pbs.err \n";
-#       print PBS "cd $job_dir/ \n";
-#  ¢    print PBS "source $softw_dir/setup/setup_at_ral.sh $softw_dir \n";
-#       print PBS "$command \n";
-#       close(PBS);
-#      `qsub -q prod $job_dir/$tag-$ijob.pbs`;
+  if($resource eq "RAL") {
+       open(PBS, ">$job_dir/$tag-$ijob.pbs") or die("Can not create the PBS batch script");
+       print PBS "#!/bin/bash \n";
+       print PBS "#PBS -N $tag-$ijob \n";
+       print PBS "#PBS -l cput=$cput \n";
+       print PBS "#PBS -l walltime=$cput \n";
+       print PBS "#PBS -o $job_dir/$tag-$ijob.pbs.out \n";
+       print PBS "#PBS -e $job_dir/$tag-$ijob.pbs.err \n";
+       print PBS "cd $job_dir/ \n";
+       print PBS "source $softw_dir/setup/setup_at_ral.sh $softw_dir \n";
+       print PBS "$command \n";
+       close(PBS);
+      `qsub -q prod $job_dir/$tag-$ijob.pbs`;
   }#RAL
 
   # 
@@ -98,8 +98,5 @@ while($ijob < $njobs) {
      print "$resource not supported just yet!\n"; 
   }#Grid
 
-
-  $curr_job_bin_min = $curr_job_bin_max + 1;
-  $curr_job_bin_max = $curr_job_bin_max + $nbins_per_job;
   $ijob++;
 }
