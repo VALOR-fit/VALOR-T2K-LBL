@@ -7,12 +7,13 @@
 #
 # --resource : 
 #      <RAL, IN2P3, Oxford, Grid>, default: RAL
-#  --cpu-time : 
+# --tag :
+# --cpu-time : 
 #      CPU time. 
 #      Default: "6:00:00" for RAL
-#  --job-dir : 
+# --job-dir : 
 #      Directory for job scripts and outputs, default: `pwd`
-#  --softw-dir : 
+# --softw-dir : 
 #      Oscillation code top-level directory, default: `pwd`
 # 
 # C.Andreopoulos
@@ -22,15 +23,17 @@ use File::Path;
 
 $iarg=0;
 foreach (@ARGV) {
-  if($_ eq '--resource'                      ) { $resource      = $ARGV[$iarg+1]; }
-  if($_ eq '--cpu-time'                      ) { $cput          = $ARGV[$iarg+1]; }
-  if($_ eq '--job-dir'                       ) { $job_dir       = $ARGV[$iarg+1]; }
-  if($_ eq '--softw-dir'                     ) { $softw_dir     = $ARGV[$iarg+1]; }
+  if($_ eq '--resource'     ) { $resource      = $ARGV[$iarg+1]; }
+  if($_ eq '--tag'          ) { $tag           = $ARGV[$iarg+1]; }
+  if($_ eq '--cpu-time'     ) { $cput          = $ARGV[$iarg+1]; }
+  if($_ eq '--job-dir'      ) { $job_dir       = $ARGV[$iarg+1]; }
+  if($_ eq '--softw-dir'    ) { $softw_dir     = $ARGV[$iarg+1]; }
   $iarg++;
 }
-$resource       = "RAL" unless defined $resource;
-$job_dir        = `pwd` unless defined $job_dir;
-$softw_dir      = `pwd` unless defined $softw_dir;
+$resource       = "RAL"     unless defined $resource;
+$tag            = "chisq4d" unless defined $tag;
+$job_dir        = `pwd`     unless defined $job_dir;
+$softw_dir      = `pwd`     unless defined $softw_dir;
 
 if( !defined $cput) {
   if($resource eq "RAL"    )  { $cput = "6:00:00";  }
