@@ -65,7 +65,8 @@ $n_dm23sq_bins = 41;
 
 mkpath ($job_dir, {verbose => 1, mode=>0777});
 die("$job_dir doesn't exist") unless -d $job_dir;
-     
+$ijob     = 0; 
+  
 $i_dcp_bin = 1;
 while($i_dcp_bin <= $n_dcp_bins) {
   $dcp_min_bin = $i_dcp_bin;
@@ -120,6 +121,7 @@ while($i_dcp_bin <= $n_dcp_bins) {
       print "$resource not supported just yet!\n"; 
      }#Grid
 
+    $ijob ++; 
     $i_dm23sq_bin++;
   }
   $i_dcp_bin++;
