@@ -58,10 +58,10 @@ void build_chisq_surface_4d
   double dm23sq_step = 1E-4;
 
   // Make sure that min and max are at the bin centre and not at the low/high edge of the first/last bin
-  int dcp_nbins    = 1 + (int) ((dcp_max    - dcp_min   ) / dcp_step   );
-  int mix13_nbins  = 1 + (int) ((mix13_max  - mix13_min ) / mix13_step );
-  int mix23_nbins  = 1 + (int) ((mix23_max  - mix23_min ) / mix23_step );
-  int dm23sq_nbins = 1 + (int) ((dm23sq_max - dm23sq_min) / dm23sq_step);
+  int dcp_nbins    = 1 + TMath::Nint( (dcp_max    - dcp_min   ) / dcp_step    );
+  int mix13_nbins  = 1 + TMath::Nint( (mix13_max  - mix13_min ) / mix13_step  );
+  int mix23_nbins  = 1 + TMath::Nint( (mix23_max  - mix23_min ) / mix23_step  );
+  int dm23sq_nbins = 1 + TMath::Nint( (dm23sq_max - dm23sq_min) / dm23sq_step );
 
   // Apply user cuts in the bin range
   int dcp_min_bin     = (input_dcp_min_bin    == -1) ? 1            : input_dcp_min_bin    ;
