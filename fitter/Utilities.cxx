@@ -64,6 +64,8 @@
    Added various AsStringRooTex() and AsStringCompact() methods to simplify
    construction of ROOT object names and TLegend entries for objects that
    depend on SK sample and mode.
+ @ 15/12/2011 - LE
+   Added methods for "EOscAnaType" 
 
 */
 //____________________________________________________________________________
@@ -656,6 +658,25 @@ string t2kana::util::AsString (
   return out.str();
 }
 //____________________________________________________________________________
+string t2kana::util::AsString(t2kana::conv::OscAnaType_t a)
+{
+  switch(a) {
+   case (kAnaCombined) :
+     return "Combined nue appearance + numu disappearance analysis";
+     break;
+   case (kAnaNuMuDisappOnly) :
+     return "Numu disappearance analysis only";
+     break;
+   case (kAnaNuEAppOnly) :
+     return "Nue appearance analysis only";
+     break;
+   default :
+     return "Undefined"; 
+     break;
+  }
+  return "";
+}
+//____________________________________________________________________________
 string t2kana::util::AsString(t2kana::conv::NuMassHierarchy_t m)
 {
   switch(m) {
@@ -1104,6 +1125,14 @@ t2kana::conv::SuperkSample_t t2kana::util::SKSampleFromString(string sh)
   if(sh == "1Re" ) return kSKsFCFV1RingELike;
 
   return kSKsUndefined;
+}
+//____________________________________________________________________________
+t2kana::conv::OscAnaType_t  t2kana::util::OscAnaFromString(string sh) {
+  if(sh == "combined"   ) return kAnaCombined;
+  if(sh == "numu_disap" ) return kAnaNuMuDisappOnly;
+  if(sh == "nue_app"    ) return kAnaNuEAppOnly;
+  
+  return kAnaUndefined;
 }
 //____________________________________________________________________________
 t2kana::conv::NuMassHierarchy_t  t2kana::util::HierarchyFromString(string sh) {

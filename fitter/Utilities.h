@@ -82,6 +82,7 @@ namespace util {
   void SetDefaultSKSpectrumStyle (t2kana::conv::SuperkSample_t s, t2kana::conv::SuperkMode_t m, TH1D * histogram);
 
   string AsString        (t2kana::conv::PhysHypothesis_t hyp, double mix12, double mix13, double mix23, double deltacp, double dm12sq, double dm23sq);
+  string AsString        (t2kana::conv::OscAnaType_t      a);
   string AsString        (t2kana::conv::NuMassHierarchy_t m);
   string AsString        (t2kana::conv::NuOscMixParam_t   p);
   string AsString        (t2kana::conv::PhysHypothesis_t  h);
@@ -99,8 +100,9 @@ namespace util {
   string AsStringCompact (t2kana::conv::SuperkSample_t s);
   string AsStringCompact (t2kana::conv::SuperkMode_t   m);
 
-  t2kana::conv::PhysHypothesis_t   PhysHypFromString   (string h);
+  t2kana::conv::PhysHypothesis_t   PhysHypFromString    (string h);
   t2kana::conv::SuperkSample_t     SKSampleFromString   (string h);
+  t2kana::conv::OscAnaType_t       OscAnaFromString     (string h);
   t2kana::conv::NuMassHierarchy_t  HierarchyFromString  (string h);
   t2kana::conv::NuOscMixParam_t    MixingTypeFromString (string h);
 
