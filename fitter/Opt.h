@@ -37,6 +37,9 @@ public:
   // Use sinsq2theta for the numu analysis, sinsqtheta for the global nue+numu analysis etc
   conv::NuOscMixParam_t gOscMixingParamChoice;
 
+  // Choice of oscillation analysis type (combined, numu disapp only, nue app only)
+  conv::OscAnaType_t gOscAnaTypeChoice;
+
   void Print(ostream & stream) const;
   friend ostream & operator << (ostream & stream, const Opt & opt);
 

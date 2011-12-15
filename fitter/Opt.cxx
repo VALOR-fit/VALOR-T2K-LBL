@@ -5,6 +5,10 @@
  @ Dec 06, 2011 - CA
    First added in v2.2.1
 
+ @ 15/12/2011 - LE                
+   Added "gOscAnaTypeChoice" to select the oscillation analysis type: 
+   combined or single analysis (numu disappearance or nue appearance only)
+
 */
 //________________________________________________________________________________________
 
@@ -55,6 +59,7 @@ void Opt::SetDefaults(void)
 {
   gMassHierarchyAssumed = kNmhNormal;
   gOscMixingParamChoice = kNuMixSinsq2Theta;
+  gOscAnaTypeChoice     = kAnaCombined;
 }
 //____________________________________________________________________________
 void Opt::Print(ostream & stream) const
@@ -66,6 +71,9 @@ void Opt::Print(ostream & stream) const
          << endl;
   stream << " - Mixing param choice: " 
          << util::AsString(gOscMixingParamChoice) 
+         << endl;
+  stream << " - Oscillation analysis  choice: " 
+         << util::AsString(gOscAnaTypeChoice) 
          << endl;
 }
 //____________________________________________________________________________
