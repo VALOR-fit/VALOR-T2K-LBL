@@ -32,7 +32,8 @@
  @ 05/12/2011 - CA
    Add capability to use either sin^2(2*theta_ij) or sin^2(theta_ij) as the
    parameter of choice for describing neutrino mixing.
-
+ @ 15/12/11
+   Add "nuosc3f_12fix" param list
 */
 //________________________________________________________________________________________
 
@@ -393,6 +394,12 @@ FitParamList * FitParamList::NamedParameterList(string name)
     FitParamList * fp = FitParamList::NuOsc3FlavourFitNoSyst();
     fp -> SetNuisance (kPhypMixing12, true);
     fp -> SetNuisance (kPhypDm12sq,   true);
+    return fp;
+  }
+  if(name == "nuosc3f_12fix") {
+    FitParamList * fp = FitParamList::NuOsc3FlavourFitNoSyst();
+    fp -> FixParameter (kPhypMixing12);
+    fp -> FixParameter (kPhypDm12sq  );
     return fp;
   }
   if(name == "nuosc3f_numudisapp_fix4") {

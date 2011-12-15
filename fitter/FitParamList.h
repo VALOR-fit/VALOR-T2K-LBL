@@ -102,6 +102,7 @@ public:
    // The string argument of NamedParameterList() can take the following values:
    // - "nuosc3f"                        : Fit for sin^2(2theta12), sin^2(2theta13), sin^2(2theta23), delta_CP, |Dm23^2| and Dm12^2 (3-flavour formalism).
    // - "nuosc3f_12constrain"            : As "nuosc3f", but penalizing sin^2(2theta12), Dm12^2 devations from values measured in solar/reactor expts.
+   // - "nuosc3f_12fix"                  : As "nuosc3f", but fixing sin^2(2theta12), Dm12^2 devations to values measured in solar/reactor expts.
    // - "nuosc3f_numudisapp_fix4"        : As "nuosc3f" but fixing  sin^2(2theta12), sin^2(2theta13), delta_CP and Dm12^2.
    // - "nuosc3f_nueapp_fix4"            : As "nuosc3f" but fixing  sin^2(2theta12), sin^2(2theta23), |Dm23^2| and Dm12^2.
    // - "numudisapp2f"                   : Fit for sin^2(2theta23) and |Dm23^2| (2-flavour formalism)
