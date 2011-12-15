@@ -311,6 +311,16 @@ typedef enum EOscChannelId
 } 
 OscChannelId_t;
 
+// Combined or single analysis 
+typedef enum EOscAnaType 
+{   
+   kAnaUndefined = -1, 
+   kAnaCombined,
+   kAnaNuMuDisappOnly,
+   kAnaNuEAppOnly
+} 
+OscAnaType_t;
+
 // Neutrino mass hierarchy
 typedef enum ENuMassHierarchy 
 {   
@@ -505,36 +515,37 @@ static const int kSKHistoAttributes[kns][knm][kNGraphicAttributes] = {
 
   // > 1 electron-like ring (nue appearance)
   {
-    {   -1,        -1, -1, -1,     -1 }, //kSKmNuMuCCQE 
-    {   -1,        -1, -1, -1,     -1 }, //kSKmNuMuCC1pi 
-    {   -1,        -1, -1, -1,     -1 }, //kSKmNuMuCCcoh 
-    {   -1,        -1, -1, -1,     -1 }, //kSKmNuMuCCoth_e 
-    {   -1,        -1, -1, -1,     -1 }, //kSKmNuMuNC1pi0 
-    {   -1,        -1, -1, -1,     -1 }, //kSKmNuMuNCcoh 
-    {   -1,        -1, -1, -1,     -1 }, //kSKmNuMuNCoth_e                            
-    {   -1,        -1, -1, -1,     -1 }, //kSKmNuMuBarCCQE 
-    {   -1,        -1, -1, -1,     -1 }, //kSKmNuMuBarCC1pi 
-    {   -1,        -1, -1, -1,     -1 }, //kSKmNuMuBarCCcoh 
-    {   -1,        -1, -1, -1,     -1 }, //kSKmNuMuBarCCoth_e  
-    {   -1,        -1, -1, -1,     -1 }, //kSKmNuMuBarNC1pi0 
-    {   -1,        -1, -1, -1,     -1 }, //kSKmNuMuBarNCcoh 
-    {   -1,        -1, -1, -1,     -1 }, //kSKmNuMuBarNCoth_e
-    {   -1,        -1, -1, -1,     -1 }, //kSKmNuECCQE 
-    {   -1,        -1, -1, -1,     -1 }, //kSKmNuECC1pi 
-    {   -1,        -1, -1, -1,     -1 }, //kSKmNuECCcoh 
-    {   -1,        -1, -1, -1,     -1 }, //kSKmNuECCoth_e
-    {   -1,        -1, -1, -1,     -1 }, //kSKmNuENC1pi0  
-    {   -1,        -1, -1, -1,     -1 }, //kSKmNuENCcoh 
-    {   -1,        -1, -1, -1,     -1 }, //kSKmNuENCoth_e
-    {   -1,        -1, -1, -1,     -1 }, //kSKmSigNuECCQE  
-    {   -1,        -1, -1, -1,     -1 }, //kSKmSigNuECC1pi  
-    {   -1,        -1, -1, -1,     -1 }, //kSKmSigNuECCoth
+    {   -1,    kWhite,  1,  1, kBlack }, //kSKmNuMuCCQE
+    { 3544,    kBlack,  1,  1, kBlack }, //kSKmNuMuCC1pi
+    { 3244,    kGreen,  1,  1, kBlack }, //kSKmNuMuCCcoh
+    { 3244,     kBlue,  1,  1, kBlack }, //kSKmNuMuCCoth_e
+    { 3006,      kRed,  1,  1, kBlack }, //kSKmNuMuNC1pi0
+    { 3006,    kRed-1,  1,  1, kBlack }, //kSKmNuMuNCcoh
+    { 3006,    kRed-2,  1,  1, kBlack }, //kSKmNuMuNCoth_e
+    { 3001,  kAzure-3,  1,  1, kBlack }, //kSKmNuMuBarCCQE
+    { 3345,  kAzure-4,  1,  1, kBlack }, //kSKmNuMuBarCC1pi
+    { 3354,  kAzure-6,  1,  1, kBlack }, //kSKmNuMuBarCCcoh
+    { 3354,  kMagenta,  1,  1, kBlack }, //kSKmNuMuBarCCoth_e
+    { 3006,  kAzure-7,  1,  1, kBlack }, //kSKmNuMuBarNC1pi0
+    { 3006,  kAzure-9,  1,  1, kBlack }, //kSKmNuMuBarNCcoh
+    { 3006,  kMagenta,  1,  1, kBlack }, //kSKmNuMuBarNCoth_e
+    { 3001,  kGreen+1,  1,  1, kBlack }, //kSKmNuECCQE
+    { 3345,  kGreen+2,  1,  1, kBlack }, //kSKmNuECC1pi
+    { 3354,  kGreen+2,  1,  1, kBlack }, //kSKmNuECCcoh
+    { 3354,    kBlack,  1,  1, kBlack }, //kSKmNuECCoth_e
+    { 3006,  kGreen+5,  1,  1, kBlack }, //kSKmNuENC1pi0
+    { 3006,  kGreen+7,  1,  1, kBlack }, //kSKmNuENCcoh
+    { 3006,    kBlack,  1,  1, kBlack }, //kSKmNuENCoth_e
+    { 3001,  kGreen+8,  1,  1, kBlack }, //kSKmSigNuECCQE
+    { 3345, kGreen+10,  1,  1, kBlack }, //kSKmSigNuECC1pi
+    { 3354,      kRed,  1,  1, kBlack }, //kSKmSigNuECCoth
     {   -1,        -1, -1, -1,     -1 }, //kSKmUndefined
     {   -1,        -1, -1, -1,     -1 }, //kSKmUndefined
     {   -1,        -1, -1, -1,     -1 }, //kSKmUndefined
     {   -1,        -1, -1, -1,     -1 }, //kSKmUndefined
     {   -1,        -1, -1, -1,     -1 }, //kSKmUndefined
     {   -1,        -1, -1, -1,     -1 }  //kSKmUndefined
+
   }
 };
 
