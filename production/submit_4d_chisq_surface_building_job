@@ -8,6 +8,7 @@
 # --resource : 
 #      <RAL, IN2P3, Oxford, Grid>, default: RAL
 # --tag :
+#      A tag used for building script and logfile names.
 # --cpu-time : 
 #      CPU time. 
 #      Default: "6:00:00" for RAL
@@ -46,60 +47,80 @@ $data_file       = "inputs/data.xml";
 $config_file     = "analysis_configuration.xml";
 $fit_param_list  = "nuosc3f";
 
-$njobs    = 90;
-$ijob     = 0;
+#
+# Note: This production script needs to match the binning used in 
+# macros/fit/build_chisq_surface_4d.C :
+# sinsqtheta13 : 101 bins in (0, 0.5)
+# sinsqtheta23 : 80 bins in (0.3, 0.7)
+# delta_cp     : 91 bins in (-3.14159, 3.14159)
+# |dm23sq|     : 41 bins in (0.001, 0.005) eV^2/c^4
+#
+
+$mix13_min_bin = 1;
+$mix13_max_bin = 101;
+$mix23_min_bin = 1;
+$mix23_max_bin = 80;
+$n_dcp_bins    = 91;
+$n_dm23sq_bins = 41;
 
 mkpath ($job_dir, {verbose => 1, mode=>0777});
 die("$job_dir doesn't exist") unless -d $job_dir;
      
-while($ijob < $njobs) {
+$i_dcp_bin = 1;
+while($i_dcp_bin <= $n_dcp_bins) {
+  $dcp_min_bin = $i_dcp_bin;
+  $dcp_max_bin = $i_dcp_bin;
 
-  $dcp_min_bin = $ijob+1;
-  $dcp_max_bin = $dcp_min_bin;
+  $i_dm23sq_bin = 1;
+  while($i_dm23sq_bin <= $n_dm23sq_bins) {
+     $dm23sq_min_bin = $i_dm23sq_bin;
+     $dm23sq_max_bin = $i_dm23sq_bin;
 
-  $command = "root2k -l -b -q \'$softw_dir/macros/fit/build_chisq_surface_4d.C(0,\"$data_file\",\"$config_file\",\"$fit_param_list\",$dcp_min_bin,$dcp_max_bin)\'"; 
+     $command = "root2k -l -b -q \'$softw_dir/macros/fit/build_chisq_surface_4d.C(0,\"$data_file\",\"$config_file\",\"$fit_param_list\",$dcp_min_bin,$dcp_max_bin,$mix13_min_bin,$mix13_max_bin,$mix23_min_bin,$mix23_max_bin,$dm23sq_min_bin,$dm23sq_min_bin)\'"; 
 
-  print "Submitting job... $ijob \n";
-  print "  $command \n";
+     print "Submitting job... $ijob \n";
+     print "  $command \n";
 
-  #
-  # RAL
-  #
-  if($resource eq "RAL") {
-       open(PBS, ">$job_dir/$tag-$ijob.pbs") or die("Can not create the PBS batch script");
-       print PBS "#!/bin/bash \n";
-       print PBS "#PBS -N $tag-$ijob \n";
-       print PBS "#PBS -l cput=$cput \n";
-       print PBS "#PBS -l walltime=$cput \n";
-       print PBS "#PBS -o $job_dir/$tag-$ijob.pbs.out \n";
-       print PBS "#PBS -e $job_dir/$tag-$ijob.pbs.err \n";
-       print PBS "cd $job_dir/ \n";
-       print PBS "source $softw_dir/setup/setup_at_ral.sh $softw_dir \n";
-       print PBS "$command \n";
-       close(PBS);
-      `qsub -q prod $job_dir/$tag-$ijob.pbs`;
-  }#RAL
+     #
+     # RAL
+     #
+     if($resource eq "RAL") {
+#       open(PBS, ">$job_dir/$tag-$ijob.pbs") or die("Can not create the PBS batch script");
+#       print PBS "#!/bin/bash \n";
+#       print PBS "#PBS -N $tag-$ijob \n";
+#       print PBS "#PBS -l cput=$cput \n";
+#       print PBS "#PBS -l walltime=$cput \n";
+#       print PBS "#PBS -o $job_dir/$tag-$ijob.pbs.out \n";
+#       print PBS "#PBS -e $job_dir/$tag-$ijob.pbs.err \n";
+#       print PBS "cd $job_dir/ \n";
+#       print PBS "source $softw_dir/setup/setup_at_ral.sh $softw_dir \n";
+#       print PBS "$command \n";
+#       close(PBS);
+#      `qsub -q prod $job_dir/$tag-$ijob.pbs`;
+     }#RAL
 
-  # 
-  # IN2P3
-  #
-  if($resource eq "IN2P3") {
-     print "$resource not supported just yet!\n"; 
-  }#IN2P3
+     # 
+     # IN2P3
+     #
+     if($resource eq "IN2P3") {
+       print "$resource not supported just yet!\n"; 
+     }#IN2P3
 
-  #   
-  # Oxford
-  #   
-  if($resource eq "Oxford") {
-     print "$resource not supported just yet!\n"; 
-  }#Oxford
+     #   
+     # Oxford
+     #   
+     if($resource eq "Oxford") {
+       print "$resource not supported just yet!\n"; 
+     }#Oxford
 
-  #   
-  # Grid
-  #   
-  if($resource eq "Grid") {
-     print "$resource not supported just yet!\n"; 
-  }#Grid
+     #   
+     # Grid
+     #   
+     if($resource eq "Grid") {
+      print "$resource not supported just yet!\n"; 
+     }#Grid
 
-  $ijob++;
+    $i_dm23sq_bin++;
+  }
+  $i_dcp_bin++;
 }
