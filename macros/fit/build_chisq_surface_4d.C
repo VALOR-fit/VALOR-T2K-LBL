@@ -73,6 +73,12 @@ void build_chisq_surface_4d
   int dm23sq_min_bin  = (input_dm23sq_min_bin == -1) ? 1            : input_dm23sq_min_bin ;
   int dm23sq_max_bin  = (input_dm23sq_max_bin == -1) ? dm23sq_nbins : input_dm23sq_max_bin ;
 
+  // Calculate total number of bins considered in this job
+  int nbins = (dcp_max_bin    - dcp_min_bin    + 1) *
+              (mix13_max_bin  - mix13_min_bin  + 1) *
+              (mix23_max_bin  - mix23_min_bin  + 1) *
+              (dm23sq_max_bin - dm23sq_min_bin + 1);
+
   // Print settings
   cout << "[Job inputs]" << endl;
   cout << " - Reading analysis configuration from: " << config << endl;
@@ -96,6 +102,8 @@ void build_chisq_surface_4d
        << " considering bins [" << dcp_min_bin << ", " << dcp_max_bin << "]" << endl;
   cout << "   - " << util::AsString(conv::kPhypDm23sq) << " : " 
        << " considering bins [" << dm23sq_min_bin << ", " << dm23sq_max_bin << "]" << endl;
+  cout << "- Current job will consider in total: " << nbins 
+       << " oscillation parameter bins" << endl;
   cout << *Opt::Instance() << endl;
 
   // Output
@@ -113,6 +121,8 @@ void build_chisq_surface_4d
   FitParamList * fparm = FitParamList::NamedParameterList(fit_param_list);
   fparm->Update(conv::kPhypMixing12, 0.313);    // fix solar osc params
   fparm->Update(conv::kPhypDm12sq,   7.58E-5);  // fix solar osc params
+
+  int ibin=0;
 
   for(int idcp = dcp_min_bin; idcp <= dcp_max_bin; idcp++) {
     double dcp = dcp_min + (idcp-1) * dcp_step;
@@ -148,6 +158,10 @@ void build_chisq_surface_4d
 
              // Save
              ntchisq->Fill(dcp,mix13,mix23,dm23sq,chisq,chisq1Rmu,chisq1Re);
+
+             ibin++;
+             double frac_done = 100 * (double)ibin / (double)nbins;
+             cout << " **** " << frac_done << "% done" << endl;
           }
        }
     }
