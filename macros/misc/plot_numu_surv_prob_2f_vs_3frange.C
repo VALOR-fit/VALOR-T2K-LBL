@@ -14,16 +14,17 @@ void plot_numu_surv_prob_2f_vs_3frange(double mixing23=1.0, double dm23sq=2.32E-
   using namespace std;
   using namespace t2kana;
 
+  // Global options
+  Opt::Instance()->gOscMixingParamChoice = conv::kNuMixSinsq2Theta;
+  Opt::Instance()->gMassHierarchyAssumed = conv::kNmhNormal;
+
+  // Constants
   const int    numu                 = conv::kPdgNuMu;
   const int    nrand                = 4000;
   const int    ne                   = 500;
   const double emin                 = 0.250;
   const double emax                 = 10.000;
   const double de                   = (emax-emin)/(ne-1);
-  const double dm12sq_frcerr        = 0.05;
-  const double mixing12_frcerr = 0.08;
-
-  TRandom rand(0);
 
   NuOsc3Flavour calc_osc3f;
 
@@ -39,7 +40,7 @@ void plot_numu_surv_prob_2f_vs_3frange(double mixing23=1.0, double dm23sq=2.32E-
     e[i] = emin + i*de;
     //cout << "E = " << e[i] << " GeV" << endl;
 
-    numu_surv_prob_2f[i] = util::NuMuSurvProbOsc2D(mixing23, dm23sq, e[i]);
+    numu_surv_prob_2f[i] = util::NuMuSurvProbOsc2Flavour(mixing23, dm23sq, e[i]);
 
     numu_surv_prob_3fv_upper[i] = -999;
     numu_surv_prob_3fv_lower[i] = +999;
@@ -48,12 +49,10 @@ void plot_numu_surv_prob_2f_vs_3frange(double mixing23=1.0, double dm23sq=2.32E-
 
     for(int irand = 0; irand < nrand; irand++) {
 
-       double dm12sq        = (1. + rand.Gaus(0.,1.) * dm12sq_frcerr       )  * conv::kGlobFitDm12sq;
-       double mixing12 = (1. + rand.Gaus(0.,1.) * mixing12_frcerr)  * conv::kGlobFitmixing12;
-       mixing12 = TMath::Min(1.,mixing12);
-       mixing12 = TMath::Max(0.,mixing12);
-       double mixing13 = rand.Uniform() * conv::kGlobFitmixing13;
-       double delta_cp      = rand.Uniform() * 2*conv::kpi;
+       double dm12sq   = util::RandomizeDm12sq();
+       double mixing12 = util::RandomizeMixing12();
+       double mixing13 = util::RandomizeMixing13();
+       double delta_cp = util::RandomizeDeltaCP();
 
        calc_osc3f.SetOscParameters(mixing12,mixing13,mixing23,dm12sq,dm23sq,delta_cp);
 
@@ -61,10 +60,10 @@ void plot_numu_surv_prob_2f_vs_3frange(double mixing23=1.0, double dm23sq=2.32E-
        if(p3fv < 0. || p3fv > 1. || TMath::IsNaN(p3fv)) {
 	 cout << "WARNING! P_{numu->numu} ("
               << "E = " << e[i] << " GeV"
-              << ", mixing12 = " << mixing12 
-              << ", mixing13 = " << mixing13 
-              << ", mixing23 = " << mixing23 
-              << ", Dm12^2 = "  << dm12sq << " eV^2"
+              << ", mixing12 = "  << mixing12 
+              << ", mixing13 = "  << mixing13 
+              << ", mixing23 = "  << mixing23 
+              << ", Dm12^2 = "    << dm12sq << " eV^2"
               << ", |Dm23^2| = "  << dm23sq << " eV^2"
               << ", delta_cp = "  << delta_cp << " rad) = " << p3fv << endl;
          continue;
@@ -76,10 +75,10 @@ void plot_numu_surv_prob_2f_vs_3frange(double mixing23=1.0, double dm23sq=2.32E-
        if(p3fm < 0. || p3fm > 1. || TMath::IsNaN(p3fm)) {
 	 cout << "WARNING! P_{numu->numu} ("
               << "E = " << e[i] << " GeV"
-              << ", mixing12 = " << mixing12 
-              << ", mixing13 = " << mixing13 
-              << ", mixing23 = " << mixing23 
-              << ", Dm12^2 = "  << dm12sq << " eV^2"
+              << ", mixing12 = "  << mixing12 
+              << ", mixing13 = "  << mixing13 
+              << ", mixing23 = "  << mixing23 
+              << ", Dm12^2 = "    << dm12sq << " eV^2"
               << ", |Dm23^2| = "  << dm23sq << " eV^2"
               << ", delta_cp = "  << delta_cp << " rad) = " << p3fm << endl;
          continue;
