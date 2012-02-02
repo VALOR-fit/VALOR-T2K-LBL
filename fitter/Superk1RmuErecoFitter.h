@@ -31,6 +31,7 @@ public:
 
    void Analyze (Option_t * option);
    void Save    (const char * filename);
+   void Save    (const char * filename, const char * option_file);
 
 private:
 

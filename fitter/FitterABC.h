@@ -34,6 +34,7 @@ public:
    virtual TObjArray& GetResults    (void) const            = 0;
    virtual void       Analyze       (Option_t * option)     = 0;
    virtual void       Save          (const char * filename) = 0;
+   virtual void       Save          (const char * filename, const char* opt_file) = 0;
 
 protected:
    FitterABC();
