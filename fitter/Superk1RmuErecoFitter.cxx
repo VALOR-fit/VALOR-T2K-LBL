@@ -236,6 +236,11 @@ void Superk1RmuErecoFitter::Analyze(Option_t * option)
 //____________________________________________________________________________ 
 void Superk1RmuErecoFitter::Save(const char * filename) 
 {
+  Save(filename, "recreate");
+}
+//____________________________________________________________________________ 
+void Superk1RmuErecoFitter::Save(const char * filename, const char * option_file) 
+{
   util::SetDefaultStyle();
 
   SuperkSample_t s = kSKsFCFV1RingMuLike;
@@ -243,7 +248,7 @@ void Superk1RmuErecoFitter::Save(const char * filename)
 
   cout << "Superk1RmuErecoFitter/Save >> Writing fit results in: " 
        << filename << endl;
-  TFile * file_out = new TFile(filename, "recreate");
+  TFile * file_out = new TFile(filename, option_file);
 
   TH1D * data = (TH1D*) fResults->FindObject("data_1Rmu");
   if(data) { 

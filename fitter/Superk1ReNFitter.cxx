@@ -115,7 +115,6 @@ void Superk1ReNFitter::Analyze(Option_t * option)
   //
   if(opt.Contains("BestFitSpectra")) {
 
-    cout << "Best Fit Spectra" << endl;
      // `best-fit' --> `current' values
      fFitInputs->FitParams().CopyBestFitToCurrValues();
 
@@ -152,7 +151,6 @@ void Superk1ReNFitter::Analyze(Option_t * option)
      bestfit_signuecc1pi    = new TH1D(*fFitInputs->Expectation().CurrPredictedErecoSpectrum(s, kSKmSigNuECC1pi));
      bestfit_signueccoth    = new TH1D(*fFitInputs->Expectation().CurrPredictedErecoSpectrum(s, kSKmSigNuECCoth));
 
-     cout << "Booked histos" << endl;
 
      bestfit_tot            -> SetDirectory ( 0        );
      bestfit_numuccqe       -> SetDirectory ( 0        );
@@ -498,14 +496,21 @@ void Superk1ReNFitter::Analyze(Option_t * option)
   } // Canvases
 
 }
+
 //____________________________________________________________________________ 
 void Superk1ReNFitter::Save(const char * filename) 
+{
+  Save(filename, "recreate");
+}
+
+//____________________________________________________________________________ 
+void Superk1ReNFitter::Save(const char * filename, const char* option_file) 
 {
   util::SetDefaultStyle();
 
   cout << "Superk1ReNFitter/Save >> Writing fit results in: " 
        << filename << endl;
-  TFile * file_out = new TFile(filename, "recreate");
+  TFile * file_out = new TFile(filename, option_file);
 
   TH1D * bestfit_tot            = (TH1D*) fResults->FindObject("bestfit_1Re_tot");
   TH1D * bestfit_numuccqe       = (TH1D*) fResults->FindObject("bestfit_1Re_numuccqe");
@@ -578,32 +583,32 @@ TH2D * Superk1ReNFitter::BuildChisqSurfaceNuEApp2ParamFit(void)
 {
    FitParamList & fp = fFitInputs->FitParams();
    //lorena -check parameters
-   double sinsq2theta13_min   = fp.MinValue(conv::kPhypMixing13);
-   double sinsq2theta13_max   = fp.MaxValue(conv::kPhypMixing13);
-   double sinsq2theta13_step  = fp.StepSize(conv::kPhypMixing13);
+   double mixing13_min   = fp.MinValue(conv::kPhypMixing13);
+   double mixing13_max   = fp.MaxValue(conv::kPhypMixing13);
+   double mixing13_step  = fp.StepSize(conv::kPhypMixing13);
    double deltacp_min         = fp.MinValue(conv::kPhypDeltaCP);
    double deltacp_max         = fp.MaxValue(conv::kPhypDeltaCP);
    double deltacp_step        = fp.StepSize(conv::kPhypDeltaCP);
 
    // make sure that min and max are at the bin centre
-   int sinsq2theta13_nbins  = 1 + (int) ((sinsq2theta13_max - sinsq2theta13_min) / sinsq2theta13_step);
+   int mixing13_nbins  = 1 + (int) ((mixing13_max - mixing13_min) / mixing13_step);
    int deltacp_nbins        = 1 + (int) ((deltacp_max -        deltacp_min )       / deltacp_step );
 
    TH2D * chisq_surface = new TH2D(
-      "chisq_surface","#chi^{2} surface",
-         sinsq2theta13_nbins, sinsq2theta13_min - 0.5*sinsq2theta13_step, sinsq2theta13_max + 0.5*sinsq2theta13_step,
-         deltacp_nbins, deltacp_min - 0.5*deltacp_step, deltacp_max + 0.5*deltacp_step);
+				   "chisq_surface","#chi^{2} surface",
+				   mixing13_nbins, mixing13_min - 0.5*mixing13_step, mixing13_max + 0.5*mixing13_step,
+				   deltacp_nbins, deltacp_min - 0.5*deltacp_step, deltacp_max + 0.5*deltacp_step);
    chisq_surface->SetDirectory(0);
    chisq_surface->GetXaxis()->SetRangeUser(0.,1.);
-
+   
    for(int i = 1; i <= chisq_surface->GetNbinsX(); i++) {
      for(int j = 1; j <= chisq_surface->GetNbinsY(); j++) {
-       double sinsq2theta13  = chisq_surface->GetXaxis()->GetBinCenter(i);
+       double mixing13  = chisq_surface->GetXaxis()->GetBinCenter(i);
        double deltacp        = chisq_surface->GetYaxis()->GetBinCenter(j);
-       fp.Update( conv::kPhypMixing13, sinsq2theta13 );
+       fp.Update( conv::kPhypMixing13, mixing13 );
        fp.Update( conv::kPhypDeltaCP,      deltacp        );
        double chisq = fFitInputs->Chisquare();
-       cout << "sinsq2theta13 = " << sinsq2theta13 << "   and deltacp =" << deltacp << "  with chisq=" << chisq << endl;
+       //       cout << "mixing13 = " << mixing13 << "   and deltacp =" << deltacp << "  with chisq=" << chisq << endl;
        chisq_surface->SetBinContent(i,j,chisq);
      }//j
    }//i
