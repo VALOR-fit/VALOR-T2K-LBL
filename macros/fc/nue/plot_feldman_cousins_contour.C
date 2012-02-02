@@ -42,6 +42,9 @@
 // @ 16/06/2011, Costas 
 //   Added `label' and `show_contours_without_systematics' arguments.
 //   Added  option to show external contours.
+// @ 1/02/2012, Lorena 
+//   Added comparison with official results of NuE appearance (2010 analysis)
+//   Added best fit line (raster scan) 
 //-----------------------------------------------------------------------------------------------------
 //
 
@@ -58,6 +61,7 @@ void plot_feldman_cousins_contour(
   bool show_contours_with_systematics=true,
   bool show_contours_without_systematics=true,
   bool show_external_contours=false,
+  bool show_official_contours=true,
   bool show_68cl=true,
   bool show_90cl=true,
   bool show_95cl=false,
@@ -73,19 +77,19 @@ void plot_feldman_cousins_contour(
   // Define deltacp, mixing13 range and step  
   //
   double mixing13_min        = 0.0;
-  double mixing13_max        = 0.4;
-  double mixing13_step       = 0.004;
+  double mixing13_max        = 0.12;
+  double mixing13_step       = 0.0012;
   double deltacp_min         = -1 * conv::kpi;
   double deltacp_max         = conv::kpi;
-  double deltacp_step        = 2*conv::kpi/90.;
+  double deltacp_step        = 0.01;
 
   //
   // Define grid so that min and max are at the bin centre 
-  // and not at the low/high edge of the first/last bin                                                                                                                               
+  // and not at the low/high edge of the first/last bin                                                                                        
   //
   const int mixing13_nbins = 1 + (int) ((mixing13_max - mixing13_min) / mixing13_step);
   const int deltacp_nbins        = 1 + (int) ((deltacp_max        - deltacp_min       ) / deltacp_step       );
-  
+
   double mixing13_grid_min       = mixing13_min - 0.5*mixing13_step;
   double mixing13_grid_max       = mixing13_max + 0.5*mixing13_step;
   double deltacp_grid_min        = deltacp_min        - 0.5*deltacp_step;
@@ -157,25 +161,44 @@ void plot_feldman_cousins_contour(
 
   TFile *dataFile = TFile::Open(chisq_file_data, "READ");
   dataFile->cd();
-  TH2D * h2 = (TH2D*)dataFile->Get("chisq_surface");
+  TH2D * h2 = (TH2D*)dataFile->Get("chisq_surface_1Re");
   TH2D * fChisqSurface = new TH2D(*h2);
 
+  int nbinsy = fChisqSurface->GetNbinsY();
   double chisq_min = 999999.0;
   double mixing13_bestfit = -1;
   double deltacp_bestfit        = -1;
-  double best_points_x[99999];
-  double best_points_y[99999];
+  Double_t* bestfit_points_x = new Double_t[nbinsy];
+  Double_t* bestfit_points_y = new Double_t[nbinsy];
 
+  //best fit point 
   for(int i = 1; i <= fChisqSurface->GetNbinsX(); i++) {
     for(int j = 1; j <= fChisqSurface->GetNbinsY(); j++) {
       double chisq = fChisqSurface->GetBinContent(i,j);
       if(chisq < chisq_min) {
-         chisq_min = chisq;
-         mixing13_bestfit = fChisqSurface->GetXaxis()->GetBinCenter(i);
-	 deltacp_bestfit        = fChisqSurface->GetYaxis()->GetBinCenter(j);
+	chisq_min = chisq;
+	mixing13_bestfit = fChisqSurface->GetXaxis()->GetBinCenter(i);
+	deltacp_bestfit        = fChisqSurface->GetYaxis()->GetBinCenter(j);
       }
     }//j loop
   }//i loop
+
+  //best fit line - raster scan: fixed a value of deltacp, find mix13 with min chisq
+  for(int i = 1; i <= fChisqSurface->GetNbinsY(); i++) {
+    double chisqmin =  999999.0;
+    int jmin = 99999;
+    for(int j = 1; j <= fChisqSurface->GetNbinsX(); j++) {
+      double chisq = fChisqSurface->GetBinContent(j,i);
+      if(chisq < chisqmin) {
+	chisqmin = chisq;
+	jmin = j;
+      }
+    }//j loop                                                                                                                               
+    bestfit_points_x[i-1]  = fChisqSurface->GetXaxis()->GetBinCenter(jmin);
+    bestfit_points_y[i-1]  = fChisqSurface->GetYaxis()->GetBinCenter(i);
+  }//i loop                                                             
+
+  //subtracting the chisq min   
   for(int i = 1; i <= fChisqSurface->GetNbinsX(); i++) {
     for(int j = 1; j <= fChisqSurface->GetNbinsY(); j++) {
       double chisq = fChisqSurface->GetBinContent(i,j);
@@ -183,8 +206,8 @@ void plot_feldman_cousins_contour(
     }//j loop
   }//i loop
 
-//TCanvas * c00 = new TCanvas("c00","",10,10,600,600);
-//fChisqSurface->Draw("colz");
+  //TCanvas * c00 = new TCanvas("c00","",10,10,600,600);
+  //fChisqSurface->Draw("colz");
 
   for(int mixing13_bin = 1; mixing13_bin <= mixing13_nbins; mixing13_bin++) {
       for(int deltacp_bin = 1; deltacp_bin <= deltacp_nbins; deltacp_bin++) {
@@ -221,9 +244,6 @@ void plot_feldman_cousins_contour(
 	hCL95StatSyst->SetBinContent(mixing13_bin, deltacp_bin, dchisq_data - dchisq95_crit_statsyst);
 	hCL99StatSyst->SetBinContent(mixing13_bin, deltacp_bin, dchisq_data - dchisq99_crit_statsyst);
 
-      //cout << "Critical DeltaChiSq (68% CL) : (stat only) = " << dchisq68_crit_statonly << ", (stat+syst) = " << dchisq68_crit_statsyst << endl;
-      //cout << "Critical DeltaChiSq (90% CL) : (stat only) = " << dchisq90_crit_statonly << ", (stat+syst) = " << dchisq90_crit_statsyst << endl;
-
       }//deltacp_bin
   }//mixing13_bin
 
@@ -234,6 +254,7 @@ void plot_feldman_cousins_contour(
   TGaxis::SetMaxDigits(2);
 
   TCanvas *ConfidenceContour = new TCanvas("ConfidenceContour", "ConfidenceContour", 800, 600);
+  gStyle->SetFillColor(kWhite);
   ConfidenceContour->Divide(1);
   ConfidenceContour->cd(1);
   gPad->SetLeftMargin(0.15);
@@ -243,8 +264,8 @@ void plot_feldman_cousins_contour(
   hframe->SetTitle("Normal Mass Hierarchy");
   hframe->GetXaxis()->SetTitle("sin^{2}2#theta_{13}");
   hframe->GetYaxis()->SetTitle("#delta_{CP}");
-//hframe->GetXaxis()->SetLimits(0.,1.002);
-//hframe->GetYaxis()->SetLimits(0.001,0.004);
+  //hframe->GetXaxis()->SetLimits(0.,1.002);
+  //hframe->GetYaxis()->SetLimits(0.001,0.004);
   hframe->GetXaxis()->SetTitleOffset(1.2);
   hframe->GetYaxis()->SetTitleOffset(1.4);
   hframe->GetXaxis()->CenterTitle();
@@ -290,8 +311,9 @@ void plot_feldman_cousins_contour(
   bestFit->SetMarkerColor(1);
   bestFit->Draw("same");
 
-  //TGraph graph = new TGraph(npoints,  best_points_x,  best_points_y);
-  //graph->Draw("PL")
+  //TGraph with bestfit values                                                                                                   
+  TGraph* gbestfit = new TGraph( nbinsy, bestfit_points_x ,bestfit_points_y );
+  gbestfit -> Draw("P");
 
   // Plot external contours
   TGraph * minos2011_68cl = 0;
@@ -299,7 +321,7 @@ void plot_feldman_cousins_contour(
   TGraph * skle_90cl      = 0;
   TGraph * sk_90cl        = 0;
   if(show_external_contours) {
-     const char * extcontourfile = Form("%s/inputs/external/contours/nue_appearance.root", gSystem->Getenv("T2KOSCANA"));
+     const char * extcontourfile = Form("%s/inputs/external/contours/numu_disappearance.root", gSystem->Getenv("T2KOSCANA"));
      TFile f(extcontourfile,"read");
      minos2011_68cl = new TGraph(* (TGraph*)f.Get("minos2011_68cl") );
      minos2011_90cl = new TGraph(* (TGraph*)f.Get("minos2011_90cl") );
@@ -317,6 +339,56 @@ void plot_feldman_cousins_contour(
      if(show_68cl) {
        minos2011_68cl->Draw("l");
      }
+     f.Close();
+  }
+
+  //Plot official contours
+  TGraph * gr_90CL_nh = 0;
+  TGraph * gr_68CL_nh = 0;
+  TGraph * gr_best_nh = 0;
+  TGraph * gr_90CL_nh_conv = 0;
+  TGraph * gr_68CL_nh_conv = 0;
+  TGraph * gr_best_nh_conv = 0;
+  TGraph * gr_90CL_ih = 0;
+  TGraph * gr_68CL_ih = 0;
+  TGraph * gr_best_ih = 0;
+  TGraph * gr_90CL_ih_conv = 0;
+  TGraph * gr_68CL_ih_conv = 0;
+  TGraph * gr_best_ih_conv = 0;
+  if(show_official_contours) {
+    const char * offcontourfile = Form("%s/inputs/external/contours/cont_smoothed.root", gSystem->Getenv("T2KOSCANA"));
+    TFile f(offcontourfile,"read");
+     
+     gr_90CL_nh = new TGraph(* (TGraph*)f.Get("gr_90CL_nh") );
+     gr_68CL_nh = new TGraph(* (TGraph*)f.Get("gr_68CL_nh") );
+     gr_best_nh = new TGraph(* (TGraph*)f.Get("gr_best_nh") );
+     gr_90CL_ih = new TGraph(* (TGraph*)f.Get("gr_90CL_ih") );
+     gr_68CL_ih = new TGraph(* (TGraph*)f.Get("gr_68CL_ih") );
+     gr_best_ih = new TGraph(* (TGraph*)f.Get("gr_best_ih") );
+     //we need to convert units in Y (official are units 1/Pi)
+     for (int i=0;i< gr_90CL_nh->GetN();i++) gr_90CL_nh->GetY()[i] *= conv::kpi;
+     for (int i=0;i< gr_68CL_nh->GetN();i++) gr_68CL_nh->GetY()[i] *= conv::kpi;
+     for (int i=0;i< gr_best_nh->GetN();i++) gr_best_nh->GetY()[i] *= conv::kpi;
+     for (int i=0;i< gr_90CL_ih->GetN();i++) gr_90CL_ih->GetY()[i] *= conv::kpi;
+     for (int i=0;i< gr_68CL_ih->GetN();i++) gr_68CL_ih->GetY()[i] *= conv::kpi;
+     for (int i=0;i< gr_best_ih->GetN();i++) gr_best_ih->GetY()[i] *= conv::kpi;
+
+     set_contour_style(gr_68CL_nh,        kMagenta,  2, 3);
+     set_contour_style(gr_90CL_nh,        7,         2, 1);
+     set_contour_style(gr_best_nh,        kBlack,    2, 2);
+     set_contour_style(gr_68CL_ih,        kMagenta,  2, 3);
+     set_contour_style(gr_90CL_ih,        7,         2, 1);
+     set_contour_style(gr_best_ih,        kBlack,    2, 2);
+     if(show_90cl) {
+       gr_90CL_nh->Draw("l");
+       gr_best_nh->Draw("l");
+       //gr_90CL_ih->Draw("l");
+       //gr_best_ih->Draw("l");
+     }
+     if(show_68cl) {
+       gr_68CL_nh->Draw("l");
+       //gr_68CL_ih->Draw("l");
+       }
      f.Close();
   }
 
@@ -369,6 +441,16 @@ void plot_feldman_cousins_contour(
     if(show_90cl) { legend->AddEntry(hCL90StatOnlyNonFC, pl_68cl_statonly.Data(), "L");  }
     if(show_68cl) { legend->AddEntry(hCL68StatOnlyNonFC, pl_68cl_statonly.Data(), "L");  }
   }
+  if(show_official_contours) {
+    if(show_90cl) {
+      legend->AddEntry(gr_90CL_nh, "Official results 2010, 90% CL", "L");
+      //legend->AddEntry(gr_90CL_ih, "Official results 2010, 90% CL", "L");
+    }
+    if(show_68cl) {
+      legend->AddEntry(gr_68CL_nh, "Official results 2010, 68% CL", "L");
+      //  legend->AddEntry(gr_68CL_ih, "Official results 2010, 68% CL", "L");
+    }
+  }
   if(show_external_contours) {
     if(show_90cl) {
       legend->AddEntry(minos2011_90cl, "MINOS 2011 (7.25E+20 POT), 90% CL");
@@ -381,6 +463,9 @@ void plot_feldman_cousins_contour(
       legend->AddEntry(skle_90cl,      "Super-K L/E, 90% CL");
     }
   }
+  legend->AddEntry(gbestfit, "Best fit", "L"); 
+  if(show_official_contours)  legend->AddEntry(gr_best_nh, "Official results 2010, best fit", "L");
+  //    legend->AddEntry(gr_best_ih, "Official results 2010, best fit", "L");
   legend->SetBorderSize(0);
   legend->Draw();
 
@@ -400,7 +485,7 @@ void plot_feldman_cousins_contour(
     //line2->Draw("same");
   }
 
-//ConfidenceContour->SaveAs("ConfidenceContours.png");
+  ConfidenceContour->SaveAs("ConfidenceContours.png");
 }
 
 void set_contour_style(TH2D *contour, Int_t color, Int_t width, Int_t style)
