@@ -59,6 +59,13 @@ public:
                                  double dmsq23,        /* |Dm^2_{23}| (always positive) in eV^2/c^4 */
                                  double deltaCP        /* delta_{CP} phase in radians */
                                  );
+  void SetOscParametersDmsqAtmSol(double sinsqtheta12, /* sin^2(theta_{12}) */
+                                 double sinsqtheta13, /* sin^2(theta_{13}) */
+                                 double sinsqtheta23,  /* sin^2(theta_{23}) */
+                                 double dmsq12,        /*  Dm^2_{12} in eV^2/c^4 */
+                                 double dmsqAtm,       /* |m_3^2 - [(m_1^2+m_2^2)/2]| (always positive) in eV^2/c^4 */
+                                 double deltaCP        /* delta_{CP} phase in radians */
+                                 );
 
  //         
  // Calculate 3-flavour oscillation probabilities in vacuum and in matter.
@@ -87,6 +94,7 @@ private:
  double dmsq23;    //< eV^2
  double dmsq12;    //< eV^2
  double dmsq13;    //< eV^2 
+ double dmsqAtm;   //< eV^2
 
  // Moduli squared of PMNS matrix elements
  double modUe1sq;
