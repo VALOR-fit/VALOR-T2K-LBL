@@ -387,14 +387,14 @@ void NuOsc3Flavour::SetOscParametersSinSqT23(
 {
   dmsq12 = dmsq12_in;
   dmsqAtm = dmsqAtm_in;
-  // Note: The input value of dmsq23 is the absolute one. The sign of dmsq23 depends on                                                                                                                
-  // the mass hierarchy. In the normal mass hierarchy, dmsq23 is positive. In the inverted                                                                                                              
-  // mass hierarchy, dmsq23 is NEGATIVE. Set the appropriate sign.                                                                                                                                    
+  // Note: The input value of dmsqAtm is the absolute one. The sign of dmsqAtm depends on                                                                                                                
+  // the mass hierarchy. In the normal mass hierarchy, dmsqAtm is positive. In the inverted                                                                                                              
+  // mass hierarchy, dmsqAtm is NEGATIVE. Set the appropriate sign.                                                                                                                                    
   if(fMassHierarchy == kNmhInverted) {
     dmsqAtm = -dmsqAtm;
   }
 
-  // The input values of dmsq23 and dmsq12  uniquely define the value of dmsq13                                                                                                                       
+  // The input values of dmsqAtm and dmsq12  uniquely define the value of dmsq23 and dmsq13                                                                                                           
   dmsq23 = dmsqAtm - 0.5*dmsq12;
   dmsq13 = dmsqAtm + 0.5*dmsq12;
 
