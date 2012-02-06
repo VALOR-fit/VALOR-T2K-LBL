@@ -34,6 +34,9 @@
    parameter of choice for describing neutrino mixing.
  @ 15/12/11
    Add "nuosc3f_12fix" param list
+ @ 30/01/12 JELENA
+   Add "nuosc3f_12fix+nuisance" param list
+   Add "nuosc3f_nueapp_fix4+nuisance" param list
 */
 //________________________________________________________________________________________
 
@@ -74,6 +77,12 @@ FitParamList::FitParamList(int nparams)
 FitParamList::~FitParamList()
 {
   this->CleanUp();
+}
+
+//________________________________________________________________________________________
+
+void FitParamList::SetTheSample (Option_t * sample = ""){
+      fSample = sample;
 }
 //________________________________________________________________________________________
 bool FitParamList::AddParam (int ip, PhysParamId_t p, 
@@ -402,6 +411,12 @@ FitParamList * FitParamList::NamedParameterList(string name)
     fp -> FixParameter (kPhypDm12sq  );
     return fp;
   }
+  if(name == "nuosc3f_12fix+nuisance") {
+    FitParamList * fp = FitParamList::NuOsc3FlavourFitAllSyst();
+    fp -> FixParameter (kPhypMixing12);
+    fp -> FixParameter (kPhypDm12sq  );
+    return fp;
+  }
   if(name == "nuosc3f_numudisapp_fix4") {
     FitParamList * fp = FitParamList::NuOsc3FlavourFitNoSyst();
     fp -> FixParameter (kPhypMixing13);
@@ -412,6 +427,14 @@ FitParamList * FitParamList::NamedParameterList(string name)
   }
   if(name == "nuosc3f_nueapp_fix4") {
     FitParamList * fp = FitParamList::NuOsc3FlavourFitNoSyst();
+    fp -> FixParameter (kPhypMixing23);
+    fp -> FixParameter (kPhypMixing12);
+    fp -> FixParameter (kPhypDm23sq);
+    fp -> FixParameter (kPhypDm12sq);
+    return fp;
+  }
+  if(name == "nuosc3f_nueapp_fix4+nuisance") {
+    FitParamList * fp = FitParamList::NuOsc3FlavourFitNuESyst();
     fp -> FixParameter (kPhypMixing23);
     fp -> FixParameter (kPhypMixing12);
     fp -> FixParameter (kPhypDm23sq);
@@ -462,6 +485,139 @@ FitParamList * FitParamList::NuOsc3FlavourFitNoSyst(void)
   return fparm;
 }
 //________________________________________________________________________________________
+
+FitParamList * FitParamList::NuOsc3FlavourFitNuESyst(void)
+{
+      FitParamList * fparm = new FitParamList(27);
+
+      NuOscMixParam_t omp = Opt::Instance()->gOscMixingParamChoice;
+      switch(omp) {
+            case(kNuMixSinsq2Theta):
+                  fparm->AddParam(0, kPhypMixing23,  kInitFitSinsq2Theta23,  kMinFitSinsq2Theta23,  kMaxFitSinsq2Theta23,  1.0E-2,  false, false);
+                  fparm->AddParam(1, kPhypMixing13,  kInitFitSinsq2Theta13,  kMinFitSinsq2Theta13,  kMaxFitSinsq2Theta13,  1.0E-3,  false, false);
+                  fparm->AddParam(2, kPhypMixing12,  kInitFitSinsq2Theta12,  kMinFitSinsq2Theta12,  kMaxFitSinsq2Theta12,  1.0E-2,  false, false);
+                  break;
+            case(kNuMixSinsqTheta):
+                  fparm->AddParam(0, kPhypMixing23,  kInitFitSinsqTheta23,   kMinFitSinsqTheta23,   kMaxFitSinsqTheta23,   1.0E-2,  false, false);
+                  fparm->AddParam(1, kPhypMixing13,  kInitFitSinsqTheta13,   kMinFitSinsqTheta13,   kMaxFitSinsqTheta13,   1.0E-3,  false, false);
+                  fparm->AddParam(2, kPhypMixing12,  kInitFitSinsqTheta12,   kMinFitSinsqTheta12,   kMaxFitSinsqTheta12,   1.0E-2,  false, false);
+                  break;
+            default:
+                  delete fparm;
+                  return 0;
+      }
+
+      fparm->AddParam(3, kPhypDeltaCP,   0,                -kpi,          kpi,           1.0E-2,  false, false);
+      fparm->AddParam(4, kPhypDm23sq,    kInitFitDm23sq,   kMinFitDm23sq, kMaxFitDm23sq, 1.0E-4,  false, false);
+      fparm->AddParam(5, kPhypDm12sq,    kInitFitDm12sq,   kMinFitDm12sq, kMaxFitDm12sq, 2.0E-6,  false, false);
+
+      //
+      // add nuisance params
+      //
+      fparm->AddParam( 6, kNuisSuperkEff1RmuCCQEoth,  0.0,           -1,    1,    1E-1,  false, true); 
+      fparm->AddParam( 7, kNuisSuperkEff1RmuCCQErc0u, 0.0,           -1,    1,    1E-1,  false, true);
+      fparm->AddParam( 8, kNuisSuperkEff1RmuCCQErc1u, 0.0,           -1,    1,    1E-1,  false, true);
+      fparm->AddParam( 9, kNuisSuperkEff1RmuCCQErc2u, 0.0,           -1,    1,    1E-1,  false, true);
+      fparm->AddParam(10, kNuisSuperkEff1RmuCCnonQE,  0.0,           -1,    1,    1E-1,  false, true);
+      fparm->AddParam(11, kNuisSuperkEff1RmuNC,       0.0,           -1,    1,    1E-1,  false, true);
+      fparm->AddParam(12, kNuisSuperkEff1RmuNueCC,    0.0,           -1,    1,    1E-1,  false, true);
+      fparm->AddParam(13, kNuisSuperkEnergyScale,     0.0,           -1,    1,    1E-1,  false, true);
+      fparm->AddParam(14, kNuisNd280Eff,              0.0,           -1,    1,    1E-1,  false, true);
+      fparm->AddParam(15, kNuisFluxNorm,              0.0,           -1,    1,    1E-1,  false, true);
+      fparm->AddParam(16, kNuisXSecCCQE,              0.0,           -1,    1,    1E-1,  false, true);
+      fparm->AddParam(17, kNuisXSecCC1piToCCQE,       0.0,           -1,    1,    1E-1,  false, true);
+      fparm->AddParam(18, kNuisXSecCCothToCCQE,       0.0,           -1,    1,    1E-1,  false, true);
+      fparm->AddParam(19, kNuisXSecNCToCCQE,          0.0,           -1,    1,    1E-1,  false, true);
+      fparm->AddParam(20, kNuisXSecNuclEffect,        0.0,           -1,    1,    1E-1,  false, true);
+      fparm->AddParam(21,kNuisSuperkEff1ReSig,        0.0,           -1,    1,    1E-1,  false, true);    
+      fparm->AddParam(22,kNuisSuperkEff1ReBkg,        0.0,           -1,    1,    1E-1,  false, true);    
+      fparm->AddParam(22,kNuisXSecCCcohToCCQE,        0.0,           -1,    1,    1E-1,  false, true);    
+      fparm->AddParam(23,kNuisXSecNC1pi0ToCCQE,       0.0,           -1,    1,    1E-1,  false, true);    
+      fparm->AddParam(24,kNuisXSecNCcohToCCQE,        0.0,           -1,    1,    1E-1,  false, true);    
+      fparm->AddParam(25,kNuisXSecNCothToCCQE,        0.0,           -1,    1,    1E-1,  false, true);    
+      fparm->AddParam(26,kNuisXSecNuEToNuMu,          0.0,           -1,    1,    1E-1,  false, true);    
+
+
+      return fparm;
+}
+//________________________________________________________________________________________
+
+FitParamList * FitParamList::NuOsc3FlavourFitAllSyst(void)
+{
+      FitParamList * fparm = new FitParamList(47);
+
+      NuOscMixParam_t omp = Opt::Instance()->gOscMixingParamChoice;
+      switch(omp) {
+            case(kNuMixSinsq2Theta):
+                  fparm->AddParam(0, kPhypMixing23,  kInitFitSinsq2Theta23,  kMinFitSinsq2Theta23,  kMaxFitSinsq2Theta23,  1.0E-2,  false, false);
+                  fparm->AddParam(1, kPhypMixing13,  kInitFitSinsq2Theta13,  kMinFitSinsq2Theta13,  kMaxFitSinsq2Theta13,  1.0E-3,  false, false);
+                  fparm->AddParam(2, kPhypMixing12,  kInitFitSinsq2Theta12,  kMinFitSinsq2Theta12,  kMaxFitSinsq2Theta12,  1.0E-2,  false, false);
+                  break;
+            case(kNuMixSinsqTheta):
+                  fparm->AddParam(0, kPhypMixing23,  kInitFitSinsqTheta23,   kMinFitSinsqTheta23,   kMaxFitSinsqTheta23,   1.0E-2,  false, false);
+                  fparm->AddParam(1, kPhypMixing13,  kInitFitSinsqTheta13,   kMinFitSinsqTheta13,   kMaxFitSinsqTheta13,   1.0E-3,  false, false);
+                  fparm->AddParam(2, kPhypMixing12,  kInitFitSinsqTheta12,   kMinFitSinsqTheta12,   kMaxFitSinsqTheta12,   1.0E-2,  false, false);
+                  break;
+            default:
+                  delete fparm;
+                  return 0;
+      }
+
+      fparm->AddParam(3, kPhypDeltaCP,   0,                -kpi,          kpi,           1.0E-2,  false, false);
+      fparm->AddParam(4, kPhypDm23sq,    kInitFitDm23sq,   kMinFitDm23sq, kMaxFitDm23sq, 1.0E-4,  false, false);
+      fparm->AddParam(5, kPhypDm12sq,    kInitFitDm12sq,   kMinFitDm12sq, kMaxFitDm12sq, 2.0E-6,  false, false);
+
+      //
+      // add nuisance params
+      //
+      //numu
+      fparm->AddParam( 6, kNuisSuperkEff1RmuCCQEoth,  0.0,           -1,    1,    1E-1,  false, true); 
+      fparm->AddParam( 7, kNuisSuperkEff1RmuCCQErc0u, 0.0,           -1,    1,    1E-1,  false, true);
+      fparm->AddParam( 8, kNuisSuperkEff1RmuCCQErc1u, 0.0,           -1,    1,    1E-1,  false, true);
+      fparm->AddParam( 9, kNuisSuperkEff1RmuCCQErc2u, 0.0,           -1,    1,    1E-1,  false, true);
+      fparm->AddParam(10, kNuisSuperkEff1RmuCCnonQE,  0.0,           -1,    1,    1E-1,  false, true);
+      fparm->AddParam(11, kNuisSuperkEff1RmuNC,       0.0,           -1,    1,    1E-1,  false, true);
+      fparm->AddParam(12, kNuisSuperkEff1RmuNueCC,    0.0,           -1,    1,    1E-1,  false, true);
+      fparm->AddParam(13, kNuisSuperkEnergyScale,     0.0,           -1,    1,    1E-1,  false, true);
+      fparm->AddParam(14, kNuisNd280Eff,              0.0,           -1,    1,    1E-1,  false, true);
+      fparm->AddParam(15, kNuisFluxNorm,              0.0,           -1,    1,    1E-1,  false, true);
+      fparm->AddParam(16, kNuisFluxShapeNuMu0u,       0.0,           -1,    1,    1E-1,  false, true);
+      fparm->AddParam(17, kNuisFluxShapeNuMu1u,       0.0,           -1,    1,    1E-1,  false, true);
+      fparm->AddParam(18, kNuisFluxShapeNuMu2u,       0.0,           -1,    1,    1E-1,  false, true);
+      fparm->AddParam(19, kNuisFluxShapeNuMu3u,       0.0,           -1,    1,    1E-1,  false, true);
+      fparm->AddParam(20, kNuisFluxShapeNuMu4u,       0.0,           -1,    1,    1E-1,  false, true);
+      fparm->AddParam(21, kNuisFluxShapeNuMu5u,       0.0,           -1,    1,    1E-1,  false, true);
+      fparm->AddParam(22, kNuisFluxShapeNuMu6u,       0.0,           -1,    1,    1E-1,  false, true);
+      fparm->AddParam(23, kNuisFluxShapeNuMu7u,       0.0,           -1,    1,    1E-1,  false, true);
+      fparm->AddParam(24, kNuisFluxShapeNuMu8u,       0.0,           -1,    1,    1E-1,  false, true);
+      fparm->AddParam(25, kNuisFluxShapeNuMu9u,       0.0,           -1,    1,    1E-1,  false, true);
+      fparm->AddParam(26, kNuisFluxShapeNuMu10u,      0.0,           -1,    1,    1E-1,  false, true);
+      fparm->AddParam(27, kNuisFluxShapeNuMu11u,      0.0,           -1,    1,    1E-1,  false, true);
+      fparm->AddParam(28, kNuisFluxShapeNuMu12u,      0.0,           -1,    1,    1E-1,  false, true);
+      fparm->AddParam(29, kNuisFluxShapeNuMu13u,      0.0,           -1,    1,    1E-1,  false, true);
+      fparm->AddParam(30, kNuisFluxShapeNuMu14u,      0.0,           -1,    1,    1E-1,  false, true);
+      fparm->AddParam(31, kNuisFluxShapeNuMu15u,      0.0,           -1,    1,    1E-1,  false, true);
+      fparm->AddParam(32, kNuisFluxShapeNuMu16u,      0.0,           -1,    1,    1E-1,  false, true);
+      fparm->AddParam(33, kNuisFluxShapeNuMu17u,      0.0,           -1,    1,    1E-1,  false, true);
+      fparm->AddParam(34, kNuisFluxShapeNuMu18u,      0.0,           -1,    1,    1E-1,  false, true);
+      fparm->AddParam(35, kNuisXSecCCQE,              0.0,           -1,    1,    1E-1,  false, true);
+      fparm->AddParam(36, kNuisXSecCC1piToCCQE,       0.0,           -1,    1,    1E-1,  false, true);
+      fparm->AddParam(37, kNuisXSecCCothToCCQE,       0.0,           -1,    1,    1E-1,  false, true);
+      fparm->AddParam(38, kNuisXSecNCToCCQE,          0.0,           -1,    1,    1E-1,  false, true);
+      fparm->AddParam(39, kNuisXSecNuclEffect,        0.0,           -1,    1,    1E-1,  false, true);
+      //additional, only important for nue
+      fparm->AddParam(40,kNuisSuperkEff1ReSig,        0.0,           -1,    1,    1E-1,  false, true);    
+      fparm->AddParam(41,kNuisSuperkEff1ReBkg,        0.0,           -1,    1,    1E-1,  false, true);    
+      fparm->AddParam(42,kNuisXSecCCcohToCCQE,        0.0,           -1,    1,    1E-1,  false, true);    
+      fparm->AddParam(43,kNuisXSecNC1pi0ToCCQE,       0.0,           -1,    1,    1E-1,  false, true);    
+      fparm->AddParam(44,kNuisXSecNCcohToCCQE,        0.0,           -1,    1,    1E-1,  false, true);    
+      fparm->AddParam(45,kNuisXSecNCothToCCQE,        0.0,           -1,    1,    1E-1,  false, true);    
+      fparm->AddParam(46,kNuisXSecNuEToNuMu,          0.0,           -1,    1,    1E-1,  false, true);    
+
+      return fparm;
+}
+//________________________________________________________________________________________
+
 FitParamList * FitParamList::NumuDisapFitNoSyst(void)
 {
   FitParamList * fparm = new FitParamList(2);

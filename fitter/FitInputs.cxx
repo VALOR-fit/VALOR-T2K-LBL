@@ -16,6 +16,9 @@
    more clear. The best-fit values must be set first.
  @ 02/12/2011 - LE
    Consider both 1Re and 1Rmu in Chisquare()
+ @ 02/02/2012 - JI
+   Changes in minuit fit function. Depending on the analysed sample different Chisquare() 
+   are used to judge the agreement between the data and the current predictio 
 */
 //________________________________________________________________________________________
 
@@ -178,16 +181,25 @@ double FitInputs::BestFitChisquare(Option_t * opt)
 void t2kana::FitFunc (
   Int_t &, Double_t *, Double_t &f, Double_t *par, Int_t /*iflag*/) 
 {
-  FitInputs * inputs = (FitInputs *) gMinuit->GetObjectFit();
+      FitInputs * inputs = (FitInputs *) gMinuit->GetObjectFit();
 
-  // get fit params
-  FitParamList & fpar = inputs->FitParams(); 
+      // get fit params
+      FitParamList & fpar = inputs->FitParams(); 
 
-  // synchronize FitParamList with the paramerer array used by MINUIT
-  fpar.Sync(par);
+      // synchronize FitParamList with the paramerer array used by MINUIT
+      fpar.Sync(par);
+      
+      TString smpl = fpar.GetTheSample();
 
-  // judge the agreement between the data and the current prediction
-  f = inputs->Chisquare("poisson"); 
+      // judge the agreement between the data and the current prediction
+      if(smpl.Contains("numu")) {
+            f = inputs->Chisquare("poisson",conv::kSKsFCFV1RingMuLike); 
+      }else if(smpl.Contains("nue")){
+            f = inputs->Chisquare("poisson",conv::kSKsFCFV1RingELike); 
+      }else{
+            f = inputs->Chisquare("poisson"); 
+      }
+
 }
 //____________________________________________________________________________
 

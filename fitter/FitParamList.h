@@ -51,6 +51,12 @@ public:
    bool AddParam (
      int ip, t2kana::conv::PhysParamId_t p, double init, 
      double min, double max, double step, bool fix=false, bool nuisance=false, string name="");
+   
+   // Set the sample
+   void SetTheSample (Option_t * sample);
+   
+   // Set the sample
+   TString GetTheSample() {return fSample;}
 
    // Check whether the input parameter was included in the physics param list
    bool Exists (t2kana::conv::PhysParamId_t p) const;
@@ -103,18 +109,22 @@ public:
    // - "nuosc3f"                        : Fit for sin^2(2theta12), sin^2(2theta13), sin^2(2theta23), delta_CP, |Dm23^2| and Dm12^2 (3-flavour formalism).
    // - "nuosc3f_12constrain"            : As "nuosc3f", but penalizing sin^2(2theta12), Dm12^2 devations from values measured in solar/reactor expts.
    // - "nuosc3f_12fix"                  : As "nuosc3f", but fixing sin^2(2theta12), Dm12^2 devations to values measured in solar/reactor expts.
+   // - "nuosc3f_12fix+nuisance"         : As "nuosc3f_12fix" + 41 nuisance parameters (nuMu + nuE)  .
    // - "nuosc3f_numudisapp_fix4"        : As "nuosc3f" but fixing  sin^2(2theta12), sin^2(2theta13), delta_CP and Dm12^2.
    // - "nuosc3f_nueapp_fix4"            : As "nuosc3f" but fixing  sin^2(2theta12), sin^2(2theta23), |Dm23^2| and Dm12^2.
+   // - "nuosc3f_nueapp_fix4+nuisance"   : As "nuosc3f_nueapp_fix4" + 22 nuisance parameters (nuE).
    // - "numudisapp2f"                   : Fit for sin^2(2theta23) and |Dm23^2| (2-flavour formalism)
    // - "numudisapp2f+nuisance"          : As "numudisapp2f" + the 34 nuisance parameters of 2010 analysis
    // - "decay"                          : Fit for sin^2(2theta) and \alpha_{decay}
    // - "decoh"                          : Fit for sin^2(2theta) and \mu_{decoherence}
-   static FitParamList * NamedParameterList     (string name);
-   static FitParamList * NuOsc3FlavourFitNoSyst (void);
-   static FitParamList * NumuDisapFitNoSyst     (void);
-   static FitParamList * NumuDisapFitAllSyst    (void);
-   static FitParamList * NumuDecayFitNoSyst     (void);
-   static FitParamList * NumuDecohFitNoSyst     (void);
+   static FitParamList * NamedParameterList      (string name);
+   static FitParamList * NuOsc3FlavourFitNoSyst  (void);
+   static FitParamList * NuOsc3FlavourFitAllSyst (void);
+   static FitParamList * NuOsc3FlavourFitNuESyst (void);
+   static FitParamList * NumuDisapFitNoSyst      (void);
+   static FitParamList * NumuDisapFitAllSyst     (void);
+   static FitParamList * NumuDecayFitNoSyst      (void);
+   static FitParamList * NumuDecohFitNoSyst      (void);
 
    // Work-out the physics hypothesis
    conv::PhysHypothesis_t PhysicsHypothesis(void) const;
@@ -142,6 +152,8 @@ private:
 
    mutable bool fShowCurrValuesOnly;
    mutable bool fShowBestFitValuesOnly;
+   
+   TString  fSample;         //[fNParams]
 };
 
 } // t2kana

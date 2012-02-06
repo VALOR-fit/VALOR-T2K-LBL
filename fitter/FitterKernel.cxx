@@ -208,8 +208,17 @@ bool FitterKernel::RunOnce(void)
   fitter->PrintResults(3,amin);
   cout << "FitterKernel/RunOnce >> Final error matrix status = " 
        << fStatusCode << endl;
-  cout << "FitterKernel/RunOnce >> Final chisq = " 
-       << fFitInputs->Chisquare() << endl;
+ 
+  TString smpl = fFitInputs->FitParams().GetTheSample(); 
+  cout << "FitterKernel/RunOnce >> Final chisq = ";
+  if (smpl =="numu"){
+        cout<<fFitInputs->Chisquare("poisson",conv::kSKsFCFV1RingMuLike)<< endl;
+  }else if(smpl =="nue"){
+        cout<<fFitInputs->Chisquare("poisson",conv::kSKsFCFV1RingELike)<< endl;
+  }else{
+        cout<<fFitInputs->Chisquare() << endl;
+  }
+
 #endif
 
 #ifdef __show_fit_steps__
