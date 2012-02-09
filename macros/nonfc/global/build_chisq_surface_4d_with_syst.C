@@ -17,9 +17,8 @@
 
 using namespace std;
 
-void build_marginalised_chisq_4d_with_syst
-(
-  
+void build_chisq_surface_4d_with_syst
+(  
   int          dataset_id            = 0,                                              /* number in <data_set_%d> XML tag, see inputs/data.xml */
   const char * data_file             = "inputs/data.xml",                              /* input SK data */
   const char * config_file           = "analysis_configuration.xml",                   /* analysis configuration file */
