@@ -46,12 +46,20 @@ void test_sk_ereco_spectrum_nominal
     ph.SetCurrValue(conv::kPhypDm23sq,    input_dm23sq);
   }
 
+  conv::SuperkSample_t s = conv::kSKsFCFV1RingMuLike;
+  if(s == kSKsUndefined) {
+    cerr << "** Undefined sample!" << endl;
+    return;
+  }
+
   // Print options
   cout << "\n[Job inputs]" << endl;
   cout << "- Reading analysis configuration from: " << config << endl;
-  cout << "- Physics hypothesis: \n" << ph << endl;
+  cout << "- Plotting spectra for sample: " << util::AsString(s) << endl;
+  cout << "- Physics hypothesis: " << ph << endl;
   cout << *Opt::Instance() << endl;
 
+/*
   // Define list of contributing modes
   const unsigned int nm = 15;
   conv::SuperkMode_t modes [nm] = {
@@ -71,6 +79,7 @@ void test_sk_ereco_spectrum_nominal
      conv::kSKmSigNuECC1pi,
      conv::kSKmSigNuECCoth
   };
+*/
 
   // Histogram booking
   TH1D * hErecoTot = new TH1D("","",conv::kNErecoBins1Rmu,conv::kErecoBinEdges1Rmu);
@@ -85,24 +94,24 @@ void test_sk_ereco_spectrum_nominal
   skexp.Generate(ph);
 
   // Get energy spectra
-  for(int im = 0; im < nm; im++) {
-    conv::SuperkMode_t m = modes[im];
-    cout << "- Retrieving spectrum prediction for 1Rmu mode: " 
-         << util::AsString(m) << endl;
-    TH1D * h = skexp.CurrPredictedErecoSpectrum(conv::kSKsFCFV1RingMuLike, m);  
+  int is = util::FindSampleSlot(s);
+  for(int im = 0; im < conv::knm; im++) {
+    conv::SuperkMode_t m = conv::kSKReactionModes[is][im];
+    if(m == kSKmUndefined) continue;
+    cout << "- Retrieving spectrum prediction for mode: " << util::AsString(m) << endl;
+    TH1D * h = skexp.CurrPredictedErecoSpectrum(s, m);  
     assert(h);
-    hErecoMode[m] = new TH1D(*h);
+    hErecoMode[im] = new TH1D(*h);
   }
-  hErecoTot = new TH1D(*skexp.CurrPredictedErecoSpectrum(conv::kSKsFCFV1RingMuLike));
+  hErecoTot = new TH1D(*skexp.CurrPredictedErecoSpectrum(s));
 
-
-  cout << "- Done..2." << endl;
   //
   // Draw
   //
 
   gStyle->SetOptStat(0);
 
+/*
   hErecoTot                             -> SetLineWidth ( 2        );
   hErecoMode[conv::kSKmNuMuCC1pi]       -> SetFillStyle ( 3544     );
   hErecoMode[conv::kSKmNuMuCCoth_mu]    -> SetFillStyle ( 3244     );
@@ -149,6 +158,7 @@ void test_sk_ereco_spectrum_nominal
   hErecoMode[conv::kSKmSigNuECCQE]      -> SetLineWidth ( 1        );
   hErecoMode[conv::kSKmSigNuECC1pi]     -> SetLineWidth ( 1        );
   hErecoMode[conv::kSKmSigNuECCoth]     -> SetLineWidth ( 1        );
+*/
 
   TCanvas * c = new TCanvas("c","",20,20,500,500);
   TLegend * legend = new TLegend(0.3, 0.7, 0.85, 0.9);
@@ -203,7 +213,7 @@ void test_sk_ereco_spectrum_nominal
     cout << "Total number of events (< " << setw(8) << setfill(' ') << setprecision(4) << esmax << " GeV): " 
          << setw(10) << setfill(' ') << setprecision(6) << hErecoTot->Integral(1,hErecoTot->FindBin(esmax)) << endl;
   }
-  for(int im = 0; im < nm; im++) {
+  for(int im = 0; im < conv::knm; im++) {
     conv::SuperkMode_t m = modes[im];
      double nmode = hErecoMode[m]->Integral();
      cout << "Contrib from mode: " 
