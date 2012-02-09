@@ -66,7 +66,13 @@
    depend on SK sample and mode.
  @ 15/12/2011 - LE
    Added methods for "EOscAnaType" 
-
+ .............................................................................
+ Work towards 2011 analysis 
+ .............................................................................
+ @ 09/02/2012 - CA
+   Removed 2010-specific nuisance parameters (PhysParamId_t) from switch-case
+   blocks. The 2011 nuisance parameters will have to be added.
+   
 */
 //____________________________________________________________________________
 
@@ -773,48 +779,6 @@ string t2kana::util::AsString(PhysParamId_t p)
     case ( kPhypSinsq2ThetaDecay      ) : return "sinsq2theta_decay";           break;
     case ( kPhypMusqDecoh             ) : return "musq_decoh";                  break;
     case ( kPhypSinsq2ThetaDecoh      ) : return "sinsq2theta_decoh";           break;
-    case ( kNuisSuperkEff1RmuCCQEoth  ) : return "f_sk_eff_1Rmu_ccqe_oth";      break;
-    case ( kNuisSuperkEff1RmuCCQErc0u ) : return "f_sk_eff_1Rmu_ccqe_rc_0u";    break;
-    case ( kNuisSuperkEff1RmuCCQErc1u ) : return "f_sk_eff_1Rmu_ccqe_rc_1u";    break;
-    case ( kNuisSuperkEff1RmuCCQErc2u ) : return "f_sk_eff_1Rmu_ccqe_rc_2u";    break;
-    case ( kNuisSuperkEff1RmuCCnonQE  ) : return "f_sk_eff_1Rmu_ccnonqe";       break;
-    case ( kNuisSuperkEff1RmuNC       ) : return "f_sk_eff_1Rmu_nc";            break;
-    case ( kNuisSuperkEff1RmuNueCC    ) : return "f_sk_eff_1Rmu_nuecc";         break;
-    case ( kNuisSuperkEff1ReSig       ) : return "f_sk_eff_1Re_sig";            break;
-    case ( kNuisSuperkEff1ReBkg       ) : return "f_sk_eff_1Re_bkg";            break;
-    case ( kNuisSuperkEnergyScale     ) : return "f_sk_energy_scale";           break;
-    case ( kNuisNd280Eff              ) : return "f_nd280_eff";                 break;
-    case ( kNuisNd280Norm             ) : return "f_nd280_norm";                break;
-    case ( kNuisFluxNorm              ) : return "f_flux_norm";                 break;
-    case ( kNuisFluxShapeNuMu0u       ) : return "f_flux_shape_numu_0u";        break;
-    case ( kNuisFluxShapeNuMu1u       ) : return "f_flux_shape_numu_1u";        break;
-    case ( kNuisFluxShapeNuMu2u       ) : return "f_flux_shape_numu_2u";        break;
-    case ( kNuisFluxShapeNuMu3u       ) : return "f_flux_shape_numu_3u";        break;
-    case ( kNuisFluxShapeNuMu4u       ) : return "f_flux_shape_numu_4u";        break;
-    case ( kNuisFluxShapeNuMu5u       ) : return "f_flux_shape_numu_5u";        break;
-    case ( kNuisFluxShapeNuMu6u       ) : return "f_flux_shape_numu_6u";        break;
-    case ( kNuisFluxShapeNuMu7u       ) : return "f_flux_shape_numu_7u";        break;
-    case ( kNuisFluxShapeNuMu8u       ) : return "f_flux_shape_numu_8u";        break;
-    case ( kNuisFluxShapeNuMu9u       ) : return "f_flux_shape_numu_9u";        break;
-    case ( kNuisFluxShapeNuMu10u      ) : return "f_flux_shape_numu_10u";       break;
-    case ( kNuisFluxShapeNuMu11u      ) : return "f_flux_shape_numu_11u";       break;
-    case ( kNuisFluxShapeNuMu12u      ) : return "f_flux_shape_numu_12u";       break;
-    case ( kNuisFluxShapeNuMu13u      ) : return "f_flux_shape_numu_13u";       break;
-    case ( kNuisFluxShapeNuMu14u      ) : return "f_flux_shape_numu_14u";       break;
-    case ( kNuisFluxShapeNuMu15u      ) : return "f_flux_shape_numu_15u";       break;
-    case ( kNuisFluxShapeNuMu16u      ) : return "f_flux_shape_numu_16u";       break;
-    case ( kNuisFluxShapeNuMu17u      ) : return "f_flux_shape_numu_17u";       break;
-    case ( kNuisFluxShapeNuMu18u      ) : return "f_flux_shape_numu_18u";       break;
-    case ( kNuisXSecCCQE              ) : return "f_xsec_ccqe";                 break;
-    case ( kNuisXSecCC1piToCCQE       ) : return "f_xsec_cc1pi_ccqe";           break;
-    case ( kNuisXSecCCcohToCCQE       ) : return "f_xsec_cccoh_ccqe";           break;
-    case ( kNuisXSecCCothToCCQE       ) : return "f_xsec_ccoth_ccqe";           break;
-    case ( kNuisXSecNCToCCQE          ) : return "f_xsec_nc_ccqe";              break;
-    case ( kNuisXSecNC1pi0ToCCQE      ) : return "f_xsec_nc1pi0_ccqe";          break;
-    case ( kNuisXSecNCcohToCCQE       ) : return "f_xsec_nccoh_ccqe";           break;
-    case ( kNuisXSecNCothToCCQE       ) : return "f_xsec_ncoth_ccqe";           break;
-    case ( kNuisXSecNuEToNuMu         ) : return "f_xsec_nue_numu";             break;
-    case ( kNuisXSecNuclEffect        ) : return "f_xsec_nucl_effect";          break;
     default : 
       return "--";
   }
@@ -1320,48 +1284,6 @@ bool t2kana::util::IsSystematic(PhysParamId_t p)
     case ( kPhypSinsq2ThetaDecay      ) : return false; break;
     case ( kPhypMusqDecoh             ) : return false; break;
     case ( kPhypSinsq2ThetaDecoh      ) : return false; break;
-    case ( kNuisSuperkEff1RmuCCQEoth  ) : return true;  break;
-    case ( kNuisSuperkEff1RmuCCQErc0u ) : return true;  break;
-    case ( kNuisSuperkEff1RmuCCQErc1u ) : return true;  break;
-    case ( kNuisSuperkEff1RmuCCQErc2u ) : return true;  break;
-    case ( kNuisSuperkEff1RmuCCnonQE  ) : return true;  break;
-    case ( kNuisSuperkEff1RmuNC       ) : return true;  break;
-    case ( kNuisSuperkEff1RmuNueCC    ) : return true;  break;
-    case ( kNuisSuperkEff1ReSig       ) : return true;  break;
-    case ( kNuisSuperkEff1ReBkg       ) : return true;  break;
-    case ( kNuisSuperkEnergyScale     ) : return true;  break;
-    case ( kNuisNd280Eff              ) : return true;  break;
-    case ( kNuisNd280Norm             ) : return false; break;
-    case ( kNuisFluxNorm              ) : return true;  break;
-    case ( kNuisFluxShapeNuMu0u       ) : return true;  break;
-    case ( kNuisFluxShapeNuMu1u       ) : return true;  break;
-    case ( kNuisFluxShapeNuMu2u       ) : return true;  break;
-    case ( kNuisFluxShapeNuMu3u       ) : return true;  break;
-    case ( kNuisFluxShapeNuMu4u       ) : return true;  break;
-    case ( kNuisFluxShapeNuMu5u       ) : return true;  break;
-    case ( kNuisFluxShapeNuMu6u       ) : return true;  break;
-    case ( kNuisFluxShapeNuMu7u       ) : return true;  break;
-    case ( kNuisFluxShapeNuMu8u       ) : return true;  break;
-    case ( kNuisFluxShapeNuMu9u       ) : return true;  break;
-    case ( kNuisFluxShapeNuMu10u      ) : return true;  break;
-    case ( kNuisFluxShapeNuMu11u      ) : return true;  break;
-    case ( kNuisFluxShapeNuMu12u      ) : return true;  break;
-    case ( kNuisFluxShapeNuMu13u      ) : return true;  break;
-    case ( kNuisFluxShapeNuMu14u      ) : return true;  break;
-    case ( kNuisFluxShapeNuMu15u      ) : return true;  break;
-    case ( kNuisFluxShapeNuMu16u      ) : return true;  break;
-    case ( kNuisFluxShapeNuMu17u      ) : return true;  break;
-    case ( kNuisFluxShapeNuMu18u      ) : return true;  break;
-    case ( kNuisXSecCCQE              ) : return true;  break;
-    case ( kNuisXSecCC1piToCCQE       ) : return true;  break;
-    case ( kNuisXSecCCcohToCCQE       ) : return true;  break;
-    case ( kNuisXSecCCothToCCQE       ) : return true;  break;
-    case ( kNuisXSecNCToCCQE          ) : return true;  break;
-    case ( kNuisXSecNC1pi0ToCCQE      ) : return true;  break;
-    case ( kNuisXSecNCcohToCCQE       ) : return true;  break;
-    case ( kNuisXSecNCothToCCQE       ) : return true;  break;
-    case ( kNuisXSecNuEToNuMu         ) : return true;  break;
-    case ( kNuisXSecNuclEffect        ) : return true;  break;
     default : 
       return false;
   }

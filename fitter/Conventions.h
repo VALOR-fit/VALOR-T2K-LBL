@@ -10,17 +10,11 @@
           
 \created  Oct 20, 2010
 
-Changes since v1.0.0:
+Changes since 2010_v3.0.0:
 
- @ 01-20/07/11 - CA
-   Added nuisance and 12-, 13-sector osc params in PhysParamId_t.
-   Added PhysHypothesis_t, OscChannelId_t and NuMassHierarchy_t.
-   Added some constants (GF,hbar,...) used in calculations and added values 
-   and uncertainties of oscillation params from a global analysis.
- @ 28/09/11 - CA
-   Added kMassHierarchyAssumed constant to specify the mass hierarchy to be
-   used in the t2kana library build. Used separate PhysParamId_t for the
-   decoherence and decay sinsq2theta parameter.
+ @ 09/02/12 - CA
+   Removed 2010-specific nuisance parameters from PhysParamId_t. The 2011
+   nuisance parameters will have to be added.
 
 */
 //____________________________________________________________________________
@@ -229,49 +223,7 @@ typedef enum EPhysParamId
    kPhypAlphaDecay,            //
    kPhypSinsq2ThetaDecay,      // 
    kPhypMusqDecoh,             //
-   kPhypSinsq2ThetaDecoh,      // 
-   kNuisSuperkEff1RmuCCQEoth,  //
-   kNuisSuperkEff1RmuCCQErc0u, //
-   kNuisSuperkEff1RmuCCQErc1u, //
-   kNuisSuperkEff1RmuCCQErc2u, //
-   kNuisSuperkEff1RmuCCnonQE,  //
-   kNuisSuperkEff1RmuNC,       //
-   kNuisSuperkEff1RmuNueCC,    //
-   kNuisSuperkEff1ReSig,       //
-   kNuisSuperkEff1ReBkg,       //
-   kNuisSuperkEnergyScale,     //
-   kNuisNd280Eff,              //
-   kNuisNd280Norm,             //
-   kNuisFluxNorm,              //
-   kNuisFluxShapeNuMu0u,       //
-   kNuisFluxShapeNuMu1u,       //
-   kNuisFluxShapeNuMu2u,       //
-   kNuisFluxShapeNuMu3u,       //
-   kNuisFluxShapeNuMu4u,       //
-   kNuisFluxShapeNuMu5u,       //
-   kNuisFluxShapeNuMu6u,       //
-   kNuisFluxShapeNuMu7u,       //
-   kNuisFluxShapeNuMu8u,       //
-   kNuisFluxShapeNuMu9u,       //
-   kNuisFluxShapeNuMu10u,      //
-   kNuisFluxShapeNuMu11u,      //
-   kNuisFluxShapeNuMu12u,      //
-   kNuisFluxShapeNuMu13u,      //
-   kNuisFluxShapeNuMu14u,      //
-   kNuisFluxShapeNuMu15u,      //
-   kNuisFluxShapeNuMu16u,      //
-   kNuisFluxShapeNuMu17u,      //
-   kNuisFluxShapeNuMu18u,      //
-   kNuisXSecCCQE,              //  
-   kNuisXSecCC1piToCCQE,       //
-   kNuisXSecCCcohToCCQE,       //
-   kNuisXSecCCothToCCQE,       //
-   kNuisXSecNCToCCQE,          //
-   kNuisXSecNC1pi0ToCCQE,      //
-   kNuisXSecNCcohToCCQE,       //
-   kNuisXSecNCothToCCQE,       //
-   kNuisXSecNuEToNuMu,         //
-   kNuisXSecNuclEffect         //
+   kPhypSinsq2ThetaDecoh       // 
 } 
 PhysParamId_t;
 
