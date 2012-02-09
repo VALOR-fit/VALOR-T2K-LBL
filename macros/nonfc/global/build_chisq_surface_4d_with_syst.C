@@ -53,8 +53,8 @@ void build_chisq_surface_4d_with_syst
       double dcp_max     = conv::kpi;
       double dcp_step    = 2*conv::kpi/90.;
       double mix13_min   = 0.0;
-      double mix13_max   = 0.5;
-      double mix13_step  = 0.005;
+      double mix13_max   = 0.12;
+      double mix13_step  = 0.0012;
       double mix23_min   = 0.3;
       double mix23_max   = 0.7;
       double mix23_step  = 0.005;

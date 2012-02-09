@@ -16,7 +16,7 @@ void build_chisq_surface_4d
   int          dataset_id            = 0,                                                  /* number in <data_set_%d> XML tag, see inputs/data.xml */
   const char * data_file             = "inputs/data.xml",                                  /* input SK data */
   const char * config_file           = "analysis_configuration.xml",                       /* analysis configuration file */
-  const char * fit_param_list        = "nuosc3f",                                          /* fit parameter list  */
+  const char * fit_param_list        = "nuosc3f_12fix",                                    /* fit parameter list  */
 
   // Cuts to be applied in the oscillation parameter space considered in this job.
   // -1 means that no cut will be applied.
