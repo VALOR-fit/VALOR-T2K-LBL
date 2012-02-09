@@ -17,7 +17,7 @@
 
 using namespace std;
 
-void 4d_nuisance_fit
+void build_marginalised_chisq_4d_with_syst
 (
   
   int          dataset_id            = 0,                                              /* number in <data_set_%d> XML tag, see inputs/data.xml */
