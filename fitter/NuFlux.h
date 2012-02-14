@@ -42,16 +42,19 @@ public:
   double  SuperkNuMuFlux    (double Etrue, bool tuned=true) const;
   double  SuperkNuMuBarFlux (double Etrue, bool tuned=true) const;
   double  SuperkNuEFlux     (double Etrue, bool tuned=true) const;
+  double  SuperkNuEBarFlux  (double Etrue, bool tuned=true) const;
 
   // Weights for nominal SK flux -> tuned SK flux
   double  SuperkNuMuFluxTuneWght    (double Etrue) const; 
   double  SuperkNuMuBarFluxTuneWght (double Etrue) const; 
   double  SuperkNuEFluxTuneWght     (double Etrue) const; 
+  double  SuperkNuEBarFluxTuneWght  (double Etrue) const; 
 
   // SK flux weights (ratios of tuned SK fluxes) as a result of BANFF tweaks
   double  SuperkNuMuFluxWght    (double Etrue) const; 
   double  SuperkNuMuBarFluxWght (double Etrue) const; 
   double  SuperkNuEFluxWght     (double Etrue) const; 
+  double  SuperkNuEBarFluxWght   (double Etrue) const; 
 
   // Read inputs from XML file
   bool Read (TXMLEngine* xml, XMLNodePointer_t root_node);
@@ -60,9 +63,11 @@ public:
   // - "Flux/SK/NuMu/TuneWghts"    :
   // - "Flux/SK/NuMuBar/TuneWghts" :
   // - "Flux/SK/NuE/TuneWghts"     :
+  // - "Flux/SK/NuEBar/TuneWghts"  :
   // - "Flux/SK/NuMu"              :
   // - "Flux/SK/NuMuBar"           :
   // - "Flux/SK/NuE"               :
+  // - "Flux/SK/NuEBar"            :
   void Draw(TVirtualPad * c, Option_t * opt) const;
 
   // BANFF fit info
@@ -80,9 +85,11 @@ private:
   TH1D *   fSuperkNuMuFluxNom;            ///< nominal SuperK numu    flux (50 MeV binning)
   TH1D *   fSuperkNuMuBarFluxNom;         ///< nominal SuperK numubar flux (50 MeV binning)
   TH1D *   fSuperkNuEFluxNom;             ///< nominal SuperK nue     flux (50 MeV binning)
-  TH1D *   fSuperkNuMuFluxTuneWght;       ///< SuperK numu    flux tuning weights (10a -> 10d)
-  TH1D *   fSuperkNuMuBarFluxTuneWght;    ///< SuperK numubar flux tuning weights (10a -> 10d)
-  TH1D *   fSuperkNuEFluxTuneWght;        ///< SuperK nue     flux tuning weights (10a -> 10d)
+  TH1D *   fSuperkNuEFluxNom;             ///< nominal SuperK nuebar  flux (50 MeV binning)
+  TH1D *   fSuperkNuMuFluxTuneWght;       ///< SuperK numu    flux tuning weights
+  TH1D *   fSuperkNuMuBarFluxTuneWght;    ///< SuperK numubar flux tuning weights
+  TH1D *   fSuperkNuEFluxTuneWght;        ///< SuperK nue     flux tuning weights
+  TH1D *   fSuperkNuEBarFluxTuneWght;     ///< SuperK nue     flux tuning weights
   BANFF *  fBANFF;                        ///< BANFF fit info
       
 ClassDef(NuFlux, 5)
