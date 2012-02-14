@@ -712,10 +712,61 @@ string t2kana::util::AsString(PhysParamId_t p)
     case ( kPhypDeltaCP               ) : return "delta_cp";                    break;
     case ( kPhypDm23sq                ) : return "|dm23sq|";                    break;
     case ( kPhypDm12sq                ) : return "dm12sq";                      break;
+
     case ( kPhypAlphaDecay            ) : return "alpha_decay";                 break;
     case ( kPhypSinsq2ThetaDecay      ) : return "sinsq2theta_decay";           break;
     case ( kPhypMusqDecoh             ) : return "musq_decoh";                  break;
     case ( kPhypSinsq2ThetaDecoh      ) : return "sinsq2theta_decoh";           break;
+
+    /*
+     * 2011-analysis nuisance parameters
+     */
+
+    case ( kNuisSuperkEnergyScale     ) : return "f_sk_e_scale";                   break;    
+    case ( kNuisSuperkEff1RmuCCQEoth  ) : return "f_sk_eff_1Rmu_ccqe_oth";         break;
+    case ( kNuisSuperkEff1RmuCCQErc0u ) : return "f_sk_eff_1Rmu_ccqe_rc0";         break;
+    case ( kNuisSuperkEff1RmuCCQErc1u ) : return "f_sk_eff_1Rmu_ccqe_rc1";         break;
+    case ( kNuisSuperkEff1RmuCCQErc2u ) : return "f_sk_eff_1Rmu_ccqe_rc2";         break;
+    case ( kNuisSuperkEff1RmuCCnonQE  ) : return "f_sk_eff_1Rmu_ccnonqe";          break;
+    case ( kNuisSuperkEff1RmuNC       ) : return "f_sk_eff_1Rmu_nc";               break;
+    case ( kNuisSuperkEff1RmuNueCC    ) : return "f_sk_eff_1Rmu_nuecc";            break;
+    case ( kNuisBANFF00               ) : return "f_banff00_nd280_numu_0.0_0.4";   break;
+    case ( kNuisBANFF01               ) : return "f_banff01_nd280_numu_0.4_0.5";   break;
+    case ( kNuisBANFF02               ) : return "f_banff02_nd280_numu_0.5_0.6";   break;
+    case ( kNuisBANFF03               ) : return "f_banff03_nd280_numu_0.6_0.7";   break;
+    case ( kNuisBANFF04               ) : return "f_banff04_nd280_numu_0.7_1.0";   break;
+    case ( kNuisBANFF05               ) : return "f_banff05_nd280_numu_1.0_1.5";   break;
+    case ( kNuisBANFF06               ) : return "f_banff06_nd280_numu_1.5_2.5";   break;
+    case ( kNuisBANFF07               ) ; return "f_banff07_nd280_numu_2.5_3.5";   break;
+    case ( kNuisBANFF08               ) : return "f_banff08_nd280_numu_3.5_5.0";   break;
+    case ( kNuisBANFF09               ) : return "f_banff09_nd280_numu_5.0_7.0";   break;
+    case ( kNuisBANFF10               ) : return "f_banff10_nd280_numu_7.0_30.0";  break;
+    case ( kNuisBANFF11               ) : return "f_banff11_sk_numu_0.0_0.4";      break;
+    case ( kNuisBANFF12               ) : return "f_banff12_sk_numu_0.4_0.5";      break;
+    case ( kNuisBANFF13               ) : return "f_banff13_sk_numu_0.5_0.6";      break;
+    case ( kNuisBANFF14               ) : return "f_banff14_sk_numu_0.6_0.7";      break;
+    case ( kNuisBANFF15               ) : return "f_banff15_sk_numu_0.7_1.0";      break;
+    case ( kNuisBANFF16               ) : return "f_banff16_sk_numu_1.0_1.5";      break;
+    case ( kNuisBANFF17               ) : return "f_banff17_sk_numu_1.5_2.5";      break;
+    case ( kNuisBANFF18               ) : return "f_banff18_sk_numu_2.5_3.5";      break;
+    case ( kNuisBANFF19               ) : return "f_banff19_sk_numu_3.5_5.0";      break;
+    case ( kNuisBANFF20               ) : return "f_banff20_sk_numu_5.0_7.0";      break;
+    case ( kNuisBANFF21               ) : return "f_banff21_sk_numu_7.0_30.0";     break;
+    case ( kNuisBANFF22               ) : return "f_banff22_sk_numubar_0.0_1.5";   break;
+    case ( kNuisBANFF23               ) : return "f_banff23_sk_numubar_1.5_30.0";  break;
+    case ( kNuisBANFF24               ) : return "f_banff24_sk_nue_0.0_0.5";       break;
+    case ( kNuisBANFF25               ) : return "f_banff25_sk_nue_0.5_0.7";       break;
+    case ( kNuisBANFF26               ) : return "f_banff26_sk_nue_0.7_0.8";       break;
+    case ( kNuisBANFF27               ) : return "f_banff27_sk_nue_0.8_1.5";       break;
+    case ( kNuisBANFF28               ) : return "f_banff28_sk_nue_1.5_2.5";       break;
+    case ( kNuisBANFF29               ) : return "f_banff29_sk_nue_2.5_4.0";       break;
+    case ( kNuisBANFF30               ) : return "f_banff30_sk_nue_4.0_30.0";      break;
+    case ( kNuisBANFF31               ) : return "f_banff31_sk_nuebar_0.0_2.5";    break;
+    case ( kNuisBANFF32               ) : return "f_banff32_sk_nuebar_2.5_30.0";   break;
+    case ( kNuisBANFF33               ) : return "f_banff33_ma_qe";                break;
+    case ( kNuisBANFF34               ) : return "f_banff34_ma_res";               break;
+    case ( kNuisBANFF35               ) : return "f_banff35_norm_ccqe_0_1.5";      break;
+    case ( kNuisBANFF36               ) : return "f_banff36_norm_ccres_0_2.5";     break;
     default : 
       return "--";
   }
@@ -1221,6 +1272,51 @@ bool t2kana::util::IsSystematic(PhysParamId_t p)
     case ( kPhypSinsq2ThetaDecay      ) : return false; break;
     case ( kPhypMusqDecoh             ) : return false; break;
     case ( kPhypSinsq2ThetaDecoh      ) : return false; break;
+    case ( kNuisSuperkEnergyScale     ) : return true;  break;
+    case ( kNuisSuperkEff1RmuCCQEoth  ) : return true;  break;
+    case ( kNuisSuperkEff1RmuCCQErc0u ) : return true;  break;
+    case ( kNuisSuperkEff1RmuCCQErc1u ) : return true;  break;
+    case ( kNuisSuperkEff1RmuCCQErc2u ) : return true;  break;
+    case ( kNuisSuperkEff1RmuCCnonQE  ) : return true;  break;
+    case ( kNuisSuperkEff1RmuNC       ) : return true;  break;
+    case ( kNuisSuperkEff1RmuNueCC    ) : return true;  break;
+    case ( kNuisBANFF00               ) : return true;  break;
+    case ( kNuisBANFF01               ) : return true;  break;
+    case ( kNuisBANFF02               ) : return true;  break;
+    case ( kNuisBANFF03               ) : return true;  break;
+    case ( kNuisBANFF04               ) ; return true;  break;
+    case ( kNuisBANFF05               ) : return true;  break;
+    case ( kNuisBANFF06               ) : return true;  break;
+    case ( kNuisBANFF07               ) ; return true;  break;
+    case ( kNuisBANFF08               ) : return true;  break;
+    case ( kNuisBANFF09               ) : return true;  break;
+    case ( kNuisBANFF10               ) : return true;  break;
+    case ( kNuisBANFF11               ) : return true;  break;
+    case ( kNuisBANFF12               ) : return true;  break;
+    case ( kNuisBANFF13               ) : return true;  break;
+    case ( kNuisBANFF14               ) : return true;  break;
+    case ( kNuisBANFF15               ) : return true;  break;
+    case ( kNuisBANFF16               ) : return true;  break;
+    case ( kNuisBANFF17               ) : return true;  break;
+    case ( kNuisBANFF18               ) : return true;  break;
+    case ( kNuisBANFF19               ) : return true;  break;
+    case ( kNuisBANFF20               ) : return true;  break;
+    case ( kNuisBANFF21               ) : return true;  break;
+    case ( kNuisBANFF22               ) : return true;  break;
+    case ( kNuisBANFF23               ) : return true;  break;
+    case ( kNuisBANFF24               ) : return true;  break;
+    case ( kNuisBANFF25               ) : return true;  break;
+    case ( kNuisBANFF26               ) : return true;  break;
+    case ( kNuisBANFF27               ) : return true;  break;
+    case ( kNuisBANFF28               ) : return true;  break;
+    case ( kNuisBANFF29               ) : return true;  break;
+    case ( kNuisBANFF30               ) : return true;  break;
+    case ( kNuisBANFF31               ) : return true;  break;
+    case ( kNuisBANFF32               ) : return true;  break;
+    case ( kNuisBANFF33               ) : return true;  break;
+    case ( kNuisBANFF34               ) : return true;  break;
+    case ( kNuisBANFF35               ) : return true;  break;
+    case ( kNuisBANFF36               ) : return true;  break;
     default : 
       return false;
   }

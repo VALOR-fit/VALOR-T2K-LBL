@@ -27,6 +27,7 @@
 
 #include "NuXSec.h"
 #include "Utilities.h"
+#include "BANFF.h"
 
 using std::cout;
 using std::cerr;
@@ -74,6 +75,7 @@ void NuXSec::Init(void)
   fSKFSIRelErr1Rebkg  = 0;
   fSKFSIRelErr1Resig  = 0;
   fCC1piInCCRES       = 0;
+  fBANFF              = 0;
 }
 //________________________________________________________________________________________
 void NuXSec::CleanUp(void)
@@ -134,20 +136,9 @@ bool NuXSec::Read(TXMLEngine* xml, XMLNodePointer_t root_node)
   return true;  
 }
 //________________________________________________________________________________________
-void NuXSec::Draw(TVirtualPad * c, Option_t * option) const
+void NuXSec::TellMeAboutTheBANFFfit(BANFF * banff)
 {
-  if(!c) return;
-
-  c->cd();
-
-  TString opt = option;
-  util::SetDefaultStyle();
-
-  //
-  // ...
-  //
-  
-  c->Update();
+  fBANFF = banff;
 }
 //________________________________________________________________________________________
 double NuXSec::ND280XSecRatioWght(
@@ -565,5 +556,19 @@ bool NuXSec::TweakAffectsSuperk(void) const
   return false;
 }
 //________________________________________________________________________________________
+void NuXSec::Draw(TVirtualPad * c, Option_t * option) const
+{
+  if(!c) return;
 
+  c->cd();
 
+  TString opt = option;
+  util::SetDefaultStyle();
+
+  //
+  // ...
+  //
+  
+  c->Update();
+}
+//________________________________________________________________________________________

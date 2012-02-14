@@ -26,6 +26,8 @@ class TVirtualPad;
 
 namespace t2kana {
 
+class BANFF;
+
 class NuXSec: public TObject
 {
 public:
@@ -64,6 +66,9 @@ public:
 
    // Etc 
    double OnePionInRES(void) { return fCC1piInCCRES; }
+
+  // BANFF fit info
+  void TellMeAboutTheBANFFfit(BANFF * banff);
    
 private:
 
@@ -105,7 +110,7 @@ private:
    TH1D * fSKFSIRelErr1Resig;    ///<
    double fCC1piInCCRES;         ///< correct ND280 interaction mode / NWIG err mis-match
 
-ClassDef(NuXSec, 3);
+ClassDef(NuXSec, 4);
 };
 
 } // t2kana

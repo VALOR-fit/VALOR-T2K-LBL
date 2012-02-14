@@ -35,18 +35,18 @@ public:
   NuFlux();   
  ~NuFlux();
 
-  //      
+  // POT used for flux simulation
   double SuperkFluxPOT (void) const;
-
-  // Weights for nominal SK flux -> tuned SK flux
-  double  SuperkNuMuFluxTuneWght    (double Etrue) const; 
-  double  SuperkNuMuBarFluxTuneWght (double Etrue) const; 
-  double  SuperkNuEFluxTuneWght     (double Etrue) const; 
 
   // Tuned (default) or nominal SK flux
   double  SuperkNuMuFlux    (double Etrue, bool tuned=true) const;
   double  SuperkNuMuBarFlux (double Etrue, bool tuned=true) const;
   double  SuperkNuEFlux     (double Etrue, bool tuned=true) const;
+
+  // Weights for nominal SK flux -> tuned SK flux
+  double  SuperkNuMuFluxTuneWght    (double Etrue) const; 
+  double  SuperkNuMuBarFluxTuneWght (double Etrue) const; 
+  double  SuperkNuEFluxTuneWght     (double Etrue) const; 
 
   // SK flux weights (ratios of tuned SK fluxes) as a result of BANFF tweaks
   double  SuperkNuMuFluxWght    (double Etrue) const; 
@@ -57,14 +57,15 @@ public:
   bool Read (TXMLEngine* xml, XMLNodePointer_t root_node);
 
   // Drawing option:
-  // - "SKFlux/10a/NuMu"              : nominal SuperK numu flux (10a)
-  // - "SKFlux/10d/NuMu"              : weighted SuperK numu flux (10d)
-  // - "SKFlux/Both10a10d/NuMu"       : nominal (10a) and weighted SuperK numu flux (10d)
-  // - "SKFlux/Weights/10aTo10d/NuMu" : 10a->10d numu flux weights
-  // - "SKFlux/CovarianceMatrix/NuMu" : SK numu flux covariance matrix
-  void Draw(TVirtualPad * c, Option_t * opt = "SKFlux/10d") const;
+  // - "Flux/SK/NuMu/TuneWghts"    :
+  // - "Flux/SK/NuMuBar/TuneWghts" :
+  // - "Flux/SK/NuE/TuneWghts"     :
+  // - "Flux/SK/NuMu"              :
+  // - "Flux/SK/NuMuBar"           :
+  // - "Flux/SK/NuE"               :
+  void Draw(TVirtualPad * c, Option_t * opt) const;
 
-  // 
+  // BANFF fit info
   void TellMeAboutTheBANFFfit(BANFF * banff);
 
 private:

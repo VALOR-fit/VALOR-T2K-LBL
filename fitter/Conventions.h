@@ -223,7 +223,51 @@ typedef enum EPhysParamId
    kPhypAlphaDecay,            //
    kPhypSinsq2ThetaDecay,      // 
    kPhypMusqDecoh,             //
-   kPhypSinsq2ThetaDecoh       // 
+   kPhypSinsq2ThetaDecoh,      //
+
+   /*
+    * List of 2011 analysis nuisance parameters 
+    * -----------------------------------------
+   */
+
+   /*
+    * 33-parameters used in the BANFF fit
+   */   
+   kNuisBANFF00,      // # 00, ND280 numu    flux,  E =  0.0 -  0.4 GeV
+   kNuisBANFF01,      // # 01, ND280 numu    flux,  E =  0.4 -  0.5 GeV
+   kNuisBANFF02,      // # 02, ND280 numu    flux,  E =  0.5 -  0.6 GeV
+   kNuisBANFF03,      // # 03, ND280 numu    flux,  E =  0.6 -  0.7 GeV
+   kNuisBANFF04,      // # 04, ND280 numu    flux,  E =  0.7 -  1.0 GeV
+   kNuisBANFF05,      // # 05, ND280 numu    flux,  E =  1.0 -  1.5 GeV
+   kNuisBANFF06,      // # 06, ND280 numu    flux,  E =  1.5 -  2.5 GeV
+   kNuisBANFF07,      // # 07, ND280 numu    flux,  E =  2.5 -  3.5 GeV
+   kNuisBANFF08,      // # 08, ND280 numu    flux,  E =  3.5 -  5.0 GeV
+   kNuisBANFF09,      // # 09, ND280 numu    flux,  E =  5.0 -  7.0 GeV
+   kNuisBANFF10,      // # 10, ND280 numu    flux,  E =  7.0 - 30.0 GeV
+   kNuisBANFF11,      // # 11, SK    numu    flux,  E =  0.0 -  0.4 GeV
+   kNuisBANFF12,      // # 12, SK    numu    flux,  E =  0.4 -  0.5 GeV
+   kNuisBANFF13,      // # 13, SK    numu    flux,  E =  0.5 -  0.6 GeV
+   kNuisBANFF14,      // # 14, SK    numu    flux,  E =  0.6 -  0.7 GeV
+   kNuisBANFF15,      // # 15, SK    numu    flux,  E =  0.7 -  1.0 GeV
+   kNuisBANFF16,      // # 16, SK    numu    flux,  E =  1.0 -  1.5 GeV
+   kNuisBANFF17,      // # 17, SK    numu    flux,  E =  1.5 -  2.5 GeV
+   kNuisBANFF18,      // # 18, SK    numu    flux,  E =  2.5 -  3.5 GeV
+   kNuisBANFF19,      // # 19, SK    numu    flux,  E =  3.5 -  5.0 GeV
+   kNuisBANFF20,      // # 20, SK    numu    flux,  E =  5.0 -  7.0 GeV
+   kNuisBANFF21,      // # 21, SK    numu    flux,  E =  7.0 - 30.0 GeV
+   kNuisBANFF22,      // # 22, SK    numubar flux,  E =  0.0 -  1.5 GeV
+   kNuisBANFF23,      // # 23, SK    numubar flux,  E =  1.5 - 30.0 GeV
+   kNuisBANFF24,      // # 24, SK    nue     flux,  E =  0.0 -  0.5 GeV
+   kNuisBANFF25,      // # 25, SK    nue     flux,  E =  0.5 -  0.7 GeV
+   kNuisBANFF26,      // # 26, SK    nue     flux,  E =  0.7 -  0.8 GeV
+   kNuisBANFF27,      // # 27, SK    nue     flux,  E =  0.8 -  1.5 GeV
+   kNuisBANFF28,      // # 28, SK    nue     flux,  E =  1.5 -  2.5 GeV
+   kNuisBANFF29,      // # 29, SK    nue     flux,  E =  2.5 -  4.0 GeV
+   kNuisBANFF30,      // # 30, SK    nue     flux,  E =  4.0 - 30.0 GeV
+   kNuisBANFF31,      // # 31, SK    nuebar  flux,  E =  0.0 -  2.5 GeV
+   kNuisBANFF32,      // # 32, SK    nuebar  flux,  E =  2.5 - 30.0 GeV
+
+
 } 
 PhysParamId_t;
 
