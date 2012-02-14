@@ -1,65 +1,15 @@
 //________________________________________________________________________________________
 /*
- Changes since v1.0.0:
 
- @ 16/03/2011 - CA
-   Old SuperkInputs, ND280Inputs, BeamInputs and GeneratorInputs nested classes were moved 
-   outside SuperkExpectation.h/cxx files and were renamed to SuperkMC, ND280Measurement,
-   NuFlux and NuXSec.
- @ 28/03/2011 - CA
-   Remove CurrPredictedErecoSpectrum() as it doesn't make sense using the combined spectrum 
-   for all the different samples considered. The default was to return the spectrum for the 
-   `1-R mu-like' sample but not typing this explicitly could lead to confusion. From now only
-   CurrPredictedErecoSpectrum(s) and CurrPredictedErecoSpectrum(s,m) will be used.
- @ 06/06/2011 - CA
-   Switched to using SuperkMC::PhysHypothesis() method for setting one of disappearance, 
-   decay or decoherence models. Added the `CCQE ring-counting efficiency' systematic err in
-   ResetSystematicVariations(), TweakSystematic() and TweakAllSystematics() methods.
-   This is an Ereco-dependent error (3 Ereco bins are considered by SK) with Ereco bin-to-bin 
-   correlations included/ The old Ereco-independent CCQE efficieny error was kept and renamed 
-   to `CCQE other efficiency error' (includes all error sources except ring-counting). 
-   There were corresponding modifications in SuperkMC.
- @ 07/06/2011 - CA
-   Added systematic params "sk_ccqe_ring_counting_eff_0", "sk_ccqe_ring_counting_eff_1" and 
-   "sk_ccqe_ring_counting_eff_2" in TweakSystematic(). They can be used for tweaking the
-   CCQE ring-counting efficiency in single Ereco bins neglecting correlations. 
-   For validation purposes only.
- @ 05/07/2011 - CA
-   Adapted code to use the modified FitParamList and PhysHypothesis classes.
-   Adapted code to changes in SuperkMC and NuFlux for including correlated systematics in
-   the oscillation fit. Added SetNuisanceParams(const FitParamList &) method.
-   There are now 2 interfaces to the SuperkExpectation code: One in which the pdfs can 
-   be tweaked using the various TweakXYZ() methods and the extrapolated spectra can be 
-   generated via Generate(const PhysHypothesis &). There is also another interface where 
-   pdf tweaking and spectrum generation take place by invoking the single 
-   Generate(const FitParamList &) method. The inpout FitParamList can contain parameters
-   that describe the physics hypothesis and the systematic tweaks to the pdfs. The former
-   interface is the one that was installed initially and used in validation. The latter 
-   interface is meant to be used in the fits.
- @ 13/07/2011 - CA
-   Take into account the statistical error on the measured number of ND280 CC-like events
-   and propagate it to SuperK.
- @ 18/07/2011 - CA
-   In the 3-flavour analysis, applying systematics and oscillations in the SuperK MC
-   templates takes place in separate steps. The SuperkMC interface has changed slightly.
-   Call SuperkMC::UpdateTemplates() in SuperkExpectation::Generate(const PhysHypothesis &)
-   before updating the Ereco and Etrue spectra.
- @ 26/07/2011 - CA
-   Took newly-added `nue signal' templates into account. They should be neglected under all 
-   but the 3-flavour oscillation hypothesis. 
- @ 27/09/2011 - CA
-   In SetNuisanceParams(const FitParamList & fp) don't call ResetSystematicVariations()
-   as this messes things-up in the case where nuisance params are not included in the fit
-   but are tweaked externally (via one of the TweakXYZ() methods).
-@  06/10/11 - CA
-   Added `PrintSystematicVariations()'.
-@  01-06/12/11 - CA,LE,TD
-   Updated so that it can be used for both 1Re and 1Rmu samples. Some re-structuring and
-   taking care of indexing issues.
- @ 08/12/11 - LE
-   Add flux norm err for 1Re.
- @ 09/12/11 - CA
-   Added Book() and default graphics formatting to simplify macros.
+ >> ChangeLog:
+
+ For changes up to version 2010_v3.0.0 (last implementation of the 2010-era analysis)
+ see code in the corresponding SVN branch.
+
+ Changes since 2011_v0.9.0:
+
+ @
+
 */
 //________________________________________________________________________________________
 

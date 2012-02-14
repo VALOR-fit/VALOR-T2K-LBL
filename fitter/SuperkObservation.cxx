@@ -1,19 +1,14 @@
 //________________________________________________________________________________________
 /*
-Important revisions after version 1.0.0 :
 
- @ 28/03/2011 - CA
-   Remove ErecoSpectrum() as it doesn't make sense using the combined spectrum for all 
-   different samples considered. The default was ErecoSpectrum(1-R mu-like) but not typing 
-   this explicitly could lead to confusion. 
- @ 15/09/2011 - CA
-   Print-out a list of all parameters used for each pseudo-expt generation.
- @ 21/09/2011 - CA
-   Added CreateMockData(SuperkExpectation &, const PhysHypothesis &, bool fluctuate) 
-   so that toy-MC expts can be generated without using the fitting interface / an input 
-   FitParamList object.
- @ 01/12/2011 - CA,LE
-   Add 1Re data. Add 1Re in CreateMockData().
+ >> ChangeLog:
+
+ For changes up to version 2010_v3.0.0 (last implementation of the 2010-era analysis)
+ see code in the corresponding SVN branch.
+
+ Changes since 2011_v0.9.0:
+
+ @
 
 */
 //________________________________________________________________________________________

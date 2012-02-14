@@ -579,9 +579,12 @@ static const SuperkMode_t kSKReactionModesOrderInStack[kns][knm] = {
 
 //
 // ------------------------------------------------------------------------
-// Binning
+// Binning etc
 // ------------------------------------------------------------------------
 //
+
+// Flux tuning weights are computed up to this true neutrino energy.
+static const double kEtrueMaxForFluxTuneWeights = 10; // GeV
 
 //
 // Variable Etrue binning scheme used by the Beam WG.

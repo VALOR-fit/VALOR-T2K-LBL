@@ -1,17 +1,14 @@
 //________________________________________________________________________________________
 /*
- Changes since v1.0.0:
 
- @ 05/07/2011 - NG
-   First added in in v2.0.1
- @ 27/07/2011 - CA
-   Get selected mass hierarchy from Conventions.h
- @ 01/12/2011 - NG
-   Add option to use sinsqtheta (instead of sinsq2theta) as mixing param choice 
- @ 06/12/2011 - CA
-   Read mass hierarchy from global options (stored in Opt). This is no longer a build
-   setting. Hierarchy choice has to be set in Opt before NuOsc3Flavour is initialized.
-   For the time being, further changes in Opt are not propagated to NuOsc3Flavour.
+ >> ChangeLog:
+
+ For changes up to version 2010_v3.0.0 (last implementation of the 2010-era analysis)
+ see code in the corresponding SVN branch.
+
+ Changes since 2011_v0.9.0:
+
+ @
 
 */
 //________________________________________________________________________________________

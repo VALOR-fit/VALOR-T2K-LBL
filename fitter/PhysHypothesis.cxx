@@ -1,28 +1,14 @@
 //________________________________________________________________________________________
 /*
- Changes since v1.0.0:
 
- @ 06/06/2011 - CA
-   PhysHypothesis class added so as to simplify SuperMC
- @ 21/06/2011 - CA
-   Add PhysHypothesis::Copy(const PhysHypothesis & ph).
- @ 05/07/2011 - CA
-   The class was restructured, using the conv::PhysHypothesis_t enumeration and an STL
-   map to store the actual params. The interface for setting/getting param values matched 
-   the one in FitParamList.
- @ 11/07/2011 - CA
-   Implemented kHypOsc3F case.
- @ 18/07/2011 - CA
-   Bug fix: Reverse order of kHypOsc3F and kHypNuMuDisapp2F cases (kHypOsc3F now first) 
-   in PhysHypothesis(const FitParamList &) ctor so that kHypOsc3F case can be picked.
- @ 27/07/2011 - CA
-   Added Print(ostream &) and `<<' operator.
- @ 14/09/2011 - CA
-   Added PhysHypothesis::PhysHypothesis(string h) constructor so as to simplify some of
-   the test macros.
- @ 05/12/2011 - CA
-   Add capability to use either sin^2(2*theta_ij) or sin^2(theta_ij) as the
-   parameter of choice for describing neutrino mixing.
+ >> ChangeLog:
+
+ For changes up to version 2010_v3.0.0 (last implementation of the 2010-era analysis)
+ see code in the corresponding SVN branch.
+
+ Changes since 2011_v0.9.0:
+
+ @
 
 */
 //________________________________________________________________________________________

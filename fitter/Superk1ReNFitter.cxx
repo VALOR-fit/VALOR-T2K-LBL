@@ -1,12 +1,15 @@
 //____________________________________________________________________________ 
 /*
- Version of Superk1RMuErecoFitter.cxx to be used for nue appearance 
- These are chagnes in Superk1RMuErecoFitter.cxx:
 
- Changes since v1.0.0:
+ >> ChangeLog:
 
- @ 08/12/2011 - LE
-   First added in v2.2.1
+ For changes up to version 2010_v3.0.0 (last implementation of the 2010-era analysis)
+ see code in the corresponding SVN branch.
+
+ Changes since 2011_v0.9.0:
+
+ @
+
 */ 
 //____________________________________________________________________________
 

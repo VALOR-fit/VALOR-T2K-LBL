@@ -1,24 +1,15 @@
 //________________________________________________________________________________________
 /*
- Changes since v1.0.0:
 
- @ 16/03/2011 - CA
-   Created from the old NuMuDisappFitter::FitInputs nested class. Also replaces similar
-   nested classes which were located in the NuMuDecayFitter and NuMuDecohFitter classes.
- @ 28/03/2011 - CA
-   In Chisquare(), make it clear that we are fitting only the 1-R mu-like sample at this
-   point.
- @ 05/07/2011 - CA
-   Adapt code since PhysParamList was renamed to FitParamList. Added penalty term in
-   chi^2 since fitting for systematics in now enabled.
- @ 29/09/2011 - CA
-   Added `BestFitChisquare(Option_t * opt = "poisson")' method to help making the code
-   more clear. The best-fit values must be set first.
- @ 02/12/2011 - LE
-   Consider both 1Re and 1Rmu in Chisquare()
- @ 02/02/2012 - JI
-   Changes in minuit fit function. Depending on the analysed sample different Chisquare() 
-   are used to judge the agreement between the data and the current predictio 
+ >> ChangeLog:
+
+ For changes up to version 2010_v3.0.0 (last implementation of the 2010-era analysis) 
+ see code in the corresponding SVN branch.
+ 
+ Changes since 2011_v0.9.0:
+
+ @
+
 */
 //________________________________________________________________________________________
 

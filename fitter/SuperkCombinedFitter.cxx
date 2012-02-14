@@ -1,14 +1,17 @@
-//____________________________________________________________________________ 
+//______________________________________________________________________________________ 
 /*
- Combined fitter, combining Superk1RMuErecoFitter and Superk1ReNFitter
-  These are chagnes in SuperkCombinedFitter.cxx:
 
- Changes since v1.0.0:
+ >> ChangeLog:
 
- @ 01/02/2012 - LE
-   First added in v2.2.1
+ For changes up to version 2010_v3.0.0 (last implementation of the 2010-era analysis)
+ see code in the corresponding SVN branch.
+
+ Changes since 2011_v0.9.0:
+
+ @
+
 */ 
-//____________________________________________________________________________
+//______________________________________________________________________________________
 
 #include <cassert> 
 #include <cstdlib> 

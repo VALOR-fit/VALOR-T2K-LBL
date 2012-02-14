@@ -1,63 +1,14 @@
 //________________________________________________________________________________________
 /*
- Changes since v1.0.0:
 
- @ 16/03/2011 - CA
-   Created from the old SuperkExpectation::SuperkInputs nested class. Removed the numu10a 
-   namespace.
- @ 28/03/2011 - CA
-   Remove CurrErecoSpectrum() as it doesn't make sense using the combined spectrum
-   for all the different samples considered. The default was to return the spectrum for the
-   `1-R mu-like' sample but not typing this explicitly could lead to confusion. From now only
-   CurrErecoSpectrum(s) and CurrErecoSpectrum(s,m) will be used.
-   Similar changes were make to SuperkExpectation and SuperkObservation classes.
- @ 06/06/2011 - CA
-   Added PhysHypothesis class.
-   Added util::UseEventToFillInTemplate(SuperkMode_t m, int pdg, int reaction_mode).
-   Added new (Ereco-dependent) `CCQE ring-counting eff. error' using the Choleslky method.
-   Renamed old `CCQE efficiency err' to `CCQE other eff. err' (it now includes all
-   sources of errors except ring-counting).
-   NumOfEvents_Ereco(), NumOfEvents_Etrue() were modified accordingly to take the new
-   Ereco-dependent error into account.
- @ 05/07/2011 - CA
-   Modified TweakRingCountingEfficiencyCCQE() to allow specifying whether the forced tweak
-   dials are the correlated or de-correlated ones. The de-correlated ones are used if the
-   CCQE ring-counting nuisance params are included in the fit. The correlated ones are
-   used for certain validation programs. Used the updated PhysHypothesis class.
- @ 20/07/2011 - CA
-   Code was re-structured. The systematic variations and the physics hypothesis 
-   (eg. oscillations) are no longer applied in a  single-step in all MC templates as 
-   the Ereco spectrum gets updated.  All work is now done in UpdateTemplates(). 
-   The UpdateErecoSpetra() and UpdateEtrueSpectra are simple loops over MC templates. 
-   3-flavour oscillations were plugged-in. At this point matter effects are neglected 
-   but they would be included shortly.
- @ 26/07/2011 - CA
-   Took newly0-added `nue signal' templates into account. They should be neglected under 
-   all but the  3-flavour oscillation hypothesis. Added bool SkipTemplate(SuperkMode_t m) 
-   to decide whether a template should be neglected. 
-   Added some comments and removed commented-out code.
- @ 29/07/11
-   Include matter effects in 3-flavour osc probabilities.
- @ 06/10/11 - CA
-   Added `PrintSystematicVariations()'. Tweaked output messages.
- @ 20-25/11/11 - CA,TD
-   Substantial structural modifications so that the code can predict both the 1Rmu and 
-   1Re distributions. The list of reaction modes kept track of for each sample may be
-   different and it is defined in Conventions.h. Implemented 1Re detector systematics.
- @ 30/11/11 - CA
-   Added option to use different Ereco binning for the 1Re and 1Rmu histograms.
-   Renamed various variables for consistency and for avoiding confusion between 
-   1Rmu and 1Re systematics.
- @ 05/12/2011 - CA
-   Add capability to use either sin^2(2*theta_ij) or sin^2(theta_ij) as the
-   parameter of choice for describing neutrino mixing.
-@  06/12/11 - CA,LE,TD
-   Some re-structuring and taking care of indexing issues introduced when code was
-   extended to handle both 1Re and 1Rmu samples. Added Book() functions and accessing
-   arrays of 1-D and 2-D spectra only via the CurrErecoSpectrum(s,m) and newly-added
-   Template(s,m,type) functions which look-up the proper array indices for the (s,m) pair.
- @ 08/12/11 - LE
-   Add 4 Etrue histograms needed for calculating flux norm err for 1Re.
+ >> ChangeLog:
+
+ For changes up to version 2010_v3.0.0 (last implementation of the 2010-era analysis)
+ see code in the corresponding SVN branch.
+
+ Changes since 2011_v0.9.0:
+
+ @
 
 */
 //________________________________________________________________________________________

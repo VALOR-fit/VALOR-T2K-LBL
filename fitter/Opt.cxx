@@ -1,13 +1,14 @@
 //________________________________________________________________________________________
 /*
- Changes since v1.0.0:
 
- @ Dec 06, 2011 - CA
-   First added in v2.2.1
+ >> ChangeLog:
 
- @ 15/12/2011 - LE                
-   Added "gOscAnaTypeChoice" to select the oscillation analysis type: 
-   combined or single analysis (numu disappearance or nue appearance only)
+ For changes up to version 2010_v3.0.0 (last implementation of the 2010-era analysis)
+ see code in the corresponding SVN branch.
+
+ Changes since 2011_v0.9.0:
+
+ @
 
 */
 //________________________________________________________________________________________

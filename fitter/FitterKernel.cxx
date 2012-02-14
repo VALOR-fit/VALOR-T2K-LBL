@@ -1,20 +1,14 @@
 //____________________________________________________________________________ 
 /*
- Changes since v1.0.0:
 
- @ 16/03/2011 - CA
-   Removed the numu10a namespace. Renamed: OscillationFitter->NuMuDisappFitter.
-   The FitInputs classs is no longer nested in the fitter class.
- @ 08/04/2011 - CA
-   Update MINOS contour to the 2011 one.
- @ 05/07/2011 - CA
-   PhysParamList was renamed to FitParamList so that distinction between the two
-   SuperkExpectation interfaces is clear. Adapt the fitter.
-   Use FitterABC as base class.
- @ 28/07/2011 - CA
-   Added method to get MINUIT err matrix status code.
- @ 28/09/2011 - CA
-   Code factorized out of the existing fitters and remaned to FitterKernel.
+ >> ChangeLog:
+
+ For changes up to version 2010_v3.0.0 (last implementation of the 2010-era analysis)
+ see code in the corresponding SVN branch.
+
+ Changes since 2011_v0.9.0:
+
+ @
 
 */ 
 //____________________________________________________________________________

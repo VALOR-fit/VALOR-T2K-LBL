@@ -1,77 +1,14 @@
 //____________________________________________________________________________
 /*
- Changes since v1.0.0:
 
- @ 06/06/11 - CA
-   Added UseEventToFillInTemplate(SuperkMode_t m, int pdg, int reaction_mode)
-   to simplify SuperkMC class.
- @ 05/07/11 - CA
-   Added CholeskyCalculateCorrelatedParamVariations (TMatrixD& L, TVectorD & 
-   g_uncorrelated) to allow fitting for systematics handled using the Cholesky
-   method (fitting for the de-correlated params).
-   Added nuisance params in AsString(PhysParamId_t p).
-   Added IsSystematic(PhysParamId_t p).
- @ 12/07/11 - CA
-   Minor changes to facilitate 3-flavour oscillation analysis:
-   Added AsString(OscChannelId_t) and OscChannelId_t GetOscChannel(int,int).
-   Added IsNeutrino(int) and IsAntiNeutrino(int).
- @ 18/07/11 - CA
-   Added AsString(PhysHypothesis_t)
- @ 20/07/11 - CA
-   Added RandomizeSinsq2Theta12(),RandomizeSinsq2Theta13(),RandomizeDeltaCP(),
-   and RandomizeDm12sq().
- @ 26/07/11 - CA
-   Took `nue signal' templates into account in AsString(SuperkMode_t m)
-   Added bool IsSignalNuE(SuperkMode_t m).
-   Included `nue signal' templates in UseEventToFillInTemplate().
- @ 14/09/11 - CA
-   Added `string AsString (string hypothesis, list of osc params)' to simplify
-   formation of output filename in test macros.
-   Added `PhysHypothesis_t FromString(string h)' to simplify running certain
-   test macros.
- @ 22/09/11 - CA
-   Added Option_t * argument in `AsString(string hypothesis, osc params)'
- @ 27/09/11 - CA
-   Added `AsString (t2kana::conv::NuMassHierarchy_t m)'
- @ 28/09/11 - CA
-   Used separate PhysParamId_t for the decoh. and decay sinsq2theta parameter.
- @ 07/10/11 - CA
-   In RandomizeDeltaCP() use a range from [-pi,pi) rather than [0,2pi)
- @ 10/10/11 - CA
-   In RandomizeSinsq2Theta12(), make sure that the generated value is always
-   physical.
- @ 30/11/11 - TD
-   Added SKSampleAsString() to simplify running certain test macros.
- @ 01/12/11 - CA,LE
-   Added `int FindSampleSlot(SuperkSample_t s)' and 
-  `FindModeSlot(SuperkSample_t s, SuperkMode_t m)'
- @ 05/12/2011 - CA
-   Add capability to use either sin^2(2*theta_ij) or sin^2(theta_ij) as the
-   parameter of choice for describing neutrino mixing.
- @ 05/12/2011 - CA
-   Added `string AsString(NuOscMixParam_t)', `const int NumErecoBins(SuperkSample_t)'
-   and `const double * ErecoBinEdges (SuperkSample_t s)'.
- @ 07/12/2011 - TD
-   Added 'NuMassHierarchy_t HierarchyFromString(string)' and 'NuOscMixParam_t MixingTypeFromString(string)'
- @ 08/12/2011 - CA
-   Added 'FluxNormErrIdx_t FindFluxNormErrIdx (SuperkSample_t)' and
-   'FluxNormErrIdx_t FindFluxNormErrIdx (SuperkSample_t, SuperkMode_t)'
-   Added AsString(FluxNormErrIdx_t)
- @ 09/12/2011 - CA
-   Added SetDefaultSKSpectrumStyle(SuperkSample_t,SuperkMode_t,TH1D*) so as
-   to simplify macros. Default graphics attributed are set in Conventions.h
- @ 13/12/2011 - CA
-   Added various AsStringRooTex() and AsStringCompact() methods to simplify
-   construction of ROOT object names and TLegend entries for objects that
-   depend on SK sample and mode.
- @ 15/12/2011 - LE
-   Added methods for "EOscAnaType" 
- .............................................................................
- Work towards 2011 analysis 
- .............................................................................
- @ 09/02/2012 - CA
-   Removed 2010-specific nuisance parameters (PhysParamId_t) from switch-case
-   blocks. The 2011 nuisance parameters will have to be added.
+ >> ChangeLog:
+
+ For changes up to version 2010_v3.0.0 (last implementation of the 2010-era analysis)
+ see code in the corresponding SVN branch.
+
+ Changes since 2011_v0.9.0:
+
+ @
    
 */
 //____________________________________________________________________________

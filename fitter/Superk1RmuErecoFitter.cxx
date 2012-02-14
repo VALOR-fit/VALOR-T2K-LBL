@@ -1,30 +1,15 @@
 //____________________________________________________________________________ 
 /*
- Changes since v1.0.0:
 
- @ 16/03/2011 - CA
-   Removed the numu10a namespace. Renamed: OscillationFitter->NuMuDisappFitter.
-   The FitInputs classs is no longer nested in the fitter class.
- @ 08/04/2011 - CA
-   Update MINOS contour to the 2011 one.
- @ 05/07/2011 - CA
-   PhysParamList was renamed to FitParamList so that distinction between the two
-   SuperkExpectation interfaces is clear. Adapt the fitter.
-   Use FitterABC as base class.
- @ 28/07/2011 - CA
-   Added method to get MINUIT err matrix status code.
- @ 28/09/2011 - CA
-   Actual fitting code factorized out of the existing fitters and put in
-   FitterKernel class.  
- @ 06/10/2011 - CA
-   Functionality of Write() was spread to Analyze(), GetResults(), Save() to
-   better serve the different needs of various toy-MC fitting studies.
- @ 05/12/2011 - CA
-   Add capability to use either sin^2(2*theta_ij) or sin^2(theta_ij) as the
-   parameter of choice for describing neutrino mixing.
- @ 13/12/2011 - CA
-   Removed hardcoded list of modes for the 1Rmu sample. Considered modes are
-   looked up from Conventions.h
+ >> ChangeLog:
+
+ For changes up to version 2010_v3.0.0 (last implementation of the 2010-era analysis)
+ see code in the corresponding SVN branch.
+
+ Changes since 2011_v0.9.0:
+
+ @
+
 */ 
 //____________________________________________________________________________
 

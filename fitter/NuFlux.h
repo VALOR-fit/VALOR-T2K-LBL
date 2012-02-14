@@ -27,18 +27,32 @@ class TVirtualPad;
 
 namespace t2kana {
 
+class BANFF;
+
 class NuFlux: public TObject
 {
 public:
   NuFlux();   
  ~NuFlux();
 
-  // Get beam oscillation analysis inputs
-  double  SuperkNuMuFlux10aTo10dWght    (double Etrue) const;
-  double  SuperkNuMuBarFlux10aTo10dWght (double Etrue) const;
-  double  SuperkNuEFlux10aTo10dWght     (double Etrue) const;
-  double  SuperkNuMuFlux                (double Etrue, bool wght_to_10d=true) const;
-      
+  //      
+  double SuperkFluxPOT (void) const;
+
+  // Weights for nominal SK flux -> tuned SK flux
+  double  SuperkNuMuFluxTuneWght    (double Etrue) const; 
+  double  SuperkNuMuBarFluxTuneWght (double Etrue) const; 
+  double  SuperkNuEFluxTuneWght     (double Etrue) const; 
+
+  // Tuned (default) or nominal SK flux
+  double  SuperkNuMuFlux    (double Etrue, bool tuned=true) const;
+  double  SuperkNuMuBarFlux (double Etrue, bool tuned=true) const;
+  double  SuperkNuEFlux     (double Etrue, bool tuned=true) const;
+
+  // SK flux weights (ratios of tuned SK fluxes) as a result of BANFF tweaks
+  double  SuperkNuMuFluxWght    (double Etrue) const; 
+  double  SuperkNuMuBarFluxWght (double Etrue) const; 
+  double  SuperkNuEFluxWght     (double Etrue) const; 
+
   // Read inputs from XML file
   bool Read (TXMLEngine* xml, XMLNodePointer_t root_node);
 
@@ -50,20 +64,27 @@ public:
   // - "SKFlux/CovarianceMatrix/NuMu" : SK numu flux covariance matrix
   void Draw(TVirtualPad * c, Option_t * opt = "SKFlux/10d") const;
 
+  // 
+  void TellMeAboutTheBANFFfit(BANFF * banff);
+
 private:
 
   void Init    (void);
   void CleanUp (void);
 
-  TH1D *        fSuperkNuMuFlux10a;            ///< 10a SuperK numu flux estimation (50 MeV binning)
-  TH1D *        fSuperkNuMuFlux10aVarBin;      ///< 10a SuperK numu flux estimation (Beam WG var binning scheme)
-  double        fSuperkNuMuFluxPOT;            ///< integrated POT for files used for numu flux simulation
-  TH1D *        fSuperkNuMuWght10aTo10d;       ///< SuperK numu    flux weights (10a -> 10d)
-  TH1D *        fSuperkNuMuBarWght10aTo10d;    ///< SuperK numubar flux weights (10a -> 10d)
-  TH1D *        fSuperkNuEWght10aTo10d;        ///< SuperK nue     flux weights (10a -> 10d)
-  double        fSuperkFluxNormTwkDial;        ///< flux normalization tweaking dial (1Re and 1Rmu tweaked coherently)
+  double Flux         (double Etrue, bool tuned, TH1D * nominal_flux, TH1D * tuning_weights) const;
+  double FluxTuneWght (double Etrue, TH1D * tuning_weights) const;
+
+  double   fSuperkFluxPOT;                ///< integrated POT for files used for flux simulation
+  TH1D *   fSuperkNuMuFluxNom;            ///< nominal SuperK numu    flux (50 MeV binning)
+  TH1D *   fSuperkNuMuBarFluxNom;         ///< nominal SuperK numubar flux (50 MeV binning)
+  TH1D *   fSuperkNuEFluxNom;             ///< nominal SuperK nue     flux (50 MeV binning)
+  TH1D *   fSuperkNuMuFluxTuneWght;       ///< SuperK numu    flux tuning weights (10a -> 10d)
+  TH1D *   fSuperkNuMuBarFluxTuneWght;    ///< SuperK numubar flux tuning weights (10a -> 10d)
+  TH1D *   fSuperkNuEFluxTuneWght;        ///< SuperK nue     flux tuning weights (10a -> 10d)
+  BANFF *  fBANFF;                        ///< BANFF fit info
       
-ClassDef(NuFlux, 4)
+ClassDef(NuFlux, 5)
 };
 
 } //t2kana

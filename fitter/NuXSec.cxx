@@ -1,23 +1,14 @@
 //________________________________________________________________________________________
 /*
- Changes since v1.0.0:
 
- @ 16/03/2011 - CA
-   Created from the old SuperkExpectation::GeneratorInputs nested class. Removed the 
-   numu10a namespace.
- @ 27/07/2011 - CA
-   Take into account the newly added `nue signal' templates when systematic parameters
-   are tweaked. Added `CCQEWght(double Etrue) const' to avoid code-repetition in 
-   `SuperkCCQEXSecWght(double Etrue, SuperkMode_t m) const'
- @ 06/10/11 - CA
-   Added `PrintSystematicVariations()'. Tweaked output messages.
- @ 25/11/11 - TD
-   Over a few iterations have:
-    added new sample (e.g. NC1pi0) xsec tweaks
-    changed methods 'Superk*Wght()' to take in samples as well as modes
-    changed 'SuperkNuclEffectWght()' to act with different histograms for different samples/modes
-    changed names: dropped XSec from CCQEXSec, dropped XSecRatio from e.g. CC1piToCCQEXSecRatio
-                   changed NuclEffect to SKFSI
+ >> ChangeLog:
+
+ For changes up to version 2010_v3.0.0 (last implementation of the 2010-era analysis)
+ see code in the corresponding SVN branch.
+
+ Changes since 2011_v0.9.0:
+
+ @
 
 */
 //________________________________________________________________________________________

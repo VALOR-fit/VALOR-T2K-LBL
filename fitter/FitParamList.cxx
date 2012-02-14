@@ -1,42 +1,15 @@
 //________________________________________________________________________________________
 /*
- Changes since v1.0.0:
 
- @ 05/07/2011 - CA
-   Was renamed from PhysParamList to FitParamList so that distinction between the two
-   SuperkExpectation interfaces is clear. Added named ctor to return the numu-disappearance
-   fit param list including all 34 nuisance params of the 2010 analysis. Added named ctor
-   which returns a fit param list by specifying a name. Added boolean array (fIsNuisance) 
-   to mark which of the fit params are nuisance params. Added ChisquarePenaltyTerm() 
-   method to return the penalty chisq term when nuisance params are included in the fit.
-   All nuisance params are de-correlated (see Cholesky)
- @ 15/07/2011 - CA
-   Added 3-flavour fit parameter lists and added NamedParameterList(string name) method.
- @ 21/07/2011 - CA
-   Added Reset() and WhichParam(int id). Implemented ChisquarePenaltyTerm() for 
-   marginalised oscillation parameters.
- @ 29/07/2011 - CA
-   Added GetNumberFreeParameters()
- @ 15/09/2011 - CA
-   Renamed Reset() to ResetCurrToInitValues() to avoid confusion.
-   Added mutable flag fShowCurrValuesOnly and a setter (ShowOnlyCurrValuesInNextPrint())
-   method. The flag affects the 'next' print-out only and then it is reset to false.
-   Method SetInitValue(PhysParamId_t p, double value) also gets the current value in sync
-   with the initial value. Calling TVirtualFitter::Clear() before setting the fit params
-   to the fitter in SetTo(TVirtualFitter *). Modified the default, named fit param lists.
- @ 28/09/2011 - CA
-   Tweak init values. Add array to hold best-fit values so as to remove the potential 
-   error from not looking-up the current/running values immediately after the chisquare
-   minimum was reached. Added `CopyCurrToBestFitValues()', `CopyBestFitToCurrValues()' 
-   `BestFitValue(PhysParamId_t)' and `ShowOnlyBestFitValuesInNextPrint()' methods.
- @ 05/12/2011 - CA
-   Add capability to use either sin^2(2*theta_ij) or sin^2(theta_ij) as the
-   parameter of choice for describing neutrino mixing.
- @ 15/12/11
-   Add "nuosc3f_12fix" param list
- @ 30/01/12 JELENA
-   Add "nuosc3f_12fix+nuisance" param list
-   Add "nuosc3f_nueapp_fix4+nuisance" param list
+ >> ChangeLog:
+
+ For changes up to version 2010_v3.0.0 (last implementation of the 2010-era analysis)
+ see code in the corresponding SVN branch.
+
+ Changes since 2011_v0.9.0:
+
+ @
+
 */
 //________________________________________________________________________________________
 
