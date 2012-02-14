@@ -231,43 +231,57 @@ typedef enum EPhysParamId
    */
 
    /*
-    * 33-parameters used in the BANFF fit
+    * SuperK detector errors (energy scale and efficiencies)
    */   
-   kNuisBANFF00,      // # 00, ND280 numu    flux,  E =  0.0 -  0.4 GeV
-   kNuisBANFF01,      // # 01, ND280 numu    flux,  E =  0.4 -  0.5 GeV
-   kNuisBANFF02,      // # 02, ND280 numu    flux,  E =  0.5 -  0.6 GeV
-   kNuisBANFF03,      // # 03, ND280 numu    flux,  E =  0.6 -  0.7 GeV
-   kNuisBANFF04,      // # 04, ND280 numu    flux,  E =  0.7 -  1.0 GeV
-   kNuisBANFF05,      // # 05, ND280 numu    flux,  E =  1.0 -  1.5 GeV
-   kNuisBANFF06,      // # 06, ND280 numu    flux,  E =  1.5 -  2.5 GeV
-   kNuisBANFF07,      // # 07, ND280 numu    flux,  E =  2.5 -  3.5 GeV
-   kNuisBANFF08,      // # 08, ND280 numu    flux,  E =  3.5 -  5.0 GeV
-   kNuisBANFF09,      // # 09, ND280 numu    flux,  E =  5.0 -  7.0 GeV
-   kNuisBANFF10,      // # 10, ND280 numu    flux,  E =  7.0 - 30.0 GeV
-   kNuisBANFF11,      // # 11, SK    numu    flux,  E =  0.0 -  0.4 GeV
-   kNuisBANFF12,      // # 12, SK    numu    flux,  E =  0.4 -  0.5 GeV
-   kNuisBANFF13,      // # 13, SK    numu    flux,  E =  0.5 -  0.6 GeV
-   kNuisBANFF14,      // # 14, SK    numu    flux,  E =  0.6 -  0.7 GeV
-   kNuisBANFF15,      // # 15, SK    numu    flux,  E =  0.7 -  1.0 GeV
-   kNuisBANFF16,      // # 16, SK    numu    flux,  E =  1.0 -  1.5 GeV
-   kNuisBANFF17,      // # 17, SK    numu    flux,  E =  1.5 -  2.5 GeV
-   kNuisBANFF18,      // # 18, SK    numu    flux,  E =  2.5 -  3.5 GeV
-   kNuisBANFF19,      // # 19, SK    numu    flux,  E =  3.5 -  5.0 GeV
-   kNuisBANFF20,      // # 20, SK    numu    flux,  E =  5.0 -  7.0 GeV
-   kNuisBANFF21,      // # 21, SK    numu    flux,  E =  7.0 - 30.0 GeV
-   kNuisBANFF22,      // # 22, SK    numubar flux,  E =  0.0 -  1.5 GeV
-   kNuisBANFF23,      // # 23, SK    numubar flux,  E =  1.5 - 30.0 GeV
-   kNuisBANFF24,      // # 24, SK    nue     flux,  E =  0.0 -  0.5 GeV
-   kNuisBANFF25,      // # 25, SK    nue     flux,  E =  0.5 -  0.7 GeV
-   kNuisBANFF26,      // # 26, SK    nue     flux,  E =  0.7 -  0.8 GeV
-   kNuisBANFF27,      // # 27, SK    nue     flux,  E =  0.8 -  1.5 GeV
-   kNuisBANFF28,      // # 28, SK    nue     flux,  E =  1.5 -  2.5 GeV
-   kNuisBANFF29,      // # 29, SK    nue     flux,  E =  2.5 -  4.0 GeV
-   kNuisBANFF30,      // # 30, SK    nue     flux,  E =  4.0 - 30.0 GeV
-   kNuisBANFF31,      // # 31, SK    nuebar  flux,  E =  0.0 -  2.5 GeV
-   kNuisBANFF32,      // # 32, SK    nuebar  flux,  E =  2.5 - 30.0 GeV
+   kNuisSuperkEnergyScale,     // SK energy scale
+   kNuisSuperkEff1RmuCCQEoth,  // SK 1Rmu CCQE efficiency (other)
+   kNuisSuperkEff1RmuCCQErc0u, // SK 1Rmu CCQE efficiency (ring counting, Ereco bin 1)
+   kNuisSuperkEff1RmuCCQErc1u, // SK 1Rmu CCQE efficiency (ring counting, Ereco bin 2)
+   kNuisSuperkEff1RmuCCQErc2u, // SK 1Rmu CCQE efficiency (ring counting, Ereco bin 3)
+   kNuisSuperkEff1RmuCCnonQE,  // SK 1Rmu CCnonQE efficiency
+   kNuisSuperkEff1RmuNC,       // SK 1Rmu NC efficiency
+   kNuisSuperkEff1RmuNueCC,    // SK 1Rmu nue CC efficiency
 
-
+   /*
+    * 37-parameters used in the BANFF fit
+   */   
+   kNuisBANFF00,               // # 00, ND280 numu    flux,  E =  0.0 -  0.4 GeV
+   kNuisBANFF01,               // # 01, ND280 numu    flux,  E =  0.4 -  0.5 GeV
+   kNuisBANFF02,               // # 02, ND280 numu    flux,  E =  0.5 -  0.6 GeV
+   kNuisBANFF03,               // # 03, ND280 numu    flux,  E =  0.6 -  0.7 GeV
+   kNuisBANFF04,               // # 04, ND280 numu    flux,  E =  0.7 -  1.0 GeV
+   kNuisBANFF05,               // # 05, ND280 numu    flux,  E =  1.0 -  1.5 GeV
+   kNuisBANFF06,               // # 06, ND280 numu    flux,  E =  1.5 -  2.5 GeV
+   kNuisBANFF07,               // # 07, ND280 numu    flux,  E =  2.5 -  3.5 GeV
+   kNuisBANFF08,               // # 08, ND280 numu    flux,  E =  3.5 -  5.0 GeV
+   kNuisBANFF09,               // # 09, ND280 numu    flux,  E =  5.0 -  7.0 GeV
+   kNuisBANFF10,               // # 10, ND280 numu    flux,  E =  7.0 - 30.0 GeV
+   kNuisBANFF11,               // # 11, SK    numu    flux,  E =  0.0 -  0.4 GeV
+   kNuisBANFF12,               // # 12, SK    numu    flux,  E =  0.4 -  0.5 GeV
+   kNuisBANFF13,               // # 13, SK    numu    flux,  E =  0.5 -  0.6 GeV
+   kNuisBANFF14,               // # 14, SK    numu    flux,  E =  0.6 -  0.7 GeV
+   kNuisBANFF15,               // # 15, SK    numu    flux,  E =  0.7 -  1.0 GeV
+   kNuisBANFF16,               // # 16, SK    numu    flux,  E =  1.0 -  1.5 GeV
+   kNuisBANFF17,               // # 17, SK    numu    flux,  E =  1.5 -  2.5 GeV
+   kNuisBANFF18,               // # 18, SK    numu    flux,  E =  2.5 -  3.5 GeV
+   kNuisBANFF19,               // # 19, SK    numu    flux,  E =  3.5 -  5.0 GeV
+   kNuisBANFF20,               // # 20, SK    numu    flux,  E =  5.0 -  7.0 GeV
+   kNuisBANFF21,               // # 21, SK    numu    flux,  E =  7.0 - 30.0 GeV
+   kNuisBANFF22,               // # 22, SK    numubar flux,  E =  0.0 -  1.5 GeV
+   kNuisBANFF23,               // # 23, SK    numubar flux,  E =  1.5 - 30.0 GeV
+   kNuisBANFF24,               // # 24, SK    nue     flux,  E =  0.0 -  0.5 GeV
+   kNuisBANFF25,               // # 25, SK    nue     flux,  E =  0.5 -  0.7 GeV
+   kNuisBANFF26,               // # 26, SK    nue     flux,  E =  0.7 -  0.8 GeV
+   kNuisBANFF27,               // # 27, SK    nue     flux,  E =  0.8 -  1.5 GeV
+   kNuisBANFF28,               // # 28, SK    nue     flux,  E =  1.5 -  2.5 GeV
+   kNuisBANFF29,               // # 29, SK    nue     flux,  E =  2.5 -  4.0 GeV
+   kNuisBANFF30,               // # 30, SK    nue     flux,  E =  4.0 - 30.0 GeV
+   kNuisBANFF31,               // # 31, SK    nuebar  flux,  E =  0.0 -  2.5 GeV
+   kNuisBANFF32,               // # 32, SK    nuebar  flux,  E =  2.5 - 30.0 GeV
+   kNuisBANFF33,               // # 33, M_{A} QE
+   kNuisBANFF34,               // # 34, M_{A} RES
+   kNuisBANFF35,               // # 35, CCQE  normalization, 0 - 1.5 GeV
+   kNuisBANFF36                // # 36, CCRES normalization, 0 - 2.5 GeV
 } 
 PhysParamId_t;
 
