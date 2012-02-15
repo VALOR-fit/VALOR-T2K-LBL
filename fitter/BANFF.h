@@ -45,16 +45,12 @@ public:
 
   // Systematic variations 
   void Tweak (bool force_input_twkv = false, TVectorD * input_twkv = 0, bool correlated = true);
-   
-  // Read inputs from XML file
-  bool Read (TXMLEngine* xml, XMLNodePointer_t root_node);
-
-  // Drawing options:
-  // -
-  void Draw(TVirtualPad * c, Option_t * opt = "") const;
 
   // Print
   void PrintSystematicVariations (void) const;
+   
+  // Read inputs from XML file
+  bool Read (TXMLEngine* xml, XMLNodePointer_t root_node);
 
 private:
 
@@ -64,9 +60,9 @@ private:
   void DoTweak   (TVectorD * input_twkv); ///< apply input tweaking dials
 
   TVectorD *  fBestFitValues;  ///< BANFF best fit values
+  TVectorD *  fCurrentValues;  ///< Current values of BANFF parameters
   TMatrixD *  fCovMtrx;        ///< BANFF covariance matrix
   TMatrixD *  fCovMtrxChoL;    ///< Triangular matrix obtained from Cholesky decomposition of BANFF covariance matrix
-  bool        fIsTweaked;      ///< Was there a flux shape tweaking?
       
 ClassDef(BANFF, 1)
 };
