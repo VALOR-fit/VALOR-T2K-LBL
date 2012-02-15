@@ -406,16 +406,16 @@ void SuperkMC::FillTemplate(SuperkSample_t s, SuperkMode_t m)
      exit(1);
   }
 
-  double wght = this->AnalyzedSamplePOT() / mcpot;
+  double pot_wght = this->AnalyzedSamplePOT() / mcpot;
 
 #ifdef __show_init_mesg_debug__        
   cout << "Exp/SKMC/CreateTemplate >>  - Weight (data POT / MC POT) = " 
-       << wght << endl;
+       << pot_wght << endl;
 #endif
-  if(wght <= 0) {
+  if(pot_wght <= 0) {
      cerr << "Exp/SKMC/CreateTemplate >> Weight (data POT / MC POT) for " 
           << util::AsString(s) << "/" << util::AsString(m)
-          << " is " << wght << endl;
+          << " is " << pot_wght << endl;
      exit(1);
   }
 
@@ -437,12 +437,13 @@ void SuperkMC::FillTemplate(SuperkSample_t s, SuperkMode_t m)
      bool use_it = util::UseEventToFillInTemplate(m,fBrPdg,fBrGenCode);
      if(!use_it) continue;
      
-   //cout << "Exp/SKMC >> Ereco = " << fBrEreco << " GeV, Etrue = " 
-   //     << fBrEtrue << " GeV, wght = " << wght << endl;
+     // apply flux tuning weights
+     double flux_tune_wght = fNuFlux->SuperkFluxTuneWght(fBrPdg,fBrEtrue);
+     double event_wght = pot_wght * flux_tune_wght;
 
-     this -> Template(s,m,kSKMCtNom) -> Fill (fBrEreco, fBrEtrue, wght);
-     this -> Template(s,m,kSKMCtSys) -> Fill (fBrEreco, fBrEtrue, wght);
-     this -> Template(s,m,kSKMCtFin) -> Fill (fBrEreco, fBrEtrue, wght);
+     this -> Template(s,m,kSKMCtNom) -> Fill (fBrEreco, fBrEtrue, event_wght);
+     this -> Template(s,m,kSKMCtSys) -> Fill (fBrEreco, fBrEtrue, event_wght);
+     this -> Template(s,m,kSKMCtFin) -> Fill (fBrEreco, fBrEtrue, event_wght);
 
   }//iev
 
@@ -525,9 +526,11 @@ void SuperkMC::ApplySystematicsToTemplates(void)
 // Apply systematic variation to MC templates
 
   //
-  // Apply a) flux 10a->10d weights, b) SuperK efficiency tweaks (if any),
-  // c) SuperK energy scale tweaks (if any), d) flux shape and norm tweaks (if any)
-  // and e) cross section tweaks (if any).
+  // Apply (if any)
+  //  - SuperK efficiency tweaks,
+  //  - SuperK energy scale tweaks
+  //  - BANFF tweaks
+  //  - Cross-section tweaks
   // All systematics are multiplicative factors applied to the number of events
   // and they are either functions of Ereco, or Etrue or have no dependence at all.
   //
@@ -883,7 +886,6 @@ void SuperkMC::ApplyPhysHypothesisToTemplates(void)
 double SuperkMC::NumOfEvents(
     double Ereco, double Etrue, SuperkSample_t s, SuperkMode_t m) const
 {
-// - Apply flux tuning weights.
 // - Apply SuperK efficiency tweaks (if any). 
 // - Apply SuperK energy scale tweaks (if any).
 // - Apply flux tweaks (if any).
@@ -906,38 +908,20 @@ double SuperkMC::NumOfEvents(
   double nev = nsk2d->GetBinContent(reco_bin, true_bin);
         
   //
-  // Apply flux weights & systematics = f(Etrue)
+  // Apply flux systematics = f(Etrue)
   //
-  double flux_10d_weight      = 1.; // 10a->10d weight
   double numu_flux_shape_wght = 1.; // systematic variation (flux shape)
   if(fNuFlux) {
      if (util::IsNuMu(m)) {
-        flux_10d_weight      = fNuFlux->SuperkNuMuFlux10aTo10dWght(Etrue);
         numu_flux_shape_wght = fNuFlux->SuperkNuMuFluxShapeWeight (Etrue);
      }
-     else
-     if (util::IsNuMuBar(m)) {
-        flux_10d_weight = fNuFlux->SuperkNuMuBarFlux10aTo10dWght(Etrue);
-     }
-     else
-     if (util::IsBeamNuE(m)) {
-        flux_10d_weight = fNuFlux->SuperkNuEFlux10aTo10dWght(Etrue);
-     } 
      else
      if (util::IsSignalNuE(m)) {
         // signal nue component comes from the numu flux:
-        flux_10d_weight      = fNuFlux->SuperkNuMuFlux10aTo10dWght(Etrue);
         numu_flux_shape_wght = fNuFlux->SuperkNuMuFluxShapeWeight (Etrue);
      } 
-     else {
-        cerr << "Exp/SKMC/NumOfEvents >> Can't handle mode = " << util::AsString(m) << endl;
-        exit(1);
-     }
   }//flux
 #ifdef __show_num_of_events_mesg_debug__
-  if(flux_10d_weight != 1) {
-    cout << "Exp/SKMC/NumOfEvents >> Applied flux tuning weight = " << flux_10d_weight << endl;
-  }
   if(numu_flux_shape_wght != 1) {
     cout << "Exp/SKMC/NumOfEvents >> Applied flux-shape-systematic weight = " << numu_flux_shape_wght << endl;
   }
@@ -991,7 +975,6 @@ double SuperkMC::NumOfEvents(
   //
   double nevtwk = 
      ( nev * 
-       flux_10d_weight * 
        numu_flux_shape_wght * 
        xsec_ccqe_wght *
        xsec_ratio_wght *

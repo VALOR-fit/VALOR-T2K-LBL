@@ -243,7 +243,7 @@ typedef enum EPhysParamId
    kNuisSuperkEff1RmuNueCC,    // SK 1Rmu nue CC efficiency
 
    /*
-    * 37-parameters used in the BANFF fit
+    * 37 (flux and cross-section) corellated parameters used in the BANFF fit
    */   
    kNuisBANFF00,               // # 00, ND280 numu    flux,  E =  0.0 -  0.4 GeV
    kNuisBANFF01,               // # 01, ND280 numu    flux,  E =  0.4 -  0.5 GeV
@@ -281,7 +281,27 @@ typedef enum EPhysParamId
    kNuisBANFF33,               // # 33, M_{A} QE
    kNuisBANFF34,               // # 34, M_{A} RES
    kNuisBANFF35,               // # 35, CCQE  normalization, 0 - 1.5 GeV
-   kNuisBANFF36                // # 36, CCRES normalization, 0 - 2.5 GeV
+   kNuisBANFF36,               // # 36, CCRES normalization, 0 - 2.5 GeV
+
+   /*
+    * Cross-section parameters.
+    * Note that some of these parameters were included in the BANFF fit and are correlated with the flux params.
+    * The other paramers are taken to be uncorrelated and are applied to SK only.
+   */   
+   kNuisXSecMAQE,              // M_{A} QE                  *** this is BANFF parameter 33 - do not include again ***
+   kNuisXSecFermiMom,          // Fermi momentum
+   kNuisXSecBindE,             // binding energy
+   kNuisXSecSpecFunc,          // spectral function on/off
+   kNuisXSecNormCCQE0,         // CCQE norm 0.0 - 1.5 GeV   *** this is BANFF parameter 35 - do not include again ***
+   kNuisXSecNormCCQE1,         // CCQE norm 1.5 - 3.5 GeV
+   kNuisXSecNormCCQE2,         // CCQE norm > 3.5 GeV
+   kNuisXSecMARES,             // M_{A} RES                 *** this is BANFF parameter 34 - do not include again ***
+   kNuisXSecDeltaMass,         // Delta mean mass 
+   kNuisXSecDeltaWidth,        // Delta width
+   kNuisXSecNormCC1pi0,        // CC1pi norm 0-2.5 GeV      *** this is BANFF parameter 36 - do not include again ***
+   kNuisXSecNormCC1pi1,        // CC1pi norm > 2.5 GeV   
+   kNuisXSecNormCCcoh,
+   kNuisXSecNormCCoth
 } 
 PhysParamId_t;
 

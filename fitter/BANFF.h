@@ -35,14 +35,16 @@ public:
  ~BANFF();
 
   // Get BANFF fit param values (nominal + tweaked)
-  double NominalParamValue (PhysParamId_t p) const;
-  double CurrentParamValue (PhysParamId_t p) const;
+  double BestFitValue (PhysParamId_t p) const;
+  double CurrentValue (PhysParamId_t p) const;
    
-  // Get BANFF covariance matrix
-  const TMatrixD & CovMatrix(void) const { return *fCovMtrx; }
+  // Get BANFF best fit values, covariance matrix and cholesky decomposition of covariance matrix
+  const TVectorD & BestFitValues     (void) const { return *fBestFitValues; }
+  const TMatrixD & CovMatrix         (void) const { return *fCovMtrx;       }
+  const TMatrixD & CovMatrixCholesky (void) const { return *fCovMtrxChoL;   }
 
   // Systematic variations 
-  void Tweak (bool force_input_twkdials = false, TVectorD * input_twkv = 0, bool correlated = true, bool fractional = false);
+  void Tweak (bool force_input_twkv = false, TVectorD * input_twkv = 0, bool correlated = true);
    
   // Read inputs from XML file
   bool Read (TXMLEngine* xml, XMLNodePointer_t root_node);
@@ -56,10 +58,12 @@ public:
 
 private:
 
-  void Init    (void);
-  void CleanUp (void);
+  void Init      (void);
+  void CleanUp   (void);
+  int  Param2Idx (PhysParamId_t p) const; ///< convert BANFF PhysParamId_t to a covariance matrix or vector index
+  void DoTweak   (TVectorD * input_twkv); ///< apply input tweaking dials
 
-  TVectorD *  fBestFitValues;  ///<
+  TVectorD *  fBestFitValues;  ///< BANFF best fit values
   TMatrixD *  fCovMtrx;        ///< BANFF covariance matrix
   TMatrixD *  fCovMtrxChoL;    ///< Triangular matrix obtained from Cholesky decomposition of BANFF covariance matrix
   bool        fIsTweaked;      ///< Was there a flux shape tweaking?

@@ -39,27 +39,25 @@ public:
   double SuperkFluxPOT (void) const;
 
   // Tuned (default) or nominal SK flux
-  double  SuperkNuMuFlux    (double Etrue, bool tuned=true) const;
-  double  SuperkNuMuBarFlux (double Etrue, bool tuned=true) const;
-  double  SuperkNuEFlux     (double Etrue, bool tuned=true) const;
-  double  SuperkNuEBarFlux  (double Etrue, bool tuned=true) const;
+  double SuperkFlux (int neutrino_pdg, double Etrue, bool tuned=true) const;
 
   // Weights for nominal SK flux -> tuned SK flux
-  double  SuperkNuMuFluxTuneWght    (double Etrue) const; 
-  double  SuperkNuMuBarFluxTuneWght (double Etrue) const; 
-  double  SuperkNuEFluxTuneWght     (double Etrue) const; 
-  double  SuperkNuEBarFluxTuneWght  (double Etrue) const; 
+  double SuperkFluxTuneWght (int neutrino_pdg, double Etrue) const; 
 
   // SK flux weights (ratios of tuned SK fluxes) as a result of BANFF tweaks
-  double  SuperkNuMuFluxWght    (double Etrue) const; 
-  double  SuperkNuMuBarFluxWght (double Etrue) const; 
-  double  SuperkNuEFluxWght     (double Etrue) const; 
-  double  SuperkNuEBarFluxWght   (double Etrue) const; 
+  double SuperkFluxWght (int neutrino_pdg, double Etrue) const; 
 
-  // Read inputs from XML file
+  // Access nominal flux and weight histograms held in this object
+  const TH1D * SuperkNominalFluxSpectrum    (neutrino_pdg) const;
+  const TH1D * SuperkFluxTuningWghtSpectrum (neutrino_pdg) const;
+
+  // Read configuration and data from input XML file
   bool Read (TXMLEngine* xml, XMLNodePointer_t root_node);
 
-  // Drawing option:
+  // BANFF fit info
+  void TellMeAboutTheBANFFfit(BANFF * banff);
+
+  // Drawing options:
   // - "Flux/SK/NuMu/TuneWghts"    :
   // - "Flux/SK/NuMuBar/TuneWghts" :
   // - "Flux/SK/NuE/TuneWghts"     :
@@ -70,16 +68,10 @@ public:
   // - "Flux/SK/NuEBar"            :
   void Draw(TVirtualPad * c, Option_t * opt) const;
 
-  // BANFF fit info
-  void TellMeAboutTheBANFFfit(BANFF * banff);
-
 private:
 
   void Init    (void);
   void CleanUp (void);
-
-  double Flux         (double Etrue, bool tuned, TH1D * nominal_flux, TH1D * tuning_weights) const;
-  double FluxTuneWght (double Etrue, TH1D * tuning_weights) const;
 
   double   fSuperkFluxPOT;                ///< integrated POT for files used for flux simulation
   TH1D *   fSuperkNuMuFluxNom;            ///< nominal SuperK numu    flux (50 MeV binning)

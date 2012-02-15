@@ -172,90 +172,66 @@ double NuFlux::SuperkFluxPOT (void) const
   return fSuperkFluxPOT;
 }
 //________________________________________________________________________________________
-double NuFlux::SuperkNuMuFlux(double Etrue, bool tuned) const
+double NuFlux::SuperkFlux(int nu_pdg, double Etrue, bool tuned) const
 {
-  return this->Flux(Etrue,tuned,fSuperkNuMuFluxNom,fSuperkNuMuFluxTuneWght);
-}
-//________________________________________________________________________________________
-double NuFlux::SuperkNuMuBarFlux(double Etrue, bool tuned) const
-{
-  return this->Flux(Etrue,tuned,fSuperkNuMuBarFluxNom,fSuperkNuMuBarFluxTuneWght);
-}
-//________________________________________________________________________________________
-double NuFlux::SuperkNuEFlux(double Etrue, bool tuned) const
-{
-  return this->Flux(Etrue,tuned,fSuperkNuEFluxNom,fSuperkNuEFluxTuneWght);
-}
-//________________________________________________________________________________________
-double NuFlux::SuperkNuEBarFlux(double Etrue, bool tuned) const
-{
-  return this->Flux(Etrue,tuned,fSuperkNuEBarFluxNom,fSuperkNuEBarFluxTuneWght);
-}
-//________________________________________________________________________________________
-double NuFlux::SuperkNuMuFluxTuneWght(double Etrue) const
-{
-  return this->FluxTuneWght(Etrue,fSuperkNuMuFluxTuneWght);
-}
-//________________________________________________________________________________________
-double NuFlux::SuperkNuMuBarFluxTuneWght(double Etrue) const
-{
-  return this->FluxTuneWght(Etrue,fSuperkNuMuBarFluxTuneWght);
-}
-//________________________________________________________________________________________
-double NuFlux::SuperkNuEFluxTuneWght(double Etrue) const
-{
-  return this->FluxTuneWght(Etrue,fSuperkNuEFluxTuneWght);
-}
-//________________________________________________________________________________________
-double NuFlux::SuperkNuEBarFluxTuneWght(double Etrue) const
-{
-  return this->FluxTuneWght(Etrue,fSuperkNuEBarFluxTuneWght);
-}
-//________________________________________________________________________________________
-double NuFlux::SuperkNuMuFluxWght(double Etrue) const
-{
-  return 1.;
-}
-//________________________________________________________________________________________
-double NuFlux::SuperkNuMuBarFluxWght(double Etrue) const
-{
-  return 1.;
-}
-//________________________________________________________________________________________
-double NuFlux::SuperkNuEFluxWght(double Etrue) const
-{
-  return 1.;
-}
-//________________________________________________________________________________________
-double NuFlux::SuperkNuEBarFluxWght(double Etrue) const
-{
-  return 1.;
-}
-//________________________________________________________________________________________
-double NuFlux::Flux(
-  double Etrue, bool tuned, TH1D * nominal_flux, TH1D * tuning_weights) const
-{
-  assert(nominal_flux);
-  int flux_bin = nominal_flux->FindBin(Etrue);
-  double flux  = nominal_flux->GetBinContent(flux_bin);
+  const TH1D * nom_flux_spectrum = this->SuperkNominalFluxSpectrum(nu_pdg);
+  assert(nom_flux_spectrum);
+
+  int bin = nom_flux_spectrum->FindBin(Etrue);
+  double flux = nom_flux_spectrum->GetBinContent(bin);
+
   if(tuned) {
-    assert(tuning_weights);
-    double wght = this->FluxTuneWght(Etrue,tuning_weights);
-    flux *= wght;
+     double wght = this->SuperkFluxTuneWght(nu_pdg,Etrue);
+     flux *= wght;
   }
+
   return flux;
 }
 //________________________________________________________________________________________
-double NuFlux::FluxTuneWght(
-  double Etrue, TH1D * tuning_weights) const
+double NuFlux::SuperkFluxTuneWght(int nu_pdg, double Etrue) const
 {
-  double wght = 1.0;
-  if(Etrue < kEtrueMaxForFluxTuneWeights) {
-    assert(tuning_weights);
-    int wght_bin = tuning_weights->FindBin(Etrue);
-    wght = tuning_weights->GetBinContent(wght_bin);
+  if(Etrue > kEtrueMaxForFluxTuneWeights) 
+  {
+    return 1;
   }
+
+  const TH1D * wght_spectrum = this->SuperkFluxTuningWghtSpectrum(nu_pdg);
+  assert(wght_spectrum);
+
+  int bin = wght_spectrum->FindBin(Etrue);
+  double wght = wght_spectrum->GetBinContent(bin);
   return wght;
+}
+//________________________________________________________________________________________
+double NuFlux::SuperkFluxWght(int nu_pdg, double Etrue) const
+{
+  return 1.;
+}
+//________________________________________________________________________________________
+const TH1D * NuFlux::SuperkNominalFluxSpectrum(nu_pdg) const
+{
+  if      ( nu_pdg == kPdgNuE     ) return fSuperkNuEFluxNom;
+  else if ( nu_pdg == kPdgNuEBar  ) return fSuperkNuEBarFluxNom;
+  else if ( nu_pdg == kPdgNuMu    ) return fSuperkNuMuFluxNom;
+  else if ( nu_pdg == kPdgNuMuBar ) return fSuperkNuMuBarFluxNom;
+  else
+  {
+    exit(1);
+  }
+  return 0;
+}
+//________________________________________________________________________________________
+const TH1D * NuFlux::SuperkFluxTuningWghtSpectrum(nu_pdg) const
+{
+  if      ( nu_pdg == kPdgNuE     ) return fSuperkNuEFluxTuneWght;
+  else if ( nu_pdg == kPdgNuEBar  ) return fSuperkNuEBarFluxTuneWght;
+  else if ( nu_pdg == kPdgNuMu    ) return fSuperkNuMuFluxTuneWght;
+  else if ( nu_pdg == kPdgNuMuBar ) return fSuperkNuMuBarFluxTuneWght;
+  else
+  {
+    exit(1);
+  }
+  return 0;
 }
 //________________________________________________________________________________________
 void NuFlux::Draw(TVirtualPad * c, Option_t * option) const
@@ -314,7 +290,7 @@ void NuFlux::Draw(TVirtualPad * c, Option_t * option) const
     htun->SetDirectory(0);
     for(int i = 1; i <= htun->GetNbinsX(); i++) {
 	double E = htun->GetBinCenter(i);
-	double f = this->SuperkNuMuFlux(E,true);
+	double f = this->SuperFlux(kPdgNuMu,E,true);
         htun->SetBinContent(i,f);
     }
     htun->Draw("same");
@@ -332,7 +308,7 @@ void NuFlux::Draw(TVirtualPad * c, Option_t * option) const
     htun->SetDirectory(0);
     for(int i = 1; i <= htun->GetNbinsX(); i++) {
 	double E = htun->GetBinCenter(i);
-	double f = this->SuperkNuMuBarFlux(E,true);
+	double f = this->SuperkFlux(kPdgNuMuBar,E,true);
         htun->SetBinContent(i,f);
     }
     htun->Draw("same");
@@ -350,7 +326,7 @@ void NuFlux::Draw(TVirtualPad * c, Option_t * option) const
     htun->SetDirectory(0);
     for(int i = 1; i <= htun->GetNbinsX(); i++) {
 	double E = htun->GetBinCenter(i);
-	double f = this->SuperkNuEFlux(E,true);
+	double f = this->SuperkFlux(kPdgNuE,E,true);
         htun->SetBinContent(i,f);
     }
     htun->Draw("same");
@@ -368,7 +344,7 @@ void NuFlux::Draw(TVirtualPad * c, Option_t * option) const
     htun->SetDirectory(0);
     for(int i = 1; i <= htun->GetNbinsX(); i++) {
 	double E = htun->GetBinCenter(i);
-	double f = this->SuperkNuEBarFlux(E,true);
+	double f = this->SuperkFlux(kPdgNuEBar,E,true);
         htun->SetBinContent(i,f);
     }
     htun->Draw("same");

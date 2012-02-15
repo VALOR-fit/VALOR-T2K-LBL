@@ -56,19 +56,20 @@ BANFF::~BANFF()
 void NuFlux::Init(void)
 {
   fBestFitValues = 0; 
+  fCurrentValues = 0; 
   fCovMtrx       = 0; 
   fCovMtrxChoL   = 0; 
-  fIsTweaked     = 0; 
 }
 //________________________________________________________________________________________
 void BANFF::CleanUp(void)
 {
   if ( fBestFitValues ) delete fBestFitValues;
+  if ( fCurrentValues ) delete fCurrentValues;
   if ( fCovMtrx       ) delete fCovMtrx;
   if ( fCovMtrxChoL   ) delete fCovMtrxChoL;
 }
 //________________________________________________________________________________________
-bool NuFlux::BANFF(TXMLEngine* xml, XMLNodePointer_t root_node)
+bool BANFF::Read(TXMLEngine* xml, XMLNodePointer_t root_node)
 {
 // Read BANFF inputs to oscillation analysis
 //
@@ -82,6 +83,9 @@ bool NuFlux::BANFF(TXMLEngine* xml, XMLNodePointer_t root_node)
     cerr << "Exp/BANFF >> No BANFF best-fit parameter vector was found." << endl;
     exit(1);
   }
+
+  // init current values to best-fit values
+  fCurrentValues = new TVectorD(*fBestFitValues);
 
   // Get BANFF fit covariance matrix
   fCovMtrx = util::XML2TMatrixD(xml,root_node,"banff/covariance_matrix");
@@ -97,40 +101,35 @@ bool NuFlux::BANFF(TXMLEngine* xml, XMLNodePointer_t root_node)
   return true;
 }
 //________________________________________________________________________________________
-void BANFF::Draw(TVirtualPad * c, Option_t * option) const
+double BANFF::BestFitValue(PhysParamId_t p) const
 {
-  if(!c) return;
-
-  c->cd();
-
-  TString opt = option;
-  util::SetDefaultStyle();
-
-  if(opt.Contains("??")) { 
-
-    //
-    // ...
-    //
-
-    c->Update();
-  }
+  const TVectorD & bestfit = this->BestFitValues();
+  int idx = this->Param2Idx(p);
+  return bestfit[idx];
 }
 //________________________________________________________________________________________
-void NuFlux::Tweak(
-  bool       force_input_twkdials,  /* force the input twk dials or generate twk dials internally */
-  TVectorD * input_twkv,            /* input twk dials (if forced) - set 0 to reset */
-  bool       correlated,            /* twk dials are the correlated or uncorrelated ones? */
-  bool       fractional             /* twk dials expressing a fractional or absolute flux change? */
+double BANFF::CurrentValue(PhysParamId_t p) const
+{
+  const TVectorD & current_values = *fCurrentValues;
+  int idx = this->Param2Idx(p);
+  return current_values[idx];
+}
+//________________________________________________________________________________________
+void BANFF::Tweak(
+  bool       force_input_twkv,  /* force the input twk dials or generate twk dials internally */
+  TVectorD * input_twkv,        /* input twk dials (if forced) - set 0 to reset */
+  bool       correlated         /* twk dials are the correlated or uncorrelated ones? */
 )    
 { 
 #ifdef __show_cholesky_mesg_debug__
-  cout << "Exp/BANFF/Tweak >> Tweaking SuperK nu_mu flux shape" << endl;
+  cout << "Exp/BANFF/Tweak >> Tweaking BANFF fit parameters" << endl;
 #endif
 
   //
   // If this is the first time this function is called, then run the Cholesky 
   // decomposition of the flux covariance matrix
   //
+
   if(fCovMtrxChoL == 0) 
   {
 #ifdef __show_cholesky_mesg_info__  
@@ -152,16 +151,15 @@ void NuFlux::Tweak(
 #endif
   }
 
-/*
   //
-  // Forcing null tweaking dials.
-  // Reset tweaked flux to nominal flux.
+  // Forcing null tweaking dials. This resets the BANFF params to their best-fit values.
   //
-  if(force_input_twkdials && input_twkv==0) {
+
+  if(force_input_twkv && input_twkv==0) {
 #ifdef __show_tweak_mesg_debug__
-    cout << "Exp/BANFF/Tweak >> Reset tweaked numu flux histogram to nominal values " << endl;
+    cout << "Exp/BANFF/Tweak >> Reset BANFF params to best-fit values." << endl;
 #endif
-     this->FillInTweakedNuMuFluxHisto(0);
+     this->DoTweak(0);
      return;
   }
 
@@ -170,11 +168,12 @@ void NuFlux::Tweak(
   // If the forced tweaking dials are supposed to be the correlated ones then we don't
   // need to use the Cholesky decomposition of the flux covariance matrix.
   //
-  if(force_input_twkdials && correlated) {
+
+  if(force_input_twkv && correlated) {
 #ifdef __show_tweak_mesg_debug__
      cout << "Exp/BANFF/Tweak >> Forcing input twk dials (correlated)! " << endl;
 #endif
-     this->FillInTweakedNuMuFluxHisto(input_twkv,fractional);
+     this->DoTweak(input_twkv);
      return;
   }
 
@@ -184,13 +183,14 @@ void NuFlux::Tweak(
   // the Cholesky decomposition of the flux covariance matrix to generate
   // correlated tweaking dials.
   //
-  if(force_input_twkdials && !correlated) {
+
+  if(force_input_twkv && !correlated) {
 #ifdef __show_tweak_mesg_debug__
      cout << "Exp/BANFF/Tweak >> Forcing input twk dials (uncorrelated)! " << endl;
 #endif
      TMatrixD & L = *fSuperkNuMuFluxCovCholeskyL;
      TVectorD twkv = util::CholeskyCalculateCorrelatedParamVariations(L,*input_twkv);
-     this->FillInTweakedNuMuFluxHisto(&twkv,false);
+     this->DoTweak(&twkv);
      return;
   }
 
@@ -200,21 +200,48 @@ void NuFlux::Tweak(
   //
   // Use Cholseky method to generate random fluxes
   //
+
   if(!force_input_twkdials) {
 #ifdef __show_tweak_mesg_debug__
     cout << "Exp/BANFF/Tweak >> Generating random twk dials (correlated)! " << endl;
 #endif
     TMatrixD & L = *fSuperkNuMuFluxCovCholeskyL;
     TVectorD twkv = util::CholeskyGenerateCorrelatedParamVariations(L);
-    this->FillInTweakedNuMuFluxHisto(&twkv,false);
+    this->DoTweak(&twkv);
     return;
   }
-*/
 
 }
 //________________________________________________________________________________________
-void NuFlux::PrintSystematicVariations(void) const
+void BANFF::PrintSystematicVariations(void) const
 {
   cout << "BANFF/Tweak >> ... " << endl;
+}
+//________________________________________________________________________________________
+int BANFF::Param2Idx(PhysParamId_t p) const
+{
+  int iparam = (int) p;
+  int first  = (int) kNuisBANFF00;
+  int last   = (int) kNuisBANFF36;
+  assert(iparam >= first && iparam <= last);
+  int idx = iparam-first;
+  return idx;  
+}
+//________________________________________________________________________________________
+void BANFF::DoTweak(TVectorD * input_twkv)
+{
+// Apply input_twkv to fBestFitValues and get fCurrentValues
+//
+
+  TVectorD & current_values = *fCurrentValues;
+  TVectorD & bestfit_values = *fBestFitValues;
+  TVectorD & twk_dials      = *input_twkv;
+
+//
+// TODO
+// TODO
+// TODO
+//
+
 }
 //________________________________________________________________________________________

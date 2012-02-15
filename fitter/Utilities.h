@@ -195,7 +195,7 @@ namespace util {
   // Etc
   //
 
-  int Sign (double tweaking_dial);
+  int    Sign       (double x);
 
 } // util
 } // t2kana
