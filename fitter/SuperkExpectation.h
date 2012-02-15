@@ -44,6 +44,7 @@ class ND280Measurement;  ///< ND280 measurement
 class SuperkMC;          ///< SuperK MC templates
 class NuFlux;            ///< Neutrino flux info
 class NuXSec;            ///< Neutrino generator / cross section info
+class BANFF;             ///< BANFF fit info
 
 class SuperkExpectation: public TObject
 {
@@ -71,10 +72,10 @@ public:
    TH1D* CurrPredictedErecoSpectrum (t2kana::conv::SuperkSample_t s, t2kana::conv::SuperkMode_t m) const;
 
    // Access inputs used for building-up the expected spectrum at SK
-   ND280Measurement * GetND280Measurement  (void) { return fND280Measurement;  }
    SuperkMC *         GetSuperkMC          (void) { return fSuperkMC;          }
    NuFlux *           GetNuFlux            (void) { return fNuFlux;            }
    NuXSec *           GetNuXSec            (void) { return fNuXSec;            }
+   BANFF *            GetBANFF             (void) { return fBANFF;             }
 
    // Print
    void PrintSystematicVariations(void) const;
@@ -94,11 +95,12 @@ private:
    SuperkMC *         fSuperkMC;             ///< SuperK MC templates
    NuFlux *           fNuFlux;               ///< Neutrino flux simulation inputs
    NuXSec *           fNuXSec;               ///< Neutrino generator / cross section inputs
+   BANFF *            fBANFF;                ///< BANFF fit info
 
    TH1D *  fPredictErecoSpectrum[kns][knm];  ///< Ereco spectrum = f(sample,mode)
    TH1D *  fPredictErecoSpectrumTot[kns];    ///< Ereco spectrum = f(sample), sum over modes
 
-ClassDef(SuperkExpectation, 4)
+ClassDef(SuperkExpectation, 5)
 };
 
 } // t2kana

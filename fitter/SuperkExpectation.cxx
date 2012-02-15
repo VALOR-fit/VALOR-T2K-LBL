@@ -30,10 +30,10 @@
 #include <TSystem.h>
 
 #include "SuperkExpectation.h"
-#include "ND280Measurement.h"
 #include "SuperkMC.h"
 #include "NuFlux.h"
 #include "NuXSec.h"
+#include "BANFF.h"
 #include "Conventions.h"
 #include "Utilities.h"
 
@@ -63,6 +63,11 @@ void SuperkExpectation::Generate(const PhysHypothesis & ph)
 // the input physics hypothesis
 //
 
+//-----------------
+// Note that currently SuperkExpectation = SuperkMC.
+// No BANFF extrapolation implemented.
+//-----------------
+
   if(!fIsConfigured) {
     cerr << "Exp >> Not configured properly! " << endl;
     exit(1);
@@ -71,124 +76,29 @@ void SuperkExpectation::Generate(const PhysHypothesis & ph)
   // set params driving the oscillation, decoherence or decay model
   fSuperkMC->Hypothesis().Copy(ph);
 
-  // Ignore flux shape tweak and calculate the number of events.
-  // Use that number of events to normalise the prediction obtain when the flux shape tweaking 
-  // is taken into account. ** Flux shape error applies only to 1Rmu **
-  double shape_norm = 1.;
-  if(this->GetNuFlux()->ShapeTweaked()) {
-#ifdef __debug_level_2__
-     cout << "Exp >> Flux shape was tweaked! Ignoring temporarily and generating SK spectra..." << endl;
-#endif
-     this->GetNuFlux()->IgnoreShapeTweaking(true); 
-     this->Generate(ph); // generate untweaked predictions
-     // get nominal Nsk
-     for(int is = 0; is < kns; is++) {
-       SuperkSample_t s = kSKSamples[is];
-       if(s == kSKsUndefined) continue;
-       if(s == kSKsFCFV1RingMuLike) { 
-         shape_norm = fPredictErecoSpectrumTot[s]->Integral();
-       }
-     }
-#ifdef __debug_level_2__
-     cout << "Exp >> Number of 1Rmu events ignoring flux shape tweak (used for normalisation) = " 
-          << shape_norm << endl;
-#endif
-     this->GetNuFlux()->IgnoreShapeTweaking(false); 
-#ifdef __debug_level_2__
-     cout << "Exp >> Flux shape tweaking was re-enabled..." << endl;
-#endif
-  }
-
-  // correction factor from ND280
-  double correction = fND280Measurement->CorrectionFactor();
-
   // update SK MC templates
   fSuperkMC->UpdateTemplates();
 
   // update Ereco spectrum prediction
   fSuperkMC->UpdateErecoSpectra();
 
+  // copy histograms
   for(int is = 0; is < kns; is++) {
     SuperkSample_t s = kSKSamples[is];
     if(s == kSKsUndefined) continue;
     const int nbins = util::NumErecoBins(s);
     for(int ibin = 1; ibin <= nbins; ibin++) {
-       double ns = correction * fSuperkMC->CurrErecoSpectrum(s)->GetBinContent(ibin);
+       double ns = fSuperkMC->CurrErecoSpectrum(s)->GetBinContent(ibin);
        this->CurrPredictedErecoSpectrum(s)->SetBinContent(ibin, ns);
        for(int im = 0; im < knm; im++) {
            SuperkMode_t m = kSKReactionModes[is][im];
            if(m == kSKmUndefined) continue;
-           double nsm = correction * fSuperkMC->CurrErecoSpectrum(s,m)->GetBinContent(ibin);
+           double nsm = fSuperkMC->CurrErecoSpectrum(s,m)->GetBinContent(ibin);
            this->CurrPredictedErecoSpectrum(s,m)->SetBinContent(ibin, nsm);       
        }//m	
     }//ibin
   }//s
 
-  // include beam normalization err (expressed in terms of Nsk/Nnd280)
-  if(this->GetNuFlux()->NormTweaked()) {
-     double * beam_norm = 0;
-     if( this->GetNuFlux()->UsingKuboSansCode() ) {
-        // input physics params (params included in the fit / systematics params)
-        this -> GetSuperkMC()         -> UpdateEtrueSpectra();
-        this -> GetND280Measurement() -> UpdateEtrueSpectra();
-        TH1D*  hnumu1Rmu     = this -> GetSuperkMC()         -> Curr1RmuNuMuEtrue    ();
-        TH1D*  hnumubar1Rmu  = this -> GetSuperkMC()         -> Curr1RmuNuMuBarEtrue ();
-        TH1D*  hnue1Rmu      = this -> GetSuperkMC()         -> Curr1RmuNuEEtrue     ();
-        TH1D*  hnumu1Re      = this -> GetSuperkMC()         -> Curr1ReNuMuEtrue     ();
-        TH1D*  hnumubar1Re   = this -> GetSuperkMC()         -> Curr1ReNuMuBarEtrue  ();
-        TH1D*  hnue1Re       = this -> GetSuperkMC()         -> Curr1ReNuEEtrue      ();
-        TH1D*  hnuesig1Re    = this -> GetSuperkMC()         -> Curr1ReNuESigEtrue   ();
-        TH1D*  hnumuND       = this -> GetND280Measurement() -> CurrNuMuEtrue        ();
-        TH1D*  hnumubarND    = this -> GetND280Measurement() -> CurrNuMuBarEtrue     ();
-        TH1D*  hnueND        = this -> GetND280Measurement() -> CurrNuEEtrue         ();
-
-        beam_norm = this->GetNuFlux()->SuperkFluxNorm(
-             hnumu1Rmu, hnumubar1Rmu, hnue1Rmu, 
-             hnumu1Re, hnumubar1Re, hnue1Re, hnuesig1Re,  
-             hnumuND, hnumubarND, hnueND);
-     } else {
-        beam_norm = this->GetNuFlux()->SuperkFluxNorm(0,0,0,0,0,0,0,0,0,0);
-     }
-
-     // Apply normalization error
-     // NOTE for nue analysis: The way the BeamWG err calculation code works (different scaling factor for 
-     // tot, and sig/bkg components) means that (once fux norm is tweaked) the sum of sig and bkg spectra 
-     // doesn't equal the total spectrum! This is not relevent for the fitter since only the total is used.
-     for(int is = 0; is < kns; is++) {
-       SuperkSample_t s = kSKSamples[is];
-       if(s == kSKsUndefined) continue;
-       FluxNormErrIdx_t serridx = util::FindFluxNormErrIdx(s);
-       if(serridx == kFlxnUndefined) continue;
-       this->CurrPredictedErecoSpectrum(s)->Scale (beam_norm[serridx]);
-       for(int im = 0; im < knm; im++) {
-         SuperkMode_t m = kSKReactionModes[is][im];
-         if(m == kSKmUndefined) continue;
-         FluxNormErrIdx_t smerridx = util::FindFluxNormErrIdx(s,m);
-         if(smerridx == kFlxnUndefined) continue;
-         this->CurrPredictedErecoSpectrum(s,m)-> Scale (beam_norm[smerridx]);
-       }
-     }
-
-     if(beam_norm) {
-       delete [] beam_norm;
-     }
-  }//norm tweaked?
-
-  if(this->GetNuFlux()->ShapeTweaked()) {
-     for(int is = 0; is < kns; is++) {
-        SuperkSample_t s = kSKSamples[is];
-        if(s == kSKsUndefined) continue;
-        if(s != kSKsFCFV1RingMuLike) continue;
-        double nsktwk = this->CurrPredictedErecoSpectrum(kSKsFCFV1RingMuLike)->Integral();
-        shape_norm /= nsktwk;
-        this->CurrPredictedErecoSpectrum(s)->Scale(shape_norm);
-        for(int im = 0; im < knm; im++) {
-            SuperkMode_t m = kSKReactionModes[is][im];
-            if(m == kSKmUndefined) continue;
-            this->CurrPredictedErecoSpectrum(s,m)->Scale(shape_norm);
-        }//m	
-     }//s
-  }
 }
 //________________________________________________________________________________________
 void SuperkExpectation::Generate(const FitParamList & fp)
@@ -244,29 +154,38 @@ void SuperkExpectation::ResetSystematicVariations(void)
   this->GetSuperkMC()->TweakEfficiency1RmuCCnonQE          (0.);
   this->GetSuperkMC()->TweakEfficiency1RmuNC               (0.);     
   this->GetSuperkMC()->TweakEfficiency1RmuNuECC            (0.);
-  this->GetSuperkMC()->TweakEfficiency1ReSig               (0.);
-  this->GetSuperkMC()->TweakEfficiency1ReBkg               (0.);
+////////////  this->GetSuperkMC()->TweakEfficiency1ReSig               (0.);
+////////////  this->GetSuperkMC()->TweakEfficiency1ReBkg               (0.);
 
-  this->GetND280Measurement()->TweakEfficiency (0.);
-  this->GetND280Measurement()->FluctuateNObsCCLike(0.);
+////////////  this->GetNuFlux()->TweakNorm (0.);
+////////////  this->GetNuFlux()->TweakShape(true,0);  
 
-  this->GetNuFlux()->TweakNorm (0.);
-  this->GetNuFlux()->TweakShape(true,0);  
-
-  this->GetNuXSec()->TweakCCQE        (0.);
-  this->GetNuXSec()->TweakCC1piToCCQE (0.);
-  this->GetNuXSec()->TweakCCCohToCCQE (0.);
-  this->GetNuXSec()->TweakCCOthToCCQE (0.);
-  this->GetNuXSec()->TweakNCToCCQE    (0.);
-  this->GetNuXSec()->TweakNC1pi0ToCCQE(0.);
-  this->GetNuXSec()->TweakNCCohToCCQE (0.);
-  this->GetNuXSec()->TweakNCOthToCCQE (0.);
-  this->GetNuXSec()->TweakNuEToNuMu   (0.);
-  this->GetNuXSec()->TweakSKFSI       (0.);
+////////////  this->GetNuXSec()->TweakCCQE        (0.);
+////////////  this->GetNuXSec()->TweakCC1piToCCQE (0.);
+////////////  this->GetNuXSec()->TweakCCCohToCCQE (0.);
+////////////  this->GetNuXSec()->TweakCCOthToCCQE (0.);
+////////////  this->GetNuXSec()->TweakNCToCCQE    (0.);
+////////////  this->GetNuXSec()->TweakNC1pi0ToCCQE(0.);
+////////////  this->GetNuXSec()->TweakNCCohToCCQE (0.);
+////////////  this->GetNuXSec()->TweakNCOthToCCQE (0.);
+////////////  this->GetNuXSec()->TweakNuEToNuMu   (0.);
+////////////  this->GetNuXSec()->TweakSKFSI       (0.);
 }
 //________________________________________________________________________________________
 void SuperkExpectation::TweakSystematic(string systematic, double twkdial)
 {
+// Valid systematic parameter names
+// - sk_energy_scale
+// - sk_1Rmu_ccqe_other_eff
+// - sk_1Rmu_ccqe_ring_counting_eff
+//    or
+//    - sk_1Rmu_ccqe_ring_counting_eff_0
+//    - sk_1Rmu_ccqe_ring_counting_eff_1
+//    - sk_1Rmu_ccqe_ring_counting_eff_2
+// - sk_1Rmu_ccnonqe_eff
+// - sk_1Rmu_nc_eff
+// - sk_1Rmu_nuecc_eff
+
   //
   // SuperK detector systematics
   //
@@ -274,114 +193,38 @@ void SuperkExpectation::TweakSystematic(string systematic, double twkdial)
      this->GetSuperkMC()->TweakEnergyScale(twkdial);
   }
   else
-  if(systematic == "sk_ccqe_other_eff") {
+  if(systematic == "sk_1Rmu_ccqe_other_eff") {
      this->GetSuperkMC()->TweakEfficiency1RmuCCQEOther(twkdial);
   }
   else
   // tweak CCQE energy-dependent ring-counting efficiency generating random
   // efficiency tweaks and taking into account bin-to-bin correlations
-  if(systematic == "sk_ccqe_ring_counting_eff") {
+  if(systematic == "sk_1Rmu_ccqe_ring_counting_eff") {
      this->GetSuperkMC()->TweakEfficiency1RmuCCQERingCounting(); //< Cholesky method
   }
   //... or tweak the CCQE ring-counting efficiency in single Ereco bins only
   // neglecting correlations (for validation purposes only)
-  else if(systematic == "sk_ccqe_ring_counting_eff_0") {
+  else if(systematic == "sk_1Rmu_ccqe_ring_counting_eff_0") {
      this->GetSuperkMC()->TweakEfficiency1RmuCCQERingCounting(true,twkdial,0.,0.); 
   }
-  else if(systematic == "sk_ccqe_ring_counting_eff_1") {
+  else if(systematic == "sk_1Rmu_ccqe_ring_counting_eff_1") {
      this->GetSuperkMC()->TweakEfficiency1RmuCCQERingCounting(true,0.,twkdial,0.); 
   }
-  else if(systematic == "sk_ccqe_ring_counting_eff_2") {
+  else if(systematic == "sk_1Rmu_ccqe_ring_counting_eff_2") {
      this->GetSuperkMC()->TweakEfficiency1RmuCCQERingCounting(true,0.,0.,twkdial); 
   }
   else
-  if(systematic == "sk_ccnonqe_eff") {
+  if(systematic == "sk_1Rmu_ccnonqe_eff") {
      this->GetSuperkMC()->TweakEfficiency1RmuCCnonQE(twkdial);
   }
   else
-  if(systematic == "sk_nc_eff") {
+  if(systematic == "sk_1Rmu_nc_eff") {
      this->GetSuperkMC()->TweakEfficiency1RmuNC(twkdial);
   }
   else
-  if(systematic == "sk_nuecc_eff") {
+  if(systematic == "sk_1Rmu_nuecc_eff") {
      this->GetSuperkMC()->TweakEfficiency1RmuNuECC(twkdial);
   }
-  else
-  if(systematic == "sk_1Resig_eff") {
-     this->GetSuperkMC()->TweakEfficiency1ReSig(twkdial);
-  }
-  else
-  if(systematic == "sk_1Rebkg_eff") {
-     this->GetSuperkMC()->TweakEfficiency1ReBkg(twkdial);
-  }
-  //
-  // ND280 detector systematics & statistical err on measured CC event count
-  //
-  else
-  if(systematic == "nd280_eff") {
-     this->GetND280Measurement()->TweakEfficiency(twkdial);
-  }
-  else
-  if(systematic == "nd280_norm") {
-     this->GetND280Measurement()->FluctuateNObsCCLike(twkdial);
-  }
-
-
-  //
-  // flux systematics
-  //
-  else
-  if(systematic == "flux_norm") {
-     this->GetNuFlux()->TweakNorm(twkdial);
-  }
-  else
-  if(systematic == "flux_shape") {
-     this->GetNuFlux()->TweakShape(); //< Cholesky method
-  }
-
-  //
-  // cross section systematics
-  //
-  else
-  if(systematic == "xsec_ccqe") {
-     this->GetNuXSec()->TweakCCQE(twkdial);
-  }
-  else
-  if(systematic == "xsec_cc1pi_to_ccqe") {
-     this->GetNuXSec()->TweakCC1piToCCQE(twkdial);
-  }
-  else
-  if(systematic == "xsec_cccoh_to_ccqe") {
-     this->GetNuXSec()->TweakCCCohToCCQE(twkdial);
-  }
-  else
-  if(systematic == "xsec_ccoth_to_ccqe") {
-     this->GetNuXSec()->TweakCCOthToCCQE(twkdial);
-  }
-  else
-  if(systematic == "xsec_nc_to_ccqe") {
-     this->GetNuXSec()->TweakNCToCCQE(twkdial);
-  }
-  else
-  if(systematic == "xsec_nc1pi0_to_ccqe") {
-     this->GetNuXSec()->TweakNC1pi0ToCCQE(twkdial);
-  }
-  else
-  if(systematic == "xsec_nccoh_to_ccqe") {
-     this->GetNuXSec()->TweakNCCohToCCQE(twkdial);
-  }
-  else
-  if(systematic == "xsec_ncoth_to_ccqe") {
-     this->GetNuXSec()->TweakNCOthToCCQE(twkdial);
-  }
-  else
-  if(systematic == "xsec_nue_to_numu") {
-     this->GetNuXSec()->TweakNuEToNuMu(twkdial);
-  }
-  else
-  if(systematic == "nuclear_effect") {
-     this->GetNuXSec()->TweakSKFSI(twkdial);
-  }   
      
   else {
      cerr << "Exp >> Unknown systematic parameter!" << endl;
@@ -405,28 +248,24 @@ void SuperkExpectation::TweakAllSystematics(bool do_tweak)
      this->GetSuperkMC()->TweakEfficiency1RmuCCnonQE           (rand.Gaus(0.,1.));
      this->GetSuperkMC()->TweakEfficiency1RmuNC                (rand.Gaus(0.,1.));     
      this->GetSuperkMC()->TweakEfficiency1RmuNuECC             (rand.Gaus(0.,1.));
-     this->GetSuperkMC()->TweakEfficiency1ReSig                (rand.Gaus(0.,1.));
-     this->GetSuperkMC()->TweakEfficiency1ReBkg                (rand.Gaus(0.,1.));
-
-     // ND280 detector response
-     this->GetND280Measurement()->TweakEfficiency     (rand.Gaus(0.,1.));
-     this->GetND280Measurement()->FluctuateNObsCCLike (rand.Gaus(0.,1.));
+/////////     this->GetSuperkMC()->TweakEfficiency1ReSig                (rand.Gaus(0.,1.));
+////////     this->GetSuperkMC()->TweakEfficiency1ReBkg                (rand.Gaus(0.,1.));
 
      // neutrino flux
-     this->GetNuFlux()->TweakNorm (rand.Gaus(0.,1.));
-     this->GetNuFlux()->TweakShape(); //< Cholesky method
+////////     this->GetNuFlux()->TweakNorm (rand.Gaus(0.,1.));
+////////     this->GetNuFlux()->TweakShape(); //< Cholesky method
 
      // neutrino cross sections
-     this->GetNuXSec()->TweakCCQE        (rand.Gaus(0.,1.));
-     this->GetNuXSec()->TweakCC1piToCCQE (rand.Gaus(0.,1.));
-     this->GetNuXSec()->TweakCCCohToCCQE (rand.Gaus(0.,1.));
-     this->GetNuXSec()->TweakCCOthToCCQE (rand.Gaus(0.,1.));
-     this->GetNuXSec()->TweakNCToCCQE    (rand.Gaus(0.,1.));
-     this->GetNuXSec()->TweakNC1pi0ToCCQE(rand.Gaus(0.,1.));
-     this->GetNuXSec()->TweakNCCohToCCQE (rand.Gaus(0.,1.));
-     this->GetNuXSec()->TweakNCOthToCCQE (rand.Gaus(0.,1.));
-     this->GetNuXSec()->TweakNuEToNuMu   (rand.Gaus(0.,1.));
-     this->GetNuXSec()->TweakSKFSI       (rand.Gaus(0.,1.));
+////////     this->GetNuXSec()->TweakCCQE        (rand.Gaus(0.,1.));
+////////     this->GetNuXSec()->TweakCC1piToCCQE (rand.Gaus(0.,1.));
+////////     this->GetNuXSec()->TweakCCCohToCCQE (rand.Gaus(0.,1.));
+////////     this->GetNuXSec()->TweakCCOthToCCQE (rand.Gaus(0.,1.));
+////////     this->GetNuXSec()->TweakNCToCCQE    (rand.Gaus(0.,1.));
+////////     this->GetNuXSec()->TweakNC1pi0ToCCQE(rand.Gaus(0.,1.));
+////////     this->GetNuXSec()->TweakNCCohToCCQE (rand.Gaus(0.,1.));
+////////     this->GetNuXSec()->TweakNCOthToCCQE (rand.Gaus(0.,1.));
+////////     this->GetNuXSec()->TweakNuEToNuMu   (rand.Gaus(0.,1.));
+////////     this->GetNuXSec()->TweakSKFSI       (rand.Gaus(0.,1.));
 
   } else {
     cout << "Exp >> No SuperkExpectation tweak" << endl;
@@ -436,10 +275,10 @@ void SuperkExpectation::TweakAllSystematics(bool do_tweak)
 void SuperkExpectation::PrintSystematicVariations(void) const
 {
   cout << "Exp >> SuperK PDF tweaks: " << endl;
-  fND280Measurement -> PrintSystematicVariations();
-  fSuperkMC         -> PrintSystematicVariations();
-  fNuFlux           -> PrintSystematicVariations();
-  fNuXSec           -> PrintSystematicVariations();
+  fSuperkMC -> PrintSystematicVariations();
+  fNuFlux   -> PrintSystematicVariations();
+  fNuXSec   -> PrintSystematicVariations();
+  fBANFF    -> PrintSystematicVariations();
 }
 //________________________________________________________________________________________
 bool SuperkExpectation::Read(string config_file)
@@ -455,13 +294,14 @@ bool SuperkExpectation::Read(string config_file)
 
   // Create components used for building-up the p.d.f.
   // Configure inter-dependencies.
-  fND280Measurement  = new ND280Measurement;
-  fSuperkMC          = new SuperkMC;
-  fNuFlux            = new NuFlux; 
-  fNuXSec            = new NuXSec; 
-  fND280Measurement  -> TellMeAboutCrossSections (fNuXSec);
-  fSuperkMC          -> TellMeAboutCrossSections (fNuXSec);
-  fSuperkMC          -> TellMeAboutTheFlux       (fNuFlux);
+  fSuperkMC = new SuperkMC;
+  fNuFlux   = new NuFlux; 
+  fNuXSec   = new NuXSec; 
+  fBANFF    = new BANFF;
+  fNuFlux   -> TellMeAboutTheBANFFfit   (fBANFF);
+  fNuXSec   -> TellMeAboutTheBANFFfit   (fBANFF);
+  fSuperkMC -> TellMeAboutCrossSections (fNuXSec);
+  fSuperkMC -> TellMeAboutTheFlux       (fNuFlux);
 
   // Parse the input XML configuration file
   TXMLEngine* xml = new TXMLEngine;   
@@ -474,10 +314,10 @@ bool SuperkExpectation::Read(string config_file)
   XMLNodePointer_t root_node = xml->DocGetRootElement(xmldoc);
 
   // Configure each of the components 
-  if ( ! this->GetND280Measurement()->Read(xml, root_node) ) return false;
-  if ( ! this->GetSuperkMC        ()->Read(xml, root_node) ) return false;
-  if ( ! this->GetNuFlux          ()->Read(xml, root_node) ) return false;
-  if ( ! this->GetNuXSec          ()->Read(xml, root_node) ) return false;
+  if ( ! this->GetSuperkMC ()->Read(xml, root_node) ) return false;
+  if ( ! this->GetNuFlux   ()->Read(xml, root_node) ) return false;
+  if ( ! this->GetNuXSec   ()->Read(xml, root_node) ) return false;
+  if ( ! this->GetBANFF    ()->Read(xml, root_node) ) return false;
 
   // Release memory
   xml->FreeDoc(xmldoc);
@@ -490,12 +330,12 @@ bool SuperkExpectation::Read(string config_file)
 //________________________________________________________________________________________
 void SuperkExpectation::Init(void)
 {
-  fIsConfigured    = false;
+  fIsConfigured = false;
 
-  fND280Measurement = 0;
-  fSuperkMC         = 0;
-  fNuFlux           = 0;
-  fNuXSec           = 0;
+  fSuperkMC = 0;
+  fNuFlux   = 0;
+  fNuXSec   = 0;
+  fBANFF    = 0;
 
   for(int is=0; is<kns; is++) {
     fPredictErecoSpectrumTot[is] = 0;
@@ -528,10 +368,10 @@ void SuperkExpectation::Book(void)
 //________________________________________________________________________________________
 void SuperkExpectation::CleanUp(void)
 {
-  if (fND280Measurement) delete fND280Measurement;
-  if (fSuperkMC        ) delete fSuperkMC;
-  if (fNuFlux          ) delete fNuFlux; 
-  if (fNuXSec          ) delete fNuXSec;
+  if (fSuperkMC ) delete fSuperkMC;
+  if (fNuFlux   ) delete fNuFlux; 
+  if (fNuXSec   ) delete fNuXSec;
+  if (fBANFF    ) delete fBANFF;
 
   for(int is = 0; is < kns; is++) {
      if (fPredictErecoSpectrumTot[is]) delete fPredictErecoSpectrumTot[is];
@@ -544,8 +384,6 @@ void SuperkExpectation::CleanUp(void)
 void SuperkExpectation::SetNuisanceParams(const FitParamList & fp)
 {
    //this->ResetSystematicVariations();
-
-   //Note that this function has NOT been updated with the new systematics errors for the nue analysis
 
    if(fp.Exists(kNuisSuperkEff1RmuCCQEoth)) {
      double twk = fp.CurrValue(kNuisSuperkEff1RmuCCQEoth);
@@ -571,109 +409,7 @@ void SuperkExpectation::SetNuisanceParams(const FitParamList & fp)
      double twk = fp.CurrValue(kNuisSuperkEff1RmuNueCC);
      this->GetSuperkMC()->TweakEfficiency1RmuNuECC(twk);
    }
-   if(fp.Exists(kNuisSuperkEff1ReSig)) {
-     double twk = fp.CurrValue(kNuisSuperkEff1ReSig);
-     this->GetSuperkMC()->TweakEfficiency1ReSig(twk);
-   }
-   if(fp.Exists(kNuisSuperkEff1ReBkg)) {
-     double twk = fp.CurrValue(kNuisSuperkEff1ReBkg);
-     this->GetSuperkMC()->TweakEfficiency1ReBkg(twk);
-   }
-   if(fp.Exists(kNuisSuperkEnergyScale)) {
-     double twk = fp.CurrValue(kNuisSuperkEnergyScale);
-     this->GetSuperkMC()->TweakEnergyScale(twk);
-   }
-   if(fp.Exists(kNuisNd280Eff)) {
-     double twk = fp.CurrValue(kNuisNd280Eff);
-     this->GetND280Measurement()->TweakEfficiency(twk);
-   }
-   if(fp.Exists(kNuisFluxNorm)) {
-     double twk = fp.CurrValue(kNuisFluxNorm);
-     this->GetNuFlux()->TweakNorm(twk);
-   }
-   if(fp.Exists(kNuisFluxShapeNuMu0u ) &&
-      fp.Exists(kNuisFluxShapeNuMu1u ) &&
-      fp.Exists(kNuisFluxShapeNuMu2u ) &&
-      fp.Exists(kNuisFluxShapeNuMu3u ) &&
-      fp.Exists(kNuisFluxShapeNuMu4u ) &&
-      fp.Exists(kNuisFluxShapeNuMu5u ) &&
-      fp.Exists(kNuisFluxShapeNuMu6u ) &&
-      fp.Exists(kNuisFluxShapeNuMu7u ) &&
-      fp.Exists(kNuisFluxShapeNuMu8u ) &&
-      fp.Exists(kNuisFluxShapeNuMu9u ) &&
-      fp.Exists(kNuisFluxShapeNuMu10u) &&
-      fp.Exists(kNuisFluxShapeNuMu11u) &&
-      fp.Exists(kNuisFluxShapeNuMu12u) &&
-      fp.Exists(kNuisFluxShapeNuMu13u) &&
-      fp.Exists(kNuisFluxShapeNuMu14u) &&
-      fp.Exists(kNuisFluxShapeNuMu15u) &&
-      fp.Exists(kNuisFluxShapeNuMu16u) &&
-      fp.Exists(kNuisFluxShapeNuMu17u) &&
-      fp.Exists(kNuisFluxShapeNuMu18u)) {
-     TVectorD twk(19);
-     twk[0]  = fp.CurrValue(kNuisFluxShapeNuMu0u);
-     twk[1]  = fp.CurrValue(kNuisFluxShapeNuMu1u);
-     twk[2]  = fp.CurrValue(kNuisFluxShapeNuMu2u);
-     twk[3]  = fp.CurrValue(kNuisFluxShapeNuMu3u);
-     twk[4]  = fp.CurrValue(kNuisFluxShapeNuMu4u);
-     twk[5]  = fp.CurrValue(kNuisFluxShapeNuMu5u);
-     twk[6]  = fp.CurrValue(kNuisFluxShapeNuMu6u);
-     twk[7]  = fp.CurrValue(kNuisFluxShapeNuMu7u);
-     twk[8]  = fp.CurrValue(kNuisFluxShapeNuMu8u);
-     twk[9]  = fp.CurrValue(kNuisFluxShapeNuMu9u);
-     twk[10] = fp.CurrValue(kNuisFluxShapeNuMu10u);
-     twk[11] = fp.CurrValue(kNuisFluxShapeNuMu11u);
-     twk[12] = fp.CurrValue(kNuisFluxShapeNuMu12u);
-     twk[13] = fp.CurrValue(kNuisFluxShapeNuMu13u);
-     twk[14] = fp.CurrValue(kNuisFluxShapeNuMu14u);
-     twk[15] = fp.CurrValue(kNuisFluxShapeNuMu15u);
-     twk[16] = fp.CurrValue(kNuisFluxShapeNuMu16u);
-     twk[17] = fp.CurrValue(kNuisFluxShapeNuMu17u);
-     twk[18] = fp.CurrValue(kNuisFluxShapeNuMu18u);
-     bool force=true;
-     bool correlated=false;
-     this->GetNuFlux()->TweakShape(force,&twk,correlated);
-   }
-   if(fp.Exists(kNuisXSecCCQE)) {
-     double twk = fp.CurrValue(kNuisXSecCCQE);
-     this->GetNuXSec()->TweakCCQE(twk);
-   }
-   if(fp.Exists(kNuisXSecCC1piToCCQE)) {
-     double twk = fp.CurrValue(kNuisXSecCC1piToCCQE);
-     this->GetNuXSec()->TweakCC1piToCCQE(twk);
-   }
-   if(fp.Exists(kNuisXSecCCcohToCCQE)) {
-     double twk = fp.CurrValue(kNuisXSecCCcohToCCQE);
-     this->GetNuXSec()->TweakCCCohToCCQE(twk);
-   }
-   if(fp.Exists(kNuisXSecCCothToCCQE)) {
-     double twk = fp.CurrValue(kNuisXSecCCothToCCQE);
-     this->GetNuXSec()->TweakCCOthToCCQE(twk);
-   }
-   if(fp.Exists(kNuisXSecNCToCCQE)) {
-     double twk = fp.CurrValue(kNuisXSecNCToCCQE);
-     this->GetNuXSec()->TweakNCToCCQE(twk);
-   }
-   if(fp.Exists(kNuisXSecNC1pi0ToCCQE)) {
-     double twk = fp.CurrValue(kNuisXSecNC1pi0ToCCQE);
-     this->GetNuXSec()->TweakNC1pi0ToCCQE(twk);
-   }
-   if(fp.Exists(kNuisXSecNCcohToCCQE)) {
-     double twk = fp.CurrValue(kNuisXSecNCcohToCCQE);
-     this->GetNuXSec()->TweakNCCohToCCQE(twk);
-   }
-   if(fp.Exists(kNuisXSecNCothToCCQE)) {
-     double twk = fp.CurrValue(kNuisXSecNCothToCCQE);
-     this->GetNuXSec()->TweakNCOthToCCQE(twk);
-   }
-   if(fp.Exists(kNuisXSecNuEToNuMu)) {
-     double twk = fp.CurrValue(kNuisXSecNuEToNuMu);
-     this->GetNuXSec()->TweakNuEToNuMu(twk);
-   }
-   if(fp.Exists(kNuisXSecNuclEffect)) {
-     double twk = fp.CurrValue(kNuisXSecNuclEffect);
-     this->GetNuXSec()->TweakSKFSI(twk);
-   }
+
 
 }
 //________________________________________________________________________________________

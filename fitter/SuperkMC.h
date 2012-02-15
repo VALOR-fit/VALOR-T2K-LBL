@@ -51,15 +51,15 @@ public:
   TH1D* CurrErecoSpectrum   (t2kana::conv::SuperkSample_t s) const;
   TH1D* CurrErecoSpectrum   (t2kana::conv::SuperkSample_t s, t2kana::conv::SuperkMode_t m) const;
 
-  // Integrate current MC templates and get Etrue spectra (needed for flux normalisation error calculation)
-  void  UpdateEtrueSpectra  (void);
-  TH1D* Curr1RmuNuMuEtrue   (void) const { return f1RmNuMuEt;    } ///< current 1Rmu (allowing for applied weights) Etrue distribution for numu
-  TH1D* Curr1RmuNuMuBarEtrue(void) const { return f1RmNuMuBarEt; } ///<      -//-  for numubar
-  TH1D* Curr1RmuNuEEtrue    (void) const { return f1RmNuEEt;     } ///<      -//-  for nue
-  TH1D* Curr1ReNuMuEtrue    (void) const { return f1ReNuMuEt;    } ///< current 1Re (allowing for applied weights) Etrue distribution for numu
-  TH1D* Curr1ReNuMuBarEtrue (void) const { return f1ReNuMuBarEt; } ///<      -//-  for numubar
-  TH1D* Curr1ReNuEEtrue     (void) const { return f1ReNuEEt;     } ///<      -//-  for nue
-  TH1D* Curr1ReNuESigEtrue  (void) const { return f1ReNuESigEt;  } ///<      -//-  for nue signal
+/////////  // Integrate current MC templates and get Etrue spectra (needed for flux normalisation error calculation)
+/////////  void  UpdateEtrueSpectra  (void);
+/////////  TH1D* Curr1RmuNuMuEtrue   (void) const { return f1RmNuMuEt;    } ///< current 1Rmu (allowing for applied weights) Etrue distribution for numu
+/////////  TH1D* Curr1RmuNuMuBarEtrue(void) const { return f1RmNuMuBarEt; } ///<      -//-  for numubar
+/////////  TH1D* Curr1RmuNuEEtrue    (void) const { return f1RmNuEEt;     } ///<      -//-  for nue
+/////////  TH1D* Curr1ReNuMuEtrue    (void) const { return f1ReNuMuEt;    } ///< current 1Re (allowing for applied weights) Etrue distribution for numu
+/////////  TH1D* Curr1ReNuMuBarEtrue (void) const { return f1ReNuMuBarEt; } ///<      -//-  for numubar
+/////////  TH1D* Curr1ReNuEEtrue     (void) const { return f1ReNuEEt;     } ///<      -//-  for nue
+/////////  TH1D* Curr1ReNuESigEtrue  (void) const { return f1ReNuESigEt;  } ///<      -//-  for nue signal
       
   // MC event samples used to fill-in MC templates and POT exposure for each
   TTree * MCTree (t2kana::conv::SuperkSample_t s, t2kana::conv::SuperkMode_t m);
@@ -78,8 +78,8 @@ public:
   void TweakEfficiency1RmuCCnonQE          (double twkdial);
   void TweakEfficiency1RmuNC               (double twkdial);
   void TweakEfficiency1RmuNuECC            (double twkdial);
-  void TweakEfficiency1ReSig               (double twkdial);
-  void TweakEfficiency1ReBkg               (double twkdial);
+///////////  void TweakEfficiency1ReSig               (double twkdial);
+///////////  void TweakEfficiency1ReBkg               (double twkdial);
 
   // Calculate weight due to efficiency tweaks
   double  EfficiencyWeight (t2kana::conv::SuperkSample_t s, t2kana::conv::SuperkMode_t m, double Ereco) const;
@@ -141,11 +141,11 @@ private:
   double     fEff1RmuCCnonQERelErr;        ///< 1Rmu CCnonQE efficiency relative error
   double     fEff1RmuNCRelErr;             ///< 1Rmu NC efficiency relative error
   double     fEff1RmuNuECCRelErr;          ///< 1Rmu nue CC efficiency relative error
-  // > 1Re
-  double     fEnergyScale1ReSigRelErr;     ///< 1Re signal energy scale relative error
-  double     fEnergyScale1ReBkgRelErr;     ///< 1Re background energy scale relative error
-  double     fEff1ReSigRelErr;             ///< 1Re signal efficiency relative error
-  double     fEff1ReBkgRelErr;             ///< 1Re background efficiency relative error
+///////  // > 1Re
+///////  double     fEnergyScale1ReSigRelErr;     ///< 1Re signal energy scale relative error
+///////  double     fEnergyScale1ReBkgRelErr;     ///< 1Re background energy scale relative error
+///////  double     fEff1ReSigRelErr;             ///< 1Re signal efficiency relative error
+///////  double     fEff1ReBkgRelErr;             ///< 1Re background efficiency relative error
 
   // systematic uncertainties: tweaking dials
   // > 1Rmu + 1Re
@@ -158,9 +158,9 @@ private:
   double     fEff1RmuCCnonQETwkDial;       ///< 1Rmu CCnonQE efficiency tweaking dial
   double     fEff1RmuNCTwkDial;            ///< 1Rmu NC efficiency tweaking dial
   double     fEff1RmuNuECCTwkDial;         ///< 1Rmu nue CC efficiency tweaking dial
-  // > 1Re
-  double     fEff1ReSigTwkDial;            ///< 1Re signal effiency tweaking dial
-  double     fEff1ReBkgTwkDial;            ///< 1Re background effiency tweaking dial
+///////  // > 1Re
+///////  double     fEff1ReSigTwkDial;            ///< 1Re signal effiency tweaking dial
+///////  double     fEff1ReBkgTwkDial;            ///< 1Re background effiency tweaking dial
 
   // input MC templates (nominal, nominal + systematics, nominal + systematics + physics hypothesis) and Ereco spectra
   TH2D *     fMCTemplNom[kns][knm];        ///< MC template(sample,mode): Ereco-Etrue (nominal)
@@ -187,14 +187,14 @@ private:
   int        fBrPdg;                       ///< branch var for reading input event sample tree
   int        fBrGenCode;                   ///< branch var for reading input event sample tree
 
-  // histograms for Nsk/Nnd280 (beam norm) error calc
-  TH1D *     f1RmNuMuEt;                   ///< Etrue distribution for 1-Ring mu-like numu    
-  TH1D *     f1RmNuMuBarEt;                ///< Etrue distribution for 1-Ring mu-like numubar 
-  TH1D *     f1RmNuEEt;                    ///< Etrue distribution for 1-Ring mu-like nue     
-  TH1D *     f1ReNuMuEt;                   ///< Etrue distribution for 1-Ring mu-like numu
-  TH1D *     f1ReNuMuBarEt;                ///< Etrue distribution for 1-Ring mu-like numubar
-  TH1D *     f1ReNuEEt;                    ///< Etrue distribution for 1-Ring mu-like nue (bkg)
-  TH1D *     f1ReNuESigEt;                 ///< Etrue distribution for 1-Ring mu-like nue (sig)
+///////  // histograms for Nsk/Nnd280 (beam norm) error calc
+///////  TH1D *     f1RmNuMuEt;                   ///< Etrue distribution for 1-Ring mu-like numu    
+///////  TH1D *     f1RmNuMuBarEt;                ///< Etrue distribution for 1-Ring mu-like numubar 
+///////  TH1D *     f1RmNuEEt;                    ///< Etrue distribution for 1-Ring mu-like nue     
+///////  TH1D *     f1ReNuMuEt;                   ///< Etrue distribution for 1-Ring mu-like numu
+///////  TH1D *     f1ReNuMuBarEt;                ///< Etrue distribution for 1-Ring mu-like numubar
+///////  TH1D *     f1ReNuEEt;                    ///< Etrue distribution for 1-Ring mu-like nue (bkg)
+///////  TH1D *     f1ReNuESigEt;                 ///< Etrue distribution for 1-Ring mu-like nue (sig)
       
   NuFlux *   fNuFlux;                      ///< Neutrino flux analysis inputs
   NuXSec *   fGenInputs;                   ///< Neutrino cross section analysis inputs
@@ -202,7 +202,7 @@ private:
   PhysHypothesis fPhysHypothesis;          ///< Hypothesis for observed deficit: disappearance, decay, decoherence
   NuOsc3Flavour  fNuOsc3Flavour;           ///< 3-flavour neutrino osc. probability calculations
 
-ClassDef(SuperkMC, 4);
+ClassDef(SuperkMC, 5);
 };
 
 } //t2kana
