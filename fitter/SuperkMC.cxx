@@ -300,6 +300,8 @@ bool SuperkMC::Read(TXMLEngine* xml, XMLNodePointer_t root_node)
      }
   }
 
+  // apply tuning to templates
+  this->ApplyTuningToTemplates();
      
 #ifdef __show_init_mesg_info__      
   cout << "Exp/SKMC >> Done reading SuperK inputs!" << endl;
@@ -437,13 +439,9 @@ void SuperkMC::FillTemplate(SuperkSample_t s, SuperkMode_t m)
      bool use_it = util::UseEventToFillInTemplate(m,fBrPdg,fBrGenCode);
      if(!use_it) continue;
      
-     // apply flux tuning weights
-     double flux_tune_wght = fNuFlux->SuperkFluxTuneWght(fBrPdg,fBrEtrue);
-     double event_wght = pot_wght * flux_tune_wght;
-
-     this -> Template(s,m,kSKMCtNom) -> Fill (fBrEreco, fBrEtrue, event_wght);
-     this -> Template(s,m,kSKMCtSys) -> Fill (fBrEreco, fBrEtrue, event_wght);
-     this -> Template(s,m,kSKMCtFin) -> Fill (fBrEreco, fBrEtrue, event_wght);
+     this -> Template(s,m,kSKMCtNom) -> Fill (fBrEreco, fBrEtrue, pot_wght);
+     this -> Template(s,m,kSKMCtSys) -> Fill (fBrEreco, fBrEtrue, pot_wght);
+     this -> Template(s,m,kSKMCtFin) -> Fill (fBrEreco, fBrEtrue, pot_wght);
 
   }//iev
 
@@ -519,6 +517,44 @@ void SuperkMC::UpdateTemplates(void)
 {
   this->ApplySystematicsToTemplates();
   this->ApplyPhysHypothesisToTemplates();
+}
+//________________________________________________________________________________________
+void SuperkMC::ApplyTuningToTemplates(void) 
+{
+  // loop over samples
+  for(int is = 0; is < kns; is++) {
+    SuperkSample_t s = kSKSamples[is];
+    if(s == kSKsUndefined) continue;
+    // loop over sample modes
+    for(int im = 0; im < knm; im++) { 
+       SuperkMode_t m = kSKReactionModes[is][im];
+       if(m == kSKmUndefined) continue;
+       // consider template?
+       bool skip = this->SkipTemplate(m);
+       if(skip) continue;
+       // get corresponding template
+       TH2D * mctempl = this -> Template(s,m,kSKMCtNom);
+       if(!mctempl) continue; 
+       // loop over Ereco
+       for(int ir = 1; ir <= mctempl->GetXaxis()->GetNbins(); ir++) {
+         double Ereco = mctempl->GetXaxis()->GetBinCenter(ir);
+         // loop over Etrue
+         for(int it = 1; it <= mctempl->GetYaxis()->GetNbins(); it++) {
+           double Etrue = mctempl->GetYaxis()->GetBinCenter(it);
+           // get number of events
+           double nev = mctempl->GetBinContent(ir,it);
+           // get tuning weights
+           double flux_tune_wght = fNuFlux->SuperkFluxTuneWght(m,Etrue);
+           // update nominal MC template
+           nev *= flux_tune_wght;
+           mctempl->SetBinContent(ir,it,nev);
+           // initialize "sys" & "fin" templates to "nom" values
+           this->Template(s,m,kSKMCtSys)->SetBinContent(ir,it,nev);
+           this->Template(s,m,kSKMCtFin)->SetBinContent(ir,it,nev);
+         }//it
+       }//ir
+    }//im
+  }//is
 }
 //________________________________________________________________________________________
 void SuperkMC::ApplySystematicsToTemplates(void) 

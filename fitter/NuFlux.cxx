@@ -188,6 +188,13 @@ double NuFlux::SuperkFlux(int nu_pdg, double Etrue, bool tuned) const
   return flux;
 }
 //________________________________________________________________________________________
+double NuFlux::SuperkFluxTuneWght (conv::SuperkMode_t m, double Etrue) const
+{
+  int nu_pdg = this->NuPdg(m);
+  assert(nu_pdg != 0);
+  return this->SuperkFluxTuneWght(nu_pdg,Etrue);
+}
+//________________________________________________________________________________________
 double NuFlux::SuperkFluxTuneWght(int nu_pdg, double Etrue) const
 {
   if(Etrue > kEtrueMaxForFluxTuneWeights) 
@@ -231,6 +238,16 @@ const TH1D * NuFlux::SuperkFluxTuningWghtSpectrum(nu_pdg) const
   {
     exit(1);
   }
+  return 0;
+}
+//________________________________________________________________________________________
+double NuFlux::NuPdg(conv::SuperkMode_t m) const
+{
+  if ( util::IsNuMu      (m) ) return kPdgNuMu;
+  if ( util::IsNuMuBar   (m) ) return kPdgNuMuBar;
+  if ( util::IsBeamNuE   (m) ) return kPdgNuE;
+  if ( util::IsSignalNuE (m) ) return kPdgNuMu; /// numu -> nue
+
   return 0;
 }
 //________________________________________________________________________________________

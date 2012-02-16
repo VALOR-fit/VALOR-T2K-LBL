@@ -42,7 +42,8 @@ public:
   double SuperkFlux (int neutrino_pdg, double Etrue, bool tuned=true) const;
 
   // Weights for nominal SK flux -> tuned SK flux
-  double SuperkFluxTuneWght (int neutrino_pdg, double Etrue) const; 
+  double SuperkFluxTuneWght (conv::SuperkMode_t m, double Etrue) const; 
+  double SuperkFluxTuneWght (int neutrino_pdg,     double Etrue) const; 
 
   // SK flux weights (ratios of tuned SK fluxes) as a result of BANFF tweaks
   double SuperkFluxWght (int neutrino_pdg, double Etrue) const; 
@@ -72,6 +73,7 @@ private:
 
   void Init    (void);
   void CleanUp (void);
+  int  NuPdg   (t2kana::conv::SuperkMode_t m) const;
 
   double   fSuperkFluxPOT;                ///< integrated POT for files used for flux simulation
   TH1D *   fSuperkNuMuFluxNom;            ///< nominal SuperK numu    flux (50 MeV binning)

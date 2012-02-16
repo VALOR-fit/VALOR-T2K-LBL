@@ -112,6 +112,9 @@ private:
   void Book         (void);
   void FillTemplate (t2kana::conv::SuperkSample_t s, t2kana::conv::SuperkMode_t m);
 
+  ///< 
+  void ApplyTuningToTemplates (void); 
+
   ///< Apply systematic variations to MC templates
   void ApplySystematicsToTemplates (void); 
 
