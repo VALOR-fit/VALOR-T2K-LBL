@@ -737,7 +737,7 @@ string t2kana::util::AsString(PhysParamId_t p)
     case ( kNuisBANFF04               ) : return "f_banff04_nd280_numu_0.7_1.0";   break;
     case ( kNuisBANFF05               ) : return "f_banff05_nd280_numu_1.0_1.5";   break;
     case ( kNuisBANFF06               ) : return "f_banff06_nd280_numu_1.5_2.5";   break;
-    case ( kNuisBANFF07               ) ; return "f_banff07_nd280_numu_2.5_3.5";   break;
+    case ( kNuisBANFF07               ) : return "f_banff07_nd280_numu_2.5_3.5";   break;
     case ( kNuisBANFF08               ) : return "f_banff08_nd280_numu_3.5_5.0";   break;
     case ( kNuisBANFF09               ) : return "f_banff09_nd280_numu_5.0_7.0";   break;
     case ( kNuisBANFF10               ) : return "f_banff10_nd280_numu_7.0_30.0";  break;
@@ -1143,6 +1143,18 @@ t2kana::conv::OscChannelId_t
   return kOscUndefined;
 }
 //____________________________________________________________________________
+int t2kana::util::SuperkMode2FluxNuPdg(t2kana::conv::SuperkMode_t m)
+{
+  if ( util::IsNuMu      (m) ) return kPdgNuMu;
+  if ( util::IsNuMuBar   (m) ) return kPdgNuMuBar;
+  if ( util::IsBeamNuE   (m) ) return kPdgNuE;
+  if ( util::IsSignalNuE (m) ) return kPdgNuMu; /// numu -> nue
+   
+  // NOTE: Beam NuEBars not handles
+
+  return 0;
+}
+//____________________________________________________________________________
 bool t2kana::util::IsNuMu(t2kana::conv::SuperkMode_t  m)
 {
   switch(m) {
@@ -1300,10 +1312,10 @@ bool t2kana::util::IsSystematic(PhysParamId_t p)
     case ( kNuisBANFF01               ) : return true;  break;
     case ( kNuisBANFF02               ) : return true;  break;
     case ( kNuisBANFF03               ) : return true;  break;
-    case ( kNuisBANFF04               ) ; return true;  break;
+    case ( kNuisBANFF04               ) : return true;  break;
     case ( kNuisBANFF05               ) : return true;  break;
     case ( kNuisBANFF06               ) : return true;  break;
-    case ( kNuisBANFF07               ) ; return true;  break;
+    case ( kNuisBANFF07               ) : return true;  break;
     case ( kNuisBANFF08               ) : return true;  break;
     case ( kNuisBANFF09               ) : return true;  break;
     case ( kNuisBANFF10               ) : return true;  break;
@@ -2048,6 +2060,60 @@ string t2kana::util::XML2String(
   }
   string content = xmleng->GetNodeContent(found_node);
   return TrimSpaces(content);
+}
+//___________________________________________________________________________
+TVectorD * t2kana::util::XML2TVectorD(
+   TXMLEngine * xmleng, XMLNodePointer_t top_node, string path)
+{
+// Get a TVectorD instance from the info in the input XML config file
+//
+
+#ifdef __debug_level_2__
+  cout << "utils/XML2TVectorD >> "
+       << "Reading info at XML node path: " << path << endl;
+#endif
+
+  XMLNodePointer_t found_node = FindNode(xmleng,top_node,path);
+  if(!found_node) {
+    cerr << "utils/XML2TVectorD >> "
+         << "No node was found at input XML node path: " << path << endl;
+    //return 0;
+    exit(1);
+  }
+
+  string filename = "";
+  string objname  = "";
+
+  XMLNodePointer_t child_node = xmleng->GetChild(found_node);
+  while(child_node) {
+    string child_node_name = xmleng->GetNodeName(child_node);
+    string content = xmleng->GetNodeContent(child_node);
+    if(child_node_name == "filename") { filename = TrimSpaces(content); }
+    if(child_node_name == "objname" ) { objname  = TrimSpaces(content); }
+    child_node = xmleng->GetNext(child_node);    
+  }
+
+#ifdef __debug_level_2__
+  cout << "utils/XML2TVectorD >> filename : " << filename << endl;
+  cout << "utils/XML2TVectorD >> objname  : " << objname  << endl;
+#endif
+
+  TFile file(
+    Form("%s/%s", gSystem->Getenv("T2KOSCANA"), filename.c_str()), "read");
+  TVectorD * vec = (TVectorD*)file.Get(objname.c_str());
+  if(!vec) {
+    cerr << "utils/XML2TVectorD >> No " 
+         << objname << " in " << filename << endl;
+    file.Close();
+    //return 0;
+    exit(1);
+  }
+
+  TVectorD * vec_copy = new TVectorD(*vec);
+
+  file.Close();
+
+  return vec_copy;
 }
 //___________________________________________________________________________
 TMatrixDSym * t2kana::util::XML2TMatrixDSym(

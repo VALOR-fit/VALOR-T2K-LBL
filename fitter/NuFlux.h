@@ -20,9 +20,8 @@
 #include <TMatrixD.h>
 #include <TMatrixTSym.h>
 #include <TXMLEngine.h>
+#include <TH1D.h>
 
-class TH1D;
-class TH2D;
 class TVirtualPad;
 
 namespace t2kana {
@@ -42,15 +41,14 @@ public:
   double SuperkFlux (int neutrino_pdg, double Etrue, bool tuned=true) const;
 
   // Weights for nominal SK flux -> tuned SK flux
-  double SuperkFluxTuneWght (conv::SuperkMode_t m, double Etrue) const; 
-  double SuperkFluxTuneWght (int neutrino_pdg,     double Etrue) const; 
+  double SuperkFluxTuneWght (int neutrino_pdg, double Etrue) const; 
 
   // SK flux weights (ratios of tuned SK fluxes) as a result of BANFF tweaks
   double SuperkFluxWght (int neutrino_pdg, double Etrue) const; 
 
   // Access nominal flux and weight histograms held in this object
-  const TH1D * SuperkNominalFluxSpectrum    (neutrino_pdg) const;
-  const TH1D * SuperkFluxTuningWghtSpectrum (neutrino_pdg) const;
+  TH1D * SuperkFluxSpectrum    (int neutrino_pdg, bool tuned=true) const;
+  TH1D * SuperkFluxTuningWghts (int neutrino_pdg) const;
 
   // Read configuration and data from input XML file
   bool Read (TXMLEngine* xml, XMLNodePointer_t root_node);
@@ -71,19 +69,23 @@ public:
 
 private:
 
-  void Init    (void);
-  void CleanUp (void);
-  int  NuPdg   (t2kana::conv::SuperkMode_t m) const;
+  void Init               (void);
+  void CleanUp            (void);
+  void ApplyFluxTuneWghts (int neutrino_pdg);
 
   double   fSuperkFluxPOT;                ///< integrated POT for files used for flux simulation
   TH1D *   fSuperkNuMuFluxNom;            ///< nominal SuperK numu    flux (50 MeV binning)
   TH1D *   fSuperkNuMuBarFluxNom;         ///< nominal SuperK numubar flux (50 MeV binning)
   TH1D *   fSuperkNuEFluxNom;             ///< nominal SuperK nue     flux (50 MeV binning)
-  TH1D *   fSuperkNuEFluxNom;             ///< nominal SuperK nuebar  flux (50 MeV binning)
-  TH1D *   fSuperkNuMuFluxTuneWght;       ///< SuperK numu    flux tuning weights
-  TH1D *   fSuperkNuMuBarFluxTuneWght;    ///< SuperK numubar flux tuning weights
-  TH1D *   fSuperkNuEFluxTuneWght;        ///< SuperK nue     flux tuning weights
-  TH1D *   fSuperkNuEBarFluxTuneWght;     ///< SuperK nue     flux tuning weights
+  TH1D *   fSuperkNuEBarFluxNom;          ///< nominal SuperK nuebar  flux (50 MeV binning)
+  TH1D *   fSuperkNuMuFluxTun;            ///< tuned   SuperK numu    flux (50 MeV binning)
+  TH1D *   fSuperkNuMuBarFluxTun;         ///< tuned   SuperK numubar flux (50 MeV binning)
+  TH1D *   fSuperkNuEFluxTun;             ///< tuned   SuperK nue     flux (50 MeV binning)
+  TH1D *   fSuperkNuEBarFluxTun;          ///< tuned   SuperK nuebar  flux (50 MeV binning)
+  TH1D *   fSuperkNuMuFluxTunWght;        ///< SuperK numu    flux tuning weights
+  TH1D *   fSuperkNuMuBarFluxTunWght;     ///< SuperK numubar flux tuning weights
+  TH1D *   fSuperkNuEFluxTunWght;         ///< SuperK nue     flux tuning weights
+  TH1D *   fSuperkNuEBarFluxTunWght;      ///< SuperK nue     flux tuning weights
   BANFF *  fBANFF;                        ///< BANFF fit info
       
 ClassDef(NuFlux, 5)

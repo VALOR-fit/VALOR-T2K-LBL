@@ -276,7 +276,7 @@ void SuperkExpectation::PrintSystematicVariations(void) const
 {
   cout << "Exp >> SuperK PDF tweaks: " << endl;
   fSuperkMC -> PrintSystematicVariations();
-  fNuFlux   -> PrintSystematicVariations();
+//  fNuFlux   -> PrintSystematicVariations();
   fNuXSec   -> PrintSystematicVariations();
   fBANFF    -> PrintSystematicVariations();
 }

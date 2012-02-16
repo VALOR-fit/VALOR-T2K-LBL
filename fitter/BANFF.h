@@ -22,6 +22,8 @@
 #include <TMatrixTSym.h>
 #include <TXMLEngine.h>
 
+#include "Conventions.h"
+
 class TH1D;
 class TH2D;
 class TVirtualPad;
@@ -35,8 +37,8 @@ public:
  ~BANFF();
 
   // Get BANFF fit param values (nominal + tweaked)
-  double BestFitValue (PhysParamId_t p) const;
-  double CurrentValue (PhysParamId_t p) const;
+  double BestFitValue (conv::PhysParamId_t p) const;
+  double CurrentValue (conv::PhysParamId_t p) const;
    
   // Get BANFF best fit values, covariance matrix and cholesky decomposition of covariance matrix
   const TVectorD & BestFitValues     (void) const { return *fBestFitValues; }
@@ -56,7 +58,7 @@ private:
 
   void Init      (void);
   void CleanUp   (void);
-  int  Param2Idx (PhysParamId_t p) const; ///< convert BANFF PhysParamId_t to a covariance matrix or vector index
+  int  Param2Idx (conv::PhysParamId_t p) const; ///< convert BANFF PhysParamId_t to a covariance matrix or vector index
   void DoTweak   (TVectorD * input_twkv); ///< apply input tweaking dials
 
   TVectorD *  fBestFitValues;  ///< BANFF best fit values

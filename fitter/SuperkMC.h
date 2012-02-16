@@ -112,7 +112,7 @@ private:
   void Book         (void);
   void FillTemplate (t2kana::conv::SuperkSample_t s, t2kana::conv::SuperkMode_t m);
 
-  ///< 
+  ///< Apply any flux or cross-section tuning on nominal MC templates
   void ApplyTuningToTemplates (void); 
 
   ///< Apply systematic variations to MC templates
@@ -166,11 +166,11 @@ private:
 ///////  double     fEff1ReBkgTwkDial;            ///< 1Re background effiency tweaking dial
 
   // input MC templates (nominal, nominal + systematics, nominal + systematics + physics hypothesis) and Ereco spectra
-  TH2D *     fMCTemplNom[kns][knm];        ///< MC template(sample,mode): Ereco-Etrue (nominal)
-  TH2D *     fMCTemplSys[kns][knm];        ///< MC template(sample,mode): Ereco-Etrue + systematic variations only
-  TH2D *     fMCTemplFin[kns][knm];        ///< MC template(sample,mode): Ereco-Etrue + systematic variations + physics hypothesis (final)
-  TH1D *     fMCErecoSpectrum[kns][knm];   ///< MC Ereco spectrum(sample,mode)        + systematic variations + physics hypothesis (final)
-  TH1D *     fMCErecoSpectrumTot[kns];     ///< MC total Ereco spectrum (sample)      + systematic variations + physics hypothesis (final)
+  TH2D *     fMCTemplNom[kns][knm];        ///< MC template(sample,mode): Ereco-Etrue (nominal+tuning)
+  TH2D *     fMCTemplSys[kns][knm];        ///< MC template(sample,mode): Ereco-Etrue (nominal+tuning) + systematic variations
+  TH2D *     fMCTemplFin[kns][knm];        ///< MC template(sample,mode): Ereco-Etrue (nominal+tuning) + systematic variations + physics hypothesis
+  TH1D *     fMCErecoSpectrum[kns][knm];   ///< MC Ereco spectrum(sample,mode)        (nominal+tuning) + systematic variations + physics hypothesis
+  TH1D *     fMCErecoSpectrumTot[kns];     ///< MC total Ereco spectrum (sample)      (nominal+tuning) + systematic variations + physics hypothesis
 
   // input event trees and normalisation factors
   TTree*     fMCTreeNuMu1Rmu;              ///< input MC event tree /  sample: numu                        / cuts: 1-ring mu-like 

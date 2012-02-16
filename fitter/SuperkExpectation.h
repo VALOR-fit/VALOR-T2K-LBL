@@ -40,7 +40,7 @@ using t2kana::conv::knmnd;
 
 namespace t2kana {
 
-class ND280Measurement;  ///< ND280 measurement
+////////////class ND280Measurement;  ///< ND280 measurement
 class SuperkMC;          ///< SuperK MC templates
 class NuFlux;            ///< Neutrino flux info
 class NuXSec;            ///< Neutrino generator / cross section info
@@ -91,7 +91,7 @@ private:
    void SetNuisanceParams (const FitParamList & fp);
 
    bool               fIsConfigured;         ///< Is this object properly configured?
-   ND280Measurement * fND280Measurement;     ///< ND280 inputs
+///////////////   ND280Measurement * fND280Measurement;     ///< ND280 inputs
    SuperkMC *         fSuperkMC;             ///< SuperK MC templates
    NuFlux *           fNuFlux;               ///< Neutrino flux simulation inputs
    NuXSec *           fNuXSec;               ///< Neutrino generator / cross section inputs

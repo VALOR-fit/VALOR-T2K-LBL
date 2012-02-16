@@ -20,21 +20,19 @@
 #include <cstdlib>
 #include <iostream>
 
-#include <TVectorD.h>
 #include <TVirtualPad.h>
 #include <TLegend.h>
 
 #include "NuFlux.h" 
+#include "BANFF.h" 
 #include "Conventions.h" 
 #include "Utilities.h" 
-#include "BANFF.h" 
 
 using std::cout;
 using std::cerr;
 using std::endl;
 
 using namespace t2kana;
-using namespace t2kana::conv;
 using namespace t2kana::util;
 
 ClassImp(NuFlux)
@@ -56,11 +54,15 @@ void NuFlux::Init(void)
   fSuperkNuMuFluxNom           = 0; 
   fSuperkNuMuBarFluxNom        = 0; 
   fSuperkNuEFluxNom            = 0; 
-  fSuperkNuBarFluxNom          = 0; 
-  fSuperkNuMuFluxTuneWght      = 0;
-  fSuperkNuMuBarFluxTuneWght   = 0;
-  fSuperkNuEFluxTuneWght       = 0;
-  fSuperkNuEBarFluxTuneWght    = 0;
+  fSuperkNuEBarFluxNom         = 0; 
+  fSuperkNuMuFluxTun           = 0; 
+  fSuperkNuMuBarFluxTun        = 0; 
+  fSuperkNuEFluxTun            = 0; 
+  fSuperkNuEBarFluxTun         = 0; 
+  fSuperkNuMuFluxTunWght       = 0;
+  fSuperkNuMuBarFluxTunWght    = 0;
+  fSuperkNuEFluxTunWght        = 0;
+  fSuperkNuEBarFluxTunWght     = 0;
   fBANFF                       = 0;
 }
 //________________________________________________________________________________________
@@ -70,10 +72,14 @@ void NuFlux::CleanUp(void)
   if ( fSuperkNuMuBarFluxNom       ) delete fSuperkNuMuBarFluxNom;
   if ( fSuperkNuEFluxNom           ) delete fSuperkNuEFluxNom;
   if ( fSuperkNuEBarFluxNom        ) delete fSuperkNuEBarFluxNom;
-  if ( fSuperkNuMuFluxTuneWght     ) delete fSuperkNuMuFluxTuneWght;
-  if ( fSuperkNuMuBarFluxTuneWght  ) delete fSuperkNuMuBarFluxTuneWght;
-  if ( fSuperkNuEFluxTuneWght      ) delete fSuperkNuEFluxTuneWght;
-  if ( fSuperkNuEBarFluxTuneWght   ) delete fSuperkNuEBarFluxTuneWght;
+  if ( fSuperkNuMuFluxTun          ) delete fSuperkNuMuFluxTun;
+  if ( fSuperkNuMuBarFluxTun       ) delete fSuperkNuMuBarFluxTun;
+  if ( fSuperkNuEFluxTun           ) delete fSuperkNuEFluxTun;
+  if ( fSuperkNuEBarFluxTun        ) delete fSuperkNuEBarFluxTun;
+  if ( fSuperkNuMuFluxTunWght      ) delete fSuperkNuMuFluxTunWght;
+  if ( fSuperkNuMuBarFluxTunWght   ) delete fSuperkNuMuBarFluxTunWght;
+  if ( fSuperkNuEFluxTunWght       ) delete fSuperkNuEFluxTunWght;
+  if ( fSuperkNuEBarFluxTunWght    ) delete fSuperkNuEBarFluxTunWght;
 }
 //________________________________________________________________________________________
 bool NuFlux::Read(TXMLEngine* xml, XMLNodePointer_t root_node)
@@ -94,7 +100,7 @@ bool NuFlux::Read(TXMLEngine* xml, XMLNodePointer_t root_node)
 #endif
 
   //
-  // Nominal fluxes
+  // Load nominal fluxes
   //
 
   // SuperK numu flux
@@ -123,43 +129,78 @@ bool NuFlux::Read(TXMLEngine* xml, XMLNodePointer_t root_node)
   }
 
   //
-  // Nominal -> tuned flux weights
+  // Load nominal -> tuned flux weights
   //
 
   // SuperK numu flux tuning weights
-  fSuperkNuMuFluxTuneWght = 
+  fSuperkNuMuFluxTunWght = 
      util::XML2TH1D(xml,root_node,"beam/superk_flux/tuning_weights/numu");
-  if(!fSuperkNuMuFluxTuneWght) {
+  if(!fSuperkNuMuFluxTunWght) {
     cerr << "Exp/Beam >> No input SuperK numu flux tuning weights!" << endl;
     exit(1);
   }
   // SuperK numubar flux tuning weights
-  fSuperkNuMuBarFluxTuneWght = 
+  fSuperkNuMuBarFluxTunWght = 
      util::XML2TH1D(xml,root_node,"beam/superk_flux/tuning_weights/numubar");
-  if(!fSuperkNuMuBarFluxTuneWght) {
+  if(!fSuperkNuMuBarFluxTunWght) {
     cerr << "Exp/Beam >> No input SuperK numubar flux tuning weights!" << endl;
     exit(1);
   }
   // SuperK nue flux tuning weights
-  fSuperkNuEFluxTuneWght = 
+  fSuperkNuEFluxTunWght = 
      util::XML2TH1D(xml,root_node,"beam/superk_flux/tuning_weights/nue");
-  if(!fSuperkNuEFluxTuneWght) {
+  if(!fSuperkNuEFluxTunWght) {
     cerr << "Exp/Beam >> No input SuperK nue flux tuning weights!" << endl;
     exit(1);
   }
   // SuperK nuebar flux tuning weights
-  fSuperkNuEBarFluxTuneWght = 
+  fSuperkNuEBarFluxTunWght = 
      util::XML2TH1D(xml,root_node,"beam/superk_flux/tuning_weights/nuebar");
-  if(!fSuperkNuEBarFluxTuneWght) {
+  if(!fSuperkNuEBarFluxTunWght) {
     cerr << "Exp/Beam >> No input SuperK nuebar flux tuning weights!" << endl;
     exit(1);
   }
+
+  //
+  // Create / init (to nominal) tuned flux histograms & then
+  // apply tuning weights
+  //
+/*
+  fSuperkNuMuFluxTun    = new TH1D(*fSuperkNuMuFluxNom);  
+  fSuperkNuMuBarFluxTun = new TH1D(*fSuperkNuMuBarFluxNom); 
+  fSuperkNuEFluxTun     = new TH1D(*fSuperkNuEFluxNom);     
+  fSuperkNuEBarFluxTun  = new TH1D(*fSuperkNuEBarFluxNom);          
+
+  fSuperkNuMuFluxTun    -> SetDirectory(0);
+  fSuperkNuMuBarFluxTun -> SetDirectory(0); 
+  fSuperkNuEFluxTun     -> SetDirectory(0);
+  fSuperkNuEBarFluxTun  -> SetDirectory(0);
+*/
+  this->ApplyFluxTuneWghts(conv::kPdgNuE    );
+  this->ApplyFluxTuneWghts(conv::kPdgNuEBar );
+  this->ApplyFluxTuneWghts(conv::kPdgNuMu   );
+  this->ApplyFluxTuneWghts(conv::kPdgNuMuBar);
 
 #ifdef __show_init_mesg_info__
   cout << "Exp/Beam >> Done reading beam inputs!" << endl;
 #endif
 
   return true;
+}
+//________________________________________________________________________________________
+void NuFlux::ApplyFluxTuneWghts(int nu_pdg)
+{
+  TH1D * hnom = this->SuperkFluxSpectrum(nu_pdg, false);
+  TH1D * htun = this->SuperkFluxSpectrum(nu_pdg, true );
+  htun = new TH1D(*hnom);
+  htun -> SetDirectory(0);
+  for(int i = 1; i <= htun->GetNbinsX(); i++) {
+     double E = htun->GetBinCenter (i);
+     double f = htun->GetBinContent(i);
+     double w = this->SuperkFluxTuneWght(nu_pdg,E);
+     f *= w;
+     htun->SetBinContent(i,f);
+  }
 }
 //________________________________________________________________________________________
 void NuFlux::TellMeAboutTheBANFFfit(BANFF * banff)
@@ -174,35 +215,23 @@ double NuFlux::SuperkFluxPOT (void) const
 //________________________________________________________________________________________
 double NuFlux::SuperkFlux(int nu_pdg, double Etrue, bool tuned) const
 {
-  const TH1D * nom_flux_spectrum = this->SuperkNominalFluxSpectrum(nu_pdg);
-  assert(nom_flux_spectrum);
+  TH1D * flux_spectrum = this->SuperkFluxSpectrum(nu_pdg,tuned);
+  assert(flux_spectrum);
 
-  int bin = nom_flux_spectrum->FindBin(Etrue);
-  double flux = nom_flux_spectrum->GetBinContent(bin);
-
-  if(tuned) {
-     double wght = this->SuperkFluxTuneWght(nu_pdg,Etrue);
-     flux *= wght;
-  }
+  int bin = flux_spectrum->FindBin(Etrue);
+  double flux = flux_spectrum->GetBinContent(bin);
 
   return flux;
 }
 //________________________________________________________________________________________
-double NuFlux::SuperkFluxTuneWght (conv::SuperkMode_t m, double Etrue) const
-{
-  int nu_pdg = this->NuPdg(m);
-  assert(nu_pdg != 0);
-  return this->SuperkFluxTuneWght(nu_pdg,Etrue);
-}
-//________________________________________________________________________________________
 double NuFlux::SuperkFluxTuneWght(int nu_pdg, double Etrue) const
 {
-  if(Etrue > kEtrueMaxForFluxTuneWeights) 
+  if(Etrue > conv::kEtrueMaxForFluxTuneWeights) 
   {
     return 1;
   }
 
-  const TH1D * wght_spectrum = this->SuperkFluxTuningWghtSpectrum(nu_pdg);
+  TH1D * wght_spectrum = this->SuperkFluxTuningWghts(nu_pdg);
   assert(wght_spectrum);
 
   int bin = wght_spectrum->FindBin(Etrue);
@@ -215,39 +244,43 @@ double NuFlux::SuperkFluxWght(int nu_pdg, double Etrue) const
   return 1.;
 }
 //________________________________________________________________________________________
-const TH1D * NuFlux::SuperkNominalFluxSpectrum(nu_pdg) const
+TH1D * NuFlux::SuperkFluxSpectrum(int nu_pdg, bool tuned) const
 {
-  if      ( nu_pdg == kPdgNuE     ) return fSuperkNuEFluxNom;
-  else if ( nu_pdg == kPdgNuEBar  ) return fSuperkNuEBarFluxNom;
-  else if ( nu_pdg == kPdgNuMu    ) return fSuperkNuMuFluxNom;
-  else if ( nu_pdg == kPdgNuMuBar ) return fSuperkNuMuBarFluxNom;
+  if(tuned) 
+  {
+     if      ( nu_pdg == conv::kPdgNuE     ) return fSuperkNuEFluxTun;
+     else if ( nu_pdg == conv::kPdgNuEBar  ) return fSuperkNuEBarFluxTun;
+     else if ( nu_pdg == conv::kPdgNuMu    ) return fSuperkNuMuFluxTun;
+     else if ( nu_pdg == conv::kPdgNuMuBar ) return fSuperkNuMuBarFluxTun;
+     else
+     {
+       exit(1);
+     }
+  }
   else
   {
-    exit(1);
+     if      ( nu_pdg == conv::kPdgNuE     ) return fSuperkNuEFluxNom;
+     else if ( nu_pdg == conv::kPdgNuEBar  ) return fSuperkNuEBarFluxNom;
+     else if ( nu_pdg == conv::kPdgNuMu    ) return fSuperkNuMuFluxNom;
+     else if ( nu_pdg == conv::kPdgNuMuBar ) return fSuperkNuMuBarFluxNom;
+     else
+     {
+       exit(1);
+     }
   }
   return 0;
 }
 //________________________________________________________________________________________
-const TH1D * NuFlux::SuperkFluxTuningWghtSpectrum(nu_pdg) const
+TH1D * NuFlux::SuperkFluxTuningWghts(int nu_pdg) const
 {
-  if      ( nu_pdg == kPdgNuE     ) return fSuperkNuEFluxTuneWght;
-  else if ( nu_pdg == kPdgNuEBar  ) return fSuperkNuEBarFluxTuneWght;
-  else if ( nu_pdg == kPdgNuMu    ) return fSuperkNuMuFluxTuneWght;
-  else if ( nu_pdg == kPdgNuMuBar ) return fSuperkNuMuBarFluxTuneWght;
+  if      ( nu_pdg == conv::kPdgNuE     ) return fSuperkNuEFluxTunWght;
+  else if ( nu_pdg == conv::kPdgNuEBar  ) return fSuperkNuEBarFluxTunWght;
+  else if ( nu_pdg == conv::kPdgNuMu    ) return fSuperkNuMuFluxTunWght;
+  else if ( nu_pdg == conv::kPdgNuMuBar ) return fSuperkNuMuBarFluxTunWght;
   else
   {
     exit(1);
   }
-  return 0;
-}
-//________________________________________________________________________________________
-double NuFlux::NuPdg(conv::SuperkMode_t m) const
-{
-  if ( util::IsNuMu      (m) ) return kPdgNuMu;
-  if ( util::IsNuMuBar   (m) ) return kPdgNuMuBar;
-  if ( util::IsBeamNuE   (m) ) return kPdgNuE;
-  if ( util::IsSignalNuE (m) ) return kPdgNuMu; /// numu -> nue
-
   return 0;
 }
 //________________________________________________________________________________________
@@ -261,8 +294,8 @@ void NuFlux::Draw(TVirtualPad * c, Option_t * option) const
   util::SetDefaultStyle();
 
   if(opt.Contains("Flux/SK/NuMu/TuneWghts")) { 
-    TH1D * h = new TH1D(*fSuperkNuMuFluxTuneWght);
-    hnom->SetDirectory(0);
+    TH1D * h = new TH1D(*fSuperkNuMuFluxTunWght);
+    h->SetDirectory(0);
     h->GetXaxis()->SetTitle("E_{#nu} (GeV)");
     h->GetYaxis()->SetTitle("SuperK numu flux weight");
     h->Draw();
@@ -270,8 +303,8 @@ void NuFlux::Draw(TVirtualPad * c, Option_t * option) const
   }
   else
   if(opt.Contains("Flux/SK/NuMuBar/TuneWghts")) { 
-    TH1D * h = new TH1D(*fSuperkNuMuBarFluxTuneWght);
-    hnom->SetDirectory(0);
+    TH1D * h = new TH1D(*fSuperkNuMuBarFluxTunWght);
+    h->SetDirectory(0);
     h->GetXaxis()->SetTitle("E_{#nu} (GeV)");
     h->GetYaxis()->SetTitle("SuperK numubar flux weight");
     h->Draw();
@@ -279,8 +312,8 @@ void NuFlux::Draw(TVirtualPad * c, Option_t * option) const
   }
   else
   if(opt.Contains("Flux/SK/NuE/TuneWghts")) { 
-    TH1D * h = new TH1D(*fSuperkNuEFluxTuneWght);
-    hnom->SetDirectory(0);
+    TH1D * h = new TH1D(*fSuperkNuEFluxTunWght);
+    h->SetDirectory(0);
     h->GetXaxis()->SetTitle("E_{#nu} (GeV)");
     h->GetYaxis()->SetTitle("SuperK nue flux weight");
     h->Draw();
@@ -288,8 +321,8 @@ void NuFlux::Draw(TVirtualPad * c, Option_t * option) const
   }
   else
   if(opt.Contains("Flux/SK/NuEBar/TuneWghts")) { 
-    TH1D * h = new TH1D(*fSuperkNuEBarFluxTuneWght);
-    hnom->SetDirectory(0);
+    TH1D * h = new TH1D(*fSuperkNuEBarFluxTunWght);
+    h->SetDirectory(0);
     h->GetXaxis()->SetTitle("E_{#nu} (GeV)");
     h->GetYaxis()->SetTitle("SuperK nuebar flux weight");
     h->Draw();
@@ -297,73 +330,49 @@ void NuFlux::Draw(TVirtualPad * c, Option_t * option) const
   }
   else
   if(opt.Contains("Flux/SK/NuMu")) { 
-    TH1D * hnom = new TH1D(*fSuperkNuMuFlux);
+    TH1D * hnom = new TH1D(*fSuperkNuMuFluxNom);
+    TH1D * htun = new TH1D(*fSuperkNuMuFluxTun);
     hnom->SetDirectory(0);
-    hnom->GetXaxis()->SetTitle("E_{#nu} (GeV)");
-    hnom->GetYaxis()->SetTitle("SuperK numu flux (#neutrinos /cm2 /POT)");
-    hnom->Divide(fSuperkFluxPOT);
-    hnom->Draw();
-    TH1D * htun = new TH1D(*hnom);
     htun->SetDirectory(0);
-    for(int i = 1; i <= htun->GetNbinsX(); i++) {
-	double E = htun->GetBinCenter(i);
-	double f = this->SuperFlux(kPdgNuMu,E,true);
-        htun->SetBinContent(i,f);
-    }
+    hnom->GetXaxis()->SetTitle("E_{#nu} (GeV)");
+    hnom->GetYaxis()->SetTitle("SuperK numu flux (#neutrinos /cm2 /x POT)");
+    hnom->Draw();
     htun->Draw("same");
     c->Update();
   }
   else
   if(opt.Contains("Flux/SK/NuMuBar")) { 
-    TH1D * hnom = new TH1D(*fSuperkNuMuBarFlux);
+    TH1D * hnom = new TH1D(*fSuperkNuMuBarFluxNom);
+    TH1D * htun = new TH1D(*fSuperkNuMuBarFluxTun);
     hnom->SetDirectory(0);
-    hnom->GetXaxis()->SetTitle("E_{#nu} (GeV)");
-    hnom->GetYaxis()->SetTitle("SuperK numubar flux (#neutrinos /cm2 /POT)");
-    hnom->Divide(fSuperkFluxPOT);
-    hnom->Draw();
-    TH1D * htun = new TH1D(*hnom);
     htun->SetDirectory(0);
-    for(int i = 1; i <= htun->GetNbinsX(); i++) {
-	double E = htun->GetBinCenter(i);
-	double f = this->SuperkFlux(kPdgNuMuBar,E,true);
-        htun->SetBinContent(i,f);
-    }
+    hnom->GetXaxis()->SetTitle("E_{#nu} (GeV)");
+    hnom->GetYaxis()->SetTitle("SuperK numubar flux (#neutrinos /cm2 /x POT)");
+    hnom->Draw();
     htun->Draw("same");
     c->Update();
   }
   else
   if(opt.Contains("Flux/SK/NuE")) { 
-    TH1D * hnom = new TH1D(*fSuperkNuEFlux);
+    TH1D * hnom = new TH1D(*fSuperkNuEFluxNom);
+    TH1D * htun = new TH1D(*fSuperkNuEFluxTun);
     hnom->SetDirectory(0);
-    hnom->GetXaxis()->SetTitle("E_{#nu} (GeV)");
-    hnom->GetYaxis()->SetTitle("SuperK nue flux (#neutrinos /cm2 /POT)");
-    hnom->Divide(fSuperkFluxPOT);
-    hnom->Draw();
-    TH1D * htun = new TH1D(*hnom);
     htun->SetDirectory(0);
-    for(int i = 1; i <= htun->GetNbinsX(); i++) {
-	double E = htun->GetBinCenter(i);
-	double f = this->SuperkFlux(kPdgNuE,E,true);
-        htun->SetBinContent(i,f);
-    }
+    hnom->GetXaxis()->SetTitle("E_{#nu} (GeV)");
+    hnom->GetYaxis()->SetTitle("SuperK nue flux (#neutrinos /cm2 /x POT)");
+    hnom->Draw();
     htun->Draw("same");
     c->Update();
   }
   else
   if(opt.Contains("Flux/SK/NuEBar")) { 
-    TH1D * hnom = new TH1D(*fSuperkNuEBarFlux);
+    TH1D * hnom = new TH1D(*fSuperkNuEBarFluxNom);
+    TH1D * htun = new TH1D(*fSuperkNuEBarFluxTun);
     hnom->SetDirectory(0);
-    hnom->GetXaxis()->SetTitle("E_{#nu} (GeV)");
-    hnom->GetYaxis()->SetTitle("SuperK nuebar flux (#neutrinos /cm2 /POT)");
-    hnom->Divide(fSuperkFluxPOT);
-    hnom->Draw();
-    TH1D * htun = new TH1D(*hnom);
     htun->SetDirectory(0);
-    for(int i = 1; i <= htun->GetNbinsX(); i++) {
-	double E = htun->GetBinCenter(i);
-	double f = this->SuperkFlux(kPdgNuEBar,E,true);
-        htun->SetBinContent(i,f);
-    }
+    hnom->GetXaxis()->SetTitle("E_{#nu} (GeV)");
+    hnom->GetYaxis()->SetTitle("SuperK nuebar flux (#neutrinos /cm2 /x POT)");
+    hnom->Draw();
     htun->Draw("same");
     c->Update();
   }

@@ -28,7 +28,7 @@
 #include <TLegend.h>
 #include <TSystem.h>
 
-#include "NuFlux.h" 
+#include "BANFF.h" 
 #include "Conventions.h" 
 #include "Utilities.h" 
 
@@ -53,7 +53,7 @@ BANFF::~BANFF()
   this->CleanUp();
 }
 //________________________________________________________________________________________
-void NuFlux::Init(void)
+void BANFF::Init(void)
 {
   fBestFitValues = 0; 
   fCurrentValues = 0; 
@@ -188,7 +188,7 @@ void BANFF::Tweak(
 #ifdef __show_tweak_mesg_debug__
      cout << "Exp/BANFF/Tweak >> Forcing input twk dials (uncorrelated)! " << endl;
 #endif
-     TMatrixD & L = *fSuperkNuMuFluxCovCholeskyL;
+     TMatrixD & L = *fCovMtrxChoL;
      TVectorD twkv = util::CholeskyCalculateCorrelatedParamVariations(L,*input_twkv);
      this->DoTweak(&twkv);
      return;
@@ -201,11 +201,11 @@ void BANFF::Tweak(
   // Use Cholseky method to generate random fluxes
   //
 
-  if(!force_input_twkdials) {
+  if(!force_input_twkv) {
 #ifdef __show_tweak_mesg_debug__
     cout << "Exp/BANFF/Tweak >> Generating random twk dials (correlated)! " << endl;
 #endif
-    TMatrixD & L = *fSuperkNuMuFluxCovCholeskyL;
+    TMatrixD & L = *fCovMtrxChoL;
     TVectorD twkv = util::CholeskyGenerateCorrelatedParamVariations(L);
     this->DoTweak(&twkv);
     return;

@@ -108,6 +108,8 @@ namespace util {
 
   t2kana::conv::OscChannelId_t GetOscChannel(int nu_start, int nu_end);
 
+  int  SuperkMode2FluxNuPdg(t2kana::conv::SuperkMode_t m);
+
   bool IsNuMu         (t2kana::conv::SuperkMode_t  m);
   bool IsNuMuBar      (t2kana::conv::SuperkMode_t  m);
   bool IsBeamNuE      (t2kana::conv::SuperkMode_t  m);
@@ -142,6 +144,7 @@ namespace util {
   double           XML2Dbl         (TXMLEngine * eng, XMLNodePointer_t topnode, string path);
   vector<double>   XML2DblArray    (TXMLEngine * eng, XMLNodePointer_t topnode, string path);
   string           XML2String      (TXMLEngine * eng, XMLNodePointer_t topnode, string path);
+  TVectorD *       XML2TVectorD    (TXMLEngine * eng, XMLNodePointer_t topnode, string path);
   TMatrixDSym *    XML2TMatrixDSym (TXMLEngine * eng, XMLNodePointer_t topnode, string path);
   TMatrixD *       XML2TMatrixD    (TXMLEngine * eng, XMLNodePointer_t topnode, string path);
   
@@ -195,7 +198,7 @@ namespace util {
   // Etc
   //
 
-  int    Sign       (double x);
+  int Sign(double x);
 
 } // util
 } // t2kana

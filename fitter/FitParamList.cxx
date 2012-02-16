@@ -487,6 +487,7 @@ FitParamList * FitParamList::NuOsc3FlavourFitNuESyst(void)
       //
       // add nuisance params
       //
+/*
       fparm->AddParam( 6, kNuisSuperkEff1RmuCCQEoth,  0.0,           -1,    1,    1E-1,  false, true); 
       fparm->AddParam( 7, kNuisSuperkEff1RmuCCQErc0u, 0.0,           -1,    1,    1E-1,  false, true);
       fparm->AddParam( 8, kNuisSuperkEff1RmuCCQErc1u, 0.0,           -1,    1,    1E-1,  false, true);
@@ -509,7 +510,7 @@ FitParamList * FitParamList::NuOsc3FlavourFitNuESyst(void)
       fparm->AddParam(24,kNuisXSecNCcohToCCQE,        0.0,           -1,    1,    1E-1,  false, true);    
       fparm->AddParam(25,kNuisXSecNCothToCCQE,        0.0,           -1,    1,    1E-1,  false, true);    
       fparm->AddParam(26,kNuisXSecNuEToNuMu,          0.0,           -1,    1,    1E-1,  false, true);    
-
+*/
 
       return fparm;
 }
@@ -543,6 +544,7 @@ FitParamList * FitParamList::NuOsc3FlavourFitAllSyst(void)
       //
       // add nuisance params
       //
+/*
       //numu
       fparm->AddParam( 6, kNuisSuperkEff1RmuCCQEoth,  0.0,           -1,    1,    1E-1,  false, true); 
       fparm->AddParam( 7, kNuisSuperkEff1RmuCCQErc0u, 0.0,           -1,    1,    1E-1,  false, true);
@@ -586,7 +588,7 @@ FitParamList * FitParamList::NuOsc3FlavourFitAllSyst(void)
       fparm->AddParam(44,kNuisXSecNCcohToCCQE,        0.0,           -1,    1,    1E-1,  false, true);    
       fparm->AddParam(45,kNuisXSecNCothToCCQE,        0.0,           -1,    1,    1E-1,  false, true);    
       fparm->AddParam(46,kNuisXSecNuEToNuMu,          0.0,           -1,    1,    1E-1,  false, true);    
-
+*/
       return fparm;
 }
 //________________________________________________________________________________________
@@ -638,7 +640,7 @@ FitParamList * FitParamList::NumuDisapFitAllSyst(void)
   //
   // add nuisance params
   //
-
+/*
   fparm->AddParam( 2, kNuisSuperkEff1RmuCCQEoth,  0.0,           -1,    1,    1E-1,  false, true);
   fparm->AddParam( 3, kNuisSuperkEff1RmuCCQErc0u, 0.0,           -1,    1,    1E-1,  false, true);
   fparm->AddParam( 4, kNuisSuperkEff1RmuCCQErc1u, 0.0,           -1,    1,    1E-1,  false, true);
@@ -673,7 +675,7 @@ FitParamList * FitParamList::NumuDisapFitAllSyst(void)
   fparm->AddParam(33, kNuisXSecCCothToCCQE,       0.0,           -1,    1,    1E-1,  false, true);
   fparm->AddParam(34, kNuisXSecNCToCCQE,          0.0,           -1,    1,    1E-1,  false, true);
   fparm->AddParam(35, kNuisXSecNuclEffect,        0.0,           -1,    1,    1E-1,  false, true);
-
+*/
   return fparm;
 }
 //________________________________________________________________________________________

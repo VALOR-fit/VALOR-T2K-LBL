@@ -544,7 +544,8 @@ void SuperkMC::ApplyTuningToTemplates(void)
            // get number of events
            double nev = mctempl->GetBinContent(ir,it);
            // get tuning weights
-           double flux_tune_wght = fNuFlux->SuperkFluxTuneWght(m,Etrue);
+           int flux_nu_pdg = util::SuperkMode2FluxNuPdg(m);
+           double flux_tune_wght = fNuFlux->SuperkFluxTuneWght(flux_nu_pdg,Etrue);
            // update nominal MC template
            nev *= flux_tune_wght;
            mctempl->SetBinContent(ir,it,nev);
@@ -942,7 +943,8 @@ double SuperkMC::NumOfEvents(
 
   // Nominal number of events
   double nev = nsk2d->GetBinContent(reco_bin, true_bin);
-        
+
+/*      
   //
   // Apply flux systematics = f(Etrue)
   //
@@ -962,7 +964,9 @@ double SuperkMC::NumOfEvents(
     cout << "Exp/SKMC/NumOfEvents >> Applied flux-shape-systematic weight = " << numu_flux_shape_wght << endl;
   }
 #endif
+*/
 
+/*
   //
   // Apply cross section systematics = f(Etrue)
   //
@@ -993,6 +997,7 @@ double SuperkMC::NumOfEvents(
     cout << "Exp/SKMC/NumOfEvents >> Applied nucl.-effect-systematic weight = " << nucl_effect_wght << endl;
   }
 #endif
+*/
 
   //
   // Plug-in "efficiency" uncertainty due to fiducial volume, reduction chain, OD cut,
@@ -1011,10 +1016,10 @@ double SuperkMC::NumOfEvents(
   //
   double nevtwk = 
      ( nev * 
-       numu_flux_shape_wght * 
-       xsec_ccqe_wght *
-       xsec_ratio_wght *
-       nucl_effect_wght *
+//       numu_flux_shape_wght * 
+//       xsec_ccqe_wght *
+//       xsec_ratio_wght *
+//       nucl_effect_wght *
        effwght
      );
 
@@ -1431,7 +1436,7 @@ double SuperkMC::EfficiencyWeight(
 /////////	   double weight  = (1. + twkdial*relerr);
 /////////	   return weight;
 /////////	   break;
-	 }
+/////////	 }
        default:
 	 return 0.;
     }//mode
