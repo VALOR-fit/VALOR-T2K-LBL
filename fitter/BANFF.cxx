@@ -77,6 +77,7 @@ bool BANFF::Read(TXMLEngine* xml, XMLNodePointer_t root_node)
   cout << "Exp/BANFF >> Reading BANFF inputs from XML configuration file." << endl;
 #endif
 
+/*
   // Get BANFF fit central values
   fBestFitValues = util::XML2TVectorD(xml,root_node,"banff/best_fit_values");
   if(!fBestFitValues) {
@@ -93,6 +94,7 @@ bool BANFF::Read(TXMLEngine* xml, XMLNodePointer_t root_node)
     cerr << "Exp/BANFF >> No BANFF covariance matrix was found." << endl;
     exit(1);
   }
+*/
 
 #ifdef __show_init_mesg_info__
   cout << "Exp/BANFF >> Done reading beam inputs!" << endl;

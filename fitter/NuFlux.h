@@ -69,11 +69,10 @@ public:
 
 private:
 
-  void Init               (void);
-  void CleanUp            (void);
-  void ApplyFluxTuneWghts (int neutrino_pdg);
+  void Init                (void);
+  void CleanUp             (void);
+  void RecreateNominalFlux (int neutrino_pdg);
 
-  double   fSuperkFluxPOT;                ///< integrated POT for files used for flux simulation
   TH1D *   fSuperkNuMuFluxNom;            ///< nominal SuperK numu    flux (50 MeV binning)
   TH1D *   fSuperkNuMuBarFluxNom;         ///< nominal SuperK numubar flux (50 MeV binning)
   TH1D *   fSuperkNuEFluxNom;             ///< nominal SuperK nue     flux (50 MeV binning)

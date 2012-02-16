@@ -18,6 +18,7 @@
 #pragma link C++ class t2kana::SuperkMC;
 #pragma link C++ class t2kana::BANFF;
 #pragma link C++ class t2kana::NuXSec;
+#pragma link C++ class t2kana::NuFlux;
 
 #pragma link C++ class t2kana::Superk1RmuErecoFitter;
 #pragma link C++ class t2kana::Superk1ReNFitter;

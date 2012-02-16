@@ -83,10 +83,6 @@ void SuperkMC::Init(void)
   fEff1RmuCCnonQERelErr       = 0.;
   fEff1RmuNCRelErr            = 0.;
   fEff1RmuNuECCRelErr         = 0.;
-/////////  fEnergyScale1ReSigRelErr    = 0.;
-/////////  fEnergyScale1ReBkgRelErr    = 0.;
-/////////  fEff1ReSigRelErr            = 0.;
-/////////  fEff1ReBkgRelErr            = 0.;
   
   fEnergyScaleTwkDial         = 0.;
   fEff1RmuCCQEOthTwkDial      = 0.;
@@ -96,8 +92,6 @@ void SuperkMC::Init(void)
   fEff1RmuCCnonQETwkDial      = 0.;
   fEff1RmuNCTwkDial           = 0.;
   fEff1RmuNuECCTwkDial        = 0.;
-/////////  fEff1ReSigTwkDial           = 0.;
-/////////  fEff1ReBkgTwkDial           = 0.;
 
   fEff1RmuCCQERCCovarChoLRelErr = 0;
   
@@ -121,15 +115,7 @@ void SuperkMC::Init(void)
   fBrGenCode      = 0;
          
   fNuFlux         = 0;
-  fGenInputs      = 0;
-  
-//////////  f1RmNuMuEt      = 0;
-//////////  f1RmNuMuBarEt   = 0;
-//////////  f1RmNuEEt       = 0;
-//////////  f1ReNuMuEt      = 0;
-//////////  f1ReNuMuBarEt   = 0;
-//////////  f1ReNuEEt       = 0;
-//////////  f1ReNuESigEt    = 0;
+  fGenInputs      = 0;  
 }
 //________________________________________________________________________________________
 void SuperkMC::CleanUp(void)
@@ -151,14 +137,6 @@ void SuperkMC::CleanUp(void)
        if( fMCErecoSpectrum[is][im] ) delete fMCErecoSpectrum[is][im];
      }
   }
-
-/////////  if (f1RmNuMuEt   ) delete f1RmNuMuEt;
-/////////  if (f1RmNuMuBarEt) delete f1RmNuMuBarEt;
-/////////  if (f1RmNuEEt    ) delete f1RmNuEEt;
-/////////  if (f1ReNuMuEt   ) delete f1ReNuMuEt;
-/////////  if (f1ReNuMuBarEt) delete f1ReNuMuBarEt;
-/////////  if (f1ReNuEEt    ) delete f1ReNuEEt;
-/////////  if (f1ReNuESigEt ) delete f1ReNuESigEt;
 }
 //________________________________________________________________________________________
 bool SuperkMC::Read(TXMLEngine* xml, XMLNodePointer_t root_node)
@@ -175,7 +153,7 @@ bool SuperkMC::Read(TXMLEngine* xml, XMLNodePointer_t root_node)
   //
   // Get data POT
   // 
-  fPOT = util::XML2Dbl(xml,root_node,"superk/observation/pot");
+  fPOT = util::XML2Dbl(xml,root_node,"data_pot/superk");
 #ifdef __show_init_mesg_info__
   cout << "Exp/SKMC >> " << "POT_{data} = " << fPOT << endl;
 #endif
@@ -183,19 +161,19 @@ bool SuperkMC::Read(TXMLEngine* xml, XMLNodePointer_t root_node)
   //
   // Get MC trees and MC POT
   //
-  fMCPOTNuMu    = util::XML2Dbl  (xml,root_node,"superk/mc/numu/pot");
-  fMCPOTNuMuBar = util::XML2Dbl  (xml,root_node,"superk/mc/numubar/pot");
-  fMCPOTNuE     = util::XML2Dbl  (xml,root_node,"superk/mc/nuebeam/pot");
-  fMCPOTNuESig  = util::XML2Dbl  (xml,root_node,"superk/mc/nuesignal/pot");
+  fMCPOTNuMu    = util::XML2Dbl  (xml,root_node,"mc/superk/nominal/numu/pot");
+  fMCPOTNuMuBar = util::XML2Dbl  (xml,root_node,"mc/superk/nominal/numubar/pot");
+  fMCPOTNuE     = util::XML2Dbl  (xml,root_node,"mc/superk/nominal/nuebeam/pot");
+  fMCPOTNuESig  = util::XML2Dbl  (xml,root_node,"mc/superk/nominal/nuesignal/pot");
 
-  fMCTreeNuMu1Rmu    = util::XML2TTree (xml,root_node,"superk/mc/numu/one_mu_ring");
-  fMCTreeNuMuBar1Rmu = util::XML2TTree (xml,root_node,"superk/mc/numubar/one_mu_ring");
-  fMCTreeNuE1Rmu     = util::XML2TTree (xml,root_node,"superk/mc/nuebeam/one_mu_ring");
-  fMCTreeNuESig1Rmu  = util::XML2TTree (xml,root_node,"superk/mc/nuesignal/one_mu_ring");
-  fMCTreeNuMu1Re     = util::XML2TTree (xml,root_node,"superk/mc/numu/one_e_ring");
-  fMCTreeNuMuBar1Re  = util::XML2TTree (xml,root_node,"superk/mc/numubar/one_e_ring");
-  fMCTreeNuE1Re      = util::XML2TTree (xml,root_node,"superk/mc/nuebeam/one_e_ring");
-  fMCTreeNuESig1Re   = util::XML2TTree (xml,root_node,"superk/mc/nuesignal/one_e_ring");
+  fMCTreeNuMu1Rmu    = util::XML2TTree (xml,root_node,"mc/superk/nominal/numu/one_mu_ring");
+  fMCTreeNuMuBar1Rmu = util::XML2TTree (xml,root_node,"mc/superk/nominal/numubar/one_mu_ring");
+  fMCTreeNuE1Rmu     = util::XML2TTree (xml,root_node,"mc/superk/nominal/nuebeam/one_mu_ring");
+  fMCTreeNuESig1Rmu  = util::XML2TTree (xml,root_node,"mc/superk/nominal/nuesignal/one_mu_ring");
+  fMCTreeNuMu1Re     = util::XML2TTree (xml,root_node,"mc/superk/nominal/numu/one_e_ring");
+  fMCTreeNuMuBar1Re  = util::XML2TTree (xml,root_node,"mc/superk/nominal/numubar/one_e_ring");
+  fMCTreeNuE1Re      = util::XML2TTree (xml,root_node,"mc/superk/nominal/nuebeam/one_e_ring");
+  fMCTreeNuESig1Re   = util::XML2TTree (xml,root_node,"mc/superk/nominal/nuesignal/one_e_ring");
 
   assert (fMCTreeNuMu1Rmu   );
   assert (fMCTreeNuMuBar1Rmu);
@@ -228,40 +206,31 @@ bool SuperkMC::Read(TXMLEngine* xml, XMLNodePointer_t root_node)
   //
 
   // Get relative error on energy scale
-  fEnergyScale1RmuRelErr = util::XML2Dbl(
-     xml,root_node,"superk/systematics/energy_scale_relative_error/one_mu_ring");
-///////////  fEnergyScale1ReSigRelErr = util::XML2Dbl(
-///////////     xml,root_node,"superk/systematics/energy_scale_relative_error/one_e_ring/sig");
-///////////  fEnergyScale1ReBkgRelErr = util::XML2Dbl(
-///////////     xml,root_node,"superk/systematics/energy_scale_relative_error/one_e_ring/bkg");
+  fEnergyScale1RmuRelErr = 
+    util::XML2Dbl(xml,root_node,
+     "detector_systematics/superk/energy_scale_relative_error/one_mu_ring");
   // Get relative error on various efficiencies
   fEff1RmuCCQEOthRelErr =
     util::XML2Dbl(xml,root_node,
-      "superk/systematics/efficiency_relative_error/one_mu_ring/ccqe/other_error");
+      "detector_systematics/superk/efficiency_relative_error/one_mu_ring/ccqe/other_error");
   fEff1RmuCCQERCCovarRelErr = 
     util::XML2TMatrixD(xml,root_node,
-      "superk/systematics/efficiency_relative_error/one_mu_ring/ccqe/rc_error");
+      "detector_systematics/superk/efficiency_relative_error/one_mu_ring/ccqe/rc_error");
   fEff1RmuCCQERCCovarE1RelErr =
     util::XML2Dbl(xml,root_node,
-      "superk/systematics/efficiency_relative_error/one_mu_ring/ccqe/rc_ereco_high_bin1");
+      "detector_systematics/superk/efficiency_relative_error/one_mu_ring/ccqe/rc_ereco_high_bin1");
   fEff1RmuCCQERCCovarE2RelErr =
     util::XML2Dbl(xml,root_node,
-      "superk/systematics/efficiency_relative_error/one_mu_ring/ccqe/rc_ereco_high_bin2");
+      "detector_systematics/superk/efficiency_relative_error/one_mu_ring/ccqe/rc_ereco_high_bin2");
   fEff1RmuCCnonQERelErr   =
     util::XML2Dbl(xml,root_node,
-      "superk/systematics/efficiency_relative_error/one_mu_ring/ccnonqe");
+      "detector_systematics/superk/efficiency_relative_error/one_mu_ring/ccnonqe");
   fEff1RmuNCRelErr        =
     util::XML2Dbl(xml,root_node,
-      "superk/systematics/efficiency_relative_error/one_mu_ring/nc");
-  fEff1RmuNuECCRelErr     =
+      "detector_systematics/superk/efficiency_relative_error/one_mu_ring/nc");
+  fEff1RmuNuECCRelErr =
     util::XML2Dbl(xml,root_node, 
-      "superk/systematics/efficiency_relative_error/one_mu_ring/nuecc");
-///////////  fEff1ReSigRelErr      =
-///////////    util::XML2Dbl(xml,root_node, 
-///////////      "superk/systematics/efficiency_relative_error/one_e_ring/sig");
-///////////  fEff1ReBkgRelErr      =
-///////////    util::XML2Dbl(xml,root_node, 
-///////////      "superk/systematics/efficiency_relative_error/one_e_ring/bkg");
+      "detector_systematics/superk/efficiency_relative_error/one_mu_ring/nuecc");
 
   if(!fEff1RmuCCQERCCovarRelErr) {
     cerr << "Exp/SK >> No input SuperK CCQE ring-counting error covariance matrix!" << endl;
@@ -270,8 +239,6 @@ bool SuperkMC::Read(TXMLEngine* xml, XMLNodePointer_t root_node)
       
 #ifdef __show_init_mesg_info__      
   cout << "Exp/SKMC >> " << "Error {EnergyScale;1Rmu}    : " << fEnergyScale1RmuRelErr  << endl;
-///////////  cout << "Exp/SKMC >> " << "Error {EnergyScale;1Re/Sig} : " << fEnergyScale1ReSigRelErr  << endl;
-///////////  cout << "Exp/SKMC >> " << "Error {EnergyScale;1Re/Bkg} : " << fEnergyScale1ReBkgRelErr  << endl;
   cout << "Exp/SKMC >> " << "Error {Efficiency;1Rmu/CCQE/Oth} : " << fEff1RmuCCQEOthRelErr << endl;
   cout << "Exp/SKMC >> " << "Error {Efficiency;1Rmu/CCQE/RC}  : " << endl;
   fEff1RmuCCQERCCovarRelErr->Print();
@@ -282,8 +249,6 @@ bool SuperkMC::Read(TXMLEngine* xml, XMLNodePointer_t root_node)
   cout << "Exp/SKMC >> " << "Error {Efficiency;1Rmu/CCnonQE} : " << fEff1RmuCCnonQERelErr  << endl;
   cout << "Exp/SKMC >> " << "Error {Efficiency;1Rmu/NC} : "      << fEff1RmuNCRelErr       << endl;
   cout << "Exp/SKMC >> " << "Error {Efficiency;1Rmu/NuECC} : "   << fEff1RmuNuECCRelErr    << endl;
-////////////  cout << "Exp/SKMC >> " << "Error {Efficiency;1Re/Sig} : "      << fEff1ReSigRelErr       << endl;
-////////////  cout << "Exp/SKMC >> " << "Error {Efficiency;1Re/Bkg} : "      << fEff1ReBkgRelErr       << endl;
 #endif
   
   // initialise physics hypothesis
@@ -312,25 +277,6 @@ bool SuperkMC::Read(TXMLEngine* xml, XMLNodePointer_t root_node)
 //________________________________________________________________________________________
 void SuperkMC::Book(void)
 {
-  //
-  // Etrue histograms needed for beam norm err calculation
-  //
-
-/////////  f1RmNuMuEt    = new TH1D("f1RmNuMuEt",       "Etrue for 1-ring mu-like numu",      200, 0, 10); /// binning expected by Kubo's code
-/////////  f1RmNuMuBarEt = new TH1D("f1RmNuMuBarEt",    "Etrue for 1-ring mu-like numubar",   200, 0, 10);
-/////////  f1RmNuEEt     = new TH1D("f1RmNuMuEEt",      "Etrue for 1-ring mu-like nue",       200, 0, 10);
-/////////  f1ReNuMuEt    = new TH1D("f1ReNuMuEt",       "Etrue for 1-ring e-like numu",       200, 0, 10); 
-/////////  f1ReNuMuBarEt = new TH1D("f1ReNuMuBarEt",    "Etrue for 1-ring e-like numubar",    200, 0, 10);
-/////////  f1ReNuEEt     = new TH1D("f1ReNuMuEEt",      "Etrue for 1-ring e-like nue",        200, 0, 10);
-/////////  f1ReNuESigEt  = new TH1D("f1ReNuMuESigEt",   "Etrue for 1-ring e-like nue signal", 200, 0, 10);
-/////////  f1RmNuMuEt     -> SetDirectory(0);
-/////////  f1RmNuMuBarEt  -> SetDirectory(0);
-/////////  f1RmNuEEt      -> SetDirectory(0);
-/////////  f1ReNuMuEt     -> SetDirectory(0);
-/////////  f1ReNuMuBarEt  -> SetDirectory(0);
-/////////  f1ReNuEEt      -> SetDirectory(0);
-/////////  f1ReNuESigEt   -> SetDirectory(0);
-
   //
   // Ereco histograms filled-in by SK spectrum prediction code
   // Histograms corresponding to different samples can have different binning
@@ -1067,62 +1013,6 @@ void SuperkMC::UpdateErecoSpectra(void)
   }//is
 }
 //________________________________________________________________________________________
-/////////void SuperkMC::UpdateEtrueSpectra(void)
-/////////{
-/////////  f1RmNuMuEt    -> Reset();
-/////////  f1RmNuMuBarEt -> Reset();
-/////////  f1RmNuEEt     -> Reset();
-/////////  f1ReNuMuEt    -> Reset();
-/////////  f1ReNuMuBarEt -> Reset();
-/////////  f1ReNuEEt     -> Reset();
-/////////  f1ReNuESigEt  -> Reset();
-/////////
-/////////  // loop over samples
-/////////  for(int is = 0; is < kns; is++) {
-/////////    SuperkSample_t s = kSKSamples[is];
-/////////    if(s == kSKsUndefined) continue;
-/////////    // loop over modes
-/////////    for(int im = 0; im < knm; im++) { 
-/////////       SuperkMode_t m = kSKReactionModes[is][im];
-/////////       if(m == kSKmUndefined) continue;
-/////////       // get Etrue spectrum
-/////////       TH1D * etrue_spectrum = 0;
-/////////       if (s == kSKsFCFV1RingMuLike){
-/////////         if      ( util::IsNuMu    (m)) { etrue_spectrum = f1RmNuMuEt;    }
-/////////         else if ( util::IsNuMuBar (m)) { etrue_spectrum = f1RmNuMuBarEt; }
-/////////         else if ( util::IsBeamNuE (m)) { etrue_spectrum = f1RmNuEEt;     }
-/////////         else {
-/////////           continue;
-/////////         }
-/////////       }
-/////////       else if (s == kSKsFCFV1RingELike){
-/////////         if      ( util::IsNuMu      (m)) { etrue_spectrum = f1ReNuMuEt;    }
-/////////         else if ( util::IsNuMuBar   (m)) { etrue_spectrum = f1ReNuMuBarEt; }
-/////////         else if ( util::IsBeamNuE   (m)) { etrue_spectrum = f1ReNuEEt;     }
-/////////         else if ( util::IsSignalNuE (m)) { etrue_spectrum = f1ReNuESigEt;  }
-/////////         else {
-/////////           continue;
-/////////         }
-/////////       }
-/////////       // get current Etrue,Ereco MC template
-/////////       TH2D * mctempl = this->Template(s,m,kSKMCtFin);
-/////////       // integrate MC template over Ereco bins and fill-in Etrue spectrum
-/////////       // NOTE: nothing enforces the Ereco spectra and the MC templates to have
-/////////       // identical Etrue binning. Add a check here.
-/////////       for(int it = 1; it <= etrue_spectrum->GetNbinsX(); it++) {
-/////////          // double Etrue = spectrum->GetBinCenter(ibin);
-/////////          double dn = 0;
-/////////          for(int ir = 1; ir <= mctempl->GetXaxis()->GetNbins(); ir++) {
-/////////              dn += mctempl->GetBinContent(ir,it);
-/////////          }//ir
-/////////          double ncurr = etrue_spectrum->GetBinContent(it);
-/////////          ncurr += dn;
-/////////          etrue_spectrum->SetBinContent(it, ncurr);
-/////////       }//it
-/////////    }//im
-/////////  }//is
-/////////}
-//________________________________________________________________________________________
 double SuperkMC::AnalyzedSamplePOT(void) const
 {
   return fPOT;  
@@ -1279,16 +1169,6 @@ void SuperkMC::TweakEfficiency1RmuNuECC(double twkdial)
   fEff1RmuNuECCTwkDial = twkdial; 
 }
 //________________________________________________________________________________________
-/////////void SuperkMC::TweakEfficiency1ReSig(double twkdial) 
-/////////{ 
-/////////  fEff1ReSigTwkDial = twkdial; 
-/////////}
-//________________________________________________________________________________________
-/////////void SuperkMC::TweakEfficiency1ReBkg(double twkdial) 
-/////////{ 
-/////////  fEff1ReBkgTwkDial = twkdial; 
-/////////}
-//________________________________________________________________________________________
 void SuperkMC::PrintSystematicVariations(void) const
 {
   cout << "Exp/SKMC >> Twk 1Rmu/1Re energy scales = "     << fEnergyScaleTwkDial      << endl;
@@ -1299,8 +1179,6 @@ void SuperkMC::PrintSystematicVariations(void) const
   cout << "Exp/SKMC >> Twk 1Rmu CCnonQE efficiency = "    << fEff1RmuCCnonQETwkDial   << endl;
   cout << "Exp/SKMC >> Twk 1Rmu NC efficiency = "         << fEff1RmuNCTwkDial        << endl;
   cout << "Exp/SKMC >> Twk 1Rmu nu_e CC efficiency = "    << fEff1RmuNuECCTwkDial     << endl;
-/////////  cout << "Exp/SKMC >> Twk 1Re sig efficiency = "         << fEff1ReSigTwkDial        << endl;
-/////////  cout << "Exp/SKMC >> Twk 1Re bkg efficiency = "         << fEff1ReBkgTwkDial        << endl;
 }
 //________________________________________________________________________________________
 double SuperkMC::EfficiencyWeight(

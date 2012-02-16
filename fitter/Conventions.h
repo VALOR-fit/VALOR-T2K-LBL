@@ -418,7 +418,7 @@ GraphicAttributeIdx_t;
 
 static const SuperkSample_t kSKSamples[kns] = {
     kSKsFCFV1RingMuLike,
-    kSKsFCFV1RingELike
+    kSKsUndefined            //<-- add kSKsFCFV1RingELike for the combined fit
 };
 
 //

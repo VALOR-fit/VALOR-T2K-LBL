@@ -294,10 +294,10 @@ bool SuperkExpectation::Read(string config_file)
 
   // Create components used for building-up the p.d.f.
   // Configure inter-dependencies.
-  fSuperkMC = new SuperkMC;
+  fBANFF    = new BANFF;
   fNuFlux   = new NuFlux; 
   fNuXSec   = new NuXSec; 
-  fBANFF    = new BANFF;
+  fSuperkMC = new SuperkMC;
   fNuFlux   -> TellMeAboutTheBANFFfit   (fBANFF);
   fNuXSec   -> TellMeAboutTheBANFFfit   (fBANFF);
   fSuperkMC -> TellMeAboutCrossSections (fNuXSec);
@@ -314,10 +314,10 @@ bool SuperkExpectation::Read(string config_file)
   XMLNodePointer_t root_node = xml->DocGetRootElement(xmldoc);
 
   // Configure each of the components 
-  if ( ! this->GetSuperkMC ()->Read(xml, root_node) ) return false;
+  if ( ! this->GetBANFF    ()->Read(xml, root_node) ) return false;
   if ( ! this->GetNuFlux   ()->Read(xml, root_node) ) return false;
   if ( ! this->GetNuXSec   ()->Read(xml, root_node) ) return false;
-  if ( ! this->GetBANFF    ()->Read(xml, root_node) ) return false;
+  if ( ! this->GetSuperkMC ()->Read(xml, root_node) ) return false;
 
   // Release memory
   xml->FreeDoc(xmldoc);

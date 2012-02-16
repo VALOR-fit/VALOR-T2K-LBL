@@ -60,7 +60,31 @@ void Opt::SetDefaults(void)
 {
   gMassHierarchyAssumed = kNmhNormal;
   gOscMixingParamChoice = kNuMixSinsq2Theta;
-  gOscAnaTypeChoice     = kAnaCombined;
+
+  bool fit_1Rmu = false;
+  bool fit_1Re  = false;
+
+  for(int is = 0; is < kns; is++) {
+    SuperkSample_t s = kSKSamples[is];
+    if(s == kSKsFCFV1RingMuLike) fit_1Rmu = true;
+    if(s == kSKsFCFV1RingELike ) fit_1Re  = true;
+  }
+
+  if(fit_1Rmu && fit_1Re) {
+    gOscAnaTypeChoice = kAnaCombined;
+  }
+  else
+  if(fit_1Rmu && !fit_1Re) {
+    gOscAnaTypeChoice = kAnaNuMuDisappOnly;
+  }
+  else
+  if(!fit_1Rmu && fit_1Re) {
+    gOscAnaTypeChoice = kAnaNuEAppOnly;
+  }
+  else {
+    gOscAnaTypeChoice = kAnaUndefined;
+  }
+
 }
 //____________________________________________________________________________
 void Opt::Print(ostream & stream) const
@@ -73,7 +97,7 @@ void Opt::Print(ostream & stream) const
   stream << " - Mixing param choice: " 
          << util::AsString(gOscMixingParamChoice) 
          << endl;
-  stream << " - Oscillation analysis  choice: " 
+  stream << " - Oscillation analysis choice: " 
          << util::AsString(gOscAnaTypeChoice) 
          << endl;
 }

@@ -50,7 +50,6 @@ NuFlux::~NuFlux()
 //________________________________________________________________________________________
 void NuFlux::Init(void)
 {
-  fSuperkFluxPOT               = 0;
   fSuperkNuMuFluxNom           = 0; 
   fSuperkNuMuBarFluxNom        = 0; 
   fSuperkNuEFluxNom            = 0; 
@@ -84,47 +83,38 @@ void NuFlux::CleanUp(void)
 //________________________________________________________________________________________
 bool NuFlux::Read(TXMLEngine* xml, XMLNodePointer_t root_node)
 {
-// Read beam inputs to the oscillation fit
+// Read flux inputs to the oscillation fit
 //
 #ifdef __show_init_mesg_info__
-  cout << "Exp/Beam >> Reading beam inputs from input XML file." << endl;
+  cout << "Exp/Flux >> Reading flux inputs from input XML file." << endl;
 #endif
 
   //
-  // Integrated POT for flux simulation
-  //
-
-  fSuperkFluxPOT = util::XML2Dbl(xml,root_node,"beam/superk_flux/pot_mc");
-#ifdef __show_init_mesg_info__
-  cout << "Exp/Beam >> POT_{SK flux simulation} = " << fSuperkFluxPOT << endl;
-#endif
-
-  //
-  // Load nominal fluxes
+  // Load tuned fluxes
   //
 
   // SuperK numu flux
-  fSuperkNuMuFluxNom = util::XML2TH1D(xml,root_node,"beam/superk_flux/nominal/numu");
-  if(!fSuperkNuMuFluxNom) {
-    cerr << "Exp/Beam >> No input SuperK numu flux histogram!" << endl;
+  fSuperkNuMuFluxTun = util::XML2TH1D(xml,root_node,"flux/superk/tuned/numu");
+  if(!fSuperkNuMuFluxTun) {
+    cerr << "Exp/Flux >> No input SuperK numu tuned flux histogram!" << endl;
     exit(1);
   }
   // SuperK numubar flux
-  fSuperkNuMuBarFluxNom = util::XML2TH1D(xml,root_node,"beam/superk_flux/nominal/numubar");
-  if(!fSuperkNuMuBarFluxNom) {
-    cerr << "Exp/Beam >> No input SuperK numubar flux histogram!" << endl;
+  fSuperkNuMuBarFluxTun = util::XML2TH1D(xml,root_node,"flux/superk/tuned/numubar");
+  if(!fSuperkNuMuBarFluxTun) {
+    cerr << "Exp/Flux >> No input SuperK numubar tuned flux histogram!" << endl;
     exit(1);
   }
   // SuperK nue flux
-  fSuperkNuEFluxNom = util::XML2TH1D(xml,root_node,"beam/superk_flux/nominal/nue");
-  if(!fSuperkNuEFluxNom) {
-    cerr << "Exp/Beam >> No input SuperK nue flux histogram!" << endl;
+  fSuperkNuEFluxTun = util::XML2TH1D(xml,root_node,"flux/superk/tuned/nue");
+  if(!fSuperkNuEFluxTun) {
+    cerr << "Exp/Flux >> No input SuperK nue tuned flux histogram!" << endl;
     exit(1);
   }
   // SuperK nuebar flux
-  fSuperkNuEBarFluxNom = util::XML2TH1D(xml,root_node,"beam/superk_flux/nominal/nuebar");
-  if(!fSuperkNuEBarFluxNom) {
-    cerr << "Exp/Beam >> No input SuperK nuebar flux histogram!" << endl;
+  fSuperkNuEBarFluxTun = util::XML2TH1D(xml,root_node,"flux/superk/tuned/nuebar");
+  if(!fSuperkNuEBarFluxTun) {
+    cerr << "Exp/Flux >> No input SuperK nuebar tuned flux histogram!" << endl;
     exit(1);
   }
 
@@ -134,30 +124,30 @@ bool NuFlux::Read(TXMLEngine* xml, XMLNodePointer_t root_node)
 
   // SuperK numu flux tuning weights
   fSuperkNuMuFluxTunWght = 
-     util::XML2TH1D(xml,root_node,"beam/superk_flux/tuning_weights/numu");
+     util::XML2TH1D(xml,root_node,"flux/superk/tuning_weights/numu");
   if(!fSuperkNuMuFluxTunWght) {
-    cerr << "Exp/Beam >> No input SuperK numu flux tuning weights!" << endl;
+    cerr << "Exp/Flux >> No input SuperK numu flux tuning weights!" << endl;
     exit(1);
   }
   // SuperK numubar flux tuning weights
   fSuperkNuMuBarFluxTunWght = 
-     util::XML2TH1D(xml,root_node,"beam/superk_flux/tuning_weights/numubar");
+     util::XML2TH1D(xml,root_node,"flux/superk/tuning_weights/numubar");
   if(!fSuperkNuMuBarFluxTunWght) {
-    cerr << "Exp/Beam >> No input SuperK numubar flux tuning weights!" << endl;
+    cerr << "Exp/Flux >> No input SuperK numubar flux tuning weights!" << endl;
     exit(1);
   }
   // SuperK nue flux tuning weights
   fSuperkNuEFluxTunWght = 
-     util::XML2TH1D(xml,root_node,"beam/superk_flux/tuning_weights/nue");
+     util::XML2TH1D(xml,root_node,"flux/superk/tuning_weights/nue");
   if(!fSuperkNuEFluxTunWght) {
-    cerr << "Exp/Beam >> No input SuperK nue flux tuning weights!" << endl;
+    cerr << "Exp/Flux >> No input SuperK nue flux tuning weights!" << endl;
     exit(1);
   }
   // SuperK nuebar flux tuning weights
   fSuperkNuEBarFluxTunWght = 
-     util::XML2TH1D(xml,root_node,"beam/superk_flux/tuning_weights/nuebar");
+     util::XML2TH1D(xml,root_node,"flux/superk/tuning_weights/nuebar");
   if(!fSuperkNuEBarFluxTunWght) {
-    cerr << "Exp/Beam >> No input SuperK nuebar flux tuning weights!" << endl;
+    cerr << "Exp/Flux >> No input SuperK nuebar flux tuning weights!" << endl;
     exit(1);
   }
 
@@ -166,51 +156,46 @@ bool NuFlux::Read(TXMLEngine* xml, XMLNodePointer_t root_node)
   // apply tuning weights
   //
 /*
-  fSuperkNuMuFluxTun    = new TH1D(*fSuperkNuMuFluxNom);  
-  fSuperkNuMuBarFluxTun = new TH1D(*fSuperkNuMuBarFluxNom); 
-  fSuperkNuEFluxTun     = new TH1D(*fSuperkNuEFluxNom);     
-  fSuperkNuEBarFluxTun  = new TH1D(*fSuperkNuEBarFluxNom);          
+  fSuperkNuMuFluxNom    = new TH1D(*fSuperkNuMuFluxTun);  
+  fSuperkNuMuBarFluxNom = new TH1D(*fSuperkNuMuBarFluxTun); 
+  fSuperkNuEFluxNom     = new TH1D(*fSuperkNuEFluxTun);     
+  fSuperkNuEBarFluxNom  = new TH1D(*fSuperkNuEBarFluxTun);          
 
-  fSuperkNuMuFluxTun    -> SetDirectory(0);
-  fSuperkNuMuBarFluxTun -> SetDirectory(0); 
-  fSuperkNuEFluxTun     -> SetDirectory(0);
-  fSuperkNuEBarFluxTun  -> SetDirectory(0);
+  fSuperkNuMuFluxNom    -> SetDirectory(0);
+  fSuperkNuMuBarFluxNom -> SetDirectory(0); 
+  fSuperkNuEFluxNom     -> SetDirectory(0);
+  fSuperkNuEBarFluxNom  -> SetDirectory(0);
 */
-  this->ApplyFluxTuneWghts(conv::kPdgNuE    );
-  this->ApplyFluxTuneWghts(conv::kPdgNuEBar );
-  this->ApplyFluxTuneWghts(conv::kPdgNuMu   );
-  this->ApplyFluxTuneWghts(conv::kPdgNuMuBar);
+  this->RecreateNominalFlux(conv::kPdgNuE    );
+  this->RecreateNominalFlux(conv::kPdgNuEBar );
+  this->RecreateNominalFlux(conv::kPdgNuMu   );
+  this->RecreateNominalFlux(conv::kPdgNuMuBar);
 
 #ifdef __show_init_mesg_info__
-  cout << "Exp/Beam >> Done reading beam inputs!" << endl;
+  cout << "Exp/Flux >> Done reading flux inputs!" << endl;
 #endif
 
   return true;
 }
 //________________________________________________________________________________________
-void NuFlux::ApplyFluxTuneWghts(int nu_pdg)
+void NuFlux::RecreateNominalFlux(int nu_pdg)
 {
   TH1D * hnom = this->SuperkFluxSpectrum(nu_pdg, false);
   TH1D * htun = this->SuperkFluxSpectrum(nu_pdg, true );
-  htun = new TH1D(*hnom);
-  htun -> SetDirectory(0);
+  hnom = new TH1D(*htun);
+  hnom -> SetDirectory(0);
   for(int i = 1; i <= htun->GetNbinsX(); i++) {
      double E = htun->GetBinCenter (i);
      double f = htun->GetBinContent(i);
      double w = this->SuperkFluxTuneWght(nu_pdg,E);
-     f *= w;
-     htun->SetBinContent(i,f);
+     if(w >=0) { f /= w; }
+     hnom->SetBinContent(i,f);
   }
 }
 //________________________________________________________________________________________
 void NuFlux::TellMeAboutTheBANFFfit(BANFF * banff)
 {
   fBANFF = banff;
-}
-//________________________________________________________________________________________
-double NuFlux::SuperkFluxPOT (void) const
-{
-  return fSuperkFluxPOT;
 }
 //________________________________________________________________________________________
 double NuFlux::SuperkFlux(int nu_pdg, double Etrue, bool tuned) const

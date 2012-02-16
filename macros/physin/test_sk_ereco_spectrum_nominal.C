@@ -47,7 +47,7 @@ void test_sk_ereco_spectrum_nominal
   }
 
   conv::SuperkSample_t s = conv::kSKsFCFV1RingMuLike;
-  if(s == kSKsUndefined) {
+  if(s == conv::kSKsUndefined) {
     cerr << "** Undefined sample!" << endl;
     return;
   }
@@ -58,28 +58,6 @@ void test_sk_ereco_spectrum_nominal
   cout << "- Plotting spectra for sample: " << util::AsString(s) << endl;
   cout << "- Physics hypothesis: " << ph << endl;
   cout << *Opt::Instance() << endl;
-
-/*
-  // Define list of contributing modes
-  const unsigned int nm = 15;
-  conv::SuperkMode_t modes [nm] = {
-     conv::kSKmNuMuCCQE, 
-     conv::kSKmNuMuCC1pi,
-     conv::kSKmNuMuCCoth_mu, 
-     conv::kSKmNuMuNC, 
-     conv::kSKmNuMuBarCCQE, 
-     conv::kSKmNuMuBarCC1pi, 
-     conv::kSKmNuMuBarCCoth_mu, 
-     conv::kSKmNuMuBarNC, 
-     conv::kSKmNuECCQE,
-     conv::kSKmNuECC1pi,
-     conv::kSKmNuECCoth_mu,
-     conv::kSKmNuENC,
-     conv::kSKmSigNuECCQE,
-     conv::kSKmSigNuECC1pi,
-     conv::kSKmSigNuECCoth
-  };
-*/
 
   // Histogram booking
   TH1D * hErecoTot = new TH1D("","",conv::kNErecoBins1Rmu,conv::kErecoBinEdges1Rmu);
@@ -97,7 +75,7 @@ void test_sk_ereco_spectrum_nominal
   int is = util::FindSampleSlot(s);
   for(int im = 0; im < conv::knm; im++) {
     conv::SuperkMode_t m = conv::kSKReactionModes[is][im];
-    if(m == kSKmUndefined) continue;
+    if(m == conv::kSKmUndefined) continue;
     cout << "- Retrieving spectrum prediction for mode: " << util::AsString(m) << endl;
     TH1D * h = skexp.CurrPredictedErecoSpectrum(s, m);  
     assert(h);
@@ -110,55 +88,6 @@ void test_sk_ereco_spectrum_nominal
   //
 
   gStyle->SetOptStat(0);
-
-/*
-  hErecoTot                             -> SetLineWidth ( 2        );
-  hErecoMode[conv::kSKmNuMuCC1pi]       -> SetFillStyle ( 3544     );
-  hErecoMode[conv::kSKmNuMuCCoth_mu]    -> SetFillStyle ( 3244     );
-  hErecoMode[conv::kSKmNuMuNC]          -> SetFillStyle ( 3006     );
-  hErecoMode[conv::kSKmNuMuBarCCQE]     -> SetFillStyle ( 3001     );
-  hErecoMode[conv::kSKmNuMuBarCC1pi]    -> SetFillStyle ( 3345     );
-  hErecoMode[conv::kSKmNuMuBarCCoth_mu] -> SetFillStyle ( 3354     );
-  hErecoMode[conv::kSKmNuMuBarNC]       -> SetFillStyle ( 3006     );
-  hErecoMode[conv::kSKmNuECCQE]         -> SetFillStyle ( 3001     );
-  hErecoMode[conv::kSKmNuECC1pi]        -> SetFillStyle ( 3345     );
-  hErecoMode[conv::kSKmNuECCoth_mu]     -> SetFillStyle ( 3354     );
-  hErecoMode[conv::kSKmNuENC]           -> SetFillStyle ( 3006     );
-  hErecoMode[conv::kSKmSigNuECCQE]      -> SetFillStyle ( 3001     );
-  hErecoMode[conv::kSKmSigNuECC1pi]     -> SetFillStyle ( 3345     );
-  hErecoMode[conv::kSKmSigNuECCoth]     -> SetFillStyle ( 3354     );
-  hErecoMode[conv::kSKmNuMuCCQE]        -> SetFillColor ( kWhite   );
-  hErecoMode[conv::kSKmNuMuCC1pi]       -> SetFillColor ( kBlack   );
-  hErecoMode[conv::kSKmNuMuCCoth_mu]    -> SetFillColor ( kBlack   );
-  hErecoMode[conv::kSKmNuMuNC]          -> SetFillColor ( kRed     );
-  hErecoMode[conv::kSKmNuMuBarCCQE]     -> SetFillColor ( kAzure-3 );
-  hErecoMode[conv::kSKmNuMuBarCC1pi]    -> SetFillColor ( kAzure-3 );
-  hErecoMode[conv::kSKmNuMuBarCCoth_mu] -> SetFillColor ( kAzure-3 );
-  hErecoMode[conv::kSKmNuMuBarNC]       -> SetFillColor ( kAzure-3 );
-  hErecoMode[conv::kSKmNuECCQE]         -> SetFillColor ( kGreen+1 );
-  hErecoMode[conv::kSKmNuECC1pi]        -> SetFillColor ( kGreen+1 );
-  hErecoMode[conv::kSKmNuECCoth_mu]     -> SetFillColor ( kGreen+1 );
-  hErecoMode[conv::kSKmNuENC]           -> SetFillColor ( kGreen+1 );
-  hErecoMode[conv::kSKmSigNuECCQE]      -> SetFillColor ( kGreen+3 );
-  hErecoMode[conv::kSKmSigNuECC1pi]     -> SetFillColor ( kGreen+3 );
-  hErecoMode[conv::kSKmSigNuECCoth]     -> SetFillColor ( kGreen+3 );
-  hErecoMode[conv::kSKmNuMuCCQE]        -> SetLineColor ( kBlack   );
-  hErecoMode[conv::kSKmNuMuCC1pi]       -> SetLineWidth ( 1        );
-  hErecoMode[conv::kSKmNuMuCCoth_mu]    -> SetLineWidth ( 1        );
-  hErecoMode[conv::kSKmNuMuNC]          -> SetLineWidth ( 1        );
-  hErecoMode[conv::kSKmNuMuCCQE]        -> SetLineWidth ( 1        );
-  hErecoMode[conv::kSKmNuMuBarCCQE]     -> SetLineWidth ( 1        );
-  hErecoMode[conv::kSKmNuMuBarCC1pi]    -> SetLineWidth ( 1        );
-  hErecoMode[conv::kSKmNuMuBarCCoth_mu] -> SetLineWidth ( 1        );
-  hErecoMode[conv::kSKmNuMuBarNC]       -> SetLineWidth ( 1        );
-  hErecoMode[conv::kSKmNuECCQE]         -> SetLineWidth ( 1        );
-  hErecoMode[conv::kSKmNuECC1pi]        -> SetLineWidth ( 1        );
-  hErecoMode[conv::kSKmNuECCoth_mu]     -> SetLineWidth ( 1        );
-  hErecoMode[conv::kSKmNuENC]           -> SetLineWidth ( 1        );
-  hErecoMode[conv::kSKmSigNuECCQE]      -> SetLineWidth ( 1        );
-  hErecoMode[conv::kSKmSigNuECC1pi]     -> SetLineWidth ( 1        );
-  hErecoMode[conv::kSKmSigNuECCoth]     -> SetLineWidth ( 1        );
-*/
 
   TCanvas * c = new TCanvas("c","",20,20,500,500);
   TLegend * legend = new TLegend(0.3, 0.7, 0.85, 0.9);
@@ -214,7 +143,7 @@ void test_sk_ereco_spectrum_nominal
          << setw(10) << setfill(' ') << setprecision(6) << hErecoTot->Integral(1,hErecoTot->FindBin(esmax)) << endl;
   }
   for(int im = 0; im < conv::knm; im++) {
-    conv::SuperkMode_t m = modes[im];
+     conv::SuperkMode_t m = conv::kSKReactionModes[is][im];
      double nmode = hErecoMode[m]->Integral();
      cout << "Contrib from mode: " 
           << setw(20) << setfill(' ') << util::AsString(m) << " : " 
