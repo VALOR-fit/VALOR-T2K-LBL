@@ -977,13 +977,13 @@ string t2kana::util::AsStringRooTex (
   out << t2kana::util::AsStringRooTex(s);
 
   if(m != kSKmUndefined) {
-    out << "(";
+    out << " (";
     out << t2kana::util::AsStringRooTex(m);
     out << ")";
   }
 
   if(append_end.size() > 0) {
-    out << append_begin;
+    out << append_end;
   }
 
   return out.str();
@@ -1009,7 +1009,7 @@ string t2kana::util::AsStringCompact (
   }
 
   if(append_end.size() > 0) {
-    out << append_begin;
+    out << append_end;
   }
 
   return out.str();

@@ -1,6 +1,6 @@
 //
 // ------------------------------------------------------------------------------------------------
-// Plot contributions from various event modes in the predicted SuperK spectrum.
+// Plot contributions from various event modes in the predicted SuperK 1Re or 1Rmu spectrum.
 //
 // Costas Andreopoulos
 // ------------------------------------------------------------------------------------------------
@@ -10,6 +10,7 @@
 
 void test_sk_ereco_spectrum_nominal
 (
+  const char * sk_sample          = "1Rmu",                         /* options: "1Rmu", "1Re" */
   const char * hypothesis         = "3f_osc",                       /* options: "2f_numu_disap", "3f_osc" */
   double       input_mixing12     = 0.86,                           /* */
   double       input_mixing13     = 0.10,                           /* */
@@ -46,7 +47,8 @@ void test_sk_ereco_spectrum_nominal
     ph.SetCurrValue(conv::kPhypDm23sq,    input_dm23sq);
   }
 
-  conv::SuperkSample_t s = conv::kSKsFCFV1RingMuLike;
+  conv::SuperkSample_t s = util::SKSampleFromString(sk_sample); // requested sample
+  int is = util::FindSampleSlot(s); // sample slot is SK spectrum arrays
   if(s == conv::kSKsUndefined) {
     cerr << "** Undefined sample!" << endl;
     return;
@@ -60,7 +62,9 @@ void test_sk_ereco_spectrum_nominal
   cout << *Opt::Instance() << endl;
 
   // Histogram booking
-  TH1D * hErecoTot = new TH1D("","",conv::kNErecoBins1Rmu,conv::kErecoBinEdges1Rmu);
+  const int nbins = util::NumErecoBins(s);
+  const double * ereco_bin_edges = util::ErecoBinEdges(s);
+  TH1D * hErecoTot = new TH1D("","",nbins,ereco_bin_edges);
   TH1D * hErecoMode[conv::knm]; //< contribution from each mode  
 
   // Create & config superk spectrum predictor
@@ -72,7 +76,6 @@ void test_sk_ereco_spectrum_nominal
   skexp.Generate(ph);
 
   // Get energy spectra
-  int is = util::FindSampleSlot(s);
   for(int im = 0; im < conv::knm; im++) {
     conv::SuperkMode_t m = conv::kSKReactionModes[is][im];
     if(m == conv::kSKmUndefined) continue;
@@ -88,47 +91,29 @@ void test_sk_ereco_spectrum_nominal
   //
 
   gStyle->SetOptStat(0);
-
   TCanvas * c = new TCanvas("c","",20,20,500,500);
-  TLegend * legend = new TLegend(0.3, 0.7, 0.85, 0.9);
+  TLegend * legend = new TLegend(0.3, 0.4, 0.9, 0.9);
   legend->SetFillColor(0);
   legend->SetBorderSize(0);
   hErecoTot->Draw();
   hErecoTot->GetXaxis()->SetTitle("E_{reco} (GeV)");
   hErecoTot->GetYaxis()->SetTitle("Number of events");
   THStack * stack = new THStack("stack","spectrum contributions");
-  stack->Add(hErecoMode[conv::kSKmSigNuECC1pi]);
-  stack->Add(hErecoMode[conv::kSKmSigNuECCoth]);
-  stack->Add(hErecoMode[conv::kSKmSigNuECCQE]);
-  stack->Add(hErecoMode[conv::kSKmNuENC]);
-  stack->Add(hErecoMode[conv::kSKmNuECC1pi]);
-  stack->Add(hErecoMode[conv::kSKmNuECCoth_mu]);
-  stack->Add(hErecoMode[conv::kSKmNuECCQE]);
-  stack->Add(hErecoMode[conv::kSKmNuMuBarNC]);
-  stack->Add(hErecoMode[conv::kSKmNuMuBarCC1pi]);
-  stack->Add(hErecoMode[conv::kSKmNuMuBarCCoth_mu]);
-  stack->Add(hErecoMode[conv::kSKmNuMuBarCCQE]);
-  stack->Add(hErecoMode[conv::kSKmNuMuNC]);
-  stack->Add(hErecoMode[conv::kSKmNuMuCCoth_mu]);
-  stack->Add(hErecoMode[conv::kSKmNuMuCC1pi]);
-  stack->Add(hErecoMode[conv::kSKmNuMuCCQE]);
+  // Get spectrum of each component mode as defined in kSKReactionModesOrderInStack array
+  // so as to enhance visibility in the stack of smaller components
+  for(int imstack = 0; imstack < conv::knm; imstack++) {
+    conv::SuperkMode_t m = conv::kSKReactionModesOrderInStack[is][imstack];	
+    if(m == conv::kSKmUndefined) continue;
+    int im = util::FindModeSlot(s,m);
+    stack->Add(hErecoMode[im]);
+  }
   stack->Draw("same");
-  legend->AddEntry(hErecoTot,                              "total",                                "L" );
-  legend->AddEntry(hErecoMode[conv::kSKmNuMuCCQE],         "#nu_{#mu} CCQE",                       "LF");
-  legend->AddEntry(hErecoMode[conv::kSKmNuMuCC1pi],        "#nu_{#mu} CC1#pi",                     "LF");
-  legend->AddEntry(hErecoMode[conv::kSKmNuMuCCoth_mu],     "#nu_{#mu} CC other",                   "LF");
-  legend->AddEntry(hErecoMode[conv::kSKmNuMuNC],           "#nu_{#mu}(#nu_{#tau}) NC",             "LF");
-  legend->AddEntry(hErecoMode[conv::kSKmNuMuBarCCQE],      "#bar{#nu_{#mu}} CCQE",                 "LF");
-  legend->AddEntry(hErecoMode[conv::kSKmNuMuBarCC1pi],     "#bar{#nu_{#mu}} CC1#pi",               "LF");
-  legend->AddEntry(hErecoMode[conv::kSKmNuMuBarCCoth_mu],  "#bar{#nu_{#mu}} CC other",             "LF");
-  legend->AddEntry(hErecoMode[conv::kSKmNuMuBarNC],        "#bar{#nu_{#mu}}(#bar{#nu_{#tau}}) NC", "LF");
-  legend->AddEntry(hErecoMode[conv::kSKmNuECCQE],          "#nu_{e} CCQE",                         "LF");
-  legend->AddEntry(hErecoMode[conv::kSKmNuECC1pi],         "#nu_{e} CC1#pi",                       "LF");
-  legend->AddEntry(hErecoMode[conv::kSKmNuECCoth_mu],      "#nu_{e} CC other",                     "LF");
-  legend->AddEntry(hErecoMode[conv::kSKmNuENC],            "#nu_{e} NC",                           "LF");
-  legend->AddEntry(hErecoMode[conv::kSKmSigNuECCQE],       "#nu_{e} (sig) CCQE",                   "LF");
-  legend->AddEntry(hErecoMode[conv::kSKmSigNuECC1pi],      "#nu_{e} (sig) CC1#pi",                 "LF");
-  legend->AddEntry(hErecoMode[conv::kSKmSigNuECCoth],      "#nu_{e} (sig) CC other",               "LF");
+  legend->AddEntry(hErecoTot, util::AsStringRooTex(s,conv::kSKmUndefined,""," total").c_str(), "L" );
+  for(int im = 0; im < conv::knm; im++) {
+    conv::SuperkMode_t m = conv::kSKReactionModes[is][im];
+    if(m == conv::kSKmUndefined) continue;
+    legend->AddEntry(hErecoMode[im], util::AsStringRooTex(s,m).c_str(), "LF");
+  }
   legend->Draw();
   c->Update();
   cout << fixed;
@@ -144,6 +129,7 @@ void test_sk_ereco_spectrum_nominal
   }
   for(int im = 0; im < conv::knm; im++) {
      conv::SuperkMode_t m = conv::kSKReactionModes[is][im];
+     if(m == conv::kSKmUndefined) continue;
      double nmode = hErecoMode[im]->Integral();
      cout << "Contrib from mode: " 
           << setw(40) << setfill(' ') << util::AsString(m) << " : " 
@@ -158,22 +144,12 @@ void test_sk_ereco_spectrum_nominal
   string oscparams = util::AsString(ph.Hypothesis(),
      input_mixing12,input_mixing13,input_mixing23,input_deltacp,input_dm12sq,input_dm23sq);
   TFile f(Form("sk_ereco_spectrum-%s.root",oscparams.c_str()),"recreate");
-  hErecoTot                             -> Write("total");
-  hErecoMode[conv::kSKmNuMuCCQE]        -> Write("numu_ccqe");
-  hErecoMode[conv::kSKmNuMuCC1pi]       -> Write("numu_cc1pi"); 
-  hErecoMode[conv::kSKmNuMuCCoth_mu]    -> Write("numu_ccoth");
-  hErecoMode[conv::kSKmNuMuNC]          -> Write("numu_and_nutau_nc");
-  hErecoMode[conv::kSKmNuMuBarCCQE]     -> Write("numubar_ccqe");
-  hErecoMode[conv::kSKmNuMuBarCC1pi]    -> Write("numubar_cc1pi");
-  hErecoMode[conv::kSKmNuMuBarCCoth_mu] -> Write("numubar_ccoth");
-  hErecoMode[conv::kSKmNuMuBarNC]       -> Write("numubar_and_nutaubar_nc");
-  hErecoMode[conv::kSKmNuECCQE]         -> Write("nue_ccqe");
-  hErecoMode[conv::kSKmNuECC1pi]        -> Write("nue_cc1pi");
-  hErecoMode[conv::kSKmNuECCoth_mu]     -> Write("nue_ccoth");
-  hErecoMode[conv::kSKmNuENC]           -> Write("nue_nc");
-  hErecoMode[conv::kSKmSigNuECCQE]      -> Write("nuesig_ccqe");
-  hErecoMode[conv::kSKmSigNuECC1pi]     -> Write("nuesig_cc1pi");
-  hErecoMode[conv::kSKmSigNuECCoth]     -> Write("nuesig_ccoth");
+  hErecoTot -> Write(util::AsStringCompact(s,conv::kSKmUndefined,"","total").c_str());
+  for(int im = 0; im < conv::knm; im++) {
+    conv::SuperkMode_t m = conv::kSKReactionModes[is][im];
+    if(m == conv::kSKmUndefined) continue;
+    hErecoMode[im] -> Write(util::AsStringCompact(s,m).c_str());
+  }
   f.Close();
 
   //
