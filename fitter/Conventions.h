@@ -210,6 +210,8 @@ typedef enum END280Mode
 } 
 ND280Mode_t; 
 
+static const int kNumOfParamsInBANFFfit = 26;  // number of BANFF fit parameters
+
 // Fit parameters
 typedef enum EPhysParamId 
 {   

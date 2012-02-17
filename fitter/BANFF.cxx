@@ -22,6 +22,7 @@
 #include <cassert>
 #include <cstdlib>
 #include <iostream>
+#include <iomanip>
 
 #include <TVectorD.h>
 #include <TVirtualPad.h>
@@ -35,6 +36,8 @@
 using std::cout;
 using std::cerr;
 using std::endl;
+using std::setw;
+using std::setprecision;
 
 using namespace t2kana;
 using namespace t2kana::conv;
@@ -77,12 +80,31 @@ bool BANFF::Read(TXMLEngine* xml, XMLNodePointer_t root_node)
   cout << "Exp/BANFF >> Reading BANFF inputs from XML configuration file." << endl;
 #endif
 
+  const int np = conv::kNumOfParamsInBANFFfit;
+
   // Get BANFF fit central values
   fBestFitValues = util::XML2TVectorD(xml,root_node,"banff/best_fit_values");
   if(!fBestFitValues) {
     cerr << "Exp/BANFF >> No BANFF best-fit parameter vector was found." << endl;
     exit(1);
   }
+
+  TVectorD & bestfit = *fBestFitValues;
+  if(bestfit.GetNoElements() != np) {
+    cerr << "Exp/BANFF >> No BANFF best-fit parameter vector has unexpected number of elements!" << endl;
+    cerr << "Exp/BANFF >> Expecting: " << np << " elements" << endl;
+    cerr << "Exp/BANFF >> Found: " << bestfit.GetNoElements() << " elements" << endl;
+    exit(1);
+  }
+
+#ifdef __show_init_mesg_info__
+  for(int ip = 0; ip < np; ip++) {
+     PhysParamId_t p = PhysParamId_t ( (int)kNuisBANFF00 + ip );
+     cout << "Exp/BANFF >> Input best-fit value for " 
+          << setw(30) << util::AsString(p) << " = " 
+          << setprecision(8) << setw(12) << bestfit[ip] << endl;
+  }
+#endif
 
   // init current values to best-fit values
   fCurrentValues = new TVectorD(*fBestFitValues);
