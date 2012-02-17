@@ -2434,76 +2434,132 @@ bool t2kana::util::UseEventToFillInTemplate(
   else
   if(m == kSKmNuECCQE || m == kSKmSigNuECCQE) 
   {
-     bool is_nue  = (nu_pdg_code == kPdgNuE || 
-                     nu_pdg_code == kPdgNuEBar);
-     use_it = is_nue && (IsCCQE(neut_reaction_mode) || IsCCQE(-neut_reaction_mode));
+     bool is_nue  = (nu_pdg_code == kPdgNuE); 
+     use_it = is_nue && IsCCQE(neut_reaction_mode);
   } 
 
   else
   if(m == kSKmNuECC1pi || m == kSKmSigNuECC1pi) 
   {
-     bool is_nue   = (nu_pdg_code == kPdgNuE || 
-                      nu_pdg_code == kPdgNuEBar);
-     use_it = is_nue && (IsCC1pi(neut_reaction_mode) || IsCC1pi(-neut_reaction_mode));
+     bool is_nue   = (nu_pdg_code == kPdgNuE); 
+     use_it = is_nue && IsCC1pi(neut_reaction_mode);
   }
 
   else
   if(m == kSKmNuECCcoh) 
   {
-     bool is_nue   = (nu_pdg_code == kPdgNuE || 
-		      nu_pdg_code == kPdgNuEBar);
-     use_it = is_nue && (IsCCcoh(neut_reaction_mode) || IsCCcoh(-neut_reaction_mode));
+     bool is_nue   = (nu_pdg_code == kPdgNuE); 
+     use_it = is_nue && IsCCcoh(neut_reaction_mode);
   } 
 
 
   else
   if(m == kSKmNuECCoth_mu || m == kSKmSigNuECCoth) 
   {
-     bool is_nue      = (nu_pdg_code == kPdgNuE || 
-			 nu_pdg_code == kPdgNuEBar);
-     use_it = is_nue && (IsCCoth_mu(neut_reaction_mode) || IsCCoth_mu(-neut_reaction_mode));
+     bool is_nue      = (nu_pdg_code == kPdgNuE); 
+     use_it = is_nue && IsCCoth_mu(neut_reaction_mode);
   }
 
   else
   if(m == kSKmNuECCoth_e) 
   {
-     bool is_nue     = (nu_pdg_code == kPdgNuE || 
-			nu_pdg_code == kPdgNuEBar);
-     use_it = is_nue && (IsCCoth_e(neut_reaction_mode) || IsCCoth_e(-neut_reaction_mode));
+     bool is_nue     = (nu_pdg_code == kPdgNuE); 
+     use_it = is_nue && IsCCoth_e(neut_reaction_mode);
   }
 
   else
   if(m == kSKmNuENC) 
   {
-     bool is_nue  = (nu_pdg_code == kPdgNuE || 
-                     nu_pdg_code == kPdgNuEBar);
-     use_it = is_nue && (IsNCall(neut_reaction_mode) || IsNCall(-neut_reaction_mode));
+     bool is_nue  = (nu_pdg_code == kPdgNuE); 
+     use_it = is_nue && IsNCall(neut_reaction_mode);
   }
 
   else
   if(m == kSKmNuENC1pi0) 
   {
-     bool is_nue    = (nu_pdg_code == kPdgNuE || 
-		       nu_pdg_code == kPdgNuEBar);
-     use_it = is_nue && (IsNC1pi0(neut_reaction_mode) || IsNC1pi0(-neut_reaction_mode));
+     bool is_nue    = (nu_pdg_code == kPdgNuE); 
+     use_it = is_nue && IsNC1pi0(neut_reaction_mode);
   }
 
   else
   if(m == kSKmNuENCcoh) 
   {
-     bool is_nue   = (nu_pdg_code == kPdgNuE || 
-                      nu_pdg_code == kPdgNuEBar);
-     use_it = is_nue && (IsNCcoh(neut_reaction_mode) || IsNCcoh(-neut_reaction_mode));
+     bool is_nue   = (nu_pdg_code == kPdgNuE); 
+     use_it = is_nue && IsNCcoh(neut_reaction_mode);
   }
 
   else
   if(m == kSKmNuENCoth_e) 
   {
-     bool is_nue     = (nu_pdg_code == kPdgNuE || 
-			nu_pdg_code == kPdgNuEBar);
-     use_it = is_nue && (IsNCoth_e(neut_reaction_mode) || IsNCoth_e(-neut_reaction_mode));
+     bool is_nue     = (nu_pdg_code == kPdgNuE); 
+     use_it = is_nue && IsNCoth_e(neut_reaction_mode);
   }
- 
+  /*
+  //NuEBar (signal and beam) templates
+  else
+  if(m == kSKmNuEBarCCQE || m == kSKmSigNuEBarCCQE) 
+  {
+     bool is_nue  = (nu_pdg_code == kPdgNuEBar); 
+     use_it = is_nue && IsCCQE(-neut_reaction_mode);
+  } 
+
+  else
+  if(m == kSKmNuEBarCC1pi || m == kSKmSigNuEBarCC1pi) 
+  {
+     bool is_nue   = (nu_pdg_code == kPdgNuEBar); 
+     use_it = is_nue && IsCC1pi(-neut_reaction_mode);
+  }
+
+  else
+  if(m == kSKmNuEBarCCcoh) 
+  {
+     bool is_nue   = (nu_pdg_code == kPdgNuEBar); 
+     use_it = is_nue && IsCCcoh(-neut_reaction_mode);
+  } 
+
+
+  else
+  if(m == kSKmNuEBarCCoth_mu || m == kSKmSigNuEBarCCoth) 
+  {
+     bool is_nue      = (nu_pdg_code == kPdgNuEBar); 
+     use_it = is_nue && IsCCoth_mu(-neut_reaction_mode);
+  }
+
+  else
+  if(m == kSKmNuEBarCCoth_e) 
+  {
+     bool is_nue     = (nu_pdg_code == kPdgNuEBar); 
+     use_it = is_nue && IsCCoth_e(-neut_reaction_mode);
+  }
+
+  else
+  if(m == kSKmNuEBarNC) 
+  {
+     bool is_nue  = (nu_pdg_code == kPdgNuEBar); 
+     use_it = is_nue && IsNCall(-neut_reaction_mode);
+  }
+
+  else
+  if(m == kSKmNuEBarNC1pi0) 
+  {
+     bool is_nue    = (nu_pdg_code == kPdgNuEBar); 
+     use_it = is_nue && IsNC1pi0(-neut_reaction_mode);
+  }
+
+  else
+  if(m == kSKmNuEBarNCcoh) 
+  {
+     bool is_nue   = (nu_pdg_code == kPdgNuEBar); 
+     use_it = is_nue && IsNCcoh(-neut_reaction_mode);
+  }
+
+  else
+  if(m == kSKmNuEBarNCoth_e) 
+  {
+     bool is_nue     = (nu_pdg_code == kPdgNuEBar); 
+     use_it = is_nue && IsNCoth_e(-neut_reaction_mode);
+  }
+  */
   return use_it;
 }
 //___________________________________________________________________________
