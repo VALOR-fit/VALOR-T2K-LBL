@@ -245,6 +245,7 @@ typedef enum EPhysParamId
    /*
     * 37 (flux and cross-section) corellated parameters used in the BANFF fit
    */   
+   /* ND flux is only used as input (its not in the output matrix)
    kNuisBANFF00,               // # 00, ND280 numu    flux,  E =  0.0 -  0.4 GeV
    kNuisBANFF01,               // # 01, ND280 numu    flux,  E =  0.4 -  0.5 GeV
    kNuisBANFF02,               // # 02, ND280 numu    flux,  E =  0.5 -  0.6 GeV
@@ -282,6 +283,34 @@ typedef enum EPhysParamId
    kNuisBANFF34,               // # 34, M_{A} RES
    kNuisBANFF35,               // # 35, CCQE  normalization, 0 - 1.5 GeV
    kNuisBANFF36,               // # 36, CCRES normalization, 0 - 2.5 GeV
+   */
+
+   kNuisBANFF00,               // # 11, SK    numu    flux,  E =  0.0 -  0.4 GeV
+   kNuisBANFF01,               // # 12, SK    numu    flux,  E =  0.4 -  0.5 GeV
+   kNuisBANFF02,               // # 13, SK    numu    flux,  E =  0.5 -  0.6 GeV
+   kNuisBANFF03,               // # 14, SK    numu    flux,  E =  0.6 -  0.7 GeV
+   kNuisBANFF04,               // # 15, SK    numu    flux,  E =  0.7 -  1.0 GeV
+   kNuisBANFF05,               // # 16, SK    numu    flux,  E =  1.0 -  1.5 GeV
+   kNuisBANFF06,               // # 17, SK    numu    flux,  E =  1.5 -  2.5 GeV
+   kNuisBANFF07,               // # 18, SK    numu    flux,  E =  2.5 -  3.5 GeV
+   kNuisBANFF08,               // # 19, SK    numu    flux,  E =  3.5 -  5.0 GeV
+   kNuisBANFF09,               // # 20, SK    numu    flux,  E =  5.0 -  7.0 GeV
+   kNuisBANFF10,               // # 21, SK    numu    flux,  E =  7.0 - 30.0 GeV
+   kNuisBANFF11,               // # 22, SK    numubar flux,  E =  0.0 -  1.5 GeV
+   kNuisBANFF12,               // # 23, SK    numubar flux,  E =  1.5 - 30.0 GeV
+   kNuisBANFF13,               // # 24, SK    nue     flux,  E =  0.0 -  0.5 GeV
+   kNuisBANFF14,               // # 25, SK    nue     flux,  E =  0.5 -  0.7 GeV
+   kNuisBANFF15,               // # 26, SK    nue     flux,  E =  0.7 -  0.8 GeV
+   kNuisBANFF16,               // # 27, SK    nue     flux,  E =  0.8 -  1.5 GeV
+   kNuisBANFF17,               // # 28, SK    nue     flux,  E =  1.5 -  2.5 GeV
+   kNuisBANFF18,               // # 29, SK    nue     flux,  E =  2.5 -  4.0 GeV
+   kNuisBANFF19,               // # 30, SK    nue     flux,  E =  4.0 - 30.0 GeV
+   kNuisBANFF20,               // # 31, SK    nuebar  flux,  E =  0.0 -  2.5 GeV
+   kNuisBANFF21,               // # 32, SK    nuebar  flux,  E =  2.5 - 30.0 GeV
+   kNuisBANFF22,               // # 33, M_{A} QE
+   kNuisBANFF23,               // # 34, M_{A} RES
+   kNuisBANFF24,               // # 35, CCQE  normalization, 0 - 1.5 GeV
+   kNuisBANFF25,               // # 36, CCRES normalization, 0 - 2.5 GeV
 
    /*
     * Cross-section parameters.
