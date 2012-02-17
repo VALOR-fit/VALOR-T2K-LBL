@@ -13,7 +13,7 @@ void test_sk_ereco_spectrum_nominal
   const char * hypothesis         = "3f_osc",                       /* options: "2f_numu_disap", "3f_osc" */
   double       input_mixing12     = 0.86,                           /* */
   double       input_mixing13     = 0.10,                           /* */
-  double       input_mixing23     = 1.00,                           /* */
+  double       input_mixing23     = 0.00,                           /* */
   double       input_deltacp      = 0.00,                           /* */
   double       input_dm12sq       = 7.58E-5,                        /* */
   double       input_dm23sq       = 2.32E-3,                        /* */
@@ -144,9 +144,9 @@ void test_sk_ereco_spectrum_nominal
   }
   for(int im = 0; im < conv::knm; im++) {
      conv::SuperkMode_t m = conv::kSKReactionModes[is][im];
-     double nmode = hErecoMode[m]->Integral();
+     double nmode = hErecoMode[im]->Integral();
      cout << "Contrib from mode: " 
-          << setw(20) << setfill(' ') << util::AsString(m) << " : " 
+          << setw(40) << setfill(' ') << util::AsString(m) << " : " 
           << setw(15) << setfill(' ') << setprecision(6) << nmode << " events ("
           << setw(10) << setfill(' ') << setprecision(6) << 100*nmode/ntot << " %)" << endl;
   }

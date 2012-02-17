@@ -243,91 +243,51 @@ typedef enum EPhysParamId
    kNuisSuperkEff1RmuNueCC,    // SK 1Rmu nue CC efficiency
 
    /*
-    * 37 (flux and cross-section) corellated parameters used in the BANFF fit
+    * 26 (flux and cross-section) corellated parameters used in the BANFF fit
    */   
-   /* ND flux is only used as input (its not in the output matrix)
-   kNuisBANFF00,               // # 00, ND280 numu    flux,  E =  0.0 -  0.4 GeV
-   kNuisBANFF01,               // # 01, ND280 numu    flux,  E =  0.4 -  0.5 GeV
-   kNuisBANFF02,               // # 02, ND280 numu    flux,  E =  0.5 -  0.6 GeV
-   kNuisBANFF03,               // # 03, ND280 numu    flux,  E =  0.6 -  0.7 GeV
-   kNuisBANFF04,               // # 04, ND280 numu    flux,  E =  0.7 -  1.0 GeV
-   kNuisBANFF05,               // # 05, ND280 numu    flux,  E =  1.0 -  1.5 GeV
-   kNuisBANFF06,               // # 06, ND280 numu    flux,  E =  1.5 -  2.5 GeV
-   kNuisBANFF07,               // # 07, ND280 numu    flux,  E =  2.5 -  3.5 GeV
-   kNuisBANFF08,               // # 08, ND280 numu    flux,  E =  3.5 -  5.0 GeV
-   kNuisBANFF09,               // # 09, ND280 numu    flux,  E =  5.0 -  7.0 GeV
-   kNuisBANFF10,               // # 10, ND280 numu    flux,  E =  7.0 - 30.0 GeV
-   kNuisBANFF11,               // # 11, SK    numu    flux,  E =  0.0 -  0.4 GeV
-   kNuisBANFF12,               // # 12, SK    numu    flux,  E =  0.4 -  0.5 GeV
-   kNuisBANFF13,               // # 13, SK    numu    flux,  E =  0.5 -  0.6 GeV
-   kNuisBANFF14,               // # 14, SK    numu    flux,  E =  0.6 -  0.7 GeV
-   kNuisBANFF15,               // # 15, SK    numu    flux,  E =  0.7 -  1.0 GeV
-   kNuisBANFF16,               // # 16, SK    numu    flux,  E =  1.0 -  1.5 GeV
-   kNuisBANFF17,               // # 17, SK    numu    flux,  E =  1.5 -  2.5 GeV
-   kNuisBANFF18,               // # 18, SK    numu    flux,  E =  2.5 -  3.5 GeV
-   kNuisBANFF19,               // # 19, SK    numu    flux,  E =  3.5 -  5.0 GeV
-   kNuisBANFF20,               // # 20, SK    numu    flux,  E =  5.0 -  7.0 GeV
-   kNuisBANFF21,               // # 21, SK    numu    flux,  E =  7.0 - 30.0 GeV
-   kNuisBANFF22,               // # 22, SK    numubar flux,  E =  0.0 -  1.5 GeV
-   kNuisBANFF23,               // # 23, SK    numubar flux,  E =  1.5 - 30.0 GeV
-   kNuisBANFF24,               // # 24, SK    nue     flux,  E =  0.0 -  0.5 GeV
-   kNuisBANFF25,               // # 25, SK    nue     flux,  E =  0.5 -  0.7 GeV
-   kNuisBANFF26,               // # 26, SK    nue     flux,  E =  0.7 -  0.8 GeV
-   kNuisBANFF27,               // # 27, SK    nue     flux,  E =  0.8 -  1.5 GeV
-   kNuisBANFF28,               // # 28, SK    nue     flux,  E =  1.5 -  2.5 GeV
-   kNuisBANFF29,               // # 29, SK    nue     flux,  E =  2.5 -  4.0 GeV
-   kNuisBANFF30,               // # 30, SK    nue     flux,  E =  4.0 - 30.0 GeV
-   kNuisBANFF31,               // # 31, SK    nuebar  flux,  E =  0.0 -  2.5 GeV
-   kNuisBANFF32,               // # 32, SK    nuebar  flux,  E =  2.5 - 30.0 GeV
-   kNuisBANFF33,               // # 33, M_{A} QE
-   kNuisBANFF34,               // # 34, M_{A} RES
-   kNuisBANFF35,               // # 35, CCQE  normalization, 0 - 1.5 GeV
-   kNuisBANFF36,               // # 36, CCRES normalization, 0 - 2.5 GeV
-   */
-
-   kNuisBANFF00,               // # 11, SK    numu    flux,  E =  0.0 -  0.4 GeV
-   kNuisBANFF01,               // # 12, SK    numu    flux,  E =  0.4 -  0.5 GeV
-   kNuisBANFF02,               // # 13, SK    numu    flux,  E =  0.5 -  0.6 GeV
-   kNuisBANFF03,               // # 14, SK    numu    flux,  E =  0.6 -  0.7 GeV
-   kNuisBANFF04,               // # 15, SK    numu    flux,  E =  0.7 -  1.0 GeV
-   kNuisBANFF05,               // # 16, SK    numu    flux,  E =  1.0 -  1.5 GeV
-   kNuisBANFF06,               // # 17, SK    numu    flux,  E =  1.5 -  2.5 GeV
-   kNuisBANFF07,               // # 18, SK    numu    flux,  E =  2.5 -  3.5 GeV
-   kNuisBANFF08,               // # 19, SK    numu    flux,  E =  3.5 -  5.0 GeV
-   kNuisBANFF09,               // # 20, SK    numu    flux,  E =  5.0 -  7.0 GeV
-   kNuisBANFF10,               // # 21, SK    numu    flux,  E =  7.0 - 30.0 GeV
-   kNuisBANFF11,               // # 22, SK    numubar flux,  E =  0.0 -  1.5 GeV
-   kNuisBANFF12,               // # 23, SK    numubar flux,  E =  1.5 - 30.0 GeV
-   kNuisBANFF13,               // # 24, SK    nue     flux,  E =  0.0 -  0.5 GeV
-   kNuisBANFF14,               // # 25, SK    nue     flux,  E =  0.5 -  0.7 GeV
-   kNuisBANFF15,               // # 26, SK    nue     flux,  E =  0.7 -  0.8 GeV
-   kNuisBANFF16,               // # 27, SK    nue     flux,  E =  0.8 -  1.5 GeV
-   kNuisBANFF17,               // # 28, SK    nue     flux,  E =  1.5 -  2.5 GeV
-   kNuisBANFF18,               // # 29, SK    nue     flux,  E =  2.5 -  4.0 GeV
-   kNuisBANFF19,               // # 30, SK    nue     flux,  E =  4.0 - 30.0 GeV
-   kNuisBANFF20,               // # 31, SK    nuebar  flux,  E =  0.0 -  2.5 GeV
-   kNuisBANFF21,               // # 32, SK    nuebar  flux,  E =  2.5 - 30.0 GeV
-   kNuisBANFF22,               // # 33, M_{A} QE
-   kNuisBANFF23,               // # 34, M_{A} RES
-   kNuisBANFF24,               // # 35, CCQE  normalization, 0 - 1.5 GeV
-   kNuisBANFF25,               // # 36, CCRES normalization, 0 - 2.5 GeV
+   kNuisBANFF00,               // # 00, SK    numu    flux,  E =  0.0 -  0.4 GeV
+   kNuisBANFF01,               // # 01, SK    numu    flux,  E =  0.4 -  0.5 GeV
+   kNuisBANFF02,               // # 02, SK    numu    flux,  E =  0.5 -  0.6 GeV
+   kNuisBANFF03,               // # 03, SK    numu    flux,  E =  0.6 -  0.7 GeV
+   kNuisBANFF04,               // # 04, SK    numu    flux,  E =  0.7 -  1.0 GeV
+   kNuisBANFF05,               // # 05, SK    numu    flux,  E =  1.0 -  1.5 GeV
+   kNuisBANFF06,               // # 06, SK    numu    flux,  E =  1.5 -  2.5 GeV
+   kNuisBANFF07,               // # 07, SK    numu    flux,  E =  2.5 -  3.5 GeV
+   kNuisBANFF08,               // # 08, SK    numu    flux,  E =  3.5 -  5.0 GeV
+   kNuisBANFF09,               // # 09, SK    numu    flux,  E =  5.0 -  7.0 GeV
+   kNuisBANFF10,               // # 10, SK    numu    flux,  E =  7.0 - 30.0 GeV
+   kNuisBANFF11,               // # 11, SK    numubar flux,  E =  0.0 -  1.5 GeV
+   kNuisBANFF12,               // # 12, SK    numubar flux,  E =  1.5 - 30.0 GeV
+   kNuisBANFF13,               // # 13, SK    nue     flux,  E =  0.0 -  0.5 GeV
+   kNuisBANFF14,               // # 14, SK    nue     flux,  E =  0.5 -  0.7 GeV
+   kNuisBANFF15,               // # 15, SK    nue     flux,  E =  0.7 -  0.8 GeV
+   kNuisBANFF16,               // # 16, SK    nue     flux,  E =  0.8 -  1.5 GeV
+   kNuisBANFF17,               // # 17, SK    nue     flux,  E =  1.5 -  2.5 GeV
+   kNuisBANFF18,               // # 18, SK    nue     flux,  E =  2.5 -  4.0 GeV
+   kNuisBANFF19,               // # 19, SK    nue     flux,  E =  4.0 - 30.0 GeV
+   kNuisBANFF20,               // # 20, SK    nuebar  flux,  E =  0.0 -  2.5 GeV
+   kNuisBANFF21,               // # 21, SK    nuebar  flux,  E =  2.5 - 30.0 GeV
+   kNuisBANFF22,               // # 22, M_{A} QE
+   kNuisBANFF23,               // # 23, M_{A} RES
+   kNuisBANFF24,               // # 24, CCQE  normalization, 0 - 1.5 GeV
+   kNuisBANFF25,               // # 25, CCRES normalization, 0 - 2.5 GeV
 
    /*
     * Cross-section parameters.
     * Note that some of these parameters were included in the BANFF fit and are correlated with the flux params.
     * The other paramers are taken to be uncorrelated and are applied to SK only.
    */   
-   kNuisXSecMAQE,              // M_{A} QE                  *** this is BANFF parameter 33 - do not include again ***
+   kNuisXSecMAQE,              // M_{A} QE                  *** this is BANFF parameter 22 - do not include again ***
    kNuisXSecFermiMom,          // Fermi momentum
    kNuisXSecBindE,             // binding energy
    kNuisXSecSpecFunc,          // spectral function on/off
-   kNuisXSecNormCCQE0,         // CCQE norm 0.0 - 1.5 GeV   *** this is BANFF parameter 35 - do not include again ***
+   kNuisXSecNormCCQE0,         // CCQE norm 0.0 - 1.5 GeV   *** this is BANFF parameter 24 - do not include again ***
    kNuisXSecNormCCQE1,         // CCQE norm 1.5 - 3.5 GeV
    kNuisXSecNormCCQE2,         // CCQE norm > 3.5 GeV
-   kNuisXSecMARES,             // M_{A} RES                 *** this is BANFF parameter 34 - do not include again ***
+   kNuisXSecMARES,             // M_{A} RES                 *** this is BANFF parameter 23 - do not include again ***
    kNuisXSecDeltaMass,         // Delta mean mass 
    kNuisXSecDeltaWidth,        // Delta width
-   kNuisXSecNormCC1pi0,        // CC1pi norm 0-2.5 GeV      *** this is BANFF parameter 36 - do not include again ***
+   kNuisXSecNormCC1pi0,        // CC1pi norm 0-2.5 GeV      *** this is BANFF parameter 25 - do not include again ***
    kNuisXSecNormCC1pi1,        // CC1pi norm > 2.5 GeV   
    kNuisXSecNormCCcoh,
    kNuisXSecNormCCoth
