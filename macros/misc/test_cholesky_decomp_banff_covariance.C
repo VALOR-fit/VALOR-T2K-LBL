@@ -1,12 +1,12 @@
 //
 // ------------------------------------------------------------------------------------------------
-// Test Cholesky decomposition of SuperK flux covariance matrix
+// Test Cholesky decomposition of BANFF covariance matrix
 //
 // Costas Andreopoulos
 // ------------------------------------------------------------------------------------------------
 //
 
-void test_cholesky_decomp_sk_flux_covariance
+void test_cholesky_decomp_banff_covariance
 (
   const char * config_file = "analysis_configuration.xml", /* analysis configuration file */
 )
@@ -21,11 +21,15 @@ void test_cholesky_decomp_sk_flux_covariance
   SuperkExpectation * skexp = new SuperkExpectation;
   skexp->Read(config);
 
-  TMatrixD & sk_flux_cov = skexp->GetNuFlux()->SuperkNuMuFluxCov();
+  TMatrixD & C = skexp->GetBANFF()->CovMatrix();
 
-  sk_flux_cov.Invert().Print();
+  cout << "BANFF covariance matrix: " << endl;
+  C.Invert().Print();
 
-  TMatrixD L = util::CholeskyDecomposition(sk_flux_cov);
+  cout << "Performing Cholesky decomposition of BANFF covariance matrix... " << endl;
+  TMatrixD L = util::CholeskyDecomposition(C);
+
+  cout << "Lower-triangular Cholesky matrix L: " << endl;
   L.Print();
 }
 
