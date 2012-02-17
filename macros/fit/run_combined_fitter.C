@@ -55,8 +55,9 @@ void run_combined_fitter
   const char * data_file_fullpath = Form("%s/%s", gSystem->Getenv("T2KOSCANA"), data_file);
 
   // Global options
-  Opt::Instance()->gOscMixingParamChoice = conv::kNuMixSinsq2Theta;
-  Opt::Instance()->gMassHierarchyAssumed = conv::kNmhNormal;
+  Opt::Instance()->gOscMixingParamChoice = conv::kNuMixSinsqTheta; //options: kNuMixSinsq2Theta, kNuMixSinsqTheta
+  Opt::Instance()->gMassHierarchyAssumed = conv::kNmhNormal;   //options: kNmhNormal, kNmhInverted 
+  Opt::Instance()->gOscAnaTypeChoice     = conv::kAnaCombined; //options: kAnaCombined, kAnaNuEAppOnly, kAnaNuMuDisappOnly
 
   // Print settings
   cout << "[Job inputs]" << endl;
