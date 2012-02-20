@@ -58,10 +58,12 @@ BANFF::~BANFF()
 //________________________________________________________________________________________
 void BANFF::Init(void)
 {
-  fBestFitValues = 0; 
-  fCurrentValues = 0; 
-  fCovMtrx       = 0; 
-  fCovMtrxChoL   = 0; 
+  fBestFitValues     = 0; 
+  fCurrentValues     = 0; 
+  fCovMtrx           = 0; 
+  fCovMtrxChoL       = 0; 
+  fIsTweaked         = false;
+  fIsFluxWghtUpdated = true;
 }
 //________________________________________________________________________________________
 void BANFF::CleanUp(void)
@@ -98,12 +100,8 @@ bool BANFF::Read(TXMLEngine* xml, XMLNodePointer_t root_node)
   }
 
 #ifdef __show_init_mesg_info__
-  for(int ip = 0; ip < np; ip++) {
-     PhysParamId_t p = PhysParamId_t ( (int)kNuisBANFF00 + ip );
-     cout << "Exp/BANFF >> Input best-fit value for " 
-          << setw(30) << util::AsString(p) << " = " 
-          << setprecision(8) << setw(12) << bestfit[ip] << endl;
-  }
+  cout << "Exp/BANFF >> Input BANFF best-fit parameters: " << endl; 
+  util::PrintCompact(bestfit,12,6,"BANFF fit params");
 #endif
 
   // init current values to best-fit values
@@ -117,7 +115,12 @@ bool BANFF::Read(TXMLEngine* xml, XMLNodePointer_t root_node)
   }
 
 #ifdef __show_init_mesg_info__
-  cout << "Exp/BANFF >> Done reading beam inputs!" << endl;
+  cout << "Exp/BANFF >> Input BANFF covariance matrix: " << endl; 
+  util::PrintCompact(*fCovMtrx,7,4);
+#endif
+  
+#ifdef __show_init_mesg_info__
+  cout << "Exp/BANFF >> Done reading BANFF inputs!" << endl;
 #endif
 
   return true;
@@ -146,6 +149,10 @@ void BANFF::Tweak(
 #ifdef __show_cholesky_mesg_debug__
   cout << "Exp/BANFF/Tweak >> Tweaking BANFF fit parameters" << endl;
 #endif
+
+  // Switch flags
+  fIsTweaked         = true;
+  fIsFluxWghtUpdated = false;
 
   //
   // If this is the first time this function is called, then run the Cholesky 
@@ -181,6 +188,7 @@ void BANFF::Tweak(
 #ifdef __show_tweak_mesg_debug__
     cout << "Exp/BANFF/Tweak >> Reset BANFF params to best-fit values." << endl;
 #endif
+     fIsTweaked = false;
      this->DoTweak(0);
      return;
   }
@@ -237,7 +245,8 @@ void BANFF::Tweak(
 //________________________________________________________________________________________
 void BANFF::PrintSystematicVariations(void) const
 {
-  cout << "BANFF/Tweak >> ... " << endl;
+  cout << "Exp/BANFF >> Current BANFF parameters: " << endl; 
+  util::PrintCompact(*fCurrentValues,12,6,"BANFF fit params");
 }
 //________________________________________________________________________________________
 int BANFF::Param2Idx(PhysParamId_t p) const

@@ -45,7 +45,7 @@ namespace util {
   // Statistics
   //
 
-  double DeltaChisquare   (t2kana::conv::ConfLevel_t cl, int nfitparams);
+  double DeltaChisquare   (conv::ConfLevel_t cl, int nfitparams);
   double ChisqGauss       (double ndata, double nmc);
   double ChisqPoisson     (double ndata, double nmc);
 
@@ -73,55 +73,56 @@ namespace util {
   // Utility functions for T2KAna enumerations
   //
 
-  int FindSampleSlot(t2kana::conv::SuperkSample_t s);
-  int FindModeSlot  (t2kana::conv::SuperkSample_t s, t2kana::conv::SuperkMode_t m);
+  int FindSampleSlot(conv::SuperkSample_t s);
+  int FindModeSlot  (conv::SuperkSample_t s, conv::SuperkMode_t m);
 
-  t2kana::conv::FluxNormErrIdx_t FindFluxNormErrIdx (t2kana::conv::SuperkSample_t s);
-  t2kana::conv::FluxNormErrIdx_t FindFluxNormErrIdx (t2kana::conv::SuperkSample_t s, t2kana::conv::SuperkMode_t m);
+  void SetDefaultSKSpectrumStyle (conv::SuperkSample_t s, conv::SuperkMode_t m, TH1D * histogram);
 
-  void SetDefaultSKSpectrumStyle (t2kana::conv::SuperkSample_t s, t2kana::conv::SuperkMode_t m, TH1D * histogram);
+  string AsString        (conv::PhysHypothesis_t hyp, double mix12, double mix13, double mix23, double deltacp, double dm12sq, double dm23sq);
+  string AsString        (conv::OscAnaType_t      a);
+  string AsString        (conv::NuMassHierarchy_t m);
+  string AsString        (conv::NuOscMixParam_t   p);
+  string AsString        (conv::PhysHypothesis_t  h);
+  string AsString        (conv::PhysParamId_t     p);
+  string AsString        (conv::SuperkSample_t    s);
+  string AsString        (conv::SuperkMode_t      m);
+  string AsString        (conv::OscChannelId_t    o);
+  string AsString        (conv::FluxNormErrIdx_t  i);
+  string AsStringTex     (conv::SuperkSample_t    s);
+  string AsStringTex     (conv::SuperkMode_t      m);
+  string AsStringRooTex  (conv::SuperkSample_t s, conv::SuperkMode_t m, string append_begin="", string append_end="");
+  string AsStringRooTex  (conv::SuperkSample_t    s);
+  string AsStringRooTex  (conv::SuperkMode_t      m);
+  string AsStringCompact (conv::SuperkSample_t s, conv::SuperkMode_t m, string append_begin="", string append_end="");
+  string AsStringCompact (conv::SuperkSample_t s);
+  string AsStringCompact (conv::SuperkMode_t   m);
 
-  string AsString        (t2kana::conv::PhysHypothesis_t hyp, double mix12, double mix13, double mix23, double deltacp, double dm12sq, double dm23sq);
-  string AsString        (t2kana::conv::OscAnaType_t      a);
-  string AsString        (t2kana::conv::NuMassHierarchy_t m);
-  string AsString        (t2kana::conv::NuOscMixParam_t   p);
-  string AsString        (t2kana::conv::PhysHypothesis_t  h);
-  string AsString        (t2kana::conv::PhysParamId_t     p);
-  string AsString        (t2kana::conv::SuperkSample_t    s);
-  string AsString        (t2kana::conv::SuperkMode_t      m);
-  string AsString        (t2kana::conv::OscChannelId_t    o);
-  string AsString        (t2kana::conv::FluxNormErrIdx_t  i);
-  string AsStringTex     (t2kana::conv::SuperkSample_t    s);
-  string AsStringTex     (t2kana::conv::SuperkMode_t      m);
-  string AsStringRooTex  (t2kana::conv::SuperkSample_t s, t2kana::conv::SuperkMode_t m, string append_begin="", string append_end="");
-  string AsStringRooTex  (t2kana::conv::SuperkSample_t    s);
-  string AsStringRooTex  (t2kana::conv::SuperkMode_t      m);
-  string AsStringCompact (t2kana::conv::SuperkSample_t s, t2kana::conv::SuperkMode_t m, string append_begin="", string append_end="");
-  string AsStringCompact (t2kana::conv::SuperkSample_t s);
-  string AsStringCompact (t2kana::conv::SuperkMode_t   m);
+  conv::PhysHypothesis_t   PhysHypFromString    (string h);
+  conv::SuperkSample_t     SKSampleFromString   (string h);
+  conv::OscAnaType_t       OscAnaFromString     (string h);
+  conv::NuMassHierarchy_t  HierarchyFromString  (string h);
+  conv::NuOscMixParam_t    MixingTypeFromString (string h);
 
-  t2kana::conv::PhysHypothesis_t   PhysHypFromString    (string h);
-  t2kana::conv::SuperkSample_t     SKSampleFromString   (string h);
-  t2kana::conv::OscAnaType_t       OscAnaFromString     (string h);
-  t2kana::conv::NuMassHierarchy_t  HierarchyFromString  (string h);
-  t2kana::conv::NuOscMixParam_t    MixingTypeFromString (string h);
+  conv::OscChannelId_t GetOscChannel(int nu_start, int nu_end);
 
-  t2kana::conv::OscChannelId_t GetOscChannel(int nu_start, int nu_end);
+  int  SuperkMode2FluxNuPdg(conv::SuperkMode_t m);
 
-  int  SuperkMode2FluxNuPdg(t2kana::conv::SuperkMode_t m);
-
-  bool IsNuMu         (t2kana::conv::SuperkMode_t  m);
-  bool IsNuMuBar      (t2kana::conv::SuperkMode_t  m);
-  bool IsBeamNuE      (t2kana::conv::SuperkMode_t  m);
-  bool IsSignalNuE    (t2kana::conv::SuperkMode_t  m);
-  bool IsCC           (t2kana::conv::SuperkMode_t  m);
-  bool IsNC           (t2kana::conv::SuperkMode_t  m);
-  bool IsSystematic   (t2kana::conv::PhysParamId_t p);
+  bool IsNuMu         (conv::SuperkMode_t  m);
+  bool IsNuMuBar      (conv::SuperkMode_t  m);
+  bool IsBeamNuE      (conv::SuperkMode_t  m);
+  bool IsSignalNuE    (conv::SuperkMode_t  m);
+  bool IsCC           (conv::SuperkMode_t  m);
+  bool IsNC           (conv::SuperkMode_t  m);
+  bool IsSystematic   (conv::PhysParamId_t p);
   bool IsNeutrino     (int pdg_code);
   bool IsAntiNeutrino (int pdg_code);
 
-  const int      NumErecoBins  (t2kana::conv::SuperkSample_t s);
-  const double * ErecoBinEdges (t2kana::conv::SuperkSample_t s);
+  const int      NumErecoBins  (conv::SuperkSample_t s);
+  const double * ErecoBinEdges (conv::SuperkSample_t s);
+
+  bool IsBANFFfitSuperkFluxParam         (conv::PhysParamId_t p);
+  void BANFFfitSuperkFluxParamEtrueRange (conv::PhysParamId_t p, double & Emin, double & Emax);
+  int  BANFFfitSuperkFluxParam2NuPdg     (conv::PhysParamId_t p);
 
   //
   // String utilities
@@ -152,7 +153,7 @@ namespace util {
   // Reaction mode utilities etc
   //
 
-  bool UseEventToFillInTemplate(t2kana::conv::SuperkMode_t m, int nu_pdg_code, int neut_reaction_mode);
+  bool UseEventToFillInTemplate(conv::SuperkMode_t m, int nu_pdg_code, int neut_reaction_mode);
 
   bool IsCCQE     (int neut_reaction_mode); 
   bool IsCC1pi    (int neut_reaction_mode);
@@ -170,11 +171,11 @@ namespace util {
   //
 
   double NuMuSurvProbOsc2Flavour (double mixing23, double dm23sq, double Et);
-  double NuMuSurvProbOsc2Flavour (double mixing23, double dm23sq, double Et, t2kana::conv::SuperkMode_t m);
+  double NuMuSurvProbOsc2Flavour (double mixing23, double dm23sq, double Et, conv::SuperkMode_t m);
   double NuMuSurvProbDecay       (double sinsq2thetadecay, double alpha, double Et);
-  double NuMuSurvProbDecay       (double sinsq2thetadecay, double alpha, double Et, t2kana::conv::SuperkMode_t m);
+  double NuMuSurvProbDecay       (double sinsq2thetadecay, double alpha, double Et, conv::SuperkMode_t m);
   double NuMuSurvProbDecoh       (double sinsq2thetadecoh, double musq, double Et);
-  double NuMuSurvProbDecoh       (double sinsq2thetadecoh, double musq, double Et, t2kana::conv::SuperkMode_t m);
+  double NuMuSurvProbDecoh       (double sinsq2thetadecoh, double musq, double Et, conv::SuperkMode_t m);
 
   //
   // ROOT style & formatting
@@ -199,6 +200,9 @@ namespace util {
   //
 
   int Sign(double x);
+  
+  void PrintCompact(const TVectorD & v, int w=15, int prec=9, Option_t * opt="");
+  void PrintCompact(const TMatrixD & m, int w=15, int prec=9);
 
 } // util
 } // t2kana

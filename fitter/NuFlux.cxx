@@ -14,11 +14,12 @@
 //________________________________________________________________________________________
 
 #define __show_init_mesg_info__  
-#define __show_init_mesg_debug__   
+#define __show_init_mesg_debug_twk__   
 
 #include <cassert>
 #include <cstdlib>
 #include <iostream>
+#include <iomanip>
 
 #include <TVirtualPad.h>
 #include <TLegend.h>
@@ -30,6 +31,7 @@
 
 using std::cout;
 using std::cerr;
+using std::setw;
 using std::endl;
 
 using namespace t2kana;
@@ -58,6 +60,10 @@ void NuFlux::Init(void)
   fSuperkNuMuBarFluxTun        = 0; 
   fSuperkNuEFluxTun            = 0; 
   fSuperkNuEBarFluxTun         = 0; 
+  fSuperkNuMuFluxTwk           = 0; 
+  fSuperkNuMuBarFluxTwk        = 0; 
+  fSuperkNuEFluxTwk            = 0; 
+  fSuperkNuEBarFluxTwk         = 0; 
   fSuperkNuMuFluxTunWght       = 0;
   fSuperkNuMuBarFluxTunWght    = 0;
   fSuperkNuEFluxTunWght        = 0;
@@ -75,6 +81,10 @@ void NuFlux::CleanUp(void)
   if ( fSuperkNuMuBarFluxTun       ) delete fSuperkNuMuBarFluxTun;
   if ( fSuperkNuEFluxTun           ) delete fSuperkNuEFluxTun;
   if ( fSuperkNuEBarFluxTun        ) delete fSuperkNuEBarFluxTun;
+  if ( fSuperkNuMuFluxTwk          ) delete fSuperkNuMuFluxTwk;
+  if ( fSuperkNuMuBarFluxTwk       ) delete fSuperkNuMuBarFluxTwk;
+  if ( fSuperkNuEFluxTwk           ) delete fSuperkNuEFluxTwk;
+  if ( fSuperkNuEBarFluxTwk        ) delete fSuperkNuEBarFluxTwk;
   if ( fSuperkNuMuFluxTunWght      ) delete fSuperkNuMuFluxTunWght;
   if ( fSuperkNuMuBarFluxTunWght   ) delete fSuperkNuMuBarFluxTunWght;
   if ( fSuperkNuEFluxTunWght       ) delete fSuperkNuEFluxTunWght;
@@ -151,25 +161,13 @@ bool NuFlux::Read(TXMLEngine* xml, XMLNodePointer_t root_node)
     exit(1);
   }
 
-  //
-  // Create / init (to nominal) tuned flux histograms & then
-  // apply tuning weights
-  //
-/*
-  fSuperkNuMuFluxNom    = new TH1D(*fSuperkNuMuFluxTun);  
-  fSuperkNuMuBarFluxNom = new TH1D(*fSuperkNuMuBarFluxTun); 
-  fSuperkNuEFluxNom     = new TH1D(*fSuperkNuEFluxTun);     
-  fSuperkNuEBarFluxNom  = new TH1D(*fSuperkNuEBarFluxTun);          
 
-  fSuperkNuMuFluxNom    -> SetDirectory(0);
-  fSuperkNuMuBarFluxNom -> SetDirectory(0); 
-  fSuperkNuEFluxNom     -> SetDirectory(0);
-  fSuperkNuEBarFluxNom  -> SetDirectory(0);
-*/
-  this->RecreateNominalFlux(conv::kPdgNuE    );
-  this->RecreateNominalFlux(conv::kPdgNuEBar );
-  this->RecreateNominalFlux(conv::kPdgNuMu   );
-  this->RecreateNominalFlux(conv::kPdgNuMuBar);
+  //
+  // Book and initialize other auxiliary histograms (nominal flux, tweaked flux)
+  //
+
+  this->BookAndInitNomFlux ();
+  this->BookAndInitTwkFlux ();
 
 #ifdef __show_init_mesg_info__
   cout << "Exp/Flux >> Done reading flux inputs!" << endl;
@@ -178,19 +176,101 @@ bool NuFlux::Read(TXMLEngine* xml, XMLNodePointer_t root_node)
   return true;
 }
 //________________________________________________________________________________________
-void NuFlux::RecreateNominalFlux(int nu_pdg)
+void NuFlux::BookAndInitNomFlux(void)
 {
-  TH1D * hnom = this->SuperkFluxSpectrum(nu_pdg, false);
-  TH1D * htun = this->SuperkFluxSpectrum(nu_pdg, true );
-  hnom = new TH1D(*htun);
-  hnom -> SetDirectory(0);
-  for(int i = 1; i <= htun->GetNbinsX(); i++) {
-     double E = htun->GetBinCenter (i);
-     double f = htun->GetBinContent(i);
-     double w = this->SuperkFluxTuneWght(nu_pdg,E);
-     if(w >=0) { f /= w; }
-     hnom->SetBinContent(i,f);
+// Create nominal flux histograms and initialize them using the tuned flux.
+// Then de-weight with flux tuning weights to recreate the nominal flux.
+
+  const int n_nu = 4;
+  int nu_pdg[n_nu] = { conv::kPdgNuE, conv::kPdgNuMu, conv::kPdgNuEBar, conv::kPdgNuMuBar };
+  for(int inu = 0; inu < n_nu; inu++) {
+     TH1D * hnom = this->SuperkFluxSpectrum(nu_pdg[inu], false, false);
+     TH1D * htun = this->SuperkFluxSpectrum(nu_pdg[inu], true,  false);
+     hnom = new TH1D(*htun);
+     hnom -> SetDirectory(0);
+     for(int ie = 1; ie <= htun->GetNbinsX(); ie++) {
+        double E = htun->GetBinCenter (ie);
+        double f = htun->GetBinContent(ie);
+        double w = this->SuperkFluxTuneWght(nu_pdg[inu],E);
+        if(w >=0) { f /= w; }
+        hnom->SetBinContent(ie,f);
+     }//ie
+  }//inu
+}
+//________________________________________________________________________________________
+void NuFlux::BookAndInitTwkFlux(void)
+{
+// Create tweaked flux histograms and initialize them using the tuned flux.
+
+  const int n_nu = 4;
+  int nu_pdg[n_nu] = { conv::kPdgNuE, conv::kPdgNuMu, conv::kPdgNuEBar, conv::kPdgNuMuBar };
+  for(int inu = 0; inu < n_nu; inu++) {
+     TH1D * htuntwk = this->SuperkFluxSpectrum(nu_pdg[inu], true, true );
+     TH1D * htun    = this->SuperkFluxSpectrum(nu_pdg[inu], true, false);
+     htuntwk = new TH1D(*htun);
+     htuntwk -> SetDirectory(0);
   }
+}
+//________________________________________________________________________________________
+void NuFlux::CalcTwkFlux(void) const
+{
+  const int np = conv::kNumOfParamsInBANFFfit;
+
+  for(int ip = 0; ip < np; ip++) {
+     conv::PhysParamId_t p = conv::PhysParamId_t ( (int)conv::kNuisBANFF00 + ip );
+
+     // flux param?
+     bool is_sk_flux_param = util::IsBANFFfitSuperkFluxParam(p);
+     if(!is_sk_flux_param) {
+#ifdef __show_init_mesg_debug_twk__
+        cout << "Exp/Flux >> Calculating tweak flux as a result of tweaking BANFF param: "
+             << setw(35) << util::AsString(p) << endl;
+#endif
+        // Get current & best-fit values of current BANFF Superk flux param
+        double banff_current = fBANFF->CurrentValue(p);
+        double banff_bestfit = fBANFF->BestFitValue(p);       
+
+        // BANFF param -> neutrino PDG code
+        int nu_pdg = util::BANFFfitSuperkFluxParam2NuPdg(p);
+
+        // BANFF param -> true energy range [variable size bin]
+        double Emin = -1;
+        double Emax = -1;
+        util::BANFFfitSuperkFluxParamEtrueRange(p,Emin,Emax);
+
+#ifdef __show_init_mesg_debug_twk__
+        cout << "Exp/Flux >> BANFF parameter tweaks Superk flux for neutrino PDG = " 
+             << nu_pdg << " in the true energy range = [" << Emin << ", " << Emax << "]"
+             << endl;
+#endif
+        // Access tweaked & untweaked flux histograms
+        TH1D * flux_twk = this->SuperkFluxSpectrum(nu_pdg,true,true );
+        TH1D * flux     = this->SuperkFluxSpectrum(nu_pdg,true,false);
+
+        //
+        //...
+        //
+/*
+        // Loop over fixed size (50 MeV) bins contained in the variable size bin [Emin,Emax]
+        int fixed_bin_min = ...
+        int fixed_bin_max = ...
+        // Flux in variable size bin (with/without twk)
+        double flux_var_twk = ...
+        double flux_var     = ...
+        for ( bin = fixed_bin_min; bin <= fixed_bin_max; bin++ ) {
+           // Flux (without twk) in current fixed size bin 
+           double flux_fix = ...
+           // Fraction of flux of the variable size bin which is contained in
+           // the current fixed size bin 
+           double frac_flux = flux_fix / flux_var;
+           // Tweaked flux in current fixed size bin
+           double flux_fix_twk = flux_fix + frac_flux * (flux_var_twk - flux_var);
+          
+        }
+*/
+
+     }//sk flux param?
+  }//ip loop  
 }
 //________________________________________________________________________________________
 void NuFlux::TellMeAboutTheBANFFfit(BANFF * banff)
@@ -198,14 +278,18 @@ void NuFlux::TellMeAboutTheBANFFfit(BANFF * banff)
   fBANFF = banff;
 }
 //________________________________________________________________________________________
-double NuFlux::SuperkFlux(int nu_pdg, double Etrue, bool tuned) const
+double NuFlux::SuperkFlux(int nu_pdg, double Etrue, bool tuned, bool tweaked) const
 {
-  TH1D * flux_spectrum = this->SuperkFluxSpectrum(nu_pdg,tuned);
-  assert(flux_spectrum);
+  // update tweaked flux (if not already) as a result of the latest BANFF param twk
+  if( ! fBANFF->IsFluxWghtUpdated() ) {
+    this->CalcTwkFlux();
+    fBANFF->MarkFluxWghtUpdated();
+  }
 
+  TH1D * flux_spectrum = this->SuperkFluxSpectrum(nu_pdg,tuned,tweaked);
+  assert(flux_spectrum);
   int bin = flux_spectrum->FindBin(Etrue);
   double flux = flux_spectrum->GetBinContent(bin);
-
   return flux;
 }
 //________________________________________________________________________________________
@@ -226,30 +310,62 @@ double NuFlux::SuperkFluxTuneWght(int nu_pdg, double Etrue) const
 //________________________________________________________________________________________
 double NuFlux::SuperkFluxWght(int nu_pdg, double Etrue) const
 {
-  return 1.;
+  double flux_twk = this->SuperkFlux(nu_pdg, Etrue, true, true );
+  double flux     = this->SuperkFlux(nu_pdg, Etrue, true, false);
+
+  double wght = 1.0;
+  if(flux >= 0) {
+    wght = flux_twk / flux;
+  }
+  return wght;
 }
 //________________________________________________________________________________________
-TH1D * NuFlux::SuperkFluxSpectrum(int nu_pdg, bool tuned) const
+TH1D * NuFlux::SuperkFluxSpectrum(int nu_pdg, bool tuned, bool tweaked) const
 {
   if(tuned) 
   {
-     if      ( nu_pdg == conv::kPdgNuE     ) return fSuperkNuEFluxTun;
-     else if ( nu_pdg == conv::kPdgNuEBar  ) return fSuperkNuEBarFluxTun;
-     else if ( nu_pdg == conv::kPdgNuMu    ) return fSuperkNuMuFluxTun;
-     else if ( nu_pdg == conv::kPdgNuMuBar ) return fSuperkNuMuBarFluxTun;
-     else
-     {
-       exit(1);
+     if(tweaked) {
+        if      ( nu_pdg == conv::kPdgNuE     ) return fSuperkNuEFluxTwk;
+        else if ( nu_pdg == conv::kPdgNuEBar  ) return fSuperkNuEBarFluxTwk;
+        else if ( nu_pdg == conv::kPdgNuMu    ) return fSuperkNuMuFluxTwk;
+        else if ( nu_pdg == conv::kPdgNuMuBar ) return fSuperkNuMuBarFluxTwk;
+        else
+        {
+           cerr << "Exp/Flux >> No tweaked flux for particle with PDG = " 
+                << nu_pdg << endl;
+           exit(1);
+        }
+     }//tweaked?
+     else {
+        if      ( nu_pdg == conv::kPdgNuE     ) return fSuperkNuEFluxTun;
+        else if ( nu_pdg == conv::kPdgNuEBar  ) return fSuperkNuEBarFluxTun;
+        else if ( nu_pdg == conv::kPdgNuMu    ) return fSuperkNuMuFluxTun;
+        else if ( nu_pdg == conv::kPdgNuMuBar ) return fSuperkNuMuBarFluxTun;
+        else
+        {
+           cerr << "Exp/Flux >> No tuned flux for particle with PDG = " 
+                << nu_pdg << endl;
+           exit(1);
+        }
      }
-  }
+  }//tuned?
+
   else
   {
+     if(tweaked) {
+       cerr << "Exp/Flux >> BANFF tweaks are applied on the tuned flux, not the nominal!" 
+            << endl;
+       exit(1);
+     }
+
      if      ( nu_pdg == conv::kPdgNuE     ) return fSuperkNuEFluxNom;
      else if ( nu_pdg == conv::kPdgNuEBar  ) return fSuperkNuEBarFluxNom;
      else if ( nu_pdg == conv::kPdgNuMu    ) return fSuperkNuMuFluxNom;
      else if ( nu_pdg == conv::kPdgNuMuBar ) return fSuperkNuMuBarFluxNom;
      else
      {
+       cerr << "Exp/Flux >> No nominal flux for particle with PDG = " 
+            << nu_pdg << endl;
        exit(1);
      }
   }

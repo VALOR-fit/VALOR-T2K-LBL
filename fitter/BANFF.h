@@ -48,6 +48,11 @@ public:
   // Systematic variations 
   void Tweak (bool force_input_twkv = false, TVectorD * input_twkv = 0, bool correlated = true);
 
+  // Get & tweak flags	
+  bool IsTweaked           (void) const { return fIsTweaked;         }
+  bool IsFluxWghtUpdated   (void) const { return fIsFluxWghtUpdated; }
+  void MarkFluxWghtUpdated (void)       { fIsFluxWghtUpdated = true; }
+
   // Print
   void PrintSystematicVariations (void) const;
    
@@ -61,10 +66,12 @@ private:
   int  Param2Idx (conv::PhysParamId_t p) const; ///< convert BANFF PhysParamId_t to a covariance matrix or vector index
   void DoTweak   (TVectorD * input_twkv); ///< apply input tweaking dials
 
-  TVectorD *  fBestFitValues;  ///< BANFF best fit values
-  TVectorD *  fCurrentValues;  ///< Current values of BANFF parameters
-  TMatrixD *  fCovMtrx;        ///< BANFF covariance matrix
-  TMatrixD *  fCovMtrxChoL;    ///< Triangular matrix obtained from Cholesky decomposition of BANFF covariance matrix
+  TVectorD *  fBestFitValues;     ///< BANFF best fit values
+  TVectorD *  fCurrentValues;     ///< Current values of BANFF parameters
+  TMatrixD *  fCovMtrx;           ///< BANFF covariance matrix
+  TMatrixD *  fCovMtrxChoL;       ///< Triangular matrix obtained from Cholesky decomposition of BANFF covariance matrix
+  bool        fIsTweaked;         ///< Were BANF params tweaked?
+  bool        fIsFluxWghtUpdated; ///< Were Flux weights updated as a result of the last BANFF param variation
       
 ClassDef(BANFF, 1)
 };

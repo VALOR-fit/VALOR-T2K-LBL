@@ -47,6 +47,7 @@ using std::cerr;
 using std::endl;
 using std::setw;
 using std::setfill;
+using std::fixed;
 using std::setprecision;
 using std::ofstream;
 using std::ostringstream;
@@ -425,35 +426,6 @@ int t2kana::util::FindModeSlot(
   return -1;
 }
 //____________________________________________________________________________
-FluxNormErrIdx_t t2kana::util::FindFluxNormErrIdx (
-  t2kana::conv::SuperkSample_t s)
-{
-  if(s == kSKsFCFV1RingMuLike) {
-     return conv::kFlxn1Rmu;
-  }
-  else
-  if(s == kSKsFCFV1RingELike) {
-     return conv::kFlxn1ReTot;
-  }
-  return conv::kFlxnUndefined;
-}
-//____________________________________________________________________________
-FluxNormErrIdx_t t2kana::util::FindFluxNormErrIdx (
-  t2kana::conv::SuperkSample_t s, t2kana::conv::SuperkMode_t m)
-{
-  if(s == kSKsFCFV1RingMuLike) {
-     if(m == kSKmUndefined) return conv::kFlxnUndefined;
-     return conv::kFlxn1Rmu;
-  }
-  else
-  if(s == kSKsFCFV1RingELike) {
-     if (m == kSKmUndefined   ) return conv::kFlxnUndefined;
-     if (util::IsSignalNuE(m) ) return conv::kFlxn1ReSig;
-     return conv::kFlxn1ReBkg;
-  }
-  return conv::kFlxnUndefined;
-}
-//____________________________________________________________________________
 void t2kana::util::SetDefaultSKSpectrumStyle (
    t2kana::conv::SuperkSample_t s, t2kana::conv::SuperkMode_t m, TH1D * hist)
 {
@@ -731,32 +703,32 @@ string t2kana::util::AsString(PhysParamId_t p)
     case ( kNuisSuperkEff1RmuNC       ) : return "f_sk_eff_1Rmu_nc";               break;
     case ( kNuisSuperkEff1RmuNueCC    ) : return "f_sk_eff_1Rmu_nuecc";            break;
 
-    case ( kNuisBANFF00               ) : return "f_banff11_sk_numu_0.0_0.4";      break;
-    case ( kNuisBANFF01               ) : return "f_banff12_sk_numu_0.4_0.5";      break;
-    case ( kNuisBANFF02               ) : return "f_banff13_sk_numu_0.5_0.6";      break;
-    case ( kNuisBANFF03               ) : return "f_banff14_sk_numu_0.6_0.7";      break;
-    case ( kNuisBANFF04               ) : return "f_banff15_sk_numu_0.7_1.0";      break;
-    case ( kNuisBANFF05               ) : return "f_banff16_sk_numu_1.0_1.5";      break;
-    case ( kNuisBANFF06               ) : return "f_banff17_sk_numu_1.5_2.5";      break;
-    case ( kNuisBANFF07               ) : return "f_banff18_sk_numu_2.5_3.5";      break;
-    case ( kNuisBANFF08               ) : return "f_banff19_sk_numu_3.5_5.0";      break;
-    case ( kNuisBANFF09               ) : return "f_banff20_sk_numu_5.0_7.0";      break;
-    case ( kNuisBANFF10               ) : return "f_banff21_sk_numu_7.0_30.0";     break;
-    case ( kNuisBANFF11               ) : return "f_banff22_sk_numubar_0.0_1.5";   break;
-    case ( kNuisBANFF12               ) : return "f_banff23_sk_numubar_1.5_30.0";  break;
-    case ( kNuisBANFF13               ) : return "f_banff24_sk_nue_0.0_0.5";       break;
-    case ( kNuisBANFF14               ) : return "f_banff25_sk_nue_0.5_0.7";       break;
-    case ( kNuisBANFF15               ) : return "f_banff26_sk_nue_0.7_0.8";       break;
-    case ( kNuisBANFF16               ) : return "f_banff27_sk_nue_0.8_1.5";       break;
-    case ( kNuisBANFF17               ) : return "f_banff28_sk_nue_1.5_2.5";       break;
-    case ( kNuisBANFF18               ) : return "f_banff29_sk_nue_2.5_4.0";       break;
-    case ( kNuisBANFF19               ) : return "f_banff30_sk_nue_4.0_30.0";      break;
-    case ( kNuisBANFF20               ) : return "f_banff31_sk_nuebar_0.0_2.5";    break;
-    case ( kNuisBANFF21               ) : return "f_banff32_sk_nuebar_2.5_30.0";   break;
-    case ( kNuisBANFF22               ) : return "f_banff33_ma_qe";                break;
-    case ( kNuisBANFF23               ) : return "f_banff34_ma_res";               break;
-    case ( kNuisBANFF24               ) : return "f_banff35_norm_ccqe_0_1.5";      break;
-    case ( kNuisBANFF25               ) : return "f_banff36_norm_ccres_0_2.5";     break;
+    case ( kNuisBANFF00               ) : return "f_banff00_sk_numu_0.0_0.4";      break;
+    case ( kNuisBANFF01               ) : return "f_banff01_sk_numu_0.4_0.5";      break;
+    case ( kNuisBANFF02               ) : return "f_banff02_sk_numu_0.5_0.6";      break;
+    case ( kNuisBANFF03               ) : return "f_banff03_sk_numu_0.6_0.7";      break;
+    case ( kNuisBANFF04               ) : return "f_banff04_sk_numu_0.7_1.0";      break;
+    case ( kNuisBANFF05               ) : return "f_banff05_sk_numu_1.0_1.5";      break;
+    case ( kNuisBANFF06               ) : return "f_banff06_sk_numu_1.5_2.5";      break;
+    case ( kNuisBANFF07               ) : return "f_banff07_sk_numu_2.5_3.5";      break;
+    case ( kNuisBANFF08               ) : return "f_banff08_sk_numu_3.5_5.0";      break;
+    case ( kNuisBANFF09               ) : return "f_banff09_sk_numu_5.0_7.0";      break;
+    case ( kNuisBANFF10               ) : return "f_banff10_sk_numu_7.0_30.0";     break;
+    case ( kNuisBANFF11               ) : return "f_banff11_sk_numubar_0.0_1.5";   break;
+    case ( kNuisBANFF12               ) : return "f_banff12_sk_numubar_1.5_30.0";  break;
+    case ( kNuisBANFF13               ) : return "f_banff13_sk_nue_0.0_0.5";       break;
+    case ( kNuisBANFF14               ) : return "f_banff14_sk_nue_0.5_0.7";       break;
+    case ( kNuisBANFF15               ) : return "f_banff15_sk_nue_0.7_0.8";       break;
+    case ( kNuisBANFF16               ) : return "f_banff16_sk_nue_0.8_1.5";       break;
+    case ( kNuisBANFF17               ) : return "f_banff17_sk_nue_1.5_2.5";       break;
+    case ( kNuisBANFF18               ) : return "f_banff18_sk_nue_2.5_4.0";       break;
+    case ( kNuisBANFF19               ) : return "f_banff19_sk_nue_4.0_30.0";      break;
+    case ( kNuisBANFF20               ) : return "f_banff20_sk_nuebar_0.0_2.5";    break;
+    case ( kNuisBANFF21               ) : return "f_banff21_sk_nuebar_2.5_30.0";   break;
+    case ( kNuisBANFF22               ) : return "f_banff22_ma_qe";                break;
+    case ( kNuisBANFF23               ) : return "f_banff23_ma_res";               break;
+    case ( kNuisBANFF24               ) : return "f_banff24_norm_ccqe_0_1.5";      break;
+    case ( kNuisBANFF25               ) : return "f_banff25_norm_ccres_0_2.5";     break;
 
     case ( kNuisXSecMAQE              ) : return "f_ma_qe";                        break; 
     case ( kNuisXSecFermiMom          ) : return "f_pfermi";                       break;
@@ -1344,6 +1316,152 @@ bool t2kana::util::IsSystematic(PhysParamId_t p)
   return false;
 }
 //____________________________________________________________________________
+bool t2kana::util::IsBANFFfitSuperkFluxParam(PhysParamId_t p)
+{
+  switch(p) {
+    //
+    // Superk numu flux params
+    //
+    case ( kNuisBANFF00 ) : 
+    case ( kNuisBANFF01 ) : 
+    case ( kNuisBANFF02 ) : 
+    case ( kNuisBANFF03 ) : 
+    case ( kNuisBANFF04 ) : 
+    case ( kNuisBANFF05 ) : 
+    case ( kNuisBANFF06 ) : 
+    case ( kNuisBANFF07 ) : 
+    case ( kNuisBANFF08 ) : 
+    case ( kNuisBANFF09 ) : 
+    case ( kNuisBANFF10 ) : 
+    //
+    // Superk numubar flux params
+    //
+    case ( kNuisBANFF11 ) : 
+    case ( kNuisBANFF12 ) : 
+    //
+    // Superk nue flux params
+    //
+    case ( kNuisBANFF13 ) :
+    case ( kNuisBANFF14 ) :
+    case ( kNuisBANFF15 ) :
+    case ( kNuisBANFF16 ) :
+    case ( kNuisBANFF17 ) :
+    case ( kNuisBANFF18 ) :
+    case ( kNuisBANFF19 ) :
+    //
+    // Superk nuebar flux params
+    //
+    case ( kNuisBANFF20 ) : 
+    case ( kNuisBANFF21 ) : 
+
+              return true;
+              break;
+
+    default: 
+              return false;
+              break;
+  }
+
+  return false;
+}
+//___________________________________________________________________________
+void t2kana::util::BANFFfitSuperkFluxParamEtrueRange(
+  PhysParamId_t p, double & Emin, double & Emax)
+{
+  switch(p) {
+    //
+    // Superk numu flux params
+    //
+    case ( kNuisBANFF00 ) : { Emin = 0.0; Emax =  0.4; break; } // f_banff00_sk_numu_0.0_0.4
+    case ( kNuisBANFF01 ) : { Emin = 0.4; Emax =  0.5; break; } // f_banff01_sk_numu_0.4_0.5
+    case ( kNuisBANFF02 ) : { Emin = 0.5; Emax =  0.6; break; } // f_banff02_sk_numu_0.5_0.6
+    case ( kNuisBANFF03 ) : { Emin = 0.6; Emax =  0.7; break; } // f_banff03_sk_numu_0.6_0.7
+    case ( kNuisBANFF04 ) : { Emin = 0.7; Emax =  1.0; break; } // f_banff04_sk_numu_0.7_1.0
+    case ( kNuisBANFF05 ) : { Emin = 1.0; Emax =  1.5; break; } // f_banff05_sk_numu_1.0_1.5
+    case ( kNuisBANFF06 ) : { Emin = 1.5; Emax =  2.5; break; } // f_banff06_sk_numu_1.5_2.5
+    case ( kNuisBANFF07 ) : { Emin = 2.5; Emax =  3.5; break; } // f_banff07_sk_numu_2.5_3.5
+    case ( kNuisBANFF08 ) : { Emin = 3.5; Emax =  5.0; break; } // f_banff08_sk_numu_3.5_5.0
+    case ( kNuisBANFF09 ) : { Emin = 5.0; Emax =  7.0; break; } // f_banff09_sk_numu_5.0_7.0
+    case ( kNuisBANFF10 ) : { Emin = 7.0; Emax = 30.0; break; } // f_banff10_sk_numu_7.0_30.0
+    //
+    // Superk numubar flux params
+    //
+    case ( kNuisBANFF11 ) : { Emin = 0.0; Emax =  1.5; break; } // f_banff11_sk_numubar_0.0_1.5
+    case ( kNuisBANFF12 ) : { Emin = 1.5; Emax = 30.0; break; } // f_banff12_sk_numubar_1.5_30.0
+    //
+    // Superk nue flux params
+    //
+    case ( kNuisBANFF13 ) : { Emin = 0.0; Emax =  0.5; break; } // f_banff13_sk_nue_0.0_0.5
+    case ( kNuisBANFF14 ) : { Emin = 0.5; Emax =  0.7; break; } // f_banff14_sk_nue_0.5_0.7
+    case ( kNuisBANFF15 ) : { Emin = 0.7; Emax =  0.8; break; } // f_banff15_sk_nue_0.7_0.8
+    case ( kNuisBANFF16 ) : { Emin = 0.8; Emax =  1.5; break; } // f_banff16_sk_nue_0.8_1.5
+    case ( kNuisBANFF17 ) : { Emin = 1.5; Emax =  2.5; break; } // f_banff17_sk_nue_1.5_2.5
+    case ( kNuisBANFF18 ) : { Emin = 2.5; Emax =  4.0; break; } // f_banff18_sk_nue_2.5_4.0
+    case ( kNuisBANFF19 ) : { Emin = 4.0; Emax = 30.0; break; } // f_banff19_sk_nue_4.0_30.0
+    //
+    // Superk nuebar flux params
+    //
+    case ( kNuisBANFF20 ) : { Emin = 0.0; Emax =  2.5; break; } // f_banff20_sk_nuebar_0.0_2.5
+    case ( kNuisBANFF21 ) : { Emin = 2.5; Emax = 30.0; break; } // f_banff21_sk_nuebar_2.5_30.0
+
+    default: {  Emin = -1.0; Emax = -1.0; }
+  }
+}
+//___________________________________________________________________________
+int t2kana::util::BANFFfitSuperkFluxParam2NuPdg(PhysParamId_t p)
+{
+  switch(p) {
+    //
+    // Superk numu flux params
+    //
+    case ( kNuisBANFF00 ) : 
+    case ( kNuisBANFF01 ) : 
+    case ( kNuisBANFF02 ) : 
+    case ( kNuisBANFF03 ) : 
+    case ( kNuisBANFF04 ) : 
+    case ( kNuisBANFF05 ) : 
+    case ( kNuisBANFF06 ) : 
+    case ( kNuisBANFF07 ) : 
+    case ( kNuisBANFF08 ) : 
+    case ( kNuisBANFF09 ) : 
+    case ( kNuisBANFF10 ) : 
+              return kPdgNuMu;
+              break;
+    //
+    // Superk numubar flux params
+    //
+    case ( kNuisBANFF11 ) : 
+    case ( kNuisBANFF12 ) : 
+              return kPdgNuMuBar;
+              break;
+    //
+    // Superk nue flux params
+    //
+    case ( kNuisBANFF13 ) :
+    case ( kNuisBANFF14 ) :
+    case ( kNuisBANFF15 ) :
+    case ( kNuisBANFF16 ) :
+    case ( kNuisBANFF17 ) :
+    case ( kNuisBANFF18 ) :
+    case ( kNuisBANFF19 ) :
+              return kPdgNuE;
+              break;
+    //
+    // Superk nuebar flux params
+    //
+    case ( kNuisBANFF20 ) : 
+    case ( kNuisBANFF21 ) : 
+              return kPdgNuEBar;
+              break;
+
+    default: 
+              return 0;
+              break;
+  }
+
+  return 0;
+}
+//___________________________________________________________________________
 bool t2kana::util::IsNeutrino(int pdg_code)
 {
   if ( pdg_code == kPdgNuE   ||
@@ -1630,10 +1748,54 @@ double t2kana::util::FluxFractionsFixedBinRelToVarBin (
    return 1;
 }
 //___________________________________________________________________________
+void t2kana::util::PrintCompact(
+   const TVectorD & v, int w, int prec, Option_t * option)
+{
+  TString opt = option;
+
+  bool printing_banff_params = opt.Contains("BANFF fit params");
+
+  int np = v.GetNoElements();
+  cout << fixed;
+
+  for(int ip = 0; ip < np; ip++) {
+     cout << "Param : " << setw(3) << ip;
+     if(printing_banff_params) {
+         cout << " [ ";
+         PhysParamId_t p = PhysParamId_t ( (int)kNuisBANFF00 + ip );
+         cout << setw(30) << util::AsString(p);
+         cout << " ]";
+     }
+     cout << " = " << setw(w) << setprecision(prec) << v[ip] << endl;
+  }
+}
+//___________________________________________________________________________
+void t2kana::util::PrintCompact(
+  const TMatrixD & m, int w, int prec)
+{
+  int nc = m.GetNcols();
+  int nr = m.GetNrows();
+  cout << fixed;
+  for(int ir=0; ir<nr; ir++) {
+    if(ir==0) {
+       cout << setw(w) << setfill(' ') << "r\\c:" << " | "; 
+       for(int ic=0; ic<nc; ic++) {
+         cout << setw(w) << setfill(' ') << setprecision(0) << ic << " | ";
+       }
+       cout << endl;
+    }
+    cout << setw(w) << setfill(' ') << setprecision(0) << ir << " | "; 
+    for(int ic=0; ic<nc; ic++) {
+         cout << setw(w) << setfill(' ') << setprecision(prec) 
+              << m[ir][ic] << " | ";
+    }//rows
+    cout << endl;
+  }//columns
+}
+//___________________________________________________________________________
 int t2kana::util::Sign(double tweaking_dial)
 {
   if(TMath::Abs(tweaking_dial) < kASmallNum) return 0;
-
   if (tweaking_dial < 0) return -1;
   return +1;
 }
