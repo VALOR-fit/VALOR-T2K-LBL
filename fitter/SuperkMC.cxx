@@ -483,7 +483,7 @@ void SuperkMC::ApplyTuningToTemplates(void)
        if(!mctempl) continue; 
        // loop over Ereco
        for(int ir = 1; ir <= mctempl->GetXaxis()->GetNbins(); ir++) {
-         double Ereco = mctempl->GetXaxis()->GetBinCenter(ir);
+         //double Ereco = mctempl->GetXaxis()->GetBinCenter(ir);
          // loop over Etrue
          for(int it = 1; it <= mctempl->GetYaxis()->GetNbins(); it++) {
            double Etrue = mctempl->GetYaxis()->GetBinCenter(it);
@@ -506,16 +506,13 @@ void SuperkMC::ApplyTuningToTemplates(void)
 //________________________________________________________________________________________
 void SuperkMC::ApplySystematicsToTemplates(void) 
 {
-// Apply systematic variation to MC templates
+// Apply systematic variations to MC templates
+//
 
   //
-  // Apply (if any)
-  //  - SuperK efficiency tweaks,
-  //  - SuperK energy scale tweaks
-  //  - BANFF tweaks
-  //  - Cross-section tweaks
-  // All systematics are multiplicative factors applied to the number of events
-  // and they are either functions of Ereco, or Etrue or have no dependence at all.
+  // All multiplicative systematics are handled in the following loop.
+  // Basically all systematic variations for each MC template bin is computed 
+  // in SuperkMC::NumOfEvents(Ereco,Etrue,sample,mode)
   //
 
   // loop over samples
@@ -869,10 +866,12 @@ void SuperkMC::ApplyPhysHypothesisToTemplates(void)
 double SuperkMC::NumOfEvents(
     double Ereco, double Etrue, SuperkSample_t s, SuperkMode_t m) const
 {
-// - Apply SuperK efficiency tweaks (if any). 
-// - Apply SuperK energy scale tweaks (if any).
-// - Apply flux tweaks (if any).
-// - Apply cross section tweaks (if any).
+// The return value is the number of events for the (Ereco,Etrue) bin of the (s,m) template
+// after applying multiplicative systematic variations (if any).
+// This method considers
+// - SuperK efficiencies variations
+// - BANFF parameter variations
+// - Cross-section variations
 
   TH2D * nsk2d = this -> Template(s,m,kSKMCtNom);
   assert(nsk2d);
@@ -889,6 +888,16 @@ double SuperkMC::NumOfEvents(
 
   // Nominal number of events
   double nev = nsk2d->GetBinContent(reco_bin, true_bin);
+
+  //
+  // Apply BANFF systematics 
+  //
+  double banff_flux_wght = 1;
+//double banff_xsec_wght = 1;
+//if(fBANFF->IsTweaked()) {
+  int flux_nu_pdg = util::SuperkMode2FluxNuPdg(m);
+  banff_flux_wght = fNuFlux->SuperkFluxWght(flux_nu_pdg, Etrue);
+//}
 
 /*      
   //
@@ -962,6 +971,7 @@ double SuperkMC::NumOfEvents(
   //
   double nevtwk = 
      ( nev * 
+       banff_flux_wght *
 //       numu_flux_shape_wght * 
 //       xsec_ccqe_wght *
 //       xsec_ratio_wght *

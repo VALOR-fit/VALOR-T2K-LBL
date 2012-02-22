@@ -148,12 +148,14 @@ void SuperkExpectation::ResetSystematicVariations(void)
 {
   cout << "Exp >> Reseting all systematic variations." << endl;
 
+  // SuperK detector systematics
   this->GetSuperkMC()->TweakEnergyScale                    (0.);
   this->GetSuperkMC()->TweakEfficiency1RmuCCQEOther        (0.);
   this->GetSuperkMC()->TweakEfficiency1RmuCCQERingCounting (true,0.,0.,0.); 
   this->GetSuperkMC()->TweakEfficiency1RmuCCnonQE          (0.);
   this->GetSuperkMC()->TweakEfficiency1RmuNC               (0.);     
   this->GetSuperkMC()->TweakEfficiency1RmuNuECC            (0.);
+
 ////////////  this->GetSuperkMC()->TweakEfficiency1ReSig               (0.);
 ////////////  this->GetSuperkMC()->TweakEfficiency1ReBkg               (0.);
 
@@ -174,20 +176,31 @@ void SuperkExpectation::ResetSystematicVariations(void)
 //________________________________________________________________________________________
 void SuperkExpectation::TweakSystematic(string systematic, double twkdial)
 {
-// Valid systematic parameter names
-// - sk_energy_scale
-// - sk_1Rmu_ccqe_other_eff
-// - sk_1Rmu_ccqe_ring_counting_eff
-//    or
-//    - sk_1Rmu_ccqe_ring_counting_eff_0
-//    - sk_1Rmu_ccqe_ring_counting_eff_1
-//    - sk_1Rmu_ccqe_ring_counting_eff_2
-// - sk_1Rmu_ccnonqe_eff
-// - sk_1Rmu_nc_eff
-// - sk_1Rmu_nuecc_eff
+// Valid systematic parameter names:
+// ............................................................
+// [SK detector systematics]
+//    - sk_energy_scale                     : 
+//    - sk_1Rmu_ccqe_ring_counting_eff      : tweak SK 1Rmu/CCQE RC efficiencies in all 3 Ereco bins, correlations taken into account (Cholesky method)
+//      or
+//      - sk_1Rmu_ccqe_ring_counting_eff_0  : tweak only SK 1Rmu/CCQE RC efficiency in the 1st Ereco bin, correlations with other bins ignored (debug mode)
+//      - sk_1Rmu_ccqe_ring_counting_eff_1  : tweak only SK 1Rmu/CCQE RC efficiency in the 2nd Ereco bin, correlations with other bins ignored (debug mode)
+//      - sk_1Rmu_ccqe_ring_counting_eff_2  : tweak only SK 1Rmu/CCQE RC efficiency in the 3rd Ereco bin, correlations with other bins ignored (debug mode)
+//   - sk_1Rmu_ccqe_other_eff              : 
+//   - sk_1Rmu_ccnonqe_eff                  :
+//   - sk_1Rmu_nc_eff                       :
+//   - sk_1Rmu_nuecc_eff                    :
+//
+// [BANFF]
+//    - banff                               : tweak all BANFF params, correlations taken into account (Cholesky method)
+//      or   
+//      - banff_0                           : tweak only BANFF param 00, see Conventions.h for definition, correlations ignored (debug mode)
+//      - banff_1                           : tweak only BANFF param 01, see Conventions.h for definition, correlations ignored (debug mode)
+//      - ..     
+//      - banff_25                          : tweak only BANFF param 25, see Conventions.h for definition, correlations ignored (debug mode)
+//
 
   //
-  // SuperK detector systematics
+  // SK detector systematics
   //
   if(systematic == "sk_energy_scale") {
      this->GetSuperkMC()->TweakEnergyScale(twkdial);
@@ -226,6 +239,30 @@ void SuperkExpectation::TweakSystematic(string systematic, double twkdial)
      this->GetSuperkMC()->TweakEfficiency1RmuNuECC(twkdial);
   }
      
+  // tweak all BANFF parameters taking into account correlations
+  else
+  if(systematic == "banff") {
+     this->GetBANFF()->Tweak(); //< Cholesky method
+  }
+
+
+  else
+  if(systematic == "banff_00") {
+     TVectorD twkv(26);
+     twkv[0]=twkdial;
+     this->GetBANFF()->Tweak(true,&twkv); 
+  }
+  else
+  if(systematic == "banff_01") {
+     TVectorD twkv(26);
+     twkv[1]=twkdial;
+     this->GetBANFF()->Tweak(true,&twkv); 
+  }
+  //
+  // etc etc
+  // do something more clever here:
+  //
+
   else {
      cerr << "Exp >> Unknown systematic parameter (" << systematic << ")" << endl;
      exit(1);

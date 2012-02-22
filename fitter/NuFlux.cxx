@@ -304,6 +304,14 @@ double NuFlux::SuperkFlux(int nu_pdg, double Etrue, bool tuned, bool tweaked) co
   }
 
   TH1D * flux_spectrum = this->SuperkFluxSpectrum(nu_pdg,tuned,tweaked);
+  if(!flux_spectrum) {
+    cerr << "Exp/Flux >> No " 
+         << ((tuned) ? "`tuned'" : "`nominal'")
+         << " + "
+         << ((tweaked) ? "`tweaked'" : "`untweaked'")
+         << " flux spectrum for neutrino PDG = " << nu_pdg
+         << endl;
+  }
   assert(flux_spectrum);
   int bin = flux_spectrum->FindBin(Etrue);
   double flux = flux_spectrum->GetBinContent(bin);
