@@ -4,33 +4,17 @@
 //
 // The input (systematic) string can be:
 //	- sk_energy_scale 
-//	- sk_ccqe_other_eff
-//	- sk_ccqe_ring_counting_eff : 
+//	- sk_1Rmu_ccqe_other_eff
+//	- sk_1Rmu_ccqe_ring_counting_eff : 
 //             This energy-dependent correlated error can not be used in this test macro. Instead,
 //             you can tweak specific components of the efficiency tweaking vector (neglecting,
 //             correlation which, in the fitter, are handled using the Cholesky method). Use:
-//	       - sk_ccqe_ring_counting_eff_0 
-//	       - sk_ccqe_ring_counting_eff_1
-//	       - sk_ccqe_ring_counting_eff_2
-//	- sk_ccnonqe_eff
-//	- sk_nc_eff
-//	- sk_nuecc_eff
-//      - sk_1Resig_eff
-//      - sk_1Rebkg_eff
-// 	- nd280_eff
-// 	- nd280_norm
-//	- flux_norm
-//	- flux_shape : Can not be used in this test macro
-//      - xsec_ccqe
-//      - xsec_cc1pi_to_ccqe
-//      - xsec_cccoh_to_ccqe
-//      - xsec_ccoth_to_ccqe
-//      - xsec_nc_to_ccqe
-//      - xsec_nc1pi0_to_ccqe
-//      - xsec_nccoh_to_ccqe
-//      - xsec_ncoth_to_ccqe
-//      - xsec_nue_to_numu
-//      - nuclear_effect
+//	       - sk_1Rmu_ccqe_ring_counting_eff_0 
+//	       - sk_1Rmu_ccqe_ring_counting_eff_1
+//	       - sk_1Rmu_ccqe_ring_counting_eff_2
+//	- sk_1Rmu_ccnonqe_eff
+//	- sk_1Rmu_nc_eff
+//	- sk_1Rmu_nuecc_eff
 //
 // Costas Andreopoulos
 // ------------------------------------------------------------------------------------------------

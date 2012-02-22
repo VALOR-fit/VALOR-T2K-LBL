@@ -60,14 +60,14 @@ void test_sk_ereco_spectrum_twk_sk_eff
   const int ntwkmodes = 8;
 
   string systematic[ntwkmodes] = { 
-     "sk_ccqe_other_eff", 
-     "sk_ccqe_ring_counting_eff_0", /* change RC efficiency < 0.4 GeV,        ignore correlations with other bins (for validation purposes only) */
-     "sk_ccqe_ring_counting_eff_1", /* change RC efficiency in 0.4 - 1.1 GeV, ignore correlations with other bins (for validation purposes only) */
-     "sk_ccqe_ring_counting_eff_2", /* change RC efficiency > 1.1 GeV,        ignore correlations with other bins (for validation purposes only) */
-     "sk_ccqe_ring_counting_eff",   /* change all RC effiencies + include correlations */
-     "sk_ccnonqe_eff", 
-     "sk_nc_eff", 
-     "sk_nuecc_eff" 
+     "sk_1Rmu_ccqe_other_eff", 
+     "sk_1Rmu_ccqe_ring_counting_eff_0", /* change RC efficiency < 0.4 GeV,        ignore correlations with other bins (for validation purposes only) */
+     "sk_1Rmu_ccqe_ring_counting_eff_1", /* change RC efficiency in 0.4 - 1.1 GeV, ignore correlations with other bins (for validation purposes only) */
+     "sk_1Rmu_ccqe_ring_counting_eff_2", /* change RC efficiency > 1.1 GeV,        ignore correlations with other bins (for validation purposes only) */
+     "sk_1Rmu_ccqe_ring_counting_eff",   /* change all RC effiencies + include correlations */
+     "sk_1Rmu_ccnonqe_eff", 
+     "sk_1Rmu_nc_eff", 
+     "sk_1Rmu_nuecc_eff" 
   };
   bool generate_toy_expts[ntwkmodes] = { 
      false,    /* sk_ccqe_other_eff              */

@@ -38,30 +38,14 @@ f.close()
 #specify the cuts you want to apply here
 systematics = []
 systematics.append("sk_energy_scale")
-systematics.append("sk_ccqe_other_eff")
-#systematics.append("sk_ccqe_ring_counting_eff") #not supported in the macro
-systematics.append("sk_ccqe_ring_counting_eff_0")
-systematics.append("sk_ccqe_ring_counting_eff_1")
-systematics.append("sk_ccqe_ring_counting_eff_2")
-systematics.append("sk_ccnonqe_eff")
-systematics.append("sk_nc_eff")
-systematics.append("sk_nuecc_eff")
-systematics.append("sk_1Resig_eff")
-systematics.append("sk_1Rebkg_eff")
-systematics.append("nd280_eff")
-systematics.append("nd280_norm")
-systematics.append("flux_norm")
-#systematics.append("flux_shape") #not supported in the macro
-systematics.append("xsec_ccqe")
-systematics.append("xsec_cc1pi_to_ccqe")
-systematics.append("xsec_cccoh_to_ccqe")
-systematics.append("xsec_ccoth_to_ccqe")
-systematics.append("xsec_nc_to_ccqe")
-systematics.append("xsec_nc1pi0_to_ccqe")
-systematics.append("xsec_nccoh_to_ccqe")
-systematics.append("xsec_ncoth_to_ccqe")
-systematics.append("xsec_nue_to_numu")
-systematics.append("nuclear_effect")
+systematics.append("sk_1Rmu_ccqe_other_eff")
+#systematics.append("sk_1Rmu_ccqe_ring_counting_eff") #not supported in the macro
+systematics.append("sk_1Rmu_ccqe_ring_counting_eff_0")
+systematics.append("sk_1Rmu_ccqe_ring_counting_eff_1")
+systematics.append("sk_1Rmu_ccqe_ring_counting_eff_2")
+systematics.append("sk_1Rmu_ccnonqe_eff")
+systematics.append("sk_1Rmu_nc_eff")
+systematics.append("sk_1Rmu_nuecc_eff")
 
 samples = []
 samples.append("1Rmu")
