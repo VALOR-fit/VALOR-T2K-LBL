@@ -1039,6 +1039,20 @@ string t2kana::util::AsStringCompact (t2kana::conv::SuperkMode_t m)
   return "";
 }
 //____________________________________________________________________________
+string t2kana::util::Pdg2String(int pdg_code)
+{
+  switch(pdg_code) {
+     case ( kPdgNuE      ) : return "nue";      break; 
+     case ( kPdgNuMu     ) : return "numu";     break;
+     case ( kPdgNuTau    ) : return "nutau";    break;
+     case ( kPdgNuEBar   ) : return "nuebar";   break;   
+     case ( kPdgNuMuBar  ) : return "numubar";  break;   
+     case ( kPdgNuTauBar ) : return "nutaubar"; break;   
+     default               : return "";   
+  }
+  return "";
+}
+//____________________________________________________________________________
 t2kana::conv::PhysHypothesis_t t2kana::util::PhysHypFromString(string sh)
 {
   if(sh == "decay"         ) return kHypDecay;
