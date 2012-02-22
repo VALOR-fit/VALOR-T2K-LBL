@@ -14,7 +14,7 @@
 //________________________________________________________________________________________
 
 #define __show_init_mesg_info__  
-#define __show_init_mesg_debug_twk__   
+#define __show_flux_twk_mesg_debug__   
 
 #include <cassert>
 #include <cstdlib>
@@ -222,13 +222,13 @@ void NuFlux::CalcTwkFlux(void) const
      // flux param?
      bool is_sk_flux_param = util::IsBANFFfitSuperkFluxParam(p);
      if(!is_sk_flux_param) {
-#ifdef __show_init_mesg_debug_twk__
+#ifdef __show_flux_twk_mesg_debug__
         cout << "Exp/Flux >> Calculating tweak flux as a result of tweaking BANFF param: "
              << setw(35) << util::AsString(p) << endl;
 #endif
         // Get current & best-fit values of current BANFF Superk flux param
         double banff_current = fBANFF->CurrentValue(p);
-        double banff_bestfit = fBANFF->BestFitValue(p);       
+      //double banff_bestfit = fBANFF->BestFitValue(p);       
 
         // BANFF param -> neutrino PDG code
         int nu_pdg = util::BANFFfitSuperkFluxParam2NuPdg(p);
@@ -238,36 +238,53 @@ void NuFlux::CalcTwkFlux(void) const
         double Emax = -1;
         util::BANFFfitSuperkFluxParamEtrueRange(p,Emin,Emax);
 
-#ifdef __show_init_mesg_debug_twk__
-        cout << "Exp/Flux >> BANFF parameter tweaks Superk flux for neutrino PDG = " 
-             << nu_pdg << " in the true energy range = [" << Emin << ", " << Emax << "]"
+        // Access tweaked & untweaked flux histograms
+        TH1D * flux_spectrum_twk = this->SuperkFluxSpectrum(nu_pdg,true,true );
+        TH1D * flux_spectrum     = this->SuperkFluxSpectrum(nu_pdg,true,false);
+
+        // Note: 
+        // The flux_spectrum histograms used in this code, use a binning scheme
+        // (typically fixed-size 50-MeV bins, although other fixed or variable binning
+        // schemes are possible) which is, in principle, different from the coarser
+        // binning scheme used by BANFF.
+        // Below, we will refer to the two binning schemes as `own' and `BANFF'
+
+        // Find range of `own' bins which corresponds to the current `BANFF' bin ([Emin,Emax] range)
+        int bin_min = flux_spectrum->FindBin(Emin + conv::kASmallNum); 
+        int bin_max = flux_spectrum->FindBin(Emax - conv::kASmallNum);
+
+#ifdef __show_flux_twk_mesg_debug__
+        cout << "Exp/Flux >> BANFF parameter tweaks Superk flux for neutrino PDG = " << nu_pdg 
+             << " in the true energy range = [" << Emin << ", " << Emax << "]"
+             << endl;
+        cout << "Exp/Flux >> In our binning scheme, this energy range corresponds to bins = ["
+             << bin_min << ", " << bin_max << "]" 
              << endl;
 #endif
-        // Access tweaked & untweaked flux histograms
-        TH1D * flux_twk = this->SuperkFluxSpectrum(nu_pdg,true,true );
-        TH1D * flux     = this->SuperkFluxSpectrum(nu_pdg,true,false);
-
-        //
-        //...
-        //
-/*
-        // Loop over fixed size (50 MeV) bins contained in the variable size bin [Emin,Emax]
-        int fixed_bin_min = ...
-        int fixed_bin_max = ...
-        // Flux in variable size bin (with/without twk)
-        double flux_var_twk = ...
-        double flux_var     = ...
-        for ( bin = fixed_bin_min; bin <= fixed_bin_max; bin++ ) {
-           // Flux (without twk) in current fixed size bin 
-           double flux_fix = ...
-           // Fraction of flux of the variable size bin which is contained in
-           // the current fixed size bin 
-           double frac_flux = flux_fix / flux_var;
-           // Tweaked flux in current fixed size bin
-           double flux_fix_twk = flux_fix + frac_flux * (flux_var_twk - flux_var);
-          
+        // Loop over `own' bins contained in the current `BANFF' bin and
+        // calculate the "tuned" and "tuned+tweaked" flux in that `BANFF' bin.
+        double flux_var_twk = 0;
+        double flux_var     = 0;
+        for ( int bin = bin_min; bin <= bin_max; bin++ ) {
+           // Un-tweaked flux in current bin 
+           double flux = flux_spectrum->GetBinContent(bin);
+           // Add to total flux in larger variable-size bin
+           flux_var += flux;
         }
-*/
+        flux_var_twk = flux_var * banff_current;
+
+        // Loop over `own' bins contained in the current `BANFF' bin and
+        // "distribute" the `BANFF' bin flux variation to our `own' bins.
+        for ( int bin = bin_min; bin <= bin_max; bin++ ) {
+           // Un-tweaked flux in current bin 
+           double flux = flux_spectrum->GetBinContent(bin);
+           // Fraction of flux of the larger variable-size bin which is contained 
+           // in the current bin
+           double frac_flux = flux / flux_var;
+           // Tweaked flux in current bin
+           double flux_twk = flux + frac_flux * (flux_var_twk - flux_var);
+           flux_spectrum_twk->SetBinContent(bin,flux_twk);
+        }
 
      }//sk flux param?
   }//ip loop  
