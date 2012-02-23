@@ -302,6 +302,13 @@ void NuFlux::CalcTwkFlux(void) const
         cout << "Exp/Flux >> Flux in current BANFF bin: " 
              << flux_var << " --> " << flux_var_twk << endl;
 #endif
+        if(flux_var_twk < 0) {
+           cerr << "Exp/Flux >> Tweaked flux for neutrino PDG = " << nu_pdg << " in BANFF bin [" 
+                << Emin << ", " << Emax << "] is = " << flux_var_twk << " !!! " << endl;
+           cerr << "Exp/Flux >> Negative value was the result of tweaking BANFF param: " 
+                << util::AsString(p) << " (current value = " << banff_current << ")" << endl;
+           exit(1);
+        }        
 
         // Loop over `own' bins contained in the current `BANFF' bin and
         // "distribute" the `BANFF' bin flux variation to our `own' bins.
@@ -313,12 +320,19 @@ void NuFlux::CalcTwkFlux(void) const
            double frac_flux = flux / flux_var;
            // Tweaked flux in current bin
            double flux_twk = flux + frac_flux * (flux_var_twk - flux_var);
-           flux_spectrum_twk->SetBinContent(bin,flux_twk);
 #ifdef __show_flux_twk_mesg_debug_level2__
-        cout << "Exp/Flux >> - Our bin = " << bin 
-             << ", contains " << frac_flux*100 << "% of flux of current BANFF bin"
-             << ", flux = " << flux << " --> " << flux_twk << endl;
+           cout << "Exp/Flux >> - Our bin = " << bin 
+                << ", contains " << frac_flux*100 << "% of flux of current BANFF bin"
+                << ", flux = " << flux << " --> " << flux_twk << endl;
 #endif
+           if(flux_twk < 0) {
+                cerr << "Exp/Flux >> Tweaked flux for neutrino PDG = " << nu_pdg 
+                     << " in bin = " << bin << " is = " << flux_twk << " !!! " << endl;
+                cerr << "Exp/Flux >> Negative value was the result of tweaking BANFF param: " 
+                     << util::AsString(p) << " (current value = " << banff_current << ")" << endl;
+                exit(1);
+           }        
+           flux_spectrum_twk->SetBinContent(bin,flux_twk);
         } // bin
      } 
      else 

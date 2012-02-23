@@ -49,8 +49,8 @@ public:
   void Tweak (bool force_input_twkv = false, TVectorD * input_twkv = 0, bool correlated = true);
 
   // Get & tweak flags	
-  bool IsTweaked           (void) const { return fIsTweaked;         }
-  bool IsFluxWghtUpdated   (void) const { return fIsFluxWghtUpdated; }
+  bool IsTweaked           (void) const { return fIsTweaked;         } ///< BANFF params tweaked?
+  bool IsFluxWghtUpdated   (void) const { return fIsFluxWghtUpdated; } ///< NuFlux object updated flux in response?
   void MarkFluxWghtUpdated (void)       { fIsFluxWghtUpdated = true; }
 
   // Print
