@@ -241,11 +241,12 @@ bool SuperkMC::Read(TXMLEngine* xml, XMLNodePointer_t root_node)
   cout << "Exp/SKMC >> " << "Error {EnergyScale;1Rmu}    : " << fEnergyScale1RmuRelErr  << endl;
   cout << "Exp/SKMC >> " << "Error {Efficiency;1Rmu/CCQE/Oth} : " << fEff1RmuCCQEOthRelErr << endl;
   cout << "Exp/SKMC >> " << "Error {Efficiency;1Rmu/CCQE/RC}  : " << endl;
-  fEff1RmuCCQERCCovarRelErr->Print();
-  cout << "Exp/SKMC >> " << "Ring-counting error matrix is given for the following 3 Ereco bins : ";
+  cout << " - The ring-counting efficiency error is given for the following 3 Ereco bins : ";
   cout << "(0, " << fEff1RmuCCQERCCovarE1RelErr << " GeV), "
        << "[" << fEff1RmuCCQERCCovarE1RelErr << " GeV, " << fEff1RmuCCQERCCovarE2RelErr << " GeV], "
        << "(" << fEff1RmuCCQERCCovarE2RelErr << " GeV, oo)" << endl;
+  cout << " - The ring-counting error matrix is : " << endl;
+  util::PrintCompact(*fEff1RmuCCQERCCovarRelErr,10,6);
   cout << "Exp/SKMC >> " << "Error {Efficiency;1Rmu/CCnonQE} : " << fEff1RmuCCnonQERelErr  << endl;
   cout << "Exp/SKMC >> " << "Error {Efficiency;1Rmu/NC} : "      << fEff1RmuNCRelErr       << endl;
   cout << "Exp/SKMC >> " << "Error {Efficiency;1Rmu/NuECC} : "   << fEff1RmuNuECCRelErr    << endl;
@@ -357,8 +358,8 @@ void SuperkMC::FillTemplate(SuperkSample_t s, SuperkMode_t m)
   double pot_wght = this->AnalyzedSamplePOT() / mcpot;
 
 #ifdef __show_init_mesg_debug__        
-  cout << "Exp/SKMC/CreateTemplate >>  - Weight (data POT / MC POT) = " 
-       << pot_wght << endl;
+  cout << "Exp/SKMC/CreateTemplate >>      "
+       << "Weight (data POT / MC POT) = " << pot_wght << endl;
 #endif
   if(pot_wght <= 0) {
      cerr << "Exp/SKMC/CreateTemplate >> Weight (data POT / MC POT) for " 
@@ -392,9 +393,9 @@ void SuperkMC::FillTemplate(SuperkSample_t s, SuperkMode_t m)
   }//iev
 
 #ifdef __show_init_mesg_debug__        
-  cout << "Exp/SKMC >> MC template was filled-in with " 
-       << this -> Template(s,m,kSKMCtNom) -> GetEntries() << " entries." 
-       << endl;
+  cout << "Exp/SKMC/CreateTemplate >>      "
+       << "Number of template entries = " 
+       << this -> Template(s,m,kSKMCtNom) -> GetEntries() << endl;
 #endif
 }
 //________________________________________________________________________________________

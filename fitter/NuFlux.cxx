@@ -14,7 +14,9 @@
 //________________________________________________________________________________________
 
 #define __show_init_mesg_info__  
+#define __show_flux_twk_mesg_info__   
 #define __show_flux_twk_mesg_debug__   
+#define __show_flux_twk_mesg_debug_level2__  #even more verbose
 
 #include <cassert>
 #include <cstdlib>
@@ -128,6 +130,10 @@ bool NuFlux::Read(TXMLEngine* xml, XMLNodePointer_t root_node)
     exit(1);
   }
 
+#ifdef __show_init_mesg_info__
+  cout << "Exp/Flux >> Done loading tuned flux histograms" << endl;
+#endif
+
   //
   // Load nominal -> tuned flux weights
   //
@@ -161,6 +167,9 @@ bool NuFlux::Read(TXMLEngine* xml, XMLNodePointer_t root_node)
     exit(1);
   }
 
+#ifdef __show_init_mesg_info__
+  cout << "Exp/Flux >> Done loading flux tuning weights" << endl;
+#endif
 
   //
   // Book and initialize other auxiliary histograms (nominal flux, tweaked flux)
@@ -180,6 +189,10 @@ void NuFlux::BookAndInitNomFlux(void)
 {
 // Create nominal flux histograms and initialize them using the tuned flux.
 // Then de-weight with flux tuning weights to recreate the nominal flux.
+
+#ifdef __show_init_mesg_info__
+  cout << "Exp/Flux >> Booking and re-creating nominal flux histograms" << endl;
+#endif
 
   const int n_nu = 4;
   int nu_pdg[n_nu] = { conv::kPdgNuE, conv::kPdgNuMu, conv::kPdgNuEBar, conv::kPdgNuMuBar };
@@ -202,33 +215,46 @@ void NuFlux::BookAndInitTwkFlux(void)
 {
 // Create tweaked flux histograms and initialize them using the tuned flux.
 
-  const int n_nu = 4;
-  int nu_pdg[n_nu] = { conv::kPdgNuE, conv::kPdgNuMu, conv::kPdgNuEBar, conv::kPdgNuMuBar };
-  for(int inu = 0; inu < n_nu; inu++) {
-     TH1D * htuntwk = this->SuperkFluxSpectrum(nu_pdg[inu], true, true );
-     TH1D * htun    = this->SuperkFluxSpectrum(nu_pdg[inu], true, false);
-     htuntwk = new TH1D(*htun);
-     htuntwk -> SetDirectory(0);
-  }
+#ifdef __show_init_mesg_info__
+  cout << "Exp/Flux >> Booking and initializing tuned+tweaked flux histograms" << endl;
+#endif
+
+  fSuperkNuMuFluxTwk    = new TH1D(*fSuperkNuMuFluxTun   );
+  fSuperkNuMuBarFluxTwk = new TH1D(*fSuperkNuMuBarFluxTun);
+  fSuperkNuEFluxTwk     = new TH1D(*fSuperkNuEFluxTun    );
+  fSuperkNuEBarFluxTwk  = new TH1D(*fSuperkNuEBarFluxTun );
+
+  fSuperkNuMuFluxTwk    -> SetDirectory(0);
+  fSuperkNuMuBarFluxTwk -> SetDirectory(0);
+  fSuperkNuEFluxTwk     -> SetDirectory(0);
+  fSuperkNuEBarFluxTwk  -> SetDirectory(0);
 }
 //________________________________________________________________________________________
 void NuFlux::CalcTwkFlux(void) const
 {
+#ifdef __show_flux_twk_mesg_info__
+   cout << "Exp/Flux >> Calculating tweaked flux ..." << endl;
+#endif
+#ifdef __show_flux_twk_mesg_debug_level2__
+   fBANFF->PrintSystematicVariations();
+#endif
+
   const int np = conv::kNumOfParamsInBANFFfit;
 
   for(int ip = 0; ip < np; ip++) {
      conv::PhysParamId_t p = conv::PhysParamId_t ( (int)conv::kNuisBANFF00 + ip );
-
      // flux param?
      bool is_sk_flux_param = util::IsBANFFfitSuperkFluxParam(p);
-     if(!is_sk_flux_param) {
-#ifdef __show_flux_twk_mesg_debug__
-        cout << "Exp/Flux >> Calculating tweak flux as a result of tweaking BANFF param: "
-             << setw(35) << util::AsString(p) << endl;
-#endif
+     if(is_sk_flux_param) 
+     {
         // Get current & best-fit values of current BANFF Superk flux param
         double banff_current = fBANFF->CurrentValue(p);
       //double banff_bestfit = fBANFF->BestFitValue(p);       
+
+#ifdef __show_flux_twk_mesg_debug__
+        cout << "Exp/Flux >> Taking into account the effect of tweaking BANFF flux param: "
+             << util::AsString(p) << " (current value = " << banff_current << ")" << endl;
+#endif
 
         // BANFF param -> neutrino PDG code
         int nu_pdg = util::BANFFfitSuperkFluxParam2NuPdg(p);
@@ -255,7 +281,7 @@ void NuFlux::CalcTwkFlux(void) const
 
 #ifdef __show_flux_twk_mesg_debug__
         cout << "Exp/Flux >> BANFF parameter tweaks Superk flux for neutrino PDG = " << nu_pdg 
-             << " in the true energy range = [" << Emin << ", " << Emax << "]"
+             << " in true energy range = [" << Emin << ", " << Emax << "]"
              << endl;
         cout << "Exp/Flux >> In our binning scheme, this energy range corresponds to bins = ["
              << bin_min << ", " << bin_max << "]" 
@@ -272,6 +298,10 @@ void NuFlux::CalcTwkFlux(void) const
            flux_var += flux;
         }
         flux_var_twk = flux_var * banff_current;
+#ifdef __show_flux_twk_mesg_debug_level2__
+        cout << "Exp/Flux >> Flux in current BANFF bin: " 
+             << flux_var << " --> " << flux_var_twk << endl;
+#endif
 
         // Loop over `own' bins contained in the current `BANFF' bin and
         // "distribute" the `BANFF' bin flux variation to our `own' bins.
@@ -284,8 +314,19 @@ void NuFlux::CalcTwkFlux(void) const
            // Tweaked flux in current bin
            double flux_twk = flux + frac_flux * (flux_var_twk - flux_var);
            flux_spectrum_twk->SetBinContent(bin,flux_twk);
-        }
-
+#ifdef __show_flux_twk_mesg_debug_level2__
+        cout << "Exp/Flux >> - Our bin = " << bin 
+             << ", contains " << frac_flux*100 << "% of flux of current BANFF bin"
+             << ", flux = " << flux << " --> " << flux_twk << endl;
+#endif
+        } // bin
+     } 
+     else 
+     {
+#ifdef __show_flux_twk_mesg_debug__
+        cout << "Exp/Flux >> BANFF param: " << util::AsString(p) 
+             << " is not a flux param and it is skipped..." << endl;
+#endif
      }//sk flux param?
   }//ip loop  
 }

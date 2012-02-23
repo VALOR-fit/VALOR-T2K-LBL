@@ -111,6 +111,8 @@ void test_sk_ereco_spectrum_twk_banff
   bool force_input_twk_dials = true;
   bool correlated            = true;
 
+  skexp.GetBANFF()->Tweak(force_input_twk_dials,0); //reset
+
   for(int iparam = 0; iparam < conv::kNumOfParamsInBANFFfit; iparam++)
   {
        // init
@@ -142,7 +144,7 @@ void test_sk_ereco_spectrum_twk_banff
        // store spectrum
        hErecoRatio1EtrueBinVarMin[iparam] = new TH1D(*skexp.CurrPredictedErecoSpectrum(conv::kSKsFCFV1RingMuLike));
        hErecoRatio1EtrueBinVarMin[iparam]->SetDirectory(0);
-       hErecoRatio1EtrueBinVarMin[iparam]->SetTitle(Form("BANFF_%d, +100 percent change",iparam));
+       hErecoRatio1EtrueBinVarMin[iparam]->SetTitle(Form("BANFF_%d, -100 percent change",iparam));
        hErecoRatio1EtrueBinVarMin[iparam]->Divide(hEreco[0]);
   }
 
@@ -170,10 +172,11 @@ void test_sk_ereco_spectrum_twk_banff
   hErecoMin->Draw("same");
   c->Update();
   TCanvas * c2 = new TCanvas("c2","",20,20,500,500);
-  c2->Divide(5,5);
+  c2->Divide(4,7);
+  c2->Update();
   for(int iparam = 0; iparam < conv::kNumOfParamsInBANFFfit; iparam++)
   {
-     c2->cd(iparam);
+     c2->cd(iparam+1);
      hErecoRatio1EtrueBinVarMax[iparam]->SetLineColor(kBlue);
      hErecoRatio1EtrueBinVarMin[iparam]->SetLineColor(kRed);
      hErecoRatio1EtrueBinVarMax[iparam]->Draw();

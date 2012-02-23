@@ -266,13 +266,20 @@ void BANFF::DoTweak(TVectorD * input_twkv)
 
   TVectorD & current_values = *fCurrentValues;
   TVectorD & bestfit_values = *fBestFitValues;
-  TVectorD & twk_dials      = *input_twkv;
 
-//
-// TODO
-// TODO
-// TODO
-//
+  const int np = conv::kNumOfParamsInBANFFfit;
+
+  if(input_twkv == 0) {
+     for(int ip = 0; ip < np; ip++) {
+       current_values[ip] = bestfit_values[ip];
+     }//ip
+  }
+  else {
+     TVectorD & twk_dials = *input_twkv;
+     for(int ip = 0; ip < np; ip++) {
+       current_values[ip] = bestfit_values[ip] * twk_dials[ip];
+     }//ip
+  }
 
 }
 //________________________________________________________________________________________

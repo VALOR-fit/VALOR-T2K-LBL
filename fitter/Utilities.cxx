@@ -48,6 +48,7 @@ using std::endl;
 using std::setw;
 using std::setfill;
 using std::fixed;
+using std::scientific;
 using std::setprecision;
 using std::ofstream;
 using std::ostringstream;
@@ -1782,6 +1783,7 @@ void t2kana::util::PrintCompact(
      }
      cout << " = " << setw(w) << setprecision(prec) << v[ip] << endl;
   }
+  cout << scientific;
 }
 //___________________________________________________________________________
 void t2kana::util::PrintCompact(
@@ -1805,6 +1807,7 @@ void t2kana::util::PrintCompact(
     }//rows
     cout << endl;
   }//columns
+  cout << scientific;
 }
 //___________________________________________________________________________
 int t2kana::util::Sign(double tweaking_dial)
