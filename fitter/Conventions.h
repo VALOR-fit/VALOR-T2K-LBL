@@ -364,24 +364,22 @@ NuOscMixParam_t;
 typedef enum ESKMCTemplateType
 {   
    kSKMCtUndefined = -1, 
-   kSKMCtNom,   // nominal MC
-   kSKMCtSys,   // nominal MC + systematic variations only
-   kSKMCtFin,   // nominal MC + systematic variations + physics hypothesis (final)
+   kSKMCtNom,   // nominal MC + tuning weights
+   kSKMCtSys,   // nominal MC + tuning weights + systematic variations
+   kSKMCtFin,   // nominal MC + tuning weights + systematic variations + physics hypothesis 
 } 
 SKMCTemplateType_t;
 
-// Flux normalization error for (1Rmu, 1Re total, 1Re sig, 1Re bkg) is stored in an array.
-// Use this enumeration so as not to have to remember the indices.
-static const int kNFluxNormErrs = 4; 
-typedef enum EFluxNormErrIdx
+// Enumeration of flux histograms types held by NuFlux
+typedef enum EFluxType
 {   
-   kFlxnUndefined = -1, 
-   kFlxn1Rmu      =  0, 
-   kFlxn1ReSig    =  1, 
-   kFlxn1ReBkg    =  2, 
-   kFlxn1ReTot    =  3
+   kFlxUndefined      = -1, 
+   kFlxNominal        =  0,  // flux used for MC production
+   kFlxExtTuning      =  1,  // flux used for MC production + tuning wghts based on external data (NA61,...)
+   kFlxFinalTuning    =  2,  // flux used for MC production + tuning wghts based on external data (NA61,...) + tuning wghts based on T2K data (ND280 data fit by BANFF,...)
+   kFlxCurrent        =  3   // current flux from systematic param variation of kFlxFinalTuning flux
 } 
-FluxNormErrIdx_t;
+FluxType_t;
 
 // Indices for array with default graphic attributes (see below)
 static const int kNGraphicAttributes = 5; 

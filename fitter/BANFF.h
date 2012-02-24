@@ -67,7 +67,7 @@ private:
   void DoTweak   (TVectorD * input_twkv); ///< apply input tweaking dials
 
   TVectorD *  fBestFitValues;     ///< BANFF best fit values
-  TVectorD *  fCurrentValues;     ///< Current values of BANFF parameters
+  TVectorD *  fCurrentValues;     ///< Current values of BANFF parameters (best_fit * twk_dial)
   TMatrixD *  fCovMtrx;           ///< BANFF covariance matrix
   TMatrixD *  fCovMtrxChoL;       ///< Triangular matrix obtained from Cholesky decomposition of BANFF covariance matrix
   bool        fIsTweaked;         ///< Were BANF params tweaked?

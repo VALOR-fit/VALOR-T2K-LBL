@@ -115,7 +115,7 @@ void SuperkMC::Init(void)
   fBrGenCode      = 0;
          
   fNuFlux         = 0;
-  fGenInputs      = 0;  
+  fNuXSec         = 0;  
 }
 //________________________________________________________________________________________
 void SuperkMC::CleanUp(void)
@@ -266,8 +266,8 @@ bool SuperkMC::Read(TXMLEngine* xml, XMLNodePointer_t root_node)
      }
   }
 
-  // apply tuning to templates
-  this->ApplyTuningToTemplates();
+  // apply flux tuning (based on external data) to templates
+  this->ApplyFluxExtTuningToTemplates();
      
 #ifdef __show_init_mesg_info__      
   cout << "Exp/SKMC >> Done reading SuperK inputs!" << endl;
@@ -466,8 +466,12 @@ void SuperkMC::UpdateTemplates(void)
   this->ApplyPhysHypothesisToTemplates();
 }
 //________________________________________________________________________________________
-void SuperkMC::ApplyTuningToTemplates(void) 
+void SuperkMC::ApplyFluxExtTuningToTemplates(void) 
 {
+// Reweight `nominal' MC templates to account for flux tuning based on external 
+// (NA61,...) data.
+// 
+
   // loop over samples
   for(int is = 0; is < kns; is++) {
     SuperkSample_t s = kSKSamples[is];
@@ -492,9 +496,9 @@ void SuperkMC::ApplyTuningToTemplates(void)
            double nev = mctempl->GetBinContent(ir,it);
            // get tuning weights
            int flux_nu_pdg = util::SuperkMode2FluxNuPdg(m);
-           double flux_tune_wght = fNuFlux->SuperkFluxTuneWght(flux_nu_pdg,Etrue);
+           double wght = fNuFlux->SuperkFluxExtTuningWght(flux_nu_pdg,Etrue);
            // update nominal MC template
-           nev *= flux_tune_wght;
+           nev *= wght;
            mctempl->SetBinContent(ir,it,nev);
            // initialize "sys" & "fin" templates to "nom" values
            this->Template(s,m,kSKMCtSys)->SetBinContent(ir,it,nev);
@@ -503,6 +507,53 @@ void SuperkMC::ApplyTuningToTemplates(void)
        }//ir
     }//im
   }//is
+}
+//________________________________________________________________________________________
+void SuperkMC::ApplyBANFFTuningToTemplates(void)
+{
+// Reweight `nominal' MC templates to account for BANFF tuning (reweight to BANFF
+// best-fit parameters)
+// Any tuning based on external data must have been already applied to MC templates
+// before running this method as the flux weights applied here are relative to the
+// ext.-tuned flux.
+
+  // loop over samples
+  for(int is = 0; is < kns; is++) {
+    SuperkSample_t s = kSKSamples[is];
+    if(s == kSKsUndefined) continue;
+    // loop over sample modes
+    for(int im = 0; im < knm; im++) { 
+       SuperkMode_t m = kSKReactionModes[is][im];
+       if(m == kSKmUndefined) continue;
+       // consider template?
+       bool skip = this->SkipTemplate(m);
+       if(skip) continue;
+       // get corresponding template
+       TH2D * mctempl = this -> Template(s,m,kSKMCtNom);
+       if(!mctempl) continue; 
+       // loop over Ereco
+       for(int ir = 1; ir <= mctempl->GetXaxis()->GetNbins(); ir++) {
+         //double Ereco = mctempl->GetXaxis()->GetBinCenter(ir);
+         // loop over Etrue
+         for(int it = 1; it <= mctempl->GetYaxis()->GetNbins(); it++) {
+           double Etrue = mctempl->GetYaxis()->GetBinCenter(it);
+           // get number of events
+           double nev = mctempl->GetBinContent(ir,it);
+           // get tuning weights
+           int flux_nu_pdg = util::SuperkMode2FluxNuPdg(m);
+           double flux_wght = fNuFlux->SuperkFluxFinTuningWght(flux_nu_pdg,Etrue);
+           double xsec_wght = 1.; /// TODO            
+           // update nominal MC template
+           nev *= (flux_wght * xsec_wght);
+           mctempl->SetBinContent(ir,it,nev);
+           // initialize "sys" & "fin" templates to "nom" values
+           this->Template(s,m,kSKMCtSys)->SetBinContent(ir,it,nev);
+           this->Template(s,m,kSKMCtFin)->SetBinContent(ir,it,nev);
+         }//it
+       }//ir
+    }//im
+  }//is
+
 }
 //________________________________________________________________________________________
 void SuperkMC::ApplySystematicsToTemplates(void) 
@@ -897,7 +948,7 @@ double SuperkMC::NumOfEvents(
 //double banff_xsec_wght = 1;
 //if(fBANFF->IsTweaked()) {
   int flux_nu_pdg = util::SuperkMode2FluxNuPdg(m);
-  banff_flux_wght = fNuFlux->SuperkFluxWght(flux_nu_pdg, Etrue);
+  banff_flux_wght = fNuFlux->SuperkFluxSystWght(flux_nu_pdg, Etrue);
 //}
 
 /*      
@@ -928,9 +979,9 @@ double SuperkMC::NumOfEvents(
   //
   double xsec_ccqe_wght  = 1.;
   double xsec_ratio_wght = 1.;
-  if(fGenInputs) {
-     xsec_ccqe_wght  = fGenInputs->SuperkCCQEXSecWght (Etrue, s, m);
-     xsec_ratio_wght = fGenInputs->SuperkXSecRatioWght(Etrue, s, m);
+  if(fNuXSec) {
+     xsec_ccqe_wght  = fNuXSec->SuperkCCQEXSecWght (Etrue, s, m);
+     xsec_ratio_wght = fNuXSec->SuperkXSecRatioWght(Etrue, s, m);
   }
 #ifdef __show_num_of_events_mesg_debug__
   if(xsec_ccqe_wght != 1.) {
@@ -945,8 +996,8 @@ double SuperkMC::NumOfEvents(
   // Apply cross section systematics = f(Ereco)
   //
   double nucl_effect_wght = 1;
-  if(fGenInputs) {
-     nucl_effect_wght = fGenInputs->SuperkNuclEffectWght(Ereco, s, m);
+  if(fNuXSec) {
+     nucl_effect_wght = fNuXSec->SuperkNuclEffectWght(Ereco, s, m);
   }
 #ifdef __show_num_of_events_mesg_debug__ 
   if(nucl_effect_wght != 1.) {

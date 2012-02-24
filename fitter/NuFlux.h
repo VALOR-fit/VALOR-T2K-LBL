@@ -22,6 +22,8 @@
 #include <TXMLEngine.h>
 #include <TH1D.h>
 
+#include "Conventions.h"
+
 class TVirtualPad;
 
 namespace t2kana {
@@ -37,18 +39,13 @@ public:
   // POT used for flux simulation
   double SuperkFluxPOT (void) const;
 
-  // Tuned (default) or nominal SK flux
-  double SuperkFlux (int neutrino_pdg, double Etrue, bool tuned=true, bool tweaked=true) const;
+  // SK flux (current, tuned/fin, tuned/ext, nominal - depending on input flux type)
+  double SuperkFlux (int neutrino_pdg, double Etrue, conv::FluxType_t type = conv::kFlxCurrent) const;
 
-  // Weights for nominal SK flux -> tuned SK flux
-  double SuperkFluxTuneWght (int neutrino_pdg, double Etrue) const; 
-
-  // SK flux weights (ratios of tuned SK fluxes) as a result of BANFF tweaks
-  double SuperkFluxWght (int neutrino_pdg, double Etrue) const; 
-
-  // Access nominal flux and weight histograms held in this object
-  TH1D * SuperkFluxSpectrum    (int neutrino_pdg, bool tuned=true, bool tweaked=true) const;
-  TH1D * SuperkFluxTuningWghts (int neutrino_pdg) const;
+  // SK flux tuning and systematic variation weights
+  double SuperkFluxExtTuningWght  (int neutrino_pdg, double Etrue) const;  // nominal --> tuned (ext. data only)
+  double SuperkFluxFinTuningWght  (int neutrino_pdg, double Etrue) const;  // tuned (ext. data only) --> tuned (ext. + T2K data)
+  double SuperkFluxSystWght       (int neutrino_pdg, double Etrue) const;  // weight due to systematic variation of tuned (ext. + T2K data) flux
 
   // Read configuration and data from input XML file
   bool Read (TXMLEngine* xml, XMLNodePointer_t root_node);
@@ -69,35 +66,48 @@ public:
 
 private:
 
-  void Init               (void);
-  void CleanUp            (void);
-  void BookAndInitNomFlux (void);
-  void BookAndInitTwkFlux (void);
-  void CalcTwkFlux        (void) const; ///< Calculate tweaked flux as a result of BANFF param variations
+  // Initialize and clean-up
+  void Init    (void);
+  void CleanUp (void);
+
+  // Book and initialize/compute spectra not loaded from config files
+  void BookAndInitAuxSpectra(void);
+
+  // Apply BANFF weights
+  void ApplyBANFFWeights (bool rew_to_banff_bestfit) const; 
+
+  // Access flux and weight histograms held in this object
+  TH1D * SuperkFluxSpectrum       (int neutrino_pdg, conv::FluxType_t type = conv::kFlxCurrent) const;
+  TH1D * SuperkFluxExtTuningWghts (int neutrino_pdg) const;
 
   //
-  // Note :
-  //  - nominal flux : refers to the Superk flux used for MC production
-  //  - tuned flux   : nominal flux + flux tuning weights
-  //  - tweaked flux : tuned flux + BANFF fit parameter variations
+  // Note on fluxes (see also Conventions.h):
+  //  - nominal          : flux used for MC production
+  //  - tuned (external) : nominal flux + flux tuning weights based on external data (NA61,...) only
+  //  - tuned (final)    : nominal flux + flux tuning weights based on external data (NA61,...) and T2K detector data (ND280 data fit by BANFF,...)
+  //  - current          : current flux (current systematic variation of combined-tuning flux)
   //
-  TH1D *           fSuperkNuMuFluxNom;            ///< nominal SuperK numu    flux (50 MeV binning)
-  TH1D *           fSuperkNuMuBarFluxNom;         ///< nominal SuperK numubar flux (50 MeV binning)
-  TH1D *           fSuperkNuEFluxNom;             ///< nominal SuperK nue     flux (50 MeV binning)
-  TH1D *           fSuperkNuEBarFluxNom;          ///< nominal SuperK nuebar  flux (50 MeV binning)
-  TH1D *           fSuperkNuMuFluxTun;            ///< tuned   SuperK numu    flux (50 MeV binning)
-  TH1D *           fSuperkNuMuBarFluxTun;         ///< tuned   SuperK numubar flux (50 MeV binning)
-  TH1D *           fSuperkNuEFluxTun;             ///< tuned   SuperK nue     flux (50 MeV binning)
-  TH1D *           fSuperkNuEBarFluxTun;          ///< tuned   SuperK nuebar  flux (50 MeV binning)
-  mutable TH1D *   fSuperkNuMuFluxTwk;            ///< tweaked SuperK numu    flux (50 MeV binning)
-  mutable TH1D *   fSuperkNuMuBarFluxTwk;         ///< tweaked SuperK numubar flux (50 MeV binning)
-  mutable TH1D *   fSuperkNuEFluxTwk;             ///< tweaked SuperK nue     flux (50 MeV binning)
-  mutable TH1D *   fSuperkNuEBarFluxTwk;          ///< tweaked SuperK nuebar  flux (50 MeV binning)
-  TH1D *           fSuperkNuMuFluxTunWght;        ///< SuperK numu    flux tuning weights
-  TH1D *           fSuperkNuMuBarFluxTunWght;     ///< SuperK numubar flux tuning weights
-  TH1D *           fSuperkNuEFluxTunWght;         ///< SuperK nue     flux tuning weights
-  TH1D *           fSuperkNuEBarFluxTunWght;      ///< SuperK nue     flux tuning weights
-  BANFF *          fBANFF;                        ///< BANFF fit info
+  TH1D *           fSKNuMuFluxNominal;           ///< nominal SuperK numu    flux (50 MeV binning)
+  TH1D *           fSKNuMuBarFluxNominal;        ///< nominal SuperK numubar flux (50 MeV binning)
+  TH1D *           fSKNuEFluxNominal;            ///< nominal SuperK nue     flux (50 MeV binning)
+  TH1D *           fSKNuEBarFluxNominal;         ///< nominal SuperK nuebar  flux (50 MeV binning)
+  TH1D *           fSKNuMuFluxTunedExt;          ///< tuned   SuperK numu    flux (50 MeV binning) based on external (NA61,...) data only 
+  TH1D *           fSKNuMuBarFluxTunedExt;       ///< tuned   SuperK numubar flux (50 MeV binning) based on external (NA61,...) data only
+  TH1D *           fSKNuEFluxTunedExt;           ///< tuned   SuperK nue     flux (50 MeV binning) based on external (NA61,...) data only
+  TH1D *           fSKNuEBarFluxTunedExt;        ///< tuned   SuperK nuebar  flux (50 MeV binning) based on external (NA61,...) data only
+  TH1D *           fSKNuMuFluxTunedFinal;        ///< tuned   SuperK numu    flux (50 MeV binning) based on external (NA61,...) + T2K detector (ND280,...) data
+  TH1D *           fSKNuMuBarFluxTunedFinal;     ///< tuned   SuperK numubar flux (50 MeV binning) based on external (NA61,...) + T2K detector (ND280,...) data
+  TH1D *           fSKNuEFluxTunedFinal;         ///< tuned   SuperK nue     flux (50 MeV binning) based on external (NA61,...) + T2K detector (ND280,...) data
+  TH1D *           fSKNuEBarFluxTunedFinal;      ///< tuned   SuperK nuebar  flux (50 MeV binning) based on external (NA61,...) + T2K detector (ND280,...) data
+  mutable TH1D *   fSKNuMuFluxCurrent;           ///< current SuperK numu    flux (50 MeV binning)
+  mutable TH1D *   fSKNuMuBarFluxCurrent;        ///< current SuperK numubar flux (50 MeV binning)
+  mutable TH1D *   fSKNuEFluxCurrent;            ///< current SuperK nue     flux (50 MeV binning)
+  mutable TH1D *   fSKNuEBarFluxCurrent;         ///< current SuperK nuebar  flux (50 MeV binning)
+  TH1D *           fSKNuMuFluxExtTuningWght;     ///< SuperK numu    flux tuning weights
+  TH1D *           fSKNuMuBarFluxExtTuningWght;  ///< SuperK numubar flux tuning weights
+  TH1D *           fSKNuEFluxExtTuningWght;      ///< SuperK nue     flux tuning weights
+  TH1D *           fSKNuEBarFluxExtTuningWght;   ///< SuperK nue     flux tuning weights
+  BANFF *          fBANFF;                       ///< BANFF fit info
       
 ClassDef(NuFlux, 5)
 };

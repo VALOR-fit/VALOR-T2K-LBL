@@ -826,14 +826,14 @@ string t2kana::util::AsString(t2kana::conv::OscChannelId_t osch)
   return "--";
 } 
 //____________________________________________________________________________
-string t2kana::util::AsString(t2kana::conv::FluxNormErrIdx_t idx)
+string t2kana::util::AsString(t2kana::conv::FluxType_t f)
 {
-  switch(idx) {
-    case ( kFlxn1Rmu   ) : return "1Rmu";     break;
-    case ( kFlxn1ReSig ) : return "1Re[sig]"; break;
-    case ( kFlxn1ReBkg ) : return "1Re[bkg]"; break;
-    case ( kFlxn1ReTot ) : return "1Re[tot]"; break;
-    default:               return "--";       break;
+  switch(f) {
+    case ( kFlxNominal     ) : return "nominal";          break;
+    case ( kFlxExtTuning   ) : return "tuned (external)"; break;
+    case ( kFlxFinalTuning ) : return "tuned (final)";    break;
+    case ( kFlxCurrent     ) : return "current";          break;
+    default                  : return "--";               break;
   }
   return "";
 }

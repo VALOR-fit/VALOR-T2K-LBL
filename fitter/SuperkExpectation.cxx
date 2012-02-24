@@ -62,12 +62,6 @@ void SuperkExpectation::Generate(const PhysHypothesis & ph)
 // Calculate dN^{exp}_{SuperK}(E_{reco}) / dE_{reco} for the input E_{reco} and 
 // the input physics hypothesis
 //
-
-//-----------------
-// Note that currently SuperkExpectation = SuperkMC.
-// No BANFF extrapolation implemented.
-//-----------------
-
   if(!fIsConfigured) {
     cerr << "Exp >> Not configured properly! " << endl;
     exit(1);
@@ -120,6 +114,15 @@ void SuperkExpectation::Generate(const FitParamList & fp)
   this->Generate(ph);
 }
 //________________________________________________________________________________________
+void SuperkExpectation::ReweightToBANFFBestFitParams(bool rew) 
+{ 
+  cout << "Exp >> ** SuperkExpectation will" 
+       << ((rew) ? "" : " not") 
+       << " include MC re-weighting to BANFF best-fit parameters" << endl;
+
+  fRew2BANFFBestFit = rew; 
+}
+//________________________________________________________________________________________
 TH1D* SuperkExpectation::CurrPredictedErecoSpectrum(t2kana::conv::SuperkSample_t s) const 
 {
   int sidx = util::FindSampleSlot(s);
@@ -156,29 +159,17 @@ void SuperkExpectation::ResetSystematicVariations(void)
   this->GetSuperkMC()->TweakEfficiency1RmuNC               (0.);     
   this->GetSuperkMC()->TweakEfficiency1RmuNuECC            (0.);
 
-////////////  this->GetSuperkMC()->TweakEfficiency1ReSig               (0.);
-////////////  this->GetSuperkMC()->TweakEfficiency1ReBkg               (0.);
+  // BANFF
+  this->GetBANFF()->Tweak(true,0);
 
-////////////  this->GetNuFlux()->TweakNorm (0.);
-////////////  this->GetNuFlux()->TweakShape(true,0);  
-
-////////////  this->GetNuXSec()->TweakCCQE        (0.);
-////////////  this->GetNuXSec()->TweakCC1piToCCQE (0.);
-////////////  this->GetNuXSec()->TweakCCCohToCCQE (0.);
-////////////  this->GetNuXSec()->TweakCCOthToCCQE (0.);
-////////////  this->GetNuXSec()->TweakNCToCCQE    (0.);
-////////////  this->GetNuXSec()->TweakNC1pi0ToCCQE(0.);
-////////////  this->GetNuXSec()->TweakNCCohToCCQE (0.);
-////////////  this->GetNuXSec()->TweakNCOthToCCQE (0.);
-////////////  this->GetNuXSec()->TweakNuEToNuMu   (0.);
-////////////  this->GetNuXSec()->TweakSKFSI       (0.);
+  // ...
 }
 //________________________________________________________________________________________
 void SuperkExpectation::TweakSystematic(string systematic, double twkdial)
 {
 // Valid systematic parameter names:
-// ............................................................
-// [SK detector systematics]
+// 
+// SK detector systematics
 //    - sk_energy_scale                     : 
 //    - sk_1Rmu_ccqe_ring_counting_eff      : tweak SK 1Rmu/CCQE RC efficiencies in all 3 Ereco bins, correlations taken into account (Cholesky method)
 //      or
@@ -190,7 +181,7 @@ void SuperkExpectation::TweakSystematic(string systematic, double twkdial)
 //   - sk_1Rmu_nc_eff                       :
 //   - sk_1Rmu_nuecc_eff                    :
 //
-// [BANFF]
+// BANFF
 //    - banff                               : tweak all BANFF params, correlations taken into account (Cholesky method)
 //      or   
 //      - banff_0                           : tweak only BANFF param 00, see Conventions.h for definition, correlations ignored (debug mode)
@@ -202,6 +193,7 @@ void SuperkExpectation::TweakSystematic(string systematic, double twkdial)
   //
   // SK detector systematics
   //
+
   if(systematic == "sk_energy_scale") {
      this->GetSuperkMC()->TweakEnergyScale(twkdial);
   }
@@ -239,6 +231,10 @@ void SuperkExpectation::TweakSystematic(string systematic, double twkdial)
      this->GetSuperkMC()->TweakEfficiency1RmuNuECC(twkdial);
   }
      
+  //
+  // BANFF 
+  //
+
   // tweak all BANFF parameters taking into account correlations
   else
   if(systematic == "banff") {
@@ -278,31 +274,18 @@ void SuperkExpectation::TweakAllSystematics(bool do_tweak)
 
      TRandom3 rand(0);
 
-     // SuperK detector response
-     this->GetSuperkMC()->TweakEnergyScale                     (rand.Gaus(0.,1.));
-     this->GetSuperkMC()->TweakEfficiency1RmuCCQEOther         (rand.Gaus(0.,1.));
-     this->GetSuperkMC()->TweakEfficiency1RmuCCQERingCounting  (); //< Cholesky method
-     this->GetSuperkMC()->TweakEfficiency1RmuCCnonQE           (rand.Gaus(0.,1.));
-     this->GetSuperkMC()->TweakEfficiency1RmuNC                (rand.Gaus(0.,1.));     
-     this->GetSuperkMC()->TweakEfficiency1RmuNuECC             (rand.Gaus(0.,1.));
-/////////     this->GetSuperkMC()->TweakEfficiency1ReSig                (rand.Gaus(0.,1.));
-////////     this->GetSuperkMC()->TweakEfficiency1ReBkg                (rand.Gaus(0.,1.));
+     // SuperK detector systematics
+     this->GetSuperkMC()->TweakEnergyScale              (rand.Gaus(0.,1.));
+     this->GetSuperkMC()->TweakEfficiency1RmuCCQEOther  (rand.Gaus(0.,1.));
+     this->GetSuperkMC()->TweakEfficiency1RmuCCnonQE    (rand.Gaus(0.,1.));
+     this->GetSuperkMC()->TweakEfficiency1RmuNC         (rand.Gaus(0.,1.));     
+     this->GetSuperkMC()->TweakEfficiency1RmuNuECC      (rand.Gaus(0.,1.));
+     this->GetSuperkMC()->TweakEfficiency1RmuCCQERingCounting  (); // <-- Cholesky method
 
-     // neutrino flux
-////////     this->GetNuFlux()->TweakNorm (rand.Gaus(0.,1.));
-////////     this->GetNuFlux()->TweakShape(); //< Cholesky method
+     // BANFF
+     this->GetBANFF()->Tweak(); // <-- Cholesky method
 
-     // neutrino cross sections
-////////     this->GetNuXSec()->TweakCCQE        (rand.Gaus(0.,1.));
-////////     this->GetNuXSec()->TweakCC1piToCCQE (rand.Gaus(0.,1.));
-////////     this->GetNuXSec()->TweakCCCohToCCQE (rand.Gaus(0.,1.));
-////////     this->GetNuXSec()->TweakCCOthToCCQE (rand.Gaus(0.,1.));
-////////     this->GetNuXSec()->TweakNCToCCQE    (rand.Gaus(0.,1.));
-////////     this->GetNuXSec()->TweakNC1pi0ToCCQE(rand.Gaus(0.,1.));
-////////     this->GetNuXSec()->TweakNCCohToCCQE (rand.Gaus(0.,1.));
-////////     this->GetNuXSec()->TweakNCOthToCCQE (rand.Gaus(0.,1.));
-////////     this->GetNuXSec()->TweakNuEToNuMu   (rand.Gaus(0.,1.));
-////////     this->GetNuXSec()->TweakSKFSI       (rand.Gaus(0.,1.));
+     // ...
 
   } else {
     cout << "Exp >> No SuperkExpectation tweak" << endl;
@@ -313,9 +296,8 @@ void SuperkExpectation::PrintSystematicVariations(void) const
 {
   cout << "Exp >> SuperK PDF tweaks: " << endl;
   fSuperkMC -> PrintSystematicVariations();
-//  fNuFlux   -> PrintSystematicVariations();
-  fNuXSec   -> PrintSystematicVariations();
   fBANFF    -> PrintSystematicVariations();
+//fNuXSec   -> PrintSystematicVariations();
 }
 //________________________________________________________________________________________
 bool SuperkExpectation::Read(string config_file)
@@ -329,12 +311,16 @@ bool SuperkExpectation::Read(string config_file)
   // Instantiate all necessary histograms
   this->Book();
 
+  // Enable extrapolation
+  this->ReweightToBANFFBestFitParams(true);
+
   // Create components used for building-up the p.d.f.
-  // Configure inter-dependencies.
   fBANFF    = new BANFF;
   fNuFlux   = new NuFlux; 
   fNuXSec   = new NuXSec; 
   fSuperkMC = new SuperkMC;
+
+  // Configure inter-dependencies.
   fNuFlux   -> TellMeAboutTheBANFFfit   (fBANFF);
   fNuXSec   -> TellMeAboutTheBANFFfit   (fBANFF);
   fSuperkMC -> TellMeAboutCrossSections (fNuXSec);
@@ -356,18 +342,19 @@ bool SuperkExpectation::Read(string config_file)
   if ( ! this->GetNuXSec   ()->Read(xml, root_node) ) return false;
   if ( ! this->GetSuperkMC ()->Read(xml, root_node) ) return false;
 
+  fIsConfigured = true;
+
   // Release memory
   xml->FreeDoc(xmldoc);
   delete xml;
-
-  fIsConfigured = true;
 
   return true;
 }
 //________________________________________________________________________________________
 void SuperkExpectation::Init(void)
 {
-  fIsConfigured = false;
+  fIsConfigured     = false;
+  fRew2BANFFBestFit = false;
 
   fSuperkMC = 0;
   fNuFlux   = 0;
@@ -421,6 +408,10 @@ void SuperkExpectation::CleanUp(void)
 void SuperkExpectation::SetNuisanceParams(const FitParamList & fp)
 {
    //this->ResetSystematicVariations();
+
+   // 
+   // SuperK detector systematics
+   //
 
    if(fp.Exists(kNuisSuperkEff1RmuCCQEoth)) {
      double twk = fp.CurrValue(kNuisSuperkEff1RmuCCQEoth);

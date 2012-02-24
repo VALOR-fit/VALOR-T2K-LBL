@@ -16,8 +16,8 @@
 #define __show_init_mesg_info__  
 #define __show_init_mesg_debug__   
 #define __show_cholesky_mesg_info__
-//#define __show_cholesky_mesg_debug__
-//#define __show_tweak_mesg_debug__
+#define __show_cholesky_mesg_debug__
+#define __show_tweak_mesg_debug__
 
 #include <cassert>
 #include <cstdlib>
@@ -168,15 +168,17 @@ void BANFF::Tweak(
 
     TMatrixD cov(this->CovMatrix());
 #ifdef __show_shape_cholesky_mesg_debug__
-    cout << "Exp/BANFF/Tweak >> BANFF covariance matrix: " << endl;
-    cov.Print();
+    cout << "Exp/BANFF/Tweak >> BANFF covariance matrix: " << endl; 
+    util::PrintCompact(cov,7,4);
+    //cov.Print();
 #endif
 
     TMatrixD L = util::CholeskyDecomposition(cov);
     fCovMtrxChoL = new TMatrixD(L);
 #ifdef __show_cholesky_mesg_debug__
     cout << "Exp/BANFF/Tweak >> Cholesky decomposition of BANFF covariance matrix: " << endl;
-    fCovMtrxChoL->Print();
+    util::PrintCompact(*fCovMtrxChoL,7,4);
+    //fCovMtrxChoL->Print();
 #endif
   }
 
@@ -196,7 +198,7 @@ void BANFF::Tweak(
   //
   // Check whether the values of the tweaking dials are forced.
   // If the forced tweaking dials are supposed to be the correlated ones then we don't
-  // need to use the Cholesky decomposition of the flux covariance matrix.
+  // need to use the Cholesky decomposition of the BANFF covariance matrix.
   //
 
   if(force_input_twkv && correlated) {
@@ -210,7 +212,7 @@ void BANFF::Tweak(
   //
   // Check whether the values of the tweaking dials are forced.
   // If the forced tweaking dials are supposed to be the un-correlated ones then use
-  // the Cholesky decomposition of the flux covariance matrix to generate
+  // the Cholesky decomposition of the BANFF covariance matrix to generate
   // correlated tweaking dials.
   //
 
@@ -277,7 +279,7 @@ void BANFF::DoTweak(TVectorD * input_twkv)
   else {
      TVectorD & twk_dials = *input_twkv;
      for(int ip = 0; ip < np; ip++) {
-       current_values[ip] = bestfit_values[ip] * twk_dials[ip];
+       current_values[ip] = bestfit_values[ip] * (1 + twk_dials[ip]);
      }//ip
   }
 

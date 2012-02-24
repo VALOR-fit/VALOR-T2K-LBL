@@ -79,6 +79,10 @@ public:
    // Print
    void PrintSystematicVariations(void) const;
 
+   // Extrapolation - Reweight prediction to the BANFF best-fit params.
+   // By default this flag is set to true.
+   void ReweightToBANFFBestFitParams(bool rew);
+
 private:
 
    // Initialise and clean-up
@@ -94,6 +98,7 @@ private:
    NuFlux *           fNuFlux;               ///< Neutrino flux simulation inputs
    NuXSec *           fNuXSec;               ///< Neutrino generator / cross section inputs
    BANFF *            fBANFF;                ///< BANFF fit info
+   bool               fRew2BANFFBestFit;     ///
 
    TH1D *  fPredictErecoSpectrum[kns][knm];  ///< Ereco spectrum = f(sample,mode)
    TH1D *  fPredictErecoSpectrumTot[kns];    ///< Ereco spectrum = f(sample), sum over modes
