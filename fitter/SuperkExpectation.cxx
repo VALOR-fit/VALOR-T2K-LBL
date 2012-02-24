@@ -114,15 +114,6 @@ void SuperkExpectation::Generate(const FitParamList & fp)
   this->Generate(ph);
 }
 //________________________________________________________________________________________
-void SuperkExpectation::ReweightToBANFFBestFitParams(bool rew) 
-{ 
-  cout << "Exp >> ** SuperkExpectation will" 
-       << ((rew) ? "" : " not") 
-       << " include MC re-weighting to BANFF best-fit parameters" << endl;
-
-  fRew2BANFFBestFit = rew; 
-}
-//________________________________________________________________________________________
 TH1D* SuperkExpectation::CurrPredictedErecoSpectrum(t2kana::conv::SuperkSample_t s) const 
 {
   int sidx = util::FindSampleSlot(s);
@@ -266,30 +257,24 @@ void SuperkExpectation::TweakSystematic(string systematic, double twkdial)
      
 }
 //________________________________________________________________________________________
-void SuperkExpectation::TweakAllSystematics(bool do_tweak)
+void SuperkExpectation::TweakAllSystematics(void)
 {
-  if(do_tweak) 
-  {
-     cout << "Exp >> Generating random variations of all systematic params." << endl;
+  cout << "Exp >> Generating random variations of all systematic params." << endl;
 
-     TRandom3 rand(0);
+  TRandom3 rand(0);
 
-     // SuperK detector systematics
-     this->GetSuperkMC()->TweakEnergyScale              (rand.Gaus(0.,1.));
-     this->GetSuperkMC()->TweakEfficiency1RmuCCQEOther  (rand.Gaus(0.,1.));
-     this->GetSuperkMC()->TweakEfficiency1RmuCCnonQE    (rand.Gaus(0.,1.));
-     this->GetSuperkMC()->TweakEfficiency1RmuNC         (rand.Gaus(0.,1.));     
-     this->GetSuperkMC()->TweakEfficiency1RmuNuECC      (rand.Gaus(0.,1.));
-     this->GetSuperkMC()->TweakEfficiency1RmuCCQERingCounting  (); // <-- Cholesky method
+  // SuperK detector systematics
+  this->GetSuperkMC()->TweakEnergyScale              (rand.Gaus(0.,1.));
+  this->GetSuperkMC()->TweakEfficiency1RmuCCQEOther  (rand.Gaus(0.,1.));
+  this->GetSuperkMC()->TweakEfficiency1RmuCCnonQE    (rand.Gaus(0.,1.));
+  this->GetSuperkMC()->TweakEfficiency1RmuNC         (rand.Gaus(0.,1.));     
+  this->GetSuperkMC()->TweakEfficiency1RmuNuECC      (rand.Gaus(0.,1.));
+  this->GetSuperkMC()->TweakEfficiency1RmuCCQERingCounting  (); // <-- Cholesky method
 
-     // BANFF
-     this->GetBANFF()->Tweak(); // <-- Cholesky method
+  // BANFF
+  this->GetBANFF()->Tweak(); // <-- Cholesky method
 
-     // ...
-
-  } else {
-    cout << "Exp >> No SuperkExpectation tweak" << endl;
-  }
+  // ...
 }
 //________________________________________________________________________________________
 void SuperkExpectation::PrintSystematicVariations(void) const
@@ -310,9 +295,6 @@ bool SuperkExpectation::Read(string config_file)
 
   // Instantiate all necessary histograms
   this->Book();
-
-  // Enable extrapolation
-  this->ReweightToBANFFBestFitParams(true);
 
   // Create components used for building-up the p.d.f.
   fBANFF    = new BANFF;
@@ -353,8 +335,7 @@ bool SuperkExpectation::Read(string config_file)
 //________________________________________________________________________________________
 void SuperkExpectation::Init(void)
 {
-  fIsConfigured     = false;
-  fRew2BANFFBestFit = false;
+  fIsConfigured = false;
 
   fSuperkMC = 0;
   fNuFlux   = 0;

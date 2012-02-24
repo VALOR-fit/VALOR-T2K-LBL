@@ -17,8 +17,8 @@
 #define __show_init_mesg_debug__
 //#define __show_hypothesis__ 
 //#define __show_hypothesis_probabilities__ 
-//#define __show_num_of_events_mesg_info__ 
-//#define __show_num_of_events_mesg_debug__ 
+//#define __show_syst_var_wght_mesg_info__ 
+//#define __show_syst_var_wght_mesg_debug__ 
 #define __show_rc_cholesky_mesg_info__
 //#define __show_rc_cholesky_mesg_debug__ 
 //#define __show_spectra_update_mesg_debug__ 
@@ -69,6 +69,7 @@ void SuperkMC::Init(void)
     fMCErecoSpectrumTot[is] = 0;
     for(int im=0; im<knm; im++) {
       fMCTemplNom      [is][im] = 0;
+      fMCTemplTun      [is][im] = 0;
       fMCTemplSys      [is][im] = 0;
       fMCTemplFin      [is][im] = 0;
       fMCErecoSpectrum [is][im] = 0;
@@ -132,6 +133,7 @@ void SuperkMC::CleanUp(void)
   for(int is = 0; is < kns; is++) {
      for(int im = 0; im < knm; im++) {
        if( fMCTemplNom     [is][im] ) delete fMCTemplNom     [is][im];
+       if( fMCTemplTun     [is][im] ) delete fMCTemplTun     [is][im];
        if( fMCTemplSys     [is][im] ) delete fMCTemplSys     [is][im];
        if( fMCTemplFin     [is][im] ) delete fMCTemplFin     [is][im];
        if( fMCErecoSpectrum[is][im] ) delete fMCErecoSpectrum[is][im];
@@ -269,6 +271,9 @@ bool SuperkMC::Read(TXMLEngine* xml, XMLNodePointer_t root_node)
   // apply flux tuning (based on external data) to templates
   this->ApplyFluxExtTuningToTemplates();
      
+  // apply flux and cross-section tuning (based on nd280 data fit by BANFF) to templates
+  this->ApplyBANFFTuningToTemplates();
+
 #ifdef __show_init_mesg_info__      
   cout << "Exp/SKMC >> Done reading SuperK inputs!" << endl;
 #endif
@@ -317,17 +322,23 @@ void SuperkMC::Book(void)
        SuperkMode_t m = kSKReactionModes[is][im];
        if(m == kSKmUndefined) continue;
        fMCTemplNom[is][im] = new TH2D(
-          Form("nsk_%d_%d",is,im), util::AsString(m).c_str(),
+          Form("nsk_nom_%d_%d",is,im), util::AsString(m).c_str(),
+               n_ereco_bins, ereco_bin_edges, kNEtrueBins, kEtrueMin, kEtrueMax);
+       fMCTemplTun[is][im] = new TH2D(
+          Form("nsk_tun_%d_%d",is,im), util::AsString(m).c_str(),
                n_ereco_bins, ereco_bin_edges, kNEtrueBins, kEtrueMin, kEtrueMax);
        fMCTemplSys[is][im] = new TH2D(
-          Form("nsksyst_%d_%d",is,im), util::AsString(m).c_str(),
+          Form("nsk_sys_%d_%d",is,im), util::AsString(m).c_str(),
                n_ereco_bins, ereco_bin_edges, kNEtrueBins, kEtrueMin, kEtrueMax);
        fMCTemplFin[is][im] = new TH2D(
-          Form("nskcurr_%d_%d",is,im), util::AsString(m).c_str(),
+          Form("nsk_fin_%d_%d",is,im), util::AsString(m).c_str(),
                n_ereco_bins, ereco_bin_edges, kNEtrueBins, kEtrueMin, kEtrueMax);
        fMCTemplNom[is][im]->SetDirectory(0);
        fMCTemplNom[is][im]->GetXaxis()->SetTitle("E_{reco} (GeV)");
        fMCTemplNom[is][im]->GetYaxis()->SetTitle("E_{true} (GeV)");
+       fMCTemplTun[is][im]->SetDirectory(0);
+       fMCTemplTun[is][im]->GetXaxis()->SetTitle("E_{reco} (GeV)");
+       fMCTemplTun[is][im]->GetYaxis()->SetTitle("E_{true} (GeV)");
        fMCTemplSys[is][im]->SetDirectory(0);
        fMCTemplSys[is][im]->GetXaxis()->SetTitle("E_{reco} (GeV)");
        fMCTemplSys[is][im]->GetYaxis()->SetTitle("E_{true} (GeV)");
@@ -387,6 +398,7 @@ void SuperkMC::FillTemplate(SuperkSample_t s, SuperkMode_t m)
      if(!use_it) continue;
      
      this -> Template(s,m,kSKMCtNom) -> Fill (fBrEreco, fBrEtrue, pot_wght);
+     this -> Template(s,m,kSKMCtTun) -> Fill (fBrEreco, fBrEtrue, pot_wght);
      this -> Template(s,m,kSKMCtSys) -> Fill (fBrEreco, fBrEtrue, pot_wght);
      this -> Template(s,m,kSKMCtFin) -> Fill (fBrEreco, fBrEtrue, pot_wght);
 
@@ -438,6 +450,9 @@ TH2D * SuperkMC::Template(SuperkSample_t s, SuperkMode_t m, SKMCTemplateType_t t
    case (kSKMCtNom) : 
      h = fMCTemplNom[sidx][midx]; 
      break;
+   case (kSKMCtTun) : 
+     h = fMCTemplTun[sidx][midx];
+     break;
    case (kSKMCtSys) : 
      h = fMCTemplSys[sidx][midx];
      break;
@@ -452,25 +467,11 @@ TH2D * SuperkMC::Template(SuperkSample_t s, SuperkMode_t m, SKMCTemplateType_t t
   return h;
 }
 //________________________________________________________________________________________
-//void SuperkMC::Update(void)
-//{
-//  this->ApplySystematicsToTemplates();
-//  this->ApplyPhysHypothesisToTemplates();
-//  this->UpdateErecoSpectra();
-//  this->UpdateEtrueSpectra();
-//}
-//________________________________________________________________________________________
-void SuperkMC::UpdateTemplates(void)
-{
-  this->ApplySystematicsToTemplates();
-  this->ApplyPhysHypothesisToTemplates();
-}
-//________________________________________________________________________________________
 void SuperkMC::ApplyFluxExtTuningToTemplates(void) 
 {
-// Reweight `nominal' MC templates to account for flux tuning based on external 
-// (NA61,...) data.
-// 
+// Take into account the flux tuning based on external (NA61,...) data.
+// This method reweights/overwrites the nominal templates & it is run just once after
+// filling-in the MC templates from the input mini-DSTs.
 
   // loop over samples
   for(int is = 0; is < kns; is++) {
@@ -500,7 +501,8 @@ void SuperkMC::ApplyFluxExtTuningToTemplates(void)
            // update nominal MC template
            nev *= wght;
            mctempl->SetBinContent(ir,it,nev);
-           // initialize "sys" & "fin" templates to "nom" values
+           // initialize "tun", "sys" & "fin" templates to "nom" values
+           this->Template(s,m,kSKMCtTun)->SetBinContent(ir,it,nev);
            this->Template(s,m,kSKMCtSys)->SetBinContent(ir,it,nev);
            this->Template(s,m,kSKMCtFin)->SetBinContent(ir,it,nev);
          }//it
@@ -511,11 +513,13 @@ void SuperkMC::ApplyFluxExtTuningToTemplates(void)
 //________________________________________________________________________________________
 void SuperkMC::ApplyBANFFTuningToTemplates(void)
 {
-// Reweight `nominal' MC templates to account for BANFF tuning (reweight to BANFF
-// best-fit parameters)
-// Any tuning based on external data must have been already applied to MC templates
-// before running this method as the flux weights applied here are relative to the
-// ext.-tuned flux.
+// Take BANFF tuning into account (reweight MC to BANFF best-fit parameters)
+// The weights returned by NuFlux::SuperkFluxFinTuningWght() are relative to the flux
+// tuned based on external (NA61,...) data, so make sure that you run 
+// SuperkMC::ApplyFluxExtTuningToTemplates() before running this method.
+// Source template type: kSKMCtNom
+// Target template type: kSKMCtTun
+//
 
   // loop over samples
   for(int is = 0; is < kns; is++) {
@@ -529,43 +533,54 @@ void SuperkMC::ApplyBANFFTuningToTemplates(void)
        bool skip = this->SkipTemplate(m);
        if(skip) continue;
        // get corresponding template
-       TH2D * mctempl = this -> Template(s,m,kSKMCtNom);
-       if(!mctempl) continue; 
+       TH2D * mctempl_src = this -> Template(s,m,kSKMCtNom);
+       if(!mctempl_src) continue; 
+       TH2D * mctempl_tgt = this -> Template(s,m,kSKMCtTun);
+       if(!mctempl_tgt) continue; 
        // loop over Ereco
-       for(int ir = 1; ir <= mctempl->GetXaxis()->GetNbins(); ir++) {
-         //double Ereco = mctempl->GetXaxis()->GetBinCenter(ir);
+       for(int ir = 1; ir <= mctempl_src->GetXaxis()->GetNbins(); ir++) {
+         //double Ereco = mctempl_src->GetXaxis()->GetBinCenter(ir);
          // loop over Etrue
-         for(int it = 1; it <= mctempl->GetYaxis()->GetNbins(); it++) {
-           double Etrue = mctempl->GetYaxis()->GetBinCenter(it);
+         for(int it = 1; it <= mctempl_src->GetYaxis()->GetNbins(); it++) {
+           double Etrue = mctempl_src->GetYaxis()->GetBinCenter(it);
            // get number of events
-           double nev = mctempl->GetBinContent(ir,it);
+           double nev = mctempl_src->GetBinContent(ir,it);
            // get tuning weights
            int flux_nu_pdg = util::SuperkMode2FluxNuPdg(m);
            double flux_wght = fNuFlux->SuperkFluxFinTuningWght(flux_nu_pdg,Etrue);
            double xsec_wght = 1.; /// TODO            
-           // update nominal MC template
-           nev *= (flux_wght * xsec_wght);
-           mctempl->SetBinContent(ir,it,nev);
-           // initialize "sys" & "fin" templates to "nom" values
+           // update tuned MC template
+           double nev_tuned = nev * flux_wght * xsec_wght;
+           mctempl_tgt->SetBinContent(ir,it,nev_tuned);
+           // initialize "sys" & "fin" templates to "tun" values
            this->Template(s,m,kSKMCtSys)->SetBinContent(ir,it,nev);
            this->Template(s,m,kSKMCtFin)->SetBinContent(ir,it,nev);
          }//it
        }//ir
     }//im
   }//is
-
+}
+//________________________________________________________________________________________
+void SuperkMC::UpdateTemplates(void)
+{
+  this->ApplySystematicsToTemplates   ();
+  this->ApplyPhysHypothesisToTemplates();
 }
 //________________________________________________________________________________________
 void SuperkMC::ApplySystematicsToTemplates(void) 
 {
 // Apply systematic variations to MC templates
 //
-
-  //
-  // All multiplicative systematics are handled in the following loop.
-  // Basically all systematic variations for each MC template bin is computed 
-  // in SuperkMC::NumOfEvents(Ereco,Etrue,sample,mode)
-  //
+  this->ApplySystematicsToTemplates_Multiplicative   (); 
+  this->ApplySystematicsToTemplates_NonMultiplicative();
+}
+//________________________________________________________________________________________
+void SuperkMC::ApplySystematicsToTemplates_Multiplicative(void) 
+{
+// All multiplicative systematics are handled in the following loop.
+// Basically all systematic variations for each MC template bin is computed 
+// in SuperkMC::NumOfEvents(Ereco,Etrue,sample,mode)
+//
 
   // loop over samples
   for(int is = 0; is < kns; is++) {
@@ -578,31 +593,37 @@ void SuperkMC::ApplySystematicsToTemplates(void)
        // consider template?
        bool skip = this->SkipTemplate(m);
        if(skip) continue;
-       // get corresponding template
-       TH2D * mctempl = this -> Template(s,m,kSKMCtSys);
-       if(!mctempl) continue; 
+       // get corresponding templates
+       TH2D * mctempl_src = this -> Template(s,m,kSKMCtTun);
+       if(!mctempl_src) continue; 
+       TH2D * mctempl_tgt = this -> Template(s,m,kSKMCtSys);
+       if(!mctempl_tgt) continue; 
        // loop over Ereco
-       for(int ir = 1; ir <= mctempl->GetXaxis()->GetNbins(); ir++) {
-         double Ereco = mctempl->GetXaxis()->GetBinCenter(ir);
+       for(int ir = 1; ir <= mctempl_src->GetXaxis()->GetNbins(); ir++) {
+         double Ereco = mctempl_src->GetXaxis()->GetBinCenter(ir);
          // loop over Etrue
-         for(int it = 1; it <= mctempl->GetYaxis()->GetNbins(); it++) {
-           double Etrue = mctempl->GetYaxis()->GetBinCenter(it);
-           // calculate number of events in this (Ereco,Etrue) bin including all
-           // systematic variations
-           double nev = this->NumOfEvents(Ereco,Etrue,s,m);
-           // update MC template
-           mctempl->SetBinContent(ir,it,nev);
+         for(int it = 1; it <= mctempl_src->GetYaxis()->GetNbins(); it++) {
+           double Etrue = mctempl_src->GetYaxis()->GetBinCenter(it);
+           // get number of events in current bin of source MC template
+           double nev = mctempl_src->GetBinContent(ir,it);
+           // get combined weight due to all multiplicative systematic variations
+           double wght = this->SystVariationWeight (Ereco, Etrue, s,m);
+           // update target MC template
+           mctempl_tgt->SetBinContent(ir,it,nev*wght);
          }//it
        }//ir
     }//im
   }//is
-
-  //
-  // Now that all simple multiplicative systematics were applied, apply the reconstructed 
-  // energy scale systematic. This systematic is applied by scaling the Ereco bin edges
-  // and, by assuming uniform distribution of events within each bin, calculating how many
-  // events a lost to / gained from neighbouring bins.
-  //
+}
+//________________________________________________________________________________________
+void SuperkMC::ApplySystematicsToTemplates_NonMultiplicative(void) 
+{
+//
+// Now that all simple multiplicative systematics were applied, apply the reconstructed 
+// energy scale systematic. This systematic is applied by scaling the Ereco bin edges
+// and, by assuming uniform distribution of events within each bin, calculating how many
+// events a lost to / gained from neighbouring bins.
+//
 
   // loop over samples
   for(int is = 0; is < kns; is++) {
@@ -915,128 +936,57 @@ void SuperkMC::ApplyPhysHypothesisToTemplates(void)
 
 }
 //________________________________________________________________________________________
-double SuperkMC::NumOfEvents(
+double SuperkMC::SystVariationWeight(
     double Ereco, double Etrue, SuperkSample_t s, SuperkMode_t m) const
 {
-// The return value is the number of events for the (Ereco,Etrue) bin of the (s,m) template
-// after applying multiplicative systematic variations (if any).
-// This method considers
+// The return value is the combined wght for the (Ereco,Etrue) bin of the (s,m) template
+// due to all multiplicative systematic param variation
+// This method considers:
 // - SuperK efficiencies variations
 // - BANFF parameter variations
 // - Cross-section variations
 
-  TH2D * nsk2d = this -> Template(s,m,kSKMCtNom);
-  assert(nsk2d);
-
-  int reco_bin = nsk2d->GetXaxis()->FindBin(Ereco);
-  int true_bin = nsk2d->GetYaxis()->FindBin(Etrue);
-
-#ifdef __show_num_of_events_mesg_info__ 
-  cout << "Exp/SKMC/NumOfEvents >> "
+#ifdef __show_syst_var_wght_mesg_info__ 
+  cout << "Exp/SKMC/SystVariationWeight >> "
        << "Sample = " << util::AsString(s) << " / Mode = " << util::AsString(m) 
        << ", Ereco = " << Ereco << " GeV (bin = " << reco_bin << ")" 
        << ", Etrue = " << Etrue << " GeV (bin = " << true_bin << ")" << endl;
 #endif
 
-  // Nominal number of events
-  double nev = nsk2d->GetBinContent(reco_bin, true_bin);
-
   //
-  // Apply BANFF systematics 
+  // Plug-in BANFF flux systematics
   //
-  double banff_flux_wght = 1;
-//double banff_xsec_wght = 1;
-//if(fBANFF->IsTweaked()) {
   int flux_nu_pdg = util::SuperkMode2FluxNuPdg(m);
-  banff_flux_wght = fNuFlux->SuperkFluxSystWght(flux_nu_pdg, Etrue);
-//}
-
-/*      
-  //
-  // Apply flux systematics = f(Etrue)
-  //
-  double numu_flux_shape_wght = 1.; // systematic variation (flux shape)
-  if(fNuFlux) {
-     if (util::IsNuMu(m)) {
-        numu_flux_shape_wght = fNuFlux->SuperkNuMuFluxShapeWeight (Etrue);
-     }
-     else
-     if (util::IsSignalNuE(m)) {
-        // signal nue component comes from the numu flux:
-        numu_flux_shape_wght = fNuFlux->SuperkNuMuFluxShapeWeight (Etrue);
-     } 
-  }//flux
-#ifdef __show_num_of_events_mesg_debug__
-  if(numu_flux_shape_wght != 1) {
-    cout << "Exp/SKMC/NumOfEvents >> Applied flux-shape-systematic weight = " << numu_flux_shape_wght << endl;
-  }
-#endif
-*/
-
-/*
-  //
-  // Apply cross section systematics = f(Etrue)
-  //
-  double xsec_ccqe_wght  = 1.;
-  double xsec_ratio_wght = 1.;
-  if(fNuXSec) {
-     xsec_ccqe_wght  = fNuXSec->SuperkCCQEXSecWght (Etrue, s, m);
-     xsec_ratio_wght = fNuXSec->SuperkXSecRatioWght(Etrue, s, m);
-  }
-#ifdef __show_num_of_events_mesg_debug__
-  if(xsec_ccqe_wght != 1.) {
-    cout << "Exp/SKMC/NumOfEvents >> Applied CCQE-xsec-systematic weight = " << xsec_ccqe_wght << endl;
-  }
-  if(xsec_ratio_wght != 1.) {
-    cout << "Exp/SKMC/NumOfEvents >> Applied mode/CCQE-xsec-ratio-systematic weight = " << xsec_ratio_wght << endl;
-  }
-#endif
+  double banff_flux_wght = fNuFlux->SuperkFluxSystWght(flux_nu_pdg, Etrue);
 
   //
-  // Apply cross section systematics = f(Ereco)
+  // Plug-in BANFF xsec systematics 
   //
-  double nucl_effect_wght = 1;
-  if(fNuXSec) {
-     nucl_effect_wght = fNuXSec->SuperkNuclEffectWght(Ereco, s, m);
-  }
-#ifdef __show_num_of_events_mesg_debug__ 
-  if(nucl_effect_wght != 1.) {
-    cout << "Exp/SKMC/NumOfEvents >> Applied nucl.-effect-systematic weight = " << nucl_effect_wght << endl;
-  }
-#endif
-*/
+  double banff_xsec_wght = 1;
 
   //
-  // Plug-in "efficiency" uncertainty due to fiducial volume, reduction chain, OD cut,
+  // ... other xsec, FSI etc
+  //
+
+  //
+  // Plug-in SK efficiency uncertainty due to fiducial volume, reduction chain, OD cut,
   // ring-counting, PID, momentum cut and decay e- cut.
   // The ring-counting error for CCQE has Ereco-dependence.
   //
-  double effwght = this->EfficiencyWeight(s,m,Ereco);
-#ifdef __show_num_of_events_mesg_debug__
-  if(effwght != 1.) {
-    cout << "Exp/SKMC/NumOfEvents >> Applied efficiency-systematic weight = " << effwght << endl;
+  double skeff_wght = this->EfficiencyWeight(s,m,Ereco);
+#ifdef __show_syst_var_wght_mesg_info__
+  if(skeff_wght != 1.) {
+    cout << "Exp/SKMC/SystVariationWeight >> Applied efficiency-systematic weight = " 
+         << skeff_wght << endl;
   }
 #endif
 
-  //
-  // Calculate updated number of events
-  //
-  double nevtwk = 
-     ( nev * 
-       banff_flux_wght *
-//       numu_flux_shape_wght * 
-//       xsec_ccqe_wght *
-//       xsec_ratio_wght *
-//       nucl_effect_wght *
-       effwght
-     );
+  double wght = 
+    banff_flux_wght *
+    banff_xsec_wght *
+    skeff_wght;
 
-#ifdef __show_num_of_events_mesg_info__ 
-  cout << "Exp/SKMC/NumOfEvents >> " << nev << " events (nominal) --> " 
-       << nevtwk << " events (current / tweaked)" << endl;
-#endif
-
-  return nevtwk;
+  return wght;
 }
 //________________________________________________________________________________________
 void SuperkMC::UpdateErecoSpectra(void)

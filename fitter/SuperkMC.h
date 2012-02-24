@@ -43,7 +43,7 @@ public:
   SuperkMC();
  ~SuperkMC();
 
-  // Apply tuning, systematic variations + oscillations (,decay,decoherence) to nominal MC templates
+  // Apply systematic variations + oscillations (,decay,decoherence) to MC templates
   void UpdateTemplates(void);
 
   // Integrate current MC templates and get Ereco spectra (needed for fitting the data)
@@ -55,7 +55,7 @@ public:
   TTree * MCTree (t2kana::conv::SuperkSample_t s, t2kana::conv::SuperkMode_t m);
   double  MCPOT  (t2kana::conv::SuperkSample_t s, t2kana::conv::SuperkMode_t m);
 
-  // Actual MC templates
+  // Access MC templates
   TH2D * Template (t2kana::conv::SuperkSample_t s, t2kana::conv::SuperkMode_t m, t2kana::conv::SKMCTemplateType_t type) const;
 
   // POT of analysed data sample (MC is scaled to that POT value)
@@ -110,13 +110,15 @@ private:
   void ApplyBANFFTuningToTemplates (void); 
 
   // Apply systematic variations to MC templates
-  void ApplySystematicsToTemplates (void); 
+  void ApplySystematicsToTemplates                   (void); 
+  void ApplySystematicsToTemplates_Multiplicative    (void); 
+  void ApplySystematicsToTemplates_NonMultiplicative (void); 
 
   // Apply physics hypothesis (oscillations,...) to MC templates
   void ApplyPhysHypothesisToTemplates (void); 
 
-  // Calculate the number of events in given (Ereco, Etrue) bin (applying all multiplicative systematics; i.e. all but energy scale)
-  double NumOfEvents (double Ereco, double Etrue, t2kana::conv::SuperkSample_t s, t2kana::conv::SuperkMode_t m) const;
+  // Calculate systematic variation weight in given (Ereco, Etrue) bin for the given sample and mode
+  double SystVariationWeight (double Ereco, double Etrue, t2kana::conv::SuperkSample_t s, t2kana::conv::SuperkMode_t m) const;
 
   // Ignore nue_signal templates for all but the 3-flavour oscillation hypothesis
   bool SkipTemplate(t2kana::conv::SuperkMode_t m);
@@ -158,11 +160,12 @@ private:
   //...
 
   // input MC templates (nominal, nominal + systematics, nominal + systematics + physics hypothesis) and Ereco spectra
-  TH2D *     fMCTemplNom[kns][knm];        ///< MC template(sample,mode): Ereco-Etrue (nominal+tuning)
-  TH2D *     fMCTemplSys[kns][knm];        ///< MC template(sample,mode): Ereco-Etrue (nominal+tuning) + systematic variations
-  TH2D *     fMCTemplFin[kns][knm];        ///< MC template(sample,mode): Ereco-Etrue (nominal+tuning) + systematic variations + physics hypothesis
-  TH1D *     fMCErecoSpectrum[kns][knm];   ///< MC Ereco spectrum(sample,mode)        (nominal+tuning) + systematic variations + physics hypothesis
-  TH1D *     fMCErecoSpectrumTot[kns];     ///< MC total Ereco spectrum (sample)      (nominal+tuning) + systematic variations + physics hypothesis
+  TH2D *     fMCTemplNom[kns][knm];        ///< Ereco-Etrue MC template(sample,mode): nominal + ext/tuning
+  TH2D *     fMCTemplTun[kns][knm];        ///< Ereco-Etrue MC template(sample,mode): nominal + ext/tuning + nd280/tuning
+  TH2D *     fMCTemplSys[kns][knm];        ///< Ereco-Etrue MC template(sample,mode): nominal + ext/tuning + nd280/tuning + systematics 
+  TH2D *     fMCTemplFin[kns][knm];        ///< Ereco-Etrue MC template(sample,mode): nominal + ext/tuning + nd280/tuning + systematics + physics hypothesis
+  TH1D *     fMCErecoSpectrum[kns][knm];   ///< Ereco MC spectrum (sample,mode)     : nominal + ext/tuning + nd280/tuning + systematics + physics hypothesis
+  TH1D *     fMCErecoSpectrumTot[kns];     ///< Ereco MC spectrum (sample)          : nominal + ext/tuning + nd280/tuning + systematics + physics hypothesis
 
   // input event trees and normalisation factors
   TTree*     fMCTreeNuMu1Rmu;              ///< input MC event tree /  sample: numu                        / cuts: 1-ring mu-like 
@@ -177,10 +180,10 @@ private:
   double     fMCPOTNuMuBar;                ///< input MC event sample POT : numubar
   double     fMCPOTNuE;                    ///< input MC event sample POT : nue (bkg)
   double     fMCPOTNuESig;                 ///< input MC event sample POT : nue (sig)
-  double     fBrEreco;                     ///< branch var for reading input event sample tree
-  double     fBrEtrue;                     ///< branch var for reading input event sample tree
-  int        fBrPdg;                       ///< branch var for reading input event sample tree
-  int        fBrGenCode;                   ///< branch var for reading input event sample tree
+  double     fBrEreco;                     ///< branch var for reading input MC mini-DST
+  double     fBrEtrue;                     ///< branch var for reading input MC mini-DST
+  int        fBrPdg;                       ///< branch var for reading input MC mini-DST
+  int        fBrGenCode;                   ///< branch var for reading input MC mini-DST
       
   NuFlux *   fNuFlux;                      ///< Neutrino flux analysis inputs
   NuXSec *   fNuXSec;                      ///< Neutrino cross section analysis inputs

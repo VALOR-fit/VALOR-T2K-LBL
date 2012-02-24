@@ -364,9 +364,10 @@ NuOscMixParam_t;
 typedef enum ESKMCTemplateType
 {   
    kSKMCtUndefined = -1, 
-   kSKMCtNom,   // nominal MC + tuning weights
-   kSKMCtSys,   // nominal MC + tuning weights + systematic variations
-   kSKMCtFin,   // nominal MC + tuning weights + systematic variations + physics hypothesis 
+   kSKMCtNom,   // nominal MC + tuning (ext) weights 
+   kSKMCtTun,   // nominal MC + tuning (ext) weights + tuning (T2K) weights
+   kSKMCtSys,   // nominal MC + tuning (ext) weights + tuning (T2K) weights + systematic variations
+   kSKMCtFin,   // nominal MC + tuning (ext) weights + tuning (T2K) weights + systematic variations + physics hypothesis 
 } 
 SKMCTemplateType_t;
 

@@ -52,15 +52,12 @@ public:
    SuperkExpectation();
   ~SuperkExpectation();
 
-   // Read inputs from input XML file
-   bool Read(string config_file);
-
    // Methods to generate SuperK spectra for a physics hypothesis (oscillations,decay,decoherence) 
    // and tweak systematics (tweak the p.d.fs used for generating the SuperK spectra).
    void Generate                  (const PhysHypothesis & ph);
    void ResetSystematicVariations (void);                                 ///< reset all systematics
    void TweakSystematic           (string systematic, double twkdial=0.); ///< set systematic variation (from top level)
-   void TweakAllSystematics       (bool do_tweak=true);                   ///< random variation of all systematics
+   void TweakAllSystematics       (void);                                 ///< random variation of all systematics
 
    // Interface method for fitters. The fit parameter list can contain info for both the 
    // physics hypothesis and the systematic variations.
@@ -70,18 +67,17 @@ public:
    TH1D* CurrPredictedErecoSpectrum (t2kana::conv::SuperkSample_t s) const;
    TH1D* CurrPredictedErecoSpectrum (t2kana::conv::SuperkSample_t s, t2kana::conv::SuperkMode_t m) const;
 
+   // Read inputs from input XML file
+   bool Read(string config_file);
+
    // Access inputs used for building-up the expected spectrum at SK
-   SuperkMC *         GetSuperkMC          (void) { return fSuperkMC;          }
-   NuFlux *           GetNuFlux            (void) { return fNuFlux;            }
-   NuXSec *           GetNuXSec            (void) { return fNuXSec;            }
-   BANFF *            GetBANFF             (void) { return fBANFF;             }
+   SuperkMC * GetSuperkMC (void) { return fSuperkMC; }
+   NuFlux *   GetNuFlux   (void) { return fNuFlux;   }
+   NuXSec *   GetNuXSec   (void) { return fNuXSec;   }
+   BANFF *    GetBANFF    (void) { return fBANFF;    }
 
    // Print
    void PrintSystematicVariations(void) const;
-
-   // Extrapolation - Reweight prediction to the BANFF best-fit params.
-   // By default this flag is set to true.
-   void ReweightToBANFFBestFitParams(bool rew);
 
 private:
 
@@ -93,12 +89,11 @@ private:
    // Use the nuisance param values in the input FitParamList to tweak the pdfs.
    void SetNuisanceParams (const FitParamList & fp);
 
-   bool               fIsConfigured;         ///< Is this object properly configured?
-   SuperkMC *         fSuperkMC;             ///< SuperK MC templates
-   NuFlux *           fNuFlux;               ///< Neutrino flux simulation inputs
-   NuXSec *           fNuXSec;               ///< Neutrino generator / cross section inputs
-   BANFF *            fBANFF;                ///< BANFF fit info
-   bool               fRew2BANFFBestFit;     ///
+   bool       fIsConfigured;         ///< Is this object properly configured?
+   SuperkMC * fSuperkMC;             ///< SuperK MC templates
+   NuFlux *   fNuFlux;               ///< Neutrino flux simulation inputs
+   NuXSec *   fNuXSec;               ///< Neutrino generator / cross section inputs
+   BANFF *    fBANFF;                ///< BANFF fit info
 
    TH1D *  fPredictErecoSpectrum[kns][knm];  ///< Ereco spectrum = f(sample,mode)
    TH1D *  fPredictErecoSpectrumTot[kns];    ///< Ereco spectrum = f(sample), sum over modes
