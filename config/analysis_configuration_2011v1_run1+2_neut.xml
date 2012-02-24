@@ -85,7 +85,7 @@
         <nominal>     
            <numu>
              <pot> 
-                6.9022613E+23
+                4.3151028E+23
              </pot>
              <one_mu_ring>
                 <filename>   inputs/official/2011/superk/neut/11c/superk_1RmuT_numu.root  </filename>
@@ -100,7 +100,7 @@
            </numu>
            <numubar>
              <pot> 
-                1.0154720E+25
+                6.3258298E+24
              </pot>
              <one_mu_ring>
                 <filename>   inputs/official/2011/superk/neut/11c/superk_1RmuT_numubar.root  </filename>
@@ -115,7 +115,7 @@
            </numubar>
            <nuebeam>
              <pot> 
-                3.4594342E+25 
+                2.2005051E+25
              </pot>
              <one_mu_ring>
                 <filename>   inputs/official/2011/superk/neut/11c/superk_1RmuT_nue.root  </filename>
@@ -130,7 +130,7 @@
           </nuebeam>
           <nuebarbeam>
              <pot> 
-                1.6516386E+26
+                1.0476136E+26
              </pot>
              <one_mu_ring>
                 <filename>   inputs/official/2011/superk/neut/11c/superk_1RmuT_nuebar.root  </filename>
@@ -145,7 +145,7 @@
           </nuebarbeam>
           <nuesignal>
              <pot> 
-                3.31357917E+23
+                2.0898769E+23
              </pot>
              <one_mu_ring>
                 <filename>   inputs/official/2011/superk/neut/11c/superk_1RmuT_nuesig.root  </filename>
