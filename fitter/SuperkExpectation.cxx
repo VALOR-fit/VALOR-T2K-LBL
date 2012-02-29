@@ -13,9 +13,8 @@
 */
 //________________________________________________________________________________________
 
-//#define __debug_level_1__
-//#define __debug_level_2__
-//#define __debug_level_3__
+#define __show_syst_reset_mesg__
+#define __show_syst_tweak_mesg__
 
 #include <cassert>
 #include <cstdlib>
@@ -140,7 +139,9 @@ TH1D* SuperkExpectation::CurrPredictedErecoSpectrum(
 //________________________________________________________________________________________
 void SuperkExpectation::ResetSystematicVariations(void)
 {
+#ifdef __show_syst_reset_mesg__
   cout << "Exp >> Reseting all systematic variations." << endl;
+#endif
 
   // SuperK detector systematics
   this->GetSuperkMC()->TweakEnergyScale                    (0.);
@@ -158,6 +159,11 @@ void SuperkExpectation::ResetSystematicVariations(void)
 //________________________________________________________________________________________
 void SuperkExpectation::TweakSystematic(string systematic, double twkdial)
 {
+#ifdef __show_syst_tweak_mesg__
+  cout << "Exp >> Setting systematic parameter: " << systematic 
+       << " to value = " << twkdial << endl;
+#endif
+
 // Valid systematic parameter names:
 // 
 // SK detector systematics
@@ -259,7 +265,9 @@ void SuperkExpectation::TweakSystematic(string systematic, double twkdial)
 //________________________________________________________________________________________
 void SuperkExpectation::TweakAllSystematics(void)
 {
+#ifdef __show_syst_tweak_mesg__
   cout << "Exp >> Generating random variations of all systematic params." << endl;
+#endif
 
   TRandom3 rand(0);
 

@@ -15,6 +15,7 @@
 
 #define __show_init_mesg_info__
 #define __show_init_mesg_debug__
+#define __show_update_mesg_info__
 //#define __show_hypothesis__ 
 //#define __show_hypothesis_probabilities__ 
 //#define __show_syst_var_wght_mesg_info__ 
@@ -473,6 +474,10 @@ void SuperkMC::ApplyFluxExtTuningToTemplates(void)
 // This method reweights/overwrites the nominal templates & it is run just once after
 // filling-in the MC templates from the input mini-DSTs.
 
+#ifdef __show_init_mesg_info__
+  cout << "Exp/SKMC >> Applying flux tuning based on external data (NA61,...)." << endl;
+#endif
+
   // loop over samples
   for(int is = 0; is < kns; is++) {
     SuperkSample_t s = kSKSamples[is];
@@ -521,6 +526,10 @@ void SuperkMC::ApplyBANFFTuningToTemplates(void)
 // Target template type: kSKMCtTun
 //
 
+#ifdef __show_init_mesg_info__
+  cout << "Exp/SKMC >> Applying BANFF flux and cross-section tuning." << endl;
+#endif
+
   // loop over samples
   for(int is = 0; is < kns; is++) {
     SuperkSample_t s = kSKSamples[is];
@@ -563,6 +572,10 @@ void SuperkMC::ApplyBANFFTuningToTemplates(void)
 //________________________________________________________________________________________
 void SuperkMC::UpdateTemplates(void)
 {
+#ifdef __show_update_mesg_info__
+  cout << "Exp/SKMC >> Updating MC templates...." << endl;
+#endif
+
   this->ApplySystematicsToTemplates   ();
   this->ApplyPhysHypothesisToTemplates();
 }
@@ -578,9 +591,12 @@ void SuperkMC::ApplySystematicsToTemplates(void)
 void SuperkMC::ApplySystematicsToTemplates_Multiplicative(void) 
 {
 // All multiplicative systematics are handled in the following loop.
-// Basically all systematic variations for each MC template bin is computed 
-// in SuperkMC::NumOfEvents(Ereco,Etrue,sample,mode)
+// The overall weight is computed by SystVariationWeight(Ereco,Etrue,sample,mode)
 //
+
+#ifdef __show_update_mesg_info__
+  cout << "Exp/SKMC >> Applying multiplicative systematics" << endl;
+#endif
 
   // loop over samples
   for(int is = 0; is < kns; is++) {
@@ -624,6 +640,10 @@ void SuperkMC::ApplySystematicsToTemplates_NonMultiplicative(void)
 // and, by assuming uniform distribution of events within each bin, calculating how many
 // events a lost to / gained from neighbouring bins.
 //
+
+#ifdef __show_update_mesg_info__
+  cout << "Exp/SKMC >> Applying non-multiplicative systematics" << endl;
+#endif
 
   // loop over samples
   for(int is = 0; is < kns; is++) {
@@ -732,6 +752,10 @@ void SuperkMC::ApplyPhysHypothesisToTemplates(void)
 // Apply physics hypothesis {oscillation (2-flavour / 3-flavour), decay or 
 // decoherence} to MC templates
 //
+
+#ifdef __show_update_mesg_info__
+  cout << "Exp/SKMC >> Applying physics hypothesis" << endl;
+#endif
 
   PhysHypothesis_t hyp = fPhysHypothesis.Hypothesis();
 

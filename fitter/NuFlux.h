@@ -43,9 +43,9 @@ public:
   double SuperkFlux (int neutrino_pdg, double Etrue, conv::FluxType_t type = conv::kFlxCurrent) const;
 
   // SK flux tuning and systematic variation weights
-  double SuperkFluxExtTuningWght  (int neutrino_pdg, double Etrue) const;  // nominal --> tuned (ext. data only)
-  double SuperkFluxFinTuningWght  (int neutrino_pdg, double Etrue) const;  // tuned (ext. data only) --> tuned (ext. + T2K data)
-  double SuperkFluxSystWght       (int neutrino_pdg, double Etrue) const;  // weight due to systematic variation of tuned (ext. + T2K data) flux
+  double SuperkFluxExtTuningWght  (int neutrino_pdg, double Etrue) const;  // weight: nominal --> ext/tuned flux
+  double SuperkFluxFinTuningWght  (int neutrino_pdg, double Etrue) const;  // weight: ext/tuned --> fin/tuned flux
+  double SuperkFluxSystWght       (int neutrino_pdg, double Etrue) const;  // weight: fin/tuned flux -> current (incl. syst. variation)
 
   // Read configuration and data from input XML file
   bool Read (TXMLEngine* xml, XMLNodePointer_t root_node);

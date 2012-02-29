@@ -45,8 +45,11 @@ public:
   const TMatrixD & CovMatrix         (void) const { return *fCovMtrx;       }
   const TMatrixD & CovMatrixCholesky (void) const { return *fCovMtrxChoL;   }
 
-  // Systematic variations 
+  // Systematic variations (wrt the best-fit BANFF params)
   void Tweak (bool force_input_twkv = false, TVectorD * input_twkv = 0, bool correlated = true);
+
+  // A special systematic variation which cancels the effect of BANFF tuning and reverts back to the nominal MC
+  void RestoreNominalMC(void);
 
   // Get & tweak flags	
   bool IsTweaked           (void) const { return fIsTweaked;         } ///< BANFF params tweaked?

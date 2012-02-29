@@ -15,8 +15,8 @@
 
 #define __show_init_mesg_info__  
 #define __show_flux_twk_mesg_info__   
-#define __show_flux_twk_mesg_debug__   
-#define __show_flux_twk_mesg_debug_level2__  #even more verbose
+//#define __show_flux_twk_mesg_debug__   
+//#define __show_flux_twk_mesg_debug_level2__  #even more verbose
 
 #include <cassert>
 #include <cstdlib>
@@ -241,7 +241,7 @@ void NuFlux::BookAndInitAuxSpectra(void)
   fSKNuEFluxTunedFinal     -> SetDirectory(0);
   fSKNuEBarFluxTunedFinal  -> SetDirectory(0);
 
-  this->ApplyBANFFWeights(true); // reweight ext/tuned to BANFF best-fit
+  this->ApplyBANFFWeights(true); // reweight ext/tuned to fin/tuned flux (corresponds to BANFF best-fit)
 
   //
   // Create current flux histograms and initialize them using the fin/tuned flux.
@@ -266,13 +266,15 @@ void NuFlux::ApplyBANFFWeights(bool rew_to_banff_bestfit) const
 {
 // Apply BANFF weights.
 //
-// Input param     |     
+// Input param     | Action    
 // ---------------------------------------------------
 // true            | apply BANFF best-fit params to ext/tuned flux [ie ext/tuned --> fin/tuned]
 // false           | apply BANFF currrent params to fin/tuned flux [ie fin/tuned --> current  ]
 
 #ifdef __show_flux_twk_mesg_info__
-   cout << "Exp/Flux >> Applying BANFF weights to SuperK flux ..." << endl;
+   cout << "Exp/Flux >> Applying BANFF weights to SuperK flux " 
+        << ( (rew_to_banff_bestfit) ? "[ext/tuned --> fin/tuned]" : "[fin/tuned --> current]" )
+        << endl;   
 #endif
 #ifdef __show_flux_twk_mesg_debug_level2__
    fBANFF->PrintSystematicVariations();
@@ -419,6 +421,8 @@ double NuFlux::SuperkFlux(int nu_pdg, double Etrue, conv::FluxType_t flxtype) co
 //________________________________________________________________________________________
 double NuFlux::SuperkFluxExtTuningWght(int nu_pdg, double Etrue) const
 {
+// Weights required to re-weight nominal flux to ext/tuned flux
+//
   if(Etrue > conv::kEtrueMaxForFluxTuneWeights) 
   {
     return 1;
@@ -434,6 +438,8 @@ double NuFlux::SuperkFluxExtTuningWght(int nu_pdg, double Etrue) const
 //________________________________________________________________________________________
 double NuFlux::SuperkFluxFinTuningWght(int nu_pdg, double Etrue) const
 {
+// Weights required to re-weight ext/tuned flux to fin/tuned flux
+//
   double flux_ext = this->SuperkFlux(nu_pdg, Etrue, conv::kFlxExtTuning  );
   double flux_fin = this->SuperkFlux(nu_pdg, Etrue, conv::kFlxFinalTuning);
 
@@ -446,6 +452,9 @@ double NuFlux::SuperkFluxFinTuningWght(int nu_pdg, double Etrue) const
 //________________________________________________________________________________________
 double NuFlux::SuperkFluxSystWght(int nu_pdg, double Etrue) const
 {
+// Weights required to re-weight fin/tuned flux to current (fin/tuned + systematic
+// variarions) flux
+//
   double flux_twk = this->SuperkFlux(nu_pdg, Etrue, conv::kFlxCurrent    );
   double flux     = this->SuperkFlux(nu_pdg, Etrue, conv::kFlxFinalTuning);
 

@@ -23,7 +23,7 @@ void test_sk_ereco_spectrum_twk_banff
   using namespace std;
   using namespace t2kana;
 
-  const int nexp = 10; // number of BANFF param tweaks
+  const int nexp = 2; // number of BANFF param tweaks
 
   // Analysis configuration
   const char * config  = Form("%s/config/%s", gSystem->Getenv("T2KOSCANA"), config_file);
@@ -67,13 +67,12 @@ void test_sk_ereco_spectrum_twk_banff
   // Generate nexp random spectra
   for(int iexp = 0; iexp < nexp; iexp++) {
      // tweak spectrum generation model
-     cout << "** iteration: " << iexp << endl;
+     cout << " ** iteration: " << iexp << endl;
      if(iexp>0) {
        // use 0^th entry to store the untweaked SK reco energy spectrum
        skexp.GetBANFF()->Tweak();       
      }
      // generate predictions
-     cout << "Generating SK predictions " << endl;
      skexp.Generate(ph);
      // store spectrum
      hEreco[iexp] = new TH1D(*skexp.CurrPredictedErecoSpectrum(conv::kSKsFCFV1RingMuLike));
@@ -115,32 +114,44 @@ void test_sk_ereco_spectrum_twk_banff
 
   for(int iparam = 0; iparam < conv::kNumOfParamsInBANFFfit; iparam++)
   {
+       //
        // init
+       //
+       cout << "- Reseting all BANFF tweaking fials " << endl;
        TVectorD twkv(conv::kNumOfParamsInBANFFfit);
        for(int k = 0; k < conv::kNumOfParamsInBANFFfit; k++) {
          twkv[k] = 0.;
        }
-
-       // tweak given Etrue bin only
-       twkv[iparam] = +2; // +100%
        skexp.GetBANFF()->Tweak(force_input_twk_dials,&twkv,correlated);       
 
+       // tweak iparam only neglecting correlations
+       conv::PhysParamId_t p = (conv::PhysParamId_t) ( (int)conv::kNuisBANFF00 + iparam );
+       cout << "- Tweaking BANFF parameter: " << iparam << " [" << util::AsString(p) << "] only (neglecting correlations)" << endl;
+
+       //
+       // tweak current param only by +100% - neglect correlations
+       //
+       cout << "- Tweaking param by +100%" << endl;
+       twkv[iparam] = +1; // +100%
+       skexp.GetBANFF()->Tweak(force_input_twk_dials,&twkv,correlated);  
+       skexp.PrintSystematicVariations();
        // generate predictions
        skexp.Generate(ph);
-
        // store spectrum
        hErecoRatio1EtrueBinVarMax[iparam] = new TH1D(*skexp.CurrPredictedErecoSpectrum(conv::kSKsFCFV1RingMuLike));
        hErecoRatio1EtrueBinVarMax[iparam]->SetDirectory(0);
        hErecoRatio1EtrueBinVarMax[iparam]->SetTitle(Form("BANFF_%d, +100 percent change",iparam));
        hErecoRatio1EtrueBinVarMax[iparam]->Divide(hEreco[0]);
 
-       // tweak given Etrue bin only
+       //
+       // tweak current param only by -100% - neglect correlations
+       //
+       cout << "- Tweaking by -100%" << endl;
        twkv[iparam] = -0.5; // -100%
        skexp.GetBANFF()->Tweak(force_input_twk_dials,&twkv,correlated);       
-
+       skexp.PrintSystematicVariations();
        // generate predictions
        skexp.Generate(ph);
-
        // store spectrum
        hErecoRatio1EtrueBinVarMin[iparam] = new TH1D(*skexp.CurrPredictedErecoSpectrum(conv::kSKsFCFV1RingMuLike));
        hErecoRatio1EtrueBinVarMin[iparam]->SetDirectory(0);

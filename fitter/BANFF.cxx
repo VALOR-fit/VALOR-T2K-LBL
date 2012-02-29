@@ -18,6 +18,7 @@
 #define __show_cholesky_mesg_info__
 #define __show_cholesky_mesg_debug__
 #define __show_tweak_mesg_debug__
+#define __show_tweak_mesg_debug_level2__ # even more verbose
 
 #include <cassert>
 #include <cstdlib>
@@ -170,7 +171,6 @@ void BANFF::Tweak(
 #ifdef __show_shape_cholesky_mesg_debug__
     cout << "Exp/BANFF/Tweak >> BANFF covariance matrix: " << endl; 
     util::PrintCompact(cov,7,4);
-    //cov.Print();
 #endif
 
     TMatrixD L = util::CholeskyDecomposition(cov);
@@ -178,7 +178,6 @@ void BANFF::Tweak(
 #ifdef __show_cholesky_mesg_debug__
     cout << "Exp/BANFF/Tweak >> Cholesky decomposition of BANFF covariance matrix: " << endl;
     util::PrintCompact(*fCovMtrxChoL,7,4);
-    //fCovMtrxChoL->Print();
 #endif
   }
 
@@ -245,6 +244,15 @@ void BANFF::Tweak(
 
 }
 //________________________________________________________________________________________
+void BANFF::RestoreNominalMC(void)
+{
+  cout << "Exp/BANFF >> ** Applying special tweak cancelling the effect of BANFF tuning "
+       << "and restoring nominal MC..." << endl; 
+
+  cerr << "Exp/BANFF >> Not implemented yet" << endl;
+  exit(1);
+}
+//________________________________________________________________________________________
 void BANFF::PrintSystematicVariations(void) const
 {
   cout << "Exp/BANFF >> Current BANFF parameters: " << endl; 
@@ -280,6 +288,14 @@ void BANFF::DoTweak(TVectorD * input_twkv)
      TVectorD & twk_dials = *input_twkv;
      for(int ip = 0; ip < np; ip++) {
        current_values[ip] = bestfit_values[ip] * (1 + twk_dials[ip]);
+#ifdef __show_tweak_mesg_debug_level2__
+       conv::PhysParamId_t p = (conv::PhysParamId_t) ( (int)conv::kNuisBANFF00 + ip );
+       cout << "Exp/BANFF/DoTweak >> " 
+            << setw(35) << util::AsString(p) << " : " 
+            << "tweak dial = " << twk_dials[ip]
+            << ", best-fit param = " << bestfit_values[ip]
+            << " ==> current param = " << current_values[ip] << endl;
+#endif
      }//ip
   }
 
