@@ -463,6 +463,27 @@ double NuFlux::SuperkFluxSystWght(int nu_pdg, double Etrue) const
   return wght;
 }
 //________________________________________________________________________________________
+double NuFlux::SuperkFluxExtTuningWght(
+  conv::SuperkSample_t /*s*/, conv::SuperkMode_t m, double Etrue) const
+{
+  int flux_nu_pdg = util::SuperkMode2FluxNuPdg(m);
+  return this->SuperkFluxExtTuningWght(flux_nu_pdg,Etrue);
+}
+//________________________________________________________________________________________
+double NuFlux::SuperkFluxFinTuningWght(
+  conv::SuperkSample_t /*s*/, conv::SuperkMode_t m, double Etrue) const
+{
+  int flux_nu_pdg = util::SuperkMode2FluxNuPdg(m);
+  return this->SuperkFluxFinTuningWght(flux_nu_pdg,Etrue);
+}
+//________________________________________________________________________________________
+double NuFlux::SuperkFluxSystWght(
+  conv::SuperkSample_t /*s*/, conv::SuperkMode_t m, double Etrue) const
+{
+  int flux_nu_pdg = util::SuperkMode2FluxNuPdg(m);
+  return this->SuperkFluxSystWght(flux_nu_pdg,Etrue);
+}
+//________________________________________________________________________________________
 TH1D * NuFlux::SuperkFluxSpectrum(int nu_pdg, conv::FluxType_t flxtype) const
 {
   switch(flxtype) {

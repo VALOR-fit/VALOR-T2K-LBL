@@ -34,8 +34,11 @@ public:
    NuXSec();
   ~NuXSec();
 
-   // Get weight
-   double SuperkXSecWght (double Etrue, t2kana::conv::SuperkSample_t s, t2kana::conv::SuperkMode_t m) const;
+   // Reweight to BANFF best-fit
+   double SuperkXSecFinTuningWght (t2kana::conv::SuperkSample_t s, t2kana::conv::SuperkMode_t m, double Etrue) const;
+
+   // Calculate weight in response to tweaked systematics relative to the BANFF best-fit (not the nominal MC)
+   double SuperkXSecSystWght (t2kana::conv::SuperkSample_t s, t2kana::conv::SuperkMode_t m, double Etrue) const;
 
    // Systematic variations
    // tweak...

@@ -118,7 +118,7 @@ private:
   void ApplyPhysHypothesisToTemplates (void); 
 
   // Calculate systematic variation weight in given (Ereco, Etrue) bin for the given sample and mode
-  double SystVariationWeight (double Ereco, double Etrue, t2kana::conv::SuperkSample_t s, t2kana::conv::SuperkMode_t m) const;
+  double SystVariationWeight (t2kana::conv::SuperkSample_t s, t2kana::conv::SuperkMode_t m, double Etrue, double Ereco) const;
 
   // Ignore nue_signal templates for all but the 3-flavour oscillation hypothesis
   bool SkipTemplate(t2kana::conv::SuperkMode_t m);

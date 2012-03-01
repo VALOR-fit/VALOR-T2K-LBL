@@ -14,7 +14,7 @@
 //________________________________________________________________________________________
 
 #define __show_init_mesg_info__
-//#define __show_xsec_ratio_mesg_debug__
+#define __show_wght_mesg_debug__
 
 #include <cassert>
 #include <cstdlib>
@@ -63,12 +63,12 @@ void NuXSec::CleanUp(void)
 bool NuXSec::Read(TXMLEngine* xml, XMLNodePointer_t root_node)
 {
 #ifdef __show_init_mesg_info__
-  cout << "Exp/XSec >> Reading neutrino generator inputs from input XML file." << endl;
+  cout << "Exp/NuXSec >> Reading neutrino generator inputs from input XML file." << endl;
 #endif
 
 
 #ifdef __show_init_mesg_info__
-  cout << "Exp/XSec >> Done reading neutrino cross-section inputs!" << endl;
+  cout << "Exp/NuXSec >> Done reading neutrino cross-section inputs!" << endl;
 #endif
   return true;  
 }
@@ -78,13 +78,82 @@ void NuXSec::TellMeAboutTheBANFFfit(BANFF * banff)
   fBANFF = banff;
 }
 //________________________________________________________________________________________
-double NuXSec::SuperkXSecWght(
-   double Etrue, t2kana::conv::SuperkSample_t s, t2kana::conv::SuperkMode_t m) const
+double NuXSec::SuperkXSecFinTuningWght(
+   t2kana::conv::SuperkSample_t s, t2kana::conv::SuperkMode_t m, double Etrue) const
 {
-  // a check to make sure the sample-mode combination exists
+// This method provides weights to reweight MC to the BANFF best-fit parameters
+
+  // A check to make sure the sample-mode combination exists
   if(s == kSKsUndefined) return 1.;
   if(m == kSKmUndefined) return 1.;
   if(util::FindModeSlot(s, m) < 0) return 1.;
+
+  double wght_maqe    = 1.;
+  double wght_mares   = 1.;
+  double wght_normqe  = 1.;
+  double wght_normres = 1.;
+/*
+  bool is_ccqe  = util::IsCCQE (m);
+  bool is_ccres = util::IsCCRES(m)
+
+  // BANFF param # 22, M_{A} QE
+  if(is_ccqe) {
+     double maqe = conv::kNomMAQE * fBANFF->BestFitValue(kNuisBANFF22);
+     maqe_wght = this->Spline(s,m,Etrue)->Eval(maqe);
+  }
+
+  // BANFF param # 23, M_{A} RES
+  if(is_ccres) {
+     double mares = conv::kNomMARES * fBANFF->BestFitValue(kNuisBANFF23);
+     mares_wght = this->Spline(s,m,Etrue)->Eval(mares);
+  }
+
+  // BANFF param # 24, CCQE  normalization, 0 - 1.5 GeV
+  if(is_ccqe && Etrue >= 0. && Etrue < 1.5) {
+     wght_normqe = fBANFF->BestFitValue(kNuisBANFF24);
+  }
+
+  // BANFF param # 25, CCRES normalization, 0 - 2.5 GeV
+  if(is_ccqe && Etrue >= 0. && Etrue < 1.5) {  
+    wght_normres = fBANFF->BestFitValue(kNuisBANFF25);
+  }
+*/
+  double wght = 
+       wght_maqe   *
+       wght_mares  *
+       wght_normqe *
+       wght_normres;
+
+#ifdef __show_wght_mesg_debug__
+  if ( wght_maqe    != 1. ||
+       wght_mares   != 1. || 
+       wght_normqe  != 1. ||
+       wght_normres != 1. )
+  {
+     cout << "Exp/NuXSec >> "
+          << "Sample = " << util::AsString(s) << " / Mode = " << util::AsString(m)
+          << ", Etrue = " << Etrue << " GeV => Weights: "
+          << "MAQE = "      << wght_maqe
+          << ", MARES = "   << wght_mares
+          << ", NormQE = "  << wght_normqe
+          << ", NormRES = " << wght_normres
+          << "  (total = "  << wght << ")"
+          << endl;   
+  }
+#endif
+
+  return wght;
+}
+//________________________________________________________________________________________
+double NuXSec::SuperkXSecSystWght(
+   t2kana::conv::SuperkSample_t s, t2kana::conv::SuperkMode_t m, double Etrue) const
+{
+  // A check to make sure the sample-mode combination exists
+  if(s == kSKsUndefined) return 1.;
+  if(m == kSKmUndefined) return 1.;
+  if(util::FindModeSlot(s, m) < 0) return 1.;
+
+
 
   return 1.;
 }

@@ -36,16 +36,18 @@ public:
   NuFlux();   
  ~NuFlux();
 
-  // POT used for flux simulation
-  double SuperkFluxPOT (void) const;
+  // SK flux tuning and systematic variation weights
+  double SuperkFluxExtTuningWght  (int neutrino_pdg, double Etrue) const;  // wght: nominal --> ext/tuned flux
+  double SuperkFluxFinTuningWght  (int neutrino_pdg, double Etrue) const;  // wght: ext/tuned --> fin/tuned flux
+  double SuperkFluxSystWght       (int neutrino_pdg, double Etrue) const;  // wght: fin/tuned flux -> current (incl. syst. variation)
+
+  // ... as above, slighty different interface
+  double SuperkFluxExtTuningWght  (conv::SuperkSample_t s, conv::SuperkMode_t m, double Etrue) const;  
+  double SuperkFluxFinTuningWght  (conv::SuperkSample_t s, conv::SuperkMode_t m, double Etrue) const;  
+  double SuperkFluxSystWght       (conv::SuperkSample_t s, conv::SuperkMode_t m, double Etrue) const;  
 
   // SK flux (current, tuned/fin, tuned/ext, nominal - depending on input flux type)
   double SuperkFlux (int neutrino_pdg, double Etrue, conv::FluxType_t type = conv::kFlxCurrent) const;
-
-  // SK flux tuning and systematic variation weights
-  double SuperkFluxExtTuningWght  (int neutrino_pdg, double Etrue) const;  // weight: nominal --> ext/tuned flux
-  double SuperkFluxFinTuningWght  (int neutrino_pdg, double Etrue) const;  // weight: ext/tuned --> fin/tuned flux
-  double SuperkFluxSystWght       (int neutrino_pdg, double Etrue) const;  // weight: fin/tuned flux -> current (incl. syst. variation)
 
   // Read configuration and data from input XML file
   bool Read (TXMLEngine* xml, XMLNodePointer_t root_node);

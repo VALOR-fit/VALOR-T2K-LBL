@@ -500,8 +500,7 @@ void SuperkMC::ApplyFluxExtTuningToTemplates(void)
            // get number of events
            double nev = mctempl->GetBinContent(ir,it);
            // get tuning weights
-           int flux_nu_pdg = util::SuperkMode2FluxNuPdg(m);
-           double wght = fNuFlux->SuperkFluxExtTuningWght(flux_nu_pdg,Etrue);
+           double wght = fNuFlux->SuperkFluxExtTuningWght(s,m,Etrue);
            // update nominal MC template
            nev *= wght;
            mctempl->SetBinContent(ir,it,nev);
@@ -554,9 +553,8 @@ void SuperkMC::ApplyBANFFTuningToTemplates(void)
            // get number of events
            double nev = mctempl_src->GetBinContent(ir,it);
            // get tuning weights
-           int flux_nu_pdg = util::SuperkMode2FluxNuPdg(m);
-           double flux_wght = fNuFlux->SuperkFluxFinTuningWght(flux_nu_pdg,Etrue);
-           double xsec_wght = 1.; /// TODO            
+           double flux_wght = fNuFlux->SuperkFluxFinTuningWght(s,m,Etrue);
+           double xsec_wght = fNuXSec->SuperkXSecFinTuningWght(s,m,Etrue);            
            // update tuned MC template
            double nev_tuned = nev * flux_wght * xsec_wght;
            mctempl_tgt->SetBinContent(ir,it,nev_tuned);
@@ -590,7 +588,7 @@ void SuperkMC::ApplySystematicsToTemplates(void)
 void SuperkMC::ApplySystematicsToTemplates_Multiplicative(void) 
 {
 // All multiplicative systematics are handled in the following loop.
-// The overall weight is computed by SystVariationWeight(Ereco,Etrue,sample,mode)
+// The overall weight is computed by SystVariationWeight(sample,mode,Etrue,Ereco)
 //
 
 #ifdef __show_update_mesg_info__
@@ -622,7 +620,7 @@ void SuperkMC::ApplySystematicsToTemplates_Multiplicative(void)
            // get number of events in current bin of source MC template
            double nev = mctempl_src->GetBinContent(ir,it);
            // get combined weight due to all multiplicative systematic variations
-           double wght = this->SystVariationWeight (Ereco, Etrue, s,m);
+           double wght = this->SystVariationWeight (s,m,Etrue,Ereco);
            // update target MC template
            mctempl_tgt->SetBinContent(ir,it,nev*wght);
          }//it
@@ -960,7 +958,7 @@ void SuperkMC::ApplyPhysHypothesisToTemplates(void)
 }
 //________________________________________________________________________________________
 double SuperkMC::SystVariationWeight(
-    double Ereco, double Etrue, SuperkSample_t s, SuperkMode_t m) const
+    SuperkSample_t s, SuperkMode_t m, double Etrue, double Ereco) const
 {
 // The return value is the combined wght for the (Ereco,Etrue) bin of the (s,m) template
 // due to all multiplicative systematic param variation
@@ -970,11 +968,10 @@ double SuperkMC::SystVariationWeight(
 // - Cross-section variations
 
   // Plug-in BANFF flux systematics
-  int flux_nu_pdg = util::SuperkMode2FluxNuPdg(m);
-  double banff_flux_wght = fNuFlux->SuperkFluxSystWght(flux_nu_pdg, Etrue);
+  double banff_flux_wght = fNuFlux->SuperkFluxSystWght(s,m,Etrue);
 
-  // Plug-in BANFF xsec systematics 
-  double banff_xsec_wght = 1;
+  // Plug-in BANFF & other xsec systematics 
+  double banff_xsec_wght = fNuXSec->SuperkXSecSystWght(s,m,Etrue);
 
   //
   // ... other xsec, FSI etc
@@ -999,7 +996,7 @@ double SuperkMC::SystVariationWeight(
           << "Sample = " << util::AsString(s) << " / Mode = " << util::AsString(m) 
           << ", Ereco = " << Ereco << " GeV" 
           << ", Etrue = " << Etrue << " GeV => Weights: " 
-          << " BANFF flux = "  << banff_flux_wght
+          << "BANFF flux = "   << banff_flux_wght
           << ", BANFF xsec = " << banff_xsec_wght
           << ", SK eff = "     << skeff_wght
           << " (total = "      << wght << ")"

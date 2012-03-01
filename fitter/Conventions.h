@@ -95,6 +95,11 @@ static const double kInitFitSinsqTheta12     = kGlobFitSinsqTheta12;
 static const double kMinFitSinsqTheta12      = 0.70;
 static const double kMaxFitSinsqTheta12      = 1.00;
 
+//
+// Nominal physics params in BANFF fit
+//
+static const double kNomMAQE  = 1.21;
+static const double kNomMARES = 1.21;
 
 //
 // Other constants
