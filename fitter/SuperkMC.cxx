@@ -18,7 +18,6 @@
 #define __show_update_mesg_info__
 //#define __show_hypothesis__ 
 //#define __show_hypothesis_probabilities__ 
-//#define __show_syst_var_wght_mesg_info__ 
 //#define __show_syst_var_wght_mesg_debug__ 
 #define __show_rc_cholesky_mesg_info__
 //#define __show_rc_cholesky_mesg_debug__ 
@@ -276,7 +275,7 @@ bool SuperkMC::Read(TXMLEngine* xml, XMLNodePointer_t root_node)
   this->ApplyBANFFTuningToTemplates();
 
 #ifdef __show_init_mesg_info__      
-  cout << "Exp/SKMC >> Done reading SuperK inputs!" << endl;
+  cout << "Exp/SKMC >> Done reading SuperK MC inputs!" << endl;
 #endif
   
   return true;
@@ -970,45 +969,43 @@ double SuperkMC::SystVariationWeight(
 // - BANFF parameter variations
 // - Cross-section variations
 
-#ifdef __show_syst_var_wght_mesg_info__ 
-  cout << "Exp/SKMC/SystVariationWeight >> "
-       << "Sample = " << util::AsString(s) << " / Mode = " << util::AsString(m) 
-       << ", Ereco = " << Ereco << " GeV (bin = " << reco_bin << ")" 
-       << ", Etrue = " << Etrue << " GeV (bin = " << true_bin << ")" << endl;
-#endif
-
-  //
   // Plug-in BANFF flux systematics
-  //
   int flux_nu_pdg = util::SuperkMode2FluxNuPdg(m);
   double banff_flux_wght = fNuFlux->SuperkFluxSystWght(flux_nu_pdg, Etrue);
 
-  //
   // Plug-in BANFF xsec systematics 
-  //
   double banff_xsec_wght = 1;
 
   //
   // ... other xsec, FSI etc
   //
 
-  //
   // Plug-in SK efficiency uncertainty due to fiducial volume, reduction chain, OD cut,
   // ring-counting, PID, momentum cut and decay e- cut.
   // The ring-counting error for CCQE has Ereco-dependence.
-  //
   double skeff_wght = this->EfficiencyWeight(s,m,Ereco);
-#ifdef __show_syst_var_wght_mesg_info__
-  if(skeff_wght != 1.) {
-    cout << "Exp/SKMC/SystVariationWeight >> Applied efficiency-systematic weight = " 
-         << skeff_wght << endl;
-  }
-#endif
 
   double wght = 
     banff_flux_wght *
     banff_xsec_wght *
     skeff_wght;
+
+#ifdef __show_syst_var_wght_mesg_debug__ 
+  if( banff_flux_wght != 1. || 
+      banff_xsec_wght != 1. || 
+      skeff_wght      != 1. ) 
+   {
+     cout << "Exp/SKMC/SystVarWght >> "
+          << "Sample = " << util::AsString(s) << " / Mode = " << util::AsString(m) 
+          << ", Ereco = " << Ereco << " GeV" 
+          << ", Etrue = " << Etrue << " GeV => Weights: " 
+          << " BANFF flux = "  << banff_flux_wght
+          << ", BANFF xsec = " << banff_xsec_wght
+          << ", SK eff = "     << skeff_wght
+          << " (total = "      << wght << ")"
+          << endl;
+   }
+#endif
 
   return wght;
 }
@@ -1207,14 +1204,15 @@ void SuperkMC::TweakEfficiency1RmuNuECC(double twkdial)
 //________________________________________________________________________________________
 void SuperkMC::PrintSystematicVariations(void) const
 {
-  cout << "Exp/SKMC >> Twk 1Rmu/1Re energy scales = "     << fEnergyScaleTwkDial      << endl;
-  cout << "Exp/SKMC >> Twk 1Rmu CCQE RC0 efficiency = "   << fEff1RmuCCQERC0TwkDial   << endl;
-  cout << "Exp/SKMC >> Twk 1Rmu CCQE RC1 efficiency = "   << fEff1RmuCCQERC1TwkDial   << endl;
-  cout << "Exp/SKMC >> Twk 1Rmu CCQE RC2 efficiency = "   << fEff1RmuCCQERC2TwkDial   << endl;
-  cout << "Exp/SKMC >> Twk 1Rmu CCQE Oth efficiency = "   << fEff1RmuCCQEOthTwkDial   << endl;
-  cout << "Exp/SKMC >> Twk 1Rmu CCnonQE efficiency = "    << fEff1RmuCCnonQETwkDial   << endl;
-  cout << "Exp/SKMC >> Twk 1Rmu NC efficiency = "         << fEff1RmuNCTwkDial        << endl;
-  cout << "Exp/SKMC >> Twk 1Rmu nu_e CC efficiency = "    << fEff1RmuNuECCTwkDial     << endl;
+  cout << "Exp/SKMC >> SuperK MC params: " << endl
+       << " > 1Rmu energy scale twk        = "  << fEnergyScaleTwkDial      << endl
+       << " > 1Rmu CCQE RC0 efficiency twk = "  << fEff1RmuCCQERC0TwkDial   << endl
+       << " > 1Rmu CCQE RC1 efficiency twk = "  << fEff1RmuCCQERC1TwkDial   << endl
+       << " > 1Rmu CCQE RC2 efficiency twk = "  << fEff1RmuCCQERC2TwkDial   << endl
+       << " > 1Rmu CCQE Oth efficiency twk = "  << fEff1RmuCCQEOthTwkDial   << endl
+       << " > 1Rmu CCnonQE efficiency twk  = "  << fEff1RmuCCnonQETwkDial   << endl
+       << " > 1Rmu NC efficiency twk       = "  << fEff1RmuNCTwkDial        << endl
+       << " > 1Rmu nu_e CC efficiency twk  = "  << fEff1RmuNuECCTwkDial     << endl;
 }
 //________________________________________________________________________________________
 double SuperkMC::EfficiencyWeight(

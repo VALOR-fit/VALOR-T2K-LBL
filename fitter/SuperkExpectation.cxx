@@ -338,6 +338,8 @@ bool SuperkExpectation::Read(string config_file)
   xml->FreeDoc(xmldoc);
   delete xml;
 
+  cout << "Exp >> Done configuring Superk spectrum predictor... \n\n" << endl;
+
   return true;
 }
 //________________________________________________________________________________________

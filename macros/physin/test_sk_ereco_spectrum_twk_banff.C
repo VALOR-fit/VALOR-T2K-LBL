@@ -23,7 +23,7 @@ void test_sk_ereco_spectrum_twk_banff
   using namespace std;
   using namespace t2kana;
 
-  const int nexp = 2; // number of BANFF param tweaks
+  const int nexp = 200; // number of BANFF param tweaks
 
   // Analysis configuration
   const char * config  = Form("%s/config/%s", gSystem->Getenv("T2KOSCANA"), config_file);
@@ -72,6 +72,7 @@ void test_sk_ereco_spectrum_twk_banff
        // use 0^th entry to store the untweaked SK reco energy spectrum
        skexp.GetBANFF()->Tweak();       
      }
+     skexp.PrintSystematicVariations();
      // generate predictions
      skexp.Generate(ph);
      // store spectrum
@@ -99,8 +100,8 @@ void test_sk_ereco_spectrum_twk_banff
       hErecoMin -> SetBinContent (ibin,  (min-nom)/nom);
     }
   }//ibin
-  hErecoMax->GetYaxis()->SetRangeUser(-1,1);
-  hErecoMin->GetYaxis()->SetRangeUser(-1,1);
+  hErecoMax->GetYaxis()->SetRangeUser(-2,2);
+  hErecoMin->GetYaxis()->SetRangeUser(-2,2);
 
   //
   // Check the effect in Ereco distributions by modifying each of the variable Etrue bins
@@ -109,8 +110,6 @@ void test_sk_ereco_spectrum_twk_banff
 
   bool force_input_twk_dials = true;
   bool correlated            = true;
-
-  skexp.GetBANFF()->Tweak(force_input_twk_dials,0); //reset
 
   for(int iparam = 0; iparam < conv::kNumOfParamsInBANFFfit; iparam++)
   {
@@ -122,7 +121,8 @@ void test_sk_ereco_spectrum_twk_banff
        for(int k = 0; k < conv::kNumOfParamsInBANFFfit; k++) {
          twkv[k] = 0.;
        }
-       skexp.GetBANFF()->Tweak(force_input_twk_dials,&twkv,correlated);       
+       skexp.GetBANFF()->Tweak(force_input_twk_dials,0); //reset
+       //skexp.GetBANFF()->Tweak(force_input_twk_dials,&twkv,correlated);       
 
        // tweak iparam only neglecting correlations
        conv::PhysParamId_t p = (conv::PhysParamId_t) ( (int)conv::kNuisBANFF00 + iparam );

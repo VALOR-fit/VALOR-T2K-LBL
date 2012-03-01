@@ -241,7 +241,7 @@ void NuFlux::BookAndInitAuxSpectra(void)
   fSKNuEFluxTunedFinal     -> SetDirectory(0);
   fSKNuEBarFluxTunedFinal  -> SetDirectory(0);
 
-  this->ApplyBANFFWeights(true); // reweight ext/tuned to fin/tuned flux (corresponds to BANFF best-fit)
+  this->ApplyBANFFWeights(false); // reweight ext/tuned to fin/tuned flux (corresponds to BANFF best-fit)
 
   //
   // Create current flux histograms and initialize them using the fin/tuned flux.
@@ -262,18 +262,18 @@ void NuFlux::BookAndInitAuxSpectra(void)
 
 }
 //________________________________________________________________________________________
-void NuFlux::ApplyBANFFWeights(bool rew_to_banff_bestfit) const
+void NuFlux::ApplyBANFFWeights(bool get_current) const
 {
-// Apply BANFF weights.
+// Apply BANFF weights to ext/tuned flux.
 //
 // Input param     | Action    
 // ---------------------------------------------------
-// true            | apply BANFF best-fit params to ext/tuned flux [ie ext/tuned --> fin/tuned]
-// false           | apply BANFF currrent params to fin/tuned flux [ie fin/tuned --> current  ]
+// false           | apply BANFF best-fit params to fin/tuned flux
+// true            | apply BANFF currrent params to current   flux 
 
 #ifdef __show_flux_twk_mesg_info__
    cout << "Exp/Flux >> Applying BANFF weights to SuperK flux " 
-        << ( (rew_to_banff_bestfit) ? "[ext/tuned --> fin/tuned]" : "[fin/tuned --> current]" )
+        << ( (get_current) ? "[ext/tuned --> current]" : "[ext/tuned --> fin/tuned]" )
         << endl;   
 #endif
 #ifdef __show_flux_twk_mesg_debug_level2__
@@ -289,8 +289,9 @@ void NuFlux::ApplyBANFFWeights(bool rew_to_banff_bestfit) const
      if(is_sk_flux_param) 
      {
         // Get the current or best-fit BANFF Superk flux param value
-        double banff_param_value = (rew_to_banff_bestfit) ? 
-             fBANFF->BestFitValue(p) : fBANFF->CurrentValue(p);
+        double banff_param_value = (get_current) ? 
+             fBANFF->CurrentValue(p) :
+             fBANFF->BestFitValue(p) ; 
 
 #ifdef __show_flux_twk_mesg_debug__
         cout << "Exp/Flux >> Taking into account the effect of BANFF flux param: "
@@ -306,16 +307,13 @@ void NuFlux::ApplyBANFFWeights(bool rew_to_banff_bestfit) const
         util::BANFFfitSuperkFluxParamEtrueRange(p,Emin,Emax);
 
         // Access flux histograms
-        TH1D * flux_spectrum_orig = 0; // original spectrum
-        TH1D * flux_spectrum_wght = 0; // original spectrum + BANFF weights
-        if(rew_to_banff_bestfit) {
-          flux_spectrum_orig = this->SuperkFluxSpectrum(nu_pdg, conv::kFlxExtTuning  );
-          flux_spectrum_wght = this->SuperkFluxSpectrum(nu_pdg, conv::kFlxFinalTuning);
-        } 
-        else {
-          flux_spectrum_orig = this->SuperkFluxSpectrum(nu_pdg, conv::kFlxFinalTuning);
-          flux_spectrum_wght = this->SuperkFluxSpectrum(nu_pdg, conv::kFlxCurrent    );
-        }
+
+        // original spectrum:
+        TH1D * flux_spectrum_orig = this->SuperkFluxSpectrum(nu_pdg, conv::kFlxExtTuning); 
+        // original spectrum + BANFF weights
+        TH1D * flux_spectrum_wght = (get_current) ?
+           this->SuperkFluxSpectrum(nu_pdg, conv::kFlxCurrent) :
+           this->SuperkFluxSpectrum(nu_pdg, conv::kFlxFinalTuning);
 
         // Note: 
         // The flux_spectrum histograms used in this code, use a binning scheme
@@ -401,9 +399,9 @@ void NuFlux::TellMeAboutTheBANFFfit(BANFF * banff)
 //________________________________________________________________________________________
 double NuFlux::SuperkFlux(int nu_pdg, double Etrue, conv::FluxType_t flxtype) const
 {
-  // update tweaked flux (if not already) as a result of the latest BANFF param twk
+  // update current flux (if not already) as a result of the latest BANFF param twk
   if( flxtype == conv::kFlxCurrent && !fBANFF->IsFluxWghtUpdated() ) {
-    this->ApplyBANFFWeights(false);
+    this->ApplyBANFFWeights(true);
     fBANFF->MarkFluxWghtUpdated();
   }
 
@@ -423,10 +421,10 @@ double NuFlux::SuperkFluxExtTuningWght(int nu_pdg, double Etrue) const
 {
 // Weights required to re-weight nominal flux to ext/tuned flux
 //
-  if(Etrue > conv::kEtrueMaxForFluxTuneWeights) 
-  {
-    return 1;
-  }
+//  if(Etrue > conv::kEtrueMaxForFluxTuneWeights) 
+//  {
+//    return 1;
+//  }
 
   TH1D * wght_spectrum = this->SuperkFluxExtTuningWghts(nu_pdg);
   assert(wght_spectrum);

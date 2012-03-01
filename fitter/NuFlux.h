@@ -74,7 +74,7 @@ private:
   void BookAndInitAuxSpectra(void);
 
   // Apply BANFF weights
-  void ApplyBANFFWeights (bool rew_to_banff_bestfit) const; 
+  void ApplyBANFFWeights (bool get_current) const; 
 
   // Access flux and weight histograms held in this object
   TH1D * SuperkFluxSpectrum       (int neutrino_pdg, conv::FluxType_t type = conv::kFlxCurrent) const;

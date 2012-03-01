@@ -1774,14 +1774,46 @@ void t2kana::util::PrintCompact(
   cout << fixed;
 
   for(int ip = 0; ip < np; ip++) {
-     cout << "Param : " << setw(3) << ip;
+     cout << "> param = " << setw(3) << ip;
      if(printing_banff_params) {
          cout << " [ ";
          PhysParamId_t p = PhysParamId_t ( (int)kNuisBANFF00 + ip );
          cout << setw(30) << util::AsString(p);
          cout << " ]";
      }
-     cout << " = " << setw(w) << setprecision(prec) << v[ip] << endl;
+     cout << " - value = " << setw(w) << setprecision(prec) << v[ip] << endl;
+  }
+  cout << scientific;
+}
+//___________________________________________________________________________
+void t2kana::util::PrintCompact(
+   const TVectorD & current, const TVectorD & nominal, 
+   int w, int prec, Option_t * option)
+{
+  TString opt = option;
+
+  bool printing_banff_params = opt.Contains("BANFF fit params");
+
+  int np = current.GetNoElements();
+  cout << fixed;
+
+  for(int ip = 0; ip < np; ip++) {
+     cout << "> param = " << setw(3) << ip;
+     if(printing_banff_params) {
+         cout << " [ ";
+         PhysParamId_t p = PhysParamId_t ( (int)kNuisBANFF00 + ip );
+         cout << setw(30) << util::AsString(p);
+         cout << " ]";
+     }
+     cout << " - current = " 
+          << setw(w) << setprecision(prec) << current[ip];
+     cout << " - nominal = " 
+          << setw(w) << setprecision(prec) << nominal[ip];
+     if(nominal[ip] != 0) {
+       cout << " - current/nominal = " 
+            << setw(w) << setprecision(prec) << current[ip]/nominal[ip];
+     }
+     cout << endl;
   }
   cout << scientific;
 }

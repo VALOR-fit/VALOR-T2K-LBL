@@ -18,7 +18,6 @@
 #define __show_cholesky_mesg_info__
 #define __show_cholesky_mesg_debug__
 #define __show_tweak_mesg_debug__
-#define __show_tweak_mesg_debug_level2__ # even more verbose
 
 #include <cassert>
 #include <cstdlib>
@@ -253,27 +252,10 @@ void BANFF::RestoreNominalMC(void)
   exit(1);
 }
 //________________________________________________________________________________________
-void BANFF::PrintSystematicVariations(void) const
-{
-  cout << "Exp/BANFF >> Current BANFF parameters: " << endl; 
-  util::PrintCompact(*fCurrentValues,12,6,"BANFF fit params");
-}
-//________________________________________________________________________________________
-int BANFF::Param2Idx(PhysParamId_t p) const
-{
-  int iparam = (int) p;
-  int first  = (int) kNuisBANFF00;
-  int last   = (int) kNuisBANFF25;
-  assert(iparam >= first && iparam <= last);
-  int idx = iparam-first;
-  return idx;  
-}
-//________________________________________________________________________________________
 void BANFF::DoTweak(TVectorD * input_twkv)
 {
 // Apply input_twkv to fBestFitValues and get fCurrentValues
 //
-
   TVectorD & current_values = *fCurrentValues;
   TVectorD & bestfit_values = *fBestFitValues;
 
@@ -288,16 +270,27 @@ void BANFF::DoTweak(TVectorD * input_twkv)
      TVectorD & twk_dials = *input_twkv;
      for(int ip = 0; ip < np; ip++) {
        current_values[ip] = bestfit_values[ip] * (1 + twk_dials[ip]);
-#ifdef __show_tweak_mesg_debug_level2__
-       conv::PhysParamId_t p = (conv::PhysParamId_t) ( (int)conv::kNuisBANFF00 + ip );
-       cout << "Exp/BANFF/DoTweak >> " 
-            << setw(35) << util::AsString(p) << " : " 
-            << "tweak dial = " << twk_dials[ip]
-            << ", best-fit param = " << bestfit_values[ip]
-            << " ==> current param = " << current_values[ip] << endl;
-#endif
      }//ip
   }
 
+}
+//________________________________________________________________________________________
+void BANFF::PrintSystematicVariations(void) const
+{
+  TVectorD & current_values = *fCurrentValues;
+  TVectorD & bestfit_values = *fBestFitValues;
+
+  cout << "Exp/BANFF >> BANFF parameters: " << endl; 
+  util::PrintCompact(current_values, bestfit_values, 12,6,"BANFF fit params");
+}
+//________________________________________________________________________________________
+int BANFF::Param2Idx(PhysParamId_t p) const
+{
+  int iparam = (int) p;
+  int first  = (int) kNuisBANFF00;
+  int last   = (int) kNuisBANFF25;
+  assert(iparam >= first && iparam <= last);
+  int idx = iparam-first;
+  return idx;  
 }
 //________________________________________________________________________________________

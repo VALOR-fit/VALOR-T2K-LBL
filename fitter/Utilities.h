@@ -202,8 +202,9 @@ namespace util {
 
   int Sign(double x);
   
-  void PrintCompact(const TVectorD & v, int w=15, int prec=9, Option_t * opt="");
-  void PrintCompact(const TMatrixD & m, int w=15, int prec=9);
+  void PrintCompact (const TVectorD & v, int w=15, int prec=9, Option_t * opt="");
+  void PrintCompact (const TVectorD & current, const TVectorD & nominal, int w, int prec, Option_t * option);
+  void PrintCompact (const TMatrixD & m, int w=15, int prec=9);
 
 } // util
 } // t2kana
