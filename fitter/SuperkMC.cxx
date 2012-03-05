@@ -546,7 +546,7 @@ void SuperkMC::ApplyBANFFTuningToTemplates(void)
        if(!mctempl_tgt) continue; 
        // loop over Ereco
        for(int ir = 1; ir <= mctempl_src->GetXaxis()->GetNbins(); ir++) {
-         //double Ereco = mctempl_src->GetXaxis()->GetBinCenter(ir);
+         double Ereco = mctempl_src->GetXaxis()->GetBinCenter(ir);
          // loop over Etrue
          for(int it = 1; it <= mctempl_src->GetYaxis()->GetNbins(); it++) {
            double Etrue = mctempl_src->GetYaxis()->GetBinCenter(it);
@@ -554,7 +554,7 @@ void SuperkMC::ApplyBANFFTuningToTemplates(void)
            double nev = mctempl_src->GetBinContent(ir,it);
            // get tuning weights
            double flux_wght = fNuFlux->SuperkFluxFinTuningWght(s,m,Etrue);
-           double xsec_wght = fNuXSec->SuperkXSecFinTuningWght(s,m,Etrue);            
+           double xsec_wght = fNuXSec->SuperkXSecFinTuningWght(s,m,Etrue,Ereco);            
            // update tuned MC template
            double nev_tuned = nev * flux_wght * xsec_wght;
            mctempl_tgt->SetBinContent(ir,it,nev_tuned);
@@ -971,7 +971,7 @@ double SuperkMC::SystVariationWeight(
   double banff_flux_wght = fNuFlux->SuperkFluxSystWght(s,m,Etrue);
 
   // Plug-in BANFF & other xsec systematics 
-  double banff_xsec_wght = fNuXSec->SuperkXSecSystWght(s,m,Etrue);
+  double banff_xsec_wght = fNuXSec->SuperkXSecSystWght(s,m,Etrue,Ereco);
 
   //
   // ... other xsec, FSI etc

@@ -746,6 +746,17 @@ string t2kana::util::AsString(PhysParamId_t p)
     case ( kNuisXSecNormCCcoh         ) : return "f_norm_cccoh";                   break;
     case ( kNuisXSecNormCCoth         ) : return "f_norm_ccoth";                   break;
 
+    case ( kNuisFSI00                 ) : return "f_fsi00_??";                     break;
+    case ( kNuisFSI01                 ) : return "f_fsi01_??";                     break;
+    case ( kNuisFSI02                 ) : return "f_fsi02_??";                     break;
+    case ( kNuisFSI03                 ) : return "f_fsi03_??";                     break;
+    case ( kNuisFSI04                 ) : return "f_fsi04_??";                     break;
+    case ( kNuisFSI05                 ) : return "f_fsi05_??";                     break;
+    case ( kNuisFSI06                 ) : return "f_fsi06_??";                     break;
+    case ( kNuisFSI07                 ) : return "f_fsi07_??";                     break;
+    case ( kNuisFSI08                 ) : return "f_fsi08_??";                     break;
+    case ( kNuisFSI09                 ) : return "f_fsi09_??";                     break;
+
     default : 
       return "--";
   }
@@ -1325,6 +1336,17 @@ bool t2kana::util::IsSystematic(PhysParamId_t p)
     case ( kNuisXSecNormCC1pi1        ) : return true;  break; 
     case ( kNuisXSecNormCCcoh         ) : return true;  break;
     case ( kNuisXSecNormCCoth         ) : return true;  break;
+    case ( kNuisFSI00                 ) : return true;  break;
+    case ( kNuisFSI01                 ) : return true;  break;
+    case ( kNuisFSI02                 ) : return true;  break;
+    case ( kNuisFSI03                 ) : return true;  break;
+    case ( kNuisFSI04                 ) : return true;  break;
+    case ( kNuisFSI05                 ) : return true;  break;
+    case ( kNuisFSI06                 ) : return true;  break;
+    case ( kNuisFSI07                 ) : return true;  break;
+    case ( kNuisFSI08                 ) : return true;  break;
+    case ( kNuisFSI09                 ) : return true;  break;
+
     default : 
       return false;
   }
@@ -1475,6 +1497,26 @@ int t2kana::util::BANFFfitSuperkFluxParam2NuPdg(PhysParamId_t p)
   }
 
   return 0;
+}
+//___________________________________________________________________________
+void t2kana::util::FSIParamErecoRange(
+  conv::PhysParamId_t p, double & Emin, double & Emax)
+{
+// TODO as soon as FSI covar matrix binning is defined
+//
+  switch(p) {
+    case ( kNuisFSI00 ) : {  Emin = -1.0; Emax = -1.0; break; }
+    case ( kNuisFSI01 ) : {  Emin = -1.0; Emax = -1.0; break; }
+    case ( kNuisFSI02 ) : {  Emin = -1.0; Emax = -1.0; break; }
+    case ( kNuisFSI03 ) : {  Emin = -1.0; Emax = -1.0; break; }
+    case ( kNuisFSI04 ) : {  Emin = -1.0; Emax = -1.0; break; }
+    case ( kNuisFSI05 ) : {  Emin = -1.0; Emax = -1.0; break; }
+    case ( kNuisFSI06 ) : {  Emin = -1.0; Emax = -1.0; break; }
+    case ( kNuisFSI07 ) : {  Emin = -1.0; Emax = -1.0; break; }
+    case ( kNuisFSI08 ) : {  Emin = -1.0; Emax = -1.0; break; }
+    case ( kNuisFSI09 ) : {  Emin = -1.0; Emax = -1.0; break; }
+    default             : {  Emin = -1.0; Emax = -1.0; break; }
+  }
 }
 //___________________________________________________________________________
 bool t2kana::util::IsNeutrino(int pdg_code)

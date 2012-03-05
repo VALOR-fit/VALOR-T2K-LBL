@@ -166,7 +166,7 @@ void BANFF::Tweak(
 #endif
 
     TMatrixD cov(this->CovMatrix());
-#ifdef __show_shape_cholesky_mesg_debug__
+#ifdef __show_cholesky_mesg_debug__
     cout << "Exp/BANFF/Tweak >> BANFF covariance matrix: " << endl; 
     util::PrintCompact(cov,7,4);
 #endif

@@ -72,7 +72,7 @@ private:
   int  Param2Idx (conv::PhysParamId_t p) const; ///< convert BANFF PhysParamId_t to a covariance matrix or vector index
 
   TVectorD *  fBestFitValues;     ///< BANFF best fit values
-  TVectorD *  fCurrentValues;     ///< Current values of BANFF parameters (best_fit * twk_dial)
+  TVectorD *  fCurrentValues;     ///< Current values of BANFF parameters 
   TMatrixD *  fCovMtrx;           ///< BANFF covariance matrix
   TMatrixD *  fCovMtrxChoL;       ///< Triangular matrix obtained from Cholesky decomposition of BANFF covariance matrix
   bool        fIsTweaked;         ///< Were BANF params tweaked?

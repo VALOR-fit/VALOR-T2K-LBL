@@ -10,11 +10,7 @@
           
 \created  Oct 20, 2010
 
-Changes since 2010_v3.0.0:
-
- @ 09/02/12 - CA
-   Removed 2010-specific nuisance parameters from PhysParamId_t. The 2011
-   nuisance parameters will have to be added.
+Changes since 2011_v0.9.0:
 
 */
 //____________________________________________________________________________
@@ -216,6 +212,7 @@ typedef enum END280Mode
 ND280Mode_t; 
 
 static const int kNumOfParamsInBANFFfit = 26;  // number of BANFF fit parameters
+static const int kNumOfFSIParams        = 10;
 
 // Fit parameters
 typedef enum EPhysParamId 
@@ -296,8 +293,25 @@ typedef enum EPhysParamId
    kNuisXSecDeltaWidth,        // Delta width
    kNuisXSecNormCC1pi0,        // CC1pi norm 0-2.5 GeV      *** this is BANFF parameter 25 - do not include again ***
    kNuisXSecNormCC1pi1,        // CC1pi norm > 2.5 GeV   
-   kNuisXSecNormCCcoh,
-   kNuisXSecNormCCoth
+   kNuisXSecNormCCcoh,         // CC coherent norm
+   kNuisXSecNormCCoth,         // CC other norm
+
+   /*
+    * FSI parameters.
+    * Assuming here a 10x10 covariance matrix will be made available.
+    * Each parameter is a scaling factor to apply at some Ereco range (to be defined) for some
+    * SK reaction mode (or the total? to be defined)
+    */
+    kNuisFSI00,                // # 00, ??
+    kNuisFSI01,                // # 01, ??
+    kNuisFSI02,                // # 02, ??
+    kNuisFSI03,                // # 03, ??
+    kNuisFSI04,                // # 04, ??
+    kNuisFSI05,                // # 05, ??
+    kNuisFSI06,                // # 06, ??
+    kNuisFSI07,                // # 07, ??
+    kNuisFSI08,                // # 08, ??
+    kNuisFSI09                 // # 09, ??
 } 
 PhysParamId_t;
 

@@ -125,6 +125,8 @@ namespace util {
   void BANFFfitSuperkFluxParamEtrueRange (conv::PhysParamId_t p, double & Emin, double & Emax);
   int  BANFFfitSuperkFluxParam2NuPdg     (conv::PhysParamId_t p);
 
+  void FSIParamErecoRange (conv::PhysParamId_t p, double & Emin, double & Emax);
+
   //
   // String utilities
   //
