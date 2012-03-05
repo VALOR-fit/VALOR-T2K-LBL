@@ -23,7 +23,7 @@ void test_sk_ereco_spectrum_twk_banff
   using namespace std;
   using namespace t2kana;
 
-  const int nexp = 200; // number of BANFF param tweaks
+  const int nexp = 500; // number of BANFF param tweaks
 
   // Analysis configuration
   const char * config  = Form("%s/config/%s", gSystem->Getenv("T2KOSCANA"), config_file);
@@ -108,23 +108,19 @@ void test_sk_ereco_spectrum_twk_banff
   // (in the Beam WG variable binning scheme used in the flux covariance matrix) by +/-100%
   //
 
-  bool force_input_twk_dials = true;
-  bool correlated            = true;
+  bool force = true;
 
   for(int iparam = 0; iparam < conv::kNumOfParamsInBANFFfit; iparam++)
   {
        //
        // init
        //
-       cout << "- Reseting all BANFF tweaking fials " << endl;
-       TVectorD twkv(conv::kNumOfParamsInBANFFfit);
-       for(int k = 0; k < conv::kNumOfParamsInBANFFfit; k++) {
-         twkv[k] = 0.;
-       }
-       skexp.GetBANFF()->Tweak(force_input_twk_dials,0); //reset
-       //skexp.GetBANFF()->Tweak(force_input_twk_dials,&twkv,correlated);       
+       cout << "- Reseting all BANFF parameters to best-fit ones " << endl;
+       skexp.GetBANFF()->Tweak(force,0); //reset
 
-       // tweak iparam only neglecting correlations
+       TVectorD v(conv::kNumOfParamsInBANFFfit);
+       v = skexp.GetBANFF()->BestFitValues();
+       
        conv::PhysParamId_t p = (conv::PhysParamId_t) ( (int)conv::kNuisBANFF00 + iparam );
        cout << "- Tweaking BANFF parameter: " << iparam << " [" << util::AsString(p) << "] only (neglecting correlations)" << endl;
 
@@ -132,8 +128,8 @@ void test_sk_ereco_spectrum_twk_banff
        // tweak current param only by +100% - neglect correlations
        //
        cout << "- Tweaking param by +100%" << endl;
-       twkv[iparam] = +1; // +100%
-       skexp.GetBANFF()->Tweak(force_input_twk_dials,&twkv,correlated);  
+       v[iparam] = 2 * skexp.GetBANFF()->BestFitValue(p); // +100%
+       skexp.GetBANFF()->Tweak(force,&v);  
        skexp.PrintSystematicVariations();
        // generate predictions
        skexp.Generate(ph);
@@ -147,8 +143,8 @@ void test_sk_ereco_spectrum_twk_banff
        // tweak current param only by -100% - neglect correlations
        //
        cout << "- Tweaking by -100%" << endl;
-       twkv[iparam] = -0.5; // -100%
-       skexp.GetBANFF()->Tweak(force_input_twk_dials,&twkv,correlated);       
+       v[iparam] = 0.5 * skexp.GetBANFF()->BestFitValue(p); // -100%
+       skexp.GetBANFF()->Tweak(force,&v);  
        skexp.PrintSystematicVariations();
        // generate predictions
        skexp.Generate(ph);

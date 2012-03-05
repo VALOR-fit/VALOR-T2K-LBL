@@ -46,10 +46,13 @@ public:
   const TMatrixD & CovMatrixCholesky (void) const { return *fCovMtrxChoL;   }
 
   // Systematic variations (wrt the best-fit BANFF params)
-  void Tweak (bool force_input_twkv = false, TVectorD * input_twkv = 0, bool correlated = true);
+  void Tweak (bool force_inputs = false, TVectorD * input_vec = 0);
 
   // A special systematic variation which cancels the effect of BANFF tuning and reverts back to the nominal MC
   void RestoreNominalMC(void);
+
+  // Penalty term included in the chisq if the BANFF fit parameters are included in the oscillation fit.
+  double ChisqPenalty(void) const;
 
   // Get & tweak flags	
   bool IsTweaked           (void) const { return fIsTweaked;         } ///< BANFF params tweaked?
@@ -67,7 +70,6 @@ private:
   void Init      (void);
   void CleanUp   (void);
   int  Param2Idx (conv::PhysParamId_t p) const; ///< convert BANFF PhysParamId_t to a covariance matrix or vector index
-  void DoTweak   (TVectorD * input_twkv); ///< apply input tweaking dials
 
   TVectorD *  fBestFitValues;     ///< BANFF best fit values
   TVectorD *  fCurrentValues;     ///< Current values of BANFF parameters (best_fit * twk_dial)

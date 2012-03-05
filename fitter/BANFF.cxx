@@ -141,9 +141,8 @@ double BANFF::CurrentValue(PhysParamId_t p) const
 }
 //________________________________________________________________________________________
 void BANFF::Tweak(
-  bool       force_input_twkv,  /* force the input twk dials or generate twk dials internally */
-  TVectorD * input_twkv,        /* input twk dials (if forced) - set 0 to reset */
-  bool       correlated         /* twk dials are the correlated or uncorrelated ones? */
+  bool       force_inputs, /* force the input params or generate random ones internally  */
+  TVectorD * input_vec     /* input vector of BANFF params - Set to 0 to reset to best-fit ones */
 )    
 { 
 #ifdef __show_cholesky_mesg_debug__
@@ -181,98 +180,78 @@ void BANFF::Tweak(
   }
 
   //
-  // Forcing null tweaking dials. This resets the BANFF params to their best-fit values.
+  // Get best-fit and current BANFF params
   //
 
-  if(force_input_twkv && input_twkv==0) {
+  TVectorD & bestfit_values = *fBestFitValues;
+  TVectorD & current_values = *fCurrentValues;
+
+  //
+  // Force input BANFF parameters
+  //
+  if(force_inputs) 
+  {
+     // Input vector is NULL.
+     // This resets the BANFF params to their best-fit values.
+     if(input_vec==0) {
 #ifdef __show_tweak_mesg_debug__
-    cout << "Exp/BANFF/Tweak >> Reset BANFF params to best-fit values." << endl;
+        cout << "Exp/BANFF/Tweak >> Reset BANFF params to best-fit values." << endl;
 #endif
-     fIsTweaked = false;
-     this->DoTweak(0);
-     return;
-  }
-
-  //
-  // Check whether the values of the tweaking dials are forced.
-  // If the forced tweaking dials are supposed to be the correlated ones then we don't
-  // need to use the Cholesky decomposition of the BANFF covariance matrix.
-  //
-
-  if(force_input_twkv && correlated) {
+        fIsTweaked = false;
+        current_values = bestfit_values;
+        return;
+     }
+     else     
+     {
 #ifdef __show_tweak_mesg_debug__
-     cout << "Exp/BANFF/Tweak >> Forcing input twk dials (correlated)! " << endl;
+        cout << "Exp/BANFF/Tweak >> Forcing input BANFF parameters. " << endl;
 #endif
-     this->DoTweak(input_twkv);
-     return;
-  }
-
-  //
-  // Check whether the values of the tweaking dials are forced.
-  // If the forced tweaking dials are supposed to be the un-correlated ones then use
-  // the Cholesky decomposition of the BANFF covariance matrix to generate
-  // correlated tweaking dials.
-  //
-
-  if(force_input_twkv && !correlated) {
-#ifdef __show_tweak_mesg_debug__
-     cout << "Exp/BANFF/Tweak >> Forcing input twk dials (uncorrelated)! " << endl;
-#endif
-     TMatrixD & L = *fCovMtrxChoL;
-     TVectorD twkv = util::CholeskyCalculateCorrelatedParamVariations(L,*input_twkv);
-     this->DoTweak(&twkv);
-     return;
-  }
+        TVectorD & vec = *input_vec;
+        current_values = vec;
+        return;
+     }
+  }//force_inputs?
 
   //
   // If the tweaking dials were not forced, generate correlated tweaking dials
   // using the Cholesky method
   //
-  // Use Cholseky method to generate random fluxes
-  //
-
-  if(!force_input_twkv) {
+  else
+  {
 #ifdef __show_tweak_mesg_debug__
-    cout << "Exp/BANFF/Tweak >> Generating random twk dials (correlated)! " << endl;
+     cout << "Exp/BANFF/Tweak >> Generating random twk dials (correlated)! " << endl;
 #endif
-    TMatrixD & L = *fCovMtrxChoL;
-    TVectorD twkv = util::CholeskyGenerateCorrelatedParamVariations(L);
-    this->DoTweak(&twkv);
-    return;
+     TMatrixD & L = *fCovMtrxChoL;
+     TVectorD vec = util::CholeskyGenerateCorrelatedParams(L,bestfit_values);
+     current_values = vec;
+     return;
   }
 
 }
 //________________________________________________________________________________________
 void BANFF::RestoreNominalMC(void)
 {
+// A special tweak method
+
   cout << "Exp/BANFF >> ** Applying special tweak cancelling the effect of BANFF tuning "
        << "and restoring nominal MC..." << endl; 
 
-  cerr << "Exp/BANFF >> Not implemented yet" << endl;
-  exit(1);
-}
-//________________________________________________________________________________________
-void BANFF::DoTweak(TVectorD * input_twkv)
-{
-// Apply input_twkv to fBestFitValues and get fCurrentValues
-//
+  fIsTweaked         = true;
+  fIsFluxWghtUpdated = false;
+
   TVectorD & current_values = *fCurrentValues;
-  TVectorD & bestfit_values = *fBestFitValues;
 
   const int np = conv::kNumOfParamsInBANFFfit;
-
-  if(input_twkv == 0) {
-     for(int ip = 0; ip < np; ip++) {
-       current_values[ip] = bestfit_values[ip];
-     }//ip
+  for(int i=0; i<np; i++) {
+    current_values[i] = 1.;
   }
-  else {
-     TVectorD & twk_dials = *input_twkv;
-     for(int ip = 0; ip < np; ip++) {
-       current_values[ip] = bestfit_values[ip] * (1 + twk_dials[ip]);
-     }//ip
-  }
+}
+//________________________________________________________________________________________
+double BANFF::ChisqPenalty(void) const
+{
+// TODO
 
+  return 0;
 }
 //________________________________________________________________________________________
 void BANFF::PrintSystematicVariations(void) const
