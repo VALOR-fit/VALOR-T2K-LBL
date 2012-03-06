@@ -1811,6 +1811,7 @@ void t2kana::util::PrintCompact(
   TString opt = option;
 
   bool printing_banff_params = opt.Contains("BANFF fit params");
+  bool printing_fsi_params   = opt.Contains("FSI params");
 
   int np = v.GetNoElements();
   cout << fixed;
@@ -1820,6 +1821,12 @@ void t2kana::util::PrintCompact(
      if(printing_banff_params) {
          cout << " [ ";
          PhysParamId_t p = PhysParamId_t ( (int)kNuisBANFF00 + ip );
+         cout << setw(30) << util::AsString(p);
+         cout << " ]";
+     }
+     if(printing_fsi_params) {
+         cout << " [ ";
+         PhysParamId_t p = PhysParamId_t ( (int)kNuisFSI00 + ip );
          cout << setw(30) << util::AsString(p);
          cout << " ]";
      }
@@ -1835,6 +1842,7 @@ void t2kana::util::PrintCompact(
   TString opt = option;
 
   bool printing_banff_params = opt.Contains("BANFF fit params");
+  bool printing_fsi_params   = opt.Contains("FSI params");
 
   int np = current.GetNoElements();
   cout << fixed;
@@ -1844,6 +1852,12 @@ void t2kana::util::PrintCompact(
      if(printing_banff_params) {
          cout << " [ ";
          PhysParamId_t p = PhysParamId_t ( (int)kNuisBANFF00 + ip );
+         cout << setw(30) << util::AsString(p);
+         cout << " ]";
+     }
+     if(printing_fsi_params) {
+         cout << " [ ";
+         PhysParamId_t p = PhysParamId_t ( (int)kNuisFSI00 + ip );
          cout << setw(30) << util::AsString(p);
          cout << " ]";
      }

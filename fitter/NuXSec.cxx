@@ -23,9 +23,6 @@
 #include <cstdlib>
 #include <iostream>
 
-#include <TH1D.h>
-#include <TVirtualPad.h>
-#include <TLegend.h>
 #include <TMath.h>
 
 #include "NuXSec.h"
@@ -75,24 +72,32 @@ bool NuXSec::Read(TXMLEngine* xml, XMLNodePointer_t root_node)
 #endif
 
 /*
+  //
+  // FSI
+  //
+
   const int np = conv::kNumOfFSIParams;
 
-  fCurrentValues = new TVectorD(np);
-  for(int ip = 0; ip < np; ip++) {
-    (*fCurrentValues)[ip] = 1.;
-  }
-
   // Get BANFF fit covariance matrix
-  fCovMtrx = util::XML2TMatrixD(xml,root_node,"xsec/fsi/covariance_matrix");
-  if(!fCovMtrx) {
+  fFSICovMtrx = util::XML2TMatrixD(xml,root_node,"xsec/fsi/covariance_matrix");
+  if(!fFSICovMtrx) {
     cerr << "Exp/NuXSec >> No BANFF covariance matrix was found." << endl;
     exit(1);
   }
 #ifdef __show_init_mesg_info__
   cout << "Exp/NuXSec >> Input FSI covariance matrix: " << endl;
-  util::PrintCompact(*fCovMtrx,7,4);
+  util::PrintCompact(*fFSICovMtrx,7,4);
 #endif
 
+  // check cov matrix dimension against no
+  // TODO
+
+  // Create/init current FSI params
+  fFSICurrentValues = new TVectorD(np);
+  for(int ip = 0; ip < np; ip++) 
+  {
+     (*fFSICurrentValues)[ip] = 1.;
+  }
 */
 
 #ifdef __show_init_mesg_info__
@@ -116,8 +121,8 @@ double NuXSec::SuperkXSecFinTuningWght(
 // flux parameters. In the current incarnation of the BANFF fit, these parameters are:
 // - BANFF param # 22, M_{A} QE
 // - BANFF param # 23, M_{A} RES
-// - BANFF param # 24, CCQE  normalization, 0 - 1.5 GeV
-// - BANFF param # 25, CCRES normalization, 0 - 2.5 GeV
+// - BANFF param # 24, CCQE  normalization, 0 - 1.5 GeV (Etrue)
+// - BANFF param # 25, CCRES normalization, 0 - 2.5 GeV (Etrue)
 //
 
   // A check to make sure the sample-mode combination exists
@@ -125,55 +130,65 @@ double NuXSec::SuperkXSecFinTuningWght(
   if(m == kSKmUndefined) return 1.;
   if(util::FindModeSlot(s, m) < 0) return 1.;
 
-  double wght_maqe    = 1.;
-  double wght_mares   = 1.;
-  double wght_normqe  = 1.;
-  double wght_normres = 1.;
-/*
-  bool is_ccqe  = util::IsCCQE (m);
-  bool is_ccres = util::IsCCRES(m)
+  // init weights
+  double wght_banff22 = 1.;
+  double wght_banff23 = 1.;
+  double wght_banff24 = 1.;
+  double wght_banff25 = 1.;
 
+  // init flags
+  bool apply_banff22 = (m == kSKmNuMuCCQE ); ////// CHECK - presumably numubars also !!!
+  bool apply_banff23 = (m == kSKmNuMuCC1pi); ////// CHECK - presumably numubars also !!!
+  bool apply_banff24 = (m == kSKmNuMuCCQE ) && (Etrue >= 0. && Etrue < 1.5); ////// CHECK
+  bool apply_banff25 = (m == kSKmNuMuCC1pi) && (Etrue >= 0. && Etrue < 2.5); ////// CHECK
+
+/*
   // BANFF param # 22, M_{A} QE
-  if(is_ccqe) {
-     double maqe = conv::kNomMAQE * fBANFF->BestFitValue(kNuisBANFF22);
-     maqe_wght = this->Spline(s,m,Etrue)->Eval(maqe);
+  if(apply_banff22) 
+  {
+     double ma = conv::kNomMAQE * fBANFF->BestFitValue(kNuisBANFF22);
+     wght_banff22 = this->Spline(s,m,Etrue)->Eval(ma);
   }
 
   // BANFF param # 23, M_{A} RES
-  if(is_ccres) {
-     double mares = conv::kNomMARES * fBANFF->BestFitValue(kNuisBANFF23);
-     mares_wght = this->Spline(s,m,Etrue)->Eval(mares);
+  if(apply_banff22) 
+  {
+     double ma = conv::kNomMARES * fBANFF->BestFitValue(kNuisBANFF23);
+     wght_banff23 = this->Spline(s,m,Etrue)->Eval(ma);
   }
+*/
 
   // BANFF param # 24, CCQE  normalization, 0 - 1.5 GeV
-  if(is_ccqe && Etrue >= 0. && Etrue < 1.5) {
-     wght_normqe = fBANFF->BestFitValue(kNuisBANFF24);
+  if(apply_banff24) 
+  {
+     wght_banff24 = fBANFF->BestFitValue(kNuisBANFF24);
   }
 
   // BANFF param # 25, CCRES normalization, 0 - 2.5 GeV
-  if(is_ccqe && Etrue >= 0. && Etrue < 1.5) {  
-    wght_normres = fBANFF->BestFitValue(kNuisBANFF25);
+  if(apply_banff25) 
+  {  
+    wght_banff25 = fBANFF->BestFitValue(kNuisBANFF25);
   }
-*/
+
   double wght = 
-       wght_maqe   *
-       wght_mares  *
-       wght_normqe *
-       wght_normres;
+       wght_banff22 *
+       wght_banff23 *
+       wght_banff24 *
+       wght_banff25;
 
 #ifdef __show_wght_mesg_debug__
-  if ( wght_maqe    != 1. ||
-       wght_mares   != 1. || 
-       wght_normqe  != 1. ||
-       wght_normres != 1. )
+  if ( wght_banff22 != 1. ||
+       wght_banff23 != 1. || 
+       wght_banff24 != 1. ||
+       wght_banff25 != 1. )
   {
      cout << "Exp/NuXSec >> "
           << "Sample = " << util::AsString(s) << " / Mode = " << util::AsString(m)
           << ", Etrue = " << Etrue << " GeV => Weights: "
-          << "MAQE = "      << wght_maqe
-          << ", MARES = "   << wght_mares
-          << ", NormQE = "  << wght_normqe
-          << ", NormRES = " << wght_normres
+          << "BANFF22 = "   << wght_banff22
+          << ", BANFF23 = " << wght_banff23
+          << ", BANFF24 = " << wght_banff24
+          << ", BANFF25 = " << wght_banff25
           << "  (total = "  << wght << ")"
           << endl;   
   }
@@ -183,24 +198,113 @@ double NuXSec::SuperkXSecFinTuningWght(
 }
 //________________________________________________________________________________________
 double NuXSec::SuperkXSecSystWght(
-   t2kana::conv::SuperkSample_t s, t2kana::conv::SuperkMode_t m, double Etrue, double Ereco) const
+   t2kana::conv::SuperkSample_t s, t2kana::conv::SuperkMode_t m, 
+   double Etrue, double Ereco) const
 {
+//
+// This method provides weights to account for systematic variations to the BANFF params.
+// The weights are relative to MC reweighted to the BANFF best-fit point.
+// It handles the 4 BANFF cross-section parameters which are correlated with the BANFF 
+// flux parameters. In the current incarnation of the BANFF fit, these parameters are:
+// - BANFF param # 22, M_{A} QE
+// - BANFF param # 23, M_{A} RES
+// - BANFF param # 24, CCQE  normalization, 0 - 1.5 GeV (Etrue)
+// - BANFF param # 25, CCRES normalization, 0 - 2.5 GeV (Etrue)
+//
+
   // A check to make sure the sample-mode combination exists
   if(s == kSKsUndefined) return 1.;
   if(m == kSKmUndefined) return 1.;
   if(util::FindModeSlot(s, m) < 0) return 1.;
 
+  // init weights
+  double wght_banff22 = 1.;
+  double wght_banff23 = 1.;
+  double wght_banff24 = 1.;
+  double wght_banff25 = 1.;
 
+  // init flags
+  bool apply_banff22 = (m == kSKmNuMuCCQE ); ////// CHECK - presumably numubars also !!!
+  bool apply_banff23 = (m == kSKmNuMuCC1pi); ////// CHECK - presumably numubars also !!!
+  bool apply_banff24 = (m == kSKmNuMuCCQE ) && (Etrue >= 0. && Etrue < 1.5); ////// CHECK
+  bool apply_banff25 = (m == kSKmNuMuCC1pi) && (Etrue >= 0. && Etrue < 2.5); ////// CHECK
 
-  return 1.;
+/*
+  // BANFF param # 22, M_{A} QE
+  if(apply_banff22) 
+  {
+
+  }
+
+  // BANFF param # 23, M_{A} RES
+  if(apply_banff22) 
+  {
+     double ma_current = conv::kNomMARES * fBANFF->CurrentValue(kNuisBANFF23) 
+     double ma_bestfit = conv::kNomMARES * fBANFF->BestFitValue(kNuisBANFF23);
+     double wght_banff23_current = this->Spline(s,m,Etrue)->Eval(ma_current);
+     double wght_banff23_bestfit = this->Spline(s,m,Etrue)->Eval(ma_bestfit);
+     wght_banff23 = wght_banff23_current / wght_banff23_bestfit;
+  }
+*/
+
+  // BANFF param # 24, CCQE  normalization, 0 - 1.5 GeV
+  if(apply_banff24) 
+  {
+     wght_banff24 = fBANFF->CurrentValue(kNuisBANFF24) / fBANFF->BestFitValue(kNuisBANFF24);
+  }
+
+  // BANFF param # 25, CCRES normalization, 0 - 2.5 GeV
+  if(apply_banff25) 
+  {  
+    wght_banff25 = fBANFF->CurrentValue(kNuisBANFF25) / fBANFF->BestFitValue(kNuisBANFF25);
+  }
+
+  double wght = 
+       wght_banff22 *
+       wght_banff23 *
+       wght_banff24 *
+       wght_banff25;
+
+#ifdef __show_wght_mesg_debug__
+  if ( wght_banff22 != 1. ||
+       wght_banff23 != 1. || 
+       wght_banff24 != 1. ||
+       wght_banff25 != 1. )
+  {
+     cout << "Exp/NuXSec >> "
+          << "Sample = " << util::AsString(s) << " / Mode = " << util::AsString(m)
+          << ", Etrue = " << Etrue << " GeV => Weights: "
+          << "BANFF22 = "   << wght_banff22
+          << ", BANFF23 = " << wght_banff23
+          << ", BANFF24 = " << wght_banff24
+          << ", BANFF25 = " << wght_banff25
+          << "  (total = "  << wght << ")"
+          << endl;   
+  }
+#endif
+
+  return wght;
 }
 //________________________________________________________________________________________
-double NuXSec::FSIParamCurrentValue (conv::PhysParamId_t /*p*/) const
+void NuXSec::PrintSystematicVariations(void) const
+{
+  TVectorD & fsi_current_values = *fFSICurrentValues;
+  cout << "Exp/NuXSec >> FSI parameters: " << endl;
+  util::PrintCompact(fsi_current_values,12,6,"FSI params");
+}
+//________________________________________________________________________________________
+
+//
+// FSI 
+//
+
+//________________________________________________________________________________________
+double NuXSec::FSICurrentValue (conv::PhysParamId_t /*p*/) const
 {
   return 0;
 }
 //________________________________________________________________________________________
-void NuXSec::TweakFSIParams(
+void NuXSec::TweakFSI(
   bool       force_inputs, /* force the input params or generate random ones internally  */
   TVectorD * input_vec     /* input vector of params - Set to 0 to reset to nominal ones */
 )
@@ -280,26 +384,5 @@ void NuXSec::TweakFSIParams(
      return;
   }
 
-}
-//________________________________________________________________________________________
-void NuXSec::PrintSystematicVariations(void) const
-{
-
-}
-//________________________________________________________________________________________
-void NuXSec::Draw(TVirtualPad * c, Option_t * option) const
-{
-  if(!c) return;
-
-  c->cd();
-
-  TString opt = option;
-  util::SetDefaultStyle();
-
-  //
-  // ...
-  //
-  
-  c->Update();
 }
 //________________________________________________________________________________________
