@@ -820,13 +820,25 @@ string t2kana::util::AsString(t2kana::conv::SuperkMode_t m)
   return "";
 }
 //____________________________________________________________________________
+string t2kana::util::AsString(t2kana::conv::FluxType_t f)
+{
+  switch(f) {
+    case ( kFlxNominal     ) : return "nominal";          break;
+    case ( kFlxExtTuning   ) : return "tuned (external)"; break;
+    case ( kFlxFinalTuning ) : return "tuned (final)";    break;
+    case ( kFlxCurrent     ) : return "current";          break;
+    default                  : return "--";               break;
+  }
+  return "";
+}
+//____________________________________________________________________________
 string t2kana::util::AsString(t2kana::conv::OscChannelId_t osch)
 {
   switch(osch) {
      case ( kOscNuE2NuE           ) : return "nue -> nue";            break;
      case ( kOscNuE2NuMu          ) : return "nue -> numu";           break;
      case ( kOscNuE2NuTau         ) : return "nue -> nutau";          break;
-     case ( kOscNuMu2NuE          ) : return "numu -> nue";           break;
+     case ( kOscNuMu2NuE          ) : return "numu -> nue";           break;  
      case ( kOscNuMu2NuMu         ) : return "numu -> numu";          break;
      case ( kOscNuMu2NuTau        ) : return "numu -> nutau";         break;
      case ( kOscNuTau2NuE         ) : return "nutau -> nue";          break;
@@ -844,18 +856,6 @@ string t2kana::util::AsString(t2kana::conv::OscChannelId_t osch)
      default                        : return "--";
   }
   return "--";
-} 
-//____________________________________________________________________________
-string t2kana::util::AsString(t2kana::conv::FluxType_t f)
-{
-  switch(f) {
-    case ( kFlxNominal     ) : return "nominal";          break;
-    case ( kFlxExtTuning   ) : return "tuned (external)"; break;
-    case ( kFlxFinalTuning ) : return "tuned (final)";    break;
-    case ( kFlxCurrent     ) : return "current";          break;
-    default                  : return "--";               break;
-  }
-  return "";
 }
 //____________________________________________________________________________
 string t2kana::util::AsStringTex(t2kana::conv::SuperkSample_t s)
@@ -1119,7 +1119,9 @@ t2kana::conv::SuperkSample_t t2kana::util::SKSampleFromString(string sh)
   return kSKsUndefined;
 }
 //____________________________________________________________________________
-t2kana::conv::OscAnaType_t  t2kana::util::OscAnaFromString(string sh) {
+t2kana::conv::OscAnaType_t  
+   t2kana::util::OscAnaFromString(string sh) 
+{
   if(sh == "combined"   ) return kAnaCombined;
   if(sh == "numu_disap" ) return kAnaNuMuDisappOnly;
   if(sh == "nue_app"    ) return kAnaNuEAppOnly;
@@ -1127,21 +1129,25 @@ t2kana::conv::OscAnaType_t  t2kana::util::OscAnaFromString(string sh) {
   return kAnaUndefined;
 }
 //____________________________________________________________________________
-t2kana::conv::NuMassHierarchy_t  t2kana::util::HierarchyFromString(string sh) {
+t2kana::conv::NuMassHierarchy_t  
+  t2kana::util::HierarchyFromString(string sh) 
+{
   if(sh == "normal"   ) return kNmhNormal;
   if(sh == "inverted" ) return kNmhInverted;
   
   return kNmhUndefined;
 }
 //____________________________________________________________________________
-t2kana::conv::NuOscMixParam_t    t2kana::util::MixingTypeFromString(string sh) {
+t2kana::conv::NuOscMixParam_t   
+  t2kana::util::MixingTypeFromString(string sh) 
+{
   if(sh == "sinsq2theta") return kNuMixSinsq2Theta;
   if(sh == "sinsqtheta" ) return kNuMixSinsqTheta;
   
   return kNuMixUndefined;
 }
 //____________________________________________________________________________
-t2kana::conv::OscChannelId_t 
+t2kana::conv::OscChannelId_t
   t2kana::util::GetOscChannel(int nu_start, int nu_end)
 {
   if ( nu_start == kPdgNuE      && nu_end == kPdgNuE      ) return kOscNuE2NuE;
@@ -1153,7 +1159,7 @@ t2kana::conv::OscChannelId_t
   if ( nu_start == kPdgNuTau    && nu_end == kPdgNuE      ) return kOscNuTau2NuE;
   if ( nu_start == kPdgNuTau    && nu_end == kPdgNuMu     ) return kOscNuTau2NuMu;
   if ( nu_start == kPdgNuTau    && nu_end == kPdgNuTau    ) return kOscNuTau2NuTau;
-  
+     
   if ( nu_start == kPdgNuEBar   && nu_end == kPdgNuEBar   ) return kOscNuEBar2NuEBar;
   if ( nu_start == kPdgNuEBar   && nu_end == kPdgNuMuBar  ) return kOscNuEBar2NuMuBar;
   if ( nu_start == kPdgNuEBar   && nu_end == kPdgNuTauBar ) return kOscNuEBar2NuTauBar;
@@ -1163,7 +1169,7 @@ t2kana::conv::OscChannelId_t
   if ( nu_start == kPdgNuTauBar && nu_end == kPdgNuEBar   ) return kOscNuTauBar2NuEBar;
   if ( nu_start == kPdgNuTauBar && nu_end == kPdgNuMuBar  ) return kOscNuTauBar2NuMuBar;
   if ( nu_start == kPdgNuTauBar && nu_end == kPdgNuTauBar ) return kOscNuTauBar2NuTauBar;
-
+   
   return kOscUndefined;
 }
 //____________________________________________________________________________
@@ -1469,49 +1475,6 @@ bool t2kana::util::IsBANFFfitSuperkFluxParam(PhysParamId_t p)
   return false;
 }
 //___________________________________________________________________________
-void t2kana::util::BANFFfitSuperkFluxParamEtrueRange(
-  PhysParamId_t p, double & Emin, double & Emax)
-{
-  switch(p) {
-    //
-    // Superk numu flux params
-    //
-    case ( kNuisBANFF00 ) : { Emin = 0.0; Emax =  0.4; break; } // f_banff00_sk_numu_0.0_0.4
-    case ( kNuisBANFF01 ) : { Emin = 0.4; Emax =  0.5; break; } // f_banff01_sk_numu_0.4_0.5
-    case ( kNuisBANFF02 ) : { Emin = 0.5; Emax =  0.6; break; } // f_banff02_sk_numu_0.5_0.6
-    case ( kNuisBANFF03 ) : { Emin = 0.6; Emax =  0.7; break; } // f_banff03_sk_numu_0.6_0.7
-    case ( kNuisBANFF04 ) : { Emin = 0.7; Emax =  1.0; break; } // f_banff04_sk_numu_0.7_1.0
-    case ( kNuisBANFF05 ) : { Emin = 1.0; Emax =  1.5; break; } // f_banff05_sk_numu_1.0_1.5
-    case ( kNuisBANFF06 ) : { Emin = 1.5; Emax =  2.5; break; } // f_banff06_sk_numu_1.5_2.5
-    case ( kNuisBANFF07 ) : { Emin = 2.5; Emax =  3.5; break; } // f_banff07_sk_numu_2.5_3.5
-    case ( kNuisBANFF08 ) : { Emin = 3.5; Emax =  5.0; break; } // f_banff08_sk_numu_3.5_5.0
-    case ( kNuisBANFF09 ) : { Emin = 5.0; Emax =  7.0; break; } // f_banff09_sk_numu_5.0_7.0
-    case ( kNuisBANFF10 ) : { Emin = 7.0; Emax = 30.0; break; } // f_banff10_sk_numu_7.0_30.0
-    //
-    // Superk numubar flux params
-    //
-    case ( kNuisBANFF11 ) : { Emin = 0.0; Emax =  1.5; break; } // f_banff11_sk_numubar_0.0_1.5
-    case ( kNuisBANFF12 ) : { Emin = 1.5; Emax = 30.0; break; } // f_banff12_sk_numubar_1.5_30.0
-    //
-    // Superk nue flux params
-    //
-    case ( kNuisBANFF13 ) : { Emin = 0.0; Emax =  0.5; break; } // f_banff13_sk_nue_0.0_0.5
-    case ( kNuisBANFF14 ) : { Emin = 0.5; Emax =  0.7; break; } // f_banff14_sk_nue_0.5_0.7
-    case ( kNuisBANFF15 ) : { Emin = 0.7; Emax =  0.8; break; } // f_banff15_sk_nue_0.7_0.8
-    case ( kNuisBANFF16 ) : { Emin = 0.8; Emax =  1.5; break; } // f_banff16_sk_nue_0.8_1.5
-    case ( kNuisBANFF17 ) : { Emin = 1.5; Emax =  2.5; break; } // f_banff17_sk_nue_1.5_2.5
-    case ( kNuisBANFF18 ) : { Emin = 2.5; Emax =  4.0; break; } // f_banff18_sk_nue_2.5_4.0
-    case ( kNuisBANFF19 ) : { Emin = 4.0; Emax = 30.0; break; } // f_banff19_sk_nue_4.0_30.0
-    //
-    // Superk nuebar flux params
-    //
-    case ( kNuisBANFF20 ) : { Emin = 0.0; Emax =  2.5; break; } // f_banff20_sk_nuebar_0.0_2.5
-    case ( kNuisBANFF21 ) : { Emin = 2.5; Emax = 30.0; break; } // f_banff21_sk_nuebar_2.5_30.0
-
-    default: {  Emin = -1.0; Emax = -1.0; }
-  }
-}
-//___________________________________________________________________________
 int t2kana::util::BANFFfitSuperkFluxParam2NuPdg(PhysParamId_t p)
 {
   switch(p) {
@@ -1564,26 +1527,6 @@ int t2kana::util::BANFFfitSuperkFluxParam2NuPdg(PhysParamId_t p)
   }
 
   return 0;
-}
-//___________________________________________________________________________
-void t2kana::util::FSIParamErecoRange(
-  conv::PhysParamId_t p, double & Emin, double & Emax)
-{
-// TODO as soon as FSI covar matrix binning is defined
-//
-  switch(p) {
-    case ( kNuisFSI00 ) : {  Emin = -1.0; Emax = -1.0; break; }
-    case ( kNuisFSI01 ) : {  Emin = -1.0; Emax = -1.0; break; }
-    case ( kNuisFSI02 ) : {  Emin = -1.0; Emax = -1.0; break; }
-    case ( kNuisFSI03 ) : {  Emin = -1.0; Emax = -1.0; break; }
-    case ( kNuisFSI04 ) : {  Emin = -1.0; Emax = -1.0; break; }
-    case ( kNuisFSI05 ) : {  Emin = -1.0; Emax = -1.0; break; }
-    case ( kNuisFSI06 ) : {  Emin = -1.0; Emax = -1.0; break; }
-    case ( kNuisFSI07 ) : {  Emin = -1.0; Emax = -1.0; break; }
-    case ( kNuisFSI08 ) : {  Emin = -1.0; Emax = -1.0; break; }
-    case ( kNuisFSI09 ) : {  Emin = -1.0; Emax = -1.0; break; }
-    default             : {  Emin = -1.0; Emax = -1.0; break; }
-  }
 }
 //___________________________________________________________________________
 bool t2kana::util::IsNeutrino(int pdg_code)
@@ -2025,6 +1968,44 @@ bool t2kana::util::NodeExists(
   }
   return false;
 }
+//___________________________________________________________________________
+/*
+bool t2kana::util::XML2RootFileAndObjectName(
+  TXMLEngine * xmleng, XMLNodePointer_t topnode, string path)
+{
+#ifdef __debug_level_2__
+  cout << "utils/XML2Root >> Reading info at XML node path: " << path << endl;
+#endif
+
+  XMLNodePointer_t found_node = FindNode(xmleng,top_node,path);
+  if(!found_node) {
+    cerr << "utils/XML2Root >> No node was found at input XML node path: "
+         << path << endl;
+    //return 0;
+    exit(1);
+  }
+
+  string filename = "";
+  string objname  = "";
+
+  XMLNodePointer_t child_node = xmleng->GetChild(found_node);
+  while(child_node) {
+    string child_node_name = xmleng->GetNodeName(child_node);
+    string content = xmleng->GetNodeContent(child_node);
+#ifdef __debug_level_2__
+    cout << "utils/XML2Root >> node = " << child_node_name << endl;
+    cout << "utils/XML2Root >> \t content = " << content << endl;
+#endif
+    if(child_node_name == "filename") { filename = TrimSpaces(content); }
+    if(child_node_name == "objname" ) { objname  = TrimSpaces(content); }
+    child_node = xmleng->GetNext(child_node);    
+  }
+
+#ifdef __debug_level_2__
+  cout << "utils/XML2Root >> filename : " << filename << endl;
+  cout << "utils/XML2Root >> objname  : " << objname  << endl;
+#endif
+}*/
 //___________________________________________________________________________
 TH1F * t2kana::util::XML2TH1F(
   TXMLEngine * xmleng, XMLNodePointer_t top_node, string path)

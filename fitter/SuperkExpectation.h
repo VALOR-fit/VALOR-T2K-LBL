@@ -36,7 +36,6 @@
 using std::string;
 using t2kana::conv::kns;
 using t2kana::conv::knm;
-using t2kana::conv::knmnd;
 
 namespace t2kana {
 

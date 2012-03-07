@@ -92,12 +92,6 @@ static const double kMinFitSinsqTheta12      = 0.70;
 static const double kMaxFitSinsqTheta12      = 1.00;
 
 //
-// Nominal physics params in BANFF fit
-//
-static const double kNomMAQE  = 1.21;
-static const double kNomMARES = 1.21;
-
-//
 // Other constants
 //
 static const double kASmallNum      = 1E-10;                         // 
@@ -119,6 +113,19 @@ static const double kNA             = 6.022142e23;                   // Avogadro
 // ------------------------------------------------------------------------
 //
 
+// Indices for array with default graphic attributes (see below)
+static const int kNGraphicAttributes = 5; 
+typedef enum EGraphicAttributeIdx
+{   
+   kGrAttUndefined  = -1, 
+   kGrAttFillStyle  =  0, 
+   kGrAttFillColour =  1, 
+   kGrAttLineStyle  =  2, 
+   kGrAttLineWidth  =  3, 
+   kGrAttLineColour =  4 
+} 
+GraphicAttributeIdx_t;
+
 // Confidence level
 typedef enum EConfLevel {
    kCLUndefined = -1, 
@@ -128,6 +135,70 @@ typedef enum EConfLevel {
    kCL99
 } 
 ConfLevel_t; 
+
+// Physics hypotheses
+typedef enum EPhysHypothesis 
+{   
+   kHypUndefined = -1,
+   kHypDecay,             // neutrino decay 
+   kHypDecoh,             // neutrino decoherence 
+   kHypNuMuDisapp2F,      // muon-neutrino disappearance, simple 2-flavour oscillation framework 
+   kHypOsc3F              // neutrino oscillations, 3-flavour framework 
+} 
+PhysHypothesis_t;
+
+// Combined or single analysis 
+typedef enum EOscAnaType 
+{   
+   kAnaUndefined = -1, 
+   kAnaCombined,
+   kAnaNuMuDisappOnly,
+   kAnaNuEAppOnly
+} 
+OscAnaType_t;
+
+// Neutrino mass hierarchy
+typedef enum ENuMassHierarchy 
+{   
+   kNmhUndefined = -1, 
+   kNmhNormal,
+   kNmhInverted
+} 
+NuMassHierarchy_t;
+
+// Choices of oscillation mixing parameter
+typedef enum ENuOscMixParam
+{   
+   kNuMixUndefined = -1, 
+   kNuMixSinsq2Theta,      // sin^2(2*theta)
+   kNuMixSinsqTheta        // sin^2(theta), preferred choice in globa nue appearance + numu disappearance fit
+} 
+NuOscMixParam_t;
+
+// Oscillation channels
+typedef enum EOscChannelId 
+{   
+   kOscUndefined = -1, 
+   kOscNuE2NuE,
+   kOscNuE2NuMu,
+   kOscNuE2NuTau,
+   kOscNuMu2NuE,
+   kOscNuMu2NuMu,
+   kOscNuMu2NuTau,
+   kOscNuTau2NuE,
+   kOscNuTau2NuMu,
+   kOscNuTau2NuTau,
+   kOscNuEBar2NuEBar,
+   kOscNuEBar2NuMuBar,
+   kOscNuEBar2NuTauBar,
+   kOscNuMuBar2NuEBar,
+   kOscNuMuBar2NuMuBar,
+   kOscNuMuBar2NuTauBar,
+   kOscNuTauBar2NuEBar,
+   kOscNuTauBar2NuMuBar,
+   kOscNuTauBar2NuTauBar
+} 
+OscChannelId_t;
 
 // Enumeration of event samples that may be included in the analysis
 // Actual choice for current analysis is given in `Configuration' section.
@@ -190,38 +261,27 @@ typedef enum ESuperkMode
 } 
 SuperkMode_t; 
 
-// (True) reaction modes considered separately in nd280 inputs
-static const int kNND280Modes = 21; // number of reaction modes considered separately within the ND280 sample
-static const int knmnd = kNND280Modes; 
-typedef enum END280Mode 
-{
-   kNDmUndefined = -1, 
-   kNDmNuMuCCQE, 
-   kNDmNuMuCCRES, 
-   kNDmNuMuCCCOH, 
-   kNDmNuMuCCOth, 
-   kNDmNuMuNCRES, 
-   kNDmNuMuNCCOH, 
-   kNDmNuMuNCOth, 
-   kNDmNuMuBarCCQE, 
-   kNDmNuMuBarCCRES, 
-   kNDmNuMuBarCCCOH, 
-   kNDmNuMuBarCCOth, 
-   kNDmNuMuBarNCRES, 
-   kNDmNuMuBarNCCOH, 
-   kNDmNuMuBarNCOth, 
-   kNDmNuECCQE, 
-   kNDmNuECCRES, 
-   kNDmNuECCCOH, 
-   kNDmNuECCOth, 
-   kNDmNuENCRES, 
-   kNDmNuENCCOH, 
-   kNDmNuENCOth
+// Type of SK MC template
+typedef enum ESKMCTemplateType
+{   
+   kSKMCtUndefined = -1, 
+   kSKMCtNom,   // nominal MC + tuning (ext) weights 
+   kSKMCtTun,   // nominal MC + tuning (ext) weights + tuning (T2K) weights
+   kSKMCtSys,   // nominal MC + tuning (ext) weights + tuning (T2K) weights + systematic variations
+   kSKMCtFin,   // nominal MC + tuning (ext) weights + tuning (T2K) weights + systematic variations + physics hypothesis 
 } 
-ND280Mode_t; 
+SKMCTemplateType_t;
 
-static const int kNumOfParamsInBANFFfit = 26;  // number of BANFF fit parameters
-static const int kNumOfFSIParams        = 10;
+// Enumeration of flux histograms types held by NuFlux
+typedef enum EFluxType
+{   
+   kFlxUndefined      = -1, 
+   kFlxNominal        =  0,  // flux used for MC production
+   kFlxExtTuning      =  1,  // flux used for MC production + tuning wghts based on external data (NA61,...)
+   kFlxFinalTuning    =  2,  // flux used for MC production + tuning wghts based on external data (NA61,...) + tuning wghts based on T2K data (ND280 data fit by BANFF,...)
+   kFlxCurrent        =  3   // current flux from systematic param variation of kFlxFinalTuning flux
+} 
+FluxType_t;
 
 // Fit parameters
 typedef enum EPhysParamId 
@@ -324,109 +384,92 @@ typedef enum EPhysParamId
 } 
 PhysParamId_t;
 
-// Physics hypotheses
-typedef enum EPhysHypothesis 
-{   
-   kHypUndefined = -1,
-   kHypDecay,             // neutrino decay 
-   kHypDecoh,             // neutrino decoherence 
-   kHypNuMuDisapp2F,      // muon-neutrino disappearance, simple 2-flavour oscillation framework 
-   kHypOsc3F              // neutrino oscillations, 3-flavour framework 
-} 
-PhysHypothesis_t;
+//
+// ------------------------------------------------------------------------
+// Info on BANFF parameters
+// ------------------------------------------------------------------------
+//
 
-// Oscillation channels
-typedef enum EOscChannelId 
-{   
-   kOscUndefined = -1, 
-   kOscNuE2NuE,
-   kOscNuE2NuMu,
-   kOscNuE2NuTau,
-   kOscNuMu2NuE,
-   kOscNuMu2NuMu,
-   kOscNuMu2NuTau,
-   kOscNuTau2NuE,
-   kOscNuTau2NuMu,
-   kOscNuTau2NuTau,
-   kOscNuEBar2NuEBar,
-   kOscNuEBar2NuMuBar,
-   kOscNuEBar2NuTauBar,
-   kOscNuMuBar2NuEBar,
-   kOscNuMuBar2NuMuBar,
-   kOscNuMuBar2NuTauBar,
-   kOscNuTauBar2NuEBar,
-   kOscNuTauBar2NuMuBar,
-   kOscNuTauBar2NuTauBar
-} 
-OscChannelId_t;
+//
+// Number of BANFF fit parameters
+//
+static const int kNumOfParamsInBANFFfit = 26;  
 
-// Combined or single analysis 
-typedef enum EOscAnaType 
-{   
-   kAnaUndefined = -1, 
-   kAnaCombined,
-   kAnaNuMuDisappOnly,
-   kAnaNuEAppOnly
-} 
-OscAnaType_t;
+//
+// Nominal physics params in BANFF fit
+//
+static const double kNomMAQE  = 1.21;
+static const double kNomMARES = 1.21;
 
-// Neutrino mass hierarchy
-typedef enum ENuMassHierarchy 
-{   
-   kNmhUndefined = -1, 
-   kNmhNormal,
-   kNmhInverted
-} 
-NuMassHierarchy_t;
+//
+// Etrue energy range for flux-related BANFF parameters
+//
+static const double kEtrueRangeOfParamInBANFFfit[kNumOfParamsInBANFFfit][2] =
+{
+   { 0.0,  0.4 },              // # 00, SK    numu    flux,  E =  0.0 -  0.4 GeV
+   { 0.4,  0.5 },              // # 01, SK    numu    flux,  E =  0.4 -  0.5 GeV
+   { 0.5,  0.6 },              // # 02, SK    numu    flux,  E =  0.5 -  0.6 GeV
+   { 0.6,  0.7 },              // # 03, SK    numu    flux,  E =  0.6 -  0.7 GeV
+   { 0.7,  1.0 },              // # 04, SK    numu    flux,  E =  0.7 -  1.0 GeV
+   { 1.0,  1.5 },              // # 05, SK    numu    flux,  E =  1.0 -  1.5 GeV
+   { 1.5,  2.5 },              // # 06, SK    numu    flux,  E =  1.5 -  2.5 GeV
+   { 2.5,  3.5 },              // # 07, SK    numu    flux,  E =  2.5 -  3.5 GeV
+   { 3.5,  5.0 },              // # 08, SK    numu    flux,  E =  3.5 -  5.0 GeV
+   { 5.0,  7.0 },              // # 09, SK    numu    flux,  E =  5.0 -  7.0 GeV
+   { 7.0, 30.0 },              // # 10, SK    numu    flux,  E =  7.0 - 30.0 GeV
+   { 0.0,  1.5 },              // # 11, SK    numubar flux,  E =  0.0 -  1.5 GeV
+   { 1.5, 30.0 },              // # 12, SK    numubar flux,  E =  1.5 - 30.0 GeV
+   { 0.0,  0.5 },              // # 13, SK    nue     flux,  E =  0.0 -  0.5 GeV
+   { 0.5,  0.7 },              // # 14, SK    nue     flux,  E =  0.5 -  0.7 GeV
+   { 0.7,  0.8 },              // # 15, SK    nue     flux,  E =  0.7 -  0.8 GeV
+   { 0.8,  1.5 },              // # 16, SK    nue     flux,  E =  0.8 -  1.5 GeV
+   { 1.5,  2.5 },              // # 17, SK    nue     flux,  E =  1.5 -  2.5 GeV
+   { 2.5,  4.0 },              // # 18, SK    nue     flux,  E =  2.5 -  4.0 GeV
+   { 4.0, 30.0 },              // # 19, SK    nue     flux,  E =  4.0 - 30.0 GeV
+   { 0.0,  2.5 },              // # 20, SK    nuebar  flux,  E =  0.0 -  2.5 GeV
+   { 2.5, 30.0 },              // # 21, SK    nuebar  flux,  E =  2.5 - 30.0 GeV
+   {  -1,   -1 },              // # 22, M_{A} QE
+   {  -1,   -1 },              // # 23, M_{A} RES
+   { 0.0,  1.5 },              // # 24, CCQE  normalization, 0 - 1.5 GeV
+   { 0.0,  2.5 }               // # 25, CCRES normalization, 0 - 2.5 GeV
+};
 
-// Choices of oscillation mixing parameter
-typedef enum ENuOscMixParam
-{   
-   kNuMixUndefined = -1, 
-   kNuMixSinsq2Theta,      // sin^2(2*theta)
-   kNuMixSinsqTheta        // sin^2(theta), preferred choice in globa nue appearance + numu disappearance fit
-} 
-NuOscMixParam_t;
+//
+// ------------------------------------------------------------------------
+// ...
+// ------------------------------------------------------------------------
+//
 
-// Type of SK MC template
-typedef enum ESKMCTemplateType
-{   
-   kSKMCtUndefined = -1, 
-   kSKMCtNom,   // nominal MC + tuning (ext) weights 
-   kSKMCtTun,   // nominal MC + tuning (ext) weights + tuning (T2K) weights
-   kSKMCtSys,   // nominal MC + tuning (ext) weights + tuning (T2K) weights + systematic variations
-   kSKMCtFin,   // nominal MC + tuning (ext) weights + tuning (T2K) weights + systematic variations + physics hypothesis 
-} 
-SKMCTemplateType_t;
+static const int kNumOfFSIParams = 10;
 
-// Enumeration of flux histograms types held by NuFlux
-typedef enum EFluxType
-{   
-   kFlxUndefined      = -1, 
-   kFlxNominal        =  0,  // flux used for MC production
-   kFlxExtTuning      =  1,  // flux used for MC production + tuning wghts based on external data (NA61,...)
-   kFlxFinalTuning    =  2,  // flux used for MC production + tuning wghts based on external data (NA61,...) + tuning wghts based on T2K data (ND280 data fit by BANFF,...)
-   kFlxCurrent        =  3   // current flux from systematic param variation of kFlxFinalTuning flux
-} 
-FluxType_t;
+//
+// ------------------------------------------------------------------------
+// Energy range for cross-section weight splines.
+// ------------------------------------------------------------------------
+//
 
-// Indices for array with default graphic attributes (see below)
-static const int kNGraphicAttributes = 5; 
-typedef enum EGraphicAttributeIdx
-{   
-   kGrAttUndefined  = -1, 
-   kGrAttFillStyle  =  0, 
-   kGrAttFillColour =  1, 
-   kGrAttLineStyle  =  2, 
-   kGrAttLineWidth  =  3, 
-   kGrAttLineColour =  4 
-} 
-GraphicAttributeIdx_t;
+/*
+static const int kXsNErecoBins = 28;
+static const double kXsErecoBinEdges[kXsNErecoBins+1] = 
+{
+   0.000,  0.050,  0.100,  0.150,  0.200,  0.250,  0.300,  0.350,  0.400,  0.450, 
+   0.500,  0.550,  0.600,  0.650,  0.700,  0.750,  0.800,  0.850,  0.900,  0.950, 
+   1.000,  1.050,  1.100,  1.150,  1.200,  1.250,  
+   3.000, 10.000, 30.000
+};
+static const int kXsNEtrueBinsNuMu = 11;
+static const double kXsEtrueBinEdgesNuMu[kXsNEtrueBinsNuMu+1] = 
+{
+   0.000, 0.400, 0.500, 0.600, 0.700, 1.000, 1.500, 
+   2.500, 3.500, 5.000, 7.000, 30.000
+};
+*/
+
 
 //
 // ------------------------------------------------------------------------
 // Choice of samples included in the analysis and
-// choice of modes (per sample) we are going to keep track of
+// choice of modes (per sample) we are going to keep track of.
 // ------------------------------------------------------------------------
 //
 

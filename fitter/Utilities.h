@@ -86,8 +86,8 @@ namespace util {
   string AsString        (conv::PhysParamId_t     p);
   string AsString        (conv::SuperkSample_t    s);
   string AsString        (conv::SuperkMode_t      m);
-  string AsString        (conv::OscChannelId_t    o);
   string AsString        (conv::FluxType_t        f);
+  string AsString        (conv::OscChannelId_t    o);
   string AsStringTex     (conv::SuperkSample_t    s);
   string AsStringTex     (conv::SuperkMode_t      m);
   string AsStringRooTex  (conv::SuperkSample_t s, conv::SuperkMode_t m, string append_begin="", string append_end="");
@@ -122,11 +122,8 @@ namespace util {
   const int      NumErecoBins  (conv::SuperkSample_t s);
   const double * ErecoBinEdges (conv::SuperkSample_t s);
 
-  bool IsBANFFfitSuperkFluxParam         (conv::PhysParamId_t p);
-  void BANFFfitSuperkFluxParamEtrueRange (conv::PhysParamId_t p, double & Emin, double & Emax);
-  int  BANFFfitSuperkFluxParam2NuPdg     (conv::PhysParamId_t p);
-
-  void FSIParamErecoRange (conv::PhysParamId_t p, double & Emin, double & Emax);
+  bool IsBANFFfitSuperkFluxParam      (conv::PhysParamId_t p);
+  int  BANFFfitSuperkFluxParam2NuPdg  (conv::PhysParamId_t p);
 
   //
   // String utilities
@@ -152,6 +149,7 @@ namespace util {
   TVectorD *       XML2TVectorD    (TXMLEngine * eng, XMLNodePointer_t topnode, string path);
   TMatrixDSym *    XML2TMatrixDSym (TXMLEngine * eng, XMLNodePointer_t topnode, string path);
   TMatrixD *       XML2TMatrixD    (TXMLEngine * eng, XMLNodePointer_t topnode, string path);
+//TSpline3 *       XML2TSpline3    (TXMLEngine * eng, XMLNodePointer_t topnode, string path);
   
   //
   // Reaction mode utilities etc

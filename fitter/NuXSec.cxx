@@ -73,6 +73,22 @@ bool NuXSec::Read(TXMLEngine* xml, XMLNodePointer_t root_node)
 
 /*
   //
+  // Cross-section weight splines
+  //
+
+  for(int iet = 0; iet < kXsNEtrueBinsNuMu; iet++) {
+    for(int ier = 0; ier < kXsNErecoBins; ier++) {
+      ostringstream xmlpath;
+      xmlpath << "maqe_" << iet << "_" << ier;
+      fXSecWghtSplMAQE[iet][ier] = ...;
+    }
+  }
+
+*/
+
+
+/*
+  //
   // FSI
   //
 

@@ -35,13 +35,12 @@ public:
   NuXSec();
  ~NuXSec();
 
-  // Reweight to BANFF best-fit
+  // Reweight to BANFF best-fit params
   double SuperkXSecFinTuningWght (t2kana::conv::SuperkSample_t s, t2kana::conv::SuperkMode_t m, double Etrue, double Ereco) const;
 
   // Calculate weight in response to tweaked systematics relative to the BANFF best-fit (not the nominal MC)
   double SuperkXSecSystWght (t2kana::conv::SuperkSample_t s, t2kana::conv::SuperkMode_t m, double Etrue, double Ereco) const;
 
-  //
   //
 
   // Get current value of FSI params
@@ -71,7 +70,9 @@ private:
   TVectorD *  fFSICurrentValues;    ///< Current values of FSI params
   TMatrixD *  fFSICovMtrx;          ///< FSI covariance matrix
   TMatrixD *  fFSICovMtrxChoL;      ///< Triangular matrix from Cholesky decomp. of FSI covar. matrix
-
+/*
+  TSpline3 *  fXSecWghtSplMAQE[conv::kXsNEtrueBinsNuMu][kXsNErecoBins];
+*/
 ClassDef(NuXSec, 4);
 };
 
