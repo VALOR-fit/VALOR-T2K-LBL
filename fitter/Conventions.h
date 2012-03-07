@@ -143,7 +143,7 @@ SuperkSample_t;
 
 // Enumeration of (true) reaction modes that may be considered separately within each SuperK sample
 // Actual choice for current analysis is given in `Configuration' section.
-static const int kNSuperkModes = 30; // number of reaction modes 
+static const int kNSuperkModes = 39; // number of reaction modes 
 static const int knm = kNSuperkModes; 
 typedef enum ESuperkMode 
 {
@@ -175,6 +175,15 @@ typedef enum ESuperkMode
    kSKmNuENC1pi0,        // nue NC 1pi0
    kSKmNuENCcoh,         // nue NC coherent
    kSKmNuENCoth_e,       // nue NC other, nu_e appearance analysis definition
+   kSKmNuEBarCCQE,       // nuebar CC QE
+   kSKmNuEBarCC1pi,      // nuebar CC 1pi
+   kSKmNuEBarCCcoh,      // nuebar CC coherent
+   kSKmNuEBarCCoth_mu,   // nuebar CC other, nu_mu disappearance analysis definition
+   kSKmNuEBarCCoth_e,    // nuebar CC other, nu_e appearance analysis definition
+   kSKmNuEBarNC,         // nuebar NC (all)
+   kSKmNuEBarNC1pi0,     // nuebar NC 1pi0
+   kSKmNuEBarNCcoh,      // nuebar NC coherent
+   kSKmNuEBarNCoth_e,    // nuebar NC other, nu_e appearance analysis definition
    kSKmSigNuECCQE,       // sig nue
    kSKmSigNuECC1pi,      // sig nue
    kSKmSigNuECCoth       // sig nue
@@ -449,10 +458,19 @@ static const SuperkMode_t kSKReactionModes[kns][knm] = {
     kSKmNuECCQE, 
     kSKmNuECC1pi, 
     kSKmNuECCoth_mu,                                
-    kSKmNuENC,                                                               
+    kSKmNuENC,
+    kSKmNuEBarCCQE,
+    kSKmNuEBarCC1pi,
+    kSKmNuEBarCCoth_mu,
+    kSKmNuEBarNC,
     kSKmSigNuECCQE, 
     kSKmSigNuECC1pi, 
     kSKmSigNuECCoth,
+    kSKmUndefined,
+    kSKmUndefined,
+    kSKmUndefined,
+    kSKmUndefined,
+    kSKmUndefined,
     kSKmUndefined,
     kSKmUndefined,
     kSKmUndefined,
@@ -493,9 +511,18 @@ static const SuperkMode_t kSKReactionModes[kns][knm] = {
     kSKmNuENC1pi0,  
     kSKmNuENCcoh, 
     kSKmNuENCoth_e,
+    kSKmNuEBarCCQE,
+    kSKmNuEBarCC1pi,
+    kSKmNuEBarCCcoh,
+    kSKmNuEBarCCoth_e,
+    kSKmNuEBarNC1pi0,
+    kSKmNuEBarNCcoh,
+    kSKmNuEBarNCoth_e,
     kSKmSigNuECCQE,  
     kSKmSigNuECC1pi,  
     kSKmSigNuECCoth,
+    kSKmUndefined,
+    kSKmUndefined,
     kSKmUndefined,
     kSKmUndefined,
     kSKmUndefined,
@@ -532,9 +559,18 @@ static const int kSKHistoAttributes[kns][knm][kNGraphicAttributes] = {
     { 3345,  kGreen+1,  1,  1,  kBlack}, //kSKmNuECC1pi
     { 3354,  kGreen+1,  1,  1,  kBlack}, //kSKmNuECCoth_mu
     { 3006,  kGreen+1,  1,  1,  kBlack}, //kSKmNuENC
+    { 3001,  kBlue,     1,  1,  kBlack}, //kSKmNuEBarCCQE
+    { 3345,  kBlue,     1,  1,  kBlack}, //kSKmNuEBarCC1pi
+    { 3354,  kBlue,     1,  1,  kBlack}, //kSKmNuEBarCCoth_mu
+    { 3006,  kBlue,     1,  1,  kBlack}, //kSKmNuEBarNC
     { 3001,  kGreen-3,  1,  1,  kBlack}, //kSKmSigNuECCQE
     { 3345,  kGreen-3,  1,  1,  kBlack}, //kSKmSigNuECC1pi
     { 3354,  kGreen-3,  1,  1,  kBlack}, //kSKmSigNuECCoth
+    {   -1,        -1, -1, -1,     -1 }, //kSKmUndefined
+    {   -1,        -1, -1, -1,     -1 }, //kSKmUndefined
+    {   -1,        -1, -1, -1,     -1 }, //kSKmUndefined
+    {   -1,        -1, -1, -1,     -1 }, //kSKmUndefined
+    {   -1,        -1, -1, -1,     -1 }, //kSKmUndefined
     {   -1,        -1, -1, -1,     -1 }, //kSKmUndefined
     {   -1,        -1, -1, -1,     -1 }, //kSKmUndefined
     {   -1,        -1, -1, -1,     -1 }, //kSKmUndefined
@@ -575,9 +611,18 @@ static const int kSKHistoAttributes[kns][knm][kNGraphicAttributes] = {
     { 3006,  kGreen+5,  1,  1, kBlack }, //kSKmNuENC1pi0
     { 3006,  kGreen+7,  1,  1, kBlack }, //kSKmNuENCcoh
     { 3006,    kBlack,  1,  1, kBlack }, //kSKmNuENCoth_e
+    { 3001,  kBlue+1,   1,  1, kBlack }, //kSKmNuEBarCCQE
+    { 3345,  kBlue+2,   1,  1, kBlack }, //kSKmNuEBarCC1pi
+    { 3354,  kBlue+2,   1,  1, kBlack }, //kSKmNuEBarCCcoh
+    { 3354,    kBlack,  1,  1, kBlack }, //kSKmNuEBarCCoth_e
+    { 3006,  kBlue+5,   1,  1, kBlack }, //kSKmNuEBarNC1pi0
+    { 3006,  kBlue+7,   1,  1, kBlack }, //kSKmNuEBarNCcoh
+    { 3006,    kBlack,  1,  1, kBlack }, //kSKmNuEBarNCoth_e
     { 3001,  kGreen+8,  1,  1, kBlack }, //kSKmSigNuECCQE
     { 3345, kGreen+10,  1,  1, kBlack }, //kSKmSigNuECC1pi
     { 3354,      kRed,  1,  1, kBlack }, //kSKmSigNuECCoth
+    {   -1,        -1, -1, -1,     -1 }, //kSKmUndefined
+    {   -1,        -1, -1, -1,     -1 }, //kSKmUndefined
     {   -1,        -1, -1, -1,     -1 }, //kSKmUndefined
     {   -1,        -1, -1, -1,     -1 }, //kSKmUndefined
     {   -1,        -1, -1, -1,     -1 }, //kSKmUndefined
@@ -600,6 +645,10 @@ static const SuperkMode_t kSKReactionModesOrderInStack[kns][knm] = {
     kSKmSigNuECC1pi, 
     kSKmSigNuECCoth,
     kSKmSigNuECCQE, 
+    kSKmNuEBarNC,                                                               
+    kSKmNuEBarCC1pi, 
+    kSKmNuEBarCCoth_mu,                                
+    kSKmNuEBarCCQE, 
     kSKmNuENC,                                                               
     kSKmNuECC1pi, 
     kSKmNuECCoth_mu,                                
@@ -612,6 +661,11 @@ static const SuperkMode_t kSKReactionModesOrderInStack[kns][knm] = {
     kSKmNuMuCCoth_mu,                      
     kSKmNuMuCC1pi, 
     kSKmNuMuCCQE,         
+    kSKmUndefined,
+    kSKmUndefined,
+    kSKmUndefined,
+    kSKmUndefined,
+    kSKmUndefined,
     kSKmUndefined,
     kSKmUndefined,
     kSKmUndefined,
@@ -645,6 +699,13 @@ static const SuperkMode_t kSKReactionModesOrderInStack[kns][knm] = {
     kSKmNuMuBarNC1pi0, 
     kSKmNuMuBarNCcoh, 
     kSKmNuMuBarNCoth_e,
+    kSKmNuEBarCCQE, 
+    kSKmNuEBarCC1pi, 
+    kSKmNuEBarCCcoh, 
+    kSKmNuEBarCCoth_e,
+    kSKmNuEBarNC1pi0,  
+    kSKmNuEBarNCcoh, 
+    kSKmNuEBarNCoth_e,
     kSKmNuECCQE, 
     kSKmNuECC1pi, 
     kSKmNuECCcoh, 
@@ -655,6 +716,8 @@ static const SuperkMode_t kSKReactionModesOrderInStack[kns][knm] = {
     kSKmSigNuECCQE,  
     kSKmSigNuECC1pi,  
     kSKmSigNuECCoth,
+    kSKmUndefined,
+    kSKmUndefined,
     kSKmUndefined,
     kSKmUndefined,
     kSKmUndefined,

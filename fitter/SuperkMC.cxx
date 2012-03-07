@@ -1269,7 +1269,8 @@ double SuperkMC::EfficiencyWeight(
        //
        case (kSKmNuMuNC)        : 
        case (kSKmNuMuBarNC) : 
-       case (kSKmNuENC)     : 
+       case (kSKmNuENC)     :
+       case (kSKmNuEBarNC)     :
        {
           double relerr  = fEff1RmuNCRelErr;
           double twkdial = fEff1RmuNCTwkDial;
@@ -1285,6 +1286,9 @@ double SuperkMC::EfficiencyWeight(
        case (kSKmNuECCQE)     : 
        case (kSKmNuECC1pi)    : 
        case (kSKmNuECCoth_mu)    : 
+       case (kSKmNuEBarCCQE)     : 
+       case (kSKmNuEBarCC1pi)    : 
+       case (kSKmNuEBarCCoth_mu)    : 
        case (kSKmSigNuECCQE)  : 
        case (kSKmSigNuECC1pi) : 
        case (kSKmSigNuECCoth) : 
@@ -1329,6 +1333,13 @@ double SuperkMC::EfficiencyWeight(
        case ( kSKmNuENC1pi0       ) : 
        case ( kSKmNuENCcoh        ) : 
        case ( kSKmNuENCoth_e      ) : 
+       case ( kSKmNuEBarCCQE      ) : 
+       case ( kSKmNuEBarCC1pi     ) : 
+       case ( kSKmNuEBarCCcoh     ) : 
+       case ( kSKmNuEBarCCoth_e   ) : 
+       case ( kSKmNuEBarNC1pi0    ) : 
+       case ( kSKmNuEBarNCcoh     ) : 
+       case ( kSKmNuEBarNCoth_e   ) : 
 /////////	 {
 /////////	   double relerr  = fEff1ReBkgRelErr;
 /////////	   double twkdial = fEff1ReBkgTwkDial;
@@ -1409,7 +1420,7 @@ void SuperkMC::Draw(TVirtualPad * c, Option_t * option) const
     double emin=0;
     double emax=6;
     const char * draw_opt = "COLZ";
-    c->Divide(2,6);
+    c->Divide(4,4);
     c->cd(1);
     c->GetPad(1)->SetLogz();
     c->GetPad(1)->SetBottomMargin(0.32);
@@ -1555,6 +1566,55 @@ void SuperkMC::Draw(TVirtualPad * c, Option_t * option) const
     fMCTemplNom[kSKsFCFV1RingMuLike][kSKmNuENC]->GetXaxis()->SetRangeUser(emin,emax);
     fMCTemplNom[kSKsFCFV1RingMuLike][kSKmNuENC]->GetYaxis()->SetRangeUser(emin,emax);
     fMCTemplNom[kSKsFCFV1RingMuLike][kSKmNuENC]->Draw(draw_opt);
+    c->cd(13);
+    c->GetPad(13)->SetLogz();
+    c->GetPad(13)->SetBottomMargin(0.32);
+    c->GetPad(13)->SetRightMargin(0.1);
+    fMCTemplNom[kSKsFCFV1RingMuLike][kSKmNuEBarCCQE]->GetXaxis()->SetLabelSize  (0.12);
+    fMCTemplNom[kSKsFCFV1RingMuLike][kSKmNuEBarCCQE]->GetXaxis()->SetTitleSize  (0.14);
+    fMCTemplNom[kSKsFCFV1RingMuLike][kSKmNuEBarCCQE]->GetYaxis()->SetLabelSize  (0.12);
+    fMCTemplNom[kSKsFCFV1RingMuLike][kSKmNuEBarCCQE]->GetYaxis()->SetTitleSize  (0.14);
+    fMCTemplNom[kSKsFCFV1RingMuLike][kSKmNuEBarCCQE]->GetYaxis()->SetTitleOffset(0.40);
+    fMCTemplNom[kSKsFCFV1RingMuLike][kSKmNuEBarCCQE]->GetXaxis()->SetRangeUser(emin,emax);
+    fMCTemplNom[kSKsFCFV1RingMuLike][kSKmNuEBarCCQE]->GetYaxis()->SetRangeUser(emin,emax);
+    fMCTemplNom[kSKsFCFV1RingMuLike][kSKmNuEBarCCQE]->Draw(draw_opt);
+    c->cd(14);
+    c->GetPad(14)->SetLogz();
+    c->GetPad(14)->SetBottomMargin(0.32);
+    c->GetPad(14)->SetRightMargin(0.1);
+    fMCTemplNom[kSKsFCFV1RingMuLike][kSKmNuEBarCC1pi]->GetXaxis()->SetLabelSize  (0.12);
+    fMCTemplNom[kSKsFCFV1RingMuLike][kSKmNuEBarCC1pi]->GetXaxis()->SetTitleSize  (0.14);
+    fMCTemplNom[kSKsFCFV1RingMuLike][kSKmNuEBarCC1pi]->GetYaxis()->SetLabelSize  (0.12);
+    fMCTemplNom[kSKsFCFV1RingMuLike][kSKmNuEBarCC1pi]->GetYaxis()->SetTitleSize  (0.14);
+    fMCTemplNom[kSKsFCFV1RingMuLike][kSKmNuEBarCC1pi]->GetYaxis()->SetTitleOffset(0.40);
+    fMCTemplNom[kSKsFCFV1RingMuLike][kSKmNuEBarCC1pi]->GetXaxis()->SetRangeUser(emin,emax);
+    fMCTemplNom[kSKsFCFV1RingMuLike][kSKmNuEBarCC1pi]->GetYaxis()->SetRangeUser(emin,emax);
+    fMCTemplNom[kSKsFCFV1RingMuLike][kSKmNuEBarCC1pi]->Draw(draw_opt);
+    c->cd(15);
+    c->GetPad(15)->SetLogz();
+    c->GetPad(15)->SetBottomMargin(0.32);
+    c->GetPad(15)->SetRightMargin(0.1);
+    fMCTemplNom[kSKsFCFV1RingMuLike][kSKmNuEBarCCoth_mu]->GetXaxis()->SetLabelSize  (0.12);
+    fMCTemplNom[kSKsFCFV1RingMuLike][kSKmNuEBarCCoth_mu]->GetXaxis()->SetTitleSize  (0.14);
+    fMCTemplNom[kSKsFCFV1RingMuLike][kSKmNuEBarCCoth_mu]->GetYaxis()->SetLabelSize  (0.12);
+    fMCTemplNom[kSKsFCFV1RingMuLike][kSKmNuEBarCCoth_mu]->GetYaxis()->SetTitleSize  (0.14);
+    fMCTemplNom[kSKsFCFV1RingMuLike][kSKmNuEBarCCoth_mu]->GetYaxis()->SetTitleOffset(0.40);
+    fMCTemplNom[kSKsFCFV1RingMuLike][kSKmNuEBarCCoth_mu]->GetXaxis()->SetRangeUser(emin,emax);
+    fMCTemplNom[kSKsFCFV1RingMuLike][kSKmNuEBarCCoth_mu]->GetYaxis()->SetRangeUser(emin,emax);
+    fMCTemplNom[kSKsFCFV1RingMuLike][kSKmNuEBarCCoth_mu]->Draw(draw_opt);
+    c->Update();
+    c->cd(16);
+    c->GetPad(16)->SetLogz();
+    c->GetPad(16)->SetBottomMargin(0.32);
+    c->GetPad(16)->SetRightMargin(0.1);
+    fMCTemplNom[kSKsFCFV1RingMuLike][kSKmNuEBarNC]->GetXaxis()->SetLabelSize  (0.12);
+    fMCTemplNom[kSKsFCFV1RingMuLike][kSKmNuEBarNC]->GetXaxis()->SetTitleSize  (0.14);
+    fMCTemplNom[kSKsFCFV1RingMuLike][kSKmNuEBarNC]->GetYaxis()->SetLabelSize  (0.12);
+    fMCTemplNom[kSKsFCFV1RingMuLike][kSKmNuEBarNC]->GetYaxis()->SetTitleSize  (0.14);
+    fMCTemplNom[kSKsFCFV1RingMuLike][kSKmNuEBarNC]->GetYaxis()->SetTitleOffset(0.40);
+    fMCTemplNom[kSKsFCFV1RingMuLike][kSKmNuEBarNC]->GetXaxis()->SetRangeUser(emin,emax);
+    fMCTemplNom[kSKsFCFV1RingMuLike][kSKmNuEBarNC]->GetYaxis()->SetRangeUser(emin,emax);
+    fMCTemplNom[kSKsFCFV1RingMuLike][kSKmNuEBarNC]->Draw(draw_opt);
     c->Update();
   }
 */
