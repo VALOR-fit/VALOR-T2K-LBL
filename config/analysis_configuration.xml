@@ -1,6 +1,6 @@
 <?xml version="1.0"?>
 
-<analysis_inputs analysis="T2KOA2011/RAL+Ox+Lancs+IFIC" mc="NEUT">
+<analysis_inputs analysis="T2K/OscillantionAnalysis2012a/RAL+Ox+Lancs+IFIC" mc="NEUT">
 
   <!--
   ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -26,22 +26,22 @@
        -->
        <tuned>
          <numu>
-            <filename>   inputs/official/2011/flux/11a_v2.3/sk_tuned11av2_11anom_run1_and_run2_fine.root </filename>
+            <filename>   inputs/official/2012/flux/11a_v2.3/sk_tuned11av2_11anom_run1_and_run2_fine.root </filename>
             <objname>    enu_sk_tuned11a_numu  </objname>
             <objtype>    TH1D                  </objtype>
          </numu>
          <numubar>
-            <filename>   inputs/official/2011/flux/11a_v2.3/sk_tuned11av2_11anom_run1_and_run2_fine.root </filename>
+            <filename>   inputs/official/2012/flux/11a_v2.3/sk_tuned11av2_11anom_run1_and_run2_fine.root </filename>
             <objname>    enu_sk_tuned11a_numub </objname>
             <objtype>    TH1D                  </objtype>
          </numubar>
          <nue>
-            <filename>   inputs/official/2011/flux/11a_v2.3/sk_tuned11av2_11anom_run1_and_run2_fine.root </filename>
+            <filename>   inputs/official/2012/flux/11a_v2.3/sk_tuned11av2_11anom_run1_and_run2_fine.root </filename>
             <objname>    enu_sk_tuned11a_nue   </objname>
             <objtype>    TH1D                  </objtype>
          </nue>
          <nuebar>
-            <filename>   inputs/official/2011/flux/11a_v2.3/sk_tuned11av2_11anom_run1_and_run2_fine.root </filename>
+            <filename>   inputs/official/2012/flux/11a_v2.3/sk_tuned11av2_11anom_run1_and_run2_fine.root </filename>
             <objname>    enu_sk_tuned11a_nue   </objname>
             <objtype>    TH1D                  </objtype>
          </nuebar>
@@ -51,22 +51,22 @@
        -->
        <tuning_weights>
          <numu>
-            <filename>   inputs/official/2011/flux/11a_v2.3/sk_tuned11av2_11anom_run1_and_run2_fine.root </filename>
+            <filename>   inputs/official/2012/flux/11a_v2.3/sk_tuned11av2_11anom_run1_and_run2_fine.root </filename>
             <objname>    enu_sk_tuned11a_numu_ratio   </objname>
             <objtype>    TH1D                         </objtype>
          </numu>
          <numubar>
-            <filename>   inputs/official/2011/flux/11a_v2.3/sk_tuned11av2_11anom_run1_and_run2_fine.root </filename>
+            <filename>   inputs/official/2012/flux/11a_v2.3/sk_tuned11av2_11anom_run1_and_run2_fine.root </filename>
             <objname>    enu_sk_tuned11a_numub_ratio  </objname>
             <objtype>    TH1D                         </objtype>
          </numubar>
          <nue>
-            <filename>   inputs/official/2011/flux/11a_v2.3/sk_tuned11av2_11anom_run1_and_run2_fine.root </filename>
+            <filename>   inputs/official/2012/flux/11a_v2.3/sk_tuned11av2_11anom_run1_and_run2_fine.root </filename>
             <objname>    enu_sk_tuned11a_nue_ratio    </objname>
             <objtype>    TH1D                         </objtype>
          </nue>
          <nuebar>
-            <filename>   inputs/official/2011/flux/11a_v2.3/sk_tuned11av2_11anom_run1_and_run2_fine.root </filename>
+            <filename>   inputs/official/2012/flux/11a_v2.3/sk_tuned11av2_11anom_run1_and_run2_fine.root </filename>
             <objname>    enu_sk_tuned11a_nueb_ratio   </objname>
             <objtype>    TH1D                         </objtype>
          </nuebar>
@@ -88,12 +88,12 @@
                 4.3151028E+23
              </pot>
              <one_mu_ring>
-                <filename>   inputs/official/2011/superk/neut/11c/superk_1RmuT_numu.root  </filename>
+                <filename>   inputs/official/2012/superk/neut/11c/superk_1RmuT_numu.root  </filename>
                 <objname>    selection_tree   </objname>
                 <objtype>    TTree            </objtype>
              </one_mu_ring>
              <one_e_ring>
-                <filename>   inputs/official/2011/superk/neut/11c/superk_1ReT_numu.root  </filename>
+                <filename>   inputs/official/2012/superk/neut/11c/superk_1ReT_numu.root  </filename>
                 <objname>    selection_tree   </objname>
                 <objtype>    TTree            </objtype>
              </one_e_ring>
@@ -103,61 +103,61 @@
                 6.3258298E+24
              </pot>
              <one_mu_ring>
-                <filename>   inputs/official/2011/superk/neut/11c/superk_1RmuT_numubar.root  </filename>
+                <filename>   inputs/official/2012/superk/neut/11c/superk_1RmuT_numubar.root  </filename>
                 <objname>    selection_tree   </objname>
                 <objtype>    TTree            </objtype>
              </one_mu_ring>
              <one_e_ring>
-                <filename>   inputs/official/2011/superk/neut/11c/superk_1ReT_numubar.root  </filename>
+                <filename>   inputs/official/2012/superk/neut/11c/superk_1ReT_numubar.root  </filename>
                 <objname>    selection_tree   </objname>
                 <objtype>    TTree            </objtype>
              </one_e_ring>
            </numubar>
-           <nuebeam>
+           <nue>
              <pot> 
                 2.2005051E+25
              </pot>
              <one_mu_ring>
-                <filename>   inputs/official/2011/superk/neut/11c/superk_1RmuT_nue.root  </filename>
+                <filename>   inputs/official/2012/superk/neut/11c/superk_1RmuT_nue.root  </filename>
                 <objname>    selection_tree   </objname>
                 <objtype>    TTree            </objtype>
              </one_mu_ring>
              <one_e_ring>
-                <filename>   inputs/official/2011/superk/neut/11c/superk_1ReT_nue.root  </filename>
+                <filename>   inputs/official/2012/superk/neut/11c/superk_1ReT_nue.root  </filename>
                 <objname>    selection_tree   </objname>
                 <objtype>    TTree            </objtype>
              </one_e_ring>
-          </nuebeam>
-          <nuebarbeam>
+          </nue>
+          <nuebar>
              <pot> 
                 1.0476136E+26
              </pot>
              <one_mu_ring>
-                <filename>   inputs/official/2011/superk/neut/11c/superk_1RmuT_nuebar.root  </filename>
+                <filename>   inputs/official/2012/superk/neut/11c/superk_1RmuT_nuebar.root  </filename>
                 <objname>    selection_tree   </objname>
                 <objtype>    TTree            </objtype>
              </one_mu_ring>
              <one_e_ring>
-                <filename>   inputs/official/2011/superk/neut/11c/superk_1ReT_nuebar.root  </filename>
+                <filename>   inputs/official/2012/superk/neut/11c/superk_1ReT_nuebar.root  </filename>
                 <objname>    selection_tree   </objname>
                 <objtype>    TTree            </objtype>
              </one_e_ring>
-          </nuebarbeam>
-          <nuesignal>
+          </nuebar>
+          <signal_nue>
              <pot> 
                 2.0898769E+23
              </pot>
              <one_mu_ring>
-                <filename>   inputs/official/2011/superk/neut/11c/superk_1RmuT_nuesig.root  </filename>
+                <filename>   inputs/official/2012/superk/neut/11c/superk_1RmuT_nuesig.root  </filename>
                 <objname>    selection_tree   </objname>
                 <objtype>    TTree            </objtype>
              </one_mu_ring>
              <one_e_ring>
-                <filename>   inputs/official/2011/superk/neut/11c/superk_1ReT_nuesig.root  </filename>
+                <filename>   inputs/official/2012/superk/neut/11c/superk_1ReT_nuesig.root  </filename>
                 <objname>    selection_tree   </objname>
                 <objtype>    TTree            </objtype>
              </one_e_ring>
-          </nuesignal>
+          </signal_nue>
        </nominal>
      </superk>
   </mc>
@@ -212,7 +212,7 @@
         Central values from BANFF fit
        -->
        <best_fit_values>
-          <filename>   inputs/official/2011/banff/postfit_TrkNuMuFit_prelim.root  </filename>
+          <filename>   inputs/official/2012/banff/postfit_TrkNuMuFit_prelim.root  </filename>
           <objname>    postfit_params   </objname>
           <objtype>    TVectorD         </objtype>
         </best_fit_values>
@@ -220,7 +220,7 @@
         Covariance of fit parameters
        -->
        <covariance_matrix>
-          <filename>   inputs/official/2011/banff/postfit_TrkNuMuFit_prelim.root  </filename>
+          <filename>   inputs/official/2012/banff/postfit_TrkNuMuFit_prelim.root  </filename>
           <objname>    postfit_cov      </objname>
           <objtype>    TMatrixD         </objtype>
         </covariance_matrix>     

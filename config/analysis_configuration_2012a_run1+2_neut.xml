@@ -113,7 +113,7 @@
                 <objtype>    TTree            </objtype>
              </one_e_ring>
            </numubar>
-           <nuebeam>
+           <nue>
              <pot> 
                 2.2005051E+25
              </pot>
@@ -127,8 +127,8 @@
                 <objname>    selection_tree   </objname>
                 <objtype>    TTree            </objtype>
              </one_e_ring>
-          </nuebeam>
-          <nuebarbeam>
+          </nue>
+          <nuebar>
              <pot> 
                 1.0476136E+26
              </pot>
@@ -142,8 +142,8 @@
                 <objname>    selection_tree   </objname>
                 <objtype>    TTree            </objtype>
              </one_e_ring>
-          </nuebarbeam>
-          <nuesignal>
+          </nuebar>
+          <signal_nue>
              <pot> 
                 2.0898769E+23
              </pot>
@@ -157,7 +157,7 @@
                 <objname>    selection_tree   </objname>
                 <objtype>    TTree            </objtype>
              </one_e_ring>
-          </nuesignal>
+          </signal_nue>
        </nominal>
      </superk>
   </mc>

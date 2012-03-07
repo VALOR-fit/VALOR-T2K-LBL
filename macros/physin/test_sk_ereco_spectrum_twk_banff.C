@@ -23,7 +23,7 @@ void test_sk_ereco_spectrum_twk_banff
   using namespace std;
   using namespace t2kana;
 
-  const int nexp = 500; // number of BANFF param tweaks
+  const int nexp = 5; // number of BANFF param tweaks
 
   // Analysis configuration
   const char * config  = Form("%s/config/%s", gSystem->Getenv("T2KOSCANA"), config_file);

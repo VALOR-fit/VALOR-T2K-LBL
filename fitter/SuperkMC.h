@@ -168,18 +168,21 @@ private:
   TH1D *     fMCErecoSpectrumTot[kns];     ///< Ereco MC spectrum (sample)          : nominal + ext/tuning + nd280/tuning + systematics + physics hypothesis
 
   // input event trees and normalisation factors
-  TTree*     fMCTreeNuMu1Rmu;              ///< input MC event tree /  sample: numu                        / cuts: 1-ring mu-like 
-  TTree*     fMCTreeNuMuBar1Rmu;           ///< input MC event tree /  sample: numubar                     / cuts: 1-ring mu-like 
-  TTree*     fMCTreeNuE1Rmu;               ///< input MC event tree /  sample: nue (intrinsic)             / cuts: 1-ring mu-like 
-  TTree*     fMCTreeNuESig1Rmu;            ///< input MC event tree /  sample: nue (signal 100% numu->nue) / cuts: 1-ring mu-like 
-  TTree*     fMCTreeNuMu1Re;               ///< input MC event tree /  sample: numu                        / cuts: 1-ring e-like 
-  TTree*     fMCTreeNuMuBar1Re;            ///< input MC event tree /  sample: numubar                     / cuts: 1-ring e-like 
-  TTree*     fMCTreeNuE1Re;                ///< input MC event tree /  sample: nue (intrinsic)             / cuts: 1-ring e-like 
-  TTree*     fMCTreeNuESig1Re;             ///< input MC event tree /  sample: nue (signal 100% numu->nue) / cuts: 1-ring e-like 
+  TTree*     fMCTreeNuMu1Rmu;              ///< input MC event tree /  sample: numu                         / cuts: 1-ring mu-like 
+  TTree*     fMCTreeNuMuBar1Rmu;           ///< input MC event tree /  sample: numubar                      / cuts: 1-ring mu-like 
+  TTree*     fMCTreeNuE1Rmu;               ///< input MC event tree /  sample: nue (intrinsic)              / cuts: 1-ring mu-like 
+  TTree*     fMCTreeNuEBar1Rmu;            ///< input MC event tree /  sample: nuebar (intrinsic)           / cuts: 1-ring mu-like 
+  TTree*     fMCTreeSigNuE1Rmu;            ///< input MC event tree /  sample: nue (signal, 100% numu->nue) / cuts: 1-ring mu-like 
+  TTree*     fMCTreeNuMu1Re;               ///< input MC event tree /  sample: numu                         / cuts: 1-ring e-like 
+  TTree*     fMCTreeNuMuBar1Re;            ///< input MC event tree /  sample: numubar                      / cuts: 1-ring e-like 
+  TTree*     fMCTreeNuE1Re;                ///< input MC event tree /  sample: nue (intrinsic)              / cuts: 1-ring e-like 
+  TTree*     fMCTreeNuEBar1Re;             ///< input MC event tree /  sample: nuebar (intrinsic)           / cuts: 1-ring e-like 
+  TTree*     fMCTreeSigNuE1Re;             ///< input MC event tree /  sample: nue (signal, 100% numu->nue) / cuts: 1-ring e-like 
   double     fMCPOTNuMu;                   ///< input MC event sample POT : numu
   double     fMCPOTNuMuBar;                ///< input MC event sample POT : numubar
-  double     fMCPOTNuE;                    ///< input MC event sample POT : nue (bkg)
-  double     fMCPOTNuESig;                 ///< input MC event sample POT : nue (sig)
+  double     fMCPOTNuE;                    ///< input MC event sample POT : nue 
+  double     fMCPOTNuEBar;                 ///< input MC event sample POT : nuebar
+  double     fMCPOTSigNuE;                 ///< input MC event sample POT : nue (signal)
   double     fBrEreco;                     ///< branch var for reading input MC mini-DST
   double     fBrEtrue;                     ///< branch var for reading input MC mini-DST
   int        fBrPdg;                       ///< branch var for reading input MC mini-DST

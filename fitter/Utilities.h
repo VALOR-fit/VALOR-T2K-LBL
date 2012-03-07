@@ -110,7 +110,7 @@ namespace util {
 
   bool IsNuMu         (conv::SuperkMode_t  m);
   bool IsNuMuBar      (conv::SuperkMode_t  m);
-  bool IsBeamNuE      (conv::SuperkMode_t  m);
+  bool IsNuE          (conv::SuperkMode_t  m);
   bool IsNuEBar       (conv::SuperkMode_t  m);
   bool IsSignalNuE    (conv::SuperkMode_t  m);
   bool IsCC           (conv::SuperkMode_t  m);

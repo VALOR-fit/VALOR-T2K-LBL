@@ -794,27 +794,27 @@ string t2kana::util::AsString(t2kana::conv::SuperkMode_t m)
      case ( kSKmNuMuBarNC1pi0   ) : return "numubar/nutaubar NC 1pi0";          break;
      case ( kSKmNuMuBarNCcoh    ) : return "numubar/nutaubar NC coh";           break;
      case ( kSKmNuMuBarNCoth_e  ) : return "numubar/nutaubar NC oth (nue app)"; break;
-     case ( kSKmNuECCQE         ) : return "bkg nue CC QE";                     break;
-     case ( kSKmNuECC1pi        ) : return "bkg nue CC 1pi";                    break;
-     case ( kSKmNuECCcoh        ) : return "bkg nue CC coh";                    break;
-     case ( kSKmNuECCoth_mu     ) : return "bkg nue CC oth (numu disap)";       break;
-     case ( kSKmNuECCoth_e      ) : return "bkg nue CC oth (nue app)";          break;
-     case ( kSKmNuENC           ) : return "bkg nue NC";                        break;
-     case ( kSKmNuENC1pi0       ) : return "bkg nue NC 1pi0";                   break;
-     case ( kSKmNuENCcoh        ) : return "bkg nue NC coh";                    break;
-     case ( kSKmNuENCoth_e      ) : return "bkg nue NC oth (nue app)";          break;
-     case ( kSKmNuEBarCCQE      ) : return "bkg nubar CC QE";                   break;
-     case ( kSKmNuEBarCC1pi     ) : return "bkg nubar CC 1pi";                  break;
-     case ( kSKmNuEBarCCcoh     ) : return "bkg nubar CC coh";                  break;
-     case ( kSKmNuEBarCCoth_mu  ) : return "bkg nubar CC oth (numu disap)";     break;
-     case ( kSKmNuEBarCCoth_e   ) : return "bkg nubar CC oth (nue app)";        break;
-     case ( kSKmNuEBarNC        ) : return "bkg nubar NC";                      break;
-     case ( kSKmNuEBarNC1pi0    ) : return "bkg nubar NC 1pi0";                 break;
-     case ( kSKmNuEBarNCcoh     ) : return "bkg nubar NC coh";                  break;
-     case ( kSKmNuEBarNCoth_e   ) : return "bkg nubar NC oth (nue app)";        break;
-     case ( kSKmSigNuECCQE      ) : return "sig nue CC QE";                     break;
-     case ( kSKmSigNuECC1pi     ) : return "sig nue CC 1pi";                    break;
-     case ( kSKmSigNuECCoth     ) : return "sig nue CC oth";                    break;
+     case ( kSKmNuECCQE         ) : return "nue CC QE";                         break;
+     case ( kSKmNuECC1pi        ) : return "nue CC 1pi";                        break;
+     case ( kSKmNuECCcoh        ) : return "nue CC coh";                        break;
+     case ( kSKmNuECCoth_mu     ) : return "nue CC oth (numu disap)";           break;
+     case ( kSKmNuECCoth_e      ) : return "nue CC oth (nue app)";              break;
+     case ( kSKmNuENC           ) : return "nue NC";                            break;
+     case ( kSKmNuENC1pi0       ) : return "nue NC 1pi0";                       break;
+     case ( kSKmNuENCcoh        ) : return "nue NC coh";                        break;
+     case ( kSKmNuENCoth_e      ) : return "nue NC oth (nue app)";              break;
+     case ( kSKmNuEBarCCQE      ) : return "nuebar CC QE";                      break;
+     case ( kSKmNuEBarCC1pi     ) : return "nuebar CC 1pi";                     break;
+     case ( kSKmNuEBarCCcoh     ) : return "nuebar CC coh";                     break;
+     case ( kSKmNuEBarCCoth_mu  ) : return "nuebar CC oth (numu disap)";        break;
+     case ( kSKmNuEBarCCoth_e   ) : return "nuebar CC oth (nue app)";           break;
+     case ( kSKmNuEBarNC        ) : return "nuebar NC";                         break;
+     case ( kSKmNuEBarNC1pi0    ) : return "nuebar NC 1pi0";                    break;
+     case ( kSKmNuEBarNCcoh     ) : return "nuebar NC coh";                     break;
+     case ( kSKmNuEBarNCoth_e   ) : return "nuebar NC oth (nue app)";           break;
+     case ( kSKmSigNuECCQE      ) : return "signal nue CC QE";                  break;
+     case ( kSKmSigNuECC1pi     ) : return "signal nue CC 1pi";                 break;
+     case ( kSKmSigNuECCoth     ) : return "signal nue CC oth";                 break;
      default                      : return "--";
   }
   return "";
@@ -889,27 +889,27 @@ string t2kana::util::AsStringTex(t2kana::conv::SuperkMode_t m)
      case ( kSKmNuMuBarNC1pi0   ) : return "$\\bar{\\nu_\\mu}$/$\\bar{\\nu_\\tau}$ NC 1$\\pi^0$";            break;
      case ( kSKmNuMuBarNCcoh    ) : return "$\\bar{\\nu_\\mu}$/$\\bar{\\nu_\\tau}$ NC coherent";             break;
      case ( kSKmNuMuBarNCoth_e  ) : return "$\\bar{\\nu_\\mu}$/$\\bar{\\nu_\\tau}$ NC other ($\\nu_e$ app)"; break;
-     case ( kSKmNuECCQE         ) : return "bkg $\\nu_e$ CCQE";                                              break;
-     case ( kSKmNuECC1pi        ) : return "bkg $\\nu_e$ CC 1$\\pi$";                                        break;
-     case ( kSKmNuECCcoh        ) : return "bkg $\\nu_e$ CC coherent";                                       break;
-     case ( kSKmNuECCoth_mu     ) : return "bkg $\\nu_e$ CC other ($\\nu_\\mu$ disap)";                      break;
-     case ( kSKmNuECCoth_e      ) : return "bkg $\\nu_e$ CC other ($\\nu_e$ app)";                           break;
-     case ( kSKmNuENC           ) : return "bkg $\\nu_e$ NC";                                                break;
-     case ( kSKmNuENC1pi0       ) : return "bkg $\\nu_e$ NC 1$\\pi^0$";                                      break;
-     case ( kSKmNuENCcoh        ) : return "bkg $\\nu_e$ NC coherent";                                       break;
-     case ( kSKmNuENCoth_e      ) : return "bkg $\\nu_e$ NC other ($\\nu_e$ app)";                           break;
-     case ( kSKmNuEBarCCQE      ) : return "bkg $\\bar{\\nu_e}$ CCQE";                                       break;
-     case ( kSKmNuEBarCC1pi     ) : return "bkg $\\bar{\\nu_e}$ CC 1$\\pi$";                                 break;
-     case ( kSKmNuEBarCCcoh     ) : return "bkg $\\bar{\\nu_e}$ CC coherent";                                break;
-     case ( kSKmNuEBarCCoth_mu  ) : return "bkg $\\bar{\\nu_e}$ CC other ($\\nu_\\mu$ disap)";               break;
-     case ( kSKmNuEBarCCoth_e   ) : return "bkg $\\bar{\\nu_e}$ CC other ($\\nu_e$ app)";                    break;
-     case ( kSKmNuEBarNC        ) : return "bkg $\\bar{\\nu_e}$ NC";                                         break;
-     case ( kSKmNuEBarNC1pi0    ) : return "bkg $\\bar{\\nu_e}$ NC 1$\\pi^0$";                               break;
-     case ( kSKmNuEBarNCcoh     ) : return "bkg $\\bar{\\nu_e}$ NC coherent";                                break;
-     case ( kSKmNuEBarNCoth_e   ) : return "bkg $\\bar{\\nu_e}$ NC other ($\\nu_e$ app)";                    break;
-     case ( kSKmSigNuECCQE      ) : return "sig $\\nu_e$ CCQE";                                              break;
-     case ( kSKmSigNuECC1pi     ) : return "sig $\\nu_e$ CC 1$\\pi$";                                        break;
-     case ( kSKmSigNuECCoth     ) : return "sig $\\nu_e$ CC other";                                          break;
+     case ( kSKmNuECCQE         ) : return "$\\nu_e$ CCQE";                                                  break;
+     case ( kSKmNuECC1pi        ) : return "$\\nu_e$ CC 1$\\pi$";                                            break;
+     case ( kSKmNuECCcoh        ) : return "$\\nu_e$ CC coherent";                                           break;
+     case ( kSKmNuECCoth_mu     ) : return "$\\nu_e$ CC other ($\\nu_\\mu$ disap)";                          break;
+     case ( kSKmNuECCoth_e      ) : return "$\\nu_e$ CC other ($\\nu_e$ app)";                               break;
+     case ( kSKmNuENC           ) : return "$\\nu_e$ NC";                                                    break;
+     case ( kSKmNuENC1pi0       ) : return "$\\nu_e$ NC 1$\\pi^0$";                                          break;
+     case ( kSKmNuENCcoh        ) : return "$\\nu_e$ NC coherent";                                           break;
+     case ( kSKmNuENCoth_e      ) : return "$\\nu_e$ NC other ($\\nu_e$ app)";                               break;
+     case ( kSKmNuEBarCCQE      ) : return "$\\bar{\\nu_e}$ CCQE";                                           break;
+     case ( kSKmNuEBarCC1pi     ) : return "$\\bar{\\nu_e}$ CC 1$\\pi$";                                     break;
+     case ( kSKmNuEBarCCcoh     ) : return "$\\bar{\\nu_e}$ CC coherent";                                    break;
+     case ( kSKmNuEBarCCoth_mu  ) : return "$\\bar{\\nu_e}$ CC other ($\\nu_\\mu$ disap)";                   break;
+     case ( kSKmNuEBarCCoth_e   ) : return "$\\bar{\\nu_e}$ CC other ($\\nu_e$ app)";                        break;
+     case ( kSKmNuEBarNC        ) : return "$\\bar{\\nu_e}$ NC";                                             break;
+     case ( kSKmNuEBarNC1pi0    ) : return "$\\bar{\\nu_e}$ NC 1$\\pi^0$";                                   break;
+     case ( kSKmNuEBarNCcoh     ) : return "$\\bar{\\nu_e}$ NC coherent";                                    break;
+     case ( kSKmNuEBarNCoth_e   ) : return "$\\bar{\\nu_e}$ NC other ($\\nu_e$ app)";                        break;
+     case ( kSKmSigNuECCQE      ) : return "signal $\\nu_e$ CCQE";                                           break;
+     case ( kSKmSigNuECC1pi     ) : return "signal $\\nu_e$ CC 1$\\pi$";                                     break;
+     case ( kSKmSigNuECCoth     ) : return "signal $\\nu_e$ CC other";                                       break;
      default                      : return "--";
   }
   return "";
@@ -1171,7 +1171,8 @@ int t2kana::util::SuperkMode2FluxNuPdg(t2kana::conv::SuperkMode_t m)
 {
   if ( util::IsNuMu      (m) ) return kPdgNuMu;
   if ( util::IsNuMuBar   (m) ) return kPdgNuMuBar;
-  if ( util::IsBeamNuE   (m) ) return kPdgNuE;
+  if ( util::IsNuE       (m) ) return kPdgNuE;
+  if ( util::IsNuEBar    (m) ) return kPdgNuEBar;
   if ( util::IsSignalNuE (m) ) return kPdgNuMu; /// numu -> nue
    
   // NOTE: Beam NuEBars not handles
@@ -1221,7 +1222,7 @@ bool t2kana::util::IsNuMuBar(t2kana::conv::SuperkMode_t m)
   return false;
 }
 //____________________________________________________________________________
-bool t2kana::util::IsBeamNuE(t2kana::conv::SuperkMode_t m)
+bool t2kana::util::IsNuE(t2kana::conv::SuperkMode_t m)
 {
   switch(m) {
      case (kSKmNuECCQE    ):

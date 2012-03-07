@@ -99,24 +99,27 @@ void SuperkMC::Init(void)
   fMCTreeNuMu1Rmu      = 0;
   fMCTreeNuMuBar1Rmu   = 0;
   fMCTreeNuE1Rmu       = 0;
-  fMCTreeNuESig1Rmu    = 0;
+  fMCTreeNuEBar1Rmu    = 0;
+  fMCTreeSigNuE1Rmu    = 0;
   fMCTreeNuMu1Re       = 0;
   fMCTreeNuMuBar1Re    = 0;
   fMCTreeNuE1Re        = 0;
-  fMCTreeNuESig1Re     = 0;
+  fMCTreeNuEBar1Re     = 0;
+  fMCTreeSigNuE1Re     = 0;
 
   fMCPOTNuMu           = 0;
   fMCPOTNuMuBar        = 0;
   fMCPOTNuE            = 0;
-  fMCPOTNuESig         = 0;
+  fMCPOTNuEBar         = 0;
+  fMCPOTSigNuE         = 0;
 
-  fBrEreco        = 0;
-  fBrEtrue        = 0;
-  fBrPdg          = 0;
-  fBrGenCode      = 0;
+  fBrEreco             = 0;
+  fBrEtrue             = 0;
+  fBrPdg               = 0;
+  fBrGenCode           = 0;
          
-  fNuFlux         = 0;
-  fNuXSec         = 0;  
+  fNuFlux              = 0;
+  fNuXSec              = 0;  
 }
 //________________________________________________________________________________________
 void SuperkMC::CleanUp(void)
@@ -124,11 +127,13 @@ void SuperkMC::CleanUp(void)
   if(fMCTreeNuMu1Rmu    ) delete fMCTreeNuMu1Rmu;
   if(fMCTreeNuMuBar1Rmu ) delete fMCTreeNuMuBar1Rmu;
   if(fMCTreeNuE1Rmu     ) delete fMCTreeNuE1Rmu;
-  if(fMCTreeNuESig1Rmu  ) delete fMCTreeNuESig1Rmu;
+  if(fMCTreeNuEBar1Rmu  ) delete fMCTreeNuEBar1Rmu;
+  if(fMCTreeSigNuE1Rmu  ) delete fMCTreeSigNuE1Rmu;
   if(fMCTreeNuMu1Re     ) delete fMCTreeNuMu1Re;
   if(fMCTreeNuMuBar1Re  ) delete fMCTreeNuMuBar1Re;
   if(fMCTreeNuE1Re      ) delete fMCTreeNuE1Re;
-  if(fMCTreeNuESig1Re   ) delete fMCTreeNuESig1Re;
+  if(fMCTreeNuEBar1Re   ) delete fMCTreeNuEBar1Re;
+  if(fMCTreeSigNuE1Re   ) delete fMCTreeSigNuE1Re;
 
   for(int is = 0; is < kns; is++) {
      for(int im = 0; im < knm; im++) {
@@ -165,42 +170,49 @@ bool SuperkMC::Read(TXMLEngine* xml, XMLNodePointer_t root_node)
   //
   fMCPOTNuMu    = util::XML2Dbl  (xml,root_node,"mc/superk/nominal/numu/pot");
   fMCPOTNuMuBar = util::XML2Dbl  (xml,root_node,"mc/superk/nominal/numubar/pot");
-  fMCPOTNuE     = util::XML2Dbl  (xml,root_node,"mc/superk/nominal/nuebeam/pot");
-  fMCPOTNuESig  = util::XML2Dbl  (xml,root_node,"mc/superk/nominal/nuesignal/pot");
+  fMCPOTNuE     = util::XML2Dbl  (xml,root_node,"mc/superk/nominal/nue/pot");
+  fMCPOTNuEBar  = util::XML2Dbl  (xml,root_node,"mc/superk/nominal/nuebar/pot");
+  fMCPOTSigNuE  = util::XML2Dbl  (xml,root_node,"mc/superk/nominal/signal_nue/pot");
 
   fMCTreeNuMu1Rmu    = util::XML2TTree (xml,root_node,"mc/superk/nominal/numu/one_mu_ring");
   fMCTreeNuMuBar1Rmu = util::XML2TTree (xml,root_node,"mc/superk/nominal/numubar/one_mu_ring");
-  fMCTreeNuE1Rmu     = util::XML2TTree (xml,root_node,"mc/superk/nominal/nuebeam/one_mu_ring");
-  fMCTreeNuESig1Rmu  = util::XML2TTree (xml,root_node,"mc/superk/nominal/nuesignal/one_mu_ring");
+  fMCTreeNuE1Rmu     = util::XML2TTree (xml,root_node,"mc/superk/nominal/nue/one_mu_ring");
+  fMCTreeNuEBar1Rmu  = util::XML2TTree (xml,root_node,"mc/superk/nominal/nuebar/one_mu_ring");
+  fMCTreeSigNuE1Rmu  = util::XML2TTree (xml,root_node,"mc/superk/nominal/signal_nue/one_mu_ring");
   fMCTreeNuMu1Re     = util::XML2TTree (xml,root_node,"mc/superk/nominal/numu/one_e_ring");
   fMCTreeNuMuBar1Re  = util::XML2TTree (xml,root_node,"mc/superk/nominal/numubar/one_e_ring");
-  fMCTreeNuE1Re      = util::XML2TTree (xml,root_node,"mc/superk/nominal/nuebeam/one_e_ring");
-  fMCTreeNuESig1Re   = util::XML2TTree (xml,root_node,"mc/superk/nominal/nuesignal/one_e_ring");
+  fMCTreeNuE1Re      = util::XML2TTree (xml,root_node,"mc/superk/nominal/nue/one_e_ring");
+  fMCTreeNuEBar1Re   = util::XML2TTree (xml,root_node,"mc/superk/nominal/nuebar/one_e_ring");
+  fMCTreeSigNuE1Re   = util::XML2TTree (xml,root_node,"mc/superk/nominal/signal_nue/one_e_ring");
 
   assert (fMCTreeNuMu1Rmu   );
   assert (fMCTreeNuMuBar1Rmu);
   assert (fMCTreeNuE1Rmu    );
-  assert (fMCTreeNuESig1Rmu );
+  assert (fMCTreeNuEBar1Rmu );
+  assert (fMCTreeSigNuE1Rmu );
   assert (fMCTreeNuMu1Re    );
   assert (fMCTreeNuMuBar1Re );
   assert (fMCTreeNuE1Re     );
-  assert (fMCTreeNuESig1Re  );
+  assert (fMCTreeNuEBar1Re  );
+  assert (fMCTreeSigNuE1Re  );
 
 #ifdef __show_init_mesg_info__
 
   cout << "Exp/SKMC >> " << "POT {MC; numu}    = " << fMCPOTNuMu    << endl;
   cout << "Exp/SKMC >> " << "POT {MC; numubar} = " << fMCPOTNuMuBar << endl;
   cout << "Exp/SKMC >> " << "POT {MC; nue_bkg} = " << fMCPOTNuE     << endl;
-  cout << "Exp/SKMC >> " << "POT {MC; nue_sig} = " << fMCPOTNuESig  << endl;
+  cout << "Exp/SKMC >> " << "POT {MC; nue_sig} = " << fMCPOTSigNuE  << endl;
 
-  cout << "Exp/SKMC >> " << "Nev {MC; numu;    1Rmu} = " << fMCTreeNuMu1Rmu    -> GetEntries()  << endl;
-  cout << "Exp/SKMC >> " << "Nev {MC; numubar; 1Rmu} = " << fMCTreeNuMuBar1Rmu -> GetEntries()  << endl;
-  cout << "Exp/SKMC >> " << "Nev {MC; nue_bkg; 1Rmu} = " << fMCTreeNuE1Rmu     -> GetEntries()  << endl;
-  cout << "Exp/SKMC >> " << "Nev {MC; nue_sig; 1Rmu} = " << fMCTreeNuESig1Rmu  -> GetEntries()  << endl;
-  cout << "Exp/SKMC >> " << "Nev {MC; numu;    1Re } = " << fMCTreeNuMu1Re     -> GetEntries()  << endl;
-  cout << "Exp/SKMC >> " << "Nev {MC; numubar; 1Re } = " << fMCTreeNuMuBar1Re  -> GetEntries()  << endl;
-  cout << "Exp/SKMC >> " << "Nev {MC; nue_bkg; 1Re } = " << fMCTreeNuE1Re      -> GetEntries()  << endl;
-  cout << "Exp/SKMC >> " << "Nev {MC; nue_sig; 1Re } = " << fMCTreeNuESig1Re   -> GetEntries()  << endl;
+  cout << "Exp/SKMC >> " << "Nev {MC; numu;     1Rmu} = " << fMCTreeNuMu1Rmu    -> GetEntries()  << endl;
+  cout << "Exp/SKMC >> " << "Nev {MC; numubar;  1Rmu} = " << fMCTreeNuMuBar1Rmu -> GetEntries()  << endl;
+  cout << "Exp/SKMC >> " << "Nev {MC; nue;      1Rmu} = " << fMCTreeNuE1Rmu     -> GetEntries()  << endl;
+  cout << "Exp/SKMC >> " << "Nev {MC; nuebar;   1Rmu} = " << fMCTreeNuEBar1Rmu  -> GetEntries()  << endl;
+  cout << "Exp/SKMC >> " << "Nev {MC; nue[sig]; 1Rmu} = " << fMCTreeSigNuE1Rmu  -> GetEntries()  << endl;
+  cout << "Exp/SKMC >> " << "Nev {MC; numu;     1Re } = " << fMCTreeNuMu1Re     -> GetEntries()  << endl;
+  cout << "Exp/SKMC >> " << "Nev {MC; numubar;  1Re } = " << fMCTreeNuMuBar1Re  -> GetEntries()  << endl;
+  cout << "Exp/SKMC >> " << "Nev {MC; nue;      1Re } = " << fMCTreeNuE1Re      -> GetEntries()  << endl;
+  cout << "Exp/SKMC >> " << "Nev {MC; nuebar;   1Re } = " << fMCTreeNuEBar1Re   -> GetEntries()  << endl;
+  cout << "Exp/SKMC >> " << "Nev {MC; nue[sig]; 1Re } = " << fMCTreeSigNuE1Re   -> GetEntries()  << endl;
 #endif
   
   //
@@ -803,17 +815,19 @@ void SuperkMC::ApplyPhysHypothesisToTemplates(void)
         double Etrue = etrue_axis->GetBinCenter(it);
 
         double p_numu_numu       = fNuOsc3Flavour.CalcMatterOscProb(kPdgNuMu,    kPdgNuMu,    Etrue);
-      //double p_nue_numu        = fNuOsc3Flavour.CalcMatterOscProb(kPdgNuE,     kPdgNuMu,    Etrue);
         double p_numubar_numubar = fNuOsc3Flavour.CalcMatterOscProb(kPdgNuMuBar, kPdgNuMuBar, Etrue);
         double p_nue_nue         = fNuOsc3Flavour.CalcMatterOscProb(kPdgNuE,     kPdgNuE,     Etrue);
+        double p_nuebar_nuebar   = fNuOsc3Flavour.CalcMatterOscProb(kPdgNuEBar,  kPdgNuEBar,  Etrue);
+      //double p_nue_numu        = fNuOsc3Flavour.CalcMatterOscProb(kPdgNuE,     kPdgNuMu,    Etrue);
         double p_numu_nue        = fNuOsc3Flavour.CalcMatterOscProb(kPdgNuMu,    kPdgNuE,     Etrue);
 #ifdef __show_hypothesis_probabilities__
         cout << "Exp/SKMC >>  E = " << Etrue << " GeV" << endl;
-        cout << "Exp/SKMC >>  * P (numu     -> numu)    = " << p_numu_numu       << endl;
-      //cout << "Exp/SKMC >>  * P (nue      -> numu)    = " << p_nue_numu        << endl;
+        cout << "Exp/SKMC >>  * P (numu     -> numu   ) = " << p_numu_numu       << endl;
         cout << "Exp/SKMC >>  * P (numubar  -> numubar) = " << p_numubar_numubar << endl;
-        cout << "Exp/SKMC >>  * P (nue      -> nue)     = " << p_nue_nue         << endl;
-        cout << "Exp/SKMC >>  * P (numu     -> nue)     = " << p_numu_nue        << endl;
+        cout << "Exp/SKMC >>  * P (nue      -> nue    ) = " << p_nue_nue         << endl;
+        cout << "Exp/SKMC >>  * P (nuebar   -> nuebar ) = " << p_nuebar_nuebar   << endl;
+      //cout << "Exp/SKMC >>  * P (nue      -> numu   ) = " << p_nue_numu        << endl;
+        cout << "Exp/SKMC >>  * P (numu     -> nue    ) = " << p_numu_nue        << endl;
 #endif
 
         // loop over Ereco
@@ -831,7 +845,8 @@ void SuperkMC::ApplyPhysHypothesisToTemplates(void)
               {
                 if( util::IsNuMu(m)      ) { posc = p_numu_numu;       }
                 if( util::IsNuMuBar(m)   ) { posc = p_numubar_numubar; }
-                if( util::IsBeamNuE(m)   ) { posc = p_nue_nue;         }
+                if( util::IsNuE(m)       ) { posc = p_nue_nue;         }
+                if( util::IsNuEBar(m)    ) { posc = p_nuebar_nuebar;   }
                 if( util::IsSignalNuE(m) ) { posc = p_numu_nue;        }
               }
               // number of events in (Ereco,Etrue) bin (oscillations + systematics applied)
@@ -1054,16 +1069,18 @@ TTree * SuperkMC::MCTree(SuperkSample_t s, SuperkMode_t m)
   {
      if ( util::IsNuMu(m)      ) return fMCTreeNuMu1Rmu;
      if ( util::IsNuMuBar(m)   ) return fMCTreeNuMuBar1Rmu;
-     if ( util::IsBeamNuE(m)   ) return fMCTreeNuE1Rmu;
-     if ( util::IsSignalNuE(m) ) return fMCTreeNuESig1Rmu;
+     if ( util::IsNuE(m)       ) return fMCTreeNuE1Rmu;
+     if ( util::IsNuEBar(m)    ) return fMCTreeNuEBar1Rmu;
+     if ( util::IsSignalNuE(m) ) return fMCTreeSigNuE1Rmu;
   }//1Rmu
 
   if (s==kSKsFCFV1RingELike)
   {
      if ( util::IsNuMu(m)      ) return fMCTreeNuMu1Re;
      if ( util::IsNuMuBar(m)   ) return fMCTreeNuMuBar1Re;
-     if ( util::IsBeamNuE(m)   ) return fMCTreeNuE1Re;
-     if ( util::IsSignalNuE(m) ) return fMCTreeNuESig1Re;
+     if ( util::IsNuE(m)       ) return fMCTreeNuE1Re;
+     if ( util::IsNuEBar(m)    ) return fMCTreeNuEBar1Re;
+     if ( util::IsSignalNuE(m) ) return fMCTreeSigNuE1Re;
   }//1Re
 
   return 0;
@@ -1075,8 +1092,9 @@ double SuperkMC::MCPOT(SuperkSample_t s, SuperkMode_t m)
   {
      if ( util::IsNuMu(m)      ) return fMCPOTNuMu;
      if ( util::IsNuMuBar(m)   ) return fMCPOTNuMuBar;
-     if ( util::IsBeamNuE(m)   ) return fMCPOTNuE;
-     if ( util::IsSignalNuE(m) ) return fMCPOTNuESig;
+     if ( util::IsNuE(m)       ) return fMCPOTNuE;
+     if ( util::IsNuEBar(m)    ) return fMCPOTNuEBar;
+     if ( util::IsSignalNuE(m) ) return fMCPOTSigNuE;
   }
   return 0;
 }
