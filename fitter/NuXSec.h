@@ -24,11 +24,7 @@
 
 #include "Conventions.h"
 
-using t2kana::conv::kns;
-using t2kana::conv::knm;
-using t2kana::conv::kNumOfXSecSystWithSpl;
-using t2kana::conv::kXsNErecoBins;
-using t2kana::conv::kXsNEtrueBins;
+using t2kana::conv::knwspl;
 
 namespace t2kana {
 
@@ -42,27 +38,37 @@ public:
  ~NuXSec();
 
   // Reweight to BANFF best-fit params
-  double SuperkXSecFinTuningWght (t2kana::conv::SuperkSample_t s, t2kana::conv::SuperkMode_t m, double Ereco, double Etrue) const;
+  double SuperkXSecFinTuningWght (conv::SuperkSample_t s, conv::SuperkMode_t m, double Ereco, double Etrue) const;
 
   // Calculate weight in response to tweaked systematics relative to the BANFF best-fit (not the nominal MC)
-  double SuperkXSecSystWght (t2kana::conv::SuperkSample_t s, t2kana::conv::SuperkMode_t m, double Ereco, double Etre) const;
-
-  //
-
-  // Get current value of FSI params
-  double FSICurrentValue (conv::PhysParamId_t p) const;
-  // Get input FSI covariance matrix and its Cholesky decomposition
-  const TMatrixD & FSICovMatrix         (void) const { return *fFSICovMtrx;       }
-  const TMatrixD & FSICovMatrixCholesky (void) const { return *fFSICovMtrxChoL;   }
+  double SuperkXSecSystWght (conv::SuperkSample_t s, conv::SuperkMode_t m, double Ereco, double Etrue) const;
 
   // Tweak 
   void TweakFSI (bool force_inputs = false, TVectorD * input_vec = 0);
+
+  // Get current value of systematic params handled by this class
+  double CurrentValue (conv::PhysParamId_t p) const;
 
   // Print
   void PrintSystematicVariations (void) const;
 
   // Read inputs from XML file
   bool Read (TXMLEngine* xml, XMLNodePointer_t root_node);
+
+  //
+  // Access data held by this object
+  //
+
+  // Get input FSI covariance matrix and its Cholesky decomposition
+  const TMatrixD & FSICovMatrix         (void) const { return *fFSICovMtrx;       }
+  const TMatrixD & FSICovMatrixCholesky (void) const { return *fFSICovMtrxChoL;   }
+
+  // Get weight spline for each sample / mode / parameters /Ereco bin / Etrue bin
+  TSpline3 * FindWghtSpline(conv::SuperkSample_t s, conv::SuperkMode_t m, conv::PhysParamId_t p, double Ereco, double Etrue);
+
+  //
+  // Set interdepencies with other classes
+  //
 
   // BANFF fit info
   void TellMeAboutTheBANFFfit(BANFF * banff);
@@ -72,12 +78,17 @@ private:
   void Init    (void);
   void CleanUp (void);
 
+  int WghtSplineIdx (conv::SuperkSample_t s, conv::SuperkMode_t m, conv::PhysParamId_t p, double Ereco, double Etrue);
+
+  //
+  // Private data members
+  //
+
   BANFF *     fBANFF;               ///< BANFF fit info
   TVectorD *  fFSICurrentValues;    ///< Current values of FSI params
   TMatrixD *  fFSICovMtrx;          ///< FSI covariance matrix
   TMatrixD *  fFSICovMtrxChoL;      ///< Triangular matrix from Cholesky decomp. of FSI covar. matrix
-
-  TSpline3 *  fXSecWghtSpl[kns][knm][kNumOfXSecSystWithSpl][kXsNErecoBins][kXsNEtrueBins];
+  TSpline3 *  fXSecWghtSpl[knwspl]; ///< Weight splines. Index is function of sample, mode, systematic param, Ereco bin, Etrue bin
 
 ClassDef(NuXSec, 4);
 };

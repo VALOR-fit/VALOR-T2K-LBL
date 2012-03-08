@@ -203,7 +203,7 @@ OscChannelId_t;
 // Enumeration of event samples that may be included in the analysis
 // Actual choice for current analysis is given in `Configuration' section.
 static const int kNSuperkSamples  = 2;  // number of samples 
-static const int kns = kNSuperkSamples; // 
+static const int kns = kNSuperkSamples; // as above - shorter name
 typedef enum ESuperkSample 
 {
    kSKsUndefined = -1, 
@@ -214,8 +214,8 @@ SuperkSample_t;
 
 // Enumeration of (true) reaction modes that may be considered separately within each SuperK sample
 // Actual choice for current analysis is given in `Configuration' section.
-static const int kNSuperkModes = 39; // number of reaction modes 
-static const int knm = kNSuperkModes; 
+static const int kNSuperkModes = 39;  // number of reaction modes kept track of within each sample
+static const int knm = kNSuperkModes; // as above - shorter name
 typedef enum ESuperkMode 
 {
    kSKmUndefined = -1, 
@@ -697,6 +697,16 @@ static const double kXsEtrueBinEdges[kns][knm][kXsNEtrueBins+1] = {
     { -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000 }  // kSKmUndefined
   }
 };
+
+
+// Number of cross-section weight splines
+static const int kNumOfXSecSystWghtSpl = 
+        kNSuperkSamples       * 
+        kNSuperkModes         * 
+        kNumOfXSecSystWithSpl * 
+        kXsNErecoBins         * 
+        kXsNEtrueBins;
+static const int knwspl = kNumOfXSecSystWghtSpl; // as above - shorter name
 
 //
 // ------------------------------------------------------------------------

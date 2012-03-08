@@ -53,9 +53,15 @@ NuXSec::~NuXSec()
 void NuXSec::Init(void)
 {
   fBANFF            = 0;
+
   fFSICurrentValues = 0;
   fFSICovMtrx       = 0;
   fFSICovMtrxChoL   = 0;
+
+  for(int ispl = 0; ispl < knwspl; ispl++) 
+  {
+     fXSecWghtSpl[ispl] = 0;
+  }
 }
 //________________________________________________________________________________________
 void NuXSec::CleanUp(void)
@@ -63,6 +69,11 @@ void NuXSec::CleanUp(void)
   if ( fFSICurrentValues ) delete fFSICurrentValues;
   if ( fFSICovMtrx       ) delete fFSICovMtrx;
   if ( fFSICovMtrxChoL   ) delete fFSICovMtrxChoL;
+
+  for(int ispl = 0; ispl < knwspl; ispl++) 
+  {
+     if (fXSecWghtSpl[ispl]) delete fXSecWghtSpl[ispl];
+  }
 }
 //________________________________________________________________________________________
 bool NuXSec::Read(TXMLEngine* xml, XMLNodePointer_t root_node)
@@ -301,6 +312,11 @@ double NuXSec::SuperkXSecSystWght(
   return wght;
 }
 //________________________________________________________________________________________
+double NuXSec::CurrentValue(PhysParamId_t p) const
+{
+  return 0;
+}
+//________________________________________________________________________________________
 void NuXSec::PrintSystematicVariations(void) const
 {
   TVectorD & fsi_current_values = *fFSICurrentValues;
@@ -313,11 +329,6 @@ void NuXSec::PrintSystematicVariations(void) const
 // FSI 
 //
 
-//________________________________________________________________________________________
-double NuXSec::FSICurrentValue (conv::PhysParamId_t /*p*/) const
-{
-  return 0;
-}
 //________________________________________________________________________________________
 void NuXSec::TweakFSI(
   bool       force_inputs, /* force the input params or generate random ones internally  */
@@ -399,5 +410,66 @@ void NuXSec::TweakFSI(
      return;
   }
 
+}
+//________________________________________________________________________________________
+
+//
+// Cross-section weight splines
+//
+
+//________________________________________________________________________________________
+TSpline3 * NuXSec::FindWghtSpline(
+   SuperkSample_t s, SuperkMode_t m, PhysParamId_t p, double Ereco, double Etrue)
+{
+  int idx = this->WghtSplineIdx(s,m,p,Ereco,Etrue);
+  if(idx == -1) 
+  {
+    cerr << "Exp/NuXSec/FindWghtSpline >> Didn't find weight spline for "
+         << "sample = "      << util::AsString(s) 
+         << ", mode = "      << util::AsString(m)
+         << ", parameter = " << util::AsString(p)
+         << ", Ereco = "     << Ereco << " GeV"
+         << ", Etrue = "     << Etrue << " GeV!"
+         << endl;
+  }
+
+  return fXSecWghtSpl[idx];
+}
+//________________________________________________________________________________________
+int NuXSec::WghtSplineIdx(
+   SuperkSample_t s, SuperkMode_t m, PhysParamId_t p, double Ereco, double Etrue)
+{
+// 1-D array of weight splines is basically a linearized version of a 5-D array 
+// with the following indices:
+//
+//  0:  0 --> kNSuperkSamples
+//  1:  0 --> kNSuperkModes
+//  2:  0 --> kNumOfXSecSystWithSpl
+//  3:  0 --> kXsNErecoBins
+//  4:  0 --> kXsNEtrueBins
+//
+
+  int sidx = util::FindSampleSlot(s);
+  if(sidx == -1) return -1;
+
+  int midx = util::FindModeSlot(s,m);
+  if(midx == -1) return -1;
+
+  int pidx = -1;
+  for(int ip = 0; ip < kNumOfXSecSystWithSpl; ip++) {
+     PhysParamId_t pcurr = kXSecSystWithSpl[ip];
+     if(pcurr == p) { 
+        pidx = ip;
+        break;
+     }
+  }
+  if(pidx == -1) return -1;
+
+  int ereco_idx = 0; /////TODO
+  int etrue_idx = 0; /////TODO
+
+  int idx = 0; ////TODO
+
+  return idx;
 }
 //________________________________________________________________________________________
