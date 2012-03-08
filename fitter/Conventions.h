@@ -387,7 +387,7 @@ PhysParamId_t;
 
 //
 // ------------------------------------------------------------------------
-// ** NOTE: IMPORTANT VHOICES MADE HERE **
+// ** NOTE: IMPORTANT CHOICES MADE HERE **
 //
 // Choice of samples included in the analysis 
 // Choice of modes (per sample) we are going to keep track of.

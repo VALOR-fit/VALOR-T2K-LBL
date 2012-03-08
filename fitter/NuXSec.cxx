@@ -84,23 +84,34 @@ bool NuXSec::Read(TXMLEngine* xml, XMLNodePointer_t root_node)
 
 /*
   //
-  // Cross-section weight splines
+  // Load cross-section weight splines
   //
-
-  for(int iet = 0; iet < kXsNEtrueBinsNuMu; iet++) {
-    for(int ier = 0; ier < kXsNErecoBins; ier++) {
-      ostringstream xmlpath;
-      xmlpath << "maqe_" << iet << "_" << ier;
-      fXSecWghtSplMAQE[iet][ier] = ...;
-    }
-  }
-
+  for(int is = 0; is < kns; is++) {
+    SuperkSample_t s = kSKSamples[is];
+    if(s == kSKsUndefined) continue;
+    for(int im = 0; im < knm; im++) {
+       SuperkMode_t m = kSKReactionModes[is][im];
+       if(m == kSKmUndefined) continue;
+       for(int ip = 0; ip < kNumOfXSecSystWithSpl; ip++) {
+          PhysParamId_t p = kXSecSystWithSpl[ip];
+          if(p == kPhypUndefined) continue;
+          for(int ir = 0; ir < kXsNErecoBins; ir++) {
+             for(int it = 0; it < kXsNEtrueBins; it++) {
+                // Get index for current weight spline
+                int idx = 0; /// TODO
+                // Copy spline from input file
+                fXSecWghtSpl[idx] = 0; /// TODO                         
+             }//Etrue
+          }//Ereco
+       }//p
+    }//m
+  }//s
 */
 
 
 /*
   //
-  // FSI
+  // Load info needed for handling FSI systematics
   //
 
   const int np = conv::kNumOfFSIParams;
