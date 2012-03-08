@@ -86,6 +86,7 @@ bool NuXSec::Read(TXMLEngine* xml, XMLNodePointer_t root_node)
   //
   // Load cross-section weight splines
   //
+
   for(int is = 0; is < kns; is++) {
     SuperkSample_t s = kSKSamples[is];
     if(s == kSKsUndefined) continue;
@@ -96,11 +97,22 @@ bool NuXSec::Read(TXMLEngine* xml, XMLNodePointer_t root_node)
           PhysParamId_t p = kXSecSystWithSpl[ip];
           if(p == kPhypUndefined) continue;
           for(int ir = 0; ir < kXsNErecoBins; ir++) {
+             double Ereco = kXsErecoBinEdges[ir] + kOneMeV;
              for(int it = 0; it < kXsNEtrueBins; it++) {
+                double Etrue = kXsEtrueBinEdges[is][im][it] + kOneMeV;              
                 // Get index for current weight spline
-                int idx = 0; /// TODO
+                int idx = this->WghtSplineIdx(s,m,p,Ereco,Etrue);     
+                // Build spline name
+                ostringstream splname;
+                splname << "spl_" 
+                        << util::AsStringCompact(s) << "_"
+                        << util::AsStringCompact(m) << "_"
+                        << util::AsStringCompact(p) << "_"
+                        << ir << "_" 
+                        << it << endl;              
                 // Copy spline from input file
-                fXSecWghtSpl[idx] = 0; /// TODO                         
+                TSpline3 * spl = (TSpline3 *) fXSecSplineFile->Get(splname.str().c_str());
+                fXSecWghtSpl[idx] = new TSpline3(*spl);
              }//Etrue
           }//Ereco
        }//p
@@ -163,10 +175,10 @@ double NuXSec::SuperkXSecFinTuningWght(
 // - BANFF param # 25, CCRES normalization, 0 - 2.5 GeV (Etrue)
 //
 
-  // A check to make sure the sample-mode combination exists
-  if(s == kSKsUndefined) return 1.;
-  if(m == kSKmUndefined) return 1.;
-  if(util::FindModeSlot(s, m) < 0) return 1.;
+  int sidx = util::FindSampleSlot(s);
+  if(sidx == -1) return 1;
+  int midx = util::FindModeSlot(s,m);
+  if(midx == -1) return 1;
 
   // init weights
   double wght_banff22 = 1.;
@@ -174,35 +186,47 @@ double NuXSec::SuperkXSecFinTuningWght(
   double wght_banff24 = 1.;
   double wght_banff25 = 1.;
 
-  // init flags
-  bool apply_banff22 = (m == kSKmNuMuCCQE ); ////// CHECK - presumably numubars also !!!
-  bool apply_banff23 = (m == kSKmNuMuCC1pi); ////// CHECK - presumably numubars also !!!
-  bool apply_banff24 = (m == kSKmNuMuCCQE ) && (Etrue >= 0. && Etrue < kEtrueMaxBANFF24); ////// CHECK
-  bool apply_banff25 = (m == kSKmNuMuCC1pi) && (Etrue >= 0. && Etrue < kEtrueMaxBANFF25); ////// CHECK
-
-/*
+  //
   // BANFF param # 22, M_{A} QE
+  //
+  int banff22_idx = util::FindSlotInListOfXSecSystWithSpl(kNuisBANFF22);
+  assert(banff22_idx != -1);
+  bool apply_banff22 = kXsApplyXSecSyst[sidx][midx][banff22_idx];
   if(apply_banff22) 
   {
+/*
      double ma = conv::kNomMAQE * fBANFF->BestFitValue(kNuisBANFF22);
-     wght_banff22 = this->Spline(s,m,Etrue)->Eval(ma);
-  }
-
-  // BANFF param # 23, M_{A} RES
-  if(apply_banff22) 
-  {
-     double ma = conv::kNomMARES * fBANFF->BestFitValue(kNuisBANFF23);
-     wght_banff23 = this->Spline(s,m,Etrue)->Eval(ma);
-  }
+     wght_banff22 = 
 */
+  }
 
+  //
+  // BANFF param # 23, M_{A} RES
+  //
+  int banff23_idx = util::FindSlotInListOfXSecSystWithSpl(kNuisBANFF23);
+  assert(banff23_idx != -1);
+  bool apply_banff23 = kXsApplyXSecSyst[sidx][midx][banff23_idx];
+  if(apply_banff23) 
+  {
+/*
+     double ma = conv::kNomMARES * fBANFF->BestFitValue(kNuisBANFF23);
+     wght_banff23 = 
+*/
+  }
+
+  //
   // BANFF param # 24, CCQE  normalization, 0 - 1.5 GeV
+  //
+  bool apply_banff24 = apply_banff22 && (Etrue >= 0. && Etrue < kEtrueMaxBANFF24); 
   if(apply_banff24) 
   {
      wght_banff24 = fBANFF->BestFitValue(kNuisBANFF24);
   }
 
+  //
   // BANFF param # 25, CCRES normalization, 0 - 2.5 GeV
+  //
+  bool apply_banff25 = apply_banff23 && (Etrue >= 0. && Etrue < kEtrueMaxBANFF25); 
   if(apply_banff25) 
   {  
     wght_banff25 = fBANFF->BestFitValue(kNuisBANFF25);
@@ -249,10 +273,10 @@ double NuXSec::SuperkXSecSystWght(
 // - BANFF param # 25, CCRES normalization, 0 - 2.5 GeV (Etrue)
 //
 
-  // A check to make sure the sample-mode combination exists
-  if(s == kSKsUndefined) return 1.;
-  if(m == kSKmUndefined) return 1.;
-  if(util::FindModeSlot(s, m) < 0) return 1.;
+  int sidx = util::FindSampleSlot(s);
+  if(sidx == -1) return 1;
+  int midx = util::FindModeSlot(s,m);
+  if(midx == -1) return 1;
 
   // init weights
   double wght_banff22 = 1.;
@@ -260,37 +284,47 @@ double NuXSec::SuperkXSecSystWght(
   double wght_banff24 = 1.;
   double wght_banff25 = 1.;
 
-  // init flags
-  bool apply_banff22 = (m == kSKmNuMuCCQE ); ////// CHECK - presumably numubars also !!!
-  bool apply_banff23 = (m == kSKmNuMuCC1pi); ////// CHECK - presumably numubars also !!!
-  bool apply_banff24 = (m == kSKmNuMuCCQE ) && (Etrue >= 0. && Etrue < 1.5); ////// CHECK
-  bool apply_banff25 = (m == kSKmNuMuCC1pi) && (Etrue >= 0. && Etrue < 2.5); ////// CHECK
-
-/*
+  //
   // BANFF param # 22, M_{A} QE
+  //
+  int banff22_idx = util::FindSlotInListOfXSecSystWithSpl(kNuisBANFF22);
+  assert(banff22_idx != -1);
+  bool apply_banff22 = kXsApplyXSecSyst[sidx][midx][banff22_idx];
   if(apply_banff22) 
   {
 
   }
 
+  //
   // BANFF param # 23, M_{A} RES
-  if(apply_banff22) 
+  //
+  int banff23_idx = util::FindSlotInListOfXSecSystWithSpl(kNuisBANFF23);
+  assert(banff23_idx != -1);
+  bool apply_banff23 = kXsApplyXSecSyst[sidx][midx][banff23_idx];
+  if(apply_banff23) 
   {
+/*
      double ma_current = conv::kNomMARES * fBANFF->CurrentValue(kNuisBANFF23) 
      double ma_bestfit = conv::kNomMARES * fBANFF->BestFitValue(kNuisBANFF23);
      double wght_banff23_current = this->Spline(s,m,Etrue)->Eval(ma_current);
      double wght_banff23_bestfit = this->Spline(s,m,Etrue)->Eval(ma_bestfit);
      wght_banff23 = wght_banff23_current / wght_banff23_bestfit;
-  }
 */
+  }
 
+  //
   // BANFF param # 24, CCQE  normalization, 0 - 1.5 GeV
+  //
+  bool apply_banff24 = apply_banff22 && (Etrue >= 0. && Etrue < kEtrueMaxBANFF24); 
   if(apply_banff24) 
   {
      wght_banff24 = fBANFF->CurrentValue(kNuisBANFF24) / fBANFF->BestFitValue(kNuisBANFF24);
   }
 
+  //
   // BANFF param # 25, CCRES normalization, 0 - 2.5 GeV
+  //
+  bool apply_banff25 = apply_banff23 && (Etrue >= 0. && Etrue < kEtrueMaxBANFF25); 
   if(apply_banff25) 
   {  
     wght_banff25 = fBANFF->CurrentValue(kNuisBANFF25) / fBANFF->BestFitValue(kNuisBANFF25);
@@ -466,20 +500,36 @@ int NuXSec::WghtSplineIdx(
   int midx = util::FindModeSlot(s,m);
   if(midx == -1) return -1;
 
-  int pidx = -1;
-  for(int ip = 0; ip < kNumOfXSecSystWithSpl; ip++) {
-     PhysParamId_t pcurr = kXSecSystWithSpl[ip];
-     if(pcurr == p) { 
-        pidx = ip;
-        break;
-     }
-  }
+  int pidx = util::FindSlotInListOfXSecSystWithSpl(p);
   if(pidx == -1) return -1;
 
-  int ereco_idx = 0; /////TODO
-  int etrue_idx = 0; /////TODO
+  int ereco_idx = -1; 
+  for (int i = 0; i < kXsNErecoBins; i++) {
+    if(kXsErecoBinEdges[i]   <= Ereco && 
+       kXsErecoBinEdges[i+1] >  Ereco) 
+    {
+        ereco_idx = i;
+        break;
+    }
+  }
+  if(ereco_idx == -1) return -1;
 
-  int idx = 0; ////TODO
+  int etrue_idx = -1; 
+  for (int i = 0; i < kXsNEtrueBins; i++) {
+    if(kXsEtrueBinEdges[sidx][midx][i]   <= Etrue && 
+       kXsEtrueBinEdges[sidx][midx][i+1] >  Etrue) 
+    {
+        etrue_idx = i;
+        break;
+    }
+  }
+  if(etrue_idx == -1) return -1;
+
+  int idx = etrue_idx 
+          + ereco_idx * kXsNEtrueBins 
+          + pidx      * kXsNEtrueBins * kXsNErecoBins
+          + midx      * kXsNEtrueBins * kXsNErecoBins * kNumOfXSecSystWithSpl
+          + sidx      * kXsNEtrueBins * kXsNErecoBins * kNumOfXSecSystWithSpl * kNSuperkModes;
 
   return idx;
 }

@@ -427,6 +427,16 @@ int t2kana::util::FindModeSlot(
   return -1;
 }
 //____________________________________________________________________________
+int t2kana::util::FindSlotInListOfXSecSystWithSpl(
+  t2kana::conv::PhysParamId_t p)
+{
+  for(int ip = 0; ip < kNumOfXSecSystWithSpl; ip++) {
+     PhysParamId_t pcurr = kListOfXSecSystWithSpl[ip];
+     if(pcurr == p) return ip;
+  }
+  return -1;
+}
+//____________________________________________________________________________
 void t2kana::util::SetDefaultSKSpectrumStyle (
    t2kana::conv::SuperkSample_t s, t2kana::conv::SuperkMode_t m, TH1D * hist)
 {
@@ -731,17 +741,13 @@ string t2kana::util::AsString(PhysParamId_t p)
     case ( kNuisBANFF24               ) : return "f_banff24_norm_ccqe_0_1.5";      break;
     case ( kNuisBANFF25               ) : return "f_banff25_norm_ccres_0_2.5";     break;
 
-    case ( kNuisXSecMAQE              ) : return "f_ma_qe";                        break; 
     case ( kNuisXSecFermiMom          ) : return "f_pfermi";                       break;
     case ( kNuisXSecBindE             ) : return "f_bind";                         break; 
     case ( kNuisXSecSpecFunc          ) : return "f_specfunc";                     break; 
-    case ( kNuisXSecNormCCQE0         ) : return "f_norm_ccqe_0_1.5";              break; 
     case ( kNuisXSecNormCCQE1         ) : return "f_norm_ccqe_1.5_3.5";            break; 
     case ( kNuisXSecNormCCQE2         ) : return "f_norm_ccqe_gt3.5";              break; 
-    case ( kNuisXSecMARES             ) : return "f_ma_res";                       break; 
     case ( kNuisXSecDeltaMass         ) : return "f_delta_mass";                   break; 
     case ( kNuisXSecDeltaWidth        ) : return "f_delta_width";                  break; 
-    case ( kNuisXSecNormCC1pi0        ) : return "f_norm_cc1pi_0_2.5";             break; 
     case ( kNuisXSecNormCC1pi1        ) : return "f_norm_cc1pi_gt2.5";             break; 
     case ( kNuisXSecNormCCcoh         ) : return "f_norm_cccoh";                   break;
     case ( kNuisXSecNormCCoth         ) : return "f_norm_ccoth";                   break;
@@ -1395,17 +1401,13 @@ bool t2kana::util::IsSystematic(PhysParamId_t p)
     case ( kNuisBANFF23               ) : return true;  break;
     case ( kNuisBANFF24               ) : return true;  break;
     case ( kNuisBANFF25               ) : return true;  break;
-    case ( kNuisXSecMAQE              ) : return true;  break; 
     case ( kNuisXSecFermiMom          ) : return true;  break;
     case ( kNuisXSecBindE             ) : return true;  break; 
     case ( kNuisXSecSpecFunc          ) : return true;  break; 
-    case ( kNuisXSecNormCCQE0         ) : return true;  break; 
     case ( kNuisXSecNormCCQE1         ) : return true;  break; 
     case ( kNuisXSecNormCCQE2         ) : return true;  break; 
-    case ( kNuisXSecMARES             ) : return true;  break; 
     case ( kNuisXSecDeltaMass         ) : return true;  break; 
     case ( kNuisXSecDeltaWidth        ) : return true;  break; 
-    case ( kNuisXSecNormCC1pi0        ) : return true;  break; 
     case ( kNuisXSecNormCC1pi1        ) : return true;  break; 
     case ( kNuisXSecNormCCcoh         ) : return true;  break;
     case ( kNuisXSecNormCCoth         ) : return true;  break;

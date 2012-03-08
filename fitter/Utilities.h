@@ -73,8 +73,9 @@ namespace util {
   // Utility functions for T2KAna enumerations
   //
 
-  int FindSampleSlot(conv::SuperkSample_t s);
-  int FindModeSlot  (conv::SuperkSample_t s, conv::SuperkMode_t m);
+  int FindSampleSlot                  (conv::SuperkSample_t s);
+  int FindModeSlot                    (conv::SuperkSample_t s, conv::SuperkMode_t m);
+  int FindSlotInListOfXSecSystWithSpl (conv::PhysParamId_t p);
 
   void SetDefaultSKSpectrumStyle (conv::SuperkSample_t s, conv::SuperkMode_t m, TH1D * histogram);
 

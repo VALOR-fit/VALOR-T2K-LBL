@@ -95,6 +95,7 @@ static const double kMaxFitSinsqTheta12      = 1.00;
 // Other constants
 //
 static const double kASmallNum      = 1E-10;                         // 
+static const double kOneMeV         = 0.001;                         // 
 static const double kBaseline       = 295.335;                       // Tokai->Kamioka (km)
 static const double kOscDimensFactor= 1.26693281;                    // Dimensional factor (GeV/eV^2/km) appearing in netrino oscillation formula
 static const double kCrustDensity   = 2.7;                           // Average density of Earth's continental crust (gr / cm^3)
@@ -346,21 +347,16 @@ typedef enum EPhysParamId
    kNuisBANFF25,               // # 25, CCRES normalization, 0 - 2.5 GeV
 
    /*
-    * Cross-section parameters.
-    * Note that some of these parameters were included in the BANFF fit and are correlated with the flux params.
-    * The other paramers are taken to be uncorrelated and are applied to SK only.
+    * Cross-section parameters (excluding cross-section params which were included in BANFF fit and are correlated with the flux params)
+    * These other paramers are taken to be uncorrelated and are applied to SK only.
    */   
-   kNuisXSecMAQE,              // M_{A} QE                  *** this is BANFF parameter 22 - do not include again ***
    kNuisXSecFermiMom,          // Fermi momentum
    kNuisXSecBindE,             // binding energy
    kNuisXSecSpecFunc,          // spectral function on/off
-   kNuisXSecNormCCQE0,         // CCQE norm 0.0 - 1.5 GeV   *** this is BANFF parameter 24 - do not include again ***
    kNuisXSecNormCCQE1,         // CCQE norm 1.5 - 3.5 GeV
    kNuisXSecNormCCQE2,         // CCQE norm > 3.5 GeV
-   kNuisXSecMARES,             // M_{A} RES                 *** this is BANFF parameter 23 - do not include again ***
    kNuisXSecDeltaMass,         // Delta mean mass 
    kNuisXSecDeltaWidth,        // Delta width
-   kNuisXSecNormCC1pi0,        // CC1pi norm 0-2.5 GeV      *** this is BANFF parameter 25 - do not include again ***
    kNuisXSecNormCC1pi1,        // CC1pi norm > 2.5 GeV   
    kNuisXSecNormCCcoh,         // CC coherent norm
    kNuisXSecNormCCoth,         // CC other norm
@@ -552,8 +548,8 @@ static const double kEtrueRangeOfFluxParamInBANFFfit[kNumOfParamsInBANFFfit][2] 
 
 // Etrue max for QE and RES normalization params in BANFF fit
 
-static const double kEtrueMaxBANFF24  = 1.5;
-static const double kEtrueMaxBANFF25  = 2.5;
+static const double kEtrueMaxBANFF24  = 1.5; // GeV
+static const double kEtrueMaxBANFF25  = 2.5; // GeV
 
 //
 // ------------------------------------------------------------------------
@@ -574,16 +570,104 @@ static const int kNumOfFSIParams = 10;
 static const int kNumOfXSecSystWithSpl = 2;
 
 // The following is the list of the above kNumOfXSecSystWithSpl parameters
-static const PhysParamId_t kXSecSystWithSpl[kNumOfXSecSystWithSpl] = 
+static const PhysParamId_t kListOfXSecSystWithSpl[kNumOfXSecSystWithSpl] = 
 {
-   kNuisBANFF24,               // # 24, CCQE  normalization, 0 - 1.5 GeV
-   kNuisBANFF25                // # 25, CCRES normalization, 0 - 2.5 GeV
+   kNuisBANFF22,               // # 22, M_{A} QE
+   kNuisBANFF23                // # 23, M_{A} RES
 };
 
 // The following list describles in which MC templates we are supposed to apply the
 // weights as a result of tweaking any of the above systematic parameters
-// ...
-// ...
+static const bool kXsApplyXSecSyst[kns][knm][kNumOfXSecSystWithSpl] = {
+
+  // > 1 muon-like ring 
+  {
+    // banff22  banff23
+    {  true,    false }, // kSKmNuMuCCQE         
+    {  false,   true  }, // kSKmNuMuCC1pi 
+    {  false,   false }, // kSKmNuMuCCoth_mu                      
+    {  false,   false }, // kSKmNuMuNC          
+    {  true,    false }, // kSKmNuMuBarCCQE      
+    {  false,   true  }, // kSKmNuMuBarCC1pi 
+    {  false,   false }, // kSKmNuMuBarCCoth_mu                  
+    {  false,   false }, // kSKmNuMuBarNC       
+    {  true,    false }, // kSKmNuECCQE 
+    {  false,   true  }, // kSKmNuECC1pi 
+    {  false,   false }, // kSKmNuECCoth_mu   
+    {  false,   false }, // kSKmNuENC
+    {  true,    false }, // kSKmNuEBarCCQE
+    {  false,   true  }, // kSKmNuEBarCC1pi
+    {  false,   false }, // kSKmNuEBarCCoth_mu
+    {  false,   false }, // kSKmNuEBarNC
+    {  true,    false }, // kSKmSigNuECCQE 
+    {  false,   true  }, // kSKmSigNuECC1pi 
+    {  false,   false }, // kSKmSigNuECCoth
+    {  false,   false }, // kSKmUndefined
+    {  false,   false }, // kSKmUndefined
+    {  false,   false }, // kSKmUndefined
+    {  false,   false }, // kSKmUndefined
+    {  false,   false }, // kSKmUndefined
+    {  false,   false }, // kSKmUndefined
+    {  false,   false }, // kSKmUndefined
+    {  false,   false }, // kSKmUndefined
+    {  false,   false }, // kSKmUndefined
+    {  false,   false }, // kSKmUndefined
+    {  false,   false }, // kSKmUndefined
+    {  false,   false }, // kSKmUndefined
+    {  false,   false }, // kSKmUndefined
+    {  false,   false }, // kSKmUndefined
+    {  false,   false }, // kSKmUndefined
+    {  false,   false }, // kSKmUndefined
+    {  false,   false }, // kSKmUndefined
+    {  false,   false }, // kSKmUndefined
+    {  false,   false }, // kSKmUndefined
+    {  false,   false }  // kSKmUndefined
+  },
+
+  // > 1 electron-like ring 
+  {
+    // banff22  banff23
+    {  false,   false  }, // kSKmNuMuCCQE 
+    {  false,   false  }, // kSKmNuMuCC1pi 
+    {  false,   false  }, // kSKmNuMuCCcoh 
+    {  false,   false  }, // kSKmNuMuCCoth_e 
+    {  false,   false  }, // kSKmNuMuNC1pi0 
+    {  false,   false  }, // kSKmNuMuNCcoh 
+    {  false,   false  }, // kSKmNuMuNCoth_e   
+    {  false,   false  }, // kSKmNuMuBarCCQE 
+    {  false,   false  }, // kSKmNuMuBarCC1pi 
+    {  false,   false  }, // kSKmNuMuBarCCcoh 
+    {  false,   false  }, // kSKmNuMuBarCCoth_e  
+    {  false,   false  }, // kSKmNuMuBarNC1pi0 
+    {  false,   false  }, // kSKmNuMuBarNCcoh 
+    {  false,   false  }, // kSKmNuMuBarNCoth_e
+    {  false,   false  }, // kSKmNuECCQE 
+    {  false,   false  }, // kSKmNuECC1pi 
+    {  false,   false  }, // kSKmNuECCcoh 
+    {  false,   false  }, // kSKmNuECCoth_e
+    {  false,   false  }, // kSKmNuENC1pi0  
+    {  false,   false  }, // kSKmNuENCcoh 
+    {  false,   false  }, // kSKmNuENCoth_e
+    {  false,   false  }, // kSKmNuEBarCCQE
+    {  false,   false  }, // kSKmNuEBarCC1pi
+    {  false,   false  }, // kSKmNuEBarCCcoh
+    {  false,   false  }, // kSKmNuEBarCCoth_e
+    {  false,   false  }, // kSKmNuEBarNC1pi0
+    {  false,   false  }, // kSKmNuEBarNCcoh
+    {  false,   false  }, // kSKmNuEBarNCoth_e
+    {  false,   false  }, // kSKmSigNuECCQE  
+    {  false,   false  }, // kSKmSigNuECC1pi  
+    {  false,   false  }, // kSKmSigNuECCoth
+    {  false,   false  }, // kSKmUndefined
+    {  false,   false  }, // kSKmUndefined
+    {  false,   false  }, // kSKmUndefined
+    {  false,   false  }, // kSKmUndefined
+    {  false,   false  }, // kSKmUndefined
+    {  false,   false  }, // kSKmUndefined
+    {  false,   false  }, // kSKmUndefined
+    {  false,   false  }  // kSKmUndefined
+  }
+};
 
 //
 // The weight splines are pre-computed for the following Ereco bins.
