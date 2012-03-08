@@ -129,7 +129,7 @@ void NuXSec::TellMeAboutTheBANFFfit(BANFF * banff)
 }
 //________________________________________________________________________________________
 double NuXSec::SuperkXSecFinTuningWght(
-   t2kana::conv::SuperkSample_t s, t2kana::conv::SuperkMode_t m, double Etrue, double Ereco) const
+   SuperkSample_t s, SuperkMode_t m, double Ereco, double Etrue) const
 {
 //
 // This method provides weights to reweight MC to the BANFF best-fit parameters.
@@ -155,8 +155,8 @@ double NuXSec::SuperkXSecFinTuningWght(
   // init flags
   bool apply_banff22 = (m == kSKmNuMuCCQE ); ////// CHECK - presumably numubars also !!!
   bool apply_banff23 = (m == kSKmNuMuCC1pi); ////// CHECK - presumably numubars also !!!
-  bool apply_banff24 = (m == kSKmNuMuCCQE ) && (Etrue >= 0. && Etrue < 1.5); ////// CHECK
-  bool apply_banff25 = (m == kSKmNuMuCC1pi) && (Etrue >= 0. && Etrue < 2.5); ////// CHECK
+  bool apply_banff24 = (m == kSKmNuMuCCQE ) && (Etrue >= 0. && Etrue < kEtrueMaxBANFF24); ////// CHECK
+  bool apply_banff25 = (m == kSKmNuMuCC1pi) && (Etrue >= 0. && Etrue < kEtrueMaxBANFF25); ////// CHECK
 
 /*
   // BANFF param # 22, M_{A} QE
@@ -214,8 +214,7 @@ double NuXSec::SuperkXSecFinTuningWght(
 }
 //________________________________________________________________________________________
 double NuXSec::SuperkXSecSystWght(
-   t2kana::conv::SuperkSample_t s, t2kana::conv::SuperkMode_t m, 
-   double Etrue, double Ereco) const
+   SuperkSample_t s, SuperkMode_t m, double Ereco, double Etrue) const
 {
 //
 // This method provides weights to account for systematic variations to the BANFF params.

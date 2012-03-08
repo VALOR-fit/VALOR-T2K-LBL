@@ -302,8 +302,9 @@ void NuFlux::ApplyBANFFWeights(bool get_current) const
         int nu_pdg = util::BANFFfitSuperkFluxParam2NuPdg(p);
 
         // BANFF param -> true energy range [variable size bin]
-        double Emin = conv::kEtrueRangeOfParamInBANFFfit[ip][0];
-        double Emax = conv::kEtrueRangeOfParamInBANFFfit[ip][1];
+        double Emin = conv::kEtrueRangeOfFluxParamInBANFFfit[ip][0];
+        double Emax = conv::kEtrueRangeOfFluxParamInBANFFfit[ip][1];
+        assert(Emin >= 0. && Emax > 0);
 
         // Access flux histograms
 

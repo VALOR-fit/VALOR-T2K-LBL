@@ -566,7 +566,7 @@ void SuperkMC::ApplyBANFFTuningToTemplates(void)
            double nev = mctempl_src->GetBinContent(ir,it);
            // get tuning weights
            double flux_wght = fNuFlux->SuperkFluxFinTuningWght(s,m,Etrue);
-           double xsec_wght = fNuXSec->SuperkXSecFinTuningWght(s,m,Etrue,Ereco);            
+           double xsec_wght = fNuXSec->SuperkXSecFinTuningWght(s,m,Ereco,Etrue);            
            // update tuned MC template
            double nev_tuned = nev * flux_wght * xsec_wght;
            mctempl_tgt->SetBinContent(ir,it,nev_tuned);
@@ -600,7 +600,7 @@ void SuperkMC::ApplySystematicsToTemplates(void)
 void SuperkMC::ApplySystematicsToTemplates_Multiplicative(void) 
 {
 // All multiplicative systematics are handled in the following loop.
-// The overall weight is computed by SystVariationWeight(sample,mode,Etrue,Ereco)
+// The overall weight is computed by SystVariationWeight(sample,mode,Ereco,Etrue)
 //
 
 #ifdef __show_update_mesg_info__
@@ -632,7 +632,7 @@ void SuperkMC::ApplySystematicsToTemplates_Multiplicative(void)
            // get number of events in current bin of source MC template
            double nev = mctempl_src->GetBinContent(ir,it);
            // get combined weight due to all multiplicative systematic variations
-           double wght = this->SystVariationWeight (s,m,Etrue,Ereco);
+           double wght = this->SystVariationWeight (s,m,Ereco,Etrue);
            // update target MC template
            mctempl_tgt->SetBinContent(ir,it,nev*wght);
          }//it
@@ -973,7 +973,7 @@ void SuperkMC::ApplyPhysHypothesisToTemplates(void)
 }
 //________________________________________________________________________________________
 double SuperkMC::SystVariationWeight(
-    SuperkSample_t s, SuperkMode_t m, double Etrue, double Ereco) const
+    SuperkSample_t s, SuperkMode_t m, double Ereco, double Etrue) const
 {
 // The return value is the combined wght for the (Ereco,Etrue) bin of the (s,m) template
 // due to all multiplicative systematic param variation
@@ -986,7 +986,7 @@ double SuperkMC::SystVariationWeight(
   double banff_flux_wght = fNuFlux->SuperkFluxSystWght(s,m,Etrue);
 
   // Plug-in BANFF & other xsec systematics 
-  double banff_xsec_wght = fNuXSec->SuperkXSecSystWght(s,m,Etrue,Ereco);
+  double banff_xsec_wght = fNuXSec->SuperkXSecSystWght(s,m,Ereco,Etrue);
 
   //
   // ... other xsec, FSI etc

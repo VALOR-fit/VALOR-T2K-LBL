@@ -384,92 +384,17 @@ typedef enum EPhysParamId
 } 
 PhysParamId_t;
 
-//
-// ------------------------------------------------------------------------
-// Info on BANFF parameters
-// ------------------------------------------------------------------------
-//
-
-//
-// Number of BANFF fit parameters
-//
-static const int kNumOfParamsInBANFFfit = 26;  
-
-//
-// Nominal physics params in BANFF fit
-//
-static const double kNomMAQE  = 1.21;
-static const double kNomMARES = 1.21;
-
-//
-// Etrue energy range for flux-related BANFF parameters
-//
-static const double kEtrueRangeOfParamInBANFFfit[kNumOfParamsInBANFFfit][2] =
-{
-   { 0.0,  0.4 },              // # 00, SK    numu    flux,  E =  0.0 -  0.4 GeV
-   { 0.4,  0.5 },              // # 01, SK    numu    flux,  E =  0.4 -  0.5 GeV
-   { 0.5,  0.6 },              // # 02, SK    numu    flux,  E =  0.5 -  0.6 GeV
-   { 0.6,  0.7 },              // # 03, SK    numu    flux,  E =  0.6 -  0.7 GeV
-   { 0.7,  1.0 },              // # 04, SK    numu    flux,  E =  0.7 -  1.0 GeV
-   { 1.0,  1.5 },              // # 05, SK    numu    flux,  E =  1.0 -  1.5 GeV
-   { 1.5,  2.5 },              // # 06, SK    numu    flux,  E =  1.5 -  2.5 GeV
-   { 2.5,  3.5 },              // # 07, SK    numu    flux,  E =  2.5 -  3.5 GeV
-   { 3.5,  5.0 },              // # 08, SK    numu    flux,  E =  3.5 -  5.0 GeV
-   { 5.0,  7.0 },              // # 09, SK    numu    flux,  E =  5.0 -  7.0 GeV
-   { 7.0, 30.0 },              // # 10, SK    numu    flux,  E =  7.0 - 30.0 GeV
-   { 0.0,  1.5 },              // # 11, SK    numubar flux,  E =  0.0 -  1.5 GeV
-   { 1.5, 30.0 },              // # 12, SK    numubar flux,  E =  1.5 - 30.0 GeV
-   { 0.0,  0.5 },              // # 13, SK    nue     flux,  E =  0.0 -  0.5 GeV
-   { 0.5,  0.7 },              // # 14, SK    nue     flux,  E =  0.5 -  0.7 GeV
-   { 0.7,  0.8 },              // # 15, SK    nue     flux,  E =  0.7 -  0.8 GeV
-   { 0.8,  1.5 },              // # 16, SK    nue     flux,  E =  0.8 -  1.5 GeV
-   { 1.5,  2.5 },              // # 17, SK    nue     flux,  E =  1.5 -  2.5 GeV
-   { 2.5,  4.0 },              // # 18, SK    nue     flux,  E =  2.5 -  4.0 GeV
-   { 4.0, 30.0 },              // # 19, SK    nue     flux,  E =  4.0 - 30.0 GeV
-   { 0.0,  2.5 },              // # 20, SK    nuebar  flux,  E =  0.0 -  2.5 GeV
-   { 2.5, 30.0 },              // # 21, SK    nuebar  flux,  E =  2.5 - 30.0 GeV
-   {  -1,   -1 },              // # 22, M_{A} QE
-   {  -1,   -1 },              // # 23, M_{A} RES
-   { 0.0,  1.5 },              // # 24, CCQE  normalization, 0 - 1.5 GeV
-   { 0.0,  2.5 }               // # 25, CCRES normalization, 0 - 2.5 GeV
-};
 
 //
 // ------------------------------------------------------------------------
-// ...
-// ------------------------------------------------------------------------
+// ** NOTE: IMPORTANT VHOICES MADE HERE **
 //
-
-static const int kNumOfFSIParams = 10;
-
+// Choice of samples included in the analysis 
+// Choice of modes (per sample) we are going to keep track of.
 //
-// ------------------------------------------------------------------------
-// Energy range for cross-section weight splines.
-// ------------------------------------------------------------------------
-//
-
-/*
-static const int kXsNErecoBins = 28;
-static const double kXsErecoBinEdges[kXsNErecoBins+1] = 
-{
-   0.000,  0.050,  0.100,  0.150,  0.200,  0.250,  0.300,  0.350,  0.400,  0.450, 
-   0.500,  0.550,  0.600,  0.650,  0.700,  0.750,  0.800,  0.850,  0.900,  0.950, 
-   1.000,  1.050,  1.100,  1.150,  1.200,  1.250,  
-   3.000, 10.000, 30.000
-};
-static const int kXsNEtrueBinsNuMu = 11;
-static const double kXsEtrueBinEdgesNuMu[kXsNEtrueBinsNuMu+1] = 
-{
-   0.000, 0.400, 0.500, 0.600, 0.700, 1.000, 1.500, 
-   2.500, 3.500, 5.000, 7.000, 30.000
-};
-*/
-
-
-//
-// ------------------------------------------------------------------------
-// Choice of samples included in the analysis and
-// choice of modes (per sample) we are going to keep track of.
+// Note that some of the arrays defined further below (such as formatting 
+// choices or binning choices for systematic parameter weight splines) 
+// depend on kSKReactionModes. Make sure changes are made consistently.
 // ------------------------------------------------------------------------
 //
 
@@ -577,6 +502,204 @@ static const SuperkMode_t kSKReactionModes[kns][knm] = {
 
 //
 // ------------------------------------------------------------------------
+// Info on BANFF systematic parameters 
+// ------------------------------------------------------------------------
+//
+
+//
+// Number of BANFF fit parameters
+//
+static const int kNumOfParamsInBANFFfit = 26;  
+
+//
+// Nominal physics params in BANFF fit
+//
+static const double kNomMAQE  = 1.21;
+static const double kNomMARES = 1.21;
+
+//
+// Etrue energy range for flux-related BANFF parameters
+//
+static const double kEtrueRangeOfFluxParamInBANFFfit[kNumOfParamsInBANFFfit][2] =
+{
+   { 0.0,  0.4 },              // # 00, SK    numu    flux,  E =  0.0 -  0.4 GeV
+   { 0.4,  0.5 },              // # 01, SK    numu    flux,  E =  0.4 -  0.5 GeV
+   { 0.5,  0.6 },              // # 02, SK    numu    flux,  E =  0.5 -  0.6 GeV
+   { 0.6,  0.7 },              // # 03, SK    numu    flux,  E =  0.6 -  0.7 GeV
+   { 0.7,  1.0 },              // # 04, SK    numu    flux,  E =  0.7 -  1.0 GeV
+   { 1.0,  1.5 },              // # 05, SK    numu    flux,  E =  1.0 -  1.5 GeV
+   { 1.5,  2.5 },              // # 06, SK    numu    flux,  E =  1.5 -  2.5 GeV
+   { 2.5,  3.5 },              // # 07, SK    numu    flux,  E =  2.5 -  3.5 GeV
+   { 3.5,  5.0 },              // # 08, SK    numu    flux,  E =  3.5 -  5.0 GeV
+   { 5.0,  7.0 },              // # 09, SK    numu    flux,  E =  5.0 -  7.0 GeV
+   { 7.0, 30.0 },              // # 10, SK    numu    flux,  E =  7.0 - 30.0 GeV
+   { 0.0,  1.5 },              // # 11, SK    numubar flux,  E =  0.0 -  1.5 GeV
+   { 1.5, 30.0 },              // # 12, SK    numubar flux,  E =  1.5 - 30.0 GeV
+   { 0.0,  0.5 },              // # 13, SK    nue     flux,  E =  0.0 -  0.5 GeV
+   { 0.5,  0.7 },              // # 14, SK    nue     flux,  E =  0.5 -  0.7 GeV
+   { 0.7,  0.8 },              // # 15, SK    nue     flux,  E =  0.7 -  0.8 GeV
+   { 0.8,  1.5 },              // # 16, SK    nue     flux,  E =  0.8 -  1.5 GeV
+   { 1.5,  2.5 },              // # 17, SK    nue     flux,  E =  1.5 -  2.5 GeV
+   { 2.5,  4.0 },              // # 18, SK    nue     flux,  E =  2.5 -  4.0 GeV
+   { 4.0, 30.0 },              // # 19, SK    nue     flux,  E =  4.0 - 30.0 GeV
+   { 0.0,  2.5 },              // # 20, SK    nuebar  flux,  E =  0.0 -  2.5 GeV
+   { 2.5, 30.0 },              // # 21, SK    nuebar  flux,  E =  2.5 - 30.0 GeV
+   {  -1,   -1 },              // # 22, not a flux param
+   {  -1,   -1 },              // # 23, not a flux param
+   {  -1,   -1 },              // # 24, not a flux param
+   {  -1,   -1 }               // # 25, not a flux param
+};
+
+// Etrue max for QE and RES normalization params in BANFF fit
+
+static const double kEtrueMaxBANFF24  = 1.5;
+static const double kEtrueMaxBANFF25  = 2.5;
+
+//
+// ------------------------------------------------------------------------
+// Info on FSI systematic parameters 
+// ------------------------------------------------------------------------
+//
+
+static const int kNumOfFSIParams = 10;
+
+//
+// ------------------------------------------------------------------------
+// Info on xsec systematic parameters with pre-computed weight splines
+// ------------------------------------------------------------------------
+//
+
+// Number of cross-section related systematics for which the effect in
+// the MC template bin content (weight) is pre-computed and stored in cubic splines
+static const int kNumOfXSecSystWithSpl = 2;
+
+// The following is the list of the above kNumOfXSecSystWithSpl parameters
+static const PhysParamId_t kXSecSystWithSpl[kNumOfXSecSystWithSpl] = 
+{
+   kNuisBANFF24,               // # 24, CCQE  normalization, 0 - 1.5 GeV
+   kNuisBANFF25                // # 25, CCRES normalization, 0 - 2.5 GeV
+};
+
+// The following list describles in which MC templates we are supposed to apply the
+// weights as a result of tweaking any of the above systematic parameters
+// ...
+// ...
+
+//
+// The weight splines are pre-computed for the following Ereco bins.
+// For the time being, the same Ereco binning is used for all samples and all modes.
+//
+
+static const int kXsNErecoBins = 28;
+
+static const double kXsErecoBinEdges[kXsNErecoBins+1] = 
+{
+   0.000,  0.050,  0.100,  0.150,  0.200,  0.250,  0.300,  0.350,  0.400,  0.450, 
+   0.500,  0.550,  0.600,  0.650,  0.700,  0.750,  0.800,  0.850,  0.900,  0.950, 
+   1.000,  1.050,  1.100,  1.150,  1.200,  1.250,  
+   3.000, 10.000, 30.000
+};
+
+//
+// The weight splines are pre-computed in the following Etrue bins (for each Ereco bin)
+// The Etrue bins can, in principle, be different for each sample/mode combination.
+// For the time-being, the Etrue bins are the BANFF ones (depend on the neutrino code).
+// Note that the order of modes below should match the one defined in kSKReactionModes array.
+//
+
+static const int kXsNEtrueBins = 11;
+
+static const double kXsEtrueBinEdges[kns][knm][kXsNEtrueBins+1] = {
+
+  // > 1 muon-like ring 
+  {
+    {  0.000,  0.400,  0.500,  0.600,  0.700,  1.000,  1.500,  2.500,  3.500,  5.000,  7.000, 30.000 }, // kSKmNuMuCCQE         
+    {  0.000,  0.400,  0.500,  0.600,  0.700,  1.000,  1.500,  2.500,  3.500,  5.000,  7.000, 30.000 }, // kSKmNuMuCC1pi 
+    {  0.000,  0.400,  0.500,  0.600,  0.700,  1.000,  1.500,  2.500,  3.500,  5.000,  7.000, 30.000 }, // kSKmNuMuCCoth_mu                      
+    {  0.000,  0.400,  0.500,  0.600,  0.700,  1.000,  1.500,  2.500,  3.500,  5.000,  7.000, 30.000 }, // kSKmNuMuNC          
+    {  0.000,  1.500, 30.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000 }, // kSKmNuMuBarCCQE      
+    {  0.000,  1.500, 30.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000 }, // kSKmNuMuBarCC1pi 
+    {  0.000,  1.500, 30.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000 }, // kSKmNuMuBarCCoth_mu                  
+    {  0.000,  1.500, 30.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000 }, // kSKmNuMuBarNC       
+    {  0.000,  0.500,  0.700,  0.800,  1.500,  2.500,  4.000, 30.000, -1.000, -1.000, -1.000, -1.000 }, // kSKmNuECCQE 
+    {  0.000,  0.500,  0.700,  0.800,  1.500,  2.500,  4.000, 30.000, -1.000, -1.000, -1.000, -1.000 }, // kSKmNuECC1pi 
+    {  0.000,  0.500,  0.700,  0.800,  1.500,  2.500,  4.000, 30.000, -1.000, -1.000, -1.000, -1.000 }, // kSKmNuECCoth_mu                                
+    {  0.000,  0.500,  0.700,  0.800,  1.500,  2.500,  4.000, 30.000, -1.000, -1.000, -1.000, -1.000 }, // kSKmNuENC
+    {  0.000,  2.500, 30.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000 }, // kSKmNuEBarCCQE
+    {  0.000,  2.500, 30.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000 }, // kSKmNuEBarCC1pi
+    {  0.000,  2.500, 30.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000 }, // kSKmNuEBarCCoth_mu
+    {  0.000,  2.500, 30.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000 }, // kSKmNuEBarNC
+    {  0.000,  2.500, 30.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000 }, // kSKmSigNuECCQE 
+    {  0.000,  2.500, 30.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000 }, // kSKmSigNuECC1pi 
+    {  0.000,  2.500, 30.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000 }, // kSKmSigNuECCoth
+    { -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000 }, // kSKmUndefined
+    { -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000 }, // kSKmUndefined
+    { -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000 }, // kSKmUndefined
+    { -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000 }, // kSKmUndefined
+    { -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000 }, // kSKmUndefined
+    { -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000 }, // kSKmUndefined
+    { -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000 }, // kSKmUndefined
+    { -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000 }, // kSKmUndefined
+    { -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000 }, // kSKmUndefined
+    { -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000 }, // kSKmUndefined
+    { -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000 }, // kSKmUndefined
+    { -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000 }, // kSKmUndefined
+    { -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000 }, // kSKmUndefined
+    { -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000 }, // kSKmUndefined
+    { -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000 }, // kSKmUndefined
+    { -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000 }, // kSKmUndefined
+    { -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000 }, // kSKmUndefined
+    { -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000 }, // kSKmUndefined
+    { -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000 }, // kSKmUndefined
+    { -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000 }  // kSKmUndefined
+  },
+
+  // > 1 electron-like ring 
+  {
+    {  0.000,  0.400,  0.500,  0.600,  0.700,  1.000,  1.500,  2.500,  3.500,  5.000,  7.000, 30.000 }, // kSKmNuMuCCQE 
+    {  0.000,  0.400,  0.500,  0.600,  0.700,  1.000,  1.500,  2.500,  3.500,  5.000,  7.000, 30.000 }, // kSKmNuMuCC1pi 
+    {  0.000,  0.400,  0.500,  0.600,  0.700,  1.000,  1.500,  2.500,  3.500,  5.000,  7.000, 30.000 }, // kSKmNuMuCCcoh 
+    {  0.000,  0.400,  0.500,  0.600,  0.700,  1.000,  1.500,  2.500,  3.500,  5.000,  7.000, 30.000 }, // kSKmNuMuCCoth_e 
+    {  0.000,  0.400,  0.500,  0.600,  0.700,  1.000,  1.500,  2.500,  3.500,  5.000,  7.000, 30.000 }, // kSKmNuMuNC1pi0 
+    {  0.000,  0.400,  0.500,  0.600,  0.700,  1.000,  1.500,  2.500,  3.500,  5.000,  7.000, 30.000 }, // kSKmNuMuNCcoh 
+    {  0.000,  0.400,  0.500,  0.600,  0.700,  1.000,  1.500,  2.500,  3.500,  5.000,  7.000, 30.000 }, // kSKmNuMuNCoth_e                            
+    {  0.000,  1.500, 30.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000 }, // kSKmNuMuBarCCQE 
+    {  0.000,  1.500, 30.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000 }, // kSKmNuMuBarCC1pi 
+    {  0.000,  1.500, 30.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000 }, // kSKmNuMuBarCCcoh 
+    {  0.000,  1.500, 30.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000 }, // kSKmNuMuBarCCoth_e  
+    {  0.000,  1.500, 30.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000 }, // kSKmNuMuBarNC1pi0 
+    {  0.000,  1.500, 30.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000 }, // kSKmNuMuBarNCcoh 
+    {  0.000,  1.500, 30.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000 }, // kSKmNuMuBarNCoth_e
+    {  0.000,  0.500,  0.700,  0.800,  1.500,  2.500,  4.000, 30.000, -1.000, -1.000, -1.000, -1.000 }, // kSKmNuECCQE 
+    {  0.000,  0.500,  0.700,  0.800,  1.500,  2.500,  4.000, 30.000, -1.000, -1.000, -1.000, -1.000 }, // kSKmNuECC1pi 
+    {  0.000,  0.500,  0.700,  0.800,  1.500,  2.500,  4.000, 30.000, -1.000, -1.000, -1.000, -1.000 }, // kSKmNuECCcoh 
+    {  0.000,  0.500,  0.700,  0.800,  1.500,  2.500,  4.000, 30.000, -1.000, -1.000, -1.000, -1.000 }, // kSKmNuECCoth_e
+    {  0.000,  0.500,  0.700,  0.800,  1.500,  2.500,  4.000, 30.000, -1.000, -1.000, -1.000, -1.000 }, // kSKmNuENC1pi0  
+    {  0.000,  0.500,  0.700,  0.800,  1.500,  2.500,  4.000, 30.000, -1.000, -1.000, -1.000, -1.000 }, // kSKmNuENCcoh 
+    {  0.000,  0.500,  0.700,  0.800,  1.500,  2.500,  4.000, 30.000, -1.000, -1.000, -1.000, -1.000 }, // kSKmNuENCoth_e
+    {  0.000,  2.500, 30.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000 }, // kSKmNuEBarCCQE
+    {  0.000,  2.500, 30.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000 }, // kSKmNuEBarCC1pi
+    {  0.000,  2.500, 30.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000 }, // kSKmNuEBarCCcoh
+    {  0.000,  2.500, 30.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000 }, // kSKmNuEBarCCoth_e
+    {  0.000,  2.500, 30.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000 }, // kSKmNuEBarNC1pi0
+    {  0.000,  2.500, 30.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000 }, // kSKmNuEBarNCcoh
+    {  0.000,  2.500, 30.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000 }, // kSKmNuEBarNCoth_e
+    {  0.000,  0.500,  0.700,  0.800,  1.500,  2.500,  4.000, 30.000, -1.000, -1.000, -1.000, -1.000 }, // kSKmSigNuECCQE  
+    {  0.000,  0.500,  0.700,  0.800,  1.500,  2.500,  4.000, 30.000, -1.000, -1.000, -1.000, -1.000 }, // kSKmSigNuECC1pi  
+    {  0.000,  0.500,  0.700,  0.800,  1.500,  2.500,  4.000, 30.000, -1.000, -1.000, -1.000, -1.000 }, // kSKmSigNuECCoth
+    { -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000 }, // kSKmUndefined
+    { -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000 }, // kSKmUndefined
+    { -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000 }, // kSKmUndefined
+    { -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000 }, // kSKmUndefined
+    { -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000 }, // kSKmUndefined
+    { -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000 }, // kSKmUndefined
+    { -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000 }, // kSKmUndefined
+    { -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000 }  // kSKmUndefined
+  }
+};
+
+//
+// ------------------------------------------------------------------------
 // Formatting etc
 // ------------------------------------------------------------------------
 //
@@ -588,90 +711,90 @@ static const SuperkMode_t kSKReactionModes[kns][knm] = {
 //
 static const int kSKHistoAttributes[kns][knm][kNGraphicAttributes] = {
 
-  // > 1 muon-like ring (numu disappearance)
+  // > 1 muon-like ring 
   {
-    {   -1,  kWhite,    1,  1,  kBlack}, //kSKmNuMuCCQE
-    { 3544,  kBlack,    1,  1,  kBlack}, //kSKmNuMuCC1pi
-    { 3244,  kBlack,    1,  1,  kBlack}, //kSKmNuMuCCoth_mu
-    { 3006,  kRed,      1,  1,  kBlack}, //kSKmNuMuNC
-    { 3001,  kAzure-3,  1,  1,  kBlack}, //kSKmNuMuBarCCQE
-    { 3345,  kAzure-3,  1,  1,  kBlack}, //kSKmNuMuBarCC1pi
-    { 3354,  kAzure-3,  1,  1,  kBlack}, //kSKmNuMuBarCCoth_mu
-    { 3006,  kAzure-3,  1,  1,  kBlack}, //kSKmNuMuBarNC
-    { 3001,  kGreen+1,  1,  1,  kBlack}, //kSKmNuECCQE
-    { 3345,  kGreen+1,  1,  1,  kBlack}, //kSKmNuECC1pi
-    { 3354,  kGreen+1,  1,  1,  kBlack}, //kSKmNuECCoth_mu
-    { 3006,  kGreen+1,  1,  1,  kBlack}, //kSKmNuENC
-    { 3001,  kBlue,     1,  1,  kBlack}, //kSKmNuEBarCCQE
-    { 3345,  kBlue,     1,  1,  kBlack}, //kSKmNuEBarCC1pi
-    { 3354,  kBlue,     1,  1,  kBlack}, //kSKmNuEBarCCoth_mu
-    { 3006,  kBlue,     1,  1,  kBlack}, //kSKmNuEBarNC
-    { 3001,  kGreen-3,  1,  1,  kBlack}, //kSKmSigNuECCQE
-    { 3345,  kGreen-3,  1,  1,  kBlack}, //kSKmSigNuECC1pi
-    { 3354,  kGreen-3,  1,  1,  kBlack}, //kSKmSigNuECCoth
-    {   -1,        -1, -1, -1,     -1 }, //kSKmUndefined
-    {   -1,        -1, -1, -1,     -1 }, //kSKmUndefined
-    {   -1,        -1, -1, -1,     -1 }, //kSKmUndefined
-    {   -1,        -1, -1, -1,     -1 }, //kSKmUndefined
-    {   -1,        -1, -1, -1,     -1 }, //kSKmUndefined
-    {   -1,        -1, -1, -1,     -1 }, //kSKmUndefined
-    {   -1,        -1, -1, -1,     -1 }, //kSKmUndefined
-    {   -1,        -1, -1, -1,     -1 }, //kSKmUndefined
-    {   -1,        -1, -1, -1,     -1 }, //kSKmUndefined
-    {   -1,        -1, -1, -1,     -1 }, //kSKmUndefined
-    {   -1,        -1, -1, -1,     -1 }, //kSKmUndefined
-    {   -1,        -1, -1, -1,     -1 }, //kSKmUndefined
-    {   -1,        -1, -1, -1,     -1 }, //kSKmUndefined
-    {   -1,        -1, -1, -1,     -1 }, //kSKmUndefined
-    {   -1,        -1, -1, -1,     -1 }, //kSKmUndefined
-    {   -1,        -1, -1, -1,     -1 }, //kSKmUndefined
-    {   -1,        -1, -1, -1,     -1 }, //kSKmUndefined
-    {   -1,        -1, -1, -1,     -1 }, //kSKmUndefined
-    {   -1,        -1, -1, -1,     -1 }, //kSKmUndefined
-    {   -1,        -1, -1, -1,     -1 }  //kSKmUndefined
+    {   -1,  kWhite,    1,  1,  kBlack}, // kSKmNuMuCCQE
+    { 3544,  kBlack,    1,  1,  kBlack}, // kSKmNuMuCC1pi
+    { 3244,  kBlack,    1,  1,  kBlack}, // kSKmNuMuCCoth_mu
+    { 3006,  kRed,      1,  1,  kBlack}, // kSKmNuMuNC
+    { 3001,  kAzure-3,  1,  1,  kBlack}, // kSKmNuMuBarCCQE
+    { 3345,  kAzure-3,  1,  1,  kBlack}, // kSKmNuMuBarCC1pi
+    { 3354,  kAzure-3,  1,  1,  kBlack}, // kSKmNuMuBarCCoth_mu
+    { 3006,  kAzure-3,  1,  1,  kBlack}, // kSKmNuMuBarNC
+    { 3001,  kGreen+1,  1,  1,  kBlack}, // kSKmNuECCQE
+    { 3345,  kGreen+1,  1,  1,  kBlack}, // kSKmNuECC1pi
+    { 3354,  kGreen+1,  1,  1,  kBlack}, // kSKmNuECCoth_mu
+    { 3006,  kGreen+1,  1,  1,  kBlack}, // kSKmNuENC
+    { 3001,  kBlue,     1,  1,  kBlack}, // kSKmNuEBarCCQE
+    { 3345,  kBlue,     1,  1,  kBlack}, // kSKmNuEBarCC1pi
+    { 3354,  kBlue,     1,  1,  kBlack}, // kSKmNuEBarCCoth_mu
+    { 3006,  kBlue,     1,  1,  kBlack}, // kSKmNuEBarNC
+    { 3001,  kGreen-3,  1,  1,  kBlack}, // kSKmSigNuECCQE
+    { 3345,  kGreen-3,  1,  1,  kBlack}, // kSKmSigNuECC1pi
+    { 3354,  kGreen-3,  1,  1,  kBlack}, // kSKmSigNuECCoth
+    {   -1,        -1, -1, -1,     -1 }, // kSKmUndefined
+    {   -1,        -1, -1, -1,     -1 }, // kSKmUndefined
+    {   -1,        -1, -1, -1,     -1 }, // kSKmUndefined
+    {   -1,        -1, -1, -1,     -1 }, // kSKmUndefined
+    {   -1,        -1, -1, -1,     -1 }, // kSKmUndefined
+    {   -1,        -1, -1, -1,     -1 }, // kSKmUndefined
+    {   -1,        -1, -1, -1,     -1 }, // kSKmUndefined
+    {   -1,        -1, -1, -1,     -1 }, // kSKmUndefined
+    {   -1,        -1, -1, -1,     -1 }, // kSKmUndefined
+    {   -1,        -1, -1, -1,     -1 }, // kSKmUndefined
+    {   -1,        -1, -1, -1,     -1 }, // kSKmUndefined
+    {   -1,        -1, -1, -1,     -1 }, // kSKmUndefined
+    {   -1,        -1, -1, -1,     -1 }, // kSKmUndefined
+    {   -1,        -1, -1, -1,     -1 }, // kSKmUndefined
+    {   -1,        -1, -1, -1,     -1 }, // kSKmUndefined
+    {   -1,        -1, -1, -1,     -1 }, // kSKmUndefined
+    {   -1,        -1, -1, -1,     -1 }, // kSKmUndefined
+    {   -1,        -1, -1, -1,     -1 }, // kSKmUndefined
+    {   -1,        -1, -1, -1,     -1 }, // kSKmUndefined
+    {   -1,        -1, -1, -1,     -1 }  // kSKmUndefined
   },
 
-  // > 1 electron-like ring (nue appearance)
+  // > 1 electron-like ring 
   {
-    {   -1,    kWhite,  1,  1, kBlack }, //kSKmNuMuCCQE
-    { 3544,    kBlack,  1,  1, kBlack }, //kSKmNuMuCC1pi
-    { 3244,    kGreen,  1,  1, kBlack }, //kSKmNuMuCCcoh
-    { 3244,     kBlue,  1,  1, kBlack }, //kSKmNuMuCCoth_e
-    { 3006,      kRed,  1,  1, kBlack }, //kSKmNuMuNC1pi0
-    { 3006,    kRed-1,  1,  1, kBlack }, //kSKmNuMuNCcoh
-    { 3006,    kRed-2,  1,  1, kBlack }, //kSKmNuMuNCoth_e
-    { 3001,  kAzure-3,  1,  1, kBlack }, //kSKmNuMuBarCCQE
-    { 3345,  kAzure-4,  1,  1, kBlack }, //kSKmNuMuBarCC1pi
-    { 3354,  kAzure-6,  1,  1, kBlack }, //kSKmNuMuBarCCcoh
-    { 3354,  kMagenta,  1,  1, kBlack }, //kSKmNuMuBarCCoth_e
-    { 3006,  kAzure-7,  1,  1, kBlack }, //kSKmNuMuBarNC1pi0
-    { 3006,  kAzure-9,  1,  1, kBlack }, //kSKmNuMuBarNCcoh
-    { 3006,  kMagenta,  1,  1, kBlack }, //kSKmNuMuBarNCoth_e
-    { 3001,  kGreen+1,  1,  1, kBlack }, //kSKmNuECCQE
-    { 3345,  kGreen+2,  1,  1, kBlack }, //kSKmNuECC1pi
-    { 3354,  kGreen+2,  1,  1, kBlack }, //kSKmNuECCcoh
-    { 3354,    kBlack,  1,  1, kBlack }, //kSKmNuECCoth_e
-    { 3006,  kGreen+5,  1,  1, kBlack }, //kSKmNuENC1pi0
-    { 3006,  kGreen+7,  1,  1, kBlack }, //kSKmNuENCcoh
-    { 3006,    kBlack,  1,  1, kBlack }, //kSKmNuENCoth_e
-    { 3001,  kBlue+1,   1,  1, kBlack }, //kSKmNuEBarCCQE
-    { 3345,  kBlue+2,   1,  1, kBlack }, //kSKmNuEBarCC1pi
-    { 3354,  kBlue+2,   1,  1, kBlack }, //kSKmNuEBarCCcoh
-    { 3354,    kBlack,  1,  1, kBlack }, //kSKmNuEBarCCoth_e
-    { 3006,  kBlue+5,   1,  1, kBlack }, //kSKmNuEBarNC1pi0
-    { 3006,  kBlue+7,   1,  1, kBlack }, //kSKmNuEBarNCcoh
-    { 3006,    kBlack,  1,  1, kBlack }, //kSKmNuEBarNCoth_e
-    { 3001,  kGreen+8,  1,  1, kBlack }, //kSKmSigNuECCQE
-    { 3345, kGreen+10,  1,  1, kBlack }, //kSKmSigNuECC1pi
-    { 3354,      kRed,  1,  1, kBlack }, //kSKmSigNuECCoth
-    {   -1,        -1, -1, -1,     -1 }, //kSKmUndefined
-    {   -1,        -1, -1, -1,     -1 }, //kSKmUndefined
-    {   -1,        -1, -1, -1,     -1 }, //kSKmUndefined
-    {   -1,        -1, -1, -1,     -1 }, //kSKmUndefined
-    {   -1,        -1, -1, -1,     -1 }, //kSKmUndefined
-    {   -1,        -1, -1, -1,     -1 }, //kSKmUndefined
-    {   -1,        -1, -1, -1,     -1 }, //kSKmUndefined
-    {   -1,        -1, -1, -1,     -1 }  //kSKmUndefined
+    {   -1,    kWhite,  1,  1, kBlack }, // kSKmNuMuCCQE
+    { 3544,    kBlack,  1,  1, kBlack }, // kSKmNuMuCC1pi
+    { 3244,    kGreen,  1,  1, kBlack }, // kSKmNuMuCCcoh
+    { 3244,     kBlue,  1,  1, kBlack }, // kSKmNuMuCCoth_e
+    { 3006,      kRed,  1,  1, kBlack }, // kSKmNuMuNC1pi0
+    { 3006,    kRed-1,  1,  1, kBlack }, // kSKmNuMuNCcoh
+    { 3006,    kRed-2,  1,  1, kBlack }, // kSKmNuMuNCoth_e
+    { 3001,  kAzure-3,  1,  1, kBlack }, // kSKmNuMuBarCCQE
+    { 3345,  kAzure-4,  1,  1, kBlack }, // kSKmNuMuBarCC1pi
+    { 3354,  kAzure-6,  1,  1, kBlack }, // kSKmNuMuBarCCcoh
+    { 3354,  kMagenta,  1,  1, kBlack }, // kSKmNuMuBarCCoth_e
+    { 3006,  kAzure-7,  1,  1, kBlack }, // kSKmNuMuBarNC1pi0
+    { 3006,  kAzure-9,  1,  1, kBlack }, // kSKmNuMuBarNCcoh
+    { 3006,  kMagenta,  1,  1, kBlack }, // kSKmNuMuBarNCoth_e
+    { 3001,  kGreen+1,  1,  1, kBlack }, // kSKmNuECCQE
+    { 3345,  kGreen+2,  1,  1, kBlack }, // kSKmNuECC1pi
+    { 3354,  kGreen+2,  1,  1, kBlack }, // kSKmNuECCcoh
+    { 3354,    kBlack,  1,  1, kBlack }, // kSKmNuECCoth_e
+    { 3006,  kGreen+5,  1,  1, kBlack }, // kSKmNuENC1pi0
+    { 3006,  kGreen+7,  1,  1, kBlack }, // kSKmNuENCcoh
+    { 3006,    kBlack,  1,  1, kBlack }, // kSKmNuENCoth_e
+    { 3001,  kBlue+1,   1,  1, kBlack }, // kSKmNuEBarCCQE
+    { 3345,  kBlue+2,   1,  1, kBlack }, // kSKmNuEBarCC1pi
+    { 3354,  kBlue+2,   1,  1, kBlack }, // kSKmNuEBarCCcoh
+    { 3354,    kBlack,  1,  1, kBlack }, // kSKmNuEBarCCoth_e
+    { 3006,  kBlue+5,   1,  1, kBlack }, // kSKmNuEBarNC1pi0
+    { 3006,  kBlue+7,   1,  1, kBlack }, // kSKmNuEBarNCcoh
+    { 3006,    kBlack,  1,  1, kBlack }, // kSKmNuEBarNCoth_e
+    { 3001,  kGreen+8,  1,  1, kBlack }, // kSKmSigNuECCQE
+    { 3345, kGreen+10,  1,  1, kBlack }, // kSKmSigNuECC1pi
+    { 3354,      kRed,  1,  1, kBlack }, // kSKmSigNuECCoth
+    {   -1,        -1, -1, -1,     -1 }, // kSKmUndefined
+    {   -1,        -1, -1, -1,     -1 }, // kSKmUndefined
+    {   -1,        -1, -1, -1,     -1 }, // kSKmUndefined
+    {   -1,        -1, -1, -1,     -1 }, // kSKmUndefined
+    {   -1,        -1, -1, -1,     -1 }, // kSKmUndefined
+    {   -1,        -1, -1, -1,     -1 }, // kSKmUndefined
+    {   -1,        -1, -1, -1,     -1 }, // kSKmUndefined
+    {   -1,        -1, -1, -1,     -1 }  // kSKmUndefined
 
   }
 };

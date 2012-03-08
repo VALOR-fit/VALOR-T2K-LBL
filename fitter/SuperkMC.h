@@ -118,7 +118,7 @@ private:
   void ApplyPhysHypothesisToTemplates (void); 
 
   // Calculate systematic variation weight in given (Ereco, Etrue) bin for the given sample and mode
-  double SystVariationWeight (t2kana::conv::SuperkSample_t s, t2kana::conv::SuperkMode_t m, double Etrue, double Ereco) const;
+  double SystVariationWeight (t2kana::conv::SuperkSample_t s, t2kana::conv::SuperkMode_t m, double Ereco, double Etrue) const;
 
   // Ignore nue_signal templates for all but the 3-flavour oscillation hypothesis
   bool SkipTemplate(t2kana::conv::SuperkMode_t m);
@@ -188,10 +188,12 @@ private:
   int        fBrPdg;                       ///< branch var for reading input MC mini-DST
   int        fBrGenCode;                   ///< branch var for reading input MC mini-DST
       
+  // utility objects for computing cross-section and flux weights
   NuFlux *   fNuFlux;                      ///< Neutrino flux analysis inputs
   NuXSec *   fNuXSec;                      ///< Neutrino cross section analysis inputs
 
-  PhysHypothesis fPhysHypothesis;          ///< Hypothesis for observed deficit: disappearance, decay, decoherence
+  // utility objects for defining physics hypothesis (oscillations, decay, ...) & computing probabilities
+  PhysHypothesis fPhysHypothesis;          ///< Physics hypothesis 
   NuOsc3Flavour  fNuOsc3Flavour;           ///< 3-flavour neutrino osc. probability calculations
 
 ClassDef(SuperkMC, 5);
