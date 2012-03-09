@@ -427,11 +427,10 @@ int t2kana::util::FindModeSlot(
   return -1;
 }
 //____________________________________________________________________________
-int t2kana::util::FindSlotInListOfXSecSystWithSpl(
-  t2kana::conv::PhysParamId_t p)
+int t2kana::util::FindSlotInListOfXSecSyst(t2kana::conv::PhysParamId_t p)
 {
-  for(int ip = 0; ip < kNumOfXSecSystWithSpl; ip++) {
-     PhysParamId_t pcurr = kListOfXSecSystWithSpl[ip];
+  for(int ip = 0; ip < kNumOfXSecSyst; ip++) {
+     PhysParamId_t pcurr = kListOfXSecSyst[ip];
      if(pcurr == p) return ip;
   }
   return -1;

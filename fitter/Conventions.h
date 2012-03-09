@@ -545,12 +545,6 @@ static const double kEtrueRangeOfFluxParamInBANFFfit[kNumOfParamsInBANFFfit][2] 
    {  -1,   -1 },              // # 24, not a flux param
    {  -1,   -1 }               // # 25, not a flux param
 };
-
-// Etrue max for QE and RES normalization params in BANFF fit
-
-static const double kEtrueMaxBANFF24  = 1.5; // GeV
-static const double kEtrueMaxBANFF25  = 2.5; // GeV
-
 //
 // ------------------------------------------------------------------------
 // Info on FSI systematic parameters 
@@ -565,107 +559,137 @@ static const int kNumOfFSIParams = 10;
 // ------------------------------------------------------------------------
 //
 
-// Number of cross-section related systematics for which the effect in
-// the MC template bin content (weight) is pre-computed and stored in cubic splines
-static const int kNumOfXSecSystWithSpl = 2;
+// Number of cross-section related systematics 
+static const int kNumOfXSecSyst = 4;
 
-// The following is the list of the above kNumOfXSecSystWithSpl parameters
-static const PhysParamId_t kListOfXSecSystWithSpl[kNumOfXSecSystWithSpl] = 
+// The following is the list of the above kNumOfXSecSyst parameters
+static const PhysParamId_t kListOfXSecSyst[kNumOfXSecSyst] = 
 {
    kNuisBANFF22,               // # 22, M_{A} QE
-   kNuisBANFF23                // # 23, M_{A} RES
+   kNuisBANFF23,               // # 23, M_{A} RES
+   kNuisBANFF24,               // # 24, CCQE  normalization, 0 - 1.5 GeV
+   kNuisBANFF25                // # 25, CCRES normalization, 0 - 2.5 GeV
+};
+
+// The following list specifies which cross-section related systematic has its
+// effect on MC templates pre-computed and stored in cubic splines.
+// The order of systematic parameters should match the one in kListOfXSecSyst.
+static const bool kXSecSystHasWghtSplines[kNumOfXSecSyst] = 
+{
+   true,                      // kNuisBANFF22
+   true,                      // kNuisBANFF23
+   false,                     // kNuisBANFF24
+   false                      // kNuisBANFF25
+};
+
+// Ereco and Etrue cuts for the application of cross-section systematics.
+// The order of systematic parameters should match the one in kListOfXSecSyst.
+static const double kXSecSystErecoCut[kNumOfXSecSyst][2] =
+{
+   { 0.0, 100.0 },            // kNuisBANFF22
+   { 0.0, 100.0 },            // kNuisBANFF23
+   { 0.0, 100.0 },            // kNuisBANFF24
+   { 0.0, 100.0 }             // kNuisBANFF25
+};
+static const double kXSecSystEtrueCut[kNumOfXSecSyst][2] =
+{
+   { 0.0, 100.0 },            // kNuisBANFF22
+   { 0.0, 100.0 },            // kNuisBANFF23
+   { 0.0,   1.5 },            // kNuisBANFF24
+   { 0.0,   2.5 }             // kNuisBANFF25
 };
 
 // The following list describles in which MC templates we are supposed to apply the
-// weights as a result of tweaking any of the above systematic parameters
-static const bool kXsApplyXSecSyst[kns][knm][kNumOfXSecSystWithSpl] = {
+// weights as a result of tweaking any of the above systematic parameters.
+// The order of systematic parameters should match the one in kListOfXSecSyst.
+static const bool kXsApplyXSecSystToSKMode[kns][knm][kNumOfXSecSyst] = {
 
   // > 1 muon-like ring 
   {
-    // banff22  banff23
-    {  true,    false }, // kSKmNuMuCCQE         
-    {  false,   true  }, // kSKmNuMuCC1pi 
-    {  false,   false }, // kSKmNuMuCCoth_mu                      
-    {  false,   false }, // kSKmNuMuNC          
-    {  true,    false }, // kSKmNuMuBarCCQE      
-    {  false,   true  }, // kSKmNuMuBarCC1pi 
-    {  false,   false }, // kSKmNuMuBarCCoth_mu                  
-    {  false,   false }, // kSKmNuMuBarNC       
-    {  true,    false }, // kSKmNuECCQE 
-    {  false,   true  }, // kSKmNuECC1pi 
-    {  false,   false }, // kSKmNuECCoth_mu   
-    {  false,   false }, // kSKmNuENC
-    {  true,    false }, // kSKmNuEBarCCQE
-    {  false,   true  }, // kSKmNuEBarCC1pi
-    {  false,   false }, // kSKmNuEBarCCoth_mu
-    {  false,   false }, // kSKmNuEBarNC
-    {  true,    false }, // kSKmSigNuECCQE 
-    {  false,   true  }, // kSKmSigNuECC1pi 
-    {  false,   false }, // kSKmSigNuECCoth
-    {  false,   false }, // kSKmUndefined
-    {  false,   false }, // kSKmUndefined
-    {  false,   false }, // kSKmUndefined
-    {  false,   false }, // kSKmUndefined
-    {  false,   false }, // kSKmUndefined
-    {  false,   false }, // kSKmUndefined
-    {  false,   false }, // kSKmUndefined
-    {  false,   false }, // kSKmUndefined
-    {  false,   false }, // kSKmUndefined
-    {  false,   false }, // kSKmUndefined
-    {  false,   false }, // kSKmUndefined
-    {  false,   false }, // kSKmUndefined
-    {  false,   false }, // kSKmUndefined
-    {  false,   false }, // kSKmUndefined
-    {  false,   false }, // kSKmUndefined
-    {  false,   false }, // kSKmUndefined
-    {  false,   false }, // kSKmUndefined
-    {  false,   false }, // kSKmUndefined
-    {  false,   false }, // kSKmUndefined
-    {  false,   false }  // kSKmUndefined
+    // banff22  banff23  banff24  banff25
+    {  true,    false,   true,    false }, // kSKmNuMuCCQE         
+    {  false,   true,    false,   true  }, // kSKmNuMuCC1pi 
+    {  false,   false,   false,   false }, // kSKmNuMuCCoth_mu                      
+    {  false,   false,   false,   false }, // kSKmNuMuNC          
+    {  true,    false,   true,    false }, // kSKmNuMuBarCCQE      
+    {  false,   true,    false,   true  }, // kSKmNuMuBarCC1pi 
+    {  false,   false,   false,   false }, // kSKmNuMuBarCCoth_mu                  
+    {  false,   false,   false,   false }, // kSKmNuMuBarNC       
+    {  true,    false,   true,    false }, // kSKmNuECCQE 
+    {  false,   true,    false,   true  }, // kSKmNuECC1pi 
+    {  false,   false,   false,   false }, // kSKmNuECCoth_mu   
+    {  false,   false,   false,   false }, // kSKmNuENC
+    {  true,    false,   true,    false }, // kSKmNuEBarCCQE
+    {  false,   true,    false,   true  }, // kSKmNuEBarCC1pi
+    {  false,   false,   false,   false }, // kSKmNuEBarCCoth_mu
+    {  false,   false,   false,   false }, // kSKmNuEBarNC
+    {  true,    false,   true,    false }, // kSKmSigNuECCQE 
+    {  false,   true,    false,   true  }, // kSKmSigNuECC1pi 
+    {  false,   false,   false,   false }, // kSKmSigNuECCoth
+    {  false,   false,   false,   false }, // kSKmUndefined
+    {  false,   false,   false,   false }, // kSKmUndefined
+    {  false,   false,   false,   false }, // kSKmUndefined
+    {  false,   false,   false,   false }, // kSKmUndefined
+    {  false,   false,   false,   false }, // kSKmUndefined
+    {  false,   false,   false,   false }, // kSKmUndefined
+    {  false,   false,   false,   false }, // kSKmUndefined
+    {  false,   false,   false,   false }, // kSKmUndefined
+    {  false,   false,   false,   false }, // kSKmUndefined
+    {  false,   false,   false,   false }, // kSKmUndefined
+    {  false,   false,   false,   false }, // kSKmUndefined
+    {  false,   false,   false,   false }, // kSKmUndefined
+    {  false,   false,   false,   false }, // kSKmUndefined
+    {  false,   false,   false,   false }, // kSKmUndefined
+    {  false,   false,   false,   false }, // kSKmUndefined
+    {  false,   false,   false,   false }, // kSKmUndefined
+    {  false,   false,   false,   false }, // kSKmUndefined
+    {  false,   false,   false,   false }, // kSKmUndefined
+    {  false,   false,   false,   false }, // kSKmUndefined
+    {  false,   false,   false,   false }  // kSKmUndefined
   },
 
   // > 1 electron-like ring 
   {
-    // banff22  banff23
-    {  false,   false  }, // kSKmNuMuCCQE 
-    {  false,   false  }, // kSKmNuMuCC1pi 
-    {  false,   false  }, // kSKmNuMuCCcoh 
-    {  false,   false  }, // kSKmNuMuCCoth_e 
-    {  false,   false  }, // kSKmNuMuNC1pi0 
-    {  false,   false  }, // kSKmNuMuNCcoh 
-    {  false,   false  }, // kSKmNuMuNCoth_e   
-    {  false,   false  }, // kSKmNuMuBarCCQE 
-    {  false,   false  }, // kSKmNuMuBarCC1pi 
-    {  false,   false  }, // kSKmNuMuBarCCcoh 
-    {  false,   false  }, // kSKmNuMuBarCCoth_e  
-    {  false,   false  }, // kSKmNuMuBarNC1pi0 
-    {  false,   false  }, // kSKmNuMuBarNCcoh 
-    {  false,   false  }, // kSKmNuMuBarNCoth_e
-    {  false,   false  }, // kSKmNuECCQE 
-    {  false,   false  }, // kSKmNuECC1pi 
-    {  false,   false  }, // kSKmNuECCcoh 
-    {  false,   false  }, // kSKmNuECCoth_e
-    {  false,   false  }, // kSKmNuENC1pi0  
-    {  false,   false  }, // kSKmNuENCcoh 
-    {  false,   false  }, // kSKmNuENCoth_e
-    {  false,   false  }, // kSKmNuEBarCCQE
-    {  false,   false  }, // kSKmNuEBarCC1pi
-    {  false,   false  }, // kSKmNuEBarCCcoh
-    {  false,   false  }, // kSKmNuEBarCCoth_e
-    {  false,   false  }, // kSKmNuEBarNC1pi0
-    {  false,   false  }, // kSKmNuEBarNCcoh
-    {  false,   false  }, // kSKmNuEBarNCoth_e
-    {  false,   false  }, // kSKmSigNuECCQE  
-    {  false,   false  }, // kSKmSigNuECC1pi  
-    {  false,   false  }, // kSKmSigNuECCoth
-    {  false,   false  }, // kSKmUndefined
-    {  false,   false  }, // kSKmUndefined
-    {  false,   false  }, // kSKmUndefined
-    {  false,   false  }, // kSKmUndefined
-    {  false,   false  }, // kSKmUndefined
-    {  false,   false  }, // kSKmUndefined
-    {  false,   false  }, // kSKmUndefined
-    {  false,   false  }  // kSKmUndefined
+    // banff22  banff23  banff24  banff25
+    {  false,   false,   false,   false }, // kSKmNuMuCCQE 
+    {  false,   false,   false,   false }, // kSKmNuMuCC1pi 
+    {  false,   false,   false,   false }, // kSKmNuMuCCcoh 
+    {  false,   false,   false,   false }, // kSKmNuMuCCoth_e 
+    {  false,   false,   false,   false }, // kSKmNuMuNC1pi0 
+    {  false,   false,   false,   false }, // kSKmNuMuNCcoh 
+    {  false,   false,   false,   false }, // kSKmNuMuNCoth_e   
+    {  false,   false,   false,   false }, // kSKmNuMuBarCCQE 
+    {  false,   false,   false,   false }, // kSKmNuMuBarCC1pi 
+    {  false,   false,   false,   false }, // kSKmNuMuBarCCcoh 
+    {  false,   false,   false,   false }, // kSKmNuMuBarCCoth_e  
+    {  false,   false,   false,   false }, // kSKmNuMuBarNC1pi0 
+    {  false,   false,   false,   false }, // kSKmNuMuBarNCcoh 
+    {  false,   false,   false,   false }, // kSKmNuMuBarNCoth_e
+    {  false,   false,   false,   false }, // kSKmNuECCQE 
+    {  false,   false,   false,   false }, // kSKmNuECC1pi 
+    {  false,   false,   false,   false }, // kSKmNuECCcoh 
+    {  false,   false,   false,   false }, // kSKmNuECCoth_e
+    {  false,   false,   false,   false }, // kSKmNuENC1pi0  
+    {  false,   false,   false,   false }, // kSKmNuENCcoh 
+    {  false,   false,   false,   false }, // kSKmNuENCoth_e
+    {  false,   false,   false,   false }, // kSKmNuEBarCCQE
+    {  false,   false,   false,   false }, // kSKmNuEBarCC1pi
+    {  false,   false,   false,   false }, // kSKmNuEBarCCcoh
+    {  false,   false,   false,   false }, // kSKmNuEBarCCoth_e
+    {  false,   false,   false,   false }, // kSKmNuEBarNC1pi0
+    {  false,   false,   false,   false }, // kSKmNuEBarNCcoh
+    {  false,   false,   false,   false }, // kSKmNuEBarNCoth_e
+    {  false,   false,   false,   false }, // kSKmSigNuECCQE  
+    {  false,   false,   false,   false }, // kSKmSigNuECC1pi  
+    {  false,   false,   false,   false }, // kSKmSigNuECCoth
+    {  false,   false,   false,   false }, // kSKmUndefined
+    {  false,   false,   false,   false }, // kSKmUndefined
+    {  false,   false,   false,   false }, // kSKmUndefined
+    {  false,   false,   false,   false }, // kSKmUndefined
+    {  false,   false,   false,   false }, // kSKmUndefined
+    {  false,   false,   false,   false }, // kSKmUndefined
+    {  false,   false,   false,   false }, // kSKmUndefined
+    {  false,   false,   false,   false }  // kSKmUndefined
   }
 };
 
@@ -782,14 +806,8 @@ static const double kXsEtrueBinEdges[kns][knm][kXsNEtrueBins+1] = {
   }
 };
 
-
 // Number of cross-section weight splines
-static const int kNumOfXSecSystWghtSpl = 
-        kNSuperkSamples       * 
-        kNSuperkModes         * 
-        kNumOfXSecSystWithSpl * 
-        kXsNErecoBins         * 
-        kXsNEtrueBins;
+static const int kNumOfXSecSystWghtSpl = kNSuperkSamples * kNSuperkModes * kNumOfXSecSyst * kXsNErecoBins * kXsNEtrueBins;
 static const int knwspl = kNumOfXSecSystWghtSpl; // as above - shorter name
 
 //

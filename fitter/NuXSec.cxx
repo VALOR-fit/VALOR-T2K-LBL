@@ -93,28 +93,30 @@ bool NuXSec::Read(TXMLEngine* xml, XMLNodePointer_t root_node)
     for(int im = 0; im < knm; im++) {
        SuperkMode_t m = kSKReactionModes[is][im];
        if(m == kSKmUndefined) continue;
-       for(int ip = 0; ip < kNumOfXSecSystWithSpl; ip++) {
-          PhysParamId_t p = kXSecSystWithSpl[ip];
+       for(int ip = 0; ip < kNumOfXSecSyst; ip++) {
+          PhysParamId_t p = kListOfXSecSyst[ip];          
           if(p == kPhypUndefined) continue;
-          for(int ir = 0; ir < kXsNErecoBins; ir++) {
-             double Ereco = kXsErecoBinEdges[ir] + kOneMeV;
-             for(int it = 0; it < kXsNEtrueBins; it++) {
-                double Etrue = kXsEtrueBinEdges[is][im][it] + kOneMeV;              
-                // Get index for current weight spline
-                int idx = this->WghtSplineIdx(s,m,p,Ereco,Etrue);     
-                // Build spline name
-                ostringstream splname;
-                splname << "spl_" 
-                        << util::AsStringCompact(s) << "_"
-                        << util::AsStringCompact(m) << "_"
-                        << util::AsStringCompact(p) << "_"
-                        << ir << "_" 
-                        << it << endl;              
-                // Copy spline from input file
-                TSpline3 * spl = (TSpline3 *) fXSecSplineFile->Get(splname.str().c_str());
-                fXSecWghtSpl[idx] = new TSpline3(*spl);
-             }//Etrue
-          }//Ereco
+          if(kXSecSystHasWghtSplines[ip]) {
+            for(int ir = 0; ir < kXsNErecoBins; ir++) {
+               double Ereco = kXsErecoBinEdges[ir] + kOneMeV;
+               for(int it = 0; it < kXsNEtrueBins; it++) {
+                  double Etrue = kXsEtrueBinEdges[is][im][it] + kOneMeV;              
+                  // Get index for current weight spline
+                  int idx = this->WghtSplineIdx(s,m,p,Ereco,Etrue);     
+                  // Build spline name
+                  ostringstream splname;
+                  splname << "spl_" 
+                          << util::AsStringCompact(s) << "_"
+                          << util::AsStringCompact(m) << "_"
+                          << util::AsStringCompact(p) << "_"
+                          << ir << "_" 
+                          << it << endl;              
+                  // Copy spline from input file
+                  TSpline3 * spl = (TSpline3 *) fXSecSplineFile->Get(splname.str().c_str());
+                  fXSecWghtSpl[idx] = new TSpline3(*spl);
+               }//Etrue
+            }//Ereco
+         }//has wght splines?
        }//p
     }//m
   }//s
@@ -175,11 +177,6 @@ double NuXSec::SuperkXSecFinTuningWght(
 // - BANFF param # 25, CCRES normalization, 0 - 2.5 GeV (Etrue)
 //
 
-  int sidx = util::FindSampleSlot(s);
-  if(sidx == -1) return 1;
-  int midx = util::FindModeSlot(s,m);
-  if(midx == -1) return 1;
-
   // init weights
   double wght_banff22 = 1.;
   double wght_banff23 = 1.;
@@ -189,10 +186,7 @@ double NuXSec::SuperkXSecFinTuningWght(
   //
   // BANFF param # 22, M_{A} QE
   //
-  int banff22_idx = util::FindSlotInListOfXSecSystWithSpl(kNuisBANFF22);
-  assert(banff22_idx != -1);
-  bool apply_banff22 = kXsApplyXSecSyst[sidx][midx][banff22_idx];
-  if(apply_banff22) 
+  if( this->ApplySyst(kNuisBANFF22,s,m,Ereco,Etrue) )
   {
 /*
      double ma = conv::kNomMAQE * fBANFF->BestFitValue(kNuisBANFF22);
@@ -203,10 +197,7 @@ double NuXSec::SuperkXSecFinTuningWght(
   //
   // BANFF param # 23, M_{A} RES
   //
-  int banff23_idx = util::FindSlotInListOfXSecSystWithSpl(kNuisBANFF23);
-  assert(banff23_idx != -1);
-  bool apply_banff23 = kXsApplyXSecSyst[sidx][midx][banff23_idx];
-  if(apply_banff23) 
+  if( this->ApplySyst(kNuisBANFF23,s,m,Ereco,Etrue) )
   {
 /*
      double ma = conv::kNomMARES * fBANFF->BestFitValue(kNuisBANFF23);
@@ -217,8 +208,7 @@ double NuXSec::SuperkXSecFinTuningWght(
   //
   // BANFF param # 24, CCQE  normalization, 0 - 1.5 GeV
   //
-  bool apply_banff24 = apply_banff22 && (Etrue >= 0. && Etrue < kEtrueMaxBANFF24); 
-  if(apply_banff24) 
+  if( this->ApplySyst(kNuisBANFF24,s,m,Ereco,Etrue) )
   {
      wght_banff24 = fBANFF->BestFitValue(kNuisBANFF24);
   }
@@ -226,8 +216,7 @@ double NuXSec::SuperkXSecFinTuningWght(
   //
   // BANFF param # 25, CCRES normalization, 0 - 2.5 GeV
   //
-  bool apply_banff25 = apply_banff23 && (Etrue >= 0. && Etrue < kEtrueMaxBANFF25); 
-  if(apply_banff25) 
+  if( this->ApplySyst(kNuisBANFF25,s,m,Ereco,Etrue) )
   {  
     wght_banff25 = fBANFF->BestFitValue(kNuisBANFF25);
   }
@@ -273,11 +262,6 @@ double NuXSec::SuperkXSecSystWght(
 // - BANFF param # 25, CCRES normalization, 0 - 2.5 GeV (Etrue)
 //
 
-  int sidx = util::FindSampleSlot(s);
-  if(sidx == -1) return 1;
-  int midx = util::FindModeSlot(s,m);
-  if(midx == -1) return 1;
-
   // init weights
   double wght_banff22 = 1.;
   double wght_banff23 = 1.;
@@ -287,21 +271,16 @@ double NuXSec::SuperkXSecSystWght(
   //
   // BANFF param # 22, M_{A} QE
   //
-  int banff22_idx = util::FindSlotInListOfXSecSystWithSpl(kNuisBANFF22);
-  assert(banff22_idx != -1);
-  bool apply_banff22 = kXsApplyXSecSyst[sidx][midx][banff22_idx];
-  if(apply_banff22) 
+  if( this->ApplySyst(kNuisBANFF22,s,m,Ereco,Etrue) )
   {
-
+/*
+*/
   }
 
   //
   // BANFF param # 23, M_{A} RES
   //
-  int banff23_idx = util::FindSlotInListOfXSecSystWithSpl(kNuisBANFF23);
-  assert(banff23_idx != -1);
-  bool apply_banff23 = kXsApplyXSecSyst[sidx][midx][banff23_idx];
-  if(apply_banff23) 
+  if( this->ApplySyst(kNuisBANFF23,s,m,Ereco,Etrue) )
   {
 /*
      double ma_current = conv::kNomMARES * fBANFF->CurrentValue(kNuisBANFF23) 
@@ -315,8 +294,7 @@ double NuXSec::SuperkXSecSystWght(
   //
   // BANFF param # 24, CCQE  normalization, 0 - 1.5 GeV
   //
-  bool apply_banff24 = apply_banff22 && (Etrue >= 0. && Etrue < kEtrueMaxBANFF24); 
-  if(apply_banff24) 
+  if( this->ApplySyst(kNuisBANFF24,s,m,Ereco,Etrue) )
   {
      wght_banff24 = fBANFF->CurrentValue(kNuisBANFF24) / fBANFF->BestFitValue(kNuisBANFF24);
   }
@@ -324,8 +302,7 @@ double NuXSec::SuperkXSecSystWght(
   //
   // BANFF param # 25, CCRES normalization, 0 - 2.5 GeV
   //
-  bool apply_banff25 = apply_banff23 && (Etrue >= 0. && Etrue < kEtrueMaxBANFF25); 
-  if(apply_banff25) 
+  if( this->ApplySyst(kNuisBANFF25,s,m,Ereco,Etrue) )
   {  
     wght_banff25 = fBANFF->CurrentValue(kNuisBANFF25) / fBANFF->BestFitValue(kNuisBANFF25);
   }
@@ -500,7 +477,7 @@ int NuXSec::WghtSplineIdx(
   int midx = util::FindModeSlot(s,m);
   if(midx == -1) return -1;
 
-  int pidx = util::FindSlotInListOfXSecSystWithSpl(p);
+  int pidx = util::FindSlotInListOfXSecSyst(p);
   if(pidx == -1) return -1;
 
   int ereco_idx = -1; 
@@ -528,9 +505,45 @@ int NuXSec::WghtSplineIdx(
   int idx = etrue_idx 
           + ereco_idx * kXsNEtrueBins 
           + pidx      * kXsNEtrueBins * kXsNErecoBins
-          + midx      * kXsNEtrueBins * kXsNErecoBins * kNumOfXSecSystWithSpl
-          + sidx      * kXsNEtrueBins * kXsNErecoBins * kNumOfXSecSystWithSpl * kNSuperkModes;
+          + midx      * kXsNEtrueBins * kXsNErecoBins * kNumOfXSecSyst
+          + sidx      * kXsNEtrueBins * kXsNErecoBins * kNumOfXSecSyst * kNSuperkModes;
 
   return idx;
 }
 //________________________________________________________________________________________
+bool NuXSec::ApplySyst(
+  PhysParamId_t p, SuperkSample_t s, SuperkMode_t m, double Ereco, double Etrue) const
+{
+  bool apply2mode = this->ApplySystToSKMode(p,s,m);
+  bool apply2bin  = this->ApplySystToEnergyBin(p,Ereco,Etrue);
+  bool apply = apply2mode && apply2bin;
+  return apply;
+}
+//________________________________________________________________________________________
+bool NuXSec::ApplySystToSKMode(PhysParamId_t p, SuperkSample_t s, SuperkMode_t m) const
+{
+  int isyst = util::FindSlotInListOfXSecSyst(p);
+  if (isyst == -1) return false;
+
+  int is = util::FindSampleSlot(s);
+  if (is == -1) return false;
+  int im = util::FindModeSlot(s,m);
+  if (im == -1) return false;
+
+  bool apply = kXsApplyXSecSystToSKMode[is][im][isyst];
+  return apply;
+}
+//________________________________________________________________________________________
+bool NuXSec::ApplySystToEnergyBin(PhysParamId_t p, double Ereco, double Etrue) const
+{
+  int isyst = util::FindSlotInListOfXSecSyst(p);
+  if (isyst == -1) return false;
+
+  bool apply = 
+     (Ereco >= kXSecSystErecoCut[isyst][0] && Ereco < kXSecSystErecoCut[isyst][1]) &&
+     (Etrue >= kXSecSystEtrueCut[isyst][0] && Etrue < kXSecSystEtrueCut[isyst][1]);
+
+  return apply;
+}
+//________________________________________________________________________________________
+

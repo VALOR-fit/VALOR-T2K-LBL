@@ -78,7 +78,11 @@ private:
   void Init    (void);
   void CleanUp (void);
 
-  int WghtSplineIdx (conv::SuperkSample_t s, conv::SuperkMode_t m, conv::PhysParamId_t p, double Ereco, double Etrue);
+  int  WghtSplineIdx   (conv::SuperkSample_t s, conv::SuperkMode_t m, conv::PhysParamId_t p, double Ereco, double Etrue);
+
+  bool ApplySyst            (conv::PhysParamId_t p, conv::SuperkSample_t s, conv::SuperkMode_t m, double Ereco, double Etrue) const;
+  bool ApplySystToSKMode    (conv::PhysParamId_t p, conv::SuperkSample_t s, conv::SuperkMode_t m) const;
+  bool ApplySystToEnergyBin (conv::PhysParamId_t p, double Ereco, double Etrue) const;
 
   //
   // Private data members
