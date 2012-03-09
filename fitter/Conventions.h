@@ -498,7 +498,9 @@ static const SuperkMode_t kSKReactionModes[kns][knm] = {
 
 //
 // ------------------------------------------------------------------------
-// Info on BANFF systematic parameters 
+//
+// Info on systematic parameters 
+//
 // ------------------------------------------------------------------------
 //
 
@@ -508,14 +510,10 @@ static const SuperkMode_t kSKReactionModes[kns][knm] = {
 static const int kNumOfParamsInBANFFfit = 26;  
 
 //
-// Nominal physics params in BANFF fit
+// ** Flux systematics
 //
-static const double kNomMAQE  = 1.21;
-static const double kNomMARES = 1.21;
 
-//
 // Etrue energy range for flux-related BANFF parameters
-//
 static const double kEtrueRangeOfFluxParamInBANFFfit[kNumOfParamsInBANFFfit][2] =
 {
    { 0.0,  0.4 },              // # 00, SK    numu    flux,  E =  0.0 -  0.4 GeV
@@ -545,19 +543,14 @@ static const double kEtrueRangeOfFluxParamInBANFFfit[kNumOfParamsInBANFFfit][2] 
    {  -1,   -1 },              // # 24, not a flux param
    {  -1,   -1 }               // # 25, not a flux param
 };
-//
-// ------------------------------------------------------------------------
-// Info on FSI systematic parameters 
-// ------------------------------------------------------------------------
-//
-
-static const int kNumOfFSIParams = 10;
 
 //
-// ------------------------------------------------------------------------
-// Info on xsec systematic parameters with pre-computed weight splines
-// ------------------------------------------------------------------------
+// ** Cross-section systematics
 //
+
+// Nominal values of cross-section related params 
+static const double kNomMAQE  = 1.21;
+static const double kNomMARES = 1.21;
 
 // Number of cross-section related systematics 
 static const int kNumOfXSecSyst = 4;
@@ -809,6 +802,13 @@ static const double kXsEtrueBinEdges[kns][knm][kXsNEtrueBins+1] = {
 // Number of cross-section weight splines
 static const int kNumOfXSecSystWghtSpl = kNSuperkSamples * kNSuperkModes * kNumOfXSecSyst * kXsNErecoBins * kXsNEtrueBins;
 static const int knwspl = kNumOfXSecSystWghtSpl; // as above - shorter name
+
+//
+// ** FSI systematics
+//
+
+static const int kNumOfFSIParams = 10;
+
 
 //
 // ------------------------------------------------------------------------

@@ -471,42 +471,42 @@ int NuXSec::WghtSplineIdx(
 //  4:  0 --> kXsNEtrueBins
 //
 
-  int sidx = util::FindSampleSlot(s);
-  if(sidx == -1) return -1;
+  int is = util::FindSampleSlot(s);
+  if(is == -1) return -1;
 
-  int midx = util::FindModeSlot(s,m);
-  if(midx == -1) return -1;
+  int im = util::FindModeSlot(s,m);
+  if(im == -1) return -1;
 
-  int pidx = util::FindSlotInListOfXSecSyst(p);
-  if(pidx == -1) return -1;
+  int ip = util::FindSlotInListOfXSecSyst(p);
+  if(ip == -1) return -1;
 
-  int ereco_idx = -1; 
+  int ireco = -1; 
   for (int i = 0; i < kXsNErecoBins; i++) {
     if(kXsErecoBinEdges[i]   <= Ereco && 
        kXsErecoBinEdges[i+1] >  Ereco) 
     {
-        ereco_idx = i;
+        ireco = i;
         break;
     }
   }
-  if(ereco_idx == -1) return -1;
+  if(ireco == -1) return -1;
 
-  int etrue_idx = -1; 
+  int itrue = -1; 
   for (int i = 0; i < kXsNEtrueBins; i++) {
-    if(kXsEtrueBinEdges[sidx][midx][i]   <= Etrue && 
-       kXsEtrueBinEdges[sidx][midx][i+1] >  Etrue) 
+    if(kXsEtrueBinEdges[is][im][i]   <= Etrue && 
+       kXsEtrueBinEdges[is][im][i+1] >  Etrue) 
     {
-        etrue_idx = i;
+        itrue = i;
         break;
     }
   }
-  if(etrue_idx == -1) return -1;
+  if(itrue == -1) return -1;
 
-  int idx = etrue_idx 
-          + ereco_idx * kXsNEtrueBins 
-          + pidx      * kXsNEtrueBins * kXsNErecoBins
-          + midx      * kXsNEtrueBins * kXsNErecoBins * kNumOfXSecSyst
-          + sidx      * kXsNEtrueBins * kXsNErecoBins * kNumOfXSecSyst * kNSuperkModes;
+  int idx = itrue 
+          + ireco * kXsNEtrueBins 
+          + ip    * kXsNEtrueBins * kXsNErecoBins
+          + im    * kXsNEtrueBins * kXsNErecoBins * kNumOfXSecSyst
+          + is    * kXsNEtrueBins * kXsNErecoBins * kNumOfXSecSyst * kNSuperkModes;
 
   return idx;
 }
