@@ -109,6 +109,20 @@ if($resource eq "IN2P3") {
 # Oxford
 #
 if($resource eq "Oxford") {
+  @myjobs = `qstat -u $user`;
+
+  foreach(@myjobs) {
+    chomp($_);
+    if( /$user/ ) {
+      /(\d+)/;
+      $jobid = $1;
+      if($jobid >= $minjobid && $jobid <= $maxjobid) {
+           print "deleting $user\'s job: $jobid\n";
+           `qdel $jobid`;
+      }#job number in input range
+    }#username matched
+  }#loop over jobs
+
   print "Not supported just yet!\n";
 }#Oxford
 
