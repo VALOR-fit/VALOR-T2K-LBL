@@ -45,10 +45,6 @@ void test_systematic_error_propagation
   const char * config_file                = "analysis_configuration.xml"    /* */
 )
 {
-  //need to declare static variables for array size at the start of function due to CINT bug
-  //this is the max number of modes that make up a certain category in the table (total nc/cc for each flavour)
-  static const int nmodesallmax = 4;
-
   using namespace std;
   using namespace t2kana;
 
@@ -95,100 +91,12 @@ void test_systematic_error_propagation
   skexp->Read(config);
 
   //
-  int ErecoBin1 =  9; // 0.4 GeV (incl.)
-  int ErecoBin2 = 22; // 1.1 GeV (incl.)
-
-  // Define arrays with entries the modes that make up the total nc/cc-flavour category.
-  // This makes the code easier to adapt if the list of modes considered for each sample changes.
-  int insknumuccall   [nmodesallmax];
-  int insknumuncall   [nmodesallmax];
-  int insknumubarccall[nmodesallmax];
-  int insknumubarncall[nmodesallmax];
-  int insknueccall    [nmodesallmax];
-  int insknuencall    [nmodesallmax];
-  int insknuesigall   [nmodesallmax];
-  // initialize arrays
-  for (int i = 0; i < nmodesallmax; i++) {
-       insknumuccall   [i] = -1;
-       insknumuncall   [i] = -1;
-       insknumubarccall[i] = -1;
-       insknumubarncall[i] = -1;
-       insknueccall    [i] = -1;
-       insknuencall    [i] = -1;
-       insknuesigall   [i] = -1;
-  }
-  // fill arrays
-  switch(s) {
-     case (conv::kSKsFCFV1RingMuLike): {
-       insknumuccall   [0] = 0;
-       insknumuccall   [1] = 1;
-       insknumuccall   [2] = 2;
-       insknumubarccall[0] = 4;
-       insknumubarccall[1] = 5;
-       insknumubarccall[2] = 6;
-       insknueccall    [0] = 8;
-       insknueccall    [1] = 9;
-       insknueccall    [2] = 10;
-       insknuesigall   [0] = 12;
-       insknuesigall   [1] = 13;
-       insknuesigall   [2] = 14;
-       break;
-     }
-     case (conv::kSKsFCFV1RingELike): {
-       insknumuccall   [0] = 0;
-       insknumuccall   [1] = 1;
-       insknumuccall   [2] = 2;
-       insknumuccall   [3] = 3;
-       insknumuncall   [0] = 4;
-       insknumuncall   [1] = 5;
-       insknumuncall   [2] = 6;
-       insknumubarccall[0] = 7;
-       insknumubarccall[1] = 8;
-       insknumubarccall[2] = 9;
-       insknumubarccall[3] = 10;
-       insknumubarncall[0] = 11;
-       insknumubarncall[1] = 12;
-       insknumubarncall[2] = 13;
-       insknueccall    [0] = 14;
-       insknueccall    [1] = 15;
-       insknueccall    [2] = 16;
-       insknueccall    [3] = 17;
-       insknuencall    [0] = 18;
-       insknuencall    [1] = 19;
-       insknuencall    [2] = 20;
-       insknuesigall   [0] = 21;
-       insknuesigall   [1] = 22;
-       insknuesigall   [2] = 23;
-       break;
-     }
-     default: 
-       cout << "*** Sample " << util::AsString(s) << " not supported yet" << endl; 
-       exit(1); 
-  }
-  //and get the last non zero entry in the array (for use to tell you when to print the total)
-  int sknumuccall_printat=-1;
-  int sknumuncall_printat=-1;
-  int sknumubarccall_printat=-1;
-  int sknumubarncall_printat=-1;
-  int sknueccall_printat=-1;
-  int sknuencall_printat=-1;
-  int sknuesigall_printat=-1;
-  for( int i = nmodesallmax-1; i>=0; i-- ) {
-    if(insknumuccall[i]>=0 && sknumuccall_printat<0)
-      sknumuccall_printat = insknumuccall[i];
-    if(insknumuncall[i]>=0 && sknumuncall_printat<0)
-      sknumuncall_printat = insknumuncall[i];
-    if(insknumubarccall[i]>=0 && sknumubarccall_printat<0)
-      sknumubarccall_printat = insknumubarccall[i];
-    if(insknumubarncall[i]>=0 && sknumubarncall_printat<0)
-      sknumubarncall_printat = insknumubarncall[i];
-    if(insknueccall[i]>=0 && sknueccall_printat<0)
-      sknueccall_printat = insknueccall[i];
-    if(insknuencall[i]>=0 && sknuencall_printat<0)
-      sknuencall_printat = insknuencall[i];
-    if(insknuesigall[i]>=0 && sknuesigall_printat<0)
-      sknuesigall_printat = insknuesigall[i];
-  }
+  int ErecoBin1 = skexp->CurrPredictedErecoSpectrum(s, conv::kSKmNuMuCCQE)->FindBin(0.4);
+  int ErecoBin2 = skexp->CurrPredictedErecoSpectrum(s, conv::kSKmNuMuCCQE)->FindBin(1.1);
+  cout << ErecoBin1 << " should be 9" << endl;
+  cout << ErecoBin2 << " should be 22" << endl;
+  //  int ErecoBin1 =  9; // 0.4 GeV (incl.)
+  //  int ErecoBin2 = 22; // 1.1 GeV (incl.)
 
   //
   // nominal
@@ -199,77 +107,60 @@ void test_systematic_error_propagation
   // total 
   double nsk_0 = skexp->CurrPredictedErecoSpectrum(s)->Integral();
 
-  // individual modes 
+  // individual modes & cc/nc species totals
   double nskmodes_0[conv::knm];
+  double nsknumucc_0 = 0;
+  double nsknumunc_0 = 0;
+  double nsknumubarcc_0 = 0;
+  double nsknumubarnc_0 = 0;
+  double nsknuecc_0 = 0;
+  double nsknuenc_0 = 0;
+  double nsknuebarcc_0 = 0;
+  double nsknuebarnc_0 = 0;
+  double nsknuesig_0 = 0;
+
   for (int im = 0; im < conv::knm; im++) {
     conv::SuperkMode_t m = conv::kSKReactionModes[s][im];
     if(m == conv::kSKmUndefined) continue;
+    if(util::FindModeSlot(s,m) < 0) continue;
     // use s, m (not is,im) as indices, eg fMCErecoSpectrum[s][m]
     nskmodes_0[m] = skexp->CurrPredictedErecoSpectrum(s,m)->Integral();
-  }
 
-  // ccnumu
-  double nsknumucc_0 = 0;
-  for (int i = 0; i<nmodesallmax; i++) {
-    if(insknumuccall[i] < 0) continue;
-    conv::SuperkMode_t m = conv::kSKReactionModes[s][insknumuccall[i]];
-    if(m == conv::kSKmUndefined) continue;
-    nsknumucc_0 += nskmodes_0[m];
-  }
-
-  // ncnumu
-  double nsknumunc_0 = 0;
-  for (int i = 0; i<nmodesallmax; i++) {
-    if(insknumuncall[i] < 0) continue;
-    conv::SuperkMode_t m = conv::kSKReactionModes[s][insknumuncall[i]];
-    if(m == conv::kSKmUndefined) continue;
-    nsknumunc_0 += nskmodes_0[m];
-  }
-
-  // ccnumubar
-  double nsknumubarcc_0 = 0;
-  for (int i = 0; i<nmodesallmax; i++) {
-    if(insknumubarccall[i] < 0) continue;
-    conv::SuperkMode_t m = conv::kSKReactionModes[s][insknumubarccall[i]];
-    if(m == conv::kSKmUndefined) continue;
-    nsknumubarcc_0 += nskmodes_0[m];
-  }
-
-  // ncnumubar
-  double nsknumubarnc_0 = 0;
-  for (int i = 0; i<nmodesallmax; i++) {
-    if(insknumubarncall[i] < 0) continue;
-    conv::SuperkMode_t m = conv::kSKReactionModes[s][insknumubarncall[i]];
-    if(m == conv::kSKmUndefined) continue;
-    nsknumubarnc_0 += nskmodes_0[m];
-  }
-
-  // ccnue
-  double nsknuecc_0 = 0;
-  for (int i = 0; i<nmodesallmax; i++) {
-    if(insknueccall[i] < 0) continue;
-    conv::SuperkMode_t m = conv::kSKReactionModes[s][insknueccall[i]];
-    if(m == conv::kSKmUndefined) continue;
-    nsknuecc_0 += nskmodes_0[m];
-  }
-
-  // ncnue
-  double nsknuenc_0 = 0;
-  for (int i = 0; i<nmodesallmax; i++) {
-    if(insknuencall[i] < 0) continue;
-    conv::SuperkMode_t m = conv::kSKReactionModes[s][insknuencall[i]];
-    if(m == conv::kSKmUndefined) continue;
-    nsknuenc_0 += nskmodes_0[m];
-  }
-
-  // signue
-  double nsknuesig_0 = 0;
-  for (int i = 0; i<nmodesallmax; i++) {
-    if(insknuesigall[i] < 0) continue;
-    conv::SuperkMode_t m = conv::kSKReactionModes[s][insknuesigall[i]];
-    if(m == conv::kSKmUndefined) continue;
-    nsknuesig_0 += nskmodes_0[m];
-  }
+    if(IsCC(m)) {
+      if(IsNuMu(m))
+	nsknumucc_0 += nskmodes_0[m];
+      else if(IsNuMuBar(m))
+	nsknumubarcc_0 += nskmodes_0[m];
+      else if(IsNuE(m))
+	nsknuecc_0 += nskmodes_0[m];
+      else if(IsNuEBar(m))
+	nsknuebarcc_0 += nskmodes_0[m];
+      else if(IsSignalNuE(m))
+	nsknuesig_0 += nskmodes_0[m];
+      else {
+	cerr << "CC mode " << AsString(m) << " is not numu, numubar, nue, nuebar, nuesig!" << endl;
+	exit(1);
+      }
+    }//CC?
+    else if(IsNC(m)) {
+      if(IsNuMu(m))
+	nsknumucc_0 += nskmodes_0[m];
+      else if(IsNuMuBar(m))
+	nsknumubarcc_0 += nskmodes_0[m];
+      else if(IsNuE(m))
+	nsknuecc_0 += nskmodes_0[m];
+      else if(IsNuEBar(m))
+	nsknuebarcc_0 += nskmodes_0[m];
+      else {
+	cerr << "NC mode " << AsString(m) << " is not numu, numubar, nue, nuebar!" << endl;
+	exit(1);
+      }
+    }//NC?
+    else {
+      cerr << "NC mode " << AsString(m) << " is not numu, numubar, nue, nuebar!" << endl;
+      exit(1);
+    }//not CC or NC
+  } //loop over modes
 
   // spectral numu ccqe
   double nsknumuccqe_0a        = skexp->CurrPredictedErecoSpectrum(s, conv::kSKmNuMuCCQE       )->Integral(1,           ErecoBin1-1          );
@@ -290,77 +181,60 @@ void test_systematic_error_propagation
   // total 
   double nsk_p = skexp->CurrPredictedErecoSpectrum(s)->Integral();
 
-  // individual modes 
+  // individual modes & cc/nc species totals
   double nskmodes_p[conv::knm];
+  double nsknumucc_p = 0;
+  double nsknumunc_p = 0;
+  double nsknumubarcc_p = 0;
+  double nsknumubarnc_p = 0;
+  double nsknuecc_p = 0;
+  double nsknuenc_p = 0;
+  double nsknuebarcc_p = 0;
+  double nsknuebarnc_p = 0;
+  double nsknuesig_p = 0;
+
   for (int im = 0; im < conv::knm; im++) {
     conv::SuperkMode_t m = conv::kSKReactionModes[s][im];
     if(m == conv::kSKmUndefined) continue;
+    if(util::FindModeSlot(s,m) < 0) continue;
     // use s, m (not is,im) as indices, eg fMCErecoSpectrum[s][m]
-    nskmodes_p[m] = skexp->CurrPredictedErecoSpectrum(s, m)->Integral();
-  }
+    nskmodes_p[m] = skexp->CurrPredictedErecoSpectrum(s,m)->Integral();
 
-  // ccnumu
-  double nsknumucc_p = 0;
-  for (int i = 0; i<nmodesallmax; i++) {
-    if (insknumuccall[i] < 0) continue;
-    conv::SuperkMode_t m = conv::kSKReactionModes[s][insknumuccall[i]];
-    if(m == conv::kSKmUndefined) continue;
-    nsknumucc_p += nskmodes_p[m];
-  }
-
-  // ncnumu
-  double nsknumunc_p = 0;
-  for (int i = 0; i<nmodesallmax; i++) {
-    if (insknumuncall[i] < 0) continue;
-    conv::SuperkMode_t m = conv::kSKReactionModes[s][insknumuncall[i]];
-    if(m == conv::kSKmUndefined) continue;
-    nsknumunc_p += nskmodes_p[m];
-  }
-
-  // ccnumubar
-  double nsknumubarcc_p = 0;
-  for (int i = 0; i<nmodesallmax; i++) {
-    if (insknumubarccall[i] < 0) continue;
-    conv::SuperkMode_t m = conv::kSKReactionModes[s][insknumubarccall[i]];
-    if(m == conv::kSKmUndefined) continue;
-    nsknumubarcc_p += nskmodes_p[m];
-  }
-
-  // ncnumubar
-  double nsknumubarnc_p = 0;
-  for (int i = 0; i<nmodesallmax; i++) {
-    if (insknumubarncall[i] < 0) continue;
-    conv::SuperkMode_t m = conv::kSKReactionModes[s][insknumubarncall[i]];
-    if(m == conv::kSKmUndefined) continue;
-    nsknumubarnc_p += nskmodes_p[m];
-  }
-
-  // ccnue
-  double nsknuecc_p = 0;
-  for (int i = 0; i<nmodesallmax; i++) {
-    if (insknueccall[i] < 0) continue;
-    conv::SuperkMode_t m = conv::kSKReactionModes[s][insknueccall[i]];
-    if(m == conv::kSKmUndefined) continue;
-    nsknuecc_p += nskmodes_p[m];
-  }
-
-  // ncnue
-  double nsknuenc_p = 0;
-  for (int i = 0; i<nmodesallmax; i++) {
-    if (insknuencall[i] < 0) continue;
-    conv::SuperkMode_t m = conv::kSKReactionModes[s][insknuencall[i]];
-    if(m == conv::kSKmUndefined) continue;
-    nsknuenc_p += nskmodes_p[m];
-  }
-
-  // signue
-  double nsknuesig_p = 0;
-  for (int i = 0; i<nmodesallmax; i++) {
-    if (insknuesigall[i] < 0) continue;
-    conv::SuperkMode_t m = conv::kSKReactionModes[s][insknuesigall[i]];
-    if(m == conv::kSKmUndefined) continue;
-    nsknuesig_p += nskmodes_p[m];
-  }
+    if(IsCC(m)) {
+      if(IsNuMu(m))
+	nsknumucc_p += nskmodes_p[m];
+      else if(IsNuMuBar(m))
+	nsknumubarcc_p += nskmodes_p[m];
+      else if(IsNuE(m))
+	nsknuecc_p += nskmodes_p[m];
+      else if(IsNuEBar(m))
+	nsknuebarcc_p += nskmodes_p[m];
+      else if(IsSignalNuE(m))
+	nsknuesig_p += nskmodes_p[m];
+      else {
+	cerr << "CC mode " << AsString(m) << " is not numu, numubar, nue, nuebar, nuesig!" << endl;
+	exit(1);
+      }
+    }//CC?
+    else if(IsNC(m)) {
+      if(IsNuMu(m))
+	nsknumucc_p += nskmodes_p[m];
+      else if(IsNuMuBar(m))
+	nsknumubarcc_p += nskmodes_p[m];
+      else if(IsNuE(m))
+	nsknuecc_p += nskmodes_p[m];
+      else if(IsNuEBar(m))
+	nsknuebarcc_p += nskmodes_p[m];
+      else {
+	cerr << "NC mode " << AsString(m) << " is not numu, numubar, nue, nuebar!" << endl;
+	exit(1);
+      }
+    }//NC?
+    else {
+      cerr << "NC mode " << AsString(m) << " is not numu, numubar, nue, nuebar!" << endl;
+      exit(1);
+    }//not CC or NC
+  } //loop over modes
 
   // spectral numu ccqe
   double nsknumuccqe_pa        = skexp->CurrPredictedErecoSpectrum(s, conv::kSKmNuMuCCQE       )->Integral(1,           ErecoBin1-1          );
@@ -380,77 +254,61 @@ void test_systematic_error_propagation
   // total 
   double nsk_m = skexp->CurrPredictedErecoSpectrum(s)->Integral();
 
-  // individual modes 
+  // individual modes & cc/nc species totals
   double nskmodes_m[conv::knm];
+  double nsknumucc_m = 0;
+  double nsknumunc_m = 0;
+  double nsknumubarcc_m = 0;
+  double nsknumubarnc_m = 0;
+  double nsknuecc_m = 0;
+  double nsknuenc_m = 0;
+  double nsknuebarcc_m = 0;
+  double nsknuebarnc_m = 0;
+  double nsknuesig_m = 0;
+
   for (int im = 0; im < conv::knm; im++) {
     conv::SuperkMode_t m = conv::kSKReactionModes[s][im];
     if(m == conv::kSKmUndefined) continue;
-    //   use s, m (not is,im) as indices, eg fMCErecoSpectrum[s][m]
-    nskmodes_m[m] = skexp->CurrPredictedErecoSpectrum(s, m)->Integral();
-  }
+    if(util::FindModeSlot(s,m) < 0) continue;
+    // use s, m (not is,im) as indices, eg fMCErecoSpectrum[s][m]
+    nskmodes_m[m] = skexp->CurrPredictedErecoSpectrum(s,m)->Integral();
 
-  // ccnumu
-  double nsknumucc_m = 0;
-  for (int i = 0; i<nmodesallmax; i++) {
-    if (insknumuccall[i] < 0) continue;
-    conv::SuperkMode_t m = conv::kSKReactionModes[s][insknumuccall[i]];
-    if(m == conv::kSKmUndefined) continue;
-    nsknumucc_m += nskmodes_m[m];
-  }
+    if(IsCC(m)) {
+      if(IsNuMu(m))
+	nsknumucc_m += nskmodes_m[m];
+      else if(IsNuMuBar(m))
+	nsknumubarcc_m += nskmodes_m[m];
+      else if(IsNuE(m))
+	nsknuecc_m += nskmodes_m[m];
+      else if(IsNuEBar(m))
+	nsknuebarcc_m += nskmodes_m[m];
+      else if(IsSignalNuE(m))
+	nsknuesig_m += nskmodes_m[m];
+      else {
+	cerr << "CC mode " << AsString(m) << " is not numu, numubar, nue, nuebar, nuesig!" << endl;
+	exit(1);
+      }
+    }//CC?
+    else if(IsNC(m)) {
+      if(IsNuMu(m))
+	nsknumucc_m += nskmodes_m[m];
+      else if(IsNuMuBar(m))
+	nsknumubarcc_m += nskmodes_m[m];
+      else if(IsNuE(m))
+	nsknuecc_m += nskmodes_m[m];
+      else if(IsNuEBar(m))
+	nsknuebarcc_m += nskmodes_m[m];
+      else {
+	cerr << "NC mode " << AsString(m) << " is not numu, numubar, nue, nuebar!" << endl;
+	exit(1);
+      }
+    }//NC?
+    else {
+      cerr << "NC mode " << AsString(m) << " is not numu, numubar, nue, nuebar!" << endl;
+      exit(1);
+    }//not CC or NC
+  } //loop over modes
 
-  // ncnumu
-  double nsknumunc_m = 0;
-  for (int i = 0; i<nmodesallmax; i++) {
-    if (insknumuncall[i] < 0) continue;
-    conv::SuperkMode_t m = conv::kSKReactionModes[s][insknumuncall[i]];
-    if(m == conv::kSKmUndefined) continue;
-    nsknumunc_m += nskmodes_m[m];
-  }
-
-  // ccnumubar
-  double nsknumubarcc_m = 0;
-  for (int i = 0; i<nmodesallmax; i++) {
-    if (insknumubarccall[i] < 0) continue;
-    conv::SuperkMode_t m = conv::kSKReactionModes[s][insknumubarccall[i]];
-    if(m == conv::kSKmUndefined) continue;
-    nsknumubarcc_m += nskmodes_m[m];
-  }
-
-  // ncnumubar
-  double nsknumubarnc_m = 0;
-  for (int i = 0; i<nmodesallmax; i++) {
-    if (insknumubarncall[i] < 0) continue;
-    conv::SuperkMode_t m = conv::kSKReactionModes[s][insknumubarncall[i]];
-    if(m == conv::kSKmUndefined) continue;
-    nsknumubarnc_m += nskmodes_m[m];
-  }
-
-  // ccnue
-  double nsknuecc_m = 0;
-  for (int i = 0; i<nmodesallmax; i++) {
-    if (insknueccall[i] < 0) continue;
-    conv::SuperkMode_t m = conv::kSKReactionModes[s][insknueccall[i]];
-    if(m == conv::kSKmUndefined) continue;
-    nsknuecc_m += nskmodes_m[m];
-  }
-
-  // ncnue
-  double nsknuenc_m = 0;
-  for (int i = 0; i<nmodesallmax; i++) {
-    if (insknuencall[i] < 0) continue;
-    conv::SuperkMode_t m = conv::kSKReactionModes[s][insknuencall[i]];
-    if(m == conv::kSKmUndefined) continue;
-    nsknuenc_m += nskmodes_m[m];
-  }
-
-  // signue
-  double nsknuesig_m = 0;
-  for (int i = 0; i<nmodesallmax; i++) {
-    if (insknuesigall[i] < 0) continue;
-    conv::SuperkMode_t m = conv::kSKReactionModes[s][insknuesigall[i]];
-    if(m == conv::kSKmUndefined) continue;
-    nsknuesig_m += nskmodes_m[m];
-  }
 
   // spectral numu ccqe
   double nsknumuccqe_ma        = skexp->CurrPredictedErecoSpectrum(s, conv::kSKmNuMuCCQE       )->Integral(1,           ErecoBin1-1          );
