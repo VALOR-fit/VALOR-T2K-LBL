@@ -664,6 +664,118 @@ string t2kana::util::AsString(PhysParamId_t p)
     {
         NuOscMixParam_t omp = Opt::Instance()->gOscMixingParamChoice;
         switch(omp) {
+           case(kNuMixSinsq2Theta) : return "sin^2(2*theta_23)"; break;
+           case(kNuMixSinsqTheta ) : return "sin^2(theta_23)";   break;
+           default                 : return "--";                break;
+         }
+    }
+    break;
+    case ( kPhypMixing13 ) : 
+    {
+        NuOscMixParam_t omp = Opt::Instance()->gOscMixingParamChoice;
+        switch(omp) {
+           case(kNuMixSinsq2Theta) : return "sin^2(2*theta_13)";  break;
+           case(kNuMixSinsqTheta ) : return "sin^2(theta_13)";    break;
+           default                 : return "--";                 break;
+         }
+    }
+    break;
+    case ( kPhypMixing12 ) :      
+    {
+        NuOscMixParam_t omp = Opt::Instance()->gOscMixingParamChoice;
+        switch(omp) {
+           case(kNuMixSinsq2Theta) : return "sin^2(2*theta_12)";  break;
+           case(kNuMixSinsqTheta ) : return "sin^2(theta_12)";    break;
+           default                 : return "--";                 break;
+         }
+    }
+    break;
+
+    case ( kPhypDeltaCP               ) : return "delta_cp";                   break;
+    case ( kPhypDm23sq                ) : return "|Dm^2_23|";                  break;
+    case ( kPhypDm12sq                ) : return "Dm^2_12";                    break;
+
+    case ( kPhypAlphaDecay            ) : return "alpha_decay";                break;
+    case ( kPhypSinsq2ThetaDecay      ) : return "sin^2(2*theta_decay)";       break;
+    case ( kPhypMusqDecoh             ) : return "mu^2_decoh";                 break;
+    case ( kPhypSinsq2ThetaDecoh      ) : return "sin^2(2*theta_decoh)";       break;
+
+    /*
+     * 2011-analysis nuisance parameters
+     */
+
+    case ( kNuisSuperkEnergyScale     ) : return "SK energy scale";                 break;    
+    case ( kNuisSuperkEff1RmuCCQEoth  ) : return "SK efficiency; 1Rmu; CCQE/Other"; break;
+    case ( kNuisSuperkEff1RmuCCQErc0u ) : return "SK efficiency; 1Rmu; CCQE/RC0";   break;
+    case ( kNuisSuperkEff1RmuCCQErc1u ) : return "SK efficiency; 1Rmu; CCQE/RC1";   break;
+    case ( kNuisSuperkEff1RmuCCQErc2u ) : return "SK efficiency; 1Rmu; CCQE/RC2";   break;
+    case ( kNuisSuperkEff1RmuCCnonQE  ) : return "SK efficiency; 1Rmu; CCnonQE";    break;
+    case ( kNuisSuperkEff1RmuNC       ) : return "SK efficiency; 1Rmu; NC";         break;
+    case ( kNuisSuperkEff1RmuNueCC    ) : return "SK efficiency; 1Rmu; nue CC";     break;
+
+    case ( kNuisBANFF00               ) : return "BANFF 00; SK numu flux; 0.0 - 0.4 GeV";     break;
+    case ( kNuisBANFF01               ) : return "BANFF 01; SK numu flux; 0.4 - 0.5 GeV";     break;
+    case ( kNuisBANFF02               ) : return "BANFF 02; SK numu flux; 0.5 - 0.6 GeV";     break;
+    case ( kNuisBANFF03               ) : return "BANFF 03; SK numu flux; 0.6 - 0.7 GeV";     break;
+    case ( kNuisBANFF04               ) : return "BANFF 04; SK numu flux; 0.7 - 1.0 GeV";     break;
+    case ( kNuisBANFF05               ) : return "BANFF 05; SK numu flux; 1.0 - 1.5 GeV";     break;
+    case ( kNuisBANFF06               ) : return "BANFF 06; SK numu flux; 1.5 - 2.5 GeV";     break;
+    case ( kNuisBANFF07               ) : return "BANFF 07; SK numu flux; 2.5 - 3.5 GeV";     break;
+    case ( kNuisBANFF08               ) : return "BANFF 08; SK numu flux; 3.5 - 5.0 GeV";     break;
+    case ( kNuisBANFF09               ) : return "BANFF 09; SK numu flux; 5.0 - 7.0 GeV";     break;
+    case ( kNuisBANFF10               ) : return "BANFF 10; SK numu flux; 7.0 - 30.0 GeV";    break;
+    case ( kNuisBANFF11               ) : return "BANFF 11; SK numubar flux; 0.0 - 1.5 GeV";  break;
+    case ( kNuisBANFF12               ) : return "BANFF 12; SK numubar flux; 1.5 - 30.0 GeV"; break;
+    case ( kNuisBANFF13               ) : return "BANFF 13; SK nue flux; 0.0 - 0.5 GeV";      break;
+    case ( kNuisBANFF14               ) : return "BANFF 14; SK nue flux; 0.5 - 0.7 GeV";      break;
+    case ( kNuisBANFF15               ) : return "BANFF 15; SK nue flux; 0.7 - 0.8 GeV";      break;
+    case ( kNuisBANFF16               ) : return "BANFF 16; SK nue flux; 0.8 - 1.5 GeV";      break;
+    case ( kNuisBANFF17               ) : return "BANFF 17; SK nue flux; 1.5 - 2.5 GeV";      break;
+    case ( kNuisBANFF18               ) : return "BANFF 18; SK nue flux; 2.5 - 4.0 GeV";      break;
+    case ( kNuisBANFF19               ) : return "BANFF 19; SK nue flux; 4.0 - 30.0 GeV";     break;
+    case ( kNuisBANFF20               ) : return "BANFF 20; SK nuebar flux; 0.0 - 2.5 GeV";   break;
+    case ( kNuisBANFF21               ) : return "BANFF 21; SK nuebar flux; 2.5 - 30.0 GeV";  break;
+    case ( kNuisBANFF22               ) : return "BANFF 22; Ma QE";                           break;
+    case ( kNuisBANFF23               ) : return "BANFF 23; Ma RES";                          break;
+    case ( kNuisBANFF24               ) : return "BANFF 24; Norm; CC QE; 0.0 - 1.5 GeV";      break;
+    case ( kNuisBANFF25               ) : return "BANFF 25; Norm; CC RES; 0.0 - 2.5 GeV";     break;
+
+    case ( kNuisXSecFermiMom          ) : return "Fermi Momentum";                  break;
+    case ( kNuisXSecBindE             ) : return "Binding Energy";                  break; 
+    case ( kNuisXSecSpecFunc          ) : return "Spectral Func";                   break; 
+    case ( kNuisXSecNormCCQE1         ) : return "Norm; CC QE Norm; 1.5 - 3.5 GeV"; break; 
+    case ( kNuisXSecNormCCQE2         ) : return "Norm; CC QE Norm; > 3.5 GeV";     break; 
+    case ( kNuisXSecDeltaMass         ) : return "Delta mass";                      break; 
+    case ( kNuisXSecDeltaWidth        ) : return "Delta width";                     break; 
+    case ( kNuisXSecNormCC1pi1        ) : return "Norm; CC 1pi; > 2.5 GeV";         break; 
+    case ( kNuisXSecNormCCcoh         ) : return "Norm; CC Coh";                    break;
+    case ( kNuisXSecNormCCoth         ) : return "Norm; CC Oth";                    break;
+
+    case ( kNuisFSI00                 ) : return "FSI 00; ??";                     break;
+    case ( kNuisFSI01                 ) : return "FSI 01; ??";                     break;
+    case ( kNuisFSI02                 ) : return "FSI 02; ??";                     break;
+    case ( kNuisFSI03                 ) : return "FSI 03; ??";                     break;
+    case ( kNuisFSI04                 ) : return "FSI 04; ??";                     break;
+    case ( kNuisFSI05                 ) : return "FSI 05; ??";                     break;
+    case ( kNuisFSI06                 ) : return "FSI 06; ??";                     break;
+    case ( kNuisFSI07                 ) : return "FSI 07; ??";                     break;
+    case ( kNuisFSI08                 ) : return "FSI 08; ??";                     break;
+    case ( kNuisFSI09                 ) : return "FSI 09; ??";                     break;
+
+    default : 
+      return "--";
+  }
+  return "--";
+}
+//____________________________________________________________________________
+string t2kana::util::AsStringCompact(PhysParamId_t p)
+{
+  switch(p) {
+
+    case ( kPhypMixing23 ) : 
+    {
+        NuOscMixParam_t omp = Opt::Instance()->gOscMixingParamChoice;
+        switch(omp) {
            case(kNuMixSinsq2Theta) : return "sinsq2theta23";  break;
            case(kNuMixSinsqTheta ) : return "sinsqtheta23";   break;
            default                 : return "--";             break;
@@ -713,54 +825,54 @@ string t2kana::util::AsString(PhysParamId_t p)
     case ( kNuisSuperkEff1RmuNC       ) : return "f_sk_eff_1Rmu_nc";               break;
     case ( kNuisSuperkEff1RmuNueCC    ) : return "f_sk_eff_1Rmu_nuecc";            break;
 
-    case ( kNuisBANFF00               ) : return "f_banff00_sk_numu_0.0_0.4";      break;
-    case ( kNuisBANFF01               ) : return "f_banff01_sk_numu_0.4_0.5";      break;
-    case ( kNuisBANFF02               ) : return "f_banff02_sk_numu_0.5_0.6";      break;
-    case ( kNuisBANFF03               ) : return "f_banff03_sk_numu_0.6_0.7";      break;
-    case ( kNuisBANFF04               ) : return "f_banff04_sk_numu_0.7_1.0";      break;
-    case ( kNuisBANFF05               ) : return "f_banff05_sk_numu_1.0_1.5";      break;
-    case ( kNuisBANFF06               ) : return "f_banff06_sk_numu_1.5_2.5";      break;
-    case ( kNuisBANFF07               ) : return "f_banff07_sk_numu_2.5_3.5";      break;
-    case ( kNuisBANFF08               ) : return "f_banff08_sk_numu_3.5_5.0";      break;
-    case ( kNuisBANFF09               ) : return "f_banff09_sk_numu_5.0_7.0";      break;
-    case ( kNuisBANFF10               ) : return "f_banff10_sk_numu_7.0_30.0";     break;
-    case ( kNuisBANFF11               ) : return "f_banff11_sk_numubar_0.0_1.5";   break;
-    case ( kNuisBANFF12               ) : return "f_banff12_sk_numubar_1.5_30.0";  break;
-    case ( kNuisBANFF13               ) : return "f_banff13_sk_nue_0.0_0.5";       break;
-    case ( kNuisBANFF14               ) : return "f_banff14_sk_nue_0.5_0.7";       break;
-    case ( kNuisBANFF15               ) : return "f_banff15_sk_nue_0.7_0.8";       break;
-    case ( kNuisBANFF16               ) : return "f_banff16_sk_nue_0.8_1.5";       break;
-    case ( kNuisBANFF17               ) : return "f_banff17_sk_nue_1.5_2.5";       break;
-    case ( kNuisBANFF18               ) : return "f_banff18_sk_nue_2.5_4.0";       break;
-    case ( kNuisBANFF19               ) : return "f_banff19_sk_nue_4.0_30.0";      break;
-    case ( kNuisBANFF20               ) : return "f_banff20_sk_nuebar_0.0_2.5";    break;
-    case ( kNuisBANFF21               ) : return "f_banff21_sk_nuebar_2.5_30.0";   break;
-    case ( kNuisBANFF22               ) : return "f_banff22_ma_qe";                break;
-    case ( kNuisBANFF23               ) : return "f_banff23_ma_res";               break;
-    case ( kNuisBANFF24               ) : return "f_banff24_norm_ccqe_0_1.5";      break;
-    case ( kNuisBANFF25               ) : return "f_banff25_norm_ccres_0_2.5";     break;
+    case ( kNuisBANFF00               ) : return "f_banff00";      break;
+    case ( kNuisBANFF01               ) : return "f_banff01";      break;
+    case ( kNuisBANFF02               ) : return "f_banff02";      break;
+    case ( kNuisBANFF03               ) : return "f_banff03";      break;
+    case ( kNuisBANFF04               ) : return "f_banff04";      break;
+    case ( kNuisBANFF05               ) : return "f_banff05";      break;
+    case ( kNuisBANFF06               ) : return "f_banff06";      break;
+    case ( kNuisBANFF07               ) : return "f_banff07";      break;
+    case ( kNuisBANFF08               ) : return "f_banff08";      break;
+    case ( kNuisBANFF09               ) : return "f_banff09";      break;
+    case ( kNuisBANFF10               ) : return "f_banff10";      break;
+    case ( kNuisBANFF11               ) : return "f_banff11";      break;
+    case ( kNuisBANFF12               ) : return "f_banff12";      break;
+    case ( kNuisBANFF13               ) : return "f_banff13";      break;
+    case ( kNuisBANFF14               ) : return "f_banff14";      break;
+    case ( kNuisBANFF15               ) : return "f_banff15";      break;
+    case ( kNuisBANFF16               ) : return "f_banff16";      break;
+    case ( kNuisBANFF17               ) : return "f_banff17";      break;
+    case ( kNuisBANFF18               ) : return "f_banff18";      break;
+    case ( kNuisBANFF19               ) : return "f_banff19";      break;
+    case ( kNuisBANFF20               ) : return "f_banff20";      break;
+    case ( kNuisBANFF21               ) : return "f_banff21";      break;
+    case ( kNuisBANFF22               ) : return "f_banff22";      break;
+    case ( kNuisBANFF23               ) : return "f_banff23";      break;
+    case ( kNuisBANFF24               ) : return "f_banff24";      break;
+    case ( kNuisBANFF25               ) : return "f_banff25";      break;
 
-    case ( kNuisXSecFermiMom          ) : return "f_pfermi";                       break;
-    case ( kNuisXSecBindE             ) : return "f_bind";                         break; 
-    case ( kNuisXSecSpecFunc          ) : return "f_specfunc";                     break; 
-    case ( kNuisXSecNormCCQE1         ) : return "f_norm_ccqe_1.5_3.5";            break; 
-    case ( kNuisXSecNormCCQE2         ) : return "f_norm_ccqe_gt3.5";              break; 
-    case ( kNuisXSecDeltaMass         ) : return "f_delta_mass";                   break; 
-    case ( kNuisXSecDeltaWidth        ) : return "f_delta_width";                  break; 
-    case ( kNuisXSecNormCC1pi1        ) : return "f_norm_cc1pi_gt2.5";             break; 
-    case ( kNuisXSecNormCCcoh         ) : return "f_norm_cccoh";                   break;
-    case ( kNuisXSecNormCCoth         ) : return "f_norm_ccoth";                   break;
+    case ( kNuisXSecFermiMom          ) : return "f_pfermi";       break;
+    case ( kNuisXSecBindE             ) : return "f_bind";         break; 
+    case ( kNuisXSecSpecFunc          ) : return "f_specfunc";     break; 
+    case ( kNuisXSecNormCCQE1         ) : return "f_norm_ccqe_1";  break; 
+    case ( kNuisXSecNormCCQE2         ) : return "f_norm_ccqe_2";  break; 
+    case ( kNuisXSecDeltaMass         ) : return "f_delta_mass";   break; 
+    case ( kNuisXSecDeltaWidth        ) : return "f_delta_width";  break; 
+    case ( kNuisXSecNormCC1pi1        ) : return "f_norm_cc1pi_1"; break; 
+    case ( kNuisXSecNormCCcoh         ) : return "f_norm_cccoh";   break;
+    case ( kNuisXSecNormCCoth         ) : return "f_norm_ccoth";   break;
 
-    case ( kNuisFSI00                 ) : return "f_fsi00_??";                     break;
-    case ( kNuisFSI01                 ) : return "f_fsi01_??";                     break;
-    case ( kNuisFSI02                 ) : return "f_fsi02_??";                     break;
-    case ( kNuisFSI03                 ) : return "f_fsi03_??";                     break;
-    case ( kNuisFSI04                 ) : return "f_fsi04_??";                     break;
-    case ( kNuisFSI05                 ) : return "f_fsi05_??";                     break;
-    case ( kNuisFSI06                 ) : return "f_fsi06_??";                     break;
-    case ( kNuisFSI07                 ) : return "f_fsi07_??";                     break;
-    case ( kNuisFSI08                 ) : return "f_fsi08_??";                     break;
-    case ( kNuisFSI09                 ) : return "f_fsi09_??";                     break;
+    case ( kNuisFSI00                 ) : return "f_fsi00";        break;
+    case ( kNuisFSI01                 ) : return "f_fsi01";        break;
+    case ( kNuisFSI02                 ) : return "f_fsi02";        break;
+    case ( kNuisFSI03                 ) : return "f_fsi03";        break;
+    case ( kNuisFSI04                 ) : return "f_fsi04";        break;
+    case ( kNuisFSI05                 ) : return "f_fsi05";        break;
+    case ( kNuisFSI06                 ) : return "f_fsi06";        break;
+    case ( kNuisFSI07                 ) : return "f_fsi07";        break;
+    case ( kNuisFSI08                 ) : return "f_fsi08";        break;
+    case ( kNuisFSI09                 ) : return "f_fsi09";        break;
 
     default : 
       return "--";
@@ -1761,61 +1873,6 @@ vector<string> t2kana::util::Tokens (string input, string delimiter)
   return tokens;
 }
 //___________________________________________________________________________
-int t2kana::util::FluxFix2VarBinNumber(int fixBinNo)
-{
-  // Given flux cov matrix is 19x19, made for a variable binning scheme:
-  // (0.0, 0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 1.0, 1.2, 1.5, 2.0, 
-  //  2.5, 3.0, 3.5, 4.0, 5.0, 7.0, 10.0) GeV
-  // We use fixed-size 0.05 GeV binning.
-  // Bin numbers (from the fixed binning scheme to the variable one) are
-  // mapped as follows:
-  //
-  // 0.0(2)0.1; 0.1(2)0.2; .....; 07(2)08; =>16 50Mev bins
-  // 0.8(4)1.0; 1.0(4)1.2; = > 8 50MeV bins
-  // 1.2(6)1.5; = > 6 50MeV bins
-  // 1.5(10)2.0; ....;3.5(10)4.0 => 50 50MeV bins
-  // 4.0(20)5.0 =>20 50MeV bins
-  // 5(40)7 =>40 50MeV bins
-  // 7(40)10 =>60 50MeV bins
-
-  if (fixBinNo >=   1 && fixBinNo <=  16) return (fixBinNo+1)/2;
-  if (fixBinNo >=  17 && fixBinNo <=  20) return 9;
-  if (fixBinNo >=  21 && fixBinNo <=  24) return 10;
-  if (fixBinNo >=  25 && fixBinNo <=  30) return 11;
-  if (fixBinNo >=  31 && fixBinNo <=  40) return 12;
-  if (fixBinNo >=  41 && fixBinNo <=  50) return 13;
-  if (fixBinNo >=  51 && fixBinNo <=  60) return 14;
-  if (fixBinNo >=  61 && fixBinNo <=  70) return 15;
-  if (fixBinNo >=  71 && fixBinNo <=  80) return 16;
-  if (fixBinNo >=  81 && fixBinNo <= 100) return 17;
-  if (fixBinNo >= 101 && fixBinNo <= 140) return 18;
-  if (fixBinNo >= 141 && fixBinNo <= 200) return 19;
-
-  return -1;
-}
-//___________________________________________________________________________
-double t2kana::util::FluxFractionsFixedBinRelToVarBin (
-  int fixBinNo, TH1D* fixBinFluxHisto, TH1D* varBinFluxHisto)
-{
-// ratio 50 MeV bin content relative to the larger bin content (in the 
-// var size binning scheme) that contains it.
-//
-      
-  if(fixBinFluxHisto->GetBinCenter(fixBinNo) < 10.0 /* GeV */)
-  {
-     double fixBinFlux = fixBinFluxHisto->GetBinContent(fixBinNo);
-     int ibin = FluxFix2VarBinNumber(fixBinNo);
-     double varBinFlux = varBinFluxHisto->GetBinContent(ibin);
-     double ratio = (varBinFlux>0) ? fixBinFlux/varBinFlux : 1;
-     return ratio;
-   }
-
-  cout << "Util/FluxFractionsFixedBinRelToVarBin >> "
-       << "Note! Input bin center above 10 GeV" << endl;
-
-   return 1;
-}
-//___________________________________________________________________________
 void t2kana::util::PrintCompact(
    const TVectorD & v, int w, int prec, Option_t * option)
 {
@@ -1832,7 +1889,7 @@ void t2kana::util::PrintCompact(
      if(printing_banff_params) {
          cout << " [ ";
          PhysParamId_t p = PhysParamId_t ( (int)kNuisBANFF00 + ip );
-         cout << setw(30) << util::AsString(p);
+         cout << setw(42) << util::AsString(p);
          cout << " ]";
      }
      if(printing_fsi_params) {
@@ -1863,7 +1920,7 @@ void t2kana::util::PrintCompact(
      if(printing_banff_params) {
          cout << " [ ";
          PhysParamId_t p = PhysParamId_t ( (int)kNuisBANFF00 + ip );
-         cout << setw(30) << util::AsString(p);
+         cout << setw(42) << util::AsString(p);
          cout << " ]";
      }
      if(printing_fsi_params) {
@@ -1970,46 +2027,116 @@ bool t2kana::util::NodeExists(
   return false;
 }
 //___________________________________________________________________________
-/*
-bool t2kana::util::XML2RootFileAndObjectName(
+double t2kana::util::XML2Dbl(
+  TXMLEngine * xmleng, XMLNodePointer_t topnode, string path)
+{
+// Get the specified node content as a floating-point number
+//
+
+#ifdef __debug_level_2__
+  cout << "utils/XML2Dbl >> Reading info at XML node path: " << path << endl;
+#endif
+
+  XMLNodePointer_t found_node = FindNode(xmleng,topnode,path);
+  if(!found_node) {
+    cerr << "utils/XML2Dbl >> No node was found at input XML node path: "
+         << path << endl;
+    exit(1);
+  }
+  string content = xmleng->GetNodeContent(found_node);
+  double value = atof(content.c_str());
+  return value;
+}
+//___________________________________________________________________________
+vector<double> t2kana::util::XML2DblArray(
+  TXMLEngine * xmleng, XMLNodePointer_t topnode, string path)
+{
+// Get the specified node content as a vector floating-point number
+// The node content should be a comma-separed list of numbers
+
+#ifdef __debug_level_2__
+  cout << "utils/XML2Dbl >> Reading info at XML node path: " << path << endl;
+#endif
+
+  XMLNodePointer_t found_node = FindNode(xmleng,topnode,path);
+  if(!found_node) {
+    cerr << "utils/XML2Dbl >> No node was found at input XML node path: "
+         << path << endl;
+    exit(1);
+  }
+  string content = TrimSpaces(xmleng->GetNodeContent(found_node));
+
+  vector<double> array;
+  vector<string> str_tokens = Tokens(content, ",");
+  vector<string>::const_iterator str_tokens_iter = str_tokens.begin();
+  for( ; str_tokens_iter != str_tokens.end(); ++str_tokens_iter) {
+     string token = *str_tokens_iter;
+     array.push_back( atof(token.c_str()) );
+  }
+  return array;
+}
+//___________________________________________________________________________
+string t2kana::util::XML2String(
+  TXMLEngine * xmleng, XMLNodePointer_t topnode, string path)
+{
+// Get the specified node content as a floating-point number
+//
+
+#ifdef __debug_level_2__
+  cout << "utils/XML2Str >> Reading info at XML node path: " << path << endl;
+#endif
+
+  XMLNodePointer_t found_node = FindNode(xmleng,topnode,path);
+  if(!found_node) {
+    cerr << "utils/XML2Str >> No node was found at input XML node path: "
+         << path << endl;
+    exit(1);
+  }
+  string content = xmleng->GetNodeContent(found_node);
+  return TrimSpaces(content);
+}
+//___________________________________________________________________________
+string t2kana::util::XML2RootFileName(
+   TXMLEngine * xmleng, XMLNodePointer_t topnode, string path)
+{
+  string filename = XML2String(xmleng,topnode,path+"/filename");
+#ifdef __debug_level_2__
+  cout << "utils/XML2RootFileName >> filename : " << filename << endl;
+#endif
+  return filename;
+}
+//___________________________________________________________________________
+string t2kana::util::XML2RootObjName (
+   TXMLEngine * xmleng, XMLNodePointer_t topnode, string path)
+{
+  string objname = XML2String(xmleng,topnode,path+"/objname");
+#ifdef __debug_level_2__
+  cout << "utils/XML2RootObjName >> objname  : " << objname  << endl;
+#endif
+  return objname;
+}
+//___________________________________________________________________________
+TFile * t2kana::util::XML2TFile(
   TXMLEngine * xmleng, XMLNodePointer_t topnode, string path)
 {
 #ifdef __debug_level_2__
-  cout << "utils/XML2Root >> Reading info at XML node path: " << path << endl;
+  cout << "utils/XML2TFile >> Reading info at XML node path: " << path << endl;
 #endif
 
-  XMLNodePointer_t found_node = FindNode(xmleng,top_node,path);
-  if(!found_node) {
-    cerr << "utils/XML2Root >> No node was found at input XML node path: "
-         << path << endl;
-    //return 0;
+  string filename = XML2RootFileName(xmleng,topnode,path);
+
+  TFile * file = new TFile(
+    Form("%s/%s", gSystem->Getenv("T2KOSCANA"), filename.c_str()), "read");
+  if(!file) {
+    cerr << "utils/XML2TFile >> No file: " << filename << " found" << endl;
     exit(1);
   }
 
-  string filename = "";
-  string objname  = "";
-
-  XMLNodePointer_t child_node = xmleng->GetChild(found_node);
-  while(child_node) {
-    string child_node_name = xmleng->GetNodeName(child_node);
-    string content = xmleng->GetNodeContent(child_node);
-#ifdef __debug_level_2__
-    cout << "utils/XML2Root >> node = " << child_node_name << endl;
-    cout << "utils/XML2Root >> \t content = " << content << endl;
-#endif
-    if(child_node_name == "filename") { filename = TrimSpaces(content); }
-    if(child_node_name == "objname" ) { objname  = TrimSpaces(content); }
-    child_node = xmleng->GetNext(child_node);    
-  }
-
-#ifdef __debug_level_2__
-  cout << "utils/XML2Root >> filename : " << filename << endl;
-  cout << "utils/XML2Root >> objname  : " << objname  << endl;
-#endif
-}*/
+  return file;
+}
 //___________________________________________________________________________
 TH1F * t2kana::util::XML2TH1F(
-  TXMLEngine * xmleng, XMLNodePointer_t top_node, string path)
+  TXMLEngine * xmleng, XMLNodePointer_t topnode, string path)
 {
 // Get a TH1F instance from the info in the input XML config file
 //
@@ -2017,34 +2144,8 @@ TH1F * t2kana::util::XML2TH1F(
   cout << "utils/XML2TH1F >> Reading info at XML node path: " << path << endl;
 #endif
 
-  XMLNodePointer_t found_node = FindNode(xmleng,top_node,path);
-  if(!found_node) {
-    cerr << "utils/XML2TH1F >> No node was found at input XML node path: "
-         << path << endl;
-    //return 0;
-    exit(1);
-  }
-
-  string filename = "";
-  string objname  = "";
-
-  XMLNodePointer_t child_node = xmleng->GetChild(found_node);
-  while(child_node) {
-    string child_node_name = xmleng->GetNodeName(child_node);
-    string content = xmleng->GetNodeContent(child_node);
-#ifdef __debug_level_2__
-    cout << "utils/XML2TH1F >> node = " << child_node_name << endl;
-    cout << "utils/XML2TH1F >> \t content = " << content << endl;
-#endif
-    if(child_node_name == "filename") { filename = TrimSpaces(content); }
-    if(child_node_name == "objname" ) { objname  = TrimSpaces(content); }
-    child_node = xmleng->GetNext(child_node);    
-  }
-
-#ifdef __debug_level_2__
-  cout << "utils/XML2TH1F >> filename : " << filename << endl;
-  cout << "utils/XML2TH1F >> objname  : " << objname  << endl;
-#endif
+  string filename = XML2RootFileName(xmleng,topnode,path);
+  string objname  = XML2RootObjName (xmleng,topnode,path);
 
   TFile file(
     Form("%s/%s", gSystem->Getenv("T2KOSCANA"), filename.c_str()), "read");
@@ -2065,7 +2166,7 @@ TH1F * t2kana::util::XML2TH1F(
 }
 //___________________________________________________________________________
 TH1D * t2kana::util::XML2TH1D(
-  TXMLEngine * xmleng, XMLNodePointer_t top_node, string path)
+  TXMLEngine * xmleng, XMLNodePointer_t topnode, string path)
 {
 // Get a TH1D instance from the info in the input XML config file
 //
@@ -2073,34 +2174,8 @@ TH1D * t2kana::util::XML2TH1D(
   cout << "utils/XML2TH1D >> Reading info at XML node path: " << path << endl;
 #endif
 
-  XMLNodePointer_t found_node = FindNode(xmleng,top_node,path);
-  if(!found_node) {
-    cerr << "utils/XML2TH1D >> No node was found at input XML node path: "
-         << path << endl;
-    //return 0;
-    exit(1);
-  }
-
-  string filename = "";
-  string objname  = "";
-
-  XMLNodePointer_t child_node = xmleng->GetChild(found_node);
-  while(child_node) {
-    string child_node_name = xmleng->GetNodeName(child_node);
-    string content = xmleng->GetNodeContent(child_node);
-#ifdef __debug_level_2__
-    cout << "utils/XML2TH1D >> node = " << child_node_name << endl;
-    cout << "utils/XML2TH1D >> \t content = " << content << endl;
-#endif
-    if(child_node_name == "filename") { filename = TrimSpaces(content); }
-    if(child_node_name == "objname" ) { objname  = TrimSpaces(content); }
-    child_node = xmleng->GetNext(child_node);    
-  }
-
-#ifdef __debug_level_2__
-  cout << "utils/XML2TH1D >> filename : " << filename << endl;
-  cout << "utils/XML2TH1D >> objname  : " << objname  << endl;
-#endif
+  string filename = XML2RootFileName(xmleng,topnode,path);
+  string objname  = XML2RootObjName (xmleng,topnode,path);
 
   TFile file(
     Form("%s/%s", gSystem->Getenv("T2KOSCANA"), filename.c_str()), "read");
@@ -2121,7 +2196,7 @@ TH1D * t2kana::util::XML2TH1D(
 }
 //___________________________________________________________________________
 TH2D * t2kana::util::XML2TH2D(
-  TXMLEngine * xmleng, XMLNodePointer_t top_node, string path)
+  TXMLEngine * xmleng, XMLNodePointer_t topnode, string path)
 {
 // Get a TH2D instance from the info in the input XML config file
 //
@@ -2129,34 +2204,8 @@ TH2D * t2kana::util::XML2TH2D(
   cout << "utils/XML2TH2D >> Reading info at XML node path: " << path << endl;
 #endif
 
-  XMLNodePointer_t found_node = FindNode(xmleng,top_node,path);
-  if(!found_node) {
-    cerr << "utils/XML2TH2D >> No node was found at input XML node path: "
-         << path << endl;
-    //return 0;
-    exit(1);
-  }
-
-  string filename = "";
-  string objname  = "";
-
-  XMLNodePointer_t child_node = xmleng->GetChild(found_node);
-  while(child_node) {
-    string child_node_name = xmleng->GetNodeName(child_node);
-    string content = xmleng->GetNodeContent(child_node);
-#ifdef __debug_level_2__
-    cout << "utils/XML2TH2D >> node = " << child_node_name << endl;
-    cout << "utils/XML2TH2D >> \t content = " << content << endl;
-#endif
-    if(child_node_name == "filename") { filename = TrimSpaces(content); }
-    if(child_node_name == "objname" ) { objname  = TrimSpaces(content); }
-    child_node = xmleng->GetNext(child_node);    
-  }
-
-#ifdef __debug_level_2__
-  cout << "utils/XML2TH1D >> filename : " << filename << endl;
-  cout << "utils/XML2TH1D >> objname  : " << objname  << endl;
-#endif
+  string filename = XML2RootFileName(xmleng,topnode,path);
+  string objname  = XML2RootObjName (xmleng,topnode,path);
 
   TFile file(
      Form("%s/%s", gSystem->Getenv("T2KOSCANA"), filename.c_str()), "read");    
@@ -2177,7 +2226,7 @@ TH2D * t2kana::util::XML2TH2D(
 }
 //___________________________________________________________________________
 TTree * t2kana::util::XML2TTree(
-   TXMLEngine * xmleng, XMLNodePointer_t top_node, string path)
+   TXMLEngine * xmleng, XMLNodePointer_t topnode, string path)
 {
 // Get a TH2D instance from the info in the input XML config file
 //
@@ -2185,38 +2234,11 @@ TTree * t2kana::util::XML2TTree(
   cout << "utils/XML2TTree >> Reading info at XML node path: " << path << endl;
 #endif
 
-  XMLNodePointer_t found_node = FindNode(xmleng,top_node,path);
-  if(!found_node) {
-    cerr << "utils/XML2TTree >> No node was found at input XML node path: "
-         << path << endl;
-    //return 0;
-    exit(1);
-  }
-
-  string filename = "";
-  string objname  = "";
-
-  XMLNodePointer_t child_node = xmleng->GetChild(found_node);
-  while(child_node) {
-    string child_node_name = xmleng->GetNodeName(child_node);
-    string content = xmleng->GetNodeContent(child_node);
-#ifdef __debug_level_2__
-    cout << "utils/XML2TTree >> node = " << child_node_name << endl;
-    cout << "utils/XML2TTree >> \t content = " << content << endl;
-#endif
-    if(child_node_name == "filename") { filename = TrimSpaces(content); }
-    if(child_node_name == "objname" ) { objname  = TrimSpaces(content); }
-    child_node = xmleng->GetNext(child_node);    
-  }
-
-#ifdef __debug_level_2__
-  cout << "utils/XML2TTree >> filename : " << filename << endl;
-  cout << "utils/XML2TTree >> objname  : " << objname  << endl;
-#endif
+  string filename = XML2RootFileName(xmleng,topnode,path);
+  string objname  = XML2RootObjName (xmleng,topnode,path);
 
 /////  TFile file(filename.c_str(), "read");
 /////  TTree * tree = (TTree*)file.Get(objname.c_str());
-
 
   TFile * file = new TFile(
      Form("%s/%s", gSystem->Getenv("T2KOSCANA"), filename.c_str()), "read");
@@ -2234,19 +2256,125 @@ TTree * t2kana::util::XML2TTree(
 //  return treecopy;
 }
 //___________________________________________________________________________
+TVectorD * t2kana::util::XML2TVectorD(
+   TXMLEngine * xmleng, XMLNodePointer_t topnode, string path)
+{
+// Get a TVectorD instance from the info in the input XML config file
+//
+#ifdef __debug_level_2__
+  cout << "utils/XML2TVectorD >> "
+       << "Reading info at XML node path: " << path << endl;
+#endif
+
+  string filename = XML2RootFileName(xmleng,topnode,path);
+  string objname  = XML2RootObjName (xmleng,topnode,path);
+
+  TFile file(
+    Form("%s/%s", gSystem->Getenv("T2KOSCANA"), filename.c_str()), "read");
+  TVectorD * vec = (TVectorD*)file.Get(objname.c_str());
+  if(!vec) {
+    cerr << "utils/XML2TVectorD >> No " 
+         << objname << " in " << filename << endl;
+    file.Close();
+    //return 0;
+    exit(1);
+  }
+
+  TVectorD * vec_copy = new TVectorD(*vec);
+
+  file.Close();
+
+  return vec_copy;
+}
+//___________________________________________________________________________
+TMatrixDSym * t2kana::util::XML2TMatrixDSym(
+   TXMLEngine * xmleng, XMLNodePointer_t topnode, string path)
+{
+// Get a TMatrixDSym instance from the info in the input XML config file
+//
+  string filename = XML2RootFileName(xmleng,topnode,path);
+  string objname  = XML2RootObjName (xmleng,topnode,path);
+
+  TFile file(
+    Form("%s/%s", gSystem->Getenv("T2KOSCANA"), filename.c_str()), "read");
+  TMatrixDSym * matrix = (TMatrixDSym*)file.Get(objname.c_str());
+  if(!matrix) {
+    cerr << "utils/XML2TMatrixDSym >> No " 
+         << objname << " in " << filename << endl;
+    file.Close();
+    //return 0;
+    exit(1);
+  }
+
+  TMatrixDSym * matrix_copy = new TMatrixDSym(*matrix);
+
+  file.Close();
+
+  return matrix_copy;
+}
+//___________________________________________________________________________
+TMatrixD * t2kana::util::XML2TMatrixD(
+    TXMLEngine * xmleng, XMLNodePointer_t topnode, string path)
+{
+// Get a TMatrixD instance from the info in the input XML config file
+//
+  string filename = XML2RootFileName(xmleng,topnode,path);
+  string objname  = XML2RootObjName (xmleng,topnode,path);
+
+  TFile * file = new TFile( 
+    Form("%s/%s", gSystem->Getenv("T2KOSCANA"), filename.c_str()), "read");
+  TMatrixD * matrix = (TMatrixD*) file->Get(objname.c_str());
+  if(!matrix) {
+    cerr << "utils/XML2TMatrixD >> No " 
+         << objname << " in " << filename << endl;
+    file->Close();
+    //return 0;
+    exit(1);
+  }
+
+  TMatrixD * matrix_copy = new TMatrixD(*matrix);
+  file->Close();
+
+  return matrix_copy;
+}
+//___________________________________________________________________________
+TSpline3 * t2kana::util::XML2TSpline3(
+  TXMLEngine * xmleng, XMLNodePointer_t topnode, string path)
+{
+  string filename = XML2RootFileName(xmleng,topnode,path);
+  string objname  = XML2RootObjName (xmleng,topnode,path);
+
+  TFile * file = new TFile( 
+    Form("%s/%s", gSystem->Getenv("T2KOSCANA"), filename.c_str()), "read");
+  TSpline3 * spl = (TSpline3*) file->Get(objname.c_str());
+  if(!spl) {
+    cerr << "utils/XML2TSpline3 >> No " 
+         << objname << " in " << filename << endl;
+    file->Close();
+    //return 0;
+    exit(1);
+  }
+
+  TSpline3 * spl_copy = new TSpline3(*spl);
+  file->Close();
+
+  return spl_copy;
+}
+//___________________________________________________________________________
+
+/*
 TAxis *  t2kana::util::XML2BinInfo(
-  TXMLEngine * xmleng, XMLNodePointer_t top_node, string path)
+  TXMLEngine * xmleng, XMLNodePointer_t topnode, string path)
 {
 //
 //
-
 #ifdef __debug_level_2__
   cout << "utils/XML2BinInfo >> Reading info at XML node path: " << path << endl;
 #endif
 
-  XMLNodePointer_t found_node = FindNode(xmleng,top_node,path);
+  XMLNodePointer_t found_node = FindNode(xmleng,topnode,path);
   if(!found_node) {
-    cerr << "utils/XML2TH2D >> No node was found at input XML node path: "
+    cerr << "utils/XML2BinInfo >> No node was found at input XML node path: "
          << path << endl;
     //return 0;
     exit(1);
@@ -2286,237 +2414,7 @@ TAxis *  t2kana::util::XML2BinInfo(
   }
 
   return 0;
-}
-//___________________________________________________________________________
-double t2kana::util::XML2Dbl(
-  TXMLEngine * xmleng, XMLNodePointer_t top_node, string path)
-{
-// Get the specified node content as a floating-point number
-//
-
-#ifdef __debug_level_2__
-  cout << "utils/XML2Dbl >> Reading info at XML node path: " << path << endl;
-#endif
-
-  XMLNodePointer_t found_node = FindNode(xmleng,top_node,path);
-  if(!found_node) {
-    cerr << "utils/XML2Dbl >> No node was found at input XML node path: "
-         << path << endl;
-    exit(1);
-  }
-  string content = xmleng->GetNodeContent(found_node);
-  double value = atof(content.c_str());
-  return value;
-}
-//___________________________________________________________________________
-vector<double> t2kana::util::XML2DblArray(
-  TXMLEngine * xmleng, XMLNodePointer_t top_node, string path)
-{
-// Get the specified node content as a vector floating-point number
-// The node content should be a comma-separed list of numbers
-
-#ifdef __debug_level_2__
-  cout << "utils/XML2Dbl >> Reading info at XML node path: " << path << endl;
-#endif
-
-  XMLNodePointer_t found_node = FindNode(xmleng,top_node,path);
-  if(!found_node) {
-    cerr << "utils/XML2Dbl >> No node was found at input XML node path: "
-         << path << endl;
-    exit(1);
-  }
-  string content = TrimSpaces(xmleng->GetNodeContent(found_node));
-
-  vector<double> array;
-  vector<string> str_tokens = Tokens(content, ",");
-  vector<string>::const_iterator str_tokens_iter = str_tokens.begin();
-  for( ; str_tokens_iter != str_tokens.end(); ++str_tokens_iter) {
-     string token = *str_tokens_iter;
-     array.push_back( atof(token.c_str()) );
-  }
-  return array;
-}
-//___________________________________________________________________________
-string t2kana::util::XML2String(
-  TXMLEngine * xmleng, XMLNodePointer_t top_node, string path)
-{
-// Get the specified node content as a floating-point number
-//
-
-#ifdef __debug_level_2__
-  cout << "utils/XML2Str >> Reading info at XML node path: " << path << endl;
-#endif
-
-  XMLNodePointer_t found_node = FindNode(xmleng,top_node,path);
-  if(!found_node) {
-    cerr << "utils/XML2Str >> No node was found at input XML node path: "
-         << path << endl;
-    exit(1);
-  }
-  string content = xmleng->GetNodeContent(found_node);
-  return TrimSpaces(content);
-}
-//___________________________________________________________________________
-TVectorD * t2kana::util::XML2TVectorD(
-   TXMLEngine * xmleng, XMLNodePointer_t top_node, string path)
-{
-// Get a TVectorD instance from the info in the input XML config file
-//
-
-#ifdef __debug_level_2__
-  cout << "utils/XML2TVectorD >> "
-       << "Reading info at XML node path: " << path << endl;
-#endif
-
-  XMLNodePointer_t found_node = FindNode(xmleng,top_node,path);
-  if(!found_node) {
-    cerr << "utils/XML2TVectorD >> "
-         << "No node was found at input XML node path: " << path << endl;
-    //return 0;
-    exit(1);
-  }
-
-  string filename = "";
-  string objname  = "";
-
-  XMLNodePointer_t child_node = xmleng->GetChild(found_node);
-  while(child_node) {
-    string child_node_name = xmleng->GetNodeName(child_node);
-    string content = xmleng->GetNodeContent(child_node);
-    if(child_node_name == "filename") { filename = TrimSpaces(content); }
-    if(child_node_name == "objname" ) { objname  = TrimSpaces(content); }
-    child_node = xmleng->GetNext(child_node);    
-  }
-
-#ifdef __debug_level_2__
-  cout << "utils/XML2TVectorD >> filename : " << filename << endl;
-  cout << "utils/XML2TVectorD >> objname  : " << objname  << endl;
-#endif
-
-  TFile file(
-    Form("%s/%s", gSystem->Getenv("T2KOSCANA"), filename.c_str()), "read");
-  TVectorD * vec = (TVectorD*)file.Get(objname.c_str());
-  if(!vec) {
-    cerr << "utils/XML2TVectorD >> No " 
-         << objname << " in " << filename << endl;
-    file.Close();
-    //return 0;
-    exit(1);
-  }
-
-  TVectorD * vec_copy = new TVectorD(*vec);
-
-  file.Close();
-
-  return vec_copy;
-}
-//___________________________________________________________________________
-TMatrixDSym * t2kana::util::XML2TMatrixDSym(
-   TXMLEngine * xmleng, XMLNodePointer_t top_node, string path)
-{
-// Get a TMatrixDSym instance from the info in the input XML config file
-//
-
-#ifdef __debug_level_2__
-  cout << "utils/XML2TMatrixDSym >> "
-       << "Reading info at XML node path: " << path << endl;
-#endif
-
-  XMLNodePointer_t found_node = FindNode(xmleng,top_node,path);
-  if(!found_node) {
-    cerr << "utils/XML2TMatrixDSym >> "
-         << "No node was found at input XML node path: " << path << endl;
-    //return 0;
-    exit(1);
-  }
-
-  string filename = "";
-  string objname  = "";
-
-  XMLNodePointer_t child_node = xmleng->GetChild(found_node);
-  while(child_node) {
-    string child_node_name = xmleng->GetNodeName(child_node);
-    string content = xmleng->GetNodeContent(child_node);
-    if(child_node_name == "filename") { filename = TrimSpaces(content); }
-    if(child_node_name == "objname" ) { objname  = TrimSpaces(content); }
-    child_node = xmleng->GetNext(child_node);    
-  }
-
-#ifdef __debug_level_2__
-  cout << "utils/XML2TMatrixDSym >> filename : " << filename << endl;
-  cout << "utils/XML2TMatrixDSym >> objname  : " << objname  << endl;
-#endif
-
-  TFile file(
-    Form("%s/%s", gSystem->Getenv("T2KOSCANA"), filename.c_str()), "read");
-  TMatrixDSym * matrix = (TMatrixDSym*)file.Get(objname.c_str());
-  if(!matrix) {
-    cerr << "utils/XML2TMatrixDSym >> No " 
-         << objname << " in " << filename << endl;
-    file.Close();
-    //return 0;
-    exit(1);
-  }
-
-  TMatrixDSym * matrix_copy = new TMatrixDSym(*matrix);
-
-  file.Close();
-
-  return matrix_copy;
-}
-//___________________________________________________________________________
-TMatrixD * t2kana::util::XML2TMatrixD(
-    TXMLEngine * xmleng, XMLNodePointer_t top_node, string path)
-{
-// Get a TMatrixD instance from the info in the input XML config file
-//
-
-#ifdef __debug_level_2__
-  cout << "utils/XML2TMatrixD >> "
-       << "Reading info at XML node path: " << path << endl;
-#endif
-
-  XMLNodePointer_t found_node = FindNode(xmleng,top_node,path);
-  if(!found_node) {
-    cerr << "utils/XML2TMatrixD >> "
-         << "No node was found at input XML node path: " << path << endl;
-    //return 0;
-    exit(1);
-  }
-
-  string filename = "";
-  string objname  = "";
-
-  XMLNodePointer_t child_node = xmleng->GetChild(found_node);
-  while(child_node) {
-    string child_node_name = xmleng->GetNodeName(child_node);
-    string content = xmleng->GetNodeContent(child_node);
-    if(child_node_name == "filename") { filename = TrimSpaces(content); }
-    if(child_node_name == "objname" ) { objname  = TrimSpaces(content); }
-    child_node = xmleng->GetNext(child_node);    
-  }
-
-#ifdef __debug_level_2__
-  cout << "utils/XML2TMatrixD >> filename : " << filename << endl;
-  cout << "utils/XML2TMatrixD >> objname  : " << objname  << endl;
-#endif
-
-  TFile * file = new TFile( 
-    Form("%s/%s", gSystem->Getenv("T2KOSCANA"), filename.c_str()), "read");
-  TMatrixD * matrix = (TMatrixD*) file->Get(objname.c_str());
-  if(!matrix) {
-    cerr << "utils/XML2TMatrixD >> No " 
-         << objname << " in " << filename << endl;
-    file->Close();
-    //return 0;
-    exit(1);
-  }
-
-  TMatrixD * matrix_copy = new TMatrixD(*matrix);
-  file->Close();
-
-  return matrix_copy;
-}
+}*/
 //___________________________________________________________________________
 
 // A few helper functions for use in UseEventToFillInTemplate

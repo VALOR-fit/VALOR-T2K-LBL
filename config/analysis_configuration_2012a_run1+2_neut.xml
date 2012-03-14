@@ -233,7 +233,11 @@
   -->
 
   <xsec>
-
+      <weight_splines>
+          <filename>
+               inputs/official/2012/xsec/fake_splines_v0.root
+          </filename>
+      </weight_splines>
   </xsec>
 
 </analysis_inputs>

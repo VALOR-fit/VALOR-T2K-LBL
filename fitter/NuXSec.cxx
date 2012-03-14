@@ -14,7 +14,8 @@
 //________________________________________________________________________________________
 
 #define __show_init_mesg_info__
-#define __show_wght_mesg_debug__
+#define __show_init_mesg_debug__
+#define __show_banff_wght_mesg_debug__
 #define __show_fsi_cholesky_mesg_info__
 #define __show_fsi_cholesky_mesg_debug__
 #define __show_fsi_tweak_mesg_debug__
@@ -22,6 +23,7 @@
 #include <cassert>
 #include <cstdlib>
 #include <iostream>
+#include <sstream>
 
 #include <TMath.h>
 
@@ -32,6 +34,7 @@
 using std::cout;
 using std::cerr;
 using std::endl;
+using std::ostringstream;
 
 using namespace t2kana;
 using namespace t2kana::conv;
@@ -82,46 +85,67 @@ bool NuXSec::Read(TXMLEngine* xml, XMLNodePointer_t root_node)
   cout << "Exp/NuXSec >> Reading neutrino generator inputs from input XML file." << endl;
 #endif
 
-/*
   //
   // Load cross-section weight splines
   //
 
+  TFile * spline_file = util::XML2TFile(xml,root_node,"xsec/weight_splines");
+  assert(spline_file);
+
+  // loop over samples
   for(int is = 0; is < kns; is++) {
     SuperkSample_t s = kSKSamples[is];
     if(s == kSKsUndefined) continue;
+    // loop over modes for current sample
     for(int im = 0; im < knm; im++) {
        SuperkMode_t m = kSKReactionModes[is][im];
        if(m == kSKmUndefined) continue;
+       // loop over cross-section systematic parameters
        for(int ip = 0; ip < kNumOfXSecSyst; ip++) {
           PhysParamId_t p = kListOfXSecSyst[ip];          
           if(p == kPhypUndefined) continue;
-          if(kXSecSystHasWghtSplines[ip]) {
-            for(int ir = 0; ir < kXsNErecoBins; ir++) {
-               double Ereco = kXsErecoBinEdges[ir] + kOneMeV;
-               for(int it = 0; it < kXsNEtrueBins; it++) {
-                  double Etrue = kXsEtrueBinEdges[is][im][it] + kOneMeV;              
-                  // Get index for current weight spline
-                  int idx = this->WghtSplineIdx(s,m,p,Ereco,Etrue);     
-                  // Build spline name
-                  ostringstream splname;
-                  splname << "spl_" 
-                          << util::AsStringCompact(s) << "_"
-                          << util::AsStringCompact(m) << "_"
-                          << util::AsStringCompact(p) << "_"
-                          << ir << "_" 
-                          << it << endl;              
-                  // Copy spline from input file
-                  TSpline3 * spl = (TSpline3 *) fXSecSplineFile->Get(splname.str().c_str());
-                  fXSecWghtSpl[idx] = new TSpline3(*spl);
-               }//Etrue
-            }//Ereco
-         }//has wght splines?
+          // do we need weight splines for the current systematic parameter?
+          bool need_splines = kXSecSystHasWghtSplines[ip];
+          if(!need_splines) continue;
+          // is the current systematic parameter going to be applied to current sample/mode?
+          bool is_applied = kXsApplyXSecSystToSKMode[is][im][ip];
+          if(!is_applied) continue;
+          // loop over the var.-size  Ereco and Etrue bins for which weight splines were pre-computed
+          for(int ir = 0; ir < kXsNErecoBins; ir++) {
+             double Ereco = kXsErecoBinEdges[ir] + kOneMeV;
+             for(int it = 0; it < kXsNEtrueBins; it++) {
+                double Etrue = kXsEtrueBinEdges[is][im][it] + kOneMeV;              
+                // Build spline name
+                ostringstream splname;
+                splname << "spl_" 
+                        << util::AsStringCompact(s) << "_"
+                        << util::AsStringCompact(m) << "_"
+                        << util::AsStringCompact(p) << "_"
+                        << ir << "_" 
+                        << it;
+#ifdef __show_init_mesg_debug__
+                cout << "Exp/NuXSec >> Loading cross-section weight spline: " 
+                     << splname.str() << endl;
+#endif
+                // Copy spline from input file
+                TSpline3 * spl = (TSpline3 *) spline_file->Get(splname.str().c_str());
+                if(!spl) {
+                   cerr << "Exp/NuXSec >> Null cross-sectionweight spline: " 
+                        << splname.str() << endl;
+                   exit(1); 
+                }
+                // Get index for current weight spline
+                int idx = this->WghtSplineIdx(s,m,p,Ereco,Etrue);     
+#ifdef __show_init_mesg_debug__
+                cout << "Exp/NuXSec >> Storing cross-section weight spline at slot: " 
+                     << idx << endl;
+#endif
+                fXSecWghtSpl[idx] = new TSpline3(*spl);
+             }//Etrue
+          }//Ereco
        }//p
     }//m
   }//s
-*/
-
 
 /*
   //
@@ -227,7 +251,7 @@ double NuXSec::SuperkXSecFinTuningWght(
        wght_banff24 *
        wght_banff25;
 
-#ifdef __show_wght_mesg_debug__
+#ifdef __show_banff_wght_mesg_debug__
   if ( wght_banff22 != 1. ||
        wght_banff23 != 1. || 
        wght_banff24 != 1. ||
@@ -313,7 +337,7 @@ double NuXSec::SuperkXSecSystWght(
        wght_banff24 *
        wght_banff25;
 
-#ifdef __show_wght_mesg_debug__
+#ifdef __show_banff_wght_mesg_debug__
   if ( wght_banff22 != 1. ||
        wght_banff23 != 1. || 
        wght_banff24 != 1. ||

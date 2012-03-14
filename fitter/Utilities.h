@@ -19,12 +19,13 @@
 #include <string>
 #include <vector>
 
+#include <TXMLEngine.h>
+#include <TFile.h>
+#include <TTree.h>
 #include <TVectorD.h>
 #include <TMatrixD.h>
-#include <TXMLEngine.h>
 #include <TH1D.h>
-#include <TAxis.h>
-#include <TTree.h>
+#include <TSpline.h>
 
 class TGraph;
 class TH1;
@@ -95,8 +96,9 @@ namespace util {
   string AsStringRooTex  (conv::SuperkSample_t    s);
   string AsStringRooTex  (conv::SuperkMode_t      m);
   string AsStringCompact (conv::SuperkSample_t s, conv::SuperkMode_t m, string append_begin="", string append_end="");
-  string AsStringCompact (conv::SuperkSample_t s);
-  string AsStringCompact (conv::SuperkMode_t   m);
+  string AsStringCompact (conv::SuperkSample_t    s);
+  string AsStringCompact (conv::SuperkMode_t      m);
+  string AsStringCompact (conv::PhysParamId_t     p);
   string Pdg2String      (int pdg_code);
 
   conv::PhysHypothesis_t   PhysHypFromString    (string h);
@@ -137,20 +139,25 @@ namespace util {
   // XML utilities
   //
 
-  XMLNodePointer_t FindNode        (TXMLEngine * eng, XMLNodePointer_t topnode, string path);
-  bool             NodeExists      (TXMLEngine * eng, XMLNodePointer_t topnode, string path);
-  TH1F *           XML2TH1F        (TXMLEngine * eng, XMLNodePointer_t topnode, string path);
-  TH1D *           XML2TH1D        (TXMLEngine * eng, XMLNodePointer_t topnode, string path);
-  TH2D *           XML2TH2D        (TXMLEngine * eng, XMLNodePointer_t topnode, string path);
-  TTree *          XML2TTree       (TXMLEngine * eng, XMLNodePointer_t topnode, string path);
-  TAxis *          XML2BinInfo     (TXMLEngine * eng, XMLNodePointer_t topnode, string path);
-  double           XML2Dbl         (TXMLEngine * eng, XMLNodePointer_t topnode, string path);
-  vector<double>   XML2DblArray    (TXMLEngine * eng, XMLNodePointer_t topnode, string path);
-  string           XML2String      (TXMLEngine * eng, XMLNodePointer_t topnode, string path);
-  TVectorD *       XML2TVectorD    (TXMLEngine * eng, XMLNodePointer_t topnode, string path);
-  TMatrixDSym *    XML2TMatrixDSym (TXMLEngine * eng, XMLNodePointer_t topnode, string path);
-  TMatrixD *       XML2TMatrixD    (TXMLEngine * eng, XMLNodePointer_t topnode, string path);
-//TSpline3 *       XML2TSpline3    (TXMLEngine * eng, XMLNodePointer_t topnode, string path);
+  XMLNodePointer_t FindNode        (TXMLEngine * xmleng, XMLNodePointer_t topnode, string path);
+  bool             NodeExists      (TXMLEngine * xmleng, XMLNodePointer_t topnode, string path);
+
+  double           XML2Dbl         (TXMLEngine * xmleng, XMLNodePointer_t topnode, string path);
+  vector<double>   XML2DblArray    (TXMLEngine * xmleng, XMLNodePointer_t topnode, string path);
+  string           XML2String      (TXMLEngine * xmleng, XMLNodePointer_t topnode, string path);
+
+  string           XML2RootFileName(TXMLEngine * xmleng, XMLNodePointer_t topnode, string path);
+  string           XML2RootObjName (TXMLEngine * xmleng, XMLNodePointer_t topnode, string path);
+
+  TFile *          XML2TFile       (TXMLEngine * xmleng, XMLNodePointer_t topnode, string path);
+  TH1F *           XML2TH1F        (TXMLEngine * xmleng, XMLNodePointer_t topnode, string path);
+  TH1D *           XML2TH1D        (TXMLEngine * xmleng, XMLNodePointer_t topnode, string path);
+  TH2D *           XML2TH2D        (TXMLEngine * xmleng, XMLNodePointer_t topnode, string path);
+  TTree *          XML2TTree       (TXMLEngine * xmleng, XMLNodePointer_t topnode, string path);
+  TVectorD *       XML2TVectorD    (TXMLEngine * xmleng, XMLNodePointer_t topnode, string path);
+  TMatrixDSym *    XML2TMatrixDSym (TXMLEngine * xmleng, XMLNodePointer_t topnode, string path);
+  TMatrixD *       XML2TMatrixD    (TXMLEngine * xmleng, XMLNodePointer_t topnode, string path);
+  TSpline3 *       XML2TSpline3    (TXMLEngine * xmleng, XMLNodePointer_t topnode, string path);
   
   //
   // Reaction mode utilities etc
@@ -190,13 +197,6 @@ namespace util {
         int lcol, int lsty, int lwid, int mcol, int msty, double msiz);
   void Format(TH1* hst, 
         int lcol, int lsty, int lwid, int mcol, int msty, double msiz);
-
-  //
-  // Handle variable binning in fluc covariance matrices
-  //
-
-  int    FluxFix2VarBinNumber             (int fixBinNo);
-  double FluxFractionsFixedBinRelToVarBin (int fixBinNo, TH1D* fixBinFluxHisto, TH1D* varBinFluxHisto);
 
   //
   // Etc
