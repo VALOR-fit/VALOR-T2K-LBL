@@ -181,8 +181,8 @@ void SuperkExpectation::TweakSystematic(string systematic, double twkdial)
 // BANFF
 //    - banff                               : tweak all BANFF params, correlations taken into account (Cholesky method)
 //      or   
-//      - banff_0                           : tweak only BANFF param 00, see Conventions.h for definition, correlations ignored (debug mode)
-//      - banff_1                           : tweak only BANFF param 01, see Conventions.h for definition, correlations ignored (debug mode)
+//      - banff_00                          : tweak only BANFF param 00, see Conventions.h for definition, correlations ignored (debug mode)
+//      - banff_01                          : tweak only BANFF param 01, see Conventions.h for definition, correlations ignored (debug mode)
 //      - ..     
 //      - banff_25                          : tweak only BANFF param 25, see Conventions.h for definition, correlations ignored (debug mode)
 //
@@ -238,23 +238,24 @@ void SuperkExpectation::TweakSystematic(string systematic, double twkdial)
      this->GetBANFF()->Tweak(); //< Cholesky method
   }
 
-
+  // tweak an individual BANFF parameter (ignores correlations, debug)
   else
-  if(systematic == "banff_00") {
-     TVectorD twkv(26);
-     twkv[0]=twkdial;
-     this->GetBANFF()->Tweak(true,&twkv); 
+  if(systematic.find("banff_") >= 0) {
+     bool found = false;
+     for (int ib = 0; ib < conv::kNumOfParamsInBANFFfit; ib++) {
+	if(systematic == Form("banff_%02i",ib)) {
+	   TVectorD twkv(26);
+	   twkv[ib]=twkdial;
+	   this->GetBANFF()->Tweak(true,&twkv);
+	   found = true;
+	   break;
+	}
+     }//ib
+     if(!found) {
+        cerr << "Exp >> Unknown systematic parameter (" << systematic << ")" << endl;
+	exit(1);
+     }   
   }
-  else
-  if(systematic == "banff_01") {
-     TVectorD twkv(26);
-     twkv[1]=twkdial;
-     this->GetBANFF()->Tweak(true,&twkv); 
-  }
-  //
-  // etc etc
-  // do something more clever here:
-  //
 
   else {
      cerr << "Exp >> Unknown systematic parameter (" << systematic << ")" << endl;
