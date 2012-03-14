@@ -64,7 +64,7 @@ public:
   const TMatrixD & FSICovMatrixCholesky (void) const { return *fFSICovMtrxChoL;   }
 
   // Get weight spline for each sample / mode / parameters /Ereco bin / Etrue bin
-  TSpline3 * FindWghtSpline(conv::SuperkSample_t s, conv::SuperkMode_t m, conv::PhysParamId_t p, double Ereco, double Etrue);
+  TSpline3 * FindWghtSpline(conv::PhysParamId_t p, conv::SuperkSample_t s, conv::SuperkMode_t m, double Ereco, double Etrue) const;
 
   //
   // Set interdepencies with other classes
@@ -78,8 +78,7 @@ private:
   void Init    (void);
   void CleanUp (void);
 
-  int  WghtSplineIdx   (conv::SuperkSample_t s, conv::SuperkMode_t m, conv::PhysParamId_t p, double Ereco, double Etrue);
-
+  int  WghtSplineIdx        (conv::PhysParamId_t p, conv::SuperkSample_t s, conv::SuperkMode_t m, double Ereco, double Etrue) const;
   bool ApplySyst            (conv::PhysParamId_t p, conv::SuperkSample_t s, conv::SuperkMode_t m, double Ereco, double Etrue) const;
   bool ApplySystToSKMode    (conv::PhysParamId_t p, conv::SuperkSample_t s, conv::SuperkMode_t m) const;
   bool ApplySystToEnergyBin (conv::PhysParamId_t p, double Ereco, double Etrue) const;

@@ -14,7 +14,7 @@
 //________________________________________________________________________________________
 
 #define __show_init_mesg_info__
-#define __show_init_mesg_debug__
+//#define __show_init_mesg_debug__
 #define __show_banff_wght_mesg_debug__
 #define __show_fsi_cholesky_mesg_info__
 #define __show_fsi_cholesky_mesg_debug__
@@ -135,7 +135,7 @@ bool NuXSec::Read(TXMLEngine* xml, XMLNodePointer_t root_node)
                    exit(1); 
                 }
                 // Get index for current weight spline
-                int idx = this->WghtSplineIdx(s,m,p,Ereco,Etrue);     
+                int idx = this->WghtSplineIdx(p,s,m,Ereco,Etrue);     
 #ifdef __show_init_mesg_debug__
                 cout << "Exp/NuXSec >> Storing cross-section weight spline at slot: " 
                      << idx << endl;
@@ -212,10 +212,11 @@ double NuXSec::SuperkXSecFinTuningWght(
   //
   if( this->ApplySyst(kNuisBANFF22,s,m,Ereco,Etrue) )
   {
-/*
-     double ma = conv::kNomMAQE * fBANFF->BestFitValue(kNuisBANFF22);
-     wght_banff22 = 
-*/
+     TSpline3 * wght_spl = this->FindWghtSpline(kNuisBANFF22,s,m,Ereco,Etrue);
+     assert(wght_spl);
+     double t = fBANFF->BestFitValue(kNuisBANFF22);
+     wght_banff22 = wght_spl->Eval(t);
+     wght_banff22 = TMath::Max(0.,wght_banff22); 
   }
 
   //
@@ -223,10 +224,11 @@ double NuXSec::SuperkXSecFinTuningWght(
   //
   if( this->ApplySyst(kNuisBANFF23,s,m,Ereco,Etrue) )
   {
-/*
-     double ma = conv::kNomMARES * fBANFF->BestFitValue(kNuisBANFF23);
-     wght_banff23 = 
-*/
+     TSpline3 * wght_spl = this->FindWghtSpline(kNuisBANFF23,s,m,Ereco,Etrue);
+     assert(wght_spl);
+     double t = fBANFF->BestFitValue(kNuisBANFF23);
+     wght_banff23 = wght_spl->Eval(t);
+     wght_banff23 = TMath::Max(0.,wght_banff23); 
   }
 
   //
@@ -297,8 +299,12 @@ double NuXSec::SuperkXSecSystWght(
   //
   if( this->ApplySyst(kNuisBANFF22,s,m,Ereco,Etrue) )
   {
-/*
-*/
+     TSpline3 * wght_spl = this->FindWghtSpline(kNuisBANFF22,s,m,Ereco,Etrue);
+     assert(wght_spl);
+     double tb = fBANFF->BestFitValue(kNuisBANFF22);
+     double tc = fBANFF->CurrentValue(kNuisBANFF22);
+     wght_banff22 = wght_spl->Eval(tc) / wght_spl->Eval(tb);
+     wght_banff22 = TMath::Max(0.,wght_banff22); 
   }
 
   //
@@ -306,13 +312,12 @@ double NuXSec::SuperkXSecSystWght(
   //
   if( this->ApplySyst(kNuisBANFF23,s,m,Ereco,Etrue) )
   {
-/*
-     double ma_current = conv::kNomMARES * fBANFF->CurrentValue(kNuisBANFF23) 
-     double ma_bestfit = conv::kNomMARES * fBANFF->BestFitValue(kNuisBANFF23);
-     double wght_banff23_current = this->Spline(s,m,Etrue)->Eval(ma_current);
-     double wght_banff23_bestfit = this->Spline(s,m,Etrue)->Eval(ma_bestfit);
-     wght_banff23 = wght_banff23_current / wght_banff23_bestfit;
-*/
+     TSpline3 * wght_spl = this->FindWghtSpline(kNuisBANFF23,s,m,Ereco,Etrue);
+     assert(wght_spl);
+     double tb = fBANFF->BestFitValue(kNuisBANFF23);
+     double tc = fBANFF->CurrentValue(kNuisBANFF23);
+     wght_banff23 = wght_spl->Eval(tc) / wght_spl->Eval(tb);
+     wght_banff23 = TMath::Max(0.,wght_banff23); 
   }
 
   //
@@ -465,9 +470,9 @@ void NuXSec::TweakFSI(
 
 //________________________________________________________________________________________
 TSpline3 * NuXSec::FindWghtSpline(
-   SuperkSample_t s, SuperkMode_t m, PhysParamId_t p, double Ereco, double Etrue)
+   PhysParamId_t p, SuperkSample_t s, SuperkMode_t m, double Ereco, double Etrue) const
 {
-  int idx = this->WghtSplineIdx(s,m,p,Ereco,Etrue);
+  int idx = this->WghtSplineIdx(p,s,m,Ereco,Etrue);
   if(idx == -1) 
   {
     cerr << "Exp/NuXSec/FindWghtSpline >> Didn't find weight spline for "
@@ -483,7 +488,7 @@ TSpline3 * NuXSec::FindWghtSpline(
 }
 //________________________________________________________________________________________
 int NuXSec::WghtSplineIdx(
-   SuperkSample_t s, SuperkMode_t m, PhysParamId_t p, double Ereco, double Etrue)
+   PhysParamId_t p, SuperkSample_t s, SuperkMode_t m, double Ereco, double Etrue) const
 {
 // 1-D array of weight splines is basically a linearized version of a 5-D array 
 // with the following indices:
