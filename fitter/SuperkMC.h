@@ -48,15 +48,15 @@ public:
 
   // Integrate current MC templates and get Ereco spectra (needed for fitting the data)
   void  UpdateErecoSpectra  (void);
-  TH1D* CurrErecoSpectrum   (t2kana::conv::SuperkSample_t s) const;
-  TH1D* CurrErecoSpectrum   (t2kana::conv::SuperkSample_t s, t2kana::conv::SuperkMode_t m) const;
+  TH1D* CurrErecoSpectrum   (conv::SuperkSample_t s) const;
+  TH1D* CurrErecoSpectrum   (conv::SuperkSample_t s, conv::SuperkMode_t m) const;
       
   // MC event samples used to fill-in MC templates and POT exposure for each
-  TTree * MCTree (t2kana::conv::SuperkSample_t s, t2kana::conv::SuperkMode_t m);
-  double  MCPOT  (t2kana::conv::SuperkSample_t s, t2kana::conv::SuperkMode_t m);
+  TTree * MCTree (conv::SuperkSample_t s, conv::SuperkMode_t m);
+  double  MCPOT  (conv::SuperkSample_t s, conv::SuperkMode_t m);
 
   // Access MC templates
-  TH2D * Template (t2kana::conv::SuperkSample_t s, t2kana::conv::SuperkMode_t m, t2kana::conv::SKMCTemplateType_t type) const;
+  TH2D * Template (conv::SuperkSample_t s, conv::SuperkMode_t m, conv::SKMCTemplateType_t type) const;
 
   // POT of analysed data sample (MC is scaled to that POT value)
   double AnalyzedSamplePOT(void) const;
@@ -70,11 +70,11 @@ public:
   void TweakEfficiency1RmuNuECC            (double twkdial);
 
   // Calculate weight due to efficiency tweaks
-  double  EfficiencyWeight (t2kana::conv::SuperkSample_t s, t2kana::conv::SuperkMode_t m, double Ereco) const;
+  double  EfficiencyWeight (conv::SuperkSample_t s, conv::SuperkMode_t m, double Ereco) const;
 
   // Info about the energy scale error and current energy scale tweaking factor
-  double  EnergyScaleRelErr   (t2kana::conv::SuperkSample_t s, t2kana::conv::SuperkMode_t m) const; ///< energy scale err
-  double  EnergyScale         (t2kana::conv::SuperkSample_t s, t2kana::conv::SuperkMode_t m) const; ///< energy scale
+  double  EnergyScaleRelErr   (conv::SuperkSample_t s, conv::SuperkMode_t m) const; ///< energy scale err
+  double  EnergyScale         (conv::SuperkSample_t s, conv::SuperkMode_t m) const; ///< energy scale
 
   // Read inputs from XML file
   bool Read (TXMLEngine* xml, XMLNodePointer_t root_node);
@@ -101,7 +101,7 @@ private:
   void Book    (void);
 
   // Fill MC templates from the input event trees
-  void FillTemplate (t2kana::conv::SuperkSample_t s, t2kana::conv::SuperkMode_t m);
+  void FillTemplate (conv::SuperkSample_t s, conv::SuperkMode_t m);
 
   // Apply any flux tuning based on external (NA61,...) data to nominal MC
   void ApplyFluxExtTuningToTemplates (void); 
@@ -117,17 +117,14 @@ private:
   // Apply physics hypothesis (oscillations,...) to MC templates
   void ApplyPhysHypothesisToTemplates (void); 
 
-  // Calculate systematic variation weight in given (Ereco, Etrue) bin for the given sample and mode
-  double SystVariationWeight (t2kana::conv::SuperkSample_t s, t2kana::conv::SuperkMode_t m, double Ereco, double Etrue) const;
-
   // Ignore nue_signal templates for all but the 3-flavour oscillation hypothesis
-  bool SkipTemplate(t2kana::conv::SuperkMode_t m);
-      
+  bool SkipTemplate(conv::SuperkMode_t m);
+
   //
-  // private data members
+  // Private data members
   //
 
-  double     fPOT;                         ///< POT for actual data-set (MC is scaled to that exposure)
+  double     fPOT;  ///< POT for actual data-set (MC is scaled to that exposure)
 
   // systematic uncertainties: 1 sigma fractional errors & covariance matrices
   // > 1Rmu

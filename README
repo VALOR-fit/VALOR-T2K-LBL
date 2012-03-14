@@ -39,7 +39,7 @@ Legacy authors:
     |            |    |-- niwg    :  - from the NIWG (agreed interaction systematics)
     |            |    |-- superk  :  - from SuperK (MC templates for both NEUT/GENIE for various selections)
     |            |       
-    |            |-- 2011         :
+    |            |-- 2012         :
     |
     |-- macros                    : Our analysis procedures
     |     |------ physin          :  - macros used for testing analysis physics inputs (spectra/systematics)
@@ -177,6 +177,6 @@ More details for the combined 3-flavour disappearance + appearance analysis may 
 
 Current trunk
 ............................................................................................................................
-2011 development code
+2012a development code
 
 

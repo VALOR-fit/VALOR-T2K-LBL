@@ -575,6 +575,29 @@ static const bool kXSecSystHasWghtSplines[kNumOfXSecSyst] =
    false                      // kNuisBANFF25
 };
 
+// The following list specifies which cross-section related systematic 
+// parameters were included in the BANFF fit.
+// The order of systematic parameters should match the one in kListOfXSecSyst.
+static const bool kXSecSystIncludedInBANFF[kNumOfXSecSyst] = 
+{
+   true,                      // kNuisBANFF22
+   true,                      // kNuisBANFF23
+   true,                      // kNuisBANFF24
+   true                       // kNuisBANFF25
+};
+
+// The following list specifies which cross-section related systematic is
+// calculated for a var.-size Ereco,Etrue bin and then needs to be distributed
+// unequally between the MC template bins (eg in proportion to number of events in each bin)
+// The order of systematic parameters should match the one in kListOfXSecSyst.
+static const bool kXSecSystWghtUnequallySharedBetweenBins[kNumOfXSecSyst] = 
+{
+   true,                      // kNuisBANFF22
+   true,                      // kNuisBANFF23
+   false,                     // kNuisBANFF24
+   false                      // kNuisBANFF25
+};
+
 // Ereco and Etrue cuts for the application of cross-section systematics.
 // The order of systematic parameters should match the one in kListOfXSecSyst.
 static const double kXSecSystErecoCut[kNumOfXSecSyst][2] =

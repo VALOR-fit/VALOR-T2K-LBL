@@ -564,9 +564,9 @@ void SuperkMC::ApplyBANFFTuningToTemplates(void)
            double Etrue = mctempl_src->GetYaxis()->GetBinCenter(it);
            // get number of events
            double nev = mctempl_src->GetBinContent(ir,it);
-           // get tuning weights
+           // get flux tuning weights
            double flux_wght = fNuFlux->SuperkFluxFinTuningWght(s,m,Etrue);
-           double xsec_wght = fNuXSec->SuperkXSecFinTuningWght(s,m,Ereco,Etrue);            
+           double xsec_wght = fNuXSec->FinTuningWght(s,m,Ereco,Etrue,mctempl_src);            
            // update tuned MC template
            double nev_tuned = nev * flux_wght * xsec_wght;
            mctempl_tgt->SetBinContent(ir,it,nev_tuned);
@@ -600,40 +600,82 @@ void SuperkMC::ApplySystematicsToTemplates(void)
 void SuperkMC::ApplySystematicsToTemplates_Multiplicative(void) 
 {
 // All multiplicative systematics are handled in the following loop.
-// The overall weight is computed by SystVariationWeight(sample,mode,Ereco,Etrue)
 //
 
 #ifdef __show_update_mesg_info__
   cout << "Exp/SKMC >> Applying multiplicative systematics" << endl;
 #endif
 
-  // loop over samples
+  // Loop over samples
   for(int is = 0; is < kns; is++) {
     SuperkSample_t s = kSKSamples[is];
     if(s == kSKsUndefined) continue;
-    // loop over sample modes
+    // Loop over sample modes
     for(int im = 0; im < knm; im++) { 
        SuperkMode_t m = kSKReactionModes[is][im];
        if(m == kSKmUndefined) continue;
-       // consider template?
+       // Consider template?
        bool skip = this->SkipTemplate(m);
        if(skip) continue;
-       // get corresponding templates
+       // Get corresponding templates
        TH2D * mctempl_src = this -> Template(s,m,kSKMCtTun);
        if(!mctempl_src) continue; 
        TH2D * mctempl_tgt = this -> Template(s,m,kSKMCtSys);
        if(!mctempl_tgt) continue; 
-       // loop over Ereco
+       // Loop over Ereco
        for(int ir = 1; ir <= mctempl_src->GetXaxis()->GetNbins(); ir++) {
          double Ereco = mctempl_src->GetXaxis()->GetBinCenter(ir);
-         // loop over Etrue
+         // Loop over Etrue
          for(int it = 1; it <= mctempl_src->GetYaxis()->GetNbins(); it++) {
            double Etrue = mctempl_src->GetYaxis()->GetBinCenter(it);
            // get number of events in current bin of source MC template
            double nev = mctempl_src->GetBinContent(ir,it);
-           // get combined weight due to all multiplicative systematic variations
-           double wght = this->SystVariationWeight (s,m,Ereco,Etrue);
-           // update target MC template
+
+           //
+           // Get combined weight due to all multiplicative systematic variations.
+           // This method considers:
+           // - SuperK efficiencies variations
+           // - BANFF parameter variations
+           // - Cross-section variations
+           //
+
+           // Plug-in SK efficiency uncertainty due to fiducial volume, reduction chain, OD cut,
+           // ring-counting, PID, momentum cut and decay e- cut.
+           // The ring-counting error for CCQE has Ereco-dependence.
+           double skeff_wght = this->EfficiencyWeight(s,m,Ereco);
+
+           // Plug-in BANFF flux systematics
+           double flux_wght = fNuFlux->SuperkFluxSystWght(s,m,Etrue);
+
+           // Plug-in BANFF & other xsec systematics 
+           double xsec_wght = fNuXSec->SystWght(s,m,Ereco,Etrue,mctempl_src); 
+
+           //
+           // Other systematic - TODO
+           // ...
+           // ...
+
+           // Combined weight
+           double wght = skeff_wght * flux_wght * xsec_wght;
+
+#ifdef __show_syst_var_wght_mesg_debug__ 
+           if( skeff_wght != 1. || 
+               flux_wght  != 1. || 
+               xsec_wght  != 1. )
+           {
+               cout << "Exp/SKMC/SystVarWght >> "
+                    << "Sample = " << util::AsString(s) << " / Mode = " << util::AsString(m) 
+                    << ", Ereco = " << Ereco << " GeV" 
+                    << ", Etrue = " << Etrue << " GeV => Weights: " 
+                    << "SK eff = "  << skeff_wght
+                    << ", Flux = "  << flux_wght
+                    << ", XSec = "  << xsec_wght
+                    << " (total = " << wght << ")"
+                    << endl;
+           }
+#endif
+
+           // Update target MC template
            mctempl_tgt->SetBinContent(ir,it,nev*wght);
          }//it
        }//ir
@@ -970,56 +1012,6 @@ void SuperkMC::ApplyPhysHypothesisToTemplates(void)
     }//is
   }
 
-}
-//________________________________________________________________________________________
-double SuperkMC::SystVariationWeight(
-    SuperkSample_t s, SuperkMode_t m, double Ereco, double Etrue) const
-{
-// The return value is the combined wght for the (Ereco,Etrue) bin of the (s,m) template
-// due to all multiplicative systematic param variation
-// This method considers:
-// - SuperK efficiencies variations
-// - BANFF parameter variations
-// - Cross-section variations
-
-  // Plug-in BANFF flux systematics
-  double banff_flux_wght = fNuFlux->SuperkFluxSystWght(s,m,Etrue);
-
-  // Plug-in BANFF & other xsec systematics 
-  double banff_xsec_wght = fNuXSec->SuperkXSecSystWght(s,m,Ereco,Etrue);
-
-  //
-  // ... other xsec, FSI etc
-  //
-
-  // Plug-in SK efficiency uncertainty due to fiducial volume, reduction chain, OD cut,
-  // ring-counting, PID, momentum cut and decay e- cut.
-  // The ring-counting error for CCQE has Ereco-dependence.
-  double skeff_wght = this->EfficiencyWeight(s,m,Ereco);
-
-  double wght = 
-    banff_flux_wght *
-    banff_xsec_wght *
-    skeff_wght;
-
-#ifdef __show_syst_var_wght_mesg_debug__ 
-  if( banff_flux_wght != 1. || 
-      banff_xsec_wght != 1. || 
-      skeff_wght      != 1. ) 
-   {
-     cout << "Exp/SKMC/SystVarWght >> "
-          << "Sample = " << util::AsString(s) << " / Mode = " << util::AsString(m) 
-          << ", Ereco = " << Ereco << " GeV" 
-          << ", Etrue = " << Etrue << " GeV => Weights: " 
-          << "BANFF flux = "   << banff_flux_wght
-          << ", BANFF xsec = " << banff_xsec_wght
-          << ", SK eff = "     << skeff_wght
-          << " (total = "      << wght << ")"
-          << endl;
-   }
-#endif
-
-  return wght;
 }
 //________________________________________________________________________________________
 void SuperkMC::UpdateErecoSpectra(void)

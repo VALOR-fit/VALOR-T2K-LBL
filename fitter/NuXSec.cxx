@@ -15,7 +15,8 @@
 
 #define __show_init_mesg_info__
 //#define __show_init_mesg_debug__
-#define __show_banff_wght_mesg_debug__
+//#define __show_banff_tuning_wght_mesg_debug__
+//#define __show_syst_var_wght_mesg_debug__
 #define __show_fsi_cholesky_mesg_info__
 #define __show_fsi_cholesky_mesg_debug__
 #define __show_fsi_tweak_mesg_debug__
@@ -55,14 +56,13 @@ NuXSec::~NuXSec()
 //________________________________________________________________________________________
 void NuXSec::Init(void)
 {
-  fBANFF            = 0;
+  fBANFF = 0;
 
   fFSICurrentValues = 0;
   fFSICovMtrx       = 0;
   fFSICovMtrxChoL   = 0;
 
-  for(int ispl = 0; ispl < knwspl; ispl++) 
-  {
+  for(int ispl = 0; ispl < knwspl; ispl++) {
      fXSecWghtSpl[ispl] = 0;
   }
 }
@@ -73,8 +73,7 @@ void NuXSec::CleanUp(void)
   if ( fFSICovMtrx       ) delete fFSICovMtrx;
   if ( fFSICovMtrxChoL   ) delete fFSICovMtrxChoL;
 
-  for(int ispl = 0; ispl < knwspl; ispl++) 
-  {
+  for(int ispl = 0; ispl < knwspl; ispl++) {
      if (fXSecWghtSpl[ispl]) delete fXSecWghtSpl[ispl];
   }
 }
@@ -188,8 +187,8 @@ void NuXSec::TellMeAboutTheBANFFfit(BANFF * banff)
   fBANFF = banff;
 }
 //________________________________________________________________________________________
-double NuXSec::SuperkXSecFinTuningWght(
-   SuperkSample_t s, SuperkMode_t m, double Ereco, double Etrue) const
+double NuXSec::FinTuningWght(
+  PhysParamId_t p, SuperkSample_t s, SuperkMode_t m, double Ereco, double Etrue) const
 {
 //
 // This method provides weights to reweight MC to the BANFF best-fit parameters.
@@ -201,72 +200,41 @@ double NuXSec::SuperkXSecFinTuningWght(
 // - BANFF param # 25, CCRES normalization, 0 - 2.5 GeV (Etrue)
 //
 
-  // init weights
-  double wght_banff22 = 1.;
-  double wght_banff23 = 1.;
-  double wght_banff24 = 1.;
-  double wght_banff25 = 1.;
+  if( ! this->ApplySyst(p,s,m,Ereco,Etrue) ) return 1.;
+
+  double wght = 1.;
 
   //
   // BANFF param # 22, M_{A} QE
-  //
-  if( this->ApplySyst(kNuisBANFF22,s,m,Ereco,Etrue) )
-  {
-     TSpline3 * wght_spl = this->FindWghtSpline(kNuisBANFF22,s,m,Ereco,Etrue);
-     assert(wght_spl);
-     double t = fBANFF->BestFitValue(kNuisBANFF22);
-     wght_banff22 = wght_spl->Eval(t);
-     wght_banff22 = TMath::Max(0.,wght_banff22); 
-  }
-
-  //
   // BANFF param # 23, M_{A} RES
   //
-  if( this->ApplySyst(kNuisBANFF23,s,m,Ereco,Etrue) )
+  if(p == kNuisBANFF22 || p == kNuisBANFF23)
   {
-     TSpline3 * wght_spl = this->FindWghtSpline(kNuisBANFF23,s,m,Ereco,Etrue);
+     TSpline3 * wght_spl = this->FindWghtSpline(p,s,m,Ereco,Etrue);
      assert(wght_spl);
-     double t = fBANFF->BestFitValue(kNuisBANFF23);
-     wght_banff23 = wght_spl->Eval(t);
-     wght_banff23 = TMath::Max(0.,wght_banff23); 
+     double t = fBANFF->BestFitValue(p);
+     wght = wght_spl->Eval(t);
+     wght = TMath::Max(0.,wght); 
   }
 
   //
   // BANFF param # 24, CCQE  normalization, 0 - 1.5 GeV
-  //
-  if( this->ApplySyst(kNuisBANFF24,s,m,Ereco,Etrue) )
-  {
-     wght_banff24 = fBANFF->BestFitValue(kNuisBANFF24);
-  }
-
-  //
   // BANFF param # 25, CCRES normalization, 0 - 2.5 GeV
-  //
-  if( this->ApplySyst(kNuisBANFF25,s,m,Ereco,Etrue) )
-  {  
-    wght_banff25 = fBANFF->BestFitValue(kNuisBANFF25);
-  }
-
-  double wght = 
-       wght_banff22 *
-       wght_banff23 *
-       wght_banff24 *
-       wght_banff25;
-
-#ifdef __show_banff_wght_mesg_debug__
-  if ( wght_banff22 != 1. ||
-       wght_banff23 != 1. || 
-       wght_banff24 != 1. ||
-       wght_banff25 != 1. )
+  //  
+  else
+  if(p == kNuisBANFF24 || p == kNuisBANFF25)
   {
-     cout << "Exp/NuXSec >> "
+     wght = fBANFF->BestFitValue(p);
+  }
+  
+#ifdef __show_banff_tuning_wght_mesg_debug__
+  if (wght != 1.)
+  {
+     cout << "Exp/NuXSec/FinTuningWght >> "
           << "Sample = " << util::AsString(s) << " / Mode = " << util::AsString(m)
-          << ", Etrue = " << Etrue << " GeV => Weights: "
-          << "BANFF22 = "   << wght_banff22
-          << ", BANFF23 = " << wght_banff23
-          << ", BANFF24 = " << wght_banff24
-          << ", BANFF25 = " << wght_banff25
-          << "  (total = "  << wght << ")"
+          << ", Ereco = " << Ereco << " GeV" 
+          << ", Etrue = " << Etrue << " GeV => Weight [" 
+          << util::AsString(p) << "] = " << wght 
           << endl;   
   }
 #endif
@@ -274,8 +242,37 @@ double NuXSec::SuperkXSecFinTuningWght(
   return wght;
 }
 //________________________________________________________________________________________
-double NuXSec::SuperkXSecSystWght(
-   SuperkSample_t s, SuperkMode_t m, double Ereco, double Etrue) const
+double NuXSec::FinTuningWght(
+  SuperkSample_t s, SuperkMode_t m, double Ereco, double Etrue, const TH2D * mctempl) const
+{
+  double tot_wght = 1.;
+
+  for(int isyst = 0; isyst < kNumOfXSecSyst; isyst++) {
+     PhysParamId_t p = kListOfXSecSyst[isyst];
+     // "Tuning" involves reweighting to BANFF best-fit values.
+     // Consider only the cross-section systematics that were included in the BANFF fit.
+     bool is_banff_xsec_param = kXSecSystIncludedInBANFF[isyst];
+     if(!is_banff_xsec_param) continue;
+     // Is the current systematic parameter applied to current sample/mode end energy bin?
+     bool apply = this->ApplySyst(p,s,m,Ereco,Etrue);
+     if(!apply) continue;
+     // Calculate weight
+     double wght = this->FinTuningWght(p,s,m,Ereco,Etrue);
+     // If the weight was calculated for a large var-size Ereco,Etrue bin and needs to
+     // shared between multiple MC template bins, calculate the weight fraction that
+     // belongs to the current MC template bin.
+     bool share = kXSecSystWghtUnequallySharedBetweenBins[isyst];
+     double frac = (share) ? 
+        this->FractionOfEvents (p,s,m,Ereco,Etrue,mctempl) : 1.;
+     // Add to total weight
+     tot_wght *= (frac*wght);
+  }
+
+  return tot_wght;
+}
+//________________________________________________________________________________________
+double NuXSec::SystWght(
+  PhysParamId_t p, SuperkSample_t s, SuperkMode_t m, double Ereco, double Etrue) const
 {
 //
 // This method provides weights to account for systematic variations to the BANFF params.
@@ -288,81 +285,75 @@ double NuXSec::SuperkXSecSystWght(
 // - BANFF param # 25, CCRES normalization, 0 - 2.5 GeV (Etrue)
 //
 
-  // init weights
-  double wght_banff22 = 1.;
-  double wght_banff23 = 1.;
-  double wght_banff24 = 1.;
-  double wght_banff25 = 1.;
+  if( ! this->ApplySyst(p,s,m,Ereco,Etrue) ) return 1.;
+
+  double wght = 1.;
 
   //
   // BANFF param # 22, M_{A} QE
-  //
-  if( this->ApplySyst(kNuisBANFF22,s,m,Ereco,Etrue) )
-  {
-     TSpline3 * wght_spl = this->FindWghtSpline(kNuisBANFF22,s,m,Ereco,Etrue);
-     assert(wght_spl);
-     double tb = fBANFF->BestFitValue(kNuisBANFF22);
-     double tc = fBANFF->CurrentValue(kNuisBANFF22);
-     wght_banff22 = wght_spl->Eval(tc) / wght_spl->Eval(tb);
-     wght_banff22 = TMath::Max(0.,wght_banff22); 
-  }
-
-  //
   // BANFF param # 23, M_{A} RES
   //
-  if( this->ApplySyst(kNuisBANFF23,s,m,Ereco,Etrue) )
+  if(p == kNuisBANFF22 || p == kNuisBANFF23)
   {
-     TSpline3 * wght_spl = this->FindWghtSpline(kNuisBANFF23,s,m,Ereco,Etrue);
+     TSpline3 * wght_spl = this->FindWghtSpline(p,s,m,Ereco,Etrue);
      assert(wght_spl);
-     double tb = fBANFF->BestFitValue(kNuisBANFF23);
-     double tc = fBANFF->CurrentValue(kNuisBANFF23);
-     wght_banff23 = wght_spl->Eval(tc) / wght_spl->Eval(tb);
-     wght_banff23 = TMath::Max(0.,wght_banff23); 
+     double tb = fBANFF->BestFitValue(p);
+     double tc = fBANFF->CurrentValue(p);
+     wght = wght_spl->Eval(tc) / wght_spl->Eval(tb);
+     wght = TMath::Max(0.,wght); 
   }
 
   //
   // BANFF param # 24, CCQE  normalization, 0 - 1.5 GeV
-  //
-  if( this->ApplySyst(kNuisBANFF24,s,m,Ereco,Etrue) )
-  {
-     wght_banff24 = fBANFF->CurrentValue(kNuisBANFF24) / fBANFF->BestFitValue(kNuisBANFF24);
-  }
-
-  //
   // BANFF param # 25, CCRES normalization, 0 - 2.5 GeV
-  //
-  if( this->ApplySyst(kNuisBANFF25,s,m,Ereco,Etrue) )
-  {  
-    wght_banff25 = fBANFF->CurrentValue(kNuisBANFF25) / fBANFF->BestFitValue(kNuisBANFF25);
+  //  
+  else
+  if(p == kNuisBANFF24 || p == kNuisBANFF25)
+  {
+     wght = fBANFF->CurrentValue(p) / fBANFF->BestFitValue(p);
   }
 
-  double wght = 
-       wght_banff22 *
-       wght_banff23 *
-       wght_banff24 *
-       wght_banff25;
-
-#ifdef __show_banff_wght_mesg_debug__
-  if ( wght_banff22 != 1. ||
-       wght_banff23 != 1. || 
-       wght_banff24 != 1. ||
-       wght_banff25 != 1. )
+#ifdef __show_syst_var_wght_mesg_debug__
+  if (wght != 1.)
   {
-     cout << "Exp/NuXSec >> "
+     cout << "Exp/NuXSec/SystWght >> "
           << "Sample = " << util::AsString(s) << " / Mode = " << util::AsString(m)
-          << ", Etrue = " << Etrue << " GeV => Weights: "
-          << "BANFF22 = "   << wght_banff22
-          << ", BANFF23 = " << wght_banff23
-          << ", BANFF24 = " << wght_banff24
-          << ", BANFF25 = " << wght_banff25
-          << "  (total = "  << wght << ")"
+          << ", Ereco = " << Ereco << " GeV" 
+          << ", Etrue = " << Etrue << " GeV => Weight [" 
+          << util::AsString(p) << "] = " << wght 
           << endl;   
   }
 #endif
-
+  
   return wght;
 }
 //________________________________________________________________________________________
+double NuXSec::SystWght(
+  SuperkSample_t s, SuperkMode_t m, double Ereco, double Etrue, const TH2D * mctempl) const
+{
+  double tot_wght = 1.;
+
+  for(int isyst = 0; isyst < kNumOfXSecSyst; isyst++) {
+     PhysParamId_t p = kListOfXSecSyst[isyst];
+     // Is the current systematic parameter applied to current sample/mode end energy bin?
+     bool apply = this->ApplySyst(p,s,m,Ereco,Etrue);
+     if(!apply) continue;
+     // Calculate weight
+     double wght = this->SystWght(p,s,m,Ereco,Etrue);
+     // If the weight was calculated for a large var-size Ereco,Etrue bin and needs to
+     // shared between multiple MC template bins, calculate the weight fraction that
+     // belongs to the current MC template bin.
+     bool share = kXSecSystWghtUnequallySharedBetweenBins[isyst];
+     double frac = (share) ? 
+         this->FractionOfEvents (p,s,m,Ereco,Etrue,mctempl) : 1.;
+     // Add to total weight
+     tot_wght *= (frac*wght);
+  }
+
+  return tot_wght;
+}
+//________________________________________________________________________________________
+
 double NuXSec::CurrentValue(PhysParamId_t p) const
 {
   return 0;
@@ -495,7 +486,7 @@ int NuXSec::WghtSplineIdx(
 //
 //  0:  0 --> kNSuperkSamples
 //  1:  0 --> kNSuperkModes
-//  2:  0 --> kNumOfXSecSystWithSpl
+//  2:  0 --> kNumOfXSecSyst
 //  3:  0 --> kXsNErecoBins
 //  4:  0 --> kXsNEtrueBins
 //
@@ -575,4 +566,71 @@ bool NuXSec::ApplySystToEnergyBin(PhysParamId_t p, double Ereco, double Etrue) c
   return apply;
 }
 //________________________________________________________________________________________
+double NuXSec::FractionOfEvents(
+  PhysParamId_t p, SuperkSample_t s, SuperkMode_t m, 
+  double Ereco, double Etrue, const TH2D * mctempl) const
+{
+  assert(mctempl);
 
+  int is = util::FindSampleSlot(s);
+  int im = util::FindModeSlot(s,m);
+  assert(is != -1 && im != -1);
+
+  int ip = util::FindSlotInListOfXSecSyst(p);
+  if(ip == -1) {
+     cerr << "Exp/NuXSec/FractionOfEvents >> Can't find index for cross-section "
+          << "systematic param: " << util::AsString(p) << endl;
+     exit(1);
+  }
+
+  // Look-up the Ereco and Etrue energy range (in the variable-size binning
+  // scheme used when pre-computing weight splines)
+  double Ereco_min = -1;
+  double Ereco_max = -1;
+  double Etrue_min = -1;
+  double Etrue_max = -1;
+  for(int ir = 0; ir < kXsNErecoBins; ir++) {
+    if(Ereco >= kXsErecoBinEdges[ir] && Ereco < kXsErecoBinEdges[ir+1]) {
+        Ereco_min = kXsErecoBinEdges[ir];
+        Ereco_max = kXsErecoBinEdges[ir+1];
+        break;
+    }
+  }
+  for(int it = 0; it < kXsNEtrueBins; it++) {
+    if(Etrue >= kXsEtrueBinEdges[is][im][it] && Etrue < kXsEtrueBinEdges[is][im][it+1]) {
+        Etrue_min = kXsEtrueBinEdges[is][im][it];
+        Etrue_max = kXsEtrueBinEdges[is][im][it+1];
+        break;
+    }
+  }
+
+  if(Ereco < Ereco_min || Ereco > Ereco_max) return 0.;
+  if(Etrue < Etrue_min || Etrue > Etrue_max) return 0.;
+
+  int ir0 = mctempl->GetXaxis()->FindBin(Ereco);
+  int it0 = mctempl->GetYaxis()->FindBin(Etrue);
+
+  double n0 = mctempl->GetBinContent(ir0,it0);
+
+  int ir_min = mctempl->GetXaxis()->FindBin(Ereco_min + kOneMeV);
+  int ir_max = mctempl->GetXaxis()->FindBin(Ereco_max - kOneMeV);
+  int it_min = mctempl->GetYaxis()->FindBin(Etrue_min + kOneMeV);
+  int it_max = mctempl->GetYaxis()->FindBin(Etrue_max - kOneMeV);
+
+  double ntot_range = 0;
+  for(int ir = ir_min; ir <= ir_max; ir++) {
+    for(int it = it_min; it <= it_max; it++) {
+       ntot_range += mctempl->GetBinContent(ir,it);
+    }
+  }
+
+  assert(ntot_range >= n0);   
+      
+  double frac = 0;
+  if(ntot_range > 0) {
+    frac = n0 / ntot_range;
+  }
+          
+  return frac;
+}
+//________________________________________________________________________________________
