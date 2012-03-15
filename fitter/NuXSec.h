@@ -45,18 +45,10 @@ public:
   //
 
   // Reweight to best-fit value of input BANFF param
-  double FinTuningWght(conv::PhysParamId_t p, conv::SuperkSample_t s, conv::SuperkMode_t m, double Ereco, double Etrue) const;
-
-  // As above, but compute the combined weight for all BANFF cross-section parameters to the input sample/mode and 
-  // energy bin. The input MC template is used for calculating how to share between the MC template bins weights computed
-  // over different var.-sized Ereco,Etrue bins
   double FinTuningWght(conv::SuperkSample_t s, conv::SuperkMode_t m, double Ereco, double Etrue) const;
 
-  // Calculate weight in response to tweaking the input parameter
+  // Calculate weight in response to systematic parameter variations.
   // For the BANFF parameters, the weight is relative to the best-fit (tuned MC) parameter, not the nominal MC one
-  double SystWght(conv::PhysParamId_t p, conv::SuperkSample_t s, conv::SuperkMode_t m, double Ereco, double Etrue) const;
-
-  // As above, but compute the combined weight for all cross-section parameters.
   double SystWght(conv::SuperkSample_t s, conv::SuperkMode_t m, double Ereco, double Etrue) const;
 
   //
@@ -107,12 +99,24 @@ private:
   void Init    (void);
   void CleanUp (void);
 
+  // Reweight to best-fit value of input BANFF param. Weight is calculated for a single (input) parameter.
+  // The calculated weight can not be applied directly to the MC template bins due to binning differences.
+  // In FinTuningWght(), the weights for all systematic params are transformed --so that they can be applied 
+  // to MC template bins-- and they are combined together.
+  double FinTuningWght_1p(conv::PhysParamId_t p, conv::SuperkSample_t s, conv::SuperkMode_t m, double Ereco, double Etrue) const;
+
+  // Calculate weight in response to systematic parameter variations. Weight is calculated for a single (input) parameter.
+  // Comments similar to the ones above apply
+  double SystWght_1p(conv::PhysParamId_t p, conv::SuperkSample_t s, conv::SuperkMode_t m, double Ereco, double Etrue) const;
+
   // Calculate weight spline index
   int  WghtSplineIdx        (conv::PhysParamId_t p, conv::SuperkSample_t s, conv::SuperkMode_t m, double Ereco, double Etrue) const;
+
   // Apply systematic to inmput sample/mode and energy bins?
   bool ApplySyst            (conv::PhysParamId_t p, conv::SuperkSample_t s, conv::SuperkMode_t m, double Ereco, double Etrue) const; 
   bool ApplySystToSKMode    (conv::PhysParamId_t p, conv::SuperkSample_t s, conv::SuperkMode_t m) const;
   bool ApplySystToEnergyBin (conv::PhysParamId_t p, double Ereco, double Etrue) const;
+
   //
   double FractionOfEvents   (conv::SuperkSample_t s, conv::SuperkMode_t m, double Ereco, double Etrue,  conv::SKMCTemplateType_t type) const;
 

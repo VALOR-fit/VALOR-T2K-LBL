@@ -232,6 +232,34 @@ void NuXSec::TellMeAboutTheBANFFfit(BANFF * banff)
 }
 //________________________________________________________________________________________
 double NuXSec::FinTuningWght(
+  SuperkSample_t s, SuperkMode_t m, double Ereco, double Etrue) const
+{
+  double tot_wght = 1.;
+
+  for(int isyst = 0; isyst < kNumOfXSecSyst; isyst++) {
+     PhysParamId_t p = kListOfXSecSyst[isyst];
+     // "Tuning" involves reweighting to BANFF best-fit values.
+     // Consider only the cross-section systematics that were included in the BANFF fit.
+     bool is_banff_xsec_param = kXSecSystIncludedInBANFF[isyst];
+     if(!is_banff_xsec_param) continue;
+     // Is the current systematic parameter applied to current sample/mode end energy bin?
+     bool apply = this->ApplySyst(p,s,m,Ereco,Etrue);
+     if(!apply) continue;
+     // Calculate weight
+     double wght = this->FinTuningWght_1p(p,s,m,Ereco,Etrue);
+     // If the weight was calculated for a large var-size Ereco,Etrue bin and needs to
+     // shared between multiple MC template bins, calculate the weight fraction that
+     // belongs to the current MC template bin.
+     bool share = kXSecSystWghtUnequallySharedBetweenBins[isyst];
+     double frac = (share) ? this->FractionOfEvents(s,m,Ereco,Etrue,kSKMCtNom) : 1;
+     // Add to total weight
+     tot_wght *= (frac*wght);
+  }
+
+  return tot_wght;
+}
+//________________________________________________________________________________________
+double NuXSec::FinTuningWght_1p(
   PhysParamId_t p, SuperkSample_t s, SuperkMode_t m, double Ereco, double Etrue) const
 {
 //
@@ -244,7 +272,7 @@ double NuXSec::FinTuningWght(
 // - BANFF param # 25, CCRES normalization, 0 - 2.5 GeV (Etrue)
 //
 
-  if( ! this->ApplySyst(p,s,m,Ereco,Etrue) ) return 1.;
+  // if( ! this->ApplySyst(p,s,m,Ereco,Etrue) ) return 1.; // check already made in function that calls this one
 
   double wght = 1.;
 
@@ -286,28 +314,26 @@ double NuXSec::FinTuningWght(
   return wght;
 }
 //________________________________________________________________________________________
-double NuXSec::FinTuningWght(
+double NuXSec::SystWght(
   SuperkSample_t s, SuperkMode_t m, double Ereco, double Etrue) const
 {
   double tot_wght = 1.;
 
   for(int isyst = 0; isyst < kNumOfXSecSyst; isyst++) {
      PhysParamId_t p = kListOfXSecSyst[isyst];
-     // "Tuning" involves reweighting to BANFF best-fit values.
-     // Consider only the cross-section systematics that were included in the BANFF fit.
-     bool is_banff_xsec_param = kXSecSystIncludedInBANFF[isyst];
-     if(!is_banff_xsec_param) continue;
+     // Was tweaked?
+     double dt = TMath::Abs(fBANFF->CurrentValue(p) - fBANFF->BestFitValue(p)); // only banff params for the time-being
+     if(dt < kASmallNum) continue;
      // Is the current systematic parameter applied to current sample/mode end energy bin?
      bool apply = this->ApplySyst(p,s,m,Ereco,Etrue);
      if(!apply) continue;
      // Calculate weight
-     double wght = this->FinTuningWght(p,s,m,Ereco,Etrue);
+     double wght = this->SystWght_1p(p,s,m,Ereco,Etrue);
      // If the weight was calculated for a large var-size Ereco,Etrue bin and needs to
      // shared between multiple MC template bins, calculate the weight fraction that
      // belongs to the current MC template bin.
      bool share = kXSecSystWghtUnequallySharedBetweenBins[isyst];
-//     double frac = 1;
-     double frac = (share) ? this->FractionOfEvents(s,m,Ereco,Etrue,kSKMCtNom) : 1;
+     double frac = (share) ? this->FractionOfEvents(s,m,Ereco,Etrue,kSKMCtTun) : 1;
      // Add to total weight
      tot_wght *= (frac*wght);
   }
@@ -315,7 +341,7 @@ double NuXSec::FinTuningWght(
   return tot_wght;
 }
 //________________________________________________________________________________________
-double NuXSec::SystWght(
+double NuXSec::SystWght_1p(
   PhysParamId_t p, SuperkSample_t s, SuperkMode_t m, double Ereco, double Etrue) const
 {
 //
@@ -329,7 +355,7 @@ double NuXSec::SystWght(
 // - BANFF param # 25, CCRES normalization, 0 - 2.5 GeV (Etrue)
 //
 
-  if( ! this->ApplySyst(p,s,m,Ereco,Etrue) ) return 1.;
+  // if( ! this->ApplySyst(p,s,m,Ereco,Etrue) ) return 1.; // check already made in function that calls this one
 
   double wght = 1.;
 
@@ -370,31 +396,6 @@ double NuXSec::SystWght(
 #endif
   
   return wght;
-}
-//________________________________________________________________________________________
-double NuXSec::SystWght(
-  SuperkSample_t s, SuperkMode_t m, double Ereco, double Etrue) const
-{
-  double tot_wght = 1.;
-
-  for(int isyst = 0; isyst < kNumOfXSecSyst; isyst++) {
-     PhysParamId_t p = kListOfXSecSyst[isyst];
-     // Is the current systematic parameter applied to current sample/mode end energy bin?
-     bool apply = this->ApplySyst(p,s,m,Ereco,Etrue);
-     if(!apply) continue;
-     // Calculate weight
-     double wght = this->SystWght(p,s,m,Ereco,Etrue);
-     // If the weight was calculated for a large var-size Ereco,Etrue bin and needs to
-     // shared between multiple MC template bins, calculate the weight fraction that
-     // belongs to the current MC template bin.
-     bool share = kXSecSystWghtUnequallySharedBetweenBins[isyst];
-//     double frac = 1;
-     double frac = (share) ? this->FractionOfEvents(s,m,Ereco,Etrue,kSKMCtTun) : 1;
-     // Add to total weight
-     tot_wght *= (frac*wght);
-  }
-
-  return tot_wght;
 }
 //________________________________________________________________________________________
 
