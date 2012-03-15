@@ -15,6 +15,13 @@
 //	- sk_1Rmu_ccnonqe_eff
 //	- sk_1Rmu_nc_eff
 //	- sk_1Rmu_nuecc_eff
+//      - banff
+//             This correlated error can not be used in this test macro. Instead,
+//             you can tweak specific components of the BANFF tweaking vector (neglecting,
+//             correlation which, in the fitter, are handled using the Cholesky method). Use:
+//             - banff_00
+//             - ...
+//             - banff_25
 //
 // Costas Andreopoulos
 // ------------------------------------------------------------------------------------------------
@@ -24,7 +31,10 @@
 //  Can write output tables to tex file
 //  Restructuring of SK modes part of code means its easier to change in the future:
 //   - if order or number of kSKReactionModes[s][m] changes, just need to modify lines ~120-160
-//
+// Major revisions by TD. 15/03/12.
+//  Takes advantage of util classes for determining which 'total' to put a mode in -> code greatly simplified
+//  Can run with or without BANFF best fit values
+//  Now prints Etrue bins (for numu CCQE) to see effect of BANFF flux bins
 
 #include <iomanip.h>
 
@@ -39,8 +49,10 @@ void test_systematic_error_propagation
   double       input_deltacp              = 0.00,                           /* */
   double       input_dm12sq               = 7.58E-5,                        /* */
   double       input_dm23sq               = 2.32E-3,                        /* */
+  bool         use_banff_bestfit          = true,                           /* if false, BANFF::RestoreNominalMC() is called */
   bool         use_tex                    = false,                          /* print-out results as a TeX table (for inclusion in tech. note)*/
-  bool         show_sk_ccqe_spectral_info = false,                          /* */
+  bool         show_sk_ccqe_spectral_info_ereco = false,                    /* */
+  bool         show_sk_ccqe_spectral_info_etrue = false,                    /* */
   const char * output_file                = "",                             /* */
   const char * config_file                = "analysis_configuration.xml"    /* */
 )
@@ -89,14 +101,25 @@ void test_systematic_error_propagation
   // Create & config superk spectrum predictor
   SuperkExpectation * skexp = new SuperkExpectation;
   skexp->Read(config);
+  
+  if(!use_banff_bestfit)
+    skexp->GetBANFF()->RestoreNominalMC();
 
-  //
-  int ErecoBin1 = skexp->CurrPredictedErecoSpectrum(s, conv::kSKmNuMuCCQE)->FindBin(0.4);
-  int ErecoBin2 = skexp->CurrPredictedErecoSpectrum(s, conv::kSKmNuMuCCQE)->FindBin(1.1);
-  cout << ErecoBin1 << " should be 9" << endl;
-  cout << ErecoBin2 << " should be 22" << endl;
-  //  int ErecoBin1 =  9; // 0.4 GeV (incl.)
-  //  int ErecoBin2 = 22; // 1.1 GeV (incl.)
+  // Get the EReco bin corresponding to the edges of SK CCQE efficiency systematic
+  Long64_t ErecoBin1NuMu    = skexp->CurrPredictedErecoSpectrum(s, conv::kSKmNuMuCCQE    )->FindBin(0.4-conv::kASmallNum);
+  Long64_t ErecoBin2NuMu    = skexp->CurrPredictedErecoSpectrum(s, conv::kSKmNuMuCCQE    )->FindBin(1.1-conv::kASmallNum);
+  Long64_t ErecoBin1NuMuBar = skexp->CurrPredictedErecoSpectrum(s, conv::kSKmNuMuBarCCQE )->FindBin(0.4-conv::kASmallNum);
+  Long64_t ErecoBin2NuMuBar = skexp->CurrPredictedErecoSpectrum(s, conv::kSKmNuMuBarCCQE )->FindBin(1.1-conv::kASmallNum);
+
+  // Get the ETrue bin edges for NuMuCCQE
+  int NEtrueBinNuMu = conv::kXsNEtrueBins;
+  Long64_t EtrueBinNuMu[conv::kXsNEtrueBins+1];
+  for(int itb = 0; itb < conv::kXsNEtrueBins+1; itb++) {
+    EtrueBinNuMu[itb] = -1;
+    EtrueBinNuMu[itb] = skexp->GetSuperkMC()->Template(s, conv::kSKmNuMuCCQE, conv::kSKMCtFin)->GetYaxis()->FindBin(conv::kXsEtrueBinEdges[util::FindSampleSlot(s)][util::FindModeSlot(s,conv::kSKmNuMuCCQE)][itb]-conv::kASmallNum);
+    if (EtrueBinNuMu[itb] > conv::kNEtrueBins) EtrueBinNuMu[itb] = conv::kNEtrueBins;
+    if (EtrueBinNuMu[itb] < 1 && itb != 0) {NEtrueBinNuMu = itb-1; break;}
+  }
 
   //
   // nominal
@@ -126,31 +149,31 @@ void test_systematic_error_propagation
     // use s, m (not is,im) as indices, eg fMCErecoSpectrum[s][m]
     nskmodes_0[m] = skexp->CurrPredictedErecoSpectrum(s,m)->Integral();
 
-    if(IsCC(m)) {
-      if(IsNuMu(m))
+    if(util::IsCC(m)) {
+      if(util::IsNuMu(m))
 	nsknumucc_0 += nskmodes_0[m];
-      else if(IsNuMuBar(m))
+      else if(util::IsNuMuBar(m))
 	nsknumubarcc_0 += nskmodes_0[m];
-      else if(IsNuE(m))
+      else if(util::IsNuE(m))
 	nsknuecc_0 += nskmodes_0[m];
-      else if(IsNuEBar(m))
+      else if(util::IsNuEBar(m))
 	nsknuebarcc_0 += nskmodes_0[m];
-      else if(IsSignalNuE(m))
+      else if(util::IsSignalNuE(m))
 	nsknuesig_0 += nskmodes_0[m];
       else {
 	cerr << "CC mode " << AsString(m) << " is not numu, numubar, nue, nuebar, nuesig!" << endl;
 	exit(1);
       }
     }//CC?
-    else if(IsNC(m)) {
-      if(IsNuMu(m))
-	nsknumucc_0 += nskmodes_0[m];
-      else if(IsNuMuBar(m))
-	nsknumubarcc_0 += nskmodes_0[m];
-      else if(IsNuE(m))
-	nsknuecc_0 += nskmodes_0[m];
-      else if(IsNuEBar(m))
-	nsknuebarcc_0 += nskmodes_0[m];
+    else if(util::IsNC(m)) {
+      if(util::IsNuMu(m))
+	nsknumunc_0 += nskmodes_0[m];
+      else if(util::IsNuMuBar(m))
+	nsknumubarnc_0 += nskmodes_0[m];
+      else if(util::IsNuE(m))
+	nsknuenc_0 += nskmodes_0[m];
+      else if(util::IsNuEBar(m))
+	nsknuebarnc_0 += nskmodes_0[m];
       else {
 	cerr << "NC mode " << AsString(m) << " is not numu, numubar, nue, nuebar!" << endl;
 	exit(1);
@@ -162,14 +185,21 @@ void test_systematic_error_propagation
     }//not CC or NC
   } //loop over modes
 
-  // spectral numu ccqe
-  double nsknumuccqe_0a        = skexp->CurrPredictedErecoSpectrum(s, conv::kSKmNuMuCCQE       )->Integral(1,           ErecoBin1-1          );
-  double nsknumuccqe_0b        = skexp->CurrPredictedErecoSpectrum(s, conv::kSKmNuMuCCQE       )->Integral(ErecoBin1,   ErecoBin2            );
-  double nsknumuccqe_0c        = skexp->CurrPredictedErecoSpectrum(s, conv::kSKmNuMuCCQE       )->Integral(ErecoBin2+1, conv::kNErecoBins1Rmu);
-  double nsknumubarccqe_0a     = skexp->CurrPredictedErecoSpectrum(s, conv::kSKmNuMuBarCCQE    )->Integral(1,           ErecoBin1-1          );
-  double nsknumubarccqe_0b     = skexp->CurrPredictedErecoSpectrum(s, conv::kSKmNuMuBarCCQE    )->Integral(ErecoBin1,   ErecoBin2            );
-  double nsknumubarccqe_0c     = skexp->CurrPredictedErecoSpectrum(s, conv::kSKmNuMuBarCCQE    )->Integral(ErecoBin2+1, conv::kNErecoBins1Rmu);
+  // spectral numu ccqe (ereco)
+  double nsknumuccqe_0a        = skexp->CurrPredictedErecoSpectrum(s, conv::kSKmNuMuCCQE    )->Integral(1,                  ErecoBin1NuMu);
+  double nsknumuccqe_0b        = skexp->CurrPredictedErecoSpectrum(s, conv::kSKmNuMuCCQE    )->Integral(ErecoBin1NuMu+1,    ErecoBin2NuMu);
+  double nsknumuccqe_0c        = skexp->CurrPredictedErecoSpectrum(s, conv::kSKmNuMuCCQE    )->Integral(ErecoBin2NuMu+1,    conv::kNErecoBins1Rmu);
+  double nsknumubarccqe_0a     = skexp->CurrPredictedErecoSpectrum(s, conv::kSKmNuMuBarCCQE )->Integral(1,                  ErecoBin1NuMuBar);
+  double nsknumubarccqe_0b     = skexp->CurrPredictedErecoSpectrum(s, conv::kSKmNuMuBarCCQE )->Integral(ErecoBin1NuMuBar+1, ErecoBin2NuMuBar);
+  double nsknumubarccqe_0c     = skexp->CurrPredictedErecoSpectrum(s, conv::kSKmNuMuBarCCQE )->Integral(ErecoBin2NuMuBar+1, conv::kNErecoBins1Rmu);
 
+  // spectral numu ccqe (etrue)
+  double nsknumuccqe_0t[conv::kXsNEtrueBins];
+  for(int itb = 0; itb < NEtrueBinNuMu; itb++) {
+    nsknumuccqe_0t[itb] = 0.;
+    nsknumuccqe_0t[itb] = skexp->GetSuperkMC()->Template(s, conv::kSKmNuMuCCQE, conv::kSKMCtFin)->Integral(1, conv::kNErecoBins1Rmu, EtrueBinNuMu[itb]+1, EtrueBinNuMu[itb+1]);
+    cout << "bin edges are from " << skexp->GetSuperkMC()->Template(s, conv::kSKmNuMuCCQE, conv::kSKMCtFin)->GetYaxis()->GetBinLowEdge(EtrueBinNuMu[itb]+1) << " to " << skexp->GetSuperkMC()->Template(s, conv::kSKmNuMuCCQE, conv::kSKMCtFin)->GetYaxis()->GetBinUpEdge(EtrueBinNuMu[itb+1]) << endl;;
+  }
 
   //
   // +1 sigma
@@ -200,31 +230,31 @@ void test_systematic_error_propagation
     // use s, m (not is,im) as indices, eg fMCErecoSpectrum[s][m]
     nskmodes_p[m] = skexp->CurrPredictedErecoSpectrum(s,m)->Integral();
 
-    if(IsCC(m)) {
-      if(IsNuMu(m))
+    if(util::IsCC(m)) {
+      if(util::IsNuMu(m))
 	nsknumucc_p += nskmodes_p[m];
-      else if(IsNuMuBar(m))
+      else if(util::IsNuMuBar(m))
 	nsknumubarcc_p += nskmodes_p[m];
-      else if(IsNuE(m))
+      else if(util::IsNuE(m))
 	nsknuecc_p += nskmodes_p[m];
-      else if(IsNuEBar(m))
+      else if(util::IsNuEBar(m))
 	nsknuebarcc_p += nskmodes_p[m];
-      else if(IsSignalNuE(m))
+      else if(util::IsSignalNuE(m))
 	nsknuesig_p += nskmodes_p[m];
       else {
 	cerr << "CC mode " << AsString(m) << " is not numu, numubar, nue, nuebar, nuesig!" << endl;
 	exit(1);
       }
     }//CC?
-    else if(IsNC(m)) {
-      if(IsNuMu(m))
-	nsknumucc_p += nskmodes_p[m];
-      else if(IsNuMuBar(m))
-	nsknumubarcc_p += nskmodes_p[m];
-      else if(IsNuE(m))
-	nsknuecc_p += nskmodes_p[m];
-      else if(IsNuEBar(m))
-	nsknuebarcc_p += nskmodes_p[m];
+    else if(util::IsNC(m)) {
+      if(util::IsNuMu(m))
+	nsknumunc_p += nskmodes_p[m];
+      else if(util::IsNuMuBar(m))
+	nsknumubarnc_p += nskmodes_p[m];
+      else if(util::IsNuE(m))
+	nsknuenc_p += nskmodes_p[m];
+      else if(util::IsNuEBar(m))
+	nsknuebarnc_p += nskmodes_p[m];
       else {
 	cerr << "NC mode " << AsString(m) << " is not numu, numubar, nue, nuebar!" << endl;
 	exit(1);
@@ -236,13 +266,20 @@ void test_systematic_error_propagation
     }//not CC or NC
   } //loop over modes
 
-  // spectral numu ccqe
-  double nsknumuccqe_pa        = skexp->CurrPredictedErecoSpectrum(s, conv::kSKmNuMuCCQE       )->Integral(1,           ErecoBin1-1          );
-  double nsknumuccqe_pb        = skexp->CurrPredictedErecoSpectrum(s, conv::kSKmNuMuCCQE       )->Integral(ErecoBin1,   ErecoBin2            );
-  double nsknumuccqe_pc        = skexp->CurrPredictedErecoSpectrum(s, conv::kSKmNuMuCCQE       )->Integral(ErecoBin2+1, conv::kNErecoBins1Rmu);
-  double nsknumubarccqe_pa     = skexp->CurrPredictedErecoSpectrum(s, conv::kSKmNuMuBarCCQE    )->Integral(1,           ErecoBin1-1          );
-  double nsknumubarccqe_pb     = skexp->CurrPredictedErecoSpectrum(s, conv::kSKmNuMuBarCCQE    )->Integral(ErecoBin1,   ErecoBin2            );
-  double nsknumubarccqe_pc     = skexp->CurrPredictedErecoSpectrum(s, conv::kSKmNuMuBarCCQE    )->Integral(ErecoBin2+1, conv::kNErecoBins1Rmu);
+  // spectral numu ccqe (ereco)
+  double nsknumuccqe_pa        = skexp->CurrPredictedErecoSpectrum(s, conv::kSKmNuMuCCQE    )->Integral(1,                  ErecoBin1NuMu);
+  double nsknumuccqe_pb        = skexp->CurrPredictedErecoSpectrum(s, conv::kSKmNuMuCCQE    )->Integral(ErecoBin1NuMu+1,    ErecoBin2NuMu);
+  double nsknumuccqe_pc        = skexp->CurrPredictedErecoSpectrum(s, conv::kSKmNuMuCCQE    )->Integral(ErecoBin2NuMu+1,    conv::kNErecoBins1Rmu);
+  double nsknumubarccqe_pa     = skexp->CurrPredictedErecoSpectrum(s, conv::kSKmNuMuBarCCQE )->Integral(1,                  ErecoBin1NuMuBar);
+  double nsknumubarccqe_pb     = skexp->CurrPredictedErecoSpectrum(s, conv::kSKmNuMuBarCCQE )->Integral(ErecoBin1NuMuBar+1, ErecoBin2NuMuBar);
+  double nsknumubarccqe_pc     = skexp->CurrPredictedErecoSpectrum(s, conv::kSKmNuMuBarCCQE )->Integral(ErecoBin2NuMuBar+1, conv::kNErecoBins1Rmu);
+
+  // spectral numu ccqe (etrue)
+  double nsknumuccqe_pt[conv::kXsNEtrueBins];
+  for(int itb = 0; itb < NEtrueBinNuMu; itb++) {
+    nsknumuccqe_pt[itb] = 0.;
+    nsknumuccqe_pt[itb] = skexp->GetSuperkMC()->Template(s, conv::kSKmNuMuCCQE, conv::kSKMCtFin)->Integral(1, conv::kNErecoBins1Rmu, EtrueBinNuMu[itb]+1, EtrueBinNuMu[itb+1]);
+  }
 
   //
   // -1 sigma
@@ -273,31 +310,31 @@ void test_systematic_error_propagation
     // use s, m (not is,im) as indices, eg fMCErecoSpectrum[s][m]
     nskmodes_m[m] = skexp->CurrPredictedErecoSpectrum(s,m)->Integral();
 
-    if(IsCC(m)) {
-      if(IsNuMu(m))
+    if(util::IsCC(m)) {
+      if(util::IsNuMu(m))
 	nsknumucc_m += nskmodes_m[m];
-      else if(IsNuMuBar(m))
+      else if(util::IsNuMuBar(m))
 	nsknumubarcc_m += nskmodes_m[m];
-      else if(IsNuE(m))
+      else if(util::IsNuE(m))
 	nsknuecc_m += nskmodes_m[m];
-      else if(IsNuEBar(m))
+      else if(util::IsNuEBar(m))
 	nsknuebarcc_m += nskmodes_m[m];
-      else if(IsSignalNuE(m))
+      else if(util::IsSignalNuE(m))
 	nsknuesig_m += nskmodes_m[m];
       else {
 	cerr << "CC mode " << AsString(m) << " is not numu, numubar, nue, nuebar, nuesig!" << endl;
 	exit(1);
       }
     }//CC?
-    else if(IsNC(m)) {
-      if(IsNuMu(m))
-	nsknumucc_m += nskmodes_m[m];
-      else if(IsNuMuBar(m))
-	nsknumubarcc_m += nskmodes_m[m];
-      else if(IsNuE(m))
-	nsknuecc_m += nskmodes_m[m];
-      else if(IsNuEBar(m))
-	nsknuebarcc_m += nskmodes_m[m];
+    else if(util::IsNC(m)) {
+      if(util::IsNuMu(m))
+	nsknumunc_m += nskmodes_m[m];
+      else if(util::IsNuMuBar(m))
+	nsknumubarnc_m += nskmodes_m[m];
+      else if(util::IsNuE(m))
+	nsknuenc_m += nskmodes_m[m];
+      else if(util::IsNuEBar(m))
+	nsknuebarnc_m += nskmodes_m[m];
       else {
 	cerr << "NC mode " << AsString(m) << " is not numu, numubar, nue, nuebar!" << endl;
 	exit(1);
@@ -309,15 +346,20 @@ void test_systematic_error_propagation
     }//not CC or NC
   } //loop over modes
 
+  // spectral numu ccqe (ereco)
+  double nsknumuccqe_ma        = skexp->CurrPredictedErecoSpectrum(s, conv::kSKmNuMuCCQE    )->Integral(1,                  ErecoBin1NuMu);
+  double nsknumuccqe_mb        = skexp->CurrPredictedErecoSpectrum(s, conv::kSKmNuMuCCQE    )->Integral(ErecoBin1NuMu+1,    ErecoBin2NuMu);
+  double nsknumuccqe_mc        = skexp->CurrPredictedErecoSpectrum(s, conv::kSKmNuMuCCQE    )->Integral(ErecoBin2NuMu+1,    conv::kNErecoBins1Rmu);
+  double nsknumubarccqe_ma     = skexp->CurrPredictedErecoSpectrum(s, conv::kSKmNuMuBarCCQE )->Integral(1,                  ErecoBin1NuMuBar);
+  double nsknumubarccqe_mb     = skexp->CurrPredictedErecoSpectrum(s, conv::kSKmNuMuBarCCQE )->Integral(ErecoBin1NuMuBar+1, ErecoBin2NuMuBar);
+  double nsknumubarccqe_mc     = skexp->CurrPredictedErecoSpectrum(s, conv::kSKmNuMuBarCCQE )->Integral(ErecoBin2NuMuBar+1, conv::kNErecoBins1Rmu);
 
-  // spectral numu ccqe
-  double nsknumuccqe_ma        = skexp->CurrPredictedErecoSpectrum(s, conv::kSKmNuMuCCQE       )->Integral(1,           ErecoBin1-1          );
-  double nsknumuccqe_mb        = skexp->CurrPredictedErecoSpectrum(s, conv::kSKmNuMuCCQE       )->Integral(ErecoBin1,   ErecoBin2            );
-  double nsknumuccqe_mc        = skexp->CurrPredictedErecoSpectrum(s, conv::kSKmNuMuCCQE       )->Integral(ErecoBin2+1, conv::kNErecoBins1Rmu);
-  double nsknumubarccqe_ma     = skexp->CurrPredictedErecoSpectrum(s, conv::kSKmNuMuBarCCQE    )->Integral(1,           ErecoBin1-1          );
-  double nsknumubarccqe_mb     = skexp->CurrPredictedErecoSpectrum(s, conv::kSKmNuMuBarCCQE    )->Integral(ErecoBin1,   ErecoBin2            );
-  double nsknumubarccqe_mc     = skexp->CurrPredictedErecoSpectrum(s, conv::kSKmNuMuBarCCQE    )->Integral(ErecoBin2+1, conv::kNErecoBins1Rmu);
-
+  // spectral numu ccqe (etrue)
+  double nsknumuccqe_mt[conv::kXsNEtrueBins];
+  for(int itb = 0; itb < NEtrueBinNuMu; itb++) {
+    nsknumuccqe_mt[itb] = 0.;
+    nsknumuccqe_mt[itb] = skexp->GetSuperkMC()->Template(s, conv::kSKmNuMuCCQE, conv::kSKMCtFin)->Integral(1, conv::kNErecoBins1Rmu, EtrueBinNuMu[itb]+1, EtrueBinNuMu[itb+1]);
+  }
 
   //
   // calc fractional changes
@@ -331,6 +373,8 @@ void test_systematic_error_propagation
   double frac_nsknumubarnc_p         = (nsknumubarnc_0         > 0) ? 100.*(nsknumubarnc_p        - nsknumubarnc_0       ) / nsknumubarnc_0        : 0.;
   double frac_nsknuecc_p             = (nsknuecc_0             > 0) ? 100.*(nsknuecc_p            - nsknuecc_0           ) / nsknuecc_0            : 0.;
   double frac_nsknuenc_p             = (nsknuenc_0             > 0) ? 100.*(nsknuenc_p            - nsknuenc_0           ) / nsknuenc_0            : 0.;
+  double frac_nsknuebarcc_p          = (nsknuebarcc_0          > 0) ? 100.*(nsknuebarcc_p         - nsknuebarcc_0        ) / nsknuebarcc_0         : 0.;
+  double frac_nsknuebarnc_p          = (nsknuebarnc_0          > 0) ? 100.*(nsknuebarnc_p         - nsknuebarnc_0        ) / nsknuebarnc_0         : 0.;
   double frac_nsknuesig_p            = (nsknuesig_0            > 0) ? 100.*(nsknuesig_p           - nsknuesig_0          ) / nsknuesig_0           : 0.;
 
   // individual modes
@@ -348,7 +392,11 @@ void test_systematic_error_propagation
   double frac_nsknumubarccqe_pa      = (nsknumubarccqe_0a      > 0) ? 100.*(nsknumubarccqe_pa     - nsknumubarccqe_0a    ) / nsknumubarccqe_0a     : 0.;
   double frac_nsknumubarccqe_pb      = (nsknumubarccqe_0b      > 0) ? 100.*(nsknumubarccqe_pb     - nsknumubarccqe_0b    ) / nsknumubarccqe_0b     : 0.;
   double frac_nsknumubarccqe_pc      = (nsknumubarccqe_0c      > 0) ? 100.*(nsknumubarccqe_pc     - nsknumubarccqe_0c    ) / nsknumubarccqe_0c     : 0.;
-
+  //spectral ccqe (etrue)
+  double frac_nsknumuccqe_pt[conv::kXsNEtrueBins];
+   for(int itb = 0; itb < NEtrueBinNuMu; itb++) {
+     frac_nsknumuccqe_pt[itb]        = (nsknumuccqe_0t[itb]    > 0) ? 100.*(nsknumuccqe_pt[itb]   - nsknumuccqe_0t[itb]  ) / nsknumuccqe_0t[itb]   : 0.;
+  } 
 
   // totals
   double frac_nsk_m                  = (nsk_0                  > 0) ? 100.*(nsk_m                 - nsk_0                ) / nsk_0                 : 0.;
@@ -358,6 +406,8 @@ void test_systematic_error_propagation
   double frac_nsknumubarnc_m         = (nsknumubarnc_0         > 0) ? 100.*(nsknumubarnc_m        - nsknumubarnc_0       ) / nsknumubarnc_0        : 0.;
   double frac_nsknuecc_m             = (nsknuecc_0             > 0) ? 100.*(nsknuecc_m            - nsknuecc_0           ) / nsknuecc_0            : 0.;
   double frac_nsknuenc_m             = (nsknuenc_0             > 0) ? 100.*(nsknuenc_m            - nsknuenc_0           ) / nsknuenc_0            : 0.;
+  double frac_nsknuebarcc_m          = (nsknuebarcc_0          > 0) ? 100.*(nsknuebarcc_m         - nsknuebarcc_0        ) / nsknuebarcc_0         : 0.;
+  double frac_nsknuebarnc_m          = (nsknuebarnc_0          > 0) ? 100.*(nsknuebarnc_m         - nsknuebarnc_0        ) / nsknuebarnc_0         : 0.;
   double frac_nsknuesig_m            = (nsknuesig_0            > 0) ? 100.*(nsknuesig_m           - nsknuesig_0          ) / nsknuesig_0           : 0.;
 
   // individual modes
@@ -376,6 +426,11 @@ void test_systematic_error_propagation
   double frac_nsknumubarccqe_ma      = (nsknumubarccqe_0a      > 0) ? 100.*(nsknumubarccqe_ma     - nsknumubarccqe_0a    ) / nsknumubarccqe_0a     : 0.;
   double frac_nsknumubarccqe_mb      = (nsknumubarccqe_0b      > 0) ? 100.*(nsknumubarccqe_mb     - nsknumubarccqe_0b    ) / nsknumubarccqe_0b     : 0.;
   double frac_nsknumubarccqe_mc      = (nsknumubarccqe_0c      > 0) ? 100.*(nsknumubarccqe_mc     - nsknumubarccqe_0c    ) / nsknumubarccqe_0c     : 0.;
+  //spectral ccqe (etrue)
+  double frac_nsknumuccqe_mt[conv::kXsNEtrueBins];
+   for(int itb = 0; itb < NEtrueBinNuMu; itb++) {
+     frac_nsknumuccqe_mt[itb]        = (nsknumuccqe_0t[itb]    > 0) ? 100.*(nsknumuccqe_mt[itb]   - nsknumuccqe_0t[itb]  ) / nsknumuccqe_0t[itb]   : 0.;
+  }
 
   //
   // Print-out
@@ -451,8 +506,8 @@ void test_systematic_error_propagation
 	 << setw(ncolfrc)  << setfill(' ') << setprecision(nprecisionpct) << frac_nskmodes_m[m] << pctsymbol 
 	 << endrow
 	 << endl;
-    //spectral ccqe
-    if ( m == conv::kSKmNuMuCCQE && show_sk_ccqe_spectral_info) {
+    //spectral ccqe (ereco)
+    if ( m == conv::kSKmNuMuCCQE && show_sk_ccqe_spectral_info_ereco) {
       temp = component + " ($E_{r} <$ 0.4 GeV)";
       streamer << setw(ncol1)  << setfill(' ') << temp
            << endcolumn
@@ -467,7 +522,7 @@ void test_systematic_error_propagation
            << setw(ncolfrc)  << setfill(' ') << setprecision(nprecisionpct) << frac_nsknumuccqe_ma << pctsymbol 
            << endrow
            << endl;
-      temp = component + " (0.4 $\leq E_{r} \geq$ 1.1 GeV)";
+      temp = component + " (0.4 $\\leq E_{r} <$ 1.1 GeV)";
       streamer << setw(ncol1)  << setfill(' ') << temp
 	   << endcolumn
            << setw(ncolnev)  << setfill(' ') << setprecision(nprecisionnev) << nsknumuccqe_0b
@@ -481,7 +536,7 @@ void test_systematic_error_propagation
            << setw(ncolfrc)  << setfill(' ') << setprecision(nprecisionpct) << frac_nsknumuccqe_mb << pctsymbol 
            << endrow
            << endl;
-      temp = component + " ($E_{r} >$ 1.1 GeV)";
+      temp = component + " ($E_{r} \\geq$ 1.1 GeV)";
       streamer << setw(ncol1)  << setfill(' ') << temp
            << endcolumn
            << setw(ncolnev)  << setfill(' ') << setprecision(nprecisionnev) << nsknumuccqe_0c
@@ -495,8 +550,29 @@ void test_systematic_error_propagation
            << setw(ncolfrc)  << setfill(' ') << setprecision(nprecisionpct) << frac_nsknumuccqe_mc << pctsymbol 
            << endrow
            << endl;
-    }//numu ccqe spectral
-    if ( m == conv::kSKmNuMuBarCCQE && show_sk_ccqe_spectral_info) {
+    }//numu ccqe spectral (ereco)
+    if ( m == conv::kSKmNuMuCCQE && show_sk_ccqe_spectral_info_etrue) {
+      char bufl[100], bufu[100];
+      for(int itb = 0; itb < NEtrueBinNuMu; itb++) {
+	snprintf(bufl, sizeof(bufl), "%g",  skexp->GetSuperkMC()->Template(s, conv::kSKmNuMuCCQE, conv::kSKMCtFin)->GetYaxis()->GetBinLowEdge(EtrueBinNuMu[itb]+1));
+	snprintf(bufu, sizeof(bufu), "%g",  skexp->GetSuperkMC()->Template(s, conv::kSKmNuMuCCQE, conv::kSKMCtFin)->GetYaxis()->GetBinUpEdge(EtrueBinNuMu[itb+1]));
+	temp = component + " (" + bufl + " $\\leq E_{t} <$ " + bufu + "GeV)";
+	streamer << setw(ncol1)  << setfill(' ') << temp
+	   << endcolumn
+           << setw(ncolnev)  << setfill(' ') << setprecision(nprecisionnev) << nsknumuccqe_0t[itb]
+           << endcolumn
+           << setw(ncolnev)  << setfill(' ') << setprecision(nprecisionnev) << nsknumuccqe_pt[itb]
+           << endcolumn
+           << setw(ncolfrc)  << setfill(' ') << setprecision(nprecisionpct) << frac_nsknumuccqe_pt[itb] << pctsymbol 
+           << endcolumn
+           << setw(ncolnev)  << setfill(' ') << setprecision(nprecisionnev) << nsknumuccqe_mt[itb]
+           << endcolumn
+           << setw(ncolfrc)  << setfill(' ') << setprecision(nprecisionpct) << frac_nsknumuccqe_mt[itb] << pctsymbol 
+           << endrow
+           << endl;
+      }//loop over etrue bins
+    }//numu ccqe spectral (etrue)
+    if ( m == conv::kSKmNuMuBarCCQE && show_sk_ccqe_spectral_info_ereco) {
       temp = component + " ($E_{r} <$ 0.4 GeV)";
       streamer << setw(ncol1)  << setfill(' ') << temp
            << endcolumn
@@ -511,7 +587,7 @@ void test_systematic_error_propagation
            << setw(ncolfrc)  << setfill(' ') << setprecision(nprecisionpct) << frac_nsknumubarccqe_ma << pctsymbol 
            << endrow
            << endl;
-      temp = component + " (0.4 $\leq E_{r} \geq$ 1.1 GeV)";
+      temp = component + " (0.4 $\\leq E_{r} <$ 1.1 GeV)";
       streamer << setw(ncol1)  << setfill(' ') << temp
            << endcolumn
            << setw(ncolnev)  << setfill(' ') << setprecision(nprecisionnev) << nsknumubarccqe_0b
@@ -525,7 +601,7 @@ void test_systematic_error_propagation
            << setw(ncolfrc)  << setfill(' ') << setprecision(nprecisionpct) << frac_nsknumubarccqe_mb << pctsymbol 
            << endrow
            << endl;
-      temp = component + " ($E_{r} >$ 1.1 GeV)";
+      temp = component + " ($E_{r} \\geq$ 1.1 GeV)";
       streamer << setw(ncol1)  << setfill(' ') << temp
            << endcolumn
            << setw(ncolnev)  << setfill(' ') << setprecision(nprecisionnev) << nsknumubarccqe_0c
@@ -539,9 +615,9 @@ void test_systematic_error_propagation
            << setw(ncolfrc)  << setfill(' ') << setprecision(nprecisionpct) << frac_nsknumubarccqe_mc << pctsymbol 
            << endrow
            << endl;
-    }//numbar ccqe spectral
+    }//numbar ccqe spectral (ereco)
     //total flavour-nc/cc
-    if (sknumuccall_printat > 0 && m == conv::kSKReactionModes[s][sknumuccall_printat]) {
+    if ((s == conv::kSKsFCFV1RingMuLike && m == conv::kSKmNuMuCCoth_mu) || (s == conv::kSKsFCFV1RingMuLike && m == conv::kSKmNuMuCCoth_e)) {
       temp = "$N_{SK}$ (" + util::AsStringTex(s) + "): $\\nu_{\\mu}$ CC all";
       streamer << setw(ncol1)  << setfill(' ') << temp
 	   << endcolumn
@@ -557,7 +633,7 @@ void test_systematic_error_propagation
 	   << endrow
 	   << endl;
     }
-    if (sknumuncall_printat > 0 && m == conv::kSKReactionModes[s][sknumuncall_printat]) {
+    if (s == conv::kSKsFCFV1RingMuLike && m == conv::kSKmNuMuNCoth_e)) {
       temp = "$N_{SK}$ (" + util::AsStringTex(s) + "): $\\nu_{\\mu}$ NC all";
       streamer << setw(ncol1)  << setfill(' ') << temp
 	   << endcolumn
@@ -573,7 +649,7 @@ void test_systematic_error_propagation
 	   << endrow
 	   << endl;
     }
-    if (sknumubarccall_printat > 0 && m == conv::kSKReactionModes[s][sknumubarccall_printat]) {
+    if ((s == conv::kSKsFCFV1RingMuLike && m == conv::kSKmNuMuBarCCoth_mu) || (s == conv::kSKsFCFV1RingMuLike && m == conv::kSKmNuMuBarCCoth_e)) {
       temp = "$N_{SK}$ (" + util::AsStringTex(s) + "): $\\bar{\\nu_{\\mu}}$ CC all";
       streamer << setw(ncol1)  << setfill(' ') << temp
 	   << endcolumn
@@ -589,7 +665,7 @@ void test_systematic_error_propagation
 	   << endrow
 	   << endl;
     }
-    if (sknumubarncall_printat > 0 && m == conv::kSKReactionModes[s][sknumubarncall_printat]) {
+    if ((s == conv::kSKsFCFV1RingMuLike && m == conv::kSKmNuMuBarNCoth_e)) {
       temp = "$N_{SK}$ (" + util::AsStringTex(s) + "): $\\bar{\\nu_{\\mu}}$ NC all";
       streamer << setw(ncol1)  << setfill(' ') << temp
 	   << endcolumn
@@ -605,7 +681,7 @@ void test_systematic_error_propagation
 	   << endrow
 	   << endl;
     }
-    if (sknueccall_printat > 0 && m == conv::kSKReactionModes[s][sknueccall_printat]) {
+    if ((s == conv::kSKsFCFV1RingMuLike && m == conv::kSKmNuECCoth_mu) || (s == conv::kSKsFCFV1RingMuLike && m == conv::kSKmNuECCoth_e)) {
       temp = "$N_{SK}$ (" + util::AsStringTex(s) + "): $\\nu_{e}$ CC all";
       streamer << setw(ncol1)  << setfill(' ') << temp
 	   << endcolumn
@@ -621,7 +697,7 @@ void test_systematic_error_propagation
 	   << endrow
 	   << endl;
     }
-    if (sknuencall_printat > 0 && m == conv::kSKReactionModes[s][sknuencall_printat]) {
+    if ((s == conv::kSKsFCFV1RingMuLike && m == conv::kSKmNuENCoth_e)) {
       temp = "$N_{SK}$ (" + util::AsStringTex(s) + "): $\\nu_{e}$ NC all";
       streamer << setw(ncol1)  << setfill(' ') << temp
 	   << endcolumn
@@ -637,7 +713,39 @@ void test_systematic_error_propagation
 	   << endrow
 	   << endl;
     }
-    if (sknuesigall_printat > 0 && m == conv::kSKReactionModes[s][sknuesigall_printat]) {
+    if ((s == conv::kSKsFCFV1RingMuLike && m == conv::kSKmNuEBarCCoth_mu) || (s == conv::kSKsFCFV1RingMuLike && m == conv::kSKmNuEBarCCoth_e)) {
+      temp = "$N_{SK}$ (" + util::AsStringTex(s) + "): $\\bar{\\nu_{e}}$ CC all";
+      streamer << setw(ncol1)  << setfill(' ') << temp
+	   << endcolumn
+	   << setw(ncolnev)  << setfill(' ') << setprecision(nprecisionnev) << nsknuebarcc_0
+	   << endcolumn
+	   << setw(ncolnev)  << setfill(' ') << setprecision(nprecisionnev) << nsknuebarcc_p
+	   << endcolumn
+	   << setw(ncolfrc)  << setfill(' ') << setprecision(nprecisionpct) << frac_nsknuebarcc_p << pctsymbol 
+	   << endcolumn
+	   << setw(ncolnev)  << setfill(' ') << setprecision(nprecisionnev) << nsknuebarcc_m 
+	   << endcolumn
+	   << setw(ncolfrc)  << setfill(' ') << setprecision(nprecisionpct) << frac_nsknuebarcc_m << pctsymbol 
+	   << endrow
+	   << endl;
+    }
+    if ((s == conv::kSKsFCFV1RingMuLike && m == conv::kSKmNuEBarNCoth_e)) {
+      temp = "$N_{SK}$ (" + util::AsStringTex(s) + "): $\\bar{\\nu_{e}}$ NC all";
+      streamer << setw(ncol1)  << setfill(' ') << temp
+	   << endcolumn
+	   << setw(ncolnev)  << setfill(' ') << setprecision(nprecisionnev) << nsknuebarnc_0
+	   << endcolumn
+	   << setw(ncolnev)  << setfill(' ') << setprecision(nprecisionnev) << nsknuebarnc_p
+	   << endcolumn
+	   << setw(ncolfrc)  << setfill(' ') << setprecision(nprecisionpct) << frac_nsknuebarnc_p << pctsymbol 
+	   << endcolumn
+	   << setw(ncolnev)  << setfill(' ') << setprecision(nprecisionnev) << nsknuebarnc_m 
+	   << endcolumn
+	   << setw(ncolfrc)  << setfill(' ') << setprecision(nprecisionpct) << frac_nsknuebarnc_m << pctsymbol 
+	   << endrow
+	   << endl;
+    }
+    if ((s == conv::kSKsFCFV1RingMuLike && m == conv::kSKmSigNuECCoth) || (s == conv::kSKsFCFV1RingMuLike && m == conv::kSKmSigNuECCoth)) {
       temp = "$N_{SK}$ (" + util::AsStringTex(s) + "): $\\nu_{e}$ (signal) CC all";
       streamer << setw(ncol1)  << setfill(' ') << temp
 	   << endcolumn
@@ -677,20 +785,23 @@ void test_systematic_error_propagation
        hypothesisstr[found]='-';
        found=hypothesisstr.find_first_of("_",found+1);
      }
+     string banffstr = use_banff_bestfit ? "Using BANFF bestfit values." : "Using nominal MC (BANFF values set to 1)";
      streamer << "\\caption{ Effect of " << systematicstr << " for sample " << util::AsStringTex(s) 
 	      << " with oscillation hypothesis " <<  hypothesisstr
-	      << " using oscillation parameters " 
-	      << " $\\sin^22\\theta_{12} = $" << input_mixing12
-	      << " $\\sin^22\\theta_{13} = $" << input_mixing13
-	      << " $\\sin^22\\theta_{23} = $" << input_mixing23
-	      << " $\\delta_{CP} = $        " << input_deltacp
-	      << " $\\Delta m^2_{12} = $    " << input_dm12sq
-	      << " $\\Delta m^2_{23} = $    " << input_dm23sq
+	      << " using oscillation parameters: " 
+	      << " $\\sin^22\\theta_{12} = $"  << input_mixing12
+	      << "; $\\sin^22\\theta_{13} = $" << input_mixing13
+	      << "; $\\sin^22\\theta_{23} = $" << input_mixing23
+	      << "; $\\delta_{CP} = $        " << input_deltacp
+	      << "; $\\Delta m^2_{12} = $    " << input_dm12sq
+	      << "; $\\Delta m^2_{23} = $    " << input_dm23sq
+	      << ". " << banffstr
 	      << " }" << endl;
      string shortsamplestr = s==conv::kSKsFCFV1RingMuLike ? "1RmuT_" : "1ReT_";
-     string spectralstr = show_sk_ccqe_spectral_info ? "_spectral" : "";
+     string spectralstrreco = show_sk_ccqe_spectral_info_ereco ? "_spectralreco" : "";
+     string spectralstrtrue = show_sk_ccqe_spectral_info_ereco ? "_spectraltrue" : "";
      streamer << "\\label{tab:num_" << systematic << "_" << shortsamplestr << hypothesis 
-	      << "_t13:" << input_mixing13 << spectralstr << "}" << endl;
+	      << "_t13:" << input_mixing13 << spectralstrreco << spectralstrtrue << "}" << endl;
      streamer << "\\end{table}" << endl;
      streamer << "\\clearpage" << endl;
   }
