@@ -124,7 +124,7 @@ void test_systematic_error_propagation
 
   // Is it a BANFF systematic? (if it is, 1 sigma errors are not definied)
   string sys(systematic);
-  bool sys_is_banff = sys.find("banff") >= 0;
+  bool sys_is_banff = sys.find("banff") == 0;
 
   //
   // nominal
@@ -210,8 +210,10 @@ void test_systematic_error_propagation
   // +1 sigma
   //
   
-  if(sys_is_banff)
-    skexp->TweakSystematic(systematic,+2.);
+  if(sys_is_banff) {
+    skexp->TweakSystematic(systematic,+2.,false);
+    skexp->GetBANFF()->PrintSystematicVariations();
+  }
   else
     skexp->TweakSystematic(systematic,+1.);
   skexp->Generate(ph);
@@ -293,8 +295,10 @@ void test_systematic_error_propagation
   // -1 sigma
   //
 
-  if(sys_is_banff)
-    skexp->TweakSystematic(systematic,+0.5);
+  if(sys_is_banff) {
+    skexp->TweakSystematic(systematic,+0.5,false);
+    skexp->GetBANFF()->PrintSystematicVariations();
+  }
   else
     skexp->TweakSystematic(systematic,-1.);
   skexp->Generate(ph);

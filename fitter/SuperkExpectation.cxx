@@ -158,7 +158,7 @@ void SuperkExpectation::ResetSystematicVariations(void)
   // ...
 }
 //________________________________________________________________________________________
-void SuperkExpectation::TweakSystematic(string systematic, double twkdial)
+void SuperkExpectation::TweakSystematic(string systematic, double twkdial, bool best_banff)
 {
 #ifdef __show_syst_tweak_mesg__
   cout << "Exp >> Setting systematic parameter: " << systematic 
@@ -245,9 +245,10 @@ void SuperkExpectation::TweakSystematic(string systematic, double twkdial)
      bool found = false;
      for (int ib = 0; ib < conv::kNumOfParamsInBANFFfit; ib++) {
 	if(systematic == Form("banff_%02i",ib)) {
-	   TVectorD twkv(26);
-	   for(int it = 0; it < 26; it++)
-	     twkv[it] = 1;
+	   TVectorD twkv(this->GetBANFF()->BestFitValues());
+	   if(!best_banff)
+	      for(int it = 0; it < 26; it++)
+		 twkv[it] = 1;
 	   twkv[ib]=twkdial;
 	   this->GetBANFF()->Tweak(true,&twkv);
 	   found = true;

@@ -51,11 +51,9 @@ systematics.append("sk_1Rmu_ccnonqe_eff")
 systematics.append("sk_1Rmu_nc_eff")
 systematics.append("sk_1Rmu_nuecc_eff")
 systematics.append("sk_energy_scale")
-systematics.append("banff") #not supported in this macro
-"""
+#systematics.append("banff") #not supported in this macro
 for i in xrange(26):
    systematics.append("banff_" + '%(number)02d' % {"number": i})
-"""
 
 samples = []
 samples.append("1Rmu")

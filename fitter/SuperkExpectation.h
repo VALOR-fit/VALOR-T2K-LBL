@@ -56,7 +56,8 @@ public:
    // and tweak systematics (tweak the p.d.fs used for generating the SuperK spectra).
    void Generate                  (const PhysHypothesis & ph);
    void ResetSystematicVariations (void);                                 ///< reset all systematics
-   void TweakSystematic           (string systematic, double twkdial=0.); ///< set systematic variation (from top level)
+   void TweakSystematic           (string systematic, double twkdial=0., bool best_banff=true); ///< set systematic variation (from top level)
+   //                     best_banff refers to whether to use bestfit or param=1 when fitting a single banff parameter
    void TweakAllSystematics       (void);                                 ///< random variation of all systematics
 
    // Interface method for fitters. The fit parameter list can contain info for both the 
