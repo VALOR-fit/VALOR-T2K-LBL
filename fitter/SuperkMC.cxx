@@ -566,7 +566,7 @@ void SuperkMC::ApplyBANFFTuningToTemplates(void)
            double nev = mctempl_src->GetBinContent(ir,it);
            // get flux tuning weights
            double flux_wght = fNuFlux->SuperkFluxFinTuningWght(s,m,Etrue);
-           double xsec_wght = 1.; //fNuXSec->FinTuningWght(s,m,Ereco,Etrue,mctempl_src);    --SLOW--
+           double xsec_wght = fNuXSec->FinTuningWght(s,m,Ereco,Etrue,mctempl_src);  // SLOW
            // update tuned MC template
            double nev_tuned = nev * flux_wght * xsec_wght;
            mctempl_tgt->SetBinContent(ir,it,nev_tuned);
@@ -648,7 +648,7 @@ void SuperkMC::ApplySystematicsToTemplates_Multiplicative(void)
            double flux_wght = fNuFlux->SuperkFluxSystWght(s,m,Etrue);
 
            // Plug-in BANFF & other xsec systematics 
-           double xsec_wght = 1.; // fNuXSec->SystWght(s,m,Ereco,Etrue,mctempl_src); --SLOW--
+           double xsec_wght = fNuXSec->SystWght(s,m,Ereco,Etrue,mctempl_src); // SLOW
 
            //
            // Other systematic - TODO

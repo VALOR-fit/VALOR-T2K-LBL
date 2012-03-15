@@ -33,13 +33,13 @@ Legacy authors:
     |
     |-- inputs                    : Analysis inputs / data-files
     |      |-- official           
-    |            |-- 2010         : Official inputs for 2010 analysis
-    |            |    |-- flux    :  - from the Beam WG (flux + inputs for norm and shape errors)
-    |            |    |-- nd280   :  - from the ND280 group (Saclay analysis MC templates for both NEUT/GENIE)
-    |            |    |-- niwg    :  - from the NIWG (agreed interaction systematics)
-    |            |    |-- superk  :  - from SuperK (MC templates for both NEUT/GENIE for various selections)
+    |            |-- 2012         : Inputs for 2012 analysis
+    |            |    |-- flux    :  - from the Beam group 
+    |            |    |-- banff   :  - from the BANFF group
+    |            |    |-- xsec    :  - from the NIWG group 
+    |            |    |-- superk  :  - from SuperK MC (mini-DSTs with MC events passing various SuperK selections)
     |            |       
-    |            |-- 2012         :
+    |            |-- 2010         :
     |
     |-- macros                    : Our analysis procedures
     |     |------ physin          :  - macros used for testing analysis physics inputs (spectra/systematics)

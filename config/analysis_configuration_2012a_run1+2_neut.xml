@@ -88,12 +88,12 @@
                 4.3151028E+23
              </pot>
              <one_mu_ring>
-                <filename>   inputs/official/2012/superk/neut/11c/superk_1RmuT_numu.root  </filename>
+                <filename>   inputs/official/2012/superk/mc/neut/11c/superk_1RmuT_numu.root  </filename>
                 <objname>    selection_tree   </objname>
                 <objtype>    TTree            </objtype>
              </one_mu_ring>
              <one_e_ring>
-                <filename>   inputs/official/2012/superk/neut/11c/superk_1ReT_numu.root  </filename>
+                <filename>   inputs/official/2012/superk/mc/neut/11c/superk_1ReT_numu.root  </filename>
                 <objname>    selection_tree   </objname>
                 <objtype>    TTree            </objtype>
              </one_e_ring>
@@ -103,12 +103,12 @@
                 6.3258298E+24
              </pot>
              <one_mu_ring>
-                <filename>   inputs/official/2012/superk/neut/11c/superk_1RmuT_numubar.root  </filename>
+                <filename>   inputs/official/2012/superk/mc/neut/11c/superk_1RmuT_numubar.root  </filename>
                 <objname>    selection_tree   </objname>
                 <objtype>    TTree            </objtype>
              </one_mu_ring>
              <one_e_ring>
-                <filename>   inputs/official/2012/superk/neut/11c/superk_1ReT_numubar.root  </filename>
+                <filename>   inputs/official/2012/superk/mc/neut/11c/superk_1ReT_numubar.root  </filename>
                 <objname>    selection_tree   </objname>
                 <objtype>    TTree            </objtype>
              </one_e_ring>
@@ -118,12 +118,12 @@
                 2.2005051E+25
              </pot>
              <one_mu_ring>
-                <filename>   inputs/official/2012/superk/neut/11c/superk_1RmuT_nue.root  </filename>
+                <filename>   inputs/official/2012/superk/mc/neut/11c/superk_1RmuT_nue.root  </filename>
                 <objname>    selection_tree   </objname>
                 <objtype>    TTree            </objtype>
              </one_mu_ring>
              <one_e_ring>
-                <filename>   inputs/official/2012/superk/neut/11c/superk_1ReT_nue.root  </filename>
+                <filename>   inputs/official/2012/superk/mc/neut/11c/superk_1ReT_nue.root  </filename>
                 <objname>    selection_tree   </objname>
                 <objtype>    TTree            </objtype>
              </one_e_ring>
@@ -133,12 +133,12 @@
                 1.0476136E+26
              </pot>
              <one_mu_ring>
-                <filename>   inputs/official/2012/superk/neut/11c/superk_1RmuT_nuebar.root  </filename>
+                <filename>   inputs/official/2012/superk/mc/neut/11c/superk_1RmuT_nuebar.root  </filename>
                 <objname>    selection_tree   </objname>
                 <objtype>    TTree            </objtype>
              </one_mu_ring>
              <one_e_ring>
-                <filename>   inputs/official/2012/superk/neut/11c/superk_1ReT_nuebar.root  </filename>
+                <filename>   inputs/official/2012/superk/mc/neut/11c/superk_1ReT_nuebar.root  </filename>
                 <objname>    selection_tree   </objname>
                 <objtype>    TTree            </objtype>
              </one_e_ring>
@@ -148,12 +148,12 @@
                 2.0898769E+23
              </pot>
              <one_mu_ring>
-                <filename>   inputs/official/2012/superk/neut/11c/superk_1RmuT_nuesig.root  </filename>
+                <filename>   inputs/official/2012/superk/mc/neut/11c/superk_1RmuT_nuesig.root  </filename>
                 <objname>    selection_tree   </objname>
                 <objtype>    TTree            </objtype>
              </one_mu_ring>
              <one_e_ring>
-                <filename>   inputs/official/2012/superk/neut/11c/superk_1ReT_nuesig.root  </filename>
+                <filename>   inputs/official/2012/superk/mc/neut/11c/superk_1ReT_nuesig.root  </filename>
                 <objname>    selection_tree   </objname>
                 <objtype>    TTree            </objtype>
              </one_e_ring>
@@ -183,7 +183,7 @@
                <ccqe>
                   <other_error>   0.017  </other_error>          
                   <rc_error>          
-                     <filename>  inputs/official/2010/superk/err/sk_ccqe_rc_err_covariance.root </filename>
+                     <filename>  inputs/official/2012/superk/err/sk_ccqe_rc_err_covariance.root </filename>
                      <objname>   ccqe_rc_err_covariance  </objname>
                      <objtype>   TMatrixD </objtype>
                   </rc_error>                     
