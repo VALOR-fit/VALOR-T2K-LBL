@@ -66,6 +66,13 @@ void NuXSec::Init(void)
   for(int ispl = 0; ispl < knwspl; ispl++) {
      fXSecWghtSpl[ispl] = 0;
   }
+
+  for(int is=0; is<kns; is++) {
+    for(int im=0; im<knm; im++) {
+      fFracNom [is][im] = 0;
+      fFracTun [is][im] = 0;
+    }
+  }
 }
 //________________________________________________________________________________________
 void NuXSec::CleanUp(void)
@@ -76,6 +83,13 @@ void NuXSec::CleanUp(void)
 
   for(int ispl = 0; ispl < knwspl; ispl++) {
      if (fXSecWghtSpl[ispl]) delete fXSecWghtSpl[ispl];
+  }
+
+  for(int is=0; is<kns; is++) {
+    for(int im=0; im<knm; im++) {
+      if (fFracNom [is][im]) delete fFracNom [is][im]; 
+      if (fFracTun [is][im]) delete fFracTun [is][im];
+    }
   }
 }
 //________________________________________________________________________________________
@@ -176,6 +190,35 @@ bool NuXSec::Read(TXMLEngine* xml, XMLNodePointer_t root_node)
   }
 */
 
+  //
+  //
+  //
+
+  cout << "Exp/NuXSec >> Booking fractional MC templates..." << endl;
+
+  for(int is = 0; is < kns; is++) {
+     SuperkSample_t s = kSKSamples[is];
+     if(s == kSKsUndefined) continue;
+     const int      n_ereco_bins    = util::NumErecoBins (s);
+     const double * ereco_bin_edges = util::ErecoBinEdges(s);
+     for(int im = 0; im < knm; im++) {
+       SuperkMode_t m = kSKReactionModes[is][im];
+       if(m == kSKmUndefined) continue;
+       fFracNom[is][im] = new TH2D(
+          Form("frac_nom_%d_%d",is,im), util::AsString(m).c_str(),
+               n_ereco_bins, ereco_bin_edges, kNEtrueBins, kEtrueMin, kEtrueMax);
+       fFracTun[is][im] = new TH2D(
+          Form("nsk_tun_%d_%d",is,im), util::AsString(m).c_str(),
+               n_ereco_bins, ereco_bin_edges, kNEtrueBins, kEtrueMin, kEtrueMax);
+       fFracNom[is][im]->SetDirectory(0);
+       fFracNom[is][im]->GetXaxis()->SetTitle("E_{reco} (GeV)");
+       fFracNom[is][im]->GetYaxis()->SetTitle("E_{true} (GeV)");
+       fFracTun[is][im]->SetDirectory(0);
+       fFracTun[is][im]->GetXaxis()->SetTitle("E_{reco} (GeV)");
+       fFracTun[is][im]->GetYaxis()->SetTitle("E_{true} (GeV)");
+     }
+  }
+
 #ifdef __show_init_mesg_info__
   cout << "Exp/NuXSec >> Done reading neutrino cross-section inputs!" << endl;
 #endif
@@ -244,7 +287,7 @@ double NuXSec::FinTuningWght(
 }
 //________________________________________________________________________________________
 double NuXSec::FinTuningWght(
-  SuperkSample_t s, SuperkMode_t m, double Ereco, double Etrue, const TH2D * mctempl) const
+  SuperkSample_t s, SuperkMode_t m, double Ereco, double Etrue) const
 {
   double tot_wght = 1.;
 
@@ -263,8 +306,8 @@ double NuXSec::FinTuningWght(
      // shared between multiple MC template bins, calculate the weight fraction that
      // belongs to the current MC template bin.
      bool share = kXSecSystWghtUnequallySharedBetweenBins[isyst];
-     double frac = (share) ? 
-        this->FractionOfEvents (p,s,m,Ereco,Etrue,mctempl) : 1.;
+//     double frac = 1;
+     double frac = (share) ? this->FractionOfEvents(s,m,Ereco,Etrue,kSKMCtNom) : 1;
      // Add to total weight
      tot_wght *= (frac*wght);
   }
@@ -330,7 +373,7 @@ double NuXSec::SystWght(
 }
 //________________________________________________________________________________________
 double NuXSec::SystWght(
-  SuperkSample_t s, SuperkMode_t m, double Ereco, double Etrue, const TH2D * mctempl) const
+  SuperkSample_t s, SuperkMode_t m, double Ereco, double Etrue) const
 {
   double tot_wght = 1.;
 
@@ -345,8 +388,8 @@ double NuXSec::SystWght(
      // shared between multiple MC template bins, calculate the weight fraction that
      // belongs to the current MC template bin.
      bool share = kXSecSystWghtUnequallySharedBetweenBins[isyst];
-     double frac = (share) ? 
-         this->FractionOfEvents (p,s,m,Ereco,Etrue,mctempl) : 1.;
+//     double frac = 1;
+     double frac = (share) ? this->FractionOfEvents(s,m,Ereco,Etrue,kSKMCtTun) : 1;
      // Add to total weight
      tot_wght *= (frac*wght);
   }
@@ -567,71 +610,92 @@ bool NuXSec::ApplySystToEnergyBin(PhysParamId_t p, double Ereco, double Etrue) c
   return apply;
 }
 //________________________________________________________________________________________
-double NuXSec::FractionOfEvents(
-  PhysParamId_t p, SuperkSample_t s, SuperkMode_t m, 
-  double Ereco, double Etrue, const TH2D * mctempl) const
+void NuXSec::BuildFracMCTemplates(
+  TH2D * input_mctempl_array[kns][knm], SKMCTemplateType_t type)
 {
-  assert(mctempl);
+  for(int is = 0; is < kns; is++) {
+     SuperkSample_t s = kSKSamples[is];
+     if(s == kSKsUndefined) continue;
+     for(int im = 0; im < knm; im++) {
+       SuperkMode_t m = kSKReactionModes[is][im];
+       if(m == kSKmUndefined) continue;
+ 
+        cout << "Exp/NuXSec >> Building MC template fractions for "
+             << "sample = " << util::AsString(s) 
+             << ", mode = " << util::AsString(m)
+             << ", template type = " << util::AsString(type)
+             << endl;
+ 
+      const TH2D * mctempl = input_mctempl_array[is][im];
+       TH2D * mctempl_frac = 0;
+       if      (type == kSKMCtNom) { mctempl_frac = fFracNom[is][im]; }
+       else if (type == kSKMCtTun) { mctempl_frac = fFracTun[is][im]; }
+       else {
+         exit(1);
+       }
 
+       // Look-up the Ereco and Etrue energy range (in the variable-size binning
+       // scheme used when pre-computing weight splines)
+       for(int irv = 0; irv < kXsNErecoBins; irv++) {
+          double Ereco_min = kXsErecoBinEdges[irv];
+          double Ereco_max = kXsErecoBinEdges[irv+1];
+          if(Ereco_min < 0 || Ereco_max < 0) continue;
+          Ereco_min += kOneMeV;
+          Ereco_max -= kOneMeV;
+          for(int itv = 0; itv < kXsNEtrueBins; itv++) {
+             double Etrue_min = kXsEtrueBinEdges[is][im][itv];
+             double Etrue_max = kXsEtrueBinEdges[is][im][itv+1];
+             if(Etrue_min < 0 || Etrue_max < 0) continue;
+             Etrue_min += kOneMeV;
+             Etrue_max -= kOneMeV;
+
+             int ir_min = mctempl->GetXaxis()->FindBin(Ereco_min);
+             int ir_max = mctempl->GetXaxis()->FindBin(Ereco_max);
+             int it_min = mctempl->GetYaxis()->FindBin(Etrue_min);
+             int it_max = mctempl->GetYaxis()->FindBin(Etrue_max);
+
+             double sum = 0.;
+             for(int ir = ir_min; ir <= ir_max; ir++) {
+               for(int it = it_min; it <= it_max; it++) {
+                  sum += mctempl->GetBinContent(ir,it);
+               }//it
+             }//ir
+
+             for(int ir = ir_min; ir <= ir_max; ir++) {
+               for(int it = it_min; it <= it_max; it++) {
+                  double nev  = mctempl->GetBinContent(ir,it);
+                  double frac = (sum > 0.) ? nev/sum : 0;
+                  mctempl_frac->SetBinContent(ir,it,frac);
+               }//it
+             }//ir
+        
+          }//itv
+       }//irv
+
+     }//im
+  }//is
+
+}
+//________________________________________________________________________________________
+double NuXSec::FractionOfEvents(
+  SuperkSample_t s, SuperkMode_t m, double Ereco, double Etrue, SKMCTemplateType_t type) const
+{
   int is = util::FindSampleSlot(s);
   int im = util::FindModeSlot(s,m);
   assert(is != -1 && im != -1);
 
-  int ip = util::FindSlotInListOfXSecSyst(p);
-  if(ip == -1) {
-     cerr << "Exp/NuXSec/FractionOfEvents >> Can't find index for cross-section "
-          << "systematic param: " << util::AsString(p) << endl;
+  TH2D * mctempl_frac = 0;
+  if      (type == kSKMCtNom) { mctempl_frac = fFracNom[is][im]; }
+  else if (type == kSKMCtTun) { mctempl_frac = fFracTun[is][im]; }
+  else {
      exit(1);
   }
+  assert(mctempl_frac);
 
-  // Look-up the Ereco and Etrue energy range (in the variable-size binning
-  // scheme used when pre-computing weight splines)
-  double Ereco_min = -1;
-  double Ereco_max = -1;
-  double Etrue_min = -1;
-  double Etrue_max = -1;
-  for(int ir = 0; ir < kXsNErecoBins; ir++) {
-    if(Ereco >= kXsErecoBinEdges[ir] && Ereco < kXsErecoBinEdges[ir+1]) {
-        Ereco_min = kXsErecoBinEdges[ir];
-        Ereco_max = kXsErecoBinEdges[ir+1];
-        break;
-    }
-  }
-  for(int it = 0; it < kXsNEtrueBins; it++) {
-    if(Etrue >= kXsEtrueBinEdges[is][im][it] && Etrue < kXsEtrueBinEdges[is][im][it+1]) {
-        Etrue_min = kXsEtrueBinEdges[is][im][it];
-        Etrue_max = kXsEtrueBinEdges[is][im][it+1];
-        break;
-    }
-  }
+  int ir = mctempl_frac->GetXaxis()->FindBin(Ereco);
+  int it = mctempl_frac->GetYaxis()->FindBin(Etrue);
 
-  if(Ereco < Ereco_min || Ereco > Ereco_max) return 0.;
-  if(Etrue < Etrue_min || Etrue > Etrue_max) return 0.;
-
-  int ir0 = mctempl->GetXaxis()->FindBin(Ereco);
-  int it0 = mctempl->GetYaxis()->FindBin(Etrue);
-
-  double n0 = mctempl->GetBinContent(ir0,it0);
-
-  int ir_min = mctempl->GetXaxis()->FindBin(Ereco_min + kOneMeV);
-  int ir_max = mctempl->GetXaxis()->FindBin(Ereco_max - kOneMeV);
-  int it_min = mctempl->GetYaxis()->FindBin(Etrue_min + kOneMeV);
-  int it_max = mctempl->GetYaxis()->FindBin(Etrue_max - kOneMeV);
-
-  double ntot_range = 0;
-  for(int ir = ir_min; ir <= ir_max; ir++) {
-    for(int it = it_min; it <= it_max; it++) {
-       ntot_range += mctempl->GetBinContent(ir,it);
-    }
-  }
-
-  assert(ntot_range >= n0);   
-      
-  double frac = 0;
-  if(ntot_range > 0) {
-    frac = n0 / ntot_range;
-  }
-          
+  double frac = mctempl_frac->GetBinContent(ir,it);
   return frac;
-}
+} 
 //________________________________________________________________________________________

@@ -937,6 +937,28 @@ string t2kana::util::AsString(t2kana::conv::SuperkMode_t m)
   return "";
 }
 //____________________________________________________________________________
+string t2kana::util::AsString(conv::SKMCTemplateType_t t)
+{
+  switch(t) {
+    case ( kSKMCtNom ) : 
+      return "nominal";          
+      break;
+    case ( kSKMCtTun ) : 
+      return "tuned"; 
+      break;
+    case ( kSKMCtSys ) : 
+      return "tuned + systematic variation";    
+      break;
+    case ( kSKMCtFin ) : 
+      return "tuned + systematic variation + physics hypothesis";          
+      break;
+    default : 
+      return "--";               
+      break;
+  }
+  return "";
+}
+//____________________________________________________________________________
 string t2kana::util::AsString(t2kana::conv::FluxType_t f)
 {
   switch(f) {

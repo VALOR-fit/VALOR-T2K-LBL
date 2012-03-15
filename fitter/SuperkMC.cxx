@@ -540,6 +540,8 @@ void SuperkMC::ApplyBANFFTuningToTemplates(void)
   cout << "Exp/SKMC >> Applying BANFF flux and cross-section tuning." << endl;
 #endif
 
+  fNuXSec->BuildFracMCTemplates(fMCTemplNom, kSKMCtNom);
+
   // loop over samples
   for(int is = 0; is < kns; is++) {
     SuperkSample_t s = kSKSamples[is];
@@ -566,7 +568,7 @@ void SuperkMC::ApplyBANFFTuningToTemplates(void)
            double nev = mctempl_src->GetBinContent(ir,it);
            // get flux tuning weights
            double flux_wght = fNuFlux->SuperkFluxFinTuningWght(s,m,Etrue);
-           double xsec_wght = fNuXSec->FinTuningWght(s,m,Ereco,Etrue,mctempl_src);  // SLOW
+           double xsec_wght = fNuXSec->FinTuningWght(s,m,Ereco,Etrue); // SLOW
            // update tuned MC template
            double nev_tuned = nev * flux_wght * xsec_wght;
            mctempl_tgt->SetBinContent(ir,it,nev_tuned);
@@ -577,6 +579,8 @@ void SuperkMC::ApplyBANFFTuningToTemplates(void)
        }//ir
     }//im
   }//is
+
+  fNuXSec->BuildFracMCTemplates(fMCTemplTun, kSKMCtTun);
 }
 //________________________________________________________________________________________
 void SuperkMC::UpdateTemplates(void)
@@ -648,7 +652,7 @@ void SuperkMC::ApplySystematicsToTemplates_Multiplicative(void)
            double flux_wght = fNuFlux->SuperkFluxSystWght(s,m,Etrue);
 
            // Plug-in BANFF & other xsec systematics 
-           double xsec_wght = fNuXSec->SystWght(s,m,Ereco,Etrue,mctempl_src); // SLOW
+           double xsec_wght = fNuXSec->SystWght(s,m,Ereco,Etrue); // SLOW
 
            //
            // Other systematic - TODO

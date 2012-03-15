@@ -25,6 +25,8 @@
 
 #include "Conventions.h"
 
+using t2kana::conv::kns;
+using t2kana::conv::knm;
 using t2kana::conv::knwspl;
 
 namespace t2kana {
@@ -48,14 +50,14 @@ public:
   // As above, but compute the combined weight for all BANFF cross-section parameters to the input sample/mode and 
   // energy bin. The input MC template is used for calculating how to share between the MC template bins weights computed
   // over different var.-sized Ereco,Etrue bins
-  double FinTuningWght(conv::SuperkSample_t s, conv::SuperkMode_t m, double Ereco, double Etrue, const TH2D * mctempl) const;
+  double FinTuningWght(conv::SuperkSample_t s, conv::SuperkMode_t m, double Ereco, double Etrue) const;
 
   // Calculate weight in response to tweaking the input parameter
   // For the BANFF parameters, the weight is relative to the best-fit (tuned MC) parameter, not the nominal MC one
   double SystWght(conv::PhysParamId_t p, conv::SuperkSample_t s, conv::SuperkMode_t m, double Ereco, double Etrue) const;
 
   // As above, but compute the combined weight for all cross-section parameters.
-  double SystWght(conv::SuperkSample_t s, conv::SuperkMode_t m, double Ereco, double Etrue, const TH2D * mctempl) const;
+  double SystWght(conv::SuperkSample_t s, conv::SuperkMode_t m, double Ereco, double Etrue) const;
 
   //
   // Tweak systematic parameters held in this object.
@@ -94,6 +96,11 @@ public:
 
   // BANFF fit info
   void TellMeAboutTheBANFFfit(BANFF * banff);
+
+
+
+  void BuildFracMCTemplates(TH2D* input_mctempl_array[kns][knm], conv::SKMCTemplateType_t type);
+
    
 private:
 
@@ -107,7 +114,7 @@ private:
   bool ApplySystToSKMode    (conv::PhysParamId_t p, conv::SuperkSample_t s, conv::SuperkMode_t m) const;
   bool ApplySystToEnergyBin (conv::PhysParamId_t p, double Ereco, double Etrue) const;
   //
-  double FractionOfEvents   (conv::PhysParamId_t p, conv::SuperkSample_t s, conv::SuperkMode_t m, double Ereco, double Etrue, const TH2D * mctempl) const;
+  double FractionOfEvents   (conv::SuperkSample_t s, conv::SuperkMode_t m, double Ereco, double Etrue,  conv::SKMCTemplateType_t type) const;
 
   //
   // Private data members
@@ -118,6 +125,9 @@ private:
   TMatrixD *  fFSICovMtrx;          ///< FSI covariance matrix
   TMatrixD *  fFSICovMtrxChoL;      ///< Triangular matrix from Cholesky decomp. of FSI covar. matrix
   TSpline3 *  fXSecWghtSpl[knwspl]; ///< Weight splines. Index is function of sample, mode, systematic param, Ereco bin, Etrue bin
+
+  TH2D *      fFracNom[kns][knm];
+  TH2D *      fFracTun[kns][knm];
 
 ClassDef(NuXSec, 4);
 };
