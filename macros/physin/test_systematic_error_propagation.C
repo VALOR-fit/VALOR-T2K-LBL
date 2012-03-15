@@ -102,6 +102,7 @@ void test_systematic_error_propagation
   SuperkExpectation * skexp = new SuperkExpectation;
   skexp->Read(config);
   
+  // Use BANFF best fit?
   if(!use_banff_bestfit)
     skexp->GetBANFF()->RestoreNominalMC();
 
@@ -120,6 +121,10 @@ void test_systematic_error_propagation
     if (EtrueBinNuMu[itb] > conv::kNEtrueBins) EtrueBinNuMu[itb] = conv::kNEtrueBins;
     if (EtrueBinNuMu[itb] < 1 && itb != 0) {NEtrueBinNuMu = itb-1; break;}
   }
+
+  // Is it a BANFF systematic? (if it is, 1 sigma errors are not definied)
+  string sys(systematic);
+  bool sys_is_banff = sys.find("banff") >= 0;
 
   //
   // nominal
@@ -204,8 +209,11 @@ void test_systematic_error_propagation
   //
   // +1 sigma
   //
-
-  skexp->TweakSystematic(systematic,+1.);
+  
+  if(sys_is_banff)
+    skexp->TweakSystematic(systematic,+2.);
+  else
+    skexp->TweakSystematic(systematic,+1.);
   skexp->Generate(ph);
 
   // total 
@@ -285,7 +293,10 @@ void test_systematic_error_propagation
   // -1 sigma
   //
 
-  skexp->TweakSystematic(systematic,-1.);
+  if(sys_is_banff)
+    skexp->TweakSystematic(systematic,+0.5);
+  else
+    skexp->TweakSystematic(systematic,-1.);
   skexp->Generate(ph);
 
   // total 

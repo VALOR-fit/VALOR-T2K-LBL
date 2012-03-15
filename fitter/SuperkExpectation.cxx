@@ -245,6 +245,8 @@ void SuperkExpectation::TweakSystematic(string systematic, double twkdial)
      for (int ib = 0; ib < conv::kNumOfParamsInBANFFfit; ib++) {
 	if(systematic == Form("banff_%02i",ib)) {
 	   TVectorD twkv(26);
+	   for(int it = 0; it < 26; it++)
+	     twkv[it] = 1;
 	   twkv[ib]=twkdial;
 	   this->GetBANFF()->Tweak(true,&twkv);
 	   found = true;
