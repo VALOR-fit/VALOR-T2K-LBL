@@ -15,6 +15,7 @@
 
 #pragma link C++ class t2kana::SuperkObservation;
 #pragma link C++ class t2kana::SuperkExpectation;
+#pragma link C++ class t2kana::SuperkDetector;
 #pragma link C++ class t2kana::SuperkMC;
 #pragma link C++ class t2kana::BANFF;
 #pragma link C++ class t2kana::NuXSec;

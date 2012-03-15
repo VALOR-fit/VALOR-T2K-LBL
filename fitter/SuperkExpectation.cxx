@@ -29,6 +29,7 @@
 #include <TSystem.h>
 
 #include "SuperkExpectation.h"
+#include "SuperkDetector.h"
 #include "SuperkMC.h"
 #include "NuFlux.h"
 #include "NuXSec.h"
@@ -144,12 +145,12 @@ void SuperkExpectation::ResetSystematicVariations(void)
 #endif
 
   // SuperK detector systematics
-  this->GetSuperkMC()->TweakEnergyScale                    (0.);
-  this->GetSuperkMC()->TweakEfficiency1RmuCCQEOther        (0.);
-  this->GetSuperkMC()->TweakEfficiency1RmuCCQERingCounting (true,0.,0.,0.); 
-  this->GetSuperkMC()->TweakEfficiency1RmuCCnonQE          (0.);
-  this->GetSuperkMC()->TweakEfficiency1RmuNC               (0.);     
-  this->GetSuperkMC()->TweakEfficiency1RmuNuECC            (0.);
+  this->GetSuperkDetector()->TweakEnergyScale                    (0.);
+  this->GetSuperkDetector()->TweakEfficiency1RmuCCQEOther        (0.);
+  this->GetSuperkDetector()->TweakEfficiency1RmuCCQERingCounting (true,0.,0.,0.); 
+  this->GetSuperkDetector()->TweakEfficiency1RmuCCnonQE          (0.);
+  this->GetSuperkDetector()->TweakEfficiency1RmuNC               (0.);     
+  this->GetSuperkDetector()->TweakEfficiency1RmuNuECC            (0.);
 
   // BANFF
   this->GetBANFF()->Tweak(true,0);
@@ -192,40 +193,40 @@ void SuperkExpectation::TweakSystematic(string systematic, double twkdial)
   //
 
   if(systematic == "sk_energy_scale") {
-     this->GetSuperkMC()->TweakEnergyScale(twkdial);
+     this->GetSuperkDetector()->TweakEnergyScale(twkdial);
   }
   else
   if(systematic == "sk_1Rmu_ccqe_other_eff") {
-     this->GetSuperkMC()->TweakEfficiency1RmuCCQEOther(twkdial);
+     this->GetSuperkDetector()->TweakEfficiency1RmuCCQEOther(twkdial);
   }
   else
   // tweak CCQE energy-dependent ring-counting efficiency generating random
   // efficiency tweaks and taking into account bin-to-bin correlations
   if(systematic == "sk_1Rmu_ccqe_ring_counting_eff") {
-     this->GetSuperkMC()->TweakEfficiency1RmuCCQERingCounting(); //< Cholesky method
+     this->GetSuperkDetector()->TweakEfficiency1RmuCCQERingCounting(); //< Cholesky method
   }
   //... or tweak the CCQE ring-counting efficiency in single Ereco bins only
   // neglecting correlations (for validation purposes only)
   else if(systematic == "sk_1Rmu_ccqe_ring_counting_eff_0") {
-     this->GetSuperkMC()->TweakEfficiency1RmuCCQERingCounting(true,twkdial,0.,0.); 
+     this->GetSuperkDetector()->TweakEfficiency1RmuCCQERingCounting(true,twkdial,0.,0.); 
   }
   else if(systematic == "sk_1Rmu_ccqe_ring_counting_eff_1") {
-     this->GetSuperkMC()->TweakEfficiency1RmuCCQERingCounting(true,0.,twkdial,0.); 
+     this->GetSuperkDetector()->TweakEfficiency1RmuCCQERingCounting(true,0.,twkdial,0.); 
   }
   else if(systematic == "sk_1Rmu_ccqe_ring_counting_eff_2") {
-     this->GetSuperkMC()->TweakEfficiency1RmuCCQERingCounting(true,0.,0.,twkdial); 
+     this->GetSuperkDetector()->TweakEfficiency1RmuCCQERingCounting(true,0.,0.,twkdial); 
   }
   else
   if(systematic == "sk_1Rmu_ccnonqe_eff") {
-     this->GetSuperkMC()->TweakEfficiency1RmuCCnonQE(twkdial);
+     this->GetSuperkDetector()->TweakEfficiency1RmuCCnonQE(twkdial);
   }
   else
   if(systematic == "sk_1Rmu_nc_eff") {
-     this->GetSuperkMC()->TweakEfficiency1RmuNC(twkdial);
+     this->GetSuperkDetector()->TweakEfficiency1RmuNC(twkdial);
   }
   else
   if(systematic == "sk_1Rmu_nuecc_eff") {
-     this->GetSuperkMC()->TweakEfficiency1RmuNuECC(twkdial);
+     this->GetSuperkDetector()->TweakEfficiency1RmuNuECC(twkdial);
   }
      
   //
@@ -275,12 +276,12 @@ void SuperkExpectation::TweakAllSystematics(void)
   TRandom3 rand(0);
 
   // SuperK detector systematics
-  this->GetSuperkMC()->TweakEnergyScale              (rand.Gaus(0.,1.));
-  this->GetSuperkMC()->TweakEfficiency1RmuCCQEOther  (rand.Gaus(0.,1.));
-  this->GetSuperkMC()->TweakEfficiency1RmuCCnonQE    (rand.Gaus(0.,1.));
-  this->GetSuperkMC()->TweakEfficiency1RmuNC         (rand.Gaus(0.,1.));     
-  this->GetSuperkMC()->TweakEfficiency1RmuNuECC      (rand.Gaus(0.,1.));
-  this->GetSuperkMC()->TweakEfficiency1RmuCCQERingCounting  (); // <-- Cholesky method
+  this->GetSuperkDetector()->TweakEnergyScale              (rand.Gaus(0.,1.));
+  this->GetSuperkDetector()->TweakEfficiency1RmuCCQEOther  (rand.Gaus(0.,1.));
+  this->GetSuperkDetector()->TweakEfficiency1RmuCCnonQE    (rand.Gaus(0.,1.));
+  this->GetSuperkDetector()->TweakEfficiency1RmuNC         (rand.Gaus(0.,1.));     
+  this->GetSuperkDetector()->TweakEfficiency1RmuNuECC      (rand.Gaus(0.,1.));
+  this->GetSuperkDetector()->TweakEfficiency1RmuCCQERingCounting  (); // <-- Cholesky method
 
   // BANFF
   this->GetBANFF()->Tweak(); // <-- Cholesky method
@@ -291,9 +292,9 @@ void SuperkExpectation::TweakAllSystematics(void)
 void SuperkExpectation::PrintSystematicVariations(void) const
 {
   cout << "Exp >> SuperK PDF tweaks: " << endl;
-  fSuperkMC -> PrintSystematicVariations();
-  fBANFF    -> PrintSystematicVariations();
-//fNuXSec   -> PrintSystematicVariations();
+  fSuperkDetector -> PrintSystematicVariations();
+  fBANFF          -> PrintSystematicVariations();
+  fNuXSec         -> PrintSystematicVariations();
 }
 //________________________________________________________________________________________
 bool SuperkExpectation::Read(string config_file)
@@ -307,15 +308,17 @@ bool SuperkExpectation::Read(string config_file)
   // Instantiate all necessary histograms
   this->Book();
 
-  // Create components used for building-up the p.d.f.
-  fBANFF    = new BANFF;
-  fNuFlux   = new NuFlux; 
-  fNuXSec   = new NuXSec; 
-  fSuperkMC = new SuperkMC;
+  // Create components used for building-up the p.d.f & implemeting its systematic variation
+  fBANFF          = new BANFF;
+  fNuFlux         = new NuFlux; 
+  fNuXSec         = new NuXSec; 
+  fSuperkDetector = new SuperkDetector; 
+  fSuperkMC       = new SuperkMC;
 
   // Configure inter-dependencies.
   fNuFlux   -> TellMeAboutTheBANFFfit   (fBANFF);
   fNuXSec   -> TellMeAboutTheBANFFfit   (fBANFF);
+  fSuperkMC -> TellMeAboutTheDetector   (fSuperkDetector);
   fSuperkMC -> TellMeAboutCrossSections (fNuXSec);
   fSuperkMC -> TellMeAboutTheFlux       (fNuFlux);
 
@@ -330,10 +333,11 @@ bool SuperkExpectation::Read(string config_file)
   XMLNodePointer_t root_node = xml->DocGetRootElement(xmldoc);
 
   // Configure each of the components 
-  if ( ! this->GetBANFF    ()->Read(xml, root_node) ) return false;
-  if ( ! this->GetNuFlux   ()->Read(xml, root_node) ) return false;
-  if ( ! this->GetNuXSec   ()->Read(xml, root_node) ) return false;
-  if ( ! this->GetSuperkMC ()->Read(xml, root_node) ) return false;
+  if ( ! this->GetBANFF          () -> Read (xml, root_node) ) return false;
+  if ( ! this->GetNuFlux         () -> Read (xml, root_node) ) return false;
+  if ( ! this->GetNuXSec         () -> Read (xml, root_node) ) return false;
+  if ( ! this->GetSuperkDetector () -> Read (xml, root_node) ) return false;
+  if ( ! this->GetSuperkMC       () -> Read (xml, root_node) ) return false;
 
   fIsConfigured = true;
 
@@ -350,10 +354,11 @@ void SuperkExpectation::Init(void)
 {
   fIsConfigured = false;
 
-  fSuperkMC = 0;
-  fNuFlux   = 0;
-  fNuXSec   = 0;
-  fBANFF    = 0;
+  fSuperkDetector = 0;
+  fSuperkMC       = 0;
+  fNuFlux         = 0;
+  fNuXSec         = 0;
+  fBANFF          = 0;
 
   for(int is=0; is<kns; is++) {
     fPredictErecoSpectrumTot[is] = 0;
@@ -386,10 +391,11 @@ void SuperkExpectation::Book(void)
 //________________________________________________________________________________________
 void SuperkExpectation::CleanUp(void)
 {
-  if (fSuperkMC ) delete fSuperkMC;
-  if (fNuFlux   ) delete fNuFlux; 
-  if (fNuXSec   ) delete fNuXSec;
-  if (fBANFF    ) delete fBANFF;
+  if (fSuperkDetector ) delete fSuperkDetector;
+  if (fSuperkMC       ) delete fSuperkMC;
+  if (fNuFlux         ) delete fNuFlux; 
+  if (fNuXSec         ) delete fNuXSec;
+  if (fBANFF          ) delete fBANFF;
 
   for(int is = 0; is < kns; is++) {
      if (fPredictErecoSpectrumTot[is]) delete fPredictErecoSpectrumTot[is];
@@ -409,7 +415,7 @@ void SuperkExpectation::SetNuisanceParams(const FitParamList & fp)
 
    if(fp.Exists(kNuisSuperkEff1RmuCCQEoth)) {
      double twk = fp.CurrValue(kNuisSuperkEff1RmuCCQEoth);
-     this->GetSuperkMC()->TweakEfficiency1RmuCCQEOther(twk);
+     this->GetSuperkDetector()->TweakEfficiency1RmuCCQEOther(twk);
    }
    if(fp.Exists(kNuisSuperkEff1RmuCCQErc0u) &&
       fp.Exists(kNuisSuperkEff1RmuCCQErc1u) &&
@@ -417,19 +423,19 @@ void SuperkExpectation::SetNuisanceParams(const FitParamList & fp)
      double twk0 = fp.CurrValue(kNuisSuperkEff1RmuCCQErc0u);
      double twk1 = fp.CurrValue(kNuisSuperkEff1RmuCCQErc1u);
      double twk2 = fp.CurrValue(kNuisSuperkEff1RmuCCQErc2u);
-     this->GetSuperkMC()->TweakEfficiency1RmuCCQERingCounting(true,twk0,twk1,twk2,false);
+     this->GetSuperkDetector()->TweakEfficiency1RmuCCQERingCounting(true,twk0,twk1,twk2,false);
    }
    if(fp.Exists(kNuisSuperkEff1RmuCCnonQE)) {
      double twk = fp.CurrValue(kNuisSuperkEff1RmuCCnonQE);
-     this->GetSuperkMC()->TweakEfficiency1RmuCCnonQE(twk);
+     this->GetSuperkDetector()->TweakEfficiency1RmuCCnonQE(twk);
    }
    if(fp.Exists(kNuisSuperkEff1RmuNC)) {
      double twk = fp.CurrValue(kNuisSuperkEff1RmuNC);
-     this->GetSuperkMC()->TweakEfficiency1RmuNC(twk);     
+     this->GetSuperkDetector()->TweakEfficiency1RmuNC(twk);     
    }
    if(fp.Exists(kNuisSuperkEff1RmuNueCC)) {
      double twk = fp.CurrValue(kNuisSuperkEff1RmuNueCC);
-     this->GetSuperkMC()->TweakEfficiency1RmuNuECC(twk);
+     this->GetSuperkDetector()->TweakEfficiency1RmuNuECC(twk);
    }
 
 

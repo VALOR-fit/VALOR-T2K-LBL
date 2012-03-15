@@ -36,6 +36,7 @@ namespace t2kana {
 
 class NuFlux;
 class NuXSec;
+class SuperkDetector;
 
 class SuperkMC: public TObject
 {
@@ -61,37 +62,20 @@ public:
   // POT of analysed data sample (MC is scaled to that POT value)
   double AnalyzedSamplePOT(void) const;
 
-  // Systematic variations
-  void TweakEnergyScale                    (double twkdial);
-  void TweakEfficiency1RmuCCQEOther        (double twkdial); ///< "other": all but ring-counting
-  void TweakEfficiency1RmuCCQERingCounting (bool force_input_twkdials=false, double twkdial1=0, double twkdial2=0, double twkdial3=0, bool correlated=true); 
-  void TweakEfficiency1RmuCCnonQE          (double twkdial);
-  void TweakEfficiency1RmuNC               (double twkdial);
-  void TweakEfficiency1RmuNuECC            (double twkdial);
-
-  // Calculate weight due to efficiency tweaks
-  double  EfficiencyWeight (conv::SuperkSample_t s, conv::SuperkMode_t m, double Ereco) const;
-
-  // Info about the energy scale error and current energy scale tweaking factor
-  double  EnergyScaleRelErr   (conv::SuperkSample_t s, conv::SuperkMode_t m) const; ///< energy scale err
-  double  EnergyScale         (conv::SuperkSample_t s, conv::SuperkMode_t m) const; ///< energy scale
-
   // Read inputs from XML file
   bool Read (TXMLEngine* xml, XMLNodePointer_t root_node);
       
   // Physics hypothesis 
   PhysHypothesis & Hypothesis(void);
 
-  // Hooks for obtaining necessary flux and cross-section information
-  void TellMeAboutTheFlux       (NuFlux * flux) { fNuFlux = flux; }
-  void TellMeAboutCrossSections (NuXSec * xsec) { fNuXSec = xsec; }
+  // Hooks for obtaining necessary flux, cross-section and detector information
+  void TellMeAboutTheFlux       (NuFlux *         flux ) { fNuFlux = flux; }
+  void TellMeAboutCrossSections (NuXSec *         xsec ) { fNuXSec = xsec; }
+  void TellMeAboutTheDetector   (SuperkDetector * skdet) { fSKDet  = skdet; }
 
   // Draw inputs:
   // ...
   void Draw(TVirtualPad * c, Option_t * opt = "") const;
-
-  // Print      
-  void PrintSystematicVariations (void) const;
 
 private:
 
@@ -124,37 +108,7 @@ private:
   // Private data members
   //
 
-  double     fPOT;  ///< POT for actual data-set (MC is scaled to that exposure)
-
-  // systematic uncertainties: 1 sigma fractional errors & covariance matrices
-  // > 1Rmu
-  double     fEnergyScale1RmuRelErr;       ///< 1Rmu energy scale relative error
-  double     fEff1RmuCCQEOthRelErr;        ///< 1Rmu CCQE other (all but ring-counting) efficiency relative error 
-  TMatrixD * fEff1RmuCCQERCCovarRelErr;    ///< 1Rmu CCQE ring-counting efficiency relative error covariance matrix (3x3)
-  double     fEff1RmuCCQERCCovarE1RelErr;  ///<  -  ~0.4 GeV (above RC cov matrix is 3x3, 3 Ereco bins: (0, fEff1RmuCCQERCCovarE1RelErr, fEff1RmuCCQERCCovarE2RelErr, oo))
-  double     fEff1RmuCCQERCCovarE2RelErr;  ///<  -  ~1.1 GeV (above RC cov matrix is 3x3, 3 Ereco bins: (0, fEff1RmuCCQERCCovarE1RelErr, fEff1RmuCCQERCCovarE2RelErr, oo))
-  TMatrixD * fEff1RmuCCQERCCovarChoLRelErr;///<  -  Cholesky decomposition (trangular matrix L) of fEff1RmuCCQERCCovarRelErr covariance matrix
-  double     fEff1RmuCCnonQERelErr;        ///< 1Rmu CCnonQE efficiency relative error
-  double     fEff1RmuNCRelErr;             ///< 1Rmu NC efficiency relative error
-  double     fEff1RmuNuECCRelErr;          ///< 1Rmu nue CC efficiency relative error
-  // > 1Re
-  //...
-  //...
-
-  // systematic uncertainties: tweaking dials
-  // > 1Rmu + 1Re
-  double     fEnergyScaleTwkDial;          ///< 1Rmu/1Re Energy scale tweaking dial
-  // > 1Rmu 
-  double     fEff1RmuCCQEOthTwkDial;       ///< 1Rmu CCQE other (all-but-ring-counting) efficiency tweaking dial
-  double     fEff1RmuCCQERC0TwkDial;       ///< 1Rmu CCQE ring-counting efficiency tweaking dial 0 (Ereco < fEff1RmuCCQERCCovarE1RelErr)
-  double     fEff1RmuCCQERC1TwkDial;       ///< 1Rmu CCQE ring-counting efficiency tweaking dial 1 (fEff1RmuCCQERCCovarE1RelErr <= Ereco <= fEff1RmuCCQERCCovarE2RelErr)
-  double     fEff1RmuCCQERC2TwkDial;       ///< 1Rmu CCQE ring-counting efficiency tweaking dial 2 (Ereco > fEff1RmuCCQERCCovarE2RelErr)
-  double     fEff1RmuCCnonQETwkDial;       ///< 1Rmu CCnonQE efficiency tweaking dial
-  double     fEff1RmuNCTwkDial;            ///< 1Rmu NC efficiency tweaking dial
-  double     fEff1RmuNuECCTwkDial;         ///< 1Rmu nue CC efficiency tweaking dial
-  // > 1Re
-  //...
-  //...
+  double fPOT;  ///< POT for actual data-set (MC is scaled to that exposure)
 
   // input MC templates (nominal, nominal + systematics, nominal + systematics + physics hypothesis) and Ereco spectra
   TH2D *     fMCTemplNom[kns][knm];        ///< Ereco-Etrue MC template(sample,mode): nominal + ext/tuning
@@ -186,8 +140,9 @@ private:
   int        fBrGenCode;                   ///< branch var for reading input MC mini-DST
       
   // utility objects for computing cross-section and flux weights
-  NuFlux *   fNuFlux;                      ///< Neutrino flux analysis inputs
-  NuXSec *   fNuXSec;                      ///< Neutrino cross section analysis inputs
+  NuFlux *         fNuFlux;                ///< Neutrino flux analysis inputs
+  NuXSec *         fNuXSec;                ///< Neutrino cross section analysis inputs
+  SuperkDetector * fSKDet;                 ///< SuperK detector efficiency error etc
 
   // utility objects for defining physics hypothesis (oscillations, decay, ...) & computing probabilities
   PhysHypothesis fPhysHypothesis;          ///< Physics hypothesis 

@@ -406,9 +406,9 @@ double NuXSec::CurrentValue(PhysParamId_t p) const
 //________________________________________________________________________________________
 void NuXSec::PrintSystematicVariations(void) const
 {
-  TVectorD & fsi_current_values = *fFSICurrentValues;
-  cout << "Exp/NuXSec >> FSI parameters: " << endl;
-  util::PrintCompact(fsi_current_values,12,6,"FSI params");
+  //TVectorD & fsi_current_values = *fFSICurrentValues;
+  //cout << "Exp/NuXSec >> FSI parameters: " << endl;
+  //util::PrintCompact(fsi_current_values,12,6,"FSI params");
 }
 //________________________________________________________________________________________
 
