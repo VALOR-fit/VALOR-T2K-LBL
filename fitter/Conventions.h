@@ -1146,7 +1146,6 @@ static const double kErecoBinEdges1Re[kNErecoBins1Re+1] =
 };
 */
 
-
 } // conv
 } // t2kana
   

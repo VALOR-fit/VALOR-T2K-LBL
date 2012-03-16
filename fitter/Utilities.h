@@ -209,6 +209,35 @@ namespace util {
   void PrintCompact (const TVectorD & current, const TVectorD & nominal, int w, int prec, Option_t * option);
   void PrintCompact (const TMatrixD & m, int w=15, int prec=9);
 
+  //
+  //
+  //
+
+  class ArrIdx {
+  public:
+    static ArrIdx * Instance();
+    int SuperkSampleIdx (conv::SuperkSample_t s)                       { return fSuperkSampleIdx[s];    }
+    int SuperkModeIdx   (conv::SuperkSample_t s, conv::SuperkMode_t m) { return fSuperkModeIdx  [s][m]; }
+  private:
+    ArrIdx();
+    ArrIdx(const ArrIdx &) {}
+   ~ArrIdx();
+    void Init();
+    int fSuperkSampleIdx [2*conv::kns];               ///<
+    int fSuperkModeIdx   [2*conv::kns][2*conv::knm];  ///<
+    static ArrIdx * fInstance;
+    struct Cleaner {
+      void DummyMethodAndSilentCompiler() { }
+      ~Cleaner() {
+         if (ArrIdx::fInstance !=0) {
+            delete ArrIdx::fInstance;
+            ArrIdx::fInstance = 0;
+         }
+      }
+    };
+    friend struct Cleaner;
+  };
+
 } // util
 } // t2kana
   

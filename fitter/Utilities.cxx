@@ -2952,3 +2952,50 @@ double t2kana::util::NuMuSurvProbDecoh (
   }
 }
 //____________________________________________________________________________
+t2kana::util::ArrIdx * t2kana::util::ArrIdx::fInstance = 0;
+//____________________________________________________________________________
+t2kana::util::ArrIdx::ArrIdx()
+{
+  this->Init();
+  fInstance = 0;
+}
+//____________________________________________________________________________
+t2kana::util::ArrIdx * t2kana::util::ArrIdx::Instance()
+{
+  if(fInstance == 0) {
+    static t2kana::util::ArrIdx::Cleaner cleaner;
+    cleaner.DummyMethodAndSilentCompiler();
+    fInstance = new t2kana::util::ArrIdx;
+  }
+  return fInstance;
+}
+//____________________________________________________________________________
+void t2kana::util::ArrIdx::Init(void)
+{
+  for(int is = 0; is < 2*kns; is++) {
+     SuperkSample_t s = kSKSamples[is];
+     fSuperkSampleIdx [s] = -1;
+     for(int im = 0; im < 2*knm; im++) {
+         SuperkMode_t m = kSKReactionModes[is][im];
+         fSuperkModeIdx [s][m] = -1;
+     }
+  }
+  for(int is = 0; is < kns; is++) {
+     SuperkSample_t s = kSKSamples[is];
+     if(s == kSKsUndefined) continue;
+     fSuperkSampleIdx [s] = util::FindSampleSlot(s);
+     cout << "Util/ArrIdx >> Sample: " 
+          << util::AsString(s)
+          << " is at slot: " << fSuperkSampleIdx [s] << endl;
+     for(int im = 0; im < knm; im++) {
+         SuperkMode_t m = kSKReactionModes[is][im];
+         if(m == kSKmUndefined) continue;
+         fSuperkModeIdx [s][m] = util::FindModeSlot(s,m);
+         cout << "Util/ArrIdx >>   Mode: " 
+              << util::AsString(s) << "/" << util::AsString(m)
+              << " is at slot: " << fSuperkModeIdx [s][m] << endl;
+     }
+  }  
+}
+//____________________________________________________________________________
+
