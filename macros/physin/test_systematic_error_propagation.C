@@ -211,7 +211,7 @@ void test_systematic_error_propagation
   //
   
   if(sys_is_banff) {
-    skexp->TweakSystematic(systematic,+2.,false);
+    skexp->TweakSystematic(systematic,+2.,use_banff_bestfit);
     skexp->GetBANFF()->PrintSystematicVariations();
   }
   else
@@ -296,7 +296,7 @@ void test_systematic_error_propagation
   //
 
   if(sys_is_banff) {
-    skexp->TweakSystematic(systematic,+0.5,false);
+    skexp->TweakSystematic(systematic,+0.5,use_banff_bestfit);
     skexp->GetBANFF()->PrintSystematicVariations();
   }
   else
