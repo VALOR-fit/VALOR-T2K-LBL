@@ -74,10 +74,6 @@ namespace util {
   // Utility functions for T2KAna enumerations
   //
 
-  int FindSampleSlot           (conv::SuperkSample_t s);
-  int FindModeSlot             (conv::SuperkSample_t s, conv::SuperkMode_t m);
-  int FindSlotInListOfXSecSyst (conv::PhysParamId_t p);
-
   void SetDefaultSKSpectrumStyle (conv::SuperkSample_t s, conv::SuperkMode_t m, TH1D * histogram);
 
   string AsString        (conv::PhysHypothesis_t hyp, double mix12, double mix13, double mix23, double deltacp, double dm12sq, double dm23sq);
@@ -218,13 +214,15 @@ namespace util {
     static ArrIdx * Instance();
     int SuperkSampleIdx (conv::SuperkSample_t s)                       { return fSuperkSampleIdx[s];    }
     int SuperkModeIdx   (conv::SuperkSample_t s, conv::SuperkMode_t m) { return fSuperkModeIdx  [s][m]; }
+    int XSecSystIdx     (conv::PhysParamId_t p)                        { return fXSecSystIdx    [p];    }
   private:
     ArrIdx();
     ArrIdx(const ArrIdx &) {}
-   ~ArrIdx();
+   ~ArrIdx() {}
     void Init();
-    int fSuperkSampleIdx [2*conv::kns];               ///<
-    int fSuperkModeIdx   [2*conv::kns][2*conv::knm];  ///<
+    int fSuperkSampleIdx [2*conv::kns];               ///< maps sample to kSKSamples array index
+    int fSuperkModeIdx   [2*conv::kns][2*conv::knm];  ///< maps sample/mode to kSKReactionModes array index
+    int fXSecSystIdx     [conv::knppmax];             ///< maps physics param to kListOfXSecSyst array index
     static ArrIdx * fInstance;
     struct Cleaner {
       void DummyMethodAndSilentCompiler() { }

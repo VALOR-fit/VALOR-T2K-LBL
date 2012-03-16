@@ -116,7 +116,7 @@ void SuperkExpectation::Generate(const FitParamList & fp)
 //________________________________________________________________________________________
 TH1D* SuperkExpectation::CurrPredictedErecoSpectrum(t2kana::conv::SuperkSample_t s) const 
 {
-  int sidx = util::FindSampleSlot(s);
+  int sidx = util::ArrIdx::Instance()->SuperkSampleIdx(s);
   if(sidx == -1) {
     return 0;
   }
@@ -126,11 +126,11 @@ TH1D* SuperkExpectation::CurrPredictedErecoSpectrum(t2kana::conv::SuperkSample_t
 TH1D* SuperkExpectation::CurrPredictedErecoSpectrum(
   t2kana::conv::SuperkSample_t s, t2kana::conv::SuperkMode_t m) const 
 { 
-  int sidx = util::FindSampleSlot(s);
+  int sidx = util::ArrIdx::Instance()->SuperkSampleIdx(s);
   if(sidx == -1) {
     return 0;
   }
-  int midx = util::FindModeSlot(s,m);
+  int midx = util::ArrIdx::Instance()->SuperkModeIdx(s,m);
   if(midx == -1) {
     return 0;
   }

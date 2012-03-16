@@ -84,7 +84,7 @@ void Superk1RmuErecoFitter::Analyze(Option_t * option)
 #endif
 
   SuperkSample_t s = kSKsFCFV1RingMuLike;
-  int isample = util::FindSampleSlot(s);
+  int isample = util::ArrIdx::Instance()->SuperkSampleIdx(s);
 
   //
   // Declare (potential) outputs
@@ -180,7 +180,7 @@ void Superk1RmuErecoFitter::Analyze(Option_t * option)
         for(int imode = 0; imode < knm; imode++) {
            SuperkMode_t m = kSKReactionModesOrderInStack[isample][imode]; 
            if(m == kSKmUndefined) continue;
-           int jmode = util::FindModeSlot(s,m);
+           int jmode = util::ArrIdx::Instance()->SuperkModeIdx(s,m);
            contrib_stack->Add(bestfit_mode[jmode]);
         }
         c1 = new TCanvas("c1","Data and best-fit spectrum (total)",20,20,500,500);
@@ -229,7 +229,7 @@ void Superk1RmuErecoFitter::Save(const char * filename, const char * option_file
   util::SetDefaultStyle();
 
   SuperkSample_t s = kSKsFCFV1RingMuLike;
-  int isample = util::FindSampleSlot(s);
+  int isample = util::ArrIdx::Instance()->SuperkSampleIdx(s);
 
   cout << "Superk1RmuErecoFitter/Save >> Writing fit results in: " 
        << filename << endl;

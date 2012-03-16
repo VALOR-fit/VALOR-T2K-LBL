@@ -131,7 +131,7 @@ void Superk1ReNFitter::Analyze(Option_t * option)
      // generate expectation
      fFitInputs->Expectation().Generate(fFitInputs->FitParams());
      conv::SuperkSample_t s = conv::kSKsFCFV1RingELike; 
-     int idx = util::FindSampleSlot(s);
+     int idx = util::ArrIdx::Instance()->SuperkSampleIdx(s);
      if(idx != -1) {
 
      // copy & format Ereco histograms

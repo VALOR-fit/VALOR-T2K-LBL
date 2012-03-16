@@ -404,38 +404,6 @@ double t2kana::util::RandomizeDm23sq(void)
   return rand.Gaus(mean,sigma);
 }
 //____________________________________________________________________________
-int t2kana::util::FindSampleSlot(t2kana::conv::SuperkSample_t s)
-{
-  for(int is = 0; is < conv::kns; is++) {
-     SuperkSample_t scurr = kSKSamples[is];
-     if(scurr == s) return is;
-  }
-  return -1;
-}
-//____________________________________________________________________________
-int t2kana::util::FindModeSlot(
-  t2kana::conv::SuperkSample_t s, t2kana::conv::SuperkMode_t m)
-{
-  int sidx = FindSampleSlot(s);
-  if(sidx == -1) {
-    return -1;
-  }
-  for(int im = 0; im < conv::knm; im++) {
-    SuperkMode_t mcurr = kSKReactionModes[sidx][im];
-    if(mcurr == m) return im;
-  }
-  return -1;
-}
-//____________________________________________________________________________
-int t2kana::util::FindSlotInListOfXSecSyst(t2kana::conv::PhysParamId_t p)
-{
-  for(int ip = 0; ip < kNumOfXSecSyst; ip++) {
-     PhysParamId_t pcurr = kListOfXSecSyst[ip];
-     if(pcurr == p) return ip;
-  }
-  return -1;
-}
-//____________________________________________________________________________
 void t2kana::util::SetDefaultSKSpectrumStyle (
    t2kana::conv::SuperkSample_t s, t2kana::conv::SuperkMode_t m, TH1D * hist)
 {
@@ -444,8 +412,8 @@ void t2kana::util::SetDefaultSKSpectrumStyle (
   if(s == kSKsUndefined) return;
   if(m == kSKmUndefined) return;
 
-  int sidx = util::FindSampleSlot (s);
-  int midx = util::FindModeSlot   (s,m);
+  int sidx = util::ArrIdx::Instance()->SuperkSampleIdx(s);
+  int midx = util::ArrIdx::Instance()->SuperkModeIdx(s,m);
 
   if(sidx == -1 || midx == -1) return;
 
@@ -2972,30 +2940,42 @@ t2kana::util::ArrIdx * t2kana::util::ArrIdx::Instance()
 //____________________________________________________________________________
 void t2kana::util::ArrIdx::Init(void)
 {
-  for(int is = 0; is < 2*kns; is++) {
-     SuperkSample_t s = kSKSamples[is];
-     fSuperkSampleIdx [s] = -1;
-     for(int im = 0; im < 2*knm; im++) {
-         SuperkMode_t m = kSKReactionModes[is][im];
-         fSuperkModeIdx [s][m] = -1;
+  //
+  // sample/mode arrays
+  //
+  for(int i = 0; i < 2*kns; i++) {
+     fSuperkSampleIdx [i] = -1;
+     for(int j = 0; j < 2*knm; j++) {
+         fSuperkModeIdx [i][j] = -1;
      }
   }
   for(int is = 0; is < kns; is++) {
      SuperkSample_t s = kSKSamples[is];
      if(s == kSKsUndefined) continue;
-     fSuperkSampleIdx [s] = util::FindSampleSlot(s);
+     fSuperkSampleIdx [s] = is;
      cout << "Util/ArrIdx >> Sample: " 
           << util::AsString(s)
           << " is at slot: " << fSuperkSampleIdx [s] << endl;
      for(int im = 0; im < knm; im++) {
          SuperkMode_t m = kSKReactionModes[is][im];
          if(m == kSKmUndefined) continue;
-         fSuperkModeIdx [s][m] = util::FindModeSlot(s,m);
+         fSuperkModeIdx [s][m] = im;
          cout << "Util/ArrIdx >>   Mode: " 
               << util::AsString(s) << "/" << util::AsString(m)
               << " is at slot: " << fSuperkModeIdx [s][m] << endl;
      }
-  }  
+  } 
+  // 
+  // phys param arrays
+  // 
+  for(int i = 0; i < knppmax; i++) {
+    fXSecSystIdx[i] = -1;
+  }
+  for(int ip = 0; ip < kNumOfXSecSyst; ip++) {
+    PhysParamId_t p = kListOfXSecSyst[ip];
+    if(p == kPhypUndefined) continue;
+    fXSecSystIdx[p] = ip;
+  }
 }
 //____________________________________________________________________________
 

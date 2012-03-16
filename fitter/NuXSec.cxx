@@ -536,13 +536,11 @@ int NuXSec::WghtSplineIdx(
 //  4:  0 --> kXsNEtrueBins
 //
 
-  int is = util::FindSampleSlot(s);
+  int is = util::ArrIdx::Instance()->SuperkSampleIdx(s);
   if(is == -1) return -1;
-
-  int im = util::FindModeSlot(s,m);
+  int im = util::ArrIdx::Instance()->SuperkModeIdx(s,m);
   if(im == -1) return -1;
-
-  int ip = util::FindSlotInListOfXSecSyst(p);
+  int ip = util::ArrIdx::Instance()->XSecSystIdx(p);
   if(ip == -1) return -1;
 
   int ireco = -1; 
@@ -587,12 +585,11 @@ bool NuXSec::ApplySyst(
 //________________________________________________________________________________________
 bool NuXSec::ApplySystToSKMode(PhysParamId_t p, SuperkSample_t s, SuperkMode_t m) const
 {
-  int isyst = util::FindSlotInListOfXSecSyst(p);
+  int isyst = util::ArrIdx::Instance()->XSecSystIdx(p);
   if (isyst == -1) return false;
-
-  int is = util::FindSampleSlot(s);
+  int is = util::ArrIdx::Instance()->SuperkSampleIdx(s);
   if (is == -1) return false;
-  int im = util::FindModeSlot(s,m);
+  int im = util::ArrIdx::Instance()->SuperkModeIdx(s,m);
   if (im == -1) return false;
 
   bool apply = kXsApplyXSecSystToSKMode[is][im][isyst];
@@ -601,7 +598,7 @@ bool NuXSec::ApplySystToSKMode(PhysParamId_t p, SuperkSample_t s, SuperkMode_t m
 //________________________________________________________________________________________
 bool NuXSec::ApplySystToEnergyBin(PhysParamId_t p, double Ereco, double Etrue) const
 {
-  int isyst = util::FindSlotInListOfXSecSyst(p);
+  int isyst = util::ArrIdx::Instance()->XSecSystIdx(p);
   if (isyst == -1) return false;
 
   bool apply = 
@@ -681,8 +678,8 @@ void NuXSec::BuildFracMCTemplates(
 double NuXSec::FractionOfEvents(
   SuperkSample_t s, SuperkMode_t m, double Ereco, double Etrue, SKMCTemplateType_t type) const
 {
-  int is = util::FindSampleSlot(s);
-  int im = util::FindModeSlot(s,m);
+  int is = util::ArrIdx::Instance()->SuperkSampleIdx(s);
+  int im = util::ArrIdx::Instance()->SuperkModeIdx(s,m);
   assert(is != -1 && im != -1);
 
   TH2D * mctempl_frac = 0;

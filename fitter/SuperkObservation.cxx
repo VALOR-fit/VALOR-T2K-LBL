@@ -62,7 +62,7 @@ double SuperkObservation::NumOfEvents(SuperkSample_t s) const
     return nev;
   }
 
-  int is = util::FindSampleSlot(s);
+  int is = util::ArrIdx::Instance()->SuperkSampleIdx(s);
   TH1D * h = fErDistr[is];
   assert(h);
   nev = h->Integral();
@@ -82,7 +82,7 @@ double SuperkObservation::NumOfEvents(double Er, SuperkSample_t s) const
     return nev;
   }
 
-  int is = util::FindSampleSlot(s);
+  int is = util::ArrIdx::Instance()->SuperkSampleIdx(s);
   TH1D * h = fErDistr[is];
   assert(h);
   int bin = h->FindBin(Er);
@@ -101,7 +101,7 @@ TH1D* SuperkObservation::ErecoSpectrum (t2kana::conv::SuperkSample_t s) const
     return 0;
   }
 
-  int is = util::FindSampleSlot(s);
+  int is = util::ArrIdx::Instance()->SuperkSampleIdx(s);
   return fErDistr[is];
 }
 //________________________________________________________________________________________
@@ -130,7 +130,7 @@ bool SuperkObservation::Read(string config_file, int data_set_id)
   datanode1Rmu << "superk/observation/one_mu_ring/ereco_values" << "/data_set_" << data_set_id;
 
   if(util::NodeExists(xml,root_node,datanode1Rmu.str())) {
-     int idx = util::FindSampleSlot(kSKsFCFV1RingMuLike);
+     int idx = util::ArrIdx::Instance()->SuperkSampleIdx(kSKsFCFV1RingMuLike);
      fErDistr[idx] = new TH1D("", "", kNErecoBins1Rmu,kErecoBinEdges1Rmu);
      fErDistr[idx]->SetDirectory(0);
      vector<double> values = util::XML2DblArray(xml,root_node,datanode1Rmu.str());
@@ -150,7 +150,7 @@ bool SuperkObservation::Read(string config_file, int data_set_id)
   datanode1Re << "superk/observation/one_e_ring/event_count" << "/data_set_" << data_set_id;
 
   if(util::NodeExists(xml,root_node,datanode1Re.str())) {
-     int idx = util::FindSampleSlot(kSKsFCFV1RingELike);
+     int idx = util::ArrIdx::Instance()->SuperkSampleIdx(kSKsFCFV1RingELike);
      fErDistr[idx] = new TH1D("", "", kNErecoBins1Re,kErecoBinEdges1Re);
      fErDistr[idx]->SetDirectory(0);
      double nev = util::XML2Dbl (xml,root_node,datanode1Re.str());
@@ -181,7 +181,7 @@ void SuperkObservation::CreateMockData(
   skexp.Generate(fp); //generate prediction
 
   int idx = -1;
-  idx = util::FindSampleSlot(kSKsFCFV1RingMuLike);
+  idx = util::ArrIdx::Instance()->SuperkSampleIdx(kSKsFCFV1RingMuLike);
   if(idx != -1) {
     fErDistr[idx] = new TH1D("", "", kNErecoBins1Rmu,kErecoBinEdges1Rmu);
     fErDistr[idx] -> SetDirectory(0);
@@ -192,7 +192,7 @@ void SuperkObservation::CreateMockData(
        fErDistr[idx]->SetBinContent(ibin,nobs);
     }
   }
-  idx = util::FindSampleSlot(kSKsFCFV1RingELike);
+  idx = util::ArrIdx::Instance()->SuperkSampleIdx(kSKsFCFV1RingELike);
   if(idx != -1) {
     fErDistr[idx]  = new TH1D("", "", kNErecoBins1Re, kErecoBinEdges1Re);
     fErDistr[idx]  -> SetDirectory(0);
@@ -217,7 +217,7 @@ void SuperkObservation::CreateMockData(
   skexp.Generate(ph); //generate prediction
 
   int idx = -1;
-  idx = util::FindSampleSlot(kSKsFCFV1RingMuLike);
+  idx = util::ArrIdx::Instance()->SuperkSampleIdx(kSKsFCFV1RingMuLike);
   if(idx != -1) {
     fErDistr[idx] = new TH1D("", "", kNErecoBins1Rmu,kErecoBinEdges1Rmu);
     fErDistr[idx] -> SetDirectory(0);
@@ -228,7 +228,7 @@ void SuperkObservation::CreateMockData(
        fErDistr[idx]->SetBinContent(ibin,nobs);
     }
   }
-  idx = util::FindSampleSlot(kSKsFCFV1RingELike);
+  idx = util::ArrIdx::Instance()->SuperkSampleIdx(kSKsFCFV1RingELike);
   if(idx != -1) {
     fErDistr[idx]  = new TH1D("", "", kNErecoBins1Re, kErecoBinEdges1Re);
     fErDistr[idx]  -> SetDirectory(0);
@@ -252,7 +252,7 @@ void SuperkObservation::Draw(TVirtualPad * c, Option_t * option) const
   util::SetDefaultStyle();
 
   if(opt.Contains("1RmuEreco")) { 
-     int idx = util::FindSampleSlot(kSKsFCFV1RingMuLike);
+     int idx = util::ArrIdx::Instance()->SuperkSampleIdx(kSKsFCFV1RingMuLike);
      fErDistr[idx]->SetLineColor(kBlack);
      fErDistr[idx]->SetLineWidth(2);
      fErDistr[idx]->SetMarkerColor(kBlack);

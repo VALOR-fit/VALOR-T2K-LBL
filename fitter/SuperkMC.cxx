@@ -353,7 +353,7 @@ void SuperkMC::FillTemplate(SuperkSample_t s, SuperkMode_t m)
 //________________________________________________________________________________________
 TH1D* SuperkMC::CurrErecoSpectrum(SuperkSample_t s) const                               
 { 
-  int sidx = util::FindSampleSlot(s);
+  int sidx = util::ArrIdx::Instance()->SuperkSampleIdx(s);
   if(sidx == -1) {
     return 0;
   }
@@ -362,11 +362,11 @@ TH1D* SuperkMC::CurrErecoSpectrum(SuperkSample_t s) const
 //________________________________________________________________________________________
 TH1D* SuperkMC::CurrErecoSpectrum(SuperkSample_t s, SuperkMode_t m) const 
 { 
-  int sidx = util::FindSampleSlot(s);
+  int sidx = util::ArrIdx::Instance()->SuperkSampleIdx(s);
   if(sidx == -1) {
     return 0;
   }
-  int midx = util::FindModeSlot(s,m);
+  int midx = util::ArrIdx::Instance()->SuperkModeIdx(s,m);
   if(midx == -1) {
     return 0;
   }            
@@ -375,11 +375,11 @@ TH1D* SuperkMC::CurrErecoSpectrum(SuperkSample_t s, SuperkMode_t m) const
 //________________________________________________________________________________________
 TH2D * SuperkMC::Template(SuperkSample_t s, SuperkMode_t m, SKMCTemplateType_t type) const
 {
-  int sidx = util::FindSampleSlot(s);
+  int sidx = util::ArrIdx::Instance()->SuperkSampleIdx(s);
   if(sidx == -1) {
     return 0;
   }
-  int midx = util::FindModeSlot(s,m);
+  int midx = util::ArrIdx::Instance()->SuperkModeIdx(s,m);
   if(midx == -1) {
     return 0;
   }            
