@@ -42,7 +42,7 @@
          </nue>
          <nuebar>
             <filename>   inputs/official/2012/flux/11a_v2.3/sk_tuned11av2_11anom_run1_and_run2_fine.root </filename>
-            <objname>    enu_sk_tuned11a_nue   </objname>
+            <objname>    enu_sk_tuned11a_nueb  </objname>
             <objtype>    TH1D                  </objtype>
          </nuebar>
        </tuned>
