@@ -19,7 +19,6 @@ a latex file (and then pdf) with the outputs. Things you can change are:
             - (Note that if sinsqtheta13 is identical in 2 cases, you'll need to add another distinguisher to the label definition at the end of root macro, otherwise the tex won't compile)
  - spectralreco - include ccqe ereco spectral information? (default true - you can specify both true and false)
  - spectraltrue - include ccqe etrue spectral information? (default true - you can specify both true and false)
- - banffbest - run with banff bestfit? (default true - you can specify both true and false)
 
 Run this by /path/to/test_systematic_error_propagation_runAll.py (you may need to chmod +x)
 It will then create the .tex, .pdf, and associated files in the current working directory
@@ -37,6 +36,7 @@ f.write("\\documentclass[10pt,a4paper]{article}\n")
 f.write("\\usepackage{amsmath}\n")
 f.write("\\usepackage{graphicx}\n")
 f.write("\\usepackage{dcolumn}\n")
+f.write("\\usepackage[cm]{fullpage}\n")
 f.write("\\begin{document}\n")
 f.close()
 
@@ -71,10 +71,6 @@ spectraltrue = []
 spectraltrue.append("true")
 #spectraltrue.append("false")
 
-banffbest = []
-banffbest.append("true")
-banffbest.append("false")
-
 for osc in oscparams:
 
    for spr in spectralreco:
@@ -85,11 +81,9 @@ for osc in oscparams:
             
             for sys in systematics:
           
-               for ban in banffbest:
-                  
-                  command = 'root2k -l -b -q \'$T2KOSCANA/macros/physin/test_systematic_error_propagation.C("'+sys+'","'+sam+'","3f_osc",'+str(osc[0])+','+str(osc[1])+','+str(osc[2])+','+str(osc[3])+','+str(osc[4])+','+str(osc[5])+','+ban+',true,'+spr+','+spt+',"'+filename+'","'+conffile+'")\''
-                  print command
-                  os.system(command)
+               command = 'root2k -l -b -q \'$T2KOSCANA/macros/physin/test_systematic_error_propagation.C("'+sys+'","'+sam+'","3f_osc",'+str(osc[0])+','+str(osc[1])+','+str(osc[2])+','+str(osc[3])+','+str(osc[4])+','+str(osc[5])+',true,'+spr+','+spt+',"'+filename+'","'+conffile+'")\''
+               print command
+               os.system(command)
           
 
 f = open(filename,'a')

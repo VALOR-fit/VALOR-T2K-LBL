@@ -49,7 +49,6 @@ void test_systematic_error_propagation
   double       input_deltacp              = 0.00,                           /* */
   double       input_dm12sq               = 7.58E-5,                        /* */
   double       input_dm23sq               = 2.32E-3,                        /* */
-  bool         use_banff_bestfit          = true,                           /* if false, BANFF::RestoreNominalMC() is called */
   bool         use_tex                    = false,                          /* print-out results as a TeX table (for inclusion in tech. note)*/
   bool         show_sk_ccqe_spectral_info_ereco = false,                    /* */
   bool         show_sk_ccqe_spectral_info_etrue = false,                    /* */
@@ -102,10 +101,6 @@ void test_systematic_error_propagation
   SuperkExpectation * skexp = new SuperkExpectation;
   skexp->Read(config);
   
-  // Use BANFF best fit?
-  if(!use_banff_bestfit)
-    skexp->GetBANFF()->RestoreNominalMC();
-
   // Get the EReco bin corresponding to the edges of SK CCQE efficiency systematic
   Long64_t ErecoBin1NuMu    = skexp->CurrPredictedErecoSpectrum(s, conv::kSKmNuMuCCQE    )->FindBin(0.4-conv::kASmallNum);
   Long64_t ErecoBin2NuMu    = skexp->CurrPredictedErecoSpectrum(s, conv::kSKmNuMuCCQE    )->FindBin(1.1-conv::kASmallNum);
@@ -117,7 +112,7 @@ void test_systematic_error_propagation
   Long64_t EtrueBinNuMu[conv::kXsNEtrueBins+1];
   for(int itb = 0; itb < conv::kXsNEtrueBins+1; itb++) {
     EtrueBinNuMu[itb] = -1;
-    EtrueBinNuMu[itb] = skexp->GetSuperkMC()->Template(s, conv::kSKmNuMuCCQE, conv::kSKMCtFin)->GetYaxis()->FindBin(conv::kXsEtrueBinEdges[util::FindSampleSlot(s)][util::FindModeSlot(s,conv::kSKmNuMuCCQE)][itb]-conv::kASmallNum);
+    EtrueBinNuMu[itb] = skexp->GetSuperkMC()->Template(s, conv::kSKmNuMuCCQE, conv::kSKMCtFin)->GetYaxis()->FindBin(conv::kXsEtrueBinEdges[util::ArrIdx::Instance()->SuperkSampleIdx(s)][util::ArrIdx::Instance()->SuperkModeIdx(s,conv::kSKmNuMuCCQE)][itb]-conv::kASmallNum);
     if (EtrueBinNuMu[itb] > conv::kNEtrueBins) EtrueBinNuMu[itb] = conv::kNEtrueBins;
     if (EtrueBinNuMu[itb] < 1 && itb != 0) {NEtrueBinNuMu = itb-1; break;}
   }
@@ -127,8 +122,95 @@ void test_systematic_error_propagation
   bool sys_is_banff = sys.find("banff") == 0;
 
   //
-  // nominal
+  // nominal MC (pre BANFF)
   //
+
+  //remove BANFF tuning
+  skexp->GetBANFF()->RestoreNominalMC();
+
+  skexp->Generate(ph);
+
+  // total 
+  double nsk_n = skexp->CurrPredictedErecoSpectrum(s)->Integral();
+
+  // individual modes & cc/nc species totals
+  double nskmodes_n[conv::knm];
+  double nsknumucc_n = 0;
+  double nsknumunc_n = 0;
+  double nsknumubarcc_n = 0;
+  double nsknumubarnc_n = 0;
+  double nsknuecc_n = 0;
+  double nsknuenc_n = 0;
+  double nsknuebarcc_n = 0;
+  double nsknuebarnc_n = 0;
+  double nsknuesig_n = 0;
+
+  for (int im = 0; im < conv::knm; im++) {
+    conv::SuperkMode_t m = conv::kSKReactionModes[s][im];
+    if(m == conv::kSKmUndefined) continue;
+    if(util::ArrIdx::Instance()->SuperkModeIdx(s,m) < 0) continue;
+    // use s, m (not is,im) as indices, eg fMCErecoSpectrum[s][m]
+    nskmodes_n[m] = skexp->CurrPredictedErecoSpectrum(s,m)->Integral();
+
+    if(util::IsCC(m)) {
+      if(util::IsNuMu(m))
+	nsknumucc_n += nskmodes_n[m];
+      else if(util::IsNuMuBar(m))
+	nsknumubarcc_n += nskmodes_n[m];
+      else if(util::IsNuE(m))
+	nsknuecc_n += nskmodes_n[m];
+      else if(util::IsNuEBar(m))
+	nsknuebarcc_n += nskmodes_n[m];
+      else if(util::IsSignalNuE(m))
+	nsknuesig_n += nskmodes_n[m];
+      else {
+	cerr << "CC mode " << AsString(m) << " is not numu, numubar, nue, nuebar, nuesig!" << endl;
+	exit(1);
+      }
+    }//CC?
+    else if(util::IsNC(m)) {
+      if(util::IsNuMu(m))
+	nsknumunc_n += nskmodes_n[m];
+      else if(util::IsNuMuBar(m))
+	nsknumubarnc_n += nskmodes_n[m];
+      else if(util::IsNuE(m))
+	nsknuenc_n += nskmodes_n[m];
+      else if(util::IsNuEBar(m))
+	nsknuebarnc_n += nskmodes_n[m];
+      else {
+	cerr << "NC mode " << AsString(m) << " is not numu, numubar, nue, nuebar!" << endl;
+	exit(1);
+      }
+    }//NC?
+    else {
+      cerr << "NC mode " << AsString(m) << " is not numu, numubar, nue, nuebar!" << endl;
+      exit(1);
+    }//not CC or NC
+  } //loop over modes
+
+  // spectral numu ccqe (ereco)
+  double nsknumuccqe_na        = skexp->CurrPredictedErecoSpectrum(s, conv::kSKmNuMuCCQE    )->Integral(1,                  ErecoBin1NuMu);
+  double nsknumuccqe_nb        = skexp->CurrPredictedErecoSpectrum(s, conv::kSKmNuMuCCQE    )->Integral(ErecoBin1NuMu+1,    ErecoBin2NuMu);
+  double nsknumuccqe_nc        = skexp->CurrPredictedErecoSpectrum(s, conv::kSKmNuMuCCQE    )->Integral(ErecoBin2NuMu+1,    conv::kNErecoBins1Rmu);
+  double nsknumubarccqe_na     = skexp->CurrPredictedErecoSpectrum(s, conv::kSKmNuMuBarCCQE )->Integral(1,                  ErecoBin1NuMuBar);
+  double nsknumubarccqe_nb     = skexp->CurrPredictedErecoSpectrum(s, conv::kSKmNuMuBarCCQE )->Integral(ErecoBin1NuMuBar+1, ErecoBin2NuMuBar);
+  double nsknumubarccqe_nc     = skexp->CurrPredictedErecoSpectrum(s, conv::kSKmNuMuBarCCQE )->Integral(ErecoBin2NuMuBar+1, conv::kNErecoBins1Rmu);
+
+  // spectral numu ccqe (etrue)
+  double nsknumuccqe_nt[conv::kXsNEtrueBins];
+  for(int itb = 0; itb < NEtrueBinNuMu; itb++) {
+    nsknumuccqe_nt[itb] = 0.;
+    nsknumuccqe_nt[itb] = skexp->GetSuperkMC()->Template(s, conv::kSKmNuMuCCQE, conv::kSKMCtFin)->Integral(1, conv::kNErecoBins1Rmu, EtrueBinNuMu[itb]+1, EtrueBinNuMu[itb+1]);
+    cout << "bin edges are from " << skexp->GetSuperkMC()->Template(s, conv::kSKmNuMuCCQE, conv::kSKMCtFin)->GetYaxis()->GetBinLowEdge(EtrueBinNuMu[itb]+1) << " to " << skexp->GetSuperkMC()->Template(s, conv::kSKmNuMuCCQE, conv::kSKMCtFin)->GetYaxis()->GetBinUpEdge(EtrueBinNuMu[itb+1]) << endl;;
+  }
+
+  //
+  // nominal BANFF tuned MC
+  //
+
+  //restore BANFF tuning
+  TVectorD twkv(skexp->GetBANFF()->BestFitValues());
+  skexp->GetBANFF()->Tweak(true,&twkv);
 
   skexp->Generate(ph);
 
@@ -150,7 +232,7 @@ void test_systematic_error_propagation
   for (int im = 0; im < conv::knm; im++) {
     conv::SuperkMode_t m = conv::kSKReactionModes[s][im];
     if(m == conv::kSKmUndefined) continue;
-    if(util::FindModeSlot(s,m) < 0) continue;
+    if(util::ArrIdx::Instance()->SuperkModeIdx(s,m) < 0) continue;
     // use s, m (not is,im) as indices, eg fMCErecoSpectrum[s][m]
     nskmodes_0[m] = skexp->CurrPredictedErecoSpectrum(s,m)->Integral();
 
@@ -207,11 +289,11 @@ void test_systematic_error_propagation
   }
 
   //
-  // +1 sigma
+  // +1 sigma (relative to untuned BANFF)
   //
   
   if(sys_is_banff) {
-    skexp->TweakSystematic(systematic,+2.,use_banff_bestfit);
+    skexp->TweakSystematic(systematic,+2);
     skexp->GetBANFF()->PrintSystematicVariations();
   }
   else
@@ -236,7 +318,7 @@ void test_systematic_error_propagation
   for (int im = 0; im < conv::knm; im++) {
     conv::SuperkMode_t m = conv::kSKReactionModes[s][im];
     if(m == conv::kSKmUndefined) continue;
-    if(util::FindModeSlot(s,m) < 0) continue;
+    if(util::ArrIdx::Instance()->SuperkModeIdx(s,m) < 0) continue;
     // use s, m (not is,im) as indices, eg fMCErecoSpectrum[s][m]
     nskmodes_p[m] = skexp->CurrPredictedErecoSpectrum(s,m)->Integral();
 
@@ -292,11 +374,11 @@ void test_systematic_error_propagation
   }
 
   //
-  // -1 sigma
+  // -1 sigma (relative to untuned BANFF)
   //
 
   if(sys_is_banff) {
-    skexp->TweakSystematic(systematic,+0.5,use_banff_bestfit);
+    skexp->TweakSystematic(systematic,+0.5);
     skexp->GetBANFF()->PrintSystematicVariations();
   }
   else
@@ -321,7 +403,7 @@ void test_systematic_error_propagation
   for (int im = 0; im < conv::knm; im++) {
     conv::SuperkMode_t m = conv::kSKReactionModes[s][im];
     if(m == conv::kSKmUndefined) continue;
-    if(util::FindModeSlot(s,m) < 0) continue;
+    if(util::ArrIdx::Instance()->SuperkModeIdx(s,m) < 0) continue;
     // use s, m (not is,im) as indices, eg fMCErecoSpectrum[s][m]
     nskmodes_m[m] = skexp->CurrPredictedErecoSpectrum(s,m)->Integral();
 
@@ -468,19 +550,22 @@ void test_systematic_error_propagation
   if(use_tex) {
      streamer << "\\begin{table}"   << endl;
      streamer << "\\footnotesize" << endl;
-     streamer << "\\centering"     << endl;
-     streamer << "\\begin{tabular}{| l | r | r  r | r  r |}" << endl;
+     //streamer << "\\centering"     << endl;
+     streamer << "\\begin{tabular}{| l | r | r | r  r | r  r |}" << endl;
      streamer << "\\hline" << endl;
      streamer << "{\\bf Component} &  "
-          << "{\\bf Nominal}   &  "
-          << "\\multicolumn {2}{c|} { {\\bf +1$\\sigma$} } &  "
-          << "\\multicolumn {2}{c|} { {\\bf -1$\\sigma$} } \\\\"
+	  << "{\\bf Nominal}   &  "
+	  << "{\\bf BANFF tuned} &  "
+          << "\\multicolumn {2}{c|} { {\\bf BANFF tuned +1$\\sigma$} } &  "
+          << "\\multicolumn {2}{c|} { {\\bf BANFF tuned -1$\\sigma$} } \\\\"
           << endl;
      streamer << "\\hline" << endl;
   }
  
   string temp = "$N_{SK}$ (" + util::AsStringTex(s) + ")";
   streamer << setw(ncol1)  << setfill(' ') << temp
+       << endcolumn
+       << setw(ncolnev)  << setfill(' ') << setprecision(nprecisionnev) << nsk_n 
        << endcolumn
        << setw(ncolnev)  << setfill(' ') << setprecision(nprecisionnev) << nsk_0 
        << endcolumn
@@ -495,7 +580,7 @@ void test_systematic_error_propagation
        << endl;
 
   if(use_tex) {
-     streamer << "\\hline" << endl;
+     streamer << "\\hline \\hline" << endl;
   } else {
      streamer << setw(150)  << setfill('-') << " " << endl;
   }
@@ -509,6 +594,8 @@ void test_systematic_error_propagation
     component += "): ";
     component +=  util::AsStringTex(m);
     streamer << setw(ncol1)  << setfill(' ') << component
+	 << endcolumn
+	 << setw(ncolnev)  << setfill(' ') << setprecision(nprecisionnev) << nskmodes_n[m]
 	 << endcolumn
 	 << setw(ncolnev)  << setfill(' ') << setprecision(nprecisionnev) << nskmodes_0[m]
 	 << endcolumn
@@ -526,6 +613,8 @@ void test_systematic_error_propagation
       temp = component + " ($E_{r} <$ 0.4 GeV)";
       streamer << setw(ncol1)  << setfill(' ') << temp
            << endcolumn
+           << setw(ncolnev)  << setfill(' ') << setprecision(nprecisionnev) << nsknumuccqe_na
+           << endcolumn
            << setw(ncolnev)  << setfill(' ') << setprecision(nprecisionnev) << nsknumuccqe_0a
            << endcolumn
            << setw(ncolnev)  << setfill(' ') << setprecision(nprecisionnev) << nsknumuccqe_pa
@@ -540,6 +629,8 @@ void test_systematic_error_propagation
       temp = component + " (0.4 $\\leq E_{r} <$ 1.1 GeV)";
       streamer << setw(ncol1)  << setfill(' ') << temp
 	   << endcolumn
+           << setw(ncolnev)  << setfill(' ') << setprecision(nprecisionnev) << nsknumuccqe_nb
+           << endcolumn
            << setw(ncolnev)  << setfill(' ') << setprecision(nprecisionnev) << nsknumuccqe_0b
            << endcolumn
            << setw(ncolnev)  << setfill(' ') << setprecision(nprecisionnev) << nsknumuccqe_pb
@@ -553,6 +644,8 @@ void test_systematic_error_propagation
            << endl;
       temp = component + " ($E_{r} \\geq$ 1.1 GeV)";
       streamer << setw(ncol1)  << setfill(' ') << temp
+           << endcolumn
+           << setw(ncolnev)  << setfill(' ') << setprecision(nprecisionnev) << nsknumuccqe_nc
            << endcolumn
            << setw(ncolnev)  << setfill(' ') << setprecision(nprecisionnev) << nsknumuccqe_0c
            << endcolumn
@@ -574,6 +667,8 @@ void test_systematic_error_propagation
 	temp = component + " (" + bufl + " $\\leq E_{t} <$ " + bufu + "GeV)";
 	streamer << setw(ncol1)  << setfill(' ') << temp
 	   << endcolumn
+           << setw(ncolnev)  << setfill(' ') << setprecision(nprecisionnev) << nsknumuccqe_nt[itb]
+           << endcolumn
            << setw(ncolnev)  << setfill(' ') << setprecision(nprecisionnev) << nsknumuccqe_0t[itb]
            << endcolumn
            << setw(ncolnev)  << setfill(' ') << setprecision(nprecisionnev) << nsknumuccqe_pt[itb]
@@ -591,6 +686,8 @@ void test_systematic_error_propagation
       temp = component + " ($E_{r} <$ 0.4 GeV)";
       streamer << setw(ncol1)  << setfill(' ') << temp
            << endcolumn
+           << setw(ncolnev)  << setfill(' ') << setprecision(nprecisionnev) << nsknumubarccqe_na
+           << endcolumn
            << setw(ncolnev)  << setfill(' ') << setprecision(nprecisionnev) << nsknumubarccqe_0a
            << endcolumn
            << setw(ncolnev)  << setfill(' ') << setprecision(nprecisionnev) << nsknumubarccqe_pa
@@ -605,6 +702,8 @@ void test_systematic_error_propagation
       temp = component + " (0.4 $\\leq E_{r} <$ 1.1 GeV)";
       streamer << setw(ncol1)  << setfill(' ') << temp
            << endcolumn
+           << setw(ncolnev)  << setfill(' ') << setprecision(nprecisionnev) << nsknumubarccqe_nb
+           << endcolumn
            << setw(ncolnev)  << setfill(' ') << setprecision(nprecisionnev) << nsknumubarccqe_0b
            << endcolumn
            << setw(ncolnev)  << setfill(' ') << setprecision(nprecisionnev) << nsknumubarccqe_pb
@@ -618,6 +717,8 @@ void test_systematic_error_propagation
            << endl;
       temp = component + " ($E_{r} \\geq$ 1.1 GeV)";
       streamer << setw(ncol1)  << setfill(' ') << temp
+           << endcolumn
+           << setw(ncolnev)  << setfill(' ') << setprecision(nprecisionnev) << nsknumubarccqe_nc
            << endcolumn
            << setw(ncolnev)  << setfill(' ') << setprecision(nprecisionnev) << nsknumubarccqe_0c
            << endcolumn
@@ -636,6 +737,8 @@ void test_systematic_error_propagation
       temp = "$N_{SK}$ (" + util::AsStringTex(s) + "): $\\nu_{\\mu}$ CC all";
       streamer << setw(ncol1)  << setfill(' ') << temp
 	   << endcolumn
+	   << setw(ncolnev)  << setfill(' ') << setprecision(nprecisionnev) << nsknumucc_n
+	   << endcolumn
 	   << setw(ncolnev)  << setfill(' ') << setprecision(nprecisionnev) << nsknumucc_0
 	   << endcolumn
 	   << setw(ncolnev)  << setfill(' ') << setprecision(nprecisionnev) << nsknumucc_p
@@ -647,10 +750,14 @@ void test_systematic_error_propagation
 	   << setw(ncolfrc)  << setfill(' ') << setprecision(nprecisionpct) << frac_nsknumucc_m << pctsymbol 
 	   << endrow
 	   << endl;
+      if(use_tex)
+	streamer << "\\hline" << endl;
     }
     if (s == conv::kSKsFCFV1RingMuLike && m == conv::kSKmNuMuNCoth_e)) {
       temp = "$N_{SK}$ (" + util::AsStringTex(s) + "): $\\nu_{\\mu}$ NC all";
       streamer << setw(ncol1)  << setfill(' ') << temp
+	   << endcolumn
+	   << setw(ncolnev)  << setfill(' ') << setprecision(nprecisionnev) << nsknumunc_n
 	   << endcolumn
 	   << setw(ncolnev)  << setfill(' ') << setprecision(nprecisionnev) << nsknumunc_0
 	   << endcolumn
@@ -663,10 +770,14 @@ void test_systematic_error_propagation
 	   << setw(ncolfrc)  << setfill(' ') << setprecision(nprecisionpct) << frac_nsknumunc_m << pctsymbol 
 	   << endrow
 	   << endl;
+      if(use_tex)
+	streamer << "\\hline" << endl;
     }
     if ((s == conv::kSKsFCFV1RingMuLike && m == conv::kSKmNuMuBarCCoth_mu) || (s == conv::kSKsFCFV1RingMuLike && m == conv::kSKmNuMuBarCCoth_e)) {
       temp = "$N_{SK}$ (" + util::AsStringTex(s) + "): $\\bar{\\nu_{\\mu}}$ CC all";
       streamer << setw(ncol1)  << setfill(' ') << temp
+	   << endcolumn
+	   << setw(ncolnev)  << setfill(' ') << setprecision(nprecisionnev) << nsknumubarcc_n
 	   << endcolumn
 	   << setw(ncolnev)  << setfill(' ') << setprecision(nprecisionnev) << nsknumubarcc_0
 	   << endcolumn
@@ -679,10 +790,14 @@ void test_systematic_error_propagation
 	   << setw(ncolfrc)  << setfill(' ') << setprecision(nprecisionpct) << frac_nsknumubarcc_m << pctsymbol 
 	   << endrow
 	   << endl;
+      if(use_tex)
+	streamer << "\\hline" << endl;
     }
     if ((s == conv::kSKsFCFV1RingMuLike && m == conv::kSKmNuMuBarNCoth_e)) {
       temp = "$N_{SK}$ (" + util::AsStringTex(s) + "): $\\bar{\\nu_{\\mu}}$ NC all";
       streamer << setw(ncol1)  << setfill(' ') << temp
+	   << endcolumn
+	   << setw(ncolnev)  << setfill(' ') << setprecision(nprecisionnev) << nsknumubarnc_n
 	   << endcolumn
 	   << setw(ncolnev)  << setfill(' ') << setprecision(nprecisionnev) << nsknumubarnc_0
 	   << endcolumn
@@ -695,10 +810,14 @@ void test_systematic_error_propagation
 	   << setw(ncolfrc)  << setfill(' ') << setprecision(nprecisionpct) << frac_nsknumubarnc_m << pctsymbol 
 	   << endrow
 	   << endl;
+      if(use_tex)
+	streamer << "\\hline" << endl;
     }
     if ((s == conv::kSKsFCFV1RingMuLike && m == conv::kSKmNuECCoth_mu) || (s == conv::kSKsFCFV1RingMuLike && m == conv::kSKmNuECCoth_e)) {
       temp = "$N_{SK}$ (" + util::AsStringTex(s) + "): $\\nu_{e}$ CC all";
       streamer << setw(ncol1)  << setfill(' ') << temp
+	   << endcolumn
+	   << setw(ncolnev)  << setfill(' ') << setprecision(nprecisionnev) << nsknuecc_n
 	   << endcolumn
 	   << setw(ncolnev)  << setfill(' ') << setprecision(nprecisionnev) << nsknuecc_0
 	   << endcolumn
@@ -711,10 +830,14 @@ void test_systematic_error_propagation
 	   << setw(ncolfrc)  << setfill(' ') << setprecision(nprecisionpct) << frac_nsknuecc_m << pctsymbol 
 	   << endrow
 	   << endl;
+      if(use_tex)
+	streamer << "\\hline" << endl;
     }
     if ((s == conv::kSKsFCFV1RingMuLike && m == conv::kSKmNuENCoth_e)) {
       temp = "$N_{SK}$ (" + util::AsStringTex(s) + "): $\\nu_{e}$ NC all";
       streamer << setw(ncol1)  << setfill(' ') << temp
+	   << endcolumn
+	   << setw(ncolnev)  << setfill(' ') << setprecision(nprecisionnev) << nsknuenc_n
 	   << endcolumn
 	   << setw(ncolnev)  << setfill(' ') << setprecision(nprecisionnev) << nsknuenc_0
 	   << endcolumn
@@ -727,10 +850,14 @@ void test_systematic_error_propagation
 	   << setw(ncolfrc)  << setfill(' ') << setprecision(nprecisionpct) << frac_nsknuenc_m << pctsymbol 
 	   << endrow
 	   << endl;
+      if(use_tex)
+	streamer << "\\hline" << endl;
     }
     if ((s == conv::kSKsFCFV1RingMuLike && m == conv::kSKmNuEBarCCoth_mu) || (s == conv::kSKsFCFV1RingMuLike && m == conv::kSKmNuEBarCCoth_e)) {
       temp = "$N_{SK}$ (" + util::AsStringTex(s) + "): $\\bar{\\nu_{e}}$ CC all";
       streamer << setw(ncol1)  << setfill(' ') << temp
+	   << endcolumn
+	   << setw(ncolnev)  << setfill(' ') << setprecision(nprecisionnev) << nsknuebarcc_n
 	   << endcolumn
 	   << setw(ncolnev)  << setfill(' ') << setprecision(nprecisionnev) << nsknuebarcc_0
 	   << endcolumn
@@ -743,10 +870,14 @@ void test_systematic_error_propagation
 	   << setw(ncolfrc)  << setfill(' ') << setprecision(nprecisionpct) << frac_nsknuebarcc_m << pctsymbol 
 	   << endrow
 	   << endl;
+      if(use_tex)
+	streamer << "\\hline" << endl;
     }
     if ((s == conv::kSKsFCFV1RingMuLike && m == conv::kSKmNuEBarNCoth_e)) {
       temp = "$N_{SK}$ (" + util::AsStringTex(s) + "): $\\bar{\\nu_{e}}$ NC all";
       streamer << setw(ncol1)  << setfill(' ') << temp
+	   << endcolumn
+	   << setw(ncolnev)  << setfill(' ') << setprecision(nprecisionnev) << nsknuebarnc_n
 	   << endcolumn
 	   << setw(ncolnev)  << setfill(' ') << setprecision(nprecisionnev) << nsknuebarnc_0
 	   << endcolumn
@@ -759,10 +890,14 @@ void test_systematic_error_propagation
 	   << setw(ncolfrc)  << setfill(' ') << setprecision(nprecisionpct) << frac_nsknuebarnc_m << pctsymbol 
 	   << endrow
 	   << endl;
+      if(use_tex)
+	streamer << "\\hline" << endl;
     }
     if ((s == conv::kSKsFCFV1RingMuLike && m == conv::kSKmSigNuECCoth) || (s == conv::kSKsFCFV1RingMuLike && m == conv::kSKmSigNuECCoth)) {
       temp = "$N_{SK}$ (" + util::AsStringTex(s) + "): $\\nu_{e}$ (signal) CC all";
       streamer << setw(ncol1)  << setfill(' ') << temp
+	   << endcolumn
+	   << setw(ncolnev)  << setfill(' ') << setprecision(nprecisionnev) << nsknuesig_n
 	   << endcolumn
 	   << setw(ncolnev)  << setfill(' ') << setprecision(nprecisionnev) << nsknuesig_0
 	   << endcolumn
@@ -775,18 +910,17 @@ void test_systematic_error_propagation
 	   << setw(ncolfrc)  << setfill(' ') << setprecision(nprecisionpct) << frac_nsknuesig_m << pctsymbol 
 	   << endrow
 	   << endl;
+      if(use_tex)
+	streamer << "\\hline" << endl;
     }
   }//end loop over sk modes
 
-  if(use_tex) {
-     streamer << "\\hline" << endl;
-  } else {
+  if(!use_tex) {
      streamer << setw(150)  << setfill('-') << " " << endl;
   }
 
 
   if(use_tex) {
-     streamer << "\\hline" << endl;
      streamer << "\\end{tabular}" << endl;
      string systematicstr(systematic), hypothesisstr(hypothesis);
      size_t found;
@@ -800,7 +934,6 @@ void test_systematic_error_propagation
        hypothesisstr[found]='-';
        found=hypothesisstr.find_first_of("_",found+1);
      }
-     string banffstr = use_banff_bestfit ? "Using BANFF bestfit values." : "Using nominal MC (BANFF values set to 1)";
      streamer << "\\caption{ Effect of " << systematicstr << " for sample " << util::AsStringTex(s) 
 	      << " with oscillation hypothesis " <<  hypothesisstr
 	      << " using oscillation parameters: " 
@@ -810,8 +943,7 @@ void test_systematic_error_propagation
 	      << "; $\\delta_{CP} = $        " << input_deltacp
 	      << "; $\\Delta m^2_{12} = $    " << input_dm12sq
 	      << "; $\\Delta m^2_{23} = $    " << input_dm23sq
-	      << ". " << banffstr
-	      << " }" << endl;
+	      << ". }" << endl;
      string shortsamplestr = s==conv::kSKsFCFV1RingMuLike ? "1RmuT_" : "1ReT_";
      string spectralstrreco = show_sk_ccqe_spectral_info_ereco ? "_spectralreco" : "";
      string spectralstrtrue = show_sk_ccqe_spectral_info_ereco ? "_spectraltrue" : "";
