@@ -48,11 +48,11 @@ void test_sk_ereco_spectrum_nominal
   }
 
   conv::SuperkSample_t s = util::SKSampleFromString(sk_sample); // requested sample
-  int is = util::FindSampleSlot(s); // sample slot is SK spectrum arrays
   if(s == conv::kSKsUndefined) {
     cerr << "** Undefined sample!" << endl;
     return;
   }
+  int is = util::ArrIdx::Instance()->SuperkSampleIdx(s); // index of specified sample
 
   // Print options
   cout << "\n[Job inputs]" << endl;
@@ -104,7 +104,7 @@ void test_sk_ereco_spectrum_nominal
   for(int imstack = 0; imstack < conv::knm; imstack++) {
     conv::SuperkMode_t m = conv::kSKReactionModesOrderInStack[is][imstack];	
     if(m == conv::kSKmUndefined) continue;
-    int im = util::FindModeSlot(s,m);
+    int im = util::ArrIdx::Instance()->SuperkModeIdx(s,m);
     stack->Add(hErecoMode[im]);
   }
   stack->Draw("same");
