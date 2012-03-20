@@ -10,16 +10,17 @@
 
 void test_sk_ereco_spectrum_nominal
 (
-  const char * sk_sample          = "1Rmu",                         /* options: "1Rmu", "1Re" */
-  const char * hypothesis         = "3f_osc",                       /* options: "2f_numu_disap", "3f_osc" */
-  double       input_mixing12     = 0.86,                           /* */
-  double       input_mixing13     = 0.10,                           /* */
-  double       input_mixing23     = 0.00,                           /* */
-  double       input_deltacp      = 0.00,                           /* */
-  double       input_dm12sq       = 7.58E-5,                        /* */
-  double       input_dm23sq       = 2.32E-3,                        /* */
-  const char * config_file        = "analysis_configuration.xml",   /* */
-  bool         print_spectrum     = false                           /* */
+  const char * sk_sample            = "1Rmu",                         /* options: "1Rmu", "1Re" */
+  const char * hypothesis           = "3f_osc",                       /* options: "2f_numu_disap", "3f_osc" */
+  double       input_mixing12       = 0.86,                           /* */
+  double       input_mixing13       = 0.10,                           /* */
+  double       input_mixing23       = 0.00,                           /* */
+  double       input_deltacp        = 0.00,                           /* */
+  double       input_dm12sq         = 7.58E-5,                        /* */
+  double       input_dm23sq         = 2.32E-3,                        /* */
+  bool         disable_banff_tuning = false                           /* */
+  const char * config_file          = "analysis_configuration.xml",   /* */
+  bool         print_spectrum       = false                           /* */
 )
 {
   using namespace std;
@@ -58,6 +59,7 @@ void test_sk_ereco_spectrum_nominal
   cout << "\n[Job inputs]" << endl;
   cout << "- Reading analysis configuration from: " << config << endl;
   cout << "- Plotting spectra for sample: " << util::AsString(s) << endl;
+  cout << "- Disabling BANFF tuning: " << ((disable_banff_tuning) ? "YES" : "NO") << endl;
   cout << "- Physics hypothesis: " << ph << endl;
   cout << *Opt::Instance() << endl;
 
@@ -70,6 +72,12 @@ void test_sk_ereco_spectrum_nominal
   // Create & config superk spectrum predictor
   SuperkExpectation skexp;
   skexp.Read(config);
+
+  // Disable BANFF tuning if requested
+  if(disable_banff_tuning) {
+    cout << "- Performing special systematic parameter variation which cancels the effect of BANFF tuning..." << endl;
+    skexp.GetBANFF().RestoreNominalMC();
+  }
 
   // Generate prediction
   cout << "- Generating predictions..." << endl;
