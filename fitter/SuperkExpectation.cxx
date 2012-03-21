@@ -34,6 +34,7 @@
 #include "NuFlux.h"
 #include "NuXSec.h"
 #include "BANFF.h"
+#include "FSI.h"
 #include "Conventions.h"
 #include "Utilities.h"
 
@@ -296,6 +297,7 @@ void SuperkExpectation::PrintSystematicVariations(void) const
   fSuperkDetector -> PrintSystematicVariations();
   fBANFF          -> PrintSystematicVariations();
   fNuXSec         -> PrintSystematicVariations();
+  fFSI            -> PrintSystematicVariations();
 }
 //________________________________________________________________________________________
 bool SuperkExpectation::Read(string config_file)
@@ -313,6 +315,7 @@ bool SuperkExpectation::Read(string config_file)
   fBANFF          = new BANFF;
   fNuFlux         = new NuFlux; 
   fNuXSec         = new NuXSec; 
+  fFSI            = new FSI; 
   fSuperkDetector = new SuperkDetector; 
   fSuperkMC       = new SuperkMC;
 
@@ -322,6 +325,7 @@ bool SuperkExpectation::Read(string config_file)
   fSuperkMC -> TellMeAboutTheDetector   (fSuperkDetector);
   fSuperkMC -> TellMeAboutCrossSections (fNuXSec);
   fSuperkMC -> TellMeAboutTheFlux       (fNuFlux);
+  fSuperkMC -> TellMeAboutFSI           (fFSI);
 
   // Parse the input XML configuration file
   TXMLEngine* xml = new TXMLEngine;   
@@ -337,6 +341,7 @@ bool SuperkExpectation::Read(string config_file)
   if ( ! this->GetBANFF          () -> Read (xml, root_node) ) return false;
   if ( ! this->GetNuFlux         () -> Read (xml, root_node) ) return false;
   if ( ! this->GetNuXSec         () -> Read (xml, root_node) ) return false;
+  if ( ! this->GetFSI            () -> Read (xml, root_node) ) return false;
   if ( ! this->GetSuperkDetector () -> Read (xml, root_node) ) return false;
   if ( ! this->GetSuperkMC       () -> Read (xml, root_node) ) return false;
 
@@ -359,6 +364,7 @@ void SuperkExpectation::Init(void)
   fSuperkMC       = 0;
   fNuFlux         = 0;
   fNuXSec         = 0;
+  fFSI            = 0;
   fBANFF          = 0;
 
   for(int is=0; is<kns; is++) {
@@ -397,6 +403,7 @@ void SuperkExpectation::CleanUp(void)
   if (fNuFlux         ) delete fNuFlux; 
   if (fNuXSec         ) delete fNuXSec;
   if (fBANFF          ) delete fBANFF;
+  if (fFSI            ) delete fFSI;
 
   for(int is = 0; is < kns; is++) {
      if (fPredictErecoSpectrumTot[is]) delete fPredictErecoSpectrumTot[is];

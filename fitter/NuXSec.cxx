@@ -18,9 +18,7 @@
 //#define __show_banff_tuning_wght_mesg_info__
 //#define __show_banff_tuning_wght_mesg_debug__
 //#define __show_syst_var_wght_mesg_debug__
-#define __show_fsi_cholesky_mesg_info__
-#define __show_fsi_cholesky_mesg_debug__
-#define __show_fsi_tweak_mesg_debug__
+//#define __show_build_frac_template_mesg_info__
 
 #include <cassert>
 #include <cstdlib>
@@ -59,10 +57,6 @@ void NuXSec::Init(void)
 {
   fBANFF = 0;
 
-  fFSICurrentValues = 0;
-  fFSICovMtrx       = 0;
-  fFSICovMtrxChoL   = 0;
-
   for(int ispl = 0; ispl < knwspl; ispl++) {
      fXSecWghtSpl[ispl] = 0;
   }
@@ -77,10 +71,6 @@ void NuXSec::Init(void)
 //________________________________________________________________________________________
 void NuXSec::CleanUp(void)
 {
-  if ( fFSICurrentValues ) delete fFSICurrentValues;
-  if ( fFSICovMtrx       ) delete fFSICovMtrx;
-  if ( fFSICovMtrxChoL   ) delete fFSICovMtrxChoL;
-
   for(int ispl = 0; ispl < knwspl; ispl++) {
      if (fXSecWghtSpl[ispl]) delete fXSecWghtSpl[ispl];
   }
@@ -160,35 +150,6 @@ bool NuXSec::Read(TXMLEngine* xml, XMLNodePointer_t root_node)
        }//p
     }//m
   }//s
-
-/*
-  //
-  // Load info needed for handling FSI systematics
-  //
-
-  const int np = conv::kNumOfFSIParams;
-
-  // Get BANFF fit covariance matrix
-  fFSICovMtrx = util::XML2TMatrixD(xml,root_node,"xsec/fsi/covariance_matrix");
-  if(!fFSICovMtrx) {
-    cerr << "Exp/NuXSec >> No BANFF covariance matrix was found." << endl;
-    exit(1);
-  }
-#ifdef __show_init_mesg_info__
-  cout << "Exp/NuXSec >> Input FSI covariance matrix: " << endl;
-  util::PrintCompact(*fFSICovMtrx,7,4);
-#endif
-
-  // check cov matrix dimension against no
-  // TODO
-
-  // Create/init current FSI params
-  fFSICurrentValues = new TVectorD(np);
-  for(int ip = 0; ip < np; ip++) 
-  {
-     (*fFSICurrentValues)[ip] = 1.;
-  }
-*/
 
   //
   //
@@ -319,10 +280,14 @@ double NuXSec::SystWght(
 {
   double tot_wght = 1.;
 
+fBANFF->PrintSystematicVariations();
+
   for(int isyst = 0; isyst < kNumOfXSecSyst; isyst++) {
      PhysParamId_t p = kListOfXSecSyst[isyst];
+     cout << "Exp/NuXSec >> " << util::AsString(p) << endl;
      // Was tweaked?
      double dt = TMath::Abs(fBANFF->CurrentValue(p) - fBANFF->BestFitValue(p)); // only banff params for the time-being
+     cout << "Exp/NuXSec >> dt = " << dt << endl;
      if(dt < kASmallNum) continue;
      // Is the current systematic parameter applied to current sample/mode end energy bin?
      bool apply = this->ApplySyst(p,s,m,Ereco,Etrue);
@@ -398,7 +363,6 @@ double NuXSec::SystWght_1p(
   return wght;
 }
 //________________________________________________________________________________________
-
 double NuXSec::CurrentValue(PhysParamId_t p) const
 {
   return 0;
@@ -406,96 +370,6 @@ double NuXSec::CurrentValue(PhysParamId_t p) const
 //________________________________________________________________________________________
 void NuXSec::PrintSystematicVariations(void) const
 {
-  //TVectorD & fsi_current_values = *fFSICurrentValues;
-  //cout << "Exp/NuXSec >> FSI parameters: " << endl;
-  //util::PrintCompact(fsi_current_values,12,6,"FSI params");
-}
-//________________________________________________________________________________________
-
-//
-// FSI 
-//
-
-//________________________________________________________________________________________
-void NuXSec::TweakFSI(
-  bool       force_inputs, /* force the input params or generate random ones internally  */
-  TVectorD * input_vec     /* input vector of params - Set to 0 to reset to nominal ones */
-)
-{
-#ifdef __show_fsi_cholesky_mesg_debug__
-  cout << "Exp/NuXSec/FSI/Tweak >> Tweaking BANFF fit parameters" << endl;
-#endif
-
-  //
-  // If this is the first time this function is called, then run the Cholesky
-  // decomposition of the flux covariance matrix
-  //
-
-  if(fFSICovMtrxChoL == 0)
-  {
-#ifdef __show_fsi_cholesky_mesg_info__
-    cout << "Exp/NuXSec/FSI/Tweak >> "
-         << "Running Cholesky's decomposition method on the FSI covariance matrix." << endl;
-#endif
-    
-    TMatrixD cov(this->FSICovMatrix());
-#ifdef __show_fsi_cholesky_mesg_debug__
-    cout << "Exp/NuXSec/FSI/Tweak >> FSI covariance matrix: " << endl;
-    util::PrintCompact(cov,7,4);
-#endif
-
-    TMatrixD L = util::CholeskyDecomposition(cov);
-    fFSICovMtrxChoL = new TMatrixD(L);
-#ifdef __show_fsi_cholesky_mesg_debug__
-    cout << "Exp/NuXSec/FSI/Tweak >> Cholesky decomposition of FSI covariance matrix: " << endl;
-    util::PrintCompact(*fFSICovMtrxChoL,7,4);
-#endif
-  }
-
-  TVectorD & current_values = *fFSICurrentValues;
-
-  //
-  // Force input FSI parameters
-  //
-  if(force_inputs)
-  {
-     // Input vector is NULL.
-     // This resets the FSI params to their best-fit values.
-     if(input_vec==0) {
-#ifdef __show_fsi_tweak_mesg_debug__
-        cout << "Exp/NuXSec/FSI/Tweak >> Reset FSI params to nominal values." << endl;
-#endif
-        const int np = conv::kNumOfFSIParams;
-        for(int ip = 0; ip < np; ip++) {
-           current_values[ip] = 1.;
-        }
-        return;
-     }
-     else
-     {
-#ifdef __show_fsi_tweak_mesg_debug__
-        cout << "Exp/NuXSec/FSI/Tweak >> Forcing input BANFF parameters. " << endl;
-#endif
-        TVectorD & vec = *input_vec;
-        current_values = vec;
-        return;
-     }
-  }//force_inputs?
-
-  //
-  // If the tweaking dials were not forced, generate correlated tweaking dials
-  // using the Cholesky method
-  //
-  else
-  {   
-#ifdef __show_fsi_tweak_mesg_debug__
-     cout << "Exp/NuXSec/FSI/Tweak >> Generating random FSI params (correlated)! " << endl;
-#endif
-     TMatrixD & L = *fFSICovMtrxChoL; 
-     TVectorD vec = util::CholeskyGenerateCorrelatedParamVariations(L);
-     current_values = vec;
-     return;
-  }
 
 }
 //________________________________________________________________________________________
@@ -616,15 +490,15 @@ void NuXSec::BuildFracMCTemplates(
      if(s == kSKsUndefined) continue;
      for(int im = 0; im < knm; im++) {
        SuperkMode_t m = kSKReactionModes[is][im];
-       if(m == kSKmUndefined) continue;
- 
-        cout << "Exp/NuXSec >> Building MC template fractions for "
-             << "sample = " << util::AsString(s) 
-             << ", mode = " << util::AsString(m)
-             << ", template type = " << util::AsString(type)
-             << endl;
- 
-      const TH2D * mctempl = input_mctempl_array[is][im];
+       if(m == kSKmUndefined) continue; 
+#ifdef __show_build_frac_template_mesg_info__
+       cout << "Exp/NuXSec >> Building MC template fractions for "
+            << "sample = " << util::AsString(s) 
+            << ", mode = " << util::AsString(m)
+            << ", template type = " << util::AsString(type)
+            << endl;
+#endif
+       const TH2D * mctempl = input_mctempl_array[is][im];
        TH2D * mctempl_frac = 0;
        if      (type == kSKMCtNom) { mctempl_frac = fFracNom[is][im]; }
        else if (type == kSKMCtTun) { mctempl_frac = fFracTun[is][im]; }

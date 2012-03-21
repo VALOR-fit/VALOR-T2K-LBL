@@ -34,6 +34,7 @@
 
 #include "SuperkMC.h"
 #include "SuperkDetector.h"
+#include "FSI.h"
 #include "NuXSec.h"
 #include "NuFlux.h"
 #include "Utilities.h"
@@ -99,6 +100,7 @@ void SuperkMC::Init(void)
          
   fNuFlux              = 0;
   fNuXSec              = 0;  
+  fFSI                 = 0;  
   fSKDet               = 0;
 }
 //________________________________________________________________________________________
@@ -533,7 +535,6 @@ void SuperkMC::ApplySystematicsToTemplates_Multiplicative(void)
 {
 // All multiplicative systematics are handled in the following loop.
 //
-
 #ifdef __show_update_mesg_info__
   cout << "Exp/SKMC >> Applying multiplicative systematics" << endl;
 #endif
@@ -562,6 +563,7 @@ void SuperkMC::ApplySystematicsToTemplates_Multiplicative(void)
            double Etrue = mctempl_src->GetYaxis()->GetBinCenter(it);
            // get number of events in current bin of source MC template
            double nev = mctempl_src->GetBinContent(ir,it);
+           nev = TMath::Max(0.,nev);
 
            //
            // Get combined weight due to all multiplicative systematic variations.
@@ -580,15 +582,13 @@ void SuperkMC::ApplySystematicsToTemplates_Multiplicative(void)
            double flux_wght = fNuFlux->SuperkFluxSystWght(s,m,Etrue);
 
            // Plug-in BANFF & other xsec systematics 
-           double xsec_wght = fNuXSec->SystWght(s,m,Ereco,Etrue); // SLOW
+           double xsec_wght = fNuXSec->SystWght(s,m,Ereco,Etrue); 
 
-           //
-           // Other systematic - TODO
-           // ...
-           // ...
+           // Plug-in FSI weightts
+           double fsi_wght = fFSI->SystWght(s,m,Ereco,Etrue); 
 
            // Combined weight
-           double wght = skeff_wght * flux_wght * xsec_wght;
+           double wght = skeff_wght * flux_wght * xsec_wght * fsi_wght;
 
 #ifdef __show_syst_var_wght_mesg_debug__ 
            if( skeff_wght != 1. || 
@@ -602,6 +602,7 @@ void SuperkMC::ApplySystematicsToTemplates_Multiplicative(void)
                     << "SK eff = "  << skeff_wght
                     << ", Flux = "  << flux_wght
                     << ", XSec = "  << xsec_wght
+                    << ", FSI  = "  << fsi_wght
                     << " (total = " << wght << ")"
                     << endl;
            }

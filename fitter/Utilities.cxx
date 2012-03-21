@@ -16,6 +16,7 @@
 //#define __debug_level_1__
 //#define __debug_level_2__
 //#define __debug_level_3__
+//#define __show_arr_idx_mesg_debug__
 
 #include <cassert>
 #include <cstdlib>
@@ -2953,16 +2954,20 @@ void t2kana::util::ArrIdx::Init(void)
      SuperkSample_t s = kSKSamples[is];
      if(s == kSKsUndefined) continue;
      fSuperkSampleIdx [s] = is;
+#ifdef __show_arr_idx_mesg_debug__
      cout << "Util/ArrIdx >> Sample: " 
           << util::AsString(s)
           << " is at slot: " << fSuperkSampleIdx [s] << endl;
+#endif
      for(int im = 0; im < knm; im++) {
          SuperkMode_t m = kSKReactionModes[is][im];
          if(m == kSKmUndefined) continue;
          fSuperkModeIdx [s][m] = im;
+#ifdef __show_arr_idx_mesg_debug__
          cout << "Util/ArrIdx >>   Mode: " 
               << util::AsString(s) << "/" << util::AsString(m)
               << " is at slot: " << fSuperkModeIdx [s][m] << endl;
+#endif
      }
   } 
   // 

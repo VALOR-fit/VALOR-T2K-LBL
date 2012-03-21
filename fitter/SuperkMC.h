@@ -36,6 +36,7 @@ namespace t2kana {
 
 class NuFlux;
 class NuXSec;
+class FSI;
 class SuperkDetector;
 
 class SuperkMC: public TObject
@@ -71,6 +72,7 @@ public:
   // Hooks for obtaining necessary flux, cross-section and detector information
   void TellMeAboutTheFlux       (NuFlux *         flux ) { fNuFlux = flux; }
   void TellMeAboutCrossSections (NuXSec *         xsec ) { fNuXSec = xsec; }
+  void TellMeAboutFSI           (FSI *            fsi  ) { fFSI    = fsi;  }
   void TellMeAboutTheDetector   (SuperkDetector * skdet) { fSKDet  = skdet; }
 
   // Draw inputs:
@@ -140,8 +142,9 @@ private:
   int        fBrGenCode;                   ///< branch var for reading input MC mini-DST
       
   // utility objects for computing cross-section and flux weights
-  NuFlux *         fNuFlux;                ///< Neutrino flux analysis inputs
-  NuXSec *         fNuXSec;                ///< Neutrino cross section analysis inputs
+  NuFlux *         fNuFlux;                ///< Neutrino flux inputs
+  NuXSec *         fNuXSec;                ///< Neutrino cross-section inputs
+  FSI *            fFSI;                   ///< FSI inputs
   SuperkDetector * fSKDet;                 ///< SuperK detector efficiency error etc
 
   // utility objects for defining physics hypothesis (oscillations, decay, ...) & computing probabilities

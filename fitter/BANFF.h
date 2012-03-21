@@ -19,6 +19,7 @@
 
 #include <TObject.h>
 #include <TMatrixD.h>
+#include <TVectorD.h>
 #include <TMatrixTSym.h>
 #include <TXMLEngine.h>
 

@@ -3,7 +3,7 @@
    
 \class    t2kana::NuXSec
       
-\brief    Neutrino generator / cross section info used in the oscillation fit
+\brief    Neutrino cross-section info used in the oscillation fit
    
 \author   Costas Andreopoulos <costas.andreopoulos \at stfc.ac.uk>
           STFC, Rutherford Appleton Laboratory
@@ -18,8 +18,8 @@
 
 #include <TObject.h>
 #include <TXMLEngine.h>
-#include <TMatrixD.h>
-#include <TVectorD.h>
+//#include <TMatrixD.h>
+//#include <TVectorD.h>
 #include <TH2.h>
 #include <TSpline.h>
 
@@ -40,34 +40,22 @@ public:
   NuXSec();
  ~NuXSec();
 
-  //
-  // Calculate weights
-  //
-
-  // Reweight to best-fit value of input BANFF param
+  // Reweight to best-fit values of the BANFF cross-section related params
   double FinTuningWght(conv::SuperkSample_t s, conv::SuperkMode_t m, double Ereco, double Etrue) const;
 
-  // Calculate weight in response to systematic parameter variations.
+  // Calculate weight in response to systematic parameter variations of cross-section parameters
   // For the BANFF parameters, the weight is relative to the best-fit (tuned MC) parameter, not the nominal MC one
   double SystWght(conv::SuperkSample_t s, conv::SuperkMode_t m, double Ereco, double Etrue) const;
 
-  //
   // Tweak systematic parameters held in this object.
-  // Note, BANFF cross-section systematic parameters are tweaked via the BANFF object and they are 
+  // Note: BANFF cross-section systematic parameters are tweaked via the BANFF object and they are 
   // correlated with the flux systematic params.
-  //
-  void TweakFSI (bool force_inputs = false, TVectorD * input_vec = 0);
 
-  //
-  // Access data held by this object
-  //
+  // ...
+
 
   // Get current value of systematic params handled by this class
   double CurrentValue (conv::PhysParamId_t p) const;
-
-  // Get input FSI covariance matrix and its Cholesky decomposition
-  const TMatrixD & FSICovMatrix         (void) const { return *fFSICovMtrx;       }
-  const TMatrixD & FSICovMatrixCholesky (void) const { return *fFSICovMtrxChoL;   }
 
   // Get weight spline for each sample / mode / parameters / Ereco bin / Etrue bin
   TSpline3 * FindWghtSpline(conv::PhysParamId_t p, conv::SuperkSample_t s, conv::SuperkMode_t m, double Ereco, double Etrue) const;
@@ -75,22 +63,13 @@ public:
   // Print
   void PrintSystematicVariations (void) const;
 
-  //
-  // Configure
-  //
-
   // Read inputs from XML file
   bool Read (TXMLEngine* xml, XMLNodePointer_t root_node);
 
-  //
-  // Set interdepencies with other classes
-  //
-
-  // BANFF fit info
+  // Set BANFF fit info
   void TellMeAboutTheBANFFfit(BANFF * banff);
 
-
-
+  //
   void BuildFracMCTemplates(TH2D* input_mctempl_array[kns][knm], conv::SKMCTemplateType_t type);
 
    
@@ -99,7 +78,7 @@ private:
   void Init    (void);
   void CleanUp (void);
 
-  // Reweight to best-fit value of input BANFF param. Weight is calculated for a single (input) parameter.
+  // Reweight to best-fit value of input BANFF cross-section relared param. Weight is calculated for a single (input) parameter.
   // The calculated weight can not be applied directly to the MC template bins due to binning differences.
   // In FinTuningWght(), the weights for all systematic params are transformed --so that they can be applied 
   // to MC template bins-- and they are combined together.
@@ -125,13 +104,9 @@ private:
   //
 
   BANFF *     fBANFF;               ///< BANFF fit info
-  TVectorD *  fFSICurrentValues;    ///< Current values of FSI params
-  TMatrixD *  fFSICovMtrx;          ///< FSI covariance matrix
-  TMatrixD *  fFSICovMtrxChoL;      ///< Triangular matrix from Cholesky decomp. of FSI covar. matrix
   TSpline3 *  fXSecWghtSpl[knwspl]; ///< Weight splines. Index is function of sample, mode, systematic param, Ereco bin, Etrue bin
-
-  TH2D *      fFracNom[kns][knm];
-  TH2D *      fFracTun[kns][knm];
+  TH2D *      fFracNom[kns][knm];   ///<
+  TH2D *      fFracTun[kns][knm];   ///<
 
 ClassDef(NuXSec, 4);
 };

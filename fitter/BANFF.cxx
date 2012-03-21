@@ -46,7 +46,8 @@ using namespace t2kana::util;
 ClassImp(BANFF)
 
 //________________________________________________________________________________________
-BANFF::BANFF()
+BANFF::BANFF() :
+TObject()
 {
   this->Init();
 }
@@ -91,10 +92,11 @@ bool BANFF::Read(TXMLEngine* xml, XMLNodePointer_t root_node)
     exit(1);
   }
 
-  TVectorD & bestfit = *fBestFitValues;
-  if(bestfit.GetNoElements() != np) {
-    cerr << "Exp/BANFF >> No BANFF best-fit parameter vector has unexpected number of elements!" << endl;
-    cerr << "Exp/BANFF >> Expecting: " << np << " elements" << endl;
+  const TVectorD & bestfit = *fBestFitValues;
+  if(bestfit.GetNoElements() != np) 
+  {
+    cerr << "Exp/BANFF >> BANFF best-fit parameter vector has unexpected number of elements!" << endl;
+    cerr << "Exp/BANFF >> Expecting: " <<  np << " elements" << endl;
     cerr << "Exp/BANFF >> Found: " << bestfit.GetNoElements() << " elements" << endl;
     exit(1);
   }
@@ -113,10 +115,16 @@ bool BANFF::Read(TXMLEngine* xml, XMLNodePointer_t root_node)
     cerr << "Exp/BANFF >> No BANFF covariance matrix was found." << endl;
     exit(1);
   }
-
+  const TMatrixD & cov = *fCovMtrx;
+  if(cov.GetNrows() != np || cov.GetNcols() != np) 
+  {
+    cerr << "Exp/BANFF >> BANFF covariance matrix has unexpected size!" << endl;
+    cerr << "Exp/BANFF >> Expecting: " <<  np << " x " << np << " matrix" << endl;
+    cerr << "Exp/BANFF >> Found: " << cov.GetNrows() << " x " <<  cov.GetNcols() << " matrix" << endl;
+  }
 #ifdef __show_init_mesg_info__
   cout << "Exp/BANFF >> Input BANFF covariance matrix: " << endl; 
-  util::PrintCompact(*fCovMtrx,7,4);
+  util::PrintCompact(cov,7,4);
 #endif
   
 #ifdef __show_init_mesg_info__
@@ -207,6 +215,7 @@ void BANFF::Tweak(
         cout << "Exp/BANFF/Tweak >> Forcing input BANFF parameters. " << endl;
 #endif
         TVectorD & vec = *input_vec;
+        assert(vec.GetNoElements() == conv::kNumOfParamsInBANFFfit);
         current_values = vec;
         return;
      }
@@ -256,8 +265,10 @@ double BANFF::ChisqPenalty(void) const
 //________________________________________________________________________________________
 void BANFF::PrintSystematicVariations(void) const
 {
-  TVectorD & current_values = *fCurrentValues;
-  TVectorD & bestfit_values = *fBestFitValues;
+  assert(fCurrentValues->GetNoElements() == conv::kNumOfParamsInBANFFfit);
+
+  const TVectorD & current_values = *fCurrentValues;
+  const TVectorD & bestfit_values = *fBestFitValues;
 
   cout << "Exp/BANFF >> BANFF parameters: " << endl; 
   util::PrintCompact(current_values, bestfit_values, 12,6,"BANFF fit params");
