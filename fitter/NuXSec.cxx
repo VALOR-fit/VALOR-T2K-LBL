@@ -129,6 +129,21 @@ bool NuXSec::Read(TXMLEngine* xml, XMLNodePointer_t root_node)
                         << util::AsStringCompact(p) << "_"
                         << ir << "_" 
                         << it;
+
+                // Get index for current weight spline
+                int idx = this->WghtSplineIdx(p,s,m,Ereco,Etrue);     
+		if(idx == -2) {
+#ifdef __show_init_mesg_debug__
+                cout << "Exp/NuXSec >> Skipping spline due to invalid Etrue bin for Etrue: " 
+                     << Etrue << endl;
+#endif
+		  continue;
+		}
+		if(idx == -1) {
+		  cerr << "Exp/NuXSec >> WghtSplineIdx returned 1 for " << splname.str();
+		  exit(1);
+		}
+
 #ifdef __show_init_mesg_debug__
                 cout << "Exp/NuXSec >> Loading cross-section weight spline: " 
                      << splname.str() << endl;
@@ -140,15 +155,7 @@ bool NuXSec::Read(TXMLEngine* xml, XMLNodePointer_t root_node)
                         << splname.str() << endl;
                    exit(1); 
                 }
-                // Get index for current weight spline
-                int idx = this->WghtSplineIdx(p,s,m,Ereco,Etrue);     
-		if(idx == -2) {
-#ifdef __show_init_mesg_debug__
-                cout << "Exp/NuXSec >> Skipping spline due to invalid Etrue bin for Etrue: " 
-                     << Etrue << endl;
-#endif
-		  continue;
-		}
+
 #ifdef __show_init_mesg_debug__
                 cout << "Exp/NuXSec >> Storing cross-section weight spline at slot: " 
                      << idx << endl;
@@ -409,7 +416,7 @@ TSpline3 * NuXSec::FindWghtSpline(
    PhysParamId_t p, SuperkSample_t s, SuperkMode_t m, double Ereco, double Etrue) const
 {
   int idx = this->WghtSplineIdx(p,s,m,Ereco,Etrue);
-  if(idx == -1) 
+  if(idx == -1 || idx == -2) 
   {
     cerr << "Exp/NuXSec/FindWghtSpline >> Didn't find weight spline for "
          << "sample = "      << util::AsString(s) 
@@ -418,6 +425,7 @@ TSpline3 * NuXSec::FindWghtSpline(
          << ", Ereco = "     << Ereco << " GeV"
          << ", Etrue = "     << Etrue << " GeV!"
          << endl;
+    exit(1);
   }
 
   return fXSecWghtSpl[idx];
