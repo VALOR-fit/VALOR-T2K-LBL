@@ -131,7 +131,8 @@ bool BANFF::Read(TXMLEngine* xml, XMLNodePointer_t root_node)
 //________________________________________________________________________________________
 double BANFF::BestFitValue(PhysParamId_t p) const
 {
-  const TVectorD & bestfit = this->BestFitValues();
+// const TVectorD & bestfit = this->BestFitValues();
+  TVectorD & bestfit = *fBestFitValues;
   int idx = this->Param2Idx(p);
   return bestfit[idx];
 }
@@ -139,6 +140,8 @@ double BANFF::BestFitValue(PhysParamId_t p) const
 double BANFF::CurrentValue(PhysParamId_t p) const
 {
   const TVectorD & current_values = *fCurrentValues;
+  assert(current_values.GetNoElements() == conv::kNumOfParamsInBANFFfit);
+
   int idx = this->Param2Idx(p);
   return current_values[idx];
 }

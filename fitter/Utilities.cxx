@@ -852,8 +852,8 @@ string t2kana::util::AsStringCompact(PhysParamId_t p)
 string t2kana::util::AsString(t2kana::conv::SuperkSample_t s)
 {
   switch(s) {
-     case ( kSKsFCFV1RingMuLike ) : return "FCFV_1R_mu"; break;
-     case ( kSKsFCFV1RingELike  ) : return "FCFV_1R_e";  break;
+     case ( kSKsFCFV1RingMuLike ) : return "FCFV 1-ring mu-like"; break;
+     case ( kSKsFCFV1RingELike  ) : return "FCFV 1-ring e-like";  break;
      default                      : return "--";
   }
   return "";

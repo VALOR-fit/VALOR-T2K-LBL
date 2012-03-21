@@ -18,6 +18,7 @@
 //#define __show_banff_tuning_wght_mesg_info__
 //#define __show_banff_tuning_wght_mesg_debug__
 //#define __show_syst_var_wght_mesg_debug__
+//#define __show_syst_var_wght_mesg_debug_level2__ // even more verbose
 //#define __show_build_frac_template_mesg_info__
 
 #include <cassert>
@@ -264,13 +265,23 @@ double NuXSec::FinTuningWght_1p(
   if (wght != 1.)
   {
      cout << "Exp/NuXSec/FinTuningWght >> "
-          << "Sample = " << util::AsString(s) << " / Mode = " << util::AsString(m)
+          << "Sample/Mode = " << util::AsString(s) << " / " << util::AsString(m)
           << ", Ereco = " << Ereco << " GeV" 
           << ", Etrue = " << Etrue << " GeV => Weight [" 
           << util::AsString(p) << "] = " << wght 
           << endl;   
   }
 #endif
+
+  if(wght < 0 || wght > 1E+5) {
+     cout << "Exp/NuXSec/FinTuningWght >> Got an absurd weight! "
+          << "Sample/Mode = " << util::AsString(s) << " / " << util::AsString(m)
+          << ", Ereco = " << Ereco << " GeV" 
+          << ", Etrue = " << Etrue << " GeV => Weight [" 
+          << util::AsString(p) << "] = " << wght 
+          << endl;   
+     exit(1);
+  }
 
   return wght;
 }
@@ -282,10 +293,11 @@ double NuXSec::SystWght(
 
   for(int isyst = 0; isyst < kNumOfXSecSyst; isyst++) {
      PhysParamId_t p = kListOfXSecSyst[isyst];
-     cout << "Exp/NuXSec >> " << util::AsString(p) << endl;
+#ifdef __show_syst_var_wght_mesg_debug_level2__
+     cout << "Exp/NuXSec >> Applying systematic param: " << util::AsString(p) << endl;
+#endif
      // Was tweaked?
      double dt = TMath::Abs(fBANFF->CurrentValue(p) - fBANFF->BestFitValue(p)); // only banff params for the time-being
-     cout << "Exp/NuXSec >> dt = " << dt << endl;
      if(dt < kASmallNum) continue;
      // Is the current systematic parameter applied to current sample/mode end energy bin?
      bool apply = this->ApplySyst(p,s,m,Ereco,Etrue);
@@ -350,13 +362,23 @@ double NuXSec::SystWght_1p(
   if (wght != 1.)
   {
      cout << "Exp/NuXSec/SystWght >> "
-          << "Sample = " << util::AsString(s) << " / Mode = " << util::AsString(m)
+          << "Sample/Mode = " << util::AsString(s) << " / " << util::AsString(m)
           << ", Ereco = " << Ereco << " GeV" 
           << ", Etrue = " << Etrue << " GeV => Weight [" 
           << util::AsString(p) << "] = " << wght 
           << endl;   
   }
 #endif
+
+  if(wght < 0 || wght > 1E+5) {
+     cout << "Exp/NuXSec/SystWght >> Got an absurd weight! "
+          << "Sample/Mode = " << util::AsString(s) << " / " << util::AsString(m)
+          << ", Ereco = " << Ereco << " GeV" 
+          << ", Etrue = " << Etrue << " GeV => Weight [" 
+          << util::AsString(p) << "] = " << wght 
+          << endl;   
+     exit(1);
+  }
   
   return wght;
 }
