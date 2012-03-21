@@ -42,9 +42,13 @@ void test_cholesky_banff_output_covariance
   for (int ii =0 ; ii<n_iter ; ii++) {
     
     skexp->GetBANFF()->Tweak();
+
+    TVectorD curr_vals(nrows);
     
-    TVectorD curr_vals = skexp->GetBANFF()->CurrentValues();
-    
+    for (int jj=0; jj < nrows ; jj++) {
+      curr_vals[jj] = skexp->GetBANFF()->CurrentValue(conv::kNuisBANFF00+jj);
+    }
+
     for (int jj=0; jj<nrows; jj++) {
       for (int kk=0; kk<nrows; kk++) {
         (*cov_matr)(jj,kk) += (curr_vals(jj)-bestfit(jj)) * (curr_vals(kk)-bestfit(kk));
