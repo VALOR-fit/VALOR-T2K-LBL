@@ -18,7 +18,7 @@ void test_sk_ereco_spectrum_nominal
   double       input_deltacp        = 0.00,                           /* */
   double       input_dm12sq         = 7.58E-5,                        /* */
   double       input_dm23sq         = 2.32E-3,                        /* */
-  bool         disable_banff_tuning = false                           /* */
+  bool         disable_banff_tuning = false,                          /* */
   const char * config_file          = "analysis_configuration.xml",   /* */
   bool         print_spectrum       = false                           /* */
 )
