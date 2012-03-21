@@ -273,7 +273,7 @@ double NuXSec::FinTuningWght_1p(
   }
 #endif
 
-  if(wght < 0 || wght > 1E+5) {
+  if(wght < 0 || wght > conv::kMaxAllowedWght) {
      cout << "Exp/NuXSec/FinTuningWght >> Got an absurd weight! "
           << "Sample/Mode = " << util::AsString(s) << " / " << util::AsString(m)
           << ", Ereco = " << Ereco << " GeV" 
@@ -370,7 +370,7 @@ double NuXSec::SystWght_1p(
   }
 #endif
 
-  if(wght < 0 || wght > 1E+5) {
+  if(wght < 0 || wght > conv::kMaxAllowedWght) {
      cout << "Exp/NuXSec/SystWght >> Got an absurd weight! "
           << "Sample/Mode = " << util::AsString(s) << " / " << util::AsString(m)
           << ", Ereco = " << Ereco << " GeV" 
