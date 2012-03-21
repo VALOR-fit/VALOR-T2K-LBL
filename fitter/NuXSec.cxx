@@ -20,6 +20,7 @@
 //#define __show_syst_var_wght_mesg_debug__
 //#define __show_syst_var_wght_mesg_debug_level2__ // even more verbose
 //#define __show_build_frac_template_mesg_info__
+//#define __show_wght_spline_idx_mesg_debug__
 
 #include <cassert>
 #include <cstdlib>
@@ -119,7 +120,7 @@ bool NuXSec::Read(TXMLEngine* xml, XMLNodePointer_t root_node)
           for(int ir = 0; ir < kXsNErecoBins; ir++) {
              double Ereco = kXsErecoBinEdges[ir] + kOneMeV;
              for(int it = 0; it < kXsNEtrueBins; it++) {
-                double Etrue = kXsEtrueBinEdges[is][im][it] + kOneMeV;              
+                double Etrue = kXsEtrueBinEdges[is][im][it] + kOneMeV;
                 // Build spline name
                 ostringstream splname;
                 splname << "spl_" 
@@ -141,6 +142,13 @@ bool NuXSec::Read(TXMLEngine* xml, XMLNodePointer_t root_node)
                 }
                 // Get index for current weight spline
                 int idx = this->WghtSplineIdx(p,s,m,Ereco,Etrue);     
+		if(idx == -2) {
+#ifdef __show_init_mesg_debug__
+                cout << "Exp/NuXSec >> Skipping spline due to invalid Etrue bin for Etrue: " 
+                     << Etrue << endl;
+#endif
+		  continue;
+		}
 #ifdef __show_init_mesg_debug__
                 cout << "Exp/NuXSec >> Storing cross-section weight spline at slot: " 
                      << idx << endl;
@@ -155,8 +163,6 @@ bool NuXSec::Read(TXMLEngine* xml, XMLNodePointer_t root_node)
   //
   //
   //
-
-  cout << "Exp/NuXSec >> Booking fractional MC templates..." << endl;
 
   for(int is = 0; is < kns; is++) {
      SuperkSample_t s = kSKSamples[is];
@@ -431,12 +437,40 @@ int NuXSec::WghtSplineIdx(
 //
 
   int is = util::ArrIdx::Instance()->SuperkSampleIdx(s);
-  if(is == -1) return -1;
+  if(is == -1) {
+#ifdef __show_wght_spline_idx_mesg_debug__
+    cout << "Exp/NuXSec/WghtSplineIdx >> Didn't find Idx for sample "
+	 << util::AsString(s)
+	 << ". util::ArrIdx returned "
+	 << util::ArrIdx::Instance()->SuperkSampleIdx(s)
+	 << endl;
+#endif
+    return -1;
+  }
   int im = util::ArrIdx::Instance()->SuperkModeIdx(s,m);
-  if(im == -1) return -1;
+  if(im == -1) {
+#ifdef __show_wght_spline_idx_mesg_debug__
+    cout << "Exp/NuXSec/WghtSplineIdx >> Didn't find Idx for mode "
+	 << util::AsString(m)
+	 << " in sample "
+	 << util::AsString(s)
+	 << ". util::ArrIdx returned "
+	 << util::ArrIdx::Instance()->SuperkModeIdx(s,m)
+	 << endl;
+#endif
+    return -1;
+  }
   int ip = util::ArrIdx::Instance()->XSecSystIdx(p);
-  if(ip == -1) return -1;
-
+  if(ip == -1) {
+#ifdef __show_wght_spline_idx_mesg_debug__
+    cout << "Exp/NuXSec/WghtSplineIdx >> Didn't find Idx for xsec sysy "
+	 << util::AsString(p)
+	 << ". util::ArrIdx returned "
+	 << util::ArrIdx::Instance()->XSecSystIdx(p)
+	 << endl;
+#endif
+    return -1;
+  }
   int ireco = -1; 
   for (int i = 0; i < kXsNErecoBins; i++) {
     if(kXsErecoBinEdges[i]   <= Ereco && 
@@ -446,7 +480,13 @@ int NuXSec::WghtSplineIdx(
         break;
     }
   }
-  if(ireco == -1) return -1;
+  if(ireco == -1) {
+#ifdef __show_wght_spline_idx_mesg_debug__
+    cout << "Exp/NuXSec/WghtSplineIdx >> Didn't find ERecoBin for ereco value "
+	 << Ereco << endl;
+#endif
+    return -1;
+  }
 
   int itrue = -1; 
   for (int i = 0; i < kXsNEtrueBins; i++) {
@@ -457,7 +497,19 @@ int NuXSec::WghtSplineIdx(
         break;
     }
   }
-  if(itrue == -1) return -1;
+  if(itrue == -1) {
+#ifdef __show_wght_spline_idx_mesg_debug__
+    cout << "Exp/NuXSec/WghtSplineIdx >> Didn't find ETrueBin for etrue value "
+	 << Ereco 
+	 << " in mode "
+	 << util::AsString(m)
+	 << " in sample "
+	 << util::AsString(s)
+	 << endl;
+      }
+#endif
+    return -2;
+  }
 
   int idx = itrue 
           + ireco * kXsNEtrueBins 

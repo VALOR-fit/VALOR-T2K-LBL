@@ -242,7 +242,7 @@ void SuperkExpectation::TweakSystematic(string systematic, double twkdial, bool 
 
   // tweak an individual BANFF parameter (ignores correlations, debug)
   else
-  if(systematic.find("banff_") >= 0) {
+  if(systematic.find("banff_") != string::npos) {
      bool found = false;
      for (int ib = 0; ib < conv::kNumOfParamsInBANFFfit; ib++) {
 	if(systematic == Form("banff_%02i",ib)) {
