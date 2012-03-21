@@ -24,11 +24,6 @@
 #include <iostream>
 #include <iomanip>
 
-#include <TVectorD.h>
-#include <TVirtualPad.h>
-#include <TLegend.h>
-#include <TSystem.h>
-
 #include "BANFF.h" 
 #include "Conventions.h" 
 #include "Utilities.h" 
@@ -107,7 +102,7 @@ bool BANFF::Read(TXMLEngine* xml, XMLNodePointer_t root_node)
 #endif
 
   // init current values to best-fit values
-  fCurrentValues = new TVectorD(*fBestFitValues);
+  fCurrentValues = new TVectorD(bestfit);
 
   // Get BANFF fit covariance matrix
   fCovMtrx = util::XML2TMatrixD(xml,root_node,"banff/covariance_matrix");

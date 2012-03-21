@@ -280,8 +280,6 @@ double NuXSec::SystWght(
 {
   double tot_wght = 1.;
 
-fBANFF->PrintSystematicVariations();
-
   for(int isyst = 0; isyst < kNumOfXSecSyst; isyst++) {
      PhysParamId_t p = kListOfXSecSyst[isyst];
      cout << "Exp/NuXSec >> " << util::AsString(p) << endl;

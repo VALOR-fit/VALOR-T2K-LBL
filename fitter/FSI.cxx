@@ -56,14 +56,6 @@ void FSI::Init(void)
   fCurrValues    = 0;
   fCovMtrx       = 0;
   fCovMtrxChoL   = 0;
-
-/*
-  for(int is=0; is<kns; is++) {
-    for(int im=0; im<knm; im++) {
-      fFracTun [is][im] = 0;
-    }
-  }
-*/
 }
 //________________________________________________________________________________________
 void FSI::CleanUp(void)
@@ -71,13 +63,6 @@ void FSI::CleanUp(void)
   if ( fCurrValues    ) delete fCurrValues;
   if ( fCovMtrx       ) delete fCovMtrx;
   if ( fCovMtrxChoL   ) delete fCovMtrxChoL;
-/*
-  for(int is=0; is<kns; is++) {
-    for(int im=0; im<knm; im++) {
-      if (fFracTun [is][im]) delete fFracTun [is][im];
-    }
-  }
-*/
 }
 //________________________________________________________________________________________
 bool FSI::Read(TXMLEngine* xml, XMLNodePointer_t root_node)
@@ -110,31 +95,6 @@ bool FSI::Read(TXMLEngine* xml, XMLNodePointer_t root_node)
      (*fCurrValues)[ip] = 1.;
   }
 
-*/
-
-/*
-  //
-  //
-  //
-
-  cout << "Exp/FSI >> Booking fractional MC templates..." << endl;
-
-  for(int is = 0; is < kns; is++) {
-     SuperkSample_t s = kSKSamples[is];
-     if(s == kSKsUndefined) continue;
-     const int      n_ereco_bins    = util::NumErecoBins (s);
-     const double * ereco_bin_edges = util::ErecoBinEdges(s);
-     for(int im = 0; im < knm; im++) {
-       SuperkMode_t m = kSKReactionModes[is][im];
-       if(m == kSKmUndefined) continue;
-       fFracTun[is][im] = new TH2D(
-          Form("nsk_tun_%d_%d",is,im), util::AsString(m).c_str(),
-               n_ereco_bins, ereco_bin_edges, kNEtrueBins, kEtrueMin, kEtrueMax);
-       fFracTun[is][im]->SetDirectory(0);
-       fFracTun[is][im]->GetXaxis()->SetTitle("E_{reco} (GeV)");
-       fFracTun[is][im]->GetYaxis()->SetTitle("E_{true} (GeV)");
-     }
-  }
 */
 
 #ifdef __show_init_mesg_info__
