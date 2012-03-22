@@ -1263,6 +1263,60 @@ t2kana::conv::NuOscMixParam_t
   return kNuMixUndefined;
 }
 //____________________________________________________________________________
+t2kana::conv::PhysParamId_t
+  t2kana::util::PhysParamIdFromString(string sh) 
+{
+  if(sh == "mixing23") return kPhypMixing23;
+  if(sh == "mixing13") return kPhypMixing13;
+  if(sh == "mixing12") return kPhypMixing12;
+  if(sh == "deltacp") return kPhypDeltaCP;
+  if(sh == "dm23sq") return kPhypDm23sq;
+  if(sh == "dm12sq") return kPhypDm12sq;
+  if(sh == "alpha_decay") return kPhypAlphaDecay;
+  if(sh == "sinsq2theta_decay") return kPhypSinsq2ThetaDecay;
+  if(sh == "musq_decoh") return kPhypMusqDecoh;
+  if(sh == "sinsq2theta_decoh") return kPhypSinsq2ThetaDecoh;
+
+  if(sh == "sk_energy_scale") return kNuisSuperkEnergyScale;
+  if(sh == "sk_1Rmu_ccqe_other_eff") return kNuisSuperkEff1RmuCCQEoth;
+  if(sh == "sk_1Rmu_ccqe_ring_counting_eff_0") return kNuisSuperkEff1RmuCCQErc0u;
+  if(sh == "sk_1Rmu_ccqe_ring_counting_eff_1") return kNuisSuperkEff1RmuCCQErc1u;
+  if(sh == "sk_1Rmu_ccqe_ring_counting_eff_2") return kNuisSuperkEff1RmuCCQErc2u;
+  if(sh == "sk_1Rmu_ccnonqe_eff") return kNuisSuperkEff1RmuCCnonQE;
+  if(sh == "sk_1Rmu_nc_eff") return kNuisSuperkEff1RmuNC;
+  if(sh == "sk_1Rmu_nuecc_eff") return kNuisSuperkEff1RmuNueCC;
+
+  if(sh == "banff_00") return kNuisBANFF00;
+  if(sh == "banff_01") return kNuisBANFF01;
+  if(sh == "banff_02") return kNuisBANFF02;
+  if(sh == "banff_03") return kNuisBANFF03;
+  if(sh == "banff_04") return kNuisBANFF04;
+  if(sh == "banff_05") return kNuisBANFF05;
+  if(sh == "banff_06") return kNuisBANFF06;
+  if(sh == "banff_07") return kNuisBANFF07;
+  if(sh == "banff_08") return kNuisBANFF08;
+  if(sh == "banff_09") return kNuisBANFF09;
+  if(sh == "banff_10") return kNuisBANFF10;
+  if(sh == "banff_11") return kNuisBANFF11;
+  if(sh == "banff_12") return kNuisBANFF12;
+  if(sh == "banff_13") return kNuisBANFF13;
+  if(sh == "banff_14") return kNuisBANFF14;
+  if(sh == "banff_15") return kNuisBANFF15;
+  if(sh == "banff_16") return kNuisBANFF16;
+  if(sh == "banff_17") return kNuisBANFF17;
+  if(sh == "banff_18") return kNuisBANFF18;
+  if(sh == "banff_19") return kNuisBANFF19;
+  if(sh == "banff_20") return kNuisBANFF20;
+  if(sh == "banff_21") return kNuisBANFF21;
+  if(sh == "banff_22") return kNuisBANFF22;
+  if(sh == "banff_23") return kNuisBANFF23;
+  if(sh == "banff_24") return kNuisBANFF24;
+  if(sh == "banff_25") return kNuisBANFF25;
+
+  cout << sh << " not yet supported in util::PhysParamIdFromString()" << endl;
+  return kPhypUndefined;
+}
+//____________________________________________________________________________
 t2kana::conv::OscChannelId_t
   t2kana::util::GetOscChannel(int nu_start, int nu_end)
 {

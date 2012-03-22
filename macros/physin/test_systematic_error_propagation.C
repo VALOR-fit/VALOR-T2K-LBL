@@ -51,7 +51,8 @@ void test_systematic_error_propagation
   double       input_dm23sq               = 2.32E-3,                        /* */
   bool         use_tex                    = false,                          /* print-out results as a TeX table (for inclusion in tech. note)*/
   bool         show_sk_ccqe_spectral_info_ereco = false,                    /* */
-  bool         show_sk_ccqe_spectral_info_etrue = false,                    /* */
+  bool         show_sk_spectral_info_etrue_flux_binning = false,            /* */
+  bool         show_sk_spectral_info_etrue_norm_binning = false,            /* */
   const char * output_file                = "",                             /* */
   const char * config_file                = "analysis_configuration.xml"    /* */
 )
@@ -100,12 +101,17 @@ void test_systematic_error_propagation
   // Create & config superk spectrum predictor
   SuperkExpectation * skexp = new SuperkExpectation;
   skexp->Read(config);
-  
+
   // Get the EReco bin corresponding to the edges of SK CCQE efficiency systematic
-  Long64_t ErecoBin1NuMu    = skexp->CurrPredictedErecoSpectrum(s, conv::kSKmNuMuCCQE    )->FindBin(0.4-conv::kASmallNum);
-  Long64_t ErecoBin2NuMu    = skexp->CurrPredictedErecoSpectrum(s, conv::kSKmNuMuCCQE    )->FindBin(1.1-conv::kASmallNum);
-  Long64_t ErecoBin1NuMuBar = skexp->CurrPredictedErecoSpectrum(s, conv::kSKmNuMuBarCCQE )->FindBin(0.4-conv::kASmallNum);
-  Long64_t ErecoBin2NuMuBar = skexp->CurrPredictedErecoSpectrum(s, conv::kSKmNuMuBarCCQE )->FindBin(1.1-conv::kASmallNum);
+  Long64_t ErecoBin1NuMuCCQE    = skexp->CurrPredictedErecoSpectrum(s, conv::kSKmNuMuCCQE    )->FindBin(0.4-conv::kASmallNum);
+  Long64_t ErecoBin2NuMuCCQE    = skexp->CurrPredictedErecoSpectrum(s, conv::kSKmNuMuCCQE    )->FindBin(1.1-conv::kASmallNum);
+  Long64_t ErecoBin1NuMuBarCCQE = skexp->CurrPredictedErecoSpectrum(s, conv::kSKmNuMuBarCCQE )->FindBin(0.4-conv::kASmallNum);
+  Long64_t ErecoBin2NuMuBarCCQE = skexp->CurrPredictedErecoSpectrum(s, conv::kSKmNuMuBarCCQE )->FindBin(1.1-conv::kASmallNum);
+
+  // Get the ETrue bin edges for XSec normalisation systematics
+  Long64_t EtrueBin1CCQENorm = skexp->GetSuperkMC()->Template(s, conv::kSKmNuMuCCQE, conv::kSKMCtFin)->GetYaxis()->FindBin(conv::kXsEtrueBinEdges[util::ArrIdx::Instance()->SuperkSampleIdx(s)][util::ArrIdx::Instance()->SuperkModeIdx(s,conv::kSKmNuMuCCQE)][1.5-conv::kASmallNum]-conv::kASmallNum);
+  Long64_t EtrueBin2CCQENorm = skexp->GetSuperkMC()->Template(s, conv::kSKmNuMuCCQE, conv::kSKMCtFin)->GetYaxis()->FindBin(conv::kXsEtrueBinEdges[util::ArrIdx::Instance()->SuperkSampleIdx(s)][util::ArrIdx::Instance()->SuperkModeIdx(s,conv::kSKmNuMuCCQE)][3.5-conv::kASmallNum]-conv::kASmallNum);
+  Long64_t EtrueBin1CCResNorm = skexp->GetSuperkMC()->Template(s, conv::kSKmNuMuCCQE, conv::kSKMCtFin)->GetYaxis()->FindBin(conv::kXsEtrueBinEdges[util::ArrIdx::Instance()->SuperkSampleIdx(s)][util::ArrIdx::Instance()->SuperkModeIdx(s,conv::kSKmNuMuCCQE)][2.5-conv::kASmallNum]-conv::kASmallNum);
 
   // Get the ETrue bin edges for NuMuCCQE
   int NEtrueBinNuMu = conv::kXsNEtrueBins;
@@ -115,6 +121,46 @@ void test_systematic_error_propagation
     EtrueBinNuMu[itb] = skexp->GetSuperkMC()->Template(s, conv::kSKmNuMuCCQE, conv::kSKMCtFin)->GetYaxis()->FindBin(conv::kXsEtrueBinEdges[util::ArrIdx::Instance()->SuperkSampleIdx(s)][util::ArrIdx::Instance()->SuperkModeIdx(s,conv::kSKmNuMuCCQE)][itb]-conv::kASmallNum);
     if (EtrueBinNuMu[itb] > conv::kNEtrueBins) EtrueBinNuMu[itb] = conv::kNEtrueBins;
     if (EtrueBinNuMu[itb] < 1 && itb != 0) {NEtrueBinNuMu = itb-1; break;}
+  }
+
+  // Get the ETrue bin edges for NuMuBarCCQE
+  int NEtrueBinNuMuBar = conv::kXsNEtrueBins;
+  Long64_t EtrueBinNuMuBar[conv::kXsNEtrueBins+1];
+  for(int itb = 0; itb < conv::kXsNEtrueBins+1; itb++) {
+    EtrueBinNuMuBar[itb] = -1;
+    EtrueBinNuMuBar[itb] = skexp->GetSuperkMC()->Template(s, conv::kSKmNuMuBarCCQE, conv::kSKMCtFin)->GetYaxis()->FindBin(conv::kXsEtrueBinEdges[util::ArrIdx::Instance()->SuperkSampleIdx(s)][util::ArrIdx::Instance()->SuperkModeIdx(s,conv::kSKmNuMuBarCCQE)][itb]-conv::kASmallNum);
+    if (EtrueBinNuMuBar[itb] > conv::kNEtrueBins) EtrueBinNuMuBar[itb] = conv::kNEtrueBins;
+    if (EtrueBinNuMuBar[itb] < 1 && itb != 0) {NEtrueBinNuMuBar = itb-1; break;}
+  }
+
+  // Get the ETrue bin edges for NuECCQE
+  int NEtrueBinNuE = conv::kXsNEtrueBins;
+  Long64_t EtrueBinNuE[conv::kXsNEtrueBins+1];
+  for(int itb = 0; itb < conv::kXsNEtrueBins+1; itb++) {
+    EtrueBinNuE[itb] = -1;
+    EtrueBinNuE[itb] = skexp->GetSuperkMC()->Template(s, conv::kSKmNuECCQE, conv::kSKMCtFin)->GetYaxis()->FindBin(conv::kXsEtrueBinEdges[util::ArrIdx::Instance()->SuperkSampleIdx(s)][util::ArrIdx::Instance()->SuperkModeIdx(s,conv::kSKmNuECCQE)][itb]-conv::kASmallNum);
+    if (EtrueBinNuE[itb] > conv::kNEtrueBins) EtrueBinNuE[itb] = conv::kNEtrueBins;
+    if (EtrueBinNuE[itb] < 1 && itb != 0) {NEtrueBinNuE = itb-1; break;}
+  }
+
+  // Get the ETrue bin edges for NuEBarCCQE
+  int NEtrueBinNuEBar = conv::kXsNEtrueBins;
+  Long64_t EtrueBinNuEBar[conv::kXsNEtrueBins+1];
+  for(int itb = 0; itb < conv::kXsNEtrueBins+1; itb++) {
+    EtrueBinNuEBar[itb] = -1;
+    EtrueBinNuEBar[itb] = skexp->GetSuperkMC()->Template(s, conv::kSKmNuEBarCCQE, conv::kSKMCtFin)->GetYaxis()->FindBin(conv::kXsEtrueBinEdges[util::ArrIdx::Instance()->SuperkSampleIdx(s)][util::ArrIdx::Instance()->SuperkModeIdx(s,conv::kSKmNuEBarCCQE)][itb]-conv::kASmallNum);
+    if (EtrueBinNuEBar[itb] > conv::kNEtrueBins) EtrueBinNuEBar[itb] = conv::kNEtrueBins;
+    if (EtrueBinNuEBar[itb] < 1 && itb != 0) {NEtrueBinNuEBar = itb-1; break;}
+  }
+
+  // Get the ETrue bin edges for SigNuECCQE
+  int NEtrueBinSigNuE = conv::kXsNEtrueBins;
+  Long64_t EtrueBinSigNuE[conv::kXsNEtrueBins+1];
+  for(int itb = 0; itb < conv::kXsNEtrueBins+1; itb++) {
+    EtrueBinSigNuE[itb] = -1;
+    EtrueBinSigNuE[itb] = skexp->GetSuperkMC()->Template(s, conv::kSKmSigNuECCQE, conv::kSKMCtFin)->GetYaxis()->FindBin(conv::kXsEtrueBinEdges[util::ArrIdx::Instance()->SuperkSampleIdx(s)][util::ArrIdx::Instance()->SuperkModeIdx(s,conv::kSKmNuMuCCQE)][itb]-conv::kASmallNum);
+    if (EtrueBinSigNuE[itb] > conv::kNEtrueBins) EtrueBinSigNuE[itb] = conv::kNEtrueBins;
+    if (EtrueBinSigNuE[itb] < 1 && itb != 0) {NEtrueBinSigNuE = itb-1; break;}
   }
 
   // Is it a BANFF systematic? (if it is, 1 sigma errors are not definied)
@@ -189,19 +235,62 @@ void test_systematic_error_propagation
   } //loop over modes
 
   // spectral numu ccqe (ereco)
-  double nsknumuccqe_na        = skexp->CurrPredictedErecoSpectrum(s, conv::kSKmNuMuCCQE    )->Integral(1,                  ErecoBin1NuMu);
-  double nsknumuccqe_nb        = skexp->CurrPredictedErecoSpectrum(s, conv::kSKmNuMuCCQE    )->Integral(ErecoBin1NuMu+1,    ErecoBin2NuMu);
-  double nsknumuccqe_nc        = skexp->CurrPredictedErecoSpectrum(s, conv::kSKmNuMuCCQE    )->Integral(ErecoBin2NuMu+1,    conv::kNErecoBins1Rmu);
-  double nsknumubarccqe_na     = skexp->CurrPredictedErecoSpectrum(s, conv::kSKmNuMuBarCCQE )->Integral(1,                  ErecoBin1NuMuBar);
-  double nsknumubarccqe_nb     = skexp->CurrPredictedErecoSpectrum(s, conv::kSKmNuMuBarCCQE )->Integral(ErecoBin1NuMuBar+1, ErecoBin2NuMuBar);
-  double nsknumubarccqe_nc     = skexp->CurrPredictedErecoSpectrum(s, conv::kSKmNuMuBarCCQE )->Integral(ErecoBin2NuMuBar+1, conv::kNErecoBins1Rmu);
+  double nsknumuccqe_na        = skexp->CurrPredictedErecoSpectrum(s, conv::kSKmNuMuCCQE    )->Integral(1,                  ErecoBin1NuMuCCQE);
+  double nsknumuccqe_nb        = skexp->CurrPredictedErecoSpectrum(s, conv::kSKmNuMuCCQE    )->Integral(ErecoBin1NuMuCCQE+1,    ErecoBin2NuMuCCQE);
+  double nsknumuccqe_nc        = skexp->CurrPredictedErecoSpectrum(s, conv::kSKmNuMuCCQE    )->Integral(ErecoBin2NuMuCCQE+1,    conv::kNErecoBins1Rmu);
+  double nsknumubarccqe_na     = skexp->CurrPredictedErecoSpectrum(s, conv::kSKmNuMuBarCCQE )->Integral(1,                  ErecoBin1NuMuBarCCQE);
+  double nsknumubarccqe_nb     = skexp->CurrPredictedErecoSpectrum(s, conv::kSKmNuMuBarCCQE )->Integral(ErecoBin1NuMuBarCCQE+1, ErecoBin2NuMuBarCCQE);
+  double nsknumubarccqe_nc     = skexp->CurrPredictedErecoSpectrum(s, conv::kSKmNuMuBarCCQE )->Integral(ErecoBin2NuMuBarCCQE+1, conv::kNErecoBins1Rmu);
 
-  // spectral numu ccqe (etrue)
-  double nsknumuccqe_nt[conv::kXsNEtrueBins];
+  //spectral etrue (norm)
+  double nsknumuccqe_etrue_na = skexp->GetSuperkMC()->Template(s, conv::kSKmNuMuCCQE, conv::kSKMCtFin)->Integral(1, conv::kNErecoBins1Rmu, 1, EtrueBin1CCQENorm);
+  double nsknumuccqe_etrue_nb = skexp->GetSuperkMC()->Template(s, conv::kSKmNuMuCCQE, conv::kSKMCtFin)->Integral(1, conv::kNErecoBins1Rmu, EtrueBin1CCQENorm+1, EtrueBin2CCQENorm);
+  double nsknumuccqe_etrue_nc = skexp->GetSuperkMC()->Template(s, conv::kSKmNuMuCCQE, conv::kSKMCtFin)->Integral(1, conv::kNErecoBins1Rmu, EtrueBin2CCQENorm+1, conv::kNEtrueBins);
+  double nsknumuccres_etrue_na = skexp->GetSuperkMC()->Template(s, conv::kSKmNuMuCC1pi, conv::kSKMCtFin)->Integral(1, conv::kNErecoBins1Rmu, 1, EtrueBin1CCResNorm);
+  double nsknumuccres_etrue_nb = skexp->GetSuperkMC()->Template(s, conv::kSKmNuMuCC1pi, conv::kSKMCtFin)->Integral(1, conv::kNErecoBins1Rmu, EtrueBin1CCResNorm+1, conv::kNEtrueBins);
+  double nsknumubarccqe_etrue_na = skexp->GetSuperkMC()->Template(s, conv::kSKmNuMuBarCCQE, conv::kSKMCtFin)->Integral(1, conv::kNErecoBins1Rmu, 1, EtrueBin1CCQENorm);
+  double nsknumubarccqe_etrue_nb = skexp->GetSuperkMC()->Template(s, conv::kSKmNuMuBarCCQE, conv::kSKMCtFin)->Integral(1, conv::kNErecoBins1Rmu, EtrueBin1CCQENorm+1, EtrueBin2CCQENorm);
+  double nsknumubarccqe_etrue_nc = skexp->GetSuperkMC()->Template(s, conv::kSKmNuMuBarCCQE, conv::kSKMCtFin)->Integral(1, conv::kNErecoBins1Rmu, EtrueBin2CCQENorm+1, conv::kNEtrueBins);
+  double nsknumubarccres_etrue_na = skexp->GetSuperkMC()->Template(s, conv::kSKmNuMuBarCC1pi, conv::kSKMCtFin)->Integral(1, conv::kNErecoBins1Rmu, 1, EtrueBin1CCResNorm);
+  double nsknumubarccres_etrue_nb = skexp->GetSuperkMC()->Template(s, conv::kSKmNuMuBarCC1pi, conv::kSKMCtFin)->Integral(1, conv::kNErecoBins1Rmu, EtrueBin1CCResNorm+1, conv::kNEtrueBins);
+  double nsknueccqe_etrue_na = skexp->GetSuperkMC()->Template(s, conv::kSKmNuECCQE, conv::kSKMCtFin)->Integral(1, conv::kNErecoBins1Rmu, 1, EtrueBin1CCQENorm);
+  double nsknueccqe_etrue_nb = skexp->GetSuperkMC()->Template(s, conv::kSKmNuECCQE, conv::kSKMCtFin)->Integral(1, conv::kNErecoBins1Rmu, EtrueBin1CCQENorm+1, EtrueBin2CCQENorm);
+  double nsknueccqe_etrue_nc = skexp->GetSuperkMC()->Template(s, conv::kSKmNuECCQE, conv::kSKMCtFin)->Integral(1, conv::kNErecoBins1Rmu, EtrueBin2CCQENorm+1, conv::kNEtrueBins);
+  double nsknueccres_etrue_na = skexp->GetSuperkMC()->Template(s, conv::kSKmNuECC1pi, conv::kSKMCtFin)->Integral(1, conv::kNErecoBins1Rmu, 1, EtrueBin1CCResNorm);
+  double nsknueccres_etrue_nb = skexp->GetSuperkMC()->Template(s, conv::kSKmNuECC1pi, conv::kSKMCtFin)->Integral(1, conv::kNErecoBins1Rmu, EtrueBin1CCResNorm+1, conv::kNEtrueBins);
+  double nsknuebarccqe_etrue_na = skexp->GetSuperkMC()->Template(s, conv::kSKmNuEBarCCQE, conv::kSKMCtFin)->Integral(1, conv::kNErecoBins1Rmu, 1, EtrueBin1CCQENorm);
+  double nsknuebarccqe_etrue_nb = skexp->GetSuperkMC()->Template(s, conv::kSKmNuEBarCCQE, conv::kSKMCtFin)->Integral(1, conv::kNErecoBins1Rmu, EtrueBin1CCQENorm+1, EtrueBin2CCQENorm);
+  double nsknuebarccqe_etrue_nc = skexp->GetSuperkMC()->Template(s, conv::kSKmNuEBarCCQE, conv::kSKMCtFin)->Integral(1, conv::kNErecoBins1Rmu, EtrueBin2CCQENorm+1, conv::kNEtrueBins);
+  double nsknuebarccres_etrue_na = skexp->GetSuperkMC()->Template(s, conv::kSKmNuEBarCC1pi, conv::kSKMCtFin)->Integral(1, conv::kNErecoBins1Rmu, 1, EtrueBin1CCResNorm);
+  double nsknuebarccres_etrue_nb = skexp->GetSuperkMC()->Template(s, conv::kSKmNuEBarCC1pi, conv::kSKMCtFin)->Integral(1, conv::kNErecoBins1Rmu, EtrueBin1CCResNorm+1, conv::kNEtrueBins);
+  double nsksignueccqe_etrue_na = skexp->GetSuperkMC()->Template(s, conv::kSKmSigNuECCQE, conv::kSKMCtFin)->Integral(1, conv::kNErecoBins1Rmu, 1, EtrueBin1CCQENorm);
+  double nsksignueccqe_etrue_nb = skexp->GetSuperkMC()->Template(s, conv::kSKmSigNuECCQE, conv::kSKMCtFin)->Integral(1, conv::kNErecoBins1Rmu, EtrueBin1CCQENorm+1, EtrueBin2CCQENorm);
+  double nsksignueccqe_etrue_nc = skexp->GetSuperkMC()->Template(s, conv::kSKmSigNuECCQE, conv::kSKMCtFin)->Integral(1, conv::kNErecoBins1Rmu, EtrueBin2CCQENorm+1, conv::kNEtrueBins);
+  double nsksignueccres_etrue_na = skexp->GetSuperkMC()->Template(s, conv::kSKmSigNuECC1pi, conv::kSKMCtFin)->Integral(1, conv::kNErecoBins1Rmu, 1, EtrueBin1CCResNorm);
+  double nsksignueccres_etrue_nb = skexp->GetSuperkMC()->Template(s, conv::kSKmSigNuECC1pi, conv::kSKMCtFin)->Integral(1, conv::kNErecoBins1Rmu, EtrueBin1CCResNorm+1, conv::kNEtrueBins);
+  
+  // spectral etrue (flux binning)
+  double nsknumu_etrue_n[conv::kXsNEtrueBins], nsknumubar_etrue_n[conv::kXsNEtrueBins], nsknue_etrue_n[conv::kXsNEtrueBins], nsknuebar_etrue_n[conv::kXsNEtrueBins], nsksignue_etrue_n[conv::kXsNEtrueBins];
   for(int itb = 0; itb < NEtrueBinNuMu; itb++) {
-    nsknumuccqe_nt[itb] = 0.;
-    nsknumuccqe_nt[itb] = skexp->GetSuperkMC()->Template(s, conv::kSKmNuMuCCQE, conv::kSKMCtFin)->Integral(1, conv::kNErecoBins1Rmu, EtrueBinNuMu[itb]+1, EtrueBinNuMu[itb+1]);
-    cout << "bin edges are from " << skexp->GetSuperkMC()->Template(s, conv::kSKmNuMuCCQE, conv::kSKMCtFin)->GetYaxis()->GetBinLowEdge(EtrueBinNuMu[itb]+1) << " to " << skexp->GetSuperkMC()->Template(s, conv::kSKmNuMuCCQE, conv::kSKMCtFin)->GetYaxis()->GetBinUpEdge(EtrueBinNuMu[itb+1]) << endl;;
+    nsknumu_etrue_n[itb] = 0.;
+    nsknumu_etrue_n[itb] = skexp->GetSuperkMC()->Template(s, conv::kSKmNuMuCCQE, conv::kSKMCtFin)->Integral(1, conv::kNErecoBins1Rmu, EtrueBinNuMu[itb]+1, EtrueBinNuMu[itb+1]);
+    cout << "numu etrue bin edges are from " << skexp->GetSuperkMC()->Template(s, conv::kSKmNuMuCCQE, conv::kSKMCtFin)->GetYaxis()->GetBinLowEdge(EtrueBinNuMu[itb]+1) << " to " << skexp->GetSuperkMC()->Template(s, conv::kSKmNuMuCCQE, conv::kSKMCtFin)->GetYaxis()->GetBinUpEdge(EtrueBinNuMu[itb+1]) << endl;;
+  }
+  for(int itb = 0; itb < NEtrueBinNuMuBar; itb++) {
+    nsknumubar_etrue_n[itb] = 0.;
+    nsknumubar_etrue_n[itb] = skexp->GetSuperkMC()->Template(s, conv::kSKmNuMuBarCCQE, conv::kSKMCtFin)->Integral(1, conv::kNErecoBins1Rmu, EtrueBinNuMuBar[itb]+1, EtrueBinNuMuBar[itb+1]);
+  }
+  for(int itb = 0; itb < NEtrueBinNuE; itb++) {
+    nsknue_etrue_n[itb] = 0.;
+    nsknue_etrue_n[itb] = skexp->GetSuperkMC()->Template(s, conv::kSKmNuECCQE, conv::kSKMCtFin)->Integral(1, conv::kNErecoBins1Rmu, EtrueBinNuE[itb]+1, EtrueBinNuE[itb+1]);
+  }
+  for(int itb = 0; itb < NEtrueBinNuEBar; itb++) {
+    nsknuebar_etrue_n[itb] = 0.;
+    nsknuebar_etrue_n[itb] = skexp->GetSuperkMC()->Template(s, conv::kSKmNuEBarCCQE, conv::kSKMCtFin)->Integral(1, conv::kNErecoBins1Rmu, EtrueBinNuEBar[itb]+1, EtrueBinNuEBar[itb+1]);
+  }
+  for(int itb = 0; itb < NEtrueBinSigNuE; itb++) {
+    nsksignue_etrue_n[itb] = 0.;
+    nsksignue_etrue_n[itb] = skexp->GetSuperkMC()->Template(s, conv::kSKmSigNuECCQE, conv::kSKMCtFin)->Integral(1, conv::kNErecoBins1Rmu, EtrueBinSigNuE[itb]+1, EtrueBinSigNuE[itb+1]);
   }
 
   //
@@ -273,19 +362,61 @@ void test_systematic_error_propagation
   } //loop over modes
 
   // spectral numu ccqe (ereco)
-  double nsknumuccqe_0a        = skexp->CurrPredictedErecoSpectrum(s, conv::kSKmNuMuCCQE    )->Integral(1,                  ErecoBin1NuMu);
-  double nsknumuccqe_0b        = skexp->CurrPredictedErecoSpectrum(s, conv::kSKmNuMuCCQE    )->Integral(ErecoBin1NuMu+1,    ErecoBin2NuMu);
-  double nsknumuccqe_0c        = skexp->CurrPredictedErecoSpectrum(s, conv::kSKmNuMuCCQE    )->Integral(ErecoBin2NuMu+1,    conv::kNErecoBins1Rmu);
-  double nsknumubarccqe_0a     = skexp->CurrPredictedErecoSpectrum(s, conv::kSKmNuMuBarCCQE )->Integral(1,                  ErecoBin1NuMuBar);
-  double nsknumubarccqe_0b     = skexp->CurrPredictedErecoSpectrum(s, conv::kSKmNuMuBarCCQE )->Integral(ErecoBin1NuMuBar+1, ErecoBin2NuMuBar);
-  double nsknumubarccqe_0c     = skexp->CurrPredictedErecoSpectrum(s, conv::kSKmNuMuBarCCQE )->Integral(ErecoBin2NuMuBar+1, conv::kNErecoBins1Rmu);
+  double nsknumuccqe_0a        = skexp->CurrPredictedErecoSpectrum(s, conv::kSKmNuMuCCQE    )->Integral(1,                  ErecoBin1NuMuCCQE);
+  double nsknumuccqe_0b        = skexp->CurrPredictedErecoSpectrum(s, conv::kSKmNuMuCCQE    )->Integral(ErecoBin1NuMuCCQE+1,    ErecoBin2NuMuCCQE);
+  double nsknumuccqe_0c        = skexp->CurrPredictedErecoSpectrum(s, conv::kSKmNuMuCCQE    )->Integral(ErecoBin2NuMuCCQE+1,    conv::kNErecoBins1Rmu);
+  double nsknumubarccqe_0a     = skexp->CurrPredictedErecoSpectrum(s, conv::kSKmNuMuBarCCQE )->Integral(1,                  ErecoBin1NuMuBarCCQE);
+  double nsknumubarccqe_0b     = skexp->CurrPredictedErecoSpectrum(s, conv::kSKmNuMuBarCCQE )->Integral(ErecoBin1NuMuBarCCQE+1, ErecoBin2NuMuBarCCQE);
+  double nsknumubarccqe_0c     = skexp->CurrPredictedErecoSpectrum(s, conv::kSKmNuMuBarCCQE )->Integral(ErecoBin2NuMuBarCCQE+1, conv::kNErecoBins1Rmu);
 
-  // spectral numu ccqe (etrue)
-  double nsknumuccqe_0t[conv::kXsNEtrueBins];
+  //spectral etrue (norm)
+  double nsknumuccqe_etrue_0a = skexp->GetSuperkMC()->Template(s, conv::kSKmNuMuCCQE, conv::kSKMCtFin)->Integral(1, conv::kNErecoBins1Rmu, 1, EtrueBin1CCQENorm);
+  double nsknumuccqe_etrue_0b = skexp->GetSuperkMC()->Template(s, conv::kSKmNuMuCCQE, conv::kSKMCtFin)->Integral(1, conv::kNErecoBins1Rmu, EtrueBin1CCQENorm+1, EtrueBin2CCQENorm);
+  double nsknumuccqe_etrue_0c = skexp->GetSuperkMC()->Template(s, conv::kSKmNuMuCCQE, conv::kSKMCtFin)->Integral(1, conv::kNErecoBins1Rmu, EtrueBin2CCQENorm+1, conv::kNEtrueBins);
+  double nsknumuccres_etrue_0a = skexp->GetSuperkMC()->Template(s, conv::kSKmNuMuCC1pi, conv::kSKMCtFin)->Integral(1, conv::kNErecoBins1Rmu, 1, EtrueBin1CCResNorm);
+  double nsknumuccres_etrue_0b = skexp->GetSuperkMC()->Template(s, conv::kSKmNuMuCC1pi, conv::kSKMCtFin)->Integral(1, conv::kNErecoBins1Rmu, EtrueBin1CCResNorm+1, conv::kNEtrueBins);
+  double nsknumubarccqe_etrue_0a = skexp->GetSuperkMC()->Template(s, conv::kSKmNuMuBarCCQE, conv::kSKMCtFin)->Integral(1, conv::kNErecoBins1Rmu, 1, EtrueBin1CCQENorm);
+  double nsknumubarccqe_etrue_0b = skexp->GetSuperkMC()->Template(s, conv::kSKmNuMuBarCCQE, conv::kSKMCtFin)->Integral(1, conv::kNErecoBins1Rmu, EtrueBin1CCQENorm+1, EtrueBin2CCQENorm);
+  double nsknumubarccqe_etrue_0c = skexp->GetSuperkMC()->Template(s, conv::kSKmNuMuBarCCQE, conv::kSKMCtFin)->Integral(1, conv::kNErecoBins1Rmu, EtrueBin2CCQENorm+1, conv::kNEtrueBins);
+  double nsknumubarccres_etrue_0a = skexp->GetSuperkMC()->Template(s, conv::kSKmNuMuBarCC1pi, conv::kSKMCtFin)->Integral(1, conv::kNErecoBins1Rmu, 1, EtrueBin1CCResNorm);
+  double nsknumubarccres_etrue_0b = skexp->GetSuperkMC()->Template(s, conv::kSKmNuMuBarCC1pi, conv::kSKMCtFin)->Integral(1, conv::kNErecoBins1Rmu, EtrueBin1CCResNorm+1, conv::kNEtrueBins);
+  double nsknueccqe_etrue_0a = skexp->GetSuperkMC()->Template(s, conv::kSKmNuECCQE, conv::kSKMCtFin)->Integral(1, conv::kNErecoBins1Rmu, 1, EtrueBin1CCQENorm);
+  double nsknueccqe_etrue_0b = skexp->GetSuperkMC()->Template(s, conv::kSKmNuECCQE, conv::kSKMCtFin)->Integral(1, conv::kNErecoBins1Rmu, EtrueBin1CCQENorm+1, EtrueBin2CCQENorm);
+  double nsknueccqe_etrue_0c = skexp->GetSuperkMC()->Template(s, conv::kSKmNuECCQE, conv::kSKMCtFin)->Integral(1, conv::kNErecoBins1Rmu, EtrueBin2CCQENorm+1, conv::kNEtrueBins);
+  double nsknueccres_etrue_0a = skexp->GetSuperkMC()->Template(s, conv::kSKmNuECC1pi, conv::kSKMCtFin)->Integral(1, conv::kNErecoBins1Rmu, 1, EtrueBin1CCResNorm);
+  double nsknueccres_etrue_0b = skexp->GetSuperkMC()->Template(s, conv::kSKmNuECC1pi, conv::kSKMCtFin)->Integral(1, conv::kNErecoBins1Rmu, EtrueBin1CCResNorm+1, conv::kNEtrueBins);
+  double nsknuebarccqe_etrue_0a = skexp->GetSuperkMC()->Template(s, conv::kSKmNuEBarCCQE, conv::kSKMCtFin)->Integral(1, conv::kNErecoBins1Rmu, 1, EtrueBin1CCQENorm);
+  double nsknuebarccqe_etrue_0b = skexp->GetSuperkMC()->Template(s, conv::kSKmNuEBarCCQE, conv::kSKMCtFin)->Integral(1, conv::kNErecoBins1Rmu, EtrueBin1CCQENorm+1, EtrueBin2CCQENorm);
+  double nsknuebarccqe_etrue_0c = skexp->GetSuperkMC()->Template(s, conv::kSKmNuEBarCCQE, conv::kSKMCtFin)->Integral(1, conv::kNErecoBins1Rmu, EtrueBin2CCQENorm+1, conv::kNEtrueBins);
+  double nsknuebarccres_etrue_0a = skexp->GetSuperkMC()->Template(s, conv::kSKmNuEBarCC1pi, conv::kSKMCtFin)->Integral(1, conv::kNErecoBins1Rmu, 1, EtrueBin1CCResNorm);
+  double nsknuebarccres_etrue_0b = skexp->GetSuperkMC()->Template(s, conv::kSKmNuEBarCC1pi, conv::kSKMCtFin)->Integral(1, conv::kNErecoBins1Rmu, EtrueBin1CCResNorm+1, conv::kNEtrueBins);
+  double nsksignueccqe_etrue_0a = skexp->GetSuperkMC()->Template(s, conv::kSKmSigNuECCQE, conv::kSKMCtFin)->Integral(1, conv::kNErecoBins1Rmu, 1, EtrueBin1CCQENorm);
+  double nsksignueccqe_etrue_0b = skexp->GetSuperkMC()->Template(s, conv::kSKmSigNuECCQE, conv::kSKMCtFin)->Integral(1, conv::kNErecoBins1Rmu, EtrueBin1CCQENorm+1, EtrueBin2CCQENorm);
+  double nsksignueccqe_etrue_0c = skexp->GetSuperkMC()->Template(s, conv::kSKmSigNuECCQE, conv::kSKMCtFin)->Integral(1, conv::kNErecoBins1Rmu, EtrueBin2CCQENorm+1, conv::kNEtrueBins);
+  double nsksignueccres_etrue_0a = skexp->GetSuperkMC()->Template(s, conv::kSKmSigNuECC1pi, conv::kSKMCtFin)->Integral(1, conv::kNErecoBins1Rmu, 1, EtrueBin1CCResNorm);
+  double nsksignueccres_etrue_0b = skexp->GetSuperkMC()->Template(s, conv::kSKmSigNuECC1pi, conv::kSKMCtFin)->Integral(1, conv::kNErecoBins1Rmu, EtrueBin1CCResNorm+1, conv::kNEtrueBins);
+  
+  // spectral etrue (flux binning)
+  double nsknumu_etrue_0[conv::kXsNEtrueBins], nsknumubar_etrue_0[conv::kXsNEtrueBins], nsknue_etrue_0[conv::kXsNEtrueBins], nsknuebar_etrue_0[conv::kXsNEtrueBins], nsksignue_etrue_0[conv::kXsNEtrueBins];
   for(int itb = 0; itb < NEtrueBinNuMu; itb++) {
-    nsknumuccqe_0t[itb] = 0.;
-    nsknumuccqe_0t[itb] = skexp->GetSuperkMC()->Template(s, conv::kSKmNuMuCCQE, conv::kSKMCtFin)->Integral(1, conv::kNErecoBins1Rmu, EtrueBinNuMu[itb]+1, EtrueBinNuMu[itb+1]);
-    cout << "bin edges are from " << skexp->GetSuperkMC()->Template(s, conv::kSKmNuMuCCQE, conv::kSKMCtFin)->GetYaxis()->GetBinLowEdge(EtrueBinNuMu[itb]+1) << " to " << skexp->GetSuperkMC()->Template(s, conv::kSKmNuMuCCQE, conv::kSKMCtFin)->GetYaxis()->GetBinUpEdge(EtrueBinNuMu[itb+1]) << endl;;
+    nsknumu_etrue_0[itb] = 0.;
+    nsknumu_etrue_0[itb] = skexp->GetSuperkMC()->Template(s, conv::kSKmNuMuCCQE, conv::kSKMCtFin)->Integral(1, conv::kNErecoBins1Rmu, EtrueBinNuMu[itb]+1, EtrueBinNuMu[itb+1]);
+  }
+  for(int itb = 0; itb < NEtrueBinNuMuBar; itb++) {
+    nsknumubar_etrue_0[itb] = 0.;
+    nsknumubar_etrue_0[itb] = skexp->GetSuperkMC()->Template(s, conv::kSKmNuMuBarCCQE, conv::kSKMCtFin)->Integral(1, conv::kNErecoBins1Rmu, EtrueBinNuMuBar[itb]+1, EtrueBinNuMuBar[itb+1]);
+  }
+  for(int itb = 0; itb < NEtrueBinNuE; itb++) {
+    nsknue_etrue_0[itb] = 0.;
+    nsknue_etrue_0[itb] = skexp->GetSuperkMC()->Template(s, conv::kSKmNuECCQE, conv::kSKMCtFin)->Integral(1, conv::kNErecoBins1Rmu, EtrueBinNuE[itb]+1, EtrueBinNuE[itb+1]);
+  }
+  for(int itb = 0; itb < NEtrueBinNuEBar; itb++) {
+    nsknuebar_etrue_0[itb] = 0.;
+    nsknuebar_etrue_0[itb] = skexp->GetSuperkMC()->Template(s, conv::kSKmNuEBarCCQE, conv::kSKMCtFin)->Integral(1, conv::kNErecoBins1Rmu, EtrueBinNuEBar[itb]+1, EtrueBinNuEBar[itb+1]);
+  }
+  for(int itb = 0; itb < NEtrueBinSigNuE; itb++) {
+    nsksignue_etrue_0[itb] = 0.;
+    nsksignue_etrue_0[itb] = skexp->GetSuperkMC()->Template(s, conv::kSKmSigNuECCQE, conv::kSKMCtFin)->Integral(1, conv::kNErecoBins1Rmu, EtrueBinSigNuE[itb]+1, EtrueBinSigNuE[itb+1]);
   }
 
   //
@@ -293,7 +424,7 @@ void test_systematic_error_propagation
   //
   
   if(sys_is_banff) {
-    skexp->TweakSystematic(systematic,+2);
+    skexp->TweakSystematic(systematic, skexp->GetBANFF()->BestFitValue(util::PhysParamIdFromString(systematic)) * 2);
     skexp->GetBANFF()->PrintSystematicVariations();
   }
   else
@@ -359,18 +490,61 @@ void test_systematic_error_propagation
   } //loop over modes
 
   // spectral numu ccqe (ereco)
-  double nsknumuccqe_pa        = skexp->CurrPredictedErecoSpectrum(s, conv::kSKmNuMuCCQE    )->Integral(1,                  ErecoBin1NuMu);
-  double nsknumuccqe_pb        = skexp->CurrPredictedErecoSpectrum(s, conv::kSKmNuMuCCQE    )->Integral(ErecoBin1NuMu+1,    ErecoBin2NuMu);
-  double nsknumuccqe_pc        = skexp->CurrPredictedErecoSpectrum(s, conv::kSKmNuMuCCQE    )->Integral(ErecoBin2NuMu+1,    conv::kNErecoBins1Rmu);
-  double nsknumubarccqe_pa     = skexp->CurrPredictedErecoSpectrum(s, conv::kSKmNuMuBarCCQE )->Integral(1,                  ErecoBin1NuMuBar);
-  double nsknumubarccqe_pb     = skexp->CurrPredictedErecoSpectrum(s, conv::kSKmNuMuBarCCQE )->Integral(ErecoBin1NuMuBar+1, ErecoBin2NuMuBar);
-  double nsknumubarccqe_pc     = skexp->CurrPredictedErecoSpectrum(s, conv::kSKmNuMuBarCCQE )->Integral(ErecoBin2NuMuBar+1, conv::kNErecoBins1Rmu);
+  double nsknumuccqe_pa        = skexp->CurrPredictedErecoSpectrum(s, conv::kSKmNuMuCCQE    )->Integral(1,                  ErecoBin1NuMuCCQE);
+  double nsknumuccqe_pb        = skexp->CurrPredictedErecoSpectrum(s, conv::kSKmNuMuCCQE    )->Integral(ErecoBin1NuMuCCQE+1,    ErecoBin2NuMuCCQE);
+  double nsknumuccqe_pc        = skexp->CurrPredictedErecoSpectrum(s, conv::kSKmNuMuCCQE    )->Integral(ErecoBin2NuMuCCQE+1,    conv::kNErecoBins1Rmu);
+  double nsknumubarccqe_pa     = skexp->CurrPredictedErecoSpectrum(s, conv::kSKmNuMuBarCCQE )->Integral(1,                  ErecoBin1NuMuBarCCQE);
+  double nsknumubarccqe_pb     = skexp->CurrPredictedErecoSpectrum(s, conv::kSKmNuMuBarCCQE )->Integral(ErecoBin1NuMuBarCCQE+1, ErecoBin2NuMuBarCCQE);
+  double nsknumubarccqe_pc     = skexp->CurrPredictedErecoSpectrum(s, conv::kSKmNuMuBarCCQE )->Integral(ErecoBin2NuMuBarCCQE+1, conv::kNErecoBins1Rmu);
 
-  // spectral numu ccqe (etrue)
-  double nsknumuccqe_pt[conv::kXsNEtrueBins];
+  //spectral etrue (norm)
+  double nsknumuccqe_etrue_pa = skexp->GetSuperkMC()->Template(s, conv::kSKmNuMuCCQE, conv::kSKMCtFin)->Integral(1, conv::kNErecoBins1Rmu, 1, EtrueBin1CCQENorm);
+  double nsknumuccqe_etrue_pb = skexp->GetSuperkMC()->Template(s, conv::kSKmNuMuCCQE, conv::kSKMCtFin)->Integral(1, conv::kNErecoBins1Rmu, EtrueBin1CCQENorm+1, EtrueBin2CCQENorm);
+  double nsknumuccqe_etrue_pc = skexp->GetSuperkMC()->Template(s, conv::kSKmNuMuCCQE, conv::kSKMCtFin)->Integral(1, conv::kNErecoBins1Rmu, EtrueBin2CCQENorm+1, conv::kNEtrueBins);
+  double nsknumuccres_etrue_pa = skexp->GetSuperkMC()->Template(s, conv::kSKmNuMuCC1pi, conv::kSKMCtFin)->Integral(1, conv::kNErecoBins1Rmu, 1, EtrueBin1CCResNorm);
+  double nsknumuccres_etrue_pb = skexp->GetSuperkMC()->Template(s, conv::kSKmNuMuCC1pi, conv::kSKMCtFin)->Integral(1, conv::kNErecoBins1Rmu, EtrueBin1CCResNorm+1, conv::kNEtrueBins);
+  double nsknumubarccqe_etrue_pa = skexp->GetSuperkMC()->Template(s, conv::kSKmNuMuBarCCQE, conv::kSKMCtFin)->Integral(1, conv::kNErecoBins1Rmu, 1, EtrueBin1CCQENorm);
+  double nsknumubarccqe_etrue_pb = skexp->GetSuperkMC()->Template(s, conv::kSKmNuMuBarCCQE, conv::kSKMCtFin)->Integral(1, conv::kNErecoBins1Rmu, EtrueBin1CCQENorm+1, EtrueBin2CCQENorm);
+  double nsknumubarccqe_etrue_pc = skexp->GetSuperkMC()->Template(s, conv::kSKmNuMuBarCCQE, conv::kSKMCtFin)->Integral(1, conv::kNErecoBins1Rmu, EtrueBin2CCQENorm+1, conv::kNEtrueBins);
+  double nsknumubarccres_etrue_pa = skexp->GetSuperkMC()->Template(s, conv::kSKmNuMuBarCC1pi, conv::kSKMCtFin)->Integral(1, conv::kNErecoBins1Rmu, 1, EtrueBin1CCResNorm);
+  double nsknumubarccres_etrue_pb = skexp->GetSuperkMC()->Template(s, conv::kSKmNuMuBarCC1pi, conv::kSKMCtFin)->Integral(1, conv::kNErecoBins1Rmu, EtrueBin1CCResNorm+1, conv::kNEtrueBins);
+  double nsknueccqe_etrue_pa = skexp->GetSuperkMC()->Template(s, conv::kSKmNuECCQE, conv::kSKMCtFin)->Integral(1, conv::kNErecoBins1Rmu, 1, EtrueBin1CCQENorm);
+  double nsknueccqe_etrue_pb = skexp->GetSuperkMC()->Template(s, conv::kSKmNuECCQE, conv::kSKMCtFin)->Integral(1, conv::kNErecoBins1Rmu, EtrueBin1CCQENorm+1, EtrueBin2CCQENorm);
+  double nsknueccqe_etrue_pc = skexp->GetSuperkMC()->Template(s, conv::kSKmNuECCQE, conv::kSKMCtFin)->Integral(1, conv::kNErecoBins1Rmu, EtrueBin2CCQENorm+1, conv::kNEtrueBins);
+  double nsknueccres_etrue_pa = skexp->GetSuperkMC()->Template(s, conv::kSKmNuECC1pi, conv::kSKMCtFin)->Integral(1, conv::kNErecoBins1Rmu, 1, EtrueBin1CCResNorm);
+  double nsknueccres_etrue_pb = skexp->GetSuperkMC()->Template(s, conv::kSKmNuECC1pi, conv::kSKMCtFin)->Integral(1, conv::kNErecoBins1Rmu, EtrueBin1CCResNorm+1, conv::kNEtrueBins);
+  double nsknuebarccqe_etrue_pa = skexp->GetSuperkMC()->Template(s, conv::kSKmNuEBarCCQE, conv::kSKMCtFin)->Integral(1, conv::kNErecoBins1Rmu, 1, EtrueBin1CCQENorm);
+  double nsknuebarccqe_etrue_pb = skexp->GetSuperkMC()->Template(s, conv::kSKmNuEBarCCQE, conv::kSKMCtFin)->Integral(1, conv::kNErecoBins1Rmu, EtrueBin1CCQENorm+1, EtrueBin2CCQENorm);
+  double nsknuebarccqe_etrue_pc = skexp->GetSuperkMC()->Template(s, conv::kSKmNuEBarCCQE, conv::kSKMCtFin)->Integral(1, conv::kNErecoBins1Rmu, EtrueBin2CCQENorm+1, conv::kNEtrueBins);
+  double nsknuebarccres_etrue_pa = skexp->GetSuperkMC()->Template(s, conv::kSKmNuEBarCC1pi, conv::kSKMCtFin)->Integral(1, conv::kNErecoBins1Rmu, 1, EtrueBin1CCResNorm);
+  double nsknuebarccres_etrue_pb = skexp->GetSuperkMC()->Template(s, conv::kSKmNuEBarCC1pi, conv::kSKMCtFin)->Integral(1, conv::kNErecoBins1Rmu, EtrueBin1CCResNorm+1, conv::kNEtrueBins);
+  double nsksignueccqe_etrue_pa = skexp->GetSuperkMC()->Template(s, conv::kSKmSigNuECCQE, conv::kSKMCtFin)->Integral(1, conv::kNErecoBins1Rmu, 1, EtrueBin1CCQENorm);
+  double nsksignueccqe_etrue_pb = skexp->GetSuperkMC()->Template(s, conv::kSKmSigNuECCQE, conv::kSKMCtFin)->Integral(1, conv::kNErecoBins1Rmu, EtrueBin1CCQENorm+1, EtrueBin2CCQENorm);
+  double nsksignueccqe_etrue_pc = skexp->GetSuperkMC()->Template(s, conv::kSKmSigNuECCQE, conv::kSKMCtFin)->Integral(1, conv::kNErecoBins1Rmu, EtrueBin2CCQENorm+1, conv::kNEtrueBins);
+  double nsksignueccres_etrue_pa = skexp->GetSuperkMC()->Template(s, conv::kSKmSigNuECC1pi, conv::kSKMCtFin)->Integral(1, conv::kNErecoBins1Rmu, 1, EtrueBin1CCResNorm);
+  double nsksignueccres_etrue_pb = skexp->GetSuperkMC()->Template(s, conv::kSKmSigNuECC1pi, conv::kSKMCtFin)->Integral(1, conv::kNErecoBins1Rmu, EtrueBin1CCResNorm+1, conv::kNEtrueBins);
+  
+  // spectral etrue (flux binning)
+  double nsknumu_etrue_p[conv::kXsNEtrueBins], nsknumubar_etrue_p[conv::kXsNEtrueBins], nsknue_etrue_p[conv::kXsNEtrueBins], nsknuebar_etrue_p[conv::kXsNEtrueBins], nsksignue_etrue_p[conv::kXsNEtrueBins];
   for(int itb = 0; itb < NEtrueBinNuMu; itb++) {
-    nsknumuccqe_pt[itb] = 0.;
-    nsknumuccqe_pt[itb] = skexp->GetSuperkMC()->Template(s, conv::kSKmNuMuCCQE, conv::kSKMCtFin)->Integral(1, conv::kNErecoBins1Rmu, EtrueBinNuMu[itb]+1, EtrueBinNuMu[itb+1]);
+    nsknumu_etrue_p[itb] = 0.;
+    nsknumu_etrue_p[itb] = skexp->GetSuperkMC()->Template(s, conv::kSKmNuMuCCQE, conv::kSKMCtFin)->Integral(1, conv::kNErecoBins1Rmu, EtrueBinNuMu[itb]+1, EtrueBinNuMu[itb+1]);
+  }
+  for(int itb = 0; itb < NEtrueBinNuMuBar; itb++) {
+    nsknumubar_etrue_p[itb] = 0.;
+    nsknumubar_etrue_p[itb] = skexp->GetSuperkMC()->Template(s, conv::kSKmNuMuBarCCQE, conv::kSKMCtFin)->Integral(1, conv::kNErecoBins1Rmu, EtrueBinNuMuBar[itb]+1, EtrueBinNuMuBar[itb+1]);
+  }
+  for(int itb = 0; itb < NEtrueBinNuE; itb++) {
+    nsknue_etrue_p[itb] = 0.;
+    nsknue_etrue_p[itb] = skexp->GetSuperkMC()->Template(s, conv::kSKmNuECCQE, conv::kSKMCtFin)->Integral(1, conv::kNErecoBins1Rmu, EtrueBinNuE[itb]+1, EtrueBinNuE[itb+1]);
+  }
+  for(int itb = 0; itb < NEtrueBinNuEBar; itb++) {
+    nsknuebar_etrue_p[itb] = 0.;
+    nsknuebar_etrue_p[itb] = skexp->GetSuperkMC()->Template(s, conv::kSKmNuEBarCCQE, conv::kSKMCtFin)->Integral(1, conv::kNErecoBins1Rmu, EtrueBinNuEBar[itb]+1, EtrueBinNuEBar[itb+1]);
+  }
+  for(int itb = 0; itb < NEtrueBinSigNuE; itb++) {
+    nsksignue_etrue_p[itb] = 0.;
+    nsksignue_etrue_p[itb] = skexp->GetSuperkMC()->Template(s, conv::kSKmSigNuECCQE, conv::kSKMCtFin)->Integral(1, conv::kNErecoBins1Rmu, EtrueBinSigNuE[itb]+1, EtrueBinSigNuE[itb+1]);
   }
 
   //
@@ -378,7 +552,7 @@ void test_systematic_error_propagation
   //
 
   if(sys_is_banff) {
-    skexp->TweakSystematic(systematic,+0.5);
+    skexp->TweakSystematic(systematic, skexp->GetBANFF()->BestFitValue(util::PhysParamIdFromString(systematic)) * 0.5);
     skexp->GetBANFF()->PrintSystematicVariations();
   }
   else
@@ -444,18 +618,61 @@ void test_systematic_error_propagation
   } //loop over modes
 
   // spectral numu ccqe (ereco)
-  double nsknumuccqe_ma        = skexp->CurrPredictedErecoSpectrum(s, conv::kSKmNuMuCCQE    )->Integral(1,                  ErecoBin1NuMu);
-  double nsknumuccqe_mb        = skexp->CurrPredictedErecoSpectrum(s, conv::kSKmNuMuCCQE    )->Integral(ErecoBin1NuMu+1,    ErecoBin2NuMu);
-  double nsknumuccqe_mc        = skexp->CurrPredictedErecoSpectrum(s, conv::kSKmNuMuCCQE    )->Integral(ErecoBin2NuMu+1,    conv::kNErecoBins1Rmu);
-  double nsknumubarccqe_ma     = skexp->CurrPredictedErecoSpectrum(s, conv::kSKmNuMuBarCCQE )->Integral(1,                  ErecoBin1NuMuBar);
-  double nsknumubarccqe_mb     = skexp->CurrPredictedErecoSpectrum(s, conv::kSKmNuMuBarCCQE )->Integral(ErecoBin1NuMuBar+1, ErecoBin2NuMuBar);
-  double nsknumubarccqe_mc     = skexp->CurrPredictedErecoSpectrum(s, conv::kSKmNuMuBarCCQE )->Integral(ErecoBin2NuMuBar+1, conv::kNErecoBins1Rmu);
+  double nsknumuccqe_ma        = skexp->CurrPredictedErecoSpectrum(s, conv::kSKmNuMuCCQE    )->Integral(1,                  ErecoBin1NuMuCCQE);
+  double nsknumuccqe_mb        = skexp->CurrPredictedErecoSpectrum(s, conv::kSKmNuMuCCQE    )->Integral(ErecoBin1NuMuCCQE+1,    ErecoBin2NuMuCCQE);
+  double nsknumuccqe_mc        = skexp->CurrPredictedErecoSpectrum(s, conv::kSKmNuMuCCQE    )->Integral(ErecoBin2NuMuCCQE+1,    conv::kNErecoBins1Rmu);
+  double nsknumubarccqe_ma     = skexp->CurrPredictedErecoSpectrum(s, conv::kSKmNuMuBarCCQE )->Integral(1,                  ErecoBin1NuMuBarCCQE);
+  double nsknumubarccqe_mb     = skexp->CurrPredictedErecoSpectrum(s, conv::kSKmNuMuBarCCQE )->Integral(ErecoBin1NuMuBarCCQE+1, ErecoBin2NuMuBarCCQE);
+  double nsknumubarccqe_mc     = skexp->CurrPredictedErecoSpectrum(s, conv::kSKmNuMuBarCCQE )->Integral(ErecoBin2NuMuBarCCQE+1, conv::kNErecoBins1Rmu);
 
-  // spectral numu ccqe (etrue)
-  double nsknumuccqe_mt[conv::kXsNEtrueBins];
+  //spectral etrue (norm)
+  double nsknumuccqe_etrue_ma = skexp->GetSuperkMC()->Template(s, conv::kSKmNuMuCCQE, conv::kSKMCtFin)->Integral(1, conv::kNErecoBins1Rmu, 1, EtrueBin1CCQENorm);
+  double nsknumuccqe_etrue_mb = skexp->GetSuperkMC()->Template(s, conv::kSKmNuMuCCQE, conv::kSKMCtFin)->Integral(1, conv::kNErecoBins1Rmu, EtrueBin1CCQENorm+1, EtrueBin2CCQENorm);
+  double nsknumuccqe_etrue_mc = skexp->GetSuperkMC()->Template(s, conv::kSKmNuMuCCQE, conv::kSKMCtFin)->Integral(1, conv::kNErecoBins1Rmu, EtrueBin2CCQENorm+1, conv::kNEtrueBins);
+  double nsknumuccres_etrue_ma = skexp->GetSuperkMC()->Template(s, conv::kSKmNuMuCC1pi, conv::kSKMCtFin)->Integral(1, conv::kNErecoBins1Rmu, 1, EtrueBin1CCResNorm);
+  double nsknumuccres_etrue_mb = skexp->GetSuperkMC()->Template(s, conv::kSKmNuMuCC1pi, conv::kSKMCtFin)->Integral(1, conv::kNErecoBins1Rmu, EtrueBin1CCResNorm+1, conv::kNEtrueBins);
+  double nsknumubarccqe_etrue_ma = skexp->GetSuperkMC()->Template(s, conv::kSKmNuMuBarCCQE, conv::kSKMCtFin)->Integral(1, conv::kNErecoBins1Rmu, 1, EtrueBin1CCQENorm);
+  double nsknumubarccqe_etrue_mb = skexp->GetSuperkMC()->Template(s, conv::kSKmNuMuBarCCQE, conv::kSKMCtFin)->Integral(1, conv::kNErecoBins1Rmu, EtrueBin1CCQENorm+1, EtrueBin2CCQENorm);
+  double nsknumubarccqe_etrue_mc = skexp->GetSuperkMC()->Template(s, conv::kSKmNuMuBarCCQE, conv::kSKMCtFin)->Integral(1, conv::kNErecoBins1Rmu, EtrueBin2CCQENorm+1, conv::kNEtrueBins);
+  double nsknumubarccres_etrue_ma = skexp->GetSuperkMC()->Template(s, conv::kSKmNuMuBarCC1pi, conv::kSKMCtFin)->Integral(1, conv::kNErecoBins1Rmu, 1, EtrueBin1CCResNorm);
+  double nsknumubarccres_etrue_mb = skexp->GetSuperkMC()->Template(s, conv::kSKmNuMuBarCC1pi, conv::kSKMCtFin)->Integral(1, conv::kNErecoBins1Rmu, EtrueBin1CCResNorm+1, conv::kNEtrueBins);
+  double nsknueccqe_etrue_ma = skexp->GetSuperkMC()->Template(s, conv::kSKmNuECCQE, conv::kSKMCtFin)->Integral(1, conv::kNErecoBins1Rmu, 1, EtrueBin1CCQENorm);
+  double nsknueccqe_etrue_mb = skexp->GetSuperkMC()->Template(s, conv::kSKmNuECCQE, conv::kSKMCtFin)->Integral(1, conv::kNErecoBins1Rmu, EtrueBin1CCQENorm+1, EtrueBin2CCQENorm);
+  double nsknueccqe_etrue_mc = skexp->GetSuperkMC()->Template(s, conv::kSKmNuECCQE, conv::kSKMCtFin)->Integral(1, conv::kNErecoBins1Rmu, EtrueBin2CCQENorm+1, conv::kNEtrueBins);
+  double nsknueccres_etrue_ma = skexp->GetSuperkMC()->Template(s, conv::kSKmNuECC1pi, conv::kSKMCtFin)->Integral(1, conv::kNErecoBins1Rmu, 1, EtrueBin1CCResNorm);
+  double nsknueccres_etrue_mb = skexp->GetSuperkMC()->Template(s, conv::kSKmNuECC1pi, conv::kSKMCtFin)->Integral(1, conv::kNErecoBins1Rmu, EtrueBin1CCResNorm+1, conv::kNEtrueBins);
+  double nsknuebarccqe_etrue_ma = skexp->GetSuperkMC()->Template(s, conv::kSKmNuEBarCCQE, conv::kSKMCtFin)->Integral(1, conv::kNErecoBins1Rmu, 1, EtrueBin1CCQENorm);
+  double nsknuebarccqe_etrue_mb = skexp->GetSuperkMC()->Template(s, conv::kSKmNuEBarCCQE, conv::kSKMCtFin)->Integral(1, conv::kNErecoBins1Rmu, EtrueBin1CCQENorm+1, EtrueBin2CCQENorm);
+  double nsknuebarccqe_etrue_mc = skexp->GetSuperkMC()->Template(s, conv::kSKmNuEBarCCQE, conv::kSKMCtFin)->Integral(1, conv::kNErecoBins1Rmu, EtrueBin2CCQENorm+1, conv::kNEtrueBins);
+  double nsknuebarccres_etrue_ma = skexp->GetSuperkMC()->Template(s, conv::kSKmNuEBarCC1pi, conv::kSKMCtFin)->Integral(1, conv::kNErecoBins1Rmu, 1, EtrueBin1CCResNorm);
+  double nsknuebarccres_etrue_mb = skexp->GetSuperkMC()->Template(s, conv::kSKmNuEBarCC1pi, conv::kSKMCtFin)->Integral(1, conv::kNErecoBins1Rmu, EtrueBin1CCResNorm+1, conv::kNEtrueBins);
+  double nsksignueccqe_etrue_ma = skexp->GetSuperkMC()->Template(s, conv::kSKmSigNuECCQE, conv::kSKMCtFin)->Integral(1, conv::kNErecoBins1Rmu, 1, EtrueBin1CCQENorm);
+  double nsksignueccqe_etrue_mb = skexp->GetSuperkMC()->Template(s, conv::kSKmSigNuECCQE, conv::kSKMCtFin)->Integral(1, conv::kNErecoBins1Rmu, EtrueBin1CCQENorm+1, EtrueBin2CCQENorm);
+  double nsksignueccqe_etrue_mc = skexp->GetSuperkMC()->Template(s, conv::kSKmSigNuECCQE, conv::kSKMCtFin)->Integral(1, conv::kNErecoBins1Rmu, EtrueBin2CCQENorm+1, conv::kNEtrueBins);
+  double nsksignueccres_etrue_ma = skexp->GetSuperkMC()->Template(s, conv::kSKmSigNuECC1pi, conv::kSKMCtFin)->Integral(1, conv::kNErecoBins1Rmu, 1, EtrueBin1CCResNorm);
+  double nsksignueccres_etrue_mb = skexp->GetSuperkMC()->Template(s, conv::kSKmSigNuECC1pi, conv::kSKMCtFin)->Integral(1, conv::kNErecoBins1Rmu, EtrueBin1CCResNorm+1, conv::kNEtrueBins);
+  
+  // spectral etrue (flux binning)
+  double nsknumu_etrue_m[conv::kXsNEtrueBins], nsknumubar_etrue_m[conv::kXsNEtrueBins], nsknue_etrue_m[conv::kXsNEtrueBins], nsknuebar_etrue_m[conv::kXsNEtrueBins], nsksignue_etrue_m[conv::kXsNEtrueBins];
   for(int itb = 0; itb < NEtrueBinNuMu; itb++) {
-    nsknumuccqe_mt[itb] = 0.;
-    nsknumuccqe_mt[itb] = skexp->GetSuperkMC()->Template(s, conv::kSKmNuMuCCQE, conv::kSKMCtFin)->Integral(1, conv::kNErecoBins1Rmu, EtrueBinNuMu[itb]+1, EtrueBinNuMu[itb+1]);
+    nsknumu_etrue_m[itb] = 0.;
+    nsknumu_etrue_m[itb] = skexp->GetSuperkMC()->Template(s, conv::kSKmNuMuCCQE, conv::kSKMCtFin)->Integral(1, conv::kNErecoBins1Rmu, EtrueBinNuMu[itb]+1, EtrueBinNuMu[itb+1]);
+  }
+  for(int itb = 0; itb < NEtrueBinNuMuBar; itb++) {
+    nsknumubar_etrue_m[itb] = 0.;
+    nsknumubar_etrue_m[itb] = skexp->GetSuperkMC()->Template(s, conv::kSKmNuMuBarCCQE, conv::kSKMCtFin)->Integral(1, conv::kNErecoBins1Rmu, EtrueBinNuMuBar[itb]+1, EtrueBinNuMuBar[itb+1]);
+  }
+  for(int itb = 0; itb < NEtrueBinNuE; itb++) {
+    nsknue_etrue_m[itb] = 0.;
+    nsknue_etrue_m[itb] = skexp->GetSuperkMC()->Template(s, conv::kSKmNuECCQE, conv::kSKMCtFin)->Integral(1, conv::kNErecoBins1Rmu, EtrueBinNuE[itb]+1, EtrueBinNuE[itb+1]);
+  }
+  for(int itb = 0; itb < NEtrueBinNuEBar; itb++) {
+    nsknuebar_etrue_m[itb] = 0.;
+    nsknuebar_etrue_m[itb] = skexp->GetSuperkMC()->Template(s, conv::kSKmNuEBarCCQE, conv::kSKMCtFin)->Integral(1, conv::kNErecoBins1Rmu, EtrueBinNuEBar[itb]+1, EtrueBinNuEBar[itb+1]);
+  }
+  for(int itb = 0; itb < NEtrueBinSigNuE; itb++) {
+    nsksignue_etrue_m[itb] = 0.;
+    nsksignue_etrue_m[itb] = skexp->GetSuperkMC()->Template(s, conv::kSKmSigNuECCQE, conv::kSKMCtFin)->Integral(1, conv::kNErecoBins1Rmu, EtrueBinSigNuE[itb]+1, EtrueBinSigNuE[itb+1]);
   }
 
   //
@@ -489,11 +706,52 @@ void test_systematic_error_propagation
   double frac_nsknumubarccqe_pa      = (nsknumubarccqe_0a      > 0) ? 100.*(nsknumubarccqe_pa     - nsknumubarccqe_0a    ) / nsknumubarccqe_0a     : 0.;
   double frac_nsknumubarccqe_pb      = (nsknumubarccqe_0b      > 0) ? 100.*(nsknumubarccqe_pb     - nsknumubarccqe_0b    ) / nsknumubarccqe_0b     : 0.;
   double frac_nsknumubarccqe_pc      = (nsknumubarccqe_0c      > 0) ? 100.*(nsknumubarccqe_pc     - nsknumubarccqe_0c    ) / nsknumubarccqe_0c     : 0.;
-  //spectral ccqe (etrue)
-  double frac_nsknumuccqe_pt[conv::kXsNEtrueBins];
-   for(int itb = 0; itb < NEtrueBinNuMu; itb++) {
-     frac_nsknumuccqe_pt[itb]        = (nsknumuccqe_0t[itb]    > 0) ? 100.*(nsknumuccqe_pt[itb]   - nsknumuccqe_0t[itb]  ) / nsknumuccqe_0t[itb]   : 0.;
-  } 
+
+  //spectral etrue (norm)
+  double frac_nsknumuccqe_etrue_pa = (nsknumuccqe_etrue_0a > 0) ? 100.*(nsknumuccqe_etrue_pa - nsknumuccqe_etrue_0a) / nsknumuccqe_etrue_0a : 0.;
+  double frac_nsknumuccqe_etrue_pb = (nsknumuccqe_etrue_0b > 0) ? 100.*(nsknumuccqe_etrue_pb - nsknumuccqe_etrue_0b) / nsknumuccqe_etrue_0b : 0.;
+  double frac_nsknumuccqe_etrue_pc = (nsknumuccqe_etrue_0c > 0) ? 100.*(nsknumuccqe_etrue_pc - nsknumuccqe_etrue_0c) / nsknumuccqe_etrue_0c : 0.;
+  double frac_nsknumuccres_etrue_pa = (nsknumuccres_etrue_0a > 0) ? 100.*(nsknumuccres_etrue_pa - nsknumuccres_etrue_0a) / nsknumuccres_etrue_0a : 0.;
+  double frac_nsknumuccres_etrue_pb = (nsknumuccres_etrue_0b > 0) ? 100.*(nsknumuccres_etrue_pb - nsknumuccres_etrue_0b) / nsknumuccres_etrue_0b : 0.;
+  double frac_nsknumubarccqe_etrue_pa = (nsknumubarccqe_etrue_0a > 0) ? 100.*(nsknumubarccqe_etrue_pa - nsknumubarccqe_etrue_0a) / nsknumubarccqe_etrue_0a : 0.;
+  double frac_nsknumubarccqe_etrue_pb = (nsknumubarccqe_etrue_0b > 0) ? 100.*(nsknumubarccqe_etrue_pb - nsknumubarccqe_etrue_0b) / nsknumubarccqe_etrue_0b : 0.;
+  double frac_nsknumubarccqe_etrue_pc = (nsknumubarccqe_etrue_0c > 0) ? 100.*(nsknumubarccqe_etrue_pc - nsknumubarccqe_etrue_0c) / nsknumubarccqe_etrue_0c : 0.;
+  double frac_nsknumubarccres_etrue_pa = (nsknumubarccres_etrue_0a > 0) ? 100.*(nsknumubarccres_etrue_pa - nsknumubarccres_etrue_0a) / nsknumubarccres_etrue_0a : 0.;
+  double frac_nsknumubarccres_etrue_pb = (nsknumubarccres_etrue_0b > 0) ? 100.*(nsknumubarccres_etrue_pb - nsknumubarccres_etrue_0b) / nsknumubarccres_etrue_0b : 0.;
+  double frac_nsknueccqe_etrue_pa = (nsknueccqe_etrue_0a > 0) ? 100.*(nsknueccqe_etrue_pa - nsknueccqe_etrue_0a) / nsknueccqe_etrue_0a : 0.;
+  double frac_nsknueccqe_etrue_pb = (nsknueccqe_etrue_0b > 0) ? 100.*(nsknueccqe_etrue_pb - nsknueccqe_etrue_0b) / nsknueccqe_etrue_0b : 0.;
+  double frac_nsknueccqe_etrue_pc = (nsknueccqe_etrue_0c > 0) ? 100.*(nsknueccqe_etrue_pc - nsknueccqe_etrue_0c) / nsknueccqe_etrue_0c : 0.;
+  double frac_nsknueccres_etrue_pa = (nsknueccres_etrue_0a > 0) ? 100.*(nsknueccres_etrue_pa - nsknueccres_etrue_0a) / nsknueccres_etrue_0a : 0.;
+  double frac_nsknueccres_etrue_pb = (nsknueccres_etrue_0b > 0) ? 100.*(nsknueccres_etrue_pb - nsknueccres_etrue_0b) / nsknueccres_etrue_0b : 0.;
+  double frac_nsknuebarccqe_etrue_pa = (nsknuebarccqe_etrue_0a > 0) ? 100.*(nsknuebarccqe_etrue_pa - nsknuebarccqe_etrue_0a) / nsknuebarccqe_etrue_0a : 0.;
+  double frac_nsknuebarccqe_etrue_pb = (nsknuebarccqe_etrue_0b > 0) ? 100.*(nsknuebarccqe_etrue_pb - nsknuebarccqe_etrue_0b) / nsknuebarccqe_etrue_0b : 0.;
+  double frac_nsknuebarccqe_etrue_pc = (nsknuebarccqe_etrue_0c > 0) ? 100.*(nsknuebarccqe_etrue_pc - nsknuebarccqe_etrue_0c) / nsknuebarccqe_etrue_0c : 0.;
+  double frac_nsknuebarccres_etrue_pa = (nsknuebarccres_etrue_0a > 0) ? 100.*(nsknuebarccres_etrue_pa - nsknuebarccres_etrue_0a) / nsknuebarccres_etrue_0a : 0.;
+  double frac_nsknuebarccres_etrue_pb = (nsknuebarccres_etrue_0b > 0) ? 100.*(nsknuebarccres_etrue_pb - nsknuebarccres_etrue_0b) / nsknuebarccres_etrue_0b : 0.;
+  double frac_nsksignueccqe_etrue_pa = (nsksignueccqe_etrue_0a > 0) ? 100.*(nsksignueccqe_etrue_pa - nsksignueccqe_etrue_0a) / nsksignueccqe_etrue_0a : 0.;
+  double frac_nsksignueccqe_etrue_pb = (nsksignueccqe_etrue_0b > 0) ? 100.*(nsksignueccqe_etrue_pb - nsksignueccqe_etrue_0b) / nsksignueccqe_etrue_0b : 0.;
+  double frac_nsksignueccqe_etrue_pc = (nsksignueccqe_etrue_0c > 0) ? 100.*(nsksignueccqe_etrue_pc - nsksignueccqe_etrue_0c) / nsksignueccqe_etrue_0c : 0.;
+  double frac_nsksignueccres_etrue_pa = (nsksignueccres_etrue_0a > 0) ? 100.*(nsksignueccres_etrue_pa - nsksignueccres_etrue_0a) / nsksignueccres_etrue_0a : 0.;
+  double frac_nsksignueccres_etrue_pb = (nsksignueccres_etrue_0b > 0) ? 100.*(nsksignueccres_etrue_pb - nsksignueccres_etrue_0b) / nsksignueccres_etrue_0b : 0.;
+  
+  // spectral etrue (flux binning)
+  double frac_nsknumu_etrue_p[conv::kXsNEtrueBins], frac_nsknumubar_etrue_p[conv::kXsNEtrueBins], frac_nsknue_etrue_p[conv::kXsNEtrueBins], frac_nsknuebar_etrue_p[conv::kXsNEtrueBins], frac_nsksignue_etrue_p[conv::kXsNEtrueBins];
+  for(int itb = 0; itb < NEtrueBinNuMu; itb++) {
+     frac_nsknumu_etrue_p[itb]        = (nsknumu_etrue_0[itb]    > 0) ? 100.*(nsknumu_etrue_p[itb]   - nsknumu_etrue_0[itb]  ) / nsknumu_etrue_0[itb]   : 0.;
+  }
+  for(int itb = 0; itb < NEtrueBinNuMuBar; itb++) {
+     frac_nsknumubar_etrue_p[itb]        = (nsknumubar_etrue_0[itb]    > 0) ? 100.*(nsknumubar_etrue_p[itb]   - nsknumubar_etrue_0[itb]  ) / nsknumubar_etrue_0[itb]   : 0.;
+  }
+  for(int itb = 0; itb < NEtrueBinNuE; itb++) {
+     frac_nsknue_etrue_p[itb]        = (nsknue_etrue_0[itb]    > 0) ? 100.*(nsknue_etrue_p[itb]   - nsknue_etrue_0[itb]  ) / nsknue_etrue_0[itb]   : 0.;
+  }
+  for(int itb = 0; itb < NEtrueBinNuEBar; itb++) {
+     frac_nsknuebar_etrue_p[itb]        = (nsknuebar_etrue_0[itb]    > 0) ? 100.*(nsknuebar_etrue_p[itb]   - nsknuebar_etrue_0[itb]  ) / nsknuebar_etrue_0[itb]   : 0.;
+  }
+  for(int itb = 0; itb < NEtrueBinSigNuE; itb++) {
+     frac_nsksignue_etrue_p[itb]        = (nsksignue_etrue_0[itb]    > 0) ? 100.*(nsksignue_etrue_p[itb]   - nsksignue_etrue_0[itb]  ) / nsksignue_etrue_0[itb]   : 0.;
+  }
+
 
   // totals
   double frac_nsk_m                  = (nsk_0                  > 0) ? 100.*(nsk_m                 - nsk_0                ) / nsk_0                 : 0.;
@@ -523,11 +781,52 @@ void test_systematic_error_propagation
   double frac_nsknumubarccqe_ma      = (nsknumubarccqe_0a      > 0) ? 100.*(nsknumubarccqe_ma     - nsknumubarccqe_0a    ) / nsknumubarccqe_0a     : 0.;
   double frac_nsknumubarccqe_mb      = (nsknumubarccqe_0b      > 0) ? 100.*(nsknumubarccqe_mb     - nsknumubarccqe_0b    ) / nsknumubarccqe_0b     : 0.;
   double frac_nsknumubarccqe_mc      = (nsknumubarccqe_0c      > 0) ? 100.*(nsknumubarccqe_mc     - nsknumubarccqe_0c    ) / nsknumubarccqe_0c     : 0.;
-  //spectral ccqe (etrue)
-  double frac_nsknumuccqe_mt[conv::kXsNEtrueBins];
-   for(int itb = 0; itb < NEtrueBinNuMu; itb++) {
-     frac_nsknumuccqe_mt[itb]        = (nsknumuccqe_0t[itb]    > 0) ? 100.*(nsknumuccqe_mt[itb]   - nsknumuccqe_0t[itb]  ) / nsknumuccqe_0t[itb]   : 0.;
+
+  //spectral etrue (norm)
+  double frac_nsknumuccqe_etrue_ma = (nsknumuccqe_etrue_0a > 0) ? 100.*(nsknumuccqe_etrue_ma - nsknumuccqe_etrue_0a) / nsknumuccqe_etrue_0a : 0.;
+  double frac_nsknumuccqe_etrue_mb = (nsknumuccqe_etrue_0b > 0) ? 100.*(nsknumuccqe_etrue_mb - nsknumuccqe_etrue_0b) / nsknumuccqe_etrue_0b : 0.;
+  double frac_nsknumuccqe_etrue_mc = (nsknumuccqe_etrue_0c > 0) ? 100.*(nsknumuccqe_etrue_mc - nsknumuccqe_etrue_0c) / nsknumuccqe_etrue_0c : 0.;
+  double frac_nsknumuccres_etrue_ma = (nsknumuccres_etrue_0a > 0) ? 100.*(nsknumuccres_etrue_ma - nsknumuccres_etrue_0a) / nsknumuccres_etrue_0a : 0.;
+  double frac_nsknumuccres_etrue_mb = (nsknumuccres_etrue_0b > 0) ? 100.*(nsknumuccres_etrue_mb - nsknumuccres_etrue_0b) / nsknumuccres_etrue_0b : 0.;
+  double frac_nsknumubarccqe_etrue_ma = (nsknumubarccqe_etrue_0a > 0) ? 100.*(nsknumubarccqe_etrue_ma - nsknumubarccqe_etrue_0a) / nsknumubarccqe_etrue_0a : 0.;
+  double frac_nsknumubarccqe_etrue_mb = (nsknumubarccqe_etrue_0b > 0) ? 100.*(nsknumubarccqe_etrue_mb - nsknumubarccqe_etrue_0b) / nsknumubarccqe_etrue_0b : 0.;
+  double frac_nsknumubarccqe_etrue_mc = (nsknumubarccqe_etrue_0c > 0) ? 100.*(nsknumubarccqe_etrue_mc - nsknumubarccqe_etrue_0c) / nsknumubarccqe_etrue_0c : 0.;
+  double frac_nsknumubarccres_etrue_ma = (nsknumubarccres_etrue_0a > 0) ? 100.*(nsknumubarccres_etrue_ma - nsknumubarccres_etrue_0a) / nsknumubarccres_etrue_0a : 0.;
+  double frac_nsknumubarccres_etrue_mb = (nsknumubarccres_etrue_0b > 0) ? 100.*(nsknumubarccres_etrue_mb - nsknumubarccres_etrue_0b) / nsknumubarccres_etrue_0b : 0.;
+  double frac_nsknueccqe_etrue_ma = (nsknueccqe_etrue_0a > 0) ? 100.*(nsknueccqe_etrue_ma - nsknueccqe_etrue_0a) / nsknueccqe_etrue_0a : 0.;
+  double frac_nsknueccqe_etrue_mb = (nsknueccqe_etrue_0b > 0) ? 100.*(nsknueccqe_etrue_mb - nsknueccqe_etrue_0b) / nsknueccqe_etrue_0b : 0.;
+  double frac_nsknueccqe_etrue_mc = (nsknueccqe_etrue_0c > 0) ? 100.*(nsknueccqe_etrue_mc - nsknueccqe_etrue_0c) / nsknueccqe_etrue_0c : 0.;
+  double frac_nsknueccres_etrue_ma = (nsknueccres_etrue_0a > 0) ? 100.*(nsknueccres_etrue_ma - nsknueccres_etrue_0a) / nsknueccres_etrue_0a : 0.;
+  double frac_nsknueccres_etrue_mb = (nsknueccres_etrue_0b > 0) ? 100.*(nsknueccres_etrue_mb - nsknueccres_etrue_0b) / nsknueccres_etrue_0b : 0.;
+  double frac_nsknuebarccqe_etrue_ma = (nsknuebarccqe_etrue_0a > 0) ? 100.*(nsknuebarccqe_etrue_ma - nsknuebarccqe_etrue_0a) / nsknuebarccqe_etrue_0a : 0.;
+  double frac_nsknuebarccqe_etrue_mb = (nsknuebarccqe_etrue_0b > 0) ? 100.*(nsknuebarccqe_etrue_mb - nsknuebarccqe_etrue_0b) / nsknuebarccqe_etrue_0b : 0.;
+  double frac_nsknuebarccqe_etrue_mc = (nsknuebarccqe_etrue_0c > 0) ? 100.*(nsknuebarccqe_etrue_mc - nsknuebarccqe_etrue_0c) / nsknuebarccqe_etrue_0c : 0.;
+  double frac_nsknuebarccres_etrue_ma = (nsknuebarccres_etrue_0a > 0) ? 100.*(nsknuebarccres_etrue_ma - nsknuebarccres_etrue_0a) / nsknuebarccres_etrue_0a : 0.;
+  double frac_nsknuebarccres_etrue_mb = (nsknuebarccres_etrue_0b > 0) ? 100.*(nsknuebarccres_etrue_mb - nsknuebarccres_etrue_0b) / nsknuebarccres_etrue_0b : 0.;
+  double frac_nsksignueccqe_etrue_ma = (nsksignueccqe_etrue_0a > 0) ? 100.*(nsksignueccqe_etrue_ma - nsksignueccqe_etrue_0a) / nsksignueccqe_etrue_0a : 0.;
+  double frac_nsksignueccqe_etrue_mb = (nsksignueccqe_etrue_0b > 0) ? 100.*(nsksignueccqe_etrue_mb - nsksignueccqe_etrue_0b) / nsksignueccqe_etrue_0b : 0.;
+  double frac_nsksignueccqe_etrue_mc = (nsksignueccqe_etrue_0c > 0) ? 100.*(nsksignueccqe_etrue_mc - nsksignueccqe_etrue_0c) / nsksignueccqe_etrue_0c : 0.;
+  double frac_nsksignueccres_etrue_ma = (nsksignueccres_etrue_0a > 0) ? 100.*(nsksignueccres_etrue_ma - nsksignueccres_etrue_0a) / nsksignueccres_etrue_0a : 0.;
+  double frac_nsksignueccres_etrue_mb = (nsksignueccres_etrue_0b > 0) ? 100.*(nsksignueccres_etrue_mb - nsksignueccres_etrue_0b) / nsksignueccres_etrue_0b : 0.;
+  
+  // spectral etrue (flux binning)
+  double frac_nsknumu_etrue_m[conv::kXsNEtrueBins], frac_nsknumubar_etrue_m[conv::kXsNEtrueBins], frac_nsknue_etrue_m[conv::kXsNEtrueBins], frac_nsknuebar_etrue_m[conv::kXsNEtrueBins], frac_nsksignue_etrue_m[conv::kXsNEtrueBins];
+  for(int itb = 0; itb < NEtrueBinNuMu; itb++) {
+     frac_nsknumu_etrue_m[itb]        = (nsknumu_etrue_0[itb]    > 0) ? 100.*(nsknumu_etrue_m[itb]   - nsknumu_etrue_0[itb]  ) / nsknumu_etrue_0[itb]   : 0.;
   }
+  for(int itb = 0; itb < NEtrueBinNuMuBar; itb++) {
+     frac_nsknumubar_etrue_m[itb]        = (nsknumubar_etrue_0[itb]    > 0) ? 100.*(nsknumubar_etrue_m[itb]   - nsknumubar_etrue_0[itb]  ) / nsknumubar_etrue_0[itb]   : 0.;
+  }
+  for(int itb = 0; itb < NEtrueBinNuE; itb++) {
+     frac_nsknue_etrue_m[itb]        = (nsknue_etrue_0[itb]    > 0) ? 100.*(nsknue_etrue_m[itb]   - nsknue_etrue_0[itb]  ) / nsknue_etrue_0[itb]   : 0.;
+  }
+  for(int itb = 0; itb < NEtrueBinNuEBar; itb++) {
+     frac_nsknuebar_etrue_m[itb]        = (nsknuebar_etrue_0[itb]    > 0) ? 100.*(nsknuebar_etrue_m[itb]   - nsknuebar_etrue_0[itb]  ) / nsknuebar_etrue_0[itb]   : 0.;
+  }
+  for(int itb = 0; itb < NEtrueBinSigNuE; itb++) {
+     frac_nsksignue_etrue_m[itb]        = (nsksignue_etrue_0[itb]    > 0) ? 100.*(nsksignue_etrue_m[itb]   - nsksignue_etrue_0[itb]  ) / nsksignue_etrue_0[itb]   : 0.;
+  }
+
 
   //
   // Print-out
@@ -549,7 +848,7 @@ void test_systematic_error_propagation
 
   if(use_tex) {
      streamer << "\\begin{table}"   << endl;
-     streamer << "\\footnotesize" << endl;
+     streamer << "\\scriptsize" << endl;
      //streamer << "\\centering"     << endl;
      streamer << "\\begin{tabular}{| l | r | r | r  r | r  r |}" << endl;
      streamer << "\\hline" << endl;
@@ -588,26 +887,450 @@ void test_systematic_error_propagation
   for (int im = 0; im < conv::knm; im++) {
     conv::SuperkMode_t m = conv::kSKReactionModes[s][im];
     if(m == conv::kSKmUndefined) continue;
-    //a normal individual mode table fill
+    //get the title of the row (or part of it for E binned rows)
     string component = "$N_{SK}$ (";
     component += util::AsStringTex(s);
     component += "): ";
     component +=  util::AsStringTex(m);
-    streamer << setw(ncol1)  << setfill(' ') << component
-	 << endcolumn
-	 << setw(ncolnev)  << setfill(' ') << setprecision(nprecisionnev) << nskmodes_n[m]
-	 << endcolumn
-	 << setw(ncolnev)  << setfill(' ') << setprecision(nprecisionnev) << nskmodes_0[m]
-	 << endcolumn
-	 << setw(ncolnev)  << setfill(' ') << setprecision(nprecisionnev) << nskmodes_p[m]
-	 << endcolumn
-	 << setw(ncolfrc)  << setfill(' ') << setprecision(nprecisionpct) << frac_nskmodes_p[m] << pctsymbol 
-	 << endcolumn
-	 << setw(ncolnev)  << setfill(' ') << setprecision(nprecisionnev) << nskmodes_m[m] 
-	 << endcolumn
-	 << setw(ncolfrc)  << setfill(' ') << setprecision(nprecisionpct) << frac_nskmodes_m[m] << pctsymbol 
-	 << endrow
-	 << endl;
+    //spectral ccqe (etrue)
+    if ( m == conv::kSKmNuMuCCQE && show_sk_spectral_info_etrue_norm_binning) {
+      temp = component + " ($E_{t} <$ 1.5 GeV)";
+      streamer << setw(ncol1)  << setfill(' ') << temp
+           << endcolumn
+           << setw(ncolnev)  << setfill(' ') << setprecision(nprecisionnev) << nsknumuccqe_etrue_na
+           << endcolumn
+           << setw(ncolnev)  << setfill(' ') << setprecision(nprecisionnev) << nsknumuccqe_etrue_0a
+           << endcolumn
+           << setw(ncolnev)  << setfill(' ') << setprecision(nprecisionnev) << nsknumuccqe_etrue_pa
+           << endcolumn
+           << setw(ncolfrc)  << setfill(' ') << setprecision(nprecisionpct) << frac_nsknumuccqe_etrue_pa << pctsymbol 
+           << endcolumn
+           << setw(ncolnev)  << setfill(' ') << setprecision(nprecisionnev) << nsknumuccqe_etrue_ma 
+           << endcolumn
+           << setw(ncolfrc)  << setfill(' ') << setprecision(nprecisionpct) << frac_nsknumuccqe_etrue_ma << pctsymbol 
+           << endrow
+           << endl;
+      temp = component + " (1.5 $\\leq E_{t} <$ 2.5 GeV)";
+      streamer << setw(ncol1)  << setfill(' ') << temp
+	   << endcolumn
+           << setw(ncolnev)  << setfill(' ') << setprecision(nprecisionnev) << nsknumuccqe_etrue_nb
+           << endcolumn
+           << setw(ncolnev)  << setfill(' ') << setprecision(nprecisionnev) << nsknumuccqe_etrue_0b
+           << endcolumn
+           << setw(ncolnev)  << setfill(' ') << setprecision(nprecisionnev) << nsknumuccqe_etrue_pb
+           << endcolumn
+           << setw(ncolfrc)  << setfill(' ') << setprecision(nprecisionpct) << frac_nsknumuccqe_etrue_pb << pctsymbol 
+           << endcolumn
+           << setw(ncolnev)  << setfill(' ') << setprecision(nprecisionnev) << nsknumuccqe_etrue_mb 
+           << endcolumn
+           << setw(ncolfrc)  << setfill(' ') << setprecision(nprecisionpct) << frac_nsknumuccqe_etrue_mb << pctsymbol 
+           << endrow
+           << endl;
+      temp = component + " ($E_{t} \\geq$ 2.5 GeV)";
+      streamer << setw(ncol1)  << setfill(' ') << temp
+           << endcolumn
+           << setw(ncolnev)  << setfill(' ') << setprecision(nprecisionnev) << nsknumuccqe_etrue_nc
+           << endcolumn
+           << setw(ncolnev)  << setfill(' ') << setprecision(nprecisionnev) << nsknumuccqe_etrue_0c
+           << endcolumn
+           << setw(ncolnev)  << setfill(' ') << setprecision(nprecisionnev) << nsknumuccqe_etrue_pc
+           << endcolumn
+           << setw(ncolfrc)  << setfill(' ') << setprecision(nprecisionpct) << frac_nsknumuccqe_etrue_pc << pctsymbol 
+           << endcolumn
+           << setw(ncolnev)  << setfill(' ') << setprecision(nprecisionnev) << nsknumuccqe_etrue_mc 
+           << endcolumn
+           << setw(ncolfrc)  << setfill(' ') << setprecision(nprecisionpct) << frac_nsknumuccqe_etrue_mc << pctsymbol 
+           << endrow
+           << endl;
+      if(use_tex) streamer << "\\hline" << endl;
+    }
+    if ( m == conv::kSKmNuMuBarCCQE && show_sk_spectral_info_etrue_norm_binning) {
+      temp = component + " ($E_{t} <$ 1.5 GeV)";
+      streamer << setw(ncol1)  << setfill(' ') << temp
+           << endcolumn
+           << setw(ncolnev)  << setfill(' ') << setprecision(nprecisionnev) << nsknumubarccqe_etrue_na
+           << endcolumn
+           << setw(ncolnev)  << setfill(' ') << setprecision(nprecisionnev) << nsknumubarccqe_etrue_0a
+           << endcolumn
+           << setw(ncolnev)  << setfill(' ') << setprecision(nprecisionnev) << nsknumubarccqe_etrue_pa
+           << endcolumn
+           << setw(ncolfrc)  << setfill(' ') << setprecision(nprecisionpct) << frac_nsknumubarccqe_etrue_pa << pctsymbol 
+           << endcolumn
+           << setw(ncolnev)  << setfill(' ') << setprecision(nprecisionnev) << nsknumubarccqe_etrue_ma 
+           << endcolumn
+           << setw(ncolfrc)  << setfill(' ') << setprecision(nprecisionpct) << frac_nsknumubarccqe_etrue_ma << pctsymbol 
+           << endrow
+           << endl;
+      temp = component + " (1.5 $\\leq E_{t} <$ 2.5 GeV)";
+      streamer << setw(ncol1)  << setfill(' ') << temp
+	   << endcolumn
+           << setw(ncolnev)  << setfill(' ') << setprecision(nprecisionnev) << nsknumubarccqe_etrue_nb
+           << endcolumn
+           << setw(ncolnev)  << setfill(' ') << setprecision(nprecisionnev) << nsknumubarccqe_etrue_0b
+           << endcolumn
+           << setw(ncolnev)  << setfill(' ') << setprecision(nprecisionnev) << nsknumubarccqe_etrue_pb
+           << endcolumn
+           << setw(ncolfrc)  << setfill(' ') << setprecision(nprecisionpct) << frac_nsknumubarccqe_etrue_pb << pctsymbol 
+           << endcolumn
+           << setw(ncolnev)  << setfill(' ') << setprecision(nprecisionnev) << nsknumubarccqe_etrue_mb 
+           << endcolumn
+           << setw(ncolfrc)  << setfill(' ') << setprecision(nprecisionpct) << frac_nsknumubarccqe_etrue_mb << pctsymbol 
+           << endrow
+           << endl;
+      temp = component + " ($E_{t} \\geq$ 2.5 GeV)";
+      streamer << setw(ncol1)  << setfill(' ') << temp
+           << endcolumn
+           << setw(ncolnev)  << setfill(' ') << setprecision(nprecisionnev) << nsknumubarccqe_etrue_nc
+           << endcolumn
+           << setw(ncolnev)  << setfill(' ') << setprecision(nprecisionnev) << nsknumubarccqe_etrue_0c
+           << endcolumn
+           << setw(ncolnev)  << setfill(' ') << setprecision(nprecisionnev) << nsknumubarccqe_etrue_pc
+           << endcolumn
+           << setw(ncolfrc)  << setfill(' ') << setprecision(nprecisionpct) << frac_nsknumubarccqe_etrue_pc << pctsymbol 
+           << endcolumn
+           << setw(ncolnev)  << setfill(' ') << setprecision(nprecisionnev) << nsknumubarccqe_etrue_mc 
+           << endcolumn
+           << setw(ncolfrc)  << setfill(' ') << setprecision(nprecisionpct) << frac_nsknumubarccqe_etrue_mc << pctsymbol 
+           << endrow
+           << endl;
+      if(use_tex) streamer << "\\hline" << endl;
+    }
+    if ( m == conv::kSKmNuECCQE && show_sk_spectral_info_etrue_norm_binning) {
+      temp = component + " ($E_{t} <$ 1.5 GeV)";
+      streamer << setw(ncol1)  << setfill(' ') << temp
+           << endcolumn
+           << setw(ncolnev)  << setfill(' ') << setprecision(nprecisionnev) << nsknueccqe_etrue_na
+           << endcolumn
+           << setw(ncolnev)  << setfill(' ') << setprecision(nprecisionnev) << nsknueccqe_etrue_0a
+           << endcolumn
+           << setw(ncolnev)  << setfill(' ') << setprecision(nprecisionnev) << nsknueccqe_etrue_pa
+           << endcolumn
+           << setw(ncolfrc)  << setfill(' ') << setprecision(nprecisionpct) << frac_nsknueccqe_etrue_pa << pctsymbol 
+           << endcolumn
+           << setw(ncolnev)  << setfill(' ') << setprecision(nprecisionnev) << nsknueccqe_etrue_ma 
+           << endcolumn
+           << setw(ncolfrc)  << setfill(' ') << setprecision(nprecisionpct) << frac_nsknueccqe_etrue_ma << pctsymbol 
+           << endrow
+           << endl;
+      temp = component + " (1.5 $\\leq E_{t} <$ 2.5 GeV)";
+      streamer << setw(ncol1)  << setfill(' ') << temp
+	   << endcolumn
+           << setw(ncolnev)  << setfill(' ') << setprecision(nprecisionnev) << nsknueccqe_etrue_nb
+           << endcolumn
+           << setw(ncolnev)  << setfill(' ') << setprecision(nprecisionnev) << nsknueccqe_etrue_0b
+           << endcolumn
+           << setw(ncolnev)  << setfill(' ') << setprecision(nprecisionnev) << nsknueccqe_etrue_pb
+           << endcolumn
+           << setw(ncolfrc)  << setfill(' ') << setprecision(nprecisionpct) << frac_nsknueccqe_etrue_pb << pctsymbol 
+           << endcolumn
+           << setw(ncolnev)  << setfill(' ') << setprecision(nprecisionnev) << nsknueccqe_etrue_mb 
+           << endcolumn
+           << setw(ncolfrc)  << setfill(' ') << setprecision(nprecisionpct) << frac_nsknueccqe_etrue_mb << pctsymbol 
+           << endrow
+           << endl;
+      temp = component + " ($E_{t} \\geq$ 2.5 GeV)";
+      streamer << setw(ncol1)  << setfill(' ') << temp
+           << endcolumn
+           << setw(ncolnev)  << setfill(' ') << setprecision(nprecisionnev) << nsknueccqe_etrue_nc
+           << endcolumn
+           << setw(ncolnev)  << setfill(' ') << setprecision(nprecisionnev) << nsknueccqe_etrue_0c
+           << endcolumn
+           << setw(ncolnev)  << setfill(' ') << setprecision(nprecisionnev) << nsknueccqe_etrue_pc
+           << endcolumn
+           << setw(ncolfrc)  << setfill(' ') << setprecision(nprecisionpct) << frac_nsknueccqe_etrue_pc << pctsymbol 
+           << endcolumn
+           << setw(ncolnev)  << setfill(' ') << setprecision(nprecisionnev) << nsknueccqe_etrue_mc 
+           << endcolumn
+           << setw(ncolfrc)  << setfill(' ') << setprecision(nprecisionpct) << frac_nsknueccqe_etrue_mc << pctsymbol 
+           << endrow
+           << endl;
+      if(use_tex) streamer << "\\hline" << endl;
+    }
+    if ( m == conv::kSKmNuEBarCCQE && show_sk_spectral_info_etrue_norm_binning) {
+      temp = component + " ($E_{t} <$ 1.5 GeV)";
+      streamer << setw(ncol1)  << setfill(' ') << temp
+           << endcolumn
+           << setw(ncolnev)  << setfill(' ') << setprecision(nprecisionnev) << nsknuebarccqe_etrue_na
+           << endcolumn
+           << setw(ncolnev)  << setfill(' ') << setprecision(nprecisionnev) << nsknuebarccqe_etrue_0a
+           << endcolumn
+           << setw(ncolnev)  << setfill(' ') << setprecision(nprecisionnev) << nsknuebarccqe_etrue_pa
+           << endcolumn
+           << setw(ncolfrc)  << setfill(' ') << setprecision(nprecisionpct) << frac_nsknuebarccqe_etrue_pa << pctsymbol 
+           << endcolumn
+           << setw(ncolnev)  << setfill(' ') << setprecision(nprecisionnev) << nsknuebarccqe_etrue_ma 
+           << endcolumn
+           << setw(ncolfrc)  << setfill(' ') << setprecision(nprecisionpct) << frac_nsknuebarccqe_etrue_ma << pctsymbol 
+           << endrow
+           << endl;
+      temp = component + " (1.5 $\\leq E_{t} <$ 2.5 GeV)";
+      streamer << setw(ncol1)  << setfill(' ') << temp
+	   << endcolumn
+           << setw(ncolnev)  << setfill(' ') << setprecision(nprecisionnev) << nsknuebarccqe_etrue_nb
+           << endcolumn
+           << setw(ncolnev)  << setfill(' ') << setprecision(nprecisionnev) << nsknuebarccqe_etrue_0b
+           << endcolumn
+           << setw(ncolnev)  << setfill(' ') << setprecision(nprecisionnev) << nsknuebarccqe_etrue_pb
+           << endcolumn
+           << setw(ncolfrc)  << setfill(' ') << setprecision(nprecisionpct) << frac_nsknuebarccqe_etrue_pb << pctsymbol 
+           << endcolumn
+           << setw(ncolnev)  << setfill(' ') << setprecision(nprecisionnev) << nsknuebarccqe_etrue_mb 
+           << endcolumn
+           << setw(ncolfrc)  << setfill(' ') << setprecision(nprecisionpct) << frac_nsknuebarccqe_etrue_mb << pctsymbol 
+           << endrow
+           << endl;
+      temp = component + " ($E_{t} \\geq$ 2.5 GeV)";
+      streamer << setw(ncol1)  << setfill(' ') << temp
+           << endcolumn
+           << setw(ncolnev)  << setfill(' ') << setprecision(nprecisionnev) << nsknuebarccqe_etrue_nc
+           << endcolumn
+           << setw(ncolnev)  << setfill(' ') << setprecision(nprecisionnev) << nsknuebarccqe_etrue_0c
+           << endcolumn
+           << setw(ncolnev)  << setfill(' ') << setprecision(nprecisionnev) << nsknuebarccqe_etrue_pc
+           << endcolumn
+           << setw(ncolfrc)  << setfill(' ') << setprecision(nprecisionpct) << frac_nsknuebarccqe_etrue_pc << pctsymbol 
+           << endcolumn
+           << setw(ncolnev)  << setfill(' ') << setprecision(nprecisionnev) << nsknuebarccqe_etrue_mc 
+           << endcolumn
+           << setw(ncolfrc)  << setfill(' ') << setprecision(nprecisionpct) << frac_nsknuebarccqe_etrue_mc << pctsymbol 
+           << endrow
+           << endl;
+      if(use_tex) streamer << "\\hline" << endl;
+    }
+    if ( m == conv::kSKmSigNuECCQE && show_sk_spectral_info_etrue_norm_binning) {
+      temp = component + " ($E_{t} <$ 1.5 GeV)";
+      streamer << setw(ncol1)  << setfill(' ') << temp
+           << endcolumn
+           << setw(ncolnev)  << setfill(' ') << setprecision(nprecisionnev) << nsksignueccqe_etrue_na
+           << endcolumn
+           << setw(ncolnev)  << setfill(' ') << setprecision(nprecisionnev) << nsksignueccqe_etrue_0a
+           << endcolumn
+           << setw(ncolnev)  << setfill(' ') << setprecision(nprecisionnev) << nsksignueccqe_etrue_pa
+           << endcolumn
+           << setw(ncolfrc)  << setfill(' ') << setprecision(nprecisionpct) << frac_nsksignueccqe_etrue_pa << pctsymbol 
+           << endcolumn
+           << setw(ncolnev)  << setfill(' ') << setprecision(nprecisionnev) << nsksignueccqe_etrue_ma 
+           << endcolumn
+           << setw(ncolfrc)  << setfill(' ') << setprecision(nprecisionpct) << frac_nsksignueccqe_etrue_ma << pctsymbol 
+           << endrow
+           << endl;
+      temp = component + " (1.5 $\\leq E_{t} <$ 2.5 GeV)";
+      streamer << setw(ncol1)  << setfill(' ') << temp
+	   << endcolumn
+           << setw(ncolnev)  << setfill(' ') << setprecision(nprecisionnev) << nsksignueccqe_etrue_nb
+           << endcolumn
+           << setw(ncolnev)  << setfill(' ') << setprecision(nprecisionnev) << nsksignueccqe_etrue_0b
+           << endcolumn
+           << setw(ncolnev)  << setfill(' ') << setprecision(nprecisionnev) << nsksignueccqe_etrue_pb
+           << endcolumn
+           << setw(ncolfrc)  << setfill(' ') << setprecision(nprecisionpct) << frac_nsksignueccqe_etrue_pb << pctsymbol 
+           << endcolumn
+           << setw(ncolnev)  << setfill(' ') << setprecision(nprecisionnev) << nsksignueccqe_etrue_mb 
+           << endcolumn
+           << setw(ncolfrc)  << setfill(' ') << setprecision(nprecisionpct) << frac_nsksignueccqe_etrue_mb << pctsymbol 
+           << endrow
+           << endl;
+      temp = component + " ($E_{t} \\geq$ 2.5 GeV)";
+      streamer << setw(ncol1)  << setfill(' ') << temp
+           << endcolumn
+           << setw(ncolnev)  << setfill(' ') << setprecision(nprecisionnev) << nsksignueccqe_etrue_nc
+           << endcolumn
+           << setw(ncolnev)  << setfill(' ') << setprecision(nprecisionnev) << nsksignueccqe_etrue_0c
+           << endcolumn
+           << setw(ncolnev)  << setfill(' ') << setprecision(nprecisionnev) << nsksignueccqe_etrue_pc
+           << endcolumn
+           << setw(ncolfrc)  << setfill(' ') << setprecision(nprecisionpct) << frac_nsksignueccqe_etrue_pc << pctsymbol 
+           << endcolumn
+           << setw(ncolnev)  << setfill(' ') << setprecision(nprecisionnev) << nsksignueccqe_etrue_mc 
+           << endcolumn
+           << setw(ncolfrc)  << setfill(' ') << setprecision(nprecisionpct) << frac_nsksignueccqe_etrue_mc << pctsymbol 
+           << endrow
+           << endl;
+      if(use_tex) streamer << "\\hline" << endl;
+    }
+    //spectral ccres (etrue)
+    if ( m == conv::kSKmNuMuCC1pi && show_sk_spectral_info_etrue_norm_binning) {
+      if(use_tex) streamer << "\\hline" << endl;
+      temp = component + " ($E_{t} <$ 2.5 GeV)";
+      streamer << setw(ncol1)  << setfill(' ') << temp
+           << endcolumn
+           << setw(ncolnev)  << setfill(' ') << setprecision(nprecisionnev) << nsknumuccres_etrue_na
+           << endcolumn
+           << setw(ncolnev)  << setfill(' ') << setprecision(nprecisionnev) << nsknumuccres_etrue_0a
+           << endcolumn
+           << setw(ncolnev)  << setfill(' ') << setprecision(nprecisionnev) << nsknumuccres_etrue_pa
+           << endcolumn
+           << setw(ncolfrc)  << setfill(' ') << setprecision(nprecisionpct) << frac_nsknumuccres_etrue_pa << pctsymbol 
+           << endcolumn
+           << setw(ncolnev)  << setfill(' ') << setprecision(nprecisionnev) << nsknumuccres_etrue_ma 
+           << endcolumn
+           << setw(ncolfrc)  << setfill(' ') << setprecision(nprecisionpct) << frac_nsknumuccres_etrue_ma << pctsymbol 
+           << endrow
+           << endl;
+      temp = component + " ($E_{t} \\geq$ 2.5 GeV)";
+      streamer << setw(ncol1)  << setfill(' ') << temp
+	   << endcolumn
+           << setw(ncolnev)  << setfill(' ') << setprecision(nprecisionnev) << nsknumuccres_etrue_nb
+           << endcolumn
+           << setw(ncolnev)  << setfill(' ') << setprecision(nprecisionnev) << nsknumuccres_etrue_0b
+           << endcolumn
+           << setw(ncolnev)  << setfill(' ') << setprecision(nprecisionnev) << nsknumuccres_etrue_pb
+           << endcolumn
+           << setw(ncolfrc)  << setfill(' ') << setprecision(nprecisionpct) << frac_nsknumuccres_etrue_pb << pctsymbol 
+           << endcolumn
+           << setw(ncolnev)  << setfill(' ') << setprecision(nprecisionnev) << nsknumuccres_etrue_mb 
+           << endcolumn
+           << setw(ncolfrc)  << setfill(' ') << setprecision(nprecisionpct) << frac_nsknumuccres_etrue_mb << pctsymbol 
+           << endrow
+           << endl;
+      if(use_tex) streamer << "\\hline" << endl;
+    }
+    if ( m == conv::kSKmNuMuBarCC1pi && show_sk_spectral_info_etrue_norm_binning) {
+      if(use_tex) streamer << "\\hline" << endl;
+      temp = component + " ($E_{t} <$ 2.5 GeV)";
+      streamer << setw(ncol1)  << setfill(' ') << temp
+           << endcolumn
+           << setw(ncolnev)  << setfill(' ') << setprecision(nprecisionnev) << nsknumubarccres_etrue_na
+           << endcolumn
+           << setw(ncolnev)  << setfill(' ') << setprecision(nprecisionnev) << nsknumubarccres_etrue_0a
+           << endcolumn
+           << setw(ncolnev)  << setfill(' ') << setprecision(nprecisionnev) << nsknumubarccres_etrue_pa
+           << endcolumn
+           << setw(ncolfrc)  << setfill(' ') << setprecision(nprecisionpct) << frac_nsknumubarccres_etrue_pa << pctsymbol 
+           << endcolumn
+           << setw(ncolnev)  << setfill(' ') << setprecision(nprecisionnev) << nsknumubarccres_etrue_ma 
+           << endcolumn
+           << setw(ncolfrc)  << setfill(' ') << setprecision(nprecisionpct) << frac_nsknumubarccres_etrue_ma << pctsymbol 
+           << endrow
+           << endl;
+      temp = component + " ($E_{t} \\geq$ 2.5 GeV)";
+      streamer << setw(ncol1)  << setfill(' ') << temp
+	   << endcolumn
+           << setw(ncolnev)  << setfill(' ') << setprecision(nprecisionnev) << nsknumubarccres_etrue_nb
+           << endcolumn
+           << setw(ncolnev)  << setfill(' ') << setprecision(nprecisionnev) << nsknumubarccres_etrue_0b
+           << endcolumn
+           << setw(ncolnev)  << setfill(' ') << setprecision(nprecisionnev) << nsknumubarccres_etrue_pb
+           << endcolumn
+           << setw(ncolfrc)  << setfill(' ') << setprecision(nprecisionpct) << frac_nsknumubarccres_etrue_pb << pctsymbol 
+           << endcolumn
+           << setw(ncolnev)  << setfill(' ') << setprecision(nprecisionnev) << nsknumubarccres_etrue_mb 
+           << endcolumn
+           << setw(ncolfrc)  << setfill(' ') << setprecision(nprecisionpct) << frac_nsknumubarccres_etrue_mb << pctsymbol 
+           << endrow
+           << endl;
+      if(use_tex) streamer << "\\hline" << endl;
+    }
+    if ( m == conv::kSKmNuECC1pi && show_sk_spectral_info_etrue_norm_binning) {
+      if(use_tex) streamer << "\\hline" << endl;
+      temp = component + " ($E_{t} <$ 2.5 GeV)";
+      streamer << setw(ncol1)  << setfill(' ') << temp
+           << endcolumn
+           << setw(ncolnev)  << setfill(' ') << setprecision(nprecisionnev) << nsknueccres_etrue_na
+           << endcolumn
+           << setw(ncolnev)  << setfill(' ') << setprecision(nprecisionnev) << nsknueccres_etrue_0a
+           << endcolumn
+           << setw(ncolnev)  << setfill(' ') << setprecision(nprecisionnev) << nsknueccres_etrue_pa
+           << endcolumn
+           << setw(ncolfrc)  << setfill(' ') << setprecision(nprecisionpct) << frac_nsknueccres_etrue_pa << pctsymbol 
+           << endcolumn
+           << setw(ncolnev)  << setfill(' ') << setprecision(nprecisionnev) << nsknueccres_etrue_ma 
+           << endcolumn
+           << setw(ncolfrc)  << setfill(' ') << setprecision(nprecisionpct) << frac_nsknueccres_etrue_ma << pctsymbol 
+           << endrow
+           << endl;
+      temp = component + " ($E_{t} \\geq$ 2.5 GeV)";
+      streamer << setw(ncol1)  << setfill(' ') << temp
+	   << endcolumn
+           << setw(ncolnev)  << setfill(' ') << setprecision(nprecisionnev) << nsknueccres_etrue_nb
+           << endcolumn
+           << setw(ncolnev)  << setfill(' ') << setprecision(nprecisionnev) << nsknueccres_etrue_0b
+           << endcolumn
+           << setw(ncolnev)  << setfill(' ') << setprecision(nprecisionnev) << nsknueccres_etrue_pb
+           << endcolumn
+           << setw(ncolfrc)  << setfill(' ') << setprecision(nprecisionpct) << frac_nsknueccres_etrue_pb << pctsymbol 
+           << endcolumn
+           << setw(ncolnev)  << setfill(' ') << setprecision(nprecisionnev) << nsknueccres_etrue_mb 
+           << endcolumn
+           << setw(ncolfrc)  << setfill(' ') << setprecision(nprecisionpct) << frac_nsknueccres_etrue_mb << pctsymbol 
+           << endrow
+           << endl;
+      temp = component + " ($E_{t} \\geq$ 2.5 GeV)";
+      if(use_tex) streamer << "\\hline" << endl;
+    }
+    if ( m == conv::kSKmNuEBarCC1pi && show_sk_spectral_info_etrue_norm_binning) {
+      if(use_tex) streamer << "\\hline" << endl;
+      temp = component + " ($E_{t} <$ 2.5 GeV)";
+      streamer << setw(ncol1)  << setfill(' ') << temp
+           << endcolumn
+           << setw(ncolnev)  << setfill(' ') << setprecision(nprecisionnev) << nsknuebarccres_etrue_na
+           << endcolumn
+           << setw(ncolnev)  << setfill(' ') << setprecision(nprecisionnev) << nsknuebarccres_etrue_0a
+           << endcolumn
+           << setw(ncolnev)  << setfill(' ') << setprecision(nprecisionnev) << nsknuebarccres_etrue_pa
+           << endcolumn
+           << setw(ncolfrc)  << setfill(' ') << setprecision(nprecisionpct) << frac_nsknuebarccres_etrue_pa << pctsymbol 
+           << endcolumn
+           << setw(ncolnev)  << setfill(' ') << setprecision(nprecisionnev) << nsknuebarccres_etrue_ma 
+           << endcolumn
+           << setw(ncolfrc)  << setfill(' ') << setprecision(nprecisionpct) << frac_nsknuebarccres_etrue_ma << pctsymbol 
+           << endrow
+           << endl;
+      temp = component + " ($E_{t} \\geq$ 2.5 GeV)";
+      streamer << setw(ncol1)  << setfill(' ') << temp
+	   << endcolumn
+           << setw(ncolnev)  << setfill(' ') << setprecision(nprecisionnev) << nsknuebarccres_etrue_nb
+           << endcolumn
+           << setw(ncolnev)  << setfill(' ') << setprecision(nprecisionnev) << nsknuebarccres_etrue_0b
+           << endcolumn
+           << setw(ncolnev)  << setfill(' ') << setprecision(nprecisionnev) << nsknuebarccres_etrue_pb
+           << endcolumn
+           << setw(ncolfrc)  << setfill(' ') << setprecision(nprecisionpct) << frac_nsknuebarccres_etrue_pb << pctsymbol 
+           << endcolumn
+           << setw(ncolnev)  << setfill(' ') << setprecision(nprecisionnev) << nsknuebarccres_etrue_mb 
+           << endcolumn
+           << setw(ncolfrc)  << setfill(' ') << setprecision(nprecisionpct) << frac_nsknuebarccres_etrue_mb << pctsymbol 
+           << endrow
+           << endl;
+      if(use_tex) streamer << "\\hline" << endl;
+    }
+    if ( m == conv::kSKmSigNuECC1pi && show_sk_spectral_info_etrue_norm_binning) {
+      if(use_tex) streamer << "\\hline" << endl;
+      temp = component + " ($E_{t} <$ 2.5 GeV)";
+      streamer << setw(ncol1)  << setfill(' ') << temp
+           << endcolumn
+           << setw(ncolnev)  << setfill(' ') << setprecision(nprecisionnev) << nsksignueccres_etrue_na
+           << endcolumn
+           << setw(ncolnev)  << setfill(' ') << setprecision(nprecisionnev) << nsksignueccres_etrue_0a
+           << endcolumn
+           << setw(ncolnev)  << setfill(' ') << setprecision(nprecisionnev) << nsksignueccres_etrue_pa
+           << endcolumn
+           << setw(ncolfrc)  << setfill(' ') << setprecision(nprecisionpct) << frac_nsksignueccres_etrue_pa << pctsymbol 
+           << endcolumn
+           << setw(ncolnev)  << setfill(' ') << setprecision(nprecisionnev) << nsksignueccres_etrue_ma 
+           << endcolumn
+           << setw(ncolfrc)  << setfill(' ') << setprecision(nprecisionpct) << frac_nsksignueccres_etrue_ma << pctsymbol 
+           << endrow
+           << endl;
+      temp = component + " ($E_{t} \\geq$ 2.5 GeV)";
+      streamer << setw(ncol1)  << setfill(' ') << temp
+	   << endcolumn
+           << setw(ncolnev)  << setfill(' ') << setprecision(nprecisionnev) << nsksignueccres_etrue_nb
+           << endcolumn
+           << setw(ncolnev)  << setfill(' ') << setprecision(nprecisionnev) << nsksignueccres_etrue_0b
+           << endcolumn
+           << setw(ncolnev)  << setfill(' ') << setprecision(nprecisionnev) << nsksignueccres_etrue_pb
+           << endcolumn
+           << setw(ncolfrc)  << setfill(' ') << setprecision(nprecisionpct) << frac_nsksignueccres_etrue_pb << pctsymbol 
+           << endcolumn
+           << setw(ncolnev)  << setfill(' ') << setprecision(nprecisionnev) << nsksignueccres_etrue_mb 
+           << endcolumn
+           << setw(ncolfrc)  << setfill(' ') << setprecision(nprecisionpct) << frac_nsksignueccres_etrue_mb << pctsymbol 
+           << endrow
+           << endl;
+      if(use_tex) streamer << "\\hline" << endl;
+    }
+
     //spectral ccqe (ereco)
     if ( m == conv::kSKmNuMuCCQE && show_sk_ccqe_spectral_info_ereco) {
       temp = component + " ($E_{r} <$ 0.4 GeV)";
@@ -658,30 +1381,8 @@ void test_systematic_error_propagation
            << setw(ncolfrc)  << setfill(' ') << setprecision(nprecisionpct) << frac_nsknumuccqe_mc << pctsymbol 
            << endrow
            << endl;
+      if(use_tex) streamer << "\\hline" << endl;
     }//numu ccqe spectral (ereco)
-    if ( m == conv::kSKmNuMuCCQE && show_sk_ccqe_spectral_info_etrue) {
-      char bufl[100], bufu[100];
-      for(int itb = 0; itb < NEtrueBinNuMu; itb++) {
-	snprintf(bufl, sizeof(bufl), "%g",  skexp->GetSuperkMC()->Template(s, conv::kSKmNuMuCCQE, conv::kSKMCtFin)->GetYaxis()->GetBinLowEdge(EtrueBinNuMu[itb]+1));
-	snprintf(bufu, sizeof(bufu), "%g",  skexp->GetSuperkMC()->Template(s, conv::kSKmNuMuCCQE, conv::kSKMCtFin)->GetYaxis()->GetBinUpEdge(EtrueBinNuMu[itb+1]));
-	temp = component + " (" + bufl + " $\\leq E_{t} <$ " + bufu + "GeV)";
-	streamer << setw(ncol1)  << setfill(' ') << temp
-	   << endcolumn
-           << setw(ncolnev)  << setfill(' ') << setprecision(nprecisionnev) << nsknumuccqe_nt[itb]
-           << endcolumn
-           << setw(ncolnev)  << setfill(' ') << setprecision(nprecisionnev) << nsknumuccqe_0t[itb]
-           << endcolumn
-           << setw(ncolnev)  << setfill(' ') << setprecision(nprecisionnev) << nsknumuccqe_pt[itb]
-           << endcolumn
-           << setw(ncolfrc)  << setfill(' ') << setprecision(nprecisionpct) << frac_nsknumuccqe_pt[itb] << pctsymbol 
-           << endcolumn
-           << setw(ncolnev)  << setfill(' ') << setprecision(nprecisionnev) << nsknumuccqe_mt[itb]
-           << endcolumn
-           << setw(ncolfrc)  << setfill(' ') << setprecision(nprecisionpct) << frac_nsknumuccqe_mt[itb] << pctsymbol 
-           << endrow
-           << endl;
-      }//loop over etrue bins
-    }//numu ccqe spectral (etrue)
     if ( m == conv::kSKmNuMuBarCCQE && show_sk_ccqe_spectral_info_ereco) {
       temp = component + " ($E_{r} <$ 0.4 GeV)";
       streamer << setw(ncol1)  << setfill(' ') << temp
@@ -698,7 +1399,7 @@ void test_systematic_error_propagation
            << endcolumn
            << setw(ncolfrc)  << setfill(' ') << setprecision(nprecisionpct) << frac_nsknumubarccqe_ma << pctsymbol 
            << endrow
-           << endl;
+	   << endl;
       temp = component + " (0.4 $\\leq E_{r} <$ 1.1 GeV)";
       streamer << setw(ncol1)  << setfill(' ') << temp
            << endcolumn
@@ -731,9 +1432,151 @@ void test_systematic_error_propagation
            << setw(ncolfrc)  << setfill(' ') << setprecision(nprecisionpct) << frac_nsknumubarccqe_mc << pctsymbol 
            << endrow
            << endl;
+      if(use_tex) streamer << "\\hline" << endl;
     }//numbar ccqe spectral (ereco)
+    //a normal individual mode table fill
+    streamer << setw(ncol1)  << setfill(' ') << component
+	 << endcolumn
+	 << setw(ncolnev)  << setfill(' ') << setprecision(nprecisionnev) << nskmodes_n[m]
+	 << endcolumn
+	 << setw(ncolnev)  << setfill(' ') << setprecision(nprecisionnev) << nskmodes_0[m]
+	 << endcolumn
+	 << setw(ncolnev)  << setfill(' ') << setprecision(nprecisionnev) << nskmodes_p[m]
+	 << endcolumn
+	 << setw(ncolfrc)  << setfill(' ') << setprecision(nprecisionpct) << frac_nskmodes_p[m] << pctsymbol 
+	 << endcolumn
+	 << setw(ncolnev)  << setfill(' ') << setprecision(nprecisionnev) << nskmodes_m[m] 
+	 << endcolumn
+	 << setw(ncolfrc)  << setfill(' ') << setprecision(nprecisionpct) << frac_nskmodes_m[m] << pctsymbol 
+	 << endrow
+	 << endl;
+    if (((s == conv::kSKsFCFV1RingMuLike && m == conv::kSKmNuMuNC) || (s == conv::kSKsFCFV1RingELike && m == conv::kSKmNuMuNCoth_e)) && show_sk_spectral_info_etrue_flux_binning) {
+      if(use_tex) streamer << "\\hline" << endl;
+      char bufl[100], bufu[100];
+      for(int itb = 0; itb < NEtrueBinNuMu; itb++) {
+	snprintf(bufl, sizeof(bufl), "%g",  skexp->GetSuperkMC()->Template(s, conv::kSKmNuMuCCQE, conv::kSKMCtFin)->GetYaxis()->GetBinLowEdge(EtrueBinNuMu[itb]+1));
+	snprintf(bufu, sizeof(bufu), "%g",  skexp->GetSuperkMC()->Template(s, conv::kSKmNuMuCCQE, conv::kSKMCtFin)->GetYaxis()->GetBinUpEdge(EtrueBinNuMu[itb+1]));
+	temp = "$N_{SK}$ (" + util::AsStringTex(s) + "): $\\nu_{\\mu}$ all (" + bufl + " $\\leq E_{t} <$ " + bufu + "GeV)";
+	streamer << setw(ncol1)  << setfill(' ') << temp
+	   << endcolumn
+           << setw(ncolnev)  << setfill(' ') << setprecision(nprecisionnev) << nsknumu_etrue_n[itb]
+           << endcolumn
+           << setw(ncolnev)  << setfill(' ') << setprecision(nprecisionnev) << nsknumu_etrue_0[itb]
+           << endcolumn
+           << setw(ncolnev)  << setfill(' ') << setprecision(nprecisionnev) << nsknumu_etrue_p[itb]
+           << endcolumn
+           << setw(ncolfrc)  << setfill(' ') << setprecision(nprecisionpct) << frac_nsknumu_etrue_p[itb] << pctsymbol 
+           << endcolumn
+           << setw(ncolnev)  << setfill(' ') << setprecision(nprecisionnev) << nsknumu_etrue_m[itb]
+           << endcolumn
+           << setw(ncolfrc)  << setfill(' ') << setprecision(nprecisionpct) << frac_nsknumu_etrue_m[itb] << pctsymbol 
+           << endrow
+           << endl;
+      }//loop over etrue bins
+      if(use_tex) streamer << "\\hline" << endl;
+    }//numu etrue (flux binning)
+    if (((s == conv::kSKsFCFV1RingMuLike && m == conv::kSKmNuMuBarNC) || (s == conv::kSKsFCFV1RingELike && m == conv::kSKmNuMuBarNCoth_e)) && show_sk_spectral_info_etrue_flux_binning) {
+      if(use_tex) streamer << "\\hline" << endl;
+      char bufl[100], bufu[100];
+      for(int itb = 0; itb < NEtrueBinNuMuBar; itb++) {
+	snprintf(bufl, sizeof(bufl), "%g",  skexp->GetSuperkMC()->Template(s, conv::kSKmNuMuBarCCQE, conv::kSKMCtFin)->GetYaxis()->GetBinLowEdge(EtrueBinNuMuBar[itb]+1));
+	snprintf(bufu, sizeof(bufu), "%g",  skexp->GetSuperkMC()->Template(s, conv::kSKmNuMuBarCCQE, conv::kSKMCtFin)->GetYaxis()->GetBinUpEdge(EtrueBinNuMuBar[itb+1]));
+	temp = "$N_{SK}$ (" + util::AsStringTex(s) + "): $\\bar{\\nu_{\\mu}}$ all (" + bufl + " $\\leq E_{t} <$ " + bufu + "GeV)";
+	streamer << setw(ncol1)  << setfill(' ') << temp
+	   << endcolumn
+           << setw(ncolnev)  << setfill(' ') << setprecision(nprecisionnev) << nsknumubar_etrue_n[itb]
+           << endcolumn
+           << setw(ncolnev)  << setfill(' ') << setprecision(nprecisionnev) << nsknumubar_etrue_0[itb]
+           << endcolumn
+           << setw(ncolnev)  << setfill(' ') << setprecision(nprecisionnev) << nsknumubar_etrue_p[itb]
+           << endcolumn
+           << setw(ncolfrc)  << setfill(' ') << setprecision(nprecisionpct) << frac_nsknumubar_etrue_p[itb] << pctsymbol 
+           << endcolumn
+           << setw(ncolnev)  << setfill(' ') << setprecision(nprecisionnev) << nsknumubar_etrue_m[itb]
+           << endcolumn
+           << setw(ncolfrc)  << setfill(' ') << setprecision(nprecisionpct) << frac_nsknumubar_etrue_m[itb] << pctsymbol 
+           << endrow
+           << endl;
+      }//loop over etrue bins
+      if(use_tex) streamer << "\\hline" << endl;
+    }//numubar etrue (flux binning)
+    if (((s == conv::kSKsFCFV1RingMuLike && m == conv::kSKmNuENC) || (s == conv::kSKsFCFV1RingELike && m == conv::kSKmNuENCoth_e)) && show_sk_spectral_info_etrue_flux_binning) {
+      if(use_tex) streamer << "\\hline" << endl;
+      char bufl[100], bufu[100];
+      for(int itb = 0; itb < NEtrueBinNuE; itb++) {
+	snprintf(bufl, sizeof(bufl), "%g",  skexp->GetSuperkMC()->Template(s, conv::kSKmNuECCQE, conv::kSKMCtFin)->GetYaxis()->GetBinLowEdge(EtrueBinNuE[itb]+1));
+	snprintf(bufu, sizeof(bufu), "%g",  skexp->GetSuperkMC()->Template(s, conv::kSKmNuECCQE, conv::kSKMCtFin)->GetYaxis()->GetBinUpEdge(EtrueBinNuE[itb+1]));
+	temp = "$N_{SK}$ (" + util::AsStringTex(s) + "): $\\nu_{e}$ all (" + bufl + " $\\leq E_{t} <$ " + bufu + "GeV)";
+	streamer << setw(ncol1)  << setfill(' ') << temp
+	   << endcolumn
+           << setw(ncolnev)  << setfill(' ') << setprecision(nprecisionnev) << nsknue_etrue_n[itb]
+           << endcolumn
+           << setw(ncolnev)  << setfill(' ') << setprecision(nprecisionnev) << nsknue_etrue_0[itb]
+           << endcolumn
+           << setw(ncolnev)  << setfill(' ') << setprecision(nprecisionnev) << nsknue_etrue_p[itb]
+           << endcolumn
+           << setw(ncolfrc)  << setfill(' ') << setprecision(nprecisionpct) << frac_nsknue_etrue_p[itb] << pctsymbol 
+           << endcolumn
+           << setw(ncolnev)  << setfill(' ') << setprecision(nprecisionnev) << nsknue_etrue_m[itb]
+           << endcolumn
+           << setw(ncolfrc)  << setfill(' ') << setprecision(nprecisionpct) << frac_nsknue_etrue_m[itb] << pctsymbol 
+           << endrow
+           << endl;
+      }//loop over etrue bins
+      if(use_tex) streamer << "\\hline" << endl;
+    }//nue etrue (flux binning)
+    if (((s == conv::kSKsFCFV1RingMuLike && m == conv::kSKmNuEBarNC) || (s == conv::kSKsFCFV1RingELike && m == conv::kSKmNuEBarNCoth_e)) && show_sk_spectral_info_etrue_flux_binning) {
+      if(use_tex) streamer << "\\hline" << endl;
+      char bufl[100], bufu[100];
+      for(int itb = 0; itb < NEtrueBinNuEBar; itb++) {
+	snprintf(bufl, sizeof(bufl), "%g",  skexp->GetSuperkMC()->Template(s, conv::kSKmNuEBarCCQE, conv::kSKMCtFin)->GetYaxis()->GetBinLowEdge(EtrueBinNuEBar[itb]+1));
+	snprintf(bufu, sizeof(bufu), "%g",  skexp->GetSuperkMC()->Template(s, conv::kSKmNuEBarCCQE, conv::kSKMCtFin)->GetYaxis()->GetBinUpEdge(EtrueBinNuEBar[itb+1]));
+	temp = "$N_{SK}$ (" + util::AsStringTex(s) + "): $\\bar{\\nu_{e}}$ all (" + bufl + " $\\leq E_{t} <$ " + bufu + "GeV)";
+	streamer << setw(ncol1)  << setfill(' ') << temp
+	   << endcolumn
+           << setw(ncolnev)  << setfill(' ') << setprecision(nprecisionnev) << nsknuebar_etrue_n[itb]
+           << endcolumn
+           << setw(ncolnev)  << setfill(' ') << setprecision(nprecisionnev) << nsknuebar_etrue_0[itb]
+           << endcolumn
+           << setw(ncolnev)  << setfill(' ') << setprecision(nprecisionnev) << nsknuebar_etrue_p[itb]
+           << endcolumn
+           << setw(ncolfrc)  << setfill(' ') << setprecision(nprecisionpct) << frac_nsknuebar_etrue_p[itb] << pctsymbol 
+           << endcolumn
+           << setw(ncolnev)  << setfill(' ') << setprecision(nprecisionnev) << nsknuebar_etrue_m[itb]
+           << endcolumn
+           << setw(ncolfrc)  << setfill(' ') << setprecision(nprecisionpct) << frac_nsknuebar_etrue_m[itb] << pctsymbol 
+           << endrow
+           << endl;
+      }//loop over etrue bins
+      if(use_tex) streamer << "\\hline" << endl;
+    }//nuebar etrue (flux binning)
+    if (((s == conv::kSKsFCFV1RingMuLike && m == conv::kSKmSigNuECCoth) || (s == conv::kSKsFCFV1RingELike && m == conv::kSKmSigNuECCoth)) && show_sk_spectral_info_etrue_flux_binning) {
+      if(use_tex) streamer << "\\hline" << endl;
+      char bufl[100], bufu[100];
+      for(int itb = 0; itb < NEtrueBinSigNuE; itb++) {
+	snprintf(bufl, sizeof(bufl), "%g",  skexp->GetSuperkMC()->Template(s, conv::kSKmSigNuECCQE, conv::kSKMCtFin)->GetYaxis()->GetBinLowEdge(EtrueBinSigNuE[itb]+1));
+	snprintf(bufu, sizeof(bufu), "%g",  skexp->GetSuperkMC()->Template(s, conv::kSKmSigNuECCQE, conv::kSKMCtFin)->GetYaxis()->GetBinUpEdge(EtrueBinSigNuE[itb+1]));
+	temp = "$N_{SK}$ (" + util::AsStringTex(s) + "): $\\nu_{e}$ (signal) all (" + bufl + " $\\leq E_{t} <$ " + bufu + "GeV)";
+	streamer << setw(ncol1)  << setfill(' ') << temp
+	   << endcolumn
+           << setw(ncolnev)  << setfill(' ') << setprecision(nprecisionnev) << nsksignue_etrue_n[itb]
+           << endcolumn
+           << setw(ncolnev)  << setfill(' ') << setprecision(nprecisionnev) << nsksignue_etrue_0[itb]
+           << endcolumn
+           << setw(ncolnev)  << setfill(' ') << setprecision(nprecisionnev) << nsksignue_etrue_p[itb]
+           << endcolumn
+           << setw(ncolfrc)  << setfill(' ') << setprecision(nprecisionpct) << frac_nsksignue_etrue_p[itb] << pctsymbol 
+           << endcolumn
+           << setw(ncolnev)  << setfill(' ') << setprecision(nprecisionnev) << nsksignue_etrue_m[itb]
+           << endcolumn
+           << setw(ncolfrc)  << setfill(' ') << setprecision(nprecisionpct) << frac_nsksignue_etrue_m[itb] << pctsymbol 
+           << endrow
+           << endl;
+      }//loop over etrue bins
+      if(use_tex) streamer << "\\hline" << endl;
+    }//signue etrue (flux binning)
     //total flavour-nc/cc
-    if ((s == conv::kSKsFCFV1RingMuLike && m == conv::kSKmNuMuCCoth_mu) || (s == conv::kSKsFCFV1RingMuLike && m == conv::kSKmNuMuCCoth_e)) {
+    if ((s == conv::kSKsFCFV1RingMuLike && m == conv::kSKmNuMuCCoth_mu) || (s == conv::kSKsFCFV1RingELike && m == conv::kSKmNuMuCCoth_e)) {
       temp = "$N_{SK}$ (" + util::AsStringTex(s) + "): $\\nu_{\\mu}$ CC all";
       streamer << setw(ncol1)  << setfill(' ') << temp
 	   << endcolumn
@@ -750,10 +1593,8 @@ void test_systematic_error_propagation
 	   << setw(ncolfrc)  << setfill(' ') << setprecision(nprecisionpct) << frac_nsknumucc_m << pctsymbol 
 	   << endrow
 	   << endl;
-      if(use_tex)
-	streamer << "\\hline" << endl;
     }
-    if (s == conv::kSKsFCFV1RingMuLike && m == conv::kSKmNuMuNCoth_e)) {
+    if ((s == conv::kSKsFCFV1RingELike && m == conv::kSKmNuMuNCoth_e)) {
       temp = "$N_{SK}$ (" + util::AsStringTex(s) + "): $\\nu_{\\mu}$ NC all";
       streamer << setw(ncol1)  << setfill(' ') << temp
 	   << endcolumn
@@ -770,10 +1611,8 @@ void test_systematic_error_propagation
 	   << setw(ncolfrc)  << setfill(' ') << setprecision(nprecisionpct) << frac_nsknumunc_m << pctsymbol 
 	   << endrow
 	   << endl;
-      if(use_tex)
-	streamer << "\\hline" << endl;
     }
-    if ((s == conv::kSKsFCFV1RingMuLike && m == conv::kSKmNuMuBarCCoth_mu) || (s == conv::kSKsFCFV1RingMuLike && m == conv::kSKmNuMuBarCCoth_e)) {
+    if ((s == conv::kSKsFCFV1RingMuLike && m == conv::kSKmNuMuBarCCoth_mu) || (s == conv::kSKsFCFV1RingELike && m == conv::kSKmNuMuBarCCoth_e)) {
       temp = "$N_{SK}$ (" + util::AsStringTex(s) + "): $\\bar{\\nu_{\\mu}}$ CC all";
       streamer << setw(ncol1)  << setfill(' ') << temp
 	   << endcolumn
@@ -790,10 +1629,8 @@ void test_systematic_error_propagation
 	   << setw(ncolfrc)  << setfill(' ') << setprecision(nprecisionpct) << frac_nsknumubarcc_m << pctsymbol 
 	   << endrow
 	   << endl;
-      if(use_tex)
-	streamer << "\\hline" << endl;
     }
-    if ((s == conv::kSKsFCFV1RingMuLike && m == conv::kSKmNuMuBarNCoth_e)) {
+    if ((s == conv::kSKsFCFV1RingELike && m == conv::kSKmNuMuBarNCoth_e)) {
       temp = "$N_{SK}$ (" + util::AsStringTex(s) + "): $\\bar{\\nu_{\\mu}}$ NC all";
       streamer << setw(ncol1)  << setfill(' ') << temp
 	   << endcolumn
@@ -810,10 +1647,8 @@ void test_systematic_error_propagation
 	   << setw(ncolfrc)  << setfill(' ') << setprecision(nprecisionpct) << frac_nsknumubarnc_m << pctsymbol 
 	   << endrow
 	   << endl;
-      if(use_tex)
-	streamer << "\\hline" << endl;
     }
-    if ((s == conv::kSKsFCFV1RingMuLike && m == conv::kSKmNuECCoth_mu) || (s == conv::kSKsFCFV1RingMuLike && m == conv::kSKmNuECCoth_e)) {
+    if ((s == conv::kSKsFCFV1RingMuLike && m == conv::kSKmNuECCoth_mu) || (s == conv::kSKsFCFV1RingELike && m == conv::kSKmNuECCoth_e)) {
       temp = "$N_{SK}$ (" + util::AsStringTex(s) + "): $\\nu_{e}$ CC all";
       streamer << setw(ncol1)  << setfill(' ') << temp
 	   << endcolumn
@@ -830,10 +1665,8 @@ void test_systematic_error_propagation
 	   << setw(ncolfrc)  << setfill(' ') << setprecision(nprecisionpct) << frac_nsknuecc_m << pctsymbol 
 	   << endrow
 	   << endl;
-      if(use_tex)
-	streamer << "\\hline" << endl;
     }
-    if ((s == conv::kSKsFCFV1RingMuLike && m == conv::kSKmNuENCoth_e)) {
+    if ((s == conv::kSKsFCFV1RingELike && m == conv::kSKmNuENCoth_e)) {
       temp = "$N_{SK}$ (" + util::AsStringTex(s) + "): $\\nu_{e}$ NC all";
       streamer << setw(ncol1)  << setfill(' ') << temp
 	   << endcolumn
@@ -850,10 +1683,8 @@ void test_systematic_error_propagation
 	   << setw(ncolfrc)  << setfill(' ') << setprecision(nprecisionpct) << frac_nsknuenc_m << pctsymbol 
 	   << endrow
 	   << endl;
-      if(use_tex)
-	streamer << "\\hline" << endl;
     }
-    if ((s == conv::kSKsFCFV1RingMuLike && m == conv::kSKmNuEBarCCoth_mu) || (s == conv::kSKsFCFV1RingMuLike && m == conv::kSKmNuEBarCCoth_e)) {
+    if ((s == conv::kSKsFCFV1RingMuLike && m == conv::kSKmNuEBarCCoth_mu) || (s == conv::kSKsFCFV1RingELike && m == conv::kSKmNuEBarCCoth_e)) {
       temp = "$N_{SK}$ (" + util::AsStringTex(s) + "): $\\bar{\\nu_{e}}$ CC all";
       streamer << setw(ncol1)  << setfill(' ') << temp
 	   << endcolumn
@@ -870,10 +1701,8 @@ void test_systematic_error_propagation
 	   << setw(ncolfrc)  << setfill(' ') << setprecision(nprecisionpct) << frac_nsknuebarcc_m << pctsymbol 
 	   << endrow
 	   << endl;
-      if(use_tex)
-	streamer << "\\hline" << endl;
     }
-    if ((s == conv::kSKsFCFV1RingMuLike && m == conv::kSKmNuEBarNCoth_e)) {
+    if ((s == conv::kSKsFCFV1RingELike && m == conv::kSKmNuEBarNCoth_e)) {
       temp = "$N_{SK}$ (" + util::AsStringTex(s) + "): $\\bar{\\nu_{e}}$ NC all";
       streamer << setw(ncol1)  << setfill(' ') << temp
 	   << endcolumn
@@ -890,10 +1719,8 @@ void test_systematic_error_propagation
 	   << setw(ncolfrc)  << setfill(' ') << setprecision(nprecisionpct) << frac_nsknuebarnc_m << pctsymbol 
 	   << endrow
 	   << endl;
-      if(use_tex)
-	streamer << "\\hline" << endl;
     }
-    if ((s == conv::kSKsFCFV1RingMuLike && m == conv::kSKmSigNuECCoth) || (s == conv::kSKsFCFV1RingMuLike && m == conv::kSKmSigNuECCoth)) {
+    if ((s == conv::kSKsFCFV1RingMuLike && m == conv::kSKmSigNuECCoth) || (s == conv::kSKsFCFV1RingELike && m == conv::kSKmSigNuECCoth)) {
       temp = "$N_{SK}$ (" + util::AsStringTex(s) + "): $\\nu_{e}$ (signal) CC all";
       streamer << setw(ncol1)  << setfill(' ') << temp
 	   << endcolumn
@@ -910,15 +1737,30 @@ void test_systematic_error_propagation
 	   << setw(ncolfrc)  << setfill(' ') << setprecision(nprecisionpct) << frac_nsknuesig_m << pctsymbol 
 	   << endrow
 	   << endl;
-      if(use_tex)
-	streamer << "\\hline" << endl;
     }
+    if (use_tex && s == conv::kSKsFCFV1RingMuLike)
+      switch(m) {
+      case conv::kSKmNuMuNC:
+      case conv::kSKmNuMuBarNC:
+      case conv::kSKmNuENC:
+      case conv::kSKmNuEBarNC:
+	streamer << "\\hline" << endl;
+      }
+    else if (use_tex && s == conv::kSKsFCFV1RingELike)
+      switch(m) {
+      case conv::kSKmNuMuNCoth_e:
+      case conv::kSKmNuMuBarNCoth_e:
+      case conv::kSKmNuENCoth_e:
+      case conv::kSKmNuEBarNCoth_e:
+	streamer << "\\hline" << endl;
+      }       
   }//end loop over sk modes
 
   if(!use_tex) {
      streamer << setw(150)  << setfill('-') << " " << endl;
   }
-
+  else
+     streamer << "\\hline" << endl;
 
   if(use_tex) {
      streamer << "\\end{tabular}" << endl;

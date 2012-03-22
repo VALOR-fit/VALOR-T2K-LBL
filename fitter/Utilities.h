@@ -103,6 +103,7 @@ namespace util {
   conv::OscAnaType_t       OscAnaFromString     (string h);
   conv::NuMassHierarchy_t  HierarchyFromString  (string h);
   conv::NuOscMixParam_t    MixingTypeFromString (string h);
+  conv::PhysParamId_t      PhysParamIdFromString(string h);
 
   conv::OscChannelId_t GetOscChannel(int nu_start, int nu_end);
 
