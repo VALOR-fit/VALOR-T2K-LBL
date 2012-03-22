@@ -221,7 +221,33 @@ double FitParamList::ChisquarePenaltyTerm(void)
         }
         else if(p == kPhypMixing13) 
         { 
-          // no contribution to \chi^2_{penalty}
+          // added contribution to \chi^2_{penalty}
+	  // penalize deviations from global analysis best-fit value                                                                                                                  
+	  double mix = fCurrValue[ip];
+	  double nom = 0;
+	  double err = 0;
+	  NuOscMixParam_t omp = Opt::Instance()->gOscMixingParamChoice;
+	  switch(omp) {
+	  case(kNuMixSinsq2Theta):
+	    nom = kGlobFitSinsq2Theta13;
+	    err = kGlobFitSinsq2Theta13 * kGlobFitErrSinsq2Theta13;
+	    break;
+	  case(kNuMixSinsqTheta):
+	    nom = kGlobFitSinsqTheta13;
+	    err = kGlobFitSinsqTheta13 * kGlobFitErrSinsqTheta13;
+	    break;
+	  default:
+	    exit(1);
+	  }
+	  double twk = (mix - nom) / err;
+	  double dchisq_penalty = twk*twk;
+	  chisq_penalty += dchisq_penalty;
+#ifdef __show_contributions_to_penalty_term__
+	  cout << "FitParamList::ChisquarePenaltyTerm >> mixing13 = " << mix
+	       << " (nominal = " << nom << ", error = " << err << ", twk = " << twk << ")"
+	       << " ==> deltachi^2_{penalty} = " << dchisq_penalty << endl;
+#endif
+
         }
         else if(p == kPhypMixing12) 
         { 
@@ -253,8 +279,36 @@ double FitParamList::ChisquarePenaltyTerm(void)
         }
         else if(p == kPhypDeltaCP) 
         { 
-          // no contribution to \chi^2_{penalty}
+          // added contribution to \chi^2_{penalty}
+	  // penalize deviations from global analysis best-fit value                                                                                                                  
+	  double dcp  = fCurrValue[ip];
+	  double nom  = kGlobFitDeltaCP;
+	  double err  = kGlobFitErrDeltaCP;
+	  double twk  = (dcp - nom) / err;
+	  double dchisq_penalty = twk*twk;
+	  chisq_penalty += dchisq_penalty;
+#ifdef __show_contributions_to_penalty_term__
+	  cout << "FitParamList::ChisquarePenaltyTerm >> dcp = " << dcp
+	       << " (nominal = " << nom << ", error = " << err << ", twk = " << twk << ")"
+	       << " ==> deltachi^2_{penalty} = " << dchisq_penalty << endl;
+#endif
         }
+        else if(p == kPhypDm12sq)
+	  {
+	    // penalize deviations from global analysis best-fit value                                                                                                                  
+	    double dmsq = fCurrValue[ip];
+	    double nom  = kGlobFitDm12sq;
+	    double err  = kGlobFitDm12sq * kGlobFitErrDm12sq;
+	    double twk  = (dmsq - nom) / err;
+	    double dchisq_penalty = twk*twk;
+	    chisq_penalty += dchisq_penalty;
+#ifdef __show_contributions_to_penalty_term__
+	    cout << "FitParamList::ChisquarePenaltyTerm >> dm12sq = " << dmsq
+		 << " (nominal = " << nom << ", error = " << err << ", twk = " << twk << ")"
+		 << " ==> deltachi^2_{penalty} = " << dchisq_penalty << endl;
+#endif
+      
+  }
         else if(p == kPhypDm23sq) 
         { 
            // penalize deviations from global analysis best-fit value
