@@ -18,7 +18,6 @@
 //#define __show_banff_tuning_wght_mesg_info__
 //#define __show_banff_tuning_wght_mesg_debug__
 //#define __show_syst_var_wght_mesg_debug__
-//#define __show_syst_var_wght_mesg_debug_level2__ // even more verbose
 //#define __show_build_frac_template_mesg_info__
 //#define __show_wght_spline_idx_mesg_debug__
 
@@ -121,6 +120,10 @@ bool NuXSec::Read(TXMLEngine* xml, XMLNodePointer_t root_node)
              double Ereco = kXsErecoBinEdges[ir] + kOneMeV;
              for(int it = 0; it < kXsNEtrueBins; it++) {
                 double Etrue = kXsEtrueBinEdges[is][im][it] + kOneMeV;
+
+                bool bin_is_beyond_end_of_range = (kXsEtrueBinEdges[is][im][it+1] < 0.);
+                if(bin_is_beyond_end_of_range) continue;
+
                 // Build spline name
                 ostringstream splname;
                 splname << "spl_" 
@@ -132,15 +135,16 @@ bool NuXSec::Read(TXMLEngine* xml, XMLNodePointer_t root_node)
 
                 // Get index for current weight spline
                 int idx = this->WghtSplineIdx(p,s,m,Ereco,Etrue);     
-		if(idx == -2) {
-#ifdef __show_init_mesg_debug__
-                cout << "Exp/NuXSec >> Skipping spline due to invalid Etrue bin for Etrue: " 
-                     << Etrue << endl;
-#endif
-		  continue;
-		}
-		if(idx == -1) {
-		  cerr << "Exp/NuXSec >> WghtSplineIdx returned 1 for " << splname.str();
+//		if(idx == -2) {
+//#ifdef __show_init_mesg_debug__
+//                cout << "Exp/NuXSec >> Skipping spline due to invalid Etrue bin for Etrue: " 
+//                     << Etrue << endl;
+//#endif
+//		  continue;
+//		}
+		if(idx < 0) {
+		  cerr << "Exp/NuXSec >> WghtSplineIdx returned invalid index for spline: " 
+                       << splname.str();
 		  exit(1);
 		}
 
@@ -306,9 +310,6 @@ double NuXSec::SystWght(
 
   for(int isyst = 0; isyst < kNumOfXSecSyst; isyst++) {
      PhysParamId_t p = kListOfXSecSyst[isyst];
-#ifdef __show_syst_var_wght_mesg_debug_level2__
-     cout << "Exp/NuXSec >> Applying systematic param: " << util::AsString(p) << endl;
-#endif
      // Was tweaked?
      double dt = TMath::Abs(fBANFF->CurrentValue(p) - fBANFF->BestFitValue(p)); // only banff params for the time-being
      if(dt < kASmallNum) continue;
