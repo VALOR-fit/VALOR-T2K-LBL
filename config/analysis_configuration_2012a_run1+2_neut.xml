@@ -228,7 +228,7 @@
 
   <!--
   ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-  Agreed errors on cross sections
+  Neutrino cross section weight splines
   ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
   -->
 
@@ -239,5 +239,23 @@
           </filename>
       </weight_splines>
   </xsec>
+
+  <!--
+  ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+  FSI
+  ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+  -->
+
+  <fsi>
+       <!--
+        Covariance matrix of FSI parameters
+       -->
+       <covariance_matrix>
+          <filename>   inputs/official/2012/fsi/somename.root  </filename>
+          <objname>    somename         </objname>
+          <objtype>    TMatrixD         </objtype>
+        </covariance_matrix>     
+  </fsi>
+
 
 </analysis_inputs>

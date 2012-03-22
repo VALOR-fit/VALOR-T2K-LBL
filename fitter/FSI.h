@@ -20,6 +20,7 @@
 #include <TXMLEngine.h>
 #include <TMatrixD.h>
 #include <TVectorD.h>
+#include <TH1D.h>
 #include <TH2D.h>
 
 #include "Conventions.h"
@@ -57,19 +58,24 @@ public:
 
   // Read inputs from XML file
   bool Read (TXMLEngine* xml, XMLNodePointer_t root_node);
+
+  //
+  void BuildFracMCTemplates(TH2D* input_mctempl_array[kns][knm]);
    
 private:
 
-  void Init    (void);
-  void CleanUp (void);
+  void Init      (void);
+  void CleanUp   (void);
+  int  Param2Idx (conv::PhysParamId_t p) const; ///< convert FSI PhysParamId_t to a covariance matrix or vector index
 
   //
   // Private data members
   //
 
-  TVectorD *  fCurrValues;       ///< Current values of FSI params
+  TVectorD *  fCurrentValues;    ///< Current values of FSI params
   TMatrixD *  fCovMtrx;          ///< FSI covariance matrix
   TMatrixD *  fCovMtrxChoL;      ///< Triangular matrix from Cholesky decomp. of FSI covar. matrix
+  TH1D *      fFracTun[kns];     ///<
 
 ClassDef(FSI, 1);
 };

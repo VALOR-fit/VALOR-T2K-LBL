@@ -122,9 +122,6 @@ namespace util {
   const int      NumErecoBins  (conv::SuperkSample_t s);
   const double * ErecoBinEdges (conv::SuperkSample_t s);
 
-  bool IsBANFFfitSuperkFluxParam      (conv::PhysParamId_t p);
-  int  BANFFfitSuperkFluxParam2NuPdg  (conv::PhysParamId_t p);
-
   //
   // String utilities
   //

@@ -510,7 +510,9 @@ void SuperkMC::ApplyBANFFTuningToTemplates(void)
     }//im
   }//is
 
-  fNuXSec->BuildFracMCTemplates(fMCTemplTun, kSKMCtTun);
+  fNuXSec -> BuildFracMCTemplates(fMCTemplTun, kSKMCtTun);
+  fFSI    -> BuildFracMCTemplates(fMCTemplTun);
+
 }
 //________________________________________________________________________________________
 void SuperkMC::UpdateTemplates(void)

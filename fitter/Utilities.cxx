@@ -682,28 +682,36 @@ string t2kana::util::AsString(PhysParamId_t p)
     case ( kNuisSuperkEff1RmuNC       ) : return "SK efficiency; 1Rmu; NC";         break;
     case ( kNuisSuperkEff1RmuNueCC    ) : return "SK efficiency; 1Rmu; nue CC";     break;
 
-    case ( kNuisBANFF00               ) : return "BANFF 00; SK numu flux; 0.0 - 0.4 GeV";     break;
-    case ( kNuisBANFF01               ) : return "BANFF 01; SK numu flux; 0.4 - 0.5 GeV";     break;
-    case ( kNuisBANFF02               ) : return "BANFF 02; SK numu flux; 0.5 - 0.6 GeV";     break;
-    case ( kNuisBANFF03               ) : return "BANFF 03; SK numu flux; 0.6 - 0.7 GeV";     break;
-    case ( kNuisBANFF04               ) : return "BANFF 04; SK numu flux; 0.7 - 1.0 GeV";     break;
-    case ( kNuisBANFF05               ) : return "BANFF 05; SK numu flux; 1.0 - 1.5 GeV";     break;
-    case ( kNuisBANFF06               ) : return "BANFF 06; SK numu flux; 1.5 - 2.5 GeV";     break;
-    case ( kNuisBANFF07               ) : return "BANFF 07; SK numu flux; 2.5 - 3.5 GeV";     break;
-    case ( kNuisBANFF08               ) : return "BANFF 08; SK numu flux; 3.5 - 5.0 GeV";     break;
-    case ( kNuisBANFF09               ) : return "BANFF 09; SK numu flux; 5.0 - 7.0 GeV";     break;
-    case ( kNuisBANFF10               ) : return "BANFF 10; SK numu flux; 7.0 - 30.0 GeV";    break;
-    case ( kNuisBANFF11               ) : return "BANFF 11; SK numubar flux; 0.0 - 1.5 GeV";  break;
-    case ( kNuisBANFF12               ) : return "BANFF 12; SK numubar flux; 1.5 - 30.0 GeV"; break;
-    case ( kNuisBANFF13               ) : return "BANFF 13; SK nue flux; 0.0 - 0.5 GeV";      break;
-    case ( kNuisBANFF14               ) : return "BANFF 14; SK nue flux; 0.5 - 0.7 GeV";      break;
-    case ( kNuisBANFF15               ) : return "BANFF 15; SK nue flux; 0.7 - 0.8 GeV";      break;
-    case ( kNuisBANFF16               ) : return "BANFF 16; SK nue flux; 0.8 - 1.5 GeV";      break;
-    case ( kNuisBANFF17               ) : return "BANFF 17; SK nue flux; 1.5 - 2.5 GeV";      break;
-    case ( kNuisBANFF18               ) : return "BANFF 18; SK nue flux; 2.5 - 4.0 GeV";      break;
-    case ( kNuisBANFF19               ) : return "BANFF 19; SK nue flux; 4.0 - 30.0 GeV";     break;
-    case ( kNuisBANFF20               ) : return "BANFF 20; SK nuebar flux; 0.0 - 2.5 GeV";   break;
-    case ( kNuisBANFF21               ) : return "BANFF 21; SK nuebar flux; 2.5 - 30.0 GeV";  break;
+    case ( kNuisBANFF00               ) :
+    case ( kNuisBANFF01               ) :
+    case ( kNuisBANFF02               ) :
+    case ( kNuisBANFF03               ) :
+    case ( kNuisBANFF04               ) :
+    case ( kNuisBANFF05               ) :
+    case ( kNuisBANFF06               ) :
+    case ( kNuisBANFF07               ) :
+    case ( kNuisBANFF08               ) :
+    case ( kNuisBANFF09               ) :
+    case ( kNuisBANFF10               ) :
+    case ( kNuisBANFF11               ) :
+    case ( kNuisBANFF12               ) :
+    case ( kNuisBANFF13               ) :
+    case ( kNuisBANFF14               ) :
+    case ( kNuisBANFF15               ) :
+    case ( kNuisBANFF16               ) :
+    case ( kNuisBANFF17               ) :
+    case ( kNuisBANFF18               ) :
+    case ( kNuisBANFF19               ) : 
+    case ( kNuisBANFF20               ) : 
+    case ( kNuisBANFF21               ) : 
+    {
+      int ip = (int)p - (int)kNuisBANFF00;
+      return Form("BANFF %2d; SK %s flux; %.1f - %.1f GeV",
+                   ip, util::Pdg2String(kNuPdgCodeOfFluxParamInBANFFfit[ip]).c_str(), 
+                   kEtrueRangeOfFluxParamInBANFFfit[ip][0],
+                   kEtrueRangeOfFluxParamInBANFFfit[ip][1]);     
+      break;
+    }
     case ( kNuisBANFF22               ) : return "BANFF 22; Ma QE";                           break;
     case ( kNuisBANFF23               ) : return "BANFF 23; Ma RES";                          break;
     case ( kNuisBANFF24               ) : return "BANFF 24; Norm; CC QE; 0.0 - 1.5 GeV";      break;
@@ -1530,109 +1538,6 @@ bool t2kana::util::IsSystematic(PhysParamId_t p)
   return false;
 }
 //____________________________________________________________________________
-bool t2kana::util::IsBANFFfitSuperkFluxParam(PhysParamId_t p)
-{
-  switch(p) {
-    //
-    // Superk numu flux params
-    //
-    case ( kNuisBANFF00 ) : 
-    case ( kNuisBANFF01 ) : 
-    case ( kNuisBANFF02 ) : 
-    case ( kNuisBANFF03 ) : 
-    case ( kNuisBANFF04 ) : 
-    case ( kNuisBANFF05 ) : 
-    case ( kNuisBANFF06 ) : 
-    case ( kNuisBANFF07 ) : 
-    case ( kNuisBANFF08 ) : 
-    case ( kNuisBANFF09 ) : 
-    case ( kNuisBANFF10 ) : 
-    //
-    // Superk numubar flux params
-    //
-    case ( kNuisBANFF11 ) : 
-    case ( kNuisBANFF12 ) : 
-    //
-    // Superk nue flux params
-    //
-    case ( kNuisBANFF13 ) :
-    case ( kNuisBANFF14 ) :
-    case ( kNuisBANFF15 ) :
-    case ( kNuisBANFF16 ) :
-    case ( kNuisBANFF17 ) :
-    case ( kNuisBANFF18 ) :
-    case ( kNuisBANFF19 ) :
-    //
-    // Superk nuebar flux params
-    //
-    case ( kNuisBANFF20 ) : 
-    case ( kNuisBANFF21 ) : 
-
-              return true;
-              break;
-
-    default: 
-              return false;
-              break;
-  }
-
-  return false;
-}
-//___________________________________________________________________________
-int t2kana::util::BANFFfitSuperkFluxParam2NuPdg(PhysParamId_t p)
-{
-  switch(p) {
-    //
-    // Superk numu flux params
-    //
-    case ( kNuisBANFF00 ) : 
-    case ( kNuisBANFF01 ) : 
-    case ( kNuisBANFF02 ) : 
-    case ( kNuisBANFF03 ) : 
-    case ( kNuisBANFF04 ) : 
-    case ( kNuisBANFF05 ) : 
-    case ( kNuisBANFF06 ) : 
-    case ( kNuisBANFF07 ) : 
-    case ( kNuisBANFF08 ) : 
-    case ( kNuisBANFF09 ) : 
-    case ( kNuisBANFF10 ) : 
-              return kPdgNuMu;
-              break;
-    //
-    // Superk numubar flux params
-    //
-    case ( kNuisBANFF11 ) : 
-    case ( kNuisBANFF12 ) : 
-              return kPdgNuMuBar;
-              break;
-    //
-    // Superk nue flux params
-    //
-    case ( kNuisBANFF13 ) :
-    case ( kNuisBANFF14 ) :
-    case ( kNuisBANFF15 ) :
-    case ( kNuisBANFF16 ) :
-    case ( kNuisBANFF17 ) :
-    case ( kNuisBANFF18 ) :
-    case ( kNuisBANFF19 ) :
-              return kPdgNuE;
-              break;
-    //
-    // Superk nuebar flux params
-    //
-    case ( kNuisBANFF20 ) : 
-    case ( kNuisBANFF21 ) : 
-              return kPdgNuEBar;
-              break;
-
-    default: 
-              return 0;
-              break;
-  }
-
-  return 0;
-}
-//___________________________________________________________________________
 bool t2kana::util::IsNeutrino(int pdg_code)
 {
   if ( pdg_code == kPdgNuE   ||

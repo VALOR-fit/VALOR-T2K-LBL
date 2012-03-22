@@ -285,7 +285,7 @@ void NuFlux::ApplyBANFFWeights(bool get_current) const
   for(int ip = 0; ip < np; ip++) {
      conv::PhysParamId_t p = conv::PhysParamId_t ( (int)conv::kNuisBANFF00 + ip );
      // flux param?
-     bool is_sk_flux_param = util::IsBANFFfitSuperkFluxParam(p);
+     bool is_sk_flux_param = conv::kParamInBANFFfitIsSuperkFluxParam[ip];
      if(is_sk_flux_param) 
      {
         // Get the current or best-fit BANFF Superk flux param value
@@ -299,7 +299,7 @@ void NuFlux::ApplyBANFFWeights(bool get_current) const
 #endif
 
         // BANFF param -> neutrino PDG code
-        int nu_pdg = util::BANFFfitSuperkFluxParam2NuPdg(p);
+        int nu_pdg = conv::kNuPdgCodeOfFluxParamInBANFFfit[ip];
 
         // BANFF param -> true energy range [variable size bin]
         double Emin = conv::kEtrueRangeOfFluxParamInBANFFfit[ip][0];

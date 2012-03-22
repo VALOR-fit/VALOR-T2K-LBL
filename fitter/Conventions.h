@@ -519,35 +519,97 @@ static const int kNumOfParamsInBANFFfit = 26;
 // ** Flux systematics
 //
 
+// Mark which BANFF parameters are SuperK flux params
+static const bool kParamInBANFFfitIsSuperkFluxParam[kNumOfParamsInBANFFfit] =
+{
+   true,                 // kNuisBANFF00
+   true,                 // kNuisBANFF01
+   true,                 // kNuisBANFF02
+   true,                 // kNuisBANFF03
+   true,                 // kNuisBANFF04
+   true,                 // kNuisBANFF05
+   true,                 // kNuisBANFF06
+   true,                 // kNuisBANFF07
+   true,                 // kNuisBANFF08
+   true,                 // kNuisBANFF09
+   true,                 // kNuisBANFF10
+   true,                 // kNuisBANFF11
+   true,                 // kNuisBANFF12
+   true,                 // kNuisBANFF13
+   true,                 // kNuisBANFF14
+   true,                 // kNuisBANFF15
+   true,                 // kNuisBANFF16
+   true,                 // kNuisBANFF17
+   true,                 // kNuisBANFF18
+   true,                 // kNuisBANFF19
+   true,                 // kNuisBANFF20
+   true,                 // kNuisBANFF21
+   false,                // kNuisBANFF22
+   false,                // kNuisBANFF23
+   false,                // kNuisBANFF24
+   false                 // kNuisBANFF25
+};
+
+// flux-related BANFF parameters --> flux neutrino PDG code
+static const int kNuPdgCodeOfFluxParamInBANFFfit[kNumOfParamsInBANFFfit] =
+{
+   kPdgNuMu,             // kNuisBANFF00
+   kPdgNuMu,             // kNuisBANFF01
+   kPdgNuMu,             // kNuisBANFF02
+   kPdgNuMu,             // kNuisBANFF03
+   kPdgNuMu,             // kNuisBANFF04
+   kPdgNuMu,             // kNuisBANFF05
+   kPdgNuMu,             // kNuisBANFF06
+   kPdgNuMu,             // kNuisBANFF07
+   kPdgNuMu,             // kNuisBANFF08
+   kPdgNuMu,             // kNuisBANFF09
+   kPdgNuMu,             // kNuisBANFF10
+   kPdgNuMuBar,          // kNuisBANFF11
+   kPdgNuMuBar,          // kNuisBANFF12
+   kPdgNuE,              // kNuisBANFF13
+   kPdgNuE,              // kNuisBANFF14
+   kPdgNuE,              // kNuisBANFF15
+   kPdgNuE,              // kNuisBANFF16
+   kPdgNuE,              // kNuisBANFF17
+   kPdgNuE,              // kNuisBANFF18
+   kPdgNuE,              // kNuisBANFF19
+   kPdgNuEBar,           // kNuisBANFF20
+   kPdgNuEBar,           // kNuisBANFF21
+   0,                    // kNuisBANFF22, not a flux param
+   0,                    // kNuisBANFF23, not a flux param
+   0,                    // kNuisBANFF24, not a flux param
+   0                     // kNuisBANFF25, not a flux param
+};
+
 // Etrue energy range for flux-related BANFF parameters
 static const double kEtrueRangeOfFluxParamInBANFFfit[kNumOfParamsInBANFFfit][2] =
 {
-   { 0.0,  0.4 },              // # 00, SK    numu    flux,  E =  0.0 -  0.4 GeV
-   { 0.4,  0.5 },              // # 01, SK    numu    flux,  E =  0.4 -  0.5 GeV
-   { 0.5,  0.6 },              // # 02, SK    numu    flux,  E =  0.5 -  0.6 GeV
-   { 0.6,  0.7 },              // # 03, SK    numu    flux,  E =  0.6 -  0.7 GeV
-   { 0.7,  1.0 },              // # 04, SK    numu    flux,  E =  0.7 -  1.0 GeV
-   { 1.0,  1.5 },              // # 05, SK    numu    flux,  E =  1.0 -  1.5 GeV
-   { 1.5,  2.5 },              // # 06, SK    numu    flux,  E =  1.5 -  2.5 GeV
-   { 2.5,  3.5 },              // # 07, SK    numu    flux,  E =  2.5 -  3.5 GeV
-   { 3.5,  5.0 },              // # 08, SK    numu    flux,  E =  3.5 -  5.0 GeV
-   { 5.0,  7.0 },              // # 09, SK    numu    flux,  E =  5.0 -  7.0 GeV
-   { 7.0, 30.0 },              // # 10, SK    numu    flux,  E =  7.0 - 30.0 GeV
-   { 0.0,  1.5 },              // # 11, SK    numubar flux,  E =  0.0 -  1.5 GeV
-   { 1.5, 30.0 },              // # 12, SK    numubar flux,  E =  1.5 - 30.0 GeV
-   { 0.0,  0.5 },              // # 13, SK    nue     flux,  E =  0.0 -  0.5 GeV
-   { 0.5,  0.7 },              // # 14, SK    nue     flux,  E =  0.5 -  0.7 GeV
-   { 0.7,  0.8 },              // # 15, SK    nue     flux,  E =  0.7 -  0.8 GeV
-   { 0.8,  1.5 },              // # 16, SK    nue     flux,  E =  0.8 -  1.5 GeV
-   { 1.5,  2.5 },              // # 17, SK    nue     flux,  E =  1.5 -  2.5 GeV
-   { 2.5,  4.0 },              // # 18, SK    nue     flux,  E =  2.5 -  4.0 GeV
-   { 4.0, 30.0 },              // # 19, SK    nue     flux,  E =  4.0 - 30.0 GeV
-   { 0.0,  2.5 },              // # 20, SK    nuebar  flux,  E =  0.0 -  2.5 GeV
-   { 2.5, 30.0 },              // # 21, SK    nuebar  flux,  E =  2.5 - 30.0 GeV
-   {  -1,   -1 },              // # 22, not a flux param
-   {  -1,   -1 },              // # 23, not a flux param
-   {  -1,   -1 },              // # 24, not a flux param
-   {  -1,   -1 }               // # 25, not a flux param
+   { 0.0,  0.4 },        // kNuisBANFF00
+   { 0.4,  0.5 },        // kNuisBANFF01
+   { 0.5,  0.6 },        // kNuisBANFF02
+   { 0.6,  0.7 },        // kNuisBANFF03
+   { 0.7,  1.0 },        // kNuisBANFF04
+   { 1.0,  1.5 },        // kNuisBANFF05
+   { 1.5,  2.5 },        // kNuisBANFF06
+   { 2.5,  3.5 },        // kNuisBANFF07
+   { 3.5,  5.0 },        // kNuisBANFF08
+   { 5.0,  7.0 },        // kNuisBANFF09
+   { 7.0, 30.0 },        // kNuisBANFF10
+   { 0.0,  1.5 },        // kNuisBANFF11
+   { 1.5, 30.0 },        // kNuisBANFF12
+   { 0.0,  0.5 },        // kNuisBANFF13
+   { 0.5,  0.7 },        // kNuisBANFF14
+   { 0.7,  0.8 },        // kNuisBANFF15
+   { 0.8,  1.5 },        // kNuisBANFF16
+   { 1.5,  2.5 },        // kNuisBANFF17
+   { 2.5,  4.0 },        // kNuisBANFF18
+   { 4.0, 30.0 },        // kNuisBANFF19
+   { 0.0,  2.5 },        // kNuisBANFF20
+   { 2.5, 30.0 },        // kNuisBANFF21
+   {  -1,   -1 },        // kNuisBANFF22, not a flux param
+   {  -1,   -1 },        // kNuisBANFF23, not a flux param
+   {  -1,   -1 },        // kNuisBANFF24, not a flux param
+   {  -1,   -1 }         // kNuisBANFF25, not a flux param
 };
 
 //
@@ -836,7 +898,17 @@ static const int knwspl = kNumOfXSecSystWghtSpl; // as above - shorter name
 // ** FSI systematics
 //
 
+// Number of FSI systematic params
+// NOTE: COMPLETELY HYPOTHETICAL FOR THE TIME-BEING
 static const int kNumOfFSIParams = 10;
+
+// Ereco energy range for FSI systematic params
+// NOTE: COMPLETELY HYPOTHETICAL FOR THE TIME-BEING
+static const double kFSIParamsErecoBinEdges[kNumOfFSIParams+1] =
+{
+//    [00]  [01]  [02]  [03]  [04]  [05]  [06]  [07]  [08]  [09]
+   0.0,  1.0,  2.0,  3.0,  4.0,  5.0,  6.0,  7.0,  8.0,  9.0,  10.0 
+};
 
 
 //
