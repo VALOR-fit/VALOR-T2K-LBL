@@ -46,6 +46,8 @@ public :
       
 private:
 
+  double ChisquarePenaltyTerm(void);
+
   SuperkObservation * fObs;
   SuperkExpectation * fExp;
   FitParamList *      fFitParams;

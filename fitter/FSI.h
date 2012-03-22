@@ -49,6 +49,9 @@ public:
   const TMatrixD & CovMatrix         (void) const { return *fCovMtrx;       }
   const TMatrixD & CovMatrixCholesky (void) const { return *fCovMtrxChoL;   }
 
+  // Penalty term included in the chisq if FSI nuisance terms are included in the fit       
+  double ChisqPenalty(void) const;
+
   // Print
   void PrintSystematicVariations (void) const;
 

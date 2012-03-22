@@ -83,9 +83,6 @@ public:
    // Sync fit param values stored this object with the values stored in the input array.
    void Sync (double * par);
 
-   // Chisq penalty term
-   double ChisquarePenaltyTerm(void);
-
    // Get number of free (not fixed) parameters
    int GetNumberFreeParameters(void);
 

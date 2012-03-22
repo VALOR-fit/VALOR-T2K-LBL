@@ -120,6 +120,11 @@ double FSI::CurrentValue(PhysParamId_t p) const
   return 0;
 }
 //________________________________________________________________________________________
+double FSI::ChisqPenalty(void) const
+{
+  return 0;
+}
+//________________________________________________________________________________________
 void FSI::PrintSystematicVariations(void) const
 {
   //TVectorD & fsi_current_values = *fCurrValues;

@@ -14,6 +14,7 @@
 //________________________________________________________________________________________
 
 //#define __show_bin_contributions_to_chisq__
+//#define __show_contributions_to_penalty_term__
 //#define __show_chisq__
 
 #include <cassert>
@@ -26,6 +27,10 @@
 #include "Conventions.h"
 #include "SuperkObservation.h"
 #include "SuperkExpectation.h"
+#include "SuperkDetector.h"
+#include "BANFF.h"
+#include "NuXSec.h"
+#include "FSI.h"
 #include "FitInputs.h"
 #include "Opt.h" 
 
@@ -70,31 +75,34 @@ FitParamList & FitInputs::FitParams(void)
 //________________________________________________________________________________________
 double FitInputs::Chisquare(Option_t * option, conv::SuperkSample_t s0)
 {
+// If input is s0 = kSKsUndefined then go ahead and calculate a chisq which is the sum of 
+// chisq for all SK samples included in the analysis.
+// If a s0 is specified, then calculate the chisq only for this sample.
+// Add penalty terms as appropriate given which nuisance parameters were included in the
+// fit and which oscillation parameters are marginalized.
+// The input option can be "poisson" or "gauss".
+//
+
+  double chisq = 0; // total chisq to be returned
+
   TString opt = option;
 
-  //set the oscillation analysis type for chisquare computation
+  // Get the oscillation analysis type for chisquare computation
   OscAnaType_t oscana = Opt::Instance()->gOscAnaTypeChoice;
   
-  double chisq = 0;
-
   // loop over samples included in the analysis
   for(int is = 0; is < kns; is++) 
-    {
+  {
       SuperkSample_t s = kSKSamples[is];
+      // current sample is undefined: skip
       if (s == conv::kSKsUndefined) continue;
+      // an input sample was specified and the current one is not it: skip
+      if(s0 != conv::kSKsUndefined && s != s0) continue;      
 
-      // If input is s0 = kSKsUndefined then go ahead and calculate a chisq which
-      // is the sum of chisq for all samples included in the analysis.
-      // If a s0 is specified, then calculate the chisq only for this sample
-      if(s0 != conv::kSKsUndefined && s != s0) continue;
-      
-
-      //
-      // 1Rmu
-      //
+      // Add chisq for 1Rmu sample
+      // If we only want the nue appearance analysis only, then skip
       if ((s == conv::kSKsFCFV1RingMuLike) && (oscana != conv::kAnaNuEAppOnly))
-      //check if we only want the nue appearance analysis, then continue 
-	{
+      {
 	  this->Expectation().Generate(this->FitParams());
 	  TH1D * obs_ereco_spectrum = this->Observation().ErecoSpectrum(s);
 	  TH1D * exp_ereco_spectrum = this->Expectation().CurrPredictedErecoSpectrum(s);
@@ -120,14 +128,13 @@ double FitInputs::Chisquare(Option_t * option, conv::SuperkSample_t s0)
 		 << "; [" << xlo << ", " << xup << "] GeV) = " << delta_chisq << endl;
 #endif
 	  }//ibin
-	}
+      }
       
-      //
-      // 1Re
-      //
+      // Add chisq for 1Re sample
+      // If we only want the numu disappearance analysis only, then skip
       else 
-	if ((s == conv::kSKsFCFV1RingELike) && (oscana != conv::kAnaNuMuDisappOnly) )
-	  {
+      if ((s == conv::kSKsFCFV1RingELike) && (oscana != conv::kAnaNuMuDisappOnly) )
+      {
 	    this->Expectation().Generate(this->FitParams());
 	    // Note: Counting experiment for the time-being
 	    double nobs = this->Observation().ErecoSpectrum(s)->Integral();
@@ -143,15 +150,16 @@ double FitInputs::Chisquare(Option_t * option, conv::SuperkSample_t s0)
 	    cout << "FitInputs::Chisquare()> chisq = " << chisq 
 		 << endl;
 #endif
-	  }
+      }
   
     }//loop over samples
-  
+
   //
-  // Add penalty term for parameters declared as nuisance 
+  // Add penalty term for nuisance parameters
   //
-  double chisq_penalty = this->FitParams().ChisquarePenaltyTerm();
+  double chisq_penalty = this->ChisquarePenaltyTerm();
   chisq += chisq_penalty;      
+
 #ifdef __show_chisq__
   cout << "FitInputs::Chisquare()> chisq = " << chisq 
        << " (contribution from penalty term = " << chisq_penalty << ")" 
@@ -159,6 +167,178 @@ double FitInputs::Chisquare(Option_t * option, conv::SuperkSample_t s0)
 #endif
 
   return chisq; 
+}
+//____________________________________________________________________________ 
+double FitInputs::ChisquarePenaltyTerm(void)
+{
+// Add penalty term for nuisance parameters
+
+  double chisq_penalty = 0;
+
+  //
+  // Add penalty term for BANFF params 
+  // First, make sure that all BANFF params were included in the fit param
+  // list and were marked as nuisance parameters.
+  //
+  bool incl_banff_penalty = true;
+  const int np = conv::kNumOfParamsInBANFFfit;
+  for(int ip = 0; ip < np; ip++) {
+     PhysParamId_t p = PhysParamId_t ( (int) kNuisBANFF00 + ip );
+     incl_banff_penalty = incl_banff_penalty && 
+       (this->FitParams().Exists(p) && this->FitParams().IsNuisance(p));
+     if(!incl_banff_penalty) break;
+  }
+  if(incl_banff_penalty) {
+    double dchisq_penalty = this->Expectation().GetBANFF()->ChisqPenalty();
+    chisq_penalty += dchisq_penalty;
+#ifdef __show_contributions_to_penalty_term__
+      cout << "FitInputs::ChisquarePenaltyTerm >> Current BANFF param variation"
+           << " => \delta\chi^2_{penalty} = " << dchisq_penalty << endl;
+#endif
+  }
+
+  //
+  // Add penalty term for SuperkDetector params
+  //
+  // ...
+
+  //
+  // Add penalty term for NuXSec params (other than the ones incl. in BANFF)
+  //
+  // ...
+
+  //
+  // Add penalty term for FSI params 
+  //
+  // ...
+
+  //
+  // Add penalty term for marginalised oscillation parameters.
+  // Penalize deviations from global analysis best-fit value.
+  // ...
+
+  if( this->FitParams().Exists    (kPhypMixing23) && 
+      this->FitParams().IsNuisance(kPhypMixing23) )
+  {
+    double mix = this->FitParams().CurrValue(kPhypMixing23);
+    double nom = 0;
+    double err = 0;
+    NuOscMixParam_t omp = Opt::Instance()->gOscMixingParamChoice;
+    switch(omp) {
+     case(kNuMixSinsq2Theta):
+          nom = kGlobFitSinsq2Theta23;
+          err = kGlobFitSinsq2Theta23 * kGlobFitErrSinsq2Theta23;
+          break;
+     case(kNuMixSinsqTheta):
+          nom = kGlobFitSinsqTheta23;
+          err = kGlobFitSinsqTheta23 * kGlobFitErrSinsqTheta23;
+          break;
+     default:
+          exit(1);
+    }
+    double twk = (mix - nom) / err;
+    double dchisq_penalty = twk*twk;
+    chisq_penalty += dchisq_penalty;
+#ifdef __show_contributions_to_penalty_term__
+    cout << "FitInputs::ChisquarePenaltyTerm >> mixing23 = " << mix
+         << " (nominal = " << nom << ", error = " << err << ", twk = " << twk << ")"
+         << " => \delta\chi^2_{penalty} = " << dchisq_penalty << endl;
+#endif
+  }//mix23
+
+  if( this->FitParams().Exists    (kPhypMixing13) && 
+      this->FitParams().IsNuisance(kPhypMixing13) )
+  {
+     double mix = this->FitParams().CurrValue(kPhypMixing13);
+     double nom = 0;
+     double err = 0;
+     NuOscMixParam_t omp = Opt::Instance()->gOscMixingParamChoice;
+     switch(omp) {
+      case(kNuMixSinsq2Theta):
+            nom = kGlobFitSinsq2Theta13;
+            err = kGlobFitSinsq2Theta13 * kGlobFitErrSinsq2Theta13;
+            break;
+      case(kNuMixSinsqTheta):
+            nom = kGlobFitSinsqTheta13;
+            err = kGlobFitSinsqTheta13 * kGlobFitErrSinsqTheta13;
+            break;
+      default:
+            exit(1);
+     }
+     double twk = (mix - nom) / err;
+     double dchisq_penalty = twk*twk;
+     chisq_penalty += dchisq_penalty;
+#ifdef __show_contributions_to_penalty_term__
+     cout << "FitInputs::ChisquarePenaltyTerm >> mixing13 = " << mix
+          << " (nominal = " << nom << ", error = " << err << ", twk = " << twk << ")"
+          << " => \delta\chi^2_{penalty} = " << dchisq_penalty << endl;
+#endif
+  }//mix13
+
+
+  if( this->FitParams().Exists    (kPhypMixing12) && 
+      this->FitParams().IsNuisance(kPhypMixing12) )
+  {
+     double mix = this->FitParams().CurrValue(kPhypMixing12);
+     double nom = 0;
+     double err = 0;
+     NuOscMixParam_t omp = Opt::Instance()->gOscMixingParamChoice;
+     switch(omp) {
+      case(kNuMixSinsq2Theta):
+            nom = kGlobFitSinsq2Theta12;
+            err = kGlobFitSinsq2Theta12 * kGlobFitErrSinsq2Theta12;
+            break;
+      case(kNuMixSinsqTheta):
+            nom = kGlobFitSinsqTheta12;
+            err = kGlobFitSinsqTheta12 * kGlobFitErrSinsqTheta12;
+            break;
+      default:
+            exit(1);
+     }
+     double twk = (mix - nom) / err;
+     double dchisq_penalty = twk*twk;
+     chisq_penalty += dchisq_penalty;
+#ifdef __show_contributions_to_penalty_term__
+     cout << "FitInputs::ChisquarePenaltyTerm >> mixing12 = " << mix
+          << " (nominal = " << nom << ", error = " << err << ", twk = " << twk << ")"
+          << " => \delta\chi^2_{penalty} = " << dchisq_penalty << endl;
+#endif
+  }//mix12
+
+  if( this->FitParams().Exists    (kPhypDm12sq) && 
+      this->FitParams().IsNuisance(kPhypDm12sq) )
+  {
+     double dmsq = this->FitParams().CurrValue(kPhypDm12sq);
+     double nom  = kGlobFitDm12sq;
+     double err  = kGlobFitDm12sq * kGlobFitErrDm12sq;
+     double twk  = (dmsq - nom) / err;
+     double dchisq_penalty = twk*twk;
+     chisq_penalty += dchisq_penalty;
+#ifdef __show_contributions_to_penalty_term__
+     cout << "FitInputs::ChisquarePenaltyTerm >> dm12sq = " << dmsq
+          << " (nominal = " << nom << ", error = " << err << ", twk = " << twk << ")"
+          << " => \delta\chi^2_{penalty} = " << dchisq_penalty << endl;
+#endif
+  }//dm12sq
+
+  if( this->FitParams().Exists    (kPhypDm23sq) && 
+      this->FitParams().IsNuisance(kPhypDm23sq) )
+  {
+      double dmsq = this->FitParams().CurrValue(kPhypDm23sq);
+      double nom  = kGlobFitDm23sq;
+      double err  = kGlobFitDm23sq * kGlobFitErrDm23sq;
+      double twk  = (dmsq - nom) / err;
+      double dchisq_penalty = twk*twk;
+      chisq_penalty += dchisq_penalty;
+#ifdef __show_contributions_to_penalty_term__
+      cout << "FitInputs::ChisquarePenaltyTerm >> |dm23sq| = " << dmsq
+           << " (nominal = " << nom << ", error = " << err << ", twk = " << twk << ")"
+           << " => \delta\chi^2_{penalty} = " << dchisq_penalty << endl;
+#endif
+  }//dm23sq
+
+
+  return chisq_penalty;
 }
 //____________________________________________________________________________ 
 double FitInputs::BestFitChisquare(Option_t * opt)
@@ -179,17 +359,19 @@ void t2kana::FitFunc (
 
       // synchronize FitParamList with the paramerer array used by MINUIT
       fpar.Sync(par);
-      
-      TString smpl = fpar.GetTheSample();
 
-      // judge the agreement between the data and the current prediction
-      if(smpl.Contains("numu")) {
-            f = inputs->Chisquare("poisson",conv::kSKsFCFV1RingMuLike); 
-      }else if(smpl.Contains("nue")){
-            f = inputs->Chisquare("poisson",conv::kSKsFCFV1RingELike); 
-      }else{
-            f = inputs->Chisquare("poisson"); 
-      }
+     // judge the agreement between the data and the current prediction
+     f = inputs->Chisquare("poisson"); 
+      
+//      TString smpl = fpar.GetTheSample();
+//      // judge the agreement between the data and the current prediction
+//      if(smpl.Contains("numu")) {
+//            f = inputs->Chisquare("poisson",conv::kSKsFCFV1RingMuLike); 
+//      }else if(smpl.Contains("nue")){
+//            f = inputs->Chisquare("poisson",conv::kSKsFCFV1RingELike); 
+//      }else{
+//            f = inputs->Chisquare("poisson"); 
+//      }
 
 }
 //____________________________________________________________________________

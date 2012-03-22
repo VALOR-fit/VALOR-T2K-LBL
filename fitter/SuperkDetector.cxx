@@ -256,6 +256,11 @@ void SuperkDetector::TweakEfficiency1RmuNuECC(double twkdial)
   fEff1RmuNuECCTwkDial = twkdial; 
 }
 //________________________________________________________________________________________
+double SuperkDetector::ChisqPenalty(void) const
+{
+  return 0;
+}
+//________________________________________________________________________________________
 void SuperkDetector::PrintSystematicVariations(void) const
 {
   cout << "Exp/SKDet >> SuperK detector systematics: " << endl
