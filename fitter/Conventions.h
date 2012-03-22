@@ -1045,7 +1045,7 @@ static const SuperkMode_t kSKReactionModesOrderInStack[kns][knm] = {
 //
 
 static const double kEtrueMin    = 0;
-static const double kEtrueMax    = 12;
+static const double kEtrueMax    = 30;
 static const double kEtrueBinSz  = 0.05;
 static const int    kNEtrueBins  = (int) ((kEtrueMax - kEtrueMin)/kEtrueBinSz);
 
