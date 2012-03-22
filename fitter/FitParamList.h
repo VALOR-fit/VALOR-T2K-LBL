@@ -51,13 +51,7 @@ public:
    bool AddParam (
      int ip, t2kana::conv::PhysParamId_t p, double init, 
      double min, double max, double step, bool fix=false, bool nuisance=false, string name="");
-   
-   // Set the sample
-   void SetTheSample (Option_t * sample);
-   
-   // Set the sample
-   TString GetTheSample() {return fSample;}
-
+      
    // Check whether the input parameter was included in the physics param list
    bool Exists (t2kana::conv::PhysParamId_t p) const;
 
@@ -114,7 +108,7 @@ public:
    // - "nuosc3f_nueapp_fix4"            : As "nuosc3f" but fixing  sin^2(2theta12), sin^2(2theta23), |Dm23^2| and Dm12^2.
    // - "nuosc3f_nueapp_fix4+nuisance"   : As "nuosc3f_nueapp_fix4" + 22 nuisance parameters (nuE).
    // - "numudisapp2f"                   : Fit for sin^2(2theta23) and |Dm23^2| (2-flavour formalism)
-   // - "numudisapp2f+nuisance"          : As "numudisapp2f" + the 34 nuisance parameters of 2010 analysis
+   // - "numudisapp2f+nuisance"          : As "numudisapp2f" + all nuisance parameters 
    // - "decay"                          : Fit for sin^2(2theta) and \alpha_{decay}
    // - "decoh"                          : Fit for sin^2(2theta) and \mu_{decoherence}
    static FitParamList * NamedParameterList      (string name);
@@ -152,8 +146,6 @@ private:
 
    mutable bool fShowCurrValuesOnly;
    mutable bool fShowBestFitValuesOnly;
-   
-   TString  fSample;         //[fNParams]
 };
 
 } // t2kana

@@ -53,11 +53,6 @@ FitParamList::~FitParamList()
 }
 
 //________________________________________________________________________________________
-
-void FitParamList::SetTheSample (Option_t * sample = ""){
-      fSample = sample;
-}
-//________________________________________________________________________________________
 bool FitParamList::AddParam (int ip, PhysParamId_t p, 
   double init, double min, double max, double step, bool fix, bool nuis, string name)
 {
