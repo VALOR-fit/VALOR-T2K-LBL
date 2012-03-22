@@ -18,6 +18,7 @@
 #define __show_cholesky_mesg_info__
 #define __show_cholesky_mesg_debug__
 #define __show_tweak_mesg_debug__
+#define __show_chisqpenalty_mesg_debug__
 
 #include <cassert>
 #include <cstdlib>
@@ -110,6 +111,11 @@ bool BANFF::Read(TXMLEngine* xml, XMLNodePointer_t root_node)
     cerr << "Exp/BANFF >> No BANFF covariance matrix was found." << endl;
     exit(1);
   }
+  // Invert BANFF fit covariance matrix
+  double det;
+  fCovMtrxInv = new TMatrixD(*fCovMtrx);
+  (*fCovMtrxInv).Invert(&det);
+
   const TMatrixD & cov = *fCovMtrx;
   if(cov.GetNrows() != np || cov.GetNcols() != np) 
   {
@@ -120,6 +126,8 @@ bool BANFF::Read(TXMLEngine* xml, XMLNodePointer_t root_node)
 #ifdef __show_init_mesg_info__
   cout << "Exp/BANFF >> Input BANFF covariance matrix: " << endl; 
   util::PrintCompact(cov,7,4);
+  cout << "Exp/BANFF >> Inverse BANFF covariance matrix: " << endl;
+  util::PrintCompact(*fCovMtrxInv,7,4);
 #endif
   
 #ifdef __show_init_mesg_info__
@@ -256,8 +264,54 @@ void BANFF::RestoreNominalMC(void)
 //________________________________________________________________________________________
 double BANFF::ChisqPenalty(void) const
 {
-// TODO
+  //Vector with deviations of current values from  best fit values
+  const TVectorD & bestfit_values   = *fBestFitValues;
+  const TVectorD & current_values   = *fCurrentValues;
+  const int np = conv::kNumOfParamsInBANFFfit;
+  TMatrixD dev  (1,np); //vector of one column in matrix form for multiplication
+  TMatrixD devT (np,1); //vector of one row in matrix form for multiplication
+  for(int i = 0; i < np; i++){
+    dev[0][i]  = current_values[i]-bestfit_values[i];
+    devT[i][0] = current_values[i]-bestfit_values[i];
+  }
 
+#ifdef __show_chisqpenalty_mesg_debug__
+  cout << "Exp/BANFF/ChisqPenalty >> BANFF parameters: " << endl;
+  util::PrintCompact(current_values, bestfit_values, 12,6,"BANFF fit params");
+#endif
+
+#ifdef __show_chisqpenalty_mesg_debug__
+  cout << "Exp/ChisqPenalty >> deviations in BANFF parameters: " << endl;
+  util::PrintCompact(TMatrixDRow(dev,0), 12,6,"BANFF fit params");
+#endif
+
+  //covariance matrix
+  const TMatrixD cov    (this->CovMatrix());
+  const TMatrixD covInv (this->CovMatrixInv());
+
+#ifdef __show_chisqpenalty_mesg_debug__
+  cout << "Exp/BANFF/ChisqPenalty >> BANFF covariance matrix: " << endl;
+  util::PrintCompact(cov,7,4);
+  cout << "Exp/BANFF/ChisqPenalty >> Inverse BANFF covariance matrix: " << endl;
+  util::PrintCompact(covInv,7,4);
+#endif
+
+  //Check the inverse:
+  TMatrixD prod = cov*covInv;
+#ifdef __show_chisqpenalty_mesg_debug__
+  cout << "Exp/BANFF/ChisqPenalty >> check of product cov*(cov)^-1 : "<< endl;
+  util::PrintCompact(prod,7,4);
+#endif
+
+  TMatrixD chisqpenalty =  dev * covInv * devT;
+  double chisq_penalty = chisqpenalty[0][0]; //The final matrix is 1x1, just a number
+
+#ifdef __show_chisqpenalty_mesg_debug__
+  cout << "Exp/BANFF/ChisqPenalty >> ChisqPenalty = " << chisq_penalty << endl;
+#endif
+
+  if(chisq_penalty) return chisq_penalty;
+  
   return 0;
 }
 //________________________________________________________________________________________

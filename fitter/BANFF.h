@@ -44,6 +44,7 @@ public:
   // Get BANFF best fit values, covariance matrix and cholesky decomposition of covariance matrix
   const TVectorD & BestFitValues     (void) const { return *fBestFitValues; }
   const TMatrixD & CovMatrix         (void) const { return *fCovMtrx;       }
+  const TMatrixD & CovMatrixInv      (void) const { return *fCovMtrxInv;    }
   const TMatrixD & CovMatrixCholesky (void) const { return *fCovMtrxChoL;   }
 
   // Systematic variations (wrt the best-fit BANFF params)
@@ -75,6 +76,7 @@ private:
   TVectorD *  fBestFitValues;     ///< BANFF best fit values
   TVectorD *  fCurrentValues;     ///< Current values of BANFF parameters 
   TMatrixD *  fCovMtrx;           ///< BANFF covariance matrix
+  TMatrixD *  fCovMtrxInv;        ///< Inverse BANFF covariance matrix
   TMatrixD *  fCovMtrxChoL;       ///< Triangular matrix obtained from Cholesky decomposition of BANFF covariance matrix
   bool        fIsTweaked;         ///< Were BANF params tweaked?
   bool        fIsFluxWghtUpdated; ///< Were Flux weights updated as a result of the last BANFF param variation
