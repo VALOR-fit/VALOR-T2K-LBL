@@ -22,6 +22,9 @@
 //             - banff_00
 //             - ...
 //             - banff_25
+//      - expected
+//             This is a special option. Skip the main macro & print out a table with the 
+//             expected 1 sigma percentage change for each systematic
 //
 // Costas Andreopoulos
 // ------------------------------------------------------------------------------------------------
@@ -35,8 +38,14 @@
 //  Takes advantage of util classes for determining which 'total' to put a mode in -> code greatly simplified
 //  Can run with or without BANFF best fit values
 //  Now prints Etrue bins (for numu CCQE) to see effect of BANFF flux bins
+// TD 23/03/12
+//  Added spectral information pertaining to normalisation binning (CCQE and CC1pi)
+//  Added "expected" option for systematics
 
 #include <iomanip.h>
+#include <TXMLEngine.h>
+
+void print_expected_errors(bool, const char*, const char*);
 
 void test_systematic_error_propagation
 (
@@ -70,6 +79,15 @@ void test_systematic_error_propagation
   // Get requested sample
   conv::SuperkSample_t s = util::SKSampleFromString(sksample);
   assert(s != conv::kSKsUndefined);
+
+  //string for convieniance
+  string sys(systematic);
+
+  //special mode
+  if(sys == "expected") {
+    print_expected_errors(use_tex, output_file, config);
+    return;
+  }
 
   // Set physics hypothesis
   PhysHypothesis ph(hypothesis);
@@ -162,10 +180,6 @@ void test_systematic_error_propagation
     if (EtrueBinSigNuE[itb] > conv::kNEtrueBins) EtrueBinSigNuE[itb] = conv::kNEtrueBins;
     if (EtrueBinSigNuE[itb] < 1 && itb != 0) {NEtrueBinSigNuE = itb-1; break;}
   }
-
-  // Is it a BANFF systematic? (if it is, 1 sigma errors are not definied)
-  string sys(systematic);
-  bool sys_is_banff = sys.find("banff") == 0;
 
   //
   // nominal MC (pre BANFF)
@@ -422,11 +436,22 @@ void test_systematic_error_propagation
   //
   // +1 sigma (relative to untuned BANFF)
   //
-  
-  if(sys_is_banff) {
-    skexp->TweakSystematic(systematic, skexp->GetBANFF()->BestFitValue(util::PhysParamIdFromString(systematic)) * 2);
+  cout << "\n\nApplying +1 sigma tweak" << endl;
+  if(sys.find("banff_") == 0) {
+    size_t found;
+    found = sys.find_first_of("012");
+    string bnum = sys.substr(found,2);
+    int bindex = atoi(bnum.c_str());
+    cout << bindex << endl;
+    skexp->TweakSystematic(systematic, skexp->GetBANFF()->BestFitValue(util::PhysParamIdFromString(systematic)) + skexp->GetBANFF()->CovMatrix()(bindex,bindex));
     skexp->GetBANFF()->PrintSystematicVariations();
   }
+  else if(sys == "sk_1Rmu_ccqe_ring_counting_eff_0")
+    skexp->TweakSystematic(systematic,skexp->GetSuperkDetector()->Eff1RmuCCQERCCovarRelErr()(0,0));
+  else if(sys == "sk_1Rmu_ccqe_ring_counting_eff_1")
+    skexp->TweakSystematic(systematic,skexp->GetSuperkDetector()->Eff1RmuCCQERCCovarRelErr()(1,1));
+  else if(sys == "sk_1Rmu_ccqe_ring_counting_eff_2")
+    skexp->TweakSystematic(systematic,skexp->GetSuperkDetector()->Eff1RmuCCQERCCovarRelErr()(2,2));
   else
     skexp->TweakSystematic(systematic,+1.);
   skexp->Generate(ph);
@@ -550,11 +575,22 @@ void test_systematic_error_propagation
   //
   // -1 sigma (relative to untuned BANFF)
   //
-
-  if(sys_is_banff) {
-    skexp->TweakSystematic(systematic, skexp->GetBANFF()->BestFitValue(util::PhysParamIdFromString(systematic)) * 0.5);
+  cout << "\n\nApplying -1 sigma tweak" << endl;
+  if(sys.find("banff_") == 0) {
+    size_t found;
+    found = sys.find_first_of("012");
+    string bnum = sys.substr(found,2);
+    int bindex = atoi(bnum.c_str());
+    cout << bindex << endl;
+    skexp->TweakSystematic(systematic, skexp->GetBANFF()->BestFitValue(util::PhysParamIdFromString(systematic)) - skexp->GetBANFF()->CovMatrix()(bindex,bindex));
     skexp->GetBANFF()->PrintSystematicVariations();
   }
+  else if(sys == "sk_1Rmu_ccqe_ring_counting_eff_0")
+    skexp->TweakSystematic(systematic,-skexp->GetSuperkDetector()->Eff1RmuCCQERCCovarRelErr()(0,0));
+  else if(sys == "sk_1Rmu_ccqe_ring_counting_eff_1")
+    skexp->TweakSystematic(systematic,-skexp->GetSuperkDetector()->Eff1RmuCCQERCCovarRelErr()(1,1));
+  else if(sys == "sk_1Rmu_ccqe_ring_counting_eff_2")
+    skexp->TweakSystematic(systematic,-skexp->GetSuperkDetector()->Eff1RmuCCQERCCovarRelErr()(2,2));
   else
     skexp->TweakSystematic(systematic,-1.);
   skexp->Generate(ph);
@@ -1550,31 +1586,6 @@ void test_systematic_error_propagation
       }//loop over etrue bins
       if(use_tex) streamer << "\\hline" << endl;
     }//nuebar etrue (flux binning)
-    if (((s == conv::kSKsFCFV1RingMuLike && m == conv::kSKmSigNuECCoth) || (s == conv::kSKsFCFV1RingELike && m == conv::kSKmSigNuECCoth)) && show_sk_spectral_info_etrue_flux_binning) {
-      if(use_tex) streamer << "\\hline" << endl;
-      char bufl[100], bufu[100];
-      for(int itb = 0; itb < NEtrueBinSigNuE; itb++) {
-	snprintf(bufl, sizeof(bufl), "%g",  skexp->GetSuperkMC()->Template(s, conv::kSKmSigNuECCQE, conv::kSKMCtFin)->GetYaxis()->GetBinLowEdge(EtrueBinSigNuE[itb]+1));
-	snprintf(bufu, sizeof(bufu), "%g",  skexp->GetSuperkMC()->Template(s, conv::kSKmSigNuECCQE, conv::kSKMCtFin)->GetYaxis()->GetBinUpEdge(EtrueBinSigNuE[itb+1]));
-	temp = "$N_{SK}$ (" + util::AsStringTex(s) + "): $\\nu_{e}$ (signal) all (" + bufl + " $\\leq E_{t} <$ " + bufu + "GeV)";
-	streamer << setw(ncol1)  << setfill(' ') << temp
-	   << endcolumn
-           << setw(ncolnev)  << setfill(' ') << setprecision(nprecisionnev) << nsksignue_etrue_n[itb]
-           << endcolumn
-           << setw(ncolnev)  << setfill(' ') << setprecision(nprecisionnev) << nsksignue_etrue_0[itb]
-           << endcolumn
-           << setw(ncolnev)  << setfill(' ') << setprecision(nprecisionnev) << nsksignue_etrue_p[itb]
-           << endcolumn
-           << setw(ncolfrc)  << setfill(' ') << setprecision(nprecisionpct) << frac_nsksignue_etrue_p[itb] << pctsymbol 
-           << endcolumn
-           << setw(ncolnev)  << setfill(' ') << setprecision(nprecisionnev) << nsksignue_etrue_m[itb]
-           << endcolumn
-           << setw(ncolfrc)  << setfill(' ') << setprecision(nprecisionpct) << frac_nsksignue_etrue_m[itb] << pctsymbol 
-           << endrow
-           << endl;
-      }//loop over etrue bins
-      if(use_tex) streamer << "\\hline" << endl;
-    }//signue etrue (flux binning)
     //total flavour-nc/cc
     if ((s == conv::kSKsFCFV1RingMuLike && m == conv::kSKmNuMuCCoth_mu) || (s == conv::kSKsFCFV1RingELike && m == conv::kSKmNuMuCCoth_e)) {
       temp = "$N_{SK}$ (" + util::AsStringTex(s) + "): $\\nu_{\\mu}$ CC all";
@@ -1738,6 +1749,31 @@ void test_systematic_error_propagation
 	   << endrow
 	   << endl;
     }
+    if (((s == conv::kSKsFCFV1RingMuLike && m == conv::kSKmSigNuECCoth) || (s == conv::kSKsFCFV1RingELike && m == conv::kSKmSigNuECCoth)) && show_sk_spectral_info_etrue_flux_binning) {
+      if(use_tex) streamer << "\\hline" << endl;
+      char bufl[100], bufu[100];
+      for(int itb = 0; itb < NEtrueBinSigNuE; itb++) {
+	snprintf(bufl, sizeof(bufl), "%g",  skexp->GetSuperkMC()->Template(s, conv::kSKmSigNuECCQE, conv::kSKMCtFin)->GetYaxis()->GetBinLowEdge(EtrueBinSigNuE[itb]+1));
+	snprintf(bufu, sizeof(bufu), "%g",  skexp->GetSuperkMC()->Template(s, conv::kSKmSigNuECCQE, conv::kSKMCtFin)->GetYaxis()->GetBinUpEdge(EtrueBinSigNuE[itb+1]));
+	temp = "$N_{SK}$ (" + util::AsStringTex(s) + "): $\\nu_{e}$ (signal) all (" + bufl + " $\\leq E_{t} <$ " + bufu + "GeV)";
+	streamer << setw(ncol1)  << setfill(' ') << temp
+	   << endcolumn
+           << setw(ncolnev)  << setfill(' ') << setprecision(nprecisionnev) << nsksignue_etrue_n[itb]
+           << endcolumn
+           << setw(ncolnev)  << setfill(' ') << setprecision(nprecisionnev) << nsksignue_etrue_0[itb]
+           << endcolumn
+           << setw(ncolnev)  << setfill(' ') << setprecision(nprecisionnev) << nsksignue_etrue_p[itb]
+           << endcolumn
+           << setw(ncolfrc)  << setfill(' ') << setprecision(nprecisionpct) << frac_nsksignue_etrue_p[itb] << pctsymbol 
+           << endcolumn
+           << setw(ncolnev)  << setfill(' ') << setprecision(nprecisionnev) << nsksignue_etrue_m[itb]
+           << endcolumn
+           << setw(ncolfrc)  << setfill(' ') << setprecision(nprecisionpct) << frac_nsksignue_etrue_m[itb] << pctsymbol 
+           << endrow
+           << endl;
+      }//loop over etrue bins
+      if(use_tex) streamer << "\\hline" << endl;
+    }//signue etrue (flux binning)
     if (use_tex && s == conv::kSKsFCFV1RingMuLike)
       switch(m) {
       case conv::kSKmNuMuNC:
@@ -1764,19 +1800,21 @@ void test_systematic_error_propagation
 
   if(use_tex) {
      streamer << "\\end{tabular}" << endl;
-     string systematicstr(systematic), hypothesisstr(hypothesis);
+     string hypothesisstr(hypothesis);
+     if(sys.find("banff") == 0)
+       sys = util::AsString(util::PhysParamIdFromString(systematic));
      size_t found;
-     found=systematicstr.find_first_of("_");
+     found=sys.find_first_of("_");
      while(found!=string::npos) {
-       systematicstr[found]='-';
-       found=systematicstr.find_first_of("_",found+1);
+       sys[found]='-';
+       found=sys.find_first_of("_",found+1);
      }
      found=hypothesisstr.find_first_of("_");
      while(found!=string::npos) {
        hypothesisstr[found]='-';
        found=hypothesisstr.find_first_of("_",found+1);
      }
-     streamer << "\\caption{ Effect of " << systematicstr << " for sample " << util::AsStringTex(s) 
+     streamer << "\\caption{ Effect of " << sys << " for sample " << util::AsStringTex(s) 
 	      << " with oscillation hypothesis " <<  hypothesisstr
 	      << " using oscillation parameters: " 
 	      << " $\\sin^22\\theta_{12} = $"  << input_mixing12
@@ -1815,5 +1853,146 @@ void test_systematic_error_propagation
   }
 
   cout << "Done!" << endl;
+
+}
+
+print_expected_errors(bool use_tex, const char * output_file, const char * config) {
+  using namespace std;
+  using namespace t2kana;
+  
+  // Parse the input XML configuration file
+  TXMLEngine* xml = new TXMLEngine;   
+  XMLDocPointer_t xmldoc = xml->ParseFile(config);
+  if (xmldoc==0) {
+    cerr << "Exp >> " << "Can not parse input: " << config << endl;
+    delete xml;
+    exit(1);
+  }
+  XMLNodePointer_t root_node = xml->DocGetRootElement(xmldoc);
+
+  // Get the expected systematic variations
+  double SKDetEnergyScale1RmuRelErr = 
+    util::XML2Dbl(xml,root_node,
+     "detector_systematics/superk/energy_scale_relative_error/one_mu_ring");
+  double SKDetEff1RmuCCQEOthRelErr =
+    util::XML2Dbl(xml,root_node,
+      "detector_systematics/superk/efficiency_relative_error/one_mu_ring/ccqe/other_error");
+  TMatrixD *SKDetEff1RmuCCQERCCovarRelErr = 
+    util::XML2TMatrixD(xml,root_node,
+      "detector_systematics/superk/efficiency_relative_error/one_mu_ring/ccqe/rc_error");
+  double SKDetEff1RmuCCnonQERelErr   =
+    util::XML2Dbl(xml,root_node,
+      "detector_systematics/superk/efficiency_relative_error/one_mu_ring/ccnonqe");
+  double SKDetEff1RmuNCRelErr        =
+    util::XML2Dbl(xml,root_node,
+      "detector_systematics/superk/efficiency_relative_error/one_mu_ring/nc");
+  double SKDetEff1RmuNuECCRelErr =
+    util::XML2Dbl(xml,root_node, 
+      "detector_systematics/superk/efficiency_relative_error/one_mu_ring/nuecc");
+
+  TMatrixD *BANFFCovMtrx = 
+    util::XML2TMatrixD(xml,root_node,
+      "banff/covariance_matrix");
+
+  // Release memory
+  xml->FreeDoc(xmldoc);
+  delete xml;
+
+  //print out
+  string pctsymbol  = (use_tex) ? " \\% "   : "% ";
+  string endcolumn  = (use_tex) ? " & "     : "" ;
+  string endrow     = (use_tex) ? " \\\\ "  : "" ;
+  int nprecisionnev = 4; // <-- for number of events
+  int nprecisionpct = 2; // <-- for % changes
+  int ncol1   = 80;
+  int ncolnev = 15;
+  int ncolfrc =  8;
+
+  stringstream streamer;
+
+  if(use_tex) {
+     streamer << "\\begin{table}"   << endl;
+     streamer << "\\scriptsize" << endl;
+     //streamer << "\\centering"     << endl;
+     streamer << "\\begin{tabular}{| l | r |}" << endl;
+     streamer << "\\hline" << endl;
+     streamer << "{\\bf Systematic} &  "
+	  << "{\\bf Expected change}   "
+          << endl;
+     streamer << "\\hline" << endl;
+  }
+ 
+  string systematic;
+
+  for (int i = 0; i < 3; i++) {
+    systematic = Form("sk_1Rmu_ccqe_ring_counting_eff_%d",i);
+    streamer << setw(ncol1)  << setfill(' ') << systematic << endcolumn
+	     << setw(ncolnev)  << setfill(' ') << setprecision(nprecisionnev)
+	     << SKDetEff1RmuCCQERCCovarRelErr(i,i) * 100 << pctsymbol
+	     << endrow << endl;
+  }
+  systematic = "sk_1Rmu_ccqe_other_eff";
+  streamer << setw(ncol1)  << setfill(' ') << systematic << endcolumn
+	   << setw(ncolnev)  << setfill(' ') << setprecision(nprecisionnev)
+	   << SKDetEff1RmuCCQEOthRelErr * 100 << pctsymbol
+	   << endrow << endl;
+  systematic = "sk_1Rmu_ccnonqe_eff";
+  streamer << setw(ncol1)  << setfill(' ') << systematic << endcolumn
+	   << setw(ncolnev)  << setfill(' ') << setprecision(nprecisionnev)
+	   << SKDetEff1RmuCCnonQERelErr * 100 << pctsymbol
+	   << endrow << endl;
+  systematic = "sk_1Rmu_nc_eff";
+  streamer << setw(ncol1)  << setfill(' ') << systematic << endcolumn
+	   << setw(ncolnev)  << setfill(' ') << setprecision(nprecisionnev)
+	   << SKDetEff1RmuNCRelErr * 100 << pctsymbol
+	   << endrow << endl;
+  systematic = "sk_1Rmu_nuecc_eff";
+  streamer << setw(ncol1)  << setfill(' ') << systematic << endcolumn
+	   << setw(ncolnev)  << setfill(' ') << setprecision(nprecisionnev)
+	   << SKDetEff1RmuNuECCRelErr * 100 << pctsymbol
+	   << endrow << endl;
+  systematic = "sk_energy_scale";
+  streamer << setw(ncol1)  << setfill(' ') << systematic << endcolumn
+	   << setw(ncolnev)  << setfill(' ') << setprecision(nprecisionnev)
+	   << SKDetEnergyScale1RmuRelErr * 100 << pctsymbol
+	   << endrow << endl;
+  for (int i = 0; i < 26; i++) {
+    systematic = Form("banff_%d",i);
+    streamer << setw(ncol1)  << setfill(' ') << systematic << endcolumn
+	     << setw(ncolnev)  << setfill(' ') << setprecision(nprecisionnev)
+	     << BANFFCovMtrx(i,i) * 100 << pctsymbol
+	     << endrow << endl;
+  }
+
+  if(!use_tex) {
+     streamer << setw(150)  << setfill('-') << " " << endl;
+  }
+
+  if(use_tex) {
+     streamer << "\\hline" << endl;
+     streamer << "\\end{tabular}" << endl;
+     streamer << "\\label{tab:expected}" << endl;
+     streamer << "\\end{table}" << endl;
+     streamer << "\\clearpage" << endl;
+  }
+
+  cout << streamer.str() << endl;
+
+  // write the table?
+  if(output_file != "") {
+    long size;
+
+    // get size of file
+    streamer.seekg(0,ifstream::end);
+    size=streamer.tellg();
+    streamer.seekg(0);
+
+    ofstream outfile (output_file,ios_base::app);
+
+    // write to outfile
+    outfile.write (streamer.str().c_str(),size);
+  
+    outfile.close();
+  }
 
 }

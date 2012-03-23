@@ -64,6 +64,9 @@ public:
   // Print systematic parameters
   void PrintSystematicVariations (void) const;
 
+  // Access the elements of the ring counting matrix
+  const TMatrixD & Eff1RmuCCQERCCovarRelErr (void) const { return *fEff1RmuCCQERCCovarRelErr; }
+
 private:
 
   // Init and clean-up

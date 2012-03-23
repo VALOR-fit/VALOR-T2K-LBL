@@ -59,6 +59,7 @@ for i in xrange(26):
       systematics.append(["banff_" + '%(number)02d' % {"number": i},"false","false","false"])
    elif i == 24 or i == 25:
       systematics.append(["banff_" + '%(number)02d' % {"number": i},"false","false","true"])
+systematics.append(["expected", "false","false","false"])
 
 samples = []
 samples.append("1Rmu")
