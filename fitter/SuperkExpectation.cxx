@@ -156,6 +156,9 @@ void SuperkExpectation::ResetSystematicVariations(void)
   // BANFF
   this->GetBANFF()->Tweak(true,0);
 
+  // FSI
+  this->GetFSI()->Tweak(true,0);
+
   // ...
 }
 //________________________________________________________________________________________
@@ -166,15 +169,16 @@ void SuperkExpectation::TweakSystematic(string systematic, double twkdial, bool 
        << " to value = " << twkdial << endl;
 #endif
 
+//
 // Valid systematic parameter names:
 // 
 // SK detector systematics
 //    - sk_energy_scale                     : 
 //    - sk_1Rmu_ccqe_ring_counting_eff      : tweak SK 1Rmu/CCQE RC efficiencies in all 3 Ereco bins, correlations taken into account (Cholesky method)
 //      or
-//      - sk_1Rmu_ccqe_ring_counting_eff_0  : tweak only SK 1Rmu/CCQE RC efficiency in the 1st Ereco bin, correlations with other bins ignored (debug mode)
-//      - sk_1Rmu_ccqe_ring_counting_eff_1  : tweak only SK 1Rmu/CCQE RC efficiency in the 2nd Ereco bin, correlations with other bins ignored (debug mode)
-//      - sk_1Rmu_ccqe_ring_counting_eff_2  : tweak only SK 1Rmu/CCQE RC efficiency in the 3rd Ereco bin, correlations with other bins ignored (debug mode)
+//      * sk_1Rmu_ccqe_ring_counting_eff_0  : tweak only SK 1Rmu/CCQE RC efficiency in the 1st Ereco bin, correlations with other bins ignored (debug mode)
+//      * sk_1Rmu_ccqe_ring_counting_eff_1  : tweak only SK 1Rmu/CCQE RC efficiency in the 2nd Ereco bin, correlations with other bins ignored (debug mode)
+//      * sk_1Rmu_ccqe_ring_counting_eff_2  : tweak only SK 1Rmu/CCQE RC efficiency in the 3rd Ereco bin, correlations with other bins ignored (debug mode)
 //   - sk_1Rmu_ccqe_other_eff              : 
 //   - sk_1Rmu_ccnonqe_eff                  :
 //   - sk_1Rmu_nc_eff                       :
@@ -183,10 +187,18 @@ void SuperkExpectation::TweakSystematic(string systematic, double twkdial, bool 
 // BANFF
 //    - banff                               : tweak all BANFF params, correlations taken into account (Cholesky method)
 //      or   
-//      - banff_00                          : tweak only BANFF param 00, see Conventions.h for definition, correlations ignored (debug mode)
-//      - banff_01                          : tweak only BANFF param 01, see Conventions.h for definition, correlations ignored (debug mode)
-//      - ..     
-//      - banff_25                          : tweak only BANFF param 25, see Conventions.h for definition, correlations ignored (debug mode)
+//      * banff_00                          : tweak only BANFF param 00, see Conventions.h for definition, correlations ignored (debug mode)
+//      * banff_01                          : tweak only BANFF param 01, see Conventions.h for definition, correlations ignored (debug mode)
+//      * ..     
+//      * banff_25                          : tweak only BANFF param 25, see Conventions.h for definition, correlations ignored (debug mode)
+//
+// FSI
+//    - fsi                                 : tweak all FSI params, correlations taken into account (Cholesky method)
+//      or     
+//      * fsi_00                            : tweak only FSI param 00, see Conventions.h for definition, correlations ignored (debug mode)
+//      * fsi_01                            : tweak only FSI param 01, see Conventions.h for definition, correlations ignored (debug mode)
+//      * ..     
+//      * fsi_09                            : tweak only FSI param 09, see Conventions.h for definition, correlations ignored (debug mode)
 //
 
   //
@@ -239,17 +251,17 @@ void SuperkExpectation::TweakSystematic(string systematic, double twkdial, bool 
   if(systematic == "banff") {
      this->GetBANFF()->Tweak(); //< Cholesky method
   }
-
   // tweak an individual BANFF parameter (ignores correlations, debug)
   else
   if(systematic.find("banff_") != string::npos) {
      bool found = false;
-     for (int ib = 0; ib < conv::kNumOfParamsInBANFFfit; ib++) {
+     const int nbanff = conv::kNumOfParamsInBANFFfit;
+     TVectorD twkv(this->GetBANFF()->BestFitValues());
+     if(!best_banff) {
+        for (int ib = 0; ib < nbanff; ib++) { twkv[ib] = 1; }
+     }
+     for (int ib = 0; ib < nbanff; ib++) {
 	if(systematic == Form("banff_%02i",ib)) {
-	   TVectorD twkv(this->GetBANFF()->BestFitValues());
-	   if(!best_banff)
-	      for(int it = 0; it < 26; it++)
-		 twkv[it] = 1;
 	   twkv[ib]=twkdial;
 	   this->GetBANFF()->Tweak(true,&twkv);
 	   found = true;
@@ -261,6 +273,41 @@ void SuperkExpectation::TweakSystematic(string systematic, double twkdial, bool 
 	exit(1);
      }   
   }
+
+
+  //
+  // FSI
+  //
+
+  // tweak all FSI parameters taking into account correlations
+  else
+  if(systematic == "banff") {
+     this->GetFSI()->Tweak(); //< Cholesky method
+  }
+  // tweak an individual FSI parameter (ignores correlations, debug)
+  else
+  if(systematic.find("fsi_") != string::npos) {
+     bool found = false;
+     const int nfsi = conv::kNumOfFSIParams;
+     TVectorD twkv(nfsi);
+     for (int ip = 0; ip < nfsi; ip++) {
+        twkv[ip] = 1;
+     }
+     for (int ip = 0; ip < nfsi; ip++) {
+	if(systematic == Form("fsi_%02i",ip)) {
+	   twkv[ip]=twkdial;
+	   this->GetFSI()->Tweak(true,&twkv);
+	   found = true;
+	   break;
+	}
+     }//ib
+     if(!found) {
+        cerr << "Exp >> Unknown systematic parameter (" << systematic << ")" << endl;
+	exit(1);
+     }   
+  }
+
+
 
   else {
      cerr << "Exp >> Unknown systematic parameter (" << systematic << ")" << endl;
@@ -287,6 +334,9 @@ void SuperkExpectation::TweakAllSystematics(void)
 
   // BANFF
   this->GetBANFF()->Tweak(); // <-- Cholesky method
+
+  // FSI
+  this->GetFSI()->Tweak(); // <-- Cholesky method
 
   // ...
 }
@@ -446,7 +496,57 @@ void SuperkExpectation::SetNuisanceParams(const FitParamList & fp)
      this->GetSuperkDetector()->TweakEfficiency1RmuNuECC(twk);
    }
 
+   // 
+   // BANFF systematics
+   //
 
+   const int nbanff = conv::kNumOfParamsInBANFFfit;
+   // BANFF params included in the fit param list?
+   bool incl_banff = true;   
+   for(int ip = 0; ip < nbanff; ip++) {
+      PhysParamId_t p = PhysParamId_t ((int) kNuisBANFF00 + ip);
+      incl_banff = incl_banff && fp.Exists(p);
+      if(!incl_banff) break;
+   }
+   // If BANFF params included, use current values stored in fit param list
+   // to tweak the BANFF object
+   if(incl_banff) {
+     TVectorD twkv(nbanff);
+     for(int ip = 0; ip < nbanff; ip++) {
+        PhysParamId_t p = PhysParamId_t ((int) kNuisBANFF00 + ip);
+        twkv[ip] = fp.CurrValue(p);
+     }
+     this->GetBANFF()->Tweak(true,&twkv);    
+   }
+
+   // 
+   // Cross-section systematics (other than BANFF ones)
+   //
+
+   // ...
+
+   // 
+   // FSI systematics
+   //
+
+   const int nfsi = conv::kNumOfFSIParams;
+   // FSI params included in the fit param list?
+   bool incl_fsi = true;   
+   for(int ip = 0; ip < nfsi; ip++) {
+      PhysParamId_t p = PhysParamId_t ((int) kNuisFSI00 + ip);
+      incl_fsi = incl_fsi && fp.Exists(p);
+      if(!incl_fsi) break;
+   }
+   // If FSI params included, use current values stored in fit param list
+   // to tweak the FSI object
+   if(incl_fsi) {
+     TVectorD twkv(nfsi);
+     for(int ip = 0; ip < nfsi; ip++) {
+        PhysParamId_t p = PhysParamId_t ((int) kNuisFSI00 + ip);
+        twkv[ip] = fp.CurrValue(p);
+     }
+     this->GetFSI()->Tweak(true,&twkv);    
+   }
 }
 //________________________________________________________________________________________
 
