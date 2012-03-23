@@ -511,6 +511,22 @@ static const SuperkMode_t kSKReactionModes[kns][knm] = {
 //
 
 //
+// Number of nuisance params parameters for 1Rmu, 1Re, 1Rmu+1Re analysis
+// 1Rmu : 44 nuisance params
+//   - 1 SK E scale 
+//   - 7 SK efficiencies (3 CCQE-RC, CCQE-Oth, CCnonQE, NC, nue CC) 
+//   - 26 BANFF
+//   - 10 FSI
+// 1Re :
+//   -
+// Joint :
+//   -
+//
+static const int kNumOfNuisanceParams1Rmu  = 44;  
+static const int kNumOfNuisanceParams1Re   = 0;  // not implemented for 2012a yet
+static const int kNumOfNuisanceParamsJoint = 0;  // not implemented for 2012a yet
+
+//
 // Number of BANFF fit parameters
 //
 static const int kNumOfParamsInBANFFfit = 26;  
