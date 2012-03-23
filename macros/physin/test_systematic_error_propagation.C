@@ -1916,48 +1916,48 @@ print_expected_errors(bool use_tex, const char * output_file, const char * confi
      //streamer << "\\centering"     << endl;
      streamer << "\\begin{tabular}{| l | r |}" << endl;
      streamer << "\\hline" << endl;
-     streamer << "{\\bf Systematic} &  "
-	  << "{\\bf Expected change}   "
-          << endl;
+     streamer << setw(ncol1)  << setfill(' ') << "{\\bf Systematic}  " << endcolumn
+	      << setw(ncolnev)  << setfill(' ') << "{\\bf Expected change} " << endrow
+	      << endl;
      streamer << "\\hline" << endl;
   }
  
   string systematic;
 
   for (int i = 0; i < 3; i++) {
-    systematic = Form("sk_1Rmu_ccqe_ring_counting_eff_%d",i);
+    systematic = Form("sk 1Rmu ccqe ring counting eff %d",i);
     streamer << setw(ncol1)  << setfill(' ') << systematic << endcolumn
 	     << setw(ncolnev)  << setfill(' ') << setprecision(nprecisionnev)
 	     << SKDetEff1RmuCCQERCCovarRelErr(i,i) * 100 << pctsymbol
 	     << endrow << endl;
   }
-  systematic = "sk_1Rmu_ccqe_other_eff";
+  systematic = "sk 1Rmu ccqe other eff";
   streamer << setw(ncol1)  << setfill(' ') << systematic << endcolumn
 	   << setw(ncolnev)  << setfill(' ') << setprecision(nprecisionnev)
 	   << SKDetEff1RmuCCQEOthRelErr * 100 << pctsymbol
 	   << endrow << endl;
-  systematic = "sk_1Rmu_ccnonqe_eff";
+  systematic = "sk 1Rmu ccnonqe eff";
   streamer << setw(ncol1)  << setfill(' ') << systematic << endcolumn
 	   << setw(ncolnev)  << setfill(' ') << setprecision(nprecisionnev)
 	   << SKDetEff1RmuCCnonQERelErr * 100 << pctsymbol
 	   << endrow << endl;
-  systematic = "sk_1Rmu_nc_eff";
+  systematic = "sk 1Rmu nc eff";
   streamer << setw(ncol1)  << setfill(' ') << systematic << endcolumn
 	   << setw(ncolnev)  << setfill(' ') << setprecision(nprecisionnev)
 	   << SKDetEff1RmuNCRelErr * 100 << pctsymbol
 	   << endrow << endl;
-  systematic = "sk_1Rmu_nuecc_eff";
+  systematic = "sk 1Rmu nuecc eff";
   streamer << setw(ncol1)  << setfill(' ') << systematic << endcolumn
 	   << setw(ncolnev)  << setfill(' ') << setprecision(nprecisionnev)
 	   << SKDetEff1RmuNuECCRelErr * 100 << pctsymbol
 	   << endrow << endl;
-  systematic = "sk_energy_scale";
+  systematic = "sk energy scale";
   streamer << setw(ncol1)  << setfill(' ') << systematic << endcolumn
 	   << setw(ncolnev)  << setfill(' ') << setprecision(nprecisionnev)
 	   << SKDetEnergyScale1RmuRelErr * 100 << pctsymbol
 	   << endrow << endl;
   for (int i = 0; i < 26; i++) {
-    systematic = Form("banff_%d",i);
+    systematic = Form("banff %d",i);
     streamer << setw(ncol1)  << setfill(' ') << systematic << endcolumn
 	     << setw(ncolnev)  << setfill(' ') << setprecision(nprecisionnev)
 	     << BANFFCovMtrx(i,i) * 100 << pctsymbol
