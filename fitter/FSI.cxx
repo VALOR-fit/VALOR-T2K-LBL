@@ -53,6 +53,7 @@ FSI::~FSI()
 void FSI::Init(void)
 {
   fCurrentValues = 0;
+  fNominalValues = 0;
   fCovMtrx       = 0;
   fCovMtrxChoL   = 0;
 
@@ -65,6 +66,7 @@ void FSI::Init(void)
 void FSI::CleanUp(void)
 {
   if ( fCurrentValues ) delete fCurrentValues;
+  if ( fNominalValues ) delete fNominalValues;
   if ( fCovMtrx       ) delete fCovMtrx;
   if ( fCovMtrxChoL   ) delete fCovMtrxChoL;
 
@@ -96,18 +98,38 @@ bool FSI::Read(TXMLEngine* xml, XMLNodePointer_t root_node)
     cerr << "Exp/FSI >> Expecting: " <<  np << " x " << np << " matrix" << endl;
     cerr << "Exp/FSI >> Found: " << cov.GetNrows() << " x " <<  cov.GetNcols() << " matrix" << endl;
   }
+*/
+
+// Temporary code: 
+// As I don't have an FSI cov matrix, create a fake one so as to have something to
+// test the code with. 
+// ------------------------------------------------------------
+fCovMtrx = new TMatrixD(np,np);
+TMatrixD & cov = *fCovMtrx;
+for(int i=0; i<np; i++) {
+  cov(i,i) = 0.5/(1.+i);
+}
+for(int i=0; i<np; i++) {
+  for(int j=0; j<np; j++) {
+    if(i >= j) continue;
+    cov(i,j) = 0;
+    cov(j,i) = 0;
+  }
+}
+// ------------------------------------------------------------
 
 #ifdef __show_init_mesg_info__
   cout << "Exp/FSI >> Input FSI covariance matrix: " << endl;
   util::PrintCompact(cov,7,4);
 #endif
-*/
 
   // Create/init current FSI params
   fCurrentValues = new TVectorD(np);
+  fNominalValues = new TVectorD(np);
   for(int ip = 0; ip < np; ip++) 
   {
      (*fCurrentValues)[ip] = 1.;
+     (*fNominalValues)[ip] = 1.;
   }
 
   //
@@ -250,7 +272,8 @@ void FSI::Tweak(
      cout << "Exp/FSI/Tweak >> Generating random FSI params (correlated)! " << endl;
 #endif
      TMatrixD & L = *fCovMtrxChoL; 
-     TVectorD vec = util::CholeskyGenerateCorrelatedParamVariations(L);
+     TVectorD & nominal_values = *fNominalValues;
+     TVectorD vec = util::CholeskyGenerateCorrelatedParams(L,nominal_values);
      current_values = vec;
      return;
   }
@@ -265,7 +288,7 @@ void FSI::PrintSystematicVariations(void) const
 {
   const TVectorD & curr_fsi_params = *fCurrentValues;
   cout << "Exp/FSI >> FSI parameters: " << endl;
-  util::PrintCompact(curr_fsi_params,12,6,"FSI params");
+  util::PrintCompact(curr_fsi_params,15,6,"FSI params");
 }
 //________________________________________________________________________________________
 int FSI::Param2Idx(conv::PhysParamId_t p) const

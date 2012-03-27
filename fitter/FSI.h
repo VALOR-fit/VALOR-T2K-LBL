@@ -73,6 +73,7 @@ private:
   //
 
   TVectorD *  fCurrentValues;    ///< Current values of FSI params
+  TVectorD *  fNominalValues;    ///< Nominal values of FSI params
   TMatrixD *  fCovMtrx;          ///< FSI covariance matrix
   TMatrixD *  fCovMtrxChoL;      ///< Triangular matrix from Cholesky decomp. of FSI covar. matrix
   TH1D *      fFracTun[kns];     ///<

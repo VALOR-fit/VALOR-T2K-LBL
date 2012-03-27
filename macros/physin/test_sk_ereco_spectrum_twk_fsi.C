@@ -8,7 +8,7 @@
 // ------------------------------------------------------------------------------------------------
 //
 
-void test_sk_ereco_spectrum_twk_banff
+void test_sk_ereco_spectrum_twk_fsi
 (
   const char * hypothesis         = "3f_osc",                       /* options: "2f_numu_disap", "3f_osc" */
   double       input_mixing12     = 0.86,                           /* */
@@ -23,7 +23,7 @@ void test_sk_ereco_spectrum_twk_banff
   using namespace std;
   using namespace t2kana;
 
-  const int nexp = 1000; // number of FSI param tweaks
+  const int nexp = 10; // number of FSI param tweaks
 
   // Analysis configuration
   const char * config  = Form("%s/config/%s", gSystem->Getenv("T2KOSCANA"), config_file);
@@ -70,7 +70,7 @@ void test_sk_ereco_spectrum_twk_banff
      cout << " ** iteration: " << iexp << endl;
      if(iexp>0) {
        // use 0^th entry to store the untweaked SK reco energy spectrum
-       skexp.TweakSystematic("banff");       
+       skexp.TweakSystematic("fsi");       
      }
      skexp.PrintSystematicVariations();
      // generate predictions
@@ -119,13 +119,13 @@ void test_sk_ereco_spectrum_twk_banff
        conv::PhysParamId_t p = (conv::PhysParamId_t) ( (int)conv::kNuisFSI00 + iparam );
        cout << "- Tweaking FSI parameter: " << iparam << " [" << util::AsString(p) << "] only (neglecting correlations)" << endl;
 
-       string p_str = Form("banff_%02i",iparam);
+       string p_str = Form("fsi_%02i",iparam);
 
        //
        // tweak current param only by +100% - neglect correlations
        //
        cout << "- Tweaking param by +100%" << endl;
-       skexp.Tweak(p_str,2.0);  
+       skexp.TweakSystematic(p_str, 2.);  
        skexp.PrintSystematicVariations();
        // generate predictions
        skexp.Generate(ph);
@@ -139,7 +139,7 @@ void test_sk_ereco_spectrum_twk_banff
        // tweak current param only by -100% - neglect correlations
        //
        cout << "- Tweaking by -100%" << endl;
-       skexp.Tweak(p_str,0.5);  
+       skexp.TweakSystematic(p_str,0.5);  
        skexp.PrintSystematicVariations();
        // generate predictions
        skexp.Generate(ph);

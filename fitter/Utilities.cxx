@@ -673,6 +673,9 @@ string t2kana::util::AsString(PhysParamId_t p)
      * 2011-analysis nuisance parameters
      */
 
+    //
+    // SK detector
+    //
     case ( kNuisSuperkEnergyScale     ) : return "SK energy scale";                 break;    
     case ( kNuisSuperkEff1RmuCCQEoth  ) : return "SK efficiency; 1Rmu; CCQE/Other"; break;
     case ( kNuisSuperkEff1RmuCCQErc0u ) : return "SK efficiency; 1Rmu; CCQE/RC0";   break;
@@ -682,28 +685,31 @@ string t2kana::util::AsString(PhysParamId_t p)
     case ( kNuisSuperkEff1RmuNC       ) : return "SK efficiency; 1Rmu; NC";         break;
     case ( kNuisSuperkEff1RmuNueCC    ) : return "SK efficiency; 1Rmu; nue CC";     break;
 
-    case ( kNuisBANFF00               ) :
-    case ( kNuisBANFF01               ) :
-    case ( kNuisBANFF02               ) :
-    case ( kNuisBANFF03               ) :
-    case ( kNuisBANFF04               ) :
-    case ( kNuisBANFF05               ) :
-    case ( kNuisBANFF06               ) :
-    case ( kNuisBANFF07               ) :
-    case ( kNuisBANFF08               ) :
-    case ( kNuisBANFF09               ) :
-    case ( kNuisBANFF10               ) :
-    case ( kNuisBANFF11               ) :
-    case ( kNuisBANFF12               ) :
-    case ( kNuisBANFF13               ) :
-    case ( kNuisBANFF14               ) :
-    case ( kNuisBANFF15               ) :
-    case ( kNuisBANFF16               ) :
-    case ( kNuisBANFF17               ) :
-    case ( kNuisBANFF18               ) :
-    case ( kNuisBANFF19               ) : 
-    case ( kNuisBANFF20               ) : 
-    case ( kNuisBANFF21               ) : 
+    //
+    // BANFF flux and cross-section params
+    //
+    case ( kNuisBANFF00 ) :
+    case ( kNuisBANFF01 ) :
+    case ( kNuisBANFF02 ) :
+    case ( kNuisBANFF03 ) :
+    case ( kNuisBANFF04 ) :
+    case ( kNuisBANFF05 ) :
+    case ( kNuisBANFF06 ) :
+    case ( kNuisBANFF07 ) :
+    case ( kNuisBANFF08 ) :
+    case ( kNuisBANFF09 ) :
+    case ( kNuisBANFF10 ) :
+    case ( kNuisBANFF11 ) :
+    case ( kNuisBANFF12 ) :
+    case ( kNuisBANFF13 ) :
+    case ( kNuisBANFF14 ) :
+    case ( kNuisBANFF15 ) :
+    case ( kNuisBANFF16 ) :
+    case ( kNuisBANFF17 ) :
+    case ( kNuisBANFF18 ) :
+    case ( kNuisBANFF19 ) : 
+    case ( kNuisBANFF20 ) : 
+    case ( kNuisBANFF21 ) : 
     {
       int ip = (int)p - (int)kNuisBANFF00;
       return Form("BANFF %2d; SK %s flux; %.1f - %.1f GeV",
@@ -712,32 +718,43 @@ string t2kana::util::AsString(PhysParamId_t p)
                    kEtrueRangeOfFluxParamInBANFFfit[ip][1]);     
       break;
     }
-    case ( kNuisBANFF22               ) : return "BANFF 22; Ma QE";                           break;
-    case ( kNuisBANFF23               ) : return "BANFF 23; Ma RES";                          break;
-    case ( kNuisBANFF24               ) : return "BANFF 24; Norm; CC QE; 0.0 - 1.5 GeV";      break;
-    case ( kNuisBANFF25               ) : return "BANFF 25; Norm; CC RES; 0.0 - 2.5 GeV";     break;
+    case ( kNuisBANFF22 ) : return "BANFF 22; Ma QE";                           break;
+    case ( kNuisBANFF23 ) : return "BANFF 23; Ma RES";                          break;
+    case ( kNuisBANFF24 ) : return "BANFF 24; Norm; CC QE; 0.0 - 1.5 GeV";      break;
+    case ( kNuisBANFF25 ) : return "BANFF 25; Norm; CC RES; 0.0 - 2.5 GeV";     break;
 
-    case ( kNuisXSecFermiMom          ) : return "Fermi Momentum";                  break;
-    case ( kNuisXSecBindE             ) : return "Binding Energy";                  break; 
-    case ( kNuisXSecSpecFunc          ) : return "Spectral Func";                   break; 
-    case ( kNuisXSecNormCCQE1         ) : return "Norm; CC QE Norm; 1.5 - 3.5 GeV"; break; 
-    case ( kNuisXSecNormCCQE2         ) : return "Norm; CC QE Norm; > 3.5 GeV";     break; 
-    case ( kNuisXSecDeltaMass         ) : return "Delta mass";                      break; 
-    case ( kNuisXSecDeltaWidth        ) : return "Delta width";                     break; 
-    case ( kNuisXSecNormCC1pi1        ) : return "Norm; CC 1pi; > 2.5 GeV";         break; 
-    case ( kNuisXSecNormCCcoh         ) : return "Norm; CC Coh";                    break;
-    case ( kNuisXSecNormCCoth         ) : return "Norm; CC Oth";                    break;
+    //
+    // XSec params not correlated with flux
+    //
+    case ( kNuisXSecFermiMom   ) : return "Fermi Momentum";                  break;
+    case ( kNuisXSecBindE      ) : return "Binding Energy";                  break; 
+    case ( kNuisXSecSpecFunc   ) : return "Spectral Func";                   break; 
+    case ( kNuisXSecNormCCQE1  ) : return "Norm; CC QE Norm; 1.5 - 3.5 GeV"; break; 
+    case ( kNuisXSecNormCCQE2  ) : return "Norm; CC QE Norm; > 3.5 GeV";     break; 
+    case ( kNuisXSecDeltaMass  ) : return "Delta mass";                      break; 
+    case ( kNuisXSecDeltaWidth ) : return "Delta width";                     break; 
+    case ( kNuisXSecNormCC1pi1 ) : return "Norm; CC 1pi; > 2.5 GeV";         break; 
+    case ( kNuisXSecNormCCcoh  ) : return "Norm; CC Coh";                    break;
+    case ( kNuisXSecNormCCoth  ) : return "Norm; CC Oth";                    break;
 
-    case ( kNuisFSI00                 ) : return "FSI 00; ??";                     break;
-    case ( kNuisFSI01                 ) : return "FSI 01; ??";                     break;
-    case ( kNuisFSI02                 ) : return "FSI 02; ??";                     break;
-    case ( kNuisFSI03                 ) : return "FSI 03; ??";                     break;
-    case ( kNuisFSI04                 ) : return "FSI 04; ??";                     break;
-    case ( kNuisFSI05                 ) : return "FSI 05; ??";                     break;
-    case ( kNuisFSI06                 ) : return "FSI 06; ??";                     break;
-    case ( kNuisFSI07                 ) : return "FSI 07; ??";                     break;
-    case ( kNuisFSI08                 ) : return "FSI 08; ??";                     break;
-    case ( kNuisFSI09                 ) : return "FSI 09; ??";                     break;
+    case ( kNuisFSI00 ) : 
+    case ( kNuisFSI01 ) : 
+    case ( kNuisFSI02 ) : 
+    case ( kNuisFSI03 ) : 
+    case ( kNuisFSI04 ) : 
+    case ( kNuisFSI05 ) : 
+    case ( kNuisFSI06 ) : 
+    case ( kNuisFSI07 ) : 
+    case ( kNuisFSI08 ) : 
+    case ( kNuisFSI09 ) : 
+    {
+      int ip = (int)p - (int)kNuisFSI00;
+      return Form("FSI %2d; Ereco range %.1f - %.1f GeV",
+                   ip, 
+                   kFSIParamsErecoBinEdges[ip],
+                   kFSIParamsErecoBinEdges[ip+1]);     
+      break;
+    }
 
     default : 
       return "--";

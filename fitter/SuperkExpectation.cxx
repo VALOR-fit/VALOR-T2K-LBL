@@ -281,7 +281,7 @@ void SuperkExpectation::TweakSystematic(string systematic, double twkdial, bool 
 
   // tweak all FSI parameters taking into account correlations
   else
-  if(systematic == "banff") {
+  if(systematic == "fsi") {
      this->GetFSI()->Tweak(); //< Cholesky method
   }
   // tweak an individual FSI parameter (ignores correlations, debug)
