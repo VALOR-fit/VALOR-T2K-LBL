@@ -127,9 +127,9 @@ void test_systematic_error_propagation
   Long64_t ErecoBin2NuMuBarCCQE = skexp->CurrPredictedErecoSpectrum(s, conv::kSKmNuMuBarCCQE )->FindBin(1.1-conv::kASmallNum);
 
   // Get the ETrue bin edges for XSec normalisation systematics
-  Long64_t EtrueBin1CCQENorm = skexp->GetSuperkMC()->Template(s, conv::kSKmNuMuCCQE, conv::kSKMCtFin)->GetYaxis()->FindBin(conv::kXsEtrueBinEdges[util::ArrIdx::Instance()->SuperkSampleIdx(s)][util::ArrIdx::Instance()->SuperkModeIdx(s,conv::kSKmNuMuCCQE)][1.5-conv::kASmallNum]-conv::kASmallNum);
-  Long64_t EtrueBin2CCQENorm = skexp->GetSuperkMC()->Template(s, conv::kSKmNuMuCCQE, conv::kSKMCtFin)->GetYaxis()->FindBin(conv::kXsEtrueBinEdges[util::ArrIdx::Instance()->SuperkSampleIdx(s)][util::ArrIdx::Instance()->SuperkModeIdx(s,conv::kSKmNuMuCCQE)][3.5-conv::kASmallNum]-conv::kASmallNum);
-  Long64_t EtrueBin1CCResNorm = skexp->GetSuperkMC()->Template(s, conv::kSKmNuMuCCQE, conv::kSKMCtFin)->GetYaxis()->FindBin(conv::kXsEtrueBinEdges[util::ArrIdx::Instance()->SuperkSampleIdx(s)][util::ArrIdx::Instance()->SuperkModeIdx(s,conv::kSKmNuMuCCQE)][2.5-conv::kASmallNum]-conv::kASmallNum);
+  Long64_t EtrueBin1CCQENorm = skexp->GetSuperkMC()->Template(s, conv::kSKmNuMuCCQE, conv::kSKMCtFin)->GetYaxis()->FindBin(1.5-conv::kASmallNum);
+  Long64_t EtrueBin2CCQENorm = skexp->GetSuperkMC()->Template(s, conv::kSKmNuMuCCQE, conv::kSKMCtFin)->GetYaxis()->FindBin(3.5-conv::kASmallNum);
+  Long64_t EtrueBin1CCResNorm = skexp->GetSuperkMC()->Template(s, conv::kSKmNuMuCCQE, conv::kSKMCtFin)->GetYaxis()->FindBin(2.5-conv::kASmallNum);
 
   // Get the ETrue bin edges for NuMuCCQE
   int NEtrueBinNuMu = conv::kXsNEtrueBins;
