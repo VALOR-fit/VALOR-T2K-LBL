@@ -151,7 +151,7 @@ void test_sk_ereco_spectrum_nominal
 
   string oscparams = util::AsString(ph.Hypothesis(),
      input_mixing12,input_mixing13,input_mixing23,input_deltacp,input_dm12sq,input_dm23sq);
-  TFile f(Form("sk_ereco_spectrum-%s.root",oscparams.c_str()),"recreate");
+  TFile f(Form("sk_ereco_spectrum-%s%s.root",oscparams.c_str(),(disable_banff_tuning ? "_nobanff" : "")) ,"recreate");
   hErecoTot -> Write(util::AsStringCompact(s,conv::kSKmUndefined,"","total").c_str());
   for(int im = 0; im < conv::knm; im++) {
     conv::SuperkMode_t m = conv::kSKReactionModes[is][im];
