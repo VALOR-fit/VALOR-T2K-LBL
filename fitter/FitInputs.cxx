@@ -199,8 +199,27 @@ double FitInputs::ChisquarePenaltyTerm(void)
 
   //
   // Add penalty term for SuperkDetector params
-  //
+  // First check all the parms considered by SuperkDetector are included in the fit
+  // param list and set as nuisance
   // ...
+
+  bool incl_skdet_penalty = true;
+  int np_skdet = 8; // 7 eff + energy scale
+  for(int ip = 0; ip < np_skdet; ip++) {
+    PhysParamId_t p = PhysParamId_t ( (int) kNuisSuperkEnergyScale  + ip );
+    incl_skdet_penalty = incl_skdet_penalty &&
+      (this->FitParams().Exists(p) && this->FitParams().IsNuisance(p));
+    if(!incl_skdet_penalty) break;
+  }
+  if(incl_skdet_penalty) {
+    double dchisq_penalty = this->Expectation().GetSuperkDetector()->ChisqPenalty();
+    chisq_penalty += dchisq_penalty;
+#ifdef __show_contributions_to_penalty_term__
+    cout << "FitInputs::ChisquarePenaltyTerm >> Current variation of params considered by SuperkDetector"
+         << " => \delta\chi^2_{penalty} = " << dchisq_penalty << endl;
+#endif
+  }
+
 
   //
   // Add penalty term for NuXSec params (other than the ones incl. in BANFF)

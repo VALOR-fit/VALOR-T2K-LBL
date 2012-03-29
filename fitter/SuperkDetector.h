@@ -66,6 +66,7 @@ public:
 
   // Access the elements of the ring counting matrix
   const TMatrixD & Eff1RmuCCQERCCovarRelErr (void) const { return *fEff1RmuCCQERCCovarRelErr; }
+  const TMatrixD & Eff1RmuCCQERCInvCovarRelErr (void) const { return *fEff1RmuCCQERCInvCovarRelErr; }
 
 private:
 
@@ -82,6 +83,7 @@ private:
   double     fEnergyScale1RmuRelErr;       ///< 1Rmu energy scale relative error
   double     fEff1RmuCCQEOthRelErr;        ///< 1Rmu CCQE other (all but ring-counting) efficiency relative error 
   TMatrixD * fEff1RmuCCQERCCovarRelErr;    ///< 1Rmu CCQE ring-counting efficiency relative error covariance matrix (3x3)
+  TMatrixD * fEff1RmuCCQERCInvCovarRelErr; ///< 1Rmu CCQE ring-counting efficiency inverse of relative error covariance matrix (3x3)
   double     fEff1RmuCCQERCCovarE1RelErr;  ///<  -  ~0.4 GeV (above RC cov matrix is 3x3, 3 Ereco bins: (0, fEff1RmuCCQERCCovarE1RelErr, fEff1RmuCCQERCCovarE2RelErr, oo))
   double     fEff1RmuCCQERCCovarE2RelErr;  ///<  -  ~1.1 GeV (above RC cov matrix is 3x3, 3 Ereco bins: (0, fEff1RmuCCQERCCovarE1RelErr, fEff1RmuCCQERCCovarE2RelErr, oo))
   TMatrixD * fEff1RmuCCQERCCovarChoLRelErr;///<  -  Cholesky decomposition (trangular matrix L) of fEff1RmuCCQERCCovarRelErr covariance matrix

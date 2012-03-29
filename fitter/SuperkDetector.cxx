@@ -53,6 +53,7 @@ void SuperkDetector::Init(void)
   fEnergyScale1RmuRelErr      = 0.;
   fEff1RmuCCQEOthRelErr       = 0.;
   fEff1RmuCCQERCCovarRelErr   = 0;
+  fEff1RmuCCQERCInvCovarRelErr= 0;
   fEff1RmuCCQERCCovarE1RelErr = 0.;
   fEff1RmuCCQERCCovarE2RelErr = 0.;      
   fEff1RmuCCnonQERelErr       = 0.;
@@ -113,6 +114,11 @@ bool SuperkDetector::Read(TXMLEngine* xml, XMLNodePointer_t root_node)
   if(!fEff1RmuCCQERCCovarRelErr) {
     cerr << "Exp/SKDet >> No input SuperK CCQE ring-counting error covariance matrix!" << endl;
     exit(1);
+  }
+  if (fEff1RmuCCQERCCovarRelErr){
+    double det;
+    fEff1RmuCCQERCInvCovarRelErr = new TMatrixD(*fEff1RmuCCQERCCovarRelErr);
+    (*fEff1RmuCCQERCCovarRelErr).Invert(&det);
   }
       
 #ifdef __show_init_mesg_info__      
@@ -258,7 +264,40 @@ void SuperkDetector::TweakEfficiency1RmuNuECC(double twkdial)
 //________________________________________________________________________________________
 double SuperkDetector::ChisqPenalty(void) const
 {
-  return 0;
+  double chisq_penalty = 0;
+
+  //add the contributions from the simple multiplicative systematics
+  if (fEff1RmuCCQEOthTwkDial) chisq_penalty += fEff1RmuCCQEOthTwkDial*fEff1RmuCCQEOthTwkDial;
+  if (fEff1RmuCCnonQETwkDial) chisq_penalty += fEff1RmuCCnonQETwkDial*fEff1RmuCCnonQETwkDial;
+  if (fEff1RmuNCTwkDial     ) chisq_penalty += fEff1RmuNCTwkDial*fEff1RmuNCTwkDial;
+  if (fEff1RmuNuECCTwkDial  ) chisq_penalty += fEff1RmuNuECCTwkDial*fEff1RmuNuECCTwkDial;
+  if (fEnergyScaleTwkDial   ) chisq_penalty += fEnergyScaleTwkDial*fEnergyScaleTwkDial;
+
+  //add the contribution from the ring counting efficiency
+  TMatrixD & rc_err_matrix     = *fEff1RmuCCQERCCovarRelErr;
+  TMatrixD & rc_err_matrix_inv = *fEff1RmuCCQERCInvCovarRelErr;
+  //  cout << "RC error matrix:" << endl;
+  //rc_err_matrix.Print();
+  //cout << "RC inverse error matrix:" << endl;
+  //rc_err_matrix_inv.Print();
+  TMatrixD prod = rc_err_matrix * rc_err_matrix_inv;
+  //prod.Print();
+  TMatrixD dev  (1,3); //vector of deviations in one column matrix form for multiplication
+  TMatrixD devT (3,1); //vector of deviations in one row matrix form for multiplication
+  dev [0][0] = fEff1RmuCCQERC0TwkDial*TMath::Sqrt(rc_err_matrix(0,0));
+  dev [0][1] = fEff1RmuCCQERC1TwkDial*TMath::Sqrt(rc_err_matrix(1,1));
+  dev [0][2] = fEff1RmuCCQERC2TwkDial*TMath::Sqrt(rc_err_matrix(2,2));
+  for (int i = 0; i <3 ; i++){
+    devT[i][0] = dev[0][i];
+  }
+  //cout << "Deviations" << endl;
+  //dev.Print();
+  //devT.Print();
+  TMatrixD chisqpenalty =  dev * rc_err_matrix_inv * devT;
+  double dchisq = chisqpenalty[0][0];
+  if (dchisq) chisq_penalty += dchisq;
+
+  return chisq_penalty;
 }
 //________________________________________________________________________________________
 void SuperkDetector::PrintSystematicVariations(void) const
