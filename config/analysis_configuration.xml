@@ -212,7 +212,7 @@
         Central values from BANFF fit
        -->
        <best_fit_values>
-          <filename>   inputs/official/2012/banff/postfit_TrkNuMuFit_prelim.root  </filename>
+          <filename>   inputs/official/2012/banff/postfit_banff_v3_osc_marg.root  </filename>
           <objname>    postfit_params   </objname>
           <objtype>    TVectorD         </objtype>
         </best_fit_values>
@@ -220,7 +220,7 @@
         Covariance of fit parameters
        -->
        <covariance_matrix>
-          <filename>   inputs/official/2012/banff/postfit_TrkNuMuFit_prelim.root  </filename>
+          <filename>   inputs/official/2012/banff/postfit_banff_v3_osc_marg.root  </filename>
           <objname>    postfit_cov      </objname>
           <objtype>    TMatrixD         </objtype>
         </covariance_matrix>     
