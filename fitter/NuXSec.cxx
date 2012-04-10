@@ -245,10 +245,11 @@ double NuXSec::FinTuningWght_1p(
 // This method provides weights to reweight MC to the BANFF best-fit parameters.
 // It handles the 4 BANFF cross-section parameters which are correlated with the BANFF 
 // flux parameters. In the current incarnation of the BANFF fit, these parameters are:
-// - BANFF param # 22, M_{A} QE
-// - BANFF param # 23, M_{A} RES
-// - BANFF param # 24, CCQE  normalization, 0 - 1.5 GeV (Etrue)
-// - BANFF param # 25, CCRES normalization, 0 - 2.5 GeV (Etrue)
+// - BANFF param # 22, M_{A}  QE
+// - BANFF param # 23, M_{A}  RES
+// - BANFF param # 24, CCQE   normalization, 0 - 1.5 GeV (Etrue)
+// - BANFF param # 25, CC1pi  normalization, 0 - 2.5 GeV (Etrue)
+// - BANFF param # 26, NC1pi0 normalization
 //
 
   // if( ! this->ApplySyst(p,s,m,Ereco,Etrue) ) return 1.; // check already made in function that calls this one
@@ -273,7 +274,7 @@ double NuXSec::FinTuningWght_1p(
   // BANFF param # 25, CCRES normalization, 0 - 2.5 GeV
   //  
   else
-  if(p == kNuisBANFF24 || p == kNuisBANFF25)
+  if(p == kNuisBANFF24 || p == kNuisBANFF25 || p == kNuisBANFF26)
   {
      wght = fBANFF->BestFitValue(p);
   }
@@ -367,7 +368,7 @@ double NuXSec::SystWght_1p(
   // BANFF param # 25, CCRES normalization, 0 - 2.5 GeV
   //  
   else
-  if(p == kNuisBANFF24 || p == kNuisBANFF25)
+  if(p == kNuisBANFF24 || p == kNuisBANFF25 || p == kNuisBANFF26)
   {
      wght = fBANFF->CurrentValue(p) / fBANFF->BestFitValue(p);
   }

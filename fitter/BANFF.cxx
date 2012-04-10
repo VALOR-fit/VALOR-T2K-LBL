@@ -12,14 +12,14 @@
 
 */
 //________________________________________________________________________________________
-
+/*
 #define __show_init_mesg_info__  
 #define __show_init_mesg_debug__   
 #define __show_cholesky_mesg_info__
 #define __show_cholesky_mesg_debug__
 #define __show_tweak_mesg_debug__
 #define __show_chisqpenalty_mesg_debug__
-
+*/
 #include <cassert>
 #include <cstdlib>
 #include <iostream>
@@ -327,7 +327,7 @@ int BANFF::Param2Idx(PhysParamId_t p) const
 {
   int iparam = (int) p;
   int first  = (int) kNuisBANFF00;
-  int last   = (int) kNuisBANFF25;
+  int last   = (int) kNuisBANFF26;
   assert(iparam >= first && iparam <= last);
   int idx = iparam-first;
   return idx;  

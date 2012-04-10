@@ -721,7 +721,8 @@ string t2kana::util::AsString(PhysParamId_t p)
     case ( kNuisBANFF22 ) : return "BANFF 22; Ma QE";                           break;
     case ( kNuisBANFF23 ) : return "BANFF 23; Ma RES";                          break;
     case ( kNuisBANFF24 ) : return "BANFF 24; Norm; CC QE; 0.0 - 1.5 GeV";      break;
-    case ( kNuisBANFF25 ) : return "BANFF 25; Norm; CC RES; 0.0 - 2.5 GeV";     break;
+    case ( kNuisBANFF25 ) : return "BANFF 25; Norm; CC 1pi; 0.0 - 2.5 GeV";     break;
+    case ( kNuisBANFF26 ) : return "BANFF 26; Norm; NC 1pi0";                   break;
 
     //
     // XSec params not correlated with flux
@@ -845,6 +846,7 @@ string t2kana::util::AsStringCompact(PhysParamId_t p)
     case ( kNuisBANFF23               ) : return "f_banff23";      break;
     case ( kNuisBANFF24               ) : return "f_banff24";      break;
     case ( kNuisBANFF25               ) : return "f_banff25";      break;
+    case ( kNuisBANFF26               ) : return "f_banff26";      break;
 
     case ( kNuisXSecFermiMom          ) : return "f_pfermi";       break;
     case ( kNuisXSecBindE             ) : return "f_bind";         break; 
@@ -1329,6 +1331,7 @@ t2kana::conv::PhysParamId_t
   if(sh == "banff_23") return kNuisBANFF23;
   if(sh == "banff_24") return kNuisBANFF24;
   if(sh == "banff_25") return kNuisBANFF25;
+  if(sh == "banff_26") return kNuisBANFF26;
 
   cout << sh << " not yet supported in util::PhysParamIdFromString()" << endl;
   return kPhypUndefined;
@@ -1582,6 +1585,7 @@ bool t2kana::util::IsSystematic(PhysParamId_t p)
     case ( kNuisBANFF23               ) : return true;  break;
     case ( kNuisBANFF24               ) : return true;  break;
     case ( kNuisBANFF25               ) : return true;  break;
+    case ( kNuisBANFF26               ) : return true;  break;
     case ( kNuisXSecFermiMom          ) : return true;  break;
     case ( kNuisXSecBindE             ) : return true;  break; 
     case ( kNuisXSecSpecFunc          ) : return true;  break; 
