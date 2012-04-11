@@ -12,7 +12,7 @@ def main():
   sample = "\\\"1Rmu\\\""
   theta_12 = 0.86
   theta_13 = 0.1
-  theta_23 = 0.0
+  theta_23 = 1.0
   delta_cp = 0.0
   dm12sq   = 7.58E-5
   dm13sq   = 2.32E-3
