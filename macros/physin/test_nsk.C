@@ -66,7 +66,7 @@ void test_nsk
 
 
   //output in form of table 16, TN52
-  cout << "Hierarchy is " << t2kana::util::AsString(hier) << " dm23sq is " << dm23sq << endl;
+  cout << " dm23sq is " << dm23sq << endl;
   cout << "     " << nskmucc+nskebeamcc+nsknc << " beam total" << endl;
   cout << "     " << nskmucc << " numu+numubar CC" << endl;
   cout << "     " << nskebeamcc << " nue beam CC" << endl;
