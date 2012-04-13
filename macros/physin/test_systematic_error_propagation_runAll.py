@@ -50,10 +50,10 @@ systematics.append(["sk_1Rmu_ccqe_other_eff","false","false","false"])
 systematics.append(["sk_1Rmu_ccnonqe_eff","false","false","false"])
 systematics.append(["sk_1Rmu_nc_eff","false","false","false"])
 systematics.append(["sk_1Rmu_nuecc_eff","false","false","false"])
-systematics.append(["sk_energy_scale","false","false","false"])
+systematics.append(["sk_energy_scale","true","false","false"])
 #systematics.append(["banff","false","true","true"]) #not supported in this macro
 for i in xrange(26):
-   if i <= 20:
+   if i <= 21:
       systematics.append(["banff_" + '%(number)02d' % {"number": i},"false","true","false"])
    elif i == 22 or i == 23:
       systematics.append(["banff_" + '%(number)02d' % {"number": i},"false","false","false"])
