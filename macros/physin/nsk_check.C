@@ -21,15 +21,11 @@ void nsk_check
   double dm23sq = 2.32E-3,
   double dm12sq = 7.58E-5,
   double deltacp = 0,
-  t2kana::conv::NuMassHierarchy_t hier = t2kana::conv::kNmhNormal, //or t2kana::conv::kNMhInverted
   const char * config_file = "analysis_configuration.xml"
 )
 {
   const char * config = Form("%s/config/%s", gSystem->Getenv("T2KOSCANA"), config_file);
   cout << "Reading analysis configuration from: " << config << endl;
-
-  if(hier == t2kana::conv::kNmhInverted)
-    dm23sq = -dm23sq;
 
   // superk spectrum predictor
   SuperkExpectation skexp;
