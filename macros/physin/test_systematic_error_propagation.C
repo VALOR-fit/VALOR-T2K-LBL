@@ -21,7 +21,7 @@
 //             correlation which, in the fitter, are handled using the Cholesky method). Use:
 //             - banff_00
 //             - ...
-//             - banff_25
+//             - banff_26
 //      - expected
 //             This is a special option. Skip the main macro & print out a table with the 
 //             expected 1 sigma percentage change for each systematic
@@ -114,7 +114,7 @@ void test_systematic_error_propagation
 
   // Precison for printed-out numerical results
   int nprecisionnev = 4; // <-- for number of events
-  int nprecisionpct = 2; // <-- for % changes
+  int nprecisionpct = 4; // <-- for % changes
 
   // Create & config superk spectrum predictor
   SuperkExpectation * skexp = new SuperkExpectation;
@@ -443,15 +443,10 @@ void test_systematic_error_propagation
     string bnum = sys.substr(found,2);
     int bindex = atoi(bnum.c_str());
     cout << bindex << endl;
-    skexp->TweakSystematic(systematic, skexp->GetBANFF()->BestFitValue(util::PhysParamIdFromString(systematic)) + skexp->GetBANFF()->CovMatrix()(bindex,bindex));
+    // curr/nominal = 1 + x
+    skexp->TweakSystematic(systematic, skexp->GetBANFF()->BestFitValue(util::PhysParamIdFromString(systematic)) * (1 + skexp->GetBANFF()->CovMatrix()(bindex,bindex)));
     skexp->GetBANFF()->PrintSystematicVariations();
   }
-  else if(sys == "sk_1Rmu_ccqe_ring_counting_eff_0")
-    skexp->TweakSystematic(systematic,skexp->GetSuperkDetector()->Eff1RmuCCQERCCovarRelErr()(0,0));
-  else if(sys == "sk_1Rmu_ccqe_ring_counting_eff_1")
-    skexp->TweakSystematic(systematic,skexp->GetSuperkDetector()->Eff1RmuCCQERCCovarRelErr()(1,1));
-  else if(sys == "sk_1Rmu_ccqe_ring_counting_eff_2")
-    skexp->TweakSystematic(systematic,skexp->GetSuperkDetector()->Eff1RmuCCQERCCovarRelErr()(2,2));
   else
     skexp->TweakSystematic(systematic,+1.);
   skexp->Generate(ph);
@@ -582,15 +577,10 @@ void test_systematic_error_propagation
     string bnum = sys.substr(found,2);
     int bindex = atoi(bnum.c_str());
     cout << bindex << endl;
-    skexp->TweakSystematic(systematic, skexp->GetBANFF()->BestFitValue(util::PhysParamIdFromString(systematic)) - skexp->GetBANFF()->CovMatrix()(bindex,bindex));
+    // curr/nominal = 1 - x
+    skexp->TweakSystematic(systematic, skexp->GetBANFF()->BestFitValue(util::PhysParamIdFromString(systematic)) * (1 - skexp->GetBANFF()->CovMatrix()(bindex,bindex)));
     skexp->GetBANFF()->PrintSystematicVariations();
   }
-  else if(sys == "sk_1Rmu_ccqe_ring_counting_eff_0")
-    skexp->TweakSystematic(systematic,-skexp->GetSuperkDetector()->Eff1RmuCCQERCCovarRelErr()(0,0));
-  else if(sys == "sk_1Rmu_ccqe_ring_counting_eff_1")
-    skexp->TweakSystematic(systematic,-skexp->GetSuperkDetector()->Eff1RmuCCQERCCovarRelErr()(1,1));
-  else if(sys == "sk_1Rmu_ccqe_ring_counting_eff_2")
-    skexp->TweakSystematic(systematic,-skexp->GetSuperkDetector()->Eff1RmuCCQERCCovarRelErr()(2,2));
   else
     skexp->TweakSystematic(systematic,-1.);
   skexp->Generate(ph);
@@ -1928,7 +1918,7 @@ print_expected_errors(bool use_tex, const char * output_file, const char * confi
     systematic = Form("sk 1Rmu ccqe ring counting eff %d",i);
     streamer << setw(ncol1)  << setfill(' ') << systematic << endcolumn
 	     << setw(ncolnev)  << setfill(' ') << setprecision(nprecisionnev)
-	     << SKDetEff1RmuCCQERCCovarRelErr(i,i) * 100 << pctsymbol
+	     << TMath::Sqrt(SKDetEff1RmuCCQERCCovarRelErr(i,i)) * 100 << pctsymbol
 	     << endrow << endl;
   }
   systematic = "sk 1Rmu ccqe other eff";
@@ -1954,9 +1944,9 @@ print_expected_errors(bool use_tex, const char * output_file, const char * confi
   systematic = "sk energy scale";
   streamer << setw(ncol1)  << setfill(' ') << systematic << endcolumn
 	   << setw(ncolnev)  << setfill(' ') << setprecision(nprecisionnev)
-	   << SKDetEnergyScale1RmuRelErr * 100 << pctsymbol
+	   << 0 << pctsymbol << " (movement in Ereco)"
 	   << endrow << endl;
-  for (int i = 0; i < 26; i++) {
+  for (int i = 0; i < 27; i++) {
     systematic = Form("banff %d",i);
     streamer << setw(ncol1)  << setfill(' ') << systematic << endcolumn
 	     << setw(ncolnev)  << setfill(' ') << setprecision(nprecisionnev)

@@ -118,9 +118,9 @@ bool SuperkDetector::Read(TXMLEngine* xml, XMLNodePointer_t root_node)
   if (fEff1RmuCCQERCCovarRelErr){
     double det;
     fEff1RmuCCQERCInvCovarRelErr = new TMatrixD(*fEff1RmuCCQERCCovarRelErr);
-    (*fEff1RmuCCQERCCovarRelErr).Invert(&det);
+    (*fEff1RmuCCQERCInvCovarRelErr).Invert(&det);
   }
-      
+  
 #ifdef __show_init_mesg_info__      
   cout << "Exp/SKDet >> " << "Error {EnergyScale;1Rmu}    : " << fEnergyScale1RmuRelErr  << endl;
   cout << "Exp/SKDet >> " << "Error {Efficiency;1Rmu/CCQE/Oth} : " << fEff1RmuCCQEOthRelErr << endl;

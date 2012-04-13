@@ -52,12 +52,12 @@ systematics.append(["sk_1Rmu_nc_eff","false","false","false"])
 systematics.append(["sk_1Rmu_nuecc_eff","false","false","false"])
 systematics.append(["sk_energy_scale","true","false","false"])
 #systematics.append(["banff","false","true","true"]) #not supported in this macro
-for i in xrange(26):
+for i in xrange(27):
    if i <= 21:
       systematics.append(["banff_" + '%(number)02d' % {"number": i},"false","true","false"])
    elif i == 22 or i == 23:
       systematics.append(["banff_" + '%(number)02d' % {"number": i},"false","false","false"])
-   elif i == 24 or i == 25:
+   elif i == 24 or i == 25 or i == 26:
       systematics.append(["banff_" + '%(number)02d' % {"number": i},"false","false","true"])
 systematics.append(["expected", "false","false","false"])
 
