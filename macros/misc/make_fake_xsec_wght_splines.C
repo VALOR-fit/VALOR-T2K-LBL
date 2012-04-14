@@ -68,12 +68,12 @@ void make_fake_xsec_wght_splines()
 
                 for(int i = 0; i < n_knots; i++) {
                    twkd[i] = twkd_min + twkd_step * i;
-                   if (Ereco > 0.500 && Ereco < 1.000 && m==kSKmNuMuCCQE  && p==kNuisBANFF22) {
+                   if (Ereco > 0.400 && Ereco < 1.100 && m==kSKmNuMuCCQE  && p==kNuisBANFF22) {
                       cout << "Not null for QE" << endl;
                       wght[i] = twkd[i];
                    }
                    else
-                   if (Ereco > 0.500 && Ereco < 1.000 && m==kSKmNuMuCC1pi && p==kNuisBANFF23) {
+                   if (Ereco > 0.400 && Ereco < 1.100 && m==kSKmNuMuCC1pi && p==kNuisBANFF23) {
                       cout << "Not null for 1pi" << endl;
                       wght[i] = 1./twkd[i];
                    }
