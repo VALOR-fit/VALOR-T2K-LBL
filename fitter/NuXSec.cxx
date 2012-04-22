@@ -232,7 +232,8 @@ double NuXSec::FinTuningWght(
      bool share = kXSecSystWghtUnequallySharedBetweenBins[isyst];
      double frac = (share) ? this->FractionOfEvents(s,m,Ereco,Etrue,kSKMCtNom) : 1;
      // Add to total weight
-     tot_wght *= (frac*wght);
+     //tot_wght *= (frac*(wght-1)+1);
+     tot_wght *= wght;
   }
 
   return tot_wght;
@@ -325,7 +326,8 @@ double NuXSec::SystWght(
      bool share = kXSecSystWghtUnequallySharedBetweenBins[isyst];
      double frac = (share) ? this->FractionOfEvents(s,m,Ereco,Etrue,kSKMCtTun) : 1;
      // Add to total weight
-     tot_wght *= (frac*wght);
+     //tot_wght *= ((frac*(wght-1))+1);
+     tot_wght *= wght;
   }
 
   return tot_wght;
