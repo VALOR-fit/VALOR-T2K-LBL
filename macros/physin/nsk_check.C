@@ -77,22 +77,34 @@ void nsk_check
 
   // integrate Ereco distribution
   double nsk = skexp.CurrPredictedErecoSpectrum(conv::kSKsFCFV1RingMuLike)->Integral();
-  double nskmucc = skexp.CurrPredictedErecoSpectrum(conv::kSKsFCFV1RingMuLike, conv::kSKmNuMuCCQE)->Integral();
-  skexp.CurrPredictedErecoSpectrum(conv::kSKsFCFV1RingMuLike, conv::kSKmNuMuCC1pi)->Integral();
-  skexp.CurrPredictedErecoSpectrum(conv::kSKsFCFV1RingMuLike, conv::kSKmNuMuCCoth_mu)->Integral();
-  skexp.CurrPredictedErecoSpectrum(conv::kSKsFCFV1RingMuLike, conv::kSKmNuMuBarCCQE)->Integral();
-  skexp.CurrPredictedErecoSpectrum(conv::kSKsFCFV1RingMuLike, conv::kSKmNuMuBarCC1pi)->Integral();
-  skexp.CurrPredictedErecoSpectrum(conv::kSKsFCFV1RingMuLike, conv::kSKmNuMuBarCCoth_mu)->Integral();
-  double nsknc = skexp.CurrPredictedErecoSpectrum(conv::kSKsFCFV1RingMuLike, conv::kSKmNuMuNC)->Integral();
-  skexp.CurrPredictedErecoSpectrum(conv::kSKsFCFV1RingMuLike, conv::kSKmNuMuBarNC)->Integral();
-  skexp.CurrPredictedErecoSpectrum(conv::kSKsFCFV1RingMuLike, conv::kSKmNuENC)->Integral();
-  double nskebeamcc = skexp.CurrPredictedErecoSpectrum(conv::kSKsFCFV1RingMuLike, conv::kSKmNuECCQE)->Integral();
-  nskebeamcc += skexp.CurrPredictedErecoSpectrum(conv::kSKsFCFV1RingMuLike, conv::kSKmNuECC1pi)->Integral();
+  double nskmucc = 0;
+  nskmucc += skexp.CurrPredictedErecoSpectrum(conv::kSKsFCFV1RingMuLike, conv::kSKmNuMuCCQE    )->Integral();
+  nskmucc += skexp.CurrPredictedErecoSpectrum(conv::kSKsFCFV1RingMuLike, conv::kSKmNuMuCC1pi   )->Integral();
+  nskmucc += skexp.CurrPredictedErecoSpectrum(conv::kSKsFCFV1RingMuLike, conv::kSKmNuMuCCcoh   )->Integral();
+  nskmucc += skexp.CurrPredictedErecoSpectrum(conv::kSKsFCFV1RingMuLike, conv::kSKmNuMuCCoth_mu)->Integral();
+  nskmucc += skexp.CurrPredictedErecoSpectrum(conv::kSKsFCFV1RingMuLike, conv::kSKmNuMuBarCCQE    )->Integral();
+  nskmucc += skexp.CurrPredictedErecoSpectrum(conv::kSKsFCFV1RingMuLike, conv::kSKmNuMuBarCC1pi   )->Integral();
+  nskmucc += skexp.CurrPredictedErecoSpectrum(conv::kSKsFCFV1RingMuLike, conv::kSKmNuMuBarCCcoh   )->Integral();
+  nskmucc += skexp.CurrPredictedErecoSpectrum(conv::kSKsFCFV1RingMuLike, conv::kSKmNuMuBarCCoth_mu)->Integral();
+  double nsknc = 0;
+  nskmunc += skexp.CurrPredictedErecoSpectrum(conv::kSKsFCFV1RingMuLike, conv::kSKmNuMuNC1piC     )->Integral();
+  nskmunc += skexp.CurrPredictedErecoSpectrum(conv::kSKsFCFV1RingMuLike, conv::kSKmNuMuNCoth_mu   )->Integral();
+  nskmunc += skexp.CurrPredictedErecoSpectrum(conv::kSKsFCFV1RingMuLike, conv::kSKmNuMuBarNC1piC  )->Integral();
+  nskmunc += skexp.CurrPredictedErecoSpectrum(conv::kSKsFCFV1RingMuLike, conv::kSKmNuMuBarNCoth_mu)->Integral();
+  nskmunc += skexp.CurrPredictedErecoSpectrum(conv::kSKsFCFV1RingMuLike, conv::kSKmNuENC1piC      )->Integral();
+  nskmunc += skexp.CurrPredictedErecoSpectrum(conv::kSKsFCFV1RingMuLike, conv::kSKmNuENCoth_mu    )->Integral();
+  nskmunc += skexp.CurrPredictedErecoSpectrum(conv::kSKsFCFV1RingMuLike, conv::kSKmNuEBarNC1piC   )->Integral();
+  nskmunc += skexp.CurrPredictedErecoSpectrum(conv::kSKsFCFV1RingMuLike, conv::kSKmNuEBarNCoth_mu )->Integral();
+  double nskebeamcc = 0;
+  nskebeamcc += skexp.CurrPredictedErecoSpectrum(conv::kSKsFCFV1RingMuLike, conv::kSKmNuECCQE    )->Integral();
+  nskebeamcc += skexp.CurrPredictedErecoSpectrum(conv::kSKsFCFV1RingMuLike, conv::kSKmNuECC1pi   )->Integral();
+  nskebeamcc += skexp.CurrPredictedErecoSpectrum(conv::kSKsFCFV1RingMuLike, conv::kSKmNuECCcoh   )->Integral();
   nskebeamcc += skexp.CurrPredictedErecoSpectrum(conv::kSKsFCFV1RingMuLike, conv::kSKmNuECCoth_mu)->Integral();
-  double nskesigcc = skexp.CurrPredictedErecoSpectrum(conv::kSKsFCFV1RingMuLike, conv::kSKmSigNuECCQE)->Integral();
-  nskesigcc += skexp.CurrPredictedErecoSpectrum(conv::kSKsFCFV1RingMuLike, conv::kSKmSigNuECC1pi)->Integral();
-  nskesigcc += skexp.CurrPredictedErecoSpectrum(conv::kSKsFCFV1RingMuLike, conv::kSKmSigNuECCoth)->Integral();
-
+  double nskesigcc = 0;
+  nskesigcc += skexp.CurrPredictedErecoSpectrum(conv::kSKsFCFV1RingMuLike, conv::kSKmSigNuECCQE    )->Integral();
+  nskesigcc += skexp.CurrPredictedErecoSpectrum(conv::kSKsFCFV1RingMuLike, conv::kSKmSigNuECC1pi   )->Integral();
+  nskesigcc += skexp.CurrPredictedErecoSpectrum(conv::kSKsFCFV1RingMuLike, conv::kSKmSigNuECCcoh   )->Integral();
+  nskesigcc += skexp.CurrPredictedErecoSpectrum(conv::kSKsFCFV1RingMuLike, conv::kSKmSigNuECCoth_mu)->Integral();
 
   //output in form of table 16, TN52
   //~ cout << " dm23sq is " << dm23sq << endl;

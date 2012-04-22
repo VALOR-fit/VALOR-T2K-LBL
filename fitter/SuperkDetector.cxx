@@ -349,12 +349,14 @@ double SuperkDetector::EfficiencyWeight(
        }
 
        //
-       // numu CC1pi, numu CCoth, numubar CC1pi, numubar CCoth:
+       // numu CC1pi, numu CCcoh, numu CCoth, numubar CC1pi, numubar CCcoh, numubar CCoth:
        // Apply the CCnonQE efficiency error. No energy dependence.
        //
-       case (kSKmNuMuCC1pi)    :
+       case (kSKmNuMuCC1pi)       :
+       case (kSKmNuMuCCcoh)       :
        case (kSKmNuMuCCoth_mu)    : 
-       case (kSKmNuMuBarCC1pi) : 
+       case (kSKmNuMuBarCC1pi)    : 
+       case (kSKmNuMuBarCCcoh)    : 
        case (kSKmNuMuBarCCoth_mu) : 
        {
           double relerr  = fEff1RmuCCnonQERelErr;
@@ -365,13 +367,20 @@ double SuperkDetector::EfficiencyWeight(
        }
 
        //
-       // numu/nutau NC, numubar/nutaubar NC, nue NC:
+       // numu/nutau NC1piC, numu/nutauNCoth_mu,
+       // numubar/nutaubar NC1piC, numubar/nutaubarNCoth_mu,
+       // nue NC1piC, nueNCoth_mu,
+       // nuebar NC1piC, nuebarNCoth_mu,
        // Apply the NC efficiency error. No energy dependence.
        //
-       case (kSKmNuMuNC)        : 
-       case (kSKmNuMuBarNC) : 
-       case (kSKmNuENC)     :
-       case (kSKmNuEBarNC)     :
+       case (kSKmNuMuNC1piC)      : 
+       case (kSKmNuMuNCoth_mu)    : 
+       case (kSKmNuMuBarNC1piC)   : 
+       case (kSKmNuMuBarNCoth_mu) : 
+       case (kSKmNuENC1piC)       :
+       case (kSKmNuENCoth_mu)     :
+       case (kSKmNuEBarNC1piC)    :
+       case (kSKmNuEBarNCoth_mu)  :
        {
           double relerr  = fEff1RmuNCRelErr;
           double twkdial = fEff1RmuNCTwkDial;
@@ -381,18 +390,21 @@ double SuperkDetector::EfficiencyWeight(
        }
 
        //
-       // nue CCQE, nue CC1pi, nue CCoth:
+       // nue CCQE, nue CC1pi, nue CCcoh, nue CCoth:
        // Apply the nue CC efficiency error. No energy dependence.
        //
-       case (kSKmNuECCQE)     : 
-       case (kSKmNuECC1pi)    : 
+       case (kSKmNuECCQE)        : 
+       case (kSKmNuECC1pi)       : 
+       case (kSKmNuECCcoh)       : 
        case (kSKmNuECCoth_mu)    : 
        case (kSKmNuEBarCCQE)     : 
        case (kSKmNuEBarCC1pi)    : 
-       case (kSKmNuEBarCCoth_mu)    : 
-       case (kSKmSigNuECCQE)  : 
-       case (kSKmSigNuECC1pi) : 
-       case (kSKmSigNuECCoth) : 
+       case (kSKmNuEBarCCcoh)    : 
+       case (kSKmNuEBarCCoth_mu) : 
+       case (kSKmSigNuECCQE)     : 
+       case (kSKmSigNuECC1pi)    : 
+       case (kSKmSigNuECCcoh)    : 
+       case (kSKmSigNuECCoth_mu) : 
        {
           double relerr  = fEff1RmuNuECCRelErr;
           double twkdial = fEff1RmuNuECCTwkDial;
@@ -440,7 +452,7 @@ double SuperkDetector::EfficiencyWeight(
        case ( kSKmNuEBarCCoth_e   ) : 
        case ( kSKmNuEBarNC1pi0    ) : 
        case ( kSKmNuEBarNCcoh     ) : 
-       case ( kSKmNuEBarNCoth_e   ) : 
+       case ( kSKmNuEBarNCoth_e   ) :
 /////////	 {
 /////////	   double relerr  = fEff1ReBkgRelErr;
 /////////	   double twkdial = fEff1ReBkgTwkDial;
@@ -450,7 +462,7 @@ double SuperkDetector::EfficiencyWeight(
 /////////	 }
        case ( kSKmSigNuECCQE      ) : 
        case ( kSKmSigNuECC1pi     ) : 
-       case ( kSKmSigNuECCoth     ) : 
+       case ( kSKmSigNuECCoth_e   ) : 
 /////////	 {
 /////////	   double relerr  = fEff1ReSigRelErr;
 /////////	   double twkdial = fEff1ReSigTwkDial;

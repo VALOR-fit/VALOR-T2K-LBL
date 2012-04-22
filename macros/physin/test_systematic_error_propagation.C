@@ -57,7 +57,7 @@ void test_systematic_error_propagation
   double       input_mixing23             = 1.00,                           /* */
   double       input_deltacp              = 0.00,                           /* */
   double       input_dm12sq               = 7.58E-5,                        /* */
-  double       input_dm23sq               = 2.32E-3,                        /* */
+  double       input_dm23sq               = 2.40E-3,                        /* */
   bool         use_tex                    = false,                          /* print-out results as a TeX table (for inclusion in tech. note)*/
   bool         show_sk_ccqe_spectral_info_ereco = false,                    /* */
   bool         show_sk_spectral_info_etrue_flux_binning = false,            /* */
@@ -238,12 +238,12 @@ void test_systematic_error_propagation
       else if(util::IsNuEBar(m))
 	nsknuebarnc_n += nskmodes_n[m];
       else {
-	cerr << "NC mode " << AsString(m) << " is not numu, numubar, nue, nuebar!" << endl;
+	cerr << "NC mode " << m << AsString(m) << " is not numu, numubar, nue, nuebar!" << endl;
 	exit(1);
       }
     }//NC?
     else {
-      cerr << "NC mode " << AsString(m) << " is not numu, numubar, nue, nuebar!" << endl;
+      cerr << "mode " << m << AsString(m) << " is not NC or CC!" << endl;
       exit(1);
     }//not CC or NC
   } //loop over modes
@@ -877,7 +877,7 @@ void test_systematic_error_propagation
      streamer << "\\scriptsize" << endl;
      //streamer << "\\centering"     << endl;
      streamer << "\\begin{tabular}{| l | r | r | r  r | r  r |}" << endl;
-     streamer << "\\hline" << endl;
+     streamer << "\\hline \\hline" << endl;
      streamer << "{\\bf Component} &  "
 	  << "{\\bf Nominal}   &  "
 	  << "{\\bf BANFF tuned} &  "
@@ -905,7 +905,7 @@ void test_systematic_error_propagation
        << endl;
 
   if(use_tex) {
-     streamer << "\\hline \\hline" << endl;
+     streamer << "\\hline" << endl;
   } else {
      streamer << setw(150)  << setfill('-') << " " << endl;
   }
@@ -918,7 +918,14 @@ void test_systematic_error_propagation
     component += util::AsStringTex(s);
     component += "): ";
     component +=  util::AsStringTex(m);
-    //spectral ccqe (etrue)
+    //extra hline above ccqe modes
+    if(use_tex)
+      if(m == conv::kSKmNuMuCCQE || m == conv::kSKmNuMuBarCCQE || m == conv::kSKmNuECCQE || m == conv::kSKmNuEBarCCQE || m == conv::kSKmSigNuECCQE)
+	streamer << "\\hline" << endl;
+    ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    // spectral etrue ccqe and ccres (all species)
+    ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    //spectral ccqe etrue (numu)
     if ( m == conv::kSKmNuMuCCQE && show_sk_spectral_info_etrue_norm_binning) {
       temp = component + " ($E_{t} <$ 1.5 GeV)";
       streamer << setw(ncol1)  << setfill(' ') << temp
@@ -970,6 +977,7 @@ void test_systematic_error_propagation
            << endl;
       if(use_tex) streamer << "\\hline" << endl;
     }
+    //spectral ccqe etrue (numubar)
     if ( m == conv::kSKmNuMuBarCCQE && show_sk_spectral_info_etrue_norm_binning) {
       temp = component + " ($E_{t} <$ 1.5 GeV)";
       streamer << setw(ncol1)  << setfill(' ') << temp
@@ -1021,6 +1029,7 @@ void test_systematic_error_propagation
            << endl;
       if(use_tex) streamer << "\\hline" << endl;
     }
+    //spectral ccqe etrue (nue)
     if ( m == conv::kSKmNuECCQE && show_sk_spectral_info_etrue_norm_binning) {
       temp = component + " ($E_{t} <$ 1.5 GeV)";
       streamer << setw(ncol1)  << setfill(' ') << temp
@@ -1072,6 +1081,7 @@ void test_systematic_error_propagation
            << endl;
       if(use_tex) streamer << "\\hline" << endl;
     }
+    //spectral ccqe etrue (nuebar)
     if ( m == conv::kSKmNuEBarCCQE && show_sk_spectral_info_etrue_norm_binning) {
       temp = component + " ($E_{t} <$ 1.5 GeV)";
       streamer << setw(ncol1)  << setfill(' ') << temp
@@ -1123,6 +1133,7 @@ void test_systematic_error_propagation
            << endl;
       if(use_tex) streamer << "\\hline" << endl;
     }
+    //spectral ccqe etrue (sig nue)
     if ( m == conv::kSKmSigNuECCQE && show_sk_spectral_info_etrue_norm_binning) {
       temp = component + " ($E_{t} <$ 1.5 GeV)";
       streamer << setw(ncol1)  << setfill(' ') << temp
@@ -1174,7 +1185,7 @@ void test_systematic_error_propagation
            << endl;
       if(use_tex) streamer << "\\hline" << endl;
     }
-    //spectral ccres (etrue)
+    //spectral ccres etrue (numu)
     if ( m == conv::kSKmNuMuCC1pi && show_sk_spectral_info_etrue_norm_binning) {
       if(use_tex) streamer << "\\hline" << endl;
       temp = component + " ($E_{t} <$ 2.5 GeV)";
@@ -1211,6 +1222,7 @@ void test_systematic_error_propagation
            << endl;
       if(use_tex) streamer << "\\hline" << endl;
     }
+    //spectral ccres etrue (numubar)
     if ( m == conv::kSKmNuMuBarCC1pi && show_sk_spectral_info_etrue_norm_binning) {
       if(use_tex) streamer << "\\hline" << endl;
       temp = component + " ($E_{t} <$ 2.5 GeV)";
@@ -1247,6 +1259,7 @@ void test_systematic_error_propagation
            << endl;
       if(use_tex) streamer << "\\hline" << endl;
     }
+    //spectral ccres etrue (nue)
     if ( m == conv::kSKmNuECC1pi && show_sk_spectral_info_etrue_norm_binning) {
       if(use_tex) streamer << "\\hline" << endl;
       temp = component + " ($E_{t} <$ 2.5 GeV)";
@@ -1284,6 +1297,7 @@ void test_systematic_error_propagation
       temp = component + " ($E_{t} \\geq$ 2.5 GeV)";
       if(use_tex) streamer << "\\hline" << endl;
     }
+    //spectral ccres etrue (nuebar)
     if ( m == conv::kSKmNuEBarCC1pi && show_sk_spectral_info_etrue_norm_binning) {
       if(use_tex) streamer << "\\hline" << endl;
       temp = component + " ($E_{t} <$ 2.5 GeV)";
@@ -1320,6 +1334,7 @@ void test_systematic_error_propagation
            << endl;
       if(use_tex) streamer << "\\hline" << endl;
     }
+    //spectral ccres etrue (sig nue)
     if ( m == conv::kSKmSigNuECC1pi && show_sk_spectral_info_etrue_norm_binning) {
       if(use_tex) streamer << "\\hline" << endl;
       temp = component + " ($E_{t} <$ 2.5 GeV)";
@@ -1356,8 +1371,10 @@ void test_systematic_error_propagation
            << endl;
       if(use_tex) streamer << "\\hline" << endl;
     }
-
-    //spectral ccqe (ereco)
+    ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    // spectral ereco ccqe (numu and numubar only)
+    ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    //spectral ccqe ereco (numu)
     if ( m == conv::kSKmNuMuCCQE && show_sk_ccqe_spectral_info_ereco) {
       temp = component + " ($E_{r} <$ 0.4 GeV)";
       streamer << setw(ncol1)  << setfill(' ') << temp
@@ -1408,7 +1425,8 @@ void test_systematic_error_propagation
            << endrow
            << endl;
       if(use_tex) streamer << "\\hline" << endl;
-    }//numu ccqe spectral (ereco)
+    }
+    //ccqe spectral ereco (numubar)
     if ( m == conv::kSKmNuMuBarCCQE && show_sk_ccqe_spectral_info_ereco) {
       temp = component + " ($E_{r} <$ 0.4 GeV)";
       streamer << setw(ncol1)  << setfill(' ') << temp
@@ -1459,7 +1477,10 @@ void test_systematic_error_propagation
            << endrow
            << endl;
       if(use_tex) streamer << "\\hline" << endl;
-    }//numbar ccqe spectral (ereco)
+    }
+    ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    // regular mode fill
+    ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
     //a normal individual mode table fill
     streamer << setw(ncol1)  << setfill(' ') << component
 	 << endcolumn
@@ -1476,8 +1497,194 @@ void test_systematic_error_propagation
 	 << setw(ncolfrc)  << setfill(' ') << setprecision(nprecisionpct) << frac_nskmodes_m[m] << pctsymbol 
 	 << endrow
 	 << endl;
-    if (((s == conv::kSKsFCFV1RingMuLike && m == conv::kSKmNuMuNC) || (s == conv::kSKsFCFV1RingELike && m == conv::kSKmNuMuNCoth_e)) && show_sk_spectral_info_etrue_flux_binning) {
+    ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    // total of indvidual species for a given mode
+    ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    //cc total (numu)
+    if ((s == conv::kSKsFCFV1RingMuLike && m == conv::kSKmNuMuCCoth_mu) || (s == conv::kSKsFCFV1RingELike && m == conv::kSKmNuMuCCoth_e)) {
+      temp = "$N_{SK}$ (" + util::AsStringTex(s) + "): $\\nu_{\\mu}$ CC all";
+      streamer << setw(ncol1)  << setfill(' ') << temp
+	   << endcolumn
+	   << setw(ncolnev)  << setfill(' ') << setprecision(nprecisionnev) << nsknumucc_n
+	   << endcolumn
+	   << setw(ncolnev)  << setfill(' ') << setprecision(nprecisionnev) << nsknumucc_0
+	   << endcolumn
+	   << setw(ncolnev)  << setfill(' ') << setprecision(nprecisionnev) << nsknumucc_p
+	   << endcolumn
+	   << setw(ncolfrc)  << setfill(' ') << setprecision(nprecisionpct) << frac_nsknumucc_p << pctsymbol 
+	   << endcolumn
+	   << setw(ncolnev)  << setfill(' ') << setprecision(nprecisionnev) << nsknumucc_m 
+	   << endcolumn
+	   << setw(ncolfrc)  << setfill(' ') << setprecision(nprecisionpct) << frac_nsknumucc_m << pctsymbol 
+	   << endrow
+	   << endl;
       if(use_tex) streamer << "\\hline" << endl;
+    }
+    //nc total (numu)
+    if ((s == conv::kSKsFCFV1RingMuLike && m == conv::kSKmNuMuNCoth_mu) || (s == conv::kSKsFCFV1RingELike && m == conv::kSKmNuMuNCoth_e)) {
+      temp = "$N_{SK}$ (" + util::AsStringTex(s) + "): $\\nu_{\\mu}$ NC all";
+      streamer << setw(ncol1)  << setfill(' ') << temp
+	   << endcolumn
+	   << setw(ncolnev)  << setfill(' ') << setprecision(nprecisionnev) << nsknumunc_n
+	   << endcolumn
+	   << setw(ncolnev)  << setfill(' ') << setprecision(nprecisionnev) << nsknumunc_0
+	   << endcolumn
+	   << setw(ncolnev)  << setfill(' ') << setprecision(nprecisionnev) << nsknumunc_p
+	   << endcolumn
+	   << setw(ncolfrc)  << setfill(' ') << setprecision(nprecisionpct) << frac_nsknumunc_p << pctsymbol 
+	   << endcolumn
+	   << setw(ncolnev)  << setfill(' ') << setprecision(nprecisionnev) << nsknumunc_m 
+	   << endcolumn
+	   << setw(ncolfrc)  << setfill(' ') << setprecision(nprecisionpct) << frac_nsknumunc_m << pctsymbol 
+	   << endrow
+	   << endl;
+      if(use_tex) streamer << "\\hline" << endl;
+    }
+    //cc total (numubar)
+    if ((s == conv::kSKsFCFV1RingMuLike && m == conv::kSKmNuMuBarCCoth_mu) || (s == conv::kSKsFCFV1RingELike && m == conv::kSKmNuMuBarCCoth_e)) {
+      temp = "$N_{SK}$ (" + util::AsStringTex(s) + "): $\\bar{\\nu_{\\mu}}$ CC all";
+      streamer << setw(ncol1)  << setfill(' ') << temp
+	   << endcolumn
+	   << setw(ncolnev)  << setfill(' ') << setprecision(nprecisionnev) << nsknumubarcc_n
+	   << endcolumn
+	   << setw(ncolnev)  << setfill(' ') << setprecision(nprecisionnev) << nsknumubarcc_0
+	   << endcolumn
+	   << setw(ncolnev)  << setfill(' ') << setprecision(nprecisionnev) << nsknumubarcc_p
+	   << endcolumn
+	   << setw(ncolfrc)  << setfill(' ') << setprecision(nprecisionpct) << frac_nsknumubarcc_p << pctsymbol 
+	   << endcolumn
+	   << setw(ncolnev)  << setfill(' ') << setprecision(nprecisionnev) << nsknumubarcc_m 
+	   << endcolumn
+	   << setw(ncolfrc)  << setfill(' ') << setprecision(nprecisionpct) << frac_nsknumubarcc_m << pctsymbol 
+	   << endrow
+	   << endl;
+      if(use_tex) streamer << "\\hline" << endl;
+    }
+    //nc total (numubar)
+    if ((s == conv::kSKsFCFV1RingMuLike && m == conv::kSKmNuMuBarNCoth_mu) || (s == conv::kSKsFCFV1RingELike && m == conv::kSKmNuMuBarNCoth_e)) {
+      temp = "$N_{SK}$ (" + util::AsStringTex(s) + "): $\\bar{\\nu_{\\mu}}$ NC all";
+      streamer << setw(ncol1)  << setfill(' ') << temp
+	   << endcolumn
+	   << setw(ncolnev)  << setfill(' ') << setprecision(nprecisionnev) << nsknumubarnc_n
+	   << endcolumn
+	   << setw(ncolnev)  << setfill(' ') << setprecision(nprecisionnev) << nsknumubarnc_0
+	   << endcolumn
+	   << setw(ncolnev)  << setfill(' ') << setprecision(nprecisionnev) << nsknumubarnc_p
+	   << endcolumn
+	   << setw(ncolfrc)  << setfill(' ') << setprecision(nprecisionpct) << frac_nsknumubarnc_p << pctsymbol 
+	   << endcolumn
+	   << setw(ncolnev)  << setfill(' ') << setprecision(nprecisionnev) << nsknumubarnc_m 
+	   << endcolumn
+	   << setw(ncolfrc)  << setfill(' ') << setprecision(nprecisionpct) << frac_nsknumubarnc_m << pctsymbol 
+	   << endrow
+	   << endl;
+      if(use_tex) streamer << "\\hline" << endl;
+    }
+    //cc total (nue)
+    if ((s == conv::kSKsFCFV1RingMuLike && m == conv::kSKmNuECCoth_mu) || (s == conv::kSKsFCFV1RingELike && m == conv::kSKmNuECCoth_e)) {
+      temp = "$N_{SK}$ (" + util::AsStringTex(s) + "): $\\nu_{e}$ CC all";
+      streamer << setw(ncol1)  << setfill(' ') << temp
+	   << endcolumn
+	   << setw(ncolnev)  << setfill(' ') << setprecision(nprecisionnev) << nsknuecc_n
+	   << endcolumn
+	   << setw(ncolnev)  << setfill(' ') << setprecision(nprecisionnev) << nsknuecc_0
+	   << endcolumn
+	   << setw(ncolnev)  << setfill(' ') << setprecision(nprecisionnev) << nsknuecc_p
+	   << endcolumn
+	   << setw(ncolfrc)  << setfill(' ') << setprecision(nprecisionpct) << frac_nsknuecc_p << pctsymbol 
+	   << endcolumn
+	   << setw(ncolnev)  << setfill(' ') << setprecision(nprecisionnev) << nsknuecc_m 
+	   << endcolumn
+	   << setw(ncolfrc)  << setfill(' ') << setprecision(nprecisionpct) << frac_nsknuecc_m << pctsymbol 
+	   << endrow
+	   << endl;
+      if(use_tex) streamer << "\\hline" << endl;
+    }
+    //nc total (nue)
+    if ((s == conv::kSKsFCFV1RingMuLike && m == conv::kSKmNuENCoth_mu) || (s == conv::kSKsFCFV1RingELike && m == conv::kSKmNuENCoth_e)) {
+      temp = "$N_{SK}$ (" + util::AsStringTex(s) + "): $\\nu_{e}$ NC all";
+      streamer << setw(ncol1)  << setfill(' ') << temp
+	   << endcolumn
+	   << setw(ncolnev)  << setfill(' ') << setprecision(nprecisionnev) << nsknuenc_n
+	   << endcolumn
+	   << setw(ncolnev)  << setfill(' ') << setprecision(nprecisionnev) << nsknuenc_0
+	   << endcolumn
+	   << setw(ncolnev)  << setfill(' ') << setprecision(nprecisionnev) << nsknuenc_p
+	   << endcolumn
+	   << setw(ncolfrc)  << setfill(' ') << setprecision(nprecisionpct) << frac_nsknuenc_p << pctsymbol 
+	   << endcolumn
+	   << setw(ncolnev)  << setfill(' ') << setprecision(nprecisionnev) << nsknuenc_m 
+	   << endcolumn
+	   << setw(ncolfrc)  << setfill(' ') << setprecision(nprecisionpct) << frac_nsknuenc_m << pctsymbol 
+	   << endrow
+	   << endl;
+      if(use_tex) streamer << "\\hline" << endl;
+    }
+    //cc total (nuebar)
+    if ((s == conv::kSKsFCFV1RingMuLike && m == conv::kSKmNuEBarCCoth_mu) || (s == conv::kSKsFCFV1RingELike && m == conv::kSKmNuEBarCCoth_e)) {
+      temp = "$N_{SK}$ (" + util::AsStringTex(s) + "): $\\bar{\\nu_{e}}$ CC all";
+      streamer << setw(ncol1)  << setfill(' ') << temp
+	   << endcolumn
+	   << setw(ncolnev)  << setfill(' ') << setprecision(nprecisionnev) << nsknuebarcc_n
+	   << endcolumn
+	   << setw(ncolnev)  << setfill(' ') << setprecision(nprecisionnev) << nsknuebarcc_0
+	   << endcolumn
+	   << setw(ncolnev)  << setfill(' ') << setprecision(nprecisionnev) << nsknuebarcc_p
+	   << endcolumn
+	   << setw(ncolfrc)  << setfill(' ') << setprecision(nprecisionpct) << frac_nsknuebarcc_p << pctsymbol 
+	   << endcolumn
+	   << setw(ncolnev)  << setfill(' ') << setprecision(nprecisionnev) << nsknuebarcc_m 
+	   << endcolumn
+	   << setw(ncolfrc)  << setfill(' ') << setprecision(nprecisionpct) << frac_nsknuebarcc_m << pctsymbol 
+	   << endrow
+	   << endl;
+      if(use_tex) streamer << "\\hline" << endl;
+    }
+    //nc total (nuebar)
+    if ((s == conv::kSKsFCFV1RingMuLike && m == conv::kSKmNuEBarNCoth_mu) || (s == conv::kSKsFCFV1RingELike && m == conv::kSKmNuEBarNCoth_e)) {
+      temp = "$N_{SK}$ (" + util::AsStringTex(s) + "): $\\bar{\\nu_{e}}$ NC all";
+      streamer << setw(ncol1)  << setfill(' ') << temp
+	   << endcolumn
+	   << setw(ncolnev)  << setfill(' ') << setprecision(nprecisionnev) << nsknuebarnc_n
+	   << endcolumn
+	   << setw(ncolnev)  << setfill(' ') << setprecision(nprecisionnev) << nsknuebarnc_0
+	   << endcolumn
+	   << setw(ncolnev)  << setfill(' ') << setprecision(nprecisionnev) << nsknuebarnc_p
+	   << endcolumn
+	   << setw(ncolfrc)  << setfill(' ') << setprecision(nprecisionpct) << frac_nsknuebarnc_p << pctsymbol 
+	   << endcolumn
+	   << setw(ncolnev)  << setfill(' ') << setprecision(nprecisionnev) << nsknuebarnc_m 
+	   << endcolumn
+	   << setw(ncolfrc)  << setfill(' ') << setprecision(nprecisionpct) << frac_nsknuebarnc_m << pctsymbol 
+	   << endrow
+	   << endl;
+      if(use_tex) streamer << "\\hline" << endl;
+    }
+    //cc total (sig nue)
+    if ((s == conv::kSKsFCFV1RingMuLike && m == conv::kSKmSigNuECCoth_mu) || (s == conv::kSKsFCFV1RingELike && m == conv::kSKmSigNuECCoth_e)) {
+      temp = "$N_{SK}$ (" + util::AsStringTex(s) + "): $\\nu_{e}$ (signal) CC all";
+      streamer << setw(ncol1)  << setfill(' ') << temp
+	   << endcolumn
+	   << setw(ncolnev)  << setfill(' ') << setprecision(nprecisionnev) << nsknuesig_n
+	   << endcolumn
+	   << setw(ncolnev)  << setfill(' ') << setprecision(nprecisionnev) << nsknuesig_0
+	   << endcolumn
+	   << setw(ncolnev)  << setfill(' ') << setprecision(nprecisionnev) << nsknuesig_p
+	   << endcolumn
+	   << setw(ncolfrc)  << setfill(' ') << setprecision(nprecisionpct) << frac_nsknuesig_p << pctsymbol 
+	   << endcolumn
+	   << setw(ncolnev)  << setfill(' ') << setprecision(nprecisionnev) << nsknuesig_m 
+	   << endcolumn
+	   << setw(ncolfrc)  << setfill(' ') << setprecision(nprecisionpct) << frac_nsknuesig_m << pctsymbol 
+	   << endrow
+	   << endl;
+      if(use_tex) streamer << "\\hline" << endl;
+    }
+    ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    // spectral total for each species etrue
+    ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    //spectral total etrue (numu)
+    if (((s == conv::kSKsFCFV1RingMuLike && m == conv::kSKmNuMuNCoth_mu) || (s == conv::kSKsFCFV1RingELike && m == conv::kSKmNuMuNCoth_e)) && show_sk_spectral_info_etrue_flux_binning) {
       char bufl[100], bufu[100];
       for(int itb = 0; itb < NEtrueBinNuMu; itb++) {
 	snprintf(bufl, sizeof(bufl), "%g",  skexp->GetSuperkMC()->Template(s, conv::kSKmNuMuCCQE, conv::kSKMCtFin)->GetYaxis()->GetBinLowEdge(EtrueBinNuMu[itb]+1));
@@ -1500,9 +1707,9 @@ void test_systematic_error_propagation
            << endl;
       }//loop over etrue bins
       if(use_tex) streamer << "\\hline" << endl;
-    }//numu etrue (flux binning)
-    if (((s == conv::kSKsFCFV1RingMuLike && m == conv::kSKmNuMuBarNC) || (s == conv::kSKsFCFV1RingELike && m == conv::kSKmNuMuBarNCoth_e)) && show_sk_spectral_info_etrue_flux_binning) {
-      if(use_tex) streamer << "\\hline" << endl;
+    }
+    //spectral total etrue (numu)
+    if (((s == conv::kSKsFCFV1RingMuLike && m == conv::kSKmNuMuBarNCoth_mu) || (s == conv::kSKsFCFV1RingELike && m == conv::kSKmNuMuBarNCoth_e)) && show_sk_spectral_info_etrue_flux_binning) {
       char bufl[100], bufu[100];
       for(int itb = 0; itb < NEtrueBinNuMuBar; itb++) {
 	snprintf(bufl, sizeof(bufl), "%g",  skexp->GetSuperkMC()->Template(s, conv::kSKmNuMuBarCCQE, conv::kSKMCtFin)->GetYaxis()->GetBinLowEdge(EtrueBinNuMuBar[itb]+1));
@@ -1525,9 +1732,9 @@ void test_systematic_error_propagation
            << endl;
       }//loop over etrue bins
       if(use_tex) streamer << "\\hline" << endl;
-    }//numubar etrue (flux binning)
-    if (((s == conv::kSKsFCFV1RingMuLike && m == conv::kSKmNuENC) || (s == conv::kSKsFCFV1RingELike && m == conv::kSKmNuENCoth_e)) && show_sk_spectral_info_etrue_flux_binning) {
-      if(use_tex) streamer << "\\hline" << endl;
+    }
+    //spectral total etrue (nue)
+    if (((s == conv::kSKsFCFV1RingMuLike && m == conv::kSKmNuENCoth_mu) || (s == conv::kSKsFCFV1RingELike && m == conv::kSKmNuENCoth_e)) && show_sk_spectral_info_etrue_flux_binning) {
       char bufl[100], bufu[100];
       for(int itb = 0; itb < NEtrueBinNuE; itb++) {
 	snprintf(bufl, sizeof(bufl), "%g",  skexp->GetSuperkMC()->Template(s, conv::kSKmNuECCQE, conv::kSKMCtFin)->GetYaxis()->GetBinLowEdge(EtrueBinNuE[itb]+1));
@@ -1550,9 +1757,9 @@ void test_systematic_error_propagation
            << endl;
       }//loop over etrue bins
       if(use_tex) streamer << "\\hline" << endl;
-    }//nue etrue (flux binning)
-    if (((s == conv::kSKsFCFV1RingMuLike && m == conv::kSKmNuEBarNC) || (s == conv::kSKsFCFV1RingELike && m == conv::kSKmNuEBarNCoth_e)) && show_sk_spectral_info_etrue_flux_binning) {
-      if(use_tex) streamer << "\\hline" << endl;
+    }
+    //spectral total etrue (nuebar)
+    if (((s == conv::kSKsFCFV1RingMuLike && m == conv::kSKmNuEBarNCoth_mu) || (s == conv::kSKsFCFV1RingELike && m == conv::kSKmNuEBarNCoth_e)) && show_sk_spectral_info_etrue_flux_binning) {
       char bufl[100], bufu[100];
       for(int itb = 0; itb < NEtrueBinNuEBar; itb++) {
 	snprintf(bufl, sizeof(bufl), "%g",  skexp->GetSuperkMC()->Template(s, conv::kSKmNuEBarCCQE, conv::kSKMCtFin)->GetYaxis()->GetBinLowEdge(EtrueBinNuEBar[itb]+1));
@@ -1575,172 +1782,9 @@ void test_systematic_error_propagation
            << endl;
       }//loop over etrue bins
       if(use_tex) streamer << "\\hline" << endl;
-    }//nuebar etrue (flux binning)
-    //total flavour-nc/cc
-    if ((s == conv::kSKsFCFV1RingMuLike && m == conv::kSKmNuMuCCoth_mu) || (s == conv::kSKsFCFV1RingELike && m == conv::kSKmNuMuCCoth_e)) {
-      temp = "$N_{SK}$ (" + util::AsStringTex(s) + "): $\\nu_{\\mu}$ CC all";
-      streamer << setw(ncol1)  << setfill(' ') << temp
-	   << endcolumn
-	   << setw(ncolnev)  << setfill(' ') << setprecision(nprecisionnev) << nsknumucc_n
-	   << endcolumn
-	   << setw(ncolnev)  << setfill(' ') << setprecision(nprecisionnev) << nsknumucc_0
-	   << endcolumn
-	   << setw(ncolnev)  << setfill(' ') << setprecision(nprecisionnev) << nsknumucc_p
-	   << endcolumn
-	   << setw(ncolfrc)  << setfill(' ') << setprecision(nprecisionpct) << frac_nsknumucc_p << pctsymbol 
-	   << endcolumn
-	   << setw(ncolnev)  << setfill(' ') << setprecision(nprecisionnev) << nsknumucc_m 
-	   << endcolumn
-	   << setw(ncolfrc)  << setfill(' ') << setprecision(nprecisionpct) << frac_nsknumucc_m << pctsymbol 
-	   << endrow
-	   << endl;
     }
-    if ((s == conv::kSKsFCFV1RingELike && m == conv::kSKmNuMuNCoth_e)) {
-      temp = "$N_{SK}$ (" + util::AsStringTex(s) + "): $\\nu_{\\mu}$ NC all";
-      streamer << setw(ncol1)  << setfill(' ') << temp
-	   << endcolumn
-	   << setw(ncolnev)  << setfill(' ') << setprecision(nprecisionnev) << nsknumunc_n
-	   << endcolumn
-	   << setw(ncolnev)  << setfill(' ') << setprecision(nprecisionnev) << nsknumunc_0
-	   << endcolumn
-	   << setw(ncolnev)  << setfill(' ') << setprecision(nprecisionnev) << nsknumunc_p
-	   << endcolumn
-	   << setw(ncolfrc)  << setfill(' ') << setprecision(nprecisionpct) << frac_nsknumunc_p << pctsymbol 
-	   << endcolumn
-	   << setw(ncolnev)  << setfill(' ') << setprecision(nprecisionnev) << nsknumunc_m 
-	   << endcolumn
-	   << setw(ncolfrc)  << setfill(' ') << setprecision(nprecisionpct) << frac_nsknumunc_m << pctsymbol 
-	   << endrow
-	   << endl;
-    }
-    if ((s == conv::kSKsFCFV1RingMuLike && m == conv::kSKmNuMuBarCCoth_mu) || (s == conv::kSKsFCFV1RingELike && m == conv::kSKmNuMuBarCCoth_e)) {
-      temp = "$N_{SK}$ (" + util::AsStringTex(s) + "): $\\bar{\\nu_{\\mu}}$ CC all";
-      streamer << setw(ncol1)  << setfill(' ') << temp
-	   << endcolumn
-	   << setw(ncolnev)  << setfill(' ') << setprecision(nprecisionnev) << nsknumubarcc_n
-	   << endcolumn
-	   << setw(ncolnev)  << setfill(' ') << setprecision(nprecisionnev) << nsknumubarcc_0
-	   << endcolumn
-	   << setw(ncolnev)  << setfill(' ') << setprecision(nprecisionnev) << nsknumubarcc_p
-	   << endcolumn
-	   << setw(ncolfrc)  << setfill(' ') << setprecision(nprecisionpct) << frac_nsknumubarcc_p << pctsymbol 
-	   << endcolumn
-	   << setw(ncolnev)  << setfill(' ') << setprecision(nprecisionnev) << nsknumubarcc_m 
-	   << endcolumn
-	   << setw(ncolfrc)  << setfill(' ') << setprecision(nprecisionpct) << frac_nsknumubarcc_m << pctsymbol 
-	   << endrow
-	   << endl;
-    }
-    if ((s == conv::kSKsFCFV1RingELike && m == conv::kSKmNuMuBarNCoth_e)) {
-      temp = "$N_{SK}$ (" + util::AsStringTex(s) + "): $\\bar{\\nu_{\\mu}}$ NC all";
-      streamer << setw(ncol1)  << setfill(' ') << temp
-	   << endcolumn
-	   << setw(ncolnev)  << setfill(' ') << setprecision(nprecisionnev) << nsknumubarnc_n
-	   << endcolumn
-	   << setw(ncolnev)  << setfill(' ') << setprecision(nprecisionnev) << nsknumubarnc_0
-	   << endcolumn
-	   << setw(ncolnev)  << setfill(' ') << setprecision(nprecisionnev) << nsknumubarnc_p
-	   << endcolumn
-	   << setw(ncolfrc)  << setfill(' ') << setprecision(nprecisionpct) << frac_nsknumubarnc_p << pctsymbol 
-	   << endcolumn
-	   << setw(ncolnev)  << setfill(' ') << setprecision(nprecisionnev) << nsknumubarnc_m 
-	   << endcolumn
-	   << setw(ncolfrc)  << setfill(' ') << setprecision(nprecisionpct) << frac_nsknumubarnc_m << pctsymbol 
-	   << endrow
-	   << endl;
-    }
-    if ((s == conv::kSKsFCFV1RingMuLike && m == conv::kSKmNuECCoth_mu) || (s == conv::kSKsFCFV1RingELike && m == conv::kSKmNuECCoth_e)) {
-      temp = "$N_{SK}$ (" + util::AsStringTex(s) + "): $\\nu_{e}$ CC all";
-      streamer << setw(ncol1)  << setfill(' ') << temp
-	   << endcolumn
-	   << setw(ncolnev)  << setfill(' ') << setprecision(nprecisionnev) << nsknuecc_n
-	   << endcolumn
-	   << setw(ncolnev)  << setfill(' ') << setprecision(nprecisionnev) << nsknuecc_0
-	   << endcolumn
-	   << setw(ncolnev)  << setfill(' ') << setprecision(nprecisionnev) << nsknuecc_p
-	   << endcolumn
-	   << setw(ncolfrc)  << setfill(' ') << setprecision(nprecisionpct) << frac_nsknuecc_p << pctsymbol 
-	   << endcolumn
-	   << setw(ncolnev)  << setfill(' ') << setprecision(nprecisionnev) << nsknuecc_m 
-	   << endcolumn
-	   << setw(ncolfrc)  << setfill(' ') << setprecision(nprecisionpct) << frac_nsknuecc_m << pctsymbol 
-	   << endrow
-	   << endl;
-    }
-    if ((s == conv::kSKsFCFV1RingELike && m == conv::kSKmNuENCoth_e)) {
-      temp = "$N_{SK}$ (" + util::AsStringTex(s) + "): $\\nu_{e}$ NC all";
-      streamer << setw(ncol1)  << setfill(' ') << temp
-	   << endcolumn
-	   << setw(ncolnev)  << setfill(' ') << setprecision(nprecisionnev) << nsknuenc_n
-	   << endcolumn
-	   << setw(ncolnev)  << setfill(' ') << setprecision(nprecisionnev) << nsknuenc_0
-	   << endcolumn
-	   << setw(ncolnev)  << setfill(' ') << setprecision(nprecisionnev) << nsknuenc_p
-	   << endcolumn
-	   << setw(ncolfrc)  << setfill(' ') << setprecision(nprecisionpct) << frac_nsknuenc_p << pctsymbol 
-	   << endcolumn
-	   << setw(ncolnev)  << setfill(' ') << setprecision(nprecisionnev) << nsknuenc_m 
-	   << endcolumn
-	   << setw(ncolfrc)  << setfill(' ') << setprecision(nprecisionpct) << frac_nsknuenc_m << pctsymbol 
-	   << endrow
-	   << endl;
-    }
-    if ((s == conv::kSKsFCFV1RingMuLike && m == conv::kSKmNuEBarCCoth_mu) || (s == conv::kSKsFCFV1RingELike && m == conv::kSKmNuEBarCCoth_e)) {
-      temp = "$N_{SK}$ (" + util::AsStringTex(s) + "): $\\bar{\\nu_{e}}$ CC all";
-      streamer << setw(ncol1)  << setfill(' ') << temp
-	   << endcolumn
-	   << setw(ncolnev)  << setfill(' ') << setprecision(nprecisionnev) << nsknuebarcc_n
-	   << endcolumn
-	   << setw(ncolnev)  << setfill(' ') << setprecision(nprecisionnev) << nsknuebarcc_0
-	   << endcolumn
-	   << setw(ncolnev)  << setfill(' ') << setprecision(nprecisionnev) << nsknuebarcc_p
-	   << endcolumn
-	   << setw(ncolfrc)  << setfill(' ') << setprecision(nprecisionpct) << frac_nsknuebarcc_p << pctsymbol 
-	   << endcolumn
-	   << setw(ncolnev)  << setfill(' ') << setprecision(nprecisionnev) << nsknuebarcc_m 
-	   << endcolumn
-	   << setw(ncolfrc)  << setfill(' ') << setprecision(nprecisionpct) << frac_nsknuebarcc_m << pctsymbol 
-	   << endrow
-	   << endl;
-    }
-    if ((s == conv::kSKsFCFV1RingELike && m == conv::kSKmNuEBarNCoth_e)) {
-      temp = "$N_{SK}$ (" + util::AsStringTex(s) + "): $\\bar{\\nu_{e}}$ NC all";
-      streamer << setw(ncol1)  << setfill(' ') << temp
-	   << endcolumn
-	   << setw(ncolnev)  << setfill(' ') << setprecision(nprecisionnev) << nsknuebarnc_n
-	   << endcolumn
-	   << setw(ncolnev)  << setfill(' ') << setprecision(nprecisionnev) << nsknuebarnc_0
-	   << endcolumn
-	   << setw(ncolnev)  << setfill(' ') << setprecision(nprecisionnev) << nsknuebarnc_p
-	   << endcolumn
-	   << setw(ncolfrc)  << setfill(' ') << setprecision(nprecisionpct) << frac_nsknuebarnc_p << pctsymbol 
-	   << endcolumn
-	   << setw(ncolnev)  << setfill(' ') << setprecision(nprecisionnev) << nsknuebarnc_m 
-	   << endcolumn
-	   << setw(ncolfrc)  << setfill(' ') << setprecision(nprecisionpct) << frac_nsknuebarnc_m << pctsymbol 
-	   << endrow
-	   << endl;
-    }
-    if ((s == conv::kSKsFCFV1RingMuLike && m == conv::kSKmSigNuECCoth) || (s == conv::kSKsFCFV1RingELike && m == conv::kSKmSigNuECCoth)) {
-      temp = "$N_{SK}$ (" + util::AsStringTex(s) + "): $\\nu_{e}$ (signal) CC all";
-      streamer << setw(ncol1)  << setfill(' ') << temp
-	   << endcolumn
-	   << setw(ncolnev)  << setfill(' ') << setprecision(nprecisionnev) << nsknuesig_n
-	   << endcolumn
-	   << setw(ncolnev)  << setfill(' ') << setprecision(nprecisionnev) << nsknuesig_0
-	   << endcolumn
-	   << setw(ncolnev)  << setfill(' ') << setprecision(nprecisionnev) << nsknuesig_p
-	   << endcolumn
-	   << setw(ncolfrc)  << setfill(' ') << setprecision(nprecisionpct) << frac_nsknuesig_p << pctsymbol 
-	   << endcolumn
-	   << setw(ncolnev)  << setfill(' ') << setprecision(nprecisionnev) << nsknuesig_m 
-	   << endcolumn
-	   << setw(ncolfrc)  << setfill(' ') << setprecision(nprecisionpct) << frac_nsknuesig_m << pctsymbol 
-	   << endrow
-	   << endl;
-    }
-    if (((s == conv::kSKsFCFV1RingMuLike && m == conv::kSKmSigNuECCoth) || (s == conv::kSKsFCFV1RingELike && m == conv::kSKmSigNuECCoth)) && show_sk_spectral_info_etrue_flux_binning) {
-      if(use_tex) streamer << "\\hline" << endl;
+    //spectral total etrue (signue)
+    if (((s == conv::kSKsFCFV1RingMuLike && m == conv::kSKmSigNuECCoth_mu) || (s == conv::kSKsFCFV1RingELike && m == conv::kSKmSigNuECCoth_e)) && show_sk_spectral_info_etrue_flux_binning) {
       char bufl[100], bufu[100];
       for(int itb = 0; itb < NEtrueBinSigNuE; itb++) {
 	snprintf(bufl, sizeof(bufl), "%g",  skexp->GetSuperkMC()->Template(s, conv::kSKmSigNuECCQE, conv::kSKMCtFin)->GetYaxis()->GetBinLowEdge(EtrueBinSigNuE[itb]+1));
@@ -1950,8 +1994,10 @@ print_expected_errors(bool use_tex, const char * output_file, const char * confi
     systematic = Form("banff %d",i);
     streamer << setw(ncol1)  << setfill(' ') << systematic << endcolumn
 	     << setw(ncolnev)  << setfill(' ') << setprecision(nprecisionnev)
-	     << BANFFCovMtrx(i,i) * 100 << pctsymbol
-	     << endrow << endl;
+	     << BANFFCovMtrx(i,i) * 100 << pctsymbol;
+    if (i == 22 || i == 23)
+      streamer << " in ereco bin 2 (numu only)";
+    streamer << endrow << endl;
   }
 
   if(!use_tex) {

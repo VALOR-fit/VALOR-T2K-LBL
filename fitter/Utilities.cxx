@@ -894,40 +894,46 @@ string t2kana::util::AsString(t2kana::conv::SuperkMode_t m)
      case ( kSKmNuMuCCcoh       ) : return "numu CC coh";                       break;
      case ( kSKmNuMuCCoth_mu    ) : return "numu CC oth (numu disap)";          break;
      case ( kSKmNuMuCCoth_e     ) : return "numu CC oth (nue app)";             break;
-     case ( kSKmNuMuNC          ) : return "numu/nutau NC";                     break;
+     case ( kSKmNuMuNC1piC      ) : return "numu/nutau NC 1piC";                break;
      case ( kSKmNuMuNC1pi0      ) : return "numu/nutau NC 1pi0";                break;
      case ( kSKmNuMuNCcoh       ) : return "numu/nutau NC coh";                 break;
      case ( kSKmNuMuNCoth_e     ) : return "numu/nutau NC oth (nue app)";       break;
+     case ( kSKmNuMuNCoth_mu    ) : return "numu/nutau NC oth (numu app)";      break;
      case ( kSKmNuMuBarCCQE     ) : return "numubar CC QE";                     break;
      case ( kSKmNuMuBarCC1pi    ) : return "numubar CC 1pi";                    break;
      case ( kSKmNuMuBarCCcoh    ) : return "numubar CC coh";                    break;
      case ( kSKmNuMuBarCCoth_mu ) : return "numubar CC oth (numu disap)";       break;
      case ( kSKmNuMuBarCCoth_e  ) : return "numubar CC oth (nue app)";          break;
-     case ( kSKmNuMuBarNC       ) : return "numubar/nutaubar NC";               break;
+     case ( kSKmNuMuBarNC1piC   ) : return "numubar/nutaubar NC 1piC";          break;
      case ( kSKmNuMuBarNC1pi0   ) : return "numubar/nutaubar NC 1pi0";          break;
      case ( kSKmNuMuBarNCcoh    ) : return "numubar/nutaubar NC coh";           break;
      case ( kSKmNuMuBarNCoth_e  ) : return "numubar/nutaubar NC oth (nue app)"; break;
+     case ( kSKmNuMuBarNCoth_mu ) : return "numubar/nutaubar NC oth (numu app)";break;
      case ( kSKmNuECCQE         ) : return "nue CC QE";                         break;
      case ( kSKmNuECC1pi        ) : return "nue CC 1pi";                        break;
      case ( kSKmNuECCcoh        ) : return "nue CC coh";                        break;
      case ( kSKmNuECCoth_mu     ) : return "nue CC oth (numu disap)";           break;
      case ( kSKmNuECCoth_e      ) : return "nue CC oth (nue app)";              break;
-     case ( kSKmNuENC           ) : return "nue NC";                            break;
+     case ( kSKmNuENC1piC       ) : return "nue NC 1piC";                       break;
      case ( kSKmNuENC1pi0       ) : return "nue NC 1pi0";                       break;
      case ( kSKmNuENCcoh        ) : return "nue NC coh";                        break;
      case ( kSKmNuENCoth_e      ) : return "nue NC oth (nue app)";              break;
+     case ( kSKmNuENCoth_mu     ) : return "nue NC oth (numu app)";             break;
      case ( kSKmNuEBarCCQE      ) : return "nuebar CC QE";                      break;
      case ( kSKmNuEBarCC1pi     ) : return "nuebar CC 1pi";                     break;
      case ( kSKmNuEBarCCcoh     ) : return "nuebar CC coh";                     break;
      case ( kSKmNuEBarCCoth_mu  ) : return "nuebar CC oth (numu disap)";        break;
      case ( kSKmNuEBarCCoth_e   ) : return "nuebar CC oth (nue app)";           break;
-     case ( kSKmNuEBarNC        ) : return "nuebar NC";                         break;
+     case ( kSKmNuEBarNC1piC    ) : return "nuebar NC 1piC";                    break;
      case ( kSKmNuEBarNC1pi0    ) : return "nuebar NC 1pi0";                    break;
      case ( kSKmNuEBarNCcoh     ) : return "nuebar NC coh";                     break;
      case ( kSKmNuEBarNCoth_e   ) : return "nuebar NC oth (nue app)";           break;
+     case ( kSKmNuEBarNCoth_mu  ) : return "nuebar NC oth (numu app)";          break;
      case ( kSKmSigNuECCQE      ) : return "signal nue CC QE";                  break;
      case ( kSKmSigNuECC1pi     ) : return "signal nue CC 1pi";                 break;
-     case ( kSKmSigNuECCoth     ) : return "signal nue CC oth";                 break;
+     case ( kSKmSigNuECCcoh     ) : return "signal nue CC coh";                 break;
+     case ( kSKmSigNuECCoth_mu  ) : return "signal nue CC oth (numu disap)";    break;
+     case ( kSKmSigNuECCoth_e   ) : return "signal nue CC oth (nue app)";       break;
      default                      : return "--";
   }
   return "";
@@ -1011,40 +1017,46 @@ string t2kana::util::AsStringTex(t2kana::conv::SuperkMode_t m)
      case ( kSKmNuMuCCcoh       ) : return "$\\nu_\\mu$ CC coherent";                                        break;
      case ( kSKmNuMuCCoth_mu    ) : return "$\\nu_\\mu$ CC other ($\\nu_\\mu$ disap)";                       break;
      case ( kSKmNuMuCCoth_e     ) : return "$\\nu_\\mu$ CC other ($\\nu_e$ app)";                            break;
-     case ( kSKmNuMuNC          ) : return "$\\nu_\\mu$/$\\nu_\\tau$ NC";                                    break;
+     case ( kSKmNuMuNC1piC      ) : return "$\\nu_\\mu$/$\\nu_\\tau$ NC 1$\\pi^{+/-}$";                      break;
      case ( kSKmNuMuNC1pi0      ) : return "$\\nu_\\mu$/$\\nu_\\tau$ NC 1$\\pi^0$";                          break;
      case ( kSKmNuMuNCcoh       ) : return "$\\nu_\\mu$/$\\nu_\\tau$ NC coherent";                           break;
      case ( kSKmNuMuNCoth_e     ) : return "$\\nu_\\mu$/$\\nu_\\tau$ NC other ($\\nu_e$ app)";               break;
+     case ( kSKmNuMuNCoth_mu    ) : return "$\\nu_\\mu$/$\\nu_\\tau$ NC other ($\\nu_\\mu$ app)";            break;
      case ( kSKmNuMuBarCCQE     ) : return "$\\bar{\\nu_\\mu}$ CCQE";                                        break;
      case ( kSKmNuMuBarCC1pi    ) : return "$\\bar{\\nu_\\mu}$ CC 1$\\pi$";                                  break;
      case ( kSKmNuMuBarCCcoh    ) : return "$\\bar{\\nu_\\mu}$ CC coherent";                                 break;
      case ( kSKmNuMuBarCCoth_mu ) : return "$\\bar{\\nu_\\mu}$ CC other ($\\nu_\\mu$ disap)";                break;
      case ( kSKmNuMuBarCCoth_e  ) : return "$\\bar{\\nu_\\mu}$ CC other ($\\nu_e$ app)";                     break;
-     case ( kSKmNuMuBarNC       ) : return "$\\bar{\\nu_\\mu}$/$\\bar{\\nu_\\tau}$ NC";                      break;
+     case ( kSKmNuMuBarNC1piC   ) : return "$\\bar{\\nu_\\mu}$/$\\bar{\\nu_\\tau}$ NC 1$\\pi^{+/-}$";        break;
      case ( kSKmNuMuBarNC1pi0   ) : return "$\\bar{\\nu_\\mu}$/$\\bar{\\nu_\\tau}$ NC 1$\\pi^0$";            break;
      case ( kSKmNuMuBarNCcoh    ) : return "$\\bar{\\nu_\\mu}$/$\\bar{\\nu_\\tau}$ NC coherent";             break;
      case ( kSKmNuMuBarNCoth_e  ) : return "$\\bar{\\nu_\\mu}$/$\\bar{\\nu_\\tau}$ NC other ($\\nu_e$ app)"; break;
+     case ( kSKmNuMuBarNCoth_mu ) : return "$\\bar{\\nu_\\mu}$/$\\bar{\\nu_\\tau}$ NC other ($\\nu_\\mu$ app)";break;
      case ( kSKmNuECCQE         ) : return "$\\nu_e$ CCQE";                                                  break;
      case ( kSKmNuECC1pi        ) : return "$\\nu_e$ CC 1$\\pi$";                                            break;
      case ( kSKmNuECCcoh        ) : return "$\\nu_e$ CC coherent";                                           break;
      case ( kSKmNuECCoth_mu     ) : return "$\\nu_e$ CC other ($\\nu_\\mu$ disap)";                          break;
      case ( kSKmNuECCoth_e      ) : return "$\\nu_e$ CC other ($\\nu_e$ app)";                               break;
-     case ( kSKmNuENC           ) : return "$\\nu_e$ NC";                                                    break;
+     case ( kSKmNuENC1piC       ) : return "$\\nu_e$ NC 1$\\pi^{+/-}$";                                      break;
      case ( kSKmNuENC1pi0       ) : return "$\\nu_e$ NC 1$\\pi^0$";                                          break;
      case ( kSKmNuENCcoh        ) : return "$\\nu_e$ NC coherent";                                           break;
      case ( kSKmNuENCoth_e      ) : return "$\\nu_e$ NC other ($\\nu_e$ app)";                               break;
+     case ( kSKmNuENCoth_mu     ) : return "$\\nu_e$ NC other ($\\nu_\\mu$ app)";                            break;
      case ( kSKmNuEBarCCQE      ) : return "$\\bar{\\nu_e}$ CCQE";                                           break;
      case ( kSKmNuEBarCC1pi     ) : return "$\\bar{\\nu_e}$ CC 1$\\pi$";                                     break;
      case ( kSKmNuEBarCCcoh     ) : return "$\\bar{\\nu_e}$ CC coherent";                                    break;
      case ( kSKmNuEBarCCoth_mu  ) : return "$\\bar{\\nu_e}$ CC other ($\\nu_\\mu$ disap)";                   break;
      case ( kSKmNuEBarCCoth_e   ) : return "$\\bar{\\nu_e}$ CC other ($\\nu_e$ app)";                        break;
-     case ( kSKmNuEBarNC        ) : return "$\\bar{\\nu_e}$ NC";                                             break;
+     case ( kSKmNuEBarNC1piC    ) : return "$\\bar{\\nu_e}$ NC 1$\\pi^{+/-}$";                               break;
      case ( kSKmNuEBarNC1pi0    ) : return "$\\bar{\\nu_e}$ NC 1$\\pi^0$";                                   break;
      case ( kSKmNuEBarNCcoh     ) : return "$\\bar{\\nu_e}$ NC coherent";                                    break;
      case ( kSKmNuEBarNCoth_e   ) : return "$\\bar{\\nu_e}$ NC other ($\\nu_e$ app)";                        break;
+     case ( kSKmNuEBarNCoth_mu  ) : return "$\\bar{\\nu_e}$ NC other ($\\nu_\\mu$ app)";                     break;
      case ( kSKmSigNuECCQE      ) : return "signal $\\nu_e$ CCQE";                                           break;
      case ( kSKmSigNuECC1pi     ) : return "signal $\\nu_e$ CC 1$\\pi$";                                     break;
-     case ( kSKmSigNuECCoth     ) : return "signal $\\nu_e$ CC other";                                       break;
+     case ( kSKmSigNuECCcoh     ) : return "signal $\\nu_e$ CC coherent";                                    break;
+     case ( kSKmSigNuECCoth_mu  ) : return "signal $\\nu_e$ CC other ($\\nu_\\mu$ app)";                     break;
+     case ( kSKmSigNuECCoth_e   ) : return "signal $\\nu_e$ CC other ($\\nu_e$ app)";                        break;
      default                      : return "--";
   }
   return "";
@@ -1071,40 +1083,46 @@ string t2kana::util::AsStringRooTex(t2kana::conv::SuperkMode_t m)
      case ( kSKmNuMuCCcoh       ) : return "#nu_{#mu} CC coherent";                         break;
      case ( kSKmNuMuCCoth_mu    ) : return "#nu_{#mu} CC other";                            break;
      case ( kSKmNuMuCCoth_e     ) : return "#nu_{#mu} CC other";                            break;
-     case ( kSKmNuMuNC          ) : return "#nu_{#mu}/#nu_{#tau} NC";                       break;
+     case ( kSKmNuMuNC1piC      ) : return "#nu_{#mu}/#nu_{#tau} NC 1#pi^{+/-}";            break;
      case ( kSKmNuMuNC1pi0      ) : return "#nu_{#mu}/#nu_{#tau} NC 1#pi^{0}";              break;
      case ( kSKmNuMuNCcoh       ) : return "#nu_{#mu}/#nu_{#tau} NC coherent";              break;
      case ( kSKmNuMuNCoth_e     ) : return "#nu_{#mu}/#nu_{#tau} NC other";                 break;
+     case ( kSKmNuMuNCoth_mu    ) : return "#nu_{#mu}/#nu_{#tau} NC other";                 break;
      case ( kSKmNuMuBarCCQE     ) : return "#bar{#nu_{#mu}} CCQE";                          break;
      case ( kSKmNuMuBarCC1pi    ) : return "#bar{#nu_{#mu}} CC 1#pi";                       break;
      case ( kSKmNuMuBarCCcoh    ) : return "#bar{#nu_{#mu}} CC coherent";                   break;
      case ( kSKmNuMuBarCCoth_mu ) : return "#bar{#nu_{#mu}} CC other";                      break;
      case ( kSKmNuMuBarCCoth_e  ) : return "#bar{#nu_{#mu}} CC other";                      break;
-     case ( kSKmNuMuBarNC       ) : return "#bar{#nu_{#mu}}/#bar{#nu_{#tau}} NC";           break;
+     case ( kSKmNuMuBarNC1piC   ) : return "#bar{#nu_{#mu}}/#bar{#nu_{#tau}} NC 1#pi^{+/-}";break;
      case ( kSKmNuMuBarNC1pi0   ) : return "#bar{#nu_{#mu}}/#bar{#nu_{#tau}} NC 1#pi^{0}";  break;
      case ( kSKmNuMuBarNCcoh    ) : return "#bar{#nu_{#mu}}/#bar{#nu_{#tau}} NC coherent";  break;
      case ( kSKmNuMuBarNCoth_e  ) : return "#bar{#nu_{#mu}}/#bar{#nu_{#tau}} NC other";     break;
+     case ( kSKmNuMuBarNCoth_mu ) : return "#bar{#nu_{#mu}}/#bar{#nu_{#tau}} NC other";     break;
      case ( kSKmNuECCQE         ) : return "#nu_{e} CCQE";                                  break;
      case ( kSKmNuECC1pi        ) : return "#nu_{e} CC 1#pi";                               break;
      case ( kSKmNuECCcoh        ) : return "#nu_{e} CC coherent";                           break;
      case ( kSKmNuECCoth_mu     ) : return "#nu_{e} CC other";                              break;
      case ( kSKmNuECCoth_e      ) : return "#nu_{e} CC other";                              break;
-     case ( kSKmNuENC           ) : return "#nu_{e} NC";                                    break;
+     case ( kSKmNuENC1piC       ) : return "#nu_{e} NC 1#pi^{+/-}";                         break;
      case ( kSKmNuENC1pi0       ) : return "#nu_{e} NC 1#pi^{0}";                           break;
      case ( kSKmNuENCcoh        ) : return "#nu_{e} NC coherent";                           break;
      case ( kSKmNuENCoth_e      ) : return "#nu_{e} NC other";                              break;
+     case ( kSKmNuENCoth_mu     ) : return "#nu_{e} NC other";                              break;
      case ( kSKmNuEBarCCQE      ) : return "#bar{#nu_{e}} CCQE";                            break;
      case ( kSKmNuEBarCC1pi     ) : return "#bar{#nu_{e}} CC 1#pi";                         break;
      case ( kSKmNuEBarCCcoh     ) : return "#bar{#nu_{e}} CC coherent";                     break;
      case ( kSKmNuEBarCCoth_mu  ) : return "#bar{#nu_{e}} CC other";                        break;
      case ( kSKmNuEBarCCoth_e   ) : return "#bar{#nu_{e}} CC other";                        break;
-     case ( kSKmNuEBarNC        ) : return "#bar{#nu_{e}} NC";                              break;
+     case ( kSKmNuEBarNC1piC    ) : return "#bar{#nu_{e}} NC 1#pi^{+/-}";                   break;
      case ( kSKmNuEBarNC1pi0    ) : return "#bar{#nu_{e}} NC 1#pi^{0}";                     break;
      case ( kSKmNuEBarNCcoh     ) : return "#bar{#nu_{e}} NC coherent";                     break;
      case ( kSKmNuEBarNCoth_e   ) : return "#bar{#nu_{e}} NC other";                        break;
+     case ( kSKmNuEBarNCoth_mu  ) : return "#bar{#nu_{e}} NC other";                        break;
      case ( kSKmSigNuECCQE      ) : return "signal #nu_{e} CCQE";                           break;
      case ( kSKmSigNuECC1pi     ) : return "signal #nu_{e} CC 1#pi";                        break;
-     case ( kSKmSigNuECCoth     ) : return "signal #nu_{e} CC other";                       break;
+     case ( kSKmSigNuECCcoh     ) : return "signal #nu_{e} CC coherent";                    break;
+     case ( kSKmSigNuECCoth_mu  ) : return "signal #nu_{e} CC other";                       break;
+     case ( kSKmSigNuECCoth_e   ) : return "signal #nu_{e} CC other";                       break;
      default                      : return "";
   }
   return "";
@@ -1183,40 +1201,46 @@ string t2kana::util::AsStringCompact (t2kana::conv::SuperkMode_t m)
      case ( kSKmNuMuCCcoh       ) : return "numucccoh";      break;
      case ( kSKmNuMuCCoth_mu    ) : return "numuccoth";      break;
      case ( kSKmNuMuCCoth_e     ) : return "numuccoth";      break;
-     case ( kSKmNuMuNC          ) : return "numunc";         break;
+     case ( kSKmNuMuNC1piC      ) : return "numunc1piC";     break;
      case ( kSKmNuMuNC1pi0      ) : return "numunc1pi0";     break;
      case ( kSKmNuMuNCcoh       ) : return "numunccoh";      break;
      case ( kSKmNuMuNCoth_e     ) : return "numuncoth";      break;
+     case ( kSKmNuMuNCoth_mu    ) : return "numuncoth";      break;
      case ( kSKmNuMuBarCCQE     ) : return "numubarccqe";    break;
      case ( kSKmNuMuBarCC1pi    ) : return "numubarcc1pi";   break;
      case ( kSKmNuMuBarCCcoh    ) : return "numubarcccoh";   break;
      case ( kSKmNuMuBarCCoth_mu ) : return "numubarccoth";   break;
      case ( kSKmNuMuBarCCoth_e  ) : return "numubarccoth";   break;
-     case ( kSKmNuMuBarNC       ) : return "numubarnc";      break;
+     case ( kSKmNuMuBarNC1piC   ) : return "numubarnc1piC";  break;
      case ( kSKmNuMuBarNC1pi0   ) : return "numubarnc1pi0";  break;
      case ( kSKmNuMuBarNCcoh    ) : return "numubarnccoh";   break;
      case ( kSKmNuMuBarNCoth_e  ) : return "numubarncoth ";  break;
+     case ( kSKmNuMuBarNCoth_mu ) : return "numubarncoth ";  break;
      case ( kSKmNuECCQE         ) : return "nueccqe";        break;
      case ( kSKmNuECC1pi        ) : return "nuecc1pi";       break;
      case ( kSKmNuECCcoh        ) : return "nuecccoh";       break;
      case ( kSKmNuECCoth_mu     ) : return "nueccoth";       break;
      case ( kSKmNuECCoth_e      ) : return "nueccoth";       break;
-     case ( kSKmNuENC           ) : return "nuenc";          break;
+     case ( kSKmNuENC1piC       ) : return "nuenc1piC";      break;
      case ( kSKmNuENC1pi0       ) : return "nuenc1pi0";      break;
      case ( kSKmNuENCcoh        ) : return "nuenccoh";       break;
      case ( kSKmNuENCoth_e      ) : return "nuencoth";       break;
+     case ( kSKmNuENCoth_mu     ) : return "nuencoth";       break;
      case ( kSKmNuEBarCCQE      ) : return "nuebarccqe";     break;
      case ( kSKmNuEBarCC1pi     ) : return "nuebarcc1pi";    break;
      case ( kSKmNuEBarCCcoh     ) : return "nuebarcccoh";    break;
      case ( kSKmNuEBarCCoth_mu  ) : return "nuebarccoth";    break;
      case ( kSKmNuEBarCCoth_e   ) : return "nuebarccoth";    break;
-     case ( kSKmNuEBarNC        ) : return "nuebarnc";       break;
+     case ( kSKmNuEBarNC1piC    ) : return "nuebarnc1piC";   break;
      case ( kSKmNuEBarNC1pi0    ) : return "nuebarnc1pi0";   break;
      case ( kSKmNuEBarNCcoh     ) : return "nuebarnccoh";    break;
      case ( kSKmNuEBarNCoth_e   ) : return "nuebarncoth";    break;
+     case ( kSKmNuEBarNCoth_mu  ) : return "nuebarncoth";    break;
      case ( kSKmSigNuECCQE      ) : return "signueccqe";     break;
      case ( kSKmSigNuECC1pi     ) : return "signuecc1pi";    break;
-     case ( kSKmSigNuECCoth     ) : return "signueccoth";    break;
+     case ( kSKmSigNuECCcoh     ) : return "signuecccoh";    break;
+     case ( kSKmSigNuECCoth_mu  ) : return "signueccoth";    break;
+     case ( kSKmSigNuECCoth_e   ) : return "signueccoth";    break;
      default                      : return "";
   }
   return "";
@@ -1384,10 +1408,11 @@ bool t2kana::util::IsNuMu(t2kana::conv::SuperkMode_t  m)
      case (kSKmNuMuCCcoh   ):
      case (kSKmNuMuCCoth_mu):
      case (kSKmNuMuCCoth_e ):
-     case (kSKmNuMuNC      ):
+     case (kSKmNuMuNC1piC  ):
      case (kSKmNuMuNC1pi0  ):
      case (kSKmNuMuNCcoh   ):
      case (kSKmNuMuNCoth_e ):
+     case (kSKmNuMuNCoth_mu):
        return true;
        break;
      default :                
@@ -1405,10 +1430,11 @@ bool t2kana::util::IsNuMuBar(t2kana::conv::SuperkMode_t m)
      case (kSKmNuMuBarCCcoh   ):
      case (kSKmNuMuBarCCoth_mu):
      case (kSKmNuMuBarCCoth_e ):
-     case (kSKmNuMuBarNC      ):
+     case (kSKmNuMuBarNC1piC  ):
      case (kSKmNuMuBarNC1pi0  ):
      case (kSKmNuMuBarNCcoh   ):
      case (kSKmNuMuBarNCoth_e ):
+     case (kSKmNuMuBarNCoth_mu):
        return true;
        break;
      default :                
@@ -1426,10 +1452,11 @@ bool t2kana::util::IsNuE(t2kana::conv::SuperkMode_t m)
      case (kSKmNuECCcoh   ):
      case (kSKmNuECCoth_mu):
      case (kSKmNuECCoth_e ):
-     case (kSKmNuENC      ):
+     case (kSKmNuENC1piC  ):
      case (kSKmNuENC1pi0  ):
      case (kSKmNuENCcoh   ):
      case (kSKmNuENCoth_e ):
+     case (kSKmNuENCoth_mu):
        return true;
        break;
      default :                
@@ -1447,10 +1474,11 @@ bool t2kana::util::IsNuEBar(t2kana::conv::SuperkMode_t m)
      case (kSKmNuEBarCCcoh   ):
      case (kSKmNuEBarCCoth_mu):
      case (kSKmNuEBarCCoth_e ):
-     case (kSKmNuEBarNC      ):
+     case (kSKmNuEBarNC1piC  ):
      case (kSKmNuEBarNC1pi0  ):
      case (kSKmNuEBarNCcoh   ):
      case (kSKmNuEBarNCoth_e ):
+     case (kSKmNuEBarNCoth_mu):
        return true;
        break;
      default :                
@@ -1463,9 +1491,11 @@ bool t2kana::util::IsNuEBar(t2kana::conv::SuperkMode_t m)
 bool t2kana::util::IsSignalNuE(t2kana::conv::SuperkMode_t m)
 {
   switch(m) {
-     case ( kSKmSigNuECCQE  ) :
-     case ( kSKmSigNuECC1pi ) :
-     case ( kSKmSigNuECCoth ) :
+     case ( kSKmSigNuECCQE     ) :
+     case ( kSKmSigNuECC1pi    ) :
+     case ( kSKmSigNuECCcoh    ) :
+     case ( kSKmSigNuECCoth_e  ) :
+     case ( kSKmSigNuECCoth_mu ) :
        return true;
        break;
      default :                
@@ -1500,7 +1530,9 @@ bool t2kana::util::IsCC(t2kana::conv::SuperkMode_t m)
      case ( kSKmNuEBarCCoth_e   ) : 
      case ( kSKmSigNuECCQE      ) : 
      case ( kSKmSigNuECC1pi     ) : 
-     case ( kSKmSigNuECCoth     ) : 
+     case ( kSKmSigNuECCcoh     ) : 
+     case ( kSKmSigNuECCoth_mu  ) : 
+     case ( kSKmSigNuECCoth_e   ) : 
 	return true;
 	break;
      default: 
@@ -1513,22 +1545,26 @@ bool t2kana::util::IsCC(t2kana::conv::SuperkMode_t m)
 bool t2kana::util::IsNC(t2kana::conv::SuperkMode_t m)
 {
   switch(m) {
-     case ( kSKmNuMuNC          ) : 
+     case ( kSKmNuMuNC1piC      ) : 
      case ( kSKmNuMuNC1pi0      ) : 
      case ( kSKmNuMuNCcoh       ) : 
      case ( kSKmNuMuNCoth_e     ) : 
-     case ( kSKmNuMuBarNC       ) : 
+     case ( kSKmNuMuNCoth_mu    ) : 
+     case ( kSKmNuMuBarNC1piC   ) : 
      case ( kSKmNuMuBarNC1pi0   ) : 
      case ( kSKmNuMuBarNCcoh    ) : 
      case ( kSKmNuMuBarNCoth_e  ) : 
-     case ( kSKmNuENC           ) : 
+     case ( kSKmNuMuBarNCoth_mu ) : 
+     case ( kSKmNuENC1piC       ) : 
      case ( kSKmNuENC1pi0       ) : 
      case ( kSKmNuENCcoh        ) : 
      case ( kSKmNuENCoth_e      ) : 
-     case ( kSKmNuEBarNC        ) : 
+     case ( kSKmNuENCoth_mu     ) : 
+     case ( kSKmNuEBarNC1piC    ) : 
      case ( kSKmNuEBarNC1pi0    ) : 
      case ( kSKmNuEBarNCcoh     ) : 
      case ( kSKmNuEBarNCoth_e   ) : 
+     case ( kSKmNuEBarNCoth_mu  ) : 
 	return true;
         break;
      default: 
@@ -2409,19 +2445,26 @@ bool t2kana::util::IsCCcoh(int neut_reaction_mode)
   return neut_reaction_mode ==  16;
 }
 //___________________________________________________________________________
-bool t2kana::util::IsCCoth_e(int neut_reaction_mode) 
+bool t2kana::util::IsCCoth(int neut_reaction_mode) 
+//this is a catch all for everything CC that is not QE, 1pi, or coh
+// needs to be updated if another subcategory is added
 {
-  bool is_ccoth_e = (neut_reaction_mode == 17 ||
+  bool is_ccoth = (neut_reaction_mode == 17 ||
 		     neut_reaction_mode == 21 ||
 		     neut_reaction_mode == 22 || 
 		     neut_reaction_mode == 23 || 
 		     neut_reaction_mode == 26);
-  return is_ccoth_e;
+  return is_ccoth;
 }
 //___________________________________________________________________________
 bool t2kana::util::IsCCoth_mu(int neut_reaction_mode) 
 {
-  return IsCCcoh(neut_reaction_mode) || IsCCoth_e(neut_reaction_mode);
+  return IsCCoth(neut_reaction_mode);
+}
+//___________________________________________________________________________
+bool t2kana::util::IsCCoth_e(int neut_reaction_mode) 
+{
+  return IsCCoth(neut_reaction_mode);
 }
 //___________________________________________________________________________
 bool t2kana::util::IsNC1pi0(int neut_reaction_mode) 
@@ -2431,16 +2474,23 @@ bool t2kana::util::IsNC1pi0(int neut_reaction_mode)
   return is_cc1pi0;
 }
 //___________________________________________________________________________
+bool t2kana::util::IsNC1piC(int neut_reaction_mode) 
+{
+  bool is_cc1pi0 = (neut_reaction_mode == 33 ||
+		    neut_reaction_mode == 34);
+  return is_cc1pi0;
+}
+//___________________________________________________________________________
 bool t2kana::util::IsNCcoh(int neut_reaction_mode) 
 {
   return neut_reaction_mode == 36;
 }
 //___________________________________________________________________________
-bool t2kana::util::IsNCoth_e(int neut_reaction_mode) 
+bool t2kana::util::IsNCoth(int neut_reaction_mode) 
+//this is a catch all for everything NC that is not 1pi0, 1piC or coh
+// needs to be updated if another subcategory is added
 {
-  bool is_ncoth_e = (neut_reaction_mode == 33 ||
-		     neut_reaction_mode == 34 ||
-		     neut_reaction_mode == 38 ||
+  bool is_ncoth = (  neut_reaction_mode == 38 ||
 		     neut_reaction_mode == 39 ||
 		     neut_reaction_mode == 41 ||
 		     neut_reaction_mode == 42 ||
@@ -2450,15 +2500,22 @@ bool t2kana::util::IsNCoth_e(int neut_reaction_mode)
 		     neut_reaction_mode == 46 ||
 		     neut_reaction_mode == 51 ||
 		     neut_reaction_mode == 52);
-  return is_ncoth_e;
+  return is_ncoth;
 }
 //___________________________________________________________________________
-bool t2kana::util::IsNCall(int neut_reaction_mode) 
+bool t2kana::util::IsNCoth_mu(int neut_reaction_mode) 
 {
-  bool is_ncall = (IsNC1pi0 (neut_reaction_mode) ||
-		   IsNCcoh  (neut_reaction_mode) ||
-		   IsNCoth_e(neut_reaction_mode));
-  return is_ncall;
+  bool is_ncoth_mu = ( IsNCoth (neut_reaction_mode) ||
+		       IsNCcoh (neut_reaction_mode) ||
+		       IsNC1pi0(neut_reaction_mode) );
+  return is_ncoth_mu;
+}
+//___________________________________________________________________________
+bool t2kana::util::IsNCoth_e(int neut_reaction_mode) 
+{
+  bool is_ncoth_e = ( IsNCoth (neut_reaction_mode) ||
+		      IsNC1piC(neut_reaction_mode) );
+  return is_ncoth_e;
 }
 //___________________________________________________________________________
 bool t2kana::util::UseEventToFillInTemplate(
@@ -2503,10 +2560,10 @@ bool t2kana::util::UseEventToFillInTemplate(
   }
 
   else
-  if(m == kSKmNuMuNC) 
+  if(m == kSKmNuMuNC1piC) 
   {
      bool is_numu   = (nu_pdg_code == kPdgNuMu);
-     use_it = is_numu && IsNCall(neut_reaction_mode);
+     use_it = is_numu && IsNC1piC(neut_reaction_mode);
   } 
 
   else
@@ -2528,6 +2585,13 @@ bool t2kana::util::UseEventToFillInTemplate(
   {
      bool is_numu    = (nu_pdg_code == kPdgNuMu);
      use_it = is_numu && IsNCoth_e(neut_reaction_mode);
+  } 
+
+  else
+  if(m == kSKmNuMuNCoth_mu) 
+  {
+     bool is_numu    = (nu_pdg_code == kPdgNuMu);
+     use_it = is_numu && IsNCoth_mu(neut_reaction_mode);
   } 
 
   //NuMuBar templates
@@ -2567,10 +2631,10 @@ bool t2kana::util::UseEventToFillInTemplate(
   } 
 
   else
-  if(m == kSKmNuMuBarNC) 
+  if(m == kSKmNuMuBarNC1piC) 
   {
      bool is_numubar  = (nu_pdg_code == kPdgNuMuBar);
-     use_it = is_numubar && IsNCall(-neut_reaction_mode);
+     use_it = is_numubar && IsNC1piC(-neut_reaction_mode);
   } 
 
   else
@@ -2594,6 +2658,13 @@ bool t2kana::util::UseEventToFillInTemplate(
      use_it = is_numubar && IsNCoth_e(-neut_reaction_mode);
   } 
 
+  else
+  if(m == kSKmNuMuBarNCoth_mu) 
+  {
+     bool is_numubar  = (nu_pdg_code == kPdgNuMuBar);
+     use_it = is_numubar && IsNCoth_mu(-neut_reaction_mode);
+  } 
+
   //NuE (signal and beam) templates
   else
   if(m == kSKmNuECCQE || m == kSKmSigNuECCQE) 
@@ -2610,15 +2681,14 @@ bool t2kana::util::UseEventToFillInTemplate(
   }
 
   else
-  if(m == kSKmNuECCcoh) 
+  if(m == kSKmNuECCcoh || m == kSKmSigNuECCcoh) 
   {
      bool is_nue   = (nu_pdg_code == kPdgNuE); 
      use_it = is_nue && IsCCcoh(neut_reaction_mode);
   } 
 
-
   else
-  if(m == kSKmNuECCoth_mu || m == kSKmSigNuECCoth) 
+  if(m == kSKmNuECCoth_mu || m == kSKmSigNuECCoth_mu) 
   {
      bool is_nue      = (nu_pdg_code == kPdgNuE); 
      use_it = is_nue && IsCCoth_mu(neut_reaction_mode);
@@ -2631,11 +2701,20 @@ bool t2kana::util::UseEventToFillInTemplate(
      use_it = is_nue && IsCCoth_e(neut_reaction_mode);
   }
 
+  //this is a little different. nuesig has no CCcoh in 1Re sample, whereas CCcoh is included
+  // for the other species
   else
-  if(m == kSKmNuENC) 
+  if(m == kSKmSigNuECCoth_e) 
+  {
+     bool is_nue     = (nu_pdg_code == kPdgNuE); 
+     use_it = is_nue && (IsCCoth_e(neut_reaction_mode) || IsCCcoh(neut_reaction_mode));
+  }
+
+  else
+  if(m == kSKmNuENC1piC) 
   {
      bool is_nue  = (nu_pdg_code == kPdgNuE); 
-     use_it = is_nue && IsNCall(neut_reaction_mode);
+     use_it = is_nue && IsNC1piC(neut_reaction_mode);
   }
 
   else
@@ -2657,6 +2736,13 @@ bool t2kana::util::UseEventToFillInTemplate(
   {
      bool is_nue     = (nu_pdg_code == kPdgNuE); 
      use_it = is_nue && IsNCoth_e(neut_reaction_mode);
+  }
+
+  else
+  if(m == kSKmNuENCoth_mu) 
+  {
+     bool is_nue     = (nu_pdg_code == kPdgNuE); 
+     use_it = is_nue && IsNCoth_mu(neut_reaction_mode);
   }
 
   //NuEBar (beam) templates
@@ -2697,10 +2783,10 @@ bool t2kana::util::UseEventToFillInTemplate(
   }
 
   else
-  if(m == kSKmNuEBarNC) 
+  if(m == kSKmNuEBarNC1piC) 
   {
      bool is_nue  = (nu_pdg_code == kPdgNuEBar); 
-     use_it = is_nue && IsNCall(-neut_reaction_mode);
+     use_it = is_nue && IsNC1piC(-neut_reaction_mode);
   }
 
   else
@@ -2722,6 +2808,13 @@ bool t2kana::util::UseEventToFillInTemplate(
   {
      bool is_nue     = (nu_pdg_code == kPdgNuEBar); 
      use_it = is_nue && IsNCoth_e(-neut_reaction_mode);
+  }
+
+  else
+  if(m == kSKmNuEBarNCoth_mu) 
+  {
+     bool is_nue     = (nu_pdg_code == kPdgNuEBar); 
+     use_it = is_nue && IsNCoth_mu(-neut_reaction_mode);
   }
 
   return use_it;
@@ -2764,25 +2857,33 @@ double t2kana::util::NuMuSurvProbOsc2Flavour(
 {
 // Note: Using only the numu disappearance analysis modes
 //
-  if(m == kSKmNuMuNC          || 
-     m == kSKmNuECCQE     ||
-     m == kSKmNuECC1pi    ||
-     m == kSKmNuECCoth_mu ||
-     m == kSKmNuENC       ||
-     m == kSKmNuEBarCCQE     ||
-     m == kSKmNuEBarCC1pi    ||
-     m == kSKmNuEBarCCoth_mu ||
-     m == kSKmNuEBarNC       ||
-     m == kSKmNuMuBarNC)
+  if(m == kSKmNuMuNC1piC      || 
+     m == kSKmNuMuNCoth_mu    ||
+     m == kSKmNuMuBarNC1piC   ||
+     m == kSKmNuMuBarNCoth_mu ||
+     m == kSKmNuECCQE         ||
+     m == kSKmNuECC1pi        ||
+     m == kSKmNuECCcoh        ||
+     m == kSKmNuECCoth_mu     ||
+     m == kSKmNuENC1piC       ||
+     m == kSKmNuENCoth_mu     ||
+     m == kSKmNuEBarCCQE      ||
+     m == kSKmNuEBarCC1pi     ||
+     m == kSKmNuEBarCCcoh     ||
+     m == kSKmNuEBarCCoth_mu  ||
+     m == kSKmNuEBarNC1piC    ||
+     m == kSKmNuEBarNCoth_mu  )
   {
     return 1.;
   }
   else
   if(m == kSKmNuMuCCQE        || 
      m == kSKmNuMuCC1pi       || 
+     m == kSKmNuMuCCcoh       || 
      m == kSKmNuMuCCoth_mu    ||
      m == kSKmNuMuBarCCQE     ||
      m == kSKmNuMuBarCC1pi    ||
+     m == kSKmNuMuBarCCcoh    ||
      m == kSKmNuMuBarCCoth_mu) 
   {
     return NuMuSurvProbOsc2Flavour(mixing23, dm23sq, Et);
@@ -2822,24 +2923,32 @@ double t2kana::util::NuMuSurvProbDecay (
 //
   if(m == kSKmNuECCQE        ||
      m == kSKmNuECC1pi       ||
+     m == kSKmNuECCcoh       ||
      m == kSKmNuECCoth_mu    ||
-     m == kSKmNuENC          ||
+     m == kSKmNuENC1piC      ||
+     m == kSKmNuENCoth_mu    ||
      m == kSKmNuEBarCCQE     ||
      m == kSKmNuEBarCC1pi    ||
+     m == kSKmNuEBarCCcoh    ||
      m == kSKmNuEBarCCoth_mu ||
-     m == kSKmNuEBarNC)
+     m == kSKmNuEBarNC1piC   ||
+     m == kSKmNuEBarNCoth_mu )
   {
     return 1.;
   }
   else
   if(m == kSKmNuMuCCQE        || 
      m == kSKmNuMuCC1pi       || 
+     m == kSKmNuMuCCcoh       || 
      m == kSKmNuMuCCoth_mu    ||
-     m == kSKmNuMuNC          ||
+     m == kSKmNuMuNC1piC      ||
+     m == kSKmNuMuNCoth_mu    ||
      m == kSKmNuMuBarCCQE     ||
      m == kSKmNuMuBarCC1pi    ||
+     m == kSKmNuMuBarCCcoh    ||
      m == kSKmNuMuBarCCoth_mu ||
-     m == kSKmNuMuBarNC) 
+     m == kSKmNuMuBarNC1piC   ||
+     m == kSKmNuMuBarNCoth_mu ) 
   {
     return NuMuSurvProbDecay(sinsq2theta, alpha, Et);
   }
@@ -2874,24 +2983,32 @@ double t2kana::util::NuMuSurvProbDecoh (
 //
   if(m == kSKmNuECCQE        ||
      m == kSKmNuECC1pi       ||
+     m == kSKmNuECCcoh       ||
      m == kSKmNuECCoth_mu    ||
-     m == kSKmNuENC          ||
+     m == kSKmNuENC1piC      ||
+     m == kSKmNuENCoth_mu    ||
      m == kSKmNuEBarCCQE     ||
      m == kSKmNuEBarCC1pi    ||
+     m == kSKmNuEBarCCcoh    ||
      m == kSKmNuEBarCCoth_mu ||
-     m == kSKmNuEBarNC)
+     m == kSKmNuEBarNC1piC   ||
+     m == kSKmNuEBarNCoth_mu )
   {
     return 1.;
   }
   else
   if(m == kSKmNuMuCCQE        || 
      m == kSKmNuMuCC1pi       || 
+     m == kSKmNuMuCCcoh       || 
      m == kSKmNuMuCCoth_mu    ||
-     m == kSKmNuMuNC              ||
+     m == kSKmNuMuNC1piC      ||
+     m == kSKmNuMuNCoth_mu    ||
      m == kSKmNuMuBarCCQE     ||
      m == kSKmNuMuBarCC1pi    ||
+     m == kSKmNuMuBarCCcoh    ||
      m == kSKmNuMuBarCCoth_mu ||
-     m == kSKmNuMuBarNC) 
+     m == kSKmNuMuBarNC1piC   ||
+     m == kSKmNuMuBarNCoth_mu ) 
   {
     return NuMuSurvProbDecoh(sinsq2theta, musq, Et);
   }

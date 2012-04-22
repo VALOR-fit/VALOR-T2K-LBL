@@ -220,7 +220,7 @@ SuperkSample_t;
 
 // Enumeration of (true) reaction modes that may be considered separately within each SuperK sample
 // Actual choice for current analysis is given in `Configuration' section.
-static const int kNSuperkModes = 39;  // number of reaction modes kept track of within each sample
+static const int kNSuperkModes = 49;  // number of reaction modes kept track of within each sample
 static const int knm = kNSuperkModes; // as above - shorter name
 typedef enum ESuperkMode 
 {
@@ -231,8 +231,10 @@ typedef enum ESuperkMode
    kSKmNuMuCCoth_mu,     // numu CC other, nu_mu disappearance analysis definition
    kSKmNuMuCCoth_e,      // numu CC other, nu_e appearance analysis definition
    kSKmNuMuNC,           // numu NC (all)
+   kSKmNuMuNC1piC,       // numu NC 1 charged pi
    kSKmNuMuNC1pi0,       // numu NC 1pi0
    kSKmNuMuNCcoh,        // numu NC coherent
+   kSKmNuMuNCoth_mu,     // numu NC other, nu_mu appearance analysis definition
    kSKmNuMuNCoth_e,      // numu NC other, nu_e appearance analysis definition
    kSKmNuMuBarCCQE,      // numubar CCQE
    kSKmNuMuBarCC1pi,     // numubar CC 1pi
@@ -240,8 +242,10 @@ typedef enum ESuperkMode
    kSKmNuMuBarCCoth_mu,  // numubar CC other, nu_mu disappearance analysis definition
    kSKmNuMuBarCCoth_e,   // numubar CC other, nu_e appearance analysis definition
    kSKmNuMuBarNC,        // numubar NC (all)
+   kSKmNuMuBarNC1piC,    // numubar NC 1 charged pi
    kSKmNuMuBarNC1pi0,    // numubar NC 1pi0
    kSKmNuMuBarNCcoh,     // numubar NC coherent
+   kSKmNuMuBarNCoth_mu,  // numubar NC other, nu_mu appearance analysis definition
    kSKmNuMuBarNCoth_e,   // numubar NC other, nu_e appearance analysis definition
    kSKmNuECCQE,          // nue CC QE
    kSKmNuECC1pi,         // nue CC 1pi
@@ -249,8 +253,10 @@ typedef enum ESuperkMode
    kSKmNuECCoth_mu,      // nue CC other, nu_mu disappearance analysis definition
    kSKmNuECCoth_e,       // nue CC other, nu_e appearance analysis definition
    kSKmNuENC,            // nue NC (all)
+   kSKmNuENC1piC,        // nue NC 1 charged pi
    kSKmNuENC1pi0,        // nue NC 1pi0
    kSKmNuENCcoh,         // nue NC coherent
+   kSKmNuENCoth_mu,      // nue NC other, nu_mu appearance analysis definition
    kSKmNuENCoth_e,       // nue NC other, nu_e appearance analysis definition
    kSKmNuEBarCCQE,       // nuebar CC QE
    kSKmNuEBarCC1pi,      // nuebar CC 1pi
@@ -258,12 +264,16 @@ typedef enum ESuperkMode
    kSKmNuEBarCCoth_mu,   // nuebar CC other, nu_mu disappearance analysis definition
    kSKmNuEBarCCoth_e,    // nuebar CC other, nu_e appearance analysis definition
    kSKmNuEBarNC,         // nuebar NC (all)
+   kSKmNuEBarNC1piC,     // nuebar NC 1 charged pi
    kSKmNuEBarNC1pi0,     // nuebar NC 1pi0
    kSKmNuEBarNCcoh,      // nuebar NC coherent
+   kSKmNuEBarNCoth_mu,   // nuebar NC other, nu_mu appearance analysis definition
    kSKmNuEBarNCoth_e,    // nuebar NC other, nu_e appearance analysis definition
-   kSKmSigNuECCQE,       // sig nue
-   kSKmSigNuECC1pi,      // sig nue
-   kSKmSigNuECCoth       // sig nue
+   kSKmSigNuECCQE,       // sig nue CCQE
+   kSKmSigNuECC1pi,      // sig nue CC 1pi
+   kSKmSigNuECCcoh,      // sig nue coh
+   kSKmSigNuECCoth_mu,   // sig nue other, nu_mu disappearance analysis definition
+   kSKmSigNuECCoth_e     // sig nue other, nu_e appearance analysis definition
 } 
 SuperkMode_t; 
 
@@ -419,24 +429,34 @@ static const SuperkMode_t kSKReactionModes[kns][knm] = {
   // > 1 muon-like ring (numu disappearance)
   {
     kSKmNuMuCCQE,         
-    kSKmNuMuCC1pi, 
+    kSKmNuMuCC1pi,
+    kSKmNuMuCCcoh,
     kSKmNuMuCCoth_mu,                      
-    kSKmNuMuNC,          
+    kSKmNuMuNC1piC,
+    kSKmNuMuNCoth_mu,          
     kSKmNuMuBarCCQE,      
-    kSKmNuMuBarCC1pi, 
+    kSKmNuMuBarCC1pi,
+    kSKmNuMuBarCCcoh,
     kSKmNuMuBarCCoth_mu,                  
-    kSKmNuMuBarNC,       
+    kSKmNuMuBarNC1piC,
+    kSKmNuMuBarNCoth_mu,
     kSKmNuECCQE, 
-    kSKmNuECC1pi, 
+    kSKmNuECC1pi,
+    kSKmNuECCcoh,
     kSKmNuECCoth_mu,                                
-    kSKmNuENC,
+    kSKmNuENC1piC,
+    kSKmNuENCoth_mu,
     kSKmNuEBarCCQE,
     kSKmNuEBarCC1pi,
+    kSKmNuEBarCCcoh,
     kSKmNuEBarCCoth_mu,
-    kSKmNuEBarNC,
-    kSKmSigNuECCQE, 
-    kSKmSigNuECC1pi, 
-    kSKmSigNuECCoth,
+    kSKmNuEBarNC1piC,
+    kSKmNuEBarNCoth_mu,
+    kSKmSigNuECCQE,
+    kSKmSigNuECC1pi,
+    kSKmSigNuECCcoh,
+    kSKmSigNuECCoth_mu,
+    kSKmUndefined,
     kSKmUndefined,
     kSKmUndefined,
     kSKmUndefined,
@@ -461,9 +481,9 @@ static const SuperkMode_t kSKReactionModes[kns][knm] = {
 
   // > 1 electron-like ring (nue appearance)
   {
-    kSKmNuMuCCQE, 
-    kSKmNuMuCC1pi, 
-    kSKmNuMuCCcoh, 
+    kSKmNuMuCCQE,
+    kSKmNuMuCC1pi,
+    kSKmNuMuCCcoh,
     kSKmNuMuCCoth_e, 
     kSKmNuMuNC1pi0, 
     kSKmNuMuNCcoh, 
@@ -491,7 +511,15 @@ static const SuperkMode_t kSKReactionModes[kns][knm] = {
     kSKmNuEBarNCoth_e,
     kSKmSigNuECCQE,  
     kSKmSigNuECC1pi,  
-    kSKmSigNuECCoth,
+    kSKmSigNuECCoth_e,
+    kSKmUndefined,
+    kSKmUndefined,
+    kSKmUndefined,
+    kSKmUndefined,
+    kSKmUndefined,
+    kSKmUndefined,
+    kSKmUndefined,
+    kSKmUndefined,
     kSKmUndefined,
     kSKmUndefined,
     kSKmUndefined,
@@ -650,7 +678,7 @@ static const PhysParamId_t kListOfXSecSyst[kNumOfXSecSyst] =
    kNuisBANFF23,               // # 23, M_{A}  RES
    kNuisBANFF24,               // # 24, CCQE   normalization, 0 - 1.5 GeV
    kNuisBANFF25,               // # 25, CC1pi  normalization, 0 - 2.5 GeV
-   kNuisBANFF26                // # 25, NC1pi0 normalization
+   kNuisBANFF26                // # 26, NC1pi0 normalization
 };
 
 // The following list specifies which cross-section related systematic has its
@@ -717,25 +745,36 @@ static const bool kXsApplyXSecSystToSKMode[kns][knm][kNumOfXSecSyst] = {
   // > 1 muon-like ring 
   {
     // banff22  banff23  banff24  banff25  banff26
+    // maqe     mares    ccqe     cc1pi    nc1pi0
     {  true,    false,   true,    false,   false }, // kSKmNuMuCCQE         
     {  false,   true,    false,   true,    false }, // kSKmNuMuCC1pi 
+    {  false,   false,   false,   false,   false }, // kSKmNuMuCCcoh 
     {  false,   false,   false,   false,   false }, // kSKmNuMuCCoth_mu                      
-    {  false,   false,   false,   false,   true  }, // kSKmNuMuNC          
+    {  false,   false,   false,   false,   false }, // kSKmNuMuNC1piC
+    {  false,   false,   false,   false,   true  }, // kSKmNuMuNCoth_mu
     {  true,    false,   true,    false,   false }, // kSKmNuMuBarCCQE      
-    {  false,   true,    false,   true,    false }, // kSKmNuMuBarCC1pi 
+    {  false,   true,    false,   true,    false }, // kSKmNuMuBarCC1pi
+    {  false,   false,   false,   false,   false }, // kSKmNuMuBarCCcoh
     {  false,   false,   false,   false,   false }, // kSKmNuMuBarCCoth_mu                  
-    {  false,   false,   false,   false,   true  }, // kSKmNuMuBarNC       
+    {  false,   false,   false,   false,   false }, // kSKmNuMuBarNC1piC
+    {  false,   false,   false,   false,   true  }, // kSKmNuMuBarNCoth_mu
     {  true,    false,   true,    false,   false }, // kSKmNuECCQE 
-    {  false,   true,    false,   true,    false }, // kSKmNuECC1pi 
-    {  false,   false,   false,   false,   false }, // kSKmNuECCoth_mu   
-    {  false,   false,   false,   false,   true  }, // kSKmNuENC
+    {  false,   true,    false,   true,    false }, // kSKmNuECC1pi
+    {  false,   false,   false,   false,   false }, // kSKmNuECCcoh
+    {  false,   false,   false,   false,   false }, // kSKmNuECCoth_mu
+    {  false,   false,   false,   false,   false }, // kSKmNuENC1piC
+    {  false,   false,   false,   false,   true  }, // kSKmNuENCoth_mu
     {  true,    false,   true,    false,   false }, // kSKmNuEBarCCQE
     {  false,   true,    false,   true,    false }, // kSKmNuEBarCC1pi
+    {  false,   false,   false,   false,   false }, // kSKmNuEBarCCcoh
     {  false,   false,   false,   false,   false }, // kSKmNuEBarCCoth_mu
-    {  false,   false,   false,   false,   true  }, // kSKmNuEBarNC
+    {  false,   false,   false,   false,   false }, // kSKmNuEBarNC1piC
+    {  false,   false,   false,   false,   true  }, // kSKmNuEBarNCoth_mu
     {  true,    false,   true,    false,   false }, // kSKmSigNuECCQE 
-    {  false,   true,    false,   true,    false }, // kSKmSigNuECC1pi 
-    {  false,   false,   false,   false,   false }, // kSKmSigNuECCoth
+    {  false,   true,    false,   true,    false }, // kSKmSigNuECC1pi
+    {  false,   false,   false,   false,   false }, // kSKmSigNuECCcoh
+    {  false,   false,   false,   false,   false }, // kSKmSigNuECCoth_mu
+    {  false,   false,   false,   false,   false }, // kSKmUndefined
     {  false,   false,   false,   false,   false }, // kSKmUndefined
     {  false,   false,   false,   false,   false }, // kSKmUndefined
     {  false,   false,   false,   false,   false }, // kSKmUndefined
@@ -791,7 +830,17 @@ static const bool kXsApplyXSecSystToSKMode[kns][knm][kNumOfXSecSyst] = {
     {  false,   false,   false,   false,   false }, // kSKmNuEBarNCoth_e
     {  false,   false,   false,   false,   false }, // kSKmSigNuECCQE  
     {  false,   false,   false,   false,   false }, // kSKmSigNuECC1pi  
-    {  false,   false,   false,   false,   false }, // kSKmSigNuECCoth
+    {  false,   false,   false,   false,   false }, // kSKmSigNuECCoth_e
+    {  false,   false,   false,   false,   false }, // kSKmUndefined
+    {  false,   false,   false,   false,   false }, // kSKmUndefined
+    {  false,   false,   false,   false,   false }, // kSKmUndefined
+    {  false,   false,   false,   false,   false }, // kSKmUndefined
+    {  false,   false,   false,   false,   false }, // kSKmUndefined
+    {  false,   false,   false,   false,   false }, // kSKmUndefined
+    {  false,   false,   false,   false,   false }, // kSKmUndefined
+    {  false,   false,   false,   false,   false }, // kSKmUndefined
+    {  false,   false,   false,   false,   false }, // kSKmUndefined
+    {  false,   false,   false,   false,   false }, // kSKmUndefined
     {  false,   false,   false,   false,   false }, // kSKmUndefined
     {  false,   false,   false,   false,   false }, // kSKmUndefined
     {  false,   false,   false,   false,   false }, // kSKmUndefined
@@ -832,24 +881,34 @@ static const double kXsEtrueBinEdges[kns][knm][kXsNEtrueBins+1] = {
   // > 1 muon-like ring 
   {
     {  0.000,  0.400,  0.500,  0.600,  0.700,  1.000,  1.500,  2.500,  3.500,  5.000,  7.000, 30.000 }, // kSKmNuMuCCQE         
-    {  0.000,  0.400,  0.500,  0.600,  0.700,  1.000,  1.500,  2.500,  3.500,  5.000,  7.000, 30.000 }, // kSKmNuMuCC1pi 
+    {  0.000,  0.400,  0.500,  0.600,  0.700,  1.000,  1.500,  2.500,  3.500,  5.000,  7.000, 30.000 }, // kSKmNuMuCC1pi
+    {  0.000,  0.400,  0.500,  0.600,  0.700,  1.000,  1.500,  2.500,  3.500,  5.000,  7.000, 30.000 }, // kSKmNuMuCCcoh
     {  0.000,  0.400,  0.500,  0.600,  0.700,  1.000,  1.500,  2.500,  3.500,  5.000,  7.000, 30.000 }, // kSKmNuMuCCoth_mu                      
-    {  0.000,  0.400,  0.500,  0.600,  0.700,  1.000,  1.500,  2.500,  3.500,  5.000,  7.000, 30.000 }, // kSKmNuMuNC          
+    {  0.000,  0.400,  0.500,  0.600,  0.700,  1.000,  1.500,  2.500,  3.500,  5.000,  7.000, 30.000 }, // kSKmNuMuNC1piC
+    {  0.000,  0.400,  0.500,  0.600,  0.700,  1.000,  1.500,  2.500,  3.500,  5.000,  7.000, 30.000 }, // kSKmNuMuNCoth_mu
     {  0.000,  1.500, 30.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000 }, // kSKmNuMuBarCCQE      
-    {  0.000,  1.500, 30.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000 }, // kSKmNuMuBarCC1pi 
+    {  0.000,  1.500, 30.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000 }, // kSKmNuMuBarCC1pi
+    {  0.000,  1.500, 30.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000 }, // kSKmNuMuBarCCcoh
     {  0.000,  1.500, 30.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000 }, // kSKmNuMuBarCCoth_mu                  
-    {  0.000,  1.500, 30.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000 }, // kSKmNuMuBarNC       
+    {  0.000,  1.500, 30.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000 }, // kSKmNuMuBarNC1piC
+    {  0.000,  1.500, 30.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000 }, // kSKmNuMuBarNCoth_mu
     {  0.000,  0.500,  0.700,  0.800,  1.500,  2.500,  4.000, 30.000, -1.000, -1.000, -1.000, -1.000 }, // kSKmNuECCQE 
     {  0.000,  0.500,  0.700,  0.800,  1.500,  2.500,  4.000, 30.000, -1.000, -1.000, -1.000, -1.000 }, // kSKmNuECC1pi 
+    {  0.000,  0.500,  0.700,  0.800,  1.500,  2.500,  4.000, 30.000, -1.000, -1.000, -1.000, -1.000 }, // kSKmNuECCcoh
     {  0.000,  0.500,  0.700,  0.800,  1.500,  2.500,  4.000, 30.000, -1.000, -1.000, -1.000, -1.000 }, // kSKmNuECCoth_mu                                
-    {  0.000,  0.500,  0.700,  0.800,  1.500,  2.500,  4.000, 30.000, -1.000, -1.000, -1.000, -1.000 }, // kSKmNuENC
+    {  0.000,  0.500,  0.700,  0.800,  1.500,  2.500,  4.000, 30.000, -1.000, -1.000, -1.000, -1.000 }, // kSKmNuENC1piC
+    {  0.000,  0.500,  0.700,  0.800,  1.500,  2.500,  4.000, 30.000, -1.000, -1.000, -1.000, -1.000 }, // kSKmNuENCoth_mu
     {  0.000,  2.500, 30.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000 }, // kSKmNuEBarCCQE
     {  0.000,  2.500, 30.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000 }, // kSKmNuEBarCC1pi
+    {  0.000,  2.500, 30.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000 }, // kSKmNuEBarCCcoth_mu
     {  0.000,  2.500, 30.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000 }, // kSKmNuEBarCCoth_mu
-    {  0.000,  2.500, 30.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000 }, // kSKmNuEBarNC
+    {  0.000,  2.500, 30.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000 }, // kSKmNuEBarNC1piC
+    {  0.000,  2.500, 30.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000 }, // kSKmNuEBarNCoth_mu
     {  0.000,  2.500, 30.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000 }, // kSKmSigNuECCQE 
-    {  0.000,  2.500, 30.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000 }, // kSKmSigNuECC1pi 
-    {  0.000,  2.500, 30.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000 }, // kSKmSigNuECCoth
+    {  0.000,  2.500, 30.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000 }, // kSKmSigNuECC1pi
+    {  0.000,  2.500, 30.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000 }, // kSKmSigNuECCcoh
+    {  0.000,  2.500, 30.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000 }, // kSKmSigNuECCoth_mu
+    { -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000 }, // kSKmUndefined
     { -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000 }, // kSKmUndefined
     { -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000 }, // kSKmUndefined
     { -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000 }, // kSKmUndefined
@@ -912,6 +971,16 @@ static const double kXsEtrueBinEdges[kns][knm][kXsNEtrueBins+1] = {
     { -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000 }, // kSKmUndefined
     { -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000 }, // kSKmUndefined
     { -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000 }, // kSKmUndefined
+    { -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000 }, // kSKmUndefined
+    { -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000 }, // kSKmUndefined
+    { -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000 }, // kSKmUndefined
+    { -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000 }, // kSKmUndefined
+    { -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000 }, // kSKmUndefined
+    { -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000 }, // kSKmUndefined
+    { -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000 }, // kSKmUndefined
+    { -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000 }, // kSKmUndefined
+    { -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000 }, // kSKmUndefined
+    { -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000 }, // kSKmUndefined
     { -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000 }  // kSKmUndefined
   }
 };
@@ -954,23 +1023,33 @@ static const int kSKHistoAttributes[kns][knm][kNGraphicAttributes] = {
   {
     {   -1,  kWhite,    1,  1,  kBlack}, // kSKmNuMuCCQE
     { 3544,  kBlack,    1,  1,  kBlack}, // kSKmNuMuCC1pi
-    { 3244,  kBlack,    1,  1,  kBlack}, // kSKmNuMuCCoth_mu
-    { 3006,  kRed,      1,  1,  kBlack}, // kSKmNuMuNC
+    { 3244,  kBlack,    1,  1,  kBlack}, // kSKmNuMuCCcoh
+    { 3006,  kBlack,    1,  1,  kBlack}, // kSKmNuMuCCoth_mu
+    { 3554,  kRed,      1,  1,  kBlack}, // kSKmNuMuNC1piC
+    { 3006,  kRed,      1,  1,  kBlack}, // kSKmNuMuNCoth_mu
     { 3001,  kAzure-3,  1,  1,  kBlack}, // kSKmNuMuBarCCQE
     { 3345,  kAzure-3,  1,  1,  kBlack}, // kSKmNuMuBarCC1pi
+    { 3244,  kAzure-3,  1,  1,  kBlack}, // kSKmNuMuBarCCcoh
     { 3354,  kAzure-3,  1,  1,  kBlack}, // kSKmNuMuBarCCoth_mu
-    { 3006,  kAzure-3,  1,  1,  kBlack}, // kSKmNuMuBarNC
+    { 3544,  kAzure-3,  1,  1,  kBlack}, // kSKmNuMuBarNC1piC
+    { 3006,  kAzure-3,  1,  1,  kBlack}, // kSKmNuMuBarNCoth_mu
     { 3001,  kGreen+1,  1,  1,  kBlack}, // kSKmNuECCQE
     { 3345,  kGreen+1,  1,  1,  kBlack}, // kSKmNuECC1pi
+    { 3244,  kGreen+1,  1,  1,  kBlack}, // kSKmNuECCcoh
     { 3354,  kGreen+1,  1,  1,  kBlack}, // kSKmNuECCoth_mu
-    { 3006,  kGreen+1,  1,  1,  kBlack}, // kSKmNuENC
+    { 3544,  kGreen+1,  1,  1,  kBlack}, // kSKmNuENC1pic
+    { 3006,  kGreen+1,  1,  1,  kBlack}, // kSKmNuENCoth_mu
     { 3001,  kBlue,     1,  1,  kBlack}, // kSKmNuEBarCCQE
     { 3345,  kBlue,     1,  1,  kBlack}, // kSKmNuEBarCC1pi
+    { 3244,  kBlue,     1,  1,  kBlack}, // kSKmNuEBarCCcoh
     { 3354,  kBlue,     1,  1,  kBlack}, // kSKmNuEBarCCoth_mu
-    { 3006,  kBlue,     1,  1,  kBlack}, // kSKmNuEBarNC
+    { 3544,  kBlue,     1,  1,  kBlack}, // kSKmNuEBarNC1pic
+    { 3006,  kBlue,     1,  1,  kBlack}, // kSKmNuEBarNCoth_mu
     { 3001,  kGreen-3,  1,  1,  kBlack}, // kSKmSigNuECCQE
     { 3345,  kGreen-3,  1,  1,  kBlack}, // kSKmSigNuECC1pi
-    { 3354,  kGreen-3,  1,  1,  kBlack}, // kSKmSigNuECCoth
+    { 3244,  kGreen-3,  1,  1,  kBlack}, // kSKmSigNuECCcoh
+    { 3354,  kGreen-3,  1,  1,  kBlack}, // kSKmSigNuECCoth_mu
+    {   -1,        -1, -1, -1,     -1 }, // kSKmUndefined
     {   -1,        -1, -1, -1,     -1 }, // kSKmUndefined
     {   -1,        -1, -1, -1,     -1 }, // kSKmUndefined
     {   -1,        -1, -1, -1,     -1 }, // kSKmUndefined
@@ -1025,7 +1104,17 @@ static const int kSKHistoAttributes[kns][knm][kNGraphicAttributes] = {
     { 3006,    kBlack,  1,  1, kBlack }, // kSKmNuEBarNCoth_e
     { 3001,  kGreen+8,  1,  1, kBlack }, // kSKmSigNuECCQE
     { 3345, kGreen+10,  1,  1, kBlack }, // kSKmSigNuECC1pi
-    { 3354,      kRed,  1,  1, kBlack }, // kSKmSigNuECCoth
+    { 3354,      kRed,  1,  1, kBlack }, // kSKmSigNuECCoth_e
+    {   -1,        -1, -1, -1,     -1 }, // kSKmUndefined
+    {   -1,        -1, -1, -1,     -1 }, // kSKmUndefined
+    {   -1,        -1, -1, -1,     -1 }, // kSKmUndefined
+    {   -1,        -1, -1, -1,     -1 }, // kSKmUndefined
+    {   -1,        -1, -1, -1,     -1 }, // kSKmUndefined
+    {   -1,        -1, -1, -1,     -1 }, // kSKmUndefined
+    {   -1,        -1, -1, -1,     -1 }, // kSKmUndefined
+    {   -1,        -1, -1, -1,     -1 }, // kSKmUndefined
+    {   -1,        -1, -1, -1,     -1 }, // kSKmUndefined
+    {   -1,        -1, -1, -1,     -1 }, // kSKmUndefined
     {   -1,        -1, -1, -1,     -1 }, // kSKmUndefined
     {   -1,        -1, -1, -1,     -1 }, // kSKmUndefined
     {   -1,        -1, -1, -1,     -1 }, // kSKmUndefined
@@ -1047,25 +1136,35 @@ static const SuperkMode_t kSKReactionModesOrderInStack[kns][knm] = {
 
   // > 1 muon-like ring (numu disappearance)
   {
-    kSKmSigNuECC1pi, 
-    kSKmSigNuECCoth,
+    kSKmSigNuECCcoh, 
+    kSKmSigNuECC1pi,
+    kSKmSigNuECCoth_mu,
     kSKmSigNuECCQE, 
-    kSKmNuEBarNC,                                                               
-    kSKmNuEBarCC1pi, 
+    kSKmNuEBarNC1piC,
+    kSKmNuEBarNCoth_mu,
+    kSKmNuEBarCCcoh,
+    kSKmNuEBarCC1pi,
     kSKmNuEBarCCoth_mu,                                
     kSKmNuEBarCCQE, 
-    kSKmNuENC,                                                               
-    kSKmNuECC1pi, 
+    kSKmNuENC1piC,
+    kSKmNuENCoth_mu,
+    kSKmNuECCcoh,
+    kSKmNuECC1pi,
     kSKmNuECCoth_mu,                                
     kSKmNuECCQE, 
-    kSKmNuMuBarNC,       
+    kSKmNuMuBarNC1piC, 
+    kSKmNuMuBarNCoth_mu,
+    kSKmNuMuBarCCcoh, 
     kSKmNuMuBarCC1pi, 
     kSKmNuMuBarCCoth_mu,                  
     kSKmNuMuBarCCQE,      
-    kSKmNuMuNC,          
+    kSKmNuMuNC1piC,
+    kSKmNuMuNCoth_mu,
     kSKmNuMuCCoth_mu,                      
+    kSKmNuMuCCcoh, 
     kSKmNuMuCC1pi, 
     kSKmNuMuCCQE,         
+    kSKmUndefined,
     kSKmUndefined,
     kSKmUndefined,
     kSKmUndefined,
@@ -1120,7 +1219,17 @@ static const SuperkMode_t kSKReactionModesOrderInStack[kns][knm] = {
     kSKmNuENCoth_e,
     kSKmSigNuECCQE,  
     kSKmSigNuECC1pi,  
-    kSKmSigNuECCoth,
+    kSKmSigNuECCoth_e,
+    kSKmUndefined,
+    kSKmUndefined,
+    kSKmUndefined,
+    kSKmUndefined,
+    kSKmUndefined,
+    kSKmUndefined,
+    kSKmUndefined,
+    kSKmUndefined,
+    kSKmUndefined,
+    kSKmUndefined,
     kSKmUndefined,
     kSKmUndefined,
     kSKmUndefined,

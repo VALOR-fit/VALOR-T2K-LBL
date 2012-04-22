@@ -166,7 +166,7 @@ void Superk1ReNFitter::Analyze(Option_t * option)
      bestfit_nuebarncoth    = new TH1D(*fFitInputs->Expectation().CurrPredictedErecoSpectrum(s, kSKmNuEBarNCoth_e));
      bestfit_signueccqe     = new TH1D(*fFitInputs->Expectation().CurrPredictedErecoSpectrum(s, kSKmSigNuECCQE));
      bestfit_signuecc1pi    = new TH1D(*fFitInputs->Expectation().CurrPredictedErecoSpectrum(s, kSKmSigNuECC1pi));
-     bestfit_signueccoth    = new TH1D(*fFitInputs->Expectation().CurrPredictedErecoSpectrum(s, kSKmSigNuECCoth));
+     bestfit_signueccoth    = new TH1D(*fFitInputs->Expectation().CurrPredictedErecoSpectrum(s, kSKmSigNuECCoth_e));
 
 
      bestfit_tot            -> SetDirectory ( 0        );

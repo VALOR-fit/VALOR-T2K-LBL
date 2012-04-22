@@ -136,7 +136,7 @@ void test_nsk_twk_osc_mixing13_deltacp
        double frac_dnsk = 100*(nsk-nskref)/nskref;
        //lorena - now separate signal and background
        double nsksig = skexp.CurrPredictedErecoSpectrum(conv::kSKsFCFV1RingELike, conv::kSKmSigNuECCQE)->Integral();
-       nsksig += skexp.CurrPredictedErecoSpectrum(conv::kSKsFCFV1RingELike, conv::kSKmSigNuECCoth)->Integral();
+       nsksig += skexp.CurrPredictedErecoSpectrum(conv::kSKsFCFV1RingELike, conv::kSKmSigNuECCoth_e)->Integral();
        nsksig += skexp.CurrPredictedErecoSpectrum(conv::kSKsFCFV1RingELike, conv::kSKmSigNuECC1pi)->Integral();
        double nskback = nsk - nsksig;
        // store values
@@ -267,7 +267,7 @@ void test_nsk_twk_osc_mixing13_deltacp
        double frac_dnsk = 100*(nsk-nskref)/nskref;
        //lorena - now separate signal and background
        double nsksig = skexp.CurrPredictedErecoSpectrum(conv::kSKsFCFV1RingELike, conv::kSKmSigNuECCQE)->Integral();
-       nsksig += skexp.CurrPredictedErecoSpectrum(conv::kSKsFCFV1RingELike, conv::kSKmSigNuECCoth)->Integral();
+       nsksig += skexp.CurrPredictedErecoSpectrum(conv::kSKsFCFV1RingELike, conv::kSKmSigNuECCoth_e)->Integral();
        nsksig += skexp.CurrPredictedErecoSpectrum(conv::kSKsFCFV1RingELike, conv::kSKmSigNuECC1pi)->Integral();
        double nskback = nsk - nsksig;
        // store values
