@@ -55,9 +55,9 @@ public:
   void TweakSpecFunc      (double twkdial) { fSpecFuncTwkDial      = twkdial; }
   void TweakWshape        (double twkdial) { fWshapeTwkDial        = twkdial; }
   void TweakShapeCCoth    (double twkdial) { fShapeCCothTwkDial    = twkdial; }
-  void TweakNormCCQE1     (double twkdial) { fNormCCQE1TwkDial     = twkdial; }
-  void TweakNormCCQE2     (double twkdial) { fNormCCQE2TwkDial     = twkdial; }
-  void TweakNormCC1pi1    (double twkdial) { fNormCC1pi1TwkDial    = twkdial; }
+  void TweakNormCCQEE1    (double twkdial) { fNormCCQEE1TwkDial    = twkdial; }
+  void TweakNormCCQEE2    (double twkdial) { fNormCCQEE2TwkDial    = twkdial; }
+  void TweakNormCC1piE1   (double twkdial) { fNormCC1piE1TwkDial   = twkdial; }
   void TweakNormCCcoh     (double twkdial) { fNormCCcohTwkDial     = twkdial; }
   void TweakNormNCcoh     (double twkdial) { fNormNCcohTwkDial     = twkdial; }
   void TweakNormNCoth     (double twkdial) { fNormNCothTwkDial     = twkdial; }
@@ -126,9 +126,9 @@ private:
   double fSpecFuncTwkDial;
   double fWshapeTwkDial;
   double fShapeCCothTwkDial;
-  double fNormCCQE1TwkDial;
-  double fNormCCQE2TwkDial;
-  double fNormCC1pi1TwkDial;
+  double fNormCCQEE1TwkDial;
+  double fNormCCQEE2TwkDial;
+  double fNormCC1piE1TwkDial;
   double fNormCCcohTwkDial;
   double fNormNCcohTwkDial;
   double fNormNCothTwkDial;
@@ -140,9 +140,9 @@ private:
   double fSpecFuncRelErr;
   double fWshapeRelErr;
   double fShapeCCothRelErr;
-  double fNormCCQE1RelErr;
-  double fNormCCQE2RelErr;
-  double fNormCC1pi1RelErr;
+  double fNormCCQEE1RelErr;
+  double fNormCCQEE2RelErr;
+  double fNormCC1piE1RelErr;
   double fNormCCcohRelErr;
   double fNormNCcohRelErr;
   double fNormNCothRelErr;

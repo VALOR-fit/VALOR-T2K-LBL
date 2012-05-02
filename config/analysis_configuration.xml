@@ -256,15 +256,15 @@
 	  </ccothshape>
       </splines>
       <normalisations>
-	  <ccqe1>
+	  <ccqee1>
 	       0.3
-	  </ccqe1>
-	  <ccqe2>
+	  </ccqee1>
+	  <ccqee2>
 	       0.3
-	  </ccqe2>
-	  <cc1pi1>
+	  </ccqee2>
+	  <cc1pie1>
 	       0.4
-	  </cc1pi1>
+	  </cc1pie1>
 	  <cccoh>
 	       1.0
 	  </cccoh>
