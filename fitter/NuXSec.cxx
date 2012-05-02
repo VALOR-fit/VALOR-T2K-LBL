@@ -74,9 +74,9 @@ void NuXSec::Init(void)
   fSpecFuncTwkDial      = 0;
   fWshapeTwkDial        = 0;
   fShapeCCothTwkDial    = 0;
-  fNormCCQE1TwkDial     = 0;
-  fNormCCQE2TwkDial     = 0;
-  fNormCC1pi1TwkDial    = 0;
+  fNormCCQEE1TwkDial    = 0;
+  fNormCCQEE2TwkDial    = 0;
+  fNormCC1piE1TwkDial   = 0;
   fNormCCcohTwkDial     = 0;
   fNormNCcohTwkDial     = 0;
   fNormNCothTwkDial     = 0;
@@ -222,11 +222,11 @@ bool NuXSec::Read(TXMLEngine* xml, XMLNodePointer_t root_node)
     util::XML2Dbl(xml,root_node,"xsec/splines/wshape");
   fShapeCCothRelErr =
     util::XML2Dbl(xml,root_node,"xsec/splines/ccothshape");
-  fNormCCQE1RelErr =
+  fNormCCQEE1RelErr =
     util::XML2Dbl(xml,root_node,"xsec/normalisations/ccqe1");
-  fNormCCQE2RelErr =
+  fNormCCQEE2RelErr =
     util::XML2Dbl(xml,root_node,"xsec/normalisations/ccqe2");
-  fNormCC1pi1RelErr =
+  fNormCC1piE1RelErr =
     util::XML2Dbl(xml,root_node,"xsec/normalisations/cc1pi1");
   fNormCCcohRelErr =
     util::XML2Dbl(xml,root_node,"xsec/normalisations/cccoh");
@@ -530,13 +530,13 @@ double NuXSec::CurrentValue(PhysParamId_t p) const
       return fShapeCCothTwkDial;
       break;
     case kNuisXSecNormCCQEE1:
-      return fNormCCQE1TwkDial;
+      return fNormCCQEE1TwkDial;
       break;
     case kNuisXSecNormCCQEE2:
-      return fNormCCQE2TwkDial;
+      return fNormCCQEE2TwkDial;
       break;
     case kNuisXSecNormCC1piE1:
-      return fNormCC1pi1TwkDial;
+      return fNormCC1piE1TwkDial;
       break;
     case kNuisXSecNormCCcoh:
       return fNormCCcohTwkDial;
@@ -575,13 +575,13 @@ double NuXSec::RelativeError(PhysParamId_t p) const
       return fShapeCCothRelErr;
       break;
     case kNuisXSecNormCCQEE1:
-      return fNormCCQE1RelErr;
+      return fNormCCQEE1RelErr;
       break;
     case kNuisXSecNormCCQEE2:
-      return fNormCCQE2RelErr;
+      return fNormCCQEE2RelErr;
       break;
     case kNuisXSecNormCC1piE1:
-      return fNormCC1pi1RelErr;
+      return fNormCC1piE1RelErr;
       break;
     case kNuisXSecNormCCcoh:
       return fNormCCcohRelErr;
@@ -609,9 +609,9 @@ void NuXSec::PrintSystematicVariations(void) const
   cout << "         >> Spectral function " << fSpecFuncTwkDial      << endl;
   cout << "         >> W-shape           " << fWshapeTwkDial        << endl;
   cout << "         >> CC-oth shape      " << fShapeCCothTwkDial    << endl;
-  cout << "         >> CCQE bin1 norm    " << fNormCCQE1TwkDial     << endl;
-  cout << "         >> CCQE bin2 norm    " << fNormCCQE2TwkDial     << endl;
-  cout << "         >> CC1pi bin1 norm   " << fNormCC1pi1TwkDial    << endl;
+  cout << "         >> CCQE bin1 norm    " << fNormCCQEE1TwkDial    << endl;
+  cout << "         >> CCQE bin2 norm    " << fNormCCQEE2TwkDial    << endl;
+  cout << "         >> CC1pi bin1 norm   " << fNormCC1piE1TwkDial   << endl;
   cout << "         >> CC-coh norm       " << fNormCCcohTwkDial     << endl;
   cout << "         >> NC-coh norm       " << fNormNCcohTwkDial     << endl;
   cout << "         >> NC-oth norm       " << fNormNCothTwkDial     << endl;

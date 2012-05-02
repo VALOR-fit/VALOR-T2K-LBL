@@ -165,9 +165,9 @@ void SuperkExpectation::ResetSystematicVariations(void)
   this->GetNuXSec()->TweakSpecFunc      (0.);
   this->GetNuXSec()->TweakWshape        (0.);
   this->GetNuXSec()->TweakShapeCCoth    (0.);
-  this->GetNuXSec()->TweakNormCCQE1     (0.);
-  this->GetNuXSec()->TweakNormCCQE2     (0.);
-  this->GetNuXSec()->TweakNormCC1pi1    (0.);
+  this->GetNuXSec()->TweakNormCCQEE1    (0.);
+  this->GetNuXSec()->TweakNormCCQEE2    (0.);
+  this->GetNuXSec()->TweakNormCC1piE1   (0.);
   this->GetNuXSec()->TweakNormCCcoh     (0.);
   this->GetNuXSec()->TweakNormNCcoh     (0.);
   this->GetNuXSec()->TweakNormNCoth     (0.);
@@ -349,11 +349,11 @@ void SuperkExpectation::TweakSystematic(string systematic, double twkdial, bool 
   else if(systematic == "xsec_shape_ccoth")
     this->GetNuXSec()->TweakShapeCCoth    (twkdial);
   else if(systematic == "xsec_norm_ccqeE1")
-    this->GetNuXSec()->TweakNormCCQE1     (twkdial);
+    this->GetNuXSec()->TweakNormCCQEE1     (twkdial);
   else if(systematic == "xsec_norm_ccqeE2")
-    this->GetNuXSec()->TweakNormCCQE2     (twkdial);
+    this->GetNuXSec()->TweakNormCCQEE2     (twkdial);
   else if(systematic == "xsec_norm_cc1piE1")
-    this->GetNuXSec()->TweakNormCC1pi1    (twkdial);
+    this->GetNuXSec()->TweakNormCC1piE1    (twkdial);
   else if(systematic == "xsec_norm_cccoh")
     this->GetNuXSec()->TweakNormCCcoh     (twkdial);
   else if(systematic == "xsec_norm_nccoh")
@@ -399,9 +399,9 @@ void SuperkExpectation::TweakAllSystematics(void)
   this->GetNuXSec()->TweakSpecFunc      (rand.Gaus(0.,1.));
   this->GetNuXSec()->TweakWshape        (rand.Gaus(0.,1.));
   this->GetNuXSec()->TweakShapeCCoth    (rand.Gaus(0.,1.));
-  this->GetNuXSec()->TweakNormCCQE1     (rand.Gaus(0.,1.));
-  this->GetNuXSec()->TweakNormCCQE2     (rand.Gaus(0.,1.));
-  this->GetNuXSec()->TweakNormCC1pi1    (rand.Gaus(0.,1.));
+  this->GetNuXSec()->TweakNormCCQEE1    (rand.Gaus(0.,1.));
+  this->GetNuXSec()->TweakNormCCQEE2    (rand.Gaus(0.,1.));
+  this->GetNuXSec()->TweakNormCC1piE1   (rand.Gaus(0.,1.));
   this->GetNuXSec()->TweakNormCCcoh     (rand.Gaus(0.,1.));
   this->GetNuXSec()->TweakNormNCcoh     (rand.Gaus(0.,1.));
   this->GetNuXSec()->TweakNormNCoth     (rand.Gaus(0.,1.));
@@ -612,15 +612,15 @@ void SuperkExpectation::SetNuisanceParams(const FitParamList & fp)
    }
    if(fp.Exists(kNuisXSecNormCCQEE1)) {
      double twk = fp.CurrValue(kNuisXSecNormCCQEE1);
-     this->GetNuXSec()->TweakNormCCQE1(twk);
+     this->GetNuXSec()->TweakNormCCQEE1(twk);
    }
    if(fp.Exists(kNuisXSecNormCCQEE2)) {
      double twk = fp.CurrValue(kNuisXSecNormCCQEE2);
-     this->GetNuXSec()->TweakNormCCQE2(twk);
+     this->GetNuXSec()->TweakNormCCQEE2(twk);
    }
    if(fp.Exists(kNuisXSecNormCC1piE1)) {
      double twk = fp.CurrValue(kNuisXSecNormCC1piE1);
-     this->GetNuXSec()->TweakNormCC1pi1(twk);
+     this->GetNuXSec()->TweakNormCC1piE1(twk);
    }
    if(fp.Exists(kNuisXSecNormCCcoh)) {
      double twk = fp.CurrValue(kNuisXSecNormCCcoh);
