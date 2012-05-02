@@ -42,6 +42,7 @@ f.close()
 
 #specify the cuts you want to apply here
 systematics = []
+#SK
 #systematics.append(["sk_1Rmu_ccqe_ring_counting_eff","true","false","false"]) #not supported in the macro
 systematics.append(["sk_1Rmu_ccqe_ring_counting_eff_0","true","false","false"])
 systematics.append(["sk_1Rmu_ccqe_ring_counting_eff_1","true","false","false"])
@@ -51,14 +52,32 @@ systematics.append(["sk_1Rmu_ccnonqe_eff","false","false","false"])
 systematics.append(["sk_1Rmu_nc_eff","false","false","false"])
 systematics.append(["sk_1Rmu_nuecc_eff","false","false","false"])
 systematics.append(["sk_energy_scale","true","false","false"])
+#BANFF
 #systematics.append(["banff","true","true","true"]) #not supported in this macro
 for i in xrange(27):
    if i <= 21:
       systematics.append(["banff_" + '%(number)02d' % {"number": i},"false","true","false"])
-   elif i == 22 or i == 23:
+   elif i == 22:
       systematics.append(["banff_" + '%(number)02d' % {"number": i},"true","false","false"])
-   elif i == 24 or i == 25 or i == 26:
+   elif i == 23 or 26:
+      systematics.append(["banff_" + '%(number)02d' % {"number": i},"false","false","false"])
+   elif i == 24 or i == 25:
       systematics.append(["banff_" + '%(number)02d' % {"number": i},"false","false","true"])
+#XSec splines
+systematics.append(["xsec_pf", "false", "false", "false"])
+systematics.append(["xsec_eb", "false", "false", "false"])
+systematics.append(["xsec_sf", "false", "false", "false"])
+systematics.append(["xsec_wshape", "false", "false", "false"])
+systematics.append(["xsec_shape_ccoth", "false", "false", "false"])
+#XSec normalisations
+systematics.append(["xsec_norm_ccqeE1", "false", "false", "true"])
+systematics.append(["xsec_norm_ccqeE2", "false", "false", "true"])
+systematics.append(["xsec_norm_cc1piE1", "false", "false", "true"])
+systematics.append(["xsec_norm_cccoh", "false", "false", "false"])
+systematics.append(["xsec_norm_nccoh", "false", "false", "false"])
+systematics.append(["xsec_norm_ncoth", "false", "false", "false"])
+systematics.append(["xsec_norm_nuetonumu", "false", "false", "false"])
+#expected table at the end
 systematics.append(["expected", "false","false","false"])
 
 samples = []

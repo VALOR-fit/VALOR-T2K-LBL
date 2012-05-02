@@ -238,6 +238,46 @@
                inputs/official/2012/xsec/fake_splines_v0.root
           </filename>
       </weight_splines>
+      <splines>
+	  <pf>
+	       0.13
+	  </pf>
+	  <eb>
+	       0.33
+	  </eb>
+	  <sf>
+	       1
+	  </sf>
+	  <wshape>
+	       0.52
+	  </wshape>
+	  <ccothshape>
+	       0.4
+	  </ccothshape>
+      </splines>
+      <normalisations>
+	  <ccqe1>
+	       0.3
+	  </ccqe1>
+	  <ccqe2>
+	       0.3
+	  </ccqe2>
+	  <cc1pi1>
+	       0.4
+	  </cc1pi1>
+	  <cccoh>
+	       1.0
+	  </cccoh>
+	  <nccoh>
+	       0.3
+	  </nccoh>
+	  <ncoth>
+	       0.3
+	  </ncoth>
+	  <numu_to_nue>
+	       0.06
+	  </numu_to_nue>
+      </normalisations>
   </xsec>
 
   <!--

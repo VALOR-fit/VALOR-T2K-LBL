@@ -68,6 +68,20 @@ void NuXSec::Init(void)
       fFracTun [is][im] = 0;
     }
   }
+
+  fFermiMomTwkDial      = 0;
+  fBindETwkDial         = 0;
+  fSpecFuncTwkDial      = 0;
+  fWshapeTwkDial        = 0;
+  fShapeCCothTwkDial    = 0;
+  fNormCCQE1TwkDial     = 0;
+  fNormCCQE2TwkDial     = 0;
+  fNormCC1pi1TwkDial    = 0;
+  fNormCCcohTwkDial     = 0;
+  fNormNCcohTwkDial     = 0;
+  fNormNCothTwkDial     = 0;
+  fNormNuEToNuMuTwkDial = 0;
+
 }
 //________________________________________________________________________________________
 void NuXSec::CleanUp(void)
@@ -198,6 +212,31 @@ bool NuXSec::Read(TXMLEngine* xml, XMLNodePointer_t root_node)
      }
   }
 
+  fFermiMomRelErr =
+    util::XML2Dbl(xml,root_node,"xsec/splines/pf");
+  fBindERelErr =
+    util::XML2Dbl(xml,root_node,"xsec/splines/eb");
+  fSpecFuncRelErr =
+    util::XML2Dbl(xml,root_node,"xsec/splines/sf");
+  fWshapeRelErr =
+    util::XML2Dbl(xml,root_node,"xsec/splines/wshape");
+  fShapeCCothRelErr =
+    util::XML2Dbl(xml,root_node,"xsec/splines/ccothshape");
+  fNormCCQE1RelErr =
+    util::XML2Dbl(xml,root_node,"xsec/normalisations/ccqe1");
+  fNormCCQE2RelErr =
+    util::XML2Dbl(xml,root_node,"xsec/normalisations/ccqe2");
+  fNormCC1pi1RelErr =
+    util::XML2Dbl(xml,root_node,"xsec/normalisations/cc1pi1");
+  fNormCCcohRelErr =
+    util::XML2Dbl(xml,root_node,"xsec/normalisations/cccoh");
+  fNormNCcohRelErr =
+    util::XML2Dbl(xml,root_node,"xsec/normalisations/nccoh");
+  fNormNCothRelErr =
+    util::XML2Dbl(xml,root_node,"xsec/normalisations/ncoth");
+  fNormNuEToNuMuRelErr =
+    util::XML2Dbl(xml,root_node,"xsec/normalisations/numu_to_nue");
+
 #ifdef __show_init_mesg_info__
   cout << "Exp/NuXSec >> Done reading neutrino cross-section inputs!" << endl;
 #endif
@@ -219,8 +258,8 @@ double NuXSec::FinTuningWght(
      PhysParamId_t p = kListOfXSecSyst[isyst];
      // "Tuning" involves reweighting to BANFF best-fit values.
      // Consider only the cross-section systematics that were included in the BANFF fit.
-     bool is_banff_xsec_param = kXSecSystIncludedInBANFF[isyst];
-     if(!is_banff_xsec_param) continue;
+     //bool is_banff_xsec_param = kXSecSystIncludedInBANFF[isyst];
+     //if(!is_banff_xsec_param) continue;
      // Is the current systematic parameter applied to current sample/mode end energy bin?
      bool apply = this->ApplySyst(p,s,m,Ereco,Etrue);
      if(!apply) continue;
@@ -267,7 +306,7 @@ double NuXSec::FinTuningWght_1p(
      assert(wght_spl);
      double t = fBANFF->BestFitValue(p);
      wght = wght_spl->Eval(t);
-     wght = TMath::Max(0.,wght); 
+     wght = TMath::Max(0.,wght);
   }
 
   //
@@ -279,7 +318,39 @@ double NuXSec::FinTuningWght_1p(
   {
      wght = fBANFF->BestFitValue(p);
   }
-  
+
+  //
+  // Fermi momentum
+  // binding energy
+  // spectral function on/off
+  // W-shape
+  // CC other shape
+  //
+  else
+  if(p == kNuisXSecFermiMom || p == kNuisXSecBindE || p == kNuisXSecSpecFunc || p == kNuisXSecWshape || p == kNuisXSecShapeCCoth)
+  {
+    TSpline3 * wght_spl = this->FindWghtSpline(p,s,m,Ereco,Etrue);
+    assert(wght_spl);
+    wght = wght_spl->Eval(1);
+    wght = TMath::Max(0.,wght);
+  }
+
+  //
+  // CCQE norm 1.5 - 3.5 GeV
+  // CCQE norm > 3.5 GeV
+  // CC1pi norm > 2.5 GeV   
+  // CC coherent norm
+  // NC coherent norm
+  // NC other norm
+  // nue / numu cross section
+  //
+  else
+  if(p == kNuisXSecNormCCQEE1 || p == kNuisXSecNormCCQEE2 || p == kNuisXSecNormCC1piE1 || p == kNuisXSecNormCCcoh || 
+       p == kNuisXSecNormNCcoh || p == kNuisXSecNormNCoth || p == kNuisXSecNormNuEToNuMu)
+  {    
+    wght = 1.;
+  }
+
 #ifdef __show_banff_tuning_wght_mesg_debug__
   if (wght != 1.)
   {
@@ -313,8 +384,13 @@ double NuXSec::SystWght(
   for(int isyst = 0; isyst < kNumOfXSecSyst; isyst++) {
      PhysParamId_t p = kListOfXSecSyst[isyst];
      // Was tweaked?
-     double dt = TMath::Abs(fBANFF->CurrentValue(p) - fBANFF->BestFitValue(p)); // only banff params for the time-being
+     double dt = 0.;
+     if(kXSecSystIncludedInBANFF[isyst])
+       dt = TMath::Abs(fBANFF->CurrentValue(p) - fBANFF->BestFitValue(p)); // banff parameters
+     else
+       dt = TMath::Abs(this->CurrentValue(p)); // non-banff normalisations
      if(dt < kASmallNum) continue;
+
      // Is the current systematic parameter applied to current sample/mode end energy bin?
      bool apply = this->ApplySyst(p,s,m,Ereco,Etrue);
      if(!apply) continue;
@@ -375,6 +451,41 @@ double NuXSec::SystWght_1p(
      wght = fBANFF->CurrentValue(p) / fBANFF->BestFitValue(p);
   }
 
+  //
+  // Fermi momentum
+  // binding energy
+  // spectral function on/off
+  // W-shape
+  // CC other shape
+  //
+  else
+  if(p == kNuisXSecFermiMom || p == kNuisXSecBindE || p == kNuisXSecSpecFunc || p == kNuisXSecWshape || p == kNuisXSecShapeCCoth)
+  {
+    TSpline3 * wght_spl = this->FindWghtSpline(p,s,m,Ereco,Etrue);
+    assert(wght_spl);
+    double tc = this->CurrentValue(p);
+    double te = this->RelativeError(p);
+    wght = wght_spl->Eval(1 + (tc * te)) / wght_spl->Eval(1);
+    wght = TMath::Max(0.,wght);
+  }
+
+  //
+  // CCQE norm 1.5 - 3.5 GeV
+  // CCQE norm > 3.5 GeV
+  // CC1pi norm > 2.5 GeV   
+  // CC coherent norm
+  // NC coherent norm
+  // NC other norm
+  // nue / numu cross section
+  //
+  else
+  if(p == kNuisXSecNormCCQEE1 || p == kNuisXSecNormCCQEE2 || p == kNuisXSecNormCC1piE1 || p == kNuisXSecNormCCcoh || 
+     p == kNuisXSecNormNCcoh || p == kNuisXSecNormNCoth || p == kNuisXSecNormNuEToNuMu)
+  {    
+    wght = 1 + (this->CurrentValue(p) * this->RelativeError(p));
+  }
+
+
 #ifdef __show_syst_var_wght_mesg_debug__
   if (wght != 1.)
   {
@@ -402,12 +513,109 @@ double NuXSec::SystWght_1p(
 //________________________________________________________________________________________
 double NuXSec::CurrentValue(PhysParamId_t p) const
 {
+  switch(p) {
+    case kNuisXSecFermiMom:
+      return fFermiMomTwkDial;
+      break;
+    case kNuisXSecBindE:
+      return fBindETwkDial;
+      break;
+    case kNuisXSecSpecFunc:
+      return fSpecFuncTwkDial;
+      break;
+    case kNuisXSecWshape:
+      return fWshapeTwkDial;
+      break;
+    case kNuisXSecShapeCCoth:
+      return fShapeCCothTwkDial;
+      break;
+    case kNuisXSecNormCCQEE1:
+      return fNormCCQE1TwkDial;
+      break;
+    case kNuisXSecNormCCQEE2:
+      return fNormCCQE2TwkDial;
+      break;
+    case kNuisXSecNormCC1piE1:
+      return fNormCC1pi1TwkDial;
+      break;
+    case kNuisXSecNormCCcoh:
+      return fNormCCcohTwkDial;
+      break;
+    case kNuisXSecNormNCcoh:
+      return fNormNCcohTwkDial;
+      break;
+    case kNuisXSecNormNCoth:
+      return fNormNCothTwkDial;
+      break;
+    case kNuisXSecNormNuEToNuMu:
+      return fNormNuEToNuMuTwkDial;
+      break;
+    default:
+      return 0;
+  }
+  return 0;
+}
+//________________________________________________________________________________________
+double NuXSec::RelativeError(PhysParamId_t p) const
+{
+  switch(p) {
+    case kNuisXSecFermiMom:
+      return fFermiMomRelErr;
+      break;
+    case kNuisXSecBindE:
+      return fBindERelErr;
+      break;
+    case kNuisXSecSpecFunc:
+      return fSpecFuncRelErr;
+      break;
+    case kNuisXSecWshape:
+      return fWshapeRelErr;
+      break;
+    case kNuisXSecShapeCCoth:
+      return fShapeCCothRelErr;
+      break;
+    case kNuisXSecNormCCQEE1:
+      return fNormCCQE1RelErr;
+      break;
+    case kNuisXSecNormCCQEE2:
+      return fNormCCQE2RelErr;
+      break;
+    case kNuisXSecNormCC1piE1:
+      return fNormCC1pi1RelErr;
+      break;
+    case kNuisXSecNormCCcoh:
+      return fNormCCcohRelErr;
+      break;
+    case kNuisXSecNormNCcoh:
+      return fNormNCcohRelErr;
+      break;
+    case kNuisXSecNormNCoth:
+      return fNormNCothRelErr;
+      break;
+    case kNuisXSecNormNuEToNuMu:
+      return fNormNuEToNuMuRelErr;
+      break;
+    default:
+      return 0;
+  }
   return 0;
 }
 //________________________________________________________________________________________
 void NuXSec::PrintSystematicVariations(void) const
 {
-
+  cout << "Exp/XSec >> XSec parameters:"                            << endl; 
+  cout << "         >> Fermi momentum    " << fFermiMomTwkDial      << endl;
+  cout << "         >> Binding energy    " << fBindETwkDial         << endl;
+  cout << "         >> Spectral function " << fSpecFuncTwkDial      << endl;
+  cout << "         >> W-shape           " << fWshapeTwkDial        << endl;
+  cout << "         >> CC-oth shape      " << fShapeCCothTwkDial    << endl;
+  cout << "         >> CCQE bin1 norm    " << fNormCCQE1TwkDial     << endl;
+  cout << "         >> CCQE bin2 norm    " << fNormCCQE2TwkDial     << endl;
+  cout << "         >> CC1pi bin1 norm   " << fNormCC1pi1TwkDial    << endl;
+  cout << "         >> CC-coh norm       " << fNormCCcohTwkDial     << endl;
+  cout << "         >> NC-coh norm       " << fNormNCcohTwkDial     << endl;
+  cout << "         >> NC-oth norm       " << fNormNCothTwkDial     << endl;
+  cout << "         >> NuE to NuMu norm  " << fNormNuEToNuMuTwkDial << endl;
 }
 //________________________________________________________________________________________
 

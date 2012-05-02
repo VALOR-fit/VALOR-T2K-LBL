@@ -78,7 +78,7 @@ void make_fake_xsec_wght_splines()
                       wght[i] = 1./twkd[i];
                    }
                    else {
-                      wght[i] = 1.;
+                      wght[i] = twkd[i];
                    }
           
                 }

@@ -328,6 +328,8 @@ int BANFF::Param2Idx(PhysParamId_t p) const
   int iparam = (int) p;
   int first  = (int) kNuisBANFF00;
   int last   = (int) kNuisBANFF26;
+  if(! (iparam >= first && iparam <= last) )
+    cout << AsString(p) << endl;
   assert(iparam >= first && iparam <= last);
   int idx = iparam-first;
   return idx;  

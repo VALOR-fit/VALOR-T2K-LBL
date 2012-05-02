@@ -447,6 +447,10 @@ void test_systematic_error_propagation
     skexp->TweakSystematic(systematic, skexp->GetBANFF()->BestFitValue(util::PhysParamIdFromString(systematic)) * (1 + skexp->GetBANFF()->CovMatrix()(bindex,bindex)));
     skexp->GetBANFF()->PrintSystematicVariations();
   }
+  else if(sys.find("xsec_") == 0) {
+    skexp->TweakSystematic(systematic,+1.);
+    skexp->GetNuXSec()->PrintSystematicVariations();
+  }
   else
     skexp->TweakSystematic(systematic,+1.);
   skexp->Generate(ph);
@@ -580,6 +584,10 @@ void test_systematic_error_propagation
     // curr/nominal = 1 - x
     skexp->TweakSystematic(systematic, skexp->GetBANFF()->BestFitValue(util::PhysParamIdFromString(systematic)) * (1 - skexp->GetBANFF()->CovMatrix()(bindex,bindex)));
     skexp->GetBANFF()->PrintSystematicVariations();
+  }
+  else if(sys.find("xsec_") == 0) {
+    skexp->TweakSystematic(systematic,-1.);
+    skexp->GetNuXSec()->PrintSystematicVariations();
   }
   else
     skexp->TweakSystematic(systematic,-1.);
@@ -1810,11 +1818,12 @@ void test_systematic_error_propagation
     }//signue etrue (flux binning)
     if (use_tex && s == conv::kSKsFCFV1RingMuLike)
       switch(m) {
-      case conv::kSKmNuMuNC:
-      case conv::kSKmNuMuBarNC:
-      case conv::kSKmNuENC:
-      case conv::kSKmNuEBarNC:
+      case conv::kSKmNuMuNCoth_mu:
+      case conv::kSKmNuMuBarNCoth_mu:
+      case conv::kSKmNuENCoth_mu:
+      case conv::kSKmNuEBarNCoth_mu:
 	streamer << "\\hline" << endl;
+	break;
       }
     else if (use_tex && s == conv::kSKsFCFV1RingELike)
       switch(m) {
@@ -1823,6 +1832,7 @@ void test_systematic_error_propagation
       case conv::kSKmNuENCoth_e:
       case conv::kSKmNuEBarNCoth_e:
 	streamer << "\\hline" << endl;
+	break;
       }       
   }//end loop over sk modes
 
@@ -1905,6 +1915,8 @@ print_expected_errors(bool use_tex, const char * output_file, const char * confi
   XMLNodePointer_t root_node = xml->DocGetRootElement(xmldoc);
 
   // Get the expected systematic variations
+
+  //SK
   double SKDetEnergyScale1RmuRelErr = 
     util::XML2Dbl(xml,root_node,
      "detector_systematics/superk/energy_scale_relative_error/one_mu_ring");
@@ -1924,9 +1936,36 @@ print_expected_errors(bool use_tex, const char * output_file, const char * confi
     util::XML2Dbl(xml,root_node, 
       "detector_systematics/superk/efficiency_relative_error/one_mu_ring/nuecc");
 
+  //BANFF
   TMatrixD *BANFFCovMtrx = 
     util::XML2TMatrixD(xml,root_node,
       "banff/covariance_matrix");
+
+  //XSec
+  double FermiMomRelErr =
+    util::XML2Dbl(xml,root_node,"xsec/splines/pf");
+  double BindERelErr =
+    util::XML2Dbl(xml,root_node,"xsec/splines/eb");
+  double SpecFuncRelErr =
+    util::XML2Dbl(xml,root_node,"xsec/splines/sf");
+  double WshapeRelErr =
+    util::XML2Dbl(xml,root_node,"xsec/splines/wshape");
+  double ShapeCCothRelErr =
+    util::XML2Dbl(xml,root_node,"xsec/splines/ccothshape");
+  double NormCCQE1RelErr =
+    util::XML2Dbl(xml,root_node,"xsec/normalisations/ccqe1");
+  double NormCCQE2RelErr =
+    util::XML2Dbl(xml,root_node,"xsec/normalisations/ccqe2");
+  double NormCC1pi1RelErr =
+    util::XML2Dbl(xml,root_node,"xsec/normalisations/cc1pi1");
+  double NormCCcohRelErr =
+    util::XML2Dbl(xml,root_node,"xsec/normalisations/cccoh");
+  double NormNCcohRelErr =
+    util::XML2Dbl(xml,root_node,"xsec/normalisations/nccoh");
+  double NormNCothRelErr =
+    util::XML2Dbl(xml,root_node,"xsec/normalisations/ncoth");
+  double NormNuEToNuMuRelErr =
+    util::XML2Dbl(xml,root_node,"xsec/normalisations/numu_to_nue");
 
   // Release memory
   xml->FreeDoc(xmldoc);
@@ -1995,10 +2034,74 @@ print_expected_errors(bool use_tex, const char * output_file, const char * confi
     streamer << setw(ncol1)  << setfill(' ') << systematic << endcolumn
 	     << setw(ncolnev)  << setfill(' ') << setprecision(nprecisionnev)
 	     << BANFFCovMtrx(i,i) * 100 << pctsymbol;
-    if (i == 22 || i == 23)
+    if (i == 22)
       streamer << " in ereco bin 2 (numu only)";
+    else if (i == 23)
+      streamer << " numu should be slightly different";
     streamer << endrow << endl;
   }
+
+  systematic = "xsec pF";
+  streamer << setw(ncol1)  << setfill(' ') << systematic << endcolumn
+	   << setw(ncolnev)  << setfill(' ') << setprecision(nprecisionnev)
+	   << FermiMomRelErr * 100 << pctsymbol
+	   << endrow << endl;
+  systematic = "xsec Eb";
+  streamer << setw(ncol1)  << setfill(' ') << systematic << endcolumn
+	   << setw(ncolnev)  << setfill(' ') << setprecision(nprecisionnev)
+	   << BindERelErr * 100 << pctsymbol
+	   << endrow << endl;
+  systematic = "xsec Spect Func";
+  streamer << setw(ncol1)  << setfill(' ') << systematic << endcolumn
+	   << setw(ncolnev)  << setfill(' ') << setprecision(nprecisionnev)
+	   << SpecFuncRelErr * 100 << pctsymbol
+	   << endrow << endl;
+  systematic = "xsec Wshape";
+  streamer << setw(ncol1)  << setfill(' ') << systematic << endcolumn
+	   << setw(ncolnev)  << setfill(' ') << setprecision(nprecisionnev)
+	   << WshapeRelErr * 100 << pctsymbol
+	   << endrow << endl;
+  systematic = "xsec CCoth shape";
+  streamer << setw(ncol1)  << setfill(' ') << systematic << endcolumn
+	   << setw(ncolnev)  << setfill(' ') << setprecision(nprecisionnev)
+	   << ShapeCCothRelErr * 100 << pctsymbol
+	   << endrow << endl;
+
+  systematic = "Norm CCQE E1";
+  streamer << setw(ncol1)  << setfill(' ') << systematic << endcolumn
+	   << setw(ncolnev)  << setfill(' ') << setprecision(nprecisionnev)
+	   << NormCCQE1RelErr * 100 << pctsymbol
+	   << endrow << endl;
+  systematic = "Norm CCQE E2";
+  streamer << setw(ncol1)  << setfill(' ') << systematic << endcolumn
+	   << setw(ncolnev)  << setfill(' ') << setprecision(nprecisionnev)
+	   << NormCCQE2RelErr * 100 << pctsymbol
+	   << endrow << endl;
+  systematic = "Norm CC1pi E1";
+  streamer << setw(ncol1)  << setfill(' ') << systematic << endcolumn
+	   << setw(ncolnev)  << setfill(' ') << setprecision(nprecisionnev)
+	   << NormCC1pi1RelErr * 100 << pctsymbol
+	   << endrow << endl;
+  systematic = "Norm CC coh";
+  streamer << setw(ncol1)  << setfill(' ') << systematic << endcolumn
+	   << setw(ncolnev)  << setfill(' ') << setprecision(nprecisionnev)
+	   << NormCCcohRelErr * 100 << pctsymbol
+	   << endrow << endl;
+  systematic = "Norm NC coh";
+  streamer << setw(ncol1)  << setfill(' ') << systematic << endcolumn
+	   << setw(ncolnev)  << setfill(' ') << setprecision(nprecisionnev)
+	   << NormNCcohRelErr * 100 << pctsymbol
+	   << endrow << endl;
+  systematic = "Norm NC oth";
+  streamer << setw(ncol1)  << setfill(' ') << systematic << endcolumn
+	   << setw(ncolnev)  << setfill(' ') << setprecision(nprecisionnev)
+	   << NormNCothRelErr * 100 << pctsymbol
+	   << endrow << endl;
+  systematic = "Norm NuE to NuMu";
+  streamer << setw(ncol1)  << setfill(' ') << systematic << endcolumn
+	   << setw(ncolnev)  << setfill(' ') << setprecision(nprecisionnev)
+	   << NormNuEToNuMuRelErr * 100 << pctsymbol
+	   << endrow << endl;
 
   if(!use_tex) {
      streamer << setw(150)  << setfill('-') << " " << endl;

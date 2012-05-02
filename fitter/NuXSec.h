@@ -50,12 +50,24 @@ public:
   // Tweak systematic parameters held in this object.
   // Note: BANFF cross-section systematic parameters are tweaked via the BANFF object and they are 
   // correlated with the flux systematic params.
-
-  // ...
-
+  void TweakFermiMom      (double twkdial) { fFermiMomTwkDial      = twkdial; }
+  void TweakBindE         (double twkdial) { fBindETwkDial         = twkdial; }
+  void TweakSpecFunc      (double twkdial) { fSpecFuncTwkDial      = twkdial; }
+  void TweakWshape        (double twkdial) { fWshapeTwkDial        = twkdial; }
+  void TweakShapeCCoth    (double twkdial) { fShapeCCothTwkDial    = twkdial; }
+  void TweakNormCCQE1     (double twkdial) { fNormCCQE1TwkDial     = twkdial; }
+  void TweakNormCCQE2     (double twkdial) { fNormCCQE2TwkDial     = twkdial; }
+  void TweakNormCC1pi1    (double twkdial) { fNormCC1pi1TwkDial    = twkdial; }
+  void TweakNormCCcoh     (double twkdial) { fNormCCcohTwkDial     = twkdial; }
+  void TweakNormNCcoh     (double twkdial) { fNormNCcohTwkDial     = twkdial; }
+  void TweakNormNCoth     (double twkdial) { fNormNCothTwkDial     = twkdial; }
+  void TweakNormNuEToNuMu (double twkdial) { fNormNuEToNuMuTwkDial = twkdial; }
 
   // Get current value of systematic params handled by this class
   double CurrentValue (conv::PhysParamId_t p) const;
+
+  // Get the relative error of systematic params handled by this class
+  double RelativeError (conv::PhysParamId_t p) const;
 
   // Get weight spline for each sample / mode / parameters / Ereco bin / Etrue bin
   TSpline3 * FindWghtSpline(conv::PhysParamId_t p, conv::SuperkSample_t s, conv::SuperkMode_t m, double Ereco, double Etrue) const;
@@ -107,6 +119,34 @@ private:
   TSpline3 *  fXSecWghtSpl[knwspl]; ///< Weight splines. Index is function of sample, mode, systematic param, Ereco bin, Etrue bin
   TH2D *      fFracNom[kns][knm];   ///<
   TH2D *      fFracTun[kns][knm];   ///<
+
+  // tweaking dials
+  double fFermiMomTwkDial;
+  double fBindETwkDial;
+  double fSpecFuncTwkDial;
+  double fWshapeTwkDial;
+  double fShapeCCothTwkDial;
+  double fNormCCQE1TwkDial;
+  double fNormCCQE2TwkDial;
+  double fNormCC1pi1TwkDial;
+  double fNormCCcohTwkDial;
+  double fNormNCcohTwkDial;
+  double fNormNCothTwkDial;
+  double fNormNuEToNuMuTwkDial;
+
+  // relative errors
+  double fFermiMomRelErr;
+  double fBindERelErr;
+  double fSpecFuncRelErr;
+  double fWshapeRelErr;
+  double fShapeCCothRelErr;
+  double fNormCCQE1RelErr;
+  double fNormCCQE2RelErr;
+  double fNormCC1pi1RelErr;
+  double fNormCCcohRelErr;
+  double fNormNCcohRelErr;
+  double fNormNCothRelErr;
+  double fNormNuEToNuMuRelErr;
 
 ClassDef(NuXSec, 4);
 };

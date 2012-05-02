@@ -727,16 +727,20 @@ string t2kana::util::AsString(PhysParamId_t p)
     //
     // XSec params not correlated with flux
     //
+
     case ( kNuisXSecFermiMom   ) : return "Fermi Momentum";                  break;
     case ( kNuisXSecBindE      ) : return "Binding Energy";                  break; 
     case ( kNuisXSecSpecFunc   ) : return "Spectral Func";                   break; 
-    case ( kNuisXSecNormCCQE1  ) : return "Norm; CC QE Norm; 1.5 - 3.5 GeV"; break; 
-    case ( kNuisXSecNormCCQE2  ) : return "Norm; CC QE Norm; > 3.5 GeV";     break; 
-    case ( kNuisXSecDeltaMass  ) : return "Delta mass";                      break; 
-    case ( kNuisXSecDeltaWidth ) : return "Delta width";                     break; 
-    case ( kNuisXSecNormCC1pi1 ) : return "Norm; CC 1pi; > 2.5 GeV";         break; 
+    case ( kNuisXSecWshape     ) : return "W-shape";                         break;
+    case ( kNuisXSecShapeCCoth ) : return "Shape; CC Oth";                   break;
+
+    case ( kNuisXSecNormCCQEE1 ) : return "Norm; CC QE Norm; 1.5 - 3.5 GeV"; break; 
+    case ( kNuisXSecNormCCQEE2 ) : return "Norm; CC QE Norm; > 3.5 GeV";     break; 
+    case ( kNuisXSecNormCC1piE1) : return "Norm; CC 1pi; > 2.5 GeV";         break; 
     case ( kNuisXSecNormCCcoh  ) : return "Norm; CC Coh";                    break;
-    case ( kNuisXSecNormCCoth  ) : return "Norm; CC Oth";                    break;
+    case ( kNuisXSecNormNCcoh  ) : return "Norm; NC Coh";                    break;
+    case ( kNuisXSecNormNCoth  ) : return "Norm; NC Oth";                    break;
+    case ( kNuisXSecNormNuEToNuMu ) : return "Norm; NuE To NuMu";                    break;
 
     case ( kNuisFSI00 ) : 
     case ( kNuisFSI01 ) : 
@@ -851,13 +855,16 @@ string t2kana::util::AsStringCompact(PhysParamId_t p)
     case ( kNuisXSecFermiMom          ) : return "f_pfermi";       break;
     case ( kNuisXSecBindE             ) : return "f_bind";         break; 
     case ( kNuisXSecSpecFunc          ) : return "f_specfunc";     break; 
-    case ( kNuisXSecNormCCQE1         ) : return "f_norm_ccqe_1";  break; 
-    case ( kNuisXSecNormCCQE2         ) : return "f_norm_ccqe_2";  break; 
-    case ( kNuisXSecDeltaMass         ) : return "f_delta_mass";   break; 
-    case ( kNuisXSecDeltaWidth        ) : return "f_delta_width";  break; 
-    case ( kNuisXSecNormCC1pi1        ) : return "f_norm_cc1pi_1"; break; 
+    case ( kNuisXSecWshape            ) : return "f_wshape";       break;
+    case ( kNuisXSecShapeCCoth        ) : return "f_shape_ccoth";  break;
+
+    case ( kNuisXSecNormCCQEE1        ) : return "f_norm_ccqe_1";  break; 
+    case ( kNuisXSecNormCCQEE2        ) : return "f_norm_ccqe_2";  break; 
+    case ( kNuisXSecNormCC1piE1       ) : return "f_norm_cc1pi_1"; break; 
     case ( kNuisXSecNormCCcoh         ) : return "f_norm_cccoh";   break;
-    case ( kNuisXSecNormCCoth         ) : return "f_norm_ccoth";   break;
+    case ( kNuisXSecNormNCcoh         ) : return "f_norm_nccoh";   break;
+    case ( kNuisXSecNormNCoth         ) : return "f_norm_ncoth";   break;
+    case ( kNuisXSecNormNuEToNuMu     ) : return "f_norm_nuetonumu"; break;
 
     case ( kNuisFSI00                 ) : return "f_fsi00";        break;
     case ( kNuisFSI01                 ) : return "f_fsi01";        break;
@@ -1357,6 +1364,30 @@ t2kana::conv::PhysParamId_t
   if(sh == "banff_25") return kNuisBANFF25;
   if(sh == "banff_26") return kNuisBANFF26;
 
+  if(sh == "xsec_pf")           return kNuisXSecFermiMom;
+  if(sh == "xsec_eb")           return kNuisXSecBindE;
+  if(sh == "xsec_sf")           return kNuisXSecSpecFunc;
+  if(sh == "xsec_wshape")       return kNuisXSecWshape;
+  if(sh == "xsec_shape_ccoth")  return kNuisXSecShapeCCoth;
+  if(sh == "xsec_norm_ccqeE1")  return kNuisXSecNormCCQEE1;
+  if(sh == "xsec_norm_ccqeE2")  return kNuisXSecNormCCQEE2;
+  if(sh == "xsec_norm_cc1piE1") return kNuisXSecNormCC1piE1;
+  if(sh == "xsec_norm_cccoh")   return kNuisXSecNormCCcoh;
+  if(sh == "xsec_norm_nccoh")   return kNuisXSecNormNCcoh;
+  if(sh == "xsec_norm_ncoth")   return kNuisXSecNormNCoth;
+  if(sh == "xsec_norm_nuenumu") return kNuisXSecNormNuEToNuMu;
+
+  if(sh == "fsi_00") return kNuisFSI00;
+  if(sh == "fsi_01") return kNuisFSI01;
+  if(sh == "fsi_02") return kNuisFSI02;
+  if(sh == "fsi_03") return kNuisFSI03;
+  if(sh == "fsi_04") return kNuisFSI04;
+  if(sh == "fsi_05") return kNuisFSI05;
+  if(sh == "fsi_06") return kNuisFSI06;
+  if(sh == "fsi_07") return kNuisFSI07;
+  if(sh == "fsi_08") return kNuisFSI08;
+  if(sh == "fsi_09") return kNuisFSI09;
+
   cout << sh << " not yet supported in util::PhysParamIdFromString()" << endl;
   return kPhypUndefined;
 }
@@ -1622,16 +1653,21 @@ bool t2kana::util::IsSystematic(PhysParamId_t p)
     case ( kNuisBANFF24               ) : return true;  break;
     case ( kNuisBANFF25               ) : return true;  break;
     case ( kNuisBANFF26               ) : return true;  break;
+
     case ( kNuisXSecFermiMom          ) : return true;  break;
     case ( kNuisXSecBindE             ) : return true;  break; 
     case ( kNuisXSecSpecFunc          ) : return true;  break; 
-    case ( kNuisXSecNormCCQE1         ) : return true;  break; 
-    case ( kNuisXSecNormCCQE2         ) : return true;  break; 
-    case ( kNuisXSecDeltaMass         ) : return true;  break; 
-    case ( kNuisXSecDeltaWidth        ) : return true;  break; 
-    case ( kNuisXSecNormCC1pi1        ) : return true;  break; 
+    case ( kNuisXSecWshape            ) : return true;  break;
+    case ( kNuisXSecShapeCCoth        ) : return true;  break;
+
+    case ( kNuisXSecNormCCQEE1        ) : return true;  break; 
+    case ( kNuisXSecNormCCQEE2        ) : return true;  break; 
+    case ( kNuisXSecNormCC1piE1       ) : return true;  break; 
     case ( kNuisXSecNormCCcoh         ) : return true;  break;
-    case ( kNuisXSecNormCCoth         ) : return true;  break;
+    case ( kNuisXSecNormNCcoh         ) : return true;  break;
+    case ( kNuisXSecNormNCoth         ) : return true;  break;
+    case ( kNuisXSecNormNuEToNuMu     ) : return true;  break;
+
     case ( kNuisFSI00                 ) : return true;  break;
     case ( kNuisFSI01                 ) : return true;  break;
     case ( kNuisFSI02                 ) : return true;  break;

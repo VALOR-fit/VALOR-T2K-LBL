@@ -159,7 +159,19 @@ void SuperkExpectation::ResetSystematicVariations(void)
   // FSI
   this->GetFSI()->Tweak(true,0);
 
-  // ...
+  // X Section
+  this->GetNuXSec()->TweakFermiMom      (0.);
+  this->GetNuXSec()->TweakBindE         (0.);
+  this->GetNuXSec()->TweakSpecFunc      (0.);
+  this->GetNuXSec()->TweakWshape        (0.);
+  this->GetNuXSec()->TweakShapeCCoth    (0.);
+  this->GetNuXSec()->TweakNormCCQE1     (0.);
+  this->GetNuXSec()->TweakNormCCQE2     (0.);
+  this->GetNuXSec()->TweakNormCC1pi1    (0.);
+  this->GetNuXSec()->TweakNormCCcoh     (0.);
+  this->GetNuXSec()->TweakNormNCcoh     (0.);
+  this->GetNuXSec()->TweakNormNCoth     (0.);
+  this->GetNuXSec()->TweakNormNuEToNuMu (0.);
 }
 //________________________________________________________________________________________
 void SuperkExpectation::TweakSystematic(string systematic, double twkdial, bool best_banff)
@@ -199,6 +211,20 @@ void SuperkExpectation::TweakSystematic(string systematic, double twkdial, bool 
 //      * fsi_01                            : tweak only FSI param 01, see Conventions.h for definition, correlations ignored (debug mode)
 //      * ..     
 //      * fsi_09                            : tweak only FSI param 09, see Conventions.h for definition, correlations ignored (debug mode)
+//
+// XSec
+//    - xsec_pf
+//    - xsec_eb
+//    - xsec_sf
+//    - xsec_wshape
+//    - xsec_shape_ccoth
+//    - xsec_norm_ccqeE1
+//    - xsec_norm_ccqeE2
+//    - xsec_norm_cc1piE1
+//    - xsec_norm_cccoh
+//    - xsec_norm_nccoh
+//    - xsec_norm_ncoth
+//    - xsec_norm_nuetonumu
 //
 
   //
@@ -308,6 +334,35 @@ void SuperkExpectation::TweakSystematic(string systematic, double twkdial, bool 
   }
 
 
+  //
+  // XSec
+  //
+
+  else if(systematic == "xsec_pf")
+    this->GetNuXSec()->TweakFermiMom      (twkdial);
+  else if(systematic == "xsec_eb")
+    this->GetNuXSec()->TweakBindE         (twkdial);
+  else if(systematic == "xsec_sf")
+    this->GetNuXSec()->TweakSpecFunc      (twkdial);
+  else if(systematic == "xsec_wshape")
+    this->GetNuXSec()->TweakWshape        (twkdial);
+  else if(systematic == "xsec_shape_ccoth")
+    this->GetNuXSec()->TweakShapeCCoth    (twkdial);
+  else if(systematic == "xsec_norm_ccqeE1")
+    this->GetNuXSec()->TweakNormCCQE1     (twkdial);
+  else if(systematic == "xsec_norm_ccqeE2")
+    this->GetNuXSec()->TweakNormCCQE2     (twkdial);
+  else if(systematic == "xsec_norm_cc1piE1")
+    this->GetNuXSec()->TweakNormCC1pi1    (twkdial);
+  else if(systematic == "xsec_norm_cccoh")
+    this->GetNuXSec()->TweakNormCCcoh     (twkdial);
+  else if(systematic == "xsec_norm_nccoh")
+    this->GetNuXSec()->TweakNormNCcoh     (twkdial);
+  else if(systematic == "xsec_norm_ncoth")
+    this->GetNuXSec()->TweakNormNCoth     (twkdial);
+  else if(systematic == "xsec_norm_nuetonumu")
+    this->GetNuXSec()->TweakNormNuEToNuMu (twkdial);
+
 
   else {
      cerr << "Exp >> Unknown systematic parameter (" << systematic << ")" << endl;
@@ -338,7 +393,20 @@ void SuperkExpectation::TweakAllSystematics(void)
   // FSI
   this->GetFSI()->Tweak(); // <-- Cholesky method
 
-  // ...
+  // XSec
+  this->GetNuXSec()->TweakFermiMom      (rand.Gaus(0.,1.));
+  this->GetNuXSec()->TweakBindE         (rand.Gaus(0.,1.));
+  this->GetNuXSec()->TweakSpecFunc      (rand.Gaus(0.,1.));
+  this->GetNuXSec()->TweakWshape        (rand.Gaus(0.,1.));
+  this->GetNuXSec()->TweakShapeCCoth    (rand.Gaus(0.,1.));
+  this->GetNuXSec()->TweakNormCCQE1     (rand.Gaus(0.,1.));
+  this->GetNuXSec()->TweakNormCCQE2     (rand.Gaus(0.,1.));
+  this->GetNuXSec()->TweakNormCC1pi1    (rand.Gaus(0.,1.));
+  this->GetNuXSec()->TweakNormCCcoh     (rand.Gaus(0.,1.));
+  this->GetNuXSec()->TweakNormNCcoh     (rand.Gaus(0.,1.));
+  this->GetNuXSec()->TweakNormNCoth     (rand.Gaus(0.,1.));
+  this->GetNuXSec()->TweakNormNuEToNuMu (rand.Gaus(0.,1.));
+
 }
 //________________________________________________________________________________________
 void SuperkExpectation::PrintSystematicVariations(void) const
@@ -522,8 +590,54 @@ void SuperkExpectation::SetNuisanceParams(const FitParamList & fp)
    // 
    // Cross-section systematics (other than BANFF ones)
    //
-
-   // ...
+   if(fp.Exists(kNuisXSecFermiMom)) {
+     double twk = fp.CurrValue(kNuisXSecFermiMom);
+     this->GetNuXSec()->TweakFermiMom(twk);
+   }
+   if(fp.Exists(kNuisXSecBindE)) {
+     double twk = fp.CurrValue(kNuisXSecBindE);
+     this->GetNuXSec()->TweakBindE(twk);
+   }
+   if(fp.Exists(kNuisXSecSpecFunc)) {
+     double twk = fp.CurrValue(kNuisXSecSpecFunc);
+     this->GetNuXSec()->TweakSpecFunc(twk);
+   }
+   if(fp.Exists(kNuisXSecWshape)) {
+     double twk = fp.CurrValue(kNuisXSecWshape);
+     this->GetNuXSec()->TweakWshape(twk);
+   }
+   if(fp.Exists(kNuisXSecShapeCCoth)) {
+     double twk = fp.CurrValue(kNuisXSecShapeCCoth);
+     this->GetNuXSec()->TweakShapeCCoth(twk);
+   }
+   if(fp.Exists(kNuisXSecNormCCQEE1)) {
+     double twk = fp.CurrValue(kNuisXSecNormCCQEE1);
+     this->GetNuXSec()->TweakNormCCQE1(twk);
+   }
+   if(fp.Exists(kNuisXSecNormCCQEE2)) {
+     double twk = fp.CurrValue(kNuisXSecNormCCQEE2);
+     this->GetNuXSec()->TweakNormCCQE2(twk);
+   }
+   if(fp.Exists(kNuisXSecNormCC1piE1)) {
+     double twk = fp.CurrValue(kNuisXSecNormCC1piE1);
+     this->GetNuXSec()->TweakNormCC1pi1(twk);
+   }
+   if(fp.Exists(kNuisXSecNormCCcoh)) {
+     double twk = fp.CurrValue(kNuisXSecNormCCcoh);
+     this->GetNuXSec()->TweakNormCCcoh(twk);
+   }
+   if(fp.Exists(kNuisXSecNormNCcoh)) {
+     double twk = fp.CurrValue(kNuisXSecNormNCcoh);
+     this->GetNuXSec()->TweakNormNCcoh(twk);
+   }
+   if(fp.Exists(kNuisXSecNormNCoth)) {
+     double twk = fp.CurrValue(kNuisXSecNormNCoth);
+     this->GetNuXSec()->TweakNormNCoth(twk);
+   }
+   if(fp.Exists(kNuisXSecNormNuEToNuMu)) {
+     double twk = fp.CurrValue(kNuisXSecNormNuEToNuMu);
+     this->GetNuXSec()->TweakNormNuEToNuMu(twk);
+   }
 
    // 
    // FSI systematics
