@@ -223,11 +223,11 @@ bool NuXSec::Read(TXMLEngine* xml, XMLNodePointer_t root_node)
   fShapeCCothRelErr =
     util::XML2Dbl(xml,root_node,"xsec/splines/ccothshape");
   fNormCCQEE1RelErr =
-    util::XML2Dbl(xml,root_node,"xsec/normalisations/ccqe1");
+    util::XML2Dbl(xml,root_node,"xsec/normalisations/ccqee1");
   fNormCCQEE2RelErr =
-    util::XML2Dbl(xml,root_node,"xsec/normalisations/ccqe2");
+    util::XML2Dbl(xml,root_node,"xsec/normalisations/ccqee2");
   fNormCC1piE1RelErr =
-    util::XML2Dbl(xml,root_node,"xsec/normalisations/cc1pi1");
+    util::XML2Dbl(xml,root_node,"xsec/normalisations/cc1pie1");
   fNormCCcohRelErr =
     util::XML2Dbl(xml,root_node,"xsec/normalisations/cccoh");
   fNormNCcohRelErr =
