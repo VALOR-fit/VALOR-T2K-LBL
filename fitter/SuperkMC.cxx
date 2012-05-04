@@ -68,6 +68,7 @@ void SuperkMC::Init(void)
   for(int is=0; is<kns; is++) {
     fMCErecoSpectrumTot[is] = 0;
     for(int im=0; im<knm; im++) {
+      fMCTemplOri      [is][im] = 0;
       fMCTemplNom      [is][im] = 0;
       fMCTemplTun      [is][im] = 0;
       fMCTemplSys      [is][im] = 0;
@@ -119,6 +120,7 @@ void SuperkMC::CleanUp(void)
 
   for(int is = 0; is < kns; is++) {
      for(int im = 0; im < knm; im++) {
+       if( fMCTemplOri     [is][im] ) delete fMCTemplOri     [is][im];
        if( fMCTemplNom     [is][im] ) delete fMCTemplNom     [is][im];
        if( fMCTemplTun     [is][im] ) delete fMCTemplTun     [is][im];
        if( fMCTemplSys     [is][im] ) delete fMCTemplSys     [is][im];
@@ -263,6 +265,9 @@ void SuperkMC::Book(void)
      for(int im = 0; im < knm; im++) {
        SuperkMode_t m = kSKReactionModes[is][im];
        if(m == kSKmUndefined) continue;
+       fMCTemplOri[is][im] = new TH2D(
+          Form("nsk_ori_%d_%d",is,im), util::AsString(m).c_str(),
+               n_ereco_bins, ereco_bin_edges, kNEtrueBins, kEtrueMin, kEtrueMax);
        fMCTemplNom[is][im] = new TH2D(
           Form("nsk_nom_%d_%d",is,im), util::AsString(m).c_str(),
                n_ereco_bins, ereco_bin_edges, kNEtrueBins, kEtrueMin, kEtrueMax);
@@ -275,6 +280,9 @@ void SuperkMC::Book(void)
        fMCTemplFin[is][im] = new TH2D(
           Form("nsk_fin_%d_%d",is,im), util::AsString(m).c_str(),
                n_ereco_bins, ereco_bin_edges, kNEtrueBins, kEtrueMin, kEtrueMax);
+       fMCTemplOri[is][im]->SetDirectory(0);
+       fMCTemplOri[is][im]->GetXaxis()->SetTitle("E_{reco} (GeV)");
+       fMCTemplOri[is][im]->GetYaxis()->SetTitle("E_{true} (GeV)");
        fMCTemplNom[is][im]->SetDirectory(0);
        fMCTemplNom[is][im]->GetXaxis()->SetTitle("E_{reco} (GeV)");
        fMCTemplNom[is][im]->GetYaxis()->SetTitle("E_{true} (GeV)");
@@ -339,6 +347,7 @@ void SuperkMC::FillTemplate(SuperkSample_t s, SuperkMode_t m)
      bool use_it = util::UseEventToFillInTemplate(m,fBrPdg,fBrGenCode);
      if(!use_it) continue;
      
+     this -> Template(s,m,kSKMCtOri) -> Fill (fBrEreco, fBrEtrue, pot_wght);
      this -> Template(s,m,kSKMCtNom) -> Fill (fBrEreco, fBrEtrue, pot_wght);
      this -> Template(s,m,kSKMCtTun) -> Fill (fBrEreco, fBrEtrue, pot_wght);
      this -> Template(s,m,kSKMCtSys) -> Fill (fBrEreco, fBrEtrue, pot_wght);
@@ -389,6 +398,9 @@ TH2D * SuperkMC::Template(SuperkSample_t s, SuperkMode_t m, SKMCTemplateType_t t
   TH2D * h = 0;
 
   switch(type) {
+   case (kSKMCtOri) : 
+     h = fMCTemplOri[sidx][midx]; 
+     break;
    case (kSKMCtNom) : 
      h = fMCTemplNom[sidx][midx]; 
      break;

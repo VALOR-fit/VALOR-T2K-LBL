@@ -99,7 +99,7 @@ void test_spline_implementation
       }//draw?
 
       //get the MC template (etrue-ereco)
-      TH2D * mctempl = skexp.GetSuperkMC()->Template(conv::kSKsFCFV1RingMuLike,m,conv::kSKMCtNom);
+      TH2D * mctempl = skexp.GetSuperkMC()->Template(conv::kSKsFCFV1RingMuLike,m,conv::kSKMCtOri);
 
       //loop over dials
       for(int idial = 0; idial < ntwkdials; idial++) {

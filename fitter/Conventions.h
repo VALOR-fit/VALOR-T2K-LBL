@@ -277,6 +277,7 @@ SuperkMode_t;
 typedef enum ESKMCTemplateType
 {   
    kSKMCtUndefined = -1, 
+   kSKMCtOri,   // nominal MC
    kSKMCtNom,   // nominal MC + tuning (ext) weights 
    kSKMCtTun,   // nominal MC + tuning (ext) weights + tuning (T2K) weights
    kSKMCtSys,   // nominal MC + tuning (ext) weights + tuning (T2K) weights + systematic variations
