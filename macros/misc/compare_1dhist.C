@@ -7,9 +7,9 @@ void compare_1dhist(
   const char * filename1,           /* name of 1st file */
   const char * filename2,           /* name of 2nd file */
   const char * histoname,           /* histogram name   */
-  bool zeroOverZeroIsZero = true    /* */
+  bool zeroOverZeroIsZero = false,  /* use the built in divide where 0/0=0, or use 0/0=1 */
+  bool draw_only_ratio = true       /* draw only the ratio? or also plot the 2 histograms overlaid */
 )
-
 {
   TFile * f1 = new TFile(filename1,"read");
   TFile * f2 = new TFile(filename2,"read");
@@ -37,11 +37,13 @@ void compare_1dhist(
   }
       
   TCanvas * c = new TCanvas("c","",10,10,600,600);
-//  c->Divide(1,2);
-//  c->cd(1);
-//  h1->Draw("p");
-//  h2->Draw("same");
-//  c->cd(2);
+  if(!draw_only_ratio) {
+    c->Divide(1,2);
+    c->cd(1);
+    h1->Draw("p");
+    h2->Draw("same");
+    c->cd(2);
+  }
   ratio->Draw();
   c->Update();
 }
