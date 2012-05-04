@@ -38,7 +38,7 @@ void test_spline_implementation
 
   // Create & config superk spectrum predictor
   SuperkExpectation skexp;
-  skexp.Read(config);
+  if (!skexp.Read(config)) return;
 
   // Get the BANFF covariance matrix (for "1-sigma" BANFF tweaks)
   TMatrixD cov = skexp.GetBANFF()->CovMatrix();
@@ -69,20 +69,23 @@ void test_spline_implementation
     string pstrc = util::AsStringCompact(p);
     string pstr  = util::AsString(p);
     cout << " *** " << pstr << endl;
-    //get the banff parameter number (if it is a banff param)
-    int bindex = -1;
+    //get the 1 sigma error
+    double relerr = 0;
     if(conv::kXSecSystIncludedInBANFF[ip]) {
       switch(p) {
-        case ( conv::kNuisBANFF22 ) : bindex = 22; break;
-        case ( conv::kNuisBANFF23 ) : bindex = 23; break;
-        default : cout << "unknown banff parameter " << pstr << endl; return;
+        case ( conv::kNuisBANFF22 ) : relerr = skexp.GetBANFF()->CovMatrix()(22,22); break;
+        case ( conv::kNuisBANFF23 ) : relerr = skexp.GetBANFF()->CovMatrix()(23,23); break;
+        default : cout << "unknown banff parameter " << p << " " << pstr << endl; return;
       }
     }//banff parameter?
+    else
+      relerr = skexp.GetNuXSec()->RelativeError(p);
 
     for (int imode = 0; imode < conv::knm; imode++) {
       //get the mode to look at
       conv::SuperkMode_t m = conv::kSKReactionModes[is][imode];
       if( m == conv::kSKmUndefined ) continue;
+      if(!conv::kXsApplyXSecSystToSKMode[is][imode][ip]) continue;
       string mstr = util::AsString(m);
       string mstrc = util::AsStringCompact(m);
       cout << " *** " << mstr << endl;
@@ -103,6 +106,10 @@ void test_spline_implementation
 	//get the spectrum histogram (as a template for the binning)
 	hEreco[ip][imode][idial] = new TH1D(*skexp.CurrPredictedErecoSpectrum(conv::kSKsFCFV1RingMuLike,m));
 	hEreco[ip][imode][idial]->SetDirectory(0);
+	//nominal?
+	bool nominal = false;
+	if (TMath::Abs(twkdial[idial]) < conv::kASmallNum)
+	  nominal = true;
 	// loop over Ereco
 	for(int ir = 1; ir <= hEreco[ip][imode][idial]->GetNbinsX(); ir++) {
 	  double nev = 0;
@@ -110,29 +117,24 @@ void test_spline_implementation
           // loop over Etrue
 	  for(int it = 1; it <= mctempl->GetYaxis()->GetNbins(); it++) {
 	    double Etrue = mctempl->GetYaxis()->GetBinCenter(it);
-	    //apply the systematic?
-	    //if(!skexp.GetNuXSec()->ApplySyst(p,s,m,Ereco,Etrue)) continue; //private method
-	    bool apply = conv::kXsApplyXSecSystToSKMode[is][imode][ip] &&
-	      (Ereco >= conv::kXSecSystErecoCut[ip][0] && Ereco < conv::kXSecSystErecoCut[ip][1]) &&
-	      (Etrue >= conv::kXSecSystEtrueCut[ip][0] && Etrue < conv::kXSecSystEtrueCut[ip][1]);
-	    if(!apply) continue;
 	    //get the weight
-	    TSpline3 * wght_spl = skexp.GetNuXSec()->FindWghtSpline(p,conv::kSKsFCFV1RingMuLike,m,Ereco,Etrue);
-	    assert(wght_spl);
-	    double relerr = 0;
-	    if(conv::kXSecSystIncludedInBANFF[ip]) {
-	      util::PrintCompact(cov);
-	      cout << bindex << endl;
-	      skexp.GetBANFF()->CovMatrix().Print();
-	      cout << skexp.GetBANFF()->CovMatrix()(bindex,bindex) << endl;
-	      relerr = skexp.GetBANFF()->CovMatrix()(bindex,bindex);
-	    }
-	    else
-	      relerr = skexp.GetNuXSec()->RelativeError(p);
-	    double wght = wght_spl->Eval(1 + (twkdial[idial] * relerr)) / wght_spl->Eval(1);
-	    wght = TMath::Max(0.,wght);
-	    //add the weighted number of events in the et-er bin to the nev for the er bin
-	    nev += mctempl->GetBinContent(ir,it) * wght;
+	    double wght = 1.;
+	    if(!nominal) {
+	      //apply the systematic to this energy bin?
+	      bool apply =
+		(Ereco >= conv::kXSecSystErecoCut[ip][0] && Ereco < conv::kXSecSystErecoCut[ip][1]) &&
+		(Etrue >= conv::kXSecSystEtrueCut[ip][0] && Etrue < conv::kXSecSystEtrueCut[ip][1]);
+	      if(apply) {
+		//get the weight
+		TSpline3 * wght_spl = skexp.GetNuXSec()->FindWghtSpline(p,conv::kSKsFCFV1RingMuLike,m,Ereco,Etrue);
+		assert(wght_spl);
+		double wght = wght_spl->Eval(1 + (twkdial[idial] * relerr)) / wght_spl->Eval(1);
+		wght = TMath::Max(0.,wght);
+	      }//apply systematic to this energy bin?
+	    }//nominal?
+	    //add the weighted number of events in the et-er bin to the number of events for the er bin
+	    nev += (mctempl->GetBinContent(ir,it) * wght);
+	    //if (wght != 1) cout << wght << endl;
           }//it
           hEreco[ip][imode][idial]->SetBinContent(ir,nev);
 	}//ir
@@ -152,7 +154,6 @@ void test_spline_implementation
 	cout << " * " << label << " : NumEvents = " << hEreco[ip][imode][idial]->Integral() << endl;
 	// Write-out in file
 	const char * title = Form("tweakEreco_1Rmu_%s_%s_%s", mstrc.c_str(), pstrc.c_str(), twkdialstr[idial]);
-	cout << title << endl;
 	hEreco[ip][imode][idial]->Write(title);
       }//idial
       //last bit of drawing
