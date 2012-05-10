@@ -14,6 +14,7 @@
 //________________________________________________________________________________________
 
 #include <string>
+#include <cstdlib>
 
 #include "Opt.h"
 #include "Utilities.h"

@@ -17,6 +17,7 @@
 //#define __debug_level_2__
 
 #include <iomanip>
+#include <cstdlib>
 
 #include "PhysHypothesis.h"
 #include "Utilities.h"
