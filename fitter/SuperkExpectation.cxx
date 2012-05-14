@@ -161,7 +161,6 @@ void SuperkExpectation::ResetSystematicVariations(void)
 
   // X Section
   this->GetNuXSec()->TweakFermiMom      (0.);
-  this->GetNuXSec()->TweakBindE         (0.);
   this->GetNuXSec()->TweakSpecFunc      (0.);
   this->GetNuXSec()->TweakWshape        (0.);
   this->GetNuXSec()->TweakShapeCCoth    (0.);
@@ -214,7 +213,6 @@ void SuperkExpectation::TweakSystematic(string systematic, double twkdial, bool 
 //
 // XSec
 //    - xsec_pf
-//    - xsec_eb
 //    - xsec_sf
 //    - xsec_wshape
 //    - xsec_shape_ccoth
@@ -340,8 +338,6 @@ void SuperkExpectation::TweakSystematic(string systematic, double twkdial, bool 
 
   else if(systematic == "xsec_pf")
     this->GetNuXSec()->TweakFermiMom      (twkdial);
-  else if(systematic == "xsec_eb")
-    this->GetNuXSec()->TweakBindE         (twkdial);
   else if(systematic == "xsec_sf")
     this->GetNuXSec()->TweakSpecFunc      (twkdial);
   else if(systematic == "xsec_wshape")
@@ -395,7 +391,6 @@ void SuperkExpectation::TweakAllSystematics(void)
 
   // XSec
   this->GetNuXSec()->TweakFermiMom      (rand.Gaus(0.,1.));
-  this->GetNuXSec()->TweakBindE         (rand.Gaus(0.,1.));
   this->GetNuXSec()->TweakSpecFunc      (rand.Gaus(0.,1.));
   this->GetNuXSec()->TweakWshape        (rand.Gaus(0.,1.));
   this->GetNuXSec()->TweakShapeCCoth    (rand.Gaus(0.,1.));
@@ -593,10 +588,6 @@ void SuperkExpectation::SetNuisanceParams(const FitParamList & fp)
    if(fp.Exists(kNuisXSecFermiMom)) {
      double twk = fp.CurrValue(kNuisXSecFermiMom);
      this->GetNuXSec()->TweakFermiMom(twk);
-   }
-   if(fp.Exists(kNuisXSecBindE)) {
-     double twk = fp.CurrValue(kNuisXSecBindE);
-     this->GetNuXSec()->TweakBindE(twk);
    }
    if(fp.Exists(kNuisXSecSpecFunc)) {
      double twk = fp.CurrValue(kNuisXSecSpecFunc);

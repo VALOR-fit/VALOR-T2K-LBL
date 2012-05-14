@@ -729,7 +729,6 @@ string t2kana::util::AsString(PhysParamId_t p)
     //
 
     case ( kNuisXSecFermiMom   ) : return "Fermi Momentum";                  break;
-    case ( kNuisXSecBindE      ) : return "Binding Energy";                  break; 
     case ( kNuisXSecSpecFunc   ) : return "Spectral Func";                   break; 
     case ( kNuisXSecWshape     ) : return "W-shape";                         break;
     case ( kNuisXSecShapeCCoth ) : return "Shape; CC Oth";                   break;
@@ -853,10 +852,9 @@ string t2kana::util::AsStringCompact(PhysParamId_t p)
     case ( kNuisBANFF26               ) : return "f_banff26";      break;
 
     case ( kNuisXSecFermiMom          ) : return "f_pfermi";       break;
-    case ( kNuisXSecBindE             ) : return "f_bind";         break; 
     case ( kNuisXSecSpecFunc          ) : return "f_specfunc";     break; 
-    case ( kNuisXSecWshape            ) : return "f_wshape";       break;
-    case ( kNuisXSecShapeCCoth        ) : return "f_shape_ccoth";  break;
+    case ( kNuisXSecWshape            ) : return "f_deltawidth";       break;
+    case ( kNuisXSecShapeCCoth        ) : return "f_dismultipi";  break;
 
     case ( kNuisXSecNormCCQEE1        ) : return "f_norm_ccqe_1";  break; 
     case ( kNuisXSecNormCCQEE2        ) : return "f_norm_ccqe_2";  break; 
@@ -1221,8 +1219,8 @@ string t2kana::util::AsStringCompact (t2kana::conv::SuperkMode_t m)
      case ( kSKmNuMuBarNC1piC   ) : return "numubarnc1piC";  break;
      case ( kSKmNuMuBarNC1pi0   ) : return "numubarnc1pi0";  break;
      case ( kSKmNuMuBarNCcoh    ) : return "numubarnccoh";   break;
-     case ( kSKmNuMuBarNCoth_e  ) : return "numubarncoth ";  break;
-     case ( kSKmNuMuBarNCoth_mu ) : return "numubarncoth ";  break;
+     case ( kSKmNuMuBarNCoth_e  ) : return "numubarncoth";   break;
+     case ( kSKmNuMuBarNCoth_mu ) : return "numubarncoth";   break;
      case ( kSKmNuECCQE         ) : return "nueccqe";        break;
      case ( kSKmNuECC1pi        ) : return "nuecc1pi";       break;
      case ( kSKmNuECCcoh        ) : return "nuecccoh";       break;
@@ -1365,7 +1363,6 @@ t2kana::conv::PhysParamId_t
   if(sh == "banff_26") return kNuisBANFF26;
 
   if(sh == "xsec_pf")           return kNuisXSecFermiMom;
-  if(sh == "xsec_eb")           return kNuisXSecBindE;
   if(sh == "xsec_sf")           return kNuisXSecSpecFunc;
   if(sh == "xsec_wshape")       return kNuisXSecWshape;
   if(sh == "xsec_shape_ccoth")  return kNuisXSecShapeCCoth;
@@ -1655,7 +1652,6 @@ bool t2kana::util::IsSystematic(PhysParamId_t p)
     case ( kNuisBANFF26               ) : return true;  break;
 
     case ( kNuisXSecFermiMom          ) : return true;  break;
-    case ( kNuisXSecBindE             ) : return true;  break; 
     case ( kNuisXSecSpecFunc          ) : return true;  break; 
     case ( kNuisXSecWshape            ) : return true;  break;
     case ( kNuisXSecShapeCCoth        ) : return true;  break;

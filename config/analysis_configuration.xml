@@ -235,16 +235,13 @@
   <xsec>
       <weight_splines>
           <filename>
-               inputs/official/2012/xsec/fake_splines_v0.root
+               inputs/official/2012/xsec/XSecSplines2012.root
           </filename>
       </weight_splines>
       <splines>
 	  <pf>
 	       0.13
 	  </pf>
-	  <eb>
-	       0.33
-	  </eb>
 	  <sf>
 	       1
 	  </sf>

@@ -51,7 +51,6 @@ public:
   // Note: BANFF cross-section systematic parameters are tweaked via the BANFF object and they are 
   // correlated with the flux systematic params.
   void TweakFermiMom      (double twkdial) { fFermiMomTwkDial      = twkdial; }
-  void TweakBindE         (double twkdial) { fBindETwkDial         = twkdial; }
   void TweakSpecFunc      (double twkdial) { fSpecFuncTwkDial      = twkdial; }
   void TweakWshape        (double twkdial) { fWshapeTwkDial        = twkdial; }
   void TweakShapeCCoth    (double twkdial) { fShapeCCothTwkDial    = twkdial; }
@@ -84,7 +83,6 @@ public:
   //
   void BuildFracMCTemplates(TH2D* input_mctempl_array[kns][knm], conv::SKMCTemplateType_t type);
 
-   
 private:
 
   void Init    (void);
@@ -122,7 +120,6 @@ private:
 
   // tweaking dials
   double fFermiMomTwkDial;
-  double fBindETwkDial;
   double fSpecFuncTwkDial;
   double fWshapeTwkDial;
   double fShapeCCothTwkDial;
@@ -136,7 +133,6 @@ private:
 
   // relative errors
   double fFermiMomRelErr;
-  double fBindERelErr;
   double fSpecFuncRelErr;
   double fWshapeRelErr;
   double fShapeCCothRelErr;

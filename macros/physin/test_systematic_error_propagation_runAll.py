@@ -65,7 +65,6 @@ for i in xrange(27):
       systematics.append(["banff_" + '%(number)02d' % {"number": i},"false","false","true"])
 #XSec splines
 systematics.append(["xsec_pf", "false", "false", "false"])
-systematics.append(["xsec_eb", "false", "false", "false"])
 systematics.append(["xsec_sf", "false", "false", "false"])
 systematics.append(["xsec_wshape", "false", "false", "false"])
 systematics.append(["xsec_shape_ccoth", "false", "false", "false"])

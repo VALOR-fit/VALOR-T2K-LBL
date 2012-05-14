@@ -15,6 +15,7 @@
 
 #define __show_init_mesg_info__
 //#define __show_init_mesg_debug__
+//#define __show_init_mesg_debug2__
 //#define __show_banff_tuning_wght_mesg_info__
 //#define __show_banff_tuning_wght_mesg_debug__
 //#define __show_syst_var_wght_mesg_debug__
@@ -70,7 +71,6 @@ void NuXSec::Init(void)
   }
 
   fFermiMomTwkDial      = 0;
-  fBindETwkDial         = 0;
   fSpecFuncTwkDial      = 0;
   fWshapeTwkDial        = 0;
   fShapeCCothTwkDial    = 0;
@@ -140,7 +140,7 @@ bool NuXSec::Read(TXMLEngine* xml, XMLNodePointer_t root_node)
 
                 // Build spline name
                 ostringstream splname;
-                splname << "spl_" 
+                splname << "spl_"
                         << util::AsStringCompact(s) << "_"
                         << util::AsStringCompact(m) << "_"
                         << util::AsStringCompact(p) << "_"
@@ -179,6 +179,14 @@ bool NuXSec::Read(TXMLEngine* xml, XMLNodePointer_t root_node)
                      << idx << endl;
 #endif
                 fXSecWghtSpl[idx] = new TSpline3(*spl);
+
+#ifdef __show_init_mesg_debug2__
+		//check that the spline is not flat
+		cout << "Exp/NuXSec >> Spline weights at -1,0,+1 are: "
+		     << fXSecWghtSpl[idx]->Eval(-1) << "\t"
+		     << fXSecWghtSpl[idx]->Eval(0) << "\t"
+		     << fXSecWghtSpl[idx]->Eval(+1) << endl;
+#endif
              }//Etrue
           }//Ereco
        }//p
@@ -214,8 +222,6 @@ bool NuXSec::Read(TXMLEngine* xml, XMLNodePointer_t root_node)
 
   fFermiMomRelErr =
     util::XML2Dbl(xml,root_node,"xsec/splines/pf");
-  fBindERelErr =
-    util::XML2Dbl(xml,root_node,"xsec/splines/eb");
   fSpecFuncRelErr =
     util::XML2Dbl(xml,root_node,"xsec/splines/sf");
   fWshapeRelErr =
@@ -321,13 +327,12 @@ double NuXSec::FinTuningWght_1p(
 
   //
   // Fermi momentum
-  // binding energy
   // spectral function on/off
   // W-shape
   // CC other shape
   //
   else
-  if(p == kNuisXSecFermiMom || p == kNuisXSecBindE || p == kNuisXSecSpecFunc || p == kNuisXSecWshape || p == kNuisXSecShapeCCoth)
+  if(p == kNuisXSecFermiMom || p == kNuisXSecSpecFunc || p == kNuisXSecWshape || p == kNuisXSecShapeCCoth)
   {
     TSpline3 * wght_spl = this->FindWghtSpline(p,s,m,Ereco,Etrue);
     assert(wght_spl);
@@ -453,13 +458,12 @@ double NuXSec::SystWght_1p(
 
   //
   // Fermi momentum
-  // binding energy
   // spectral function on/off
   // W-shape
   // CC other shape
   //
   else
-  if(p == kNuisXSecFermiMom || p == kNuisXSecBindE || p == kNuisXSecSpecFunc || p == kNuisXSecWshape || p == kNuisXSecShapeCCoth)
+  if(p == kNuisXSecFermiMom || p == kNuisXSecSpecFunc || p == kNuisXSecWshape || p == kNuisXSecShapeCCoth)
   {
     TSpline3 * wght_spl = this->FindWghtSpline(p,s,m,Ereco,Etrue);
     assert(wght_spl);
@@ -517,9 +521,6 @@ double NuXSec::CurrentValue(PhysParamId_t p) const
     case kNuisXSecFermiMom:
       return fFermiMomTwkDial;
       break;
-    case kNuisXSecBindE:
-      return fBindETwkDial;
-      break;
     case kNuisXSecSpecFunc:
       return fSpecFuncTwkDial;
       break;
@@ -562,9 +563,6 @@ double NuXSec::RelativeError(PhysParamId_t p) const
     case kNuisXSecFermiMom:
       return fFermiMomRelErr;
       break;
-    case kNuisXSecBindE:
-      return fBindERelErr;
-      break;
     case kNuisXSecSpecFunc:
       return fSpecFuncRelErr;
       break;
@@ -605,7 +603,6 @@ void NuXSec::PrintSystematicVariations(void) const
 {
   cout << "Exp/XSec >> XSec parameters:"                            << endl; 
   cout << "         >> Fermi momentum    " << fFermiMomTwkDial      << endl;
-  cout << "         >> Binding energy    " << fBindETwkDial         << endl;
   cout << "         >> Spectral function " << fSpecFuncTwkDial      << endl;
   cout << "         >> W-shape           " << fWshapeTwkDial        << endl;
   cout << "         >> CC-oth shape      " << fShapeCCothTwkDial    << endl;
