@@ -347,7 +347,7 @@ void SuperkMC::FillTemplate(SuperkSample_t s, SuperkMode_t m)
      bool use_it = util::UseEventToFillInTemplate(m,fBrPdg,fBrGenCode);
      if(!use_it) continue;
      
-     this -> Template(s,m,kSKMCtOri) -> Fill (fBrEreco, fBrEtrue, pot_wght);
+     this -> Template(s,m,kSKMCtOri) -> Fill (fBrEreco, fBrEtrue, 1.);
      this -> Template(s,m,kSKMCtNom) -> Fill (fBrEreco, fBrEtrue, pot_wght);
      this -> Template(s,m,kSKMCtTun) -> Fill (fBrEreco, fBrEtrue, pot_wght);
      this -> Template(s,m,kSKMCtSys) -> Fill (fBrEreco, fBrEtrue, pot_wght);

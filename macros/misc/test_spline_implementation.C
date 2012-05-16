@@ -13,6 +13,7 @@
 void test_spline_implementation
 (
   bool         draw               = false,                          /* draw & save the canvas? */
+  bool         debug              = false,                          /* print debug messages? */
   const char * config_file        = "analysis_configuration.xml"    /* */
 )
 {
@@ -52,7 +53,7 @@ void test_spline_implementation
   int hstyle              [ntwkdials] = { kDotted, kDashed, kSolid,    kDashed, kDotted };
  
   // Histograms & canvases (a few too many than I actually need) & output file
-  TH1D * hEreco   [conv::kNumOfXSecSyst][conv::knm][ntwkdials];
+  TH1D * hEreco[conv::kNumOfXSecSyst][conv::knm][ntwkdials];
   TCanvas * c[conv::kNumOfXSecSyst][conv::knm];
   TLegend * legend = 0;
   TFile f("test_spline_implementation.root","recreate");
@@ -69,18 +70,6 @@ void test_spline_implementation
     string pstrc = util::AsStringCompact(p);
     string pstr  = util::AsString(p);
     cout << " *** " << pstr << endl;
-    //get the 1 sigma error
-    double relerr = 0;
-    if(conv::kXSecSystIncludedInBANFF[ip]) {
-      switch(p) {
-        case ( conv::kNuisBANFF22 ) : relerr = skexp.GetBANFF()->CovMatrix()(22,22); break;
-        case ( conv::kNuisBANFF23 ) : relerr = skexp.GetBANFF()->CovMatrix()(23,23); break;
-        default : cout << "unknown banff parameter " << p << " " << pstr << endl; return;
-      }
-    }//banff parameter?
-    else
-      relerr = skexp.GetNuXSec()->RelativeError(p);
-
     for (int imode = 0; imode < conv::knm; imode++) {
       //get the mode to look at
       conv::SuperkMode_t m = conv::kSKReactionModes[is][imode];
@@ -128,15 +117,17 @@ void test_spline_implementation
 		//get the weight
 		TSpline3 * wght_spl = skexp.GetNuXSec()->FindWghtSpline(p,conv::kSKsFCFV1RingMuLike,m,Ereco,Etrue);
 		assert(wght_spl);
-		double wght = wght_spl->Eval(1 + (twkdial[idial] * relerr)) / wght_spl->Eval(1);
+		wght = wght_spl->Eval(twkdial[idial]) / wght_spl->Eval(0);
 		wght = TMath::Max(0.,wght);
 	      }//apply systematic to this energy bin?
 	    }//nominal?
 	    //add the weighted number of events in the et-er bin to the number of events for the er bin
 	    nev += (mctempl->GetBinContent(ir,it) * wght);
-	    //if (wght != 1) cout << wght << endl;
           }//it
           hEreco[ip][imode][idial]->SetBinContent(ir,nev);
+	  if(debug && nev > conv::kASmallNum)
+	    cout << "ereco bin " << ir << " with centre " << std::fixed << Ereco 
+		 << " set to " << std::fixed << nev << endl;
 	}//ir
 	const char * label = Form("tweak dial = %.2f", twkdial[idial]);
 	if(draw) {
@@ -154,6 +145,8 @@ void test_spline_implementation
 	cout << " * " << label << " : NumEvents = " << hEreco[ip][imode][idial]->Integral() << endl;
 	// Write-out in file
 	const char * title = Form("tweakEreco_1Rmu_%s_%s_%s", mstrc.c_str(), pstrc.c_str(), twkdialstr[idial]);
+	if(nominal)
+	  title = Form("tweakEreco_1Rmu_%s_f_%s", mstrc.c_str(), twkdialstr[idial]);
 	hEreco[ip][imode][idial]->Write(title);
       }//idial
       //last bit of drawing
