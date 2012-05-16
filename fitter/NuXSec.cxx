@@ -138,6 +138,11 @@ bool NuXSec::Read(TXMLEngine* xml, XMLNodePointer_t root_node)
                 bool bin_is_beyond_end_of_range = (kXsEtrueBinEdges[is][im][it+1] < 0.);
                 if(bin_is_beyond_end_of_range) continue;
 
+		/*not implemented this fully yet
+		bool bin_is_empty = (this->Template(s,m,kSKMCtOri)->GetBinContent(ir,it) <= (0 + kASmallNum));
+		if(bin_is_empty) continue;
+		*/
+
                 // Build spline name
                 ostringstream splname;
                 splname << "spl_"
@@ -220,14 +225,6 @@ bool NuXSec::Read(TXMLEngine* xml, XMLNodePointer_t root_node)
      }
   }
 
-  fFermiMomRelErr =
-    util::XML2Dbl(xml,root_node,"xsec/splines/pf");
-  fSpecFuncRelErr =
-    util::XML2Dbl(xml,root_node,"xsec/splines/sf");
-  fWshapeRelErr =
-    util::XML2Dbl(xml,root_node,"xsec/splines/wshape");
-  fShapeCCothRelErr =
-    util::XML2Dbl(xml,root_node,"xsec/splines/ccothshape");
   fNormCCQEE1RelErr =
     util::XML2Dbl(xml,root_node,"xsec/normalisations/ccqee1");
   fNormCCQEE2RelErr =
@@ -310,8 +307,9 @@ double NuXSec::FinTuningWght_1p(
   {
      TSpline3 * wght_spl = this->FindWghtSpline(p,s,m,Ereco,Etrue);
      assert(wght_spl);
-     double t = fBANFF->BestFitValue(p);
-     wght = wght_spl->Eval(t);
+     //double t = fBANFF->BestFitValue(p);
+     //wght = wght_spl->Eval(t);
+     wght = wght_spl->Eval(0);
      wght = TMath::Max(0.,wght);
   }
 
@@ -336,7 +334,7 @@ double NuXSec::FinTuningWght_1p(
   {
     TSpline3 * wght_spl = this->FindWghtSpline(p,s,m,Ereco,Etrue);
     assert(wght_spl);
-    wght = wght_spl->Eval(1);
+    wght = wght_spl->Eval(0);
     wght = TMath::Max(0.,wght);
   }
 
@@ -442,8 +440,11 @@ double NuXSec::SystWght_1p(
      assert(wght_spl);
      double tb = fBANFF->BestFitValue(p);
      double tc = fBANFF->CurrentValue(p);
-     wght = wght_spl->Eval(tc) / wght_spl->Eval(tb);
-     wght = TMath::Max(0.,wght); 
+     double diag = 0;
+     if(p == kNuisBANFF22) diag = fBANFF->CovMatrix()[22][22];
+     else if(p == kNuisBANFF23) diag = fBANFF->CovMatrix()[23][23];
+     wght = wght_spl->Eval(((tc / tb) - 1) / diag) / wght_spl->Eval(0);
+     wght = TMath::Max(0.,wght);
   }
 
   //
@@ -468,8 +469,7 @@ double NuXSec::SystWght_1p(
     TSpline3 * wght_spl = this->FindWghtSpline(p,s,m,Ereco,Etrue);
     assert(wght_spl);
     double tc = this->CurrentValue(p);
-    double te = this->RelativeError(p);
-    wght = wght_spl->Eval(1 + (tc * te)) / wght_spl->Eval(1);
+    wght = wght_spl->Eval(tc) / wght_spl->Eval(0);
     wght = TMath::Max(0.,wght);
   }
 
@@ -560,18 +560,6 @@ double NuXSec::CurrentValue(PhysParamId_t p) const
 double NuXSec::RelativeError(PhysParamId_t p) const
 {
   switch(p) {
-    case kNuisXSecFermiMom:
-      return fFermiMomRelErr;
-      break;
-    case kNuisXSecSpecFunc:
-      return fSpecFuncRelErr;
-      break;
-    case kNuisXSecWshape:
-      return fWshapeRelErr;
-      break;
-    case kNuisXSecShapeCCoth:
-      return fShapeCCothRelErr;
-      break;
     case kNuisXSecNormCCQEE1:
       return fNormCCQEE1RelErr;
       break;
@@ -594,6 +582,7 @@ double NuXSec::RelativeError(PhysParamId_t p) const
       return fNormNuEToNuMuRelErr;
       break;
     default:
+      cout << "Relative error is not defined for xsec parameter: " << AsString(p) << endl;
       return 0;
   }
   return 0;

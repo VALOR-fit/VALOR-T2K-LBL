@@ -108,7 +108,7 @@ private:
 
   //
   double FractionOfEvents   (conv::SuperkSample_t s, conv::SuperkMode_t m, double Ereco, double Etrue,  conv::SKMCTemplateType_t type) const;
-
+  
   //
   // Private data members
   //
@@ -132,10 +132,6 @@ private:
   double fNormNuEToNuMuTwkDial;
 
   // relative errors
-  double fFermiMomRelErr;
-  double fSpecFuncRelErr;
-  double fWshapeRelErr;
-  double fShapeCCothRelErr;
   double fNormCCQEE1RelErr;
   double fNormCCQEE2RelErr;
   double fNormCC1piE1RelErr;

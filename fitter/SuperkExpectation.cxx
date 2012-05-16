@@ -345,11 +345,11 @@ void SuperkExpectation::TweakSystematic(string systematic, double twkdial, bool 
   else if(systematic == "xsec_shape_ccoth")
     this->GetNuXSec()->TweakShapeCCoth    (twkdial);
   else if(systematic == "xsec_norm_ccqeE1")
-    this->GetNuXSec()->TweakNormCCQEE1     (twkdial);
+    this->GetNuXSec()->TweakNormCCQEE1    (twkdial);
   else if(systematic == "xsec_norm_ccqeE2")
-    this->GetNuXSec()->TweakNormCCQEE2     (twkdial);
+    this->GetNuXSec()->TweakNormCCQEE2    (twkdial);
   else if(systematic == "xsec_norm_cc1piE1")
-    this->GetNuXSec()->TweakNormCC1piE1    (twkdial);
+    this->GetNuXSec()->TweakNormCC1piE1   (twkdial);
   else if(systematic == "xsec_norm_cccoh")
     this->GetNuXSec()->TweakNormCCcoh     (twkdial);
   else if(systematic == "xsec_norm_nccoh")

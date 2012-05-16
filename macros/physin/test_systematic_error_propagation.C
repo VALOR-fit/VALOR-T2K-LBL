@@ -443,7 +443,7 @@ void test_systematic_error_propagation
     string bnum = sys.substr(found,2);
     int bindex = atoi(bnum.c_str());
     cout << bindex << endl;
-    // curr/nominal = 1 + x
+    // curr/nominal = 1 + (nsigma * x)
     skexp->TweakSystematic(systematic, skexp->GetBANFF()->BestFitValue(util::PhysParamIdFromString(systematic)) * (1 + skexp->GetBANFF()->CovMatrix()(bindex,bindex)));
     skexp->GetBANFF()->PrintSystematicVariations();
   }
@@ -581,7 +581,7 @@ void test_systematic_error_propagation
     string bnum = sys.substr(found,2);
     int bindex = atoi(bnum.c_str());
     cout << bindex << endl;
-    // curr/nominal = 1 - x
+    // curr/nominal = 1 + (nsigma * x)
     skexp->TweakSystematic(systematic, skexp->GetBANFF()->BestFitValue(util::PhysParamIdFromString(systematic)) * (1 - skexp->GetBANFF()->CovMatrix()(bindex,bindex)));
     skexp->GetBANFF()->PrintSystematicVariations();
   }
@@ -1944,8 +1944,6 @@ print_expected_errors(bool use_tex, const char * output_file, const char * confi
   //XSec
   double FermiMomRelErr =
     util::XML2Dbl(xml,root_node,"xsec/splines/pf");
-  double BindERelErr =
-    util::XML2Dbl(xml,root_node,"xsec/splines/eb");
   double SpecFuncRelErr =
     util::XML2Dbl(xml,root_node,"xsec/splines/sf");
   double WshapeRelErr =
@@ -1953,11 +1951,11 @@ print_expected_errors(bool use_tex, const char * output_file, const char * confi
   double ShapeCCothRelErr =
     util::XML2Dbl(xml,root_node,"xsec/splines/ccothshape");
   double NormCCQE1RelErr =
-    util::XML2Dbl(xml,root_node,"xsec/normalisations/ccqe1");
+    util::XML2Dbl(xml,root_node,"xsec/normalisations/ccqee1");
   double NormCCQE2RelErr =
-    util::XML2Dbl(xml,root_node,"xsec/normalisations/ccqe2");
+    util::XML2Dbl(xml,root_node,"xsec/normalisations/ccqee2");
   double NormCC1pi1RelErr =
-    util::XML2Dbl(xml,root_node,"xsec/normalisations/cc1pi1");
+    util::XML2Dbl(xml,root_node,"xsec/normalisations/cc1pie1");
   double NormCCcohRelErr =
     util::XML2Dbl(xml,root_node,"xsec/normalisations/cccoh");
   double NormNCcohRelErr =
@@ -2045,11 +2043,6 @@ print_expected_errors(bool use_tex, const char * output_file, const char * confi
   streamer << setw(ncol1)  << setfill(' ') << systematic << endcolumn
 	   << setw(ncolnev)  << setfill(' ') << setprecision(nprecisionnev)
 	   << FermiMomRelErr * 100 << pctsymbol
-	   << endrow << endl;
-  systematic = "xsec Eb";
-  streamer << setw(ncol1)  << setfill(' ') << systematic << endcolumn
-	   << setw(ncolnev)  << setfill(' ') << setprecision(nprecisionnev)
-	   << BindERelErr * 100 << pctsymbol
 	   << endrow << endl;
   systematic = "xsec Spect Func";
   streamer << setw(ncol1)  << setfill(' ') << systematic << endcolumn

@@ -18,7 +18,7 @@ void make_fake_xsec_wght_splines()
 
   const int n_knots = 100;
 
-  const double twkd_min  = 0.2;
+  const double twkd_min  = -5.0;
   const double twkd_max  = 5.0;
   const double twkd_step = (twkd_max - twkd_min) / (n_knots-1);
 
@@ -67,22 +67,25 @@ void make_fake_xsec_wght_splines()
                 cout << " - Creating cross-section weight spline: " << splname.str() << endl;
 
                 for(int i = 0; i < n_knots; i++) {
+		   // twkd[i] is x-value of current point
+		   // wght[i] is y-value of current point
                    twkd[i] = twkd_min + twkd_step * i;
+
                    if (Ereco > 0.400 && Ereco < 1.100 && m==kSKmNuMuCCQE  && p==kNuisBANFF22) {
                       cout << "Not null for QE" << endl;
-                      wght[i] = twkd[i];
+                      wght[i] = (twkd[i] / twkd_max) + 1;
                    }
                    else
                    if (Ereco > 0.400 && Ereco < 1.100 && m==kSKmNuMuCC1pi && p==kNuisBANFF23) {
                       cout << "Not null for 1pi" << endl;
-                      wght[i] = 1./twkd[i];
+                      //wght[i] = 1./((twkd[i] / twkd_max) + 1 + conv::kASmallNum);
+		      wght[i] = (twkd[i] / twkd_max) + 1;
                    }
                    else {
-                      wght[i] = twkd[i];
+ 		      wght[i] = (twkd[i] / twkd_max) + 1;
                    }
           
                 }
-
                 TSpline3 * spl = new TSpline3(splname.str().c_str(),twkd,wght,n_knots);
                 f.cd();
                 spl->Write(splname.str().c_str());
