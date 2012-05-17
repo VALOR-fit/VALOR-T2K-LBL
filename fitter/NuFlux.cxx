@@ -334,42 +334,16 @@ void NuFlux::ApplyBANFFWeights(bool get_current) const
              << bin_min << ", " << bin_max << "]" 
              << endl;
 #endif
-        // Loop over `own' bins contained in the current `BANFF' bin and
-        // calculate the original and tweaked flux in that `BANFF' bin.
-        double flux_var_twk = 0;
-        double flux_var     = 0;
-        for ( int bin = bin_min; bin <= bin_max; bin++ ) {
-           // Un-tweaked flux in current bin 
-           double flux = flux_spectrum_orig->GetBinContent(bin);
-           // Add to total flux in larger variable-size bin
-           flux_var += flux;
-        }
-        flux_var_twk = flux_var * banff_param_value;
-#ifdef __show_flux_twk_mesg_debug_level2__
-        cout << "Exp/Flux >> Flux in current BANFF bin: " 
-             << flux_var << " --> " << flux_var_twk << endl;
-#endif
-        if(flux_var_twk < 0) {
-           cerr << "Exp/Flux >> Tweaked flux for neutrino PDG = " << nu_pdg << " in BANFF bin [" 
-                << Emin << ", " << Emax << "] is = " << flux_var_twk << " !!! " << endl;
-           cerr << "Exp/Flux >> Negative value was the result of tweaking BANFF param: " 
-                << util::AsString(p) << " (value = " << banff_param_value << ")" << endl;
-           exit(1);
-        }        
 
         // Loop over `own' bins contained in the current `BANFF' bin and
         // "distribute" the `BANFF' bin flux variation to our `own' bins.
         for ( int bin = bin_min; bin <= bin_max; bin++ ) {
            // Un-tweaked flux in current bin 
            double flux = flux_spectrum_orig->GetBinContent(bin);
-           // Fraction of flux of the larger variable-size bin which is contained 
-           // in the current bin
-           double frac_flux = flux / flux_var;
            // Tweaked flux in current bin
-           double flux_twk = flux + frac_flux * (flux_var_twk - flux_var);
+           double flux_twk = flux * banff_param_value;
 #ifdef __show_flux_twk_mesg_debug_level2__
-           cout << "Exp/Flux >> - Our bin = " << bin 
-                << ", contains " << frac_flux*100 << "% of flux of current BANFF bin"
+           cout << "Exp/Flux >> - Our bin = " << bin
                 << ", flux = " << flux << " --> " << flux_twk << endl;
 #endif
            if(flux_twk < 0) {
@@ -378,7 +352,7 @@ void NuFlux::ApplyBANFFWeights(bool get_current) const
                 cerr << "Exp/Flux >> Negative value was the result of tweaking BANFF param: " 
                      << util::AsString(p) << " (value = " << banff_param_value << ")" << endl;
                 exit(1);
-           }        
+           }
            flux_spectrum_wght->SetBinContent(bin,flux_twk);
         } // bin
      } 
