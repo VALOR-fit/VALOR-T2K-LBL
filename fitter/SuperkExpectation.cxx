@@ -457,6 +457,7 @@ bool SuperkExpectation::Read(string config_file)
   if ( ! this->GetFSI            () -> Read (xml, root_node) ) return false;
   if ( ! this->GetSuperkDetector () -> Read (xml, root_node) ) return false;
   if ( ! this->GetSuperkMC       () -> Read (xml, root_node) ) return false;
+  if ( ! this->GetNuXSec         () -> ReadSplines(xml,root_node) ) return false;
 
   fIsConfigured = true;
 

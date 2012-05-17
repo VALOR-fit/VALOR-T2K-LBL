@@ -19,7 +19,7 @@
 //#define __show_banff_tuning_wght_mesg_info__
 //#define __show_banff_tuning_wght_mesg_debug__
 //#define __show_syst_var_wght_mesg_debug__
-//#define __show_build_frac_template_mesg_info__
+//#define __show_build_bool_template_mesg_info__
 //#define __show_wght_spline_idx_mesg_debug__
 
 #include <cassert>
@@ -65,8 +65,7 @@ void NuXSec::Init(void)
 
   for(int is=0; is<kns; is++) {
     for(int im=0; im<knm; im++) {
-      fFracNom [is][im] = 0;
-      fFracTun [is][im] = 0;
+      fBoolTempl [is][im] = 0;
     }
   }
 
@@ -92,16 +91,15 @@ void NuXSec::CleanUp(void)
 
   for(int is=0; is<kns; is++) {
     for(int im=0; im<knm; im++) {
-      if (fFracNom [is][im]) delete fFracNom [is][im]; 
-      if (fFracTun [is][im]) delete fFracTun [is][im];
+      if (fBoolTempl [is][im]) delete fBoolTempl [is][im]; 
     }
   }
 }
 //________________________________________________________________________________________
-bool NuXSec::Read(TXMLEngine* xml, XMLNodePointer_t root_node)
+bool NuXSec::ReadSplines(TXMLEngine* xml, XMLNodePointer_t root_node)
 {
 #ifdef __show_init_mesg_info__
-  cout << "Exp/NuXSec >> Reading neutrino generator inputs from input XML file." << endl;
+  cout << "Exp/NuXSec >> Reading neutrino generator inputs (splines only) from input XML file." << endl;
 #endif
 
   //
@@ -138,11 +136,6 @@ bool NuXSec::Read(TXMLEngine* xml, XMLNodePointer_t root_node)
                 bool bin_is_beyond_end_of_range = (kXsEtrueBinEdges[is][im][it+1] < 0.);
                 if(bin_is_beyond_end_of_range) continue;
 
-		/*not implemented this fully yet
-		bool bin_is_empty = (this->Template(s,m,kSKMCtOri)->GetBinContent(ir,it) <= (0 + kASmallNum));
-		if(bin_is_empty) continue;
-		*/
-
                 // Build spline name
                 ostringstream splname;
                 splname << "spl_"
@@ -173,11 +166,19 @@ bool NuXSec::Read(TXMLEngine* xml, XMLNodePointer_t root_node)
 #endif
                 // Copy spline from input file
                 TSpline3 * spl = (TSpline3 *) spline_file->Get(splname.str().c_str());
-                if(!spl) {
+		bool bin_is_empty = this->IsThereAnEvent(s, m, Ereco, Etrue);
+                if(!spl && !bin_is_empty) { 
                    cerr << "Exp/NuXSec >> Null cross-sectionweight spline: " 
                         << splname.str() << endl;
                    exit(1); 
                 }
+		/* Uncomment this when we have null splines for empty bins
+		else if(spl && bin_is_empty) {
+		   cerr << "Exp/NuXSec >> Spline exists for empty bin: "
+			<< splname.str() << endl;
+		   exit(1);
+		}
+		*/
 
 #ifdef __show_init_mesg_debug__
                 cout << "Exp/NuXSec >> Storing cross-section weight spline at slot: " 
@@ -198,6 +199,20 @@ bool NuXSec::Read(TXMLEngine* xml, XMLNodePointer_t root_node)
     }//m
   }//s
 
+#ifdef __show_init_mesg_info__
+  cout << "Exp/NuXSec >> Done reading neutrino cross-section inputs (splines only)!" << endl;
+#endif
+
+  return true;  
+}
+
+//________________________________________________________________________________________
+bool NuXSec::Read(TXMLEngine* xml, XMLNodePointer_t root_node)
+{
+#ifdef __show_init_mesg_info__
+  cout << "Exp/NuXSec >> Reading neutrino generator inputs (minus splines) from input XML file." << endl;
+#endif
+
   //
   //
   //
@@ -210,18 +225,12 @@ bool NuXSec::Read(TXMLEngine* xml, XMLNodePointer_t root_node)
      for(int im = 0; im < knm; im++) {
        SuperkMode_t m = kSKReactionModes[is][im];
        if(m == kSKmUndefined) continue;
-       fFracNom[is][im] = new TH2D(
-          Form("frac_nom_%d_%d",is,im), util::AsString(m).c_str(),
-               n_ereco_bins, ereco_bin_edges, kNEtrueBins, kEtrueMin, kEtrueMax);
-       fFracTun[is][im] = new TH2D(
-          Form("nsk_tun_%d_%d",is,im), util::AsString(m).c_str(),
-               n_ereco_bins, ereco_bin_edges, kNEtrueBins, kEtrueMin, kEtrueMax);
-       fFracNom[is][im]->SetDirectory(0);
-       fFracNom[is][im]->GetXaxis()->SetTitle("E_{reco} (GeV)");
-       fFracNom[is][im]->GetYaxis()->SetTitle("E_{true} (GeV)");
-       fFracTun[is][im]->SetDirectory(0);
-       fFracTun[is][im]->GetXaxis()->SetTitle("E_{reco} (GeV)");
-       fFracTun[is][im]->GetYaxis()->SetTitle("E_{true} (GeV)");
+       fBoolTempl[is][im] = new TH2I(
+          Form("bool_templ_%d_%d",is,im), util::AsString(m).c_str(),
+	  n_ereco_bins, ereco_bin_edges, kNEtrueBins, (int)kEtrueMin, (int)kEtrueMax);
+       fBoolTempl[is][im]->SetDirectory(0);
+       fBoolTempl[is][im]->GetXaxis()->SetTitle("E_{reco} (GeV)");
+       fBoolTempl[is][im]->GetYaxis()->SetTitle("E_{true} (GeV)");
      }
   }
 
@@ -241,7 +250,7 @@ bool NuXSec::Read(TXMLEngine* xml, XMLNodePointer_t root_node)
     util::XML2Dbl(xml,root_node,"xsec/normalisations/numu_to_nue");
 
 #ifdef __show_init_mesg_info__
-  cout << "Exp/NuXSec >> Done reading neutrino cross-section inputs!" << endl;
+  cout << "Exp/NuXSec >> Done reading neutrino cross-section inputs (not splines)!" << endl;
 #endif
 
   return true;  
@@ -268,13 +277,6 @@ double NuXSec::FinTuningWght(
      if(!apply) continue;
      // Calculate weight
      double wght = this->FinTuningWght_1p(p,s,m,Ereco,Etrue);
-     // If the weight was calculated for a large var-size Ereco,Etrue bin and needs to
-     // shared between multiple MC template bins, calculate the weight fraction that
-     // belongs to the current MC template bin.
-     bool share = kXSecSystWghtUnequallySharedBetweenBins[isyst];
-     double frac = (share) ? this->FractionOfEvents(s,m,Ereco,Etrue,kSKMCtNom) : 1;
-     // Add to total weight
-     //tot_wght *= (frac*(wght-1)+1);
      tot_wght *= wght;
   }
 
@@ -305,12 +307,15 @@ double NuXSec::FinTuningWght_1p(
   //
   if(p == kNuisBANFF22 || p == kNuisBANFF23)
   {
-     TSpline3 * wght_spl = this->FindWghtSpline(p,s,m,Ereco,Etrue);
-     assert(wght_spl);
-     //double t = fBANFF->BestFitValue(p);
-     //wght = wght_spl->Eval(t);
-     wght = wght_spl->Eval(0);
-     wght = TMath::Max(0.,wght);
+     bool ev = this->IsThereAnEvent(s, m, Ereco, Etrue);
+     if(ev) {
+       TSpline3 * wght_spl = this->FindWghtSpline(p,s,m,Ereco,Etrue);
+       assert(wght_spl);
+       //double t = fBANFF->BestFitValue(p);
+       //wght = wght_spl->Eval(t);
+       wght = wght_spl->Eval(0);
+       wght = TMath::Max(0.,wght);
+     }
   }
 
   //
@@ -332,10 +337,13 @@ double NuXSec::FinTuningWght_1p(
   else
   if(p == kNuisXSecFermiMom || p == kNuisXSecSpecFunc || p == kNuisXSecWshape || p == kNuisXSecShapeCCoth)
   {
-    TSpline3 * wght_spl = this->FindWghtSpline(p,s,m,Ereco,Etrue);
-    assert(wght_spl);
-    wght = wght_spl->Eval(0);
-    wght = TMath::Max(0.,wght);
+    bool ev = this->IsThereAnEvent(s, m, Ereco, Etrue);
+    if(ev) {
+      TSpline3 * wght_spl = this->FindWghtSpline(p,s,m,Ereco,Etrue);
+      assert(wght_spl);
+      wght = wght_spl->Eval(0);
+      wght = TMath::Max(0.,wght);
+    }
   }
 
   //
@@ -399,13 +407,6 @@ double NuXSec::SystWght(
      if(!apply) continue;
      // Calculate weight
      double wght = this->SystWght_1p(p,s,m,Ereco,Etrue);
-     // If the weight was calculated for a large var-size Ereco,Etrue bin and needs to
-     // shared between multiple MC template bins, calculate the weight fraction that
-     // belongs to the current MC template bin.
-     bool share = kXSecSystWghtUnequallySharedBetweenBins[isyst];
-     double frac = (share) ? this->FractionOfEvents(s,m,Ereco,Etrue,kSKMCtTun) : 1;
-     // Add to total weight
-     //tot_wght *= ((frac*(wght-1))+1);
      tot_wght *= wght;
   }
 
@@ -436,15 +437,18 @@ double NuXSec::SystWght_1p(
   //
   if(p == kNuisBANFF22 || p == kNuisBANFF23)
   {
-     TSpline3 * wght_spl = this->FindWghtSpline(p,s,m,Ereco,Etrue);
-     assert(wght_spl);
-     double tb = fBANFF->BestFitValue(p);
-     double tc = fBANFF->CurrentValue(p);
-     double diag = 0;
-     if(p == kNuisBANFF22) diag = fBANFF->CovMatrix()[22][22];
-     else if(p == kNuisBANFF23) diag = fBANFF->CovMatrix()[23][23];
-     wght = wght_spl->Eval(((tc / tb) - 1) / diag) / wght_spl->Eval(0);
-     wght = TMath::Max(0.,wght);
+     bool ev = this->IsThereAnEvent(s, m, Ereco, Etrue);
+     if(ev) {
+       TSpline3 * wght_spl = this->FindWghtSpline(p,s,m,Ereco,Etrue);
+       assert(wght_spl);
+       double tb = fBANFF->BestFitValue(p);
+       double tc = fBANFF->CurrentValue(p);
+       double diag = 0;
+       if(p == kNuisBANFF22) diag = fBANFF->CovMatrix()[22][22];
+       else if(p == kNuisBANFF23) diag = fBANFF->CovMatrix()[23][23];
+       wght = wght_spl->Eval(((tc / tb) - 1) / diag) / wght_spl->Eval(0);
+       wght = TMath::Max(0.,wght);
+     }
   }
 
   //
@@ -466,11 +470,14 @@ double NuXSec::SystWght_1p(
   else
   if(p == kNuisXSecFermiMom || p == kNuisXSecSpecFunc || p == kNuisXSecWshape || p == kNuisXSecShapeCCoth)
   {
-    TSpline3 * wght_spl = this->FindWghtSpline(p,s,m,Ereco,Etrue);
-    assert(wght_spl);
-    double tc = this->CurrentValue(p);
-    wght = wght_spl->Eval(tc) / wght_spl->Eval(0);
-    wght = TMath::Max(0.,wght);
+    bool ev = this->IsThereAnEvent(s, m, Ereco, Etrue);
+    if(ev) {
+      TSpline3 * wght_spl = this->FindWghtSpline(p,s,m,Ereco,Etrue);
+      assert(wght_spl);
+      double tc = this->CurrentValue(p);
+      wght = wght_spl->Eval(tc) / wght_spl->Eval(0);
+      wght = TMath::Max(0.,wght);
+    }
   }
 
   //
@@ -760,8 +767,8 @@ bool NuXSec::ApplySystToEnergyBin(PhysParamId_t p, double Ereco, double Etrue) c
   return apply;
 }
 //________________________________________________________________________________________
-void NuXSec::BuildFracMCTemplates(
-  TH2D * input_mctempl_array[kns][knm], SKMCTemplateType_t type)
+void NuXSec::BuildBoolMCTemplates(
+  TH2D * input_mctempl_array[kns][knm])
 {
   for(int is = 0; is < kns; is++) {
      SuperkSample_t s = kSKSamples[is];
@@ -769,20 +776,14 @@ void NuXSec::BuildFracMCTemplates(
      for(int im = 0; im < knm; im++) {
        SuperkMode_t m = kSKReactionModes[is][im];
        if(m == kSKmUndefined) continue; 
-#ifdef __show_build_frac_template_mesg_info__
-       cout << "Exp/NuXSec >> Building MC template fractions for "
+#ifdef __show_build_bool_template_mesg_info__
+       cout << "Exp/NuXSec >> Building MC template booleans for "
             << "sample = " << util::AsString(s) 
             << ", mode = " << util::AsString(m)
-            << ", template type = " << util::AsString(type)
             << endl;
 #endif
        const TH2D * mctempl = input_mctempl_array[is][im];
-       TH2D * mctempl_frac = 0;
-       if      (type == kSKMCtNom) { mctempl_frac = fFracNom[is][im]; }
-       else if (type == kSKMCtTun) { mctempl_frac = fFracTun[is][im]; }
-       else {
-         exit(1);
-       }
+       TH2I * mctempl_bool = fBoolTempl[is][im];
 
        // Look-up the Ereco and Etrue energy range (in the variable-size binning
        // scheme used when pre-computing weight splines)
@@ -804,18 +805,11 @@ void NuXSec::BuildFracMCTemplates(
              int it_min = mctempl->GetYaxis()->FindBin(Etrue_min);
              int it_max = mctempl->GetYaxis()->FindBin(Etrue_max);
 
-             double sum = 0.;
-             for(int ir = ir_min; ir <= ir_max; ir++) {
-               for(int it = it_min; it <= it_max; it++) {
-                  sum += mctempl->GetBinContent(ir,it);
-               }//it
-             }//ir
-
              for(int ir = ir_min; ir <= ir_max; ir++) {
                for(int it = it_min; it <= it_max; it++) {
                   double nev  = mctempl->GetBinContent(ir,it);
-                  double frac = (sum > 0.) ? nev/sum : 0;
-                  mctempl_frac->SetBinContent(ir,it,frac);
+		  if(nev > kASmallNum)
+		    mctempl_bool->SetBinContent(ir,it,1);
                }//it
              }//ir
         
@@ -827,25 +821,20 @@ void NuXSec::BuildFracMCTemplates(
 
 }
 //________________________________________________________________________________________
-double NuXSec::FractionOfEvents(
-  SuperkSample_t s, SuperkMode_t m, double Ereco, double Etrue, SKMCTemplateType_t type) const
+bool NuXSec::IsThereAnEvent(
+  SuperkSample_t s, SuperkMode_t m, double Ereco, double Etrue) const
 {
   int is = util::ArrIdx::Instance()->SuperkSampleIdx(s);
   int im = util::ArrIdx::Instance()->SuperkModeIdx(s,m);
   assert(is != -1 && im != -1);
 
-  TH2D * mctempl_frac = 0;
-  if      (type == kSKMCtNom) { mctempl_frac = fFracNom[is][im]; }
-  else if (type == kSKMCtTun) { mctempl_frac = fFracTun[is][im]; }
-  else {
-     exit(1);
-  }
-  assert(mctempl_frac);
+  TH2I * mctempl_bool = fBoolTempl[is][im];
+  assert(mctempl_bool);
 
-  int ir = mctempl_frac->GetXaxis()->FindBin(Ereco);
-  int it = mctempl_frac->GetYaxis()->FindBin(Etrue);
+  int ir = mctempl_bool->GetXaxis()->FindBin(Ereco);
+  int it = mctempl_bool->GetYaxis()->FindBin(Etrue);
 
-  double frac = mctempl_frac->GetBinContent(ir,it);
-  return frac;
+  bool ev = (mctempl_bool->GetBinContent(ir,it) > 0);
+  return ev;
 } 
 //________________________________________________________________________________________

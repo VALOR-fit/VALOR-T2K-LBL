@@ -76,12 +76,13 @@ public:
 
   // Read inputs from XML file
   bool Read (TXMLEngine* xml, XMLNodePointer_t root_node);
+  bool ReadSplines (TXMLEngine* xml, XMLNodePointer_t root_node);
 
   // Set BANFF fit info
   void TellMeAboutTheBANFFfit(BANFF * banff);
 
   //
-  void BuildFracMCTemplates(TH2D* input_mctempl_array[kns][knm], conv::SKMCTemplateType_t type);
+  void BuildBoolMCTemplates(TH2D* input_mctempl_array[kns][knm]);
 
 private:
 
@@ -107,7 +108,7 @@ private:
   bool ApplySystToEnergyBin (conv::PhysParamId_t p, double Ereco, double Etrue) const;
 
   //
-  double FractionOfEvents   (conv::SuperkSample_t s, conv::SuperkMode_t m, double Ereco, double Etrue,  conv::SKMCTemplateType_t type) const;
+  bool IsThereAnEvent       (conv::SuperkSample_t s, conv::SuperkMode_t m, double Ereco, double Etrue) const;
   
   //
   // Private data members
@@ -115,8 +116,7 @@ private:
 
   BANFF *     fBANFF;               ///< BANFF fit info
   TSpline3 *  fXSecWghtSpl[knwspl]; ///< Weight splines. Index is function of sample, mode, systematic param, Ereco bin, Etrue bin
-  TH2D *      fFracNom[kns][knm];   ///<
-  TH2D *      fFracTun[kns][knm];   ///<
+  TH2I *      fBoolTempl[kns][knm]; ///< Stores whether there is an event in the SKMC Tun template, or not
 
   // tweaking dials
   double fFermiMomTwkDial;

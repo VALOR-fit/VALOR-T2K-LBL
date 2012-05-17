@@ -482,8 +482,6 @@ void SuperkMC::ApplyBANFFTuningToTemplates(void)
   cout << "Exp/SKMC >> Applying BANFF flux and cross-section tuning." << endl;
 #endif
 
-  fNuXSec->BuildFracMCTemplates(fMCTemplNom, kSKMCtNom);
-
   // loop over samples
   for(int is = 0; is < kns; is++) {
     SuperkSample_t s = kSKSamples[is];
@@ -522,7 +520,7 @@ void SuperkMC::ApplyBANFFTuningToTemplates(void)
     }//im
   }//is
 
-  fNuXSec -> BuildFracMCTemplates(fMCTemplTun, kSKMCtTun);
+  fNuXSec -> BuildBoolMCTemplates(fMCTemplTun);
   fFSI    -> BuildFracMCTemplates(fMCTemplTun);
 
 }
