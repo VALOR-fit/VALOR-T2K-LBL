@@ -732,6 +732,8 @@ string t2kana::util::AsString(PhysParamId_t p)
     case ( kNuisXSecSpecFunc   ) : return "Spectral Func";                   break; 
     case ( kNuisXSecWshape     ) : return "W-shape";                         break;
     case ( kNuisXSecShapeCCoth ) : return "Shape; CC Oth";                   break;
+    case ( kNuisXSecPiLessDelta) : return "Pi-less delta decay";             break;
+    case ( kNuisXSecENuShape   ) : return "Shape; CC1pi ENu";                break;
 
     case ( kNuisXSecNormCCQEE1 ) : return "Norm; CC QE Norm; 1.5 - 3.5 GeV"; break; 
     case ( kNuisXSecNormCCQEE2 ) : return "Norm; CC QE Norm; > 3.5 GeV";     break; 
@@ -853,8 +855,10 @@ string t2kana::util::AsStringCompact(PhysParamId_t p)
 
     case ( kNuisXSecFermiMom          ) : return "f_pfermi";       break;
     case ( kNuisXSecSpecFunc          ) : return "f_specfunc";     break; 
-    case ( kNuisXSecWshape            ) : return "f_deltawidth";       break;
-    case ( kNuisXSecShapeCCoth        ) : return "f_dismultipi";  break;
+    case ( kNuisXSecWshape            ) : return "f_deltawidth";   break;
+    case ( kNuisXSecShapeCCoth        ) : return "f_dismultipi";   break;
+    case ( kNuisXSecPiLessDelta       ) : return "f_pilessdelta";  break;
+    case ( kNuisXSecENuShape          ) : return "f_enushape";     break;
 
     case ( kNuisXSecNormCCQEE1        ) : return "f_norm_ccqe_1";  break; 
     case ( kNuisXSecNormCCQEE2        ) : return "f_norm_ccqe_2";  break; 
@@ -1366,6 +1370,8 @@ t2kana::conv::PhysParamId_t
   if(sh == "xsec_sf")           return kNuisXSecSpecFunc;
   if(sh == "xsec_wshape")       return kNuisXSecWshape;
   if(sh == "xsec_shape_ccoth")  return kNuisXSecShapeCCoth;
+  if(sh == "xsec_pilessdelta")  return kNuisXSecPiLessDelta;
+  if(sh == "xsec_enushape")     return kNuisXSecENuShape;
   if(sh == "xsec_norm_ccqeE1")  return kNuisXSecNormCCQEE1;
   if(sh == "xsec_norm_ccqeE2")  return kNuisXSecNormCCQEE2;
   if(sh == "xsec_norm_cc1piE1") return kNuisXSecNormCC1piE1;
@@ -1655,6 +1661,8 @@ bool t2kana::util::IsSystematic(PhysParamId_t p)
     case ( kNuisXSecSpecFunc          ) : return true;  break; 
     case ( kNuisXSecWshape            ) : return true;  break;
     case ( kNuisXSecShapeCCoth        ) : return true;  break;
+    case ( kNuisXSecPiLessDelta       ) : return true;  break;
+    case ( kNuisXSecENuShape          ) : return true;  break;
 
     case ( kNuisXSecNormCCQEE1        ) : return true;  break; 
     case ( kNuisXSecNormCCQEE2        ) : return true;  break; 

@@ -54,6 +54,8 @@ public:
   void TweakSpecFunc      (double twkdial) { fSpecFuncTwkDial      = twkdial; }
   void TweakWshape        (double twkdial) { fWshapeTwkDial        = twkdial; }
   void TweakShapeCCoth    (double twkdial) { fShapeCCothTwkDial    = twkdial; }
+  void TweakPiLessDelta   (double twkdial) { fPiLessDeltaTwkDial   = twkdial; }
+  void TweakENuShape      (double twkdial) { fENuShapeTwkDial      = twkdial; }
   void TweakNormCCQEE1    (double twkdial) { fNormCCQEE1TwkDial    = twkdial; }
   void TweakNormCCQEE2    (double twkdial) { fNormCCQEE2TwkDial    = twkdial; }
   void TweakNormCC1piE1   (double twkdial) { fNormCC1piE1TwkDial   = twkdial; }
@@ -116,13 +118,15 @@ private:
 
   BANFF *     fBANFF;               ///< BANFF fit info
   TSpline3 *  fXSecWghtSpl[knwspl]; ///< Weight splines. Index is function of sample, mode, systematic param, Ereco bin, Etrue bin
-  TH2I *      fBoolTempl[kns][knm]; ///< Stores whether there is an event in the SKMC Tun template, or not
+  TH2D *      fBoolTempl[kns][knm]; ///< Stores whether there is an event in the SKMC Tun template, or not
 
   // tweaking dials
   double fFermiMomTwkDial;
   double fSpecFuncTwkDial;
   double fWshapeTwkDial;
   double fShapeCCothTwkDial;
+  double fPiLessDeltaTwkDial;
+  double fENuShapeTwkDial;
   double fNormCCQEE1TwkDial;
   double fNormCCQEE2TwkDial;
   double fNormCC1piE1TwkDial;

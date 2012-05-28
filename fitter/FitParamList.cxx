@@ -466,6 +466,21 @@ void FitParamList::AppendSystematics(FitParamList * fparm, int start)
     fparm->AddParam(ip++, p,  1.0,  0.5,  1.5,  1E-1,  false, true);
   }
 
+  // XSec
+  fparm->AddParam( ip++, kNuisXSecFermiMom,      0.0, -1.0, 1.0, 1E-1,  false, true);
+  fparm->AddParam( ip++, kNuisXSecSpecFunc,      0.0, -1.0, 1.0, 1E-1,  false, true);
+  fparm->AddParam( ip++, kNuisXSecWshape,        0.0, -1.0, 1.0, 1E-1,  false, true);
+  fparm->AddParam( ip++, kNuisXSecShapeCCoth,    0.0, -1.0, 1.0, 1E-1,  false, true);
+  fparm->AddParam( ip++, kNuisXSecPiLessDelta,   0.0, -1.0, 1.0, 1E-1,  false, true);
+  fparm->AddParam( ip++, kNuisXSecENuShape,      0.0, -1.0, 1.0, 1E-1,  false, true);
+  fparm->AddParam( ip++, kNuisXSecNormCCQEE1,    0.0, -1.0, 1.0, 1E-1,  false, true);
+  fparm->AddParam( ip++, kNuisXSecNormCCQEE2,    0.0, -1.0, 1.0, 1E-1,  false, true);
+  fparm->AddParam( ip++, kNuisXSecNormCC1piE1,   0.0, -1.0, 1.0, 1E-1,  false, true);
+  fparm->AddParam( ip++, kNuisXSecNormCCcoh,     0.0, -1.0, 1.0, 1E-1,  false, true);
+  fparm->AddParam( ip++, kNuisXSecNormNCcoh,     0.0, -1.0, 1.0, 1E-1,  false, true);
+  fparm->AddParam( ip++, kNuisXSecNormNCoth,     0.0, -1.0, 1.0, 1E-1,  false, true);
+  fparm->AddParam( ip++, kNuisXSecNormNuEToNuMu, 0.0, -1.0, 1.0, 1E-1,  false, true);
+
   // FSI
   for(int i = 0; i < kNumOfFSIParams; i++) {
     PhysParamId_t p = PhysParamId_t ((int) kNuisFSI00 + i);

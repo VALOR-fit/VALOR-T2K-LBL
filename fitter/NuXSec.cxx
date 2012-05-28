@@ -21,6 +21,7 @@
 //#define __show_syst_var_wght_mesg_debug__
 //#define __show_build_bool_template_mesg_info__
 //#define __show_wght_spline_idx_mesg_debug__
+//#define __show_isanevent_mesg_debug__
 
 #include <cassert>
 #include <cstdlib>
@@ -73,6 +74,8 @@ void NuXSec::Init(void)
   fSpecFuncTwkDial      = 0;
   fWshapeTwkDial        = 0;
   fShapeCCothTwkDial    = 0;
+  fPiLessDeltaTwkDial   = 0;
+  fENuShapeTwkDial      = 0;
   fNormCCQEE1TwkDial    = 0;
   fNormCCQEE2TwkDial    = 0;
   fNormCC1piE1TwkDial   = 0;
@@ -162,23 +165,29 @@ bool NuXSec::ReadSplines(TXMLEngine* xml, XMLNodePointer_t root_node)
 
 #ifdef __show_init_mesg_debug__
                 cout << "Exp/NuXSec >> Loading cross-section weight spline: " 
-                     << splname.str() << endl;
+                     << splname.str() << " for Ereco: " << Ereco << ", Etrue: " << Etrue << endl;
 #endif
                 // Copy spline from input file
                 TSpline3 * spl = (TSpline3 *) spline_file->Get(splname.str().c_str());
-		bool bin_is_empty = this->IsThereAnEvent(s, m, Ereco, Etrue);
-                if(!spl && !bin_is_empty) { 
+		bool bin_is_not_empty = this->IsThereAnEvent(s, m, Ereco, Etrue);
+		if(!spl && !bin_is_not_empty) {
+#ifdef __show_init_mesg_debug__
+		  cout << "Exp/NuXSec >> No events or spline for: "
+		       << splname.str() << endl;
+#endif
+		  continue;
+		}
+                if(!spl && bin_is_not_empty) { 
                    cerr << "Exp/NuXSec >> Null cross-sectionweight spline: " 
                         << splname.str() << endl;
                    exit(1); 
                 }
-		/* Uncomment this when we have null splines for empty bins
-		else if(spl && bin_is_empty) {
+		else if(spl && !bin_is_not_empty) {
 		   cerr << "Exp/NuXSec >> Spline exists for empty bin: "
-			<< splname.str() << endl;
-		   exit(1);
+			<< splname.str() << ". Spline thinks there are " 
+			<< spl->GetTitle() << endl;
+		   //exit(1);
 		}
-		*/
 
 #ifdef __show_init_mesg_debug__
                 cout << "Exp/NuXSec >> Storing cross-section weight spline at slot: " 
@@ -217,6 +226,7 @@ bool NuXSec::Read(TXMLEngine* xml, XMLNodePointer_t root_node)
   //
   //
 
+  /*
   for(int is = 0; is < kns; is++) {
      SuperkSample_t s = kSKSamples[is];
      if(s == kSKsUndefined) continue;
@@ -233,6 +243,7 @@ bool NuXSec::Read(TXMLEngine* xml, XMLNodePointer_t root_node)
        fBoolTempl[is][im]->GetYaxis()->SetTitle("E_{true} (GeV)");
      }
   }
+  */
 
   fNormCCQEE1RelErr =
     util::XML2Dbl(xml,root_node,"xsec/normalisations/ccqee1");
@@ -335,7 +346,8 @@ double NuXSec::FinTuningWght_1p(
   // CC other shape
   //
   else
-  if(p == kNuisXSecFermiMom || p == kNuisXSecSpecFunc || p == kNuisXSecWshape || p == kNuisXSecShapeCCoth)
+  if(p == kNuisXSecFermiMom || p == kNuisXSecSpecFunc || p == kNuisXSecWshape || p == kNuisXSecShapeCCoth ||
+     p == kNuisXSecPiLessDelta || p == kNuisXSecENuShape)
   {
     bool ev = this->IsThereAnEvent(s, m, Ereco, Etrue);
     if(ev) {
@@ -468,7 +480,8 @@ double NuXSec::SystWght_1p(
   // CC other shape
   //
   else
-  if(p == kNuisXSecFermiMom || p == kNuisXSecSpecFunc || p == kNuisXSecWshape || p == kNuisXSecShapeCCoth)
+  if(p == kNuisXSecFermiMom || p == kNuisXSecSpecFunc || p == kNuisXSecWshape || p == kNuisXSecShapeCCoth ||
+     p == kNuisXSecPiLessDelta || p == kNuisXSecENuShape)
   {
     bool ev = this->IsThereAnEvent(s, m, Ereco, Etrue);
     if(ev) {
@@ -537,6 +550,12 @@ double NuXSec::CurrentValue(PhysParamId_t p) const
     case kNuisXSecShapeCCoth:
       return fShapeCCothTwkDial;
       break;
+    case kNuisXSecPiLessDelta:
+      return fPiLessDeltaTwkDial;
+      break;
+    case kNuisXSecENuShape:
+      return fENuShapeTwkDial;
+      break;
     case kNuisXSecNormCCQEE1:
       return fNormCCQEE1TwkDial;
       break;
@@ -598,17 +617,19 @@ double NuXSec::RelativeError(PhysParamId_t p) const
 void NuXSec::PrintSystematicVariations(void) const
 {
   cout << "Exp/XSec >> XSec parameters:"                            << endl; 
-  cout << "         >> Fermi momentum    " << fFermiMomTwkDial      << endl;
-  cout << "         >> Spectral function " << fSpecFuncTwkDial      << endl;
-  cout << "         >> W-shape           " << fWshapeTwkDial        << endl;
-  cout << "         >> CC-oth shape      " << fShapeCCothTwkDial    << endl;
-  cout << "         >> CCQE bin1 norm    " << fNormCCQEE1TwkDial    << endl;
-  cout << "         >> CCQE bin2 norm    " << fNormCCQEE2TwkDial    << endl;
-  cout << "         >> CC1pi bin1 norm   " << fNormCC1piE1TwkDial   << endl;
-  cout << "         >> CC-coh norm       " << fNormCCcohTwkDial     << endl;
-  cout << "         >> NC-coh norm       " << fNormNCcohTwkDial     << endl;
-  cout << "         >> NC-oth norm       " << fNormNCothTwkDial     << endl;
-  cout << "         >> NuE to NuMu norm  " << fNormNuEToNuMuTwkDial << endl;
+  cout << "         >> Fermi momentum      " << fFermiMomTwkDial      << endl;
+  cout << "         >> Spectral function   " << fSpecFuncTwkDial      << endl;
+  cout << "         >> W-shape             " << fWshapeTwkDial        << endl;
+  cout << "         >> CC-oth shape        " << fShapeCCothTwkDial    << endl;
+  cout << "         >> Pi-less delta decay " << fPiLessDeltaTwkDial   << endl;
+  cout << "         >> CC1pi ENu Shape     " << fENuShapeTwkDial      << endl;
+  cout << "         >> CCQE bin1 norm      " << fNormCCQEE1TwkDial    << endl;
+  cout << "         >> CCQE bin2 norm      " << fNormCCQEE2TwkDial    << endl;
+  cout << "         >> CC1pi bin1 norm     " << fNormCC1piE1TwkDial   << endl;
+  cout << "         >> CC-coh norm         " << fNormCCcohTwkDial     << endl;
+  cout << "         >> NC-coh norm         " << fNormNCcohTwkDial     << endl;
+  cout << "         >> NC-oth norm         " << fNormNCothTwkDial     << endl;
+  cout << "         >> NuE to NuMu norm    " << fNormNuEToNuMuTwkDial << endl;
 }
 //________________________________________________________________________________________
 
@@ -783,8 +804,10 @@ void NuXSec::BuildBoolMCTemplates(
             << endl;
 #endif
        const TH2D * mctempl = input_mctempl_array[is][im];
-       TH2I * mctempl_bool = fBoolTempl[is][im];
+       assert (mctempl);
+       fBoolTempl[is][im] = new TH2D(*mctempl);
 
+       /*
        // Look-up the Ereco and Etrue energy range (in the variable-size binning
        // scheme used when pre-computing weight splines)
        for(int irv = 0; irv < kXsNErecoBins; irv++) {
@@ -809,32 +832,44 @@ void NuXSec::BuildBoolMCTemplates(
                for(int it = it_min; it <= it_max; it++) {
                   double nev  = mctempl->GetBinContent(ir,it);
 		  if(nev > kASmallNum)
-		    mctempl_bool->SetBinContent(ir,it,1);
+		    mctempl_bool->SetBinContent(ir,it,nev);
                }//it
              }//ir
         
           }//itv
        }//irv
+       */
 
      }//im
   }//is
 
 }
 //________________________________________________________________________________________
-bool NuXSec::IsThereAnEvent(
-  SuperkSample_t s, SuperkMode_t m, double Ereco, double Etrue) const
+bool NuXSec::IsThereAnEvent(SuperkSample_t s, SuperkMode_t m, double Ereco, double Etrue) const
 {
   int is = util::ArrIdx::Instance()->SuperkSampleIdx(s);
   int im = util::ArrIdx::Instance()->SuperkModeIdx(s,m);
   assert(is != -1 && im != -1);
 
-  TH2I * mctempl_bool = fBoolTempl[is][im];
+  TH2D * mctempl_bool = fBoolTempl[is][im];
   assert(mctempl_bool);
 
   int ir = mctempl_bool->GetXaxis()->FindBin(Ereco);
   int it = mctempl_bool->GetYaxis()->FindBin(Etrue);
 
-  bool ev = (mctempl_bool->GetBinContent(ir,it) > 0);
+  bool ev = (mctempl_bool->GetBinContent(ir,it) > kASmallNum);
+
+#ifdef __show_isanevent_mesg_debug__
+  if(ev)
+    cout << "Exp/NuXSec >> There are "
+	 << mctempl_bool->GetBinContent(ir,it)
+	 << " events for sample = " << util::AsString(s) 
+	 << ", mode = " << util::AsString(m)
+	 << ", Etrue = " << Etrue
+	 << ", Ereco = " << Ereco
+	 << endl;
+#endif
+
   return ev;
 } 
 //________________________________________________________________________________________

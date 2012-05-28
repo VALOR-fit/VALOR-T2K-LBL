@@ -22,6 +22,20 @@
 //             - banff_00
 //             - ...
 //             - banff_26
+//      - xsec_pf
+//      - xsec_sf
+//      - xsec_wshape
+//      - xsec_shape_ccoth
+//      - xsec_pilessdelta
+//      - xsec_enushape
+//      - xsec_norm_ccqeE1
+//      - xsec_norm_ccqeE2
+//      - xsec_norm_cc1piE1
+//      - xsec_norm_cccoh
+//      - xsec_norm_nccoh
+//      - xsec_norm_ncoth
+//      - xsec_norm_nuetonumu
+//      
 //      - expected
 //             This is a special option. Skip the main macro & print out a table with the 
 //             expected 1 sigma percentage change for each systematic
@@ -1942,14 +1956,18 @@ print_expected_errors(bool use_tex, const char * output_file, const char * confi
       "banff/covariance_matrix");
 
   //XSec
+  /* these don't work now, (splines changed to run from -4 to +4, instead of 0-5)
   double FermiMomRelErr =
     util::XML2Dbl(xml,root_node,"xsec/splines/pf");
   double SpecFuncRelErr =
     util::XML2Dbl(xml,root_node,"xsec/splines/sf");
   double WshapeRelErr =
     util::XML2Dbl(xml,root_node,"xsec/splines/wshape");
-  double ShapeCCothRelErr =
-    util::XML2Dbl(xml,root_node,"xsec/splines/ccothshape");
+  double PiLessDeltaRelErr =
+    util::XML2Dbl(xml,root_node,"xsec/splines/pilessdelta");
+  double ENuShapeRelErr =
+    util::XML2Dbl(xml,root_node,"xsec/splines/enushape");
+  */
   double NormCCQE1RelErr =
     util::XML2Dbl(xml,root_node,"xsec/normalisations/ccqee1");
   double NormCCQE2RelErr =
@@ -2039,6 +2057,7 @@ print_expected_errors(bool use_tex, const char * output_file, const char * confi
     streamer << endrow << endl;
   }
 
+  /*
   systematic = "xsec pF";
   streamer << setw(ncol1)  << setfill(' ') << systematic << endcolumn
 	   << setw(ncolnev)  << setfill(' ') << setprecision(nprecisionnev)
@@ -2059,7 +2078,17 @@ print_expected_errors(bool use_tex, const char * output_file, const char * confi
 	   << setw(ncolnev)  << setfill(' ') << setprecision(nprecisionnev)
 	   << ShapeCCothRelErr * 100 << pctsymbol
 	   << endrow << endl;
-
+  systematic = "xsec Pion-less delta decay";
+  streamer << setw(ncol1)  << setfill(' ') << systematic << endcolumn
+	   << setw(ncolnev)  << setfill(' ') << setprecision(nprecisionnev)
+	   << PiLessDeltaRelErr * 100 << pctsymbol
+	   << endrow << endl;
+  systematic = "xsec CC1pi ENu shape";
+  streamer << setw(ncol1)  << setfill(' ') << systematic << endcolumn
+	   << setw(ncolnev)  << setfill(' ') << setprecision(nprecisionnev)
+	   << ENuShapeRelErr * 100 << pctsymbol
+	   << endrow << endl;
+  */
   systematic = "Norm CCQE E1";
   streamer << setw(ncol1)  << setfill(' ') << systematic << endcolumn
 	   << setw(ncolnev)  << setfill(' ') << setprecision(nprecisionnev)

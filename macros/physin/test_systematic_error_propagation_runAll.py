@@ -68,6 +68,8 @@ systematics.append(["xsec_pf", "false", "false", "false"])
 systematics.append(["xsec_sf", "false", "false", "false"])
 systematics.append(["xsec_wshape", "false", "false", "false"])
 systematics.append(["xsec_shape_ccoth", "false", "false", "false"])
+systematics.append(["xsec_pilessdelta", "false", "false", "false"])
+systematics.append(["xsec_enushape", "false", "false", "false"])
 #XSec normalisations
 systematics.append(["xsec_norm_ccqeE1", "false", "false", "true"])
 systematics.append(["xsec_norm_ccqeE2", "false", "false", "true"])

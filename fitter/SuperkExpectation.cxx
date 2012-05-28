@@ -164,6 +164,8 @@ void SuperkExpectation::ResetSystematicVariations(void)
   this->GetNuXSec()->TweakSpecFunc      (0.);
   this->GetNuXSec()->TweakWshape        (0.);
   this->GetNuXSec()->TweakShapeCCoth    (0.);
+  this->GetNuXSec()->TweakPiLessDelta   (0.);
+  this->GetNuXSec()->TweakENuShape      (0.);
   this->GetNuXSec()->TweakNormCCQEE1    (0.);
   this->GetNuXSec()->TweakNormCCQEE2    (0.);
   this->GetNuXSec()->TweakNormCC1piE1   (0.);
@@ -216,6 +218,8 @@ void SuperkExpectation::TweakSystematic(string systematic, double twkdial, bool 
 //    - xsec_sf
 //    - xsec_wshape
 //    - xsec_shape_ccoth
+//    - xsec_pilessdelta
+//    - xsec_enushape
 //    - xsec_norm_ccqeE1
 //    - xsec_norm_ccqeE2
 //    - xsec_norm_cc1piE1
@@ -344,6 +348,10 @@ void SuperkExpectation::TweakSystematic(string systematic, double twkdial, bool 
     this->GetNuXSec()->TweakWshape        (twkdial);
   else if(systematic == "xsec_shape_ccoth")
     this->GetNuXSec()->TweakShapeCCoth    (twkdial);
+  else if(systematic == "xsec_pilessdelta")
+    this->GetNuXSec()->TweakPiLessDelta   (twkdial);
+  else if(systematic == "xsec_enushape")
+    this->GetNuXSec()->TweakENuShape      (twkdial);
   else if(systematic == "xsec_norm_ccqeE1")
     this->GetNuXSec()->TweakNormCCQEE1    (twkdial);
   else if(systematic == "xsec_norm_ccqeE2")
@@ -394,6 +402,8 @@ void SuperkExpectation::TweakAllSystematics(void)
   this->GetNuXSec()->TweakSpecFunc      (rand.Gaus(0.,1.));
   this->GetNuXSec()->TweakWshape        (rand.Gaus(0.,1.));
   this->GetNuXSec()->TweakShapeCCoth    (rand.Gaus(0.,1.));
+  this->GetNuXSec()->TweakPiLessDelta   (rand.Gaus(0.,1.));
+  this->GetNuXSec()->TweakENuShape      (rand.Gaus(0.,1.));
   this->GetNuXSec()->TweakNormCCQEE1    (rand.Gaus(0.,1.));
   this->GetNuXSec()->TweakNormCCQEE2    (rand.Gaus(0.,1.));
   this->GetNuXSec()->TweakNormCC1piE1   (rand.Gaus(0.,1.));
@@ -457,7 +467,6 @@ bool SuperkExpectation::Read(string config_file)
   if ( ! this->GetFSI            () -> Read (xml, root_node) ) return false;
   if ( ! this->GetSuperkDetector () -> Read (xml, root_node) ) return false;
   if ( ! this->GetSuperkMC       () -> Read (xml, root_node) ) return false;
-  if ( ! this->GetNuXSec         () -> ReadSplines(xml,root_node) ) return false;
 
   fIsConfigured = true;
 
@@ -601,6 +610,14 @@ void SuperkExpectation::SetNuisanceParams(const FitParamList & fp)
    if(fp.Exists(kNuisXSecShapeCCoth)) {
      double twk = fp.CurrValue(kNuisXSecShapeCCoth);
      this->GetNuXSec()->TweakShapeCCoth(twk);
+   }
+   if(fp.Exists(kNuisXSecPiLessDelta)) {
+     double twk = fp.CurrValue(kNuisXSecPiLessDelta);
+     this->GetNuXSec()->TweakPiLessDelta(twk);
+   }
+   if(fp.Exists(kNuisXSecENuShape)) {
+     double twk = fp.CurrValue(kNuisXSecENuShape);
+     this->GetNuXSec()->TweakENuShape(twk);
    }
    if(fp.Exists(kNuisXSecNormCCQEE1)) {
      double twk = fp.CurrValue(kNuisXSecNormCCQEE1);
