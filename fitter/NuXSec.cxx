@@ -22,6 +22,7 @@
 //#define __show_build_bool_template_mesg_info__
 //#define __show_wght_spline_idx_mesg_debug__
 //#define __show_isanevent_mesg_debug__
+//#define __save_ori_templates_init_debug__
 
 #include <cassert>
 #include <cstdlib>
@@ -66,7 +67,7 @@ void NuXSec::Init(void)
 
   for(int is=0; is<kns; is++) {
     for(int im=0; im<knm; im++) {
-      fBoolTempl [is][im] = 0;
+      fXsBinningTempl [is][im] = 0;
     }
   }
 
@@ -94,7 +95,7 @@ void NuXSec::CleanUp(void)
 
   for(int is=0; is<kns; is++) {
     for(int im=0; im<knm; im++) {
-      if (fBoolTempl [is][im]) delete fBoolTempl [is][im]; 
+      if (fXsBinningTempl [is][im]) delete fXsBinningTempl [is][im]; 
     }
   }
 }
@@ -179,14 +180,14 @@ bool NuXSec::ReadSplines(TXMLEngine* xml, XMLNodePointer_t root_node)
 		}
                 if(!spl && bin_is_not_empty) { 
                    cerr << "Exp/NuXSec >> Null cross-sectionweight spline: " 
-                        << splname.str() << endl;
+                        << splname.str() << " Ereco: " << Ereco << ", Etrue: " << Etrue << endl;
                    exit(1); 
                 }
 		else if(spl && !bin_is_not_empty) {
 		   cerr << "Exp/NuXSec >> Spline exists for empty bin: "
-			<< splname.str() << ". Spline thinks there are " 
-			<< spl->GetTitle() << endl;
-		   //exit(1);
+			<< splname.str() << " Ereco: " << Ereco << ", Etrue: " << Etrue
+			<< ". Spline thinks there are " << spl->GetTitle() << endl;
+		   exit(1);
 		}
 
 #ifdef __show_init_mesg_debug__
@@ -226,7 +227,7 @@ bool NuXSec::Read(TXMLEngine* xml, XMLNodePointer_t root_node)
   //
   //
 
-  /*
+  //book the bool templ histograms
   for(int is = 0; is < kns; is++) {
      SuperkSample_t s = kSKSamples[is];
      if(s == kSKsUndefined) continue;
@@ -235,15 +236,16 @@ bool NuXSec::Read(TXMLEngine* xml, XMLNodePointer_t root_node)
      for(int im = 0; im < knm; im++) {
        SuperkMode_t m = kSKReactionModes[is][im];
        if(m == kSKmUndefined) continue;
-       fBoolTempl[is][im] = new TH2I(
+       const int      n_etrue_bins    = util::NumVariableXsEtrueBins (s,m);
+       const double * etrue_bin_edges = util::VariableXsEtrueBinEdges(s,m);
+       fXsBinningTempl[is][im] = new TH2D(
           Form("bool_templ_%d_%d",is,im), util::AsString(m).c_str(),
-	  n_ereco_bins, ereco_bin_edges, kNEtrueBins, (int)kEtrueMin, (int)kEtrueMax);
-       fBoolTempl[is][im]->SetDirectory(0);
-       fBoolTempl[is][im]->GetXaxis()->SetTitle("E_{reco} (GeV)");
-       fBoolTempl[is][im]->GetYaxis()->SetTitle("E_{true} (GeV)");
+	  n_ereco_bins, ereco_bin_edges, n_etrue_bins, etrue_bin_edges);
+       fXsBinningTempl[is][im]->SetDirectory(0);
+       fXsBinningTempl[is][im]->GetXaxis()->SetTitle("E_{reco} (GeV)");
+       fXsBinningTempl[is][im]->GetYaxis()->SetTitle("E_{true} (GeV)");
      }
   }
-  */
 
   fNormCCQEE1RelErr =
     util::XML2Dbl(xml,root_node,"xsec/normalisations/ccqee1");
@@ -788,7 +790,7 @@ bool NuXSec::ApplySystToEnergyBin(PhysParamId_t p, double Ereco, double Etrue) c
   return apply;
 }
 //________________________________________________________________________________________
-void NuXSec::BuildBoolMCTemplates(
+void NuXSec::BuildXsBinningMCTemplates(
   TH2D * input_mctempl_array[kns][knm])
 {
   for(int is = 0; is < kns; is++) {
@@ -797,51 +799,39 @@ void NuXSec::BuildBoolMCTemplates(
      for(int im = 0; im < knm; im++) {
        SuperkMode_t m = kSKReactionModes[is][im];
        if(m == kSKmUndefined) continue; 
-#ifdef __show_build_bool_template_mesg_info__
-       cout << "Exp/NuXSec >> Building MC template booleans for "
+#ifdef __show_build_xsbinning_template_mesg_info__
+       cout << "Exp/NuXSec >> Building Xsec binning MC template for "
             << "sample = " << util::AsString(s) 
             << ", mode = " << util::AsString(m)
             << endl;
 #endif
        const TH2D * mctempl = input_mctempl_array[is][im];
        assert (mctempl);
-       fBoolTempl[is][im] = new TH2D(*mctempl);
+       TH2D * mctempl_xsbinning = fXsBinningTempl[is][im];
 
-       /*
-       // Look-up the Ereco and Etrue energy range (in the variable-size binning
-       // scheme used when pre-computing weight splines)
-       for(int irv = 0; irv < kXsNErecoBins; irv++) {
-          double Ereco_min = kXsErecoBinEdges[irv];
-          double Ereco_max = kXsErecoBinEdges[irv+1];
-          if(Ereco_min < 0 || Ereco_max < 0) continue;
-          Ereco_min += kOneMeV;
-          Ereco_max -= kOneMeV;
-          for(int itv = 0; itv < kXsNEtrueBins; itv++) {
-             double Etrue_min = kXsEtrueBinEdges[is][im][itv];
-             double Etrue_max = kXsEtrueBinEdges[is][im][itv+1];
-             if(Etrue_min < 0 || Etrue_max < 0) continue;
-             Etrue_min += kOneMeV;
-             Etrue_max -= kOneMeV;
-
-             int ir_min = mctempl->GetXaxis()->FindBin(Ereco_min);
-             int ir_max = mctempl->GetXaxis()->FindBin(Ereco_max);
-             int it_min = mctempl->GetYaxis()->FindBin(Etrue_min);
-             int it_max = mctempl->GetYaxis()->FindBin(Etrue_max);
-
-             for(int ir = ir_min; ir <= ir_max; ir++) {
-               for(int it = it_min; it <= it_max; it++) {
-                  double nev  = mctempl->GetBinContent(ir,it);
-		  if(nev > kASmallNum)
-		    mctempl_bool->SetBinContent(ir,it,nev);
-               }//it
-             }//ir
-        
-          }//itv
-       }//irv
-       */
-
+       for(int ir = 0; ir <= kNErecoBins1Rmu; ir++) {
+	 for(int it = 0; it <= kNEtrueBins; it++) {
+	   if(mctempl->GetBinContent(ir,it) > kASmallNum)
+	     mctempl_xsbinning->Fill(mctempl->GetBinCenter(ir), mctempl->GetBinCenter(it), mctempl->GetBinContent(ir,it));
+	 }//it
+       }//ir
+       
      }//im
   }//is
+
+#ifdef __save_ori_templates_init_debug__
+  TFile out("XsBinningTemplates.root","RECREATE");
+  for(int is = 0; is < kns; is++) {
+    SuperkSample_t s = kSKSamples[is];
+    if(s == kSKsUndefined) continue;
+    for(int im = 0; im < knm; im++) {
+      SuperkMode_t m = kSKReactionModes[is][im];
+      if(m == kSKmUndefined) continue;
+      fXsBinningTempl[is][im]->Write();
+    }
+  }
+  out.Close();
+#endif
 
 }
 //________________________________________________________________________________________
@@ -851,18 +841,18 @@ bool NuXSec::IsThereAnEvent(SuperkSample_t s, SuperkMode_t m, double Ereco, doub
   int im = util::ArrIdx::Instance()->SuperkModeIdx(s,m);
   assert(is != -1 && im != -1);
 
-  TH2D * mctempl_bool = fBoolTempl[is][im];
-  assert(mctempl_bool);
+  TH2D * mctempl_xsbinning = fXsBinningTempl[is][im];
+  assert(mctempl_xsbinning);
 
-  int ir = mctempl_bool->GetXaxis()->FindBin(Ereco);
-  int it = mctempl_bool->GetYaxis()->FindBin(Etrue);
+  int ir = mctempl_xsbinning->GetXaxis()->FindBin(Ereco);
+  int it = mctempl_xsbinning->GetYaxis()->FindBin(Etrue);
 
-  bool ev = (mctempl_bool->GetBinContent(ir,it) > kASmallNum);
+  double nev = mctempl_xsbinning->GetBinContent(ir,it);
+  bool ev = nev > kASmallNum;
 
 #ifdef __show_isanevent_mesg_debug__
   if(ev)
-    cout << "Exp/NuXSec >> There are "
-	 << mctempl_bool->GetBinContent(ir,it)
+    cout << "Exp/NuXSec >> There are " << nev
 	 << " events for sample = " << util::AsString(s) 
 	 << ", mode = " << util::AsString(m)
 	 << ", Etrue = " << Etrue

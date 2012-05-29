@@ -855,8 +855,8 @@ string t2kana::util::AsStringCompact(PhysParamId_t p)
 
     case ( kNuisXSecFermiMom          ) : return "f_pfermi";       break;
     case ( kNuisXSecSpecFunc          ) : return "f_specfunc";     break; 
-    case ( kNuisXSecWshape            ) : return "f_deltawidth";   break;
-    case ( kNuisXSecShapeCCoth        ) : return "f_dismultipi";   break;
+    case ( kNuisXSecWshape            ) : return "f_wshape";       break;
+    case ( kNuisXSecShapeCCoth        ) : return "f_shape";        break;
     case ( kNuisXSecPiLessDelta       ) : return "f_pilessdelta";  break;
     case ( kNuisXSecENuShape          ) : return "f_enushape";     break;
 
@@ -1210,7 +1210,7 @@ string t2kana::util::AsStringCompact (t2kana::conv::SuperkMode_t m)
      case ( kSKmNuMuCCcoh       ) : return "numucccoh";      break;
      case ( kSKmNuMuCCoth_mu    ) : return "numuccoth";      break;
      case ( kSKmNuMuCCoth_e     ) : return "numuccoth";      break;
-     case ( kSKmNuMuNC1piC      ) : return "numunc1piC";     break;
+     case ( kSKmNuMuNC1piC      ) : return "numunc1pi";     break;
      case ( kSKmNuMuNC1pi0      ) : return "numunc1pi0";     break;
      case ( kSKmNuMuNCcoh       ) : return "numunccoh";      break;
      case ( kSKmNuMuNCoth_e     ) : return "numuncoth";      break;
@@ -1220,7 +1220,7 @@ string t2kana::util::AsStringCompact (t2kana::conv::SuperkMode_t m)
      case ( kSKmNuMuBarCCcoh    ) : return "numubarcccoh";   break;
      case ( kSKmNuMuBarCCoth_mu ) : return "numubarccoth";   break;
      case ( kSKmNuMuBarCCoth_e  ) : return "numubarccoth";   break;
-     case ( kSKmNuMuBarNC1piC   ) : return "numubarnc1piC";  break;
+     case ( kSKmNuMuBarNC1piC   ) : return "numubarnc1pi";  break;
      case ( kSKmNuMuBarNC1pi0   ) : return "numubarnc1pi0";  break;
      case ( kSKmNuMuBarNCcoh    ) : return "numubarnccoh";   break;
      case ( kSKmNuMuBarNCoth_e  ) : return "numubarncoth";   break;
@@ -1230,7 +1230,7 @@ string t2kana::util::AsStringCompact (t2kana::conv::SuperkMode_t m)
      case ( kSKmNuECCcoh        ) : return "nuecccoh";       break;
      case ( kSKmNuECCoth_mu     ) : return "nueccoth";       break;
      case ( kSKmNuECCoth_e      ) : return "nueccoth";       break;
-     case ( kSKmNuENC1piC       ) : return "nuenc1piC";      break;
+     case ( kSKmNuENC1piC       ) : return "nuenc1pi";      break;
      case ( kSKmNuENC1pi0       ) : return "nuenc1pi0";      break;
      case ( kSKmNuENCcoh        ) : return "nuenccoh";       break;
      case ( kSKmNuENCoth_e      ) : return "nuencoth";       break;
@@ -1240,7 +1240,7 @@ string t2kana::util::AsStringCompact (t2kana::conv::SuperkMode_t m)
      case ( kSKmNuEBarCCcoh     ) : return "nuebarcccoh";    break;
      case ( kSKmNuEBarCCoth_mu  ) : return "nuebarccoth";    break;
      case ( kSKmNuEBarCCoth_e   ) : return "nuebarccoth";    break;
-     case ( kSKmNuEBarNC1piC    ) : return "nuebarnc1piC";   break;
+     case ( kSKmNuEBarNC1piC    ) : return "nuebarnc1pi";   break;
      case ( kSKmNuEBarNC1pi0    ) : return "nuebarnc1pi0";   break;
      case ( kSKmNuEBarNCcoh     ) : return "nuebarnccoh";    break;
      case ( kSKmNuEBarNCoth_e   ) : return "nuebarncoth";    break;
@@ -1729,6 +1729,37 @@ const double * t2kana::util::ErecoBinEdges(t2kana::conv::SuperkSample_t s)
      default                      : return 0;
   }
   return 0;
+}
+//___________________________________________________________________________
+const int t2kana::util::NumVariableXsEtrueBins(t2kana::conv::SuperkSample_t s,
+					       t2kana::conv::SuperkMode_t m)
+{
+  int is = util::ArrIdx::Instance()->SuperkSampleIdx(s);
+  if(is == -1)
+    return 0;
+  int im = util::ArrIdx::Instance()->SuperkModeIdx(s,m);
+  if(im == -1)
+    return 0;
+
+  int nbins = 0;
+  for(int it = 0; it <= t2kana::conv::kXsNEtrueBins; it++) {
+    if(t2kana::conv::kXsEtrueBinEdges[is][im][it] < 0)
+      break;
+    nbins++;
+  }
+  return nbins;
+}
+//___________________________________________________________________________
+const double * t2kana::util::VariableXsEtrueBinEdges(t2kana::conv::SuperkSample_t s,
+						      t2kana::conv::SuperkMode_t m)
+{
+  int is = util::ArrIdx::Instance()->SuperkSampleIdx(s);
+  if(is == -1)
+    return 0;
+  int im = util::ArrIdx::Instance()->SuperkModeIdx(s,m);
+  if(im == -1)
+    return 0;
+  return t2kana::conv::kXsEtrueBinEdges[is][im];
 }
 //___________________________________________________________________________
 void t2kana::util::SetDefaultStyle(bool black_n_white)

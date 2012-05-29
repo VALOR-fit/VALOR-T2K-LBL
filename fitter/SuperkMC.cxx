@@ -228,7 +228,7 @@ bool SuperkMC::Read(TXMLEngine* xml, XMLNodePointer_t root_node)
 #endif
 
   // need to read in the xsec splines, before applying any BANFF tweaks
-  fNuXSec -> BuildBoolMCTemplates(fMCTemplOri);
+  fNuXSec -> BuildXsBinningMCTemplates(fMCTemplOri);
   if( !fNuXSec -> ReadSplines(xml,root_node) ) return false;
 
   // apply flux tuning (based on external data) to templates

@@ -84,7 +84,7 @@ public:
   void TellMeAboutTheBANFFfit(BANFF * banff);
 
   //
-  void BuildBoolMCTemplates(TH2D* input_mctempl_array[kns][knm]);
+  void BuildXsBinningMCTemplates(TH2D* input_mctempl_array[kns][knm]);
 
 private:
 
@@ -118,7 +118,7 @@ private:
 
   BANFF *     fBANFF;               ///< BANFF fit info
   TSpline3 *  fXSecWghtSpl[knwspl]; ///< Weight splines. Index is function of sample, mode, systematic param, Ereco bin, Etrue bin
-  TH2D *      fBoolTempl[kns][knm]; ///< Stores whether there is an event in the SKMC Tun template, or not
+  TH2D *      fXsBinningTempl[kns][knm]; ///< Ereco-Etrue templates in XSec binning scheme
 
   // tweaking dials
   double fFermiMomTwkDial;

@@ -122,6 +122,8 @@ namespace util {
 
   const int      NumErecoBins  (conv::SuperkSample_t s);
   const double * ErecoBinEdges (conv::SuperkSample_t s);
+  const int      NumVariableXsEtrueBins(conv::SuperkSample_t s, conv::SuperkMode_t m);
+  const double * VariableXsEtrueBinEdges(conv::SuperkSample_t s, conv::SuperkMode_t m);
 
   //
   // String utilities
