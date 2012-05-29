@@ -21,6 +21,7 @@
 //#define __show_syst_var_wght_mesg_debug__ 
 //#define __show_spectra_update_mesg_debug__ 
 //#define __show_skipped_templates__ 
+//#define __save_ori_templates_init_debug__
 
 #include <cassert>
 #include <cstdlib>
@@ -211,6 +212,20 @@ bool SuperkMC::Read(TXMLEngine* xml, XMLNodePointer_t root_node)
        this->FillTemplate(s,m);
      }
   }
+
+#ifdef __save_ori_templates_init_debug__
+  TFile out("OriTemplates.root","RECREATE");
+  for(int is = 0; is < kns; is++) {
+    SuperkSample_t s = kSKSamples[is];
+    if(s == kSKsUndefined) continue;
+    for(int im = 0; im < knm; im++) {
+      SuperkMode_t m = kSKReactionModes[is][im];
+      if(m == kSKmUndefined) continue;
+      this->Template(s,m,kSKMCtOri)->Write();
+    }
+  }
+  out.Close();
+#endif
 
   // need to read in the xsec splines, before applying any BANFF tweaks
   fNuXSec -> BuildBoolMCTemplates(fMCTemplOri);
