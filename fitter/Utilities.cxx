@@ -1741,8 +1741,9 @@ const int t2kana::util::NumVariableXsEtrueBins(t2kana::conv::SuperkSample_t s,
   if(im == -1)
     return 0;
 
-  int nbins = 0;
-  for(int it = 0; it <= t2kana::conv::kXsNEtrueBins; it++) {
+  //need to start counter at zero. Want nbins. Looping over bin edges.
+  int nbins = -1;
+  for(int it = 0; it < t2kana::conv::kXsNEtrueBins; it++) {
     if(t2kana::conv::kXsEtrueBinEdges[is][im][it] < 0)
       break;
     nbins++;
