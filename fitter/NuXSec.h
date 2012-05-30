@@ -86,6 +86,9 @@ public:
   //
   void BuildXsBinningMCTemplates(TH2D* input_mctempl_array[kns][knm]);
 
+  //
+  TH2D * Template(conv::SuperkSample_t s, conv::SuperkMode_t m) const;
+
 private:
 
   void Init    (void);

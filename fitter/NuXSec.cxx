@@ -149,6 +149,37 @@ bool NuXSec::ReadSplines(TXMLEngine* xml, XMLNodePointer_t root_node)
                         << ir << "_" 
                         << it;
 
+#ifdef __show_init_mesg_debug__
+                cout << "Exp/NuXSec >> Loading cross-section weight spline: " 
+                     << splname.str() << " for Ereco: " << Ereco << ", Etrue: " << Etrue << endl;
+#endif
+                // Copy spline from input file
+                TSpline3 * spl = (TSpline3 *) spline_file->Get(splname.str().c_str());
+		bool bin_is_not_empty = this->IsThereAnEvent(s, m, Ereco, Etrue);
+	     
+		if(!spl) {
+		  if(!bin_is_not_empty) {
+#ifdef __show_init_mesg_debug__
+		    cout << "Exp/NuXSec >> No events or spline for: "
+			 << splname.str() << endl;
+#endif
+		    continue;
+		  }
+		  else {
+		    cerr << "Exp/NuXSec >> Null cross-sectionweight spline: " 
+			 << splname.str() << " Ereco: " << Ereco << ", Etrue: " << Etrue << endl;
+		    exit(1); 
+		  }
+		}
+		else {
+		  if(!bin_is_not_empty) {
+		    cerr << "Exp/NuXSec >> Spline exists for empty bin: "
+			 << splname.str() << " Ereco: " << Ereco << ", Etrue: " << Etrue
+			 << ". Spline thinks there are " << spl->GetTitle() << endl;
+		    exit(1);
+		  }
+		}
+
                 // Get index for current weight spline
                 int idx = this->WghtSplineIdx(p,s,m,Ereco,Etrue);     
 //		if(idx == -2) {
@@ -162,32 +193,6 @@ bool NuXSec::ReadSplines(TXMLEngine* xml, XMLNodePointer_t root_node)
 		  cerr << "Exp/NuXSec >> WghtSplineIdx returned invalid index for spline: " 
                        << splname.str();
 		  exit(1);
-		}
-
-#ifdef __show_init_mesg_debug__
-                cout << "Exp/NuXSec >> Loading cross-section weight spline: " 
-                     << splname.str() << " for Ereco: " << Ereco << ", Etrue: " << Etrue << endl;
-#endif
-                // Copy spline from input file
-                TSpline3 * spl = (TSpline3 *) spline_file->Get(splname.str().c_str());
-		bool bin_is_not_empty = this->IsThereAnEvent(s, m, Ereco, Etrue);
-		if(!spl && !bin_is_not_empty) {
-#ifdef __show_init_mesg_debug__
-		  cout << "Exp/NuXSec >> No events or spline for: "
-		       << splname.str() << endl;
-#endif
-		  continue;
-		}
-                if(!spl && bin_is_not_empty) { 
-                   cerr << "Exp/NuXSec >> Null cross-sectionweight spline: " 
-                        << splname.str() << " Ereco: " << Ereco << ", Etrue: " << Etrue << endl;
-                   exit(1); 
-                }
-		else if(spl && !bin_is_not_empty) {
-		   cerr << "Exp/NuXSec >> Spline exists for empty bin: "
-			<< splname.str() << " Ereco: " << Ereco << ", Etrue: " << Etrue
-			<< ". Spline thinks there are " << spl->GetTitle() << endl;
-		   exit(1);
 		}
 
 #ifdef __show_init_mesg_debug__
@@ -283,8 +288,8 @@ double NuXSec::FinTuningWght(
      PhysParamId_t p = kListOfXSecSyst[isyst];
      // "Tuning" involves reweighting to BANFF best-fit values.
      // Consider only the cross-section systematics that were included in the BANFF fit.
-     //bool is_banff_xsec_param = kXSecSystIncludedInBANFF[isyst];
-     //if(!is_banff_xsec_param) continue;
+     bool is_banff_xsec_param = kXSecSystIncludedInBANFF[isyst];
+     if(!is_banff_xsec_param) continue;
      // Is the current systematic parameter applied to current sample/mode end energy bin?
      bool apply = this->ApplySyst(p,s,m,Ereco,Etrue);
      if(!apply) continue;
@@ -324,9 +329,9 @@ double NuXSec::FinTuningWght_1p(
      if(ev) {
        TSpline3 * wght_spl = this->FindWghtSpline(p,s,m,Ereco,Etrue);
        assert(wght_spl);
-       //double t = fBANFF->BestFitValue(p);
-       //wght = wght_spl->Eval(t);
-       wght = wght_spl->Eval(0);
+       double t = fBANFF->BestFitValue(p);
+       wght = wght_spl->Eval(t);
+       //wght = wght_spl->Eval(0);
        wght = TMath::Max(0.,wght);
      }
   }
@@ -339,41 +344,6 @@ double NuXSec::FinTuningWght_1p(
   if(p == kNuisBANFF24 || p == kNuisBANFF25 || p == kNuisBANFF26)
   {
      wght = fBANFF->BestFitValue(p);
-  }
-
-  //
-  // Fermi momentum
-  // spectral function on/off
-  // W-shape
-  // CC other shape
-  //
-  else
-  if(p == kNuisXSecFermiMom || p == kNuisXSecSpecFunc || p == kNuisXSecWshape || p == kNuisXSecShapeCCoth ||
-     p == kNuisXSecPiLessDelta || p == kNuisXSecENuShape)
-  {
-    bool ev = this->IsThereAnEvent(s, m, Ereco, Etrue);
-    if(ev) {
-      TSpline3 * wght_spl = this->FindWghtSpline(p,s,m,Ereco,Etrue);
-      assert(wght_spl);
-      wght = wght_spl->Eval(0);
-      wght = TMath::Max(0.,wght);
-    }
-  }
-
-  //
-  // CCQE norm 1.5 - 3.5 GeV
-  // CCQE norm > 3.5 GeV
-  // CC1pi norm > 2.5 GeV   
-  // CC coherent norm
-  // NC coherent norm
-  // NC other norm
-  // nue / numu cross section
-  //
-  else
-  if(p == kNuisXSecNormCCQEE1 || p == kNuisXSecNormCCQEE2 || p == kNuisXSecNormCC1piE1 || p == kNuisXSecNormCCcoh || 
-       p == kNuisXSecNormNCcoh || p == kNuisXSecNormNCoth || p == kNuisXSecNormNuEToNuMu)
-  {    
-    wght = 1.;
   }
 
 #ifdef __show_banff_tuning_wght_mesg_debug__
@@ -458,9 +428,11 @@ double NuXSec::SystWght_1p(
        double tb = fBANFF->BestFitValue(p);
        double tc = fBANFF->CurrentValue(p);
        double diag = 0;
-       if(p == kNuisBANFF22) diag = fBANFF->CovMatrix()[22][22];
-       else if(p == kNuisBANFF23) diag = fBANFF->CovMatrix()[23][23];
-       wght = wght_spl->Eval(((tc / tb) - 1) / diag) / wght_spl->Eval(0);
+       if(p == kNuisBANFF22)
+	 diag = fBANFF->CovMatrix()[22][22];
+       else if(p == kNuisBANFF23)
+	 diag = fBANFF->CovMatrix()[23][23];
+       wght = wght_spl->Eval(((tc / tb) - 1) / diag) / wght_spl->Eval(tb);
        wght = TMath::Max(0.,wght);
      }
   }
@@ -490,7 +462,7 @@ double NuXSec::SystWght_1p(
       TSpline3 * wght_spl = this->FindWghtSpline(p,s,m,Ereco,Etrue);
       assert(wght_spl);
       double tc = this->CurrentValue(p);
-      wght = wght_spl->Eval(tc) / wght_spl->Eval(0);
+      wght = wght_spl->Eval(tc) / 1.; //wght_spl->Eval(0);
       wght = TMath::Max(0.,wght);
     }
   }
@@ -507,7 +479,7 @@ double NuXSec::SystWght_1p(
   else
   if(p == kNuisXSecNormCCQEE1 || p == kNuisXSecNormCCQEE2 || p == kNuisXSecNormCC1piE1 || p == kNuisXSecNormCCcoh || 
      p == kNuisXSecNormNCcoh || p == kNuisXSecNormNCoth || p == kNuisXSecNormNuEToNuMu)
-  {    
+  {
     wght = 1 + (this->CurrentValue(p) * this->RelativeError(p));
   }
 
@@ -847,12 +819,11 @@ bool NuXSec::IsThereAnEvent(SuperkSample_t s, SuperkMode_t m, double Ereco, doub
   int ir = mctempl_xsbinning->GetXaxis()->FindBin(Ereco);
   int it = mctempl_xsbinning->GetYaxis()->FindBin(Etrue);
 
-  double nev = mctempl_xsbinning->GetBinContent(ir,it);
-  bool ev = nev > kASmallNum;
+  bool ev = mctempl_xsbinning->GetBinContent(ir,it) > kASmallNum;
 
 #ifdef __show_isanevent_mesg_debug__
   if(ev)
-    cout << "Exp/NuXSec >> There are " << nev
+    cout << "Exp/NuXSec >> There are " << mctempl_xsbinning->GetBinContent(ir,it)
 	 << " events for sample = " << util::AsString(s) 
 	 << ", mode = " << util::AsString(m)
 	 << ", Etrue = " << Etrue
@@ -862,4 +833,22 @@ bool NuXSec::IsThereAnEvent(SuperkSample_t s, SuperkMode_t m, double Ereco, doub
 
   return ev;
 } 
+//________________________________________________________________________________________
+TH2D * NuXSec::Template(SuperkSample_t s, SuperkMode_t m) const
+{
+  int sidx = util::ArrIdx::Instance()->SuperkSampleIdx(s);
+  if(sidx == -1) {
+    return 0;
+  }
+  int midx = util::ArrIdx::Instance()->SuperkModeIdx(s,m);
+  if(midx == -1) {
+    return 0;
+  }
+
+  TH2D * h = 0;
+  h = fXsBinningTempl[sidx][midx];
+  assert(h);
+
+  return h;
+}
 //________________________________________________________________________________________

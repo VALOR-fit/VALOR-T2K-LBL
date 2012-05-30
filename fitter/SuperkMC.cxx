@@ -520,21 +520,46 @@ void SuperkMC::ApplyBANFFTuningToTemplates(void)
        // loop over Ereco
        for(int ir = 1; ir <= mctempl_src->GetXaxis()->GetNbins(); ir++) {
          double Ereco = mctempl_src->GetXaxis()->GetBinCenter(ir);
-         // loop over Etrue
-         for(int it = 1; it <= mctempl_src->GetYaxis()->GetNbins(); it++) {
-           double Etrue = mctempl_src->GetYaxis()->GetBinCenter(it);
-           // get number of events
-           double nev = mctempl_src->GetBinContent(ir,it);
-           // get flux tuning weights
-           double flux_wght = fNuFlux->SuperkFluxFinTuningWght(s,m,Etrue);
-           double xsec_wght = fNuXSec->FinTuningWght(s,m,Ereco,Etrue); // SLOW
-           // update tuned MC template
-           double nev_tuned = nev * flux_wght * xsec_wght;
-           mctempl_tgt->SetBinContent(ir,it,nev_tuned);
-           // initialize "sys" & "fin" templates to "tun" values
-           this->Template(s,m,kSKMCtSys)->SetBinContent(ir,it,nev);
-           this->Template(s,m,kSKMCtFin)->SetBinContent(ir,it,nev);
-         }//it
+
+	 //
+	 // There are 600 50MeV Etrue energy bins in the templates, but
+	 // the flux/xsec systematics only have up to ~10 Etrue bins (same as flux binning), so
+	 // we can call NuXSec::SystWght() and FSI::SystWght() and NuFlux::SuperkFluxSystWght()  
+	 // a factor of 10 less often by looping over the kXsEtrueBinEdges.
+	 // Note that the Ereco binning is identical between XSec and SuperkMC templates
+	 //
+	 // Loop over variable flux Etrue bins
+	 for(int itv = 1; itv <= util::NumVariableXsEtrueBins(s,m); itv ++) {
+
+	   // Get the min/max energy of the current variable flux Etrue bin
+	   double EtrueVarMin = util::VariableXsEtrueBinEdges(s,m)[itv-1] + kOneMeV;
+	   double EtrueVarMax = util::VariableXsEtrueBinEdges(s,m)[itv] - kOneMeV;
+
+           // Plug-in BANFF flux systematics
+           double flux_wght = fNuFlux->SuperkFluxSystWght(s,m,EtrueVarMin);
+	   
+           // Plug-in BANFF & other xsec systematics 
+           double xsec_wght = fNuXSec->SystWght(s,m,Ereco,EtrueVarMin); 
+
+           // Combined weight
+           double wght = flux_wght * xsec_wght;
+
+	   // Get the 50MeV Etrue bin number range
+	   int firstbin = mctempl_src->GetYaxis()->FindBin(EtrueVarMin);
+	   int lastbin = mctempl_src->GetYaxis()->FindBin(EtrueVarMax);
+
+	   // Loop over 50MeV Etrue bins
+	   for(int it = firstbin; it <= lastbin; it++) {
+	     // get number of events in current bin of source MC template
+	     double nev = mctempl_src->GetBinContent(ir,it);
+	     nev = TMath::Max(0.,nev);
+	     double nev_tuned = nev * wght;
+	     mctempl_tgt->SetBinContent(ir,it,nev_tuned);
+	     // initialize "sys" & "fin" templates to "tun" values
+	     this->Template(s,m,kSKMCtSys)->SetBinContent(ir,it,nev_tuned);
+	     this->Template(s,m,kSKMCtFin)->SetBinContent(ir,it,nev_tuned);
+	   }//it
+	 }//itv
        }//ir
     }//im
   }//is
@@ -582,65 +607,85 @@ void SuperkMC::ApplySystematicsToTemplates_Multiplicative(void)
        if(skip) continue;
        // Get corresponding templates
        TH2D * mctempl_src = this -> Template(s,m,kSKMCtTun);
-       if(!mctempl_src) continue; 
+       if(!mctempl_src) continue;
        TH2D * mctempl_tgt = this -> Template(s,m,kSKMCtSys);
-       if(!mctempl_tgt) continue; 
+       if(!mctempl_tgt) continue;
+
        // Loop over Ereco
        for(int ir = 1; ir <= mctempl_src->GetXaxis()->GetNbins(); ir++) {
          double Ereco = mctempl_src->GetXaxis()->GetBinCenter(ir);
-         // Loop over Etrue
-         for(int it = 1; it <= mctempl_src->GetYaxis()->GetNbins(); it++) {
-           double Etrue = mctempl_src->GetYaxis()->GetBinCenter(it);
-           // get number of events in current bin of source MC template
-           double nev = mctempl_src->GetBinContent(ir,it);
-           nev = TMath::Max(0.,nev);
+	 //
+	 // Get combined weight due to all multiplicative systematic variations.
+	 // This method considers:
+	 // - SuperK efficiencies variations
+	 // - BANFF parameter variations
+	 // - Cross-section variations
+	 //
+	 // Plug-in SK efficiency uncertainty due to fiducial volume, reduction chain, OD cut,
+	 // ring-counting, PID, momentum cut and decay e- cut.
+	 // The ring-counting error for CCQE has Ereco-dependence.
+	 double skeff_wght = fSKDet->EfficiencyWeight(s,m,Ereco);
 
-           //
-           // Get combined weight due to all multiplicative systematic variations.
-           // This method considers:
-           // - SuperK efficiencies variations
-           // - BANFF parameter variations
-           // - Cross-section variations
-           //
+	 //
+	 // There are 600 50MeV Etrue energy bins in the templates, but
+	 // the flux/xsec systematics only have up to ~10 Etrue bins (same as flux binning), so
+	 // we can call NuXSec::SystWght() and FSI::SystWght() and NuFlux::SuperkFluxSystWght()  
+	 // a factor of 10 less often by looping over the kXsEtrueBinEdges.
+	 // Note that the Ereco binning is identical between XSec and SuperkMC templates
+	 //
+	 // Loop over variable flux Etrue bins
+	 for(int itv = 1; itv <= util::NumVariableXsEtrueBins(s,m); itv ++) {
 
-           // Plug-in SK efficiency uncertainty due to fiducial volume, reduction chain, OD cut,
-           // ring-counting, PID, momentum cut and decay e- cut.
-           // The ring-counting error for CCQE has Ereco-dependence.
-           double skeff_wght = fSKDet->EfficiencyWeight(s,m,Ereco);
+	   // Get the min/max energy of the current variable flux Etrue bin
+	   double EtrueVarMin = util::VariableXsEtrueBinEdges(s,m)[itv-1] + kOneMeV;
+	   double EtrueVarMax = util::VariableXsEtrueBinEdges(s,m)[itv] - kOneMeV;
 
            // Plug-in BANFF flux systematics
-           double flux_wght = fNuFlux->SuperkFluxSystWght(s,m,Etrue);
-
+           double flux_wght = fNuFlux->SuperkFluxSystWght(s,m,EtrueVarMin);
+	   
            // Plug-in BANFF & other xsec systematics 
-           double xsec_wght = fNuXSec->SystWght(s,m,Ereco,Etrue); 
+           double xsec_wght = fNuXSec->SystWght(s,m,Ereco,EtrueVarMin); 
 
-           // Plug-in FSI weightts
-           double fsi_wght = fFSI->SystWght(s,m,Ereco,Etrue); 
+           // Plug-in FSI weights
+           double fsi_wght = fFSI->SystWght(s,m,Ereco,EtrueVarMin); 
 
            // Combined weight
            double wght = skeff_wght * flux_wght * xsec_wght * fsi_wght;
 
+	   // Get the 50MeV Etrue bin number range
+	   int firstbin = mctempl_src->GetYaxis()->FindBin(EtrueVarMin);
+	   int lastbin = mctempl_src->GetYaxis()->FindBin(EtrueVarMax);
+
+	   // Loop over 50MeV Etrue bins
+	   for(int it = firstbin; it <= lastbin; it++) {
+	     // get number of events in current bin of source MC template
+	     double nev = mctempl_src->GetBinContent(ir,it);
+	     nev = TMath::Max(0.,nev);
+
 #ifdef __show_syst_var_wght_mesg_debug__ 
-           if( skeff_wght != 1. || 
-               flux_wght  != 1. || 
-               xsec_wght  != 1. )
-           {
-               cout << "Exp/SKMC/SystVarWght >> "
-                    << "Sample = " << util::AsString(s) << " / Mode = " << util::AsString(m) 
-                    << ", Ereco = " << Ereco << " GeV" 
-                    << ", Etrue = " << Etrue << " GeV => Weights: " 
-                    << "SK eff = "  << skeff_wght
-                    << ", Flux = "  << flux_wght
-                    << ", XSec = "  << xsec_wght
-                    << ", FSI  = "  << fsi_wght
-                    << " (total = " << wght << ")"
-                    << endl;
-           }
+	     if( skeff_wght != 1. || 
+		 flux_wght  != 1. || 
+		 xsec_wght  != 1. )
+	       {
+		 // Get the energy of the current 50MeV Etrue bin
+		 double Etrue = mctempl_src->GetYaxis()->GetBinCenter(it);
+		 cout << "Exp/SKMC/SystVarWght >> "
+		      << "Sample = " << util::AsString(s) << " / Mode = " << util::AsString(m) 
+		      << ", Ereco = " << Ereco << " GeV" 
+		      << ", Etrue = " << Etrue << " GeV => Weights: " 
+		      << "SK eff = "  << skeff_wght
+		      << ", Flux = "  << flux_wght
+		      << ", XSec = "  << xsec_wght
+		      << ", FSI  = "  << fsi_wght
+		      << " (total = " << wght << ")"
+		      << endl;
+	       }
 #endif
 
-           // Update target MC template
-           mctempl_tgt->SetBinContent(ir,it,nev*wght);
-         }//it
+	     // Update target MC template
+	     mctempl_tgt->SetBinContent(ir,it,nev*wght);
+	   }//it
+	 }//itv
        }//ir
     }//im
   }//is

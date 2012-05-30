@@ -88,7 +88,8 @@ void test_spline_implementation
       }//draw?
 
       //get the MC template (etrue-ereco)
-      TH2D * mctempl = skexp.GetSuperkMC()->Template(conv::kSKsFCFV1RingMuLike,m,conv::kSKMCtOri);
+      //TH2D * mctempl = skexp.GetSuperkMC()->Template(conv::kSKsFCFV1RingMuLike,m,conv::kSKMCtOri);
+      TH2D * mctempl = skexp.GetNuXSec()->Template(conv::kSKsFCFV1RingMuLike,m);
 
       //loop over dials
       for(int idial = 0; idial < ntwkdials; idial++) {
@@ -108,6 +109,9 @@ void test_spline_implementation
 	    double Etrue = mctempl->GetYaxis()->GetBinCenter(it);
 	    //get the weight
 	    double wght = 1.;
+	    //skip empty bins
+	    if(mctempl->GetBinContent(ir,it) < 0)
+	      continue;
 	    if(!nominal) {
 	      //apply the systematic to this energy bin?
 	      bool apply =
