@@ -748,20 +748,20 @@ void SuperkMC::ApplyPhysHypothesisToTemplates(void)
     NuOscDmsqScheme_t  dmsqscheme = Opt::Instance()->gOscDmsqScheme;
 
     // mixing params are: sin^2(2*theta)
-    // independent squared mass splittings are:
+    // independent squared mass splittings are: dm^2 = Dm^2_{12}, Dm^2 = |Dm^2_{23}|
     if(dmsqscheme == kNuDmsq12andAbs23 && omp == kNuMixSinsq2Theta) 
     {
        fNuOsc3Flavour.SetOscParameters(mixing12,mixing13,mixing23,dmsq,Dmsq,delta_cp);
     }
     // mixing params are: sin^2(theta)
-    // independent squared mass splittings are:
+    // independent squared mass splittings are: dm^2 = Dm^2_{12}, Dm^2 = |Dm^2_{23}|
     else
     if(dmsqscheme == kNuDmsq12andAbs23 && omp == kNuMixSinsqTheta) 
     {
        fNuOsc3Flavour.SetOscParametersSinSqTAll(mixing12,mixing13,mixing23,dmsq,Dmsq,delta_cp);
     }
     // mixing params are: sin^2(2*theta)
-    // independent squared mass splittings are:
+    // independent squared mass splittings are: dm^2 = Dm^2_{12}, Dm^2 = |m^2_{3} - (m^2_{1} + m^2_{1})/2|
     if(dmsqscheme == kNuDmsqFogliLisi && omp == kNuMixSinsq2Theta) 
     {
        // NOT SUPPORTED YET, TO BE ADDED
@@ -772,7 +772,7 @@ void SuperkMC::ApplyPhysHypothesisToTemplates(void)
        exit(1);
     }
     // mixing params are: sin^2(theta)
-    // independent squared mass splittings are:
+    // independent squared mass splittings are: dm^2 = Dm^2_{12}, Dm^2 = |m^2_{3} - (m^2_{1} + m^2_{1})/2|
     else
     if(dmsqscheme == kNuDmsqFogliLisi && omp == kNuMixSinsqTheta) 
     {
