@@ -1,65 +1,11 @@
 //
 // ------------------------------------------------------------------------------------------------
-// Test systematic errors.
+// Test systematic errors. Looks at all known error's so far.
 //
-// The input (systematic) string can be:
-//	- sk_energy_scale 
-//	- sk_1Rmu_ccqe_other_eff
-//	- sk_1Rmu_ccqe_ring_counting_eff : 
-//             This energy-dependent correlated error can not be used in this test macro. Instead,
-//             you can tweak specific components of the efficiency tweaking vector (neglecting,
-//             correlation which, in the fitter, are handled using the Cholesky method). Use:
-//	       - sk_1Rmu_ccqe_ring_counting_eff_0 
-//	       - sk_1Rmu_ccqe_ring_counting_eff_1
-//	       - sk_1Rmu_ccqe_ring_counting_eff_2
-//	- sk_1Rmu_ccnonqe_eff
-//	- sk_1Rmu_nc_eff
-//	- sk_1Rmu_nuecc_eff
-//      - banff
-//             This correlated error can not be used in this test macro. Instead,
-//             you can tweak specific components of the BANFF tweaking vector (neglecting,
-//             correlation which, in the fitter, are handled using the Cholesky method). Use:
-//             - banff_00
-//             - ...
-//             - banff_26
-//      - xsec_pf
-//      - xsec_sf
-//      - xsec_wshape
-//      - xsec_shape_ccoth
-//      - xsec_pilessdelta
-//      - xsec_enushape
-//      - xsec_norm_ccqeE1
-//      - xsec_norm_ccqeE2
-//      - xsec_norm_cc1piE1
-//      - xsec_norm_cccoh
-//      - xsec_norm_nccoh
-//      - xsec_norm_ncoth
-//      - xsec_norm_nuetonumu
-//      
-//      - expected
-//             This is a special option. Skip the main macro & print out a table with the 
-//             expected 1 sigma percentage change for each systematic
-//
-// Costas Andreopoulos
-// ------------------------------------------------------------------------------------------------
-//
-// Major revisions by TD. 25/11/11.
-//  Now takes SK sample as input
-//  Can write output tables to tex file
-//  Restructuring of SK modes part of code means its easier to change in the future:
-//   - if order or number of kSKReactionModes[s][m] changes, just need to modify lines ~120-160
-// Major revisions by TD. 15/03/12.
-//  Takes advantage of util classes for determining which 'total' to put a mode in -> code greatly simplified
-//  Can run with or without BANFF best fit values
-//  Now prints Etrue bins (for numu CCQE) to see effect of BANFF flux bins
-// TD 23/03/12
-//  Added spectral information pertaining to normalisation binning (CCQE and CC1pi)
-//  Added "expected" option for systematics
+
 
 #include <iomanip.h>
 #include <TXMLEngine.h>
-
-void print_expected_errors(bool, const char*, const char*);
 
 void test_systematic_error_propagation_all
 (
@@ -81,7 +27,7 @@ void test_systematic_error_propagation_all
   const char * config  = Form("%s/config/%s", gSystem->Getenv("T2KOSCANA"), config_file);
     
   // write document header to outfile
-  ofstream outfile (output_file,ios_base::trunc&&ios_base::out);
+  ofstream outfile (output_file);
   string f;
   f += "\\documentclass[10pt,a4paper]{article}\n";
   f += ("\\usepackage{amsmath}\n");
@@ -187,6 +133,10 @@ void test_systematic_error_propagation_all
   }
 
   vector<string> systematics;
+  //systematics.push_back("banff"); //not supported in this macro
+  for(int ib = 0; ib < conv::kNumOfParamsInBANFFfit; ib++) {
+    systematics.push_back(Form("banff_%02d",ib));
+  }
   //systematics.push_back("sk_1Rmu_ccqe_ring_counting_eff"); //not supported in the macro
   systematics.push_back("sk_1Rmu_ccqe_ring_counting_eff_0");
   systematics.push_back("sk_1Rmu_ccqe_ring_counting_eff_1");
@@ -196,10 +146,6 @@ void test_systematic_error_propagation_all
   systematics.push_back("sk_1Rmu_nc_eff");
   systematics.push_back("sk_1Rmu_nuecc_eff");
   systematics.push_back("sk_energy_scale");
-  //systematics.push_back("banff"); //not supported in this macro
-  for(int ib = 0; ib < conv::kNumOfParamsInBANFFfit; ib++) {
-    systematics.push_back(Form("banff_%02d",ib));
-  }
   systematics.push_back("xsec_pf");
   systematics.push_back("xsec_sf");
   systematics.push_back("xsec_wshape");
@@ -219,15 +165,37 @@ void test_systematic_error_propagation_all
   for(int isys = 0; isys < systematics.size(); isys++) {
     string systematic = systematics[isys];
 
+    bool show_sk_ccqe_spectral_info_ereco = false;
+    bool show_sk_spectral_info_etrue_flux_binning = false;
+    bool show_sk_spectral_info_etrue_norm_binning = false;
 
-
-    bool         show_sk_ccqe_spectral_info_ereco = false;
-    bool         show_sk_spectral_info_etrue_flux_binning = false;
-    bool         show_sk_spectral_info_etrue_norm_binning = false;
-
-
-
-
+    if(systematic.find("sk_1Rmu_ccqe_ring_counting_eff_") == 0 || systematic.find("sk_energy_scale") == 0)
+      show_sk_ccqe_spectral_info_ereco = true;
+    else if(systematic.find("banff_") == 0) {
+      size_t found;
+      found = systematic.find_first_of("012");
+      string bnum = systematic.substr(found,2);
+      int bindex = atoi(bnum.c_str());
+      //flux parameters
+      if(bindex <= 21)
+	show_sk_spectral_info_etrue_flux_binning = true;
+      //spline parameters
+      else if(bindex == 22 || bindex == 23)
+	show_sk_spectral_info_etrue_flux_binning = true;
+      //norm parameters with binning
+      else if(bindex == 24 || bindex == 25)
+	show_sk_spectral_info_etrue_norm_binning = true;
+    }
+    else if(systematic.find("xsec_") == 0) {
+      if(systematic.find("xsec_norm_") == 0) {
+	//norm parameters with binning
+	if(systematic.find("xsec_norm_ccqeE1") == 0 || systematic.find("xsec_norm_ccqeE2") == 0 || systematic.find("xsec_norm_cc1piE1") == 0)
+	  show_sk_spectral_info_etrue_norm_binning = true;
+      }
+      //spline parameters
+      else
+	show_sk_spectral_info_etrue_flux_binning = true;
+    }
 
     //
     // nominal MC (pre BANFF)
@@ -335,24 +303,54 @@ void test_systematic_error_propagation_all
     double nsknumu_etrue_n[conv::kXsNEtrueBins], nsknumubar_etrue_n[conv::kXsNEtrueBins], nsknue_etrue_n[conv::kXsNEtrueBins], nsknuebar_etrue_n[conv::kXsNEtrueBins], nsksignue_etrue_n[conv::kXsNEtrueBins];
     for(int itb = 0; itb < NEtrueBinNuMu; itb++) {
       nsknumu_etrue_n[itb] = 0.;
-      nsknumu_etrue_n[itb] = skexp->GetSuperkMC()->Template(s, conv::kSKmNuMuCCQE, conv::kSKMCtFin)->Integral(1, conv::kNErecoBins1Rmu, EtrueBinNuMu[itb]+1, EtrueBinNuMu[itb+1]);
+      for (int im = 0; im < conv::knm; im++) {
+	conv::SuperkMode_t m = conv::kSKReactionModes[s][im];
+	if(m == conv::kSKmUndefined) continue;
+	if(util::IsNuMu(m)) {
+	  nsknumu_etrue_n[itb] += skexp->GetSuperkMC()->Template(s, m, conv::kSKMCtFin)->Integral(1, conv::kNErecoBins1Rmu, EtrueBinNuMu[itb]+1, EtrueBinNuMu[itb+1]);
+	}
+      }
       cout << "numu etrue bin edges are from " << skexp->GetSuperkMC()->Template(s, conv::kSKmNuMuCCQE, conv::kSKMCtFin)->GetYaxis()->GetBinLowEdge(EtrueBinNuMu[itb]+1) << " to " << skexp->GetSuperkMC()->Template(s, conv::kSKmNuMuCCQE, conv::kSKMCtFin)->GetYaxis()->GetBinUpEdge(EtrueBinNuMu[itb+1]) << endl;;
     }
     for(int itb = 0; itb < NEtrueBinNuMuBar; itb++) {
       nsknumubar_etrue_n[itb] = 0.;
-      nsknumubar_etrue_n[itb] = skexp->GetSuperkMC()->Template(s, conv::kSKmNuMuBarCCQE, conv::kSKMCtFin)->Integral(1, conv::kNErecoBins1Rmu, EtrueBinNuMuBar[itb]+1, EtrueBinNuMuBar[itb+1]);
+      for (int im = 0; im < conv::knm; im++) {
+	conv::SuperkMode_t m = conv::kSKReactionModes[s][im];
+	if(m == conv::kSKmUndefined) continue;
+	if(util::IsNuMuBar(m)) {
+	  nsknumubar_etrue_n[itb] += skexp->GetSuperkMC()->Template(s, m, conv::kSKMCtFin)->Integral(1, conv::kNErecoBins1Rmu, EtrueBinNuMuBar[itb]+1, EtrueBinNuMuBar[itb+1]);
+	}
+      }
     }
     for(int itb = 0; itb < NEtrueBinNuE; itb++) {
       nsknue_etrue_n[itb] = 0.;
-      nsknue_etrue_n[itb] = skexp->GetSuperkMC()->Template(s, conv::kSKmNuECCQE, conv::kSKMCtFin)->Integral(1, conv::kNErecoBins1Rmu, EtrueBinNuE[itb]+1, EtrueBinNuE[itb+1]);
+      for (int im = 0; im < conv::knm; im++) {
+	conv::SuperkMode_t m = conv::kSKReactionModes[s][im];
+	if(m == conv::kSKmUndefined) continue;
+	if(util::IsNuE(m)) {
+	  nsknue_etrue_n[itb] += skexp->GetSuperkMC()->Template(s, m, conv::kSKMCtFin)->Integral(1, conv::kNErecoBins1Rmu, EtrueBinNuE[itb]+1, EtrueBinNuE[itb+1]);
+	}
+      }
     }
     for(int itb = 0; itb < NEtrueBinNuEBar; itb++) {
       nsknuebar_etrue_n[itb] = 0.;
-      nsknuebar_etrue_n[itb] = skexp->GetSuperkMC()->Template(s, conv::kSKmNuEBarCCQE, conv::kSKMCtFin)->Integral(1, conv::kNErecoBins1Rmu, EtrueBinNuEBar[itb]+1, EtrueBinNuEBar[itb+1]);
+      for (int im = 0; im < conv::knm; im++) {
+	conv::SuperkMode_t m = conv::kSKReactionModes[s][im];
+	if(m == conv::kSKmUndefined) continue;
+	if(util::IsNuEBar(m)) {
+	  nsknuebar_etrue_n[itb] += skexp->GetSuperkMC()->Template(s, m, conv::kSKMCtFin)->Integral(1, conv::kNErecoBins1Rmu, EtrueBinNuEBar[itb]+1, EtrueBinNuEBar[itb+1]);
+	}
+      }
     }
     for(int itb = 0; itb < NEtrueBinSigNuE; itb++) {
       nsksignue_etrue_n[itb] = 0.;
-      nsksignue_etrue_n[itb] = skexp->GetSuperkMC()->Template(s, conv::kSKmSigNuECCQE, conv::kSKMCtFin)->Integral(1, conv::kNErecoBins1Rmu, EtrueBinSigNuE[itb]+1, EtrueBinSigNuE[itb+1]);
+      for (int im = 0; im < conv::knm; im++) {
+	conv::SuperkMode_t m = conv::kSKReactionModes[s][im];
+	if(m == conv::kSKmUndefined) continue;
+	if(util::IsSignalNuE(m)) {
+	  nsksignue_etrue_n[itb] += skexp->GetSuperkMC()->Template(s, m, conv::kSKMCtFin)->Integral(1, conv::kNErecoBins1Rmu, EtrueBinSigNuE[itb]+1, EtrueBinSigNuE[itb+1]);
+	}
+      }
     }
 
     //
@@ -462,23 +460,53 @@ void test_systematic_error_propagation_all
     double nsknumu_etrue_0[conv::kXsNEtrueBins], nsknumubar_etrue_0[conv::kXsNEtrueBins], nsknue_etrue_0[conv::kXsNEtrueBins], nsknuebar_etrue_0[conv::kXsNEtrueBins], nsksignue_etrue_0[conv::kXsNEtrueBins];
     for(int itb = 0; itb < NEtrueBinNuMu; itb++) {
       nsknumu_etrue_0[itb] = 0.;
-      nsknumu_etrue_0[itb] = skexp->GetSuperkMC()->Template(s, conv::kSKmNuMuCCQE, conv::kSKMCtFin)->Integral(1, conv::kNErecoBins1Rmu, EtrueBinNuMu[itb]+1, EtrueBinNuMu[itb+1]);
+      for (int im = 0; im < conv::knm; im++) {
+	conv::SuperkMode_t m = conv::kSKReactionModes[s][im];
+	if(m == conv::kSKmUndefined) continue;
+	if(util::IsNuMu(m)) {
+	  nsknumu_etrue_0[itb] += skexp->GetSuperkMC()->Template(s, m, conv::kSKMCtFin)->Integral(1, conv::kNErecoBins1Rmu, EtrueBinNuMu[itb]+1, EtrueBinNuMu[itb+1]);
+	}
+      }
     }
     for(int itb = 0; itb < NEtrueBinNuMuBar; itb++) {
       nsknumubar_etrue_0[itb] = 0.;
-      nsknumubar_etrue_0[itb] = skexp->GetSuperkMC()->Template(s, conv::kSKmNuMuBarCCQE, conv::kSKMCtFin)->Integral(1, conv::kNErecoBins1Rmu, EtrueBinNuMuBar[itb]+1, EtrueBinNuMuBar[itb+1]);
+      for (int im = 0; im < conv::knm; im++) {
+	conv::SuperkMode_t m = conv::kSKReactionModes[s][im];
+	if(m == conv::kSKmUndefined) continue;
+	if(util::IsNuMuBar(m)) {
+	  nsknumubar_etrue_0[itb] += skexp->GetSuperkMC()->Template(s, m, conv::kSKMCtFin)->Integral(1, conv::kNErecoBins1Rmu, EtrueBinNuMuBar[itb]+1, EtrueBinNuMuBar[itb+1]);
+	}
+      }
     }
     for(int itb = 0; itb < NEtrueBinNuE; itb++) {
       nsknue_etrue_0[itb] = 0.;
-      nsknue_etrue_0[itb] = skexp->GetSuperkMC()->Template(s, conv::kSKmNuECCQE, conv::kSKMCtFin)->Integral(1, conv::kNErecoBins1Rmu, EtrueBinNuE[itb]+1, EtrueBinNuE[itb+1]);
+      for (int im = 0; im < conv::knm; im++) {
+	conv::SuperkMode_t m = conv::kSKReactionModes[s][im];
+	if(m == conv::kSKmUndefined) continue;
+	if(util::IsNuE(m)) {
+	  nsknue_etrue_0[itb] += skexp->GetSuperkMC()->Template(s, m, conv::kSKMCtFin)->Integral(1, conv::kNErecoBins1Rmu, EtrueBinNuE[itb]+1, EtrueBinNuE[itb+1]);
+	}
+      }
     }
     for(int itb = 0; itb < NEtrueBinNuEBar; itb++) {
       nsknuebar_etrue_0[itb] = 0.;
-      nsknuebar_etrue_0[itb] = skexp->GetSuperkMC()->Template(s, conv::kSKmNuEBarCCQE, conv::kSKMCtFin)->Integral(1, conv::kNErecoBins1Rmu, EtrueBinNuEBar[itb]+1, EtrueBinNuEBar[itb+1]);
+      for (int im = 0; im < conv::knm; im++) {
+	conv::SuperkMode_t m = conv::kSKReactionModes[s][im];
+	if(m == conv::kSKmUndefined) continue;
+	if(util::IsNuEBar(m)) {
+	  nsknuebar_etrue_0[itb] += skexp->GetSuperkMC()->Template(s, m, conv::kSKMCtFin)->Integral(1, conv::kNErecoBins1Rmu, EtrueBinNuEBar[itb]+1, EtrueBinNuEBar[itb+1]);
+	}
+      }
     }
     for(int itb = 0; itb < NEtrueBinSigNuE; itb++) {
       nsksignue_etrue_0[itb] = 0.;
-      nsksignue_etrue_0[itb] = skexp->GetSuperkMC()->Template(s, conv::kSKmSigNuECCQE, conv::kSKMCtFin)->Integral(1, conv::kNErecoBins1Rmu, EtrueBinSigNuE[itb]+1, EtrueBinSigNuE[itb+1]);
+      for (int im = 0; im < conv::knm; im++) {
+	conv::SuperkMode_t m = conv::kSKReactionModes[s][im];
+	if(m == conv::kSKmUndefined) continue;
+	if(util::IsSignalNuE(m)) {
+	  nsksignue_etrue_0[itb] += skexp->GetSuperkMC()->Template(s, m, conv::kSKMCtFin)->Integral(1, conv::kNErecoBins1Rmu, EtrueBinSigNuE[itb]+1, EtrueBinSigNuE[itb+1]);
+	}
+      }
     }
 
     //
@@ -602,23 +630,53 @@ void test_systematic_error_propagation_all
     double nsknumu_etrue_p[conv::kXsNEtrueBins], nsknumubar_etrue_p[conv::kXsNEtrueBins], nsknue_etrue_p[conv::kXsNEtrueBins], nsknuebar_etrue_p[conv::kXsNEtrueBins], nsksignue_etrue_p[conv::kXsNEtrueBins];
     for(int itb = 0; itb < NEtrueBinNuMu; itb++) {
       nsknumu_etrue_p[itb] = 0.;
-      nsknumu_etrue_p[itb] = skexp->GetSuperkMC()->Template(s, conv::kSKmNuMuCCQE, conv::kSKMCtFin)->Integral(1, conv::kNErecoBins1Rmu, EtrueBinNuMu[itb]+1, EtrueBinNuMu[itb+1]);
+      for (int im = 0; im < conv::knm; im++) {
+	conv::SuperkMode_t m = conv::kSKReactionModes[s][im];
+	if(m == conv::kSKmUndefined) continue;
+	if(util::IsNuMu(m)) {
+	  nsknumu_etrue_p[itb] += skexp->GetSuperkMC()->Template(s, m, conv::kSKMCtFin)->Integral(1, conv::kNErecoBins1Rmu, EtrueBinNuMu[itb]+1, EtrueBinNuMu[itb+1]);
+	}
+      }
     }
     for(int itb = 0; itb < NEtrueBinNuMuBar; itb++) {
       nsknumubar_etrue_p[itb] = 0.;
-      nsknumubar_etrue_p[itb] = skexp->GetSuperkMC()->Template(s, conv::kSKmNuMuBarCCQE, conv::kSKMCtFin)->Integral(1, conv::kNErecoBins1Rmu, EtrueBinNuMuBar[itb]+1, EtrueBinNuMuBar[itb+1]);
+      for (int im = 0; im < conv::knm; im++) {
+	conv::SuperkMode_t m = conv::kSKReactionModes[s][im];
+	if(m == conv::kSKmUndefined) continue;
+	if(util::IsNuMuBar(m)) {
+	  nsknumubar_etrue_p[itb] += skexp->GetSuperkMC()->Template(s, m, conv::kSKMCtFin)->Integral(1, conv::kNErecoBins1Rmu, EtrueBinNuMuBar[itb]+1, EtrueBinNuMuBar[itb+1]);
+	}
+      }
     }
     for(int itb = 0; itb < NEtrueBinNuE; itb++) {
       nsknue_etrue_p[itb] = 0.;
-      nsknue_etrue_p[itb] = skexp->GetSuperkMC()->Template(s, conv::kSKmNuECCQE, conv::kSKMCtFin)->Integral(1, conv::kNErecoBins1Rmu, EtrueBinNuE[itb]+1, EtrueBinNuE[itb+1]);
+      for (int im = 0; im < conv::knm; im++) {
+	conv::SuperkMode_t m = conv::kSKReactionModes[s][im];
+	if(m == conv::kSKmUndefined) continue;
+	if(util::IsNuE(m)) {
+	  nsknue_etrue_p[itb] += skexp->GetSuperkMC()->Template(s, m, conv::kSKMCtFin)->Integral(1, conv::kNErecoBins1Rmu, EtrueBinNuE[itb]+1, EtrueBinNuE[itb+1]);
+	}
+      }
     }
     for(int itb = 0; itb < NEtrueBinNuEBar; itb++) {
       nsknuebar_etrue_p[itb] = 0.;
-      nsknuebar_etrue_p[itb] = skexp->GetSuperkMC()->Template(s, conv::kSKmNuEBarCCQE, conv::kSKMCtFin)->Integral(1, conv::kNErecoBins1Rmu, EtrueBinNuEBar[itb]+1, EtrueBinNuEBar[itb+1]);
+      for (int im = 0; im < conv::knm; im++) {
+	conv::SuperkMode_t m = conv::kSKReactionModes[s][im];
+	if(m == conv::kSKmUndefined) continue;
+	if(util::IsNuEBar(m)) {
+	  nsknuebar_etrue_p[itb] += skexp->GetSuperkMC()->Template(s, m, conv::kSKMCtFin)->Integral(1, conv::kNErecoBins1Rmu, EtrueBinNuEBar[itb]+1, EtrueBinNuEBar[itb+1]);
+	}
+      }
     }
     for(int itb = 0; itb < NEtrueBinSigNuE; itb++) {
       nsksignue_etrue_p[itb] = 0.;
-      nsksignue_etrue_p[itb] = skexp->GetSuperkMC()->Template(s, conv::kSKmSigNuECCQE, conv::kSKMCtFin)->Integral(1, conv::kNErecoBins1Rmu, EtrueBinSigNuE[itb]+1, EtrueBinSigNuE[itb+1]);
+      for (int im = 0; im < conv::knm; im++) {
+	conv::SuperkMode_t m = conv::kSKReactionModes[s][im];
+	if(m == conv::kSKmUndefined) continue;
+	if(util::IsSignalNuE(m)) {
+	  nsksignue_etrue_p[itb] += skexp->GetSuperkMC()->Template(s, m, conv::kSKMCtFin)->Integral(1, conv::kNErecoBins1Rmu, EtrueBinSigNuE[itb]+1, EtrueBinSigNuE[itb+1]);
+	}
+      }
     }
 
     //
@@ -740,23 +798,53 @@ void test_systematic_error_propagation_all
     double nsknumu_etrue_m[conv::kXsNEtrueBins], nsknumubar_etrue_m[conv::kXsNEtrueBins], nsknue_etrue_m[conv::kXsNEtrueBins], nsknuebar_etrue_m[conv::kXsNEtrueBins], nsksignue_etrue_m[conv::kXsNEtrueBins];
     for(int itb = 0; itb < NEtrueBinNuMu; itb++) {
       nsknumu_etrue_m[itb] = 0.;
-      nsknumu_etrue_m[itb] = skexp->GetSuperkMC()->Template(s, conv::kSKmNuMuCCQE, conv::kSKMCtFin)->Integral(1, conv::kNErecoBins1Rmu, EtrueBinNuMu[itb]+1, EtrueBinNuMu[itb+1]);
+      for (int im = 0; im < conv::knm; im++) {
+	conv::SuperkMode_t m = conv::kSKReactionModes[s][im];
+	if(m == conv::kSKmUndefined) continue;
+	if(util::IsNuMu(m)) {
+	  nsknumu_etrue_m[itb] += skexp->GetSuperkMC()->Template(s, m, conv::kSKMCtFin)->Integral(1, conv::kNErecoBins1Rmu, EtrueBinNuMu[itb]+1, EtrueBinNuMu[itb+1]);
+	}
+      }
     }
     for(int itb = 0; itb < NEtrueBinNuMuBar; itb++) {
       nsknumubar_etrue_m[itb] = 0.;
-      nsknumubar_etrue_m[itb] = skexp->GetSuperkMC()->Template(s, conv::kSKmNuMuBarCCQE, conv::kSKMCtFin)->Integral(1, conv::kNErecoBins1Rmu, EtrueBinNuMuBar[itb]+1, EtrueBinNuMuBar[itb+1]);
+      for (int im = 0; im < conv::knm; im++) {
+	conv::SuperkMode_t m = conv::kSKReactionModes[s][im];
+	if(m == conv::kSKmUndefined) continue;
+	if(util::IsNuMuBar(m)) {
+	  nsknumubar_etrue_m[itb] += skexp->GetSuperkMC()->Template(s, m, conv::kSKMCtFin)->Integral(1, conv::kNErecoBins1Rmu, EtrueBinNuMuBar[itb]+1, EtrueBinNuMuBar[itb+1]);
+	}
+      }
     }
     for(int itb = 0; itb < NEtrueBinNuE; itb++) {
       nsknue_etrue_m[itb] = 0.;
-      nsknue_etrue_m[itb] = skexp->GetSuperkMC()->Template(s, conv::kSKmNuECCQE, conv::kSKMCtFin)->Integral(1, conv::kNErecoBins1Rmu, EtrueBinNuE[itb]+1, EtrueBinNuE[itb+1]);
+      for (int im = 0; im < conv::knm; im++) {
+	conv::SuperkMode_t m = conv::kSKReactionModes[s][im];
+	if(m == conv::kSKmUndefined) continue;
+	if(util::IsNuE(m)) {
+	  nsknue_etrue_m[itb] += skexp->GetSuperkMC()->Template(s, m, conv::kSKMCtFin)->Integral(1, conv::kNErecoBins1Rmu, EtrueBinNuE[itb]+1, EtrueBinNuE[itb+1]);
+	}
+      }
     }
     for(int itb = 0; itb < NEtrueBinNuEBar; itb++) {
       nsknuebar_etrue_m[itb] = 0.;
-      nsknuebar_etrue_m[itb] = skexp->GetSuperkMC()->Template(s, conv::kSKmNuEBarCCQE, conv::kSKMCtFin)->Integral(1, conv::kNErecoBins1Rmu, EtrueBinNuEBar[itb]+1, EtrueBinNuEBar[itb+1]);
+      for (int im = 0; im < conv::knm; im++) {
+	conv::SuperkMode_t m = conv::kSKReactionModes[s][im];
+	if(m == conv::kSKmUndefined) continue;
+	if(util::IsNuEBar(m)) {
+	  nsknuebar_etrue_m[itb] += skexp->GetSuperkMC()->Template(s, m, conv::kSKMCtFin)->Integral(1, conv::kNErecoBins1Rmu, EtrueBinNuEBar[itb]+1, EtrueBinNuEBar[itb+1]);
+	}
+      }
     }
     for(int itb = 0; itb < NEtrueBinSigNuE; itb++) {
       nsksignue_etrue_m[itb] = 0.;
-      nsksignue_etrue_m[itb] = skexp->GetSuperkMC()->Template(s, conv::kSKmSigNuECCQE, conv::kSKMCtFin)->Integral(1, conv::kNErecoBins1Rmu, EtrueBinSigNuE[itb]+1, EtrueBinSigNuE[itb+1]);
+      for (int im = 0; im < conv::knm; im++) {
+	conv::SuperkMode_t m = conv::kSKReactionModes[s][im];
+	if(m == conv::kSKmUndefined) continue;
+	if(util::IsSignalNuE(m)) {
+	  nsksignue_etrue_m[itb] += skexp->GetSuperkMC()->Template(s, m, conv::kSKMCtFin)->Integral(1, conv::kNErecoBins1Rmu, EtrueBinSigNuE[itb]+1, EtrueBinSigNuE[itb+1]);
+	}
+      }
     }
 
     //
@@ -1957,258 +2045,10 @@ void test_systematic_error_propagation_all
 
   }//isys
 
-  //don't forget to print the expected
-  print_expected_errors(use_tex, output_file, config);
-
-  // ... and write document footer to outfile
+  // don't forget to write document footer to outfile
   ofstream outfile (output_file,ios_base::trunc&&ios_base::out);
   string f;
   f += ("\\end{document}\n");
   outfile.write (f.c_str(),f.size());
   outfile.close();
-}
-
-
-print_expected_errors(bool use_tex, const char * output_file, const char * config) {
-  using namespace std;
-  using namespace t2kana;
-  
-  // Parse the input XML configuration file
-  TXMLEngine* xml = new TXMLEngine;   
-  XMLDocPointer_t xmldoc = xml->ParseFile(config);
-  if (xmldoc==0) {
-    cerr << "Exp >> " << "Can not parse input: " << config << endl;
-    delete xml;
-    exit(1);
-  }
-  XMLNodePointer_t root_node = xml->DocGetRootElement(xmldoc);
-
-  // Get the expected systematic variations
-
-  //SK
-  double SKDetEnergyScale1RmuRelErr = 
-    util::XML2Dbl(xml,root_node,
-     "detector_systematics/superk/energy_scale_relative_error/one_mu_ring");
-  double SKDetEff1RmuCCQEOthRelErr =
-    util::XML2Dbl(xml,root_node,
-      "detector_systematics/superk/efficiency_relative_error/one_mu_ring/ccqe/other_error");
-  TMatrixD *SKDetEff1RmuCCQERCCovarRelErr = 
-    util::XML2TMatrixD(xml,root_node,
-      "detector_systematics/superk/efficiency_relative_error/one_mu_ring/ccqe/rc_error");
-  double SKDetEff1RmuCCnonQERelErr   =
-    util::XML2Dbl(xml,root_node,
-      "detector_systematics/superk/efficiency_relative_error/one_mu_ring/ccnonqe");
-  double SKDetEff1RmuNCRelErr        =
-    util::XML2Dbl(xml,root_node,
-      "detector_systematics/superk/efficiency_relative_error/one_mu_ring/nc");
-  double SKDetEff1RmuNuECCRelErr =
-    util::XML2Dbl(xml,root_node, 
-      "detector_systematics/superk/efficiency_relative_error/one_mu_ring/nuecc");
-
-  //BANFF
-  TMatrixD *BANFFCovMtrx = 
-    util::XML2TMatrixD(xml,root_node,
-      "banff/covariance_matrix");
-
-  //XSec
-  /* these don't work now, (splines changed to run from -4 to +4, instead of 0-5)
-  double FermiMomRelErr =
-    util::XML2Dbl(xml,root_node,"xsec/splines/pf");
-  double SpecFuncRelErr =
-    util::XML2Dbl(xml,root_node,"xsec/splines/sf");
-  double WshapeRelErr =
-    util::XML2Dbl(xml,root_node,"xsec/splines/wshape");
-  double PiLessDeltaRelErr =
-    util::XML2Dbl(xml,root_node,"xsec/splines/pilessdelta");
-  double ENuShapeRelErr =
-    util::XML2Dbl(xml,root_node,"xsec/splines/enushape");
-  */
-  double NormCCQE1RelErr =
-    util::XML2Dbl(xml,root_node,"xsec/normalisations/ccqee1");
-  double NormCCQE2RelErr =
-    util::XML2Dbl(xml,root_node,"xsec/normalisations/ccqee2");
-  double NormCC1pi1RelErr =
-    util::XML2Dbl(xml,root_node,"xsec/normalisations/cc1pie1");
-  double NormCCcohRelErr =
-    util::XML2Dbl(xml,root_node,"xsec/normalisations/cccoh");
-  double NormNCcohRelErr =
-    util::XML2Dbl(xml,root_node,"xsec/normalisations/nccoh");
-  double NormNCothRelErr =
-    util::XML2Dbl(xml,root_node,"xsec/normalisations/ncoth");
-  double NormNuEToNuMuRelErr =
-    util::XML2Dbl(xml,root_node,"xsec/normalisations/numu_to_nue");
-
-  // Release memory
-  xml->FreeDoc(xmldoc);
-  delete xml;
-
-  //print out
-  string pctsymbol  = (use_tex) ? " \\% "   : "% ";
-  string endcolumn  = (use_tex) ? " & "     : "" ;
-  string endrow     = (use_tex) ? " \\\\ "  : "" ;
-  int nprecisionnev = 4; // <-- for number of events
-  int nprecisionpct = 2; // <-- for % changes
-  int ncol1   = 80;
-  int ncolnev = 15;
-  int ncolfrc =  8;
-
-  stringstream streamer;
-
-  if(use_tex) {
-     streamer << "\\begin{table}"   << endl;
-     streamer << "\\scriptsize" << endl;
-     //streamer << "\\centering"     << endl;
-     streamer << "\\begin{tabular}{| l | r |}" << endl;
-     streamer << "\\hline" << endl;
-     streamer << setw(ncol1)  << setfill(' ') << "{\\bf Systematic}  " << endcolumn
-	      << setw(ncolnev)  << setfill(' ') << "{\\bf Expected change} " << endrow
-	      << endl;
-     streamer << "\\hline" << endl;
-  }
- 
-  string systematic;
-
-  for (int i = 0; i < 3; i++) {
-    systematic = Form("sk 1Rmu ccqe ring counting eff %d",i);
-    streamer << setw(ncol1)  << setfill(' ') << systematic << endcolumn
-	     << setw(ncolnev)  << setfill(' ') << setprecision(nprecisionnev)
-	     << TMath::Sqrt(SKDetEff1RmuCCQERCCovarRelErr(i,i)) * 100 << pctsymbol
-	     << endrow << endl;
-  }
-  systematic = "sk 1Rmu ccqe other eff";
-  streamer << setw(ncol1)  << setfill(' ') << systematic << endcolumn
-	   << setw(ncolnev)  << setfill(' ') << setprecision(nprecisionnev)
-	   << SKDetEff1RmuCCQEOthRelErr * 100 << pctsymbol
-	   << endrow << endl;
-  systematic = "sk 1Rmu ccnonqe eff";
-  streamer << setw(ncol1)  << setfill(' ') << systematic << endcolumn
-	   << setw(ncolnev)  << setfill(' ') << setprecision(nprecisionnev)
-	   << SKDetEff1RmuCCnonQERelErr * 100 << pctsymbol
-	   << endrow << endl;
-  systematic = "sk 1Rmu nc eff";
-  streamer << setw(ncol1)  << setfill(' ') << systematic << endcolumn
-	   << setw(ncolnev)  << setfill(' ') << setprecision(nprecisionnev)
-	   << SKDetEff1RmuNCRelErr * 100 << pctsymbol
-	   << endrow << endl;
-  systematic = "sk 1Rmu nuecc eff";
-  streamer << setw(ncol1)  << setfill(' ') << systematic << endcolumn
-	   << setw(ncolnev)  << setfill(' ') << setprecision(nprecisionnev)
-	   << SKDetEff1RmuNuECCRelErr * 100 << pctsymbol
-	   << endrow << endl;
-  systematic = "sk energy scale";
-  streamer << setw(ncol1)  << setfill(' ') << systematic << endcolumn
-	   << setw(ncolnev)  << setfill(' ') << setprecision(nprecisionnev)
-	   << 0 << pctsymbol << " (movement in Ereco)"
-	   << endrow << endl;
-  for (int i = 0; i < 27; i++) {
-    systematic = Form("banff %d",i);
-    streamer << setw(ncol1)  << setfill(' ') << systematic << endcolumn
-	     << setw(ncolnev)  << setfill(' ') << setprecision(nprecisionnev)
-	     << BANFFCovMtrx(i,i) * 100 << pctsymbol;
-    if (i == 22)
-      streamer << " in ereco bin 2 (numu only)";
-    else if (i == 23)
-      streamer << " numu should be slightly different";
-    streamer << endrow << endl;
-  }
-
-  /*
-  systematic = "xsec pF";
-  streamer << setw(ncol1)  << setfill(' ') << systematic << endcolumn
-	   << setw(ncolnev)  << setfill(' ') << setprecision(nprecisionnev)
-	   << FermiMomRelErr * 100 << pctsymbol
-	   << endrow << endl;
-  systematic = "xsec Spect Func";
-  streamer << setw(ncol1)  << setfill(' ') << systematic << endcolumn
-	   << setw(ncolnev)  << setfill(' ') << setprecision(nprecisionnev)
-	   << SpecFuncRelErr * 100 << pctsymbol
-	   << endrow << endl;
-  systematic = "xsec Wshape";
-  streamer << setw(ncol1)  << setfill(' ') << systematic << endcolumn
-	   << setw(ncolnev)  << setfill(' ') << setprecision(nprecisionnev)
-	   << WshapeRelErr * 100 << pctsymbol
-	   << endrow << endl;
-  systematic = "xsec CCoth shape";
-  streamer << setw(ncol1)  << setfill(' ') << systematic << endcolumn
-	   << setw(ncolnev)  << setfill(' ') << setprecision(nprecisionnev)
-	   << ShapeCCothRelErr * 100 << pctsymbol
-	   << endrow << endl;
-  systematic = "xsec Pion-less delta decay";
-  streamer << setw(ncol1)  << setfill(' ') << systematic << endcolumn
-	   << setw(ncolnev)  << setfill(' ') << setprecision(nprecisionnev)
-	   << PiLessDeltaRelErr * 100 << pctsymbol
-	   << endrow << endl;
-  systematic = "xsec CC1pi ENu shape";
-  streamer << setw(ncol1)  << setfill(' ') << systematic << endcolumn
-	   << setw(ncolnev)  << setfill(' ') << setprecision(nprecisionnev)
-	   << ENuShapeRelErr * 100 << pctsymbol
-	   << endrow << endl;
-  */
-  systematic = "Norm CCQE E1";
-  streamer << setw(ncol1)  << setfill(' ') << systematic << endcolumn
-	   << setw(ncolnev)  << setfill(' ') << setprecision(nprecisionnev)
-	   << NormCCQE1RelErr * 100 << pctsymbol
-	   << endrow << endl;
-  systematic = "Norm CCQE E2";
-  streamer << setw(ncol1)  << setfill(' ') << systematic << endcolumn
-	   << setw(ncolnev)  << setfill(' ') << setprecision(nprecisionnev)
-	   << NormCCQE2RelErr * 100 << pctsymbol
-	   << endrow << endl;
-  systematic = "Norm CC1pi E1";
-  streamer << setw(ncol1)  << setfill(' ') << systematic << endcolumn
-	   << setw(ncolnev)  << setfill(' ') << setprecision(nprecisionnev)
-	   << NormCC1pi1RelErr * 100 << pctsymbol
-	   << endrow << endl;
-  systematic = "Norm CC coh";
-  streamer << setw(ncol1)  << setfill(' ') << systematic << endcolumn
-	   << setw(ncolnev)  << setfill(' ') << setprecision(nprecisionnev)
-	   << NormCCcohRelErr * 100 << pctsymbol
-	   << endrow << endl;
-  systematic = "Norm NC coh";
-  streamer << setw(ncol1)  << setfill(' ') << systematic << endcolumn
-	   << setw(ncolnev)  << setfill(' ') << setprecision(nprecisionnev)
-	   << NormNCcohRelErr * 100 << pctsymbol
-	   << endrow << endl;
-  systematic = "Norm NC oth";
-  streamer << setw(ncol1)  << setfill(' ') << systematic << endcolumn
-	   << setw(ncolnev)  << setfill(' ') << setprecision(nprecisionnev)
-	   << NormNCothRelErr * 100 << pctsymbol
-	   << endrow << endl;
-  systematic = "Norm NuE to NuMu";
-  streamer << setw(ncol1)  << setfill(' ') << systematic << endcolumn
-	   << setw(ncolnev)  << setfill(' ') << setprecision(nprecisionnev)
-	   << NormNuEToNuMuRelErr * 100 << pctsymbol
-	   << endrow << endl;
-
-  if(!use_tex) {
-     streamer << setw(150)  << setfill('-') << " " << endl;
-  }
-
-  if(use_tex) {
-     streamer << "\\hline" << endl;
-     streamer << "\\end{tabular}" << endl;
-     streamer << "\\label{tab:expected}" << endl;
-     streamer << "\\end{table}" << endl;
-     streamer << "\\clearpage" << endl;
-  }
-
-  cout << streamer.str() << endl;
-
-  // write the table?
-  if(output_file != "") {
-    long size;
-
-    // get size of file
-    streamer.seekg(0,ifstream::end);
-    size=streamer.tellg();
-    streamer.seekg(0);
-
-    ofstream outfile (output_file,ios_base::app);
-
-    // write to outfile
-    outfile.write (streamer.str().c_str(),size);
-  
-    outfile.close();
-  }
-
 }

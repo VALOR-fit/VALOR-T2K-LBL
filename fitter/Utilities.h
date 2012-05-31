@@ -124,6 +124,8 @@ namespace util {
   const double * ErecoBinEdges (conv::SuperkSample_t s);
   const int      NumVariableXsEtrueBins(conv::SuperkSample_t s, conv::SuperkMode_t m);
   const double * VariableXsEtrueBinEdges(conv::SuperkSample_t s, conv::SuperkMode_t m);
+  const int      NumVariableMCEtrueBins(conv::SuperkSample_t s, conv::SuperkMode_t m);
+  const double * VariableMCEtrueBinEdges(conv::SuperkSample_t s, conv::SuperkMode_t m);
 
   //
   // String utilities

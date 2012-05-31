@@ -529,11 +529,11 @@ void SuperkMC::ApplyBANFFTuningToTemplates(void)
 	 // Note that the Ereco binning is identical between XSec and SuperkMC templates
 	 //
 	 // Loop over variable flux Etrue bins
-	 for(int itv = 1; itv <= util::NumVariableXsEtrueBins(s,m); itv ++) {
+	 for(int itv = 1; itv <= util::NumVariableMCEtrueBins(s,m); itv ++) {
 
 	   // Get the min/max energy of the current variable flux Etrue bin
-	   double EtrueVarMin = util::VariableXsEtrueBinEdges(s,m)[itv-1] + kOneMeV;
-	   double EtrueVarMax = util::VariableXsEtrueBinEdges(s,m)[itv] - kOneMeV;
+	   double EtrueVarMin = util::VariableMCEtrueBinEdges(s,m)[itv-1] + kOneMeV;
+	   double EtrueVarMax = util::VariableMCEtrueBinEdges(s,m)[itv] - kOneMeV;
 
            // Plug-in BANFF flux systematics
            double flux_wght = fNuFlux->SuperkFluxSystWght(s,m,EtrueVarMin);
@@ -634,11 +634,11 @@ void SuperkMC::ApplySystematicsToTemplates_Multiplicative(void)
 	 // Note that the Ereco binning is identical between XSec and SuperkMC templates
 	 //
 	 // Loop over variable flux Etrue bins
-	 for(int itv = 1; itv <= util::NumVariableXsEtrueBins(s,m); itv ++) {
+	 for(int itv = 1; itv <= util::NumVariableMCEtrueBins(s,m); itv ++) {
 
 	   // Get the min/max energy of the current variable flux Etrue bin
-	   double EtrueVarMin = util::VariableXsEtrueBinEdges(s,m)[itv-1] + kOneMeV;
-	   double EtrueVarMax = util::VariableXsEtrueBinEdges(s,m)[itv] - kOneMeV;
+	   double EtrueVarMin = util::VariableMCEtrueBinEdges(s,m)[itv-1] + kOneMeV;
+	   double EtrueVarMax = util::VariableMCEtrueBinEdges(s,m)[itv] - kOneMeV;
 
            // Plug-in BANFF flux systematics
            double flux_wght = fNuFlux->SuperkFluxSystWght(s,m,EtrueVarMin);

@@ -48,6 +48,13 @@ void test_nsk
 
   // integrate Ereco distribution
   double nsk = skexp.CurrPredictedErecoSpectrum(conv::kSKsFCFV1RingMuLike)->Integral();
+  double nskmc = 0;
+  for(int im = 0; im < conv::knm; im++) {
+    conv::SuperkMode_t m = kSKReactionModes[conv::kSKsFCFV1RingMuLike][im];
+    if(m == conv::kSKmUndefined)
+      continue;
+    nskmc += skexp.GetBANFF()->Template(conv::kSKsFCFV1RingMuLike, m, conv::kSKMCtFin)->Integral();
+  }
   double nskmucc = 0;
   nskmucc += skexp.CurrPredictedErecoSpectrum(conv::kSKsFCFV1RingMuLike, conv::kSKmNuMuCCQE    )->Integral();
   nskmucc += skexp.CurrPredictedErecoSpectrum(conv::kSKsFCFV1RingMuLike, conv::kSKmNuMuCC1pi   )->Integral();
@@ -86,5 +93,5 @@ void test_nsk
   cout << "     " << nsknc << " all NC" << endl;
   cout << "     " << nskesigcc << " nue signal CC" << endl;
   cout << "Number of predicted events at SK is: " << nsk << "     = " << nskmucc+nsknc+nskebeamcc+nskesigcc << endl;
-
+  cout << nskmc << endl;
 }
