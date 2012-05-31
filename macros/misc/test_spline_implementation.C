@@ -110,7 +110,7 @@ void test_spline_implementation
 	    //get the weight
 	    double wght = 1.;
 	    //skip empty bins
-	    if(mctempl->GetBinContent(ir,it) < 0)
+	    if(mctempl->GetBinContent(ir,it) < conv::kASmallNum)
 	      continue;
 	    if(!nominal) {
 	      //apply the systematic to this energy bin?
@@ -120,6 +120,7 @@ void test_spline_implementation
 	      if(apply) {
 		//get the weight
 		TSpline3 * wght_spl = skexp.GetNuXSec()->FindWghtSpline(p,conv::kSKsFCFV1RingMuLike,m,Ereco,Etrue);
+		cout << Etrue << "\t" << Ereco << "\t" << mctempl->GetBinContent(ir,it) << endl;
 		assert(wght_spl);
 		wght = wght_spl->Eval(twkdial[idial]) / wght_spl->Eval(0);
 		wght = TMath::Max(0.,wght);
@@ -165,3 +166,29 @@ void test_spline_implementation
   f.Close();
 }
 
+IsThereAnEvent(SuperkSample_t s, SuperkMode_t m, double Ereco, double Etrue) const
+{
+  int is = util::ArrIdx::Instance()->SuperkSampleIdx(s);
+  int im = util::ArrIdx::Instance()->SuperkModeIdx(s,m);
+  assert(is != -1 && im != -1);
+
+  TH2D * mctempl_xsbinning = fXsBinningTempl[is][im];
+  assert(mctempl_xsbinning);
+
+  int ir = mctempl_xsbinning->GetXaxis()->FindBin(Ereco);
+  int it = mctempl_xsbinning->GetYaxis()->FindBin(Etrue);
+
+  bool ev = mctempl_xsbinning->GetBinContent(ir,it) > kASmallNum;
+
+#ifdef __show_isanevent_mesg_debug__
+  if(ev)
+    cout << "Exp/NuXSec >> There are " << mctempl_xsbinning->GetBinContent(ir,it)
+	 << " events for sample = " << util::AsString(s) 
+	 << ", mode = " << util::AsString(m)
+	 << ", Etrue = " << Etrue
+	 << ", Ereco = " << Ereco
+	 << endl;
+#endif
+
+  return ev;
+} 

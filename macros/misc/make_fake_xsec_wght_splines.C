@@ -11,10 +11,17 @@
 
 using namespace std;
 
-void make_fake_xsec_wght_splines()
+void make_fake_xsec_wght_splines(
+       const char * config_file        = "analysis_configuration.xml"    /* */
+)
 {
   using namespace t2kana;
   using namespace t2kana::conv;
+
+  // Create & config superk spectrum predictor - so we can get a template to check which splines we don't need to make
+  const char * config  = Form("%s/config/%s", gSystem->Getenv("T2KOSCANA"), config_file);
+  SuperkExpectation skexp;
+  if (!skexp.Read(config)) return;
 
   const int n_knots = 100;
 
@@ -37,6 +44,9 @@ void make_fake_xsec_wght_splines()
        SuperkMode_t m = kSKReactionModes[is][im];
        if(m == kSKmUndefined) continue;
 
+       //get the MC template (etrue-ereco)
+       TH2D * mctempl = skexp.GetNuXSec()->Template(conv::kSKsFCFV1RingMuLike,m);
+
        // loop over xsec systematic parameters
        for(int ip = 0; ip < kNumOfXSecSyst; ip++) {
           PhysParamId_t p = kListOfXSecSyst[ip];
@@ -55,6 +65,10 @@ void make_fake_xsec_wght_splines()
              for(int it = 0; it < kXsNEtrueBins; it++) {
                 double Etrue = kXsEtrueBinEdges[is][im][it] + kOneMeV;
 
+		//skip empty bins
+		if(mctempl->GetBinContent(ir,it) < conv::kASmallNum)
+		  continue;
+		
                 // Build spline name
                 ostringstream splname;
                 splname << "spl_"
