@@ -54,7 +54,7 @@ void test_nsk
     conv::SuperkMode_t m = conv::kSKReactionModes[is][im];
     if(m == conv::kSKmUndefined)
       continue;
-    nskmc += skexp.GetBANFF()->Template(conv::kSKsFCFV1RingMuLike, m, conv::kSKMCtFin)->Integral();
+    nskmc += skexp.GetSuperkMC()->Template(conv::kSKsFCFV1RingMuLike, m, conv::kSKMCtFin)->Integral();
   }
   double nskmucc = 0;
   nskmucc += skexp.CurrPredictedErecoSpectrum(conv::kSKsFCFV1RingMuLike, conv::kSKmNuMuCCQE    )->Integral();

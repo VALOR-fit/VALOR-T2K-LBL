@@ -16,8 +16,10 @@ void test_systematic_error_propagation_all
   double       input_deltacp              = 0.00,                           /* */
   double       input_dm12sq               = 7.58E-5,                        /* */
   double       input_dm23sq               = 2.40E-3,                        /* */
-  const char * output_file                = "systematic_tables.tex",        /* */
-  const char * config_file                = "analysis_configuration.xml"    /* */
+  const char * output_file                = "systematic_tables_fakesplines.tex",        /* */
+  const char * config_file                = "analysis_configuration_fakesplines.xml"    /* */
+  //const char * output_file                = "systematic_tables.tex",        /* */
+  //const char * config_file                = "analysis_configuration.xml"    /* */
 )
 {
   using namespace std;
@@ -183,14 +185,16 @@ void test_systematic_error_propagation_all
       else if(bindex == 22 || bindex == 23)
 	show_sk_spectral_info_etrue_flux_binning = true;
       //norm parameters with binning
-      else if(bindex == 24 || bindex == 25)
-	show_sk_spectral_info_etrue_norm_binning = true;
+      else if(bindex == 24 || bindex == 25) {
+        show_sk_spectral_info_etrue_norm_binning = true;
+      }
     }
     else if(systematic.find("xsec_") == 0) {
       if(systematic.find("xsec_norm_") == 0) {
 	//norm parameters with binning
-	if(systematic.find("xsec_norm_ccqeE1") == 0 || systematic.find("xsec_norm_ccqeE2") == 0 || systematic.find("xsec_norm_cc1piE1") == 0)
+	if(systematic.find("xsec_norm_ccqeE1") == 0 || systematic.find("xsec_norm_ccqeE2") == 0 || systematic.find("xsec_norm_cc1piE1") == 0) {
 	  show_sk_spectral_info_etrue_norm_binning = true;
+	}
       }
       //spline parameters
       else
@@ -1089,7 +1093,7 @@ void test_systematic_error_propagation_all
 		 << setw(ncolfrc)  << setfill(' ') << setprecision(nprecisionpct) << frac_nsknumuccqe_etrue_ma << pctsymbol 
 		 << endrow
 		 << endl;
-	temp = component + " (1.5 $\\leq E_{t} <$ 2.5 GeV)";
+	temp = component + " (1.5 $\\leq E_{t} <$ 3.5 GeV)";
 	streamer << setw(ncol1)  << setfill(' ') << temp
 		 << endcolumn
 		 << setw(ncolnev)  << setfill(' ') << setprecision(nprecisionnev) << nsknumuccqe_etrue_nb
@@ -1105,7 +1109,7 @@ void test_systematic_error_propagation_all
 		 << setw(ncolfrc)  << setfill(' ') << setprecision(nprecisionpct) << frac_nsknumuccqe_etrue_mb << pctsymbol 
 		 << endrow
 		 << endl;
-	temp = component + " ($E_{t} \\geq$ 2.5 GeV)";
+	temp = component + " ($E_{t} \\geq$ 3.5 GeV)";
 	streamer << setw(ncol1)  << setfill(' ') << temp
 		 << endcolumn
 		 << setw(ncolnev)  << setfill(' ') << setprecision(nprecisionnev) << nsknumuccqe_etrue_nc
@@ -1141,7 +1145,7 @@ void test_systematic_error_propagation_all
 		 << setw(ncolfrc)  << setfill(' ') << setprecision(nprecisionpct) << frac_nsknumubarccqe_etrue_ma << pctsymbol 
 		 << endrow
 		 << endl;
-	temp = component + " (1.5 $\\leq E_{t} <$ 2.5 GeV)";
+	temp = component + " (1.5 $\\leq E_{t} <$ 3.5 GeV)";
 	streamer << setw(ncol1)  << setfill(' ') << temp
 		 << endcolumn
 		 << setw(ncolnev)  << setfill(' ') << setprecision(nprecisionnev) << nsknumubarccqe_etrue_nb
@@ -1157,7 +1161,7 @@ void test_systematic_error_propagation_all
 		 << setw(ncolfrc)  << setfill(' ') << setprecision(nprecisionpct) << frac_nsknumubarccqe_etrue_mb << pctsymbol 
 		 << endrow
 		 << endl;
-	temp = component + " ($E_{t} \\geq$ 2.5 GeV)";
+	temp = component + " ($E_{t} \\geq$ 3.5 GeV)";
 	streamer << setw(ncol1)  << setfill(' ') << temp
 		 << endcolumn
 		 << setw(ncolnev)  << setfill(' ') << setprecision(nprecisionnev) << nsknumubarccqe_etrue_nc
@@ -1193,7 +1197,7 @@ void test_systematic_error_propagation_all
 		 << setw(ncolfrc)  << setfill(' ') << setprecision(nprecisionpct) << frac_nsknueccqe_etrue_ma << pctsymbol 
 		 << endrow
 		 << endl;
-	temp = component + " (1.5 $\\leq E_{t} <$ 2.5 GeV)";
+	temp = component + " (1.5 $\\leq E_{t} <$ 3.5 GeV)";
 	streamer << setw(ncol1)  << setfill(' ') << temp
 		 << endcolumn
 		 << setw(ncolnev)  << setfill(' ') << setprecision(nprecisionnev) << nsknueccqe_etrue_nb
@@ -1209,7 +1213,7 @@ void test_systematic_error_propagation_all
 		 << setw(ncolfrc)  << setfill(' ') << setprecision(nprecisionpct) << frac_nsknueccqe_etrue_mb << pctsymbol 
 		 << endrow
 		 << endl;
-	temp = component + " ($E_{t} \\geq$ 2.5 GeV)";
+	temp = component + " ($E_{t} \\geq$ 3.5 GeV)";
 	streamer << setw(ncol1)  << setfill(' ') << temp
 		 << endcolumn
 		 << setw(ncolnev)  << setfill(' ') << setprecision(nprecisionnev) << nsknueccqe_etrue_nc
@@ -1245,7 +1249,7 @@ void test_systematic_error_propagation_all
 		 << setw(ncolfrc)  << setfill(' ') << setprecision(nprecisionpct) << frac_nsknuebarccqe_etrue_ma << pctsymbol 
 		 << endrow
 		 << endl;
-	temp = component + " (1.5 $\\leq E_{t} <$ 2.5 GeV)";
+	temp = component + " (1.5 $\\leq E_{t} <$ 3.5 GeV)";
 	streamer << setw(ncol1)  << setfill(' ') << temp
 		 << endcolumn
 		 << setw(ncolnev)  << setfill(' ') << setprecision(nprecisionnev) << nsknuebarccqe_etrue_nb
@@ -1261,7 +1265,7 @@ void test_systematic_error_propagation_all
 		 << setw(ncolfrc)  << setfill(' ') << setprecision(nprecisionpct) << frac_nsknuebarccqe_etrue_mb << pctsymbol 
 		 << endrow
 		 << endl;
-	temp = component + " ($E_{t} \\geq$ 2.5 GeV)";
+	temp = component + " ($E_{t} \\geq$ 3.5 GeV)";
 	streamer << setw(ncol1)  << setfill(' ') << temp
 		 << endcolumn
 		 << setw(ncolnev)  << setfill(' ') << setprecision(nprecisionnev) << nsknuebarccqe_etrue_nc
@@ -1297,7 +1301,7 @@ void test_systematic_error_propagation_all
 		 << setw(ncolfrc)  << setfill(' ') << setprecision(nprecisionpct) << frac_nsksignueccqe_etrue_ma << pctsymbol 
 		 << endrow
 		 << endl;
-	temp = component + " (1.5 $\\leq E_{t} <$ 2.5 GeV)";
+	temp = component + " (1.5 $\\leq E_{t} <$ 3.5 GeV)";
 	streamer << setw(ncol1)  << setfill(' ') << temp
 		 << endcolumn
 		 << setw(ncolnev)  << setfill(' ') << setprecision(nprecisionnev) << nsksignueccqe_etrue_nb
@@ -1313,7 +1317,7 @@ void test_systematic_error_propagation_all
 		 << setw(ncolfrc)  << setfill(' ') << setprecision(nprecisionpct) << frac_nsksignueccqe_etrue_mb << pctsymbol 
 		 << endrow
 		 << endl;
-	temp = component + " ($E_{t} \\geq$ 2.5 GeV)";
+	temp = component + " ($E_{t} \\geq$ 3.5 GeV)";
 	streamer << setw(ncol1)  << setfill(' ') << temp
 		 << endcolumn
 		 << setw(ncolnev)  << setfill(' ') << setprecision(nprecisionnev) << nsksignueccqe_etrue_nc

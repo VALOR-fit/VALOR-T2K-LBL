@@ -32,6 +32,13 @@ void make_fake_xsec_wght_splines(
   double wght[n_knots];
   double twkd[n_knots];
 
+  for(int i = 0; i < n_knots; i++) {
+    // twkd[i] is x-value of current point
+    // wght[i] is y-value of current point
+    twkd[i] = twkd_min + twkd_step * i;
+    wght[i] = (twkd[i] / twkd_max) + 1;
+  }
+
   TFile f("splines.root","recreate");
 
   // loop over samples
@@ -61,12 +68,11 @@ void make_fake_xsec_wght_splines(
           // loop over variable-size Ereco and Etrue bins for which xsec wght splines
           // are computed
           for(int ir = 0; ir < kXsNErecoBins; ir++) {
-             double Ereco = kXsErecoBinEdges[ir] + kOneMeV;
              for(int it = 0; it < kXsNEtrueBins; it++) {
-                double Etrue = kXsEtrueBinEdges[is][im][it] + kOneMeV;
-
+		
 		//skip empty bins
-		if(mctempl->GetBinContent(ir,it) < conv::kASmallNum)
+	        // bin zero in the histogram is the underflow bin, but we call the first bin bin zero.
+		if(mctempl->GetBinContent(ir+1,it+1) < conv::kASmallNum)
 		  continue;
 		
                 // Build spline name
@@ -80,26 +86,6 @@ void make_fake_xsec_wght_splines(
 
                 cout << " - Creating cross-section weight spline: " << splname.str() << endl;
 
-                for(int i = 0; i < n_knots; i++) {
-		   // twkd[i] is x-value of current point
-		   // wght[i] is y-value of current point
-                   twkd[i] = twkd_min + twkd_step * i;
-
-                   if (Ereco > 0.400 && Ereco < 1.100 && m==kSKmNuMuCCQE  && p==kNuisBANFF22) {
-                      cout << "Not null for QE" << endl;
-                      wght[i] = (twkd[i] / twkd_max) + 1;
-                   }
-                   else
-                   if (Ereco > 0.400 && Ereco < 1.100 && m==kSKmNuMuCC1pi && p==kNuisBANFF23) {
-                      cout << "Not null for 1pi" << endl;
-                      //wght[i] = 1./((twkd[i] / twkd_max) + 1 + conv::kASmallNum);
-		      wght[i] = (twkd[i] / twkd_max) + 1;
-                   }
-                   else {
- 		      wght[i] = (twkd[i] / twkd_max) + 1;
-                   }
-          
-                }
                 TSpline3 * spl = new TSpline3(splname.str().c_str(),twkd,wght,n_knots);
                 f.cd();
                 spl->Write(splname.str().c_str());

@@ -23,6 +23,7 @@
 //#define __show_wght_spline_idx_mesg_debug__
 //#define __show_isanevent_mesg_debug__
 //#define __save_ori_templates_init_debug__
+//#define __skip_unexpected_spline_test_in_readsplines__
 
 #include <cassert>
 #include <cstdlib>
@@ -140,6 +141,12 @@ bool NuXSec::ReadSplines(TXMLEngine* xml, XMLNodePointer_t root_node)
                 bool bin_is_beyond_end_of_range = (kXsEtrueBinEdges[is][im][it+1] < 0.);
                 if(bin_is_beyond_end_of_range) continue;
 
+		bool bin_is_not_empty = this->IsThereAnEvent(s, m, Ereco, Etrue);
+
+#ifdef __skip_unexpected_spline_test_in_readsplines__
+		if(!bin_is_not_empty)
+		  continue;
+#endif
                 // Build spline name
                 ostringstream splname;
                 splname << "spl_"
@@ -155,7 +162,6 @@ bool NuXSec::ReadSplines(TXMLEngine* xml, XMLNodePointer_t root_node)
 #endif
                 // Copy spline from input file
                 TSpline3 * spl = (TSpline3 *) spline_file->Get(splname.str().c_str());
-		bool bin_is_not_empty = this->IsThereAnEvent(s, m, Ereco, Etrue);
 	     
 		if(!spl) {
 		  if(!bin_is_not_empty) {
