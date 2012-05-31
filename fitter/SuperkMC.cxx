@@ -58,7 +58,8 @@
    Template(s,m,type) functions which look-up the proper array indices for the (s,m) pair.
  @ 08/12/11 - LE
    Add 4 Etrue histograms needed for calculating flux norm err for 1Re.
-
+ @ 30/05/12 - CA
+   In the 3-flavour analyses, take the global NuOscDmsqScheme_t option into account.
 */
 //________________________________________________________________________________________
 
@@ -737,26 +738,52 @@ void SuperkMC::ApplyPhysHypothesisToTemplates(void)
     double mixing12 = fPhysHypothesis.CurrValue(kPhypMixing12);
     double mixing13 = fPhysHypothesis.CurrValue(kPhypMixing13);
     double mixing23 = fPhysHypothesis.CurrValue(kPhypMixing23);
-    double dm12sq   = fPhysHypothesis.CurrValue(kPhypDm12sq);
-    double dm23sq   = fPhysHypothesis.CurrValue(kPhypDm23sq);
+    double dmsq     = fPhysHypothesis.CurrValue(kPhypDm12sq);
+    double Dmsq     = fPhysHypothesis.CurrValue(kPhypDm23sq);
     double delta_cp = fPhysHypothesis.CurrValue(kPhypDeltaCP);
 #ifdef __show_hypothesis__
     cout << "**  Exp/SKMC >> " << fPhysHypothesis;
 #endif
-    NuOscMixParam_t omp = Opt::Instance()->gOscMixingParamChoice;
-    switch(omp) {
-       // mixing params are sin^2(2*theta)
-       case(kNuMixSinsq2Theta) : 
-         fNuOsc3Flavour.SetOscParameters(mixing12,mixing13,mixing23,dm12sq,dm23sq,delta_cp);
-         break;
-       // mixing params are sin^2(theta)
-       case(kNuMixSinsqTheta) : 
-         fNuOsc3Flavour.SetOscParametersSinSqTAll(mixing12,mixing13,mixing23,dm12sq,dm23sq,delta_cp);
-         break;
-       default : 
-         cerr << "**  Exp/SKMC >> Can't handle choice of oscillation mixing params (" 
-              << util::AsString(omp) << ")" << endl;
-         exit(1);
+    NuOscMixParam_t    omp        = Opt::Instance()->gOscMixingParamChoice;
+    NuOscDmsqScheme_t  dmsqscheme = Opt::Instance()->gOscDmsqScheme;
+
+    // mixing params are: sin^2(2*theta)
+    // independent squared mass splittings are:
+    if(dmsqscheme == kNuDmsq12andAbs23 && omp == kNuMixSinsq2Theta) 
+    {
+       fNuOsc3Flavour.SetOscParameters(mixing12,mixing13,mixing23,dmsq,Dmsq,delta_cp);
+    }
+    // mixing params are: sin^2(theta)
+    // independent squared mass splittings are:
+    else
+    if(dmsqscheme == kNuDmsq12andAbs23 && omp == kNuMixSinsqTheta) 
+    {
+       fNuOsc3Flavour.SetOscParametersSinSqTAll(mixing12,mixing13,mixing23,dmsq,Dmsq,delta_cp);
+    }
+    // mixing params are: sin^2(2*theta)
+    // independent squared mass splittings are:
+    if(dmsqscheme == kNuDmsqFogliLisi && omp == kNuMixSinsq2Theta) 
+    {
+       // NOT SUPPORTED YET, TO BE ADDED
+       cerr << "**  Exp/SKMC >> Can't handle choice of "
+            << "\n oscillation mixing params: " << util::AsString(omp) 
+            << "\n and independent squared mass-splittings: " << util::AsString(dmsqscheme) 
+            << endl;
+       exit(1);
+    }
+    // mixing params are: sin^2(theta)
+    // independent squared mass splittings are:
+    else
+    if(dmsqscheme == kNuDmsqFogliLisi && omp == kNuMixSinsqTheta) 
+    {
+       fNuOsc3Flavour.SetOscParametersDmsqAtmSol(mixing12,mixing13,mixing23,dmsq,Dmsq,delta_cp);
+    }
+    else {
+       cerr << "**  Exp/SKMC >> Can't handle choice of "
+            << "\n oscillation mixing params: " << util::AsString(omp) 
+            << "\n and independent squared mass-splittings: " << util::AsString(dmsqscheme) 
+            << endl;
+       exit(1);
     }
     
     // loop over samples

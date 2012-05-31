@@ -37,6 +37,11 @@ public:
   // Use sinsq2theta for the numu analysis, sinsqtheta for the global nue+numu analysis etc
   conv::NuOscMixParam_t gOscMixingParamChoice;
 
+  // Choice of independent squared mass splittings, eg
+  // - dm^2 = Dm^2_{12} and Dm^2 = |Dm^2_{23}|, or
+  // - dm^2 = Dm^2_{12} and Dm^2 = |m^2_{3} - (m^2_{1} + m^2_{1})/2| (Fogli,Lisi)
+  conv::NuOscDmsqScheme_t gOscDmsqScheme;
+
   // Choice of oscillation analysis type (combined, numu disapp only, nue app only)
   conv::OscAnaType_t gOscAnaTypeChoice;
 

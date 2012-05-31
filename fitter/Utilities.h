@@ -85,6 +85,7 @@ namespace util {
   string AsString        (t2kana::conv::OscAnaType_t      a);
   string AsString        (t2kana::conv::NuMassHierarchy_t m);
   string AsString        (t2kana::conv::NuOscMixParam_t   p);
+  string AsString        (t2kana::conv::NuOscDmsqScheme_t dmsqs);
   string AsString        (t2kana::conv::PhysHypothesis_t  h);
   string AsString        (t2kana::conv::PhysParamId_t     p);
   string AsString        (t2kana::conv::SuperkSample_t    s);

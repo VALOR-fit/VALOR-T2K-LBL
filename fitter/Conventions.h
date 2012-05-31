@@ -10,18 +10,6 @@
           
 \created  Oct 20, 2010
 
-Changes since v1.0.0:
-
- @ 01-20/07/11 - CA
-   Added nuisance and 12-, 13-sector osc params in PhysParamId_t.
-   Added PhysHypothesis_t, OscChannelId_t and NuMassHierarchy_t.
-   Added some constants (GF,hbar,...) used in calculations and added values 
-   and uncertainties of oscillation params from a global analysis.
- @ 28/09/11 - CA
-   Added kMassHierarchyAssumed constant to specify the mass hierarchy to be
-   used in the t2kana library build. Used separate PhysParamId_t for the
-   decoherence and decay sinsq2theta parameter.
-
 */
 //____________________________________________________________________________
 
@@ -338,6 +326,15 @@ typedef enum ENuOscMixParam
    kNuMixSinsqTheta        // sin^2(theta), preferred choice in globa nue appearance + numu disappearance fit
 } 
 NuOscMixParam_t;
+
+// Choices of squared mass splittings
+typedef enum ENuOscDmsqScheme
+{   
+   kNuDmsqUndefined = -1, 
+   kNuDmsq12andAbs23,  // use |Dm^2_{23}| and Dm^2_{12} as the 2 independent squared mass splittings   
+   kNuDmsqFogliLisi    // scheme used by Fogli and Lisi, dm^2 = Dm^2_{12} and Dm^2 = |m^2_{3} - (m^2_{1} + m^2_{1})/2|
+} 
+NuOscDmsqScheme_t;
 
 // Type of SK MC template
 typedef enum ESKMCTemplateType

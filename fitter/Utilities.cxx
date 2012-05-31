@@ -66,6 +66,8 @@
    depend on SK sample and mode.
  @ 15/12/2011 - LE
    Added methods for "EOscAnaType" 
+ @ 30/05/2012 - CA
+   Added  AsString(NuOscDmsqScheme_t dmsqs)
 
 */
 //____________________________________________________________________________
@@ -707,6 +709,21 @@ string t2kana::util::AsString(t2kana::conv::NuOscMixParam_t p)
      break;
   }
   return "";
+}
+//____________________________________________________________________________
+string t2kana::util::AsString(t2kana::conv::NuOscDmsqScheme_t dmsqs)
+{
+  switch(dmsqs) {   
+   case(kNuDmsq12andAbs23) :  
+     return "dm^2 = Dm^2_{12}, Dm^2 = |Dm^2_{23}|";
+     break;
+   case(kNuDmsqFogliLisi ) : 
+     return "dm^2 = Dm^2_{12}, Dm^2 = |m^2_{3} - (m^2_{1} + m^2_{1})/2|";
+     break;
+   default :
+     return "Undefined"; 
+     break;
+  }
 }
 //____________________________________________________________________________
 string t2kana::util::AsString(t2kana::conv::PhysHypothesis_t h)

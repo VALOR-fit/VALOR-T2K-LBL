@@ -59,6 +59,7 @@ void Opt::SetDefaults(void)
 {
   gMassHierarchyAssumed = kNmhNormal;
   gOscMixingParamChoice = kNuMixSinsq2Theta;
+  gOscDmsqScheme        = kNuDmsq12andAbs23;
   gOscAnaTypeChoice     = kAnaCombined;
 }
 //____________________________________________________________________________
@@ -71,6 +72,9 @@ void Opt::Print(ostream & stream) const
          << endl;
   stream << " - Mixing param choice: " 
          << util::AsString(gOscMixingParamChoice) 
+         << endl;
+  stream << " - Independent squared mass splittings: " 
+         << util::AsString(gOscDmsqScheme) 
          << endl;
   stream << " - Oscillation analysis  choice: " 
          << util::AsString(gOscAnaTypeChoice) 
