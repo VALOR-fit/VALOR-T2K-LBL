@@ -764,12 +764,7 @@ void SuperkMC::ApplyPhysHypothesisToTemplates(void)
     // independent squared mass splittings are: dm^2 = Dm^2_{12}, Dm^2 = |m^2_{3} - (m^2_{1} + m^2_{1})/2|
     if(dmsqscheme == kNuDmsqFogliLisi && omp == kNuMixSinsq2Theta) 
     {
-       // NOT SUPPORTED YET, TO BE ADDED
-       cerr << "**  Exp/SKMC >> Can't handle choice of "
-            << "\n oscillation mixing params: " << util::AsString(omp) 
-            << "\n and independent squared mass-splittings: " << util::AsString(dmsqscheme) 
-            << endl;
-       exit(1);
+       fNuOsc3Flavour.SetOscParametersSSq2TDmAtmSol(mixing12,mixing13,mixing23,dmsq,Dmsq,delta_cp);
     }
     // mixing params are: sin^2(theta)
     // independent squared mass splittings are: dm^2 = Dm^2_{12}, Dm^2 = |m^2_{3} - (m^2_{1} + m^2_{1})/2|
