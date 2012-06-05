@@ -120,6 +120,7 @@ public:
    static FitParamList * NamedParameterList      (string name);
    static FitParamList * NuOsc3FlavourFitNoSyst  (void);
    static FitParamList * NuOsc3FlavourFitAllSyst (void);
+   static FitParamList * NuOsc3FlavourFitNuMuSyst(void);
    static FitParamList * NuOsc3FlavourFitNuESyst (void);
    static FitParamList * NumuDisapFitNoSyst      (void);
    static FitParamList * NumuDisapFitAllSyst     (void);
