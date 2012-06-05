@@ -47,16 +47,20 @@ static const double kGlobFitDm23sq           = 2.35E-3;
 static const double kGlobFitDm12sq           = 7.58E-5;
 static const double kGlobFitErrDm23sq        = 0.05; // ~5%
 static const double kGlobFitErrDm12sq        = 0.03; // ~3%
+// deltacp global fit results
+static const double kGlobFitDeltaCP          = 0.0;
+static const double kGlobFitErrDeltaCP       = 0.10; // ~10%
 // sinsq2theta global fit results
 static const double kGlobFitSinsq2Theta23    = 1.00;
 static const double kGlobFitSinsq2Theta13    = 0.10;
 static const double kGlobFitSinsq2Theta12    = 0.86;
 static const double kGlobFitErrSinsq2Theta23 = 0.15; // ~15%
 static const double kGlobFitErrSinsq2Theta12 = 0.06; // ~6%
+static const double kGlobFitErrSinsq2Theta13 = 0.10; // ~10%
 // sinsqtheta global fit results
-static const double kGlobFitSinsqTheta23    = 0.420;
-static const double kGlobFitSinsqTheta13    = 0.025;
-static const double kGlobFitSinsqTheta12    = 0.312;
+static const double kGlobFitSinsqTheta23    = 0.56;
+static const double kGlobFitSinsqTheta13    = 0.0235;
+static const double kGlobFitSinsqTheta12    = 0.32;
 static const double kGlobFitErrSinsqTheta23 = 0.261;  // ~26% (1 sigma range)
 static const double kGlobFitErrSinsqTheta12 = 0.110;  // ~11% (1 sigma range)
 static const double kGlobFitErrSinsqTheta13 = 0.560;  // ~56% (1 sigma range)
@@ -74,20 +78,20 @@ static const double kMinFitSinsq2Theta23     = 0.60;
 static const double kMaxFitSinsq2Theta23     = 1.00;
 static const double kInitFitSinsq2Theta13    = kGlobFitSinsq2Theta13;
 static const double kMinFitSinsq2Theta13     = 0.00;
-static const double kMaxFitSinsq2Theta13     = 0.40;
+static const double kMaxFitSinsq2Theta13     = 0.42;
 static const double kInitFitSinsq2Theta12    = kGlobFitSinsq2Theta12;
 static const double kMinFitSinsq2Theta12     = 0.70;
 static const double kMaxFitSinsq2Theta12     = 1.00;
 // sinsqtheta fitter init values and range
-static const double kInitFitSinsqTheta23     = 0.90;
-static const double kMinFitSinsqTheta23      = 0.60;
-static const double kMaxFitSinsqTheta23      = 1.00;
+static const double kInitFitSinsqTheta23     = 0.56;
+static const double kMinFitSinsqTheta23      = 0.25;
+static const double kMaxFitSinsqTheta23      = 0.75;
 static const double kInitFitSinsqTheta13     = kGlobFitSinsqTheta13;
 static const double kMinFitSinsqTheta13      = 0.00;
-static const double kMaxFitSinsqTheta13      = 0.40;
+static const double kMaxFitSinsqTheta13      = 0.12;
 static const double kInitFitSinsqTheta12     = kGlobFitSinsqTheta12;
-static const double kMinFitSinsqTheta12      = 0.70;
-static const double kMaxFitSinsqTheta12      = 1.00;
+static const double kMinFitSinsqTheta12      = 0.22;
+static const double kMaxFitSinsqTheta12      = 0.5;
 
 
 //
