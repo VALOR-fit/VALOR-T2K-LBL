@@ -19,6 +19,8 @@
  @ 02/02/2012 - JI
    Changes in minuit fit function. Depending on the analysed sample different Chisquare() 
    are used to judge the agreement between the data and the current predictio 
+ @ 05/06/2012 - LE
+   Using ChisqPoissonCount for 1Re (counting experiment)
 */
 //________________________________________________________________________________________
 
@@ -143,7 +145,7 @@ double FitInputs::Chisquare(Option_t * option, conv::SuperkSample_t s0)
 	    double nexp = this->Expectation().CurrPredictedErecoSpectrum(s)->Integral();
 	    
 	    double delta_chisq = 0.;
-	    if      (opt.Contains("poisson")) { delta_chisq = util::ChisqPoisson(nobs,nexp); }
+	    if      (opt.Contains("poisson")) { delta_chisq = util::ChisqPoissonCount(nobs,nexp); } 
 	    else if (opt.Contains("gauss")  ) { delta_chisq = util::ChisqGauss  (nobs,nexp); }
 	    
 	    chisq += delta_chisq;
@@ -153,7 +155,6 @@ double FitInputs::Chisquare(Option_t * option, conv::SuperkSample_t s0)
 		 << endl;
 #endif
 	  }
-  
     }//loop over samples
   
   //
@@ -166,7 +167,6 @@ double FitInputs::Chisquare(Option_t * option, conv::SuperkSample_t s0)
        << " (contribution from penalty term = " << chisq_penalty << ")" 
        << endl;
 #endif
-
   return chisq; 
 }
 //____________________________________________________________________________ 
