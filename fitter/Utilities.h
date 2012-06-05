@@ -48,6 +48,7 @@ namespace util {
   double DeltaChisquare   (t2kana::conv::ConfLevel_t cl, int nfitparams);
   double ChisqGauss       (double ndata, double nmc);
   double ChisqPoisson     (double ndata, double nmc);
+  double ChisqPoissonCount(double ndata, double nmc);	
 
   //
   // Cholesky decomposition

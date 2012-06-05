@@ -68,6 +68,8 @@
    Added methods for "EOscAnaType" 
  @ 30/05/2012 - CA
    Added  AsString(NuOscDmsqScheme_t dmsqs)
+ @ 05/06/2012 - LE
+   Added ChisqPoissonCount() to compute chisq for a counting experiment  
 
 */
 //____________________________________________________________________________
@@ -179,6 +181,14 @@ double t2kana::util::ChisqPoisson(
   if(nmc <= 0. || ndata <= 0.) return 2.*(nmc-ndata);
   return (2. * (nmc-ndata) + 2. * ndata * TMath::Log(ndata/nmc));
 }
+//____________________________________________________________________________                                                               
+double t2kana::util::ChisqPoissonCount(
+                                  double ndata, double nmc)
+{
+  if(nmc <= 0. || ndata <= 0.) return 2.*(nmc-ndata);
+  return (-2 * TMath::Log(TMath::Poisson(ndata, nmc)));
+}
+
 //____________________________________________________________________________
 TMatrixD t2kana::util::CholeskyDecomposition(TMatrixD& cov_matrix)
 {
