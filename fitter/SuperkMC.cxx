@@ -762,6 +762,7 @@ void SuperkMC::ApplyPhysHypothesisToTemplates(void)
     }
     // mixing params are: sin^2(2*theta)
     // independent squared mass splittings are: dm^2 = Dm^2_{12}, Dm^2 = |m^2_{3} - (m^2_{1} + m^2_{1})/2|
+    else
     if(dmsqscheme == kNuDmsqFogliLisi && omp == kNuMixSinsq2Theta) 
     {
        fNuOsc3Flavour.SetOscParametersSSq2TDmAtmSol(mixing12,mixing13,mixing23,dmsq,Dmsq,delta_cp);
