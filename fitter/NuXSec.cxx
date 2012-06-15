@@ -23,7 +23,7 @@
 //#define __show_wght_spline_idx_mesg_debug__
 //#define __show_isanevent_mesg_debug__
 //#define __save_ori_templates_init_debug__
-//#define __skip_unexpected_spline_test_in_readsplines__
+#define __skip_unexpected_spline_test_in_readsplines__
 
 #include <cassert>
 #include <cstdlib>
@@ -314,11 +314,11 @@ double NuXSec::FinTuningWght_1p(
 // This method provides weights to reweight MC to the BANFF best-fit parameters.
 // It handles the 4 BANFF cross-section parameters which are correlated with the BANFF 
 // flux parameters. In the current incarnation of the BANFF fit, these parameters are:
-// - BANFF param # 22, M_{A}  QE
-// - BANFF param # 23, M_{A}  RES
-// - BANFF param # 24, CCQE   normalization, 0 - 1.5 GeV (Etrue)
-// - BANFF param # 25, CC1pi  normalization, 0 - 2.5 GeV (Etrue)
-// - BANFF param # 26, NC1pi0 normalization
+// - BANFF param # 31, M_{A}  QE
+// - BANFF param # 32, M_{A}  RES
+// - BANFF param # 33, CCQE   normalization, 0 - 1.5 GeV (Etrue)
+// - BANFF param # 34, CC1pi  normalization, 0 - 2.5 GeV (Etrue)
+// - BANFF param # 35, NC1pi0 normalization
 //
 
   // if( ! this->ApplySyst(p,s,m,Ereco,Etrue) ) return 1.; // check already made in function that calls this one
@@ -326,10 +326,10 @@ double NuXSec::FinTuningWght_1p(
   double wght = 1.;
 
   //
-  // BANFF param # 22, M_{A} QE
-  // BANFF param # 23, M_{A} RES
+  // BANFF param # 31, M_{A} QE
+  // BANFF param # 32, M_{A} RES
   //
-  if(p == kNuisBANFF22 || p == kNuisBANFF23)
+  if(p == kNuisBANFFMAQE || p == kNuisBANFFMARES)
   {
      bool ev = this->IsThereAnEvent(s, m, Ereco, Etrue);
      if(ev) {
@@ -343,11 +343,12 @@ double NuXSec::FinTuningWght_1p(
   }
 
   //
-  // BANFF param # 24, CCQE  normalization, 0 - 1.5 GeV
-  // BANFF param # 25, CCRES normalization, 0 - 2.5 GeV
+  // BANFF param # 33, CCQE  normalization, 0 - 1.5 GeV
+  // BANFF param # 34, CCRES normalization, 0 - 2.5 GeV
+  // BANFF param # 35, NC1pi0 normalization
   //  
   else
-  if(p == kNuisBANFF24 || p == kNuisBANFF25 || p == kNuisBANFF26)
+  if(p == kNuisBANFFCCQEE0 || p == kNuisBANFFCC1piE0 || p == kNuisBANFFNC1pi0)
   {
      wght = fBANFF->BestFitValue(p);
   }
@@ -411,10 +412,11 @@ double NuXSec::SystWght_1p(
 // The weights are relative to MC reweighted to the BANFF best-fit point.
 // It handles the 4 BANFF cross-section parameters which are correlated with the BANFF 
 // flux parameters. In the current incarnation of the BANFF fit, these parameters are:
-// - BANFF param # 22, M_{A} QE
-// - BANFF param # 23, M_{A} RES
-// - BANFF param # 24, CCQE  normalization, 0 - 1.5 GeV (Etrue)
-// - BANFF param # 25, CCRES normalization, 0 - 2.5 GeV (Etrue)
+// - BANFF param # 31, M_{A} QE
+// - BANFF param # 32, M_{A} RES
+// - BANFF param # 33, CCQE  normalization, 0 - 1.5 GeV (Etrue)
+// - BANFF param # 34, CCRES normalization, 0 - 2.5 GeV (Etrue)
+// - BANFF param # 35, NC1pi0 normalization
 //
 
   // if( ! this->ApplySyst(p,s,m,Ereco,Etrue) ) return 1.; // check already made in function that calls this one
@@ -422,10 +424,10 @@ double NuXSec::SystWght_1p(
   double wght = 1.;
 
   //
-  // BANFF param # 22, M_{A} QE
-  // BANFF param # 23, M_{A} RES
+  // BANFF param # 31, M_{A} QE
+  // BANFF param # 32, M_{A} RES
   //
-  if(p == kNuisBANFF22 || p == kNuisBANFF23)
+  if(p == kNuisBANFFMAQE || p == kNuisBANFFMARES)
   {
      bool ev = this->IsThereAnEvent(s, m, Ereco, Etrue);
      if(ev) {
@@ -434,21 +436,22 @@ double NuXSec::SystWght_1p(
        double tb = fBANFF->BestFitValue(p);
        double tc = fBANFF->CurrentValue(p);
        double diag = 0;
-       if(p == kNuisBANFF22)
-	 diag = fBANFF->CovMatrix()[22][22];
-       else if(p == kNuisBANFF23)
-	 diag = fBANFF->CovMatrix()[23][23];
+       if(p == kNuisBANFFMAQE)
+	 diag = fBANFF->CovMatrix()[31][31];
+       else if(p == kNuisBANFFMARES)
+	 diag = fBANFF->CovMatrix()[32][32];
        wght = wght_spl->Eval(((tc / tb) - 1) / diag) / wght_spl->Eval(tb);
        wght = TMath::Max(0.,wght);
      }
   }
 
   //
-  // BANFF param # 24, CCQE  normalization, 0 - 1.5 GeV
-  // BANFF param # 25, CCRES normalization, 0 - 2.5 GeV
+  // BANFF param # 33, CCQE  normalization, 0 - 1.5 GeV
+  // BANFF param # 34, CCRES normalization, 0 - 2.5 GeV
+  // BANFF param # 35, NC1pi0 normalization
   //  
   else
-  if(p == kNuisBANFF24 || p == kNuisBANFF25 || p == kNuisBANFF26)
+  if(p == kNuisBANFFCCQEE0 || p == kNuisBANFFCC1piE0 || p == kNuisBANFFNC1pi0)
   {
      wght = fBANFF->CurrentValue(p) / fBANFF->BestFitValue(p);
   }
@@ -503,13 +506,33 @@ double NuXSec::SystWght_1p(
 #endif
 
   if(wght < 0 || wght > conv::kMaxAllowedWght) {
-     cout << "Exp/NuXSec/SystWght >> Got an absurd weight! "
-          << "Sample/Mode = " << util::AsString(s) << " / " << util::AsString(m)
-          << ", Ereco = " << Ereco << " GeV" 
-          << ", Etrue = " << Etrue << " GeV => Weight [" 
-          << util::AsString(p) << "] = " << wght 
-          << endl;   
-     exit(1);
+    //get the ereco & etrue bin indexes (to be used to check whether the spline is sensible)
+    int ireco = -1; 
+    for (int i = 0; i < kXsNErecoBins; i++) {
+      if(kXsErecoBinEdges[i]   <= Ereco && 
+	 kXsErecoBinEdges[i+1] >  Ereco) 
+	{
+	  ireco = i;
+	  break;
+	}
+    }
+    int itrue = -1; 
+    for (int i = 0; i < kXsNEtrueBins; i++) {
+      if(kXsEtrueBinEdges[is][im][i]   <= Etrue && 
+	 kXsEtrueBinEdges[is][im][i+1] >  Etrue) 
+	{
+	  itrue = i;
+	  break;
+	}
+    }
+    cout << "Exp/NuXSec/SystWght >> Got an absurd weight! "
+	 << "Sample/Mode = " << util::AsString(s) << " / " << util::AsString(m)
+	 << ", Ereco = " << Ereco << " GeV" 
+	 << ", Etrue = " << Etrue << " GeV =>"
+	 << " Bins are Ereco,Etrue = " << ireco << "," << itrue << " =>"
+	 << " Weight [" << util::AsString(p) << "] = " << wght 
+	 << endl;   
+    exit(1);
   }
   
   return wght;

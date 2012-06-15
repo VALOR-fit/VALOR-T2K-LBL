@@ -16,13 +16,15 @@
 void test_sk_ereco_spectrum_twk_osc_non23sector
 (
   int          varied_osc_param   = 0,                              /* 0: vary dmsq12, 1: vary theta12, 2: vary theta13, 3: vary deltacp */
-  double       input_mixing23     = 1.00,                           /* */
-  double       input_dm23sq       = 2.32E-3,                        /* */
+  double       input_mixing23     = -99,                            /* */
+  double       input_dm23sq       = -99,                            /* */
   const char * config_file        = "analysis_configuration.xml"    /* */
 )
 {
   using namespace std;
   using namespace t2kana;
+
+  conv::SuperkSample_t s = conv::kSKsFCFV1RingMuLike;
 
   // Analysis configuration
   const char * config  = Form("%s/config/%s", gSystem->Getenv("T2KOSCANA"), config_file);
@@ -30,6 +32,13 @@ void test_sk_ereco_spectrum_twk_osc_non23sector
   // Global options
   Opt::Instance()->gOscMixingParamChoice = conv::kNuMixSinsq2Theta;
   Opt::Instance()->gMassHierarchyAssumed = conv::kNmhNormal;
+  if(Opt::Instance()->gOscMixingParamChoice == conv::kNuMixSinsq2Theta) {
+    if(input_mixing23 < -1) input_mixing23 = conv::kGlobFitSinsq2Theta23;
+  }
+  else {
+    if(input_mixing23 < -1) input_mixing23 = conv::kGlobFitSinsqTheta23;
+  }
+  if(input_dm23sq < -1)  input_dm23sq = conv::kGlobFitDm23sq;
 
   // Define oscillation hypotheses
   const  int ncases = 4; // one 2-flavour case (0) + three 3-flavour cases (1,2,3)
@@ -83,7 +92,7 @@ void test_sk_ereco_spectrum_twk_osc_non23sector
     // generate predictions  
     skexp.Generate(ph);
     // store spectrum
-    hEreco[icase] = new TH1D(*skexp.CurrPredictedErecoSpectrum(conv::kSKsFCFV1RingMuLike));
+    hEreco[icase] = new TH1D(*skexp.CurrPredictedErecoSpectrum(s));
     hEreco[icase]->SetDirectory(0);
     hEreco[icase]->SetLineWidth(hwidth[icase]);
     hEreco[icase]->SetLineColor(hcolor[icase]);

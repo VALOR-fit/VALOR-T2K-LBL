@@ -26,23 +26,23 @@
        -->
        <tuned>
          <numu>
-            <filename>   inputs/official/2012/flux/11a_v2.3/sk_tuned11av2_11anom_run1_and_run2_fine.root </filename>
-            <objname>    enu_sk_tuned11a_numu  </objname>
+            <filename>   inputs/official/2012/flux/11b_v3.1_run1-3c_fulldata/sk_tuned11bv3.1_10anom_run1-run3c_full_fine.root </filename>
+            <objname>    enu_sk_tuned11b_numu  </objname>
             <objtype>    TH1D                  </objtype>
          </numu>
          <numubar>
-            <filename>   inputs/official/2012/flux/11a_v2.3/sk_tuned11av2_11anom_run1_and_run2_fine.root </filename>
-            <objname>    enu_sk_tuned11a_numub </objname>
+            <filename>   inputs/official/2012/flux/11b_v3.1_run1-3c_fulldata/sk_tuned11bv3.1_10anom_run1-run3c_full_fine.root </filename>
+            <objname>    enu_sk_tuned11b_numub </objname>
             <objtype>    TH1D                  </objtype>
          </numubar>
          <nue>
-            <filename>   inputs/official/2012/flux/11a_v2.3/sk_tuned11av2_11anom_run1_and_run2_fine.root </filename>
-            <objname>    enu_sk_tuned11a_nue   </objname>
+            <filename>   inputs/official/2012/flux/11b_v3.1_run1-3c_fulldata/sk_tuned11bv3.1_10anom_run1-run3c_full_fine.root </filename>
+            <objname>    enu_sk_tuned11b_nue   </objname>
             <objtype>    TH1D                  </objtype>
          </nue>
          <nuebar>
-            <filename>   inputs/official/2012/flux/11a_v2.3/sk_tuned11av2_11anom_run1_and_run2_fine.root </filename>
-            <objname>    enu_sk_tuned11a_nueb  </objname>
+            <filename>   inputs/official/2012/flux/11b_v3.1_run1-3c_fulldata/sk_tuned11bv3.1_10anom_run1-run3c_full_fine.root </filename>
+            <objname>    enu_sk_tuned11b_nueb  </objname>
             <objtype>    TH1D                  </objtype>
          </nuebar>
        </tuned>
@@ -51,23 +51,23 @@
        -->
        <tuning_weights>
          <numu>
-            <filename>   inputs/official/2012/flux/11a_v2.3/sk_tuned11av2_11anom_run1_and_run2_fine.root </filename>
-            <objname>    enu_sk_tuned11a_numu_ratio   </objname>
+            <filename>   inputs/official/2012/flux/11b_v3.1_run1-3c_fulldata/sk_tuned11bv3.1_10anom_run1-run3c_full_fine.root </filename>
+            <objname>    enu_sk_tuned11b_numu_ratio   </objname>
             <objtype>    TH1D                         </objtype>
          </numu>
          <numubar>
-            <filename>   inputs/official/2012/flux/11a_v2.3/sk_tuned11av2_11anom_run1_and_run2_fine.root </filename>
-            <objname>    enu_sk_tuned11a_numub_ratio  </objname>
+            <filename>   inputs/official/2012/flux/11b_v3.1_run1-3c_fulldata/sk_tuned11bv3.1_10anom_run1-run3c_full_fine.root </filename>
+            <objname>    enu_sk_tuned11b_numub_ratio  </objname>
             <objtype>    TH1D                         </objtype>
          </numubar>
          <nue>
-            <filename>   inputs/official/2012/flux/11a_v2.3/sk_tuned11av2_11anom_run1_and_run2_fine.root </filename>
-            <objname>    enu_sk_tuned11a_nue_ratio    </objname>
+            <filename>   inputs/official/2012/flux/11b_v3.1_run1-3c_fulldata/sk_tuned11bv3.1_10anom_run1-run3c_full_fine.root </filename>
+            <objname>    enu_sk_tuned11b_nue_ratio    </objname>
             <objtype>    TH1D                         </objtype>
          </nue>
          <nuebar>
-            <filename>   inputs/official/2012/flux/11a_v2.3/sk_tuned11av2_11anom_run1_and_run2_fine.root </filename>
-            <objname>    enu_sk_tuned11a_nueb_ratio   </objname>
+            <filename>   inputs/official/2012/flux/11b_v3.1_run1-3c_fulldata/sk_tuned11bv3.1_10anom_run1-run3c_full_fine.root </filename>
+            <objname>    enu_sk_tuned11b_nueb_ratio   </objname>
             <objtype>    TH1D                         </objtype>
          </nuebar>
        </tuning_weights>
@@ -212,7 +212,7 @@
         Central values from BANFF fit
        -->
        <best_fit_values>
-          <filename>   inputs/official/2012/banff/postfit_banff_v3_osc_marg.root  </filename>
+          <filename>   inputs/official/2012/banff/postfit_banff_v5_osc_marg_numu.root  </filename>
           <objname>    postfit_params   </objname>
           <objtype>    TVectorD         </objtype>
         </best_fit_values>
@@ -220,7 +220,7 @@
         Covariance of fit parameters
        -->
        <covariance_matrix>
-          <filename>   inputs/official/2012/banff/postfit_banff_v3_osc_marg.root  </filename>
+          <filename>   inputs/official/2012/banff/postfit_banff_v5_osc_marg_numu.root  </filename>
           <objname>    postfit_cov      </objname>
           <objtype>    TMatrixD         </objtype>
         </covariance_matrix>     
@@ -235,7 +235,7 @@
   <xsec>
       <weight_splines>
           <filename>
-               inputs/official/2012/xsec/XSecSplines2012.root
+               inputs/official/2012/xsec/XSecSplinesCoarse2012.root
           </filename>
       </weight_splines>
       <splines>

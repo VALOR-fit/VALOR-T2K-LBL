@@ -10,18 +10,20 @@
 void test_sk_ereco_spectrum_twk_sk_eff
 (
   const char * hypothesis         = "3f_osc",                       /* options: "2f_numu_disap", "3f_osc" */
-  double       input_mixing12     = 0.86,                           /* */
-  double       input_mixing13     = 0.10,                           /* */
-  double       input_mixing23     = 1.00,                           /* */
-  double       input_deltacp      = 0.00,                           /* */
-  double       input_dm12sq       = 7.58E-5,                        /* */
-  double       input_dm23sq       = 2.32E-3,                        /* */
+  double       input_mixing12     = -99,                            /* */
+  double       input_mixing13     = -99,                            /* */
+  double       input_mixing23     = -99,                            /* */
+  double       input_deltacp      = -99,                            /* */
+  double       input_dm12sq       = -99,                            /* */
+  double       input_dm23sq       = -99,                            /* */
   const char * config_file        = "analysis_configuration.xml"    /* */
 )
 {
   using namespace std;
   using namespace t2kana;
-	
+
+  conv::SuperkSample_t s = conv::kSKsFCFV1RingMuLike;
+
   // Analysis configuration
   const char * config  = Form("%s/config/%s", gSystem->Getenv("T2KOSCANA"), config_file);
 
@@ -117,7 +119,7 @@ void test_sk_ereco_spectrum_twk_sk_eff
            // generate predictions  
            skexp.Generate(ph);
            // store spectrum
-           hEreco[imode][idial] = new TH1D(*skexp.CurrPredictedErecoSpectrum(conv::kSKsFCFV1RingMuLike));
+           hEreco[imode][idial] = new TH1D(*skexp.CurrPredictedErecoSpectrum(s));
            hEreco[imode][idial]->SetDirectory(0);
         }//idial
      } 
@@ -136,12 +138,12 @@ void test_sk_ereco_spectrum_twk_sk_eff
            // generate predictions  
            skexp.Generate(ph);
            // store spectrum
-           hErecoToyMC[iexp] = new TH1D(*skexp.CurrPredictedErecoSpectrum(conv::kSKsFCFV1RingMuLike));
+           hErecoToyMC[iexp] = new TH1D(*skexp.CurrPredictedErecoSpectrum(s));
            hErecoToyMC[iexp]->SetDirectory(0);
         }//iexp
         // Initialise Ereco distributions for all twk dials to nominal distribution
         for(int idial = 0; idial < ntwkdials; idial++) {
-           hEreco[imode][idial] = new TH1D(*skexp.CurrPredictedErecoSpectrum(conv::kSKsFCFV1RingMuLike));
+           hEreco[imode][idial] = new TH1D(*skexp.CurrPredictedErecoSpectrum(s));
         } // idial
         // Caluclate 1-sigma for each bin 
         for(int ibin=1; ibin <= conv::kNErecoBins1Rmu; ibin++) {
@@ -151,7 +153,7 @@ void test_sk_ereco_spectrum_twk_sk_eff
               double N = hErecoToyMC[iexp]->GetBinContent(ibin);
               sumsq += TMath::Power(N-nom,2);	
            }//iexp
-           double sig = TMath::Sqrt(sumsq/(nexperiments-1));   
+          double sig = TMath::Sqrt(sumsq/(nexperiments-1));   
            for(int idial = 0; idial < ntwkdials; idial++) {
               double nevtwk = nom + twkdial[idial] * sig;
               hEreco[imode][idial]->SetBinContent(ibin, nevtwk);

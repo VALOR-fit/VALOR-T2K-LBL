@@ -12,10 +12,10 @@
 
 void test_nsk_twk_osc_mixing13_deltacp
 (
-  double       input_mixing23          = 1.00,                           /* */
-  double       input_dm23sq            = 2.4E-3,                        /* */
-  double       input_mixing12          = 0.8704,                           /* */
-  double       input_dm12sq            = 7.6E-5,                        /* */
+  double       input_mixing12     = -99,                                 /* */
+  double       input_mixing23     = -99,                                 /* */
+  double       input_dm12sq       = -99,                                 /* */
+  double       input_dm23sq       = -99,                                 /* */
   const char * config_file             = "analysis_configuration.xml"    /* */
 )
 {
@@ -90,9 +90,20 @@ void test_nsk_twk_osc_mixing13_deltacp
   const char * config = Form("%s/config/%s", gSystem->Getenv("T2KOSCANA"), config_file);
   cout << "Reading analysis configuration from: " << config << endl;
 
- // Global options
+  // Global options
   Opt::Instance()->gOscMixingParamChoice = conv::kNuMixSinsq2Theta;
   Opt::Instance()->gMassHierarchyAssumed = conv::kNmhNormal;
+
+  if(Opt::Instance()->gOscMixingParamChoice == conv::kNuMixSinsq2Theta) {
+    if(input_mixing23 < -1) input_mixing23 = conv::kGlobFitSinsq2Theta23;
+    if(input_mixing12 < -1) input_mixing12 = conv::kGlobFitSinsq2Theta12;
+  }
+  else {
+    if(input_mixing23 < -1) input_mixing23 = conv::kGlobFitSinsqTheta23;
+    if(input_mixing12 < -1) input_mixing12 = conv::kGlobFitSinsqTheta12;
+  }
+  if(input_dm23sq < -1)  input_dm23sq = conv::kGlobFitDm23sq;
+  if(input_dm12sq < -1)  input_dm12sq = conv::kGlobFitDm12sq;
 
   SuperkExpectation skexp;
   skexp.Read(config);
@@ -100,7 +111,7 @@ void test_nsk_twk_osc_mixing13_deltacp
   // reference (2-flavour) physics hypothesis
   PhysHypothesis phref(t2kana::conv::kHypNuMuDisapp2F);
   phref.SetCurrValue(conv::kPhypMixing23,  input_mixing23);
-  phref.SetCurrValue(conv::kPhypDm23sq,         input_dm23sq       );
+  phref.SetCurrValue(conv::kPhypDm23sq,    input_dm23sq);
 
   // prediction for reference hypothesis
   skexp.Generate(phref);
@@ -110,9 +121,9 @@ void test_nsk_twk_osc_mixing13_deltacp
   // 3-flavour physics hypothesis, setting fixed params
   PhysHypothesis ph(conv::kHypOsc3F);
   ph.SetCurrValue(conv::kPhypMixing23,  input_mixing23);
-  ph.SetCurrValue(conv::kPhypDm23sq,         input_dm23sq       );
+  ph.SetCurrValue(conv::kPhypDm23sq,    input_dm23sq       );
   ph.SetCurrValue(conv::kPhypMixing12,  input_mixing12);
-  ph.SetCurrValue(conv::kPhypDm12sq,         input_dm12sq       );
+  ph.SetCurrValue(conv::kPhypDm12sq,    input_dm12sq       );
 
   // Print options
   cout << "\n[Job inputs]" << endl;
@@ -127,8 +138,8 @@ void test_nsk_twk_osc_mixing13_deltacp
     for(int j = 1; j <= nsk_vs_osc_params->GetNbinsY(); j++) {
        double mixing13 = nsk_vs_osc_params->GetXaxis()->GetBinCenter(i);
        double deltacp       = nsk_vs_osc_params->GetYaxis()->GetBinCenter(j);
-       ph.SetCurrValue(conv::kPhypMixing13,  mixing13);
-       ph.SetCurrValue(conv::kPhypDeltaCP,        deltacp      );
+       ph.SetCurrValue(conv::kPhypMixing13, mixing13);
+       ph.SetCurrValue(conv::kPhypDeltaCP,  deltacp );
        // generate predictions
        skexp.Generate(ph);
        // integrate Ereco distribution 
@@ -178,9 +189,9 @@ void test_nsk_twk_osc_mixing13_deltacp
   mixing13_min  =  0.0;
   mixing13_max  =  0.25;
   mixing13_step =  0.01;
-  double dm23sq_min        = 1.0E-3;
-  double dm23sq_max        = 4.0E-3;
-  double dm23sq_step       =  0.1E-3;
+  double dm23sq_min  = 1.0E-3;
+  double dm23sq_max  = 4.0E-3;
+  double dm23sq_step =  0.1E-3;
 
   // make sure that min and max are at the bin centre
   int mixing13_nbins = 1 + (int) ((mixing13_max - mixing13_min) / mixing13_step);
@@ -248,9 +259,9 @@ void test_nsk_twk_osc_mixing13_deltacp
   // 3-flavour physics hypothesis, setting fixed params
   // PhysHypothesis ph(conv::kHypOsc3F);
   ph.SetCurrValue(conv::kPhypMixing23,  input_mixing23);
-  ph.SetCurrValue(conv::kPhypDeltaCP,        input_deltaCP       );
+  ph.SetCurrValue(conv::kPhypDeltaCP,   input_deltaCP );
   ph.SetCurrValue(conv::kPhypMixing12,  input_mixing12);
-  ph.SetCurrValue(conv::kPhypDm12sq,         input_dm12sq       );
+  ph.SetCurrValue(conv::kPhypDm12sq,    input_dm12sq  );
    
 
   // loop over varied params and generate predictions
@@ -287,9 +298,9 @@ void test_nsk_twk_osc_mixing13_deltacp
   TCanvas * c6 = new TCanvas;
   frac_dnsk_vs_osc_params_bis -> Draw("colz");
   TCanvas * c7 = new TCanvas;
-  nsk_vs_osc_params_bis_sig       -> Draw("colz");
+  nsk_vs_osc_params_bis_sig   -> Draw("colz");
   TCanvas * c8 = new TCanvas;
-  nsk_vs_osc_params_bis_back       -> Draw("colz");
+  nsk_vs_osc_params_bis_back  -> Draw("colz");
 
   // save
   //string oscparams = util::AsString("3f_osc",   

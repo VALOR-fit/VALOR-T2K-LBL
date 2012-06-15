@@ -16,12 +16,12 @@ void test_nsk_twk_beam_norm_nue
 (
   const string sample_str                 = "1Re",                          /* options: "1Rmu", "1Re" */
   const char * hypothesis                 = "3f_osc",                       /* options: "2f_numu_disap", "3f_osc" */
-  double       input_mixing12             = 0.86,                           /* */
-  double       input_mixing13             = 0.30,                           /* */
-  double       input_mixing23             = 1.00,                           /* */
-  double       input_deltacp              = 0.00,                           /* */
-  double       input_dm12sq               = 7.6E-5,                         /* */
-  double       input_dm23sq               = 2.4E-3,                         /* */
+  double       input_mixing12             = -99,                            /* */
+  double       input_mixing13             = -99,                            /* */
+  double       input_mixing23             = -99,                            /* */
+  double       input_deltacp              = -99,                            /* */
+  double       input_dm12sq               = -99,                            /* */
+  double       input_dm23sq               = -99,                            /* */
   const char * config_file                = "analysis_configuration.xml"    /* */
 )
 {
@@ -29,13 +29,26 @@ void test_nsk_twk_beam_norm_nue
   using namespace t2kana;
 
   conv::SuperkSample_t s = util::SKSampleFromString(sample_str);
-  int sidx = util::FindSampleSlot(s);
+  int sidx = util::ArrIdx::Instance()->SuperkSampleIdx(s);
   if(sidx == -1) {
-    cerr << "Sample 1Re not defined" << endl;
+    cerr << "Sample " << sample_str << " not defined. Check conv::kSKSamples[kns]" << endl;
     exit(1);
   }
   
   // set physics hypothesis
+  if(Opt::Instance()->gOscMixingParamChoice == conv::kNuMixSinsq2Theta) {
+    if(input_mixing13 < -1) input_mixing13 = conv::kGlobFitSinsq2Theta13;
+    if(input_mixing23 < -1) input_mixing23 = conv::kGlobFitSinsq2Theta23;
+    if(input_mixing12 < -1) input_mixing12 = conv::kGlobFitSinsq2Theta12;
+  }
+  else {
+    if(input_mixing13 < -1) input_mixing13 = conv::kGlobFitSinsqTheta13;
+    if(input_mixing23 < -1) input_mixing23 = conv::kGlobFitSinsqTheta23;
+    if(input_mixing12 < -1) input_mixing12 = conv::kGlobFitSinsqTheta12;
+  }
+  if(input_dm23sq < -1)  input_dm23sq = conv::kGlobFitDm23sq;
+  if(input_dm12sq < -1)  input_dm12sq = conv::kGlobFitDm12sq;
+  if(input_deltacp < -90) input_deltacp = conv::kGlobFitDeltaCP;
   PhysHypothesis ph(hypothesis);
   if(ph.Hypothesis() == conv::kHypNuMuDisapp2F) {
     ph.SetCurrValue(conv::kPhypMixing23,  input_mixing23);

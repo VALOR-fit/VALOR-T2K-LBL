@@ -54,14 +54,14 @@ systematics.append(["sk_1Rmu_nuecc_eff","false","false","false"])
 systematics.append(["sk_energy_scale","true","false","false"])
 #BANFF
 #systematics.append(["banff","true","true","true"]) #not supported in this macro
-for i in xrange(27):
-   if i <= 21:
+for i in xrange(36):
+   if i <= 30:
       systematics.append(["banff_" + '%(number)02d' % {"number": i},"false","true","false"])
-   elif i == 22:
+   elif i == 31:
       systematics.append(["banff_" + '%(number)02d' % {"number": i},"true","false","false"])
-   elif i == 23 or 26:
+   elif i == 32 or 35:
       systematics.append(["banff_" + '%(number)02d' % {"number": i},"false","false","false"])
-   elif i == 24 or i == 25:
+   elif i == 33 or i == 34:
       systematics.append(["banff_" + '%(number)02d' % {"number": i},"false","false","true"])
 #XSec splines
 systematics.append(["xsec_pf", "false", "false", "false"])
@@ -85,8 +85,9 @@ samples = []
 samples.append("1Rmu")
 #samples.append("1Re")
    
-oscparams = [] #fill with oscillation parameters, in order mixing12, theta13, theta23, deltacp, dmsq12, dmsq23hypothesis 
-oscparams.append([0.86, 0.1,  1,  0,  7.58E-5,  2.32E-3])
+oscparams = [] #fill with oscillation parameters, in order mixing12, theta13, theta23, deltacp, dmsq12, dmsq23hypothesis
+oscparams.append([-99, -99, -99, -99, -99, -99]) #use global best fits!
+#oscparams.append([0.86, 0.1,  1,  0,  7.58E-5,  2.32E-3])
 #oscparams.append([0.86, 0,    1,  0,  7.58E-5,  2.32E-3])
 
 for osc in oscparams:

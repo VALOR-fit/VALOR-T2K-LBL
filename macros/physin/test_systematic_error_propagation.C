@@ -21,7 +21,7 @@
 //             correlation which, in the fitter, are handled using the Cholesky method). Use:
 //             - banff_00
 //             - ...
-//             - banff_26
+//             - banff_35
 //      - xsec_pf
 //      - xsec_sf
 //      - xsec_wshape
@@ -66,12 +66,12 @@ void test_systematic_error_propagation
   const char * systematic,                                                  /* options: see above */
   const char * sksample                   = "1Rmu",                         /* options: "1Rmu", "1Re" */
   const char * hypothesis                 = "3f_osc",                       /* options: "2f_numu_disap", "3f_osc" */
-  double       input_mixing12             = 0.86,                           /* */
-  double       input_mixing13             = 0.10,                           /* */
-  double       input_mixing23             = 1.00,                           /* */
-  double       input_deltacp              = 0.00,                           /* */
-  double       input_dm12sq               = 7.58E-5,                        /* */
-  double       input_dm23sq               = 2.40E-3,                        /* */
+  double       input_mixing12             = -99,                            /* */
+  double       input_mixing13             = -99,                            /* */
+  double       input_mixing23             = -99,                            /* */
+  double       input_deltacp              = -99,                            /* */
+  double       input_dm12sq               = -99,                            /* */
+  double       input_dm23sq               = -99,                            /* */
   bool         use_tex                    = false,                          /* print-out results as a TeX table (for inclusion in tech. note)*/
   bool         show_sk_ccqe_spectral_info_ereco = false,                    /* */
   bool         show_sk_spectral_info_etrue_flux_binning = false,            /* */
@@ -104,6 +104,19 @@ void test_systematic_error_propagation
   }
 
   // Set physics hypothesis
+  if(Opt::Instance()->gOscMixingParamChoice == conv::kNuMixSinsq2Theta) {
+    if(input_mixing13 < -1) input_mixing13 = conv::kGlobFitSinsq2Theta13;
+    if(input_mixing23 < -1) input_mixing23 = conv::kGlobFitSinsq2Theta23;
+    if(input_mixing12 < -1) input_mixing12 = conv::kGlobFitSinsq2Theta12;
+  }
+  else {
+    if(input_mixing13 < -1) input_mixing13 = conv::kGlobFitSinsqTheta13;
+    if(input_mixing23 < -1) input_mixing23 = conv::kGlobFitSinsqTheta23;
+    if(input_mixing12 < -1) input_mixing12 = conv::kGlobFitSinsqTheta12;
+  }
+  if(input_dm23sq < -1)  input_dm23sq = conv::kGlobFitDm23sq;
+  if(input_dm12sq < -1)  input_dm12sq = conv::kGlobFitDm12sq;
+  if(input_deltacp < -90) input_deltacp = conv::kGlobFitDeltaCP;
   PhysHypothesis ph(hypothesis);
   if(ph.Hypothesis() == conv::kHypNuMuDisapp2F) {
     ph.SetCurrValue(conv::kPhypMixing23,  input_mixing23);
@@ -451,22 +464,19 @@ void test_systematic_error_propagation
   // +1 sigma (relative to untuned BANFF)
   //
   cout << "\n\nApplying +1 sigma tweak" << endl;
+#line 0
   if(sys.find("banff_") == 0) {
-    size_t found;
-    found = sys.find_first_of("012");
-    string bnum = sys.substr(found,2);
-    int bindex = atoi(bnum.c_str());
-    cout << bindex << endl;
+    conv::PhysParamId_t p = util::PhysParamIdFromString(systematic);
+    int ip = util::ArrIdx::Instance()->BANFFSystIdx(p);
     // curr/nominal = 1 + (nsigma * x)
-    skexp->TweakSystematic(systematic, skexp->GetBANFF()->BestFitValue(util::PhysParamIdFromString(systematic)) * (1 + skexp->GetBANFF()->CovMatrix()(bindex,bindex)));
+    skexp->TweakSystematic(systematic, skexp->GetBANFF()->BestFitValue(p) * (1 + skexp->GetBANFF()->CovMatrix()(ip,ip)));
     skexp->GetBANFF()->PrintSystematicVariations();
-  }
-  else if(sys.find("xsec_") == 0) {
-    skexp->TweakSystematic(systematic,+1.);
-    skexp->GetNuXSec()->PrintSystematicVariations();
+    sys_is_banff = true;
   }
   else
     skexp->TweakSystematic(systematic,+1.);
+  if(sys.find("xsec_") == 0)
+    skexp->GetNuXSec()->PrintSystematicVariations();
   skexp->Generate(ph);
 
   // total 
@@ -590,21 +600,16 @@ void test_systematic_error_propagation
   //
   cout << "\n\nApplying -1 sigma tweak" << endl;
   if(sys.find("banff_") == 0) {
-    size_t found;
-    found = sys.find_first_of("012");
-    string bnum = sys.substr(found,2);
-    int bindex = atoi(bnum.c_str());
-    cout << bindex << endl;
+    conv::PhysParamId_t p = util::PhysParamIdFromString(systematic);
+    int ip = util::ArrIdx::Instance()->BANFFSystIdx(p);
     // curr/nominal = 1 + (nsigma * x)
-    skexp->TweakSystematic(systematic, skexp->GetBANFF()->BestFitValue(util::PhysParamIdFromString(systematic)) * (1 - skexp->GetBANFF()->CovMatrix()(bindex,bindex)));
+    skexp->TweakSystematic(systematic, skexp->GetBANFF()->BestFitValue(p) * (1 - skexp->GetBANFF()->CovMatrix()(ip,ip)));
     skexp->GetBANFF()->PrintSystematicVariations();
   }
-  else if(sys.find("xsec_") == 0) {
+  else 
     skexp->TweakSystematic(systematic,-1.);
+  if(sys.find("xsec_") == 0)
     skexp->GetNuXSec()->PrintSystematicVariations();
-  }
-  else
-    skexp->TweakSystematic(systematic,-1.);
   skexp->Generate(ph);
 
   // total 

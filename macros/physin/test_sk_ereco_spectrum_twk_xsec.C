@@ -10,17 +10,19 @@
 void test_sk_ereco_spectrum_twk_xsec
 (
   const char * hypothesis         = "3f_osc",                       /* options: "2f_numu_disap", "3f_osc" */
-  double       input_mixing12     = 0.86,                           /* */
-  double       input_mixing13     = 0.10,                           /* */
-  double       input_mixing23     = 1.00,                           /* */
-  double       input_deltacp      = 0.00,                           /* */
-  double       input_dm12sq       = 7.58E-5,                        /* */
-  double       input_dm23sq       = 2.32E-3,                        /* */
+  double       input_mixing12     = -99,                            /* */
+  double       input_mixing13     = -99,                            /* */
+  double       input_mixing23     = -99,                            /* */
+  double       input_deltacp      = -99,                            /* */
+  double       input_dm12sq       = -99,                            /* */
+  double       input_dm23sq       = -99,                            /* */
   const char * config_file        = "analysis_configuration.xml"    /* */
 )
 {
   using namespace std;
   using namespace t2kana;
+
+  conv::SuperkSample_t s = conv::kSKsFCFV1RingMuLike;
 
   // Analysis configuration
   const char * config  = Form("%s/config/%s", gSystem->Getenv("T2KOSCANA"), config_file);
@@ -30,6 +32,19 @@ void test_sk_ereco_spectrum_twk_xsec
   Opt::Instance()->gMassHierarchyAssumed = conv::kNmhNormal;
 
   // Set physics hypothesis
+  if(Opt::Instance()->gOscMixingParamChoice == conv::kNuMixSinsq2Theta) {
+    if(input_mixing13 < -1) input_mixing13 = conv::kGlobFitSinsq2Theta13;
+    if(input_mixing23 < -1) input_mixing23 = conv::kGlobFitSinsq2Theta23;
+    if(input_mixing12 < -1) input_mixing12 = conv::kGlobFitSinsq2Theta12;
+  }
+  else {
+    if(input_mixing13 < -1) input_mixing13 = conv::kGlobFitSinsqTheta13;
+    if(input_mixing23 < -1) input_mixing23 = conv::kGlobFitSinsqTheta23;
+    if(input_mixing12 < -1) input_mixing12 = conv::kGlobFitSinsqTheta12;
+  }
+  if(input_dm23sq < -1)  input_dm23sq = conv::kGlobFitDm23sq;
+  if(input_dm12sq < -1)  input_dm12sq = conv::kGlobFitDm12sq;
+  if(input_deltacp < -90) input_deltacp = conv::kGlobFitDeltaCP;
   PhysHypothesis ph(hypothesis);
   if(ph.Hypothesis() == conv::kHypNuMuDisapp2F) {
     ph.SetCurrValue(conv::kPhypMixing23,  input_mixing23);
@@ -50,14 +65,23 @@ void test_sk_ereco_spectrum_twk_xsec
   cout << "- Physics hypothesis: \n" << ph << endl;
   cout << *Opt::Instance() << endl;
 
+
   // Tweaks
-  const int ntwkmodes = 5;
+  const int ntwkmodes = 13;
   string twklabel[ntwkmodes] = {
-   	"CCQE cross-section",
-	"CC1#pi/CCQE cross-section ratio",
-        "CCoth/CCQE cross-section ratio",
-        "NC/CCQE cross-section ratio",
-        "FSI"
+    "FermiMom",
+    "SpecFunc",
+    "Wshape",
+    "ShapeCCoth",
+    "PiLessDelta",
+    "ENuShape",
+    "NormCCQEE1",
+    "NormCCQEE2",
+    "NormCC1piE1",
+    "NormCCcoh",
+    "NormNCcoh",
+    "NormNCoth",
+    "NormNuEToNuMu"
   };
   const int ntwkdials = 5;
   double twkdial[ntwkdials] = { -1.0, -0.5, 0.0, +0.5, +1.0 };
@@ -80,15 +104,23 @@ void test_sk_ereco_spectrum_twk_xsec
        // reset previously set tweaks
        skexp.ResetSystematicVariations(); 
        // tweak spectrum generation model
-       if      (imode==0) skexp.GetNuXSec()->TweakCCQE        ( twkdial[idial] );
-       else if (imode==1) skexp.GetNuXSec()->TweakCC1piToCCQE ( twkdial[idial] );
-       else if (imode==2) skexp.GetNuXSec()->TweakCCOthToCCQE ( twkdial[idial] );
-       else if (imode==3) skexp.GetNuXSec()->TweakNCToCCQE    ( twkdial[idial] );
-       else if (imode==4) skexp.GetNuXSec()->TweakSKFSI       ( twkdial[idial] );
+       if      (imode==0)  skexp.GetNuXSec()->TweakFermiMom      ( twkdial[idial] );
+       else if (imode==1)  skexp.GetNuXSec()->TweakSpecFunc      ( twkdial[idial] );
+       else if (imode==2)  skexp.GetNuXSec()->TweakWshape        ( twkdial[idial] );
+       else if (imode==3)  skexp.GetNuXSec()->TweakShapeCCoth    ( twkdial[idial] );
+       else if (imode==4)  skexp.GetNuXSec()->TweakPiLessDelta   ( twkdial[idial] );
+       else if (imode==5)  skexp.GetNuXSec()->TweakENuShape      ( twkdial[idial] );
+       else if (imode==6)  skexp.GetNuXSec()->TweakNormCCQEE1    ( twkdial[idial] );
+       else if (imode==7)  skexp.GetNuXSec()->TweakNormCCQEE2    ( twkdial[idial] );
+       else if (imode==8)  skexp.GetNuXSec()->TweakNormCC1piE1   ( twkdial[idial] );
+       else if (imode==9)  skexp.GetNuXSec()->TweakNormCCcoh     ( twkdial[idial] );
+       else if (imode==10) skexp.GetNuXSec()->TweakNormNCcoh     ( twkdial[idial] );
+       else if (imode==11) skexp.GetNuXSec()->TweakNormNCoth     ( twkdial[idial] );
+       else if (imode==12) skexp.GetNuXSec()->TweakNormNuEToNuMu ( twkdial[idial] );
        // generate predictions  
        skexp.Generate(ph);
        // store spectrum
-       hEreco[imode][idial] = new TH1D(*skexp.CurrPredictedErecoSpectrum(conv::kSKsFCFV1RingMuLike));
+       hEreco[imode][idial] = new TH1D(*skexp.CurrPredictedErecoSpectrum(s));
        hEreco[imode][idial]->SetDirectory(0);
     }//idial
   }//imode
@@ -169,11 +201,7 @@ void test_sk_ereco_spectrum_twk_xsec
   for(int imode = 0; imode < ntwkmodes; imode++) {
      for(int idial = 0; idial < ntwkdials; idial++) {
        const char * syst = "";
-       if(imode==0) syst="ccqe_xsec";
-       if(imode==1) syst="cc1pi_to_ccqe_xsec_ratio";
-       if(imode==2) syst="ccoth_to_ccqe_xsec_ratio";
-       if(imode==3) syst="nc_to_ccqe_xsec_ratio";
-       if(imode==4) syst="nuclear_effect";
+       syst = twklabel[imode].c_str();
        const char * dial = "";
        if( TMath::Abs(twkdial[idial]-1.0) < conv::kASmallNum ) dial="plus_one_sigma";
        if( TMath::Abs(twkdial[idial]-0.5) < conv::kASmallNum ) dial="plus_half_sigma";

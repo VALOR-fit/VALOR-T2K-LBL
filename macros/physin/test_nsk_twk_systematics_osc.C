@@ -9,7 +9,7 @@
 // ------------------------------------------------------------------------------------------------
 //
 
-#include "Conventions.h"
+//#include "Conventions.h"
 
 void test_nsk_twk_systematics_osc
 (
@@ -19,6 +19,8 @@ void test_nsk_twk_systematics_osc
   using namespace std;
   using namespace t2kana;
 
+  conv::SuperkSample_t s = conv::kSKsFCFV1RingMuLike;
+
   const char * config = Form("%s/config/%s", gSystem->Getenv("T2KOSCANA"), config_file);
   cout << "Reading analysis configuration from: " << config << endl;
 
@@ -27,9 +29,9 @@ void test_nsk_twk_systematics_osc
   double mixing23_min  = 0.0;
   double mixing23_max  = 1.0;
   double mixing23_step = 0.01;
-  double dm23sq_min         = 1E-3;
-  double dm23sq_max         = 6E-3;
-  double dm23sq_step        = 1E-4;
+  double dm23sq_min    = 1E-3;
+  double dm23sq_max    = 6E-3;
+  double dm23sq_step   = 1E-4;
 
   // make sure that min and max are at the bin centre
   int mixing23_nbins = 1 + (int) ((mixing23_max - mixing23_min) / mixing23_step);
@@ -44,51 +46,75 @@ void test_nsk_twk_systematics_osc
        dm23sq_min - 0.5*dm23sq_step, 
        dm23sq_max + 0.5*dm23sq_step);
 
-  const int nsystematics = 13;
+  const int nsystematics = 21;
   string systematic[nsystematics] = {
-        "sk_ccqe_other_eff",
-        "sk_ccqe_ring_counting_eff",
-        "sk_ccnonqe_eff",
-        "sk_nc_eff",
-        "sk_nuecc_eff",
-        "nd280_eff",
-        "nd280_norm",
-        "flux_norm",
-        "xsec_ccqe",
-        "xsec_cc1pi_to_ccqe",
-        "xsec_ccoth_to_ccqe",
-        "xsec_nc_to_ccqe",
-        "nuclear_effect"
+    "sk_1Rmu_ccqe_ring_counting_eff", //0
+    "sk_1Rmu_ccqe_other_eff",         //1
+    "sk_1Rmu_ccnonqe_eff",            //2
+    "sk_1Rmu_nc_eff",                 //3
+    "sk_1Rmu_nuecc_eff",              //4
+    "sk_1Rmu_energy_scale",           //5
+    "banff",                     //6
+    "xsec_pf",                   //7
+    "xsec_sf",                   //8
+    "xsec_wshape",               //9
+    "xsec_shape_ccoth",          //10
+    "xsec_pilessdelta",          //11
+    "xsec_enushape",             //12
+    "xsec_norm_ccqeE1",          //13
+    "xsec_norm_ccqeE2",          //14
+    "xsec_norm_cc1piE1",         //15
+    "xsec_norm_cccoh",           //16
+    "xsec_norm_nccoh",           //17
+    "xsec_norm_ncoth",           //18
+    "xsec_norm_nuetonumu",       //19
+    "fsi"                        //20
   };
   bool generate_random[nsystematics] = {
-        false,  /* sk_ccqe_other_eff          */
-        true,   /* sk_ccqe_ring_counting_eff  */
-        false,  /* sk_ccnonqe_eff             */
-        false,  /* sk_nc_eff                  */
-        false,  /* sk_nuecc_eff               */
-        false,  /* nd280_eff                  */
-        false,  /* nd280_norm                 */
-        false,  /* flux_norm                  */
-        false,  /* xsec_ccqe                  */
-        false,  /* xsec_cc1pi_to_ccqe         */
-        false,  /* xsec_ccoth_to_ccqe         */
-        false,  /* xsec_nc_to_ccqe            */
-        false   /* nuclear_effect             */
+    true,  /* sk_1Rmu_ccqe_ring_counting_eff */
+    false, /* sk_1Rmu_ccqe_other_eff         */
+    false, /* sk_1Rmu_ccnonqe_eff            */
+    false, /* sk_1Rmu_nc_eff                 */
+    false, /* sk_1Rmu_nuecc_eff              */
+    false, /* sk_1Rmu_energy_scale           */
+    true,  /* banff                     */
+    false, /* xsec_pf                   */
+    false, /* xsec_sf                   */
+    false, /* xsec_wshape               */
+    false, /* xsec_shape_ccoth          */
+    false, /* xsec_pilessdelta          */
+    false, /* xsec_enushape             */
+    false, /* xsec_norm_ccqeE1          */
+    false, /* xsec_norm_ccqeE2          */
+    false, /* xsec_norm_cc1piE1         */
+    false, /* xsec_norm_cccoh           */
+    false, /* xsec_norm_nccoh           */
+    false, /* xsec_norm_ncoth           */
+    false, /* xsec_norm_nuetonumu       */
+    true   /* fsi                       */
   };
   bool skip[nsystematics] = {
-        true,   /* sk_ccqe_other_eff         */
-        true,   /* sk_ccqe_ring_counting_eff */
-        true,   /* sk_ccnonqe_eff            */
-        true,   /* sk_nc_eff                 */
-        true,   /* sk_nuecc_eff              */
-        true,   /* nd280_eff                 */
-        true,   /* nd280_norm                */
-        true,   /* flux_norm                 */
-        false,  /* xsec_ccqe                 */
-        false,  /* xsec_cc1pi_to_ccqe        */
-        false,  /* xsec_ccoth_to_ccqe        */
-        false,  /* xsec_nc_to_ccqe           */
-        false   /* nuclear_effect            */
+    false, /* sk_1Rmu_ccqe_ring_counting_eff */
+    false, /* sk_1Rmu_ccqe_other_eff         */
+    false, /* sk_1Rmu_ccnonqe_eff            */
+    false, /* sk_1Rmu_nc_eff                 */
+    false, /* sk_1Rmu_nuecc_eff              */
+    false, /* sk_1Rmu_energy_scale           */
+    false, /* banff                     */
+    false, /* xsec_pf                   */
+    false, /* xsec_sf                   */
+    false, /* xsec_wshape               */
+    false, /* xsec_shape_ccoth          */
+    false, /* xsec_pilessdelta          */
+    false, /* xsec_enushape             */
+    false, /* xsec_norm_ccqeE1          */
+    false, /* xsec_norm_ccqeE2          */
+    false, /* xsec_norm_cc1piE1         */
+    false, /* xsec_norm_cccoh           */
+    false, /* xsec_norm_nccoh           */
+    false, /* xsec_norm_ncoth           */
+    false, /* xsec_norm_nuetonumu       */
+    true   /* fsi                       */
   };
 
 
@@ -104,10 +130,10 @@ void test_nsk_twk_systematics_osc
     for(int j = 1; j <= frac_nsk_err->GetNbinsY(); j++) {
 
        double mixing23 = frac_nsk_err->GetXaxis()->GetBinCenter(i);
-       double dm23sq        = frac_nsk_err->GetYaxis()->GetBinCenter(j);
+       double dm23sq   = frac_nsk_err->GetYaxis()->GetBinCenter(j);
        mixing23 = TMath::Max(0.,mixing23);
        ph.SetCurrValue(t2kana::conv::kPhypMixing23, mixing23);
-       ph.SetCurrValue(t2kana::conv::kPhypDm23sq,        dm23sq);
+       ph.SetCurrValue(t2kana::conv::kPhypDm23sq,   dm23sq);
 
        cout << "* Dm23^2 = " << dm23sq 
             << " eV^2, sin^2(2theta) = " << mixing23 << endl;
@@ -117,7 +143,7 @@ void test_nsk_twk_systematics_osc
        skexp.Generate(ph);
 
        // integrate Ereco distribution & get nominal nsk
-       double nsk = skexp.CurrPredictedErecoSpectrum(conv::kSKsFCFV1RingMuLike)->Integral();
+       double nsk = skexp.CurrPredictedErecoSpectrum(s)->Integral();
 
        cout << "\t nsk = " << nsk << endl;
 
@@ -143,7 +169,7 @@ void test_nsk_twk_systematics_osc
                     skexp.ResetSystematicVariations(); 
                     skexp.TweakSystematic(systematic[isystematic]);
                     skexp.Generate(ph);
-                    double nsk = skexp.CurrPredictedErecoSpectrum(conv::kSKsFCFV1RingMuLike)->Integral();
+                    double nsk = skexp.CurrPredictedErecoSpectrum(s)->Integral();
                     nskexp[iexperiment] = nsk;
                 }//iexperiment
                 // calculate standard deviation
@@ -160,11 +186,11 @@ void test_nsk_twk_systematics_osc
                 skexp.ResetSystematicVariations();
                 skexp.TweakSystematic(systematic[isystematic], +1);
                 skexp.Generate(ph);
-                double nsk1 = skexp.CurrPredictedErecoSpectrum(conv::kSKsFCFV1RingMuLike)->Integral();
+                double nsk1 = skexp.CurrPredictedErecoSpectrum(s)->Integral();
                 skexp.ResetSystematicVariations();
                 skexp.TweakSystematic(systematic[isystematic], -1);
                 skexp.Generate(ph);
-                double nsk2 = skexp.CurrPredictedErecoSpectrum(conv::kSKsFCFV1RingMuLike)->Integral();
+                double nsk2 = skexp.CurrPredictedErecoSpectrum(s)->Integral();
                 nsk_min[isystematic] = TMath::Min(nsk1,nsk2);
                 nsk_max[isystematic] = TMath::Max(nsk1,nsk2);
             }

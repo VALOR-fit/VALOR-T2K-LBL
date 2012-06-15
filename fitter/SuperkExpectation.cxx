@@ -15,6 +15,7 @@
 
 #define __show_syst_reset_mesg__
 #define __show_syst_tweak_mesg__
+#define __show_syst_tweak_debug__
 
 #include <cassert>
 #include <cstdlib>
@@ -203,7 +204,12 @@ void SuperkExpectation::TweakSystematic(string systematic, double twkdial, bool 
 //      * banff_00                          : tweak only BANFF param 00, see Conventions.h for definition, correlations ignored (debug mode)
 //      * banff_01                          : tweak only BANFF param 01, see Conventions.h for definition, correlations ignored (debug mode)
 //      * ..     
-//      * banff_25                          : tweak only BANFF param 25, see Conventions.h for definition, correlations ignored (debug mode)
+//      * banff_30(48)                      : tweak only BANFF param 35(48), see Conventions.h for definition, correlations ignored (debug mode)
+//      * banff_maqe                        : tweak only BANFF maqe parameter
+//      * banff_mares                       : tweak only BANFF mares parameter
+//      * banff_ccqeE0                      : tweak only BANFF ccqeE0 parameter
+//      * banff_cc1pi0E0                    : tweak only BANFF cc1piE0 parameter
+//      * banff_nc1pi0                      : tweak only BANFF nc1pi0 parameter
 //
 // FSI
 //    - fsi                                 : tweak all FSI params, correlations taken into account (Cholesky method)
@@ -282,15 +288,26 @@ void SuperkExpectation::TweakSystematic(string systematic, double twkdial, bool 
   // tweak an individual BANFF parameter (ignores correlations, debug)
   else
   if(systematic.find("banff_") != string::npos) {
-     bool found = false;
      const int nbanff = conv::kNumOfParamsInBANFFfit;
      TVectorD twkv(this->GetBANFF()->BestFitValues());
      if(!best_banff) {
         for (int ib = 0; ib < nbanff; ib++) { twkv[ib] = 1; }
      }
+     PhysParamId_t p = util::PhysParamIdFromString(systematic);
+     int ip = util::ArrIdx::Instance()->BANFFSystIdx(p);
+     twkv[ip] = twkdial;
+#ifdef __show_syst_tweak_debug__
+     cout << "Tweaking systematic string: " << systematic
+	  << ", NuisParam: " << util::AsString(p)
+	  << endl;
+     util::PrintCompact(twkv);
+#endif
+     this->GetBANFF()->Tweak(true,&twkv);
+
+     /*
      for (int ib = 0; ib < nbanff; ib++) {
 	if(systematic == Form("banff_%02i",ib)) {
-	   twkv[ib]=twkdial;
+	   twkv[ib] = twkdial;
 	   this->GetBANFF()->Tweak(true,&twkv);
 	   found = true;
 	   break;
@@ -300,6 +317,7 @@ void SuperkExpectation::TweakSystematic(string systematic, double twkdial, bool 
         cerr << "Exp >> Unknown systematic parameter (" << systematic << ")" << endl;
 	exit(1);
      }   
+     */
   }
 
 

@@ -13,17 +13,21 @@ using namespace t2kana::conv;
   
 void nsk_check
 (
-  bool withbanff  = true,
-  PhysHypothesis_t phyp = kHypNuMuDisapp2F,
-  double mixing13 = 0.1,
-  double mixing23 = 1,
-  double mixing12 = 0.86,
-  double dm23sq = 2.32E-3,
-  double dm12sq = 7.58E-5,
-  double deltacp = 0,
+  bool withbanff           = true,
+  const string hyp         = "3f_osc",
+  const string sample_str  = "1Rmu",
+  double input_mixing13    = -99,
+  double input_mixing23    = -99,
+  double input_mixing12    = -99,
+  double input_dm23sq      = -99,
+  double input_dm12sq      = -99,
+  double input_deltacp     = -99,
   const char * config_file = "analysis_configuration.xml"
 )
 {
+  conv::SuperkSample_t s = util::SKSampleFromString(sample_str);
+  int is = util::ArrIdx::Instance()->SuperkSampleIdx(s);
+
   const char * config = Form("%s/config/%s", gSystem->Getenv("T2KOSCANA"), config_file);
   cout << "Reading analysis configuration from: " << config << endl;
 
@@ -36,18 +40,34 @@ void nsk_check
   }
   
   // generate predictions
+  if(Opt::Instance()->gOscMixingParamChoice == conv::kNuMixSinsq2Theta) {
+    if(input_mixing13 < -1) input_mixing13 = conv::kGlobFitSinsq2Theta13;
+    if(input_mixing23 < -1) input_mixing23 = conv::kGlobFitSinsq2Theta23;
+    if(input_mixing12 < -1) input_mixing12 = conv::kGlobFitSinsq2Theta12;
+  }
+  else {
+    if(input_mixing13 < -1) input_mixing13 = conv::kGlobFitSinsqTheta13;
+    if(input_mixing23 < -1) input_mixing23 = conv::kGlobFitSinsqTheta23;
+    if(input_mixing12 < -1) input_mixing12 = conv::kGlobFitSinsqTheta12;
+  }
+  if(input_dm23sq < -1)  input_dm23sq = conv::kGlobFitDm23sq;
+  if(input_dm12sq < -1)  input_dm12sq = conv::kGlobFitDm12sq;
+  if(input_deltacp < -90) input_deltacp = conv::kGlobFitDeltaCP;
+  PhysHypothesis_t phyp = util::PhysHypFromString(hyp);
   if (phyp == kHypNuMuDisapp2F || phyp == kHypOsc3F) {
     // fit params
     PhysHypothesis ph(phyp);
 
     // generate predictions
-    ph.SetCurrValue(t2kana::conv::kPhypMixing23,      mixing23);
-    ph.SetCurrValue(t2kana::conv::kPhypMixing13,      mixing13);
-    ph.SetCurrValue(t2kana::conv::kPhypMixing12,      mixing12);
-    ph.SetCurrValue(t2kana::conv::kPhypDm23sq,        dm23sq);
-    ph.SetCurrValue(t2kana::conv::kPhypDm12sq,        dm12sq);
-    ph.SetCurrValue(t2kana::conv::kPhypDeltaCP,       deltacp);
-  
+    ph.SetCurrValue(conv::kPhypMixing23,  input_mixing23);
+    ph.SetCurrValue(conv::kPhypDm23sq,    input_dm23sq);
+    if(ph.Hypothesis() == conv::kHypOsc3F) {
+      ph.SetCurrValue(conv::kPhypMixing12,  input_mixing12);
+      ph.SetCurrValue(conv::kPhypMixing13,  input_mixing13);
+      ph.SetCurrValue(conv::kPhypDeltaCP,   input_deltacp);
+      ph.SetCurrValue(conv::kPhypDm12sq,    input_dm12sq);
+    }
+
     skexp.Generate(ph);
   }
   else { /* Adapted from SuperkExpectation */
@@ -75,46 +95,6 @@ void nsk_check
     }//s
   }
 
-  // integrate Ereco distribution
-  double nsk = skexp.CurrPredictedErecoSpectrum(conv::kSKsFCFV1RingMuLike)->Integral();
-  double nskmucc = 0;
-  nskmucc += skexp.CurrPredictedErecoSpectrum(conv::kSKsFCFV1RingMuLike, conv::kSKmNuMuCCQE    )->Integral();
-  nskmucc += skexp.CurrPredictedErecoSpectrum(conv::kSKsFCFV1RingMuLike, conv::kSKmNuMuCC1pi   )->Integral();
-  nskmucc += skexp.CurrPredictedErecoSpectrum(conv::kSKsFCFV1RingMuLike, conv::kSKmNuMuCCcoh   )->Integral();
-  nskmucc += skexp.CurrPredictedErecoSpectrum(conv::kSKsFCFV1RingMuLike, conv::kSKmNuMuCCoth_mu)->Integral();
-  nskmucc += skexp.CurrPredictedErecoSpectrum(conv::kSKsFCFV1RingMuLike, conv::kSKmNuMuBarCCQE    )->Integral();
-  nskmucc += skexp.CurrPredictedErecoSpectrum(conv::kSKsFCFV1RingMuLike, conv::kSKmNuMuBarCC1pi   )->Integral();
-  nskmucc += skexp.CurrPredictedErecoSpectrum(conv::kSKsFCFV1RingMuLike, conv::kSKmNuMuBarCCcoh   )->Integral();
-  nskmucc += skexp.CurrPredictedErecoSpectrum(conv::kSKsFCFV1RingMuLike, conv::kSKmNuMuBarCCoth_mu)->Integral();
-  double nsknc = 0;
-  nsknc += skexp.CurrPredictedErecoSpectrum(conv::kSKsFCFV1RingMuLike, conv::kSKmNuMuNC1piC     )->Integral();
-  nsknc += skexp.CurrPredictedErecoSpectrum(conv::kSKsFCFV1RingMuLike, conv::kSKmNuMuNCoth_mu   )->Integral();
-  nsknc += skexp.CurrPredictedErecoSpectrum(conv::kSKsFCFV1RingMuLike, conv::kSKmNuMuBarNC1piC  )->Integral();
-  nsknc += skexp.CurrPredictedErecoSpectrum(conv::kSKsFCFV1RingMuLike, conv::kSKmNuMuBarNCoth_mu)->Integral();
-  nsknc += skexp.CurrPredictedErecoSpectrum(conv::kSKsFCFV1RingMuLike, conv::kSKmNuENC1piC      )->Integral();
-  nsknc += skexp.CurrPredictedErecoSpectrum(conv::kSKsFCFV1RingMuLike, conv::kSKmNuENCoth_mu    )->Integral();
-  nsknc += skexp.CurrPredictedErecoSpectrum(conv::kSKsFCFV1RingMuLike, conv::kSKmNuEBarNC1piC   )->Integral();
-  nsknc += skexp.CurrPredictedErecoSpectrum(conv::kSKsFCFV1RingMuLike, conv::kSKmNuEBarNCoth_mu )->Integral();
-  double nskebeamcc = 0;
-  nskebeamcc += skexp.CurrPredictedErecoSpectrum(conv::kSKsFCFV1RingMuLike, conv::kSKmNuECCQE    )->Integral();
-  nskebeamcc += skexp.CurrPredictedErecoSpectrum(conv::kSKsFCFV1RingMuLike, conv::kSKmNuECC1pi   )->Integral();
-  nskebeamcc += skexp.CurrPredictedErecoSpectrum(conv::kSKsFCFV1RingMuLike, conv::kSKmNuECCcoh   )->Integral();
-  nskebeamcc += skexp.CurrPredictedErecoSpectrum(conv::kSKsFCFV1RingMuLike, conv::kSKmNuECCoth_mu)->Integral();
-  double nskesigcc = 0;
-  nskesigcc += skexp.CurrPredictedErecoSpectrum(conv::kSKsFCFV1RingMuLike, conv::kSKmSigNuECCQE    )->Integral();
-  nskesigcc += skexp.CurrPredictedErecoSpectrum(conv::kSKsFCFV1RingMuLike, conv::kSKmSigNuECC1pi   )->Integral();
-  nskesigcc += skexp.CurrPredictedErecoSpectrum(conv::kSKsFCFV1RingMuLike, conv::kSKmSigNuECCcoh   )->Integral();
-  nskesigcc += skexp.CurrPredictedErecoSpectrum(conv::kSKsFCFV1RingMuLike, conv::kSKmSigNuECCoth_mu)->Integral();
-
-  //output in form of table 16, TN52
-  //~ cout << " dm23sq is " << dm23sq << endl;
-  //~ cout << "     " << nskmucc+nskebeamcc+nsknc << " beam total" << endl;
-  //~ cout << "     " << nskmucc << " numu+numubar CC" << endl;
-  //~ cout << "     " << nskebeamcc << " nue beam CC" << endl;
-  //~ cout << "     " << nsknc << " all NC" << endl;
-  //~ cout << "     " << nskesigcc << " nue signal CC" << endl;
-  //~ cout << "Number of predicted events at SK is: " << nsk << "     = " << nskmucc+nsknc+nskebeamcc+nskesigcc << endl;
-  
   ostringstream outfile_name;
   
   string phyp_short;
@@ -131,24 +111,15 @@ void nsk_check
   outfile_name << "N-" << phyp_short << "-" << (withbanff ? "W" : "N");
   TFile outfile( (outfile_name.str() + ".root").c_str() , "RECREATE");
   
-  skexp.CurrPredictedErecoSpectrum(conv::kSKsFCFV1RingMuLike)->Write("Total");
-  skexp.CurrPredictedErecoSpectrum(conv::kSKsFCFV1RingMuLike, conv::kSKmNuMuCCQE)->Write("NuMuCCQE");
-  skexp.CurrPredictedErecoSpectrum(conv::kSKsFCFV1RingMuLike, conv::kSKmNuMuCC1pi)->Write("NuMuCC1pi");
-  skexp.CurrPredictedErecoSpectrum(conv::kSKsFCFV1RingMuLike, conv::kSKmNuMuCCoth_mu)->Write("NuMuCCoth_mu");
-  skexp.CurrPredictedErecoSpectrum(conv::kSKsFCFV1RingMuLike, conv::kSKmNuMuBarCCQE)->Write("NuMuBarCCQE");
-  skexp.CurrPredictedErecoSpectrum(conv::kSKsFCFV1RingMuLike, conv::kSKmNuMuBarCC1pi)->Write("NuMuBarCC1pi");
-  skexp.CurrPredictedErecoSpectrum(conv::kSKsFCFV1RingMuLike, conv::kSKmNuMuBarCCoth_mu)->Write("NuMuBarCCoth_mu");
-  skexp.CurrPredictedErecoSpectrum(conv::kSKsFCFV1RingMuLike, conv::kSKmNuMuNC)->Write("NuMuNC");
-  skexp.CurrPredictedErecoSpectrum(conv::kSKsFCFV1RingMuLike, conv::kSKmNuMuBarNC)->Write("NuMuBarNC");
-  skexp.CurrPredictedErecoSpectrum(conv::kSKsFCFV1RingMuLike, conv::kSKmNuENC)->Write("NuENC");
-  skexp.CurrPredictedErecoSpectrum(conv::kSKsFCFV1RingMuLike, conv::kSKmNuECCQE)->Write("NuECCQE");
-  skexp.CurrPredictedErecoSpectrum(conv::kSKsFCFV1RingMuLike, conv::kSKmNuECC1pi)->Write("NuECC1pi");
-  skexp.CurrPredictedErecoSpectrum(conv::kSKsFCFV1RingMuLike, conv::kSKmNuECCoth_mu)->Write("NuECCoth_mu");
-  //~ skexp.CurrPredictedErecoSpectrum(conv::kSKsFCFV1RingMuLike, conv::kSKmSigNuECCQE)->Write("SigNuECCQE");
-  //~ skexp.CurrPredictedErecoSpectrum(conv::kSKsFCFV1RingMuLike, conv::kSKmSigNuECC1pi)->Write("SigNuECC1pi");
-  //~ skexp.CurrPredictedErecoSpectrum(conv::kSKsFCFV1RingMuLike, conv::kSKmSigNuECCoth)->Write("SigNuECCoth");
-  
-  TH1D * tot_hist = skexp.CurrPredictedErecoSpectrum(conv::kSKsFCFV1RingMuLike);
+  //write the ereco spectra to file
+  skexp.CurrPredictedErecoSpectrum(s)->Write("Total");
+  for(int im = 0; im < conv::knm; im++) {
+    SuperkMode_t m = kSKReactionModes[is][im];
+    if(m == kSKmUndefined) continue;
+    skexp.CurrPredictedErecoSpectrum(s, m)->Write(util::AsStringCompact(m).c_str());
+  }
+
+  TH1D * tot_hist = skexp.CurrPredictedErecoSpectrum(s);
   
   TCanvas * c = new TCanvas("c","",20,20,500,500);
   int highn = tot_hist->GetNbinsX();
@@ -159,22 +130,36 @@ void nsk_check
   hframe->GetYaxis()->SetTitle("Number of events");
   c->SetLogy();
   
+  //draw the total & individual mode spectra
   tot_hist->Draw();
-  skexp.CurrPredictedErecoSpectrum(conv::kSKsFCFV1RingMuLike, conv::kSKmNuMuCCQE)->Draw("same");
-  skexp.CurrPredictedErecoSpectrum(conv::kSKsFCFV1RingMuLike, conv::kSKmNuMuCC1pi)->Draw("same");
-  skexp.CurrPredictedErecoSpectrum(conv::kSKsFCFV1RingMuLike, conv::kSKmNuMuCCoth_mu)->Draw("same");
-  skexp.CurrPredictedErecoSpectrum(conv::kSKsFCFV1RingMuLike, conv::kSKmNuMuBarCCQE)->Draw("same");
-  skexp.CurrPredictedErecoSpectrum(conv::kSKsFCFV1RingMuLike, conv::kSKmNuMuBarCC1pi)->Draw("same");
-  skexp.CurrPredictedErecoSpectrum(conv::kSKsFCFV1RingMuLike, conv::kSKmNuMuBarCCoth_mu)->Draw("same");
-  skexp.CurrPredictedErecoSpectrum(conv::kSKsFCFV1RingMuLike, conv::kSKmNuMuNC)->Draw("same");
-  skexp.CurrPredictedErecoSpectrum(conv::kSKsFCFV1RingMuLike, conv::kSKmNuMuBarNC)->Draw("same");
-  skexp.CurrPredictedErecoSpectrum(conv::kSKsFCFV1RingMuLike, conv::kSKmNuENC)->Draw("same");
-  skexp.CurrPredictedErecoSpectrum(conv::kSKsFCFV1RingMuLike, conv::kSKmNuECCQE)->Draw("same");
-  skexp.CurrPredictedErecoSpectrum(conv::kSKsFCFV1RingMuLike, conv::kSKmNuECC1pi)->Draw("same");
-  skexp.CurrPredictedErecoSpectrum(conv::kSKsFCFV1RingMuLike, conv::kSKmNuECCoth_mu)->Draw("same");
-  
+  TH1D * hErecoMode[conv::knm]; //< contribution from each mode 
+  for(int im = 0; im < conv::knm; im++) {
+    conv::SuperkMode_t m = conv::kSKReactionModes[is][im];
+    if(m == conv::kSKmUndefined) continue;
+    cout << "- Retrieving spectrum prediction for mode: " << util::AsString(m) << endl;
+    TH1D * h = skexp.CurrPredictedErecoSpectrum(s, m);  
+    assert(h);
+    hErecoMode[im] = new TH1D(*h);
+  }
+  THStack * stack = new THStack("stack","spectrum contributions");
+  for(int imstack = 0; imstack < conv::knm; imstack++) {
+    conv::SuperkMode_t m = conv::kSKReactionModesOrderInStack[is][imstack];	
+    if(m == conv::kSKmUndefined) continue;
+    int im = util::ArrIdx::Instance()->SuperkModeIdx(s,m);
+    stack->Add(hErecoMode[im]);
+  }
+  stack->Draw("same");
+  TLegend * legend = new TLegend(0.3, 0.4, 0.9, 0.9);
+  legend->AddEntry(tot_hist, util::AsStringRooTex(s,conv::kSKmUndefined,""," total").c_str(), "L" );
+  for(int im = 0; im < conv::knm; im++) {
+    conv::SuperkMode_t m = conv::kSKReactionModes[is][im];
+    if(m == conv::kSKmUndefined) continue;
+    legend->AddEntry(hErecoMode[im], util::AsStringRooTex(s,m).c_str(), "LF");
+  }
+  legend->Draw();
   c->Update();
   c->Write("All");
+  stack->Write("Stack");
   
   ofstream returnstr( (outfile_name.str() + ".txt").c_str() );
   returnstr << "EReco_min\tEreco_max\tn_events\n";

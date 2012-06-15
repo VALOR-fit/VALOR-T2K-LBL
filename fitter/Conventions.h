@@ -22,6 +22,11 @@ Changes since 2011_v0.9.0:
 #include "Rtypes.h"
 #endif
 
+#ifndef BANFF_Bins
+#define BANFF_Bins 1 // Coarse binning (numu using same binning as 2012 nue analyses)
+//#define BANFF_Bins -1 // Fine binning (numu using same binning as 2010 numu analyses)
+#endif
+
 namespace t2kana {
 namespace conv   {
 
@@ -330,8 +335,9 @@ typedef enum EPhysParamId
    kNuisSuperkEff1RmuNueCC,    // SK 1Rmu nue CC efficiency
 
    /*
-    * 27 (flux and cross-section) corellated parameters used in the BANFF fit
+    * 35 (flux and cross-section) corellated parameters used in the BANFF fit
    */   
+#if BANFF_Bins == 1
    kNuisBANFF00,               // # 00, SK     numu    flux,  E =  0.0 -  0.4 GeV
    kNuisBANFF01,               // # 01, SK     numu    flux,  E =  0.4 -  0.5 GeV
    kNuisBANFF02,               // # 02, SK     numu    flux,  E =  0.5 -  0.6 GeV
@@ -343,22 +349,82 @@ typedef enum EPhysParamId
    kNuisBANFF08,               // # 08, SK     numu    flux,  E =  3.5 -  5.0 GeV
    kNuisBANFF09,               // # 09, SK     numu    flux,  E =  5.0 -  7.0 GeV
    kNuisBANFF10,               // # 10, SK     numu    flux,  E =  7.0 - 30.0 GeV
-   kNuisBANFF11,               // # 11, SK     numubar flux,  E =  0.0 -  1.5 GeV
-   kNuisBANFF12,               // # 12, SK     numubar flux,  E =  1.5 - 30.0 GeV
-   kNuisBANFF13,               // # 13, SK     nue     flux,  E =  0.0 -  0.5 GeV
-   kNuisBANFF14,               // # 14, SK     nue     flux,  E =  0.5 -  0.7 GeV
-   kNuisBANFF15,               // # 15, SK     nue     flux,  E =  0.7 -  0.8 GeV
-   kNuisBANFF16,               // # 16, SK     nue     flux,  E =  0.8 -  1.5 GeV
-   kNuisBANFF17,               // # 17, SK     nue     flux,  E =  1.5 -  2.5 GeV
-   kNuisBANFF18,               // # 18, SK     nue     flux,  E =  2.5 -  4.0 GeV
-   kNuisBANFF19,               // # 19, SK     nue     flux,  E =  4.0 - 30.0 GeV
-   kNuisBANFF20,               // # 20, SK     nuebar  flux,  E =  0.0 -  2.5 GeV
-   kNuisBANFF21,               // # 21, SK     nuebar  flux,  E =  2.5 - 30.0 GeV
-   kNuisBANFF22,               // # 22, M_{A}  QE
-   kNuisBANFF23,               // # 23, M_{A}  RES
-   kNuisBANFF24,               // # 24, CCQE   normalization, 0 - 1.5 GeV
-   kNuisBANFF25,               // # 25, CC1pi  normalization, 0 - 2.5 GeV
-   kNuisBANFF26,               // # 26, NC1pi0 normalization
+   kNuisBANFF11,               // # 11, SK     numubar flux,  E =  0.0 -  0.4 GeV
+   kNuisBANFF12,               // # 12, SK     numubar flux,  E =  0.4 -  0.5 GeV
+   kNuisBANFF13,               // # 13, SK     numubar flux,  E =  0.5 -  0.6 GeV
+   kNuisBANFF14,               // # 14, SK     numubar flux,  E =  0.6 -  0.7 GeV
+   kNuisBANFF15,               // # 15, SK     numubar flux,  E =  0.7 -  1.0 GeV
+   kNuisBANFF16,               // # 16, SK     numubar flux,  E =  1.0 -  1.5 GeV
+   kNuisBANFF17,               // # 17, SK     numubar flux,  E =  1.5 -  2.5 GeV
+   kNuisBANFF18,               // # 18, SK     numubar flux,  E =  2.5 -  3.5 GeV
+   kNuisBANFF19,               // # 19, SK     numubar flux,  E =  3.5 -  5.0 GeV
+   kNuisBANFF20,               // # 20, SK     numubar flux,  E =  5.0 -  7.0 GeV
+   kNuisBANFF21,               // # 21, SK     numubar flux,  E =  7.0 - 30.0 GeV
+   kNuisBANFF22,               // # 22, SK     nue     flux,  E =  0.0 -  0.5 GeV
+   kNuisBANFF23,               // # 23, SK     nue     flux,  E =  0.5 -  0.7 GeV
+   kNuisBANFF24,               // # 24, SK     nue     flux,  E =  0.7 -  0.8 GeV
+   kNuisBANFF25,               // # 25, SK     nue     flux,  E =  0.8 -  1.5 GeV
+   kNuisBANFF26,               // # 26, SK     nue     flux,  E =  1.5 -  2.5 GeV
+   kNuisBANFF27,               // # 27, SK     nue     flux,  E =  2.5 -  4.0 GeV
+   kNuisBANFF28,               // # 28, SK     nue     flux,  E =  4.0 - 30.0 GeV
+   kNuisBANFF29,               // # 29, SK     nuebar  flux,  E =  0.0 -  2.5 GeV
+   kNuisBANFF30,               // # 30, SK     nuebar  flux,  E =  2.5 - 30.0 GeV
+#elif BANFF_Bins == -1
+   kNuisBANFF00,               // # 00, SK     numu    flux,  E =  0.0 -  0.1 GeV
+   kNuisBANFF01,               // # 01, SK     numu    flux,  E =  0.1 -  0.2 GeV
+   kNuisBANFF02,               // # 02, SK     numu    flux,  E =  0.2 -  0.3 GeV
+   kNuisBANFF03,               // # 03, SK     numu    flux,  E =  0.3 -  0.4 GeV
+   kNuisBANFF04,               // # 04, SK     numu    flux,  E =  0.4 -  0.5 GeV
+   kNuisBANFF05,               // # 05, SK     numu    flux,  E =  0.5 -  0.6 GeV
+   kNuisBANFF06,               // # 06, SK     numu    flux,  E =  0.6 -  0.7 GeV
+   kNuisBANFF07,               // # 07, SK     numu    flux,  E =  0.7 -  0.8 GeV
+   kNuisBANFF08,               // # 08, SK     numu    flux,  E =  0.8 -  1.0 GeV
+   kNuisBANFF09,               // # 09, SK     numu    flux,  E =  1.0 -  1.2 GeV
+   kNuisBANFF10,               // # 10, SK     numu    flux,  E =  1.2 -  1.5 GeV
+   kNuisBANFF11,               // # 11, SK     numu    flux,  E =  1.5 -  2.0 GeV
+   kNuisBANFF12,               // # 12, SK     numu    flux,  E =  2.0 -  2.5 GeV
+   kNuisBANFF13,               // # 13, SK     numu    flux,  E =  2.5 -  3.0 GeV
+   kNuisBANFF14,               // # 14, SK     numu    flux,  E =  3.0 -  3.5 GeV
+   kNuisBANFF15,               // # 15, SK     numu    flux,  E =  3.5 -  4.0 GeV
+   kNuisBANFF16,               // # 16, SK     numu    flux,  E =  4.0 -  5.0 GeV
+   kNuisBANFF17,               // # 17, SK     numu    flux,  E =  5.0 -  7.0 GeV
+   kNuisBANFF18,               // # 18, SK     numu    flux,  E =  7.0 - 10.0 GeV
+   kNuisBANFF19,               // # 19, SK     numu    flux,  E = 10.0 - 30.0 GeV
+   kNuisBANFF20,               // # 20, SK     numubar flux,  E =  0.0 -  0.1 GeV
+   kNuisBANFF21,               // # 21, SK     numubar flux,  E =  0.1 -  0.2 GeV
+   kNuisBANFF22,               // # 22, SK     numubar flux,  E =  0.2 -  0.3 GeV
+   kNuisBANFF23,               // # 23, SK     numubar flux,  E =  0.3 -  0.4 GeV
+   kNuisBANFF24,               // # 24, SK     numubar flux,  E =  0.4 -  0.5 GeV
+   kNuisBANFF25,               // # 25, SK     numubar flux,  E =  0.5 -  0.6 GeV
+   kNuisBANFF26,               // # 26, SK     numubar flux,  E =  0.6 -  0.7 GeV
+   kNuisBANFF27,               // # 27, SK     numubar flux,  E =  0.7 -  0.8 GeV
+   kNuisBANFF28,               // # 28, SK     numubar flux,  E =  0.8 -  1.0 GeV
+   kNuisBANFF29,               // # 29, SK     numubar flux,  E =  1.0 -  1.2 GeV
+   kNuisBANFF30,               // # 30, SK     numubar flux,  E =  1.2 -  1.5 GeV
+   kNuisBANFF31,               // # 31, SK     numubar flux,  E =  1.5 -  2.0 GeV
+   kNuisBANFF32,               // # 32, SK     numubar flux,  E =  2.0 -  2.5 GeV
+   kNuisBANFF33,               // # 33, SK     numubar flux,  E =  2.5 -  3.0 GeV
+   kNuisBANFF34,               // # 34, SK     numubar flux,  E =  3.0 -  3.5 GeV
+   kNuisBANFF35,               // # 35, SK     numubar flux,  E =  3.5 -  4.0 GeV
+   kNuisBANFF36,               // # 36, SK     numubar flux,  E =  4.0 -  5.0 GeV
+   kNuisBANFF37,               // # 37, SK     numubar flux,  E =  5.0 -  7.0 GeV
+   kNuisBANFF38,               // # 38, SK     numubar flux,  E =  7.0 - 10.0 GeV
+   kNuisBANFF39,               // # 39, SK     numubar flux,  E = 10.0 - 30.0 GeV
+   kNuisBANFF40,               // # 40, SK     nue     flux,  E =  0.0 -  0.5 GeV
+   kNuisBANFF41,               // # 41, SK     nue     flux,  E =  0.5 -  0.7 GeV
+   kNuisBANFF42,               // # 42, SK     nue     flux,  E =  0.7 -  0.8 GeV
+   kNuisBANFF43,               // # 43, SK     nue     flux,  E =  0.8 -  1.5 GeV
+   kNuisBANFF44,               // # 44, SK     nue     flux,  E =  1.5 -  2.5 GeV
+   kNuisBANFF45,               // # 45, SK     nue     flux,  E =  2.5 -  4.0 GeV
+   kNuisBANFF46,               // # 46, SK     nue     flux,  E =  4.0 - 30.0 GeV
+   kNuisBANFF47,               // # 47, SK     nuebar  flux,  E =  0.0 -  2.5 GeV
+   kNuisBANFF48,               // # 48, SK     nuebar  flux,  E =  2.5 - 30.0 GeV
+#endif
+   kNuisBANFFMAQE,             // # M_{A}  QE
+   kNuisBANFFMARES,            // # M_{A}  RES
+   kNuisBANFFCCQEE0,           // # CCQE   normalization, 0 - 1.5 GeV
+   kNuisBANFFCC1piE0,          // # CC1pi  normalization, 0 - 2.5 GeV
+   kNuisBANFFNC1pi0,           // # NC1pi0 normalization
 
    /*
     * Cross-section parameters (excluding cross-section params which were included in BANFF fit and are correlated with the flux params)
@@ -553,8 +619,12 @@ static const int kNumOfNuisanceParamsJoint = 0;  // not implemented for 2012a ye
 //
 // Number of BANFF fit parameters
 //
-static const int kNumOfParamsInBANFFfit = 27;  
-
+#if BANFF_Bins == 1
+static const int kNumOfParamsInBANFFfit = 36;
+#elif BANFF_Bins == -1
+static const int kNumOfParamsInBANFFfit = 54;
+#endif
+static const int kNumOfFluxParamsInBANFFfit = kNumOfParamsInBANFFfit - 5;
 //
 // ** Flux systematics
 //
@@ -584,14 +654,44 @@ static const bool kParamInBANFFfitIsSuperkFluxParam[kNumOfParamsInBANFFfit] =
    true,                 // kNuisBANFF19
    true,                 // kNuisBANFF20
    true,                 // kNuisBANFF21
-   false,                // kNuisBANFF22
-   false,                // kNuisBANFF23
-   false,                // kNuisBANFF24
-   false,                // kNuisBANFF25
-   false                 // kNuisBANFF26
+   true,                 // kNuisBANFF22
+   true,                 // kNuisBANFF23
+   true,                 // kNuisBANFF24
+   true,                 // kNuisBANFF25
+   true,                 // kNuisBANFF26
+   true,                 // kNuisBANFF27
+   true,                 // kNuisBANFF28
+   true,                 // kNuisBANFF29
+   true,                 // kNuisBANFF30
+#if BANFF_Bins == -1
+   true,                 // kNuisBANFF31
+   true,                 // kNuisBANFF32
+   true,                 // kNuisBANFF33
+   true,                 // kNuisBANFF34
+   true,                 // kNuisBANFF35
+   true,                 // kNuisBANFF36
+   true,                 // kNuisBANFF37
+   true,                 // kNuisBANFF38
+   true,                 // kNuisBANFF39
+   true,                 // kNuisBANFF40
+   true,                 // kNuisBANFF41
+   true,                 // kNuisBANFF42
+   true,                 // kNuisBANFF43
+   true,                 // kNuisBANFF44
+   true,                 // kNuisBANFF45
+   true,                 // kNuisBANFF46
+   true,                 // kNuisBANFF47
+   true,                 // kNuisBANFF48
+#endif
+   false,                // kNuisBANFFMAQE
+   false,                // kNuisBANFFMARES
+   false,                // kNuisBANFFCCQEE0
+   false,                // kNuisBANFFCC1piE0
+   false                 // kNuisBANFFNC1pi0
 };
 
 // flux-related BANFF parameters --> flux neutrino PDG code
+#if BANFF_Bins == 1
 static const int kNuPdgCodeOfFluxParamInBANFFfit[kNumOfParamsInBANFFfit] =
 {
    kPdgNuMu,             // kNuisBANFF00
@@ -607,23 +707,92 @@ static const int kNuPdgCodeOfFluxParamInBANFFfit[kNumOfParamsInBANFFfit] =
    kPdgNuMu,             // kNuisBANFF10
    kPdgNuMuBar,          // kNuisBANFF11
    kPdgNuMuBar,          // kNuisBANFF12
-   kPdgNuE,              // kNuisBANFF13
-   kPdgNuE,              // kNuisBANFF14
-   kPdgNuE,              // kNuisBANFF15
-   kPdgNuE,              // kNuisBANFF16
-   kPdgNuE,              // kNuisBANFF17
-   kPdgNuE,              // kNuisBANFF18
-   kPdgNuE,              // kNuisBANFF19
-   kPdgNuEBar,           // kNuisBANFF20
-   kPdgNuEBar,           // kNuisBANFF21
-   0,                    // kNuisBANFF22, not a flux param
-   0,                    // kNuisBANFF23, not a flux param
-   0,                    // kNuisBANFF24, not a flux param
-   0,                    // kNuisBANFF25, not a flux param
-   0                     // kNuisBANFF26, not a flux param
+   kPdgNuMuBar,          // kNuisBANFF13
+   kPdgNuMuBar,          // kNuisBANFF14
+   kPdgNuMuBar,          // kNuisBANFF15
+   kPdgNuMuBar,          // kNuisBANFF16
+   kPdgNuMuBar,          // kNuisBANFF17
+   kPdgNuMuBar,          // kNuisBANFF18
+   kPdgNuMuBar,          // kNuisBANFF19
+   kPdgNuMuBar,          // kNuisBANFF20
+   kPdgNuMuBar,          // kNuisBANFF21
+   kPdgNuE,              // kNuisBANFF22
+   kPdgNuE,              // kNuisBANFF23
+   kPdgNuE,              // kNuisBANFF24
+   kPdgNuE,              // kNuisBANFF25
+   kPdgNuE,              // kNuisBANFF26
+   kPdgNuE,              // kNuisBANFF27
+   kPdgNuE,              // kNuisBANFF28
+   kPdgNuEBar,           // kNuisBANFF29
+   kPdgNuEBar,           // kNuisBANFF30
+   0,                    // kNuisBANFFMAQE, not a flux param
+   0,                    // kNuisBANFFMARES, not a flux param
+   0,                    // kNuisBANFFCCQEE0, not a flux param
+   0,                    // kNuisBANFFCC1piE0, not a flux param
+   0                     // kNuisBANFFNC1pi0, not a flux param
 };
+#elif BANFF_Bins == -1
+static const int kNuPdgCodeOfFluxParamInBANFFfit[kNumOfParamsInBANFFfit] =
+{
+   kPdgNuMu,             // kNuisBANFF00
+   kPdgNuMu,             // kNuisBANFF01
+   kPdgNuMu,             // kNuisBANFF02
+   kPdgNuMu,             // kNuisBANFF03
+   kPdgNuMu,             // kNuisBANFF04
+   kPdgNuMu,             // kNuisBANFF05
+   kPdgNuMu,             // kNuisBANFF06
+   kPdgNuMu,             // kNuisBANFF07
+   kPdgNuMu,             // kNuisBANFF08
+   kPdgNuMu,             // kNuisBANFF09
+   kPdgNuMu,             // kNuisBANFF10
+   kPdgNuMu,             // kNuisBANFF11
+   kPdgNuMu,             // kNuisBANFF12
+   kPdgNuMu,             // kNuisBANFF13
+   kPdgNuMu,             // kNuisBANFF14
+   kPdgNuMu,             // kNuisBANFF15
+   kPdgNuMu,             // kNuisBANFF16
+   kPdgNuMu,             // kNuisBANFF17
+   kPdgNuMu,             // kNuisBANFF18
+   kPdgNuMu,             // kNuisBANFF19
+   kPdgNuMuBar,          // kNuisBANFF20
+   kPdgNuMuBar,          // kNuisBANFF21
+   kPdgNuMuBar,          // kNuisBANFF22
+   kPdgNuMuBar,          // kNuisBANFF23
+   kPdgNuMuBar,          // kNuisBANFF24
+   kPdgNuMuBar,          // kNuisBANFF25
+   kPdgNuMuBar,          // kNuisBANFF26
+   kPdgNuMuBar,          // kNuisBANFF27
+   kPdgNuMuBar,          // kNuisBANFF28
+   kPdgNuMuBar,          // kNuisBANFF29
+   kPdgNuMuBar,          // kNuisBANFF30
+   kPdgNuMuBar,          // kNuisBANFF31
+   kPdgNuMuBar,          // kNuisBANFF32
+   kPdgNuMuBar,          // kNuisBANFF33
+   kPdgNuMuBar,          // kNuisBANFF34
+   kPdgNuMuBar,          // kNuisBANFF35
+   kPdgNuMuBar,          // kNuisBANFF36
+   kPdgNuMuBar,          // kNuisBANFF37
+   kPdgNuMuBar,          // kNuisBANFF38
+   kPdgNuMuBar,          // kNuisBANFF39
+   kPdgNuE,              // kNuisBANFF40
+   kPdgNuE,              // kNuisBANFF41
+   kPdgNuE,              // kNuisBANFF42
+   kPdgNuE,              // kNuisBANFF43
+   kPdgNuE,              // kNuisBANFF44
+   kPdgNuE,              // kNuisBANFF45
+   kPdgNuE,              // kNuisBANFF46
+   kPdgNuEBar,           // kNuisBANFF47
+   kPdgNuEBar,           // kNuisBANFF48
+   0,                    // kNuisBANFFMAQE, not a flux param
+   0,                    // kNuisBANFFMARES, not a flux param
+   0,                    // kNuisBANFFCCQEE0, not a flux param
+   0,                    // kNuisBANFFCC1piE0, not a flux param
+   0                     // kNuisBANFFNC1pi0, not a flux param
+#endif
 
 // Etrue energy range for flux-related BANFF parameters
+
+#if BANFF_Bins == 1
 static const double kEtrueRangeOfFluxParamInBANFFfit[kNumOfParamsInBANFFfit][2] =
 {
    { 0.0,  0.4 },        // kNuisBANFF00
@@ -637,23 +806,91 @@ static const double kEtrueRangeOfFluxParamInBANFFfit[kNumOfParamsInBANFFfit][2] 
    { 3.5,  5.0 },        // kNuisBANFF08
    { 5.0,  7.0 },        // kNuisBANFF09
    { 7.0, 30.0 },        // kNuisBANFF10
-   { 0.0,  1.5 },        // kNuisBANFF11
-   { 1.5, 30.0 },        // kNuisBANFF12
-   { 0.0,  0.5 },        // kNuisBANFF13
-   { 0.5,  0.7 },        // kNuisBANFF14
-   { 0.7,  0.8 },        // kNuisBANFF15
-   { 0.8,  1.5 },        // kNuisBANFF16
+   { 0.0,  0.4 },        // kNuisBANFF11
+   { 0.4,  0.5 },        // kNuisBANFF12
+   { 0.5,  0.6 },        // kNuisBANFF13
+   { 0.6,  0.7 },        // kNuisBANFF14
+   { 0.7,  1.0 },        // kNuisBANFF15
+   { 1.0,  1.5 },        // kNuisBANFF16
    { 1.5,  2.5 },        // kNuisBANFF17
-   { 2.5,  4.0 },        // kNuisBANFF18
-   { 4.0, 30.0 },        // kNuisBANFF19
-   { 0.0,  2.5 },        // kNuisBANFF20
-   { 2.5, 30.0 },        // kNuisBANFF21
-   {  -1,   -1 },        // kNuisBANFF22, not a flux param
-   {  -1,   -1 },        // kNuisBANFF23, not a flux param
-   {  -1,   -1 },        // kNuisBANFF24, not a flux param
-   {  -1,   -1 },        // kNuisBANFF25, not a flux param
-   {  -1,   -1 }         // kNuisBANFF26, not a flux param
+   { 2.5,  3.5 },        // kNuisBANFF18
+   { 3.5,  5.0 },        // kNuisBANFF19
+   { 5.0,  7.0 },        // kNuisBANFF20
+   { 7.0, 30.0 },        // kNuisBANFF21
+   { 0.0,  0.5 },        // kNuisBANFF22
+   { 0.5,  0.7 },        // kNuisBANFF23
+   { 0.7,  0.8 },        // kNuisBANFF24
+   { 0.8,  1.5 },        // kNuisBANFF25
+   { 1.5,  2.5 },        // kNuisBANFF26
+   { 2.5,  4.0 },        // kNuisBANFF27
+   { 4.0, 30.0 },        // kNuisBANFF28
+   { 0.0,  2.5 },        // kNuisBANFF29
+   { 2.5, 30.0 },        // kNuisBANFF30
+   {  -1,   -1 },        // kNuisBANFFMAQE, not a flux param
+   {  -1,   -1 },        // kNuisBANFFMARES, not a flux param
+   {  -1,   -1 },        // kNuisBANFFCCQEE0, not a flux param
+   {  -1,   -1 },        // kNuisBANFFCC1piE0, not a flux param
+   {  -1,   -1 }         // kNuisBANFFNC1pi0, not a flux param
 };
+#elif BANFF_Bins == -1
+static const double kEtrueRangeOfFluxParamInBANFFfit[kNumOfParamsInBANFFfit][2] =
+{
+   { 0.0,  0.1 },        // kNuisBANFF00
+   { 0.1,  0.2 },        // kNuisBANFF01
+   { 0.2,  0.3 },        // kNuisBANFF02
+   { 0.3,  0.4 },        // kNuisBANFF03
+   { 0.4,  0.5 },        // kNuisBANFF04
+   { 0.5,  0.6 },        // kNuisBANFF05
+   { 0.6,  0.7 },        // kNuisBANFF06
+   { 0.7,  0.8 },        // kNuisBANFF07
+   { 0.8,  1.0 },        // kNuisBANFF08
+   { 1.0,  1.2 },        // kNuisBANFF09
+   { 1.2,  1.5 },        // kNuisBANFF10
+   { 1.5,  2.0 },        // kNuisBANFF11
+   { 2.0,  2.5 },        // kNuisBANFF12
+   { 2.5,  3.0 },        // kNuisBANFF13
+   { 3.0,  3.5 },        // kNuisBANFF14
+   { 3.5,  4.0 },        // kNuisBANFF15
+   { 4.0,  5.0 },        // kNuisBANFF16
+   { 5.0,  7.0 },        // kNuisBANFF17
+   { 7.0, 10.0 },        // kNuisBANFF18
+   {10.0, 30.0 },        // kNuisBANFF19
+   { 0.0,  0.1 },        // kNuisBANFF20
+   { 0.1,  0.2 },        // kNuisBANFF21
+   { 0.2,  0.3 },        // kNuisBANFF22
+   { 0.3,  0.4 },        // kNuisBANFF23
+   { 0.4,  0.5 },        // kNuisBANFF24
+   { 0.5,  0.6 },        // kNuisBANFF25
+   { 0.6,  0.7 },        // kNuisBANFF26
+   { 0.7,  0.8 },        // kNuisBANFF27
+   { 0.8,  1.0 },        // kNuisBANFF28
+   { 1.0,  1.2 },        // kNuisBANFF29
+   { 1.2,  1.5 },        // kNuisBANFF30
+   { 1.5,  2.0 },        // kNuisBANFF31
+   { 2.0,  2.5 },        // kNuisBANFF32
+   { 2.5,  3.0 },        // kNuisBANFF33
+   { 3.0,  3.5 },        // kNuisBANFF34
+   { 3.5,  4.0 },        // kNuisBANFF35
+   { 4.0,  5.0 },        // kNuisBANFF36
+   { 5.0,  7.0 },        // kNuisBANFF37
+   { 7.0, 10.0 },        // kNuisBANFF38
+   {10.0, 30.0 },        // kNuisBANFF39
+   { 0.0,  0.5 },        // kNuisBANFF40
+   { 0.5,  0.7 },        // kNuisBANFF41
+   { 0.7,  0.8 },        // kNuisBANFF42
+   { 0.8,  1.5 },        // kNuisBANFF43
+   { 1.5,  2.5 },        // kNuisBANFF44
+   { 2.5,  4.0 },        // kNuisBANFF45
+   { 4.0, 30.0 },        // kNuisBANFF46
+   { 0.0,  2.5 },        // kNuisBANFF47
+   { 2.5, 30.0 },        // kNuisBANFF48
+   {  -1,   -1 },        // kNuisBANFFMAQE, not a flux param
+   {  -1,   -1 },        // kNuisBANFFMARES, not a flux param
+   {  -1,   -1 },        // kNuisBANFFCCQEE0, not a flux param
+   {  -1,   -1 },        // kNuisBANFFCC1piE0, not a flux param
+   {  -1,   -1 }         // kNuisBANFFNC1pi0, not a flux param
+};
+#endif
 
 //
 // ** Cross-section systematics
@@ -664,16 +901,16 @@ static const double kNomMAQE  = 1.21;
 static const double kNomMARES = 1.21;
 
 // Number of cross-section related systematics 
-static const int kNumOfXSecSyst = 19;
+static const int kNumOfXSecSyst = 18;
 
 // The following is the list of the above kNumOfXSecSyst parameters
 static const PhysParamId_t kListOfXSecSyst[kNumOfXSecSyst] = 
 {
-   kNuisBANFF22,               // # 22, M_{A}  QE
-   kNuisBANFF23,               // # 23, M_{A}  RES
-   kNuisBANFF24,               // # 24, CCQE   normalization, 0 - 1.5 GeV
-   kNuisBANFF25,               // # 25, CC1pi  normalization, 0 - 2.5 GeV
-   kNuisBANFF26,               // # 26, NC1pi0 normalization
+   kNuisBANFFMAQE,             // # 31, M_{A}  QE
+   kNuisBANFFMARES,            // # 32, M_{A}  RES
+   kNuisBANFFCCQEE0,           // # 33, CCQE   normalization, 0 - 1.5 GeV
+   kNuisBANFFCC1piE0,          // # 34, CC1pi  normalization, 0 - 2.5 GeV
+   kNuisBANFFNC1pi0,           // # 35, NC1pi0 normalization
    kNuisXSecFermiMom,          // Fermi momentum
    kNuisXSecSpecFunc,          // spectral function on/off
    kNuisXSecWshape,            // W-shape
@@ -694,11 +931,11 @@ static const PhysParamId_t kListOfXSecSyst[kNumOfXSecSyst] =
 // The order of systematic parameters should match the one in kListOfXSecSyst.
 static const bool kXSecSystHasWghtSplines[kNumOfXSecSyst] = 
 {
-   true,                      // kNuisBANFF22
-   true,                      // kNuisBANFF23
-   false,                     // kNuisBANFF24
-   false,                     // kNuisBANFF25
-   false,                     // kNuisBANFF26
+   true,                      // kNuisBANFFMAQE
+   true,                      // kNuisBANFFMARES
+   false,                     // kNuisBANFFCCQEE0
+   false,                     // kNuisBANFFCC1piE0
+   false,                     // kNuisBANFFNC1pi0
    true,                      // Fermi momentum
    true,                      // spectral function on/off
    true,                      // W-shape
@@ -719,11 +956,11 @@ static const bool kXSecSystHasWghtSplines[kNumOfXSecSyst] =
 // The order of systematic parameters should match the one in kListOfXSecSyst.
 static const bool kXSecSystIncludedInBANFF[kNumOfXSecSyst] = 
 {
-   true,                      // kNuisBANFF22
-   true,                      // kNuisBANFF23
-   true,                      // kNuisBANFF24
-   true,                      // kNuisBANFF25
-   true,                      // kNuisBANFF26
+   true,                      // kNuisBANFFMAQE
+   true,                      // kNuisBANFFMARES
+   true,                      // kNuisBANFFCCQEE0
+   true,                      // kNuisBANFFCC1piE0
+   true,                      // kNuisBANFFNC1pi0
    false,                     // Fermi momentum
    false,                     // spectral function on/off
    false,                     // W-shape
@@ -745,11 +982,11 @@ static const bool kXSecSystIncludedInBANFF[kNumOfXSecSyst] =
 // The order of systematic parameters should match the one in kListOfXSecSyst.
 static const bool kXSecSystWghtUnequallySharedBetweenBins[kNumOfXSecSyst] = 
 {
-   true,                      // kNuisBANFF22
-   true,                      // kNuisBANFF23
-   false,                     // kNuisBANFF24
-   false,                     // kNuisBANFF25
-   false,                     // kNuisBANFF26
+   true,                      // kNuisBANFFMAQE
+   true,                      // kNuisBANFFMARES
+   false,                     // kNuisBANFFCCQEE0
+   false,                     // kNuisBANFFCC1piE0
+   false,                     // kNuisBANFFNC1pi0
    true,                      // Fermi momentum
    true,                      // spectral function on/off
    true,                      // W-shape
@@ -769,11 +1006,11 @@ static const bool kXSecSystWghtUnequallySharedBetweenBins[kNumOfXSecSyst] =
 // The order of systematic parameters should match the one in kListOfXSecSyst.
 static const double kXSecSystErecoCut[kNumOfXSecSyst][2] =
 {
-   { 0.0, 100.0 },            // kNuisBANFF22
-   { 0.0, 100.0 },            // kNuisBANFF23
-   { 0.0, 100.0 },            // kNuisBANFF24
-   { 0.0, 100.0 },            // kNuisBANFF25
-   { 0.0, 100.0 },            // kNuisBANFF26
+   { 0.0, 100.0 },            // kNuisBANFFMAQE
+   { 0.0, 100.0 },            // kNuisBANFFMARES
+   { 0.0, 100.0 },            // kNuisBANFFCCQEE0
+   { 0.0, 100.0 },            // kNuisBANFFCC1piE0
+   { 0.0, 100.0 },            // kNuisBANFFNC1pi0
    { 0.0, 100.0 },            // Fermi momentum
    { 0.0, 100.0 },            // spectral function on/off
    { 0.0, 100.0 },            // W-shape
@@ -790,11 +1027,11 @@ static const double kXSecSystErecoCut[kNumOfXSecSyst][2] =
 };
 static const double kXSecSystEtrueCut[kNumOfXSecSyst][2] =
 {
-   { 0.0, 100.0 },            // kNuisBANFF22
-   { 0.0, 100.0 },            // kNuisBANFF23
-   { 0.0,   1.5 },            // kNuisBANFF24
-   { 0.0,   2.5 },            // kNuisBANFF25
-   { 0.0, 100.0 },            // kNuisBANFF26
+   { 0.0, 100.0 },            // kNuisBANFFMAQE
+   { 0.0, 100.0 },            // kNuisBANFFMARES
+   { 0.0,   1.5 },            // kNuisBANFFCCQEE0
+   { 0.0,   2.5 },            // kNuisBANFFCC1piE0
+   { 0.0, 100.0 },            // kNuisBANFFNC1pi0
    { 0.0, 100.0 },            // Fermi momentum
    { 0.0, 100.0 },            // spectral function on/off
    { 0.0, 100.0 },            // W-shape
@@ -817,7 +1054,7 @@ static const bool kXsApplyXSecSystToSKMode[kns][knm][kNumOfXSecSyst] = {
 
   // > 1 muon-like ring 
   {
-    // banff22  banff23  banff24  banff25  banff26
+    // banff31  banff32  banff33  banff34  banff35
     // pF  spectral   W-shape  ccothshape pilessdelta enushape
     // ccqeE2   ccqeE3   cc1piE2  cccoh    nccoh  ncoth    nue/numu
     {  1, 0, 1, 0, 0,  1, 1, 0, 0, 0, 0,  1, 1, 0, 0, 0, 0, 0 }, // kSKmNuMuCCQE        
@@ -1005,10 +1242,9 @@ static const double kXsErecoBinEdges[kXsNErecoBins+1] =
 // Note that the order of modes below should match the one defined in kSKReactionModes array.
 //
 
+#if BANFF_Bins == 1
 static const int kXsNEtrueBins = 11;
-
 static const double kXsEtrueBinEdges[kns][knm][kXsNEtrueBins+1] = {
-
   // > 1 muon-like ring 
   {
     {  0.000,  0.400,  0.500,  0.600,  0.700,  1.000,  1.500,  2.500,  3.500,  5.000,  7.000, 30.000 }, // kSKmNuMuCCQE         
@@ -1017,12 +1253,12 @@ static const double kXsEtrueBinEdges[kns][knm][kXsNEtrueBins+1] = {
     {  0.000,  0.400,  0.500,  0.600,  0.700,  1.000,  1.500,  2.500,  3.500,  5.000,  7.000, 30.000 }, // kSKmNuMuCCoth_mu                      
     {  0.000,  0.400,  0.500,  0.600,  0.700,  1.000,  1.500,  2.500,  3.500,  5.000,  7.000, 30.000 }, // kSKmNuMuNC1piC
     {  0.000,  0.400,  0.500,  0.600,  0.700,  1.000,  1.500,  2.500,  3.500,  5.000,  7.000, 30.000 }, // kSKmNuMuNCoth_mu
-    {  0.000,  1.500, 30.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000 }, // kSKmNuMuBarCCQE      
-    {  0.000,  1.500, 30.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000 }, // kSKmNuMuBarCC1pi
-    {  0.000,  1.500, 30.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000 }, // kSKmNuMuBarCCcoh
-    {  0.000,  1.500, 30.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000 }, // kSKmNuMuBarCCoth_mu                  
-    {  0.000,  1.500, 30.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000 }, // kSKmNuMuBarNC1piC
-    {  0.000,  1.500, 30.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000 }, // kSKmNuMuBarNCoth_mu
+    {  0.000,  0.400,  0.500,  0.600,  0.700,  1.000,  1.500,  2.500,  3.500,  5.000,  7.000, 30.000 }, // kSKmNuMuBarCCQE         
+    {  0.000,  0.400,  0.500,  0.600,  0.700,  1.000,  1.500,  2.500,  3.500,  5.000,  7.000, 30.000 }, // kSKmNuMuBarCC1pi
+    {  0.000,  0.400,  0.500,  0.600,  0.700,  1.000,  1.500,  2.500,  3.500,  5.000,  7.000, 30.000 }, // kSKmNuMuBarCCcoh
+    {  0.000,  0.400,  0.500,  0.600,  0.700,  1.000,  1.500,  2.500,  3.500,  5.000,  7.000, 30.000 }, // kSKmNuMuBarCCoth_mu                      
+    {  0.000,  0.400,  0.500,  0.600,  0.700,  1.000,  1.500,  2.500,  3.500,  5.000,  7.000, 30.000 }, // kSKmNuMuBarNC1piC
+    {  0.000,  0.400,  0.500,  0.600,  0.700,  1.000,  1.500,  2.500,  3.500,  5.000,  7.000, 30.000 }, // kSKmNuMuBarNCoth_mu
     {  0.000,  0.500,  0.700,  0.800,  1.500,  2.500,  4.000, 30.000, -1.000, -1.000, -1.000, -1.000 }, // kSKmNuECCQE 
     {  0.000,  0.500,  0.700,  0.800,  1.500,  2.500,  4.000, 30.000, -1.000, -1.000, -1.000, -1.000 }, // kSKmNuECC1pi 
     {  0.000,  0.500,  0.700,  0.800,  1.500,  2.500,  4.000, 30.000, -1.000, -1.000, -1.000, -1.000 }, // kSKmNuECCcoh
@@ -1057,7 +1293,6 @@ static const double kXsEtrueBinEdges[kns][knm][kXsNEtrueBins+1] = {
     { -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000 }, // kSKmUndefined
     { -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000 }  // kSKmUndefined
   },
-
   // > 1 electron-like ring 
   {
     {  0.000,  0.400,  0.500,  0.600,  0.700,  1.000,  1.500,  2.500,  3.500,  5.000,  7.000, 30.000 }, // kSKmNuMuCCQE 
@@ -1088,9 +1323,9 @@ static const double kXsEtrueBinEdges[kns][knm][kXsNEtrueBins+1] = {
     {  0.000,  2.500, 30.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000 }, // kSKmNuEBarNC1pi0
     {  0.000,  2.500, 30.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000 }, // kSKmNuEBarNCcoh
     {  0.000,  2.500, 30.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000 }, // kSKmNuEBarNCoth_e
-    {  0.000,  0.500,  0.700,  0.800,  1.500,  2.500,  4.000, 30.000, -1.000, -1.000, -1.000, -1.000 }, // kSKmSigNuECCQE  
-    {  0.000,  0.500,  0.700,  0.800,  1.500,  2.500,  4.000, 30.000, -1.000, -1.000, -1.000, -1.000 }, // kSKmSigNuECC1pi  
-    {  0.000,  0.500,  0.700,  0.800,  1.500,  2.500,  4.000, 30.000, -1.000, -1.000, -1.000, -1.000 }, // kSKmSigNuECCoth_e
+    {  0.000,  0.400,  0.500,  0.600,  0.700,  1.000,  1.500,  2.500,  3.500,  5.000,  7.000, 30.000 }, // kSKmSigNuECCQE  
+    {  0.000,  0.400,  0.500,  0.600,  0.700,  1.000,  1.500,  2.500,  3.500,  5.000,  7.000, 30.000 }, // kSKmSigNuECC1pi  
+    {  0.000,  0.400,  0.500,  0.600,  0.700,  1.000,  1.500,  2.500,  3.500,  5.000,  7.000, 30.000 }, // kSKmSigNuECCoth_e
     { -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000 }, // kSKmUndefined
     { -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000 }, // kSKmUndefined
     { -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000 }, // kSKmUndefined
@@ -1107,6 +1342,197 @@ static const double kXsEtrueBinEdges[kns][knm][kXsNEtrueBins+1] = {
     { -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000 }  // kSKmUndefined
   }
 };
+#elif BANFF_Bins == -1
+static const int kXsNEtrueBins = 20;
+static const double kXsEtrueBinEdges[kns][knm][kXsNEtrueBins+1] = {
+  // > 1 muon-like ring 
+  {
+    {  0.000,  0.100,  0.200,  0.300,  0.400,  0.500,  0.600,  0.700,  0.800,  1.000, 1.200, 
+       1.500,  2.000,  2.500,  3.000,  3.500,  4.000,  5.000,  7.000, 10.000, 30.000 }, // kSKmNuMuCCQE         
+    {  0.000,  0.100,  0.200,  0.300,  0.400,  0.500,  0.600,  0.700,  0.800,  1.000, 1.200, 
+       1.500,  2.000,  2.500,  3.000,  3.500,  4.000,  5.000,  7.000, 10.000, 30.000 }, // kSKmNuMuCC1pi
+    {  0.000,  0.100,  0.200,  0.300,  0.400,  0.500,  0.600,  0.700,  0.800,  1.000, 1.200, 
+       1.500,  2.000,  2.500,  3.000,  3.500,  4.000,  5.000,  7.000, 10.000, 30.000 }, // kSKmNuMuCCcoh
+    {  0.000,  0.100,  0.200,  0.300,  0.400,  0.500,  0.600,  0.700,  0.800,  1.000, 1.200, 
+       1.500,  2.000,  2.500,  3.000,  3.500,  4.000,  5.000,  7.000, 10.000, 30.000 }, // kSKmNuMuCCoth_mu
+    {  0.000,  0.100,  0.200,  0.300,  0.400,  0.500,  0.600,  0.700,  0.800,  1.000, 1.200, 
+       1.500,  2.000,  2.500,  3.000,  3.500,  4.000,  5.000,  7.000, 10.000, 30.000 }, // kSKmNuMuNC1piC
+    {  0.000,  0.100,  0.200,  0.300,  0.400,  0.500,  0.600,  0.700,  0.800,  1.000, 1.200, 
+       1.500,  2.000,  2.500,  3.000,  3.500,  4.000,  5.000,  7.000, 10.000, 30.000 }, // kSKmNuMuNCoth_mu
+    {  0.000,  0.100,  0.200,  0.300,  0.400,  0.500,  0.600,  0.700,  0.800,  1.000, 1.200, 
+       1.500,  2.000,  2.500,  3.000,  3.500,  4.000,  5.000,  7.000, 10.000, 30.000 }, // kSKmNuMuBarCCQE         
+    {  0.000,  0.100,  0.200,  0.300,  0.400,  0.500,  0.600,  0.700,  0.800,  1.000, 1.200, 
+       1.500,  2.000,  2.500,  3.000,  3.500,  4.000,  5.000,  7.000, 10.000, 30.000 }, // kSKmNuMuBarCC1pi
+    {  0.000,  0.100,  0.200,  0.300,  0.400,  0.500,  0.600,  0.700,  0.800,  1.000, 1.200, 
+       1.500,  2.000,  2.500,  3.000,  3.500,  4.000,  5.000,  7.000, 10.000, 30.000 }, // kSKmNuMuBarCCcoh
+    {  0.000,  0.100,  0.200,  0.300,  0.400,  0.500,  0.600,  0.700,  0.800,  1.000, 1.200, 
+       1.500,  2.000,  2.500,  3.000,  3.500,  4.000,  5.000,  7.000, 10.000, 30.000 }, // kSKmNuMuBarCCoth_mu
+    {  0.000,  0.100,  0.200,  0.300,  0.400,  0.500,  0.600,  0.700,  0.800,  1.000, 1.200, 
+       1.500,  2.000,  2.500,  3.000,  3.500,  4.000,  5.000,  7.000, 10.000, 30.000 }, // kSKmNuMuBarNC1piC
+    {  0.000,  0.100,  0.200,  0.300,  0.400,  0.500,  0.600,  0.700,  0.800,  1.000, 1.200, 
+       1.500,  2.000,  2.500,  3.000,  3.500,  4.000,  5.000,  7.000, 10.000, 30.000 }, // kSKmNuMuBarNCoth_mu
+    {  0.000,  0.500,  0.700,  0.800,  1.500,  2.500,  4.000, 30.000, -1.000, -1.000, -1.000,  
+      -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000 }, // kSKmNuECCQE 
+    {  0.000,  0.500,  0.700,  0.800,  1.500,  2.500,  4.000, 30.000, -1.000, -1.000, -1.000,  
+      -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000 }, // kSKmNuECC1pi 
+    {  0.000,  0.500,  0.700,  0.800,  1.500,  2.500,  4.000, 30.000, -1.000, -1.000, -1.000,  
+      -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000 }, // kSKmNuECCcoh
+    {  0.000,  0.500,  0.700,  0.800,  1.500,  2.500,  4.000, 30.000, -1.000, -1.000, -1.000,  
+      -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000 }, // kSKmNuECCoth_mu                                
+    {  0.000,  0.500,  0.700,  0.800,  1.500,  2.500,  4.000, 30.000, -1.000, -1.000, -1.000,  
+      -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000 }, // kSKmNuENC1piC
+    {  0.000,  0.500,  0.700,  0.800,  1.500,  2.500,  4.000, 30.000, -1.000, -1.000, -1.000,  
+      -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000 }, // kSKmNuENCoth_mu
+    {  0.000,  2.500, 30.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000,  
+      -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000 }, // kSKmNuEBarCCQE
+    {  0.000,  2.500, 30.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000,  
+      -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000 }, // kSKmNuEBarCC1pi
+    {  0.000,  2.500, 30.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000,  
+      -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000 }, // kSKmNuEBarCCcoth_mu
+    {  0.000,  2.500, 30.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000,  
+      -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000 }, // kSKmNuEBarCCoth_mu
+    {  0.000,  2.500, 30.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000,  
+      -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000 }, // kSKmNuEBarNC1piC
+    {  0.000,  2.500, 30.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000,  
+      -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000 }, // kSKmNuEBarNCoth_mu
+    {  0.000,  0.100,  0.200,  0.300,  0.400,  0.500,  0.600,  0.700,  0.800,  1.000, 1.200, 
+       1.500,  2.000,  2.500,  3.000,  3.500,  4.000,  5.000,  7.000, 10.000, 30.000 }, // kSKmSigNuECCQE 
+    {  0.000,  0.100,  0.200,  0.300,  0.400,  0.500,  0.600,  0.700,  0.800,  1.000, 1.200, 
+       1.500,  2.000,  2.500,  3.000,  3.500,  4.000,  5.000,  7.000, 10.000, 30.000 }, // kSKmSigNuECC1pi
+    {  0.000,  0.100,  0.200,  0.300,  0.400,  0.500,  0.600,  0.700,  0.800,  1.000, 1.200, 
+       1.500,  2.000,  2.500,  3.000,  3.500,  4.000,  5.000,  7.000, 10.000, 30.000 }, // kSKmSigNuECCcoh
+    {  0.000,  0.100,  0.200,  0.300,  0.400,  0.500,  0.600,  0.700,  0.800,  1.000, 1.200, 
+       1.500,  2.000,  2.500,  3.000,  3.500,  4.000,  5.000,  7.000, 10.000, 30.000 }, // kSKmSigNuECCoth_mu
+    { -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000,  
+      -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000 }, // kSKmUndefined
+    { -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000,  
+      -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000 }, // kSKmUndefined
+    { -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000,  
+      -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000 }, // kSKmUndefined
+    { -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000,  
+      -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000 }, // kSKmUndefined
+    { -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000,  
+      -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000 }, // kSKmUndefined
+    { -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000,  
+      -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000 }, // kSKmUndefined
+    { -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000,  
+      -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000 }, // kSKmUndefined
+    { -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000,  
+      -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000 }, // kSKmUndefined
+    { -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000,  
+      -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000 }, // kSKmUndefined
+    { -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000,  
+      -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000 }, // kSKmUndefined
+    { -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000,  
+      -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000 }, // kSKmUndefined
+    { -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000,  
+      -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000 }, // kSKmUndefined
+    { -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000,  
+      -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000 }, // kSKmUndefined
+    { -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000,  
+      -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000 }, // kSKmUndefined
+    { -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000,  
+      -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000 }, // kSKmUndefined
+    { -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000,  
+      -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000 }, // kSKmUndefined
+    { -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000,  
+      -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000 }  // kSKmUndefined
+  },
+  // > 1 electron-like ring 
+  {
+    {  0.000,  0.400,  0.500,  0.600,  0.700,  1.000,  1.500,  2.500,  3.500,  5.000,  7.000,
+       30.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000 }, // kSKmNuMuCCQE 
+    {  0.000,  0.400,  0.500,  0.600,  0.700,  1.000,  1.500,  2.500,  3.500,  5.000,  7.000, 
+       30.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000 }, // kSKmNuMuCC1pi 
+    {  0.000,  0.400,  0.500,  0.600,  0.700,  1.000,  1.500,  2.500,  3.500,  5.000,  7.000, 
+       30.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000 }, // kSKmNuMuCCcoh 
+    {  0.000,  0.400,  0.500,  0.600,  0.700,  1.000,  1.500,  2.500,  3.500,  5.000,  7.000, 
+       30.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000 }, // kSKmNuMuCCoth_e 
+    {  0.000,  0.400,  0.500,  0.600,  0.700,  1.000,  1.500,  2.500,  3.500,  5.000,  7.000, 
+       30.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000 }, // kSKmNuMuNC1pi0 
+    {  0.000,  0.400,  0.500,  0.600,  0.700,  1.000,  1.500,  2.500,  3.500,  5.000,  7.000, 
+       30.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000 }, // kSKmNuMuNCcoh 
+    {  0.000,  0.400,  0.500,  0.600,  0.700,  1.000,  1.500,  2.500,  3.500,  5.000,  7.000, 
+       30.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000 }, // kSKmNuMuNCoth_e                            
+    {  0.000,  1.500, 30.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000,  
+      -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000 }, // kSKmNuMuBarCCQE 
+    {  0.000,  1.500, 30.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000,  
+      -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000 }, // kSKmNuMuBarCC1pi 
+    {  0.000,  1.500, 30.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000,  
+      -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000 }, // kSKmNuMuBarCCcoh 
+    {  0.000,  1.500, 30.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000,  
+      -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000 }, // kSKmNuMuBarCCoth_e  
+    {  0.000,  1.500, 30.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000,  
+      -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000 }, // kSKmNuMuBarNC1pi0 
+    {  0.000,  1.500, 30.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000,  
+      -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000 }, // kSKmNuMuBarNCcoh 
+    {  0.000,  1.500, 30.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000,  
+      -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000 }, // kSKmNuMuBarNCoth_e
+    {  0.000,  0.500,  0.700,  0.800,  1.500,  2.500,  4.000, 30.000, -1.000, -1.000, -1.000,  
+      -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000 }, // kSKmNuECCQE 
+    {  0.000,  0.500,  0.700,  0.800,  1.500,  2.500,  4.000, 30.000, -1.000, -1.000, -1.000,  
+      -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000 }, // kSKmNuECC1pi 
+    {  0.000,  0.500,  0.700,  0.800,  1.500,  2.500,  4.000, 30.000, -1.000, -1.000, -1.000,  
+      -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000 }, // kSKmNuECCcoh 
+    {  0.000,  0.500,  0.700,  0.800,  1.500,  2.500,  4.000, 30.000, -1.000, -1.000, -1.000,  
+      -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000 }, // kSKmNuECCoth_e
+    {  0.000,  0.500,  0.700,  0.800,  1.500,  2.500,  4.000, 30.000, -1.000, -1.000, -1.000,  
+      -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000 }, // kSKmNuENC1pi0  
+    {  0.000,  0.500,  0.700,  0.800,  1.500,  2.500,  4.000, 30.000, -1.000, -1.000, -1.000,  
+      -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000 }, // kSKmNuENCcoh 
+    {  0.000,  0.500,  0.700,  0.800,  1.500,  2.500,  4.000, 30.000, -1.000, -1.000, -1.000,  
+      -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000 }, // kSKmNuENCoth_e
+    {  0.000,  2.500, 30.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000,  
+      -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000 }, // kSKmNuEBarCCQE
+    {  0.000,  2.500, 30.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000,  
+      -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000 }, // kSKmNuEBarCC1pi
+    {  0.000,  2.500, 30.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000,  
+      -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000 }, // kSKmNuEBarCCcoh
+    {  0.000,  2.500, 30.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000,  
+      -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000 }, // kSKmNuEBarCCoth_e
+    {  0.000,  2.500, 30.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000,  
+      -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000 }, // kSKmNuEBarNC1pi0
+    {  0.000,  2.500, 30.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000,  
+      -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000 }, // kSKmNuEBarNCcoh
+    {  0.000,  2.500, 30.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000,  
+      -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000 }, // kSKmNuEBarNCoth_e
+    {  0.000,  0.400,  0.500,  0.600,  0.700,  1.000,  1.500,  2.500,  3.500,  5.000,  7.000, 
+       30.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000 }, // kSKmSigNuECCQE  
+    {  0.000,  0.400,  0.500,  0.600,  0.700,  1.000,  1.500,  2.500,  3.500,  5.000,  7.000, 
+       30.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000 }, // kSKmSigNuECC1pi  
+    {  0.000,  0.400,  0.500,  0.600,  0.700,  1.000,  1.500,  2.500,  3.500,  5.000,  7.000, 
+       30.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000 }, // kSKmSigNuECCoth_e
+    { -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000,  
+      -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000 }, // kSKmUndefined
+    { -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000,  
+      -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000 }, // kSKmUndefined
+    { -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000,  
+      -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000 }, // kSKmUndefined
+    { -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000,  
+      -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000 }, // kSKmUndefined
+    { -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000,  
+      -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000 }, // kSKmUndefined
+    { -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000,  
+      -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000 }, // kSKmUndefined
+    { -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000,  
+      -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000 }, // kSKmUndefined
+    { -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000,  
+      -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000 }, // kSKmUndefined
+    { -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000,  
+      -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000 }, // kSKmUndefined
+    { -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000,  
+      -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000 }, // kSKmUndefined
+    { -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000,  
+      -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000 }, // kSKmUndefined
+    { -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000,  
+      -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000 }, // kSKmUndefined
+    { -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000,  
+      -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000 }, // kSKmUndefined
+    { -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000,  
+      -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000 }  // kSKmUndefined
+  }
+};
+#endif
 
 //
 // SuperkMC calcuates weights using the following binning. This causes ~ a factor
@@ -1114,11 +1540,9 @@ static const double kXsEtrueBinEdges[kns][knm][kXsNEtrueBins+1] = {
 // kXsEtrueBinEdges (i.e. BANFF binning), with the addition of requiring bin edges at
 // 1.5 and 2.5 GeV, to make sure that the binned xsec normalisation are handled correctly.
 //
-
+#if BANFF_Bins == 1
 static const int kMCNEtrueBins = 11;
-
 static const double kMCEtrueBinEdges[kns][knm][kXsNEtrueBins+1] = {
-
   // > 1 muon-like ring 
   {
     {  0.000,  0.400,  0.500,  0.600,  0.700,  1.000,  1.500,  2.500,  3.500,  5.000,  7.000, 30.000 }, // kSKmNuMuCCQE         
@@ -1127,12 +1551,12 @@ static const double kMCEtrueBinEdges[kns][knm][kXsNEtrueBins+1] = {
     {  0.000,  0.400,  0.500,  0.600,  0.700,  1.000,  1.500,  2.500,  3.500,  5.000,  7.000, 30.000 }, // kSKmNuMuCCoth_mu                      
     {  0.000,  0.400,  0.500,  0.600,  0.700,  1.000,  1.500,  2.500,  3.500,  5.000,  7.000, 30.000 }, // kSKmNuMuNC1piC
     {  0.000,  0.400,  0.500,  0.600,  0.700,  1.000,  1.500,  2.500,  3.500,  5.000,  7.000, 30.000 }, // kSKmNuMuNCoth_mu
-    {  0.000,  1.500,  2.500,  3.500, 30.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000 }, // kSKmNuMuBarCCQE      
-    {  0.000,  1.500,  2.500,  3.500, 30.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000 }, // kSKmNuMuBarCC1pi
-    {  0.000,  1.500,  2.500,  3.500, 30.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000 }, // kSKmNuMuBarCCcoh
-    {  0.000,  1.500,  2.500,  3.500, 30.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000 }, // kSKmNuMuBarCCoth_mu                  
-    {  0.000,  1.500,  2.500,  3.500, 30.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000 }, // kSKmNuMuBarNC1piC
-    {  0.000,  1.500,  2.500,  3.500, 30.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000 }, // kSKmNuMuBarNCoth_mu
+    {  0.000,  0.400,  0.500,  0.600,  0.700,  1.000,  1.500,  2.500,  3.500,  5.000,  7.000, 30.000 }, // kSKmNuMuBarCCQE         
+    {  0.000,  0.400,  0.500,  0.600,  0.700,  1.000,  1.500,  2.500,  3.500,  5.000,  7.000, 30.000 }, // kSKmNuMuBarCC1pi
+    {  0.000,  0.400,  0.500,  0.600,  0.700,  1.000,  1.500,  2.500,  3.500,  5.000,  7.000, 30.000 }, // kSKmNuMuBarCCcoh
+    {  0.000,  0.400,  0.500,  0.600,  0.700,  1.000,  1.500,  2.500,  3.500,  5.000,  7.000, 30.000 }, // kSKmNuMuBarCCoth_mu                      
+    {  0.000,  0.400,  0.500,  0.600,  0.700,  1.000,  1.500,  2.500,  3.500,  5.000,  7.000, 30.000 }, // kSKmNuMuBarNC1piC
+    {  0.000,  0.400,  0.500,  0.600,  0.700,  1.000,  1.500,  2.500,  3.500,  5.000,  7.000, 30.000 }, // kSKmNuMuBarNCoth_mu
     {  0.000,  0.500,  0.700,  0.800,  1.500,  2.500,  3.500,  4.000, 30.000, -1.000, -1.000, -1.000 }, // kSKmNuECCQE 
     {  0.000,  0.500,  0.700,  0.800,  1.500,  2.500,  3.500,  4.000, 30.000, -1.000, -1.000, -1.000 }, // kSKmNuECC1pi 
     {  0.000,  0.500,  0.700,  0.800,  1.500,  2.500,  3.500,  4.000, 30.000, -1.000, -1.000, -1.000 }, // kSKmNuECCcoh
@@ -1167,7 +1591,6 @@ static const double kMCEtrueBinEdges[kns][knm][kXsNEtrueBins+1] = {
     { -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000 }, // kSKmUndefined
     { -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000 }  // kSKmUndefined
   },
-
   // > 1 electron-like ring 
   {
     {  0.000,  0.400,  0.500,  0.600,  0.700,  1.000,  1.500,  2.500,  3.500,  5.000,  7.000, 30.000 }, // kSKmNuMuCCQE 
@@ -1198,9 +1621,9 @@ static const double kMCEtrueBinEdges[kns][knm][kXsNEtrueBins+1] = {
     {  0.000,  1.500,  2.500,  3.500, 30.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000 }, // kSKmNuEBarNC1pi0
     {  0.000,  1.500,  2.500,  3.500, 30.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000 }, // kSKmNuEBarNCcoh
     {  0.000,  1.500,  2.500,  3.500, 30.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000 }, // kSKmNuEBarNCoth_e
-    {  0.000,  0.500,  0.700,  0.800,  1.500,  2.500,  3.500,  4.000, 30.000, -1.000, -1.000, -1.000 }, // kSKmSigNuECCQE  
-    {  0.000,  0.500,  0.700,  0.800,  1.500,  2.500,  3.500,  4.000, 30.000, -1.000, -1.000, -1.000 }, // kSKmSigNuECC1pi  
-    {  0.000,  0.500,  0.700,  0.800,  1.500,  2.500,  3.500,  4.000, 30.000, -1.000, -1.000, -1.000 }, // kSKmSigNuECCoth_e
+    {  0.000,  0.400,  0.500,  0.600,  0.700,  1.000,  1.500,  2.500,  3.500,  5.000,  7.000, 30.000 }, // kSKmSigNuECCQE  
+    {  0.000,  0.400,  0.500,  0.600,  0.700,  1.000,  1.500,  2.500,  3.500,  5.000,  7.000, 30.000 }, // kSKmSigNuECC1pi  
+    {  0.000,  0.400,  0.500,  0.600,  0.700,  1.000,  1.500,  2.500,  3.500,  5.000,  7.000, 30.000 }, // kSKmSigNuECCoth_e
     { -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000 }, // kSKmUndefined
     { -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000 }, // kSKmUndefined
     { -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000 }, // kSKmUndefined
@@ -1217,6 +1640,197 @@ static const double kMCEtrueBinEdges[kns][knm][kXsNEtrueBins+1] = {
     { -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000 }  // kSKmUndefined
   }
 };
+#elif BANFF_Bins == -1
+static const int kMCNEtrueBins = 20;
+static const double kMCEtrueBinEdges[kns][knm][kXsNEtrueBins+1] = {
+  // > 1 muon-like ring 
+  {
+    {  0.000,  0.100,  0.200,  0.300,  0.400,  0.500,  0.600,  0.700,  0.800,  1.000, 1.200, 
+       1.500,  2.000,  2.500,  3.000,  3.500,  4.000,  5.000,  7.000, 10.000, 30.000 }, // kSKmNuMuCCQE         
+    {  0.000,  0.100,  0.200,  0.300,  0.400,  0.500,  0.600,  0.700,  0.800,  1.000, 1.200, 
+       1.500,  2.000,  2.500,  3.000,  3.500,  4.000,  5.000,  7.000, 10.000, 30.000 }, // kSKmNuMuCC1pi
+    {  0.000,  0.100,  0.200,  0.300,  0.400,  0.500,  0.600,  0.700,  0.800,  1.000, 1.200, 
+       1.500,  2.000,  2.500,  3.000,  3.500,  4.000,  5.000,  7.000, 10.000, 30.000 }, // kSKmNuMuCCcoh
+    {  0.000,  0.100,  0.200,  0.300,  0.400,  0.500,  0.600,  0.700,  0.800,  1.000, 1.200, 
+       1.500,  2.000,  2.500,  3.000,  3.500,  4.000,  5.000,  7.000, 10.000, 30.000 }, // kSKmNuMuCCoth_mu
+    {  0.000,  0.100,  0.200,  0.300,  0.400,  0.500,  0.600,  0.700,  0.800,  1.000, 1.200, 
+       1.500,  2.000,  2.500,  3.000,  3.500,  4.000,  5.000,  7.000, 10.000, 30.000 }, // kSKmNuMuNC1piC
+    {  0.000,  0.100,  0.200,  0.300,  0.400,  0.500,  0.600,  0.700,  0.800,  1.000, 1.200, 
+       1.500,  2.000,  2.500,  3.000,  3.500,  4.000,  5.000,  7.000, 10.000, 30.000 }, // kSKmNuMuNCoth_mu
+    {  0.000,  0.100,  0.200,  0.300,  0.400,  0.500,  0.600,  0.700,  0.800,  1.000, 1.200, 
+       1.500,  2.000,  2.500,  3.000,  3.500,  4.000,  5.000,  7.000, 10.000, 30.000 }, // kSKmNuMuBarCCQE         
+    {  0.000,  0.100,  0.200,  0.300,  0.400,  0.500,  0.600,  0.700,  0.800,  1.000, 1.200, 
+       1.500,  2.000,  2.500,  3.000,  3.500,  4.000,  5.000,  7.000, 10.000, 30.000 }, // kSKmNuMuBarCC1pi
+    {  0.000,  0.100,  0.200,  0.300,  0.400,  0.500,  0.600,  0.700,  0.800,  1.000, 1.200, 
+       1.500,  2.000,  2.500,  3.000,  3.500,  4.000,  5.000,  7.000, 10.000, 30.000 }, // kSKmNuMuBarCCcoh
+    {  0.000,  0.100,  0.200,  0.300,  0.400,  0.500,  0.600,  0.700,  0.800,  1.000, 1.200, 
+       1.500,  2.000,  2.500,  3.000,  3.500,  4.000,  5.000,  7.000, 10.000, 30.000 }, // kSKmNuMuBarCCoth_mu
+    {  0.000,  0.100,  0.200,  0.300,  0.400,  0.500,  0.600,  0.700,  0.800,  1.000, 1.200, 
+       1.500,  2.000,  2.500,  3.000,  3.500,  4.000,  5.000,  7.000, 10.000, 30.000 }, // kSKmNuMuBarNC1piC
+    {  0.000,  0.100,  0.200,  0.300,  0.400,  0.500,  0.600,  0.700,  0.800,  1.000, 1.200, 
+       1.500,  2.000,  2.500,  3.000,  3.500,  4.000,  5.000,  7.000, 10.000, 30.000 }, // kSKmNuMuBarNCoth_mu
+    {  0.000,  0.500,  0.700,  0.800,  1.500,  2.500,  3.500,  4.000, 30.000, -1.000, -1.000,  
+      -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000 }, // kSKmNuECCQE 
+    {  0.000,  0.500,  0.700,  0.800,  1.500,  2.500,  3.500,  4.000, 30.000, -1.000, -1.000,  
+      -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000 }, // kSKmNuECC1pi 
+    {  0.000,  0.500,  0.700,  0.800,  1.500,  2.500,  3.500,  4.000, 30.000, -1.000, -1.000,  
+      -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000 }, // kSKmNuECCcoh
+    {  0.000,  0.500,  0.700,  0.800,  1.500,  2.500,  3.500,  4.000, 30.000, -1.000, -1.000,  
+      -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000 }, // kSKmNuECCoth_mu
+    {  0.000,  0.500,  0.700,  0.800,  1.500,  2.500,  3.500,  4.000, 30.000, -1.000, -1.000,  
+      -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000 }, // kSKmNuENC1piC
+    {  0.000,  0.500,  0.700,  0.800,  1.500,  2.500,  3.500,  4.000, 30.000, -1.000, -1.000,  
+      -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000 }, // kSKmNuENCoth_mu
+    {  0.000,  1.500,  2.500, 3.500,  30.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000,  
+      -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000 }, // kSKmNuEBarCCQE
+    {  0.000,  1.500,  2.500, 3.500,  30.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000,  
+      -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000 }, // kSKmNuEBarCC1pi
+    {  0.000,  1.500,  2.500, 3.500,  30.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000,  
+      -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000 }, // kSKmNuEBarCCcoth_mu
+    {  0.000,  1.500,  2.500, 3.500,  30.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000,  
+      -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000 }, // kSKmNuEBarCCoth_mu
+    {  0.000,  1.500,  2.500, 3.500,  30.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000,  
+      -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000 }, // kSKmNuEBarNC1piC
+    {  0.000,  1.500,  2.500, 3.500,  30.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000,  
+      -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000 }, // kSKmNuEBarNCoth_mu
+    {  0.000,  0.100,  0.200,  0.300,  0.400,  0.500,  0.600,  0.700,  0.800,  1.000, 1.200, 
+       1.500,  2.000,  2.500,  3.000,  3.500,  4.000,  5.000,  7.000, 10.000, 30.000 }, // kSKmSigNuECCQE 
+    {  0.000,  0.100,  0.200,  0.300,  0.400,  0.500,  0.600,  0.700,  0.800,  1.000, 1.200, 
+       1.500,  2.000,  2.500,  3.000,  3.500,  4.000,  5.000,  7.000, 10.000, 30.000 }, // kSKmSigNuECC1pi
+    {  0.000,  0.100,  0.200,  0.300,  0.400,  0.500,  0.600,  0.700,  0.800,  1.000, 1.200, 
+       1.500,  2.000,  2.500,  3.000,  3.500,  4.000,  5.000,  7.000, 10.000, 30.000 }, // kSKmSigNuECCcoh
+    {  0.000,  0.100,  0.200,  0.300,  0.400,  0.500,  0.600,  0.700,  0.800,  1.000, 1.200, 
+       1.500,  2.000,  2.500,  3.000,  3.500,  4.000,  5.000,  7.000, 10.000, 30.000 }, // kSKmSigNuECCoth_mu
+    { -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000,  
+      -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000 }, // kSKmUndefined
+    { -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000,  
+      -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000 }, // kSKmUndefined
+    { -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000,  
+      -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000 }, // kSKmUndefined
+    { -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000,  
+      -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000 }, // kSKmUndefined
+    { -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000,  
+      -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000 }, // kSKmUndefined
+    { -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000,  
+      -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000 }, // kSKmUndefined
+    { -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000,  
+      -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000 }, // kSKmUndefined
+    { -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000,  
+      -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000 }, // kSKmUndefined
+    { -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000,  
+      -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000 }, // kSKmUndefined
+    { -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000,  
+      -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000 }, // kSKmUndefined
+    { -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000,  
+      -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000 }, // kSKmUndefined
+    { -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000,  
+      -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000 }, // kSKmUndefined
+    { -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000,  
+      -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000 }, // kSKmUndefined
+    { -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000,  
+      -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000 }, // kSKmUndefined
+    { -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000,  
+      -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000 }, // kSKmUndefined
+    { -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000,  
+      -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000 }, // kSKmUndefined
+    { -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000,  
+      -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000 }  // kSKmUndefined
+  },
+  // > 1 electron-like ring 
+  {
+    {  0.000,  0.400,  0.500,  0.600,  0.700,  1.000,  1.500,  2.500,  3.500,  5.000,  7.000,
+       30.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000 }, // kSKmNuMuCCQE 
+    {  0.000,  0.400,  0.500,  0.600,  0.700,  1.000,  1.500,  2.500,  3.500,  5.000,  7.000, 
+       30.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000 }, // kSKmNuMuCC1pi 
+    {  0.000,  0.400,  0.500,  0.600,  0.700,  1.000,  1.500,  2.500,  3.500,  5.000,  7.000, 
+       30.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000 }, // kSKmNuMuCCcoh 
+    {  0.000,  0.400,  0.500,  0.600,  0.700,  1.000,  1.500,  2.500,  3.500,  5.000,  7.000, 
+       30.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000 }, // kSKmNuMuCCoth_e 
+    {  0.000,  0.400,  0.500,  0.600,  0.700,  1.000,  1.500,  2.500,  3.500,  5.000,  7.000, 
+       30.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000 }, // kSKmNuMuNC1pi0 
+    {  0.000,  0.400,  0.500,  0.600,  0.700,  1.000,  1.500,  2.500,  3.500,  5.000,  7.000, 
+       30.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000 }, // kSKmNuMuNCcoh 
+    {  0.000,  0.400,  0.500,  0.600,  0.700,  1.000,  1.500,  2.500,  3.500,  5.000,  7.000, 
+       30.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000 }, // kSKmNuMuNCoth_e
+    {  0.000,  1.500, 30.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000,  
+      -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000 }, // kSKmNuMuBarCCQE 
+    {  0.000,  1.500, 30.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000,  
+      -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000 }, // kSKmNuMuBarCC1pi 
+    {  0.000,  1.500, 30.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000,  
+      -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000 }, // kSKmNuMuBarCCcoh 
+    {  0.000,  1.500, 30.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000,  
+      -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000 }, // kSKmNuMuBarCCoth_e  
+    {  0.000,  1.500, 30.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000,  
+      -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000 }, // kSKmNuMuBarNC1pi0 
+    {  0.000,  1.500, 30.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000,  
+      -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000 }, // kSKmNuMuBarNCcoh 
+    {  0.000,  1.500, 30.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000,  
+      -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000 }, // kSKmNuMuBarNCoth_e
+    {  0.000,  0.500,  0.700,  0.800,  1.500,  2.500,  3.500,  4.000, 30.000, -1.000, -1.000,  
+      -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000 }, // kSKmNuECCQE 
+    {  0.000,  0.500,  0.700,  0.800,  1.500,  2.500,  3.500,  4.000, 30.000, -1.000, -1.000,  
+      -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000 }, // kSKmNuECC1pi 
+    {  0.000,  0.500,  0.700,  0.800,  1.500,  2.500,  3.500,  4.000, 30.000, -1.000, -1.000,  
+      -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000 }, // kSKmNuECCcoh 
+    {  0.000,  0.500,  0.700,  0.800,  1.500,  2.500,  3.500,  4.000, 30.000, -1.000, -1.000,  
+      -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000 }, // kSKmNuECCoth_e
+    {  0.000,  0.500,  0.700,  0.800,  1.500,  2.500,  3.500,  4.000, 30.000, -1.000, -1.000,  
+      -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000 }, // kSKmNuENC1pi0  
+    {  0.000,  0.500,  0.700,  0.800,  1.500,  2.500,  3.500,  4.000, 30.000, -1.000, -1.000,  
+      -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000 }, // kSKmNuENCcoh 
+    {  0.000,  0.500,  0.700,  0.800,  1.500,  2.500,  3.500,  4.000, 30.000, -1.000, -1.000,  
+      -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000 }, // kSKmNuENCoth_e
+    {  0.000,  1.500,  2.500, 3.500,  30.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000,  
+      -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000 }, // kSKmNuEBarCCQE
+    {  0.000,  1.500,  2.500, 3.500,  30.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000,  
+      -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000 }, // kSKmNuEBarCC1pi
+    {  0.000,  1.500,  2.500, 3.500,  30.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000,  
+      -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000 }, // kSKmNuEBarCCcoh
+    {  0.000,  1.500,  2.500, 3.500,  30.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000,  
+      -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000 }, // kSKmNuEBarCCoth_e
+    {  0.000,  1.500,  2.500, 3.500,  30.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000,  
+      -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000 }, // kSKmNuEBarNC1pi0
+    {  0.000,  1.500,  2.500, 3.500,  30.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000,  
+      -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000 }, // kSKmNuEBarNCcoh
+    {  0.000,  1.500,  2.500, 3.500,  30.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000,  
+      -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000 }, // kSKmNuEBarNCoth_e
+    {  0.000,  0.400,  0.500,  0.600,  0.700,  1.000,  1.500,  2.500,  3.500,  5.000,  7.000, 
+       30.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000 }, // kSKmSigNuECCQE  
+    {  0.000,  0.400,  0.500,  0.600,  0.700,  1.000,  1.500,  2.500,  3.500,  5.000,  7.000, 
+       30.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000 }, // kSKmSigNuECC1pi  
+    {  0.000,  0.400,  0.500,  0.600,  0.700,  1.000,  1.500,  2.500,  3.500,  5.000,  7.000, 
+       30.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000 }, // kSKmSigNuECCoth_e
+    { -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000,  
+      -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000 }, // kSKmUndefined
+    { -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000,  
+      -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000 }, // kSKmUndefined
+    { -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000,  
+      -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000 }, // kSKmUndefined
+    { -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000,  
+      -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000 }, // kSKmUndefined
+    { -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000,  
+      -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000 }, // kSKmUndefined
+    { -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000,  
+      -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000 }, // kSKmUndefined
+    { -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000,  
+      -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000 }, // kSKmUndefined
+    { -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000,  
+      -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000 }, // kSKmUndefined
+    { -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000,  
+      -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000 }, // kSKmUndefined
+    { -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000,  
+      -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000 }, // kSKmUndefined
+    { -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000,  
+      -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000 }, // kSKmUndefined
+    { -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000,  
+      -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000 }, // kSKmUndefined
+    { -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000,  
+      -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000 }, // kSKmUndefined
+    { -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000,  
+      -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000 }  // kSKmUndefined
+  }
+};
+#endif
 
 // Number of cross-section weight splines
 static const int kNumOfXSecSystWghtSpl = kNSuperkSamples * kNSuperkModes * kNumOfXSecSyst * kXsNErecoBins * kXsNEtrueBins;

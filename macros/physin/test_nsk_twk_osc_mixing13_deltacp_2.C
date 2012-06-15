@@ -8,32 +8,34 @@
 // ------------------------------------------------------------------------------------------------
 //
 
-#include "Conventions.h"
+//#include "Conventions.h"
 
-void test_nsk_twk_osc_mixing13_deltacp
+void test_nsk_twk_osc_mixing13_deltacp_2
 (
-  double       input_mixing23     = 1.00,                           /* */
-  double       input_dm23sq            = 2.32E-3,                        /* */
-  double       input_mixing12     = 0.86,                           /* */
-  double       input_dm12sq            = 7.58E-5,                        /* */
-  const char * config_file             = "analysis_configuration.xml"    /* */
+  double       input_mixing12     = -99,                            /* */
+  double       input_mixing23     = -99,                            /* */
+  double       input_dm12sq       = -99,                            /* */
+  double       input_dm23sq       = -99,                            /* */
+  const char * config_file        = "analysis_configuration.xml"    /* */
 )
 {
   using namespace std;
   using namespace t2kana;
+
+  conv::SuperkSample_t s = conv::kSKsFCFV1RingMuLike;
 
   const double pi = TMath::Pi();
 
   double mixing13_min  =  0.0;
   double mixing13_max  =  0.25;
   double mixing13_step =  0.01;
-  double deltacp_min        = -pi;
-  double deltacp_max        =  pi;
-  double deltacp_step       =  2*pi/90.;
+  double deltacp_min   = -pi;
+  double deltacp_max   =  pi;
+  double deltacp_step  =  2*pi/90.;
 
   // make sure that min and max are at the bin centre
   int mixing13_nbins = 1 + (int) ((mixing13_max - mixing13_min) / mixing13_step);
-  int deltacp_nbins       = 1 + (int) ((deltacp_max       - deltacp_min      ) / deltacp_step      );
+  int deltacp_nbins  = 1 + (int) ((deltacp_max  - deltacp_min ) / deltacp_step );
 
   TH2D * nsk_vs_osc_params = 
    new TH2D("nsk_vs_osc_params", "number of 1-ring mu-like events",
@@ -67,22 +69,34 @@ void test_nsk_twk_osc_mixing13_deltacp
   SuperkExpectation skexp;
   skexp.Read(config);
 
+  // Set physics hypothesis
+  if(Opt::Instance()->gOscMixingParamChoice == conv::kNuMixSinsq2Theta) {
+    if(input_mixing23 < -1) input_mixing23 = conv::kGlobFitSinsq2Theta23;
+    if(input_mixing12 < -1) input_mixing12 = conv::kGlobFitSinsq2Theta12;
+  }
+  else {
+    if(input_mixing13 < -1) input_mixing13 = conv::kGlobFitSinsqTheta13;
+    if(input_mixing23 < -1) input_mixing23 = conv::kGlobFitSinsqTheta23;
+  }
+  if(input_dm23sq < -1)  input_dm23sq = conv::kGlobFitDm23sq;
+  if(input_dm12sq < -1)  input_dm12sq = conv::kGlobFitDm12sq;
+
   // reference (2-flavour) physics hypothesis
   PhysHypothesis phref(t2kana::conv::kHypNuMuDisapp2F);
-  phref.SetCurrValue(conv::kPhypMixing23,  input_mixing23);
-  phref.SetCurrValue(conv::kPhypDm23sq,         input_dm23sq       );
+  phref.SetCurrValue(conv::kPhypMixing23, input_mixing23);
+  phref.SetCurrValue(conv::kPhypDm23sq,   input_dm23sq  );
 
   // prediction for reference hypothesis
   skexp.Generate(phref);
-  double nskref = skexp.CurrPredictedErecoSpectrum(conv::kSKsFCFV1RingMuLike)->Integral();
+  double nskref = skexp.CurrPredictedErecoSpectrum(s)->Integral();
   cout << "Nsk[1Rmu,2-flavour] = " << nskref << endl;
 
   // 3-flavour physics hypothesis, setting fixed params
   PhysHypothesis ph(conv::kHypOsc3F);
   ph.SetCurrValue(conv::kPhypMixing23,  input_mixing23);
-  ph.SetCurrValue(conv::kPhypDm23sq,         input_dm23sq       );
+  ph.SetCurrValue(conv::kPhypDm23sq,    input_dm23sq  );
   ph.SetCurrValue(conv::kPhypMixing12,  input_mixing12);
-  ph.SetCurrValue(conv::kPhypDm12sq,         input_dm12sq       );
+  ph.SetCurrValue(conv::kPhypDm12sq,    input_dm12sq  );
    
   // loop over varied params and generate predictions
   for(int i = 1; i <= nsk_vs_osc_params->GetNbinsX(); i++) {
@@ -94,7 +108,7 @@ void test_nsk_twk_osc_mixing13_deltacp
        // generate predictions
        skexp.Generate(ph);
        // integrate Ereco distribution 
-       double nsk = skexp.CurrPredictedErecoSpectrum(conv::kSKsFCFV1RingMuLike)->Integral();
+       double nsk = skexp.CurrPredictedErecoSpectrum(s)->Integral();
        double frac_dnsk = 100*(nsk-nskref)/nskref;
        // store values
        nsk_vs_osc_params->SetBinContent(i,j,nsk);

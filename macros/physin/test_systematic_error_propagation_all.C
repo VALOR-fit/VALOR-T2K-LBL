@@ -9,17 +9,17 @@
 
 void test_systematic_error_propagation_all
 (
-  const char * sksample                   = "1Rmu",                         /* options: "1Rmu", "1Re" */
-  double       input_mixing12             = 0.86,                           /* */
-  double       input_mixing13             = 0.10,                           /* */
-  double       input_mixing23             = 1.00,                           /* */
-  double       input_deltacp              = 0.00,                           /* */
-  double       input_dm12sq               = 7.58E-5,                        /* */
-  double       input_dm23sq               = 2.40E-3,                        /* */
-  const char * output_file                = "systematic_tables_fakesplines.tex",        /* */
-  const char * config_file                = "analysis_configuration_fakesplines.xml"    /* */
-  //const char * output_file                = "systematic_tables.tex",        /* */
-  //const char * config_file                = "analysis_configuration.xml"    /* */
+  const char * sksample         = "1Rmu",                         /* options: "1Rmu", "1Re" */
+  double       input_mixing12   = -99,                            /* */
+  double       input_mixing13   = -99,                            /* */
+  double       input_mixing23   = -99,                            /* */
+  double       input_deltacp    = -99,                            /* */
+  double       input_dm12sq     = -99,                            /* */
+  double       input_dm23sq     = -99,                            /* */
+  const char * output_file      = "systematic_tables_fakesplines.tex",        /* */
+  const char * config_file      = "analysis_configuration_fakesplines.xml"    /* */
+  //const char * output_file    = "systematic_tables.tex",        /* */
+  //const char * config_file    = "analysis_configuration.xml"    /* */
 )
 {
   using namespace std;
@@ -49,6 +49,19 @@ void test_systematic_error_propagation_all
   assert(s != conv::kSKsUndefined);
 
   // Set physics hypothesis
+  if(Opt::Instance()->gOscMixingParamChoice == conv::kNuMixSinsq2Theta) {
+    if(input_mixing13 < -1) input_mixing13 = conv::kGlobFitSinsq2Theta13;
+    if(input_mixing23 < -1) input_mixing23 = conv::kGlobFitSinsq2Theta23;
+    if(input_mixing12 < -1) input_mixing12 = conv::kGlobFitSinsq2Theta12;
+  }
+  else {
+    if(input_mixing13 < -1) input_mixing13 = conv::kGlobFitSinsqTheta13;
+    if(input_mixing23 < -1) input_mixing23 = conv::kGlobFitSinsqTheta23;
+    if(input_mixing12 < -1) input_mixing12 = conv::kGlobFitSinsqTheta12;
+  }
+  if(input_dm23sq < -1)  input_dm23sq = conv::kGlobFitDm23sq;
+  if(input_dm12sq < -1)  input_dm12sq = conv::kGlobFitDm12sq;
+  if(input_deltacp < -90) input_deltacp = conv::kGlobFitDeltaCP;
   char* hypothesis("3f_osc");
   PhysHypothesis ph(hypothesis);
   ph.SetCurrValue(conv::kPhypMixing12,  input_mixing12);
@@ -136,9 +149,14 @@ void test_systematic_error_propagation_all
 
   vector<string> systematics;
   //systematics.push_back("banff"); //not supported in this macro
-  for(int ib = 0; ib < conv::kNumOfParamsInBANFFfit; ib++) {
+  for(int ib = 0; ib < conv::kNumOfFluxParamsInBANFFfit; ib++) {
     systematics.push_back(Form("banff_%02d",ib));
   }
+  systematics.push_back("banff_maqe");
+  systematics.push_back("banff_mares");
+  systematics.push_back("banff_ccqeE0");
+  systematics.push_back("banff_cc1piE0");
+  systematics.push_back("banff_nc1pi0");
   //systematics.push_back("sk_1Rmu_ccqe_ring_counting_eff"); //not supported in the macro
   systematics.push_back("sk_1Rmu_ccqe_ring_counting_eff_0");
   systematics.push_back("sk_1Rmu_ccqe_ring_counting_eff_1");
@@ -162,7 +180,7 @@ void test_systematic_error_propagation_all
   systematics.push_back("xsec_norm_ncoth");
   systematics.push_back("xsec_norm_nuetonumu");
 
-  bool         use_tex                    = true;
+  bool use_tex = true;
 
   for(int isys = 0; isys < systematics.size(); isys++) {
     string systematic = systematics[isys];
@@ -171,24 +189,23 @@ void test_systematic_error_propagation_all
     bool show_sk_spectral_info_etrue_flux_binning = false;
     bool show_sk_spectral_info_etrue_norm_binning = false;
 
+    //sk systematics
     if(systematic.find("sk_1Rmu_ccqe_ring_counting_eff_") == 0 || systematic.find("sk_energy_scale") == 0)
       show_sk_ccqe_spectral_info_ereco = true;
+    //banff splines
+    else if(systematic.find("banff_maqe") == 0 || systematic.find("banff_mares") == 0)
+      show_sk_spectral_info_etrue_flux_binning = true;
+    //banff binned norms
+    else if(systematic.find("banff_ccqeE0") == 0 || systematic.find("banff_cc1piE0") == 0)
+      show_sk_spectral_info_etrue_norm_binning = true;
+    //banff unbinned norms
+    else if(systematic.find("banff_nc1pi0") == 0)
+      show_sk_ccqe_spectral_info_ereco = false;
+    //banff flux
     else if(systematic.find("banff_") == 0) {
-      size_t found;
-      found = systematic.find_first_of("012");
-      string bnum = systematic.substr(found,2);
-      int bindex = atoi(bnum.c_str());
-      //flux parameters
-      if(bindex <= 21)
-	show_sk_spectral_info_etrue_flux_binning = true;
-      //spline parameters
-      else if(bindex == 22 || bindex == 23)
-	show_sk_spectral_info_etrue_flux_binning = true;
-      //norm parameters with binning
-      else if(bindex == 24 || bindex == 25) {
-        show_sk_spectral_info_etrue_norm_binning = true;
-      }
+      show_sk_spectral_info_etrue_flux_binning = true;
     }
+    //xsec
     else if(systematic.find("xsec_") == 0) {
       if(systematic.find("xsec_norm_") == 0) {
 	//norm parameters with binning
@@ -519,13 +536,10 @@ void test_systematic_error_propagation_all
     cout << "\n\nApplying +1 sigma tweak" << endl;
     bool sys_is_banff = false;
     if(systematic.find("banff_") == 0) {
-      size_t found;
-      found = systematic.find_first_of("012");
-      string bnum = systematic.substr(found,2);
-      int bindex = atoi(bnum.c_str());
-      cout << bindex << endl;
+      conv::PhysParamId_t p = util::PhysParamIdFromString(systematic);
+      int ip = util::ArrIdx::Instance()->BANFFSystIdx(p);
       // curr/nominal = 1 + (nsigma * x)
-      skexp->TweakSystematic(systematic, skexp->GetBANFF()->BestFitValue(util::PhysParamIdFromString(systematic)) * (1 + skexp->GetBANFF()->CovMatrix()(bindex,bindex)));
+      skexp->TweakSystematic(systematic, skexp->GetBANFF()->BestFitValue(p) * (1 + skexp->GetBANFF()->CovMatrix()(ip,ip)));
       skexp->GetBANFF()->PrintSystematicVariations();
       sys_is_banff = true;
     }
@@ -688,13 +702,10 @@ void test_systematic_error_propagation_all
     //
     cout << "\n\nApplying -1 sigma tweak" << endl;
     if(systematic.find("banff_") == 0) {
-      size_t found;
-      found = systematic.find_first_of("012");
-      string bnum = systematic.substr(found,2);
-      int bindex = atoi(bnum.c_str());
-      cout << bindex << endl;
+      conv::PhysParamId_t p = util::PhysParamIdFromString(systematic);
+      int ip = util::ArrIdx::Instance()->BANFFSystIdx(p);
       // curr/nominal = 1 + (nsigma * x)
-      skexp->TweakSystematic(systematic, skexp->GetBANFF()->BestFitValue(util::PhysParamIdFromString(systematic)) * (1 - skexp->GetBANFF()->CovMatrix()(bindex,bindex)));
+      skexp->TweakSystematic(systematic, skexp->GetBANFF()->BestFitValue(p) * (1 - skexp->GetBANFF()->CovMatrix()(ip,ip)));
       skexp->GetBANFF()->PrintSystematicVariations();
     }
     else if(systematic.find("xsec_") == 0) {

@@ -12,17 +12,21 @@
 
 void test_nsk
 (
-  double mixing13 = 0.1,
-  double mixing23 = 1,
-  double mixing12 = 0.86,
-  double dm23sq = 2.32E-3,
-  double dm12sq = 7.58E-5,
-  double deltacp = 0,
-  const char * config_file = "analysis_configuration.xml"
+ double input_mixing13    = -99,
+ double input_mixing23    = -99,
+ double input_mixing12    = -99,
+ double input_dm23sq      = -99,
+ double input_dm12sq      = -99,
+ double input_deltacp     = -99,
+ const string sample_str  = "1Rmu",
+ const char * config_file = "analysis_configuration.xml"
 )
 {
   using namespace std;
   using namespace t2kana;
+
+  conv::SuperkSample_t s = util::SKSampleFromString(sample_str);
+  int is = util::ArrIdx::Instance()->SuperkSampleIdx(s);
 
   const char * config = Form("%s/config/%s", gSystem->Getenv("T2KOSCANA"), config_file);
   cout << "Reading analysis configuration from: " << config << endl;
@@ -35,64 +39,76 @@ void test_nsk
   PhysHypothesis ph(t2kana::conv::kHypOsc3F);
 
   // generate predictions
-  ph.SetCurrValue(t2kana::conv::kPhypMixing23, mixing23);
-  ph.SetCurrValue(t2kana::conv::kPhypMixing13, mixing13);
-  ph.SetCurrValue(t2kana::conv::kPhypMixing12, mixing12);
-  ph.SetCurrValue(t2kana::conv::kPhypDm23sq,        dm23sq);
-  ph.SetCurrValue(t2kana::conv::kPhypDm12sq,        dm12sq);
-  ph.SetCurrValue(t2kana::conv::kPhypDeltaCP,       deltacp);
+  if(Opt::Instance()->gOscMixingParamChoice == conv::kNuMixSinsq2Theta) {
+    if(input_mixing13 < -1) input_mixing13 = conv::kGlobFitSinsq2Theta13;
+    if(input_mixing23 < -1) input_mixing23 = conv::kGlobFitSinsq2Theta23;
+    if(input_mixing12 < -1) input_mixing12 = conv::kGlobFitSinsq2Theta12;
+  }
+  else {
+    if(input_mixing13 < -1) input_mixing13 = conv::kGlobFitSinsqTheta13;
+    if(input_mixing23 < -1) input_mixing23 = conv::kGlobFitSinsqTheta23;
+    if(input_mixing12 < -1) input_mixing12 = conv::kGlobFitSinsqTheta12;
+  }
+  if(input_dm23sq < -1)  input_dm23sq = conv::kGlobFitDm23sq;
+  if(input_dm12sq < -1)  input_dm12sq = conv::kGlobFitDm12sq;
+  if(input_deltacp < -90) input_deltacp = conv::kGlobFitDeltaCP;
+
+  ph.SetCurrValue(t2kana::conv::kPhypMixing23, input_mixing23);
+  ph.SetCurrValue(t2kana::conv::kPhypMixing13, input_mixing13);
+  ph.SetCurrValue(t2kana::conv::kPhypMixing12, input_mixing12);
+  ph.SetCurrValue(t2kana::conv::kPhypDm23sq,   input_dm23sq);
+  ph.SetCurrValue(t2kana::conv::kPhypDm12sq,   input_dm12sq);
+  ph.SetCurrValue(t2kana::conv::kPhypDeltaCP,  input_deltacp);
 
   // generate predictions
   skexp.Generate(ph);
 
-
   // integrate Ereco distribution
-  double nsk = skexp.CurrPredictedErecoSpectrum(conv::kSKsFCFV1RingMuLike)->Integral();
-  double nskmc = 0;
+  double nsk = skexp.CurrPredictedErecoSpectrum(s)->Integral();
+  double nskmc = 0, nskmucc = 0, nskmubarcc = 0, nskecc = 0, nskebarcc = 0, nsksigecc = 0, nsknc = 0;
   for(int im = 0; im < conv::knm; im++) {
-    int is =util::ArrIdx::Instance()-> SuperkSampleIdx(conv::kSKsFCFV1RingMuLike);
     conv::SuperkMode_t m = conv::kSKReactionModes[is][im];
     if(m == conv::kSKmUndefined)
       continue;
-    nskmc += skexp.GetSuperkMC()->Template(conv::kSKsFCFV1RingMuLike, m, conv::kSKMCtFin)->Integral();
-  }
-  double nskmucc = 0;
-  nskmucc += skexp.CurrPredictedErecoSpectrum(conv::kSKsFCFV1RingMuLike, conv::kSKmNuMuCCQE    )->Integral();
-  nskmucc += skexp.CurrPredictedErecoSpectrum(conv::kSKsFCFV1RingMuLike, conv::kSKmNuMuCC1pi   )->Integral();
-  nskmucc += skexp.CurrPredictedErecoSpectrum(conv::kSKsFCFV1RingMuLike, conv::kSKmNuMuCCcoh   )->Integral();
-  nskmucc += skexp.CurrPredictedErecoSpectrum(conv::kSKsFCFV1RingMuLike, conv::kSKmNuMuCCoth_mu)->Integral();
-  nskmucc += skexp.CurrPredictedErecoSpectrum(conv::kSKsFCFV1RingMuLike, conv::kSKmNuMuBarCCQE    )->Integral();
-  nskmucc += skexp.CurrPredictedErecoSpectrum(conv::kSKsFCFV1RingMuLike, conv::kSKmNuMuBarCC1pi   )->Integral();
-  nskmucc += skexp.CurrPredictedErecoSpectrum(conv::kSKsFCFV1RingMuLike, conv::kSKmNuMuBarCCcoh   )->Integral();
-  nskmucc += skexp.CurrPredictedErecoSpectrum(conv::kSKsFCFV1RingMuLike, conv::kSKmNuMuBarCCoth_mu)->Integral();
-  double nsknc = 0;
-  nsknc += skexp.CurrPredictedErecoSpectrum(conv::kSKsFCFV1RingMuLike, conv::kSKmNuMuNC1piC     )->Integral();
-  nsknc += skexp.CurrPredictedErecoSpectrum(conv::kSKsFCFV1RingMuLike, conv::kSKmNuMuNCoth_mu   )->Integral();
-  nsknc += skexp.CurrPredictedErecoSpectrum(conv::kSKsFCFV1RingMuLike, conv::kSKmNuMuBarNC1piC  )->Integral();
-  nsknc += skexp.CurrPredictedErecoSpectrum(conv::kSKsFCFV1RingMuLike, conv::kSKmNuMuBarNCoth_mu)->Integral();
-  nsknc += skexp.CurrPredictedErecoSpectrum(conv::kSKsFCFV1RingMuLike, conv::kSKmNuENC1piC      )->Integral();
-  nsknc += skexp.CurrPredictedErecoSpectrum(conv::kSKsFCFV1RingMuLike, conv::kSKmNuENCoth_mu    )->Integral();
-  nsknc += skexp.CurrPredictedErecoSpectrum(conv::kSKsFCFV1RingMuLike, conv::kSKmNuEBarNC1piC   )->Integral();
-  nsknc += skexp.CurrPredictedErecoSpectrum(conv::kSKsFCFV1RingMuLike, conv::kSKmNuEBarNCoth_mu )->Integral();
-  double nskebeamcc = 0;
-  nskebeamcc += skexp.CurrPredictedErecoSpectrum(conv::kSKsFCFV1RingMuLike, conv::kSKmNuECCQE    )->Integral();
-  nskebeamcc += skexp.CurrPredictedErecoSpectrum(conv::kSKsFCFV1RingMuLike, conv::kSKmNuECC1pi   )->Integral();
-  nskebeamcc += skexp.CurrPredictedErecoSpectrum(conv::kSKsFCFV1RingMuLike, conv::kSKmNuECCcoh   )->Integral();
-  nskebeamcc += skexp.CurrPredictedErecoSpectrum(conv::kSKsFCFV1RingMuLike, conv::kSKmNuECCoth_mu)->Integral();
-  double nskesigcc = 0;
-  nskesigcc += skexp.CurrPredictedErecoSpectrum(conv::kSKsFCFV1RingMuLike, conv::kSKmSigNuECCQE    )->Integral();
-  nskesigcc += skexp.CurrPredictedErecoSpectrum(conv::kSKsFCFV1RingMuLike, conv::kSKmSigNuECC1pi   )->Integral();
-  nskesigcc += skexp.CurrPredictedErecoSpectrum(conv::kSKsFCFV1RingMuLike, conv::kSKmSigNuECCcoh   )->Integral();
-  nskesigcc += skexp.CurrPredictedErecoSpectrum(conv::kSKsFCFV1RingMuLike, conv::kSKmSigNuECCoth_mu)->Integral();
+    nskmc += skexp.GetSuperkMC()->Template(s, m, conv::kSKMCtFin)->Integral();
 
+    //split into categories (all NC, CC numu, CC numubar, CC nue, CC nuebar, CC signue)
+    if(util::IsNC(m))
+      nsknc += skexp.GetSuperkMC()->Template(s, m, conv::kSKMCtFin)->Integral();
+    else {
+      if(util::IsNuMu(m))
+	nskmucc += skexp.GetSuperkMC()->Template(s, m, conv::kSKMCtFin)->Integral();
+      else if(util::IsNuMuBar(m))
+	nskmubarcc += skexp.GetSuperkMC()->Template(s, m, conv::kSKMCtFin)->Integral();
+      else if(util::IsNuE(m))
+	nskecc += skexp.GetSuperkMC()->Template(s, m, conv::kSKMCtFin)->Integral();
+      else if(util::IsNuEBar(m))
+	nskebarcc += skexp.GetSuperkMC()->Template(s, m, conv::kSKMCtFin)->Integral();
+      else if(util::IsSignalNuE(m))
+	nsksigecc += skexp.GetSuperkMC()->Template(s, m, conv::kSKMCtFin)->Integral();
+    }//CC?
+  }
 
   //output in form of table 16, TN52
-  cout << " dm23sq is " << dm23sq << endl;
-  cout << "     " << nskmucc+nskebeamcc+nsknc << " beam total" << endl;
-  cout << "     " << nskmucc << " numu+numubar CC" << endl;
-  cout << "     " << nskebeamcc << " nue beam CC" << endl;
+  cout << endl << " dm23sq is " << input_dm23sq << endl;
+  cout << "     " << nskmucc + nskmubarcc + nskecc + nskebarcc + nsksigecc + nsknc << " beam total" << endl;
+  cout << "     " << nskmucc + nskmubarcc << " numu+numubar CC" << endl;
+  cout << "     " << nskecc + nskebarcc << " nue+nuebar beam CC" << endl;
   cout << "     " << nsknc << " all NC" << endl;
-  cout << "     " << nskesigcc << " nue signal CC" << endl;
-  cout << "Number of predicted events at SK is: " << nsk << "     = " << nskmucc+nsknc+nskebeamcc+nskesigcc << endl;
-  cout << nskmc << endl;
+  cout << "     " << nsksigecc << " nue signal CC" << endl;
+
+  //output a bit more broken down
+  cout << endl << " dm23sq is " << input_dm23sq << endl;
+  cout << "     " << nskmucc + nskmubarcc + nskecc + nskebarcc + nsksigecc + nsknc << " beam total" << endl;
+  cout << "     " << nskmucc << " numu CC" << endl;
+  cout << "     " << nskmubarcc << " numubar CC" << endl;
+  cout << "     " << nskecc << " nue beam CC" << endl;
+  cout << "     " << nskebarcc << " nuebar beam CC" << endl;
+  cout << "     " << nsknc << " all NC" << endl;
+  cout << "     " << nsksigecc << " nue signal CC" << endl;
+
+  //the total
+  cout << endl << "Number of predicted events at SK is: " << nsk << "     = " 
+       << nskmucc + nskmubarcc + nskecc + nskebarcc + nsksigecc + nsknc << "     = " 
+       << nskmc << endl;
 }

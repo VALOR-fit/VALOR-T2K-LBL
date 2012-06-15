@@ -10,17 +10,19 @@
 void test_sk_ereco_spectrum_twk_sk_escale
 (
   const char * hypothesis         = "3f_osc",                       /* options: "2f_numu_disap", "3f_osc" */
-  double       input_mixing12     = 0.86,                           /* */
-  double       input_mixing13     = 0.10,                           /* */
-  double       input_mixing23     = 1.00,                           /* */
-  double       input_deltacp      = 0.00,                           /* */
-  double       input_dm12sq       = 7.58E-5,                        /* */
-  double       input_dm23sq       = 2.32E-3,                        /* */
+  double       input_mixing12     = -99,                            /* */
+  double       input_mixing13     = -99,                            /* */
+  double       input_mixing23     = -99,                            /* */
+  double       input_deltacp      = -99,                            /* */
+  double       input_dm12sq       = -99,                            /* */
+  double       input_dm23sq       = -99,                            /* */
   const char * config_file        = "analysis_configuration.xml"    /* */
 )
 {
   using namespace std;
   using namespace t2kana;
+
+  conv::SuperkSample_t s = conv::kSKsFCFV1RingMuLike;
 
   // Analysis configuration
   const char * config  = Form("%s/config/%s", gSystem->Getenv("T2KOSCANA"), config_file);
@@ -30,6 +32,19 @@ void test_sk_ereco_spectrum_twk_sk_escale
   Opt::Instance()->gMassHierarchyAssumed = conv::kNmhNormal;
 
   // Set physics hypothesis
+  if(Opt::Instance()->gOscMixingParamChoice == conv::kNuMixSinsq2Theta) {
+    if(input_mixing13 < -1) input_mixing13 = conv::kGlobFitSinsq2Theta13;
+    if(input_mixing23 < -1) input_mixing23 = conv::kGlobFitSinsq2Theta23;
+    if(input_mixing12 < -1) input_mixing12 = conv::kGlobFitSinsq2Theta12;
+  }
+  else {
+    if(input_mixing13 < -1) input_mixing13 = conv::kGlobFitSinsqTheta13;
+    if(input_mixing23 < -1) input_mixing23 = conv::kGlobFitSinsqTheta23;
+    if(input_mixing12 < -1) input_mixing12 = conv::kGlobFitSinsqTheta12;
+  }
+  if(input_dm23sq < -1)  input_dm23sq = conv::kGlobFitDm23sq;
+  if(input_dm12sq < -1)  input_dm12sq = conv::kGlobFitDm12sq;
+  if(input_deltacp < -90) input_deltacp = conv::kGlobFitDeltaCP;
   PhysHypothesis ph(hypothesis);
   if(ph.Hypothesis() == conv::kHypNuMuDisapp2F) {
     ph.SetCurrValue(conv::kPhypMixing23,  input_mixing23);
@@ -69,11 +84,11 @@ void test_sk_ereco_spectrum_twk_sk_escale
   TH1D * hEreco[ntwkdials];
   for(int idial = 0; idial < ntwkdials; idial++) {
      // tweak spectrum generation model
-     skexp.GetSuperkMC()->TweakEnergyScale( twkdial[idial] );
+     skexp.GetSuperkDetector()->TweakEnergyScale( twkdial[idial] );
      // generate predictions
      skexp.Generate(ph);
      // store spectrum
-     hEreco[idial] = new TH1D(*skexp.CurrPredictedErecoSpectrum(conv::kSKsFCFV1RingMuLike));
+     hEreco[idial] = new TH1D(*skexp.CurrPredictedErecoSpectrum(s));
      hEreco[idial]->SetDirectory(0);
   }//idial
   // get fractional err

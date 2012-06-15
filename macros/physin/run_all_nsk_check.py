@@ -9,13 +9,13 @@ import os
 def main():
   macroname = '$T2KOSCANA/macros/physin/nsk_check.C'
 
-  hypotheses = ['t2kana::conv::kHypOsc3F', 't2kana::conv::kHypNuMuDisapp2F' , 't2kana::conv::kHypUndefined' ]
+  hypotheses = ['3f_osc', '2f_numu_disap', '' ]
   boolstrs = ['true' , 'false' ]
 
   #~ for hyp, banff in itertools.product(hypotheses, boolstrs):
   for hyp in hypotheses:
     for banff in boolstrs:
-      if os.system("root2k -q -b '"+macroname+"("+banff+","+hyp+")'"):
+      if os.system("root2k -q -b '"+macroname+"("+banff+",\""+hyp+"\")'"):
         print "Something went wrong"
         return 1;
         
