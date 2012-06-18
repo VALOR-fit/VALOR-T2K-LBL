@@ -423,28 +423,37 @@ double t2kana::util::RandomizeMixing13(void)
 {
   TRandom3 rand(0);
 
-  double thirty_deg = 30.*kpi/180.;
-
-  double min = 0;
-  double max = 0;
+  double mix = 0;
 
   NuOscMixParam_t omp = Opt::Instance()->gOscMixingParamChoice;
   switch(omp) {
    case(kNuMixSinsq2Theta):
    {
-     max = TMath::Power( TMath::Sin(2*thirty_deg), 2. );
+     double mean  = conv::kGlobFitSinsq2Theta13;
+     double sigma = conv::kGlobFitSinsq2Theta13 * conv::kGlobFitErrSinsq2Theta13;
+     double sinsq2theta = rand.Gaus(mean,sigma);
+     mix = sinsq2theta;
      break;
    }
    case(kNuMixSinsqTheta):
    {
-     max = TMath::Power( TMath::Sin(thirty_deg), 2. );
+     double mean  = conv::kGlobFitSinsqTheta13;
+     double sigma = conv::kGlobFitSinsqTheta13 * conv::kGlobFitErrSinsqTheta13;
+     double sinsqtheta = rand.Gaus(mean,sigma);
+     mix = sinsqtheta;
      break;
    }
    default:
      exit(1);
   }
 
-  return rand.Uniform(min,max);
+  // return if a physical value was generated                                                                                                                                               
+  if(mix >=0. && mix <= 1.) {
+    return mix;
+  }
+
+  // or try again                                                                                                                                                                         
+  return util::RandomizeMixing13();
 }
 //____________________________________________________________________________
 double t2kana::util::RandomizeDeltaCP(void)

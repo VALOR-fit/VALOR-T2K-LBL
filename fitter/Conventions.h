@@ -43,20 +43,20 @@ static const int kPdgNuTauBar = -16;
 //
 
 // Dm^2 global fit results
-static const double kGlobFitDm23sq           = 2.35E-3;
-static const double kGlobFitDm12sq           = 7.58E-5;
-static const double kGlobFitErrDm23sq        = 0.05; // ~5%
+static const double kGlobFitDm23sq           = 2.32E-3;
+static const double kGlobFitDm12sq           = 7.6E-5;
+static const double kGlobFitErrDm23sq        = 0.04; // ~4%
 static const double kGlobFitErrDm12sq        = 0.03; // ~3%
 // deltacp global fit results
 static const double kGlobFitDeltaCP          = 0.0;
 static const double kGlobFitErrDeltaCP       = 0.10; // ~10%
 // sinsq2theta global fit results
 static const double kGlobFitSinsq2Theta23    = 1.00;
-static const double kGlobFitSinsq2Theta13    = 0.10;
-static const double kGlobFitSinsq2Theta12    = 0.86;
-static const double kGlobFitErrSinsq2Theta23 = 0.15; // ~15%
-static const double kGlobFitErrSinsq2Theta12 = 0.06; // ~6%
-static const double kGlobFitErrSinsq2Theta13 = 0.10; // ~10%
+static const double kGlobFitSinsq2Theta13    = 0.099;
+static const double kGlobFitSinsq2Theta12    = 0.87;
+static const double kGlobFitErrSinsq2Theta23 = 0.06; // ~6%
+static const double kGlobFitErrSinsq2Theta12 = 0.04; // ~4%
+static const double kGlobFitErrSinsq2Theta13 = 0.14; // ~14%
 // sinsqtheta global fit results
 static const double kGlobFitSinsqTheta23    = 0.56;
 static const double kGlobFitSinsqTheta13    = 0.0235;
