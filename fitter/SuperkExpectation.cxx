@@ -15,7 +15,7 @@
 
 #define __show_syst_reset_mesg__
 #define __show_syst_tweak_mesg__
-#define __show_syst_tweak_debug__
+//#define __show_syst_tweak_debug__
 
 #include <cassert>
 #include <cstdlib>
@@ -297,7 +297,7 @@ void SuperkExpectation::TweakSystematic(string systematic, double twkdial, bool 
      int ip = util::ArrIdx::Instance()->BANFFSystIdx(p);
      twkv[ip] = twkdial;
 #ifdef __show_syst_tweak_debug__
-     cout << "Tweaking systematic string: " << systematic
+     cout << "Exp >> Tweaking systematic string: " << systematic
 	  << ", NuisParam: " << util::AsString(p)
 	  << endl;
      util::PrintCompact(twkv);

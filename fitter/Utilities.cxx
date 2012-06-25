@@ -3307,10 +3307,16 @@ void t2kana::util::ArrIdx::Init(void)
   for(int i = 0; i < knppmax; i++) {
     fBANFFSystIdx[i] = -1;
   }
-  for(int ip = kNuisBANFF00; ip < kNumOfParamsInBANFFfit; ip++) {
+  for(int ip = 0; ip < kNumOfParamsInBANFFfit; ip++) {
+    cout << ip << endl;
     PhysParamId_t p = PhysParamId_t ((int) kNuisBANFF00 + ip);
     if(p == kPhypUndefined) continue;
     fBANFFSystIdx[p] = ip;
+#ifdef __show_arr_idx_mesg_debug__
+     cout << "Util/ArrIdx >> BANFF: " 
+          << util::AsString(p)
+          << " is at slot: " << fBANFFSystIdx [p] << endl;
+#endif
   }
 }
 //____________________________________________________________________________
