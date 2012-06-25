@@ -10,7 +10,7 @@
 
   <data_pot>
      <superk> 
-        1.431E+20 
+        3.010E+20 
      </superk> 
   </data_pot>
 
@@ -235,7 +235,7 @@
   <xsec>
       <weight_splines>
           <filename>
-               inputs/official/2012/xsec/XSecSplinesFine2012.root
+               inputs/official/2012/xsec/XSecSplinesCoarse2012.root
           </filename>
       </weight_splines>
       <splines>
