@@ -96,8 +96,10 @@ void SuperkMC::Init(void)
   fMCPOTSigNuE         = 0;
 
   fBrEreco             = 0;
-  fBrEtrue             = 0;
-  fBrPdg               = 0;
+  for(int ii = 0; ii < 50; ii++) {
+    fBrEtrue[ii]       = 0;
+    fBrPdg  [ii]       = 0;
+  }
   fBrGenCode           = 0;
          
   fNuFlux              = 0;
@@ -348,30 +350,35 @@ void SuperkMC::FillTemplate(SuperkSample_t s, SuperkMode_t m)
      exit(1);
   }
 
-  TBranch * branchEreco   = mctree->GetBranch("EnuReco");    
-  TBranch * branchEtrue   = mctree->GetBranch("Enu");
-  TBranch * branchPdg     = mctree->GetBranch("Pdg");
-  TBranch * branchGenCode = mctree->GetBranch("Mode");
+  TBranch * branchEreco   = mctree->GetBranch("erec");
+  TBranch * branchEtrue   = mctree->GetBranch("pnu");
+  TBranch * branchPdg     = mctree->GetBranch("ipnu");
+  TBranch * branchGenCode = mctree->GetBranch("mode");
 
   branchEreco   -> SetAddress(&fBrEreco);
-  branchEtrue   -> SetAddress(&fBrEtrue);
-  branchPdg     -> SetAddress(&fBrPdg);
+  branchEtrue   -> SetAddress(fBrEtrue);
+  branchPdg     -> SetAddress(fBrPdg);
   branchGenCode -> SetAddress(&fBrGenCode);
+
+  mctree->SetBranchStatus("*",0);
+  mctree->SetBranchStatus("erec",1);
+  mctree->SetBranchStatus("pnu",1);
+  mctree->SetBranchStatus("ipnu",1);
+  mctree->SetBranchStatus("mode",1);
   
   for(int iev = 0; iev < mctree->GetEntries(); iev++) 
   {
      mctree->GetEntry(iev);
 
      // use current entry for mode m template?
-     bool use_it = util::UseEventToFillInTemplate(m,fBrPdg,fBrGenCode);
+     bool use_it = util::UseEventToFillInTemplate(m,fBrPdg[0],fBrGenCode);
      if(!use_it) continue;
-     
-     this -> Template(s,m,kSKMCtOri) -> Fill (fBrEreco, fBrEtrue);
-     this -> Template(s,m,kSKMCtNom) -> Fill (fBrEreco, fBrEtrue, pot_wght);
-     this -> Template(s,m,kSKMCtTun) -> Fill (fBrEreco, fBrEtrue, pot_wght);
-     this -> Template(s,m,kSKMCtSys) -> Fill (fBrEreco, fBrEtrue, pot_wght);
-     this -> Template(s,m,kSKMCtFin) -> Fill (fBrEreco, fBrEtrue, pot_wght);
-
+  
+     this -> Template(s,m,kSKMCtOri) -> Fill (fBrEreco/1000., fBrEtrue[0]);
+     this -> Template(s,m,kSKMCtNom) -> Fill (fBrEreco/1000., fBrEtrue[0], pot_wght);
+     this -> Template(s,m,kSKMCtTun) -> Fill (fBrEreco/1000., fBrEtrue[0], pot_wght);
+     this -> Template(s,m,kSKMCtSys) -> Fill (fBrEreco/1000., fBrEtrue[0], pot_wght);
+     this -> Template(s,m,kSKMCtFin) -> Fill (fBrEreco/1000., fBrEtrue[0], pot_wght);     
   }//iev
 
 #ifdef __show_init_mesg_debug__        

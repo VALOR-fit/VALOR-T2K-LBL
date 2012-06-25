@@ -88,8 +88,8 @@
                 4.3151028E+23
              </pot>
              <one_mu_ring>
-                <filename>   inputs/official/2012/superk/mc/neut/11c/superk_1RmuT_numu.root  </filename>
-                <objname>    selection_tree   </objname>
+                <filename>   inputs/official/2012/superk/mc/neut/11c/mtuple_numuana_sk11c_flx11av2_10acuts_numu.root  </filename>
+                <objname>    mtuple   </objname>
                 <objtype>    TTree            </objtype>
              </one_mu_ring>
              <one_e_ring>
@@ -103,8 +103,8 @@
                 6.3258298E+24
              </pot>
              <one_mu_ring>
-                <filename>   inputs/official/2012/superk/mc/neut/11c/superk_1RmuT_numubar.root  </filename>
-                <objname>    selection_tree   </objname>
+                <filename>   inputs/official/2012/superk/mc/neut/11c/mtuple_numuana_sk11c_flx11av2_10acuts_numubar.root  </filename>
+                <objname>    mtuple   </objname>
                 <objtype>    TTree            </objtype>
              </one_mu_ring>
              <one_e_ring>
@@ -118,8 +118,8 @@
                 2.2005051E+25
              </pot>
              <one_mu_ring>
-                <filename>   inputs/official/2012/superk/mc/neut/11c/superk_1RmuT_nue.root  </filename>
-                <objname>    selection_tree   </objname>
+                <filename>   inputs/official/2012/superk/mc/neut/11c/mtuple_numuana_sk11c_flx11av2_10acuts_nue.root  </filename>
+                <objname>    mtuple   </objname>
                 <objtype>    TTree            </objtype>
              </one_mu_ring>
              <one_e_ring>
@@ -133,8 +133,8 @@
                 1.0476136E+26
              </pot>
              <one_mu_ring>
-                <filename>   inputs/official/2012/superk/mc/neut/11c/superk_1RmuT_nuebar.root  </filename>
-                <objname>    selection_tree   </objname>
+                <filename>   inputs/official/2012/superk/mc/neut/11c/mtuple_numuana_sk11c_flx11av2_10acuts_nuebar.root  </filename>
+                <objname>    mtuple   </objname>
                 <objtype>    TTree            </objtype>
              </one_mu_ring>
              <one_e_ring>
@@ -148,8 +148,8 @@
                 2.0898769E+23
              </pot>
              <one_mu_ring>
-                <filename>   inputs/official/2012/superk/mc/neut/11c/superk_1RmuT_nuesig.root  </filename>
-                <objname>    selection_tree   </objname>
+                <filename>   inputs/official/2012/superk/mc/neut/11c/mtuple_numuana_sk11c_flx11av2_10acuts_oscnue.root  </filename>
+                <objname>    mtuple   </objname>
                 <objtype>    TTree            </objtype>
              </one_mu_ring>
              <one_e_ring>

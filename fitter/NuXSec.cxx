@@ -23,7 +23,7 @@
 //#define __show_wght_spline_idx_mesg_debug__
 //#define __show_isanevent_mesg_debug__
 //#define __save_ori_templates_init_debug__
-//#define __skip_unexpected_spline_test_in_readsplines__
+#define __skip_unexpected_spline_test_in_readsplines__
 
 #include <cassert>
 #include <cstdlib>
