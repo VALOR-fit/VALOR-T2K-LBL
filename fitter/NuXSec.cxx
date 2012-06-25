@@ -23,7 +23,7 @@
 //#define __show_wght_spline_idx_mesg_debug__
 //#define __show_isanevent_mesg_debug__
 //#define __save_ori_templates_init_debug__
-#define __skip_unexpected_spline_test_in_readsplines__
+//#define __skip_unexpected_spline_test_in_readsplines__
 
 #include <cassert>
 #include <cstdlib>
@@ -517,6 +517,8 @@ double NuXSec::SystWght_1p(
 	}
     }
     int itrue = -1; 
+    int is = util::ArrIdx::Instance()->SuperkSampleIdx(s);
+    int im = util::ArrIdx::Instance()->SuperkModeIdx(s, m);
     for (int i = 0; i < kXsNEtrueBins; i++) {
       if(kXsEtrueBinEdges[is][im][i]   <= Etrue && 
 	 kXsEtrueBinEdges[is][im][i+1] >  Etrue) 

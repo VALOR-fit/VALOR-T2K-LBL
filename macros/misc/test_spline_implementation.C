@@ -120,7 +120,8 @@ void test_spline_implementation
 	      if(apply) {
 		//get the weight
 		TSpline3 * wght_spl = skexp.GetNuXSec()->FindWghtSpline(p,conv::kSKsFCFV1RingMuLike,m,Ereco,Etrue);
-		cout << Etrue << "\t" << Ereco << "\t" << mctempl->GetBinContent(ir,it) << endl;
+		if(debug)
+		  cout << Etrue << "\t" << Ereco << "\t" << mctempl->GetBinContent(ir,it) << endl;
 		assert(wght_spl);
 		wght = wght_spl->Eval(twkdial[idial]) / wght_spl->Eval(0);
 		wght = TMath::Max(0.,wght);

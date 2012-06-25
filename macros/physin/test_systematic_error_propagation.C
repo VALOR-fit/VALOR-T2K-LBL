@@ -464,7 +464,6 @@ void test_systematic_error_propagation
   // +1 sigma (relative to untuned BANFF)
   //
   cout << "\n\nApplying +1 sigma tweak" << endl;
-#line 0
   if(sys.find("banff_") == 0) {
     conv::PhysParamId_t p = util::PhysParamIdFromString(systematic);
     int ip = util::ArrIdx::Instance()->BANFFSystIdx(p);
