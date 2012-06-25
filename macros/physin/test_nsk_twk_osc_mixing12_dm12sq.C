@@ -130,8 +130,8 @@ void test_nsk_twk_osc_mixing12_dm12sq
   frac_dnsk_vs_osc_params -> Draw("colz");
 
   // save
-  string oscparams = util::AsString("3f_osc",   
-     -1,input_mixing13,input_mixing23,input_deltacp,-1,input_dm23sq,"no-theta12-dm12sq");
+  string oscparams = util::AsString(conv::kHypOsc3F,   
+     -1,input_mixing13,input_mixing23,input_deltacp,-1,input_dm23sq);
   TFile f(Form("nsk_vs_mixing12_dm12sq-%s.root",oscparams.c_str()),"recreate");
   nsk_vs_osc_params       -> Write("nsk");
   frac_dnsk_vs_osc_params -> Write("frac_dnsk");

@@ -83,7 +83,7 @@ void test_nsk_twk_systematics
     "sk_1Rmu_ccnonqe_eff",       //2
     "sk_1Rmu_nc_eff",            //3
     "sk_1Rmu_nuecc_eff",         //4
-    "sk_1Rmu_energy_scale",      //5
+    "sk_energy_scale",           //5
     "banff",                     //6
     "xsec_pf",                   //7
     "xsec_sf",                   //8
@@ -106,7 +106,7 @@ void test_nsk_twk_systematics
     false, /* sk_1Rmu_ccnonqe_eff       */
     false, /* sk_1Rmu_nc_eff            */
     false, /* sk_1Rmu_nuecc_eff         */
-    false, /* sk_1Rmu_energy_scale      */
+    false, /* sk_energy_scale           */
     true,  /* banff                     */
     false, /* xsec_pf                   */
     false, /* xsec_sf                   */
@@ -129,7 +129,7 @@ void test_nsk_twk_systematics
     false, /* sk_1Rmu_ccnonqe_eff       */
     false, /* sk_1Rmu_nc_eff            */
     false, /* sk_1Rmu_nuecc_eff         */
-    false, /* sk_1Rmu_energy_scale      */
+    false, /* sk_energy_scale           */
     false, /* banff                     */
     false, /* xsec_pf                   */
     false, /* xsec_sf                   */
