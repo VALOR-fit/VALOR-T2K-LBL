@@ -16,10 +16,8 @@ void test_systematic_error_propagation_all
   double       input_deltacp    = -99,                            /* */
   double       input_dm12sq     = -99,                            /* */
   double       input_dm23sq     = -99,                            /* */
-  const char * output_file      = "systematic_tables_fakesplines.tex",        /* */
-  const char * config_file      = "analysis_configuration_fakesplines.xml"    /* */
-  //const char * output_file    = "systematic_tables.tex",        /* */
-  //const char * config_file    = "analysis_configuration.xml"    /* */
+  const char * output_file      = "systematic_tables.tex",        /* */
+  const char * config_file      = "analysis_configuration.xml"    /* */
 )
 {
   using namespace std;
@@ -152,11 +150,13 @@ void test_systematic_error_propagation_all
   for(int ib = 0; ib < conv::kNumOfFluxParamsInBANFFfit; ib++) {
     systematics.push_back(Form("banff_%02d",ib));
   }
+
   systematics.push_back("banff_maqe");
   systematics.push_back("banff_mares");
   systematics.push_back("banff_ccqeE0");
   systematics.push_back("banff_cc1piE0");
   systematics.push_back("banff_nc1pi0");
+
   //systematics.push_back("sk_1Rmu_ccqe_ring_counting_eff"); //not supported in the macro
   systematics.push_back("sk_1Rmu_ccqe_ring_counting_eff_0");
   systematics.push_back("sk_1Rmu_ccqe_ring_counting_eff_1");
@@ -166,12 +166,14 @@ void test_systematic_error_propagation_all
   systematics.push_back("sk_1Rmu_nc_eff");
   systematics.push_back("sk_1Rmu_nuecc_eff");
   systematics.push_back("sk_energy_scale");
+
   systematics.push_back("xsec_pf");
   systematics.push_back("xsec_sf");
   systematics.push_back("xsec_wshape");
   systematics.push_back("xsec_shape_ccoth");
   systematics.push_back("xsec_pilessdelta");
   systematics.push_back("xsec_enushape");
+
   systematics.push_back("xsec_norm_ccqeE1");
   systematics.push_back("xsec_norm_ccqeE2");
   systematics.push_back("xsec_norm_cc1piE1");
@@ -2053,10 +2055,7 @@ void test_systematic_error_propagation_all
     cout << "Done sytematic! " << systematic << endl;
 
     //reset the systematic
-    if(sys_is_banff)
-      skexp->TweakSystematic(systematic, skexp->GetBANFF()->BestFitValue(util::PhysParamIdFromString(systematic)));
-    else
-      skexp->TweakSystematic(systematic, 0);
+    skexp->ResetSystematicVariations();
 
   }//isys
 

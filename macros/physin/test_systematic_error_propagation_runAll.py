@@ -78,8 +78,6 @@ systematics.append(["xsec_norm_cccoh", "false", "false", "false"])
 systematics.append(["xsec_norm_nccoh", "false", "false", "false"])
 systematics.append(["xsec_norm_ncoth", "false", "false", "false"])
 systematics.append(["xsec_norm_nuetonumu", "false", "false", "false"])
-#expected table at the end
-systematics.append(["expected", "false","false","false"])
 
 samples = []
 samples.append("1Rmu")
