@@ -16,7 +16,6 @@ void test_systematic_error_propagation_all
   double       input_deltacp    = -99,                            /* */
   double       input_dm12sq     = -99,                            /* */
   double       input_dm23sq     = -99,                            /* */
-  const char * output_file      = "systematic_tables.tex",        /* */
   const char * config_file      = "analysis_configuration.xml"    /* */
 )
 {
@@ -25,18 +24,6 @@ void test_systematic_error_propagation_all
 
   // Analysis configuration
   const char * config  = Form("%s/config/%s", gSystem->Getenv("T2KOSCANA"), config_file);
-    
-  // write document header to outfile
-  ofstream outfile (output_file);
-  string f;
-  f += "\\documentclass[10pt,a4paper]{article}\n";
-  f += ("\\usepackage{amsmath}\n");
-  f += ("\\usepackage{graphicx}\n");
-  f += ("\\usepackage{dcolumn}\n");
-  f += ("\\usepackage[cm]{fullpage}\n");
-  f += ("\\begin{document}\n");
-  outfile.write (f.c_str(),f.size());
-  outfile.close();
 
   // Global options
   Opt::Instance()->gOscMixingParamChoice = conv::kNuMixSinsq2Theta;
@@ -68,6 +55,23 @@ void test_systematic_error_propagation_all
   ph.SetCurrValue(conv::kPhypDeltaCP,   input_deltacp);
   ph.SetCurrValue(conv::kPhypDm12sq,    input_dm12sq);
   ph.SetCurrValue(conv::kPhypDm23sq,    input_dm23sq);
+
+  //output file name
+  string oscparams = util::AsString(ph.Hypothesis(),
+	  input_mixing12,input_mixing13,input_mixing23,input_deltacp,input_dm12sq,input_dm23sq);
+  string output_file (Form("systematic_tables-%s.txt",oscparams.c_str()));
+
+  // write document header to outfile
+  ofstream outfile (output_file.c_str());
+  string f;
+  f += "\\documentclass[10pt,a4paper]{article}\n";
+  f += ("\\usepackage{amsmath}\n");
+  f += ("\\usepackage{graphicx}\n");
+  f += ("\\usepackage{dcolumn}\n");
+  f += ("\\usepackage[cm]{fullpage}\n");
+  f += ("\\begin{document}\n");
+  outfile.write (f.c_str(),f.size());
+  outfile.close();
 
   // Print options
   cout << "\n[Job inputs]" << endl;
@@ -2044,7 +2048,7 @@ void test_systematic_error_propagation_all
       size=streamer.tellg();
       streamer.seekg(0);
 
-      ofstream outfile (output_file,ios_base::app);
+      ofstream outfile (output_file.c_str(),ios_base::app);
 
       // write to outfile
       outfile.write (streamer.str().c_str(),size);
@@ -2060,7 +2064,7 @@ void test_systematic_error_propagation_all
   }//isys
 
   // don't forget to write document footer to outfile
-  ofstream outfile (output_file,ios_base::trunc&&ios_base::out);
+  ofstream outfile (output_file.c_str(),ios_base::trunc&&ios_base::out);
   string f;
   f += ("\\end{document}\n");
   outfile.write (f.c_str(),f.size());

@@ -3,7 +3,7 @@
 
 test_systematic_error_propagation_expectation(
   bool         use_tex      = false,
-  const char * output_file  = "",
+  const char * output_file  = "systematic_tables_expectation.tex",
   const char * config_file  = "analysis_configuration.xml"    /* */
 )
 {

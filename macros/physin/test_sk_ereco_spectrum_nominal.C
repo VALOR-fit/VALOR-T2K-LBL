@@ -137,22 +137,26 @@ void test_sk_ereco_spectrum_nominal
   }
   legend->Draw();
   c->Update();
-  cout << fixed;
+
+  //can save this to file &/or print it
+  stringstream streamer;
+
+  streamer << fixed;
   double ntot = hErecoTot->Integral();
-  cout << "Total number of events: " 
+  streamer << "Total number of events: " 
        << setw(10) << setfill(' ') << setprecision(6) << ntot << endl;
   const int nslices=6;
   double slice_max[nslices] = { 0.50, 0.75, 1.00, 1.25, 1.50, 2.00 };
   for(int islice=0; islice<nslices; islice++) {
     double esmax = slice_max[islice];
-    cout << "Total number of events (< " << setw(8) << setfill(' ') << setprecision(4) << esmax << " GeV): " 
+    streamer << "Total number of events (< " << setw(8) << setfill(' ') << setprecision(4) << esmax << " GeV): " 
          << setw(10) << setfill(' ') << setprecision(6) << hErecoTot->Integral(1,hErecoTot->FindBin(esmax)) << endl;
   }
   for(int im = 0; im < conv::knm; im++) {
      conv::SuperkMode_t m = conv::kSKReactionModes[is][im];
      if(m == conv::kSKmUndefined) continue;
      double nmode = hErecoMode[im]->Integral();
-     cout << "Contrib from mode: " 
+     streamer << "Contrib from mode: " 
           << setw(40) << setfill(' ') << util::AsString(m) << " : " 
           << setw(15) << setfill(' ') << setprecision(6) << nmode << " events ("
           << setw(10) << setfill(' ') << setprecision(6) << 100*nmode/ntot << " %)" << endl;
@@ -179,17 +183,31 @@ void test_sk_ereco_spectrum_nominal
 
   if(print_spectrum) {  
     int nprec=5;
-    cout << fixed;
+    streamer << fixed;
     for(int ibin = 1; ibin <= hErecoTot->GetXaxis()->GetNbins(); ibin++) {
-      cout << setw(6) << setfill(' ') << ibin
-           << " : "
-           << setw(6) << setfill(' ') << setprecision(3) << hErecoTot->GetXaxis()->GetBinLowEdge(ibin)
-           << " - "
-           << setw(6) << setfill(' ') << setprecision(3) << hErecoTot->GetXaxis()->GetBinUpEdge(ibin)
-           << " : "
-           << setw(6) << setfill(' ') << setprecision(nprec) << hErecoTot->GetBinContent(ibin)
-           << endl;
+      streamer << setw(6) << setfill(' ') << ibin
+	       << " : "
+	       << setw(6) << setfill(' ') << setprecision(3) << hErecoTot->GetXaxis()->GetBinLowEdge(ibin)
+	       << " - "
+	       << setw(6) << setfill(' ') << setprecision(3) << hErecoTot->GetXaxis()->GetBinUpEdge(ibin)
+	       << " : "
+	       << setw(6) << setfill(' ') << setprecision(nprec) << hErecoTot->GetBinContent(ibin)
+	       << endl;
     }//ibin
   }
+
+  //actually print
+  cout << streamer.str() << endl;
+  
+  // get size of streamer
+  long size;
+  streamer.seekg(0,ifstream::end);
+  size=streamer.tellg();
+  streamer.seekg(0);
+
+  //write to file
+  ofstream outfile (Form("sk_ereco_spectrum-%s%s.txt",oscparams.c_str(),(disable_banff_tuning ? "_nobanff" : "")));
+  outfile.write (streamer.str().c_str(),size);
+  outfile.close();
 
 }
