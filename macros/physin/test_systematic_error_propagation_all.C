@@ -59,7 +59,7 @@ void test_systematic_error_propagation_all
   //output file name
   string oscparams = util::AsString(ph.Hypothesis(),
 	  input_mixing12,input_mixing13,input_mixing23,input_deltacp,input_dm12sq,input_dm23sq);
-  string output_file (Form("systematic_tables-%s.txt",oscparams.c_str()));
+  string output_file (Form("systematic_tables-%s.tex",oscparams.c_str()));
 
   // write document header to outfile
   ofstream outfile (output_file.c_str());

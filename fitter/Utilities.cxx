@@ -3308,7 +3308,6 @@ void t2kana::util::ArrIdx::Init(void)
     fBANFFSystIdx[i] = -1;
   }
   for(int ip = 0; ip < kNumOfParamsInBANFFfit; ip++) {
-    cout << ip << endl;
     PhysParamId_t p = PhysParamId_t ((int) kNuisBANFF00 + ip);
     if(p == kPhypUndefined) continue;
     fBANFFSystIdx[p] = ip;
