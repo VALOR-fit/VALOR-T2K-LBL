@@ -81,15 +81,22 @@ test_systematic_error_propagation_expectation(
   stringstream streamer;
 
   if(use_tex) {
-     streamer << "\\begin{table}"   << endl;
-     streamer << "\\scriptsize" << endl;
-     //streamer << "\\centering"     << endl;
-     streamer << "\\begin{tabular}{| l | r |}" << endl;
-     streamer << "\\hline" << endl;
-     streamer << setw(ncol1)  << setfill(' ') << "{\\bf Systematic}  " << endcolumn
-	      << setw(ncolnev)  << setfill(' ') << "{\\bf Expected change} " << endrow
-	      << endl;
-     streamer << "\\hline" << endl;
+    streamer << "\\documentclass[10pt,a4paper]{article}\n" << endl;
+    streamer << "\\usepackage{amsmath}\n" << endl;
+    streamer << "\\usepackage{graphicx}\n" << endl;
+    streamer << "\\usepackage{dcolumn}\n" << endl;
+    streamer << "\\usepackage[cm]{fullpage}\n" << endl;
+    streamer << "\\begin{document}\n" << endl;
+
+    streamer << "\\begin{table}"   << endl;
+    streamer << "\\scriptsize" << endl;
+    //streamer << "\\centering"     << endl;
+    streamer << "\\begin{tabular}{| l | r |}" << endl;
+    streamer << "\\hline" << endl;
+    streamer << setw(ncol1)  << setfill(' ') << "{\\bf Systematic}  " << endcolumn
+	     << setw(ncolnev)  << setfill(' ') << "{\\bf Expected change} " << endrow
+	     << endl;
+    streamer << "\\hline" << endl;
   }
  
   string systematic;
@@ -179,6 +186,7 @@ test_systematic_error_propagation_expectation(
      streamer << "\\label{tab:expected}" << endl;
      streamer << "\\end{table}" << endl;
      streamer << "\\clearpage" << endl;
+     streamer << "\\end{document}" << endl;
   }
 
   cout << streamer.str() << endl;
