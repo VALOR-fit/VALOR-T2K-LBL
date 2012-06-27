@@ -254,13 +254,13 @@
       </splines>
       <normalisations>
 	  <ccqee1>
-	       0.3
+	       0.23
 	  </ccqee1>
 	  <ccqee2>
-	       0.3
+	       0.252
 	  </ccqee2>
 	  <cc1pie1>
-	       0.4
+	       0.297
 	  </cc1pie1>
 	  <cccoh>
 	       1.0
@@ -272,7 +272,7 @@
 	       0.3
 	  </ncoth>
 	  <numu_to_nue>
-	       0.06
+	       0.03
 	  </numu_to_nue>
       </normalisations>
   </xsec>

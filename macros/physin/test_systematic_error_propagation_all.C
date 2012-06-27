@@ -2005,8 +2005,7 @@ void test_systematic_error_propagation_all
     if(use_tex) {
       streamer << "\\end{tabular}" << endl;
       string hypothesisstr(hypothesis);
-      if(systematic.find("banff") == 0)
-	sys = util::AsString(util::PhysParamIdFromString(systematic));
+      sys = util::AsString(util::PhysParamIdFromString(systematic));
       size_t found;
       found=systematic.find_first_of("_");
       while(found!=string::npos) {
