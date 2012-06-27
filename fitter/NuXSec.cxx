@@ -529,7 +529,7 @@ double NuXSec::SystWght_1p(
   }
 #endif
 
-  if(abs(wght) > conv::kMaxAllowedWght) {
+  if(TMath::Abs(wght) > conv::kMaxAllowedWght) {
     //get the ereco & etrue bin indexes (to be used to check whether the spline is sensible)
     int ireco = -1; 
     for (int i = 0; i < kXsNErecoBins; i++) {

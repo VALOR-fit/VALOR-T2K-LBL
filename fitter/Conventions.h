@@ -788,6 +788,7 @@ static const int kNuPdgCodeOfFluxParamInBANFFfit[kNumOfParamsInBANFFfit] =
    0,                    // kNuisBANFFCCQEE0, not a flux param
    0,                    // kNuisBANFFCC1piE0, not a flux param
    0                     // kNuisBANFFNC1pi0, not a flux param
+};
 #endif
 
 // Etrue energy range for flux-related BANFF parameters

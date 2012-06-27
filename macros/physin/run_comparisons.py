@@ -13,7 +13,7 @@ import string
 import logging
 
 mixing23s = [1.0]
-dm23sqs = [0.0024]
+dm23sqs = [0.00235]
 dm12sq = -99
 mixing13 = -99
 mixing12 = -99
