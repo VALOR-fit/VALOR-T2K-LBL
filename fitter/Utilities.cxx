@@ -806,6 +806,178 @@ string t2kana::util::AsString(PhysParamId_t p)
   return "--";
 }
 //____________________________________________________________________________
+string t2kana::util::AsStringTex(PhysParamId_t p)
+{
+  switch(p) {
+
+    case ( kPhypMixing23 ) : 
+    {
+        NuOscMixParam_t omp = Opt::Instance()->gOscMixingParamChoice;
+        switch(omp) {
+           case(kNuMixSinsq2Theta) : return "$\\sin^2(2\\theta_{23})$"; break;
+           case(kNuMixSinsqTheta ) : return "$\\sin^2(\\theta_{23})$";   break;
+           default                 : return "--";                break;
+         }
+    }
+    break;
+    case ( kPhypMixing13 ) : 
+    {
+        NuOscMixParam_t omp = Opt::Instance()->gOscMixingParamChoice;
+        switch(omp) {
+           case(kNuMixSinsq2Theta) : return "$\\sin^2(2\\theta_{13})$";  break;
+           case(kNuMixSinsqTheta ) : return "$\\sin^2(\\theta_{13})$";    break;
+           default                 : return "--";                 break;
+         }
+    }
+    break;
+    case ( kPhypMixing12 ) :      
+    {
+        NuOscMixParam_t omp = Opt::Instance()->gOscMixingParamChoice;
+        switch(omp) {
+           case(kNuMixSinsq2Theta) : return "$\\sin^2(2\\theta_{12})$";  break;
+           case(kNuMixSinsqTheta ) : return "$\\sin^2(\\theta_{12})$";    break;
+           default                 : return "--";                 break;
+         }
+    }
+    break;
+
+    case ( kPhypDeltaCP               ) : return "$\\delta_{cp}$";                   break;
+    case ( kPhypDm23sq                ) : return "$|\\Deltam^2_{23}|$";                  break;
+    case ( kPhypDm12sq                ) : return "$\\Deltam^2_{12}$";                    break;
+
+    case ( kPhypAlphaDecay            ) : return "$\\alpha_{decay}$";                break;
+    case ( kPhypSinsq2ThetaDecay      ) : return "$\\sin^2(2\\theta_{decay})$";       break;
+    case ( kPhypMusqDecoh             ) : return "$\\mu^2_{decoh}$";                 break;
+    case ( kPhypSinsq2ThetaDecoh      ) : return "$\\sin^2(2\\theta_{decoh})$";       break;
+
+    /*
+     * 2011-analysis nuisance parameters
+     */
+
+    //
+    // SK detector
+    //
+    case ( kNuisSuperkEnergyScale     ) : return "SK energy scale";                 break;    
+    case ( kNuisSuperkEff1RmuCCQEoth  ) : return "SK efficiency, 1Rmu, CCQE//Other"; break;
+    case ( kNuisSuperkEff1RmuCCQErc0u ) : return "SK efficiency, 1Rmu, CCQE//RC0";   break;
+    case ( kNuisSuperkEff1RmuCCQErc1u ) : return "SK efficiency, 1Rmu, CCQE//RC1";   break;
+    case ( kNuisSuperkEff1RmuCCQErc2u ) : return "SK efficiency, 1Rmu, CCQE//RC2";   break;
+    case ( kNuisSuperkEff1RmuCCnonQE  ) : return "SK efficiency, 1Rmu, CCnonQE";    break;
+    case ( kNuisSuperkEff1RmuNC       ) : return "SK efficiency, 1Rmu, NC";         break;
+    case ( kNuisSuperkEff1RmuNueCC    ) : return "SK efficiency, 1Rmu, nue CC";     break;
+
+    //
+    // BANFF flux and cross-section params
+    //
+    case ( kNuisBANFF00 ) :
+    case ( kNuisBANFF01 ) :
+    case ( kNuisBANFF02 ) :
+    case ( kNuisBANFF03 ) :
+    case ( kNuisBANFF04 ) :
+    case ( kNuisBANFF05 ) :
+    case ( kNuisBANFF06 ) :
+    case ( kNuisBANFF07 ) :
+    case ( kNuisBANFF08 ) :
+    case ( kNuisBANFF09 ) :
+    case ( kNuisBANFF10 ) :
+    case ( kNuisBANFF11 ) :
+    case ( kNuisBANFF12 ) :
+    case ( kNuisBANFF13 ) :
+    case ( kNuisBANFF14 ) :
+    case ( kNuisBANFF15 ) :
+    case ( kNuisBANFF16 ) :
+    case ( kNuisBANFF17 ) :
+    case ( kNuisBANFF18 ) :
+    case ( kNuisBANFF19 ) : 
+    case ( kNuisBANFF20 ) : 
+    case ( kNuisBANFF21 ) : 
+    case ( kNuisBANFF22 ) :
+    case ( kNuisBANFF23 ) :
+    case ( kNuisBANFF24 ) :
+    case ( kNuisBANFF25 ) :
+    case ( kNuisBANFF26 ) :
+    case ( kNuisBANFF27 ) :
+    case ( kNuisBANFF28 ) :
+    case ( kNuisBANFF29 ) :
+    case ( kNuisBANFF30 ) :
+#if BANFF_Bins == -1
+    case ( kNuisBANFF31 ) :
+    case ( kNuisBANFF32 ) :
+    case ( kNuisBANFF33 ) :
+    case ( kNuisBANFF34 ) :
+    case ( kNuisBANFF35 ) :
+    case ( kNuisBANFF36 ) :
+    case ( kNuisBANFF37 ) :
+    case ( kNuisBANFF38 ) :
+    case ( kNuisBANFF39 ) :
+    case ( kNuisBANFF40 ) :
+    case ( kNuisBANFF41 ) :
+    case ( kNuisBANFF42 ) :
+    case ( kNuisBANFF43 ) :
+    case ( kNuisBANFF44 ) :
+    case ( kNuisBANFF45 ) :
+    case ( kNuisBANFF46 ) :
+    case ( kNuisBANFF47 ) :
+    case ( kNuisBANFF48 ) :
+#endif
+    {
+      int ip = (int)p - (int)kNuisBANFF00;
+      return Form("BANFF %2d, SK %s flux, %.1f - %.1f GeV",
+                   ip, util::Pdg2String(kNuPdgCodeOfFluxParamInBANFFfit[ip]).c_str(), 
+                   kEtrueRangeOfFluxParamInBANFFfit[ip][0],
+                   kEtrueRangeOfFluxParamInBANFFfit[ip][1]);     
+      break;
+    }
+    case ( kNuisBANFFMAQE    ) : return "BANFF, Ma QE";                           break;
+    case ( kNuisBANFFMARES   ) : return "BANFF, Ma RES";                          break;
+    case ( kNuisBANFFCCQEE0  ) : return "BANFF, Norm, CC QE; 0.0 - 1.5 GeV";      break;
+    case ( kNuisBANFFCC1piE0 ) : return "BANFF, Norm, CC 1pi; 0.0 - 2.5 GeV";     break;
+    case ( kNuisBANFFNC1pi0  ) : return "BANFF, Norm, NC 1pi0";                   break;
+
+    //
+    // XSec params not correlated with flux
+    //
+
+    case ( kNuisXSecFermiMom   ) : return "Fermi Momentum";                  break;
+    case ( kNuisXSecSpecFunc   ) : return "Spectral Func";                   break; 
+    case ( kNuisXSecWshape     ) : return "W-shape";                         break;
+    case ( kNuisXSecShapeCCoth ) : return "Shape; CC Oth";                   break;
+    case ( kNuisXSecPiLessDelta) : return "Pi-less delta decay";             break;
+    case ( kNuisXSecENuShape   ) : return "Shape; CC1pi ENu";                break;
+
+    case ( kNuisXSecNormCCQEE1 ) : return "Norm, CC QE Norm, 1.5 - 3.5 GeV"; break; 
+    case ( kNuisXSecNormCCQEE2 ) : return "Norm, CC QE Norm, $>$ 3.5 GeV";     break; 
+    case ( kNuisXSecNormCC1piE1) : return "Norm, CC 1pi, $>$ 2.5 GeV";         break; 
+    case ( kNuisXSecNormCCcoh  ) : return "Norm, CC Coh";                    break;
+    case ( kNuisXSecNormNCcoh  ) : return "Norm, NC Coh";                    break;
+    case ( kNuisXSecNormNCoth  ) : return "Norm, NC Oth";                    break;
+    case ( kNuisXSecNormNuEToNuMu ) : return "Norm, NuE To NuMu";                    break;
+
+    case ( kNuisFSI00 ) : 
+    case ( kNuisFSI01 ) : 
+    case ( kNuisFSI02 ) : 
+    case ( kNuisFSI03 ) : 
+    case ( kNuisFSI04 ) : 
+    case ( kNuisFSI05 ) : 
+    case ( kNuisFSI06 ) : 
+    case ( kNuisFSI07 ) : 
+    case ( kNuisFSI08 ) : 
+    case ( kNuisFSI09 ) : 
+    {
+      int ip = (int)p - (int)kNuisFSI00;
+      return Form("FSI %2d, Ereco range %.1f - %.1f GeV",
+                   ip, 
+                   kFSIParamsErecoBinEdges[ip],
+                   kFSIParamsErecoBinEdges[ip+1]);     
+      break;
+    }
+
+    default : 
+      return "--";
+  }
+  return "--";
+}
+//____________________________________________________________________________
 string t2kana::util::AsStringCompact(PhysParamId_t p)
 {
   switch(p) {

@@ -89,6 +89,7 @@ namespace util {
   string AsString        (conv::OscChannelId_t     o);
   string AsStringTex     (conv::SuperkSample_t     s);
   string AsStringTex     (conv::SuperkMode_t       m);
+  string AsStringTex     (conv::PhysParamId_t      p);
   string AsStringRooTex  (conv::SuperkSample_t s, conv::SuperkMode_t m, string append_begin="", string append_end="");
   string AsStringRooTex  (conv::SuperkSample_t     s);
   string AsStringRooTex  (conv::SuperkMode_t       m);

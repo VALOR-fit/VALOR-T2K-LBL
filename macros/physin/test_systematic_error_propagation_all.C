@@ -2001,17 +2001,10 @@ void test_systematic_error_propagation_all
     else
       streamer << "\\hline" << endl;
 
-    string sys(systematic);
     if(use_tex) {
       streamer << "\\end{tabular}" << endl;
       string hypothesisstr(hypothesis);
-      sys = util::AsString(util::PhysParamIdFromString(systematic));
-      size_t found;
-      found=systematic.find_first_of("_");
-      while(found!=string::npos) {
-	sys[found]='-';
-	found=systematic.find_first_of("_",found+1);
-      }
+      string sys = util::AsStringTex(util::PhysParamIdFromString(systematic));
       found=hypothesisstr.find_first_of("_");
       while(found!=string::npos) {
 	hypothesisstr[found]='-';
