@@ -366,13 +366,37 @@ double NuXSec::FinTuningWght_1p(
 #endif
 
   if(wght < 0 || wght > conv::kMaxAllowedWght) {
-     cout << "Exp/NuXSec/FinTuningWght >> Got an absurd weight! "
-          << "Sample/Mode = " << util::AsString(s) << " / " << util::AsString(m)
-          << ", Ereco = " << Ereco << " GeV" 
-          << ", Etrue = " << Etrue << " GeV => Weight [" 
-          << util::AsString(p) << "] = " << wght 
-          << endl;   
-     exit(1);
+    //get the ereco & etrue bin indexes (to be used to check whether the spline is sensible)
+    int ireco = -1; 
+    for (int i = 0; i < kXsNErecoBins; i++) {
+      if(kXsErecoBinEdges[i]   <= Ereco && 
+	 kXsErecoBinEdges[i+1] >  Ereco) 
+	{
+	  ireco = i;
+	  break;
+	}
+    }
+    int itrue = -1; 
+    int is = util::ArrIdx::Instance()->SuperkSampleIdx(s);
+    int im = util::ArrIdx::Instance()->SuperkModeIdx(s, m);
+    for (int i = 0; i < kXsNEtrueBins; i++) {
+      if(kXsEtrueBinEdges[is][im][i]   <= Etrue && 
+	 kXsEtrueBinEdges[is][im][i+1] >  Etrue) 
+	{
+	  itrue = i;
+	  break;
+	}
+    }
+
+    cout << "Exp/NuXSec/FinTuningWght >> Got an absurd weight! "
+	 << "Sample/Mode = " << util::AsString(s) << " / " << util::AsString(m)
+	 << ", Ereco = " << Ereco << " GeV" 
+	 << ", Etrue = " << Etrue << " GeV =>"
+	 << " Bins are Ereco,Etrue = " << ireco << "," << itrue << " =>"
+	 << " Weight [" << util::AsString(p) << "] = " << wght
+	 << " Current value = " << this->CurrentValue(p)
+	 << endl;   
+    exit(1);
   }
 
   return wght;
@@ -505,7 +529,7 @@ double NuXSec::SystWght_1p(
   }
 #endif
 
-  if(wght < 0 || wght > conv::kMaxAllowedWght) {
+  if(abs(wght) > conv::kMaxAllowedWght) {
     //get the ereco & etrue bin indexes (to be used to check whether the spline is sensible)
     int ireco = -1; 
     for (int i = 0; i < kXsNErecoBins; i++) {
@@ -532,7 +556,8 @@ double NuXSec::SystWght_1p(
 	 << ", Ereco = " << Ereco << " GeV" 
 	 << ", Etrue = " << Etrue << " GeV =>"
 	 << " Bins are Ereco,Etrue = " << ireco << "," << itrue << " =>"
-	 << " Weight [" << util::AsString(p) << "] = " << wght 
+	 << " Weight [" << util::AsString(p) << "] = " << wght
+	 << " Current value = " << this->CurrentValue(p)
 	 << endl;   
     exit(1);
   }
