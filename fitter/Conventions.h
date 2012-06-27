@@ -59,8 +59,8 @@ static const double kGlobFitDeltaCP          = 0.0;
 static const double kGlobFitErrDeltaCP       = 0.10; // ~10%
 // sinsq2theta global fit results
 static const double kGlobFitSinsq2Theta23    = 1.00;
-static const double kGlobFitSinsq2Theta13    = 0.099;
-static const double kGlobFitSinsq2Theta12    = 0.87;
+static const double kGlobFitSinsq2Theta13    = 0.1;
+static const double kGlobFitSinsq2Theta12    = 0.8704;
 static const double kGlobFitErrSinsq2Theta23 = 0.06; // ~6%
 static const double kGlobFitErrSinsq2Theta12 = 0.04; // ~4%
 static const double kGlobFitErrSinsq2Theta13 = 0.14; // ~14%

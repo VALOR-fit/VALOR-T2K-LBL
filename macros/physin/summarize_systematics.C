@@ -29,30 +29,39 @@ void summarize_systematics
   TH1D * h_mixing23_frac_err = new TH1D("h_mixing23_frac_err", "", nsyst, 0, nsyst);
   TH1D * h_nfits             = new TH1D("h_nfits",             "", nsyst, 0, nsyst);
 
+  string oscparams = util::AsString(hyp,
+	  input_mixing12,input_mixing13,input_mixing23,input_deltacp,input_dm12sq,input_dm23sq);
+
   for(int isyst = 0; isyst < nsyst; isyst++) {
 
     string syst_label="";
-    if (isyst ==  0)  syst_label = "sk_ccqe_other_eff";
-    if (isyst ==  1)  syst_label = "sk_ccqe_ring_counting_eff";
-    if (isyst ==  2)  syst_label = "sk_ccnonqe_eff";
-    if (isyst ==  3)  syst_label = "sk_nc_eff";
-    if (isyst ==  4)  syst_label = "sk_nuecc_eff";
+    if (isyst ==  0)  syst_label = "sk_1Rmu_ccqe_other_eff";
+    if (isyst ==  1)  syst_label = "sk_1Rmu_ccqe_ring_counting_eff";
+    if (isyst ==  2)  syst_label = "sk_1Rmu_ccnonqe_eff";
+    if (isyst ==  3)  syst_label = "sk_1Rmu_nc_eff";
+    if (isyst ==  4)  syst_label = "sk_1Rmu_nuecc_eff";
     if (isyst ==  5)  syst_label = "sk_energy_scale";
-    if (isyst ==  6)  syst_label = "nd280_eff";
-    if (isyst ==  7)  syst_label = "nd280_norm";
-    if (isyst ==  8)  syst_label = "flux_norm";
-    if (isyst ==  9)  syst_label = "flux_shape";
-    if (isyst == 10)  syst_label = "xsec_ccqe";
-    if (isyst == 11)  syst_label = "xsec_cc1pi_to_ccqe";
-    if (isyst == 12)  syst_label = "xsec_ccoth_to_ccqe";
-    if (isyst == 13)  syst_label = "xsec_nc_to_ccqe";
-    if (isyst == 14)  syst_label = "nuclear_effect";
+    if (isyst ==  6)  syst_label = "banff";
+    if (isyst ==  7)  syst_label = "xsec_pf";
+    if (isyst ==  8)  syst_label = "xsec_sf";
+    if (isyst ==  9)  syst_label = "xsec_wshape";
+    if (isyst == 10)  syst_label = "xsec_shape_ccoth";
+    if (isyst == 11)  syst_label = "xsec_pilessdelta";
+    if (isyst == 12)  syst_label = "xsec_enushape";
+    if (isyst == 13)  syst_label = "xsec_norm_ccqeE1";
+    if (isyst == 14)  syst_label = "xsec_norm_ccqeE2";
+    if (isyst == 15)  syst_label = "xsec_norm_cc1piE1";
+    if (isyst == 16)  syst_label = "xsec_norm_cccoh";
+    if (isyst == 17)  syst_label = "xsec_norm_nccoh";
+    if (isyst == 18)  syst_label = "xsec_norm_ncoth";
+    if (isyst == 19)  syst_label = "xsec_norm_nuetonumu";
+    if (isyst == 20)  syst_label = "fsi";
 
     TChain * chain = new TChain("sysnt");
 
     TString filename_template = 
-       Form("%s/syst_%s-mixing23_%.2f-dm23sq_%.5feV2_*.root",
-            file_path.c_str(), syst_label.c_str(),input_mixing23,input_dm23sq);
+       Form("%s/syst_%s-%s_*.root",
+            file_path.c_str(), syst_label.c_str(), oscparams.c_str());
 
     chain->Add(filename_template.Data());
     cout << "Adding files :  " << filename_template << endl;

@@ -4,6 +4,7 @@
 // If drawn, the original histograms are print with the points from file1,
 //  and the line from file2
 //
+// Tom Dealtry
 
 void compare_1dhist_all(
   const char * filename1,           /* name of 1st file */
