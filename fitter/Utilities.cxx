@@ -1091,8 +1091,8 @@ string t2kana::util::AsStringCompact(PhysParamId_t p)
     case ( kNuisBANFF46               ) : return "f_banff46";      break;
     case ( kNuisBANFF47               ) : return "f_banff47";      break;
     case ( kNuisBANFF48               ) : return "f_banff48";      break;
-    case ( kNuisBANFFMAQE             ) : return "f_banff49";      break;
-    case ( kNuisBANFFMARES            ) : return "f_banff50";      break;
+    case ( kNuisBANFFMAQE             ) : return "f_banff31";      break;
+    case ( kNuisBANFFMARES            ) : return "f_banff32";      break;
     case ( kNuisBANFFCCQEE0           ) : return "f_banff51";      break;
     case ( kNuisBANFFCC1piE0          ) : return "f_banff52";      break;
     case ( kNuisBANFFNC1pi0           ) : return "f_banff53";      break;
