@@ -175,6 +175,8 @@ void test_sk_ereco_spectrum_nominal
     if(m == conv::kSKmUndefined) continue;
     hErecoMode[im] -> Write(util::AsStringCompact(s,m).c_str());
   }
+  stack->Write();
+  legend->Write();
   f.Close();
 
   //
