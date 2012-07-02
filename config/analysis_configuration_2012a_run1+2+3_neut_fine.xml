@@ -288,8 +288,8 @@
         Covariance matrix of FSI parameters
        -->
        <covariance_matrix>
-          <filename>   inputs/official/2012/fsi/somename.root  </filename>
-          <objname>    somename         </objname>
+          <filename>   inputs/official/2012/fsi/FSIErrors2012.root  </filename>
+          <objname>    FSICovariance         </objname>
           <objtype>    TMatrixD         </objtype>
         </covariance_matrix>     
   </fsi>
