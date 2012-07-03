@@ -607,6 +607,13 @@ double NuXSec::CurrentValue(PhysParamId_t p) const
     case kNuisXSecNormNuEToNuMu:
       return fNormNuEToNuMuTwkDial;
       break;
+    case kNuisBANFFMAQE:
+    case kNuisBANFFMARES:
+    case kNuisBANFFCCQEE0:
+    case kNuisBANFFCC1piE0:
+    case kNuisBANFFNC1pi0:
+      return fBANFF->CurrentValue(p);
+      break;
     default:
       return 0;
   }
