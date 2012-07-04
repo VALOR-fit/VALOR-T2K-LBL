@@ -6,13 +6,19 @@
 // ------------------------------------------------------------------------------------------------
 //
 
-#include "Conventions.h"
+//#include "Conventions.h"
+#include <algorithm>
 
 void summarize_systematics
 (
   string  file_path,       /* Path to data files produced by bestfit_systematic_study_fitting_job.C */
+  double  input_mixing12,  /* True mixing12 used in bestfit_systematic_study_fitting_job.C     */
+  double  input_mixing13,  /* True mixing13 used in bestfit_systematic_study_fitting_job.C     */
   double  input_mixing23,  /* True mixing23 used in bestfit_systematic_study_fitting_job.C     */
-  double  input_dm23sq     /* True dm23sq used in bestfit_systematic_study_fitting_job.C            */
+  double  input_deltacp,   /* True deltacp used in bestfit_systematic_study_fitting_job.C     */
+  double  input_dm12sq,    /* True dm12sq used in bestfit_systematic_study_fitting_job.C     */
+  double  input_dm23sq,    /* True dm23sq used in bestfit_systematic_study_fitting_job.C            */
+  string  hypothesis       /* True physics hypothesis used in bestfit_systematic_study_fitting_job.C */
 )
 {
   using namespace std;
@@ -28,6 +34,8 @@ void summarize_systematics
   TH1D * h_dm23sq_frac_err   = new TH1D("h_dm23sq_frac_err",   "", nsyst, 0, nsyst);
   TH1D * h_mixing23_frac_err = new TH1D("h_mixing23_frac_err", "", nsyst, 0, nsyst);
   TH1D * h_nfits             = new TH1D("h_nfits",             "", nsyst, 0, nsyst);
+
+  conv::PhysHypothesis_t hyp = util::PhysHypFromString(hypothesis);
 
   string oscparams = util::AsString(hyp,
 	  input_mixing12,input_mixing13,input_mixing23,input_deltacp,input_dm12sq,input_dm23sq);
@@ -59,16 +67,21 @@ void summarize_systematics
 
     TChain * chain = new TChain("sysnt");
 
-    TString filename_template = 
+    string filename_template = 
        Form("%s/syst_%s-%s_*.root",
             file_path.c_str(), syst_label.c_str(), oscparams.c_str());
 
-    chain->Add(filename_template.Data());
+    //need to swap [ and ] for * (weird ROOT thing...)
+    replace(filename_template.begin(), filename_template.end(), '[', '*');
+    replace(filename_template.begin(), filename_template.end(), ']', '*');
+
+    chain->Add(filename_template.c_str());
     cout << "Adding files :  " << filename_template << endl;
 
     int nfits = chain->GetEntries();
     if(nfits==0) {
 	delete chain;
+	cout << "Skipping (no entries)..." << endl;
 	continue;
     }
 
