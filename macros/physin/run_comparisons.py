@@ -33,6 +33,8 @@ for mixing23 in mixing23s:
         print command
         os.system(command)
 
+        command = 'root2k -l -b -q \'$T2KOSCANA/macros/physin/test_nsk.C\''+str(mixing12)+','+str(mixing13)+','+str(mixing23)+','+str(deltacp)+','+str(dm12sq)+','+str(dm23sq)+'"1Rmu","analysis_configuration.xml")\''
+
 
 # not oscillated
 for banff in banffs:

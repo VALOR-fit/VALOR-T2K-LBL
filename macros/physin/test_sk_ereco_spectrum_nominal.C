@@ -81,6 +81,16 @@ void test_sk_ereco_spectrum_nominal
   const double * ereco_bin_edges = util::ErecoBinEdges(s);
   TH1D * hErecoTot = new TH1D("","",nbins,ereco_bin_edges);
   TH1D * hErecoMode[conv::knm]; //< contribution from each mode  
+  const int nbins_coarse = util::NumVariableXsEtrueBins(s,conv::kSKmNuMuCCQE);
+  const double * ereco_bin_edges_coarse = util::VariableXsEtrueBinEdges(s,conv::kSKmNuMuCCQE);
+  TH1D * hErecoTot_coarse;// = new TH1D("total_coarse","",nbins_coarse,ereco_bin_edges_coarse);
+  TH1D * hErecoMode_coarse[conv::knm]; //< contribution from each mode
+  /*
+  for(int im = 0; im < conv::knm; im++) {
+    conv::SuperkMode_t m = conv::kSKReactionModes[is][im];
+    hErecoMode_coarse[im] = new TH1D(Form("%s_coarse",AsStringCompact(m)),"",nbins,ereco_bin_edges_coarse);
+  }
+  */
 
   // Create & config superk spectrum predictor
   SuperkExpectation skexp;
@@ -104,8 +114,13 @@ void test_sk_ereco_spectrum_nominal
     TH1D * h = skexp.CurrPredictedErecoSpectrum(s, m);  
     assert(h);
     hErecoMode[im] = new TH1D(*h);
+    hErecoMode_coarse[im] = (TH1D)hErecoMode[im]->Rebin(nbins_coarse,Form("%s_coarse",hErecoMode[im]->GetName()),ereco_bin_edges_coarse);
   }
   hErecoTot = new TH1D(*skexp.CurrPredictedErecoSpectrum(s));
+  hErecoTot_coarse = (TH1D)hErecoTot->Rebin(nbins_coarse,Form("%s_coarse",hErecoTot->GetName()),ereco_bin_edges_coarse);
+
+  //Fill the coarse binned histograms
+  
 
   //
   // Draw
@@ -138,11 +153,47 @@ void test_sk_ereco_spectrum_nominal
   legend->Draw();
   c->Update();
 
+  //draw coarse binned histograms
+  TCanvas * c_coarse = new TCanvas("c_coarse","",20,20,500,500);
+  TLegend * legend_coarse = new TLegend(0.3, 0.4, 0.9, 0.9);
+  legend_coarse->SetFillColor(0);
+  legend_coarse->SetBorderSize(0);
+  hErecoTot_coarse->Draw();
+  hErecoTot_coarse->GetXaxis()->SetTitle("E_{reco} (GeV)");
+  hErecoTot_coarse->GetYaxis()->SetTitle("Number of events");
+  THStack * stack_coarse = new THStack("stack","spectrum contributions");
+  // Get spectrum of each component mode as defined in kSKReactionModesOrderInStack array
+  // so as to enhance visibility in the stack of smaller components
+  for(int imstack = 0; imstack < conv::knm; imstack++) {
+    conv::SuperkMode_t m = conv::kSKReactionModesOrderInStack[is][imstack];	
+    if(m == conv::kSKmUndefined) continue;
+    int im = util::ArrIdx::Instance()->SuperkModeIdx(s,m);
+    stack_coarse->Add(hErecoMode[im]);
+  }
+  stack_coarse->Draw("same");
+  legend_coarse->AddEntry(hErecoTot, util::AsStringRooTex(s,conv::kSKmUndefined,""," total").c_str(), "L" );
+  for(int im = 0; im < conv::knm; im++) {
+    conv::SuperkMode_t m = conv::kSKReactionModes[is][im];
+    if(m == conv::kSKmUndefined) continue;
+    legend_coarse->AddEntry(hErecoMode[im], util::AsStringRooTex(s,m).c_str(), "LF");
+  }
+  legend_coarse->Draw();
+  c_coarse->Update();
+
+
   //can save this to file &/or print it
   stringstream streamer;
 
   streamer << fixed;
   double ntot = hErecoTot->Integral();
+  double ntot_coarse = hErecoTot->Integral();
+  if(TMath::Abs(ntot - ntot_coarse) > conv::kASmallNum) {
+    cerr << "Integrals are different between differently binned histograms "
+	 << "50MeV: " << ntot
+	 << "BANFF binning: " << ntot_coarse << endl;
+    exit(1);
+  }
+
   streamer << "Total number of events: " 
        << setw(10) << setfill(' ') << setprecision(6) << ntot << endl;
   const int nslices=6;
@@ -186,6 +237,20 @@ void test_sk_ereco_spectrum_nominal
   if(print_spectrum) {  
     int nprec=5;
     streamer << fixed;
+
+    streamer << endl;
+    for(int ibin = 1; ibin <= hErecoTot_coarse->GetXaxis()->GetNbins(); ibin++) {
+      streamer << setw(6) << setfill(' ') << ibin
+	       << " : "
+	       << setw(6) << setfill(' ') << setprecision(3) << hErecoTot_coarse->GetXaxis()->GetBinLowEdge(ibin)
+	       << " - "
+	       << setw(6) << setfill(' ') << setprecision(3) << hErecoTot_coarse->GetXaxis()->GetBinUpEdge(ibin)
+	       << " : "
+	       << setw(6) << setfill(' ') << setprecision(nprec) << hErecoTot_coarse->GetBinContent(ibin)
+	       << endl;
+    }//ibin
+
+    streamer << endl;
     for(int ibin = 1; ibin <= hErecoTot->GetXaxis()->GetNbins(); ibin++) {
       streamer << setw(6) << setfill(' ') << ibin
 	       << " : "

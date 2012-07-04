@@ -143,7 +143,7 @@ void test_sk_ereco_spectrum_twk_banff
        // tweak current param only by +100% - neglect correlations
        //
        cout << "- Tweaking param by +100%" << endl;
-       v[iparam] = 2 * skexp.GetBANFF()->BestFitValue(p); // +100%
+       v[iparam] = skexp.GetBANFF()->BestFitValue(p) + skexp.GetBANFF()->CovMatrix()[iparam][iparam]; // +100%
        skexp.GetBANFF()->Tweak(force,&v);  
        skexp.PrintSystematicVariations();
        // generate predictions
@@ -158,7 +158,7 @@ void test_sk_ereco_spectrum_twk_banff
        // tweak current param only by -100% - neglect correlations
        //
        cout << "- Tweaking by -100%" << endl;
-       v[iparam] = 0.5 * skexp.GetBANFF()->BestFitValue(p); // -100%
+       v[iparam] = skexp.GetBANFF()->BestFitValue(p) - skexp.GetBANFF()->CovMatrix()[iparam][iparam]; // -100%
        skexp.GetBANFF()->Tweak(force,&v);  
        skexp.PrintSystematicVariations();
        // generate predictions

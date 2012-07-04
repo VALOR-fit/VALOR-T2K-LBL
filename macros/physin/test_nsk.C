@@ -28,9 +28,9 @@ void test_nsk
  double input_mixing13    = -99,
  double input_mixing23    = -99,
  double input_mixing12    = -99,
+ double input_deltacp     = -99,
  double input_dm23sq      = -99,
  double input_dm12sq      = -99,
- double input_deltacp     = -99,
  const string sample_str  = "1Rmu",
  const char * config_file = "analysis_configuration.xml"
 )
@@ -124,14 +124,15 @@ void test_nsk
   streamer << "\\begin{tabular}{| l | c c | c c |}" << endl;
   streamer << "\\hline" << endl;
   streamer << " &  "
-	   << "\\multicolumn {2}{c|} { {\\bf Osc ($\\Delta{m}_{23}^2$ = " << input_dm23sq << ") } } &  "
-	   << "\\multicolumn {2}{c|} { {\\bf No osc} } \\\\"
+	   << "\\multicolumn {2}{c|} {\\scriptsize Osc ($\\Delta{m}_{23}^2$ = " << input_dm23sq
+	   << ", $\\sin^2(2\\theta_{23})$ = " << input_mixing23 << ") }  &  "
+	   << "\\multicolumn {2}{c|} { No osc } \\\\"
 	   << endl;
   streamer << " &  "
-	   << "{\\bf No BANFF}   &  "
-	   << "{\\bf BANFF tuned} &  "
-	   << "{\\bf No BANFF}   &  "
-	   << "{\\bf BANFF tuned}  \\\\"
+	   << "{No BANFF}   &  "
+	   << "{BANFF tuned} &  "
+	   << "{No BANFF}   &  "
+	   << "{BANFF tuned}  \\\\"
 	   << endl;
   streamer << "\\hline" << endl;
 
@@ -150,7 +151,7 @@ void test_nsk
 	   << endl;
 
   streamer << "\\hline" << endl;
-  
+
   streamer << setw(ncol1)  << setfill(' ') << "$\\nu_\\mu$ CC"
 	   << endcolumn
 	   << setw(ncolnev)  << setfill(' ') << setprecision(nprecisionnev) << osc_nobanff.nskmucc 
@@ -223,6 +224,19 @@ void test_nsk
   streamer << "\\end{table}" << endl;
 
   cout << "\n\n\n\n\n\n" << streamer.str() << endl;
+
+  // get size of streamer
+  long size;
+  streamer.seekg(0,ifstream::end);
+  size=streamer.tellg();
+  streamer.seekg(0);
+
+  //write streamer to file
+  string oscparams = util::AsString(ph.Hypothesis(),
+				    input_mixing12,input_mixing13,input_mixing23,input_deltacp,input_dm12sq,input_dm23sq);
+  ofstream outfile (Form("nsk_summary-%s.txt",oscparams.c_str()));
+  outfile.write (streamer.str().c_str(),size);
+  outfile.close();
 }
 
 
