@@ -55,7 +55,7 @@ void test_analysis_inputs
 
   if(opt.Contains("BANFF")) {
     util::PrintCompact(skexp->GetBANFF()->BestFitValues(),15,9,"BANFF fit params");
-    util::PrintCompact(skexp->GetBANFF()->CovMatrix(),15,9);
+    skexp->GetBANFF()->CovMatrix().Print();
   }//BANFF
 
   if(opt.Contains("NuXSec")) {

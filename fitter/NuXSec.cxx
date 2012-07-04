@@ -335,9 +335,14 @@ double NuXSec::FinTuningWght_1p(
      if(ev) {
        TSpline3 * wght_spl = this->FindWghtSpline(p,s,m,Ereco,Etrue);
        assert(wght_spl);
-       double t = fBANFF->BestFitValue(p);
-       wght = wght_spl->Eval(t);
-       //wght = wght_spl->Eval(0);
+       int banff_pos = util::ArrIdx::Instance()->BANFFSystIdx(p);
+       double diag = fBANFF->CovMatrix()[banff_pos][banff_pos];
+       double tb = fBANFF->BestFitValue(p);
+       double numerator = 0;
+       if(TMath::Abs(tb - 1) > conv::kASmallNum) {
+	 numerator = (tb - 1) / (diag);
+       }
+       wght = wght_spl->Eval(numerator) / 1.; // wght_spl->Eval(0);
        wght = TMath::Max(0.,wght);
      }
   }
@@ -365,7 +370,7 @@ double NuXSec::FinTuningWght_1p(
   }
 #endif
 
-  if(wght < 0 || wght > conv::kMaxAllowedWght) {
+  if(TMath::Abs(wght) > conv::kMaxAllowedWght) {
     //get the ereco & etrue bin indexes (to be used to check whether the spline is sensible)
     int ireco = -1; 
     for (int i = 0; i < kXsNErecoBins; i++) {
@@ -397,6 +402,17 @@ double NuXSec::FinTuningWght_1p(
 	 << " Current value = " << this->CurrentValue(p)
 	 << endl;   
     exit(1);
+  }
+
+  if(wght < -conv::kASmallNum) {
+    cout << "Exp/NuXSec/FinTuningWght_1p >> "
+	 << "Weight < 0 (" << wght 
+	 << ") returning 0 " << AsStringCompact(s) 
+	 << " " << AsStringCompact(m) 
+	 << " " << AsStringCompact(p)
+	 << " Ereco " << Ereco
+	 << " Etrue " << Etrue << endl;
+      return 0;
   }
 
   return wght;
@@ -459,12 +475,16 @@ double NuXSec::SystWght_1p(
        assert(wght_spl);
        double tb = fBANFF->BestFitValue(p);
        double tc = fBANFF->CurrentValue(p);
-       double diag = 0;
-       if(p == kNuisBANFFMAQE)
-	 diag = fBANFF->CovMatrix()[31][31];
-       else if(p == kNuisBANFFMARES)
-	 diag = fBANFF->CovMatrix()[32][32];
-       wght = wght_spl->Eval(((tc / tb) - 1) / diag) / wght_spl->Eval(tb);
+       int banff_pos = util::ArrIdx::Instance()->BANFFSystIdx(p);
+       double diag = fBANFF->CovMatrix()[banff_pos][banff_pos];
+       double denominator = 0, numerator = 0;
+       if(TMath::Abs(tb - 1) > conv::kASmallNum) {
+	 denominator = (tb - 1) / (diag);
+       }
+       if(TMath::Abs(tc - 1) > conv::kASmallNum) {
+	 numerator = (tc - 1) / (diag);
+       }
+       wght = wght_spl->Eval(numerator) / 1.; // wght_spl->Eval(0); // wght_spl->Eval(denominator);
        wght = TMath::Max(0.,wght);
      }
   }
@@ -560,6 +580,17 @@ double NuXSec::SystWght_1p(
 	 << " Current value = " << this->CurrentValue(p)
 	 << endl;   
     exit(1);
+  }
+
+  if(wght < -conv::kASmallNum) {
+    cout << "Exp/NuXSec/SystWght_1p >> "
+	 << "Weight < 0 (" << wght 
+	 << ") returning 0 " << AsStringCompact(s) 
+	 << " " << AsStringCompact(m) 
+	 << " " << AsStringCompact(p)
+	 << " Ereco " << Ereco
+	 << " Etrue " << Etrue << endl;
+      return 0;
   }
   
   return wght;

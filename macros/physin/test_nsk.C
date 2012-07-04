@@ -150,7 +150,7 @@ void test_nsk
 	   << endl;
 
   streamer << "\\hline" << endl;
-  cout << streamer.str() << endl;
+  
   streamer << setw(ncol1)  << setfill(' ') << "$\\nu_\\mu$ CC"
 	   << endcolumn
 	   << setw(ncolnev)  << setfill(' ') << setprecision(nprecisionnev) << osc_nobanff.nskmucc 

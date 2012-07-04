@@ -50,7 +50,7 @@ static const int kPdgNuTauBar = -16;
 //
 
 // Dm^2 global fit results
-static const double kGlobFitDm23sq           = 2.35E-3;
+static const double kGlobFitDm23sq           = 2.4E-3;
 static const double kGlobFitDm12sq           = 7.6E-5;
 static const double kGlobFitErrDm23sq        = 0.04; // ~4%
 static const double kGlobFitErrDm12sq        = 0.03; // ~3%
@@ -106,7 +106,7 @@ static const double kMaxFitSinsqTheta12      = 1.00;
 static const double kMaxAllowedWght = 1E+3;                          // Complain if any computed weights exceeds this value
 static const double kASmallNum      = 1E-10;                         // 
 static const double kOneMeV         = 0.001;                         // 
-static const double kBaseline       = 295.335;                       // Tokai->Kamioka (km)
+static const double kBaseline       = 295;                           // Tokai->Kamioka (km)
 static const double kOscDimensFactor= 1.26693281;                    // Dimensional factor (GeV/eV^2/km) appearing in netrino oscillation formula
 static const double kCrustDensity   = 2.6;                           // Average density of Earth's continental crust (gr / cm^3)
 static const double kpi             = 3.141592653589793;             // pi
@@ -1061,31 +1061,31 @@ static const bool kXsApplyXSecSystToSKMode[kns][knm][kNumOfXSecSyst] = {
     {  1, 0, 1, 0, 0,  1, 1, 0, 0, 0, 0,  1, 1, 0, 0, 0, 0, 0 }, // kSKmNuMuCCQE        
     {  0, 1, 0, 1, 0,  0, 0, 1, 0, 1, 1,  0, 0, 1, 0, 0, 0, 0 }, // kSKmNuMuCC1pi
     {  0, 0, 0, 0, 0,  0, 0, 0, 0, 0, 0,  0, 0, 0, 1, 0, 0, 0 }, // kSKmNuMuCCcoh
-    {  0, 0, 0, 0, 0,  0, 0, 1, 1, 0, 0,  0, 0, 0, 0, 0, 0, 0 }, // kSKmNuMuCCoth_mu
-    {  0, 0, 0, 0, 0,  0, 0, 0, 0, 1, 0,  0, 0, 0, 0, 0, 0, 0 }, // kSKmNuMuNC1piC
-    {  0, 0, 0, 0, 1,  0, 0, 0, 0, 1, 0,  0, 0, 0, 0, 0, 1, 0 }, // kSKmNuMuNCoth_mu
+    {  0, 1, 0, 0, 0,  0, 0, 1, 1, 1, 0,  0, 0, 0, 0, 0, 0, 0 }, // kSKmNuMuCCoth_mu
+    {  0, 1, 0, 0, 0,  0, 0, 1, 0, 1, 0,  0, 0, 0, 0, 0, 0, 0 }, // kSKmNuMuNC1piC
+    {  0, 1, 0, 0, 1,  0, 0, 1, 0, 1, 0,  0, 0, 0, 0, 0, 1, 0 }, // kSKmNuMuNCoth_mu
     {  1, 0, 1, 0, 0,  1, 1, 0, 0, 0, 0,  1, 1, 0, 0, 0, 0, 0 }, // kSKmNuMuBarCCQE        
     {  0, 1, 0, 1, 0,  0, 0, 1, 0, 1, 1,  0, 0, 1, 0, 0, 0, 0 }, // kSKmNuMuBarCC1pi
     {  0, 0, 0, 0, 0,  0, 0, 0, 0, 0, 0,  0, 0, 0, 1, 0, 0, 0 }, // kSKmNuMuBarCCcoh
-    {  0, 0, 0, 0, 0,  0, 0, 1, 1, 0, 0,  0, 0, 0, 0, 0, 0, 0 }, // kSKmNuMuBarCCoth_mu
-    {  0, 0, 0, 0, 0,  0, 0, 0, 0, 1, 0,  0, 0, 0, 0, 0, 0, 0 }, // kSKmNuMuBarNC1piC
-    {  0, 0, 0, 0, 1,  0, 0, 0, 0, 1, 0,  0, 0, 0, 0, 0, 1, 0 }, // kSKmNuMuBarNCoth_mu
+    {  0, 1, 0, 0, 0,  0, 0, 1, 1, 1, 0,  0, 0, 0, 0, 0, 0, 0 }, // kSKmNuMuBarCCoth_mu
+    {  0, 1, 0, 0, 0,  0, 0, 1, 0, 1, 0,  0, 0, 0, 0, 0, 0, 0 }, // kSKmNuMuBarNC1piC
+    {  0, 1, 0, 0, 1,  0, 0, 1, 0, 1, 0,  0, 0, 0, 0, 0, 1, 0 }, // kSKmNuMuBarNCoth_mu
     {  1, 0, 1, 0, 0,  1, 1, 0, 0, 0, 0,  1, 1, 0, 0, 0, 0, 0 }, // kSKmNuECCQE        
     {  0, 1, 0, 1, 0,  0, 0, 1, 0, 1, 1,  0, 0, 1, 0, 0, 0, 0 }, // kSKmNuECC1pi
     {  0, 0, 0, 0, 0,  0, 0, 0, 0, 0, 0,  0, 0, 0, 1, 0, 0, 0 }, // kSKmNuECCcoh
-    {  0, 0, 0, 0, 0,  0, 0, 1, 1, 0, 0,  0, 0, 0, 0, 0, 0, 0 }, // kSKmNuECCoth_mu
-    {  0, 0, 0, 0, 0,  0, 0, 0, 0, 1, 0,  0, 0, 0, 0, 0, 0, 0 }, // kSKmNuENC1piC
-    {  0, 0, 0, 0, 1,  0, 0, 0, 0, 1, 0,  0, 0, 0, 0, 0, 1, 0 }, // kSKmNuENCoth_mu
+    {  0, 1, 0, 0, 0,  0, 0, 1, 1, 1, 0,  0, 0, 0, 0, 0, 0, 0 }, // kSKmNuECCoth_mu
+    {  0, 1, 0, 0, 0,  0, 0, 1, 0, 1, 0,  0, 0, 0, 0, 0, 0, 0 }, // kSKmNuENC1piC
+    {  0, 1, 0, 0, 1,  0, 0, 1, 0, 1, 0,  0, 0, 0, 0, 0, 1, 0 }, // kSKmNuENCoth_mu
     {  1, 0, 1, 0, 0,  1, 1, 0, 0, 0, 0,  1, 1, 0, 0, 0, 0, 0 }, // kSKmNuEBarCCQE        
     {  0, 1, 0, 1, 0,  0, 0, 1, 0, 1, 1,  0, 0, 1, 0, 0, 0, 0 }, // kSKmNuEBarCC1pi
     {  0, 0, 0, 0, 0,  0, 0, 0, 0, 0, 0,  0, 0, 0, 1, 0, 0, 0 }, // kSKmNuEBarCCcoh
-    {  0, 0, 0, 0, 0,  0, 0, 1, 1, 0, 0,  0, 0, 0, 0, 0, 0, 0 }, // kSKmNuEBarCCoth_mu
-    {  0, 0, 0, 0, 0,  0, 0, 0, 0, 1, 0,  0, 0, 0, 0, 0, 0, 0 }, // kSKmNuEBarNC1piC
-    {  0, 0, 0, 0, 1,  0, 0, 0, 0, 1, 0,  0, 0, 0, 0, 0, 1, 0 }, // kSKmNuEBarNCoth_mu
+    {  0, 1, 0, 0, 0,  0, 0, 1, 1, 1, 0,  0, 0, 0, 0, 0, 0, 0 }, // kSKmNuEBarCCoth_mu
+    {  0, 1, 0, 0, 0,  0, 0, 1, 0, 1, 0,  0, 0, 0, 0, 0, 0, 0 }, // kSKmNuEBarNC1piC
+    {  0, 1, 0, 0, 1,  0, 0, 1, 0, 1, 0,  0, 0, 0, 0, 0, 1, 0 }, // kSKmNuEBarNCoth_mu
     {  1, 0, 1, 0, 0,  1, 1, 0, 0, 0, 0,  1, 1, 0, 0, 0, 0, 0 }, // kSKmSigNuECCQE        
     {  0, 1, 0, 1, 0,  0, 0, 1, 0, 1, 1,  0, 0, 1, 0, 0, 0, 0 }, // kSKmSigNuECC1pi
     {  0, 0, 0, 0, 0,  0, 0, 0, 0, 0, 0,  0, 0, 0, 1, 0, 0, 0 }, // kSKmSigNuECCcoh
-    {  0, 0, 0, 0, 0,  0, 0, 1, 1, 0, 0,  0, 0, 0, 0, 0, 0, 0 }, // kSKmSigNuECCoth_mu
+    {  0, 1, 0, 0, 0,  0, 0, 1, 1, 1, 0,  0, 0, 0, 0, 0, 0, 0 }, // kSKmSigNuECCoth_mu
     {  0, 0, 0, 0, 0,  0, 0, 0, 0, 0, 0,  0, 0, 0, 0, 0, 0, 0 }, // kSKmUndefined
     {  0, 0, 0, 0, 0,  0, 0, 0, 0, 0, 0,  0, 0, 0, 0, 0, 0, 0 }, // kSKmUndefined
     {  0, 0, 0, 0, 0,  0, 0, 0, 0, 0, 0,  0, 0, 0, 0, 0, 0, 0 }, // kSKmUndefined

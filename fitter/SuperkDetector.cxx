@@ -316,6 +316,9 @@ void SuperkDetector::PrintSystematicVariations(void) const
 double SuperkDetector::EfficiencyWeight(
     SuperkSample_t s, SuperkMode_t m, double Ereco) const
 {
+
+  double weight = 0;
+
   //
   // 1-ring mu-like sample
   //
@@ -343,8 +346,7 @@ double SuperkDetector::EfficiencyWeight(
           else if (Ereco > fEff1RmuCCQERCCovarE2RelErr) { weight_rc = weight_rc2; }
           else                            { weight_rc = weight_rc1; }
           // combined weight
-          double weight     = weight_oth * weight_rc;
-          return weight;
+          weight     = weight_oth * weight_rc;
           break;
        }
 
@@ -361,8 +363,7 @@ double SuperkDetector::EfficiencyWeight(
        {
           double relerr  = fEff1RmuCCnonQERelErr;
           double twkdial = fEff1RmuCCnonQETwkDial;
-          double weight  = (1. + twkdial*relerr);
-          return weight;
+          weight  = (1. + twkdial*relerr);
           break;
        }
 
@@ -384,8 +385,7 @@ double SuperkDetector::EfficiencyWeight(
        {
           double relerr  = fEff1RmuNCRelErr;
           double twkdial = fEff1RmuNCTwkDial;
-          double weight  = (1. + twkdial*relerr);
-          return weight;
+          weight  = (1. + twkdial*relerr);
           break;
        }
 
@@ -408,8 +408,7 @@ double SuperkDetector::EfficiencyWeight(
        {
           double relerr  = fEff1RmuNuECCRelErr;
           double twkdial = fEff1RmuNuECCTwkDial;
-          double weight  = (1. + twkdial*relerr);
-          return weight;
+          weight  = (1. + twkdial*relerr);
           break;
        }
 
@@ -418,6 +417,9 @@ double SuperkDetector::EfficiencyWeight(
           return 0.;                 
           break;
        }
+       
+       return 0;
+
     }//mode
   }//1-ring mu-like sample
   //
@@ -456,7 +458,7 @@ double SuperkDetector::EfficiencyWeight(
 /////////	 {
 /////////	   double relerr  = fEff1ReBkgRelErr;
 /////////	   double twkdial = fEff1ReBkgTwkDial;
-/////////	   double weight  = (1. + twkdial*relerr);
+/////////	   weight  = (1. + twkdial*relerr);
 /////////	   return weight;
 /////////	   break;
 /////////	 }
@@ -466,7 +468,7 @@ double SuperkDetector::EfficiencyWeight(
 /////////	 {
 /////////	   double relerr  = fEff1ReSigRelErr;
 /////////	   double twkdial = fEff1ReSigTwkDial;
-/////////	   double weight  = (1. + twkdial*relerr);
+/////////	   weight  = (1. + twkdial*relerr);
 /////////	   return weight;
 /////////	   break;
 /////////	 }
@@ -475,7 +477,16 @@ double SuperkDetector::EfficiencyWeight(
     }//mode
   }//1-ring e-like sample
 
-  return 0.;
+  if(weight < -conv::kASmallNum) {
+    cout << "Exp/SKDet/EfficiencyWeight >> "
+	 << "Weight < 0 (" << weight 
+	 << ") returning 0 " << AsStringCompact(s) 
+	 << " " << AsStringCompact(m) 
+	 << " Ereco " << Ereco << endl;
+    return 0;
+  }
+  return weight;
+
 }
 //________________________________________________________________________________________
 double SuperkDetector::EnergyScaleRelErr(SuperkSample_t s, SuperkMode_t m) const
