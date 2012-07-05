@@ -61,6 +61,9 @@ void test_sk_ereco_spectrum_nominal
     ph.SetCurrValue(conv::kPhypDm23sq,    input_dm23sq);
   }
 
+  string oscparams = util::AsString(ph.Hypothesis(),
+     input_mixing12,input_mixing13,input_mixing23,input_deltacp,input_dm12sq,input_dm23sq);
+
   conv::SuperkSample_t s = util::SKSampleFromString(sk_sample); // requested sample
   if(s == conv::kSKsUndefined) {
     cerr << "** Undefined sample!" << endl;
@@ -99,7 +102,7 @@ void test_sk_ereco_spectrum_nominal
   // Disable BANFF tuning if requested
   if(disable_banff_tuning) {
     cout << "- Performing special systematic parameter variation which cancels the effect of BANFF tuning..." << endl;
-    skexp.GetBANFF().RestoreNominalMC();
+    skexp.GetBANFF()->RestoreNominalMC();
   }
 
   // Generate prediction
@@ -128,9 +131,10 @@ void test_sk_ereco_spectrum_nominal
 
   gStyle->SetOptStat(0);
   TCanvas * c = new TCanvas("c","",20,20,500,500);
-  TLegend * legend = new TLegend(0.3, 0.4, 0.9, 0.9);
+  TLegend * legend = new TLegend(0.6, 0.4, 0.9, 0.9);
   legend->SetFillColor(0);
   legend->SetBorderSize(0);
+  hErecoTot->GetXaxis()->SetRangeUser(0,7);
   hErecoTot->Draw();
   hErecoTot->GetXaxis()->SetTitle("E_{reco} (GeV)");
   hErecoTot->GetYaxis()->SetTitle("Number of events");
@@ -152,23 +156,26 @@ void test_sk_ereco_spectrum_nominal
   }
   legend->Draw();
   c->Update();
+  c->SaveAs(Form("sk_ereco_spectrum-%s%s.png",oscparams.c_str(),(disable_banff_tuning ? "_nobanff" : "")));
 
   //draw coarse binned histograms
   TCanvas * c_coarse = new TCanvas("c_coarse","",20,20,500,500);
-  TLegend * legend_coarse = new TLegend(0.3, 0.4, 0.9, 0.9);
+  TLegend * legend_coarse = new TLegend(0.6, 0.4, 0.9, 0.9);
+  legend_coarse->SetName("legend_coarse");
   legend_coarse->SetFillColor(0);
   legend_coarse->SetBorderSize(0);
+  hErecoTot_coarse->GetXaxis()->SetRangeUser(0,7-conv::kASmallNum);
   hErecoTot_coarse->Draw();
   hErecoTot_coarse->GetXaxis()->SetTitle("E_{reco} (GeV)");
   hErecoTot_coarse->GetYaxis()->SetTitle("Number of events");
-  THStack * stack_coarse = new THStack("stack","spectrum contributions");
+  THStack * stack_coarse = new THStack("stack_coarse","spectrum contributions");
   // Get spectrum of each component mode as defined in kSKReactionModesOrderInStack array
   // so as to enhance visibility in the stack of smaller components
   for(int imstack = 0; imstack < conv::knm; imstack++) {
     conv::SuperkMode_t m = conv::kSKReactionModesOrderInStack[is][imstack];	
     if(m == conv::kSKmUndefined) continue;
     int im = util::ArrIdx::Instance()->SuperkModeIdx(s,m);
-    stack_coarse->Add(hErecoMode[im]);
+    stack_coarse->Add(hErecoMode_coarse[im]);
   }
   stack_coarse->Draw("same");
   legend_coarse->AddEntry(hErecoTot, util::AsStringRooTex(s,conv::kSKmUndefined,""," total").c_str(), "L" );
@@ -179,6 +186,7 @@ void test_sk_ereco_spectrum_nominal
   }
   legend_coarse->Draw();
   c_coarse->Update();
+  c_coarse->SaveAs(Form("sk_ereco_spectrum-%s%s_coarse.png",oscparams.c_str(),(disable_banff_tuning ? "_nobanff" : "")));
 
 
   //can save this to file &/or print it
@@ -217,17 +225,19 @@ void test_sk_ereco_spectrum_nominal
   // Save histograms in a ROOT file
   //
 
-  string oscparams = util::AsString(ph.Hypothesis(),
-     input_mixing12,input_mixing13,input_mixing23,input_deltacp,input_dm12sq,input_dm23sq);
   TFile f(Form("sk_ereco_spectrum-%s%s.root",oscparams.c_str(),(disable_banff_tuning ? "_nobanff" : "")) ,"recreate");
   hErecoTot -> Write(util::AsStringCompact(s,conv::kSKmUndefined,"","total").c_str());
+  hErecoTot_coarse->Write(Form("%s_coarse",util::AsStringCompact(s,conv::kSKmUndefined,"","total").c_str()));
   for(int im = 0; im < conv::knm; im++) {
     conv::SuperkMode_t m = conv::kSKReactionModes[is][im];
     if(m == conv::kSKmUndefined) continue;
     hErecoMode[im] -> Write(util::AsStringCompact(s,m).c_str());
+    hErecoMode_coarse[im] -> Write(Form("%s_coarse",util::AsStringCompact(s,m).c_str()));
   }
   stack->Write();
   legend->Write();
+  stack_coarse->Write();
+  legend_coarse->Write();
   f.Close();
 
   //
