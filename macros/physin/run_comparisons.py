@@ -46,7 +46,7 @@ for mixing23 in mixing23s:
             os.system(command)
 
         #nsk (table summarising banff/no banff & osc/no osc)
-        command = 'root2k -l -b -q \'$T2KOSCANA/macros/physin/test_nsk.C\''+str(mixing12)+','+str(mixing13)+','+str(mixing23)+','+str(deltacp)+','+str(dm12sq)+','+str(dm23sq)+'"1Rmu","analysis_configuration.xml")\''
+        command = 'root2k -l -b -q \'$T2KOSCANA/macros/physin/test_nsk.C('+str(mixing12)+','+str(mixing13)+','+str(mixing23)+','+str(deltacp)+','+str(dm12sq)+','+str(dm23sq)+',"1Rmu","analysis_configuration.xml")\''
         print command
         if not opt.skip_nsk:
             os.system(command)
