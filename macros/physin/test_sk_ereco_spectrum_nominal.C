@@ -86,14 +86,8 @@ void test_sk_ereco_spectrum_nominal
   TH1D * hErecoMode[conv::knm]; //< contribution from each mode  
   const int nbins_coarse = util::NumVariableXsEtrueBins(s,conv::kSKmNuMuCCQE);
   const double * ereco_bin_edges_coarse = util::VariableXsEtrueBinEdges(s,conv::kSKmNuMuCCQE);
-  TH1D * hErecoTot_coarse;// = new TH1D("total_coarse","",nbins_coarse,ereco_bin_edges_coarse);
+  TH1D * hErecoTot_coarse;
   TH1D * hErecoMode_coarse[conv::knm]; //< contribution from each mode
-  /*
-  for(int im = 0; im < conv::knm; im++) {
-    conv::SuperkMode_t m = conv::kSKReactionModes[is][im];
-    hErecoMode_coarse[im] = new TH1D(Form("%s_coarse",AsStringCompact(m)),"",nbins,ereco_bin_edges_coarse);
-  }
-  */
 
   // Create & config superk spectrum predictor
   SuperkExpectation skexp;
@@ -121,9 +115,6 @@ void test_sk_ereco_spectrum_nominal
   }
   hErecoTot = new TH1D(*skexp.CurrPredictedErecoSpectrum(s));
   hErecoTot_coarse = (TH1D)hErecoTot->Rebin(nbins_coarse,Form("%s_coarse",hErecoTot->GetName()),ereco_bin_edges_coarse);
-
-  //Fill the coarse binned histograms
-  
 
   //
   // Draw
@@ -157,6 +148,7 @@ void test_sk_ereco_spectrum_nominal
   legend->Draw();
   c->Update();
   c->SaveAs(Form("sk_ereco_spectrum-%s%s.png",oscparams.c_str(),(disable_banff_tuning ? "_nobanff" : "")));
+  hErecoTot->GetXaxis()->UnZoom();
 
   //draw coarse binned histograms
   TCanvas * c_coarse = new TCanvas("c_coarse","",20,20,500,500);
