@@ -218,13 +218,13 @@ void test_sk_ereco_spectrum_nominal
   //
 
   TFile f(Form("sk_ereco_spectrum-%s%s.root",oscparams.c_str(),(disable_banff_tuning ? "_nobanff" : "")) ,"recreate");
-  hErecoTot -> Write(util::AsStringCompact(s,conv::kSKmUndefined,"","total").c_str());
-  hErecoTot_coarse->Write(Form("%s_coarse",util::AsStringCompact(s,conv::kSKmUndefined,"","total").c_str()));
+  hErecoTot -> Write(util::AsStringCompact(s,conv::kSKmUndefined,"sk_","total").c_str());
+  hErecoTot_coarse->Write(Form("%s_coarse",util::AsStringCompact(s,conv::kSKmUndefined,"sk_","total").c_str()));
   for(int im = 0; im < conv::knm; im++) {
     conv::SuperkMode_t m = conv::kSKReactionModes[is][im];
     if(m == conv::kSKmUndefined) continue;
-    hErecoMode[im] -> Write(util::AsStringCompact(s,m).c_str());
-    hErecoMode_coarse[im] -> Write(Form("%s_coarse",util::AsStringCompact(s,m).c_str()));
+    hErecoMode[im] -> Write(util::AsStringCompact(s,m,"sk_","").c_str());
+    hErecoMode_coarse[im] -> Write(Form("sk_%s_coarse",util::AsStringCompact(s,m).c_str()));
   }
   stack->Write();
   legend->Write();
