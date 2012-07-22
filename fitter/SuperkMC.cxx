@@ -22,6 +22,9 @@
 //#define __show_spectra_update_mesg_debug__ 
 //#define __show_skipped_templates__ 
 //#define __save_ori_templates_init_debug__
+//#define __save_nom_templates_init_debug__
+//#define __save_nomft_templates_init_debug__
+//#define __save_tun_templates_init_debug__
 
 #include <cassert>
 #include <cstdlib>
@@ -224,9 +227,24 @@ bool SuperkMC::Read(TXMLEngine* xml, XMLNodePointer_t root_node)
       SuperkMode_t m = kSKReactionModes[is][im];
       if(m == kSKmUndefined) continue;
       this->Template(s,m,kSKMCtOri)->Write();
+      cout << "OriTemplate " << util::AsString(s) << " " << util::AsString(m) << " " << this->Template(s,m,kSKMCtOri)->Integral() << endl;
     }
   }
   out.Close();
+#endif
+#ifdef __save_nom_templates_init_debug__
+  TFile out2("NomTemplates.root","RECREATE");
+  for(int is = 0; is < kns; is++) {
+    SuperkSample_t s = kSKSamples[is];
+    if(s == kSKsUndefined) continue;
+    for(int im = 0; im < knm; im++) {
+      SuperkMode_t m = kSKReactionModes[is][im];
+      if(m == kSKmUndefined) continue;
+      this->Template(s,m,kSKMCtNom)->Write();
+      cout << "NomTemplate " << util::AsString(s) << " " << util::AsString(m) << " " << this->Template(s,m,kSKMCtNom)->Integral() << endl;
+    }
+  }
+  out2.Close();
 #endif
 
   // need to read in the xsec splines, before applying any BANFF tweaks
@@ -492,6 +510,21 @@ void SuperkMC::ApplyFluxExtTuningToTemplates(void)
        }//ir
     }//im
   }//is
+
+#ifdef __save_nomft_templates_init_debug__
+  TFile out("NomftTemplates.root","RECREATE");
+  for(int is = 0; is < kns; is++) {
+    SuperkSample_t s = kSKSamples[is];
+    if(s == kSKsUndefined) continue;
+    for(int im = 0; im < knm; im++) {
+      SuperkMode_t m = kSKReactionModes[is][im];
+      if(m == kSKmUndefined) continue;
+      this->Template(s,m,kSKMCtNom)->Write();
+      cout << "NomFluxTunedTemplate " << util::AsString(s) << " " << util::AsString(m) << " " << this->Template(s,m,kSKMCtNom)->Integral() << endl;
+    }
+  }
+  out.Close();
+#endif
 }
 //________________________________________________________________________________________
 void SuperkMC::ApplyBANFFTuningToTemplates(void)
@@ -572,6 +605,21 @@ void SuperkMC::ApplyBANFFTuningToTemplates(void)
   }//is
 
   fFSI    -> BuildFracMCTemplates(fMCTemplTun);
+
+#ifdef __save_tun_templates_init_debug__
+  TFile out("TunTemplates.root","RECREATE");
+  for(int is = 0; is < kns; is++) {
+    SuperkSample_t s = kSKSamples[is];
+    if(s == kSKsUndefined) continue;
+    for(int im = 0; im < knm; im++) {
+      SuperkMode_t m = kSKReactionModes[is][im];
+      if(m == kSKmUndefined) continue;
+      this->Template(s,m,kSKMCtNom)->Write();
+      cout << "TunFluxTunedTemplate " << util::AsString(s) << " " << util::AsString(m) << " " << this->Template(s,m,kSKMCtTun)->Integral() << endl;
+    }
+  }
+  out.Close();
+#endif
 
 }
 //________________________________________________________________________________________
