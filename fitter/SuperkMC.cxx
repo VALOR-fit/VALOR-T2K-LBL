@@ -21,10 +21,10 @@
 //#define __show_syst_var_wght_mesg_debug__ 
 //#define __show_spectra_update_mesg_debug__ 
 //#define __show_skipped_templates__ 
-#define __save_ori_templates_init_debug__   // number of events
-#define __save_nom_templates_init_debug__   // number of events, weighted by pot & mc normalisation
-#define __save_nomft_templates_init_debug__ // number of events, weighted by pot & mc normalisation, flux tuning
-#define __save_tun_templates_init_debug__   // number of events, weighted by pot & mc normalisation, flux tuning, banff tuning
+//#define __save_ori_templates_init_debug__   // number of events
+//#define __save_nom_templates_init_debug__   // number of events, weighted by pot & mc normalisation
+//#define __save_nomft_templates_init_debug__ // number of events, weighted by pot & mc normalisation, flux tuning
+//#define __save_tun_templates_init_debug__   // number of events, weighted by pot & mc normalisation, flux tuning, banff tuning
 
 #include <cassert>
 #include <cstdlib>
