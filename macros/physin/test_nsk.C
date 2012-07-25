@@ -274,22 +274,22 @@ nsk_t nsk_integration(nsk_t n, SuperkExpectation *skexp, conv::SuperkSample_t s)
     conv::SuperkMode_t m = conv::kSKReactionModes[is][im];
     if(m == conv::kSKmUndefined)
       continue;
-    n.nskmc += skexp->GetSuperkMC()->Template(s, m, conv::kSKMCtFin)->Integral();
+    n.nskmc += skexp->GetSuperkMC()->Template(s, m, conv::kSKMCtNom)->Integral();
 
     //split into categories (all NC, CC numu, CC numubar, CC nue, CC nuebar, CC signue)
     if(util::IsNC(m))
-      n.nsknc += skexp->GetSuperkMC()->Template(s, m, conv::kSKMCtFin)->Integral();
+      n.nsknc += skexp->GetSuperkMC()->Template(s, m, conv::kSKMCtNom)->Integral();
     else {
       if(util::IsNuMu(m))
-	n.nskmucc += skexp->GetSuperkMC()->Template(s, m, conv::kSKMCtFin)->Integral();
+	n.nskmucc += skexp->GetSuperkMC()->Template(s, m, conv::kSKMCtNom)->Integral();
       else if(util::IsNuMuBar(m))
-	n.nskmubarcc += skexp->GetSuperkMC()->Template(s, m, conv::kSKMCtFin)->Integral();
+	n.nskmubarcc += skexp->GetSuperkMC()->Template(s, m, conv::kSKMCtNom)->Integral();
       else if(util::IsNuE(m))
-	n.nskecc += skexp->GetSuperkMC()->Template(s, m, conv::kSKMCtFin)->Integral();
+	n.nskecc += skexp->GetSuperkMC()->Template(s, m, conv::kSKMCtNom)->Integral();
       else if(util::IsNuEBar(m))
-	n.nskebarcc += skexp->GetSuperkMC()->Template(s, m, conv::kSKMCtFin)->Integral();
+	n.nskebarcc += skexp->GetSuperkMC()->Template(s, m, conv::kSKMCtNom)->Integral();
       else if(util::IsSignalNuE(m))
-	n.nsksigecc += skexp->GetSuperkMC()->Template(s, m, conv::kSKMCtFin)->Integral();
+	n.nsksigecc += skexp->GetSuperkMC()->Template(s, m, conv::kSKMCtNom)->Integral();
     }//CC?
   }
   return n;

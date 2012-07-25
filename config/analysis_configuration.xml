@@ -85,11 +85,13 @@
         <nominal>     
            <numu>
              <pot> 
-                4.3151028E+23
+	       <filename>   inputs/official/2012/superk/mc/neut/11c/smallnt_numu_sk11c_flx11bv31_r1-3cfull_10acut.root </filename>
+	       <objname>    h_stat_snt_tnumu  </objname>
+	       <objtype>    TH1D                  </objtype>
              </pot>
              <one_mu_ring>
-                <filename>   inputs/official/2012/superk/mc/neut/11c/mtuple_numuana_sk11c_flx11av2_10acuts_numu.root  </filename>
-                <objname>    mtuple   </objname>
+                <filename>   inputs/official/2012/superk/mc/neut/11c/smallnt_numu_sk11c_flx11bv31_r1-3cfull_10acut.root  </filename>
+                <objname>    tnumu   </objname>
                 <objtype>    TTree            </objtype>
              </one_mu_ring>
              <one_e_ring>
@@ -100,11 +102,13 @@
            </numu>
            <numubar>
              <pot> 
-                6.3258298E+24
+	       <filename>   inputs/official/2012/superk/mc/neut/11c/smallnt_numu_sk11c_flx11bv31_r1-3cfull_10acut.root </filename>
+	       <objname>    h_stat_snt_tnumubar  </objname>
+	       <objtype>    TH1D                  </objtype>
              </pot>
              <one_mu_ring>
-                <filename>   inputs/official/2012/superk/mc/neut/11c/mtuple_numuana_sk11c_flx11av2_10acuts_numubar.root  </filename>
-                <objname>    mtuple   </objname>
+                <filename>   inputs/official/2012/superk/mc/neut/11c/smallnt_numu_sk11c_flx11bv31_r1-3cfull_10acut.root  </filename>
+                <objname>    tnumubar   </objname>
                 <objtype>    TTree            </objtype>
              </one_mu_ring>
              <one_e_ring>
@@ -115,11 +119,13 @@
            </numubar>
            <nue>
              <pot> 
-                2.2005051E+25
+	       <filename>   inputs/official/2012/superk/mc/neut/11c/smallnt_numu_sk11c_flx11bv31_r1-3cfull_10acut.root </filename>
+	       <objname>    h_stat_snt_tnue  </objname>
+	       <objtype>    TH1D                  </objtype>
              </pot>
              <one_mu_ring>
-                <filename>   inputs/official/2012/superk/mc/neut/11c/mtuple_numuana_sk11c_flx11av2_10acuts_nue.root  </filename>
-                <objname>    mtuple   </objname>
+                <filename>   inputs/official/2012/superk/mc/neut/11c/smallnt_numu_sk11c_flx11bv31_r1-3cfull_10acut.root  </filename>
+                <objname>    tnue   </objname>
                 <objtype>    TTree            </objtype>
              </one_mu_ring>
              <one_e_ring>
@@ -130,11 +136,13 @@
           </nue>
           <nuebar>
              <pot> 
-                1.0476136E+26
+	       <filename>   inputs/official/2012/superk/mc/neut/11c/smallnt_numu_sk11c_flx11bv31_r1-3cfull_10acut.root </filename>
+	       <objname>    h_stat_snt_tnuebar  </objname>
+	       <objtype>    TH1D                  </objtype>
              </pot>
              <one_mu_ring>
-                <filename>   inputs/official/2012/superk/mc/neut/11c/mtuple_numuana_sk11c_flx11av2_10acuts_nuebar.root  </filename>
-                <objname>    mtuple   </objname>
+                <filename>   inputs/official/2012/superk/mc/neut/11c/smallnt_numu_sk11c_flx11bv31_r1-3cfull_10acut.root  </filename>
+                <objname>    tnuebar   </objname>
                 <objtype>    TTree            </objtype>
              </one_mu_ring>
              <one_e_ring>
@@ -145,11 +153,13 @@
           </nuebar>
           <signal_nue>
              <pot> 
-                2.0898769E+23
+	       <filename>   inputs/official/2012/superk/mc/neut/11c/smallnt_numu_sk11c_flx11bv31_r1-3cfull_10acut.root </filename>
+	       <objname>    h_stat_snt_tnuesig  </objname>
+	       <objtype>    TH1D                  </objtype>
              </pot>
              <one_mu_ring>
-                <filename>   inputs/official/2012/superk/mc/neut/11c/mtuple_numuana_sk11c_flx11av2_10acuts_oscnue.root  </filename>
-                <objname>    mtuple   </objname>
+                <filename>   inputs/official/2012/superk/mc/neut/11c/smallnt_numu_sk11c_flx11bv31_r1-3cfull_10acut.root  </filename>
+                <objname>    tnuesig   </objname>
                 <objtype>    TTree            </objtype>
              </one_mu_ring>
              <one_e_ring>

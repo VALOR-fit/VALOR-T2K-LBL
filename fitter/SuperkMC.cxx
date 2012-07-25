@@ -21,10 +21,10 @@
 //#define __show_syst_var_wght_mesg_debug__ 
 //#define __show_spectra_update_mesg_debug__ 
 //#define __show_skipped_templates__ 
-//#define __save_ori_templates_init_debug__
-//#define __save_nom_templates_init_debug__
-//#define __save_nomft_templates_init_debug__
-//#define __save_tun_templates_init_debug__
+#define __save_ori_templates_init_debug__   // number of events
+#define __save_nom_templates_init_debug__   // number of events, weighted by pot & mc normalisation
+#define __save_nomft_templates_init_debug__ // number of events, weighted by pot & mc normalisation, flux tuning
+#define __save_tun_templates_init_debug__   // number of events, weighted by pot & mc normalisation, flux tuning, banff tuning
 
 #include <cassert>
 #include <cstdlib>
@@ -99,10 +99,8 @@ void SuperkMC::Init(void)
   fMCPOTSigNuE         = 0;
 
   fBrEreco             = 0;
-  for(int ii = 0; ii < 50; ii++) {
-    fBrEtrue[ii]       = 0;
-    fBrPdg  [ii]       = 0;
-  }
+  fBrEtrue             = 0;
+  fBrPdg               = 0;
   fBrGenCode           = 0;
          
   fNuFlux              = 0;
@@ -158,11 +156,17 @@ bool SuperkMC::Read(TXMLEngine* xml, XMLNodePointer_t root_node)
   //
   // Get MC trees and MC POT
   //
-  fMCPOTNuMu    = util::XML2Dbl  (xml,root_node,"mc/superk/nominal/numu/pot");
-  fMCPOTNuMuBar = util::XML2Dbl  (xml,root_node,"mc/superk/nominal/numubar/pot");
-  fMCPOTNuE     = util::XML2Dbl  (xml,root_node,"mc/superk/nominal/nue/pot");
-  fMCPOTNuEBar  = util::XML2Dbl  (xml,root_node,"mc/superk/nominal/nuebar/pot");
-  fMCPOTSigNuE  = util::XML2Dbl  (xml,root_node,"mc/superk/nominal/signal_nue/pot");
+  fMCPOTHistNuMu    = util::XML2TH1D  (xml,root_node,"mc/superk/nominal/numu/pot");
+  fMCPOTHistNuMuBar = util::XML2TH1D  (xml,root_node,"mc/superk/nominal/numubar/pot");
+  fMCPOTHistNuE     = util::XML2TH1D  (xml,root_node,"mc/superk/nominal/nue/pot");
+  fMCPOTHistNuEBar  = util::XML2TH1D  (xml,root_node,"mc/superk/nominal/nuebar/pot");
+  fMCPOTHistSigNuE  = util::XML2TH1D  (xml,root_node,"mc/superk/nominal/signal_nue/pot");
+
+  fMCPOTNuMu    = fMCPOTHistNuMu->GetBinContent(2)    / fMCPOTHistNuMu->GetBinContent(1);
+  fMCPOTNuMuBar = fMCPOTHistNuMuBar->GetBinContent(2) / fMCPOTHistNuMuBar->GetBinContent(1);
+  fMCPOTNuE     = fMCPOTHistNuE->GetBinContent(2)     / fMCPOTHistNuE->GetBinContent(1);
+  fMCPOTNuEBar  = fMCPOTHistNuEBar->GetBinContent(2)  / fMCPOTHistNuEBar->GetBinContent(1);
+  fMCPOTSigNuE  = fMCPOTHistSigNuE->GetBinContent(2)  / fMCPOTHistSigNuE->GetBinContent(1);
 
   fMCTreeNuMu1Rmu    = util::XML2TTree (xml,root_node,"mc/superk/nominal/numu/one_mu_ring");
   fMCTreeNuMuBar1Rmu = util::XML2TTree (xml,root_node,"mc/superk/nominal/numubar/one_mu_ring");
@@ -369,18 +373,18 @@ void SuperkMC::FillTemplate(SuperkSample_t s, SuperkMode_t m)
   }
 
   TBranch * branchEreco   = mctree->GetBranch("erec");
-  TBranch * branchEtrue   = mctree->GetBranch("pnu");
+  TBranch * branchEtrue   = mctree->GetBranch("enu");
   TBranch * branchPdg     = mctree->GetBranch("ipnu");
   TBranch * branchGenCode = mctree->GetBranch("mode");
 
   branchEreco   -> SetAddress(&fBrEreco);
-  branchEtrue   -> SetAddress(fBrEtrue);
-  branchPdg     -> SetAddress(fBrPdg);
+  branchEtrue   -> SetAddress(&fBrEtrue);
+  branchPdg     -> SetAddress(&fBrPdg);
   branchGenCode -> SetAddress(&fBrGenCode);
 
   mctree->SetBranchStatus("*",0);
   mctree->SetBranchStatus("erec",1);
-  mctree->SetBranchStatus("pnu",1);
+  mctree->SetBranchStatus("enu",1);
   mctree->SetBranchStatus("ipnu",1);
   mctree->SetBranchStatus("mode",1);
   
@@ -389,14 +393,14 @@ void SuperkMC::FillTemplate(SuperkSample_t s, SuperkMode_t m)
      mctree->GetEntry(iev);
 
      // use current entry for mode m template?
-     bool use_it = util::UseEventToFillInTemplate(m,fBrPdg[0],fBrGenCode);
+     bool use_it = util::UseEventToFillInTemplate(m,fBrPdg,fBrGenCode);
      if(!use_it) continue;
   
-     this -> Template(s,m,kSKMCtOri) -> Fill (fBrEreco/1000., fBrEtrue[0]);
-     this -> Template(s,m,kSKMCtNom) -> Fill (fBrEreco/1000., fBrEtrue[0], pot_wght);
-     this -> Template(s,m,kSKMCtTun) -> Fill (fBrEreco/1000., fBrEtrue[0], pot_wght);
-     this -> Template(s,m,kSKMCtSys) -> Fill (fBrEreco/1000., fBrEtrue[0], pot_wght);
-     this -> Template(s,m,kSKMCtFin) -> Fill (fBrEreco/1000., fBrEtrue[0], pot_wght);     
+     this -> Template(s,m,kSKMCtOri) -> Fill (fBrEreco/1000., fBrEtrue);
+     this -> Template(s,m,kSKMCtNom) -> Fill (fBrEreco/1000., fBrEtrue, pot_wght);
+     this -> Template(s,m,kSKMCtTun) -> Fill (fBrEreco/1000., fBrEtrue, pot_wght);
+     this -> Template(s,m,kSKMCtSys) -> Fill (fBrEreco/1000., fBrEtrue, pot_wght);
+     this -> Template(s,m,kSKMCtFin) -> Fill (fBrEreco/1000., fBrEtrue, pot_wght);     
   }//iev
 
 #ifdef __show_init_mesg_debug__        

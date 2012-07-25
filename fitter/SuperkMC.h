@@ -132,14 +132,19 @@ private:
   TTree*     fMCTreeNuE1Re;                ///< input MC event tree /  sample: nue (intrinsic)              / cuts: 1-ring e-like 
   TTree*     fMCTreeNuEBar1Re;             ///< input MC event tree /  sample: nuebar (intrinsic)           / cuts: 1-ring e-like 
   TTree*     fMCTreeSigNuE1Re;             ///< input MC event tree /  sample: nue (signal, 100% numu->nue) / cuts: 1-ring e-like 
-  double     fMCPOTNuMu;                   ///< input MC event sample POT : numu
-  double     fMCPOTNuMuBar;                ///< input MC event sample POT : numubar
-  double     fMCPOTNuE;                    ///< input MC event sample POT : nue 
-  double     fMCPOTNuEBar;                 ///< input MC event sample POT : nuebar
-  double     fMCPOTSigNuE;                 ///< input MC event sample POT : nue (signal)
-  double     fBrEreco;                     ///< branch var for reading input MC mini-DST
-  float      fBrEtrue[50];                 ///< branch var for reading input MC mini-DST
-  int        fBrPdg[50];                   ///< branch var for reading input MC mini-DST
+  TH1D*      fMCPOTHistNuMu;               ///< input MC event sample POT histogram : numu
+  TH1D*      fMCPOTHistNuMuBar;            ///< input MC event sample POT histogram : numubar
+  TH1D*      fMCPOTHistNuE;                ///< input MC event sample POT histogram : nue 
+  TH1D*      fMCPOTHistNuEBar;             ///< input MC event sample POT histogram : nuebar
+  TH1D*      fMCPOTHistSigNuE;             ///< input MC event sample POT histogram : nue (signal)
+  double     fMCPOTNuMu;                   ///< MC event sample POT : numu
+  double     fMCPOTNuMuBar;                ///< MC event sample POT : numubar
+  double     fMCPOTNuE;                    ///< MC event sample POT : nue 
+  double     fMCPOTNuEBar;                 ///< MC event sample POT : nuebar
+  double     fMCPOTSigNuE;                 ///< MC event sample POT : nue (signal)
+  float      fBrEreco;                     ///< branch var for reading input MC mini-DST
+  float      fBrEtrue;                     ///< branch var for reading input MC mini-DST
+  int        fBrPdg;                       ///< branch var for reading input MC mini-DST
   int        fBrGenCode;                   ///< branch var for reading input MC mini-DST
       
   // utility objects for computing cross-section and flux weights
