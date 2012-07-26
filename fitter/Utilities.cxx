@@ -1664,6 +1664,18 @@ t2kana::conv::PhysParamId_t
   return kPhypUndefined;
 }
 //____________________________________________________________________________
+t2kana::conv::SKMCTemplateType_t   
+  t2kana::util::SKMCTemplateTypeFromString(string sh) 
+{
+  if(sh == "ori")        return kSKMCtOri;
+  if(sh == "nom")        return kSKMCtNom;
+  if(sh == "tun")        return kSKMCtTun;
+  if(sh == "sys")        return kSKMCtSys;
+  if(sh == "fin")        return kSKMCtFin;
+
+  return kSKMCtUndefined;
+}
+//____________________________________________________________________________
 t2kana::conv::OscChannelId_t
   t2kana::util::GetOscChannel(int nu_start, int nu_end)
 {
@@ -1697,6 +1709,19 @@ int t2kana::util::SuperkMode2FluxNuPdg(t2kana::conv::SuperkMode_t m)
   if ( util::IsNuE       (m) ) return kPdgNuE;
   if ( util::IsNuEBar    (m) ) return kPdgNuEBar;
   if ( util::IsSignalNuE (m) ) return kPdgNuMu; /// numu -> nue
+   
+  // NOTE: Beam NuEBars not handles
+
+  return 0;
+}
+//____________________________________________________________________________
+int t2kana::util::SuperkMode2SKMCPdg(t2kana::conv::SuperkMode_t m)
+{
+  if ( util::IsNuMu      (m) ) return kPdgNuMu;
+  if ( util::IsNuMuBar   (m) ) return kPdgNuMuBar;
+  if ( util::IsNuE       (m) ) return kPdgNuE;
+  if ( util::IsNuEBar    (m) ) return kPdgNuEBar;
+  if ( util::IsSignalNuE (m) ) return kPdgNuE;
    
   // NOTE: Beam NuEBars not handles
 

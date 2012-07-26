@@ -144,7 +144,6 @@ private:
   double     fMCPOTSigNuE;                 ///< MC event sample POT : nue (signal)
   float      fBrEreco;                     ///< branch var for reading input MC mini-DST
   float      fBrEtrue;                     ///< branch var for reading input MC mini-DST
-  int        fBrPdg;                       ///< branch var for reading input MC mini-DST
   int        fBrGenCode;                   ///< branch var for reading input MC mini-DST
       
   // utility objects for computing cross-section and flux weights

@@ -20,7 +20,7 @@ struct nsk_t {
 using namespace std;
 using namespace t2kana;
 
-nsk_t nsk_integration(nsk_t n, SuperkExpectation *skexp, conv::SuperkSample_t s);
+nsk_t nsk_integration(nsk_t n, SuperkExpectation *skexp, conv::SuperkSample_t s, SKMCTemplateType_t t);
 void nsk_print(nsk_t n, double input_dm23sq);
 
 void test_nsk
@@ -32,11 +32,14 @@ void test_nsk
  double input_dm23sq      = -99,
  double input_dm12sq      = -99,
  const string sample_str  = "1Rmu",
+ const string template_str = "fin",
  const char * config_file = "analysis_configuration.xml"
 )
 {
   conv::SuperkSample_t s = util::SKSampleFromString(sample_str);
   int is = util::ArrIdx::Instance()->SuperkSampleIdx(s);
+
+  conv::SKMCTemplateType_t t = util::SKMCTemplateTypeFromString(template_str);
 
   const char * config = Form("%s/config/%s", gSystem->Getenv("T2KOSCANA"), config_file);
   cout << "Reading analysis configuration from: " << config << endl;
@@ -72,14 +75,25 @@ void test_nsk
 
   nsk_t osc_banff, noosc_banff, osc_nobanff, noosc_nobanff;
 
+  osc_banff.nsk = 0; osc_banff.nskmc = 0; osc_banff.nskmucc = 0; osc_banff.nskmubarcc = 0;
+  osc_banff.nskecc = 0; osc_banff.nskebarcc = 0; osc_banff.nsksigecc = 0; osc_banff.nsknc = 0;
+  noosc_banff.nsk = 0; noosc_banff.nskmc = 0; noosc_banff.nskmucc = 0; noosc_banff.nskmubarcc = 0;
+  noosc_banff.nskecc = 0; noosc_banff.nskebarcc = 0; noosc_banff.nsksigecc = 0; noosc_banff.nsknc = 0;
+  osc_nobanff.nsk = 0; osc_nobanff.nskmc = 0; osc_nobanff.nskmucc = 0; osc_nobanff.nskmubarcc = 0;
+  osc_nobanff.nskecc = 0; osc_nobanff.nskebarcc = 0; osc_nobanff.nsksigecc = 0; osc_nobanff.nsknc = 0;
+  noosc_nobanff.nsk = 0; noosc_nobanff.nskmc = 0; noosc_nobanff.nskmucc = 0; noosc_nobanff.nskmubarcc = 0;
+  noosc_nobanff.nskecc = 0; noosc_nobanff.nskebarcc = 0; noosc_nobanff.nsksigecc = 0; noosc_nobanff.nsknc = 0;
+
   // generate predictions
   skexp.Generate(ph);
-  osc_banff = nsk_integration(osc_banff, &skexp, s);
+  if(template_str=="fin")
+    osc_banff = nsk_integration(osc_banff, &skexp, s, t);
 
   //undo banff
   skexp.GetBANFF()->RestoreNominalMC();
   skexp.Generate(ph);
-  osc_nobanff = nsk_integration(osc_nobanff, &skexp, s);
+  if(template_str=="fin")
+    osc_nobanff = nsk_integration(osc_nobanff, &skexp, s, t);
 
   //restore banff, undo osc
   TVectorD twkv(skexp.GetBANFF()->BestFitValues());
@@ -91,22 +105,26 @@ void test_nsk
   ph.SetCurrValue(t2kana::conv::kPhypDm12sq,   0);
   ph.SetCurrValue(t2kana::conv::kPhypDeltaCP,  0);
   skexp.Generate(ph);
-  noosc_banff = nsk_integration(noosc_banff, &skexp, s);
+  if(template_str=="fin" || template_str=="tun" || template_str=="sys")
+    noosc_banff = nsk_integration(noosc_banff, &skexp, s, t);
 
   //undo banff
   skexp.GetBANFF()->RestoreNominalMC();
   skexp.Generate(ph);
-  noosc_nobanff = nsk_integration(noosc_nobanff, &skexp, s);
+  noosc_nobanff = nsk_integration(noosc_nobanff, &skexp, s, t);
 
+  if(template_str=="fin") {
+    cout << "\n\n\nWith BANFF tuning, with osc" << endl;
+    nsk_print(osc_banff,input_dm23sq);
 
-  cout << "\n\n\nWith BANFF tuning" << endl;
-  nsk_print(osc_banff,input_dm23sq);
+    cout << "\n\n\nWithout BANFF tuning, with osc" << endl;
+    nsk_print(osc_nobanff,input_dm23sq);
+  }
 
-  cout << "\n\n\nWithout BANFF tuning" << endl;
-  nsk_print(osc_nobanff,input_dm23sq);
-
-  cout << "\n\n\nWith BANFF tuning or osc" << endl;
-  nsk_print(noosc_banff,0);
+  if(template_str=="fin" || template_str=="tun" || template_str=="sys") {
+    cout << "\n\n\nWith BANFF tuning & without osc" << endl;
+    nsk_print(noosc_banff,0);
+  }
 
   cout << "\n\n\nWithout BANFF tuning or osc" << endl;
   nsk_print(noosc_nobanff,0);
@@ -140,13 +158,13 @@ void test_nsk
 
   streamer << setw(ncol1)  << setfill(' ') << "Total"
 	   << endcolumn
-	   << setw(ncolnev)  << setfill(' ') << setprecision(nprecisionnev) << osc_nobanff.nsk 
+	   << setw(ncolnev)  << setfill(' ') << setprecision(nprecisionnev) << osc_nobanff.nskmc 
 	   << endcolumn
-	   << setw(ncolnev)  << setfill(' ') << setprecision(nprecisionnev) << osc_banff.nsk
+	   << setw(ncolnev)  << setfill(' ') << setprecision(nprecisionnev) << osc_banff.nskmc
 	   << endcolumn
-	   << setw(ncolnev)  << setfill(' ') << setprecision(nprecisionnev) << noosc_nobanff.nsk 
+	   << setw(ncolnev)  << setfill(' ') << setprecision(nprecisionnev) << noosc_nobanff.nskmc 
 	   << endcolumn
-	   << setw(ncolnev)  << setfill(' ') << setprecision(nprecisionnev) << noosc_banff.nsk
+	   << setw(ncolnev)  << setfill(' ') << setprecision(nprecisionnev) << noosc_banff.nskmc
 	   << endrow
 	   << endl;
 
@@ -260,12 +278,12 @@ void nsk_print(nsk_t n, double input_dm23sq) {
   cout << "     " << n.nsksigecc << " nue signal CC" << endl;
 
   //the total
-  cout << endl << "Number of predicted events at SK is: " << n.nsk << "     = " 
-       << n.nskmucc + n.nskmubarcc + n.nskecc + n.nskebarcc + n.nsksigecc + n.nsknc << "     = " 
-       << n.nskmc << endl;
+  cout << endl << "Number of predicted events at SK is: "
+       << n.nskmucc + n.nskmubarcc + n.nskecc + n.nskebarcc + n.nsksigecc + n.nsknc
+       << "     = " << n.nskmc << endl;
 }
 
-nsk_t nsk_integration(nsk_t n, SuperkExpectation *skexp, conv::SuperkSample_t s) {
+nsk_t nsk_integration(nsk_t n, SuperkExpectation *skexp, conv::SuperkSample_t s, conv::SKMCTemplateType_t t) {
   int is = util::ArrIdx::Instance()->SuperkSampleIdx(s);
   // integrate Ereco distribution
   double n.nsk = skexp->CurrPredictedErecoSpectrum(s)->Integral();
@@ -274,22 +292,22 @@ nsk_t nsk_integration(nsk_t n, SuperkExpectation *skexp, conv::SuperkSample_t s)
     conv::SuperkMode_t m = conv::kSKReactionModes[is][im];
     if(m == conv::kSKmUndefined)
       continue;
-    n.nskmc += skexp->GetSuperkMC()->Template(s, m, conv::kSKMCtNom)->Integral();
+    n.nskmc += skexp->GetSuperkMC()->Template(s, m, t)->Integral();
 
     //split into categories (all NC, CC numu, CC numubar, CC nue, CC nuebar, CC signue)
     if(util::IsNC(m))
-      n.nsknc += skexp->GetSuperkMC()->Template(s, m, conv::kSKMCtNom)->Integral();
+      n.nsknc += skexp->GetSuperkMC()->Template(s, m, t)->Integral();
     else {
       if(util::IsNuMu(m))
-	n.nskmucc += skexp->GetSuperkMC()->Template(s, m, conv::kSKMCtNom)->Integral();
+	n.nskmucc += skexp->GetSuperkMC()->Template(s, m, t)->Integral();
       else if(util::IsNuMuBar(m))
-	n.nskmubarcc += skexp->GetSuperkMC()->Template(s, m, conv::kSKMCtNom)->Integral();
+	n.nskmubarcc += skexp->GetSuperkMC()->Template(s, m, t)->Integral();
       else if(util::IsNuE(m))
-	n.nskecc += skexp->GetSuperkMC()->Template(s, m, conv::kSKMCtNom)->Integral();
+	n.nskecc += skexp->GetSuperkMC()->Template(s, m, t)->Integral();
       else if(util::IsNuEBar(m))
-	n.nskebarcc += skexp->GetSuperkMC()->Template(s, m, conv::kSKMCtNom)->Integral();
+	n.nskebarcc += skexp->GetSuperkMC()->Template(s, m, t)->Integral();
       else if(util::IsSignalNuE(m))
-	n.nsksigecc += skexp->GetSuperkMC()->Template(s, m, conv::kSKMCtNom)->Integral();
+	n.nsksigecc += skexp->GetSuperkMC()->Template(s, m, t)->Integral();
     }//CC?
   }
   return n;

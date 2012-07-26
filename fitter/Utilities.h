@@ -99,16 +99,18 @@ namespace util {
   string AsStringCompact (conv::PhysParamId_t      p);
   string Pdg2String      (int pdg_code);
 
-  conv::PhysHypothesis_t   PhysHypFromString    (string h);
-  conv::SuperkSample_t     SKSampleFromString   (string h);
-  conv::OscAnaType_t       OscAnaFromString     (string h);
-  conv::NuMassHierarchy_t  HierarchyFromString  (string h);
-  conv::NuOscMixParam_t    MixingTypeFromString (string h);
-  conv::PhysParamId_t      PhysParamIdFromString(string h);
+  conv::PhysHypothesis_t   PhysHypFromString         (string h);
+  conv::SuperkSample_t     SKSampleFromString        (string h);
+  conv::OscAnaType_t       OscAnaFromString          (string h);
+  conv::NuMassHierarchy_t  HierarchyFromString       (string h);
+  conv::NuOscMixParam_t    MixingTypeFromString      (string h);
+  conv::PhysParamId_t      PhysParamIdFromString     (string h);
+  conv::SKMCTemplateType_t SKMCTemplateTypeFromString(string h);
 
   conv::OscChannelId_t GetOscChannel(int nu_start, int nu_end);
 
   int  SuperkMode2FluxNuPdg(conv::SuperkMode_t m);
+  int  SuperkMode2SKMCPdg  (conv::SuperkMode_t m);
 
   bool IsNuMu         (conv::SuperkMode_t  m);
   bool IsNuMuBar      (conv::SuperkMode_t  m);

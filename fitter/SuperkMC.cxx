@@ -25,6 +25,8 @@
 //#define __save_nom_templates_init_debug__   // number of events, weighted by pot & mc normalisation
 //#define __save_nomft_templates_init_debug__ // number of events, weighted by pot & mc normalisation, flux tuning
 //#define __save_tun_templates_init_debug__   // number of events, weighted by pot & mc normalisation, flux tuning, banff tuning
+//#define __save_sys_templates_init_debug__   // number of events, weighted by pot & mc normalisation, flux tuning, banff tuning, systematic variations
+//#define __save_fin_templates_init_debug__   // number of events, weighted by pot & mc normalisation, flux tuning, banff tuning, systematic variations, physics hypothesis
 
 #include <cassert>
 #include <cstdlib>
@@ -100,7 +102,6 @@ void SuperkMC::Init(void)
 
   fBrEreco             = 0;
   fBrEtrue             = 0;
-  fBrPdg               = 0;
   fBrGenCode           = 0;
          
   fNuFlux              = 0;
@@ -209,7 +210,8 @@ bool SuperkMC::Read(TXMLEngine* xml, XMLNodePointer_t root_node)
 #endif
     
   // initialise physics hypothesis
-  fPhysHypothesis.Init(kHypUndefined);
+  // need to initialise as 3 flavour oscillation, otherwise ExtTuning (NA61) and FinTuning (BANFF) is not applied to nuesig modes
+  fPhysHypothesis.Init(kHypOsc3F);
 
   // fill-in MC templates from the input event tree
   for(int is = 0; is < kns; is++) {
@@ -223,30 +225,51 @@ bool SuperkMC::Read(TXMLEngine* xml, XMLNodePointer_t root_node)
   }
 
 #ifdef __save_ori_templates_init_debug__
-  TFile out("OriTemplates.root","RECREATE");
+  TFile out1("Templates_nevents.root","RECREATE");
   for(int is = 0; is < kns; is++) {
     SuperkSample_t s = kSKSamples[is];
     if(s == kSKsUndefined) continue;
+    double nsk = 0;
     for(int im = 0; im < knm; im++) {
       SuperkMode_t m = kSKReactionModes[is][im];
       if(m == kSKmUndefined) continue;
       this->Template(s,m,kSKMCtOri)->Write();
-      cout << "OriTemplate " << util::AsString(s) << " " << util::AsString(m) << " " << this->Template(s,m,kSKMCtOri)->Integral() << endl;
+      cout << "OriTemplate " << util::AsString(s) << " " << util::AsString(m) << " " << this->Template(s,m,kSKMCtOri)->Integral(0,this->Template(s,m,kSKMCtOri)->GetNbinsX()+1) << endl;
+      nsk += this->Template(s,m,kSKMCtOri)->Integral(0,this->Template(s,m,kSKMCtOri)->GetNbinsX()+1);
     }
+    cout << "Total: " << nsk << endl << endl;
   }
-  out.Close();
+  out1.Close();
 #endif
-#ifdef __save_nom_templates_init_debug__
-  TFile out2("NomTemplates.root","RECREATE");
+#ifdef __save_ori_templates_init_debug__
   for(int is = 0; is < kns; is++) {
     SuperkSample_t s = kSKSamples[is];
     if(s == kSKsUndefined) continue;
+    double nsk = 0;
+    for(int im = 0; im < knm; im++) {
+      SuperkMode_t m = kSKReactionModes[is][im];
+      if(m == kSKmUndefined) continue;
+      cout << "OriTemplate " << util::AsString(s) << " " << util::AsString(m) << " " << this->Template(s,m,kSKMCtOri)->Integral(1,this->Template(s,m,kSKMCtOri)->GetNbinsX()) << endl;
+      nsk += this->Template(s,m,kSKMCtOri)->Integral(1,this->Template(s,m,kSKMCtOri)->GetNbinsX());
+    }
+    cout << "Total: " << nsk << endl << endl;
+  }
+#endif
+
+#ifdef __save_nom_templates_init_debug__
+  TFile out2("Templates_mcnorm.root","RECREATE");
+  for(int is = 0; is < kns; is++) {
+    SuperkSample_t s = kSKSamples[is];
+    if(s == kSKsUndefined) continue;
+    double nsk = 0;
     for(int im = 0; im < knm; im++) {
       SuperkMode_t m = kSKReactionModes[is][im];
       if(m == kSKmUndefined) continue;
       this->Template(s,m,kSKMCtNom)->Write();
       cout << "NomTemplate " << util::AsString(s) << " " << util::AsString(m) << " " << this->Template(s,m,kSKMCtNom)->Integral() << endl;
+      nsk += this->Template(s,m,kSKMCtNom)->Integral();
     }
+    cout << "Total: " << nsk << endl << endl;
   }
   out2.Close();
 #endif
@@ -257,9 +280,48 @@ bool SuperkMC::Read(TXMLEngine* xml, XMLNodePointer_t root_node)
 
   // apply flux tuning (based on external data) to templates
   this->ApplyFluxExtTuningToTemplates();
-     
+
+#ifdef __save_nomft_templates_init_debug__
+  TFile out3("Templates_mcnorm_fluxtuned.root","RECREATE");
+  for(int is = 0; is < kns; is++) {
+    SuperkSample_t s = kSKSamples[is];
+    if(s == kSKsUndefined) continue;
+    double nsk = 0, nsk2 = 0;
+    for(int im = 0; im < knm; im++) {
+      SuperkMode_t m = kSKReactionModes[is][im];
+      if(m == kSKmUndefined) continue;
+      this->Template(s,m,kSKMCtNom)->Write();
+      cout << "NomFluxTunedTemplate " << util::AsString(s) << " " << util::AsString(m) << " " << this->Template(s,m,kSKMCtNom)->Integral() << endl;
+      nsk += this->Template(s,m,kSKMCtNom)->Integral();
+      if(!util::IsSignalNuE(m))
+	nsk2 += this->Template(s,m,kSKMCtNom)->Integral();
+    }
+    cout << "Total: " << nsk << endl;
+    cout << "Total (excluding nuesig): " << nsk2 << endl << endl;
+  }
+  out3.Close();
+#endif
+
   // apply flux and cross-section tuning (based on nd280 data fit by BANFF) to templates
   this->ApplyBANFFTuningToTemplates();
+
+#ifdef __save_tun_templates_init_debug__
+  TFile out4("Templates_mcnorm_fluxtuned_banfftuned.root","RECREATE");
+  for(int is = 0; is < kns; is++) {
+    SuperkSample_t s = kSKSamples[is];
+    if(s == kSKsUndefined) continue;
+    double nsk = 0;
+    for(int im = 0; im < knm; im++) {
+      SuperkMode_t m = kSKReactionModes[is][im];
+      if(m == kSKmUndefined) continue;
+      this->Template(s,m,kSKMCtNom)->Write();
+      cout << "TunFluxTunedTemplate " << util::AsString(s) << " " << util::AsString(m) << " " << this->Template(s,m,kSKMCtTun)->Integral() << endl;
+      nsk += this->Template(s,m,kSKMCtTun)->Integral();
+    }
+    cout << "Total: " << nsk << endl << endl;
+  }
+  out4.Close();
+#endif
 
 #ifdef __show_init_mesg_info__      
   cout << "Exp/SKMC >> Done reading SuperK MC inputs!" << endl;
@@ -374,18 +436,15 @@ void SuperkMC::FillTemplate(SuperkSample_t s, SuperkMode_t m)
 
   TBranch * branchEreco   = mctree->GetBranch("erec");
   TBranch * branchEtrue   = mctree->GetBranch("enu");
-  TBranch * branchPdg     = mctree->GetBranch("ipnu");
   TBranch * branchGenCode = mctree->GetBranch("mode");
 
   branchEreco   -> SetAddress(&fBrEreco);
   branchEtrue   -> SetAddress(&fBrEtrue);
-  branchPdg     -> SetAddress(&fBrPdg);
   branchGenCode -> SetAddress(&fBrGenCode);
 
   mctree->SetBranchStatus("*",0);
   mctree->SetBranchStatus("erec",1);
   mctree->SetBranchStatus("enu",1);
-  mctree->SetBranchStatus("ipnu",1);
   mctree->SetBranchStatus("mode",1);
   
   for(int iev = 0; iev < mctree->GetEntries(); iev++) 
@@ -393,14 +452,20 @@ void SuperkMC::FillTemplate(SuperkSample_t s, SuperkMode_t m)
      mctree->GetEntry(iev);
 
      // use current entry for mode m template?
-     bool use_it = util::UseEventToFillInTemplate(m,fBrPdg,fBrGenCode);
+     bool use_it = util::UseEventToFillInTemplate(m,util::SuperkMode2SKMCPdg(m),fBrGenCode);
      if(!use_it) continue;
   
      this -> Template(s,m,kSKMCtOri) -> Fill (fBrEreco/1000., fBrEtrue);
      this -> Template(s,m,kSKMCtNom) -> Fill (fBrEreco/1000., fBrEtrue, pot_wght);
      this -> Template(s,m,kSKMCtTun) -> Fill (fBrEreco/1000., fBrEtrue, pot_wght);
      this -> Template(s,m,kSKMCtSys) -> Fill (fBrEreco/1000., fBrEtrue, pot_wght);
-     this -> Template(s,m,kSKMCtFin) -> Fill (fBrEreco/1000., fBrEtrue, pot_wght);     
+     this -> Template(s,m,kSKMCtFin) -> Fill (fBrEreco/1000., fBrEtrue, pot_wght);
+
+     if(fBrEtrue <= 0 || fBrEtrue >= 30)
+       cout << "Exp/SKMC/CreateTemplate >> Etrue is out of template range " << AsString(s) << " " << AsString(m) << " " << fBrEtrue << endl;
+     if(fBrEreco/1000 <= 0 || fBrEreco/1000 >= 30)
+       cout << "Exp/SKMC/CreateTemplate >> Ereco is out of template range " << AsString(s) << " " << AsString(m) << " " << fBrEreco/1000 << endl;
+
   }//iev
 
 #ifdef __show_init_mesg_debug__        
@@ -514,21 +579,6 @@ void SuperkMC::ApplyFluxExtTuningToTemplates(void)
        }//ir
     }//im
   }//is
-
-#ifdef __save_nomft_templates_init_debug__
-  TFile out("NomftTemplates.root","RECREATE");
-  for(int is = 0; is < kns; is++) {
-    SuperkSample_t s = kSKSamples[is];
-    if(s == kSKsUndefined) continue;
-    for(int im = 0; im < knm; im++) {
-      SuperkMode_t m = kSKReactionModes[is][im];
-      if(m == kSKmUndefined) continue;
-      this->Template(s,m,kSKMCtNom)->Write();
-      cout << "NomFluxTunedTemplate " << util::AsString(s) << " " << util::AsString(m) << " " << this->Template(s,m,kSKMCtNom)->Integral() << endl;
-    }
-  }
-  out.Close();
-#endif
 }
 //________________________________________________________________________________________
 void SuperkMC::ApplyBANFFTuningToTemplates(void)
@@ -568,7 +618,7 @@ void SuperkMC::ApplyBANFFTuningToTemplates(void)
 	 //
 	 // There are 600 50MeV Etrue energy bins in the templates, but
 	 // the flux/xsec systematics only have up to ~10 Etrue bins (same as flux binning), so
-	 // we can call NuXSec::SystWght() and FSI::SystWght() and NuFlux::SuperkFluxSystWght()  
+	 // we can call NuXSec::FinTuningWght() and NuFlux::SuperkFluxFinTuningWght()  
 	 // a factor of 10 less often by looping over the kXsEtrueBinEdges.
 	 // Note that the Ereco binning is identical between XSec and SuperkMC templates
 	 //
@@ -580,10 +630,10 @@ void SuperkMC::ApplyBANFFTuningToTemplates(void)
 	   double EtrueVarMax = util::VariableMCEtrueBinEdges(s,m)[itv] - kOneMeV;
 
            // Plug-in BANFF flux systematics
-           double flux_wght = fNuFlux->SuperkFluxSystWght(s,m,EtrueVarMin);
+           double flux_wght = fNuFlux->SuperkFluxFinTuningWght(s,m,EtrueVarMin);
 	   
            // Plug-in BANFF & other xsec systematics 
-           double xsec_wght = fNuXSec->SystWght(s,m,Ereco,EtrueVarMin); 
+           double xsec_wght = fNuXSec->FinTuningWght(s,m,Ereco,EtrueVarMin); 
 
            // Combined weight
            double wght = flux_wght * xsec_wght;
@@ -609,22 +659,6 @@ void SuperkMC::ApplyBANFFTuningToTemplates(void)
   }//is
 
   fFSI    -> BuildFracMCTemplates(fMCTemplTun);
-
-#ifdef __save_tun_templates_init_debug__
-  TFile out("TunTemplates.root","RECREATE");
-  for(int is = 0; is < kns; is++) {
-    SuperkSample_t s = kSKSamples[is];
-    if(s == kSKsUndefined) continue;
-    for(int im = 0; im < knm; im++) {
-      SuperkMode_t m = kSKReactionModes[is][im];
-      if(m == kSKmUndefined) continue;
-      this->Template(s,m,kSKMCtNom)->Write();
-      cout << "TunFluxTunedTemplate " << util::AsString(s) << " " << util::AsString(m) << " " << this->Template(s,m,kSKMCtTun)->Integral() << endl;
-    }
-  }
-  out.Close();
-#endif
-
 }
 //________________________________________________________________________________________
 void SuperkMC::UpdateTemplates(void)
@@ -748,6 +782,24 @@ void SuperkMC::ApplySystematicsToTemplates_Multiplicative(void)
        }//ir
     }//im
   }//is
+
+#ifdef __save_sys_templates_init_debug__
+  TFile out("Templates_mcnorm_fluxtuned_banfftuned_syst_multi.root","RECREATE");
+  for(int is = 0; is < kns; is++) {
+    SuperkSample_t s = kSKSamples[is];
+    if(s == kSKsUndefined) continue;
+    double nsk = 0;
+    for(int im = 0; im < knm; im++) {
+      SuperkMode_t m = kSKReactionModes[is][im];
+      if(m == kSKmUndefined) continue;
+      this->Template(s,m,kSKMCtNom)->Write();
+      cout << "SysTemplate_multiplicative " << util::AsString(s) << " " << util::AsString(m) << " " << this->Template(s,m,kSKMCtSys)->Integral() << endl;
+      nsk += this->Template(s,m,kSKMCtSys)->Integral();
+    }
+    cout << "Total: " << nsk << endl << endl;
+  }
+  out.Close();
+#endif
 }
 //________________________________________________________________________________________
 void SuperkMC::ApplySystematicsToTemplates_NonMultiplicative(void) 
@@ -862,7 +914,23 @@ void SuperkMC::ApplySystematicsToTemplates_NonMultiplicative(void)
        delete mctempl_no_ereco_scale;
     }//im
   }//is
-
+#ifdef __save_sys_templates_init_debug__
+  TFile out("Templates_mcnorm_fluxtuned_banfftuned_syst_nonmulti.root","RECREATE");
+  for(int is = 0; is < kns; is++) {
+    SuperkSample_t s = kSKSamples[is];
+    if(s == kSKsUndefined) continue;
+    double nsk = 0;
+    for(int im = 0; im < knm; im++) {
+      SuperkMode_t m = kSKReactionModes[is][im];
+      if(m == kSKmUndefined) continue;
+      this->Template(s,m,kSKMCtNom)->Write();
+      cout << "SysTemplate_nonmultiplicative " << util::AsString(s) << " " << util::AsString(m) << " " << this->Template(s,m,kSKMCtSys)->Integral() << endl;
+      nsk += this->Template(s,m,kSKMCtSys)->Integral();
+    }
+    cout << "Total: " << nsk << endl << endl;
+  }
+  out.Close();
+#endif
 }
 //________________________________________________________________________________________
 void SuperkMC::ApplyPhysHypothesisToTemplates(void)
@@ -1078,7 +1146,23 @@ void SuperkMC::ApplyPhysHypothesisToTemplates(void)
       }//im
     }//is
   }
-
+#ifdef __save_fin_templates_init_debug__
+  TFile out("Templates_mcnorm_fluxtuned_banfftuned_syst_phys.root","RECREATE");
+  for(int is = 0; is < kns; is++) {
+    SuperkSample_t s = kSKSamples[is];
+    if(s == kSKsUndefined) continue;
+    double nsk = 0;
+    for(int im = 0; im < knm; im++) {
+      SuperkMode_t m = kSKReactionModes[is][im];
+      if(m == kSKmUndefined) continue;
+      this->Template(s,m,kSKMCtNom)->Write();
+      cout << "PhysHypTemplate " << util::AsString(s) << " " << util::AsString(m) << " " << this->Template(s,m,kSKMCtFin)->Integral() << endl;
+      nsk += this->Template(s,m,kSKMCtFin)->Integral();
+    }
+    cout << "Total: " << nsk << endl << endl;
+  }
+  out.Close();
+#endif
 }
 //________________________________________________________________________________________
 void SuperkMC::UpdateErecoSpectra(void)

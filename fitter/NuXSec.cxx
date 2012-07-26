@@ -324,7 +324,7 @@ double NuXSec::FinTuningWght_1p(
   // if( ! this->ApplySyst(p,s,m,Ereco,Etrue) ) return 1.; // check already made in function that calls this one
 
   double wght = 1.;
-
+  //  return wght;
   //
   // BANFF param # 31, M_{A} QE
   // BANFF param # 32, M_{A} RES
@@ -340,7 +340,7 @@ double NuXSec::FinTuningWght_1p(
        double tb = fBANFF->BestFitValue(p);
        double numerator = 0;
        if(TMath::Abs(tb - 1) > conv::kASmallNum) {
-	 numerator = (tb - 1) / (diag);
+	 numerator = (tb - 1) / (sqrt(diag));
        }
        wght = wght_spl->Eval(numerator) / 1.; // wght_spl->Eval(0);
        wght = TMath::Max(0.,wght);
@@ -462,7 +462,7 @@ double NuXSec::SystWght_1p(
   // if( ! this->ApplySyst(p,s,m,Ereco,Etrue) ) return 1.; // check already made in function that calls this one
 
   double wght = 1.;
-
+  //  return wght;
   //
   // BANFF param # 31, M_{A} QE
   // BANFF param # 32, M_{A} RES
@@ -479,12 +479,12 @@ double NuXSec::SystWght_1p(
        double diag = fBANFF->CovMatrix()[banff_pos][banff_pos];
        double denominator = 0, numerator = 0;
        if(TMath::Abs(tb - 1) > conv::kASmallNum) {
-	 denominator = (tb - 1) / (diag);
+	 denominator = (tb - 1) / (sqrt(diag));
        }
        if(TMath::Abs(tc - 1) > conv::kASmallNum) {
-	 numerator = (tc - 1) / (diag);
+	 numerator = (tc - 1) / (sqrt(diag));
        }
-       wght = wght_spl->Eval(numerator) / 1.; // wght_spl->Eval(0); // wght_spl->Eval(denominator);
+       wght = wght_spl->Eval(numerator) / wght_spl->Eval(denominator);
        wght = TMath::Max(0.,wght);
      }
   }
