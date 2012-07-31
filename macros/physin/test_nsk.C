@@ -97,7 +97,6 @@ void test_nsk
   if(template_str=="fin")
     osc_nobanff = nsk_integration(osc_nobanff, &skexp, s, t);
 
-  /*
   //restore banff, undo osc
   TVectorD twkv(skexp.GetBANFF()->BestFitValues());
   skexp.GetBANFF()->Tweak(true,&twkv);
@@ -115,7 +114,6 @@ void test_nsk
   skexp.GetBANFF()->RestoreNominalMC();
   skexp.Generate(ph);
   noosc_nobanff = nsk_integration(noosc_nobanff, &skexp, s, t);
-  */
 
   if(template_str=="fin") {
     cout << "\n\n\nWith BANFF tuning, with osc" << endl;
