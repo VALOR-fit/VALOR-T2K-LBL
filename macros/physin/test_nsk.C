@@ -20,7 +20,7 @@ struct nsk_t {
 using namespace std;
 using namespace t2kana;
 
-nsk_t nsk_integration(nsk_t n, SuperkExpectation *skexp, conv::SuperkSample_t s, SKMCTemplateType_t t);
+nsk_t nsk_integration(nsk_t n, SuperkExpectation *skexp, conv::SuperkSample_t s, conv::SKMCTemplateType_t t);
 void nsk_print(nsk_t n, double input_dm23sq);
 
 void test_nsk
@@ -40,6 +40,8 @@ void test_nsk
   int is = util::ArrIdx::Instance()->SuperkSampleIdx(s);
 
   conv::SKMCTemplateType_t t = util::SKMCTemplateTypeFromString(template_str);
+
+  //Opt::Instance()->gMassHierarchyAssumed = conv::kNmhInverted;
 
   const char * config = Form("%s/config/%s", gSystem->Getenv("T2KOSCANA"), config_file);
   cout << "Reading analysis configuration from: " << config << endl;
@@ -95,6 +97,7 @@ void test_nsk
   if(template_str=="fin")
     osc_nobanff = nsk_integration(osc_nobanff, &skexp, s, t);
 
+  /*
   //restore banff, undo osc
   TVectorD twkv(skexp.GetBANFF()->BestFitValues());
   skexp.GetBANFF()->Tweak(true,&twkv);
@@ -112,6 +115,7 @@ void test_nsk
   skexp.GetBANFF()->RestoreNominalMC();
   skexp.Generate(ph);
   noosc_nobanff = nsk_integration(noosc_nobanff, &skexp, s, t);
+  */
 
   if(template_str=="fin") {
     cout << "\n\n\nWith BANFF tuning, with osc" << endl;
@@ -214,7 +218,7 @@ void test_nsk
 	   << setw(ncolnev)  << setfill(' ') << setprecision(nprecisionnev) << noosc_banff.nskebarcc
 	   << endrow
 	   << endl;
-  streamer << setw(ncol1)  << setfill(' ') << "Signal $\\nu_e$ CC"
+  streamer << setw(ncol1)  << setfill(' ') << "Appearance $\\nu_e$ CC"
 	   << endcolumn
 	   << setw(ncolnev)  << setfill(' ') << setprecision(nprecisionnev) << osc_nobanff.nsksigecc 
 	   << endcolumn
@@ -275,7 +279,7 @@ void nsk_print(nsk_t n, double input_dm23sq) {
   cout << "     " << n.nskecc << " nue beam CC" << endl;
   cout << "     " << n.nskebarcc << " nuebar beam CC" << endl;
   cout << "     " << n.nsknc << " all NC" << endl;
-  cout << "     " << n.nsksigecc << " nue signal CC" << endl;
+  cout << "     " << n.nsksigecc << " nue appearance CC" << endl;
 
   //the total
   cout << endl << "Number of predicted events at SK is: "

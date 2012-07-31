@@ -2180,6 +2180,24 @@ static const double kErecoBinEdges1Rmu[kNErecoBins1Rmu+1] =
 };
 */
 /*
+// Fewer bins at higher energies for improved speed
+// -   50 MeV bins in 0-3 GeV
+// -  100 MeV bins in 3-3.5 GeV
+// - Variable bins > 3.5 GeV
+static const int kNErecoBins1Rmu = 70;
+static const double kErecoBinEdges1Rmu[kNErecoBins1Rmu+1] = 
+{
+   0.000,  0.050,  0.100,  0.150,  0.200,  0.250,  0.300,  0.350,  0.400,  0.450, 
+   0.500,  0.550,  0.600,  0.650,  0.700,  0.750,  0.800,  0.850,  0.900,  0.950, 
+   1.000,  1.050,  1.100,  1.150,  1.200,  1.250,  1.300,  1.350,  1.400,  1.450, 
+   1.500,  1.550,  1.600,  1.650,  1.700,  1.750,  1.800,  1.850,  1.900,  1.950, 
+   2.000,  2.050,  2.100,  2.150,  2.200,  2.250,  2.300,  2.350,  2.400,  2.450, 
+   2.500,  2.550,  2.600,  2.650,  2.700,  2.750,  2.800,  2.850,  2.900,  2.950, 
+   3.000,  3.100,  3.200,  3.300,  3.400,  3.500,
+   4.000,  5.000,  7.000, 10.000, 30.000
+};
+*/
+/*
 // Extension of the nue 2012a analyses to higher energy
 // -   50 MeV bins in 0-1.25 GeV
 // -   1 bin from 1.25-3 GeV

@@ -21,12 +21,14 @@
 //#define __show_syst_var_wght_mesg_debug__ 
 //#define __show_spectra_update_mesg_debug__ 
 //#define __show_skipped_templates__ 
-//#define __save_ori_templates_init_debug__   // number of events
-//#define __save_nom_templates_init_debug__   // number of events, weighted by pot & mc normalisation
-//#define __save_nomft_templates_init_debug__ // number of events, weighted by pot & mc normalisation, flux tuning
-//#define __save_tun_templates_init_debug__   // number of events, weighted by pot & mc normalisation, flux tuning, banff tuning
-//#define __save_sys_templates_init_debug__   // number of events, weighted by pot & mc normalisation, flux tuning, banff tuning, systematic variations
-//#define __save_fin_templates_init_debug__   // number of events, weighted by pot & mc normalisation, flux tuning, banff tuning, systematic variations, physics hypothesis
+//#define __save_templates_debug__   // saves to files, and cout's number of events, at various stages of applying tunes to the templates:
+// 1 number of events
+// 2 number of events, weighted by pot & mc normalisation
+// 3 number of events, weighted by pot & mc normalisation, flux tuning
+// 4 number of events, weighted by pot & mc normalisation, flux tuning, banff tuning
+// 5 number of events, weighted by pot & mc normalisation, flux tuning, banff tuning, multiplicative systematic variations
+// 6 number of events, weighted by pot & mc normalisation, flux tuning, banff tuning, multiplicative systematic variations, nonmultiplicative systematic variations
+// 7 number of events, weighted by pot & mc normalisation, flux tuning, banff tuning, multiplicative systematic variations, nonmultiplicative systematic variations, physics hypothesis
 
 #include <cassert>
 #include <cstdlib>
@@ -224,54 +226,9 @@ bool SuperkMC::Read(TXMLEngine* xml, XMLNodePointer_t root_node)
      }
   }
 
-#ifdef __save_ori_templates_init_debug__
-  TFile out1("Templates_nevents.root","RECREATE");
-  for(int is = 0; is < kns; is++) {
-    SuperkSample_t s = kSKSamples[is];
-    if(s == kSKsUndefined) continue;
-    double nsk = 0;
-    for(int im = 0; im < knm; im++) {
-      SuperkMode_t m = kSKReactionModes[is][im];
-      if(m == kSKmUndefined) continue;
-      this->Template(s,m,kSKMCtOri)->Write();
-      cout << "OriTemplate " << util::AsString(s) << " " << util::AsString(m) << " " << this->Template(s,m,kSKMCtOri)->Integral(0,this->Template(s,m,kSKMCtOri)->GetNbinsX()+1) << endl;
-      nsk += this->Template(s,m,kSKMCtOri)->Integral(0,this->Template(s,m,kSKMCtOri)->GetNbinsX()+1);
-    }
-    cout << "Total: " << nsk << endl << endl;
-  }
-  out1.Close();
-#endif
-#ifdef __save_ori_templates_init_debug__
-  for(int is = 0; is < kns; is++) {
-    SuperkSample_t s = kSKSamples[is];
-    if(s == kSKsUndefined) continue;
-    double nsk = 0;
-    for(int im = 0; im < knm; im++) {
-      SuperkMode_t m = kSKReactionModes[is][im];
-      if(m == kSKmUndefined) continue;
-      cout << "OriTemplate " << util::AsString(s) << " " << util::AsString(m) << " " << this->Template(s,m,kSKMCtOri)->Integral(1,this->Template(s,m,kSKMCtOri)->GetNbinsX()) << endl;
-      nsk += this->Template(s,m,kSKMCtOri)->Integral(1,this->Template(s,m,kSKMCtOri)->GetNbinsX());
-    }
-    cout << "Total: " << nsk << endl << endl;
-  }
-#endif
-
-#ifdef __save_nom_templates_init_debug__
-  TFile out2("Templates_mcnorm.root","RECREATE");
-  for(int is = 0; is < kns; is++) {
-    SuperkSample_t s = kSKSamples[is];
-    if(s == kSKsUndefined) continue;
-    double nsk = 0;
-    for(int im = 0; im < knm; im++) {
-      SuperkMode_t m = kSKReactionModes[is][im];
-      if(m == kSKmUndefined) continue;
-      this->Template(s,m,kSKMCtNom)->Write();
-      cout << "NomTemplate " << util::AsString(s) << " " << util::AsString(m) << " " << this->Template(s,m,kSKMCtNom)->Integral() << endl;
-      nsk += this->Template(s,m,kSKMCtNom)->Integral();
-    }
-    cout << "Total: " << nsk << endl << endl;
-  }
-  out2.Close();
+#ifdef __save_templates_debug__
+  this->NevDebug(kSKMCtOri, "nevents");
+  this->NevDebug(kSKMCtNom, "mcnorm");
 #endif
 
   // need to read in the xsec splines, before applying any BANFF tweaks
@@ -281,46 +238,15 @@ bool SuperkMC::Read(TXMLEngine* xml, XMLNodePointer_t root_node)
   // apply flux tuning (based on external data) to templates
   this->ApplyFluxExtTuningToTemplates();
 
-#ifdef __save_nomft_templates_init_debug__
-  TFile out3("Templates_mcnorm_fluxtuned.root","RECREATE");
-  for(int is = 0; is < kns; is++) {
-    SuperkSample_t s = kSKSamples[is];
-    if(s == kSKsUndefined) continue;
-    double nsk = 0, nsk2 = 0;
-    for(int im = 0; im < knm; im++) {
-      SuperkMode_t m = kSKReactionModes[is][im];
-      if(m == kSKmUndefined) continue;
-      this->Template(s,m,kSKMCtNom)->Write();
-      cout << "NomFluxTunedTemplate " << util::AsString(s) << " " << util::AsString(m) << " " << this->Template(s,m,kSKMCtNom)->Integral() << endl;
-      nsk += this->Template(s,m,kSKMCtNom)->Integral();
-      if(!util::IsSignalNuE(m))
-	nsk2 += this->Template(s,m,kSKMCtNom)->Integral();
-    }
-    cout << "Total: " << nsk << endl;
-    cout << "Total (excluding nuesig): " << nsk2 << endl << endl;
-  }
-  out3.Close();
+#ifdef __save_templates_debug__
+  this->NevDebug(kSKMCtNom, "mcnorm_fluxtuned");
 #endif
 
   // apply flux and cross-section tuning (based on nd280 data fit by BANFF) to templates
   this->ApplyBANFFTuningToTemplates();
 
-#ifdef __save_tun_templates_init_debug__
-  TFile out4("Templates_mcnorm_fluxtuned_banfftuned.root","RECREATE");
-  for(int is = 0; is < kns; is++) {
-    SuperkSample_t s = kSKSamples[is];
-    if(s == kSKsUndefined) continue;
-    double nsk = 0;
-    for(int im = 0; im < knm; im++) {
-      SuperkMode_t m = kSKReactionModes[is][im];
-      if(m == kSKmUndefined) continue;
-      this->Template(s,m,kSKMCtNom)->Write();
-      cout << "TunFluxTunedTemplate " << util::AsString(s) << " " << util::AsString(m) << " " << this->Template(s,m,kSKMCtTun)->Integral() << endl;
-      nsk += this->Template(s,m,kSKMCtTun)->Integral();
-    }
-    cout << "Total: " << nsk << endl << endl;
-  }
-  out4.Close();
+#ifdef __save_templates_debug__
+  this->NevDebug(kSKMCtTun, "mcnorm_fluxtuned_banfftuned");
 #endif
 
 #ifdef __show_init_mesg_info__      
@@ -372,7 +298,7 @@ void SuperkMC::Book(void)
        if(m == kSKmUndefined) continue;
        fMCTemplOri[is][im] = new TH2D(
           Form("nsk_ori_%d_%d",is,im), util::AsString(m).c_str(),
-               n_ereco_bins, ereco_bin_edges, kNEtrueBins, kEtrueMin, kEtrueMax);
+	       n_ereco_bins, ereco_bin_edges, kNEtrueBins, kEtrueMin, kEtrueMax);
        fMCTemplNom[is][im] = new TH2D(
           Form("nsk_nom_%d_%d",is,im), util::AsString(m).c_str(),
                n_ereco_bins, ereco_bin_edges, kNEtrueBins, kEtrueMin, kEtrueMax);
@@ -783,22 +709,8 @@ void SuperkMC::ApplySystematicsToTemplates_Multiplicative(void)
     }//im
   }//is
 
-#ifdef __save_sys_templates_init_debug__
-  TFile out("Templates_mcnorm_fluxtuned_banfftuned_syst_multi.root","RECREATE");
-  for(int is = 0; is < kns; is++) {
-    SuperkSample_t s = kSKSamples[is];
-    if(s == kSKsUndefined) continue;
-    double nsk = 0;
-    for(int im = 0; im < knm; im++) {
-      SuperkMode_t m = kSKReactionModes[is][im];
-      if(m == kSKmUndefined) continue;
-      this->Template(s,m,kSKMCtNom)->Write();
-      cout << "SysTemplate_multiplicative " << util::AsString(s) << " " << util::AsString(m) << " " << this->Template(s,m,kSKMCtSys)->Integral() << endl;
-      nsk += this->Template(s,m,kSKMCtSys)->Integral();
-    }
-    cout << "Total: " << nsk << endl << endl;
-  }
-  out.Close();
+#ifdef __save_templates_debug__
+  this->NevDebug(kSKMCtSys, "mcnorm_fluxtuned_banfftuned_syst_multi");
 #endif
 }
 //________________________________________________________________________________________
@@ -914,22 +826,8 @@ void SuperkMC::ApplySystematicsToTemplates_NonMultiplicative(void)
        delete mctempl_no_ereco_scale;
     }//im
   }//is
-#ifdef __save_sys_templates_init_debug__
-  TFile out("Templates_mcnorm_fluxtuned_banfftuned_syst_nonmulti.root","RECREATE");
-  for(int is = 0; is < kns; is++) {
-    SuperkSample_t s = kSKSamples[is];
-    if(s == kSKsUndefined) continue;
-    double nsk = 0;
-    for(int im = 0; im < knm; im++) {
-      SuperkMode_t m = kSKReactionModes[is][im];
-      if(m == kSKmUndefined) continue;
-      this->Template(s,m,kSKMCtNom)->Write();
-      cout << "SysTemplate_nonmultiplicative " << util::AsString(s) << " " << util::AsString(m) << " " << this->Template(s,m,kSKMCtSys)->Integral() << endl;
-      nsk += this->Template(s,m,kSKMCtSys)->Integral();
-    }
-    cout << "Total: " << nsk << endl << endl;
-  }
-  out.Close();
+#ifdef __save_templates_debug__
+  this->NevDebug(kSKMCtSys, "mcnorm_fluxtuned_banfftuned_syst_nonmulti");
 #endif
 }
 //________________________________________________________________________________________
@@ -1146,22 +1044,8 @@ void SuperkMC::ApplyPhysHypothesisToTemplates(void)
       }//im
     }//is
   }
-#ifdef __save_fin_templates_init_debug__
-  TFile out("Templates_mcnorm_fluxtuned_banfftuned_syst_phys.root","RECREATE");
-  for(int is = 0; is < kns; is++) {
-    SuperkSample_t s = kSKSamples[is];
-    if(s == kSKsUndefined) continue;
-    double nsk = 0;
-    for(int im = 0; im < knm; im++) {
-      SuperkMode_t m = kSKReactionModes[is][im];
-      if(m == kSKmUndefined) continue;
-      this->Template(s,m,kSKMCtNom)->Write();
-      cout << "PhysHypTemplate " << util::AsString(s) << " " << util::AsString(m) << " " << this->Template(s,m,kSKMCtFin)->Integral() << endl;
-      nsk += this->Template(s,m,kSKMCtFin)->Integral();
-    }
-    cout << "Total: " << nsk << endl << endl;
-  }
-  out.Close();
+#ifdef __save_templates_debug__
+  this->NevDebug(kSKMCtFin, "mcnorm_fluxtuned_banfftuned_syst_phys");
 #endif
 }
 //________________________________________________________________________________________
@@ -1488,5 +1372,71 @@ bool SuperkMC::SkipTemplate(SuperkMode_t m)
   return skip;
 }
 //________________________________________________________________________________________
+void SuperkMC::NevDebug(SKMCTemplateType_t t, string name)
+{
+  TFile out(Form("Template_%s.root", name.c_str()),"RECREATE");
+  static const int erecobins = 70;
+  static const double erecobinedges[kNErecoBins1Rmu+1] = {
+      0.000,  0.050,  0.100,  0.150,  0.200,  0.250,  0.300,  0.350,  0.400,  0.450, 
+      0.500,  0.550,  0.600,  0.650,  0.700,  0.750,  0.800,  0.850,  0.900,  0.950, 
+      1.000,  1.050,  1.100,  1.150,  1.200,  1.250,  1.300,  1.350,  1.400,  1.450, 
+      1.500,  1.550,  1.600,  1.650,  1.700,  1.750,  1.800,  1.850,  1.900,  1.950, 
+      2.000,  2.050,  2.100,  2.150,  2.200,  2.250,  2.300,  2.350,  2.400,  2.450, 
+      2.500,  2.550,  2.600,  2.650,  2.700,  2.750,  2.800,  2.850,  2.900,  2.950, 
+      3.000,  3.100,  3.200,  3.300,  3.400,  3.500,
+      4.000,  5.000,  7.000, 10.000, 30.000
+  };
+  for(int is = 0; is < kns; is++) {
+    SuperkSample_t s = kSKSamples[is];
+    if(s == kSKsUndefined) continue;
+    double nsk = 0;
+    for(int im = 0; im < knm; im++) {
+      SuperkMode_t m = kSKReactionModes[is][im];
+      if(m == kSKmUndefined) continue;
+      TH2D * mctempl = this -> Template(s,m,t);
 
+      //first write the 2d template, and cout the mode integral
+      mctempl->Write();
+      cout << name << " " << util::AsString(s) << " " << util::AsString(m) << " " << mctempl->Integral() << endl;
+      nsk += mctempl->Integral();
+
+      //fill a 1D ereco spectrum
+      TH1D * hrec = new TH1D(Form("erec_int_%s",AsStringCompact_Japan(m).c_str()), Form("erec_int_%s",AsStringCompact_Japan(m).c_str()), erecobins, erecobinedges);
+      // loop over Ereco
+      for(int ir = 1; ir <= hrec->GetNbinsX(); ir++) {
+	//find low and high of ereco for current bin
+	double rmin = hrec->GetXaxis()->GetBinLowEdge(ir) + kOneMeV;
+	double rmax = hrec->GetXaxis()->GetBinUpEdge(ir)  - kOneMeV;
+	//integrate the template
+	int ir_min = mctempl->GetXaxis()->FindBin(rmin);
+	int ir_max = mctempl->GetXaxis()->FindBin(rmax);
+	int it_bins = mctempl->GetNbinsY();
+	double nev = mctempl->Integral(ir_min, ir_max, 1, it_bins);
+	hrec->SetBinContent(ir,nev);
+      }
+      hrec->Write();
+      delete hrec;
+
+      //fill a 1D etrue spectrum
+      TH1D * htru = new TH1D(Form("enu_int_%s",AsStringCompact_Japan(m).c_str()), Form("enu_int_%s",AsStringCompact_Japan(m).c_str()), util::NumVariableXsEtrueBins(s,m), util::VariableXsEtrueBinEdges(s,m));
+      // loop over Etrue
+      for(int it = 1; it <= htru->GetNbinsX(); it++) {
+	//find low and high of etrue for current bin
+	double tmin = htru->GetXaxis()->GetBinLowEdge(it) + kOneMeV;
+	double tmax = htru->GetXaxis()->GetBinUpEdge(it)  - kOneMeV;
+	//integrate the template
+	int it_min = mctempl->GetYaxis()->FindBin(tmin);
+	int it_max = mctempl->GetYaxis()->FindBin(tmax);
+	int ir_bins = mctempl->GetNbinsX();
+	double nev = mctempl->Integral(1, ir_bins, it_min, it_max);
+	htru->SetBinContent(it,nev);
+      }
+      htru->Write();
+      delete htru;
+    }
+
+    cout << "Total: " << nsk << endl << endl;
+  }
+  out.Close();
+}
 

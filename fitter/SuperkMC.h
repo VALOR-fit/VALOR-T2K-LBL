@@ -106,6 +106,9 @@ private:
   // Ignore nue_signal templates for all but the 3-flavour oscillation hypothesis
   bool SkipTemplate(conv::SuperkMode_t m);
 
+  // Debug method, prints out some number of events, and also saves templates & spectra
+  void NevDebug(conv::SKMCTemplateType_t t, string name);
+
   //
   // Private data members
   //

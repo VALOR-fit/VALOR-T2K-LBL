@@ -12,7 +12,9 @@ void compare_1dhist_all(
   double confidence = 1.0,          /* if a Kolmogorov test returns a value greater than this, assume compatible & don't draw */
   double ratiotest = 1E-6,          /* maximum ratio needs to be more than this (away from 1) */
   bool zeroOverZeroIsZero = false,  /* use the built in divide where 0/0=0, or use 0/0=1 */
-  bool draw_only_ratio = true       /* draw only the ratio? or also plot the 2 histograms overlaid */
+  bool draw_only_ratio = false,     /* draw only the ratio? or also plot the 2 histograms overlaid */
+  double xmin = -9999999,           /* minimum of x axis to draw */
+  double xmax =  9999999            /* maximum of x axis to draw */
 )
 {
   char *s = new char[50];
@@ -64,9 +66,10 @@ void compare_1dhist_all(
 	}
       } //zeroOverZeroIsZero?
       //Another check, to see if the ratio is small (e.g. from the migration of a single value from one bin to another)
-      if(ratio->GetBinContent(ratio->GetMaximumBin() < 1 + ratiotest) 
-	 && ratio->GetBinContent(ratio->GetMinimumBin() > 1 - ratiotest)) {
+      if((ratio->GetBinContent(ratio->GetMaximumBin()) < 1 + ratiotest)
+	 && (ratio->GetBinContent(ratio->GetMinimumBin()) > 1 - ratiotest)) {
 	cout << "skipping due to maximum/minimum ratio test" << endl;
+	cout << "Max " << ratio->GetBinContent(ratio->GetMaximumBin()) << "\tMin " << ratio->GetBinContent(ratio->GetMinimumBin()) << endl;
 	continue;
       }
       //draw
@@ -74,10 +77,13 @@ void compare_1dhist_all(
       if(!draw_only_ratio) {
 	c->Divide(1,2);
 	c->cd(1);
+	h1->GetXaxis()->SetRangeUser(xmin, xmax);
+	h2->GetXaxis()->SetRangeUser(xmin, xmax);
 	h1->Draw("p");
 	h2->Draw("same");
 	c->cd(2);
       }
+      ratio->GetXaxis()->SetRangeUser(xmin, xmax);
       ratio->Draw();
       c->Update();
 
