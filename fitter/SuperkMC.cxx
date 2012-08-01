@@ -298,19 +298,19 @@ void SuperkMC::Book(void)
        if(m == kSKmUndefined) continue;
        fMCTemplOri[is][im] = new TH2D(
           Form("nsk_ori_%d_%d",is,im), util::AsString(m).c_str(),
-	       n_ereco_bins, ereco_bin_edges, kNEtrueBins, kEtrueMin, kEtrueMax);
+	       n_ereco_bins, ereco_bin_edges, kNEtrueBins, kEtrueBinEdges);
        fMCTemplNom[is][im] = new TH2D(
           Form("nsk_nom_%d_%d",is,im), util::AsString(m).c_str(),
-               n_ereco_bins, ereco_bin_edges, kNEtrueBins, kEtrueMin, kEtrueMax);
+               n_ereco_bins, ereco_bin_edges, kNEtrueBins, kEtrueBinEdges);
        fMCTemplTun[is][im] = new TH2D(
           Form("nsk_tun_%d_%d",is,im), util::AsString(m).c_str(),
-               n_ereco_bins, ereco_bin_edges, kNEtrueBins, kEtrueMin, kEtrueMax);
+               n_ereco_bins, ereco_bin_edges, kNEtrueBins, kEtrueBinEdges);
        fMCTemplSys[is][im] = new TH2D(
           Form("nsk_sys_%d_%d",is,im), util::AsString(m).c_str(),
-               n_ereco_bins, ereco_bin_edges, kNEtrueBins, kEtrueMin, kEtrueMax);
+               n_ereco_bins, ereco_bin_edges, kNEtrueBins, kEtrueBinEdges);
        fMCTemplFin[is][im] = new TH2D(
           Form("nsk_fin_%d_%d",is,im), util::AsString(m).c_str(),
-               n_ereco_bins, ereco_bin_edges, kNEtrueBins, kEtrueMin, kEtrueMax);
+               n_ereco_bins, ereco_bin_edges, kNEtrueBins, kEtrueBinEdges);
        fMCTemplOri[is][im]->SetDirectory(0);
        fMCTemplOri[is][im]->GetXaxis()->SetTitle("E_{reco} (GeV)");
        fMCTemplOri[is][im]->GetYaxis()->SetTitle("E_{true} (GeV)");
