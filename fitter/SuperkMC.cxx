@@ -21,7 +21,7 @@
 //#define __show_syst_var_wght_mesg_debug__ 
 //#define __show_spectra_update_mesg_debug__ 
 //#define __show_skipped_templates__ 
-#define __save_templates_debug__   // saves to files, and cout's number of events, at various stages of applying tunes to the templates:
+//#define __save_templates_debug__   // saves to files, and cout's number of events, at various stages of applying tunes to the templates:
 // 1 number of events
 // 2 number of events, weighted by pot & mc normalisation
 // 3 number of events, weighted by pot & mc normalisation, flux tuning
