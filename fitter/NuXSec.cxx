@@ -23,7 +23,8 @@
 //#define __show_wght_spline_idx_mesg_debug__
 //#define __show_isanevent_mesg_debug__
 //#define __save_ori_templates_init_debug__
-#define __skip_unexpected_spline_test_in_readsplines__
+#define __skip_unexpected_spline_test_in_readsplines__ // skip looking for splines we don't expect (due to our empty bins) - speedy!
+//#define __turn_off_splines__ //special mode that doesn't read in splines, and returns weights of 1 for all splines
 
 #include <cassert>
 #include <cstdlib>
@@ -106,7 +107,10 @@ bool NuXSec::ReadSplines(TXMLEngine* xml, XMLNodePointer_t root_node)
 #ifdef __show_init_mesg_info__
   cout << "Exp/NuXSec >> Reading neutrino generator inputs (splines only) from input XML file." << endl;
 #endif
-
+#ifdef __turn_off_splines__
+  cout << "Exp/NuXSec >> Special mode turned on in which splines are not read, and weights involving splines are set to 1" << endl;
+  return true;
+#endif
   //
   // Load cross-section weight splines
   //
@@ -324,13 +328,16 @@ double NuXSec::FinTuningWght_1p(
   // if( ! this->ApplySyst(p,s,m,Ereco,Etrue) ) return 1.; // check already made in function that calls this one
 
   double wght = 1.;
-  //  return wght;
+
   //
   // BANFF param # 31, M_{A} QE
   // BANFF param # 32, M_{A} RES
   //
   if(p == kNuisBANFFMAQE || p == kNuisBANFFMARES)
   {
+#ifdef __turn_off_splines__
+    return wght;
+#endif
      bool ev = this->IsThereAnEvent(s, m, Ereco, Etrue);
      if(ev) {
        TSpline3 * wght_spl = this->FindWghtSpline(p,s,m,Ereco,Etrue);
@@ -465,13 +472,16 @@ double NuXSec::SystWght_1p(
   // if( ! this->ApplySyst(p,s,m,Ereco,Etrue) ) return 1.; // check already made in function that calls this one
 
   double wght = 1.;
-  //  return wght;
+
   //
   // BANFF param # 31, M_{A} QE
   // BANFF param # 32, M_{A} RES
   //
   if(p == kNuisBANFFMAQE || p == kNuisBANFFMARES)
   {
+#ifdef __turn_off_splines__
+    return wght;
+#endif
      bool ev = this->IsThereAnEvent(s, m, Ereco, Etrue);
      if(ev) {
        TSpline3 * wght_spl = this->FindWghtSpline(p,s,m,Ereco,Etrue);
@@ -517,6 +527,9 @@ double NuXSec::SystWght_1p(
   if(p == kNuisXSecFermiMom || p == kNuisXSecSpecFunc || p == kNuisXSecWshape || p == kNuisXSecShapeCCoth ||
      p == kNuisXSecPiLessDelta || p == kNuisXSecENuShape)
   {
+#ifdef __turn_off_splines__
+    return wght;
+#endif
     bool ev = this->IsThereAnEvent(s, m, Ereco, Etrue);
     if(ev) {
       TSpline3 * wght_spl = this->FindWghtSpline(p,s,m,Ereco,Etrue);

@@ -13,8 +13,10 @@ void compare_1dhist_all(
   double ratiotest = 1E-6,          /* maximum ratio needs to be more than this (away from 1) */
   bool zeroOverZeroIsZero = false,  /* use the built in divide where 0/0=0, or use 0/0=1 */
   bool draw_only_ratio = false,     /* draw only the ratio? or also plot the 2 histograms overlaid */
-  double xmin = 0,           /* minimum of x axis to draw */
-  double xmax =  6.99            /* maximum of x axis to draw */
+  double xmin = -9999999,           /* minimum of x axis to draw */
+  double xmax = +9999999,           /* maximum of x axis to draw */
+  string skipstr = "",              /* skip histograms that contain this string in their name */
+  bool save_canvas = false          /* save canvas to a .png? */
 )
 {
   char *s = new char[50];
@@ -35,7 +37,7 @@ void compare_1dhist_all(
     //if not skipping, draw histograms
     if(i<=0) {
       cout << "\nViewing comparison for histogram: " << histoname.Data() << endl;
-      if(histoname.Contains("erec")) {
+      if(histoname.Contains(skipstr.c_str())) {
 	cout << "Skipping due to histogram name" << endl;
 	continue;
       }
@@ -93,13 +95,12 @@ void compare_1dhist_all(
       ratio->GetXaxis()->SetRangeUser(xmin, xmax);
       ratio->Draw();
       c->Update();
-      c->SaveAs(Form("plotA_%s.png",histoname.Data()));
+      if(save_canvas)
+	c->SaveAs(Form("plot_%s.png",histoname.Data()));
 
-      /*
       gets(s); //waits for a [RETURN] entry on the command line.
       //Can type a number to skip n histograms
       i = atoi(s);
-      */
       if(i>0)
 	cout << "skipping " << i << " histograms" << endl;
     } // i<=0

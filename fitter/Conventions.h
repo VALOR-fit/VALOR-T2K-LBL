@@ -27,6 +27,25 @@ Changes since 2011_v0.9.0:
 //#define BANFF_Bins -1 // Fine binning (numu using same binning as 2010 numu analyses)
 #endif
 
+#ifndef ETRUE_BINS
+#define ETRUE_BINS 1 // 50 MeV binning 0-30 GeV
+//#define ETRUE_BINS 2 // 10 MeV binning 0-1 GeV, 50 MeV binning 1-30 GeV
+//#define ETRUE_BINS 3 //  5 MeV binning 0-1 GeV, 50 MeV binning 1-30 GeV
+#endif
+
+#ifndef ERECO_BINS_1RMU
+#define ERECO_BINS_1RMU 1 // 50 MeV binning 0-30 GeV
+//#define ERECO_BINS_1RMU 2 // 50 MeV bins in 0-3 GeV, 200 MeV bins in 3-4 GeV, 500 MeV bins in 4-6 GeV, 1000 MeV bins > 6 GeV
+//#define ERECO_BINS_1RMU 3 // 50 MeV bins in 0-3 GeV, 100 MeV bins in 3-3.5 GeV, Variable bins > 3.5 GeV
+//#define ERECO_BINS_1RMU 4 // 50 MeV bins in 0-1.25 GeV, 1 bin from 1.25-3 GeV, 1 bin from 3-10 GeV, 1 bin from 10-30 GeV
+#endif
+
+#ifndef ERECO_BINS_1RE
+#define ERECO_BINS_1RE 1 // 200 MeV bins 0-1 GeV, 1 bin from 1-1.25 GeV
+//#define ERECO_BINS_1RE 2 // 1 bin (0-1.25 GeV)
+//#define ERECO_BINS_1RE 3 // 50 MeV bins 0-1.25 GeV
+#endif
+
 namespace t2kana {
 namespace conv   {
 
@@ -2082,7 +2101,7 @@ static const SuperkMode_t kSKReactionModesOrderInStack[kns][knm] = {
 //
 // Etrue binning for SK MC templates
 //
-
+#if ETRUE_BINS == 1
 // 600 50-MeV bins from 0 to 30 GeV
 static const int kNEtrueBins = 600;
 static const double kEtrueBinEdges[kNEtrueBins+1] = 
@@ -2149,8 +2168,7 @@ static const double kEtrueBinEdges[kNEtrueBins+1] =
   29.500, 29.550, 29.600, 29.650, 29.700, 29.750, 29.800, 29.850, 29.900, 29.950, 
   30.000
 };
-
-/*
+#elif ETRUE_BINS == 2
 // Finer binning around the oscillation maximum
 // 10-MeV bins from  0.0  to 1.0  GeV (100 bins)
 // 50-MeV bins from 1.0  to 30   GeV (580 bins)
@@ -2227,8 +2245,7 @@ static const double kEtrueBinEdges[kNEtrueBins+1] =
   29.500, 29.550, 29.600, 29.650, 29.700, 29.750, 29.800, 29.850, 29.900, 29.950, 
   30.000
 };
-*/
-/*
+#elif ETRUE_BINS == 3
 // Even finer binning around the oscillation maximum
 // 5-MeV bins from  0.0  to 1.0  GeV (200 bins)
 // 50-MeV bins from 1.0  to 30   GeV (580 bins)
@@ -2315,11 +2332,12 @@ static const double kEtrueBinEdges[kNEtrueBins+1] =
   29.500, 29.550, 29.600, 29.650, 29.700, 29.750, 29.800, 29.850, 29.900, 29.950, 
   30.000
 };
-*/
+#endif
+
 //
 // Ereco binning for SK 1Rmu sample
 //
-
+#if ERECO_BINS_1RMU == 1
 // 600 50-MeV bins from 0 to 30 GeV
 static const int kNErecoBins1Rmu = 600;
 static const double kErecoBinEdges1Rmu[kNErecoBins1Rmu+1] = 
@@ -2386,8 +2404,7 @@ static const double kErecoBinEdges1Rmu[kNErecoBins1Rmu+1] =
   29.500, 29.550, 29.600, 29.650, 29.700, 29.750, 29.800, 29.850, 29.900, 29.950, 
   30.000
 };
-
-/*
+#elif ERECO_BINS_1RMU == 2
 // Fewer bins at higher energies for improved speed
 // -   50 MeV bins in 0-3 GeV
 // -  200 MeV bins in 3-4 GeV
@@ -2406,8 +2423,7 @@ static const double kErecoBinEdges1Rmu[kNErecoBins1Rmu+1] =
    4.000,  4.500,  5.000,  5.500,  
    6.000,  7.000,  8.000,  9.000, 10.000
 };
-*/
-/*
+#elif ERECO_BINS_1RMU == 3
 // Fewer bins at higher energies for improved speed
 // -   50 MeV bins in 0-3 GeV
 // -  100 MeV bins in 3-3.5 GeV
@@ -2424,8 +2440,7 @@ static const double kErecoBinEdges1Rmu[kNErecoBins1Rmu+1] =
    3.000,  3.100,  3.200,  3.300,  3.400,  3.500,
    4.000,  5.000,  7.000, 10.000, 30.000
 };
-*/
-/*
+#elif ERECO_BINS_1RMU == 4
 // Extension of the nue 2012a analyses to higher energy
 // -   50 MeV bins in 0-1.25 GeV
 // -   1 bin from 1.25-3 GeV
@@ -2438,27 +2453,30 @@ static const double kErecoBinEdges1Rmu[kNErecoBins1Rmu+1] =
    0.500,  0.550,  0.600,  0.650,  0.700,  0.750,  0.800,  0.850,  0.900,  0.950, 
    1.000,  1.050,  1.100,  1.150,  1.200,  1.250,  3.000, 10.000, 30.000
 };
-*/
+#endif
+
 //
 // Ereco binning for SK 1Re sample
 //
-// 50 bins from 0 to 10 GeV (same as the 2010a NIWG input for SKFSI)
+#if ERECO_BINS_1RE == 1
+// Similar to the 2010a NIWG input for SKFSI
+// -  200 MeV bins, 0-1 GeV (5 bins)
+// -  250 MeV bins, 0-1.25 GeV (1 bin)
 static const int kNErecoBins1Re = 6;
 static const double kErecoBinEdges1Re[kNErecoBins1Re+1] = 
 {
   0.000,  0.200,  0.400, 0.600, 0.800,  1.000,  1.250
 };
-/*
-// 1 bin from 0 to 10 GeV (counting expt)
+#elif ERECO_BINS_1RE == 2
+// 1 bin from 0 to 1.25 GeV (counting expt)
 //WARNING this gives wrong errors for anything that is Ereco dependant (SKFSI)
 static const int kNErecoBins1Re = 1;
 static const double kErecoBinEdges1Re[kNErecoBins1Re+1] = 
 { 
    0., 1.250 
 };
-*/
-/*
-// Same binning as the standard 1Rmu one: 200 50-MeV bins from 0 to 10 GeV
+#elif ERECO_BINS_1RE == 3
+// Same binning as the standard 1Rmu one: 25 50-MeV bins from 0 to 1.25 GeV
 static const int kNErecoBins1Re = 25;
 static const double kErecoBinEdges1Re[kNErecoBins1Re+1] = 
 {
@@ -2466,7 +2484,7 @@ static const double kErecoBinEdges1Re[kNErecoBins1Re+1] =
    0.500,  0.550,  0.600,  0.650,  0.700,  0.750,  0.800,  0.850,  0.900,  0.950, 
    1.000,  1.050,  1.100,  1.150,  1.200,  1.250
 };
-*/
+#endif
 
 } // conv
 } // t2kana
