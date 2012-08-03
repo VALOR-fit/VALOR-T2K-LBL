@@ -167,10 +167,13 @@ void SuperkExpectation::ResetSystematicVariations(void)
   this->GetNuXSec()->TweakShapeCCoth    (0.);
   this->GetNuXSec()->TweakPiLessDelta   (0.);
   this->GetNuXSec()->TweakENuShape      (0.);
+#if BANFF_Bins != 2
   this->GetNuXSec()->TweakNormCCQEE1    (0.);
   this->GetNuXSec()->TweakNormCCQEE2    (0.);
   this->GetNuXSec()->TweakNormCC1piE1   (0.);
+#endif
   this->GetNuXSec()->TweakNormCCcoh     (0.);
+  this->GetNuXSec()->TweakNormNC1piC    (0.);
   this->GetNuXSec()->TweakNormNCcoh     (0.);
   this->GetNuXSec()->TweakNormNCoth     (0.);
   this->GetNuXSec()->TweakNormNuEToNuMu (0.);
@@ -208,7 +211,10 @@ void SuperkExpectation::TweakSystematic(string systematic, double twkdial, bool 
 //      * banff_maqe                        : tweak only BANFF maqe parameter
 //      * banff_mares                       : tweak only BANFF mares parameter
 //      * banff_ccqeE0                      : tweak only BANFF ccqeE0 parameter
+//      * banff_ccqeE1                      : tweak only BANFF ccqeE1 parameter
+//      * banff_ccqeE2                      : tweak only BANFF ccqeE2 parameter
 //      * banff_cc1pi0E0                    : tweak only BANFF cc1piE0 parameter
+//      * banff_cc1pi0E1                    : tweak only BANFF cc1piE1 parameter
 //      * banff_nc1pi0                      : tweak only BANFF nc1pi0 parameter
 //
 // FSI
@@ -230,6 +236,7 @@ void SuperkExpectation::TweakSystematic(string systematic, double twkdial, bool 
 //    - xsec_norm_ccqeE2
 //    - xsec_norm_cc1piE1
 //    - xsec_norm_cccoh
+//    - xsec_norm_nc1piC
 //    - xsec_norm_nccoh
 //    - xsec_norm_ncoth
 //    - xsec_norm_nuetonumu
@@ -370,14 +377,18 @@ void SuperkExpectation::TweakSystematic(string systematic, double twkdial, bool 
     this->GetNuXSec()->TweakPiLessDelta   (twkdial);
   else if(systematic == "xsec_enushape")
     this->GetNuXSec()->TweakENuShape      (twkdial);
+#if BANFF_Bins != 2
   else if(systematic == "xsec_norm_ccqeE1")
     this->GetNuXSec()->TweakNormCCQEE1    (twkdial);
   else if(systematic == "xsec_norm_ccqeE2")
     this->GetNuXSec()->TweakNormCCQEE2    (twkdial);
   else if(systematic == "xsec_norm_cc1piE1")
     this->GetNuXSec()->TweakNormCC1piE1   (twkdial);
+#endif
   else if(systematic == "xsec_norm_cccoh")
     this->GetNuXSec()->TweakNormCCcoh     (twkdial);
+  else if(systematic == "xsec_norm_nc1piC")
+    this->GetNuXSec()->TweakNormNC1piC    (twkdial);
   else if(systematic == "xsec_norm_nccoh")
     this->GetNuXSec()->TweakNormNCcoh     (twkdial);
   else if(systematic == "xsec_norm_ncoth")
@@ -422,10 +433,13 @@ void SuperkExpectation::TweakAllSystematics(void)
   this->GetNuXSec()->TweakShapeCCoth    (rand.Gaus(0.,1.));
   this->GetNuXSec()->TweakPiLessDelta   (rand.Gaus(0.,1.));
   this->GetNuXSec()->TweakENuShape      (rand.Gaus(0.,1.));
+#if BANFF_Bins != 2
   this->GetNuXSec()->TweakNormCCQEE1    (rand.Gaus(0.,1.));
   this->GetNuXSec()->TweakNormCCQEE2    (rand.Gaus(0.,1.));
   this->GetNuXSec()->TweakNormCC1piE1   (rand.Gaus(0.,1.));
+#endif
   this->GetNuXSec()->TweakNormCCcoh     (rand.Gaus(0.,1.));
+  this->GetNuXSec()->TweakNormNC1piC    (rand.Gaus(0.,1.));
   this->GetNuXSec()->TweakNormNCcoh     (rand.Gaus(0.,1.));
   this->GetNuXSec()->TweakNormNCoth     (rand.Gaus(0.,1.));
   this->GetNuXSec()->TweakNormNuEToNuMu (rand.Gaus(0.,1.));
@@ -637,6 +651,7 @@ void SuperkExpectation::SetNuisanceParams(const FitParamList & fp)
      double twk = fp.CurrValue(kNuisXSecENuShape);
      this->GetNuXSec()->TweakENuShape(twk);
    }
+#if BANFF_Bins != 2
    if(fp.Exists(kNuisXSecNormCCQEE1)) {
      double twk = fp.CurrValue(kNuisXSecNormCCQEE1);
      this->GetNuXSec()->TweakNormCCQEE1(twk);
@@ -649,9 +664,14 @@ void SuperkExpectation::SetNuisanceParams(const FitParamList & fp)
      double twk = fp.CurrValue(kNuisXSecNormCC1piE1);
      this->GetNuXSec()->TweakNormCC1piE1(twk);
    }
+#endif
    if(fp.Exists(kNuisXSecNormCCcoh)) {
      double twk = fp.CurrValue(kNuisXSecNormCCcoh);
      this->GetNuXSec()->TweakNormCCcoh(twk);
+   }
+   if(fp.Exists(kNuisXSecNormNC1piC)) {
+     double twk = fp.CurrValue(kNuisXSecNormNC1piC);
+     this->GetNuXSec()->TweakNormNC1piC(twk);
    }
    if(fp.Exists(kNuisXSecNormNCcoh)) {
      double twk = fp.CurrValue(kNuisXSecNormNCcoh);

@@ -160,7 +160,14 @@ void test_systematic_error_propagation_all
   systematics.push_back("banff_maqe");
   systematics.push_back("banff_mares");
   systematics.push_back("banff_ccqeE0");
+#if BANFF_Bins == 2
+  systematics.push_back("banff_ccqeE1");
+  systematics.push_back("banff_ccqeE2");
+#endif
   systematics.push_back("banff_cc1piE0");
+#if BANFF_Bins == 2
+  systematics.push_back("banff_cc1piE1");
+#endif
   systematics.push_back("banff_nc1pi0");
 
   systematics.push_back("xsec_pf");
@@ -170,10 +177,13 @@ void test_systematic_error_propagation_all
   systematics.push_back("xsec_pilessdelta");
   systematics.push_back("xsec_enushape");
 
+#if BANFF_Bins != 2
   systematics.push_back("xsec_norm_ccqeE1");
   systematics.push_back("xsec_norm_ccqeE2");
   systematics.push_back("xsec_norm_cc1piE1");
+#endif
   systematics.push_back("xsec_norm_cccoh");
+  systematics.push_back("xsec_norm_nc1piC");
   systematics.push_back("xsec_norm_nccoh");
   systematics.push_back("xsec_norm_ncoth");
   systematics.push_back("xsec_norm_nuetonumu");

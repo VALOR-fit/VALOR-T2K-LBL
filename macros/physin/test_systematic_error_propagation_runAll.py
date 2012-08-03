@@ -54,15 +54,18 @@ systematics.append(["sk_1Rmu_nuecc_eff","false","false","false"])
 systematics.append(["sk_energy_scale","true","false","false"])
 #BANFF
 #systematics.append(["banff","true","true","true"]) #not supported in this macro
-for i in xrange(36):
-   if i <= 30:
-      systematics.append(["banff_" + '%(number)02d' % {"number": i},"false","true","false"])
-   elif i == 31:
-      systematics.append(["banff_" + '%(number)02d' % {"number": i},"true","false","false"])
-   elif i == 32 or 35:
-      systematics.append(["banff_" + '%(number)02d' % {"number": i},"false","false","false"])
-   elif i == 33 or i == 34:
-      systematics.append(["banff_" + '%(number)02d' % {"number": i},"false","false","true"])
+#BANFF flux
+for i in xrange(49):
+   systematics.append(["banff_" + '%(number)02d' % {"number": i},"false","true","false"])
+#BANFF xsec
+systematics.append(["banff_maqe","false","false","false"])
+systematics.append(["banff_mares","false","false","false"])
+systematics.append(["banff_ccqeE0","false","false","true"])
+systematics.append(["banff_ccqeE1","false","false","true"])
+systematics.append(["banff_ccqeE2","false","false","true"])
+systematics.append(["banff_cc1piE0","false","false","true"])
+systematics.append(["banff_cc1piE1","false","false","true"])
+systematics.append(["banff_nc1pi0","false","false","false"])
 #XSec splines
 systematics.append(["xsec_pf", "false", "false", "false"])
 systematics.append(["xsec_sf", "false", "false", "false"])
@@ -75,6 +78,7 @@ systematics.append(["xsec_norm_ccqeE1", "false", "false", "true"])
 systematics.append(["xsec_norm_ccqeE2", "false", "false", "true"])
 systematics.append(["xsec_norm_cc1piE1", "false", "false", "true"])
 systematics.append(["xsec_norm_cccoh", "false", "false", "false"])
+systematics.append(["xsec_norm_nc1piC", "false", "false", "false"])
 systematics.append(["xsec_norm_nccoh", "false", "false", "false"])
 systematics.append(["xsec_norm_ncoth", "false", "false", "false"])
 systematics.append(["xsec_norm_nuetonumu", "false", "false", "false"])

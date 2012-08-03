@@ -23,8 +23,9 @@ Changes since 2011_v0.9.0:
 #endif
 
 #ifndef BANFF_Bins
-#define BANFF_Bins 1 // Coarse binning (numu using same binning as 2012 nue analyses)
+//#define BANFF_Bins 1 // Coarse binning (numu using same binning as 2012 nue analyses)
 //#define BANFF_Bins -1 // Fine binning (numu using same binning as 2010 numu analyses)
+#define BANFF_Bins 2 // Coarse binning, with high energy ccqe & cc1pi bins included in BANFF
 #endif
 
 #ifndef ETRUE_BINS
@@ -321,7 +322,7 @@ typedef enum EFluxType
 FluxType_t;
 
 // Fit parameters
-static const int knppmax = 100; // maximum number of physics params listed below (for booking large enough param arrays)
+static const int knppmax = 110; // maximum number of physics params listed below (for booking large enough param arrays)
 typedef enum EPhysParamId 
 {   
    kPhypUndefined = -1, 
@@ -356,7 +357,7 @@ typedef enum EPhysParamId
    /*
     * 35 (flux and cross-section) corellated parameters used in the BANFF fit
    */   
-#if BANFF_Bins == 1
+#if BANFF_Bins >= 1
    kNuisBANFF00,               // # 00, SK     numu    flux,  E =  0.0 -  0.4 GeV
    kNuisBANFF01,               // # 01, SK     numu    flux,  E =  0.4 -  0.5 GeV
    kNuisBANFF02,               // # 02, SK     numu    flux,  E =  0.5 -  0.6 GeV
@@ -442,7 +443,14 @@ typedef enum EPhysParamId
    kNuisBANFFMAQE,             // # M_{A}  QE
    kNuisBANFFMARES,            // # M_{A}  RES
    kNuisBANFFCCQEE0,           // # CCQE   normalization, 0 - 1.5 GeV
+#if BANFF_Bins == 2
+   kNuisBANFFCCQEE1,           // # CCQE   normalization, 1.5 -  3.5 GeV
+   kNuisBANFFCCQEE2,           // # CCQE   normalization, 3.5 - 30.0 GeV
+#endif
    kNuisBANFFCC1piE0,          // # CC1pi  normalization, 0 - 2.5 GeV
+#if BANFF_Bins == 2
+   kNuisBANFFCC1piE1,          // # CC1pi  normalization, 2.5 - 30.0 GeV
+#endif
    kNuisBANFFNC1pi0,           // # NC1pi0 normalization
 
    /*
@@ -457,10 +465,13 @@ typedef enum EPhysParamId
    kNuisXSecPiLessDelta,       // Pion-less delta decay
    kNuisXSecENuShape,          // CC 1pi enu shape
    //systematics that are normalisations
+#if BANFF_Bins != 2
    kNuisXSecNormCCQEE1,        // CCQE norm 1.5 - 3.5 GeV
    kNuisXSecNormCCQEE2,        // CCQE norm > 3.5 GeV
    kNuisXSecNormCC1piE1,       // CC1pi norm > 2.5 GeV   
+#endif
    kNuisXSecNormCCcoh,         // CC coherent norm
+   kNuisXSecNormNC1piC,        // NC 1piC norm
    kNuisXSecNormNCcoh,         // NC coherent norm
    kNuisXSecNormNCoth,         // NC other norm
    kNuisXSecNormNuEToNuMu,     // nue / numu cross section
@@ -640,6 +651,8 @@ static const int kNumOfNuisanceParamsJoint = 0;  // not implemented for 2012a ye
 //
 #if BANFF_Bins == 1
 static const int kNumOfParamsInBANFFfit = 36;
+#elif BANFF_Bins == 2
+static const int kNumOfParamsInBANFFfit = 39;
 #elif BANFF_Bins == -1
 static const int kNumOfParamsInBANFFfit = 54;
 #endif
@@ -705,7 +718,14 @@ static const bool kParamInBANFFfitIsSuperkFluxParam[kNumOfParamsInBANFFfit] =
    false,                // kNuisBANFFMAQE
    false,                // kNuisBANFFMARES
    false,                // kNuisBANFFCCQEE0
+#if BANFF_Bins == 2
+   false,                // kNuisBANFFCCQEE1
+   false,                // kNuisBANFFCCQEE2
+#endif
    false,                // kNuisBANFFCC1piE0
+#if BANFF_Bins == 2
+   false,                // kNuisBANFFCC1piE0
+#endif
    false                 // kNuisBANFFNC1pi0
 };
 
@@ -748,6 +768,49 @@ static const int kNuPdgCodeOfFluxParamInBANFFfit[kNumOfParamsInBANFFfit] =
    0,                    // kNuisBANFFMARES, not a flux param
    0,                    // kNuisBANFFCCQEE0, not a flux param
    0,                    // kNuisBANFFCC1piE0, not a flux param
+   0                     // kNuisBANFFNC1pi0, not a flux param
+};
+#elif BANFF_Bins == 2
+static const int kNuPdgCodeOfFluxParamInBANFFfit[kNumOfParamsInBANFFfit] =
+{
+   kPdgNuMu,             // kNuisBANFF00
+   kPdgNuMu,             // kNuisBANFF01
+   kPdgNuMu,             // kNuisBANFF02
+   kPdgNuMu,             // kNuisBANFF03
+   kPdgNuMu,             // kNuisBANFF04
+   kPdgNuMu,             // kNuisBANFF05
+   kPdgNuMu,             // kNuisBANFF06
+   kPdgNuMu,             // kNuisBANFF07
+   kPdgNuMu,             // kNuisBANFF08
+   kPdgNuMu,             // kNuisBANFF09
+   kPdgNuMu,             // kNuisBANFF10
+   kPdgNuMuBar,          // kNuisBANFF11
+   kPdgNuMuBar,          // kNuisBANFF12
+   kPdgNuMuBar,          // kNuisBANFF13
+   kPdgNuMuBar,          // kNuisBANFF14
+   kPdgNuMuBar,          // kNuisBANFF15
+   kPdgNuMuBar,          // kNuisBANFF16
+   kPdgNuMuBar,          // kNuisBANFF17
+   kPdgNuMuBar,          // kNuisBANFF18
+   kPdgNuMuBar,          // kNuisBANFF19
+   kPdgNuMuBar,          // kNuisBANFF20
+   kPdgNuMuBar,          // kNuisBANFF21
+   kPdgNuE,              // kNuisBANFF22
+   kPdgNuE,              // kNuisBANFF23
+   kPdgNuE,              // kNuisBANFF24
+   kPdgNuE,              // kNuisBANFF25
+   kPdgNuE,              // kNuisBANFF26
+   kPdgNuE,              // kNuisBANFF27
+   kPdgNuE,              // kNuisBANFF28
+   kPdgNuEBar,           // kNuisBANFF29
+   kPdgNuEBar,           // kNuisBANFF30
+   0,                    // kNuisBANFFMAQE, not a flux param
+   0,                    // kNuisBANFFMARES, not a flux param
+   0,                    // kNuisBANFFCCQEE0, not a flux param
+   0,                    // kNuisBANFFCCQEE1, not a flux param
+   0,                    // kNuisBANFFCCQEE2, not a flux param
+   0,                    // kNuisBANFFCC1piE0, not a flux param
+   0,                    // kNuisBANFFCC1piE1, not a flux param
    0                     // kNuisBANFFNC1pi0, not a flux param
 };
 #elif BANFF_Bins == -1
@@ -852,6 +915,49 @@ static const double kEtrueRangeOfFluxParamInBANFFfit[kNumOfParamsInBANFFfit][2] 
    {  -1,   -1 },        // kNuisBANFFCC1piE0, not a flux param
    {  -1,   -1 }         // kNuisBANFFNC1pi0, not a flux param
 };
+#elif BANFF_Bins == 2
+static const double kEtrueRangeOfFluxParamInBANFFfit[kNumOfParamsInBANFFfit][2] =
+{
+   { 0.0,  0.4 },        // kNuisBANFF00
+   { 0.4,  0.5 },        // kNuisBANFF01
+   { 0.5,  0.6 },        // kNuisBANFF02
+   { 0.6,  0.7 },        // kNuisBANFF03
+   { 0.7,  1.0 },        // kNuisBANFF04
+   { 1.0,  1.5 },        // kNuisBANFF05
+   { 1.5,  2.5 },        // kNuisBANFF06
+   { 2.5,  3.5 },        // kNuisBANFF07
+   { 3.5,  5.0 },        // kNuisBANFF08
+   { 5.0,  7.0 },        // kNuisBANFF09
+   { 7.0, 30.0 },        // kNuisBANFF10
+   { 0.0,  0.4 },        // kNuisBANFF11
+   { 0.4,  0.5 },        // kNuisBANFF12
+   { 0.5,  0.6 },        // kNuisBANFF13
+   { 0.6,  0.7 },        // kNuisBANFF14
+   { 0.7,  1.0 },        // kNuisBANFF15
+   { 1.0,  1.5 },        // kNuisBANFF16
+   { 1.5,  2.5 },        // kNuisBANFF17
+   { 2.5,  3.5 },        // kNuisBANFF18
+   { 3.5,  5.0 },        // kNuisBANFF19
+   { 5.0,  7.0 },        // kNuisBANFF20
+   { 7.0, 30.0 },        // kNuisBANFF21
+   { 0.0,  0.5 },        // kNuisBANFF22
+   { 0.5,  0.7 },        // kNuisBANFF23
+   { 0.7,  0.8 },        // kNuisBANFF24
+   { 0.8,  1.5 },        // kNuisBANFF25
+   { 1.5,  2.5 },        // kNuisBANFF26
+   { 2.5,  4.0 },        // kNuisBANFF27
+   { 4.0, 30.0 },        // kNuisBANFF28
+   { 0.0,  2.5 },        // kNuisBANFF29
+   { 2.5, 30.0 },        // kNuisBANFF30
+   {  -1,   -1 },        // kNuisBANFFMAQE, not a flux param
+   {  -1,   -1 },        // kNuisBANFFMARES, not a flux param
+   {  -1,   -1 },        // kNuisBANFFCCQEE0, not a flux param
+   {  -1,   -1 },        // kNuisBANFFCCQEE1, not a flux param
+   {  -1,   -1 },        // kNuisBANFFCCQEE2, not a flux param
+   {  -1,   -1 },        // kNuisBANFFCC1piE0, not a flux param
+   {  -1,   -1 },        // kNuisBANFFCC1piE1, not a flux param
+   {  -1,   -1 }         // kNuisBANFFNC1pi0, not a flux param
+};
 #elif BANFF_Bins == -1
 static const double kEtrueRangeOfFluxParamInBANFFfit[kNumOfParamsInBANFFfit][2] =
 {
@@ -921,26 +1027,36 @@ static const double kNomMAQE  = 1.21;
 static const double kNomMARES = 1.21;
 
 // Number of cross-section related systematics 
-static const int kNumOfXSecSyst = 18;
+static const int kNumOfXSecSyst = 19;
 
 // The following is the list of the above kNumOfXSecSyst parameters
 static const PhysParamId_t kListOfXSecSyst[kNumOfXSecSyst] = 
 {
-   kNuisBANFFMAQE,             // # 31, M_{A}  QE
-   kNuisBANFFMARES,            // # 32, M_{A}  RES
-   kNuisBANFFCCQEE0,           // # 33, CCQE   normalization, 0 - 1.5 GeV
-   kNuisBANFFCC1piE0,          // # 34, CC1pi  normalization, 0 - 2.5 GeV
-   kNuisBANFFNC1pi0,           // # 35, NC1pi0 normalization
+   kNuisBANFFMAQE,             // BANFF, M_{A}  QE
+   kNuisBANFFMARES,            // BANFF, M_{A}  RES
+   kNuisBANFFCCQEE0,           // BANFF, CCQE   normalization, 0 - 1.5 GeV
+#if BANFF_Bins == 2
+   kNuisBANFFCCQEE1,           // BANFF, CCQE   normalization, 1.5 - 3.5 GeV
+   kNuisBANFFCCQEE2,           // BANFF, CCQE   normalization, 3.5 - 30.0 GeV
+#endif
+   kNuisBANFFCC1piE0,          // BANFF, CC1pi  normalization, 0 - 2.5 GeV
+#if BANFF_Bins == 2
+   kNuisBANFFCC1piE1,          // BANFF, CC1pi  normalization, 2.5 - 30.0 GeV
+#endif
+   kNuisBANFFNC1pi0,           // BANFF, NC1pi0 normalization
    kNuisXSecFermiMom,          // Fermi momentum
    kNuisXSecSpecFunc,          // spectral function on/off
    kNuisXSecWshape,            // W-shape
    kNuisXSecShapeCCoth,        // CC other shape
    kNuisXSecPiLessDelta,       // Pion-less delta decay
    kNuisXSecENuShape,          // CC 1pi enu shape
+#if BANFF_Bins != 2
    kNuisXSecNormCCQEE1,        // CCQE norm 1.5 - 3.5 GeV
    kNuisXSecNormCCQEE2,        // CCQE norm > 3.5 GeV
    kNuisXSecNormCC1piE1,       // CC1pi norm > 2.5 GeV   
+#endif
    kNuisXSecNormCCcoh,         // CC coherent norm
+   kNuisXSecNormNC1piC,        // NC 1piC norm
    kNuisXSecNormNCcoh,         // NC coherent norm
    kNuisXSecNormNCoth,         // NC other norm
    kNuisXSecNormNuEToNuMu      // nue / numu cross section
@@ -954,7 +1070,14 @@ static const bool kXSecSystHasWghtSplines[kNumOfXSecSyst] =
    true,                      // kNuisBANFFMAQE
    true,                      // kNuisBANFFMARES
    false,                     // kNuisBANFFCCQEE0
+#if BANFF_Bins == 2
+   false,                     // kNuisBANFFCCQEE1
+   false,                     // kNuisBANFFCCQEE2
+#endif
    false,                     // kNuisBANFFCC1piE0
+#if BANFF_Bins == 2
+   false,                     // kNuisBANFFCC1piE1
+#endif
    false,                     // kNuisBANFFNC1pi0
    true,                      // Fermi momentum
    true,                      // spectral function on/off
@@ -962,10 +1085,13 @@ static const bool kXSecSystHasWghtSplines[kNumOfXSecSyst] =
    true,                      // CC other shape
    true,                      // Pion-less delta decay
    true,                      // CC 1pi enu shape
+#if BANFF_Bins != 2
    false,                     // CCQE norm 1.5 - 3.5 GeV
    false,                     // CCQE norm > 3.5 GeV
    false,                     // CC1pi norm > 2.5 GeV   
+#endif
    false,                     // CC coherent norm
+   false,                     // NC 1piC norm
    false,                     // NC coherent norm
    false,                     // NC other norm
    false                      // nue / numu cross section
@@ -979,7 +1105,14 @@ static const bool kXSecSystIncludedInBANFF[kNumOfXSecSyst] =
    true,                      // kNuisBANFFMAQE
    true,                      // kNuisBANFFMARES
    true,                      // kNuisBANFFCCQEE0
-   true,                      // kNuisBANFFCC1piE0
+#if BANFF_Bins == 2
+   true,                     // kNuisBANFFCCQEE1
+   true,                     // kNuisBANFFCCQEE2
+#endif
+   true,                     // kNuisBANFFCC1piE0
+#if BANFF_Bins == 2
+   true,                     // kNuisBANFFCC1piE1
+#endif
    true,                      // kNuisBANFFNC1pi0
    false,                     // Fermi momentum
    false,                     // spectral function on/off
@@ -987,10 +1120,13 @@ static const bool kXSecSystIncludedInBANFF[kNumOfXSecSyst] =
    false,                     // CC other shape
    false,                     // Pion-less delta decay
    false,                     // CC 1pi enu shape
+#if BANFF_Bins != 2
    false,                     // CCQE norm 1.5 - 3.5 GeV
    false,                     // CCQE norm > 3.5 GeV
    false,                     // CC1pi norm > 2.5 GeV   
+#endif
    false,                     // CC coherent norm
+   false,                     // NC 1piC norm
    false,                     // NC coherent norm
    false,                     // NC other norm
    false                      // nue / numu cross section
@@ -1005,7 +1141,14 @@ static const bool kXSecSystWghtUnequallySharedBetweenBins[kNumOfXSecSyst] =
    true,                      // kNuisBANFFMAQE
    true,                      // kNuisBANFFMARES
    false,                     // kNuisBANFFCCQEE0
+#if BANFF_Bins == 2
+   false,                     // kNuisBANFFCCQEE1
+   false,                     // kNuisBANFFCCQEE2
+#endif
    false,                     // kNuisBANFFCC1piE0
+#if BANFF_Bins == 2
+   false,                     // kNuisBANFFCC1piE1
+#endif
    false,                     // kNuisBANFFNC1pi0
    true,                      // Fermi momentum
    true,                      // spectral function on/off
@@ -1013,10 +1156,13 @@ static const bool kXSecSystWghtUnequallySharedBetweenBins[kNumOfXSecSyst] =
    true,                      // CC other shape
    true,                      // Pion-less delta decay
    true,                      // CC 1pi enu shape
+#if BANFF_Bins != 2
    false,                     // CCQE norm 1.5 - 3.5 GeV
    false,                     // CCQE norm > 3.5 GeV
    false,                     // CC1pi norm > 2.5 GeV   
+#endif
    false,                     // CC coherent norm
+   false,                     // NC 1piC norm
    false,                     // NC coherent norm
    false,                     // NC other norm
    false                      // nue / numu cross section
@@ -1029,7 +1175,14 @@ static const double kXSecSystErecoCut[kNumOfXSecSyst][2] =
    { 0.0, 100.0 },            // kNuisBANFFMAQE
    { 0.0, 100.0 },            // kNuisBANFFMARES
    { 0.0, 100.0 },            // kNuisBANFFCCQEE0
+#if BANFF_Bins == 2
+   { 0.0, 100.0 },            // kNuisBANFFCCQEE1
+   { 0.0, 100.0 },            // kNuisBANFFCCQEE2
+#endif
    { 0.0, 100.0 },            // kNuisBANFFCC1piE0
+#if BANFF_Bins == 2
+   { 0.0, 100.0 },            // kNuisBANFFCC1piE1
+#endif
    { 0.0, 100.0 },            // kNuisBANFFNC1pi0
    { 0.0, 100.0 },            // Fermi momentum
    { 0.0, 100.0 },            // spectral function on/off
@@ -1037,10 +1190,13 @@ static const double kXSecSystErecoCut[kNumOfXSecSyst][2] =
    { 0.0, 100.0 },            // CC other shape
    { 0.0, 100.0 },            // Pion-less delta decay
    { 0.0, 100.0 },            // CC 1pi enu shape
+#if BANFF_Bins != 2
    { 0.0, 100.0 },            // CCQE norm 1.5 - 3.5 GeV
    { 0.0, 100.0 },            // CCQE norm > 3.5 GeV
    { 0.0, 100.0 },            // CC1pi norm > 2.5 GeV   
+#endif
    { 0.0, 100.0 },            // CC coherent norm
+   { 0.0, 100.0 },            // NC 1piC norm
    { 0.0, 100.0 },            // NC coherent norm
    { 0.0, 100.0 },            // NC other norm
    { 0.0, 100.0 }             // nue / numu cross section
@@ -1050,7 +1206,14 @@ static const double kXSecSystEtrueCut[kNumOfXSecSyst][2] =
    { 0.0, 100.0 },            // kNuisBANFFMAQE
    { 0.0, 100.0 },            // kNuisBANFFMARES
    { 0.0,   1.5 },            // kNuisBANFFCCQEE0
+#if BANFF_Bins == 2
+   { 1.5,   3.5 },            // kNuisBANFFCCQEE1
+   { 3.5,  30.0 },            // kNuisBANFFCCQEE2
+#endif
    { 0.0,   2.5 },            // kNuisBANFFCC1piE0
+#if BANFF_Bins == 2
+   { 2.5,  30.0 },            // kNuisBANFFCC1piE1
+#endif
    { 0.0, 100.0 },            // kNuisBANFFNC1pi0
    { 0.0, 100.0 },            // Fermi momentum
    { 0.0, 100.0 },            // spectral function on/off
@@ -1058,10 +1221,13 @@ static const double kXSecSystEtrueCut[kNumOfXSecSyst][2] =
    { 0.0, 100.0 },            // CC other shape
    { 0.0, 100.0 },            // Pion-less delta decay
    { 0.0, 100.0 },            // CC 1pi enu shape
+#if BANFF_Bins != 2
    { 1.5,   3.5 },            // CCQE norm 1.5 - 3.5 GeV
    { 3.5, 100.0 },            // CCQE norm > 3.5 GeV
    { 2.5, 100.0 },            // CC1pi norm > 2.5 GeV   
+#endif
    { 0.0, 100.0 },            // CC coherent norm
+   { 0.0, 100.0 },            // NC 1piC norm
    { 0.0, 100.0 },            // NC coherent norm
    { 0.0, 100.0 },            // NC other norm
    { 0.0, 100.0 }             // nue / numu cross section
@@ -1070,11 +1236,11 @@ static const double kXSecSystEtrueCut[kNumOfXSecSyst][2] =
 // The following list describles in which MC templates we are supposed to apply the
 // weights as a result of tweaking any of the above systematic parameters.
 // The order of systematic parameters should match the one in kListOfXSecSyst.
+#if BANFF_Bins != 2
 static const bool kXsApplyXSecSystToSKMode[kns][knm][kNumOfXSecSyst] = {
-
   // > 1 muon-like ring 
   {
-    // banff31  banff32  banff33  banff34  banff35
+    // banffmaqe banffmares banffccqeE0 banffcc1piE0 banffnc1pi0
     // pF  spectral   W-shape  ccothshape pilessdelta enushape
     // ccqeE2   ccqeE3   cc1piE2  cccoh    nccoh  ncoth    nue/numu
     {  1, 0, 1, 0, 0,  1, 1, 0, 0, 0, 0,  1, 1, 0, 0, 0, 0, 0 }, // kSKmNuMuCCQE        
@@ -1123,7 +1289,6 @@ static const bool kXsApplyXSecSystToSKMode[kns][knm][kNumOfXSecSyst] = {
     {  0, 0, 0, 0, 0,  0, 0, 0, 0, 0, 0,  0, 0, 0, 0, 0, 0, 0 }, // kSKmUndefined
     {  0, 0, 0, 0, 0,  0, 0, 0, 0, 0, 0,  0, 0, 0, 0, 0, 0, 0 } // kSKmUndefined
   },
-
   // > 1 electron-like ring 
   {
     {  0, 0, 0, 0, 0,  0, 0, 0, 0, 0, 0,  0, 0, 0, 0, 0, 0, 0 }, // kSKmNuMuCCQE        
@@ -1173,7 +1338,110 @@ static const bool kXsApplyXSecSystToSKMode[kns][knm][kNumOfXSecSyst] = {
     {  0, 0, 0, 0, 0,  0, 0, 0, 0, 0, 0,  0, 0, 0, 0, 0, 0, 0 }  // kSKmUndefined
   }
 };
-
+#elif BANFF_Bins == 2
+static const bool kXsApplyXSecSystToSKMode[kns][knm][kNumOfXSecSyst] = {
+  // > 1 muon-like ring 
+  {
+    // banffmaqe banffmares banffccqeE0 banffccqeE1 banffccqeE2
+    // banffcc1piE0 banffcc1piE1 banffnc1pi0
+    // pF  spectral   W-shape  ccothshape pilessdelta enushape
+    // cccoh    nccoh  ncoth    nue/numu
+    {  1, 0, 1, 1, 1,  0, 0, 0,  1, 1, 0, 0, 0, 0,  0, 0, 0, 0 }, // kSKmNuMuCCQE        
+    {  0, 1, 0, 0, 0,  1, 1, 0,  0, 0, 1, 0, 1, 1,  0, 0, 0, 0 }, // kSKmNuMuCC1pi
+    {  0, 0, 0, 0, 0,  0, 0, 0,  0, 0, 0, 0, 0, 0,  1, 0, 0, 0 }, // kSKmNuMuCCcoh
+    {  0, 1, 0, 0, 0,  0, 0, 0,  0, 0, 1, 1, 1, 0,  0, 0, 0, 0 }, // kSKmNuMuCCoth_mu
+    {  0, 1, 0, 0, 0,  0, 0, 0,  0, 0, 1, 0, 1, 0,  0, 0, 0, 0 }, // kSKmNuMuNC1piC
+    {  0, 1, 0, 0, 0,  0, 0, 0,  0, 0, 1, 0, 1, 0,  0, 0, 1, 0 }, // kSKmNuMuNCoth_mu
+    {  1, 0, 1, 1, 1,  0, 0, 0,  1, 1, 0, 0, 0, 0,  0, 0, 0, 0 }, // kSKmNuMuBarCCQE        
+    {  0, 1, 0, 0, 0,  1, 1, 0,  0, 0, 1, 0, 1, 1,  0, 0, 0, 0 }, // kSKmNuMuBarCC1pi
+    {  0, 0, 0, 0, 0,  0, 0, 0,  0, 0, 0, 0, 0, 0,  1, 0, 0, 0 }, // kSKmNuMuBarCCcoh
+    {  0, 1, 0, 0, 0,  0, 0, 0,  0, 0, 1, 1, 1, 0,  0, 0, 0, 0 }, // kSKmNuMuBarCCoth_mu
+    {  0, 1, 0, 0, 0,  0, 0, 0,  0, 0, 1, 0, 1, 0,  0, 0, 0, 0 }, // kSKmNuMuBarNC1piC
+    {  0, 1, 0, 0, 0,  0, 0, 0,  0, 0, 1, 0, 1, 0,  0, 0, 1, 0 }, // kSKmNuMuBarNCoth_mu
+    {  1, 0, 1, 1, 1,  0, 0, 0,  1, 1, 0, 0, 0, 0,  0, 0, 0, 0 }, // kSKmNuECCQE        
+    {  0, 1, 0, 0, 0,  1, 1, 0,  0, 0, 1, 0, 1, 1,  0, 0, 0, 0 }, // kSKmNuECC1pi
+    {  0, 0, 0, 0, 0,  0, 0, 0,  0, 0, 0, 0, 0, 0,  1, 0, 0, 0 }, // kSKmNuECCcoh
+    {  0, 1, 0, 0, 0,  0, 0, 0,  0, 0, 1, 1, 1, 0,  0, 0, 0, 0 }, // kSKmNuECCoth_mu
+    {  0, 1, 0, 0, 0,  0, 0, 0,  0, 0, 1, 0, 1, 0,  0, 0, 0, 0 }, // kSKmNuENC1piC
+    {  0, 1, 0, 0, 0,  0, 0, 0,  0, 0, 1, 0, 1, 0,  0, 0, 1, 0 }, // kSKmNuENCoth_mu
+    {  1, 0, 1, 1, 1,  0, 0, 0,  1, 1, 0, 0, 0, 0,  0, 0, 0, 0 }, // kSKmNuEBarCCQE        
+    {  0, 1, 0, 0, 0,  1, 1, 0,  0, 0, 1, 0, 1, 1,  0, 0, 0, 0 }, // kSKmNuEBarCC1pi
+    {  0, 0, 0, 0, 0,  0, 0, 0,  0, 0, 0, 0, 0, 0,  1, 0, 0, 0 }, // kSKmNuEBarCCcoh
+    {  0, 1, 0, 0, 0,  0, 0, 0,  0, 0, 1, 1, 1, 0,  0, 0, 0, 0 }, // kSKmNuEBarCCoth_mu
+    {  0, 1, 0, 0, 0,  0, 0, 0,  0, 0, 1, 0, 1, 0,  0, 0, 0, 0 }, // kSKmNuEBarNC1piC
+    {  0, 1, 0, 0, 0,  0, 0, 0,  0, 0, 1, 0, 1, 0,  0, 0, 1, 0 }, // kSKmNuEBarNCoth_mu
+    {  1, 0, 1, 1, 1,  0, 0, 0,  1, 1, 0, 0, 0, 0,  0, 0, 0, 0 }, // kSKmSigNuECCQE        
+    {  0, 1, 0, 0, 0,  1, 1, 0,  0, 0, 1, 0, 1, 1,  0, 0, 0, 0 }, // kSKmSigNuECC1pi
+    {  0, 0, 0, 0, 0,  0, 0, 0,  0, 0, 0, 0, 0, 0,  1, 0, 0, 0 }, // kSKmSigNuECCcoh
+    {  0, 1, 0, 0, 0,  0, 0, 0,  0, 0, 1, 1, 1, 0,  0, 0, 0, 0 }, // kSKmSigNuECCoth_mu
+    {  0, 0, 0, 0, 0,  0, 0, 0,  0, 0, 0, 0, 0, 0,  0, 0, 0, 0 }, // kSKmUndefined
+    {  0, 0, 0, 0, 0,  0, 0, 0,  0, 0, 0, 0, 0, 0,  0, 0, 0, 0 }, // kSKmUndefined
+    {  0, 0, 0, 0, 0,  0, 0, 0,  0, 0, 0, 0, 0, 0,  0, 0, 0, 0 }, // kSKmUndefined
+    {  0, 0, 0, 0, 0,  0, 0, 0,  0, 0, 0, 0, 0, 0,  0, 0, 0, 0 }, // kSKmUndefined
+    {  0, 0, 0, 0, 0,  0, 0, 0,  0, 0, 0, 0, 0, 0,  0, 0, 0, 0 }, // kSKmUndefined
+    {  0, 0, 0, 0, 0,  0, 0, 0,  0, 0, 0, 0, 0, 0,  0, 0, 0, 0 }, // kSKmUndefined
+    {  0, 0, 0, 0, 0,  0, 0, 0,  0, 0, 0, 0, 0, 0,  0, 0, 0, 0 }, // kSKmUndefined
+    {  0, 0, 0, 0, 0,  0, 0, 0,  0, 0, 0, 0, 0, 0,  0, 0, 0, 0 }, // kSKmUndefined
+    {  0, 0, 0, 0, 0,  0, 0, 0,  0, 0, 0, 0, 0, 0,  0, 0, 0, 0 }, // kSKmUndefined
+    {  0, 0, 0, 0, 0,  0, 0, 0,  0, 0, 0, 0, 0, 0,  0, 0, 0, 0 }, // kSKmUndefined
+    {  0, 0, 0, 0, 0,  0, 0, 0,  0, 0, 0, 0, 0, 0,  0, 0, 0, 0 }, // kSKmUndefined
+    {  0, 0, 0, 0, 0,  0, 0, 0,  0, 0, 0, 0, 0, 0,  0, 0, 0, 0 }, // kSKmUndefined
+    {  0, 0, 0, 0, 0,  0, 0, 0,  0, 0, 0, 0, 0, 0,  0, 0, 0, 0 }, // kSKmUndefined
+    {  0, 0, 0, 0, 0,  0, 0, 0,  0, 0, 0, 0, 0, 0,  0, 0, 0, 0 }, // kSKmUndefined
+    {  0, 0, 0, 0, 0,  0, 0, 0,  0, 0, 0, 0, 0, 0,  0, 0, 0, 0 }, // kSKmUndefined
+    {  0, 0, 0, 0, 0,  0, 0, 0,  0, 0, 0, 0, 0, 0,  0, 0, 0, 0 }, // kSKmUndefined
+    {  0, 0, 0, 0, 0,  0, 0, 0,  0, 0, 0, 0, 0, 0,  0, 0, 0, 0 } // kSKmUndefined
+  },
+  // > 1 electron-like ring 
+  {
+    {  0, 0, 0, 0, 0,  0, 0, 0,  0, 0, 0, 0, 0, 0,  0, 0, 0, 0 }, // kSKmNuMuCCQE        
+    {  0, 0, 0, 0, 0,  0, 0, 0,  0, 0, 0, 0, 0, 0,  0, 0, 0, 0 }, // kSKmNuMuCC1pi
+    {  0, 0, 0, 0, 0,  0, 0, 0,  0, 0, 0, 0, 0, 0,  0, 0, 0, 0 }, // kSKmNuMuCCcoh
+    {  0, 0, 0, 0, 0,  0, 0, 0,  0, 0, 0, 0, 0, 0,  0, 0, 0, 0 }, // kSKmNuMuCCoth_e
+    {  0, 0, 0, 0, 0,  0, 0, 0,  0, 0, 0, 0, 0, 0,  0, 0, 0, 0 }, // kSKmNuMuNC1pi0 
+    {  0, 0, 0, 0, 0,  0, 0, 0,  0, 0, 0, 0, 0, 0,  0, 0, 0, 0 }, // kSKmNuMuNCcoh 
+    {  0, 0, 0, 0, 0,  0, 0, 0,  0, 0, 0, 0, 0, 0,  0, 0, 0, 0 }, // kSKmNuMuNCoth_e
+    {  0, 0, 0, 0, 0,  0, 0, 0,  0, 0, 0, 0, 0, 0,  0, 0, 0, 0 }, // kSKmNuMuBarCCQE        
+    {  0, 0, 0, 0, 0,  0, 0, 0,  0, 0, 0, 0, 0, 0,  0, 0, 0, 0 }, // kSKmNuMuBarCC1pi
+    {  0, 0, 0, 0, 0,  0, 0, 0,  0, 0, 0, 0, 0, 0,  0, 0, 0, 0 }, // kSKmNuMuBarCCcoh
+    {  0, 0, 0, 0, 0,  0, 0, 0,  0, 0, 0, 0, 0, 0,  0, 0, 0, 0 }, // kSKmNuMuBarCCoth_e
+    {  0, 0, 0, 0, 0,  0, 0, 0,  0, 0, 0, 0, 0, 0,  0, 0, 0, 0 }, // kSKmNuMuBarNC1pi0 
+    {  0, 0, 0, 0, 0,  0, 0, 0,  0, 0, 0, 0, 0, 0,  0, 0, 0, 0 }, // kSKmNuMuBarNCcoh 
+    {  0, 0, 0, 0, 0,  0, 0, 0,  0, 0, 0, 0, 0, 0,  0, 0, 0, 0 }, // kSKmNuMuBarNCoth_e
+    {  0, 0, 0, 0, 0,  0, 0, 0,  0, 0, 0, 0, 0, 0,  0, 0, 0, 0 }, // kSKmNuECCQE        
+    {  0, 0, 0, 0, 0,  0, 0, 0,  0, 0, 0, 0, 0, 0,  0, 0, 0, 0 }, // kSKmNuECC1pi
+    {  0, 0, 0, 0, 0,  0, 0, 0,  0, 0, 0, 0, 0, 0,  0, 0, 0, 0 }, // kSKmNuECCcoh
+    {  0, 0, 0, 0, 0,  0, 0, 0,  0, 0, 0, 0, 0, 0,  0, 0, 0, 0 }, // kSKmNuECCoth_e
+    {  0, 0, 0, 0, 0,  0, 0, 0,  0, 0, 0, 0, 0, 0,  0, 0, 0, 0 }, // kSKmNuENC1pi0 
+    {  0, 0, 0, 0, 0,  0, 0, 0,  0, 0, 0, 0, 0, 0,  0, 0, 0, 0 }, // kSKmNuENCcoh 
+    {  0, 0, 0, 0, 0,  0, 0, 0,  0, 0, 0, 0, 0, 0,  0, 0, 0, 0 }, // kSKmNuENCoth_e
+    {  0, 0, 0, 0, 0,  0, 0, 0,  0, 0, 0, 0, 0, 0,  0, 0, 0, 0 }, // kSKmNuEBarCCQE        
+    {  0, 0, 0, 0, 0,  0, 0, 0,  0, 0, 0, 0, 0, 0,  0, 0, 0, 0 }, // kSKmNuEBarCC1pi
+    {  0, 0, 0, 0, 0,  0, 0, 0,  0, 0, 0, 0, 0, 0,  0, 0, 0, 0 }, // kSKmNuEBarCCcoh
+    {  0, 0, 0, 0, 0,  0, 0, 0,  0, 0, 0, 0, 0, 0,  0, 0, 0, 0 }, // kSKmNuEBarCCoth_e
+    {  0, 0, 0, 0, 0,  0, 0, 0,  0, 0, 0, 0, 0, 0,  0, 0, 0, 0 }, // kSKmNuEBarNC1pi0 
+    {  0, 0, 0, 0, 0,  0, 0, 0,  0, 0, 0, 0, 0, 0,  0, 0, 0, 0 }, // kSKmNuEBarNCcoh 
+    {  0, 0, 0, 0, 0,  0, 0, 0,  0, 0, 0, 0, 0, 0,  0, 0, 0, 0 }, // kSKmNuEBarNCoth_e
+    {  0, 0, 0, 0, 0,  0, 0, 0,  0, 0, 0, 0, 0, 0,  0, 0, 0, 0 }, // kSKmSigNuECCQE        
+    {  0, 0, 0, 0, 0,  0, 0, 0,  0, 0, 0, 0, 0, 0,  0, 0, 0, 0 }, // kSKmSigNuECC1pi
+    {  0, 0, 0, 0, 0,  0, 0, 0,  0, 0, 0, 0, 0, 0,  0, 0, 0, 0 }, // kSKmSigNuECCoth_e
+    {  0, 0, 0, 0, 0,  0, 0, 0,  0, 0, 0, 0, 0, 0,  0, 0, 0, 0 }, // kSKmUndefined
+    {  0, 0, 0, 0, 0,  0, 0, 0,  0, 0, 0, 0, 0, 0,  0, 0, 0, 0 }, // kSKmUndefined
+    {  0, 0, 0, 0, 0,  0, 0, 0,  0, 0, 0, 0, 0, 0,  0, 0, 0, 0 }, // kSKmUndefined
+    {  0, 0, 0, 0, 0,  0, 0, 0,  0, 0, 0, 0, 0, 0,  0, 0, 0, 0 }, // kSKmUndefined
+    {  0, 0, 0, 0, 0,  0, 0, 0,  0, 0, 0, 0, 0, 0,  0, 0, 0, 0 }, // kSKmUndefined
+    {  0, 0, 0, 0, 0,  0, 0, 0,  0, 0, 0, 0, 0, 0,  0, 0, 0, 0 }, // kSKmUndefined
+    {  0, 0, 0, 0, 0,  0, 0, 0,  0, 0, 0, 0, 0, 0,  0, 0, 0, 0 }, // kSKmUndefined
+    {  0, 0, 0, 0, 0,  0, 0, 0,  0, 0, 0, 0, 0, 0,  0, 0, 0, 0 }, // kSKmUndefined
+    {  0, 0, 0, 0, 0,  0, 0, 0,  0, 0, 0, 0, 0, 0,  0, 0, 0, 0 }, // kSKmUndefined
+    {  0, 0, 0, 0, 0,  0, 0, 0,  0, 0, 0, 0, 0, 0,  0, 0, 0, 0 }, // kSKmUndefined
+    {  0, 0, 0, 0, 0,  0, 0, 0,  0, 0, 0, 0, 0, 0,  0, 0, 0, 0 }, // kSKmUndefined
+    {  0, 0, 0, 0, 0,  0, 0, 0,  0, 0, 0, 0, 0, 0,  0, 0, 0, 0 }, // kSKmUndefined
+    {  0, 0, 0, 0, 0,  0, 0, 0,  0, 0, 0, 0, 0, 0,  0, 0, 0, 0 }, // kSKmUndefined
+    {  0, 0, 0, 0, 0,  0, 0, 0,  0, 0, 0, 0, 0, 0,  0, 0, 0, 0 }  // kSKmUndefined
+  }
+};
+#endif
 //
 // The weight splines are pre-computed for the following Ereco bins.
 // For the time being, the same Ereco binning is used for all samples and all modes.
@@ -1262,7 +1530,7 @@ static const double kXsErecoBinEdges[kXsNErecoBins+1] =
 // Note that the order of modes below should match the one defined in kSKReactionModes array.
 //
 
-#if BANFF_Bins == 1
+#if BANFF_Bins >= 1
 static const int kXsNEtrueBins = 11;
 static const double kXsEtrueBinEdges[kns][knm][kXsNEtrueBins+1] = {
   // > 1 muon-like ring 
@@ -1560,7 +1828,7 @@ static const double kXsEtrueBinEdges[kns][knm][kXsNEtrueBins+1] = {
 // kXsEtrueBinEdges (i.e. BANFF binning), with the addition of requiring bin edges at
 // 1.5 and 2.5 GeV, to make sure that the binned xsec normalisation are handled correctly.
 //
-#if BANFF_Bins == 1
+#if BANFF_Bins >= 1
 static const int kMCNEtrueBins = 11;
 static const double kMCEtrueBinEdges[kns][knm][kXsNEtrueBins+1] = {
   // > 1 muon-like ring 

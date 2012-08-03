@@ -759,7 +759,14 @@ string t2kana::util::AsString(PhysParamId_t p)
     case ( kNuisBANFFMAQE    ) : return "BANFF; Ma QE";                           break;
     case ( kNuisBANFFMARES   ) : return "BANFF; Ma RES";                          break;
     case ( kNuisBANFFCCQEE0  ) : return "BANFF; Norm; CC QE; 0.0 - 1.5 GeV";      break;
+#if BANFF_Bins == 2
+    case ( kNuisBANFFCCQEE1  ) : return "BANFF; Norm; CC QE; 1.5 - 3.5 GeV";      break;
+    case ( kNuisBANFFCCQEE2  ) : return "BANFF; Norm; CC QE; 3.5 - 30.0 GeV";     break;
+#endif
     case ( kNuisBANFFCC1piE0 ) : return "BANFF; Norm; CC 1pi; 0.0 - 2.5 GeV";     break;
+#if BANFF_Bins == 2
+    case ( kNuisBANFFCC1piE1 ) : return "BANFF; Norm; CC 1pi; 2.5 - 30.0 GeV";    break;
+#endif
     case ( kNuisBANFFNC1pi0  ) : return "BANFF; Norm; NC 1pi0";                   break;
 
     //
@@ -773,10 +780,13 @@ string t2kana::util::AsString(PhysParamId_t p)
     case ( kNuisXSecPiLessDelta) : return "Pi-less delta decay";             break;
     case ( kNuisXSecENuShape   ) : return "Shape; CC1pi ENu";                break;
 
+#if BANFF_Bins != 2
     case ( kNuisXSecNormCCQEE1 ) : return "Norm; CC QE Norm; 1.5 - 3.5 GeV"; break; 
     case ( kNuisXSecNormCCQEE2 ) : return "Norm; CC QE Norm; > 3.5 GeV";     break; 
     case ( kNuisXSecNormCC1piE1) : return "Norm; CC 1pi; > 2.5 GeV";         break; 
+#endif
     case ( kNuisXSecNormCCcoh  ) : return "Norm; CC Coh";                    break;
+    case ( kNuisXSecNormNC1piC ) : return "Norm; NC 1piC";                   break;
     case ( kNuisXSecNormNCcoh  ) : return "Norm; NC Coh";                    break;
     case ( kNuisXSecNormNCoth  ) : return "Norm; NC Oth";                    break;
     case ( kNuisXSecNormNuEToNuMu ) : return "Norm; NuE To NuMu";                    break;
@@ -930,8 +940,14 @@ string t2kana::util::AsStringTex(PhysParamId_t p)
     }
     case ( kNuisBANFFMAQE    ) : return "BANFF, Ma QE";                           break;
     case ( kNuisBANFFMARES   ) : return "BANFF, Ma RES";                          break;
-    case ( kNuisBANFFCCQEE0  ) : return "BANFF, Norm, CC QE; 0.0 - 1.5 GeV";      break;
-    case ( kNuisBANFFCC1piE0 ) : return "BANFF, Norm, CC 1pi; 0.0 - 2.5 GeV";     break;
+#if BANFF_Bins == 2
+    case ( kNuisBANFFCCQEE1  ) : return "BANFF; Norm; CC QE; 1.5 - 3.5 GeV";      break;
+    case ( kNuisBANFFCCQEE2  ) : return "BANFF; Norm; CC QE; 3.5 - 30.0 GeV";     break;
+#endif
+    case ( kNuisBANFFCC1piE0 ) : return "BANFF; Norm; CC 1pi; 0.0 - 2.5 GeV";     break;
+#if BANFF_Bins == 2
+    case ( kNuisBANFFCC1piE1 ) : return "BANFF; Norm; CC 1pi; 2.5 - 30.0 GeV";    break;
+#endif
     case ( kNuisBANFFNC1pi0  ) : return "BANFF, Norm, NC 1pi0";                   break;
 
     //
@@ -945,11 +961,14 @@ string t2kana::util::AsStringTex(PhysParamId_t p)
     case ( kNuisXSecPiLessDelta) : return "Pi-less delta decay";             break;
     case ( kNuisXSecENuShape   ) : return "Shape; CC1pi ENu";                break;
 
+#if BANFF_Bins != 2
     case ( kNuisXSecNormCCQEE1 ) : return "Norm, CC QE Norm, 1.5 - 3.5 GeV"; break; 
-    case ( kNuisXSecNormCCQEE2 ) : return "Norm, CC QE Norm, $>$ 3.5 GeV";     break; 
-    case ( kNuisXSecNormCC1piE1) : return "Norm, CC 1pi, $>$ 2.5 GeV";         break; 
+    case ( kNuisXSecNormCCQEE2 ) : return "Norm, CC QE Norm, $>$ 3.5 GeV";   break; 
+    case ( kNuisXSecNormCC1piE1) : return "Norm, CC 1pi, $>$ 2.5 GeV";       break; 
+#endif
     case ( kNuisXSecNormCCcoh  ) : return "Norm, CC Coh";                    break;
     case ( kNuisXSecNormNCcoh  ) : return "Norm, NC Coh";                    break;
+    case ( kNuisXSecNormNC1piC ) : return "Norm, NC 1piC";                   break;
     case ( kNuisXSecNormNCoth  ) : return "Norm, NC Oth";                    break;
     case ( kNuisXSecNormNuEToNuMu ) : return "Norm, NuE To NuMu";                    break;
 
@@ -1090,7 +1109,14 @@ string t2kana::util::AsStringCompact(PhysParamId_t p)
     case ( kNuisBANFFMAQE             ) : return "f_banffmaqe";    break;
     case ( kNuisBANFFMARES            ) : return "f_banffmares";   break;
     case ( kNuisBANFFCCQEE0           ) : return "f_banffccqee0";  break;
+#if BANFF_Bins == 2
+    case ( kNuisBANFFCCQEE1           ) : return "f_banffccqee1";  break;
+    case ( kNuisBANFFCCQEE2           ) : return "f_banffccqee2";  break;
+#endif
     case ( kNuisBANFFCC1piE0          ) : return "f_banffcc1pie0"; break;
+#if BANFF_Bins == 2
+    case ( kNuisBANFFCC1piE1          ) : return "f_banffcc1pie1"; break;
+#endif
     case ( kNuisBANFFNC1pi0           ) : return "f_banffnc1pi0";  break;
 
     case ( kNuisXSecFermiMom          ) : return "f_pfermi";       break;
@@ -1100,10 +1126,13 @@ string t2kana::util::AsStringCompact(PhysParamId_t p)
     case ( kNuisXSecPiLessDelta       ) : return "f_pilessdelta";  break;
     case ( kNuisXSecENuShape          ) : return "f_enushape";     break;
 
+#if BANFF_Bins != 2
     case ( kNuisXSecNormCCQEE1        ) : return "f_norm_ccqe_1";  break; 
     case ( kNuisXSecNormCCQEE2        ) : return "f_norm_ccqe_2";  break; 
-    case ( kNuisXSecNormCC1piE1       ) : return "f_norm_cc1pi_1"; break; 
+    case ( kNuisXSecNormCC1piE1       ) : return "f_norm_cc1pi_1"; break;
+#endif
     case ( kNuisXSecNormCCcoh         ) : return "f_norm_cccoh";   break;
+    case ( kNuisXSecNormNC1piC        ) : return "f_norm_nc1piC";  break;
     case ( kNuisXSecNormNCcoh         ) : return "f_norm_nccoh";   break;
     case ( kNuisXSecNormNCoth         ) : return "f_norm_ncoth";   break;
     case ( kNuisXSecNormNuEToNuMu     ) : return "f_norm_nuetonumu"; break;
@@ -1688,7 +1717,14 @@ t2kana::conv::PhysParamId_t
   if(sh == "banff_maqe")    return kNuisBANFFMAQE;
   if(sh == "banff_mares")   return kNuisBANFFMARES;
   if(sh == "banff_ccqeE0")  return kNuisBANFFCCQEE0;
+#if BANFF_Bins == 2
+  if(sh == "banff_ccqeE1")  return kNuisBANFFCCQEE1;
+  if(sh == "banff_ccqeE2")  return kNuisBANFFCCQEE2;
+#endif
   if(sh == "banff_cc1piE0") return kNuisBANFFCC1piE0;
+#if BANFF_Bins == 2
+  if(sh == "banff_cc1piE1") return kNuisBANFFCC1piE1;
+#endif
   if(sh == "banff_nc1pi0")  return kNuisBANFFNC1pi0;
 
   if(sh == "xsec_pf")           return kNuisXSecFermiMom;
@@ -1697,10 +1733,13 @@ t2kana::conv::PhysParamId_t
   if(sh == "xsec_shape_ccoth")  return kNuisXSecShapeCCoth;
   if(sh == "xsec_pilessdelta")  return kNuisXSecPiLessDelta;
   if(sh == "xsec_enushape")     return kNuisXSecENuShape;
+#if BANFF_Bins != 2
   if(sh == "xsec_norm_ccqeE1")  return kNuisXSecNormCCQEE1;
   if(sh == "xsec_norm_ccqeE2")  return kNuisXSecNormCCQEE2;
   if(sh == "xsec_norm_cc1piE1") return kNuisXSecNormCC1piE1;
+#endif
   if(sh == "xsec_norm_cccoh")   return kNuisXSecNormCCcoh;
+  if(sh == "xsec_norm_nc1piC")  return kNuisXSecNormNC1piC;
   if(sh == "xsec_norm_nccoh")   return kNuisXSecNormNCcoh;
   if(sh == "xsec_norm_ncoth")   return kNuisXSecNormNCoth;
   if(sh == "xsec_norm_nuenumu") return kNuisXSecNormNuEToNuMu;
@@ -2033,7 +2072,14 @@ bool t2kana::util::IsSystematic(PhysParamId_t p)
     case ( kNuisBANFFMAQE             ) : return true;  break;
     case ( kNuisBANFFMARES            ) : return true;  break;
     case ( kNuisBANFFCCQEE0           ) : return true;  break;
+#if BANFF_Bins == 2
+    case ( kNuisBANFFCCQEE1           ) : return true;  break;
+    case ( kNuisBANFFCCQEE2           ) : return true;  break;
+#endif
     case ( kNuisBANFFCC1piE0          ) : return true;  break;
+#if BANFF_Bins == 2
+    case ( kNuisBANFFCC1piE1          ) : return true;  break;
+#endif
     case ( kNuisBANFFNC1pi0           ) : return true;  break;
 
     case ( kNuisXSecFermiMom          ) : return true;  break;
@@ -2043,10 +2089,13 @@ bool t2kana::util::IsSystematic(PhysParamId_t p)
     case ( kNuisXSecPiLessDelta       ) : return true;  break;
     case ( kNuisXSecENuShape          ) : return true;  break;
 
+#if BANFF_Bins != 2
     case ( kNuisXSecNormCCQEE1        ) : return true;  break; 
     case ( kNuisXSecNormCCQEE2        ) : return true;  break; 
     case ( kNuisXSecNormCC1piE1       ) : return true;  break; 
+#endif
     case ( kNuisXSecNormCCcoh         ) : return true;  break;
+    case ( kNuisXSecNormNC1piC        ) : return true;  break;
     case ( kNuisXSecNormNCcoh         ) : return true;  break;
     case ( kNuisXSecNormNCoth         ) : return true;  break;
     case ( kNuisXSecNormNuEToNuMu     ) : return true;  break;

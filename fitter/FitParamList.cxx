@@ -473,10 +473,13 @@ void FitParamList::AppendSystematics(FitParamList * fparm, int start)
   fparm->AddParam( ip++, kNuisXSecShapeCCoth,    0.0, -1.0, 1.0, 1E-1,  false, true);
   fparm->AddParam( ip++, kNuisXSecPiLessDelta,   0.0, -1.0, 1.0, 1E-1,  false, true);
   fparm->AddParam( ip++, kNuisXSecENuShape,      0.0, -1.0, 1.0, 1E-1,  false, true);
+#if BANFF_Bins != 2
   fparm->AddParam( ip++, kNuisXSecNormCCQEE1,    0.0, -1.0, 1.0, 1E-1,  false, true);
   fparm->AddParam( ip++, kNuisXSecNormCCQEE2,    0.0, -1.0, 1.0, 1E-1,  false, true);
   fparm->AddParam( ip++, kNuisXSecNormCC1piE1,   0.0, -1.0, 1.0, 1E-1,  false, true);
+#endif
   fparm->AddParam( ip++, kNuisXSecNormCCcoh,     0.0, -1.0, 1.0, 1E-1,  false, true);
+  fparm->AddParam( ip++, kNuisXSecNormNC1piC,    0.0, -1.0, 1.0, 1E-1,  false, true);
   fparm->AddParam( ip++, kNuisXSecNormNCcoh,     0.0, -1.0, 1.0, 1E-1,  false, true);
   fparm->AddParam( ip++, kNuisXSecNormNCoth,     0.0, -1.0, 1.0, 1E-1,  false, true);
   fparm->AddParam( ip++, kNuisXSecNormNuEToNuMu, 0.0, -1.0, 1.0, 1E-1,  false, true);

@@ -79,10 +79,13 @@ void NuXSec::Init(void)
   fShapeCCothTwkDial    = 0;
   fPiLessDeltaTwkDial   = 0;
   fENuShapeTwkDial      = 0;
+#if BANFF_Bins != 2
   fNormCCQEE1TwkDial    = 0;
   fNormCCQEE2TwkDial    = 0;
   fNormCC1piE1TwkDial   = 0;
+#endif
   fNormCCcohTwkDial     = 0;
+  fNormNC1piCTwkDial    = 0;
   fNormNCcohTwkDial     = 0;
   fNormNCothTwkDial     = 0;
   fNormNuEToNuMuTwkDial = 0;
@@ -262,14 +265,18 @@ bool NuXSec::Read(TXMLEngine* xml, XMLNodePointer_t root_node)
      }
   }
 
+#if BANFF_Bins != 2
   fNormCCQEE1RelErr =
     util::XML2Dbl(xml,root_node,"xsec/normalisations/ccqee1");
   fNormCCQEE2RelErr =
     util::XML2Dbl(xml,root_node,"xsec/normalisations/ccqee2");
   fNormCC1piE1RelErr =
     util::XML2Dbl(xml,root_node,"xsec/normalisations/cc1pie1");
+#endif
   fNormCCcohRelErr =
     util::XML2Dbl(xml,root_node,"xsec/normalisations/cccoh");
+  fNormNC1piCRelErr =
+    util::XML2Dbl(xml,root_node,"xsec/normalisations/nc1piC");
   fNormNCcohRelErr =
     util::XML2Dbl(xml,root_node,"xsec/normalisations/nccoh");
   fNormNCothRelErr =
@@ -318,11 +325,14 @@ double NuXSec::FinTuningWght_1p(
 // This method provides weights to reweight MC to the BANFF best-fit parameters.
 // It handles the 4 BANFF cross-section parameters which are correlated with the BANFF 
 // flux parameters. In the current incarnation of the BANFF fit, these parameters are:
-// - BANFF param # 31, M_{A}  QE
-// - BANFF param # 32, M_{A}  RES
-// - BANFF param # 33, CCQE   normalization, 0 - 1.5 GeV (Etrue)
-// - BANFF param # 34, CC1pi  normalization, 0 - 2.5 GeV (Etrue)
-// - BANFF param # 35, NC1pi0 normalization
+// - BANFF param, M_{A}  QE
+// - BANFF param, M_{A}  RES
+// - BANFF param, CCQE   normalization, 0 - 1.5 GeV (Etrue)
+// - BANFF param, CCQE   normalization, 1.5 - 3.5 GeV (Etrue)
+// - BANFF param, CCQE   normalization, 3.5 - 30.0 GeV (Etrue)
+// - BANFF param, CC1pi  normalization, 0 - 2.5 GeV (Etrue)
+// - BANFF param, CC1pi  normalization, 2.5 - 30.0 GeV (Etrue)
+// - BANFF param, NC1pi0 normalization
 //
 
   // if( ! this->ApplySyst(p,s,m,Ereco,Etrue) ) return 1.; // check already made in function that calls this one
@@ -330,8 +340,8 @@ double NuXSec::FinTuningWght_1p(
   double wght = 1.;
 
   //
-  // BANFF param # 31, M_{A} QE
-  // BANFF param # 32, M_{A} RES
+  // BANFF param, M_{A} QE
+  // BANFF param, M_{A} RES
   //
   if(p == kNuisBANFFMAQE || p == kNuisBANFFMARES)
   {
@@ -358,12 +368,24 @@ double NuXSec::FinTuningWght_1p(
   }
 
   //
-  // BANFF param # 33, CCQE  normalization, 0 - 1.5 GeV
-  // BANFF param # 34, CCRES normalization, 0 - 2.5 GeV
-  // BANFF param # 35, NC1pi0 normalization
+  // BANFF param, CCQE   normalization, 0 - 1.5 GeV
+  // BANFF param, CCQE   normalization, 1.5 - 3.5 GeV
+  // BANFF param, CCQE   normalization, 3.5 - 30.0 GeV
+  // BANFF param, CC1pi  normalization, 0 - 2.5 GeV
+  // BANFF param, CC1pi  normalization, 2.5 - 30.0 GeV
+  // BANFF param, NC1pi0 normalization
   //  
   else
-  if(p == kNuisBANFFCCQEE0 || p == kNuisBANFFCC1piE0 || p == kNuisBANFFNC1pi0)
+  if(p == kNuisBANFFCCQEE0 ||
+#if BANFF_Bins == 2
+     p == kNuisBANFFCCQEE1 ||
+     p == kNuisBANFFCCQEE2 ||
+#endif
+     p == kNuisBANFFCC1piE0 || 
+#if BANFF_Bins == 2
+     p == kNuisBANFFCC1piE1 || 
+#endif
+     p == kNuisBANFFNC1pi0)
   {
      wght = fBANFF->BestFitValue(p);
   }
@@ -462,11 +484,14 @@ double NuXSec::SystWght_1p(
 // The weights are relative to MC reweighted to the BANFF best-fit point.
 // It handles the 4 BANFF cross-section parameters which are correlated with the BANFF 
 // flux parameters. In the current incarnation of the BANFF fit, these parameters are:
-// - BANFF param # 31, M_{A} QE
-// - BANFF param # 32, M_{A} RES
-// - BANFF param # 33, CCQE  normalization, 0 - 1.5 GeV (Etrue)
-// - BANFF param # 34, CCRES normalization, 0 - 2.5 GeV (Etrue)
-// - BANFF param # 35, NC1pi0 normalization
+// - BANFF param, M_{A} QE
+// - BANFF param, M_{A} RES
+// - BANFF param, CCQE   normalization, 0 - 1.5 GeV (Etrue)
+// - BANFF param, CCQE   normalization, 1.5 - 3.5 GeV (Etrue)
+// - BANFF param, CCQE   normalization, 3.5 - 30.0 GeV (Etrue)
+// - BANFF param, CC1pi  normalization, 0 - 2.5 GeV (Etrue)
+// - BANFF param, CC1pi  normalization, 2.5 - 30.0 GeV (Etrue)
+// - BANFF param, NC1pi0 normalization
 //
 
   // if( ! this->ApplySyst(p,s,m,Ereco,Etrue) ) return 1.; // check already made in function that calls this one
@@ -507,12 +532,25 @@ double NuXSec::SystWght_1p(
   }
 
   //
-  // BANFF param # 33, CCQE  normalization, 0 - 1.5 GeV
-  // BANFF param # 34, CCRES normalization, 0 - 2.5 GeV
-  // BANFF param # 35, NC1pi0 normalization
-  //  
+  //
+  // BANFF param, CCQE   normalization, 0 - 1.5 GeV
+  // BANFF param, CCQE   normalization, 1.5 - 3.5 GeV
+  // BANFF param, CCQE   normalization, 3.5 - 30.0 GeV
+  // BANFF param, CC1pi  normalization, 0 - 2.5 GeV
+  // BANFF param, CC1pi  normalization, 2.5 - 30.0 GeV
+  // BANFF param, NC1pi0 normalization
+  // 
   else
-  if(p == kNuisBANFFCCQEE0 || p == kNuisBANFFCC1piE0 || p == kNuisBANFFNC1pi0)
+  if(p == kNuisBANFFCCQEE0 ||
+#if BANFF_Bins == 2
+     p == kNuisBANFFCCQEE1 ||
+     p == kNuisBANFFCCQEE2 ||
+#endif
+     p == kNuisBANFFCC1piE0 || 
+#if BANFF_Bins == 2
+     p == kNuisBANFFCC1piE1 || 
+#endif
+     p == kNuisBANFFNC1pi0)
   {
      wght = fBANFF->CurrentValue(p) / fBANFF->BestFitValue(p);
   }
@@ -545,13 +583,18 @@ double NuXSec::SystWght_1p(
   // CCQE norm > 3.5 GeV
   // CC1pi norm > 2.5 GeV   
   // CC coherent norm
+  // NC 1piC norm
   // NC coherent norm
   // NC other norm
   // nue / numu cross section
   //
   else
-  if(p == kNuisXSecNormCCQEE1 || p == kNuisXSecNormCCQEE2 || p == kNuisXSecNormCC1piE1 || p == kNuisXSecNormCCcoh || 
-     p == kNuisXSecNormNCcoh || p == kNuisXSecNormNCoth || p == kNuisXSecNormNuEToNuMu)
+  if(
+#if BANFF_Bins != 2
+     p == kNuisXSecNormCCQEE1 || p == kNuisXSecNormCCQEE2 || p == kNuisXSecNormCC1piE1 ||
+#endif
+     p == kNuisXSecNormCCcoh || p == kNuisXSecNormNCcoh || p == kNuisXSecNormNCcoh ||
+     p == kNuisXSecNormNCoth || p == kNuisXSecNormNuEToNuMu)
   {
     wght = 1 + (this->CurrentValue(p) * this->RelativeError(p));
   }
@@ -637,6 +680,7 @@ double NuXSec::CurrentValue(PhysParamId_t p) const
     case kNuisXSecENuShape:
       return fENuShapeTwkDial;
       break;
+#if BANFF_Bins != 2
     case kNuisXSecNormCCQEE1:
       return fNormCCQEE1TwkDial;
       break;
@@ -646,8 +690,12 @@ double NuXSec::CurrentValue(PhysParamId_t p) const
     case kNuisXSecNormCC1piE1:
       return fNormCC1piE1TwkDial;
       break;
+#endif
     case kNuisXSecNormCCcoh:
       return fNormCCcohTwkDial;
+      break;
+    case kNuisXSecNormNC1piC:
+      return fNormNC1piCTwkDial;
       break;
     case kNuisXSecNormNCcoh:
       return fNormNCcohTwkDial;
@@ -661,7 +709,14 @@ double NuXSec::CurrentValue(PhysParamId_t p) const
     case kNuisBANFFMAQE:
     case kNuisBANFFMARES:
     case kNuisBANFFCCQEE0:
+#if BANFF_Bins == 2
+    case kNuisBANFFCCQEE1:
+    case kNuisBANFFCCQEE2:
+#endif
     case kNuisBANFFCC1piE0:
+#if BANFF_Bins == 2
+    case kNuisBANFFCC1piE1:
+#endif
     case kNuisBANFFNC1pi0:
       return fBANFF->CurrentValue(p);
       break;
@@ -674,6 +729,7 @@ double NuXSec::CurrentValue(PhysParamId_t p) const
 double NuXSec::RelativeError(PhysParamId_t p) const
 {
   switch(p) {
+#if BANFF_Bins != 2
     case kNuisXSecNormCCQEE1:
       return fNormCCQEE1RelErr;
       break;
@@ -683,8 +739,12 @@ double NuXSec::RelativeError(PhysParamId_t p) const
     case kNuisXSecNormCC1piE1:
       return fNormCC1piE1RelErr;
       break;
+#endif
     case kNuisXSecNormCCcoh:
       return fNormCCcohRelErr;
+      break;
+    case kNuisXSecNormNC1piC:
+      return fNormNC1piCRelErr;
       break;
     case kNuisXSecNormNCcoh:
       return fNormNCcohRelErr;
@@ -711,10 +771,13 @@ void NuXSec::PrintSystematicVariations(void) const
   cout << "         >> CC-oth shape        " << fShapeCCothTwkDial    << endl;
   cout << "         >> Pi-less delta decay " << fPiLessDeltaTwkDial   << endl;
   cout << "         >> CC1pi ENu Shape     " << fENuShapeTwkDial      << endl;
+#if BANFF_Bins != 2
   cout << "         >> CCQE bin1 norm      " << fNormCCQEE1TwkDial    << endl;
   cout << "         >> CCQE bin2 norm      " << fNormCCQEE2TwkDial    << endl;
   cout << "         >> CC1pi bin1 norm     " << fNormCC1piE1TwkDial   << endl;
+#endif
   cout << "         >> CC-coh norm         " << fNormCCcohTwkDial     << endl;
+  cout << "         >> NC-1piC norm        " << fNormNC1piCTwkDial    << endl;
   cout << "         >> NC-coh norm         " << fNormNCcohTwkDial     << endl;
   cout << "         >> NC-oth norm         " << fNormNCothTwkDial     << endl;
   cout << "         >> NuE to NuMu norm    " << fNormNuEToNuMuTwkDial << endl;
