@@ -302,7 +302,7 @@
        -->
        <covariance_matrix>
           <filename>   inputs/official/2012/fsi/FSIErrors2012.root  </filename>
-          <objname>    FSICovariance         </objname>
+          <objname>    fsi_cov         </objname>
           <objtype>    TMatrixD         </objtype>
         </covariance_matrix>     
   </fsi>
