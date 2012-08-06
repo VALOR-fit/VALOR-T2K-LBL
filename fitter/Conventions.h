@@ -656,7 +656,12 @@ static const int kNumOfParamsInBANFFfit = 39;
 #elif BANFF_Bins == -1
 static const int kNumOfParamsInBANFFfit = 54;
 #endif
+#if BANFF_Bins != 2
 static const int kNumOfFluxParamsInBANFFfit = kNumOfParamsInBANFFfit - 5;
+#elif BANFF_Bins == 2
+static const int kNumOfFluxParamsInBANFFfit = kNumOfParamsInBANFFfit - 8;
+#endif
+
 //
 // ** Flux systematics
 //

@@ -20,6 +20,7 @@
 //#define __show_banff_tuning_wght_mesg_debug__
 //#define __show_syst_var_wght_mesg_debug__
 //#define __show_build_bool_template_mesg_info__
+//#define __show_build_xsbinning_template_mesg_debug__
 //#define __show_wght_spline_idx_mesg_debug__
 //#define __show_isanevent_mesg_debug__
 //#define __save_ori_templates_init_debug__
@@ -960,8 +961,15 @@ void NuXSec::BuildXsBinningMCTemplates(
 
        for(int ir = 0; ir <= kNErecoBins1Rmu; ir++) {
 	 for(int it = 0; it <= kNEtrueBins; it++) {
-	   if(mctempl->GetBinContent(ir,it) > kASmallNum)
+	   if(mctempl->GetBinContent(ir,it) > kASmallNum) {
 	     mctempl_xsbinning->Fill(mctempl->GetBinCenter(ir), mctempl->GetBinCenter(it), mctempl->GetBinContent(ir,it));
+#ifdef __show_build_xsbinning_template_mesg_debug__
+	     cout << "Exp/NuXSec >> Filled Xsec binning MC template for "
+		  << "ereco = " << mctempl->GetBinCenter(ir)
+		  << " etrue = " << mctempl->GetBinCenter(it)
+		  << endl;
+#endif
+	   }
 	 }//it
        }//ir
        
