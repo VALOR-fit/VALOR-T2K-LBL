@@ -19,7 +19,7 @@
 //#define __show_banff_tuning_wght_mesg_info__
 //#define __show_banff_tuning_wght_mesg_debug__
 //#define __show_syst_var_wght_mesg_debug__
-//#define __show_build_bool_template_mesg_info__
+//#define __show_build_xsbinning_template_mesg_info__
 //#define __show_build_xsbinning_template_mesg_debug__
 //#define __show_wght_spline_idx_mesg_debug__
 //#define __show_isanevent_mesg_debug__
@@ -250,8 +250,8 @@ bool NuXSec::Read(TXMLEngine* xml, XMLNodePointer_t root_node)
   for(int is = 0; is < kns; is++) {
      SuperkSample_t s = kSKSamples[is];
      if(s == kSKsUndefined) continue;
-     const int      n_ereco_bins    = util::NumErecoBins (s);
-     const double * ereco_bin_edges = util::ErecoBinEdges(s);
+     const int      n_ereco_bins    = conv::kXsNErecoBins;
+     const double * ereco_bin_edges = conv::kXsErecoBinEdges;
      for(int im = 0; im < knm; im++) {
        SuperkMode_t m = kSKReactionModes[is][im];
        if(m == kSKmUndefined) continue;
@@ -959,14 +959,24 @@ void NuXSec::BuildXsBinningMCTemplates(
        assert (mctempl);
        TH2D * mctempl_xsbinning = fXsBinningTempl[is][im];
 
-       for(int ir = 0; ir <= kNErecoBins1Rmu; ir++) {
-	 for(int it = 0; it <= kNEtrueBins; it++) {
+       for(int ir = 0; ir <= mctempl->GetNbinsX(); ir++) {
+	 for(int it = 0; it <= mctempl->GetNbinsY(); it++) {
 	   if(mctempl->GetBinContent(ir,it) > kASmallNum) {
-	     mctempl_xsbinning->Fill(mctempl->GetBinCenter(ir), mctempl->GetBinCenter(it), mctempl->GetBinContent(ir,it));
+	     mctempl_xsbinning->Fill(mctempl->GetXaxis()->GetBinCenter(ir), mctempl->GetYaxis()->GetBinCenter(it), mctempl->GetBinContent(ir,it));
 #ifdef __show_build_xsbinning_template_mesg_debug__
-	     cout << "Exp/NuXSec >> Filled Xsec binning MC template for "
+	     int bx = 0, by = 0, bz = 0;
+	     int bg = mctempl_xsbinning->FindBin(mctempl->GetXaxis()->GetBinCenter(ir), mctempl->GetYaxis()->GetBinCenter(it));
+	     mctempl_xsbinning->GetBinXYZ(bg, bx, by, bz);
+	     cout << std::fixed
+		  << "Exp/NuXSec >> Filled Xsec binning MC template for "
 		  << "ereco = " << mctempl->GetBinCenter(ir)
 		  << " etrue = " << mctempl->GetBinCenter(it)
+		  << endl
+		  << "\t Put into bins: ereco " 
+		  << mctempl_xsbinning->GetXaxis()->GetBinLowEdge(bx) << " - " 
+		  << mctempl_xsbinning->GetXaxis()->GetBinUpEdge(bx) << "\t etrue " 
+		  << mctempl_xsbinning->GetYaxis()->GetBinLowEdge(by) << " - " 
+		  << mctempl_xsbinning->GetYaxis()->GetBinUpEdge(by)
 		  << endl;
 #endif
 	   }

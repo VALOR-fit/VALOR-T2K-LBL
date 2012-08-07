@@ -162,12 +162,12 @@ void test_sk_ereco_spectrum_twk_sys
       moodetitle = "sk ccqe ring counting efficiency"; break;
     case: 8
       moodetitle = "fsi"; break;
-    default: 8
+    default:
       moodetitle = ""; break;
   }
 
   // Tweak!
-  for(int itweak = 0; itweak < ntweaks; itweak++;) {
+  for(int itweak = 0; itweak < ntweaks; itweak++) {
     int tweak = tweaks[itweak];
 
     //set histogram color
@@ -189,7 +189,7 @@ void test_sk_ereco_spectrum_twk_sys
 	histcolor = kBlack;
     }
 
-    if(mode<0 || (mode>8)// && mode<100) || (mode>150 && mode<200) || (mode>213 && mode<300) || (mode>307 && mode<400) || mode>415) {
+    if(mode<0 || (mode>8)){// && mode<100) || (mode>150 && mode<200) || (mode>213 && mode<300) || (mode>307 && mode<400) || mode>415) {
       cout << "Invalid mode " << mode << endl;
       exit(1);
     }
