@@ -53,7 +53,15 @@ void test_nsk
   // fit params
   PhysHypothesis ph(t2kana::conv::kHypOsc3F);
 
-  // generate predictions
+  // set up for no oscillations
+  ph.SetCurrValue(t2kana::conv::kPhypMixing23, 0);
+  ph.SetCurrValue(t2kana::conv::kPhypMixing13, 0);
+  ph.SetCurrValue(t2kana::conv::kPhypMixing12, 0);
+  ph.SetCurrValue(t2kana::conv::kPhypDm23sq,   0);
+  ph.SetCurrValue(t2kana::conv::kPhypDm12sq,   0);
+  ph.SetCurrValue(t2kana::conv::kPhypDeltaCP,  0);
+
+  // find the oscillation parameters to use
   if(Opt::Instance()->gOscMixingParamChoice == conv::kNuMixSinsq2Theta) {
     if(input_mixing13 < -1) input_mixing13 = conv::kGlobFitSinsq2Theta13;
     if(input_mixing23 < -1) input_mixing23 = conv::kGlobFitSinsq2Theta23;
@@ -68,13 +76,6 @@ void test_nsk
   if(input_dm12sq < -1)  input_dm12sq = conv::kGlobFitDm12sq;
   if(input_deltacp < -90) input_deltacp = conv::kGlobFitDeltaCP;
 
-  ph.SetCurrValue(t2kana::conv::kPhypMixing23, input_mixing23);
-  ph.SetCurrValue(t2kana::conv::kPhypMixing13, input_mixing13);
-  ph.SetCurrValue(t2kana::conv::kPhypMixing12, input_mixing12);
-  ph.SetCurrValue(t2kana::conv::kPhypDm23sq,   input_dm23sq);
-  ph.SetCurrValue(t2kana::conv::kPhypDm12sq,   input_dm12sq);
-  ph.SetCurrValue(t2kana::conv::kPhypDeltaCP,  input_deltacp);
-
   nsk_t osc_banff, noosc_banff, osc_nobanff, noosc_nobanff;
 
   osc_banff.nsk = 0; osc_banff.nskmc = 0; osc_banff.nskmucc = 0; osc_banff.nskmubarcc = 0;
@@ -86,35 +87,39 @@ void test_nsk
   noosc_nobanff.nsk = 0; noosc_nobanff.nskmc = 0; noosc_nobanff.nskmucc = 0; noosc_nobanff.nskmubarcc = 0;
   noosc_nobanff.nskecc = 0; noosc_nobanff.nskebarcc = 0; noosc_nobanff.nsksigecc = 0; noosc_nobanff.nsknc = 0;
 
-  // generate predictions
+  // generate predictions for no oscillation, with BANFF
   skexp.Generate(ph);
   if(template_str=="fin")
-    osc_banff = nsk_integration(osc_banff, &skexp, s, t);
-
-  //undo banff
-  skexp.GetBANFF()->RestoreNominalMC();
-  skexp.Generate(ph);
-  if(template_str=="fin")
-    osc_nobanff = nsk_integration(osc_nobanff, &skexp, s, t);
-
-  //restore banff, undo osc
-  TVectorD twkv(skexp.GetBANFF()->BestFitValues());
-  skexp.GetBANFF()->Tweak(true,&twkv);
-  ph.SetCurrValue(t2kana::conv::kPhypMixing23, 0);
-  ph.SetCurrValue(t2kana::conv::kPhypMixing13, 0);
-  ph.SetCurrValue(t2kana::conv::kPhypMixing12, 0);
-  ph.SetCurrValue(t2kana::conv::kPhypDm23sq,   0);
-  ph.SetCurrValue(t2kana::conv::kPhypDm12sq,   0);
-  ph.SetCurrValue(t2kana::conv::kPhypDeltaCP,  0);
-  skexp.Generate(ph);
-  if(template_str=="fin" || template_str=="tun" || template_str=="sys")
     noosc_banff = nsk_integration(noosc_banff, &skexp, s, t);
 
   //undo banff
   skexp.GetBANFF()->RestoreNominalMC();
   skexp.Generate(ph);
-  noosc_nobanff = nsk_integration(noosc_nobanff, &skexp, s, t);
+  if(template_str=="fin")
+    noosc_nobanff = nsk_integration(noosc_nobanff, &skexp, s, t);
 
+  //restore banff
+  TVectorD twkv(skexp.GetBANFF()->BestFitValues());
+  skexp.GetBANFF()->Tweak(true,&twkv);
+  // oscillate!
+  ph.SetCurrValue(t2kana::conv::kPhypMixing23, input_mixing23);
+  ph.SetCurrValue(t2kana::conv::kPhypMixing13, input_mixing13);
+  ph.SetCurrValue(t2kana::conv::kPhypMixing12, input_mixing12);
+  ph.SetCurrValue(t2kana::conv::kPhypDm23sq,   input_dm23sq);
+  ph.SetCurrValue(t2kana::conv::kPhypDm12sq,   input_dm12sq);
+  ph.SetCurrValue(t2kana::conv::kPhypDeltaCP,  input_deltacp);
+
+  // generate predictions for oscillation, with BANFF
+  skexp.Generate(ph);
+  if(template_str=="fin" || template_str=="tun" || template_str=="sys")
+    osc_banff = nsk_integration(osc_banff, &skexp, s, t);
+
+  //undo banff
+  skexp.GetBANFF()->RestoreNominalMC();
+  skexp.Generate(ph);
+  osc_nobanff = nsk_integration(osc_nobanff, &skexp, s, t);
+
+  //print
   if(template_str=="fin") {
     cout << "\n\n\nWith BANFF tuning, with osc" << endl;
     nsk_print(osc_banff,input_dm23sq);
@@ -122,12 +127,10 @@ void test_nsk
     cout << "\n\n\nWithout BANFF tuning, with osc" << endl;
     nsk_print(osc_nobanff,input_dm23sq);
   }
-
   if(template_str=="fin" || template_str=="tun" || template_str=="sys") {
     cout << "\n\n\nWith BANFF tuning & without osc" << endl;
     nsk_print(noosc_banff,0);
   }
-
   cout << "\n\n\nWithout BANFF tuning or osc" << endl;
   nsk_print(noosc_nobanff,0);
 
