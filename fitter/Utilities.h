@@ -96,7 +96,7 @@ namespace util {
   string AsStringCompact (conv::SuperkSample_t s, conv::SuperkMode_t m, string append_begin="", string append_end="");
   string AsStringCompact (conv::SuperkSample_t     s);
   string AsStringCompact (conv::SuperkMode_t       m);
-  string AsStringCompact_Japan (conv::SuperkMode_t       m);
+  string AsStringCompact_Japan (conv::SuperkMode_t m);
   string AsStringCompact (conv::PhysParamId_t      p);
   string Pdg2String      (int pdg_code);
 

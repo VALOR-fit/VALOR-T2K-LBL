@@ -17,6 +17,7 @@
 #define __show_init_mesg_debug__
 #define __show_rc_cholesky_mesg_info__
 //#define __show_rc_cholesky_mesg_debug__ 
+//#define __show_effic_weight_mesg_debug__
 
 #include <cassert>
 #include <cstdlib>
@@ -477,6 +478,7 @@ double SuperkDetector::EfficiencyWeight(
     }//mode
   }//1-ring e-like sample
 
+#ifdef __show_effic_weight_mesg_debug__
   if(weight < -conv::kASmallNum) {
     cout << "Exp/SKDet/EfficiencyWeight >> "
 	 << "Weight < 0 (" << weight 
@@ -485,6 +487,8 @@ double SuperkDetector::EfficiencyWeight(
 	 << " Ereco " << Ereco << endl;
     return 0;
   }
+#endif
+
   return weight;
 
 }
