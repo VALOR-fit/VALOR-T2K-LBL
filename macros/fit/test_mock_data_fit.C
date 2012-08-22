@@ -25,6 +25,7 @@ void test_mock_data_fit
 {
   using namespace std;
   using namespace t2kana;
+  using namespace t2kana::conv;
 
   // Analysis configuration
   const char * config = Form("%s/config/%s", gSystem->Getenv("T2KOSCANA"), config_file);

@@ -23,34 +23,34 @@ Changes since 2011_v0.9.0:
 #endif
 
 #ifndef BANFF_Bins
-//#define BANFF_Bins 1 // Coarse binning (numu using same binning as 2012 nue analyses)
-//#define BANFF_Bins -1 // Fine binning (numu using same binning as 2010 numu analyses)
+//#define BANFF_Bins 1 // Coarse binning (numu using same binning as 2012 nue analyses, 11 numu bins)
+//#define BANFF_Bins -1 // Fine binning (numu using same binning as 2010 numu analyses, 20 numu bins)
 #define BANFF_Bins 2 // DEFAULT Coarse binning, with high energy ccqe & cc1pi bins included in BANFF
 #endif
 
 #ifndef ETRUE_BINS
-//#define ETRUE_BINS 1 // 50 MeV binning 0-30 GeV
-//#define ETRUE_BINS 2 // 10 MeV binning 0-1 GeV, 50 MeV binning 1-30 GeV
-#define ETRUE_BINS 3 //  DEFAULT 5 MeV binning 0-1 GeV, 50 MeV binning 1-30 GeV
+//#define ETRUE_BINS 1 // 50 MeV binning 0-30 GeV (600 bins)
+//#define ETRUE_BINS 2 // 10 MeV binning 0-1 GeV, 50 MeV binning 1-30 GeV (680 bins)
+#define ETRUE_BINS 3 //  DEFAULT 5 MeV binning 0-1 GeV, 50 MeV binning 1-30 GeV (780 bins)
 #endif
 
 #ifndef ERECO_BINS_1RMU
 #define ERECO_BINS_1RMU 1 // DEFAULT 50 MeV binning 0-30 GeV
-//#define ERECO_BINS_1RMU 2 // 50 MeV bins in 0-3 GeV, 200 MeV bins in 3-4 GeV, 500 MeV bins in 4-6 GeV, 1000 MeV bins > 6 GeV
-//#define ERECO_BINS_1RMU 3 // 50 MeV bins in 0-3 GeV, 100 MeV bins in 3-3.5 GeV, Variable bins > 3.5 GeV
-//#define ERECO_BINS_1RMU 4 // 50 MeV bins in 0-1.25 GeV, 1 bin from 1.25-3 GeV, 1 bin from 3-10 GeV, 1 bin from 10-30 GeV
+//#define ERECO_BINS_1RMU 2 // 50 MeV bins in 0-3 GeV, 200 MeV bins in 3-4 GeV, 500 MeV bins in 4-6 GeV, 1000 MeV bins > 6 GeV (73 bins)
+//#define ERECO_BINS_1RMU 3 // 50 MeV bins in 0-3 GeV, 100 MeV bins in 3-3.5 GeV, Variable bins > 3.5 GeV (70 bins)
+//#define ERECO_BINS_1RMU 4 // 50 MeV bins in 0-1.25 GeV, 1 bin from 1.25-3 GeV, 1 bin from 3-10 GeV, 1 bin from 10-30 GeV (28 bins)
 #endif
 
 #ifndef ERECO_BINS_1RE
-#define ERECO_BINS_1RE 1 // DEFAULT 200 MeV bins 0-1 GeV, 1 bin from 1-1.25 GeV
+#define ERECO_BINS_1RE 1 // DEFAULT 200 MeV bins 0-1 GeV, 1 bin from 1-1.25 GeV (6 bins)
 //#define ERECO_BINS_1RE 2 // 1 bin (0-1.25 GeV)
-//#define ERECO_BINS_1RE 3 // 50 MeV bins 0-1.25 GeV
+//#define ERECO_BINS_1RE 3 // 50 MeV bins 0-1.25 GeV (25 bins)
 #endif
 
-#ifndef ETRUE_XSEC_BINS
-//#define ETRUE_XSEC_BINS 1 // 50 MeV bins 0-1.25 GeV, 1.25-3, 3-10, 10-30 (28 bins)
-//#define ETRUE_XSEC_BINS 2 // 41 bins, Japanese binning
-#define ETRUE_XSEC_BINS 3 // DEFAULT 50 MeV binning 0-30 GeV (600 bins)
+#ifndef ERECO_XSEC_BINS
+//#define ERECO_XSEC_BINS 1 // 50 MeV bins 0-1.25 GeV, 1.25-3, 3-10, 10-30 (28 bins)
+//#define ERECO_XSEC_BINS 2 // 41 bins, Japanese binning
+#define ERECO_XSEC_BINS 3 // DEFAULT 50 MeV binning 0-30 GeV (600 bins)
 #endif
 
 namespace t2kana {
@@ -1457,7 +1457,7 @@ static const bool kXsApplyXSecSystToSKMode[kns][knm][kNumOfXSecSyst] = {
 // The weight splines are pre-computed for the following Ereco bins.
 // For the time being, the same Ereco binning is used for all samples and all modes.
 //
-#if ETRUE_XSEC_BINS == 1
+#if ERECO_XSEC_BINS == 1
 static const int kXsNErecoBins = 28;
 static const double kXsErecoBinEdges[kXsNErecoBins+1] = 
 {
@@ -1466,7 +1466,7 @@ static const double kXsErecoBinEdges[kXsNErecoBins+1] =
    1.000,  1.050,  1.100,  1.150,  1.200,  1.250,  
    3.000, 10.000, 30.000
 };
-#elif ETRUE_XSEC_BINS == 2
+#elif ERECO_XSEC_BINS == 2
 static const int kXsNErecoBins = 41;
 static const double kXsErecoBinEdges[kXsNErecoBins+1] = 
 {
@@ -1476,7 +1476,7 @@ static const double kXsErecoBinEdges[kXsNErecoBins+1] =
    2.500,  2.600,  2.700,  2.800,  2.900,  3.000,  3.500,  4.000,  5.000,  7.000,
    10.000, 30.000
 };
-#elif ETRUE_XSEC_BINS == 3
+#elif ERECO_XSEC_BINS == 3
 // 600 50-MeV bins from 0 to 30 GeV
 static const int kXsNErecoBins = 600;
 static const double kXsErecoBinEdges[kXsNErecoBins+1] = 

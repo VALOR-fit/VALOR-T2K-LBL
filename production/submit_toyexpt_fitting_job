@@ -21,7 +21,7 @@
 #  --sinsq2theta13          : Value of sin^2(2theta_{13}) for toy MC expts. Default: 0.10. Randomized if set to -999.
 #  --sinsq2theta12          : Value of sin^2(2theta_{12}) for toy MC expts. Default: 0.86. Randomized if set to -999.
 #  --deltacp                : Value of delta_CP for toy MC expts. Default: 0. Randomized if set to -999.
-#  --fit-param-list         : Fit parameter list. Default: "numudisapp2f". See FitParamList.h for allowed options.
+#  --fit-param-list         : Fit parameter list. Default: "nuosc3f_numudisapp_fix4". See FitParamList.h for allowed options.
 #  --fit-option             : Option passed to fitter. Default: "minuit".
 #  --job-dir                : Directory for job scripts and outputs. Default: `pwd`.
 #  --softw-dir              : Oscillation code top-level directory. Default: `pwd`.
@@ -72,7 +72,7 @@ $twk_systematics        = 0                             unless defined $twk_syst
 $store_chisq_surf       = 0                             unless defined $store_chisq_surf;
 $store_toy_expts        = 0                             unless defined $store_toy_expts;
 $store_bestfit_spectra  = 0                             unless defined $store_bestfit_spectra;
-$fitparamlist           = "numudisapp2f"                unless defined $fitparamlist;
+$fitparamlist           = "nuosc3f_numudisapp_fix4"     unless defined $fitparamlist;
 $fitoption              = "minuit"                      unless defined $fitter;
 $tag                    = "toyexptfits"                 unless defined $tag;
 $job_dir                = `pwd`                         unless defined $job_dir;
