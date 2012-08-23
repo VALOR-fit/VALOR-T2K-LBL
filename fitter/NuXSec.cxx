@@ -285,6 +285,10 @@ bool NuXSec::Read(TXMLEngine* xml, XMLNodePointer_t root_node)
     util::XML2Dbl(xml,root_node,"xsec/normalisations/ncoth");
   fNormNuEToNuMuRelErr =
     util::XML2Dbl(xml,root_node,"xsec/normalisations/numu_to_nue");
+  fSplineMAQERelErr =
+    util::XML2Dbl(xml,root_node,"xsec/splines/maqe");
+  fSplineMARESRelErr =
+    util::XML2Dbl(xml,root_node,"xsec/splines/mares");
 
 #ifdef __show_init_mesg_info__
   cout << "Exp/NuXSec >> Done reading neutrino cross-section inputs (not splines)!" << endl;
@@ -355,16 +359,13 @@ double NuXSec::FinTuningWght_1p(
        TSpline3 * wght_spl = this->FindWghtSpline(p,s,m,Ereco,Etrue);
        assert(wght_spl);
        double tb = fBANFF->BestFitValue(p);
-       double numerator = 0;
-       /*
-       int banff_pos = util::ArrIdx::Instance()->BANFFSystIdx(p);
-       double diag = fBANFF->CovMatrix()[banff_pos][banff_pos];
-       if(TMath::Abs(tb - 1) > conv::kASmallNum) {
-	 numerator = (tb - 1) / (sqrt(diag));
-       }
-       */
-       numerator = tb-1;
-       wght = wght_spl->Eval(numerator) / 1.; // wght_spl->Eval(0);
+       double relerr = 0;       
+       if(p == kNuisBANFFMAQE)
+	 relerr = fSplineMAQERelErr;
+       else if(p == kNuisBANFFMARES)
+	 relerr = fSplineMARESRelErr;
+       double numerator = (tb-1) / relerr;
+       wght = wght_spl->Eval(numerator) / 1.;
        wght = TMath::Max(0.,wght);
      }
   }
@@ -514,20 +515,14 @@ double NuXSec::SystWght_1p(
        TSpline3 * wght_spl = this->FindWghtSpline(p,s,m,Ereco,Etrue);
        assert(wght_spl);
        double tb = fBANFF->BestFitValue(p);
-       double tc = fBANFF->CurrentValue(p);
-       double denominator = 0, numerator = 0;
-       /*
-       int banff_pos = util::ArrIdx::Instance()->BANFFSystIdx(p);
-       double diag = fBANFF->CovMatrix()[banff_pos][banff_pos];
-       if(TMath::Abs(tb - 1) > conv::kASmallNum) {
-	 denominator = (tb - 1) / (sqrt(diag));
-       }
-       if(TMath::Abs(tc - 1) > conv::kASmallNum) {
-	 numerator = (tc - 1) / (sqrt(diag));
-       }
-       */
-       denominator = tb -1;
-       numerator = tc - 1;
+       double tc = fBANFF->CurrentValue(p);   
+       double relerr = 0;
+       if(p == kNuisBANFFMAQE)
+	 relerr = fSplineMAQERelErr;
+       else if(p == kNuisBANFFMARES)
+	 relerr = fSplineMARESRelErr;
+       double denominator = (tb-1) / relerr;
+       double numerator = (tc-1) / relerr;
        wght = wght_spl->Eval(numerator) / wght_spl->Eval(denominator);
        wght = TMath::Max(0.,wght);
      }
@@ -758,6 +753,12 @@ double NuXSec::RelativeError(PhysParamId_t p) const
       break;
     case kNuisXSecNormNuEToNuMu:
       return fNormNuEToNuMuRelErr;
+      break;
+    case kNuisBANFFMAQE:
+      return fSplineMAQERelErr;
+      break;
+    case kNuisBANFFMARES:
+      return fSplineMARESRelErr;
       break;
     default:
       cout << "Relative error is not defined for xsec parameter: " << AsString(p) << endl;

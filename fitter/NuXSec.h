@@ -155,6 +155,8 @@ private:
   double fNormNCcohRelErr;
   double fNormNCothRelErr;
   double fNormNuEToNuMuRelErr;
+  double fSplineMAQERelErr;
+  double fSplineMARESRelErr;
 
 ClassDef(NuXSec, 4);
 };

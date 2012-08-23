@@ -249,6 +249,12 @@
           </filename>
       </weight_splines>
       <splines>
+	  <maqe>
+	       0.162
+	  </maqe>
+	  <mares>
+	       0.082
+	  </mares>
 	  <pf>
 	       0.13
 	  </pf>
