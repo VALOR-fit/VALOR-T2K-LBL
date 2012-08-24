@@ -590,7 +590,7 @@ double NuXSec::SystWght_1p(
 #if BANFF_Bins != 2
      p == kNuisXSecNormCCQEE1 || p == kNuisXSecNormCCQEE2 || p == kNuisXSecNormCC1piE1 ||
 #endif
-     p == kNuisXSecNormCCcoh || p == kNuisXSecNormNCcoh || p == kNuisXSecNormNCcoh ||
+     p == kNuisXSecNormCCcoh || p == kNuisXSecNormNC1piC || p == kNuisXSecNormNCcoh ||
      p == kNuisXSecNormNCoth || p == kNuisXSecNormNuEToNuMu)
   {
     wght = 1 + (this->CurrentValue(p) * this->RelativeError(p));

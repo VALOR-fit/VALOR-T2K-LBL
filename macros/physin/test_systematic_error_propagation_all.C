@@ -151,7 +151,7 @@ void test_systematic_error_propagation_all
   }
 
   vector<string> systematics;
-
+  
   //systematics.push_back("banff"); //not supported in this macro
   for(int ib = 0; ib < conv::kNumOfFluxParamsInBANFFfit; ib++) {
     systematics.push_back(Form("banff_%02d",ib));
@@ -160,14 +160,14 @@ void test_systematic_error_propagation_all
   systematics.push_back("banff_maqe");
   systematics.push_back("banff_mares");
   systematics.push_back("banff_ccqeE0");
-#if BANFF_Bins == 2
+  
   systematics.push_back("banff_ccqeE1");
   systematics.push_back("banff_ccqeE2");
-#endif
+
   systematics.push_back("banff_cc1piE0");
-#if BANFF_Bins == 2
+
   systematics.push_back("banff_cc1piE1");
-#endif
+
   systematics.push_back("banff_nc1pi0");
 
   systematics.push_back("xsec_pf");
@@ -177,11 +177,12 @@ void test_systematic_error_propagation_all
   systematics.push_back("xsec_pilessdelta");
   systematics.push_back("xsec_enushape");
 
-#if BANFF_Bins != 2
+  /*
   systematics.push_back("xsec_norm_ccqeE1");
   systematics.push_back("xsec_norm_ccqeE2");
   systematics.push_back("xsec_norm_cc1piE1");
-#endif
+  */
+  
   systematics.push_back("xsec_norm_cccoh");
   systematics.push_back("xsec_norm_nc1piC");
   systematics.push_back("xsec_norm_nccoh");
@@ -197,7 +198,7 @@ void test_systematic_error_propagation_all
   systematics.push_back("sk_1Rmu_nc_eff");
   systematics.push_back("sk_1Rmu_nuecc_eff");
   systematics.push_back("sk_energy_scale");
-
+  
   bool use_tex = true;
 
   for(int isys = 0; isys < systematics.size(); isys++) {
@@ -212,9 +213,9 @@ void test_systematic_error_propagation_all
       show_sk_ccqe_spectral_info_ereco = true;
     //banff splines
     else if(systematic.find("banff_maqe") == 0 || systematic.find("banff_mares") == 0)
-      show_sk_spectral_info_etrue_flux_binning = true;
+      show_sk_spectral_info_etrue_flux_binning = false;
     //banff binned norms
-    else if(systematic.find("banff_ccqeE0") == 0 || systematic.find("banff_cc1piE0") == 0)
+    else if(systematic.find("banff_ccqeE") == 0 || systematic.find("banff_cc1piE") == 0)
       show_sk_spectral_info_etrue_norm_binning = true;
     //banff unbinned norms
     else if(systematic.find("banff_nc1pi0") == 0)
@@ -349,7 +350,7 @@ void test_systematic_error_propagation_all
 	  nsknumu_etrue_n[itb] += skexp->GetSuperkMC()->Template(s, m, conv::kSKMCtFin)->Integral(1, conv::kNErecoBins1Rmu, EtrueBinNuMu[itb]+1, EtrueBinNuMu[itb+1]);
 	}
       }
-      cout << "numu etrue bin edges are from " << skexp->GetSuperkMC()->Template(s, conv::kSKmNuMuCCQE, conv::kSKMCtFin)->GetYaxis()->GetBinLowEdge(EtrueBinNuMu[itb]+1) << " to " << skexp->GetSuperkMC()->Template(s, conv::kSKmNuMuCCQE, conv::kSKMCtFin)->GetYaxis()->GetBinUpEdge(EtrueBinNuMu[itb+1]) << endl;;
+      //cout << "numu etrue bin edges are from " << skexp->GetSuperkMC()->Template(s, conv::kSKmNuMuCCQE, conv::kSKMCtFin)->GetYaxis()->GetBinLowEdge(EtrueBinNuMu[itb]+1) << " to " << skexp->GetSuperkMC()->Template(s, conv::kSKmNuMuCCQE, conv::kSKMCtFin)->GetYaxis()->GetBinUpEdge(EtrueBinNuMu[itb+1]) << endl;;
     }
     for(int itb = 0; itb < NEtrueBinNuMuBar; itb++) {
       nsknumubar_etrue_n[itb] = 0.;
@@ -552,14 +553,12 @@ void test_systematic_error_propagation_all
     // +1 sigma (relative to untuned BANFF)
     //
     cout << "\n\nApplying +1 sigma tweak" << endl;
-    bool sys_is_banff = false;
     if(systematic.find("banff_") == 0) {
       conv::PhysParamId_t p = util::PhysParamIdFromString(systematic);
       int ip = util::ArrIdx::Instance()->BANFFSystIdx(p);
       // curr/nominal = 1 + (nsigma * x)
       skexp->TweakSystematic(systematic, skexp->GetBANFF()->BestFitValue(p) * (1 + skexp->GetBANFF()->CovMatrix()(ip,ip)));
       skexp->GetBANFF()->PrintSystematicVariations();
-      sys_is_banff = true;
     }
     else if(systematic.find("xsec_") == 0) {
       skexp->TweakSystematic(systematic,+1.);
@@ -2017,7 +2016,7 @@ void test_systematic_error_propagation_all
       streamer << "\\end{tabular}" << endl;
       string hypothesisstr(hypothesis);
       string sys = util::AsStringTex(util::PhysParamIdFromString(systematic));
-      found=hypothesisstr.find_first_of("_");
+      size_t found=hypothesisstr.find_first_of("_");
       while(found!=string::npos) {
 	hypothesisstr[found]='-';
 	found=hypothesisstr.find_first_of("_",found+1);

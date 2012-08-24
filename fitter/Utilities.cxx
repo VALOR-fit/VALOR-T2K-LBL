@@ -940,6 +940,7 @@ string t2kana::util::AsStringTex(PhysParamId_t p)
     }
     case ( kNuisBANFFMAQE    ) : return "BANFF, Ma QE";                           break;
     case ( kNuisBANFFMARES   ) : return "BANFF, Ma RES";                          break;
+    case ( kNuisBANFFCCQEE0  ) : return "BANFF; Norm; CC QE; 0.0 - 1.5 GeV";      break;
 #if BANFF_Bins == 2
     case ( kNuisBANFFCCQEE1  ) : return "BANFF; Norm; CC QE; 1.5 - 3.5 GeV";      break;
     case ( kNuisBANFFCCQEE2  ) : return "BANFF; Norm; CC QE; 3.5 - 30.0 GeV";     break;
@@ -970,7 +971,7 @@ string t2kana::util::AsStringTex(PhysParamId_t p)
     case ( kNuisXSecNormNCcoh  ) : return "Norm, NC Coh";                    break;
     case ( kNuisXSecNormNC1piC ) : return "Norm, NC 1piC";                   break;
     case ( kNuisXSecNormNCoth  ) : return "Norm, NC Oth";                    break;
-    case ( kNuisXSecNormNuEToNuMu ) : return "Norm, NuE To NuMu";                    break;
+    case ( kNuisXSecNormNuEToNuMu ) : return "Norm, NuE To NuMu";            break;
 
     case ( kNuisFSI00 ) : 
     case ( kNuisFSI01 ) : 
@@ -1742,7 +1743,7 @@ t2kana::conv::PhysParamId_t
   if(sh == "xsec_norm_nc1piC")  return kNuisXSecNormNC1piC;
   if(sh == "xsec_norm_nccoh")   return kNuisXSecNormNCcoh;
   if(sh == "xsec_norm_ncoth")   return kNuisXSecNormNCoth;
-  if(sh == "xsec_norm_nuenumu") return kNuisXSecNormNuEToNuMu;
+  if(sh == "xsec_norm_nuetonumu") return kNuisXSecNormNuEToNuMu;
 
   if(sh == "fsi_00") return kNuisFSI00;
   if(sh == "fsi_01") return kNuisFSI01;

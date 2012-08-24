@@ -303,7 +303,7 @@ void test_systematic_error_propagation
   for(int itb = 0; itb < NEtrueBinNuMu; itb++) {
     nsknumu_etrue_n[itb] = 0.;
     nsknumu_etrue_n[itb] = skexp->GetSuperkMC()->Template(s, conv::kSKmNuMuCCQE, conv::kSKMCtFin)->Integral(1, conv::kNErecoBins1Rmu, EtrueBinNuMu[itb]+1, EtrueBinNuMu[itb+1]);
-    cout << "numu etrue bin edges are from " << skexp->GetSuperkMC()->Template(s, conv::kSKmNuMuCCQE, conv::kSKMCtFin)->GetYaxis()->GetBinLowEdge(EtrueBinNuMu[itb]+1) << " to " << skexp->GetSuperkMC()->Template(s, conv::kSKmNuMuCCQE, conv::kSKMCtFin)->GetYaxis()->GetBinUpEdge(EtrueBinNuMu[itb+1]) << endl;;
+    //cout << "numu etrue bin edges are from " << skexp->GetSuperkMC()->Template(s, conv::kSKmNuMuCCQE, conv::kSKMCtFin)->GetYaxis()->GetBinLowEdge(EtrueBinNuMu[itb]+1) << " to " << skexp->GetSuperkMC()->Template(s, conv::kSKmNuMuCCQE, conv::kSKMCtFin)->GetYaxis()->GetBinUpEdge(EtrueBinNuMu[itb+1]) << endl;;
   }
   for(int itb = 0; itb < NEtrueBinNuMuBar; itb++) {
     nsknumubar_etrue_n[itb] = 0.;
@@ -458,7 +458,6 @@ void test_systematic_error_propagation
     // curr/nominal = 1 + (nsigma * x)
     skexp->TweakSystematic(systematic, skexp->GetBANFF()->BestFitValue(p) * (1 + skexp->GetBANFF()->CovMatrix()(ip,ip)));
     skexp->GetBANFF()->PrintSystematicVariations();
-    sys_is_banff = true;
   }
   else
     skexp->TweakSystematic(systematic,+1.);
