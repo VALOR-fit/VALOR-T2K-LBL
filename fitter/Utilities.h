@@ -110,8 +110,8 @@ namespace util {
 
   conv::OscChannelId_t GetOscChannel(int nu_start, int nu_end);
 
-  int  SuperkMode2FluxNuPdg(conv::SuperkMode_t m);
-  int  SuperkMode2SKMCPdg  (conv::SuperkMode_t m);
+  int SuperkMode2FluxNuPdg(conv::SuperkMode_t m);
+  int SuperkMode2SKMCPdg  (conv::SuperkMode_t m);
 
   bool IsNuMu         (conv::SuperkMode_t  m);
   bool IsNuMuBar      (conv::SuperkMode_t  m);
@@ -130,7 +130,6 @@ namespace util {
   const double * VariableXsEtrueBinEdges(conv::SuperkSample_t s, conv::SuperkMode_t m);
   const int      NumVariableMCEtrueBins(conv::SuperkSample_t s, conv::SuperkMode_t m);
   const double * VariableMCEtrueBinEdges(conv::SuperkSample_t s, conv::SuperkMode_t m);
-
   //
   // String utilities
   //
@@ -225,6 +224,7 @@ namespace util {
     int SuperkModeIdx   (conv::SuperkSample_t s, conv::SuperkMode_t m) { return fSuperkModeIdx  [s][m]; }
     int XSecSystIdx     (conv::PhysParamId_t p)                        { return fXSecSystIdx    [p];    }
     int BANFFSystIdx    (conv::PhysParamId_t p)                        { return fBANFFSystIdx   [p];    }
+    int FSISystIdx      (conv::PhysParamId_t p)                        { return fFSISystIdx     [p];    }
   private:
     ArrIdx();
     ArrIdx(const ArrIdx &) {}
@@ -234,6 +234,7 @@ namespace util {
     int fSuperkModeIdx   [2*conv::kns][2*conv::knm];     ///< maps sample/mode to kSKReactionModes array index
     int fXSecSystIdx     [conv::knppmax];                ///< maps physics param to kListOfXSecSyst array index
     int fBANFFSystIdx    [conv::knppmax];                ///< maps physics param to BANFF covariance matrix
+    int fFSISystIdx    [conv::knppmax];                  ///< maps physics param to FSI covariance matrix
     static ArrIdx * fInstance;
     struct Cleaner {
       void DummyMethodAndSilentCompiler() { }

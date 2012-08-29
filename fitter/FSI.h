@@ -49,6 +49,7 @@ public:
   // Get input FSI covariance matrix and its Cholesky decomposition
   const TMatrixD & CovMatrix         (void) const { return *fCovMtrx;       }
   const TMatrixD & CovMatrixCholesky (void) const { return *fCovMtrxChoL;   }
+  const TMatrixD & CovMatrixInv      (void) const { return *fCovMtrxInv;    }
 
   // Penalty term included in the chisq if FSI nuisance terms are included in the fit       
   double ChisqPenalty(void) const;
@@ -66,17 +67,20 @@ private:
 
   void Init      (void);
   void CleanUp   (void);
-  int  Param2Idx (conv::PhysParamId_t p) const; ///< convert FSI PhysParamId_t to a covariance matrix or vector index
-
+  // Apply the given FSI parameter to the given sample, mode, Ereco?
+  bool ApplySyst            (conv::PhysParamId_t p, conv::SuperkSample_t s, conv::SuperkMode_t m, double Ereco) const;
+  bool ApplySystToSKMode    (conv::PhysParamId_t p, conv::SuperkSample_t s, conv::SuperkMode_t m) const;
+  bool ApplySystToEnergyBin (conv::PhysParamId_t p, double Ereco) const;
   //
   // Private data members
   //
 
-  TVectorD *  fCurrentValues;    ///< Current values of FSI params
-  TVectorD *  fNominalValues;    ///< Nominal values of FSI params
-  TMatrixD *  fCovMtrx;          ///< FSI covariance matrix
-  TMatrixD *  fCovMtrxChoL;      ///< Triangular matrix from Cholesky decomp. of FSI covar. matrix
-  TH1D *      fFracTun[kns];     ///<
+  TVectorD * fCurrentValues;    ///< Current values of FSI params
+  TVectorD * fNominalValues;    ///< Nominal values of FSI params
+  TMatrixD * fCovMtrx;          ///< FSI covariance matrix
+  TMatrixD * fCovMtrxInv;       ///< Inverse FSI covariance matrix
+  TMatrixD * fCovMtrxChoL;      ///< Triangular matrix from Cholesky decomp. of FSI covar. matrix
+  TH1D     * fFracTun[kns][knm];///<
 
 ClassDef(FSI, 1);
 };

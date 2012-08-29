@@ -48,6 +48,11 @@ test_systematic_error_propagation_expectation(
     util::XML2TMatrixD(xml,root_node,
       "banff/covariance_matrix");
 
+  //BANFF
+  TMatrixD *FSICovMtrx = 
+    util::XML2TMatrixD(xml,root_node,
+      "fsi/covariance_matrix");
+
   //XSec
   double NormCCQE1RelErr =
     util::XML2Dbl(xml,root_node,"xsec/normalisations/ccqee1");
@@ -138,6 +143,13 @@ test_systematic_error_propagation_expectation(
     streamer << setw(ncol1)  << setfill(' ') << systematic << endcolumn
 	     << setw(ncolnev)  << setfill(' ') << setprecision(nprecisionnev)
 	     << BANFFCovMtrx(i,i) * 100 << pctsymbol;
+    streamer << endrow << endl;
+  }
+  for (int i = 0; i < conv::kNumOfFSIParams; i++) {
+    systematic = Form("fsi %d",i);
+    streamer << setw(ncol1)  << setfill(' ') << systematic << endcolumn
+	     << setw(ncolnev)  << setfill(' ') << setprecision(nprecisionnev)
+	     << FSICovMtrx(i,i) * 100 << pctsymbol;
     streamer << endrow << endl;
   }
   systematic = "Norm CCQE E1";

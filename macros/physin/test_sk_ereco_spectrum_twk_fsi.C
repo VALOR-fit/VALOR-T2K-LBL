@@ -125,6 +125,8 @@ void test_sk_ereco_spectrum_twk_fsi
 
   for(int iparam = 0; iparam < conv::kNumOfFSIParams; iparam++)
   {
+       conv::PhysParamId_t p = conv::kListOfFSIParams[iparam];
+
        //
        // init
        //
@@ -140,7 +142,7 @@ void test_sk_ereco_spectrum_twk_fsi
        // tweak current param only by +100% - neglect correlations
        //
        cout << "- Tweaking param by +100%" << endl;
-       skexp.TweakSystematic(p_str, 2.);  
+       skexp.TweakSystematic(p_str, 1 + skexp.GetFSI()->CovMatrix()[iparam][iparam]);
        skexp.PrintSystematicVariations();
        // generate predictions
        skexp.Generate(ph);
@@ -154,7 +156,7 @@ void test_sk_ereco_spectrum_twk_fsi
        // tweak current param only by -100% - neglect correlations
        //
        cout << "- Tweaking by -100%" << endl;
-       skexp.TweakSystematic(p_str,0.5);  
+       skexp.TweakSystematic(p_str, 1 - skexp.GetFSI()->CovMatrix()[iparam][iparam]);  
        skexp.PrintSystematicVariations();
        // generate predictions
        skexp.Generate(ph);

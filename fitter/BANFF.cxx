@@ -12,14 +12,14 @@
 
 */
 //________________________________________________________________________________________
-/*
+
 #define __show_init_mesg_info__  
-#define __show_init_mesg_debug__   
+//#define __show_init_mesg_debug__   
 #define __show_cholesky_mesg_info__
-#define __show_cholesky_mesg_debug__
-#define __show_tweak_mesg_debug__
-#define __show_chisqpenalty_mesg_debug__
-*/
+//#define __show_cholesky_mesg_debug__
+//#define __show_tweak_mesg_debug__
+//#define __show_chisqpenalty_mesg_debug__
+
 #include <cassert>
 #include <cstdlib>
 #include <iostream>
@@ -97,7 +97,7 @@ bool BANFF::Read(TXMLEngine* xml, XMLNodePointer_t root_node)
     exit(1);
   }
 
-#ifdef __show_init_mesg_info__
+#ifdef __show_init_mesg_debug__
   cout << "Exp/BANFF >> Input BANFF best-fit parameters: " << endl; 
   util::PrintCompact(bestfit,12,6,"BANFF fit params");
 #endif
@@ -123,7 +123,7 @@ bool BANFF::Read(TXMLEngine* xml, XMLNodePointer_t root_node)
     cerr << "Exp/BANFF >> Expecting: " <<  np << " x " << np << " matrix" << endl;
     cerr << "Exp/BANFF >> Found: " << cov.GetNrows() << " x " <<  cov.GetNcols() << " matrix" << endl;
   }
-#ifdef __show_init_mesg_info__
+#ifdef __show_init_mesg_debug__
   cout << "Exp/BANFF >> Input BANFF covariance matrix: " << endl; 
   util::PrintCompact(cov,7,4);
   cout << "Exp/BANFF >> Inverse BANFF covariance matrix: " << endl;

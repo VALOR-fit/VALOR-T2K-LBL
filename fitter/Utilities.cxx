@@ -800,16 +800,58 @@ string t2kana::util::AsString(PhysParamId_t p)
     case ( kNuisFSI06 ) : 
     case ( kNuisFSI07 ) : 
     case ( kNuisFSI08 ) : 
-    case ( kNuisFSI09 ) : 
+    case ( kNuisFSI09 ) :
+    case ( kNuisFSI10 ) : 
+    case ( kNuisFSI11 ) : 
+    case ( kNuisFSI12 ) : 
+    case ( kNuisFSI13 ) : 
+    case ( kNuisFSI14 ) : 
     {
       int ip = (int)p - (int)kNuisFSI00;
-      return Form("FSI %2d; Ereco range %.1f - %.1f GeV",
-                   ip, 
-                   kFSIParamsErecoBinEdges[ip],
-                   kFSIParamsErecoBinEdges[ip+1]);     
+      string nutypes = "";
+#if FSI_BINS == 1
+      switch(p) {
+        case (kNuisFSI00) :
+        case (kNuisFSI01) :
+        case (kNuisFSI02) :
+	  nutypes = "numu"; break;
+        case (kNuisFSI03) :
+        case (kNuisFSI04) :
+        case (kNuisFSI05) :
+	  nutypes = "numubar"; break;
+        case (kNuisFSI06) :
+        case (kNuisFSI07) :
+        case (kNuisFSI08) :
+	  nutypes = "nue"; break;
+        case (kNuisFSI09) :
+        case (kNuisFSI10) :
+        case (kNuisFSI11) :
+	  nutypes = "nuebar"; break;
+        case (kNuisFSI12) :
+        case (kNuisFSI13) :
+        case (kNuisFSI14) :
+	  nutypes = "oscillated nue"; break;
+        default : nutypes = "--";
+      }
+#elif FSI_BINS == 2
+      switch(p) {
+        case (kNuisFSI00) :
+        case (kNuisFSI01) :
+        case (kNuisFSI02) :
+	  nutypes = "numu/numubar CCQE"; break;
+        case (kNuisFSI03) :
+	  nutypes = "numu/numubar CCnQE"; break;
+        case (kNuisFSI04) :
+	  nutypes = "nue/nuebar/signue CC"; break;
+        case (kNuisFSI05) :
+	  nutypes = "all NC"; break;
+        default : nutypes = "--";
+      }
+#endif
+      return Form("FSI %2d; Ereco range %.1f - %.1f GeV; %s",ip,
+		  kFSIParamsErecoCut[ip][0],kFSIParamsErecoCut[ip][1],nutypes.c_str());     
       break;
-    }
-
+    }//FSI
     default : 
       return "--";
   }
@@ -983,15 +1025,57 @@ string t2kana::util::AsStringTex(PhysParamId_t p)
     case ( kNuisFSI07 ) : 
     case ( kNuisFSI08 ) : 
     case ( kNuisFSI09 ) : 
+    case ( kNuisFSI10 ) : 
+    case ( kNuisFSI11 ) : 
+    case ( kNuisFSI12 ) : 
+    case ( kNuisFSI13 ) : 
+    case ( kNuisFSI14 ) : 
     {
+      string nutypes = "";
       int ip = (int)p - (int)kNuisFSI00;
-      return Form("FSI %2d, Ereco range %.1f - %.1f GeV",
-                   ip, 
-                   kFSIParamsErecoBinEdges[ip],
-                   kFSIParamsErecoBinEdges[ip+1]);     
+#if FSI_BINS == 1
+      switch(p) {
+        case (kNuisFSI00) :
+        case (kNuisFSI01) :
+        case (kNuisFSI02) :
+	  nutypes = "$\\nu_\\mu$"; break;
+        case (kNuisFSI03) :
+        case (kNuisFSI04) :
+        case (kNuisFSI05) :
+	  nutypes = "$\\bar{\\nu_\\mu}$"; break;
+        case (kNuisFSI06) :
+        case (kNuisFSI07) :
+        case (kNuisFSI08) :
+	  nutypes = "$\\nu_e$"; break;
+        case (kNuisFSI09) :
+        case (kNuisFSI10) :
+        case (kNuisFSI11) :
+	  nutypes = "$\\bar{\\nu_e}$"; break;
+        case (kNuisFSI12) :
+        case (kNuisFSI13) :
+        case (kNuisFSI14) :
+	  nutypes = "Oscillated $\\nu_e$"; break;
+        default : nutypes = "--";
+      }
+#elif FSI_BINS == 2
+      switch(p) {
+        case (kNuisFSI00) :
+        case (kNuisFSI01) :
+        case (kNuisFSI02) :
+	  nutypes = "$\\nu_\\mu$/$\\bar{\\nu_\\mu}$ CCQE"; break;
+        case (kNuisFSI03) :
+	  nutypes = "\\nu_\\mu$/$\\bar{\\nu_\\mu}$ CCnQE"; break;
+        case (kNuisFSI04) :
+	  nutypes = "\\nu_e$/$\\bar{\\nu_e}/sig$\\nu_e$ CC"; break;
+        case (kNuisFSI05) :
+	  nutypes = "all NC"; break;
+        default : nutypes = "--";
+      }
+#endif
+      return Form("FSI %2d; Ereco range %.1f - %.1f GeV; %s",ip,
+		  kFSIParamsErecoCut[ip][0],kFSIParamsErecoCut[ip][1],nutypes.c_str());     
       break;
-    }
-
+    }//FSI
     default : 
       return "--";
   }
@@ -1148,6 +1232,11 @@ string t2kana::util::AsStringCompact(PhysParamId_t p)
     case ( kNuisFSI07                 ) : return "f_fsi07";        break;
     case ( kNuisFSI08                 ) : return "f_fsi08";        break;
     case ( kNuisFSI09                 ) : return "f_fsi09";        break;
+    case ( kNuisFSI10                 ) : return "f_fsi10";        break;
+    case ( kNuisFSI11                 ) : return "f_fsi11";        break;
+    case ( kNuisFSI12                 ) : return "f_fsi12";        break;
+    case ( kNuisFSI13                 ) : return "f_fsi13";        break;
+    case ( kNuisFSI14                 ) : return "f_fsi14";        break;
 
     default : 
       return "--";
@@ -1755,6 +1844,11 @@ t2kana::conv::PhysParamId_t
   if(sh == "fsi_07") return kNuisFSI07;
   if(sh == "fsi_08") return kNuisFSI08;
   if(sh == "fsi_09") return kNuisFSI09;
+  if(sh == "fsi_10") return kNuisFSI10;
+  if(sh == "fsi_11") return kNuisFSI11;
+  if(sh == "fsi_12") return kNuisFSI12;
+  if(sh == "fsi_13") return kNuisFSI13;
+  if(sh == "fsi_14") return kNuisFSI14;
 
   cout << sh << " not yet supported in util::PhysParamIdFromString()" << endl;
   return kPhypUndefined;
@@ -1806,7 +1900,7 @@ int t2kana::util::SuperkMode2FluxNuPdg(t2kana::conv::SuperkMode_t m)
   if ( util::IsNuEBar    (m) ) return kPdgNuEBar;
   if ( util::IsSignalNuE (m) ) return kPdgNuMu; /// numu -> nue
    
-  // NOTE: Beam NuEBars not handles
+  // NOTE: Beam NuEBars not handled
 
   return 0;
 }
@@ -1819,7 +1913,7 @@ int t2kana::util::SuperkMode2SKMCPdg(t2kana::conv::SuperkMode_t m)
   if ( util::IsNuEBar    (m) ) return kPdgNuEBar;
   if ( util::IsSignalNuE (m) ) return kPdgNuE;
    
-  // NOTE: Beam NuEBars not handles
+  // NOTE: Beam NuEBars not handled
 
   return 0;
 }
@@ -2111,6 +2205,11 @@ bool t2kana::util::IsSystematic(PhysParamId_t p)
     case ( kNuisFSI07                 ) : return true;  break;
     case ( kNuisFSI08                 ) : return true;  break;
     case ( kNuisFSI09                 ) : return true;  break;
+    case ( kNuisFSI10                 ) : return true;  break;
+    case ( kNuisFSI11                 ) : return true;  break;
+    case ( kNuisFSI12                 ) : return true;  break;
+    case ( kNuisFSI13                 ) : return true;  break;
+    case ( kNuisFSI14                 ) : return true;  break;
 
     default : 
       return false;
@@ -3622,6 +3721,19 @@ void t2kana::util::ArrIdx::Init(void)
      cout << "Util/ArrIdx >> BANFF: " 
           << util::AsString(p)
           << " is at slot: " << fBANFFSystIdx [p] << endl;
+#endif
+  }
+  for(int i = 0; i < knppmax; i++) {
+    fFSISystIdx[i] = -1;
+  }
+  for(int ip = 0; ip < kNumOfFSIParams; ip++) {
+    PhysParamId_t p = PhysParamId_t ((int) kNuisFSI00 + ip);
+    if(p == kPhypUndefined) continue;
+    fFSISystIdx[p] = ip;
+#ifdef __show_arr_idx_mesg_debug__
+     cout << "Util/ArrIdx >> FSI: " 
+          << util::AsString(p)
+          << " is at slot: " << fFSISystIdx [p] << endl;
 #endif
   }
 }

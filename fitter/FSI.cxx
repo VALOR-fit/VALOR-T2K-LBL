@@ -19,6 +19,8 @@
 #define __show_fsi_cholesky_mesg_debug__
 #define __show_fsi_tweak_mesg_debug__
 //#define __show_build_frac_template_mesg_info__
+//#define __show_chisqpenalty_mesg_debug__
+//#define __show_fsi_applysyst_mesg_debug__
 
 #include <cassert>
 #include <cstdlib>
@@ -58,7 +60,9 @@ void FSI::Init(void)
   fCovMtrxChoL   = 0;
 
   for(int is = 0; is < kns; is++) {
-     fFracTun[is] = 0;
+    for(int im = 0; im < knm; im++) {
+      fFracTun[is][im] = 0;
+    }
   }
 
 }
@@ -71,7 +75,9 @@ void FSI::CleanUp(void)
   if ( fCovMtrxChoL   ) delete fCovMtrxChoL;
 
   for(int is = 0; is < kns; is++) {
-     if (fFracTun[is]) delete fFracTun[is];
+    for(int im = 0; im < knm; im++) {
+      if (fFracTun[is]) delete fFracTun[is][im];
+    }
   }
 }
 //________________________________________________________________________________________
@@ -83,7 +89,6 @@ bool FSI::Read(TXMLEngine* xml, XMLNodePointer_t root_node)
 
   const int np = conv::kNumOfFSIParams;
 
-/*
   // Get FSI covariance matrix
   fCovMtrx = util::XML2TMatrixD(xml,root_node,"fsi/covariance_matrix");
   if(!fCovMtrx) {
@@ -94,33 +99,20 @@ bool FSI::Read(TXMLEngine* xml, XMLNodePointer_t root_node)
   const TMatrixD & cov = *fCovMtrx;
   if(cov.GetNrows() != np || cov.GetNcols() != np)
   {
-    cerr << "Exp/FSI >> BANFF covariance matrix has unexpected size!" << endl;
+    cerr << "Exp/FSI >> FSI covariance matrix has unexpected size!" << endl;
     cerr << "Exp/FSI >> Expecting: " <<  np << " x " << np << " matrix" << endl;
     cerr << "Exp/FSI >> Found: " << cov.GetNrows() << " x " <<  cov.GetNcols() << " matrix" << endl;
   }
-*/
 
-// Temporary code: 
-// As I don't have an FSI cov matrix, create a fake one so as to have something to
-// test the code with. 
-// ------------------------------------------------------------
-fCovMtrx = new TMatrixD(np,np);
-TMatrixD & cov = *fCovMtrx;
-for(int i=0; i<np; i++) {
-  cov(i,i) = 0.5/(1.+i);
-}
-for(int i=0; i<np; i++) {
-  for(int j=0; j<np; j++) {
-    if(i >= j) continue;
-    cov(i,j) = 0;
-    cov(j,i) = 0;
-  }
-}
-// ------------------------------------------------------------
+  double det;
+  fCovMtrxInv = new TMatrixD(*fCovMtrx);
+  (*fCovMtrxInv).Invert(&det);
 
-#ifdef __show_init_mesg_info__
-  cout << "Exp/FSI >> Input FSI covariance matrix: " << endl;
+#ifdef __show_init_mesg_debug__
+  cout << "Exp/FSI >> Input FSI covariance matrix: " << endl; 
   util::PrintCompact(cov,7,4);
+  cout << "Exp/FSI >> Inverse FSI covariance matrix: " << endl;
+  util::PrintCompact(*fCovMtrxInv,7,4);
 #endif
 
   // Create/init current FSI params
@@ -141,11 +133,17 @@ for(int i=0; i<np; i++) {
      if(s == conv::kSKsUndefined) continue;
      const int      n_ereco_bins    = util::NumErecoBins (s);
      const double * ereco_bin_edges = util::ErecoBinEdges(s);
-     fFracTun[is] = new TH1D(
-        Form("nsk_tun_%d",is), util::AsStringCompact(s).c_str(), n_ereco_bins, ereco_bin_edges);
-     fFracTun[is]->SetDirectory(0);
-     fFracTun[is]->GetXaxis()->SetTitle("E_{reco} (GeV)");
-     fFracTun[is]->GetYaxis()->SetTitle("Fraction");
+     for(int im = 0; im < knm; im++) {
+       conv::SuperkMode_t m = conv::kSKReactionModes[is][im];
+       if(m == conv::kSKmUndefined) continue;
+       fFracTun[is][im] = new TH1D(
+		 Form("nsk_tun_%d_%d",is,im),
+		 Form("%s_%s",util::AsStringCompact(s).c_str(), util::AsStringCompact(m).c_str()),
+		 n_ereco_bins, ereco_bin_edges);
+       fFracTun[is][im]->SetDirectory(0);
+       fFracTun[is][im]->GetXaxis()->SetTitle("E_{reco} (GeV)");
+       fFracTun[is][im]->GetYaxis()->SetTitle("Fraction");
+     }//im
   }//is
 
 #ifdef __show_init_mesg_info__
@@ -156,18 +154,30 @@ for(int i=0; i<np; i++) {
 }
 //________________________________________________________________________________________
 double FSI::SystWght(
-  conv::SuperkSample_t s, conv::SuperkMode_t /*m*/, double Ereco, double /*Etrue*/) const
+  conv::SuperkSample_t s, conv::SuperkMode_t m, double Ereco, double /*Etrue*/) const
 {
   // find FSI param which corresponds to the current Ereco param
+  int iparam = -1;
+  for(int ip = 0; ip < conv::kNumOfFSIParams; ip++) {
+     conv::PhysParamId_t p = conv::kListOfFSIParams[ip];
+     // Is the current systematic parameter applied to current sample/mode end energy bin?
+     bool apply = this->ApplySyst(p,s,m,Ereco);
+     if(!apply) continue;
+     if(iparam != -1) {
+       cerr << "Exp/FSI/SystWght >> Found multiple FSI bins for sample, mode, Ereco combination!" << endl;
+       exit(1);
+     }
+     iparam = util::ArrIdx::Instance()->FSISystIdx(p);
+  }
   const int np = conv::kNumOfFSIParams;
-  int ip = TMath::BinarySearch(np+1, conv::kFSIParamsErecoBinEdges, Ereco);
-  if(ip < 0 || ip >= np) {
-     cerr << "Exp/FSI >> Weird FSI Ereco index for Ereco value = " << Ereco << endl;
+  if(iparam < 0 || iparam >= np) {
+    cerr << "Exp/FSI >> Weird FSI Ereco index: " << iparam << " for Ereco value = " << Ereco 
+	 << " sample " << util::AsString(s) << " mode " << util::AsString(m) << endl;
      exit(1);
   }
  
-  // get current value of ip^th FSI param
-  double fsi_param_value = (*fCurrentValues)[ip];
+  // get current value of iparam^th FSI param
+  double fsi_param_value = (*fCurrentValues)[iparam];
 
   // param tweaked
   bool tweaked = TMath::Abs(fsi_param_value - 1.) > conv::kASmallNum;
@@ -182,9 +192,14 @@ double FSI::SystWght(
      cerr << "Exp/FSI >> Negative idx for sample: " << util::AsString(s) << endl;
      exit(1);
   }
-  int ir =  fFracTun[is]->FindBin(Ereco); 
-  double frac = fFracTun[is]->GetBinContent(ir);
-
+  int im =  util::ArrIdx::Instance()->SuperkModeIdx(s,m); 
+  if(im < 0) {
+     cerr << "Exp/FSI >> Negative idx for mode: " << util::AsString(s) << endl;
+     exit(1);
+  }
+  int ir =  fFracTun[is][im]->FindBin(Ereco); 
+  double frac = fFracTun[is][im]->GetBinContent(ir);
+  frac = 1;
   // Calculate FSI weight for current MC template bin
   double fsi_wght = frac * fsi_param_value;
   return fsi_wght;
@@ -193,7 +208,7 @@ double FSI::SystWght(
 double FSI::CurrentValue(conv::PhysParamId_t p) const
 {
   const TVectorD & current_values = *fCurrentValues;
-  int idx = this->Param2Idx(p);
+  int idx = util::ArrIdx::Instance()->FSISystIdx(p);
   return current_values[idx];
 }
 //________________________________________________________________________________________
@@ -280,7 +295,56 @@ void FSI::Tweak(
 }
 //________________________________________________________________________________________
 double FSI::ChisqPenalty(void) const
+//just a straight copy of BANFF::ChisqPenalty
 {
+  //Vector with deviations of current values from  best fit values
+  const TVectorD & bestfit_values   = *fNominalValues;
+  const TVectorD & current_values   = *fCurrentValues;
+  const int np = conv::kNumOfFSIParams;
+  TMatrixD dev  (1,np); //vector of one column in matrix form for multiplication
+  TMatrixD devT (np,1); //vector of one row in matrix form for multiplication
+  for(int i = 0; i < np; i++){
+    dev[0][i]  = current_values[i]-bestfit_values[i];
+    devT[i][0] = current_values[i]-bestfit_values[i];
+  }
+
+#ifdef __show_chisqpenalty_mesg_debug__
+  cout << "Exp/FSI/ChisqPenalty >> FSI parameters: " << endl;
+  util::PrintCompact(current_values, bestfit_values, 12,6,"FSI fit params");
+#endif
+
+#ifdef __show_chisqpenalty_mesg_debug__
+  cout << "Exp/ChisqPenalty >> deviations in FSI parameters: " << endl;
+  util::PrintCompact(TMatrixDRow(dev,0), 12,6,"FSI fit params");
+#endif
+
+  //covariance matrix
+  const TMatrixD cov    (this->CovMatrix());
+  const TMatrixD    covInv (this->CovMatrixInv());
+
+#ifdef __show_chisqpenalty_mesg_debug__
+  cout << "Exp/FSI/ChisqPenalty >> FSI covariance matrix: " << endl;
+  util::PrintCompact(cov,7,4);
+  cout << "Exp/FSI/ChisqPenalty >> Inverse FSI covariance matrix: " << endl;
+  util::PrintCompact(covInv,7,4);
+#endif
+
+  //Check the inverse:
+  TMatrixD prod = cov*covInv;
+#ifdef __show_chisqpenalty_mesg_debug__
+  cout << "Exp/FSI/ChisqPenalty >> check of product cov*(cov)^-1 : "<< endl;
+  util::PrintCompact(prod,7,4);
+#endif
+
+  TMatrixD chisqpenalty =  dev * covInv * devT;
+  double chisq_penalty = chisqpenalty[0][0]; //The final matrix is 1x1, just a number
+
+#ifdef __show_chisqpenalty_mesg_debug__
+  cout << "Exp/FSI/ChisqPenalty >> ChisqPenalty = " << chisq_penalty << endl;
+#endif
+
+  if(chisq_penalty) return chisq_penalty;
+  
   return 0;
 }
 //________________________________________________________________________________________
@@ -291,70 +355,118 @@ void FSI::PrintSystematicVariations(void) const
   util::PrintCompact(curr_fsi_params,15,6,"FSI params");
 }
 //________________________________________________________________________________________
-int FSI::Param2Idx(conv::PhysParamId_t p) const
-{
-  int iparam = (int) p;
-  int first  = (int) conv::kNuisFSI00;
-  int last   = (int) conv::kNuisFSI09;
-  assert(iparam >= first && iparam <= last);
-  int idx = iparam-first;
-  return idx;
-}
-//________________________________________________________________________________________
 void FSI::BuildFracMCTemplates(TH2D* input_mctempl_array[kns][knm])
 {
 #ifdef __show_build_frac_template_mesg_info__
        cout << "Exp/FSI >> Building MC template fractions... " << endl;
 #endif  
 
-  const int np = conv::kNumOfFSIParams;
-
   for(int is = 0; is < kns; is++) {
      conv::SuperkSample_t s = conv::kSKSamples[is];
      if(s == conv::kSKsUndefined) continue;
-     TH1D * mctempl_frac = fFracTun[is];
-     assert(mctempl_frac);   
-     // Loop over Ereco bins (MC template binning scheme)
-     int nr = mctempl_frac->GetXaxis()->GetNbins();
-     for(int ir = 1; ir <= nr; ir++) {
-        // Loop over all modes and all Etrue bins and calculate the number of events
-        double nev = 0;
-        for(int im = 0; im < knm; im++) {
-           conv::SuperkMode_t m = conv::kSKReactionModes[is][im];
-           if(m == conv::kSKmUndefined) continue;
-           const TH2D * mctempl = input_mctempl_array[is][im];
-           assert(mctempl);
-           int nt = mctempl->GetYaxis()->GetNbins();
-           for(int it = 1; it <= nt; it++) {
-              nev += mctempl->GetBinContent(ir,it);
-           }//it
-        }//im
-        mctempl_frac->SetBinContent(ir,nev);
-     }//ir
 
-     // Loop over FSI params and look-up the Ereco energy range for each 
-     for(int irv = 0; irv < np; irv++) {
-        double Ereco_min = conv::kFSIParamsErecoBinEdges[irv];
-        double Ereco_max = conv::kFSIParamsErecoBinEdges[irv+1];
-        if(Ereco_min < 0 || Ereco_max < 0) continue;
-        Ereco_min += conv::kOneMeV;
-        Ereco_max -= conv::kOneMeV;
-        int ir_min = mctempl_frac->GetXaxis()->FindBin(Ereco_min);
-        int ir_max = mctempl_frac->GetXaxis()->FindBin(Ereco_max);
-        double sum = 0;
-        for(int ir = ir_min; ir <= ir_max; ir++) {
-          double n = mctempl_frac->GetBinContent(ir);
-          sum += n;
-        }//ir
-        for(int ir = ir_min; ir <= ir_max; ir++) {
-          double n = mctempl_frac->GetBinContent(ir);
-          double frac = (sum>0) ? n/sum : 0;
-          mctempl_frac->SetBinContent(ir,frac);
-        }//ir
-     }//irv
+     // First, fill the histograms as 1D Ereco spectra
+     for(int im = 0; im < knm; im++) {
+       conv::SuperkMode_t m = conv::kSKReactionModes[is][im];
+       if(m == conv::kSKmUndefined) continue;
+       TH1D * mctempl_frac = fFracTun[is][im];
+       assert(mctempl_frac);
+       // Loop over Ereco bins (MC template binning scheme)
+       int nr = mctempl_frac->GetXaxis()->GetNbins();
+       for(int ir = 1; ir <= nr; ir++) {
+	 // Loop over Etrue bins and calculate the number of events
+	 double nev = 0;
+	 const TH2D * mctempl = input_mctempl_array[is][im];
+	 assert(mctempl);
+	 int nt = mctempl->GetYaxis()->GetNbins();
+	 for(int it = 1; it <= nt; it++) {
+	   nev += mctempl->GetBinContent(ir,it);
+	 }//it
+	 mctempl_frac->SetBinContent(ir,nev);
+       }//ir
+     }//im
+
+     // Next, divide each bin by the total in that FSI bin (total is integral over Ereco & modes)
+     // Find the FSI parameter(s) that affects the given mode
+     for(int ip = 0; ip < conv::kNumOfFSIParams; ip++) {
+       conv::PhysParamId_t p = conv::kListOfFSIParams[ip];
+       // look-up the Ereco energy range for the current FSI parameter
+       double Ereco_min = conv::kFSIParamsErecoCut[ip][0];
+       double Ereco_max = conv::kFSIParamsErecoCut[ip][1];
+       if(Ereco_min < 0 || Ereco_max < 0) continue;
+       Ereco_min += conv::kOneMeV;
+       Ereco_max -= conv::kOneMeV;
+       // find the sum of the FSI bin
+       double sum = 0;
+       for(int im = 0; im < knm; im++) {
+	 conv::SuperkMode_t m = conv::kSKReactionModes[is][im];
+	 if(m == conv::kSKmUndefined) continue;
+	 // Is the current systematic parameter applied to current sample/mode end energy bin?
+	 bool apply2mode = this->ApplySystToSKMode(p,s,m);
+	 if(!apply2mode) continue;
+	 TH1D * mctempl_frac = fFracTun[is][im];
+	 int ir_min = mctempl_frac->GetXaxis()->FindBin(Ereco_min);
+	 int ir_max = mctempl_frac->GetXaxis()->FindBin(Ereco_max);
+	 for(int ir = ir_min; ir <= ir_max; ir++) {
+	   double n = mctempl_frac->GetBinContent(ir);
+	   sum += n;
+	 }//ir
+       }//im
+       // divide the FSI bin contents by the sum (make them fractional!)
+       for(int im = 0; im < knm; im++) {
+	 conv::SuperkMode_t m = conv::kSKReactionModes[is][im];
+	 bool apply2mode = this->ApplySystToSKMode(p,s,m);
+	 if(!apply2mode) continue;
+	 TH1D * mctempl_frac = fFracTun[is][im];
+	 int ir_min = mctempl_frac->GetXaxis()->FindBin(Ereco_min);
+	 int ir_max = mctempl_frac->GetXaxis()->FindBin(Ereco_max);
+	 for(int ir = ir_min; ir <= ir_max; ir++) {
+	   double n = mctempl_frac->GetBinContent(ir);
+	   double frac = (sum>0) ? n/sum : 0;
+	   mctempl_frac->SetBinContent(ir,frac);
+	 }//ir
+       }//im
+     }//ip
+
   }//is
      
 }
 //________________________________________________________________________________________
-  
+bool FSI::ApplySyst(
+  conv::PhysParamId_t p, conv::SuperkSample_t s, conv::SuperkMode_t m, double Ereco) const
+{
+  bool apply2mode = this->ApplySystToSKMode(p,s,m);
+  bool apply2bin  = this->ApplySystToEnergyBin(p,Ereco);
+  bool apply = apply2mode && apply2bin;
+  return apply;
+}
+//________________________________________________________________________________________
+bool FSI::ApplySystToSKMode(conv::PhysParamId_t p, conv::SuperkSample_t s, conv::SuperkMode_t m) const
+{
+  int idx = util::ArrIdx::Instance()->FSISystIdx(p);
+  if (idx == -1) return false;
+  int is = util::ArrIdx::Instance()->SuperkSampleIdx(s);
+  if (is == -1) return false;
+  int im = util::ArrIdx::Instance()->SuperkModeIdx(s,m);
+  if (im == -1) return false;
 
+  bool apply = conv::kFSIApplyFSIParamToSKMode[is][im][idx];
+#ifdef __show_fsi_applysyst_mesg_debug__
+  cout << apply ? "Passed" : "Failed" << "\t" << util::AsString(p) << "\t" << util::AsString(s) << "\t" << util::AsString(m) << endl;
+#endif
+  return apply;
+}
+//________________________________________________________________________________________
+bool FSI::ApplySystToEnergyBin(conv::PhysParamId_t p, double Ereco) const
+{
+  int idx = util::ArrIdx::Instance()->FSISystIdx(p);
+  if (idx == -1) return false;
+
+  bool apply = Ereco >= conv::kFSIParamsErecoCut[idx][0] &&
+               Ereco <  conv::kFSIParamsErecoCut[idx][1];
+#ifdef __show_fsi_applysyst_mesg_debug__
+  cout << apply ? "Passed" : "Failed" << "\t" << util::AsString(p) << "\t" << Ereco << endl;
+#endif
+  return apply;
+}
+//________________________________________________________________________________________

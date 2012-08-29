@@ -223,7 +223,7 @@ void SuperkExpectation::TweakSystematic(string systematic, double twkdial, bool 
 //      * fsi_00                            : tweak only FSI param 00, see Conventions.h for definition, correlations ignored (debug mode)
 //      * fsi_01                            : tweak only FSI param 01, see Conventions.h for definition, correlations ignored (debug mode)
 //      * ..     
-//      * fsi_09                            : tweak only FSI param 09, see Conventions.h for definition, correlations ignored (debug mode)
+//      * fsi_14                            : tweak only FSI param 14, see Conventions.h for definition, correlations ignored (debug mode)
 //
 // XSec
 //    - xsec_pf

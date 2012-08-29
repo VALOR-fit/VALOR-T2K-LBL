@@ -22,6 +22,13 @@
 //             - banff_00
 //             - ...
 //             - banff_35
+//      - fsi
+//             This correlated error can not be used in this test macro. Instead,
+//             you can tweak specific components of the BANFF tweaking vector (neglecting,
+//             correlation which, in the fitter, are handled using the Cholesky method). Use:
+//             - fsi_00
+//             - ...
+//             - fsi_14
 //      - xsec_pf
 //      - xsec_sf
 //      - xsec_wshape
@@ -459,6 +466,12 @@ void test_systematic_error_propagation
     skexp->TweakSystematic(systematic, skexp->GetBANFF()->BestFitValue(p) * (1 + skexp->GetBANFF()->CovMatrix()(ip,ip)));
     skexp->GetBANFF()->PrintSystematicVariations();
   }
+  else if(systematic.find("fsi_") == 0) {
+    conv::PhysParamId_t p = util::PhysParamIdFromString(systematic);
+    int ip = util::ArrIdx::Instance()->FSISystIdx(p);
+    skexp->TweakSystematic(systematic, 1 + skexp->GetFSI()->CovMatrix()(ip,ip));
+    skexp->GetFSI()->PrintSystematicVariations();
+  }
   else
     skexp->TweakSystematic(systematic,+1.);
   if(sys.find("xsec_") == 0)
@@ -591,6 +604,12 @@ void test_systematic_error_propagation
     // curr/nominal = 1 + (nsigma * x)
     skexp->TweakSystematic(systematic, skexp->GetBANFF()->BestFitValue(p) * (1 - skexp->GetBANFF()->CovMatrix()(ip,ip)));
     skexp->GetBANFF()->PrintSystematicVariations();
+  }
+  else if(systematic.find("fsi_") == 0) {
+    conv::PhysParamId_t p = util::PhysParamIdFromString(systematic);
+    int ip = util::ArrIdx::Instance()->FSISystIdx(p);
+    skexp->TweakSystematic(systematic, 1 + skexp->GetFSI()->CovMatrix()(ip,ip));
+    skexp->GetFSI()->PrintSystematicVariations();
   }
   else 
     skexp->TweakSystematic(systematic,-1.);

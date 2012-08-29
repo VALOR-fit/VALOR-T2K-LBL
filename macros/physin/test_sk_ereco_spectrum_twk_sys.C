@@ -315,16 +315,14 @@ void test_sk_ereco_spectrum_twk_sys
 	skexp.TweakSystematic("sk_1Rmu_ccqe_ring_counting_eff_2",tweak);
       }
 
-      /*
       if(mode == 0 || mode == 9) {
 	TVectorD v(conv::kNumOfFSIParams);
 	v.Zero();
 	for(int ib = 0; ib < conv::kNumOfFSIParams; ib++) {
-	  v[ib] = tweak * skexp.GetFSI()->CovMatrix()[ib][ib];
+	  v[ib] = 1 + (tweak * skexp.GetFSI()->CovMatrix()[ib][ib]);
 	}
 	skexp.GetFSI()->Tweak(true,&v);
       }
-      */
 
     }//mode<100
 

@@ -151,7 +151,12 @@ void test_systematic_error_propagation_all
   }
 
   vector<string> systematics;
-  
+
+  //systematics.push_back("fsi"); //not supported in this macro
+  for(int ib = 0; ib < conv::kNumOfFSIParams; ib++) {
+    systematics.push_back(Form("fsi_%02d",ib));
+  }
+
   //systematics.push_back("banff"); //not supported in this macro
   for(int ib = 0; ib < conv::kNumOfFluxParamsInBANFFfit; ib++) {
     systematics.push_back(Form("banff_%02d",ib));
@@ -176,20 +181,17 @@ void test_systematic_error_propagation_all
   systematics.push_back("xsec_shape_ccoth");
   systematics.push_back("xsec_pilessdelta");
   systematics.push_back("xsec_enushape");
+  //systematics.push_back("xsec_norm_ccqeE1");
+  //systematics.push_back("xsec_norm_ccqeE2");
+  //systematics.push_back("xsec_norm_cc1piE1");
 
-  /*
-  systematics.push_back("xsec_norm_ccqeE1");
-  systematics.push_back("xsec_norm_ccqeE2");
-  systematics.push_back("xsec_norm_cc1piE1");
-  */
-  
   systematics.push_back("xsec_norm_cccoh");
   systematics.push_back("xsec_norm_nc1piC");
   systematics.push_back("xsec_norm_nccoh");
   systematics.push_back("xsec_norm_ncoth");
   systematics.push_back("xsec_norm_nuetonumu");
 
-  //systematics.push_back("sk_1Rmu_ccqe_ring_counting_eff"); //not supported in the macro
+  //systematics.push_back("sk_1Rmu_ccqe_ring_counting_eff"); //not supported in this macro
   systematics.push_back("sk_1Rmu_ccqe_ring_counting_eff_0");
   systematics.push_back("sk_1Rmu_ccqe_ring_counting_eff_1");
   systematics.push_back("sk_1Rmu_ccqe_ring_counting_eff_2");
@@ -198,7 +200,7 @@ void test_systematic_error_propagation_all
   systematics.push_back("sk_1Rmu_nc_eff");
   systematics.push_back("sk_1Rmu_nuecc_eff");
   systematics.push_back("sk_energy_scale");
-  
+
   bool use_tex = true;
 
   for(int isys = 0; isys < systematics.size(); isys++) {
@@ -235,6 +237,9 @@ void test_systematic_error_propagation_all
       //spline parameters
       else
 	show_sk_spectral_info_etrue_flux_binning = true;
+    }
+    else if(systematic.find("fsi_") == 0) {
+      show_sk_ccqe_spectral_info_ereco = true;
     }
 
     //
@@ -560,6 +565,12 @@ void test_systematic_error_propagation_all
       skexp->TweakSystematic(systematic, skexp->GetBANFF()->BestFitValue(p) * (1 + skexp->GetBANFF()->CovMatrix()(ip,ip)));
       skexp->GetBANFF()->PrintSystematicVariations();
     }
+    else if(systematic.find("fsi_") == 0) {
+      conv::PhysParamId_t p = util::PhysParamIdFromString(systematic);
+      int ip = util::ArrIdx::Instance()->FSISystIdx(p);
+      skexp->TweakSystematic(systematic, 1 + skexp->GetFSI()->CovMatrix()(ip,ip));
+      skexp->GetFSI()->PrintSystematicVariations();
+    }
     else if(systematic.find("xsec_") == 0) {
       skexp->TweakSystematic(systematic,+1.);
       skexp->GetNuXSec()->PrintSystematicVariations();
@@ -724,6 +735,12 @@ void test_systematic_error_propagation_all
       // curr/nominal = 1 + (nsigma * x)
       skexp->TweakSystematic(systematic, skexp->GetBANFF()->BestFitValue(p) * (1 - skexp->GetBANFF()->CovMatrix()(ip,ip)));
       skexp->GetBANFF()->PrintSystematicVariations();
+    }
+    else if(systematic.find("fsi_") == 0) {
+      conv::PhysParamId_t p = util::PhysParamIdFromString(systematic);
+      int ip = util::ArrIdx::Instance()->FSISystIdx(p);
+      skexp->TweakSystematic(systematic, 1 - skexp->GetFSI()->CovMatrix()(ip,ip));
+      skexp->GetFSI()->PrintSystematicVariations();
     }
     else if(systematic.find("xsec_") == 0) {
       skexp->TweakSystematic(systematic,-1.);
