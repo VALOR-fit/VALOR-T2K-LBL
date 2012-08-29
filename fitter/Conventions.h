@@ -29,8 +29,8 @@ Changes since 2011_v0.9.0:
 #endif
 
 #ifndef FSI_BINS
-//#define FSI_BINS 1 // 15 bins (0-0.4, 0.4-1.1, 1.1-30.0 GeV Ereco) x (numu, numubar, nue, nuebar, oscnue)
-#define FSI_BINS 2 // 6 bins (0-0.4, 0.4-1.1, 1.1-30.0 GeV Ereco) for numu(bar)CCQE, numu(bar)CCnQE, nueCC, allNC
+#define FSI_BINS 1 // 15 bins (0-0.4, 0.4-1.1, 1.1-30.0 GeV Ereco) x (numu, numubar, nue, nuebar, oscnue)
+//#define FSI_BINS 2 // 6 bins (0-0.4, 0.4-1.1, 1.1-30.0 GeV Ereco) for numu(bar)CCQE, numu(bar)CCnQE, nueCC, allNC
 #endif
 
 #ifndef ETRUE_BINS

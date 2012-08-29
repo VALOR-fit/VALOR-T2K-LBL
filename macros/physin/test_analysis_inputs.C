@@ -70,9 +70,7 @@ void test_analysis_inputs
   }//NuXSec
 
   if(opt.Contains("FSI")) {
-    //
-    //...
-    //
+   skexp->GetFSI()->CovMatrix().Print();
   }//FSI
 }
 
