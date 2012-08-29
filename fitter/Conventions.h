@@ -29,8 +29,8 @@ Changes since 2011_v0.9.0:
 #endif
 
 #ifndef FSI_BINS
-#define FSI_BINS 1 // 15 bins (0-0.4, 0.4-1.1, 1.1-30.0 GeV Ereco) x (numu, numubar, nue, nuebar, oscnue)
-//#define FSI_BINS 2 // 6 bins (0-0.4, 0.4-1.1, 1.1-30.0 GeV Ereco) for numu(bar)CCQE, numu(bar)CCnQE, nueCC, allNC
+//#define FSI_BINS 1 // 15 bins (0-0.4, 0.4-1.1, 1.1-30.0 GeV Ereco) x (numu, numubar, nue, nuebar, oscnue)
+#define FSI_BINS 2 // 6 bins (0-0.4, 0.4-1.1, 1.1-30.0 GeV Ereco) for numu(bar)CCQE, numu(bar)CCnQE, nueCC, allNC
 #endif
 
 #ifndef ETRUE_BINS
@@ -493,13 +493,13 @@ typedef enum EPhysParamId
     * Each parameter is a scaling factor to apply at some Ereco range (to be defined) for some
     * SK reaction mode (or the total? to be defined)
     */
-#if FSI_BINS == 1
     kNuisFSI00,                // # 00, ??
     kNuisFSI01,                // # 01, ??
     kNuisFSI02,                // # 02, ??
     kNuisFSI03,                // # 03, ??
     kNuisFSI04,                // # 04, ??
     kNuisFSI05,                // # 05, ??
+#if FSI_BINS == 1
     kNuisFSI06,                // # 06, ??
     kNuisFSI07,                // # 07, ??
     kNuisFSI08,                // # 08, ??
@@ -2180,8 +2180,8 @@ static const PhysParamId_t kListOfFSIParams[kNumOfFSIParams] =
    kNuisFSI03,   // FSI
    kNuisFSI04,   // FSI
    kNuisFSI05,   // FSI
+#if FSI_BINS == 1
    kNuisFSI06,   // FSI
-   #if FSI_BINS == 1
    kNuisFSI07,   // FSI
    kNuisFSI08,   // FSI
    kNuisFSI09,   // FSI
@@ -2190,7 +2190,7 @@ static const PhysParamId_t kListOfFSIParams[kNumOfFSIParams] =
    kNuisFSI12,   // FSI
    kNuisFSI13,   // FSI
    kNuisFSI14    // FSI
-   #endif
+#endif
 };
 
 static const double kFSIParamsErecoCut[kNumOfFSIParams][2] =

@@ -797,6 +797,7 @@ string t2kana::util::AsString(PhysParamId_t p)
     case ( kNuisFSI03 ) : 
     case ( kNuisFSI04 ) : 
     case ( kNuisFSI05 ) : 
+#if FSI_BINS == 1
     case ( kNuisFSI06 ) : 
     case ( kNuisFSI07 ) : 
     case ( kNuisFSI08 ) : 
@@ -806,6 +807,7 @@ string t2kana::util::AsString(PhysParamId_t p)
     case ( kNuisFSI12 ) : 
     case ( kNuisFSI13 ) : 
     case ( kNuisFSI14 ) : 
+#endif
     {
       int ip = (int)p - (int)kNuisFSI00;
       string nutypes = "";
@@ -1021,6 +1023,7 @@ string t2kana::util::AsStringTex(PhysParamId_t p)
     case ( kNuisFSI03 ) : 
     case ( kNuisFSI04 ) : 
     case ( kNuisFSI05 ) : 
+#if FSI_BINS == 1
     case ( kNuisFSI06 ) : 
     case ( kNuisFSI07 ) : 
     case ( kNuisFSI08 ) : 
@@ -1030,6 +1033,7 @@ string t2kana::util::AsStringTex(PhysParamId_t p)
     case ( kNuisFSI12 ) : 
     case ( kNuisFSI13 ) : 
     case ( kNuisFSI14 ) : 
+#endif
     {
       string nutypes = "";
       int ip = (int)p - (int)kNuisFSI00;
@@ -1228,6 +1232,7 @@ string t2kana::util::AsStringCompact(PhysParamId_t p)
     case ( kNuisFSI03                 ) : return "f_fsi03";        break;
     case ( kNuisFSI04                 ) : return "f_fsi04";        break;
     case ( kNuisFSI05                 ) : return "f_fsi05";        break;
+#if FSI_BINS == 1
     case ( kNuisFSI06                 ) : return "f_fsi06";        break;
     case ( kNuisFSI07                 ) : return "f_fsi07";        break;
     case ( kNuisFSI08                 ) : return "f_fsi08";        break;
@@ -1237,6 +1242,7 @@ string t2kana::util::AsStringCompact(PhysParamId_t p)
     case ( kNuisFSI12                 ) : return "f_fsi12";        break;
     case ( kNuisFSI13                 ) : return "f_fsi13";        break;
     case ( kNuisFSI14                 ) : return "f_fsi14";        break;
+#endif
 
     default : 
       return "--";
@@ -1840,6 +1846,7 @@ t2kana::conv::PhysParamId_t
   if(sh == "fsi_03") return kNuisFSI03;
   if(sh == "fsi_04") return kNuisFSI04;
   if(sh == "fsi_05") return kNuisFSI05;
+#if FSI_BINS == 1
   if(sh == "fsi_06") return kNuisFSI06;
   if(sh == "fsi_07") return kNuisFSI07;
   if(sh == "fsi_08") return kNuisFSI08;
@@ -1849,6 +1856,7 @@ t2kana::conv::PhysParamId_t
   if(sh == "fsi_12") return kNuisFSI12;
   if(sh == "fsi_13") return kNuisFSI13;
   if(sh == "fsi_14") return kNuisFSI14;
+#endif
 
   cout << sh << " not yet supported in util::PhysParamIdFromString()" << endl;
   return kPhypUndefined;
@@ -2201,6 +2209,7 @@ bool t2kana::util::IsSystematic(PhysParamId_t p)
     case ( kNuisFSI03                 ) : return true;  break;
     case ( kNuisFSI04                 ) : return true;  break;
     case ( kNuisFSI05                 ) : return true;  break;
+#if FSI_BINS == 1
     case ( kNuisFSI06                 ) : return true;  break;
     case ( kNuisFSI07                 ) : return true;  break;
     case ( kNuisFSI08                 ) : return true;  break;
@@ -2210,6 +2219,7 @@ bool t2kana::util::IsSystematic(PhysParamId_t p)
     case ( kNuisFSI12                 ) : return true;  break;
     case ( kNuisFSI13                 ) : return true;  break;
     case ( kNuisFSI14                 ) : return true;  break;
+#endif
 
     default : 
       return false;
