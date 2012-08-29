@@ -1068,9 +1068,9 @@ string t2kana::util::AsStringTex(PhysParamId_t p)
         case (kNuisFSI02) :
 	  nutypes = "$\\nu_\\mu$/$\\bar{\\nu_\\mu}$ CCQE"; break;
         case (kNuisFSI03) :
-	  nutypes = "\\nu_\\mu$/$\\bar{\\nu_\\mu}$ CCnQE"; break;
+	  nutypes = "$\\nu_\\mu$/$\\bar{\\nu_\\mu}$ CCnQE"; break;
         case (kNuisFSI04) :
-	  nutypes = "\\nu_e$/$\\bar{\\nu_e}/sig$\\nu_e$ CC"; break;
+	  nutypes = "$\\nu_e$/$\\bar{\\nu_e}$/sig$\\nu_e$ CC"; break;
         case (kNuisFSI05) :
 	  nutypes = "all NC"; break;
         default : nutypes = "--";
