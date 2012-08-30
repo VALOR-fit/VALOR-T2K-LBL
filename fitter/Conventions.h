@@ -134,7 +134,7 @@ static const double kMaxFitSinsqTheta12      = 1.00;
 //
 // Other constants
 //
-static const double kMaxAllowedWght = 1E+3;                          // Complain if any computed weights exceeds this value
+static const double kMaxAllowedWght = 2E+3;                          // Complain if any computed weights exceeds this value
 static const double kASmallNum      = 1E-10;                         // 
 static const double kOneMeV         = 0.001;                         // 
 static const double kBaseline       = 295;                           // Tokai->Kamioka (km)

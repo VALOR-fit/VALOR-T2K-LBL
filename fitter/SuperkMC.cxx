@@ -15,6 +15,7 @@
 
 #define __show_init_mesg_info__
 #define __show_init_mesg_debug__
+//#define __show_init_mesg_debug2__
 #define __show_update_mesg_info__
 //#define __show_hypothesis__ 
 //#define __show_hypothesis_probabilities__ 
@@ -387,10 +388,16 @@ void SuperkMC::FillTemplate(SuperkSample_t s, SuperkMode_t m)
      this -> Template(s,m,kSKMCtSys) -> Fill (fBrEreco/1000., fBrEtrue, pot_wght);
      this -> Template(s,m,kSKMCtFin) -> Fill (fBrEreco/1000., fBrEtrue, pot_wght);
 
+#ifdef __show_init_mesg_debug__
      if(fBrEtrue <= 0 || fBrEtrue >= this->Template(s,m,kSKMCtOri)->GetYaxis()->GetBinUpEdge(this->Template(s,m,kSKMCtOri)->GetNbinsY()))
        cout << "Exp/SKMC/CreateTemplate >> Etrue is out of template range " << AsString(s) << " " << AsString(m) << " " << fBrEtrue << endl;
-     if(fBrEreco/1000 <= 0 || fBrEreco/1000 >= this->Template(s,m,kSKMCtOri)->GetXaxis()->GetBinUpEdge(this->Template(s,m,kSKMCtOri)->GetNbinsX()))
+#ifdef __show_init_mesg_debug2__
+     if(fBrEreco/1000 <= 0)
        cout << "Exp/SKMC/CreateTemplate >> Ereco is out of template range " << AsString(s) << " " << AsString(m) << " " << fBrEreco/1000 << endl;
+#endif
+     if(fBrEreco/1000 >= this->Template(s,m,kSKMCtOri)->GetXaxis()->GetBinUpEdge(this->Template(s,m,kSKMCtOri)->GetNbinsX()))
+       cout << "Exp/SKMC/CreateTemplate >> Ereco is out of template range " << AsString(s) << " " << AsString(m) << " " << fBrEreco/1000 << endl;
+#endif
 
   }//iev
 

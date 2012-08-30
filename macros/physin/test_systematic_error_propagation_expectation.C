@@ -142,14 +142,14 @@ test_systematic_error_propagation_expectation(
     systematic = Form("banff %d",i);
     streamer << setw(ncol1)  << setfill(' ') << systematic << endcolumn
 	     << setw(ncolnev)  << setfill(' ') << setprecision(nprecisionnev)
-	     << BANFFCovMtrx(i,i) * 100 << pctsymbol;
+	     << sqrt(BANFFCovMtrx(i,i)) * 100 << pctsymbol;
     streamer << endrow << endl;
   }
   for (int i = 0; i < conv::kNumOfFSIParams; i++) {
     systematic = Form("fsi %d",i);
     streamer << setw(ncol1)  << setfill(' ') << systematic << endcolumn
 	     << setw(ncolnev)  << setfill(' ') << setprecision(nprecisionnev)
-	     << FSICovMtrx(i,i) * 100 << pctsymbol;
+	     << sqrt(FSICovMtrx(i,i)) * 100 << pctsymbol;
     streamer << endrow << endl;
   }
   systematic = "Norm CCQE E1";

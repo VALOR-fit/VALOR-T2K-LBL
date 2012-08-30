@@ -25,7 +25,7 @@ void test_sk_ereco_spectrum_twk_fsi
 
   conv::SuperkSample_t s = conv::kSKsFCFV1RingMuLike;
 
-  const int nexp = 10; // number of FSI param tweaks
+  const int nexp = 2; // number of FSI param tweaks
 
   // Analysis configuration
   const char * config  = Form("%s/config/%s", gSystem->Getenv("T2KOSCANA"), config_file);
@@ -87,7 +87,7 @@ void test_sk_ereco_spectrum_twk_fsi
        // use 0^th entry to store the untweaked SK reco energy spectrum
        skexp.TweakSystematic("fsi");       
      }
-     skexp.PrintSystematicVariations();
+     skexp.GetFSI()->PrintSystematicVariations();
      // generate predictions
      skexp.Generate(ph);
      // store spectrum
@@ -105,14 +105,14 @@ void test_sk_ereco_spectrum_twk_fsi
     double sumsq = 0;
     for(int iexp = 1; iexp < nexp; iexp++) {
        double N = hEreco[iexp]->GetBinContent(ibin);
-       sumsq += TMath::Power(N-nom,2);	
+       sumsq += TMath::Power(N-nom,2);
     }//iexp
     double sig = TMath::Sqrt(sumsq/(nexp-1));
     double min = nom-sig;
     double max = nom+sig; 
     if(nom>0){
-      hErecoMax -> SetBinContent (ibin,  (max-nom)/nom);
-      hErecoMin -> SetBinContent (ibin,  (min-nom)/nom);
+      hErecoMax -> SetBinContent (ibin, (max-nom)/nom);
+      hErecoMin -> SetBinContent (ibin, (min-nom)/nom);
     }
   }//ibin
   hErecoMax->GetYaxis()->SetRangeUser(-2,2);
@@ -125,8 +125,6 @@ void test_sk_ereco_spectrum_twk_fsi
 
   for(int iparam = 0; iparam < conv::kNumOfFSIParams; iparam++)
   {
-       conv::PhysParamId_t p = conv::kListOfFSIParams[iparam];
-
        //
        // init
        //
@@ -142,29 +140,49 @@ void test_sk_ereco_spectrum_twk_fsi
        // tweak current param only by +100% - neglect correlations
        //
        cout << "- Tweaking param by +100%" << endl;
-       skexp.TweakSystematic(p_str, 1 + skexp.GetFSI()->CovMatrix()[iparam][iparam]);
-       skexp.PrintSystematicVariations();
+       skexp.TweakSystematic(p_str, 1 + (1 * sqrt(skexp.GetFSI()->CovMatrix()[iparam][iparam])));
+       skexp.GetFSI()->PrintSystematicVariations();
        // generate predictions
        skexp.Generate(ph);
        // store spectrum
        hErecoRatio1EtrueBinVarMax[iparam] = new TH1D(*skexp.CurrPredictedErecoSpectrum(s));
        hErecoRatio1EtrueBinVarMax[iparam]->SetDirectory(0);
        hErecoRatio1EtrueBinVarMax[iparam]->SetTitle(Form("FSI_%d, +100 percent change",iparam));
-       hErecoRatio1EtrueBinVarMax[iparam]->Divide(hEreco[0]);
+       //divide in such a way that 0/0=1
+       Int_t binx;
+       Double_t c0,c1,w;
+       for (binx=0;binx<=hErecoRatio1EtrueBinVarMax[iparam]->GetNbinsX()+1;binx++) {
+	 c0  = hErecoRatio1EtrueBinVarMax[iparam]->GetBinContent(binx);
+	 c1  = hEreco[0]->GetBinContent(binx);
+	 if (c1) w = c0/c1;
+	 else if(!c1 && !c0) w=1;
+	 else    w = 0;
+	 hErecoRatio1EtrueBinVarMax[iparam]->SetBinContent(binx,w);
+       }
+       //hErecoRatio1EtrueBinVarMax[iparam]->Divide(hEreco[0]);
 
        //
        // tweak current param only by -100% - neglect correlations
        //
        cout << "- Tweaking by -100%" << endl;
-       skexp.TweakSystematic(p_str, 1 - skexp.GetFSI()->CovMatrix()[iparam][iparam]);  
-       skexp.PrintSystematicVariations();
+       skexp.TweakSystematic(p_str, 1 + (-1 * sqrt(skexp.GetFSI()->CovMatrix()[iparam][iparam])));  
+       skexp.GetFSI()->PrintSystematicVariations();
        // generate predictions
        skexp.Generate(ph);
        // store spectrum
        hErecoRatio1EtrueBinVarMin[iparam] = new TH1D(*skexp.CurrPredictedErecoSpectrum(s));
        hErecoRatio1EtrueBinVarMin[iparam]->SetDirectory(0);
        hErecoRatio1EtrueBinVarMin[iparam]->SetTitle(Form("FSI_%d, -100 percent change",iparam));
-       hErecoRatio1EtrueBinVarMin[iparam]->Divide(hEreco[0]);
+       //divide in such a way that 0/0=1
+       for (binx=0;binx<=hErecoRatio1EtrueBinVarMin[iparam]->GetNbinsX()+1;binx++) {
+	 c0  = hErecoRatio1EtrueBinVarMin[iparam]->GetBinContent(binx);
+	 c1  = hEreco[0]->GetBinContent(binx);
+	 if (c1) w = c0/c1;
+	 else if(!c1 && !c0) w=1;
+	 else    w = 0;
+	 hErecoRatio1EtrueBinVarMin[iparam]->SetBinContent(binx,w);
+       }
+       //hErecoRatio1EtrueBinVarMin[iparam]->Divide(hEreco[0]);
   }
 
   //
@@ -191,7 +209,10 @@ void test_sk_ereco_spectrum_twk_fsi
   hErecoMin->Draw("same");
   c->Update();
   TCanvas * c2 = new TCanvas("c2","",20,20,500,500);
-  c2->Divide(2,5);
+  if(conv::kNumOfFSIParams == 6)
+    c2->Divide(2,3);
+  else
+    c2->Divide(3,5);
   c2->Update();
   for(int iparam = 0; iparam < conv::kNumOfFSIParams; iparam++)
   {
@@ -200,6 +221,9 @@ void test_sk_ereco_spectrum_twk_fsi
      hErecoRatio1EtrueBinVarMin[iparam]->SetLineColor(kRed);
      hErecoRatio1EtrueBinVarMax[iparam]->Draw();
      hErecoRatio1EtrueBinVarMin[iparam]->Draw("same");
+     double min = TMath::Min(hErecoRatio1EtrueBinVarMin[iparam]->GetMinimum(), hErecoRatio1EtrueBinVarMax[iparam]->GetMinimum());
+     double max = TMath::Max(hErecoRatio1EtrueBinVarMin[iparam]->GetMaximum(), hErecoRatio1EtrueBinVarMax[iparam]->GetMaximum());
+     hErecoRatio1EtrueBinVarMax[iparam]->GetYaxis()->SetRangeUser(1-((1-min)*1.1),1+((max-1)*1.1));
   }
   
   // Write-out in file

@@ -638,7 +638,7 @@ double NuXSec::SystWght_1p(
 	 << " Bins are Ereco,Etrue = " << ireco << "," << itrue << " =>"
 	 << " Weight [" << util::AsString(p) << "] = " << wght
 	 << " Current value = " << this->CurrentValue(p)
-	 << endl;   
+	 << endl;
     exit(1);
   }
 

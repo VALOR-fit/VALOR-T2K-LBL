@@ -26,7 +26,7 @@ modes1 = [0,1,2,3,4,5,6,7,8,9] #combinations
 modes2 = range(100,139) #banff
 modes3 = range(200,214) #unconstranied xsec
 modes4 = range(300,308) #sk detector
-modes5 = range(400,415) #fsi
+modes5 = range(400,414) #fsi
 
 modes = modes1 + modes2 + modes3 + modes4 + modes5
 
@@ -44,8 +44,7 @@ for osc in oscparams:
 
         command = 'root2k -l -b -q \'$T2KOSCANA/macros/physin/test_sk_ereco_spectrum_twk_sys.C('+str(mode)+','+update+',"3f_osc",'+str(osc[0])+','+str(osc[1])+','+str(osc[2])+','+str(osc[3])+','+str(osc[4])+','+str(osc[5])+','+str(emax)+',"'+conffile+'")\''
         print command
-        os.system(command)
+        if os.system(command) == 1:
+            sys.exit(1)
         if update == "false":
             update = "true"
-
-

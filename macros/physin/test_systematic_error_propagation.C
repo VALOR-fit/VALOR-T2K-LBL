@@ -463,13 +463,13 @@ void test_systematic_error_propagation
     conv::PhysParamId_t p = util::PhysParamIdFromString(systematic);
     int ip = util::ArrIdx::Instance()->BANFFSystIdx(p);
     // curr/nominal = 1 + (nsigma * x)
-    skexp->TweakSystematic(systematic, skexp->GetBANFF()->BestFitValue(p) * (1 + skexp->GetBANFF()->CovMatrix()(ip,ip)));
+    skexp->TweakSystematic(systematic, skexp->GetBANFF()->BestFitValue(p) + (1 * sqrt(skexp->GetBANFF()->CovMatrix()(ip,ip))));
     skexp->GetBANFF()->PrintSystematicVariations();
   }
   else if(systematic.find("fsi_") == 0) {
     conv::PhysParamId_t p = util::PhysParamIdFromString(systematic);
     int ip = util::ArrIdx::Instance()->FSISystIdx(p);
-    skexp->TweakSystematic(systematic, 1 + skexp->GetFSI()->CovMatrix()(ip,ip));
+    skexp->TweakSystematic(systematic, 1 + (1 * sqrt(skexp->GetFSI()->CovMatrix()(ip,ip))));
     skexp->GetFSI()->PrintSystematicVariations();
   }
   else
@@ -602,13 +602,13 @@ void test_systematic_error_propagation
     conv::PhysParamId_t p = util::PhysParamIdFromString(systematic);
     int ip = util::ArrIdx::Instance()->BANFFSystIdx(p);
     // curr/nominal = 1 + (nsigma * x)
-    skexp->TweakSystematic(systematic, skexp->GetBANFF()->BestFitValue(p) * (1 - skexp->GetBANFF()->CovMatrix()(ip,ip)));
+    skexp->TweakSystematic(systematic, skexp->GetBANFF()->BestFitValue(p) + (-1 * sqrt(skexp->GetBANFF()->CovMatrix()(ip,ip))));
     skexp->GetBANFF()->PrintSystematicVariations();
   }
   else if(systematic.find("fsi_") == 0) {
     conv::PhysParamId_t p = util::PhysParamIdFromString(systematic);
     int ip = util::ArrIdx::Instance()->FSISystIdx(p);
-    skexp->TweakSystematic(systematic, 1 + skexp->GetFSI()->CovMatrix()(ip,ip));
+    skexp->TweakSystematic(systematic, 1 + (-1 * sqrt(skexp->GetFSI()->CovMatrix()(ip,ip))));
     skexp->GetFSI()->PrintSystematicVariations();
   }
   else 

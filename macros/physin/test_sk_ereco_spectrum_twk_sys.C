@@ -12,9 +12,10 @@
 //   3 tweak all BANFF xsec
 //   4 tweak all unconstrained xsec
 //   5 tweak all xsec (BANFF + unconstrained)
-//   6 tweak all sk detector
+//   6 tweak all sk detector (without energy scale)
 //   7 tweak all sk ccqe ring counting efficiency
-//   8 tweak all fsi
+//   8 tweak all sk detector
+//   9 tweak all fsi
 //
 // 100 tweak banff00
 // 101 tweak banff01
@@ -146,10 +147,10 @@ void test_sk_ereco_spectrum_twk_sys
       modetitle = "sk_1Rmu_ccqe_ring_counting_eff_2"; break;
 
     default:
-      if(mode >= 100 && mode <= 100+conv::kNumOfParamsInBANFFfit) {
+      if(mode >= 100 && mode < 100+conv::kNumOfParamsInBANFFfit) {
 	modetitle = Form("banff_%02d",mode-100); break;
       }
-      else if(mode >= 400 && mode <= 400+conv::kNumOfFSIParams) {
+      else if(mode >= 400 && mode < 400+conv::kNumOfFSIParams) {
 	modetitle = Form("fsi_%02d",mode-400); break;
       }
       else {
@@ -254,29 +255,32 @@ void test_sk_ereco_spectrum_twk_sys
 
     if(mode < 100) {
 
+      //all BANFF
       if(mode == 0 || mode == 1) {
 	TVectorD v(conv::kNumOfParamsInBANFFfit);
 	v = skexp.GetBANFF()->BestFitValues();
 	for(int ib = 0; ib < conv::kNumOfParamsInBANFFfit; ib++) {
-	  v[ib] = skexp.GetBANFF()->BestFitValues()[ib] + (tweak * skexp.GetBANFF()->CovMatrix()[ib][ib]);
+	  v[ib] = skexp.GetBANFF()->BestFitValues()[ib] + (tweak * sqrt(skexp.GetBANFF()->CovMatrix()[ib][ib]));
 	}
 	skexp.GetBANFF()->Tweak(true,&v);
       }
 
+      //BANFF flux only
       if(mode == 2) {
 	TVectorD v(conv::kNumOfParamsInBANFFfit);
 	v = skexp.GetBANFF()->BestFitValues();
 	for(int ib = 0; ib < conv::kNumOfFluxParamsInBANFFfit; ib++) {
-	  v[ib] = skexp.GetBANFF()->BestFitValues()[ib] + (tweak * skexp.GetBANFF()->CovMatrix()[ib][ib]);
+	  v[ib] = skexp.GetBANFF()->BestFitValues()[ib] + (tweak * sqrt(skexp.GetBANFF()->CovMatrix()[ib][ib]));
 	}
 	skexp.GetBANFF()->Tweak(true,&v);
       }
 
+      //BANFF xsec only
       if(mode == 3 || mode == 5) {
 	TVectorD v(conv::kNumOfParamsInBANFFfit);
 	v = skexp.GetBANFF()->BestFitValues();
 	for(int ib = conv::kNumOfFluxParamsInBANFFfit; ib < conv::kNumOfParamsInBANFFfit; ib++) {
-	  v[ib] = skexp.GetBANFF()->BestFitValues()[ib] + (tweak * skexp.GetBANFF()->CovMatrix()[ib][ib]);
+	  v[ib] = skexp.GetBANFF()->BestFitValues()[ib] + (tweak * sqrt(skexp.GetBANFF()->CovMatrix()[ib][ib]));
 	}
 	skexp.GetBANFF()->Tweak(true,&v);
       }
@@ -301,7 +305,7 @@ void test_sk_ereco_spectrum_twk_sys
       }
 
       if(mode == 0 || mode == 6 || mode == 8) {
-	if(mode == 0 || mode == 9)
+	if(mode == 0 || mode == 8)
 	  skexp.TweakSystematic("sk_energy_scale",tweak);
 	skexp.TweakSystematic("sk_1Rmu_ccqe_other_eff",tweak);
 	skexp.TweakSystematic("sk_1Rmu_ccnonqe_eff",tweak);
@@ -319,7 +323,7 @@ void test_sk_ereco_spectrum_twk_sys
 	TVectorD v(conv::kNumOfFSIParams);
 	v.Zero();
 	for(int ib = 0; ib < conv::kNumOfFSIParams; ib++) {
-	  v[ib] = 1 + (tweak * skexp.GetFSI()->CovMatrix()[ib][ib]);
+	  v[ib] = 1 + (tweak * sqrt(skexp.GetFSI()->CovMatrix()[ib][ib]));
 	}
 	skexp.GetFSI()->Tweak(true,&v);
       }
@@ -376,19 +380,21 @@ void test_sk_ereco_spectrum_twk_sys
 	  skexp.TweakSystematic("sk_1Rmu_ccqe_ring_counting_eff_2",tweak); break;
 
         default:
-	  if(mode >= 100 && mode <= 100+conv::kNumOfParamsInBANFFfit) {
+	  if(mode >= 100 && mode < 100+conv::kNumOfParamsInBANFFfit) {
 	    TVectorD v(conv::kNumOfParamsInBANFFfit);
 	    v = skexp.GetBANFF()->BestFitValues();
 	    int ib = mode - 100;
-	    v[ib] = skexp.GetBANFF()->BestFitValues()[ib] + (tweak * skexp.GetBANFF()->CovMatrix()[ib][ib]);
+	    v[ib] = skexp.GetBANFF()->BestFitValues()[ib] + (tweak * sqrt(skexp.GetBANFF()->CovMatrix()[ib][ib]));
 	    skexp.GetBANFF()->Tweak(true,&v);
 	    break;
 	  }
-	  else if(mode >= 400 && mode <= 400+conv::kNumOfFSIParams) {
+	  else if(mode >= 400 && mode < 400+conv::kNumOfFSIParams) {
 	    TVectorD v(conv::kNumOfFSIParams);
-	    v.Zero();
+	    for (int ipf = 0; ipf < conv::kNumOfFSIParams; ipf++) {
+	      v[ipf] = 1;
+	    }
 	    int ib = mode - 400;
-	    v[ib] = tweak * skexp.GetFSI()->CovMatrix()[ib][ib];
+	    v[ib] = 1 + (tweak * sqrt(skexp.GetFSI()->CovMatrix()[ib][ib]));
 	    skexp.GetFSI()->Tweak(true,&v);
 	    break;
 	  }
@@ -450,10 +456,13 @@ void test_sk_ereco_spectrum_twk_sys
   //
   double nsk_0 = hErecoNominal->Integral(1,hErecoNominal->GetNbinsX());
   double nsk_p  = hEreco[1]->Integral(1,hEreco[1]->GetNbinsX());
-  double nsk_m  = hEreco[2]->Integral(1,hEreco[1]->GetNbinsX());
+  double nsk_m  = hEreco[2]->Integral(1,hEreco[2]->GetNbinsX());
   double frac_nsk_p = (nsk_0 > 0) ? 100.*(nsk_p - nsk_0) / nsk_0 : 0.;
   double frac_nsk_m = (nsk_0 > 0) ? 100.*(nsk_m - nsk_0) / nsk_0 : 0.;
 
+  cout << endl << "Nominal number of events: " << nsk_0 << endl
+       << "   +1 sigma:              " << nsk_p << "\t" << frac_nsk_p << "%" << endl
+       << "   -1 sigma:              " << nsk_m << "\t" << frac_nsk_m << "%" << endl;
   if(mode>=100) {
     TH1D * summary_p = 0, * summary_m = 0;
     summary_p = f.GetObject("summary_p",summary_p);
