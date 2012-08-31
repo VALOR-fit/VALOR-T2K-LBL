@@ -11,7 +11,7 @@ void test_n_mock_data_fits
 (
   const char * tag                     = "toyexptfits",                  /* tag for output file */
   int          run                     = 0,                              /* run number */
-  int          nexperiments            = 1000,                           /* number of toy MC experiment fits */
+  int          nexperiments            = 2,                           /* number of toy MC experiment fits */
   double       input_mixing12          = 0.86,                           /* 12-mixing, sinq2theta or sinsqtheta depending on user choice, if -999 then randomize */
   double       input_mixing13          = 0.10,                           /* 13-mixing, sinq2theta or sinsqtheta depending on user choice, if -999 then randomize */
   double       input_mixing23          = 1.00,                           /* 23-mixing, sinq2theta or sinsqtheta depending on user choice */
@@ -85,7 +85,7 @@ void test_n_mock_data_fits
 
   // Create ntuple to store oscillation fit results
   TNtupleD * nfitnt = new TNtupleD("nfitnt","",
-     "iexp:bestfit_mixing12:bestfit_mixing13:bestfit_mixing23:bestfit_deltacp:bestfit_dm12sq:bestfit_dm23sq:chisq:fitstatus:input_mixing12:input_mixing13:input_mixing23:input_deltacp:input_dm12sq:input_dm23sq");
+     "iexp:bestfit_mixing12:bestfit_mixing13:bestfit_mixing23:bestfit_deltacp:bestfit_dm12sq:bestfit_dm23sq:bestfit_chisq:fitstatus:input_mixing12:input_mixing13:input_mixing23:input_deltacp:input_dm12sq:input_dm23sq");
 
   // Loop over toy-MC experiments
   for(int iexperiment = 0; iexperiment < nexperiments; iexperiment++) {
@@ -153,7 +153,7 @@ void test_n_mock_data_fits
      fparm->ResetCurrToInitValues(); // reset osc params
      fitter->DoTheFit();
      int fitstatus = fitter->FitStatusCode();
-     bestfit_chisq = fit_inputs->BestFitChisquare();
+     double bestfit_chisq = fit_inputs->BestFitChisquare();
 
      // Print-out best-fit params
      fparm->ShowOnlyBestFitValuesInNextPrint();
@@ -168,7 +168,7 @@ void test_n_mock_data_fits
      double bestfit_deltacp  = -1;
      double bestfit_dm12sq   = -1;
      double bestfit_dm23sq   = -1;
-     double bestfit_chisq    = -1;
+
      if(hyp == kHypOsc3F) {
         bestfit_mixing12 = fparm->BestFitValue(kPhypMixing12);
         bestfit_mixing13 = fparm->BestFitValue(kPhypMixing13);
