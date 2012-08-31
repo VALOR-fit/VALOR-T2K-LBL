@@ -21,7 +21,7 @@ void test_analysis_inputs
   cout << "Reading analysis configuration from: " << config << endl;
 
   SuperkExpectation * skexp = new SuperkExpectation;
-  skexp.Read(config);
+  skexp->Read(config);
 
   // energy range and binning
   const double Emin  = 0;

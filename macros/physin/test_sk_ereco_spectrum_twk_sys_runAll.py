@@ -22,7 +22,7 @@ It will then create the .root, *.png, in the current working directory
 conffile = "analysis_configuration.xml"
 emax = 7
 
-modes1 = [0,1,2,3,4,5,6,7,8,9] #combinations
+modes1 = [0,1,2,3,4,5,6,7,8,9,10] #combinations
 modes2 = range(100,139) #banff
 modes3 = range(200,214) #unconstranied xsec
 modes4 = range(300,308) #sk detector
@@ -32,7 +32,7 @@ modes = modes1 + modes2 + modes3 + modes4 + modes5
 
 oscparams = [] #fill with oscillation parameters, in order mixing12, theta13, theta23, deltacp, dmsq12, dmsq23hypothesis
 oscparams.append([-99, -99, -99, -99, -99, -99]) #use global best fits!
-#oscparams.append([  0,   0,   0,   0,   0,   0]) #no oscillations!
+oscparams.append([  0,   0,   0,   0,   0,   0]) #no oscillations!
 #oscparams.append([0.86, 0.1,  1,  0,  7.58E-5,  2.32E-3])
 #oscparams.append([0.86, 0,    1,  0,  7.58E-5,  2.32E-3])
 

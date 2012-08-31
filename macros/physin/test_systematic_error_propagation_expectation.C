@@ -47,8 +47,11 @@ test_systematic_error_propagation_expectation(
   TMatrixD *BANFFCovMtrx = 
     util::XML2TMatrixD(xml,root_node,
       "banff/covariance_matrix");
+  TVectorD *BANNFBestFit =
+    util::XML2TVectorD(xml,root_node,
+      "banff/best_fit_values");
 
-  //BANFF
+  //FSI
   TMatrixD *FSICovMtrx = 
     util::XML2TMatrixD(xml,root_node,
       "fsi/covariance_matrix");
@@ -140,9 +143,10 @@ test_systematic_error_propagation_expectation(
 	   << endrow << endl;
   for (int i = 0; i < conv::kNumOfParamsInBANFFfit; i++) {
     systematic = Form("banff %d",i);
+#line 0
     streamer << setw(ncol1)  << setfill(' ') << systematic << endcolumn
 	     << setw(ncolnev)  << setfill(' ') << setprecision(nprecisionnev)
-	     << sqrt(BANFFCovMtrx(i,i)) * 100 << pctsymbol;
+	     << sqrt(BANFFCovMtrx(i,i)) * 100 / BANNFBestFit(i) << pctsymbol;
     streamer << endrow << endl;
   }
   for (int i = 0; i < conv::kNumOfFSIParams; i++) {
