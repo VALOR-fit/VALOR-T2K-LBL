@@ -11,7 +11,7 @@ void test_n_mock_data_fits
 (
   const char * tag                     = "toyexptfits",                  /* tag for output file */
   int          run                     = 0,                              /* run number */
-  int          nexperiments            = 2,                           /* number of toy MC experiment fits */
+  int          nexperiments            = 1000,                           /* number of toy MC experiment fits */
   double       input_mixing12          = 0.86,                           /* 12-mixing, sinq2theta or sinsqtheta depending on user choice, if -999 then randomize */
   double       input_mixing13          = 0.10,                           /* 13-mixing, sinq2theta or sinsqtheta depending on user choice, if -999 then randomize */
   double       input_mixing23          = 1.00,                           /* 23-mixing, sinq2theta or sinsqtheta depending on user choice */
