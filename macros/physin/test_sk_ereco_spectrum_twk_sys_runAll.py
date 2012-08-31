@@ -26,13 +26,13 @@ modes1 = [0,1,2,3,4,5,6,7,8,9,10] #combinations
 modes2 = range(100,139) #banff
 modes3 = range(200,214) #unconstranied xsec
 modes4 = range(300,308) #sk detector
-modes5 = range(400,414) #fsi
+modes5 = range(400,415) #fsi
 
 modes = modes1 + modes2 + modes3 + modes4 + modes5
 
 oscparams = [] #fill with oscillation parameters, in order mixing12, theta13, theta23, deltacp, dmsq12, dmsq23hypothesis
+#oscparams.append([  0,   0,   0,   0,   0,   0]) #no oscillations!
 oscparams.append([-99, -99, -99, -99, -99, -99]) #use global best fits!
-oscparams.append([  0,   0,   0,   0,   0,   0]) #no oscillations!
 #oscparams.append([0.86, 0.1,  1,  0,  7.58E-5,  2.32E-3])
 #oscparams.append([0.86, 0,    1,  0,  7.58E-5,  2.32E-3])
 
@@ -48,3 +48,25 @@ for osc in oscparams:
             sys.exit(1)
         if update == "false":
             update = "true"
+
+"""
+new TCanvas();
+categories_p->Draw();
+categories_m->Draw("same");
+categories_p->GetYaxis()->SetRangeUser(-100,100);
+categories_p->SetTitle("");
+categories_p->GetXaxis()->SetLabelSize(0.03); 
+categories_m->SetLineColor(kBlue);
+TLine line_c(0,0,categories_p->GetNbinsX(),0);
+line_c->Draw();
+new TCanvas();
+summary_p->Draw();
+summary_m->Draw("same");
+summary_p->GetYaxis()->SetRangeUser(-10,10);
+summary_p->SetTitle("");
+summary_p->GetXaxis()->SetLabelSize(0.03); 
+summary_m->SetLineColor(kBlue);
+TLine line_s(0,0,summary_p->GetNbinsX(),0);
+line_s->Draw();
+
+"""
