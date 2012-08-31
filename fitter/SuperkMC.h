@@ -109,6 +109,12 @@ private:
   // Debug method, prints out some number of events, and also saves templates & spectra
   void NevDebug(conv::SKMCTemplateType_t t, string name);
 
+  // Looks to see if there are any events for the given Etrue in the sample
+  bool IsThereAnEvent(conv::SuperkSample_t s, double Etrue) const;
+
+  // Integrate current MC templates and get Etrue spectra (needed for applying physics hypothesis)
+  void FillEtrueSpectra(void);
+
   //
   // Private data members
   //
@@ -123,6 +129,7 @@ private:
   TH2D *     fMCTemplFin[kns][knm];        ///< Ereco-Etrue MC template(sample,mode): nominal + ext/tuning + nd280/tuning + systematics + physics hypothesis
   TH1D *     fMCErecoSpectrum[kns][knm];   ///< Ereco MC spectrum (sample,mode)     : nominal + ext/tuning + nd280/tuning + systematics + physics hypothesis
   TH1D *     fMCErecoSpectrumTot[kns];     ///< Ereco MC spectrum (sample)          : nominal + ext/tuning + nd280/tuning + systematics + physics hypothesis
+  TH1D *     fMCEtrueSpectrumTot[kns];     ///< Etrue MC spectrum (sample)          : nominal
 
   // input event trees and normalisation factors
   TTree*     fMCTreeNuMu1Rmu;              ///< input MC event tree /  sample: numu                         / cuts: 1-ring mu-like 

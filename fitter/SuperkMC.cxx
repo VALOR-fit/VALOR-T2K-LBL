@@ -22,6 +22,7 @@
 //#define __show_syst_var_wght_mesg_debug__ 
 //#define __show_spectra_update_mesg_debug__ 
 //#define __show_skipped_templates__ 
+//#define __show_isanevent_mesg_debug__
 //#define __save_templates_debug__   // saves to files, and cout's number of events, at various stages of applying tunes to the templates:
 // 1 number of events
 // 2 number of events, weighted by pot & mc normalisation
@@ -76,6 +77,7 @@ void SuperkMC::Init(void)
 
   for(int is=0; is<kns; is++) {
     fMCErecoSpectrumTot[is] = 0;
+    fMCEtrueSpectrumTot[is] = 0;
     for(int im=0; im<knm; im++) {
       fMCTemplOri      [is][im] = 0;
       fMCTemplNom      [is][im] = 0;
@@ -246,6 +248,9 @@ bool SuperkMC::Read(TXMLEngine* xml, XMLNodePointer_t root_node)
   // apply flux and cross-section tuning (based on nd280 data fit by BANFF) to templates
   this->ApplyBANFFTuningToTemplates();
 
+  // fill the etrue spectra
+  this->FillEtrueSpectra();
+
 #ifdef __save_templates_debug__
   this->NevDebug(kSKMCtTun, "mcnorm_fluxtuned_banfftuned");
 #endif
@@ -274,6 +279,10 @@ void SuperkMC::Book(void)
      fMCErecoSpectrumTot[is] -> SetDirectory(0);
      fMCErecoSpectrumTot[is]->SetLineWidth(2);
      fMCErecoSpectrumTot[is]->SetLineColor(kBlack);
+     fMCEtrueSpectrumTot[is] = new TH1D("","", kNEtrueBins, kEtrueBinEdges);
+     fMCEtrueSpectrumTot[is] -> SetDirectory(0);
+     fMCEtrueSpectrumTot[is]->SetLineWidth(2);
+     fMCEtrueSpectrumTot[is]->SetLineColor(kBlack);
      for(int im=0; im < knm; im++) 
      {
        SuperkMode_t m = kSKReactionModes[is][im];
@@ -895,6 +904,9 @@ void SuperkMC::ApplyPhysHypothesisToTemplates(void)
 
         // calculate oscillation probabilities (incl. matter effects) for the current Etrue value
         double Etrue = etrue_axis->GetBinCenter(it);
+	// skip unnecessary calculations
+	bool bin_is_not_empty = this->IsThereAnEvent(s, Etrue);
+	if(!bin_is_not_empty) continue;
 
         double p_numu_numu       = fNuOsc3Flavour.CalcMatterOscProb(kPdgNuMu,    kPdgNuMu,    Etrue);
         double p_numubar_numubar = fNuOsc3Flavour.CalcMatterOscProb(kPdgNuMuBar, kPdgNuMuBar, Etrue);
@@ -1091,6 +1103,63 @@ void SuperkMC::UpdateErecoSpectra(void)
     }//ir
   }//is
 }
+//________________________________________________________________________________________
+void SuperkMC::FillEtrueSpectra(void)
+{
+  // loop over samples
+  for(int is = 0; is < kns; is++) {
+    SuperkSample_t s = kSKSamples[is];
+    if(s == kSKsUndefined) continue;
+    TH1D * true_spectrum_tot = fMCEtrueSpectrumTot[is];
+
+    // loop over Etrue
+    for(int it = 1; it <= true_spectrum_tot->GetNbinsX(); it++) {
+       double nev_tot = 0;
+
+       // loop over modes
+       for(int im = 0; im < knm; im++) { 
+          SuperkMode_t m = kSKReactionModes[is][im];
+          if(m == kSKmUndefined) continue;
+          // consider template?
+          bool skip = this->SkipTemplate(m);
+          if(skip) continue;
+
+          TH2D * mctempl = this -> Template(s,m,kSKMCtOri);
+ 
+          // loop over Ereco
+          double nev = 0;
+          for(int ir = 1; ir <= mctempl->GetXaxis()->GetNbins(); ir++) {
+             nev += mctempl->GetBinContent(ir,it);
+          }//ir
+          nev_tot += nev;
+       }//im
+       true_spectrum_tot->SetBinContent(it,nev_tot);
+    }//it
+  }//is
+}
+//________________________________________________________________________________________
+bool SuperkMC::IsThereAnEvent(SuperkSample_t s, double Etrue) const
+{
+  int is = util::ArrIdx::Instance()->SuperkSampleIdx(s);
+  assert(is != -1);
+
+  TH1D * true_spectrum_tot = fMCEtrueSpectrumTot[is];
+  assert(true_spectrum_tot);
+
+  int it = true_spectrum_tot->GetXaxis()->FindBin(Etrue);
+
+  bool ev = true_spectrum_tot->GetBinContent(it) > kASmallNum;
+
+#ifdef __show_isanevent_mesg_debug__
+  if(ev)
+    cout << "Exp/SuperkMC >> There are " << true_spectrum_tot->GetBinContent(it)
+	 << " events for sample = " << util::AsString(s) 
+	 << ", Etrue = " << Etrue
+	 << endl;
+#endif
+
+  return ev;
+} 
 //________________________________________________________________________________________
 double SuperkMC::AnalyzedSamplePOT(void) const
 {

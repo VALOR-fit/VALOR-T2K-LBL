@@ -41,7 +41,7 @@ Changes since 2011_v0.9.0:
 
 #ifndef ERECO_BINS_1RMU
 #define ERECO_BINS_1RMU 1 // DEFAULT 50 MeV binning 0-30 GeV
-//#define ERECO_BINS_1RMU 2 // 50 MeV bins in 0-3 GeV, 200 MeV bins in 3-4 GeV, 500 MeV bins in 4-6 GeV, 1000 MeV bins > 6 GeV (73 bins)
+//#define ERECO_BINS_1RMU 2 // 50 MeV bins in 0-3 GeV, 200 MeV bins in 3-4 GeV, 500 MeV bins in 4-6 GeV, 1000 MeV bins 6-10 GeV, 1 bin 10-30 GeV (74 bins)
 //#define ERECO_BINS_1RMU 3 // 50 MeV bins in 0-3 GeV, 100 MeV bins in 3-3.5 GeV, Variable bins > 3.5 GeV (70 bins)
 //#define ERECO_BINS_1RMU 4 // 50 MeV bins in 0-1.25 GeV, 1 bin from 1.25-3 GeV, 1 bin from 3-10 GeV, 1 bin from 10-30 GeV (28 bins)
 #endif
@@ -2961,8 +2961,9 @@ static const double kErecoBinEdges1Rmu[kNErecoBins1Rmu+1] =
 // -   50 MeV bins in 0-3 GeV
 // -  200 MeV bins in 3-4 GeV
 // -  500 MeV bins in 4-6 GeV
-// - 1000 MeV bins > 6 GeV
-static const int kNErecoBins1Rmu = 73;
+// - 1000 MeV bins 6-10 GeV
+// - 1 bin 10-30 GeV
+static const int kNErecoBins1Rmu = 74;
 static const double kErecoBinEdges1Rmu[kNErecoBins1Rmu+1] = 
 {
    0.000,  0.050,  0.100,  0.150,  0.200,  0.250,  0.300,  0.350,  0.400,  0.450, 
@@ -2973,7 +2974,7 @@ static const double kErecoBinEdges1Rmu[kNErecoBins1Rmu+1] =
    2.500,  2.550,  2.600,  2.650,  2.700,  2.750,  2.800,  2.850,  2.900,  2.950, 
    3.000,  3.200,  3.400,  3.600,  3.800,
    4.000,  4.500,  5.000,  5.500,  
-   6.000,  7.000,  8.000,  9.000, 10.000
+   6.000,  7.000,  8.000,  9.000, 10.000, 30.000
 };
 #elif ERECO_BINS_1RMU == 3
 // Fewer bins at higher energies for improved speed
