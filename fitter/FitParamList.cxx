@@ -271,6 +271,14 @@ FitParamList * FitParamList::NamedParameterList(string name)
     fp -> FixParameter (kPhypDm12sq);
     return fp;
   }
+  if(name == "nuosc3f_numudisapp_fix4+nuisance") {
+    FitParamList * fp = FitParamList::NuOsc3FlavourFitWithAllSyst();
+    fp -> FixParameter (kPhypMixing13);
+    fp -> FixParameter (kPhypMixing12);
+    fp -> FixParameter (kPhypDeltaCP);
+    fp -> FixParameter (kPhypDm12sq);
+    return fp;
+  }
   if(name == "nuosc3f_nueapp_fix4") {
     FitParamList * fp = FitParamList::NuOsc3FlavourFit();
     fp -> FixParameter (kPhypMixing23);

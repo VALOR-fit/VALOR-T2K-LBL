@@ -64,6 +64,9 @@ public:
   // Print systematic parameters
   void PrintSystematicVariations (void) const;
 
+  // Get current value of systematic params handled by this class
+  double CurrentValue (conv::PhysParamId_t p) const;
+
   // Access the elements of the ring counting matrix
   const TMatrixD & Eff1RmuCCQERCCovarRelErr (void) const { return *fEff1RmuCCQERCCovarRelErr; }
   const TMatrixD & Eff1RmuCCQERCInvCovarRelErr (void) const { return *fEff1RmuCCQERCInvCovarRelErr; }

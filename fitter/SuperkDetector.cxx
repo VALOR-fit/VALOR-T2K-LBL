@@ -523,3 +523,36 @@ double SuperkDetector::EnergyScale(SuperkSample_t s, SuperkMode_t m) const
   return scale;
 }
 //________________________________________________________________________________________
+double SuperkDetector::CurrentValue(PhysParamId_t p) const
+{
+  switch(p) {
+    case kNuisSuperkEnergyScale:
+      return fEnergyScaleTwkDial;
+      break;
+    case kNuisSuperkEff1RmuCCQEoth:
+      return fEff1RmuCCQEOthTwkDial;
+      break;
+    case kNuisSuperkEff1RmuCCQErc0u:
+      return fEff1RmuCCQERC0TwkDial;
+      break;
+    case kNuisSuperkEff1RmuCCQErc1u:
+      return fEff1RmuCCQERC1TwkDial;
+      break;
+    case kNuisSuperkEff1RmuCCQErc2u:
+      return fEff1RmuCCQERC2TwkDial;
+      break;
+    case kNuisSuperkEff1RmuCCnonQE:
+      return fEff1RmuCCnonQETwkDial;
+      break;
+    case kNuisSuperkEff1RmuNC:
+      return fEff1RmuNCTwkDial;
+      break;
+    case kNuisSuperkEff1RmuNueCC:
+      return fEff1RmuNuECCTwkDial;
+      break;
+    default:
+      return 0;
+  }
+  return 0;
+}
+//________________________________________________________________________________________

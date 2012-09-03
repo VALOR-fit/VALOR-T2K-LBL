@@ -652,15 +652,17 @@ static const SuperkMode_t kSKReactionModes[kns][knm] = {
 // 1Rmu : 57 nuisance params
 //   - 1 SK E scale 
 //   - 7 SK efficiencies (3 CCQE-RC, CCQE-Oth, CCnonQE, NC, nue CC) 
-//   - 27 BANFF
-//   - 12 XSec
+//   - 31 BANFF flux
+//   - 8 BANFF XSec 
+//   - 6 XSec parameters treated with splines
+//   - 5 XSec normalisations
 //   - 15 FSI
 // 1Re :
 //   -
 // Joint :
 //   -
 //
-static const int kNumOfNuisanceParams1Rmu  = 57;  
+static const int kNumOfNuisanceParams1Rmu  = 73;  
 static const int kNumOfNuisanceParams1Re   = 0;  // not implemented for 2012a yet
 static const int kNumOfNuisanceParamsJoint = 0;  // not implemented for 2012a yet
 
