@@ -36,8 +36,8 @@ import ROOT
 #EDM, STRATEGY, ERR MATRIX STATUS
 #PARAM: value, err, step size, first derivative
 #refit
-#com = 'grep \"FCN=.*\..* FROM MIGRAD\|EDM\|1  sinsq2theta23\|2  sinsq2theta13\|3  sinsq2theta12\|4  delta_cp\|5  |dm23sq|\|6  dm12sq\|refit\" '
-com = 'grep \"FCN=.*\..* FROM MIGRAD\|EDM\|^   [0-9]  \|^  [0-9][0-9]  \|refit\" --with-filename '
+#com = 'grep \"FCN=[0-9].* FROM MIGRAD\|EDM\|1  sinsq2theta23\|2  sinsq2theta13\|3  sinsq2theta12\|4  delta_cp\|5  |dm23sq|\|6  dm12sq\|refit\" '
+com = 'grep \"FCN=[0-9].* FROM MIGRAD\|EDM\|^   [0-9]  \|^  [0-9][0-9]  \|refit\" --with-filename '
 com = com + sys.argv[1]
 com = com +  ' >> tempfile.txt'
 print com
@@ -114,6 +114,7 @@ f = open('tempfile.txt', 'r')
 for line in f:
     #this is always the starting line of a block we want to save.
     if 'FCN' in line:
+        print line
         #fill the tree, unless 1st line of file or refit line found above.
         if filltree:
             t.Fill()
@@ -175,17 +176,17 @@ for line in f:
         else:
             errtemp = temp[6].split()
             err[0] = float(errtemp[1])
-    elif 'sinsq2theta23' in line:
+    elif 'sin^2(2*theta_23)' in line:
         holder = GetParamValues(line)
         #sinsq2theta23 = GetParamValues(line) doesn't fill the tree correctly.
         # no idea why... so need to do the following
         for i in xrange(4):
             sinsq2theta23[i] = holder[i]
-    elif 'sinsq2theta13' in line:
+    elif 'sin^2(2*theta_13)' in line:
         holder = GetParamValues(line)
         for i in xrange(4):
             sinsq2theta13[i] = holder[i]
-    elif 'sinsq2theta12' in line:
+    elif 'sin^2(2*theta_12)' in line:
         holder = GetParamValues(line)
         for i in xrange(4):
             sinsq2theta12[i] = holder[i]
@@ -193,11 +194,11 @@ for line in f:
         holder = GetParamValues(line)
         for i in xrange(4):
             delta_cp[i] = holder[i]
-    elif 'dm23sq' in line:
+    elif '|Dm^2_32|' in line:
         holder = GetParamValues(line)
         for i in xrange(4):
             dm23sq[i] = holder[i]
-    elif 'dm12sq' in line:
+    elif 'Dm^2_12' in line:
         holder = GetParamValues(line)
         for i in xrange(4):
             dm12sq[i] = holder[i]
