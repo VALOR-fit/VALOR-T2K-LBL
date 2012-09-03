@@ -7,6 +7,27 @@
 // ------------------------------------------------------------------------------------------------
 //
 
+/*
+#include <string>
+#include <sstream>
+#include <cstdlib>
+#include <TSystem.h>
+#include <TH1D.h>
+#include <TRandom3.h>
+#include <TObject.h>
+#include <TNtupleD.h>
+
+#include "Conventions.h"
+#include "SuperkExpectation.h"
+#include "FitParamList.h"
+#include "Utilities.h"
+#include "SuperkObservation.h"
+#include "FitInputs.h"
+#include "FitterABC.h"
+#include "Opt.h"
+#include "Superk1RmuErecoFitter.h"
+*/
+
 void test_n_mock_data_fits
 (
   const char * tag                     = "toyexptfits",                  /* tag for output file */
