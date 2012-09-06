@@ -92,6 +92,9 @@ public:
   //
   TH2D * Template(conv::SuperkSample_t s, conv::SuperkMode_t m) const;
 
+  // Penalty term included in the chisq if NuXSec nuisance terms are included in the fit
+  double ChisqPenalty(void) const;
+
 private:
 
   void Init    (void);
@@ -117,6 +120,7 @@ private:
 
   //
   bool IsThereAnEvent       (conv::SuperkSample_t s, conv::SuperkMode_t m, double Ereco, double Etrue) const;
+  int  HowManyEvents        (conv::SuperkSample_t s, conv::SuperkMode_t m, double Ereco, double Etrue) const;
   
   //
   // Private data members

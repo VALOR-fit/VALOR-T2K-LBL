@@ -14,7 +14,7 @@
 //________________________________________________________________________________________
 
 //#define __show_bin_contributions_to_chisq__
-//#define __show_contributions_to_penalty_term__
+#define __show_contributions_to_penalty_term__
 //#define __show_chisq__
 
 #include <cassert>
@@ -181,8 +181,8 @@ double FitInputs::ChisquarePenaltyTerm(void)
   // list and were marked as nuisance parameters.
   //
   bool incl_banff_penalty = true;
-  const int np = conv::kNumOfParamsInBANFFfit;
-  for(int ip = 0; ip < np; ip++) {
+  const int np_banff = conv::kNumOfParamsInBANFFfit;
+  for(int ip = 0; ip < np_banff; ip++) {
      PhysParamId_t p = PhysParamId_t ( (int) kNuisBANFF00 + ip );
      incl_banff_penalty = incl_banff_penalty && 
        (this->FitParams().Exists(p) && this->FitParams().IsNuisance(p));
@@ -193,7 +193,7 @@ double FitInputs::ChisquarePenaltyTerm(void)
     chisq_penalty += dchisq_penalty;
 #ifdef __show_contributions_to_penalty_term__
       cout << "FitInputs::ChisquarePenaltyTerm >> Current BANFF param variation"
-           << " => \delta\chi^2_{penalty} = " << dchisq_penalty << endl;
+           << " => \\delta\\chi^2_{penalty} = " << dchisq_penalty << endl;
 #endif
   }
 
@@ -201,8 +201,7 @@ double FitInputs::ChisquarePenaltyTerm(void)
   // Add penalty term for SuperkDetector params
   // First check all the parms considered by SuperkDetector are included in the fit
   // param list and set as nuisance
-  // ...
-
+  //
   bool incl_skdet_penalty = true;
   int np_skdet = 8; // 7 eff + energy scale
   for(int ip = 0; ip < np_skdet; ip++) {
@@ -216,7 +215,7 @@ double FitInputs::ChisquarePenaltyTerm(void)
     chisq_penalty += dchisq_penalty;
 #ifdef __show_contributions_to_penalty_term__
     cout << "FitInputs::ChisquarePenaltyTerm >> Current variation of params considered by SuperkDetector"
-         << " => \delta\chi^2_{penalty} = " << dchisq_penalty << endl;
+         << " => \\delta\\chi^2_{penalty} = " << dchisq_penalty << endl;
 #endif
   }
 
@@ -224,12 +223,48 @@ double FitInputs::ChisquarePenaltyTerm(void)
   //
   // Add penalty term for NuXSec params (other than the ones incl. in BANFF)
   //
-  // ...
+  bool incl_xsec_penalty = true;
+#if BANFF_Bins != 2
+  int np_xsec = 11;
+#else
+  int np_xsec = 14;
+#endif
+  for(int ip = 0; ip < np_xsec; ip++) {
+    PhysParamId_t p = PhysParamId_t ( (int) kNuisXSecFermiMom  + ip );
+    incl_xsec_penalty = incl_xsec_penalty &&
+      (this->FitParams().Exists(p) && this->FitParams().IsNuisance(p));
+    if(!incl_xsec_penalty) break;
+  }
+  if(incl_xsec_penalty) {
+    double dchisq_penalty = this->Expectation().GetNuXSec()->ChisqPenalty();
+    chisq_penalty += dchisq_penalty;
+#ifdef __show_contributions_to_penalty_term__
+    cout << "FitInputs::ChisquarePenaltyTerm >> Current variation of params considered by NuXSec"
+         << " => \\delta\\chi^2_{penalty} = " << dchisq_penalty << endl;
+#endif
+  }
+
 
   //
   // Add penalty term for FSI params 
   //
-  // ...
+  bool incl_fsi_penalty = true;
+  const int np_fsi = conv::kNumOfFSIParams;
+  for(int ip = 0; ip < np_fsi; ip++) {
+     PhysParamId_t p = PhysParamId_t ( (int) kNuisFSI00 + ip );
+     incl_fsi_penalty = incl_fsi_penalty && 
+       (this->FitParams().Exists(p) && this->FitParams().IsNuisance(p));
+     if(!incl_fsi_penalty) break;
+  }
+  if(incl_fsi_penalty) {
+    double dchisq_penalty = this->Expectation().GetFSI()->ChisqPenalty();
+    chisq_penalty += dchisq_penalty;
+#ifdef __show_contributions_to_penalty_term__
+      cout << "FitInputs::ChisquarePenaltyTerm >> Current FSI param variation"
+           << " => \\delta\\chi^2_{penalty} = " << dchisq_penalty << endl;
+#endif
+  }
+
 
   //
   // Add penalty term for marginalised oscillation parameters.
@@ -261,7 +296,7 @@ double FitInputs::ChisquarePenaltyTerm(void)
 #ifdef __show_contributions_to_penalty_term__
     cout << "FitInputs::ChisquarePenaltyTerm >> mixing23 = " << mix
          << " (nominal = " << nom << ", error = " << err << ", twk = " << twk << ")"
-         << " => \delta\chi^2_{penalty} = " << dchisq_penalty << endl;
+         << " => \\delta\\chi^2_{penalty} = " << dchisq_penalty << endl;
 #endif
   }//mix23
 
@@ -290,7 +325,7 @@ double FitInputs::ChisquarePenaltyTerm(void)
 #ifdef __show_contributions_to_penalty_term__
      cout << "FitInputs::ChisquarePenaltyTerm >> mixing13 = " << mix
           << " (nominal = " << nom << ", error = " << err << ", twk = " << twk << ")"
-          << " => \delta\chi^2_{penalty} = " << dchisq_penalty << endl;
+          << " => \\delta\\chi^2_{penalty} = " << dchisq_penalty << endl;
 #endif
   }//mix13
 
@@ -320,7 +355,7 @@ double FitInputs::ChisquarePenaltyTerm(void)
 #ifdef __show_contributions_to_penalty_term__
      cout << "FitInputs::ChisquarePenaltyTerm >> mixing12 = " << mix
           << " (nominal = " << nom << ", error = " << err << ", twk = " << twk << ")"
-          << " => \delta\chi^2_{penalty} = " << dchisq_penalty << endl;
+          << " => \\delta\\chi^2_{penalty} = " << dchisq_penalty << endl;
 #endif
   }//mix12
 
@@ -336,7 +371,7 @@ double FitInputs::ChisquarePenaltyTerm(void)
 #ifdef __show_contributions_to_penalty_term__
      cout << "FitInputs::ChisquarePenaltyTerm >> dm12sq = " << dmsq
           << " (nominal = " << nom << ", error = " << err << ", twk = " << twk << ")"
-          << " => \delta\chi^2_{penalty} = " << dchisq_penalty << endl;
+          << " => \\delta\\chi^2_{penalty} = " << dchisq_penalty << endl;
 #endif
   }//dm12sq
 
@@ -352,7 +387,7 @@ double FitInputs::ChisquarePenaltyTerm(void)
 #ifdef __show_contributions_to_penalty_term__
       cout << "FitInputs::ChisquarePenaltyTerm >> |dm23sq| = " << dmsq
            << " (nominal = " << nom << ", error = " << err << ", twk = " << twk << ")"
-           << " => \delta\chi^2_{penalty} = " << dchisq_penalty << endl;
+           << " => \\delta\\chi^2_{penalty} = " << dchisq_penalty << endl;
 #endif
   }//dm23sq
 

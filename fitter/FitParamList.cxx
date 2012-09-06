@@ -17,10 +17,13 @@
 #include <cstdlib>
 #include <iostream>
 #include <iomanip>
+#include <math.h>
 
 #include "FitParamList.h"
 #include "Utilities.h"
 #include "Opt.h"
+
+#include <TSystem.h>
 
 using std::cout;
 using std::cerr;
@@ -458,44 +461,86 @@ void FitParamList::AppendSystematics(FitParamList * fparm, int start)
 
   int ip = start; // first unallocated element in the param list
 
+  int nsigma = 3; // number of sigma away from nominal nuisance parameters are allowed to be
+
+  //    Get the covariance matrices & best fits of FSI & BANFF from xml, 
+  //    to have something sensible to initialise to
+  // Parse the input XML configuration file
+  const char * config_file = Form("%s/config/%s", gSystem->Getenv("T2KOSCANA"), "analysis_configuration.xml");
+  TXMLEngine* xml = new TXMLEngine;   
+  XMLDocPointer_t xmldoc = xml->ParseFile(config_file);
+  if (xmldoc==0) {
+    cerr << "Exp >> " << "Can not parse input: " << config_file << endl;
+    delete xml;
+    exit(1);  
+  }
+  // Get BANFF fit central values
+  XMLNodePointer_t root_node = xml->DocGetRootElement(xmldoc);
+  TVectorD * BANFFBestFitValues = util::XML2TVectorD(xml,root_node,"banff/best_fit_values");
+  if(!BANFFBestFitValues) {
+    cerr << "FitParamList/AppendSystematics >> No BANFF best-fit parameter vector was found." << endl;
+    exit(1);
+  }
+  const TVectorD & BANFFBestFit = *BANFFBestFitValues;
+  // Get BANFF fit covariance matrix
+  TMatrixD * BANFFCovMtrx = util::XML2TMatrixD(xml,root_node,"banff/covariance_matrix");
+  if(!BANFFCovMtrx) {
+    cerr << "FitParamList/AppendSystematics >> No BANFF covariance matrix was found." << endl;
+    exit(1);
+  }
+  const TMatrixD & BANFFCov = *BANFFCovMtrx;
+  // Get FSI covariance matrix
+  TMatrixD * FSICovMtrx = util::XML2TMatrixD(xml,root_node,"fsi/covariance_matrix");
+  if(!FSICovMtrx) {
+    cerr << "FitParamList/AppendSystematics >> No FSI covariance matrix was found." << endl;
+    exit(1);
+  }
+  const TMatrixD & FSICov = *FSICovMtrx;
+  // Release memory
+  xml->FreeDoc(xmldoc);
+  delete xml;
+
   // SK detector
-  fparm->AddParam( ip++, kNuisSuperkEff1RmuCCQEoth,  0.0, -1.0, 1.0, 1E-1,  false, true);
-  fparm->AddParam( ip++, kNuisSuperkEff1RmuCCQErc0u, 0.0, -1.0, 1.0, 1E-1,  false, true);
-  fparm->AddParam( ip++, kNuisSuperkEff1RmuCCQErc1u, 0.0, -1.0, 1.0, 1E-1,  false, true);
-  fparm->AddParam( ip++, kNuisSuperkEff1RmuCCQErc2u, 0.0, -1.0, 1.0, 1E-1,  false, true);
-  fparm->AddParam( ip++, kNuisSuperkEff1RmuCCnonQE,  0.0, -1.0, 1.0, 1E-1,  false, true);
-  fparm->AddParam( ip++, kNuisSuperkEff1RmuNC,       0.0, -1.0, 1.0, 1E-1,  false, true);
-  fparm->AddParam( ip++, kNuisSuperkEff1RmuNueCC,    0.0, -1.0, 1.0, 1E-1,  false, true);
-  fparm->AddParam( ip++, kNuisSuperkEnergyScale,     0.0, -1.0, 1.0, 1E-1,  false, true);
+  fparm->AddParam( ip++, kNuisSuperkEff1RmuCCQEoth,  0.0, -1.0*nsigma, 1.0*nsigma, 5E-1,  false, true);
+  fparm->AddParam( ip++, kNuisSuperkEff1RmuCCQErc0u, 0.0, -1.0*nsigma, 1.0*nsigma, 5E-1,  false, true);
+  fparm->AddParam( ip++, kNuisSuperkEff1RmuCCQErc1u, 0.0, -1.0*nsigma, 1.0*nsigma, 5E-1,  false, true);
+  fparm->AddParam( ip++, kNuisSuperkEff1RmuCCQErc2u, 0.0, -1.0*nsigma, 1.0*nsigma, 5E-1,  false, true);
+  fparm->AddParam( ip++, kNuisSuperkEff1RmuCCnonQE,  0.0, -1.0*nsigma, 1.0*nsigma, 5E-1,  false, true);
+  fparm->AddParam( ip++, kNuisSuperkEff1RmuNC,       0.0, -1.0*nsigma, 1.0*nsigma, 5E-1,  false, true);
+  fparm->AddParam( ip++, kNuisSuperkEff1RmuNueCC,    0.0, -1.0*nsigma, 1.0*nsigma, 5E-1,  false, true);
+  fparm->AddParam( ip++, kNuisSuperkEnergyScale,     0.0, -1.0*nsigma, 1.0*nsigma, 5E-1,  false, true);
 
   // BANFF 
   for(int i = 0; i < kNumOfParamsInBANFFfit; i++) {
     PhysParamId_t p = PhysParamId_t ((int) kNuisBANFF00 + i);
-    fparm->AddParam(ip++, p,  1.0,  0.5,  1.5,  1E-1,  false, true);
+    double bf = BANFFBestFit[i];
+    double err = sqrt(BANFFCov[i][i]);
+    fparm->AddParam(ip++, p, bf, bf-(err*nsigma), bf+(err*nsigma),  err/2,  false, true);
   }
 
   // XSec
-  fparm->AddParam( ip++, kNuisXSecFermiMom,      0.0, -1.0, 1.0, 1E-1,  false, true);
-  fparm->AddParam( ip++, kNuisXSecSpecFunc,      0.0, -1.0, 1.0, 1E-1,  false, true);
-  fparm->AddParam( ip++, kNuisXSecWshape,        0.0, -1.0, 1.0, 1E-1,  false, true);
-  fparm->AddParam( ip++, kNuisXSecShapeCCoth,    0.0, -1.0, 1.0, 1E-1,  false, true);
-  fparm->AddParam( ip++, kNuisXSecPiLessDelta,   0.0, -1.0, 1.0, 1E-1,  false, true);
-  fparm->AddParam( ip++, kNuisXSecENuShape,      0.0, -1.0, 1.0, 1E-1,  false, true);
+  fparm->AddParam( ip++, kNuisXSecFermiMom,      0.0, -1.0*nsigma, 1.0*nsigma, 5E-1,  false, true);
+  fparm->AddParam( ip++, kNuisXSecSpecFunc,      0.0, -1.0*nsigma, 1.0*nsigma, 5E-1,  false, true);
+  fparm->AddParam( ip++, kNuisXSecWshape,        0.0, -1.0*nsigma, 1.0*nsigma, 5E-1,  false, true);
+  fparm->AddParam( ip++, kNuisXSecShapeCCoth,    0.0, -1.0*nsigma, 1.0*nsigma, 5E-1,  false, true);
+  fparm->AddParam( ip++, kNuisXSecPiLessDelta,   0.0, -1.0*nsigma, 1.0*nsigma, 5E-1,  false, true);
+  fparm->AddParam( ip++, kNuisXSecENuShape,      0.0, -1.0*nsigma, 1.0*nsigma, 5E-1,  false, true);
 #if BANFF_Bins != 2
-  fparm->AddParam( ip++, kNuisXSecNormCCQEE1,    0.0, -1.0, 1.0, 1E-1,  false, true);
-  fparm->AddParam( ip++, kNuisXSecNormCCQEE2,    0.0, -1.0, 1.0, 1E-1,  false, true);
-  fparm->AddParam( ip++, kNuisXSecNormCC1piE1,   0.0, -1.0, 1.0, 1E-1,  false, true);
+  fparm->AddParam( ip++, kNuisXSecNormCCQEE1,    0.0, -1.0*nsigma, 1.0*nsigma, 5E-1,  false, true);
+  fparm->AddParam( ip++, kNuisXSecNormCCQEE2,    0.0, -1.0*nsigma, 1.0*nsigma, 5E-1,  false, true);
+  fparm->AddParam( ip++, kNuisXSecNormCC1piE1,   0.0, -1.0*nsigma, 1.0*nsigma, 5E-1,  false, true);
 #endif
-  fparm->AddParam( ip++, kNuisXSecNormCCcoh,     0.0, -1.0, 1.0, 1E-1,  false, true);
-  fparm->AddParam( ip++, kNuisXSecNormNC1piC,    0.0, -1.0, 1.0, 1E-1,  false, true);
-  fparm->AddParam( ip++, kNuisXSecNormNCcoh,     0.0, -1.0, 1.0, 1E-1,  false, true);
-  fparm->AddParam( ip++, kNuisXSecNormNCoth,     0.0, -1.0, 1.0, 1E-1,  false, true);
-  fparm->AddParam( ip++, kNuisXSecNormNuEToNuMu, 0.0, -1.0, 1.0, 1E-1,  false, true);
+  fparm->AddParam( ip++, kNuisXSecNormCCcoh,     0.0, -1.0*nsigma, 1.0*nsigma, 5E-1,  false, true);
+  fparm->AddParam( ip++, kNuisXSecNormNC1piC,    0.0, -1.0*nsigma, 1.0*nsigma, 5E-1,  false, true);
+  fparm->AddParam( ip++, kNuisXSecNormNCcoh,     0.0, -1.0*nsigma, 1.0*nsigma, 5E-1,  false, true);
+  fparm->AddParam( ip++, kNuisXSecNormNCoth,     0.0, -1.0*nsigma, 1.0*nsigma, 5E-1,  false, true);
+  fparm->AddParam( ip++, kNuisXSecNormNuEToNuMu, 0.0, -1.0*nsigma, 1.0*nsigma, 5E-1,  false, true);
 
   // FSI
   for(int i = 0; i < kNumOfFSIParams; i++) {
     PhysParamId_t p = PhysParamId_t ((int) kNuisFSI00 + i);
-    fparm->AddParam(ip++, p,  1.0,  0.5,  1.5,  1E-1,  false, true);
+    double err = sqrt(FSICov[i][i]);
+    fparm->AddParam(ip++, p,  1.0, 1.0-(err*nsigma), 1.0+(err*nsigma),  err/2,  false, true);
   }
 
 }

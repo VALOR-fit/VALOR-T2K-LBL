@@ -195,6 +195,21 @@ bool NuXSec::ReadSplines(TXMLEngine* xml, XMLNodePointer_t root_node)
 		  }
 		}
 
+#ifndef __skip_unexpected_spline_test_in_readsplines__
+		string spln(spl->GetTitle());
+		spln.erase(spln.end()-7,spln.end());
+		int nevents_spl = atoi(spln.c_str());
+		int nevents_hist = this->HowManyEvents(s, m, Ereco, Etrue);
+		if(nevents_spl != nevents_hist) {
+		  cerr << "Exp/NuXSec >> Spline and histogram disagree on number of events! "
+		       << "Spline thinks there are: " << nevents_spl
+		       << ", Histogram thinks there are: " << nevents_hist
+		       << "; " << splname.str()
+		       << "; Ereco: " << Ereco << ", Etrue: " << Etrue << endl;
+		  exit(1);
+		}
+#endif	
+
                 // Get index for current weight spline
                 int idx = this->WghtSplineIdx(p,s,m,Ereco,Etrue);     
 //		if(idx == -2) {
@@ -213,6 +228,8 @@ bool NuXSec::ReadSplines(TXMLEngine* xml, XMLNodePointer_t root_node)
 #ifdef __show_init_mesg_debug__
                 cout << "Exp/NuXSec >> Storing cross-section weight spline at slot: " 
                      << idx << endl;
+		cout << "Exp/NuXSec >> Splines thinks there are " 
+		     << spl->GetTitle() << endl;
 #endif
                 fXSecWghtSpl[idx] = new TSpline3(*spl);
 
@@ -1033,6 +1050,33 @@ bool NuXSec::IsThereAnEvent(SuperkSample_t s, SuperkMode_t m, double Ereco, doub
   return ev;
 } 
 //________________________________________________________________________________________
+int NuXSec::HowManyEvents(SuperkSample_t s, SuperkMode_t m, double Ereco, double Etrue) const
+{
+  int is = util::ArrIdx::Instance()->SuperkSampleIdx(s);
+  int im = util::ArrIdx::Instance()->SuperkModeIdx(s,m);
+  assert(is != -1 && im != -1);
+
+  TH2D * mctempl_xsbinning = fXsBinningTempl[is][im];
+  assert(mctempl_xsbinning);
+
+  int ir = mctempl_xsbinning->GetXaxis()->FindBin(Ereco);
+  int it = mctempl_xsbinning->GetYaxis()->FindBin(Etrue);
+
+  int ev = (int)mctempl_xsbinning->GetBinContent(ir,it);
+
+#ifdef __show_isanevent_mesg_debug__
+  if(ev)
+    cout << "Exp/NuXSec >> There are " << ev
+	 << " events for sample = " << util::AsString(s) 
+	 << ", mode = " << util::AsString(m)
+	 << ", Etrue = " << Etrue
+	 << ", Ereco = " << Ereco
+	 << endl;
+#endif
+
+  return ev;
+} 
+//________________________________________________________________________________________
 TH2D * NuXSec::Template(SuperkSample_t s, SuperkMode_t m) const
 {
   int sidx = util::ArrIdx::Instance()->SuperkSampleIdx(s);
@@ -1049,5 +1093,31 @@ TH2D * NuXSec::Template(SuperkSample_t s, SuperkMode_t m) const
   assert(h);
 
   return h;
+}
+//________________________________________________________________________________________
+double NuXSec::ChisqPenalty(void) const
+{
+  //only contains the contributions from the non-BANFF xsec parameters
+
+  double chisq_penalty = 0;
+
+  if (fFermiMomTwkDial) chisq_penalty += fFermiMomTwkDial*fFermiMomTwkDial;
+  if (fSpecFuncTwkDial) chisq_penalty += fSpecFuncTwkDial*fSpecFuncTwkDial;
+  if (fWshapeTwkDial) chisq_penalty += fWshapeTwkDial*fWshapeTwkDial;
+  if (fShapeCCothTwkDial) chisq_penalty += fShapeCCothTwkDial*fShapeCCothTwkDial;
+  if (fPiLessDeltaTwkDial) chisq_penalty += fPiLessDeltaTwkDial*fPiLessDeltaTwkDial;
+  if (fENuShapeTwkDial) chisq_penalty += fENuShapeTwkDial*fENuShapeTwkDial;
+#if BANFF_Bins != 2
+  if (fNormCCQEE1TwkDial) chisq_penalty += fNormCCQEE1TwkDial*fNormCCQEE1TwkDial;
+  if (fNormCCQEE2TwkDial) chisq_penalty += fNormCCQEE2TwkDial*fNormCCQEE2TwkDial;
+  if (fNormCC1piE1TwkDial) chisq_penalty += fNormCC1piE1TwkDial*fNormCC1piE1TwkDial;
+#endif
+  if (fNormCCcohTwkDial) chisq_penalty += fNormCCcohTwkDial*fNormCCcohTwkDial;
+  if (fNormNC1piCTwkDial) chisq_penalty += fNormNC1piCTwkDial*fNormNC1piCTwkDial;
+  if (fNormNCcohTwkDial) chisq_penalty += fNormNCcohTwkDial*fNormNCcohTwkDial;
+  if (fNormNCothTwkDial) chisq_penalty += fNormNCothTwkDial*fNormNCothTwkDial;
+  if (fNormNuEToNuMuTwkDial) chisq_penalty += fNormNuEToNuMuTwkDial*fNormNuEToNuMuTwkDial;
+
+  return chisq_penalty;
 }
 //________________________________________________________________________________________

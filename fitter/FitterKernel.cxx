@@ -193,6 +193,11 @@ bool FitterKernel::RunOnce(void)
   int errMatrixStatus = fitter->GetStats(ha, edm, errdef, nvpar, nparx);
   fStatusCode = errMatrixStatus;
 
+  // Get errors
+#ifdef __show_fit_steps__
+  cout << "FitterKernel/RunOnce >> Getting errors..." << endl;
+#endif
+
   // Print fit result
 #ifdef __show_fit_result__
 #ifdef __show_fit_steps__
