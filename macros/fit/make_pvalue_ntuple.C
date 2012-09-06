@@ -11,11 +11,12 @@ void make_pvalue_ntuple
 (
   const char * tag                     = "pv",                           /* */
   int          run                     = 0,                              /* */
-  int          nexperiments            = 10,                             /* */
+  bool         exclude_noosc           = true,                           /* perform experiment to exclude no oscillations, or to exclude maximal mixing */
+  int          nexperiments            = 1000,                           /* */
   const char * config_file             = "analysis_configuration.xml",   /* analysis configuration file */
   bool         stat_fluctuations       = true,                           /* include statistical fluctuation in toy MC expts? */
   bool         tweak_systematics       = true,                           /* generate toy MC with randomized systematics? */
-  const char * fit_param_list          = "numudisapp2f"                  /* fit parameter list for the given physics hypothesis (see run_fitter.C) */
+  const char * fit_param_list          = "nuosc3f_numudisapp_fix4"       /* fit parameter list for the given physics hypothesis (see run_fitter.C) */
 )
 {
   using namespace std;
@@ -45,18 +46,35 @@ void make_pvalue_ntuple
   FitParamList * fparm = FitParamList::NamedParameterList(fit_param_list);
   PhysHypothesis_t hyp = fparm->PhysicsHypothesis();
   cout << "Specified physics hypothesis: " << util::AsString(hyp) << endl;
-  if(hyp == kHypOsc3F) {
-  //fparm->Update(kPhypMixing12, 0.); // allow solar osc. as part of the null hypothesis
-    fparm->Update(kPhypMixing13, 0.);
-    fparm->Update(kPhypMixing23, 0.);
-    fparm->Update(kPhypDeltaCP,  0.);
-  }
-  else
-  if(hyp == kHypNuMuDisapp2F) {
-    fparm->Update(kPhypMixing23, 0.);
+  if(exclude_noosc) {
+    if(hyp == kHypOsc3F) {
+      //fparm->Update(kPhypMixing12, 0.); // allow solar osc. as part of the null hypothesis
+      fparm->Update(kPhypMixing13, 0.);
+      fparm->Update(kPhypMixing23, 0.);
+      fparm->Update(kPhypDeltaCP,  0.);
+    }
+    else
+    if(hyp == kHypNuMuDisapp2F) {
+      fparm->Update(kPhypMixing23, 0.);
+    }
+    else {
+      return;
+    }
   }
   else {
-    return;
+    if(hyp == kHypOsc3F) {
+      //fparm->Update(kPhypMixing12, 0.); // allow solar osc. as part of the null hypothesis
+      fparm->Update(kPhypMixing13, 0.);
+      fparm->Update(kPhypMixing23, 1.);
+      fparm->Update(kPhypDeltaCP,  0.);
+    }
+    else
+    if(hyp == kHypNuMuDisapp2F) {
+      fparm->Update(kPhypMixing23, 1.);
+    }
+    else {
+      return;
+    }
   }
 
   // Get superk spectrum predictor & configure

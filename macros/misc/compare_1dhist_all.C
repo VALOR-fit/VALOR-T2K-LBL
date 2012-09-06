@@ -9,13 +9,13 @@
 void compare_1dhist_all(
   const char * filename1,           /* name of 1st file */
   const char * filename2,           /* name of 2nd file */
+  string checkstr = "",             /* only check histograms that contain this string in their name */
   double confidence = 1.0,          /* if a Kolmogorov test returns a value greater than this, assume compatible & don't draw */
   double ratiotest = 1E-6,          /* maximum ratio needs to be more than this (away from 1) */
   bool zeroOverZeroIsZero = false,  /* use the built in divide where 0/0=0, or use 0/0=1 */
   bool draw_only_ratio = false,     /* draw only the ratio? or also plot the 2 histograms overlaid */
   double xmin = -9999999,           /* minimum of x axis to draw */
   double xmax = +9999999,           /* maximum of x axis to draw */
-  string skipstr = "",              /* skip histograms that contain this string in their name */
   bool save_canvas = false          /* save canvas to a .png? */
 )
 {
@@ -37,7 +37,7 @@ void compare_1dhist_all(
     //if not skipping, draw histograms
     if(i<=0) {
       cout << "\nViewing comparison for histogram: " << histoname.Data() << endl;
-      if(histoname.Contains(skipstr.c_str())) {
+      if(!histoname.Contains(checkstr.c_str())) {
 	cout << "Skipping due to histogram name" << endl;
 	continue;
       }

@@ -6,60 +6,6 @@
 // Costas Andreopoulos
 // ------------------------------------------------------------------------------------------------
 //
-
-/*
-TChain csyst("nfitnt");
-csyst.Add("syst-run_*");
-TCanvas *cansyst = new TCanvas();
-cansyst->SetTitle("syst");
-cansyst->Divide(2,2);
-cansyst->cd(1);
-csyst.Draw("bestfit_dm23sq");
-cansyst->cd(2);
-csyst.Draw("bestfit_dm23sq","fitstatus==3");
-TH1F *hsyst_dm23sq = (TH1F*)gPad->GetPrimitive("htemp");
-double dm23_mean_syst = hsyst_dm23sq->GetMean();
-double dm23_err_syst = hsyst_dm23sq->GetMeanError();
-cansyst->cd(3);
-csyst.Draw("bestfit_mixing23");
-cansyst->cd(4);
-csyst.Draw("bestfit_mixing23","fitstatus==3");
-TH1F *hsyst_mixing23 = (TH1F*)gPad->GetPrimitive("htemp");
-double mixing23_mean_syst = hsyst_mixing23->GetMean();
-double mixing23_err_syst = hsyst_mixing23->GetMeanError();
-
-TChain cnosyst("nfitnt");
-cnosyst.Add("nosyst-run_*");
-TCanvas *cannosyst = new TCanvas();
-cannosyst->SetTitle("nosyst");
-cannosyst->Divide(2,2);
-cannosyst->cd(1);
-cnosyst.Draw("bestfit_dm23sq");
-cannosyst->cd(2);
-cnosyst.Draw("bestfit_dm23sq","fitstatus==3");
-TH1F *hnosyst_dm23sq = (TH1F*)gPad->GetPrimitive("htemp");
-double dm23_mean_nosyst = hnosyst_dm23sq->GetMean();
-double dm23_err_nosyst = hnosyst_dm23sq->GetMeanError();
-cannosyst->cd(3);
-cnosyst.Draw("bestfit_mixing23");
-cannosyst->cd(4);
-cnosyst.Draw("bestfit_mixing23","fitstatus==3");
-TH1F *hnosyst_mixing23 = (TH1F*)gPad->GetPrimitive("htemp");
-double mixing23_mean_nosyst = hnosyst_mixing23->GetMean();
-double mixing23_err_nosyst = hnosyst_mixing23->GetMeanError();
-
-//csyst->Scan("*","fitstatus!=3");
-//cnosyst->Scan("*","fitstatus!=3");
-
-cout << dm23_err_syst << endl;
-
-TCanvas *pull = new TCanvas();
-csyst.Draw("(bestfit_dm23sq-input_dm23sq)/sqrt(pow(9.6E-5,2)-pow(6.72199e-06,2))","fitstatus==3");
-TLine l1(htemp->GetMean(),0,htemp->GetMean(),1000);
-l1->Draw();
-*/
-
-
 /*
 #include <string>
 #include <sstream>
