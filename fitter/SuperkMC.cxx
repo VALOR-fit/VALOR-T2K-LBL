@@ -239,7 +239,7 @@ bool SuperkMC::Read(TXMLEngine* xml, XMLNodePointer_t root_node)
   if( !fNuXSec -> ReadSplines(xml,root_node) ) return false;
 
   // apply flux tuning (based on external data) to templates
-  this->ApplyFluxExtTuningToTemplates();
+  //this->ApplyFluxExtTuningToTemplates();
 
 #ifdef __save_templates_debug__
   this->NevDebug(kSKMCtNom, "mcnorm_fluxtuned");
@@ -373,15 +373,18 @@ void SuperkMC::FillTemplate(SuperkSample_t s, SuperkMode_t m)
   TBranch * branchEreco   = mctree->GetBranch("erec");
   TBranch * branchEtrue   = mctree->GetBranch("enu");
   TBranch * branchGenCode = mctree->GetBranch("mode");
+  TBranch * branchWght    = mctree->GetBranch("wgt");
 
   branchEreco   -> SetAddress(&fBrEreco);
   branchEtrue   -> SetAddress(&fBrEtrue);
   branchGenCode -> SetAddress(&fBrGenCode);
+  branchWght    -> SetAddress(&fBrWght);
 
   mctree->SetBranchStatus("*",0);
   mctree->SetBranchStatus("erec",1);
   mctree->SetBranchStatus("enu",1);
   mctree->SetBranchStatus("mode",1);
+  mctree->SetBranchStatus("wgt",1);
   
   for(int iev = 0; iev < mctree->GetEntries(); iev++) 
   {
@@ -392,10 +395,10 @@ void SuperkMC::FillTemplate(SuperkSample_t s, SuperkMode_t m)
      if(!use_it) continue;
   
      this -> Template(s,m,kSKMCtOri) -> Fill (fBrEreco/1000., fBrEtrue);
-     this -> Template(s,m,kSKMCtNom) -> Fill (fBrEreco/1000., fBrEtrue, pot_wght);
-     this -> Template(s,m,kSKMCtTun) -> Fill (fBrEreco/1000., fBrEtrue, pot_wght);
-     this -> Template(s,m,kSKMCtSys) -> Fill (fBrEreco/1000., fBrEtrue, pot_wght);
-     this -> Template(s,m,kSKMCtFin) -> Fill (fBrEreco/1000., fBrEtrue, pot_wght);
+     this -> Template(s,m,kSKMCtNom) -> Fill (fBrEreco/1000., fBrEtrue, fBrWght * pot_wght);
+     this -> Template(s,m,kSKMCtTun) -> Fill (fBrEreco/1000., fBrEtrue, fBrWght * pot_wght);
+     this -> Template(s,m,kSKMCtSys) -> Fill (fBrEreco/1000., fBrEtrue, fBrWght * pot_wght);
+     this -> Template(s,m,kSKMCtFin) -> Fill (fBrEreco/1000., fBrEtrue, fBrWght * pot_wght);
 
 #ifdef __show_init_mesg_debug__
      if(fBrEtrue <= 0 || fBrEtrue >= this->Template(s,m,kSKMCtOri)->GetYaxis()->GetBinUpEdge(this->Template(s,m,kSKMCtOri)->GetNbinsY()))
@@ -510,7 +513,11 @@ void SuperkMC::ApplyFluxExtTuningToTemplates(void)
            double nev = mctempl->GetBinContent(ir,it);
            // get tuning weights
            double wght = fNuFlux->SuperkFluxExtTuningWght(s,m,Etrue);
-           // update nominal MC template
+ 	   if(wght < kMinAllowedWght) {
+	     cout << "set weight " << wght << " to kMinAllowedWght " << kMinAllowedWght << endl;
+	     wght = kMinAllowedWght;
+	   }
+	   // update nominal MC template
            nev *= wght;
            mctempl->SetBinContent(ir,it,nev);
            // initialize "tun", "sys" & "fin" templates to "nom" values
@@ -579,6 +586,10 @@ void SuperkMC::ApplyBANFFTuningToTemplates(void)
 
            // Combined weight
            double wght = flux_wght * xsec_wght;
+	   if(wght < kMinAllowedWght) {
+	     cout << "set weight " << wght << " to kMinAllowedWght " << kMinAllowedWght << endl;
+	     wght = kMinAllowedWght;
+	   }
 
 	   // Get the 50MeV Etrue bin number range
 	   int firstbin = mctempl_src->GetYaxis()->FindBin(EtrueVarMin);
@@ -686,6 +697,10 @@ void SuperkMC::ApplySystematicsToTemplates_Multiplicative(void)
 
            // Combined weight
            double wght = skeff_wght * flux_wght * xsec_wght * fsi_wght;
+	   if(wght < kMinAllowedWght) {
+	     cout << "set weight " << wght << " to kMinAllowedWght " << kMinAllowedWght << endl;
+	     wght = kMinAllowedWght;
+	   }
 
 	   // Get the 50MeV Etrue bin number range
 	   int firstbin = mctempl_src->GetYaxis()->FindBin(EtrueVarMin);

@@ -81,7 +81,7 @@ void NuXSec::Init(void)
   fShapeCCothTwkDial    = 0;
   fPiLessDeltaTwkDial   = 0;
   fENuShapeTwkDial      = 0;
-#if BANFF_Bins != 2
+#if BANFF_BINS != 2
   fNormCCQEE1TwkDial    = 0;
   fNormCCQEE2TwkDial    = 0;
   fNormCC1piE1TwkDial   = 0;
@@ -284,7 +284,7 @@ bool NuXSec::Read(TXMLEngine* xml, XMLNodePointer_t root_node)
      }
   }
 
-#if BANFF_Bins != 2
+#if BANFF_BINS != 2
   fNormCCQEE1RelErr =
     util::XML2Dbl(xml,root_node,"xsec/normalisations/ccqee1");
   fNormCCQEE2RelErr =
@@ -397,12 +397,12 @@ double NuXSec::FinTuningWght_1p(
   //  
   else
   if(p == kNuisBANFFCCQEE0 ||
-#if BANFF_Bins == 2
+#if BANFF_BINS == 2
      p == kNuisBANFFCCQEE1 ||
      p == kNuisBANFFCCQEE2 ||
 #endif
      p == kNuisBANFFCC1piE0 || 
-#if BANFF_Bins == 2
+#if BANFF_BINS == 2
      p == kNuisBANFFCC1piE1 || 
 #endif
      p == kNuisBANFFNC1pi0)
@@ -556,12 +556,12 @@ double NuXSec::SystWght_1p(
   // 
   else
   if(p == kNuisBANFFCCQEE0 ||
-#if BANFF_Bins == 2
+#if BANFF_BINS == 2
      p == kNuisBANFFCCQEE1 ||
      p == kNuisBANFFCCQEE2 ||
 #endif
      p == kNuisBANFFCC1piE0 || 
-#if BANFF_Bins == 2
+#if BANFF_BINS == 2
      p == kNuisBANFFCC1piE1 || 
 #endif
      p == kNuisBANFFNC1pi0)
@@ -604,7 +604,7 @@ double NuXSec::SystWght_1p(
   //
   else
   if(
-#if BANFF_Bins != 2
+#if BANFF_BINS != 2
      p == kNuisXSecNormCCQEE1 || p == kNuisXSecNormCCQEE2 || p == kNuisXSecNormCC1piE1 ||
 #endif
      p == kNuisXSecNormCCcoh || p == kNuisXSecNormNC1piC || p == kNuisXSecNormNCcoh ||
@@ -696,7 +696,7 @@ double NuXSec::CurrentValue(PhysParamId_t p) const
     case kNuisXSecENuShape:
       return fENuShapeTwkDial;
       break;
-#if BANFF_Bins != 2
+#if BANFF_BINS != 2
     case kNuisXSecNormCCQEE1:
       return fNormCCQEE1TwkDial;
       break;
@@ -725,12 +725,12 @@ double NuXSec::CurrentValue(PhysParamId_t p) const
     case kNuisBANFFMAQE:
     case kNuisBANFFMARES:
     case kNuisBANFFCCQEE0:
-#if BANFF_Bins == 2
+#if BANFF_BINS == 2
     case kNuisBANFFCCQEE1:
     case kNuisBANFFCCQEE2:
 #endif
     case kNuisBANFFCC1piE0:
-#if BANFF_Bins == 2
+#if BANFF_BINS == 2
     case kNuisBANFFCC1piE1:
 #endif
     case kNuisBANFFNC1pi0:
@@ -745,7 +745,7 @@ double NuXSec::CurrentValue(PhysParamId_t p) const
 double NuXSec::RelativeError(PhysParamId_t p) const
 {
   switch(p) {
-#if BANFF_Bins != 2
+#if BANFF_BINS != 2
     case kNuisXSecNormCCQEE1:
       return fNormCCQEE1RelErr;
       break;
@@ -793,7 +793,7 @@ void NuXSec::PrintSystematicVariations(void) const
   cout << "         >> CC-oth shape        " << fShapeCCothTwkDial    << endl;
   cout << "         >> Pi-less delta decay " << fPiLessDeltaTwkDial   << endl;
   cout << "         >> CC1pi ENu Shape     " << fENuShapeTwkDial      << endl;
-#if BANFF_Bins != 2
+#if BANFF_BINS != 2
   cout << "         >> CCQE bin1 norm      " << fNormCCQEE1TwkDial    << endl;
   cout << "         >> CCQE bin2 norm      " << fNormCCQEE2TwkDial    << endl;
   cout << "         >> CC1pi bin1 norm     " << fNormCC1piE1TwkDial   << endl;
@@ -1107,7 +1107,7 @@ double NuXSec::ChisqPenalty(void) const
   if (fShapeCCothTwkDial) chisq_penalty += fShapeCCothTwkDial*fShapeCCothTwkDial;
   if (fPiLessDeltaTwkDial) chisq_penalty += fPiLessDeltaTwkDial*fPiLessDeltaTwkDial;
   if (fENuShapeTwkDial) chisq_penalty += fENuShapeTwkDial*fENuShapeTwkDial;
-#if BANFF_Bins != 2
+#if BANFF_BINS != 2
   if (fNormCCQEE1TwkDial) chisq_penalty += fNormCCQEE1TwkDial*fNormCCQEE1TwkDial;
   if (fNormCCQEE2TwkDial) chisq_penalty += fNormCCQEE2TwkDial*fNormCCQEE2TwkDial;
   if (fNormCC1piE1TwkDial) chisq_penalty += fNormCC1piE1TwkDial*fNormCC1piE1TwkDial;

@@ -56,7 +56,7 @@ public:
   void TweakShapeCCoth    (double twkdial) { fShapeCCothTwkDial    = twkdial; }
   void TweakPiLessDelta   (double twkdial) { fPiLessDeltaTwkDial   = twkdial; }
   void TweakENuShape      (double twkdial) { fENuShapeTwkDial      = twkdial; }
-#if BANFF_Bins != 2
+#if BANFF_BINS != 2
   void TweakNormCCQEE1    (double twkdial) { fNormCCQEE1TwkDial    = twkdial; }
   void TweakNormCCQEE2    (double twkdial) { fNormCCQEE2TwkDial    = twkdial; }
   void TweakNormCC1piE1   (double twkdial) { fNormCC1piE1TwkDial   = twkdial; }
@@ -137,7 +137,7 @@ private:
   double fShapeCCothTwkDial;
   double fPiLessDeltaTwkDial;
   double fENuShapeTwkDial;
-#if BANFF_Bins != 2
+#if BANFF_BINS != 2
   double fNormCCQEE1TwkDial;
   double fNormCCQEE2TwkDial;
   double fNormCC1piE1TwkDial;
@@ -149,7 +149,7 @@ private:
   double fNormNuEToNuMuTwkDial;
 
   // relative errors
-#if BANFF_Bins != 2
+#if BANFF_BINS != 2
   double fNormCCQEE1RelErr;
   double fNormCCQEE2RelErr;
   double fNormCC1piE1RelErr;

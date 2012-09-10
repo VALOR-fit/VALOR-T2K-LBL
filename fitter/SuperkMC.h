@@ -155,7 +155,8 @@ private:
   float      fBrEreco;                     ///< branch var for reading input MC mini-DST
   float      fBrEtrue;                     ///< branch var for reading input MC mini-DST
   int        fBrGenCode;                   ///< branch var for reading input MC mini-DST
-      
+  double     fBrWght;                      ///< branch var for reading input MC mini-DST
+
   // utility objects for computing cross-section and flux weights
   NuFlux *         fNuFlux;                ///< Neutrino flux inputs
   NuXSec *         fNuXSec;                ///< Neutrino cross-section inputs

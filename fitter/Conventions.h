@@ -22,10 +22,10 @@ Changes since 2011_v0.9.0:
 #include "Rtypes.h"
 #endif
 
-#ifndef BANFF_Bins
-//#define BANFF_Bins 1 // Coarse binning (numu using same binning as 2012 nue analyses, 11 numu bins)
-//#define BANFF_Bins -1 // Fine binning (numu using same binning as 2010 numu analyses, 20 numu bins)
-#define BANFF_Bins 2 // DEFAULT Coarse binning, with high energy ccqe & cc1pi bins included in BANFF
+#ifndef BANFF_BINS
+//#define BANFF_BINS 1 // Coarse binning (numu using same binning as 2012 nue analyses, 11 numu bins)
+//#define BANFF_BINS -1 // Fine binning (numu using same binning as 2010 numu analyses, 20 numu bins)
+#define BANFF_BINS 2 // DEFAULT Coarse binning, with high energy ccqe & cc1pi bins included in BANFF
 #endif
 
 #ifndef FSI_BINS
@@ -36,8 +36,16 @@ Changes since 2011_v0.9.0:
 #ifndef ETRUE_BINS
 //#define ETRUE_BINS 1 // 50 MeV binning 0-30 GeV (600 bins)
 //#define ETRUE_BINS 2 // 10 MeV binning 0-1 GeV, 50 MeV binning 1-30 GeV (680 bins)
-#define ETRUE_BINS 3 //  DEFAULT 5 MeV binning 0-1 GeV, 50 MeV binning 1-30 GeV (780 bins)
-//#define ETRUE_BINS 4 // Japanese variable binning, 70 bins
+//#define ETRUE_BINS 3 //  5 MeV binning 0-1 GeV, 50 MeV binning 1-30 GeV (780 bins)
+//#define ETRUE_BINS 4 // 50 MeV 0-3 GeV, 100 MeV 3-3.5 GeV, 3.5-4 GeV, 4-5 GeV, 5-7 GeV, 7-10 GeV, 10-30 GeV (70 bins)
+#define ETRUE_BINS 5 // DEFAULT 50 MeV 0-0.3 GeV, 25 MeV 0.3-1 GeV, 50 MeV 1-3 GeV, 100 MeV 3-3.5 GeV, 3.5-4 GeV, 4-5 GeV, 5-7 GeV, 7-10 GeV, 10-30 GeV (84 bins)
+//#define ETRUE_BINS 6 // 50 MeV 0-0.3 GeV, 10 MeV 0.3-1 GeV, 50 MeV 1-3 GeV, 100 MeV 3-3.5 GeV, 3.5-4 GeV, 4-5 GeV, 5-7 GeV, 7-10 GeV, 10-30 GeV (126 bins)
+#endif
+
+#ifndef ERECO_XSEC_BINS
+//#define ERECO_XSEC_BINS 1 // 50 MeV bins 0-1.25 GeV, 1.25-3, 3-10, 10-30 (28 bins)
+#define ERECO_XSEC_BINS 2 // DEFAULT 0-0.3 GeV, 50 MeV 0.3-1 GeV, 100 MeV 1-3 GeV, 3.5-4 GeV, 4-5 GeV, 5-7 GeV, 7-10 GeV, 10-30 GeV (41 bins)
+//#define ERECO_XSEC_BINS 3 // 50 MeV binning 0-30 GeV (600 bins)
 #endif
 
 #ifndef ERECO_BINS_1RMU
@@ -51,12 +59,6 @@ Changes since 2011_v0.9.0:
 #define ERECO_BINS_1RE 1 // DEFAULT 200 MeV bins 0-1 GeV, 1 bin from 1-1.25 GeV (6 bins)
 //#define ERECO_BINS_1RE 2 // 1 bin (0-1.25 GeV)
 //#define ERECO_BINS_1RE 3 // 50 MeV bins 0-1.25 GeV (25 bins)
-#endif
-
-#ifndef ERECO_XSEC_BINS
-//#define ERECO_XSEC_BINS 1 // 50 MeV bins 0-1.25 GeV, 1.25-3, 3-10, 10-30 (28 bins)
-//#define ERECO_XSEC_BINS 2 // 41 bins, Japanese binning
-#define ERECO_XSEC_BINS 3 // DEFAULT 50 MeV binning 0-30 GeV (600 bins)
 #endif
 
 namespace t2kana {
@@ -136,6 +138,7 @@ static const double kMaxFitSinsqTheta12      = 1.00;
 // Other constants
 //
 static const double kMaxAllowedWght = 2E+3;                          // Complain if any computed weights exceeds this value
+static const double kMinAllowedWght = 1E-3;                          // Set any weights less than this, to this
 static const double kASmallNum      = 1E-10;                         // 
 static const double kOneMeV         = 0.001;                         // 
 static const double kBaseline       = 295;                           // Tokai->Kamioka (km)
@@ -369,7 +372,7 @@ typedef enum EPhysParamId
    /*
     * (flux and cross-section) corellated parameters used in the BANFF fit
    */   
-#if BANFF_Bins >= 1
+#if BANFF_BINS >= 1
    kNuisBANFF00,               // # 00, SK     numu    flux,  E =  0.0 -  0.4 GeV
    kNuisBANFF01,               // # 01, SK     numu    flux,  E =  0.4 -  0.5 GeV
    kNuisBANFF02,               // # 02, SK     numu    flux,  E =  0.5 -  0.6 GeV
@@ -401,7 +404,7 @@ typedef enum EPhysParamId
    kNuisBANFF28,               // # 28, SK     nue     flux,  E =  4.0 - 30.0 GeV
    kNuisBANFF29,               // # 29, SK     nuebar  flux,  E =  0.0 -  2.5 GeV
    kNuisBANFF30,               // # 30, SK     nuebar  flux,  E =  2.5 - 30.0 GeV
-#elif BANFF_Bins == -1
+#elif BANFF_BINS == -1
    kNuisBANFF00,               // # 00, SK     numu    flux,  E =  0.0 -  0.1 GeV
    kNuisBANFF01,               // # 01, SK     numu    flux,  E =  0.1 -  0.2 GeV
    kNuisBANFF02,               // # 02, SK     numu    flux,  E =  0.2 -  0.3 GeV
@@ -455,12 +458,12 @@ typedef enum EPhysParamId
    kNuisBANFFMAQE,             // # M_{A}  QE
    kNuisBANFFMARES,            // # M_{A}  RES
    kNuisBANFFCCQEE0,           // # CCQE   normalization, 0 - 1.5 GeV
-#if BANFF_Bins == 2
+#if BANFF_BINS == 2
    kNuisBANFFCCQEE1,           // # CCQE   normalization, 1.5 -  3.5 GeV
    kNuisBANFFCCQEE2,           // # CCQE   normalization, 3.5 - 30.0 GeV
 #endif
    kNuisBANFFCC1piE0,          // # CC1pi  normalization, 0 - 2.5 GeV
-#if BANFF_Bins == 2
+#if BANFF_BINS == 2
    kNuisBANFFCC1piE1,          // # CC1pi  normalization, 2.5 - 30.0 GeV
 #endif
    kNuisBANFFNC1pi0,           // # NC1pi0 normalization
@@ -477,7 +480,7 @@ typedef enum EPhysParamId
    kNuisXSecPiLessDelta,       // Pion-less delta decay
    kNuisXSecENuShape,          // CC 1pi enu shape
    //systematics that are normalisations
-#if BANFF_Bins != 2
+#if BANFF_BINS != 2
    kNuisXSecNormCCQEE1,        // CCQE norm 1.5 - 3.5 GeV
    kNuisXSecNormCCQEE2,        // CCQE norm > 3.5 GeV
    kNuisXSecNormCC1piE1,       // CC1pi norm > 2.5 GeV   
@@ -670,16 +673,16 @@ static const int kNumOfNuisanceParamsJoint = 0;  // not implemented for 2012a ye
 //
 // Number of BANFF fit parameters
 //
-#if BANFF_Bins == 1
+#if BANFF_BINS == 1
 static const int kNumOfParamsInBANFFfit = 36;
-#elif BANFF_Bins == 2
+#elif BANFF_BINS == 2
 static const int kNumOfParamsInBANFFfit = 39;
-#elif BANFF_Bins == -1
+#elif BANFF_BINS == -1
 static const int kNumOfParamsInBANFFfit = 54;
 #endif
-#if BANFF_Bins != 2
+#if BANFF_BINS != 2
 static const int kNumOfFluxParamsInBANFFfit = kNumOfParamsInBANFFfit - 5;
-#elif BANFF_Bins == 2
+#elif BANFF_BINS == 2
 static const int kNumOfFluxParamsInBANFFfit = kNumOfParamsInBANFFfit - 8;
 #endif
 
@@ -721,7 +724,7 @@ static const bool kParamInBANFFfitIsSuperkFluxParam[kNumOfParamsInBANFFfit] =
    true,                 // kNuisBANFF28
    true,                 // kNuisBANFF29
    true,                 // kNuisBANFF30
-#if BANFF_Bins == -1
+#if BANFF_BINS == -1
    true,                 // kNuisBANFF31
    true,                 // kNuisBANFF32
    true,                 // kNuisBANFF33
@@ -744,19 +747,19 @@ static const bool kParamInBANFFfitIsSuperkFluxParam[kNumOfParamsInBANFFfit] =
    false,                // kNuisBANFFMAQE
    false,                // kNuisBANFFMARES
    false,                // kNuisBANFFCCQEE0
-#if BANFF_Bins == 2
+#if BANFF_BINS == 2
    false,                // kNuisBANFFCCQEE1
    false,                // kNuisBANFFCCQEE2
 #endif
    false,                // kNuisBANFFCC1piE0
-#if BANFF_Bins == 2
+#if BANFF_BINS == 2
    false,                // kNuisBANFFCC1piE0
 #endif
    false                 // kNuisBANFFNC1pi0
 };
 
 // flux-related BANFF parameters --> flux neutrino PDG code
-#if BANFF_Bins == 1
+#if BANFF_BINS == 1
 static const int kNuPdgCodeOfFluxParamInBANFFfit[kNumOfParamsInBANFFfit] =
 {
    kPdgNuMu,             // kNuisBANFF00
@@ -796,7 +799,7 @@ static const int kNuPdgCodeOfFluxParamInBANFFfit[kNumOfParamsInBANFFfit] =
    0,                    // kNuisBANFFCC1piE0, not a flux param
    0                     // kNuisBANFFNC1pi0, not a flux param
 };
-#elif BANFF_Bins == 2
+#elif BANFF_BINS == 2
 static const int kNuPdgCodeOfFluxParamInBANFFfit[kNumOfParamsInBANFFfit] =
 {
    kPdgNuMu,             // kNuisBANFF00
@@ -839,7 +842,7 @@ static const int kNuPdgCodeOfFluxParamInBANFFfit[kNumOfParamsInBANFFfit] =
    0,                    // kNuisBANFFCC1piE1, not a flux param
    0                     // kNuisBANFFNC1pi0, not a flux param
 };
-#elif BANFF_Bins == -1
+#elif BANFF_BINS == -1
 static const int kNuPdgCodeOfFluxParamInBANFFfit[kNumOfParamsInBANFFfit] =
 {
    kPdgNuMu,             // kNuisBANFF00
@@ -901,7 +904,7 @@ static const int kNuPdgCodeOfFluxParamInBANFFfit[kNumOfParamsInBANFFfit] =
 
 // Etrue energy range for flux-related BANFF parameters
 
-#if BANFF_Bins == 1
+#if BANFF_BINS == 1
 static const double kEtrueRangeOfFluxParamInBANFFfit[kNumOfParamsInBANFFfit][2] =
 {
    { 0.0,  0.4 },        // kNuisBANFF00
@@ -941,7 +944,7 @@ static const double kEtrueRangeOfFluxParamInBANFFfit[kNumOfParamsInBANFFfit][2] 
    {  -1,   -1 },        // kNuisBANFFCC1piE0, not a flux param
    {  -1,   -1 }         // kNuisBANFFNC1pi0, not a flux param
 };
-#elif BANFF_Bins == 2
+#elif BANFF_BINS == 2
 static const double kEtrueRangeOfFluxParamInBANFFfit[kNumOfParamsInBANFFfit][2] =
 {
    { 0.0,  0.4 },        // kNuisBANFF00
@@ -984,7 +987,7 @@ static const double kEtrueRangeOfFluxParamInBANFFfit[kNumOfParamsInBANFFfit][2] 
    {  -1,   -1 },        // kNuisBANFFCC1piE1, not a flux param
    {  -1,   -1 }         // kNuisBANFFNC1pi0, not a flux param
 };
-#elif BANFF_Bins == -1
+#elif BANFF_BINS == -1
 static const double kEtrueRangeOfFluxParamInBANFFfit[kNumOfParamsInBANFFfit][2] =
 {
    { 0.0,  0.1 },        // kNuisBANFF00
@@ -1061,12 +1064,12 @@ static const PhysParamId_t kListOfXSecSyst[kNumOfXSecSyst] =
    kNuisBANFFMAQE,             // BANFF, M_{A}  QE
    kNuisBANFFMARES,            // BANFF, M_{A}  RES
    kNuisBANFFCCQEE0,           // BANFF, CCQE   normalization, 0 - 1.5 GeV
-#if BANFF_Bins == 2
+#if BANFF_BINS == 2
    kNuisBANFFCCQEE1,           // BANFF, CCQE   normalization, 1.5 - 3.5 GeV
    kNuisBANFFCCQEE2,           // BANFF, CCQE   normalization, 3.5 - 30.0 GeV
 #endif
    kNuisBANFFCC1piE0,          // BANFF, CC1pi  normalization, 0 - 2.5 GeV
-#if BANFF_Bins == 2
+#if BANFF_BINS == 2
    kNuisBANFFCC1piE1,          // BANFF, CC1pi  normalization, 2.5 - 30.0 GeV
 #endif
    kNuisBANFFNC1pi0,           // BANFF, NC1pi0 normalization
@@ -1076,7 +1079,7 @@ static const PhysParamId_t kListOfXSecSyst[kNumOfXSecSyst] =
    kNuisXSecShapeCCoth,        // CC other shape
    kNuisXSecPiLessDelta,       // Pion-less delta decay
    kNuisXSecENuShape,          // CC 1pi enu shape
-#if BANFF_Bins != 2
+#if BANFF_BINS != 2
    kNuisXSecNormCCQEE1,        // CCQE norm 1.5 - 3.5 GeV
    kNuisXSecNormCCQEE2,        // CCQE norm > 3.5 GeV
    kNuisXSecNormCC1piE1,       // CC1pi norm > 2.5 GeV   
@@ -1096,12 +1099,12 @@ static const bool kXSecSystHasWghtSplines[kNumOfXSecSyst] =
    true,                      // kNuisBANFFMAQE
    true,                      // kNuisBANFFMARES
    false,                     // kNuisBANFFCCQEE0
-#if BANFF_Bins == 2
+#if BANFF_BINS == 2
    false,                     // kNuisBANFFCCQEE1
    false,                     // kNuisBANFFCCQEE2
 #endif
    false,                     // kNuisBANFFCC1piE0
-#if BANFF_Bins == 2
+#if BANFF_BINS == 2
    false,                     // kNuisBANFFCC1piE1
 #endif
    false,                     // kNuisBANFFNC1pi0
@@ -1111,7 +1114,7 @@ static const bool kXSecSystHasWghtSplines[kNumOfXSecSyst] =
    true,                      // CC other shape
    true,                      // Pion-less delta decay
    true,                      // CC 1pi enu shape
-#if BANFF_Bins != 2
+#if BANFF_BINS != 2
    false,                     // CCQE norm 1.5 - 3.5 GeV
    false,                     // CCQE norm > 3.5 GeV
    false,                     // CC1pi norm > 2.5 GeV   
@@ -1131,12 +1134,12 @@ static const bool kXSecSystIncludedInBANFF[kNumOfXSecSyst] =
    true,                      // kNuisBANFFMAQE
    true,                      // kNuisBANFFMARES
    true,                      // kNuisBANFFCCQEE0
-#if BANFF_Bins == 2
+#if BANFF_BINS == 2
    true,                     // kNuisBANFFCCQEE1
    true,                     // kNuisBANFFCCQEE2
 #endif
    true,                     // kNuisBANFFCC1piE0
-#if BANFF_Bins == 2
+#if BANFF_BINS == 2
    true,                     // kNuisBANFFCC1piE1
 #endif
    true,                      // kNuisBANFFNC1pi0
@@ -1146,7 +1149,7 @@ static const bool kXSecSystIncludedInBANFF[kNumOfXSecSyst] =
    false,                     // CC other shape
    false,                     // Pion-less delta decay
    false,                     // CC 1pi enu shape
-#if BANFF_Bins != 2
+#if BANFF_BINS != 2
    false,                     // CCQE norm 1.5 - 3.5 GeV
    false,                     // CCQE norm > 3.5 GeV
    false,                     // CC1pi norm > 2.5 GeV   
@@ -1167,12 +1170,12 @@ static const bool kXSecSystWghtUnequallySharedBetweenBins[kNumOfXSecSyst] =
    true,                      // kNuisBANFFMAQE
    true,                      // kNuisBANFFMARES
    false,                     // kNuisBANFFCCQEE0
-#if BANFF_Bins == 2
+#if BANFF_BINS == 2
    false,                     // kNuisBANFFCCQEE1
    false,                     // kNuisBANFFCCQEE2
 #endif
    false,                     // kNuisBANFFCC1piE0
-#if BANFF_Bins == 2
+#if BANFF_BINS == 2
    false,                     // kNuisBANFFCC1piE1
 #endif
    false,                     // kNuisBANFFNC1pi0
@@ -1182,7 +1185,7 @@ static const bool kXSecSystWghtUnequallySharedBetweenBins[kNumOfXSecSyst] =
    true,                      // CC other shape
    true,                      // Pion-less delta decay
    true,                      // CC 1pi enu shape
-#if BANFF_Bins != 2
+#if BANFF_BINS != 2
    false,                     // CCQE norm 1.5 - 3.5 GeV
    false,                     // CCQE norm > 3.5 GeV
    false,                     // CC1pi norm > 2.5 GeV   
@@ -1201,12 +1204,12 @@ static const double kXSecSystErecoCut[kNumOfXSecSyst][2] =
    { 0.0, 100.0 },            // kNuisBANFFMAQE
    { 0.0, 100.0 },            // kNuisBANFFMARES
    { 0.0, 100.0 },            // kNuisBANFFCCQEE0
-#if BANFF_Bins == 2
+#if BANFF_BINS == 2
    { 0.0, 100.0 },            // kNuisBANFFCCQEE1
    { 0.0, 100.0 },            // kNuisBANFFCCQEE2
 #endif
    { 0.0, 100.0 },            // kNuisBANFFCC1piE0
-#if BANFF_Bins == 2
+#if BANFF_BINS == 2
    { 0.0, 100.0 },            // kNuisBANFFCC1piE1
 #endif
    { 0.0, 100.0 },            // kNuisBANFFNC1pi0
@@ -1216,7 +1219,7 @@ static const double kXSecSystErecoCut[kNumOfXSecSyst][2] =
    { 0.0, 100.0 },            // CC other shape
    { 0.0, 100.0 },            // Pion-less delta decay
    { 0.0, 100.0 },            // CC 1pi enu shape
-#if BANFF_Bins != 2
+#if BANFF_BINS != 2
    { 0.0, 100.0 },            // CCQE norm 1.5 - 3.5 GeV
    { 0.0, 100.0 },            // CCQE norm > 3.5 GeV
    { 0.0, 100.0 },            // CC1pi norm > 2.5 GeV   
@@ -1232,12 +1235,12 @@ static const double kXSecSystEtrueCut[kNumOfXSecSyst][2] =
    { 0.0, 100.0 },            // kNuisBANFFMAQE
    { 0.0, 100.0 },            // kNuisBANFFMARES
    { 0.0,   1.5 },            // kNuisBANFFCCQEE0
-#if BANFF_Bins == 2
+#if BANFF_BINS == 2
    { 1.5,   3.5 },            // kNuisBANFFCCQEE1
    { 3.5,  30.0 },            // kNuisBANFFCCQEE2
 #endif
    { 0.0,   2.5 },            // kNuisBANFFCC1piE0
-#if BANFF_Bins == 2
+#if BANFF_BINS == 2
    { 2.5,  30.0 },            // kNuisBANFFCC1piE1
 #endif
    { 0.0, 100.0 },            // kNuisBANFFNC1pi0
@@ -1247,7 +1250,7 @@ static const double kXSecSystEtrueCut[kNumOfXSecSyst][2] =
    { 0.0, 100.0 },            // CC other shape
    { 0.0, 100.0 },            // Pion-less delta decay
    { 0.0, 100.0 },            // CC 1pi enu shape
-#if BANFF_Bins != 2
+#if BANFF_BINS != 2
    { 1.5,   3.5 },            // CCQE norm 1.5 - 3.5 GeV
    { 3.5, 100.0 },            // CCQE norm > 3.5 GeV
    { 2.5, 100.0 },            // CC1pi norm > 2.5 GeV   
@@ -1262,7 +1265,7 @@ static const double kXSecSystEtrueCut[kNumOfXSecSyst][2] =
 // The following list describles in which MC templates we are supposed to apply the
 // weights as a result of tweaking any of the above systematic parameters.
 // The order of systematic parameters should match the one in kListOfXSecSyst.
-#if BANFF_Bins != 2
+#if BANFF_BINS != 2
 static const bool kXsApplyXSecSystToSKMode[kns][knm][kNumOfXSecSyst] = {
   // > 1 muon-like ring 
   {
@@ -1365,7 +1368,7 @@ static const bool kXsApplyXSecSystToSKMode[kns][knm][kNumOfXSecSyst] = {
     {  0, 0, 0, 0, 0,  0, 0, 0, 0, 0, 0,  0, 0, 0,  0, 0, 0, 0, 0 }  // kSKmUndefined
   }
 };
-#elif BANFF_Bins == 2
+#elif BANFF_BINS == 2
 static const bool kXsApplyXSecSystToSKMode[kns][knm][kNumOfXSecSyst] = {
   // > 1 muon-like ring 
   {
@@ -1568,7 +1571,7 @@ static const double kXsErecoBinEdges[kXsNErecoBins+1] =
 // Note that the order of modes below should match the one defined in kSKReactionModes array.
 //
 
-#if BANFF_Bins >= 1
+#if BANFF_BINS >= 1
 static const int kXsNEtrueBins = 11;
 static const double kXsEtrueBinEdges[kns][knm][kXsNEtrueBins+1] = {
   // > 1 muon-like ring 
@@ -1668,7 +1671,7 @@ static const double kXsEtrueBinEdges[kns][knm][kXsNEtrueBins+1] = {
     { -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000 }  // kSKmUndefined
   }
 };
-#elif BANFF_Bins == -1
+#elif BANFF_BINS == -1
 static const int kXsNEtrueBins = 20;
 static const double kXsEtrueBinEdges[kns][knm][kXsNEtrueBins+1] = {
   // > 1 muon-like ring 
@@ -1866,7 +1869,7 @@ static const double kXsEtrueBinEdges[kns][knm][kXsNEtrueBins+1] = {
 // kXsEtrueBinEdges (i.e. BANFF binning), with the addition of requiring bin edges at
 // 1.5 and 2.5 GeV, to make sure that the binned xsec normalisation are handled correctly.
 //
-#if BANFF_Bins >= 1
+#if BANFF_BINS >= 1
 static const int kMCNEtrueBins = 11;
 static const double kMCEtrueBinEdges[kns][knm][kXsNEtrueBins+1] = {
   // > 1 muon-like ring 
@@ -1966,7 +1969,7 @@ static const double kMCEtrueBinEdges[kns][knm][kXsNEtrueBins+1] = {
     { -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000 }  // kSKmUndefined
   }
 };
-#elif BANFF_Bins == -1
+#elif BANFF_BINS == -1
 static const int kMCNEtrueBins = 20;
 static const double kMCEtrueBinEdges[kns][knm][kXsNEtrueBins+1] = {
   // > 1 muon-like ring 
@@ -2888,7 +2891,6 @@ static const double kEtrueBinEdges[kNEtrueBins+1] =
   30.000
 };
 #elif ETRUE_BINS == 4
-// Even finer binning around the oscillation maximum
 //  50-MeV bins from 0.0  to 3.0  GeV (60 bins)
 // 100-MeV bins from 3.0  to 3.5  GeV (5 bins)
 // Variable binning to 30 GeV (5 bins)
@@ -2897,6 +2899,54 @@ static const double kEtrueBinEdges[kNEtrueBins+1] =
 {
    0.000,  0.050,  0.100,  0.150,  0.200,  0.250,  0.300,  0.350,  0.400,  0.450, 
    0.500,  0.550,  0.600,  0.650,  0.700,  0.750,  0.800,  0.850,  0.900,  0.950, 
+   1.000,  1.050,  1.100,  1.150,  1.200,  1.250,  1.300,  1.350,  1.400,  1.450, 
+   1.500,  1.550,  1.600,  1.650,  1.700,  1.750,  1.800,  1.850,  1.900,  1.950, 
+   2.000,  2.050,  2.100,  2.150,  2.200,  2.250,  2.300,  2.350,  2.400,  2.450, 
+   2.500,  2.550,  2.600,  2.650,  2.700,  2.750,  2.800,  2.850,  2.900,  2.950, 
+   3.000,  3.100,  3.200,  3.300,  3.400, 
+   3.500,  4.000,  5.000,  7.000, 10.000,
+   30.000
+};
+#elif ETRUE_BINS == 5
+// Even finer binning around the oscillation maximum
+//  50-MeV bins from 0.0  to 0.3  GeV (6  bins)
+//  25-MeV bins from 0.0  to 1.0  GeV (28 bins)
+//  50-MeV bins from 1.0  to 3.0  GeV (40 bins)
+// 100-MeV bins from 3.0  to 3.5  GeV (5 bins)
+// Variable binning to 30 GeV (5 bins)
+static const int kNEtrueBins = 84;
+static const double kEtrueBinEdges[kNEtrueBins+1] = 
+{
+   0.000,  0.050,  0.100,  0.150,  0.200,  0.250,
+   0.300,  0.325,  0.350,  0.375,  0.400,  0.425,  0.450,  0.475,  0.500,  0.525,
+   0.550,  0.575,  0.600,  0.625,  0.650,  0.675,  0.700,  0.725,  0.750,  0.775,
+   0.800,  0.825,  0.850,  0.875,  0.900,  0.925,  0.950,  0.975,
+   1.000,  1.050,  1.100,  1.150,  1.200,  1.250,  1.300,  1.350,  1.400,  1.450, 
+   1.500,  1.550,  1.600,  1.650,  1.700,  1.750,  1.800,  1.850,  1.900,  1.950, 
+   2.000,  2.050,  2.100,  2.150,  2.200,  2.250,  2.300,  2.350,  2.400,  2.450, 
+   2.500,  2.550,  2.600,  2.650,  2.700,  2.750,  2.800,  2.850,  2.900,  2.950, 
+   3.000,  3.100,  3.200,  3.300,  3.400, 
+   3.500,  4.000,  5.000,  7.000, 10.000,
+   30.000
+};
+#elif ETRUE_BINS == 6
+// Even finer binning around the oscillation maximum
+//  50-MeV bins from 0.0  to 0.3  GeV (6  bins)
+//  10-MeV bins from 0.0  to 1.0  GeV (70 bins)
+//  50-MeV bins from 1.0  to 3.0  GeV (40 bins)
+// 100-MeV bins from 3.0  to 3.5  GeV (5 bins)
+// Variable binning to 30 GeV (5 bins)
+static const int kNEtrueBins = 126;
+static const double kEtrueBinEdges[kNEtrueBins+1] = 
+{
+   0.000,  0.050,  0.100,  0.150,  0.200,  0.250,
+   0.300,  0.310,  0.320,  0.330,  0.340,  0.350,  0.360,  0.370,  0.380,  0.390, 
+   0.400,  0.410,  0.420,  0.430,  0.440,  0.450,  0.460,  0.470,  0.480,  0.490, 
+   0.500,  0.510,  0.520,  0.530,  0.540,  0.550,  0.560,  0.570,  0.580,  0.590, 
+   0.600,  0.610,  0.620,  0.630,  0.640,  0.650,  0.660,  0.670,  0.680,  0.690, 
+   0.700,  0.710,  0.720,  0.730,  0.740,  0.750,  0.760,  0.770,  0.780,  0.790, 
+   0.800,  0.810,  0.820,  0.830,  0.840,  0.850,  0.860,  0.870,  0.880,  0.890, 
+   0.900,  0.910,  0.920,  0.930,  0.940,  0.950,  0.960,  0.970,  0.980,  0.990, 
    1.000,  1.050,  1.100,  1.150,  1.200,  1.250,  1.300,  1.350,  1.400,  1.450, 
    1.500,  1.550,  1.600,  1.650,  1.700,  1.750,  1.800,  1.850,  1.900,  1.950, 
    2.000,  2.050,  2.100,  2.150,  2.200,  2.250,  2.300,  2.350,  2.400,  2.450, 

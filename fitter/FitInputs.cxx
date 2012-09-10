@@ -224,7 +224,7 @@ double FitInputs::ChisquarePenaltyTerm(void)
   // Add penalty term for NuXSec params (other than the ones incl. in BANFF)
   //
   bool incl_xsec_penalty = true;
-#if BANFF_Bins != 2
+#if BANFF_BINS != 2
   int np_xsec = 11;
 #else
   int np_xsec = 14;
