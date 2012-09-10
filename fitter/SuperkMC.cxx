@@ -231,7 +231,7 @@ bool SuperkMC::Read(TXMLEngine* xml, XMLNodePointer_t root_node)
 
 #ifdef __save_templates_debug__
   this->NevDebug(kSKMCtOri, "nevents");
-  this->NevDebug(kSKMCtNom, "mcnorm");
+  //this->NevDebug(kSKMCtNom, "mcnorm");
 #endif
 
   // need to read in the xsec splines, before applying any BANFF tweaks
