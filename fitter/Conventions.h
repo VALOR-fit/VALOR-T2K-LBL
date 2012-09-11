@@ -51,8 +51,8 @@ Changes since 2011_v0.9.0:
 
 #ifndef ERECO_BINS_1RMU
 //#define ERECO_BINS_1RMU 1 // DEFAULT 50 MeV binning 0-30 GeV
-//#define ERECO_BINS_1RMU 2 // 50 MeV bins in 0-3 GeV, 250 MeV bins in 3-4 GeV, 500 MeV bins in 4-6 GeV, 1000 MeV bins 6-10 GeV, 1 bin 10-30 GeV (73 bins)
-#define ERECO_BINS_1RMU 3 // 50 MeV bins in 0-3 GeV, 100 MeV bins in 3-3.5 GeV, Variable bins > 3.5 GeV (70 bins)
+#define ERECO_BINS_1RMU 2 // 50 MeV bins in 0-3 GeV, 250 MeV bins in 3-4 GeV, 500 MeV bins in 4-6 GeV, 1000 MeV bins 6-10 GeV, 1 bin 10-30 GeV (73 bins)
+//#define ERECO_BINS_1RMU 3 // 50 MeV bins in 0-3 GeV, 100 MeV bins in 3-3.5 GeV, Variable bins > 3.5 GeV (70 bins)
 //#define ERECO_BINS_1RMU 4 // 50 MeV bins in 0-1.25 GeV, 1 bin from 1.25-3 GeV, 1 bin from 3-10 GeV, 1 bin from 10-30 GeV (28 bins)
 #endif
 
@@ -3148,7 +3148,7 @@ static const double kFSIParamsErecoCut[kNumOfFSIParams][2] =
   { 0.0,  0.4 }, // FSI000
   { 0.4,  1.1 }, // FSI001
   { 1.1, 30.0 }, // FSI002
-#if FSI_BINS == 1
+#if FSI_BINS == 2
   { 0.0,  0.4 }, // FSI003
   { 0.4,  1.1 }, // FSI004
   { 1.1, 30.0 }, // FSI005
@@ -3161,7 +3161,7 @@ static const double kFSIParamsErecoCut[kNumOfFSIParams][2] =
   { 0.0,  0.4 }, // FSI012
   { 0.4,  1.1 }, // FSI013
   { 1.1, 30.0 }, // FSI014
-#elif FSI_BINS == 2
+#elif FSI_BINS == 1
   { 0.0, 30.0 }, // FSI003
   { 0.0, 30.0 }, // FSI004
   { 0.0, 30.0 }, // FSI005

@@ -410,21 +410,39 @@ void SuperkExpectation::TweakAllSystematics(void)
   cout << "Exp >> Generating random variations of all systematic params." << endl;
 #endif
 
-  TRandom3 rand(0);
-
-  // SuperK detector systematics
-  this->GetSuperkDetector()->TweakEnergyScale              (rand.Gaus(0.,1.));
-  this->GetSuperkDetector()->TweakEfficiency1RmuCCQEOther  (rand.Gaus(0.,1.));
-  this->GetSuperkDetector()->TweakEfficiency1RmuCCnonQE    (rand.Gaus(0.,1.));
-  this->GetSuperkDetector()->TweakEfficiency1RmuNC         (rand.Gaus(0.,1.));     
-  this->GetSuperkDetector()->TweakEfficiency1RmuNuECC      (rand.Gaus(0.,1.));
-  this->GetSuperkDetector()->TweakEfficiency1RmuCCQERingCounting  (); // <-- Cholesky method
+  this->TweakAllBANFFSystematics();
+  this->TweakAllFSISystematics();
+  this->TweakAllUncorrelatedXSecSystematics();
+  this->TweakAllSKDetectorSystematics();
+}
+//________________________________________________________________________________________
+void SuperkExpectation::TweakAllBANFFSystematics(void)
+{
+#ifdef __show_syst_tweak_mesg__
+  cout << "Exp >> Generating random variations of all BANFF systematic params." << endl;
+#endif
 
   // BANFF
   this->GetBANFF()->Tweak(); // <-- Cholesky method
+}
+//________________________________________________________________________________________
+void SuperkExpectation::TweakAllFSISystematics(void)
+{
+#ifdef __show_syst_tweak_mesg__
+  cout << "Exp >> Generating random variations of all FSI systematic params." << endl;
+#endif
 
   // FSI
   this->GetFSI()->Tweak(); // <-- Cholesky method
+}
+//________________________________________________________________________________________
+void SuperkExpectation::TweakAllUncorrelatedXSecSystematics(void)
+{
+#ifdef __show_syst_tweak_mesg__
+  cout << "Exp >> Generating random variations of all Uncorrelated XSec systematic params." << endl;
+#endif
+
+  TRandom3 rand(0);
 
   // XSec
   this->GetNuXSec()->TweakFermiMom      (rand.Gaus(0.,1.));
@@ -443,7 +461,23 @@ void SuperkExpectation::TweakAllSystematics(void)
   this->GetNuXSec()->TweakNormNCcoh     (rand.Gaus(0.,1.));
   this->GetNuXSec()->TweakNormNCoth     (rand.Gaus(0.,1.));
   this->GetNuXSec()->TweakNormNuEToNuMu (rand.Gaus(0.,1.));
+}
+//________________________________________________________________________________________
+void SuperkExpectation::TweakAllSKDetectorSystematics(void)
+{
+#ifdef __show_syst_tweak_mesg__
+  cout << "Exp >> Generating random variations of all SKDetector systematic params." << endl;
+#endif
 
+  TRandom3 rand(0);
+
+  // SuperK detector systematics
+  this->GetSuperkDetector()->TweakEnergyScale              (rand.Gaus(0.,1.));
+  this->GetSuperkDetector()->TweakEfficiency1RmuCCQEOther  (rand.Gaus(0.,1.));
+  this->GetSuperkDetector()->TweakEfficiency1RmuCCnonQE    (rand.Gaus(0.,1.));
+  this->GetSuperkDetector()->TweakEfficiency1RmuNC         (rand.Gaus(0.,1.));     
+  this->GetSuperkDetector()->TweakEfficiency1RmuNuECC      (rand.Gaus(0.,1.));
+  this->GetSuperkDetector()->TweakEfficiency1RmuCCQERingCounting  (); // <-- Cholesky method
 }
 //________________________________________________________________________________________
 void SuperkExpectation::PrintSystematicVariations(void) const

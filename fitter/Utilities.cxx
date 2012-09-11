@@ -1278,7 +1278,7 @@ string t2kana::util::AsString(PhysParamId_t p)
     {
       int ip = (int)p - (int)kNuisFSI000;
       string nutypes = "";
-#if FSI_BINS == 1
+#if FSI_BINS == 2
       switch(p) {
         case (kNuisFSI000) :
         case (kNuisFSI001) :
@@ -1302,7 +1302,7 @@ string t2kana::util::AsString(PhysParamId_t p)
 	  nutypes = "oscillated nue"; break;
         default : nutypes = "--";
       }
-#elif FSI_BINS == 2
+#elif FSI_BINS == 1
       switch(p) {
         case (kNuisFSI000) :
         case (kNuisFSI001) :
@@ -1982,7 +1982,7 @@ string t2kana::util::AsStringTex(PhysParamId_t p)
     {
       string nutypes = "";
       int ip = (int)p - (int)kNuisFSI000;
-#if FSI_BINS == 1
+#if FSI_BINS == 2
       switch(p) {
         case (kNuisFSI000) :
         case (kNuisFSI001) :
@@ -2006,7 +2006,7 @@ string t2kana::util::AsStringTex(PhysParamId_t p)
 	  nutypes = "Oscillated $\\nu_e$"; break;
         default : nutypes = "--";
       }
-#elif FSI_BINS == 2
+#elif FSI_BINS == 1
       switch(p) {
         case (kNuisFSI000) :
         case (kNuisFSI001) :

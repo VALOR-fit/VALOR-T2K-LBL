@@ -59,7 +59,11 @@ public:
    void ResetSystematicVariations (void);                                 ///< reset all systematics
    void TweakSystematic           (string systematic, double twkdial=0., bool best_banff=true); ///< set systematic variation (from top level)
    //                     best_banff refers to whether to use bestfit or param=1 when fitting a single banff parameter
-   void TweakAllSystematics       (void);                                 ///< random variation of all systematics
+   void TweakAllSystematics                  (void);           ///< random variation of all systematics
+   void TweakAllBANFFSystematics             (void);           ///< random variation of all BANFF systematics
+   void TweakAllFSISystematics               (void);           ///< random variation of all FSI systematics
+   void TweakAllUncorrelatedXSecSystematics  (void);           ///< random variation of all Uncorrelated XSec systematics
+   void TweakAllSKDetectorSystematics        (void);           ///< random variation of all SK Detector systematics
 
    // Interface method for fitters. The fit parameter list can contain info for both the 
    // physics hypothesis and the systematic variations.

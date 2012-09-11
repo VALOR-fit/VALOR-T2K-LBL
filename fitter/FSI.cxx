@@ -170,7 +170,9 @@ double FSI::SystWght(
      bool apply = this->ApplySyst(p,s,m,Ereco);
      if(!apply) continue;
      if(iparam != -1) {
-       cerr << "Exp/FSI/SystWght >> Found multiple FSI bins for sample, mode, Ereco combination!" << endl;
+       cerr << "Exp/FSI/SystWght >> Found multiple FSI bins for sample, mode, Ereco combination!" << endl
+	    << util::AsString(s) << "\t" << util::AsString(m) << "\t" << Ereco << endl
+	    << util::AsString((conv::PhysParamId_t)(iparam+conv::kNuisFSI000)) << "\t" <<  util::AsString(p) << endl;
        exit(1);
      }
      iparam = util::ArrIdx::Instance()->FSISystIdx(p);
