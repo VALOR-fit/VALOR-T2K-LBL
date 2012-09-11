@@ -46,6 +46,8 @@ public:
    double StepSize     (t2kana::conv::PhysParamId_t p) const { return fStepSize     [this->Id(p)];   }
    bool   IsFixed      (t2kana::conv::PhysParamId_t p) const { return fIsFixed      [this->Id(p)];   }
    bool   IsNuisance   (t2kana::conv::PhysParamId_t p) const { return fIsNuisance   [this->Id(p)];   }
+   double PlusError    (t2kana::conv::PhysParamId_t p) const { return fPlusError    [this->Id(p)];   }
+   double MinusError   (t2kana::conv::PhysParamId_t p) const { return fMinusError   [this->Id(p)];   }
 
    // Add a parameter
    bool AddParam (
@@ -67,6 +69,9 @@ public:
    // Copy current param values to best-fit values & vice-versa
    void CopyCurrToBestFitValues (void);
    void CopyBestFitToCurrValues (void);
+
+   // Set the errors
+   void SetErrors(double * errplus, double * errminus);
 
    // Fix a parameter
    void FixParameter (t2kana::conv::PhysParamId_t p); 
@@ -146,6 +151,8 @@ private:
    string * fName;         //[fNParams]
    bool *   fIsFixed;      //[fNParams]
    bool *   fIsNuisance;   //[fNParams]
+   double * fPlusError;    //[fNParams]
+   double * fMinusError;   //[fNParams]
 
    mutable bool fShowCurrValuesOnly;
    mutable bool fShowBestFitValuesOnly;

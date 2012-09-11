@@ -154,7 +154,7 @@ void test_sk_ereco_spectrum_twk_sys
 	modetitle = Form("banff_%02d",mode-100); break;
       }
       else if(mode >= 400 && mode < 400+conv::kNumOfFSIParams) {
-	modetitle = Form("fsi_%02d",mode-400); break;
+	modetitle = Form("fsi_%03d",mode-400); break;
       }
       else {
 	cout << "Unknown mode " << mode << endl; exit(1); break;
@@ -506,7 +506,7 @@ void test_sk_ereco_spectrum_twk_sys
     summary_p->GetXaxis()->SetBinLabel(conv::kNumOfParamsInBANFFfit+21,"sk_1Rmu_ccqe_ring_counting_eff_1");
     summary_p->GetXaxis()->SetBinLabel(conv::kNumOfParamsInBANFFfit+22,"sk_1Rmu_ccqe_ring_counting_eff_2");
     for(int i = 0; i < conv::kNumOfFSIParams; i++)
-      summary_p->GetXaxis()->SetBinLabel(i+conv::kNumOfParamsInBANFFfit+23,Form("fsi_%02d",i));
+      summary_p->GetXaxis()->SetBinLabel(i+conv::kNumOfParamsInBANFFfit+23,Form("fsi_%03d",i));
   }
   if(!summary_m) {
     int nbins = conv::kNumOfParamsInBANFFfit + 17 + 8 + conv::kNumOfFSIParams;
@@ -538,7 +538,7 @@ void test_sk_ereco_spectrum_twk_sys
     summary_m->GetXaxis()->SetBinLabel(conv::kNumOfParamsInBANFFfit+21,"sk_1Rmu_ccqe_ring_counting_eff_1");
     summary_m->GetXaxis()->SetBinLabel(conv::kNumOfParamsInBANFFfit+22,"sk_1Rmu_ccqe_ring_counting_eff_2");
     for(int i = 0; i < conv::kNumOfFSIParams; i++)
-      summary_m->GetXaxis()->SetBinLabel(i+conv::kNumOfParamsInBANFFfit+23,Form("fsi_%02d",i));
+      summary_m->GetXaxis()->SetBinLabel(i+conv::kNumOfParamsInBANFFfit+23,Form("fsi_%03d",i));
   }
   if(!categories_p) {
     categories_p = new TH1D("categories_p","categories_p",11,0,11);

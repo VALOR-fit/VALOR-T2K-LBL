@@ -154,7 +154,7 @@ void test_systematic_error_propagation_all
 
   //systematics.push_back("fsi"); //not supported in this macro
   for(int ib = 0; ib < conv::kNumOfFSIParams; ib++) {
-    systematics.push_back(Form("fsi_%02d",ib));
+    systematics.push_back(Form("fsi_%03d",ib));
   }
 
   //systematics.push_back("banff"); //not supported in this macro

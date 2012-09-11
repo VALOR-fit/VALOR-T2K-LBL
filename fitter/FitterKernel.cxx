@@ -197,6 +197,12 @@ bool FitterKernel::RunOnce(void)
 #ifdef __show_fit_steps__
   cout << "FitterKernel/RunOnce >> Getting errors..." << endl;
 #endif
+  double errplus[fFitInputs->FitParams().Size()], errminus[fFitInputs->FitParams().Size()];
+  for(int ip = 0; ip < fFitInputs->FitParams().Size(); ip++) {
+    double errpara, glob_corr; // dummy vars
+    fitter->GetErrors(ip,errplus[ip],errminus[ip],errpara,glob_corr);
+    fFitInputs->FitParams().SetErrors(errplus, errminus);
+  }
 
   // Print fit result
 #ifdef __show_fit_result__

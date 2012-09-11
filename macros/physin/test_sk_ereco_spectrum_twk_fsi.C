@@ -131,10 +131,10 @@ void test_sk_ereco_spectrum_twk_fsi
        cout << "- Reseting all systematic variations " << endl;
        skexp.ResetSystematicVariations(); //reset
        
-       conv::PhysParamId_t p = (conv::PhysParamId_t) ( (int)conv::kNuisFSI00 + iparam );
+       conv::PhysParamId_t p = (conv::PhysParamId_t) ( (int)conv::kNuisFSI000 + iparam );
        cout << "- Tweaking FSI parameter: " << iparam << " [" << util::AsString(p) << "] only (neglecting correlations)" << endl;
 
-       string p_str = Form("fsi_%02i",iparam);
+       string p_str = Form("fsi_%03i",iparam);
 
        //
        // tweak current param only by +100% - neglect correlations

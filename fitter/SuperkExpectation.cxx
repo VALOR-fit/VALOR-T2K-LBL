@@ -220,10 +220,10 @@ void SuperkExpectation::TweakSystematic(string systematic, double twkdial, bool 
 // FSI
 //    - fsi                                 : tweak all FSI params, correlations taken into account (Cholesky method)
 //      or     
-//      * fsi_00                            : tweak only FSI param 00, see Conventions.h for definition, correlations ignored (debug mode)
-//      * fsi_01                            : tweak only FSI param 01, see Conventions.h for definition, correlations ignored (debug mode)
+//      * fsi_000                           : tweak only FSI param 00, see Conventions.h for definition, correlations ignored (debug mode)
+//      * fsi_001                           : tweak only FSI param 01, see Conventions.h for definition, correlations ignored (debug mode)
 //      * ..     
-//      * fsi_14                            : tweak only FSI param 14, see Conventions.h for definition, correlations ignored (debug mode)
+//      * fsi_014                           : tweak only FSI param 14, see Conventions.h for definition, correlations ignored (debug mode)
 //
 // XSec
 //    - xsec_pf
@@ -347,7 +347,7 @@ void SuperkExpectation::TweakSystematic(string systematic, double twkdial, bool 
         twkv[ip] = 1;
      }
      for (int ip = 0; ip < nfsi; ip++) {
-	if(systematic == Form("fsi_%02i",ip)) {
+	if(systematic == Form("fsi_%03i",ip)) {
 	   twkv[ip]=twkdial;
 	   this->GetFSI()->Tweak(true,&twkv);
 	   found = true;
@@ -694,7 +694,7 @@ void SuperkExpectation::SetNuisanceParams(const FitParamList & fp)
    // FSI params included in the fit param list?
    bool incl_fsi = true;   
    for(int ip = 0; ip < nfsi; ip++) {
-      PhysParamId_t p = PhysParamId_t ((int) kNuisFSI00 + ip);
+      PhysParamId_t p = PhysParamId_t ((int) kNuisFSI000 + ip);
       incl_fsi = incl_fsi && fp.Exists(p);
       if(!incl_fsi) break;
    }
@@ -703,7 +703,7 @@ void SuperkExpectation::SetNuisanceParams(const FitParamList & fp)
    if(incl_fsi) {
      TVectorD twkv(nfsi);
      for(int ip = 0; ip < nfsi; ip++) {
-        PhysParamId_t p = PhysParamId_t ((int) kNuisFSI00 + ip);
+        PhysParamId_t p = PhysParamId_t ((int) kNuisFSI000 + ip);
         twkv[ip] = fp.CurrValue(p);
      }
      this->GetFSI()->Tweak(true,&twkv);    

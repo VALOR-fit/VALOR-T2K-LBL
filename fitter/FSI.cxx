@@ -156,6 +156,12 @@ bool FSI::Read(TXMLEngine* xml, XMLNodePointer_t root_node)
 double FSI::SystWght(
   conv::SuperkSample_t s, conv::SuperkMode_t m, double Ereco, double /*Etrue*/) const
 {
+#if FSI_BINS == 3
+  //special check that needs to be done for the 480x480 matrix that has no bins below 250 MeV
+  if(Ereco < 0.25)
+    return 1;
+#endif
+
   // find FSI param which corresponds to the current Ereco param
   int iparam = -1;
   for(int ip = 0; ip < conv::kNumOfFSIParams; ip++) {
@@ -221,32 +227,6 @@ void FSI::Tweak(
   cout << "Exp/FSI/Tweak >> Tweaking FSI parameters" << endl;
 #endif
 
-  //
-  // If this is the first time this function is called, then run the Cholesky
-  // decomposition of the flux covariance matrix
-  //
-
-  if(fCovMtrxChoL == 0)
-  {
-#ifdef __show_fsi_cholesky_mesg_info__
-    cout << "Exp/FSI/Tweak >> "
-         << "Running Cholesky's decomposition method on the FSI covariance matrix." << endl;
-#endif
-    
-    TMatrixD cov(this->CovMatrix());
-#ifdef __show_fsi_cholesky_mesg_debug__
-    cout << "Exp/FSI/Tweak >> FSI covariance matrix: " << endl;
-    util::PrintCompact(cov,7,4);
-#endif
-
-    TMatrixD L = util::CholeskyDecomposition(cov);
-    fCovMtrxChoL = new TMatrixD(L);
-#ifdef __show_fsi_cholesky_mesg_debug__
-    cout << "Exp/FSI/Tweak >> Cholesky decomposition of FSI covariance matrix: " << endl;
-    util::PrintCompact(*fCovMtrxChoL,7,4);
-#endif
-  }
-
   TVectorD & current_values = *fCurrentValues;
 
   //
@@ -278,10 +258,36 @@ void FSI::Tweak(
   }//force_inputs?
 
   //
+  // If this is the first time this function is called, then run the Cholesky
+  // decomposition of the flux covariance matrix
+  //
+
+  if(fCovMtrxChoL == 0)
+  {
+#ifdef __show_fsi_cholesky_mesg_info__
+    cout << "Exp/FSI/Tweak >> "
+         << "Running Cholesky's decomposition method on the FSI covariance matrix." << endl;
+#endif
+    
+    TMatrixD cov(this->CovMatrix());
+#ifdef __show_fsi_cholesky_mesg_debug__
+    cout << "Exp/FSI/Tweak >> FSI covariance matrix: " << endl;
+    util::PrintCompact(cov,7,4);
+#endif
+
+    TMatrixD L = util::CholeskyDecomposition(cov);
+    fCovMtrxChoL = new TMatrixD(L);
+#ifdef __show_fsi_cholesky_mesg_debug__
+    cout << "Exp/FSI/Tweak >> Cholesky decomposition of FSI covariance matrix: " << endl;
+    util::PrintCompact(*fCovMtrxChoL,7,4);
+#endif
+  }
+
+  //
   // If the tweaking dials were not forced, generate correlated tweaking dials
   // using the Cholesky method
   //
-  else
+  if(!force_inputs)
   {   
 #ifdef __show_fsi_tweak_mesg_debug__
      cout << "Exp/FSI/Tweak >> Generating random FSI params (correlated)! " << endl;
@@ -452,7 +458,9 @@ bool FSI::ApplySystToSKMode(conv::PhysParamId_t p, conv::SuperkSample_t s, conv:
 
   bool apply = conv::kFSIApplyFSIParamToSKMode[is][im][idx];
 #ifdef __show_fsi_applysyst_mesg_debug__
-  cout << apply ? "Passed" : "Failed" << "\t" << util::AsString(p) << "\t" << util::AsString(s) << "\t" << util::AsString(m) << endl;
+  string applystr;
+  applystr = apply ? "Passed" : "Failed";
+  cout << applystr << "\t" << util::AsString(p) << "\t" << util::AsString(s) << "\t" << util::AsString(m) << endl;
 #endif
   return apply;
 }
@@ -465,7 +473,9 @@ bool FSI::ApplySystToEnergyBin(conv::PhysParamId_t p, double Ereco) const
   bool apply = Ereco >= conv::kFSIParamsErecoCut[idx][0] &&
                Ereco <  conv::kFSIParamsErecoCut[idx][1];
 #ifdef __show_fsi_applysyst_mesg_debug__
-  cout << apply ? "Passed" : "Failed" << "\t" << util::AsString(p) << "\t" << Ereco << endl;
+  string applystr;
+  applystr = apply ? "Passed" : "Failed";
+  cout << applystr << "\t" << util::AsString(p) << "\t" << Ereco << endl;
 #endif
   return apply;
 }

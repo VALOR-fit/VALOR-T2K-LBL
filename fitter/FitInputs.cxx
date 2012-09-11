@@ -251,7 +251,7 @@ double FitInputs::ChisquarePenaltyTerm(void)
   bool incl_fsi_penalty = true;
   const int np_fsi = conv::kNumOfFSIParams;
   for(int ip = 0; ip < np_fsi; ip++) {
-     PhysParamId_t p = PhysParamId_t ( (int) kNuisFSI00 + ip );
+     PhysParamId_t p = PhysParamId_t ( (int) kNuisFSI000 + ip );
      incl_fsi_penalty = incl_fsi_penalty && 
        (this->FitParams().Exists(p) && this->FitParams().IsNuisance(p));
      if(!incl_fsi_penalty) break;

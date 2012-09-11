@@ -117,6 +117,14 @@ void FitParamList::CopyBestFitToCurrValues(void)
   }
 }
 //________________________________________________________________________________________
+void FitParamList::SetErrors(double * errplus, double * errminus)
+{
+  for(int ip = 0; ip < fNParams; ip++) {
+     fPlusError [ip] = errplus [ip];
+     fMinusError[ip] = errminus[ip];
+  }
+}
+//________________________________________________________________________________________
 void FitParamList::FixParameter(PhysParamId_t p)
 {
   fIsFixed [this->Id(p)] = true;
@@ -474,8 +482,8 @@ void FitParamList::AppendSystematics(FitParamList * fparm, int start)
     delete xml;
     exit(1);  
   }
-  // Get BANFF fit central values
   XMLNodePointer_t root_node = xml->DocGetRootElement(xmldoc);
+  // Get BANFF fit central values
   TVectorD * BANFFBestFitValues = util::XML2TVectorD(xml,root_node,"banff/best_fit_values");
   if(!BANFFBestFitValues) {
     cerr << "FitParamList/AppendSystematics >> No BANFF best-fit parameter vector was found." << endl;
@@ -497,7 +505,8 @@ void FitParamList::AppendSystematics(FitParamList * fparm, int start)
   }
   const TMatrixD & FSICov = *FSICovMtrx;
   // Release memory
-  xml->FreeDoc(xmldoc);
+  //  xml->FreeDoc(xmldoc);
+  xml->FreeNode(root_node);
   delete xml;
 
   // SK detector
@@ -538,7 +547,7 @@ void FitParamList::AppendSystematics(FitParamList * fparm, int start)
 
   // FSI
   for(int i = 0; i < kNumOfFSIParams; i++) {
-    PhysParamId_t p = PhysParamId_t ((int) kNuisFSI00 + i);
+    PhysParamId_t p = PhysParamId_t ((int) kNuisFSI000 + i);
     double err = sqrt(FSICov[i][i]);
     fparm->AddParam(ip++, p,  1.0, 1.0-(err*nsigma), 1.0+(err*nsigma),  err/2,  false, true);
   }
