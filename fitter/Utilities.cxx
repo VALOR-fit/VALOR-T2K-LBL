@@ -4099,7 +4099,7 @@ bool t2kana::util::IsSystematic(PhysParamId_t p)
     case ( kNuisFSI003                ) : return true;  break;
     case ( kNuisFSI004                ) : return true;  break;
     case ( kNuisFSI005                ) : return true;  break;
-#if BANFF_BINS >= 2
+#if FSI_BINS >= 2
     case ( kNuisFSI006                ) : return true;  break;
     case ( kNuisFSI007                ) : return true;  break;
     case ( kNuisFSI008                ) : return true;  break;
@@ -4109,7 +4109,7 @@ bool t2kana::util::IsSystematic(PhysParamId_t p)
     case ( kNuisFSI012                ) : return true;  break;
     case ( kNuisFSI013                ) : return true;  break;
     case ( kNuisFSI014                ) : return true;  break;
-#if BANFF_BINS >= 3
+#if FSI_BINS >= 3
     case ( kNuisFSI015                ) : return true;  break;
     case ( kNuisFSI016                ) : return true;  break;
     case ( kNuisFSI017                ) : return true;  break;

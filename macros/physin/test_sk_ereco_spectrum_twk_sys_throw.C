@@ -319,7 +319,7 @@ void test_sk_ereco_spectrum_twk_sys_throw
         case 304:
 	  skexp.TweakSystematic("sk_1Rmu_nuecc_eff",tweak); break;
         case 305:
-	  skexp.GetSuperkDetector()->TweakEfficiency1RmuCCQERingCounting();
+	  skexp.GetSuperkDetector()->TweakEfficiency1RmuCCQERingCounting(); break;
 
         default:
 	  cout << "Unknown mode " << mode << endl; exit(1); break;
