@@ -93,7 +93,7 @@ public:
   TH2D * Template(conv::SuperkSample_t s, conv::SuperkMode_t m) const;
 
   // Penalty term included in the chisq if NuXSec nuisance terms are included in the fit
-  double ChisqPenalty(void) const;
+  double ChisqPenalty(bool all_syst = true) const;
 
 private:
 

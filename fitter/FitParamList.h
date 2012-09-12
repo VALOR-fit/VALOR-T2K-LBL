@@ -108,12 +108,17 @@ public:
    // - "nuosc3f_12fix"                  : As "nuosc3f", but fixing sin^2(2theta12), Dm12^2 devations to values measured in solar/reactor expts.
    // - "nuosc3f_numudisapp_fix4"        : As "nuosc3f" but fixing  sin^2(2theta12), sin^2(2theta13), delta_CP and Dm12^2.
    // - "nuosc3f_numudisapp_fix4+nuisance": As "nuosc3f" but fixing  sin^2(2theta12), sin^2(2theta13), delta_CP and Dm12^2 + all nuisance parameters.
+   // - "nuosc3f_numudisapp_fix4+nuisanceselection": As "nuosc3f" but fixing  sin^2(2theta12), sin^2(2theta13), delta_CP and Dm12^2 + a selection of nuisance parameters.
    // - "nuosc3f_nueapp_fix4"            : As "nuosc3f" but fixing  sin^2(2theta12), sin^2(2theta23), |Dm23^2| and Dm12^2.
    // - "numudisapp2f"                   : Fit for sin^2(2theta23) and |Dm23^2| (2-flavour formalism)
    // - "numudisapp2f+nuisance"          : As "numudisapp2f" + all nuisance parameters 
    // - "decay"                          : Fit for sin^2(2theta) and \alpha_{decay}
    // - "decoh"                          : Fit for sin^2(2theta) and \mu_{decoherence}
    static FitParamList * NamedParameterList (string name);
+
+   // Get the name used in NamedParameterList
+   string GetParListName (void) const { return fParListName; }
+   void   SetParListName (string s)   { fParListName = s; }
 
    // Work-out the physics hypothesis
    conv::PhysHypothesis_t PhysicsHypothesis(void) const;
@@ -140,6 +145,8 @@ private:
    t2kana::conv::PhysParamId_t WhichParam(int id) const; // array slot --> PhysParamId_t
 
    map<t2kana::conv::PhysParamId_t, int> fIdMap;
+
+   string   fParListName;
 
    int      fNParams;   
    double * fBestFitValue; //[fNParams]

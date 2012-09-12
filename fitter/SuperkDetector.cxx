@@ -263,9 +263,16 @@ void SuperkDetector::TweakEfficiency1RmuNuECC(double twkdial)
   fEff1RmuNuECCTwkDial = twkdial; 
 }
 //________________________________________________________________________________________
-double SuperkDetector::ChisqPenalty(void) const
+double SuperkDetector::ChisqPenalty(bool all_syst) const
 {
   double chisq_penalty = 0;
+
+  // when only fitting for most important systematics
+  if(!all_syst) {
+    if (fEff1RmuCCnonQETwkDial) chisq_penalty += fEff1RmuCCnonQETwkDial*fEff1RmuCCnonQETwkDial;
+    if (fEff1RmuNCTwkDial     ) chisq_penalty += fEff1RmuNCTwkDial*fEff1RmuNCTwkDial;
+    return chisq_penalty;
+  }
 
   //add the contributions from the simple multiplicative systematics
   if (fEff1RmuCCQEOthTwkDial) chisq_penalty += fEff1RmuCCQEOthTwkDial*fEff1RmuCCQEOthTwkDial;

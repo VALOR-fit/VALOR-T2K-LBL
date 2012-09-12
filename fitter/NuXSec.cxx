@@ -1068,11 +1068,20 @@ TH2D * NuXSec::Template(SuperkSample_t s, SuperkMode_t m) const
   return h;
 }
 //________________________________________________________________________________________
-double NuXSec::ChisqPenalty(void) const
+double NuXSec::ChisqPenalty(bool all_syst) const
 {
   //only contains the contributions from the non-BANFF xsec parameters
 
   double chisq_penalty = 0;
+
+  // when only fitting for most important systematics
+  if(!all_syst) {
+    if (fWshapeTwkDial) chisq_penalty += fWshapeTwkDial*fWshapeTwkDial;
+    if (fENuShapeTwkDial) chisq_penalty += fENuShapeTwkDial*fENuShapeTwkDial;
+    if (fNormNC1piCTwkDial) chisq_penalty += fNormNC1piCTwkDial*fNormNC1piCTwkDial;
+    if (fNormNCothTwkDial) chisq_penalty += fNormNCothTwkDial*fNormNCothTwkDial;
+    return chisq_penalty;
+  }
 
   if (fFermiMomTwkDial) chisq_penalty += fFermiMomTwkDial*fFermiMomTwkDial;
   if (fSpecFuncTwkDial) chisq_penalty += fSpecFuncTwkDial*fSpecFuncTwkDial;

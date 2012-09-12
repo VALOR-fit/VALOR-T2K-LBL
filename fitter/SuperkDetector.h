@@ -56,7 +56,7 @@ public:
   double  EnergyScale         (conv::SuperkSample_t s, conv::SuperkMode_t m) const; ///< energy scale
 
   // Penalty term included in the chisq if SuperK detector nuisance terms are included in the fit
-  double ChisqPenalty(void) const;
+  double ChisqPenalty(bool all_syst = true) const;
 
   // Read inputs from XML file
   bool Read (TXMLEngine* xml, XMLNodePointer_t root_node);

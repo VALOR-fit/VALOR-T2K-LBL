@@ -252,10 +252,14 @@ FitParamList * FitParamList::NamedParameterList(string name)
   // 3-flavour oscillation fit with/without systematics included 
   //
   if(name == "nuosc3f") {
-    return FitParamList::NuOsc3FlavourFit();
+    FitParamList * fp = FitParamList::NuOsc3FlavourFit();
+    fp -> SetParListName(name);
+    return fp;
   }
   if(name == "nuosc3f+nuisance") {
-    return FitParamList::NuOsc3FlavourFitWithAllSyst();
+    FitParamList * fp = FitParamList::NuOsc3FlavourFitWithAllSyst();
+    fp -> SetParListName(name);
+    return fp;
   }
 
   //
@@ -266,12 +270,14 @@ FitParamList * FitParamList::NamedParameterList(string name)
     FitParamList * fp = FitParamList::NuOsc3FlavourFit();
     fp -> SetNuisance (kPhypMixing12, true);
     fp -> SetNuisance (kPhypDm12sq,   true);
+    fp -> SetParListName(name);
     return fp;
   }
   if(name == "nuosc3f_12fix") {
     FitParamList * fp = FitParamList::NuOsc3FlavourFit();
     fp -> FixParameter (kPhypMixing12);
     fp -> FixParameter (kPhypDm12sq  );
+    fp -> SetParListName(name);
     return fp;
   }
   if(name == "nuosc3f_numudisapp_fix4") {
@@ -280,6 +286,7 @@ FitParamList * FitParamList::NamedParameterList(string name)
     fp -> FixParameter (kPhypMixing12);
     fp -> FixParameter (kPhypDeltaCP);
     fp -> FixParameter (kPhypDm12sq);
+    fp -> SetParListName(name);
     return fp;
   }
   if(name == "nuosc3f_numudisapp_fix4+nuisance") {
@@ -288,6 +295,53 @@ FitParamList * FitParamList::NamedParameterList(string name)
     fp -> FixParameter (kPhypMixing12);
     fp -> FixParameter (kPhypDeltaCP);
     fp -> FixParameter (kPhypDm12sq);
+    fp -> SetParListName(name);
+    return fp;
+  }
+  if(name == "nuosc3f_numudisapp_fix4+nuisanceselection") {
+    FitParamList * fp = FitParamList::NuOsc3FlavourFitWithAllSyst();
+    fp -> FixParameter (kPhypMixing13);
+    fp -> FixParameter (kPhypMixing12);
+    fp -> FixParameter (kPhypDeltaCP);
+    fp -> FixParameter (kPhypDm12sq);
+    for(int i = 0; i < kNumOfFSIParams; i++) {
+      PhysParamId_t p = PhysParamId_t ((int) kNuisFSI000 + i);
+      fp -> FixParameter (p);
+      fp -> SetNuisance  (p, false);
+    }
+    fp -> FixParameter (kNuisSuperkEff1RmuCCQEoth);
+    fp -> SetNuisance  (kNuisSuperkEff1RmuCCQEoth ,false);
+    fp -> FixParameter (kNuisSuperkEff1RmuCCQErc0u);
+    fp -> SetNuisance  (kNuisSuperkEff1RmuCCQErc0u ,false);
+    fp -> FixParameter (kNuisSuperkEff1RmuCCQErc1u);
+    fp -> SetNuisance  (kNuisSuperkEff1RmuCCQErc1u ,false);
+    fp -> FixParameter (kNuisSuperkEff1RmuCCQErc2u);
+    fp -> SetNuisance  (kNuisSuperkEff1RmuCCQErc2u ,false);
+    fp -> FixParameter (kNuisSuperkEff1RmuNueCC);
+    fp -> SetNuisance  (kNuisSuperkEff1RmuNueCC ,false);
+    fp -> FixParameter (kNuisSuperkEnergyScale);
+    fp -> SetNuisance  (kNuisSuperkEnergyScale ,false);
+    fp -> FixParameter (kNuisXSecFermiMom);
+    fp -> SetNuisance  (kNuisXSecFermiMom ,false);
+    fp -> FixParameter (kNuisXSecSpecFunc);
+    fp -> SetNuisance  (kNuisXSecSpecFunc ,false);
+    fp -> FixParameter (kNuisXSecWshape);
+    fp -> SetNuisance  (kNuisXSecWshape ,false);
+    fp -> FixParameter (kNuisXSecShapeCCoth);
+    fp -> SetNuisance  (kNuisXSecShapeCCoth ,false);
+#if BANFF_BINS != 2
+    fp -> FixParameter (kNuisXSecNormCCQEE1);
+    fp -> SetNuisance  (kNuisXSecNormCCQEE1 ,false);
+    fp -> FixParameter (kNuisXSecNormCCQEE2);
+    fp -> SetNuisance  (kNuisXSecNormCCQEE2 ,false);
+    fp -> FixParameter (kNuisXSecNormCC1piE1);
+    fp -> SetNuisance  (kNuisXSecNormCC1piE1 ,false);
+#endif
+    fp -> FixParameter (kNuisXSecNormCCcoh);
+    fp -> SetNuisance  (kNuisXSecNormCCcoh ,false);
+    fp -> FixParameter (kNuisXSecNormNuEToNuMu);
+    fp -> SetNuisance  (kNuisXSecNormNuEToNuMu ,false);
+    fp -> SetParListName(name);
     return fp;
   }
   if(name == "nuosc3f_nueapp_fix4") {
@@ -296,6 +350,7 @@ FitParamList * FitParamList::NamedParameterList(string name)
     fp -> FixParameter (kPhypMixing12);
     fp -> FixParameter (kPhypDm23sq);
     fp -> FixParameter (kPhypDm12sq);
+    fp -> SetParListName(name);
     return fp;
   }
 
@@ -303,24 +358,32 @@ FitParamList * FitParamList::NamedParameterList(string name)
   // 2-flavour numu-disappearance oscillation fit with/without systematics included 
   //
   if(name == "numudisapp2f") {
-    return FitParamList::NumuDisapFit();
+    FitParamList * fp = FitParamList::NumuDisapFit();
+    fp -> SetParListName(name);
+    return fp;
   }
   if(name == "numudisapp2f+nuisance") {
-    return FitParamList::NumuDisapFitWithAllSyst();
+    FitParamList * fp = FitParamList::NumuDisapFitWithAllSyst();
+    fp -> SetParListName(name);
+    return fp;
   }
 
   //
   // numu decay fit
   //
   if(name == "decay") {
-    return FitParamList::NumuDecayFit();
+    FitParamList * fp = FitParamList::NumuDecayFit();
+    fp -> SetParListName(name);
+    return fp;
   }
 
   //
   // numu decoherence fit
   //
   if(name == "decoh") {
-    return FitParamList::NumuDecohFit();
+    FitParamList * fp = FitParamList::NumuDecohFit();
+    fp -> SetParListName(name);
+    return fp;
   }
 
   return 0;
@@ -526,6 +589,7 @@ void FitParamList::AppendSystematics(FitParamList * fparm, int start)
     double err = sqrt(BANFFCov[i][i]);
     fparm->AddParam(ip++, p, bf, bf-(err*nsigma), bf+(err*nsigma),  err/2,  false, true);
   }
+  fparm -> SetNuisance(kNuisBANFFNC1pi0 ,false); // not used in numu analysis!
 
   // XSec
   fparm->AddParam( ip++, kNuisXSecFermiMom,      0.0, -1.0*nsigma, 1.0*nsigma, 5E-1,  false, true);
@@ -541,7 +605,7 @@ void FitParamList::AppendSystematics(FitParamList * fparm, int start)
 #endif
   fparm->AddParam( ip++, kNuisXSecNormCCcoh,     0.0, -1.0*nsigma, 1.0*nsigma, 5E-1,  false, true);
   fparm->AddParam( ip++, kNuisXSecNormNC1piC,    0.0, -1.0*nsigma, 1.0*nsigma, 5E-1,  false, true);
-  fparm->AddParam( ip++, kNuisXSecNormNCcoh,     0.0, -1.0*nsigma, 1.0*nsigma, 5E-1,  false, true);
+  fparm->AddParam( ip++, kNuisXSecNormNCcoh,     0.0, -1.0*nsigma, 1.0*nsigma, 5E-1,  true, false); // not used in numu analysis!
   fparm->AddParam( ip++, kNuisXSecNormNCoth,     0.0, -1.0*nsigma, 1.0*nsigma, 5E-1,  false, true);
   fparm->AddParam( ip++, kNuisXSecNormNuEToNuMu, 0.0, -1.0*nsigma, 1.0*nsigma, 5E-1,  false, true);
 
@@ -599,6 +663,8 @@ void FitParamList::Init(int nparams)
 {
    assert(nparams>0);
 
+   fParListName = "";
+
    fNParams = nparams; 
 
    fBestFitValue = new double[fNParams];
@@ -627,6 +693,7 @@ void FitParamList::CleanUp(void)
    delete [] fName;
    delete [] fIsFixed;
    delete [] fIsNuisance;
+   fParListName = "";
 }
 //________________________________________________________________________________________
 int FitParamList::Id(PhysParamId_t p) const
