@@ -70,7 +70,9 @@ void test_sk_ereco_spectrum_twk_sys_throw
     case 3:
       modetitle = "sk-detector"; break;
     case 4:
-      modetitle = "fsi"; break;
+      char fsibins[40] = "";
+      sprintf(fsibins, "fsi_%d", conv::kNumOfFSIParams);
+      modetitle = fsibins; break;
 
     case 200:
       modetitle = "xsec_pf"; break;
@@ -166,7 +168,7 @@ void test_sk_ereco_spectrum_twk_sys_throw
   // Output histograms
   TH1D * hErecoNominal = 0;
   TH1D * hEreco[nexp];
-  TH1D * hNsk = new TH1D(Form("%s_nsk",modetitle.c_str()),Form("%s_nsk",modetitle.c_str()),300,0,300);
+  TH1D * hNsk = new TH1D(Form("%s_nsk",modetitle.c_str()),Form("%s_nsk",modetitle.c_str()),3000,0,300);
   int nbanff = conv::kNumOfParamsInBANFFfit;
   int nfsi = conv::kNumOfFSIParams;
   const int nsys = nbanff + nfsi + 8 + 11;
@@ -222,17 +224,22 @@ void test_sk_ereco_spectrum_twk_sys_throw
 	  sysstr = ""; break;
       }//switch(isys2)
     }//isys>=nbanff+nfsi
-    hSysThrown[isys] = new TH1D(Form("%s_tweak_throws_%s",modetitle.c_str(),sysstr.c_str()),Form("%s_tweak_throws_%s",modetitle.c_str(),sysstr.c_str()),100,-5,5);
+    hSysThrown[isys] = new TH1D(Form("%s_tweak_throws_%s",modetitle.c_str(),sysstr.c_str()),Form("%s_tweak_throws_%s",modetitle.c_str(),sysstr.c_str()),1000,-5,5);
     hSysThrown[isys]->SetDirectory(0);
   }
 
-  // Open output file
+  // Open output files
   string rootmode = "update";
   if(!update_rootfile)
     rootmode = "recreate";
   string oscparams = util::AsString(ph.Hypothesis(),
      input_mixing12,input_mixing13,input_mixing23,input_deltacp,input_dm12sq,input_dm23sq);
   TFile f(Form("sk_ereco_spectrum-twk_sys_throw_%s.root",oscparams.c_str()),rootmode.c_str());
+#line 0
+  if(!update_rootfile)
+    ofstream outfile(Form("sk_ereco_spectrum-twk_sys_throw_%s.txt",oscparams.c_str()),ios_base::trunc);
+  else
+    ofstream outfile(Form("sk_ereco_spectrum-twk_sys_throw_%s.txt",oscparams.c_str()),ios_base::app);
 
   // Get the nominal
   skexp.Generate(ph);
@@ -339,7 +346,6 @@ void test_sk_ereco_spectrum_twk_sys_throw
     hNsk->Fill(hEreco[iexp]->Integral());
 
     //store thrown parameter values
-    nbflux = conv::kNumOfFluxParamsInBANFFfit;
     for(int isys = 0; isys < nbanff; isys++) {
       hSysThrown[isys]->Fill(skexp.GetBANFF()->CurrentValue(conv::kNuisBANFF00 + isys));
     }
@@ -394,10 +400,55 @@ void test_sk_ereco_spectrum_twk_sys_throw
       hErecoMin -> SetBinContent (ibin,  (min-nom)/nom);
     }
   }//ibin
-  hErecoMax->GetYaxis()->SetRangeUser(-2,2);
-  hErecoMin->GetYaxis()->SetRangeUser(-2,2);
   hErecoMax->Write(Form("%s_pluserr",modetitle.c_str()));
   hErecoMin->Write(Form("%s_minuserr",modetitle.c_str()));
 
+  //Draw & save
+  TCanvas * c = new TCanvas();
+  hNsk->Draw();
+  c->SaveAs(Form("%s_nsk.png",modetitle.c_str()));
+  hErecoMax->Draw();
+  c->SaveAs(Form("%s_pluserr.png",modetitle.c_str()));
+  hErecoMin->Draw();
+  c->SaveAs(Form("%s_minuserr.png",modetitle.c_str()));
+  TCanvas * csys = new TCanvas();
+  csys->Divide(ceil(sqrt(nsys)),ceil(sqrt(nsys)));
+  for(int isys=0; isys < nsys; isys++) {
+    csys->cd(isys+1);
+    hSysThrown[isys]->Draw();
+  }
+  csys->SaveAs(Form("%s_throws.png",modetitle.c_str()));
+  delete c;
+  delete csys;
+
   f.Close();
+
+  // format info to write
+  stringstream streamer;
+  if(!update_rootfile) {
+    streamer << "\\begin{table}"   << endl;
+    streamer << "\\begin{tabular}{| c | c c |}" << endl;
+    streamer << "\\hline" << endl;
+    streamer << "Nsk RMS/Mean &  "
+	     << "BANFF pre "
+	     << "BANFF post "
+	     << endl;
+    streamer << "\\hline" << endl;
+  }
+  string banffpre = "-";
+  if(mode == 0 || mode == 1)
+    banffpre = "?";
+  streamer << modetitle << " & & " << hNsk->GetRMS() / hNsk->GetMean() << " \\\\ \\hline";
+  cout << streamer.str() << endl;
+
+  // get size of file
+  long size;
+  streamer.seekg(0,ifstream::end);
+  size=streamer.tellg();
+  streamer.seekg(0);
+  // write to outfile
+  outfile.write (streamer.str().c_str(),size);
+  outfile.close();
+
+
 }

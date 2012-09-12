@@ -117,11 +117,12 @@ void FitParamList::CopyBestFitToCurrValues(void)
   }
 }
 //________________________________________________________________________________________
-void FitParamList::SetErrors(double * errplus, double * errminus)
+void FitParamList::SetErrors(double * errplus, double * errminus, double * errpara)
 {
   for(int ip = 0; ip < fNParams; ip++) {
      fPlusError [ip] = errplus [ip];
      fMinusError[ip] = errminus[ip];
+     fParaError [ip] = errpara [ip];
   }
 }
 //________________________________________________________________________________________
@@ -396,7 +397,7 @@ FitParamList * FitParamList::NuOsc3FlavourFit(void)
   NuOscMixParam_t omp = Opt::Instance()->gOscMixingParamChoice;
   switch(omp) {
   case(kNuMixSinsq2Theta):
-    fparm->AddParam(0, kPhypMixing23,  kInitFitSinsq2Theta23,  kMinFitSinsq2Theta23,  kMaxFitSinsq2Theta23,  1.0E-2,  false, false);
+    fparm->AddParam(0, kPhypMixing23,  kInitFitSinsq2Theta23,  kMinFitSinsq2Theta23,  10,  1.0E-2,  false, false);
     fparm->AddParam(1, kPhypMixing13,  kInitFitSinsq2Theta13,  kMinFitSinsq2Theta13,  kMaxFitSinsq2Theta13,  1.0E-3,  false, false);
     fparm->AddParam(2, kPhypMixing12,  kInitFitSinsq2Theta12,  kMinFitSinsq2Theta12,  kMaxFitSinsq2Theta12,  1.0E-2,  false, false);
     break;
@@ -676,6 +677,9 @@ void FitParamList::Init(int nparams)
    fName         = new string[fNParams];
    fIsFixed      = new bool  [fNParams];
    fIsNuisance   = new bool  [fNParams];
+   fPlusError    = new double[fNParams];
+   fMinusError   = new double[fNParams];
+   fParaError    = new double[fNParams];
 
    fShowCurrValuesOnly    = false;
    fShowBestFitValuesOnly = false;
@@ -693,6 +697,10 @@ void FitParamList::CleanUp(void)
    delete [] fName;
    delete [] fIsFixed;
    delete [] fIsNuisance;
+   delete [] fPlusError;
+   delete [] fMinusError;
+   delete [] fParaError;
+
    fParListName = "";
 }
 //________________________________________________________________________________________

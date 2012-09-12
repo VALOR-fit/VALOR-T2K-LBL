@@ -18,13 +18,22 @@ Run this by /path/to/test_sk_ereco_spectrum_twk_sys_throw_runAll.py (you may nee
 It will then create the .root in the current working directory
 """
 
+optionParser = optparse.OptionParser(usage ="""\
+usage: %prog [options]
+    Run test_sk_ereco_spectrum_twk_sys_throw.C many times""")
+#names of things
+optionParser.add_option("-a","--all", action="store_true", dest="do_all", default=False, help="If set, will run indiviudal systematics, as well as the categories")
+(opt, args) = optionParser.parse_args()
+
 conffile = "analysis_configuration.xml"
 
 modes1 = [0,1,2,3,4] #combinations
 modes3 = range(200,214) #unconstranied xsec
 modes4 = range(300,306) #sk detector
 
-modes = modes1 + modes3 + modes4
+modes = modes1
+if opt.do_all:
+    modes = modes + modes3 + modes4
 
 oscparams = [] #fill with oscillation parameters, in order mixing12, theta13, theta23, deltacp, dmsq12, dmsq23hypothesis
 #oscparams.append([  0,   0,   0,   0,   0,   0]) #no oscillations!

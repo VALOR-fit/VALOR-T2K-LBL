@@ -14,7 +14,7 @@
 //________________________________________________________________________________________
 
 //#define __show_bin_contributions_to_chisq__
-#define __show_contributions_to_penalty_term__
+//#define __show_contributions_to_penalty_term__
 //#define __show_chisq__
 
 #include <cassert>

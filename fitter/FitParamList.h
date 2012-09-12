@@ -48,6 +48,7 @@ public:
    bool   IsNuisance   (t2kana::conv::PhysParamId_t p) const { return fIsNuisance   [this->Id(p)];   }
    double PlusError    (t2kana::conv::PhysParamId_t p) const { return fPlusError    [this->Id(p)];   }
    double MinusError   (t2kana::conv::PhysParamId_t p) const { return fMinusError   [this->Id(p)];   }
+   double ParabolicError (t2kana::conv::PhysParamId_t p) const { return fParaError    [this->Id(p)];   }
 
    // Add a parameter
    bool AddParam (
@@ -71,7 +72,7 @@ public:
    void CopyBestFitToCurrValues (void);
 
    // Set the errors
-   void SetErrors(double * errplus, double * errminus);
+   void SetErrors(double * errplus, double * errminus, double * errpara);
 
    // Fix a parameter
    void FixParameter (t2kana::conv::PhysParamId_t p); 
@@ -160,6 +161,7 @@ private:
    bool *   fIsNuisance;   //[fNParams]
    double * fPlusError;    //[fNParams]
    double * fMinusError;   //[fNParams]
+   double * fParaError;    //[fNParams]
 
    mutable bool fShowCurrValuesOnly;
    mutable bool fShowBestFitValuesOnly;
