@@ -708,6 +708,7 @@ void SuperkMC::ApplySystematicsToTemplates_Multiplicative(void)
 #ifdef __show_small_wght_mesg_debug__
 	     cout << "Exp/SKMC/ApplySystematicsToTemplates_Multiplicative >> set weight " << wght
 		  << " to kMinAllowedWght " << kMinAllowedWght << endl;
+#endif
 	     wght = kMinAllowedWght;
 	   }
 

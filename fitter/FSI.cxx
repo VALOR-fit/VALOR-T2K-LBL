@@ -16,8 +16,8 @@
 #define __show_init_mesg_info__
 //#define __show_init_mesg_debug__
 #define __show_fsi_cholesky_mesg_info__
-#define __show_fsi_cholesky_mesg_debug__
-#define __show_fsi_tweak_mesg_debug__
+//#define __show_fsi_cholesky_mesg_debug__
+//#define __show_fsi_tweak_mesg_debug__
 //#define __show_build_frac_template_mesg_info__
 //#define __show_chisqpenalty_mesg_debug__
 //#define __show_fsi_applysyst_mesg_debug__

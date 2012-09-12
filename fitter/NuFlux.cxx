@@ -14,7 +14,7 @@
 //________________________________________________________________________________________
 
 #define __show_init_mesg_info__  
-#define __show_flux_twk_mesg_info__   
+//#define __show_flux_twk_mesg_info__   
 //#define __show_flux_twk_mesg_debug__   
 //#define __show_flux_twk_mesg_debug_level2__  #even more verbose
 
