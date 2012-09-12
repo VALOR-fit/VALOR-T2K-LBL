@@ -193,6 +193,7 @@ double FSI::SystWght(
     return 1.;
   }
 
+  /*
   // get fraction of events in current MC template Ereco bin relative to the 
   // number of events in the current (wider) FSI Ereco bin
   int is =  util::ArrIdx::Instance()->SuperkSampleIdx(s); 
@@ -207,9 +208,11 @@ double FSI::SystWght(
   }
   int ir =  fFracTun[is][im]->FindBin(Ereco); 
   double frac = fFracTun[is][im]->GetBinContent(ir);
-  frac = 1;
   // Calculate FSI weight for current MC template bin
   double fsi_wght = frac * fsi_param_value;
+  */
+
+  double fsi_wght = fsi_param_value;
   return fsi_wght;
 }
 //________________________________________________________________________________________

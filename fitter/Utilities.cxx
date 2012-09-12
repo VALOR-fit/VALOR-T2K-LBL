@@ -186,8 +186,14 @@ TVectorD t2kana::util::CholeskyGenerateCorrelatedParams (
   int nrows = cholesky_triangular.GetNrows();
   int npars = mean_params.GetNrows();
 
-  assert(ncols==nrows);
-  assert(npars==nrows);
+  if(ncols != nrows) {
+    cerr << "util::CholeskyGenerateCorrelatedParams >> Number of columns " << ncols << " & rows " << nrows << " disagree. Exiting..." << endl;
+    exit(1);
+  }
+  if(npars != nrows) {
+    cerr << "util::CholeskyGenerateCorrelatedParams >> Number of parameters " << npars << " & rows " << nrows << " disagree. Exiting..." << endl;
+    exit(1);
+  }
 
   int n = nrows;
 

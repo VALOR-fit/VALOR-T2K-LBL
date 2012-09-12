@@ -23,6 +23,7 @@
 //#define __show_spectra_update_mesg_debug__ 
 //#define __show_skipped_templates__ 
 //#define __show_isanevent_mesg_debug__
+//#define __show_small_wght_mesg_debug__
 //#define __save_templates_debug__   // saves to files, and cout's number of events, at various stages of applying tunes to the templates:
 // 1 number of events
 // 2 number of events, weighted by pot & mc normalisation
@@ -514,7 +515,10 @@ void SuperkMC::ApplyFluxExtTuningToTemplates(void)
            // get tuning weights
            double wght = fNuFlux->SuperkFluxExtTuningWght(s,m,Etrue);
  	   if(wght < kMinAllowedWght) {
-	     cout << "set weight " << wght << " to kMinAllowedWght " << kMinAllowedWght << endl;
+#ifdef __show_small_wght_mesg_debug__
+	     cout << "Exp/SKMC/ApplyFluxExtTuningToTemplates >> set weight " << wght 
+		  << " to kMinAllowedWght " << kMinAllowedWght << endl;
+#endif
 	     wght = kMinAllowedWght;
 	   }
 	   // update nominal MC template
@@ -587,7 +591,10 @@ void SuperkMC::ApplyBANFFTuningToTemplates(void)
            // Combined weight
            double wght = flux_wght * xsec_wght;
 	   if(wght < kMinAllowedWght) {
-	     cout << "set weight " << wght << " to kMinAllowedWght " << kMinAllowedWght << endl;
+#ifdef __show_small_wght_mesg_debug__
+	     cout << "Exp/SKMC/ApplyBANFFTuningToTemplates >> set weight " << wght
+		  << " to kMinAllowedWght " << kMinAllowedWght << endl;
+#endif
 	     wght = kMinAllowedWght;
 	   }
 
@@ -698,7 +705,9 @@ void SuperkMC::ApplySystematicsToTemplates_Multiplicative(void)
            // Combined weight
            double wght = skeff_wght * flux_wght * xsec_wght * fsi_wght;
 	   if(wght < kMinAllowedWght) {
-	     cout << "set weight " << wght << " to kMinAllowedWght " << kMinAllowedWght << endl;
+#ifdef __show_small_wght_mesg_debug__
+	     cout << "Exp/SKMC/ApplySystematicsToTemplates_Multiplicative >> set weight " << wght
+		  << " to kMinAllowedWght " << kMinAllowedWght << endl;
 	     wght = kMinAllowedWght;
 	   }
 

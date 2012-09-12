@@ -383,7 +383,6 @@ double NuXSec::FinTuningWght_1p(
 	 relerr = fSplineMARESRelErr;
        double numerator = (tb-1) / relerr;
        wght = wght_spl->Eval(numerator) / 1.;
-       wght = TMath::Max(0.,wght);
      }
   }
 
@@ -454,17 +453,6 @@ double NuXSec::FinTuningWght_1p(
 	 << " Current value = " << this->CurrentValue(p)
 	 << endl;   
     exit(1);
-  }
-
-  if(wght < -conv::kASmallNum) {
-    cout << "Exp/NuXSec/FinTuningWght_1p >> "
-	 << "Weight < 0 (" << wght 
-	 << ") returning 0 " << AsStringCompact(s) 
-	 << " " << AsStringCompact(m) 
-	 << " " << AsStringCompact(p)
-	 << " Ereco " << Ereco
-	 << " Etrue " << Etrue << endl;
-      return 0;
   }
 
   return wght;
@@ -541,7 +529,6 @@ double NuXSec::SystWght_1p(
        double denominator = (tb-1) / relerr;
        double numerator = (tc-1) / relerr;
        wght = wght_spl->Eval(numerator) / wght_spl->Eval(denominator);
-       wght = TMath::Max(0.,wght);
      }
   }
 
@@ -588,7 +575,6 @@ double NuXSec::SystWght_1p(
       assert(wght_spl);
       double tc = this->CurrentValue(p);
       wght = wght_spl->Eval(tc) / 1.; //wght_spl->Eval(0);
-      wght = TMath::Max(0.,wght);
     }
   }
 
@@ -658,19 +644,6 @@ double NuXSec::SystWght_1p(
 	 << endl;
     exit(1);
   }
-
-#ifdef __show_syst_var_wght_mesg_debug2__
-  if(wght < -conv::kASmallNum) {
-    cout << "Exp/NuXSec/SystWght_1p >> "
-	 << "Weight < 0 (" << wght 
-	 << ") returning 0 " << AsStringCompact(s) 
-	 << " " << AsStringCompact(m) 
-	 << " " << AsStringCompact(p)
-	 << " Ereco " << Ereco
-	 << " Etrue " << Etrue << endl;
-      return 0;
-  }
-#endif
   
   return wght;
 }

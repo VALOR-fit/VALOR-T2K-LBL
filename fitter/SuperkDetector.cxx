@@ -478,17 +478,6 @@ double SuperkDetector::EfficiencyWeight(
     }//mode
   }//1-ring e-like sample
 
-  if(weight < 0) {
-#ifdef __show_effic_weight_mesg_debug__
-    cout << "Exp/SKDet/EfficiencyWeight >> "
-	 << "Weight < 0 (" << weight 
-	 << ") returning 0 " << AsStringCompact(s) 
-	 << " " << AsStringCompact(m) 
-	 << " Ereco " << Ereco << endl;
-#endif
-    return 0;
-  }
-
   return weight;
 
 }
