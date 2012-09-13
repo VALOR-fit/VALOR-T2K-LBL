@@ -24,14 +24,11 @@ test_systematic_error_propagation_expectation(
   // Get the expected systematic variations
 
   //SK
-  double SKDetEnergyScale1RmuRelErr = 
-    util::XML2Dbl(xml,root_node,
+  double SKDetEnergyScale1RmuRelErr = util::XML2Dbl(xml,root_node,
      "detector_systematics/superk/energy_scale_relative_error/one_mu_ring");
-  double SKDetEff1RmuCCQEOthRelErr =
-    util::XML2Dbl(xml,root_node,
+  double SKDetEff1RmuCCQEOthRelErr = util::XML2Dbl(xml,root_node,
       "detector_systematics/superk/efficiency_relative_error/one_mu_ring/ccqe/other_error");
-  TMatrixD *SKDetEff1RmuCCQERCCovarRelErr = 
-    util::XML2TMatrixD(xml,root_node,
+  TMatrixD *SKDetEff1RmuCCQERCCovarRelErr = util::XML2TMatrixD(xml,root_node,
       "detector_systematics/superk/efficiency_relative_error/one_mu_ring/ccqe/rc_error");
   double SKDetEff1RmuCCnonQERelErr   =
     util::XML2Dbl(xml,root_node,
@@ -44,33 +41,21 @@ test_systematic_error_propagation_expectation(
       "detector_systematics/superk/efficiency_relative_error/one_mu_ring/nuecc");
 
   //BANFF
-  TMatrixD *BANFFCovMtrx = 
-    util::XML2TMatrixD(xml,root_node,
-      "banff/covariance_matrix");
-  TVectorD *BANNFBestFit =
-    util::XML2TVectorD(xml,root_node,
-      "banff/best_fit_values");
+  TMatrixD *BANFFCovMtrx = util::XML2TMatrixD(xml,root_node, "banff/covariance_matrix");
+  TVectorD *BANNFBestFit = util::XML2TVectorD(xml,root_node, "banff/best_fit_values");
 
   //FSI
-  TMatrixD *FSICovMtrx = 
-    util::XML2TMatrixD(xml,root_node,
-      "fsi/covariance_matrix");
+  TMatrixD *FSICovMtrx = util::XML2TMatrixD(xml,root_node, "fsi/covariance_matrix");
 
   //XSec
-  double NormCCQE1RelErr =
-    util::XML2Dbl(xml,root_node,"xsec/normalisations/ccqee1");
-  double NormCCQE2RelErr =
-    util::XML2Dbl(xml,root_node,"xsec/normalisations/ccqee2");
-  double NormCC1pi1RelErr =
-    util::XML2Dbl(xml,root_node,"xsec/normalisations/cc1pie1");
-  double NormCCcohRelErr =
-    util::XML2Dbl(xml,root_node,"xsec/normalisations/cccoh");
-  double NormNCcohRelErr =
-    util::XML2Dbl(xml,root_node,"xsec/normalisations/nccoh");
-  double NormNCothRelErr =
-    util::XML2Dbl(xml,root_node,"xsec/normalisations/ncoth");
-  double NormNuEToNuMuRelErr =
-    util::XML2Dbl(xml,root_node,"xsec/normalisations/numu_to_nue");
+  double NormCCQE1RelErr = util::XML2Dbl(xml,root_node,"xsec/normalisations/ccqee1");
+  double NormCCQE2RelErr = util::XML2Dbl(xml,root_node,"xsec/normalisations/ccqee2");
+  double NormCC1pi1RelErr = util::XML2Dbl(xml,root_node,"xsec/normalisations/cc1pie1");
+  double NormCCcohRelErr = util::XML2Dbl(xml,root_node,"xsec/normalisations/cccoh");
+  double NormNC1piCRelErr = util::XML2Dbl(xml,root_node,"xsec/normalisations/nc1piC");
+  double NormNCcohRelErr = util::XML2Dbl(xml,root_node,"xsec/normalisations/nccoh");
+  double NormNCothRelErr = util::XML2Dbl(xml,root_node,"xsec/normalisations/ncoth");
+  double NormNuEToNuMuRelErr = util::XML2Dbl(xml,root_node,"xsec/normalisations/numu_to_nue");
 
   // Release memory
   xml->FreeDoc(xmldoc);
@@ -175,6 +160,11 @@ test_systematic_error_propagation_expectation(
   streamer << setw(ncol1)  << setfill(' ') << systematic << endcolumn
 	   << setw(ncolnev)  << setfill(' ') << setprecision(nprecisionnev)
 	   << NormCCcohRelErr * 100 << pctsymbol
+	   << endrow << endl;
+  systematic = "Norm NC 1piC";
+  streamer << setw(ncol1)  << setfill(' ') << systematic << endcolumn
+	   << setw(ncolnev)  << setfill(' ') << setprecision(nprecisionnev)
+	   << NormNC1piCRelErr * 100 << pctsymbol
 	   << endrow << endl;
   systematic = "Norm NC coh";
   streamer << setw(ncol1)  << setfill(' ') << systematic << endcolumn

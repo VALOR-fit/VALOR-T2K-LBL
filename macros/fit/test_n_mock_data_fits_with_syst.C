@@ -27,18 +27,12 @@
 #include "Superk1RmuErecoFitter.h"
 */
 
-#ifndef FSI_BINS
-#define FSI_BINS 1 // 6 bins (0-0.4, 0.4-1.1, 1.1-30.0 GeV Ereco) for numu(bar)CCQE, numu(bar)CCnQE, nueCC, allNC
-//#define FSI_BINS 2 // 15 bins (0-0.4, 0.4-1.1, 1.1-30.0 GeV Ereco) x (numu, numubar, nue, nuebar, oscnue)
-//#define FSI_BINS 3 // 480 bins (50 MeV bins 0.25-5 GeV, 5-30 GeV) x (numu, numubar, nue, nuebar, oscnue)
-#endif
-
-
 void test_n_mock_data_fits_with_syst
 (
   const char * tag                     = "toyexptfitswithsyst",          /* tag for output file */
+  int          syst_mode               = 0,                              /* which systematics to tweak? 0 none. 1 all. 2 BANFF. 3 Unconstrained XSec. 4 SK detector. 5 FSI. */
   int          run                     = 0,                              /* run number */
-  int          nexperiments            = 1000,                            /* number of toy MC experiment fits */
+  int          nexperiments            = 100,                            /* number of toy MC experiment fits */
   double       input_mixing12          = 0.86,                           /* 12-mixing, sinq2theta or sinsqtheta depending on user choice, if -999 then randomize */
   double       input_mixing13          = 0.10,                           /* 13-mixing, sinq2theta or sinsqtheta depending on user choice, if -999 then randomize */
   double       input_mixing23          = 1.00,                           /* 23-mixing, sinq2theta or sinsqtheta depending on user choice */
@@ -47,7 +41,6 @@ void test_n_mock_data_fits_with_syst
   double       input_dm23sq            = 2.32E-3,                        /* |Dm^2_{23}| */
   const char * config_file             = "analysis_configuration.xml",   /* analysis configuration file */
   bool         stat_fluctuations       = true,                           /* include statistical fluctuation in toy MC expts? */
-  bool         tweak_systematics       = true,                           /* generate toy MC with randomized systematics? */
   const char * fit_param_list          = "nuosc3f_numudisapp_fix4", /* fit parameter list for the given physics hypothesis (see run_fitter.C) */
   const char * fit_option              = "minuit",                       /* fitter option (see run_fitter.C) */
   bool         store_chisq_surf        = false,                          /* by default storing only best-fit values, enable this to store the chisq surfaces   */
@@ -69,12 +62,38 @@ void test_n_mock_data_fits_with_syst
   bool randomize_deltacp  = (TMath::Abs(input_deltacp  + 999) < kASmallNum);
   bool randomize_dm12sq   = (TMath::Abs(input_dm12sq   + 999) < kASmallNum);
 
+  // Get syst mode string
+  string syst_modestr = "";
+  switch(syst_mode) {
+    case 0:
+      break;
+    case 1:
+      syst_modestr = "All";
+      break;
+    case 2:
+      syst_modestr = "BANFF";
+      break;
+    case 3:
+      syst_modestr = "Unconstrained XSec";
+      break;
+    case 4:
+      syst_modestr = "SK detector";
+      break;
+    case 5:
+      syst_modestr = "FSI";
+      break;
+    default:
+      cerr << "Invalid systematic mode " << syst_mode << ". Exiting" << endl;
+      exit(1);
+      break;
+  }
+
   // Print settings
   cout << "\n[Job inputs]" << endl;
   cout << "- Job: " << tag << "/" << run << endl;
   cout << "- Toy-MC generation" << endl;
   cout << "   - Number of toy experiments: " << nexperiments << endl; 
-  cout << "   - Randomize systematics : "      << ((tweak_systematics) ?      "YES " : "NO") << endl;
+  cout << "   - Randomize systematics : "      << ((syst_mode > 0)     ?      "YES " : "NO") << syst_modestr << endl;
   cout << "   - Statistical fluctuations: "    << ((stat_fluctuations) ?      "YES " : "NO") << endl;
   cout << "   - True oscillation parameters: " << endl;
   cout << "       > " << util::AsString(kPhypMixing12) << " = " << ((randomize_mixing12) ? "* randomized *" : input_mixing12) << endl;
@@ -110,7 +129,13 @@ void test_n_mock_data_fits_with_syst
 
   // Create file to store results
   string oscstr = util::AsString(hyp,input_mixing12,input_mixing13,input_mixing23,input_deltacp,input_dm12sq,input_dm23sq);
-  TFile f(Form("%s-run_%d-%s.root", tag, run, oscstr.c_str()), "recreate");
+  string syststr = syst_modestr;
+  if(syststr == "")
+    syststr = "none";
+  string statstr = "none";
+  if(stat_fluctuations)
+    statstr = "yes";
+  TFile f(Form("%s-run_%d-systfluc_%s-statfluc_%s-fitparam_%s-%s.root", tag, run, syststr.c_str(), statstr.c_str(), fit_param_list, oscstr.c_str()), "recreate");
 
   // Create ntuple to store oscillation fit results
   TTree * nfitnt = new TTree("nfitnt","nfitnt");
@@ -673,10 +698,30 @@ void test_n_mock_data_fits_with_syst
      // get superk spectrum observation (toy experiment)
      //
      SuperkObservation * skobs = new SuperkObservation;
-     if(tweak_systematics) {
+     if(syst_mode > 0) {
         // tweak all sources of systematic err (gaussian err)
-        cout << "- Randomizing all systematic params in pdf..." << endl;
-        skexp->TweakAllSystematics();     
+        cout << "- Randomizing systematic params in pdf..." << endl;
+        switch(syst_mode) {
+ 	  case 1:
+	    skexp->TweakAllSystematics();
+	    break;
+ 	  case 2:
+	    skexp->TweakAllBANFFSystematics();
+	    break;
+ 	  case 3:
+	    skexp->TweakAllUncorrelatedXSecSystematics();
+	    break;
+ 	  case 4:
+	    skexp->TweakAllSKDetectorSystematics();
+	    break;
+ 	  case 5:
+	    skexp->TweakAllFSISystematics();
+	    break;
+  	  default:
+	    cerr << "Invalid systematic mode " << syst_mode << ". Exiting" << endl;
+	    exit(1);
+	    break;
+	}
         skexp->PrintSystematicVariations();
 	// save the input systematics to the tree
 	input_banff_00 = skexp->GetBANFF()->CurrentValue(conv::kNuisBANFF00);
@@ -743,17 +788,17 @@ void test_n_mock_data_fits_with_syst
 	input_fsi_003 = skexp->GetFSI()->CurrentValue(conv::kNuisFSI003);
 	input_fsi_004 = skexp->GetFSI()->CurrentValue(conv::kNuisFSI004);
 	input_fsi_005 = skexp->GetFSI()->CurrentValue(conv::kNuisFSI005);
-#if FSI_BINS >= 2
-	input_fsi_006 = skexp->GetFSI()->CurrentValue(conv::kNuisFSI006);
-	input_fsi_007 = skexp->GetFSI()->CurrentValue(conv::kNuisFSI007);
-	input_fsi_008 = skexp->GetFSI()->CurrentValue(conv::kNuisFSI008);
-	input_fsi_009 = skexp->GetFSI()->CurrentValue(conv::kNuisFSI009);
-	input_fsi_010 = skexp->GetFSI()->CurrentValue(conv::kNuisFSI010);
-	input_fsi_011 = skexp->GetFSI()->CurrentValue(conv::kNuisFSI011);
-	input_fsi_012 = skexp->GetFSI()->CurrentValue(conv::kNuisFSI012);
-	input_fsi_013 = skexp->GetFSI()->CurrentValue(conv::kNuisFSI013);
-	input_fsi_014 = skexp->GetFSI()->CurrentValue(conv::kNuisFSI014);
-#endif
+	if(conv::kNumOfFSIParams == 15) {
+	  input_fsi_006 = skexp->GetFSI()->CurrentValue(conv::kNuisFSI006);
+	  input_fsi_007 = skexp->GetFSI()->CurrentValue(conv::kNuisFSI007);
+	  input_fsi_008 = skexp->GetFSI()->CurrentValue(conv::kNuisFSI008);
+	  input_fsi_009 = skexp->GetFSI()->CurrentValue(conv::kNuisFSI009);
+	  input_fsi_010 = skexp->GetFSI()->CurrentValue(conv::kNuisFSI010);
+	  input_fsi_011 = skexp->GetFSI()->CurrentValue(conv::kNuisFSI011);
+	  input_fsi_012 = skexp->GetFSI()->CurrentValue(conv::kNuisFSI012);
+	  input_fsi_013 = skexp->GetFSI()->CurrentValue(conv::kNuisFSI013);
+	  input_fsi_014 = skexp->GetFSI()->CurrentValue(conv::kNuisFSI014);
+	}
 	//update the FitParamList with the fluctuated nuisance parameters
 	if(fparm->Exists(conv::kNuisBANFF00)) fparm->Update(conv::kNuisBANFF00, input_banff_00);
 	if(fparm->Exists(conv::kNuisBANFF01)) fparm->Update(conv::kNuisBANFF01, input_banff_01);
@@ -819,17 +864,17 @@ void test_n_mock_data_fits_with_syst
 	if(fparm->Exists(conv::kNuisFSI003)) fparm->Update(conv::kNuisFSI003, input_fsi_003);
 	if(fparm->Exists(conv::kNuisFSI004)) fparm->Update(conv::kNuisFSI004, input_fsi_004);
 	if(fparm->Exists(conv::kNuisFSI005)) fparm->Update(conv::kNuisFSI005, input_fsi_005);
-#if FSI_BINS >= 2
-	if(fparm->Exists(conv::kNuisFSI006)) fparm->Update(conv::kNuisFSI006, input_fsi_006);
-	if(fparm->Exists(conv::kNuisFSI007)) fparm->Update(conv::kNuisFSI007, input_fsi_007);
-	if(fparm->Exists(conv::kNuisFSI008)) fparm->Update(conv::kNuisFSI008, input_fsi_008);
-	if(fparm->Exists(conv::kNuisFSI009)) fparm->Update(conv::kNuisFSI009, input_fsi_009);
-	if(fparm->Exists(conv::kNuisFSI010)) fparm->Update(conv::kNuisFSI010, input_fsi_010);
-	if(fparm->Exists(conv::kNuisFSI011)) fparm->Update(conv::kNuisFSI011, input_fsi_011);
-	if(fparm->Exists(conv::kNuisFSI012)) fparm->Update(conv::kNuisFSI012, input_fsi_012);
-	if(fparm->Exists(conv::kNuisFSI013)) fparm->Update(conv::kNuisFSI013, input_fsi_013);
-	if(fparm->Exists(conv::kNuisFSI014)) fparm->Update(conv::kNuisFSI014, input_fsi_014);
-#endif
+	if(conv::kNumOfFSIParams == 15) {
+	  if(fparm->Exists(conv::kNuisFSI006)) fparm->Update(conv::kNuisFSI006, input_fsi_006);
+	  if(fparm->Exists(conv::kNuisFSI007)) fparm->Update(conv::kNuisFSI007, input_fsi_007);
+	  if(fparm->Exists(conv::kNuisFSI008)) fparm->Update(conv::kNuisFSI008, input_fsi_008);
+	  if(fparm->Exists(conv::kNuisFSI009)) fparm->Update(conv::kNuisFSI009, input_fsi_009);
+	  if(fparm->Exists(conv::kNuisFSI010)) fparm->Update(conv::kNuisFSI010, input_fsi_010);
+	  if(fparm->Exists(conv::kNuisFSI011)) fparm->Update(conv::kNuisFSI011, input_fsi_011);
+	  if(fparm->Exists(conv::kNuisFSI012)) fparm->Update(conv::kNuisFSI012, input_fsi_012);
+	  if(fparm->Exists(conv::kNuisFSI013)) fparm->Update(conv::kNuisFSI013, input_fsi_013);
+	  if(fparm->Exists(conv::kNuisFSI014)) fparm->Update(conv::kNuisFSI014, input_fsi_014);
+	}
 	// generate mock data using the current PDF (incl. systematic variations) 
         // + statistical fluctuations if requested (Poisson fluctuation in each bin)
         cout << "- Generating toy-MC..." << endl;
@@ -846,7 +891,7 @@ void test_n_mock_data_fits_with_syst
      }
 
      // Get nominal number of events
-     nsk_nom = skexp->CurrPredictedErecoSpectrum(s)->Integral();
+     nsk_nom = skexp->CurrPredictedErecoSpectrum(conv::kSKsFCFV1RingMuLike)->Integral();
 
      // Get fitter
      FitInputs * fit_inputs = new FitInputs(skobs,skexp,fparm);
@@ -867,7 +912,7 @@ void test_n_mock_data_fits_with_syst
      bestfit_chisq = fit_inputs->BestFitChisquare();
 
      // Get bestfit number of events
-     nsk_bf = skexp->CurrPredictedErecoSpectrum(s)->Integral();
+     nsk_bf = skexp->CurrPredictedErecoSpectrum(conv::kSKsFCFV1RingMuLike)->Integral();
 
      // Print-out best-fit params
      fparm->ShowOnlyBestFitValuesInNextPrint();
@@ -1272,17 +1317,17 @@ void test_n_mock_data_fits_with_syst
      if(fparm->Exists(conv::kNuisFSI003)) bestfit_fsi_003 = fparm->BestFitValue(conv::kNuisFSI003);
      if(fparm->Exists(conv::kNuisFSI004)) bestfit_fsi_004 = fparm->BestFitValue(conv::kNuisFSI004);
      if(fparm->Exists(conv::kNuisFSI005)) bestfit_fsi_005 = fparm->BestFitValue(conv::kNuisFSI005);
-#if FSI_BINS >= 2
-     if(fparm->Exists(conv::kNuisFSI006)) bestfit_fsi_006 = fparm->BestFitValue(conv::kNuisFSI006);
-     if(fparm->Exists(conv::kNuisFSI007)) bestfit_fsi_007 = fparm->BestFitValue(conv::kNuisFSI007);
-     if(fparm->Exists(conv::kNuisFSI008)) bestfit_fsi_008 = fparm->BestFitValue(conv::kNuisFSI008);
-     if(fparm->Exists(conv::kNuisFSI009)) bestfit_fsi_009 = fparm->BestFitValue(conv::kNuisFSI009);
-     if(fparm->Exists(conv::kNuisFSI010)) bestfit_fsi_010 = fparm->BestFitValue(conv::kNuisFSI010);
-     if(fparm->Exists(conv::kNuisFSI011)) bestfit_fsi_011 = fparm->BestFitValue(conv::kNuisFSI011);
-     if(fparm->Exists(conv::kNuisFSI012)) bestfit_fsi_012 = fparm->BestFitValue(conv::kNuisFSI012);
-     if(fparm->Exists(conv::kNuisFSI013)) bestfit_fsi_013 = fparm->BestFitValue(conv::kNuisFSI013);
-     if(fparm->Exists(conv::kNuisFSI014)) bestfit_fsi_014 = fparm->BestFitValue(conv::kNuisFSI014);
-#endif
+     if(conv::kNumOfFSIParams == 15) {
+       if(fparm->Exists(conv::kNuisFSI006)) bestfit_fsi_006 = fparm->BestFitValue(conv::kNuisFSI006);
+       if(fparm->Exists(conv::kNuisFSI007)) bestfit_fsi_007 = fparm->BestFitValue(conv::kNuisFSI007);
+       if(fparm->Exists(conv::kNuisFSI008)) bestfit_fsi_008 = fparm->BestFitValue(conv::kNuisFSI008);
+       if(fparm->Exists(conv::kNuisFSI009)) bestfit_fsi_009 = fparm->BestFitValue(conv::kNuisFSI009);
+       if(fparm->Exists(conv::kNuisFSI010)) bestfit_fsi_010 = fparm->BestFitValue(conv::kNuisFSI010);
+       if(fparm->Exists(conv::kNuisFSI011)) bestfit_fsi_011 = fparm->BestFitValue(conv::kNuisFSI011);
+       if(fparm->Exists(conv::kNuisFSI012)) bestfit_fsi_012 = fparm->BestFitValue(conv::kNuisFSI012);
+       if(fparm->Exists(conv::kNuisFSI013)) bestfit_fsi_013 = fparm->BestFitValue(conv::kNuisFSI013);
+       if(fparm->Exists(conv::kNuisFSI014)) bestfit_fsi_014 = fparm->BestFitValue(conv::kNuisFSI014);
+     }
      //get the plus errors
      if(hyp == kHypOsc3F) {
         errp_mixing12 = fparm->PlusError(kPhypMixing12);
@@ -1360,17 +1405,17 @@ void test_n_mock_data_fits_with_syst
      if(fparm->Exists(conv::kNuisFSI003)) errp_fsi_003 = fparm->PlusError(conv::kNuisFSI003);
      if(fparm->Exists(conv::kNuisFSI004)) errp_fsi_004 = fparm->PlusError(conv::kNuisFSI004);
      if(fparm->Exists(conv::kNuisFSI005)) errp_fsi_005 = fparm->PlusError(conv::kNuisFSI005);
-#if FSI_BINS >= 2
-     if(fparm->Exists(conv::kNuisFSI006)) errp_fsi_006 = fparm->PlusError(conv::kNuisFSI006);
-     if(fparm->Exists(conv::kNuisFSI007)) errp_fsi_007 = fparm->PlusError(conv::kNuisFSI007);
-     if(fparm->Exists(conv::kNuisFSI008)) errp_fsi_008 = fparm->PlusError(conv::kNuisFSI008);
-     if(fparm->Exists(conv::kNuisFSI009)) errp_fsi_009 = fparm->PlusError(conv::kNuisFSI009);
-     if(fparm->Exists(conv::kNuisFSI010)) errp_fsi_010 = fparm->PlusError(conv::kNuisFSI010);
-     if(fparm->Exists(conv::kNuisFSI011)) errp_fsi_011 = fparm->PlusError(conv::kNuisFSI011);
-     if(fparm->Exists(conv::kNuisFSI012)) errp_fsi_012 = fparm->PlusError(conv::kNuisFSI012);
-     if(fparm->Exists(conv::kNuisFSI013)) errp_fsi_013 = fparm->PlusError(conv::kNuisFSI013);
-     if(fparm->Exists(conv::kNuisFSI014)) errp_fsi_014 = fparm->PlusError(conv::kNuisFSI014);
-#endif
+     if(conv::kNumOfFSIParams == 15) {
+       if(fparm->Exists(conv::kNuisFSI006)) errp_fsi_006 = fparm->PlusError(conv::kNuisFSI006);
+       if(fparm->Exists(conv::kNuisFSI007)) errp_fsi_007 = fparm->PlusError(conv::kNuisFSI007);
+       if(fparm->Exists(conv::kNuisFSI008)) errp_fsi_008 = fparm->PlusError(conv::kNuisFSI008);
+       if(fparm->Exists(conv::kNuisFSI009)) errp_fsi_009 = fparm->PlusError(conv::kNuisFSI009);
+       if(fparm->Exists(conv::kNuisFSI010)) errp_fsi_010 = fparm->PlusError(conv::kNuisFSI010);
+       if(fparm->Exists(conv::kNuisFSI011)) errp_fsi_011 = fparm->PlusError(conv::kNuisFSI011);
+       if(fparm->Exists(conv::kNuisFSI012)) errp_fsi_012 = fparm->PlusError(conv::kNuisFSI012);
+       if(fparm->Exists(conv::kNuisFSI013)) errp_fsi_013 = fparm->PlusError(conv::kNuisFSI013);
+       if(fparm->Exists(conv::kNuisFSI014)) errp_fsi_014 = fparm->PlusError(conv::kNuisFSI014);
+     }
      //get the minus errors
      if(hyp == kHypOsc3F) {
         errm_mixing12 = fparm->MinusError(kPhypMixing12);
@@ -1448,17 +1493,17 @@ void test_n_mock_data_fits_with_syst
      if(fparm->Exists(conv::kNuisFSI003)) errm_fsi_003 = fparm->MinusError(conv::kNuisFSI003);
      if(fparm->Exists(conv::kNuisFSI004)) errm_fsi_004 = fparm->MinusError(conv::kNuisFSI004);
      if(fparm->Exists(conv::kNuisFSI005)) errm_fsi_005 = fparm->MinusError(conv::kNuisFSI005);
-#if FSI_BINS >= 2
-     if(fparm->Exists(conv::kNuisFSI006)) errm_fsi_006 = fparm->MinusError(conv::kNuisFSI006);
-     if(fparm->Exists(conv::kNuisFSI007)) errm_fsi_007 = fparm->MinusError(conv::kNuisFSI007);
-     if(fparm->Exists(conv::kNuisFSI008)) errm_fsi_008 = fparm->MinusError(conv::kNuisFSI008);
-     if(fparm->Exists(conv::kNuisFSI009)) errm_fsi_009 = fparm->MinusError(conv::kNuisFSI009);
-     if(fparm->Exists(conv::kNuisFSI010)) errm_fsi_010 = fparm->MinusError(conv::kNuisFSI010);
-     if(fparm->Exists(conv::kNuisFSI011)) errm_fsi_011 = fparm->MinusError(conv::kNuisFSI011);
-     if(fparm->Exists(conv::kNuisFSI012)) errm_fsi_012 = fparm->MinusError(conv::kNuisFSI012);
-     if(fparm->Exists(conv::kNuisFSI013)) errm_fsi_013 = fparm->MinusError(conv::kNuisFSI013);
-     if(fparm->Exists(conv::kNuisFSI014)) errm_fsi_014 = fparm->MinusError(conv::kNuisFSI014);
-#endif
+     if(conv::kNumOfFSIParams == 15) {
+       if(fparm->Exists(conv::kNuisFSI006)) errm_fsi_006 = fparm->MinusError(conv::kNuisFSI006);
+       if(fparm->Exists(conv::kNuisFSI007)) errm_fsi_007 = fparm->MinusError(conv::kNuisFSI007);
+       if(fparm->Exists(conv::kNuisFSI008)) errm_fsi_008 = fparm->MinusError(conv::kNuisFSI008);
+       if(fparm->Exists(conv::kNuisFSI009)) errm_fsi_009 = fparm->MinusError(conv::kNuisFSI009);
+       if(fparm->Exists(conv::kNuisFSI010)) errm_fsi_010 = fparm->MinusError(conv::kNuisFSI010);
+       if(fparm->Exists(conv::kNuisFSI011)) errm_fsi_011 = fparm->MinusError(conv::kNuisFSI011);
+       if(fparm->Exists(conv::kNuisFSI012)) errm_fsi_012 = fparm->MinusError(conv::kNuisFSI012);
+       if(fparm->Exists(conv::kNuisFSI013)) errm_fsi_013 = fparm->MinusError(conv::kNuisFSI013);
+       if(fparm->Exists(conv::kNuisFSI014)) errm_fsi_014 = fparm->MinusError(conv::kNuisFSI014);
+     }
      //get the parabolic errors
      if(hyp == kHypOsc3F) {
         errpar_mixing12 = fparm->ParabolicError(kPhypMixing12);
@@ -1536,17 +1581,17 @@ void test_n_mock_data_fits_with_syst
      if(fparm->Exists(conv::kNuisFSI003)) errpar_fsi_003 = fparm->ParabolicError(conv::kNuisFSI003);
      if(fparm->Exists(conv::kNuisFSI004)) errpar_fsi_004 = fparm->ParabolicError(conv::kNuisFSI004);
      if(fparm->Exists(conv::kNuisFSI005)) errpar_fsi_005 = fparm->ParabolicError(conv::kNuisFSI005);
-#if FSI_BINS >= 2
-     if(fparm->Exists(conv::kNuisFSI006)) errpar_fsi_006 = fparm->ParabolicError(conv::kNuisFSI006);
-     if(fparm->Exists(conv::kNuisFSI007)) errpar_fsi_007 = fparm->ParabolicError(conv::kNuisFSI007);
-     if(fparm->Exists(conv::kNuisFSI008)) errpar_fsi_008 = fparm->ParabolicError(conv::kNuisFSI008);
-     if(fparm->Exists(conv::kNuisFSI009)) errpar_fsi_009 = fparm->ParabolicError(conv::kNuisFSI009);
-     if(fparm->Exists(conv::kNuisFSI010)) errpar_fsi_010 = fparm->ParabolicError(conv::kNuisFSI010);
-     if(fparm->Exists(conv::kNuisFSI011)) errpar_fsi_011 = fparm->ParabolicError(conv::kNuisFSI011);
-     if(fparm->Exists(conv::kNuisFSI012)) errpar_fsi_012 = fparm->ParabolicError(conv::kNuisFSI012);
-     if(fparm->Exists(conv::kNuisFSI013)) errpar_fsi_013 = fparm->ParabolicError(conv::kNuisFSI013);
-     if(fparm->Exists(conv::kNuisFSI014)) errpar_fsi_014 = fparm->ParabolicError(conv::kNuisFSI014);
-#endif
+     if(conv::kNumOfFSIParams == 15) {
+       if(fparm->Exists(conv::kNuisFSI006)) errpar_fsi_006 = fparm->ParabolicError(conv::kNuisFSI006);
+       if(fparm->Exists(conv::kNuisFSI007)) errpar_fsi_007 = fparm->ParabolicError(conv::kNuisFSI007);
+       if(fparm->Exists(conv::kNuisFSI008)) errpar_fsi_008 = fparm->ParabolicError(conv::kNuisFSI008);
+       if(fparm->Exists(conv::kNuisFSI009)) errpar_fsi_009 = fparm->ParabolicError(conv::kNuisFSI009);
+       if(fparm->Exists(conv::kNuisFSI010)) errpar_fsi_010 = fparm->ParabolicError(conv::kNuisFSI010);
+       if(fparm->Exists(conv::kNuisFSI011)) errpar_fsi_011 = fparm->ParabolicError(conv::kNuisFSI011);
+       if(fparm->Exists(conv::kNuisFSI012)) errpar_fsi_012 = fparm->ParabolicError(conv::kNuisFSI012);
+       if(fparm->Exists(conv::kNuisFSI013)) errpar_fsi_013 = fparm->ParabolicError(conv::kNuisFSI013);
+       if(fparm->Exists(conv::kNuisFSI014)) errpar_fsi_014 = fparm->ParabolicError(conv::kNuisFSI014);
+     }
 
      nfitnt->Fill();
 

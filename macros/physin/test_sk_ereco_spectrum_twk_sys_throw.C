@@ -438,7 +438,7 @@ void test_sk_ereco_spectrum_twk_sys_throw
   string banffpre = "-";
   if(mode == 0 || mode == 1)
     banffpre = "?";
-  streamer << modetitle << " & & " << hNsk->GetRMS() / hNsk->GetMean() << " \\\\ \\hline";
+  streamer << modetitle << " & & " << hNsk->GetRMS() / hNsk->GetMean() << " \\\\ \\hline" << endl;
   cout << streamer.str() << endl;
 
   // get size of file
