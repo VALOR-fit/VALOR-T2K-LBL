@@ -313,7 +313,7 @@
         Covariance matrix of FSI parameters
        -->
        <covariance_matrix>
-          <filename>   inputs/official/2012/fsi/FSIandSIError_ICL_E3Binning.root  </filename>
+          <filename>   inputs/official/2012/fsi/FSIandSIError_ICL_SKDetectorBinning.root  </filename>
           <objname>    fsi_cov         </objname>
           <objtype>    TMatrixD         </objtype>
         </covariance_matrix>     
