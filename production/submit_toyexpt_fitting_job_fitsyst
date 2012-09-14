@@ -11,7 +11,7 @@
 #  --nexpts                 : Number of toy MC expt fits per run. Default: 100.
 #  --cpu-time               : Required CPU time. Default: "6:00:00" for RAL, "1500000" for IN2P3, "11:50:00" for Oxford.
 #  --stat-fluctuations      : include statistical fluctuation in toy MC expts
-#  --tweak-systematics      : generate toy MC with randomized systematics
+#  --tweak-systematics      : generate toy MC with randomized systematics. Mode 0 is don't fluctuate. 1 all. 2 BANFF. 3 Unconstrained XSec. 4 SK Detector. 5 FSI
 #  --store-chisq-surf       : Store chisq surfaces? Default: No, only best-fit values are stored.
 #  --store-toy-expts        : Store the generated toy MC expts? Default: No, only best-fit values are stored.
 #  --store-bestfit-spectra  : Store the best-fit spectra? Default: No, only best-fit values are stored.
@@ -21,7 +21,7 @@
 #  --sinsq2theta13          : Value of sin^2(2theta_{13}) for toy MC expts. Default: 0.10. Randomized if set to -999.
 #  --sinsq2theta12          : Value of sin^2(2theta_{12}) for toy MC expts. Default: 0.86. Randomized if set to -999.
 #  --deltacp                : Value of delta_CP for toy MC expts. Default: 0. Randomized if set to -999.
-#  --fit-param-list         : Fit parameter list. Default: "nuosc3f_numudisapp_fix4+nuisance". See FitParamList.h for allowed options, but if you don't use a "+nuisance" list, it will error.
+#  --fit-param-list         : Fit parameter list. Default: "nuosc3f_numudisapp_fix4+nuisance". See FitParamList.h for allowed options
 #  --fit-option             : Option passed to fitter. Default: "minuit".
 #  --job-dir                : Directory for job scripts and outputs. Default: `pwd`.
 #  --softw-dir              : Oscillation code top-level directory. Default: `pwd`.
@@ -41,7 +41,7 @@ foreach (@ARGV) {
   if($_ eq '--nexpts'                 ) { $nexpts                = $ARGV[$iarg+1]; }
   if($_ eq '--cpu-time'               ) { $cput                  = $ARGV[$iarg+1]; }
   if($_ eq '--stat-fluctuations'      ) { $stat_fluct            = 1;              }
-  if($_ eq '--tweak-systematics'      ) { $twk_systematics       = 1;              }
+  if($_ eq '--tweak-systematics'      ) { $twk_systematics       = $ARGV[$iarg+1]; }
   if($_ eq '--store-chisq-surf'       ) { $store_chisq_surf      = 1;              }
   if($_ eq '--store-toy-expts'        ) { $store_toy_expts       = 1;              }
   if($_ eq '--store-bestfit-spectra'  ) { $store_bestfit_spectra = 1;              }
@@ -72,7 +72,7 @@ $twk_systematics        = 0                             unless defined $twk_syst
 $store_chisq_surf       = 0                             unless defined $store_chisq_surf;
 $store_toy_expts        = 0                             unless defined $store_toy_expts;
 $store_bestfit_spectra  = 0                             unless defined $store_bestfit_spectra;
-$fitparamlist           = "nuosc3f_numudisapp_fix4+nuisance" unless defined $fitparamlist;
+$fitparamlist           = "nuosc3f_numudisapp_fix4"     unless defined $fitparamlist;
 $fitoption              = "minuit"                      unless defined $fitter;
 $tag                    = "toyexptfits"                 unless defined $tag;
 $job_dir                = `pwd`                         unless defined $job_dir;
@@ -91,55 +91,55 @@ die("$job_dir doesn't exist") unless -d $job_dir;
 $irun = 0;
 while($irun < $nruns) {
   print "Submitting run: $irun \n";
-  $command = "root2k -l -b -q \'$softw_dir/macros/fit/test_n_mock_data_fits_with_syst.C(\"$tag\",$irun,$nexpts,$sinsq2theta12,$sinsq2theta13,$sinsq2theta23,$deltacp,$dm12sq,$dm23sq,\"$config_file\",$stat_fluct,$twk_systematics,\"$fitparamlist\",\"$fitoption\",$store_chisq_surf,$store_toy_expts,$store_bestfit_spectra)\'";
+  $command = "root2k -l -b -q \'$softw_dir/macros/fit/test_n_mock_data_fits_with_syst.C(\"$tag\",$twk_systematics,$irun,$nexpts,$sinsq2theta12,$sinsq2theta13,$sinsq2theta23,$deltacp,$dm12sq,$dm23sq,\"$config_file\",$stat_fluct,\"$fitparamlist\",\"$fitoption\",$store_chisq_surf,$store_toy_expts,$store_bestfit_spectra)\'";
   print "$command \n";
 
   #
   # RAL
   #
   if($resource eq "RAL") {
-     open(PBS, ">$job_dir/$tag-$irun.pbs") or die("Can not create the PBS batch script");
+     open(PBS, ">$job_dir/$tag-$irun-$fitparamlist-systmode$twk_systematics-statmode$stat_fluct.pbs") or die("Can not create the PBS batch script");
      print PBS "#!/bin/bash \n";
-     print PBS "#PBS -N $tag-$irun \n";
+     print PBS "#PBS -N $tag-$irun-$fitparamlist-systmode$twk_systematics-statmode$stat_fluct \n";
      print PBS "#PBS -l cput=$cput \n";
-     print PBS "#PBS -o $job_dir/$tag-$irun.pbs.out \n";
-     print PBS "#PBS -e $job_dir/$tag-$irun.pbs.err \n";
+     print PBS "#PBS -o $job_dir/$tag-$irun-$fitparamlist-systmode$twk_systematics-statmode$stat_fluct.pbs.out \n";
+     print PBS "#PBS -e $job_dir/$tag-$irun-$fitparamlist-systmode$twk_systematics-statmode$stat_fluct.pbs.err \n";
      print PBS "#PBS -q prod \n";
      print PBS "#PBS -l walltime=$cput \n";
      print PBS "cd $job_dir \n";
      print PBS "source $softw_dir/setup/setup_at_ral.sh $softw_dir\n";
      print PBS "$command \n";
      close(PBS);
-     `qsub -q prod $job_dir/$tag-$irun.pbs`;
+     `qsub -q prod $job_dir/$tag-$irun-$fitparamlist-systmode$twk_systematics-statmode$stat_fluct.pbs`;
   }
   #
   # IN2P3
   #
   if($resource eq "IN2P3") {
-     open(PBS, ">$job_dir/$tag-$irun.pbs") or die("Can not create the PBS batch script");
+     open(PBS, ">$job_dir/$tag-$irun-$fitparamlist-systmode$twk_systematics-statmode$stat_fluct.pbs") or die("Can not create the PBS batch script");
      print PBS "#!/bin/tcsh \n";
      print PBS "cd $job_dir \n";
      print PBS "source $softw_dir/setup/setup_at_in2p3.csh $softw_dir\n";
      print PBS "$command \n";
      close(PBS);
-     `chmod +x $job_dir/$tag-$irun.pbs`;
-     `qsub -eo -V -l platform=LINUX,t=$cput,M=2200MB,scratch=500MB,u_sps_babar -o $job_dir/$tag-$irun.pbs.out -N $tag-$irun $job_dir/$tag-$irun.pbs`;
+     `chmod +x $job_dir/$tag-$irun-$fitparamlist-systmode$twk_systematics-statmode$stat_fluct.pbs`;
+     `qsub -eo -V -l platform=LINUX,t=$cput,M=2200MB,scratch=500MB,u_sps_babar -o $job_dir/$tag-$irun-$fitparamlist-systmode$twk_systematics-statmode$stat_fluct.pbs.out -N $tag-$irun-$fitparamlist-systmode$twk_systematics-statmode$stat_fluct $job_dir/$tag-$irun-$fitparamlist-systmode$twk_systematics-statmode$stat_fluct.pbs`;
   }
   #
   # Oxford
   #
   if($resource eq "Oxford") {
-     open(PBS, ">$job_dir/$tag-$irun.pbs") or die("Can not create the PBS batch script");
+     open(PBS, ">$job_dir/$tag-$irun-$fitparamlist-systmode$twk_systematics-statmode$stat_fluct.pbs") or die("Can not create the PBS batch script");
      print PBS "#!/bin/bash \n";
-     print PBS "#PBS -N $tag-$irun \n";
+     print PBS "#PBS -N $tag-$irun-$fitparamlist-systmode$twk_systematics-statmode$stat_fluct \n";
      print PBS "#PBS -l cput=$cput \n";
-     print PBS "#PBS -o $job_dir/$tag-$irun.pbs.out \n";
-     print PBS "#PBS -e $job_dir/$tag-$irun.pbs.err \n";
+     print PBS "#PBS -o $job_dir/$tag-$irun-$fitparamlist-systmode$twk_systematics-statmode$stat_fluct.pbs.out \n";
+     print PBS "#PBS -e $job_dir/$tag-$irun-$fitparamlist-systmode$twk_systematics-statmode$stat_fluct.pbs.err \n";
      print PBS "cd $job_dir \n";
      print PBS "source $softw_dir/setup/setup_at_oxford.sh $softw_dir\n";
      print PBS "$command \n";
      close(PBS);
-     `qsub $job_dir/$tag-$irun.pbs`;
+     `qsub $job_dir/$tag-$irun-$fitparamlist-systmode$twk_systematics-statmode$stat_fluct.pbs`;
   }
   #
   # Grid
