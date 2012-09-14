@@ -13,9 +13,9 @@
 */
 //____________________________________________________________________________
 
-//#define __debug_level_1__
-//#define __debug_level_2__
-//#define __debug_level_3__
+//#define __show_cholesky_decomposition_mesg_debug__
+#define __show_cholesky_gen_corr_param_variations_mesg_debug__
+//#define __show_xml_mesg_info__
 //#define __show_arr_idx_mesg_debug__
 
 #include <cassert>
@@ -150,6 +150,10 @@ TMatrixD t2kana::util::CholeskyDecomposition(TMatrixD& cov_matrix)
        cerr << "Decomposed covariance matrix not positive-definite" << endl;
        exit(1);
      }
+     if(L(i,i) < conv::kASmallNum) {
+       cout << "argh!!! " << L(i,i) << endl;
+       //L(i,i) = conv::kASmallNum;
+     }
      L(i,i) = TMath::Sqrt(L(i,i));
      // then the off-diagonal terms
      for (int j = i+1; j < n; ++j) {
@@ -164,7 +168,7 @@ TMatrixD t2kana::util::CholeskyDecomposition(TMatrixD& cov_matrix)
   // create the transpose of L
   TMatrixD LT(TMatrixD::kTransposed,L);
 
-#ifdef __debug_level_1___
+#ifdef __show_cholesky_decomposition_mesg_debug__
   cout << "Cholesky matrix L^{T}" << endl;
   for(int ip=0; ip<n; ip++) {
     for(int jp=0; jp<n; jp++) {
@@ -205,7 +209,7 @@ TVectorD t2kana::util::CholeskyGenerateCorrelatedParams (
   }
   g *= cholesky_triangular;
 
-#ifdef __debug_level_3__
+#ifdef __show_cholesky_gen_corr_param_variations_mesg_debug__
   ofstream foutp1("cholesky_uncorrelated_params.txt",fstream::app);
   for (int i = 0; i < n; ++i) {
     foutp1 << g[i] << "\t";
@@ -222,7 +226,7 @@ TVectorD t2kana::util::CholeskyGenerateCorrelatedParams (
      correlated_params[i] = v;
   }
 
-#ifdef __debug_level_3__
+#ifdef __show_cholesky_gen_corr_param_variations_mesg_debug__
   ofstream foutp2("cholesky_correlated_params.txt",fstream::app);
   for (int i = 0; i < n; ++i) {
     foutp2 << correlated_params[i] << "\t";
@@ -254,7 +258,7 @@ TVectorD t2kana::util::CholeskyGenerateCorrelatedParamVariations (
   }
   g *= cholesky_triangular;
 
-#ifdef __debug_level_3__
+#ifdef __show_cholesky_gen_corr_param_variations_mesg_debug__
   cout << "Util >> Tweak vector size = " << g.GetNrows() << endl;
 #endif
 
@@ -278,7 +282,7 @@ TVectorD t2kana::util::CholeskyCalculateCorrelatedParamVariations (
   TVectorD g(g_uncorrelated);
   g *= cholesky_triangular;
 
-#ifdef __debug_level_3__
+#ifdef __show_cholesky_gen_corr_param_variations_mesg_debug__
   cout << "Util >> Tweak vector size = " << g.GetNrows() << endl;
 #endif
 
@@ -5073,7 +5077,7 @@ double t2kana::util::XML2Dbl(
 // Get the specified node content as a floating-point number
 //
 
-#ifdef __debug_level_2__
+#ifdef __show_xml_mesg_info__
   cout << "utils/XML2Dbl >> Reading info at XML node path: " << path << endl;
 #endif
 
@@ -5094,7 +5098,7 @@ vector<double> t2kana::util::XML2DblArray(
 // Get the specified node content as a vector floating-point number
 // The node content should be a comma-separed list of numbers
 
-#ifdef __debug_level_2__
+#ifdef __show_xml_mesg_info__
   cout << "utils/XML2Dbl >> Reading info at XML node path: " << path << endl;
 #endif
 
@@ -5122,7 +5126,7 @@ string t2kana::util::XML2String(
 // Get the specified node content as a floating-point number
 //
 
-#ifdef __debug_level_2__
+#ifdef __show_xml_mesg_info__
   cout << "utils/XML2Str >> Reading info at XML node path: " << path << endl;
 #endif
 
@@ -5140,7 +5144,7 @@ string t2kana::util::XML2RootFileName(
    TXMLEngine * xmleng, XMLNodePointer_t topnode, string path)
 {
   string filename = XML2String(xmleng,topnode,path+"/filename");
-#ifdef __debug_level_2__
+#ifdef __show_xml_mesg_info__
   cout << "utils/XML2RootFileName >> filename : " << filename << endl;
 #endif
   return filename;
@@ -5150,7 +5154,7 @@ string t2kana::util::XML2RootObjName (
    TXMLEngine * xmleng, XMLNodePointer_t topnode, string path)
 {
   string objname = XML2String(xmleng,topnode,path+"/objname");
-#ifdef __debug_level_2__
+#ifdef __show_xml_mesg_info__
   cout << "utils/XML2RootObjName >> objname  : " << objname  << endl;
 #endif
   return objname;
@@ -5159,7 +5163,7 @@ string t2kana::util::XML2RootObjName (
 TFile * t2kana::util::XML2TFile(
   TXMLEngine * xmleng, XMLNodePointer_t topnode, string path)
 {
-#ifdef __debug_level_2__
+#ifdef __show_xml_mesg_info__
   cout << "utils/XML2TFile >> Reading info at XML node path: " << path << endl;
 #endif
 
@@ -5180,7 +5184,7 @@ TH1F * t2kana::util::XML2TH1F(
 {
 // Get a TH1F instance from the info in the input XML config file
 //
-#ifdef __debug_level_2__
+#ifdef __show_xml_mesg_info__
   cout << "utils/XML2TH1F >> Reading info at XML node path: " << path << endl;
 #endif
 
@@ -5210,7 +5214,7 @@ TH1D * t2kana::util::XML2TH1D(
 {
 // Get a TH1D instance from the info in the input XML config file
 //
-#ifdef __debug_level_2__
+#ifdef __show_xml_mesg_info__
   cout << "utils/XML2TH1D >> Reading info at XML node path: " << path << endl;
 #endif
 
@@ -5240,7 +5244,7 @@ TH2D * t2kana::util::XML2TH2D(
 {
 // Get a TH2D instance from the info in the input XML config file
 //
-#ifdef __debug_level_2__
+#ifdef __show_xml_mesg_info__
   cout << "utils/XML2TH2D >> Reading info at XML node path: " << path << endl;
 #endif
 
@@ -5270,7 +5274,7 @@ TTree * t2kana::util::XML2TTree(
 {
 // Get a TH2D instance from the info in the input XML config file
 //
-#ifdef __debug_level_2__
+#ifdef __show_xml_mesg_info__
   cout << "utils/XML2TTree >> Reading info at XML node path: " << path << endl;
 #endif
 
@@ -5301,7 +5305,7 @@ TVectorD * t2kana::util::XML2TVectorD(
 {
 // Get a TVectorD instance from the info in the input XML config file
 //
-#ifdef __debug_level_2__
+#ifdef __show_xml_mesg_info__
   cout << "utils/XML2TVectorD >> "
        << "Reading info at XML node path: " << path << endl;
 #endif
@@ -5408,7 +5412,7 @@ TAxis *  t2kana::util::XML2BinInfo(
 {
 //
 //
-#ifdef __debug_level_2__
+#ifdef __show_xml_mesg_info__
   cout << "utils/XML2BinInfo >> Reading info at XML node path: " << path << endl;
 #endif
 
@@ -5434,7 +5438,7 @@ TAxis *  t2kana::util::XML2BinInfo(
       if(child_node_name == "max"  ) { max   = atof(TrimSpaces(content).c_str()); }
       child_node = xmleng->GetNext(child_node);    
     }
-#ifdef __debug_level_2__
+#ifdef __show_xml_mesg_info__
     cout << "utils/XML2BinInfo >> nbins = " << nbins 
          << ", range = (" << min << ", " << max << ")" << endl;
 #endif

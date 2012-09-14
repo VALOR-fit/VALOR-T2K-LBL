@@ -54,7 +54,7 @@ void test_sk_ereco_spectrum_twk_sys_throw
   using namespace std;
   using namespace t2kana;
 
-  const int nexp = 20000; //number of experiments to make
+  const int nexp = 2; //number of experiments to make
 
   conv::SuperkSample_t s = conv::kSKsFCFV1RingMuLike;
 
@@ -276,6 +276,7 @@ void test_sk_ereco_spectrum_twk_sys_throw
       // FSI
       if(mode == 0 || mode == 4) {
 	skexp.TweakAllFSISystematics();
+	//skexp.GetFSI()->PrintSystematicVariations();
       }
 
     }//mode<100

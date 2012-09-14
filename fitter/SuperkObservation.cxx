@@ -13,9 +13,7 @@
 */
 //________________________________________________________________________________________
 
-//#define __debug_level_1__
-//#define __debug_level_2__
-//#define __debug_level_3__
+//#define __show_num_of_events_mesg_debug__
 
 #include <cassert>
 #include <cstdlib>
@@ -66,7 +64,7 @@ double SuperkObservation::NumOfEvents(SuperkSample_t s) const
   TH1D * h = fErDistr[is];
   assert(h);
   nev = h->Integral();
-#ifdef __debug_level_2__
+#ifdef __show_num_of_events_mesg_debug__
   cout << "Obs >> NEvents(" 
        << util::AsString(s) << ") = " << nev << endl;
 #endif
@@ -87,7 +85,7 @@ double SuperkObservation::NumOfEvents(double Er, SuperkSample_t s) const
   assert(h);
   int bin = h->FindBin(Er);
   nev = h->GetBinContent(bin);
-#ifdef __debug_level_2__
+#ifdef __show_num_of_events_mesg_debug__
   cout << "Obs >> NEvents(" 
        << util::AsString(s) << ", Ereco = " << Er << " GeV) = " << nev << endl;
 #endif

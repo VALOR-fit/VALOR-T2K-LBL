@@ -13,8 +13,7 @@
 */
 //________________________________________________________________________________________
 
-//#define __debug_level_1__
-//#define __debug_level_2__
+//#define __show_init_mesg_info__
 
 #include <iomanip>
 #include <cstdlib>
@@ -96,7 +95,7 @@ PhysHypothesis::PhysHypothesis(const FitParamList & fp)
     this->Init(kHypUndefined);
   }
 
-#ifdef __debug_level_2__
+#ifdef __show_init_mesg_info__
   cout << " PhysHypothesis ctor > "
        << "Input physics hypothesis = " << util::AsString(fHypothesis) << endl;
 #endif
