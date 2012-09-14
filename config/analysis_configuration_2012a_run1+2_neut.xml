@@ -256,17 +256,23 @@
 	       0.083
 	  </mares>
 	  <pf>
-	       0.13
+	       0.133
 	  </pf>
 	  <sf>
 	       1
 	  </sf>
 	  <wshape>
-	       0.52
+	       0.516
 	  </wshape>
 	  <ccothshape>
 	       0.4
 	  </ccothshape>
+	  <cc1pishape>
+	       0.5
+	  </cc1pishape>
+	  <pilessdelta>
+	       0.2
+	  </pilessdelta>
       </splines>
       <normalisations>
 	  <ccqee1>

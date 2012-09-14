@@ -245,7 +245,7 @@
   <xsec>
       <weight_splines>
           <filename>
-               inputs/official/2012/xsec/XSecSplinesCoarse2012.root
+               inputs/official/2012/xsec/XSecSplinesCoarse2012_coarseEreco.root
           </filename>
       </weight_splines>
       <splines>
@@ -256,17 +256,23 @@
 	       0.083
 	  </mares>
 	  <pf>
-	       0.13
+	       0.133
 	  </pf>
 	  <sf>
 	       1
 	  </sf>
 	  <wshape>
-	       0.52
+	       0.516
 	  </wshape>
 	  <ccothshape>
 	       0.4
 	  </ccothshape>
+	  <cc1pishape>
+	       0.5
+	  </cc1pishape>
+	  <pilessdelta>
+	       0.2
+	  </pilessdelta>
       </splines>
       <normalisations>
 	  <ccqee1>
@@ -307,7 +313,7 @@
         Covariance matrix of FSI parameters
        -->
        <covariance_matrix>
-          <filename>   inputs/official/2012/fsi/FSIErrors2012.root  </filename>
+          <filename>   inputs/official/2012/fsi/FSIandSIError_ICL_E3Binning.root  </filename>
           <objname>    fsi_cov         </objname>
           <objtype>    TMatrixD         </objtype>
         </covariance_matrix>     

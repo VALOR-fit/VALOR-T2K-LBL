@@ -1345,7 +1345,7 @@ string t2kana::util::AsString(PhysParamId_t p)
       else if(ip <= (int)kNuisFSI479)
 	nutypes = "oscillated nue";
 #endif
-      return Form("FSI %2d; Ereco range %.1f - %.1f GeV; %s",ip,
+      return Form("FSI/SI %2d; Ereco range %.1f - %.1f GeV; %s",ip,
 		  kFSIParamsErecoCut[ip][0],kFSIParamsErecoCut[ip][1],nutypes.c_str());     
       break;
     }//FSI
@@ -2060,7 +2060,7 @@ string t2kana::util::AsStringTex(PhysParamId_t p)
       else if(ip <= (int)kNuisFSI479)
 	nutypes = "Oscillated $\\nu_e$";
 #endif
-      return Form("FSI %2d; Ereco range %.1f - %.1f GeV; %s",ip,
+      return Form("FSI/SI %2d; Ereco range %.1f - %.1f GeV; %s",ip,
 		  kFSIParamsErecoCut[ip][0],kFSIParamsErecoCut[ip][1],nutypes.c_str());     
       break;
     }//FSI
