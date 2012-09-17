@@ -150,10 +150,6 @@ TMatrixD t2kana::util::CholeskyDecomposition(TMatrixD& cov_matrix)
        cerr << "Decomposed covariance matrix not positive-definite" << endl;
        exit(1);
      }
-     if(L(i,i) < conv::kASmallNum) {
-       cout << "argh!!! " << L(i,i) << endl;
-       //L(i,i) = conv::kASmallNum;
-     }
      L(i,i) = TMath::Sqrt(L(i,i));
      // then the off-diagonal terms
      for (int j = i+1; j < n; ++j) {
@@ -2707,6 +2703,25 @@ string t2kana::util::AsStringCompact(PhysParamId_t p)
   return "--";
 }
 //____________________________________________________________________________
+string t2kana::util::AsStringCompact_Japan(PhysParamId_t p)
+{
+  switch(p) {
+
+    case ( kNuisBANFFMAQE             ) : return "maqe";     break;
+    case ( kNuisBANFFMARES            ) : return "mares";    break;
+    case ( kNuisXSecFermiMom          ) : return "pf";       break;
+    case ( kNuisXSecSpecFunc          ) : return "sf";       break; 
+    case ( kNuisXSecWshape            ) : return "wshape";   break;
+    case ( kNuisXSecShapeCCoth        ) : return "ccothshp"; break;
+    case ( kNuisXSecPiLessDelta       ) : return "pdd";      break;
+    case ( kNuisXSecENuShape          ) : return "enushape"; break;
+
+    default : 
+      return AsStringCompact(p);
+  }
+  return "--";
+}
+//____________________________________________________________________________
 string t2kana::util::AsString(t2kana::conv::SuperkSample_t s)
 {
   switch(s) {
@@ -5173,6 +5188,10 @@ TFile * t2kana::util::XML2TFile(
     Form("%s/%s", gSystem->Getenv("T2KOSCANA"), filename.c_str()), "read");
   if(!file) {
     cerr << "utils/XML2TFile >> No file: " << filename << " found" << endl;
+    exit(1);
+  }
+  if(file->IsZombie()) {
+    cerr << "utils/XML2TFile >> File is a zombie: " << filename << endl;
     exit(1);
   }
 

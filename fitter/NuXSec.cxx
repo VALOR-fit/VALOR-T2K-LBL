@@ -25,7 +25,7 @@
 //#define __show_wght_spline_idx_mesg_debug__
 //#define __show_isanevent_mesg_debug__
 //#define __save_ori_templates_init_debug__
-#define __skip_unexpected_spline_test_in_readsplines__ // skip looking for splines we don't expect (due to our empty bins) - speedy!
+//#define __skip_unexpected_spline_test_in_readsplines__ // skip looking for splines we don't expect (due to our empty bins) - speedy!
 //#define __turn_off_splines__ //special mode that doesn't read in splines, and returns weights of 1 for all splines
 
 #include <cassert>
@@ -120,8 +120,21 @@ bool NuXSec::ReadSplines(TXMLEngine* xml, XMLNodePointer_t root_node)
   // Load cross-section weight splines
   //
 
+#if SPLINE_TYPE == 0
+  TFile * spline_file_numu = util::XML2TFile(xml,root_node,"xsec/weight_splines/numu");
+  assert(spline_file_numu);
+  TFile * spline_file_numubar = util::XML2TFile(xml,root_node,"xsec/weight_splines/numubar");
+  assert(spline_file_numubar);
+  TFile * spline_file_nue = util::XML2TFile(xml,root_node,"xsec/weight_splines/nue");
+  assert(spline_file_nue);
+  TFile * spline_file_nuebar = util::XML2TFile(xml,root_node,"xsec/weight_splines/nuebar");
+  assert(spline_file_nuebar);
+  TFile * spline_file_signue = util::XML2TFile(xml,root_node,"xsec/weight_splines/signue");
+  assert(spline_file_signue);
+#elif SPLINE_TYPE == 1
   TFile * spline_file = util::XML2TFile(xml,root_node,"xsec/weight_splines");
   assert(spline_file);
+#endif
 
   // loop over samples
   for(int is = 0; is < kns; is++) {
@@ -131,6 +144,22 @@ bool NuXSec::ReadSplines(TXMLEngine* xml, XMLNodePointer_t root_node)
     for(int im = 0; im < knm; im++) {
        SuperkMode_t m = kSKReactionModes[is][im];
        if(m == kSKmUndefined) continue;
+
+#if SPLINE_TYPE == 0
+       // get correct spline file
+       TFile * spline_file = 0;
+       if(IsNuMu(m))
+	 spline_file = spline_file_numu;
+       else if(IsNuMuBar(m))
+	 spline_file = spline_file_numubar;
+       else if(IsNuE(m))
+	 spline_file = spline_file_nue;
+       else if(IsNuEBar(m))
+	 spline_file = spline_file_nuebar;
+       else if(IsSignalNuE(m))
+	 spline_file = spline_file_signue;
+#endif
+
        // loop over cross-section systematic parameters
        for(int ip = 0; ip < kNumOfXSecSyst; ip++) {
           PhysParamId_t p = kListOfXSecSyst[ip];          
@@ -158,12 +187,21 @@ bool NuXSec::ReadSplines(TXMLEngine* xml, XMLNodePointer_t root_node)
 #endif
                 // Build spline name
                 ostringstream splname;
+#if SPLINE_TYPE == 0
+		vector<string> mode = util::Tokens(util::AsStringCompact_Japan(m), "_");
+		splname << "spl_"
+                        << util::AsStringCompact_Japan(p) << "_"
+                        << mode[1] << "_"
+                        << "enu"  << it << "_" 
+                        << "erec" << ir;
+#elif SPLINE_TYPE == 1
                 splname << "spl_"
                         << util::AsStringCompact(s) << "_"
                         << util::AsStringCompact(m) << "_"
                         << util::AsStringCompact(p) << "_"
                         << ir << "_" 
                         << it;
+#endif
 
 #ifdef __show_init_mesg_debug__
                 cout << "Exp/NuXSec >> Loading cross-section weight spline: " 
@@ -176,26 +214,42 @@ bool NuXSec::ReadSplines(TXMLEngine* xml, XMLNodePointer_t root_node)
 		  if(!bin_is_not_empty) {
 #ifdef __show_init_mesg_debug__
 		    cout << "Exp/NuXSec >> No events or spline for: "
-			 << splname.str() << endl;
+			 << splname.str()
+#if SPLINE_TYPE == 0
+			 << ", " << mode[0]
+#endif
+			 << endl;
 #endif
 		    continue;
 		  }
 		  else {
 		    cerr << "Exp/NuXSec >> Null cross-sectionweight spline: " 
-			 << splname.str() << " Ereco: " << Ereco << ", Etrue: " << Etrue << endl;
+			 << splname.str() 
+#if SPLINE_TYPE == 0
+			 << ", " << mode[0]
+#endif
+			 << " Ereco: " << Ereco << ", Etrue: " << Etrue << endl;
 		    exit(1); 
 		  }
 		}
 		else {
 		  if(!bin_is_not_empty) {
 		    cerr << "Exp/NuXSec >> Spline exists for empty bin: "
-			 << splname.str() << " Ereco: " << Ereco << ", Etrue: " << Etrue
-			 << ". Spline thinks there are " << spl->GetTitle() << endl;
+			 << splname.str() 
+#if SPLINE_TYPE == 0
+			 << ", " << mode[0]
+#endif
+			 << " Ereco: " << Ereco << ", Etrue: " << Etrue
+#if SPLINE_TYPE == 1
+			 << ". Spline thinks there are " << spl->GetTitle()
+#endif
+			 << endl;
 		    exit(1);
 		  }
 		}
 
 #ifndef __skip_unexpected_spline_test_in_readsplines__
+#if SPLINE_TYPE == 1 // number of events information is only available in VaLOR splines
 		string spln(spl->GetTitle());
 		spln.erase(spln.end()-7,spln.end());
 		int nevents_spl = atoi(spln.c_str());
@@ -208,6 +262,7 @@ bool NuXSec::ReadSplines(TXMLEngine* xml, XMLNodePointer_t root_node)
 		       << "; Ereco: " << Ereco << ", Etrue: " << Etrue << endl;
 		  exit(1);
 		}
+#endif
 #endif	
 
                 // Get index for current weight spline
@@ -221,15 +276,21 @@ bool NuXSec::ReadSplines(TXMLEngine* xml, XMLNodePointer_t root_node)
 //		}
 		if(idx < 0) {
 		  cerr << "Exp/NuXSec >> WghtSplineIdx returned invalid index for spline: " 
-                       << splname.str();
+                       << splname.str()
+#if SPLINE_TYPE == 0
+			 << ", " << mode[0]
+#endif
+			 << endl;
 		  exit(1);
 		}
 
 #ifdef __show_init_mesg_debug__
                 cout << "Exp/NuXSec >> Storing cross-section weight spline at slot: " 
                      << idx << endl;
-		cout << "Exp/NuXSec >> Splines thinks there are " 
+#if SPLINE_TYPE == 1
+		cout << "Exp/NuXSec >> Spline thinks there are " 
 		     << spl->GetTitle() << endl;
+#endif
 #endif
                 fXSecWghtSpl[idx] = new TSpline3(*spl);
 

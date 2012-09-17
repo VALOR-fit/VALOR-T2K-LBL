@@ -50,6 +50,13 @@ Changes since 2011_v0.9.0:
 //#define ERECO_XSEC_BINS 3 // 50 MeV binning 0-30 GeV (600 bins)
 #endif
 
+#ifndef SPLINE_TYPE
+// NOTE1: binning is identical; just produced by different people
+// NOTE2: don't need to change config xml file
+//#define SPLINE_TYPE 0 // Use KIT splines
+#define SPLINE_TYPE 1 // Use VaLOR splines
+#endif
+
 #ifndef ERECO_BINS_1RMU
 //#define ERECO_BINS_1RMU 1 // DEFAULT 50 MeV binning 0-30 GeV
 #define ERECO_BINS_1RMU 2 // 50 MeV bins in 0-3 GeV, 250 MeV bins in 3-4 GeV, 500 MeV bins in 4-6 GeV, 1000 MeV bins 6-10 GeV, 1 bin 10-30 GeV (73 bins)

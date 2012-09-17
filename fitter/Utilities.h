@@ -98,6 +98,7 @@ namespace util {
   string AsStringCompact (conv::SuperkMode_t       m);
   string AsStringCompact_Japan (conv::SuperkMode_t m);
   string AsStringCompact (conv::PhysParamId_t      p);
+  string AsStringCompact_Japan (conv::PhysParamId_t p);
   string Pdg2String      (int pdg_code);
 
   conv::PhysHypothesis_t   PhysHypFromString         (string h);
