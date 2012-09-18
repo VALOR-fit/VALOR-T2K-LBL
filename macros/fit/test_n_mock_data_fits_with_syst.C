@@ -206,6 +206,7 @@ void test_n_mock_data_fits_with_syst
   double input_xsec_normnccoh, bestfit_xsec_normnccoh, errp_xsec_normnccoh, errm_xsec_normnccoh, errpar_xsec_normnccoh;
   double input_xsec_normncoth, bestfit_xsec_normncoth, errp_xsec_normncoth, errm_xsec_normncoth, errpar_xsec_normncoth;
   double input_xsec_normnuetonumu, bestfit_xsec_normnuetonumu, errp_xsec_normnuetonumu, errm_xsec_normnuetonumu, errpar_xsec_normnuetonumu;
+  double input_xsec_normantinutonu, bestfit_xsec_normantinutonu, errp_xsec_normantinutonu, errm_xsec_normantinutonu, errpar_xsec_normantinutonu;
   double input_skdet_energyscale, bestfit_skdet_energyscale, errp_skdet_energyscale, errm_skdet_energyscale, errpar_skdet_energyscale;
   double input_skdet_ccqerc0, bestfit_skdet_ccqerc0, errp_skdet_ccqerc0, errm_skdet_ccqerc0, errpar_skdet_ccqerc0;
   double input_skdet_ccqerc1, bestfit_skdet_ccqerc1, errp_skdet_ccqerc1, errm_skdet_ccqerc1, errpar_skdet_ccqerc1;
@@ -323,6 +324,7 @@ void test_n_mock_data_fits_with_syst
   nfitnt->Branch("input_xsec_normnccoh",&input_xsec_normnccoh,"input_xsec_normnccoh/D");
   nfitnt->Branch("input_xsec_normncoth",&input_xsec_normncoth,"input_xsec_normncoth/D");
   nfitnt->Branch("input_xsec_normnuetonumu",&input_xsec_normnuetonumu,"input_xsec_normnuetonumu/D");
+  nfitnt->Branch("input_xsec_normantinutonu",&input_xsec_normantinutonu,"input_xsec_normantinutonu/D");
   nfitnt->Branch("input_skdet_energyscale",&input_skdet_energyscale,"input_skdet_energyscale/D");
   nfitnt->Branch("input_skdet_ccqerc0",&input_skdet_ccqerc0,"input_skdet_ccqerc0/D");
   nfitnt->Branch("input_skdet_ccqerc1",&input_skdet_ccqerc1,"input_skdet_ccqerc1/D");
@@ -403,6 +405,7 @@ void test_n_mock_data_fits_with_syst
   nfitnt->Branch("bestfit_xsec_normnccoh",&bestfit_xsec_normnccoh,"bestfit_xsec_normnccoh/D");
   nfitnt->Branch("bestfit_xsec_normncoth",&bestfit_xsec_normncoth,"bestfit_xsec_normncoth/D");
   nfitnt->Branch("bestfit_xsec_normnuetonumu",&bestfit_xsec_normnuetonumu,"bestfit_xsec_normnuetonumu/D");
+  nfitnt->Branch("bestfit_xsec_normantinutonu",&bestfit_xsec_normantinutonu,"bestfit_xsec_normantinutonu/D");
   nfitnt->Branch("bestfit_skdet_energyscale",&bestfit_skdet_energyscale,"bestfit_skdet_energyscale/D");
   nfitnt->Branch("bestfit_skdet_ccqerc0",&bestfit_skdet_ccqerc0,"bestfit_skdet_ccqerc0/D");
   nfitnt->Branch("bestfit_skdet_ccqerc1",&bestfit_skdet_ccqerc1,"bestfit_skdet_ccqerc1/D");
@@ -483,6 +486,7 @@ void test_n_mock_data_fits_with_syst
   nfitnt->Branch("errp_xsec_normnccoh",&errp_xsec_normnccoh,"errp_xsec_normnccoh/D");
   nfitnt->Branch("errp_xsec_normncoth",&errp_xsec_normncoth,"errp_xsec_normncoth/D");
   nfitnt->Branch("errp_xsec_normnuetonumu",&errp_xsec_normnuetonumu,"errp_xsec_normnuetonumu/D");
+  nfitnt->Branch("errp_xsec_normantinutonu",&errp_xsec_normantinutonu,"errp_xsec_normantinutonu/D");
   nfitnt->Branch("errp_skdet_energyscale",&errp_skdet_energyscale,"errp_skdet_energyscale/D");
   nfitnt->Branch("errp_skdet_ccqerc0",&errp_skdet_ccqerc0,"errp_skdet_ccqerc0/D");
   nfitnt->Branch("errp_skdet_ccqerc1",&errp_skdet_ccqerc1,"errp_skdet_ccqerc1/D");
@@ -563,6 +567,7 @@ void test_n_mock_data_fits_with_syst
   nfitnt->Branch("errm_xsec_normnccoh",&errm_xsec_normnccoh,"errm_xsec_normnccoh/D");
   nfitnt->Branch("errm_xsec_normncoth",&errm_xsec_normncoth,"errm_xsec_normncoth/D");
   nfitnt->Branch("errm_xsec_normnuetonumu",&errm_xsec_normnuetonumu,"errm_xsec_normnuetonumu/D");
+  nfitnt->Branch("errm_xsec_normantinutonu",&errm_xsec_normantinutonu,"errm_xsec_normantinutonu/D");
   nfitnt->Branch("errm_skdet_energyscale",&errm_skdet_energyscale,"errm_skdet_energyscale/D");
   nfitnt->Branch("errm_skdet_ccqerc0",&errm_skdet_ccqerc0,"errm_skdet_ccqerc0/D");
   nfitnt->Branch("errm_skdet_ccqerc1",&errm_skdet_ccqerc1,"errm_skdet_ccqerc1/D");
@@ -643,6 +648,7 @@ void test_n_mock_data_fits_with_syst
   nfitnt->Branch("errpar_xsec_normnccoh",&errpar_xsec_normnccoh,"errpar_xsec_normnccoh/D");
   nfitnt->Branch("errpar_xsec_normncoth",&errpar_xsec_normncoth,"errpar_xsec_normncoth/D");
   nfitnt->Branch("errpar_xsec_normnuetonumu",&errpar_xsec_normnuetonumu,"errpar_xsec_normnuetonumu/D");
+  nfitnt->Branch("errpar_xsec_normantinutonu",&errpar_xsec_normantinutonu,"errpar_xsec_normantinutonu/D");
   nfitnt->Branch("errpar_skdet_energyscale",&errpar_skdet_energyscale,"errpar_skdet_energyscale/D");
   nfitnt->Branch("errpar_skdet_ccqerc0",&errpar_skdet_ccqerc0,"errpar_skdet_ccqerc0/D");
   nfitnt->Branch("errpar_skdet_ccqerc1",&errpar_skdet_ccqerc1,"errpar_skdet_ccqerc1/D");
@@ -774,6 +780,7 @@ void test_n_mock_data_fits_with_syst
 	input_xsec_normnccoh = skexp->GetNuXSec()->CurrentValue(conv::kNuisXSecNormNCcoh);
 	input_xsec_normncoth = skexp->GetNuXSec()->CurrentValue(conv::kNuisXSecNormNCoth);
 	input_xsec_normnuetonumu = skexp->GetNuXSec()->CurrentValue(conv::kNuisXSecNormNuEToNuMu);
+	input_xsec_normantinutonu = skexp->GetNuXSec()->CurrentValue(conv::kNuisXSecNormAntiNuToNu);
         input_skdet_energyscale = skexp->GetSuperkDetector()->CurrentValue(conv::kNuisSuperkEnergyScale);
         input_skdet_ccqerc0 = skexp->GetSuperkDetector()->CurrentValue(conv::kNuisSuperkEff1RmuCCQErc0u);
         input_skdet_ccqerc1 = skexp->GetSuperkDetector()->CurrentValue(conv::kNuisSuperkEff1RmuCCQErc1u);
@@ -850,6 +857,7 @@ void test_n_mock_data_fits_with_syst
 	if(fparm->Exists(conv::kNuisXSecNormNCcoh)) fparm->Update(conv::kNuisXSecNormNCcoh, input_xsec_normnccoh);
 	if(fparm->Exists(conv::kNuisXSecNormNCoth)) fparm->Update(conv::kNuisXSecNormNCoth, input_xsec_normncoth);
 	if(fparm->Exists(conv::kNuisXSecNormNuEToNuMu)) fparm->Update(conv::kNuisXSecNormNuEToNuMu, input_xsec_normnuetonumu);
+	if(fparm->Exists(conv::kNuisXSecNormAntiNuToNu)) fparm->Update(conv::kNuisXSecNormAntiNuToNu, input_xsec_normantinutonu);
         if(fparm->Exists(conv::kNuisSuperkEnergyScale)) fparm->Update(conv::kNuisSuperkEnergyScale, input_skdet_energyscale);
         if(fparm->Exists(conv::kNuisSuperkEff1RmuCCQErc0u)) fparm->Update(conv::kNuisSuperkEff1RmuCCQErc0u, input_skdet_ccqerc0);
         if(fparm->Exists(conv::kNuisSuperkEff1RmuCCQErc1u)) fparm->Update(conv::kNuisSuperkEff1RmuCCQErc1u, input_skdet_ccqerc1);
@@ -977,6 +985,7 @@ void test_n_mock_data_fits_with_syst
      bestfit_xsec_normnccoh = -1;
      bestfit_xsec_normncoth = -1;
      bestfit_xsec_normnuetonumu = -1;
+     bestfit_xsec_normantinutonu = -1;
      bestfit_skdet_energyscale = -1;
      bestfit_skdet_ccqerc0 = -1;
      bestfit_skdet_ccqerc1 = -1;
@@ -1057,6 +1066,7 @@ void test_n_mock_data_fits_with_syst
      errp_xsec_normnccoh = -1;
      errp_xsec_normncoth = -1;
      errp_xsec_normnuetonumu = -1;
+     errp_xsec_normantinutonu = -1;
      errp_skdet_energyscale = -1;
      errp_skdet_ccqerc0 = -1;
      errp_skdet_ccqerc1 = -1;
@@ -1137,6 +1147,7 @@ void test_n_mock_data_fits_with_syst
      errm_xsec_normnccoh = -1;
      errm_xsec_normncoth = -1;
      errm_xsec_normnuetonumu = -1;
+     errm_xsec_normantinutonu = -1;
      errm_skdet_energyscale = -1;
      errm_skdet_ccqerc0 = -1;
      errm_skdet_ccqerc1 = -1;
@@ -1217,6 +1228,7 @@ void test_n_mock_data_fits_with_syst
      errpar_xsec_normnccoh = -1;
      errpar_xsec_normncoth = -1;
      errpar_xsec_normnuetonumu = -1;
+     errpar_xsec_normantinutonu = -1;
      errpar_skdet_energyscale = -1;
      errpar_skdet_ccqerc0 = -1;
      errpar_skdet_ccqerc1 = -1;
@@ -1303,6 +1315,7 @@ void test_n_mock_data_fits_with_syst
      if(fparm->Exists(conv::kNuisXSecNormNCcoh)) bestfit_xsec_normnccoh = fparm->BestFitValue(conv::kNuisXSecNormNCcoh);
      if(fparm->Exists(conv::kNuisXSecNormNCoth)) bestfit_xsec_normncoth = fparm->BestFitValue(conv::kNuisXSecNormNCoth);
      if(fparm->Exists(conv::kNuisXSecNormNuEToNuMu)) bestfit_xsec_normnuetonumu = fparm->BestFitValue(conv::kNuisXSecNormNuEToNuMu);
+     if(fparm->Exists(conv::kNuisXSecNormAntiNuToNu)) bestfit_xsec_normantinutonu = fparm->BestFitValue(conv::kNuisXSecNormAntiNuToNu);
      if(fparm->Exists(conv::kNuisSuperkEnergyScale)) bestfit_skdet_energyscale = fparm->BestFitValue(conv::kNuisSuperkEnergyScale);
      if(fparm->Exists(conv::kNuisSuperkEff1RmuCCQErc0u)) bestfit_skdet_ccqerc0 = fparm->BestFitValue(conv::kNuisSuperkEff1RmuCCQErc0u);
      if(fparm->Exists(conv::kNuisSuperkEff1RmuCCQErc1u)) bestfit_skdet_ccqerc1 = fparm->BestFitValue(conv::kNuisSuperkEff1RmuCCQErc1u);
@@ -1391,6 +1404,7 @@ void test_n_mock_data_fits_with_syst
      if(fparm->Exists(conv::kNuisXSecNormNCcoh)) errp_xsec_normnccoh = fparm->PlusError(conv::kNuisXSecNormNCcoh);
      if(fparm->Exists(conv::kNuisXSecNormNCoth)) errp_xsec_normncoth = fparm->PlusError(conv::kNuisXSecNormNCoth);
      if(fparm->Exists(conv::kNuisXSecNormNuEToNuMu)) errp_xsec_normnuetonumu = fparm->PlusError(conv::kNuisXSecNormNuEToNuMu);
+     if(fparm->Exists(conv::kNuisXSecNormAntiNuToNu)) errp_xsec_normantinutonu = fparm->PlusError(conv::kNuisXSecNormAntiNuToNu);
      if(fparm->Exists(conv::kNuisSuperkEnergyScale)) errp_skdet_energyscale = fparm->PlusError(conv::kNuisSuperkEnergyScale);
      if(fparm->Exists(conv::kNuisSuperkEff1RmuCCQErc0u)) errp_skdet_ccqerc0 = fparm->PlusError(conv::kNuisSuperkEff1RmuCCQErc0u);
      if(fparm->Exists(conv::kNuisSuperkEff1RmuCCQErc1u)) errp_skdet_ccqerc1 = fparm->PlusError(conv::kNuisSuperkEff1RmuCCQErc1u);
@@ -1479,6 +1493,7 @@ void test_n_mock_data_fits_with_syst
      if(fparm->Exists(conv::kNuisXSecNormNCcoh)) errm_xsec_normnccoh = fparm->MinusError(conv::kNuisXSecNormNCcoh);
      if(fparm->Exists(conv::kNuisXSecNormNCoth)) errm_xsec_normncoth = fparm->MinusError(conv::kNuisXSecNormNCoth);
      if(fparm->Exists(conv::kNuisXSecNormNuEToNuMu)) errm_xsec_normnuetonumu = fparm->MinusError(conv::kNuisXSecNormNuEToNuMu);
+     if(fparm->Exists(conv::kNuisXSecNormAntiNuToNu)) errm_xsec_normantinutonu = fparm->MinusError(conv::kNuisXSecNormAntiNuToNu);
      if(fparm->Exists(conv::kNuisSuperkEnergyScale)) errm_skdet_energyscale = fparm->MinusError(conv::kNuisSuperkEnergyScale);
      if(fparm->Exists(conv::kNuisSuperkEff1RmuCCQErc0u)) errm_skdet_ccqerc0 = fparm->MinusError(conv::kNuisSuperkEff1RmuCCQErc0u);
      if(fparm->Exists(conv::kNuisSuperkEff1RmuCCQErc1u)) errm_skdet_ccqerc1 = fparm->MinusError(conv::kNuisSuperkEff1RmuCCQErc1u);
@@ -1567,6 +1582,7 @@ void test_n_mock_data_fits_with_syst
      if(fparm->Exists(conv::kNuisXSecNormNCcoh)) errpar_xsec_normnccoh = fparm->ParabolicError(conv::kNuisXSecNormNCcoh);
      if(fparm->Exists(conv::kNuisXSecNormNCoth)) errpar_xsec_normncoth = fparm->ParabolicError(conv::kNuisXSecNormNCoth);
      if(fparm->Exists(conv::kNuisXSecNormNuEToNuMu)) errpar_xsec_normnuetonumu = fparm->ParabolicError(conv::kNuisXSecNormNuEToNuMu);
+     if(fparm->Exists(conv::kNuisXSecNormAntiNuToNu)) errpar_xsec_normantinutonu = fparm->ParabolicError(conv::kNuisXSecNormAntiNuToNu);
      if(fparm->Exists(conv::kNuisSuperkEnergyScale)) errpar_skdet_energyscale = fparm->ParabolicError(conv::kNuisSuperkEnergyScale);
      if(fparm->Exists(conv::kNuisSuperkEff1RmuCCQErc0u)) errpar_skdet_ccqerc0 = fparm->ParabolicError(conv::kNuisSuperkEff1RmuCCQErc0u);
      if(fparm->Exists(conv::kNuisSuperkEff1RmuCCQErc1u)) errpar_skdet_ccqerc1 = fparm->ParabolicError(conv::kNuisSuperkEff1RmuCCQErc1u);

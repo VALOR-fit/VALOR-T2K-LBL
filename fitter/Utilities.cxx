@@ -13,7 +13,7 @@
 */
 //____________________________________________________________________________
 
-//#define __show_cholesky_decomposition_mesg_debug__
+#define __show_cholesky_decomposition_mesg_debug__
 #define __show_cholesky_gen_corr_param_variations_mesg_debug__
 //#define __show_xml_mesg_info__
 //#define __show_arr_idx_mesg_debug__
@@ -795,7 +795,8 @@ string t2kana::util::AsString(PhysParamId_t p)
     case ( kNuisXSecNormNC1piC ) : return "Norm; NC 1piC";                   break;
     case ( kNuisXSecNormNCcoh  ) : return "Norm; NC Coh";                    break;
     case ( kNuisXSecNormNCoth  ) : return "Norm; NC Oth";                    break;
-    case ( kNuisXSecNormNuEToNuMu ) : return "Norm; NuE To NuMu";                    break;
+    case ( kNuisXSecNormNuEToNuMu  ) : return "Norm; NuE To NuMu";           break;
+    case ( kNuisXSecNormAntiNuToNu ) : return "Norm; AntiNu To Nu";          break;
 
     case ( kNuisFSI000 ) :
     case ( kNuisFSI001 ) :
@@ -1510,7 +1511,8 @@ string t2kana::util::AsStringTex(PhysParamId_t p)
     case ( kNuisXSecNormNCcoh  ) : return "Norm, NC Coh";                    break;
     case ( kNuisXSecNormNC1piC ) : return "Norm, NC 1piC";                   break;
     case ( kNuisXSecNormNCoth  ) : return "Norm, NC Oth";                    break;
-    case ( kNuisXSecNormNuEToNuMu ) : return "Norm, NuE To NuMu";            break;
+    case ( kNuisXSecNormNuEToNuMu  ) : return "Norm, $\\nu_e$ To $\\nu_\\mu$";  break;
+    case ( kNuisXSecNormAntiNuToNu ) : return "Norm, $\\bar{\\nu}$ To $\\nu$";  break;
 
     case ( kNuisFSI000 ) :
     case ( kNuisFSI001 ) :
@@ -2208,7 +2210,8 @@ string t2kana::util::AsStringCompact(PhysParamId_t p)
     case ( kNuisXSecNormNC1piC        ) : return "f_norm_nc1piC";  break;
     case ( kNuisXSecNormNCcoh         ) : return "f_norm_nccoh";   break;
     case ( kNuisXSecNormNCoth         ) : return "f_norm_ncoth";   break;
-    case ( kNuisXSecNormNuEToNuMu     ) : return "f_norm_nuetonumu"; break;
+    case ( kNuisXSecNormNuEToNuMu     ) : return "f_norm_nuetonumu";  break;
+    case ( kNuisXSecNormAntiNuToNu    ) : return "f_norm_antinutonu"; break;
 
     case ( kNuisFSI000 ) : return "f_fsi000"; break;
     case ( kNuisFSI001 ) : return "f_fsi001"; break;
@@ -3311,6 +3314,7 @@ t2kana::conv::PhysParamId_t
   if(sh == "xsec_norm_nccoh")   return kNuisXSecNormNCcoh;
   if(sh == "xsec_norm_ncoth")   return kNuisXSecNormNCoth;
   if(sh == "xsec_norm_nuetonumu") return kNuisXSecNormNuEToNuMu;
+  if(sh == "xsec_norm_antinutonu") return kNuisXSecNormAntiNuToNu;
 
   if(sh == "fsi_000") return kNuisFSI000;
   if(sh == "fsi_001") return kNuisFSI001;
@@ -4143,6 +4147,7 @@ bool t2kana::util::IsSystematic(PhysParamId_t p)
     case ( kNuisXSecNormNCcoh         ) : return true;  break;
     case ( kNuisXSecNormNCoth         ) : return true;  break;
     case ( kNuisXSecNormNuEToNuMu     ) : return true;  break;
+    case ( kNuisXSecNormAntiNuToNu    ) : return true;  break;
 
     case ( kNuisFSI000                ) : return true;  break;
     case ( kNuisFSI001                ) : return true;  break;

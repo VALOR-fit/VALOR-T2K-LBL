@@ -177,6 +177,7 @@ void SuperkExpectation::ResetSystematicVariations(void)
   this->GetNuXSec()->TweakNormNCcoh     (0.);
   this->GetNuXSec()->TweakNormNCoth     (0.);
   this->GetNuXSec()->TweakNormNuEToNuMu (0.);
+  this->GetNuXSec()->TweakNormAntiNuToNu(0.);
 }
 //________________________________________________________________________________________
 void SuperkExpectation::TweakSystematic(string systematic, double twkdial, bool best_banff)
@@ -240,6 +241,7 @@ void SuperkExpectation::TweakSystematic(string systematic, double twkdial, bool 
 //    - xsec_norm_nccoh
 //    - xsec_norm_ncoth
 //    - xsec_norm_nuetonumu
+//    - xsec_norm_antinutonu
 //
 
   //
@@ -395,6 +397,8 @@ void SuperkExpectation::TweakSystematic(string systematic, double twkdial, bool 
     this->GetNuXSec()->TweakNormNCoth     (twkdial);
   else if(systematic == "xsec_norm_nuetonumu")
     this->GetNuXSec()->TweakNormNuEToNuMu (twkdial);
+  else if(systematic == "xsec_norm_antinutonu")
+    this->GetNuXSec()->TweakNormAntiNuToNu(twkdial);
 
 
   else {
@@ -461,6 +465,7 @@ void SuperkExpectation::TweakAllUncorrelatedXSecSystematics(void)
   this->GetNuXSec()->TweakNormNCcoh     (rand.Gaus(0.,1.));
   this->GetNuXSec()->TweakNormNCoth     (rand.Gaus(0.,1.));
   this->GetNuXSec()->TweakNormNuEToNuMu (rand.Gaus(0.,1.));
+  this->GetNuXSec()->TweakNormAntiNuToNu(rand.Gaus(0.,1.));
 }
 //________________________________________________________________________________________
 void SuperkExpectation::TweakAllSKDetectorSystematics(void)
@@ -718,6 +723,10 @@ void SuperkExpectation::SetNuisanceParams(const FitParamList & fp)
    if(fp.Exists(kNuisXSecNormNuEToNuMu)) {
      double twk = fp.CurrValue(kNuisXSecNormNuEToNuMu);
      this->GetNuXSec()->TweakNormNuEToNuMu(twk);
+   }
+   if(fp.Exists(kNuisXSecNormAntiNuToNu)) {
+     double twk = fp.CurrValue(kNuisXSecNormAntiNuToNu);
+     this->GetNuXSec()->TweakNormAntiNuToNu(twk);
    }
 
    // 

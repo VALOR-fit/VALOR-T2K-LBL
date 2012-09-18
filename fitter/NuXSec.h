@@ -66,6 +66,7 @@ public:
   void TweakNormNCcoh     (double twkdial) { fNormNCcohTwkDial     = twkdial; }
   void TweakNormNCoth     (double twkdial) { fNormNCothTwkDial     = twkdial; }
   void TweakNormNuEToNuMu (double twkdial) { fNormNuEToNuMuTwkDial = twkdial; }
+  void TweakNormAntiNuToNu(double twkdial) { fNormAntiNuToNuTwkDial= twkdial; }
 
   // Get current value of systematic params handled by this class
   double CurrentValue (conv::PhysParamId_t p) const;
@@ -147,6 +148,7 @@ private:
   double fNormNCcohTwkDial;
   double fNormNCothTwkDial;
   double fNormNuEToNuMuTwkDial;
+  double fNormAntiNuToNuTwkDial;
 
   // relative errors
 #if BANFF_BINS != 2
@@ -159,6 +161,7 @@ private:
   double fNormNCcohRelErr;
   double fNormNCothRelErr;
   double fNormNuEToNuMuRelErr;
+  double fNormAntiNuToNuRelErr;
   double fSplineMAQERelErr;
   double fSplineMARESRelErr;
 

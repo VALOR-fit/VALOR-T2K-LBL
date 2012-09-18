@@ -63,7 +63,8 @@ void summarize_systematics
     if (isyst == 17)  syst_label = "xsec_norm_nccoh";
     if (isyst == 18)  syst_label = "xsec_norm_ncoth";
     if (isyst == 19)  syst_label = "xsec_norm_nuetonumu";
-    if (isyst == 20)  syst_label = "fsi";
+    if (isyst == 20)  syst_label = "xsec_norm_antinutonu";
+    if (isyst == 21)  syst_label = "fsi";
 
     TChain * chain = new TChain("sysnt");
 

@@ -76,7 +76,7 @@ void test_nsk_twk_systematics
   
   const int nexperiments = 5000;
 
-  const int nsystematics = 21;
+  const int nsystematics = 22;
   string systematic[nsystematics] = {
     "sk_1Rmu_ccqe_ring_counting_eff", //0
     "sk_1Rmu_ccqe_other_eff",    //1
@@ -98,7 +98,8 @@ void test_nsk_twk_systematics
     "xsec_norm_nccoh",           //17
     "xsec_norm_ncoth",           //18
     "xsec_norm_nuetonumu",       //19
-    "fsi"                        //20
+    "xsec_norm_antinutonu",      //20
+    "fsi"                        //21
   };
   bool generate_random[nsystematics] = {
     true,  /* sk_1Rmu_ccqe_ring_counting_eff */
@@ -121,6 +122,7 @@ void test_nsk_twk_systematics
     false, /* xsec_norm_nccoh           */
     false, /* xsec_norm_ncoth           */
     false, /* xsec_norm_nuetonumu       */
+    false, /* xsec_norm_antinutonu      */
     true   /* fsi                       */
   };
   bool skip[nsystematics] = {
@@ -144,7 +146,8 @@ void test_nsk_twk_systematics
     false, /* xsec_norm_nccoh           */
     false, /* xsec_norm_ncoth           */
     false, /* xsec_norm_nuetonumu       */
-    true   /* fsi                       */
+    false, /* xsec_norm_antinutonu      */
+    false  /* fsi                       */
   };
 
   double nsknnd_min[nsystematics];

@@ -37,6 +37,7 @@
 // 211 tweak xsec_norm_nccoh
 // 212 tweak xsec_norm_ncoth
 // 213 tweak xsec_norm_nuetonumu
+// 214 tweak xsec_norm_antinutonumu
 //
 // 300 tweak sk_energy_scale
 // 301 tweak sk_1Rmu_ccqe_other_eff
@@ -131,6 +132,8 @@ void test_sk_ereco_spectrum_twk_sys
       modetitle = "xsec_norm_ncoth"; break;
     case 213:
       modetitle = "xsec_norm_nuetonumu"; break;
+    case 214:
+      modetitle = "xsec_norm_antinutonu"; break;
 
     case 300:
       modetitle = "sk_energy_scale"; break;
@@ -305,6 +308,7 @@ void test_sk_ereco_spectrum_twk_sys
 	skexp.TweakSystematic("xsec_norm_nccoh",tweak);
 	skexp.TweakSystematic("xsec_norm_ncoth",tweak);
 	skexp.TweakSystematic("xsec_norm_nuetonumu",tweak);
+	skexp.TweakSystematic("xsec_norm_antinutonu",tweak);
       }
 
       if(mode == 0 || mode == 6 || mode == 8 || mode == 10) {
@@ -364,6 +368,8 @@ void test_sk_ereco_spectrum_twk_sys
 	  skexp.TweakSystematic("xsec_norm_ncoth",tweak); break;
         case 213:
 	  skexp.TweakSystematic("xsec_norm_nuetonumu",tweak); break;
+        case 214:
+	  skexp.TweakSystematic("xsec_norm_antinutonu",tweak); break;
 
         case 300:
 	  skexp.TweakSystematic("sk_energy_scale",tweak); break;
@@ -477,7 +483,7 @@ void test_sk_ereco_spectrum_twk_sys
   categories_m = f.GetObject("categories_m",categories_m);
 
   if(!summary_p) {
-    int nbins = conv::kNumOfParamsInBANFFfit + 17 + 8 + conv::kNumOfFSIParams;
+    int nbins = conv::kNumOfParamsInBANFFfit + 18 + 8 + conv::kNumOfFSIParams;
     summary_p = new TH1D("summary_p","summary_p",nbins,0,nbins);
     summary_p->SetLineColor(kRed);
     summary_p->GetYaxis()->SetTitle("% change");
@@ -497,19 +503,20 @@ void test_sk_ereco_spectrum_twk_sys
     summary_p->GetXaxis()->SetBinLabel(conv::kNumOfParamsInBANFFfit+12,"xsec_norm_nccoh");
     summary_p->GetXaxis()->SetBinLabel(conv::kNumOfParamsInBANFFfit+13,"xsec_norm_ncoth");
     summary_p->GetXaxis()->SetBinLabel(conv::kNumOfParamsInBANFFfit+14,"xsec_norm_nuetonumu");
-    summary_p->GetXaxis()->SetBinLabel(conv::kNumOfParamsInBANFFfit+15,"sk_energy_scale");
-    summary_p->GetXaxis()->SetBinLabel(conv::kNumOfParamsInBANFFfit+16,"sk_1Rmu_ccqe_other_eff");
-    summary_p->GetXaxis()->SetBinLabel(conv::kNumOfParamsInBANFFfit+17,"sk_1Rmu_ccnonqe_eff");
-    summary_p->GetXaxis()->SetBinLabel(conv::kNumOfParamsInBANFFfit+18,"sk_1Rmu_nc_eff");
-    summary_p->GetXaxis()->SetBinLabel(conv::kNumOfParamsInBANFFfit+19,"sk_1Rmu_nuecc_eff");
-    summary_p->GetXaxis()->SetBinLabel(conv::kNumOfParamsInBANFFfit+20,"sk_1Rmu_ccqe_ring_counting_eff_0");
-    summary_p->GetXaxis()->SetBinLabel(conv::kNumOfParamsInBANFFfit+21,"sk_1Rmu_ccqe_ring_counting_eff_1");
-    summary_p->GetXaxis()->SetBinLabel(conv::kNumOfParamsInBANFFfit+22,"sk_1Rmu_ccqe_ring_counting_eff_2");
+    summary_p->GetXaxis()->SetBinLabel(conv::kNumOfParamsInBANFFfit+15,"xsec_norm_antinutonu");
+    summary_p->GetXaxis()->SetBinLabel(conv::kNumOfParamsInBANFFfit+16,"sk_energy_scale");
+    summary_p->GetXaxis()->SetBinLabel(conv::kNumOfParamsInBANFFfit+17,"sk_1Rmu_ccqe_other_eff");
+    summary_p->GetXaxis()->SetBinLabel(conv::kNumOfParamsInBANFFfit+18,"sk_1Rmu_ccnonqe_eff");
+    summary_p->GetXaxis()->SetBinLabel(conv::kNumOfParamsInBANFFfit+19,"sk_1Rmu_nc_eff");
+    summary_p->GetXaxis()->SetBinLabel(conv::kNumOfParamsInBANFFfit+20,"sk_1Rmu_nuecc_eff");
+    summary_p->GetXaxis()->SetBinLabel(conv::kNumOfParamsInBANFFfit+21,"sk_1Rmu_ccqe_ring_counting_eff_0");
+    summary_p->GetXaxis()->SetBinLabel(conv::kNumOfParamsInBANFFfit+22,"sk_1Rmu_ccqe_ring_counting_eff_1");
+    summary_p->GetXaxis()->SetBinLabel(conv::kNumOfParamsInBANFFfit+23,"sk_1Rmu_ccqe_ring_counting_eff_2");
     for(int i = 0; i < conv::kNumOfFSIParams; i++)
       summary_p->GetXaxis()->SetBinLabel(i+conv::kNumOfParamsInBANFFfit+23,Form("fsi_%03d",i));
   }
   if(!summary_m) {
-    int nbins = conv::kNumOfParamsInBANFFfit + 17 + 8 + conv::kNumOfFSIParams;
+    int nbins = conv::kNumOfParamsInBANFFfit + 18 + 8 + conv::kNumOfFSIParams;
     summary_m = new TH1D("summary_m","summary_m",nbins,0,nbins);
     summary_m->SetLineColor(kBlue);
     summary_m->GetYaxis()->SetTitle("% change");
@@ -529,14 +536,15 @@ void test_sk_ereco_spectrum_twk_sys
     summary_m->GetXaxis()->SetBinLabel(conv::kNumOfParamsInBANFFfit+12,"xsec_norm_nccoh");
     summary_m->GetXaxis()->SetBinLabel(conv::kNumOfParamsInBANFFfit+13,"xsec_norm_ncoth");
     summary_m->GetXaxis()->SetBinLabel(conv::kNumOfParamsInBANFFfit+14,"xsec_norm_nuetonumu");
-    summary_m->GetXaxis()->SetBinLabel(conv::kNumOfParamsInBANFFfit+15,"sk_energy_scale");
-    summary_m->GetXaxis()->SetBinLabel(conv::kNumOfParamsInBANFFfit+16,"sk_1Rmu_ccqe_other_eff");
-    summary_m->GetXaxis()->SetBinLabel(conv::kNumOfParamsInBANFFfit+17,"sk_1Rmu_ccnonqe_eff");
-    summary_m->GetXaxis()->SetBinLabel(conv::kNumOfParamsInBANFFfit+18,"sk_1Rmu_nc_eff");
-    summary_m->GetXaxis()->SetBinLabel(conv::kNumOfParamsInBANFFfit+19,"sk_1Rmu_nuecc_eff");
-    summary_m->GetXaxis()->SetBinLabel(conv::kNumOfParamsInBANFFfit+20,"sk_1Rmu_ccqe_ring_counting_eff_0");
-    summary_m->GetXaxis()->SetBinLabel(conv::kNumOfParamsInBANFFfit+21,"sk_1Rmu_ccqe_ring_counting_eff_1");
-    summary_m->GetXaxis()->SetBinLabel(conv::kNumOfParamsInBANFFfit+22,"sk_1Rmu_ccqe_ring_counting_eff_2");
+    summary_m->GetXaxis()->SetBinLabel(conv::kNumOfParamsInBANFFfit+15,"xsec_norm_antinutonu");
+    summary_m->GetXaxis()->SetBinLabel(conv::kNumOfParamsInBANFFfit+16,"sk_energy_scale");
+    summary_m->GetXaxis()->SetBinLabel(conv::kNumOfParamsInBANFFfit+17,"sk_1Rmu_ccqe_other_eff");
+    summary_m->GetXaxis()->SetBinLabel(conv::kNumOfParamsInBANFFfit+18,"sk_1Rmu_ccnonqe_eff");
+    summary_m->GetXaxis()->SetBinLabel(conv::kNumOfParamsInBANFFfit+19,"sk_1Rmu_nc_eff");
+    summary_m->GetXaxis()->SetBinLabel(conv::kNumOfParamsInBANFFfit+20,"sk_1Rmu_nuecc_eff");
+    summary_m->GetXaxis()->SetBinLabel(conv::kNumOfParamsInBANFFfit+21,"sk_1Rmu_ccqe_ring_counting_eff_0");
+    summary_m->GetXaxis()->SetBinLabel(conv::kNumOfParamsInBANFFfit+22,"sk_1Rmu_ccqe_ring_counting_eff_1");
+    summary_m->GetXaxis()->SetBinLabel(conv::kNumOfParamsInBANFFfit+23,"sk_1Rmu_ccqe_ring_counting_eff_2");
     for(int i = 0; i < conv::kNumOfFSIParams; i++)
       summary_m->GetXaxis()->SetBinLabel(i+conv::kNumOfParamsInBANFFfit+23,Form("fsi_%03d",i));
   }

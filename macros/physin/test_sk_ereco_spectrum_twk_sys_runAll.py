@@ -24,7 +24,7 @@ emax = 7
 
 modes1 = [0,1,2,3,4,5,6,7,8,9,10] #combinations
 modes2 = range(100,139) #banff
-modes3 = range(200,214) #unconstranied xsec
+modes3 = range(200,215) #unconstranied xsec
 modes4 = range(300,308) #sk detector
 modes5 = range(400,879) #fsi
 

@@ -25,6 +25,7 @@
 // 211 tweak xsec_norm_nccoh
 // 212 tweak xsec_norm_ncoth
 // 213 tweak xsec_norm_nuetonumu
+// 214 tweak xsec_norm_antinutonu
 //
 // 300 tweak sk_energy_scale
 // 301 tweak sk_1Rmu_ccqe_other_eff
@@ -54,7 +55,7 @@ void test_sk_ereco_spectrum_twk_sys_throw
   using namespace std;
   using namespace t2kana;
 
-  const int nexp = 2; //number of experiments to make
+  const int nexp = 20000; //number of experiments to make
 
   conv::SuperkSample_t s = conv::kSKsFCFV1RingMuLike;
 
@@ -102,6 +103,8 @@ void test_sk_ereco_spectrum_twk_sys_throw
       modetitle = "xsec_norm_ncoth"; break;
     case 213:
       modetitle = "xsec_norm_nuetonumu"; break;
+    case 214:
+      modetitle = "xsec_norm_antinutonu"; break;
 
     case 300:
       modetitle = "sk_energy_scale"; break;
@@ -171,7 +174,7 @@ void test_sk_ereco_spectrum_twk_sys_throw
   TH1D * hNsk = new TH1D(Form("%s_nsk",modetitle.c_str()),Form("%s_nsk",modetitle.c_str()),3000,0,300);
   int nbanff = conv::kNumOfParamsInBANFFfit;
   int nfsi = conv::kNumOfFSIParams;
-  const int nsys = nbanff + nfsi + 8 + 11;
+  const int nsys = nbanff + nfsi + 8 + 12;
   TH1D * hSysThrown[nsys];
   for(int isys = 0; isys < nsys; isys++) {
     string sysstr = "";
@@ -220,6 +223,8 @@ void test_sk_ereco_spectrum_twk_sys_throw
 	  sysstr = "xsec_norm_ncoth"; break;
         case(18) :
 	  sysstr = "xsec_norm_nuetonumu"; break;
+        case(19) :
+	  sysstr = "xsec_norm_antinutonu"; break;
         default:
 	  sysstr = ""; break;
       }//switch(isys2)
@@ -315,6 +320,8 @@ void test_sk_ereco_spectrum_twk_sys_throw
 	  skexp.TweakSystematic("xsec_norm_ncoth",tweak); break;
         case 213:
 	  skexp.TweakSystematic("xsec_norm_nuetonumu",tweak); break;
+        case 214:
+	  skexp.TweakSystematic("xsec_norm_antinutonu",tweak); break;
 
         case 300:
 	  skexp.TweakSystematic("sk_energy_scale",tweak); break;
@@ -372,6 +379,7 @@ void test_sk_ereco_spectrum_twk_sys_throw
     hSysThrown[nbanff+nfsi+16]->Fill(skexp.GetNuXSec()->CurrentValue(util::PhysParamIdFromString("xsec_norm_nccoh")));
     hSysThrown[nbanff+nfsi+17]->Fill(skexp.GetNuXSec()->CurrentValue(util::PhysParamIdFromString("xsec_norm_ncoth")));
     hSysThrown[nbanff+nfsi+18]->Fill(skexp.GetNuXSec()->CurrentValue(util::PhysParamIdFromString("xsec_norm_nuetonumu")));
+    hSysThrown[nbanff+nfsi+19]->Fill(skexp.GetNuXSec()->CurrentValue(util::PhysParamIdFromString("xsec_norm_antinutonu")));
   }//end loop over experiments
 
   //save some histograms

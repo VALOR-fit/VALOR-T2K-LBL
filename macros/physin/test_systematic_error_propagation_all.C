@@ -190,6 +190,7 @@ void test_systematic_error_propagation_all
   systematics.push_back("xsec_norm_nccoh");
   systematics.push_back("xsec_norm_ncoth");
   systematics.push_back("xsec_norm_nuetonumu");
+  systematics.push_back("xsec_norm_antinutonu");
 
   //systematics.push_back("sk_1Rmu_ccqe_ring_counting_eff"); //not supported in this macro
   systematics.push_back("sk_1Rmu_ccqe_ring_counting_eff_0");

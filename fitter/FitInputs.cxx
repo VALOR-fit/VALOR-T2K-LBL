@@ -253,6 +253,7 @@ double FitInputs::ChisquarePenaltyTerm(void)
     for(int ip = 0; ip < np_xsec; ip++) {
       PhysParamId_t p = PhysParamId_t ( (int) kNuisXSecFermiMom  + ip );
       if(p == kNuisXSecNormNCcoh) continue; // not used in numu analysis!
+      if(p == kNuisXSecENuShape)  continue; // not used in numu analysis!
       incl_xsec_penalty = incl_xsec_penalty &&
 	(this->FitParams().Exists(p) && this->FitParams().IsNuisance(p));
       if(!incl_xsec_penalty) break;
@@ -260,9 +261,6 @@ double FitInputs::ChisquarePenaltyTerm(void)
   }
   else {
     PhysParamId_t p = kNuisXSecPiLessDelta;
-    incl_xsec_penalty = incl_xsec_penalty &&
-      (this->FitParams().Exists(p) && this->FitParams().IsNuisance(p));
-    p = kNuisXSecENuShape;
     incl_xsec_penalty = incl_xsec_penalty &&
       (this->FitParams().Exists(p) && this->FitParams().IsNuisance(p));
     p = kNuisXSecNormNC1piC;

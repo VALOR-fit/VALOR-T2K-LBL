@@ -42,6 +42,7 @@
 //      - xsec_norm_nccoh
 //      - xsec_norm_ncoth
 //      - xsec_norm_nuetonumu
+//      - xsec_norm_antinutonu
 //      
 // Costas Andreopoulos
 // ------------------------------------------------------------------------------------------------

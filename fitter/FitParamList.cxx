@@ -342,6 +342,8 @@ FitParamList * FitParamList::NamedParameterList(string name)
     fp -> SetNuisance  (kNuisXSecNormCCcoh ,false);
     fp -> FixParameter (kNuisXSecNormNuEToNuMu);
     fp -> SetNuisance  (kNuisXSecNormNuEToNuMu ,false);
+    fp -> FixParameter (kNuisXSecNormAntiNuToNu);
+    fp -> SetNuisance  (kNuisXSecNormAntiNuToNu ,false);
     fp -> SetParListName(name);
     return fp;
   }
@@ -598,7 +600,7 @@ void FitParamList::AppendSystematics(FitParamList * fparm, int start)
   fparm->AddParam( ip++, kNuisXSecWshape,        0.0, -1.0*nsigma, 1.0*nsigma, 5E-1,  false, true);
   fparm->AddParam( ip++, kNuisXSecShapeCCoth,    0.0, -1.0*nsigma, 1.0*nsigma, 5E-1,  false, true);
   fparm->AddParam( ip++, kNuisXSecPiLessDelta,   0.0, -1.0*nsigma, 1.0*nsigma, 5E-1,  false, true);
-  fparm->AddParam( ip++, kNuisXSecENuShape,      0.0, -1.0*nsigma, 1.0*nsigma, 5E-1,  false, true);
+  //fparm->AddParam( ip++, kNuisXSecENuShape,      0.0, -1.0*nsigma, 1.0*nsigma, 5E-1,  false, true); // not used in numu analysis!
 #if BANFF_BINS != 2
   fparm->AddParam( ip++, kNuisXSecNormCCQEE1,    0.0, -1.0*nsigma, 1.0*nsigma, 5E-1,  false, true);
   fparm->AddParam( ip++, kNuisXSecNormCCQEE2,    0.0, -1.0*nsigma, 1.0*nsigma, 5E-1,  false, true);
@@ -606,9 +608,10 @@ void FitParamList::AppendSystematics(FitParamList * fparm, int start)
 #endif
   fparm->AddParam( ip++, kNuisXSecNormCCcoh,     0.0, -1.0*nsigma, 1.0*nsigma, 5E-1,  false, true);
   fparm->AddParam( ip++, kNuisXSecNormNC1piC,    0.0, -1.0*nsigma, 1.0*nsigma, 5E-1,  false, true);
-  fparm->AddParam( ip++, kNuisXSecNormNCcoh,     0.0, -1.0*nsigma, 1.0*nsigma, 5E-1,  true, false); // not used in numu analysis!
+  //fparm->AddParam( ip++, kNuisXSecNormNCcoh,     0.0, -1.0*nsigma, 1.0*nsigma, 5E-1,  false, true); // not used in numu analysis!
   fparm->AddParam( ip++, kNuisXSecNormNCoth,     0.0, -1.0*nsigma, 1.0*nsigma, 5E-1,  false, true);
   fparm->AddParam( ip++, kNuisXSecNormNuEToNuMu, 0.0, -1.0*nsigma, 1.0*nsigma, 5E-1,  false, true);
+  fparm->AddParam( ip++, kNuisXSecNormAntiNuToNu,0.0, -1.0*nsigma, 1.0*nsigma, 5E-1,  false, true);
 
   // FSI
   for(int i = 0; i < kNumOfFSIParams; i++) {

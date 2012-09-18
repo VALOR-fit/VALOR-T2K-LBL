@@ -324,6 +324,9 @@
 	  <numu_to_nue>
 	       0.03
 	  </numu_to_nue>
+	  <nu_to_antinu>
+	       0.40
+	  </nu_to_antinu>
       </normalisations>
   </xsec>
 

@@ -68,6 +68,7 @@ void test_nsk_twk_systematics_osc
     "xsec_norm_nccoh",           //17
     "xsec_norm_ncoth",           //18
     "xsec_norm_nuetonumu",       //19
+    "xsec_norm_antinutonu",      //19
     "fsi"                        //20
   };
   bool generate_random[nsystematics] = {
@@ -91,6 +92,7 @@ void test_nsk_twk_systematics_osc
     false, /* xsec_norm_nccoh           */
     false, /* xsec_norm_ncoth           */
     false, /* xsec_norm_nuetonumu       */
+    false, /* xsec_norm_antinutonu      */
     true   /* fsi                       */
   };
   bool skip[nsystematics] = {
@@ -114,7 +116,8 @@ void test_nsk_twk_systematics_osc
     false, /* xsec_norm_nccoh           */
     false, /* xsec_norm_ncoth           */
     false, /* xsec_norm_nuetonumu       */
-    true   /* fsi                       */
+    false, /* xsec_norm_antinutonu      */
+    false  /* fsi                       */
   };
 
 

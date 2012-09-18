@@ -232,14 +232,12 @@ bool NuXSec::ReadSplines(TXMLEngine* xml, XMLNodePointer_t root_node)
 		  }
 		}
 		else {
-#if SPLINE_TYPE == 0 // KIT splines exist for empty bins, so don't do this test
+#if SPLINE_TYPE != 0 // KIT splines exist for empty bins, so don't do this test
 		  if(!bin_is_not_empty) {
 		    cerr << "Exp/NuXSec >> Spline exists for empty bin: "
 			 << splname.str() 
 			 << " Ereco: " << Ereco << ", Etrue: " << Etrue
-#if SPLINE_TYPE == 1
 			 << ". Spline thinks there are " << spl->GetTitle()
-#endif
 			 << endl;
 		    exit(1);
 		  }
@@ -361,6 +359,8 @@ bool NuXSec::Read(TXMLEngine* xml, XMLNodePointer_t root_node)
     util::XML2Dbl(xml,root_node,"xsec/normalisations/ncoth");
   fNormNuEToNuMuRelErr =
     util::XML2Dbl(xml,root_node,"xsec/normalisations/numu_to_nue");
+  fNormAntiNuToNuRelErr =
+    util::XML2Dbl(xml,root_node,"xsec/normalisations/nu_to_antinu");
   fSplineMAQERelErr =
     util::XML2Dbl(xml,root_node,"xsec/splines/maqe");
   fSplineMARESRelErr =
@@ -653,7 +653,7 @@ double NuXSec::SystWght_1p(
      p == kNuisXSecNormCCQEE1 || p == kNuisXSecNormCCQEE2 || p == kNuisXSecNormCC1piE1 ||
 #endif
      p == kNuisXSecNormCCcoh || p == kNuisXSecNormNC1piC || p == kNuisXSecNormNCcoh ||
-     p == kNuisXSecNormNCoth || p == kNuisXSecNormNuEToNuMu)
+     p == kNuisXSecNormNCoth || p == kNuisXSecNormNuEToNuMu || p == kNuisXSecNormAntiNuToNu)
   {
     wght = 1 + (this->CurrentValue(p) * this->RelativeError(p));
   }
@@ -754,6 +754,9 @@ double NuXSec::CurrentValue(PhysParamId_t p) const
     case kNuisXSecNormNuEToNuMu:
       return fNormNuEToNuMuTwkDial;
       break;
+    case kNuisXSecNormAntiNuToNu:
+      return fNormAntiNuToNuTwkDial;
+      break;
     case kNuisBANFFMAQE:
     case kNuisBANFFMARES:
     case kNuisBANFFCCQEE0:
@@ -803,6 +806,9 @@ double NuXSec::RelativeError(PhysParamId_t p) const
     case kNuisXSecNormNuEToNuMu:
       return fNormNuEToNuMuRelErr;
       break;
+    case kNuisXSecNormAntiNuToNu:
+      return fNormAntiNuToNuRelErr;
+      break;
     case kNuisBANFFMAQE:
       return fSplineMAQERelErr;
       break;
@@ -835,6 +841,7 @@ void NuXSec::PrintSystematicVariations(void) const
   cout << "         >> NC-coh norm         " << fNormNCcohTwkDial     << endl;
   cout << "         >> NC-oth norm         " << fNormNCothTwkDial     << endl;
   cout << "         >> NuE to NuMu norm    " << fNormNuEToNuMuTwkDial << endl;
+  cout << "         >> AntiNu to Nu norm   " << fNormAntiNuToNuTwkDial<< endl;
 }
 //________________________________________________________________________________________
 
@@ -1136,7 +1143,6 @@ double NuXSec::ChisqPenalty(bool all_syst) const
   // when only fitting for most important systematics
   if(!all_syst) {
     if (fWshapeTwkDial) chisq_penalty += fWshapeTwkDial*fWshapeTwkDial;
-    if (fENuShapeTwkDial) chisq_penalty += fENuShapeTwkDial*fENuShapeTwkDial;
     if (fNormNC1piCTwkDial) chisq_penalty += fNormNC1piCTwkDial*fNormNC1piCTwkDial;
     if (fNormNCothTwkDial) chisq_penalty += fNormNCothTwkDial*fNormNCothTwkDial;
     return chisq_penalty;
@@ -1147,7 +1153,7 @@ double NuXSec::ChisqPenalty(bool all_syst) const
   if (fWshapeTwkDial) chisq_penalty += fWshapeTwkDial*fWshapeTwkDial;
   if (fShapeCCothTwkDial) chisq_penalty += fShapeCCothTwkDial*fShapeCCothTwkDial;
   if (fPiLessDeltaTwkDial) chisq_penalty += fPiLessDeltaTwkDial*fPiLessDeltaTwkDial;
-  if (fENuShapeTwkDial) chisq_penalty += fENuShapeTwkDial*fENuShapeTwkDial;
+  //if (fENuShapeTwkDial) chisq_penalty += fENuShapeTwkDial*fENuShapeTwkDial; // not used in numu analysis!
 #if BANFF_BINS != 2
   if (fNormCCQEE1TwkDial) chisq_penalty += fNormCCQEE1TwkDial*fNormCCQEE1TwkDial;
   if (fNormCCQEE2TwkDial) chisq_penalty += fNormCCQEE2TwkDial*fNormCCQEE2TwkDial;
@@ -1155,9 +1161,10 @@ double NuXSec::ChisqPenalty(bool all_syst) const
 #endif
   if (fNormCCcohTwkDial) chisq_penalty += fNormCCcohTwkDial*fNormCCcohTwkDial;
   if (fNormNC1piCTwkDial) chisq_penalty += fNormNC1piCTwkDial*fNormNC1piCTwkDial;
-  if (fNormNCcohTwkDial) chisq_penalty += fNormNCcohTwkDial*fNormNCcohTwkDial;
+  //if (fNormNCcohTwkDial) chisq_penalty += fNormNCcohTwkDial*fNormNCcohTwkDial; // not used in numu analysis!
   if (fNormNCothTwkDial) chisq_penalty += fNormNCothTwkDial*fNormNCothTwkDial;
   if (fNormNuEToNuMuTwkDial) chisq_penalty += fNormNuEToNuMuTwkDial*fNormNuEToNuMuTwkDial;
+  if (fNormAntiNuToNuTwkDial) chisq_penalty += fNormAntiNuToNuTwkDial*fNormAntiNuToNuTwkDial;
 
   return chisq_penalty;
 }

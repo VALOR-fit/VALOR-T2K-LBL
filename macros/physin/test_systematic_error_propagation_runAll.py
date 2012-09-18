@@ -82,6 +82,7 @@ systematics.append(["xsec_norm_nc1piC", "false", "false", "false"])
 systematics.append(["xsec_norm_nccoh", "false", "false", "false"])
 systematics.append(["xsec_norm_ncoth", "false", "false", "false"])
 systematics.append(["xsec_norm_nuetonumu", "false", "false", "false"])
+systematics.append(["xsec_norm_antinutonu", "false", "false", "false"])
 #FSI
 for i in xrange(479):
    systematics.append(["fsi_" + '%(number)03d' % {"number": i},"true","false","false"])
