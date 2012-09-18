@@ -2711,10 +2711,10 @@ string t2kana::util::AsStringCompact_Japan(PhysParamId_t p)
     case ( kNuisBANFFMARES            ) : return "mares";    break;
     case ( kNuisXSecFermiMom          ) : return "pf";       break;
     case ( kNuisXSecSpecFunc          ) : return "sf";       break; 
-    case ( kNuisXSecWshape            ) : return "wshape";   break;
+    case ( kNuisXSecWshape            ) : return "mdel";     break;
     case ( kNuisXSecShapeCCoth        ) : return "ccothshp"; break;
     case ( kNuisXSecPiLessDelta       ) : return "pdd";      break;
-    case ( kNuisXSecENuShape          ) : return "enushape"; break;
+    case ( kNuisXSecENuShape          ) : return "pishp";    break;
 
     default : 
       return AsStringCompact(p);

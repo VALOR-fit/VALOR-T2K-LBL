@@ -53,6 +53,7 @@ Changes since 2011_v0.9.0:
 #ifndef SPLINE_TYPE
 // NOTE1: binning is identical; just produced by different people
 // NOTE2: don't need to change config xml file
+//#define SPLINE_TYPE -1 // Special mode turned on in which splines are not read, and weights involving splines are set to 1
 //#define SPLINE_TYPE 0 // Use KIT splines
 #define SPLINE_TYPE 1 // Use VaLOR splines
 #endif
@@ -1759,6 +1760,7 @@ static const bool kXsApplyXSecSystToSKMode[kns][knm][kNumOfXSecSyst] = {
     // pF  spectral   W-shape  ccothshape pilessdelta enushape
     // ccqeE2   ccqeE3   cc1piE2
     // cccoh    nc1piC   nccoh    ncoth    nue/numu
+#if SPLINE_TYPE == 1
     {  1, 0, 1, 0, 0,  1, 1, 0, 0, 0, 0,  1, 1, 0,  0, 0, 0, 0, 0 }, // kSKmNuMuCCQE        
     {  0, 1, 0, 1, 0,  0, 0, 1, 0, 1, 1,  0, 0, 1,  0, 0, 0, 0, 0 }, // kSKmNuMuCC1pi
     {  0, 0, 0, 0, 0,  0, 0, 0, 0, 0, 0,  0, 0, 0,  1, 0, 0, 0, 0 }, // kSKmNuMuCCcoh
@@ -1787,6 +1789,36 @@ static const bool kXsApplyXSecSystToSKMode[kns][knm][kNumOfXSecSyst] = {
     {  0, 1, 0, 1, 0,  0, 0, 1, 0, 1, 1,  0, 0, 1,  0, 0, 0, 0, 1 }, // kSKmSigNuECC1pi
     {  0, 0, 0, 0, 0,  0, 0, 0, 0, 0, 0,  0, 0, 0,  1, 0, 0, 0, 1 }, // kSKmSigNuECCcoh
     {  0, 1, 0, 0, 0,  0, 0, 1, 1, 1, 0,  0, 0, 0,  0, 0, 0, 0, 1 }, // kSKmSigNuECCoth_mu
+#elif SPLINE_TYPE <= 0
+    {  1, 0, 1, 0, 0,  1, 1, 0, 0, 0, 0,  1, 1, 0,  0, 0, 0, 0, 0 }, // kSKmNuMuCCQE        
+    {  0, 1, 0, 1, 0,  0, 0, 1, 0, 1, 1,  0, 0, 1,  0, 0, 0, 0, 0 }, // kSKmNuMuCC1pi
+    {  0, 0, 0, 0, 0,  0, 0, 0, 0, 0, 0,  0, 0, 0,  1, 0, 0, 0, 0 }, // kSKmNuMuCCcoh
+    {  0, 1, 0, 0, 0,  0, 0, 1, 1, 0, 0,  0, 0, 0,  0, 0, 0, 0, 0 }, // kSKmNuMuCCoth_mu
+    {  0, 1, 0, 0, 0,  0, 0, 1, 0, 1, 0,  0, 0, 0,  0, 1, 0, 0, 0 }, // kSKmNuMuNC1piC
+    {  0, 1, 0, 0, 0,  0, 0, 1, 0, 1, 1,  0, 0, 0,  0, 0, 0, 1, 0 }, // kSKmNuMuNCoth_mu
+    {  1, 0, 1, 0, 0,  1, 1, 0, 0, 0, 0,  1, 1, 0,  0, 0, 0, 0, 0 }, // kSKmNuMuBarCCQE        
+    {  0, 1, 0, 1, 0,  0, 0, 1, 0, 1, 1,  0, 0, 1,  0, 0, 0, 0, 0 }, // kSKmNuMuBarCC1pi
+    {  0, 0, 0, 0, 0,  0, 0, 0, 0, 0, 0,  0, 0, 0,  1, 0, 0, 0, 0 }, // kSKmNuMuBarCCcoh
+    {  0, 1, 0, 0, 0,  0, 0, 1, 1, 0, 0,  0, 0, 0,  0, 0, 0, 0, 0 }, // kSKmNuMuBarCCoth_mu
+    {  0, 1, 0, 0, 0,  0, 0, 1, 0, 1, 0,  0, 0, 0,  0, 1, 0, 0, 0 }, // kSKmNuMuBarNC1piC
+    {  0, 1, 0, 0, 0,  0, 0, 1, 0, 1, 1,  0, 0, 0,  0, 0, 0, 1, 0 }, // kSKmNuMuBarNCoth_mu
+    {  1, 0, 1, 0, 0,  1, 1, 0, 0, 0, 0,  1, 1, 0,  0, 0, 0, 0, 1 }, // kSKmNuECCQE        
+    {  0, 1, 0, 1, 0,  0, 0, 1, 0, 1, 1,  0, 0, 1,  0, 0, 0, 0, 1 }, // kSKmNuECC1pi
+    {  0, 0, 0, 0, 0,  0, 0, 0, 0, 0, 0,  0, 0, 0,  1, 0, 0, 0, 1 }, // kSKmNuECCcoh
+    {  0, 1, 0, 0, 0,  0, 0, 1, 1, 0, 0,  0, 0, 0,  0, 0, 0, 0, 1 }, // kSKmNuECCoth_mu
+    {  0, 1, 0, 0, 0,  0, 0, 1, 0, 1, 0,  0, 0, 0,  0, 1, 0, 0, 1 }, // kSKmNuENC1piC
+    {  0, 1, 0, 0, 0,  0, 0, 1, 0, 1, 1,  0, 0, 0,  0, 0, 0, 1, 1 }, // kSKmNuENCoth_mu
+    {  1, 0, 1, 0, 0,  1, 1, 0, 0, 0, 0,  1, 1, 0,  0, 0, 0, 0, 1 }, // kSKmNuEBarCCQE        
+    {  0, 1, 0, 1, 0,  0, 0, 1, 0, 1, 1,  0, 0, 1,  0, 0, 0, 0, 1 }, // kSKmNuEBarCC1pi
+    {  0, 0, 0, 0, 0,  0, 0, 0, 0, 0, 0,  0, 0, 0,  1, 0, 0, 0, 1 }, // kSKmNuEBarCCcoh
+    {  0, 1, 0, 0, 0,  0, 0, 1, 1, 0, 0,  0, 0, 0,  0, 0, 0, 0, 1 }, // kSKmNuEBarCCoth_mu
+    {  0, 1, 0, 0, 0,  0, 0, 1, 0, 1, 0,  0, 0, 0,  0, 1, 0, 0, 1 }, // kSKmNuEBarNC1piC
+    {  0, 1, 0, 0, 0,  0, 0, 1, 0, 1, 1,  0, 0, 0,  0, 0, 0, 1, 1 }, // kSKmNuEBarNCoth_mu
+    {  1, 0, 1, 0, 0,  1, 1, 0, 0, 0, 0,  1, 1, 0,  0, 0, 0, 0, 1 }, // kSKmSigNuECCQE        
+    {  0, 1, 0, 1, 0,  0, 0, 1, 0, 1, 1,  0, 0, 1,  0, 0, 0, 0, 1 }, // kSKmSigNuECC1pi
+    {  0, 0, 0, 0, 0,  0, 0, 0, 0, 0, 0,  0, 0, 0,  1, 0, 0, 0, 1 }, // kSKmSigNuECCcoh
+    {  0, 1, 0, 0, 0,  0, 0, 1, 1, 0, 0,  0, 0, 0,  0, 0, 0, 0, 1 }, // kSKmSigNuECCoth_mu
+#endif
     {  0, 0, 0, 0, 0,  0, 0, 0, 0, 0, 0,  0, 0, 0,  0, 0, 0, 0, 0 }, // kSKmUndefined
     {  0, 0, 0, 0, 0,  0, 0, 0, 0, 0, 0,  0, 0, 0,  0, 0, 0, 0, 0 }, // kSKmUndefined
     {  0, 0, 0, 0, 0,  0, 0, 0, 0, 0, 0,  0, 0, 0,  0, 0, 0, 0, 0 }, // kSKmUndefined
@@ -1862,6 +1894,7 @@ static const bool kXsApplyXSecSystToSKMode[kns][knm][kNumOfXSecSyst] = {
     // banffcc1piE0 banffcc1piE1 banffnc1pi0
     // pF  spectral   W-shape  ccothshape pilessdelta enushape
     // cccoh    nc1piC   nccoh  ncoth    nue/numu
+#if SPLINE_TYPE == 1
     {  1, 0, 1, 1, 1,  0, 0, 0,  1, 1, 0, 0, 0, 0,  0, 0, 0, 0, 0 }, // kSKmNuMuCCQE        
     {  0, 1, 0, 0, 0,  1, 1, 0,  0, 0, 1, 0, 1, 1,  0, 0, 0, 0, 0 }, // kSKmNuMuCC1pi
     {  0, 0, 0, 0, 0,  0, 0, 0,  0, 0, 0, 0, 0, 0,  1, 0, 0, 0, 0 }, // kSKmNuMuCCcoh
@@ -1890,6 +1923,36 @@ static const bool kXsApplyXSecSystToSKMode[kns][knm][kNumOfXSecSyst] = {
     {  0, 1, 0, 0, 0,  1, 1, 0,  0, 0, 1, 0, 1, 1,  0, 0, 0, 0, 1 }, // kSKmSigNuECC1pi
     {  0, 0, 0, 0, 0,  0, 0, 0,  0, 0, 0, 0, 0, 0,  1, 0, 0, 0, 1 }, // kSKmSigNuECCcoh
     {  0, 1, 0, 0, 0,  0, 0, 0,  0, 0, 1, 1, 1, 0,  0, 0, 0, 0, 1 }, // kSKmSigNuECCoth_mu
+#elif SPLINE_TYPE <= 0
+    {  1, 0, 1, 1, 1,  0, 0, 0,  1, 1, 0, 0, 0, 0,  0, 0, 0, 0, 0 }, // kSKmNuMuCCQE        
+    {  0, 1, 0, 0, 0,  1, 1, 0,  0, 0, 1, 0, 1, 1,  0, 0, 0, 0, 0 }, // kSKmNuMuCC1pi
+    {  0, 0, 0, 0, 0,  0, 0, 0,  0, 0, 0, 0, 0, 0,  1, 0, 0, 0, 0 }, // kSKmNuMuCCcoh
+    {  0, 1, 0, 0, 0,  0, 0, 0,  0, 0, 1, 1, 0, 0,  0, 0, 0, 0, 0 }, // kSKmNuMuCCoth_mu
+    {  0, 1, 0, 0, 0,  0, 0, 0,  0, 0, 1, 0, 1, 0,  0, 1, 0, 0, 0 }, // kSKmNuMuNC1piC
+    {  0, 1, 0, 0, 0,  0, 0, 0,  0, 0, 1, 0, 1, 1,  0, 0, 0, 1, 0 }, // kSKmNuMuNCoth_mu
+    {  1, 0, 1, 1, 1,  0, 0, 0,  1, 1, 0, 0, 0, 0,  0, 0, 0, 0, 0 }, // kSKmNuMuBarCCQE        
+    {  0, 1, 0, 0, 0,  1, 1, 0,  0, 0, 1, 0, 1, 1,  0, 0, 0, 0, 0 }, // kSKmNuMuBarCC1pi
+    {  0, 0, 0, 0, 0,  0, 0, 0,  0, 0, 0, 0, 0, 0,  1, 0, 0, 0, 0 }, // kSKmNuMuBarCCcoh
+    {  0, 1, 0, 0, 0,  0, 0, 0,  0, 0, 1, 1, 0, 0,  0, 0, 0, 0, 0 }, // kSKmNuMuBarCCoth_mu
+    {  0, 1, 0, 0, 0,  0, 0, 0,  0, 0, 1, 0, 1, 0,  0, 1, 0, 0, 0 }, // kSKmNuMuBarNC1piC
+    {  0, 1, 0, 0, 0,  0, 0, 0,  0, 0, 1, 0, 1, 1,  0, 0, 0, 1, 0 }, // kSKmNuMuBarNCoth_mu
+    {  1, 0, 1, 1, 1,  0, 0, 0,  1, 1, 0, 0, 0, 0,  0, 0, 0, 0, 1 }, // kSKmNuECCQE        
+    {  0, 1, 0, 0, 0,  1, 1, 0,  0, 0, 1, 0, 1, 1,  0, 0, 0, 0, 1 }, // kSKmNuECC1pi
+    {  0, 0, 0, 0, 0,  0, 0, 0,  0, 0, 0, 0, 0, 0,  1, 0, 0, 0, 1 }, // kSKmNuECCcoh
+    {  0, 1, 0, 0, 0,  0, 0, 0,  0, 0, 1, 1, 0, 0,  0, 0, 0, 0, 1 }, // kSKmNuECCoth_mu
+    {  0, 1, 0, 0, 0,  0, 0, 0,  0, 0, 1, 0, 1, 0,  0, 1, 0, 0, 1 }, // kSKmNuENC1piC
+    {  0, 1, 0, 0, 0,  0, 0, 0,  0, 0, 1, 0, 1, 1,  0, 0, 0, 1, 1 }, // kSKmNuENCoth_mu
+    {  1, 0, 1, 1, 1,  0, 0, 0,  1, 1, 0, 0, 0, 0,  0, 0, 0, 0, 1 }, // kSKmNuEBarCCQE        
+    {  0, 1, 0, 0, 0,  1, 1, 0,  0, 0, 1, 0, 1, 1,  0, 0, 0, 0, 1 }, // kSKmNuEBarCC1pi
+    {  0, 0, 0, 0, 0,  0, 0, 0,  0, 0, 0, 0, 0, 0,  1, 0, 0, 0, 1 }, // kSKmNuEBarCCcoh
+    {  0, 1, 0, 0, 0,  0, 0, 0,  0, 0, 1, 1, 0, 0,  0, 0, 0, 0, 1 }, // kSKmNuEBarCCoth_mu
+    {  0, 1, 0, 0, 0,  0, 0, 0,  0, 0, 1, 0, 1, 0,  0, 1, 0, 0, 1 }, // kSKmNuEBarNC1piC
+    {  0, 1, 0, 0, 0,  0, 0, 0,  0, 0, 1, 0, 1, 1,  0, 0, 0, 1, 1 }, // kSKmNuEBarNCoth_mu
+    {  1, 0, 1, 1, 1,  0, 0, 0,  1, 1, 0, 0, 0, 0,  0, 0, 0, 0, 1 }, // kSKmSigNuECCQE        
+    {  0, 1, 0, 0, 0,  1, 1, 0,  0, 0, 1, 0, 1, 1,  0, 0, 0, 0, 1 }, // kSKmSigNuECC1pi
+    {  0, 0, 0, 0, 0,  0, 0, 0,  0, 0, 0, 0, 0, 0,  1, 0, 0, 0, 1 }, // kSKmSigNuECCcoh
+    {  0, 1, 0, 0, 0,  0, 0, 0,  0, 0, 1, 1, 0, 0,  0, 0, 0, 0, 1 }, // kSKmSigNuECCoth_mu
+#endif
     {  0, 0, 0, 0, 0,  0, 0, 0,  0, 0, 0, 0, 0, 0,  0, 0, 0, 0, 0 }, // kSKmUndefined
     {  0, 0, 0, 0, 0,  0, 0, 0,  0, 0, 0, 0, 0, 0,  0, 0, 0, 0, 0 }, // kSKmUndefined
     {  0, 0, 0, 0, 0,  0, 0, 0,  0, 0, 0, 0, 0, 0,  0, 0, 0, 0, 0 }, // kSKmUndefined

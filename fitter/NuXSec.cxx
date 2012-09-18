@@ -25,8 +25,7 @@
 //#define __show_wght_spline_idx_mesg_debug__
 //#define __show_isanevent_mesg_debug__
 //#define __save_ori_templates_init_debug__
-//#define __skip_unexpected_spline_test_in_readsplines__ // skip looking for splines we don't expect (due to our empty bins) - speedy!
-//#define __turn_off_splines__ //special mode that doesn't read in splines, and returns weights of 1 for all splines
+#define __skip_unexpected_spline_test_in_readsplines__ // skip looking for splines we don't expect (due to our empty bins) - speedy!
 
 #include <cassert>
 #include <cstdlib>
@@ -112,7 +111,7 @@ bool NuXSec::ReadSplines(TXMLEngine* xml, XMLNodePointer_t root_node)
 #ifdef __show_init_mesg_info__
   cout << "Exp/NuXSec >> Reading neutrino generator inputs (splines only) from input XML file." << endl;
 #endif
-#ifdef __turn_off_splines__
+#if SPLINE_TYPE == -1
   cout << "Exp/NuXSec >> Special mode turned on in which splines are not read, and weights involving splines are set to 1" << endl;
   return true;
 #endif
@@ -223,7 +222,7 @@ bool NuXSec::ReadSplines(TXMLEngine* xml, XMLNodePointer_t root_node)
 		    continue;
 		  }
 		  else {
-		    cerr << "Exp/NuXSec >> Null cross-sectionweight spline: " 
+		    cerr << "Exp/NuXSec >> Null cross-section weight spline: " 
 			 << splname.str() 
 #if SPLINE_TYPE == 0
 			 << ", " << mode[0]
@@ -233,12 +232,10 @@ bool NuXSec::ReadSplines(TXMLEngine* xml, XMLNodePointer_t root_node)
 		  }
 		}
 		else {
+#if SPLINE_TYPE == 0 // KIT splines exist for empty bins, so don't do this test
 		  if(!bin_is_not_empty) {
 		    cerr << "Exp/NuXSec >> Spline exists for empty bin: "
 			 << splname.str() 
-#if SPLINE_TYPE == 0
-			 << ", " << mode[0]
-#endif
 			 << " Ereco: " << Ereco << ", Etrue: " << Etrue
 #if SPLINE_TYPE == 1
 			 << ". Spline thinks there are " << spl->GetTitle()
@@ -246,6 +243,7 @@ bool NuXSec::ReadSplines(TXMLEngine* xml, XMLNodePointer_t root_node)
 			 << endl;
 		    exit(1);
 		  }
+#endif
 		}
 
 #ifndef __skip_unexpected_spline_test_in_readsplines__
@@ -429,7 +427,7 @@ double NuXSec::FinTuningWght_1p(
   //
   if(p == kNuisBANFFMAQE || p == kNuisBANFFMARES)
   {
-#ifdef __turn_off_splines__
+#if SPLINE_TYPE == -1
     return wght;
 #endif
      bool ev = this->IsThereAnEvent(s, m, Ereco, Etrue);
@@ -573,7 +571,7 @@ double NuXSec::SystWght_1p(
   //
   if(p == kNuisBANFFMAQE || p == kNuisBANFFMARES)
   {
-#ifdef __turn_off_splines__
+#if SPLINE_TYPE == -1
     return wght;
 #endif
      bool ev = this->IsThereAnEvent(s, m, Ereco, Etrue);
@@ -627,7 +625,7 @@ double NuXSec::SystWght_1p(
   if(p == kNuisXSecFermiMom || p == kNuisXSecSpecFunc || p == kNuisXSecWshape || p == kNuisXSecShapeCCoth ||
      p == kNuisXSecPiLessDelta || p == kNuisXSecENuShape)
   {
-#ifdef __turn_off_splines__
+#if SPLINE_TYPE == -1
     return wght;
 #endif
     bool ev = this->IsThereAnEvent(s, m, Ereco, Etrue);
