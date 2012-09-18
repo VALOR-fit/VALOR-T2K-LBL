@@ -29,9 +29,9 @@ Changes since 2011_v0.9.0:
 #endif
 
 #ifndef FSI_BINS
-//#define FSI_BINS 1 // 6 bins (0-0.4, 0.4-1.1, 1.1-30.0 GeV Ereco) for numu(bar)CCQE, numu(bar)CCnQE, nueCC, allNC
+#define FSI_BINS 1 // 6 bins (0-0.4, 0.4-1.1, 1.1-30.0 GeV Ereco) for numu(bar)CCQE, numu(bar)CCnQE, nueCC, allNC (DEFAULT for collab meeting)
 //#define FSI_BINS 2 // 15 bins (0-0.4, 0.4-1.1, 1.1-30.0 GeV Ereco) x (numu, numubar, nue, nuebar, oscnue)
-#define FSI_BINS 3 // 79 bins (0-0.3, 100 MeV 0.3-1.5, 500 MeV 1.5-5, 5-30 GeV) for numu(bar)CCQE, numu(bar)CCnQE, nueCC + (0-0.3, 100 MeV 0.3-1.5, 1.5-2, 2-5, 5-30 GeV) for allNC
+//#define FSI_BINS 3 // 79 bins (0-0.3, 100 MeV 0.3-1.5, 500 MeV 1.5-5, 5-30 GeV) for numu(bar)CCQE, numu(bar)CCnQE, nueCC + (0-0.3, 100 MeV 0.3-1.5, 1.5-2, 2-5, 5-30 GeV) for allNC
 //#define FSI_BINS 4 // 480 bins (50 MeV bins 0.25-5 GeV, 5-30 GeV) x (numu, numubar, nue, nuebar, oscnue)
 #endif
 
@@ -54,7 +54,7 @@ Changes since 2011_v0.9.0:
 // NOTE1: binning is identical; just produced by different people
 // NOTE2: don't need to change config xml file
 //#define SPLINE_TYPE -1 // Special mode turned on in which splines are not read, and weights involving splines are set to 1
-#define SPLINE_TYPE 0 // Use KIT splines
+#define SPLINE_TYPE 0 // Use KIT splines (DEFAULT for collab meeting)
 //#define SPLINE_TYPE 1 // Use VaLOR splines
 #endif
 
