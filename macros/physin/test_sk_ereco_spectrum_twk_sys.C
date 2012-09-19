@@ -77,6 +77,7 @@ void test_sk_ereco_spectrum_twk_sys
   using namespace t2kana;
 
   conv::SuperkSample_t s = conv::kSKsFCFV1RingMuLike;
+  int is = (int)s;
 
   //Check if the mode is valid
   string modetitle = "";
@@ -215,6 +216,9 @@ void test_sk_ereco_spectrum_twk_sys
   TH1D * hErecoNominal = 0;
   TH1D * hEreco[ntweaks];
   TH1D * hErecoRatio[ntweaks];
+  TH1D * hErecoModeNominal[conv::knm];
+  TH1D * hErecoMode[conv::knm][ntweaks];
+  TH1D * hErecoModeRatio[conv::knm][ntweaks];
 
   // Open output file
   string rootmode = "update";
@@ -231,8 +235,25 @@ void test_sk_ereco_spectrum_twk_sys
   hErecoNominal->GetXaxis()->SetTitle("E_{reco} (GeV)");
   hErecoNominal->GetYaxis()->SetTitle("Number of events");
   hErecoNominal->SetLineWidth(2);
-  if(!update_rootfile)
+  for(int im = 0; im < conv::knm; im++) {
+    conv::SuperkMode_t m = conv::kSKReactionModes[is][im];
+    if(m == conv::kSKmUndefined) continue;
+    cout << "- Retrieving spectrum prediction for mode: " << util::AsString(m) << endl;
+    TH1D * h = skexp.CurrPredictedErecoSpectrum(s, m);  
+    assert(h);
+    hErecoModeNominal[im] = new TH1D(*h);
+    hErecoModeNominal[im]->SetDirectory(0);
+    hErecoModeNominal[im]->GetXaxis()->SetTitle("E_{reco} (GeV)");
+    hErecoModeNominal[im]->GetYaxis()->SetTitle("Number of events");
+  }
+  if(!update_rootfile) {
     hErecoNominal->Write("nominal");
+    for(int im = 0; im < conv::knm; im++) {
+      conv::SuperkMode_t m = conv::kSKReactionModes[is][im];
+      if(m == conv::kSKmUndefined) continue;
+      hErecoModeNominal[im]->Write(Form("nominal_%s",util::AsStringCompact(m).c_str()));
+    }
+  }
 
   // Tweak!
   for(int itweak = 0; itweak < ntweaks; itweak++) {
@@ -424,7 +445,18 @@ void test_sk_ereco_spectrum_twk_sys
     hErecoRatio[itweak] = new TH1D(*hEreco[itweak]);
     hErecoRatio[itweak]->Divide(hErecoNominal);
     hErecoRatio[itweak]->Write(Form("%s_%d_sigma_ratio",modetitle.c_str(),tweak));
-	
+    for(int im = 0; im < conv::knm; im++) {
+      conv::SuperkMode_t m = conv::kSKReactionModes[is][im];
+      if(m == conv::kSKmUndefined) continue;
+      hErecoMode[im][itweak] = new TH1D(*skexp.CurrPredictedErecoSpectrum(s,m));
+      hErecoMode[im][itweak]->SetDirectory(0);
+      hErecoMode[im][itweak]->SetTitle(Form("%s_%d_sigma_%s",modetitle.c_str(),tweak,util::AsStringCompact(m).c_str()));
+      hErecoMode[im][itweak]->SetLineColor(histcolor);
+      hErecoMode[im][itweak]->Write(Form("%s_%d_sigma",modetitle.c_str(),tweak));		    
+      hErecoModeRatio[im][itweak] = new TH1D(*hErecoMode[im][itweak]);
+      hErecoModeRatio[im][itweak]->Divide(hErecoModeNominal[im]);
+      hErecoModeRatio[im][itweak]->Write(Form("%s_%d_sigma_ratio_%s",modetitle.c_str(),tweak,util::AsStringCompact(m).c_str()));
+    }
   }//end loop over tweaks
 
   //
@@ -462,6 +494,43 @@ void test_sk_ereco_spectrum_twk_sys
   hErecoNominal->GetXaxis()->UnZoom();
   hErecoRatio[0]->GetXaxis()->UnZoom();
   c->SaveAs(Form("ereco_twk_%s_fullrange.png",modetitle.c_str()));
+  // Draw mode by mode
+  TCanvas * cm = new TCanvas("cm","",20,20,500,500);
+  gStyle->SetOptStat(0);
+  cm->Divide(1,2);
+  for(int im = 0; im < conv::knm; im++) {
+    conv::SuperkMode_t m = conv::kSKReactionModes[is][im];
+    if(m == conv::kSKmUndefined) continue;
+    cm->cd(1);
+    TLegend * legend = new TLegend(0.7, 0.4, 0.9, 0.85);
+    legend->SetFillColor(0);
+    legend->SetBorderSize(0);
+    legend->AddEntry(hErecoModeNominal[im], "nominal", "L" );
+    hErecoModeNominal[im]->SetTitle(Form("%s_%s",modetitle.c_str(),util::AsStringCompact(m).c_str()));
+    hErecoModeNominal[im]->GetXaxis()->SetRangeUser(0,ereco_max_plot-conv::kOneMeV);
+    hErecoModeNominal[im]->Draw();
+    for(int itweak = 0; itweak < ntweaks; itweak++) {
+      hErecoMode[im][itweak]->Draw("same");
+      legend->AddEntry(hErecoMode[im][itweak], Form("%d sigma",tweaks[itweak]), "L" );
+    }
+    legend->Draw();
+    cm->cd(2);
+    for(int itweak = 0; itweak < ntweaks; itweak++) {
+      if(itweak==0){
+	hErecoModeRatio[im][itweak]->GetXaxis()->SetRangeUser(0,ereco_max_plot-conv::kOneMeV);
+	hErecoModeRatio[im][itweak]->GetXaxis()->SetTitle("E_{reco} (GeV)");
+	hErecoModeRatio[im][itweak]->GetYaxis()->SetTitle("Relative error");
+	hErecoModeRatio[im][itweak]->SetTitle("Ratio");
+	hErecoModeRatio[im][itweak]->Draw();
+	continue;
+      }
+      hErecoModeRatio[im][itweak]->Draw("same");
+    }
+    cm->SaveAs(Form("ereco_twk_%s_%s.png",modetitle.c_str(),util::AsStringCompact(m).c_str()));
+    hErecoModeNominal[im]->GetXaxis()->UnZoom();
+    hErecoModeRatio[im][0]->GetXaxis()->UnZoom();
+    cm->SaveAs(Form("ereco_twk_%s_%s_fullrange.png",modetitle.c_str(),util::AsStringCompact(m).c_str()));
+  }//loop over modes
 
   //
   // Save the change in nsk
@@ -471,16 +540,47 @@ void test_sk_ereco_spectrum_twk_sys
   double nsk_m  = hEreco[2]->Integral(1,hEreco[2]->GetNbinsX());
   double frac_nsk_p = (nsk_0 > 0) ? 100.*(nsk_p - nsk_0) / nsk_0 : 0.;
   double frac_nsk_m = (nsk_0 > 0) ? 100.*(nsk_m - nsk_0) / nsk_0 : 0.;
+  double nskmode_p[conv::knm] = {0}, nskmode_m[conv::knm] = {0};
+  double frac_nskmode_p[conv::knm] = {0}, frac_nskmode_m[conv::knm] = {0};
+  for(int im = 0; im < conv::knm; im++) {
+    conv::SuperkMode_t m = conv::kSKReactionModes[is][im];
+    if(m == conv::kSKmUndefined) continue;
+    nskmode_p[im] = hErecoMode[im][1]->Integral(1,hErecoMode[im][1]->GetNbinsX());
+    nskmode_m[im] = hErecoMode[im][2]->Integral(1,hErecoMode[im][2]->GetNbinsX());
+    frac_nskmode_p[im] = (nsk_0 > 0) ? 100.*(nskmode_p[im] - nsk_0) / nsk_0 : 0.;
+    frac_nskmode_m[im] = (nsk_0 > 0) ? 100.*(nskmode_m[im] - nsk_0) / nsk_0 : 0.;
+  }
 
   cout << endl << "Nominal number of events: " << nsk_0 << endl
        << "   +1 sigma:              " << nsk_p << "\t" << frac_nsk_p << "%" << endl
        << "   -1 sigma:              " << nsk_m << "\t" << frac_nsk_m << "%" << endl;
+#line 0
+  for(int im = 0; im < conv::knm; im++) {
+    conv::SuperkMode_t m = conv::kSKReactionModes[is][im];
+    if(m == conv::kSKmUndefined) continue;
+    cout << util::AsString(m) << "\t" 
+	 << nskmode_p[im] << "   " << frac_nskmode_p[im] << "%" << "\t"
+	 << nskmode_m[im] << "   " << frac_nskmode_m[im] << "%" << endl;
+  }
 
   TH1D * summary_p = 0, * summary_m = 0, * categories_p = 0, * categories_m = 0;
-  summary_p = f.GetObject("summary_p",summary_p);
-  summary_m = f.GetObject("summary_m",summary_m);
-  categories_p = f.GetObject("categories_p",categories_p);
-  categories_m = f.GetObject("categories_m",categories_m);
+  TH1D * summarymode_p[conv::knm], * summarymode_m[conv::knm], * categoriesmode_p[conv::knm], * categoriesmode_m[conv::knm];
+  f.GetObject("summary_p",summary_p);
+  f.GetObject("summary_m",summary_m);
+  f.GetObject("categories_p",categories_p);
+  f.GetObject("categories_m",categories_m);
+  for(int im = 0; im < conv::knm; im++) {
+    conv::SuperkMode_t m = conv::kSKReactionModes[is][im];
+    if(m == conv::kSKmUndefined) continue;
+    summarymode_p[im] = 0;
+    summarymode_m[im] = 0;
+    categoriesmode_p[im] = 0;
+    categoriesmode_m[im] = 0;
+    f.GetObject(Form("summary_p_%s",util::AsStringCompact(m).c_str()),summarymode_p[im]);
+    f.GetObject(Form("summary_m_%s",util::AsStringCompact(m).c_str()),summarymode_m[im]);
+    f.GetObject(Form("categories_p_%s",util::AsStringCompact(m).c_str()),categoriesmode_p[im]);
+    f.GetObject(Form("categories_m_%s",util::AsStringCompact(m).c_str()),categoriesmode_m[im]);
+  }
 
   if(!summary_p) {
     int nbins = conv::kNumOfParamsInBANFFfit + 18 + 8 + conv::kNumOfFSIParams;
@@ -580,17 +680,140 @@ void test_sk_ereco_spectrum_twk_sys
     categories_m->GetXaxis()->SetBinLabel(10,"sk-ccqe-ring-counting-efficiency");
     categories_m->GetXaxis()->SetBinLabel(11,"fsi");
   }
+  for(int im = 0; im < conv::knm; im++) {
+    conv::SuperkMode_t m = conv::kSKReactionModes[is][im];
+    if(m == conv::kSKmUndefined) continue;
+    if(!summarymode_p[im]) {
+      int nbins = conv::kNumOfParamsInBANFFfit + 18 + 8 + conv::kNumOfFSIParams;
+      summarymode_p[im] = new TH1D(Form("summarymode_p_%s",util::AsStringCompact(m).c_str()),Form("summarymode_p_%s",util::AsStringCompact(m).c_str()),nbins,0,nbins);
+      summarymode_p[im]->SetLineColor(kRed);
+      summarymode_p[im]->GetYaxis()->SetTitle("% change");
+      for(int i = 0; i < conv::kNumOfParamsInBANFFfit; i++)
+	summarymode_p[im]->GetXaxis()->SetBinLabel(i+1,Form("banff_%02d",i));
+      summarymode_p[im]->GetXaxis()->SetBinLabel(conv::kNumOfParamsInBANFFfit+1,"xsec_pf");
+      summarymode_p[im]->GetXaxis()->SetBinLabel(conv::kNumOfParamsInBANFFfit+2,"xsec_sf");
+      summarymode_p[im]->GetXaxis()->SetBinLabel(conv::kNumOfParamsInBANFFfit+3,"xsec_wshape");
+      summarymode_p[im]->GetXaxis()->SetBinLabel(conv::kNumOfParamsInBANFFfit+4,"xsec_shape_ccoth");
+      summarymode_p[im]->GetXaxis()->SetBinLabel(conv::kNumOfParamsInBANFFfit+5,"xsec_pilessdelta");
+      summarymode_p[im]->GetXaxis()->SetBinLabel(conv::kNumOfParamsInBANFFfit+6,"xsec_enushape");
+      summarymode_p[im]->GetXaxis()->SetBinLabel(conv::kNumOfParamsInBANFFfit+7,"xsec_norm_ccqeE1");
+      summarymode_p[im]->GetXaxis()->SetBinLabel(conv::kNumOfParamsInBANFFfit+8,"xsec_norm_ccqeE2");
+      summarymode_p[im]->GetXaxis()->SetBinLabel(conv::kNumOfParamsInBANFFfit+9,"xsec_norm_cc1piE1");
+      summarymode_p[im]->GetXaxis()->SetBinLabel(conv::kNumOfParamsInBANFFfit+10,"xsec_norm_cccoh");
+      summarymode_p[im]->GetXaxis()->SetBinLabel(conv::kNumOfParamsInBANFFfit+11,"xsec_norm_nc1piC");
+      summarymode_p[im]->GetXaxis()->SetBinLabel(conv::kNumOfParamsInBANFFfit+12,"xsec_norm_nccoh");
+      summarymode_p[im]->GetXaxis()->SetBinLabel(conv::kNumOfParamsInBANFFfit+13,"xsec_norm_ncoth");
+      summarymode_p[im]->GetXaxis()->SetBinLabel(conv::kNumOfParamsInBANFFfit+14,"xsec_norm_nuetonumu");
+      summarymode_p[im]->GetXaxis()->SetBinLabel(conv::kNumOfParamsInBANFFfit+15,"xsec_norm_antinutonu");
+      summarymode_p[im]->GetXaxis()->SetBinLabel(conv::kNumOfParamsInBANFFfit+16,"sk_energy_scale");
+      summarymode_p[im]->GetXaxis()->SetBinLabel(conv::kNumOfParamsInBANFFfit+17,"sk_1Rmu_ccqe_other_eff");
+      summarymode_p[im]->GetXaxis()->SetBinLabel(conv::kNumOfParamsInBANFFfit+18,"sk_1Rmu_ccnonqe_eff");
+      summarymode_p[im]->GetXaxis()->SetBinLabel(conv::kNumOfParamsInBANFFfit+19,"sk_1Rmu_nc_eff");
+      summarymode_p[im]->GetXaxis()->SetBinLabel(conv::kNumOfParamsInBANFFfit+20,"sk_1Rmu_nuecc_eff");
+      summarymode_p[im]->GetXaxis()->SetBinLabel(conv::kNumOfParamsInBANFFfit+21,"sk_1Rmu_ccqe_ring_counting_eff_0");
+      summarymode_p[im]->GetXaxis()->SetBinLabel(conv::kNumOfParamsInBANFFfit+22,"sk_1Rmu_ccqe_ring_counting_eff_1");
+      summarymode_p[im]->GetXaxis()->SetBinLabel(conv::kNumOfParamsInBANFFfit+23,"sk_1Rmu_ccqe_ring_counting_eff_2");
+      for(int i = 0; i < conv::kNumOfFSIParams; i++)
+	summarymode_p[im]->GetXaxis()->SetBinLabel(i+conv::kNumOfParamsInBANFFfit+23,Form("fsi_%03d",i));
+    }
+    if(!summarymode_m[im]) {
+      int nbins = conv::kNumOfParamsInBANFFfit + 18 + 8 + conv::kNumOfFSIParams;
+      summarymode_m[im] = new TH1D(Form("summarymode_m_%s",util::AsStringCompact(m).c_str()),Form("summarymode_m_%s",util::AsStringCompact(m).c_str()),nbins,0,nbins);
+      summarymode_m[im]->SetLineColor(kBlue);
+      summarymode_m[im]->GetYaxis()->SetTitle("% change");
+      for(int i = 0; i < conv::kNumOfParamsInBANFFfit; i++)
+	summarymode_m[im]->GetXaxis()->SetBinLabel(i+1,Form("banff_%02d",i));
+      summarymode_m[im]->GetXaxis()->SetBinLabel(conv::kNumOfParamsInBANFFfit+1,"xsec_pf");
+      summarymode_m[im]->GetXaxis()->SetBinLabel(conv::kNumOfParamsInBANFFfit+2,"xsec_sf");
+      summarymode_m[im]->GetXaxis()->SetBinLabel(conv::kNumOfParamsInBANFFfit+3,"xsec_wshape");
+      summarymode_m[im]->GetXaxis()->SetBinLabel(conv::kNumOfParamsInBANFFfit+4,"xsec_shape_ccoth");
+      summarymode_m[im]->GetXaxis()->SetBinLabel(conv::kNumOfParamsInBANFFfit+5,"xsec_pilessdelta");
+      summarymode_m[im]->GetXaxis()->SetBinLabel(conv::kNumOfParamsInBANFFfit+6,"xsec_enushape");
+      summarymode_m[im]->GetXaxis()->SetBinLabel(conv::kNumOfParamsInBANFFfit+7,"xsec_norm_ccqeE1");
+      summarymode_m[im]->GetXaxis()->SetBinLabel(conv::kNumOfParamsInBANFFfit+8,"xsec_norm_ccqeE2");
+      summarymode_m[im]->GetXaxis()->SetBinLabel(conv::kNumOfParamsInBANFFfit+9,"xsec_norm_cc1piE1");
+      summarymode_m[im]->GetXaxis()->SetBinLabel(conv::kNumOfParamsInBANFFfit+10,"xsec_norm_cccoh");
+      summarymode_m[im]->GetXaxis()->SetBinLabel(conv::kNumOfParamsInBANFFfit+11,"xsec_norm_nc1piC");
+      summarymode_m[im]->GetXaxis()->SetBinLabel(conv::kNumOfParamsInBANFFfit+12,"xsec_norm_nccoh");
+      summarymode_m[im]->GetXaxis()->SetBinLabel(conv::kNumOfParamsInBANFFfit+13,"xsec_norm_ncoth");
+      summarymode_m[im]->GetXaxis()->SetBinLabel(conv::kNumOfParamsInBANFFfit+14,"xsec_norm_nuetonumu");
+      summarymode_m[im]->GetXaxis()->SetBinLabel(conv::kNumOfParamsInBANFFfit+15,"xsec_norm_antinutonu");
+      summarymode_m[im]->GetXaxis()->SetBinLabel(conv::kNumOfParamsInBANFFfit+16,"sk_energy_scale");
+      summarymode_m[im]->GetXaxis()->SetBinLabel(conv::kNumOfParamsInBANFFfit+17,"sk_1Rmu_ccqe_other_eff");
+      summarymode_m[im]->GetXaxis()->SetBinLabel(conv::kNumOfParamsInBANFFfit+18,"sk_1Rmu_ccnonqe_eff");
+      summarymode_m[im]->GetXaxis()->SetBinLabel(conv::kNumOfParamsInBANFFfit+19,"sk_1Rmu_nc_eff");
+      summarymode_m[im]->GetXaxis()->SetBinLabel(conv::kNumOfParamsInBANFFfit+20,"sk_1Rmu_nuecc_eff");
+      summarymode_m[im]->GetXaxis()->SetBinLabel(conv::kNumOfParamsInBANFFfit+21,"sk_1Rmu_ccqe_ring_counting_eff_0");
+      summarymode_m[im]->GetXaxis()->SetBinLabel(conv::kNumOfParamsInBANFFfit+22,"sk_1Rmu_ccqe_ring_counting_eff_1");
+      summarymode_m[im]->GetXaxis()->SetBinLabel(conv::kNumOfParamsInBANFFfit+23,"sk_1Rmu_ccqe_ring_counting_eff_2");
+      for(int i = 0; i < conv::kNumOfFSIParams; i++)
+	summarymode_m[im]->GetXaxis()->SetBinLabel(i+conv::kNumOfParamsInBANFFfit+23,Form("fsi_%03d",i));
+    }
+    if(!categoriesmode_p[im]) {
+      categoriesmode_p[im] = new TH1D(Form("categoriesmode_p_%s",util::AsStringCompact(m).c_str()),Form("categoriesmode_p_%s",util::AsStringCompact(m).c_str()),11,0,11);
+      categoriesmode_p[im]->SetLineColor(kRed);
+      categoriesmode_p[im]->GetYaxis()->SetTitle("% change");
+      categoriesmode_p[im]->GetXaxis()->SetBinLabel(1,"all");
+      categoriesmode_p[im]->GetXaxis()->SetBinLabel(2,"all(without-energy-scale)");
+      categoriesmode_p[im]->GetXaxis()->SetBinLabel(3,"BANFF");
+      categoriesmode_p[im]->GetXaxis()->SetBinLabel(4,"BANFF-flux");
+      categoriesmode_p[im]->GetXaxis()->SetBinLabel(5,"BANFF-xsec");
+      categoriesmode_p[im]->GetXaxis()->SetBinLabel(6,"unconstrained-xsec");
+      categoriesmode_p[im]->GetXaxis()->SetBinLabel(7,"xsec-all(BANFF+unconstrained)");
+      categoriesmode_p[im]->GetXaxis()->SetBinLabel(8,"sk-detector");
+      categoriesmode_p[im]->GetXaxis()->SetBinLabel(9,"sk-detector(without-energy-scale)");
+      categoriesmode_p[im]->GetXaxis()->SetBinLabel(10,"sk-ccqe-ring-counting-efficiency");
+      categoriesmode_p[im]->GetXaxis()->SetBinLabel(11,"fsi");
+    }
+    if(!categoriesmode_m[im]) {
+      categoriesmode_m[im] = new TH1D(Form("categoriesmode_m_%s",util::AsStringCompact(m).c_str()),Form("categoriesmode_m_%s",util::AsStringCompact(m).c_str()),11,0,11);
+      categoriesmode_m[im]->SetLineColor(kRed);
+      categoriesmode_m[im]->GetYaxis()->SetTitle("% change");
+      categoriesmode_m[im]->GetXaxis()->SetBinLabel(1,"all");
+      categoriesmode_m[im]->GetXaxis()->SetBinLabel(2,"all(without-energy-scale)");
+      categoriesmode_m[im]->GetXaxis()->SetBinLabel(3,"BANFF");
+      categoriesmode_m[im]->GetXaxis()->SetBinLabel(4,"BANFF-flux");
+      categoriesmode_m[im]->GetXaxis()->SetBinLabel(5,"BANFF-xsec");
+      categoriesmode_m[im]->GetXaxis()->SetBinLabel(6,"unconstrained-xsec");
+      categoriesmode_m[im]->GetXaxis()->SetBinLabel(7,"xsec-all(BANFF+unconstrained)");
+      categoriesmode_m[im]->GetXaxis()->SetBinLabel(8,"sk-detector");
+      categoriesmode_m[im]->GetXaxis()->SetBinLabel(9,"sk-detector(without-energy-scale)");
+      categoriesmode_m[im]->GetXaxis()->SetBinLabel(10,"sk-ccqe-ring-counting-efficiency");
+      categoriesmode_m[im]->GetXaxis()->SetBinLabel(11,"fsi");
+    }
+  }
+
+
   if(mode >= 100) {
     summary_p->Fill(modetitle.c_str(),frac_nsk_p);
     summary_m->Fill(modetitle.c_str(),frac_nsk_m);
     summary_p->Write();
     summary_m->Write();
+    for(int im = 0; im < conv::knm; im++) {
+      conv::SuperkMode_t m = conv::kSKReactionModes[is][im];
+      if(m == conv::kSKmUndefined) continue;
+      summarymode_p[im]->Fill(modetitle.c_str(),frac_nskmode_p[im]);
+      summarymode_m[im]->Fill(modetitle.c_str(),frac_nskmode_m[im]);
+      summarymode_p[im]->Write();
+      summarymode_m[im]->Write();
+
+    }
   }
   else{
     categories_p->Fill(modetitle.c_str(),frac_nsk_p);
     categories_m->Fill(modetitle.c_str(),frac_nsk_m);
     categories_p->Write();
     categories_m->Write();
+    for(int im = 0; im < conv::knm; im++) {
+      conv::SuperkMode_t m = conv::kSKReactionModes[is][im];
+      if(m == conv::kSKmUndefined) continue;
+      categoriesmode_p[im]->Fill(modetitle.c_str(),frac_nskmode_p[im]);
+      categoriesmode_m[im]->Fill(modetitle.c_str(),frac_nskmode_m[im]);
+      categoriesmode_p[im]->Write();
+      categoriesmode_m[im]->Write();
+
+    }
   }
   f.Close();
 }
+  
