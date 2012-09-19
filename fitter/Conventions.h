@@ -1767,36 +1767,6 @@ static const bool kXsApplyXSecSystToSKMode[kns][knm][kNumOfXSecSyst] = {
     // pF  spectral   W-shape  ccothshape pilessdelta enushape
     // ccqeE2   ccqeE3   cc1piE2
     // cccoh    nc1piC   nccoh    ncoth    nue/numu antinu/nu
-#if SPLINE_TYPE == 1
-    {  1, 0, 1, 0, 0,  1, 1, 0, 0, 0, 0,  1, 1, 0,  0, 0, 0, 0, 0, 0 }, // kSKmNuMuCCQE        
-    {  0, 1, 0, 1, 0,  0, 0, 1, 0, 1, 0,  0, 0, 1,  0, 0, 0, 0, 0, 0 }, // kSKmNuMuCC1pi
-    {  0, 0, 0, 0, 0,  0, 0, 0, 0, 0, 0,  0, 0, 0,  1, 0, 0, 0, 0, 0 }, // kSKmNuMuCCcoh
-    {  0, 1, 0, 0, 0,  0, 0, 1, 1, 1, 0,  0, 0, 0,  0, 0, 0, 0, 0, 0 }, // kSKmNuMuCCoth_mu
-    {  0, 1, 0, 0, 0,  0, 0, 1, 0, 1, 0,  0, 0, 0,  0, 1, 0, 0, 0, 0 }, // kSKmNuMuNC1piC
-    {  0, 1, 0, 0, 0,  0, 0, 1, 0, 1, 0,  0, 0, 0,  0, 0, 0, 1, 0, 0 }, // kSKmNuMuNCoth_mu
-    {  1, 0, 1, 0, 0,  1, 1, 0, 0, 0, 0,  1, 1, 0,  0, 0, 0, 0, 0, 1 }, // kSKmNuMuBarCCQE        
-    {  0, 1, 0, 1, 0,  0, 0, 1, 0, 1, 0,  0, 0, 1,  0, 0, 0, 0, 0, 1 }, // kSKmNuMuBarCC1pi
-    {  0, 0, 0, 0, 0,  0, 0, 0, 0, 0, 0,  0, 0, 0,  1, 0, 0, 0, 0, 1 }, // kSKmNuMuBarCCcoh
-    {  0, 1, 0, 0, 0,  0, 0, 1, 1, 1, 0,  0, 0, 0,  0, 0, 0, 0, 0, 1 }, // kSKmNuMuBarCCoth_mu
-    {  0, 1, 0, 0, 0,  0, 0, 1, 0, 1, 0,  0, 0, 0,  0, 1, 0, 0, 0, 1 }, // kSKmNuMuBarNC1piC
-    {  0, 1, 0, 0, 0,  0, 0, 1, 0, 1, 0,  0, 0, 0,  0, 0, 0, 1, 0, 1 }, // kSKmNuMuBarNCoth_mu
-    {  1, 0, 1, 0, 0,  1, 1, 0, 0, 0, 0,  1, 1, 0,  0, 0, 0, 0, 1, 0 }, // kSKmNuECCQE        
-    {  0, 1, 0, 1, 0,  0, 0, 1, 0, 1, 0,  0, 0, 1,  0, 0, 0, 0, 1, 0 }, // kSKmNuECC1pi
-    {  0, 0, 0, 0, 0,  0, 0, 0, 0, 0, 0,  0, 0, 0,  1, 0, 0, 0, 1, 0 }, // kSKmNuECCcoh
-    {  0, 1, 0, 0, 0,  0, 0, 1, 1, 1, 0,  0, 0, 0,  0, 0, 0, 0, 1, 0 }, // kSKmNuECCoth_mu
-    {  0, 1, 0, 0, 0,  0, 0, 1, 0, 1, 0,  0, 0, 0,  0, 1, 0, 0, 1, 0 }, // kSKmNuENC1piC
-    {  0, 1, 0, 0, 0,  0, 0, 1, 0, 1, 0,  0, 0, 0,  0, 0, 0, 1, 1, 0 }, // kSKmNuENCoth_mu
-    {  1, 0, 1, 0, 0,  1, 1, 0, 0, 0, 0,  1, 1, 0,  0, 0, 0, 0, 1, 1 }, // kSKmNuEBarCCQE        
-    {  0, 1, 0, 1, 0,  0, 0, 1, 0, 1, 0,  0, 0, 1,  0, 0, 0, 0, 1, 1 }, // kSKmNuEBarCC1pi
-    {  0, 0, 0, 0, 0,  0, 0, 0, 0, 0, 0,  0, 0, 0,  1, 0, 0, 0, 1, 1 }, // kSKmNuEBarCCcoh
-    {  0, 1, 0, 0, 0,  0, 0, 1, 1, 1, 0,  0, 0, 0,  0, 0, 0, 0, 1, 1 }, // kSKmNuEBarCCoth_mu
-    {  0, 1, 0, 0, 0,  0, 0, 1, 0, 1, 0,  0, 0, 0,  0, 1, 0, 0, 1, 1 }, // kSKmNuEBarNC1piC
-    {  0, 1, 0, 0, 0,  0, 0, 1, 0, 1, 0,  0, 0, 0,  0, 0, 0, 1, 1, 1 }, // kSKmNuEBarNCoth_mu
-    {  1, 0, 1, 0, 0,  1, 1, 0, 0, 0, 0,  1, 1, 0,  0, 0, 0, 0, 1, 0 }, // kSKmSigNuECCQE        
-    {  0, 1, 0, 1, 0,  0, 0, 1, 0, 1, 0,  0, 0, 1,  0, 0, 0, 0, 1, 0 }, // kSKmSigNuECC1pi
-    {  0, 0, 0, 0, 0,  0, 0, 0, 0, 0, 0,  0, 0, 0,  1, 0, 0, 0, 1, 0 }, // kSKmSigNuECCcoh
-    {  0, 1, 0, 0, 0,  0, 0, 1, 1, 1, 0,  0, 0, 0,  0, 0, 0, 0, 1, 0 }, // kSKmSigNuECCoth_mu
-#elif SPLINE_TYPE <= 0
     {  1, 0, 1, 0, 0,  1, 1, 0, 0, 0, 0,  1, 1, 0,  0, 0, 0, 0, 0, 0 }, // kSKmNuMuCCQE        
     {  0, 1, 0, 1, 0,  0, 0, 1, 0, 1, 0,  0, 0, 1,  0, 0, 0, 0, 0, 0 }, // kSKmNuMuCC1pi
     {  0, 0, 0, 0, 0,  0, 0, 0, 0, 0, 0,  0, 0, 0,  1, 0, 0, 0, 0, 0 }, // kSKmNuMuCCcoh
@@ -1825,7 +1795,6 @@ static const bool kXsApplyXSecSystToSKMode[kns][knm][kNumOfXSecSyst] = {
     {  0, 1, 0, 1, 0,  0, 0, 1, 0, 1, 0,  0, 0, 1,  0, 0, 0, 0, 1, 0 }, // kSKmSigNuECC1pi
     {  0, 0, 0, 0, 0,  0, 0, 0, 0, 0, 0,  0, 0, 0,  1, 0, 0, 0, 1, 0 }, // kSKmSigNuECCcoh
     {  0, 1, 0, 0, 0,  0, 0, 1, 1, 0, 0,  0, 0, 0,  0, 0, 0, 0, 1, 0 }, // kSKmSigNuECCoth_mu
-#endif
     {  0, 0, 0, 0, 0,  0, 0, 0, 0, 0, 0,  0, 0, 0,  0, 0, 0, 0, 0, 0 }, // kSKmUndefined
     {  0, 0, 0, 0, 0,  0, 0, 0, 0, 0, 0,  0, 0, 0,  0, 0, 0, 0, 0, 0 }, // kSKmUndefined
     {  0, 0, 0, 0, 0,  0, 0, 0, 0, 0, 0,  0, 0, 0,  0, 0, 0, 0, 0, 0 }, // kSKmUndefined
@@ -1901,36 +1870,6 @@ static const bool kXsApplyXSecSystToSKMode[kns][knm][kNumOfXSecSyst] = {
     // banffcc1piE0 banffcc1piE1 banffnc1pi0
     // pF  spectral   W-shape  ccothshape pilessdelta enushape
     // cccoh    nc1piC   nccoh  ncoth    nue/numu
-#if SPLINE_TYPE == 1
-    {  1, 0, 1, 1, 1,  0, 0, 0,  1, 1, 0, 0, 0, 0,  0, 0, 0, 0, 0, 0 }, // kSKmNuMuCCQE        
-    {  0, 1, 0, 0, 0,  1, 1, 0,  0, 0, 1, 0, 1, 0,  0, 0, 0, 0, 0, 0 }, // kSKmNuMuCC1pi
-    {  0, 0, 0, 0, 0,  0, 0, 0,  0, 0, 0, 0, 0, 0,  1, 0, 0, 0, 0, 0 }, // kSKmNuMuCCcoh
-    {  0, 1, 0, 0, 0,  0, 0, 0,  0, 0, 1, 1, 1, 0,  0, 0, 0, 0, 0, 0 }, // kSKmNuMuCCoth_mu
-    {  0, 1, 0, 0, 0,  0, 0, 0,  0, 0, 1, 0, 1, 0,  0, 1, 0, 0, 0, 0 }, // kSKmNuMuNC1piC
-    {  0, 1, 0, 0, 0,  0, 0, 0,  0, 0, 1, 0, 1, 0,  0, 0, 0, 1, 0, 0 }, // kSKmNuMuNCoth_mu
-    {  1, 0, 1, 1, 1,  0, 0, 0,  1, 1, 0, 0, 0, 0,  0, 0, 0, 0, 0, 1 }, // kSKmNuMuBarCCQE        
-    {  0, 1, 0, 0, 0,  1, 1, 0,  0, 0, 1, 0, 1, 0,  0, 0, 0, 0, 0, 1 }, // kSKmNuMuBarCC1pi
-    {  0, 0, 0, 0, 0,  0, 0, 0,  0, 0, 0, 0, 0, 0,  1, 0, 0, 0, 0, 1 }, // kSKmNuMuBarCCcoh
-    {  0, 1, 0, 0, 0,  0, 0, 0,  0, 0, 1, 1, 1, 0,  0, 0, 0, 0, 0, 1 }, // kSKmNuMuBarCCoth_mu
-    {  0, 1, 0, 0, 0,  0, 0, 0,  0, 0, 1, 0, 1, 0,  0, 1, 0, 0, 0, 1 }, // kSKmNuMuBarNC1piC
-    {  0, 1, 0, 0, 0,  0, 0, 0,  0, 0, 1, 0, 1, 0,  0, 0, 0, 1, 0, 1 }, // kSKmNuMuBarNCoth_mu
-    {  1, 0, 1, 1, 1,  0, 0, 0,  1, 1, 0, 0, 0, 0,  0, 0, 0, 0, 1, 0 }, // kSKmNuECCQE        
-    {  0, 1, 0, 0, 0,  1, 1, 0,  0, 0, 1, 0, 1, 0,  0, 0, 0, 0, 1, 0 }, // kSKmNuECC1pi
-    {  0, 0, 0, 0, 0,  0, 0, 0,  0, 0, 0, 0, 0, 0,  1, 0, 0, 0, 1, 0 }, // kSKmNuECCcoh
-    {  0, 1, 0, 0, 0,  0, 0, 0,  0, 0, 1, 1, 1, 0,  0, 0, 0, 0, 1, 0 }, // kSKmNuECCoth_mu
-    {  0, 1, 0, 0, 0,  0, 0, 0,  0, 0, 1, 0, 1, 0,  0, 1, 0, 0, 1, 0 }, // kSKmNuENC1piC
-    {  0, 1, 0, 0, 0,  0, 0, 0,  0, 0, 1, 0, 1, 0,  0, 0, 0, 1, 1, 0 }, // kSKmNuENCoth_mu
-    {  1, 0, 1, 1, 1,  0, 0, 0,  1, 1, 0, 0, 0, 0,  0, 0, 0, 0, 1, 1 }, // kSKmNuEBarCCQE        
-    {  0, 1, 0, 0, 0,  1, 1, 0,  0, 0, 1, 0, 1, 0,  0, 0, 0, 0, 1, 1 }, // kSKmNuEBarCC1pi
-    {  0, 0, 0, 0, 0,  0, 0, 0,  0, 0, 0, 0, 0, 0,  1, 0, 0, 0, 1, 1 }, // kSKmNuEBarCCcoh
-    {  0, 1, 0, 0, 0,  0, 0, 0,  0, 0, 1, 1, 1, 0,  0, 0, 0, 0, 1, 1 }, // kSKmNuEBarCCoth_mu
-    {  0, 1, 0, 0, 0,  0, 0, 0,  0, 0, 1, 0, 1, 0,  0, 1, 0, 0, 1, 1 }, // kSKmNuEBarNC1piC
-    {  0, 1, 0, 0, 0,  0, 0, 0,  0, 0, 1, 0, 1, 0,  0, 0, 0, 1, 1, 1 }, // kSKmNuEBarNCoth_mu
-    {  1, 0, 1, 1, 1,  0, 0, 0,  1, 1, 0, 0, 0, 0,  0, 0, 0, 0, 1, 0 }, // kSKmSigNuECCQE        
-    {  0, 1, 0, 0, 0,  1, 1, 0,  0, 0, 1, 0, 1, 0,  0, 0, 0, 0, 1, 0 }, // kSKmSigNuECC1pi
-    {  0, 0, 0, 0, 0,  0, 0, 0,  0, 0, 0, 0, 0, 0,  1, 0, 0, 0, 1, 0 }, // kSKmSigNuECCcoh
-    {  0, 1, 0, 0, 0,  0, 0, 0,  0, 0, 1, 1, 1, 0,  0, 0, 0, 0, 1, 0 }, // kSKmSigNuECCoth_mu
-#elif SPLINE_TYPE <= 0
     {  1, 0, 1, 1, 1,  0, 0, 0,  1, 1, 0, 0, 0, 0,  0, 0, 0, 0, 0, 0 }, // kSKmNuMuCCQE        
     {  0, 1, 0, 0, 0,  1, 1, 0,  0, 0, 1, 0, 1, 0,  0, 0, 0, 0, 0, 0 }, // kSKmNuMuCC1pi
     {  0, 0, 0, 0, 0,  0, 0, 0,  0, 0, 0, 0, 0, 0,  1, 0, 0, 0, 0, 0 }, // kSKmNuMuCCcoh
@@ -1959,7 +1898,6 @@ static const bool kXsApplyXSecSystToSKMode[kns][knm][kNumOfXSecSyst] = {
     {  0, 1, 0, 0, 0,  1, 1, 0,  0, 0, 1, 0, 1, 0,  0, 0, 0, 0, 1, 0 }, // kSKmSigNuECC1pi
     {  0, 0, 0, 0, 0,  0, 0, 0,  0, 0, 0, 0, 0, 0,  1, 0, 0, 0, 1, 0 }, // kSKmSigNuECCcoh
     {  0, 1, 0, 0, 0,  0, 0, 0,  0, 0, 1, 1, 0, 0,  0, 0, 0, 0, 1, 0 }, // kSKmSigNuECCoth_mu
-#endif
     {  0, 0, 0, 0, 0,  0, 0, 0,  0, 0, 0, 0, 0, 0,  0, 0, 0, 0, 0, 0 }, // kSKmUndefined
     {  0, 0, 0, 0, 0,  0, 0, 0,  0, 0, 0, 0, 0, 0,  0, 0, 0, 0, 0, 0 }, // kSKmUndefined
     {  0, 0, 0, 0, 0,  0, 0, 0,  0, 0, 0, 0, 0, 0,  0, 0, 0, 0, 0, 0 }, // kSKmUndefined

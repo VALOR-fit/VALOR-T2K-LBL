@@ -146,7 +146,7 @@ TMatrixD t2kana::util::CholeskyDecomposition(TMatrixD& cov_matrix)
         double tmp = L(k,i);
         L(i,i) -= tmp*tmp;
      }//k
-     if(L(i,i) < 0) {
+     if(L(i,i) <= 0) {
        cerr << "Decomposed covariance matrix not positive-definite" << endl;
        exit(1);
      }
