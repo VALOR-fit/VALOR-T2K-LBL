@@ -57,7 +57,7 @@
 // Tom Dealtry
 // ------------------------------------------------------------------------------------------------
 //
-
+#define NTWEAKS 4 //2 or 4!
 void test_sk_ereco_spectrum_twk_sys
 (
   int          mode,                                                /* options: see above */
@@ -211,8 +211,16 @@ void test_sk_ereco_spectrum_twk_sys
   skexp.Read(config);
   
   // Output histograms and graphs
+#if NTWEAKS == 4
   const int ntweaks = 4;
   int * tweaks[ntweaks] = {+3, +1, -1, -3};
+#elif NTWEAKS == 2
+  const int ntweaks = 2;
+  int * tweaks[ntweaks] = {+1, -1};
+#else
+  cerr << "Unknown NTWEAKS" << endl;
+  exit(1);
+#endif
   TH1D * hErecoNominal = 0;
   TH1D * hEreco[ntweaks];
   TH1D * hErecoRatio[ntweaks];
@@ -245,6 +253,7 @@ void test_sk_ereco_spectrum_twk_sys
     hErecoModeNominal[im]->SetDirectory(0);
     hErecoModeNominal[im]->GetXaxis()->SetTitle("E_{reco} (GeV)");
     hErecoModeNominal[im]->GetYaxis()->SetTitle("Number of events");
+    hErecoModeNominal[im]->SetFillStyle(0);
   }
   if(!update_rootfile) {
     hErecoNominal->Write("nominal");
@@ -452,7 +461,8 @@ void test_sk_ereco_spectrum_twk_sys
       hErecoMode[im][itweak]->SetDirectory(0);
       hErecoMode[im][itweak]->SetTitle(Form("%s_%d_sigma_%s",modetitle.c_str(),tweak,util::AsStringCompact(m).c_str()));
       hErecoMode[im][itweak]->SetLineColor(histcolor);
-      hErecoMode[im][itweak]->Write(Form("%s_%d_sigma",modetitle.c_str(),tweak));		    
+      hErecoMode[im][itweak]->SetFillStyle(0);
+      hErecoMode[im][itweak]->Write(Form("%s_%d_sigma_%s",modetitle.c_str(),tweak,util::AsStringCompact(m).c_str()));
       hErecoModeRatio[im][itweak] = new TH1D(*hErecoMode[im][itweak]);
       hErecoModeRatio[im][itweak]->Divide(hErecoModeNominal[im]);
       hErecoModeRatio[im][itweak]->Write(Form("%s_%d_sigma_ratio_%s",modetitle.c_str(),tweak,util::AsStringCompact(m).c_str()));
@@ -536,8 +546,8 @@ void test_sk_ereco_spectrum_twk_sys
   // Save the change in nsk
   //
   double nsk_0 = hErecoNominal->Integral(1,hErecoNominal->GetNbinsX());
-  double nsk_p  = hEreco[1]->Integral(1,hEreco[1]->GetNbinsX());
-  double nsk_m  = hEreco[2]->Integral(1,hEreco[2]->GetNbinsX());
+  double nsk_p  = hEreco[ntweaks/2 - 1]->Integral(1,hEreco[ntweaks/2 - 1]->GetNbinsX());
+  double nsk_m  = hEreco[ntweaks/2    ]->Integral(1,hEreco[ntweaks/2    ]->GetNbinsX());
   double frac_nsk_p = (nsk_0 > 0) ? 100.*(nsk_p - nsk_0) / nsk_0 : 0.;
   double frac_nsk_m = (nsk_0 > 0) ? 100.*(nsk_m - nsk_0) / nsk_0 : 0.;
   double nskmode_p[conv::knm] = {0}, nskmode_m[conv::knm] = {0};
@@ -545,8 +555,8 @@ void test_sk_ereco_spectrum_twk_sys
   for(int im = 0; im < conv::knm; im++) {
     conv::SuperkMode_t m = conv::kSKReactionModes[is][im];
     if(m == conv::kSKmUndefined) continue;
-    nskmode_p[im] = hErecoMode[im][1]->Integral(1,hErecoMode[im][1]->GetNbinsX());
-    nskmode_m[im] = hErecoMode[im][2]->Integral(1,hErecoMode[im][2]->GetNbinsX());
+    nskmode_p[im] = hErecoMode[im][ntweaks/2 - 1]->Integral(1,hErecoMode[im][ntweaks/2 - 1]->GetNbinsX());
+    nskmode_m[im] = hErecoMode[im][ntweaks/2    ]->Integral(1,hErecoMode[im][ntweaks/2    ]->GetNbinsX());
     frac_nskmode_p[im] = (nsk_0 > 0) ? 100.*(nskmode_p[im] - nsk_0) / nsk_0 : 0.;
     frac_nskmode_m[im] = (nsk_0 > 0) ? 100.*(nskmode_m[im] - nsk_0) / nsk_0 : 0.;
   }
