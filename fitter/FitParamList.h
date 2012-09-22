@@ -105,6 +105,7 @@ public:
    // The string argument of NamedParameterList() can take the following values:
    // - "nuosc3f"                        : Fit for sin^2(2theta12), sin^2(2theta13), sin^2(2theta23), delta_CP, |Dm23^2| and Dm12^2 (3-flavour formalism).
    // - "nuosc3f+nuisance"               : As "nuosc3f" + all nuisance parameters
+   // - "nuosc3f+nuisanceselection"      : As "nuosc3f" + a selection of nuisance parameters
    // - "nuosc3f_12constrain"            : As "nuosc3f", but penalizing sin^2(2theta12), Dm12^2 devations from values measured in solar/reactor expts.
    // - "nuosc3f_12fix"                  : As "nuosc3f", but fixing sin^2(2theta12), Dm12^2 devations to values measured in solar/reactor expts.
    // - "nuosc3f_numudisapp_fix4"        : As "nuosc3f" but fixing  sin^2(2theta12), sin^2(2theta13), delta_CP and Dm12^2.
@@ -113,6 +114,7 @@ public:
    // - "nuosc3f_nueapp_fix4"            : As "nuosc3f" but fixing  sin^2(2theta12), sin^2(2theta23), |Dm23^2| and Dm12^2.
    // - "numudisapp2f"                   : Fit for sin^2(2theta23) and |Dm23^2| (2-flavour formalism)
    // - "numudisapp2f+nuisance"          : As "numudisapp2f" + all nuisance parameters 
+   // - "numudisapp2f+nuisanceselection" : As "numudisapp2f" + a selection of nuisance parameters 
    // - "decay"                          : Fit for sin^2(2theta) and \alpha_{decay}
    // - "decoh"                          : Fit for sin^2(2theta) and \mu_{decoherence}
    static FitParamList * NamedParameterList (string name);
@@ -131,13 +133,16 @@ private:
    int  Id      (t2kana::conv::PhysParamId_t p) const; // PhysParamId_t --> array slot
 
    // Various functions called by NamedParameterList(name)
-   static FitParamList * NuOsc3FlavourFit            (void);
-   static FitParamList * NuOsc3FlavourFitWithAllSyst (void);
-   static FitParamList * NumuDisapFit                (void);
-   static FitParamList * NumuDisapFitWithAllSyst     (void);
-   static FitParamList * NumuDecayFit                (void);
-   static FitParamList * NumuDecohFit                (void);
-   static void           AppendSystematics           (FitParamList * fp, int start);
+   static FitParamList * NuOsc3FlavourFit                 (void);
+   static FitParamList * NuOsc3FlavourFitWithAllSyst      (void);
+   static FitParamList * NuOsc3FlavourFitWithSelectedSyst (void);
+   static FitParamList * NumuDisapFit                     (void);
+   static FitParamList * NumuDisapFitWithAllSyst          (void);
+   static FitParamList * NumuDisapFitWithSelectedSyst     (void);
+   static FitParamList * NumuDecayFit                     (void);
+   static FitParamList * NumuDecohFit                     (void);
+   static void           AppendSystematics                (FitParamList * fp, int start);
+   static void           AppendSelectedSystematics        (FitParamList * fp, int start);
 
    //
    // Private data members

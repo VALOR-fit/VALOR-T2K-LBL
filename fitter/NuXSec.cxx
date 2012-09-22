@@ -1142,9 +1142,8 @@ double NuXSec::ChisqPenalty(bool all_syst) const
 
   // when only fitting for most important systematics
   if(!all_syst) {
-    if (fWshapeTwkDial) chisq_penalty += fWshapeTwkDial*fWshapeTwkDial;
-    if (fNormNC1piCTwkDial) chisq_penalty += fNormNC1piCTwkDial*fNormNC1piCTwkDial;
-    if (fNormNCothTwkDial) chisq_penalty += fNormNCothTwkDial*fNormNCothTwkDial;
+    if (fPiLessDeltaTwkDial) chisq_penalty += fPiLessDeltaTwkDial*fPiLessDeltaTwkDial;
+    if (fSpecFuncTwkDial) chisq_penalty += fSpecFuncTwkDial*fSpecFuncTwkDial;
     return chisq_penalty;
   }
 

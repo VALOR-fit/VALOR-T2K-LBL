@@ -17,8 +17,6 @@ const int kTruePointMarkerColour =  kBlack;
 //
 // formatting for ellipse showing `cut' for considering a systematic in the fit
 //
-const double kRdm23sq      = 2E-4; // adjust
-const double kRmixing23    = 0.02; // adjust
 const int    kCutLineStyle = kDashed;
 const int    kCutFillStyle = 0; // transparent
 const double kCutLineWidth = 1;
@@ -44,12 +42,25 @@ int kArrowLineStyle[kNSyst] = {
 
 void make_star_plot_for_disappearance_analysis
 (
-  const char * tweaked_toy_mc_expt_fit_data, /* merged outputs of test_bestfit_point_shift_due_to_syst_twk.C calls */
+  string       tweaked_toy_mc_expt_fit_data, /* merged outputs of test_bestfit_point_shift_due_to_syst_twk.C calls */
   double       true_mixing23,
   double       true_dm23sq   
 )
 {
+  using namespace std;
+  using namespace t2kana;
+
   gStyle->SetOptStat(0);
+
+  if(true_dm23sq   < -1) true_dm23sq   = conv::kGlobFitDm23sq;
+  if(true_mixing23 < -1) true_mixing23 = conv::kGlobFitSinsq2Theta23;
+
+  double kRdm23sq      = 1E-4; // adjust
+  double kRmixing23    = 0.011; // adjust
+  if(TMath::Abs(1.0-true_mixing23) < conv::kASmallNum) {
+    kRdm23sq   = 0.5E-4;
+    kRmixing23 = 0.004;
+  }
 
   //
   // Plot osc param frame
@@ -57,7 +68,7 @@ void make_star_plot_for_disappearance_analysis
 
   // dm23sq, mixing23 range and step
   double mixing23_min   = 0.85;
-  double mixing23_max   = 0.95;
+  double mixing23_max   = 1.;//0.95;
   double mixing23_step  = 0.001;
   double dm23sq_min     = 1.8E-3;
   double dm23sq_max     = 2.8E-3;
@@ -79,7 +90,7 @@ void make_star_plot_for_disappearance_analysis
   osc_param_space->GetYaxis()->SetTitleOffset(1.4);
   osc_param_space->GetXaxis()->CenterTitle();
   osc_param_space->GetYaxis()->CenterTitle();
-  TCanvas * c = new TCanvas("c","T2K numu disappearance analysis star plot",20,20,500,500);
+  TCanvas * c = new TCanvas("c","T2K numu disappearance analysis star plot",20,20,1000,1000);
   c->SetFillColor(0);
   c->SetBorderMode(0);
   osc_param_space->Draw();
@@ -113,7 +124,7 @@ void make_star_plot_for_disappearance_analysis
 
   cout << "Reading tweaked toy MC fit data from: " << tweaked_toy_mc_expt_fit_data << endl;
 
-  ifstream fit_data(tweaked_toy_mc_expt_fit_data);
+  ifstream fit_data(tweaked_toy_mc_expt_fit_data.c_str());
   if (!fit_data.good() ) {
       cerr << "** Can't open data file: " << tweaked_toy_mc_expt_fit_data << endl;
       return;
@@ -186,7 +197,45 @@ void make_star_plot_for_disappearance_analysis
 
   fit_data.close();
 
+  if(TMath::Abs(1.0-true_mixing23) < conv::kASmallNum) {
+    legend->SetX1(0.1);
+    legend->SetX2(0.25);
+  }
   legend->Draw();
+
+  //Save a couple of zoom levels of the canvas automatically
+  vector<string> token = util::Tokens (tweaked_toy_mc_expt_fit_data, "-");
+  string tokened = token[token.size()-1];
+  vector<string> groupname = util::Tokens(tokened, ".");
+  string group = groupname[0];
+
+  if(TMath::Abs(0.9-true_mixing23) < conv::kASmallNum && TMath::Abs(2.4E-3-true_dm23sq) < conv::kASmallNum) {
+    osc_param_space->GetXaxis()->SetRangeUser(0.878,0.916);
+    osc_param_space->GetYaxis()->SetRangeUser(0.00227,0.00253);
+    c->SaveAs(Form("%s-%f-%f.png",group.c_str(),true_mixing23,true_dm23sq));
+
+    osc_param_space->GetXaxis()->SetRangeUser(0.895,0.905);
+    osc_param_space->GetYaxis()->SetRangeUser(0.002375,0.002425);
+    c->SaveAs(Form("%s-%f-%f_zoom.png",group.c_str(),true_mixing23,true_dm23sq));
+
+    osc_param_space->GetXaxis()->SetRangeUser(0.898,0.902);
+    osc_param_space->GetYaxis()->SetRangeUser(0.002395,0.002405);
+    c->SaveAs(Form("%s-%f-%f_zoom2.png",group.c_str(),true_mixing23,true_dm23sq));
+  }
+
+  else if(TMath::Abs(1.0-true_mixing23) < conv::kASmallNum && TMath::Abs(2.4E-3-true_dm23sq) < conv::kASmallNum) {
+    osc_param_space->GetXaxis()->SetRangeUser(0.982,1.);
+    osc_param_space->GetYaxis()->SetRangeUser(0.00227,0.00253);
+    c->SaveAs(Form("%s-%f-%f.png",group.c_str(),true_mixing23,true_dm23sq));
+
+    osc_param_space->GetXaxis()->SetRangeUser(0.995,1.);
+    osc_param_space->GetYaxis()->SetRangeUser(0.002375,0.002425);
+    c->SaveAs(Form("%s-%f-%f_zoom.png",group.c_str(),true_mixing23,true_dm23sq));
+
+    osc_param_space->GetXaxis()->SetRangeUser(0.998,1.);
+    osc_param_space->GetYaxis()->SetRangeUser(0.002395,0.002405);
+    c->SaveAs(Form("%s-%f-%f_zoom2.png",group.c_str(),true_mixing23,true_dm23sq));
+  }
 
   cout << "Done! " << endl;
 }

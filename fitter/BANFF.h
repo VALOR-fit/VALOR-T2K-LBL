@@ -54,7 +54,7 @@ public:
   void RestoreNominalMC(void);
 
   // Penalty term included in the chisq if the BANFF fit parameters are included in the oscillation fit.
-  double ChisqPenalty(void) const;
+  double ChisqPenalty(bool all_syst = true) const;
 
   // Get & tweak flags	
   bool IsTweaked           (void) const { return fIsTweaked;         } ///< BANFF params tweaked?
