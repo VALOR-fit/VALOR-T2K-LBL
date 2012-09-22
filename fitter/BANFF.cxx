@@ -261,10 +261,11 @@ void BANFF::RestoreNominalMC(void)
 //________________________________________________________________________________________
 double BANFF::ChisqPenalty(bool all_syst) const
 {
-  if(all_syst) {
-    //temporary - will want to get a chisqpenalty for maqe, ccqeE0 & cc1piE0
-    return 0;
+  /*
+  if(!all_syst) {
+  
   }
+  */
 
   //Vector with deviations of current values from  best fit values
   const TVectorD & bestfit_values   = *fBestFitValues;
