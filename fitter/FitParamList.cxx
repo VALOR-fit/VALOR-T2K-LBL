@@ -427,7 +427,7 @@ FitParamList * FitParamList::NuOsc3FlavourFitWithAllSyst(void)
 //________________________________________________________________________________________
 FitParamList * FitParamList::NuOsc3FlavourFitWithSelectedSyst(void)
 {
-  FitParamList * fparm = new FitParamList(6+kNumOfNuisanceParams1Rmu); // NOTE: This will have to change for the 2012a 1Re and joint analysis
+  FitParamList * fparm = new FitParamList(6+7); // NOTE: This will have to change for the 2012a 1Re and joint analysis
 
   //
   // add osc params
@@ -513,7 +513,7 @@ FitParamList * FitParamList::NumuDisapFitWithAllSyst(void)
 //________________________________________________________________________________________
 FitParamList * FitParamList::NumuDisapFitWithSelectedSyst(void)
 {
-  FitParamList * fparm = new FitParamList(2+kNumOfNuisanceParams1Rmu);
+  FitParamList * fparm = new FitParamList(2+7);
 
   //
   // add osc params

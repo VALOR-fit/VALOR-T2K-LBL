@@ -13,8 +13,8 @@
 */
 //____________________________________________________________________________
 
-#define __show_cholesky_decomposition_mesg_debug__
-#define __show_cholesky_gen_corr_param_variations_mesg_debug__
+//#define __show_cholesky_decomposition_mesg_debug__
+//#define __show_cholesky_gen_corr_param_variations_mesg_debug__
 //#define __show_xml_mesg_info__
 //#define __show_arr_idx_mesg_debug__
 
@@ -4944,6 +4944,7 @@ void t2kana::util::PrintCompact(
 
   bool printing_banff_params = opt.Contains("BANFF fit params");
   bool printing_fsi_params   = opt.Contains("FSI params");
+  bool printing_selected_banff_params = opt.Contains("BANFF selected fit params");
 
   int np = v.GetNoElements();
   cout << fixed;
@@ -4959,6 +4960,18 @@ void t2kana::util::PrintCompact(
      if(printing_fsi_params) {
          cout << " [ ";
          PhysParamId_t p = PhysParamId_t ( (int)kNuisFSI000 + ip );
+         cout << setw(30) << util::AsString(p);
+         cout << " ]";
+     }
+     if(printing_selected_banff_params) {
+         cout << " [ ";
+         PhysParamId_t p = kPhypUndefined;
+	 if(ip == 0)
+	   p = kNuisBANFFMAQE;
+	 else if(ip == 1)
+	   p = kNuisBANFFCCQEE0;
+	 else if(ip == 2)
+	   p = kNuisBANFFCC1piE0;
          cout << setw(30) << util::AsString(p);
          cout << " ]";
      }

@@ -646,22 +646,21 @@ void SuperkExpectation::SetNuisanceParams(const FitParamList & fp)
 
    const int nbanff = conv::kNumOfParamsInBANFFfit;
    // BANFF params included in the fit param list?
-   bool incl_banff = true;   
+   TVectorD twkv(nbanff);
    for(int ip = 0; ip < nbanff; ip++) {
-      PhysParamId_t p = PhysParamId_t ((int) kNuisBANFF00 + ip);
-      incl_banff = incl_banff && fp.Exists(p);
-      if(!incl_banff) break;
-   }
-   // If BANFF params included, use current values stored in fit param list
-   // to tweak the BANFF object
-   if(incl_banff) {
-     TVectorD twkv(nbanff);
-     for(int ip = 0; ip < nbanff; ip++) {
-        PhysParamId_t p = PhysParamId_t ((int) kNuisBANFF00 + ip);
-        twkv[ip] = fp.CurrValue(p);
+     PhysParamId_t p = PhysParamId_t ((int) kNuisBANFF00 + ip);
+     bool incl_banff = fp.Exists(p);
+     // If BANFF param included, use current value stored in fit param list
+     // to tweak the BANFF object
+     if(incl_banff) {
+       twkv[ip] = fp.CurrValue(p);
      }
-     this->GetBANFF()->Tweak(true,&twkv);    
+     // Otherwise, use whatever is already stored in the BANFF object
+     else {
+       twkv[ip] = this->GetBANFF()->CurrentValue(p);
+     }
    }
+   this->GetBANFF()->Tweak(true,&twkv);
 
    // 
    // Cross-section systematics (other than BANFF ones)

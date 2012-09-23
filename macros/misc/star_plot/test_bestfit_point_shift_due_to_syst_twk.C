@@ -24,7 +24,15 @@
 //             correlation which, in the fitter, are handled using the Cholesky method). Use:
 //             - banff_00
 //             - ...
-//             - banff_35
+//             - banff_30
+//             - banff_maqe
+//             - banff_mares
+//             - banff_ccqeE0
+//             - banff_ccqeE1
+//             - banff_ccqeE2
+//             - banff_cc1piE0
+//             - banff_cc1piE1
+//             - banff_nc1pi0
 //      - fsi
 //             This correlated error can not be used in this test macro. Instead,
 //             you can tweak specific components of the BANFF tweaking vector (neglecting,

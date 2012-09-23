@@ -46,7 +46,7 @@ Changes since 2011_v0.9.0:
 
 #ifndef ERECO_XSEC_BINS
 //#define ERECO_XSEC_BINS 1 // 50 MeV bins 0-1.25 GeV, 1.25-3, 3-10, 10-30 (28 bins)
-#define ERECO_XSEC_BINS 2 // DEFAULT 0-0.3 GeV, 50 MeV 0.3-1 GeV, 100 MeV 1-3 GeV, 3.5-4 GeV, 4-5 GeV, 5-7 GeV, 7-10 GeV, 10-30 GeV (41 bins)
+#define ERECO_XSEC_BINS 2 // DEFAULT 0-0.3 GeV, 50 MeV 0.3-1 GeV, 100 MeV 1-3 GeV, 3-3.5 GeV, 3.5-4 GeV, 4-5 GeV, 5-7 GeV, 7-10 GeV, 10-30 GeV (41 bins)
 //#define ERECO_XSEC_BINS 3 // 50 MeV binning 0-30 GeV (600 bins)
 #endif
 

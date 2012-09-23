@@ -16,6 +16,7 @@
 //#define __show_bin_contributions_to_chisq__
 //#define __show_contributions_to_penalty_term__
 //#define __show_chisq__
+#define __include_all_systematics_in_banff_penalty_term__
 
 #include <cassert>
 #include <cstdlib>
@@ -213,7 +214,11 @@ double FitInputs::ChisquarePenaltyTerm(void)
       (this->FitParams().Exists(p) && this->FitParams().IsNuisance(p));
   }
   if(incl_banff_penalty) {
+#ifdef __include_all_systematics_in_banff_penalty_term__
     double dchisq_penalty = this->Expectation().GetBANFF()->ChisqPenalty();
+#else
+    double dchisq_penalty = this->Expectation().GetBANFF()->ChisqPenalty(all_syst);
+#endif
     chisq_penalty += dchisq_penalty;
 #ifdef __show_contributions_to_penalty_term__
       cout << "FitInputs::ChisquarePenaltyTerm >> Current BANFF param variation"
