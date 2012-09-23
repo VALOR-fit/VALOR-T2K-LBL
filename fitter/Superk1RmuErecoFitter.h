@@ -36,6 +36,7 @@ public:
 private:
 
   TH2D * BuildChisqSurfaceNuMuDisap2ParamFit(void);
+  TH2D * BuildChisqSurfaceNuMuDisapWithSystParamFit(void);
   TH2D * BuildChisqSurfaceNuMuDecay2ParamFit(void);
   TH2D * BuildChisqSurfaceNuMuDecoh2ParamFit(void);
 
