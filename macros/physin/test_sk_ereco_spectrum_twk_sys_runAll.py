@@ -31,7 +31,7 @@ modes5 = range(400,879) #fsi
 modes = modes1 + modes2 + modes3 + modes4 + modes5
 
 oscparams = [] #fill with oscillation parameters, in order mixing12, theta13, theta23, deltacp, dmsq12, dmsq23hypothesis
-#oscparams.append([  0,   0,   0,   0,   0,   0]) #no oscillations!
+oscparams.append([  0,   0,   0,   0,   0,   0]) #no oscillations!
 oscparams.append([-99, -99, -99, -99, -99, -99]) #use global best fits!
 #oscparams.append([0.86, 0.1,  1,  0,  7.58E-5,  2.32E-3])
 #oscparams.append([0.86, 0,    1,  0,  7.58E-5,  2.32E-3])

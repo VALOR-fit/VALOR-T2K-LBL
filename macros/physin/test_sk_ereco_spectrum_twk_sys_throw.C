@@ -49,6 +49,7 @@ void test_sk_ereco_spectrum_twk_sys_throw
   double       input_deltacp      = -99,                            /* */
   double       input_dm12sq       = -99,                            /* */
   double       input_dm23sq       = -99,                            /* */
+  bool         save_toy_expts     = false,                          /* save the ereco spectra? */
   const char * config_file        = "analysis_configuration.xml"    /* */
 )
 {
@@ -348,7 +349,8 @@ void test_sk_ereco_spectrum_twk_sys_throw
     hEreco[iexp] = new TH1D(*skexp.CurrPredictedErecoSpectrum(s));
     hEreco[iexp]->SetDirectory(0);
     hEreco[iexp]->SetTitle(Form("%s_exp%d",modetitle.c_str(),iexp));
-    hEreco[iexp]->Write(Form("%s_exp%d",modetitle.c_str(),iexp));		    
+    if(save_toy_expts)
+      hEreco[iexp]->Write(Form("%s_exp%d",modetitle.c_str(),iexp));		    
 	
     //store Nsk
     hNsk->Fill(hEreco[iexp]->Integral());
