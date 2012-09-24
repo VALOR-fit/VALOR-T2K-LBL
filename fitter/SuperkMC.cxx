@@ -16,7 +16,7 @@
 #define __show_init_mesg_info__
 #define __show_init_mesg_debug__
 //#define __show_init_mesg_debug2__
-#define __show_update_mesg_info__
+//#define __show_update_mesg_info__
 //#define __show_hypothesis__ 
 //#define __show_hypothesis_probabilities__ 
 //#define __show_syst_var_wght_mesg_debug__ 
