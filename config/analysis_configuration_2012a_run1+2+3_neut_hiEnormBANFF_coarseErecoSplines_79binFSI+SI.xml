@@ -249,27 +249,27 @@
           </filename>
           <numu>
                <filename>
-                    inputs/official/2012/xsec/spl_numuoa_sk11c_flx11bv31_numu.root
+                    inputs/official/2012/xsec/spl_numuoa_sk11c_flx11bv31_numu_fine.root
                </filename>
           </numu>
           <numubar>
                <filename>
-                    inputs/official/2012/xsec/spl_numuoa_sk11c_flx11bv31_numubar.root
+                    inputs/official/2012/xsec/spl_numuoa_sk11c_flx11bv31_numubar_fine.root
                </filename>
           </numubar>
           <nue>
                <filename>
-                    inputs/official/2012/xsec/spl_numuoa_sk11c_flx11bv31_nue.root
+                    inputs/official/2012/xsec/spl_numuoa_sk11c_flx11bv31_nue_fine.root
                </filename>
           </nue>
           <nuebar>
                <filename>
-                    inputs/official/2012/xsec/spl_numuoa_sk11c_flx11bv31_nuebar.root
+                    inputs/official/2012/xsec/spl_numuoa_sk11c_flx11bv31_nuebar_fine.root
                </filename>
           </nuebar>
           <signue>
                <filename>
-                    inputs/official/2012/xsec/spl_numuoa_sk11c_flx11bv31_signalnue.root
+                    inputs/official/2012/xsec/spl_numuoa_sk11c_flx11bv31_signalnue_fine.root
                </filename>
           </signue>
       </weight_splines>
