@@ -241,7 +241,7 @@ void test_sk_ereco_spectrum_twk_sys_throw
   string oscparams = util::AsString(ph.Hypothesis(),
      input_mixing12,input_mixing13,input_mixing23,input_deltacp,input_dm12sq,input_dm23sq);
   TFile f(Form("sk_ereco_spectrum-twk_sys_throw_%s.root",oscparams.c_str()),rootmode.c_str());
-#line 0
+
   if(!update_rootfile)
     ofstream outfile(Form("sk_ereco_spectrum-twk_sys_throw_%s.txt",oscparams.c_str()),ios_base::trunc);
   else
