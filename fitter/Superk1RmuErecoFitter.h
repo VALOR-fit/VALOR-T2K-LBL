@@ -40,6 +40,8 @@ private:
   TH2D * BuildChisqSurfaceNuMuDecay2ParamFit(void);
   TH2D * BuildChisqSurfaceNuMuDecoh2ParamFit(void);
 
+  TH2D * fDChisq_surface;
+
 };
 
 } // t2kana

@@ -276,6 +276,11 @@ void Superk1RmuErecoFitter::Save(const char * filename, const char * option_file
     chisurf->Write();
   }
 
+  TH2D * dchisurf = (TH2D*) fResults->FindObject("dchisq_surface_1Rmu");
+  if(dchisurf) {
+    dchisurf->Write();
+  }
+
   TH2D * chisystsurf = (TH2D*) fResults->FindObject("chisq_withsyst_surface_1Rmu");
   if(chisystsurf) {
     chisystsurf->Write();
@@ -294,23 +299,33 @@ TH2D * Superk1RmuErecoFitter::BuildChisqSurfaceNuMuDisap2ParamFit(void)
 {
    FitParamList & fp = fFitInputs->FitParams();
 
-   double mixing23_min  = 0.8;//fp.MinValue(conv::kPhypMixing23);
+   double mixing23_min  = fp.MinValue(conv::kPhypMixing23);
    double mixing23_max  = fp.MaxValue(conv::kPhypMixing23);
    double mixing23_step = fp.StepSize(conv::kPhypMixing23);
-   double dm23sq_min    = 1.5E-3;//fp.MinValue(conv::kPhypDm23sq);
-   double dm23sq_max    = 3.5E-3;//fp.MaxValue(conv::kPhypDm23sq);
+   double dm23sq_min    = fp.MinValue(conv::kPhypDm23sq);
+   double dm23sq_max    = fp.MaxValue(conv::kPhypDm23sq);
    double dm23sq_step   = fp.StepSize(conv::kPhypDm23sq);
 
    // make sure that min and max are at the bin centre
    int mixing23_nbins = 1 + (int) ((mixing23_max - mixing23_min) / mixing23_step);
    int dm23sq_nbins   = 1 + (int) ((dm23sq_max -   dm23sq_min )  / dm23sq_step );
 
-   TH2D * chisq_surface = new TH2D(
-      "chisq_surface","#chi^{2} surface",
+   TH2D * chisq_surface;
+   chisq_surface = new TH2D(
+         "chisq_surface","#chi^{2} surface",
          mixing23_nbins, mixing23_min - 0.5*mixing23_step, mixing23_max + 0.5*mixing23_step,
          dm23sq_nbins, dm23sq_min - 0.5*dm23sq_step, dm23sq_max + 0.5*dm23sq_step);
    chisq_surface->SetDirectory(0);
    chisq_surface->GetXaxis()->SetRangeUser(0.,1.);
+   fDChisq_surface = 0;
+   fDChisq_surface = new TH2D(
+         "dchisq_surface","#Delta#chi^{2} surface",
+         mixing23_nbins, mixing23_min - 0.5*mixing23_step, mixing23_max + 0.5*mixing23_step,
+         dm23sq_nbins, dm23sq_min - 0.5*dm23sq_step, dm23sq_max + 0.5*dm23sq_step);
+   fDChisq_surface->SetDirectory(0);
+   fDChisq_surface->GetXaxis()->SetRangeUser(0.,1.);
+
+   double bestfit_chisq = fFitInputs->BestFitChisquare();
 
    for(int i = 1; i <= chisq_surface->GetNbinsX(); i++) {
      for(int j = 1; j <= chisq_surface->GetNbinsY(); j++) {
@@ -320,6 +335,7 @@ TH2D * Superk1RmuErecoFitter::BuildChisqSurfaceNuMuDisap2ParamFit(void)
          fp.Update( conv::kPhypDm23sq,   dm23sq   );
          double chisq = fFitInputs->Chisquare();
          chisq_surface->SetBinContent(i,j,chisq);
+         fDChisq_surface->SetBinContent(i,j,chisq - bestfit_chisq);
      }//j
    }//i
 
@@ -328,8 +344,17 @@ TH2D * Superk1RmuErecoFitter::BuildChisqSurfaceNuMuDisap2ParamFit(void)
    chisq_surface->GetYaxis()->SetTitleOffset(1);
    chisq_surface->GetYaxis()->SetTitleSize(0.05);
    chisq_surface->GetXaxis()->SetTitleSize(0.05);
+   fDChisq_surface->GetXaxis()->SetTitle("sin^{2}(2#theta_{23})");
+   fDChisq_surface->GetYaxis()->SetTitle("|#Deltam_{32}^{2}| (eV^{2}/c^{4})");
+   fDChisq_surface->GetYaxis()->SetTitleOffset(1);
+   fDChisq_surface->GetYaxis()->SetTitleSize(0.05);
+   fDChisq_surface->GetXaxis()->SetTitleSize(0.05);
 
-   return chisq_surface;            
+   fDChisq_surface->SetName("dchisq_surface_1Rmu");
+   fResults->Add(fDChisq_surface);
+   fResults->Dump();
+
+   return chisq_surface;
 }
 //____________________________________________________________________________ 
 TH2D * Superk1RmuErecoFitter::BuildChisqSurfaceNuMuDisapWithSystParamFit(void) 

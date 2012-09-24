@@ -33,18 +33,18 @@ void test_n_mock_data_fits_with_syst
  int          syst_mode               = 0,                              /* which systematics to tweak? 0 none. 1 all. 2 BANFF. 3 Unconstrained XSec. 4 SK detector. 5 FSI. */
  int          run                     = 0,                              /* run number */
  int          nexperiments            = 1,                            /* number of toy MC experiment fits */
- double       input_mixing12          = 0.86,                           /* 12-mixing, sinq2theta or sinsqtheta depending on user choice, if -999 then randomize */
- double       input_mixing13          = 0.10,                           /* 13-mixing, sinq2theta or sinsqtheta depending on user choice, if -999 then randomize */
- double       input_mixing23          = 1.00,                           /* 23-mixing, sinq2theta or sinsqtheta depending on user choice */
- double       input_deltacp           = 0.00,                           /* deltacp, if -999 then randomize */
- double       input_dm12sq            = 7.58E-5,                        /* Dm^2_{12}, if -999 then randomize */
- double       input_dm23sq            = 2.32E-3,                        /* |Dm^2_{23}| */
+ double       input_mixing12          = -99,                            /* 12-mixing, sinq2theta or sinsqtheta depending on user choice, if -999 then randomize */
+ double       input_mixing13          = -99,                            /* 13-mixing, sinq2theta or sinsqtheta depending on user choice, if -999 then randomize */
+ double       input_mixing23          = -99,                            /* 23-mixing, sinq2theta or sinsqtheta depending on user choice */
+ double       input_deltacp           = -99,                            /* deltacp, if -999 then randomize */
+ double       input_dm12sq            = -99,                            /* Dm^2_{12}, if -999 then randomize */
+ double       input_dm23sq            = -99,                            /* |Dm^2_{23}| */
  const char * config_file             = "analysis_configuration.xml",   /* analysis configuration file */
  bool         stat_fluctuations       = true,                           /* include statistical fluctuation in toy MC expts? */
  string       fit_param_list          = "nuosc3f_numudisapp_fix4+nuisanceselection", /* fit parameter list for the given physics hypothesis (see run_fitter.C) */
  const char * fit_option              = "minuit",                       /* fitter option (see run_fitter.C) */
  bool         store_chisq_surf        = true,                          /* by default storing only best-fit values, enable this to store the chisq surfaces   */
- bool         store_withsyst_chisq_surf = true,                        /* by default storing only best-fit values, enable this to store the chisq with systematics surfaces   */
+ bool         store_withsyst_chisq_surf = false,                        /* by default storing only best-fit values, enable this to store the chisq with systematics surfaces   */
  bool         store_toy_expts         = true,                          /* by default storing only best-fit values, enable this to store the toy MC expts     */
  bool         store_bestfit_spectrum  = true                           /* by default storing only best-fit values, enable this to store the best-fit spectra */
  )
@@ -57,6 +57,20 @@ void test_n_mock_data_fits_with_syst
   Opt::Instance()->gOscMixingParamChoice = kNuMixSinsq2Theta;
   Opt::Instance()->gMassHierarchyAssumed = kNmhNormal;
 
+  //Set to defaults
+  if(Opt::Instance()->gOscMixingParamChoice == conv::kNuMixSinsq2Theta) {
+    if(input_mixing13 < -1 && input_mixing13 > -900) input_mixing13 = conv::kGlobFitSinsq2Theta13;
+    if(input_mixing23 < -1 && input_mixing23 > -900) input_mixing23 = conv::kGlobFitSinsq2Theta23;
+    if(input_mixing12 < -1 && input_mixing12 > -900) input_mixing12 = conv::kGlobFitSinsq2Theta12;
+  }
+  else {
+    if(input_mixing13 < -1 && input_mixing13 > -900) input_mixing13 = conv::kGlobFitSinsqTheta13;
+    if(input_mixing23 < -1 && input_mixing23 > -900) input_mixing23 = conv::kGlobFitSinsqTheta23;
+    if(input_mixing12 < -1 && input_mixing12 > -900) input_mixing12 = conv::kGlobFitSinsqTheta12;
+  }
+  if(input_dm23sq < -1 && input_dm23sq > -900)  input_dm23sq = conv::kGlobFitDm23sq;
+  if(input_dm12sq < -1 && input_dm12sq > -900)  input_dm12sq = conv::kGlobFitDm12sq;
+  if(input_deltacp < -90 && input_deltacp > -900) input_deltacp = conv::kGlobFitDeltaCP;
   // Check whether some osc. params need to be randomized
   bool randomize_mixing12 = (TMath::Abs(input_mixing12 + 999) < kASmallNum);
   bool randomize_mixing13 = (TMath::Abs(input_mixing13 + 999) < kASmallNum);
@@ -1787,11 +1801,11 @@ void test_n_mock_data_fits_with_syst
     fitter->Analyze(output_option.c_str());
 
     if ( store_withsyst_chisq_surf) {
-      double mixing23_min  = 0.8;//fparm->MinValue(conv::kPhypMixing23);
+      double mixing23_min  = 0.95;//fparm->MinValue(conv::kPhypMixing23);
       double mixing23_max  = fparm->MaxValue(conv::kPhypMixing23);
       double mixing23_step = fparm->StepSize(conv::kPhypMixing23);
-      double dm23sq_min    = 1.5E-3;//fparm->MinValue(conv::kPhypDm23sq);
-      double dm23sq_max    = 3.5E-3;//fparm->MaxValue(conv::kPhypDm23sq);
+      double dm23sq_min    = 0.15E-3;//fparm->MinValue(conv::kPhypDm23sq);
+      double dm23sq_max    = 0.35E-3;//fparm->MaxValue(conv::kPhypDm23sq);
       double dm23sq_step   = fparm->StepSize(conv::kPhypDm23sq);
 
       // make sure that min and max are at the bin centre
@@ -1809,12 +1823,25 @@ void test_n_mock_data_fits_with_syst
       chisq_surface->GetYaxis()->SetTitleSize(0.05);
       chisq_surface->GetXaxis()->SetTitleSize(0.05);
 
+      TH2D * dchisq_surface = new TH2D("dchisq_surface","#Delta#chi^{2} surface",
+		mixing23_nbins, mixing23_min - 0.5*mixing23_step, mixing23_max + 0.5*mixing23_step,
+		dm23sq_nbins, dm23sq_min - 0.5*dm23sq_step, dm23sq_max + 0.5*dm23sq_step);
+      dchisq_surface->SetDirectory(0);
+      dchisq_surface->GetXaxis()->SetRangeUser(0.,1.);
+      dchisq_surface->GetXaxis()->SetTitle("sin^{2}(2#theta_{23})");
+      dchisq_surface->GetYaxis()->SetTitle("|#Deltam_{32}^{2}| (eV^{2}/c^{4})");
+      dchisq_surface->GetYaxis()->SetTitleOffset(1);
+      dchisq_surface->GetYaxis()->SetTitleSize(0.05);
+      dchisq_surface->GetXaxis()->SetTitleSize(0.05);
+
       // Do the fit
       for(int i = 1; i <= chisq_surface->GetNbinsX(); i++) {
 	for(int j = 1; j <= chisq_surface->GetNbinsY(); j++) {
 	  fparm->ResetCurrToInitValues();
 	  double mixing23 = chisq_surface->GetXaxis()->GetBinCenter(i);
 	  double dm23sq   = chisq_surface->GetYaxis()->GetBinCenter(j);
+	  fparm->FreeParameter(conv::kPhypMixing23);
+	  fparm->FreeParameter(conv::kPhypDm23sq);
 	  fparm->Update( conv::kPhypMixing23, mixing23 );
 	  fparm->Update( conv::kPhypDm23sq,   dm23sq   );
 	  fparm->FixParameter(conv::kPhypMixing23);
@@ -1825,13 +1852,17 @@ void test_n_mock_data_fits_with_syst
 	  fitter2->DoTheFit();
 	  double chisq = fit_inputs2->Chisquare();
 	  chisq_surface->SetBinContent(i,j,chisq);
+	  dchisq_surface->SetBinContent(i,j,chisq-bestfit_chisq);
+	  //if(fparm->CurrValue(conv::kPhypMixing23) != mixing23 || fparm->CurrValue(conv::kPhypDm23sq) != dm23sq) {}
 	  delete fitter2;
 	  delete fit_inputs2;
 	}//j
       }//i
-      chisq_surface -> SetName(Form("chisq_withsyst_surface_1Rmu_%d",iexperiment));
+      chisq_surface  -> SetName(Form("chisq_withsyst_surface_1Rmu_%d",iexperiment));
+      dchisq_surface -> SetName(Form("dchisq_withsyst_surface_1Rmu_%d",iexperiment));
       f.cd();
-      chisq_surface->Write();
+      chisq_surface ->Write();
+      dchisq_surface->Write();
     }    
 
     // Store toy-MC expt (if asked)
@@ -1854,10 +1885,19 @@ void test_n_mock_data_fits_with_syst
     // Store chisq surface (if asked)
     if(store_chisq_surf) {
       TH2D * h2 = (TH2D*) fitter->GetResults().FindObject("chisq_surface_1Rmu");
-      TH2D * chisqsurf = new TH2D(*h2); 
-      chisqsurf->SetName(Form("chisqsurf_%d",iexperiment)); 
-      f.cd();
-      chisqsurf->Write();
+      if(h2) {
+	TH2D * chisqsurf = new TH2D(*h2); 
+	chisqsurf->SetName(Form("chisqsurf_%d",iexperiment)); 
+	f.cd();
+	chisqsurf->Write();
+      }
+      TH2D * h2a = (TH2D*) fitter->GetResults().FindObject("dchisq_surface_1Rmu");
+      if(h2a) {
+	TH2D * dchisqsurf = new TH2D(*h2a); 
+	dchisqsurf->SetName(Form("dchisqsurf_%d",iexperiment)); 
+	f.cd();
+	dchisqsurf->Write();
+      }
     }
     /* doesn't currently work
     // Store chisq syst surface (if asked)
