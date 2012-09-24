@@ -13,6 +13,7 @@
 #  --stat-fluctuations      : include statistical fluctuation in toy MC expts
 #  --tweak-systematics      : generate toy MC with randomized systematics. Mode 0 is don't fluctuate. 1 all. 2 BANFF. 3 Unconstrained XSec. 4 SK Detector. 5 FSI
 #  --store-chisq-surf       : Store chisq surfaces? Default: No, only best-fit values are stored.
+#  --store-chisq-withsyst-surf : Store chisq with syst surfaces? Default: No, only best-fit values are stored.
 #  --store-toy-expts        : Store the generated toy MC expts? Default: No, only best-fit values are stored.
 #  --store-bestfit-spectra  : Store the best-fit spectra? Default: No, only best-fit values are stored.
 #  --dm23sq                 : Value of |Dm^2_{23}| for toy MC expts. Default: 2.32E-3 eV^2.
@@ -43,6 +44,7 @@ foreach (@ARGV) {
   if($_ eq '--stat-fluctuations'      ) { $stat_fluct            = 1;              }
   if($_ eq '--tweak-systematics'      ) { $twk_systematics       = $ARGV[$iarg+1]; }
   if($_ eq '--store-chisq-surf'       ) { $store_chisq_surf      = 1;              }
+  if($_ eq '--store-chisq-withsyst-surf' ) { $store_chisq_withsyst_surf = 1;       }
   if($_ eq '--store-toy-expts'        ) { $store_toy_expts       = 1;              }
   if($_ eq '--store-bestfit-spectra'  ) { $store_bestfit_spectra = 1;              }
   if($_ eq '--dm23sq'                 ) { $dm23sq                = $ARGV[$iarg+1]; }
@@ -70,9 +72,10 @@ $nexpts                 = 100                           unless defined $nexpts;
 $stat_fluct             = 0                             unless defined $stat_fluct;
 $twk_systematics        = 0                             unless defined $twk_systematics;
 $store_chisq_surf       = 0                             unless defined $store_chisq_surf;
+$store_chisq_withsyst_surf = 0                          unless defined $store_chisq_withsyst_surf;
 $store_toy_expts        = 0                             unless defined $store_toy_expts;
 $store_bestfit_spectra  = 0                             unless defined $store_bestfit_spectra;
-$fitparamlist           = "nuosc3f_numudisapp_fix4"     unless defined $fitparamlist;
+$fitparamlist           = "nuosc3f_numudisapp_fix4+nuisanceselection" unless defined $fitparamlist;
 $fitoption              = "minuit"                      unless defined $fitter;
 $tag                    = "toyexptfits"                 unless defined $tag;
 $job_dir                = `pwd`                         unless defined $job_dir;
@@ -91,7 +94,7 @@ die("$job_dir doesn't exist") unless -d $job_dir;
 $irun = 0;
 while($irun < $nruns) {
   print "Submitting run: $irun \n";
-  $command = "root2k -l -b -q \'$softw_dir/macros/fit/test_n_mock_data_fits_with_syst.C(\"$tag\",$twk_systematics,$irun,$nexpts,$sinsq2theta12,$sinsq2theta13,$sinsq2theta23,$deltacp,$dm12sq,$dm23sq,\"$config_file\",$stat_fluct,\"$fitparamlist\",\"$fitoption\",$store_chisq_surf,$store_toy_expts,$store_bestfit_spectra)\'";
+  $command = "root2k -l -b -q \'$softw_dir/macros/fit/test_n_mock_data_fits_with_syst.C(\"$tag\",$twk_systematics,$irun,$nexpts,$sinsq2theta12,$sinsq2theta13,$sinsq2theta23,$deltacp,$dm12sq,$dm23sq,\"$config_file\",$stat_fluct,\"$fitparamlist\",\"$fitoption\",$store_chisq_surf,$store_chisq_withsyst_surf,$store_toy_expts,$store_bestfit_spectra)\'";
   print "$command \n";
 
   #
