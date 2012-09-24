@@ -752,7 +752,7 @@ void SuperkMC::ApplySystematicsToTemplates_Multiplicative(void)
 #endif
 
 	     // Update target MC template
-	     mctempl_tgt->SetBinContent(ir,it,nev*wght);
+	     mctempl_tgt->SetBinContent(ir,it,nev);
 	   }//it
 	 }//itv
        }//ir

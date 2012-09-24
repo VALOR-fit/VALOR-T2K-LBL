@@ -2,9 +2,9 @@
 #include <iomanip.h>
 
 void mock_data_fit_pulls(
-     const char * filenames,                 /* add these filenames to the tree */
-     bool         fit_systematics = false,   /* were the systematics included in the fit? */
-     const char * config_file     = "analysis_configuration.xml"    /* file to get the pre errors from*/
+     const char * filenames,                                              /* add these filenames to the tree */
+     bool         fit_systematics_mode = 1,                               /* what was fit for? 0: osc only. 1: osc+selected nuisance. 2: osc+all nuisance */
+     const char * config_file          = "analysis_configuration.xml"    /* file to get the pre errors from */
 )
 {
   using namespace std;
@@ -136,7 +136,16 @@ void mock_data_fit_pulls(
   double input_deltacp, bestfit_deltacp, errp_deltacp, errm_deltacp, errpar_deltacp;
   double input_dm12sq, bestfit_dm12sq, errp_dm12sq, errm_dm12sq, errpar_dm12sq;
   double input_dm23sq, bestfit_dm23sq, errp_dm23sq, errm_dm23sq, errpar_dm23sq;
-  if(fit_systematics) {
+  if(fit_systematics_mode == 1) {
+    double input_banff_maqe, bestfit_banff_maqe, errp_banff_maqe, errm_banff_maqe, errpar_banff_maqe;
+    double input_banff_ccqeE0, bestfit_banff_ccqeE0, errp_banff_ccqeE0, errm_banff_ccqeE0, errpar_banff_ccqeE0;
+    double input_banff_cc1piE0, bestfit_banff_cc1piE0, errp_banff_cc1piE0, errm_banff_cc1piE0, errpar_banff_cc1piE0;
+    double input_xsec_sf, bestfit_xsec_sf, errp_xsec_sf, errm_xsec_sf, errpar_xsec_sf;
+    double input_xsec_pilessdelta, bestfit_xsec_pilessdelta, errp_xsec_pilessdelta, errm_xsec_pilessdelta, errpar_xsec_pilessdelta;
+    double input_skdet_ccnqe, bestfit_skdet_ccnqe, errp_skdet_ccnqe, errm_skdet_ccnqe, errpar_skdet_ccnqe;
+    double input_skdet_nc, bestfit_skdet_nc, errp_skdet_nc, errm_skdet_nc, errpar_skdet_nc;
+  }
+  else if(fit_systematics_mode == 2) {
     //inputs
     double input_banff_00, bestfit_banff_00, errp_banff_00, errm_banff_00, errpar_banff_00;
     double input_banff_01, bestfit_banff_01, errp_banff_01, errm_banff_01, errpar_banff_01;
@@ -253,7 +262,49 @@ void mock_data_fit_pulls(
   ch.SetBranchAddress("errpar_deltacp",&errpar_deltacp);
   ch.SetBranchAddress("errpar_dm12sq",&errpar_dm12sq);
   ch.SetBranchAddress("errpar_dm23sq",&errpar_dm23sq);
-  if(fit_systematics) {
+  if(fit_systematics_mode == 1) {
+    //inputs
+    ch.SetBranchAddress("input_banff_maqe",&input_banff_maqe);
+    ch.SetBranchAddress("input_banff_ccqeE0",&input_banff_ccqeE0);
+    ch.SetBranchAddress("input_banff_cc1piE0",&input_banff_cc1piE0);
+    ch.SetBranchAddress("input_xsec_sf",&input_xsec_sf);
+    ch.SetBranchAddress("input_xsec_pilessdelta",&input_xsec_pilessdelta);
+    ch.SetBranchAddress("input_skdet_ccnqe",&input_skdet_ccnqe);
+    ch.SetBranchAddress("input_skdet_nc",&input_skdet_nc);
+    //best fits
+    ch.SetBranchAddress("bestfit_banff_maqe",&bestfit_banff_maqe);
+    ch.SetBranchAddress("bestfit_banff_ccqeE0",&bestfit_banff_ccqeE0);
+    ch.SetBranchAddress("bestfit_banff_cc1piE0",&bestfit_banff_cc1piE0);
+    ch.SetBranchAddress("bestfit_xsec_sf",&bestfit_xsec_sf);
+    ch.SetBranchAddress("bestfit_xsec_pilessdelta",&bestfit_xsec_pilessdelta);
+    ch.SetBranchAddress("bestfit_skdet_ccnqe",&bestfit_skdet_ccnqe);
+    ch.SetBranchAddress("bestfit_skdet_nc",&bestfit_skdet_nc);
+    //plus errors
+    ch.SetBranchAddress("errp_banff_maqe",&errp_banff_maqe);
+    ch.SetBranchAddress("errp_banff_ccqeE0",&errp_banff_ccqeE0);
+    ch.SetBranchAddress("errp_banff_cc1piE0",&errp_banff_cc1piE0);
+    ch.SetBranchAddress("errp_xsec_sf",&errp_xsec_sf);
+    ch.SetBranchAddress("errp_xsec_pilessdelta",&errp_xsec_pilessdelta);
+    ch.SetBranchAddress("errp_skdet_ccnqe",&errp_skdet_ccnqe);
+    ch.SetBranchAddress("errp_skdet_nc",&errp_skdet_nc);
+    //minus errors
+    ch.SetBranchAddress("errm_banff_maqe",&errm_banff_maqe);
+    ch.SetBranchAddress("errm_banff_ccqeE0",&errm_banff_ccqeE0);
+    ch.SetBranchAddress("errm_banff_cc1piE0",&errm_banff_cc1piE0);
+    ch.SetBranchAddress("errm_xsec_sf",&errm_xsec_sf);
+    ch.SetBranchAddress("errm_xsec_pilessdelta",&errm_xsec_pilessdelta);
+    ch.SetBranchAddress("errm_skdet_ccnqe",&errm_skdet_ccnqe);
+    ch.SetBranchAddress("errm_skdet_nc",&errm_skdet_nc);
+    //parabolic errors
+    ch.SetBranchAddress("errpar_banff_maqe",&errpar_banff_maqe);
+    ch.SetBranchAddress("errpar_banff_ccqeE0",&errpar_banff_ccqeE0);
+    ch.SetBranchAddress("errpar_banff_cc1piE0",&errpar_banff_cc1piE0);
+    ch.SetBranchAddress("errpar_xsec_sf",&errpar_xsec_sf);
+    ch.SetBranchAddress("errpar_xsec_pilessdelta",&errpar_xsec_pilessdelta);
+    ch.SetBranchAddress("errpar_skdet_ccnqe",&errpar_skdet_ccnqe);
+    ch.SetBranchAddress("errpar_skdet_nc",&errpar_skdet_nc);
+  }
+  else if(fit_systematics_mode == 2) {
     //inputs
     ch.SetBranchAddress("input_banff_00",&input_banff_00);
     ch.SetBranchAddress("input_banff_01",&input_banff_01);
@@ -632,7 +683,27 @@ void mock_data_fit_pulls(
   TH1D * h_dchisq    = new TH1D("h_dchisq","h_dchisq",10000,-1000,1000);
   TH1D * h_mixing23 = new TH1D("h_mixing23","h_mixing23",160,-0.4,0.4);
   TH1D * h_dm23sq   = new TH1D("h_dm23sq","h_dm23sq",120,-1E-3,1E-3);
-  if(fit_systematics) {
+  //pull histograms
+  TH1D * hpull_mixing23 = new TH1D("hpull_mixing23","hpull_mixing23",160,-0.4,0.4);
+  TH1D * hpull_dm23sq   = new TH1D("hpull_dm23sq","hpull_dm23sq",120,-1E-3,1E-3);
+  if(fit_systematics_mode == 1) {
+    TH1D * h_banff_maqe = new TH1D("h_banff_maqe","h_banff_maqe",50,-5,5);
+    TH1D * h_banff_ccqeE0 = new TH1D("h_banff_ccqeE0","h_banff_ccqeE0",50,-5,5);
+    TH1D * h_banff_cc1piE0 = new TH1D("h_banff_cc1piE0","h_banff_cc1piE0",50,-5,5);
+    TH1D * h_xsec_sf = new TH1D("h_xsec_sf","h_xsec_sf",50,-5,5);
+    TH1D * h_xsec_pilessdelta = new TH1D("h_xsec_pilessdelta","h_xsec_pilessdelta",50,-5,5);
+    TH1D * h_skdet_ccnqe = new TH1D("h_skdet_ccnqe","h_skdet_ccnqe",50,-5,5);
+    TH1D * h_skdet_nc = new TH1D("h_skdet_nc","h_skdet_nc",50,-5,5);
+    //pull histograms
+    TH1D * hpull_banff_maqe = new TH1D("hpull_banff_maqe","hpull_banff_maqe",50,-5,5);
+    TH1D * hpull_banff_ccqeE0 = new TH1D("hpull_banff_ccqeE0","hpull_banff_ccqeE0",50,-5,5);
+    TH1D * hpull_banff_cc1piE0 = new TH1D("hpull_banff_cc1piE0","hpull_banff_cc1piE0",50,-5,5);
+    TH1D * hpull_xsec_sf = new TH1D("hpull_xsec_sf","hpull_xsec_sf",50,-5,5);
+    TH1D * hpull_xsec_pilessdelta = new TH1D("hpull_xsec_pilessdelta","hpull_xsec_pilessdelta",50,-5,5);
+    TH1D * hpull_skdet_ccnqe = new TH1D("hpull_skdet_ccnqe","hpull_skdet_ccnqe",50,-5,5);
+    TH1D * hpull_skdet_nc = new TH1D("hpull_skdet_nc","hpull_skdet_nc",50,-5,5);
+  }
+  else if(fit_systematics_mode == 2) {
     TH1D * h_banff_00 = new TH1D("h_banff_00","h_banff_00",50,-5,5);
     TH1D * h_banff_01 = new TH1D("h_banff_01","h_banff_01",50,-5,5);
     TH1D * h_banff_02 = new TH1D("h_banff_02","h_banff_02",50,-5,5);
@@ -706,10 +777,7 @@ void mock_data_fit_pulls(
     TH1D * h_fsi_012 = new TH1D("h_fsi_012","h_fsi_012",50,-5,5);
     TH1D * h_fsi_013 = new TH1D("h_fsi_013","h_fsi_013",50,-5,5);
     TH1D * h_fsi_014 = new TH1D("h_fsi_014","h_fsi_014",50,-5,5); 
-  }
-  TH1D * hpull_mixing23 = new TH1D("hpull_mixing23","hpull_mixing23",160,-0.4,0.4);
-  TH1D * hpull_dm23sq   = new TH1D("hpull_dm23sq","hpull_dm23sq",120,-1E-3,1E-3);
-  if(fit_systematics) {
+    //pull histograms
     TH1D * hpull_banff_00 = new TH1D("hpull_banff_00","hpull_banff_00",50,-5,5);
     TH1D * hpull_banff_01 = new TH1D("hpull_banff_01","hpull_banff_01",50,-5,5);
     TH1D * hpull_banff_02 = new TH1D("hpull_banff_02","hpull_banff_02",50,-5,5);
@@ -799,7 +867,27 @@ void mock_data_fit_pulls(
     h_dchisq->Fill(true_chisq - bestfit_chisq);
     h_mixing23->Fill((bestfit_mixing23 - input_mixing23));
     h_dm23sq->Fill((bestfit_dm23sq - input_dm23sq));
-    if(fit_systematics) {
+    //pull histograms
+    hpull_mixing23->Fill((bestfit_mixing23 - input_mixing23) / errpar_mixing23);
+    hpull_dm23sq->Fill((bestfit_dm23sq - input_dm23sq) / errpar_dm23sq);
+    if(fit_systematics_mode == 1) {
+      if(preerr_banff_maqe > errpar_banff_maqe) h_banff_maqe->Fill((bestfit_banff_maqe - input_banff_maqe));
+      if(preerr_banff_ccqeE0 > errpar_banff_ccqeE0) h_banff_ccqeE0->Fill((bestfit_banff_ccqeE0 - input_banff_ccqeE0));
+      if(preerr_banff_cc1piE0 > errpar_banff_cc1piE0) h_banff_cc1piE0->Fill((bestfit_banff_cc1piE0 - input_banff_cc1piE0));
+      if(preerr_xsec_sf > errpar_xsec_sf) h_xsec_sf->Fill((bestfit_xsec_sf - input_xsec_sf));
+      if(preerr_xsec_pilessdelta > errpar_xsec_pilessdelta) h_xsec_pilessdelta->Fill((bestfit_xsec_pilessdelta - input_xsec_pilessdelta));
+      if(preerr_skdet_ccnqe > errpar_skdet_ccnqe) h_skdet_ccnqe->Fill((bestfit_skdet_ccnqe - input_skdet_ccnqe));
+      if(preerr_skdet_nc > errpar_skdet_nc) h_skdet_nc->Fill((bestfit_skdet_nc - input_skdet_nc));
+      //pull histograms
+      if(preerr_banff_maqe > errpar_banff_maqe) hpull_banff_maqe->Fill((bestfit_banff_maqe - input_banff_maqe) / sqrt((preerr_banff_maqe*preerr_banff_maqe) - (errpar_banff_maqe*errpar_banff_maqe)));
+      if(preerr_banff_ccqeE0 > errpar_banff_ccqeE0) hpull_banff_ccqeE0->Fill((bestfit_banff_ccqeE0 - input_banff_ccqeE0) / sqrt((preerr_banff_ccqeE0*preerr_banff_ccqeE0) - (errpar_banff_ccqeE0*errpar_banff_ccqeE0)));
+      if(preerr_banff_cc1piE0 > errpar_banff_cc1piE0) hpull_banff_cc1piE0->Fill((bestfit_banff_cc1piE0 - input_banff_cc1piE0) / sqrt((preerr_banff_cc1piE0*preerr_banff_cc1piE0) - (errpar_banff_cc1piE0*errpar_banff_cc1piE0)));
+      if(preerr_xsec_sf > errpar_xsec_sf) hpull_xsec_sf->Fill((bestfit_xsec_sf - input_xsec_sf) / sqrt((preerr_xsec_sf*preerr_xsec_sf) - (errpar_xsec_sf*errpar_xsec_sf)));
+      if(preerr_xsec_pilessdelta > errpar_xsec_pilessdelta) hpull_xsec_pilessdelta->Fill((bestfit_xsec_pilessdelta - input_xsec_pilessdelta) / sqrt((preerr_xsec_pilessdelta*preerr_xsec_pilessdelta) - (errpar_xsec_pilessdelta*errpar_xsec_pilessdelta)));
+      if(preerr_skdet_ccnqe > errpar_skdet_ccnqe) hpull_skdet_ccnqe->Fill((bestfit_skdet_ccnqe - input_skdet_ccnqe) / sqrt((preerr_skdet_ccnqe*preerr_skdet_ccnqe) - (errpar_skdet_ccnqe*errpar_skdet_ccnqe)));
+      if(preerr_skdet_nc > errpar_skdet_nc) hpull_skdet_nc->Fill((bestfit_skdet_nc - input_skdet_nc) / sqrt((preerr_skdet_nc*preerr_skdet_nc) - (errpar_skdet_nc*errpar_skdet_nc)));
+    }
+    else if(fit_systematics_mode == 2) {
       if(preerr_banff_00 > errpar_banff_00) h_banff_00->Fill((bestfit_banff_00 - input_banff_00));
       if(preerr_banff_01 > errpar_banff_01) h_banff_01->Fill((bestfit_banff_01 - input_banff_01));
       if(preerr_banff_02 > errpar_banff_02) h_banff_02->Fill((bestfit_banff_02 - input_banff_02));
@@ -873,11 +961,7 @@ void mock_data_fit_pulls(
       if(preerr_fsi_012 > errpar_fsi_012) h_fsi_012->Fill((bestfit_fsi_012 - input_fsi_012));
       if(preerr_fsi_013 > errpar_fsi_013) h_fsi_013->Fill((bestfit_fsi_013 - input_fsi_013));
       if(preerr_fsi_014 > errpar_fsi_014) h_fsi_014->Fill((bestfit_fsi_014 - input_fsi_014)); 
-    }
-    //pull histograms
-    hpull_mixing23->Fill((bestfit_mixing23 - input_mixing23) / errpar_mixing23);
-    hpull_dm23sq->Fill((bestfit_dm23sq - input_dm23sq) / errpar_dm23sq);
-    if(fit_systematics) {
+      //pull histograms
       if(preerr_banff_00 > errpar_banff_00) hpull_banff_00->Fill((bestfit_banff_00 - input_banff_00) / sqrt((preerr_banff_00*preerr_banff_00) - (errpar_banff_00*errpar_banff_00)));
       if(preerr_banff_01 > errpar_banff_01) hpull_banff_01->Fill((bestfit_banff_01 - input_banff_01) / sqrt((preerr_banff_01*preerr_banff_01) - (errpar_banff_01*errpar_banff_01)));
       if(preerr_banff_02 > errpar_banff_02) hpull_banff_02->Fill((bestfit_banff_02 - input_banff_02) / sqrt((preerr_banff_02*preerr_banff_02) - (errpar_banff_02*errpar_banff_02)));
@@ -963,7 +1047,23 @@ void mock_data_fit_pulls(
   TLine *l_mixing23 = new TLine(h_mixing23->GetMean(),0,h_mixing23->GetMean(),1000); l_mixing23->Draw();
   cosc->cd(2); h_dm23sq->Draw();
   TLine *l_dm23sq = new TLine(h_dm23sq->GetMean(),0,h_dm23sq->GetMean(),1000); l_dm23sq->Draw();
-  if(fit_systematics) {
+  if(fit_systematics_mode == 1) {
+    new TCanvas(); h_banff_maqe->Draw();
+    TLine *l_banff_maqe = new TLine(h_banff_maqe->GetMean(),0,h_banff_maqe->GetMean(),1000); l_banff_maqe->Draw();
+    new TCanvas(); h_banff_ccqeE0->Draw();
+    TLine *l_banff_ccqeE0 = new TLine(h_banff_ccqeE0->GetMean(),0,h_banff_ccqeE0->GetMean(),1000); l_banff_ccqeE0->Draw();
+    new TCanvas(); h_banff_cc1piE0->Draw();
+    TLine *l_banff_cc1piE0 = new TLine(h_banff_cc1piE0->GetMean(),0,h_banff_cc1piE0->GetMean(),1000); l_banff_cc1piE0->Draw();
+    new TCanvas(); h_xsec_sf->Draw();
+    TLine *l_xsec_sf = new TLine(h_xsec_sf->GetMean(),0,h_xsec_sf->GetMean(),1000); l_xsec_sf->Draw();
+    new TCanvas(); h_xsec_pilessdelta->Draw();
+    TLine *l_xsec_pilessdelta = new TLine(h_xsec_pilessdelta->GetMean(),0,h_xsec_pilessdelta->GetMean(),1000); l_xsec_pilessdelta->Draw();
+    new TCanvas(); h_skdet_ccnqe->Draw();
+    TLine *l_skdet_ccnqe = new TLine(h_skdet_ccnqe->GetMean(),0,h_skdet_ccnqe->GetMean(),1000); l_skdet_ccnqe->Draw();
+    new TCanvas(); h_skdet_nc->Draw();
+    TLine *l_skdet_nc = new TLine(h_skdet_nc->GetMean(),0,h_skdet_nc->GetMean(),1000); l_skdet_nc->Draw();
+  }
+  else if(fit_systematics_mode == 2) {
     new TCanvas(); h_banff_00->Draw();
     TLine *l_banff_00 = new TLine(h_banff_00->GetMean(),0,h_banff_00->GetMean(),1000); l_banff_00->Draw();
     new TCanvas(); h_banff_01->Draw();
@@ -1117,7 +1217,23 @@ void mock_data_fit_pulls(
   TLine *lpull_mixing23 = new TLine(hpull_mixing23->GetMean(),0,hpull_mixing23->GetMean(),1000); lpull_mixing23->Draw();
   cosc->cd(2); hpull_dm23sq->Draw();
   TLine *lpull_dm23sq = new TLine(hpull_dm23sq->GetMean(),0,hpull_dm23sq->GetMean(),1000); lpull_dm23sq->Draw();
-  if(fit_systematics) {
+  if(fit_systematics_mode == 1) {
+    new TCanvas(); hpull_banff_maqe->Draw();
+    TLine *lpull_banff_maqe = new TLine(hpull_banff_maqe->GetMean(),0,hpull_banff_maqe->GetMean(),1000); lpull_banff_maqe->Draw();
+    new TCanvas(); hpull_banff_ccqeE0->Draw();
+    TLine *lpull_banff_ccqeE0 = new TLine(hpull_banff_ccqeE0->GetMean(),0,hpull_banff_ccqeE0->GetMean(),1000); lpull_banff_ccqeE0->Draw();
+    new TCanvas(); hpull_banff_cc1piE0->Draw();
+    TLine *lpull_banff_cc1piE0 = new TLine(hpull_banff_cc1piE0->GetMean(),0,hpull_banff_cc1piE0->GetMean(),1000); lpull_banff_cc1piE0->Draw();
+    new TCanvas(); hpull_xsec_sf->Draw();
+    TLine *lpull_xsec_sf = new TLine(hpull_xsec_sf->GetMean(),0,hpull_xsec_sf->GetMean(),1000); lpull_xsec_sf->Draw();
+    new TCanvas(); hpull_xsec_pilessdelta->Draw();
+    TLine *lpull_xsec_pilessdelta = new TLine(hpull_xsec_pilessdelta->GetMean(),0,hpull_xsec_pilessdelta->GetMean(),1000); lpull_xsec_pilessdelta->Draw();
+    new TCanvas(); hpull_skdet_ccnqe->Draw();
+    TLine *lpull_skdet_ccnqe = new TLine(hpull_skdet_ccnqe->GetMean(),0,hpull_skdet_ccnqe->GetMean(),1000); lpull_skdet_ccnqe->Draw();
+    new TCanvas(); hpull_skdet_nc->Draw();
+    TLine *lpull_skdet_nc = new TLine(hpull_skdet_nc->GetMean(),0,hpull_skdet_nc->GetMean(),1000); lpull_skdet_nc->Draw();
+  }
+  else if(fit_systematics_mode == 2) {
     new TCanvas(); hpull_banff_00->Draw();
     TLine *lpull_banff_00 = new TLine(hpull_banff_00->GetMean(),0,hpull_banff_00->GetMean(),1000); lpull_banff_00->Draw();
     new TCanvas(); hpull_banff_01->Draw();

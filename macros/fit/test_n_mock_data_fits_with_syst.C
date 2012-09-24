@@ -44,7 +44,7 @@ void test_n_mock_data_fits_with_syst
  string       fit_param_list          = "nuosc3f_numudisapp_fix4+nuisanceselection", /* fit parameter list for the given physics hypothesis (see run_fitter.C) */
  const char * fit_option              = "minuit",                       /* fitter option (see run_fitter.C) */
  bool         store_chisq_surf        = true,                          /* by default storing only best-fit values, enable this to store the chisq surfaces   */
- bool         store_withsyst_chisq_surf = false,                        /* by default storing only best-fit values, enable this to store the chisq with systematics surfaces   */
+ bool         store_withsyst_chisq_surf = true,                        /* by default storing only best-fit values, enable this to store the chisq with systematics surfaces   */
  bool         store_toy_expts         = true,                          /* by default storing only best-fit values, enable this to store the toy MC expts     */
  bool         store_bestfit_spectrum  = true                           /* by default storing only best-fit values, enable this to store the best-fit spectra */
  )
@@ -1801,11 +1801,11 @@ void test_n_mock_data_fits_with_syst
     fitter->Analyze(output_option.c_str());
 
     if ( store_withsyst_chisq_surf) {
-      double mixing23_min  = 0.95;//fparm->MinValue(conv::kPhypMixing23);
+      double mixing23_min  = 0.8;//fparm->MinValue(conv::kPhypMixing23);
       double mixing23_max  = fparm->MaxValue(conv::kPhypMixing23);
       double mixing23_step = fparm->StepSize(conv::kPhypMixing23);
-      double dm23sq_min    = 0.15E-3;//fparm->MinValue(conv::kPhypDm23sq);
-      double dm23sq_max    = 0.35E-3;//fparm->MaxValue(conv::kPhypDm23sq);
+      double dm23sq_min    = 1.5E-3;//fparm->MinValue(conv::kPhypDm23sq);
+      double dm23sq_max    = 3.5E-3;//fparm->MaxValue(conv::kPhypDm23sq);
       double dm23sq_step   = fparm->StepSize(conv::kPhypDm23sq);
 
       // make sure that min and max are at the bin centre
