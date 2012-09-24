@@ -1787,12 +1787,12 @@ void test_n_mock_data_fits_with_syst
     fitter->Analyze(output_option.c_str());
 
     if ( store_withsyst_chisq_surf) {
-      double mixing23_min  = 0.8;//fparm.MinValue(conv::kPhypMixing23);
-      double mixing23_max  = fparm.MaxValue(conv::kPhypMixing23);
-      double mixing23_step = fparm.StepSize(conv::kPhypMixing23);
-      double dm23sq_min    = 1.5E-3;//fparm.MinValue(conv::kPhypDm23sq);
-      double dm23sq_max    = 3.5E-3;//fparm.MaxValue(conv::kPhypDm23sq);
-      double dm23sq_step   = fparm.StepSize(conv::kPhypDm23sq);
+      double mixing23_min  = 0.8;//fparm->MinValue(conv::kPhypMixing23);
+      double mixing23_max  = fparm->MaxValue(conv::kPhypMixing23);
+      double mixing23_step = fparm->StepSize(conv::kPhypMixing23);
+      double dm23sq_min    = 1.5E-3;//fparm->MinValue(conv::kPhypDm23sq);
+      double dm23sq_max    = 3.5E-3;//fparm->MaxValue(conv::kPhypDm23sq);
+      double dm23sq_step   = fparm->StepSize(conv::kPhypDm23sq);
 
       // make sure that min and max are at the bin centre
       int mixing23_nbins = 1 + (int) ((mixing23_max - mixing23_min) / mixing23_step);
