@@ -60,12 +60,12 @@ foreach (@ARGV) {
   if($_ eq '--config-file'            ) { $config_file           = $ARGV[$iarg+1]; }
   $iarg++;
 }
-$dm23sq                 = 0.00232                       unless defined $dm23sq; 
-$dm12sq                 = 0.0000758                     unless defined $dm12sq; 
-$sinsq2theta23          = 1.00                          unless defined $sinsq2theta23;
-$sinsq2theta13          = 0.10                          unless defined $sinsq2theta13;
-$sinsq2theta12          = 0.86                          unless defined $sinsq2theta12;
-$deltacp                = 0.00                          unless defined $deltacp;
+$dm23sq                 = -99                           unless defined $dm23sq; 
+$dm12sq                 = -99                           unless defined $dm12sq; 
+$sinsq2theta23          = -99                           unless defined $sinsq2theta23;
+$sinsq2theta13          = -99                           unless defined $sinsq2theta13;
+$sinsq2theta12          = -99                           unless defined $sinsq2theta12;
+$deltacp                = -99                           unless defined $deltacp;
 $resource               = "interactive"                 unless defined $resource;
 $nruns                  = 1                             unless defined $nruns;
 $nexpts                 = 100                           unless defined $nexpts;
