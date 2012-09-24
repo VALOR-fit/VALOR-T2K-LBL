@@ -1835,17 +1835,29 @@ void test_n_mock_data_fits_with_syst
       dchisq_surface->GetXaxis()->SetTitleSize(0.05);
 
       // Do the fit
+      double nfits_done = 0;
+      double nfits_all  = chisq_surface->GetNbinsX() * chisq_surface->GetNbinsY();
       for(int i = 1; i <= chisq_surface->GetNbinsX(); i++) {
 	for(int j = 1; j <= chisq_surface->GetNbinsY(); j++) {
-	  fparm->ResetCurrToInitValues();
 	  double mixing23 = chisq_surface->GetXaxis()->GetBinCenter(i);
 	  double dm23sq   = chisq_surface->GetYaxis()->GetBinCenter(j);
+	  cout << "> Fit for systematics, fixing Dm23sq := " << dm23sq << " eV^2 and mixing23 := " << mixing23 << endl;
+	  //          cout << *fparm;
+	  //          cout << "Resetting current to the initial values" << endl;
+	  fparm->ResetCurrToInitValues();
+	  //          cout << *fparm;
+	  //          cout << "Free-ing 23-params" << endl;
 	  fparm->FreeParameter(conv::kPhypMixing23);
 	  fparm->FreeParameter(conv::kPhypDm23sq);
-	  fparm->Update( conv::kPhypMixing23, mixing23 );
-	  fparm->Update( conv::kPhypDm23sq,   dm23sq   );
+	  //          cout << *fparm;
+	  //          cout << "Setting new initial value for 23-params" << endl;
+	  fparm->SetInitValue( conv::kPhypMixing23, mixing23 );
+	  fparm->SetInitValue( conv::kPhypDm23sq,   dm23sq   );
+	  //          cout << *fparm;
+	  //          cout << "Fixing 23-params" << endl;
 	  fparm->FixParameter(conv::kPhypMixing23);
 	  fparm->FixParameter(conv::kPhypDm23sq);
+	  //          cout << *fparm;
 	  //for some reason, need to make a new fitter when changing the FitParamList
 	  FitInputs * fit_inputs2 = new FitInputs(skobs,skexp,fparm);
 	  FitterABC * fitter2 = new Superk1RmuErecoFitter(fit_inputs,fit_option);
@@ -1856,6 +1868,8 @@ void test_n_mock_data_fits_with_syst
 	  //if(fparm->CurrValue(conv::kPhypMixing23) != mixing23 || fparm->CurrValue(conv::kPhypDm23sq) != dm23sq) {}
 	  delete fitter2;
 	  delete fit_inputs2;
+          nfits_done += 1;
+          cout << "> ..... " << 100*nfits_done/nfits_all << "% done" << endl;
 	}//j
       }//i
       chisq_surface  -> SetName(Form("chisq_withsyst_surface_1Rmu_%d",iexperiment));
