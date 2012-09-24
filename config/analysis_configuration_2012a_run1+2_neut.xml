@@ -191,7 +191,7 @@
          <efficiency_relative_error>  
             <one_mu_ring>
                <ccqe>
-                  <other_error>   0.017  </other_error>          
+                  <other_error>   0.018  </other_error>          
                   <rc_error>          
                      <filename>  inputs/official/2012/superk/err/sk_ccqe_rc_err_covariance.root </filename>
                      <objname>   ccqe_rc_err_covariance  </objname>
