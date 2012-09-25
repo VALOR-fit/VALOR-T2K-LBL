@@ -97,6 +97,9 @@ void test_n_mock_data_fits_with_syst
   case 5:
     syst_modestr = "FSI";
     break;
+  case 6:
+    syst_modestr = "Fitted";
+    break;
   default:
     cerr << "Invalid systematic mode " << syst_mode << ". Exiting" << endl;
     exit(1);
@@ -787,6 +790,22 @@ void test_n_mock_data_fits_with_syst
 	break;
       case 5:
 	skexp->TweakAllFSISystematics();
+	break;
+      case 6:
+	TRandom3 rand(0);
+	skexp->GetNuXSec()->TweakSpecFunc      (rand.Gaus(0.,1.));
+	skexp->GetNuXSec()->TweakPiLessDelta   (rand.Gaus(0.,1.));
+	skexp->GetSuperkDetector()->TweakEfficiency1RmuCCnonQE    (rand.Gaus(0.,1.));
+	skexp->GetSuperkDetector()->TweakEfficiency1RmuNC         (rand.Gaus(0.,1.));  
+	TVectorD twkv(skexp->GetBANFF()->BestFitValues());
+	TVectorD cov (skexp->GetBANFF()->CovMtrx());
+	PhysParamId_t p = conv::kNuisBANFFMAQE;
+	int ip   = util::ArrIdx::Instance()->BANFFSystIdx(kNuisBANFFMAQE);
+	twkv[ip] = twkdial(rand.Gaus(twkv[ip], cov[ip]));
+	ip       = util::ArrIdx::Instance()->BANFFSystIdx(kNuisBANFFCCQEE0);
+	twkv[ip] = twkdial(rand.Gaus(twkv[ip], cov[ip]));
+	ip       = util::ArrIdx::Instance()->BANFFSystIdx(kNuisBANFFCC1piE0);
+	twkv[ip] = twkdial(rand.Gaus(twkv[ip], cov[ip]));
 	break;
       default:
 	cerr << "Invalid systematic mode " << syst_mode << ". Exiting" << endl;
@@ -1979,6 +1998,8 @@ void test_n_mock_data_fits_with_syst
       dchisq_surface_corr->GetYaxis()->SetTitleOffset(1);
       dchisq_surface_corr->GetYaxis()->SetTitleSize(0.05);
       dchisq_surface_corr->GetXaxis()->SetTitleSize(0.05);
+
+      // what to actually do?
 
       //save
       dchisq_surface_corr -> SetName(Form("dchisq_surface_corr_1Rmu_%d",iexperiment));
