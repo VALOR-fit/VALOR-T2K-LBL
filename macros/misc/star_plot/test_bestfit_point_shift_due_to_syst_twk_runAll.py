@@ -39,16 +39,13 @@ systematics.append("osc_mixing13");
 systematics.append("osc_dm12sq");
 systematics.append("osc_deltacp");
 #SK
-"""
 #systematics.append("sk_1Rmu_ccqe_ring_counting_eff")
 systematics.append("sk_1Rmu_ccqe_ring_counting_eff_0")
 systematics.append("sk_1Rmu_ccqe_ring_counting_eff_1")
 systematics.append("sk_1Rmu_ccqe_ring_counting_eff_2")
 systematics.append("sk_1Rmu_ccqe_other_eff")
-"""
 systematics.append("sk_1Rmu_ccnonqe_eff")
 systematics.append("sk_1Rmu_nc_eff")
-"""
 systematics.append("sk_1Rmu_nuecc_eff")
 systematics.append("sk_energy_scale")
 #BANFF
@@ -57,29 +54,19 @@ systematics.append("sk_energy_scale")
 for i in xrange(31):
    systematics.append("banff_" + '%(number)02d' % {"number": i})
 #BANFF xsec
-"""
 systematics.append("banff_maqe")
-"""
 systematics.append("banff_mares")
-"""
 systematics.append("banff_ccqeE0")
-"""
 systematics.append("banff_ccqeE1")
 systematics.append("banff_ccqeE2")
-"""
 systematics.append("banff_cc1piE0")
-"""
 systematics.append("banff_cc1piE1")
 #XSec splines
 systematics.append("xsec_pf")
-"""
 systematics.append("xsec_sf")
-"""
 systematics.append("xsec_wshape")
 systematics.append("xsec_shape_ccoth")
-"""
 systematics.append("xsec_pilessdelta")
-"""
 #XSec normalisations
 systematics.append("xsec_norm_ccqeE1")
 systematics.append("xsec_norm_ccqeE2")
@@ -92,7 +79,6 @@ systematics.append("xsec_norm_antinutonu")
 #FSI
 for i in xrange(15):
    systematics.append("fsi_" + '%(number)03d' % {"number": i})
-"""
 
 samples = []
 samples.append("1Rmu")
