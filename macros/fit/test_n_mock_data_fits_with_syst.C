@@ -43,7 +43,7 @@ void test_n_mock_data_fits_with_syst
  bool         stat_fluctuations       = true,                           /* include statistical fluctuation in toy MC expts? */
  string       fit_param_list          = "nuosc3f_numudisapp_fix4+nuisanceselection", /* fit parameter list for the given physics hypothesis (see run_fitter.C) */
  const char * fit_option              = "minuit",                       /* fitter option (see run_fitter.C) */
- bool         store_chisq_surf        = true,                          /* by default storing only best-fit values, enable this to store the chisq surfaces   */
+ bool         store_chisq_surf        = false,                          /* by default storing only best-fit values, enable this to store the chisq surfaces   */
  bool         store_withsyst_chisq_surf = true,                        /* by default storing only best-fit values, enable this to store the chisq with systematics surfaces   */
  bool         store_toy_expts         = true,                          /* by default storing only best-fit values, enable this to store the toy MC expts     */
  bool         store_bestfit_spectrum  = true                           /* by default storing only best-fit values, enable this to store the best-fit spectra */
@@ -800,7 +800,7 @@ void test_n_mock_data_fits_with_syst
 	input_banff_ccqeE0 = skexp->GetBANFF()->CurrentValue(conv::kNuisBANFFCCQEE0);
 	input_banff_cc1piE0 = skexp->GetBANFF()->CurrentValue(conv::kNuisBANFFCC1piE0);
 	input_xsec_sf = skexp->GetNuXSec()->CurrentValue(conv::kNuisXSecSpecFunc);
-	input_xsec_pilessdelta = skexp->GetNuXSec()->CurrentValue(conv::kNuisXSecENuShape);
+	input_xsec_pilessdelta = skexp->GetNuXSec()->CurrentValue(conv::kNuisXSecPiLessDelta);
 	input_skdet_ccnqe = skexp->GetSuperkDetector()->CurrentValue(conv::kNuisSuperkEff1RmuCCnonQE);
 	input_skdet_nc = skexp->GetSuperkDetector()->CurrentValue(conv::kNuisSuperkEff1RmuNC);
       }
@@ -848,8 +848,8 @@ void test_n_mock_data_fits_with_syst
 	input_xsec_sf = skexp->GetNuXSec()->CurrentValue(conv::kNuisXSecSpecFunc);
 	input_xsec_wshape = skexp->GetNuXSec()->CurrentValue(conv::kNuisXSecWshape);
 	input_xsec_ccothshape = skexp->GetNuXSec()->CurrentValue(conv::kNuisXSecShapeCCoth);
-	input_xsec_cc1pishape = skexp->GetNuXSec()->CurrentValue(conv::kNuisXSecPiLessDelta);
-	input_xsec_pilessdelta = skexp->GetNuXSec()->CurrentValue(conv::kNuisXSecENuShape);
+	input_xsec_cc1pishape = skexp->GetNuXSec()->CurrentValue(conv::kNuisXSecENuShape);
+	input_xsec_pilessdelta = skexp->GetNuXSec()->CurrentValue(conv::kNuisXSecPiLessDelta);
 	input_xsec_normcccoh = skexp->GetNuXSec()->CurrentValue(conv::kNuisXSecNormCCcoh);
 	input_xsec_normnc1piC = skexp->GetNuXSec()->CurrentValue(conv::kNuisXSecNormNC1piC);
 	input_xsec_normnccoh = skexp->GetNuXSec()->CurrentValue(conv::kNuisXSecNormNCcoh);
@@ -888,7 +888,7 @@ void test_n_mock_data_fits_with_syst
 	if(fparm->Exists(conv::kNuisBANFFCCQEE0)) fparm->Update(conv::kNuisBANFFCCQEE0, input_banff_ccqeE0);
 	if(fparm->Exists(conv::kNuisBANFFCC1piE0)) fparm->Update(conv::kNuisBANFFCC1piE0, input_banff_cc1piE0);
 	if(fparm->Exists(conv::kNuisXSecSpecFunc)) fparm->Update(conv::kNuisXSecSpecFunc, input_xsec_sf);
-	if(fparm->Exists(conv::kNuisXSecPiLessDelta)) fparm->Update(conv::kNuisXSecPiLessDelta, input_xsec_cc1pishape);
+	if(fparm->Exists(conv::kNuisXSecPiLessDelta)) fparm->Update(conv::kNuisXSecPiLessDelta, input_xsec_pilessdelta);
 	if(fparm->Exists(conv::kNuisSuperkEff1RmuCCnonQE)) fparm->Update(conv::kNuisSuperkEff1RmuCCnonQE, input_skdet_ccnqe);
 	if(fparm->Exists(conv::kNuisSuperkEff1RmuNC)) fparm->Update(conv::kNuisSuperkEff1RmuNC, input_skdet_nc);
       }
@@ -936,8 +936,8 @@ void test_n_mock_data_fits_with_syst
 	if(fparm->Exists(conv::kNuisXSecSpecFunc)) fparm->Update(conv::kNuisXSecSpecFunc, input_xsec_sf);
 	if(fparm->Exists(conv::kNuisXSecWshape)) fparm->Update(conv::kNuisXSecWshape, input_xsec_wshape);
 	if(fparm->Exists(conv::kNuisXSecShapeCCoth)) fparm->Update(conv::kNuisXSecShapeCCoth, input_xsec_ccothshape);
-	if(fparm->Exists(conv::kNuisXSecPiLessDelta)) fparm->Update(conv::kNuisXSecPiLessDelta, input_xsec_cc1pishape);
-	if(fparm->Exists(conv::kNuisXSecENuShape)) fparm->Update(conv::kNuisXSecENuShape, input_xsec_pilessdelta);
+	if(fparm->Exists(conv::kNuisXSecPiLessDelta)) fparm->Update(conv::kNuisXSecPiLessDelta, input_xsec_pilessdelta);
+	if(fparm->Exists(conv::kNuisXSecENuShape)) fparm->Update(conv::kNuisXSecENuShape, input_xsec_enushape);
 	if(fparm->Exists(conv::kNuisXSecNormCCcoh)) fparm->Update(conv::kNuisXSecNormCCcoh, input_xsec_normcccoh);
 	if(fparm->Exists(conv::kNuisXSecNormNC1piC)) fparm->Update(conv::kNuisXSecNormNC1piC, input_xsec_normnc1piC);
 	if(fparm->Exists(conv::kNuisXSecNormNCcoh)) fparm->Update(conv::kNuisXSecNormNCcoh, input_xsec_normnccoh);
@@ -1409,7 +1409,7 @@ void test_n_mock_data_fits_with_syst
       if(fparm->Exists(conv::kNuisBANFFCCQEE0)) bestfit_banff_ccqeE0 = fparm->BestFitValue(conv::kNuisBANFFCCQEE0);
       if(fparm->Exists(conv::kNuisBANFFCC1piE0)) bestfit_banff_cc1piE0 = fparm->BestFitValue(conv::kNuisBANFFCC1piE0);
       if(fparm->Exists(conv::kNuisXSecSpecFunc)) bestfit_xsec_sf = fparm->BestFitValue(conv::kNuisXSecSpecFunc);
-      if(fparm->Exists(conv::kNuisXSecPiLessDelta)) bestfit_xsec_cc1pishape = fparm->BestFitValue(conv::kNuisXSecPiLessDelta);
+      if(fparm->Exists(conv::kNuisXSecPiLessDelta)) bestfit_xsec_pilessdelta = fparm->BestFitValue(conv::kNuisXSecPiLessDelta);
       if(fparm->Exists(conv::kNuisSuperkEff1RmuCCnonQE)) bestfit_skdet_ccnqe = fparm->BestFitValue(conv::kNuisSuperkEff1RmuCCnonQE);
       if(fparm->Exists(conv::kNuisSuperkEff1RmuNC)) bestfit_skdet_nc = fparm->BestFitValue(conv::kNuisSuperkEff1RmuNC);
     }
@@ -1457,8 +1457,8 @@ void test_n_mock_data_fits_with_syst
       if(fparm->Exists(conv::kNuisXSecSpecFunc)) bestfit_xsec_sf = fparm->BestFitValue(conv::kNuisXSecSpecFunc);
       if(fparm->Exists(conv::kNuisXSecWshape)) bestfit_xsec_wshape = fparm->BestFitValue(conv::kNuisXSecWshape);
       if(fparm->Exists(conv::kNuisXSecShapeCCoth)) bestfit_xsec_ccothshape = fparm->BestFitValue(conv::kNuisXSecShapeCCoth);
-      if(fparm->Exists(conv::kNuisXSecPiLessDelta)) bestfit_xsec_cc1pishape = fparm->BestFitValue(conv::kNuisXSecPiLessDelta);
-      if(fparm->Exists(conv::kNuisXSecENuShape)) bestfit_xsec_pilessdelta = fparm->BestFitValue(conv::kNuisXSecENuShape);
+      if(fparm->Exists(conv::kNuisXSecPiLessDelta)) bestfit_xsec_pilessdelta = fparm->BestFitValue(conv::kNuisXSecPiLessDelta);
+      if(fparm->Exists(conv::kNuisXSecENuShape)) bestfit_xsec_enushape = fparm->BestFitValue(conv::kNuisXSecENuShape);
       if(fparm->Exists(conv::kNuisXSecNormCCcoh)) bestfit_xsec_normcccoh = fparm->BestFitValue(conv::kNuisXSecNormCCcoh);
       if(fparm->Exists(conv::kNuisXSecNormNC1piC)) bestfit_xsec_normnc1piC = fparm->BestFitValue(conv::kNuisXSecNormNC1piC);
       if(fparm->Exists(conv::kNuisXSecNormNCcoh)) bestfit_xsec_normnccoh = fparm->BestFitValue(conv::kNuisXSecNormNCcoh);
@@ -1509,7 +1509,7 @@ void test_n_mock_data_fits_with_syst
       if(fparm->Exists(conv::kNuisBANFFCCQEE0)) errp_banff_ccqeE0 = fparm->PlusError(conv::kNuisBANFFCCQEE0);
       if(fparm->Exists(conv::kNuisBANFFCC1piE0)) errp_banff_cc1piE0 = fparm->PlusError(conv::kNuisBANFFCC1piE0);
       if(fparm->Exists(conv::kNuisXSecSpecFunc)) errp_xsec_sf = fparm->PlusError(conv::kNuisXSecSpecFunc);
-      if(fparm->Exists(conv::kNuisXSecPiLessDelta)) errp_xsec_cc1pishape = fparm->PlusError(conv::kNuisXSecPiLessDelta);
+      if(fparm->Exists(conv::kNuisXSecPiLessDelta)) errp_xsec_pilessdelta = fparm->PlusError(conv::kNuisXSecPiLessDelta);
       if(fparm->Exists(conv::kNuisSuperkEff1RmuCCnonQE)) errp_skdet_ccnqe = fparm->PlusError(conv::kNuisSuperkEff1RmuCCnonQE);
       if(fparm->Exists(conv::kNuisSuperkEff1RmuNC)) errp_skdet_nc = fparm->PlusError(conv::kNuisSuperkEff1RmuNC);
     }
@@ -1557,7 +1557,7 @@ void test_n_mock_data_fits_with_syst
       if(fparm->Exists(conv::kNuisXSecSpecFunc)) errp_xsec_sf = fparm->PlusError(conv::kNuisXSecSpecFunc);
       if(fparm->Exists(conv::kNuisXSecWshape)) errp_xsec_wshape = fparm->PlusError(conv::kNuisXSecWshape);
       if(fparm->Exists(conv::kNuisXSecShapeCCoth)) errp_xsec_ccothshape = fparm->PlusError(conv::kNuisXSecShapeCCoth);
-      if(fparm->Exists(conv::kNuisXSecPiLessDelta)) errp_xsec_cc1pishape = fparm->PlusError(conv::kNuisXSecPiLessDelta);
+      if(fparm->Exists(conv::kNuisXSecPiLessDelta)) errp_xsec_pilessdelta = fparm->PlusError(conv::kNuisXSecPiLessDelta);
       if(fparm->Exists(conv::kNuisXSecENuShape)) errp_xsec_pilessdelta = fparm->PlusError(conv::kNuisXSecENuShape);
       if(fparm->Exists(conv::kNuisXSecNormCCcoh)) errp_xsec_normcccoh = fparm->PlusError(conv::kNuisXSecNormCCcoh);
       if(fparm->Exists(conv::kNuisXSecNormNC1piC)) errp_xsec_normnc1piC = fparm->PlusError(conv::kNuisXSecNormNC1piC);
@@ -1609,7 +1609,7 @@ void test_n_mock_data_fits_with_syst
       if(fparm->Exists(conv::kNuisBANFFCCQEE0)) errm_banff_ccqeE0 = fparm->MinusError(conv::kNuisBANFFCCQEE0);
       if(fparm->Exists(conv::kNuisBANFFCC1piE0)) errm_banff_cc1piE0 = fparm->MinusError(conv::kNuisBANFFCC1piE0);
       if(fparm->Exists(conv::kNuisXSecSpecFunc)) errm_xsec_sf = fparm->MinusError(conv::kNuisXSecSpecFunc);
-      if(fparm->Exists(conv::kNuisXSecPiLessDelta)) errm_xsec_cc1pishape = fparm->MinusError(conv::kNuisXSecPiLessDelta);
+      if(fparm->Exists(conv::kNuisXSecPiLessDelta)) errm_xsec_pilessdelta = fparm->MinusError(conv::kNuisXSecPiLessDelta);
       if(fparm->Exists(conv::kNuisSuperkEff1RmuCCnonQE)) errm_skdet_ccnqe = fparm->MinusError(conv::kNuisSuperkEff1RmuCCnonQE);
       if(fparm->Exists(conv::kNuisSuperkEff1RmuNC)) errm_skdet_nc = fparm->MinusError(conv::kNuisSuperkEff1RmuNC);
     }
@@ -1657,8 +1657,8 @@ void test_n_mock_data_fits_with_syst
       if(fparm->Exists(conv::kNuisXSecSpecFunc)) errm_xsec_sf = fparm->MinusError(conv::kNuisXSecSpecFunc);
       if(fparm->Exists(conv::kNuisXSecWshape)) errm_xsec_wshape = fparm->MinusError(conv::kNuisXSecWshape);
       if(fparm->Exists(conv::kNuisXSecShapeCCoth)) errm_xsec_ccothshape = fparm->MinusError(conv::kNuisXSecShapeCCoth);
-      if(fparm->Exists(conv::kNuisXSecPiLessDelta)) errm_xsec_cc1pishape = fparm->MinusError(conv::kNuisXSecPiLessDelta);
-      if(fparm->Exists(conv::kNuisXSecENuShape)) errm_xsec_pilessdelta = fparm->MinusError(conv::kNuisXSecENuShape);
+      if(fparm->Exists(conv::kNuisXSecPiLessDelta)) errm_xsec_pilessdelta = fparm->MinusError(conv::kNuisXSecPiLessDelta);
+      if(fparm->Exists(conv::kNuisXSecENuShape)) errm_xsec_enushape = fparm->MinusError(conv::kNuisXSecENuShape);
       if(fparm->Exists(conv::kNuisXSecNormCCcoh)) errm_xsec_normcccoh = fparm->MinusError(conv::kNuisXSecNormCCcoh);
       if(fparm->Exists(conv::kNuisXSecNormNC1piC)) errm_xsec_normnc1piC = fparm->MinusError(conv::kNuisXSecNormNC1piC);
       if(fparm->Exists(conv::kNuisXSecNormNCcoh)) errm_xsec_normnccoh = fparm->MinusError(conv::kNuisXSecNormNCcoh);
@@ -1709,7 +1709,7 @@ void test_n_mock_data_fits_with_syst
       if(fparm->Exists(conv::kNuisBANFFCCQEE0)) errpar_banff_ccqeE0 = fparm->ParabolicError(conv::kNuisBANFFCCQEE0);
       if(fparm->Exists(conv::kNuisBANFFCC1piE0)) errpar_banff_cc1piE0 = fparm->ParabolicError(conv::kNuisBANFFCC1piE0);
       if(fparm->Exists(conv::kNuisXSecSpecFunc)) errpar_xsec_sf = fparm->ParabolicError(conv::kNuisXSecSpecFunc);
-      if(fparm->Exists(conv::kNuisXSecPiLessDelta)) errpar_xsec_cc1pishape = fparm->ParabolicError(conv::kNuisXSecPiLessDelta);
+      if(fparm->Exists(conv::kNuisXSecPiLessDelta)) errpar_xsec_pilessdelta = fparm->ParabolicError(conv::kNuisXSecPiLessDelta);
       if(fparm->Exists(conv::kNuisSuperkEff1RmuCCnonQE)) errpar_skdet_ccnqe = fparm->ParabolicError(conv::kNuisSuperkEff1RmuCCnonQE);
       if(fparm->Exists(conv::kNuisSuperkEff1RmuNC)) errpar_skdet_nc = fparm->ParabolicError(conv::kNuisSuperkEff1RmuNC);
     }
@@ -1757,8 +1757,8 @@ void test_n_mock_data_fits_with_syst
       if(fparm->Exists(conv::kNuisXSecSpecFunc)) errpar_xsec_sf = fparm->ParabolicError(conv::kNuisXSecSpecFunc);
       if(fparm->Exists(conv::kNuisXSecWshape)) errpar_xsec_wshape = fparm->ParabolicError(conv::kNuisXSecWshape);
       if(fparm->Exists(conv::kNuisXSecShapeCCoth)) errpar_xsec_ccothshape = fparm->ParabolicError(conv::kNuisXSecShapeCCoth);
-      if(fparm->Exists(conv::kNuisXSecPiLessDelta)) errpar_xsec_cc1pishape = fparm->ParabolicError(conv::kNuisXSecPiLessDelta);
-      if(fparm->Exists(conv::kNuisXSecENuShape)) errpar_xsec_pilessdelta = fparm->ParabolicError(conv::kNuisXSecENuShape);
+      if(fparm->Exists(conv::kNuisXSecPiLessDelta)) errpar_xsec_pilessdelta = fparm->ParabolicError(conv::kNuisXSecPiLessDelta);
+      if(fparm->Exists(conv::kNuisXSecENuShape)) errpar_xsec_enushape = fparm->ParabolicError(conv::kNuisXSecENuShape);
       if(fparm->Exists(conv::kNuisXSecNormCCcoh)) errpar_xsec_normcccoh = fparm->ParabolicError(conv::kNuisXSecNormCCcoh);
       if(fparm->Exists(conv::kNuisXSecNormNC1piC)) errpar_xsec_normnc1piC = fparm->ParabolicError(conv::kNuisXSecNormNC1piC);
       if(fparm->Exists(conv::kNuisXSecNormNCcoh)) errpar_xsec_normnccoh = fparm->ParabolicError(conv::kNuisXSecNormNCcoh);
@@ -1801,16 +1801,30 @@ void test_n_mock_data_fits_with_syst
     fitter->Analyze(output_option.c_str());
 
     if ( store_withsyst_chisq_surf) {
-      double mixing23_min  = 0.8;//fparm->MinValue(conv::kPhypMixing23);
+
+      //set up binning
+      double mixing23_min  = fparm->MinValue(conv::kPhypMixing23);
       double mixing23_max  = fparm->MaxValue(conv::kPhypMixing23);
       double mixing23_step = fparm->StepSize(conv::kPhypMixing23);
-      double dm23sq_min    = 1.5E-3;//fparm->MinValue(conv::kPhypDm23sq);
-      double dm23sq_max    = 3.5E-3;//fparm->MaxValue(conv::kPhypDm23sq);
+      double dm23sq_min    = fparm->MinValue(conv::kPhypDm23sq);
+      double dm23sq_max    = fparm->MaxValue(conv::kPhypDm23sq);
       double dm23sq_step   = fparm->StepSize(conv::kPhypDm23sq);
+
+      mixing23_min = 0.8;
+      dm23sq_min = 1.5E-3;
+      dm23sq_max = 3.5E-3;
+
+      mixing23_min = 0.92;
+      dm23sq_min = 2.2E-3;
+      dm23sq_max = 2.8E-3;
 
       // make sure that min and max are at the bin centre
       int mixing23_nbins = 1 + (int) ((mixing23_max - mixing23_min) / mixing23_step);
       int dm23sq_nbins   = 1 + (int) ((dm23sq_max -   dm23sq_min )  / dm23sq_step );
+
+      //FIRST
+      // Use the 7 best-fit systematics, the N-7 nominal systematics, loop over oscillation params and calculate chisq (this is the chisq surface
+      // without systematics). The chisq at the minimum is the chisq_min. Calculate the deltachisq surface.
 
       TH2D * chisq_surface = new TH2D("chisq_surface","#chi^{2} surface",
 		mixing23_nbins, mixing23_min - 0.5*mixing23_step, mixing23_max + 0.5*mixing23_step,
@@ -1834,13 +1848,82 @@ void test_n_mock_data_fits_with_syst
       dchisq_surface->GetYaxis()->SetTitleSize(0.05);
       dchisq_surface->GetXaxis()->SetTitleSize(0.05);
 
-      // Do the fit
+      //make sure that the systematics are set at their bestfit value
+      fparm->Update( conv::kNuisBANFFMAQE,       bestfit_banff_maqe   );
+      fparm->Update( conv::kNuisBANFFCCQEE0,     bestfit_banff_ccqeE0   );
+      fparm->Update( conv::kNuisBANFFCC1piE0,    bestfit_banff_cc1piE0   );
+      fparm->Update( conv::kNuisXSecSpecFunc,    bestfit_xsec_sf   );
+      fparm->Update( conv::kNuisXSecPiLessDelta, bestfit_xsec_pilessdelta   );
+      fparm->Update( conv::kNuisSuperkEff1RmuCCnonQE,   bestfit_skdet_ccnqe   );
+      fparm->Update( conv::kNuisSuperkEff1RmuNC, bestfit_skdet_nc   );
+
+      //Get the chisq surface
       double nfits_done = 0;
       double nfits_all  = chisq_surface->GetNbinsX() * chisq_surface->GetNbinsY();
       for(int i = 1; i <= chisq_surface->GetNbinsX(); i++) {
 	for(int j = 1; j <= chisq_surface->GetNbinsY(); j++) {
 	  double mixing23 = chisq_surface->GetXaxis()->GetBinCenter(i);
 	  double dm23sq   = chisq_surface->GetYaxis()->GetBinCenter(j);
+	  cout << "> Making chisq surface, fixing Dm23sq := " << dm23sq << " eV^2 and mixing23 := " << mixing23 << endl;
+	  fparm->Update( conv::kPhypMixing23, mixing23 );
+	  fparm->Update( conv::kPhypDm23sq,   dm23sq   );
+	  double chisq = fit_inputs->Chisquare();
+	  chisq_surface->SetBinContent(i,j,chisq);
+	  nfits_done += 1;
+	}
+	cout << "> ..... " << 100*nfits_done/nfits_all << "% done" << endl;
+      }
+
+      //Get the min(chisq)
+      double min_chisq = chisq_surface->GetBinContent(chisq_surface->GetMinimumBin());
+      
+      //Fill delta(chisq) surface
+      for(int i = 1; i <= chisq_surface->GetNbinsX(); i++) {
+	for(int j = 1; j <= chisq_surface->GetNbinsY(); j++) {
+	  double chi = chisq_surface->GetBinContent(i,j);
+	  dchisq_surface->SetBinContent(i,j, chi - min_chisq);
+	}
+      }
+
+      //save
+      chisq_surface  -> SetName(Form("chisq_surface_1Rmu_%d",iexperiment));
+      dchisq_surface -> SetName(Form("dchisq_surface_1Rmu_%d",iexperiment));
+      f.cd();
+      chisq_surface ->Write();
+      dchisq_surface->Write();
+
+      //NEXT
+      //Loop over oscillation param bins, fix oscillation params and fit for the 7 systematics (*note* that was N before).
+      //This will give lower chisq than before so you can calculate by how much you need to correct the deltachisq surface
+
+      TH2D * chisq_surface_syst = new TH2D("chisq_surface_syst","#chi^{2} surface",
+		mixing23_nbins, mixing23_min - 0.5*mixing23_step, mixing23_max + 0.5*mixing23_step,
+		dm23sq_nbins, dm23sq_min - 0.5*dm23sq_step, dm23sq_max + 0.5*dm23sq_step);
+      chisq_surface_syst->SetDirectory(0);
+      chisq_surface_syst->GetXaxis()->SetRangeUser(0.,1.);
+      chisq_surface_syst->GetXaxis()->SetTitle("sin^{2}(2#theta_{23})");
+      chisq_surface_syst->GetYaxis()->SetTitle("|#Deltam_{32}^{2}| (eV^{2}/c^{4})");
+      chisq_surface_syst->GetYaxis()->SetTitleOffset(1);
+      chisq_surface_syst->GetYaxis()->SetTitleSize(0.05);
+      chisq_surface_syst->GetXaxis()->SetTitleSize(0.05);
+
+      TH2D * dchisq_surface_syst = new TH2D("dchisq_surface_syst","#Delta#chi^{2} surface",
+		mixing23_nbins, mixing23_min - 0.5*mixing23_step, mixing23_max + 0.5*mixing23_step,
+		dm23sq_nbins, dm23sq_min - 0.5*dm23sq_step, dm23sq_max + 0.5*dm23sq_step);
+      dchisq_surface_syst->SetDirectory(0);
+      dchisq_surface_syst->GetXaxis()->SetRangeUser(0.,1.);
+      dchisq_surface_syst->GetXaxis()->SetTitle("sin^{2}(2#theta_{23})");
+      dchisq_surface_syst->GetYaxis()->SetTitle("|#Deltam_{32}^{2}| (eV^{2}/c^{4})");
+      dchisq_surface_syst->GetYaxis()->SetTitleOffset(1);
+      dchisq_surface_syst->GetYaxis()->SetTitleSize(0.05);
+      dchisq_surface_syst->GetXaxis()->SetTitleSize(0.05);
+
+      // Get the chisq surface with systematics (fit for systematics at every point)
+      nfits_done = 0;
+      for(int i = 1; i <= chisq_surface_syst->GetNbinsX(); i++) {
+	for(int j = 1; j <= chisq_surface_syst->GetNbinsY(); j++) {
+	  double mixing23 = chisq_surface_syst->GetXaxis()->GetBinCenter(i);
+	  double dm23sq   = chisq_surface_syst->GetYaxis()->GetBinCenter(j);
 	  cout << "> Fit for systematics, fixing Dm23sq := " << dm23sq << " eV^2 and mixing23 := " << mixing23 << endl;
 	  //          cout << *fparm;
 	  //          cout << "Resetting current to the initial values" << endl;
@@ -1863,8 +1946,8 @@ void test_n_mock_data_fits_with_syst
 	  FitterABC * fitter2 = new Superk1RmuErecoFitter(fit_inputs,fit_option);
 	  fitter2->DoTheFit();
 	  double chisq = fit_inputs2->Chisquare();
-	  chisq_surface->SetBinContent(i,j,chisq);
-	  dchisq_surface->SetBinContent(i,j,chisq-bestfit_chisq);
+	  chisq_surface_syst->SetBinContent(i,j,chisq);
+	  dchisq_surface_syst->SetBinContent(i,j, chisq - min_chisq);
 	  //if(fparm->CurrValue(conv::kPhypMixing23) != mixing23 || fparm->CurrValue(conv::kPhypDm23sq) != dm23sq) {}
 	  delete fitter2;
 	  delete fit_inputs2;
@@ -1872,11 +1955,36 @@ void test_n_mock_data_fits_with_syst
           cout << "> ..... " << 100*nfits_done/nfits_all << "% done" << endl;
 	}//j
       }//i
-      chisq_surface  -> SetName(Form("chisq_withsyst_surface_1Rmu_%d",iexperiment));
-      dchisq_surface -> SetName(Form("dchisq_withsyst_surface_1Rmu_%d",iexperiment));
+
+      //Check the min(chisq)
+      double min_chisq_syst = chisq_surface_syst->GetBinContent(chisq_surface_syst->GetMinimumBin());
+      cout << "Minima of the 2 chisq surface should agree: " << min_chisq << "\t" << min_chisq_syst << endl;
+
+      //save
+      chisq_surface_syst  -> SetName(Form("chisq_surface_syst_1Rmu_%d",iexperiment));
+      dchisq_surface_syst -> SetName(Form("dchisq_surface_syst_1Rmu_%d",iexperiment));
       f.cd();
-      chisq_surface ->Write();
-      dchisq_surface->Write();
+      chisq_surface_syst ->Write();
+      dchisq_surface_syst->Write();
+
+      //FINALLY
+      //correct the dchisq surface, using the dchisq surface with syst
+      TH2D * dchisq_surface_corr = new TH2D("dchisq_surface_corr","#Delta#chi^{2} surface",
+		mixing23_nbins, mixing23_min - 0.5*mixing23_step, mixing23_max + 0.5*mixing23_step,
+		dm23sq_nbins, dm23sq_min - 0.5*dm23sq_step, dm23sq_max + 0.5*dm23sq_step);
+      dchisq_surface_corr->SetDirectory(0);
+      dchisq_surface_corr->GetXaxis()->SetRangeUser(0.,1.);
+      dchisq_surface_corr->GetXaxis()->SetTitle("sin^{2}(2#theta_{23})");
+      dchisq_surface_corr->GetYaxis()->SetTitle("|#Deltam_{32}^{2}| (eV^{2}/c^{4})");
+      dchisq_surface_corr->GetYaxis()->SetTitleOffset(1);
+      dchisq_surface_corr->GetYaxis()->SetTitleSize(0.05);
+      dchisq_surface_corr->GetXaxis()->SetTitleSize(0.05);
+
+      //save
+      dchisq_surface_corr -> SetName(Form("dchisq_surface_corr_1Rmu_%d",iexperiment));
+      f.cd();
+      dchisq_surface_corr->Write();
+
     }    
 
     // Store toy-MC expt (if asked)

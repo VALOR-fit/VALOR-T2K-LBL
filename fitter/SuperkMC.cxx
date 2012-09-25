@@ -825,10 +825,12 @@ void SuperkMC::ApplySystematicsToTemplates_NonMultiplicative(void)
                  for(int it = 1; it <= mctempl->GetYaxis()->GetNbins(); it++) {
                       // calculate how many events from nominal bin ir get lost to bin ir'
                       double n  = mctempl_no_ereco_scale->GetBinContent(ir, it);
-                      double dn = n * overlap / (bin_max-bin_min); ///< (orerlap) * (nominal # of events) / (bin width)
-                      dn = TMath::Min(dn,n);
+                      double dn = n * overlap / (bin_max-bin_min); ///< (overlap) * (nominal # of events) / (bin width)
                       // update the systematically varied templates
-                      mctempl->SetBinContent(ir, it, mctempl->GetBinContent(ir,  it) - dn);
+		      double minus_events = mctempl->GetBinContent(ir,  it) - dn;
+		      if(minus_events < 0) minus_events = kSetNegEventsTo;
+                      mctempl->SetBinContent(ir, it, minus_events);
+                      dn = TMath::Min(dn,n);
                       mctempl->SetBinContent(irp,it, mctempl->GetBinContent(irp, it) + dn);
                  }//it
               }//irp
@@ -864,10 +866,13 @@ void SuperkMC::ApplySystematicsToTemplates_NonMultiplicative(void)
                  for(int it = 1; it <= mctempl->GetYaxis()->GetNbins(); it++) {
                       // calculate how many events from nominal bin ir get lost to bin ir'
                       double n  = mctempl_no_ereco_scale->GetBinContent(ir, it);
-                      double dn = n * overlap / (bin_max-bin_min); ///< (orerlap) * (nominal # of events) / (bin width)
-                      dn = TMath::Min(dn,n);
+                      double dn = n * overlap / (bin_max-bin_min); ///< (overlap) * (nominal # of events) / (bin width)
+                      //dn = TMath::Min(dn,n);
                       // update the systematically varied templates
-                      mctempl->SetBinContent(ir, it, mctempl->GetBinContent(ir,  it) - dn);
+		      double minus_events = mctempl->GetBinContent(ir,  it) - dn;
+		      if(minus_events < 0) minus_events = kSetNegEventsTo;
+                      mctempl->SetBinContent(ir, it, minus_events);
+                      dn = TMath::Min(dn,n);
                       mctempl->SetBinContent(irp,it, mctempl->GetBinContent(irp, it) + dn);
                  }//it
               }//irp
