@@ -6,6 +6,14 @@
 // One can assemble all such text files and produce the `star plot'.
 //
 // The input (systematic) string can be:
+//
+//      - osc_mixing12
+//      - osc_mixing13
+//      - osc_dm12sq
+//      - osc_deltacp
+//
+//      - stat
+//
 //	- sk_energy_scale 
 //	- sk_1Rmu_ccqe_other_eff
 //	- sk_1Rmu_ccqe_ring_counting_eff : 
@@ -128,6 +136,10 @@ void test_bestfit_point_shift_due_to_syst_twk
   }
 
   bool fluctuate_stat = false; // <- don't fluctuate, best-fit point shift is purely due to systematic tweak
+  int nexp = 10; // how many experiments to run (when running stat)
+  if(sys.find("stat") == 0) {
+    fluctuate_stat = true;
+  }
 
   // Print options
   cout << "\n[Job inputs]" << endl;
@@ -155,7 +167,7 @@ void test_bestfit_point_shift_due_to_syst_twk
   SuperkObservation * skobs = 0;
   FitInputs * fit_inputs = 0;
   FitterABC * fitter = 0;
-
+  
   //
   //
   // +1 sigma (relative to tuned BANFF)
@@ -176,6 +188,33 @@ void test_bestfit_point_shift_due_to_syst_twk
     skexp->TweakSystematic(systematic, 1 + (1 * sqrt(skexp->GetFSI()->CovMatrix()(ip,ip))));
     skexp->GetFSI()->PrintSystematicVariations();
   }
+  else if(sys.find("osc_mixing12") == 0) {
+    double tweak_mixing12 = input_mixing12 + conv::kGlobFitErrSinsq2Theta12;
+    if(tweak_mixing12 >  fparm->MaxValue(conv::kPhypMixing12)) tweak_mixing12 = fparm->MaxValue(conv::kPhypMixing12);
+    if(tweak_mixing12 <  fparm->MinValue(conv::kPhypMixing12)) tweak_mixing12 = fparm->MinValue(conv::kPhypMixing12);
+    fparm->Update(conv::kPhypMixing12, tweak_mixing12);
+  }
+  else if(sys.find("osc_mixing13") == 0) {
+    double tweak_mixing13 = input_mixing13 + conv::kGlobFitErrSinsq2Theta13;
+    if(tweak_mixing13 >  fparm->MaxValue(conv::kPhypMixing13)) tweak_mixing13 = fparm->MaxValue(conv::kPhypMixing13);
+    if(tweak_mixing13 <  fparm->MinValue(conv::kPhypMixing13)) tweak_mixing13 = fparm->MinValue(conv::kPhypMixing13);
+    fparm->Update(conv::kPhypMixing13, tweak_mixing13);
+  }
+  else if(sys.find("osc_dm12sq") == 0) {
+    double tweak_dm12sq = input_dm12sq + conv::kGlobFitErrSinsq2Theta12;
+    if(tweak_dm12sq >  fparm->MaxValue(conv::kPhypDm12sq)) tweak_dm12sq = fparm->MaxValue(conv::kPhypDm12sq);
+    if(tweak_dm12sq <  fparm->MinValue(conv::kPhypDm12sq)) tweak_dm12sq = fparm->MinValue(conv::kPhypDm12sq);
+    fparm->Update(conv::kPhypDeltaCP, tweak_dm12sq);
+  }
+  else if(sys.find("osc_deltacp") == 0) {
+    double tweak_deltacp = input_deltacp + conv::kGlobFitErrDeltaCP;
+    if(tweak_deltacp >  fparm->MaxValue(conv::kPhypDeltaCP)) tweak_deltacp = fparm->MaxValue(conv::kPhypDeltaCP);
+    if(tweak_deltacp <  fparm->MinValue(conv::kPhypDeltaCP)) tweak_deltacp = fparm->MinValue(conv::kPhypDeltaCP);
+    fparm->Update(conv::kPhypDm12sq, tweak_deltacp);
+  }
+  else if(sys.find("stat") == 0) {
+    cout << endl; // do nothing
+  }
   else {
     skexp->TweakSystematic(systematic,+1.);
   }
@@ -187,6 +226,7 @@ void test_bestfit_point_shift_due_to_syst_twk
   cout << "Generating toy-MC..." << endl;
   cout << "p.d.f parameters: " << endl;
   skexp->PrintSystematicVariations();
+
   skobs = new SuperkObservation;
   skobs->CreateMockData(*skexp, *fparm, fluctuate_stat);
 
@@ -198,7 +238,8 @@ void test_bestfit_point_shift_due_to_syst_twk
   fitter = new Superk1RmuErecoFitter(fit_inputs,fit_option);
 
   // Do the fit
-  fitter->DoTheFit();
+  if(sys.find("stat") != 0)
+    fitter->DoTheFit();
 
   // Store best-fit params
   double bestfit_mixing12_p1sig = -1;
@@ -208,18 +249,17 @@ void test_bestfit_point_shift_due_to_syst_twk
   double bestfit_dm12sq_p1sig   = -1;
   double bestfit_dm23sq_p1sig   = -1;
   if(hyp == conv::kHypOsc3F) {
-     bestfit_mixing12_p1sig = fparm->BestFitValue(conv::kPhypMixing12);
-     bestfit_mixing13_p1sig = fparm->BestFitValue(conv::kPhypMixing13);
-     bestfit_mixing23_p1sig = fparm->BestFitValue(conv::kPhypMixing23);
-     bestfit_deltacp_p1sig  = fparm->BestFitValue(conv::kPhypDeltaCP);
-     bestfit_dm12sq_p1sig   = fparm->BestFitValue(conv::kPhypDm12sq);
-     bestfit_dm23sq_p1sig   = fparm->BestFitValue(conv::kPhypDm23sq);
+    bestfit_mixing12_p1sig = fparm->BestFitValue(conv::kPhypMixing12);
+    bestfit_mixing13_p1sig = fparm->BestFitValue(conv::kPhypMixing13);
+    bestfit_mixing23_p1sig = fparm->BestFitValue(conv::kPhypMixing23);
+    bestfit_deltacp_p1sig  = fparm->BestFitValue(conv::kPhypDeltaCP);
+    bestfit_dm12sq_p1sig   = fparm->BestFitValue(conv::kPhypDm12sq);
+    bestfit_dm23sq_p1sig   = fparm->BestFitValue(conv::kPhypDm23sq);
   } else
-  if(hyp == conv::kHypNuMuDisapp2F) {
-     bestfit_mixing23_p1sig = fparm->BestFitValue(conv::kPhypMixing23);
-     bestfit_dm23sq_p1sig   = fparm->BestFitValue(conv::kPhypDm23sq);
-  }
-
+    if(hyp == conv::kHypNuMuDisapp2F) {
+      bestfit_mixing23_p1sig = fparm->BestFitValue(conv::kPhypMixing23);
+      bestfit_dm23sq_p1sig   = fparm->BestFitValue(conv::kPhypDm23sq);
+    }
 
   // Clean-up in preparation for the -1 sigma fit
   delete skobs;
@@ -233,7 +273,6 @@ void test_bestfit_point_shift_due_to_syst_twk
   // -1 sigma (relative to tuned BANFF)
   //
   //
-
   cout << "\n\nApplying -1 sigma tweak" << endl;
   if(sys.find("banff_") == 0) {
     conv::PhysParamId_t p = util::PhysParamIdFromString(systematic);
@@ -247,6 +286,33 @@ void test_bestfit_point_shift_due_to_syst_twk
     int ip = util::ArrIdx::Instance()->FSISystIdx(p);
     skexp->TweakSystematic(systematic, 1 + (-1 * sqrt(skexp->GetFSI()->CovMatrix()(ip,ip))));
     skexp->GetFSI()->PrintSystematicVariations();
+  }
+  else if(sys.find("osc_mixing12") == 0) {
+    double tweak_mixing12 = input_mixing12 - conv::kGlobFitErrSinsq2Theta12;
+    if(tweak_mixing12 >  fparm->MaxValue(conv::kPhypMixing12)) tweak_mixing12 = fparm->MaxValue(conv::kPhypMixing12);
+    if(tweak_mixing12 <  fparm->MinValue(conv::kPhypMixing12)) tweak_mixing12 = fparm->MinValue(conv::kPhypMixing12);
+    fparm->Update(conv::kPhypMixing12, tweak_mixing12);
+  }
+  else if(sys.find("osc_mixing13") == 0) {
+    double tweak_mixing13 = input_mixing13 - conv::kGlobFitErrSinsq2Theta13;
+    if(tweak_mixing13 >  fparm->MaxValue(conv::kPhypMixing13)) tweak_mixing13 = fparm->MaxValue(conv::kPhypMixing13);
+    if(tweak_mixing13 <  fparm->MinValue(conv::kPhypMixing13)) tweak_mixing13 = fparm->MinValue(conv::kPhypMixing13);
+    fparm->Update(conv::kPhypMixing13, tweak_mixing13);
+  }
+  else if(sys.find("osc_dm12sq") == 0) {
+    double tweak_dm12sq = input_dm12sq - conv::kGlobFitErrSinsq2Theta12;
+    if(tweak_dm12sq >  fparm->MaxValue(conv::kPhypDm12sq)) tweak_dm12sq = fparm->MaxValue(conv::kPhypDm12sq);
+    if(tweak_dm12sq <  fparm->MinValue(conv::kPhypDm12sq)) tweak_dm12sq = fparm->MinValue(conv::kPhypDm12sq);
+    fparm->Update(conv::kPhypDeltaCP, tweak_dm12sq);
+  }
+  else if(sys.find("osc_deltacp") == 0) {
+    double tweak_deltacp = input_deltacp - conv::kGlobFitErrDeltaCP;
+    if(tweak_deltacp >  fparm->MaxValue(conv::kPhypDeltaCP)) tweak_deltacp = fparm->MaxValue(conv::kPhypDeltaCP);
+    if(tweak_deltacp <  fparm->MinValue(conv::kPhypDeltaCP)) tweak_deltacp = fparm->MinValue(conv::kPhypDeltaCP);
+    fparm->Update(conv::kPhypDm12sq, tweak_deltacp);
+  }
+  else if(sys.find("stat") == 0) {
+    cout << endl; // do nothing
   }
   else {
     skexp->TweakSystematic(systematic,-1.);
@@ -270,6 +336,7 @@ void test_bestfit_point_shift_due_to_syst_twk
   fitter = new Superk1RmuErecoFitter(fit_inputs,fit_option);
 
   // Do the fit
+  if(sys.find("stat") != 0)
   fitter->DoTheFit();
 
   // Store best-fit params
@@ -293,31 +360,100 @@ void test_bestfit_point_shift_due_to_syst_twk
   }
 
 
-  // Clean-up in preparation for the -1 sigma fit
-  delete skexp;
+  // Clean-up in preparation for exiting
   delete skobs;
   delete fit_inputs;
   delete fitter;
+  skexp->ResetSystematicVariations();
+
+  //
+  // many experiments if doing stat error
+  //
+  // Setup best-fit params holder
+  double bestfit_mixing12_stat = 0;
+  double bestfit_mixing13_stat = 0;
+  double bestfit_mixing23_stat = 0;
+  double bestfit_deltacp_stat  = 0;
+  double bestfit_dm12sq_stat   = 0;
+  double bestfit_dm23sq_stat   = 0;
+
+  if(sys.find("stat") == 0) {
+    for(int iexp = 0; iexp < nexp; iexp++) {
+      // Reset systematic variation
+      skexp->ResetSystematicVariations();
+      // Generate toy MC
+      cout << "Generating toy-MC..." << endl;
+      cout << "p.d.f parameters: " << endl;
+      skobs = new SuperkObservation;
+      skobs->CreateMockData(*skexp, *fparm, fluctuate_stat);
+      // Get fitter
+      fit_inputs = new FitInputs(skobs,skexp,fparm);
+      fitter = new Superk1RmuErecoFitter(fit_inputs,fit_option);
+      // Do the fit
+      fitter->DoTheFit();
+
+      // Store best-fit params
+      if(hyp == conv::kHypOsc3F) {
+	bestfit_mixing12_stat += fparm->BestFitValue(conv::kPhypMixing12);
+	bestfit_mixing13_stat += fparm->BestFitValue(conv::kPhypMixing13);
+	bestfit_mixing23_stat += fparm->BestFitValue(conv::kPhypMixing23);
+	bestfit_deltacp_stat  += fparm->BestFitValue(conv::kPhypDeltaCP);
+	bestfit_dm12sq_stat   += fparm->BestFitValue(conv::kPhypDm12sq);
+	bestfit_dm23sq_stat   += fparm->BestFitValue(conv::kPhypDm23sq);
+      } else
+      if(hyp == conv::kHypNuMuDisapp2F) {
+	  bestfit_mixing23_stat += fparm->BestFitValue(conv::kPhypMixing23);
+	  bestfit_dm23sq_stat   += fparm->BestFitValue(conv::kPhypDm23sq);
+      }
+
+      // Clean-up in preparation for next exp
+      delete skobs;
+      delete fit_inputs;
+      delete fitter;
+    }//iexp
+    //get the stat error
+    bestfit_mixing12_stat /= nexp;
+    bestfit_mixing13_stat /= nexp;
+    bestfit_mixing23_stat /= nexp;
+    bestfit_deltacp_stat  /= nexp;
+    bestfit_dm12sq_stat   /= nexp;
+    bestfit_dm23sq_stat   /= nexp;
+
+    delete skexp;
+  }//stat
+
 
   // Write-out results
   ostringstream outfilename;
   outfilename << "star_plot_line-" << systematic << ".data";
   ofstream outfile;
   outfile.open(outfilename.str().c_str());
-  outfile << systematic 
-          << "\t" << bestfit_mixing12_p1sig 
-          << "\t" << bestfit_mixing13_p1sig 
-          << "\t" << bestfit_mixing23_p1sig 
-          << "\t" << bestfit_deltacp_p1sig  
-          << "\t" << bestfit_dm12sq_p1sig   
-          << "\t" << bestfit_dm23sq_p1sig   
-          << "\t" << bestfit_mixing12_m1sig 
-          << "\t" << bestfit_mixing13_m1sig 
-          << "\t" << bestfit_mixing23_m1sig 
-          << "\t" << bestfit_deltacp_m1sig  
-          << "\t" << bestfit_dm12sq_m1sig   
-          << "\t" << bestfit_dm23sq_m1sig   
-          << endl;
+  if(sys.find("stat") == 0) {
+    outfile << systematic 
+	    << endl << bestfit_mixing12_stat 
+	    << endl << bestfit_mixing13_stat 
+	    << endl << bestfit_mixing23_stat 
+	    << endl << bestfit_deltacp_stat  
+	    << endl << bestfit_dm12sq_stat   
+	    << endl << bestfit_dm23sq_stat   
+	    << endl;
+  }
+  else{
+    outfile << systematic 
+	    << "\t" << bestfit_mixing12_p1sig 
+	    << "\t" << bestfit_mixing13_p1sig 
+	    << "\t" << bestfit_mixing23_p1sig 
+	    << "\t" << bestfit_deltacp_p1sig  
+	    << "\t" << bestfit_dm12sq_p1sig   
+	    << "\t" << bestfit_dm23sq_p1sig   
+	    << "\t" << bestfit_mixing12_m1sig 
+	    << "\t" << bestfit_mixing13_m1sig 
+	    << "\t" << bestfit_mixing23_m1sig 
+	    << "\t" << bestfit_deltacp_m1sig  
+	    << "\t" << bestfit_dm12sq_m1sig   
+	    << "\t" << bestfit_dm23sq_m1sig   
+	    << endl;
+  }
   outfile.close();
 
   cout << "Done!" << endl;

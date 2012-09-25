@@ -44,7 +44,9 @@ void make_star_plot_for_disappearance_analysis
 (
   string       tweaked_toy_mc_expt_fit_data, /* merged outputs of test_bestfit_point_shift_due_to_syst_twk.C calls */
   double       true_mixing23,
-  double       true_dm23sq   
+  double       true_dm23sq,
+  double       kRmixing23,
+  double       kRdm23sq
 )
 {
   using namespace std;
@@ -54,13 +56,6 @@ void make_star_plot_for_disappearance_analysis
 
   if(true_dm23sq   < -1) true_dm23sq   = conv::kGlobFitDm23sq;
   if(true_mixing23 < -1) true_mixing23 = conv::kGlobFitSinsq2Theta23;
-
-  double kRdm23sq      = 1E-4; // adjust
-  double kRmixing23    = 0.011; // adjust
-  if(TMath::Abs(1.0-true_mixing23) < conv::kASmallNum) {
-    kRdm23sq   = 0.5E-4;
-    kRmixing23 = 0.004;
-  }
 
   //
   // Plot osc param frame
@@ -85,7 +80,7 @@ void make_star_plot_for_disappearance_analysis
        dm23sq_min - 0.5*dm23sq_step, 
        dm23sq_max + 0.5*dm23sq_step);
   osc_param_space->GetXaxis()->SetTitle("sin^{2}2#theta_{23}"); // adjust if mixing param is sinsqtheta rather than sinsq2theta...
-  osc_param_space->GetYaxis()->SetTitle("|#Deltam_{23}^{2}| (eV^{2}/c^{4})");
+  osc_param_space->GetYaxis()->SetTitle("|#Deltam_{32}^{2}| (eV^{2}/c^{4})");
   osc_param_space->GetXaxis()->SetTitleOffset(1.2);
   osc_param_space->GetYaxis()->SetTitleOffset(1.4);
   osc_param_space->GetXaxis()->CenterTitle();
