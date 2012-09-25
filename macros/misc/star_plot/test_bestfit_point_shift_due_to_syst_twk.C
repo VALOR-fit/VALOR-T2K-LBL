@@ -136,7 +136,7 @@ void test_bestfit_point_shift_due_to_syst_twk
   }
 
   bool fluctuate_stat = false; // <- don't fluctuate, best-fit point shift is purely due to systematic tweak
-  int nexp = 10; // how many experiments to run (when running stat)
+  int nexp = 1000; // how many experiments to run (when running stat)
   if(sys.find("stat") == 0) {
     fluctuate_stat = true;
   }
@@ -425,7 +425,10 @@ void test_bestfit_point_shift_due_to_syst_twk
 
   // Write-out results
   ostringstream outfilename;
-  outfilename << "star_plot_line-" << systematic << ".data";
+  if(sys.find("stat") == 0)
+    outfilename << systematic << ".data";
+  else
+    outfilename << "star_plot_line-" << systematic << ".data";
   ofstream outfile;
   outfile.open(outfilename.str().c_str());
   if(sys.find("stat") == 0) {

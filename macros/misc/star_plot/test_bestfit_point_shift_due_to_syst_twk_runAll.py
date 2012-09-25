@@ -124,7 +124,7 @@ for osc in oscparams:
 
          if syst == systematics[len(systematics)-1]:
 
-            file = open('star_plot_line-stat.data', 'r')
+            file = open('stat.data', 'r')
             file.readline()
             errmixing12 = file.readline().strip('\n')
             errmixing13 = file.readline().strip('\n')

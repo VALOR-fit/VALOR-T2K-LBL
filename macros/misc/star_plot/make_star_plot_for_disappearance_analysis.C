@@ -45,8 +45,8 @@ void make_star_plot_for_disappearance_analysis
   string       tweaked_toy_mc_expt_fit_data, /* merged outputs of test_bestfit_point_shift_due_to_syst_twk.C calls */
   double       true_mixing23,
   double       true_dm23sq,
-  double       kRmixing23,
-  double       kRdm23sq
+  double       stat_av_mixing23,
+  double       stat_av_dm23sq
 )
 {
   using namespace std;
@@ -62,11 +62,11 @@ void make_star_plot_for_disappearance_analysis
   //
 
   // dm23sq, mixing23 range and step
-  double mixing23_min   = 0.85;
-  double mixing23_max   = 1.;//0.95;
+  double mixing23_min   = 0.5;
+  double mixing23_max   = 1.;
   double mixing23_step  = 0.001;
-  double dm23sq_min     = 1.8E-3;
-  double dm23sq_max     = 2.8E-3;
+  double dm23sq_min     = 1E-3;
+  double dm23sq_max     = 4E-3;
   double dm23sq_step    = 1E-5;
   // make sure that min and max are at the bin centre and not at the low/high edge of the first/last bin
   int mixing23_nbins = 1 + (int) ((mixing23_max - mixing23_min) / mixing23_step);
@@ -107,6 +107,8 @@ void make_star_plot_for_disappearance_analysis
   true_point->Draw();
 
   //
+  double kRmixing23 = TMath::Abs(stat_av_mixing23 - true_mixing23);
+  double kRdm23sq   = TMath::Abs(stat_av_dm23sq   - true_dm23sq  );
   TEllipse * cut = new TEllipse(true_mixing23,true_dm23sq, kRmixing23, kRdm23sq);
   cut->SetLineWidth(kCutLineWidth);
   cut->SetLineStyle(kCutLineStyle);
@@ -231,6 +233,6 @@ void make_star_plot_for_disappearance_analysis
     osc_param_space->GetYaxis()->SetRangeUser(0.002395,0.002405);
     c->SaveAs(Form("%s-%f-%f_zoom2.png",group.c_str(),true_mixing23,true_dm23sq));
   }
-
+ 
   cout << "Done! " << endl;
 }
