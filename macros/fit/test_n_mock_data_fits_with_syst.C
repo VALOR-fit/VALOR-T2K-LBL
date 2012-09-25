@@ -806,6 +806,7 @@ void test_n_mock_data_fits_with_syst
 	twkv[ip] = twkdial(rand.Gaus(twkv[ip], cov[ip]));
 	ip       = util::ArrIdx::Instance()->BANFFSystIdx(kNuisBANFFCC1piE0);
 	twkv[ip] = twkdial(rand.Gaus(twkv[ip], cov[ip]));
+	skexp->GetBANFF()->Tweak(true,&twkv);
 	break;
       default:
 	cerr << "Invalid systematic mode " << syst_mode << ". Exiting" << endl;
