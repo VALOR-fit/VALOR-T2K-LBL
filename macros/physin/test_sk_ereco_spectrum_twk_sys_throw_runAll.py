@@ -58,3 +58,12 @@ for osc in oscparams:
             sys.exit(1)
         if update == "false":
             update = "true"
+
+        #don't forget the banff prefit
+        if mode == 1 or mode == 0:
+            command = 'root2k -l -b -q \'$T2KOSCANA/macros/physin/test_sk_ereco_spectrum_twk_sys_throw.C('+str(mode)+','+update+',"3f_osc",'+str(osc[0])+','+str(osc[1])+','+str(osc[2])+','+str(osc[3])+','+str(osc[4])+','+str(osc[5])+','+save_toy_expts+',"analysis_configuration_prefitbanff.xml")\''
+            print command
+            if os.system(command) == 1:
+                sys.exit(1)
+
+            

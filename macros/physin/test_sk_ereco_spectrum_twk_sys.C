@@ -53,6 +53,11 @@
 // ...
 // 400+kNumOfFSIParams tweak last fsi parameter
 //
+// SPECIAL COMPARISON TWEAKS
+// 500 ring counting 0 + other
+// 501 ring counting 1 + other
+// 502 ring counting 2 + other
+//
 //
 // Tom Dealtry
 // ------------------------------------------------------------------------------------------------
@@ -152,6 +157,13 @@ void test_sk_ereco_spectrum_twk_sys
       modetitle = "sk_1Rmu_ccqe_ring_counting_eff_1"; break;
     case 307:
       modetitle = "sk_1Rmu_ccqe_ring_counting_eff_2"; break;
+
+    case 500:
+      modetitle = "sk_1Rmu_ccqe_ring_counting_eff_0+other"; break;
+    case 501:
+      modetitle = "sk_1Rmu_ccqe_ring_counting_eff_1+other"; break;
+    case 502:
+      modetitle = "sk_1Rmu_ccqe_ring_counting_eff_2+other"; break;
 
     default:
       if(mode >= 100 && mode < 100+conv::kNumOfParamsInBANFFfit) {
@@ -416,6 +428,16 @@ void test_sk_ereco_spectrum_twk_sys
         case 306:
 	  skexp.TweakSystematic("sk_1Rmu_ccqe_ring_counting_eff_1",tweak); break;
         case 307:
+	  skexp.TweakSystematic("sk_1Rmu_ccqe_ring_counting_eff_2",tweak); break;
+
+        case 500: 
+	  skexp.TweakSystematic("sk_energy_scale",tweak);
+	  skexp.TweakSystematic("sk_1Rmu_ccqe_ring_counting_eff_0",tweak); break;
+        case 501: 
+	  skexp.TweakSystematic("sk_energy_scale",tweak);
+	  skexp.TweakSystematic("sk_1Rmu_ccqe_ring_counting_eff_1",tweak); break;
+        case 502: 
+	  skexp.TweakSystematic("sk_energy_scale",tweak);
 	  skexp.TweakSystematic("sk_1Rmu_ccqe_ring_counting_eff_2",tweak); break;
 
         default:

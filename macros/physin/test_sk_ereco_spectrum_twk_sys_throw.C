@@ -124,6 +124,10 @@ void test_sk_ereco_spectrum_twk_sys_throw
       cout << "Unknown mode " << mode << endl; exit(1); break;
   }//switch mode
 
+  TString config_str(config_file);
+  if(config_str.Contains("prefitbanff"))
+    modetitle += "prefit";
+
   // Analysis configuration
   const char * config  = Form("%s/config/%s", gSystem->Getenv("T2KOSCANA"), config_file);
     
@@ -391,7 +395,6 @@ void test_sk_ereco_spectrum_twk_sys_throw
   hNsk->Write();
 
   // Find min/max and calculate fractional deviation from nominal
-#line 0
   hErecoMax = new TH1D(*hErecoNominal);
   hErecoMin = new TH1D(*hErecoNominal);
   hErecoMax->SetDirectory(0);

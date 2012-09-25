@@ -27,8 +27,9 @@ modes2 = range(100,139) #banff
 modes3 = range(200,215) #unconstranied xsec
 modes4 = range(300,308) #sk detector
 modes5 = range(400,879) #fsi
+modes6 = range(500,503) #special comparison tweaks
 
-modes = modes1 + modes2 + modes3 + modes4 + modes5
+modes = modes1 + modes2 + modes3 + modes4 + modes5 #+ modes6
 
 oscparams = [] #fill with oscillation parameters, in order mixing12, theta13, theta23, deltacp, dmsq12, dmsq23hypothesis
 oscparams.append([  0,   0,   0,   0,   0,   0]) #no oscillations!
