@@ -120,7 +120,7 @@ for osc in oscparams:
           
          command = 'root2k -l -b -q \'$T2KOSCANA/macros/misc/star_plot/test_bestfit_point_shift_due_to_syst_twk.C("'+syst+'","'+sam+'","'+fitparamlist+'","'+fitter+'",'+str(osc[0])+','+str(osc[1])+','+str(osc[2])+','+str(osc[3])+','+str(osc[4])+','+str(osc[5])+',"'+conffile+'")\''
          print command
-         #os.system(command)
+         os.system(command)
 
          if syst == systematics[len(systematics)-1]:
 
