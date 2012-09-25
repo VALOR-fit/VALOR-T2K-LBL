@@ -272,6 +272,19 @@ void SuperkExpectation::TweakSystematic(string systematic, double twkdial, bool 
   else if(systematic == "sk_1Rmu_ccqe_ring_counting_eff_2") {
      this->GetSuperkDetector()->TweakEfficiency1RmuCCQERingCounting(true,0.,0.,twkdial); 
   }
+  //special tweak for comparing to KIT analysis (ring counting + other)
+  else if(systematic == "sk_1Rmu_ccqe_ring_counting_eff_0+other") {
+     this->GetSuperkDetector()->TweakEfficiency1RmuCCQERingCounting(true,twkdial,0.,0.); 
+     this->GetSuperkDetector()->TweakEfficiency1RmuCCQEOther(twkdial);
+  }
+  else if(systematic == "sk_1Rmu_ccqe_ring_counting_eff_1+other") {
+     this->GetSuperkDetector()->TweakEfficiency1RmuCCQERingCounting(true,0.,twkdial,0.); 
+     this->GetSuperkDetector()->TweakEfficiency1RmuCCQEOther(twkdial);
+  }
+  else if(systematic == "sk_1Rmu_ccqe_ring_counting_eff_2+other") {
+     this->GetSuperkDetector()->TweakEfficiency1RmuCCQERingCounting(true,0.,0.,twkdial); 
+     this->GetSuperkDetector()->TweakEfficiency1RmuCCQEOther(twkdial);
+  }
   else
   if(systematic == "sk_1Rmu_ccnonqe_eff") {
      this->GetSuperkDetector()->TweakEfficiency1RmuCCnonQE(twkdial);
