@@ -57,6 +57,7 @@
 // 500 ring counting 0 + other
 // 501 ring counting 1 + other
 // 502 ring counting 2 + other
+// 503 all ring counting + other
 //
 //
 // Tom Dealtry
@@ -164,6 +165,8 @@ void test_sk_ereco_spectrum_twk_sys
       modetitle = "sk_1Rmu_ccqe_ring_counting_eff_1+other"; break;
     case 502:
       modetitle = "sk_1Rmu_ccqe_ring_counting_eff_2+other"; break;
+    case 503:
+      modetitle = "sk_1Rmu_ccqe_ring_counting_eff_all+other"; break;
 
     default:
       if(mode >= 100 && mode < 100+conv::kNumOfParamsInBANFFfit) {
@@ -439,7 +442,11 @@ void test_sk_ereco_spectrum_twk_sys
         case 502: 
 	  skexp.TweakSystematic("sk_energy_scale",tweak);
 	  skexp.TweakSystematic("sk_1Rmu_ccqe_ring_counting_eff_2",tweak); break;
-
+        case 503: 
+	  skexp.TweakSystematic("sk_energy_scale",tweak);
+	  skexp.TweakSystematic("sk_1Rmu_ccqe_ring_counting_eff_0",tweak);
+	  skexp.TweakSystematic("sk_1Rmu_ccqe_ring_counting_eff_1",tweak);
+	  skexp.TweakSystematic("sk_1Rmu_ccqe_ring_counting_eff_2",tweak); break;
         default:
 	  if(mode >= 100 && mode < 100+conv::kNumOfParamsInBANFFfit) {
 	    TVectorD v(conv::kNumOfParamsInBANFFfit);

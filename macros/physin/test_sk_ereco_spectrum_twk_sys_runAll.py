@@ -27,7 +27,7 @@ modes2 = range(100,139) #banff
 modes3 = range(200,215) #unconstranied xsec
 modes4 = range(300,308) #sk detector
 modes5 = range(400,879) #fsi
-modes6 = range(500,503) #special comparison tweaks
+modes6 = range(500,504) #special comparison tweaks
 
 modes = modes1 + modes2 + modes3 + modes4 + modes5 #+ modes6
 
@@ -36,7 +36,6 @@ oscparams.append([  0,   0,   0,   0,   0,   0]) #no oscillations!
 oscparams.append([-99, -99, -99, -99, -99, -99]) #use global best fits!
 #oscparams.append([0.86, 0.1,  1,  0,  7.58E-5,  2.32E-3])
 #oscparams.append([0.86, 0,    1,  0,  7.58E-5,  2.32E-3])
-
 
 for osc in oscparams:
 
