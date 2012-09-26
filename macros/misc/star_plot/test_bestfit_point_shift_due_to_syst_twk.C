@@ -136,7 +136,7 @@ void test_bestfit_point_shift_due_to_syst_twk
   }
 
   bool fluctuate_stat = false; // <- don't fluctuate, best-fit point shift is purely due to systematic tweak
-  int nexp = 1000; // how many experiments to run (when running stat)
+  const int nexp = 10000; // how many experiments to run (when running stat)
   if(sys.find("stat") == 0) {
     fluctuate_stat = true;
   }
@@ -370,12 +370,24 @@ void test_bestfit_point_shift_due_to_syst_twk
   // many experiments if doing stat error
   //
   // Setup best-fit params holder
-  double bestfit_mixing12_stat = 0;
-  double bestfit_mixing13_stat = 0;
-  double bestfit_mixing23_stat = 0;
-  double bestfit_deltacp_stat  = 0;
-  double bestfit_dm12sq_stat   = 0;
-  double bestfit_dm23sq_stat   = 0;
+  double bestfit_mixing12_stat[nexp] = {0};
+  double bestfit_mixing13_stat[nexp] = {0};
+  double bestfit_mixing23_stat[nexp] = {0};
+  double bestfit_deltacp_stat[nexp]  = {0};
+  double bestfit_dm12sq_stat[nexp]   = {0};
+  double bestfit_dm23sq_stat[nexp]   = {0};
+  double average_bestfit_mixing12_stat = 0;
+  double average_bestfit_mixing13_stat = 0;
+  double average_bestfit_mixing23_stat = 0;
+  double average_bestfit_deltacp_stat  = 0;
+  double average_bestfit_dm12sq_stat   = 0;
+  double average_bestfit_dm23sq_stat   = 0;
+  double standarddeviation_bestfit_mixing12_stat = 0;
+  double standarddeviation_bestfit_mixing13_stat = 0;
+  double standarddeviation_bestfit_mixing23_stat = 0;
+  double standarddeviation_bestfit_deltacp_stat  = 0;
+  double standarddeviation_bestfit_dm12sq_stat   = 0;
+  double standarddeviation_bestfit_dm23sq_stat   = 0;
 
   if(sys.find("stat") == 0) {
     for(int iexp = 0; iexp < nexp; iexp++) {
@@ -394,16 +406,24 @@ void test_bestfit_point_shift_due_to_syst_twk
 
       // Store best-fit params
       if(hyp == conv::kHypOsc3F) {
-	bestfit_mixing12_stat += fparm->BestFitValue(conv::kPhypMixing12);
-	bestfit_mixing13_stat += fparm->BestFitValue(conv::kPhypMixing13);
-	bestfit_mixing23_stat += fparm->BestFitValue(conv::kPhypMixing23);
-	bestfit_deltacp_stat  += fparm->BestFitValue(conv::kPhypDeltaCP);
-	bestfit_dm12sq_stat   += fparm->BestFitValue(conv::kPhypDm12sq);
-	bestfit_dm23sq_stat   += fparm->BestFitValue(conv::kPhypDm23sq);
+	bestfit_mixing12_stat[iexp] = fparm->BestFitValue(conv::kPhypMixing12);
+	bestfit_mixing13_stat[iexp] = fparm->BestFitValue(conv::kPhypMixing13);
+	bestfit_mixing23_stat[iexp] = fparm->BestFitValue(conv::kPhypMixing23);
+	bestfit_deltacp_stat[iexp]  = fparm->BestFitValue(conv::kPhypDeltaCP);
+	bestfit_dm12sq_stat[iexp]   = fparm->BestFitValue(conv::kPhypDm12sq);
+	bestfit_dm23sq_stat[iexp]   = fparm->BestFitValue(conv::kPhypDm23sq);
+	average_bestfit_mixing12_stat += fparm->BestFitValue(conv::kPhypMixing12);
+	average_bestfit_mixing13_stat += fparm->BestFitValue(conv::kPhypMixing13);
+	average_bestfit_mixing23_stat += fparm->BestFitValue(conv::kPhypMixing23);
+	average_bestfit_deltacp_stat  += fparm->BestFitValue(conv::kPhypDeltaCP);
+	average_bestfit_dm12sq_stat   += fparm->BestFitValue(conv::kPhypDm12sq);
+	average_bestfit_dm23sq_stat   += fparm->BestFitValue(conv::kPhypDm23sq);
       } else
       if(hyp == conv::kHypNuMuDisapp2F) {
-	  bestfit_mixing23_stat += fparm->BestFitValue(conv::kPhypMixing23);
-	  bestfit_dm23sq_stat   += fparm->BestFitValue(conv::kPhypDm23sq);
+	bestfit_mixing23_stat[iexp] = fparm->BestFitValue(conv::kPhypMixing23);
+	bestfit_dm23sq_stat[iexp]   = fparm->BestFitValue(conv::kPhypDm23sq);
+	average_bestfit_mixing23_stat += fparm->BestFitValue(conv::kPhypMixing23);
+	average_bestfit_dm23sq_stat   += fparm->BestFitValue(conv::kPhypDm23sq);
       }
 
       // Clean-up in preparation for next exp
@@ -411,13 +431,22 @@ void test_bestfit_point_shift_due_to_syst_twk
       delete fit_inputs;
       delete fitter;
     }//iexp
+
     //get the stat error
-    bestfit_mixing12_stat /= nexp;
-    bestfit_mixing13_stat /= nexp;
-    bestfit_mixing23_stat /= nexp;
-    bestfit_deltacp_stat  /= nexp;
-    bestfit_dm12sq_stat   /= nexp;
-    bestfit_dm23sq_stat   /= nexp;
+    for(int iexp = 0; iexp < nexp; iexp++) {
+      standarddeviation_bestfit_mixing12_stat += (bestfit_mixing12_stat - input_mixing12) * (bestfit_mixing12_stat - input_mixing12);
+      standarddeviation_bestfit_mixing13_stat += (bestfit_mixing13_stat - input_mixing13) * (bestfit_mixing13_stat - input_mixing13);
+      standarddeviation_bestfit_mixing23_stat += (bestfit_mixing23_stat - input_mixing23) * (bestfit_mixing23_stat - input_mixing23);
+      standarddeviation_bestfit_deltacp_stat  += (bestfit_deltacp_stat - input_deltacp) * (bestfit_deltacp_stat - input_deltacp);
+      standarddeviation_bestfit_dm12sq_stat   += (bestfit_dm12sq_stat - input_dm12sq) * (bestfit_dm12sq_stat - input_dm12sq);
+      standarddeviation_bestfit_dm23sq_stat   += (bestfit_dm23sq_stat - input_dm23sq) * (bestfit_dm23sq_stat - input_dm23sq);
+    }//iexp
+    standarddeviation_bestfit_mixing12_stat /= (nexp - 1);
+    standarddeviation_bestfit_mixing13_stat /= (nexp - 1);
+    standarddeviation_bestfit_mixing23_stat /= (nexp - 1);
+    standarddeviation_bestfit_deltacp_stat  /= (nexp - 1);
+    standarddeviation_bestfit_dm12sq_stat   /= (nexp - 1);
+    standarddeviation_bestfit_dm23sq_stat   /= (nexp - 1);
 
     delete skexp;
   }//stat
@@ -433,12 +462,26 @@ void test_bestfit_point_shift_due_to_syst_twk
   outfile.open(outfilename.str().c_str());
   if(sys.find("stat") == 0) {
     outfile << systematic 
-	    << endl << bestfit_mixing12_stat 
-	    << endl << bestfit_mixing13_stat 
-	    << endl << bestfit_mixing23_stat 
-	    << endl << bestfit_deltacp_stat  
-	    << endl << bestfit_dm12sq_stat   
-	    << endl << bestfit_dm23sq_stat   
+	    << endl << standarddeviation_bestfit_mixing12_stat 
+	    << endl << standarddeviation_bestfit_mixing13_stat 
+	    << endl << standarddeviation_bestfit_mixing23_stat 
+	    << endl << standarddeviation_bestfit_deltacp_stat  
+	    << endl << standarddeviation_bestfit_dm12sq_stat   
+	    << endl << standarddeviation_bestfit_dm23sq_stat   
+	    << endl << "averages"
+	    << endl << average_bestfit_mixing12_stat 
+	    << endl << average_bestfit_mixing13_stat 
+	    << endl << average_bestfit_mixing23_stat 
+	    << endl << average_bestfit_deltacp_stat  
+	    << endl << average_bestfit_dm12sq_stat   
+	    << endl << average_bestfit_dm23sq_stat  
+	    << endl << "inputs"
+	    << endl << input_mixing12 
+	    << endl << input_mixing13 
+	    << endl << input_mixing23 
+	    << endl << input_deltacp  
+	    << endl << input_dm12sq   
+	    << endl << input_dm23sq  
 	    << endl;
   }
   else{

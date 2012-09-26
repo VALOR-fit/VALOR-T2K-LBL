@@ -206,6 +206,8 @@ void make_star_plot_for_disappearance_analysis
   vector<string> groupname = util::Tokens(tokened, ".");
   string group = groupname[0];
 
+  c->SaveAs(Form("%s-%f-%f_big.png",group.c_str(),true_mixing23,true_dm23sq));
+
   if(TMath::Abs(0.9-true_mixing23) < conv::kASmallNum && TMath::Abs(2.4E-3-true_dm23sq) < conv::kASmallNum) {
     osc_param_space->GetXaxis()->SetRangeUser(0.878,0.916);
     osc_param_space->GetYaxis()->SetRangeUser(0.00227,0.00253);
