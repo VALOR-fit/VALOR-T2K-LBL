@@ -136,7 +136,7 @@ void test_bestfit_point_shift_due_to_syst_twk
   }
 
   bool fluctuate_stat = false; // <- don't fluctuate, best-fit point shift is purely due to systematic tweak
-  const int nexp = 10000; // how many experiments to run (when running stat)
+  const int nexp = 1000; // how many experiments to run (when running stat)
   if(sys.find("stat") == 0) {
     fluctuate_stat = true;
   }
@@ -434,12 +434,12 @@ void test_bestfit_point_shift_due_to_syst_twk
 
     //get the stat error
     for(int iexp = 0; iexp < nexp; iexp++) {
-      standarddeviation_bestfit_mixing12_stat += (bestfit_mixing12_stat - input_mixing12) * (bestfit_mixing12_stat - input_mixing12);
-      standarddeviation_bestfit_mixing13_stat += (bestfit_mixing13_stat - input_mixing13) * (bestfit_mixing13_stat - input_mixing13);
-      standarddeviation_bestfit_mixing23_stat += (bestfit_mixing23_stat - input_mixing23) * (bestfit_mixing23_stat - input_mixing23);
-      standarddeviation_bestfit_deltacp_stat  += (bestfit_deltacp_stat - input_deltacp) * (bestfit_deltacp_stat - input_deltacp);
-      standarddeviation_bestfit_dm12sq_stat   += (bestfit_dm12sq_stat - input_dm12sq) * (bestfit_dm12sq_stat - input_dm12sq);
-      standarddeviation_bestfit_dm23sq_stat   += (bestfit_dm23sq_stat - input_dm23sq) * (bestfit_dm23sq_stat - input_dm23sq);
+      standarddeviation_bestfit_mixing12_stat += (bestfit_mixing12_stat[iexp] - input_mixing12) * (bestfit_mixing12_stat[iexp] - input_mixing12);
+      standarddeviation_bestfit_mixing13_stat += (bestfit_mixing13_stat[iexp] - input_mixing13) * (bestfit_mixing13_stat[iexp] - input_mixing13);
+      standarddeviation_bestfit_mixing23_stat += (bestfit_mixing23_stat[iexp] - input_mixing23) * (bestfit_mixing23_stat[iexp] - input_mixing23);
+      standarddeviation_bestfit_deltacp_stat  += (bestfit_deltacp_stat[iexp] - input_deltacp) * (bestfit_deltacp_stat[iexp] - input_deltacp);
+      standarddeviation_bestfit_dm12sq_stat   += (bestfit_dm12sq_stat[iexp] - input_dm12sq) * (bestfit_dm12sq_stat[iexp] - input_dm12sq);
+      standarddeviation_bestfit_dm23sq_stat   += (bestfit_dm23sq_stat[iexp] - input_dm23sq) * (bestfit_dm23sq_stat[iexp] - input_dm23sq);
     }//iexp
     standarddeviation_bestfit_mixing12_stat /= (nexp - 1);
     standarddeviation_bestfit_mixing13_stat /= (nexp - 1);
@@ -447,6 +447,20 @@ void test_bestfit_point_shift_due_to_syst_twk
     standarddeviation_bestfit_deltacp_stat  /= (nexp - 1);
     standarddeviation_bestfit_dm12sq_stat   /= (nexp - 1);
     standarddeviation_bestfit_dm23sq_stat   /= (nexp - 1);
+
+    standarddeviation_bestfit_mixing12_stat  = sqrt(standarddeviation_bestfit_mixing12_stat);
+    standarddeviation_bestfit_mixing13_stat  = sqrt(standarddeviation_bestfit_mixing13_stat);
+    standarddeviation_bestfit_mixing23_stat  = sqrt(standarddeviation_bestfit_mixing23_stat);
+    standarddeviation_bestfit_deltacp_stat   = sqrt(standarddeviation_bestfit_deltacp_stat );
+    standarddeviation_bestfit_dm12sq_stat    = sqrt(standarddeviation_bestfit_dm12sq_stat  );
+    standarddeviation_bestfit_dm23sq_stat    = sqrt(standarddeviation_bestfit_dm23sq_stat  );
+
+    average_bestfit_mixing12_stat /= nexp;
+    average_bestfit_mixing13_stat /= nexp;
+    average_bestfit_mixing23_stat /= nexp;
+    average_bestfit_deltacp_stat  /= nexp;
+    average_bestfit_dm12sq_stat   /= nexp;
+    average_bestfit_dm23sq_stat   /= nexp;
 
     delete skexp;
   }//stat

@@ -107,8 +107,8 @@ void make_star_plot_for_disappearance_analysis
   true_point->Draw();
 
   //
-  double kRmixing23 = TMath::Abs(stat_av_mixing23 - true_mixing23);
-  double kRdm23sq   = TMath::Abs(stat_av_dm23sq   - true_dm23sq  );
+  double kRmixing23 = TMath::Abs(stat_av_mixing23);
+  double kRdm23sq   = TMath::Abs(stat_av_dm23sq);
   TEllipse * cut = new TEllipse(true_mixing23,true_dm23sq, kRmixing23, kRdm23sq);
   cut->SetLineWidth(kCutLineWidth);
   cut->SetLineStyle(kCutLineStyle);
