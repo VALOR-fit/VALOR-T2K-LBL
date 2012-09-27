@@ -1520,10 +1520,10 @@ void test_n_mock_data_fits_with_syst
       errp_dm12sq   = fparm->PlusError(kPhypDm12sq);
       errp_dm23sq   = fparm->PlusError(kPhypDm23sq);
     } else
-      if(hyp == kHypNuMuDisapp2F) {
+    if(hyp == kHypNuMuDisapp2F) {
         errp_mixing23 = fparm->PlusError(kPhypMixing23);
         errp_dm23sq   = fparm->PlusError(kPhypDm23sq);
-      }
+    }
     if(fit_syst_mode == 1) {
       if(fparm->Exists(conv::kNuisBANFFMAQE)) errp_banff_maqe = fparm->PlusError(conv::kNuisBANFFMAQE);
       if(fparm->Exists(conv::kNuisBANFFCCQEE0)) errp_banff_ccqeE0 = fparm->PlusError(conv::kNuisBANFFCCQEE0);
@@ -1915,7 +1915,7 @@ void test_n_mock_data_fits_with_syst
       //NEXT
       //Loop over oscillation param bins, fix oscillation params and fit for the 7 systematics (*note* that was N before).
       //This will give lower chisq than before so you can calculate by how much you need to correct the deltachisq surface
-
+      /* Turn off for now.
       TH2D * chisq_surface_syst = new TH2D("chisq_surface_syst","#chi^{2} surface",
 		mixing23_nbins, mixing23_min - 0.5*mixing23_step, mixing23_max + 0.5*mixing23_step,
 		dm23sq_nbins, dm23sq_min - 0.5*dm23sq_step, dm23sq_max + 0.5*dm23sq_step);
@@ -2006,7 +2006,7 @@ void test_n_mock_data_fits_with_syst
       dchisq_surface_corr -> SetName(Form("dchisq_surface_corr_1Rmu_%d",iexperiment));
       f.cd();
       dchisq_surface_corr->Write();
-
+      */
     }    
 
     // Store toy-MC expt (if asked)

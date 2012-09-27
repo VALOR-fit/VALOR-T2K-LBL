@@ -42,66 +42,67 @@ void mock_data_fit_pulls(
       "detector_systematics/superk/efficiency_relative_error/one_mu_ring/nuecc");
 
   //BANFF
-  TMatrixD *BANFFCovMtrx = util::XML2TMatrixD(xml,root_node, "banff/covariance_matrix");
-  double preerr_banff_00 = BANFFCovMtrx[0];
-  double preerr_banff_01 = BANFFCovMtrx[1];
-  double preerr_banff_02 = BANFFCovMtrx[2];
-  double preerr_banff_03 = BANFFCovMtrx[3];
-  double preerr_banff_04 = BANFFCovMtrx[4];
-  double preerr_banff_05 = BANFFCovMtrx[5];
-  double preerr_banff_06 = BANFFCovMtrx[6];
-  double preerr_banff_07 = BANFFCovMtrx[7];
-  double preerr_banff_08 = BANFFCovMtrx[8];
-  double preerr_banff_09 = BANFFCovMtrx[9];
-  double preerr_banff_10 = BANFFCovMtrx[10];
-  double preerr_banff_11 = BANFFCovMtrx[11];
-  double preerr_banff_12 = BANFFCovMtrx[12];
-  double preerr_banff_13 = BANFFCovMtrx[13];
-  double preerr_banff_14 = BANFFCovMtrx[14];
-  double preerr_banff_15 = BANFFCovMtrx[15];
-  double preerr_banff_16 = BANFFCovMtrx[16];
-  double preerr_banff_17 = BANFFCovMtrx[17];
-  double preerr_banff_18 = BANFFCovMtrx[18];
-  double preerr_banff_19 = BANFFCovMtrx[19];
-  double preerr_banff_20 = BANFFCovMtrx[20];
-  double preerr_banff_21 = BANFFCovMtrx[21];
-  double preerr_banff_22 = BANFFCovMtrx[22];
-  double preerr_banff_23 = BANFFCovMtrx[23];
-  double preerr_banff_24 = BANFFCovMtrx[24];
-  double preerr_banff_25 = BANFFCovMtrx[25];
-  double preerr_banff_26 = BANFFCovMtrx[26];
-  double preerr_banff_27 = BANFFCovMtrx[27];
-  double preerr_banff_28 = BANFFCovMtrx[28];
-  double preerr_banff_29 = BANFFCovMtrx[29];
-  double preerr_banff_30 = BANFFCovMtrx[30];
-  double preerr_banff_maqe = BANFFCovMtrx[31];
-  double preerr_banff_mares = BANFFCovMtrx[32];
-  double preerr_banff_ccqeE0 = BANFFCovMtrx[33];
-  double preerr_banff_ccqeE1 = BANFFCovMtrx[34];
-  double preerr_banff_ccqeE2 = BANFFCovMtrx[35];
-  double preerr_banff_cc1piE0 = BANFFCovMtrx[36];
-  double preerr_banff_cc1piE1 = BANFFCovMtrx[37];
-  double preerr_banff_nc1pi0 = BANFFCovMtrx[38];
+  TMatrixD * BANFFCovMtrx = util::XML2TMatrixD(xml,root_node, "banff/covariance_matrix");
+  double preerr_banff_00 = sqrt(BANFFCovMtrx(0,0));
+  double preerr_banff_01 = sqrt(BANFFCovMtrx(1,1));
+  double preerr_banff_02 = sqrt(BANFFCovMtrx(2,2));
+  double preerr_banff_03 = sqrt(BANFFCovMtrx(3,3));
+  double preerr_banff_04 = sqrt(BANFFCovMtrx(4,4));
+  double preerr_banff_05 = sqrt(BANFFCovMtrx(5,5));
+  double preerr_banff_06 = sqrt(BANFFCovMtrx(6,6));
+  double preerr_banff_07 = sqrt(BANFFCovMtrx(7,7));
+  double preerr_banff_08 = sqrt(BANFFCovMtrx(8,8));
+  double preerr_banff_09 = sqrt(BANFFCovMtrx(9,9));
+  double preerr_banff_10 = sqrt(BANFFCovMtrx(10,10));
+  double preerr_banff_11 = sqrt(BANFFCovMtrx(11,11));
+  double preerr_banff_12 = sqrt(BANFFCovMtrx(12,12));
+  double preerr_banff_13 = sqrt(BANFFCovMtrx(13,13));
+  double preerr_banff_14 = sqrt(BANFFCovMtrx(14,14));
+  double preerr_banff_15 = sqrt(BANFFCovMtrx(15,15));
+  double preerr_banff_16 = sqrt(BANFFCovMtrx(16,16));
+  double preerr_banff_17 = sqrt(BANFFCovMtrx(17,17));
+  double preerr_banff_18 = sqrt(BANFFCovMtrx(18,18));
+  double preerr_banff_19 = sqrt(BANFFCovMtrx(19,19));
+  double preerr_banff_20 = sqrt(BANFFCovMtrx(20,20));
+  double preerr_banff_21 = sqrt(BANFFCovMtrx(21,21));
+  double preerr_banff_22 = sqrt(BANFFCovMtrx(22,22));
+  double preerr_banff_23 = sqrt(BANFFCovMtrx(23,23));
+  double preerr_banff_24 = sqrt(BANFFCovMtrx(24,24));
+  double preerr_banff_25 = sqrt(BANFFCovMtrx(25,25));
+  double preerr_banff_26 = sqrt(BANFFCovMtrx(26,26));
+  double preerr_banff_27 = sqrt(BANFFCovMtrx(27,27));
+  double preerr_banff_28 = sqrt(BANFFCovMtrx(28,28));
+  double preerr_banff_29 = sqrt(BANFFCovMtrx(29,29));
+  double preerr_banff_30 = sqrt(BANFFCovMtrx(30,30));
+  double preerr_banff_maqe = sqrt(BANFFCovMtrx(31,31));
+  double preerr_banff_mares = sqrt(BANFFCovMtrx(32,32));
+  double preerr_banff_ccqeE0 = sqrt(BANFFCovMtrx(33,33));
+  double preerr_banff_ccqeE1 = sqrt(BANFFCovMtrx(34,34));
+  double preerr_banff_ccqeE2 = sqrt(BANFFCovMtrx(35,35));
+  double preerr_banff_cc1piE0 = sqrt(BANFFCovMtrx(36,36));
+  double preerr_banff_cc1piE1 = sqrt(BANFFCovMtrx(37,37));
+  //double preerr_banff_nc1pi0 = sqrt(BANFFCovMtrx(38,38));
 
   //FSI
   TMatrixD *FSICovMtrx = util::XML2TMatrixD(xml,root_node, "fsi/covariance_matrix");
-  double preerr_fsi_000 = FSICovMtrx[0];
-  double preerr_fsi_001 = FSICovMtrx[1];
-  double preerr_fsi_002 = FSICovMtrx[2];
-  double preerr_fsi_003 = FSICovMtrx[3];
-  double preerr_fsi_004 = FSICovMtrx[4];
-  double preerr_fsi_005 = FSICovMtrx[5];
-  double preerr_fsi_006 = FSICovMtrx[6];
-  double preerr_fsi_007 = FSICovMtrx[7];
-  double preerr_fsi_008 = FSICovMtrx[8];
-  double preerr_fsi_009 = FSICovMtrx[9];
-  double preerr_fsi_010 = FSICovMtrx[10];
-  double preerr_fsi_011 = FSICovMtrx[11];
-  double preerr_fsi_012 = FSICovMtrx[12];
-  double preerr_fsi_013 = FSICovMtrx[13];
-  double preerr_fsi_014 = FSICovMtrx[14];
-  double preerr_fsi_015 = FSICovMtrx[15];
-
+  double preerr_fsi_000 = sqrt(FSICovMtrx(0,0));
+  double preerr_fsi_001 = sqrt(FSICovMtrx(1,1));
+  double preerr_fsi_002 = sqrt(FSICovMtrx(2,2));
+  double preerr_fsi_003 = sqrt(FSICovMtrx(3,3));
+  double preerr_fsi_004 = sqrt(FSICovMtrx(4,4));
+  double preerr_fsi_005 = sqrt(FSICovMtrx(5,5));
+  /*
+  double preerr_fsi_006 = sqrt(FSICovMtrx(6,6));
+  double preerr_fsi_007 = sqrt(FSICovMtrx(7,7));
+  double preerr_fsi_008 = sqrt(FSICovMtrx(8,8));
+  double preerr_fsi_009 = sqrt(FSICovMtrx(9,9));
+  double preerr_fsi_010 = sqrt(FSICovMtrx(10,10));
+  double preerr_fsi_011 = sqrt(FSICovMtrx(11,11));
+  double preerr_fsi_012 = sqrt(FSICovMtrx(12,12));
+  double preerr_fsi_013 = sqrt(FSICovMtrx(13,13));
+  double preerr_fsi_014 = sqrt(FSICovMtrx(14,14));
+  double preerr_fsi_015 = sqrt(FSICovMtrx(15,15));
+  */
   //XSec
   double preerr_xsec_normcccoh = util::XML2Dbl(xml,root_node,"xsec/normalisations/cccoh");
   double preerr_xsec_normnc1piC = util::XML2Dbl(xml,root_node,"xsec/normalisations/nc1piC");
@@ -678,22 +679,22 @@ void mock_data_fit_pulls(
   }
 
   // Book histograms
-  TH1D * h_nsk_nom      = new TH1D("h_nsk_nom","h_nsk_nom",1000,0,250);
-  TH1D * h_nsk_bf       = new TH1D("h_nsk_bf","h_nsk_bf",1000,0,250);
-  TH1D * h_dchisq    = new TH1D("h_dchisq","h_dchisq",10000,-1000,1000);
+  TH1D * h_nsk_nom  = new TH1D("h_nsk_nom","h_nsk_nom",150,0,150);
+  TH1D * h_nsk_bf   = new TH1D("h_nsk_bf","h_nsk_bf",150,0,150);
+  TH1D * h_dchisq   = new TH1D("h_dchisq","h_dchisq",300,-5,25);
   TH1D * h_mixing23 = new TH1D("h_mixing23","h_mixing23",160,-0.4,0.4);
   TH1D * h_dm23sq   = new TH1D("h_dm23sq","h_dm23sq",120,-1E-3,1E-3);
   //pull histograms
   TH1D * hpull_mixing23 = new TH1D("hpull_mixing23","hpull_mixing23",160,-0.4,0.4);
   TH1D * hpull_dm23sq   = new TH1D("hpull_dm23sq","hpull_dm23sq",120,-1E-3,1E-3);
   if(fit_systematics_mode == 1) {
-    TH1D * h_banff_maqe = new TH1D("h_banff_maqe","h_banff_maqe",50,-5,5);
-    TH1D * h_banff_ccqeE0 = new TH1D("h_banff_ccqeE0","h_banff_ccqeE0",50,-5,5);
-    TH1D * h_banff_cc1piE0 = new TH1D("h_banff_cc1piE0","h_banff_cc1piE0",50,-5,5);
-    TH1D * h_xsec_sf = new TH1D("h_xsec_sf","h_xsec_sf",50,-5,5);
-    TH1D * h_xsec_pilessdelta = new TH1D("h_xsec_pilessdelta","h_xsec_pilessdelta",50,-5,5);
-    TH1D * h_skdet_ccnqe = new TH1D("h_skdet_ccnqe","h_skdet_ccnqe",50,-5,5);
-    TH1D * h_skdet_nc = new TH1D("h_skdet_nc","h_skdet_nc",50,-5,5);
+    TH1D * h_banff_maqe = new TH1D("h_banff_maqe","h_banff_maqe",200,-10,10);
+    TH1D * h_banff_ccqeE0 = new TH1D("h_banff_ccqeE0","h_banff_ccqeE0",200,-10,10);
+    TH1D * h_banff_cc1piE0 = new TH1D("h_banff_cc1piE0","h_banff_cc1piE0",200,-10,10);
+    TH1D * h_xsec_sf = new TH1D("h_xsec_sf","h_xsec_sf",200,-3,3);
+    TH1D * h_xsec_pilessdelta = new TH1D("h_xsec_pilessdelta","h_xsec_pilessdelta",200,-3,3);
+    TH1D * h_skdet_ccnqe = new TH1D("h_skdet_ccnqe","h_skdet_ccnqe",200,-3,3);
+    TH1D * h_skdet_nc = new TH1D("h_skdet_nc","h_skdet_nc",200,-3,3);
     //pull histograms
     TH1D * hpull_banff_maqe = new TH1D("hpull_banff_maqe","hpull_banff_maqe",50,-5,5);
     TH1D * hpull_banff_ccqeE0 = new TH1D("hpull_banff_ccqeE0","hpull_banff_ccqeE0",50,-5,5);
@@ -704,45 +705,45 @@ void mock_data_fit_pulls(
     TH1D * hpull_skdet_nc = new TH1D("hpull_skdet_nc","hpull_skdet_nc",50,-5,5);
   }
   else if(fit_systematics_mode == 2) {
-    TH1D * h_banff_00 = new TH1D("h_banff_00","h_banff_00",50,-5,5);
-    TH1D * h_banff_01 = new TH1D("h_banff_01","h_banff_01",50,-5,5);
-    TH1D * h_banff_02 = new TH1D("h_banff_02","h_banff_02",50,-5,5);
-    TH1D * h_banff_03 = new TH1D("h_banff_03","h_banff_03",50,-5,5);
-    TH1D * h_banff_04 = new TH1D("h_banff_04","h_banff_04",50,-5,5);
-    TH1D * h_banff_05 = new TH1D("h_banff_05","h_banff_05",50,-5,5);
-    TH1D * h_banff_06 = new TH1D("h_banff_06","h_banff_06",50,-5,5);
-    TH1D * h_banff_07 = new TH1D("h_banff_07","h_banff_07",50,-5,5);
-    TH1D * h_banff_08 = new TH1D("h_banff_08","h_banff_08",50,-5,5);
-    TH1D * h_banff_09 = new TH1D("h_banff_09","h_banff_09",50,-5,5);
-    TH1D * h_banff_10 = new TH1D("h_banff_10","h_banff_10",50,-5,5);
-    TH1D * h_banff_11 = new TH1D("h_banff_11","h_banff_11",50,-5,5);
-    TH1D * h_banff_12 = new TH1D("h_banff_12","h_banff_12",50,-5,5);
-    TH1D * h_banff_13 = new TH1D("h_banff_13","h_banff_13",50,-5,5);
-    TH1D * h_banff_14 = new TH1D("h_banff_14","h_banff_14",50,-5,5);
-    TH1D * h_banff_15 = new TH1D("h_banff_15","h_banff_15",50,-5,5);
-    TH1D * h_banff_16 = new TH1D("h_banff_16","h_banff_16",50,-5,5);
-    TH1D * h_banff_17 = new TH1D("h_banff_17","h_banff_17",50,-5,5);
-    TH1D * h_banff_18 = new TH1D("h_banff_18","h_banff_18",50,-5,5);
-    TH1D * h_banff_19 = new TH1D("h_banff_19","h_banff_19",50,-5,5);
-    TH1D * h_banff_20 = new TH1D("h_banff_20","h_banff_20",50,-5,5);
-    TH1D * h_banff_21 = new TH1D("h_banff_21","h_banff_21",50,-5,5);
-    TH1D * h_banff_22 = new TH1D("h_banff_22","h_banff_22",50,-5,5);
-    TH1D * h_banff_23 = new TH1D("h_banff_23","h_banff_23",50,-5,5);
-    TH1D * h_banff_24 = new TH1D("h_banff_24","h_banff_24",50,-5,5);
-    TH1D * h_banff_25 = new TH1D("h_banff_25","h_banff_25",50,-5,5);
-    TH1D * h_banff_26 = new TH1D("h_banff_26","h_banff_26",50,-5,5);
-    TH1D * h_banff_27 = new TH1D("h_banff_27","h_banff_27",50,-5,5);
-    TH1D * h_banff_28 = new TH1D("h_banff_28","h_banff_28",50,-5,5);
-    TH1D * h_banff_29 = new TH1D("h_banff_29","h_banff_29",50,-5,5);
-    TH1D * h_banff_30 = new TH1D("h_banff_30","h_banff_30",50,-5,5);
-    TH1D * h_banff_maqe = new TH1D("h_banff_maqe","h_banff_maqe",50,-5,5);
-    TH1D * h_banff_mares = new TH1D("h_banff_mares","h_banff_mares",50,-5,5);
-    TH1D * h_banff_ccqeE0 = new TH1D("h_banff_ccqeE0","h_banff_ccqeE0",50,-5,5);
-    TH1D * h_banff_ccqeE1 = new TH1D("h_banff_ccqeE1","h_banff_ccqeE1",50,-5,5);
-    TH1D * h_banff_ccqeE2 = new TH1D("h_banff_ccqeE2","h_banff_ccqeE2",50,-5,5);
-    TH1D * h_banff_cc1piE0 = new TH1D("h_banff_cc1piE0","h_banff_cc1piE0",50,-5,5);
-    TH1D * h_banff_cc1piE1 = new TH1D("h_banff_cc1piE1","h_banff_cc1piE1",50,-5,5);
-    TH1D * h_banff_nc1pi0 = new TH1D("h_banff_nc1pi0","h_banff_nc1pi0",50,-5,5);
+    TH1D * h_banff_00 = new TH1D("h_banff_00","h_banff_00",100,0,2);
+    TH1D * h_banff_01 = new TH1D("h_banff_01","h_banff_01",100,0,2);
+    TH1D * h_banff_02 = new TH1D("h_banff_02","h_banff_02",100,0,2);
+    TH1D * h_banff_03 = new TH1D("h_banff_03","h_banff_03",100,0,2);
+    TH1D * h_banff_04 = new TH1D("h_banff_04","h_banff_04",100,0,2);
+    TH1D * h_banff_05 = new TH1D("h_banff_05","h_banff_05",100,0,2);
+    TH1D * h_banff_06 = new TH1D("h_banff_06","h_banff_06",100,0,2);
+    TH1D * h_banff_07 = new TH1D("h_banff_07","h_banff_07",100,0,2);
+    TH1D * h_banff_08 = new TH1D("h_banff_08","h_banff_08",100,0,2);
+    TH1D * h_banff_09 = new TH1D("h_banff_09","h_banff_09",100,0,2);
+    TH1D * h_banff_10 = new TH1D("h_banff_10","h_banff_10",100,0,2);
+    TH1D * h_banff_11 = new TH1D("h_banff_11","h_banff_11",100,0,2);
+    TH1D * h_banff_12 = new TH1D("h_banff_12","h_banff_12",100,0,2);
+    TH1D * h_banff_13 = new TH1D("h_banff_13","h_banff_13",100,0,2);
+    TH1D * h_banff_14 = new TH1D("h_banff_14","h_banff_14",100,0,2);
+    TH1D * h_banff_15 = new TH1D("h_banff_15","h_banff_15",100,0,2);
+    TH1D * h_banff_16 = new TH1D("h_banff_16","h_banff_16",100,0,2);
+    TH1D * h_banff_17 = new TH1D("h_banff_17","h_banff_17",100,0,2);
+    TH1D * h_banff_18 = new TH1D("h_banff_18","h_banff_18",100,0,2);
+    TH1D * h_banff_19 = new TH1D("h_banff_19","h_banff_19",100,0,2);
+    TH1D * h_banff_20 = new TH1D("h_banff_20","h_banff_20",100,0,2);
+    TH1D * h_banff_21 = new TH1D("h_banff_21","h_banff_21",100,0,2);
+    TH1D * h_banff_22 = new TH1D("h_banff_22","h_banff_22",100,0,2);
+    TH1D * h_banff_23 = new TH1D("h_banff_23","h_banff_23",100,0,2);
+    TH1D * h_banff_24 = new TH1D("h_banff_24","h_banff_24",100,0,2);
+    TH1D * h_banff_25 = new TH1D("h_banff_25","h_banff_25",100,0,2);
+    TH1D * h_banff_26 = new TH1D("h_banff_26","h_banff_26",100,0,2);
+    TH1D * h_banff_27 = new TH1D("h_banff_27","h_banff_27",100,0,2);
+    TH1D * h_banff_28 = new TH1D("h_banff_28","h_banff_28",100,0,2);
+    TH1D * h_banff_29 = new TH1D("h_banff_29","h_banff_29",100,0,2);
+    TH1D * h_banff_30 = new TH1D("h_banff_30","h_banff_30",100,0,2);
+    TH1D * h_banff_maqe = new TH1D("h_banff_maqe","h_banff_maqe",100,0,2);
+    TH1D * h_banff_mares = new TH1D("h_banff_mares","h_banff_mares",100,0,2);
+    TH1D * h_banff_ccqeE0 = new TH1D("h_banff_ccqeE0","h_banff_ccqeE0",100,0,2);
+    TH1D * h_banff_ccqeE1 = new TH1D("h_banff_ccqeE1","h_banff_ccqeE1",100,0,2);
+    TH1D * h_banff_ccqeE2 = new TH1D("h_banff_ccqeE2","h_banff_ccqeE2",100,0,2);
+    TH1D * h_banff_cc1piE0 = new TH1D("h_banff_cc1piE0","h_banff_cc1piE0",100,0,2);
+    TH1D * h_banff_cc1piE1 = new TH1D("h_banff_cc1piE1","h_banff_cc1piE1",100,0,2);
+    TH1D * h_banff_nc1pi0 = new TH1D("h_banff_nc1pi0","h_banff_nc1pi0",100,0,2);
     TH1D * h_xsec_pf = new TH1D("h_xsec_pf","h_xsec_pf",50,-5,5);
     TH1D * h_xsec_sf = new TH1D("h_xsec_sf","h_xsec_sf",50,-5,5);
     TH1D * h_xsec_wshape = new TH1D("h_xsec_wshape","h_xsec_wshape",50,-5,5);
@@ -871,13 +872,20 @@ void mock_data_fit_pulls(
     hpull_mixing23->Fill((bestfit_mixing23 - input_mixing23) / errpar_mixing23);
     hpull_dm23sq->Fill((bestfit_dm23sq - input_dm23sq) / errpar_dm23sq);
     if(fit_systematics_mode == 1) {
-      if(preerr_banff_maqe > errpar_banff_maqe) h_banff_maqe->Fill((bestfit_banff_maqe - input_banff_maqe));
-      if(preerr_banff_ccqeE0 > errpar_banff_ccqeE0) h_banff_ccqeE0->Fill((bestfit_banff_ccqeE0 - input_banff_ccqeE0));
-      if(preerr_banff_cc1piE0 > errpar_banff_cc1piE0) h_banff_cc1piE0->Fill((bestfit_banff_cc1piE0 - input_banff_cc1piE0));
-      if(preerr_xsec_sf > errpar_xsec_sf) h_xsec_sf->Fill((bestfit_xsec_sf - input_xsec_sf));
-      if(preerr_xsec_pilessdelta > errpar_xsec_pilessdelta) h_xsec_pilessdelta->Fill((bestfit_xsec_pilessdelta - input_xsec_pilessdelta));
-      if(preerr_skdet_ccnqe > errpar_skdet_ccnqe) h_skdet_ccnqe->Fill((bestfit_skdet_ccnqe - input_skdet_ccnqe));
-      if(preerr_skdet_nc > errpar_skdet_nc) h_skdet_nc->Fill((bestfit_skdet_nc - input_skdet_nc));
+      //if(preerr_banff_maqe > errpar_banff_maqe)
+      //h_banff_maqe->Fill((bestfit_banff_maqe - input_banff_maqe));
+      //if(preerr_banff_ccqeE0 > errpar_banff_ccqeE0)
+      //h_banff_ccqeE0->Fill((bestfit_banff_ccqeE0 - input_banff_ccqeE0));
+      //if(preerr_banff_cc1piE0 > errpar_banff_cc1piE0)
+      //h_banff_cc1piE0->Fill((bestfit_banff_cc1piE0 - input_banff_cc1piE0));
+      //if(preerr_xsec_sf > errpar_xsec_sf)
+        h_xsec_sf->Fill((bestfit_xsec_sf - input_xsec_sf));
+      //if(preerr_xsec_pilessdelta > errpar_xsec_pilessdelta)
+	h_xsec_pilessdelta->Fill((bestfit_xsec_pilessdelta - input_xsec_pilessdelta));
+      //if(preerr_skdet_ccnqe > errpar_skdet_ccnqe)
+	h_skdet_ccnqe->Fill((bestfit_skdet_ccnqe - input_skdet_ccnqe));
+      //if(preerr_skdet_nc > errpar_skdet_nc)
+	h_skdet_nc->Fill((bestfit_skdet_nc - input_skdet_nc));
       //pull histograms
       if(preerr_banff_maqe > errpar_banff_maqe) hpull_banff_maqe->Fill((bestfit_banff_maqe - input_banff_maqe) / sqrt((preerr_banff_maqe*preerr_banff_maqe) - (errpar_banff_maqe*errpar_banff_maqe)));
       if(preerr_banff_ccqeE0 > errpar_banff_ccqeE0) hpull_banff_ccqeE0->Fill((bestfit_banff_ccqeE0 - input_banff_ccqeE0) / sqrt((preerr_banff_ccqeE0*preerr_banff_ccqeE0) - (errpar_banff_ccqeE0*errpar_banff_ccqeE0)));
@@ -886,6 +894,14 @@ void mock_data_fit_pulls(
       if(preerr_xsec_pilessdelta > errpar_xsec_pilessdelta) hpull_xsec_pilessdelta->Fill((bestfit_xsec_pilessdelta - input_xsec_pilessdelta) / sqrt((preerr_xsec_pilessdelta*preerr_xsec_pilessdelta) - (errpar_xsec_pilessdelta*errpar_xsec_pilessdelta)));
       if(preerr_skdet_ccnqe > errpar_skdet_ccnqe) hpull_skdet_ccnqe->Fill((bestfit_skdet_ccnqe - input_skdet_ccnqe) / sqrt((preerr_skdet_ccnqe*preerr_skdet_ccnqe) - (errpar_skdet_ccnqe*errpar_skdet_ccnqe)));
       if(preerr_skdet_nc > errpar_skdet_nc) hpull_skdet_nc->Fill((bestfit_skdet_nc - input_skdet_nc) / sqrt((preerr_skdet_nc*preerr_skdet_nc) - (errpar_skdet_nc*errpar_skdet_nc)));
+      
+      h_banff_maqe->Fill((bestfit_banff_maqe - input_banff_maqe) / preerr_banff_maqe);
+      h_banff_ccqeE0->Fill((bestfit_banff_ccqeE0 - input_banff_ccqeE0) / preerr_banff_ccqeE0);
+      h_banff_cc1piE0->Fill((bestfit_banff_cc1piE0 - input_banff_cc1piE0) / preerr_banff_cc1piE0);
+      /*cout << bestfit_banff_maqe - input_banff_maqe << "\t" << (bestfit_banff_maqe - input_banff_maqe) / preerr_banff_maqe << "\t" << preerr_banff_maqe << endl;
+      cout << bestfit_banff_ccqeE0 - input_banff_ccqeE0 << "\t" << (bestfit_banff_ccqeE0 - input_banff_ccqeE0) / preerr_banff_ccqeE0 << "\t" << preerr_banff_ccqeE0 << endl;
+      cout << bestfit_banff_cc1piE0 - input_banff_cc1piE0 << "\t" << (bestfit_banff_cc1piE0 - input_banff_cc1piE0) / preerr_banff_cc1piE0 << "\t" << preerr_banff_cc1piE0 << endl;
+      */
     }
     else if(fit_systematics_mode == 2) {
       if(preerr_banff_00 > errpar_banff_00) h_banff_00->Fill((bestfit_banff_00 - input_banff_00));
@@ -1047,21 +1063,27 @@ void mock_data_fit_pulls(
   TLine *l_mixing23 = new TLine(h_mixing23->GetMean(),0,h_mixing23->GetMean(),1000); l_mixing23->Draw();
   cosc->cd(2); h_dm23sq->Draw();
   TLine *l_dm23sq = new TLine(h_dm23sq->GetMean(),0,h_dm23sq->GetMean(),1000); l_dm23sq->Draw();
+  cosc->SaveAs(Form("%f_osc.png", input_mixing23));
   if(fit_systematics_mode == 1) {
-    new TCanvas(); h_banff_maqe->Draw();
+    TCanvas *cbanff = new TCanvas(); cbanff->Divide(2,2);
+    cbanff->cd(1); h_banff_maqe->Draw();
     TLine *l_banff_maqe = new TLine(h_banff_maqe->GetMean(),0,h_banff_maqe->GetMean(),1000); l_banff_maqe->Draw();
-    new TCanvas(); h_banff_ccqeE0->Draw();
+    cbanff->cd(2); h_banff_ccqeE0->Draw();
     TLine *l_banff_ccqeE0 = new TLine(h_banff_ccqeE0->GetMean(),0,h_banff_ccqeE0->GetMean(),1000); l_banff_ccqeE0->Draw();
-    new TCanvas(); h_banff_cc1piE0->Draw();
+    cbanff->cd(3); h_banff_cc1piE0->Draw();
     TLine *l_banff_cc1piE0 = new TLine(h_banff_cc1piE0->GetMean(),0,h_banff_cc1piE0->GetMean(),1000); l_banff_cc1piE0->Draw();
-    new TCanvas(); h_xsec_sf->Draw();
+    TCanvas *coth = new TCanvas(); coth->Divide(2,2);
+    coth->cd(1); h_xsec_sf->Draw();
     TLine *l_xsec_sf = new TLine(h_xsec_sf->GetMean(),0,h_xsec_sf->GetMean(),1000); l_xsec_sf->Draw();
-    new TCanvas(); h_xsec_pilessdelta->Draw();
+    coth->cd(2); h_xsec_pilessdelta->Draw();
     TLine *l_xsec_pilessdelta = new TLine(h_xsec_pilessdelta->GetMean(),0,h_xsec_pilessdelta->GetMean(),1000); l_xsec_pilessdelta->Draw();
-    new TCanvas(); h_skdet_ccnqe->Draw();
+    coth->cd(3); h_skdet_ccnqe->Draw();
     TLine *l_skdet_ccnqe = new TLine(h_skdet_ccnqe->GetMean(),0,h_skdet_ccnqe->GetMean(),1000); l_skdet_ccnqe->Draw();
-    new TCanvas(); h_skdet_nc->Draw();
+    coth->cd(4); h_skdet_nc->Draw();
     TLine *l_skdet_nc = new TLine(h_skdet_nc->GetMean(),0,h_skdet_nc->GetMean(),1000); l_skdet_nc->Draw();
+    
+    cbanff->SaveAs(Form("%f_banff.png", input_mixing23));
+    coth->SaveAs(Form("%f_other.png", input_mixing23));
   }
   else if(fit_systematics_mode == 2) {
     new TCanvas(); h_banff_00->Draw();
@@ -1212,12 +1234,15 @@ void mock_data_fit_pulls(
     TLine *l_fsi_014 = new TLine(h_fsi_014->GetMean(),0,h_fsi_014->GetMean(),1000); l_fsi_014->Draw(); 
   }
   // pull histograms
+  /*
   TCanvas *cosc = new TCanvas(); cosc->Divide(1,2);
   cosc->cd(1); hpull_mixing23->Draw();
   TLine *lpull_mixing23 = new TLine(hpull_mixing23->GetMean(),0,hpull_mixing23->GetMean(),1000); lpull_mixing23->Draw();
   cosc->cd(2); hpull_dm23sq->Draw();
   TLine *lpull_dm23sq = new TLine(hpull_dm23sq->GetMean(),0,hpull_dm23sq->GetMean(),1000); lpull_dm23sq->Draw();
+  */
   if(fit_systematics_mode == 1) {
+    /*
     new TCanvas(); hpull_banff_maqe->Draw();
     TLine *lpull_banff_maqe = new TLine(hpull_banff_maqe->GetMean(),0,hpull_banff_maqe->GetMean(),1000); lpull_banff_maqe->Draw();
     new TCanvas(); hpull_banff_ccqeE0->Draw();
@@ -1232,6 +1257,7 @@ void mock_data_fit_pulls(
     TLine *lpull_skdet_ccnqe = new TLine(hpull_skdet_ccnqe->GetMean(),0,hpull_skdet_ccnqe->GetMean(),1000); lpull_skdet_ccnqe->Draw();
     new TCanvas(); hpull_skdet_nc->Draw();
     TLine *lpull_skdet_nc = new TLine(hpull_skdet_nc->GetMean(),0,hpull_skdet_nc->GetMean(),1000); lpull_skdet_nc->Draw();
+    */
   }
   else if(fit_systematics_mode == 2) {
     new TCanvas(); hpull_banff_00->Draw();
