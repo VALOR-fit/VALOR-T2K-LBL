@@ -47,6 +47,21 @@ void generate_toymc_ensemble
   bool randomize_dm12sq        = (TMath::Abs(input_dm12sq   + 999) < kASmallNum);
   bool randomized_osc_params   = (randomize_mixing12 || randomize_mixing13 || randomize_deltacp || randomize_dm12sq);
 
+  //Set to defaults
+  if(Opt::Instance()->gOscMixingParamChoice == conv::kNuMixSinsq2Theta) {
+    if(input_mixing13 < -1 && input_mixing13 > -900) input_mixing13 = conv::kGlobFitSinsq2Theta13;
+    if(input_mixing23 < -1 && input_mixing23 > -900) input_mixing23 = conv::kGlobFitSinsq2Theta23;
+    if(input_mixing12 < -1 && input_mixing12 > -900) input_mixing12 = conv::kGlobFitSinsq2Theta12;
+  }
+  else {
+    if(input_mixing13 < -1 && input_mixing13 > -900) input_mixing13 = conv::kGlobFitSinsqTheta13;
+    if(input_mixing23 < -1 && input_mixing23 > -900) input_mixing23 = conv::kGlobFitSinsqTheta23;
+    if(input_mixing12 < -1 && input_mixing12 > -900) input_mixing12 = conv::kGlobFitSinsqTheta12;
+  }
+  if(input_dm23sq < -1 && input_dm23sq > -900)  input_dm23sq = conv::kGlobFitDm23sq;
+  if(input_dm12sq < -1 && input_dm12sq > -900)  input_dm12sq = conv::kGlobFitDm12sq;
+  if(input_deltacp < -90 && input_deltacp > -900) input_deltacp = conv::kGlobFitDeltaCP;
+
   // Print out job summary
   cout << "\n[Job inputs]" << endl;
   cout << "- Job: " << tag << "/" << run << endl;
@@ -81,7 +96,7 @@ void generate_toymc_ensemble
   ofstream fxml;
   if(save_in_xml_format) {
     ostringstream xml_filename;
-    xml_filename << tag << "-" << run << ".xml";
+    xml_filename << tag << "-" << run << "_" << input_mixing23 << "_" << input_dm23sq << ".xml";
     fxml.open(xml_filename.str().c_str());
     fxml << "<?xml version=\"1.0\"?> " << endl;
     fxml << "<analysis_inputs>       " << endl;

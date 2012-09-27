@@ -15,8 +15,9 @@ void test_n_mock_data_fits_xml
   int          first_experiment,                                   /* */
   int          last_experiment,                                    /* */
   const char * config_file         = "analysis_configuration.xml", /* analysis configuration file */
-  const char * fit_param_list      = "numudisapp2f",               /* fit parameter list for the given physics hypothesis (see run_fitter.C) */
-  const char * fit_option          = "minuit"                      /* fitter option (see run_fitter.C) */
+  const char * fit_param_list      = "nuosc3f_numudisapp_fix4",    /* fit parameter list for the given physics hypothesis (see run_fitter.C) */
+  const char * fit_option          = "minuit",                     /* fitter option (see run_fitter.C) */
+  const char * output_option       = "Observation+BestFitSpectra+ChisqSurface+Canvases",  /* what to write-out once the fit is done */
 )
 {
   using namespace std;
@@ -62,7 +63,7 @@ void test_n_mock_data_fits_xml
      cout << "\n\n *** Pseudo-experiment = " << iexperiment << endl;
 
      // Re-seed fitter (reset current values to specified init values)
-     fparm->Reset();
+     fparm->ResetCurrToInitValues();
 
      // Get superk spectrum observation (toy experiment)
      SuperkObservation * skobs = new SuperkObservation;
@@ -75,6 +76,10 @@ void test_n_mock_data_fits_xml
      // Do the fit
      fitter->DoTheFit();
      int fitstatus = fitter->FitStatusCode();
+
+     // Write-out results
+     fitter->Analyze(output_option);
+     fitter->Save("mockfit.root");
 
      // Get best-fit chisquare
      bestfit_chisq = fit_inputs->BestFitChisquare();

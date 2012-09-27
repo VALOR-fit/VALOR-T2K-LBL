@@ -1567,6 +1567,10 @@ void SuperkMC::NevDebug(SKMCTemplateType_t t, string name)
       delete htru;
     }//mode
 
+    //get the total ereco spectrum
+    TH1D * hfull = this->CurrErecoSpectrum(s);
+    hfull->Write("ereco_spectrum");
+
     cout << "Total: " << nsk << endl << endl;
   }//sample
   out.Close();
