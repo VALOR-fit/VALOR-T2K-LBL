@@ -136,6 +136,7 @@ private:
    static FitParamList * NuOsc3FlavourFit                 (void);
    static FitParamList * NuOsc3FlavourFitWithAllSyst      (void);
    static FitParamList * NuOsc3FlavourFitWithSelectedSyst (void);
+   static FitParamList * NuOsc3FlavourFitWithSelectedSystFullBANFF (void);
    static FitParamList * NumuDisapFit                     (void);
    static FitParamList * NumuDisapFitWithAllSyst          (void);
    static FitParamList * NumuDisapFitWithSelectedSyst     (void);
@@ -143,6 +144,7 @@ private:
    static FitParamList * NumuDecohFit                     (void);
    static void           AppendSystematics                (FitParamList * fp, int start);
    static void           AppendSelectedSystematics        (FitParamList * fp, int start);
+   static void           AppendSelectedSystematicsWithFullBANFF (FitParamList * fp, int start);
 
    //
    // Private data members

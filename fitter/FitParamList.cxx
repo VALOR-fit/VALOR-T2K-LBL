@@ -312,6 +312,15 @@ FitParamList * FitParamList::NamedParameterList(string name)
     fp -> SetParListName(name);
     return fp;
   }
+  if(name == "nuosc3f_numudisapp_fix4+nuisancefullbanffselection") {
+    FitParamList * fp = FitParamList::NuOsc3FlavourFitWithSelectedSystFullBANFF();
+    fp -> FixParameter (kPhypMixing13);
+    fp -> FixParameter (kPhypMixing12);
+    fp -> FixParameter (kPhypDeltaCP);
+    fp -> FixParameter (kPhypDm12sq);
+    fp -> SetParListName(name);
+    return fp;
+  }
   if(name == "nuosc3f_nueapp_fix4") {
     FitParamList * fp = FitParamList::NuOsc3FlavourFit();
     fp -> FixParameter (kPhypMixing23);
@@ -540,6 +549,35 @@ FitParamList * FitParamList::NumuDisapFitWithSelectedSyst(void)
   return fparm;
 }
 //________________________________________________________________________________________
+FitParamList * FitParamList::NuOsc3FlavourFitWithSelectedSystFullBANFF(void)
+{
+  FitParamList * fparm = new FitParamList(2+7);
+
+  //
+  // add osc params
+  //
+  NuOscMixParam_t omp = Opt::Instance()->gOscMixingParamChoice;
+  switch(omp) {
+  case(kNuMixSinsq2Theta):
+    fparm->AddParam(0, kPhypMixing23, kInitFitSinsq2Theta23, kMinFitSinsq2Theta23,  kMaxFitSinsq2Theta23,  0.01,  false, false);
+    break;
+  case(kNuMixSinsqTheta):
+    fparm->AddParam(0, kPhypMixing23, kInitFitSinsqTheta23,  kMinFitSinsqTheta23,   kMaxFitSinsqTheta23,   0.01,  false, false);
+    break;
+  default:
+    delete fparm;
+    return 0;
+  }
+  fparm->AddParam(1, kPhypDm23sq, kInitFitDm23sq, kMinFitDm23sq, kMaxFitDm23sq, 1E-4, false, false);
+
+  //
+  // add nuisance params
+  //
+  FitParamList::AppendSelectedSystematicsWithFullBANFF(fparm, 2);
+
+  return fparm;
+}
+//________________________________________________________________________________________
 FitParamList * FitParamList::NumuDecayFit(void)
 {
   FitParamList * fparm = new FitParamList(2);
@@ -569,7 +607,7 @@ void FitParamList::AppendSystematics(FitParamList * fparm, int start)
 
   int ip = start; // first unallocated element in the param list
 
-  int nsigma = 3; // number of sigma away from nominal nuisance parameters are allowed to be
+  int nsigma = 5; // number of sigma away from nominal nuisance parameters are allowed to be
 
   //    Get the covariance matrices & best fits of FSI & BANFF from xml, 
   //    to have something sensible to initialise to
@@ -663,7 +701,7 @@ void FitParamList::AppendSelectedSystematics(FitParamList * fparm, int start)
 
   int ip = start; // first unallocated element in the param list
 
-  int nsigma = 3; // number of sigma away from nominal nuisance parameters are allowed to be
+  int nsigma = 5; // number of sigma away from nominal nuisance parameters are allowed to be
 
   //    Get the covariance matrices & best fits of BANFF from xml, 
   //    to have something sensible to initialise to
@@ -703,10 +741,69 @@ void FitParamList::AppendSelectedSystematics(FitParamList * fparm, int start)
   // BANFF 
   int bidx = util::ArrIdx::Instance()->BANFFSystIdx(kNuisBANFFMAQE);
   double bf  = BANFFBestFit[bidx];
-  double err = BANFFCov[bidx][bidx];
+  double err = sqrt(BANFFCov[bidx][bidx]);
   fparm->AddParam( ip++, kNuisBANFFMAQE,    bf, bf-(err*nsigma), bf+(err*nsigma),  err/2,  false, true);
   fparm->AddParam( ip++, kNuisBANFFCCQEE0,  bf, bf-(err*nsigma), bf+(err*nsigma),  err/2,  false, true);
   fparm->AddParam( ip++, kNuisBANFFCC1piE0, bf, bf-(err*nsigma), bf+(err*nsigma),  err/2,  false, true);
+
+  // XSec
+  fparm->AddParam( ip++, kNuisXSecSpecFunc,      0.0, -1.0*nsigma, 1.0*nsigma, 5E-1,  false, true);
+  fparm->AddParam( ip++, kNuisXSecPiLessDelta,   0.0, -1.0*nsigma, 1.0*nsigma, 5E-1,  false, true);
+
+}
+//________________________________________________________________________________________
+void FitParamList::AppendSelectedSystematicsWithFullBANFF(FitParamList * fparm, int start)
+{
+// Add most important systematic parameters
+//
+
+  int ip = start; // first unallocated element in the param list
+
+  int nsigma = 5; // number of sigma away from nominal nuisance parameters are allowed to be
+
+  //    Get the covariance matrices & best fits of BANFF from xml, 
+  //    to have something sensible to initialise to
+  // Parse the input XML configuration file
+  const char * config_file = Form("%s/config/%s", gSystem->Getenv("T2KOSCANA"), "analysis_configuration.xml");
+  TXMLEngine* xml = new TXMLEngine;   
+  XMLDocPointer_t xmldoc = xml->ParseFile(config_file);
+  if (xmldoc==0) {
+    cerr << "Exp >> " << "Can not parse input: " << config_file << endl;
+    delete xml;
+    exit(1);  
+  }
+  XMLNodePointer_t root_node = xml->DocGetRootElement(xmldoc);
+  // Get BANFF fit central values
+  TVectorD * BANFFBestFitValues = util::XML2TVectorD(xml,root_node,"banff/best_fit_values");
+  if(!BANFFBestFitValues) {
+    cerr << "FitParamList/AppendSystematics >> No BANFF best-fit parameter vector was found." << endl;
+    exit(1);
+  }
+  const TVectorD & BANFFBestFit = *BANFFBestFitValues;
+  // Get BANFF fit covariance matrix
+  TMatrixD * BANFFCovMtrx = util::XML2TMatrixD(xml,root_node,"banff/covariance_matrix");
+  if(!BANFFCovMtrx) {
+    cerr << "FitParamList/AppendSystematics >> No BANFF covariance matrix was found." << endl;
+    exit(1);
+  }
+  const TMatrixD & BANFFCov = *BANFFCovMtrx;
+  // Release memory
+  //  xml->FreeDoc(xmldoc);
+  xml->FreeNode(root_node);
+  delete xml;
+
+  // SK detector
+  fparm->AddParam( ip++, kNuisSuperkEff1RmuCCnonQE,  0.0, -1.0*nsigma, 1.0*nsigma, 5E-1,  false, true);
+  fparm->AddParam( ip++, kNuisSuperkEff1RmuNC,       0.0, -1.0*nsigma, 1.0*nsigma, 5E-1,  false, true);
+
+  // BANFF 
+  for(int i = 0; i < kNumOfParamsInBANFFfit; i++) {
+    PhysParamId_t p = PhysParamId_t ((int) kNuisBANFF00 + i);
+    double bf = BANFFBestFit[i];
+    double err = sqrt(BANFFCov[i][i]);
+    fparm->AddParam(ip++, p, bf, bf-(err*nsigma), bf+(err*nsigma),  err/2,  false, true);
+  }
+  fparm -> SetNuisance(kNuisBANFFNC1pi0 ,false); // not used in numu analysis!
 
   // XSec
   fparm->AddParam( ip++, kNuisXSecSpecFunc,      0.0, -1.0*nsigma, 1.0*nsigma, 5E-1,  false, true);
