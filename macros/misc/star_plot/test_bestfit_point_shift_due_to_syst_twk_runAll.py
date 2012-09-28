@@ -21,6 +21,26 @@ Run this by /path/to/test_bestfit_point_shift_due_to_syst_twk_runAll.py (you may
 It will then create the .png & .data files in new subfolders from the current working directory
 """
 
+optionParser = optparse.OptionParser(usage ="""\
+usage: %prog [options]
+    Run test_bestfit_point_shift_due_to_syst_twk.C""")
+optionParser.add_option("--syst", action="store_true", dest="do_syst", default=False, help="If set, will produce .data files for each systematic")
+optionParser.add_option("--stat", action="store_true", dest="do_stat", default=False, help="Stat is not implemented in this macro. Please run the production script, and use the code snippet at the bottom of $T2KOSCANA/macros/misc/star_plot/test_bestfit_point_shift_due_to_syst_twk.C to get stat errors, then replace the numbers instat.data: $T2KOSCANA/production/submit_toyexpt_fitting_job_fitsyst --resource Oxford --softw-dir $T2KOSCANA --job-dir $PWD --cpu-time 01:59:00 --tweak-systematics 1 --nruns 100 --nexpts 100 --dm23sq 0.0024 --sinsq2theta23 1. --stat-fluctuations --fit-param-list nuosc3f_numudisapp_fix4")
+optionParser.add_option("--draw", action="store_true", dest="do_draw", default=False, help="If set, will draw all the plots")
+(opt, args) = optionParser.parse_args()
+
+if not opt.do_syst or opt.do_stat or opt.do_draw:
+   optionParser.print_usage()
+   sys.exit(1)
+
+if opt.do_draw():
+   print "Stat is not implemented in this macro. Please run the production script, and use the code snippet at the bottom of $T2KOSCANA/macros/misc/star_plot/test_bestfit_point_shift_due_to_syst_twk.C to get stat errors, then replace the numbers instat.data: $T2KOSCANA/production/submit_toyexpt_fitting_job_fitsyst --resource Oxford --softw-dir $T2KOSCANA --job-dir $PWD --cpu-time 01:59:00 --tweak-systematics 1 --nruns 100 --nexpts 100 --dm23sq 0.0024 --sinsq2theta23 1. --stat-fluctuations --fit-param-list nuosc3f_numudisapp_fix4"
+   sys.exit(1)
+   
+if (opt.do_syst and opt.do_stat):
+   optionParser.print_usage()
+   sys.exit(1)
+
 conffile = "analysis_configuration.xml"
 
 #will create directories relative to the current working directory, if they don't already exist
@@ -103,12 +123,13 @@ for osc in oscparams:
       os.chdir(dirname)
 
       for syst in systematics:
-          
-         command = 'root2k -l -b -q \'$T2KOSCANA/macros/misc/star_plot/test_bestfit_point_shift_due_to_syst_twk.C("'+syst+'","'+sam+'","'+fitparamlist+'","'+fitter+'",'+str(osc[0])+','+str(osc[1])+','+str(osc[2])+','+str(osc[3])+','+str(osc[4])+','+str(osc[5])+',"'+conffile+'")\''
-         print command
-         os.system(command)
 
-         if syst == systematics[len(systematics)-1]:
+         if opt.do_syst:
+            command = 'root2k -l -b -q \'$T2KOSCANA/macros/misc/star_plot/test_bestfit_point_shift_due_to_syst_twk.C("'+syst+'","'+sam+'","'+fitparamlist+'","'+fitter+'",'+str(osc[0])+','+str(osc[1])+','+str(osc[2])+','+str(osc[3])+','+str(osc[4])+','+str(osc[5])+',"'+conffile+'")\''
+            print command
+            os.system(command)
+
+         if syst == systematics[len(systematics)-1] and opt.do_draw:
 
             file = open('stat.data', 'r')
             file.readline()
@@ -200,5 +221,6 @@ for osc in oscparams:
             print command
             os.system(command)
             
-            
+         if syst == systematics[len(systematics)-1]
+
             os.chdir(basedir)

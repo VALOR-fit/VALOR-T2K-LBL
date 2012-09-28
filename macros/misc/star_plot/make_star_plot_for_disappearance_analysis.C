@@ -109,7 +109,7 @@ void make_star_plot_for_disappearance_analysis
   //
   double kRmixing23 = TMath::Abs(stat_av_mixing23);
   double kRdm23sq   = TMath::Abs(stat_av_dm23sq);
-  TEllipse * cut = new TEllipse(true_mixing23,true_dm23sq, kRmixing23, kRdm23sq);
+  TEllipse * cut = new TEllipse(true_mixing23,true_dm23sq, kRmixing23 / 4, kRdm23sq / 4);
   cut->SetLineWidth(kCutLineWidth);
   cut->SetLineStyle(kCutLineStyle);
   cut->SetFillStyle(kCutFillStyle);
@@ -206,34 +206,34 @@ void make_star_plot_for_disappearance_analysis
   vector<string> groupname = util::Tokens(tokened, ".");
   string group = groupname[0];
 
-  c->SaveAs(Form("%s-%f-%f_big.png",group.c_str(),true_mixing23,true_dm23sq));
+  c->SaveAs(Form("%s-%f-%f_big.pdf",group.c_str(),true_mixing23,true_dm23sq));
 
   if(TMath::Abs(0.9-true_mixing23) < conv::kASmallNum && TMath::Abs(2.4E-3-true_dm23sq) < conv::kASmallNum) {
     osc_param_space->GetXaxis()->SetRangeUser(0.878,0.916);
     osc_param_space->GetYaxis()->SetRangeUser(0.00227,0.00253);
-    c->SaveAs(Form("%s-%f-%f.png",group.c_str(),true_mixing23,true_dm23sq));
+    c->SaveAs(Form("%s-%f-%f.pdf",group.c_str(),true_mixing23,true_dm23sq));
 
     osc_param_space->GetXaxis()->SetRangeUser(0.895,0.905);
     osc_param_space->GetYaxis()->SetRangeUser(0.002375,0.002425);
-    c->SaveAs(Form("%s-%f-%f_zoom.png",group.c_str(),true_mixing23,true_dm23sq));
+    c->SaveAs(Form("%s-%f-%f_zoom.pdf",group.c_str(),true_mixing23,true_dm23sq));
 
     osc_param_space->GetXaxis()->SetRangeUser(0.898,0.902);
     osc_param_space->GetYaxis()->SetRangeUser(0.002395,0.002405);
-    c->SaveAs(Form("%s-%f-%f_zoom2.png",group.c_str(),true_mixing23,true_dm23sq));
+    c->SaveAs(Form("%s-%f-%f_zoom2.pdf",group.c_str(),true_mixing23,true_dm23sq));
   }
 
   else if(TMath::Abs(1.0-true_mixing23) < conv::kASmallNum && TMath::Abs(2.4E-3-true_dm23sq) < conv::kASmallNum) {
     osc_param_space->GetXaxis()->SetRangeUser(0.982,1.);
     osc_param_space->GetYaxis()->SetRangeUser(0.00227,0.00253);
-    c->SaveAs(Form("%s-%f-%f.png",group.c_str(),true_mixing23,true_dm23sq));
+    c->SaveAs(Form("%s-%f-%f.pdf",group.c_str(),true_mixing23,true_dm23sq));
 
     osc_param_space->GetXaxis()->SetRangeUser(0.995,1.);
     osc_param_space->GetYaxis()->SetRangeUser(0.002375,0.002425);
-    c->SaveAs(Form("%s-%f-%f_zoom.png",group.c_str(),true_mixing23,true_dm23sq));
+    c->SaveAs(Form("%s-%f-%f_zoom.pdf",group.c_str(),true_mixing23,true_dm23sq));
 
     osc_param_space->GetXaxis()->SetRangeUser(0.998,1.);
     osc_param_space->GetYaxis()->SetRangeUser(0.002395,0.002405);
-    c->SaveAs(Form("%s-%f-%f_zoom2.png",group.c_str(),true_mixing23,true_dm23sq));
+    c->SaveAs(Form("%s-%f-%f_zoom2.pdf",group.c_str(),true_mixing23,true_dm23sq));
   }
  
   cout << "Done! " << endl;

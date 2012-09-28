@@ -136,7 +136,7 @@ void test_bestfit_point_shift_due_to_syst_twk
   }
 
   bool fluctuate_stat = false; // <- don't fluctuate, best-fit point shift is purely due to systematic tweak
-  const int nexp = 1000; // how many experiments to run (when running stat)
+  const int nexp = 1; // how many experiments to run (when running stat)
   if(sys.find("stat") == 0) {
     fluctuate_stat = true;
   }
@@ -518,3 +518,35 @@ void test_bestfit_point_shift_due_to_syst_twk
 
   cout << "Done!" << endl;
 }
+
+/*
+
+  TChain c("nfitnt");
+  c.Add("toyexptfits-run_*");
+
+  double input_mixing23, bestfit_mixing23;
+  c.SetBranchAddress("input_mixing23",&input_mixing23);
+  c.SetBranchAddress("bestfit_mixing23",&bestfit_mixing23);
+  double sd_mixing23 = 0;
+  for(int i=0; i<c.GetEntries(); i++) {
+  c.GetEntry(i);
+  sd_mixing23 += (bestfit_mixing23 - input_mixing23) * (bestfit_mixing23 - input_mixing23);
+  cout << input_mixing23 << endl;
+  }
+  sd_mixing23 = sqrt(sd_mixing23 / (c.GetEntries() - 1));
+  cout << sd_mixing23 << endl;
+
+  double input_dm23sq, bestfit_dm23sq;
+  c.SetBranchAddress("input_dm23sq",&input_dm23sq);
+  c.SetBranchAddress("bestfit_dm23sq",&bestfit_dm23sq);
+  double sd_dm23sq = 0;
+  for(int i=0; i<c.GetEntries(); i++) {
+  c.GetEntry(i);
+  sd_dm23sq += (bestfit_dm23sq - input_dm23sq) * (bestfit_dm23sq - input_dm23sq);
+  cout << input_dm23sq << endl;
+  }
+  sd_dm23sq = sqrt(sd_dm23sq / (c.GetEntries() - 1));
+  cout << sd_dm23sq << endl;
+  cout << sd_mixing23 << endl;
+
+*/
