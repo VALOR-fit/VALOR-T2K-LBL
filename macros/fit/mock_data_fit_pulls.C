@@ -682,7 +682,7 @@ void mock_data_fit_pulls(
   TH1D * h_nsk_nom  = new TH1D("h_nsk_nom","h_nsk_nom",150,0,150);
   TH1D * h_nsk_bf   = new TH1D("h_nsk_bf","h_nsk_bf",150,0,150);
   TH1D * h_dchisq   = new TH1D("h_dchisq","h_dchisq",300,-5,25);
-  TH1D * h_mixing23 = new TH1D("h_mixing23","h_mixing23",160,-0.4,0.4);
+  TH1D * h_mixing23 = new TH1D("h_mixing23","h_mixing23",150,-0.3,0.3);
   TH1D * h_dm23sq   = new TH1D("h_dm23sq","h_dm23sq",120,-1E-3,1E-3);
   //pull histograms
   TH1D * hpull_mixing23 = new TH1D("hpull_mixing23","hpull_mixing23",160,-0.4,0.4);
@@ -1063,7 +1063,7 @@ void mock_data_fit_pulls(
   TLine *l_mixing23 = new TLine(h_mixing23->GetMean(),0,h_mixing23->GetMean(),1000); l_mixing23->Draw();
   cosc->cd(2); h_dm23sq->Draw();
   TLine *l_dm23sq = new TLine(h_dm23sq->GetMean(),0,h_dm23sq->GetMean(),1000); l_dm23sq->Draw();
-  cosc->SaveAs(Form("%f_osc.png", input_mixing23));
+  cosc->SaveAs(Form("%f_osc.pdf", input_mixing23));
   if(fit_systematics_mode == 1) {
     TCanvas *cbanff = new TCanvas(); cbanff->Divide(2,2);
     cbanff->cd(1); h_banff_maqe->Draw();
@@ -1082,8 +1082,8 @@ void mock_data_fit_pulls(
     coth->cd(4); h_skdet_nc->Draw();
     TLine *l_skdet_nc = new TLine(h_skdet_nc->GetMean(),0,h_skdet_nc->GetMean(),1000); l_skdet_nc->Draw();
     
-    cbanff->SaveAs(Form("%f_banff.png", input_mixing23));
-    coth->SaveAs(Form("%f_other.png", input_mixing23));
+    cbanff->SaveAs(Form("%f_banff.pdf", input_mixing23));
+    coth->SaveAs(Form("%f_other.pdf", input_mixing23));
   }
   else if(fit_systematics_mode == 2) {
     new TCanvas(); h_banff_00->Draw();

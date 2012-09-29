@@ -82,7 +82,7 @@ void test_n_mock_data_fits_xml
      fitter->Save("mockfit.root");
 
      // Get best-fit chisquare
-     bestfit_chisq = fit_inputs->BestFitChisquare();
+     double bestfit_chisq = fit_inputs->BestFitChisquare();
 
      // Get best-fit params
      double bestfit_mixing12 = -1;
@@ -91,7 +91,6 @@ void test_n_mock_data_fits_xml
      double bestfit_deltacp  = -1;
      double bestfit_dm12sq   = -1;
      double bestfit_dm23sq   = -1;
-     double bestfit_chisq    = -1;
      if(hyp == conv::kHypOsc3F) {
         bestfit_mixing12 = fparm->BestFitValue(t2kana::conv::kPhypMixing12);
         bestfit_mixing13 = fparm->BestFitValue(t2kana::conv::kPhypMixing13);
