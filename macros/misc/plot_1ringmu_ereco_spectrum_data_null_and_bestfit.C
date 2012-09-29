@@ -35,13 +35,13 @@ void plot_1ringmu_ereco_spectrum_data_null_and_bestfit
   TH1D * hdata       = 0;
   ffit->cd();
   if(rebin) {
-     hmcall      = (TH1D*) bestfit_tot       -> Rebin(kNErecoBins1Rmu, "hmcall",      kErecoBinEdges1Rmu);
-     hmcnumuccqe = (TH1D*) bestfit_numuccqe  -> Rebin(kNErecoBins1Rmu, "hmcnumuccqe", kErecoBinEdges1Rmu);
-     hdata       = (TH1D*) data              -> Rebin(kNErecoBins1Rmu, "hdata",       kErecoBinEdges1Rmu);
+     hmcall      = (TH1D*) bestfit_1Rmu       -> Rebin(kNErecoBins1Rmu, "hmcall",      kErecoBinEdges1Rmu);
+     hmcnumuccqe = (TH1D*) bestfit_1Rmu_numuccqe  -> Rebin(kNErecoBins1Rmu, "hmcnumuccqe", kErecoBinEdges1Rmu);
+     hdata       = (TH1D*) data_1Rmu              -> Rebin(kNErecoBins1Rmu, "hdata",       kErecoBinEdges1Rmu);
   } else {
-     hmcall      = new TH1D(*bestfit_tot);
-     hmcnumuccqe = new TH1D(*bestfit_numuccqe);
-     hdata       = new TH1D(*data);
+     hmcall      = new TH1D(*bestfit_1Rmu);
+     hmcnumuccqe = new TH1D(*bestfit_1Rmu_numuccqe);
+     hdata       = new TH1D(*data_1Rmu);
   }
 
   cout << "Read " << hdata->GetEntries() << " events " << endl;

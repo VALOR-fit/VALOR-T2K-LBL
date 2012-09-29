@@ -11,7 +11,7 @@ void plot_deltachisq_surface(
 )
 {
   TFile * ffit  = new TFile(fitfile, "read");
-  TH2D * hchisqsurf = new TH2D(*chisq_surface);
+  TH2D * hchisqsurf = new TH2D(*chisq_surface_1Rmu);
 
   double chisqmin = 999999;
   double best_sinsq2theta = 0;

@@ -9,7 +9,7 @@ import logging
 
 """
 This script will run the macro test_bestfit_point_shift_due_to_syst_twk.C for all systematic possiblities, producing
-lots of .data files with the outputs, and a variety of .png images. Things you can change are:
+lots of .data files with the outputs, and a variety of .pdf images. Things you can change are:
  - conffile - configuration file
  - samples - the SK samples you want to consider (default: 1Rmu)
  - fitparamlist - the FitParamList you want to use (default: nuosc3f_numudisapp_fix4)
@@ -18,7 +18,7 @@ lots of .data files with the outputs, and a variety of .png images. Things you c
  - systematics - the systematics you want to run over (defaults to all currently known)
 
 Run this by /path/to/test_bestfit_point_shift_due_to_syst_twk_runAll.py (you may need to chmod +x)
-It will then create the .png & .data files in new subfolders from the current working directory
+It will then create the .pdf & .data files in new subfolders from the current working directory
 """
 
 optionParser = optparse.OptionParser(usage ="""\

@@ -16,7 +16,7 @@ void compare_1dhist_all(
   bool draw_only_ratio = false,     /* draw only the ratio? or also plot the 2 histograms overlaid */
   double xmin = -9999999,           /* minimum of x axis to draw */
   double xmax = +9999999,           /* maximum of x axis to draw */
-  bool save_canvas = false          /* save canvas to a .png? */
+  bool save_canvas = false          /* save canvas to a .pdf? */
 )
 {
   char *s = new char[50];
@@ -96,7 +96,7 @@ void compare_1dhist_all(
       ratio->Draw();
       c->Update();
       if(save_canvas)
-	c->SaveAs(Form("plot_%s.png",histoname.Data()));
+	c->SaveAs(Form("plot_%s.pdf",histoname.Data()));
 
       gets(s); //waits for a [RETURN] entry on the command line.
       //Can type a number to skip n histograms
