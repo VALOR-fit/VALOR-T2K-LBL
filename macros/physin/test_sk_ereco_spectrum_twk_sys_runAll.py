@@ -12,7 +12,6 @@ This script will run the macro test_sk_ereco_spectrum_twk_sys.C for all systemat
 a ROOT file with the outputs (plus lots of .png's). Things you can change are:
  - conffile - configuration file
  - oscparam - the oscillation parameters you want to calculate shifts relative to (defaults to global best fits - you can specify more than 1 set of parameters to run over)
-            - (Note that if sinsqtheta13 is identical in 2 cases, you'll need to add another distinguisher to the label definition at the end of root macro, otherwise the tex won't compile)
  - emax     - maximum of the Ereco (x-axis) to plot in the images
  
 Run this by /path/to/test_sk_ereco_spectrum_twk_sys_runAll.py (you may need to chmod +x)

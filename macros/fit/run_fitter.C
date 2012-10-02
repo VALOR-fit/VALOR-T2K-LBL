@@ -69,7 +69,6 @@ void run_fitter
   cout << "  Output option: " << output_option  << endl;
   cout << *Opt::Instance() << endl;
 
-
   // set physics hypothesis
   PhysHypothesis ph(hypothesis);
   if(ph.Hypothesis() == conv::kHypNuMuDisapp2F) {
