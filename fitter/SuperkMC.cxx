@@ -517,13 +517,6 @@ void SuperkMC::ApplyFluxExtTuningToTemplates(void)
            double wght = fNuFlux->SuperkFluxExtTuningWght(s,m,Etrue);
 	   // update nominal MC template
            nev *= wght;
-	   if(nev < 0) {
-#ifdef __show_negative_events_mesg_debug__
-	     cout << "Exp/SKMC/ApplyFluxExtTuningToTemplates >> set negative number of events " << nev 
-		  << " to kSetNegEventsTo " << kSetNegEventsTo << endl;
-#endif
-	     nev = kSetNegEventsTo;
-	   }
            mctempl->SetBinContent(ir,it,nev);
            // initialize "tun", "sys" & "fin" templates to "nom" values
            this->Template(s,m,kSKMCtTun)->SetBinContent(ir,it,nev);
@@ -602,13 +595,6 @@ void SuperkMC::ApplyBANFFTuningToTemplates(void)
 	     double nev = mctempl_src->GetBinContent(ir,it);
 	     nev = TMath::Max(0.,nev);
 	     double nev_tuned = nev * wght;
-	     if(nev_tuned < 0) {
-#ifdef __show_negative_events_mesg_debug__
-	       cout << "Exp/SKMC/ApplyBANFFTuningToTemplates >> set negative number of events " << nev_tuned 
-		    << " to kSetNegEventsTo " << kSetNegEventsTo << endl;
-#endif
-	       nev_tuned = kSetNegEventsTo;
-	     }
 	     mctempl_tgt->SetBinContent(ir,it,nev_tuned);
 	     // initialize "sys" & "fin" templates to "tun" values
 	     this->Template(s,m,kSKMCtSys)->SetBinContent(ir,it,nev_tuned);
@@ -716,13 +702,6 @@ void SuperkMC::ApplySystematicsToTemplates_Multiplicative(void)
 	     double nev = mctempl_src->GetBinContent(ir,it);
 	     nev = TMath::Max(0.,nev);
 	     nev *= wght;
-	     if(nev < 0) {
-#ifdef __show_negative_events_mesg_debug__
-	       cout << "Exp/SKMC/ApplyFluxExtTuningToTemplates >> set negative number of events " << nev 
-		    << " to kSetNegEventsTo " << kSetNegEventsTo << endl;
-#endif
-	       nev = kSetNegEventsTo;
-	     }
 
 #ifdef __show_syst_var_wght_mesg_debug__ 
 	     if( skeff_wght != 1. || 
@@ -820,10 +799,8 @@ void SuperkMC::ApplySystematicsToTemplates_NonMultiplicative(void)
                       double n  = mctempl_no_ereco_scale->GetBinContent(ir, it);
                       double dn = n * overlap / (bin_max-bin_min); ///< (overlap) * (nominal # of events) / (bin width)
                       // update the systematically varied templates
-		      double minus_events = mctempl->GetBinContent(ir,  it) - dn;
-		      if(minus_events < 0) minus_events = kSetNegEventsTo;
-                      mctempl->SetBinContent(ir, it, minus_events);
                       dn = TMath::Min(dn,n);
+		      mctempl->SetBinContent(ir, it, mctempl->GetBinContent(ir,  it) - dn);
                       mctempl->SetBinContent(irp,it, mctempl->GetBinContent(irp, it) + dn);
                  }//it
               }//irp
@@ -860,12 +837,9 @@ void SuperkMC::ApplySystematicsToTemplates_NonMultiplicative(void)
                       // calculate how many events from nominal bin ir get lost to bin ir'
                       double n  = mctempl_no_ereco_scale->GetBinContent(ir, it);
                       double dn = n * overlap / (bin_max-bin_min); ///< (overlap) * (nominal # of events) / (bin width)
-                      //dn = TMath::Min(dn,n);
                       // update the systematically varied templates
-		      double minus_events = mctempl->GetBinContent(ir,  it) - dn;
-		      if(minus_events < 0) minus_events = kSetNegEventsTo;
-                      mctempl->SetBinContent(ir, it, minus_events);
                       dn = TMath::Min(dn,n);
+		      mctempl->SetBinContent(ir, it, mctempl->GetBinContent(ir,  it) - dn);
                       mctempl->SetBinContent(irp,it, mctempl->GetBinContent(irp, it) + dn);
                  }//it
               }//irp
@@ -1128,9 +1102,24 @@ void SuperkMC::UpdateErecoSpectra(void)
           for(int it = 1; it <= mctempl->GetYaxis()->GetNbins(); it++) {
              nev += mctempl->GetBinContent(ir,it);
           }//it
-          reco_spectrum->SetBinContent(ir,nev);
           nev_tot += nev;
+	  if(nev < 0) {
+#ifdef __show_negative_events_mesg_debug__
+	    cout << "Exp/SKMC/UpdateErecoSpectra >> set negative number of events " << nev_tot 
+		 << " to kSetNegEventsTo " << kSetNegEventsTo << "\t" << AsStringCompact(m) 
+		 << " Ereco: " << reco_spectrum_tot->GetXaxis()->GetBinCenter(ir) << endl;
+#endif
+	    nev = kSetNegEventsTo;
+	  }
+          reco_spectrum->SetBinContent(ir,nev);
        }//im
+       if(nev_tot < 0) {
+#ifdef __show_negative_events_mesg_debug__
+	 cout << "Exp/SKMC/UpdateErecoSpectra >> set negative number of events " << nev_tot 
+	      << " to kSetNegEventsTo " << kSetNegEventsTo << "\t" << " Ereco: " << reco_spectrum_tot->GetXaxis()->GetBinCenter(ir) << endl;
+#endif
+	 nev_tot = kSetNegEventsTo;
+       }
        reco_spectrum_tot->SetBinContent(ir,nev_tot);
     }//ir
   }//is

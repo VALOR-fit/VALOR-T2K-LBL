@@ -139,7 +139,8 @@ bool SuperkObservation::Read(string config_file, int data_set_id)
      }
      cout << "Obs >> Read: " << fErDistr[idx]->Integral() 
        << " " << util::AsString(kSKsFCFV1RingMuLike) << " events." << endl;
-  } else {
+  }
+  else {
      cerr << "Obs >> Node " << datanode1Rmu.str() << " does not exist!" << endl;
   }
 
@@ -155,7 +156,8 @@ bool SuperkObservation::Read(string config_file, int data_set_id)
      fErDistr[idx]->SetBinContent(1,nev); ///// just put the number in the 1st bin
      cout << "Obs >> Read: " << fErDistr[idx]->Integral() 
        << " " << util::AsString(kSKsFCFV1RingELike) << " events." << endl;
-  } else {
+  }
+  else {
      cerr << "Obs >> Node " << datanode1Re.str() << " does not exist!" << endl;
   }
 
