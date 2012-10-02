@@ -705,13 +705,6 @@ void SuperkMC::ApplySystematicsToTemplates_Multiplicative(void)
 
            // Combined weight
            double wght = skeff_wght * flux_wght * xsec_wght * fsi_wght;
-	   if(wght < 0) {
-#ifdef __show_small_wght_mesg_debug__
-	     cout << "Exp/SKMC/ApplySystematicsToTemplates_Multiplicative >> set weight " << wght
-		  << " to kSetNegEventsTo " << kSetNegEventsTo << endl;
-#endif
-	     wght = kSetNegEventsTo;
-	   }
 
 	   // Get the 50MeV Etrue bin number range
 	   int firstbin = mctempl_src->GetYaxis()->FindBin(EtrueVarMin);
