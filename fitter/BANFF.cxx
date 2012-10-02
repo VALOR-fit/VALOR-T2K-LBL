@@ -371,15 +371,15 @@ double BANFF::ChisqPenalty(bool all_syst) const
   return 0;
 }
 //________________________________________________________________________________________
-void BANFF::PrintSystematicVariations(void) const
+void BANFF::PrintSystematicVariations(ostream & stream) const
 {
   //assert(fCurrentValues->GetNoElements() == conv::kNumOfParamsInBANFFfit);
 
   const TVectorD & current_values = *fCurrentValues;
   const TVectorD & bestfit_values = *fBestFitValues;
 
-  cout << "Exp/BANFF >> BANFF parameters: " << endl; 
-  util::PrintCompact(current_values, bestfit_values, 12,6,"BANFF fit params");
+  stream << "Exp/BANFF >> BANFF parameters: " << endl; 
+  util::PrintCompact(current_values, bestfit_values, 12,6,"BANFF fit params", stream);
 }
 //________________________________________________________________________________________
 int BANFF::Param2Idx(PhysParamId_t p) const

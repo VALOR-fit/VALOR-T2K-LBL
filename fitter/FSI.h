@@ -23,6 +23,8 @@
 #include <TH1D.h>
 #include <TH2D.h>
 
+#include <iostream>
+
 #include "Conventions.h"
 
 using t2kana::conv::kns;
@@ -55,7 +57,7 @@ public:
   double ChisqPenalty(void) const;
 
   // Print
-  void PrintSystematicVariations (void) const;
+  void PrintSystematicVariations (ostream & stream = std::cout) const;
 
   // Read inputs from XML file
   bool Read (TXMLEngine* xml, XMLNodePointer_t root_node);

@@ -85,7 +85,7 @@ public:
    FSI *            GetFSI            (void) { return fFSI;            }
 
    // Print
-   void PrintSystematicVariations(void) const;
+   void PrintSystematicVariations(ostream & stream = std::cout) const;
 
 private:
 

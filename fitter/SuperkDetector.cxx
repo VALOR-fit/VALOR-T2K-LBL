@@ -308,17 +308,17 @@ double SuperkDetector::ChisqPenalty(bool all_syst) const
   return chisq_penalty;
 }
 //________________________________________________________________________________________
-void SuperkDetector::PrintSystematicVariations(void) const
+void SuperkDetector::PrintSystematicVariations(ostream & stream) const
 {
-  cout << "Exp/SKDet >> SuperK detector systematics: " << endl
-       << " > 1Rmu energy scale twk        = "  << fEnergyScaleTwkDial      << endl
-       << " > 1Rmu CCQE RC0 efficiency twk = "  << fEff1RmuCCQERC0TwkDial   << endl
-       << " > 1Rmu CCQE RC1 efficiency twk = "  << fEff1RmuCCQERC1TwkDial   << endl
-       << " > 1Rmu CCQE RC2 efficiency twk = "  << fEff1RmuCCQERC2TwkDial   << endl
-       << " > 1Rmu CCQE Oth efficiency twk = "  << fEff1RmuCCQEOthTwkDial   << endl
-       << " > 1Rmu CCnonQE efficiency twk  = "  << fEff1RmuCCnonQETwkDial   << endl
-       << " > 1Rmu NC efficiency twk       = "  << fEff1RmuNCTwkDial        << endl
-       << " > 1Rmu nu_e CC efficiency twk  = "  << fEff1RmuNuECCTwkDial     << endl;
+  stream << "Exp/SKDet >> SuperK detector systematics: " << endl
+	 << " > 1Rmu energy scale twk        = "  << fEnergyScaleTwkDial      << endl
+	 << " > 1Rmu CCQE RC0 efficiency twk = "  << fEff1RmuCCQERC0TwkDial   << endl
+	 << " > 1Rmu CCQE RC1 efficiency twk = "  << fEff1RmuCCQERC1TwkDial   << endl
+	 << " > 1Rmu CCQE RC2 efficiency twk = "  << fEff1RmuCCQERC2TwkDial   << endl
+	 << " > 1Rmu CCQE Oth efficiency twk = "  << fEff1RmuCCQEOthTwkDial   << endl
+	 << " > 1Rmu CCnonQE efficiency twk  = "  << fEff1RmuCCnonQETwkDial   << endl
+	 << " > 1Rmu NC efficiency twk       = "  << fEff1RmuNCTwkDial        << endl
+	 << " > 1Rmu nu_e CC efficiency twk  = "  << fEff1RmuNuECCTwkDial     << endl;
 }
 //________________________________________________________________________________________
 double SuperkDetector::EfficiencyWeight(

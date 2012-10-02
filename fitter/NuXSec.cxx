@@ -822,26 +822,26 @@ double NuXSec::RelativeError(PhysParamId_t p) const
   return 0;
 }
 //________________________________________________________________________________________
-void NuXSec::PrintSystematicVariations(void) const
+void NuXSec::PrintSystematicVariations(ostream & stream) const
 {
-  cout << "Exp/XSec >> XSec parameters:"                            << endl; 
-  cout << "         >> Fermi momentum      " << fFermiMomTwkDial      << endl;
-  cout << "         >> Spectral function   " << fSpecFuncTwkDial      << endl;
-  cout << "         >> W-shape             " << fWshapeTwkDial        << endl;
-  cout << "         >> CC-oth shape        " << fShapeCCothTwkDial    << endl;
-  cout << "         >> Pi-less delta decay " << fPiLessDeltaTwkDial   << endl;
-  cout << "         >> CC1pi ENu Shape     " << fENuShapeTwkDial      << endl;
+  stream << "Exp/XSec >> XSec parameters:"                              << endl; 
+  stream << "         >> Fermi momentum      " << fFermiMomTwkDial      << endl;
+  stream << "         >> Spectral function   " << fSpecFuncTwkDial      << endl;
+  stream << "         >> W-shape             " << fWshapeTwkDial        << endl;
+  stream << "         >> CC-oth shape        " << fShapeCCothTwkDial    << endl;
+  stream << "         >> Pi-less delta decay " << fPiLessDeltaTwkDial   << endl;
+  stream << "         >> CC1pi ENu Shape     " << fENuShapeTwkDial      << endl;
 #if BANFF_BINS != 2
-  cout << "         >> CCQE bin1 norm      " << fNormCCQEE1TwkDial    << endl;
-  cout << "         >> CCQE bin2 norm      " << fNormCCQEE2TwkDial    << endl;
-  cout << "         >> CC1pi bin1 norm     " << fNormCC1piE1TwkDial   << endl;
+  stream << "         >> CCQE bin1 norm      " << fNormCCQEE1TwkDial    << endl;
+  stream << "         >> CCQE bin2 norm      " << fNormCCQEE2TwkDial    << endl;
+  stream << "         >> CC1pi bin1 norm     " << fNormCC1piE1TwkDial   << endl;
 #endif
-  cout << "         >> CC-coh norm         " << fNormCCcohTwkDial     << endl;
-  cout << "         >> NC-1piC norm        " << fNormNC1piCTwkDial    << endl;
-  cout << "         >> NC-coh norm         " << fNormNCcohTwkDial     << endl;
-  cout << "         >> NC-oth norm         " << fNormNCothTwkDial     << endl;
-  cout << "         >> NuE to NuMu norm    " << fNormNuEToNuMuTwkDial << endl;
-  cout << "         >> AntiNu to Nu norm   " << fNormAntiNuToNuTwkDial<< endl;
+  stream << "         >> CC-coh norm         " << fNormCCcohTwkDial     << endl;
+  stream << "         >> NC-1piC norm        " << fNormNC1piCTwkDial    << endl;
+  stream << "         >> NC-coh norm         " << fNormNCcohTwkDial     << endl;
+  stream << "         >> NC-oth norm         " << fNormNCothTwkDial     << endl;
+  stream << "         >> NuE to NuMu norm    " << fNormNuEToNuMuTwkDial << endl;
+  stream << "         >> AntiNu to Nu norm   " << fNormAntiNuToNuTwkDial<< endl;
 }
 //________________________________________________________________________________________
 

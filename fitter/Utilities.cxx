@@ -4938,7 +4938,7 @@ vector<string> t2kana::util::Tokens (string input, string delimiter)
 }
 //___________________________________________________________________________
 void t2kana::util::PrintCompact(
-   const TVectorD & v, int w, int prec, Option_t * option)
+        const TVectorD & v, int w, int prec, Option_t * option, ostream & stream)
 {
   TString opt = option;
 
@@ -4947,24 +4947,24 @@ void t2kana::util::PrintCompact(
   bool printing_selected_banff_params = opt.Contains("BANFF selected fit params");
 
   int np = v.GetNoElements();
-  cout << fixed;
+  stream << fixed;
 
   for(int ip = 0; ip < np; ip++) {
-     cout << "> param = " << setw(3) << ip;
+     stream << "> param = " << setw(3) << ip;
      if(printing_banff_params) {
-         cout << " [ ";
+         stream << " [ ";
          PhysParamId_t p = PhysParamId_t ( (int)kNuisBANFF00 + ip );
-         cout << setw(42) << util::AsString(p);
-         cout << " ]";
+         stream << setw(42) << util::AsString(p);
+         stream << " ]";
      }
      if(printing_fsi_params) {
-         cout << " [ ";
+         stream << " [ ";
          PhysParamId_t p = PhysParamId_t ( (int)kNuisFSI000 + ip );
-         cout << setw(30) << util::AsString(p);
-         cout << " ]";
+         stream << setw(30) << util::AsString(p);
+         stream << " ]";
      }
      if(printing_selected_banff_params) {
-         cout << " [ ";
+         stream << " [ ";
          PhysParamId_t p = kPhypUndefined;
 	 if(ip == 0)
 	   p = kNuisBANFFMAQE;
@@ -4972,17 +4972,17 @@ void t2kana::util::PrintCompact(
 	   p = kNuisBANFFCCQEE0;
 	 else if(ip == 2)
 	   p = kNuisBANFFCC1piE0;
-         cout << setw(30) << util::AsString(p);
-         cout << " ]";
+         stream << setw(30) << util::AsString(p);
+         stream << " ]";
      }
-     cout << " - value = " << setw(w) << setprecision(prec) << v[ip] << endl;
+     stream << " - value = " << setw(w) << setprecision(prec) << v[ip] << endl;
   }
-  cout << scientific;
+  stream << scientific;
 }
 //___________________________________________________________________________
 void t2kana::util::PrintCompact(
    const TVectorD & current, const TVectorD & nominal, 
-   int w, int prec, Option_t * option)
+   int w, int prec, Option_t * option, ostream & stream)
 {
   TString opt = option;
 
@@ -4990,57 +4990,57 @@ void t2kana::util::PrintCompact(
   bool printing_fsi_params   = opt.Contains("FSI params");
 
   int np = current.GetNoElements();
-  cout << fixed;
+  stream << fixed;
 
   for(int ip = 0; ip < np; ip++) {
-     cout << "> param = " << setw(3) << ip;
+     stream << "> param = " << setw(3) << ip;
      if(printing_banff_params) {
-         cout << " [ ";
+         stream << " [ ";
          PhysParamId_t p = PhysParamId_t ( (int)kNuisBANFF00 + ip );
-         cout << setw(42) << util::AsString(p);
-         cout << " ]";
+         stream << setw(42) << util::AsString(p);
+         stream << " ]";
      }
      if(printing_fsi_params) {
-         cout << " [ ";
+         stream << " [ ";
          PhysParamId_t p = PhysParamId_t ( (int)kNuisFSI000 + ip );
-         cout << setw(30) << util::AsString(p);
-         cout << " ]";
+         stream << setw(30) << util::AsString(p);
+         stream << " ]";
      }
-     cout << " - current = " 
+     stream << " - current = " 
           << setw(w) << setprecision(prec) << current[ip];
-     cout << " - nominal = " 
+     stream << " - nominal = " 
           << setw(w) << setprecision(prec) << nominal[ip];
      if(nominal[ip] != 0) {
-       cout << " - current/nominal = " 
+       stream << " - current/nominal = " 
             << setw(w) << setprecision(prec) << current[ip]/nominal[ip];
      }
-     cout << endl;
+     stream << endl;
   }
-  cout << scientific;
+  stream << scientific;
 }
 //___________________________________________________________________________
 void t2kana::util::PrintCompact(
-  const TMatrixD & m, int w, int prec)
+  const TMatrixD & m, int w, int prec, ostream & stream)
 {
   int nc = m.GetNcols();
   int nr = m.GetNrows();
-  cout << fixed;
+  stream << fixed;
   for(int ir=0; ir<nr; ir++) {
     if(ir==0) {
-       cout << setw(w) << setfill(' ') << "r\\c:" << " | "; 
+       stream << setw(w) << setfill(' ') << "r\\c:" << " | "; 
        for(int ic=0; ic<nc; ic++) {
-         cout << setw(w) << setfill(' ') << setprecision(0) << ic << " | ";
+         stream << setw(w) << setfill(' ') << setprecision(0) << ic << " | ";
        }
-       cout << endl;
+       stream << endl;
     }
-    cout << setw(w) << setfill(' ') << setprecision(0) << ir << " | "; 
+    stream << setw(w) << setfill(' ') << setprecision(0) << ir << " | "; 
     for(int ic=0; ic<nc; ic++) {
-         cout << setw(w) << setfill(' ') << setprecision(prec) 
+         stream << setw(w) << setfill(' ') << setprecision(prec) 
               << m[ir][ic] << " | ";
     }//rows
-    cout << endl;
+    stream << endl;
   }//columns
-  cout << scientific;
+  stream << scientific;
 }
 //___________________________________________________________________________
 int t2kana::util::Sign(double tweaking_dial)

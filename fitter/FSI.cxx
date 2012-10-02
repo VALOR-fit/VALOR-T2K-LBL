@@ -359,11 +359,11 @@ double FSI::ChisqPenalty(void) const
   return 0;
 }
 //________________________________________________________________________________________
-void FSI::PrintSystematicVariations(void) const
+void FSI::PrintSystematicVariations(ostream & stream) const
 {
   const TVectorD & curr_fsi_params = *fCurrentValues;
-  cout << "Exp/FSI >> FSI parameters: " << endl;
-  util::PrintCompact(curr_fsi_params,15,6,"FSI params");
+  stream << "Exp/FSI >> FSI parameters: " << endl;
+  util::PrintCompact(curr_fsi_params,15,6,"FSI params",stream);
 }
 //________________________________________________________________________________________
 void FSI::BuildFracMCTemplates(TH2D* input_mctempl_array[kns][knm])

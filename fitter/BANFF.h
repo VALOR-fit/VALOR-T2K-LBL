@@ -23,6 +23,8 @@
 #include <TMatrixTSym.h>
 #include <TXMLEngine.h>
 
+#include <iostream>
+
 #include "Conventions.h"
 
 class TH1D;
@@ -62,7 +64,7 @@ public:
   void MarkFluxWghtUpdated (void)       { fIsFluxWghtUpdated = true; }
 
   // Print
-  void PrintSystematicVariations (void) const;
+  void PrintSystematicVariations (ostream & stream = std::cout) const;
    
   // Read inputs from XML file
   bool Read (TXMLEngine* xml, XMLNodePointer_t root_node);

@@ -13,17 +13,17 @@ void generate_toymc_ensemble
   int          run                     = 0,                              /* */
   double       nexperiments            = 10,                             /* number of toy-MC expts to generate */
   const char * hypothesis              = "3f_osc",                       /* options: "2f_numu_disap", "3f_osc" */
-  double       input_mixing12          = 0.86,                           /* 12-mixing, sinq2theta or sinsqtheta depending on config choice, if -999 then randomize  */
-  double       input_mixing13          = 0.10,                           /* 13-mixing, sinq2theta or sinsqtheta depending on config choice, if -999 then randomize  */
-  double       input_mixing23          = 1.00,                           /* 23-mixing, sinq2theta or sinsqtheta depending on config choice */
-  double       input_deltacp           = 0.00,                           /* deltacp, if -999 then randomize */
-  double       input_dm12sq            = 7.58E-5,                        /* Dm^2_{12}, if -999 then randomize */
-  double       input_dm23sq            = 2.32E-3,                        /* |Dm^2_{23}| */
+  double       input_mixing12          = -99,                            /* 12-mixing, sinq2theta or sinsqtheta depending on config choice, if -999 then randomize  */
+  double       input_mixing13          = -99,                            /* 13-mixing, sinq2theta or sinsqtheta depending on config choice, if -999 then randomize  */
+  double       input_mixing23          = -99,                            /* 23-mixing, sinq2theta or sinsqtheta depending on config choice */
+  double       input_deltacp           = -99,                            /* deltacp, if -999 then randomize */
+  double       input_dm12sq            = -99,                            /* Dm^2_{12}, if -999 then randomize */
+  double       input_dm23sq            = -99,                            /* |Dm^2_{23}| */
   const char * config_file             = "analysis_configuration.xml",   /* analysis configuration file */
   bool         stat_fluctuations       = true,                           /* include statistical fluctuation in toy MC expts? */
   bool         tweak_systematics       = true,                           /* generate toy MC with randomized systematics? */
   bool         save_in_xml_format      = true,                           /* */
-  bool         save_in_root_format     = false,                          /* */
+  bool         save_in_root_format     = true,                           /* */
   const char * points_to_add           = 0                               /* comma separated-list of data-points to add, eg when creating hybrid data/toy-MC experiments */
 )
 {
@@ -90,13 +90,14 @@ void generate_toymc_ensemble
   if(save_in_root_format) {
     ostringstream root_filename;
     root_filename << tag << "-" << run << ".root";
+    cout << root_filename.str();
     f = new TFile(root_filename.str().c_str(), "recreate");
   }
 
   ofstream fxml;
   if(save_in_xml_format) {
     ostringstream xml_filename;
-    xml_filename << tag << "-" << run << "_" << input_mixing23 << "_" << input_dm23sq << ".xml";
+    xml_filename << tag << "-" << run << ".xml";
     fxml.open(xml_filename.str().c_str());
     fxml << "<?xml version=\"1.0\"?> " << endl;
     fxml << "<analysis_inputs>       " << endl;
@@ -155,6 +156,11 @@ void generate_toymc_ensemble
      // If an XML file was specified, add an entry
      if(save_in_xml_format) {
        fxml << "           " << Form("<data_set_%d>",iexperiment) << endl;
+       fxml << "\t\t" << "<!-- ";
+       ph.Print(fxml);
+       if(tweak_systematics)
+	 skexp->PrintSystematicVariations(fxml);
+       fxml << " -->" << endl;
        fxml << "\t\t";
        // Adding Ereco values as a comma separated list.
        // Assuming uniform distribution within each bin, randomize values within each bin.
@@ -183,10 +189,12 @@ void generate_toymc_ensemble
      // If a ROOT filename was specified, save the ROOT histogram too
      if(f) {
        if(save_in_root_format) {
-          vector<string> vecp = util::Tokens(points_to_add,",");
-          assert(vecp.size()>0);
-          for(int ip=0; ip < vecp.size(); ip++) {
-            mock_data->Fill(atof(vecp[ip].c_str()));
+ 	  if(points_to_add) {
+	    vector<string> vecp = util::Tokens(points_to_add,",");
+	    assert(vecp.size()>0);
+	    for(int ip=0; ip < vecp.size(); ip++) {
+	      mock_data->Fill(atof(vecp[ip].c_str()));
+	    }
           }
        }
        f->cd();

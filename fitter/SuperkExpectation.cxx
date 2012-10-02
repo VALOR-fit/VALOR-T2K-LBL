@@ -498,13 +498,13 @@ void SuperkExpectation::TweakAllSKDetectorSystematics(void)
   this->GetSuperkDetector()->TweakEfficiency1RmuCCQERingCounting  (); // <-- Cholesky method
 }
 //________________________________________________________________________________________
-void SuperkExpectation::PrintSystematicVariations(void) const
+void SuperkExpectation::PrintSystematicVariations(ostream & stream) const
 {
   cout << "Exp >> SuperK PDF tweaks: " << endl;
-  fSuperkDetector -> PrintSystematicVariations();
-  fBANFF          -> PrintSystematicVariations();
-  fNuXSec         -> PrintSystematicVariations();
-  fFSI            -> PrintSystematicVariations();
+  fSuperkDetector -> PrintSystematicVariations(stream);
+  fBANFF          -> PrintSystematicVariations(stream);
+  fNuXSec         -> PrintSystematicVariations(stream);
+  fFSI            -> PrintSystematicVariations(stream);
 }
 //________________________________________________________________________________________
 bool SuperkExpectation::Read(string config_file)

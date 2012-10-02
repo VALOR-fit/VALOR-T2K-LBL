@@ -62,7 +62,7 @@ public:
   bool Read (TXMLEngine* xml, XMLNodePointer_t root_node);
       
   // Print systematic parameters
-  void PrintSystematicVariations (void) const;
+  void PrintSystematicVariations (ostream & stream = std::cout) const;
 
   // Get current value of systematic params handled by this class
   double CurrentValue (conv::PhysParamId_t p) const;
