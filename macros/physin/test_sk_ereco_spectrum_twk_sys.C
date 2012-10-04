@@ -535,10 +535,10 @@ void test_sk_ereco_spectrum_twk_sys
     }
     hErecoRatio[itweak]->Draw("same");
   }
-  c->SaveAs(Form("ereco_twk_%s.png",modetitle.c_str()));
+  c->SaveAs(Form("ereco_twk_%s.pdf",modetitle.c_str()));
   hErecoNominal->GetXaxis()->UnZoom();
   hErecoRatio[0]->GetXaxis()->UnZoom();
-  c->SaveAs(Form("ereco_twk_%s_fullrange.png",modetitle.c_str()));
+  c->SaveAs(Form("ereco_twk_%s_fullrange.pdf",modetitle.c_str()));
   // Draw mode by mode
   TCanvas * cm = new TCanvas("cm","",20,20,500,500);
   gStyle->SetOptStat(0);
@@ -571,10 +571,10 @@ void test_sk_ereco_spectrum_twk_sys
       }
       hErecoModeRatio[im][itweak]->Draw("same");
     }
-    cm->SaveAs(Form("ereco_twk_%s_%s.png",modetitle.c_str(),util::AsStringCompact(m).c_str()));
+    cm->SaveAs(Form("ereco_twk_%s_%s.pdf",modetitle.c_str(),util::AsStringCompact(m).c_str()));
     hErecoModeNominal[im]->GetXaxis()->UnZoom();
     hErecoModeRatio[im][0]->GetXaxis()->UnZoom();
-    cm->SaveAs(Form("ereco_twk_%s_%s_fullrange.png",modetitle.c_str(),util::AsStringCompact(m).c_str()));
+    cm->SaveAs(Form("ereco_twk_%s_%s_fullrange.pdf",modetitle.c_str(),util::AsStringCompact(m).c_str()));
   }//loop over modes
 
   //

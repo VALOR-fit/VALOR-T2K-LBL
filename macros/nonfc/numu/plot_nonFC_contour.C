@@ -259,7 +259,7 @@ void pl_nonFC_contour(
       legend->Draw();
 
       //Save the plot;
-      ConfidenceContour->SaveAs("Contour_nonFC.png");
+      ConfidenceContour->SaveAs("Contour_nonFC.pdf");
       
 }
 //=============================================

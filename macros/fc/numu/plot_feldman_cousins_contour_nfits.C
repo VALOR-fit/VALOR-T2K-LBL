@@ -395,7 +395,7 @@ void plot_feldman_cousins_contour_nfits
   legend->SetBorderSize(0);
   legend->Draw();
 
-//ConfidenceContour->SaveAs("ConfidenceContours.png");
+//ConfidenceContour->SaveAs("ConfidenceContours.pdf");
 }
 
 void set_contour_style(TH2D *contour, Int_t color, Int_t width, Int_t style)

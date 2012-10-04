@@ -9,13 +9,13 @@ import logging
 
 """
 This script will run the macro test_sk_ereco_spectrum_twk_sys.C for all systematic possiblities, producing
-a ROOT file with the outputs (plus lots of .png's). Things you can change are:
+a ROOT file with the outputs (plus lots of .pdf's). Things you can change are:
  - conffile - configuration file
  - oscparam - the oscillation parameters you want to calculate shifts relative to (defaults to global best fits - you can specify more than 1 set of parameters to run over)
  - emax     - maximum of the Ereco (x-axis) to plot in the images
  
 Run this by /path/to/test_sk_ereco_spectrum_twk_sys_runAll.py (you may need to chmod +x)
-It will then create the .root, *.png, in the current working directory
+It will then create the .root, *.pdf, in the current working directory
 """
 
 conffile = "analysis_configuration.xml"

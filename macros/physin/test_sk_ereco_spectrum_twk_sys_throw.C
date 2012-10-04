@@ -428,18 +428,18 @@ void test_sk_ereco_spectrum_twk_sys_throw
   //Draw & save
   TCanvas * c = new TCanvas();
   hNsk->Draw();
-  c->SaveAs(Form("%s_nsk_%s.png",modetitle.c_str(),oscparams.c_str()));
+  c->SaveAs(Form("%s_nsk_%s.pdf",modetitle.c_str(),oscparams.c_str()));
   hErecoMax->Draw();
-  c->SaveAs(Form("%s_pluserr_%s.png",modetitle.c_str(),oscparams.c_str()));
+  c->SaveAs(Form("%s_pluserr_%s.pdf",modetitle.c_str(),oscparams.c_str()));
   hErecoMin->Draw();
-  c->SaveAs(Form("%s_minuserr_%s.png",modetitle.c_str(),oscparams.c_str()));
+  c->SaveAs(Form("%s_minuserr_%s.pdf",modetitle.c_str(),oscparams.c_str()));
   TCanvas * csys = new TCanvas();
   csys->Divide(ceil(sqrt(nsys)),ceil(sqrt(nsys)));
   for(int isys=0; isys < nsys; isys++) {
     csys->cd(isys+1);
     hSysThrown[isys]->Draw();
   }
-  csys->SaveAs(Form("%s_throws_%s.png",modetitle.c_str(),oscparams.c_str()));
+  csys->SaveAs(Form("%s_throws_%s.pdf",modetitle.c_str(),oscparams.c_str()));
   delete c;
   delete csys;
 
