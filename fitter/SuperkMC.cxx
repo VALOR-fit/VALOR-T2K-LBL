@@ -1103,14 +1103,6 @@ void SuperkMC::UpdateErecoSpectra(void)
              nev += mctempl->GetBinContent(ir,it);
           }//it
           nev_tot += nev;
-	  if(nev < 0) {
-#ifdef __show_negative_events_mesg_debug__
-	    cout << "Exp/SKMC/UpdateErecoSpectra >> set negative number of events " << nev_tot 
-		 << " to kSetNegEventsTo " << kSetNegEventsTo << "\t" << AsStringCompact(m) 
-		 << " Ereco: " << reco_spectrum_tot->GetXaxis()->GetBinCenter(ir) << endl;
-#endif
-	    nev = kSetNegEventsTo;
-	  }
           reco_spectrum->SetBinContent(ir,nev);
        }//im
        if(nev_tot < 0) {

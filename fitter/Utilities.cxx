@@ -719,6 +719,7 @@ string t2kana::util::AsString(PhysParamId_t p)
     case ( kNuisBANFF13 ) :
     case ( kNuisBANFF14 ) :
     case ( kNuisBANFF15 ) :
+#if BANFF_BINS <= 2
     case ( kNuisBANFF16 ) :
     case ( kNuisBANFF17 ) :
     case ( kNuisBANFF18 ) :
@@ -754,6 +755,7 @@ string t2kana::util::AsString(PhysParamId_t p)
     case ( kNuisBANFF47 ) :
     case ( kNuisBANFF48 ) :
 #endif
+#endif
     {
       int ip = (int)p - (int)kNuisBANFF00;
       return Form("BANFF %2d; SK %s flux; %.1f - %.1f GeV",
@@ -762,18 +764,24 @@ string t2kana::util::AsString(PhysParamId_t p)
                    kEtrueRangeOfFluxParamInBANFFfit[ip][1]);     
       break;
     }
+#if BANFF_BINS == 4
+    case ( kNuisBANFFMAQE    ) : return "BANFF; 1 / (Ma QE)^2";                   break;
+#else
     case ( kNuisBANFFMAQE    ) : return "BANFF; Ma QE";                           break;
+#endif
     case ( kNuisBANFFMARES   ) : return "BANFF; Ma RES";                          break;
     case ( kNuisBANFFCCQEE0  ) : return "BANFF; Norm; CC QE; 0.0 - 1.5 GeV";      break;
-#if BANFF_BINS == 2
+#if BANFF_BINS >= 2
     case ( kNuisBANFFCCQEE1  ) : return "BANFF; Norm; CC QE; 1.5 - 3.5 GeV";      break;
     case ( kNuisBANFFCCQEE2  ) : return "BANFF; Norm; CC QE; 3.5 - 30.0 GeV";     break;
 #endif
     case ( kNuisBANFFCC1piE0 ) : return "BANFF; Norm; CC 1pi; 0.0 - 2.5 GeV";     break;
-#if BANFF_BINS == 2
+#if BANFF_BINS >= 2
     case ( kNuisBANFFCC1piE1 ) : return "BANFF; Norm; CC 1pi; 2.5 - 30.0 GeV";    break;
 #endif
+#if BANFF_BINS <= 2
     case ( kNuisBANFFNC1pi0  ) : return "BANFF; Norm; NC 1pi0";                   break;
+#endif
 
     //
     // XSec params not correlated with flux
@@ -785,8 +793,9 @@ string t2kana::util::AsString(PhysParamId_t p)
     case ( kNuisXSecShapeCCoth ) : return "Shape; CC Oth";                   break;
     case ( kNuisXSecPiLessDelta) : return "Pi-less delta decay";             break;
     case ( kNuisXSecENuShape   ) : return "Shape; CC1pi ENu";                break;
+    case ( kNuisXSecBindE      ) : return "Binding energy";                  break;
 
-#if BANFF_BINS != 2
+#if BANFF_BINS <= 1
     case ( kNuisXSecNormCCQEE1 ) : return "Norm; CC QE Norm; 1.5 - 3.5 GeV"; break; 
     case ( kNuisXSecNormCCQEE2 ) : return "Norm; CC QE Norm; > 3.5 GeV";     break; 
     case ( kNuisXSecNormCC1piE1) : return "Norm; CC 1pi; > 2.5 GeV";         break; 
@@ -849,439 +858,6 @@ string t2kana::util::AsString(PhysParamId_t p)
     case ( kNuisFSI046 ) :
     case ( kNuisFSI047 ) :
     case ( kNuisFSI048 ) :
-    case ( kNuisFSI049 ) :
-    case ( kNuisFSI050 ) :
-    case ( kNuisFSI051 ) :
-    case ( kNuisFSI052 ) :
-    case ( kNuisFSI053 ) :
-    case ( kNuisFSI054 ) :
-    case ( kNuisFSI055 ) :
-    case ( kNuisFSI056 ) :
-    case ( kNuisFSI057 ) :
-    case ( kNuisFSI058 ) :
-    case ( kNuisFSI059 ) :
-    case ( kNuisFSI060 ) :
-    case ( kNuisFSI061 ) :
-    case ( kNuisFSI062 ) :
-    case ( kNuisFSI063 ) :
-    case ( kNuisFSI064 ) :
-    case ( kNuisFSI065 ) :
-    case ( kNuisFSI066 ) :
-    case ( kNuisFSI067 ) :
-    case ( kNuisFSI068 ) :
-    case ( kNuisFSI069 ) :
-    case ( kNuisFSI070 ) :
-    case ( kNuisFSI071 ) :
-    case ( kNuisFSI072 ) :
-    case ( kNuisFSI073 ) :
-    case ( kNuisFSI074 ) :
-    case ( kNuisFSI075 ) :
-    case ( kNuisFSI076 ) :
-    case ( kNuisFSI077 ) :
-    case ( kNuisFSI078 ) :
-#if FSI_BINS >= 4
-    case ( kNuisFSI079 ) :
-    case ( kNuisFSI080 ) :
-    case ( kNuisFSI081 ) :
-    case ( kNuisFSI082 ) :
-    case ( kNuisFSI083 ) :
-    case ( kNuisFSI084 ) :
-    case ( kNuisFSI085 ) :
-    case ( kNuisFSI086 ) :
-    case ( kNuisFSI087 ) :
-    case ( kNuisFSI088 ) :
-    case ( kNuisFSI089 ) :
-    case ( kNuisFSI090 ) :
-    case ( kNuisFSI091 ) :
-    case ( kNuisFSI092 ) :
-    case ( kNuisFSI093 ) :
-    case ( kNuisFSI094 ) :
-    case ( kNuisFSI095 ) :
-    case ( kNuisFSI096 ) :
-    case ( kNuisFSI097 ) :
-    case ( kNuisFSI098 ) :
-    case ( kNuisFSI099 ) :
-    case ( kNuisFSI100 ) :
-    case ( kNuisFSI101 ) :
-    case ( kNuisFSI102 ) :
-    case ( kNuisFSI103 ) :
-    case ( kNuisFSI104 ) :
-    case ( kNuisFSI105 ) :
-    case ( kNuisFSI106 ) :
-    case ( kNuisFSI107 ) :
-    case ( kNuisFSI108 ) :
-    case ( kNuisFSI109 ) :
-    case ( kNuisFSI110 ) :
-    case ( kNuisFSI111 ) :
-    case ( kNuisFSI112 ) :
-    case ( kNuisFSI113 ) :
-    case ( kNuisFSI114 ) :
-    case ( kNuisFSI115 ) :
-    case ( kNuisFSI116 ) :
-    case ( kNuisFSI117 ) :
-    case ( kNuisFSI118 ) :
-    case ( kNuisFSI119 ) :
-    case ( kNuisFSI120 ) :
-    case ( kNuisFSI121 ) :
-    case ( kNuisFSI122 ) :
-    case ( kNuisFSI123 ) :
-    case ( kNuisFSI124 ) :
-    case ( kNuisFSI125 ) :
-    case ( kNuisFSI126 ) :
-    case ( kNuisFSI127 ) :
-    case ( kNuisFSI128 ) :
-    case ( kNuisFSI129 ) :
-    case ( kNuisFSI130 ) :
-    case ( kNuisFSI131 ) :
-    case ( kNuisFSI132 ) :
-    case ( kNuisFSI133 ) :
-    case ( kNuisFSI134 ) :
-    case ( kNuisFSI135 ) :
-    case ( kNuisFSI136 ) :
-    case ( kNuisFSI137 ) :
-    case ( kNuisFSI138 ) :
-    case ( kNuisFSI139 ) :
-    case ( kNuisFSI140 ) :
-    case ( kNuisFSI141 ) :
-    case ( kNuisFSI142 ) :
-    case ( kNuisFSI143 ) :
-    case ( kNuisFSI144 ) :
-    case ( kNuisFSI145 ) :
-    case ( kNuisFSI146 ) :
-    case ( kNuisFSI147 ) :
-    case ( kNuisFSI148 ) :
-    case ( kNuisFSI149 ) :
-    case ( kNuisFSI150 ) :
-    case ( kNuisFSI151 ) :
-    case ( kNuisFSI152 ) :
-    case ( kNuisFSI153 ) :
-    case ( kNuisFSI154 ) :
-    case ( kNuisFSI155 ) :
-    case ( kNuisFSI156 ) :
-    case ( kNuisFSI157 ) :
-    case ( kNuisFSI158 ) :
-    case ( kNuisFSI159 ) :
-    case ( kNuisFSI160 ) :
-    case ( kNuisFSI161 ) :
-    case ( kNuisFSI162 ) :
-    case ( kNuisFSI163 ) :
-    case ( kNuisFSI164 ) :
-    case ( kNuisFSI165 ) :
-    case ( kNuisFSI166 ) :
-    case ( kNuisFSI167 ) :
-    case ( kNuisFSI168 ) :
-    case ( kNuisFSI169 ) :
-    case ( kNuisFSI170 ) :
-    case ( kNuisFSI171 ) :
-    case ( kNuisFSI172 ) :
-    case ( kNuisFSI173 ) :
-    case ( kNuisFSI174 ) :
-    case ( kNuisFSI175 ) :
-    case ( kNuisFSI176 ) :
-    case ( kNuisFSI177 ) :
-    case ( kNuisFSI178 ) :
-    case ( kNuisFSI179 ) :
-    case ( kNuisFSI180 ) :
-    case ( kNuisFSI181 ) :
-    case ( kNuisFSI182 ) :
-    case ( kNuisFSI183 ) :
-    case ( kNuisFSI184 ) :
-    case ( kNuisFSI185 ) :
-    case ( kNuisFSI186 ) :
-    case ( kNuisFSI187 ) :
-    case ( kNuisFSI188 ) :
-    case ( kNuisFSI189 ) :
-    case ( kNuisFSI190 ) :
-    case ( kNuisFSI191 ) :
-    case ( kNuisFSI192 ) :
-    case ( kNuisFSI193 ) :
-    case ( kNuisFSI194 ) :
-    case ( kNuisFSI195 ) :
-    case ( kNuisFSI196 ) :
-    case ( kNuisFSI197 ) :
-    case ( kNuisFSI198 ) :
-    case ( kNuisFSI199 ) :
-    case ( kNuisFSI200 ) :
-    case ( kNuisFSI201 ) :
-    case ( kNuisFSI202 ) :
-    case ( kNuisFSI203 ) :
-    case ( kNuisFSI204 ) :
-    case ( kNuisFSI205 ) :
-    case ( kNuisFSI206 ) :
-    case ( kNuisFSI207 ) :
-    case ( kNuisFSI208 ) :
-    case ( kNuisFSI209 ) :
-    case ( kNuisFSI210 ) :
-    case ( kNuisFSI211 ) :
-    case ( kNuisFSI212 ) :
-    case ( kNuisFSI213 ) :
-    case ( kNuisFSI214 ) :
-    case ( kNuisFSI215 ) :
-    case ( kNuisFSI216 ) :
-    case ( kNuisFSI217 ) :
-    case ( kNuisFSI218 ) :
-    case ( kNuisFSI219 ) :
-    case ( kNuisFSI220 ) :
-    case ( kNuisFSI221 ) :
-    case ( kNuisFSI222 ) :
-    case ( kNuisFSI223 ) :
-    case ( kNuisFSI224 ) :
-    case ( kNuisFSI225 ) :
-    case ( kNuisFSI226 ) :
-    case ( kNuisFSI227 ) :
-    case ( kNuisFSI228 ) :
-    case ( kNuisFSI229 ) :
-    case ( kNuisFSI230 ) :
-    case ( kNuisFSI231 ) :
-    case ( kNuisFSI232 ) :
-    case ( kNuisFSI233 ) :
-    case ( kNuisFSI234 ) :
-    case ( kNuisFSI235 ) :
-    case ( kNuisFSI236 ) :
-    case ( kNuisFSI237 ) :
-    case ( kNuisFSI238 ) :
-    case ( kNuisFSI239 ) :
-    case ( kNuisFSI240 ) :
-    case ( kNuisFSI241 ) :
-    case ( kNuisFSI242 ) :
-    case ( kNuisFSI243 ) :
-    case ( kNuisFSI244 ) :
-    case ( kNuisFSI245 ) :
-    case ( kNuisFSI246 ) :
-    case ( kNuisFSI247 ) :
-    case ( kNuisFSI248 ) :
-    case ( kNuisFSI249 ) :
-    case ( kNuisFSI250 ) :
-    case ( kNuisFSI251 ) :
-    case ( kNuisFSI252 ) :
-    case ( kNuisFSI253 ) :
-    case ( kNuisFSI254 ) :
-    case ( kNuisFSI255 ) :
-    case ( kNuisFSI256 ) :
-    case ( kNuisFSI257 ) :
-    case ( kNuisFSI258 ) :
-    case ( kNuisFSI259 ) :
-    case ( kNuisFSI260 ) :
-    case ( kNuisFSI261 ) :
-    case ( kNuisFSI262 ) :
-    case ( kNuisFSI263 ) :
-    case ( kNuisFSI264 ) :
-    case ( kNuisFSI265 ) :
-    case ( kNuisFSI266 ) :
-    case ( kNuisFSI267 ) :
-    case ( kNuisFSI268 ) :
-    case ( kNuisFSI269 ) :
-    case ( kNuisFSI270 ) :
-    case ( kNuisFSI271 ) :
-    case ( kNuisFSI272 ) :
-    case ( kNuisFSI273 ) :
-    case ( kNuisFSI274 ) :
-    case ( kNuisFSI275 ) :
-    case ( kNuisFSI276 ) :
-    case ( kNuisFSI277 ) :
-    case ( kNuisFSI278 ) :
-    case ( kNuisFSI279 ) :
-    case ( kNuisFSI280 ) :
-    case ( kNuisFSI281 ) :
-    case ( kNuisFSI282 ) :
-    case ( kNuisFSI283 ) :
-    case ( kNuisFSI284 ) :
-    case ( kNuisFSI285 ) :
-    case ( kNuisFSI286 ) :
-    case ( kNuisFSI287 ) :
-    case ( kNuisFSI288 ) :
-    case ( kNuisFSI289 ) :
-    case ( kNuisFSI290 ) :
-    case ( kNuisFSI291 ) :
-    case ( kNuisFSI292 ) :
-    case ( kNuisFSI293 ) :
-    case ( kNuisFSI294 ) :
-    case ( kNuisFSI295 ) :
-    case ( kNuisFSI296 ) :
-    case ( kNuisFSI297 ) :
-    case ( kNuisFSI298 ) :
-    case ( kNuisFSI299 ) :
-    case ( kNuisFSI300 ) :
-    case ( kNuisFSI301 ) :
-    case ( kNuisFSI302 ) :
-    case ( kNuisFSI303 ) :
-    case ( kNuisFSI304 ) :
-    case ( kNuisFSI305 ) :
-    case ( kNuisFSI306 ) :
-    case ( kNuisFSI307 ) :
-    case ( kNuisFSI308 ) :
-    case ( kNuisFSI309 ) :
-    case ( kNuisFSI310 ) :
-    case ( kNuisFSI311 ) :
-    case ( kNuisFSI312 ) :
-    case ( kNuisFSI313 ) :
-    case ( kNuisFSI314 ) :
-    case ( kNuisFSI315 ) :
-    case ( kNuisFSI316 ) :
-    case ( kNuisFSI317 ) :
-    case ( kNuisFSI318 ) :
-    case ( kNuisFSI319 ) :
-    case ( kNuisFSI320 ) :
-    case ( kNuisFSI321 ) :
-    case ( kNuisFSI322 ) :
-    case ( kNuisFSI323 ) :
-    case ( kNuisFSI324 ) :
-    case ( kNuisFSI325 ) :
-    case ( kNuisFSI326 ) :
-    case ( kNuisFSI327 ) :
-    case ( kNuisFSI328 ) :
-    case ( kNuisFSI329 ) :
-    case ( kNuisFSI330 ) :
-    case ( kNuisFSI331 ) :
-    case ( kNuisFSI332 ) :
-    case ( kNuisFSI333 ) :
-    case ( kNuisFSI334 ) :
-    case ( kNuisFSI335 ) :
-    case ( kNuisFSI336 ) :
-    case ( kNuisFSI337 ) :
-    case ( kNuisFSI338 ) :
-    case ( kNuisFSI339 ) :
-    case ( kNuisFSI340 ) :
-    case ( kNuisFSI341 ) :
-    case ( kNuisFSI342 ) :
-    case ( kNuisFSI343 ) :
-    case ( kNuisFSI344 ) :
-    case ( kNuisFSI345 ) :
-    case ( kNuisFSI346 ) :
-    case ( kNuisFSI347 ) :
-    case ( kNuisFSI348 ) :
-    case ( kNuisFSI349 ) :
-    case ( kNuisFSI350 ) :
-    case ( kNuisFSI351 ) :
-    case ( kNuisFSI352 ) :
-    case ( kNuisFSI353 ) :
-    case ( kNuisFSI354 ) :
-    case ( kNuisFSI355 ) :
-    case ( kNuisFSI356 ) :
-    case ( kNuisFSI357 ) :
-    case ( kNuisFSI358 ) :
-    case ( kNuisFSI359 ) :
-    case ( kNuisFSI360 ) :
-    case ( kNuisFSI361 ) :
-    case ( kNuisFSI362 ) :
-    case ( kNuisFSI363 ) :
-    case ( kNuisFSI364 ) :
-    case ( kNuisFSI365 ) :
-    case ( kNuisFSI366 ) :
-    case ( kNuisFSI367 ) :
-    case ( kNuisFSI368 ) :
-    case ( kNuisFSI369 ) :
-    case ( kNuisFSI370 ) :
-    case ( kNuisFSI371 ) :
-    case ( kNuisFSI372 ) :
-    case ( kNuisFSI373 ) :
-    case ( kNuisFSI374 ) :
-    case ( kNuisFSI375 ) :
-    case ( kNuisFSI376 ) :
-    case ( kNuisFSI377 ) :
-    case ( kNuisFSI378 ) :
-    case ( kNuisFSI379 ) :
-    case ( kNuisFSI380 ) :
-    case ( kNuisFSI381 ) :
-    case ( kNuisFSI382 ) :
-    case ( kNuisFSI383 ) :
-    case ( kNuisFSI384 ) :
-    case ( kNuisFSI385 ) :
-    case ( kNuisFSI386 ) :
-    case ( kNuisFSI387 ) :
-    case ( kNuisFSI388 ) :
-    case ( kNuisFSI389 ) :
-    case ( kNuisFSI390 ) :
-    case ( kNuisFSI391 ) :
-    case ( kNuisFSI392 ) :
-    case ( kNuisFSI393 ) :
-    case ( kNuisFSI394 ) :
-    case ( kNuisFSI395 ) :
-    case ( kNuisFSI396 ) :
-    case ( kNuisFSI397 ) :
-    case ( kNuisFSI398 ) :
-    case ( kNuisFSI399 ) :
-    case ( kNuisFSI400 ) :
-    case ( kNuisFSI401 ) :
-    case ( kNuisFSI402 ) :
-    case ( kNuisFSI403 ) :
-    case ( kNuisFSI404 ) :
-    case ( kNuisFSI405 ) :
-    case ( kNuisFSI406 ) :
-    case ( kNuisFSI407 ) :
-    case ( kNuisFSI408 ) :
-    case ( kNuisFSI409 ) :
-    case ( kNuisFSI410 ) :
-    case ( kNuisFSI411 ) :
-    case ( kNuisFSI412 ) :
-    case ( kNuisFSI413 ) :
-    case ( kNuisFSI414 ) :
-    case ( kNuisFSI415 ) :
-    case ( kNuisFSI416 ) :
-    case ( kNuisFSI417 ) :
-    case ( kNuisFSI418 ) :
-    case ( kNuisFSI419 ) :
-    case ( kNuisFSI420 ) :
-    case ( kNuisFSI421 ) :
-    case ( kNuisFSI422 ) :
-    case ( kNuisFSI423 ) :
-    case ( kNuisFSI424 ) :
-    case ( kNuisFSI425 ) :
-    case ( kNuisFSI426 ) :
-    case ( kNuisFSI427 ) :
-    case ( kNuisFSI428 ) :
-    case ( kNuisFSI429 ) :
-    case ( kNuisFSI430 ) :
-    case ( kNuisFSI431 ) :
-    case ( kNuisFSI432 ) :
-    case ( kNuisFSI433 ) :
-    case ( kNuisFSI434 ) :
-    case ( kNuisFSI435 ) :
-    case ( kNuisFSI436 ) :
-    case ( kNuisFSI437 ) :
-    case ( kNuisFSI438 ) :
-    case ( kNuisFSI439 ) :
-    case ( kNuisFSI440 ) :
-    case ( kNuisFSI441 ) :
-    case ( kNuisFSI442 ) :
-    case ( kNuisFSI443 ) :
-    case ( kNuisFSI444 ) :
-    case ( kNuisFSI445 ) :
-    case ( kNuisFSI446 ) :
-    case ( kNuisFSI447 ) :
-    case ( kNuisFSI448 ) :
-    case ( kNuisFSI449 ) :
-    case ( kNuisFSI450 ) :
-    case ( kNuisFSI451 ) :
-    case ( kNuisFSI452 ) :
-    case ( kNuisFSI453 ) :
-    case ( kNuisFSI454 ) :
-    case ( kNuisFSI455 ) :
-    case ( kNuisFSI456 ) :
-    case ( kNuisFSI457 ) :
-    case ( kNuisFSI458 ) :
-    case ( kNuisFSI459 ) :
-    case ( kNuisFSI460 ) :
-    case ( kNuisFSI461 ) :
-    case ( kNuisFSI462 ) :
-    case ( kNuisFSI463 ) :
-    case ( kNuisFSI464 ) :
-    case ( kNuisFSI465 ) :
-    case ( kNuisFSI466 ) :
-    case ( kNuisFSI467 ) :
-    case ( kNuisFSI468 ) :
-    case ( kNuisFSI469 ) :
-    case ( kNuisFSI470 ) :
-    case ( kNuisFSI471 ) :
-    case ( kNuisFSI472 ) :
-    case ( kNuisFSI473 ) :
-    case ( kNuisFSI474 ) :
-    case ( kNuisFSI475 ) :
-    case ( kNuisFSI476 ) :
-    case ( kNuisFSI477 ) :
-    case ( kNuisFSI478 ) :
-    case ( kNuisFSI479 ) :
-#endif
 #endif
 #endif
     {
@@ -1326,25 +902,14 @@ string t2kana::util::AsString(PhysParamId_t p)
         default : nutypes = "--";
       }
 #elif FSI_BINS == 3
-      if(ip <= (int)kNuisFSI020)
+      if(ip == (int)kNuisFSI000)
 	nutypes = "numu/numubar CCQE";
-      else if(ip <= (int)kNuisFSI041)
+      else if(ip <= (int)kNuisFSI016)
 	nutypes = "numu/numubar CCnQE";
-      else if(ip <= (int)kNuisFSI062)
+      else if(ip <= (int)kNuisFSI032)
 	nutypes = "nue/nuebar/signue CC";
-      else if(ip <= (int)kNuisFSI078)
+      else if(ip <= (int)kNuisFSI048)
 	nutypes = "all NC";
-#elif FSI_BINS == 4
-      if(ip <= (int)kNuisFSI095)
-	nutypes = "numu";
-      else if(ip <= (int)kNuisFSI191)
-	nutypes = "numubar";
-      else if(ip <= (int)kNuisFSI287)
-	nutypes = "nue";
-      else if(ip <= (int)kNuisFSI384)
-	nutypes = "nuebar";
-      else if(ip <= (int)kNuisFSI479)
-	nutypes = "oscillated nue";
 #endif
       return Form("FSI/SI %2d; Ereco range %.1f - %.1f GeV; %s",ip,
 		  kFSIParamsErecoCut[ip][0],kFSIParamsErecoCut[ip][1],nutypes.c_str());     
@@ -1435,6 +1000,7 @@ string t2kana::util::AsStringTex(PhysParamId_t p)
     case ( kNuisBANFF13 ) :
     case ( kNuisBANFF14 ) :
     case ( kNuisBANFF15 ) :
+#if BANFF_BINS <= 2
     case ( kNuisBANFF16 ) :
     case ( kNuisBANFF17 ) :
     case ( kNuisBANFF18 ) :
@@ -1470,6 +1036,7 @@ string t2kana::util::AsStringTex(PhysParamId_t p)
     case ( kNuisBANFF47 ) :
     case ( kNuisBANFF48 ) :
 #endif
+#endif
     {
       int ip = (int)p - (int)kNuisBANFF00;
       return Form("BANFF %2d, SK %s flux, %.1f - %.1f GeV",
@@ -1478,18 +1045,24 @@ string t2kana::util::AsStringTex(PhysParamId_t p)
                    kEtrueRangeOfFluxParamInBANFFfit[ip][1]);     
       break;
     }
+#if BANFF_BINS == 4
+    case ( kNuisBANFFMAQE    ) : return "BANFF, 1 / (Ma QE)$^2$";                 break;
+#else
     case ( kNuisBANFFMAQE    ) : return "BANFF, Ma QE";                           break;
+#endif
     case ( kNuisBANFFMARES   ) : return "BANFF, Ma RES";                          break;
     case ( kNuisBANFFCCQEE0  ) : return "BANFF; Norm; CC QE; 0.0 - 1.5 GeV";      break;
-#if BANFF_BINS == 2
+#if BANFF_BINS >= 2
     case ( kNuisBANFFCCQEE1  ) : return "BANFF; Norm; CC QE; 1.5 - 3.5 GeV";      break;
     case ( kNuisBANFFCCQEE2  ) : return "BANFF; Norm; CC QE; 3.5 - 30.0 GeV";     break;
 #endif
     case ( kNuisBANFFCC1piE0 ) : return "BANFF; Norm; CC 1pi; 0.0 - 2.5 GeV";     break;
-#if BANFF_BINS == 2
+#if BANFF_BINS >= 2
     case ( kNuisBANFFCC1piE1 ) : return "BANFF; Norm; CC 1pi; 2.5 - 30.0 GeV";    break;
 #endif
+#if BANFF_BINS <= 2
     case ( kNuisBANFFNC1pi0  ) : return "BANFF, Norm, NC 1pi0";                   break;
+#endif
 
     //
     // XSec params not correlated with flux
@@ -1501,8 +1074,9 @@ string t2kana::util::AsStringTex(PhysParamId_t p)
     case ( kNuisXSecShapeCCoth ) : return "Shape; CC Oth";                   break;
     case ( kNuisXSecPiLessDelta) : return "Pi-less delta decay";             break;
     case ( kNuisXSecENuShape   ) : return "Shape; CC1pi ENu";                break;
+    case ( kNuisXSecBindE      ) : return "Binding energy";                  break;
 
-#if BANFF_BINS != 2
+#if BANFF_BINS <= 1
     case ( kNuisXSecNormCCQEE1 ) : return "Norm, CC QE Norm, 1.5 - 3.5 GeV"; break; 
     case ( kNuisXSecNormCCQEE2 ) : return "Norm, CC QE Norm, $>$ 3.5 GeV";   break; 
     case ( kNuisXSecNormCC1piE1) : return "Norm, CC 1pi, $>$ 2.5 GeV";       break; 
@@ -1565,439 +1139,6 @@ string t2kana::util::AsStringTex(PhysParamId_t p)
     case ( kNuisFSI046 ) :
     case ( kNuisFSI047 ) :
     case ( kNuisFSI048 ) :
-    case ( kNuisFSI049 ) :
-    case ( kNuisFSI050 ) :
-    case ( kNuisFSI051 ) :
-    case ( kNuisFSI052 ) :
-    case ( kNuisFSI053 ) :
-    case ( kNuisFSI054 ) :
-    case ( kNuisFSI055 ) :
-    case ( kNuisFSI056 ) :
-    case ( kNuisFSI057 ) :
-    case ( kNuisFSI058 ) :
-    case ( kNuisFSI059 ) :
-    case ( kNuisFSI060 ) :
-    case ( kNuisFSI061 ) :
-    case ( kNuisFSI062 ) :
-    case ( kNuisFSI063 ) :
-    case ( kNuisFSI064 ) :
-    case ( kNuisFSI065 ) :
-    case ( kNuisFSI066 ) :
-    case ( kNuisFSI067 ) :
-    case ( kNuisFSI068 ) :
-    case ( kNuisFSI069 ) :
-    case ( kNuisFSI070 ) :
-    case ( kNuisFSI071 ) :
-    case ( kNuisFSI072 ) :
-    case ( kNuisFSI073 ) :
-    case ( kNuisFSI074 ) :
-    case ( kNuisFSI075 ) :
-    case ( kNuisFSI076 ) :
-    case ( kNuisFSI077 ) :
-    case ( kNuisFSI078 ) :
-#if FSI_BINS >= 4
-    case ( kNuisFSI079 ) :
-    case ( kNuisFSI080 ) :
-    case ( kNuisFSI081 ) :
-    case ( kNuisFSI082 ) :
-    case ( kNuisFSI083 ) :
-    case ( kNuisFSI084 ) :
-    case ( kNuisFSI085 ) :
-    case ( kNuisFSI086 ) :
-    case ( kNuisFSI087 ) :
-    case ( kNuisFSI088 ) :
-    case ( kNuisFSI089 ) :
-    case ( kNuisFSI090 ) :
-    case ( kNuisFSI091 ) :
-    case ( kNuisFSI092 ) :
-    case ( kNuisFSI093 ) :
-    case ( kNuisFSI094 ) :
-    case ( kNuisFSI095 ) :
-    case ( kNuisFSI096 ) :
-    case ( kNuisFSI097 ) :
-    case ( kNuisFSI098 ) :
-    case ( kNuisFSI099 ) :
-    case ( kNuisFSI100 ) :
-    case ( kNuisFSI101 ) :
-    case ( kNuisFSI102 ) :
-    case ( kNuisFSI103 ) :
-    case ( kNuisFSI104 ) :
-    case ( kNuisFSI105 ) :
-    case ( kNuisFSI106 ) :
-    case ( kNuisFSI107 ) :
-    case ( kNuisFSI108 ) :
-    case ( kNuisFSI109 ) :
-    case ( kNuisFSI110 ) :
-    case ( kNuisFSI111 ) :
-    case ( kNuisFSI112 ) :
-    case ( kNuisFSI113 ) :
-    case ( kNuisFSI114 ) :
-    case ( kNuisFSI115 ) :
-    case ( kNuisFSI116 ) :
-    case ( kNuisFSI117 ) :
-    case ( kNuisFSI118 ) :
-    case ( kNuisFSI119 ) :
-    case ( kNuisFSI120 ) :
-    case ( kNuisFSI121 ) :
-    case ( kNuisFSI122 ) :
-    case ( kNuisFSI123 ) :
-    case ( kNuisFSI124 ) :
-    case ( kNuisFSI125 ) :
-    case ( kNuisFSI126 ) :
-    case ( kNuisFSI127 ) :
-    case ( kNuisFSI128 ) :
-    case ( kNuisFSI129 ) :
-    case ( kNuisFSI130 ) :
-    case ( kNuisFSI131 ) :
-    case ( kNuisFSI132 ) :
-    case ( kNuisFSI133 ) :
-    case ( kNuisFSI134 ) :
-    case ( kNuisFSI135 ) :
-    case ( kNuisFSI136 ) :
-    case ( kNuisFSI137 ) :
-    case ( kNuisFSI138 ) :
-    case ( kNuisFSI139 ) :
-    case ( kNuisFSI140 ) :
-    case ( kNuisFSI141 ) :
-    case ( kNuisFSI142 ) :
-    case ( kNuisFSI143 ) :
-    case ( kNuisFSI144 ) :
-    case ( kNuisFSI145 ) :
-    case ( kNuisFSI146 ) :
-    case ( kNuisFSI147 ) :
-    case ( kNuisFSI148 ) :
-    case ( kNuisFSI149 ) :
-    case ( kNuisFSI150 ) :
-    case ( kNuisFSI151 ) :
-    case ( kNuisFSI152 ) :
-    case ( kNuisFSI153 ) :
-    case ( kNuisFSI154 ) :
-    case ( kNuisFSI155 ) :
-    case ( kNuisFSI156 ) :
-    case ( kNuisFSI157 ) :
-    case ( kNuisFSI158 ) :
-    case ( kNuisFSI159 ) :
-    case ( kNuisFSI160 ) :
-    case ( kNuisFSI161 ) :
-    case ( kNuisFSI162 ) :
-    case ( kNuisFSI163 ) :
-    case ( kNuisFSI164 ) :
-    case ( kNuisFSI165 ) :
-    case ( kNuisFSI166 ) :
-    case ( kNuisFSI167 ) :
-    case ( kNuisFSI168 ) :
-    case ( kNuisFSI169 ) :
-    case ( kNuisFSI170 ) :
-    case ( kNuisFSI171 ) :
-    case ( kNuisFSI172 ) :
-    case ( kNuisFSI173 ) :
-    case ( kNuisFSI174 ) :
-    case ( kNuisFSI175 ) :
-    case ( kNuisFSI176 ) :
-    case ( kNuisFSI177 ) :
-    case ( kNuisFSI178 ) :
-    case ( kNuisFSI179 ) :
-    case ( kNuisFSI180 ) :
-    case ( kNuisFSI181 ) :
-    case ( kNuisFSI182 ) :
-    case ( kNuisFSI183 ) :
-    case ( kNuisFSI184 ) :
-    case ( kNuisFSI185 ) :
-    case ( kNuisFSI186 ) :
-    case ( kNuisFSI187 ) :
-    case ( kNuisFSI188 ) :
-    case ( kNuisFSI189 ) :
-    case ( kNuisFSI190 ) :
-    case ( kNuisFSI191 ) :
-    case ( kNuisFSI192 ) :
-    case ( kNuisFSI193 ) :
-    case ( kNuisFSI194 ) :
-    case ( kNuisFSI195 ) :
-    case ( kNuisFSI196 ) :
-    case ( kNuisFSI197 ) :
-    case ( kNuisFSI198 ) :
-    case ( kNuisFSI199 ) :
-    case ( kNuisFSI200 ) :
-    case ( kNuisFSI201 ) :
-    case ( kNuisFSI202 ) :
-    case ( kNuisFSI203 ) :
-    case ( kNuisFSI204 ) :
-    case ( kNuisFSI205 ) :
-    case ( kNuisFSI206 ) :
-    case ( kNuisFSI207 ) :
-    case ( kNuisFSI208 ) :
-    case ( kNuisFSI209 ) :
-    case ( kNuisFSI210 ) :
-    case ( kNuisFSI211 ) :
-    case ( kNuisFSI212 ) :
-    case ( kNuisFSI213 ) :
-    case ( kNuisFSI214 ) :
-    case ( kNuisFSI215 ) :
-    case ( kNuisFSI216 ) :
-    case ( kNuisFSI217 ) :
-    case ( kNuisFSI218 ) :
-    case ( kNuisFSI219 ) :
-    case ( kNuisFSI220 ) :
-    case ( kNuisFSI221 ) :
-    case ( kNuisFSI222 ) :
-    case ( kNuisFSI223 ) :
-    case ( kNuisFSI224 ) :
-    case ( kNuisFSI225 ) :
-    case ( kNuisFSI226 ) :
-    case ( kNuisFSI227 ) :
-    case ( kNuisFSI228 ) :
-    case ( kNuisFSI229 ) :
-    case ( kNuisFSI230 ) :
-    case ( kNuisFSI231 ) :
-    case ( kNuisFSI232 ) :
-    case ( kNuisFSI233 ) :
-    case ( kNuisFSI234 ) :
-    case ( kNuisFSI235 ) :
-    case ( kNuisFSI236 ) :
-    case ( kNuisFSI237 ) :
-    case ( kNuisFSI238 ) :
-    case ( kNuisFSI239 ) :
-    case ( kNuisFSI240 ) :
-    case ( kNuisFSI241 ) :
-    case ( kNuisFSI242 ) :
-    case ( kNuisFSI243 ) :
-    case ( kNuisFSI244 ) :
-    case ( kNuisFSI245 ) :
-    case ( kNuisFSI246 ) :
-    case ( kNuisFSI247 ) :
-    case ( kNuisFSI248 ) :
-    case ( kNuisFSI249 ) :
-    case ( kNuisFSI250 ) :
-    case ( kNuisFSI251 ) :
-    case ( kNuisFSI252 ) :
-    case ( kNuisFSI253 ) :
-    case ( kNuisFSI254 ) :
-    case ( kNuisFSI255 ) :
-    case ( kNuisFSI256 ) :
-    case ( kNuisFSI257 ) :
-    case ( kNuisFSI258 ) :
-    case ( kNuisFSI259 ) :
-    case ( kNuisFSI260 ) :
-    case ( kNuisFSI261 ) :
-    case ( kNuisFSI262 ) :
-    case ( kNuisFSI263 ) :
-    case ( kNuisFSI264 ) :
-    case ( kNuisFSI265 ) :
-    case ( kNuisFSI266 ) :
-    case ( kNuisFSI267 ) :
-    case ( kNuisFSI268 ) :
-    case ( kNuisFSI269 ) :
-    case ( kNuisFSI270 ) :
-    case ( kNuisFSI271 ) :
-    case ( kNuisFSI272 ) :
-    case ( kNuisFSI273 ) :
-    case ( kNuisFSI274 ) :
-    case ( kNuisFSI275 ) :
-    case ( kNuisFSI276 ) :
-    case ( kNuisFSI277 ) :
-    case ( kNuisFSI278 ) :
-    case ( kNuisFSI279 ) :
-    case ( kNuisFSI280 ) :
-    case ( kNuisFSI281 ) :
-    case ( kNuisFSI282 ) :
-    case ( kNuisFSI283 ) :
-    case ( kNuisFSI284 ) :
-    case ( kNuisFSI285 ) :
-    case ( kNuisFSI286 ) :
-    case ( kNuisFSI287 ) :
-    case ( kNuisFSI288 ) :
-    case ( kNuisFSI289 ) :
-    case ( kNuisFSI290 ) :
-    case ( kNuisFSI291 ) :
-    case ( kNuisFSI292 ) :
-    case ( kNuisFSI293 ) :
-    case ( kNuisFSI294 ) :
-    case ( kNuisFSI295 ) :
-    case ( kNuisFSI296 ) :
-    case ( kNuisFSI297 ) :
-    case ( kNuisFSI298 ) :
-    case ( kNuisFSI299 ) :
-    case ( kNuisFSI300 ) :
-    case ( kNuisFSI301 ) :
-    case ( kNuisFSI302 ) :
-    case ( kNuisFSI303 ) :
-    case ( kNuisFSI304 ) :
-    case ( kNuisFSI305 ) :
-    case ( kNuisFSI306 ) :
-    case ( kNuisFSI307 ) :
-    case ( kNuisFSI308 ) :
-    case ( kNuisFSI309 ) :
-    case ( kNuisFSI310 ) :
-    case ( kNuisFSI311 ) :
-    case ( kNuisFSI312 ) :
-    case ( kNuisFSI313 ) :
-    case ( kNuisFSI314 ) :
-    case ( kNuisFSI315 ) :
-    case ( kNuisFSI316 ) :
-    case ( kNuisFSI317 ) :
-    case ( kNuisFSI318 ) :
-    case ( kNuisFSI319 ) :
-    case ( kNuisFSI320 ) :
-    case ( kNuisFSI321 ) :
-    case ( kNuisFSI322 ) :
-    case ( kNuisFSI323 ) :
-    case ( kNuisFSI324 ) :
-    case ( kNuisFSI325 ) :
-    case ( kNuisFSI326 ) :
-    case ( kNuisFSI327 ) :
-    case ( kNuisFSI328 ) :
-    case ( kNuisFSI329 ) :
-    case ( kNuisFSI330 ) :
-    case ( kNuisFSI331 ) :
-    case ( kNuisFSI332 ) :
-    case ( kNuisFSI333 ) :
-    case ( kNuisFSI334 ) :
-    case ( kNuisFSI335 ) :
-    case ( kNuisFSI336 ) :
-    case ( kNuisFSI337 ) :
-    case ( kNuisFSI338 ) :
-    case ( kNuisFSI339 ) :
-    case ( kNuisFSI340 ) :
-    case ( kNuisFSI341 ) :
-    case ( kNuisFSI342 ) :
-    case ( kNuisFSI343 ) :
-    case ( kNuisFSI344 ) :
-    case ( kNuisFSI345 ) :
-    case ( kNuisFSI346 ) :
-    case ( kNuisFSI347 ) :
-    case ( kNuisFSI348 ) :
-    case ( kNuisFSI349 ) :
-    case ( kNuisFSI350 ) :
-    case ( kNuisFSI351 ) :
-    case ( kNuisFSI352 ) :
-    case ( kNuisFSI353 ) :
-    case ( kNuisFSI354 ) :
-    case ( kNuisFSI355 ) :
-    case ( kNuisFSI356 ) :
-    case ( kNuisFSI357 ) :
-    case ( kNuisFSI358 ) :
-    case ( kNuisFSI359 ) :
-    case ( kNuisFSI360 ) :
-    case ( kNuisFSI361 ) :
-    case ( kNuisFSI362 ) :
-    case ( kNuisFSI363 ) :
-    case ( kNuisFSI364 ) :
-    case ( kNuisFSI365 ) :
-    case ( kNuisFSI366 ) :
-    case ( kNuisFSI367 ) :
-    case ( kNuisFSI368 ) :
-    case ( kNuisFSI369 ) :
-    case ( kNuisFSI370 ) :
-    case ( kNuisFSI371 ) :
-    case ( kNuisFSI372 ) :
-    case ( kNuisFSI373 ) :
-    case ( kNuisFSI374 ) :
-    case ( kNuisFSI375 ) :
-    case ( kNuisFSI376 ) :
-    case ( kNuisFSI377 ) :
-    case ( kNuisFSI378 ) :
-    case ( kNuisFSI379 ) :
-    case ( kNuisFSI380 ) :
-    case ( kNuisFSI381 ) :
-    case ( kNuisFSI382 ) :
-    case ( kNuisFSI383 ) :
-    case ( kNuisFSI384 ) :
-    case ( kNuisFSI385 ) :
-    case ( kNuisFSI386 ) :
-    case ( kNuisFSI387 ) :
-    case ( kNuisFSI388 ) :
-    case ( kNuisFSI389 ) :
-    case ( kNuisFSI390 ) :
-    case ( kNuisFSI391 ) :
-    case ( kNuisFSI392 ) :
-    case ( kNuisFSI393 ) :
-    case ( kNuisFSI394 ) :
-    case ( kNuisFSI395 ) :
-    case ( kNuisFSI396 ) :
-    case ( kNuisFSI397 ) :
-    case ( kNuisFSI398 ) :
-    case ( kNuisFSI399 ) :
-    case ( kNuisFSI400 ) :
-    case ( kNuisFSI401 ) :
-    case ( kNuisFSI402 ) :
-    case ( kNuisFSI403 ) :
-    case ( kNuisFSI404 ) :
-    case ( kNuisFSI405 ) :
-    case ( kNuisFSI406 ) :
-    case ( kNuisFSI407 ) :
-    case ( kNuisFSI408 ) :
-    case ( kNuisFSI409 ) :
-    case ( kNuisFSI410 ) :
-    case ( kNuisFSI411 ) :
-    case ( kNuisFSI412 ) :
-    case ( kNuisFSI413 ) :
-    case ( kNuisFSI414 ) :
-    case ( kNuisFSI415 ) :
-    case ( kNuisFSI416 ) :
-    case ( kNuisFSI417 ) :
-    case ( kNuisFSI418 ) :
-    case ( kNuisFSI419 ) :
-    case ( kNuisFSI420 ) :
-    case ( kNuisFSI421 ) :
-    case ( kNuisFSI422 ) :
-    case ( kNuisFSI423 ) :
-    case ( kNuisFSI424 ) :
-    case ( kNuisFSI425 ) :
-    case ( kNuisFSI426 ) :
-    case ( kNuisFSI427 ) :
-    case ( kNuisFSI428 ) :
-    case ( kNuisFSI429 ) :
-    case ( kNuisFSI430 ) :
-    case ( kNuisFSI431 ) :
-    case ( kNuisFSI432 ) :
-    case ( kNuisFSI433 ) :
-    case ( kNuisFSI434 ) :
-    case ( kNuisFSI435 ) :
-    case ( kNuisFSI436 ) :
-    case ( kNuisFSI437 ) :
-    case ( kNuisFSI438 ) :
-    case ( kNuisFSI439 ) :
-    case ( kNuisFSI440 ) :
-    case ( kNuisFSI441 ) :
-    case ( kNuisFSI442 ) :
-    case ( kNuisFSI443 ) :
-    case ( kNuisFSI444 ) :
-    case ( kNuisFSI445 ) :
-    case ( kNuisFSI446 ) :
-    case ( kNuisFSI447 ) :
-    case ( kNuisFSI448 ) :
-    case ( kNuisFSI449 ) :
-    case ( kNuisFSI450 ) :
-    case ( kNuisFSI451 ) :
-    case ( kNuisFSI452 ) :
-    case ( kNuisFSI453 ) :
-    case ( kNuisFSI454 ) :
-    case ( kNuisFSI455 ) :
-    case ( kNuisFSI456 ) :
-    case ( kNuisFSI457 ) :
-    case ( kNuisFSI458 ) :
-    case ( kNuisFSI459 ) :
-    case ( kNuisFSI460 ) :
-    case ( kNuisFSI461 ) :
-    case ( kNuisFSI462 ) :
-    case ( kNuisFSI463 ) :
-    case ( kNuisFSI464 ) :
-    case ( kNuisFSI465 ) :
-    case ( kNuisFSI466 ) :
-    case ( kNuisFSI467 ) :
-    case ( kNuisFSI468 ) :
-    case ( kNuisFSI469 ) :
-    case ( kNuisFSI470 ) :
-    case ( kNuisFSI471 ) :
-    case ( kNuisFSI472 ) :
-    case ( kNuisFSI473 ) :
-    case ( kNuisFSI474 ) :
-    case ( kNuisFSI475 ) :
-    case ( kNuisFSI476 ) :
-    case ( kNuisFSI477 ) :
-    case ( kNuisFSI478 ) :
-    case ( kNuisFSI479 ) :
-#endif
 #endif
 #endif
     {
@@ -2042,25 +1183,14 @@ string t2kana::util::AsStringTex(PhysParamId_t p)
         default : nutypes = "--";
       }
 #elif FSI_BINS == 3
-      if(ip <= (int)kNuisFSI020)
+      if(ip == (int)kNuisFSI000)
 	nutypes = "$\\nu_\\mu$/$\\bar{\\nu_\\mu}$ CCQE";
-      else if(ip <= (int)kNuisFSI041)
+      else if(ip <= (int)kNuisFSI016)
 	nutypes = "$\\nu_\\mu$/$\\bar{\\nu_\\mu}$ CCnQE";
-      else if(ip <= (int)kNuisFSI062)
+      else if(ip <= (int)kNuisFSI032)
 	nutypes = "$\\nu_e$/$\\bar{\\nu_e}$/sig$\\nu_e$ CC";
-      else if(ip <= (int)kNuisFSI078)
+      else if(ip <= (int)kNuisFSI048)
 	nutypes = "all NC";
-#elif FSI_BINS == 4
-      if(ip <= (int)kNuisFSI095)
-	nutypes = "$\\nu_\\mu$";
-      else if(ip <= (int)kNuisFSI191)
-	nutypes = "$\\bar{\\nu_\\mu}$";
-      else if(ip <= (int)kNuisFSI287)
-	nutypes = "$\\nu_e$";
-      else if(ip <= (int)kNuisFSI384)
-	nutypes = "$\\bar{\\nu_e}$";
-      else if(ip <= (int)kNuisFSI479)
-	nutypes = "Oscillated $\\nu_e$";
 #endif
       return Form("FSI/SI %2d; Ereco range %.1f - %.1f GeV; %s",ip,
 		  kFSIParamsErecoCut[ip][0],kFSIParamsErecoCut[ip][1],nutypes.c_str());     
@@ -2145,6 +1275,7 @@ string t2kana::util::AsStringCompact(PhysParamId_t p)
     case ( kNuisBANFF13               ) : return "f_banff13";      break;
     case ( kNuisBANFF14               ) : return "f_banff14";      break;
     case ( kNuisBANFF15               ) : return "f_banff15";      break;
+#if BANFF_BINS <= 2
     case ( kNuisBANFF16               ) : return "f_banff16";      break;
     case ( kNuisBANFF17               ) : return "f_banff17";      break;
     case ( kNuisBANFF18               ) : return "f_banff18";      break;
@@ -2180,19 +1311,26 @@ string t2kana::util::AsStringCompact(PhysParamId_t p)
     case ( kNuisBANFF47               ) : return "f_banff47";      break;
     case ( kNuisBANFF48               ) : return "f_banff48";      break;
 #endif
+#endif
 
+#if BANFF_BINS == 4
+    case ( kNuisBANFFMAQE             ) : return "f_banff1overmaqe2";  break;
+#else
     case ( kNuisBANFFMAQE             ) : return "f_banffmaqe";    break;
+#endif
     case ( kNuisBANFFMARES            ) : return "f_banffmares";   break;
     case ( kNuisBANFFCCQEE0           ) : return "f_banffccqee0";  break;
-#if BANFF_BINS == 2
+#if BANFF_BINS >= 2
     case ( kNuisBANFFCCQEE1           ) : return "f_banffccqee1";  break;
     case ( kNuisBANFFCCQEE2           ) : return "f_banffccqee2";  break;
 #endif
     case ( kNuisBANFFCC1piE0          ) : return "f_banffcc1pie0"; break;
-#if BANFF_BINS == 2
+#if BANFF_BINS >= 2
     case ( kNuisBANFFCC1piE1          ) : return "f_banffcc1pie1"; break;
 #endif
+#if BANFF_BINS <= 2
     case ( kNuisBANFFNC1pi0           ) : return "f_banffnc1pi0";  break;
+#endif
 
     case ( kNuisXSecFermiMom          ) : return "f_pfermi";       break;
     case ( kNuisXSecSpecFunc          ) : return "f_specfunc";     break; 
@@ -2200,8 +1338,9 @@ string t2kana::util::AsStringCompact(PhysParamId_t p)
     case ( kNuisXSecShapeCCoth        ) : return "f_shapeCCoth";   break;
     case ( kNuisXSecPiLessDelta       ) : return "f_pilessdelta";  break;
     case ( kNuisXSecENuShape          ) : return "f_enushape";     break;
+    case ( kNuisXSecBindE             ) : return "f_bindE";        break;
 
-#if BANFF_BINS != 2
+#if BANFF_BINS <= 1
     case ( kNuisXSecNormCCQEE1        ) : return "f_norm_ccqe_1";  break; 
     case ( kNuisXSecNormCCQEE2        ) : return "f_norm_ccqe_2";  break; 
     case ( kNuisXSecNormCC1piE1       ) : return "f_norm_cc1pi_1"; break;
@@ -2264,439 +1403,6 @@ string t2kana::util::AsStringCompact(PhysParamId_t p)
     case ( kNuisFSI046 ) : return "f_fsi046"; break;
     case ( kNuisFSI047 ) : return "f_fsi047"; break;
     case ( kNuisFSI048 ) : return "f_fsi048"; break;
-    case ( kNuisFSI049 ) : return "f_fsi049"; break;
-    case ( kNuisFSI050 ) : return "f_fsi050"; break;
-    case ( kNuisFSI051 ) : return "f_fsi051"; break;
-    case ( kNuisFSI052 ) : return "f_fsi052"; break;
-    case ( kNuisFSI053 ) : return "f_fsi053"; break;
-    case ( kNuisFSI054 ) : return "f_fsi054"; break;
-    case ( kNuisFSI055 ) : return "f_fsi055"; break;
-    case ( kNuisFSI056 ) : return "f_fsi056"; break;
-    case ( kNuisFSI057 ) : return "f_fsi057"; break;
-    case ( kNuisFSI058 ) : return "f_fsi058"; break;
-    case ( kNuisFSI059 ) : return "f_fsi059"; break;
-    case ( kNuisFSI060 ) : return "f_fsi060"; break;
-    case ( kNuisFSI061 ) : return "f_fsi061"; break;
-    case ( kNuisFSI062 ) : return "f_fsi062"; break;
-    case ( kNuisFSI063 ) : return "f_fsi063"; break;
-    case ( kNuisFSI064 ) : return "f_fsi064"; break;
-    case ( kNuisFSI065 ) : return "f_fsi065"; break;
-    case ( kNuisFSI066 ) : return "f_fsi066"; break;
-    case ( kNuisFSI067 ) : return "f_fsi067"; break;
-    case ( kNuisFSI068 ) : return "f_fsi068"; break;
-    case ( kNuisFSI069 ) : return "f_fsi069"; break;
-    case ( kNuisFSI070 ) : return "f_fsi070"; break;
-    case ( kNuisFSI071 ) : return "f_fsi071"; break;
-    case ( kNuisFSI072 ) : return "f_fsi072"; break;
-    case ( kNuisFSI073 ) : return "f_fsi073"; break;
-    case ( kNuisFSI074 ) : return "f_fsi074"; break;
-    case ( kNuisFSI075 ) : return "f_fsi075"; break;
-    case ( kNuisFSI076 ) : return "f_fsi076"; break;
-    case ( kNuisFSI077 ) : return "f_fsi077"; break;
-    case ( kNuisFSI078 ) : return "f_fsi078"; break;
-#if FSI_BINS >= 4
-    case ( kNuisFSI079 ) : return "f_fsi079"; break;
-    case ( kNuisFSI080 ) : return "f_fsi080"; break;
-    case ( kNuisFSI081 ) : return "f_fsi081"; break;
-    case ( kNuisFSI082 ) : return "f_fsi082"; break;
-    case ( kNuisFSI083 ) : return "f_fsi083"; break;
-    case ( kNuisFSI084 ) : return "f_fsi084"; break;
-    case ( kNuisFSI085 ) : return "f_fsi085"; break;
-    case ( kNuisFSI086 ) : return "f_fsi086"; break;
-    case ( kNuisFSI087 ) : return "f_fsi087"; break;
-    case ( kNuisFSI088 ) : return "f_fsi088"; break;
-    case ( kNuisFSI089 ) : return "f_fsi089"; break;
-    case ( kNuisFSI090 ) : return "f_fsi090"; break;
-    case ( kNuisFSI091 ) : return "f_fsi091"; break;
-    case ( kNuisFSI092 ) : return "f_fsi092"; break;
-    case ( kNuisFSI093 ) : return "f_fsi093"; break;
-    case ( kNuisFSI094 ) : return "f_fsi094"; break;
-    case ( kNuisFSI095 ) : return "f_fsi095"; break;
-    case ( kNuisFSI096 ) : return "f_fsi096"; break;
-    case ( kNuisFSI097 ) : return "f_fsi097"; break;
-    case ( kNuisFSI098 ) : return "f_fsi098"; break;
-    case ( kNuisFSI099 ) : return "f_fsi099"; break;
-    case ( kNuisFSI100 ) : return "f_fsi100"; break;
-    case ( kNuisFSI101 ) : return "f_fsi101"; break;
-    case ( kNuisFSI102 ) : return "f_fsi102"; break;
-    case ( kNuisFSI103 ) : return "f_fsi103"; break;
-    case ( kNuisFSI104 ) : return "f_fsi104"; break;
-    case ( kNuisFSI105 ) : return "f_fsi105"; break;
-    case ( kNuisFSI106 ) : return "f_fsi106"; break;
-    case ( kNuisFSI107 ) : return "f_fsi107"; break;
-    case ( kNuisFSI108 ) : return "f_fsi108"; break;
-    case ( kNuisFSI109 ) : return "f_fsi109"; break;
-    case ( kNuisFSI110 ) : return "f_fsi110"; break;
-    case ( kNuisFSI111 ) : return "f_fsi111"; break;
-    case ( kNuisFSI112 ) : return "f_fsi112"; break;
-    case ( kNuisFSI113 ) : return "f_fsi113"; break;
-    case ( kNuisFSI114 ) : return "f_fsi114"; break;
-    case ( kNuisFSI115 ) : return "f_fsi115"; break;
-    case ( kNuisFSI116 ) : return "f_fsi116"; break;
-    case ( kNuisFSI117 ) : return "f_fsi117"; break;
-    case ( kNuisFSI118 ) : return "f_fsi118"; break;
-    case ( kNuisFSI119 ) : return "f_fsi119"; break;
-    case ( kNuisFSI120 ) : return "f_fsi120"; break;
-    case ( kNuisFSI121 ) : return "f_fsi121"; break;
-    case ( kNuisFSI122 ) : return "f_fsi122"; break;
-    case ( kNuisFSI123 ) : return "f_fsi123"; break;
-    case ( kNuisFSI124 ) : return "f_fsi124"; break;
-    case ( kNuisFSI125 ) : return "f_fsi125"; break;
-    case ( kNuisFSI126 ) : return "f_fsi126"; break;
-    case ( kNuisFSI127 ) : return "f_fsi127"; break;
-    case ( kNuisFSI128 ) : return "f_fsi128"; break;
-    case ( kNuisFSI129 ) : return "f_fsi129"; break;
-    case ( kNuisFSI130 ) : return "f_fsi130"; break;
-    case ( kNuisFSI131 ) : return "f_fsi131"; break;
-    case ( kNuisFSI132 ) : return "f_fsi132"; break;
-    case ( kNuisFSI133 ) : return "f_fsi133"; break;
-    case ( kNuisFSI134 ) : return "f_fsi134"; break;
-    case ( kNuisFSI135 ) : return "f_fsi135"; break;
-    case ( kNuisFSI136 ) : return "f_fsi136"; break;
-    case ( kNuisFSI137 ) : return "f_fsi137"; break;
-    case ( kNuisFSI138 ) : return "f_fsi138"; break;
-    case ( kNuisFSI139 ) : return "f_fsi139"; break;
-    case ( kNuisFSI140 ) : return "f_fsi140"; break;
-    case ( kNuisFSI141 ) : return "f_fsi141"; break;
-    case ( kNuisFSI142 ) : return "f_fsi142"; break;
-    case ( kNuisFSI143 ) : return "f_fsi143"; break;
-    case ( kNuisFSI144 ) : return "f_fsi144"; break;
-    case ( kNuisFSI145 ) : return "f_fsi145"; break;
-    case ( kNuisFSI146 ) : return "f_fsi146"; break;
-    case ( kNuisFSI147 ) : return "f_fsi147"; break;
-    case ( kNuisFSI148 ) : return "f_fsi148"; break;
-    case ( kNuisFSI149 ) : return "f_fsi149"; break;
-    case ( kNuisFSI150 ) : return "f_fsi150"; break;
-    case ( kNuisFSI151 ) : return "f_fsi151"; break;
-    case ( kNuisFSI152 ) : return "f_fsi152"; break;
-    case ( kNuisFSI153 ) : return "f_fsi153"; break;
-    case ( kNuisFSI154 ) : return "f_fsi154"; break;
-    case ( kNuisFSI155 ) : return "f_fsi155"; break;
-    case ( kNuisFSI156 ) : return "f_fsi156"; break;
-    case ( kNuisFSI157 ) : return "f_fsi157"; break;
-    case ( kNuisFSI158 ) : return "f_fsi158"; break;
-    case ( kNuisFSI159 ) : return "f_fsi159"; break;
-    case ( kNuisFSI160 ) : return "f_fsi160"; break;
-    case ( kNuisFSI161 ) : return "f_fsi161"; break;
-    case ( kNuisFSI162 ) : return "f_fsi162"; break;
-    case ( kNuisFSI163 ) : return "f_fsi163"; break;
-    case ( kNuisFSI164 ) : return "f_fsi164"; break;
-    case ( kNuisFSI165 ) : return "f_fsi165"; break;
-    case ( kNuisFSI166 ) : return "f_fsi166"; break;
-    case ( kNuisFSI167 ) : return "f_fsi167"; break;
-    case ( kNuisFSI168 ) : return "f_fsi168"; break;
-    case ( kNuisFSI169 ) : return "f_fsi169"; break;
-    case ( kNuisFSI170 ) : return "f_fsi170"; break;
-    case ( kNuisFSI171 ) : return "f_fsi171"; break;
-    case ( kNuisFSI172 ) : return "f_fsi172"; break;
-    case ( kNuisFSI173 ) : return "f_fsi173"; break;
-    case ( kNuisFSI174 ) : return "f_fsi174"; break;
-    case ( kNuisFSI175 ) : return "f_fsi175"; break;
-    case ( kNuisFSI176 ) : return "f_fsi176"; break;
-    case ( kNuisFSI177 ) : return "f_fsi177"; break;
-    case ( kNuisFSI178 ) : return "f_fsi178"; break;
-    case ( kNuisFSI179 ) : return "f_fsi179"; break;
-    case ( kNuisFSI180 ) : return "f_fsi180"; break;
-    case ( kNuisFSI181 ) : return "f_fsi181"; break;
-    case ( kNuisFSI182 ) : return "f_fsi182"; break;
-    case ( kNuisFSI183 ) : return "f_fsi183"; break;
-    case ( kNuisFSI184 ) : return "f_fsi184"; break;
-    case ( kNuisFSI185 ) : return "f_fsi185"; break;
-    case ( kNuisFSI186 ) : return "f_fsi186"; break;
-    case ( kNuisFSI187 ) : return "f_fsi187"; break;
-    case ( kNuisFSI188 ) : return "f_fsi188"; break;
-    case ( kNuisFSI189 ) : return "f_fsi189"; break;
-    case ( kNuisFSI190 ) : return "f_fsi190"; break;
-    case ( kNuisFSI191 ) : return "f_fsi191"; break;
-    case ( kNuisFSI192 ) : return "f_fsi192"; break;
-    case ( kNuisFSI193 ) : return "f_fsi193"; break;
-    case ( kNuisFSI194 ) : return "f_fsi194"; break;
-    case ( kNuisFSI195 ) : return "f_fsi195"; break;
-    case ( kNuisFSI196 ) : return "f_fsi196"; break;
-    case ( kNuisFSI197 ) : return "f_fsi197"; break;
-    case ( kNuisFSI198 ) : return "f_fsi198"; break;
-    case ( kNuisFSI199 ) : return "f_fsi199"; break;
-    case ( kNuisFSI200 ) : return "f_fsi200"; break;
-    case ( kNuisFSI201 ) : return "f_fsi201"; break;
-    case ( kNuisFSI202 ) : return "f_fsi202"; break;
-    case ( kNuisFSI203 ) : return "f_fsi203"; break;
-    case ( kNuisFSI204 ) : return "f_fsi204"; break;
-    case ( kNuisFSI205 ) : return "f_fsi205"; break;
-    case ( kNuisFSI206 ) : return "f_fsi206"; break;
-    case ( kNuisFSI207 ) : return "f_fsi207"; break;
-    case ( kNuisFSI208 ) : return "f_fsi208"; break;
-    case ( kNuisFSI209 ) : return "f_fsi209"; break;
-    case ( kNuisFSI210 ) : return "f_fsi210"; break;
-    case ( kNuisFSI211 ) : return "f_fsi211"; break;
-    case ( kNuisFSI212 ) : return "f_fsi212"; break;
-    case ( kNuisFSI213 ) : return "f_fsi213"; break;
-    case ( kNuisFSI214 ) : return "f_fsi214"; break;
-    case ( kNuisFSI215 ) : return "f_fsi215"; break;
-    case ( kNuisFSI216 ) : return "f_fsi216"; break;
-    case ( kNuisFSI217 ) : return "f_fsi217"; break;
-    case ( kNuisFSI218 ) : return "f_fsi218"; break;
-    case ( kNuisFSI219 ) : return "f_fsi219"; break;
-    case ( kNuisFSI220 ) : return "f_fsi220"; break;
-    case ( kNuisFSI221 ) : return "f_fsi221"; break;
-    case ( kNuisFSI222 ) : return "f_fsi222"; break;
-    case ( kNuisFSI223 ) : return "f_fsi223"; break;
-    case ( kNuisFSI224 ) : return "f_fsi224"; break;
-    case ( kNuisFSI225 ) : return "f_fsi225"; break;
-    case ( kNuisFSI226 ) : return "f_fsi226"; break;
-    case ( kNuisFSI227 ) : return "f_fsi227"; break;
-    case ( kNuisFSI228 ) : return "f_fsi228"; break;
-    case ( kNuisFSI229 ) : return "f_fsi229"; break;
-    case ( kNuisFSI230 ) : return "f_fsi230"; break;
-    case ( kNuisFSI231 ) : return "f_fsi231"; break;
-    case ( kNuisFSI232 ) : return "f_fsi232"; break;
-    case ( kNuisFSI233 ) : return "f_fsi233"; break;
-    case ( kNuisFSI234 ) : return "f_fsi234"; break;
-    case ( kNuisFSI235 ) : return "f_fsi235"; break;
-    case ( kNuisFSI236 ) : return "f_fsi236"; break;
-    case ( kNuisFSI237 ) : return "f_fsi237"; break;
-    case ( kNuisFSI238 ) : return "f_fsi238"; break;
-    case ( kNuisFSI239 ) : return "f_fsi239"; break;
-    case ( kNuisFSI240 ) : return "f_fsi240"; break;
-    case ( kNuisFSI241 ) : return "f_fsi241"; break;
-    case ( kNuisFSI242 ) : return "f_fsi242"; break;
-    case ( kNuisFSI243 ) : return "f_fsi243"; break;
-    case ( kNuisFSI244 ) : return "f_fsi244"; break;
-    case ( kNuisFSI245 ) : return "f_fsi245"; break;
-    case ( kNuisFSI246 ) : return "f_fsi246"; break;
-    case ( kNuisFSI247 ) : return "f_fsi247"; break;
-    case ( kNuisFSI248 ) : return "f_fsi248"; break;
-    case ( kNuisFSI249 ) : return "f_fsi249"; break;
-    case ( kNuisFSI250 ) : return "f_fsi250"; break;
-    case ( kNuisFSI251 ) : return "f_fsi251"; break;
-    case ( kNuisFSI252 ) : return "f_fsi252"; break;
-    case ( kNuisFSI253 ) : return "f_fsi253"; break;
-    case ( kNuisFSI254 ) : return "f_fsi254"; break;
-    case ( kNuisFSI255 ) : return "f_fsi255"; break;
-    case ( kNuisFSI256 ) : return "f_fsi256"; break;
-    case ( kNuisFSI257 ) : return "f_fsi257"; break;
-    case ( kNuisFSI258 ) : return "f_fsi258"; break;
-    case ( kNuisFSI259 ) : return "f_fsi259"; break;
-    case ( kNuisFSI260 ) : return "f_fsi260"; break;
-    case ( kNuisFSI261 ) : return "f_fsi261"; break;
-    case ( kNuisFSI262 ) : return "f_fsi262"; break;
-    case ( kNuisFSI263 ) : return "f_fsi263"; break;
-    case ( kNuisFSI264 ) : return "f_fsi264"; break;
-    case ( kNuisFSI265 ) : return "f_fsi265"; break;
-    case ( kNuisFSI266 ) : return "f_fsi266"; break;
-    case ( kNuisFSI267 ) : return "f_fsi267"; break;
-    case ( kNuisFSI268 ) : return "f_fsi268"; break;
-    case ( kNuisFSI269 ) : return "f_fsi269"; break;
-    case ( kNuisFSI270 ) : return "f_fsi270"; break;
-    case ( kNuisFSI271 ) : return "f_fsi271"; break;
-    case ( kNuisFSI272 ) : return "f_fsi272"; break;
-    case ( kNuisFSI273 ) : return "f_fsi273"; break;
-    case ( kNuisFSI274 ) : return "f_fsi274"; break;
-    case ( kNuisFSI275 ) : return "f_fsi275"; break;
-    case ( kNuisFSI276 ) : return "f_fsi276"; break;
-    case ( kNuisFSI277 ) : return "f_fsi277"; break;
-    case ( kNuisFSI278 ) : return "f_fsi278"; break;
-    case ( kNuisFSI279 ) : return "f_fsi279"; break;
-    case ( kNuisFSI280 ) : return "f_fsi280"; break;
-    case ( kNuisFSI281 ) : return "f_fsi281"; break;
-    case ( kNuisFSI282 ) : return "f_fsi282"; break;
-    case ( kNuisFSI283 ) : return "f_fsi283"; break;
-    case ( kNuisFSI284 ) : return "f_fsi284"; break;
-    case ( kNuisFSI285 ) : return "f_fsi285"; break;
-    case ( kNuisFSI286 ) : return "f_fsi286"; break;
-    case ( kNuisFSI287 ) : return "f_fsi287"; break;
-    case ( kNuisFSI288 ) : return "f_fsi288"; break;
-    case ( kNuisFSI289 ) : return "f_fsi289"; break;
-    case ( kNuisFSI290 ) : return "f_fsi290"; break;
-    case ( kNuisFSI291 ) : return "f_fsi291"; break;
-    case ( kNuisFSI292 ) : return "f_fsi292"; break;
-    case ( kNuisFSI293 ) : return "f_fsi293"; break;
-    case ( kNuisFSI294 ) : return "f_fsi294"; break;
-    case ( kNuisFSI295 ) : return "f_fsi295"; break;
-    case ( kNuisFSI296 ) : return "f_fsi296"; break;
-    case ( kNuisFSI297 ) : return "f_fsi297"; break;
-    case ( kNuisFSI298 ) : return "f_fsi298"; break;
-    case ( kNuisFSI299 ) : return "f_fsi299"; break;
-    case ( kNuisFSI300 ) : return "f_fsi300"; break;
-    case ( kNuisFSI301 ) : return "f_fsi301"; break;
-    case ( kNuisFSI302 ) : return "f_fsi302"; break;
-    case ( kNuisFSI303 ) : return "f_fsi303"; break;
-    case ( kNuisFSI304 ) : return "f_fsi304"; break;
-    case ( kNuisFSI305 ) : return "f_fsi305"; break;
-    case ( kNuisFSI306 ) : return "f_fsi306"; break;
-    case ( kNuisFSI307 ) : return "f_fsi307"; break;
-    case ( kNuisFSI308 ) : return "f_fsi308"; break;
-    case ( kNuisFSI309 ) : return "f_fsi309"; break;
-    case ( kNuisFSI310 ) : return "f_fsi310"; break;
-    case ( kNuisFSI311 ) : return "f_fsi311"; break;
-    case ( kNuisFSI312 ) : return "f_fsi312"; break;
-    case ( kNuisFSI313 ) : return "f_fsi313"; break;
-    case ( kNuisFSI314 ) : return "f_fsi314"; break;
-    case ( kNuisFSI315 ) : return "f_fsi315"; break;
-    case ( kNuisFSI316 ) : return "f_fsi316"; break;
-    case ( kNuisFSI317 ) : return "f_fsi317"; break;
-    case ( kNuisFSI318 ) : return "f_fsi318"; break;
-    case ( kNuisFSI319 ) : return "f_fsi319"; break;
-    case ( kNuisFSI320 ) : return "f_fsi320"; break;
-    case ( kNuisFSI321 ) : return "f_fsi321"; break;
-    case ( kNuisFSI322 ) : return "f_fsi322"; break;
-    case ( kNuisFSI323 ) : return "f_fsi323"; break;
-    case ( kNuisFSI324 ) : return "f_fsi324"; break;
-    case ( kNuisFSI325 ) : return "f_fsi325"; break;
-    case ( kNuisFSI326 ) : return "f_fsi326"; break;
-    case ( kNuisFSI327 ) : return "f_fsi327"; break;
-    case ( kNuisFSI328 ) : return "f_fsi328"; break;
-    case ( kNuisFSI329 ) : return "f_fsi329"; break;
-    case ( kNuisFSI330 ) : return "f_fsi330"; break;
-    case ( kNuisFSI331 ) : return "f_fsi331"; break;
-    case ( kNuisFSI332 ) : return "f_fsi332"; break;
-    case ( kNuisFSI333 ) : return "f_fsi333"; break;
-    case ( kNuisFSI334 ) : return "f_fsi334"; break;
-    case ( kNuisFSI335 ) : return "f_fsi335"; break;
-    case ( kNuisFSI336 ) : return "f_fsi336"; break;
-    case ( kNuisFSI337 ) : return "f_fsi337"; break;
-    case ( kNuisFSI338 ) : return "f_fsi338"; break;
-    case ( kNuisFSI339 ) : return "f_fsi339"; break;
-    case ( kNuisFSI340 ) : return "f_fsi340"; break;
-    case ( kNuisFSI341 ) : return "f_fsi341"; break;
-    case ( kNuisFSI342 ) : return "f_fsi342"; break;
-    case ( kNuisFSI343 ) : return "f_fsi343"; break;
-    case ( kNuisFSI344 ) : return "f_fsi344"; break;
-    case ( kNuisFSI345 ) : return "f_fsi345"; break;
-    case ( kNuisFSI346 ) : return "f_fsi346"; break;
-    case ( kNuisFSI347 ) : return "f_fsi347"; break;
-    case ( kNuisFSI348 ) : return "f_fsi348"; break;
-    case ( kNuisFSI349 ) : return "f_fsi349"; break;
-    case ( kNuisFSI350 ) : return "f_fsi350"; break;
-    case ( kNuisFSI351 ) : return "f_fsi351"; break;
-    case ( kNuisFSI352 ) : return "f_fsi352"; break;
-    case ( kNuisFSI353 ) : return "f_fsi353"; break;
-    case ( kNuisFSI354 ) : return "f_fsi354"; break;
-    case ( kNuisFSI355 ) : return "f_fsi355"; break;
-    case ( kNuisFSI356 ) : return "f_fsi356"; break;
-    case ( kNuisFSI357 ) : return "f_fsi357"; break;
-    case ( kNuisFSI358 ) : return "f_fsi358"; break;
-    case ( kNuisFSI359 ) : return "f_fsi359"; break;
-    case ( kNuisFSI360 ) : return "f_fsi360"; break;
-    case ( kNuisFSI361 ) : return "f_fsi361"; break;
-    case ( kNuisFSI362 ) : return "f_fsi362"; break;
-    case ( kNuisFSI363 ) : return "f_fsi363"; break;
-    case ( kNuisFSI364 ) : return "f_fsi364"; break;
-    case ( kNuisFSI365 ) : return "f_fsi365"; break;
-    case ( kNuisFSI366 ) : return "f_fsi366"; break;
-    case ( kNuisFSI367 ) : return "f_fsi367"; break;
-    case ( kNuisFSI368 ) : return "f_fsi368"; break;
-    case ( kNuisFSI369 ) : return "f_fsi369"; break;
-    case ( kNuisFSI370 ) : return "f_fsi370"; break;
-    case ( kNuisFSI371 ) : return "f_fsi371"; break;
-    case ( kNuisFSI372 ) : return "f_fsi372"; break;
-    case ( kNuisFSI373 ) : return "f_fsi373"; break;
-    case ( kNuisFSI374 ) : return "f_fsi374"; break;
-    case ( kNuisFSI375 ) : return "f_fsi375"; break;
-    case ( kNuisFSI376 ) : return "f_fsi376"; break;
-    case ( kNuisFSI377 ) : return "f_fsi377"; break;
-    case ( kNuisFSI378 ) : return "f_fsi378"; break;
-    case ( kNuisFSI379 ) : return "f_fsi379"; break;
-    case ( kNuisFSI380 ) : return "f_fsi380"; break;
-    case ( kNuisFSI381 ) : return "f_fsi381"; break;
-    case ( kNuisFSI382 ) : return "f_fsi382"; break;
-    case ( kNuisFSI383 ) : return "f_fsi383"; break;
-    case ( kNuisFSI384 ) : return "f_fsi384"; break;
-    case ( kNuisFSI385 ) : return "f_fsi385"; break;
-    case ( kNuisFSI386 ) : return "f_fsi386"; break;
-    case ( kNuisFSI387 ) : return "f_fsi387"; break;
-    case ( kNuisFSI388 ) : return "f_fsi388"; break;
-    case ( kNuisFSI389 ) : return "f_fsi389"; break;
-    case ( kNuisFSI390 ) : return "f_fsi390"; break;
-    case ( kNuisFSI391 ) : return "f_fsi391"; break;
-    case ( kNuisFSI392 ) : return "f_fsi392"; break;
-    case ( kNuisFSI393 ) : return "f_fsi393"; break;
-    case ( kNuisFSI394 ) : return "f_fsi394"; break;
-    case ( kNuisFSI395 ) : return "f_fsi395"; break;
-    case ( kNuisFSI396 ) : return "f_fsi396"; break;
-    case ( kNuisFSI397 ) : return "f_fsi397"; break;
-    case ( kNuisFSI398 ) : return "f_fsi398"; break;
-    case ( kNuisFSI399 ) : return "f_fsi399"; break;
-    case ( kNuisFSI400 ) : return "f_fsi400"; break;
-    case ( kNuisFSI401 ) : return "f_fsi401"; break;
-    case ( kNuisFSI402 ) : return "f_fsi402"; break;
-    case ( kNuisFSI403 ) : return "f_fsi403"; break;
-    case ( kNuisFSI404 ) : return "f_fsi404"; break;
-    case ( kNuisFSI405 ) : return "f_fsi405"; break;
-    case ( kNuisFSI406 ) : return "f_fsi406"; break;
-    case ( kNuisFSI407 ) : return "f_fsi407"; break;
-    case ( kNuisFSI408 ) : return "f_fsi408"; break;
-    case ( kNuisFSI409 ) : return "f_fsi409"; break;
-    case ( kNuisFSI410 ) : return "f_fsi410"; break;
-    case ( kNuisFSI411 ) : return "f_fsi411"; break;
-    case ( kNuisFSI412 ) : return "f_fsi412"; break;
-    case ( kNuisFSI413 ) : return "f_fsi413"; break;
-    case ( kNuisFSI414 ) : return "f_fsi414"; break;
-    case ( kNuisFSI415 ) : return "f_fsi415"; break;
-    case ( kNuisFSI416 ) : return "f_fsi416"; break;
-    case ( kNuisFSI417 ) : return "f_fsi417"; break;
-    case ( kNuisFSI418 ) : return "f_fsi418"; break;
-    case ( kNuisFSI419 ) : return "f_fsi419"; break;
-    case ( kNuisFSI420 ) : return "f_fsi420"; break;
-    case ( kNuisFSI421 ) : return "f_fsi421"; break;
-    case ( kNuisFSI422 ) : return "f_fsi422"; break;
-    case ( kNuisFSI423 ) : return "f_fsi423"; break;
-    case ( kNuisFSI424 ) : return "f_fsi424"; break;
-    case ( kNuisFSI425 ) : return "f_fsi425"; break;
-    case ( kNuisFSI426 ) : return "f_fsi426"; break;
-    case ( kNuisFSI427 ) : return "f_fsi427"; break;
-    case ( kNuisFSI428 ) : return "f_fsi428"; break;
-    case ( kNuisFSI429 ) : return "f_fsi429"; break;
-    case ( kNuisFSI430 ) : return "f_fsi430"; break;
-    case ( kNuisFSI431 ) : return "f_fsi431"; break;
-    case ( kNuisFSI432 ) : return "f_fsi432"; break;
-    case ( kNuisFSI433 ) : return "f_fsi433"; break;
-    case ( kNuisFSI434 ) : return "f_fsi434"; break;
-    case ( kNuisFSI435 ) : return "f_fsi435"; break;
-    case ( kNuisFSI436 ) : return "f_fsi436"; break;
-    case ( kNuisFSI437 ) : return "f_fsi437"; break;
-    case ( kNuisFSI438 ) : return "f_fsi438"; break;
-    case ( kNuisFSI439 ) : return "f_fsi439"; break;
-    case ( kNuisFSI440 ) : return "f_fsi440"; break;
-    case ( kNuisFSI441 ) : return "f_fsi441"; break;
-    case ( kNuisFSI442 ) : return "f_fsi442"; break;
-    case ( kNuisFSI443 ) : return "f_fsi443"; break;
-    case ( kNuisFSI444 ) : return "f_fsi444"; break;
-    case ( kNuisFSI445 ) : return "f_fsi445"; break;
-    case ( kNuisFSI446 ) : return "f_fsi446"; break;
-    case ( kNuisFSI447 ) : return "f_fsi447"; break;
-    case ( kNuisFSI448 ) : return "f_fsi448"; break;
-    case ( kNuisFSI449 ) : return "f_fsi449"; break;
-    case ( kNuisFSI450 ) : return "f_fsi450"; break;
-    case ( kNuisFSI451 ) : return "f_fsi451"; break;
-    case ( kNuisFSI452 ) : return "f_fsi452"; break;
-    case ( kNuisFSI453 ) : return "f_fsi453"; break;
-    case ( kNuisFSI454 ) : return "f_fsi454"; break;
-    case ( kNuisFSI455 ) : return "f_fsi455"; break;
-    case ( kNuisFSI456 ) : return "f_fsi456"; break;
-    case ( kNuisFSI457 ) : return "f_fsi457"; break;
-    case ( kNuisFSI458 ) : return "f_fsi458"; break;
-    case ( kNuisFSI459 ) : return "f_fsi459"; break;
-    case ( kNuisFSI460 ) : return "f_fsi460"; break;
-    case ( kNuisFSI461 ) : return "f_fsi461"; break;
-    case ( kNuisFSI462 ) : return "f_fsi462"; break;
-    case ( kNuisFSI463 ) : return "f_fsi463"; break;
-    case ( kNuisFSI464 ) : return "f_fsi464"; break;
-    case ( kNuisFSI465 ) : return "f_fsi465"; break;
-    case ( kNuisFSI466 ) : return "f_fsi466"; break;
-    case ( kNuisFSI467 ) : return "f_fsi467"; break;
-    case ( kNuisFSI468 ) : return "f_fsi468"; break;
-    case ( kNuisFSI469 ) : return "f_fsi469"; break;
-    case ( kNuisFSI470 ) : return "f_fsi470"; break;
-    case ( kNuisFSI471 ) : return "f_fsi471"; break;
-    case ( kNuisFSI472 ) : return "f_fsi472"; break;
-    case ( kNuisFSI473 ) : return "f_fsi473"; break;
-    case ( kNuisFSI474 ) : return "f_fsi474"; break;
-    case ( kNuisFSI475 ) : return "f_fsi475"; break;
-    case ( kNuisFSI476 ) : return "f_fsi476"; break;
-    case ( kNuisFSI477 ) : return "f_fsi477"; break;
-    case ( kNuisFSI478 ) : return "f_fsi478"; break;
-    case ( kNuisFSI479 ) : return "f_fsi479"; break;
-#endif
 #endif
 #endif
 
@@ -3250,6 +1956,7 @@ t2kana::conv::PhysParamId_t
   if(sh == "banff_13") return kNuisBANFF13;
   if(sh == "banff_14") return kNuisBANFF14;
   if(sh == "banff_15") return kNuisBANFF15;
+#if BANFF_BINS <= 2
   if(sh == "banff_16") return kNuisBANFF16;
   if(sh == "banff_17") return kNuisBANFF17;
   if(sh == "banff_18") return kNuisBANFF18;
@@ -3285,18 +1992,21 @@ t2kana::conv::PhysParamId_t
   if(sh == "banff_47") return kNuisBANFF47;
   if(sh == "banff_48") return kNuisBANFF48;
 #endif
+#endif
   if(sh == "banff_maqe")    return kNuisBANFFMAQE;
   if(sh == "banff_mares")   return kNuisBANFFMARES;
   if(sh == "banff_ccqeE0")  return kNuisBANFFCCQEE0;
-#if BANFF_BINS == 2
+#if BANFF_BINS >= 2
   if(sh == "banff_ccqeE1")  return kNuisBANFFCCQEE1;
   if(sh == "banff_ccqeE2")  return kNuisBANFFCCQEE2;
 #endif
   if(sh == "banff_cc1piE0") return kNuisBANFFCC1piE0;
-#if BANFF_BINS == 2
+#if BANFF_BINS >= 2
   if(sh == "banff_cc1piE1") return kNuisBANFFCC1piE1;
 #endif
+#if BANFF_BINS <= 2
   if(sh == "banff_nc1pi0")  return kNuisBANFFNC1pi0;
+#endif
 
   if(sh == "xsec_pf")           return kNuisXSecFermiMom;
   if(sh == "xsec_sf")           return kNuisXSecSpecFunc;
@@ -3304,7 +2014,8 @@ t2kana::conv::PhysParamId_t
   if(sh == "xsec_shape_ccoth")  return kNuisXSecShapeCCoth;
   if(sh == "xsec_pilessdelta")  return kNuisXSecPiLessDelta;
   if(sh == "xsec_enushape")     return kNuisXSecENuShape;
-#if BANFF_BINS != 2
+  if(sh == "xsec_bindE")        return kNuisXSecBindE;
+#if BANFF_BINS <= 1
   if(sh == "xsec_norm_ccqeE1")  return kNuisXSecNormCCQEE1;
   if(sh == "xsec_norm_ccqeE2")  return kNuisXSecNormCCQEE2;
   if(sh == "xsec_norm_cc1piE1") return kNuisXSecNormCC1piE1;
@@ -3367,439 +2078,6 @@ t2kana::conv::PhysParamId_t
   if(sh == "fsi_046") return kNuisFSI046;
   if(sh == "fsi_047") return kNuisFSI047;
   if(sh == "fsi_048") return kNuisFSI048;
-  if(sh == "fsi_049") return kNuisFSI049;
-  if(sh == "fsi_050") return kNuisFSI050;
-  if(sh == "fsi_051") return kNuisFSI051;
-  if(sh == "fsi_052") return kNuisFSI052;
-  if(sh == "fsi_053") return kNuisFSI053;
-  if(sh == "fsi_054") return kNuisFSI054;
-  if(sh == "fsi_055") return kNuisFSI055;
-  if(sh == "fsi_056") return kNuisFSI056;
-  if(sh == "fsi_057") return kNuisFSI057;
-  if(sh == "fsi_058") return kNuisFSI058;
-  if(sh == "fsi_059") return kNuisFSI059;
-  if(sh == "fsi_060") return kNuisFSI060;
-  if(sh == "fsi_061") return kNuisFSI061;
-  if(sh == "fsi_062") return kNuisFSI062;
-  if(sh == "fsi_063") return kNuisFSI063;
-  if(sh == "fsi_064") return kNuisFSI064;
-  if(sh == "fsi_065") return kNuisFSI065;
-  if(sh == "fsi_066") return kNuisFSI066;
-  if(sh == "fsi_067") return kNuisFSI067;
-  if(sh == "fsi_068") return kNuisFSI068;
-  if(sh == "fsi_069") return kNuisFSI069;
-  if(sh == "fsi_070") return kNuisFSI070;
-  if(sh == "fsi_071") return kNuisFSI071;
-  if(sh == "fsi_072") return kNuisFSI072;
-  if(sh == "fsi_073") return kNuisFSI073;
-  if(sh == "fsi_074") return kNuisFSI074;
-  if(sh == "fsi_075") return kNuisFSI075;
-  if(sh == "fsi_076") return kNuisFSI076;
-  if(sh == "fsi_077") return kNuisFSI077;
-  if(sh == "fsi_078") return kNuisFSI078;
-#if FSI_BINS >= 4
-  if(sh == "fsi_079") return kNuisFSI079;
-  if(sh == "fsi_080") return kNuisFSI080;
-  if(sh == "fsi_081") return kNuisFSI081;
-  if(sh == "fsi_082") return kNuisFSI082;
-  if(sh == "fsi_083") return kNuisFSI083;
-  if(sh == "fsi_084") return kNuisFSI084;
-  if(sh == "fsi_085") return kNuisFSI085;
-  if(sh == "fsi_086") return kNuisFSI086;
-  if(sh == "fsi_087") return kNuisFSI087;
-  if(sh == "fsi_088") return kNuisFSI088;
-  if(sh == "fsi_089") return kNuisFSI089;
-  if(sh == "fsi_090") return kNuisFSI090;
-  if(sh == "fsi_091") return kNuisFSI091;
-  if(sh == "fsi_092") return kNuisFSI092;
-  if(sh == "fsi_093") return kNuisFSI093;
-  if(sh == "fsi_094") return kNuisFSI094;
-  if(sh == "fsi_095") return kNuisFSI095;
-  if(sh == "fsi_096") return kNuisFSI096;
-  if(sh == "fsi_097") return kNuisFSI097;
-  if(sh == "fsi_098") return kNuisFSI098;
-  if(sh == "fsi_099") return kNuisFSI099;
-  if(sh == "fsi_100") return kNuisFSI100;
-  if(sh == "fsi_101") return kNuisFSI101;
-  if(sh == "fsi_102") return kNuisFSI102;
-  if(sh == "fsi_103") return kNuisFSI103;
-  if(sh == "fsi_104") return kNuisFSI104;
-  if(sh == "fsi_105") return kNuisFSI105;
-  if(sh == "fsi_106") return kNuisFSI106;
-  if(sh == "fsi_107") return kNuisFSI107;
-  if(sh == "fsi_108") return kNuisFSI108;
-  if(sh == "fsi_109") return kNuisFSI109;
-  if(sh == "fsi_110") return kNuisFSI110;
-  if(sh == "fsi_111") return kNuisFSI111;
-  if(sh == "fsi_112") return kNuisFSI112;
-  if(sh == "fsi_113") return kNuisFSI113;
-  if(sh == "fsi_114") return kNuisFSI114;
-  if(sh == "fsi_115") return kNuisFSI115;
-  if(sh == "fsi_116") return kNuisFSI116;
-  if(sh == "fsi_117") return kNuisFSI117;
-  if(sh == "fsi_118") return kNuisFSI118;
-  if(sh == "fsi_119") return kNuisFSI119;
-  if(sh == "fsi_120") return kNuisFSI120;
-  if(sh == "fsi_121") return kNuisFSI121;
-  if(sh == "fsi_122") return kNuisFSI122;
-  if(sh == "fsi_123") return kNuisFSI123;
-  if(sh == "fsi_124") return kNuisFSI124;
-  if(sh == "fsi_125") return kNuisFSI125;
-  if(sh == "fsi_126") return kNuisFSI126;
-  if(sh == "fsi_127") return kNuisFSI127;
-  if(sh == "fsi_128") return kNuisFSI128;
-  if(sh == "fsi_129") return kNuisFSI129;
-  if(sh == "fsi_130") return kNuisFSI130;
-  if(sh == "fsi_131") return kNuisFSI131;
-  if(sh == "fsi_132") return kNuisFSI132;
-  if(sh == "fsi_133") return kNuisFSI133;
-  if(sh == "fsi_134") return kNuisFSI134;
-  if(sh == "fsi_135") return kNuisFSI135;
-  if(sh == "fsi_136") return kNuisFSI136;
-  if(sh == "fsi_137") return kNuisFSI137;
-  if(sh == "fsi_138") return kNuisFSI138;
-  if(sh == "fsi_139") return kNuisFSI139;
-  if(sh == "fsi_140") return kNuisFSI140;
-  if(sh == "fsi_141") return kNuisFSI141;
-  if(sh == "fsi_142") return kNuisFSI142;
-  if(sh == "fsi_143") return kNuisFSI143;
-  if(sh == "fsi_144") return kNuisFSI144;
-  if(sh == "fsi_145") return kNuisFSI145;
-  if(sh == "fsi_146") return kNuisFSI146;
-  if(sh == "fsi_147") return kNuisFSI147;
-  if(sh == "fsi_148") return kNuisFSI148;
-  if(sh == "fsi_149") return kNuisFSI149;
-  if(sh == "fsi_150") return kNuisFSI150;
-  if(sh == "fsi_151") return kNuisFSI151;
-  if(sh == "fsi_152") return kNuisFSI152;
-  if(sh == "fsi_153") return kNuisFSI153;
-  if(sh == "fsi_154") return kNuisFSI154;
-  if(sh == "fsi_155") return kNuisFSI155;
-  if(sh == "fsi_156") return kNuisFSI156;
-  if(sh == "fsi_157") return kNuisFSI157;
-  if(sh == "fsi_158") return kNuisFSI158;
-  if(sh == "fsi_159") return kNuisFSI159;
-  if(sh == "fsi_160") return kNuisFSI160;
-  if(sh == "fsi_161") return kNuisFSI161;
-  if(sh == "fsi_162") return kNuisFSI162;
-  if(sh == "fsi_163") return kNuisFSI163;
-  if(sh == "fsi_164") return kNuisFSI164;
-  if(sh == "fsi_165") return kNuisFSI165;
-  if(sh == "fsi_166") return kNuisFSI166;
-  if(sh == "fsi_167") return kNuisFSI167;
-  if(sh == "fsi_168") return kNuisFSI168;
-  if(sh == "fsi_169") return kNuisFSI169;
-  if(sh == "fsi_170") return kNuisFSI170;
-  if(sh == "fsi_171") return kNuisFSI171;
-  if(sh == "fsi_172") return kNuisFSI172;
-  if(sh == "fsi_173") return kNuisFSI173;
-  if(sh == "fsi_174") return kNuisFSI174;
-  if(sh == "fsi_175") return kNuisFSI175;
-  if(sh == "fsi_176") return kNuisFSI176;
-  if(sh == "fsi_177") return kNuisFSI177;
-  if(sh == "fsi_178") return kNuisFSI178;
-  if(sh == "fsi_179") return kNuisFSI179;
-  if(sh == "fsi_180") return kNuisFSI180;
-  if(sh == "fsi_181") return kNuisFSI181;
-  if(sh == "fsi_182") return kNuisFSI182;
-  if(sh == "fsi_183") return kNuisFSI183;
-  if(sh == "fsi_184") return kNuisFSI184;
-  if(sh == "fsi_185") return kNuisFSI185;
-  if(sh == "fsi_186") return kNuisFSI186;
-  if(sh == "fsi_187") return kNuisFSI187;
-  if(sh == "fsi_188") return kNuisFSI188;
-  if(sh == "fsi_189") return kNuisFSI189;
-  if(sh == "fsi_190") return kNuisFSI190;
-  if(sh == "fsi_191") return kNuisFSI191;
-  if(sh == "fsi_192") return kNuisFSI192;
-  if(sh == "fsi_193") return kNuisFSI193;
-  if(sh == "fsi_194") return kNuisFSI194;
-  if(sh == "fsi_195") return kNuisFSI195;
-  if(sh == "fsi_196") return kNuisFSI196;
-  if(sh == "fsi_197") return kNuisFSI197;
-  if(sh == "fsi_198") return kNuisFSI198;
-  if(sh == "fsi_199") return kNuisFSI199;
-  if(sh == "fsi_200") return kNuisFSI200;
-  if(sh == "fsi_201") return kNuisFSI201;
-  if(sh == "fsi_202") return kNuisFSI202;
-  if(sh == "fsi_203") return kNuisFSI203;
-  if(sh == "fsi_204") return kNuisFSI204;
-  if(sh == "fsi_205") return kNuisFSI205;
-  if(sh == "fsi_206") return kNuisFSI206;
-  if(sh == "fsi_207") return kNuisFSI207;
-  if(sh == "fsi_208") return kNuisFSI208;
-  if(sh == "fsi_209") return kNuisFSI209;
-  if(sh == "fsi_210") return kNuisFSI210;
-  if(sh == "fsi_211") return kNuisFSI211;
-  if(sh == "fsi_212") return kNuisFSI212;
-  if(sh == "fsi_213") return kNuisFSI213;
-  if(sh == "fsi_214") return kNuisFSI214;
-  if(sh == "fsi_215") return kNuisFSI215;
-  if(sh == "fsi_216") return kNuisFSI216;
-  if(sh == "fsi_217") return kNuisFSI217;
-  if(sh == "fsi_218") return kNuisFSI218;
-  if(sh == "fsi_219") return kNuisFSI219;
-  if(sh == "fsi_220") return kNuisFSI220;
-  if(sh == "fsi_221") return kNuisFSI221;
-  if(sh == "fsi_222") return kNuisFSI222;
-  if(sh == "fsi_223") return kNuisFSI223;
-  if(sh == "fsi_224") return kNuisFSI224;
-  if(sh == "fsi_225") return kNuisFSI225;
-  if(sh == "fsi_226") return kNuisFSI226;
-  if(sh == "fsi_227") return kNuisFSI227;
-  if(sh == "fsi_228") return kNuisFSI228;
-  if(sh == "fsi_229") return kNuisFSI229;
-  if(sh == "fsi_230") return kNuisFSI230;
-  if(sh == "fsi_231") return kNuisFSI231;
-  if(sh == "fsi_232") return kNuisFSI232;
-  if(sh == "fsi_233") return kNuisFSI233;
-  if(sh == "fsi_234") return kNuisFSI234;
-  if(sh == "fsi_235") return kNuisFSI235;
-  if(sh == "fsi_236") return kNuisFSI236;
-  if(sh == "fsi_237") return kNuisFSI237;
-  if(sh == "fsi_238") return kNuisFSI238;
-  if(sh == "fsi_239") return kNuisFSI239;
-  if(sh == "fsi_240") return kNuisFSI240;
-  if(sh == "fsi_241") return kNuisFSI241;
-  if(sh == "fsi_242") return kNuisFSI242;
-  if(sh == "fsi_243") return kNuisFSI243;
-  if(sh == "fsi_244") return kNuisFSI244;
-  if(sh == "fsi_245") return kNuisFSI245;
-  if(sh == "fsi_246") return kNuisFSI246;
-  if(sh == "fsi_247") return kNuisFSI247;
-  if(sh == "fsi_248") return kNuisFSI248;
-  if(sh == "fsi_249") return kNuisFSI249;
-  if(sh == "fsi_250") return kNuisFSI250;
-  if(sh == "fsi_251") return kNuisFSI251;
-  if(sh == "fsi_252") return kNuisFSI252;
-  if(sh == "fsi_253") return kNuisFSI253;
-  if(sh == "fsi_254") return kNuisFSI254;
-  if(sh == "fsi_255") return kNuisFSI255;
-  if(sh == "fsi_256") return kNuisFSI256;
-  if(sh == "fsi_257") return kNuisFSI257;
-  if(sh == "fsi_258") return kNuisFSI258;
-  if(sh == "fsi_259") return kNuisFSI259;
-  if(sh == "fsi_260") return kNuisFSI260;
-  if(sh == "fsi_261") return kNuisFSI261;
-  if(sh == "fsi_262") return kNuisFSI262;
-  if(sh == "fsi_263") return kNuisFSI263;
-  if(sh == "fsi_264") return kNuisFSI264;
-  if(sh == "fsi_265") return kNuisFSI265;
-  if(sh == "fsi_266") return kNuisFSI266;
-  if(sh == "fsi_267") return kNuisFSI267;
-  if(sh == "fsi_268") return kNuisFSI268;
-  if(sh == "fsi_269") return kNuisFSI269;
-  if(sh == "fsi_270") return kNuisFSI270;
-  if(sh == "fsi_271") return kNuisFSI271;
-  if(sh == "fsi_272") return kNuisFSI272;
-  if(sh == "fsi_273") return kNuisFSI273;
-  if(sh == "fsi_274") return kNuisFSI274;
-  if(sh == "fsi_275") return kNuisFSI275;
-  if(sh == "fsi_276") return kNuisFSI276;
-  if(sh == "fsi_277") return kNuisFSI277;
-  if(sh == "fsi_278") return kNuisFSI278;
-  if(sh == "fsi_279") return kNuisFSI279;
-  if(sh == "fsi_280") return kNuisFSI280;
-  if(sh == "fsi_281") return kNuisFSI281;
-  if(sh == "fsi_282") return kNuisFSI282;
-  if(sh == "fsi_283") return kNuisFSI283;
-  if(sh == "fsi_284") return kNuisFSI284;
-  if(sh == "fsi_285") return kNuisFSI285;
-  if(sh == "fsi_286") return kNuisFSI286;
-  if(sh == "fsi_287") return kNuisFSI287;
-  if(sh == "fsi_288") return kNuisFSI288;
-  if(sh == "fsi_289") return kNuisFSI289;
-  if(sh == "fsi_290") return kNuisFSI290;
-  if(sh == "fsi_291") return kNuisFSI291;
-  if(sh == "fsi_292") return kNuisFSI292;
-  if(sh == "fsi_293") return kNuisFSI293;
-  if(sh == "fsi_294") return kNuisFSI294;
-  if(sh == "fsi_295") return kNuisFSI295;
-  if(sh == "fsi_296") return kNuisFSI296;
-  if(sh == "fsi_297") return kNuisFSI297;
-  if(sh == "fsi_298") return kNuisFSI298;
-  if(sh == "fsi_299") return kNuisFSI299;
-  if(sh == "fsi_300") return kNuisFSI300;
-  if(sh == "fsi_301") return kNuisFSI301;
-  if(sh == "fsi_302") return kNuisFSI302;
-  if(sh == "fsi_303") return kNuisFSI303;
-  if(sh == "fsi_304") return kNuisFSI304;
-  if(sh == "fsi_305") return kNuisFSI305;
-  if(sh == "fsi_306") return kNuisFSI306;
-  if(sh == "fsi_307") return kNuisFSI307;
-  if(sh == "fsi_308") return kNuisFSI308;
-  if(sh == "fsi_309") return kNuisFSI309;
-  if(sh == "fsi_310") return kNuisFSI310;
-  if(sh == "fsi_311") return kNuisFSI311;
-  if(sh == "fsi_312") return kNuisFSI312;
-  if(sh == "fsi_313") return kNuisFSI313;
-  if(sh == "fsi_314") return kNuisFSI314;
-  if(sh == "fsi_315") return kNuisFSI315;
-  if(sh == "fsi_316") return kNuisFSI316;
-  if(sh == "fsi_317") return kNuisFSI317;
-  if(sh == "fsi_318") return kNuisFSI318;
-  if(sh == "fsi_319") return kNuisFSI319;
-  if(sh == "fsi_320") return kNuisFSI320;
-  if(sh == "fsi_321") return kNuisFSI321;
-  if(sh == "fsi_322") return kNuisFSI322;
-  if(sh == "fsi_323") return kNuisFSI323;
-  if(sh == "fsi_324") return kNuisFSI324;
-  if(sh == "fsi_325") return kNuisFSI325;
-  if(sh == "fsi_326") return kNuisFSI326;
-  if(sh == "fsi_327") return kNuisFSI327;
-  if(sh == "fsi_328") return kNuisFSI328;
-  if(sh == "fsi_329") return kNuisFSI329;
-  if(sh == "fsi_330") return kNuisFSI330;
-  if(sh == "fsi_331") return kNuisFSI331;
-  if(sh == "fsi_332") return kNuisFSI332;
-  if(sh == "fsi_333") return kNuisFSI333;
-  if(sh == "fsi_334") return kNuisFSI334;
-  if(sh == "fsi_335") return kNuisFSI335;
-  if(sh == "fsi_336") return kNuisFSI336;
-  if(sh == "fsi_337") return kNuisFSI337;
-  if(sh == "fsi_338") return kNuisFSI338;
-  if(sh == "fsi_339") return kNuisFSI339;
-  if(sh == "fsi_340") return kNuisFSI340;
-  if(sh == "fsi_341") return kNuisFSI341;
-  if(sh == "fsi_342") return kNuisFSI342;
-  if(sh == "fsi_343") return kNuisFSI343;
-  if(sh == "fsi_344") return kNuisFSI344;
-  if(sh == "fsi_345") return kNuisFSI345;
-  if(sh == "fsi_346") return kNuisFSI346;
-  if(sh == "fsi_347") return kNuisFSI347;
-  if(sh == "fsi_348") return kNuisFSI348;
-  if(sh == "fsi_349") return kNuisFSI349;
-  if(sh == "fsi_350") return kNuisFSI350;
-  if(sh == "fsi_351") return kNuisFSI351;
-  if(sh == "fsi_352") return kNuisFSI352;
-  if(sh == "fsi_353") return kNuisFSI353;
-  if(sh == "fsi_354") return kNuisFSI354;
-  if(sh == "fsi_355") return kNuisFSI355;
-  if(sh == "fsi_356") return kNuisFSI356;
-  if(sh == "fsi_357") return kNuisFSI357;
-  if(sh == "fsi_358") return kNuisFSI358;
-  if(sh == "fsi_359") return kNuisFSI359;
-  if(sh == "fsi_360") return kNuisFSI360;
-  if(sh == "fsi_361") return kNuisFSI361;
-  if(sh == "fsi_362") return kNuisFSI362;
-  if(sh == "fsi_363") return kNuisFSI363;
-  if(sh == "fsi_364") return kNuisFSI364;
-  if(sh == "fsi_365") return kNuisFSI365;
-  if(sh == "fsi_366") return kNuisFSI366;
-  if(sh == "fsi_367") return kNuisFSI367;
-  if(sh == "fsi_368") return kNuisFSI368;
-  if(sh == "fsi_369") return kNuisFSI369;
-  if(sh == "fsi_370") return kNuisFSI370;
-  if(sh == "fsi_371") return kNuisFSI371;
-  if(sh == "fsi_372") return kNuisFSI372;
-  if(sh == "fsi_373") return kNuisFSI373;
-  if(sh == "fsi_374") return kNuisFSI374;
-  if(sh == "fsi_375") return kNuisFSI375;
-  if(sh == "fsi_376") return kNuisFSI376;
-  if(sh == "fsi_377") return kNuisFSI377;
-  if(sh == "fsi_378") return kNuisFSI378;
-  if(sh == "fsi_379") return kNuisFSI379;
-  if(sh == "fsi_380") return kNuisFSI380;
-  if(sh == "fsi_381") return kNuisFSI381;
-  if(sh == "fsi_382") return kNuisFSI382;
-  if(sh == "fsi_383") return kNuisFSI383;
-  if(sh == "fsi_384") return kNuisFSI384;
-  if(sh == "fsi_385") return kNuisFSI385;
-  if(sh == "fsi_386") return kNuisFSI386;
-  if(sh == "fsi_387") return kNuisFSI387;
-  if(sh == "fsi_388") return kNuisFSI388;
-  if(sh == "fsi_389") return kNuisFSI389;
-  if(sh == "fsi_390") return kNuisFSI390;
-  if(sh == "fsi_391") return kNuisFSI391;
-  if(sh == "fsi_392") return kNuisFSI392;
-  if(sh == "fsi_393") return kNuisFSI393;
-  if(sh == "fsi_394") return kNuisFSI394;
-  if(sh == "fsi_395") return kNuisFSI395;
-  if(sh == "fsi_396") return kNuisFSI396;
-  if(sh == "fsi_397") return kNuisFSI397;
-  if(sh == "fsi_398") return kNuisFSI398;
-  if(sh == "fsi_399") return kNuisFSI399;
-  if(sh == "fsi_400") return kNuisFSI400;
-  if(sh == "fsi_401") return kNuisFSI401;
-  if(sh == "fsi_402") return kNuisFSI402;
-  if(sh == "fsi_403") return kNuisFSI403;
-  if(sh == "fsi_404") return kNuisFSI404;
-  if(sh == "fsi_405") return kNuisFSI405;
-  if(sh == "fsi_406") return kNuisFSI406;
-  if(sh == "fsi_407") return kNuisFSI407;
-  if(sh == "fsi_408") return kNuisFSI408;
-  if(sh == "fsi_409") return kNuisFSI409;
-  if(sh == "fsi_410") return kNuisFSI410;
-  if(sh == "fsi_411") return kNuisFSI411;
-  if(sh == "fsi_412") return kNuisFSI412;
-  if(sh == "fsi_413") return kNuisFSI413;
-  if(sh == "fsi_414") return kNuisFSI414;
-  if(sh == "fsi_415") return kNuisFSI415;
-  if(sh == "fsi_416") return kNuisFSI416;
-  if(sh == "fsi_417") return kNuisFSI417;
-  if(sh == "fsi_418") return kNuisFSI418;
-  if(sh == "fsi_419") return kNuisFSI419;
-  if(sh == "fsi_420") return kNuisFSI420;
-  if(sh == "fsi_421") return kNuisFSI421;
-  if(sh == "fsi_422") return kNuisFSI422;
-  if(sh == "fsi_423") return kNuisFSI423;
-  if(sh == "fsi_424") return kNuisFSI424;
-  if(sh == "fsi_425") return kNuisFSI425;
-  if(sh == "fsi_426") return kNuisFSI426;
-  if(sh == "fsi_427") return kNuisFSI427;
-  if(sh == "fsi_428") return kNuisFSI428;
-  if(sh == "fsi_429") return kNuisFSI429;
-  if(sh == "fsi_430") return kNuisFSI430;
-  if(sh == "fsi_431") return kNuisFSI431;
-  if(sh == "fsi_432") return kNuisFSI432;
-  if(sh == "fsi_433") return kNuisFSI433;
-  if(sh == "fsi_434") return kNuisFSI434;
-  if(sh == "fsi_435") return kNuisFSI435;
-  if(sh == "fsi_436") return kNuisFSI436;
-  if(sh == "fsi_437") return kNuisFSI437;
-  if(sh == "fsi_438") return kNuisFSI438;
-  if(sh == "fsi_439") return kNuisFSI439;
-  if(sh == "fsi_440") return kNuisFSI440;
-  if(sh == "fsi_441") return kNuisFSI441;
-  if(sh == "fsi_442") return kNuisFSI442;
-  if(sh == "fsi_443") return kNuisFSI443;
-  if(sh == "fsi_444") return kNuisFSI444;
-  if(sh == "fsi_445") return kNuisFSI445;
-  if(sh == "fsi_446") return kNuisFSI446;
-  if(sh == "fsi_447") return kNuisFSI447;
-  if(sh == "fsi_448") return kNuisFSI448;
-  if(sh == "fsi_449") return kNuisFSI449;
-  if(sh == "fsi_450") return kNuisFSI450;
-  if(sh == "fsi_451") return kNuisFSI451;
-  if(sh == "fsi_452") return kNuisFSI452;
-  if(sh == "fsi_453") return kNuisFSI453;
-  if(sh == "fsi_454") return kNuisFSI454;
-  if(sh == "fsi_455") return kNuisFSI455;
-  if(sh == "fsi_456") return kNuisFSI456;
-  if(sh == "fsi_457") return kNuisFSI457;
-  if(sh == "fsi_458") return kNuisFSI458;
-  if(sh == "fsi_459") return kNuisFSI459;
-  if(sh == "fsi_460") return kNuisFSI460;
-  if(sh == "fsi_461") return kNuisFSI461;
-  if(sh == "fsi_462") return kNuisFSI462;
-  if(sh == "fsi_463") return kNuisFSI463;
-  if(sh == "fsi_464") return kNuisFSI464;
-  if(sh == "fsi_465") return kNuisFSI465;
-  if(sh == "fsi_466") return kNuisFSI466;
-  if(sh == "fsi_467") return kNuisFSI467;
-  if(sh == "fsi_468") return kNuisFSI468;
-  if(sh == "fsi_469") return kNuisFSI469;
-  if(sh == "fsi_470") return kNuisFSI470;
-  if(sh == "fsi_471") return kNuisFSI471;
-  if(sh == "fsi_472") return kNuisFSI472;
-  if(sh == "fsi_473") return kNuisFSI473;
-  if(sh == "fsi_474") return kNuisFSI474;
-  if(sh == "fsi_475") return kNuisFSI475;
-  if(sh == "fsi_476") return kNuisFSI476;
-  if(sh == "fsi_477") return kNuisFSI477;
-  if(sh == "fsi_478") return kNuisFSI478;
-  if(sh == "fsi_479") return kNuisFSI479;
-#endif
 #endif
 #endif
 
@@ -4082,6 +2360,7 @@ bool t2kana::util::IsSystematic(PhysParamId_t p)
     case ( kNuisBANFF13               ) : return true;  break;
     case ( kNuisBANFF14               ) : return true;  break;
     case ( kNuisBANFF15               ) : return true;  break;
+#if BANFF_BINS <= 2
     case ( kNuisBANFF16               ) : return true;  break;
     case ( kNuisBANFF17               ) : return true;  break;
     case ( kNuisBANFF18               ) : return true;  break;
@@ -4117,18 +2396,21 @@ bool t2kana::util::IsSystematic(PhysParamId_t p)
     case ( kNuisBANFF47               ) : return true;  break;
     case ( kNuisBANFF48               ) : return true;  break;
 #endif
+#endif
     case ( kNuisBANFFMAQE             ) : return true;  break;
     case ( kNuisBANFFMARES            ) : return true;  break;
     case ( kNuisBANFFCCQEE0           ) : return true;  break;
-#if BANFF_BINS == 2
+#if BANFF_BINS >= 2
     case ( kNuisBANFFCCQEE1           ) : return true;  break;
     case ( kNuisBANFFCCQEE2           ) : return true;  break;
 #endif
     case ( kNuisBANFFCC1piE0          ) : return true;  break;
-#if BANFF_BINS == 2
+#if BANFF_BINS >= 2
     case ( kNuisBANFFCC1piE1          ) : return true;  break;
 #endif
+#if BANFF_BINS <= 2
     case ( kNuisBANFFNC1pi0           ) : return true;  break;
+#endif
 
     case ( kNuisXSecFermiMom          ) : return true;  break;
     case ( kNuisXSecSpecFunc          ) : return true;  break; 
@@ -4136,8 +2418,9 @@ bool t2kana::util::IsSystematic(PhysParamId_t p)
     case ( kNuisXSecShapeCCoth        ) : return true;  break;
     case ( kNuisXSecPiLessDelta       ) : return true;  break;
     case ( kNuisXSecENuShape          ) : return true;  break;
+    case ( kNuisXSecBindE             ) : return true;  break;
 
-#if BANFF_BINS != 2
+#if BANFF_BINS <= 1
     case ( kNuisXSecNormCCQEE1        ) : return true;  break; 
     case ( kNuisXSecNormCCQEE2        ) : return true;  break; 
     case ( kNuisXSecNormCC1piE1       ) : return true;  break; 
@@ -4200,439 +2483,6 @@ bool t2kana::util::IsSystematic(PhysParamId_t p)
     case ( kNuisFSI046                ) : return true;  break;
     case ( kNuisFSI047                ) : return true;  break;
     case ( kNuisFSI048                ) : return true;  break;
-    case ( kNuisFSI049                ) : return true;  break;
-    case ( kNuisFSI050                ) : return true;  break;
-    case ( kNuisFSI051                ) : return true;  break;
-    case ( kNuisFSI052                ) : return true;  break;
-    case ( kNuisFSI053                ) : return true;  break;
-    case ( kNuisFSI054                ) : return true;  break;
-    case ( kNuisFSI055                ) : return true;  break;
-    case ( kNuisFSI056                ) : return true;  break;
-    case ( kNuisFSI057                ) : return true;  break;
-    case ( kNuisFSI058                ) : return true;  break;
-    case ( kNuisFSI059                ) : return true;  break;
-    case ( kNuisFSI060                ) : return true;  break;
-    case ( kNuisFSI061                ) : return true;  break;
-    case ( kNuisFSI062                ) : return true;  break;
-    case ( kNuisFSI063                ) : return true;  break;
-    case ( kNuisFSI064                ) : return true;  break;
-    case ( kNuisFSI065                ) : return true;  break;
-    case ( kNuisFSI066                ) : return true;  break;
-    case ( kNuisFSI067                ) : return true;  break;
-    case ( kNuisFSI068                ) : return true;  break;
-    case ( kNuisFSI069                ) : return true;  break;
-    case ( kNuisFSI070                ) : return true;  break;
-    case ( kNuisFSI071                ) : return true;  break;
-    case ( kNuisFSI072                ) : return true;  break;
-    case ( kNuisFSI073                ) : return true;  break;
-    case ( kNuisFSI074                ) : return true;  break;
-    case ( kNuisFSI075                ) : return true;  break;
-    case ( kNuisFSI076                ) : return true;  break;
-    case ( kNuisFSI077                ) : return true;  break;
-    case ( kNuisFSI078                ) : return true;  break;
-#if FSI_BINS >= 4
-    case ( kNuisFSI079                ) : return true;  break;
-    case ( kNuisFSI080                ) : return true;  break;
-    case ( kNuisFSI081                ) : return true;  break;
-    case ( kNuisFSI082                ) : return true;  break;
-    case ( kNuisFSI083                ) : return true;  break;
-    case ( kNuisFSI084                ) : return true;  break;
-    case ( kNuisFSI085                ) : return true;  break;
-    case ( kNuisFSI086                ) : return true;  break;
-    case ( kNuisFSI087                ) : return true;  break;
-    case ( kNuisFSI088                ) : return true;  break;
-    case ( kNuisFSI089                ) : return true;  break;
-    case ( kNuisFSI090                ) : return true;  break;
-    case ( kNuisFSI091                ) : return true;  break;
-    case ( kNuisFSI092                ) : return true;  break;
-    case ( kNuisFSI093                ) : return true;  break;
-    case ( kNuisFSI094                ) : return true;  break;
-    case ( kNuisFSI095                ) : return true;  break;
-    case ( kNuisFSI096                ) : return true;  break;
-    case ( kNuisFSI097                ) : return true;  break;
-    case ( kNuisFSI098                ) : return true;  break;
-    case ( kNuisFSI099                ) : return true;  break;
-    case ( kNuisFSI100                ) : return true;  break;
-    case ( kNuisFSI101                ) : return true;  break;
-    case ( kNuisFSI102                ) : return true;  break;
-    case ( kNuisFSI103                ) : return true;  break;
-    case ( kNuisFSI104                ) : return true;  break;
-    case ( kNuisFSI105                ) : return true;  break;
-    case ( kNuisFSI106                ) : return true;  break;
-    case ( kNuisFSI107                ) : return true;  break;
-    case ( kNuisFSI108                ) : return true;  break;
-    case ( kNuisFSI109                ) : return true;  break;
-    case ( kNuisFSI110                ) : return true;  break;
-    case ( kNuisFSI111                ) : return true;  break;
-    case ( kNuisFSI112                ) : return true;  break;
-    case ( kNuisFSI113                ) : return true;  break;
-    case ( kNuisFSI114                ) : return true;  break;
-    case ( kNuisFSI115                ) : return true;  break;
-    case ( kNuisFSI116                ) : return true;  break;
-    case ( kNuisFSI117                ) : return true;  break;
-    case ( kNuisFSI118                ) : return true;  break;
-    case ( kNuisFSI119                ) : return true;  break;
-    case ( kNuisFSI120                ) : return true;  break;
-    case ( kNuisFSI121                ) : return true;  break;
-    case ( kNuisFSI122                ) : return true;  break;
-    case ( kNuisFSI123                ) : return true;  break;
-    case ( kNuisFSI124                ) : return true;  break;
-    case ( kNuisFSI125                ) : return true;  break;
-    case ( kNuisFSI126                ) : return true;  break;
-    case ( kNuisFSI127                ) : return true;  break;
-    case ( kNuisFSI128                ) : return true;  break;
-    case ( kNuisFSI129                ) : return true;  break;
-    case ( kNuisFSI130                ) : return true;  break;
-    case ( kNuisFSI131                ) : return true;  break;
-    case ( kNuisFSI132                ) : return true;  break;
-    case ( kNuisFSI133                ) : return true;  break;
-    case ( kNuisFSI134                ) : return true;  break;
-    case ( kNuisFSI135                ) : return true;  break;
-    case ( kNuisFSI136                ) : return true;  break;
-    case ( kNuisFSI137                ) : return true;  break;
-    case ( kNuisFSI138                ) : return true;  break;
-    case ( kNuisFSI139                ) : return true;  break;
-    case ( kNuisFSI140                ) : return true;  break;
-    case ( kNuisFSI141                ) : return true;  break;
-    case ( kNuisFSI142                ) : return true;  break;
-    case ( kNuisFSI143                ) : return true;  break;
-    case ( kNuisFSI144                ) : return true;  break;
-    case ( kNuisFSI145                ) : return true;  break;
-    case ( kNuisFSI146                ) : return true;  break;
-    case ( kNuisFSI147                ) : return true;  break;
-    case ( kNuisFSI148                ) : return true;  break;
-    case ( kNuisFSI149                ) : return true;  break;
-    case ( kNuisFSI150                ) : return true;  break;
-    case ( kNuisFSI151                ) : return true;  break;
-    case ( kNuisFSI152                ) : return true;  break;
-    case ( kNuisFSI153                ) : return true;  break;
-    case ( kNuisFSI154                ) : return true;  break;
-    case ( kNuisFSI155                ) : return true;  break;
-    case ( kNuisFSI156                ) : return true;  break;
-    case ( kNuisFSI157                ) : return true;  break;
-    case ( kNuisFSI158                ) : return true;  break;
-    case ( kNuisFSI159                ) : return true;  break;
-    case ( kNuisFSI160                ) : return true;  break;
-    case ( kNuisFSI161                ) : return true;  break;
-    case ( kNuisFSI162                ) : return true;  break;
-    case ( kNuisFSI163                ) : return true;  break;
-    case ( kNuisFSI164                ) : return true;  break;
-    case ( kNuisFSI165                ) : return true;  break;
-    case ( kNuisFSI166                ) : return true;  break;
-    case ( kNuisFSI167                ) : return true;  break;
-    case ( kNuisFSI168                ) : return true;  break;
-    case ( kNuisFSI169                ) : return true;  break;
-    case ( kNuisFSI170                ) : return true;  break;
-    case ( kNuisFSI171                ) : return true;  break;
-    case ( kNuisFSI172                ) : return true;  break;
-    case ( kNuisFSI173                ) : return true;  break;
-    case ( kNuisFSI174                ) : return true;  break;
-    case ( kNuisFSI175                ) : return true;  break;
-    case ( kNuisFSI176                ) : return true;  break;
-    case ( kNuisFSI177                ) : return true;  break;
-    case ( kNuisFSI178                ) : return true;  break;
-    case ( kNuisFSI179                ) : return true;  break;
-    case ( kNuisFSI180                ) : return true;  break;
-    case ( kNuisFSI181                ) : return true;  break;
-    case ( kNuisFSI182                ) : return true;  break;
-    case ( kNuisFSI183                ) : return true;  break;
-    case ( kNuisFSI184                ) : return true;  break;
-    case ( kNuisFSI185                ) : return true;  break;
-    case ( kNuisFSI186                ) : return true;  break;
-    case ( kNuisFSI187                ) : return true;  break;
-    case ( kNuisFSI188                ) : return true;  break;
-    case ( kNuisFSI189                ) : return true;  break;
-    case ( kNuisFSI190                ) : return true;  break;
-    case ( kNuisFSI191                ) : return true;  break;
-    case ( kNuisFSI192                ) : return true;  break;
-    case ( kNuisFSI193                ) : return true;  break;
-    case ( kNuisFSI194                ) : return true;  break;
-    case ( kNuisFSI195                ) : return true;  break;
-    case ( kNuisFSI196                ) : return true;  break;
-    case ( kNuisFSI197                ) : return true;  break;
-    case ( kNuisFSI198                ) : return true;  break;
-    case ( kNuisFSI199                ) : return true;  break;
-    case ( kNuisFSI200                ) : return true;  break;
-    case ( kNuisFSI201                ) : return true;  break;
-    case ( kNuisFSI202                ) : return true;  break;
-    case ( kNuisFSI203                ) : return true;  break;
-    case ( kNuisFSI204                ) : return true;  break;
-    case ( kNuisFSI205                ) : return true;  break;
-    case ( kNuisFSI206                ) : return true;  break;
-    case ( kNuisFSI207                ) : return true;  break;
-    case ( kNuisFSI208                ) : return true;  break;
-    case ( kNuisFSI209                ) : return true;  break;
-    case ( kNuisFSI210                ) : return true;  break;
-    case ( kNuisFSI211                ) : return true;  break;
-    case ( kNuisFSI212                ) : return true;  break;
-    case ( kNuisFSI213                ) : return true;  break;
-    case ( kNuisFSI214                ) : return true;  break;
-    case ( kNuisFSI215                ) : return true;  break;
-    case ( kNuisFSI216                ) : return true;  break;
-    case ( kNuisFSI217                ) : return true;  break;
-    case ( kNuisFSI218                ) : return true;  break;
-    case ( kNuisFSI219                ) : return true;  break;
-    case ( kNuisFSI220                ) : return true;  break;
-    case ( kNuisFSI221                ) : return true;  break;
-    case ( kNuisFSI222                ) : return true;  break;
-    case ( kNuisFSI223                ) : return true;  break;
-    case ( kNuisFSI224                ) : return true;  break;
-    case ( kNuisFSI225                ) : return true;  break;
-    case ( kNuisFSI226                ) : return true;  break;
-    case ( kNuisFSI227                ) : return true;  break;
-    case ( kNuisFSI228                ) : return true;  break;
-    case ( kNuisFSI229                ) : return true;  break;
-    case ( kNuisFSI230                ) : return true;  break;
-    case ( kNuisFSI231                ) : return true;  break;
-    case ( kNuisFSI232                ) : return true;  break;
-    case ( kNuisFSI233                ) : return true;  break;
-    case ( kNuisFSI234                ) : return true;  break;
-    case ( kNuisFSI235                ) : return true;  break;
-    case ( kNuisFSI236                ) : return true;  break;
-    case ( kNuisFSI237                ) : return true;  break;
-    case ( kNuisFSI238                ) : return true;  break;
-    case ( kNuisFSI239                ) : return true;  break;
-    case ( kNuisFSI240                ) : return true;  break;
-    case ( kNuisFSI241                ) : return true;  break;
-    case ( kNuisFSI242                ) : return true;  break;
-    case ( kNuisFSI243                ) : return true;  break;
-    case ( kNuisFSI244                ) : return true;  break;
-    case ( kNuisFSI245                ) : return true;  break;
-    case ( kNuisFSI246                ) : return true;  break;
-    case ( kNuisFSI247                ) : return true;  break;
-    case ( kNuisFSI248                ) : return true;  break;
-    case ( kNuisFSI249                ) : return true;  break;
-    case ( kNuisFSI250                ) : return true;  break;
-    case ( kNuisFSI251                ) : return true;  break;
-    case ( kNuisFSI252                ) : return true;  break;
-    case ( kNuisFSI253                ) : return true;  break;
-    case ( kNuisFSI254                ) : return true;  break;
-    case ( kNuisFSI255                ) : return true;  break;
-    case ( kNuisFSI256                ) : return true;  break;
-    case ( kNuisFSI257                ) : return true;  break;
-    case ( kNuisFSI258                ) : return true;  break;
-    case ( kNuisFSI259                ) : return true;  break;
-    case ( kNuisFSI260                ) : return true;  break;
-    case ( kNuisFSI261                ) : return true;  break;
-    case ( kNuisFSI262                ) : return true;  break;
-    case ( kNuisFSI263                ) : return true;  break;
-    case ( kNuisFSI264                ) : return true;  break;
-    case ( kNuisFSI265                ) : return true;  break;
-    case ( kNuisFSI266                ) : return true;  break;
-    case ( kNuisFSI267                ) : return true;  break;
-    case ( kNuisFSI268                ) : return true;  break;
-    case ( kNuisFSI269                ) : return true;  break;
-    case ( kNuisFSI270                ) : return true;  break;
-    case ( kNuisFSI271                ) : return true;  break;
-    case ( kNuisFSI272                ) : return true;  break;
-    case ( kNuisFSI273                ) : return true;  break;
-    case ( kNuisFSI274                ) : return true;  break;
-    case ( kNuisFSI275                ) : return true;  break;
-    case ( kNuisFSI276                ) : return true;  break;
-    case ( kNuisFSI277                ) : return true;  break;
-    case ( kNuisFSI278                ) : return true;  break;
-    case ( kNuisFSI279                ) : return true;  break;
-    case ( kNuisFSI280                ) : return true;  break;
-    case ( kNuisFSI281                ) : return true;  break;
-    case ( kNuisFSI282                ) : return true;  break;
-    case ( kNuisFSI283                ) : return true;  break;
-    case ( kNuisFSI284                ) : return true;  break;
-    case ( kNuisFSI285                ) : return true;  break;
-    case ( kNuisFSI286                ) : return true;  break;
-    case ( kNuisFSI287                ) : return true;  break;
-    case ( kNuisFSI288                ) : return true;  break;
-    case ( kNuisFSI289                ) : return true;  break;
-    case ( kNuisFSI290                ) : return true;  break;
-    case ( kNuisFSI291                ) : return true;  break;
-    case ( kNuisFSI292                ) : return true;  break;
-    case ( kNuisFSI293                ) : return true;  break;
-    case ( kNuisFSI294                ) : return true;  break;
-    case ( kNuisFSI295                ) : return true;  break;
-    case ( kNuisFSI296                ) : return true;  break;
-    case ( kNuisFSI297                ) : return true;  break;
-    case ( kNuisFSI298                ) : return true;  break;
-    case ( kNuisFSI299                ) : return true;  break;
-    case ( kNuisFSI300                ) : return true;  break;
-    case ( kNuisFSI301                ) : return true;  break;
-    case ( kNuisFSI302                ) : return true;  break;
-    case ( kNuisFSI303                ) : return true;  break;
-    case ( kNuisFSI304                ) : return true;  break;
-    case ( kNuisFSI305                ) : return true;  break;
-    case ( kNuisFSI306                ) : return true;  break;
-    case ( kNuisFSI307                ) : return true;  break;
-    case ( kNuisFSI308                ) : return true;  break;
-    case ( kNuisFSI309                ) : return true;  break;
-    case ( kNuisFSI310                ) : return true;  break;
-    case ( kNuisFSI311                ) : return true;  break;
-    case ( kNuisFSI312                ) : return true;  break;
-    case ( kNuisFSI313                ) : return true;  break;
-    case ( kNuisFSI314                ) : return true;  break;
-    case ( kNuisFSI315                ) : return true;  break;
-    case ( kNuisFSI316                ) : return true;  break;
-    case ( kNuisFSI317                ) : return true;  break;
-    case ( kNuisFSI318                ) : return true;  break;
-    case ( kNuisFSI319                ) : return true;  break;
-    case ( kNuisFSI320                ) : return true;  break;
-    case ( kNuisFSI321                ) : return true;  break;
-    case ( kNuisFSI322                ) : return true;  break;
-    case ( kNuisFSI323                ) : return true;  break;
-    case ( kNuisFSI324                ) : return true;  break;
-    case ( kNuisFSI325                ) : return true;  break;
-    case ( kNuisFSI326                ) : return true;  break;
-    case ( kNuisFSI327                ) : return true;  break;
-    case ( kNuisFSI328                ) : return true;  break;
-    case ( kNuisFSI329                ) : return true;  break;
-    case ( kNuisFSI330                ) : return true;  break;
-    case ( kNuisFSI331                ) : return true;  break;
-    case ( kNuisFSI332                ) : return true;  break;
-    case ( kNuisFSI333                ) : return true;  break;
-    case ( kNuisFSI334                ) : return true;  break;
-    case ( kNuisFSI335                ) : return true;  break;
-    case ( kNuisFSI336                ) : return true;  break;
-    case ( kNuisFSI337                ) : return true;  break;
-    case ( kNuisFSI338                ) : return true;  break;
-    case ( kNuisFSI339                ) : return true;  break;
-    case ( kNuisFSI340                ) : return true;  break;
-    case ( kNuisFSI341                ) : return true;  break;
-    case ( kNuisFSI342                ) : return true;  break;
-    case ( kNuisFSI343                ) : return true;  break;
-    case ( kNuisFSI344                ) : return true;  break;
-    case ( kNuisFSI345                ) : return true;  break;
-    case ( kNuisFSI346                ) : return true;  break;
-    case ( kNuisFSI347                ) : return true;  break;
-    case ( kNuisFSI348                ) : return true;  break;
-    case ( kNuisFSI349                ) : return true;  break;
-    case ( kNuisFSI350                ) : return true;  break;
-    case ( kNuisFSI351                ) : return true;  break;
-    case ( kNuisFSI352                ) : return true;  break;
-    case ( kNuisFSI353                ) : return true;  break;
-    case ( kNuisFSI354                ) : return true;  break;
-    case ( kNuisFSI355                ) : return true;  break;
-    case ( kNuisFSI356                ) : return true;  break;
-    case ( kNuisFSI357                ) : return true;  break;
-    case ( kNuisFSI358                ) : return true;  break;
-    case ( kNuisFSI359                ) : return true;  break;
-    case ( kNuisFSI360                ) : return true;  break;
-    case ( kNuisFSI361                ) : return true;  break;
-    case ( kNuisFSI362                ) : return true;  break;
-    case ( kNuisFSI363                ) : return true;  break;
-    case ( kNuisFSI364                ) : return true;  break;
-    case ( kNuisFSI365                ) : return true;  break;
-    case ( kNuisFSI366                ) : return true;  break;
-    case ( kNuisFSI367                ) : return true;  break;
-    case ( kNuisFSI368                ) : return true;  break;
-    case ( kNuisFSI369                ) : return true;  break;
-    case ( kNuisFSI370                ) : return true;  break;
-    case ( kNuisFSI371                ) : return true;  break;
-    case ( kNuisFSI372                ) : return true;  break;
-    case ( kNuisFSI373                ) : return true;  break;
-    case ( kNuisFSI374                ) : return true;  break;
-    case ( kNuisFSI375                ) : return true;  break;
-    case ( kNuisFSI376                ) : return true;  break;
-    case ( kNuisFSI377                ) : return true;  break;
-    case ( kNuisFSI378                ) : return true;  break;
-    case ( kNuisFSI379                ) : return true;  break;
-    case ( kNuisFSI380                ) : return true;  break;
-    case ( kNuisFSI381                ) : return true;  break;
-    case ( kNuisFSI382                ) : return true;  break;
-    case ( kNuisFSI383                ) : return true;  break;
-    case ( kNuisFSI384                ) : return true;  break;
-    case ( kNuisFSI385                ) : return true;  break;
-    case ( kNuisFSI386                ) : return true;  break;
-    case ( kNuisFSI387                ) : return true;  break;
-    case ( kNuisFSI388                ) : return true;  break;
-    case ( kNuisFSI389                ) : return true;  break;
-    case ( kNuisFSI390                ) : return true;  break;
-    case ( kNuisFSI391                ) : return true;  break;
-    case ( kNuisFSI392                ) : return true;  break;
-    case ( kNuisFSI393                ) : return true;  break;
-    case ( kNuisFSI394                ) : return true;  break;
-    case ( kNuisFSI395                ) : return true;  break;
-    case ( kNuisFSI396                ) : return true;  break;
-    case ( kNuisFSI397                ) : return true;  break;
-    case ( kNuisFSI398                ) : return true;  break;
-    case ( kNuisFSI399                ) : return true;  break;
-    case ( kNuisFSI400                ) : return true;  break;
-    case ( kNuisFSI401                ) : return true;  break;
-    case ( kNuisFSI402                ) : return true;  break;
-    case ( kNuisFSI403                ) : return true;  break;
-    case ( kNuisFSI404                ) : return true;  break;
-    case ( kNuisFSI405                ) : return true;  break;
-    case ( kNuisFSI406                ) : return true;  break;
-    case ( kNuisFSI407                ) : return true;  break;
-    case ( kNuisFSI408                ) : return true;  break;
-    case ( kNuisFSI409                ) : return true;  break;
-    case ( kNuisFSI410                ) : return true;  break;
-    case ( kNuisFSI411                ) : return true;  break;
-    case ( kNuisFSI412                ) : return true;  break;
-    case ( kNuisFSI413                ) : return true;  break;
-    case ( kNuisFSI414                ) : return true;  break;
-    case ( kNuisFSI415                ) : return true;  break;
-    case ( kNuisFSI416                ) : return true;  break;
-    case ( kNuisFSI417                ) : return true;  break;
-    case ( kNuisFSI418                ) : return true;  break;
-    case ( kNuisFSI419                ) : return true;  break;
-    case ( kNuisFSI420                ) : return true;  break;
-    case ( kNuisFSI421                ) : return true;  break;
-    case ( kNuisFSI422                ) : return true;  break;
-    case ( kNuisFSI423                ) : return true;  break;
-    case ( kNuisFSI424                ) : return true;  break;
-    case ( kNuisFSI425                ) : return true;  break;
-    case ( kNuisFSI426                ) : return true;  break;
-    case ( kNuisFSI427                ) : return true;  break;
-    case ( kNuisFSI428                ) : return true;  break;
-    case ( kNuisFSI429                ) : return true;  break;
-    case ( kNuisFSI430                ) : return true;  break;
-    case ( kNuisFSI431                ) : return true;  break;
-    case ( kNuisFSI432                ) : return true;  break;
-    case ( kNuisFSI433                ) : return true;  break;
-    case ( kNuisFSI434                ) : return true;  break;
-    case ( kNuisFSI435                ) : return true;  break;
-    case ( kNuisFSI436                ) : return true;  break;
-    case ( kNuisFSI437                ) : return true;  break;
-    case ( kNuisFSI438                ) : return true;  break;
-    case ( kNuisFSI439                ) : return true;  break;
-    case ( kNuisFSI440                ) : return true;  break;
-    case ( kNuisFSI441                ) : return true;  break;
-    case ( kNuisFSI442                ) : return true;  break;
-    case ( kNuisFSI443                ) : return true;  break;
-    case ( kNuisFSI444                ) : return true;  break;
-    case ( kNuisFSI445                ) : return true;  break;
-    case ( kNuisFSI446                ) : return true;  break;
-    case ( kNuisFSI447                ) : return true;  break;
-    case ( kNuisFSI448                ) : return true;  break;
-    case ( kNuisFSI449                ) : return true;  break;
-    case ( kNuisFSI450                ) : return true;  break;
-    case ( kNuisFSI451                ) : return true;  break;
-    case ( kNuisFSI452                ) : return true;  break;
-    case ( kNuisFSI453                ) : return true;  break;
-    case ( kNuisFSI454                ) : return true;  break;
-    case ( kNuisFSI455                ) : return true;  break;
-    case ( kNuisFSI456                ) : return true;  break;
-    case ( kNuisFSI457                ) : return true;  break;
-    case ( kNuisFSI458                ) : return true;  break;
-    case ( kNuisFSI459                ) : return true;  break;
-    case ( kNuisFSI460                ) : return true;  break;
-    case ( kNuisFSI461                ) : return true;  break;
-    case ( kNuisFSI462                ) : return true;  break;
-    case ( kNuisFSI463                ) : return true;  break;
-    case ( kNuisFSI464                ) : return true;  break;
-    case ( kNuisFSI465                ) : return true;  break;
-    case ( kNuisFSI466                ) : return true;  break;
-    case ( kNuisFSI467                ) : return true;  break;
-    case ( kNuisFSI468                ) : return true;  break;
-    case ( kNuisFSI469                ) : return true;  break;
-    case ( kNuisFSI470                ) : return true;  break;
-    case ( kNuisFSI471                ) : return true;  break;
-    case ( kNuisFSI472                ) : return true;  break;
-    case ( kNuisFSI473                ) : return true;  break;
-    case ( kNuisFSI474                ) : return true;  break;
-    case ( kNuisFSI475                ) : return true;  break;
-    case ( kNuisFSI476                ) : return true;  break;
-    case ( kNuisFSI477                ) : return true;  break;
-    case ( kNuisFSI478                ) : return true;  break;
-    case ( kNuisFSI479                ) : return true;  break;
-#endif
 #endif
 #endif
 

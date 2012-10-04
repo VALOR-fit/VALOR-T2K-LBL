@@ -607,7 +607,8 @@ void FitParamList::AppendSystematics(FitParamList * fparm, int start)
 
   int ip = start; // first unallocated element in the param list
 
-  int nsigma = 5; // number of sigma away from nominal nuisance parameters are allowed to be
+  int nsigma = 7; // number of sigma away from nominal nuisance parameters are allowed to be
+  int step = 1E-1; // step size (in units of sigma)
 
   //    Get the covariance matrices & best fits of FSI & BANFF from xml, 
   //    to have something sensible to initialise to
@@ -648,48 +649,51 @@ void FitParamList::AppendSystematics(FitParamList * fparm, int start)
   delete xml;
 
   // SK detector
-  fparm->AddParam( ip++, kNuisSuperkEff1RmuCCQEoth,  0.0, -1.0*nsigma, 1.0*nsigma, 5E-1,  false, true);
-  fparm->AddParam( ip++, kNuisSuperkEff1RmuCCQErc0u, 0.0, -1.0*nsigma, 1.0*nsigma, 5E-1,  false, true);
-  fparm->AddParam( ip++, kNuisSuperkEff1RmuCCQErc1u, 0.0, -1.0*nsigma, 1.0*nsigma, 5E-1,  false, true);
-  fparm->AddParam( ip++, kNuisSuperkEff1RmuCCQErc2u, 0.0, -1.0*nsigma, 1.0*nsigma, 5E-1,  false, true);
-  fparm->AddParam( ip++, kNuisSuperkEff1RmuCCnonQE,  0.0, -1.0*nsigma, 1.0*nsigma, 5E-1,  false, true);
-  fparm->AddParam( ip++, kNuisSuperkEff1RmuNC,       0.0, -1.0*nsigma, 1.0*nsigma, 5E-1,  false, true);
-  fparm->AddParam( ip++, kNuisSuperkEff1RmuNueCC,    0.0, -1.0*nsigma, 1.0*nsigma, 5E-1,  false, true);
-  fparm->AddParam( ip++, kNuisSuperkEnergyScale,     0.0, -1.0*nsigma, 1.0*nsigma, 5E-1,  false, true);
+  fparm->AddParam( ip++, kNuisSuperkEff1RmuCCQEoth,  0.0, -1.0*nsigma, 1.0*nsigma, step,  false, true);
+  fparm->AddParam( ip++, kNuisSuperkEff1RmuCCQErc0u, 0.0, -1.0*nsigma, 1.0*nsigma, step,  false, true);
+  fparm->AddParam( ip++, kNuisSuperkEff1RmuCCQErc1u, 0.0, -1.0*nsigma, 1.0*nsigma, step,  false, true);
+  fparm->AddParam( ip++, kNuisSuperkEff1RmuCCQErc2u, 0.0, -1.0*nsigma, 1.0*nsigma, step,  false, true);
+  fparm->AddParam( ip++, kNuisSuperkEff1RmuCCnonQE,  0.0, -1.0*nsigma, 1.0*nsigma, step,  false, true);
+  fparm->AddParam( ip++, kNuisSuperkEff1RmuNC,       0.0, -1.0*nsigma, 1.0*nsigma, step,  false, true);
+  fparm->AddParam( ip++, kNuisSuperkEff1RmuNueCC,    0.0, -1.0*nsigma, 1.0*nsigma, step,  false, true);
+  fparm->AddParam( ip++, kNuisSuperkEnergyScale,     0.0, -1.0*nsigma, 1.0*nsigma, step,  false, true);
 
   // BANFF 
   for(int i = 0; i < kNumOfParamsInBANFFfit; i++) {
     PhysParamId_t p = PhysParamId_t ((int) kNuisBANFF00 + i);
     double bf = BANFFBestFit[i];
     double err = sqrt(BANFFCov[i][i]);
-    fparm->AddParam(ip++, p, bf, bf-(err*nsigma), bf+(err*nsigma),  err/2,  false, true);
+    fparm->AddParam(ip++, p, bf, bf-(err*nsigma), bf+(err*nsigma),  err*step,  false, true);
   }
+#if BANFF_BINS <= 2
   fparm -> SetNuisance(kNuisBANFFNC1pi0 ,false); // not used in numu analysis!
+#endif
 
   // XSec
-  fparm->AddParam( ip++, kNuisXSecFermiMom,      0.0, -1.0*nsigma, 1.0*nsigma, 5E-1,  false, true);
-  fparm->AddParam( ip++, kNuisXSecSpecFunc,      0.0, -1.0*nsigma, 1.0*nsigma, 5E-1,  false, true);
-  fparm->AddParam( ip++, kNuisXSecWshape,        0.0, -1.0*nsigma, 1.0*nsigma, 5E-1,  false, true);
-  fparm->AddParam( ip++, kNuisXSecShapeCCoth,    0.0, -1.0*nsigma, 1.0*nsigma, 5E-1,  false, true);
-  fparm->AddParam( ip++, kNuisXSecPiLessDelta,   0.0, -1.0*nsigma, 1.0*nsigma, 5E-1,  false, true);
-  //fparm->AddParam( ip++, kNuisXSecENuShape,      0.0, -1.0*nsigma, 1.0*nsigma, 5E-1,  false, true); // not used in numu analysis!
-#if BANFF_BINS != 2
-  fparm->AddParam( ip++, kNuisXSecNormCCQEE1,    0.0, -1.0*nsigma, 1.0*nsigma, 5E-1,  false, true);
-  fparm->AddParam( ip++, kNuisXSecNormCCQEE2,    0.0, -1.0*nsigma, 1.0*nsigma, 5E-1,  false, true);
-  fparm->AddParam( ip++, kNuisXSecNormCC1piE1,   0.0, -1.0*nsigma, 1.0*nsigma, 5E-1,  false, true);
+  fparm->AddParam( ip++, kNuisXSecFermiMom,      0.0, -1.0*nsigma, 1.0*nsigma, step,  false, true);
+  fparm->AddParam( ip++, kNuisXSecSpecFunc,      0.0, -1.0*nsigma, 1.0*nsigma, step,  false, true);
+  fparm->AddParam( ip++, kNuisXSecWshape,        0.0, -1.0*nsigma, 1.0*nsigma, step,  false, true);
+  fparm->AddParam( ip++, kNuisXSecShapeCCoth,    0.0, -1.0*nsigma, 1.0*nsigma, step,  false, true);
+  fparm->AddParam( ip++, kNuisXSecPiLessDelta,   0.0, -1.0*nsigma, 1.0*nsigma, step,  false, true);
+  //fparm->AddParam( ip++, kNuisXSecENuShape,      0.0, -1.0*nsigma, 1.0*nsigma, step,  false, true); // not used in numu analysis!
+  //fparm->AddParam( ip++, kNuisXSecBindE,         0.0, -1.0*nsigma, 1.0*nsigma, step,  false, true); // not used in numu analysis!
+#if BANFF_BINS <= 1
+  fparm->AddParam( ip++, kNuisXSecNormCCQEE1,    0.0, -1.0*nsigma, 1.0*nsigma, step,  false, true);
+  fparm->AddParam( ip++, kNuisXSecNormCCQEE2,    0.0, -1.0*nsigma, 1.0*nsigma, step,  false, true);
+  fparm->AddParam( ip++, kNuisXSecNormCC1piE1,   0.0, -1.0*nsigma, 1.0*nsigma, step,  false, true);
 #endif
-  fparm->AddParam( ip++, kNuisXSecNormCCcoh,     0.0, -1.0*nsigma, 1.0*nsigma, 5E-1,  false, true);
-  fparm->AddParam( ip++, kNuisXSecNormNC1piC,    0.0, -1.0*nsigma, 1.0*nsigma, 5E-1,  false, true);
-  //fparm->AddParam( ip++, kNuisXSecNormNCcoh,     0.0, -1.0*nsigma, 1.0*nsigma, 5E-1,  false, true); // not used in numu analysis!
-  fparm->AddParam( ip++, kNuisXSecNormNCoth,     0.0, -1.0*nsigma, 1.0*nsigma, 5E-1,  false, true);
-  fparm->AddParam( ip++, kNuisXSecNormNuEToNuMu, 0.0, -1.0*nsigma, 1.0*nsigma, 5E-1,  false, true);
-  fparm->AddParam( ip++, kNuisXSecNormAntiNuToNu,0.0, -1.0*nsigma, 1.0*nsigma, 5E-1,  false, true);
+  fparm->AddParam( ip++, kNuisXSecNormCCcoh,     0.0, -1.0*nsigma, 1.0*nsigma, step,  false, true);
+  fparm->AddParam( ip++, kNuisXSecNormNC1piC,    0.0, -1.0*nsigma, 1.0*nsigma, step,  false, true);
+  //fparm->AddParam( ip++, kNuisXSecNormNCcoh,     0.0, -1.0*nsigma, 1.0*nsigma, step,  false, true); // not used in numu analysis!
+  fparm->AddParam( ip++, kNuisXSecNormNCoth,     0.0, -1.0*nsigma, 1.0*nsigma, step,  false, true);
+  fparm->AddParam( ip++, kNuisXSecNormNuEToNuMu, 0.0, -1.0*nsigma, 1.0*nsigma, step,  false, true);
+  fparm->AddParam( ip++, kNuisXSecNormAntiNuToNu,0.0, -1.0*nsigma, 1.0*nsigma, step,  false, true);
 
   // FSI
   for(int i = 0; i < kNumOfFSIParams; i++) {
     PhysParamId_t p = PhysParamId_t ((int) kNuisFSI000 + i);
     double err = sqrt(FSICov[i][i]);
-    fparm->AddParam(ip++, p,  1.0, 1.0-(err*nsigma), 1.0+(err*nsigma),  err/2,  false, true);
+    fparm->AddParam(ip++, p,  1.0, 1.0-(err*nsigma), 1.0+(err*nsigma),  err*step,  false, true);
   }
 
 }
@@ -701,7 +705,8 @@ void FitParamList::AppendSelectedSystematics(FitParamList * fparm, int start)
 
   int ip = start; // first unallocated element in the param list
 
-  int nsigma = 5; // number of sigma away from nominal nuisance parameters are allowed to be
+  int nsigma = 7; // number of sigma away from nominal nuisance parameters are allowed to be
+  int step = 1E-1; // step size (in units of sigma)
 
   //    Get the covariance matrices & best fits of BANFF from xml, 
   //    to have something sensible to initialise to
@@ -735,20 +740,20 @@ void FitParamList::AppendSelectedSystematics(FitParamList * fparm, int start)
   delete xml;
 
   // SK detector
-  fparm->AddParam( ip++, kNuisSuperkEff1RmuCCnonQE,  0.0, -1.0*nsigma, 1.0*nsigma, 5E-1,  false, true);
-  fparm->AddParam( ip++, kNuisSuperkEff1RmuNC,       0.0, -1.0*nsigma, 1.0*nsigma, 5E-1,  false, true);
+  fparm->AddParam( ip++, kNuisSuperkEff1RmuCCnonQE,  0.0, -1.0*nsigma, 1.0*nsigma, step,  false, true);
+  fparm->AddParam( ip++, kNuisSuperkEff1RmuNC,       0.0, -1.0*nsigma, 1.0*nsigma, step,  false, true);
 
   // BANFF 
   int bidx = util::ArrIdx::Instance()->BANFFSystIdx(kNuisBANFFMAQE);
   double bf  = BANFFBestFit[bidx];
   double err = sqrt(BANFFCov[bidx][bidx]);
-  fparm->AddParam( ip++, kNuisBANFFMAQE,    bf, bf-(err*nsigma), bf+(err*nsigma),  err/2,  false, true);
-  fparm->AddParam( ip++, kNuisBANFFCCQEE0,  bf, bf-(err*nsigma), bf+(err*nsigma),  err/2,  false, true);
-  fparm->AddParam( ip++, kNuisBANFFCC1piE0, bf, bf-(err*nsigma), bf+(err*nsigma),  err/2,  false, true);
+  fparm->AddParam( ip++, kNuisBANFFMAQE,    bf, bf-(err*nsigma), bf+(err*nsigma),  err*step,  false, true);
+  fparm->AddParam( ip++, kNuisBANFFCCQEE0,  bf, bf-(err*nsigma), bf+(err*nsigma),  err*step,  false, true);
+  fparm->AddParam( ip++, kNuisBANFFCC1piE0, bf, bf-(err*nsigma), bf+(err*nsigma),  err*step,  false, true);
 
   // XSec
-  fparm->AddParam( ip++, kNuisXSecSpecFunc,      0.0, -1.0*nsigma, 1.0*nsigma, 5E-1,  false, true);
-  fparm->AddParam( ip++, kNuisXSecPiLessDelta,   0.0, -1.0*nsigma, 1.0*nsigma, 5E-1,  false, true);
+  fparm->AddParam( ip++, kNuisXSecSpecFunc,      0.0, -1.0*nsigma, 1.0*nsigma, step,  false, true);
+  fparm->AddParam( ip++, kNuisXSecPiLessDelta,   0.0, -1.0*nsigma, 1.0*nsigma, step,  false, true);
 
 }
 //________________________________________________________________________________________
@@ -759,7 +764,8 @@ void FitParamList::AppendSelectedSystematicsWithFullBANFF(FitParamList * fparm, 
 
   int ip = start; // first unallocated element in the param list
 
-  int nsigma = 5; // number of sigma away from nominal nuisance parameters are allowed to be
+  int nsigma = 7; // number of sigma away from nominal nuisance parameters are allowed to be
+  int step = 1E-1; // step size (in units of sigma)
 
   //    Get the covariance matrices & best fits of BANFF from xml, 
   //    to have something sensible to initialise to
@@ -793,21 +799,23 @@ void FitParamList::AppendSelectedSystematicsWithFullBANFF(FitParamList * fparm, 
   delete xml;
 
   // SK detector
-  fparm->AddParam( ip++, kNuisSuperkEff1RmuCCnonQE,  0.0, -1.0*nsigma, 1.0*nsigma, 5E-1,  false, true);
-  fparm->AddParam( ip++, kNuisSuperkEff1RmuNC,       0.0, -1.0*nsigma, 1.0*nsigma, 5E-1,  false, true);
+  fparm->AddParam( ip++, kNuisSuperkEff1RmuCCnonQE,  0.0, -1.0*nsigma, 1.0*nsigma, step,  false, true);
+  fparm->AddParam( ip++, kNuisSuperkEff1RmuNC,       0.0, -1.0*nsigma, 1.0*nsigma, step,  false, true);
 
   // BANFF 
   for(int i = 0; i < kNumOfParamsInBANFFfit; i++) {
     PhysParamId_t p = PhysParamId_t ((int) kNuisBANFF00 + i);
     double bf = BANFFBestFit[i];
     double err = sqrt(BANFFCov[i][i]);
-    fparm->AddParam(ip++, p, bf, bf-(err*nsigma), bf+(err*nsigma),  err/2,  false, true);
+    fparm->AddParam(ip++, p, bf, bf-(err*nsigma), bf+(err*nsigma),  err*step,  false, true);
   }
+#if BANFF_BINS <= 2
   fparm -> SetNuisance(kNuisBANFFNC1pi0 ,false); // not used in numu analysis!
+#endif
 
   // XSec
-  fparm->AddParam( ip++, kNuisXSecSpecFunc,      0.0, -1.0*nsigma, 1.0*nsigma, 5E-1,  false, true);
-  fparm->AddParam( ip++, kNuisXSecPiLessDelta,   0.0, -1.0*nsigma, 1.0*nsigma, 5E-1,  false, true);
+  fparm->AddParam( ip++, kNuisXSecSpecFunc,      0.0, -1.0*nsigma, 1.0*nsigma, step,  false, true);
+  fparm->AddParam( ip++, kNuisXSecPiLessDelta,   0.0, -1.0*nsigma, 1.0*nsigma, step,  false, true);
 
 }
 //________________________________________________________________________________________

@@ -73,6 +73,7 @@ systematics.append(["xsec_wshape", "false", "false", "false"])
 systematics.append(["xsec_shape_ccoth", "false", "false", "false"])
 systematics.append(["xsec_pilessdelta", "false", "false", "false"])
 systematics.append(["xsec_enushape", "false", "false", "false"])
+systematics.append(["xsec_bindE", "false", "false", "false"])
 #XSec normalisations
 systematics.append(["xsec_norm_ccqeE1", "false", "false", "true"])
 systematics.append(["xsec_norm_ccqeE2", "false", "false", "true"])
@@ -84,7 +85,7 @@ systematics.append(["xsec_norm_ncoth", "false", "false", "false"])
 systematics.append(["xsec_norm_nuetonumu", "false", "false", "false"])
 systematics.append(["xsec_norm_antinutonu", "false", "false", "false"])
 #FSI
-for i in xrange(479):
+for i in xrange(49):
    systematics.append(["fsi_" + '%(number)03d' % {"number": i},"true","false","false"])
    
 samples = []

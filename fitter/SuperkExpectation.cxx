@@ -167,7 +167,8 @@ void SuperkExpectation::ResetSystematicVariations(void)
   this->GetNuXSec()->TweakShapeCCoth    (0.);
   this->GetNuXSec()->TweakPiLessDelta   (0.);
   this->GetNuXSec()->TweakENuShape      (0.);
-#if BANFF_BINS != 2
+  this->GetNuXSec()->TweakBindE         (0.);
+#if BANFF_BINS <= 1
   this->GetNuXSec()->TweakNormCCQEE1    (0.);
   this->GetNuXSec()->TweakNormCCQEE2    (0.);
   this->GetNuXSec()->TweakNormCC1piE1   (0.);
@@ -233,6 +234,7 @@ void SuperkExpectation::TweakSystematic(string systematic, double twkdial, bool 
 //    - xsec_shape_ccoth
 //    - xsec_pilessdelta
 //    - xsec_enushape
+//    - xsec_bindE
 //    - xsec_norm_ccqeE1
 //    - xsec_norm_ccqeE2
 //    - xsec_norm_cc1piE1
@@ -392,7 +394,9 @@ void SuperkExpectation::TweakSystematic(string systematic, double twkdial, bool 
     this->GetNuXSec()->TweakPiLessDelta   (twkdial);
   else if(systematic == "xsec_enushape")
     this->GetNuXSec()->TweakENuShape      (twkdial);
-#if BANFF_BINS != 2
+  else if(systematic == "xsec_bindE")
+    this->GetNuXSec()->TweakBindE         (twkdial);
+#if BANFF_BINS <= 1
   else if(systematic == "xsec_norm_ccqeE1")
     this->GetNuXSec()->TweakNormCCQEE1    (twkdial);
   else if(systematic == "xsec_norm_ccqeE2")
@@ -468,7 +472,7 @@ void SuperkExpectation::TweakAllUncorrelatedXSecSystematics(void)
   this->GetNuXSec()->TweakShapeCCoth    (rand.Gaus(0.,1.));
   this->GetNuXSec()->TweakPiLessDelta   (rand.Gaus(0.,1.));
   this->GetNuXSec()->TweakENuShape      (rand.Gaus(0.,1.));
-#if BANFF_BINS != 2
+#if BANFF_BINS <= 1
   this->GetNuXSec()->TweakNormCCQEE1    (rand.Gaus(0.,1.));
   this->GetNuXSec()->TweakNormCCQEE2    (rand.Gaus(0.,1.));
   this->GetNuXSec()->TweakNormCC1piE1   (rand.Gaus(0.,1.));
@@ -702,7 +706,7 @@ void SuperkExpectation::SetNuisanceParams(const FitParamList & fp)
      double twk = fp.CurrValue(kNuisXSecENuShape);
      this->GetNuXSec()->TweakENuShape(twk);
    }
-#if BANFF_BINS != 2
+#if BANFF_BINS <= 1
    if(fp.Exists(kNuisXSecNormCCQEE1)) {
      double twk = fp.CurrValue(kNuisXSecNormCCQEE1);
      this->GetNuXSec()->TweakNormCCQEE1(twk);

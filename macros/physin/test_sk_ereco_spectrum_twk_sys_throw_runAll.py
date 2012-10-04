@@ -32,7 +32,7 @@ conffile = "analysis_configuration.xml"
 save_toy_expts = "false"
 
 modes1 = [0,1,2,3,4] #combinations
-modes3 = range(200,215) #unconstranied xsec
+modes3 = range(200,216) #unconstranied xsec
 modes4 = range(300,306) #sk detector
 
 modes = modes1

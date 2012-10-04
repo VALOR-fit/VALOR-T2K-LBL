@@ -38,6 +38,7 @@
 // 212 tweak xsec_norm_ncoth
 // 213 tweak xsec_norm_nuetonumu
 // 214 tweak xsec_norm_antinutonumu
+// 215 tweak xsec_bindE
 //
 // 300 tweak sk_energy_scale
 // 301 tweak sk_1Rmu_ccqe_other_eff
@@ -141,6 +142,8 @@ void test_sk_ereco_spectrum_twk_sys
       modetitle = "xsec_norm_nuetonumu"; break;
     case 214:
       modetitle = "xsec_norm_antinutonu"; break;
+    case 215:
+      modetitle = "xsec_bindE"; break;
 
     case 300:
       modetitle = "sk_energy_scale"; break;
@@ -354,6 +357,7 @@ void test_sk_ereco_spectrum_twk_sys
 	skexp.TweakSystematic("xsec_norm_ncoth",tweak);
 	skexp.TweakSystematic("xsec_norm_nuetonumu",tweak);
 	skexp.TweakSystematic("xsec_norm_antinutonu",tweak);
+	skexp.TweakSystematic("xsec_bindE",tweak);
       }
 
       if(mode == 0 || mode == 6 || mode == 8 || mode == 10) {
@@ -415,6 +419,8 @@ void test_sk_ereco_spectrum_twk_sys
 	  skexp.TweakSystematic("xsec_norm_nuetonumu",tweak); break;
         case 214:
 	  skexp.TweakSystematic("xsec_norm_antinutonu",tweak); break;
+        case 215:
+	  skexp.TweakSystematic("xsec_bindE",tweak); break;
 
         case 300:
 	  skexp.TweakSystematic("sk_energy_scale",tweak); break;
@@ -622,7 +628,7 @@ void test_sk_ereco_spectrum_twk_sys
   }
 
   if(!summary_p) {
-    int nbins = conv::kNumOfParamsInBANFFfit + 18 + 8 + conv::kNumOfFSIParams;
+    int nbins = conv::kNumOfParamsInBANFFfit + 19 + 8 + conv::kNumOfFSIParams;
     summary_p = new TH1D("summary_p","summary_p",nbins,0,nbins);
     summary_p->SetLineColor(kRed);
     summary_p->GetYaxis()->SetTitle("% change");
@@ -651,11 +657,12 @@ void test_sk_ereco_spectrum_twk_sys
     summary_p->GetXaxis()->SetBinLabel(conv::kNumOfParamsInBANFFfit+21,"sk_1Rmu_ccqe_ring_counting_eff_0");
     summary_p->GetXaxis()->SetBinLabel(conv::kNumOfParamsInBANFFfit+22,"sk_1Rmu_ccqe_ring_counting_eff_1");
     summary_p->GetXaxis()->SetBinLabel(conv::kNumOfParamsInBANFFfit+23,"sk_1Rmu_ccqe_ring_counting_eff_2");
+    summary_p->GetXaxis()->SetBinLabel(conv::kNumOfParamsInBANFFfit+24,"xsec_bindE");
     for(int i = 0; i < conv::kNumOfFSIParams; i++)
       summary_p->GetXaxis()->SetBinLabel(i+conv::kNumOfParamsInBANFFfit+23,Form("fsi_%03d",i));
   }
   if(!summary_m) {
-    int nbins = conv::kNumOfParamsInBANFFfit + 18 + 8 + conv::kNumOfFSIParams;
+    int nbins = conv::kNumOfParamsInBANFFfit + 19 + 8 + conv::kNumOfFSIParams;
     summary_m = new TH1D("summary_m","summary_m",nbins,0,nbins);
     summary_m->SetLineColor(kBlue);
     summary_m->GetYaxis()->SetTitle("% change");
@@ -684,6 +691,7 @@ void test_sk_ereco_spectrum_twk_sys
     summary_m->GetXaxis()->SetBinLabel(conv::kNumOfParamsInBANFFfit+21,"sk_1Rmu_ccqe_ring_counting_eff_0");
     summary_m->GetXaxis()->SetBinLabel(conv::kNumOfParamsInBANFFfit+22,"sk_1Rmu_ccqe_ring_counting_eff_1");
     summary_m->GetXaxis()->SetBinLabel(conv::kNumOfParamsInBANFFfit+23,"sk_1Rmu_ccqe_ring_counting_eff_2");
+    summary_m->GetXaxis()->SetBinLabel(conv::kNumOfParamsInBANFFfit+24,"xsec_bindE");
     for(int i = 0; i < conv::kNumOfFSIParams; i++)
       summary_m->GetXaxis()->SetBinLabel(i+conv::kNumOfParamsInBANFFfit+23,Form("fsi_%03d",i));
   }
@@ -723,7 +731,7 @@ void test_sk_ereco_spectrum_twk_sys
     conv::SuperkMode_t m = conv::kSKReactionModes[is][im];
     if(m == conv::kSKmUndefined) continue;
     if(!summarymode_p[im]) {
-      int nbins = conv::kNumOfParamsInBANFFfit + 18 + 8 + conv::kNumOfFSIParams;
+      int nbins = conv::kNumOfParamsInBANFFfit + 19 + 8 + conv::kNumOfFSIParams;
       summarymode_p[im] = new TH1D(Form("summarymode_p_%s",util::AsStringCompact(m).c_str()),Form("summarymode_p_%s",util::AsStringCompact(m).c_str()),nbins,0,nbins);
       summarymode_p[im]->SetLineColor(kRed);
       summarymode_p[im]->GetYaxis()->SetTitle("% change");
@@ -752,11 +760,12 @@ void test_sk_ereco_spectrum_twk_sys
       summarymode_p[im]->GetXaxis()->SetBinLabel(conv::kNumOfParamsInBANFFfit+21,"sk_1Rmu_ccqe_ring_counting_eff_0");
       summarymode_p[im]->GetXaxis()->SetBinLabel(conv::kNumOfParamsInBANFFfit+22,"sk_1Rmu_ccqe_ring_counting_eff_1");
       summarymode_p[im]->GetXaxis()->SetBinLabel(conv::kNumOfParamsInBANFFfit+23,"sk_1Rmu_ccqe_ring_counting_eff_2");
+      summarymode_p[im]->GetXaxis()->SetBinLabel(conv::kNumOfParamsInBANFFfit+24,"xsec_bindE");
       for(int i = 0; i < conv::kNumOfFSIParams; i++)
 	summarymode_p[im]->GetXaxis()->SetBinLabel(i+conv::kNumOfParamsInBANFFfit+23,Form("fsi_%03d",i));
     }
     if(!summarymode_m[im]) {
-      int nbins = conv::kNumOfParamsInBANFFfit + 18 + 8 + conv::kNumOfFSIParams;
+      int nbins = conv::kNumOfParamsInBANFFfit + 19 + 8 + conv::kNumOfFSIParams;
       summarymode_m[im] = new TH1D(Form("summarymode_m_%s",util::AsStringCompact(m).c_str()),Form("summarymode_m_%s",util::AsStringCompact(m).c_str()),nbins,0,nbins);
       summarymode_m[im]->SetLineColor(kBlue);
       summarymode_m[im]->GetYaxis()->SetTitle("% change");
@@ -785,6 +794,7 @@ void test_sk_ereco_spectrum_twk_sys
       summarymode_m[im]->GetXaxis()->SetBinLabel(conv::kNumOfParamsInBANFFfit+21,"sk_1Rmu_ccqe_ring_counting_eff_0");
       summarymode_m[im]->GetXaxis()->SetBinLabel(conv::kNumOfParamsInBANFFfit+22,"sk_1Rmu_ccqe_ring_counting_eff_1");
       summarymode_m[im]->GetXaxis()->SetBinLabel(conv::kNumOfParamsInBANFFfit+23,"sk_1Rmu_ccqe_ring_counting_eff_2");
+      summarymode_m[im]->GetXaxis()->SetBinLabel(conv::kNumOfParamsInBANFFfit+24,"xsec_bindE");
       for(int i = 0; i < conv::kNumOfFSIParams; i++)
 	summarymode_m[im]->GetXaxis()->SetBinLabel(i+conv::kNumOfParamsInBANFFfit+23,Form("fsi_%03d",i));
     }

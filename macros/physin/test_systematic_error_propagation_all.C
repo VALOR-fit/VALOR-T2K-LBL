@@ -173,7 +173,7 @@ void test_systematic_error_propagation_all
 
   systematics.push_back("banff_cc1piE1");
 
-  systematics.push_back("banff_nc1pi0");
+  //systematics.push_back("banff_nc1pi0");
 
   systematics.push_back("xsec_pf");
   systematics.push_back("xsec_sf");
@@ -181,6 +181,7 @@ void test_systematic_error_propagation_all
   systematics.push_back("xsec_shape_ccoth");
   systematics.push_back("xsec_pilessdelta");
   systematics.push_back("xsec_enushape");
+  systematics.push_back("xsec_bindE");
   //systematics.push_back("xsec_norm_ccqeE1");
   //systematics.push_back("xsec_norm_ccqeE2");
   //systematics.push_back("xsec_norm_cc1piE1");

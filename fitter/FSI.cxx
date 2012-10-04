@@ -102,6 +102,7 @@ bool FSI::Read(TXMLEngine* xml, XMLNodePointer_t root_node)
     cerr << "Exp/FSI >> FSI covariance matrix has unexpected size!" << endl;
     cerr << "Exp/FSI >> Expecting: " <<  np << " x " << np << " matrix" << endl;
     cerr << "Exp/FSI >> Found: " << cov.GetNrows() << " x " <<  cov.GetNcols() << " matrix" << endl;
+    exit(1);
   }
 
   double det;
@@ -156,11 +157,6 @@ bool FSI::Read(TXMLEngine* xml, XMLNodePointer_t root_node)
 double FSI::SystWght(
   conv::SuperkSample_t s, conv::SuperkMode_t m, double Ereco, double /*Etrue*/) const
 {
-#if FSI_BINS == 4
-  //special check that needs to be done for the 480x480 matrix that has no bins below 250 MeV
-  if(Ereco < 0.25)
-    return 1;
-#endif
 
   // find FSI param which corresponds to the current Ereco param
   int iparam = -1;

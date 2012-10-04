@@ -1,0 +1,351 @@
+<?xml version="1.0"?>
+
+<analysis_inputs analysis="T2K/OscillantionAnalysis2012a/RAL+Ox+Lancs+IFIC" mc="NEUT">
+
+  <!--
+  ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+  Data POT for analysis
+  ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+  -->
+
+  <data_pot>
+     <superk> 
+        3.010E+20 
+     </superk> 
+  </data_pot>
+
+  <!--
+  ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+  Flux inputs
+  ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+  -->
+  <flux>
+     <superk>
+       <!--
+        Tuned SuperK flux 
+       -->
+       <tuned>
+         <numu>
+            <filename>   inputs/official/2012/flux/11b_v3.1_run1-3c_fulldata/sk_tuned11bv3.1_11anom_run1-run3c_full_fine.root </filename>
+            <objname>    enu_sk_tuned11b_numu  </objname>
+            <objtype>    TH1D                  </objtype>
+         </numu>
+         <numubar>
+            <filename>   inputs/official/2012/flux/11b_v3.1_run1-3c_fulldata/sk_tuned11bv3.1_11anom_run1-run3c_full_fine.root </filename>
+            <objname>    enu_sk_tuned11b_numub </objname>
+            <objtype>    TH1D                  </objtype>
+         </numubar>
+         <nue>
+            <filename>   inputs/official/2012/flux/11b_v3.1_run1-3c_fulldata/sk_tuned11bv3.1_11anom_run1-run3c_full_fine.root </filename>
+            <objname>    enu_sk_tuned11b_nue   </objname>
+            <objtype>    TH1D                  </objtype>
+         </nue>
+         <nuebar>
+            <filename>   inputs/official/2012/flux/11b_v3.1_run1-3c_fulldata/sk_tuned11bv3.1_11anom_run1-run3c_full_fine.root </filename>
+            <objname>    enu_sk_tuned11b_nueb  </objname>
+            <objtype>    TH1D                  </objtype>
+         </nuebar>
+       </tuned>
+       <!--
+        Flux weights: nominal -> tuned 
+       -->
+       <tuning_weights>
+         <numu>
+            <filename>   inputs/official/2012/flux/11b_v3.1_run1-3c_fulldata/sk_tuned11bv3.1_11anom_run1-run3c_full_fine.root </filename>
+            <objname>    enu_sk_tuned11b_numu_ratio   </objname>
+            <objtype>    TH1D                         </objtype>
+         </numu>
+         <numubar>
+            <filename>   inputs/official/2012/flux/11b_v3.1_run1-3c_fulldata/sk_tuned11bv3.1_11anom_run1-run3c_full_fine.root </filename>
+            <objname>    enu_sk_tuned11b_numub_ratio  </objname>
+            <objtype>    TH1D                         </objtype>
+         </numubar>
+         <nue>
+            <filename>   inputs/official/2012/flux/11b_v3.1_run1-3c_fulldata/sk_tuned11bv3.1_11anom_run1-run3c_full_fine.root </filename>
+            <objname>    enu_sk_tuned11b_nue_ratio    </objname>
+            <objtype>    TH1D                         </objtype>
+         </nue>
+         <nuebar>
+            <filename>   inputs/official/2012/flux/11b_v3.1_run1-3c_fulldata/sk_tuned11bv3.1_11anom_run1-run3c_full_fine.root </filename>
+            <objname>    enu_sk_tuned11b_nueb_ratio   </objname>
+            <objtype>    TH1D                         </objtype>
+         </nuebar>
+       </tuning_weights>
+     </superk>     
+  </flux>
+
+  <!--
+  ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+  SuperK MC inputs 
+  ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+  -->
+
+  <mc>
+     <superk>     
+        <nominal>     
+           <numu>
+             <pot> 
+	       <filename>   inputs/official/2012/superk/mc/neut/11c/smallnt_numu_sk11c_flx11bv31fine_r1-3cfull_10acut.root </filename>
+	       <objname>    h_stat_snt_tnumu  </objname>
+	       <objtype>    TH1D                  </objtype>
+             </pot>
+             <one_mu_ring>
+                <filename>   inputs/official/2012/superk/mc/neut/11c/smallnt_numu_sk11c_flx11bv31fine_r1-3cfull_10acut.root  </filename>
+                <objname>    tnumu   </objname>
+                <objtype>    TTree            </objtype>
+             </one_mu_ring>
+             <one_e_ring>
+                <filename>   inputs/official/2012/superk/mc/neut/11c/superk_1ReT_numu.root  </filename>
+                <objname>    selection_tree   </objname>
+                <objtype>    TTree            </objtype>
+             </one_e_ring>
+           </numu>
+           <numubar>
+             <pot> 
+	       <filename>   inputs/official/2012/superk/mc/neut/11c/smallnt_numu_sk11c_flx11bv31fine_r1-3cfull_10acut.root </filename>
+	       <objname>    h_stat_snt_tnumubar  </objname>
+	       <objtype>    TH1D                  </objtype>
+             </pot>
+             <one_mu_ring>
+                <filename>   inputs/official/2012/superk/mc/neut/11c/smallnt_numu_sk11c_flx11bv31fine_r1-3cfull_10acut.root  </filename>
+                <objname>    tnumubar   </objname>
+                <objtype>    TTree            </objtype>
+             </one_mu_ring>
+             <one_e_ring>
+                <filename>   inputs/official/2012/superk/mc/neut/11c/superk_1ReT_numubar.root  </filename>
+                <objname>    selection_tree   </objname>
+                <objtype>    TTree            </objtype>
+             </one_e_ring>
+           </numubar>
+           <nue>
+             <pot> 
+	       <filename>   inputs/official/2012/superk/mc/neut/11c/smallnt_numu_sk11c_flx11bv31fine_r1-3cfull_10acut.root </filename>
+	       <objname>    h_stat_snt_tnue  </objname>
+	       <objtype>    TH1D                  </objtype>
+             </pot>
+             <one_mu_ring>
+                <filename>   inputs/official/2012/superk/mc/neut/11c/smallnt_numu_sk11c_flx11bv31fine_r1-3cfull_10acut.root  </filename>
+                <objname>    tnue   </objname>
+                <objtype>    TTree            </objtype>
+             </one_mu_ring>
+             <one_e_ring>
+                <filename>   inputs/official/2012/superk/mc/neut/11c/superk_1ReT_nue.root  </filename>
+                <objname>    selection_tree   </objname>
+                <objtype>    TTree            </objtype>
+             </one_e_ring>
+          </nue>
+          <nuebar>
+             <pot> 
+	       <filename>   inputs/official/2012/superk/mc/neut/11c/smallnt_numu_sk11c_flx11bv31fine_r1-3cfull_10acut.root </filename>
+	       <objname>    h_stat_snt_tnuebar  </objname>
+	       <objtype>    TH1D                  </objtype>
+             </pot>
+             <one_mu_ring>
+                <filename>   inputs/official/2012/superk/mc/neut/11c/smallnt_numu_sk11c_flx11bv31fine_r1-3cfull_10acut.root  </filename>
+                <objname>    tnuebar   </objname>
+                <objtype>    TTree            </objtype>
+             </one_mu_ring>
+             <one_e_ring>
+                <filename>   inputs/official/2012/superk/mc/neut/11c/superk_1ReT_nuebar.root  </filename>
+                <objname>    selection_tree   </objname>
+                <objtype>    TTree            </objtype>
+             </one_e_ring>
+          </nuebar>
+          <signal_nue>
+             <pot> 
+	       <filename>   inputs/official/2012/superk/mc/neut/11c/smallnt_numu_sk11c_flx11bv31fine_r1-3cfull_10acut.root </filename>
+	       <objname>    h_stat_snt_tnuesig  </objname>
+	       <objtype>    TH1D                  </objtype>
+             </pot>
+             <one_mu_ring>
+                <filename>   inputs/official/2012/superk/mc/neut/11c/smallnt_numu_sk11c_flx11bv31fine_r1-3cfull_10acut.root  </filename>
+                <objname>    tnuesig   </objname>
+                <objtype>    TTree            </objtype>
+             </one_mu_ring>
+             <one_e_ring>
+                <filename>   inputs/official/2012/superk/mc/neut/11c/superk_1ReT_nuesig.root  </filename>
+                <objname>    selection_tree   </objname>
+                <objtype>    TTree            </objtype>
+             </one_e_ring>
+          </signal_nue>
+       </nominal>
+     </superk>
+  </mc>
+
+  <!--
+  ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+  SuperK detector systematics
+  ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+  -->
+
+  <detector_systematics>
+     <superk>
+         <energy_scale_relative_error>
+            <one_mu_ring>
+               0.023  
+            </one_mu_ring>
+            <one_e_ring>
+               <!-- not added yet -->
+            </one_e_ring>
+         </energy_scale_relative_error>
+         <efficiency_relative_error>  
+            <one_mu_ring>
+               <ccqe>
+                  <other_error>   0.018  </other_error>          
+                  <rc_error>          
+                     <filename>  inputs/official/2012/superk/err/sk_ccqe_rc_err_covariance.root </filename>
+                     <objname>   ccqe_rc_err_covariance  </objname>
+                     <objtype>   TMatrixD </objtype>
+                  </rc_error>                     
+                  <rc_ereco_high_bin1>   0.4  </rc_ereco_high_bin1>          
+                  <rc_ereco_high_bin2>   1.1  </rc_ereco_high_bin2>   
+               </ccqe>
+               <ccnonqe>   0.200 </ccnonqe>
+               <nc>        1.110 </nc>
+               <nuecc>     1.000 </nuecc>
+            </one_mu_ring>
+            <one_e_ring>
+               <!-- not added yet -->
+            </one_e_ring>
+         </efficiency_relative_error>  
+     </superk>
+  </detector_systematics>
+
+  <!--
+  ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+  BANFF inputs 
+  ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+  -->
+
+  <banff>
+       <!--
+        Central values from BANFF fit
+       -->
+       <best_fit_values>
+          <filename>   inputs/official/2012/banff/postfit_banff_v8_osc_marg_MAQE.root  </filename>
+          <objname>    postfit_params   </objname>
+          <objtype>    TVectorD         </objtype>
+        </best_fit_values>
+       <!--
+        Covariance of fit parameters
+       -->
+       <covariance_matrix>
+          <filename>   inputs/official/2012/banff/postfit_banff_v8_osc_marg_MAQE.root  </filename>
+          <objname>    postfit_cov      </objname>
+          <objtype>    TMatrixD         </objtype>
+        </covariance_matrix>     
+  </banff>
+
+  <!--
+  ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+  Neutrino cross section weight splines
+  ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+  -->
+
+  <xsec>
+      <weight_splines>
+          <filename>
+               inputs/official/2012/xsec/XSecSplinesCoarse2012_coarseEreco.root
+          </filename>
+          <numu>
+               <filename>
+                    inputs/official/2012/xsec/spl_numuoa_sk11c_flx11bv31_numu.root
+               </filename>
+          </numu>
+          <numubar>
+               <filename>
+                    inputs/official/2012/xsec/spl_numuoa_sk11c_flx11bv31_numubar.root
+               </filename>
+          </numubar>
+          <nue>
+               <filename>
+                    inputs/official/2012/xsec/spl_numuoa_sk11c_flx11bv31_nue.root
+               </filename>
+          </nue>
+          <nuebar>
+               <filename>
+                    inputs/official/2012/xsec/spl_numuoa_sk11c_flx11bv31_nuebar.root
+               </filename>
+          </nuebar>
+          <signue>
+               <filename>
+                    inputs/official/2012/xsec/spl_numuoa_sk11c_flx11bv31_signalnue.root
+               </filename>
+          </signue>
+      </weight_splines>
+      <splines>
+	  <maqe>
+	       0.198
+	  </maqe>
+	  <mares>
+	       0.083
+	  </mares>
+	  <pf>
+	       0.133
+	  </pf>
+	  <sf>
+	       1
+	  </sf>
+	  <wshape>
+	       0.516
+	  </wshape>
+	  <ccothshape>
+	       0.4
+	  </ccothshape>
+	  <cc1pishape>
+	       0.5
+	  </cc1pishape>
+	  <pilessdelta>
+	       0.2
+	  </pilessdelta>
+      </splines>
+      <normalisations>
+	  <ccqee1>
+	       0.23
+	  </ccqee1>
+	  <ccqee2>
+	       0.252
+	  </ccqee2>
+	  <cc1pie1>
+	       0.297
+	  </cc1pie1>
+	  <cccoh>
+	       1.0
+	  </cccoh>
+	  <nc1piC>
+	       0.3
+	  </nc1piC>
+	  <nccoh>
+	       0.3
+	  </nccoh>
+	  <ncoth>
+	       0.3
+	  </ncoth>
+	  <numu_to_nue>
+	       0.03
+	  </numu_to_nue>
+	  <nu_to_antinu>
+	       0.40
+	  </nu_to_antinu>
+      </normalisations>
+  </xsec>
+
+  <!--
+  ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+  FSI
+  ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+  -->
+
+  <fsi>
+       <!--
+        Covariance matrix of FSI parameters
+       -->
+       <covariance_matrix>
+          <filename>   inputs/official/2012/fsi/FSIandSIError_ICLFine49Binning.root  </filename>
+          <objname>    fsi_cov         </objname>
+          <objtype>    TMatrixD         </objtype>
+        </covariance_matrix>     
+  </fsi>
+
+
+</analysis_inputs>

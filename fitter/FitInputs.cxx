@@ -196,7 +196,9 @@ double FitInputs::ChisquarePenaltyTerm(void)
     const int np_banff = conv::kNumOfParamsInBANFFfit;
     for(int ip = 0; ip < np_banff; ip++) {
       PhysParamId_t p = PhysParamId_t ( (int) kNuisBANFF00 + ip );
+#if BANFF_BINS <= 2
       if(p == kNuisBANFFNC1pi0) continue; // not used in numu analysis!
+#endif
       incl_banff_penalty = incl_banff_penalty && 
 	(this->FitParams().Exists(p) && this->FitParams().IsNuisance(p));
       if(!incl_banff_penalty) break;
@@ -263,15 +265,16 @@ double FitInputs::ChisquarePenaltyTerm(void)
   //
   bool incl_xsec_penalty = true;
   if(all_syst) {
-#if BANFF_BINS != 2
-    int np_xsec = 11;
+#if BANFF_BINS >= 2
+    int np_xsec = 13;
 #else
-    int np_xsec = 14;
+    int np_xsec = 10;
 #endif
     for(int ip = 0; ip < np_xsec; ip++) {
       PhysParamId_t p = PhysParamId_t ( (int) kNuisXSecFermiMom  + ip );
       if(p == kNuisXSecNormNCcoh) continue; // not used in numu analysis!
       if(p == kNuisXSecENuShape)  continue; // not used in numu analysis!
+      if(p == kNuisXSecBindE)     continue; // not used in numu analysis!
       incl_xsec_penalty = incl_xsec_penalty &&
 	(this->FitParams().Exists(p) && this->FitParams().IsNuisance(p));
       if(!incl_xsec_penalty) break;
