@@ -608,7 +608,7 @@ void FitParamList::AppendSystematics(FitParamList * fparm, int start)
   int ip = start; // first unallocated element in the param list
 
   int nsigma = 7; // number of sigma away from nominal nuisance parameters are allowed to be
-  int step = 1E-1; // step size (in units of sigma)
+  double step = 1E-1; // step size (in units of sigma)
 
   //    Get the covariance matrices & best fits of FSI & BANFF from xml, 
   //    to have something sensible to initialise to
@@ -706,7 +706,7 @@ void FitParamList::AppendSelectedSystematics(FitParamList * fparm, int start)
   int ip = start; // first unallocated element in the param list
 
   int nsigma = 7; // number of sigma away from nominal nuisance parameters are allowed to be
-  int step = 1E-1; // step size (in units of sigma)
+  double step = 1E-1; // step size (in units of sigma)
 
   //    Get the covariance matrices & best fits of BANFF from xml, 
   //    to have something sensible to initialise to
@@ -765,7 +765,7 @@ void FitParamList::AppendSelectedSystematicsWithFullBANFF(FitParamList * fparm, 
   int ip = start; // first unallocated element in the param list
 
   int nsigma = 7; // number of sigma away from nominal nuisance parameters are allowed to be
-  int step = 1E-1; // step size (in units of sigma)
+  double step = 1E-1; // step size (in units of sigma)
 
   //    Get the covariance matrices & best fits of BANFF from xml, 
   //    to have something sensible to initialise to
