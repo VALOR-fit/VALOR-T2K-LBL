@@ -1,0 +1,60 @@
+void get_starplot_staterror(const char * folder = "./") {
+
+  TChain c("nfitnt");
+  c.Add(Form("%s/toyexptfits-run_*",folder));
+
+  double input_mixing23, bestfit_mixing23;
+  c.SetBranchAddress("input_mixing23",&input_mixing23);
+  c.SetBranchAddress("bestfit_mixing23",&bestfit_mixing23);
+  double sd_mixing23 = 0;
+  for(int i=0; i<c.GetEntries(); i++) {
+    c.GetEntry(i);
+    sd_mixing23 += (bestfit_mixing23 - input_mixing23) * (bestfit_mixing23 - input_mixing23);
+    //cout << input_mixing23 << endl;
+  }
+  sd_mixing23 = sqrt(sd_mixing23 / (c.GetEntries() - 1));
+
+  double input_dm23sq, bestfit_dm23sq;
+  c.SetBranchAddress("input_dm23sq",&input_dm23sq);
+  c.SetBranchAddress("bestfit_dm23sq",&bestfit_dm23sq);
+  double sd_dm23sq = 0;
+  for(int i=0; i<c.GetEntries(); i++) {
+    c.GetEntry(i);
+    sd_dm23sq += (bestfit_dm23sq - input_dm23sq) * (bestfit_dm23sq - input_dm23sq);
+    //cout << input_dm23sq << "\t" << bestfit_dm23sq << endl;
+  }
+  sd_dm23sq = sqrt(sd_dm23sq / (c.GetEntries() - 1));
+  cout << sd_dm23sq << "\t" << input_dm23sq << endl;
+  cout << sd_mixing23 << "\t" << input_mixing23 << endl;
+
+  ofstream stat;
+  stat.open (Form("%s/stat.data",folder));
+  stat << sd_mixing23 << endl;
+  stat << sd_dm23sq << endl;
+  stat.close();
+}
+
+
+/*
+root -q 'temp.C("starstat_mixing23_100_dm32sq_22")'
+root -q 'temp.C("starstat_mixing23_100_dm32sq_24")'
+root -q 'temp.C("starstat_mixing23_100_dm32sq_26")'
+root -q 'temp.C("starstat_mixing23_95_dm32sq_22")'
+root -q 'temp.C("starstat_mixing23_95_dm32sq_24")'
+root -q 'temp.C("starstat_mixing23_95_dm32sq_26")'
+root -q 'temp.C("starstat_mixing23_90_dm32sq_22")'
+root -q 'temp.C("starstat_mixing23_90_dm32sq_24")'
+root -q 'temp.C("starstat_mixing23_90_dm32sq_26")'
+
+
+cp starstat_mixing23_100_dm32sq_22/stat.data bestfit_point_shift_1Rmu_-99_-99_-99_-99_-99_0.0022/stat.data
+cp starstat_mixing23_100_dm32sq_24/stat.data bestfit_point_shift_1Rmu_-99_-99_-99_-99_-99_-99/stat.data
+cp starstat_mixing23_100_dm32sq_26/stat.data bestfit_point_shift_1Rmu_-99_-99_-99_-99_-99_0.0026/stat.data
+cp starstat_mixing23_95_dm32sq_22/stat.data bestfit_point_shift_1Rmu_-99_-99_0.95_-99_-99_0.0022/stat.data
+cp starstat_mixing23_95_dm32sq_24/stat.data bestfit_point_shift_1Rmu_-99_-99_0.95_-99_-99_-99/stat.data
+cp starstat_mixing23_95_dm32sq_26/stat.data bestfit_point_shift_1Rmu_-99_-99_0.95_-99_-99_0.0026/stat.data
+cp starstat_mixing23_90_dm32sq_22/stat.data bestfit_point_shift_1Rmu_-99_-99_0.9_-99_-99_0.0022/stat.data
+cp starstat_mixing23_90_dm32sq_24/stat.data bestfit_point_shift_1Rmu_-99_-99_0.9_-99_-99_-99/stat.data
+cp starstat_mixing23_90_dm32sq_26/stat.data bestfit_point_shift_1Rmu_-99_-99_0.9_-99_-99_0.0026/stat.data
+
+ */

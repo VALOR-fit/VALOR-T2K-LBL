@@ -235,6 +235,14 @@ void make_star_plot_for_disappearance_analysis
     osc_param_space->GetYaxis()->SetRangeUser(0.002395,0.002405);
     c->SaveAs(Form("%s-%f-%f_zoom2.pdf",group.c_str(),true_mixing23,true_dm23sq));
   }
- 
+  
+  osc_param_space->GetXaxis()->SetRangeUser(true_mixing23 - (1.1* stat_av_mixing23), true_mixing23 + (1.1* stat_av_mixing23));
+  osc_param_space->GetYaxis()->SetRangeUser(true_dm23sq - (1.1* stat_av_dm23sq), true_dm23sq + (1.1* stat_av_dm23sq));
+  c->SaveAs(Form("%s-%f-%f_testbig.pdf",group.c_str(),true_mixing23,true_dm23sq));
+
+  osc_param_space->GetXaxis()->SetRangeUser(true_mixing23 - (0.6* stat_av_mixing23), true_mixing23 + (0.6* stat_av_mixing23));
+  osc_param_space->GetYaxis()->SetRangeUser(true_dm23sq - (0.6* stat_av_dm23sq), true_dm23sq + (0.6* stat_av_dm23sq));
+  c->SaveAs(Form("%s-%f-%f_testzoom.pdf",group.c_str(),true_mixing23,true_dm23sq));
+  
   cout << "Done! " << endl;
 }

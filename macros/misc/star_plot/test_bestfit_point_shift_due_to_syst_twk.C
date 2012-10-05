@@ -136,7 +136,7 @@ void test_bestfit_point_shift_due_to_syst_twk
   }
 
   bool fluctuate_stat = false; // <- don't fluctuate, best-fit point shift is purely due to systematic tweak
-  const int nexp = 1; // how many experiments to run (when running stat)
+  const int nexp = 2; // how many experiments to run (when running stat)
   if(sys.find("stat") == 0) {
     fluctuate_stat = true;
   }
@@ -543,7 +543,7 @@ void test_bestfit_point_shift_due_to_syst_twk
   for(int i=0; i<c.GetEntries(); i++) {
   c.GetEntry(i);
   sd_dm23sq += (bestfit_dm23sq - input_dm23sq) * (bestfit_dm23sq - input_dm23sq);
-  cout << input_dm23sq << endl;
+  cout << input_dm23sq << "\t" << bestfit_dm23sq << endl;
   }
   sd_dm23sq = sqrt(sd_dm23sq / (c.GetEntries() - 1));
   cout << sd_dm23sq << endl;

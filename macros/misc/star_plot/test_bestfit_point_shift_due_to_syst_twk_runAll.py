@@ -29,12 +29,12 @@ optionParser.add_option("--stat", action="store_true", dest="do_stat", default=F
 optionParser.add_option("--draw", action="store_true", dest="do_draw", default=False, help="If set, will draw all the plots")
 (opt, args) = optionParser.parse_args()
 
-if not opt.do_syst or opt.do_stat or opt.do_draw:
+if not (opt.do_syst or opt.do_stat or opt.do_draw):
    optionParser.print_usage()
    sys.exit(1)
 
-if opt.do_draw():
-   print "Stat is not implemented in this macro. Please run the production script, and use the code snippet at the bottom of $T2KOSCANA/macros/misc/star_plot/test_bestfit_point_shift_due_to_syst_twk.C to get stat errors, then replace the numbers instat.data: $T2KOSCANA/production/submit_toyexpt_fitting_job_fitsyst --resource Oxford --softw-dir $T2KOSCANA --job-dir $PWD --cpu-time 01:59:00 --tweak-systematics 1 --nruns 100 --nexpts 100 --dm23sq 0.0024 --sinsq2theta23 1. --stat-fluctuations --fit-param-list nuosc3f_numudisapp_fix4"
+if opt.do_stat:
+   print "Stat is not implemented in this macro. Please run the production script, and use the code snippet at the bottom of $T2KOSCANA/macros/misc/star_plot/test_bestfit_point_shift_due_to_syst_twk.C to get stat errors, then replace the numbers in stat.data: $T2KOSCANA/production/submit_toyexpt_fitting_job_fitsyst --resource Oxford --softw-dir $T2KOSCANA --job-dir $PWD --cpu-time 01:59:00 --tweak-systematics 1 --nruns 100 --nexpts 100 --dm23sq 0.0024 --sinsq2theta23 1. --stat-fluctuations --fit-param-list nuosc3f_numudisapp_fix4"
    sys.exit(1)
    
 if (opt.do_syst and opt.do_stat):
@@ -52,12 +52,12 @@ fitter = "minuit"
 #specify the cuts you want to apply here
 systematics = []
 #stats
-systematics.append("stat");
+#systematics.append("stat");
 #oscillations
-systematics.append("osc_mixing12");
-systematics.append("osc_mixing13");
-systematics.append("osc_dm12sq");
-systematics.append("osc_deltacp");
+#systematics.append("osc_mixing12");
+#systematics.append("osc_mixing13");
+#systematics.append("osc_dm12sq");
+#systematics.append("osc_deltacp");
 #SK
 #systematics.append("sk_1Rmu_ccqe_ring_counting_eff")
 systematics.append("sk_1Rmu_ccqe_ring_counting_eff_0")
@@ -108,6 +108,13 @@ samples.append("1Rmu")
 oscparams = [] 
 oscparams.append([-99, -99, -99, -99, -99, -99]) #use global best fits!
 oscparams.append([-99, -99, 0.9, -99, -99, -99]) #mixing23=0.9 & global best fits
+oscparams.append([-99, -99, 0.95, -99, -99, -99]) #mixing23=0.9 & global best fits
+oscparams.append([-99, -99, -99, -99, -99, 0.0022]) #use global best fits! & dm32sq = 2.2E-3
+oscparams.append([-99, -99, 0.9, -99, -99, 0.0022]) #mixing23=0.9 & global best fits & dm32sq = 2.2E-3
+oscparams.append([-99, -99, 0.95, -99, -99, 0.0022]) #mixing23=0.95 & global best fits & dm32sq = 2.2E-3
+oscparams.append([-99, -99, -99, -99, -99, 0.0026]) #use global best fits! & dm32sq = 2.6E-3
+oscparams.append([-99, -99, 0.9, -99, -99, 0.0026]) #mixing23=0.9 & global best fits & dm32sq = 2.6E-3
+oscparams.append([-99, -99, 0.95, -99, -99, 0.0026]) #mixing23=0.95 & global best fits & dm32sq = 2.6E-3
 
 for osc in oscparams:
 
@@ -132,12 +139,7 @@ for osc in oscparams:
          if syst == systematics[len(systematics)-1] and opt.do_draw:
 
             file = open('stat.data', 'r')
-            file.readline()
-            errmixing12 = file.readline().strip('\n')
-            errmixing13 = file.readline().strip('\n')
             errmixing23 = file.readline().strip('\n')
-	    errdeltacp  = file.readline().strip('\n')
-	    errdm12sq   = file.readline().strip('\n')
 	    errdm23sq   = file.readline().strip('\n')
             file.close()
 
@@ -221,6 +223,6 @@ for osc in oscparams:
             print command
             os.system(command)
             
-         if syst == systematics[len(systematics)-1]
+         if syst == systematics[len(systematics)-1]:
 
             os.chdir(basedir)
