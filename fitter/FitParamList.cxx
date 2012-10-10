@@ -669,7 +669,8 @@ void FitParamList::AppendSystematics(FitParamList * fparm, int start)
     PhysParamId_t p = PhysParamId_t ((int) kNuisBANFF00 + i);
     double bf = BANFFBestFit[i];
     double err = sqrt(BANFFCov[i][i]);
-    fparm->AddParam(ip++, p, bf, bf-(err*nsigma), bf+(err*nsigma),  err*step,  false, true);
+    double lowerr = TMath::Max(0., bf-(err*nsigma));
+    fparm->AddParam(ip++, p, bf, lowerr, bf+(err*nsigma),  err*step,  false, true);
   }
 #if BANFF_BINS <= 2
   fparm -> SetNuisance(kNuisBANFFNC1pi0 ,false); // not used in numu analysis!
@@ -699,7 +700,8 @@ void FitParamList::AppendSystematics(FitParamList * fparm, int start)
   for(int i = 0; i < kNumOfFSIParams; i++) {
     PhysParamId_t p = PhysParamId_t ((int) kNuisFSI000 + i);
     double err = sqrt(FSICov[i][i]);
-    fparm->AddParam(ip++, p,  1.0, 1.0-(err*nsigma), 1.0+(err*nsigma),  err*step,  false, true);
+    double lowerr = TMath::Max(0., 1.0-(err*nsigma));
+    fparm->AddParam(ip++, p,  1.0, lowerr, 1.0+(err*nsigma),  err*step,  false, true);
   }
 
 }
@@ -753,8 +755,13 @@ void FitParamList::AppendSelectedSystematics(FitParamList * fparm, int start)
   int bidx = util::ArrIdx::Instance()->BANFFSystIdx(kNuisBANFFMAQE);
   double bf  = BANFFBestFit[bidx];
   double err = sqrt(BANFFCov[bidx][bidx]);
-  fparm->AddParam( ip++, kNuisBANFFMAQE,    bf, bf-(err*nsigma), bf+(err*nsigma),  err*step,  false, true);
-  fparm->AddParam( ip++, kNuisBANFFCCQEE0,  bf, bf-(err*nsigma), bf+(err*nsigma),  err*step,  false, true);
+  double lowerr = TMath::Max(0., bf-(err*nsigma));
+  fparm->AddParam( ip++, kNuisBANFFMAQE,    bf, lowerr, bf+(err*nsigma),  err*step,  false, true);
+  bidx = util::ArrIdx::Instance()->BANFFSystIdx(kNuisBANFFCCQEE0);
+  bf  = BANFFBestFit[bidx];
+  err = sqrt(BANFFCov[bidx][bidx]);
+  lowerr = TMath::Max(0., bf-(err*nsigma));
+  fparm->AddParam( ip++, kNuisBANFFCCQEE0,  bf, lowerr, bf+(err*nsigma),  err*step,  false, true);
 
   // XSec
   fparm->AddParam( ip++, kNuisXSecSpecFunc,      0.0, -1.0*nsigma, 1.0*nsigma, step,  false, true);
@@ -812,7 +819,8 @@ void FitParamList::AppendSelectedSystematicsWithFullBANFF(FitParamList * fparm, 
     PhysParamId_t p = PhysParamId_t ((int) kNuisBANFF00 + i);
     double bf = BANFFBestFit[i];
     double err = sqrt(BANFFCov[i][i]);
-    fparm->AddParam(ip++, p, bf, bf-(err*nsigma), bf+(err*nsigma),  err*step,  false, true);
+    double lowerr = TMath::Max(0., bf-(err*nsigma));
+    fparm->AddParam(ip++, p, bf, lowerr, bf+(err*nsigma),  err*step,  false, true);
   }
 #if BANFF_BINS <= 2
   fparm -> SetNuisance(kNuisBANFFNC1pi0 ,false); // not used in numu analysis!

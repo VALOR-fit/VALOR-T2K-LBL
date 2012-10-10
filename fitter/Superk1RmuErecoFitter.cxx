@@ -299,11 +299,11 @@ TH2D * Superk1RmuErecoFitter::BuildChisqSurfaceNuMuDisap2ParamFit(void)
 {
    FitParamList & fp = fFitInputs->FitParams();
 
-   double mixing23_min  = fp.MinValue(conv::kPhypMixing23);
-   double mixing23_max  = fp.MaxValue(conv::kPhypMixing23);
+   double mixing23_min  = kMinChisqSurfaceSinsq2Theta23;
+   double mixing23_max  = kMaxChisqSurfaceSinsq2Theta23;
    double mixing23_step = fp.StepSize(conv::kPhypMixing23);
-   double dm23sq_min    = fp.MinValue(conv::kPhypDm23sq);
-   double dm23sq_max    = fp.MaxValue(conv::kPhypDm23sq);
+   double dm23sq_min    = kMinChisqSurfaceDm23sq;
+   double dm23sq_max    = kMaxChisqSurfaceDm23sq;
    double dm23sq_step   = fp.StepSize(conv::kPhypDm23sq);
 
    // make sure that min and max are at the bin centre
@@ -361,11 +361,11 @@ TH2D * Superk1RmuErecoFitter::BuildChisqSurfaceNuMuDisapWithSystParamFit(void)
 {
    FitParamList & fp = fFitInputs->FitParams();
 
-   double mixing23_min  = fp.MinValue(conv::kPhypMixing23);
-   double mixing23_max  = fp.MaxValue(conv::kPhypMixing23);
+   double mixing23_min  = kMinChisqSurfaceSinsq2Theta23;
+   double mixing23_max  = kMaxChisqSurfaceSinsq2Theta23;
    double mixing23_step = fp.StepSize(conv::kPhypMixing23);
-   double dm23sq_min    = fp.MinValue(conv::kPhypDm23sq);
-   double dm23sq_max    = fp.MaxValue(conv::kPhypDm23sq);
+   double dm23sq_min    = kMinChisqSurfaceDm23sq;
+   double dm23sq_max    = kMaxChisqSurfaceDm23sq;
    double dm23sq_step   = fp.StepSize(conv::kPhypDm23sq);
 
    // make sure that min and max are at the bin centre

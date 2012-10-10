@@ -121,6 +121,12 @@ void FitterKernel::Init(FitInputs * fit_inputs, Option_t * option)
 
     // set minimization function
     fitter->SetFCN(FitFunc);
+
+    /*
+    // free parameters
+    arglist[0] = 4; //deltacp
+    fitter->ExecuteCommand("SET LIMits",arglist, 1);
+    */
   }
 
   // calculate degrees of freedom
@@ -214,6 +220,7 @@ bool FitterKernel::RunOnce(void)
 #endif
   Double_t amin = 0;
   fitter->PrintResults(3,amin);
+  //fitter->PrintResults(1,amin); // prints limits
   cout << "FitterKernel/RunOnce >> Final error matrix status = " 
        << fStatusCode << endl;
  

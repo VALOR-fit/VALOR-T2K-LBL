@@ -1866,20 +1866,12 @@ void test_n_mock_data_fits_with_syst
     if ( store_withsyst_chisq_surf) {
 
       //set up binning
-      double mixing23_min  = fparm->MinValue(conv::kPhypMixing23);
-      double mixing23_max  = fparm->MaxValue(conv::kPhypMixing23);
+      double mixing23_min  = kMinChisqSurfaceSinsq2Theta23;
+      double mixing23_max  = kMaxChisqSurfaceSinsq2Theta23;
       double mixing23_step = fparm->StepSize(conv::kPhypMixing23);
-      double dm23sq_min    = fparm->MinValue(conv::kPhypDm23sq);
-      double dm23sq_max    = fparm->MaxValue(conv::kPhypDm23sq);
+      double dm23sq_min    = kMinChisqSurfaceDm23sq;
+      double dm23sq_max    = kMaxChisqSurfaceDm23sq;
       double dm23sq_step   = fparm->StepSize(conv::kPhypDm23sq);
-
-      mixing23_min = 0.8;
-      dm23sq_min = 1.5E-3;
-      dm23sq_max = 3.5E-3;
-
-      mixing23_min = 0.92;
-      dm23sq_min = 2.2E-3;
-      dm23sq_max = 2.8E-3;
 
       // make sure that min and max are at the bin centre
       int mixing23_nbins = 1 + (int) ((mixing23_max - mixing23_min) / mixing23_step);
