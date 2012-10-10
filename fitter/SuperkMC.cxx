@@ -32,6 +32,7 @@
 // 5 number of events, weighted by pot & mc normalisation, flux tuning, banff tuning, multiplicative systematic variations
 // 6 number of events, weighted by pot & mc normalisation, flux tuning, banff tuning, multiplicative systematic variations, nonmultiplicative systematic variations
 // 7 number of events, weighted by pot & mc normalisation, flux tuning, banff tuning, multiplicative systematic variations, nonmultiplicative systematic variations, physics hypothesis
+#define __apply_minevents_to_individual_modes__ //special debug mode that applies kSetNegEventsTo to all modes. Used for comparisons with the KIT 1 sigma spectra
 
 #include <cassert>
 #include <cstdlib>
@@ -1103,6 +1104,15 @@ void SuperkMC::UpdateErecoSpectra(void)
              nev += mctempl->GetBinContent(ir,it);
           }//it
           nev_tot += nev;
+#ifdef __apply_minevents_to_individual_modes__
+	  if(nev_tot < 0) {
+#ifdef __show_negative_events_mesg_debug__
+	    cout << "Exp/SKMC/UpdateErecoSpectra >> set negative number of events " << nev_tot 
+		 << " to kSetNegEventsTo " << kSetNegEventsTo << "\t" << " Ereco: " << reco_spectrum_tot->GetXaxis()->GetBinCenter(ir) << endl;
+#endif
+	    nev_tot = kSetNegEventsTo;
+	  }
+#endif
           reco_spectrum->SetBinContent(ir,nev);
        }//im
        if(nev_tot < 0) {
