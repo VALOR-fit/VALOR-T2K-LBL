@@ -280,7 +280,6 @@ void test_n_mock_data_fits_with_syst
   if(fit_syst_mode == 1) {
     nfitnt->Branch("input_banff_maqe",&input_banff_maqe,"input_banff_maqe/D");
     nfitnt->Branch("input_banff_ccqeE0",&input_banff_ccqeE0,"input_banff_ccqeE0/D");
-    nfitnt->Branch("input_banff_cc1piE0",&input_banff_cc1piE0,"input_banff_cc1piE0/D");
     nfitnt->Branch("input_xsec_sf",&input_xsec_sf,"input_xsec_sf/D");
     nfitnt->Branch("input_xsec_pilessdelta",&input_xsec_pilessdelta,"input_xsec_pilessdelta/D");
     nfitnt->Branch("input_skdet_ccnqe",&input_skdet_ccnqe,"input_skdet_ccnqe/D");
@@ -303,6 +302,7 @@ void test_n_mock_data_fits_with_syst
     nfitnt->Branch("input_banff_13",&input_banff_13,"input_banff_13/D");
     nfitnt->Branch("input_banff_14",&input_banff_14,"input_banff_14/D");
     nfitnt->Branch("input_banff_15",&input_banff_15,"input_banff_15/D");
+#if BANFF_BINS <= 2
     nfitnt->Branch("input_banff_16",&input_banff_16,"input_banff_16/D");
     nfitnt->Branch("input_banff_17",&input_banff_17,"input_banff_17/D");
     nfitnt->Branch("input_banff_18",&input_banff_18,"input_banff_18/D");
@@ -318,6 +318,7 @@ void test_n_mock_data_fits_with_syst
     nfitnt->Branch("input_banff_28",&input_banff_28,"input_banff_28/D");
     nfitnt->Branch("input_banff_29",&input_banff_29,"input_banff_29/D");
     nfitnt->Branch("input_banff_30",&input_banff_30,"input_banff_30/D");
+#endif
     nfitnt->Branch("input_banff_maqe",&input_banff_maqe,"input_banff_maqe/D");
     nfitnt->Branch("input_banff_mares",&input_banff_mares,"input_banff_mares/D");
     nfitnt->Branch("input_banff_ccqeE0",&input_banff_ccqeE0,"input_banff_ccqeE0/D");
@@ -325,7 +326,9 @@ void test_n_mock_data_fits_with_syst
     nfitnt->Branch("input_banff_ccqeE2",&input_banff_ccqeE2,"input_banff_ccqeE2/D");
     nfitnt->Branch("input_banff_cc1piE0",&input_banff_cc1piE0,"input_banff_cc1piE0/D");
     nfitnt->Branch("input_banff_cc1piE1",&input_banff_cc1piE1,"input_banff_cc1piE1/D");
+#if BANFF_BINS <= 2
     nfitnt->Branch("input_banff_nc1pi0",&input_banff_nc1pi0,"input_banff_nc1pi0/D");
+#endif
     nfitnt->Branch("input_xsec_pf",&input_xsec_pf,"input_xsec_pf/D");
     nfitnt->Branch("input_xsec_sf",&input_xsec_sf,"input_xsec_sf/D");
     nfitnt->Branch("input_xsec_wshape",&input_xsec_wshape,"input_xsec_wshape/D");
@@ -374,7 +377,6 @@ void test_n_mock_data_fits_with_syst
   if(fit_syst_mode == 1) {
     nfitnt->Branch("bestfit_banff_maqe",&bestfit_banff_maqe,"bestfit_banff_maqe/D");
     nfitnt->Branch("bestfit_banff_ccqeE0",&bestfit_banff_ccqeE0,"bestfit_banff_ccqeE0/D");
-    nfitnt->Branch("bestfit_banff_cc1piE0",&bestfit_banff_cc1piE0,"bestfit_banff_cc1piE0/D");
     nfitnt->Branch("bestfit_xsec_sf",&bestfit_xsec_sf,"bestfit_xsec_sf/D");
     nfitnt->Branch("bestfit_xsec_pilessdelta",&bestfit_xsec_pilessdelta,"bestfit_xsec_pilessdelta/D");
     nfitnt->Branch("bestfit_skdet_ccnqe",&bestfit_skdet_ccnqe,"bestfit_skdet_ccnqe/D");
@@ -397,6 +399,7 @@ void test_n_mock_data_fits_with_syst
     nfitnt->Branch("bestfit_banff_13",&bestfit_banff_13,"bestfit_banff_13/D");
     nfitnt->Branch("bestfit_banff_14",&bestfit_banff_14,"bestfit_banff_14/D");
     nfitnt->Branch("bestfit_banff_15",&bestfit_banff_15,"bestfit_banff_15/D");
+#if BANFF_BINS <= 2
     nfitnt->Branch("bestfit_banff_16",&bestfit_banff_16,"bestfit_banff_16/D");
     nfitnt->Branch("bestfit_banff_17",&bestfit_banff_17,"bestfit_banff_17/D");
     nfitnt->Branch("bestfit_banff_18",&bestfit_banff_18,"bestfit_banff_18/D");
@@ -412,6 +415,7 @@ void test_n_mock_data_fits_with_syst
     nfitnt->Branch("bestfit_banff_28",&bestfit_banff_28,"bestfit_banff_28/D");
     nfitnt->Branch("bestfit_banff_29",&bestfit_banff_29,"bestfit_banff_29/D");
     nfitnt->Branch("bestfit_banff_30",&bestfit_banff_30,"bestfit_banff_30/D");
+#endif
     nfitnt->Branch("bestfit_banff_maqe",&bestfit_banff_maqe,"bestfit_banff_maqe/D");
     nfitnt->Branch("bestfit_banff_mares",&bestfit_banff_mares,"bestfit_banff_mares/D");
     nfitnt->Branch("bestfit_banff_ccqeE0",&bestfit_banff_ccqeE0,"bestfit_banff_ccqeE0/D");
@@ -419,7 +423,9 @@ void test_n_mock_data_fits_with_syst
     nfitnt->Branch("bestfit_banff_ccqeE2",&bestfit_banff_ccqeE2,"bestfit_banff_ccqeE2/D");
     nfitnt->Branch("bestfit_banff_cc1piE0",&bestfit_banff_cc1piE0,"bestfit_banff_cc1piE0/D");
     nfitnt->Branch("bestfit_banff_cc1piE1",&bestfit_banff_cc1piE1,"bestfit_banff_cc1piE1/D");
+#if BANFF_BINS <= 2
     nfitnt->Branch("bestfit_banff_nc1pi0",&bestfit_banff_nc1pi0,"bestfit_banff_nc1pi0/D");
+#endif
     nfitnt->Branch("bestfit_xsec_pf",&bestfit_xsec_pf,"bestfit_xsec_pf/D");
     nfitnt->Branch("bestfit_xsec_sf",&bestfit_xsec_sf,"bestfit_xsec_sf/D");
     nfitnt->Branch("bestfit_xsec_wshape",&bestfit_xsec_wshape,"bestfit_xsec_wshape/D");
@@ -468,7 +474,6 @@ void test_n_mock_data_fits_with_syst
   if(fit_syst_mode == 1) {
     nfitnt->Branch("errp_banff_maqe",&errp_banff_maqe,"errp_banff_maqe/D");
     nfitnt->Branch("errp_banff_ccqeE0",&errp_banff_ccqeE0,"errp_banff_ccqeE0/D");
-    nfitnt->Branch("errp_banff_cc1piE0",&errp_banff_cc1piE0,"errp_banff_cc1piE0/D");
     nfitnt->Branch("errp_xsec_sf",&errp_xsec_sf,"errp_xsec_sf/D");
     nfitnt->Branch("errp_xsec_pilessdelta",&errp_xsec_pilessdelta,"errp_xsec_pilessdelta/D");
     nfitnt->Branch("errp_skdet_ccnqe",&errp_skdet_ccnqe,"errp_skdet_ccnqe/D");
@@ -491,6 +496,7 @@ void test_n_mock_data_fits_with_syst
     nfitnt->Branch("errp_banff_13",&errp_banff_13,"errp_banff_13/D");
     nfitnt->Branch("errp_banff_14",&errp_banff_14,"errp_banff_14/D");
     nfitnt->Branch("errp_banff_15",&errp_banff_15,"errp_banff_15/D");
+#if BANFF_BINS <= 2
     nfitnt->Branch("errp_banff_16",&errp_banff_16,"errp_banff_16/D");
     nfitnt->Branch("errp_banff_17",&errp_banff_17,"errp_banff_17/D");
     nfitnt->Branch("errp_banff_18",&errp_banff_18,"errp_banff_18/D");
@@ -506,6 +512,7 @@ void test_n_mock_data_fits_with_syst
     nfitnt->Branch("errp_banff_28",&errp_banff_28,"errp_banff_28/D");
     nfitnt->Branch("errp_banff_29",&errp_banff_29,"errp_banff_29/D");
     nfitnt->Branch("errp_banff_30",&errp_banff_30,"errp_banff_30/D");
+#endif
     nfitnt->Branch("errp_banff_maqe",&errp_banff_maqe,"errp_banff_maqe/D");
     nfitnt->Branch("errp_banff_mares",&errp_banff_mares,"errp_banff_mares/D");
     nfitnt->Branch("errp_banff_ccqeE0",&errp_banff_ccqeE0,"errp_banff_ccqeE0/D");
@@ -513,7 +520,9 @@ void test_n_mock_data_fits_with_syst
     nfitnt->Branch("errp_banff_ccqeE2",&errp_banff_ccqeE2,"errp_banff_ccqeE2/D");
     nfitnt->Branch("errp_banff_cc1piE0",&errp_banff_cc1piE0,"errp_banff_cc1piE0/D");
     nfitnt->Branch("errp_banff_cc1piE1",&errp_banff_cc1piE1,"errp_banff_cc1piE1/D");
+#if BANFF_BINS <= 2
     nfitnt->Branch("errp_banff_nc1pi0",&errp_banff_nc1pi0,"errp_banff_nc1pi0/D");
+#endif
     nfitnt->Branch("errp_xsec_pf",&errp_xsec_pf,"errp_xsec_pf/D");
     nfitnt->Branch("errp_xsec_sf",&errp_xsec_sf,"errp_xsec_sf/D");
     nfitnt->Branch("errp_xsec_wshape",&errp_xsec_wshape,"errp_xsec_wshape/D");
@@ -562,7 +571,6 @@ void test_n_mock_data_fits_with_syst
   if(fit_syst_mode == 1) {
     nfitnt->Branch("errm_banff_maqe",&errm_banff_maqe,"errm_banff_maqe/D");
     nfitnt->Branch("errm_banff_ccqeE0",&errm_banff_ccqeE0,"errm_banff_ccqeE0/D");
-    nfitnt->Branch("errm_banff_cc1piE0",&errm_banff_cc1piE0,"errm_banff_cc1piE0/D");
     nfitnt->Branch("errm_xsec_sf",&errm_xsec_sf,"errm_xsec_sf/D");
     nfitnt->Branch("errm_xsec_pilessdelta",&errm_xsec_pilessdelta,"errm_xsec_pilessdelta/D");
     nfitnt->Branch("errm_skdet_ccnqe",&errm_skdet_ccnqe,"errm_skdet_ccnqe/D");
@@ -585,6 +593,7 @@ void test_n_mock_data_fits_with_syst
     nfitnt->Branch("errm_banff_13",&errm_banff_13,"errm_banff_13/D");
     nfitnt->Branch("errm_banff_14",&errm_banff_14,"errm_banff_14/D");
     nfitnt->Branch("errm_banff_15",&errm_banff_15,"errm_banff_15/D");
+#if BANFF_BINS <= 2
     nfitnt->Branch("errm_banff_16",&errm_banff_16,"errm_banff_16/D");
     nfitnt->Branch("errm_banff_17",&errm_banff_17,"errm_banff_17/D");
     nfitnt->Branch("errm_banff_18",&errm_banff_18,"errm_banff_18/D");
@@ -600,6 +609,7 @@ void test_n_mock_data_fits_with_syst
     nfitnt->Branch("errm_banff_28",&errm_banff_28,"errm_banff_28/D");
     nfitnt->Branch("errm_banff_29",&errm_banff_29,"errm_banff_29/D");
     nfitnt->Branch("errm_banff_30",&errm_banff_30,"errm_banff_30/D");
+#endif
     nfitnt->Branch("errm_banff_maqe",&errm_banff_maqe,"errm_banff_maqe/D");
     nfitnt->Branch("errm_banff_mares",&errm_banff_mares,"errm_banff_mares/D");
     nfitnt->Branch("errm_banff_ccqeE0",&errm_banff_ccqeE0,"errm_banff_ccqeE0/D");
@@ -607,7 +617,9 @@ void test_n_mock_data_fits_with_syst
     nfitnt->Branch("errm_banff_ccqeE2",&errm_banff_ccqeE2,"errm_banff_ccqeE2/D");
     nfitnt->Branch("errm_banff_cc1piE0",&errm_banff_cc1piE0,"errm_banff_cc1piE0/D");
     nfitnt->Branch("errm_banff_cc1piE1",&errm_banff_cc1piE1,"errm_banff_cc1piE1/D");
+#if BANFF_BINS <= 2
     nfitnt->Branch("errm_banff_nc1pi0",&errm_banff_nc1pi0,"errm_banff_nc1pi0/D");
+#endif
     nfitnt->Branch("errm_xsec_pf",&errm_xsec_pf,"errm_xsec_pf/D");
     nfitnt->Branch("errm_xsec_sf",&errm_xsec_sf,"errm_xsec_sf/D");
     nfitnt->Branch("errm_xsec_wshape",&errm_xsec_wshape,"errm_xsec_wshape/D");
@@ -656,7 +668,6 @@ void test_n_mock_data_fits_with_syst
   if(fit_syst_mode == 1) {
     nfitnt->Branch("errpar_banff_maqe",&errpar_banff_maqe,"errpar_banff_maqe/D");
     nfitnt->Branch("errpar_banff_ccqeE0",&errpar_banff_ccqeE0,"errpar_banff_ccqeE0/D");
-    nfitnt->Branch("errpar_banff_cc1piE0",&errpar_banff_cc1piE0,"errpar_banff_cc1piE0/D");
     nfitnt->Branch("errpar_xsec_sf",&errpar_xsec_sf,"errpar_xsec_sf/D");
     nfitnt->Branch("errpar_xsec_pilessdelta",&errpar_xsec_pilessdelta,"errpar_xsec_pilessdelta/D");
     nfitnt->Branch("errpar_skdet_ccnqe",&errpar_skdet_ccnqe,"errpar_skdet_ccnqe/D");
@@ -679,6 +690,7 @@ void test_n_mock_data_fits_with_syst
     nfitnt->Branch("errpar_banff_13",&errpar_banff_13,"errpar_banff_13/D");
     nfitnt->Branch("errpar_banff_14",&errpar_banff_14,"errpar_banff_14/D");
     nfitnt->Branch("errpar_banff_15",&errpar_banff_15,"errpar_banff_15/D");
+#if BANFF_BINS <= 2
     nfitnt->Branch("errpar_banff_16",&errpar_banff_16,"errpar_banff_16/D");
     nfitnt->Branch("errpar_banff_17",&errpar_banff_17,"errpar_banff_17/D");
     nfitnt->Branch("errpar_banff_18",&errpar_banff_18,"errpar_banff_18/D");
@@ -694,6 +706,7 @@ void test_n_mock_data_fits_with_syst
     nfitnt->Branch("errpar_banff_28",&errpar_banff_28,"errpar_banff_28/D");
     nfitnt->Branch("errpar_banff_29",&errpar_banff_29,"errpar_banff_29/D");
     nfitnt->Branch("errpar_banff_30",&errpar_banff_30,"errpar_banff_30/D");
+#endif
     nfitnt->Branch("errpar_banff_maqe",&errpar_banff_maqe,"errpar_banff_maqe/D");
     nfitnt->Branch("errpar_banff_mares",&errpar_banff_mares,"errpar_banff_mares/D");
     nfitnt->Branch("errpar_banff_ccqeE0",&errpar_banff_ccqeE0,"errpar_banff_ccqeE0/D");
@@ -701,7 +714,9 @@ void test_n_mock_data_fits_with_syst
     nfitnt->Branch("errpar_banff_ccqeE2",&errpar_banff_ccqeE2,"errpar_banff_ccqeE2/D");
     nfitnt->Branch("errpar_banff_cc1piE0",&errpar_banff_cc1piE0,"errpar_banff_cc1piE0/D");
     nfitnt->Branch("errpar_banff_cc1piE1",&errpar_banff_cc1piE1,"errpar_banff_cc1piE1/D");
+#if BANFF_BINS <= 2
     nfitnt->Branch("errpar_banff_nc1pi0",&errpar_banff_nc1pi0,"errpar_banff_nc1pi0/D");
+#endif
     nfitnt->Branch("errpar_xsec_pf",&errpar_xsec_pf,"errpar_xsec_pf/D");
     nfitnt->Branch("errpar_xsec_sf",&errpar_xsec_sf,"errpar_xsec_sf/D");
     nfitnt->Branch("errpar_xsec_wshape",&errpar_xsec_wshape,"errpar_xsec_wshape/D");
@@ -804,8 +819,6 @@ void test_n_mock_data_fits_with_syst
 	twkv[ip] = twkdial(rand.Gaus(twkv[ip], cov[ip]));
 	ip       = util::ArrIdx::Instance()->BANFFSystIdx(kNuisBANFFCCQEE0);
 	twkv[ip] = twkdial(rand.Gaus(twkv[ip], cov[ip]));
-	ip       = util::ArrIdx::Instance()->BANFFSystIdx(kNuisBANFFCC1piE0);
-	twkv[ip] = twkdial(rand.Gaus(twkv[ip], cov[ip]));
 	skexp->GetBANFF()->Tweak(true,&twkv);
 	break;
       default:
@@ -818,7 +831,6 @@ void test_n_mock_data_fits_with_syst
       if(fit_syst_mode == 1) {
 	input_banff_maqe = skexp->GetBANFF()->CurrentValue(conv::kNuisBANFFMAQE);
 	input_banff_ccqeE0 = skexp->GetBANFF()->CurrentValue(conv::kNuisBANFFCCQEE0);
-	input_banff_cc1piE0 = skexp->GetBANFF()->CurrentValue(conv::kNuisBANFFCC1piE0);
 	input_xsec_sf = skexp->GetNuXSec()->CurrentValue(conv::kNuisXSecSpecFunc);
 	input_xsec_pilessdelta = skexp->GetNuXSec()->CurrentValue(conv::kNuisXSecPiLessDelta);
 	input_skdet_ccnqe = skexp->GetSuperkDetector()->CurrentValue(conv::kNuisSuperkEff1RmuCCnonQE);
@@ -841,6 +853,7 @@ void test_n_mock_data_fits_with_syst
 	input_banff_13 = skexp->GetBANFF()->CurrentValue(conv::kNuisBANFF13);
 	input_banff_14 = skexp->GetBANFF()->CurrentValue(conv::kNuisBANFF14);
 	input_banff_15 = skexp->GetBANFF()->CurrentValue(conv::kNuisBANFF15);
+#if BANFF_BINS <= 2
 	input_banff_16 = skexp->GetBANFF()->CurrentValue(conv::kNuisBANFF16);
 	input_banff_17 = skexp->GetBANFF()->CurrentValue(conv::kNuisBANFF17);
 	input_banff_18 = skexp->GetBANFF()->CurrentValue(conv::kNuisBANFF18);
@@ -856,6 +869,7 @@ void test_n_mock_data_fits_with_syst
 	input_banff_28 = skexp->GetBANFF()->CurrentValue(conv::kNuisBANFF28);
 	input_banff_29 = skexp->GetBANFF()->CurrentValue(conv::kNuisBANFF29);
 	input_banff_30 = skexp->GetBANFF()->CurrentValue(conv::kNuisBANFF30);
+#endif
 	input_banff_maqe = skexp->GetBANFF()->CurrentValue(conv::kNuisBANFFMAQE);
 	input_banff_mares = skexp->GetBANFF()->CurrentValue(conv::kNuisBANFFMARES);
 	input_banff_ccqeE0 = skexp->GetBANFF()->CurrentValue(conv::kNuisBANFFCCQEE0);
@@ -863,7 +877,9 @@ void test_n_mock_data_fits_with_syst
 	input_banff_ccqeE2 = skexp->GetBANFF()->CurrentValue(conv::kNuisBANFFCCQEE2);
 	input_banff_cc1piE0 = skexp->GetBANFF()->CurrentValue(conv::kNuisBANFFCC1piE0);
 	input_banff_cc1piE1 = skexp->GetBANFF()->CurrentValue(conv::kNuisBANFFCC1piE1);
+#if BANFF_BINS <= 2
 	input_banff_nc1pi0 = skexp->GetBANFF()->CurrentValue(conv::kNuisBANFFNC1pi0);
+#endif
 	input_xsec_pf = skexp->GetNuXSec()->CurrentValue(conv::kNuisXSecFermiMom);
 	input_xsec_sf = skexp->GetNuXSec()->CurrentValue(conv::kNuisXSecSpecFunc);
 	input_xsec_wshape = skexp->GetNuXSec()->CurrentValue(conv::kNuisXSecWshape);
@@ -906,7 +922,6 @@ void test_n_mock_data_fits_with_syst
       if(fit_syst_mode == 1) {
 	if(fparm->Exists(conv::kNuisBANFFMAQE)) fparm->Update(conv::kNuisBANFFMAQE, input_banff_maqe);
 	if(fparm->Exists(conv::kNuisBANFFCCQEE0)) fparm->Update(conv::kNuisBANFFCCQEE0, input_banff_ccqeE0);
-	if(fparm->Exists(conv::kNuisBANFFCC1piE0)) fparm->Update(conv::kNuisBANFFCC1piE0, input_banff_cc1piE0);
 	if(fparm->Exists(conv::kNuisXSecSpecFunc)) fparm->Update(conv::kNuisXSecSpecFunc, input_xsec_sf);
 	if(fparm->Exists(conv::kNuisXSecPiLessDelta)) fparm->Update(conv::kNuisXSecPiLessDelta, input_xsec_pilessdelta);
 	if(fparm->Exists(conv::kNuisSuperkEff1RmuCCnonQE)) fparm->Update(conv::kNuisSuperkEff1RmuCCnonQE, input_skdet_ccnqe);
@@ -929,6 +944,7 @@ void test_n_mock_data_fits_with_syst
 	if(fparm->Exists(conv::kNuisBANFF13)) fparm->Update(conv::kNuisBANFF13, input_banff_13);
 	if(fparm->Exists(conv::kNuisBANFF14)) fparm->Update(conv::kNuisBANFF14, input_banff_14);
 	if(fparm->Exists(conv::kNuisBANFF15)) fparm->Update(conv::kNuisBANFF15, input_banff_15);
+#if BANFF_BINS <= 2
 	if(fparm->Exists(conv::kNuisBANFF16)) fparm->Update(conv::kNuisBANFF16, input_banff_16);
 	if(fparm->Exists(conv::kNuisBANFF17)) fparm->Update(conv::kNuisBANFF17, input_banff_17);
 	if(fparm->Exists(conv::kNuisBANFF18)) fparm->Update(conv::kNuisBANFF18, input_banff_18);
@@ -944,6 +960,7 @@ void test_n_mock_data_fits_with_syst
 	if(fparm->Exists(conv::kNuisBANFF28)) fparm->Update(conv::kNuisBANFF28, input_banff_28);
 	if(fparm->Exists(conv::kNuisBANFF29)) fparm->Update(conv::kNuisBANFF29, input_banff_29);
 	if(fparm->Exists(conv::kNuisBANFF30)) fparm->Update(conv::kNuisBANFF30, input_banff_30);
+#endif
 	if(fparm->Exists(conv::kNuisBANFFMAQE)) fparm->Update(conv::kNuisBANFFMAQE, input_banff_maqe);
 	if(fparm->Exists(conv::kNuisBANFFMARES)) fparm->Update(conv::kNuisBANFFMARES, input_banff_mares);
 	if(fparm->Exists(conv::kNuisBANFFCCQEE0)) fparm->Update(conv::kNuisBANFFCCQEE0, input_banff_ccqeE0);
@@ -951,7 +968,9 @@ void test_n_mock_data_fits_with_syst
 	if(fparm->Exists(conv::kNuisBANFFCCQEE2)) fparm->Update(conv::kNuisBANFFCCQEE2, input_banff_ccqeE2);
 	if(fparm->Exists(conv::kNuisBANFFCC1piE0)) fparm->Update(conv::kNuisBANFFCC1piE0, input_banff_cc1piE0);
 	if(fparm->Exists(conv::kNuisBANFFCC1piE1)) fparm->Update(conv::kNuisBANFFCC1piE1, input_banff_cc1piE1);
+#if BANFF_BINS <= 2
 	if(fparm->Exists(conv::kNuisBANFFNC1pi0)) fparm->Update(conv::kNuisBANFFNC1pi0, input_banff_nc1pi0);
+#endif
 	if(fparm->Exists(conv::kNuisXSecFermiMom)) fparm->Update(conv::kNuisXSecFermiMom, input_xsec_pf);
 	if(fparm->Exists(conv::kNuisXSecSpecFunc)) fparm->Update(conv::kNuisXSecSpecFunc, input_xsec_sf);
 	if(fparm->Exists(conv::kNuisXSecWshape)) fparm->Update(conv::kNuisXSecWshape, input_xsec_wshape);
@@ -1045,7 +1064,6 @@ void test_n_mock_data_fits_with_syst
     if(fit_syst_mode == 1) {
       bestfit_banff_maqe = -1;
       bestfit_banff_ccqeE0 = -1;
-      bestfit_banff_cc1piE0 = -1;
       bestfit_xsec_sf = -1;
       bestfit_xsec_pilessdelta = -1;
       bestfit_skdet_ccnqe = -1;
@@ -1068,6 +1086,7 @@ void test_n_mock_data_fits_with_syst
       bestfit_banff_13 = -1;
       bestfit_banff_14 = -1;
       bestfit_banff_15 = -1;
+#if BANFF_BINS <= 2
       bestfit_banff_16 = -1;
       bestfit_banff_17 = -1;
       bestfit_banff_18 = -1;
@@ -1083,6 +1102,7 @@ void test_n_mock_data_fits_with_syst
       bestfit_banff_28 = -1;
       bestfit_banff_29 = -1;
       bestfit_banff_30 = -1;
+#endif
       bestfit_banff_maqe = -1;
       bestfit_banff_mares = -1;
       bestfit_banff_ccqeE0 = -1;
@@ -1090,7 +1110,9 @@ void test_n_mock_data_fits_with_syst
       bestfit_banff_ccqeE2 = -1;
       bestfit_banff_cc1piE0 = -1;
       bestfit_banff_cc1piE1 = -1;
+#if BANFF_BINS <= 2
       bestfit_banff_nc1pi0 = -1;
+#endif
       bestfit_xsec_pf = -1;
       bestfit_xsec_sf = -1;
       bestfit_xsec_wshape = -1;
@@ -1139,7 +1161,6 @@ void test_n_mock_data_fits_with_syst
     if(fit_syst_mode == 1) {
       errp_banff_maqe = -1;
       errp_banff_ccqeE0 = -1;
-      errp_banff_cc1piE0 = -1;
       errp_xsec_sf = -1;
       errp_xsec_pilessdelta = -1;
       errp_skdet_ccnqe = -1;
@@ -1162,6 +1183,7 @@ void test_n_mock_data_fits_with_syst
       errp_banff_13 = -1;
       errp_banff_14 = -1;
       errp_banff_15 = -1;
+#if BANFF_BINS <= 2
       errp_banff_16 = -1;
       errp_banff_17 = -1;
       errp_banff_18 = -1;
@@ -1177,6 +1199,7 @@ void test_n_mock_data_fits_with_syst
       errp_banff_28 = -1;
       errp_banff_29 = -1;
       errp_banff_30 = -1;
+#endif
       errp_banff_maqe = -1;
       errp_banff_mares = -1;
       errp_banff_ccqeE0 = -1;
@@ -1184,7 +1207,9 @@ void test_n_mock_data_fits_with_syst
       errp_banff_ccqeE2 = -1;
       errp_banff_cc1piE0 = -1;
       errp_banff_cc1piE1 = -1;
+#if BANFF_BINS <= 2
       errp_banff_nc1pi0 = -1;
+#endif
       errp_xsec_pf = -1;
       errp_xsec_sf = -1;
       errp_xsec_wshape = -1;
@@ -1233,7 +1258,6 @@ void test_n_mock_data_fits_with_syst
     if(fit_syst_mode == 1) {
       errm_banff_maqe = -1;
       errm_banff_ccqeE0 = -1;
-      errm_banff_cc1piE0 = -1;
       errm_xsec_sf = -1;
       errm_xsec_pilessdelta = -1;
       errm_skdet_ccnqe = -1;
@@ -1256,6 +1280,7 @@ void test_n_mock_data_fits_with_syst
       errm_banff_13 = -1;
       errm_banff_14 = -1;
       errm_banff_15 = -1;
+#if BANFF_BINS <= 2
       errm_banff_16 = -1;
       errm_banff_17 = -1;
       errm_banff_18 = -1;
@@ -1271,6 +1296,7 @@ void test_n_mock_data_fits_with_syst
       errm_banff_28 = -1;
       errm_banff_29 = -1;
       errm_banff_30 = -1;
+#endif
       errm_banff_maqe = -1;
       errm_banff_mares = -1;
       errm_banff_ccqeE0 = -1;
@@ -1278,7 +1304,9 @@ void test_n_mock_data_fits_with_syst
       errm_banff_ccqeE2 = -1;
       errm_banff_cc1piE0 = -1;
       errm_banff_cc1piE1 = -1;
+#if BANFF_BINS <= 2
       errm_banff_nc1pi0 = -1;
+#endif
       errm_xsec_pf = -1;
       errm_xsec_sf = -1;
       errm_xsec_wshape = -1;
@@ -1327,7 +1355,6 @@ void test_n_mock_data_fits_with_syst
     if(fit_syst_mode == 1) {
       errpar_banff_maqe = -1;
       errpar_banff_ccqeE0 = -1;
-      errpar_banff_cc1piE0 = -1;
       errpar_xsec_sf = -1;
       errpar_xsec_pilessdelta = -1;
       errpar_skdet_ccnqe = -1;
@@ -1350,6 +1377,7 @@ void test_n_mock_data_fits_with_syst
       errpar_banff_13 = -1;
       errpar_banff_14 = -1;
       errpar_banff_15 = -1;
+#if BANFF_BINS <= 2
       errpar_banff_16 = -1;
       errpar_banff_17 = -1;
       errpar_banff_18 = -1;
@@ -1365,6 +1393,7 @@ void test_n_mock_data_fits_with_syst
       errpar_banff_28 = -1;
       errpar_banff_29 = -1;
       errpar_banff_30 = -1;
+#endif
       errpar_banff_maqe = -1;
       errpar_banff_mares = -1;
       errpar_banff_ccqeE0 = -1;
@@ -1372,7 +1401,9 @@ void test_n_mock_data_fits_with_syst
       errpar_banff_ccqeE2 = -1;
       errpar_banff_cc1piE0 = -1;
       errpar_banff_cc1piE1 = -1;
+#if BANFF_BINS <= 2
       errpar_banff_nc1pi0 = -1;
+#endif
       errpar_xsec_pf = -1;
       errpar_xsec_sf = -1;
       errpar_xsec_wshape = -1;
@@ -1427,7 +1458,6 @@ void test_n_mock_data_fits_with_syst
     if(fit_syst_mode == 1) {
       if(fparm->Exists(conv::kNuisBANFFMAQE)) bestfit_banff_maqe = fparm->BestFitValue(conv::kNuisBANFFMAQE);
       if(fparm->Exists(conv::kNuisBANFFCCQEE0)) bestfit_banff_ccqeE0 = fparm->BestFitValue(conv::kNuisBANFFCCQEE0);
-      if(fparm->Exists(conv::kNuisBANFFCC1piE0)) bestfit_banff_cc1piE0 = fparm->BestFitValue(conv::kNuisBANFFCC1piE0);
       if(fparm->Exists(conv::kNuisXSecSpecFunc)) bestfit_xsec_sf = fparm->BestFitValue(conv::kNuisXSecSpecFunc);
       if(fparm->Exists(conv::kNuisXSecPiLessDelta)) bestfit_xsec_pilessdelta = fparm->BestFitValue(conv::kNuisXSecPiLessDelta);
       if(fparm->Exists(conv::kNuisSuperkEff1RmuCCnonQE)) bestfit_skdet_ccnqe = fparm->BestFitValue(conv::kNuisSuperkEff1RmuCCnonQE);
@@ -1450,6 +1480,7 @@ void test_n_mock_data_fits_with_syst
       if(fparm->Exists(conv::kNuisBANFF13)) bestfit_banff_13 = fparm->BestFitValue(conv::kNuisBANFF13);
       if(fparm->Exists(conv::kNuisBANFF14)) bestfit_banff_14 = fparm->BestFitValue(conv::kNuisBANFF14);
       if(fparm->Exists(conv::kNuisBANFF15)) bestfit_banff_15 = fparm->BestFitValue(conv::kNuisBANFF15);
+#if BANFF_BINS <= 2
       if(fparm->Exists(conv::kNuisBANFF16)) bestfit_banff_16 = fparm->BestFitValue(conv::kNuisBANFF16);
       if(fparm->Exists(conv::kNuisBANFF17)) bestfit_banff_17 = fparm->BestFitValue(conv::kNuisBANFF17);
       if(fparm->Exists(conv::kNuisBANFF18)) bestfit_banff_18 = fparm->BestFitValue(conv::kNuisBANFF18);
@@ -1465,6 +1496,7 @@ void test_n_mock_data_fits_with_syst
       if(fparm->Exists(conv::kNuisBANFF28)) bestfit_banff_28 = fparm->BestFitValue(conv::kNuisBANFF28);
       if(fparm->Exists(conv::kNuisBANFF29)) bestfit_banff_29 = fparm->BestFitValue(conv::kNuisBANFF29);
       if(fparm->Exists(conv::kNuisBANFF30)) bestfit_banff_30 = fparm->BestFitValue(conv::kNuisBANFF30);
+#endif
       if(fparm->Exists(conv::kNuisBANFFMAQE)) bestfit_banff_maqe = fparm->BestFitValue(conv::kNuisBANFFMAQE);
       if(fparm->Exists(conv::kNuisBANFFMARES)) bestfit_banff_mares = fparm->BestFitValue(conv::kNuisBANFFMARES);
       if(fparm->Exists(conv::kNuisBANFFCCQEE0)) bestfit_banff_ccqeE0 = fparm->BestFitValue(conv::kNuisBANFFCCQEE0);
@@ -1472,7 +1504,9 @@ void test_n_mock_data_fits_with_syst
       if(fparm->Exists(conv::kNuisBANFFCCQEE2)) bestfit_banff_ccqeE2 = fparm->BestFitValue(conv::kNuisBANFFCCQEE2);
       if(fparm->Exists(conv::kNuisBANFFCC1piE0)) bestfit_banff_cc1piE0 = fparm->BestFitValue(conv::kNuisBANFFCC1piE0);
       if(fparm->Exists(conv::kNuisBANFFCC1piE1)) bestfit_banff_cc1piE1 = fparm->BestFitValue(conv::kNuisBANFFCC1piE1);
+#if BANFF_BINS <= 2
       if(fparm->Exists(conv::kNuisBANFFNC1pi0)) bestfit_banff_nc1pi0 = fparm->BestFitValue(conv::kNuisBANFFNC1pi0);
+#endif
       if(fparm->Exists(conv::kNuisXSecFermiMom)) bestfit_xsec_pf = fparm->BestFitValue(conv::kNuisXSecFermiMom);
       if(fparm->Exists(conv::kNuisXSecSpecFunc)) bestfit_xsec_sf = fparm->BestFitValue(conv::kNuisXSecSpecFunc);
       if(fparm->Exists(conv::kNuisXSecWshape)) bestfit_xsec_wshape = fparm->BestFitValue(conv::kNuisXSecWshape);
@@ -1527,7 +1561,6 @@ void test_n_mock_data_fits_with_syst
     if(fit_syst_mode == 1) {
       if(fparm->Exists(conv::kNuisBANFFMAQE)) errp_banff_maqe = fparm->PlusError(conv::kNuisBANFFMAQE);
       if(fparm->Exists(conv::kNuisBANFFCCQEE0)) errp_banff_ccqeE0 = fparm->PlusError(conv::kNuisBANFFCCQEE0);
-      if(fparm->Exists(conv::kNuisBANFFCC1piE0)) errp_banff_cc1piE0 = fparm->PlusError(conv::kNuisBANFFCC1piE0);
       if(fparm->Exists(conv::kNuisXSecSpecFunc)) errp_xsec_sf = fparm->PlusError(conv::kNuisXSecSpecFunc);
       if(fparm->Exists(conv::kNuisXSecPiLessDelta)) errp_xsec_pilessdelta = fparm->PlusError(conv::kNuisXSecPiLessDelta);
       if(fparm->Exists(conv::kNuisSuperkEff1RmuCCnonQE)) errp_skdet_ccnqe = fparm->PlusError(conv::kNuisSuperkEff1RmuCCnonQE);
@@ -1550,6 +1583,7 @@ void test_n_mock_data_fits_with_syst
       if(fparm->Exists(conv::kNuisBANFF13)) errp_banff_13 = fparm->PlusError(conv::kNuisBANFF13);
       if(fparm->Exists(conv::kNuisBANFF14)) errp_banff_14 = fparm->PlusError(conv::kNuisBANFF14);
       if(fparm->Exists(conv::kNuisBANFF15)) errp_banff_15 = fparm->PlusError(conv::kNuisBANFF15);
+#if BANFF_BINS <= 2
       if(fparm->Exists(conv::kNuisBANFF16)) errp_banff_16 = fparm->PlusError(conv::kNuisBANFF16);
       if(fparm->Exists(conv::kNuisBANFF17)) errp_banff_17 = fparm->PlusError(conv::kNuisBANFF17);
       if(fparm->Exists(conv::kNuisBANFF18)) errp_banff_18 = fparm->PlusError(conv::kNuisBANFF18);
@@ -1565,6 +1599,7 @@ void test_n_mock_data_fits_with_syst
       if(fparm->Exists(conv::kNuisBANFF28)) errp_banff_28 = fparm->PlusError(conv::kNuisBANFF28);
       if(fparm->Exists(conv::kNuisBANFF29)) errp_banff_29 = fparm->PlusError(conv::kNuisBANFF29);
       if(fparm->Exists(conv::kNuisBANFF30)) errp_banff_30 = fparm->PlusError(conv::kNuisBANFF30);
+#endif
       if(fparm->Exists(conv::kNuisBANFFMAQE)) errp_banff_maqe = fparm->PlusError(conv::kNuisBANFFMAQE);
       if(fparm->Exists(conv::kNuisBANFFMARES)) errp_banff_mares = fparm->PlusError(conv::kNuisBANFFMARES);
       if(fparm->Exists(conv::kNuisBANFFCCQEE0)) errp_banff_ccqeE0 = fparm->PlusError(conv::kNuisBANFFCCQEE0);
@@ -1572,7 +1607,9 @@ void test_n_mock_data_fits_with_syst
       if(fparm->Exists(conv::kNuisBANFFCCQEE2)) errp_banff_ccqeE2 = fparm->PlusError(conv::kNuisBANFFCCQEE2);
       if(fparm->Exists(conv::kNuisBANFFCC1piE0)) errp_banff_cc1piE0 = fparm->PlusError(conv::kNuisBANFFCC1piE0);
       if(fparm->Exists(conv::kNuisBANFFCC1piE1)) errp_banff_cc1piE1 = fparm->PlusError(conv::kNuisBANFFCC1piE1);
+#if BANFF_BINS <= 2
       if(fparm->Exists(conv::kNuisBANFFNC1pi0)) errp_banff_nc1pi0 = fparm->PlusError(conv::kNuisBANFFNC1pi0);
+#endif
       if(fparm->Exists(conv::kNuisXSecFermiMom)) errp_xsec_pf = fparm->PlusError(conv::kNuisXSecFermiMom);
       if(fparm->Exists(conv::kNuisXSecSpecFunc)) errp_xsec_sf = fparm->PlusError(conv::kNuisXSecSpecFunc);
       if(fparm->Exists(conv::kNuisXSecWshape)) errp_xsec_wshape = fparm->PlusError(conv::kNuisXSecWshape);
@@ -1627,7 +1664,6 @@ void test_n_mock_data_fits_with_syst
     if(fit_syst_mode == 1) {
       if(fparm->Exists(conv::kNuisBANFFMAQE)) errm_banff_maqe = fparm->MinusError(conv::kNuisBANFFMAQE);
       if(fparm->Exists(conv::kNuisBANFFCCQEE0)) errm_banff_ccqeE0 = fparm->MinusError(conv::kNuisBANFFCCQEE0);
-      if(fparm->Exists(conv::kNuisBANFFCC1piE0)) errm_banff_cc1piE0 = fparm->MinusError(conv::kNuisBANFFCC1piE0);
       if(fparm->Exists(conv::kNuisXSecSpecFunc)) errm_xsec_sf = fparm->MinusError(conv::kNuisXSecSpecFunc);
       if(fparm->Exists(conv::kNuisXSecPiLessDelta)) errm_xsec_pilessdelta = fparm->MinusError(conv::kNuisXSecPiLessDelta);
       if(fparm->Exists(conv::kNuisSuperkEff1RmuCCnonQE)) errm_skdet_ccnqe = fparm->MinusError(conv::kNuisSuperkEff1RmuCCnonQE);
@@ -1650,6 +1686,7 @@ void test_n_mock_data_fits_with_syst
       if(fparm->Exists(conv::kNuisBANFF13)) errm_banff_13 = fparm->MinusError(conv::kNuisBANFF13);
       if(fparm->Exists(conv::kNuisBANFF14)) errm_banff_14 = fparm->MinusError(conv::kNuisBANFF14);
       if(fparm->Exists(conv::kNuisBANFF15)) errm_banff_15 = fparm->MinusError(conv::kNuisBANFF15);
+#if BANFF_BINS <= 2
       if(fparm->Exists(conv::kNuisBANFF16)) errm_banff_16 = fparm->MinusError(conv::kNuisBANFF16);
       if(fparm->Exists(conv::kNuisBANFF17)) errm_banff_17 = fparm->MinusError(conv::kNuisBANFF17);
       if(fparm->Exists(conv::kNuisBANFF18)) errm_banff_18 = fparm->MinusError(conv::kNuisBANFF18);
@@ -1665,6 +1702,7 @@ void test_n_mock_data_fits_with_syst
       if(fparm->Exists(conv::kNuisBANFF28)) errm_banff_28 = fparm->MinusError(conv::kNuisBANFF28);
       if(fparm->Exists(conv::kNuisBANFF29)) errm_banff_29 = fparm->MinusError(conv::kNuisBANFF29);
       if(fparm->Exists(conv::kNuisBANFF30)) errm_banff_30 = fparm->MinusError(conv::kNuisBANFF30);
+#endif
       if(fparm->Exists(conv::kNuisBANFFMAQE)) errm_banff_maqe = fparm->MinusError(conv::kNuisBANFFMAQE);
       if(fparm->Exists(conv::kNuisBANFFMARES)) errm_banff_mares = fparm->MinusError(conv::kNuisBANFFMARES);
       if(fparm->Exists(conv::kNuisBANFFCCQEE0)) errm_banff_ccqeE0 = fparm->MinusError(conv::kNuisBANFFCCQEE0);
@@ -1672,7 +1710,9 @@ void test_n_mock_data_fits_with_syst
       if(fparm->Exists(conv::kNuisBANFFCCQEE2)) errm_banff_ccqeE2 = fparm->MinusError(conv::kNuisBANFFCCQEE2);
       if(fparm->Exists(conv::kNuisBANFFCC1piE0)) errm_banff_cc1piE0 = fparm->MinusError(conv::kNuisBANFFCC1piE0);
       if(fparm->Exists(conv::kNuisBANFFCC1piE1)) errm_banff_cc1piE1 = fparm->MinusError(conv::kNuisBANFFCC1piE1);
+#if BANFF_BINS <= 2
       if(fparm->Exists(conv::kNuisBANFFNC1pi0)) errm_banff_nc1pi0 = fparm->MinusError(conv::kNuisBANFFNC1pi0);
+#endif
       if(fparm->Exists(conv::kNuisXSecFermiMom)) errm_xsec_pf = fparm->MinusError(conv::kNuisXSecFermiMom);
       if(fparm->Exists(conv::kNuisXSecSpecFunc)) errm_xsec_sf = fparm->MinusError(conv::kNuisXSecSpecFunc);
       if(fparm->Exists(conv::kNuisXSecWshape)) errm_xsec_wshape = fparm->MinusError(conv::kNuisXSecWshape);
@@ -1727,7 +1767,6 @@ void test_n_mock_data_fits_with_syst
     if(fit_syst_mode == 1) {
       if(fparm->Exists(conv::kNuisBANFFMAQE)) errpar_banff_maqe = fparm->ParabolicError(conv::kNuisBANFFMAQE);
       if(fparm->Exists(conv::kNuisBANFFCCQEE0)) errpar_banff_ccqeE0 = fparm->ParabolicError(conv::kNuisBANFFCCQEE0);
-      if(fparm->Exists(conv::kNuisBANFFCC1piE0)) errpar_banff_cc1piE0 = fparm->ParabolicError(conv::kNuisBANFFCC1piE0);
       if(fparm->Exists(conv::kNuisXSecSpecFunc)) errpar_xsec_sf = fparm->ParabolicError(conv::kNuisXSecSpecFunc);
       if(fparm->Exists(conv::kNuisXSecPiLessDelta)) errpar_xsec_pilessdelta = fparm->ParabolicError(conv::kNuisXSecPiLessDelta);
       if(fparm->Exists(conv::kNuisSuperkEff1RmuCCnonQE)) errpar_skdet_ccnqe = fparm->ParabolicError(conv::kNuisSuperkEff1RmuCCnonQE);
@@ -1750,6 +1789,7 @@ void test_n_mock_data_fits_with_syst
       if(fparm->Exists(conv::kNuisBANFF13)) errpar_banff_13 = fparm->ParabolicError(conv::kNuisBANFF13);
       if(fparm->Exists(conv::kNuisBANFF14)) errpar_banff_14 = fparm->ParabolicError(conv::kNuisBANFF14);
       if(fparm->Exists(conv::kNuisBANFF15)) errpar_banff_15 = fparm->ParabolicError(conv::kNuisBANFF15);
+#if BANFF_BINS <= 2
       if(fparm->Exists(conv::kNuisBANFF16)) errpar_banff_16 = fparm->ParabolicError(conv::kNuisBANFF16);
       if(fparm->Exists(conv::kNuisBANFF17)) errpar_banff_17 = fparm->ParabolicError(conv::kNuisBANFF17);
       if(fparm->Exists(conv::kNuisBANFF18)) errpar_banff_18 = fparm->ParabolicError(conv::kNuisBANFF18);
@@ -1765,6 +1805,7 @@ void test_n_mock_data_fits_with_syst
       if(fparm->Exists(conv::kNuisBANFF28)) errpar_banff_28 = fparm->ParabolicError(conv::kNuisBANFF28);
       if(fparm->Exists(conv::kNuisBANFF29)) errpar_banff_29 = fparm->ParabolicError(conv::kNuisBANFF29);
       if(fparm->Exists(conv::kNuisBANFF30)) errpar_banff_30 = fparm->ParabolicError(conv::kNuisBANFF30);
+#endif
       if(fparm->Exists(conv::kNuisBANFFMAQE)) errpar_banff_maqe = fparm->ParabolicError(conv::kNuisBANFFMAQE);
       if(fparm->Exists(conv::kNuisBANFFMARES)) errpar_banff_mares = fparm->ParabolicError(conv::kNuisBANFFMARES);
       if(fparm->Exists(conv::kNuisBANFFCCQEE0)) errpar_banff_ccqeE0 = fparm->ParabolicError(conv::kNuisBANFFCCQEE0);
@@ -1772,7 +1813,9 @@ void test_n_mock_data_fits_with_syst
       if(fparm->Exists(conv::kNuisBANFFCCQEE2)) errpar_banff_ccqeE2 = fparm->ParabolicError(conv::kNuisBANFFCCQEE2);
       if(fparm->Exists(conv::kNuisBANFFCC1piE0)) errpar_banff_cc1piE0 = fparm->ParabolicError(conv::kNuisBANFFCC1piE0);
       if(fparm->Exists(conv::kNuisBANFFCC1piE1)) errpar_banff_cc1piE1 = fparm->ParabolicError(conv::kNuisBANFFCC1piE1);
+#if BANFF_BINS <= 2
       if(fparm->Exists(conv::kNuisBANFFNC1pi0)) errpar_banff_nc1pi0 = fparm->ParabolicError(conv::kNuisBANFFNC1pi0);
+#endif
       if(fparm->Exists(conv::kNuisXSecFermiMom)) errpar_xsec_pf = fparm->ParabolicError(conv::kNuisXSecFermiMom);
       if(fparm->Exists(conv::kNuisXSecSpecFunc)) errpar_xsec_sf = fparm->ParabolicError(conv::kNuisXSecSpecFunc);
       if(fparm->Exists(conv::kNuisXSecWshape)) errpar_xsec_wshape = fparm->ParabolicError(conv::kNuisXSecWshape);
@@ -1871,7 +1914,6 @@ void test_n_mock_data_fits_with_syst
       //make sure that the systematics are set at their bestfit value
       fparm->Update( conv::kNuisBANFFMAQE,       bestfit_banff_maqe   );
       fparm->Update( conv::kNuisBANFFCCQEE0,     bestfit_banff_ccqeE0   );
-      fparm->Update( conv::kNuisBANFFCC1piE0,    bestfit_banff_cc1piE0   );
       fparm->Update( conv::kNuisXSecSpecFunc,    bestfit_xsec_sf   );
       fparm->Update( conv::kNuisXSecPiLessDelta, bestfit_xsec_pilessdelta   );
       fparm->Update( conv::kNuisSuperkEff1RmuCCnonQE,   bestfit_skdet_ccnqe   );

@@ -42,7 +42,7 @@ void run_fitter
   double       input_deltacp      = 0.00,                                           /* */
   double       input_dm12sq       = 7.6E-5,                                         /* value from nue appearance TN52 */
   double       input_dm23sq       = 2.4E-3,                                         /* value from nue appearance TN52 */
-  const char * output_option  = "Observation+BestFitSpectra+ChisqSurface+Canvases"  /* what to write-out once the fit is done */
+  const char * output_option  = "Observation+BestFitSpectra+Canvases"  /* what to write-out once the fit is done */
 )
 {
   using namespace std;
