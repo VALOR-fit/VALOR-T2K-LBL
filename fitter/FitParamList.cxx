@@ -163,28 +163,6 @@ void FitParamList::SetTo(TVirtualFitter * fitter)
   }
 }
 //________________________________________________________________________________________
-void FitParamList::SetTo(TVirtualFitter * fitter)
-{
-  if(!fitter) return;
-  fitter->Clear();
-  map<t2kana::conv::PhysParamId_t, int>::const_iterator iter = fIdMap.begin();
-  for ( ; iter != fIdMap.end(); ++iter) {
-    PhysParamId_t p = iter->first;
-    int iparam = iter->second;
-    fitter->SetParameter(
-      iparam,
-      this->Name(p).c_str(),
-      this->InitValue(p),
-      this->StepSize(p),
-      this->MinValue(p),
-      this->MaxValue(p) );
-
-    if(this->IsFixed(p)) {
-     fitter->FixParameter(iparam);
-    }
-  }
-}
-//________________________________________________________________________________________
 void FitParamList::Sync(double * par)
 {
   if(!par) return;
