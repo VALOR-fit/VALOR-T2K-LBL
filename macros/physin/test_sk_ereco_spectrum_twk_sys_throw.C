@@ -57,7 +57,7 @@ void test_sk_ereco_spectrum_twk_sys_throw
   using namespace std;
   using namespace t2kana;
 
-  const int nexp = 20000; //number of experiments to make
+  const int nexp = 2000; //number of experiments to make
 
   conv::SuperkSample_t s = conv::kSKsFCFV1RingMuLike;
 
@@ -196,11 +196,11 @@ void test_sk_ereco_spectrum_twk_sys_throw
         case(0) :
 	  sysstr = "sk_energy_scale"; break;
         case(1) :
-	  sysstr = "sk_1Rmu_ccqe_ring_counting_eff_0"; break;
+	  sysstr = "sk_ccqe_rc_eff_0"; break;
         case(2) :
-	  sysstr = "sk_1Rmu_ccqe_ring_counting_eff_1"; break;
+	  sysstr = "sk_ccqe_rc_eff_1"; break;
         case(3) :
-	  sysstr = "sk_1Rmu_ccqe_ring_counting_eff_2"; break;
+	  sysstr = "sk_ccqe_rc_eff_2"; break;
         case(4) :
 	  sysstr = "sk_1Rmu_ccqe_other_eff"; break;
         case(5) :
@@ -255,6 +255,11 @@ void test_sk_ereco_spectrum_twk_sys_throw
     ofstream outfile(Form("sk_ereco_spectrum-twk_sys_throw_%s.txt",oscparams.c_str()),ios_base::trunc);
   else
     ofstream outfile(Form("sk_ereco_spectrum-twk_sys_throw_%s.txt",oscparams.c_str()),ios_base::app);
+
+  //remove the [] so can use it in SaveAs
+  while(oscparams.find_first_of("[]") != string::npos) {
+    oscparams.erase(oscparams.find_first_of("[]"), 1);
+  }
 
   // Get the nominal
   skexp.Generate(ph);
@@ -373,16 +378,16 @@ void test_sk_ereco_spectrum_twk_sys_throw
     for(int isys = 0; isys < nfsi; isys++) {
       hSysThrown[isys+nbanff]->Fill(skexp.GetFSI()->CurrentValue(util::PhysParamIdFromString(Form("fsi_%03d",isys))));
     }
-    hSysThrown[nbanff+nfsi+0]->Fill(skexp.GetSuperkDetector()->CurrentValue(util::PhysParamIdFromString("sk_energy_scale")));
-    hSysThrown[nbanff+nfsi+1]->Fill(skexp.GetSuperkDetector()->CurrentValue(util::PhysParamIdFromString("sk_1Rmu_ccqe_ring_counting_eff_0")));
-    hSysThrown[nbanff+nfsi+2]->Fill(skexp.GetSuperkDetector()->CurrentValue(util::PhysParamIdFromString("sk_1Rmu_ccqe_ring_counting_eff_1")));
-    hSysThrown[nbanff+nfsi+3]->Fill(skexp.GetSuperkDetector()->CurrentValue(util::PhysParamIdFromString("sk_1Rmu_ccqe_ring_counting_eff_2")));
-    hSysThrown[nbanff+nfsi+4]->Fill(skexp.GetSuperkDetector()->CurrentValue(util::PhysParamIdFromString("sk_1Rmu_ccqe_other_eff")));
-    hSysThrown[nbanff+nfsi+5]->Fill(skexp.GetSuperkDetector()->CurrentValue(util::PhysParamIdFromString("sk_1Rmu_ccnonqe_eff")));
-    hSysThrown[nbanff+nfsi+6]->Fill(skexp.GetSuperkDetector()->CurrentValue(util::PhysParamIdFromString("sk_1Rmu_nc_eff")));
-    hSysThrown[nbanff+nfsi+7]->Fill(skexp.GetSuperkDetector()->CurrentValue(util::PhysParamIdFromString("sk_1Rmu_nuecc_eff")));
-    hSysThrown[nbanff+nfsi+8]->Fill(skexp.GetNuXSec()->CurrentValue(util::PhysParamIdFromString("xsec_pf")));
-    hSysThrown[nbanff+nfsi+9]->Fill(skexp.GetNuXSec()->CurrentValue(util::PhysParamIdFromString("xsec_sf")));
+    hSysThrown[nbanff+nfsi+0 ]->Fill(skexp.GetSuperkDetector()->CurrentValue(util::PhysParamIdFromString("sk_energy_scale")));
+    hSysThrown[nbanff+nfsi+1 ]->Fill(skexp.GetSuperkDetector()->CurrentValue(util::PhysParamIdFromString("sk_1Rmu_ccqe_ring_counting_eff_0")));
+    hSysThrown[nbanff+nfsi+2 ]->Fill(skexp.GetSuperkDetector()->CurrentValue(util::PhysParamIdFromString("sk_1Rmu_ccqe_ring_counting_eff_1")));
+    hSysThrown[nbanff+nfsi+3 ]->Fill(skexp.GetSuperkDetector()->CurrentValue(util::PhysParamIdFromString("sk_1Rmu_ccqe_ring_counting_eff_2")));
+    hSysThrown[nbanff+nfsi+4 ]->Fill(skexp.GetSuperkDetector()->CurrentValue(util::PhysParamIdFromString("sk_1Rmu_ccqe_other_eff")));
+    hSysThrown[nbanff+nfsi+5 ]->Fill(skexp.GetSuperkDetector()->CurrentValue(util::PhysParamIdFromString("sk_1Rmu_ccnonqe_eff")));
+    hSysThrown[nbanff+nfsi+6 ]->Fill(skexp.GetSuperkDetector()->CurrentValue(util::PhysParamIdFromString("sk_1Rmu_nc_eff")));
+    hSysThrown[nbanff+nfsi+7 ]->Fill(skexp.GetSuperkDetector()->CurrentValue(util::PhysParamIdFromString("sk_1Rmu_nuecc_eff")));
+    hSysThrown[nbanff+nfsi+8 ]->Fill(skexp.GetNuXSec()->CurrentValue(util::PhysParamIdFromString("xsec_pf")));
+    hSysThrown[nbanff+nfsi+9 ]->Fill(skexp.GetNuXSec()->CurrentValue(util::PhysParamIdFromString("xsec_sf")));
     hSysThrown[nbanff+nfsi+10]->Fill(skexp.GetNuXSec()->CurrentValue(util::PhysParamIdFromString("xsec_wshape")));
     hSysThrown[nbanff+nfsi+11]->Fill(skexp.GetNuXSec()->CurrentValue(util::PhysParamIdFromString("xsec_shape_ccoth")));
     hSysThrown[nbanff+nfsi+12]->Fill(skexp.GetNuXSec()->CurrentValue(util::PhysParamIdFromString("xsec_pilessdelta")));
@@ -438,6 +443,7 @@ void test_sk_ereco_spectrum_twk_sys_throw
   for(int isys=0; isys < nsys; isys++) {
     csys->cd(isys+1);
     hSysThrown[isys]->Draw();
+    cout << isys << "\t" << hSysThrown[isys]->GetTitle() << endl;
   }
   csys->SaveAs(Form("%s_throws_%s.pdf",modetitle.c_str(),oscparams.c_str()));
   delete c;

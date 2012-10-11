@@ -472,6 +472,7 @@ void SuperkExpectation::TweakAllUncorrelatedXSecSystematics(void)
   this->GetNuXSec()->TweakShapeCCoth    (rand.Gaus(0.,1.));
   this->GetNuXSec()->TweakPiLessDelta   (rand.Gaus(0.,1.));
   this->GetNuXSec()->TweakENuShape      (rand.Gaus(0.,1.));
+  this->GetNuXSec()->TweakBindE         (rand.Gaus(0.,1.));
 #if BANFF_BINS <= 1
   this->GetNuXSec()->TweakNormCCQEE1    (rand.Gaus(0.,1.));
   this->GetNuXSec()->TweakNormCCQEE2    (rand.Gaus(0.,1.));
@@ -705,6 +706,10 @@ void SuperkExpectation::SetNuisanceParams(const FitParamList & fp)
    if(fp.Exists(kNuisXSecENuShape)) {
      double twk = fp.CurrValue(kNuisXSecENuShape);
      this->GetNuXSec()->TweakENuShape(twk);
+   }
+   if(fp.Exists(kNuisXSecBindE)) {
+     double twk = fp.CurrValue(kNuisXSecBindE);
+     this->GetNuXSec()->TweakBindE(twk);
    }
 #if BANFF_BINS <= 1
    if(fp.Exists(kNuisXSecNormCCQEE1)) {
