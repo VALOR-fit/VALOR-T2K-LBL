@@ -6,17 +6,18 @@
 //
 // There are many run modes:
 //
-//   0 tweak all parameters
-//   1 tweak all BANFF
-//   2 tweak all BANFF flux
-//   3 tweak all BANFF xsec
+//   0 tweak all parameters (BANFF correlated)
+//   1 tweak all BANFF (correlated)
+//   2 tweak all BANFF flux (correlated)
+//   3 tweak all BANFF xsec (correlated)
 //   4 tweak all unconstrained xsec
-//   5 tweak all xsec (BANFF + unconstrained)
+//   5 tweak all xsec (BANFF (correlated) + unconstrained)
 //   6 tweak all sk detector (without energy scale)
 //   7 tweak all sk ccqe ring counting efficiency
 //   8 tweak all sk detector
 //   9 tweak all fsi
-//  10 tweak all (except energy scale!)
+//  10 tweak all (except energy scale!) (BANFF correlated)
+//  11 tweak all BANFF uncorrelated
 //
 // 100 tweak banff00
 // 101 tweak banff01
@@ -59,6 +60,11 @@
 // 501 ring counting 1 + other
 // 502 ring counting 2 + other
 // 503 all ring counting + other
+//
+// 600 tweak unbanff00
+// 601 tweak unbanff01
+// ...
+// 600+kNumOfParamsInBANFFfit tweak last uncorrelated banff parameter
 //
 //
 // Tom Dealtry
@@ -111,6 +117,8 @@ void test_sk_ereco_spectrum_twk_sys
       modetitle = "fsi"; break;
     case 10:
       modetitle = "all(without-energy-scale)"; break;
+    case 11:
+      modetitle = "BANFF-uncorrelated"; break;
 
     case 200:
       modetitle = "xsec_pf"; break;
@@ -177,6 +185,9 @@ void test_sk_ereco_spectrum_twk_sys
       }
       else if(mode >= 400 && mode < 400+conv::kNumOfFSIParams) {
 	modetitle = Form("fsi_%03d",mode-400); break;
+      }
+      if(mode >= 600 && mode < 600+conv::kNumOfParamsInBANFFfit) {
+	modetitle = Form("unbanff_%02d",mode-100); break;
       }
       else {
 	cout << "Unknown mode " << mode << endl; exit(1); break;
@@ -384,6 +395,16 @@ void test_sk_ereco_spectrum_twk_sys
 	skexp.GetFSI()->Tweak(true,&v);
       }
 
+      //all BANFF uncorrelated
+      if(mode == 0 || mode == 1 || mode == 10) {
+	TVectorD v(conv::kNumOfParamsInBANFFfit);
+	v = skexp.GetBANFF()->CurrentUncorrelatedValues();
+	for(int ib = 0; ib < conv::kNumOfParamsInBANFFfit; ib++) {
+	  v[ib] = 0 + (tweak * sqrt(skexp.GetBANFF()->CovMatrix()[ib][ib]));
+	}
+	skexp.GetBANFF()->Tweak(true,&v,false);
+      }
+
     }//mode<100
 
     else {
@@ -470,6 +491,14 @@ void test_sk_ereco_spectrum_twk_sys
 	    int ib = mode - 400;
 	    v[ib] = 1 + (tweak * sqrt(skexp.GetFSI()->CovMatrix()[ib][ib]));
 	    skexp.GetFSI()->Tweak(true,&v);
+	    break;
+	  }
+	  if(mode >= 600 && mode < 600+conv::kNumOfParamsInBANFFfit) {
+	    TVectorD v(conv::kNumOfParamsInBANFFfit);
+	    v = skexp.GetBANFF()->CurrentUncorrelatedValues();
+	    int ib = mode - 600;
+	    v[ib] = 0 + (tweak * sqrt(skexp.GetBANFF()->CovMatrix()[ib][ib]));
+	    skexp.GetBANFF()->Tweak(true,&v,false);
 	    break;
 	  }
 	  else {
@@ -628,7 +657,7 @@ void test_sk_ereco_spectrum_twk_sys
   }
 
   if(!summary_p) {
-    int nbins = conv::kNumOfParamsInBANFFfit + 19 + 8 + conv::kNumOfFSIParams;
+    int nbins = (2*conv::kNumOfParamsInBANFFfit) + 19 + 8 + conv::kNumOfFSIParams;
     summary_p = new TH1D("summary_p","summary_p",nbins,0,nbins);
     summary_p->SetLineColor(kRed);
     summary_p->GetYaxis()->SetTitle("% change");
@@ -660,9 +689,11 @@ void test_sk_ereco_spectrum_twk_sys
     summary_p->GetXaxis()->SetBinLabel(conv::kNumOfParamsInBANFFfit+24,"xsec_bindE");
     for(int i = 0; i < conv::kNumOfFSIParams; i++)
       summary_p->GetXaxis()->SetBinLabel(i+conv::kNumOfParamsInBANFFfit+23,Form("fsi_%03d",i));
+    for(int i = 0; i < conv::kNumOfParamsInBANFFfit; i++)
+      summary_p->GetXaxis()->SetBinLabel(i+conv::kNumOfParamsInBANFFfit+23+conv::kNumOfFSIParams,Form("unbanff_%02d",i));
   }
   if(!summary_m) {
-    int nbins = conv::kNumOfParamsInBANFFfit + 19 + 8 + conv::kNumOfFSIParams;
+    int nbins =  (2*conv::kNumOfParamsInBANFFfit) + 19 + 8 + conv::kNumOfFSIParams;
     summary_m = new TH1D("summary_m","summary_m",nbins,0,nbins);
     summary_m->SetLineColor(kBlue);
     summary_m->GetYaxis()->SetTitle("% change");
@@ -694,6 +725,8 @@ void test_sk_ereco_spectrum_twk_sys
     summary_m->GetXaxis()->SetBinLabel(conv::kNumOfParamsInBANFFfit+24,"xsec_bindE");
     for(int i = 0; i < conv::kNumOfFSIParams; i++)
       summary_m->GetXaxis()->SetBinLabel(i+conv::kNumOfParamsInBANFFfit+23,Form("fsi_%03d",i));
+    for(int i = 0; i < conv::kNumOfParamsInBANFFfit; i++)
+      summary_m->GetXaxis()->SetBinLabel(i+conv::kNumOfParamsInBANFFfit+23+conv::kNumOfFSIParams,Form("unbanff_%02d",i));
   }
   if(!categories_p) {
     categories_p = new TH1D("categories_p","categories_p",11,0,11);
@@ -710,6 +743,7 @@ void test_sk_ereco_spectrum_twk_sys
     categories_p->GetXaxis()->SetBinLabel(9,"sk-detector(without-energy-scale)");
     categories_p->GetXaxis()->SetBinLabel(10,"sk-ccqe-ring-counting-efficiency");
     categories_p->GetXaxis()->SetBinLabel(11,"fsi");
+    categories_p->GetXaxis()->SetBinLabel(12,"BANFF-uncorrelated");
   }
   if(!categories_m) {
     categories_m = new TH1D("categories_m","categories_m",11,0,11);
@@ -726,12 +760,13 @@ void test_sk_ereco_spectrum_twk_sys
     categories_m->GetXaxis()->SetBinLabel(9,"sk-detector(without-energy-scale)");
     categories_m->GetXaxis()->SetBinLabel(10,"sk-ccqe-ring-counting-efficiency");
     categories_m->GetXaxis()->SetBinLabel(11,"fsi");
+    categories_m->GetXaxis()->SetBinLabel(12,"BANFF-uncorrelated");
   }
   for(int im = 0; im < conv::knm; im++) {
     conv::SuperkMode_t m = conv::kSKReactionModes[is][im];
     if(m == conv::kSKmUndefined) continue;
     if(!summarymode_p[im]) {
-      int nbins = conv::kNumOfParamsInBANFFfit + 19 + 8 + conv::kNumOfFSIParams;
+      int nbins = (2*conv::kNumOfParamsInBANFFfit) + 19 + 8 + conv::kNumOfFSIParams;
       summarymode_p[im] = new TH1D(Form("summarymode_p_%s",util::AsStringCompact(m).c_str()),Form("summarymode_p_%s",util::AsStringCompact(m).c_str()),nbins,0,nbins);
       summarymode_p[im]->SetLineColor(kRed);
       summarymode_p[im]->GetYaxis()->SetTitle("% change");
@@ -763,9 +798,11 @@ void test_sk_ereco_spectrum_twk_sys
       summarymode_p[im]->GetXaxis()->SetBinLabel(conv::kNumOfParamsInBANFFfit+24,"xsec_bindE");
       for(int i = 0; i < conv::kNumOfFSIParams; i++)
 	summarymode_p[im]->GetXaxis()->SetBinLabel(i+conv::kNumOfParamsInBANFFfit+23,Form("fsi_%03d",i));
+      for(int i = 0; i < conv::kNumOfParamsInBANFFfit; i++)
+	summarymode_p[im]->GetXaxis()->SetBinLabel(i+conv::kNumOfParamsInBANFFfit+23+conv::kNumOfFSIParams,Form("unbanff_%02d",i));
     }
     if(!summarymode_m[im]) {
-      int nbins = conv::kNumOfParamsInBANFFfit + 19 + 8 + conv::kNumOfFSIParams;
+      int nbins = (2*conv::kNumOfParamsInBANFFfit) + 19 + 8 + conv::kNumOfFSIParams;
       summarymode_m[im] = new TH1D(Form("summarymode_m_%s",util::AsStringCompact(m).c_str()),Form("summarymode_m_%s",util::AsStringCompact(m).c_str()),nbins,0,nbins);
       summarymode_m[im]->SetLineColor(kBlue);
       summarymode_m[im]->GetYaxis()->SetTitle("% change");
@@ -797,6 +834,8 @@ void test_sk_ereco_spectrum_twk_sys
       summarymode_m[im]->GetXaxis()->SetBinLabel(conv::kNumOfParamsInBANFFfit+24,"xsec_bindE");
       for(int i = 0; i < conv::kNumOfFSIParams; i++)
 	summarymode_m[im]->GetXaxis()->SetBinLabel(i+conv::kNumOfParamsInBANFFfit+23,Form("fsi_%03d",i));
+      for(int i = 0; i < conv::kNumOfParamsInBANFFfit; i++)
+	summarymode_m[im]->GetXaxis()->SetBinLabel(i+conv::kNumOfParamsInBANFFfit+23+conv::kNumOfFSIParams,Form("unbanff_%02d",i));
     }
     if(!categoriesmode_p[im]) {
       categoriesmode_p[im] = new TH1D(Form("categoriesmode_p_%s",util::AsStringCompact(m).c_str()),Form("categoriesmode_p_%s",util::AsStringCompact(m).c_str()),11,0,11);
@@ -813,6 +852,7 @@ void test_sk_ereco_spectrum_twk_sys
       categoriesmode_p[im]->GetXaxis()->SetBinLabel(9,"sk-detector(without-energy-scale)");
       categoriesmode_p[im]->GetXaxis()->SetBinLabel(10,"sk-ccqe-ring-counting-efficiency");
       categoriesmode_p[im]->GetXaxis()->SetBinLabel(11,"fsi");
+      categoriesmode_p[im]->GetXaxis()->SetBinLabel(12,"BANFF-uncorrelated");
     }
     if(!categoriesmode_m[im]) {
       categoriesmode_m[im] = new TH1D(Form("categoriesmode_m_%s",util::AsStringCompact(m).c_str()),Form("categoriesmode_m_%s",util::AsStringCompact(m).c_str()),11,0,11);
@@ -829,6 +869,7 @@ void test_sk_ereco_spectrum_twk_sys
       categoriesmode_m[im]->GetXaxis()->SetBinLabel(9,"sk-detector(without-energy-scale)");
       categoriesmode_m[im]->GetXaxis()->SetBinLabel(10,"sk-ccqe-ring-counting-efficiency");
       categoriesmode_m[im]->GetXaxis()->SetBinLabel(11,"fsi");
+      categoriesmode_m[im]->GetXaxis()->SetBinLabel(12,"BANFF-uncorrelated");
     }
   }
 

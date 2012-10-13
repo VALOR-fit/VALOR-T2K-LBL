@@ -6,10 +6,11 @@
 // There are many run modes:
 //
 //   0 tweak all parameters
-//   1 tweak all BANFF
+//   1 tweak all BANFF (uncorrelated)
 //   2 tweak all unconstrained xsec
 //   3 tweak all sk detector
 //   4 tweak all fsi
+//   5 tweak all BANFF (correlated)
 //
 // 200 tweak xsec_pf
 // 201 tweak xsec_sf
@@ -57,7 +58,7 @@ void test_sk_ereco_spectrum_twk_sys_throw
   using namespace std;
   using namespace t2kana;
 
-  const int nexp = 2000; //number of experiments to make
+  const int nexp = 20000; //number of experiments to make
 
   conv::SuperkSample_t s = conv::kSKsFCFV1RingMuLike;
 
@@ -67,7 +68,7 @@ void test_sk_ereco_spectrum_twk_sys_throw
     case 0:
       modetitle = "all"; break;
     case 1:
-      modetitle = "BANFF"; break;
+      modetitle = "BANFF-uncorrelated"; break;
     case 2:
       modetitle = "unconstrained-xsec"; break;
     case 3:
@@ -76,6 +77,8 @@ void test_sk_ereco_spectrum_twk_sys_throw
       char fsibins[40] = "";
       sprintf(fsibins, "fsi_%d", conv::kNumOfFSIParams);
       modetitle = fsibins; break;
+    case 5:
+      modetitle = "BANFF-correlated"; break;
 
     case 200:
       modetitle = "xsec_pf"; break;
@@ -278,9 +281,9 @@ void test_sk_ereco_spectrum_twk_sys_throw
 
     if(mode < 100) {
 
-      // BANFF
+      // BANFF (uncorrelated)
       if(mode == 0 || mode == 1) {
-	skexp.TweakAllBANFFSystematics();
+	skexp.TweakAllUncorrelatedBANFFSystematics();
       }
 
       // Uncorrelated XSec
@@ -297,6 +300,11 @@ void test_sk_ereco_spectrum_twk_sys_throw
       if(mode == 0 || mode == 4) {
 	skexp.TweakAllFSISystematics();
 	//skexp.GetFSI()->PrintSystematicVariations();
+      }
+
+     // BANFF (correlated)
+      if(mode == 5) {
+	skexp.TweakAllBANFFSystematics();
       }
 
     }//mode<100

@@ -21,12 +21,13 @@ It will then create the .root, *.pdf, in the current working directory
 conffile = "analysis_configuration.xml"
 emax = 7
 
-modes1 = [0,1,2,3,4,5,6,7,8,9,10] #combinations
+modes1 = [0,1,2,3,4,5,6,7,8,9,10,11] #combinations
 modes2 = range(100,139) #banff
 modes3 = range(200,216) #unconstranied xsec
 modes4 = range(300,308) #sk detector
 modes5 = range(400,449) #fsi
 modes6 = range(500,504) #special comparison tweaks
+modes7 = range(600,639) #uncorrelated banff
 
 modes = modes1 + modes2 + modes3 + modes4 + modes5 #+ modes6
 

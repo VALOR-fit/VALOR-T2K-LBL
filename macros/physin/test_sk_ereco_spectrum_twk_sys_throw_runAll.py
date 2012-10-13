@@ -31,7 +31,7 @@ conffile = "analysis_configuration.xml"
 
 save_toy_expts = "false"
 
-modes1 = [0,1,2,3,4] #combinations
+modes1 = [0,1,2,3,4,5] #combinations
 modes3 = range(200,216) #unconstranied xsec
 modes4 = range(300,306) #sk detector
 
@@ -45,6 +45,7 @@ oscparams.append([-99, -99, -99, -99, -99, -99]) #use global best fits!
 #oscparams.append([0.86, 0.1,  1,  0,  7.58E-5,  2.32E-3])
 #oscparams.append([0.86, 0,    1,  0,  7.58E-5,  2.32E-3])
 
+modes = [1,5]
 
 for osc in oscparams:
 
