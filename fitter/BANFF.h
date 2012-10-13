@@ -60,7 +60,9 @@ public:
   void RestoreNominalMC(void);
 
   // Penalty term included in the chisq if the BANFF fit parameters are included in the oscillation fit.
-  double ChisqPenalty(bool all_syst = true) const;
+  double ChisqPenalty             (bool all_syst = true, bool correlated = true) const;
+  double ChisqPenaltyCorrelated   (bool all_syst = true) const;
+  double ChisqPenaltyUncorrelated (bool all_syst = true) const;
 
   // Get & tweak flags	
   bool IsTweaked           (void) const { return fIsTweaked;         } ///< BANFF params tweaked?
@@ -77,7 +79,8 @@ private:
 
   void Init      (void);
   void CleanUp   (void);
-  int  Param2Idx (conv::PhysParamId_t p) const; ///< convert BANFF PhysParamId_t to a covariance matrix or vector index
+  int  Param2Idx   (conv::PhysParamId_t p) const; ///< convert BANFF PhysParamId_t to a covariance matrix or vector index
+  int  UnParam2Idx (conv::PhysParamId_t p) const; ///< convert UnBANFF PhysParamId_t to a covariance matrix or vector index
   void UpdateCorrelated        (void); ///< use the currently stored uncorrelated values to update the current correlated values, using the cholesky method
   void CholeskyDecomposeMatrix (void); ///< Cholesky decompose the covariance matrix
 

@@ -17,8 +17,8 @@
 //#define __show_init_mesg_debug__   
 #define __show_cholesky_mesg_info__
 //#define __show_cholesky_mesg_debug__
-#define __show_tweak_mesg_debug__
-#define __show_update_correlated_mesg_debug__
+//#define __show_tweak_mesg_debug__
+//#define __show_update_correlated_mesg_debug__
 //#define __show_chisqpenalty_mesg_debug__
 //#define __show_chisqpenalty_mesg_debug2__
 
@@ -164,7 +164,7 @@ double BANFF::CurrentValue(PhysParamId_t p) const
 double BANFF::CurrentUncorrelatedValue(PhysParamId_t p) const
 {
   const TVectorD & current_uncorrelated_values = *fUncorrelatedCurrentValues;
-  int idx = this->Param2Idx(p);
+  int idx = this->UnParam2Idx(p);
   return current_uncorrelated_values[idx];
 }
 //________________________________________________________________________________________
@@ -387,7 +387,39 @@ void BANFF::RestoreNominalMC(void)
   }
 }
 //________________________________________________________________________________________
-double BANFF::ChisqPenalty(bool all_syst) const
+double BANFF::ChisqPenalty(bool all_syst, bool correlated) const
+{
+  double chisq_penalty = 0;
+  if(correlated)
+    chisq_penalty = ChisqPenaltyCorrelated(all_syst);
+  else
+    chisq_penalty = ChisqPenaltyUncorrelated(all_syst);
+
+  return chisq_penalty;
+}
+//________________________________________________________________________________________
+double BANFF::ChisqPenaltyUncorrelated(bool all_syst) const
+{
+  double chisq_penalty = 0;
+  if(!all_syst) {
+    chisq_penalty += CurrentUncorrelatedValue(kNuisUnBANFF00) * CurrentUncorrelatedValue(kNuisUnBANFF00);
+    chisq_penalty += CurrentUncorrelatedValue(kNuisUnBANFF01) * CurrentUncorrelatedValue(kNuisUnBANFF01);
+  }
+  else {
+    const TVectorD & current_correlated_values   = *fUncorrelatedCurrentValues;
+    const int np = conv::kNumOfParamsInBANFFfit;
+    for(int ip = 0; ip < np; ip++) {
+      chisq_penalty += current_correlated_values[ip] * current_correlated_values[ip];
+    }
+  }
+
+#ifdef __show_chisqpenalty_mesg_debug__
+    cout << "Exp/BANFF/ChisqPenalty >> ChisqPenalty = " << chisq_penalty << endl;
+#endif
+    return chisq_penalty;
+}
+//________________________________________________________________________________________
+double BANFF::ChisqPenaltyCorrelated(bool all_syst) const
 {
   //Vector of current values & best fit values
   const TVectorD & bestfit_values   = *fBestFitValues;
@@ -518,6 +550,18 @@ int BANFF::Param2Idx(PhysParamId_t p) const
 #elif BANFF_BINS >= 3
   int last   = (int) kNuisBANFFCC1piE1;
 #endif
+  if(! (iparam >= first && iparam <= last) )
+    cout << AsString(p) << endl;
+  assert(iparam >= first && iparam <= last);
+  int idx = iparam-first;
+  return idx;  
+}
+//________________________________________________________________________________________
+int BANFF::UnParam2Idx(PhysParamId_t p) const
+{
+  int iparam = (int) p;
+  int first  = (int) kNuisUnBANFF00;
+  int last   = (int) kNuisUnBANFF00 + kNumOfParamsInBANFFfit;
   if(! (iparam >= first && iparam <= last) )
     cout << AsString(p) << endl;
   assert(iparam >= first && iparam <= last);

@@ -229,6 +229,38 @@ double FitInputs::ChisquarePenaltyTerm(void)
   }
 
   //
+  // Add penalty term for uncorrelated BANFF params 
+  // First, make sure that all BANFF params were included in the fit param
+  // list and were marked as nuisance parameters.
+  //
+  bool incl_unbanff_penalty = true;
+  if(all_syst) {
+    const int np_banff = conv::kNumOfParamsInBANFFfit;
+    for(int ip = 0; ip < np_banff; ip++) {
+      PhysParamId_t p = PhysParamId_t ( (int) kNuisUnBANFF00 + ip );
+      incl_banff_penalty = incl_banff_penalty && 
+	(this->FitParams().Exists(p) && this->FitParams().IsNuisance(p));
+      if(!incl_banff_penalty) break;
+    }
+  }
+  else {
+    PhysParamId_t p = kNuisUnBANFF00;
+    incl_banff_penalty = incl_banff_penalty && 
+      (this->FitParams().Exists(p) && this->FitParams().IsNuisance(p));
+    p = kNuisUnBANFF01;
+    incl_banff_penalty = incl_banff_penalty && 
+      (this->FitParams().Exists(p) && this->FitParams().IsNuisance(p));
+  }
+  if(incl_unbanff_penalty) {
+    double dchisq_penalty = this->Expectation().GetBANFF()->ChisqPenalty(all_syst);
+    chisq_penalty += dchisq_penalty;
+#ifdef __show_contributions_to_penalty_term__
+      cout << "FitInputs::ChisquarePenaltyTerm >> Current BANFF param variation"
+           << " => \\delta\\chi^2_{penalty} = " << dchisq_penalty << endl;
+#endif
+  }
+
+  //
   // Add penalty term for SuperkDetector params
   // First check all the parms considered by SuperkDetector are included in the fit
   // param list and set as nuisance

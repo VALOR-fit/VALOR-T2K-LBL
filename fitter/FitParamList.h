@@ -112,6 +112,9 @@ public:
    // - "nuosc3f_numudisapp_fix4+nuisanceselection": As "nuosc3f" but fixing  sin^2(2theta12), sin^2(2theta13), delta_CP and Dm12^2 + a selection of nuisance parameters.
    // - "nuosc3f_numudisapp_fix4+nuisancefullbanffselection": As "nuosc3f" but fixing  sin^2(2theta12), sin^2(2theta13), delta_CP and Dm12^2 + a selection of nuisance parameters (including the full BANFF matrix).
    // - "nuosc3f_numudisapp_fix4+nuisance": As "nuosc3f" but fixing  sin^2(2theta12), sin^2(2theta13), delta_CP and Dm12^2 + all nuisance parameters.
+   // - "nuosc3f_numudisapp_fix4+nuisanceunbanffselection": As "nuosc3f" but fixing  sin^2(2theta12), sin^2(2theta13), delta_CP and Dm12^2 + a selection of nuisance parameters (uncorrelated BANFF mode).
+   // - "nuosc3f_numudisapp_fix4+nuisanceunbanfffullbanffselection": As "nuosc3f" but fixing  sin^2(2theta12), sin^2(2theta13), delta_CP and Dm12^2 + a selection of nuisance parameters (including the full uncorrelated BANFF matrix).
+   // - "nuosc3f_numudisapp_fix4+nuisanceunbanff": As "nuosc3f" but fixing  sin^2(2theta12), sin^2(2theta13), delta_CP and Dm12^2 + all nuisance parameters (uncorrelated BANFF mode).
    // - "nuosc3f_nueapp_fix4"            : As "nuosc3f" but fixing  sin^2(2theta12), sin^2(2theta23), |Dm23^2| and Dm12^2.
    // - "numudisapp2f"                   : Fit for sin^2(2theta23) and |Dm23^2| (2-flavour formalism)
    // - "numudisapp2f+nuisance"          : As "numudisapp2f" + all nuisance parameters 
@@ -138,6 +141,9 @@ private:
    static FitParamList * NuOsc3FlavourFitWithAllSyst      (void);
    static FitParamList * NuOsc3FlavourFitWithSelectedSyst (void);
    static FitParamList * NuOsc3FlavourFitWithSelectedSystFullBANFF (void);
+   static FitParamList * NuOsc3FlavourFitWithAllSystUnBANFF      (void);
+   static FitParamList * NuOsc3FlavourFitWithSelectedSystUnBANFF (void);
+   static FitParamList * NuOsc3FlavourFitWithSelectedSystFullBANFFUnBANFF (void);
    static FitParamList * NumuDisapFit                     (void);
    static FitParamList * NumuDisapFitWithAllSyst          (void);
    static FitParamList * NumuDisapFitWithSelectedSyst     (void);
@@ -146,6 +152,9 @@ private:
    static void           AppendSystematics                (FitParamList * fp, int start);
    static void           AppendSelectedSystematics        (FitParamList * fp, int start);
    static void           AppendSelectedSystematicsWithFullBANFF (FitParamList * fp, int start);
+   static void           AppendSystematicsUnBANFF                (FitParamList * fp, int start);
+   static void           AppendSelectedSystematicsUnBANFF        (FitParamList * fp, int start);
+   static void           AppendSelectedSystematicsUnBANFFWithFullBANFF (FitParamList * fp, int start);
 
    //
    // Private data members
