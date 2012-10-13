@@ -45,8 +45,6 @@ oscparams.append([-99, -99, -99, -99, -99, -99]) #use global best fits!
 #oscparams.append([0.86, 0.1,  1,  0,  7.58E-5,  2.32E-3])
 #oscparams.append([0.86, 0,    1,  0,  7.58E-5,  2.32E-3])
 
-modes = [1,5]
-
 for osc in oscparams:
 
     update = "false"

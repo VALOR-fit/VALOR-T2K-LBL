@@ -226,6 +226,29 @@ void test_n_mock_data_fits_with_syst
   double input_banff_cc1piE0, bestfit_banff_cc1piE0, errp_banff_cc1piE0, errm_banff_cc1piE0, errpar_banff_cc1piE0;
   double input_banff_cc1piE1, bestfit_banff_cc1piE1, errp_banff_cc1piE1, errm_banff_cc1piE1, errpar_banff_cc1piE1;
   double input_banff_nc1pi0, bestfit_banff_nc1pi0, errp_banff_nc1pi0, errm_banff_nc1pi0, errpar_banff_nc1pi0;
+  double input_unbanff_00, bestfit_unbanff_00, errp_unbanff_00, errm_unbanff_00, errpar_unbanff_00;
+  double input_unbanff_01, bestfit_unbanff_01, errp_unbanff_01, errm_unbanff_01, errpar_unbanff_01;
+  double input_unbanff_02, bestfit_unbanff_02, errp_unbanff_02, errm_unbanff_02, errpar_unbanff_02;
+  double input_unbanff_03, bestfit_unbanff_03, errp_unbanff_03, errm_unbanff_03, errpar_unbanff_03;
+  double input_unbanff_04, bestfit_unbanff_04, errp_unbanff_04, errm_unbanff_04, errpar_unbanff_04;
+  double input_unbanff_05, bestfit_unbanff_05, errp_unbanff_05, errm_unbanff_05, errpar_unbanff_05;
+  double input_unbanff_06, bestfit_unbanff_06, errp_unbanff_06, errm_unbanff_06, errpar_unbanff_06;
+  double input_unbanff_07, bestfit_unbanff_07, errp_unbanff_07, errm_unbanff_07, errpar_unbanff_07;
+  double input_unbanff_08, bestfit_unbanff_08, errp_unbanff_08, errm_unbanff_08, errpar_unbanff_08;
+  double input_unbanff_09, bestfit_unbanff_09, errp_unbanff_09, errm_unbanff_09, errpar_unbanff_09;
+  double input_unbanff_10, bestfit_unbanff_10, errp_unbanff_10, errm_unbanff_10, errpar_unbanff_10;
+  double input_unbanff_11, bestfit_unbanff_11, errp_unbanff_11, errm_unbanff_11, errpar_unbanff_11;
+  double input_unbanff_12, bestfit_unbanff_12, errp_unbanff_12, errm_unbanff_12, errpar_unbanff_12;
+  double input_unbanff_13, bestfit_unbanff_13, errp_unbanff_13, errm_unbanff_13, errpar_unbanff_13;
+  double input_unbanff_14, bestfit_unbanff_14, errp_unbanff_14, errm_unbanff_14, errpar_unbanff_14;
+  double input_unbanff_15, bestfit_unbanff_15, errp_unbanff_15, errm_unbanff_15, errpar_unbanff_15;
+  double input_unbanff_16, bestfit_unbanff_16, errp_unbanff_16, errm_unbanff_16, errpar_unbanff_16;
+  double input_unbanff_17, bestfit_unbanff_17, errp_unbanff_17, errm_unbanff_17, errpar_unbanff_17;
+  double input_unbanff_18, bestfit_unbanff_18, errp_unbanff_18, errm_unbanff_18, errpar_unbanff_18;
+  double input_unbanff_19, bestfit_unbanff_19, errp_unbanff_19, errm_unbanff_19, errpar_unbanff_19;
+  double input_unbanff_20, bestfit_unbanff_20, errp_unbanff_20, errm_unbanff_20, errpar_unbanff_20;
+  double input_unbanff_21, bestfit_unbanff_21, errp_unbanff_21, errm_unbanff_21, errpar_unbanff_21;
+  double input_unbanff_22, bestfit_unbanff_22, errp_unbanff_22, errm_unbanff_22, errpar_unbanff_22;
   double input_xsec_pf, bestfit_xsec_pf, errp_xsec_pf, errm_xsec_pf, errpar_xsec_pf;
   double input_xsec_sf, bestfit_xsec_sf, errp_xsec_sf, errm_xsec_sf, errpar_xsec_sf;
   double input_xsec_wshape, bestfit_xsec_wshape, errp_xsec_wshape, errm_xsec_wshape, errpar_xsec_wshape;
@@ -277,15 +300,30 @@ void test_n_mock_data_fits_with_syst
   nfitnt->Branch("input_deltacp",&input_deltacp,"input_deltacp/D");
   nfitnt->Branch("input_dm12sq",&input_dm12sq,"input_dm12sq/D");
   nfitnt->Branch("input_dm23sq",&input_dm23sq,"input_dm23sq/D");
-  if(fit_syst_mode == 1) {
-    nfitnt->Branch("input_banff_maqe",&input_banff_maqe,"input_banff_maqe/D");
-    nfitnt->Branch("input_banff_ccqeE0",&input_banff_ccqeE0,"input_banff_ccqeE0/D");
-    nfitnt->Branch("input_xsec_sf",&input_xsec_sf,"input_xsec_sf/D");
-    nfitnt->Branch("input_xsec_pilessdelta",&input_xsec_pilessdelta,"input_xsec_pilessdelta/D");
-    nfitnt->Branch("input_skdet_ccnqe",&input_skdet_ccnqe,"input_skdet_ccnqe/D");
-    nfitnt->Branch("input_skdet_nc",&input_skdet_nc,"input_skdet_nc/D");
-  }
-  else if(fit_syst_mode == 2) {
+  if(fit_syst_mode >= 1) {
+    nfitnt->Branch("input_unbanff_00",&input_unbanff_00,"input_unbanff_00/D");
+    nfitnt->Branch("input_unbanff_01",&input_unbanff_01,"input_unbanff_01/D");
+    nfitnt->Branch("input_unbanff_02",&input_unbanff_02,"input_unbanff_02/D");
+    nfitnt->Branch("input_unbanff_03",&input_unbanff_03,"input_unbanff_03/D");
+    nfitnt->Branch("input_unbanff_04",&input_unbanff_04,"input_unbanff_04/D");
+    nfitnt->Branch("input_unbanff_05",&input_unbanff_05,"input_unbanff_05/D");
+    nfitnt->Branch("input_unbanff_06",&input_unbanff_06,"input_unbanff_06/D");
+    nfitnt->Branch("input_unbanff_07",&input_unbanff_07,"input_unbanff_07/D");
+    nfitnt->Branch("input_unbanff_08",&input_unbanff_08,"input_unbanff_08/D");
+    nfitnt->Branch("input_unbanff_09",&input_unbanff_09,"input_unbanff_09/D");
+    nfitnt->Branch("input_unbanff_10",&input_unbanff_10,"input_unbanff_10/D");
+    nfitnt->Branch("input_unbanff_11",&input_unbanff_11,"input_unbanff_11/D");
+    nfitnt->Branch("input_unbanff_12",&input_unbanff_12,"input_unbanff_12/D");
+    nfitnt->Branch("input_unbanff_13",&input_unbanff_13,"input_unbanff_13/D");
+    nfitnt->Branch("input_unbanff_14",&input_unbanff_14,"input_unbanff_14/D");
+    nfitnt->Branch("input_unbanff_15",&input_unbanff_15,"input_unbanff_15/D");
+    nfitnt->Branch("input_unbanff_16",&input_unbanff_16,"input_unbanff_16/D");
+    nfitnt->Branch("input_unbanff_17",&input_unbanff_17,"input_unbanff_17/D");
+    nfitnt->Branch("input_unbanff_18",&input_unbanff_18,"input_unbanff_18/D");
+    nfitnt->Branch("input_unbanff_19",&input_unbanff_19,"input_unbanff_19/D");
+    nfitnt->Branch("input_unbanff_20",&input_unbanff_20,"input_unbanff_20/D");
+    nfitnt->Branch("input_unbanff_21",&input_unbanff_21,"input_unbanff_21/D");
+    nfitnt->Branch("input_unbanff_22",&input_unbanff_22,"input_unbanff_22/D");
     nfitnt->Branch("input_banff_00",&input_banff_00,"input_banff_00/D");
     nfitnt->Branch("input_banff_01",&input_banff_01,"input_banff_01/D");
     nfitnt->Branch("input_banff_02",&input_banff_02,"input_banff_02/D");
@@ -329,6 +367,14 @@ void test_n_mock_data_fits_with_syst
 #if BANFF_BINS <= 2
     nfitnt->Branch("input_banff_nc1pi0",&input_banff_nc1pi0,"input_banff_nc1pi0/D");
 #endif
+  }
+  if(fit_syst_mode == 1) {
+    nfitnt->Branch("input_xsec_sf",&input_xsec_sf,"input_xsec_sf/D");
+    nfitnt->Branch("input_xsec_pilessdelta",&input_xsec_pilessdelta,"input_xsec_pilessdelta/D");
+    nfitnt->Branch("input_skdet_ccnqe",&input_skdet_ccnqe,"input_skdet_ccnqe/D");
+    nfitnt->Branch("input_skdet_nc",&input_skdet_nc,"input_skdet_nc/D");
+  }
+  else if(fit_syst_mode == 2) {
     nfitnt->Branch("input_xsec_pf",&input_xsec_pf,"input_xsec_pf/D");
     nfitnt->Branch("input_xsec_sf",&input_xsec_sf,"input_xsec_sf/D");
     nfitnt->Branch("input_xsec_wshape",&input_xsec_wshape,"input_xsec_wshape/D");
@@ -374,15 +420,30 @@ void test_n_mock_data_fits_with_syst
   nfitnt->Branch("bestfit_deltacp",&bestfit_deltacp,"bestfit_deltacp/D");
   nfitnt->Branch("bestfit_dm12sq",&bestfit_dm12sq,"bestfit_dm12sq/D");
   nfitnt->Branch("bestfit_dm23sq",&bestfit_dm23sq,"bestfit_dm23sq/D");
-  if(fit_syst_mode == 1) {
-    nfitnt->Branch("bestfit_banff_maqe",&bestfit_banff_maqe,"bestfit_banff_maqe/D");
-    nfitnt->Branch("bestfit_banff_ccqeE0",&bestfit_banff_ccqeE0,"bestfit_banff_ccqeE0/D");
-    nfitnt->Branch("bestfit_xsec_sf",&bestfit_xsec_sf,"bestfit_xsec_sf/D");
-    nfitnt->Branch("bestfit_xsec_pilessdelta",&bestfit_xsec_pilessdelta,"bestfit_xsec_pilessdelta/D");
-    nfitnt->Branch("bestfit_skdet_ccnqe",&bestfit_skdet_ccnqe,"bestfit_skdet_ccnqe/D");
-    nfitnt->Branch("bestfit_skdet_nc",&bestfit_skdet_nc,"bestfit_skdet_nc/D");
-  }
-  else if(fit_syst_mode == 2) {
+  if(fit_syst_mode >= 1) {
+    nfitnt->Branch("bestfit_unbanff_00",&bestfit_unbanff_00,"bestfit_unbanff_00/D");
+    nfitnt->Branch("bestfit_unbanff_01",&bestfit_unbanff_01,"bestfit_unbanff_01/D");
+    nfitnt->Branch("bestfit_unbanff_02",&bestfit_unbanff_02,"bestfit_unbanff_02/D");
+    nfitnt->Branch("bestfit_unbanff_03",&bestfit_unbanff_03,"bestfit_unbanff_03/D");
+    nfitnt->Branch("bestfit_unbanff_04",&bestfit_unbanff_04,"bestfit_unbanff_04/D");
+    nfitnt->Branch("bestfit_unbanff_05",&bestfit_unbanff_05,"bestfit_unbanff_05/D");
+    nfitnt->Branch("bestfit_unbanff_06",&bestfit_unbanff_06,"bestfit_unbanff_06/D");
+    nfitnt->Branch("bestfit_unbanff_07",&bestfit_unbanff_07,"bestfit_unbanff_07/D");
+    nfitnt->Branch("bestfit_unbanff_08",&bestfit_unbanff_08,"bestfit_unbanff_08/D");
+    nfitnt->Branch("bestfit_unbanff_09",&bestfit_unbanff_09,"bestfit_unbanff_09/D");
+    nfitnt->Branch("bestfit_unbanff_10",&bestfit_unbanff_10,"bestfit_unbanff_10/D");
+    nfitnt->Branch("bestfit_unbanff_11",&bestfit_unbanff_11,"bestfit_unbanff_11/D");
+    nfitnt->Branch("bestfit_unbanff_12",&bestfit_unbanff_12,"bestfit_unbanff_12/D");
+    nfitnt->Branch("bestfit_unbanff_13",&bestfit_unbanff_13,"bestfit_unbanff_13/D");
+    nfitnt->Branch("bestfit_unbanff_14",&bestfit_unbanff_14,"bestfit_unbanff_14/D");
+    nfitnt->Branch("bestfit_unbanff_15",&bestfit_unbanff_15,"bestfit_unbanff_15/D");
+    nfitnt->Branch("bestfit_unbanff_16",&bestfit_unbanff_16,"bestfit_unbanff_16/D");
+    nfitnt->Branch("bestfit_unbanff_17",&bestfit_unbanff_17,"bestfit_unbanff_17/D");
+    nfitnt->Branch("bestfit_unbanff_18",&bestfit_unbanff_18,"bestfit_unbanff_18/D");
+    nfitnt->Branch("bestfit_unbanff_19",&bestfit_unbanff_19,"bestfit_unbanff_19/D");
+    nfitnt->Branch("bestfit_unbanff_20",&bestfit_unbanff_20,"bestfit_unbanff_20/D");
+    nfitnt->Branch("bestfit_unbanff_21",&bestfit_unbanff_21,"bestfit_unbanff_21/D");
+    nfitnt->Branch("bestfit_unbanff_22",&bestfit_unbanff_22,"bestfit_unbanff_22/D");
     nfitnt->Branch("bestfit_banff_00",&bestfit_banff_00,"bestfit_banff_00/D");
     nfitnt->Branch("bestfit_banff_01",&bestfit_banff_01,"bestfit_banff_01/D");
     nfitnt->Branch("bestfit_banff_02",&bestfit_banff_02,"bestfit_banff_02/D");
@@ -426,6 +487,14 @@ void test_n_mock_data_fits_with_syst
 #if BANFF_BINS <= 2
     nfitnt->Branch("bestfit_banff_nc1pi0",&bestfit_banff_nc1pi0,"bestfit_banff_nc1pi0/D");
 #endif
+  }
+  if(fit_syst_mode == 1) {
+    nfitnt->Branch("bestfit_xsec_sf",&bestfit_xsec_sf,"bestfit_xsec_sf/D");
+    nfitnt->Branch("bestfit_xsec_pilessdelta",&bestfit_xsec_pilessdelta,"bestfit_xsec_pilessdelta/D");
+    nfitnt->Branch("bestfit_skdet_ccnqe",&bestfit_skdet_ccnqe,"bestfit_skdet_ccnqe/D");
+    nfitnt->Branch("bestfit_skdet_nc",&bestfit_skdet_nc,"bestfit_skdet_nc/D");
+  }
+  else if(fit_syst_mode == 2) {
     nfitnt->Branch("bestfit_xsec_pf",&bestfit_xsec_pf,"bestfit_xsec_pf/D");
     nfitnt->Branch("bestfit_xsec_sf",&bestfit_xsec_sf,"bestfit_xsec_sf/D");
     nfitnt->Branch("bestfit_xsec_wshape",&bestfit_xsec_wshape,"bestfit_xsec_wshape/D");
@@ -471,15 +540,30 @@ void test_n_mock_data_fits_with_syst
   nfitnt->Branch("errp_deltacp",&errp_deltacp,"errp_deltacp/D");
   nfitnt->Branch("errp_dm12sq",&errp_dm12sq,"errp_dm12sq/D");
   nfitnt->Branch("errp_dm23sq",&errp_dm23sq,"errp_dm23sq/D");
-  if(fit_syst_mode == 1) {
-    nfitnt->Branch("errp_banff_maqe",&errp_banff_maqe,"errp_banff_maqe/D");
-    nfitnt->Branch("errp_banff_ccqeE0",&errp_banff_ccqeE0,"errp_banff_ccqeE0/D");
-    nfitnt->Branch("errp_xsec_sf",&errp_xsec_sf,"errp_xsec_sf/D");
-    nfitnt->Branch("errp_xsec_pilessdelta",&errp_xsec_pilessdelta,"errp_xsec_pilessdelta/D");
-    nfitnt->Branch("errp_skdet_ccnqe",&errp_skdet_ccnqe,"errp_skdet_ccnqe/D");
-    nfitnt->Branch("errp_skdet_nc",&errp_skdet_nc,"errp_skdet_nc/D");
-  }
-  else if(fit_syst_mode == 2) {
+  if(fit_syst_mode >= 1) {
+    nfitnt->Branch("errp_unbanff_00",&errp_unbanff_00,"errp_unbanff_00/D");
+    nfitnt->Branch("errp_unbanff_01",&errp_unbanff_01,"errp_unbanff_01/D");
+    nfitnt->Branch("errp_unbanff_02",&errp_unbanff_02,"errp_unbanff_02/D");
+    nfitnt->Branch("errp_unbanff_03",&errp_unbanff_03,"errp_unbanff_03/D");
+    nfitnt->Branch("errp_unbanff_04",&errp_unbanff_04,"errp_unbanff_04/D");
+    nfitnt->Branch("errp_unbanff_05",&errp_unbanff_05,"errp_unbanff_05/D");
+    nfitnt->Branch("errp_unbanff_06",&errp_unbanff_06,"errp_unbanff_06/D");
+    nfitnt->Branch("errp_unbanff_07",&errp_unbanff_07,"errp_unbanff_07/D");
+    nfitnt->Branch("errp_unbanff_08",&errp_unbanff_08,"errp_unbanff_08/D");
+    nfitnt->Branch("errp_unbanff_09",&errp_unbanff_09,"errp_unbanff_09/D");
+    nfitnt->Branch("errp_unbanff_10",&errp_unbanff_10,"errp_unbanff_10/D");
+    nfitnt->Branch("errp_unbanff_11",&errp_unbanff_11,"errp_unbanff_11/D");
+    nfitnt->Branch("errp_unbanff_12",&errp_unbanff_12,"errp_unbanff_12/D");
+    nfitnt->Branch("errp_unbanff_13",&errp_unbanff_13,"errp_unbanff_13/D");
+    nfitnt->Branch("errp_unbanff_14",&errp_unbanff_14,"errp_unbanff_14/D");
+    nfitnt->Branch("errp_unbanff_15",&errp_unbanff_15,"errp_unbanff_15/D");
+    nfitnt->Branch("errp_unbanff_16",&errp_unbanff_16,"errp_unbanff_16/D");
+    nfitnt->Branch("errp_unbanff_17",&errp_unbanff_17,"errp_unbanff_17/D");
+    nfitnt->Branch("errp_unbanff_18",&errp_unbanff_18,"errp_unbanff_18/D");
+    nfitnt->Branch("errp_unbanff_19",&errp_unbanff_19,"errp_unbanff_19/D");
+    nfitnt->Branch("errp_unbanff_20",&errp_unbanff_20,"errp_unbanff_20/D");
+    nfitnt->Branch("errp_unbanff_21",&errp_unbanff_21,"errp_unbanff_21/D");
+    nfitnt->Branch("errp_unbanff_22",&errp_unbanff_22,"errp_unbanff_22/D");
     nfitnt->Branch("errp_banff_00",&errp_banff_00,"errp_banff_00/D");
     nfitnt->Branch("errp_banff_01",&errp_banff_01,"errp_banff_01/D");
     nfitnt->Branch("errp_banff_02",&errp_banff_02,"errp_banff_02/D");
@@ -523,6 +607,14 @@ void test_n_mock_data_fits_with_syst
 #if BANFF_BINS <= 2
     nfitnt->Branch("errp_banff_nc1pi0",&errp_banff_nc1pi0,"errp_banff_nc1pi0/D");
 #endif
+  }
+  if(fit_syst_mode == 1) {
+    nfitnt->Branch("errp_xsec_sf",&errp_xsec_sf,"errp_xsec_sf/D");
+    nfitnt->Branch("errp_xsec_pilessdelta",&errp_xsec_pilessdelta,"errp_xsec_pilessdelta/D");
+    nfitnt->Branch("errp_skdet_ccnqe",&errp_skdet_ccnqe,"errp_skdet_ccnqe/D");
+    nfitnt->Branch("errp_skdet_nc",&errp_skdet_nc,"errp_skdet_nc/D");
+  }
+  else if(fit_syst_mode == 2) {
     nfitnt->Branch("errp_xsec_pf",&errp_xsec_pf,"errp_xsec_pf/D");
     nfitnt->Branch("errp_xsec_sf",&errp_xsec_sf,"errp_xsec_sf/D");
     nfitnt->Branch("errp_xsec_wshape",&errp_xsec_wshape,"errp_xsec_wshape/D");
@@ -568,15 +660,30 @@ void test_n_mock_data_fits_with_syst
   nfitnt->Branch("errm_deltacp",&errm_deltacp,"errm_deltacp/D");
   nfitnt->Branch("errm_dm12sq",&errm_dm12sq,"errm_dm12sq/D");
   nfitnt->Branch("errm_dm23sq",&errm_dm23sq,"errm_dm23sq/D");
-  if(fit_syst_mode == 1) {
-    nfitnt->Branch("errm_banff_maqe",&errm_banff_maqe,"errm_banff_maqe/D");
-    nfitnt->Branch("errm_banff_ccqeE0",&errm_banff_ccqeE0,"errm_banff_ccqeE0/D");
-    nfitnt->Branch("errm_xsec_sf",&errm_xsec_sf,"errm_xsec_sf/D");
-    nfitnt->Branch("errm_xsec_pilessdelta",&errm_xsec_pilessdelta,"errm_xsec_pilessdelta/D");
-    nfitnt->Branch("errm_skdet_ccnqe",&errm_skdet_ccnqe,"errm_skdet_ccnqe/D");
-    nfitnt->Branch("errm_skdet_nc",&errm_skdet_nc,"errm_skdet_nc/D");
-  }
-  else if(fit_syst_mode == 2) {
+  if(fit_syst_mode >= 1) {
+    nfitnt->Branch("errm_unbanff_00",&errm_unbanff_00,"errm_unbanff_00/D");
+    nfitnt->Branch("errm_unbanff_01",&errm_unbanff_01,"errm_unbanff_01/D");
+    nfitnt->Branch("errm_unbanff_02",&errm_unbanff_02,"errm_unbanff_02/D");
+    nfitnt->Branch("errm_unbanff_03",&errm_unbanff_03,"errm_unbanff_03/D");
+    nfitnt->Branch("errm_unbanff_04",&errm_unbanff_04,"errm_unbanff_04/D");
+    nfitnt->Branch("errm_unbanff_05",&errm_unbanff_05,"errm_unbanff_05/D");
+    nfitnt->Branch("errm_unbanff_06",&errm_unbanff_06,"errm_unbanff_06/D");
+    nfitnt->Branch("errm_unbanff_07",&errm_unbanff_07,"errm_unbanff_07/D");
+    nfitnt->Branch("errm_unbanff_08",&errm_unbanff_08,"errm_unbanff_08/D");
+    nfitnt->Branch("errm_unbanff_09",&errm_unbanff_09,"errm_unbanff_09/D");
+    nfitnt->Branch("errm_unbanff_10",&errm_unbanff_10,"errm_unbanff_10/D");
+    nfitnt->Branch("errm_unbanff_11",&errm_unbanff_11,"errm_unbanff_11/D");
+    nfitnt->Branch("errm_unbanff_12",&errm_unbanff_12,"errm_unbanff_12/D");
+    nfitnt->Branch("errm_unbanff_13",&errm_unbanff_13,"errm_unbanff_13/D");
+    nfitnt->Branch("errm_unbanff_14",&errm_unbanff_14,"errm_unbanff_14/D");
+    nfitnt->Branch("errm_unbanff_15",&errm_unbanff_15,"errm_unbanff_15/D");
+    nfitnt->Branch("errm_unbanff_16",&errm_unbanff_16,"errm_unbanff_16/D");
+    nfitnt->Branch("errm_unbanff_17",&errm_unbanff_17,"errm_unbanff_17/D");
+    nfitnt->Branch("errm_unbanff_18",&errm_unbanff_18,"errm_unbanff_18/D");
+    nfitnt->Branch("errm_unbanff_19",&errm_unbanff_19,"errm_unbanff_19/D");
+    nfitnt->Branch("errm_unbanff_20",&errm_unbanff_20,"errm_unbanff_20/D");
+    nfitnt->Branch("errm_unbanff_21",&errm_unbanff_21,"errm_unbanff_21/D");
+    nfitnt->Branch("errm_unbanff_22",&errm_unbanff_22,"errm_unbanff_22/D");
     nfitnt->Branch("errm_banff_00",&errm_banff_00,"errm_banff_00/D");
     nfitnt->Branch("errm_banff_01",&errm_banff_01,"errm_banff_01/D");
     nfitnt->Branch("errm_banff_02",&errm_banff_02,"errm_banff_02/D");
@@ -620,6 +727,14 @@ void test_n_mock_data_fits_with_syst
 #if BANFF_BINS <= 2
     nfitnt->Branch("errm_banff_nc1pi0",&errm_banff_nc1pi0,"errm_banff_nc1pi0/D");
 #endif
+  }
+  if(fit_syst_mode == 1) {
+    nfitnt->Branch("errm_xsec_sf",&errm_xsec_sf,"errm_xsec_sf/D");
+    nfitnt->Branch("errm_xsec_pilessdelta",&errm_xsec_pilessdelta,"errm_xsec_pilessdelta/D");
+    nfitnt->Branch("errm_skdet_ccnqe",&errm_skdet_ccnqe,"errm_skdet_ccnqe/D");
+    nfitnt->Branch("errm_skdet_nc",&errm_skdet_nc,"errm_skdet_nc/D");
+  }
+  else if(fit_syst_mode == 2) {
     nfitnt->Branch("errm_xsec_pf",&errm_xsec_pf,"errm_xsec_pf/D");
     nfitnt->Branch("errm_xsec_sf",&errm_xsec_sf,"errm_xsec_sf/D");
     nfitnt->Branch("errm_xsec_wshape",&errm_xsec_wshape,"errm_xsec_wshape/D");
@@ -665,15 +780,30 @@ void test_n_mock_data_fits_with_syst
   nfitnt->Branch("errpar_deltacp",&errpar_deltacp,"errpar_deltacp/D");
   nfitnt->Branch("errpar_dm12sq",&errpar_dm12sq,"errpar_dm12sq/D");
   nfitnt->Branch("errpar_dm23sq",&errpar_dm23sq,"errpar_dm23sq/D");
-  if(fit_syst_mode == 1) {
-    nfitnt->Branch("errpar_banff_maqe",&errpar_banff_maqe,"errpar_banff_maqe/D");
-    nfitnt->Branch("errpar_banff_ccqeE0",&errpar_banff_ccqeE0,"errpar_banff_ccqeE0/D");
-    nfitnt->Branch("errpar_xsec_sf",&errpar_xsec_sf,"errpar_xsec_sf/D");
-    nfitnt->Branch("errpar_xsec_pilessdelta",&errpar_xsec_pilessdelta,"errpar_xsec_pilessdelta/D");
-    nfitnt->Branch("errpar_skdet_ccnqe",&errpar_skdet_ccnqe,"errpar_skdet_ccnqe/D");
-    nfitnt->Branch("errpar_skdet_nc",&errpar_skdet_nc,"errpar_skdet_nc/D");
-  }
-  else if(fit_syst_mode == 2) {
+  if(fit_syst_mode >= 1) {
+    nfitnt->Branch("errpar_unbanff_00",&errpar_unbanff_00,"errpar_unbanff_00/D");
+    nfitnt->Branch("errpar_unbanff_01",&errpar_unbanff_01,"errpar_unbanff_01/D");
+    nfitnt->Branch("errpar_unbanff_02",&errpar_unbanff_02,"errpar_unbanff_02/D");
+    nfitnt->Branch("errpar_unbanff_03",&errpar_unbanff_03,"errpar_unbanff_03/D");
+    nfitnt->Branch("errpar_unbanff_04",&errpar_unbanff_04,"errpar_unbanff_04/D");
+    nfitnt->Branch("errpar_unbanff_05",&errpar_unbanff_05,"errpar_unbanff_05/D");
+    nfitnt->Branch("errpar_unbanff_06",&errpar_unbanff_06,"errpar_unbanff_06/D");
+    nfitnt->Branch("errpar_unbanff_07",&errpar_unbanff_07,"errpar_unbanff_07/D");
+    nfitnt->Branch("errpar_unbanff_08",&errpar_unbanff_08,"errpar_unbanff_08/D");
+    nfitnt->Branch("errpar_unbanff_09",&errpar_unbanff_09,"errpar_unbanff_09/D");
+    nfitnt->Branch("errpar_unbanff_10",&errpar_unbanff_10,"errpar_unbanff_10/D");
+    nfitnt->Branch("errpar_unbanff_11",&errpar_unbanff_11,"errpar_unbanff_11/D");
+    nfitnt->Branch("errpar_unbanff_12",&errpar_unbanff_12,"errpar_unbanff_12/D");
+    nfitnt->Branch("errpar_unbanff_13",&errpar_unbanff_13,"errpar_unbanff_13/D");
+    nfitnt->Branch("errpar_unbanff_14",&errpar_unbanff_14,"errpar_unbanff_14/D");
+    nfitnt->Branch("errpar_unbanff_15",&errpar_unbanff_15,"errpar_unbanff_15/D");
+    nfitnt->Branch("errpar_unbanff_16",&errpar_unbanff_16,"errpar_unbanff_16/D");
+    nfitnt->Branch("errpar_unbanff_17",&errpar_unbanff_17,"errpar_unbanff_17/D");
+    nfitnt->Branch("errpar_unbanff_18",&errpar_unbanff_18,"errpar_unbanff_18/D");
+    nfitnt->Branch("errpar_unbanff_19",&errpar_unbanff_19,"errpar_unbanff_19/D");
+    nfitnt->Branch("errpar_unbanff_20",&errpar_unbanff_20,"errpar_unbanff_20/D");
+    nfitnt->Branch("errpar_unbanff_21",&errpar_unbanff_21,"errpar_unbanff_21/D");
+    nfitnt->Branch("errpar_unbanff_22",&errpar_unbanff_22,"errpar_unbanff_22/D");
     nfitnt->Branch("errpar_banff_00",&errpar_banff_00,"errpar_banff_00/D");
     nfitnt->Branch("errpar_banff_01",&errpar_banff_01,"errpar_banff_01/D");
     nfitnt->Branch("errpar_banff_02",&errpar_banff_02,"errpar_banff_02/D");
@@ -717,6 +847,13 @@ void test_n_mock_data_fits_with_syst
 #if BANFF_BINS <= 2
     nfitnt->Branch("errpar_banff_nc1pi0",&errpar_banff_nc1pi0,"errpar_banff_nc1pi0/D");
 #endif
+  }  if(fit_syst_mode == 1) {
+    nfitnt->Branch("errpar_xsec_sf",&errpar_xsec_sf,"errpar_xsec_sf/D");
+    nfitnt->Branch("errpar_xsec_pilessdelta",&errpar_xsec_pilessdelta,"errpar_xsec_pilessdelta/D");
+    nfitnt->Branch("errpar_skdet_ccnqe",&errpar_skdet_ccnqe,"errpar_skdet_ccnqe/D");
+    nfitnt->Branch("errpar_skdet_nc",&errpar_skdet_nc,"errpar_skdet_nc/D");
+  }
+  else if(fit_syst_mode == 2) {
     nfitnt->Branch("errpar_xsec_pf",&errpar_xsec_pf,"errpar_xsec_pf/D");
     nfitnt->Branch("errpar_xsec_sf",&errpar_xsec_sf,"errpar_xsec_sf/D");
     nfitnt->Branch("errpar_xsec_wshape",&errpar_xsec_wshape,"errpar_xsec_wshape/D");
@@ -795,7 +932,7 @@ void test_n_mock_data_fits_with_syst
 	skexp->TweakAllSystematics();
 	break;
       case 2:
-	skexp->TweakAllBANFFSystematics();
+	skexp->TweakAllUncorrelatedBANFFSystematics();
 	break;
       case 3:
 	skexp->TweakAllUncorrelatedXSecSystematics();
@@ -828,15 +965,30 @@ void test_n_mock_data_fits_with_syst
       }
       skexp->PrintSystematicVariations();
       // save the input systematics to the tree
-      if(fit_syst_mode == 1) {
-	input_banff_maqe = skexp->GetBANFF()->CurrentValue(conv::kNuisBANFFMAQE);
-	input_banff_ccqeE0 = skexp->GetBANFF()->CurrentValue(conv::kNuisBANFFCCQEE0);
-	input_xsec_sf = skexp->GetNuXSec()->CurrentValue(conv::kNuisXSecSpecFunc);
-	input_xsec_pilessdelta = skexp->GetNuXSec()->CurrentValue(conv::kNuisXSecPiLessDelta);
-	input_skdet_ccnqe = skexp->GetSuperkDetector()->CurrentValue(conv::kNuisSuperkEff1RmuCCnonQE);
-	input_skdet_nc = skexp->GetSuperkDetector()->CurrentValue(conv::kNuisSuperkEff1RmuNC);
-      }
-      else if(fit_syst_mode == 2) {
+      if(fit_syst_mode >= 1) {
+	input_unbanff_00 = skexp->GetBANFF()->CurrentUncorrelatedValue(conv::kNuisUnBANFF00);
+	input_unbanff_01 = skexp->GetBANFF()->CurrentUncorrelatedValue(conv::kNuisUnBANFF01);
+	input_unbanff_02 = skexp->GetBANFF()->CurrentUncorrelatedValue(conv::kNuisUnBANFF02);
+	input_unbanff_03 = skexp->GetBANFF()->CurrentUncorrelatedValue(conv::kNuisUnBANFF03);
+	input_unbanff_04 = skexp->GetBANFF()->CurrentUncorrelatedValue(conv::kNuisUnBANFF04);
+	input_unbanff_05 = skexp->GetBANFF()->CurrentUncorrelatedValue(conv::kNuisUnBANFF05);
+	input_unbanff_06 = skexp->GetBANFF()->CurrentUncorrelatedValue(conv::kNuisUnBANFF06);
+	input_unbanff_07 = skexp->GetBANFF()->CurrentUncorrelatedValue(conv::kNuisUnBANFF07);
+	input_unbanff_08 = skexp->GetBANFF()->CurrentUncorrelatedValue(conv::kNuisUnBANFF08);
+	input_unbanff_09 = skexp->GetBANFF()->CurrentUncorrelatedValue(conv::kNuisUnBANFF09);
+	input_unbanff_10 = skexp->GetBANFF()->CurrentUncorrelatedValue(conv::kNuisUnBANFF10);
+	input_unbanff_11 = skexp->GetBANFF()->CurrentUncorrelatedValue(conv::kNuisUnBANFF11);
+	input_unbanff_12 = skexp->GetBANFF()->CurrentUncorrelatedValue(conv::kNuisUnBANFF12);
+	input_unbanff_13 = skexp->GetBANFF()->CurrentUncorrelatedValue(conv::kNuisUnBANFF13);
+	input_unbanff_14 = skexp->GetBANFF()->CurrentUncorrelatedValue(conv::kNuisUnBANFF14);
+	input_unbanff_15 = skexp->GetBANFF()->CurrentUncorrelatedValue(conv::kNuisUnBANFF15);
+	input_unbanff_16 = skexp->GetBANFF()->CurrentUncorrelatedValue(conv::kNuisUnBANFF16);
+	input_unbanff_17 = skexp->GetBANFF()->CurrentUncorrelatedValue(conv::kNuisUnBANFF17);
+	input_unbanff_18 = skexp->GetBANFF()->CurrentUncorrelatedValue(conv::kNuisUnBANFF18);
+	input_unbanff_19 = skexp->GetBANFF()->CurrentUncorrelatedValue(conv::kNuisUnBANFF19);
+	input_unbanff_20 = skexp->GetBANFF()->CurrentUncorrelatedValue(conv::kNuisUnBANFF20);
+	input_unbanff_21 = skexp->GetBANFF()->CurrentUncorrelatedValue(conv::kNuisUnBANFF21);
+	input_unbanff_22 = skexp->GetBANFF()->CurrentUncorrelatedValue(conv::kNuisUnBANFF22);
 	input_banff_00 = skexp->GetBANFF()->CurrentValue(conv::kNuisBANFF00);
 	input_banff_01 = skexp->GetBANFF()->CurrentValue(conv::kNuisBANFF01);
 	input_banff_02 = skexp->GetBANFF()->CurrentValue(conv::kNuisBANFF02);
@@ -880,6 +1032,16 @@ void test_n_mock_data_fits_with_syst
 #if BANFF_BINS <= 2
 	input_banff_nc1pi0 = skexp->GetBANFF()->CurrentValue(conv::kNuisBANFFNC1pi0);
 #endif
+      }
+      if(fit_syst_mode == 1) {
+	input_banff_maqe = skexp->GetBANFF()->CurrentValue(conv::kNuisBANFFMAQE);
+	input_banff_ccqeE0 = skexp->GetBANFF()->CurrentValue(conv::kNuisBANFFCCQEE0);
+	input_xsec_sf = skexp->GetNuXSec()->CurrentValue(conv::kNuisXSecSpecFunc);
+	input_xsec_pilessdelta = skexp->GetNuXSec()->CurrentValue(conv::kNuisXSecPiLessDelta);
+	input_skdet_ccnqe = skexp->GetSuperkDetector()->CurrentValue(conv::kNuisSuperkEff1RmuCCnonQE);
+	input_skdet_nc = skexp->GetSuperkDetector()->CurrentValue(conv::kNuisSuperkEff1RmuNC);
+      }
+      else if(fit_syst_mode == 2) {
 	input_xsec_pf = skexp->GetNuXSec()->CurrentValue(conv::kNuisXSecFermiMom);
 	input_xsec_sf = skexp->GetNuXSec()->CurrentValue(conv::kNuisXSecSpecFunc);
 	input_xsec_wshape = skexp->GetNuXSec()->CurrentValue(conv::kNuisXSecWshape);
@@ -919,15 +1081,30 @@ void test_n_mock_data_fits_with_syst
 	}
       }
       //update the FitParamList with the fluctuated nuisance parameters
-      if(fit_syst_mode == 1) {
-	if(fparm->Exists(conv::kNuisBANFFMAQE)) fparm->Update(conv::kNuisBANFFMAQE, input_banff_maqe);
-	if(fparm->Exists(conv::kNuisBANFFCCQEE0)) fparm->Update(conv::kNuisBANFFCCQEE0, input_banff_ccqeE0);
-	if(fparm->Exists(conv::kNuisXSecSpecFunc)) fparm->Update(conv::kNuisXSecSpecFunc, input_xsec_sf);
-	if(fparm->Exists(conv::kNuisXSecPiLessDelta)) fparm->Update(conv::kNuisXSecPiLessDelta, input_xsec_pilessdelta);
-	if(fparm->Exists(conv::kNuisSuperkEff1RmuCCnonQE)) fparm->Update(conv::kNuisSuperkEff1RmuCCnonQE, input_skdet_ccnqe);
-	if(fparm->Exists(conv::kNuisSuperkEff1RmuNC)) fparm->Update(conv::kNuisSuperkEff1RmuNC, input_skdet_nc);
-      }
-      else if(fit_syst_mode == 2) {
+      if(fit_syst_mode >= 1) {
+	if(fparm->Exists(conv::kNuisUnBANFF00)) fparm->Update(conv::kNuisUnBANFF00, input_unbanff_00);
+	if(fparm->Exists(conv::kNuisUnBANFF01)) fparm->Update(conv::kNuisUnBANFF01, input_unbanff_01);
+	if(fparm->Exists(conv::kNuisUnBANFF02)) fparm->Update(conv::kNuisUnBANFF02, input_unbanff_02);
+	if(fparm->Exists(conv::kNuisUnBANFF03)) fparm->Update(conv::kNuisUnBANFF03, input_unbanff_03);
+	if(fparm->Exists(conv::kNuisUnBANFF04)) fparm->Update(conv::kNuisUnBANFF04, input_unbanff_04);
+	if(fparm->Exists(conv::kNuisUnBANFF05)) fparm->Update(conv::kNuisUnBANFF05, input_unbanff_05);
+	if(fparm->Exists(conv::kNuisUnBANFF06)) fparm->Update(conv::kNuisUnBANFF06, input_unbanff_06);
+	if(fparm->Exists(conv::kNuisUnBANFF07)) fparm->Update(conv::kNuisUnBANFF07, input_unbanff_07);
+	if(fparm->Exists(conv::kNuisUnBANFF08)) fparm->Update(conv::kNuisUnBANFF08, input_unbanff_08);
+	if(fparm->Exists(conv::kNuisUnBANFF09)) fparm->Update(conv::kNuisUnBANFF09, input_unbanff_09);
+	if(fparm->Exists(conv::kNuisUnBANFF10)) fparm->Update(conv::kNuisUnBANFF10, input_unbanff_10);
+	if(fparm->Exists(conv::kNuisUnBANFF11)) fparm->Update(conv::kNuisUnBANFF11, input_unbanff_11);
+	if(fparm->Exists(conv::kNuisUnBANFF12)) fparm->Update(conv::kNuisUnBANFF12, input_unbanff_12);
+	if(fparm->Exists(conv::kNuisUnBANFF13)) fparm->Update(conv::kNuisUnBANFF13, input_unbanff_13);
+	if(fparm->Exists(conv::kNuisUnBANFF14)) fparm->Update(conv::kNuisUnBANFF14, input_unbanff_14);
+	if(fparm->Exists(conv::kNuisUnBANFF15)) fparm->Update(conv::kNuisUnBANFF15, input_unbanff_15);
+	if(fparm->Exists(conv::kNuisUnBANFF16)) fparm->Update(conv::kNuisUnBANFF16, input_unbanff_16);
+	if(fparm->Exists(conv::kNuisUnBANFF17)) fparm->Update(conv::kNuisUnBANFF17, input_unbanff_17);
+	if(fparm->Exists(conv::kNuisUnBANFF18)) fparm->Update(conv::kNuisUnBANFF18, input_unbanff_18);
+	if(fparm->Exists(conv::kNuisUnBANFF19)) fparm->Update(conv::kNuisUnBANFF19, input_unbanff_19);
+	if(fparm->Exists(conv::kNuisUnBANFF20)) fparm->Update(conv::kNuisUnBANFF20, input_unbanff_20);
+	if(fparm->Exists(conv::kNuisUnBANFF21)) fparm->Update(conv::kNuisUnBANFF21, input_unbanff_21);
+	if(fparm->Exists(conv::kNuisUnBANFF22)) fparm->Update(conv::kNuisUnBANFF22, input_unbanff_22);
 	if(fparm->Exists(conv::kNuisBANFF00)) fparm->Update(conv::kNuisBANFF00, input_banff_00);
 	if(fparm->Exists(conv::kNuisBANFF01)) fparm->Update(conv::kNuisBANFF01, input_banff_01);
 	if(fparm->Exists(conv::kNuisBANFF02)) fparm->Update(conv::kNuisBANFF02, input_banff_02);
@@ -971,6 +1148,16 @@ void test_n_mock_data_fits_with_syst
 #if BANFF_BINS <= 2
 	if(fparm->Exists(conv::kNuisBANFFNC1pi0)) fparm->Update(conv::kNuisBANFFNC1pi0, input_banff_nc1pi0);
 #endif
+      }
+      if(fit_syst_mode == 1) {
+	if(fparm->Exists(conv::kNuisBANFFMAQE)) fparm->Update(conv::kNuisBANFFMAQE, input_banff_maqe);
+	if(fparm->Exists(conv::kNuisBANFFCCQEE0)) fparm->Update(conv::kNuisBANFFCCQEE0, input_banff_ccqeE0);
+	if(fparm->Exists(conv::kNuisXSecSpecFunc)) fparm->Update(conv::kNuisXSecSpecFunc, input_xsec_sf);
+	if(fparm->Exists(conv::kNuisXSecPiLessDelta)) fparm->Update(conv::kNuisXSecPiLessDelta, input_xsec_pilessdelta);
+	if(fparm->Exists(conv::kNuisSuperkEff1RmuCCnonQE)) fparm->Update(conv::kNuisSuperkEff1RmuCCnonQE, input_skdet_ccnqe);
+	if(fparm->Exists(conv::kNuisSuperkEff1RmuNC)) fparm->Update(conv::kNuisSuperkEff1RmuNC, input_skdet_nc);
+      }
+      else if(fit_syst_mode == 2) {
 	if(fparm->Exists(conv::kNuisXSecFermiMom)) fparm->Update(conv::kNuisXSecFermiMom, input_xsec_pf);
 	if(fparm->Exists(conv::kNuisXSecSpecFunc)) fparm->Update(conv::kNuisXSecSpecFunc, input_xsec_sf);
 	if(fparm->Exists(conv::kNuisXSecWshape)) fparm->Update(conv::kNuisXSecWshape, input_xsec_wshape);
@@ -1061,193 +1248,207 @@ void test_n_mock_data_fits_with_syst
     bestfit_deltacp  = -1;
     bestfit_dm12sq   = -1;
     bestfit_dm23sq   = -1;
-    if(fit_syst_mode == 1) {
-      bestfit_banff_maqe = -1;
-      bestfit_banff_ccqeE0 = -1;
-      bestfit_xsec_sf = -1;
-      bestfit_xsec_pilessdelta = -1;
-      bestfit_skdet_ccnqe = -1;
-      bestfit_skdet_nc = -1;
-    }
-    else if(fit_syst_mode == 2) {
-      bestfit_banff_00 = -1;
-      bestfit_banff_01 = -1;
-      bestfit_banff_02 = -1;
-      bestfit_banff_03 = -1;
-      bestfit_banff_04 = -1;
-      bestfit_banff_05 = -1;
-      bestfit_banff_06 = -1;
-      bestfit_banff_07 = -1;
-      bestfit_banff_08 = -1;
-      bestfit_banff_09 = -1;
-      bestfit_banff_10 = -1;
-      bestfit_banff_11 = -1;
-      bestfit_banff_12 = -1;
-      bestfit_banff_13 = -1;
-      bestfit_banff_14 = -1;
-      bestfit_banff_15 = -1;
-#if BANFF_BINS <= 2
-      bestfit_banff_16 = -1;
-      bestfit_banff_17 = -1;
-      bestfit_banff_18 = -1;
-      bestfit_banff_19 = -1;
-      bestfit_banff_20 = -1;
-      bestfit_banff_21 = -1;
-      bestfit_banff_22 = -1;
-      bestfit_banff_23 = -1;
-      bestfit_banff_24 = -1;
-      bestfit_banff_25 = -1;
-      bestfit_banff_26 = -1;
-      bestfit_banff_27 = -1;
-      bestfit_banff_28 = -1;
-      bestfit_banff_29 = -1;
-      bestfit_banff_30 = -1;
-#endif
-      bestfit_banff_maqe = -1;
-      bestfit_banff_mares = -1;
-      bestfit_banff_ccqeE0 = -1;
-      bestfit_banff_ccqeE1 = -1;
-      bestfit_banff_ccqeE2 = -1;
-      bestfit_banff_cc1piE0 = -1;
-      bestfit_banff_cc1piE1 = -1;
-#if BANFF_BINS <= 2
-      bestfit_banff_nc1pi0 = -1;
-#endif
-      bestfit_xsec_pf = -1;
-      bestfit_xsec_sf = -1;
-      bestfit_xsec_wshape = -1;
-      bestfit_xsec_ccothshape = -1;
-      bestfit_xsec_cc1pishape = -1;
-      bestfit_xsec_pilessdelta = -1;
-      bestfit_xsec_normcccoh = -1;
-      bestfit_xsec_normnc1piC = -1;
-      bestfit_xsec_normnccoh = -1;
-      bestfit_xsec_normncoth = -1;
-      bestfit_xsec_normnuetonumu = -1;
-      bestfit_xsec_normantinutonu = -1;
-      bestfit_skdet_energyscale = -1;
-      bestfit_skdet_ccqerc0 = -1;
-      bestfit_skdet_ccqerc1 = -1;
-      bestfit_skdet_ccqerc2 = -1;
-      bestfit_skdet_ccqeoth = -1;
-      bestfit_skdet_ccnqe = -1;
-      bestfit_skdet_nc = -1;
-      bestfit_skdet_nuecc = -1;
-      bestfit_fsi_000 = -1;
-      bestfit_fsi_001 = -1;
-      bestfit_fsi_002 = -1;
-      bestfit_fsi_003 = -1;
-      bestfit_fsi_004 = -1;
-      bestfit_fsi_005 = -1;
-      if(conv::kNumOfFSIParams == 15) {
-	bestfit_fsi_006 = -1;
-	bestfit_fsi_007 = -1;
-	bestfit_fsi_008 = -1;
-	bestfit_fsi_009 = -1;
-	bestfit_fsi_010 = -1;
-	bestfit_fsi_011 = -1;
-	bestfit_fsi_012 = -1;
-	bestfit_fsi_013 = -1;
-	bestfit_fsi_014 = -1;
-      }
-    }
-    // Init plus errors
+    bestfit_unbanff_00 = -1;
+    bestfit_unbanff_01 = -1;
+    bestfit_unbanff_02 = -1;
+    bestfit_unbanff_03 = -1;
+    bestfit_unbanff_04 = -1;
+    bestfit_unbanff_05 = -1;
+    bestfit_unbanff_06 = -1;
+    bestfit_unbanff_07 = -1;
+    bestfit_unbanff_08 = -1;
+    bestfit_unbanff_09 = -1;
+    bestfit_unbanff_10 = -1;
+    bestfit_unbanff_11 = -1;
+    bestfit_unbanff_12 = -1;
+    bestfit_unbanff_13 = -1;
+    bestfit_unbanff_14 = -1;
+    bestfit_unbanff_15 = -1;
+    bestfit_unbanff_16 = -1;
+    bestfit_unbanff_17 = -1;
+    bestfit_unbanff_18 = -1;
+    bestfit_unbanff_19 = -1;
+    bestfit_unbanff_20 = -1;
+    bestfit_unbanff_21 = -1;
+    bestfit_unbanff_22 = -1;
+    bestfit_banff_00 = -1;
+    bestfit_banff_01 = -1;
+    bestfit_banff_02 = -1;
+    bestfit_banff_03 = -1;
+    bestfit_banff_04 = -1;
+    bestfit_banff_05 = -1;
+    bestfit_banff_06 = -1;
+    bestfit_banff_07 = -1;
+    bestfit_banff_08 = -1;
+    bestfit_banff_09 = -1;
+    bestfit_banff_10 = -1;
+    bestfit_banff_11 = -1;
+    bestfit_banff_12 = -1;
+    bestfit_banff_13 = -1;
+    bestfit_banff_14 = -1;
+    bestfit_banff_15 = -1;
+    bestfit_banff_16 = -1;
+    bestfit_banff_17 = -1;
+    bestfit_banff_18 = -1;
+    bestfit_banff_19 = -1;
+    bestfit_banff_20 = -1;
+    bestfit_banff_21 = -1;
+    bestfit_banff_22 = -1;
+    bestfit_banff_23 = -1;
+    bestfit_banff_24 = -1;
+    bestfit_banff_25 = -1;
+    bestfit_banff_26 = -1;
+    bestfit_banff_27 = -1;
+    bestfit_banff_28 = -1;
+    bestfit_banff_29 = -1;
+    bestfit_banff_30 = -1;
+    bestfit_banff_maqe = -1;
+    bestfit_banff_mares = -1;
+    bestfit_banff_ccqeE0 = -1;
+    bestfit_banff_ccqeE1 = -1;
+    bestfit_banff_ccqeE2 = -1;
+    bestfit_banff_cc1piE0 = -1;
+    bestfit_banff_cc1piE1 = -1;
+    bestfit_banff_nc1pi0 = -1;
+    bestfit_xsec_pf = -1;
+    bestfit_xsec_sf = -1;
+    bestfit_xsec_wshape = -1;
+    bestfit_xsec_ccothshape = -1;
+    bestfit_xsec_cc1pishape = -1;
+    bestfit_xsec_pilessdelta = -1;
+    bestfit_xsec_normcccoh = -1;
+    bestfit_xsec_normnc1piC = -1;
+    bestfit_xsec_normnccoh = -1;
+    bestfit_xsec_normncoth = -1;
+    bestfit_xsec_normnuetonumu = -1;
+    bestfit_xsec_normantinutonu = -1;
+    bestfit_skdet_energyscale = -1;
+    bestfit_skdet_ccqerc0 = -1;
+    bestfit_skdet_ccqerc1 = -1;
+    bestfit_skdet_ccqerc2 = -1;
+    bestfit_skdet_ccqeoth = -1;
+    bestfit_skdet_ccnqe = -1;
+    bestfit_skdet_nc = -1;
+    bestfit_skdet_nuecc = -1;
+    bestfit_fsi_000 = -1;
+    bestfit_fsi_001 = -1;
+    bestfit_fsi_002 = -1;
+    bestfit_fsi_003 = -1;
+    bestfit_fsi_004 = -1;
+    bestfit_fsi_005 = -1;
+    bestfit_fsi_006 = -1;
+    bestfit_fsi_007 = -1;
+    bestfit_fsi_008 = -1;
+    bestfit_fsi_009 = -1;
+    bestfit_fsi_010 = -1;
+    bestfit_fsi_011 = -1;
+    bestfit_fsi_012 = -1;
+    bestfit_fsi_013 = -1;
+    bestfit_fsi_014 = -1;
+     // Init plus errors
     errp_mixing12 = -1;
     errp_mixing13 = -1;
     errp_mixing23 = -1;
     errp_deltacp  = -1;
     errp_dm12sq   = -1;
     errp_dm23sq   = -1;
-    if(fit_syst_mode == 1) {
-      errp_banff_maqe = -1;
-      errp_banff_ccqeE0 = -1;
-      errp_xsec_sf = -1;
-      errp_xsec_pilessdelta = -1;
-      errp_skdet_ccnqe = -1;
-      errp_skdet_nc = -1;
-    }
-    else if(fit_syst_mode == 2) {
-      errp_banff_00 = -1;
-      errp_banff_01 = -1;
-      errp_banff_02 = -1;
-      errp_banff_03 = -1;
-      errp_banff_04 = -1;
-      errp_banff_05 = -1;
-      errp_banff_06 = -1;
-      errp_banff_07 = -1;
-      errp_banff_08 = -1;
-      errp_banff_09 = -1;
-      errp_banff_10 = -1;
-      errp_banff_11 = -1;
-      errp_banff_12 = -1;
-      errp_banff_13 = -1;
-      errp_banff_14 = -1;
-      errp_banff_15 = -1;
-#if BANFF_BINS <= 2
-      errp_banff_16 = -1;
-      errp_banff_17 = -1;
-      errp_banff_18 = -1;
-      errp_banff_19 = -1;
-      errp_banff_20 = -1;
-      errp_banff_21 = -1;
-      errp_banff_22 = -1;
-      errp_banff_23 = -1;
-      errp_banff_24 = -1;
-      errp_banff_25 = -1;
-      errp_banff_26 = -1;
-      errp_banff_27 = -1;
-      errp_banff_28 = -1;
-      errp_banff_29 = -1;
-      errp_banff_30 = -1;
-#endif
-      errp_banff_maqe = -1;
-      errp_banff_mares = -1;
-      errp_banff_ccqeE0 = -1;
-      errp_banff_ccqeE1 = -1;
-      errp_banff_ccqeE2 = -1;
-      errp_banff_cc1piE0 = -1;
-      errp_banff_cc1piE1 = -1;
-#if BANFF_BINS <= 2
-      errp_banff_nc1pi0 = -1;
-#endif
-      errp_xsec_pf = -1;
-      errp_xsec_sf = -1;
-      errp_xsec_wshape = -1;
-      errp_xsec_ccothshape = -1;
-      errp_xsec_cc1pishape = -1;
-      errp_xsec_pilessdelta = -1;
-      errp_xsec_normcccoh = -1;
-      errp_xsec_normnc1piC = -1;
-      errp_xsec_normnccoh = -1;
-      errp_xsec_normncoth = -1;
-      errp_xsec_normnuetonumu = -1;
-      errp_xsec_normantinutonu = -1;
-      errp_skdet_energyscale = -1;
-      errp_skdet_ccqerc0 = -1;
-      errp_skdet_ccqerc1 = -1;
-      errp_skdet_ccqerc2 = -1;
-      errp_skdet_ccqeoth = -1;
-      errp_skdet_ccnqe = -1;
-      errp_skdet_nc = -1;
-      errp_skdet_nuecc = -1;
-      errp_fsi_000 = -1;
-      errp_fsi_001 = -1;
-      errp_fsi_002 = -1;
-      errp_fsi_003 = -1;
-      errp_fsi_004 = -1;
-      errp_fsi_005 = -1;
-      if(conv::kNumOfFSIParams == 15) {
-	errp_fsi_006 = -1;
-	errp_fsi_007 = -1;
-	errp_fsi_008 = -1;
-	errp_fsi_009 = -1;
-	errp_fsi_010 = -1;
-	errp_fsi_011 = -1;
-	errp_fsi_012 = -1;
-	errp_fsi_013 = -1;
-	errp_fsi_014 = -1;
-      }
-    }
+    errp_unbanff_00 = -1;
+    errp_unbanff_01 = -1;
+    errp_unbanff_02 = -1;
+    errp_unbanff_03 = -1;
+    errp_unbanff_04 = -1;
+    errp_unbanff_05 = -1;
+    errp_unbanff_06 = -1;
+    errp_unbanff_07 = -1;
+    errp_unbanff_08 = -1;
+    errp_unbanff_09 = -1;
+    errp_unbanff_10 = -1;
+    errp_unbanff_11 = -1;
+    errp_unbanff_12 = -1;
+    errp_unbanff_13 = -1;
+    errp_unbanff_14 = -1;
+    errp_unbanff_15 = -1;
+    errp_unbanff_16 = -1;
+    errp_unbanff_17 = -1;
+    errp_unbanff_18 = -1;
+    errp_unbanff_19 = -1;
+    errp_unbanff_20 = -1;
+    errp_unbanff_21 = -1;
+    errp_unbanff_22 = -1;
+    errp_banff_00 = -1;
+    errp_banff_01 = -1;
+    errp_banff_02 = -1;
+    errp_banff_03 = -1;
+    errp_banff_04 = -1;
+    errp_banff_05 = -1;
+    errp_banff_06 = -1;
+    errp_banff_07 = -1;
+    errp_banff_08 = -1;
+    errp_banff_09 = -1;
+    errp_banff_10 = -1;
+    errp_banff_11 = -1;
+    errp_banff_12 = -1;
+    errp_banff_13 = -1;
+    errp_banff_14 = -1;
+    errp_banff_15 = -1;
+    errp_banff_16 = -1;
+    errp_banff_17 = -1;
+    errp_banff_18 = -1;
+    errp_banff_19 = -1;
+    errp_banff_20 = -1;
+    errp_banff_21 = -1;
+    errp_banff_22 = -1;
+    errp_banff_23 = -1;
+    errp_banff_24 = -1;
+    errp_banff_25 = -1;
+    errp_banff_26 = -1;
+    errp_banff_27 = -1;
+    errp_banff_28 = -1;
+    errp_banff_29 = -1;
+    errp_banff_30 = -1;
+    errp_banff_maqe = -1;
+    errp_banff_mares = -1;
+    errp_banff_ccqeE0 = -1;
+    errp_banff_ccqeE1 = -1;
+    errp_banff_ccqeE2 = -1;
+    errp_banff_cc1piE0 = -1;
+    errp_banff_cc1piE1 = -1;
+    errp_banff_nc1pi0 = -1;
+    errp_xsec_pf = -1;
+    errp_xsec_sf = -1;
+    errp_xsec_wshape = -1;
+    errp_xsec_ccothshape = -1;
+    errp_xsec_cc1pishape = -1;
+    errp_xsec_pilessdelta = -1;
+    errp_xsec_normcccoh = -1;
+    errp_xsec_normnc1piC = -1;
+    errp_xsec_normnccoh = -1;
+    errp_xsec_normncoth = -1;
+    errp_xsec_normnuetonumu = -1;
+    errp_xsec_normantinutonu = -1;
+    errp_skdet_energyscale = -1;
+    errp_skdet_ccqerc0 = -1;
+    errp_skdet_ccqerc1 = -1;
+    errp_skdet_ccqerc2 = -1;
+    errp_skdet_ccqeoth = -1;
+    errp_skdet_ccnqe = -1;
+    errp_skdet_nc = -1;
+    errp_skdet_nuecc = -1;
+    errp_fsi_000 = -1;
+    errp_fsi_001 = -1;
+    errp_fsi_002 = -1;
+    errp_fsi_003 = -1;
+    errp_fsi_004 = -1;
+    errp_fsi_005 = -1;
+    errp_fsi_006 = -1;
+    errp_fsi_007 = -1;
+    errp_fsi_008 = -1;
+    errp_fsi_009 = -1;
+    errp_fsi_010 = -1;
+    errp_fsi_011 = -1;
+    errp_fsi_012 = -1;
+    errp_fsi_013 = -1;
+    errp_fsi_014 = -1;
     // Init minus errors
     errm_mixing12 = -1;
     errm_mixing13 = -1;
@@ -1255,96 +1456,103 @@ void test_n_mock_data_fits_with_syst
     errm_deltacp  = -1;
     errm_dm12sq   = -1;
     errm_dm23sq   = -1;
-    if(fit_syst_mode == 1) {
-      errm_banff_maqe = -1;
-      errm_banff_ccqeE0 = -1;
-      errm_xsec_sf = -1;
-      errm_xsec_pilessdelta = -1;
-      errm_skdet_ccnqe = -1;
-      errm_skdet_nc = -1;
-    }
-    else if(fit_syst_mode == 2) {
-      errm_banff_00 = -1;
-      errm_banff_01 = -1;
-      errm_banff_02 = -1;
-      errm_banff_03 = -1;
-      errm_banff_04 = -1;
-      errm_banff_05 = -1;
-      errm_banff_06 = -1;
-      errm_banff_07 = -1;
-      errm_banff_08 = -1;
-      errm_banff_09 = -1;
-      errm_banff_10 = -1;
-      errm_banff_11 = -1;
-      errm_banff_12 = -1;
-      errm_banff_13 = -1;
-      errm_banff_14 = -1;
-      errm_banff_15 = -1;
-#if BANFF_BINS <= 2
-      errm_banff_16 = -1;
-      errm_banff_17 = -1;
-      errm_banff_18 = -1;
-      errm_banff_19 = -1;
-      errm_banff_20 = -1;
-      errm_banff_21 = -1;
-      errm_banff_22 = -1;
-      errm_banff_23 = -1;
-      errm_banff_24 = -1;
-      errm_banff_25 = -1;
-      errm_banff_26 = -1;
-      errm_banff_27 = -1;
-      errm_banff_28 = -1;
-      errm_banff_29 = -1;
-      errm_banff_30 = -1;
-#endif
-      errm_banff_maqe = -1;
-      errm_banff_mares = -1;
-      errm_banff_ccqeE0 = -1;
-      errm_banff_ccqeE1 = -1;
-      errm_banff_ccqeE2 = -1;
-      errm_banff_cc1piE0 = -1;
-      errm_banff_cc1piE1 = -1;
-#if BANFF_BINS <= 2
-      errm_banff_nc1pi0 = -1;
-#endif
-      errm_xsec_pf = -1;
-      errm_xsec_sf = -1;
-      errm_xsec_wshape = -1;
-      errm_xsec_ccothshape = -1;
-      errm_xsec_cc1pishape = -1;
-      errm_xsec_pilessdelta = -1;
-      errm_xsec_normcccoh = -1;
-      errm_xsec_normnc1piC = -1;
-      errm_xsec_normnccoh = -1;
-      errm_xsec_normncoth = -1;
-      errm_xsec_normnuetonumu = -1;
-      errm_xsec_normantinutonu = -1;
-      errm_skdet_energyscale = -1;
-      errm_skdet_ccqerc0 = -1;
-      errm_skdet_ccqerc1 = -1;
-      errm_skdet_ccqerc2 = -1;
-      errm_skdet_ccqeoth = -1;
-      errm_skdet_ccnqe = -1;
-      errm_skdet_nc = -1;
-      errm_skdet_nuecc = -1;
-      errm_fsi_000 = -1;
-      errm_fsi_001 = -1;
-      errm_fsi_002 = -1;
-      errm_fsi_003 = -1;
-      errm_fsi_004 = -1;
-      errm_fsi_005 = -1;
-      if(conv::kNumOfFSIParams == 15) {
-	errm_fsi_006 = -1;
-	errm_fsi_007 = -1;
-	errm_fsi_008 = -1;
-	errm_fsi_009 = -1;
-	errm_fsi_010 = -1;
-	errm_fsi_011 = -1;
-	errm_fsi_012 = -1;
-	errm_fsi_013 = -1;
-	errm_fsi_014 = -1;
-      }
-    }
+    errm_unbanff_00 = -1;
+    errm_unbanff_01 = -1;
+    errm_unbanff_02 = -1;
+    errm_unbanff_03 = -1;
+    errm_unbanff_04 = -1;
+    errm_unbanff_05 = -1;
+    errm_unbanff_06 = -1;
+    errm_unbanff_07 = -1;
+    errm_unbanff_08 = -1;
+    errm_unbanff_09 = -1;
+    errm_unbanff_10 = -1;
+    errm_unbanff_11 = -1;
+    errm_unbanff_12 = -1;
+    errm_unbanff_13 = -1;
+    errm_unbanff_14 = -1;
+    errm_unbanff_15 = -1;
+    errm_unbanff_16 = -1;
+    errm_unbanff_17 = -1;
+    errm_unbanff_18 = -1;
+    errm_unbanff_19 = -1;
+    errm_unbanff_20 = -1;
+    errm_unbanff_21 = -1;
+    errm_unbanff_22 = -1;
+    errm_banff_00 = -1;
+    errm_banff_01 = -1;
+    errm_banff_02 = -1;
+    errm_banff_03 = -1;
+    errm_banff_04 = -1;
+    errm_banff_05 = -1;
+    errm_banff_06 = -1;
+    errm_banff_07 = -1;
+    errm_banff_08 = -1;
+    errm_banff_09 = -1;
+    errm_banff_10 = -1;
+    errm_banff_11 = -1;
+    errm_banff_12 = -1;
+    errm_banff_13 = -1;
+    errm_banff_14 = -1;
+    errm_banff_15 = -1;
+    errm_banff_16 = -1;
+    errm_banff_17 = -1;
+    errm_banff_18 = -1;
+    errm_banff_19 = -1;
+    errm_banff_20 = -1;
+    errm_banff_21 = -1;
+    errm_banff_22 = -1;
+    errm_banff_23 = -1;
+    errm_banff_24 = -1;
+    errm_banff_25 = -1;
+    errm_banff_26 = -1;
+    errm_banff_27 = -1;
+    errm_banff_28 = -1;
+    errm_banff_29 = -1;
+    errm_banff_30 = -1;
+    errm_banff_maqe = -1;
+    errm_banff_mares = -1;
+    errm_banff_ccqeE0 = -1;
+    errm_banff_ccqeE1 = -1;
+    errm_banff_ccqeE2 = -1;
+    errm_banff_cc1piE0 = -1;
+    errm_banff_cc1piE1 = -1;
+    errm_banff_nc1pi0 = -1;
+    errm_xsec_pf = -1;
+    errm_xsec_sf = -1;
+    errm_xsec_wshape = -1;
+    errm_xsec_ccothshape = -1;
+    errm_xsec_cc1pishape = -1;
+    errm_xsec_pilessdelta = -1;
+    errm_xsec_normcccoh = -1;
+    errm_xsec_normnc1piC = -1;
+    errm_xsec_normnccoh = -1;
+    errm_xsec_normncoth = -1;
+    errm_xsec_normnuetonumu = -1;
+    errm_xsec_normantinutonu = -1;
+    errm_skdet_energyscale = -1;
+    errm_skdet_ccqerc0 = -1;
+    errm_skdet_ccqerc1 = -1;
+    errm_skdet_ccqerc2 = -1;
+    errm_skdet_ccqeoth = -1;
+    errm_skdet_ccnqe = -1;
+    errm_skdet_nc = -1;
+    errm_skdet_nuecc = -1;
+    errm_fsi_000 = -1;
+    errm_fsi_001 = -1;
+    errm_fsi_002 = -1;
+    errm_fsi_003 = -1;
+    errm_fsi_004 = -1;
+    errm_fsi_005 = -1;
+    errm_fsi_006 = -1;
+    errm_fsi_007 = -1;
+    errm_fsi_008 = -1;
+    errm_fsi_009 = -1;
+    errm_fsi_010 = -1;
+    errm_fsi_011 = -1;
+    errm_fsi_012 = -1;
+    errm_fsi_013 = -1;
+    errm_fsi_014 = -1;
     // Init parabolic errors
     errpar_mixing12 = -1;
     errpar_mixing13 = -1;
@@ -1352,96 +1560,103 @@ void test_n_mock_data_fits_with_syst
     errpar_deltacp  = -1;
     errpar_dm12sq   = -1;
     errpar_dm23sq   = -1;
-    if(fit_syst_mode == 1) {
-      errpar_banff_maqe = -1;
-      errpar_banff_ccqeE0 = -1;
-      errpar_xsec_sf = -1;
-      errpar_xsec_pilessdelta = -1;
-      errpar_skdet_ccnqe = -1;
-      errpar_skdet_nc = -1;
-    }
-    else if(fit_syst_mode == 2) {
-      errpar_banff_00 = -1;
-      errpar_banff_01 = -1;
-      errpar_banff_02 = -1;
-      errpar_banff_03 = -1;
-      errpar_banff_04 = -1;
-      errpar_banff_05 = -1;
-      errpar_banff_06 = -1;
-      errpar_banff_07 = -1;
-      errpar_banff_08 = -1;
-      errpar_banff_09 = -1;
-      errpar_banff_10 = -1;
-      errpar_banff_11 = -1;
-      errpar_banff_12 = -1;
-      errpar_banff_13 = -1;
-      errpar_banff_14 = -1;
-      errpar_banff_15 = -1;
-#if BANFF_BINS <= 2
-      errpar_banff_16 = -1;
-      errpar_banff_17 = -1;
-      errpar_banff_18 = -1;
-      errpar_banff_19 = -1;
-      errpar_banff_20 = -1;
-      errpar_banff_21 = -1;
-      errpar_banff_22 = -1;
-      errpar_banff_23 = -1;
-      errpar_banff_24 = -1;
-      errpar_banff_25 = -1;
-      errpar_banff_26 = -1;
-      errpar_banff_27 = -1;
-      errpar_banff_28 = -1;
-      errpar_banff_29 = -1;
-      errpar_banff_30 = -1;
-#endif
-      errpar_banff_maqe = -1;
-      errpar_banff_mares = -1;
-      errpar_banff_ccqeE0 = -1;
-      errpar_banff_ccqeE1 = -1;
-      errpar_banff_ccqeE2 = -1;
-      errpar_banff_cc1piE0 = -1;
-      errpar_banff_cc1piE1 = -1;
-#if BANFF_BINS <= 2
-      errpar_banff_nc1pi0 = -1;
-#endif
-      errpar_xsec_pf = -1;
-      errpar_xsec_sf = -1;
-      errpar_xsec_wshape = -1;
-      errpar_xsec_ccothshape = -1;
-      errpar_xsec_cc1pishape = -1;
-      errpar_xsec_pilessdelta = -1;
-      errpar_xsec_normcccoh = -1;
-      errpar_xsec_normnc1piC = -1;
-      errpar_xsec_normnccoh = -1;
-      errpar_xsec_normncoth = -1;
-      errpar_xsec_normnuetonumu = -1;
-      errpar_xsec_normantinutonu = -1;
-      errpar_skdet_energyscale = -1;
-      errpar_skdet_ccqerc0 = -1;
-      errpar_skdet_ccqerc1 = -1;
-      errpar_skdet_ccqerc2 = -1;
-      errpar_skdet_ccqeoth = -1;
-      errpar_skdet_ccnqe = -1;
-      errpar_skdet_nc = -1;
-      errpar_skdet_nuecc = -1;
-      errpar_fsi_000 = -1;
-      errpar_fsi_001 = -1;
-      errpar_fsi_002 = -1;
-      errpar_fsi_003 = -1;
-      errpar_fsi_004 = -1;
-      errpar_fsi_005 = -1;
-      if(conv::kNumOfFSIParams == 15) {
-	errpar_fsi_006 = -1;
-	errpar_fsi_007 = -1;
-	errpar_fsi_008 = -1;
-	errpar_fsi_009 = -1;
-	errpar_fsi_010 = -1;
-	errpar_fsi_011 = -1;
-	errpar_fsi_012 = -1;
-	errpar_fsi_013 = -1;
-	errpar_fsi_014 = -1;
-      }
-    }
+    errpar_unbanff_00 = -1;
+    errpar_unbanff_01 = -1;
+    errpar_unbanff_02 = -1;
+    errpar_unbanff_03 = -1;
+    errpar_unbanff_04 = -1;
+    errpar_unbanff_05 = -1;
+    errpar_unbanff_06 = -1;
+    errpar_unbanff_07 = -1;
+    errpar_unbanff_08 = -1;
+    errpar_unbanff_09 = -1;
+    errpar_unbanff_10 = -1;
+    errpar_unbanff_11 = -1;
+    errpar_unbanff_12 = -1;
+    errpar_unbanff_13 = -1;
+    errpar_unbanff_14 = -1;
+    errpar_unbanff_15 = -1;
+    errpar_unbanff_16 = -1;
+    errpar_unbanff_17 = -1;
+    errpar_unbanff_18 = -1;
+    errpar_unbanff_19 = -1;
+    errpar_unbanff_20 = -1;
+    errpar_unbanff_21 = -1;
+    errpar_unbanff_22 = -1;
+    errpar_banff_00 = -1;
+    errpar_banff_01 = -1;
+    errpar_banff_02 = -1;
+    errpar_banff_03 = -1;
+    errpar_banff_04 = -1;
+    errpar_banff_05 = -1;
+    errpar_banff_06 = -1;
+    errpar_banff_07 = -1;
+    errpar_banff_08 = -1;
+    errpar_banff_09 = -1;
+    errpar_banff_10 = -1;
+    errpar_banff_11 = -1;
+    errpar_banff_12 = -1;
+    errpar_banff_13 = -1;
+    errpar_banff_14 = -1;
+    errpar_banff_15 = -1;
+    errpar_banff_16 = -1;
+    errpar_banff_17 = -1;
+    errpar_banff_18 = -1;
+    errpar_banff_19 = -1;
+    errpar_banff_20 = -1;
+    errpar_banff_21 = -1;
+    errpar_banff_22 = -1;
+    errpar_banff_23 = -1;
+    errpar_banff_24 = -1;
+    errpar_banff_25 = -1;
+    errpar_banff_26 = -1;
+    errpar_banff_27 = -1;
+    errpar_banff_28 = -1;
+    errpar_banff_29 = -1;
+    errpar_banff_30 = -1;
+    errpar_banff_maqe = -1;
+    errpar_banff_mares = -1;
+    errpar_banff_ccqeE0 = -1;
+    errpar_banff_ccqeE1 = -1;
+    errpar_banff_ccqeE2 = -1;
+    errpar_banff_cc1piE0 = -1;
+    errpar_banff_cc1piE1 = -1;
+    errpar_banff_nc1pi0 = -1;
+    errpar_xsec_pf = -1;
+    errpar_xsec_sf = -1;
+    errpar_xsec_wshape = -1;
+    errpar_xsec_ccothshape = -1;
+    errpar_xsec_cc1pishape = -1;
+    errpar_xsec_pilessdelta = -1;
+    errpar_xsec_normcccoh = -1;
+    errpar_xsec_normnc1piC = -1;
+    errpar_xsec_normnccoh = -1;
+    errpar_xsec_normncoth = -1;
+    errpar_xsec_normnuetonumu = -1;
+    errpar_xsec_normantinutonu = -1;
+    errpar_skdet_energyscale = -1;
+    errpar_skdet_ccqerc0 = -1;
+    errpar_skdet_ccqerc1 = -1;
+    errpar_skdet_ccqerc2 = -1;
+    errpar_skdet_ccqeoth = -1;
+    errpar_skdet_ccnqe = -1;
+    errpar_skdet_nc = -1;
+    errpar_skdet_nuecc = -1;
+    errpar_fsi_000 = -1;
+    errpar_fsi_001 = -1;
+    errpar_fsi_002 = -1;
+    errpar_fsi_003 = -1;
+    errpar_fsi_004 = -1;
+    errpar_fsi_005 = -1;
+    errpar_fsi_006 = -1;
+    errpar_fsi_007 = -1;
+    errpar_fsi_008 = -1;
+    errpar_fsi_009 = -1;
+    errpar_fsi_010 = -1;
+    errpar_fsi_011 = -1;
+    errpar_fsi_012 = -1;
+    errpar_fsi_013 = -1;
+    errpar_fsi_014 = -1;
     //get the bestfit values
     if(hyp == kHypOsc3F) {
       bestfit_mixing12 = fparm->BestFitValue(kPhypMixing12);
@@ -1455,15 +1670,30 @@ void test_n_mock_data_fits_with_syst
         bestfit_mixing23 = fparm->BestFitValue(kPhypMixing23);
         bestfit_dm23sq   = fparm->BestFitValue(kPhypDm23sq);
       }
-    if(fit_syst_mode == 1) {
-      if(fparm->Exists(conv::kNuisBANFFMAQE)) bestfit_banff_maqe = fparm->BestFitValue(conv::kNuisBANFFMAQE);
-      if(fparm->Exists(conv::kNuisBANFFCCQEE0)) bestfit_banff_ccqeE0 = fparm->BestFitValue(conv::kNuisBANFFCCQEE0);
-      if(fparm->Exists(conv::kNuisXSecSpecFunc)) bestfit_xsec_sf = fparm->BestFitValue(conv::kNuisXSecSpecFunc);
-      if(fparm->Exists(conv::kNuisXSecPiLessDelta)) bestfit_xsec_pilessdelta = fparm->BestFitValue(conv::kNuisXSecPiLessDelta);
-      if(fparm->Exists(conv::kNuisSuperkEff1RmuCCnonQE)) bestfit_skdet_ccnqe = fparm->BestFitValue(conv::kNuisSuperkEff1RmuCCnonQE);
-      if(fparm->Exists(conv::kNuisSuperkEff1RmuNC)) bestfit_skdet_nc = fparm->BestFitValue(conv::kNuisSuperkEff1RmuNC);
-    }
-    else if(fit_syst_mode == 2) {
+    if(fit_syst_mode >= 1) {
+      if(fparm->Exists(conv::kNuisUnBANFF00)) bestfit_unbanff_00 = fparm->BestFitValue(conv::kNuisUnBANFF00);
+      if(fparm->Exists(conv::kNuisUnBANFF01)) bestfit_unbanff_01 = fparm->BestFitValue(conv::kNuisUnBANFF01);
+      if(fparm->Exists(conv::kNuisUnBANFF02)) bestfit_unbanff_02 = fparm->BestFitValue(conv::kNuisUnBANFF02);
+      if(fparm->Exists(conv::kNuisUnBANFF03)) bestfit_unbanff_03 = fparm->BestFitValue(conv::kNuisUnBANFF03);
+      if(fparm->Exists(conv::kNuisUnBANFF04)) bestfit_unbanff_04 = fparm->BestFitValue(conv::kNuisUnBANFF04);
+      if(fparm->Exists(conv::kNuisUnBANFF05)) bestfit_unbanff_05 = fparm->BestFitValue(conv::kNuisUnBANFF05);
+      if(fparm->Exists(conv::kNuisUnBANFF06)) bestfit_unbanff_06 = fparm->BestFitValue(conv::kNuisUnBANFF06);
+      if(fparm->Exists(conv::kNuisUnBANFF07)) bestfit_unbanff_07 = fparm->BestFitValue(conv::kNuisUnBANFF07);
+      if(fparm->Exists(conv::kNuisUnBANFF08)) bestfit_unbanff_08 = fparm->BestFitValue(conv::kNuisUnBANFF08);
+      if(fparm->Exists(conv::kNuisUnBANFF09)) bestfit_unbanff_09 = fparm->BestFitValue(conv::kNuisUnBANFF09);
+      if(fparm->Exists(conv::kNuisUnBANFF10)) bestfit_unbanff_10 = fparm->BestFitValue(conv::kNuisUnBANFF10);
+      if(fparm->Exists(conv::kNuisUnBANFF11)) bestfit_unbanff_11 = fparm->BestFitValue(conv::kNuisUnBANFF11);
+      if(fparm->Exists(conv::kNuisUnBANFF12)) bestfit_unbanff_12 = fparm->BestFitValue(conv::kNuisUnBANFF12);
+      if(fparm->Exists(conv::kNuisUnBANFF13)) bestfit_unbanff_13 = fparm->BestFitValue(conv::kNuisUnBANFF13);
+      if(fparm->Exists(conv::kNuisUnBANFF14)) bestfit_unbanff_14 = fparm->BestFitValue(conv::kNuisUnBANFF14);
+      if(fparm->Exists(conv::kNuisUnBANFF15)) bestfit_unbanff_15 = fparm->BestFitValue(conv::kNuisUnBANFF15);
+      if(fparm->Exists(conv::kNuisUnBANFF16)) bestfit_unbanff_16 = fparm->BestFitValue(conv::kNuisUnBANFF16);
+      if(fparm->Exists(conv::kNuisUnBANFF17)) bestfit_unbanff_17 = fparm->BestFitValue(conv::kNuisUnBANFF17);
+      if(fparm->Exists(conv::kNuisUnBANFF18)) bestfit_unbanff_18 = fparm->BestFitValue(conv::kNuisUnBANFF18);
+      if(fparm->Exists(conv::kNuisUnBANFF19)) bestfit_unbanff_19 = fparm->BestFitValue(conv::kNuisUnBANFF19);
+      if(fparm->Exists(conv::kNuisUnBANFF20)) bestfit_unbanff_20 = fparm->BestFitValue(conv::kNuisUnBANFF20);
+      if(fparm->Exists(conv::kNuisUnBANFF21)) bestfit_unbanff_21 = fparm->BestFitValue(conv::kNuisUnBANFF21);
+      if(fparm->Exists(conv::kNuisUnBANFF22)) bestfit_unbanff_22 = fparm->BestFitValue(conv::kNuisUnBANFF22);
       if(fparm->Exists(conv::kNuisBANFF00)) bestfit_banff_00 = fparm->BestFitValue(conv::kNuisBANFF00);
       if(fparm->Exists(conv::kNuisBANFF01)) bestfit_banff_01 = fparm->BestFitValue(conv::kNuisBANFF01);
       if(fparm->Exists(conv::kNuisBANFF02)) bestfit_banff_02 = fparm->BestFitValue(conv::kNuisBANFF02);
@@ -1507,6 +1737,16 @@ void test_n_mock_data_fits_with_syst
 #if BANFF_BINS <= 2
       if(fparm->Exists(conv::kNuisBANFFNC1pi0)) bestfit_banff_nc1pi0 = fparm->BestFitValue(conv::kNuisBANFFNC1pi0);
 #endif
+    }
+    if(fit_syst_mode == 1) {
+      if(fparm->Exists(conv::kNuisBANFFMAQE)) bestfit_banff_maqe = fparm->BestFitValue(conv::kNuisBANFFMAQE);
+      if(fparm->Exists(conv::kNuisBANFFCCQEE0)) bestfit_banff_ccqeE0 = fparm->BestFitValue(conv::kNuisBANFFCCQEE0);
+      if(fparm->Exists(conv::kNuisXSecSpecFunc)) bestfit_xsec_sf = fparm->BestFitValue(conv::kNuisXSecSpecFunc);
+      if(fparm->Exists(conv::kNuisXSecPiLessDelta)) bestfit_xsec_pilessdelta = fparm->BestFitValue(conv::kNuisXSecPiLessDelta);
+      if(fparm->Exists(conv::kNuisSuperkEff1RmuCCnonQE)) bestfit_skdet_ccnqe = fparm->BestFitValue(conv::kNuisSuperkEff1RmuCCnonQE);
+      if(fparm->Exists(conv::kNuisSuperkEff1RmuNC)) bestfit_skdet_nc = fparm->BestFitValue(conv::kNuisSuperkEff1RmuNC);
+    }
+    else if(fit_syst_mode == 2) {
       if(fparm->Exists(conv::kNuisXSecFermiMom)) bestfit_xsec_pf = fparm->BestFitValue(conv::kNuisXSecFermiMom);
       if(fparm->Exists(conv::kNuisXSecSpecFunc)) bestfit_xsec_sf = fparm->BestFitValue(conv::kNuisXSecSpecFunc);
       if(fparm->Exists(conv::kNuisXSecWshape)) bestfit_xsec_wshape = fparm->BestFitValue(conv::kNuisXSecWshape);
@@ -1558,15 +1798,30 @@ void test_n_mock_data_fits_with_syst
         errp_mixing23 = fparm->PlusError(kPhypMixing23);
         errp_dm23sq   = fparm->PlusError(kPhypDm23sq);
     }
-    if(fit_syst_mode == 1) {
-      if(fparm->Exists(conv::kNuisBANFFMAQE)) errp_banff_maqe = fparm->PlusError(conv::kNuisBANFFMAQE);
-      if(fparm->Exists(conv::kNuisBANFFCCQEE0)) errp_banff_ccqeE0 = fparm->PlusError(conv::kNuisBANFFCCQEE0);
-      if(fparm->Exists(conv::kNuisXSecSpecFunc)) errp_xsec_sf = fparm->PlusError(conv::kNuisXSecSpecFunc);
-      if(fparm->Exists(conv::kNuisXSecPiLessDelta)) errp_xsec_pilessdelta = fparm->PlusError(conv::kNuisXSecPiLessDelta);
-      if(fparm->Exists(conv::kNuisSuperkEff1RmuCCnonQE)) errp_skdet_ccnqe = fparm->PlusError(conv::kNuisSuperkEff1RmuCCnonQE);
-      if(fparm->Exists(conv::kNuisSuperkEff1RmuNC)) errp_skdet_nc = fparm->PlusError(conv::kNuisSuperkEff1RmuNC);
-    }
-    else if(fit_syst_mode == 2) {
+    if(fit_syst_mode >= 1) {
+      if(fparm->Exists(conv::kNuisUnBANFF00)) errp_unbanff_00 = fparm->PlusError(conv::kNuisUnBANFF00);
+      if(fparm->Exists(conv::kNuisUnBANFF01)) errp_unbanff_01 = fparm->PlusError(conv::kNuisUnBANFF01);
+      if(fparm->Exists(conv::kNuisUnBANFF02)) errp_unbanff_02 = fparm->PlusError(conv::kNuisUnBANFF02);
+      if(fparm->Exists(conv::kNuisUnBANFF03)) errp_unbanff_03 = fparm->PlusError(conv::kNuisUnBANFF03);
+      if(fparm->Exists(conv::kNuisUnBANFF04)) errp_unbanff_04 = fparm->PlusError(conv::kNuisUnBANFF04);
+      if(fparm->Exists(conv::kNuisUnBANFF05)) errp_unbanff_05 = fparm->PlusError(conv::kNuisUnBANFF05);
+      if(fparm->Exists(conv::kNuisUnBANFF06)) errp_unbanff_06 = fparm->PlusError(conv::kNuisUnBANFF06);
+      if(fparm->Exists(conv::kNuisUnBANFF07)) errp_unbanff_07 = fparm->PlusError(conv::kNuisUnBANFF07);
+      if(fparm->Exists(conv::kNuisUnBANFF08)) errp_unbanff_08 = fparm->PlusError(conv::kNuisUnBANFF08);
+      if(fparm->Exists(conv::kNuisUnBANFF09)) errp_unbanff_09 = fparm->PlusError(conv::kNuisUnBANFF09);
+      if(fparm->Exists(conv::kNuisUnBANFF10)) errp_unbanff_10 = fparm->PlusError(conv::kNuisUnBANFF10);
+      if(fparm->Exists(conv::kNuisUnBANFF11)) errp_unbanff_11 = fparm->PlusError(conv::kNuisUnBANFF11);
+      if(fparm->Exists(conv::kNuisUnBANFF12)) errp_unbanff_12 = fparm->PlusError(conv::kNuisUnBANFF12);
+      if(fparm->Exists(conv::kNuisUnBANFF13)) errp_unbanff_13 = fparm->PlusError(conv::kNuisUnBANFF13);
+      if(fparm->Exists(conv::kNuisUnBANFF14)) errp_unbanff_14 = fparm->PlusError(conv::kNuisUnBANFF14);
+      if(fparm->Exists(conv::kNuisUnBANFF15)) errp_unbanff_15 = fparm->PlusError(conv::kNuisUnBANFF15);
+      if(fparm->Exists(conv::kNuisUnBANFF16)) errp_unbanff_16 = fparm->PlusError(conv::kNuisUnBANFF16);
+      if(fparm->Exists(conv::kNuisUnBANFF17)) errp_unbanff_17 = fparm->PlusError(conv::kNuisUnBANFF17);
+      if(fparm->Exists(conv::kNuisUnBANFF18)) errp_unbanff_18 = fparm->PlusError(conv::kNuisUnBANFF18);
+      if(fparm->Exists(conv::kNuisUnBANFF19)) errp_unbanff_19 = fparm->PlusError(conv::kNuisUnBANFF19);
+      if(fparm->Exists(conv::kNuisUnBANFF20)) errp_unbanff_20 = fparm->PlusError(conv::kNuisUnBANFF20);
+      if(fparm->Exists(conv::kNuisUnBANFF21)) errp_unbanff_21 = fparm->PlusError(conv::kNuisUnBANFF21);
+      if(fparm->Exists(conv::kNuisUnBANFF22)) errp_unbanff_22 = fparm->PlusError(conv::kNuisUnBANFF22);
       if(fparm->Exists(conv::kNuisBANFF00)) errp_banff_00 = fparm->PlusError(conv::kNuisBANFF00);
       if(fparm->Exists(conv::kNuisBANFF01)) errp_banff_01 = fparm->PlusError(conv::kNuisBANFF01);
       if(fparm->Exists(conv::kNuisBANFF02)) errp_banff_02 = fparm->PlusError(conv::kNuisBANFF02);
@@ -1610,6 +1865,16 @@ void test_n_mock_data_fits_with_syst
 #if BANFF_BINS <= 2
       if(fparm->Exists(conv::kNuisBANFFNC1pi0)) errp_banff_nc1pi0 = fparm->PlusError(conv::kNuisBANFFNC1pi0);
 #endif
+    }
+    if(fit_syst_mode == 1) {
+      if(fparm->Exists(conv::kNuisBANFFMAQE)) errp_banff_maqe = fparm->PlusError(conv::kNuisBANFFMAQE);
+      if(fparm->Exists(conv::kNuisBANFFCCQEE0)) errp_banff_ccqeE0 = fparm->PlusError(conv::kNuisBANFFCCQEE0);
+      if(fparm->Exists(conv::kNuisXSecSpecFunc)) errp_xsec_sf = fparm->PlusError(conv::kNuisXSecSpecFunc);
+      if(fparm->Exists(conv::kNuisXSecPiLessDelta)) errp_xsec_pilessdelta = fparm->PlusError(conv::kNuisXSecPiLessDelta);
+      if(fparm->Exists(conv::kNuisSuperkEff1RmuCCnonQE)) errp_skdet_ccnqe = fparm->PlusError(conv::kNuisSuperkEff1RmuCCnonQE);
+      if(fparm->Exists(conv::kNuisSuperkEff1RmuNC)) errp_skdet_nc = fparm->PlusError(conv::kNuisSuperkEff1RmuNC);
+    }
+    else if(fit_syst_mode == 2) {
       if(fparm->Exists(conv::kNuisXSecFermiMom)) errp_xsec_pf = fparm->PlusError(conv::kNuisXSecFermiMom);
       if(fparm->Exists(conv::kNuisXSecSpecFunc)) errp_xsec_sf = fparm->PlusError(conv::kNuisXSecSpecFunc);
       if(fparm->Exists(conv::kNuisXSecWshape)) errp_xsec_wshape = fparm->PlusError(conv::kNuisXSecWshape);
@@ -1662,14 +1927,29 @@ void test_n_mock_data_fits_with_syst
         errm_dm23sq   = fparm->MinusError(kPhypDm23sq);
       }
     if(fit_syst_mode == 1) {
-      if(fparm->Exists(conv::kNuisBANFFMAQE)) errm_banff_maqe = fparm->MinusError(conv::kNuisBANFFMAQE);
-      if(fparm->Exists(conv::kNuisBANFFCCQEE0)) errm_banff_ccqeE0 = fparm->MinusError(conv::kNuisBANFFCCQEE0);
-      if(fparm->Exists(conv::kNuisXSecSpecFunc)) errm_xsec_sf = fparm->MinusError(conv::kNuisXSecSpecFunc);
-      if(fparm->Exists(conv::kNuisXSecPiLessDelta)) errm_xsec_pilessdelta = fparm->MinusError(conv::kNuisXSecPiLessDelta);
-      if(fparm->Exists(conv::kNuisSuperkEff1RmuCCnonQE)) errm_skdet_ccnqe = fparm->MinusError(conv::kNuisSuperkEff1RmuCCnonQE);
-      if(fparm->Exists(conv::kNuisSuperkEff1RmuNC)) errm_skdet_nc = fparm->MinusError(conv::kNuisSuperkEff1RmuNC);
-    }
-    else if(fit_syst_mode == 2) {
+      if(fparm->Exists(conv::kNuisUnBANFF00)) errm_unbanff_00 = fparm->MinusError(conv::kNuisUnBANFF00);
+      if(fparm->Exists(conv::kNuisUnBANFF01)) errm_unbanff_01 = fparm->MinusError(conv::kNuisUnBANFF01);
+      if(fparm->Exists(conv::kNuisUnBANFF02)) errm_unbanff_02 = fparm->MinusError(conv::kNuisUnBANFF02);
+      if(fparm->Exists(conv::kNuisUnBANFF03)) errm_unbanff_03 = fparm->MinusError(conv::kNuisUnBANFF03);
+      if(fparm->Exists(conv::kNuisUnBANFF04)) errm_unbanff_04 = fparm->MinusError(conv::kNuisUnBANFF04);
+      if(fparm->Exists(conv::kNuisUnBANFF05)) errm_unbanff_05 = fparm->MinusError(conv::kNuisUnBANFF05);
+      if(fparm->Exists(conv::kNuisUnBANFF06)) errm_unbanff_06 = fparm->MinusError(conv::kNuisUnBANFF06);
+      if(fparm->Exists(conv::kNuisUnBANFF07)) errm_unbanff_07 = fparm->MinusError(conv::kNuisUnBANFF07);
+      if(fparm->Exists(conv::kNuisUnBANFF08)) errm_unbanff_08 = fparm->MinusError(conv::kNuisUnBANFF08);
+      if(fparm->Exists(conv::kNuisUnBANFF09)) errm_unbanff_09 = fparm->MinusError(conv::kNuisUnBANFF09);
+      if(fparm->Exists(conv::kNuisUnBANFF10)) errm_unbanff_10 = fparm->MinusError(conv::kNuisUnBANFF10);
+      if(fparm->Exists(conv::kNuisUnBANFF11)) errm_unbanff_11 = fparm->MinusError(conv::kNuisUnBANFF11);
+      if(fparm->Exists(conv::kNuisUnBANFF12)) errm_unbanff_12 = fparm->MinusError(conv::kNuisUnBANFF12);
+      if(fparm->Exists(conv::kNuisUnBANFF13)) errm_unbanff_13 = fparm->MinusError(conv::kNuisUnBANFF13);
+      if(fparm->Exists(conv::kNuisUnBANFF14)) errm_unbanff_14 = fparm->MinusError(conv::kNuisUnBANFF14);
+      if(fparm->Exists(conv::kNuisUnBANFF15)) errm_unbanff_15 = fparm->MinusError(conv::kNuisUnBANFF15);
+      if(fparm->Exists(conv::kNuisUnBANFF16)) errm_unbanff_16 = fparm->MinusError(conv::kNuisUnBANFF16);
+      if(fparm->Exists(conv::kNuisUnBANFF17)) errm_unbanff_17 = fparm->MinusError(conv::kNuisUnBANFF17);
+      if(fparm->Exists(conv::kNuisUnBANFF18)) errm_unbanff_18 = fparm->MinusError(conv::kNuisUnBANFF18);
+      if(fparm->Exists(conv::kNuisUnBANFF19)) errm_unbanff_19 = fparm->MinusError(conv::kNuisUnBANFF19);
+      if(fparm->Exists(conv::kNuisUnBANFF20)) errm_unbanff_20 = fparm->MinusError(conv::kNuisUnBANFF20);
+      if(fparm->Exists(conv::kNuisUnBANFF21)) errm_unbanff_21 = fparm->MinusError(conv::kNuisUnBANFF21);
+      if(fparm->Exists(conv::kNuisUnBANFF22)) errm_unbanff_22 = fparm->MinusError(conv::kNuisUnBANFF22);
       if(fparm->Exists(conv::kNuisBANFF00)) errm_banff_00 = fparm->MinusError(conv::kNuisBANFF00);
       if(fparm->Exists(conv::kNuisBANFF01)) errm_banff_01 = fparm->MinusError(conv::kNuisBANFF01);
       if(fparm->Exists(conv::kNuisBANFF02)) errm_banff_02 = fparm->MinusError(conv::kNuisBANFF02);
@@ -1713,6 +1993,16 @@ void test_n_mock_data_fits_with_syst
 #if BANFF_BINS <= 2
       if(fparm->Exists(conv::kNuisBANFFNC1pi0)) errm_banff_nc1pi0 = fparm->MinusError(conv::kNuisBANFFNC1pi0);
 #endif
+    }
+    if(fit_syst_mode == 1) {
+      if(fparm->Exists(conv::kNuisBANFFMAQE)) errm_banff_maqe = fparm->MinusError(conv::kNuisBANFFMAQE);
+      if(fparm->Exists(conv::kNuisBANFFCCQEE0)) errm_banff_ccqeE0 = fparm->MinusError(conv::kNuisBANFFCCQEE0);
+      if(fparm->Exists(conv::kNuisXSecSpecFunc)) errm_xsec_sf = fparm->MinusError(conv::kNuisXSecSpecFunc);
+      if(fparm->Exists(conv::kNuisXSecPiLessDelta)) errm_xsec_pilessdelta = fparm->MinusError(conv::kNuisXSecPiLessDelta);
+      if(fparm->Exists(conv::kNuisSuperkEff1RmuCCnonQE)) errm_skdet_ccnqe = fparm->MinusError(conv::kNuisSuperkEff1RmuCCnonQE);
+      if(fparm->Exists(conv::kNuisSuperkEff1RmuNC)) errm_skdet_nc = fparm->MinusError(conv::kNuisSuperkEff1RmuNC);
+    }
+    else if(fit_syst_mode == 2) {
       if(fparm->Exists(conv::kNuisXSecFermiMom)) errm_xsec_pf = fparm->MinusError(conv::kNuisXSecFermiMom);
       if(fparm->Exists(conv::kNuisXSecSpecFunc)) errm_xsec_sf = fparm->MinusError(conv::kNuisXSecSpecFunc);
       if(fparm->Exists(conv::kNuisXSecWshape)) errm_xsec_wshape = fparm->MinusError(conv::kNuisXSecWshape);
@@ -1764,15 +2054,30 @@ void test_n_mock_data_fits_with_syst
         errpar_mixing23 = fparm->ParabolicError(kPhypMixing23);
         errpar_dm23sq   = fparm->ParabolicError(kPhypDm23sq);
       }
-    if(fit_syst_mode == 1) {
-      if(fparm->Exists(conv::kNuisBANFFMAQE)) errpar_banff_maqe = fparm->ParabolicError(conv::kNuisBANFFMAQE);
-      if(fparm->Exists(conv::kNuisBANFFCCQEE0)) errpar_banff_ccqeE0 = fparm->ParabolicError(conv::kNuisBANFFCCQEE0);
-      if(fparm->Exists(conv::kNuisXSecSpecFunc)) errpar_xsec_sf = fparm->ParabolicError(conv::kNuisXSecSpecFunc);
-      if(fparm->Exists(conv::kNuisXSecPiLessDelta)) errpar_xsec_pilessdelta = fparm->ParabolicError(conv::kNuisXSecPiLessDelta);
-      if(fparm->Exists(conv::kNuisSuperkEff1RmuCCnonQE)) errpar_skdet_ccnqe = fparm->ParabolicError(conv::kNuisSuperkEff1RmuCCnonQE);
-      if(fparm->Exists(conv::kNuisSuperkEff1RmuNC)) errpar_skdet_nc = fparm->ParabolicError(conv::kNuisSuperkEff1RmuNC);
-    }
-    else if(fit_syst_mode == 2) {
+    if(fit_syst_mode >= 1) {
+      if(fparm->Exists(conv::kNuisUnBANFF00)) errpar_unbanff_00 = fparm->ParabolicError(conv::kNuisUnBANFF00);
+      if(fparm->Exists(conv::kNuisUnBANFF01)) errpar_unbanff_01 = fparm->ParabolicError(conv::kNuisUnBANFF01);
+      if(fparm->Exists(conv::kNuisUnBANFF02)) errpar_unbanff_02 = fparm->ParabolicError(conv::kNuisUnBANFF02);
+      if(fparm->Exists(conv::kNuisUnBANFF03)) errpar_unbanff_03 = fparm->ParabolicError(conv::kNuisUnBANFF03);
+      if(fparm->Exists(conv::kNuisUnBANFF04)) errpar_unbanff_04 = fparm->ParabolicError(conv::kNuisUnBANFF04);
+      if(fparm->Exists(conv::kNuisUnBANFF05)) errpar_unbanff_05 = fparm->ParabolicError(conv::kNuisUnBANFF05);
+      if(fparm->Exists(conv::kNuisUnBANFF06)) errpar_unbanff_06 = fparm->ParabolicError(conv::kNuisUnBANFF06);
+      if(fparm->Exists(conv::kNuisUnBANFF07)) errpar_unbanff_07 = fparm->ParabolicError(conv::kNuisUnBANFF07);
+      if(fparm->Exists(conv::kNuisUnBANFF08)) errpar_unbanff_08 = fparm->ParabolicError(conv::kNuisUnBANFF08);
+      if(fparm->Exists(conv::kNuisUnBANFF09)) errpar_unbanff_09 = fparm->ParabolicError(conv::kNuisUnBANFF09);
+      if(fparm->Exists(conv::kNuisUnBANFF10)) errpar_unbanff_10 = fparm->ParabolicError(conv::kNuisUnBANFF10);
+      if(fparm->Exists(conv::kNuisUnBANFF11)) errpar_unbanff_11 = fparm->ParabolicError(conv::kNuisUnBANFF11);
+      if(fparm->Exists(conv::kNuisUnBANFF12)) errpar_unbanff_12 = fparm->ParabolicError(conv::kNuisUnBANFF12);
+      if(fparm->Exists(conv::kNuisUnBANFF13)) errpar_unbanff_13 = fparm->ParabolicError(conv::kNuisUnBANFF13);
+      if(fparm->Exists(conv::kNuisUnBANFF14)) errpar_unbanff_14 = fparm->ParabolicError(conv::kNuisUnBANFF14);
+      if(fparm->Exists(conv::kNuisUnBANFF15)) errpar_unbanff_15 = fparm->ParabolicError(conv::kNuisUnBANFF15);
+      if(fparm->Exists(conv::kNuisUnBANFF16)) errpar_unbanff_16 = fparm->ParabolicError(conv::kNuisUnBANFF16);
+      if(fparm->Exists(conv::kNuisUnBANFF17)) errpar_unbanff_17 = fparm->ParabolicError(conv::kNuisUnBANFF17);
+      if(fparm->Exists(conv::kNuisUnBANFF18)) errpar_unbanff_18 = fparm->ParabolicError(conv::kNuisUnBANFF18);
+      if(fparm->Exists(conv::kNuisUnBANFF19)) errpar_unbanff_19 = fparm->ParabolicError(conv::kNuisUnBANFF19);
+      if(fparm->Exists(conv::kNuisUnBANFF20)) errpar_unbanff_20 = fparm->ParabolicError(conv::kNuisUnBANFF20);
+      if(fparm->Exists(conv::kNuisUnBANFF21)) errpar_unbanff_21 = fparm->ParabolicError(conv::kNuisUnBANFF21);
+      if(fparm->Exists(conv::kNuisUnBANFF22)) errpar_unbanff_22 = fparm->ParabolicError(conv::kNuisUnBANFF22);
       if(fparm->Exists(conv::kNuisBANFF00)) errpar_banff_00 = fparm->ParabolicError(conv::kNuisBANFF00);
       if(fparm->Exists(conv::kNuisBANFF01)) errpar_banff_01 = fparm->ParabolicError(conv::kNuisBANFF01);
       if(fparm->Exists(conv::kNuisBANFF02)) errpar_banff_02 = fparm->ParabolicError(conv::kNuisBANFF02);
@@ -1816,6 +2121,16 @@ void test_n_mock_data_fits_with_syst
 #if BANFF_BINS <= 2
       if(fparm->Exists(conv::kNuisBANFFNC1pi0)) errpar_banff_nc1pi0 = fparm->ParabolicError(conv::kNuisBANFFNC1pi0);
 #endif
+    }
+    if(fit_syst_mode == 1) {
+      if(fparm->Exists(conv::kNuisBANFFMAQE)) errpar_banff_maqe = fparm->ParabolicError(conv::kNuisBANFFMAQE);
+      if(fparm->Exists(conv::kNuisBANFFCCQEE0)) errpar_banff_ccqeE0 = fparm->ParabolicError(conv::kNuisBANFFCCQEE0);
+      if(fparm->Exists(conv::kNuisXSecSpecFunc)) errpar_xsec_sf = fparm->ParabolicError(conv::kNuisXSecSpecFunc);
+      if(fparm->Exists(conv::kNuisXSecPiLessDelta)) errpar_xsec_pilessdelta = fparm->ParabolicError(conv::kNuisXSecPiLessDelta);
+      if(fparm->Exists(conv::kNuisSuperkEff1RmuCCnonQE)) errpar_skdet_ccnqe = fparm->ParabolicError(conv::kNuisSuperkEff1RmuCCnonQE);
+      if(fparm->Exists(conv::kNuisSuperkEff1RmuNC)) errpar_skdet_nc = fparm->ParabolicError(conv::kNuisSuperkEff1RmuNC);
+    }
+    else if(fit_syst_mode == 2) {
       if(fparm->Exists(conv::kNuisXSecFermiMom)) errpar_xsec_pf = fparm->ParabolicError(conv::kNuisXSecFermiMom);
       if(fparm->Exists(conv::kNuisXSecSpecFunc)) errpar_xsec_sf = fparm->ParabolicError(conv::kNuisXSecSpecFunc);
       if(fparm->Exists(conv::kNuisXSecWshape)) errpar_xsec_wshape = fparm->ParabolicError(conv::kNuisXSecWshape);
