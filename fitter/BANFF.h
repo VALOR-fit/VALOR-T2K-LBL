@@ -78,7 +78,8 @@ private:
   void Init      (void);
   void CleanUp   (void);
   int  Param2Idx (conv::PhysParamId_t p) const; ///< convert BANFF PhysParamId_t to a covariance matrix or vector index
-  void UpdateCorrelated (void); ///< use the currently stored uncorrelated values to update the current correlated values, using the cholesky method
+  void UpdateCorrelated        (void); ///< use the currently stored uncorrelated values to update the current correlated values, using the cholesky method
+  void CholeskyDecomposeMatrix (void); ///< Cholesky decompose the covariance matrix
 
   TVectorD *  fBestFitValues;     ///< BANFF best fit values
   TVectorD *  fCurrentValues;     ///< Current values of BANFF parameters 

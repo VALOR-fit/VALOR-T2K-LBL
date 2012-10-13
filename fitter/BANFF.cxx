@@ -17,7 +17,8 @@
 //#define __show_init_mesg_debug__   
 #define __show_cholesky_mesg_info__
 //#define __show_cholesky_mesg_debug__
-//#define __show_tweak_mesg_debug__
+#define __show_tweak_mesg_debug__
+#define __show_update_correlated_mesg_debug__
 //#define __show_chisqpenalty_mesg_debug__
 //#define __show_chisqpenalty_mesg_debug2__
 
@@ -108,9 +109,10 @@ bool BANFF::Read(TXMLEngine* xml, XMLNodePointer_t root_node)
 
   // init current values to best-fit values
   fCurrentValues = new TVectorD(bestfit);
-  fUncorrelatedCurrentValues = new TVectorD(np);
+  fUncorrelatedCurrentValues = new TVectorD(bestfit);
+  TVectorD & current_uncorrelated_values = *fUncorrelatedCurrentValues;
   for(int ip = 0; ip < np; ip++) {
-    fUncorrelatedCurrentValues[ip] = 0;
+    current_uncorrelated_values[ip] = 0;
   }
 
   // Get BANFF fit covariance matrix
@@ -195,7 +197,7 @@ void BANFF::TweakUncorrelated(
   TVectorD * input_vec    /* input vector of BANFF params - Set to 0 to reset to best-fit ones */
 )
 {
-#ifdef __show_cholesky_mesg_debug__
+#ifdef __show_tweak_mesg_debug__
   cout << "Exp/BANFF/Tweak >> Tweaking uncorrelated BANFF fit parameters" << endl;
 #endif
 
@@ -269,25 +271,7 @@ void BANFF::TweakCorrelated(
   //
 
   if(fCovMtrxChoL == 0) 
-  {
-#ifdef __show_cholesky_mesg_info__  
-    cout << "Exp/BANFF/Tweak >> "
-         << "Running Cholesky's decomposition method on the BANFF covariance matrix." << endl;
-#endif
-
-    TMatrixD cov(this->CovMatrix());
-#ifdef __show_cholesky_mesg_debug__
-    cout << "Exp/BANFF/Tweak >> BANFF covariance matrix: " << endl; 
-    util::PrintCompact(cov,7,4);
-#endif
-
-    TMatrixD L = util::CholeskyDecomposition(cov);
-    fCovMtrxChoL = new TMatrixD(L);
-#ifdef __show_cholesky_mesg_debug__
-    cout << "Exp/BANFF/Tweak >> Cholesky decomposition of BANFF covariance matrix: " << endl;
-    util::PrintCompact(*fCovMtrxChoL,7,4);
-#endif
-  }
+    this->CholeskyDecomposeMatrix();
 
   //
   // Get best-fit and current BANFF params
@@ -342,7 +326,7 @@ void BANFF::TweakCorrelated(
 //________________________________________________________________________________________
 void BANFF::UpdateCorrelated()
 {
-#ifdef __show_cholesky_mesg_debug__
+#ifdef __show_update_correlated_mesg_debug__
   cout << "Exp/BANFF/UpdateCorrelated >> Updating BANFF current values, using current uncorrelated parameters" << endl;
 #endif
 
@@ -353,11 +337,34 @@ void BANFF::UpdateCorrelated()
   TVectorD & bestfit_values = *fBestFitValues;
   TVectorD & current_values = *fCurrentValues;
   TVectorD & current_correlated_values = *fUncorrelatedCurrentValues;
+  if(fCovMtrxChoL == 0)
+    this->CholeskyDecomposeMatrix();
   TMatrixD & L = *fCovMtrxChoL;
 
   TVectorD vec = util::CholeskyGenerateCorrelatedParams(L,bestfit_values,current_correlated_values);
   current_values = vec;
   return;
+}
+//________________________________________________________________________________________
+void BANFF::CholeskyDecomposeMatrix()
+{
+#ifdef __show_cholesky_mesg_info__  
+    cout << "Exp/BANFF/CholeskyDecomposeMatrix >> "
+         << "Running Cholesky's decomposition method on the BANFF covariance matrix." << endl;
+#endif
+
+    TMatrixD cov(this->CovMatrix());
+#ifdef __show_cholesky_mesg_debug__
+    cout << "Exp/BANFF/CholeskyDecomposeMatrix >> BANFF covariance matrix: " << endl; 
+    util::PrintCompact(cov,7,4);
+#endif
+
+    TMatrixD L = util::CholeskyDecomposition(cov);
+    fCovMtrxChoL = new TMatrixD(L);
+#ifdef __show_cholesky_mesg_debug__
+    cout << "Exp/BANFF/CholeskyDecomposeMatrix >> Cholesky decomposition of BANFF covariance matrix: " << endl;
+    util::PrintCompact(*fCovMtrxChoL,7,4);
+#endif
 }
 //________________________________________________________________________________________
 void BANFF::RestoreNominalMC(void)
