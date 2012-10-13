@@ -42,15 +42,19 @@ public:
   // Get BANFF fit param values (nominal + tweaked)
   double BestFitValue (conv::PhysParamId_t p) const;
   double CurrentValue (conv::PhysParamId_t p) const;
+  double CurrentUncorrelatedValue (conv::PhysParamId_t p) const;
    
   // Get BANFF best fit values, covariance matrix and cholesky decomposition of covariance matrix
-  const TVectorD & BestFitValues     (void) const { return *fBestFitValues; }
-  const TMatrixD & CovMatrix         (void) const { return *fCovMtrx;       }
-  const TMatrixD & CovMatrixInv      (void) const { return *fCovMtrxInv;    }
-  const TMatrixD & CovMatrixCholesky (void) const { return *fCovMtrxChoL;   }
+  const TVectorD & BestFitValues              (void) const { return *fBestFitValues;             }
+  const TVectorD & CurrentUncorrelatedValues  (void) const { return *fUncorrelatedCurrentValues; }
+  const TMatrixD & CovMatrix                  (void) const { return *fCovMtrx;                   }
+  const TMatrixD & CovMatrixInv               (void) const { return *fCovMtrxInv;                }
+  const TMatrixD & CovMatrixCholesky          (void) const { return *fCovMtrxChoL;               }
 
   // Systematic variations (wrt the best-fit BANFF params)
-  void Tweak (bool force_inputs = false, TVectorD * input_vec = 0);
+  void Tweak             (bool force_inputs = false, TVectorD * input_vec = 0, bool correlated = true); ///> if correlated=false, still updates fCurrentValues using UpdateUncorrelated()
+  void TweakCorrelated   (bool force_inputs = false, TVectorD * input_vec = 0); ///> updates fCurrentValues
+  void TweakUncorrelated (bool force_inputs = false, TVectorD * input_vec = 0); ///> updates fUncorrelatedCurrentValues
 
   // A special systematic variation which cancels the effect of BANFF tuning and reverts back to the nominal MC
   void RestoreNominalMC(void);
@@ -74,15 +78,18 @@ private:
   void Init      (void);
   void CleanUp   (void);
   int  Param2Idx (conv::PhysParamId_t p) const; ///< convert BANFF PhysParamId_t to a covariance matrix or vector index
+  void UpdateCorrelated (void); ///< use the currently stored uncorrelated values to update the current correlated values, using the cholesky method
 
   TVectorD *  fBestFitValues;     ///< BANFF best fit values
   TVectorD *  fCurrentValues;     ///< Current values of BANFF parameters 
+  TVectorD *  fUncorrelatedCurrentValues; ///< Uncorrelated transformed values of BANFF current values
   TMatrixD *  fCovMtrx;           ///< BANFF covariance matrix
   TMatrixD *  fCovMtrxInv;        ///< Inverse BANFF covariance matrix
   TMatrixD *  fCovMtrxChoL;       ///< Triangular matrix obtained from Cholesky decomposition of BANFF covariance matrix
   bool        fIsTweaked;         ///< Were BANF params tweaked?
   bool        fIsFluxWghtUpdated; ///< Were Flux weights updated as a result of the last BANFF param variation
       
+
 ClassDef(BANFF, 1)
 };
 

@@ -25,6 +25,7 @@
 #include <cstdlib>
 #include <iostream>
 #include <iomanip>
+#include <TRandom3.h>
 
 #include "BANFF.h" 
 #include "Conventions.h" 
@@ -58,6 +59,7 @@ void BANFF::Init(void)
 {
   fBestFitValues     = 0; 
   fCurrentValues     = 0; 
+  fUncorrelatedCurrentValues = 0;
   fCovMtrx           = 0; 
   fCovMtrxChoL       = 0; 
   fIsTweaked         = false;
@@ -66,10 +68,11 @@ void BANFF::Init(void)
 //________________________________________________________________________________________
 void BANFF::CleanUp(void)
 {
-  if ( fBestFitValues ) delete fBestFitValues;
-  if ( fCurrentValues ) delete fCurrentValues;
-  if ( fCovMtrx       ) delete fCovMtrx;
-  if ( fCovMtrxChoL   ) delete fCovMtrxChoL;
+  if ( fBestFitValues             ) delete fBestFitValues;
+  if ( fCurrentValues             ) delete fCurrentValues;
+  if ( fUncorrelatedCurrentValues ) delete fUncorrelatedCurrentValues;
+  if ( fCovMtrx                   ) delete fCovMtrx;
+  if ( fCovMtrxChoL               ) delete fCovMtrxChoL;
 }
 //________________________________________________________________________________________
 bool BANFF::Read(TXMLEngine* xml, XMLNodePointer_t root_node)
@@ -105,6 +108,10 @@ bool BANFF::Read(TXMLEngine* xml, XMLNodePointer_t root_node)
 
   // init current values to best-fit values
   fCurrentValues = new TVectorD(bestfit);
+  fUncorrelatedCurrentValues = new TVectorD(np);
+  for(int ip = 0; ip < np; ip++) {
+    fUncorrelatedCurrentValues[ip] = 0;
+  }
 
   // Get BANFF fit covariance matrix
   fCovMtrx = util::XML2TMatrixD(xml,root_node,"banff/covariance_matrix");
@@ -152,7 +159,98 @@ double BANFF::CurrentValue(PhysParamId_t p) const
   return current_values[idx];
 }
 //________________________________________________________________________________________
+double BANFF::CurrentUncorrelatedValue(PhysParamId_t p) const
+{
+  const TVectorD & current_uncorrelated_values = *fUncorrelatedCurrentValues;
+  int idx = this->Param2Idx(p);
+  return current_uncorrelated_values[idx];
+}
+//________________________________________________________________________________________
 void BANFF::Tweak(
+  bool       force_inputs, /* force the input params or generate random ones internally  */
+  TVectorD * input_vec,    /* input vector of BANFF params - Set to 0 to reset to best-fit ones */
+  bool       correlated    /* tweak the correlated (default) or uncorrelated vector? */
+)
+{
+
+  /*
+    WARNING. Do not mix working in correlated & uncorrelated parameter
+    bases! When the correlated parameters are updated (BANFF::Tweak()),
+    the uncorrelated parameters are not updated. If
+    BANFF::UpdateCorrelated() (only available from BANFF::Tweak()) is then
+    called, the result of the correlated tweak is lost.
+  */
+
+  if(correlated) {
+    this->TweakCorrelated(force_inputs, input_vec);
+  }
+  else {
+    this->TweakUncorrelated(force_inputs, input_vec);
+    this->UpdateCorrelated();
+  }
+}
+//________________________________________________________________________________________
+void BANFF::TweakUncorrelated(
+  bool       force_inputs, /* force the input params or generate random ones internally  */
+  TVectorD * input_vec    /* input vector of BANFF params - Set to 0 to reset to best-fit ones */
+)
+{
+#ifdef __show_cholesky_mesg_debug__
+  cout << "Exp/BANFF/Tweak >> Tweaking uncorrelated BANFF fit parameters" << endl;
+#endif
+
+  // Switch flags
+  fIsTweaked         = true;
+  fIsFluxWghtUpdated = false;
+
+  //
+  // Get current BANFF params
+  //
+
+  TVectorD & current_correlated_values = *fUncorrelatedCurrentValues;
+
+  //
+  // Force input BANFF parameters
+  //
+  if(force_inputs) {
+    // Input vector is NULL.
+    // This resets the BANFF params to their best-fit values.
+    if(input_vec==0) {
+#ifdef __show_tweak_mesg_debug__
+      cout << "Exp/BANFF/Tweak >> Reset BANFF params to best-fit values." << endl;
+#endif
+      fIsTweaked = false;
+      for(int ip = 0; ip < current_correlated_values.GetNrows(); ip++) {
+	current_correlated_values[ip] = 0;
+      }
+      return;
+    }
+    else {
+#ifdef __show_tweak_mesg_debug__
+      cout << "Exp/BANFF/Tweak >> Forcing input uncorrelated BANFF parameters. " << endl;
+#endif
+      TVectorD & vec = *input_vec;
+      assert(vec.GetNoElements() == conv::kNumOfParamsInBANFFfit);
+      current_correlated_values = vec;
+      return;
+    }
+  }//force_inputs?
+
+  else{ 
+#ifdef __show_tweak_mesg_debug__
+    cout << "Exp/BANFF/Tweak >> Generating random twk dials (uncorrelated)!" << endl;
+#endif
+
+    TRandom3 rand(0);
+    for(int ip = 0; ip < current_correlated_values.GetNrows(); ip++) {
+      current_correlated_values[ip] = rand.Gaus(0,1);
+    }
+    return;
+  }
+
+}
+//________________________________________________________________________________________
+void BANFF::TweakCorrelated(
   bool       force_inputs, /* force the input params or generate random ones internally  */
   TVectorD * input_vec     /* input vector of BANFF params - Set to 0 to reset to best-fit ones */
 )    
@@ -242,6 +340,26 @@ void BANFF::Tweak(
 
 }
 //________________________________________________________________________________________
+void BANFF::UpdateCorrelated()
+{
+#ifdef __show_cholesky_mesg_debug__
+  cout << "Exp/BANFF/UpdateCorrelated >> Updating BANFF current values, using current uncorrelated parameters" << endl;
+#endif
+
+  //
+  // Get best-fit & current BANFF params & decomposed cov matrix
+  //
+
+  TVectorD & bestfit_values = *fBestFitValues;
+  TVectorD & current_values = *fCurrentValues;
+  TVectorD & current_correlated_values = *fUncorrelatedCurrentValues;
+  TMatrixD & L = *fCovMtrxChoL;
+
+  TVectorD vec = util::CholeskyGenerateCorrelatedParams(L,bestfit_values,current_correlated_values);
+  current_values = vec;
+  return;
+}
+//________________________________________________________________________________________
 void BANFF::RestoreNominalMC(void)
 {
 // A special tweak method
@@ -253,10 +371,12 @@ void BANFF::RestoreNominalMC(void)
   fIsFluxWghtUpdated = false;
 
   TVectorD & current_values = *fCurrentValues;
+  TVectorD & current_uncorrelated_values = *fUncorrelatedCurrentValues;
 
   const int np = conv::kNumOfParamsInBANFFfit;
   for(int i=0; i<np; i++) {
     current_values[i] = 1.;
+    current_uncorrelated_values[i] = 0.;
   }
 }
 //________________________________________________________________________________________
