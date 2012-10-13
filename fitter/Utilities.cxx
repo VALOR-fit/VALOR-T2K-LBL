@@ -234,6 +234,64 @@ TVectorD t2kana::util::CholeskyGenerateCorrelatedParams (
   return correlated_params;
 }
 //____________________________________________________________________________
+TVectorD t2kana::util::CholeskyGenerateCorrelatedParams (
+ TMatrixD& cholesky_triangular, TVectorD& mean_params, TVectorD& g_uncorrelated) 
+{
+// Generate a vector of correlated params
+
+  int ncols = cholesky_triangular.GetNcols();
+  int nrows = cholesky_triangular.GetNrows();
+  int npars = mean_params.GetNrows();
+  int nunco = g_uncorrelated.GetNrows();
+
+  if(ncols != nrows) {
+    cerr << "util::CholeskyGenerateCorrelatedParams >> Number of columns " << ncols << " & rows " << nrows << " disagree. Exiting..." << endl;
+    exit(1);
+  }
+  if(npars != nrows) {
+    cerr << "util::CholeskyGenerateCorrelatedParams >> Number of parameters " << npars << " & rows " << nrows << " disagree. Exiting..." << endl;
+    exit(1);
+  }
+  if(nunco != nrows) {
+    cerr << "util::CholeskyGenerateCorrelatedParams >> Number of uncorrelated parameters " << nunco << " & rows " << nrows << " disagree. Exiting..." << endl;
+    exit(1);
+  }
+
+  int n = nrows;
+
+  // create a vector of unit Gaussian variables
+  // and multiply by Lt to introduce the appropriate correlations
+  g_uncorrelated *= cholesky_triangular;
+
+#ifdef __show_cholesky_gen_corr_param_variations_mesg_debug__
+  ofstream foutp1("cholesky_uncorrelated_params.txt",fstream::app);
+  for (int i = 0; i < n; ++i) {
+    foutp1 << g_uncorrelated[i] << "\t";
+  }
+  foutp1 << endl;
+  foutp1.close();
+#endif
+
+  // add the mean value offsets and store the results
+  TVectorD correlated_params(n);
+  for (int i = 0; i < n; ++i) {
+     double v = mean_params[i];
+     v += g_uncorrelated(i);
+     correlated_params[i] = v;
+  }
+
+#ifdef __show_cholesky_gen_corr_param_variations_mesg_debug__
+  ofstream foutp2("cholesky_correlated_params.txt",fstream::app);
+  for (int i = 0; i < n; ++i) {
+    foutp2 << correlated_params[i] << "\t";
+  }
+  foutp2 << endl;
+  foutp2.close();
+#endif
+
+  return correlated_params;
+}
+//____________________________________________________________________________
 TVectorD t2kana::util::CholeskyGenerateCorrelatedParamVariations (
     TMatrixD& cholesky_triangular) 
 {
