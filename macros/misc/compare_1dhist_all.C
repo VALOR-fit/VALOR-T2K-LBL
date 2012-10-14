@@ -16,7 +16,8 @@ void compare_1dhist_all(
   bool draw_only_ratio = false,     /* draw only the ratio? or also plot the 2 histograms overlaid */
   double xmin = -9999999,           /* minimum of x axis to draw */
   double xmax = +9999999,           /* maximum of x axis to draw */
-  bool save_canvas = false          /* save canvas to a .pdf? */
+  bool save_canvas = false,         /* save canvas to a .pdf? */
+  bool dividingTwoRatios = true    /* special option to use to compare 2 ratio histograms. Needs zerOverZeroIsZero = false */
 )
 {
   char *s = new char[50];
@@ -56,6 +57,18 @@ void compare_1dhist_all(
       TH1D * ratio = new TH1D(*h2);
       if (zeroOverZeroIsZero)
 	ratio->Divide(h1);
+      else if(dividingTwoRatios) {
+	Int_t binx;
+	Double_t c0,c1,w;
+	for (binx=0;binx<=h1->GetNbinsX()+1;binx++) {
+	  c0  = TMath::Abs(h2->GetBinContent(binx) - 1);
+	  c1  = TMath::Abs(h1->GetBinContent(binx) - 1);
+	  if (c1) w = c0/c1;
+	  else if(!c1 && !c0) w=1;
+	  else    w = 0;
+	  ratio->SetBinContent(binx,w);
+	}
+      }
       else {
 	Int_t binx;
 	Double_t c0,c1,w;

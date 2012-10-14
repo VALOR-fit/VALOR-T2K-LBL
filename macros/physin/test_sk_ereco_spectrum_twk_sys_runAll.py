@@ -29,7 +29,7 @@ modes5 = range(400,449) #fsi
 modes6 = range(500,504) #special comparison tweaks
 modes7 = range(600,639) #uncorrelated banff
 
-modes = modes1 + modes2 + modes3 + modes4 + modes5 #+ modes6
+modes = modes1 + modes2 + modes3 + modes4 + modes5 + modes7 #+ modes6
 
 oscparams = [] #fill with oscillation parameters, in order mixing12, theta13, theta23, deltacp, dmsq12, dmsq23hypothesis
 oscparams.append([  0,   0,   0,   0,   0,   0]) #no oscillations!

@@ -60,6 +60,7 @@
 // 501 ring counting 1 + other
 // 502 ring counting 2 + other
 // 503 all ring counting + other
+// 504 tweak xsec_pilessdelta, put name it fsiabs
 //
 // 600 tweak unbanff00
 // 601 tweak unbanff01
@@ -178,6 +179,8 @@ void test_sk_ereco_spectrum_twk_sys
       modetitle = "sk_1Rmu_ccqe_ring_counting_eff_2+other"; break;
     case 503:
       modetitle = "sk_1Rmu_ccqe_ring_counting_eff_all+other"; break;
+    case 504:
+      modetitle = "xsec_fsiabs"; break;
 
     default:
       if(mode >= 100 && mode < 100+conv::kNumOfParamsInBANFFfit) {
@@ -474,6 +477,9 @@ void test_sk_ereco_spectrum_twk_sys
 	  skexp.TweakSystematic("sk_1Rmu_ccqe_ring_counting_eff_0",tweak);
 	  skexp.TweakSystematic("sk_1Rmu_ccqe_ring_counting_eff_1",tweak);
 	  skexp.TweakSystematic("sk_1Rmu_ccqe_ring_counting_eff_2",tweak); break;
+        case 504:
+	  skexp.TweakSystematic("xsec_pilessdelta",tweak); break;
+
         default:
 	  if(mode >= 100 && mode < 100+conv::kNumOfParamsInBANFFfit) {
 	    TVectorD v(conv::kNumOfParamsInBANFFfit);
@@ -729,7 +735,7 @@ void test_sk_ereco_spectrum_twk_sys
       summary_m->GetXaxis()->SetBinLabel(i+conv::kNumOfParamsInBANFFfit+23+conv::kNumOfFSIParams,Form("unbanff_%02d",i));
   }
   if(!categories_p) {
-    categories_p = new TH1D("categories_p","categories_p",11,0,11);
+    categories_p = new TH1D("categories_p","categories_p",12,0,12);
     categories_p->SetLineColor(kRed);
     categories_p->GetYaxis()->SetTitle("% change");
     categories_p->GetXaxis()->SetBinLabel(1,"all");
@@ -746,7 +752,7 @@ void test_sk_ereco_spectrum_twk_sys
     categories_p->GetXaxis()->SetBinLabel(12,"BANFF-uncorrelated");
   }
   if(!categories_m) {
-    categories_m = new TH1D("categories_m","categories_m",11,0,11);
+    categories_m = new TH1D("categories_m","categories_m",12,0,12);
     categories_m->SetLineColor(kRed);
     categories_m->GetYaxis()->SetTitle("% change");
     categories_m->GetXaxis()->SetBinLabel(1,"all");
@@ -838,7 +844,7 @@ void test_sk_ereco_spectrum_twk_sys
 	summarymode_m[im]->GetXaxis()->SetBinLabel(i+conv::kNumOfParamsInBANFFfit+23+conv::kNumOfFSIParams,Form("unbanff_%02d",i));
     }
     if(!categoriesmode_p[im]) {
-      categoriesmode_p[im] = new TH1D(Form("categoriesmode_p_%s",util::AsStringCompact(m).c_str()),Form("categoriesmode_p_%s",util::AsStringCompact(m).c_str()),11,0,11);
+      categoriesmode_p[im] = new TH1D(Form("categoriesmode_p_%s",util::AsStringCompact(m).c_str()),Form("categoriesmode_p_%s",util::AsStringCompact(m).c_str()),12,0,12);
       categoriesmode_p[im]->SetLineColor(kRed);
       categoriesmode_p[im]->GetYaxis()->SetTitle("% change");
       categoriesmode_p[im]->GetXaxis()->SetBinLabel(1,"all");
@@ -855,7 +861,7 @@ void test_sk_ereco_spectrum_twk_sys
       categoriesmode_p[im]->GetXaxis()->SetBinLabel(12,"BANFF-uncorrelated");
     }
     if(!categoriesmode_m[im]) {
-      categoriesmode_m[im] = new TH1D(Form("categoriesmode_m_%s",util::AsStringCompact(m).c_str()),Form("categoriesmode_m_%s",util::AsStringCompact(m).c_str()),11,0,11);
+      categoriesmode_m[im] = new TH1D(Form("categoriesmode_m_%s",util::AsStringCompact(m).c_str()),Form("categoriesmode_m_%s",util::AsStringCompact(m).c_str()),12,0,12);
       categoriesmode_m[im]->SetLineColor(kRed);
       categoriesmode_m[im]->GetYaxis()->SetTitle("% change");
       categoriesmode_m[im]->GetXaxis()->SetBinLabel(1,"all");
