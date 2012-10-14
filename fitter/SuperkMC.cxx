@@ -33,6 +33,7 @@
 // 6 number of events, weighted by pot & mc normalisation, flux tuning, banff tuning, multiplicative systematic variations, nonmultiplicative systematic variations
 // 7 number of events, weighted by pot & mc normalisation, flux tuning, banff tuning, multiplicative systematic variations, nonmultiplicative systematic variations, physics hypothesis
 #define __apply_minevents_to_individual_modes__ //special debug mode that applies kSetNegEventsTo to all modes. Used for comparisons with the KIT 1 sigma spectra
+//#define NO_EVENTS_CAN_BE_NEGATIVE // if defined, will stop events being negative at all stages (not just building the Ereco spectra)
 
 #include <cassert>
 #include <cstdlib>
@@ -518,6 +519,15 @@ void SuperkMC::ApplyFluxExtTuningToTemplates(void)
            double wght = fNuFlux->SuperkFluxExtTuningWght(s,m,Etrue);
 	   // update nominal MC template
            nev *= wght;
+#ifdef NO_EVENTS_CAN_BE_NEGATIVE
+	     if(nev < 0) {
+#ifdef __show_negative_events_mesg_debug__
+	       cout << "Exp/SKMC/ApplyFluxExtTuningToTemplates >> set negative number of events " << nev
+		    << " to " << 0 << "\t" << " Ereco: " << mctempl->GetXaxis()->GetBinCenter(ir) << endl;
+#endif
+	       nev = 0;
+	     }
+#endif
            mctempl->SetBinContent(ir,it,nev);
            // initialize "tun", "sys" & "fin" templates to "nom" values
            this->Template(s,m,kSKMCtTun)->SetBinContent(ir,it,nev);
@@ -596,6 +606,15 @@ void SuperkMC::ApplyBANFFTuningToTemplates(void)
 	     double nev = mctempl_src->GetBinContent(ir,it);
 	     nev = TMath::Max(0.,nev);
 	     double nev_tuned = nev * wght;
+#ifdef NO_EVENTS_CAN_BE_NEGATIVE
+	     if(nev_tuned < 0) {
+#ifdef __show_negative_events_mesg_debug__
+	       cout << "Exp/SKMC/ApplyBANFFTuningToTemplates >> set negative number of events " << nev_tuned
+		    << " to " << 0 << "\t" << " Ereco: " << mctempl_src->GetXaxis()->GetBinCenter(ir) << endl;
+#endif
+	       nev_tuned = 0;
+	     }
+#endif
 	     mctempl_tgt->SetBinContent(ir,it,nev_tuned);
 	     // initialize "sys" & "fin" templates to "tun" values
 	     this->Template(s,m,kSKMCtSys)->SetBinContent(ir,it,nev_tuned);
@@ -723,7 +742,15 @@ void SuperkMC::ApplySystematicsToTemplates_Multiplicative(void)
 		      << endl;
 	       }
 #endif
-
+#ifdef NO_EVENTS_CAN_BE_NEGATIVE
+	     if(nev < 0) {
+#ifdef __show_negative_events_mesg_debug__
+	       cout << "Exp/SKMC/ApplySystematicsToTemplates_Multiplicative >> set negative number of events " << nev
+		    << " to " << 0 << "\t" << " Ereco: " << mctempl_tgt->GetXaxis()->GetBinCenter(ir) << endl;
+#endif
+	       nev = 0;
+	     }
+#endif
 	     // Update target MC template
 	     mctempl_tgt->SetBinContent(ir,it,nev);
 	   }//it
@@ -847,6 +874,25 @@ void SuperkMC::ApplySystematicsToTemplates_NonMultiplicative(void)
            }//ir
        }// scale < 1
        delete mctempl_no_ereco_scale;
+
+#ifdef NO_EVENTS_CAN_BE_NEGATIVE
+       // loop at the end, to get rid of any negatives
+       // loop over Ereco
+       for(int ir = 1; ir <= mctempl->GetXaxis()->GetNbins(); ir++) {
+	 // loop over Etrue
+	 for(int it = 1; it <= mctempl->GetYaxis()->GetNbins(); it++) {
+	   if(mctempl->GetBinContent(ir,  it) < 0) {
+#ifdef __show_negative_events_mesg_debug__
+	     cout << "Exp/SKMC/ApplySystematicsToTemplates_NonMultiplicative " << mctempl->GetBinContent(ir,  it)
+		  << " to " << 0 << "\t" << " Ereco: " << mctempl->GetXaxis()->GetBinCenter(ir) << endl;
+#endif
+	     mctempl->SetBinContent(ir,  it,  0);
+	   }
+	 }
+       }
+#endif
+
+
     }//im
   }//is
 #ifdef __save_templates_debug__
