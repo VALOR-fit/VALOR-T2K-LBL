@@ -233,6 +233,10 @@ void test_systematic_error_propagation_all
     else if(systematic.find("banff_") == 0) {
       show_sk_spectral_info_etrue_flux_binning = true;
     }
+    //unbanff
+    else if(systematic.find("unbanff_") == 0) {
+      show_sk_spectral_info_etrue_flux_binning = true;
+    }
     //xsec
     else if(systematic.find("xsec_") == 0) {
       if(systematic.find("xsec_norm_") == 0) {

@@ -501,9 +501,11 @@ void test_sk_ereco_spectrum_twk_sys
 	  }
 	  if(mode >= 600 && mode < 600+conv::kNumOfParamsInBANFFfit) {
 	    TVectorD v(conv::kNumOfParamsInBANFFfit);
-	    v = skexp.GetBANFF()->CurrentUncorrelatedValues();
+	    for(int ip = 0; ip < conv::kNumOfParamsInBANFFfit; ip++) {
+	      v[ip] = 0;
+	    }
 	    int ib = mode - 600;
-	    v[ib] = 0 + (tweak * sqrt(skexp.GetBANFF()->CovMatrix()[ib][ib]));
+	    v[ib] = tweak;
 	    skexp.GetBANFF()->Tweak(true,&v,false);
 	    break;
 	  }
