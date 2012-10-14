@@ -183,7 +183,8 @@ double FitInputs::ChisquarePenaltyTerm(void)
 
   // Check whether its a full or partial set of systematics
   bool all_syst = true;
-  if(this->FitParams().GetParListName().find("nuisancesel") != string::npos)
+  if(this->FitParams().GetParListName().find("nuisancesel") != string::npos
+     || this->FitParams().GetParListName().find("unbanffselection") != string::npos)
     all_syst = false;
 
   //
