@@ -275,10 +275,13 @@
       </weight_splines>
       <splines>
 	  <maqe>
-	       0.198
+	       0.149
 	  </maqe>
+	  <oneovermaqesq>
+	       0.274
+	  </oneovermaqesq>
 	  <mares>
-	       0.083
+	       0.107
 	  </mares>
 	  <pf>
 	       0.133

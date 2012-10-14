@@ -222,7 +222,7 @@
         Central values from BANFF fit
        -->
        <best_fit_values>
-          <filename>   inputs/official/2012/banff/postfit_banff_v5_osc_marg_numu_fine.root  </filename>
+          <filename>   inputs/official/2012/banff/postfit_banff_v8_osc_marg_MAQE.root  </filename>
           <objname>    postfit_params   </objname>
           <objtype>    TVectorD         </objtype>
         </best_fit_values>
@@ -230,7 +230,7 @@
         Covariance of fit parameters
        -->
        <covariance_matrix>
-          <filename>   inputs/official/2012/banff/postfit_banff_v5_osc_marg_numu_fine.root  </filename>
+          <filename>   inputs/official/2012/banff/postfit_banff_v8_osc_marg_MAQE.root  </filename>
           <objname>    postfit_cov      </objname>
           <objtype>    TMatrixD         </objtype>
         </covariance_matrix>     
@@ -245,40 +245,43 @@
   <xsec>
       <weight_splines>
           <filename>
-               inputs/official/2012/xsec/XSecSplinesFine2012.root
+               inputs/official/2012/xsec/XSecSplinesCoarse2012_coarseEreco_fsiabs_noeb.root
           </filename>
-	  <numu>
-	       <filename>
-	            inputs/official/2012/xsec/spl_numuoa_sk11c_flx11bv31_numu.root
+          <numu>
+               <filename>
+                    inputs/official/2012/xsec/spl_numuoa_sk11c_flx11bv31_numu.root
                </filename>
-	  </numu>
-	  <numubar>
-	       <filename>
-	            inputs/official/2012/xsec/spl_numuoa_sk11c_flx11bv31_numubar.root
+          </numu>
+          <numubar>
+               <filename>
+                    inputs/official/2012/xsec/spl_numuoa_sk11c_flx11bv31_numubar.root
                </filename>
-	  </numubar>
-	  <nue>
-	       <filename>
-	            inputs/official/2012/xsec/spl_numuoa_sk11c_flx11bv31_nue.root
+          </numubar>
+          <nue>
+               <filename>
+                    inputs/official/2012/xsec/spl_numuoa_sk11c_flx11bv31_nue.root
                </filename>
-	  </nue>
-	  <nuebar>
-	       <filename>
-	            inputs/official/2012/xsec/spl_numuoa_sk11c_flx11bv31_nuebar.root
+          </nue>
+          <nuebar>
+               <filename>
+                    inputs/official/2012/xsec/spl_numuoa_sk11c_flx11bv31_nuebar.root
                </filename>
-	  </nuebar>
-	  <signue>
-	       <filename>
-	            inputs/official/2012/xsec/spl_numuoa_sk11c_flx11bv31_signalnue.root
+          </nuebar>
+          <signue>
+               <filename>
+                    inputs/official/2012/xsec/spl_numuoa_sk11c_flx11bv31_signalnue.root
                </filename>
-	  </signue>
+          </signue>
       </weight_splines>
       <splines>
 	  <maqe>
-	       0.198
+	       0.149
 	  </maqe>
+	  <oneovermaqesq>
+	       0.274
+	  </oneovermaqesq>
 	  <mares>
-	       0.083
+	       0.107
 	  </mares>
 	  <pf>
 	       0.133
@@ -341,7 +344,7 @@
         Covariance matrix of FSI parameters
        -->
        <covariance_matrix>
-          <filename>   inputs/official/2012/fsi/FSIErrors2012.root  </filename>
+          <filename>   inputs/official/2012/fsi/FSIandSIError_ICL_SKDetectorBinning.root  </filename>
           <objname>    fsi_cov         </objname>
           <objtype>    TMatrixD         </objtype>
         </covariance_matrix>     
