@@ -165,6 +165,7 @@ private:
   double fNormNuEToNuMuRelErr;
   double fNormAntiNuToNuRelErr;
   double fSplineMAQERelErr;
+  double fSpline1overMAQE2RelErr;
   double fSplineMARESRelErr;
 
 ClassDef(NuXSec, 4);

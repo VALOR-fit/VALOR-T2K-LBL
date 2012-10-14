@@ -364,6 +364,8 @@ bool NuXSec::Read(TXMLEngine* xml, XMLNodePointer_t root_node)
     util::XML2Dbl(xml,root_node,"xsec/normalisations/nu_to_antinu");
   fSplineMAQERelErr =
     util::XML2Dbl(xml,root_node,"xsec/splines/maqe");
+  fSpline1overMAQE2RelErr =
+    util::XML2Dbl(xml,root_node,"xsec/splines/oneovermaqesq");
   fSplineMARESRelErr =
     util::XML2Dbl(xml,root_node,"xsec/splines/mares");
 
@@ -438,7 +440,11 @@ double NuXSec::FinTuningWght_1p(
        double tb = fBANFF->BestFitValue(p);
        double relerr = 0;       
        if(p == kNuisBANFFMAQE)
+#if BANFF_BINS <= 3
 	 relerr = fSplineMAQERelErr;
+#elif BANFF_BINS == 4
+	 relerr = fSpline1overMAQE2RelErr;
+#endif
        else if(p == kNuisBANFFMARES)
 	 relerr = fSplineMARESRelErr;
        double numerator = (tb-1) / relerr;
@@ -586,7 +592,11 @@ double NuXSec::SystWght_1p(
        double tc = fBANFF->CurrentValue(p);   
        double relerr = 0;
        if(p == kNuisBANFFMAQE)
+#if BANFF_BINS <= 3
 	 relerr = fSplineMAQERelErr;
+#elif BANFF_BINS == 4
+	 relerr = fSpline1overMAQE2RelErr;
+#endif
        else if(p == kNuisBANFFMARES)
 	 relerr = fSplineMARESRelErr;
        double denominator = (tb-1) / relerr;
@@ -822,7 +832,11 @@ double NuXSec::RelativeError(PhysParamId_t p) const
       return fNormAntiNuToNuRelErr;
       break;
     case kNuisBANFFMAQE:
-      return fSplineMAQERelErr;
+#if BANFF_BINS <= 3
+	 return fSplineMAQERelErr;
+#elif BANFF_BINS == 4
+	 return fSpline1overMAQE2RelErr;
+#endif
       break;
     case kNuisBANFFMARES:
       return fSplineMARESRelErr;
