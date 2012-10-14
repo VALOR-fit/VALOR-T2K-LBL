@@ -87,6 +87,7 @@ systematics.append("xsec_sf")
 systematics.append("xsec_wshape")
 systematics.append("xsec_shape_ccoth")
 systematics.append("xsec_pilessdelta")
+systematics.append("xsec_bindE")
 #XSec normalisations
 systematics.append("xsec_norm_ccqeE1")
 systematics.append("xsec_norm_ccqeE2")
