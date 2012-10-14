@@ -99,7 +99,10 @@ systematics.append("xsec_norm_antinutonu")
 #FSI
 for i in xrange(15):
    systematics.append("fsi_" + '%(number)03d' % {"number": i})
-
+#UnBANFF
+for i in xrange(24):
+   systematics.append("unbanff_" + '%(number)02d' % {"number": i})
+   
 samples = []
 samples.append("1Rmu")
 #samples.append("1Re")
@@ -206,6 +209,13 @@ for osc in oscparams:
             print command
             os.system(command)
             command = 'root2k -l -b -q \'$T2KOSCANA/macros/misc/star_plot/make_star_plot_for_disappearance_analysis.C("star_plot_line-banffxsec.data",'+str(osc[2])+','+str(osc[5])+','+errmixing23+','+errdm23sq+')\''
+            print command
+            os.system(command)
+
+            command = 'cat star_plot_line-unbanff*.data cat > star_plot_line-unbanff.data'
+            print command
+            os.system(command)
+            command = 'root2k -l -b -q \'$T2KOSCANA/macros/misc/star_plot/make_star_plot_for_disappearance_analysis.C("star_plot_line-unbanff.data",'+str(osc[2])+','+str(osc[5])+','+errmixing23+','+errdm23sq+')\''
             print command
             os.system(command)
 
