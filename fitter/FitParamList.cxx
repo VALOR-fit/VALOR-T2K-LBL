@@ -815,7 +815,7 @@ void FitParamList::AppendSystematics(FitParamList * fparm, int start)
   fparm->AddParam( ip++, kNuisXSecShapeCCoth,    0.0, -1.0*nsigma, 1.0*nsigma, step,  false, true);
   fparm->AddParam( ip++, kNuisXSecPiLessDelta,   0.0, -1.0*nsigma, 1.0*nsigma, step,  false, true);
   //fparm->AddParam( ip++, kNuisXSecENuShape,      0.0, -1.0*nsigma, 1.0*nsigma, step,  false, true); // not used in numu analysis!
-  fparm->AddParam( ip++, kNuisXSecBindE,         0.0, -1.0*nsigma, 1.0*nsigma, step,  true, false); // not nuisance yet! (waiting for splines)
+  fparm->AddParam( ip++, kNuisXSecBindE,         0.0, -1.0*nsigma, 1.0*nsigma, step,  false, true);
 #if BANFF_BINS <= 1
   fparm->AddParam( ip++, kNuisXSecNormCCQEE1,    0.0, -1.0*nsigma, 1.0*nsigma, step,  false, true);
   fparm->AddParam( ip++, kNuisXSecNormCCQEE2,    0.0, -1.0*nsigma, 1.0*nsigma, step,  false, true);
@@ -1021,7 +1021,7 @@ void FitParamList::AppendSystematicsUnBANFF(FitParamList * fparm, int start)
   fparm->AddParam( ip++, kNuisXSecShapeCCoth,    0.0, -1.0*nsigma, 1.0*nsigma, step,  false, true);
   fparm->AddParam( ip++, kNuisXSecPiLessDelta,   0.0, -1.0*nsigma, 1.0*nsigma, step,  false, true);
   //fparm->AddParam( ip++, kNuisXSecENuShape,      0.0, -1.0*nsigma, 1.0*nsigma, step,  false, true); // not used in numu analysis!
-  fparm->AddParam( ip++, kNuisXSecBindE,         0.0, -1.0*nsigma, 1.0*nsigma, step,  true, false); // not nuisance yet! (waiting for splines)
+  fparm->AddParam( ip++, kNuisXSecBindE,         0.0, -1.0*nsigma, 1.0*nsigma, step,  false, true);
 #if BANFF_BINS <= 1
   fparm->AddParam( ip++, kNuisXSecNormCCQEE1,    0.0, -1.0*nsigma, 1.0*nsigma, step,  false, true);
   fparm->AddParam( ip++, kNuisXSecNormCCQEE2,    0.0, -1.0*nsigma, 1.0*nsigma, step,  false, true);

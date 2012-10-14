@@ -1180,7 +1180,7 @@ double NuXSec::ChisqPenalty(bool all_syst) const
   if (fShapeCCothTwkDial)     chisq_penalty += fShapeCCothTwkDial*fShapeCCothTwkDial;
   if (fPiLessDeltaTwkDial)    chisq_penalty += fPiLessDeltaTwkDial*fPiLessDeltaTwkDial;
   //if (fENuShapeTwkDial)       chisq_penalty += fENuShapeTwkDial*fENuShapeTwkDial; // not used in numu analysis!
-  //if (fBindETwkDial)          chisq_penalty += fBindETwkDial*fBindETwkDial; // not used in numu analysis!
+  if (fBindETwkDial)          chisq_penalty += fBindETwkDial*fBindETwkDial;
 #if BANFF_BINS <= 1
   if (fNormCCQEE1TwkDial)     chisq_penalty += fNormCCQEE1TwkDial*fNormCCQEE1TwkDial;
   if (fNormCCQEE2TwkDial)     chisq_penalty += fNormCCQEE2TwkDial*fNormCCQEE2TwkDial;

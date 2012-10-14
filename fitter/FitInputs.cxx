@@ -307,7 +307,6 @@ double FitInputs::ChisquarePenaltyTerm(void)
       PhysParamId_t p = PhysParamId_t ( (int) kNuisXSecFermiMom  + ip );
       if(p == kNuisXSecNormNCcoh) continue; // not used in numu analysis!
       if(p == kNuisXSecENuShape)  continue; // not used in numu analysis!
-      if(p == kNuisXSecBindE)     continue; // not used in numu analysis!
       incl_xsec_penalty = incl_xsec_penalty &&
 	(this->FitParams().Exists(p) && this->FitParams().IsNuisance(p));
       if(!incl_xsec_penalty) break;
