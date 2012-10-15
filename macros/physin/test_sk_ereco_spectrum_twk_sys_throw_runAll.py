@@ -25,8 +25,13 @@ usage: %prog [options]
     Run test_sk_ereco_spectrum_twk_sys_throw.C many times""")
 #names of things
 optionParser.add_option("-a","--all", action="store_true", dest="do_all", default=False, help="If set, will run indiviudal systematics, as well as the categories")
+optionParser.add_option("-n","--nexp", action="store", dest="nexp", type="int", default=-1, help="How many experiments to generate at each point. Required")
 (opt, args) = optionParser.parse_args()
 
+nexp = opt.nexp
+if nexp <= 0:
+    sys.exit("specify number of events")
+    
 conffile = "analysis_configuration.xml"
 
 save_toy_expts = "false"
@@ -51,7 +56,7 @@ for osc in oscparams:
     
     for mode in modes:
 
-        command = 'root2k -l -b -q \'$T2KOSCANA/macros/physin/test_sk_ereco_spectrum_twk_sys_throw.C('+str(mode)+','+update+',"3f_osc",'+str(osc[0])+','+str(osc[1])+','+str(osc[2])+','+str(osc[3])+','+str(osc[4])+','+str(osc[5])+','+save_toy_expts+',"'+conffile+'")\''
+        command = 'root2k -l -b -q \'$T2KOSCANA/macros/physin/test_sk_ereco_spectrum_twk_sys_throw.C('+str(mode)+','+update+',"3f_osc",'+str(osc[0])+','+str(osc[1])+','+str(osc[2])+','+str(osc[3])+','+str(osc[4])+','+str(osc[5])+','+save_toy_expts+',"'+conffile+'",'+str(nexp)+')\''
         print command
         if os.system(command) == 1:
             sys.exit(1)
@@ -59,8 +64,8 @@ for osc in oscparams:
             update = "true"
 
         #don't forget the banff prefit
-        if mode == 1 or mode == 0:
-            command = 'root2k -l -b -q \'$T2KOSCANA/macros/physin/test_sk_ereco_spectrum_twk_sys_throw.C('+str(mode)+','+update+',"3f_osc",'+str(osc[0])+','+str(osc[1])+','+str(osc[2])+','+str(osc[3])+','+str(osc[4])+','+str(osc[5])+','+save_toy_expts+',"analysis_configuration_prefitbanff.xml")\''
+        if mode == or mode == 0:
+            command = 'root2k -l -b -q \'$T2KOSCANA/macros/physin/test_sk_ereco_spectrum_twk_sys_throw.C('+str(mode)+','+update+',"3f_osc",'+str(osc[0])+','+str(osc[1])+','+str(osc[2])+','+str(osc[3])+','+str(osc[4])+','+str(osc[5])+','+save_toy_expts+',"analysis_configuration_prefitbanff.xml",'+str(nexp)+')\''
             print command
             if os.system(command) == 1:
                 sys.exit(1)

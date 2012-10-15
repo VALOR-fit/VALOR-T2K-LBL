@@ -52,13 +52,12 @@ void test_sk_ereco_spectrum_twk_sys_throw
   double       input_dm12sq       = -99,                            /* */
   double       input_dm23sq       = -99,                            /* */
   bool         save_toy_expts     = false,                          /* save the ereco spectra? */
-  const char * config_file        = "analysis_configuration.xml"    /* */
+  const char * config_file        = "analysis_configuration.xml",   /* */
+  const int    nexp               = 20000                           /* number of experiments to make */
 )
 {
   using namespace std;
   using namespace t2kana;
-
-  const int nexp = 20000; //number of experiments to make
 
   conv::SuperkSample_t s = conv::kSKsFCFV1RingMuLike;
 
