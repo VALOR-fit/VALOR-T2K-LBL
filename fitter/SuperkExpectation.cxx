@@ -328,7 +328,7 @@ void SuperkExpectation::TweakSystematic(string systematic, double twkdial, bool 
   if(systematic.find("unbanff_") != string::npos) {
     TVectorD twkv(this->GetBANFF()->CurrentUncorrelatedValues());
     PhysParamId_t p = util::PhysParamIdFromString(systematic);
-    int ip = util::ArrIdx::Instance()->BANFFSystIdx(p);
+    int ip = util::ArrIdx::Instance()->UnBANFFSystIdx(p);
     twkv[ip] = twkdial;
 #ifdef __show_syst_tweak_debug__
     cout << "Exp >> Tweaking systematic string: " << systematic

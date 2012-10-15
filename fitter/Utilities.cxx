@@ -4368,6 +4368,7 @@ void t2kana::util::ArrIdx::Init(void)
   // 
   // phys param arrays
   // 
+  //XSEC
   for(int i = 0; i < knppmax; i++) {
     fXSecSystIdx[i] = -1;
   }
@@ -4376,6 +4377,7 @@ void t2kana::util::ArrIdx::Init(void)
     if(p == kPhypUndefined) continue;
     fXSecSystIdx[p] = ip;
   }
+  //BANFF
   for(int i = 0; i < knppmax; i++) {
     fBANFFSystIdx[i] = -1;
   }
@@ -4389,6 +4391,21 @@ void t2kana::util::ArrIdx::Init(void)
           << " is at slot: " << fBANFFSystIdx [p] << endl;
 #endif
   }
+  //UnBANFF
+  for(int i = 0; i < knppmax; i++) {
+    fUnBANFFSystIdx[i] = -1;
+  }
+  for(int ip = 0; ip < kNumOfParamsInBANFFfit; ip++) {
+    PhysParamId_t p = PhysParamId_t ((int) kNuisUnBANFF00 + ip);
+    if(p == kPhypUndefined) continue;
+    fUnBANFFSystIdx[p] = ip;
+#ifdef __show_arr_idx_mesg_debug__
+     cout << "Util/ArrIdx >> UnBANFF: " 
+          << util::AsString(p)
+          << " is at slot: " << fUnBANFFSystIdx [p] << endl;
+#endif
+  }
+  //FSI
   for(int i = 0; i < knppmax; i++) {
     fFSISystIdx[i] = -1;
   }
