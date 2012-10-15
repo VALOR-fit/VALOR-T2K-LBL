@@ -12,8 +12,6 @@
 //      - osc_dm12sq
 //      - osc_deltacp
 //
-//      - stat
-//
 //	- sk_energy_scale 
 //	- sk_1Rmu_ccqe_other_eff
 //	- sk_1Rmu_ccqe_ring_counting_eff : 
@@ -69,18 +67,18 @@
 
 void test_bestfit_point_shift_due_to_syst_twk
 (
-  const char * systematic,                                                  /* options: see above */
-  const char * sksample                   = "1Rmu",                         /* options: "1Rmu", "1Re" */
-  const char * fit_param_list             = "nuosc3f_numudisapp_fix4",      /* */
-  const char * fit_option                 = "minuit",                       /* oscillation fitter (see run_fitter.C) */
-  double       input_mixing12             = -99,                            /* */
-  double       input_mixing13             = -99,                            /* */
-  double       input_mixing23             = -99,                            /* */
-  double       input_deltacp              = -99,                            /* */
-  double       input_dm12sq               = -99,                            /* */
-  double       input_dm23sq               = -99,                            /* */
-  const char * config_file                = "analysis_configuration.xml"    /* */
-)
+ const char * systematic,                                                  /* options: see above */
+ const char * sksample                   = "1Rmu",                         /* options: "1Rmu", "1Re" */
+ const char * fit_param_list             = "nuosc3f_numudisapp_fix4",      /* */
+ const char * fit_option                 = "minuit",                       /* oscillation fitter (see run_fitter.C) */
+ double       input_mixing12             = -99,                            /* */
+ double       input_mixing13             = -99,                            /* */
+ double       input_mixing23             = 0.9,                            /* */
+ double       input_deltacp              = -99,                            /* */
+ double       input_dm12sq               = -99,                            /* */
+ double       input_dm23sq               = -99,                            /* */
+ const char * config_file                = "analysis_configuration.xml"    /* */
+ )
 {
   using namespace std;
   using namespace t2kana;
@@ -126,20 +124,15 @@ void test_bestfit_point_shift_due_to_syst_twk
     fparm->Update(conv::kPhypDm12sq,   input_dm12sq);
     fparm->Update(conv::kPhypDm23sq,   input_dm23sq);
   }
-  else 
-  if(hyp == conv::kHypNuMuDisapp2F) {
+  else if(hyp == conv::kHypNuMuDisapp2F) {
     fparm->Update(conv::kPhypMixing23, input_mixing23);
     fparm->Update(conv::kPhypDm23sq,   input_dm23sq);
-  } 
+  }  
   else {
     return;
   }
 
   bool fluctuate_stat = false; // <- don't fluctuate, best-fit point shift is purely due to systematic tweak
-  const int nexp = 2; // how many experiments to run (when running stat)
-  if(sys.find("stat") == 0) {
-    fluctuate_stat = true;
-  }
 
   // Print options
   cout << "\n[Job inputs]" << endl;
@@ -185,7 +178,6 @@ void test_bestfit_point_shift_due_to_syst_twk
     conv::PhysParamId_t p = util::PhysParamIdFromString(systematic);
     int ip = util::ArrIdx::Instance()->FSISystIdx(p);
     skexp->TweakSystematic(systematic, 1 + (1 * sqrt(skexp->GetFSI()->CovMatrix()(ip,ip))));
-    skexp->GetFSI()->PrintSystematicVariations();
   }
   else if(sys.find("osc_mixing12") == 0) {
     double tweak_mixing12 = input_mixing12 + conv::kGlobFitErrSinsq2Theta12;
@@ -211,24 +203,14 @@ void test_bestfit_point_shift_due_to_syst_twk
     if(tweak_deltacp <  fparm->MinValue(conv::kPhypDeltaCP)) tweak_deltacp = fparm->MinValue(conv::kPhypDeltaCP);
     fparm->Update(conv::kPhypDm12sq, tweak_deltacp);
   }
-  else if(sys.find("stat") == 0) {
-    cout << endl; // do nothing
-  }
   else {
     skexp->TweakSystematic(systematic,+1.);
-  }
-  if(sys.find("xsec_") == 0) {
-    skexp->GetNuXSec()->PrintSystematicVariations();
-  }
-  else if(sys.find("banff_") != string::npos) {
-    skexp->GetBANFF()->PrintSystematicVariations();
   }
 
   // Generate toy MC
   cout << "Generating toy-MC..." << endl;
   cout << "p.d.f parameters: " << endl;
   skexp->PrintSystematicVariations();
-
   skobs = new SuperkObservation;
   skobs->CreateMockData(*skexp, *fparm, fluctuate_stat);
 
@@ -240,8 +222,7 @@ void test_bestfit_point_shift_due_to_syst_twk
   fitter = new Superk1RmuErecoFitter(fit_inputs,fit_option);
 
   // Do the fit
-  if(sys.find("stat") != 0)
-    fitter->DoTheFit();
+  fitter->DoTheFit();
 
   // Store best-fit params
   double bestfit_mixing12_p1sig = -1;
@@ -257,18 +238,17 @@ void test_bestfit_point_shift_due_to_syst_twk
     bestfit_deltacp_p1sig  = fparm->BestFitValue(conv::kPhypDeltaCP);
     bestfit_dm12sq_p1sig   = fparm->BestFitValue(conv::kPhypDm12sq);
     bestfit_dm23sq_p1sig   = fparm->BestFitValue(conv::kPhypDm23sq);
-  } else
-    if(hyp == conv::kHypNuMuDisapp2F) {
-      bestfit_mixing23_p1sig = fparm->BestFitValue(conv::kPhypMixing23);
-      bestfit_dm23sq_p1sig   = fparm->BestFitValue(conv::kPhypDm23sq);
-    }
+  }
+  else if(hyp == conv::kHypNuMuDisapp2F) {
+    bestfit_mixing23_p1sig = fparm->BestFitValue(conv::kPhypMixing23);
+    bestfit_dm23sq_p1sig   = fparm->BestFitValue(conv::kPhypDm23sq);
+  }
 
   // Clean-up in preparation for the -1 sigma fit
   delete skobs;
   delete fit_inputs;
   delete fitter;
   skexp->ResetSystematicVariations();
-
 
   //
   //
@@ -281,13 +261,11 @@ void test_bestfit_point_shift_due_to_syst_twk
     int ip = util::ArrIdx::Instance()->BANFFSystIdx(p);
     // curr/nominal = 1 + (nsigma * x)
     skexp->TweakSystematic(systematic, skexp->GetBANFF()->BestFitValue(p) + (-1 * sqrt(skexp->GetBANFF()->CovMatrix()(ip,ip))));
-    skexp->GetBANFF()->PrintSystematicVariations();
   }
   else if(sys.find("fsi_") == 0) {
     conv::PhysParamId_t p = util::PhysParamIdFromString(systematic);
     int ip = util::ArrIdx::Instance()->FSISystIdx(p);
     skexp->TweakSystematic(systematic, 1 + (-1 * sqrt(skexp->GetFSI()->CovMatrix()(ip,ip))));
-    skexp->GetFSI()->PrintSystematicVariations();
   }
   else if(sys.find("osc_mixing12") == 0) {
     double tweak_mixing12 = input_mixing12 - conv::kGlobFitErrSinsq2Theta12;
@@ -313,14 +291,8 @@ void test_bestfit_point_shift_due_to_syst_twk
     if(tweak_deltacp <  fparm->MinValue(conv::kPhypDeltaCP)) tweak_deltacp = fparm->MinValue(conv::kPhypDeltaCP);
     fparm->Update(conv::kPhypDm12sq, tweak_deltacp);
   }
-  else if(sys.find("stat") == 0) {
-    cout << endl; // do nothing
-  }
   else {
     skexp->TweakSystematic(systematic,-1.);
-  }
-  if(sys.find("xsec_") == 0) {
-    skexp->GetNuXSec()->PrintSystematicVariations();
   }
 
   // Generate toy MC
@@ -338,7 +310,6 @@ void test_bestfit_point_shift_due_to_syst_twk
   fitter = new Superk1RmuErecoFitter(fit_inputs,fit_option);
 
   // Do the fit
-  if(sys.find("stat") != 0)
   fitter->DoTheFit();
 
   // Store best-fit params
@@ -349,206 +320,44 @@ void test_bestfit_point_shift_due_to_syst_twk
   double bestfit_dm12sq_m1sig   = -1;
   double bestfit_dm23sq_m1sig   = -1;
   if(hyp == conv::kHypOsc3F) {
-     bestfit_mixing12_m1sig = fparm->BestFitValue(conv::kPhypMixing12);
-     bestfit_mixing13_m1sig = fparm->BestFitValue(conv::kPhypMixing13);
-     bestfit_mixing23_m1sig = fparm->BestFitValue(conv::kPhypMixing23);
-     bestfit_deltacp_m1sig  = fparm->BestFitValue(conv::kPhypDeltaCP);
-     bestfit_dm12sq_m1sig   = fparm->BestFitValue(conv::kPhypDm12sq);
-     bestfit_dm23sq_m1sig   = fparm->BestFitValue(conv::kPhypDm23sq);
-  } else
-  if(hyp == conv::kHypNuMuDisapp2F) {
-     bestfit_mixing23_m1sig = fparm->BestFitValue(conv::kPhypMixing23);
-     bestfit_dm23sq_m1sig   = fparm->BestFitValue(conv::kPhypDm23sq);
+    bestfit_mixing12_m1sig = fparm->BestFitValue(conv::kPhypMixing12);
+    bestfit_mixing13_m1sig = fparm->BestFitValue(conv::kPhypMixing13);
+    bestfit_mixing23_m1sig = fparm->BestFitValue(conv::kPhypMixing23);
+    bestfit_deltacp_m1sig  = fparm->BestFitValue(conv::kPhypDeltaCP);
+    bestfit_dm12sq_m1sig   = fparm->BestFitValue(conv::kPhypDm12sq);
+    bestfit_dm23sq_m1sig   = fparm->BestFitValue(conv::kPhypDm23sq);
   }
-
+  else if(hyp == conv::kHypNuMuDisapp2F) {
+    bestfit_mixing23_m1sig = fparm->BestFitValue(conv::kPhypMixing23);
+    bestfit_dm23sq_m1sig   = fparm->BestFitValue(conv::kPhypDm23sq);
+  }
 
   // Clean-up in preparation for exiting
   delete skobs;
   delete fit_inputs;
   delete fitter;
-  skexp->ResetSystematicVariations();
-
-  //
-  // many experiments if doing stat error
-  //
-  // Setup best-fit params holder
-  double bestfit_mixing12_stat[nexp] = {0};
-  double bestfit_mixing13_stat[nexp] = {0};
-  double bestfit_mixing23_stat[nexp] = {0};
-  double bestfit_deltacp_stat[nexp]  = {0};
-  double bestfit_dm12sq_stat[nexp]   = {0};
-  double bestfit_dm23sq_stat[nexp]   = {0};
-  double average_bestfit_mixing12_stat = 0;
-  double average_bestfit_mixing13_stat = 0;
-  double average_bestfit_mixing23_stat = 0;
-  double average_bestfit_deltacp_stat  = 0;
-  double average_bestfit_dm12sq_stat   = 0;
-  double average_bestfit_dm23sq_stat   = 0;
-  double standarddeviation_bestfit_mixing12_stat = 0;
-  double standarddeviation_bestfit_mixing13_stat = 0;
-  double standarddeviation_bestfit_mixing23_stat = 0;
-  double standarddeviation_bestfit_deltacp_stat  = 0;
-  double standarddeviation_bestfit_dm12sq_stat   = 0;
-  double standarddeviation_bestfit_dm23sq_stat   = 0;
-
-  if(sys.find("stat") == 0) {
-    for(int iexp = 0; iexp < nexp; iexp++) {
-      // Reset systematic variation
-      skexp->ResetSystematicVariations();
-      // Generate toy MC
-      cout << "Generating toy-MC..." << endl;
-      cout << "p.d.f parameters: " << endl;
-      skobs = new SuperkObservation;
-      skobs->CreateMockData(*skexp, *fparm, fluctuate_stat);
-      // Get fitter
-      fit_inputs = new FitInputs(skobs,skexp,fparm);
-      fitter = new Superk1RmuErecoFitter(fit_inputs,fit_option);
-      // Do the fit
-      fitter->DoTheFit();
-
-      // Store best-fit params
-      if(hyp == conv::kHypOsc3F) {
-	bestfit_mixing12_stat[iexp] = fparm->BestFitValue(conv::kPhypMixing12);
-	bestfit_mixing13_stat[iexp] = fparm->BestFitValue(conv::kPhypMixing13);
-	bestfit_mixing23_stat[iexp] = fparm->BestFitValue(conv::kPhypMixing23);
-	bestfit_deltacp_stat[iexp]  = fparm->BestFitValue(conv::kPhypDeltaCP);
-	bestfit_dm12sq_stat[iexp]   = fparm->BestFitValue(conv::kPhypDm12sq);
-	bestfit_dm23sq_stat[iexp]   = fparm->BestFitValue(conv::kPhypDm23sq);
-	average_bestfit_mixing12_stat += fparm->BestFitValue(conv::kPhypMixing12);
-	average_bestfit_mixing13_stat += fparm->BestFitValue(conv::kPhypMixing13);
-	average_bestfit_mixing23_stat += fparm->BestFitValue(conv::kPhypMixing23);
-	average_bestfit_deltacp_stat  += fparm->BestFitValue(conv::kPhypDeltaCP);
-	average_bestfit_dm12sq_stat   += fparm->BestFitValue(conv::kPhypDm12sq);
-	average_bestfit_dm23sq_stat   += fparm->BestFitValue(conv::kPhypDm23sq);
-      } else
-      if(hyp == conv::kHypNuMuDisapp2F) {
-	bestfit_mixing23_stat[iexp] = fparm->BestFitValue(conv::kPhypMixing23);
-	bestfit_dm23sq_stat[iexp]   = fparm->BestFitValue(conv::kPhypDm23sq);
-	average_bestfit_mixing23_stat += fparm->BestFitValue(conv::kPhypMixing23);
-	average_bestfit_dm23sq_stat   += fparm->BestFitValue(conv::kPhypDm23sq);
-      }
-
-      // Clean-up in preparation for next exp
-      delete skobs;
-      delete fit_inputs;
-      delete fitter;
-    }//iexp
-
-    //get the stat error
-    for(int iexp = 0; iexp < nexp; iexp++) {
-      standarddeviation_bestfit_mixing12_stat += (bestfit_mixing12_stat[iexp] - input_mixing12) * (bestfit_mixing12_stat[iexp] - input_mixing12);
-      standarddeviation_bestfit_mixing13_stat += (bestfit_mixing13_stat[iexp] - input_mixing13) * (bestfit_mixing13_stat[iexp] - input_mixing13);
-      standarddeviation_bestfit_mixing23_stat += (bestfit_mixing23_stat[iexp] - input_mixing23) * (bestfit_mixing23_stat[iexp] - input_mixing23);
-      standarddeviation_bestfit_deltacp_stat  += (bestfit_deltacp_stat[iexp] - input_deltacp) * (bestfit_deltacp_stat[iexp] - input_deltacp);
-      standarddeviation_bestfit_dm12sq_stat   += (bestfit_dm12sq_stat[iexp] - input_dm12sq) * (bestfit_dm12sq_stat[iexp] - input_dm12sq);
-      standarddeviation_bestfit_dm23sq_stat   += (bestfit_dm23sq_stat[iexp] - input_dm23sq) * (bestfit_dm23sq_stat[iexp] - input_dm23sq);
-    }//iexp
-    standarddeviation_bestfit_mixing12_stat /= (nexp - 1);
-    standarddeviation_bestfit_mixing13_stat /= (nexp - 1);
-    standarddeviation_bestfit_mixing23_stat /= (nexp - 1);
-    standarddeviation_bestfit_deltacp_stat  /= (nexp - 1);
-    standarddeviation_bestfit_dm12sq_stat   /= (nexp - 1);
-    standarddeviation_bestfit_dm23sq_stat   /= (nexp - 1);
-
-    standarddeviation_bestfit_mixing12_stat  = sqrt(standarddeviation_bestfit_mixing12_stat);
-    standarddeviation_bestfit_mixing13_stat  = sqrt(standarddeviation_bestfit_mixing13_stat);
-    standarddeviation_bestfit_mixing23_stat  = sqrt(standarddeviation_bestfit_mixing23_stat);
-    standarddeviation_bestfit_deltacp_stat   = sqrt(standarddeviation_bestfit_deltacp_stat );
-    standarddeviation_bestfit_dm12sq_stat    = sqrt(standarddeviation_bestfit_dm12sq_stat  );
-    standarddeviation_bestfit_dm23sq_stat    = sqrt(standarddeviation_bestfit_dm23sq_stat  );
-
-    average_bestfit_mixing12_stat /= nexp;
-    average_bestfit_mixing13_stat /= nexp;
-    average_bestfit_mixing23_stat /= nexp;
-    average_bestfit_deltacp_stat  /= nexp;
-    average_bestfit_dm12sq_stat   /= nexp;
-    average_bestfit_dm23sq_stat   /= nexp;
-
-    delete skexp;
-  }//stat
-
-
+  delete skexp;
+  
   // Write-out results
   ostringstream outfilename;
-  if(sys.find("stat") == 0)
-    outfilename << systematic << ".data";
-  else
-    outfilename << "star_plot_line-" << systematic << ".data";
+  outfilename << "star_plot_line-" << systematic << ".data";
   ofstream outfile;
   outfile.open(outfilename.str().c_str());
-  if(sys.find("stat") == 0) {
-    outfile << systematic 
-	    << endl << standarddeviation_bestfit_mixing12_stat 
-	    << endl << standarddeviation_bestfit_mixing13_stat 
-	    << endl << standarddeviation_bestfit_mixing23_stat 
-	    << endl << standarddeviation_bestfit_deltacp_stat  
-	    << endl << standarddeviation_bestfit_dm12sq_stat   
-	    << endl << standarddeviation_bestfit_dm23sq_stat   
-	    << endl << "averages"
-	    << endl << average_bestfit_mixing12_stat 
-	    << endl << average_bestfit_mixing13_stat 
-	    << endl << average_bestfit_mixing23_stat 
-	    << endl << average_bestfit_deltacp_stat  
-	    << endl << average_bestfit_dm12sq_stat   
-	    << endl << average_bestfit_dm23sq_stat  
-	    << endl << "inputs"
-	    << endl << input_mixing12 
-	    << endl << input_mixing13 
-	    << endl << input_mixing23 
-	    << endl << input_deltacp  
-	    << endl << input_dm12sq   
-	    << endl << input_dm23sq  
-	    << endl;
-  }
-  else{
-    outfile << systematic 
-	    << "\t" << bestfit_mixing12_p1sig 
-	    << "\t" << bestfit_mixing13_p1sig 
-	    << "\t" << bestfit_mixing23_p1sig 
-	    << "\t" << bestfit_deltacp_p1sig  
-	    << "\t" << bestfit_dm12sq_p1sig   
-	    << "\t" << bestfit_dm23sq_p1sig   
-	    << "\t" << bestfit_mixing12_m1sig 
-	    << "\t" << bestfit_mixing13_m1sig 
-	    << "\t" << bestfit_mixing23_m1sig 
-	    << "\t" << bestfit_deltacp_m1sig  
-	    << "\t" << bestfit_dm12sq_m1sig   
-	    << "\t" << bestfit_dm23sq_m1sig   
-	    << endl;
-  }
+  outfile << systematic 
+	  << "\t" << bestfit_mixing12_p1sig 
+	  << "\t" << bestfit_mixing13_p1sig 
+	  << "\t" << bestfit_mixing23_p1sig 
+	  << "\t" << bestfit_deltacp_p1sig  
+	  << "\t" << bestfit_dm12sq_p1sig   
+	  << "\t" << bestfit_dm23sq_p1sig   
+	  << "\t" << bestfit_mixing12_m1sig 
+	  << "\t" << bestfit_mixing13_m1sig 
+	  << "\t" << bestfit_mixing23_m1sig 
+	  << "\t" << bestfit_deltacp_m1sig  
+	  << "\t" << bestfit_dm12sq_m1sig   
+	  << "\t" << bestfit_dm23sq_m1sig   
+	  << endl;
   outfile.close();
 
   cout << "Done!" << endl;
 }
-
-/*
-
-  TChain c("nfitnt");
-  c.Add("toyexptfits-run_*");
-
-  double input_mixing23, bestfit_mixing23;
-  c.SetBranchAddress("input_mixing23",&input_mixing23);
-  c.SetBranchAddress("bestfit_mixing23",&bestfit_mixing23);
-  double sd_mixing23 = 0;
-  for(int i=0; i<c.GetEntries(); i++) {
-  c.GetEntry(i);
-  sd_mixing23 += (bestfit_mixing23 - input_mixing23) * (bestfit_mixing23 - input_mixing23);
-  cout << input_mixing23 << endl;
-  }
-  sd_mixing23 = sqrt(sd_mixing23 / (c.GetEntries() - 1));
-  cout << sd_mixing23 << endl;
-
-  double input_dm23sq, bestfit_dm23sq;
-  c.SetBranchAddress("input_dm23sq",&input_dm23sq);
-  c.SetBranchAddress("bestfit_dm23sq",&bestfit_dm23sq);
-  double sd_dm23sq = 0;
-  for(int i=0; i<c.GetEntries(); i++) {
-  c.GetEntry(i);
-  sd_dm23sq += (bestfit_dm23sq - input_dm23sq) * (bestfit_dm23sq - input_dm23sq);
-  cout << input_dm23sq << "\t" << bestfit_dm23sq << endl;
-  }
-  sd_dm23sq = sqrt(sd_dm23sq / (c.GetEntries() - 1));
-  cout << sd_dm23sq << endl;
-  cout << sd_mixing23 << endl;
-
-*/
