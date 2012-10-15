@@ -1,7 +1,8 @@
 void get_starplot_staterror(const char * folder = "./") {
 
   TChain c("nfitnt");
-  c.Add(Form("%s/toyexptfits-run_*",folder));
+  c.Add(Form("%s/starstat-run_*",folder));
+  cout << c.GetEntries() << " entries in trees, from location " << Form("%s/starstat-run_*",folder) << endl;
 
   double input_mixing23, bestfit_mixing23;
   c.SetBranchAddress("input_mixing23",&input_mixing23);
@@ -36,25 +37,25 @@ void get_starplot_staterror(const char * folder = "./") {
 
 
 /*
-root -q 'temp.C("starstat_mixing23_100_dm32sq_22")'
-root -q 'temp.C("starstat_mixing23_100_dm32sq_24")'
-root -q 'temp.C("starstat_mixing23_100_dm32sq_26")'
-root -q 'temp.C("starstat_mixing23_95_dm32sq_22")'
-root -q 'temp.C("starstat_mixing23_95_dm32sq_24")'
-root -q 'temp.C("starstat_mixing23_95_dm32sq_26")'
-root -q 'temp.C("starstat_mixing23_90_dm32sq_22")'
-root -q 'temp.C("starstat_mixing23_90_dm32sq_24")'
-root -q 'temp.C("starstat_mixing23_90_dm32sq_26")'
+root -q '$T2KOSCANA/macros/misc/star_plot/get_starplot_staterror.C("nuosc3f_numudisapp_fix4/pulls_-99_-99_-99_-99_-99_0.0022")'
+root -q '$T2KOSCANA/macros/misc/star_plot/get_starplot_staterror.C("nuosc3f_numudisapp_fix4/pulls_-99_-99_-99_-99_-99_-99")'
+root -q '$T2KOSCANA/macros/misc/star_plot/get_starplot_staterror.C("nuosc3f_numudisapp_fix4/pulls_-99_-99_-99_-99_-99_0.0026")'
+root -q '$T2KOSCANA/macros/misc/star_plot/get_starplot_staterror.C("nuosc3f_numudisapp_fix4/pulls_-99_-99_0.95_-99_-99_0.0022")'
+root -q '$T2KOSCANA/macros/misc/star_plot/get_starplot_staterror.C("nuosc3f_numudisapp_fix4/pulls_-99_-99_0.95_-99_-99_-99")'
+root -q '$T2KOSCANA/macros/misc/star_plot/get_starplot_staterror.C("nuosc3f_numudisapp_fix4/pulls_-99_-99_0.95_-99_-99_0.0026")'
+root -q '$T2KOSCANA/macros/misc/star_plot/get_starplot_staterror.C("nuosc3f_numudisapp_fix4/pulls_-99_-99_0.9_-99_-99_0.0022")'
+root -q '$T2KOSCANA/macros/misc/star_plot/get_starplot_staterror.C("nuosc3f_numudisapp_fix4/pulls_-99_-99_0.9_-99_-99_-99")'
+root -q '$T2KOSCANA/macros/misc/star_plot/get_starplot_staterror.C("nuosc3f_numudisapp_fix4/pulls_-99_-99_0.9_-99_-99_0.0026")'
 
 
-cp starstat_mixing23_100_dm32sq_22/stat.data bestfit_point_shift_1Rmu_-99_-99_-99_-99_-99_0.0022/stat.data
-cp starstat_mixing23_100_dm32sq_24/stat.data bestfit_point_shift_1Rmu_-99_-99_-99_-99_-99_-99/stat.data
-cp starstat_mixing23_100_dm32sq_26/stat.data bestfit_point_shift_1Rmu_-99_-99_-99_-99_-99_0.0026/stat.data
-cp starstat_mixing23_95_dm32sq_22/stat.data bestfit_point_shift_1Rmu_-99_-99_0.95_-99_-99_0.0022/stat.data
-cp starstat_mixing23_95_dm32sq_24/stat.data bestfit_point_shift_1Rmu_-99_-99_0.95_-99_-99_-99/stat.data
-cp starstat_mixing23_95_dm32sq_26/stat.data bestfit_point_shift_1Rmu_-99_-99_0.95_-99_-99_0.0026/stat.data
-cp starstat_mixing23_90_dm32sq_22/stat.data bestfit_point_shift_1Rmu_-99_-99_0.9_-99_-99_0.0022/stat.data
-cp starstat_mixing23_90_dm32sq_24/stat.data bestfit_point_shift_1Rmu_-99_-99_0.9_-99_-99_-99/stat.data
-cp starstat_mixing23_90_dm32sq_26/stat.data bestfit_point_shift_1Rmu_-99_-99_0.9_-99_-99_0.0026/stat.data
+cp nuosc3f_numudisapp_fix4/pulls_-99_-99_-99_-99_-99_0.0022/stat.data bestfit_point_shift_1Rmu_-99_-99_-99_-99_-99_0.0022/stat.data
+cp nuosc3f_numudisapp_fix4/pulls_-99_-99_-99_-99_-99_-99/stat.data bestfit_point_shift_1Rmu_-99_-99_-99_-99_-99_-99/stat.data
+cp nuosc3f_numudisapp_fix4/pulls_-99_-99_-99_-99_-99_0.0026/stat.data bestfit_point_shift_1Rmu_-99_-99_-99_-99_-99_0.0026/stat.data
+cp nuosc3f_numudisapp_fix4/pulls_-99_-99_0.95_-99_-99_0.0022/stat.data bestfit_point_shift_1Rmu_-99_-99_0.95_-99_-99_0.0022/stat.data
+cp nuosc3f_numudisapp_fix4/pulls_-99_-99_0.95_-99_-99_-99/stat.data bestfit_point_shift_1Rmu_-99_-99_0.95_-99_-99_-99/stat.data
+cp nuosc3f_numudisapp_fix4/pulls_-99_-99_0.95_-99_-99_0.0026/stat.data bestfit_point_shift_1Rmu_-99_-99_0.95_-99_-99_0.0026/stat.data
+cp nuosc3f_numudisapp_fix4/pulls_-99_-99_0.9_-99_-99_0.0022/stat.data bestfit_point_shift_1Rmu_-99_-99_0.9_-99_-99_0.0022/stat.data
+cp nuosc3f_numudisapp_fix4/pulls_-99_-99_0.9_-99_-99_-99/stat.data bestfit_point_shift_1Rmu_-99_-99_0.9_-99_-99_-99/stat.data
+cp nuosc3f_numudisapp_fix4/pulls_-99_-99_0.9_-99_-99_0.0026/stat.data bestfit_point_shift_1Rmu_-99_-99_0.9_-99_-99_0.0026/stat.data
 
  */

@@ -323,7 +323,7 @@ void test_sk_ereco_spectrum_twk_sys
 
     if(mode < 100) {
 
-      //all BANFF
+      //all BANFF correlated
       if(mode == 0 || mode == 1 || mode == 10) {
 	TVectorD v(conv::kNumOfParamsInBANFFfit);
 	v = skexp.GetBANFF()->BestFitValues();
@@ -333,7 +333,7 @@ void test_sk_ereco_spectrum_twk_sys
 	skexp.GetBANFF()->Tweak(true,&v);
       }
 
-      //BANFF flux only
+      //BANFF flux only correlated
       if(mode == 2) {
 	TVectorD v(conv::kNumOfParamsInBANFFfit);
 	v = skexp.GetBANFF()->BestFitValues();
@@ -343,7 +343,7 @@ void test_sk_ereco_spectrum_twk_sys
 	skexp.GetBANFF()->Tweak(true,&v);
       }
 
-      //BANFF xsec only
+      //BANFF xsec only correlated
       if(mode == 3 || mode == 5) {
 	TVectorD v(conv::kNumOfParamsInBANFFfit);
 	v = skexp.GetBANFF()->BestFitValues();
@@ -353,6 +353,7 @@ void test_sk_ereco_spectrum_twk_sys
 	skexp.GetBANFF()->Tweak(true,&v);
       }
 
+      //Uncorrelated xsec
       if(mode == 0 || mode == 4 || mode == 5 || mode == 10) {
 	skexp.TweakSystematic("xsec_pf",tweak);
 	skexp.TweakSystematic("xsec_sf",tweak);
@@ -360,6 +361,7 @@ void test_sk_ereco_spectrum_twk_sys
 	skexp.TweakSystematic("xsec_shape_ccoth",tweak);
 	skexp.TweakSystematic("xsec_pilessdelta",tweak);
 	skexp.TweakSystematic("xsec_enushape",tweak);
+	skexp.TweakSystematic("xsec_bindE",tweak);
 	/*
 	  skexp.TweakSystematic("xsec_norm_ccqeE1",tweak);
 	  skexp.TweakSystematic("xsec_norm_ccqeE2",tweak);
@@ -371,9 +373,9 @@ void test_sk_ereco_spectrum_twk_sys
 	skexp.TweakSystematic("xsec_norm_ncoth",tweak);
 	skexp.TweakSystematic("xsec_norm_nuetonumu",tweak);
 	skexp.TweakSystematic("xsec_norm_antinutonu",tweak);
-	skexp.TweakSystematic("xsec_bindE",tweak);
       }
 
+      //SK det uncorrelated
       if(mode == 0 || mode == 6 || mode == 8 || mode == 10) {
 	if(mode == 0 || mode == 8)
 	  skexp.TweakSystematic("sk_energy_scale",tweak);
@@ -383,12 +385,14 @@ void test_sk_ereco_spectrum_twk_sys
 	skexp.TweakSystematic("sk_1Rmu_nuecc_eff",tweak);
       }
 
+      //SK det ring counting
       if(mode == 0 || mode == 6 || mode == 7 || mode == 8 || mode == 10) {
 	skexp.TweakSystematic("sk_1Rmu_ccqe_ring_counting_eff_0",tweak);
 	skexp.TweakSystematic("sk_1Rmu_ccqe_ring_counting_eff_1",tweak);
 	skexp.TweakSystematic("sk_1Rmu_ccqe_ring_counting_eff_2",tweak);
       }
 
+      //FSI
       if(mode == 0 || mode == 9 || mode == 10) {
 	TVectorD v(conv::kNumOfFSIParams);
 	v.Zero();
@@ -399,11 +403,11 @@ void test_sk_ereco_spectrum_twk_sys
       }
 
       //all BANFF uncorrelated
-      if(mode == 0 || mode == 1 || mode == 10) {
+      if(mode == 0 || mode == 1 || mode == 11) {
 	TVectorD v(conv::kNumOfParamsInBANFFfit);
 	v = skexp.GetBANFF()->CurrentUncorrelatedValues();
 	for(int ib = 0; ib < conv::kNumOfParamsInBANFFfit; ib++) {
-	  v[ib] = 0 + (tweak * sqrt(skexp.GetBANFF()->CovMatrix()[ib][ib]));
+	  v[ib] = tweak;
 	}
 	skexp.GetBANFF()->Tweak(true,&v,false);
       }

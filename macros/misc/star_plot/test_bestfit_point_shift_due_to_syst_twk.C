@@ -180,7 +180,6 @@ void test_bestfit_point_shift_due_to_syst_twk
     int ip = util::ArrIdx::Instance()->BANFFSystIdx(p);
     // curr/nominal = 1 + (nsigma * x)
     skexp->TweakSystematic(systematic, skexp->GetBANFF()->BestFitValue(p) + (1 * sqrt(skexp->GetBANFF()->CovMatrix()(ip,ip))));
-    skexp->GetBANFF()->PrintSystematicVariations();
   }
   else if(sys.find("fsi_") == 0) {
     conv::PhysParamId_t p = util::PhysParamIdFromString(systematic);
@@ -220,6 +219,9 @@ void test_bestfit_point_shift_due_to_syst_twk
   }
   if(sys.find("xsec_") == 0) {
     skexp->GetNuXSec()->PrintSystematicVariations();
+  }
+  else if(sys.find("banff_") != string::npos) {
+    skexp->GetBANFF()->PrintSystematicVariations();
   }
 
   // Generate toy MC
