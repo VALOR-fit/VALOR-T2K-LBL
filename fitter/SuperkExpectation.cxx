@@ -688,6 +688,7 @@ void SuperkExpectation::SetNuisanceParams(const FitParamList & fp)
 
    const int nbanff = conv::kNumOfParamsInBANFFfit;
    // BANFF params included in the fit param list?
+   bool need_to_tweak_banff = false;
    TVectorD twkv(nbanff);
    for(int ip = 0; ip < nbanff; ip++) {
      PhysParamId_t p = PhysParamId_t ((int) kNuisBANFF00 + ip);
@@ -696,13 +697,15 @@ void SuperkExpectation::SetNuisanceParams(const FitParamList & fp)
      // to tweak the BANFF object
      if(incl_banff) {
        twkv[ip] = fp.CurrValue(p);
+       need_to_tweak_banff = true;
      }
      // Otherwise, use whatever is already stored in the BANFF object
      else {
        twkv[ip] = this->GetBANFF()->CurrentValue(p);
      }
    }
-   this->GetBANFF()->Tweak(true,&twkv);
+   if(need_to_tweak_banff)
+     this->GetBANFF()->Tweak(true,&twkv);
 
    // 
    // Uncorrelated BANFF systematics
@@ -710,6 +713,7 @@ void SuperkExpectation::SetNuisanceParams(const FitParamList & fp)
 
    // Uncorrelated BANFF params included in the fit param list?
    TVectorD twkvu(nbanff);
+   bool need_to_tweak_unbanff = false;
    for(int ip = 0; ip < nbanff; ip++) {
      PhysParamId_t p = PhysParamId_t ((int) kNuisUnBANFF00 + ip);
      bool incl_banff = fp.Exists(p);
@@ -717,13 +721,15 @@ void SuperkExpectation::SetNuisanceParams(const FitParamList & fp)
      // to tweak the BANFF object
      if(incl_banff) {
        twkvu[ip] = fp.CurrValue(p);
+       need_to_tweak_unbanff = true;
      }
      // Otherwise, use whatever is already stored in the BANFF object
      else {
        twkvu[ip] = this->GetBANFF()->CurrentUncorrelatedValue(p);
      }
    }
-   this->GetBANFF()->Tweak(true,&twkvu,false);
+   if(need_to_tweak_unbanff)
+     this->GetBANFF()->Tweak(true,&twkvu,false);
 
    // 
    // Cross-section systematics (other than BANFF ones)

@@ -27,11 +27,11 @@ Changes since 2011_v0.9.0:
 //#define BANFF_BINS -1 // Fine binning (numu using same binning as 2010 numu analyses, 20 numu bins)
 //#define BANFF_BINS 2 // Coarse binning, with high energy ccqe & cc1pi bins included in BANFF
 #define BANFF_BINS 3 // DEFAULT Final BANFF matrix. MAQE. Coarser binning for numubar. No nue/nuebar bins. High energy ccqe & cc1pi bins
-//#define BANFF_BINS 4 // DEFAULT Final BANFF matrix. 1/MAQE^2. Coarser binning for numubar. No nue/nuebar bins. High energy ccqe & cc1pi bins
+//#define BANFF_BINS 4 // Final BANFF matrix. 1/MAQE^2. Coarser binning for numubar. No nue/nuebar bins. High energy ccqe & cc1pi bins
 #endif
 
 #ifndef FSI_BINS
-#define FSI_BINS 1 // 6 bins (0-0.4, 0.4-1.1, 1.1-30.0 GeV Ereco) for numu(bar)CCQE, numu(bar)CCnQE, nueCC, allNC (DEFAULT for collab meeting)
+#define FSI_BINS 1 // DEFAULT 6 bins (0-0.4, 0.4-1.1, 1.1-30.0 GeV Ereco) for numu(bar)CCQE, numu(bar)CCnQE, nueCC, allNC (DEFAULT for collab meeting)
 //#define FSI_BINS 2 // 15 bins (0-0.4, 0.4-1.1, 1.1-30.0 GeV Ereco) x (numu, numubar, nue, nuebar, oscnue)
 //#define FSI_BINS 3 // 49 bins numu(bar)CCQE, (0-300, 300-400, 400-500, 500-600, 600-700, 700-800, 800-900, 900-1000,1000-1100, 1100-1200, 1200-1300, 1300-1400, 1400-1500,1500-2000, 2000-5000,5000-30000 MeV) x (numu(bar)CCnQE, nueCC, NC)
 #endif
@@ -56,7 +56,7 @@ Changes since 2011_v0.9.0:
 // NOTE2: don't need to change config xml file
 //#define SPLINE_TYPE -1 // Special mode turned on in which splines are not read, and weights involving splines are set to 1
 //#define SPLINE_TYPE 0 // Use KIT splines (DEFAULT for collab meeting)
-#define SPLINE_TYPE 1 // Use VaLOR splines
+#define SPLINE_TYPE 1 // DEFAULT Use VaLOR splines
 #endif
 
 #ifndef ERECO_BINS_1RMU
