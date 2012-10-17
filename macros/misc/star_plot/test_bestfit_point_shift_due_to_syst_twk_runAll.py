@@ -58,7 +58,6 @@ systematics = []
 #systematics.append("osc_deltacp");
 #SK
 #systematics.append("sk_1Rmu_ccqe_ring_counting_eff")
-"""
 systematics.append("sk_1Rmu_ccqe_ring_counting_eff_0")
 systematics.append("sk_1Rmu_ccqe_ring_counting_eff_1")
 systematics.append("sk_1Rmu_ccqe_ring_counting_eff_2")
@@ -67,7 +66,6 @@ systematics.append("sk_1Rmu_ccnonqe_eff")
 systematics.append("sk_1Rmu_nc_eff")
 systematics.append("sk_1Rmu_nuecc_eff")
 systematics.append("sk_energy_scale")
-"""
 #BANFF
 #systematics.append("banff")
 #BANFF flux
@@ -82,7 +80,6 @@ systematics.append("banff_ccqeE2")
 systematics.append("banff_cc1piE0")
 systematics.append("banff_cc1piE1")
 #XSec splines
-"""
 systematics.append("xsec_pf")
 systematics.append("xsec_sf")
 systematics.append("xsec_wshape")
@@ -101,8 +98,8 @@ systematics.append("xsec_norm_antinutonu")
 #FSI
 for i in xrange(15):
    systematics.append("fsi_" + '%(number)03d' % {"number": i})
-"""
 #UnBANFF
+#systematics.append("unbanff")
 for i in xrange(24):
    systematics.append("unbanff_" + '%(number)02d' % {"number": i})
    
