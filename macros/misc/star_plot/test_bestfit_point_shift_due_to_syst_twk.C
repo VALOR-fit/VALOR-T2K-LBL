@@ -73,7 +73,7 @@ void test_bestfit_point_shift_due_to_syst_twk
  const char * fit_option                 = "minuit",                       /* oscillation fitter (see run_fitter.C) */
  double       input_mixing12             = -99,                            /* */
  double       input_mixing13             = -99,                            /* */
- double       input_mixing23             = 0.9,                            /* */
+ double       input_mixing23             = -99,                            /* */
  double       input_deltacp              = -99,                            /* */
  double       input_dm12sq               = -99,                            /* */
  double       input_dm23sq               = -99,                            /* */
@@ -359,5 +359,7 @@ void test_bestfit_point_shift_due_to_syst_twk
 	  << endl;
   outfile.close();
 
+  cout << bestfit_mixing23_p1sig  << "\t" << bestfit_mixing23_m1sig << endl
+       <<  bestfit_dm23sq_p1sig   << "\t" << bestfit_dm23sq_m1sig   << endl;
   cout << "Done!" << endl;
 }

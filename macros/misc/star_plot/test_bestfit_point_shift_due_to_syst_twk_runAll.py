@@ -51,8 +51,6 @@ fitter = "minuit"
 
 #specify the cuts you want to apply here
 systematics = []
-#stats
-#systematics.append("stat");
 #oscillations
 #systematics.append("osc_mixing12");
 #systematics.append("osc_mixing13");
@@ -60,6 +58,7 @@ systematics = []
 #systematics.append("osc_deltacp");
 #SK
 #systematics.append("sk_1Rmu_ccqe_ring_counting_eff")
+"""
 systematics.append("sk_1Rmu_ccqe_ring_counting_eff_0")
 systematics.append("sk_1Rmu_ccqe_ring_counting_eff_1")
 systematics.append("sk_1Rmu_ccqe_ring_counting_eff_2")
@@ -68,10 +67,11 @@ systematics.append("sk_1Rmu_ccnonqe_eff")
 systematics.append("sk_1Rmu_nc_eff")
 systematics.append("sk_1Rmu_nuecc_eff")
 systematics.append("sk_energy_scale")
+"""
 #BANFF
 #systematics.append("banff")
 #BANFF flux
-for i in xrange(31):
+for i in xrange(24):
    systematics.append("banff_" + '%(number)02d' % {"number": i})
 #BANFF xsec
 systematics.append("banff_maqe")
@@ -82,6 +82,7 @@ systematics.append("banff_ccqeE2")
 systematics.append("banff_cc1piE0")
 systematics.append("banff_cc1piE1")
 #XSec splines
+"""
 systematics.append("xsec_pf")
 systematics.append("xsec_sf")
 systematics.append("xsec_wshape")
@@ -100,6 +101,7 @@ systematics.append("xsec_norm_antinutonu")
 #FSI
 for i in xrange(15):
    systematics.append("fsi_" + '%(number)03d' % {"number": i})
+"""
 #UnBANFF
 for i in xrange(24):
    systematics.append("unbanff_" + '%(number)02d' % {"number": i})
@@ -151,6 +153,7 @@ for osc in oscparams:
             print command
             os.system(command)
 
+            """
             command = 'cat star_plot_line-osc*.data > star_plot_line-osc.data'
             print command
             os.system(command)
@@ -163,7 +166,7 @@ for osc in oscparams:
             command = 'root2k -l -b -q \'$T2KOSCANA/macros/misc/star_plot/make_star_plot_for_disappearance_analysis.C("star_plot_line-all.data",'+str(osc[2])+','+str(osc[5])+','+errmixing23+','+errdm23sq+')\''
             print command
             os.system(command)
-
+            """
             command = 'cat star_plot_line-sk_*.data > star_plot_line-sk.data'
             print command
             os.system(command)
@@ -192,19 +195,21 @@ for osc in oscparams:
             print command
             os.system(command)
 
+            """
             command = 'for i in {22..28}; do printf -v ii "%02i" $i; cat star_plot_line-banff_$ii* >> star_plot_line-banffnue.data; done'
             print command
             os.system(command)
             command = 'root2k -l -b -q \'$T2KOSCANA/macros/misc/star_plot/make_star_plot_for_disappearance_analysis.C("star_plot_line-banffnue.data",'+str(osc[2])+','+str(osc[5])+','+errmixing23+','+errdm23sq+')\''
             print command
             os.system(command)
-
+            
             command = 'for i in {29..30}; do printf -v ii "%02i" $i; cat star_plot_line-banff_$ii* >> star_plot_line-banffnuebar.data; done'
             print command
             os.system(command)
             command = 'root2k -l -b -q \'$T2KOSCANA/macros/misc/star_plot/make_star_plot_for_disappearance_analysis.C("star_plot_line-banffnuebar.data",'+str(osc[2])+','+str(osc[5])+','+errmixing23+','+errdm23sq+')\''
             print command
             os.system(command)
+            """
 
             command = 'cat star_plot_line-banff_ma*.data cat star_plot_line-banff_cc*.data > star_plot_line-banffxsec.data'
             print command
@@ -227,7 +232,7 @@ for osc in oscparams:
             print command
             os.system(command)
 
-            command = 'cat star_plot_line-sk_1Rmu_ccnonqe_eff.data star_plot_line-sk_1Rmu_nc_eff.data star_plot_line-xsec_pilessdelta.data star_plot_line-xsec_sf.data star_plot_line-banff_maqe.data star_plot_line-banff_ccqeE0.data star_plot_line-banff_cc1piE0.data > star_plot_line-important.data'
+            command = 'cat star_plot_line-sk_1Rmu_ccnonqe_eff.data star_plot_line-sk_1Rmu_nc_eff.data star_plot_line-sk_energy_scale.data star_plot_line-xsec_pilessdelta.data star_plot_line-xsec_sf.data star_plot_line-xsec_bindE.data star_plot_line-banff_maqe.data star_plot_line-banff_ccqeE0.data > star_plot_line-important.data'
             print command
             os.system(command)
             command = 'root2k -l -b -q \'$T2KOSCANA/macros/misc/star_plot/make_star_plot_for_disappearance_analysis.C("star_plot_line-important.data",'+str(osc[2])+','+str(osc[5])+','+errmixing23+','+errdm23sq+')\''
