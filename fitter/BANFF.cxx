@@ -402,8 +402,9 @@ double BANFF::ChisqPenaltyUncorrelated(bool all_syst) const
 {
   double chisq_penalty = 0;
   if(!all_syst) {
-    chisq_penalty += CurrentUncorrelatedValue(kNuisUnBANFF00) * CurrentUncorrelatedValue(kNuisUnBANFF00);
-    chisq_penalty += CurrentUncorrelatedValue(kNuisUnBANFF01) * CurrentUncorrelatedValue(kNuisUnBANFF01);
+    return 0;
+    // Currently not fitting any uncorrelated BANFF parameters. If we do start, will use something like:
+    //chisq_penalty += CurrentUncorrelatedValue(kNuisUnBANFF00) * CurrentUncorrelatedValue(kNuisUnBANFF00);
   }
   else {
     const TVectorD & current_correlated_values   = *fUncorrelatedCurrentValues;
@@ -435,18 +436,15 @@ double BANFF::ChisqPenaltyCorrelated(bool all_syst) const
 
   if(!all_syst) {
     //Vector with deviations of current values from  best fit values
-    const int np = 3;
+    const int np = 2;
     TMatrixD dev  (1,np); //vector of one column in matrix form for multiplication
     TMatrixD devT (np,1); //vector of one row in matrix form for multiplication
     int imaqe    = util::ArrIdx::Instance()->BANFFSystIdx(kNuisBANFFMAQE);
     int iccqeE0  = util::ArrIdx::Instance()->BANFFSystIdx(kNuisBANFFCCQEE0);
-    int icc1piE0 = util::ArrIdx::Instance()->BANFFSystIdx(kNuisBANFFCC1piE0);
     dev [0][0] = current_values[imaqe]   - bestfit_values[imaqe];
     devT[0][0] = current_values[imaqe]   - bestfit_values[imaqe];
-    dev [0][1] = current_values[iccqeE0] - bestfit_values[imaqe];
-    devT[1][0] = current_values[iccqeE0] - bestfit_values[imaqe];
-    dev [0][2] = current_values[icc1piE0]- bestfit_values[imaqe];
-    devT[2][0] = current_values[icc1piE0]- bestfit_values[imaqe];
+    dev [0][1] = current_values[iccqeE0] - bestfit_values[iccqeE0];
+    devT[1][0] = current_values[iccqeE0] - bestfit_values[iccqeE0];
 
 #ifdef __show_chisqpenalty_mesg_debug2__
     cout << "Exp/ChisqPenalty >> deviations in BANFF parameters: " << endl;
@@ -457,13 +455,8 @@ double BANFF::ChisqPenaltyCorrelated(bool all_syst) const
     TMatrixD covSub(np, np);
     covSub[0][0] = cov[imaqe]   [imaqe];
     covSub[1][1] = cov[iccqeE0] [iccqeE0];
-    covSub[2][2] = cov[icc1piE0][icc1piE0];
     covSub[0][1] = cov[imaqe]   [iccqeE0];
     covSub[1][0] = cov[iccqeE0] [imaqe];
-    covSub[0][2] = cov[imaqe]   [icc1piE0];
-    covSub[2][0] = cov[icc1piE0][imaqe];
-    covSub[1][2] = cov[iccqeE0] [icc1piE0];
-    covSub[2][1] = cov[icc1piE0][iccqeE0];
     //invert the sub matrix
     double det;
     TMatrixD covInvSub(covSub);
@@ -485,7 +478,7 @@ double BANFF::ChisqPenaltyCorrelated(bool all_syst) const
 
     TMatrixD chisqpenalty =  dev * covInvSub * devT;
     double chisq_penalty = chisqpenalty[0][0]; //The final matrix is 1x1, just a number
-    if(chisq_penalty) return chisq_penalty;
+    return chisq_penalty;
   }
 
   else {

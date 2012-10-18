@@ -3670,7 +3670,8 @@ static const double kErecoBinEdges1Re[kNErecoBins1Re+1] =
 // Joint :
 //   -
 //
-static const int kNumOfNuisanceParams1Rmu  = kNumOfParamsInBANFFfit + kNumOfFSIParams + kNumOfXSecSyst - (kNumOfParamsInBANFFfit - kNumOfFluxParamsInBANFFfit) + 8;  
+static const int kNumOfSKDetParams = 8;
+static const int kNumOfNuisanceParams1Rmu  = kNumOfParamsInBANFFfit + kNumOfFSIParams + kNumOfXSecSyst - (kNumOfParamsInBANFFfit - kNumOfFluxParamsInBANFFfit) + kNumOfSKDetParams;  
 static const int kNumOfNuisanceParams1Re   = 0;  // not implemented for 2012a yet
 static const int kNumOfNuisanceParamsJoint = 0;  // not implemented for 2012a yet
 

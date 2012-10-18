@@ -212,9 +212,6 @@ double FitInputs::ChisquarePenaltyTerm(void)
     p = kNuisBANFFCCQEE0;
     incl_banff_penalty = incl_banff_penalty && 
       (this->FitParams().Exists(p) && this->FitParams().IsNuisance(p));
-    p = kNuisBANFFCC1piE0;
-    incl_banff_penalty = incl_banff_penalty && 
-      (this->FitParams().Exists(p) && this->FitParams().IsNuisance(p));
   }
   if(incl_banff_penalty) {
 #ifdef __include_all_systematics_in_banff_penalty_term__
@@ -245,12 +242,13 @@ double FitInputs::ChisquarePenaltyTerm(void)
     }
   }
   else {
+    incl_unbanff_penalty = false;
+    //currently no unbanff parameters are 'selected'; if they were, would do something like:
+    /*
     PhysParamId_t p = kNuisUnBANFF00;
     incl_banff_penalty = incl_banff_penalty && 
       (this->FitParams().Exists(p) && this->FitParams().IsNuisance(p));
-    p = kNuisUnBANFF01;
-    incl_banff_penalty = incl_banff_penalty && 
-      (this->FitParams().Exists(p) && this->FitParams().IsNuisance(p));
+    */
   }
   if(incl_unbanff_penalty) {
     double dchisq_penalty = this->Expectation().GetBANFF()->ChisqPenalty(all_syst);
@@ -281,6 +279,9 @@ double FitInputs::ChisquarePenaltyTerm(void)
     incl_skdet_penalty = incl_skdet_penalty &&
       (this->FitParams().Exists(p) && this->FitParams().IsNuisance(p));
     p = kNuisSuperkEff1RmuNC;
+    incl_skdet_penalty = incl_skdet_penalty &&
+      (this->FitParams().Exists(p) && this->FitParams().IsNuisance(p));
+    p = kNuisSuperkEnergyScale;
     incl_skdet_penalty = incl_skdet_penalty &&
       (this->FitParams().Exists(p) && this->FitParams().IsNuisance(p));
   }
@@ -317,6 +318,9 @@ double FitInputs::ChisquarePenaltyTerm(void)
     incl_xsec_penalty = incl_xsec_penalty &&
       (this->FitParams().Exists(p) && this->FitParams().IsNuisance(p));
     p = kNuisXSecSpecFunc;
+    incl_xsec_penalty = incl_xsec_penalty &&
+      (this->FitParams().Exists(p) && this->FitParams().IsNuisance(p));
+    p = kNuisXSecBindE;
     incl_xsec_penalty = incl_xsec_penalty &&
       (this->FitParams().Exists(p) && this->FitParams().IsNuisance(p));
   }

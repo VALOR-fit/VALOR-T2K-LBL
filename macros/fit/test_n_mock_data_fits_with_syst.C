@@ -32,7 +32,7 @@ void test_n_mock_data_fits_with_syst
  const char * tag                     = "toyexptfitswithsyst",          /* tag for output file */
  int          syst_mode               = 0,                              /* which systematics to tweak? 0 none. 1 all. 2 BANFF. 3 Unconstrained XSec. 4 SK detector. 5 FSI. */
  int          run                     = 0,                              /* run number */
- int          nexperiments            = 1,                            /* number of toy MC experiment fits */
+ int          nexperiments            = 1,                              /* number of toy MC experiment fits */
  double       input_mixing12          = -99,                            /* 12-mixing, sinq2theta or sinsqtheta depending on user choice, if -999 then randomize */
  double       input_mixing13          = -99,                            /* 13-mixing, sinq2theta or sinsqtheta depending on user choice, if -999 then randomize */
  double       input_mixing23          = -99,                            /* 23-mixing, sinq2theta or sinsqtheta depending on user choice */
@@ -44,9 +44,9 @@ void test_n_mock_data_fits_with_syst
  string       fit_param_list          = "nuosc3f_numudisapp_fix4+nuisanceselection", /* fit parameter list for the given physics hypothesis (see run_fitter.C) */
  const char * fit_option              = "minuit",                       /* fitter option (see run_fitter.C) */
  bool         store_chisq_surf        = false,                          /* by default storing only best-fit values, enable this to store the chisq surfaces   */
- bool         store_withsyst_chisq_surf = true,                        /* by default storing only best-fit values, enable this to store the chisq with systematics surfaces   */
- bool         store_toy_expts         = true,                          /* by default storing only best-fit values, enable this to store the toy MC expts     */
- bool         store_bestfit_spectrum  = true                           /* by default storing only best-fit values, enable this to store the best-fit spectra */
+ bool         store_withsyst_chisq_surf = false,                        /* by default storing only best-fit values, enable this to store the chisq with systematics surfaces   */
+ bool         store_toy_expts         = false,                          /* by default storing only best-fit values, enable this to store the toy MC expts     */
+ bool         store_bestfit_spectrum  = false                           /* by default storing only best-fit values, enable this to store the best-fit spectra */
  )
 {
   using namespace std;
