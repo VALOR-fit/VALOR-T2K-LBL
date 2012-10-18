@@ -52,18 +52,18 @@ if runmode == "PULLS":
    #fill with oscillation parameters, in order mixing12, mixing13, mixing23, deltacp, dmsq12, dmsq23
    oscparams.append([-99, -99, 0.9, -99, -99, -99]) #mixing23=0.9 & global best fits
    oscparams.append([-99, -99, -99, -99, -99, -99]) #use global best fits!
+   stat = " --stat-fluctuations "
+   tag = "pull"
    if fitparamlist == "nuosc3f_numudisapp_fix4":
       syst = 0
    else:
       syst = 1
-   tag = "pull"
-   if fitparamlist == "nuosc3f_numudisapp_fix4" or fitparamlist == "nuosc3f_numudisapp_fix4+nuisanceselection" or fitparamlist == "nuosc3f_numudisapp_fix4+nuisanceunbanffselection":
+   if fitparamlist == "nuosc3f_numudisapp_fix4" or fitparamlist == "nuosc3f_numudisapp_fix4+nuisanceselection" or fitparamlist == "nuosc3f_numudisapp_fix4+nuisanceunbanffselection" or fitparamlist == "nuosc3f_numudisapp_fix4+nuisanceselectionnobanff":
       nruns = 100
       nexpts = 100
    else:
       nruns = 200
       nexpts = 50
-      stat = " --stat-fluctuations "
 
 if runmode == "STARSTAT":
    #fill with oscillation parameters, in order mixing12, mixing13, mixing23, deltacp, dmsq12, dmsq23
