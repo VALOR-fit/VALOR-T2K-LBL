@@ -18,6 +18,7 @@
 //   9 tweak all fsi
 //  10 tweak all (except energy scale!) (BANFF correlated)
 //  11 tweak all BANFF uncorrelated
+//  12 tweak all BANFF eigendecomposition
 //
 // 100 tweak banff00
 // 101 tweak banff01
@@ -120,6 +121,8 @@ void test_sk_ereco_spectrum_twk_sys
       modetitle = "all(without-energy-scale)"; break;
     case 11:
       modetitle = "BANFF-uncorrelated"; break;
+    case 12:
+      modetitle = "BANFF-eigendecomposition"; break;
 
     case 200:
       modetitle = "xsec_pf"; break;
@@ -330,7 +333,7 @@ void test_sk_ereco_spectrum_twk_sys
 	for(int ib = 0; ib < conv::kNumOfParamsInBANFFfit; ib++) {
 	  v[ib] = skexp.GetBANFF()->BestFitValues()[ib] + (tweak * sqrt(skexp.GetBANFF()->CovMatrix()[ib][ib]));
 	}
-	skexp.GetBANFF()->Tweak(true,&v);
+	skexp.GetBANFF()->Tweak(true,&v,1);
       }
 
       //BANFF flux only correlated
@@ -340,7 +343,7 @@ void test_sk_ereco_spectrum_twk_sys
 	for(int ib = 0; ib < conv::kNumOfFluxParamsInBANFFfit; ib++) {
 	  v[ib] = skexp.GetBANFF()->BestFitValues()[ib] + (tweak * sqrt(skexp.GetBANFF()->CovMatrix()[ib][ib]));
 	}
-	skexp.GetBANFF()->Tweak(true,&v);
+	skexp.GetBANFF()->Tweak(true,&v,1);
       }
 
       //BANFF xsec only correlated
@@ -350,7 +353,7 @@ void test_sk_ereco_spectrum_twk_sys
 	for(int ib = conv::kNumOfFluxParamsInBANFFfit; ib < conv::kNumOfParamsInBANFFfit; ib++) {
 	  v[ib] = skexp.GetBANFF()->BestFitValues()[ib] + (tweak * sqrt(skexp.GetBANFF()->CovMatrix()[ib][ib]));
 	}
-	skexp.GetBANFF()->Tweak(true,&v);
+	skexp.GetBANFF()->Tweak(true,&v,1);
       }
 
       //Uncorrelated xsec
@@ -403,13 +406,25 @@ void test_sk_ereco_spectrum_twk_sys
       }
 
       //all BANFF uncorrelated
-      if(mode == 0 || mode == 1 || mode == 11) {
+      if(mode == 11) {
 	TVectorD v(conv::kNumOfParamsInBANFFfit);
 	v = skexp.GetBANFF()->CurrentUncorrelatedValues();
 	for(int ib = 0; ib < conv::kNumOfParamsInBANFFfit; ib++) {
 	  v[ib] = tweak;
 	}
-	skexp.GetBANFF()->Tweak(true,&v,false);
+	skexp.GetBANFF()->Tweak(true,&v,2);
+      }
+
+      //all BANFF uncorrelated
+      if(mode == 12) {
+	TVectorD v(conv::kNumOfParamsInBANFFfit);
+	v = skexp.GetBANFF()->CurrentEigenDecompValues();
+	TVectorD ev(conv::kNumOfParamsInBANFFfit);
+	ev = skexp.GetBANFF()->EigenDecompEigenValues();
+	for(int ib = 0; ib < conv::kNumOfParamsInBANFFfit; ib++) {
+	  v[ib] += ev[ib] * tweak;
+	}
+	skexp.GetBANFF()->Tweak(true,&v,3);
       }
 
     }//mode<100
@@ -490,7 +505,7 @@ void test_sk_ereco_spectrum_twk_sys
 	    v = skexp.GetBANFF()->BestFitValues();
 	    int ib = mode - 100;
 	    v[ib] = skexp.GetBANFF()->BestFitValues()[ib] + (tweak * sqrt(skexp.GetBANFF()->CovMatrix()[ib][ib]));
-	    skexp.GetBANFF()->Tweak(true,&v);
+	    skexp.GetBANFF()->Tweak(true,&v,1);
 	    break;
 	  }
 	  else if(mode >= 400 && mode < 400+conv::kNumOfFSIParams) {
@@ -510,7 +525,7 @@ void test_sk_ereco_spectrum_twk_sys
 	    }
 	    int ib = mode - 600;
 	    v[ib] = tweak;
-	    skexp.GetBANFF()->Tweak(true,&v,false);
+	    skexp.GetBANFF()->Tweak(true,&v,2);
 	    break;
 	  }
 	  else {
@@ -520,6 +535,7 @@ void test_sk_ereco_spectrum_twk_sys
     }//mode>=100
 
     // generate predictions
+    skexp.PrintSystematicVariations();
     skexp.Generate(ph);
     //store spectrum
     hEreco[itweak] = new TH1D(*skexp.CurrPredictedErecoSpectrum(s));

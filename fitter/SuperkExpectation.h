@@ -62,6 +62,7 @@ public:
    void TweakAllSystematics                  (void);           ///< random variation of all systematics
    void TweakAllBANFFSystematics             (void);           ///< random variation of all BANFF systematics
    void TweakAllUncorrelatedBANFFSystematics (void);           ///< random variation of all BANFF systematics, in uncorrelated space
+   void TweakAllEigenDecompBANFFSystematics (void);            ///< random variation of all BANFF systematics, in eigendecomposition space
    void TweakAllFSISystematics               (void);           ///< random variation of all FSI systematics
    void TweakAllUncorrelatedXSecSystematics  (void);           ///< random variation of all Uncorrelated XSec systematics
    void TweakAllSKDetectorSystematics        (void);           ///< random variation of all SK Detector systematics

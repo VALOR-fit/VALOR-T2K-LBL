@@ -15,6 +15,7 @@
 
 #define __show_init_mesg_info__  
 //#define __show_init_mesg_debug__   
+//#define __show_init_mesg_debug_eigen__
 #define __show_cholesky_mesg_info__
 //#define __show_cholesky_mesg_debug__
 //#define __show_tweak_mesg_debug__
@@ -27,6 +28,7 @@
 #include <iostream>
 #include <iomanip>
 #include <TRandom3.h>
+#include <TMath.h>
 
 #include "BANFF.h" 
 #include "Conventions.h" 
@@ -58,13 +60,19 @@ BANFF::~BANFF()
 //________________________________________________________________________________________
 void BANFF::Init(void)
 {
-  fBestFitValues     = 0; 
-  fCurrentValues     = 0; 
+  fBestFitValues      = 0; 
+  fCurrentValues      = 0; 
   fUncorrelatedCurrentValues = 0;
-  fCovMtrx           = 0; 
-  fCovMtrxChoL       = 0; 
-  fIsTweaked         = false;
-  fIsFluxWghtUpdated = true;
+  fEigenValues        = 0;
+  fEigenVectors       = 0;
+  fEigenVectorsT      = 0;
+  fEigenCovMtrx       = 0;
+  fEigenBestFitValues = 0;
+  fEigenCurrentValues = 0;
+  fCovMtrx            = 0; 
+  fCovMtrxChoL        = 0; 
+  fIsTweaked          = false;
+  fIsFluxWghtUpdated  = true;
 }
 //________________________________________________________________________________________
 void BANFF::CleanUp(void)
@@ -74,6 +82,12 @@ void BANFF::CleanUp(void)
   if ( fUncorrelatedCurrentValues ) delete fUncorrelatedCurrentValues;
   if ( fCovMtrx                   ) delete fCovMtrx;
   if ( fCovMtrxChoL               ) delete fCovMtrxChoL;
+  if ( fEigenValues               ) delete fEigenValues;
+  if ( fEigenVectors              ) delete fEigenVectors;
+  if ( fEigenVectorsT             ) delete fEigenVectorsT;
+  if ( fEigenCovMtrx              ) delete fEigenCovMtrx;
+  if ( fEigenBestFitValues        ) delete fEigenBestFitValues;
+  if ( fEigenCurrentValues        ) delete fEigenCurrentValues;
 }
 //________________________________________________________________________________________
 bool BANFF::Read(TXMLEngine* xml, XMLNodePointer_t root_node)
@@ -139,7 +153,40 @@ bool BANFF::Read(TXMLEngine* xml, XMLNodePointer_t root_node)
   cout << "Exp/BANFF >> Inverse BANFF covariance matrix: " << endl;
   util::PrintCompact(*fCovMtrxInv,7,4);
 #endif
-  
+
+  //EigenDecompose the BANFF fit covariance matrix
+  TVectorD eigen_values(np);
+  TMatrixD eigen_vectors = cov.EigenVectors(eigen_values);
+  TMatrixD eigen_vectorsT(eigen_vectors);
+  eigen_vectorsT.T();
+  TMatrixDSym eigen_covariance(np);
+  for(int i = 0; i < np; i++) {
+    for(int j = 0; j < np; j++) {
+      if(i==j)
+	eigen_covariance(i,j) = eigen_values(i);
+      else
+	eigen_covariance(i,j) = 0.;
+    }
+  }
+  TVectorD eigen_bestfit_values(bestfit);
+  eigen_bestfit_values *= eigen_vectorsT;
+
+  fEigenValues           = new TVectorD(eigen_values);
+  fEigenVectors          = new TMatrixD(eigen_vectors);
+  fEigenVectorsT         = new TMatrixD(eigen_vectorsT);
+  fEigenCovMtrx          = new TMatrixDSym(eigen_covariance);
+  fEigenBestFitValues    = new TVectorD(eigen_bestfit_values);
+  //initialise current to bestfit
+  fEigenCurrentValues   = new TVectorD(eigen_bestfit_values);
+
+#ifdef __show_init_mesg_debug_eigen__
+  eigen_values.Print();
+  eigen_vectors.Print();
+  eigen_vectorsT.Print();
+  eigen_covariance.Print();
+  eigen_bestfit_values.Print();
+#endif
+
 #ifdef __show_init_mesg_info__
   cout << "Exp/BANFF >> Done reading BANFF inputs!" << endl;
 #endif
@@ -168,10 +215,24 @@ double BANFF::CurrentUncorrelatedValue(PhysParamId_t p) const
   return current_uncorrelated_values[idx];
 }
 //________________________________________________________________________________________
+double BANFF::CurrentEigenDecompValue(PhysParamId_t p) const
+{
+  const TVectorD & current_eigendecomp_values = *fEigenCurrentValues;
+  int idx = this->EDParam2Idx(p);
+  return current_eigendecomp_values[idx];
+}
+//________________________________________________________________________________________
+double BANFF::BestFitEigenDecompValue(PhysParamId_t p) const
+{
+  const TVectorD & bestfit_eigendecomp_values = *fEigenBestFitValues;
+  int idx = this->EDParam2Idx(p);
+  return bestfit_eigendecomp_values[idx];
+}
+//________________________________________________________________________________________
 void BANFF::Tweak(
   bool       force_inputs, /* force the input params or generate random ones internally  */
   TVectorD * input_vec,    /* input vector of BANFF params - Set to 0 to reset to best-fit ones */
-  bool       correlated    /* tweak the correlated (default) or uncorrelated vector? */
+  int        mode          /* tweak the 1: correlated (default) or 2: uncorrelated vector or 3: eigendecomp vector */
 )
 {
 
@@ -181,14 +242,19 @@ void BANFF::Tweak(
     the uncorrelated parameters are not updated. If
     BANFF::UpdateCorrelated() (only available from BANFF::Tweak()) is then
     called, the result of the correlated tweak is lost.
+    The same is true for eigendecomp!
   */
 
-  if(correlated) {
+  if(mode == 1) {
     this->TweakCorrelated(force_inputs, input_vec);
   }
-  else {
+  else if(mode == 2) {
     this->TweakUncorrelated(force_inputs, input_vec);
-    this->UpdateCorrelated();
+    this->UpdateCorrelatedCholesky();
+  }
+  else if(mode == 3) {
+    this->TweakEigenDecomp(force_inputs, input_vec);
+    this->UpdateCorrelatedEigenDecomp();
   }
 }
 //________________________________________________________________________________________
@@ -324,16 +390,83 @@ void BANFF::TweakCorrelated(
 
 }
 //________________________________________________________________________________________
-void BANFF::UpdateCorrelated()
+void BANFF::TweakEigenDecomp(
+  bool       force_inputs, /* force the input params or generate random ones internally  */
+  TVectorD * input_vec     /* input vector of BANFF params - Set to 0 to reset to best-fit ones */
+)    
+{ 
+#ifdef __show_cholesky_mesg_debug__
+  cout << "Exp/BANFF/Tweak >> Tweaking eigendecomposition BANFF fit parameters" << endl;
+#endif
+
+  // Switch flags
+  fIsTweaked         = true;
+  fIsFluxWghtUpdated = false;
+
+  //
+  // Get best-fit and current params
+  //
+
+  TVectorD & bestfit_eigen_values = *fEigenBestFitValues;
+  TVectorD & current_eigen_values = *fEigenCurrentValues;
+
+  //
+  // Force input
+  //
+  if(force_inputs) 
+  {
+     // Input vector is NULL.
+     // This resets the BANFF params to their best-fit values.
+     if(input_vec==0) {
+#ifdef __show_tweak_mesg_debug__
+        cout << "Exp/BANFF/Tweak >> Reset eigendecomposition BANFF params to best-fit values." << endl;
+#endif
+        fIsTweaked = false;
+        current_eigen_values = bestfit_eigen_values;
+        return;
+     }
+     else     
+     {
+#ifdef __show_tweak_mesg_debug__
+        cout << "Exp/BANFF/Tweak >> Forcing input eigendecomposition BANFF parameters. " << endl;
+#endif
+        TVectorD & vec = *input_vec;
+        assert(vec.GetNoElements() == conv::kNumOfParamsInBANFFfit);
+        current_eigen_values = vec;
+        return;
+     }
+  }//force_inputs?
+
+  //
+  // If the tweaking dials were not forced, generate eigendecomposition tweaking dials
+  //
+  else
+  {
+#ifdef __show_tweak_mesg_debug__
+     cout << "Exp/BANFF/Tweak >> Generating random twk dials (eigendecomposition)! " << endl;
+#endif
+     TVectorD & eigen_values  = *fEigenValues;
+     const int np = conv::kNumOfParamsInBANFFfit;
+     TVectorD vec(np);
+     TRandom3 rand(0);
+     for(int ip = 0; ip < np; ip++) {
+       vec(ip) = rand.Gaus(bestfit_eigen_values(ip), TMath::Sqrt(eigen_values(ip)));
+     }
+     current_eigen_values = vec;
+     return;
+  }
+
+}
+//________________________________________________________________________________________
+void BANFF::UpdateCorrelatedCholesky()
 {
 #ifdef __show_update_correlated_mesg_debug__
-  cout << "Exp/BANFF/UpdateCorrelated >> Updating BANFF current values, using current uncorrelated parameters" << endl;
+  cout << "Exp/BANFF/UpdateCorrelatedCholesky >> Updating BANFF current values, using current uncorrelated parameters" << endl;
 #endif
 
   //
   // Get best-fit & current BANFF params & decomposed cov matrix
   //
-
   TVectorD & bestfit_values = *fBestFitValues;
   TVectorD & current_values = *fCurrentValues;
   TVectorD & current_correlated_values = *fUncorrelatedCurrentValues;
@@ -341,7 +474,28 @@ void BANFF::UpdateCorrelated()
     this->CholeskyDecomposeMatrix();
   TMatrixD & L = *fCovMtrxChoL;
 
+  // Update the correlated current values
   TVectorD vec = util::CholeskyGenerateCorrelatedParams(L,bestfit_values,current_correlated_values);
+  current_values = vec;
+  return;
+}
+//________________________________________________________________________________________
+void BANFF::UpdateCorrelatedEigenDecomp()
+{
+#ifdef __show_update_correlated_mesg_debug__
+  cout << "Exp/BANFF/UpdateCorrelatedEigenDecomp >> Updating BANFF current values, using current eigendecomposition parameters" << endl;
+#endif
+
+  //
+  // Get current parameters, and transposed eigenvector matrix
+  //
+  TVectorD & current_values       = *fCurrentValues;
+  TVectorD & current_eigen_values = *fEigenCurrentValues;
+  TMatrixD & eigen_vectorsT       = *fEigenVectors;
+
+  // Update the correlated current values
+  TVectorD vec(current_eigen_values);
+  vec *= eigen_vectorsT;
   current_values = vec;
   return;
 }
@@ -371,6 +525,8 @@ void BANFF::RestoreNominalMC(void)
 {
 // A special tweak method
 
+// Does not work when working in eigendecomposition mode!
+
   cout << "Exp/BANFF >> ** Applying special tweak cancelling the effect of BANFF tuning "
        << "and restoring nominal MC..." << endl; 
 
@@ -387,13 +543,15 @@ void BANFF::RestoreNominalMC(void)
   }
 }
 //________________________________________________________________________________________
-double BANFF::ChisqPenalty(bool all_syst, bool correlated) const
+double BANFF::ChisqPenalty(bool all_syst, int mode) const
 {
   double chisq_penalty = 0;
-  if(correlated)
+  if(mode == 1)
     chisq_penalty = ChisqPenaltyCorrelated(all_syst);
-  else
+  else if(mode == 2)
     chisq_penalty = ChisqPenaltyUncorrelated(all_syst);
+  else if(mode == 3)
+    chisq_penalty = ChisqPenaltyEigenDecomp(all_syst);
 
   return chisq_penalty;
 }
@@ -411,6 +569,35 @@ double BANFF::ChisqPenaltyUncorrelated(bool all_syst) const
     const int np = conv::kNumOfParamsInBANFFfit;
     for(int ip = 0; ip < np; ip++) {
       chisq_penalty += current_correlated_values[ip] * current_correlated_values[ip];
+    }
+  }
+
+#ifdef __show_chisqpenalty_mesg_debug__
+    cout << "Exp/BANFF/ChisqPenalty >> ChisqPenalty = " << chisq_penalty << endl;
+#endif
+    return chisq_penalty;
+}
+//________________________________________________________________________________________
+double BANFF::ChisqPenaltyEigenDecomp(bool all_syst) const
+{
+  double chisq_penalty = 0;
+  if(!all_syst) {
+    return 0;
+    // Currently not fitting any eigendecomposition BANFF parameters. If we do start, will use something like:
+    //PhysParamId_t p = kNuisEDBANFF00;
+    //double tmp = CurrentEigenDecompValue(p) - BestFitEigenDecompValue(p);
+    //tmp *= tmp;
+    //tmp /= EigenDecompEigenValue(p);
+    //chisq_penalty += tmp;
+  }
+  else {
+    const int np = conv::kNumOfParamsInBANFFfit;
+    for(int ip = 0; ip < np; ip++) {
+      PhysParamId_t p = PhysParamId_t ((int) kNuisEDBANFF00 + ip);
+      double tmp = CurrentEigenDecompValue(p) - BestFitEigenDecompValue(p);
+      tmp *= tmp;
+      tmp /= EigenDecompEigenValue(p);
+      chisq_penalty += tmp;
     }
   }
 
@@ -555,6 +742,18 @@ int BANFF::UnParam2Idx(PhysParamId_t p) const
   int iparam = (int) p;
   int first  = (int) kNuisUnBANFF00;
   int last   = (int) kNuisUnBANFF00 + kNumOfParamsInBANFFfit;
+  if(! (iparam >= first && iparam <= last) )
+    cout << AsString(p) << endl;
+  assert(iparam >= first && iparam <= last);
+  int idx = iparam-first;
+  return idx;  
+}
+//________________________________________________________________________________________
+int BANFF::EDParam2Idx(PhysParamId_t p) const
+{
+  int iparam = (int) p;
+  int first  = (int) kNuisEDBANFF00;
+  int last   = (int) kNuisEDBANFF00 + kNumOfParamsInBANFFfit;
   if(! (iparam >= first && iparam <= last) )
     cout << AsString(p) << endl;
   assert(iparam >= first && iparam <= last);

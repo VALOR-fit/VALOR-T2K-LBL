@@ -11,6 +11,7 @@
 //   3 tweak all sk detector
 //   4 tweak all fsi
 //   5 tweak all BANFF (correlated)
+//   6 tweak all BANFF (eigendecomposition)
 //
 // 200 tweak xsec_pf
 // 201 tweak xsec_sf
@@ -67,17 +68,19 @@ void test_sk_ereco_spectrum_twk_sys_throw
     case 0:
       modetitle = "all"; break;
     case 1:
-      modetitle = "BANFF-uncorrelated"; break;
+      modetitle = "BANFF_uncorrelated"; break;
     case 2:
-      modetitle = "unconstrained-xsec"; break;
+      modetitle = "unconstrained_xsec"; break;
     case 3:
-      modetitle = "sk-detector"; break;
+      modetitle = "sk_detector"; break;
     case 4:
       char fsibins[40] = "";
       sprintf(fsibins, "fsi_%d", conv::kNumOfFSIParams);
       modetitle = fsibins; break;
     case 5:
-      modetitle = "BANFF-correlated"; break;
+      modetitle = "BANFF_correlated"; break;
+    case 6:
+      modetitle = "BANFF_eigendecomposition"; break;
 
     case 200:
       modetitle = "xsec_pf"; break;
@@ -304,6 +307,11 @@ void test_sk_ereco_spectrum_twk_sys_throw
      // BANFF (correlated)
       if(mode == 5) {
 	skexp.TweakAllBANFFSystematics();
+      }
+
+     // BANFF (eigendecompostion)
+      if(mode == 6) {
+	skexp.TweakAllEigenDecompBANFFSystematics();
       }
 
     }//mode<100

@@ -228,6 +228,7 @@ namespace util {
     int XSecSystIdx     (conv::PhysParamId_t p)                        { return fXSecSystIdx    [p];    }
     int BANFFSystIdx    (conv::PhysParamId_t p)                        { return fBANFFSystIdx   [p];    }
     int UnBANFFSystIdx  (conv::PhysParamId_t p)                        { return fUnBANFFSystIdx [p];    }
+    int EDBANFFSystIdx  (conv::PhysParamId_t p)                        { return fEDBANFFSystIdx [p];    }
     int FSISystIdx      (conv::PhysParamId_t p)                        { return fFSISystIdx     [p];    }
   private:
     ArrIdx();
@@ -239,6 +240,7 @@ namespace util {
     int fXSecSystIdx     [conv::knppmax];                ///< maps physics param to kListOfXSecSyst array index
     int fBANFFSystIdx    [conv::knppmax];                ///< maps physics param to BANFF covariance matrix
     int fUnBANFFSystIdx    [conv::knppmax];              ///< maps physics param to Uncorrelated BANFF id
+    int fEDBANFFSystIdx    [conv::knppmax];              ///< maps physics param to EigenDecomposition BANFF id
     int fFSISystIdx    [conv::knppmax];                  ///< maps physics param to FSI covariance matrix
     static ArrIdx * fInstance;
     struct Cleaner {

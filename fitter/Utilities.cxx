@@ -1040,6 +1040,72 @@ string t2kana::util::AsString(PhysParamId_t p)
       break;
     }
 
+    case ( kNuisEDBANFF00 ) :
+    case ( kNuisEDBANFF01 ) :
+    case ( kNuisEDBANFF02 ) :
+    case ( kNuisEDBANFF03 ) :
+    case ( kNuisEDBANFF04 ) :
+    case ( kNuisEDBANFF05 ) :
+    case ( kNuisEDBANFF06 ) :
+    case ( kNuisEDBANFF07 ) :
+    case ( kNuisEDBANFF08 ) :
+    case ( kNuisEDBANFF09 ) :
+    case ( kNuisEDBANFF10 ) :
+    case ( kNuisEDBANFF11 ) :
+    case ( kNuisEDBANFF12 ) :
+    case ( kNuisEDBANFF13 ) :
+    case ( kNuisEDBANFF14 ) :
+    case ( kNuisEDBANFF15 ) :
+    case ( kNuisEDBANFF16 ) :
+    case ( kNuisEDBANFF17 ) :
+    case ( kNuisEDBANFF18 ) :
+    case ( kNuisEDBANFF19 ) : 
+    case ( kNuisEDBANFF20 ) : 
+    case ( kNuisEDBANFF21 ) : 
+    case ( kNuisEDBANFF22 ) :
+#if BANFF_BINS <= 2
+    case ( kNuisEDBANFF23 ) :
+    case ( kNuisEDBANFF24 ) :
+    case ( kNuisEDBANFF25 ) :
+    case ( kNuisEDBANFF26 ) :
+    case ( kNuisEDBANFF27 ) :
+    case ( kNuisEDBANFF28 ) :
+    case ( kNuisEDBANFF29 ) :
+    case ( kNuisEDBANFF30 ) :
+    case ( kNuisEDBANFF31 ) :
+    case ( kNuisEDBANFF32 ) :
+    case ( kNuisEDBANFF33 ) :
+    case ( kNuisEDBANFF34 ) :
+    case ( kNuisEDBANFF35 ) :
+#if BANFF_BINS != 1
+    case ( kNuisEDBANFF36 ) :
+    case ( kNuisEDBANFF37 ) :
+    case ( kNuisEDBANFF38 ) :
+#if BANFF_BINS == -1
+    case ( kNuisEDBANFF39 ) :
+    case ( kNuisEDBANFF40 ) :
+    case ( kNuisEDBANFF41 ) :
+    case ( kNuisEDBANFF42 ) :
+    case ( kNuisEDBANFF43 ) :
+    case ( kNuisEDBANFF44 ) :
+    case ( kNuisEDBANFF45 ) :
+    case ( kNuisEDBANFF46 ) :
+    case ( kNuisEDBANFF47 ) :
+    case ( kNuisEDBANFF48 ) :
+    case ( kNuisEDBANFF49 ) :
+    case ( kNuisEDBANFF50 ) :
+    case ( kNuisEDBANFF51 ) :
+    case ( kNuisEDBANFF52 ) :
+    case ( kNuisEDBANFF53 ) :
+#endif
+#endif
+#endif
+    {
+      int ip = (int)p - (int)kNuisEDBANFF00;
+      return Form("EigenDecomposition BANFF %2d", ip);
+      break;
+    }
+
     default : 
       return "--";
   }
@@ -1388,6 +1454,72 @@ string t2kana::util::AsStringTex(PhysParamId_t p)
       break;
     }
 
+    case ( kNuisEDBANFF00 ) :
+    case ( kNuisEDBANFF01 ) :
+    case ( kNuisEDBANFF02 ) :
+    case ( kNuisEDBANFF03 ) :
+    case ( kNuisEDBANFF04 ) :
+    case ( kNuisEDBANFF05 ) :
+    case ( kNuisEDBANFF06 ) :
+    case ( kNuisEDBANFF07 ) :
+    case ( kNuisEDBANFF08 ) :
+    case ( kNuisEDBANFF09 ) :
+    case ( kNuisEDBANFF10 ) :
+    case ( kNuisEDBANFF11 ) :
+    case ( kNuisEDBANFF12 ) :
+    case ( kNuisEDBANFF13 ) :
+    case ( kNuisEDBANFF14 ) :
+    case ( kNuisEDBANFF15 ) :
+    case ( kNuisEDBANFF16 ) :
+    case ( kNuisEDBANFF17 ) :
+    case ( kNuisEDBANFF18 ) :
+    case ( kNuisEDBANFF19 ) : 
+    case ( kNuisEDBANFF20 ) : 
+    case ( kNuisEDBANFF21 ) : 
+    case ( kNuisEDBANFF22 ) :
+#if BANFF_BINS <= 2
+    case ( kNuisEDBANFF23 ) :
+    case ( kNuisEDBANFF24 ) :
+    case ( kNuisEDBANFF25 ) :
+    case ( kNuisEDBANFF26 ) :
+    case ( kNuisEDBANFF27 ) :
+    case ( kNuisEDBANFF28 ) :
+    case ( kNuisEDBANFF29 ) :
+    case ( kNuisEDBANFF30 ) :
+    case ( kNuisEDBANFF31 ) :
+    case ( kNuisEDBANFF32 ) :
+    case ( kNuisEDBANFF33 ) :
+    case ( kNuisEDBANFF34 ) :
+    case ( kNuisEDBANFF35 ) :
+#if BANFF_BINS != 1
+    case ( kNuisEDBANFF36 ) :
+    case ( kNuisEDBANFF37 ) :
+    case ( kNuisEDBANFF38 ) :
+#if BANFF_BINS == -1
+    case ( kNuisEDBANFF39 ) :
+    case ( kNuisEDBANFF40 ) :
+    case ( kNuisEDBANFF41 ) :
+    case ( kNuisEDBANFF42 ) :
+    case ( kNuisEDBANFF43 ) :
+    case ( kNuisEDBANFF44 ) :
+    case ( kNuisEDBANFF45 ) :
+    case ( kNuisEDBANFF46 ) :
+    case ( kNuisEDBANFF47 ) :
+    case ( kNuisEDBANFF48 ) :
+    case ( kNuisEDBANFF49 ) :
+    case ( kNuisEDBANFF50 ) :
+    case ( kNuisEDBANFF51 ) :
+    case ( kNuisEDBANFF52 ) :
+    case ( kNuisEDBANFF53 ) :
+#endif
+#endif
+#endif
+    {
+      int ip = (int)p - (int)kNuisEDBANFF00;
+      return Form("EigenDecomposition BANFF %2d", ip);
+      break;
+    }
+
     default : 
       return "--";
   }
@@ -1655,6 +1787,67 @@ string t2kana::util::AsStringCompact(PhysParamId_t p)
     case ( kNuisUnBANFF51 ) : return "f_unbanff51"; break;
     case ( kNuisUnBANFF52 ) : return "f_unbanff52"; break;
     case ( kNuisUnBANFF53 ) : return "f_unbanff53"; break;
+#endif
+#endif
+#endif
+
+    case ( kNuisEDBANFF00 ) : return "f_edbanff00"; break;
+    case ( kNuisEDBANFF01 ) : return "f_edbanff01"; break;
+    case ( kNuisEDBANFF02 ) : return "f_edbanff02"; break;
+    case ( kNuisEDBANFF03 ) : return "f_edbanff03"; break;
+    case ( kNuisEDBANFF04 ) : return "f_edbanff04"; break;
+    case ( kNuisEDBANFF05 ) : return "f_edbanff05"; break;
+    case ( kNuisEDBANFF06 ) : return "f_edbanff06"; break;
+    case ( kNuisEDBANFF07 ) : return "f_edbanff07"; break;
+    case ( kNuisEDBANFF08 ) : return "f_edbanff08"; break;
+    case ( kNuisEDBANFF09 ) : return "f_edbanff09"; break;
+    case ( kNuisEDBANFF10 ) : return "f_edbanff10"; break;
+    case ( kNuisEDBANFF11 ) : return "f_edbanff11"; break;
+    case ( kNuisEDBANFF12 ) : return "f_edbanff12"; break;
+    case ( kNuisEDBANFF13 ) : return "f_edbanff13"; break;
+    case ( kNuisEDBANFF14 ) : return "f_edbanff14"; break;
+    case ( kNuisEDBANFF15 ) : return "f_edbanff15"; break;
+    case ( kNuisEDBANFF16 ) : return "f_edbanff16"; break;
+    case ( kNuisEDBANFF17 ) : return "f_edbanff17"; break;
+    case ( kNuisEDBANFF18 ) : return "f_edbanff18"; break;
+    case ( kNuisEDBANFF19 ) : return "f_edbanff19"; break; 
+    case ( kNuisEDBANFF20 ) : return "f_edbanff20"; break; 
+    case ( kNuisEDBANFF21 ) : return "f_edbanff21"; break; 
+    case ( kNuisEDBANFF22 ) : return "f_edbanff22"; break;
+#if BANFF_BINS <= 2
+    case ( kNuisEDBANFF23 ) : return "f_edbanff23"; break;
+    case ( kNuisEDBANFF24 ) : return "f_edbanff24"; break;
+    case ( kNuisEDBANFF25 ) : return "f_edbanff25"; break;
+    case ( kNuisEDBANFF26 ) : return "f_edbanff26"; break;
+    case ( kNuisEDBANFF27 ) : return "f_edbanff27"; break;
+    case ( kNuisEDBANFF28 ) : return "f_edbanff28"; break;
+    case ( kNuisEDBANFF29 ) : return "f_edbanff29"; break;
+    case ( kNuisEDBANFF30 ) : return "f_edbanff30"; break;
+    case ( kNuisEDBANFF31 ) : return "f_edbanff31"; break;
+    case ( kNuisEDBANFF32 ) : return "f_edbanff32"; break;
+    case ( kNuisEDBANFF33 ) : return "f_edbanff33"; break;
+    case ( kNuisEDBANFF34 ) : return "f_edbanff34"; break;
+    case ( kNuisEDBANFF35 ) : return "f_edbanff35"; break;
+#if BANFF_BINS != 1
+    case ( kNuisEDBANFF36 ) : return "f_edbanff36"; break;
+    case ( kNuisEDBANFF37 ) : return "f_edbanff37"; break;
+    case ( kNuisEDBANFF38 ) : return "f_edbanff38"; break;
+#if BANFF_BINS == -1
+    case ( kNuisEDBANFF39 ) : return "f_edbanff39"; break;
+    case ( kNuisEDBANFF40 ) : return "f_edbanff40"; break;
+    case ( kNuisEDBANFF41 ) : return "f_edbanff41"; break;
+    case ( kNuisEDBANFF42 ) : return "f_edbanff42"; break;
+    case ( kNuisEDBANFF43 ) : return "f_edbanff43"; break;
+    case ( kNuisEDBANFF44 ) : return "f_edbanff44"; break;
+    case ( kNuisEDBANFF45 ) : return "f_edbanff45"; break;
+    case ( kNuisEDBANFF46 ) : return "f_edbanff46"; break;
+    case ( kNuisEDBANFF47 ) : return "f_edbanff47"; break;
+    case ( kNuisEDBANFF48 ) : return "f_edbanff48"; break;
+    case ( kNuisEDBANFF49 ) : return "f_edbanff49"; break;
+    case ( kNuisEDBANFF50 ) : return "f_edbanff50"; break;
+    case ( kNuisEDBANFF51 ) : return "f_edbanff51"; break;
+    case ( kNuisEDBANFF52 ) : return "f_edbanff52"; break;
+    case ( kNuisEDBANFF53 ) : return "f_edbanff53"; break;
 #endif
 #endif
 #endif
@@ -2395,6 +2588,67 @@ t2kana::conv::PhysParamId_t
 #endif
 #endif
 
+  if(sh == "edbanff_00") return kNuisEDBANFF00;
+  if(sh == "edbanff_01") return kNuisEDBANFF01;
+  if(sh == "edbanff_02") return kNuisEDBANFF02;
+  if(sh == "edbanff_03") return kNuisEDBANFF03;
+  if(sh == "edbanff_04") return kNuisEDBANFF04;
+  if(sh == "edbanff_05") return kNuisEDBANFF05;
+  if(sh == "edbanff_06") return kNuisEDBANFF06;
+  if(sh == "edbanff_07") return kNuisEDBANFF07;
+  if(sh == "edbanff_08") return kNuisEDBANFF08;
+  if(sh == "edbanff_09") return kNuisEDBANFF09;
+  if(sh == "edbanff_10") return kNuisEDBANFF10;
+  if(sh == "edbanff_11") return kNuisEDBANFF11;
+  if(sh == "edbanff_12") return kNuisEDBANFF12;
+  if(sh == "edbanff_13") return kNuisEDBANFF13;
+  if(sh == "edbanff_14") return kNuisEDBANFF14;
+  if(sh == "edbanff_15") return kNuisEDBANFF15;
+  if(sh == "edbanff_16") return kNuisEDBANFF16;
+  if(sh == "edbanff_17") return kNuisEDBANFF17;
+  if(sh == "edbanff_18") return kNuisEDBANFF18;
+  if(sh == "edbanff_19") return kNuisEDBANFF19;
+  if(sh == "edbanff_20") return kNuisEDBANFF20;
+  if(sh == "edbanff_21") return kNuisEDBANFF21;
+  if(sh == "edbanff_22") return kNuisEDBANFF22;
+#if BANFF_BINS <= 2
+  if(sh == "edbanff_23") return kNuisEDBANFF23;
+  if(sh == "edbanff_24") return kNuisEDBANFF24;
+  if(sh == "edbanff_25") return kNuisEDBANFF25;
+  if(sh == "edbanff_26") return kNuisEDBANFF26;
+  if(sh == "edbanff_27") return kNuisEDBANFF27;
+  if(sh == "edbanff_28") return kNuisEDBANFF28;
+  if(sh == "edbanff_29") return kNuisEDBANFF29;
+  if(sh == "edbanff_30") return kNuisEDBANFF30;
+  if(sh == "edbanff_31") return kNuisEDBANFF31;
+  if(sh == "edbanff_32") return kNuisEDBANFF32;
+  if(sh == "edbanff_33") return kNuisEDBANFF33;
+  if(sh == "edbanff_34") return kNuisEDBANFF34;
+  if(sh == "edbanff_35") return kNuisEDBANFF35;
+#if BANFF_BINS != 1
+  if(sh == "edbanff_36") return kNuisEDBANFF36;
+  if(sh == "edbanff_37") return kNuisEDBANFF37;
+  if(sh == "edbanff_38") return kNuisEDBANFF38;
+#if BANFF_BINS == -1
+  if(sh == "edbanff_39") return kNuisEDBANFF39;
+  if(sh == "edbanff_40") return kNuisEDBANFF40;
+  if(sh == "edbanff_41") return kNuisEDBANFF41;
+  if(sh == "edbanff_42") return kNuisEDBANFF42;
+  if(sh == "edbanff_43") return kNuisEDBANFF43;
+  if(sh == "edbanff_44") return kNuisEDBANFF44;
+  if(sh == "edbanff_45") return kNuisEDBANFF45;
+  if(sh == "edbanff_46") return kNuisEDBANFF46;
+  if(sh == "edbanff_47") return kNuisEDBANFF47;
+  if(sh == "edbanff_48") return kNuisEDBANFF48;
+  if(sh == "edbanff_49") return kNuisEDBANFF49;
+  if(sh == "edbanff_50") return kNuisEDBANFF50;
+  if(sh == "edbanff_51") return kNuisEDBANFF51;
+  if(sh == "edbanff_52") return kNuisEDBANFF52;
+  if(sh == "edbanff_53") return kNuisEDBANFF53;
+#endif
+#endif
+#endif
+
   cout << sh << " not yet supported in util::PhysParamIdFromString()" << endl;
   return kPhypUndefined;
 }
@@ -2856,6 +3110,66 @@ bool t2kana::util::IsSystematic(PhysParamId_t p)
     case ( kNuisUnBANFF51             ) : return true; break;
     case ( kNuisUnBANFF52             ) : return true; break;
     case ( kNuisUnBANFF53             ) : return true; break;
+#endif
+#endif
+#endif
+    case ( kNuisEDBANFF00             ) : return true; break;
+    case ( kNuisEDBANFF01             ) : return true; break;
+    case ( kNuisEDBANFF02             ) : return true; break;
+    case ( kNuisEDBANFF03             ) : return true; break;
+    case ( kNuisEDBANFF04             ) : return true; break;
+    case ( kNuisEDBANFF05             ) : return true; break;
+    case ( kNuisEDBANFF06             ) : return true; break;
+    case ( kNuisEDBANFF07             ) : return true; break;
+    case ( kNuisEDBANFF08             ) : return true; break;
+    case ( kNuisEDBANFF09             ) : return true; break;
+    case ( kNuisEDBANFF10             ) : return true; break;
+    case ( kNuisEDBANFF11             ) : return true; break;
+    case ( kNuisEDBANFF12             ) : return true; break;
+    case ( kNuisEDBANFF13             ) : return true; break;
+    case ( kNuisEDBANFF14             ) : return true; break;
+    case ( kNuisEDBANFF15             ) : return true; break;
+    case ( kNuisEDBANFF16             ) : return true; break;
+    case ( kNuisEDBANFF17             ) : return true; break;
+    case ( kNuisEDBANFF18             ) : return true; break;
+    case ( kNuisEDBANFF19             ) : return true; break;
+    case ( kNuisEDBANFF20             ) : return true; break;
+    case ( kNuisEDBANFF21             ) : return true; break;
+    case ( kNuisEDBANFF22             ) : return true; break;
+#if BANFF_BINS <= 2
+    case ( kNuisEDBANFF23             ) : return true; break;
+    case ( kNuisEDBANFF24             ) : return true; break;
+    case ( kNuisEDBANFF25             ) : return true; break;
+    case ( kNuisEDBANFF26             ) : return true; break;
+    case ( kNuisEDBANFF27             ) : return true; break;
+    case ( kNuisEDBANFF28             ) : return true; break;
+    case ( kNuisEDBANFF29             ) : return true; break;
+    case ( kNuisEDBANFF30             ) : return true; break;
+    case ( kNuisEDBANFF31             ) : return true; break;
+    case ( kNuisEDBANFF32             ) : return true; break;
+    case ( kNuisEDBANFF33             ) : return true; break;
+    case ( kNuisEDBANFF34             ) : return true; break;
+    case ( kNuisEDBANFF35             ) : return true; break;
+#if BANFF_BINS != 1
+    case ( kNuisEDBANFF36             ) : return true; break;
+    case ( kNuisEDBANFF37             ) : return true; break;
+    case ( kNuisEDBANFF38             ) : return true; break;
+#if BANFF_BINS == -1
+    case ( kNuisEDBANFF39             ) : return true; break;
+    case ( kNuisEDBANFF40             ) : return true; break;
+    case ( kNuisEDBANFF41             ) : return true; break;
+    case ( kNuisEDBANFF42             ) : return true; break;
+    case ( kNuisEDBANFF43             ) : return true; break;
+    case ( kNuisEDBANFF44             ) : return true; break;
+    case ( kNuisEDBANFF45             ) : return true; break;
+    case ( kNuisEDBANFF46             ) : return true; break;
+    case ( kNuisEDBANFF47             ) : return true; break;
+    case ( kNuisEDBANFF48             ) : return true; break;
+    case ( kNuisEDBANFF49             ) : return true; break;
+    case ( kNuisEDBANFF50             ) : return true; break;
+    case ( kNuisEDBANFF51             ) : return true; break;
+    case ( kNuisEDBANFF52             ) : return true; break;
+    case ( kNuisEDBANFF53             ) : return true; break;
 #endif
 #endif
 #endif
@@ -4403,6 +4717,20 @@ void t2kana::util::ArrIdx::Init(void)
      cout << "Util/ArrIdx >> UnBANFF: " 
           << util::AsString(p)
           << " is at slot: " << fUnBANFFSystIdx [p] << endl;
+#endif
+  }
+  //EDBANFF
+  for(int i = 0; i < knppmax; i++) {
+    fEDBANFFSystIdx[i] = -1;
+  }
+  for(int ip = 0; ip < kNumOfParamsInBANFFfit; ip++) {
+    PhysParamId_t p = PhysParamId_t ((int) kNuisEDBANFF00 + ip);
+    if(p == kPhypUndefined) continue;
+    fEDBANFFSystIdx[p] = ip;
+#ifdef __show_arr_idx_mesg_debug__
+     cout << "Util/ArrIdx >> EDBANFF: " 
+          << util::AsString(p)
+          << " is at slot: " << fEDBANFFSystIdx [p] << endl;
 #endif
   }
   //FSI

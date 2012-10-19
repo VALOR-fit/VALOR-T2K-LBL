@@ -652,6 +652,71 @@ typedef enum EPhysParamId
 #endif
 #endif
 #endif
+
+
+   // uncorrelated version of the BANFF parameters, using eigendecomposition.
+   // there is no physical meaning
+
+    kNuisEDBANFF00,
+    kNuisEDBANFF01,
+    kNuisEDBANFF02,
+    kNuisEDBANFF03,
+    kNuisEDBANFF04,
+    kNuisEDBANFF05,
+    kNuisEDBANFF06,
+    kNuisEDBANFF07,
+    kNuisEDBANFF08,
+    kNuisEDBANFF09,
+    kNuisEDBANFF10,
+    kNuisEDBANFF11,
+    kNuisEDBANFF12,
+    kNuisEDBANFF13,
+    kNuisEDBANFF14,
+    kNuisEDBANFF15,
+    kNuisEDBANFF16,
+    kNuisEDBANFF17,
+    kNuisEDBANFF18,
+    kNuisEDBANFF19,
+    kNuisEDBANFF20,
+    kNuisEDBANFF21,
+    kNuisEDBANFF22,
+#if BANFF_BINS <= 2
+    kNuisEDBANFF23,
+    kNuisEDBANFF24,
+    kNuisEDBANFF25,
+    kNuisEDBANFF26,
+    kNuisEDBANFF27,
+    kNuisEDBANFF28,
+    kNuisEDBANFF29,
+    kNuisEDBANFF30,
+    kNuisEDBANFF31,
+    kNuisEDBANFF32,
+    kNuisEDBANFF33,
+    kNuisEDBANFF34,
+    kNuisEDBANFF35,
+#if BANFF_BINS != 1
+    kNuisEDBANFF36,
+    kNuisEDBANFF37,
+    kNuisEDBANFF38,
+#if BANFF_BINS == -1
+    kNuisEDBANFF39,
+    kNuisEDBANFF40,
+    kNuisEDBANFF41,
+    kNuisEDBANFF42,
+    kNuisEDBANFF43,
+    kNuisEDBANFF44,
+    kNuisEDBANFF45,
+    kNuisEDBANFF46,
+    kNuisEDBANFF47,
+    kNuisEDBANFF48,
+    kNuisEDBANFF49,
+    kNuisEDBANFF50,
+    kNuisEDBANFF51,
+    kNuisEDBANFF52,
+    kNuisEDBANFF53
+#endif
+#endif
+#endif
 } 
 PhysParamId_t;
 

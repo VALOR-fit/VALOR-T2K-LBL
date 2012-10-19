@@ -155,8 +155,9 @@ void SuperkExpectation::ResetSystematicVariations(void)
   this->GetSuperkDetector()->TweakEfficiency1RmuNuECC            (0.);
 
   // BANFF
-  this->GetBANFF()->Tweak(true,0,false); //update uncorrelated to zero (will also update correlated to best fit, via cholesky)
-  this->GetBANFF()->Tweak(true,0,true ); //update correlated to best fit exactly
+  this->GetBANFF()->Tweak(true,0,3); //update eigendecomposition to best fit (will also update correlated to best fit)
+  this->GetBANFF()->Tweak(true,0,2); //update uncorrelated to zero (will also update correlated to best fit, via cholesky)
+  this->GetBANFF()->Tweak(true,0,1); //update correlated to best fit exactly
 
   // FSI
   this->GetFSI()->Tweak(true,0);
@@ -254,6 +255,14 @@ void SuperkExpectation::TweakSystematic(string systematic, double twkdial, bool 
 //      * ..     
 //      * unbanff_30(48)                    : tweak only uncorrelated BANFF param 35(48), see Conventions.h for definition
 //
+// EigenDecomposition BANFF
+//    - edbanff                             : tweak all eigendecomposition BANFF params
+//      or   
+//      * edbanff_00                        : tweak only eigendecomposition BANFF param 00, see Conventions.h for definition
+//      * edbanff_01                        : tweak only eigendecomposition BANFF param 01, see Conventions.h for definition
+//      * ..     
+//      * edbanff_30(48)                    : tweak only eigendecomposition BANFF param 35(48), see Conventions.h for definition
+//
 
   //
   // SK detector systematics
@@ -316,12 +325,17 @@ void SuperkExpectation::TweakSystematic(string systematic, double twkdial, bool 
   // tweak all BANFF parameters taking into account correlations
   else
   if(systematic == "banff") {
-    this->GetBANFF()->Tweak(); //< Cholesky method
+    this->GetBANFF()->Tweak(false,0,1); //< Cholesky method
   }
   // tweak all uncorrelated BANFF parameters
   else
   if(systematic == "unbanff") {
-    this->GetBANFF()->Tweak(false,0,false); //< Gaussian randomise uncorrelated
+    this->GetBANFF()->Tweak(false,0,2); //< Gaussian randomise uncorrelated
+  }
+  // tweak all uncorrelated BANFF parameters
+  else
+  if(systematic == "edbanff") {
+    this->GetBANFF()->Tweak(false,0,3); //< Eigendecomposition
   }
   // tweak an indivual uncorrelated BANFF parameter
   else
@@ -336,7 +350,22 @@ void SuperkExpectation::TweakSystematic(string systematic, double twkdial, bool 
 	 << endl;
     util::PrintCompact(twkv);
 #endif
-    this->GetBANFF()->Tweak(true,&twkv,false);
+    this->GetBANFF()->Tweak(true,&twkv,2);
+  }
+  // tweak an indivual eigendecompostion BANFF parameter
+  else
+  if(systematic.find("unbanff_") != string::npos) {
+    TVectorD twkv(this->GetBANFF()->CurrentEigenDecompValues());
+    PhysParamId_t p = util::PhysParamIdFromString(systematic);
+    int ip = util::ArrIdx::Instance()->EDBANFFSystIdx(p);
+    twkv[ip] = twkdial;
+#ifdef __show_syst_tweak_debug__
+    cout << "Exp >> Tweaking systematic string: " << systematic
+	 << ", NuisParam: " << util::AsString(p)
+	 << endl;
+    util::PrintCompact(twkv);
+#endif
+    this->GetBANFF()->Tweak(true,&twkv,3);
   }
   // tweak an individual BANFF parameter (ignores correlations, debug)
   else
@@ -355,7 +384,7 @@ void SuperkExpectation::TweakSystematic(string systematic, double twkdial, bool 
 	 << endl;
     util::PrintCompact(twkv);
 #endif
-    this->GetBANFF()->Tweak(true,&twkv);
+    this->GetBANFF()->Tweak(true,&twkv,1);
   }
 
 
@@ -445,7 +474,7 @@ void SuperkExpectation::TweakAllSystematics(void)
   cout << "Exp >> Generating random variations of all systematic params." << endl;
 #endif
 
-  this->TweakAllUncorrelatedBANFFSystematics();
+  this->TweakAllEigenDecompBANFFSystematics();
   this->TweakAllFSISystematics();
   this->TweakAllUncorrelatedXSecSystematics();
   this->TweakAllSKDetectorSystematics();
@@ -454,21 +483,31 @@ void SuperkExpectation::TweakAllSystematics(void)
 void SuperkExpectation::TweakAllBANFFSystematics(void)
 {
 #ifdef __show_syst_tweak_mesg__
-  cout << "Exp >> Generating random variations of all BANFF systematic params." << endl;
+  cout << "Exp >> Generating random variations of all BANFF systematic params (correlated)" << endl;
 #endif
 
   // BANFF
-  this->GetBANFF()->Tweak(); // <-- Cholesky method
+  this->GetBANFF()->Tweak(false,0,1); // <-- Cholesky method
 }
 //________________________________________________________________________________________
 void SuperkExpectation::TweakAllUncorrelatedBANFFSystematics(void)
 {
 #ifdef __show_syst_tweak_mesg__
-  cout << "Exp >> Generating random variations of all BANFF systematic params." << endl;
+  cout << "Exp >> Generating random variations of all BANFF systematic params (Cholesky)" << endl;
 #endif
 
   // Uncorrelated BANFF
-  this->GetBANFF()->Tweak(false,0,false); //< Gaussian randomise uncorrelated
+  this->GetBANFF()->Tweak(false,0,2); //< Gaussian randomise uncorrelated
+}
+//________________________________________________________________________________________
+void SuperkExpectation::TweakAllEigenDecompBANFFSystematics(void)
+{
+#ifdef __show_syst_tweak_mesg__
+  cout << "Exp >> Generating random variations of all BANFF systematic params (eigendecomposition)" << endl;
+#endif
+
+  // Uncorrelated BANFF
+  this->GetBANFF()->Tweak(false,0,3); //< Eigendecomposition
 }
 //________________________________________________________________________________________
 void SuperkExpectation::TweakAllFSISystematics(void)
@@ -705,7 +744,7 @@ void SuperkExpectation::SetNuisanceParams(const FitParamList & fp)
      }
    }
    if(need_to_tweak_banff)
-     this->GetBANFF()->Tweak(true,&twkv);
+     this->GetBANFF()->Tweak(true,&twkv,1);
 
    // 
    // Uncorrelated BANFF systematics
@@ -729,7 +768,31 @@ void SuperkExpectation::SetNuisanceParams(const FitParamList & fp)
      }
    }
    if(need_to_tweak_unbanff)
-     this->GetBANFF()->Tweak(true,&twkvu,false);
+     this->GetBANFF()->Tweak(true,&twkvu,2);
+
+   // 
+   // Eigendecomposition BANFF systematics
+   //
+
+   // Eigendecomposition BANFF params included in the fit param list?
+   TVectorD twkve(nbanff);
+   bool need_to_tweak_edbanff = false;
+   for(int ip = 0; ip < nbanff; ip++) {
+     PhysParamId_t p = PhysParamId_t ((int) kNuisEDBANFF00 + ip);
+     bool incl_banff = fp.Exists(p);
+     // If BANFF param included, use current value stored in fit param list
+     // to tweak the BANFF object
+     if(incl_banff) {
+       twkve[ip] = fp.CurrValue(p);
+       need_to_tweak_edbanff = true;
+     }
+     // Otherwise, use whatever is already stored in the BANFF object
+     else {
+       twkve[ip] = this->GetBANFF()->CurrentEigenDecompValue(p);
+     }
+   }
+   if(need_to_tweak_edbanff)
+     this->GetBANFF()->Tweak(true,&twkve,3);
 
    // 
    // Cross-section systematics (other than BANFF ones)
