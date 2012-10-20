@@ -343,6 +343,10 @@ void SuperkExpectation::TweakSystematic(string systematic, double twkdial, bool 
     TVectorD twkv(this->GetBANFF()->CurrentUncorrelatedValues());
     PhysParamId_t p = util::PhysParamIdFromString(systematic);
     int ip = util::ArrIdx::Instance()->UnBANFFSystIdx(p);
+    if(ip < 0) {
+      cerr << "Exp >> Unknown systematic parameter (" << systematic << ")" << endl;
+      exit(1);
+    }
     twkv[ip] = twkdial;
 #ifdef __show_syst_tweak_debug__
     cout << "Exp >> Tweaking systematic string: " << systematic
@@ -354,10 +358,14 @@ void SuperkExpectation::TweakSystematic(string systematic, double twkdial, bool 
   }
   // tweak an indivual eigendecompostion BANFF parameter
   else
-  if(systematic.find("unbanff_") != string::npos) {
+  if(systematic.find("edbanff_") != string::npos) {
     TVectorD twkv(this->GetBANFF()->CurrentEigenDecompValues());
     PhysParamId_t p = util::PhysParamIdFromString(systematic);
     int ip = util::ArrIdx::Instance()->EDBANFFSystIdx(p);
+    if(ip < 0) {
+      cerr << "Exp >> Unknown systematic parameter (" << systematic << ")" << endl;
+      exit(1);
+    }
     twkv[ip] = twkdial;
 #ifdef __show_syst_tweak_debug__
     cout << "Exp >> Tweaking systematic string: " << systematic
@@ -377,6 +385,10 @@ void SuperkExpectation::TweakSystematic(string systematic, double twkdial, bool 
     }
     PhysParamId_t p = util::PhysParamIdFromString(systematic);
     int ip = util::ArrIdx::Instance()->BANFFSystIdx(p);
+    if(ip < 0) {
+      cerr << "Exp >> Unknown systematic parameter (" << systematic << ")" << endl;
+      exit(1);
+    }
     twkv[ip] = twkdial;
 #ifdef __show_syst_tweak_debug__
     cout << "Exp >> Tweaking systematic string: " << systematic

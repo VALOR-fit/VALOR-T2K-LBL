@@ -229,6 +229,13 @@ double BANFF::BestFitEigenDecompValue(PhysParamId_t p) const
   return bestfit_eigendecomp_values[idx];
 }
 //________________________________________________________________________________________
+double BANFF::EigenDecompEigenValue(PhysParamId_t p) const
+{
+  const TVectorD & eigen_values = *fEigenValues;
+  int idx = this->EDParam2Idx(p);
+  return eigen_values[idx];
+}
+//________________________________________________________________________________________
 void BANFF::Tweak(
   bool       force_inputs, /* force the input params or generate random ones internally  */
   TVectorD * input_vec,    /* input vector of BANFF params - Set to 0 to reset to best-fit ones */

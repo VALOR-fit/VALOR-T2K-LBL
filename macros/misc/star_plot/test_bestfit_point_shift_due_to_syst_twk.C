@@ -174,6 +174,10 @@ void test_bestfit_point_shift_due_to_syst_twk
     // curr/nominal = 1 + (nsigma * x)
     skexp->TweakSystematic(systematic, skexp->GetBANFF()->BestFitValue(p) + (1 * sqrt(skexp->GetBANFF()->CovMatrix()(ip,ip))));
   }
+  if(sys.find("edbanff_") == 0) {
+    conv::PhysParamId_t p = util::PhysParamIdFromString(systematic);
+    skexp->TweakSystematic(systematic, skexp->GetBANFF()->BestFitEigenDecompValue(p) + (1 * sqrt(skexp->GetBANFF()->EigenDecompEigenValue(p))));
+  }
   else if(sys.find("fsi_") == 0) {
     conv::PhysParamId_t p = util::PhysParamIdFromString(systematic);
     int ip = util::ArrIdx::Instance()->FSISystIdx(p);
@@ -261,6 +265,10 @@ void test_bestfit_point_shift_due_to_syst_twk
     int ip = util::ArrIdx::Instance()->BANFFSystIdx(p);
     // curr/nominal = 1 + (nsigma * x)
     skexp->TweakSystematic(systematic, skexp->GetBANFF()->BestFitValue(p) + (-1 * sqrt(skexp->GetBANFF()->CovMatrix()(ip,ip))));
+  }
+  if(sys.find("edbanff_") == 0) {
+    conv::PhysParamId_t p = util::PhysParamIdFromString(systematic);
+    skexp->TweakSystematic(systematic, skexp->GetBANFF()->BestFitEigenDecompValue(p) + (-1 * sqrt(skexp->GetBANFF()->EigenDecompEigenValue(p))));
   }
   else if(sys.find("fsi_") == 0) {
     conv::PhysParamId_t p = util::PhysParamIdFromString(systematic);

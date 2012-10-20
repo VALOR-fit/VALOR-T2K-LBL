@@ -202,7 +202,8 @@ bool SuperkMC::Read(TXMLEngine* xml, XMLNodePointer_t root_node)
 #ifdef __show_init_mesg_info__
   cout << "Exp/SKMC >> " << "POT {MC; numu}    = " << fMCPOTNuMu    << endl;
   cout << "Exp/SKMC >> " << "POT {MC; numubar} = " << fMCPOTNuMuBar << endl;
-  cout << "Exp/SKMC >> " << "POT {MC; nue_bkg} = " << fMCPOTNuE     << endl;
+  cout << "Exp/SKMC >> " << "POT {MC; nue}     = " << fMCPOTNuE     << endl;
+  cout << "Exp/SKMC >> " << "POT {MC; nuebar}  = " << fMCPOTNuEBar  << endl;
   cout << "Exp/SKMC >> " << "POT {MC; nue_sig} = " << fMCPOTSigNuE  << endl;
 
   cout << "Exp/SKMC >> " << "Nev {MC; numu;     1Rmu} = " << fMCTreeNuMu1Rmu    -> GetEntries()  << endl;
