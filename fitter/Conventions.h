@@ -356,9 +356,21 @@ FluxType_t;
 
 // Fit parameters
 #if FSI_BINS < 3
-static const int knppmax = 120; // maximum number of physics params listed below (for booking large enough param arrays)
+#if BANFF_BINS >= 3
+static const int knppmax = 140; // maximum number of physics params listed below (for booking large enough param arrays)
+#elif BANFF_BINS == -1
+static const int knppmax = 230; // maximum number of physics params listed below (for booking large enough param arrays)
+#else
+static const int knppmax = 200; // maximum number of physics params listed below (for booking large enough param arrays)
+#endif
 #elif FSI_BINS == 3
-static const int knppmax = 170; // maximum number of physics params listed below (for booking large enough param arrays)
+#if BANFF_BINS >= 3
+static const int knppmax = 180; // maximum number of physics params listed below (for booking large enough param arrays)
+#elif BANFF_BINS == -1
+static const int knppmax = 270; // maximum number of physics params listed below (for booking large enough param arrays)
+#else
+static const int knppmax = 240; // maximum number of physics params listed below (for booking large enough param arrays)
+#endif
 #endif
 
 typedef enum EPhysParamId 
@@ -648,7 +660,7 @@ typedef enum EPhysParamId
     kNuisUnBANFF50,
     kNuisUnBANFF51,
     kNuisUnBANFF52,
-    kNuisUnBANFF53
+    kNuisUnBANFF53,
 #endif
 #endif
 #endif

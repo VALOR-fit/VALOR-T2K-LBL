@@ -123,6 +123,7 @@ namespace util {
   bool IsCC           (conv::SuperkMode_t  m);
   bool IsNC           (conv::SuperkMode_t  m);
   bool IsSystematic   (conv::PhysParamId_t p);
+  bool IsMixingAngle  (conv::PhysParamId_t p);
   bool IsNeutrino     (int pdg_code);
   bool IsAntiNeutrino (int pdg_code);
 

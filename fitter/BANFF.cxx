@@ -15,7 +15,8 @@
 
 #define __show_init_mesg_info__  
 //#define __show_init_mesg_debug__   
-//#define __show_init_mesg_debug_eigen__
+//#define __show_init_mesg_eigen_debug__
+//#define __show_init_mesg_eigen_debug2__
 #define __show_cholesky_mesg_info__
 //#define __show_cholesky_mesg_debug__
 //#define __show_tweak_mesg_debug__
@@ -177,14 +178,24 @@ bool BANFF::Read(TXMLEngine* xml, XMLNodePointer_t root_node)
   fEigenCovMtrx          = new TMatrixDSym(eigen_covariance);
   fEigenBestFitValues    = new TVectorD(eigen_bestfit_values);
   //initialise current to bestfit
-  fEigenCurrentValues   = new TVectorD(eigen_bestfit_values);
+  fEigenCurrentValues    = new TVectorD(eigen_bestfit_values);
 
-#ifdef __show_init_mesg_debug_eigen__
+#ifdef __show_init_mesg_eigen_debug__
   eigen_values.Print();
   eigen_vectors.Print();
   eigen_vectorsT.Print();
   eigen_covariance.Print();
   eigen_bestfit_values.Print();
+#endif
+
+#ifdef __show_init_mesg_eigen_debug2__
+  TVectorD & current_values = *fCurrentValues;
+  current_values.Print();
+  TVectorD & current_eigen_values = *fEigenCurrentValues;
+  TVectorD vec(current_eigen_values);
+  vec = eigen_vectors * current_eigen_values;
+  vec.Print();
+  exit(1);
 #endif
 
 #ifdef __show_init_mesg_info__
@@ -498,11 +509,11 @@ void BANFF::UpdateCorrelatedEigenDecomp()
   //
   TVectorD & current_values       = *fCurrentValues;
   TVectorD & current_eigen_values = *fEigenCurrentValues;
-  TMatrixD & eigen_vectorsT       = *fEigenVectors;
+  TMatrixD & eigen_vectors        = *fEigenVectors;
 
   // Update the correlated current values
   TVectorD vec(current_eigen_values);
-  vec *= eigen_vectorsT;
+  vec = eigen_vectors * current_eigen_values;
   current_values = vec;
   return;
 }

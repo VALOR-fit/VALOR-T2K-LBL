@@ -3180,6 +3180,22 @@ bool t2kana::util::IsSystematic(PhysParamId_t p)
   return false;
 }
 //____________________________________________________________________________
+bool t2kana::util::IsMixingAngle(PhysParamId_t p)
+{
+  switch(p) {
+    case ( kPhypMixing23              ) : return true; break;
+    case ( kPhypMixing13              ) : return true; break;
+    case ( kPhypMixing12              ) : return true; break;
+    case ( kPhypSinsq2ThetaDecay      ) : return true; break;
+    case ( kPhypSinsq2ThetaDecoh      ) : return true; break;
+
+    default : 
+      return false;
+  }
+  return false;
+}
+
+//____________________________________________________________________________
 bool t2kana::util::IsNeutrino(int pdg_code)
 {
   if ( pdg_code == kPdgNuE   ||
