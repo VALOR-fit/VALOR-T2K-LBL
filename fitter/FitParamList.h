@@ -19,6 +19,7 @@
 #include <iostream>
 #include <string>
 #include <map>
+#include <vector>
 
 #include <TVirtualFitter.h>
 #include <Minuit2/MnUserParameters.h>
@@ -37,18 +38,20 @@ public:
   ~FitParamList();
 
    // Get information for the fit parameters
-   int    Size         (void)                          const { return fNParams;                      }
-   string Name         (t2kana::conv::PhysParamId_t p) const { return fName         [this->Id(p)];   }
-   double BestFitValue (t2kana::conv::PhysParamId_t p) const { return fBestFitValue [this->Id(p)];   }
-   double CurrValue    (t2kana::conv::PhysParamId_t p) const { return fCurrValue    [this->Id(p)];   }
-   double InitValue    (t2kana::conv::PhysParamId_t p) const { return fInitValue    [this->Id(p)];   }
-   double MinValue     (t2kana::conv::PhysParamId_t p) const { return fMinValue     [this->Id(p)];   }
-   double MaxValue     (t2kana::conv::PhysParamId_t p) const { return fMaxValue     [this->Id(p)];   }
-   double StepSize     (t2kana::conv::PhysParamId_t p) const { return fStepSize     [this->Id(p)];   }
-   bool   IsFixed      (t2kana::conv::PhysParamId_t p) const { return fIsFixed      [this->Id(p)];   }
-   bool   IsNuisance   (t2kana::conv::PhysParamId_t p) const { return fIsNuisance   [this->Id(p)];   }
-   double PlusError    (t2kana::conv::PhysParamId_t p) const { return fPlusError    [this->Id(p)];   }
-   double MinusError   (t2kana::conv::PhysParamId_t p) const { return fMinusError   [this->Id(p)];   }
+   int    Size           (void)                          const { return fNParams;                      }
+   string Name           (t2kana::conv::PhysParamId_t p) const { return fName         [this->Id(p)];   }
+   double BestFitValue   (t2kana::conv::PhysParamId_t p) const { return fBestFitValue [this->Id(p)];   }
+   double CurrValue      (t2kana::conv::PhysParamId_t p) const { return fCurrValue    [this->Id(p)];   }
+   double InitValue      (t2kana::conv::PhysParamId_t p) const { return fInitValue    [this->Id(p)];   }
+   double MinValue       (t2kana::conv::PhysParamId_t p) const { return fMinValue     [this->Id(p)];   }
+   double MaxValue       (t2kana::conv::PhysParamId_t p) const { return fMaxValue     [this->Id(p)];   }
+   double StepSize       (t2kana::conv::PhysParamId_t p) const { return fStepSize     [this->Id(p)];   }
+   bool   IsFixed        (t2kana::conv::PhysParamId_t p) const { return fIsFixed      [this->Id(p)];   }
+   bool   IsNuisance     (t2kana::conv::PhysParamId_t p) const { return fIsNuisance   [this->Id(p)];   }
+   double MigradError    (t2kana::conv::PhysParamId_t p) const { return fMigradError  [this->Id(p)];   }
+   double HesseError     (t2kana::conv::PhysParamId_t p) const { return fHesseError   [this->Id(p)];   }
+   double PlusError      (t2kana::conv::PhysParamId_t p) const { return fPlusError    [this->Id(p)];   }
+   double MinusError     (t2kana::conv::PhysParamId_t p) const { return fMinusError   [this->Id(p)];   }
    double ParabolicError (t2kana::conv::PhysParamId_t p) const { return fParaError    [this->Id(p)];   }
 
    // Add a parameter
@@ -73,7 +76,12 @@ public:
    void CopyBestFitToCurrValues (void);
 
    // Set the errors
+   // used with FitterKernel
    void SetErrors(double * errplus, double * errminus, double * errpara);
+   // used with FitterKernelMinuit2
+   void SetMigradErrors(std::vector<double> err);
+   void SetHesseErrors (std::vector<double> err);
+   void SetMinosErrors (std::vector<double> plus, std::vector<double> minus);
 
    // Fix a parameter
    void FixParameter (t2kana::conv::PhysParamId_t p); 
@@ -86,7 +94,7 @@ public:
 
    // Set parameter list to input TVirtualFitter 
    void SetTo (TVirtualFitter * fitter);
-   void SetTo (ROOT::Minuit2::MnUserParameters * params);
+   void SetTo (ROOT::Minuit2::MnUserParameters & params);
    
    // Sync fit param values stored this object with the values stored in the input array.
    void Sync (double * par);
@@ -132,6 +140,12 @@ public:
 
    // Work-out the physics hypothesis
    conv::PhysHypothesis_t PhysicsHypothesis(void) const;
+
+   //Are the errors set?
+   bool MinuitErrorsSet (void) const { return fMinuitErrorsSet; }
+   bool MigradErrorsSet (void) const { return fMigradErrorsSet; }
+   bool HesseErrorsSet  (void) const { return fHesseErrorsSet;  }
+   bool MinosErrorsSet  (void) const { return fMinosErrorsSet;  }
 
 private:
 
@@ -183,9 +197,16 @@ private:
    string * fName;         //[fNParams]
    bool *   fIsFixed;      //[fNParams]
    bool *   fIsNuisance;   //[fNParams]
+   double * fMigradError;  //[fNParams]
+   double * fHesseError;   //[fNParams]
    double * fPlusError;    //[fNParams]
    double * fMinusError;   //[fNParams]
    double * fParaError;    //[fNParams]
+
+   bool fMinuitErrorsSet;
+   bool fMigradErrorsSet;
+   bool fHesseErrorsSet;
+   bool fMinosErrorsSet;
 
    mutable bool fShowCurrValuesOnly;
    mutable bool fShowBestFitValuesOnly;

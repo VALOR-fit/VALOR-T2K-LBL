@@ -58,8 +58,8 @@ protected:
    int         fNFreeFitParams;   ///< number of free params in fit
    TObjArray*  fResults;          ///<
 
-   ROOT::Minuit2::MnUserCovariance   fCovMtrx;     ///< covariance matrix of all parameters in the Fit
-   ROOT::Minuit2::MnUserParameters * fUserParams;   ///< store the user parameters
+   ROOT::Minuit2::MnUserCovariance fCovMtrx;      ///< covariance matrix of all parameters in the Fit
+   ROOT::Minuit2::MnUserParameters fUserParams;   ///< store the user parameters
 };
 
 

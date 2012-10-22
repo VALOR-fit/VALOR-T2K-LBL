@@ -17,7 +17,10 @@
 #define __show_fit_init_debug__ 
 #define __show_fit_result__ 
 #define __show_fit_steps__ 
+#define __show_fit_steps_debug__
 #define __show_fit_cpu_time__
+//#define __get_hesse_errors__
+//#define __get_minos_errors__
 
 #include <cassert> 
 #include <cstdlib> 
@@ -78,7 +81,6 @@ FitterABC()
 FitterKernelMinuit2::~FitterKernelMinuit2() 
 {
   if(fResults)    { delete fResults;    }
-  if(fUserParams) { delete fUserParams; }
 }
 //____________________________________________________________________________ 
 void FitterKernelMinuit2::Init(void) 
@@ -88,7 +90,6 @@ void FitterKernelMinuit2::Init(void)
   fNFreeFitParams = 0;
   fNFitBins       = 0;
   fResults        = 0;
-  fUserParams     = 0;
 }
 //____________________________________________________________________________ 
 void FitterKernelMinuit2::Init(FitInputs * fit_inputs, Option_t * option) 
@@ -116,8 +117,9 @@ void FitterKernelMinuit2::Init(FitInputs * fit_inputs, Option_t * option)
 #endif
   
   // set params
-  ROOT::Minuit2::MnUserParameters * fUserParams = new ROOT::Minuit2::MnUserParameters();
   fit_params.SetTo(fUserParams);
+
+  cout << fUserParams << endl;
 
 #ifdef __show_fit_init_info__
   cout << "FitterKernelMinuit2/Init >> Constructing covariance matrix " << endl;
@@ -166,14 +168,18 @@ bool FitterKernelMinuit2::DoTheFit(void)
 bool FitterKernelMinuit2::RunOnce(void) 
 {
   // a few arrays to store parameters
-  const int nparamsmax = knppmax;
-  double bestfit_arr   [nparamsmax] = {0.};
-  double err_migrad_cov[nparamsmax] = {0.};
-  double err_migrad_err[nparamsmax] = {0.};
-  double err_hesse_cov [nparamsmax] = {0.};
+  unsigned int nfreeparams = (unsigned int)fFitInputs->FitParams().GetNumberFreeParameters();
+  unsigned int nparams     = (unsigned int)fFitInputs->FitParams().Size();
+  vector<double> bestfit_free;
+  vector<double> err_migrad_cov;
+  vector<double> err_migrad_err;
+#ifdef __get_hesse_errors__
+  vector<double> err_hesse_cov;
+  vector<double> err_hesse_err;
+#endif
 #ifdef __get_minos_errors__
-  double err_minosplus [nparamsmax] = {0.};
-  double err_minosminus[nparamsmax] = {0.};
+  vector<double> err_minosplus;
+  vector<double> err_minosminus;
 #endif
 
   // Set fitter strategy
@@ -186,7 +192,7 @@ bool FitterKernelMinuit2::RunOnce(void)
   cout << "FitterKernelMinuit2/RunOnce >> Getting the fitter & giving it inputs (data & pdf)..." << endl;
 #endif
 
-  ROOT::Minuit2::MnMigrad migrad(*fFitInputs, *fUserParams);
+  ROOT::Minuit2::MnMigrad migrad(*fFitInputs, fUserParams);
   
   // Run MINUIT's minimization step
 #ifdef __show_fit_steps__
@@ -205,13 +211,22 @@ bool FitterKernelMinuit2::RunOnce(void)
   //Minimise!
   ROOT::Minuit2::FunctionMinimum bestfit = migrad(max_calls, tolerance);
 
+#ifdef __show_fit_steps__
+  cout << "FitterKernelMinuit2/RunOnce >> MIGRAD minimisation complete" << endl;
+#endif
+
   // Done! Copy current --> best-fit values
   fFitInputs->FitParams().CopyCurrToBestFitValues();
-  std::vector<double> bestfit_vec;
-  bestfit_vec = bestfit.UserParameters().Params();
-  for(unsigned int ip = 0; ip < bestfit_vec.size(); ip++) {
-    bestfit_arr[ip] = bestfit_vec[ip];
-    cout << "Bestfit for par#" << ip << " = " << bestfit_arr[ip] << endl;
+
+  //get the best fit vector, for use in this function
+  std::vector<ROOT::Minuit2::MinuitParameter> bestfit_params = bestfit.UserParameters().Parameters();
+  for(unsigned int ip = 0; ip < bestfit_params.size(); ip++) {
+    if(!bestfit_params[ip].IsFixed()) {
+      bestfit_free.push_back(bestfit_params[ip].Value());
+    }
+#ifdef __show_fit_steps_debug__
+    cout << "FitterKernelMinuit2/RunOnce >> Bestfit for par#" << ip << " = " << bestfit_params[ip].Value() << endl;
+#endif
   }
 
 #ifdef __show_fit_steps__
@@ -219,49 +234,72 @@ bool FitterKernelMinuit2::RunOnce(void)
 #endif
   //Check if fit succeeded
   if(!bestfit.IsValid()){
-    std::cout << "Fit Failed" << std::endl;
+    std::cout << "FitterKernelMinuit2/RunOnce >> Fit Failed" << std::endl;
     return false;
   }
   else {
-    std::cout << "Fit succeeded" << std::endl;
+    std::cout << "FitterKernelMinuit2/RunOnce >> Fit succeeded" << std::endl;
     fStatusCode = 3;
   }
 
   // Get errors
 #ifdef __show_fit_steps__
-  cout << "FitterKernelMinuit2/RunOnce >> Getting errors..." << endl;
+  cout << "FitterKernelMinuit2/RunOnce >> Getting Migrad errors..." << endl;
 #endif
 
   // migrad covariance
   ROOT::Minuit2::MnUserCovariance cov_migrad(bestfit.UserCovariance());
-  for(unsigned int ip = 0; ip < bestfit_vec.size(); ip++) {
-    err_migrad_cov[ip] = cov_migrad(ip,ip);
-    cout << "Migrad covariance for par#" << ip << " = " << bestfit_arr[ip] << " +/- " << err_migrad_cov[ip] << endl;
+#ifdef __show_fit_steps_debug__
+  cout << cov_migrad << endl;
+#endif
+  for(unsigned int ip = 0; ip < nfreeparams; ip++) {
+    double tmp = cov_migrad(ip,ip);
+    err_migrad_cov.push_back(tmp);
+#ifdef __show_fit_steps_debug__
+    cout << "FitterKernelMinuit2/RunOnce >> Migrad covariance for par#" << ip << " = " << bestfit_free[ip] << " +/- " << err_migrad_cov[ip] << endl;
+#endif
   }
 
   // migrad error
-  std::vector<double> error_vec;
-  error_vec =  bestfit.UserParameters().Errors(); 
-  //fFitInputs->FitParams().SetMigradErrors(error_vec);
-  for(unsigned int ip = 0; ip < bestfit_vec.size(); ip++) {
-    err_migrad_err[ip] = error_vec[ip];
-    cout << "Migrad error for par#" << ip << " = " << bestfit_arr[ip] << " +/- " << err_migrad_err[ip] << endl;
+  err_migrad_err =  bestfit.UserParameters().Errors(); 
+  for(unsigned int ip = 0; ip < nparams; ip++) {
+#ifdef __show_fit_steps_debug__
+    cout << "FitterKernelMinuit2/RunOnce >> Migrad error for par#" << ip << " = " << bestfit_free[ip] << " +/- " << err_migrad_err[ip] << endl;
+#endif
   }
+  fFitInputs->FitParams().SetMigradErrors(err_migrad_err);
 
+#ifdef __get_hesse_errors__
   //Get Hesse errors
 #ifdef __show_fit_steps__
   cout << "FitterKernelMinuit2/RunOnce >> Getting Hesse errors..." << endl;
 #endif
   // argument is strategy
   ROOT::Minuit2::MnHesse hesse(2);
+  // perform hesse error calculation
   hesse(*fFitInputs, bestfit);
 
   // hesse covariance
   ROOT::Minuit2::MnUserCovariance cov_hesse(bestfit.UserCovariance());
-  for(unsigned int ip = 0; ip < bestfit_vec.size(); ip++) {
-    err_hesse_cov[ip] = cov_hesse(ip,ip);
-    cout << "Migrad covariance for par#" << ip << " = " << bestfit_arr[ip] << " +/- " << err_hesse_cov[ip] << endl;
+#ifdef __show_fit_steps_debug__
+  cout << cov_hesse << endl;
+#endif
+  for(unsigned int ip = 0; ip < nfreeparams; ip++) {
+    err_hesse_cov.push_back(cov_hesse(ip,ip));
+#ifdef __show_fit_steps_debug__
+    cout << "FitterKernelMinuit2/RunOnce >> Hesse covariance for par#" << ip << " = " << bestfit_free[ip] << " +/- " << err_hesse_cov[ip] << endl;
+#endif
   }
+
+  // hesse error
+  err_hesse_err =  bestfit.UserParameters().Errors(); 
+  fFitInputs->FitParams().SetHesseErrors(err_hesse_err);
+  for(unsigned int ip = 0; ip < nfreeparams; ip++) {
+#ifdef __show_fit_steps_debug__
+    cout << "FitterKernelMinuit2/RunOnce >> Hesse error for par#" << ip << " = " << bestfit_free[ip] << " +/- " << err_hesse_err[ip] << endl;
+#endif
+  }
+#endif
 
 #ifdef __get_minos_errors__
 #ifdef __show_fit_steps__
@@ -269,25 +307,28 @@ bool FitterKernelMinuit2::RunOnce(void)
 #endif
 
   //Get Minos Errors
-  ROOT::Minuit2::MnMinos minos(*migrad,bestfit);
-  for(int ip = 0; ip < fFitInputs->FitParams().Size(); ip++) {
-      double up = minos_nd280.Upper(ip);
-      double lo = minos_nd280.Lower(ip);
-      err_minosminus[ip] = pow(lo,2);
-      err_minosplus [ip] = pow(up,2);
-      cout << "FitterKernelMinuit2/RunOnce >> par#" << ip << " = " <<  << " +" << up << " -" << lo << " (minos)" << endl;
-  }
+  ROOT::Minuit2::MnMinos minos(*fFitInputs,bestfit);
+  for(unsigned int ip = 0; ip < nparams; ip++) {
+    if(!bestfit_params[ip].IsFixed())
+      continue;
+    double up = minos.Upper(ip);
+    double lo = minos.Lower(ip);
+    err_minosminus.push_back(pow(lo,2));
+    err_minosplus. push_back (pow(up,2));
+#ifdef __show_fit_steps_debug__
+    cout << "FitterKernelMinuit2/RunOnce >> par#" << ip << " = " << bestfit_free[ip] << " +" << up << " -" << lo << " (minos)" << endl;
 #endif
-
-  //Get the chi^2
-  cout << "fcn = " << bestfit.Fval() << endl;
-  cout << "chi2 = " << fFitInputs->Chisquare() << endl;
+  }
+  fFitInputs->FitParams().SetMinosErrors(err_minosplus, err_minosminus);
+#endif
 
   // Print fit result
 #ifdef __show_fit_result__
 #ifdef __show_fit_steps__
   cout << "FitterKernelMinuit2/RunOnce >> Printing fit results..." << endl;
 #endif
+  cout << "FitterKernelMinuit2/RunOnce >> fcn =  " << bestfit.Fval() << endl;
+  cout << "FitterKernelMinuit2/RunOnce >> chi2 = " << fFitInputs->Chisquare() << endl;
   cout << bestfit << endl;
 #endif
 

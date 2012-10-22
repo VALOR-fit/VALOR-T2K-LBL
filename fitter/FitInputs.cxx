@@ -46,11 +46,12 @@ ClassImp(FitInputs)
 
 //________________________________________________________________________________________
 FitInputs::FitInputs(
-		     SuperkObservation * skobs, SuperkExpectation * skexp, FitParamList * fpar, string opt) :
+	   SuperkObservation * skobs, SuperkExpectation * skexp, FitParamList * fpar, string opt, double errdef) :
 fObs(skobs), 
 fExp(skexp), 
 fFitParams(fpar),
-fOpt(opt)
+fOpt(opt),
+fErrDef(errdef)
 { 
 
 }
@@ -496,14 +497,18 @@ double FitInputs::BestFitChisquare(Option_t * opt)
 // MINUIT fit functions 
 // 
 //____________________________________________________________________________ 
-double FitInputs::operator() (const std::vector<double>& x)
+double FitInputs::operator() (const std::vector<double>& x) const
 {
   // To be used with Minuit2
-
+  /*
   fFitParams->Sync(x);
 
-  return this->Chisquare(fOpt.c_str());
-
+  return this->ChisquarePenaltyTerm(fOpt.c_str());
+  */
+  double penalty = 0;
+  for(unsigned int i = 0; i < x.size(); i++)
+    penalty += x[i] * x[i];
+  return penalty;
 }
 //____________________________________________________________________________ 
 void t2kana::FitFunc (

@@ -132,6 +132,79 @@ void FitParamList::SetErrors(double * errplus, double * errminus, double * errpa
   }
 }
 //________________________________________________________________________________________
+void FitParamList::SetMigradErrors(vector<double> err)
+{
+  if(err.size() != (unsigned int)this->Size()) {
+    cerr << "FitterKernelMinuit2/SetMigradErrors >> Error vector size: " << err.size()
+	 << " is not the same size as the number of free parameters: "
+	 << this->GetNumberFreeParameters() << endl;
+    exit(1);
+  }
+  // vector only contains free parameters, so need to make sure we handle the
+  // fixed parameters in the parameter list correctly
+  int ifree = 0;
+  for(int ip = 0; ip < fNParams; ip++) {
+    if(fIsFixed[ip]) {
+      fMigradError [ip] = 0;
+    }
+    else {
+      fMigradError[ip] = err[ifree];
+      ifree++;
+    }
+  }
+}
+//________________________________________________________________________________________
+void FitParamList::SetHesseErrors(vector<double> err)
+{
+  if(err.size() != (unsigned int)this->Size()) {
+    cerr << "FitterKernelMinuit2/SetHesseErrors >> Error vector size: " << err.size()
+	 << " is not the same size as the number of free parameters: "
+	 << this->GetNumberFreeParameters() << endl;
+    exit(1);
+  }
+  // vector only contains free parameters, so need to make sure we handle the
+  // fixed parameters in the parameter list correctly
+  int ifree = 0;
+  for(int ip = 0; ip < fNParams; ip++) {
+    if(fIsFixed[ip]) {
+      fHesseError [ip] = 0;
+    }
+    else {
+      fHesseError[ip] = err[ifree];
+      ifree++;
+    }
+  }
+}
+//________________________________________________________________________________________
+void FitParamList::SetMinosErrors(vector<double> plus, vector<double> minus)
+{
+  if(plus.size() != (unsigned int)this->Size()) {
+    cerr << "FitterKernelMinuit2/SetMinosErrors >> Error vector size: " << plus.size()
+	 << " is not the same size as the number of free parameters: "
+	 << this->GetNumberFreeParameters() << endl;
+    exit(1);
+  }
+  if(plus.size() != minus.size()) {
+    cerr << "FitterKernelMinuit2/SetMinosErrors >> Error vector size (plus): " << plus.size()
+	 << " is not the same size as error vector size (minus): " << minus.size() << endl;
+    exit(1);
+  }
+  // vector only contains free parameters, so need to make sure we handle the
+  // fixed parameters in the parameter list correctly
+  int ifree = 0;
+  for(int ip = 0; ip < fNParams; ip++) {
+    if(fIsFixed[ip]) {
+      fPlusError   [ip] = 0;
+      fMinusError  [ip] = 0;
+    }
+    else {
+      fPlusError [ip] = plus [ifree];
+      fMinusError[ip] = minus[ifree];
+      ifree++;
+    }
+  }
+}
+//________________________________________________________________________________________
 void FitParamList::FixParameter(PhysParamId_t p)
 {
   fIsFixed [this->Id(p)] = true;
@@ -169,22 +242,22 @@ void FitParamList::SetTo(TVirtualFitter * fitter)
   }
 }
 //________________________________________________________________________________________
-void FitParamList::SetTo(ROOT::Minuit2::MnUserParameters * params)
+void FitParamList::SetTo(ROOT::Minuit2::MnUserParameters & params)
 {
-  if(!params) return;
-  //params->Clear();
+  //if(!params) return;
+  //params.Clear();
   map<t2kana::conv::PhysParamId_t, int>::const_iterator iter = fIdMap.begin();
   for ( ; iter != fIdMap.end(); ++iter) {
     PhysParamId_t p = iter->first;
     int iparam = iter->second;
     if(util::IsMixingAngle(p)) {
-      params->Add(this->Name(p).c_str(), this->InitValue(p), this->StepSize(p), 0, 1);
+      params.Add(this->Name(p).c_str(), this->InitValue(p), this->StepSize(p), 0, 1);
     }
     else {
-      params->Add(this->Name(p).c_str(), this->InitValue(p), this->StepSize(p));
+      params.Add(this->Name(p).c_str(), this->InitValue(p), this->StepSize(p));
     }
     if(this->IsFixed(p)) {
-     params->Fix(iparam);
+     params.Fix(iparam);
     }
   }
 }
@@ -953,6 +1026,8 @@ void FitParamList::Init(int nparams)
    fName         = new string[fNParams];
    fIsFixed      = new bool  [fNParams];
    fIsNuisance   = new bool  [fNParams];
+   fMigradError  = new double[fNParams];
+   fHesseError   = new double[fNParams];
    fPlusError    = new double[fNParams];
    fMinusError   = new double[fNParams];
    fParaError    = new double[fNParams];
@@ -973,6 +1048,8 @@ void FitParamList::CleanUp(void)
    delete [] fName;
    delete [] fIsFixed;
    delete [] fIsNuisance;
+   delete [] fMigradError;
+   delete [] fHesseError;
    delete [] fPlusError;
    delete [] fMinusError;
    delete [] fParaError;

@@ -31,7 +31,7 @@ class SuperkExpectation;
 class FitInputs: public ROOT::Minuit2::FCNBase, public TObject
 {
 public :
-  FitInputs(SuperkObservation * o, SuperkExpectation * e, FitParamList * p, string opt = "poisson");
+  FitInputs(SuperkObservation * o, SuperkExpectation * e, FitParamList * p, string opt = "poisson", double errdef = 1);
  ~FitInputs();
 
   SuperkObservation & Observation(void);
@@ -48,10 +48,12 @@ public :
   void SetChisquareFitOption(Option_t * opt) { fOpt = opt; }
 
   // Minuit2: Minimum chi2 fit (delta chi2 = 1 for 1 sigma error)
-  double Up() const { return 1.; }
+  double Up          (void) const    { return fErrDef;   }
+  double ErrorDef    (void) const    { return Up();   }
+  void   SetErrorDef (double errdef) { fErrDef = errdef; }
 
   // Minuit2: Returns Chi square
-  double operator() (const std::vector<double>& x);
+  double operator() (const std::vector<double>& x) const;
       
 private:
 
@@ -61,6 +63,7 @@ private:
   SuperkExpectation * fExp;
   FitParamList *      fFitParams;
   string              fOpt;
+  double              fErrDef;
 
 ClassDef(FitInputs, 4)
 
