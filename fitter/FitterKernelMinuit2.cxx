@@ -19,7 +19,7 @@
 #define __show_fit_steps__ 
 #define __show_fit_steps_debug__
 #define __show_fit_cpu_time__
-//#define __get_hesse_errors__
+#define __get_hesse_errors__
 //#define __get_minos_errors__
 
 #include <cassert> 

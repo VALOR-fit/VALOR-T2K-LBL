@@ -250,9 +250,17 @@ void FitParamList::SetTo(ROOT::Minuit2::MnUserParameters & params)
   for ( ; iter != fIdMap.end(); ++iter) {
     PhysParamId_t p = iter->first;
     int iparam = iter->second;
+    //keep mixing angles in physical region
     if(util::IsMixingAngle(p)) {
       params.Add(this->Name(p).c_str(), this->InitValue(p), this->StepSize(p), 0, 1);
     }
+    //stop splines going too far from nominal
+    //(normalisations will eventually make poisson term grow too, not necessaryily true to splines)
+    else if(util::ArrIdx::Instance()->XSecSystIdx(p) >= 0) {
+      if(kXSecSystHasWghtSplines[util::ArrIdx::Instance()->XSecSystIdx(p)])
+	params.Add(this->Name(p).c_str(), this->InitValue(p), this->StepSize(p), -SYST_NSIGMA, SYST_NSIGMA);
+    }
+    //everything else is free
     else {
       params.Add(this->Name(p).c_str(), this->InitValue(p), this->StepSize(p));
     }
