@@ -39,11 +39,12 @@
 
 #include <Minuit2/MnUserParameters.h>
 #include <Minuit2/MnUserCovariance.h>
-#include <Minuit2/MnMigrad.h>
 #include <Minuit2/FunctionMinimum.h>
-#include <Minuit2/MnPrint.h>
+#include <Minuit2/MnApplication.h>
+#include <Minuit2/MnMigrad.h>
 #include <Minuit2/MnHesse.h>
 #include <Minuit2/MnMinos.h>
+#include <Minuit2/MnPrint.h>
 
 #include "FitterKernelMinuit2.h" 
 #include "SuperkObservation.h" 
