@@ -169,6 +169,34 @@ void FitParamList::SetTo(TVirtualFitter * fitter)
   }
 }
 //________________________________________________________________________________________
+void FitParamList::SetTo(ROOT::Minuit2::MnUserParameters * params)
+{
+  if(!params) return;
+  //params->Clear();
+  map<t2kana::conv::PhysParamId_t, int>::const_iterator iter = fIdMap.begin();
+  for ( ; iter != fIdMap.end(); ++iter) {
+    PhysParamId_t p = iter->first;
+    int iparam = iter->second;
+    if(util::IsMixingAngle(p)) {
+      params->Add(this->Name(p).c_str(), this->InitValue(p), this->StepSize(p), 0, 1);
+    }
+    else {
+      params->Add(this->Name(p).c_str(), this->InitValue(p), this->StepSize(p));
+    }
+    if(this->IsFixed(p)) {
+     params->Fix(iparam);
+    }
+  }
+}
+//________________________________________________________________________________________
+void FitParamList::Sync(std::vector<double> par)
+{
+  if(par.size() <= 0) return;
+  for(int ip = 0; ip < fNParams; ip++) {
+     fCurrValue[ip] = par[ip];
+  }
+}
+//________________________________________________________________________________________
 void FitParamList::Sync(double * par)
 {
   if(!par) return;

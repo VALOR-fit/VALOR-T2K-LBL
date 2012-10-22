@@ -46,10 +46,11 @@ ClassImp(FitInputs)
 
 //________________________________________________________________________________________
 FitInputs::FitInputs(
-       SuperkObservation * skobs, SuperkExpectation * skexp, FitParamList * fpar) :
+		     SuperkObservation * skobs, SuperkExpectation * skexp, FitParamList * fpar, string opt) :
 fObs(skobs), 
 fExp(skexp), 
-fFitParams(fpar)
+fFitParams(fpar),
+fOpt(opt)
 { 
 
 }
@@ -494,19 +495,31 @@ double FitInputs::BestFitChisquare(Option_t * opt)
 //____________________________________________________________________________ 
 // MINUIT fit functions 
 // 
+//____________________________________________________________________________ 
+double FitInputs::operator() (const std::vector<double>& x)
+{
+  // To be used with Minuit2
+
+  fFitParams->Sync(x);
+
+  return this->Chisquare(fOpt.c_str());
+
+}
+//____________________________________________________________________________ 
 void t2kana::FitFunc (
   Int_t &, Double_t *, Double_t &f, Double_t *par, Int_t /*iflag*/) 
 {
-      FitInputs * inputs = (FitInputs *) gMinuit->GetObjectFit();
+  // To be used with a TVirtualFitter
+  FitInputs * inputs = (FitInputs *) gMinuit->GetObjectFit();
 
-      // get fit params
-      FitParamList & fpar = inputs->FitParams(); 
+  // get fit params
+  FitParamList & fpar = inputs->FitParams(); 
 
-      // synchronize FitParamList with the paramerer array used by MINUIT
-      fpar.Sync(par);
+  // synchronize FitParamList with the paramerer array used by MINUIT
+  fpar.Sync(par);
 
-     // judge the agreement between the data and the current prediction
-     f = inputs->Chisquare("poisson"); 
+  // judge the agreement between the data and the current prediction
+  f = inputs->Chisquare("poisson"); 
       
 //      TString smpl = fpar.GetTheSample();
 //      // judge the agreement between the data and the current prediction

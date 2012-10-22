@@ -18,7 +18,7 @@
 #ifndef _t2kana_fit_inputs_h_
 #define _t2kana_fit_inputs_h_
 
-#include <TObject.h>
+#include <Minuit2/FCNBase.h>
 
 #include "FitParamList.h"
 #include "Conventions.h"
@@ -28,10 +28,10 @@ namespace t2kana {
 class SuperkObservation;
 class SuperkExpectation;
 
-class FitInputs: public TObject 
+class FitInputs: public ROOT::Minuit2::FCNBase, public TObject
 {
 public :
-  FitInputs(SuperkObservation * o, SuperkExpectation * e, FitParamList * p);
+  FitInputs(SuperkObservation * o, SuperkExpectation * e, FitParamList * p, string opt = "poisson");
  ~FitInputs();
 
   SuperkObservation & Observation(void);
@@ -43,6 +43,15 @@ public :
 
   // get chisquare for the best fit prediction
   double BestFitChisquare (Option_t * opt = "poisson");
+
+  // Set the chisquare type (e.g. poisson) to be used in the fit
+  void SetChisquareFitOption(Option_t * opt) { fOpt = opt; }
+
+  // Minuit2: Minimum chi2 fit (delta chi2 = 1 for 1 sigma error)
+  double Up() const { return 1.; }
+
+  // Minuit2: Returns Chi square
+  double operator() (const std::vector<double>& x);
       
 private:
 
@@ -51,6 +60,7 @@ private:
   SuperkObservation * fObs;
   SuperkExpectation * fExp;
   FitParamList *      fFitParams;
+  string              fOpt;
 
 ClassDef(FitInputs, 4)
 
