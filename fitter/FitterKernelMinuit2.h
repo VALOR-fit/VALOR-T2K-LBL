@@ -19,6 +19,7 @@
 
 #include <TString.h>
 #include <TObject.h>
+#include <TMatrixD.h>
 #include <Minuit2/MnUserCovariance.h>
 
 #include "Conventions.h"
@@ -57,8 +58,8 @@ protected:
    int         fNFitBins;         ///< number of bins in fit
    int         fNFreeFitParams;   ///< number of free params in fit
    TObjArray*  fResults;          ///<
+   TMatrixD*   fCovMtrx;          ///< covariance matrix of all free parameters in the fit
 
-   ROOT::Minuit2::MnUserCovariance fCovMtrx;      ///< covariance matrix of all parameters in the Fit
    ROOT::Minuit2::MnUserParameters fUserParams;   ///< store the user parameters
 };
 

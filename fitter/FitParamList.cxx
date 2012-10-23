@@ -178,7 +178,7 @@ void FitParamList::SetHesseErrors(vector<double> err)
 //________________________________________________________________________________________
 void FitParamList::SetMinosErrors(vector<double> plus, vector<double> minus)
 {
-  if(plus.size() != (unsigned int)this->Size()) {
+  if((int)plus.size() != this->GetNumberFreeParameters()) {
     cerr << "FitterKernelMinuit2/SetMinosErrors >> Error vector size: " << plus.size()
 	 << " is not the same size as the number of free parameters: "
 	 << this->GetNumberFreeParameters() << endl;
@@ -246,10 +246,8 @@ void FitParamList::SetTo(ROOT::Minuit2::MnUserParameters & params)
 {
   //if(!params) return;
   //params.Clear();
-  map<t2kana::conv::PhysParamId_t, int>::const_iterator iter = fIdMap.begin();
-  for ( ; iter != fIdMap.end(); ++iter) {
-    PhysParamId_t p = iter->first;
-    int iparam = iter->second;
+  for(int ip = 0; ip < fNParams; ip++) {
+    t2kana::conv::PhysParamId_t p = WhichParam(ip);
     //keep mixing angles in physical region
     if(util::IsMixingAngle(p)) {
       params.Add(this->Name(p).c_str(), this->InitValue(p), this->StepSize(p), 0, 1);
@@ -259,15 +257,20 @@ void FitParamList::SetTo(ROOT::Minuit2::MnUserParameters & params)
     else if(util::ArrIdx::Instance()->XSecSystIdx(p) >= 0) {
       if(kXSecSystHasWghtSplines[util::ArrIdx::Instance()->XSecSystIdx(p)])
 	params.Add(this->Name(p).c_str(), this->InitValue(p), this->StepSize(p), -SYST_NSIGMA, SYST_NSIGMA);
+      else
+	params.Add(this->Name(p).c_str(), this->InitValue(p), this->StepSize(p));
     }
+    //sk energy scale is also special
+    if(p == kNuisSuperkEnergyScale)
+	params.Add(this->Name(p).c_str(), this->InitValue(p), this->StepSize(p), -SYST_NSIGMA, SYST_NSIGMA);
     //everything else is free
     else {
       params.Add(this->Name(p).c_str(), this->InitValue(p), this->StepSize(p));
     }
     if(this->IsFixed(p)) {
-     params.Fix(iparam);
+     params.Fix(ip);
     }
-  }
+  }//loop over params
 }
 //________________________________________________________________________________________
 void FitParamList::Sync(std::vector<double> par)

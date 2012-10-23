@@ -2653,6 +2653,245 @@ t2kana::conv::PhysParamId_t
   return kPhypUndefined;
 }
 //____________________________________________________________________________
+t2kana::conv::PhysParamId_t t2kana::util::PhysParamIdFromLongString(string sh)
+{
+  if(sh == "sin^2(2*theta_23)"   ) return kPhypMixing23;
+  if(sh == "sin^2(theta_23)"     ) return kPhypMixing23;
+  if(sh == "sin^2(2*theta_13)"   ) return kPhypMixing13;
+  if(sh == "sin^2(theta_13)"     ) return kPhypMixing13;
+  if(sh == "sin^2(2*theta_12)"   ) return kPhypMixing12;
+  if(sh == "sin^2(theta_12)"     ) return kPhypMixing12;
+  if(sh == "delta_cp"            ) return kPhypDeltaCP;
+  if(sh == "|Dm^2_32|"           ) return kPhypDm23sq;
+  if(sh == "Dm^2_12"             ) return kPhypDm12sq;
+  if(sh == "alpha_decay"         ) return kPhypAlphaDecay;
+  if(sh == "sin^2(2*theta_decay)") return kPhypSinsq2ThetaDecay;
+  if(sh == "mu^2_decoh"          ) return kPhypMusqDecoh;
+  if(sh == "sin^2(2*theta_decoh)") return kPhypSinsq2ThetaDecoh;
+
+  if(sh == "SK energy scale"                ) return kNuisSuperkEnergyScale;
+  if(sh == "SK efficiency; 1Rmu; CCQE/Other") return kNuisSuperkEff1RmuCCQEoth;
+  if(sh == "SK efficiency; 1Rmu; CCQE/RC0"  ) return kNuisSuperkEff1RmuCCQErc0u;
+  if(sh == "SK efficiency; 1Rmu; CCQE/RC1"  ) return kNuisSuperkEff1RmuCCQErc1u;
+  if(sh == "SK efficiency; 1Rmu; CCQE/RC2"  ) return kNuisSuperkEff1RmuCCQErc2u;
+  if(sh == "SK efficiency; 1Rmu; CCnonQE"   ) return kNuisSuperkEff1RmuCCnonQE;
+  if(sh == "SK efficiency; 1Rmu; NC"        ) return kNuisSuperkEff1RmuNC;
+  if(sh == "SK efficiency; 1Rmu; nue CC"    ) return kNuisSuperkEff1RmuNueCC;
+
+  for(int ip = 0; ip < kNumOfFluxParamsInBANFFfit; ip++) {
+    string comp = Form("BANFF %2d; SK %s flux; %.1f - %.1f GeV",
+		ip, util::Pdg2String(kNuPdgCodeOfFluxParamInBANFFfit[ip]).c_str(), 
+		kEtrueRangeOfFluxParamInBANFFfit[ip][0],
+		kEtrueRangeOfFluxParamInBANFFfit[ip][1]);
+    if(sh == comp) return (PhysParamId_t)((int)kNuisBANFF00+ip);
+  }
+
+#if BANFF_BINS == 4
+  if(sh == "BANFF; 1 / (Ma QE)^2"               ) return kNuisBANFFMAQE;
+#else
+  if(sh == "BANFF; Ma QE"                       ) return kNuisBANFFMAQE;
+#endif
+  if(sh == "BANFF; Ma RES"                      ) return kNuisBANFFMARES;
+  if(sh == "BANFF; Norm; CC QE; 0.0 - 1.5 GeV"  ) return kNuisBANFFCCQEE0;
+#if BANFF_BINS >= 2
+  if(sh == "BANFF; Norm; CC QE; 1.5 - 3.5 GeV"  ) return kNuisBANFFCCQEE1;
+  if(sh == "BANFF; Norm; CC QE; 3.5 - 30.0 GeV" ) return kNuisBANFFCCQEE2;
+#endif
+  if(sh == "BANFF; Norm; CC 1pi; 0.0 - 2.5 GeV" ) return kNuisBANFFCC1piE0;
+#if BANFF_BINS >= 2
+  if(sh == "BANFF; Norm; CC 1pi; 2.5 - 30.0 GeV") return kNuisBANFFCC1piE1;
+#endif
+#if BANFF_BINS <= 2
+  if(sh == "BANFF; Norm; NC 1pi0"               ) return kNuisBANFFNC1pi0;
+#endif
+
+    //
+    // XSec params not correlated with flux
+    //
+
+ if(sh == "Fermi Momentum"     ) return kNuisXSecFermiMom;
+ if(sh == "Spectral Func"      ) return kNuisXSecSpecFunc;
+ if(sh == "W-shape"            ) return kNuisXSecWshape;
+ if(sh == "Shape; CC Oth"      ) return kNuisXSecShapeCCoth;
+ if(sh == "Pi-less delta decay") return kNuisXSecPiLessDelta;
+ if(sh == "Shape; CC1pi ENu"   ) return kNuisXSecENuShape;
+ if(sh == "Binding energy"     ) return kNuisXSecBindE;
+
+#if BANFF_BINS <= 1
+ if(sh == "Norm; CC QE Norm; 1.5 - 3.5 GeV") return kNuisXSecNormCCQEE1;
+ if(sh == "Norm; CC QE Norm; > 3.5 GeV"    ) return kNuisXSecNormCCQEE2;
+ if(sh == "Norm; CC 1pi; > 2.5 GeV"        ) return kNuisXSecNormCC1piE1;
+#endif
+ if(sh == "Norm; CC Coh"      ) return kNuisXSecNormCCcoh;
+ if(sh == "Norm; NC 1piC"     ) return kNuisXSecNormNC1piC;
+ if(sh == "Norm; NC Coh"      ) return kNuisXSecNormNCcoh;
+ if(sh == "Norm; NC Oth"      ) return kNuisXSecNormNCoth;
+ if(sh == "Norm; NuE To NuMu" ) return kNuisXSecNormNuEToNuMu;
+ if(sh == "Norm; AntiNu To Nu") return kNuisXSecNormAntiNuToNu;
+
+ for(int ip = 0; ip < kNumOfFSIParams; ip++) {
+   string nutypes = "";
+#if FSI_BINS == 2
+   if(ip < 3)
+	  nutypes = "numu";
+	else if(ip < 6)
+	  nutypes = "numubar";
+	else if(ip < 9)
+	  nutypes = "nue";
+	else if(ip < 12)
+	  nutypes = "nuebar";
+	else if(ip < 15)
+	  nutypes = "oscillated nue";
+#elif FSI_BINS == 1
+	if(ip < 3)
+	  nutypes = "numu/numubar CCQE";
+	else if(ip < 4)
+	  nutypes = "numu/numubar CCnQE";
+	else if(ip < 5)
+	  nutypes = "nue/nuebar/signue CC";
+        else if(ip < 6)
+	  nutypes = "all NC";
+#elif FSI_BINS == 3
+	if(ip < 1)
+	  nutypes = "numu/numubar CCQE";
+	else if(ip < 17)
+	  nutypes = "numu/numubar CCnQE";
+	else if(ip < 33)
+	  nutypes = "nue/nuebar/signue CC";
+	else if(ip < 49)
+	  nutypes = "all NC";
+#endif
+	string comp = Form("FSI/SI %2d; Ereco range %.1f - %.1f GeV; %s",ip,
+			   kFSIParamsErecoCut[ip][0],kFSIParamsErecoCut[ip][1],nutypes.c_str());     
+	if(sh == comp) return (PhysParamId_t)((int)kNuisFSI000+ip);
+ }
+
+    if(sh == "Uncorrelated BANFF 00") return kNuisUnBANFF00;
+    if(sh == "Uncorrelated BANFF 01") return kNuisUnBANFF01;
+    if(sh == "Uncorrelated BANFF 02") return kNuisUnBANFF02;
+    if(sh == "Uncorrelated BANFF 03") return kNuisUnBANFF03;
+    if(sh == "Uncorrelated BANFF 04") return kNuisUnBANFF04;
+    if(sh == "Uncorrelated BANFF 05") return kNuisUnBANFF05;
+    if(sh == "Uncorrelated BANFF 06") return kNuisUnBANFF06;
+    if(sh == "Uncorrelated BANFF 07") return kNuisUnBANFF07;
+    if(sh == "Uncorrelated BANFF 08") return kNuisUnBANFF08;
+    if(sh == "Uncorrelated BANFF 09") return kNuisUnBANFF09;
+    if(sh == "Uncorrelated BANFF 10") return kNuisUnBANFF10;
+    if(sh == "Uncorrelated BANFF 11") return kNuisUnBANFF11;
+    if(sh == "Uncorrelated BANFF 12") return kNuisUnBANFF12;
+    if(sh == "Uncorrelated BANFF 13") return kNuisUnBANFF13;
+    if(sh == "Uncorrelated BANFF 14") return kNuisUnBANFF14;
+    if(sh == "Uncorrelated BANFF 15") return kNuisUnBANFF15;
+    if(sh == "Uncorrelated BANFF 16") return kNuisUnBANFF16;
+    if(sh == "Uncorrelated BANFF 17") return kNuisUnBANFF17;
+    if(sh == "Uncorrelated BANFF 18") return kNuisUnBANFF18;
+    if(sh == "Uncorrelated BANFF 19") return kNuisUnBANFF19; 
+    if(sh == "Uncorrelated BANFF 20") return kNuisUnBANFF20; 
+    if(sh == "Uncorrelated BANFF 21") return kNuisUnBANFF21; 
+    if(sh == "Uncorrelated BANFF 22") return kNuisUnBANFF22;
+#if BANFF_BINS <= 2
+    if(sh == "Uncorrelated BANFF 23") return kNuisUnBANFF23;
+    if(sh == "Uncorrelated BANFF 24") return kNuisUnBANFF24;
+    if(sh == "Uncorrelated BANFF 25") return kNuisUnBANFF25;
+    if(sh == "Uncorrelated BANFF 26") return kNuisUnBANFF26;
+    if(sh == "Uncorrelated BANFF 27") return kNuisUnBANFF27;
+    if(sh == "Uncorrelated BANFF 28") return kNuisUnBANFF28;
+    if(sh == "Uncorrelated BANFF 29") return kNuisUnBANFF29;
+    if(sh == "Uncorrelated BANFF 30") return kNuisUnBANFF30;
+    if(sh == "Uncorrelated BANFF 31") return kNuisUnBANFF31;
+    if(sh == "Uncorrelated BANFF 32") return kNuisUnBANFF32;
+    if(sh == "Uncorrelated BANFF 33") return kNuisUnBANFF33;
+    if(sh == "Uncorrelated BANFF 34") return kNuisUnBANFF34;
+    if(sh == "Uncorrelated BANFF 35") return kNuisUnBANFF35;
+#if BANFF_BINS != 1
+    if(sh == "Uncorrelated BANFF 36") return kNuisUnBANFF36;
+    if(sh == "Uncorrelated BANFF 37") return kNuisUnBANFF37;
+    if(sh == "Uncorrelated BANFF 38") return kNuisUnBANFF38;
+#if BANFF_BINS == -1
+    if(sh == "Uncorrelated BANFF 39") return kNuisUnBANFF39;
+    if(sh == "Uncorrelated BANFF 40") return kNuisUnBANFF40;
+    if(sh == "Uncorrelated BANFF 41") return kNuisUnBANFF41;
+    if(sh == "Uncorrelated BANFF 42") return kNuisUnBANFF42;
+    if(sh == "Uncorrelated BANFF 43") return kNuisUnBANFF43;
+    if(sh == "Uncorrelated BANFF 44") return kNuisUnBANFF44;
+    if(sh == "Uncorrelated BANFF 45") return kNuisUnBANFF45;
+    if(sh == "Uncorrelated BANFF 46") return kNuisUnBANFF46;
+    if(sh == "Uncorrelated BANFF 47") return kNuisUnBANFF47;
+    if(sh == "Uncorrelated BANFF 48") return kNuisUnBANFF48;
+    if(sh == "Uncorrelated BANFF 49") return kNuisUnBANFF49;
+    if(sh == "Uncorrelated BANFF 50") return kNuisUnBANFF50;
+    if(sh == "Uncorrelated BANFF 51") return kNuisUnBANFF51;
+    if(sh == "Uncorrelated BANFF 52") return kNuisUnBANFF52;
+    if(sh == "Uncorrelated BANFF 53") return kNuisUnBANFF53;
+#endif
+#endif
+#endif
+
+    if(sh == "EigenDecomposition BANFF 00") return kNuisEDBANFF00;
+    if(sh == "EigenDecomposition BANFF 01") return kNuisEDBANFF01;
+    if(sh == "EigenDecomposition BANFF 02") return kNuisEDBANFF02;
+    if(sh == "EigenDecomposition BANFF 03") return kNuisEDBANFF03;
+    if(sh == "EigenDecomposition BANFF 04") return kNuisEDBANFF04;
+    if(sh == "EigenDecomposition BANFF 05") return kNuisEDBANFF05;
+    if(sh == "EigenDecomposition BANFF 06") return kNuisEDBANFF06;
+    if(sh == "EigenDecomposition BANFF 07") return kNuisEDBANFF07;
+    if(sh == "EigenDecomposition BANFF 08") return kNuisEDBANFF08;
+    if(sh == "EigenDecomposition BANFF 09") return kNuisEDBANFF09;
+    if(sh == "EigenDecomposition BANFF 10") return kNuisEDBANFF10;
+    if(sh == "EigenDecomposition BANFF 11") return kNuisEDBANFF11;
+    if(sh == "EigenDecomposition BANFF 12") return kNuisEDBANFF12;
+    if(sh == "EigenDecomposition BANFF 13") return kNuisEDBANFF13;
+    if(sh == "EigenDecomposition BANFF 14") return kNuisEDBANFF14;
+    if(sh == "EigenDecomposition BANFF 15") return kNuisEDBANFF15;
+    if(sh == "EigenDecomposition BANFF 16") return kNuisEDBANFF16;
+    if(sh == "EigenDecomposition BANFF 17") return kNuisEDBANFF17;
+    if(sh == "EigenDecomposition BANFF 18") return kNuisEDBANFF18;
+    if(sh == "EigenDecomposition BANFF 19") return kNuisEDBANFF19; 
+    if(sh == "EigenDecomposition BANFF 20") return kNuisEDBANFF20; 
+    if(sh == "EigenDecomposition BANFF 21") return kNuisEDBANFF21; 
+    if(sh == "EigenDecomposition BANFF 22") return kNuisEDBANFF22;
+#if BANFF_BINS <= 2
+    if(sh == "EigenDecomposition BANFF 23") return kNuisEDBANFF23;
+    if(sh == "EigenDecomposition BANFF 24") return kNuisEDBANFF24;
+    if(sh == "EigenDecomposition BANFF 25") return kNuisEDBANFF25;
+    if(sh == "EigenDecomposition BANFF 26") return kNuisEDBANFF26;
+    if(sh == "EigenDecomposition BANFF 27") return kNuisEDBANFF27;
+    if(sh == "EigenDecomposition BANFF 28") return kNuisEDBANFF28;
+    if(sh == "EigenDecomposition BANFF 29") return kNuisEDBANFF29;
+    if(sh == "EigenDecomposition BANFF 30") return kNuisEDBANFF30;
+    if(sh == "EigenDecomposition BANFF 31") return kNuisEDBANFF31;
+    if(sh == "EigenDecomposition BANFF 32") return kNuisEDBANFF32;
+    if(sh == "EigenDecomposition BANFF 33") return kNuisEDBANFF33;
+    if(sh == "EigenDecomposition BANFF 34") return kNuisEDBANFF34;
+    if(sh == "EigenDecomposition BANFF 35") return kNuisEDBANFF35;
+#if BANFF_BINS != 1
+    if(sh == "EigenDecomposition BANFF 36") return kNuisEDBANFF36;
+    if(sh == "EigenDecomposition BANFF 37") return kNuisEDBANFF37;
+    if(sh == "EigenDecomposition BANFF 38") return kNuisEDBANFF38;
+#if BANFF_BINS == -1
+    if(sh == "EigenDecomposition BANFF 39") return kNuisEDBANFF39;
+    if(sh == "EigenDecomposition BANFF 40") return kNuisEDBANFF40;
+    if(sh == "EigenDecomposition BANFF 41") return kNuisEDBANFF41;
+    if(sh == "EigenDecomposition BANFF 42") return kNuisEDBANFF42;
+    if(sh == "EigenDecomposition BANFF 43") return kNuisEDBANFF43;
+    if(sh == "EigenDecomposition BANFF 44") return kNuisEDBANFF44;
+    if(sh == "EigenDecomposition BANFF 45") return kNuisEDBANFF45;
+    if(sh == "EigenDecomposition BANFF 46") return kNuisEDBANFF46;
+    if(sh == "EigenDecomposition BANFF 47") return kNuisEDBANFF47;
+    if(sh == "EigenDecomposition BANFF 48") return kNuisEDBANFF48;
+    if(sh == "EigenDecomposition BANFF 49") return kNuisEDBANFF49;
+    if(sh == "EigenDecomposition BANFF 50") return kNuisEDBANFF50;
+    if(sh == "EigenDecomposition BANFF 51") return kNuisEDBANFF51;
+    if(sh == "EigenDecomposition BANFF 52") return kNuisEDBANFF52;
+    if(sh == "EigenDecomposition BANFF 53") return kNuisEDBANFF53;
+#endif
+#endif
+#endif
+
+  cout << sh << " not yet supported in util::PhysParamIdFromLongString()" << endl;
+  return kPhypUndefined;
+}
+//____________________________________________________________________________
 t2kana::conv::SKMCTemplateType_t   
   t2kana::util::SKMCTemplateTypeFromString(string sh) 
 {

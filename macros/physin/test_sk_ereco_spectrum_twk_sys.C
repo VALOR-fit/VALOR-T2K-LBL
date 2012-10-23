@@ -415,14 +415,14 @@ void test_sk_ereco_spectrum_twk_sys
 	skexp.GetBANFF()->Tweak(true,&v,2);
       }
 
-      //all BANFF uncorrelated
+      //all BANFF eigen decomposition
       if(mode == 12) {
 	TVectorD v(conv::kNumOfParamsInBANFFfit);
 	v = skexp.GetBANFF()->CurrentEigenDecompValues();
 	TVectorD ev(conv::kNumOfParamsInBANFFfit);
 	ev = skexp.GetBANFF()->EigenDecompEigenValues();
 	for(int ib = 0; ib < conv::kNumOfParamsInBANFFfit; ib++) {
-	  v[ib] += ev[ib] * tweak;
+	  v[ib] += sqrt(ev[ib]) * tweak;
 	}
 	skexp.GetBANFF()->Tweak(true,&v,3);
       }
