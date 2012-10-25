@@ -69,7 +69,7 @@ bool plot_99CL_prob = true
   const int nProbValues = 5;
   double probValues[nProbValues] = {0.1, 0.3, 0.5, 0.7, 0.9};
 
-  double threshold = 1.0;
+  double threshold = 0.99999;
 
   double mixing23_min = 0.85;
   double mixing23_max = 0.95;
@@ -134,10 +134,12 @@ bool plot_99CL_prob = true
 
   for(int dm23sq_bin=0; dm23sq_bin<dm23sq_nbins; dm23sq_bin++)
     {
+    //dm23sq_tag might need to be changed to fit the names of the directories
     dm23sq_tag = (int)((dm23sq_min + dm23sq_bin * dm23sq_step) * 1.001E5);
       
     for(int mixing23_bin=0; mixing23_bin<mixing23_nbins; mixing23_bin++)
       {
+      //mixing_tag might need to be changed to fit the names of the directories
       mixing23_tag = (int)((mixing23_min + mixing23_bin * mixing23_step) * 100.1);  
 
       TChain *chain = new TChain("nfitnt");
@@ -179,6 +181,8 @@ bool plot_99CL_prob = true
         CLFracFound[k] = false;
         }
 
+      //find fraction of experiments whose best-fit points are at sinsq(2*theta23) < 1
+      //to be precise, it is the fraction whose best-fit points are at sinsq(2*theta23) <= threshold
       for(int i=0; i<nexpts; i++)
         {
         bestfitMix23Iter = bestfitMix23.begin() + i;
@@ -187,7 +191,8 @@ bool plot_99CL_prob = true
           bestfitFraction = (float)i / nexpts;
           bestfitFracFound = true;
 	  }
-
+       
+      //find fraction of experiments whose confidence regions are completely contained within sinsq(2*theta23) <= 1
       for(int k=0; k<nCL; k++)
         {
         deltaChisqIter[k] = deltaChisq[k].begin() + i;
@@ -223,7 +228,8 @@ bool plot_99CL_prob = true
 
       }//end of for(int mixing23_bin=0; mixing23_bin<mixing23_nbins; mixing23_bin++)
 
-
+    //interpolate probabilities of best-fit points between grid points in sinsq(2*theta23)
+    //only loop to mixing23_nbins-1 so that interpolation can be made between the penultimate and last grid points
     for(int p=0; p<(mixing23_nbins-1); p++)
       {
       for(int prob=0; prob<nProbValues; prob++)
@@ -236,7 +242,7 @@ bool plot_99CL_prob = true
         }//end of for(int prob=0; prob<nProbValues; prob++)
       }//end of for(int p=0; p<(mixing23_nbins-1); p++)  
 
-      
+    //interpolate probabilities of confidence regions between grid points in sinsq(2*theta23)  
     for(int k=0; k<nCL; k++)
       {
       for(int p=0; p<(mixing23_nbins-1); p++)
@@ -261,6 +267,7 @@ bool plot_99CL_prob = true
       TCanvas *ProbBestfit = new TCanvas("ProbBestfit", "ProbBestfit", 800, 600);
       FormatCanvas(ProbBestfit, mixing23_min, mixing23_max, dm23sq_min, dm23sq_max);
       TLegend *lProbBestfit = new TLegend(0.2, 0.7, 0.45, 0.85);
+      //only plot this graph if interpolation was possible at all values of dm23sq in the range of jobs
       if(interpolatedBestfitPointsFound[0] == dm23sq_nbins)
         {
           TGraph *Prob_Bestfit_10 = new TGraph(dm23sq_nbins, interpolatedBestfitProb[0], dm23sqPoints);
@@ -510,13 +517,13 @@ void FormatCanvas(TCanvas *canvas, double mixing23_min, double mixing23_max, dou
   gPad->SetTopMargin(0.12);
 
   //dummyGraph is made to draw the axes                                                                                                                                                          
+  //this is done since it is not known which of the probability graphs will be drawn
   double dummyX[2] = {30.0, 31.0};
   double dummyY[2] = {30.0, 31.0};
   TGraph *dummyGraph = new TGraph(2, dummyX, dummyY);
   dummyGraph->SetTitle("");
   dummyGraph->GetXaxis()->SetTitle("sin^{2}(2#theta_{23})");
   dummyGraph->GetYaxis()->SetTitle("|#Deltam_{32}^{2}| (eV^{2})");
-  //dummyGraph->GetXaxis()->SetLimits(0.95*mixing23_min, 1.05*mixing23_max);                                                                                                                  
   dummyGraph->GetXaxis()->SetLimits(0.85, 1.01);
   dummyGraph->GetYaxis()->SetRangeUser(0.95*dm23sq_min, 1.05*dm23sq_max);
   dummyGraph->Draw("AL");
