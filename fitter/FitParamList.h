@@ -52,7 +52,6 @@ public:
    double HesseError     (t2kana::conv::PhysParamId_t p) const { return fHesseError   [this->Id(p)];   }
    double PlusError      (t2kana::conv::PhysParamId_t p) const { return fPlusError    [this->Id(p)];   }
    double MinusError     (t2kana::conv::PhysParamId_t p) const { return fMinusError   [this->Id(p)];   }
-   double ParabolicError (t2kana::conv::PhysParamId_t p) const { return fParaError    [this->Id(p)];   }
 
    // Add a parameter
    bool AddParam (
@@ -77,7 +76,7 @@ public:
 
    // Set the errors
    // used with FitterKernel
-   void SetErrors(double * errplus, double * errminus, double * errpara);
+   void SetErrors(double * errplus, double * errminus, double * errmigrad);
    // used with FitterKernelMinuit2
    void SetMigradErrors(std::vector<double> err);
    void SetHesseErrors (std::vector<double> err);
@@ -142,7 +141,6 @@ public:
    conv::PhysHypothesis_t PhysicsHypothesis(void) const;
 
    //Are the errors set?
-   bool MinuitErrorsSet (void) const { return fMinuitErrorsSet; }
    bool MigradErrorsSet (void) const { return fMigradErrorsSet; }
    bool HesseErrorsSet  (void) const { return fHesseErrorsSet;  }
    bool MinosErrorsSet  (void) const { return fMinosErrorsSet;  }
@@ -201,9 +199,7 @@ private:
    double * fHesseError;   //[fNParams]
    double * fPlusError;    //[fNParams]
    double * fMinusError;   //[fNParams]
-   double * fParaError;    //[fNParams]
 
-   bool fMinuitErrorsSet;
    bool fMigradErrorsSet;
    bool fHesseErrorsSet;
    bool fMinosErrorsSet;

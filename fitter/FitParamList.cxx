@@ -123,13 +123,16 @@ void FitParamList::CopyBestFitToCurrValues(void)
   }
 }
 //________________________________________________________________________________________
-void FitParamList::SetErrors(double * errplus, double * errminus, double * errpara)
+void FitParamList::SetErrors(double * errplus, double * errminus, double * errmigrad)
 {
   for(int ip = 0; ip < fNParams; ip++) {
-     fPlusError [ip] = errplus [ip];
-     fMinusError[ip] = errminus[ip];
-     fParaError [ip] = errpara [ip];
+     fPlusError  [ip] = errplus  [ip];
+     fMinusError [ip] = errminus [ip];
+     fMigradError[ip] = errmigrad[ip];
+     if(errplus[ip] > kASmallNum || errminus[ip] > kASmallNum)
+       fMinosErrorsSet = true;
   }
+  fMigradErrorsSet = true;
 }
 //________________________________________________________________________________________
 void FitParamList::SetMigradErrors(vector<double> err)
@@ -152,6 +155,7 @@ void FitParamList::SetMigradErrors(vector<double> err)
       ifree++;
     }
   }
+  fMigradErrorsSet = true;
 }
 //________________________________________________________________________________________
 void FitParamList::SetHesseErrors(vector<double> err)
@@ -174,6 +178,7 @@ void FitParamList::SetHesseErrors(vector<double> err)
       ifree++;
     }
   }
+  fHesseErrorsSet = true;
 }
 //________________________________________________________________________________________
 void FitParamList::SetMinosErrors(vector<double> plus, vector<double> minus)
@@ -203,6 +208,7 @@ void FitParamList::SetMinosErrors(vector<double> plus, vector<double> minus)
       ifree++;
     }
   }
+  fMinosErrorsSet = true;
 }
 //________________________________________________________________________________________
 void FitParamList::FixParameter(PhysParamId_t p)
@@ -1041,10 +1047,13 @@ void FitParamList::Init(int nparams)
    fHesseError   = new double[fNParams];
    fPlusError    = new double[fNParams];
    fMinusError   = new double[fNParams];
-   fParaError    = new double[fNParams];
 
    fShowCurrValuesOnly    = false;
    fShowBestFitValuesOnly = false;
+
+   fMigradErrorsSet = false;
+   fHesseErrorsSet  = false;
+   fMinosErrorsSet  = false;
 }
 //________________________________________________________________________________________
 void FitParamList::CleanUp(void)
@@ -1063,7 +1072,6 @@ void FitParamList::CleanUp(void)
    delete [] fHesseError;
    delete [] fPlusError;
    delete [] fMinusError;
-   delete [] fParaError;
 
    fParListName = "";
 }
