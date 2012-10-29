@@ -69,7 +69,7 @@ public:
 
    // Interface method for fitters. The fit parameter list can contain info for both the 
    // physics hypothesis and the systematic variations.
-   void Generate (const FitParamList & fp);
+   void Generate (const FitParamList & fp, bool all_banff_fit);
 
    // Access calculated SK reconstructed energy spectrum for each sample/mode
    TH1D* CurrPredictedErecoSpectrum (t2kana::conv::SuperkSample_t s) const;
@@ -97,7 +97,7 @@ private:
    void CleanUp (void);
 
    // Use the nuisance param values in the input FitParamList to tweak the pdfs.
-   void SetNuisanceParams (const FitParamList & fp);
+   void SetNuisanceParams (const FitParamList & fp, bool all_banff_fit);
 
    bool             fIsConfigured;           ///< Is this object properly configured?
    SuperkDetector * fSuperkDetector;         ///< SuperK detector info

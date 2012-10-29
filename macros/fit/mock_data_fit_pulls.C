@@ -687,6 +687,7 @@ void mock_data_fit_pulls(
   }
 
   // Book histograms
+  TH1D * h_fitstat  = new TH1D("h_fitstat","h_fitstat",10,-5,5);
   TH1D * h_nsk_nom  = new TH1D("h_nsk_nom","h_nsk_nom",150,0,150);
   TH1D * h_nsk_bf   = new TH1D("h_nsk_bf","h_nsk_bf",150,0,150);
   TH1D * h_dchisq   = new TH1D("h_dchisq","h_dchisq",300,-5,25);
@@ -858,6 +859,7 @@ void mock_data_fit_pulls(
   for(int i = 0; i < ch.GetEntries(); i++) {
     ch.GetEntry(i);
     //ignore failed fits!
+    h_fitstat->Fill(fitstatus);
     if(fitstatus != 3) continue;
     //if(TMath::Abs(bestfit_mixing23 - 1.) < 1E-3) continue;
 
@@ -1346,6 +1348,7 @@ void mock_data_fit_pulls(
   }
 
   // Draw
+  new TCanvas(); h_fitstat->Draw();
   new TCanvas(); h_nsk_nom->Draw();
   new TCanvas(); h_nsk_bf->Draw();
   new TCanvas(); h_dchisq->Draw();

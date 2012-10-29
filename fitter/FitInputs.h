@@ -64,6 +64,7 @@ private:
   FitParamList *      fFitParams;
   string              fOpt;
   double              fErrDef;
+  bool                fAllBANFFFit;
 
 ClassDef(FitInputs, 4)
 

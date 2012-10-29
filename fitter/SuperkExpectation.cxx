@@ -97,7 +97,7 @@ void SuperkExpectation::Generate(const PhysHypothesis & ph)
 
 }
 //________________________________________________________________________________________
-void SuperkExpectation::Generate(const FitParamList & fp)
+void SuperkExpectation::Generate(const FitParamList & fp, bool all_banff_fit)
 {
 // SuperkExpectation interface method for fitters.
 // Calculate dN^{exp}_{SuperK}(E_{reco}) / dE_{reco} for the input E_{reco} and 
@@ -106,7 +106,7 @@ void SuperkExpectation::Generate(const FitParamList & fp)
 
   // set values of nuisance parameters 
   // (if any nuisance parameter is included in the fit)
-  this->SetNuisanceParams(fp);
+  this->SetNuisanceParams(fp, all_banff_fit);
 
   // extract the values of params driving the oscillation, decoherence or decay model
   PhysHypothesis ph(fp);
@@ -486,7 +486,7 @@ void SuperkExpectation::TweakAllSystematics(void)
   cout << "Exp >> Generating random variations of all systematic params." << endl;
 #endif
 
-  this->TweakAllEigenDecompBANFFSystematics();
+  this->TweakAllBANFFSystematics();
   this->TweakAllFSISystematics();
   this->TweakAllUncorrelatedXSecSystematics();
   this->TweakAllSKDetectorSystematics();
@@ -700,7 +700,7 @@ void SuperkExpectation::CleanUp(void)
   }
 }
 //________________________________________________________________________________________
-void SuperkExpectation::SetNuisanceParams(const FitParamList & fp)
+void SuperkExpectation::SetNuisanceParams(const FitParamList & fp, bool all_banff_fit)
 {
    //this->ResetSystematicVariations();
 
@@ -739,24 +739,51 @@ void SuperkExpectation::SetNuisanceParams(const FitParamList & fp)
 
    const int nbanff = conv::kNumOfParamsInBANFFfit;
    // BANFF params included in the fit param list?
-   bool need_to_tweak_banff = false;
    TVectorD twkv(nbanff);
-   for(int ip = 0; ip < nbanff; ip++) {
-     PhysParamId_t p = PhysParamId_t ((int) kNuisBANFF00 + ip);
-     bool incl_banff = fp.Exists(p);
-     // If BANFF param included, use current value stored in fit param list
-     // to tweak the BANFF object
-     if(incl_banff) {
-       twkv[ip] = fp.CurrValue(p);
-       need_to_tweak_banff = true;
+   if(all_banff_fit) {
+     for(int ip = 0; ip < nbanff; ip++) {
+       PhysParamId_t p = PhysParamId_t ((int) kNuisBANFF00 + ip);
+       bool incl_banff = fp.Exists(p);
+       // If BANFF param included, use current value stored in fit param list
+       // to tweak the BANFF object
+       if(incl_banff)
+	 twkv[ip] = fp.CurrValue(p);
+       // Otherwise, use whatever is already stored in the BANFF object
+       else
+	 twkv[ip] = this->GetBANFF()->CurrentValue(p);
      }
-     // Otherwise, use whatever is already stored in the BANFF object
-     else {
-       twkv[ip] = this->GetBANFF()->CurrentValue(p);
+   }//all_banff_fit
+   else{
+     const TMatrixD & cov = this->GetBANFF()->CovMatrix();
+     // get the value of things we're actually fitting
+     PhysParamId_t p_maqe = kNuisBANFFMAQE;
+     int ip_maqe = util::ArrIdx::Instance()->BANFFSystIdx(p_maqe);
+     bool incl_maqe = fp.Exists(p_maqe);
+     if(incl_maqe)
+       twkv[ip_maqe] = fp.CurrValue(p_maqe);
+     else
+       twkv[ip_maqe] = this->GetBANFF()->CurrentValue(p_maqe);
+     double sigma_maqe = (this->GetBANFF()->CurrentValue(p_maqe) - this->GetBANFF()->BestFitValue(p_maqe)) / cov[ip_maqe][ip_maqe];
+     PhysParamId_t p_ccqe0 = kNuisBANFFCCQEE0;
+     int ip_ccqe0 = util::ArrIdx::Instance()->BANFFSystIdx(p_ccqe0);
+     bool incl_ccqe0 = fp.Exists(p_ccqe0);
+     if(incl_ccqe0)
+       twkv[ip_ccqe0] = fp.CurrValue(p_ccqe0);
+     else
+       twkv[ip_ccqe0] = this->GetBANFF()->CurrentValue(p_ccqe0);
+     double sigma_ccqe0 = (this->GetBANFF()->CurrentValue(p_ccqe0) - this->GetBANFF()->BestFitValue(p_ccqe0)) / cov[ip_ccqe0][ip_ccqe0];
+     // now, tweak the other parameters according to the correlations between them and the fitted parameters
+     for(int ip = 0; ip < nbanff; ip++) {
+       PhysParamId_t p = PhysParamId_t ((int) kNuisBANFF00 + ip);
+       if(p == kNuisBANFFMAQE || p == kNuisBANFFCCQEE0)
+	 continue;
+       twkv[ip] = this->GetBANFF()->BestFitValue(p);
+       twkv[ip] += sigma_maqe  * cov[ip_maqe] [ip];
+       twkv[ip] += sigma_ccqe0 * cov[ip_ccqe0][ip];
      }
-   }
-   if(need_to_tweak_banff)
-     this->GetBANFF()->Tweak(true,&twkv,1);
+   }//!all_banff_fit
+   //And finally apply the tweak
+   this->GetBANFF()->Tweak(true,&twkv,1);
 
    // 
    // Uncorrelated BANFF systematics

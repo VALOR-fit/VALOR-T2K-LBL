@@ -19,8 +19,9 @@
 #define __show_fit_steps__ 
 #define __show_fit_steps_debug__
 #define __show_fit_cpu_time__
-#define __get_hesse_errors__
+//#define __get_hesse_errors__
 //#define __get_minos_errors__
+//#define __give_fitter_covariance_matrix__
 
 #include <cassert> 
 #include <cstdlib> 
@@ -140,8 +141,6 @@ void FitterKernelMinuit2::Init(FitInputs * fit_inputs, Option_t * option)
 #ifdef __show_fit_init_info__
   cout << "FitterKernelMinuit2/Init >> Constructing covariance matrix " << endl;
 #endif
-
-  this->ConstructCovMatrix();
 }
 //____________________________________________________________________________ 
 void FitterKernelMinuit2::ConstructCovMatrix(void)
@@ -243,6 +242,8 @@ void FitterKernelMinuit2::ConstructCovMatrix(void)
     ipf++;
   }//end loop over FitParamList
 
+  if(fCovMtrx)
+    delete fCovMtrx;
   fCovMtrx = new TMatrixD(total_covariance);
 
 #ifdef __show_fit_cov_matrix_debug__
@@ -295,9 +296,10 @@ bool FitterKernelMinuit2::RunOnce(void)
   // Currently allowed values are 0 (low), 1 (default), and 2 (high).
   ROOT::Minuit2::MnStrategy strategy(1);
 
-
+#ifdef __give_fitter_covariance_matrix__
   // We have a TMatrixD covariance matrix, need to translate it into
   // the Minuit2::MnUserCovariance
+  this->ConstructCovMatrix();
   ROOT::Minuit2::MnUserCovariance input_cov(nfreeparams);
   TMatrixD covmtrx(*fCovMtrx);
   for(unsigned int i = 0; i < nfreeparams; i++) {
@@ -309,14 +311,21 @@ bool FitterKernelMinuit2::RunOnce(void)
   cout << "FitterKernelMinuit2/RunOnce >> Input covariance matrix:" << endl;
   cout << input_cov << endl;
 #endif
+#else
+  fCovMtrx = new TMatrixD(); // need to do this to make the destructor work. confusing...
+#endif
 
   // Get the fitter & pass it the inputs
 #ifdef __show_fit_steps__
   cout << "FitterKernelMinuit2/RunOnce >> Getting the fitter & giving it inputs (data & pdf)..." << endl;
 #endif
 
+#ifdef __give_fitter_covariance_matrix__
   ROOT::Minuit2::MnMigrad migrad(*fFitInputs, fUserParams, input_cov);
-  
+#else
+  ROOT::Minuit2::MnMigrad migrad(*fFitInputs, fUserParams);
+#endif
+
   // Run MINUIT's minimization step
 #ifdef __show_fit_steps__
   cout << "FitterKernelMinuit2/RunOnce >> Running MIGRAD..." << endl;

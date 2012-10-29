@@ -833,7 +833,7 @@ void test_n_mock_data_fits_with_syst_minuit2
 	skexp->TweakAllSystematics();
 	break;
       case 2:
-	skexp->TweakAllUncorrelatedBANFFSystematics();
+	skexp->TweakAllBANFFSystematics();
 	break;
       case 3:
 	skexp->TweakAllUncorrelatedXSecSystematics();
@@ -942,7 +942,7 @@ void test_n_mock_data_fits_with_syst_minuit2
       // generate mock data using the current PDF (incl. systematic variations) 
       // + statistical fluctuations if requested (Poisson fluctuation in each bin)
       cout << "- Generating toy-MC..." << endl;
-      skobs->CreateMockData(*skexp, *fparm, stat_fluctuations);
+      skobs->CreateMockData(*skexp, PhysHypothesis(*fparm), stat_fluctuations);
       // reset all systematics so that the PDF used in the fitter is the nominal one
       cout << "- Reseting all systematic params in pdf..." << endl;
       skexp->ResetSystematicVariations();
@@ -950,8 +950,9 @@ void test_n_mock_data_fits_with_syst_minuit2
     } else {       
       // generate mock data using the current PDF (without systematic variations) 
       // with statistical fluctuations if requested (Poisson fluctuation in each bin)
+      skexp->ResetSystematicVariations(); //make sure there are no systematic variations
       cout << "- Generating toy-MC..." << endl;
-      skobs->CreateMockData(*skexp, *fparm, stat_fluctuations); 
+      skobs->CreateMockData(*skexp, PhysHypothesis(*fparm), stat_fluctuations); 
     }
 
     // Get nominal number of events

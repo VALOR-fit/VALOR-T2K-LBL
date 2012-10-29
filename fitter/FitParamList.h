@@ -135,7 +135,6 @@ public:
 
    // Get the name used in NamedParameterList
    string GetParListName (void) const { return fParListName; }
-   void   SetParListName (string s)   { fParListName = s; }
 
    // Work-out the physics hypothesis
    conv::PhysHypothesis_t PhysicsHypothesis(void) const;
@@ -150,6 +149,7 @@ private:
    void CleanUp (void);
    void Init    (int nparams);
    int  Id      (t2kana::conv::PhysParamId_t p) const; // PhysParamId_t --> array slot
+   void SetParListName (string s)   { fParListName = s; }
 
    // Various functions called by NamedParameterList(name)
    static FitParamList * NuOsc3FlavourFit                 (void);

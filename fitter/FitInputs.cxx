@@ -53,7 +53,10 @@ fFitParams(fpar),
 fOpt(opt),
 fErrDef(errdef)
 { 
-
+  if(fFitParams->GetParListName() == "nuosc3f_numudisapp_fix4+nuisanceselection")
+    fAllBANFFFit = false;
+  else
+    fAllBANFFFit = true;
 }
 //________________________________________________________________________________________
 FitInputs::~FitInputs()  
@@ -106,7 +109,7 @@ double FitInputs::Chisquare(Option_t * option, conv::SuperkSample_t s0)
       // If we only want the nue appearance analysis only, then skip
       if ((s == conv::kSKsFCFV1RingMuLike) && (oscana != conv::kAnaNuEAppOnly))
       {
-	  this->Expectation().Generate(this->FitParams());
+  	  this->Expectation().Generate(this->FitParams(), fAllBANFFFit);
 	  TH1D * obs_ereco_spectrum = this->Observation().ErecoSpectrum(s);
 	  TH1D * exp_ereco_spectrum = this->Expectation().CurrPredictedErecoSpectrum(s);
 	  int nbins = exp_ereco_spectrum->GetNbinsX();
@@ -138,7 +141,7 @@ double FitInputs::Chisquare(Option_t * option, conv::SuperkSample_t s0)
       else 
       if ((s == conv::kSKsFCFV1RingELike) && (oscana != conv::kAnaNuMuDisappOnly) )
       {
-	    this->Expectation().Generate(this->FitParams());
+	    this->Expectation().Generate(this->FitParams(), fAllBANFFFit);
 	    // Note: Counting experiment for the time-being
 	    double nobs = this->Observation().ErecoSpectrum(s)->Integral();
 	    double nexp = this->Expectation().CurrPredictedErecoSpectrum(s)->Integral();
@@ -514,7 +517,7 @@ double FitInputs::operator() (const std::vector<double>& x) const
 
   //Generate the Ereco spectra
   SuperkSample_t s = conv::kSKsFCFV1RingMuLike;
-  fExp->Generate(*fFitParams);
+  fExp->Generate(*fFitParams, fAllBANFFFit);
   TH1D * obs_ereco_spectrum = fObs->ErecoSpectrum(s);
   TH1D * exp_ereco_spectrum = fExp->CurrPredictedErecoSpectrum(s);
   int nbins = exp_ereco_spectrum->GetNbinsX();
