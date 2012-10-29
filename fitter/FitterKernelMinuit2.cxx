@@ -407,7 +407,7 @@ bool FitterKernelMinuit2::RunOnce(void)
 #ifdef __show_fit_steps_debug__
   cout << cov_hesse << endl;
 #endif
-  for(unsigned int ip = 0; ip < nfreeparams; ip++) {
+  for(unsigned int ip = 0; ip < nfreeparams && ip < cov_hesse.Nrow(); ip++) {
     err_hesse_cov.push_back(sqrt(cov_hesse(ip,ip)));
 #ifdef __show_fit_steps_debug__
     cout << "FitterKernelMinuit2/RunOnce >> Hesse covariance for par#" << ip << " = " << bestfit_free[ip] << " +/- " << err_hesse_cov[ip] << endl;
