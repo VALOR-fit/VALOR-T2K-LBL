@@ -966,9 +966,9 @@ void test_n_mock_data_fits_with_syst_minuit2
     true_chisq = fit_inputs->Chisquare();
 
     // Print-out true params
-    fparm->ShowOnlyCurrValuesInNextPrint();
-    cout << "- True oscillation params (below) yield chisq = " << true_chisq
-	 << *fparm;
+    //fparm->ShowOnlyCurrValuesInNextPrint();
+    //cout << "- True oscillation params (below) yield chisq = " << true_chisq
+    //	   << *fparm;
 
     // Do the fit
     fparm->ResetCurrToInitValues(); // reset osc params

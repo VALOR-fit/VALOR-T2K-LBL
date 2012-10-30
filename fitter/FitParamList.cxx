@@ -259,16 +259,16 @@ void FitParamList::SetTo(ROOT::Minuit2::MnUserParameters & params)
       params.Add(this->Name(p).c_str(), this->InitValue(p), this->StepSize(p), 0, 1);
     }
     //stop splines going too far from nominal
-    //(normalisations will eventually make poisson term grow too, not necessaryily true to splines)
+    //(normalisations will eventually make poisson term grow too, not necessarily true for splines)
     else if(util::ArrIdx::Instance()->XSecSystIdx(p) >= 0) {
       if(kXSecSystHasWghtSplines[util::ArrIdx::Instance()->XSecSystIdx(p)])
-	params.Add(this->Name(p).c_str(), this->InitValue(p), this->StepSize(p), -SYST_NSIGMA, SYST_NSIGMA);
+	params.Add(this->Name(p).c_str(), this->InitValue(p), this->StepSize(p), this->MinValue(p), this->MaxValue(p));
       else
 	params.Add(this->Name(p).c_str(), this->InitValue(p), this->StepSize(p));
     }
     //sk energy scale is also special
     if(p == kNuisSuperkEnergyScale)
-	params.Add(this->Name(p).c_str(), this->InitValue(p), this->StepSize(p), -SYST_NSIGMA, SYST_NSIGMA);
+	params.Add(this->Name(p).c_str(), this->InitValue(p), this->StepSize(p), this->MinValue(p), this->MaxValue(p));
     //everything else is free
     else {
       params.Add(this->Name(p).c_str(), this->InitValue(p), this->StepSize(p));
