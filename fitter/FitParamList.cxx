@@ -258,6 +258,7 @@ void FitParamList::SetTo(ROOT::Minuit2::MnUserParameters & params)
     if(util::IsMixingAngle(p)) {
       params.Add(this->Name(p).c_str(), this->InitValue(p), this->StepSize(p), 0, 1);
     }
+    /*
     //stop splines going too far from nominal
     //(normalisations will eventually make poisson term grow too, not necessarily true for splines)
     else if(util::ArrIdx::Instance()->XSecSystIdx(p) >= 0) {
@@ -269,10 +270,17 @@ void FitParamList::SetTo(ROOT::Minuit2::MnUserParameters & params)
     //sk energy scale is also special
     if(p == kNuisSuperkEnergyScale)
 	params.Add(this->Name(p).c_str(), this->InitValue(p), this->StepSize(p), this->MinValue(p), this->MaxValue(p));
+    */
+    // confine everything else
+    else {
+      params.Add(this->Name(p).c_str(), this->InitValue(p), this->StepSize(p), this->MinValue(p), this->MaxValue(p));
+    }
+    /*
     //everything else is free
     else {
       params.Add(this->Name(p).c_str(), this->InitValue(p), this->StepSize(p));
     }
+    */
     if(this->IsFixed(p)) {
      params.Fix(ip);
     }
