@@ -4,12 +4,19 @@
 //#define SYST_FLUCT_MODE 0 //no fluctuations
 #define SYST_FLUCT_MODE 1 //uncorrelated fluctuations
 //#define SYST_FLUCT_MODE 2 //correlated fluctuations
+//#define DONT_FIT_ALL 0 // fit all systematics
+#define DONT_FIT_ALL 1 // fit all but 1 systematic
+//#define DONT_FIT_ALL 2 // fit all but 2 systematics
+#define FIX_NOT_FIT // fix the systematics not fit to their bestfit. otherwise, tweak according to correlations
+#define CORRELATED_CHISQ // use the correlation matrix to define the chisq. otherwise, use uncorrelated chisq
+//#define FLUCT_NOT_FIT // don't fluctuate the parameters that aren't fit
 
 #include <iostream>
 #include <cassert>
 
 #include "TFile.h"
 #include "TH1.h"
+#include "TF1.h"
 #include "TCanvas.h"
 #include "TSystem.h"
 #include "TRandom3.h"
@@ -28,10 +35,24 @@ const double kxmax   = 10.;
 const double ka1err  = 0.02;
 const double ka2err  = 0.06;
 const double ka3err  = 0.10;
-const double ka4err  = 0.50;
+const double ka4err  = 0.01;
+const double ka12cor = -0.015;
+const double ka13cor = -0.002;
+const double ka14cor = -0.006;
+const double ka23cor = 0.008;
+const double ka24cor = 0.001;
+const double ka34cor = 0.01;
 const double klevel  = 20;
 const double kslope  = 6;
 const double kbump   = 4;
+const double true_a1   = 1.0;
+const double true_a2   = 1.0;
+const double true_a3   = 1.0;
+const double true_a4   = 1.0;
+const double true_mean = 4.0;
+const double true_dip  = 0.8;
+TMatrixD cov(4,4);
+TMatrixD covInv(4,4);
 
 using namespace std;
 
@@ -89,10 +110,32 @@ void fitfunc(Int_t &, Double_t *, Double_t &f, Double_t *par, Int_t iflag)
   // get fit params 
   double mean = par[0];
   double dip  = par[1];
-  double a1   = par[2];
-  double a2   = par[3];
-  double a3   = par[4];
-  double a4   = par[5];
+  double a4   = par[2];
+  double a3   = par[3];
+
+#if DONT_FIT_ALL == 2
+#ifdef FIX_NOT_FIT
+  double a2 = true_a2;
+#else
+  double a2 = true_a2 + (((a3 - true_a3) / cov[2][2]) * cov[1][2]) + (((a4 - true_a4) / cov[3][3]) * cov[1][3]);
+#endif
+#elif DONT_FIX_ALL <= 1
+  double a2 = par[4];
+#endif
+
+#if DONT_FIT_ALL >= 1
+#ifdef FIX_NOT_FIT
+  double a1 = true_a1;
+#else
+#if DONT_FIT_ALL == 1
+  double a1 = true_a1 + (((a2 - true_a2) / cov[1][1]) * cov[0][1]) + (((a3 - true_a3) / cov[2][2]) * cov[0][2]) + (((a4 - true_a4) / cov[3][3]) * cov[0][3]);
+#elif DONT_FIT_ALL == 2
+  double a1 = true_a1 + (((a3 - true_a3) / cov[2][2]) * cov[0][2]) + (((a4 - true_a4) / cov[3][3]) * cov[0][3]);
+#endif
+#endif
+#elif DONT_FIX_ALL == 0
+  double a1 = par[5];
+#endif
 
 #ifdef __print_fit_func_debug_mesgs__
   cout << "Minimization function / Trying parameters: mean = " 
@@ -124,11 +167,38 @@ double chisq(TH1D * data, double mean, double dip, double a1, double a2, double 
   }
 
   // penalty term
-  double chisq_penalty = 
-    TMath::Power(1-a1,2.) / TMath::Power(ka1err,2.) +
-    TMath::Power(1-a2,2.) / TMath::Power(ka2err,2.) +
-    TMath::Power(1-a3,2.) / TMath::Power(ka3err,2.) +
-    TMath::Power(1-a4,2.) / TMath::Power(ka4err,2.);
+#ifdef CORRELATED_CHISQ
+  //Vector with deviations of current values from  best fit values
+  const int np = 4;
+  TMatrixD dev  (1,np); //vector of one column in matrix form for multiplication
+  TMatrixD devT (np,1); //vector of one row in matrix form for multiplication
+  dev [0][0] = a1-true_a1;
+  devT[0][0] = a1-true_a1;
+  dev [0][1] = a2-true_a2;
+  devT[1][0] = a2-true_a2;
+  dev [0][2] = a3-true_a3;
+  devT[2][0] = a3-true_a3;
+  dev [0][3] = a4-true_a4;
+  devT[3][0] = a4-true_a4;
+  TMatrixD chisqpenalty =  dev * covInv * devT;
+  double chisq_penalty = chisqpenalty[0][0]; //The final matrix is 1x1, just a number
+  /*
+  dev.Print();
+  covInv.Print();
+  devT.Print();
+  chisqpenalty.Print();
+  */
+#else
+  double chisq_penalty = 0;
+#if DONT_FIT_ALL == 0
+  chisq_penalty += TMath::Power(true_a1-a1,2.) / TMath::Power(ka1err,2.);
+#endif
+#if DONT_FIT_ALL <= 1
+  chisq_penalty += TMath::Power(true_a2-a2,2.) / TMath::Power(ka2err,2.);
+#endif
+  chisq_penalty += TMath::Power(true_a3-a3,2.) / TMath::Power(ka3err,2.);
+  chisq_penalty += TMath::Power(true_a4-a4,2.) / TMath::Power(ka4err,2.);
+#endif
 
   chisq += chisq_penalty;
 
@@ -192,34 +262,29 @@ int fit(TH1D * data,
   
   mean = fitter->GetParameter(0);
   dip  = fitter->GetParameter(1);
-  a1   = fitter->GetParameter(2);
-  a2   = fitter->GetParameter(3);
-  a3   = fitter->GetParameter(4);
-  a4   = fitter->GetParameter(5);
+  a4   = fitter->GetParameter(2);
+  a3   = fitter->GetParameter(3);
+#if DONT_FIT_ALL <= 1
+  a2   = fitter->GetParameter(4);
+#else
+  a2   = true_a2;
+#endif
+#if DONT_FIT_ALL == 0
+  a1   = fitter->GetParameter(5);
+#else
+  a1   = true_a1;
+#endif
 
   mean_err = fitter->GetParError(0);
   dip_err  = fitter->GetParError(1);
-  a1_err   = fitter->GetParError(2);
-  a2_err   = fitter->GetParError(3);
-  a3_err   = fitter->GetParError(4);
-  a4_err   = fitter->GetParError(5);
-
-  /*
-  const int nparams = 6;
-  double errplus [nparams] = {0.};
-  double errminus[nparams] = {0.};
-  double errpara [nparams] = {0.};
-  for(int ip = 0; ip < nparams; ip++) {
-    double glob_corr; // dummy vars
-    fitter->GetErrors(ip,errplus[ip],errminus[ip],errpara[ip],glob_corr);
-  }
-  mean_err = errpara[0];
-  dip_err  = errpara[1];
-  a1_err   = errpara[2];
-  a2_err   = errpara[3];
-  a3_err   = errpara[4];
-  a4_err   = errpara[5];
-  */
+  a4_err   = fitter->GetParError(2);
+  a3_err   = fitter->GetParError(3);
+#if DONT_FIT_ALL <= 1
+  a2_err   = fitter->GetParError(4);
+#endif
+#if DONT_FIT_ALL == 0
+  a1_err   = fitter->GetParError(5);
+#endif
 
   cout << "Done fitting! Error matrix status = " << status_code << endl;
 
@@ -245,10 +310,14 @@ void init_fitter(void)
   fitter->Clear();
   fitter->SetParameter(0, "mean", 5.00, 0.01, 0.00, 10.00 );
   fitter->SetParameter(1, "dip",  0.80, 0.01, 0.30,  1.00 );
-  fitter->SetParameter(2, "a1",   1.00, 0.01, 0.00,  2.00 );
-  fitter->SetParameter(3, "a2",   1.00, 0.01, 0.00,  2.00 );
-  fitter->SetParameter(4, "a3",   1.00, 0.01, 0.00,  2.00 );
-  fitter->SetParameter(5, "a4",   1.00, 0.01, 0.00,  2.00 );
+  fitter->SetParameter(2, "a4",   true_a1, 0.01, 0.00,  2.00 );
+  fitter->SetParameter(3, "a3",   true_a2, 0.01, 0.00,  2.00 );
+#if DONT_FIT_ALL <= 1
+  fitter->SetParameter(4, "a2",   true_a3, 0.01, 0.00,  2.00 );
+#endif
+#if DONT_FIT_ALL == 0
+  fitter->SetParameter(5, "a1",   true_a4, 0.01, 0.00,  2.00 );
+#endif
 
   // set minimization function
   //cout << "Setting functions" << endl;
@@ -376,14 +445,46 @@ TVectorD CholeskyGenerateCorrelatedParams (
 //.............................................................................
 int main(void)
 {
+
+#ifndef SYST_FLUCT_MODE
+  return 1;
+#endif
+#ifndef DONT_FIT_ALL
+  return 1;
+#endif
+
   cout << "Start test..." << endl;
 
-  double true_mean = 4.0;
-  double true_dip  = 0.8;
-  double true_a1   = 1.0;
-  double true_a2   = 1.0;
-  double true_a3   = 1.0;
-  double true_a4   = 1.0;
+  cov.Zero();
+  cov[0][0] = pow(ka1err,2);
+  cov[1][1] = pow(ka2err,2);
+  cov[2][2] = pow(ka3err,2);
+  cov[3][3] = pow(ka4err,2);
+  cov[0][1] = ka1err * ka2err * ka12cor;
+  cov[1][0] = ka1err * ka2err * ka12cor;
+  cov[0][2] = ka1err * ka3err * ka13cor;
+  cov[2][0] = ka1err * ka3err * ka13cor;
+  cov[0][3] = ka1err * ka4err * ka14cor;
+  cov[3][0] = ka1err * ka4err * ka14cor;
+  cov[1][2] = ka1err * ka2err * ka23cor;
+  cov[2][1] = ka1err * ka2err * ka23cor;
+  cov[1][3] = ka1err * ka2err * ka24cor;
+  cov[3][1] = ka1err * ka2err * ka24cor;
+  cov[2][3] = ka1err * ka2err * ka23cor;
+  cov[3][2] = ka1err * ka2err * ka23cor;
+  cov.Print();
+
+  double det;
+  covInv = cov;
+  covInv.Invert(&det);
+  covInv.Print();
+
+  TMatrixD unit = covInv * cov;
+  unit.Print();
+
+  TMatrixD covL = CholeskyDecomposition(cov);
+  assert(covL.GetNrows() == 4);
+  covL.Print();
 
 #if SYST_FLUCT_MODE == 2
   TVectorD bf(4);
@@ -391,41 +492,24 @@ int main(void)
   bf[1] = true_a2;
   bf[2] = true_a3;
   bf[3] = true_a4;
-
-  TMatrixD cov(4,4);
-  cov[0][0] = ka1err;
-  cov[1][1] = ka2err;
-  cov[2][2] = ka3err;
-  cov[3][3] = ka4err;
-  cov[0][1] = 0.01;
-  cov[1][0] = 0.01;
-  cov[0][2] = 0.001;
-  cov[2][0] = 0.001;
-  cov[0][3] = 0.01;
-  cov[3][0] = 0.01;
-  cov[1][2] = 0.015;
-  cov[2][1] = 0.015;
-  cov[1][3] = 0.01;
-  cov[3][1] = 0.01;
-  cov[2][3] = 0.0001;
-  cov[3][2] = 0.0001;
-  TMatrixD covL = CholeskyDecomposition(cov);
-  cov.Print();
-  covL.Print();
 #endif
 
   TFile f("./out.root","recreate");
   TNtuple * bestfit_params = new TNtuple("bestfit_params","","status:m:d:a1:a2:a3:a4:chisq:chisqp:merr:derr:a1err:a2err:a3err:a4err");
-  TH1D * pull_mean = new TH1D("pull_mean","pull_mean",100,-5,5);
-  TH1D * pull_dip  = new TH1D("pull_dip", "pull_dip", 100,-5,5);
-  TH1D * pull_a1   = new TH1D("pull_a1",  "pull_a1",  100,-5,5);
-  TH1D * pull_a2   = new TH1D("pull_a2",  "pull_a2",  100,-5,5);
-  TH1D * pull_a3   = new TH1D("pull_a3",  "pull_a3",  100,-5,5);
-  TH1D * pull_a4   = new TH1D("pull_a4",  "pull_a4",  100,-5,5);
-  TH1D * pullalt_a1   = new TH1D("pullalt_a1",  "pullalt_a1",  100,-5,5);
-  TH1D * pullalt_a2   = new TH1D("pullalt_a2",  "pullalt_a2",  100,-5,5);
-  TH1D * pullalt_a3   = new TH1D("pullalt_a3",  "pullalt_a3",  100,-5,5);
-  TH1D * pullalt_a4   = new TH1D("pullalt_a4",  "pullalt_a4",  100,-5,5);
+  TH1D * pull_mean = new TH1D("pull_mean","pull_mean",200,-5,5);
+  TH1D * pull_dip  = new TH1D("pull_dip", "pull_dip", 200,-5,5);
+  TH1D * pull_a1   = new TH1D("pull_a1",  "pull_a1",  200,-5,5);
+  TH1D * pull_a2   = new TH1D("pull_a2",  "pull_a2",  200,-5,5);
+  TH1D * pull_a3   = new TH1D("pull_a3",  "pull_a3",  200,-5,5);
+  TH1D * pull_a4   = new TH1D("pull_a4",  "pull_a4",  200,-5,5);
+  TH1D * pullalt_a1   = new TH1D("pullalt_a1",  "pullalt_a1",  200,-5,5);
+  TH1D * pullalt_a2   = new TH1D("pullalt_a2",  "pullalt_a2",  200,-5,5);
+  TH1D * pullalt_a3   = new TH1D("pullalt_a3",  "pullalt_a3",  200,-5,5);
+  TH1D * pullalt_a4   = new TH1D("pullalt_a4",  "pullalt_a4",  200,-5,5);
+  TH1D * throw_a1 = new TH1D("throw_a1", "throw_a1", 1000,-5,5);
+  TH1D * throw_a2 = new TH1D("throw_a2", "throw_a2", 1000,-5,5);
+  TH1D * throw_a3 = new TH1D("throw_a3", "throw_a3", 1000,-5,5);
+  TH1D * throw_a4 = new TH1D("throw_a4", "throw_a4", 1000,-5,5);
 
   cout << "Initialize fitter..." << endl;
   init_fitter();
@@ -453,6 +537,17 @@ int main(void)
      double input_a3 = twp[2];
      double input_a4 = twp[3];
 #endif
+
+     //reset not tweaked parameters to true
+#ifndef FLUCT_NOT_FIT
+#if DONT_FIT_ALL >= 1
+     input_a1 = true_a1;
+#if DONT_FIT_ALL >= 2
+     input_a2 = true_a2;
+#endif
+#endif
+#endif
+
      TH1D * data = mock_data(input_mean, input_dip, input_a1, input_a2, input_a3, input_a4);
      set_fit_data(data);
 
@@ -499,6 +594,11 @@ int main(void)
      data   ->Write(Form("data_%d",   i));
      bestfit->Write(Form("bestfit_%d",i));
 
+     throw_a1->Fill(input_a1);
+     throw_a2->Fill(input_a2);
+     throw_a3->Fill(input_a3);
+     throw_a4->Fill(input_a4);
+
      pull_mean->Fill((bestfit_mean - input_mean) / (error_mean));
      pull_dip-> Fill((bestfit_dip  - input_dip)  / (error_dip) );
      /*
@@ -537,19 +637,56 @@ int main(void)
      }
   }//loop over toys
 
-  TF1 *fit = 0;
   gStyle->SetOptFit(1);
 
   TCanvas * c_mean = new TCanvas(); pull_mean->Draw(); pull_mean->Fit("gaus"); c_mean->SaveAs("mean.png");
   TCanvas * c_dip  = new TCanvas(); pull_dip ->Draw(); pull_dip ->Fit("gaus"); c_dip ->SaveAs("dip.png");
-  TCanvas * c_a1   = new TCanvas(); pull_a1  ->Draw(); pull_a1  ->Fit("gaus"); c_a1  ->SaveAs("a1.png");
-  TCanvas * c_a2   = new TCanvas(); pull_a2  ->Draw(); pull_a2  ->Fit("gaus"); c_a2  ->SaveAs("a2.png");
-  TCanvas * c_a3   = new TCanvas(); pull_a3  ->Draw(); pull_a3  ->Fit("gaus"); c_a3  ->SaveAs("a3.png");
-  TCanvas * c_a4   = new TCanvas(); pull_a4  ->Draw(); pull_a4  ->Fit("gaus"); c_a4  ->SaveAs("a4.png");
+  //TCanvas * c_a1   = new TCanvas(); pull_a1  ->Draw(); pull_a1  ->Fit("gaus"); c_a1  ->SaveAs("a1.png");
+  //TCanvas * c_a2   = new TCanvas(); pull_a2  ->Draw(); pull_a2  ->Fit("gaus"); c_a2  ->SaveAs("a2.png");
+  //TCanvas * c_a3   = new TCanvas(); pull_a3  ->Draw(); pull_a3  ->Fit("gaus"); c_a3  ->SaveAs("a3.png");
+  //TCanvas * c_a4   = new TCanvas(); pull_a4  ->Draw(); pull_a4  ->Fit("gaus"); c_a4  ->SaveAs("a4.png");
   TCanvas * calt_a1   = new TCanvas(); pullalt_a1  ->Draw(); pullalt_a1  ->Fit("gaus"); calt_a1  ->SaveAs("a1alt.png");
   TCanvas * calt_a2   = new TCanvas(); pullalt_a2  ->Draw(); pullalt_a2  ->Fit("gaus"); calt_a2  ->SaveAs("a2alt.png");
   TCanvas * calt_a3   = new TCanvas(); pullalt_a3  ->Draw(); pullalt_a3  ->Fit("gaus"); calt_a3  ->SaveAs("a3alt.png");
   TCanvas * calt_a4   = new TCanvas(); pullalt_a4  ->Draw(); pullalt_a4  ->Fit("gaus"); calt_a4  ->SaveAs("a4alt.png");
+  TCanvas * cthrow_a1   = new TCanvas(); throw_a1  ->Draw(); throw_a1  ->Fit("gaus"); cthrow_a1  ->SaveAs("throwa1.png");
+  TCanvas * cthrow_a2   = new TCanvas(); throw_a2  ->Draw(); throw_a2  ->Fit("gaus"); cthrow_a2  ->SaveAs("throwa2.png");
+  TCanvas * cthrow_a3   = new TCanvas(); throw_a3  ->Draw(); throw_a3  ->Fit("gaus"); cthrow_a3  ->SaveAs("throwa3.png");
+  TCanvas * cthrow_a4   = new TCanvas(); throw_a4  ->Draw(); throw_a4  ->Fit("gaus"); cthrow_a4  ->SaveAs("throwa4.png");
+
+  TH1D * meansummary = new TH1D("meansum","meansum",6,0,6); 
+  TH1D * sigmasummary = new TH1D("sigmasum","sigmasum",6,0,6);
+  TF1 *fit = 0;
+  int ifit = 1;
+  fit = pull_mean->GetFunction("gaus");
+  meansummary->SetBinContent(ifit, fit->GetParameter(1)); meansummary->SetBinError(ifit, fit->GetParError(1));
+  sigmasummary->SetBinContent(ifit, fit->GetParameter(2)); sigmasummary->SetBinError(ifit, fit->GetParError(2)); ifit++;
+  fit = pull_dip->GetFunction("gaus");
+  meansummary->SetBinContent(ifit, fit->GetParameter(1)); meansummary->SetBinError(ifit, fit->GetParError(1));
+  sigmasummary->SetBinContent(ifit, fit->GetParameter(2)); sigmasummary->SetBinError(ifit, fit->GetParError(2)); ifit++;
+#if DONT_FIT_ALL == 0
+  fit = pullalt_a1->GetFunction("gaus");
+  meansummary->SetBinContent(ifit, fit->GetParameter(1)); meansummary->SetBinError(ifit, fit->GetParError(1));
+  sigmasummary->SetBinContent(ifit, fit->GetParameter(2)); sigmasummary->SetBinError(ifit, fit->GetParError(2)); ifit++;
+#else
+  meansummary->SetBinContent(ifit, 0);
+  sigmasummary->SetBinContent(ifit, 1); ifit++;
+#endif
+#if DONT_FIT_ALL <= 1
+  fit = pullalt_a2->GetFunction("gaus");
+  meansummary->SetBinContent(ifit, fit->GetParameter(1)); meansummary->SetBinError(ifit, fit->GetParError(1));
+  sigmasummary->SetBinContent(ifit, fit->GetParameter(2)); sigmasummary->SetBinError(ifit, fit->GetParError(2)); ifit++;
+#else
+  meansummary->SetBinContent(ifit, 0);
+  sigmasummary->SetBinContent(ifit, 1); ifit++;
+#endif
+  fit = pullalt_a3->GetFunction("gaus");
+  meansummary->SetBinContent(ifit, fit->GetParameter(1)); meansummary->SetBinError(ifit, fit->GetParError(1));
+  sigmasummary->SetBinContent(ifit, fit->GetParameter(2)); sigmasummary->SetBinError(ifit, fit->GetParError(2)); ifit++;
+  fit = pullalt_a4->GetFunction("gaus");
+  meansummary->SetBinContent(ifit, fit->GetParameter(1)); meansummary->SetBinError(ifit, fit->GetParError(1));
+  sigmasummary->SetBinContent(ifit, fit->GetParameter(2)); sigmasummary->SetBinError(ifit, fit->GetParError(2)); ifit++;
+  TCanvas * csum = new TCanvas(); csum->Divide(1,2); csum->cd(1); meansummary->Draw(); csum->cd(2); sigmasummary->Draw(); csum->SaveAs("1.png");
 
   bestfit_params->Write();
   pull_mean->Write();
@@ -562,6 +699,12 @@ int main(void)
   pullalt_a2  ->Write();
   pullalt_a3  ->Write();
   pullalt_a4  ->Write();
+  throw_a1  ->Write();
+  throw_a2  ->Write();
+  throw_a3  ->Write();
+  throw_a4  ->Write();
+  meansummary->Write();
+  sigmasummary->Write();
   f.Close();
 
   cout << "Done" << endl;

@@ -30,7 +30,7 @@
 void test_n_mock_data_fits_with_syst_minuit2
 (
  const char * tag                     = "toyexptfitswithsyst",          /* tag for output file */
- int          syst_mode               = 0,                              /* which systematics to tweak? 0 none. 1 all. 2 BANFF. 3 Unconstrained XSec. 4 SK detector. 5 FSI. */
+ int          syst_mode               = 0,                              /* which systematics to tweak? 0 none. 1 all. 2 BANFF. 3 Unconstrained XSec. 4 SK detector. 5 FSI. 6 Selected. */
  int          run                     = 0,                              /* run number */
  int          nexperiments            = 1,                              /* number of toy MC experiment fits */
  double       input_mixing12          = -99,                            /* 12-mixing, sinq2theta or sinsqtheta depending on user choice, if -999 then randomize */
@@ -98,7 +98,7 @@ void test_n_mock_data_fits_with_syst_minuit2
     syst_modestr = "FSI";
     break;
   case 6:
-    syst_modestr = "Fitted";
+    syst_modestr = "Selected";
     break;
   default:
     cerr << "Invalid systematic mode " << syst_mode << ". Exiting" << endl;
@@ -847,9 +847,11 @@ void test_n_mock_data_fits_with_syst_minuit2
       case 6:
 	TRandom3 rand(0);
 	skexp->GetNuXSec()->TweakSpecFunc      (rand.Gaus(0.,1.));
+	skexp->GetNuXSec()->TweakBindE         (rand.Gaus(0.,1.));
 	skexp->GetNuXSec()->TweakPiLessDelta   (rand.Gaus(0.,1.));
 	skexp->GetSuperkDetector()->TweakEfficiency1RmuCCnonQE    (rand.Gaus(0.,1.));
-	skexp->GetSuperkDetector()->TweakEfficiency1RmuNC         (rand.Gaus(0.,1.));  
+	skexp->GetSuperkDetector()->TweakEfficiency1RmuNC         (rand.Gaus(0.,1.));
+	skexp->GetSuperkDetector()->TweakEnergyScale              (rand.Gaus(0.,1.));
 	TVectorD twkv(skexp->GetBANFF()->BestFitValues());
 	TVectorD cov (skexp->GetBANFF()->CovMtrx());
 	PhysParamId_t p = conv::kNuisBANFFMAQE;

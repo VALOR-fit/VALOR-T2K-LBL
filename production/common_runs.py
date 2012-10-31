@@ -60,6 +60,8 @@ if runmode == "PULLS":
    tag = "pull"
    if fitparamlist == "nuosc3f_numudisapp_fix4":
       syst = 0
+   elif fitparamlist == "nuosc3f_numudisapp_fix4+nuisanceselection":
+      syst = 6
    else:
       syst = 1
    if fitparamlist == "nuosc3f_numudisapp_fix4" or fitparamlist == "nuosc3f_numudisapp_fix4+nuisanceselection" or fitparamlist == "nuosc3f_numudisapp_fix4+nuisanceunbanffselection" or fitparamlist == "nuosc3f_numudisapp_fix4+nuisanceselectionnobanff":
