@@ -350,15 +350,16 @@ bool FitterKernelMinuit2::RunOnce(void)
 #ifdef __show_fit_steps__
   cout << "FitterKernelMinuit2/RunOnce >> Getting fit success status..." << endl;
 #endif
-  //Check if fit succeeded
-  GetStatusCode(bestfit);
-  if(fStatusCode == 9) {
-    cout << "FitterKernelMinuit2/RunOnce >> Fit failed. Returning..." << endl;
-    return false;
-  }
 
   // Done! Copy current --> best-fit values
   fFitInputs->FitParams().CopyCurrToBestFitValues();
+
+  //Check if fit succeeded
+  GetStatusCode(bestfit);
+  if(fStatusCode == 9) {
+    cerr << "FitterKernelMinuit2/RunOnce >> Fit failed. Returning..." << endl;
+    return false;
+  }
 
   //get the best fit vector, for use in this function
   std::vector<ROOT::Minuit2::MinuitParameter> bestfit_params = bestfit.UserParameters().Parameters();
@@ -476,7 +477,7 @@ bool FitterKernelMinuit2::RunOnce(void)
 }
 //____________________________________________________________________________ 
 void FitterKernelMinuit2::GetStatusCode(ROOT::Minuit2::FunctionMinimum bestfit) {
-  if( !bestfit.IsValid()) {
+  if(!bestfit.IsValid()) {
 #ifdef __show_fit_steps__
     cout << "FitterKernelMinuit2/GetStatusCode >> Minuit failed." << endl;
 #endif
