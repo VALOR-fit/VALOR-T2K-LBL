@@ -347,6 +347,16 @@ bool FitterKernelMinuit2::RunOnce(void)
   cout << "FitterKernelMinuit2/RunOnce >> MIGRAD minimisation complete" << endl;
 #endif
 
+#ifdef __show_fit_steps__
+  cout << "FitterKernelMinuit2/RunOnce >> Getting fit success status..." << endl;
+#endif
+  //Check if fit succeeded
+  GetStatusCode(bestfit);
+  if(fStatusCode == 9) {
+    cout << "FitterKernelMinuit2/RunOnce >> Fit failed. Returning..." << endl;
+    return false;
+  }
+
   // Done! Copy current --> best-fit values
   fFitInputs->FitParams().CopyCurrToBestFitValues();
 
@@ -360,12 +370,6 @@ bool FitterKernelMinuit2::RunOnce(void)
     cout << "FitterKernelMinuit2/RunOnce >> Bestfit for par#" << ip << " = " << bestfit_params[ip].Value() << endl;
 #endif
   }
-
-#ifdef __show_fit_steps__
-  cout << "FitterKernelMinuit2/RunOnce >> Getting fit success status..." << endl;
-#endif
-  //Check if fit succeeded
-  GetStatusCode(bestfit);
 
   // Get errors
 #ifdef __show_fit_steps__
@@ -406,26 +410,31 @@ bool FitterKernelMinuit2::RunOnce(void)
   //Check if fit succeeded
   GetStatusCode(bestfit);
 
-  // hesse covariance
-  ROOT::Minuit2::MnUserCovariance cov_hesse(bestfit.UserCovariance());
-#ifdef __show_fit_steps_debug__
-  cout << cov_hesse << endl;
-#endif
-  for(unsigned int ip = 0; ip < nfreeparams && ip < cov_hesse.Nrow(); ip++) {
-    err_hesse_cov.push_back(sqrt(cov_hesse(ip,ip)));
-#ifdef __show_fit_steps_debug__
-    cout << "FitterKernelMinuit2/RunOnce >> Hesse covariance for par#" << ip << " = " << bestfit_free[ip] << " +/- " << err_hesse_cov[ip] << endl;
-#endif
-  }
+  //if status code is 9, the bestfit is invalid (so there won't be a user covariance
+  if(fStatusCode != 9) {
 
-  // hesse error
-  err_hesse_err =  bestfit.UserParameters().Errors(); 
-  fFitInputs->FitParams().SetHesseErrors(err_hesse_err);
-  for(unsigned int ip = 0; ip < nparams; ip++) {
+    // hesse covariance
+    ROOT::Minuit2::MnUserCovariance cov_hesse(bestfit.UserCovariance());
 #ifdef __show_fit_steps_debug__
-    cout << "FitterKernelMinuit2/RunOnce >> Hesse error for par#" << ip << " = " << bestfit_free[ip] << " +/- " << err_hesse_err[ip] << endl;
+    cout << cov_hesse << endl;
 #endif
-  }
+    for(unsigned int ip = 0; ip < nfreeparams && ip < cov_hesse.Nrow(); ip++) {
+      err_hesse_cov.push_back(sqrt(cov_hesse(ip,ip)));
+#ifdef __show_fit_steps_debug__
+      cout << "FitterKernelMinuit2/RunOnce >> Hesse covariance for par#" << ip << " = " << bestfit_free[ip] << " +/- " << err_hesse_cov[ip] << endl;
+#endif
+    }
+
+    // hesse error
+    err_hesse_err =  bestfit.UserParameters().Errors(); 
+    fFitInputs->FitParams().SetHesseErrors(err_hesse_err);
+    for(unsigned int ip = 0; ip < nparams; ip++) {
+#ifdef __show_fit_steps_debug__
+      cout << "FitterKernelMinuit2/RunOnce >> Hesse error for par#" << ip << " = " << bestfit_free[ip] << " +/- " << err_hesse_err[ip] << endl;
+#endif
+    }
+
+  }//fStatusCode=!=9
 #endif
 
 #ifdef __get_minos_errors__
