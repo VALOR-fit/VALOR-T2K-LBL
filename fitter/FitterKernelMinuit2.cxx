@@ -377,16 +377,18 @@ bool FitterKernelMinuit2::RunOnce(void)
 #endif
 
   // migrad covariance
-  ROOT::Minuit2::MnUserCovariance cov_migrad(bestfit.UserCovariance());
+  if(bestfit.HasCovariance()) {
+    ROOT::Minuit2::MnUserCovariance cov_migrad(bestfit.UserCovariance());
 #ifdef __show_fit_steps_debug__
-  cout << cov_migrad << endl;
+    cout << cov_migrad << endl;
 #endif
-  for(unsigned int ip = 0; ip < nfreeparams; ip++) {
-    double tmp = sqrt(cov_migrad(ip,ip));
-    err_migrad_cov.push_back(tmp);
+    for(unsigned int ip = 0; ip < nfreeparams; ip++) {
+      double tmp = sqrt(cov_migrad(ip,ip));
+      err_migrad_cov.push_back(tmp);
 #ifdef __show_fit_steps_debug__
-    cout << "FitterKernelMinuit2/RunOnce >> Migrad covariance for par#" << ip << " = " << bestfit_free[ip] << " +/- " << err_migrad_cov[ip] << endl;
+      cout << "FitterKernelMinuit2/RunOnce >> Migrad covariance for par#" << ip << " = " << bestfit_free[ip] << " +/- " << err_migrad_cov[ip] << endl;
 #endif
+    }
   }
 
   // migrad error
@@ -410,10 +412,8 @@ bool FitterKernelMinuit2::RunOnce(void)
   //Check if fit succeeded
   GetStatusCode(bestfit);
 
-  //if status code is 9, the bestfit is invalid (so there won't be a user covariance
-  if(fStatusCode != 9) {
-
-    // hesse covariance
+  // hesse covariance
+  if(bestfit.HasCovariance()) {
     ROOT::Minuit2::MnUserCovariance cov_hesse(bestfit.UserCovariance());
 #ifdef __show_fit_steps_debug__
     cout << cov_hesse << endl;
@@ -424,17 +424,16 @@ bool FitterKernelMinuit2::RunOnce(void)
       cout << "FitterKernelMinuit2/RunOnce >> Hesse covariance for par#" << ip << " = " << bestfit_free[ip] << " +/- " << err_hesse_cov[ip] << endl;
 #endif
     }
+  }
 
-    // hesse error
-    err_hesse_err =  bestfit.UserParameters().Errors(); 
-    fFitInputs->FitParams().SetHesseErrors(err_hesse_err);
-    for(unsigned int ip = 0; ip < nparams; ip++) {
+  // hesse error
+  err_hesse_err =  bestfit.UserParameters().Errors(); 
+  fFitInputs->FitParams().SetHesseErrors(err_hesse_err);
+  for(unsigned int ip = 0; ip < nparams; ip++) {
 #ifdef __show_fit_steps_debug__
-      cout << "FitterKernelMinuit2/RunOnce >> Hesse error for par#" << ip << " = " << bestfit_free[ip] << " +/- " << err_hesse_err[ip] << endl;
+    cout << "FitterKernelMinuit2/RunOnce >> Hesse error for par#" << ip << " = " << bestfit_free[ip] << " +/- " << err_hesse_err[ip] << endl;
 #endif
-    }
-
-  }//fStatusCode=!=9
+  }
 #endif
 
 #ifdef __get_minos_errors__
@@ -477,7 +476,13 @@ bool FitterKernelMinuit2::RunOnce(void)
 }
 //____________________________________________________________________________ 
 void FitterKernelMinuit2::GetStatusCode(ROOT::Minuit2::FunctionMinimum bestfit) {
-  if (bestfit.HasReachedCallLimit()) {
+  if( !bestfit.IsValid()) {
+#ifdef __show_fit_steps__
+    cout << "FitterKernelMinuit2/GetStatusCode >> Minuit failed." << endl;
+#endif
+    fStatusCode = 9;
+  }
+  else if (bestfit.HasReachedCallLimit()) {
     #ifdef __show_fit_steps__
     cout << "FitterKernelMinuit2/GetStatusCode >> Minuit reached the specified call limit (maxcalls)." << endl;
 #endif
@@ -524,12 +529,6 @@ void FitterKernelMinuit2::GetStatusCode(ROOT::Minuit2::FunctionMinimum bestfit) 
     cout << "FitterKernelMinuit2/GetStatusCode >> Parameters are not valid." << endl;
 #endif
     fStatusCode = 8;
-  }
-  else if( !bestfit.IsValid()) {
-#ifdef __show_fit_steps__
-    cout << "FitterKernelMinuit2/GetStatusCode >> Minuit failed." << endl;
-#endif
-    fStatusCode = 9;
   }
   else {
 #ifdef __show_fit_steps__
