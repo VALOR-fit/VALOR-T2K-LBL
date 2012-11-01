@@ -21,6 +21,7 @@
 #include <TObject.h>
 #include <TMatrixD.h>
 #include <Minuit2/MnUserCovariance.h>
+#include <Minuit2/FunctionMinimum.h>
 
 #include "Conventions.h"
 #include "FitterABC.h"
@@ -51,6 +52,7 @@ protected:
    void  Init    (FitInputs * fit_inputs, Option_t * option = "minuit2");
    bool  RunOnce (void);
    void  ConstructCovMatrix(void);
+   void  GetStatusCode(ROOT::Minuit2::FunctionMinimum bestfit);
 
    FitInputs*  fFitInputs;        ///< fit inputs
    TString     fOption;           ///< fit option

@@ -29,11 +29,11 @@ void mock_data_fit_pulls(
      //"detector_systematics/superk/energy_scale_relative_error/one_mu_ring");
   double preerr_skdet_ccqeoth = 1;//util::XML2Dbl(xml,root_node,
       //"detector_systematics/superk/efficiency_relative_error/one_mu_ring/ccqe/other_error");
-  TMatrixD *SKDetEff1RmuCCQERCCovarRelErr = util::XML2TMatrixD(xml,root_node,
-      "detector_systematics/superk/efficiency_relative_error/one_mu_ring/ccqe/rc_error");
-  double preerr_skdet_ccqerc0 = SKDetEff1RmuCCQERCCovarRelErr[0];
-  double preerr_skdet_ccqerc1 = SKDetEff1RmuCCQERCCovarRelErr[1];
-  double preerr_skdet_ccqerc2 = SKDetEff1RmuCCQERCCovarRelErr[2];
+  //TMatrixD *SKDetEff1RmuCCQERCCovarRelErr = util::XML2TMatrixD(xml,root_node,
+  //  "detector_systematics/superk/efficiency_relative_error/one_mu_ring/ccqe/rc_error");
+  double preerr_skdet_ccqerc0 = 1;//SKDetEff1RmuCCQERCCovarRelErr[0];
+  double preerr_skdet_ccqerc1 = 1;//SKDetEff1RmuCCQERCCovarRelErr[1];
+  double preerr_skdet_ccqerc2 = 1;//SKDetEff1RmuCCQERCCovarRelErr[2];
   double preerr_skdet_ccnqe   = 1;//util::XML2Dbl(xml,root_node,
       //"detector_systematics/superk/efficiency_relative_error/one_mu_ring/ccnonqe");
   double preerr_skdet_nc = 1;//util::XML2Dbl(xml,root_node,

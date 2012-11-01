@@ -30,7 +30,7 @@
 void test_n_mock_data_fits_with_syst_minuit2
 (
  const char * tag                     = "toyexptfitswithsyst",          /* tag for output file */
- int          syst_mode               = 0,                              /* which systematics to tweak? 0 none. 1 all. 2 BANFF. 3 Unconstrained XSec. 4 SK detector. 5 FSI. 6 Selected. */
+ int          syst_mode               = 6,                              /* which systematics to tweak? 0 none. 1 all. 2 BANFF. 3 Unconstrained XSec. 4 SK detector. 5 FSI. 6 Selected. */
  int          run                     = 0,                              /* run number */
  int          nexperiments            = 1,                              /* number of toy MC experiment fits */
  double       input_mixing12          = -99,                            /* 12-mixing, sinq2theta or sinsqtheta depending on user choice, if -999 then randomize */
@@ -853,12 +853,12 @@ void test_n_mock_data_fits_with_syst_minuit2
 	skexp->GetSuperkDetector()->TweakEfficiency1RmuNC         (rand.Gaus(0.,1.));
 	skexp->GetSuperkDetector()->TweakEnergyScale              (rand.Gaus(0.,1.));
 	TVectorD twkv(skexp->GetBANFF()->BestFitValues());
-	TVectorD cov (skexp->GetBANFF()->CovMtrx());
+	TVectorD cov (skexp->GetBANFF()->CovMatrix());
 	PhysParamId_t p = conv::kNuisBANFFMAQE;
 	int ip   = util::ArrIdx::Instance()->BANFFSystIdx(kNuisBANFFMAQE);
-	twkv[ip] = twkdial(rand.Gaus(twkv[ip], cov[ip]));
+	twkv[ip] = rand.Gaus(twkv[ip], cov[ip]);
 	ip       = util::ArrIdx::Instance()->BANFFSystIdx(kNuisBANFFCCQEE0);
-	twkv[ip] = twkdial(rand.Gaus(twkv[ip], cov[ip]));
+	twkv[ip] = rand.Gaus(twkv[ip], cov[ip]);
 	skexp->GetBANFF()->Tweak(true,&twkv);
 	break;
       default:

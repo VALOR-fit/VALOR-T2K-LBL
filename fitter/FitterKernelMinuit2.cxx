@@ -19,7 +19,7 @@
 #define __show_fit_steps__ 
 #define __show_fit_steps_debug__
 #define __show_fit_cpu_time__
-//#define __get_hesse_errors__
+#define __get_hesse_errors__
 //#define __get_minos_errors__
 //#define __give_fitter_covariance_matrix__
 
@@ -365,14 +365,7 @@ bool FitterKernelMinuit2::RunOnce(void)
   cout << "FitterKernelMinuit2/RunOnce >> Getting fit success status..." << endl;
 #endif
   //Check if fit succeeded
-  if(!bestfit.IsValid()){
-    std::cout << "FitterKernelMinuit2/RunOnce >> Fit Failed" << std::endl;
-    return false;
-  }
-  else {
-    std::cout << "FitterKernelMinuit2/RunOnce >> Fit succeeded" << std::endl;
-    fStatusCode = 3;
-  }
+  GetStatusCode(bestfit);
 
   // Get errors
 #ifdef __show_fit_steps__
@@ -410,6 +403,8 @@ bool FitterKernelMinuit2::RunOnce(void)
   ROOT::Minuit2::MnHesse hesse(2);
   // perform hesse error calculation
   hesse(*fFitInputs, bestfit);
+  //Check if fit succeeded
+  GetStatusCode(bestfit);
 
   // hesse covariance
   ROOT::Minuit2::MnUserCovariance cov_hesse(bestfit.UserCovariance());
@@ -462,12 +457,76 @@ bool FitterKernelMinuit2::RunOnce(void)
   cout << "FitterKernelMinuit2/RunOnce >> fcn =  " << bestfit.Fval() << endl;
   cout << "FitterKernelMinuit2/RunOnce >> chi2 = " << fFitInputs->Chisquare() << endl;
   cout << bestfit << endl;
+  cout << "FitterKernelMinuit2/RunOnce >> fit status code = " << fStatusCode << endl;
 #endif
 
 #ifdef __show_fit_steps__
   cout << "FitterKernelMinuit2/RunOnce >> Done" << endl;
 #endif
 
-  return (fStatusCode == 3);
+  return (fStatusCode == 0);
+}
+//____________________________________________________________________________ 
+void FitterKernelMinuit2::GetStatusCode(ROOT::Minuit2::FunctionMinimum bestfit) {
+  if (bestfit.HasReachedCallLimit()) {
+    #ifdef __show_fit_steps__
+    cout << "FitterKernelMinuit2/GetStatusCode >> Minuit reached the specified call limit (maxcalls)." << endl;
+#endif
+    fStatusCode = 1;
+  }
+  else if (bestfit.IsAboveMaxEdm()) {
+#ifdef __show_fit_steps__
+    cout << "FitterKernelMinuit2/GetStatusCode >> Function value is above the specified estimated distance to the minimum (edm)." << endl;
+#endif
+    fStatusCode = 2;
+  }
+  else if (!bestfit.HasPosDefCovar()) {
+#ifdef __show_fit_steps__
+    cout << "FitterKernelMinuit2/GetStatusCode >> Covariance is not positive definite." << endl;
+#endif
+    fStatusCode = 3;
+  }
+  else if (!bestfit.HasMadePosDefCovar()) {
+#ifdef __show_fit_steps__
+    cout << "FitterKernelMinuit2/GetStatusCode >> Covariance could not be made positive definite." << endl;
+#endif
+    fStatusCode = 4;
+  }
+  else if (!bestfit.HasAccurateCovar()) {
+#ifdef __show_fit_steps__
+    cout << "FitterKernelMinuit2/GetStatusCode >> Covariance is not accurate." << endl;
+#endif
+    fStatusCode = 5;
+  }
+  else if (!bestfit.HasValidCovariance()) {
+#ifdef __show_fit_steps__
+    cout << "FitterKernelMinuit2/GetStatusCode >> Covariance is not valid." << endl;
+#endif
+    fStatusCode = 6;
+  }
+  else if (bestfit.HesseFailed()) {
+#ifdef __show_fit_steps__
+    cout << "FitterKernelMinuit2/GetStatusCode >> HESSE failed." << endl;
+#endif
+    fStatusCode = 7;
+  }
+  else if (!bestfit.HasValidParameters()) {
+#ifdef __show_fit_steps__
+    cout << "FitterKernelMinuit2/GetStatusCode >> Parameters are not valid." << endl;
+#endif
+    fStatusCode = 8;
+  }
+  else if( !bestfit.IsValid()) {
+#ifdef __show_fit_steps__
+    cout << "FitterKernelMinuit2/GetStatusCode >> Minuit failed." << endl;
+#endif
+    fStatusCode = 9;
+  }
+  else {
+#ifdef __show_fit_steps__
+    cout << "FitterKernelMinuit2/GetStatusCode >> Fit valid" << endl;
+#endif
+    fStatusCode = 0;
+  }
 }
 //____________________________________________________________________________ 
