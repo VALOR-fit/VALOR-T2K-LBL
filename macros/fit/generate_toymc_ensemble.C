@@ -21,10 +21,11 @@ void generate_toymc_ensemble
   double       input_dm23sq            = -99,                            /* |Dm^2_{23}| */
   const char * config_file             = "analysis_configuration.xml",   /* analysis configuration file */
   bool         stat_fluctuations       = true,                           /* include statistical fluctuation in toy MC expts? */
-  bool         tweak_systematics       = true,                           /* generate toy MC with randomized systematics? */
+  int          tweak_systematics       = 1,                              /* generate toy MC with randomized systematics? Numbers greater than 1 are special options */
   bool         save_in_xml_format      = true,                           /* */
   bool         save_in_root_format     = true,                           /* */
-  const char * points_to_add           = 0                               /* comma separated-list of data-points to add, eg when creating hybrid data/toy-MC experiments */
+  const char * points_to_add           = 0,                              /* comma separated-list of data-points to add, eg when creating hybrid data/toy-MC experiments */
+  bool         save_fluct_in_xml       = true                            /* save the values of the variations in the xml file? */
 )
 {
   using namespace std;
@@ -62,6 +63,16 @@ void generate_toymc_ensemble
   if(input_dm12sq < -1 && input_dm12sq > -900)  input_dm12sq = conv::kGlobFitDm12sq;
   if(input_deltacp < -90 && input_deltacp > -900) input_deltacp = conv::kGlobFitDeltaCP;
 
+  string tweak_sys_str = "None";
+  switch(tweak_systematics) {
+    case(1):
+      tweak_sys_str = "All"; break;
+    case(2):
+      tweak_sys_str = "Special low energy numu flux increase"; break;
+    default:
+      tweak_sys_str = "None";
+  }
+
   // Print out job summary
   cout << "\n[Job inputs]" << endl;
   cout << "- Job: " << tag << "/" << run << endl;
@@ -69,7 +80,7 @@ void generate_toymc_ensemble
   cout << "- Input physics hypothesis: " << hypothesis << endl;
   cout << "- Toy-MC generation" << endl;
   cout << "   - Number of toy experiments: " << nexperiments << endl;
-  cout << "   - Randomize systematics : "      << ((tweak_systematics) ? "YES " : "NO") << endl;
+  cout << "   - Randomize systematics : "      << tweak_sys_str << endl;
   cout << "   - Statistical fluctuations: "    << ((stat_fluctuations) ? "YES " : "NO") << endl;
   cout << "   - True oscillation parameters: " << endl;
   cout << "       > " << util::AsString(kPhypMixing12) << " = " << ((randomize_mixing12) ? "* randomized *" : input_mixing12) << endl;
@@ -137,10 +148,21 @@ void generate_toymc_ensemble
      }
      //cout << "- Physics hypothesis set: " << ph << endl;
 
-     if(tweak_systematics) {
+     if(tweak_systematics == 1) {
         // tweak all sources of systematic err (gaussian err)
         cout << "- Randomizing all systematic params in pdf..." << endl;
         skexp->TweakAllSystematics();
+        skexp->PrintSystematicVariations();
+     }
+     else if(tweak_systematics == 2) {
+        // special tweak, increasing numu flux parameters <700MeV by 5%
+        cout << "- Increasing numu flux parameters <700MeV by 5% in pdf..." << endl;
+	TVectorD twkv(skexp->GetBANFF()->BestFitValues());
+	twkv[0] += 0.05;
+	twkv[1] += 0.05;
+	twkv[2] += 0.05;
+	twkv[3] += 0.05;
+        skexp->GetBANFF()->Tweak(true,&twkv);
         skexp->PrintSystematicVariations();
      }
 
@@ -157,9 +179,11 @@ void generate_toymc_ensemble
      if(save_in_xml_format) {
        fxml << "           " << Form("<data_set_%d>",iexperiment) << endl;
        fxml << "\t\t" << "<!-- ";
-       ph.Print(fxml);
-       if(tweak_systematics)
-	 skexp->PrintSystematicVariations(fxml);
+       if(save_fluct_in_xml) {
+	 ph.Print(fxml);
+	 if(tweak_systematics)
+	   skexp->PrintSystematicVariations(fxml);
+       }
        fxml << " -->" << endl;
        fxml << "\t\t";
        // Adding Ereco values as a comma separated list.
