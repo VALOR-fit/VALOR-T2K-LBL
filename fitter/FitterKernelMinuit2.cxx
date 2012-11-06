@@ -435,6 +435,7 @@ bool FitterKernelMinuit2::RunOnce(void)
     cout << "FitterKernelMinuit2/RunOnce >> Hesse error for par#" << ip << " = " << bestfit_free[ip] << " +/- " << err_hesse_err[ip] << endl;
 #endif
   }
+  GetStatusCode(bestfit);
 #endif
 
 #ifdef __get_minos_errors__
@@ -461,7 +462,7 @@ bool FitterKernelMinuit2::RunOnce(void)
   // Print fit result
 #ifdef __show_fit_result__
 #ifdef __show_fit_steps__
-  cout << "FitterKernelMinuit2/RunOnce >> Printing fit results..." << endl;
+  cout << endl << "FitterKernelMinuit2/RunOnce >> Printing fit results..." << endl;
 #endif
   cout << "FitterKernelMinuit2/RunOnce >> fcn =  " << bestfit.Fval() << endl;
   cout << "FitterKernelMinuit2/RunOnce >> chi2 = " << fFitInputs->Chisquare() << endl;

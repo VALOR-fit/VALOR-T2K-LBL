@@ -54,6 +54,7 @@ public:
   // Info about the energy scale error and current energy scale tweaking factor
   double  EnergyScaleRelErr   (conv::SuperkSample_t s, conv::SuperkMode_t m) const; ///< energy scale err
   double  EnergyScale         (conv::SuperkSample_t s, conv::SuperkMode_t m) const; ///< energy scale
+  double  EnergyScale         (conv::SuperkSample_t s) const; ///< energy scale
 
   // Penalty term included in the chisq if SuperK detector nuisance terms are included in the fit
   double ChisqPenalty(bool all_syst = true) const;

@@ -99,6 +99,7 @@ private:
   void ApplySystematicsToTemplates                   (void); 
   void ApplySystematicsToTemplates_Multiplicative    (void); 
   void ApplySystematicsToTemplates_NonMultiplicative (void); 
+  void ApplyEnergyScaleSystematicToTotalSpectrum     (void);
 
   // Apply physics hypothesis (oscillations,...) to MC templates
   void ApplyPhysHypothesisToTemplates (void); 

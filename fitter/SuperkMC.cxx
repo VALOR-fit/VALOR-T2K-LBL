@@ -34,6 +34,7 @@
 // 7 number of events, weighted by pot & mc normalisation, flux tuning, banff tuning, multiplicative systematic variations, nonmultiplicative systematic variations, physics hypothesis
 //#define __apply_minevents_to_individual_modes__ //special debug mode that applies kSetNegEventsTo to all modes. Used for comparisons with the KIT 1 sigma spectra
 //#define NO_EVENTS_CAN_BE_NEGATIVE // if defined, will stop events being negative at all stages (not just building the Ereco spectra)
+#define APPLY_ESCALE_AT_SPECTRUM_STAGE
 
 #include <cassert>
 #include <cstdlib>
@@ -643,8 +644,10 @@ void SuperkMC::ApplySystematicsToTemplates(void)
 {
 // Apply systematic variations to MC templates
 //
-  this->ApplySystematicsToTemplates_Multiplicative   (); 
+  this->ApplySystematicsToTemplates_Multiplicative   ();
+#ifndef APPLY_ESCALE_AT_SPECTRUM_STAGE
   this->ApplySystematicsToTemplates_NonMultiplicative();
+#endif
 }
 //________________________________________________________________________________________
 void SuperkMC::ApplySystematicsToTemplates_Multiplicative(void) 
@@ -899,6 +902,124 @@ void SuperkMC::ApplySystematicsToTemplates_NonMultiplicative(void)
 #ifdef __save_templates_debug__
   this->NevDebug(kSKMCtSys, "mcnorm_fluxtuned_banfftuned_syst_nonmulti");
 #endif
+}
+//________________________________________________________________________________________
+void SuperkMC::ApplyEnergyScaleSystematicToTotalSpectrum(void) 
+{
+//
+// Now that all other systematics and physics hypotheses (that depend on Etrue) have been 
+// applied, apply the reconstructed energy scale systematic (that depends on Ereco).
+// This systematic is applied by scaling the Ereco bin edges and, by assuming uniform 
+//distribution of events within each bin, calculating how many events a lost to / gained
+// from neighbouring bins.
+//
+
+#ifdef __show_update_mesg_info__
+  cout << "Exp/SKMC >> Applying non-multiplicative systematics to total spectrum" << endl;
+#endif
+
+  // loop over samples
+  for(int is = 0; is < kns; is++) {
+    SuperkSample_t s = kSKSamples[is];
+    if(s == kSKsUndefined) continue;
+    //get corresponding spectrum
+    TH1D * reco_spectrum_tot = this->CurrErecoSpectrum(s);
+    if(!reco_spectrum_tot) continue;
+    //clone
+    TH1D * reco_spectrum_tot_no_ereco_scale = new TH1D(*reco_spectrum_tot);
+    // get energy scale
+    double escale = fSKDet->EnergyScale(s);
+
+    // energy scale > 1 : 
+    // For a given bin, events are gained from bins on the left (lower Ereco bins) and 
+    // are lost to bins on the right (higher Ereco bins)
+    if(escale > 1. + kASmallNum) {
+      // loop over Ereco
+      for(int ir = 1; ir <= reco_spectrum_tot->GetXaxis()->GetNbins(); ir++) {
+	// nominal reco bin edges
+	double bin_max = reco_spectrum_tot->GetXaxis()->GetBinUpEdge (ir);
+	double bin_min = reco_spectrum_tot->GetXaxis()->GetBinLowEdge(ir);
+	// scaled reco bin edges
+	bin_max *= escale;
+	bin_min *= escale;
+	// loop over Ereco' (> Ereco)
+	for(int irp = ir+1; irp <= reco_spectrum_tot->GetXaxis()->GetNbins(); irp++) {
+	  // bin edges for reco bin ir'
+	  double bin_max_p = reco_spectrum_tot->GetXaxis()->GetBinUpEdge (irp);
+	  double bin_min_p = reco_spectrum_tot->GetXaxis()->GetBinLowEdge(irp);
+	  // do bins ir and ir' overlap?
+	  if(bin_max <= bin_min_p || bin_min >= bin_max_p) continue; // no overlap
+	  // calculate overlap
+	  double overlap = 0;
+	  if(bin_min_p < bin_max && bin_min_p > bin_min) overlap = bin_max   - bin_min_p;
+	  if(bin_max_p < bin_max && bin_max_p > bin_min) overlap = bin_max_p - bin_min;
+	  if(bin_max_p > bin_max && bin_min_p < bin_min) overlap = bin_max   - bin_min;
+	  if(bin_max_p < bin_max && bin_min_p > bin_min) overlap = bin_max_p - bin_min_p;
+
+	  // calculate how many events from nominal bin ir get lost to bin ir'
+	  double n  = reco_spectrum_tot_no_ereco_scale->GetBinContent(ir);
+	  double dn = n * overlap / (bin_max-bin_min); ///< (overlap) * (nominal # of events) / (bin width)
+	  // update the systematically varied spectrum
+	  dn = TMath::Min(dn,n);
+	  reco_spectrum_tot->SetBinContent(ir,  reco_spectrum_tot->GetBinContent(ir)  - dn);
+	  reco_spectrum_tot->SetBinContent(irp, reco_spectrum_tot->GetBinContent(irp) + dn);
+	}//irp
+      }//ir
+    }// scale > 1
+
+    // energy scale < 1 : 
+    // For a given bin, events are gained from bins on the right (higher Ereco bins) and 
+    // are lost to bins on the left (lower Ereco bins)
+    else if(escale < 1. - kASmallNum) {
+      // loop over Ereco
+      for(int ir = 1; ir <= reco_spectrum_tot->GetXaxis()->GetNbins(); ir++) {
+	// nominal reco bin edges
+	double bin_max = reco_spectrum_tot->GetXaxis()->GetBinUpEdge (ir);
+	double bin_min = reco_spectrum_tot->GetXaxis()->GetBinLowEdge(ir);
+	// scaled reco bin edges
+	bin_max *= escale;
+	bin_min *= escale;
+	// loop over Ereco' (< Ereco)
+	for(int irp = 1; irp <= ir-1; irp++) {
+	  // bin edges for reco bin ir'
+	  double bin_max_p = reco_spectrum_tot->GetXaxis()->GetBinUpEdge (irp);
+	  double bin_min_p = reco_spectrum_tot->GetXaxis()->GetBinLowEdge(irp);
+	  // do bins ir and ir' overlap?
+	  if(bin_max <= bin_min_p || bin_min >= bin_max_p) continue; // no overlap
+	  // calculate overlap
+	  double overlap = 0;
+	  if(bin_min_p < bin_max && bin_min_p > bin_min) overlap = bin_max   - bin_min_p;
+	  if(bin_max_p < bin_max && bin_max_p > bin_min) overlap = bin_max_p - bin_min;
+	  if(bin_max_p > bin_max && bin_min_p < bin_min) overlap = bin_max   - bin_min;
+	  if(bin_max_p < bin_max && bin_min_p > bin_min) overlap = bin_max_p - bin_min_p;
+	  
+	  // calculate how many events from nominal bin ir get lost to bin ir'
+	  double n  = reco_spectrum_tot_no_ereco_scale->GetBinContent(ir);
+	  double dn = n * overlap / (bin_max-bin_min); ///< (overlap) * (nominal # of events) / (bin width)
+	  // update the systematically varied templates
+	  dn = TMath::Min(dn,n);
+	  reco_spectrum_tot->SetBinContent(ir,  reco_spectrum_tot->GetBinContent(ir)  - dn);
+	  reco_spectrum_tot->SetBinContent(irp, reco_spectrum_tot->GetBinContent(irp) + dn);
+	}//irp
+      }//ir
+    }// scale < 1
+    delete reco_spectrum_tot_no_ereco_scale;
+
+    // loop at the end, to get rid of any negatives
+    // loop over Ereco
+    for(int ir = 1; ir <= reco_spectrum_tot->GetXaxis()->GetNbins(); ir++) {
+      double nev_tot = reco_spectrum_tot->GetBinContent(ir);
+      if(nev_tot < 0 || (ir >= 5 && nev_tot < kASmallNum)) {
+	// bin 5 is first bin expect events in (nominally empty, but can have events for negative energy scale) bin 4 is empty, except for more than 8 sigma tweak!
+#ifdef __show_negative_events_mesg_debug__
+	cout << "Exp/SKMC/ApplyEnergyScaleSystematicToTotalSpectrum >> set negative number of events " << reco_spectrum_tot->GetBinContent(ir)
+	     << " to " << kSetMinEventsTo << "\t" << " Ereco: " << reco_spectrum_tot->GetXaxis()->GetBinCenter(ir) << endl;
+#endif
+	reco_spectrum_tot->SetBinContent(ir, kSetNegEventsTo);
+      }
+    }//ir
+
+  }//is
 }
 //________________________________________________________________________________________
 void SuperkMC::ApplyPhysHypothesisToTemplates(void)
@@ -1162,6 +1283,7 @@ void SuperkMC::UpdateErecoSpectra(void)
 #endif
           reco_spectrum->SetBinContent(ir,nev);
        }//im
+#ifndef APPLY_ESCALE_AT_SPECTRUM_STAGE
        if(nev_tot < 0 || (ir >= 5 && nev_tot < kASmallNum)) {
 	 // bin 5 is first bin expect events in (nominally empty, but can have events for negative energy scale) bin 4 is empty, except for more than 8 sigma tweak!
 #ifdef __show_negative_events_mesg_debug__
@@ -1170,8 +1292,12 @@ void SuperkMC::UpdateErecoSpectra(void)
 #endif
 	 nev_tot = kSetNegEventsTo;
        }
+#endif
        reco_spectrum_tot->SetBinContent(ir,nev_tot);
     }//ir
+#ifdef APPLY_ESCALE_AT_SPECTRUM_STAGE
+    this->ApplyEnergyScaleSystematicToTotalSpectrum();
+#endif
   }//is
 }
 //________________________________________________________________________________________

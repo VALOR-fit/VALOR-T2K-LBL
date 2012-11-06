@@ -520,6 +520,16 @@ double SuperkDetector::EnergyScale(SuperkSample_t s, SuperkMode_t m) const
   return scale;
 }
 //________________________________________________________________________________________
+double SuperkDetector::EnergyScale(SuperkSample_t s) const
+{
+// energy scale
+
+  double twkdial = fEnergyScaleTwkDial;
+  double err     = this->EnergyScaleRelErr(s,kSKmNuMuCCQE);
+  double scale   = 1. + twkdial * err;
+  return scale;
+}
+//________________________________________________________________________________________
 double SuperkDetector::CurrentValue(PhysParamId_t p) const
 {
   switch(p) {
