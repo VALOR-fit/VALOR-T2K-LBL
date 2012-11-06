@@ -25,6 +25,7 @@
   #include "FitterABC.h"
   #include "Opt.h"
   #include "Superk1RmuErecoFitterMinuit2.h"
+  #include "Superk1RmuErecoFitter.h"
 */
 
 void test_n_mock_data_fits_with_syst_minuit2
@@ -46,7 +47,8 @@ void test_n_mock_data_fits_with_syst_minuit2
  bool         store_chisq_surf        = false,                          /* by default storing only best-fit values, enable this to store the chisq surfaces   */
  bool         store_withsyst_chisq_surf = false,                        /* by default storing only best-fit values, enable this to store the chisq with systematics surfaces   */
  bool         store_toy_expts         = false,                          /* by default storing only best-fit values, enable this to store the toy MC expts     */
- bool         store_bestfit_spectrum  = false                           /* by default storing only best-fit values, enable this to store the best-fit spectra */
+ bool         store_bestfit_spectrum  = false,                          /* by default storing only best-fit values, enable this to store the best-fit spectra */
+ bool         use_minuit2             = true                            /* use minuit2, or minuit */
  )
 {
   using namespace std;
@@ -123,6 +125,7 @@ void test_n_mock_data_fits_with_syst_minuit2
   cout << "- Fit" << endl;
   cout << "   - Fit Parameter List: " << fit_param_list << endl;
   cout << "   - Fitter option: " << fit_option << endl;
+  cout << "   - Minuit" << ((use_minuit2) ? "2" : "") << endl;
   cout << "- Outputs" << endl;
   cout << "     - Storing chisq surfaces: "           << ((store_chisq_surf) ?          "YES " : "NO") << endl;
   cout << "     - Storing chisq with syst surfaces: " << ((store_withsyst_chisq_surf) ? "YES " : "NO") << endl;
@@ -962,7 +965,11 @@ void test_n_mock_data_fits_with_syst_minuit2
 
     // Get fitter
     FitInputs * fit_inputs = new FitInputs(skobs,skexp,fparm);
-    FitterABC * fitter = new Superk1RmuErecoFitterMinuit2(fit_inputs,fit_option);
+    FitterABC * fitter = 0;
+    if(use_minuit2)
+      fitter = new Superk1RmuErecoFitterMinuit2(fit_inputs,fit_option);
+    else
+      fitter = new Superk1RmuErecoFitter(fit_inputs,fit_option);
 
     // Chisq for true (input) params
     true_chisq = fit_inputs->Chisquare();

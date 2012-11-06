@@ -20,17 +20,16 @@ optionParser.add_option("--resource", action="store", type="string", dest="resou
 optionParser.add_option("--cputime", action="store", type="string", dest="cputime", default="11:50:00", help="Default: 11:50:00")
 optionParser.add_option("--runmode", action="store", type="string", dest="runmode", default="", help="\nPULLS (10000 fits at 2 oscillation points. \nIncludes systematics fluctuations if applicable), STARSTAT (10000 fits at 9 oscillation points. No systematic fluctuations. Only fits for osc params")
 optionParser.add_option("--fitparamlist", action="store", type="string", dest="fitparamlist", default="nuosc3f_numudisapp_fix4", help="Default: nuosc3f_numudisapp_fix4 (this is ignored in run mode 'starstat'")
-optionParser.add_option("--fitter", action="store", type="string", dest="fitter", default="Minuit2", help="Default: Minuit2. Also, Minuit")
+optionParser.add_option("--minuit", action="store_true", type="bool", dest="minuit", default="false", help="Run with Minuit. Otherwise, use Minuit2")
 (opt, args) = optionParser.parse_args()
 
 #will create directories relative to the current working directory, if they don't already exist
 basedir = os.getenv("PWD")
 
 #initialise some variables
-fitter = opt.fitter
-fitter_postfix = ""
-if fitter == "Minuit2":
-   fitter_postfix = "_minuit2"
+fitstr = ""
+if not opt.minuit:
+   fitstr = "--minuit2"
 conffile = "analysis_configuration.xml"
 oscparams = []
 syst = -1
@@ -109,7 +108,7 @@ for osc in oscparams:
          sys.exit()
    os.chdir(dirname)
 
-   command = '$T2KOSCANA/production/submit_toyexpt_fitting_job_fitsyst'+fitter_postfix+' --resource '+resource+' --softw-dir $T2KOSCANA --job-dir $PWD --cpu-time '+cputime+' --tweak-systematics '+str(syst)+' --nruns '+str(nruns)+' --nexpts '+str(nexpts)+' --sinsq2theta12 '+str(osc[0])+' --sinsq2theta13 '+str(osc[1])+' --sinsq2theta23 '+str(osc[2])+' --deltacp '+str(osc[3])+' --dm12sq '+str(osc[4])+' --dm23sq '+str(osc[5])+' --fit-param-list '+fitparamlist+' --config-file '+conffile+' --tag '+tag+' '+store_chisqsurf+' '+store_chisq_withsyst_surf+' '+store_toy_expts+' '+store_bestfit_spectra+' '+stat
+   command = '$T2KOSCANA/production/submit_toyexpt_fitting_job_fitsyst_minuit2 --resource '+resource+' --softw-dir $T2KOSCANA --job-dir $PWD --cpu-time '+cputime+' --tweak-systematics '+str(syst)+' --nruns '+str(nruns)+' --nexpts '+str(nexpts)+' --sinsq2theta12 '+str(osc[0])+' --sinsq2theta13 '+str(osc[1])+' --sinsq2theta23 '+str(osc[2])+' --deltacp '+str(osc[3])+' --dm12sq '+str(osc[4])+' --dm23sq '+str(osc[5])+' --fit-param-list '+fitparamlist+' --config-file '+conffile+' --tag '+tag+' '+store_chisqsurf+' '+store_chisq_withsyst_surf+' '+store_toy_expts+' '+store_bestfit_spectra+' '+stat+' '+fitstr
 
    print command
    os.system(command)
