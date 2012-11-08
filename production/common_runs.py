@@ -20,7 +20,7 @@ optionParser.add_option("--resource", action="store", type="string", dest="resou
 optionParser.add_option("--cputime", action="store", type="string", dest="cputime", default="11:50:00", help="Default: 11:50:00")
 optionParser.add_option("--runmode", action="store", type="string", dest="runmode", default="", help="\nPULLS (10000 fits at 2 oscillation points. \nIncludes systematics fluctuations if applicable), STARSTAT (10000 fits at 9 oscillation points. No systematic fluctuations. Only fits for osc params")
 optionParser.add_option("--fitparamlist", action="store", type="string", dest="fitparamlist", default="nuosc3f_numudisapp_fix4", help="Default: nuosc3f_numudisapp_fix4 (this is ignored in run mode 'starstat'")
-optionParser.add_option("--minuit", action="store_true", type="bool", dest="minuit", default="false", help="Run with Minuit. Otherwise, use Minuit2")
+optionParser.add_option("--minuit", action="store_true", dest="minuit", default="false", help="Run with Minuit. Otherwise, use Minuit2")
 (opt, args) = optionParser.parse_args()
 
 #will create directories relative to the current working directory, if they don't already exist
