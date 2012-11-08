@@ -56,16 +56,6 @@ systematics = []
 #systematics.append("osc_mixing13");
 #systematics.append("osc_dm12sq");
 #systematics.append("osc_deltacp");
-#SK
-#systematics.append("sk_1Rmu_ccqe_ring_counting_eff")
-systematics.append("sk_1Rmu_ccqe_ring_counting_eff_0")
-systematics.append("sk_1Rmu_ccqe_ring_counting_eff_1")
-systematics.append("sk_1Rmu_ccqe_ring_counting_eff_2")
-systematics.append("sk_1Rmu_ccqe_other_eff")
-systematics.append("sk_1Rmu_ccnonqe_eff")
-systematics.append("sk_1Rmu_nc_eff")
-systematics.append("sk_1Rmu_nuecc_eff")
-systematics.append("sk_energy_scale")
 #BANFF
 #systematics.append("banff")
 #BANFF flux
@@ -79,6 +69,17 @@ systematics.append("banff_ccqeE1")
 systematics.append("banff_ccqeE2")
 systematics.append("banff_cc1piE0")
 systematics.append("banff_cc1piE1")
+"""
+#SK
+#systematics.append("sk_1Rmu_ccqe_ring_counting_eff")
+systematics.append("sk_1Rmu_ccqe_ring_counting_eff_0")
+systematics.append("sk_1Rmu_ccqe_ring_counting_eff_1")
+systematics.append("sk_1Rmu_ccqe_ring_counting_eff_2")
+systematics.append("sk_1Rmu_ccqe_other_eff")
+systematics.append("sk_1Rmu_ccnonqe_eff")
+systematics.append("sk_1Rmu_nc_eff")
+systematics.append("sk_1Rmu_nuecc_eff")
+systematics.append("sk_energy_scale")
 #XSec splines
 systematics.append("xsec_pf")
 systematics.append("xsec_sf")
@@ -98,6 +99,8 @@ systematics.append("xsec_norm_antinutonu")
 #FSI
 for i in xrange(15):
    systematics.append("fsi_" + '%(number)03d' % {"number": i})
+"""
+"""
 #UnBANFF
 #systematics.append("unbanff")
 for i in xrange(24):
@@ -107,6 +110,7 @@ for i in xrange(24):
 #systematics.append("edbanff")
 for i in xrange(24):
    systematics.append("edbanff_" + '%(number)02d' % {"number": i})
+"""
    
 samples = []
 samples.append("1Rmu")
@@ -140,9 +144,14 @@ for osc in oscparams:
       for syst in systematics:
 
          if opt.do_syst:
-            command = 'root2k -l -b -q \'$T2KOSCANA/macros/misc/star_plot/test_bestfit_point_shift_due_to_syst_twk.C("'+syst+'","'+sam+'","'+fitparamlist+'","'+fitter+'",'+str(osc[0])+','+str(osc[1])+','+str(osc[2])+','+str(osc[3])+','+str(osc[4])+','+str(osc[5])+',"'+conffile+'")\''
+            command = 'root2k -l -b -q \'$T2KOSCANA/macros/misc/star_plot/test_bestfit_point_shift_due_to_syst_twk.C("'+syst+'","'+sam+'","'+fitparamlist+'","'+fitter+'",'+str(osc[0])+','+str(osc[1])+','+str(osc[2])+','+str(osc[3])+','+str(osc[4])+','+str(osc[5])+',"'+conffile+'",false)\''
             print command
             os.system(command)
+
+            if syst.find("banff_") == 0:
+               command = 'root2k -l -b -q \'$T2KOSCANA/macros/misc/star_plot/test_bestfit_point_shift_due_to_syst_twk.C("'+syst+'","'+sam+'","'+fitparamlist+'","'+fitter+'",'+str(osc[0])+','+str(osc[1])+','+str(osc[2])+','+str(osc[3])+','+str(osc[4])+','+str(osc[5])+',"'+conffile+'",true)\''
+               print command
+               os.system(command)
 
          if syst == systematics[len(systematics)-1] and opt.do_draw:
 
@@ -151,7 +160,7 @@ for osc in oscparams:
 	    errdm23sq   = file.readline().strip('\n')
             file.close()
 
-            command = 'rm star_plot_line-all.data star_plot_line-banff[n,x]*.data star_plot_line-edbanff.data star_plot_line-unbanff.data star_plot_line-fsi.data star_plot_line-sk.data star_plot_line-xsec.data'
+            command = 'rm star_plot_line-all.data star_plot_line-banff[n,x]*.data star_plot_line-edbanff.data star_plot_line-unbanff.data star_plot_line-fsi.data star_plot_line-sk.data star_plot_line-xsec.data star_plot_line-correlated_banff.data'
             print command
             os.system(command)
             command = 'cat star_plot_line-*.data > star_plot_line-all.data'
@@ -223,6 +232,13 @@ for osc in oscparams:
             print command
             os.system(command)
             command = 'root2k -l -b -q \'$T2KOSCANA/macros/misc/star_plot/make_star_plot_for_disappearance_analysis.C("star_plot_line-unbanff.data",'+str(osc[2])+','+str(osc[5])+','+errmixing23+','+errdm23sq+')\''
+            print command
+            os.system(command)
+
+            command = 'cat star_plot_line-correlated_banff*.data cat > star_plot_line-correlated_banff.data'
+            print command
+            os.system(command)
+            command = 'root2k -l -b -q \'$T2KOSCANA/macros/misc/star_plot/make_star_plot_for_disappearance_analysis.C("star_plot_line-correlated_banff.data",'+str(osc[2])+','+str(osc[5])+','+errmixing23+','+errdm23sq+')\''
             print command
             os.system(command)
 

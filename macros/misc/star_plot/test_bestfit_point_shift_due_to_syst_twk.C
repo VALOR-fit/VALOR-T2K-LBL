@@ -67,7 +67,7 @@
 
 void test_bestfit_point_shift_due_to_syst_twk
 (
- const char * systematic,                                                  /* options: see above */
+ const char * systematic="banff_00",                                                  /* options: see above */
  const char * sksample                   = "1Rmu",                         /* options: "1Rmu", "1Re" */
  const char * fit_param_list             = "nuosc3f_numudisapp_fix4",      /* */
  const char * fit_option                 = "minuit",                       /* oscillation fitter (see run_fitter.C) */
@@ -77,7 +77,8 @@ void test_bestfit_point_shift_due_to_syst_twk
  double       input_deltacp              = -99,                            /* */
  double       input_dm12sq               = -99,                            /* */
  double       input_dm23sq               = -99,                            /* */
- const char * config_file                = "analysis_configuration.xml"    /* */
+ const char * config_file                = "analysis_configuration.xml",   /* */
+ bool         correlated_banff           = true                           /* tweak banff parameters respecting correlations? */
  )
 {
   using namespace std;
@@ -169,12 +170,31 @@ void test_bestfit_point_shift_due_to_syst_twk
 
   cout << "\n\nApplying +1 sigma tweak" << endl;
   if(sys.find("banff_") == 0) {
+    //find parameter to tweak
     conv::PhysParamId_t p = util::PhysParamIdFromString(systematic);
     int ip = util::ArrIdx::Instance()->BANFFSystIdx(p);
-    // curr/nominal = 1 + (nsigma * x)
-    skexp->TweakSystematic(systematic, skexp->GetBANFF()->BestFitValue(p) + (1 * sqrt(skexp->GetBANFF()->CovMatrix()(ip,ip))));
+    //initialise tweak vector
+    const int nbanff = conv::kNumOfParamsInBANFFfit;
+    TVectorD twkv(nbanff);
+    const TMatrixD & cov = skexp->GetBANFF()->CovMatrix();
+    //tweak the parameter to tweak
+    twkv[ip] = skexp->GetBANFF()->BestFitValue(p) + (1 * sqrt(cov[ip][ip]));
+    //if we're tweaking the other parameters in a correlated way too
+    double sigma = (twkv[ip] - skexp->GetBANFF()->BestFitValue(p)) / cov[ip][ip];
+    for(int ipp = 0; ipp < nbanff; ipp++) {
+      int position = (int)conv::kNuisBANFF00 + ipp;
+      conv::PhysParamId_t pp = (conv::PhysParamId_t)position;
+      if(pp == p)
+	continue;
+      //set non-tweaked values to best fit
+      twkv[ipp] = skexp->GetBANFF()->BestFitValue(pp);
+      //now, tweak the other parameters according to the correlations between them and the fitted parameters
+      if(correlated_banff)
+	twkv[ipp] += sigma * cov[ip][ipp];
+    }
+    skexp->GetBANFF()->Tweak(true,&twkv,1);
   }
-  if(sys.find("edbanff_") == 0) {
+  else if(sys.find("edbanff_") == 0) {
     conv::PhysParamId_t p = util::PhysParamIdFromString(systematic);
     skexp->TweakSystematic(systematic, skexp->GetBANFF()->BestFitEigenDecompValue(p) + (1 * sqrt(skexp->GetBANFF()->EigenDecompEigenValue(p))));
   }
@@ -188,24 +208,28 @@ void test_bestfit_point_shift_due_to_syst_twk
     if(tweak_mixing12 >  fparm->MaxValue(conv::kPhypMixing12)) tweak_mixing12 = fparm->MaxValue(conv::kPhypMixing12);
     if(tweak_mixing12 <  fparm->MinValue(conv::kPhypMixing12)) tweak_mixing12 = fparm->MinValue(conv::kPhypMixing12);
     fparm->Update(conv::kPhypMixing12, tweak_mixing12);
+    fparm->SetInitValue(conv::kPhypMixing12, tweak_mixing12);
   }
   else if(sys.find("osc_mixing13") == 0) {
     double tweak_mixing13 = input_mixing13 + conv::kGlobFitErrSinsq2Theta13;
     if(tweak_mixing13 >  fparm->MaxValue(conv::kPhypMixing13)) tweak_mixing13 = fparm->MaxValue(conv::kPhypMixing13);
     if(tweak_mixing13 <  fparm->MinValue(conv::kPhypMixing13)) tweak_mixing13 = fparm->MinValue(conv::kPhypMixing13);
     fparm->Update(conv::kPhypMixing13, tweak_mixing13);
+    fparm->SetInitValue(conv::kPhypMixing13, tweak_mixing13);
   }
   else if(sys.find("osc_dm12sq") == 0) {
     double tweak_dm12sq = input_dm12sq + conv::kGlobFitErrSinsq2Theta12;
     if(tweak_dm12sq >  fparm->MaxValue(conv::kPhypDm12sq)) tweak_dm12sq = fparm->MaxValue(conv::kPhypDm12sq);
     if(tweak_dm12sq <  fparm->MinValue(conv::kPhypDm12sq)) tweak_dm12sq = fparm->MinValue(conv::kPhypDm12sq);
     fparm->Update(conv::kPhypDeltaCP, tweak_dm12sq);
+    fparm->SetInitValue(conv::kPhypDeltaCP, tweak_dm12sq);
   }
   else if(sys.find("osc_deltacp") == 0) {
     double tweak_deltacp = input_deltacp + conv::kGlobFitErrDeltaCP;
     if(tweak_deltacp >  fparm->MaxValue(conv::kPhypDeltaCP)) tweak_deltacp = fparm->MaxValue(conv::kPhypDeltaCP);
     if(tweak_deltacp <  fparm->MinValue(conv::kPhypDeltaCP)) tweak_deltacp = fparm->MinValue(conv::kPhypDeltaCP);
     fparm->Update(conv::kPhypDm12sq, tweak_deltacp);
+    fparm->SetInitValue(conv::kPhypDm12sq, tweak_deltacp);
   }
   else {
     skexp->TweakSystematic(systematic,+1.);
@@ -261,12 +285,31 @@ void test_bestfit_point_shift_due_to_syst_twk
   //
   cout << "\n\nApplying -1 sigma tweak" << endl;
   if(sys.find("banff_") == 0) {
+    //find parameter to tweak
     conv::PhysParamId_t p = util::PhysParamIdFromString(systematic);
     int ip = util::ArrIdx::Instance()->BANFFSystIdx(p);
-    // curr/nominal = 1 + (nsigma * x)
-    skexp->TweakSystematic(systematic, skexp->GetBANFF()->BestFitValue(p) + (-1 * sqrt(skexp->GetBANFF()->CovMatrix()(ip,ip))));
+    //initialise tweak vector
+    const int nbanff = conv::kNumOfParamsInBANFFfit;
+    TVectorD twkv(nbanff);
+    const TMatrixD & cov = skexp->GetBANFF()->CovMatrix();
+    //tweak the parameter to tweak
+    twkv[ip] = skexp->GetBANFF()->BestFitValue(p) + (-1 * sqrt(cov[ip][ip]));
+    //if we're tweaking the other parameters in a correlated way too
+    double sigma = (twkv[ip] - skexp->GetBANFF()->BestFitValue(p)) / cov[ip][ip];
+    for(int ipp = 0; ipp < nbanff; ipp++) {
+      int position = (int)conv::kNuisBANFF00 + ipp;
+      conv::PhysParamId_t pp = (conv::PhysParamId_t)position;
+      if(pp == p)
+	continue;
+      //set non-tweaked values to best fit
+      twkv[ipp] = skexp->GetBANFF()->BestFitValue(pp);
+      //now, tweak the other parameters according to the correlations between them and the fitted parameters
+      if(correlated_banff)
+	twkv[ipp] += sigma * cov[ip][ipp];
+    }
+    skexp->GetBANFF()->Tweak(true,&twkv,1);
   }
-  if(sys.find("edbanff_") == 0) {
+  else if(sys.find("edbanff_") == 0) {
     conv::PhysParamId_t p = util::PhysParamIdFromString(systematic);
     skexp->TweakSystematic(systematic, skexp->GetBANFF()->BestFitEigenDecompValue(p) + (-1 * sqrt(skexp->GetBANFF()->EigenDecompEigenValue(p))));
   }
@@ -280,24 +323,28 @@ void test_bestfit_point_shift_due_to_syst_twk
     if(tweak_mixing12 >  fparm->MaxValue(conv::kPhypMixing12)) tweak_mixing12 = fparm->MaxValue(conv::kPhypMixing12);
     if(tweak_mixing12 <  fparm->MinValue(conv::kPhypMixing12)) tweak_mixing12 = fparm->MinValue(conv::kPhypMixing12);
     fparm->Update(conv::kPhypMixing12, tweak_mixing12);
+    fparm->SetInitValue(conv::kPhypMixing12, tweak_mixing12);
   }
   else if(sys.find("osc_mixing13") == 0) {
     double tweak_mixing13 = input_mixing13 - conv::kGlobFitErrSinsq2Theta13;
     if(tweak_mixing13 >  fparm->MaxValue(conv::kPhypMixing13)) tweak_mixing13 = fparm->MaxValue(conv::kPhypMixing13);
     if(tweak_mixing13 <  fparm->MinValue(conv::kPhypMixing13)) tweak_mixing13 = fparm->MinValue(conv::kPhypMixing13);
     fparm->Update(conv::kPhypMixing13, tweak_mixing13);
+    fparm->SetInitValue(conv::kPhypMixing13, tweak_mixing13);
   }
   else if(sys.find("osc_dm12sq") == 0) {
     double tweak_dm12sq = input_dm12sq - conv::kGlobFitErrSinsq2Theta12;
     if(tweak_dm12sq >  fparm->MaxValue(conv::kPhypDm12sq)) tweak_dm12sq = fparm->MaxValue(conv::kPhypDm12sq);
     if(tweak_dm12sq <  fparm->MinValue(conv::kPhypDm12sq)) tweak_dm12sq = fparm->MinValue(conv::kPhypDm12sq);
     fparm->Update(conv::kPhypDeltaCP, tweak_dm12sq);
+    fparm->SetInitValue(conv::kPhypDeltaCP, tweak_dm12sq);
   }
   else if(sys.find("osc_deltacp") == 0) {
     double tweak_deltacp = input_deltacp - conv::kGlobFitErrDeltaCP;
     if(tweak_deltacp >  fparm->MaxValue(conv::kPhypDeltaCP)) tweak_deltacp = fparm->MaxValue(conv::kPhypDeltaCP);
     if(tweak_deltacp <  fparm->MinValue(conv::kPhypDeltaCP)) tweak_deltacp = fparm->MinValue(conv::kPhypDeltaCP);
     fparm->Update(conv::kPhypDm12sq, tweak_deltacp);
+    fparm->SetInitValue(conv::kPhypDm12sq, tweak_deltacp);
   }
   else {
     skexp->TweakSystematic(systematic,-1.);
@@ -348,6 +395,9 @@ void test_bestfit_point_shift_due_to_syst_twk
   
   // Write-out results
   ostringstream outfilename;
+  string cor = "";
+  if(correlated_banff)
+    cor = "_correlated";
   outfilename << "star_plot_line-" << systematic << ".data";
   ofstream outfile;
   outfile.open(outfilename.str().c_str());

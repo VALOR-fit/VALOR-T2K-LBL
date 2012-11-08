@@ -1725,8 +1725,8 @@ static const bool kXsApplyXSecSystToSKMode[kns][knm][kNumOfXSecSyst] = {
     {  0, 1, 0, 0, 0,  1, 1,  0, 0, 0, 0, 1, 0,  0, 0, 0, 0, 1 }, // kSKmNuMuBarCC1pi
     {  0, 0, 0, 0, 0,  0, 0,  0, 0, 0, 0, 0, 0,  1, 0, 0, 0, 1 }, // kSKmNuMuBarCCcoh
     {  0, 1, 0, 0, 0,  0, 0,  0, 0, 0, 1, 0, 0,  0, 0, 0, 0, 1 }, // kSKmNuMuBarCCoth_mu
-    {  0, 1, 0, 0, 0,  0, 0,  0, 0, 1, 0, 1, 0,  0, 1, 0, 0, 1 }, // kSKmNuMuBarNC1piC
-    {  0, 1, 0, 0, 0,  0, 0,  0, 0, 1, 0, 1, 0,  0, 0, 1, 0, 1 }, // kSKmNuMuBarNCoth_mu
+    {  0, 1, 0, 0, 0,  0, 0,  0, 0, 1, 0, 1, 0,  0, 1, 0, 0, 0 }, // kSKmNuMuBarNC1piC
+    {  0, 1, 0, 0, 0,  0, 0,  0, 0, 1, 0, 1, 0,  0, 0, 1, 0, 0 }, // kSKmNuMuBarNCoth_mu
     {  1, 0, 1, 1, 1,  0, 0,  1, 1, 0, 0, 0, 1,  0, 0, 0, 1, 0 }, // kSKmNuECCQE        
     {  0, 1, 0, 0, 0,  1, 1,  0, 0, 0, 0, 1, 0,  0, 0, 0, 1, 0 }, // kSKmNuECC1pi
     {  0, 0, 0, 0, 0,  0, 0,  0, 0, 0, 0, 0, 0,  1, 0, 0, 1, 0 }, // kSKmNuECCcoh
@@ -1737,8 +1737,8 @@ static const bool kXsApplyXSecSystToSKMode[kns][knm][kNumOfXSecSyst] = {
     {  0, 1, 0, 0, 0,  1, 1,  0, 0, 0, 0, 1, 0,  0, 0, 0, 1, 1 }, // kSKmNuEBarCC1pi
     {  0, 0, 0, 0, 0,  0, 0,  0, 0, 0, 0, 0, 0,  1, 0, 0, 1, 1 }, // kSKmNuEBarCCcoh
     {  0, 1, 0, 0, 0,  0, 0,  0, 0, 0, 1, 0, 0,  0, 0, 0, 1, 1 }, // kSKmNuEBarCCoth_mu
-    {  0, 1, 0, 0, 0,  0, 0,  0, 0, 1, 0, 1, 0,  0, 1, 0, 0, 1 }, // kSKmNuEBarNC1piC
-    {  0, 1, 0, 0, 0,  0, 0,  0, 0, 1, 0, 1, 0,  0, 0, 1, 0, 1 }, // kSKmNuEBarNCoth_mu
+    {  0, 1, 0, 0, 0,  0, 0,  0, 0, 1, 0, 1, 0,  0, 1, 0, 0, 0 }, // kSKmNuEBarNC1piC
+    {  0, 1, 0, 0, 0,  0, 0,  0, 0, 1, 0, 1, 0,  0, 0, 1, 0, 0 }, // kSKmNuEBarNCoth_mu
     {  1, 0, 1, 1, 1,  0, 0,  1, 1, 0, 0, 0, 1,  0, 0, 0, 1, 0 }, // kSKmSigNuECCQE        
     {  0, 1, 0, 0, 0,  1, 1,  0, 0, 0, 0, 1, 0,  0, 0, 0, 1, 0 }, // kSKmSigNuECC1pi
     {  0, 0, 0, 0, 0,  0, 0,  0, 0, 0, 0, 0, 0,  1, 0, 0, 1, 0 }, // kSKmSigNuECCcoh
