@@ -204,32 +204,32 @@ void test_bestfit_point_shift_due_to_syst_twk
     skexp->TweakSystematic(systematic, 1 + (1 * sqrt(skexp->GetFSI()->CovMatrix()(ip,ip))));
   }
   else if(sys.find("osc_mixing12") == 0) {
-    double tweak_mixing12 = input_mixing12 + conv::kGlobFitErrSinsq2Theta12;
+    double tweak_mixing12 = input_mixing12 * (1 + conv::kGlobFitErrSinsq2Theta12)
     if(tweak_mixing12 >  fparm->MaxValue(conv::kPhypMixing12)) tweak_mixing12 = fparm->MaxValue(conv::kPhypMixing12);
     if(tweak_mixing12 <  fparm->MinValue(conv::kPhypMixing12)) tweak_mixing12 = fparm->MinValue(conv::kPhypMixing12);
     fparm->Update(conv::kPhypMixing12, tweak_mixing12);
     fparm->SetInitValue(conv::kPhypMixing12, tweak_mixing12);
   }
   else if(sys.find("osc_mixing13") == 0) {
-    double tweak_mixing13 = input_mixing13 + conv::kGlobFitErrSinsq2Theta13;
+    double tweak_mixing13 = input_mixing13 * (1 + conv::kGlobFitErrSinsq2Theta13);
     if(tweak_mixing13 >  fparm->MaxValue(conv::kPhypMixing13)) tweak_mixing13 = fparm->MaxValue(conv::kPhypMixing13);
     if(tweak_mixing13 <  fparm->MinValue(conv::kPhypMixing13)) tweak_mixing13 = fparm->MinValue(conv::kPhypMixing13);
     fparm->Update(conv::kPhypMixing13, tweak_mixing13);
     fparm->SetInitValue(conv::kPhypMixing13, tweak_mixing13);
   }
   else if(sys.find("osc_dm12sq") == 0) {
-    double tweak_dm12sq = input_dm12sq + conv::kGlobFitErrSinsq2Theta12;
+    double tweak_dm12sq = input_dm12sq * (1 + conv::kGlobFitErrDm12sq);
     if(tweak_dm12sq >  fparm->MaxValue(conv::kPhypDm12sq)) tweak_dm12sq = fparm->MaxValue(conv::kPhypDm12sq);
     if(tweak_dm12sq <  fparm->MinValue(conv::kPhypDm12sq)) tweak_dm12sq = fparm->MinValue(conv::kPhypDm12sq);
-    fparm->Update(conv::kPhypDeltaCP, tweak_dm12sq);
-    fparm->SetInitValue(conv::kPhypDeltaCP, tweak_dm12sq);
+    fparm->Update(conv::kPhypDm12sq, tweak_dm12sq);
+    fparm->SetInitValue(conv::kPhypDm12sq, tweak_dm12sq);
   }
   else if(sys.find("osc_deltacp") == 0) {
-    double tweak_deltacp = input_deltacp + conv::kGlobFitErrDeltaCP;
+    double tweak_deltacp = input_deltacp + (TMath::Pi()/2);
     if(tweak_deltacp >  fparm->MaxValue(conv::kPhypDeltaCP)) tweak_deltacp = fparm->MaxValue(conv::kPhypDeltaCP);
     if(tweak_deltacp <  fparm->MinValue(conv::kPhypDeltaCP)) tweak_deltacp = fparm->MinValue(conv::kPhypDeltaCP);
-    fparm->Update(conv::kPhypDm12sq, tweak_deltacp);
-    fparm->SetInitValue(conv::kPhypDm12sq, tweak_deltacp);
+    fparm->Update(conv::kPhypDeltaCP, tweak_deltacp);
+    fparm->SetInitValue(conv::kPhypDeltaCP, tweak_deltacp);
   }
   else {
     skexp->TweakSystematic(systematic,+1.);
@@ -319,32 +319,32 @@ void test_bestfit_point_shift_due_to_syst_twk
     skexp->TweakSystematic(systematic, 1 + (-1 * sqrt(skexp->GetFSI()->CovMatrix()(ip,ip))));
   }
   else if(sys.find("osc_mixing12") == 0) {
-    double tweak_mixing12 = input_mixing12 - conv::kGlobFitErrSinsq2Theta12;
+    double tweak_mixing12 = input_mixing12 * (1 - conv::kGlobFitErrSinsq2Theta12);
     if(tweak_mixing12 >  fparm->MaxValue(conv::kPhypMixing12)) tweak_mixing12 = fparm->MaxValue(conv::kPhypMixing12);
     if(tweak_mixing12 <  fparm->MinValue(conv::kPhypMixing12)) tweak_mixing12 = fparm->MinValue(conv::kPhypMixing12);
     fparm->Update(conv::kPhypMixing12, tweak_mixing12);
     fparm->SetInitValue(conv::kPhypMixing12, tweak_mixing12);
   }
   else if(sys.find("osc_mixing13") == 0) {
-    double tweak_mixing13 = input_mixing13 - conv::kGlobFitErrSinsq2Theta13;
+    double tweak_mixing13 = input_mixing13 * (1 - conv::kGlobFitErrSinsq2Theta13);
     if(tweak_mixing13 >  fparm->MaxValue(conv::kPhypMixing13)) tweak_mixing13 = fparm->MaxValue(conv::kPhypMixing13);
     if(tweak_mixing13 <  fparm->MinValue(conv::kPhypMixing13)) tweak_mixing13 = fparm->MinValue(conv::kPhypMixing13);
     fparm->Update(conv::kPhypMixing13, tweak_mixing13);
     fparm->SetInitValue(conv::kPhypMixing13, tweak_mixing13);
   }
   else if(sys.find("osc_dm12sq") == 0) {
-    double tweak_dm12sq = input_dm12sq - conv::kGlobFitErrSinsq2Theta12;
+    double tweak_dm12sq = input_dm12sq * (1 - conv::kGlobFitErrDm12sq);
     if(tweak_dm12sq >  fparm->MaxValue(conv::kPhypDm12sq)) tweak_dm12sq = fparm->MaxValue(conv::kPhypDm12sq);
     if(tweak_dm12sq <  fparm->MinValue(conv::kPhypDm12sq)) tweak_dm12sq = fparm->MinValue(conv::kPhypDm12sq);
-    fparm->Update(conv::kPhypDeltaCP, tweak_dm12sq);
-    fparm->SetInitValue(conv::kPhypDeltaCP, tweak_dm12sq);
+    fparm->Update(conv::kPhypDm12sq, tweak_dm12sq);
+    fparm->SetInitValue(conv::kPhypDm12sq, tweak_dm12sq);
   }
   else if(sys.find("osc_deltacp") == 0) {
-    double tweak_deltacp = input_deltacp - conv::kGlobFitErrDeltaCP;
+    double tweak_deltacp = input_deltacp - (TMath::Pi()/2);
     if(tweak_deltacp >  fparm->MaxValue(conv::kPhypDeltaCP)) tweak_deltacp = fparm->MaxValue(conv::kPhypDeltaCP);
     if(tweak_deltacp <  fparm->MinValue(conv::kPhypDeltaCP)) tweak_deltacp = fparm->MinValue(conv::kPhypDeltaCP);
-    fparm->Update(conv::kPhypDm12sq, tweak_deltacp);
-    fparm->SetInitValue(conv::kPhypDm12sq, tweak_deltacp);
+    fparm->Update(conv::kPhypDeltaCP, tweak_deltacp);
+    fparm->SetInitValue(conv::kPhypDeltaCP, tweak_deltacp);
   }
   else {
     skexp->TweakSystematic(systematic,-1.);
@@ -398,7 +398,7 @@ void test_bestfit_point_shift_due_to_syst_twk
   string cor = "";
   if(correlated_banff)
     cor = "_correlated";
-  outfilename << "star_plot_line-" << systematic << ".data";
+  outfilename << "star_plot_line-" << cor << systematic << ".data";
   ofstream outfile;
   outfile.open(outfilename.str().c_str());
   outfile << systematic 

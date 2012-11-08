@@ -81,6 +81,13 @@ if runmode == "STARSTAT":
    oscparams.append([-99, -99, -99, -99, -99, 0.0026]) #use global best fits! & dm32sq = 2.6E-3
    oscparams.append([-99, -99, 0.9, -99, -99, 0.0026]) #mixing23=0.9 & global best fits & dm32sq = 2.6E-3
    oscparams.append([-99, -99, 0.95, -99, -99, 0.0026]) #mixing23=0.95 & global best fits & dm32sq = 2.6E-3
+   #some at the edges of the space
+   oscparams.append([-99, -99, 0.8, -99, -99, 0.0020])
+   oscparams.append([-99, -99, 0.8, -99, -99, 0.0030])
+   oscparams.append([-99, -99, 0.8, -99, -99, 0.0024])
+   oscparams.append([-99, -99, 1.0, -99, -99, 0.0020])
+   oscparams.append([-99, -99, 1.0, -99, -99, 0.0030])
+   
    syst = 0
    tag = "starstat"
    nruns = 100

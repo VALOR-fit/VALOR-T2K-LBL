@@ -52,14 +52,14 @@ fitter = "minuit"
 #specify the cuts you want to apply here
 systematics = []
 #oscillations
-#systematics.append("osc_mixing12");
-#systematics.append("osc_mixing13");
-#systematics.append("osc_dm12sq");
-#systematics.append("osc_deltacp");
+systematics.append("osc_mixing12");
+systematics.append("osc_mixing13");
+systematics.append("osc_dm12sq");
+systematics.append("osc_deltacp");
 #BANFF
 #systematics.append("banff")
 #BANFF flux
-for i in xrange(24):
+for i in xrange(16):
    systematics.append("banff_" + '%(number)02d' % {"number": i})
 #BANFF xsec
 systematics.append("banff_maqe")
@@ -69,7 +69,6 @@ systematics.append("banff_ccqeE1")
 systematics.append("banff_ccqeE2")
 systematics.append("banff_cc1piE0")
 systematics.append("banff_cc1piE1")
-"""
 #SK
 #systematics.append("sk_1Rmu_ccqe_ring_counting_eff")
 systematics.append("sk_1Rmu_ccqe_ring_counting_eff_0")
@@ -97,9 +96,8 @@ systematics.append("xsec_norm_ncoth")
 systematics.append("xsec_norm_nuetonumu")
 systematics.append("xsec_norm_antinutonu")
 #FSI
-for i in xrange(15):
+for i in xrange(6):
    systematics.append("fsi_" + '%(number)03d' % {"number": i})
-"""
 """
 #UnBANFF
 #systematics.append("unbanff")
@@ -127,6 +125,12 @@ oscparams.append([-99, -99, 0.95, -99, -99, 0.0022]) #mixing23=0.95 & global bes
 oscparams.append([-99, -99, -99, -99, -99, 0.0026]) #use global best fits! & dm32sq = 2.6E-3
 oscparams.append([-99, -99, 0.9, -99, -99, 0.0026]) #mixing23=0.9 & global best fits & dm32sq = 2.6E-3
 oscparams.append([-99, -99, 0.95, -99, -99, 0.0026]) #mixing23=0.95 & global best fits & dm32sq = 2.6E-3
+#some at the edges of the space
+oscparams.append([-99, -99, 0.8, -99, -99, 0.0020])
+oscparams.append([-99, -99, 0.8, -99, -99, 0.0030])
+oscparams.append([-99, -99, 0.8, -99, -99, 0.0024])
+oscparams.append([-99, -99, 1.0, -99, -99, 0.0020])
+oscparams.append([-99, -99, 1.0, -99, -99, 0.0030])
 
 for osc in oscparams:
 
