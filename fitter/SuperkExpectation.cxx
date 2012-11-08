@@ -542,11 +542,11 @@ void SuperkExpectation::TweakAllUncorrelatedXSecSystematics(void)
 
   // XSec
   this->GetNuXSec()->TweakFermiMom      (rand.Gaus(0.,1.));
-  this->GetNuXSec()->TweakSpecFunc      (rand.Gaus(0.,1.));
+  this->GetNuXSec()->TweakSpecFunc      (rand.Uniform(0.,1.));
   this->GetNuXSec()->TweakWshape        (rand.Gaus(0.,1.));
   this->GetNuXSec()->TweakShapeCCoth    (rand.Gaus(0.,1.));
   this->GetNuXSec()->TweakPiLessDelta   (rand.Gaus(0.,1.));
-  this->GetNuXSec()->TweakENuShape      (rand.Gaus(0.,1.));
+  //this->GetNuXSec()->TweakENuShape      (rand.Gaus(0.,1.)); //not used in numu analysis!
   this->GetNuXSec()->TweakBindE         (rand.Gaus(0.,1.));
 #if BANFF_BINS <= 1
   this->GetNuXSec()->TweakNormCCQEE1    (rand.Gaus(0.,1.));
@@ -555,7 +555,7 @@ void SuperkExpectation::TweakAllUncorrelatedXSecSystematics(void)
 #endif
   this->GetNuXSec()->TweakNormCCcoh     (rand.Gaus(0.,1.));
   this->GetNuXSec()->TweakNormNC1piC    (rand.Gaus(0.,1.));
-  this->GetNuXSec()->TweakNormNCcoh     (rand.Gaus(0.,1.));
+  //this->GetNuXSec()->TweakNormNCcoh     (rand.Gaus(0.,1.)); //not used in numu analysis!
   this->GetNuXSec()->TweakNormNCoth     (rand.Gaus(0.,1.));
   this->GetNuXSec()->TweakNormNuEToNuMu (rand.Gaus(0.,1.));
   this->GetNuXSec()->TweakNormAntiNuToNu(rand.Gaus(0.,1.));
@@ -796,10 +796,11 @@ void SuperkExpectation::SetNuisanceParams(const FitParamList & fp, bool all_banf
    //And finally apply the tweak
    this->GetBANFF()->Tweak(true,&twkv,1);
 
+   /*
    // 
    // Uncorrelated BANFF systematics
    //
-
+   
    // Uncorrelated BANFF params included in the fit param list?
    TVectorD twkvu(nbanff);
    bool need_to_tweak_unbanff = false;
@@ -819,7 +820,9 @@ void SuperkExpectation::SetNuisanceParams(const FitParamList & fp, bool all_banf
    }
    if(need_to_tweak_unbanff)
      this->GetBANFF()->Tweak(true,&twkvu,2);
+   */
 
+   /*
    // 
    // Eigendecomposition BANFF systematics
    //
@@ -843,6 +846,7 @@ void SuperkExpectation::SetNuisanceParams(const FitParamList & fp, bool all_banf
    }
    if(need_to_tweak_edbanff)
      this->GetBANFF()->Tweak(true,&twkve,3);
+   */
 
    // 
    // Cross-section systematics (other than BANFF ones)
@@ -867,10 +871,12 @@ void SuperkExpectation::SetNuisanceParams(const FitParamList & fp, bool all_banf
      double twk = fp.CurrValue(kNuisXSecPiLessDelta);
      this->GetNuXSec()->TweakPiLessDelta(twk);
    }
+   /*
    if(fp.Exists(kNuisXSecENuShape)) {
      double twk = fp.CurrValue(kNuisXSecENuShape);
      this->GetNuXSec()->TweakENuShape(twk);
    }
+   */
    if(fp.Exists(kNuisXSecBindE)) {
      double twk = fp.CurrValue(kNuisXSecBindE);
      this->GetNuXSec()->TweakBindE(twk);
@@ -897,10 +903,12 @@ void SuperkExpectation::SetNuisanceParams(const FitParamList & fp, bool all_banf
      double twk = fp.CurrValue(kNuisXSecNormNC1piC);
      this->GetNuXSec()->TweakNormNC1piC(twk);
    }
+   /*
    if(fp.Exists(kNuisXSecNormNCcoh)) {
      double twk = fp.CurrValue(kNuisXSecNormNCcoh);
      this->GetNuXSec()->TweakNormNCcoh(twk);
    }
+   */
    if(fp.Exists(kNuisXSecNormNCoth)) {
      double twk = fp.CurrValue(kNuisXSecNormNCoth);
      this->GetNuXSec()->TweakNormNCoth(twk);
