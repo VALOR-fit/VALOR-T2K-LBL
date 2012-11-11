@@ -55,7 +55,7 @@ public:
 
    // Methods to generate SuperK spectra for a physics hypothesis (oscillations,decay,decoherence) 
    // and tweak systematics (tweak the p.d.fs used for generating the SuperK spectra).
-   void Generate                  (const PhysHypothesis & ph);
+   bool Generate                  (const PhysHypothesis & ph);
    void ResetSystematicVariations (void);                                 ///< reset all systematics
    void TweakSystematic           (string systematic, double twkdial=0., bool best_banff=true); ///< set systematic variation (from top level)
    //                     best_banff refers to whether to use bestfit or param=1 when fitting a single banff parameter
@@ -69,7 +69,7 @@ public:
 
    // Interface method for fitters. The fit parameter list can contain info for both the 
    // physics hypothesis and the systematic variations.
-   void Generate (const FitParamList & fp, bool all_banff_fit);
+   bool Generate (const FitParamList & fp, bool all_banff_fit);
 
    // Access calculated SK reconstructed energy spectrum for each sample/mode
    TH1D* CurrPredictedErecoSpectrum (t2kana::conv::SuperkSample_t s) const;
@@ -99,13 +99,13 @@ private:
    // Use the nuisance param values in the input FitParamList to tweak the pdfs.
    void SetNuisanceParams (const FitParamList & fp, bool all_banff_fit);
 
-   bool             fIsConfigured;           ///< Is this object properly configured?
-   SuperkDetector * fSuperkDetector;         ///< SuperK detector info
-   SuperkMC *       fSuperkMC;               ///< SuperK MC templates
-   NuFlux *         fNuFlux;                 ///< Neutrino flux simulation inputs
-   NuXSec *         fNuXSec;                 ///< Neutrino generator / cross section inputs
-   BANFF *          fBANFF;                  ///< BANFF fit info
-   FSI *            fFSI;                    ///< FSI info
+   bool             fIsConfigured;                ///< Is this object properly configured?
+   SuperkDetector * fSuperkDetector;              ///< SuperK detector info
+   SuperkMC *       fSuperkMC;                    ///< SuperK MC templates
+   NuFlux *         fNuFlux;                      ///< Neutrino flux simulation inputs
+   NuXSec *         fNuXSec;                      ///< Neutrino generator / cross section inputs
+   BANFF *          fBANFF;                       ///< BANFF fit info
+   FSI *            fFSI;                         ///< FSI info
 
    TH1D *  fPredictErecoSpectrum[kns][knm];  ///< Ereco spectrum = f(sample,mode)
    TH1D *  fPredictErecoSpectrumTot[kns];    ///< Ereco spectrum = f(sample), sum over modes

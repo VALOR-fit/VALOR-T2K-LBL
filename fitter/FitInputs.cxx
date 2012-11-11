@@ -95,7 +95,8 @@ double FitInputs::Chisquare(Option_t * option, conv::SuperkSample_t s0)
 
   // Get the oscillation analysis type for chisquare computation
   OscAnaType_t oscana = Opt::Instance()->gOscAnaTypeChoice;
-  
+  bool applied_negevents_condition = false;
+
   // loop over samples included in the analysis
   for(int is = 0; is < kns; is++) 
   {
@@ -109,7 +110,7 @@ double FitInputs::Chisquare(Option_t * option, conv::SuperkSample_t s0)
       // If we only want the nue appearance analysis only, then skip
       if ((s == conv::kSKsFCFV1RingMuLike) && (oscana != conv::kAnaNuEAppOnly))
       {
-  	  this->Expectation().Generate(this->FitParams(), fAllBANFFFit);
+  	  applied_negevents_condition = this->Expectation().Generate(this->FitParams(), fAllBANFFFit) || applied_negevents_condition;
 	  TH1D * obs_ereco_spectrum = this->Observation().ErecoSpectrum(s);
 	  TH1D * exp_ereco_spectrum = this->Expectation().CurrPredictedErecoSpectrum(s);
 	  int nbins = exp_ereco_spectrum->GetNbinsX();
@@ -141,7 +142,7 @@ double FitInputs::Chisquare(Option_t * option, conv::SuperkSample_t s0)
       else 
       if ((s == conv::kSKsFCFV1RingELike) && (oscana != conv::kAnaNuMuDisappOnly) )
       {
-	    this->Expectation().Generate(this->FitParams(), fAllBANFFFit);
+	    applied_negevents_condition = this->Expectation().Generate(this->FitParams(), fAllBANFFFit) || applied_negevents_condition;
 	    // Note: Counting experiment for the time-being
 	    double nobs = this->Observation().ErecoSpectrum(s)->Integral();
 	    double nexp = this->Expectation().CurrPredictedErecoSpectrum(s)->Integral();
@@ -171,6 +172,8 @@ double FitInputs::Chisquare(Option_t * option, conv::SuperkSample_t s0)
        << " (contribution from penalty term = " << chisq_penalty << ")" 
        << endl;
 #endif
+
+  if(applied_negevents_condition) chisq += 1E8;
 
   return chisq; 
 }
@@ -231,6 +234,7 @@ double FitInputs::ChisquarePenaltyTerm(void)
 #endif
   }
 
+  /*
   //
   // Add penalty term for uncorrelated BANFF params 
   // First, make sure that all BANFF params were included in the fit param
@@ -249,11 +253,9 @@ double FitInputs::ChisquarePenaltyTerm(void)
   else {
     incl_unbanff_penalty = false;
     //currently no unbanff parameters are 'selected'; if they were, would do something like:
-    /*
-    PhysParamId_t p = kNuisUnBANFF00;
-    incl_banff_penalty = incl_banff_penalty && 
-      (this->FitParams().Exists(p) && this->FitParams().IsNuisance(p));
-    */
+    //PhysParamId_t p = kNuisUnBANFF00;
+    //incl_banff_penalty = incl_banff_penalty && 
+    //(this->FitParams().Exists(p) && this->FitParams().IsNuisance(p));
   }
   if(incl_unbanff_penalty) {
     double dchisq_penalty = this->Expectation().GetBANFF()->ChisqPenalty(all_syst);
@@ -263,6 +265,7 @@ double FitInputs::ChisquarePenaltyTerm(void)
            << " => \\delta\\chi^2_{penalty} = " << dchisq_penalty << endl;
 #endif
   }
+  */
 
   //
   // Add penalty term for SuperkDetector params
@@ -286,9 +289,9 @@ double FitInputs::ChisquarePenaltyTerm(void)
     p = kNuisSuperkEff1RmuNC;
     incl_skdet_penalty = incl_skdet_penalty &&
       (this->FitParams().Exists(p) && this->FitParams().IsNuisance(p));
-    p = kNuisSuperkEnergyScale;
-    incl_skdet_penalty = incl_skdet_penalty &&
-      (this->FitParams().Exists(p) && this->FitParams().IsNuisance(p));
+    //p = kNuisSuperkEnergyScale;
+    //incl_skdet_penalty = incl_skdet_penalty &&
+    //(this->FitParams().Exists(p) && this->FitParams().IsNuisance(p));
   }
   if(incl_skdet_penalty) {
     double dchisq_penalty = this->Expectation().GetSuperkDetector()->ChisqPenalty(all_syst);
@@ -517,7 +520,7 @@ double FitInputs::operator() (const std::vector<double>& x) const
 
   //Generate the Ereco spectra
   SuperkSample_t s = conv::kSKsFCFV1RingMuLike;
-  fExp->Generate(*fFitParams, fAllBANFFFit);
+  bool applied_negevents_condition = fExp->Generate(*fFitParams, fAllBANFFFit);
   TH1D * obs_ereco_spectrum = fObs->ErecoSpectrum(s);
   TH1D * exp_ereco_spectrum = fExp->CurrPredictedErecoSpectrum(s);
   int nbins = exp_ereco_spectrum->GetNbinsX();
@@ -602,39 +605,6 @@ double FitInputs::operator() (const std::vector<double>& x) const
     }
 
     //
-    // Add penalty term for uncorrelated BANFF params 
-    // First, make sure that all BANFF params were included in the fit param
-    // list and were marked as nuisance parameters.
-    //
-    bool incl_unbanff_penalty = true;
-    if(all_syst) {
-      const int np_banff = conv::kNumOfParamsInBANFFfit;
-      for(int ip = 0; ip < np_banff; ip++) {
-	PhysParamId_t p = PhysParamId_t ( (int) kNuisUnBANFF00 + ip );
-	incl_banff_penalty = incl_banff_penalty && 
-	  (fFitParams->Exists(p) && fFitParams->IsNuisance(p));
-	if(!incl_banff_penalty) break;
-      }
-    }
-    else {
-      incl_unbanff_penalty = false;
-      //currently no unbanff parameters are 'selected'; if they were, would do something like:
-      /*
-	PhysParamId_t p = kNuisUnBANFF00;
-	incl_banff_penalty = incl_banff_penalty && 
-	(fFitParams->Exists(p) && fFitParams->IsNuisance(p));
-      */
-    }
-    if(incl_unbanff_penalty) {
-      double dchisq_penalty = fExp->GetBANFF()->ChisqPenalty(all_syst);
-      chisq_penalty += dchisq_penalty;
-#ifdef __show_contributions_to_penalty_term__
-      cout << "FitInputs::ChisquarePenaltyTerm >> Current BANFF param variation"
-           << " => \\delta\\chi^2_{penalty} = " << dchisq_penalty << endl;
-#endif
-    }
-
-    //
     // Add penalty term for SuperkDetector params
     // First check all the parms considered by SuperkDetector are included in the fit
     // param list and set as nuisance
@@ -656,9 +626,9 @@ double FitInputs::operator() (const std::vector<double>& x) const
       p = kNuisSuperkEff1RmuNC;
       incl_skdet_penalty = incl_skdet_penalty &&
 	(fFitParams->Exists(p) && fFitParams->IsNuisance(p));
-      p = kNuisSuperkEnergyScale;
-      incl_skdet_penalty = incl_skdet_penalty &&
-	(fFitParams->Exists(p) && fFitParams->IsNuisance(p));
+      //p = kNuisSuperkEnergyScale;
+      //incl_skdet_penalty = incl_skdet_penalty &&
+      //(fFitParams->Exists(p) && fFitParams->IsNuisance(p));
     }
     if(incl_skdet_penalty) {
       double dchisq_penalty = fExp->GetSuperkDetector()->ChisqPenalty(all_syst);
@@ -739,6 +709,8 @@ double FitInputs::operator() (const std::vector<double>& x) const
        << " (contribution from penalty term = " << chisq_penalty << ")" 
        << endl;
 #endif
+
+  if(applied_negevents_condition) chisq += 1E8;
 
   return chisq; 
 }

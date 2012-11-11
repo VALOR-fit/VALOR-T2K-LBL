@@ -49,7 +49,7 @@ public:
   void UpdateTemplates(void);
 
   // Integrate current MC templates and get Ereco spectra (needed for fitting the data)
-  void  UpdateErecoSpectra  (void);
+  bool  UpdateErecoSpectra  (void);
   TH1D* CurrErecoSpectrum   (conv::SuperkSample_t s) const;
   TH1D* CurrErecoSpectrum   (conv::SuperkSample_t s, conv::SuperkMode_t m) const;
       
@@ -99,7 +99,7 @@ private:
   void ApplySystematicsToTemplates                   (void); 
   void ApplySystematicsToTemplates_Multiplicative    (void); 
   void ApplySystematicsToTemplates_NonMultiplicative (void); 
-  void ApplyEnergyScaleSystematicToTotalSpectrum     (void);
+  bool ApplyEnergyScaleSystematicToTotalSpectrum     (void);
 
   // Apply physics hypothesis (oscillations,...) to MC templates
   void ApplyPhysHypothesisToTemplates (void); 

@@ -904,7 +904,7 @@ void SuperkMC::ApplySystematicsToTemplates_NonMultiplicative(void)
 #endif
 }
 //________________________________________________________________________________________
-void SuperkMC::ApplyEnergyScaleSystematicToTotalSpectrum(void) 
+bool SuperkMC::ApplyEnergyScaleSystematicToTotalSpectrum(void) 
 {
 //
 // Now that all other systematics and physics hypotheses (that depend on Etrue) have been 
@@ -917,6 +917,8 @@ void SuperkMC::ApplyEnergyScaleSystematicToTotalSpectrum(void)
 #ifdef __show_update_mesg_info__
   cout << "Exp/SKMC >> Applying non-multiplicative systematics to total spectrum" << endl;
 #endif
+
+  bool applied_negevents_condition = false;
 
   // loop over samples
   for(int is = 0; is < kns; is++) {
@@ -1015,11 +1017,13 @@ void SuperkMC::ApplyEnergyScaleSystematicToTotalSpectrum(void)
 	cout << "Exp/SKMC/ApplyEnergyScaleSystematicToTotalSpectrum >> set negative number of events " << reco_spectrum_tot->GetBinContent(ir)
 	     << " to " << kSetMinEventsTo << "\t" << " Ereco: " << reco_spectrum_tot->GetXaxis()->GetBinCenter(ir) << endl;
 #endif
+	applied_negevents_condition = true;
 	reco_spectrum_tot->SetBinContent(ir, kSetNegEventsTo);
       }
     }//ir
 
   }//is
+  return applied_negevents_condition;
 }
 //________________________________________________________________________________________
 void SuperkMC::ApplyPhysHypothesisToTemplates(void)
@@ -1243,8 +1247,9 @@ void SuperkMC::ApplyPhysHypothesisToTemplates(void)
 #endif
 }
 //________________________________________________________________________________________
-void SuperkMC::UpdateErecoSpectra(void)
+bool SuperkMC::UpdateErecoSpectra(void)
 {
+  bool applied_negevents_condition = false;
   // loop over samples
   for(int is = 0; is < kns; is++) {
     SuperkSample_t s = kSKSamples[is];
@@ -1280,7 +1285,7 @@ void SuperkMC::UpdateErecoSpectra(void)
 #endif
 	    nev = kSetNegEventsTo;
 	  }
-#endif
+#endif //__apply_minevents_to_individual_modes__
           reco_spectrum->SetBinContent(ir,nev);
        }//im
 #ifndef APPLY_ESCALE_AT_SPECTRUM_STAGE
@@ -1290,15 +1295,17 @@ void SuperkMC::UpdateErecoSpectra(void)
 	 cout << "Exp/SKMC/UpdateErecoSpectra >> set negative number of events " << nev_tot 
 	      << " to kSetNegEventsTo " << kSetNegEventsTo << "\t" << " Ereco: " << reco_spectrum_tot->GetXaxis()->GetBinCenter(ir) << endl;
 #endif
+	 applied_negevents_condition = true;
 	 nev_tot = kSetNegEventsTo;
        }
-#endif
+#endif //!APPLY_ESCALE_AT_SPECTRUM_STAGE
        reco_spectrum_tot->SetBinContent(ir,nev_tot);
     }//ir
-#ifdef APPLY_ESCALE_AT_SPECTRUM_STAGE
-    this->ApplyEnergyScaleSystematicToTotalSpectrum();
-#endif
   }//is
+#ifdef APPLY_ESCALE_AT_SPECTRUM_STAGE
+  applied_negevents_condition = this->ApplyEnergyScaleSystematicToTotalSpectrum();
+#endif
+  return applied_negevents_condition;
 }
 //________________________________________________________________________________________
 void SuperkMC::FillEtrueSpectra(void)

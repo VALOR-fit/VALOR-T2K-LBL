@@ -59,7 +59,7 @@ SuperkExpectation::~SuperkExpectation(void)
   this->CleanUp();
 }
 //________________________________________________________________________________________
-void SuperkExpectation::Generate(const PhysHypothesis & ph)
+bool SuperkExpectation::Generate(const PhysHypothesis & ph)
 {
 // Calculate dN^{exp}_{SuperK}(E_{reco}) / dE_{reco} for the input E_{reco} and 
 // the input physics hypothesis
@@ -76,7 +76,7 @@ void SuperkExpectation::Generate(const PhysHypothesis & ph)
   fSuperkMC->UpdateTemplates();
 
   // update Ereco spectrum prediction
-  fSuperkMC->UpdateErecoSpectra();
+  bool applied_negevents_condition = fSuperkMC->UpdateErecoSpectra();
 
   // copy histograms
   for(int is = 0; is < kns; is++) {
@@ -94,10 +94,10 @@ void SuperkExpectation::Generate(const PhysHypothesis & ph)
        }//m	
     }//ibin
   }//s
-
+  return applied_negevents_condition;
 }
 //________________________________________________________________________________________
-void SuperkExpectation::Generate(const FitParamList & fp, bool all_banff_fit)
+bool SuperkExpectation::Generate(const FitParamList & fp, bool all_banff_fit)
 {
 // SuperkExpectation interface method for fitters.
 // Calculate dN^{exp}_{SuperK}(E_{reco}) / dE_{reco} for the input E_{reco} and 
@@ -113,7 +113,8 @@ void SuperkExpectation::Generate(const FitParamList & fp, bool all_banff_fit)
 
   // call main Generate() method to generate SuperK predictions for the input
   // physics hypothesis using the (potentially) tweaked p.d.fs
-  this->Generate(ph);
+  bool applied_negevents_condition = this->Generate(ph);
+  return applied_negevents_condition;
 }
 //________________________________________________________________________________________
 TH1D* SuperkExpectation::CurrPredictedErecoSpectrum(t2kana::conv::SuperkSample_t s) const 
@@ -568,25 +569,14 @@ void SuperkExpectation::TweakAllSKDetectorSystematics(void)
 #endif
 
   TRandom3 rand(0);
-  double tweak = -99;
 
   // SuperK detector systematics
   this->GetSuperkDetector()->TweakEnergyScale              (rand.Gaus(0.,1.));
   this->GetSuperkDetector()->TweakEfficiency1RmuCCQEOther  (rand.Gaus(0.,1.));
   this->GetSuperkDetector()->TweakEfficiency1RmuCCQERingCounting  (); // <-- Cholesky method
-  //add protection against going negative.
-  tweak = rand.Gaus(0.,1.);
-  while(tweak < -5) //20%
-    tweak = rand.Gaus(0.,1.);
-  this->GetSuperkDetector()->TweakEfficiency1RmuCCnonQE    (tweak);
-  tweak = rand.Gaus(0.,1.);
-  while(tweak < -0.9009) //111%
-    tweak = rand.Gaus(0.,1.);
-  this->GetSuperkDetector()->TweakEfficiency1RmuNC         (tweak);
-  tweak = rand.Gaus(0.,1.);
-  while(tweak < -1) //100%
-    tweak = rand.Gaus(0.,1.);
-  this->GetSuperkDetector()->TweakEfficiency1RmuNuECC      (tweak);
+  this->GetSuperkDetector()->TweakEfficiency1RmuCCnonQE    (rand.Gaus(0.,1.));
+  this->GetSuperkDetector()->TweakEfficiency1RmuNC         (rand.Gaus(0.,1.));
+  this->GetSuperkDetector()->TweakEfficiency1RmuNuECC      (rand.Gaus(0.,1.));
 }
 //________________________________________________________________________________________
 void SuperkExpectation::PrintSystematicVariations(ostream & stream) const

@@ -137,10 +137,6 @@ void FitterKernelMinuit2::Init(FitInputs * fit_inputs, Option_t * option)
        << ", Number of free parameters = " << this->NFitParams() << ")"
        << endl;
 #endif
-
-#ifdef __show_fit_init_info__
-  cout << "FitterKernelMinuit2/Init >> Constructing covariance matrix " << endl;
-#endif
 }
 //____________________________________________________________________________ 
 void FitterKernelMinuit2::ConstructCovMatrix(void)

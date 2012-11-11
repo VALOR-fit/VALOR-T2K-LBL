@@ -828,140 +828,165 @@ void test_n_mock_data_fits_with_syst_minuit2
     // get superk spectrum observation (toy experiment)
     //
     SuperkObservation * skobs = new SuperkObservation;
-    if(syst_mode > 0) {
-      // tweak all sources of systematic err (gaussian err)
-      cout << "- Randomizing systematic params in pdf..." << endl;
-      switch(syst_mode) {
-      case 1:
-	skexp->TweakAllSystematics();
-	break;
-      case 2:
-	skexp->TweakAllBANFFSystematics();
-	break;
-      case 3:
-	skexp->TweakAllUncorrelatedXSecSystematics();
-	break;
-      case 4:
-	skexp->TweakAllSKDetectorSystematics();
-	break;
-      case 5:
-	skexp->TweakAllFSISystematics();
-	break;
-      case 6:
-	TRandom3 rand(0);
-	skexp->GetNuXSec()->TweakSpecFunc      (rand.Gaus(0.,1.));
-	skexp->GetNuXSec()->TweakBindE         (rand.Gaus(0.,1.));
-	skexp->GetNuXSec()->TweakPiLessDelta   (rand.Gaus(0.,1.));
-	skexp->GetSuperkDetector()->TweakEfficiency1RmuCCnonQE    (rand.Gaus(0.,1.));
-	skexp->GetSuperkDetector()->TweakEfficiency1RmuNC         (rand.Gaus(0.,1.));
-	skexp->GetSuperkDetector()->TweakEnergyScale              (rand.Gaus(0.,1.));
-	TVectorD twkv(skexp->GetBANFF()->BestFitValues());
-	TVectorD cov (skexp->GetBANFF()->CovMatrix());
-	PhysParamId_t p = conv::kNuisBANFFMAQE;
-	int ip   = util::ArrIdx::Instance()->BANFFSystIdx(kNuisBANFFMAQE);
-	twkv[ip] = rand.Gaus(twkv[ip], cov[ip]);
-	ip       = util::ArrIdx::Instance()->BANFFSystIdx(kNuisBANFFCCQEE0);
-	twkv[ip] = rand.Gaus(twkv[ip], cov[ip]);
-	skexp->GetBANFF()->Tweak(true,&twkv);
-	break;
-      default:
-	cerr << "Invalid systematic mode " << syst_mode << ". Exiting" << endl;
-	exit(1);
-	break;
+    bool applied_negevents_condition = true;
+    while(applied_negevents_condition) {
+      if(syst_mode > 0) {
+	// tweak all sources of systematic err (gaussian err)
+	cout << "- Randomizing systematic params in pdf..." << endl;
+	switch(syst_mode) {
+	case 1:
+	  skexp->TweakAllSystematics();
+	  break;
+	case 2:
+	  skexp->TweakAllBANFFSystematics();
+	  break;
+	case 3:
+	  skexp->TweakAllUncorrelatedXSecSystematics();
+	  break;
+	case 4:
+	  skexp->TweakAllSKDetectorSystematics();
+	  break;
+	case 5:
+	  skexp->TweakAllFSISystematics();
+	  break;
+	case 6:
+	  TRandom3 rand(0);
+	  skexp->GetNuXSec()->TweakSpecFunc      (rand.Gaus(0.,1.));
+	  skexp->GetNuXSec()->TweakBindE         (rand.Gaus(0.,1.));
+	  skexp->GetNuXSec()->TweakPiLessDelta   (rand.Gaus(0.,1.));
+	  skexp->GetSuperkDetector()->TweakEfficiency1RmuCCnonQE    (rand.Gaus(0.,1.));
+	  skexp->GetSuperkDetector()->TweakEfficiency1RmuNC         (rand.Gaus(0.,1.));
+	  skexp->GetSuperkDetector()->TweakEnergyScale              (rand.Gaus(0.,1.));
+	  TVectorD twkv(skexp->GetBANFF()->BestFitValues());
+	  TVectorD cov (skexp->GetBANFF()->CovMatrix());
+	  PhysParamId_t p = conv::kNuisBANFFMAQE;
+	  int ip   = util::ArrIdx::Instance()->BANFFSystIdx(kNuisBANFFMAQE);
+	  twkv[ip] = rand.Gaus(twkv[ip], cov[ip]);
+	  ip       = util::ArrIdx::Instance()->BANFFSystIdx(kNuisBANFFCCQEE0);
+	  twkv[ip] = rand.Gaus(twkv[ip], cov[ip]);
+	  skexp->GetBANFF()->Tweak(true,&twkv);
+	  break;
+	default:
+	  cerr << "Invalid systematic mode " << syst_mode << ". Exiting" << endl;
+	  exit(1);
+	  break;
+	}
+	skexp->PrintSystematicVariations();
+	// save the input systematics to the tree
+	input_banff_00 = skexp->GetBANFF()->CurrentValue(conv::kNuisBANFF00);
+	input_banff_01 = skexp->GetBANFF()->CurrentValue(conv::kNuisBANFF01);
+	input_banff_02 = skexp->GetBANFF()->CurrentValue(conv::kNuisBANFF02);
+	input_banff_03 = skexp->GetBANFF()->CurrentValue(conv::kNuisBANFF03);
+	input_banff_04 = skexp->GetBANFF()->CurrentValue(conv::kNuisBANFF04);
+	input_banff_05 = skexp->GetBANFF()->CurrentValue(conv::kNuisBANFF05);
+	input_banff_06 = skexp->GetBANFF()->CurrentValue(conv::kNuisBANFF06);
+	input_banff_07 = skexp->GetBANFF()->CurrentValue(conv::kNuisBANFF07);
+	input_banff_08 = skexp->GetBANFF()->CurrentValue(conv::kNuisBANFF08);
+	input_banff_09 = skexp->GetBANFF()->CurrentValue(conv::kNuisBANFF09);
+	input_banff_10 = skexp->GetBANFF()->CurrentValue(conv::kNuisBANFF10);
+	input_banff_11 = skexp->GetBANFF()->CurrentValue(conv::kNuisBANFF11);
+	input_banff_12 = skexp->GetBANFF()->CurrentValue(conv::kNuisBANFF12);
+	input_banff_13 = skexp->GetBANFF()->CurrentValue(conv::kNuisBANFF13);
+	input_banff_14 = skexp->GetBANFF()->CurrentValue(conv::kNuisBANFF14);
+	input_banff_15 = skexp->GetBANFF()->CurrentValue(conv::kNuisBANFF15);
+	input_banff_maqe = skexp->GetBANFF()->CurrentValue(conv::kNuisBANFFMAQE);
+	input_banff_mares = skexp->GetBANFF()->CurrentValue(conv::kNuisBANFFMARES);
+	input_banff_ccqeE0 = skexp->GetBANFF()->CurrentValue(conv::kNuisBANFFCCQEE0);
+	input_banff_ccqeE1 = skexp->GetBANFF()->CurrentValue(conv::kNuisBANFFCCQEE1);
+	input_banff_ccqeE2 = skexp->GetBANFF()->CurrentValue(conv::kNuisBANFFCCQEE2);
+	input_banff_cc1piE0 = skexp->GetBANFF()->CurrentValue(conv::kNuisBANFFCC1piE0);
+	input_banff_cc1piE1 = skexp->GetBANFF()->CurrentValue(conv::kNuisBANFFCC1piE1);
+	input_unbanff_00 = skexp->GetBANFF()->CurrentUncorrelatedValue(conv::kNuisUnBANFF00);
+	input_unbanff_01 = skexp->GetBANFF()->CurrentUncorrelatedValue(conv::kNuisUnBANFF01);
+	input_unbanff_02 = skexp->GetBANFF()->CurrentUncorrelatedValue(conv::kNuisUnBANFF02);
+	input_unbanff_03 = skexp->GetBANFF()->CurrentUncorrelatedValue(conv::kNuisUnBANFF03);
+	input_unbanff_04 = skexp->GetBANFF()->CurrentUncorrelatedValue(conv::kNuisUnBANFF04);
+	input_unbanff_05 = skexp->GetBANFF()->CurrentUncorrelatedValue(conv::kNuisUnBANFF05);
+	input_unbanff_06 = skexp->GetBANFF()->CurrentUncorrelatedValue(conv::kNuisUnBANFF06);
+	input_unbanff_07 = skexp->GetBANFF()->CurrentUncorrelatedValue(conv::kNuisUnBANFF07);
+	input_unbanff_08 = skexp->GetBANFF()->CurrentUncorrelatedValue(conv::kNuisUnBANFF08);
+	input_unbanff_09 = skexp->GetBANFF()->CurrentUncorrelatedValue(conv::kNuisUnBANFF09);
+	input_unbanff_10 = skexp->GetBANFF()->CurrentUncorrelatedValue(conv::kNuisUnBANFF10);
+	input_unbanff_11 = skexp->GetBANFF()->CurrentUncorrelatedValue(conv::kNuisUnBANFF11);
+	input_unbanff_12 = skexp->GetBANFF()->CurrentUncorrelatedValue(conv::kNuisUnBANFF12);
+	input_unbanff_13 = skexp->GetBANFF()->CurrentUncorrelatedValue(conv::kNuisUnBANFF13);
+	input_unbanff_14 = skexp->GetBANFF()->CurrentUncorrelatedValue(conv::kNuisUnBANFF14);
+	input_unbanff_15 = skexp->GetBANFF()->CurrentUncorrelatedValue(conv::kNuisUnBANFF15);
+	input_unbanff_16 = skexp->GetBANFF()->CurrentUncorrelatedValue(conv::kNuisUnBANFF16);
+	input_unbanff_17 = skexp->GetBANFF()->CurrentUncorrelatedValue(conv::kNuisUnBANFF17);
+	input_unbanff_18 = skexp->GetBANFF()->CurrentUncorrelatedValue(conv::kNuisUnBANFF18);
+	input_unbanff_19 = skexp->GetBANFF()->CurrentUncorrelatedValue(conv::kNuisUnBANFF19);
+	input_unbanff_20 = skexp->GetBANFF()->CurrentUncorrelatedValue(conv::kNuisUnBANFF20);
+	input_unbanff_21 = skexp->GetBANFF()->CurrentUncorrelatedValue(conv::kNuisUnBANFF21);
+	input_unbanff_22 = skexp->GetBANFF()->CurrentUncorrelatedValue(conv::kNuisUnBANFF22);
+	input_xsec_pf = skexp->GetNuXSec()->CurrentValue(conv::kNuisXSecFermiMom);
+	input_xsec_sf = skexp->GetNuXSec()->CurrentValue(conv::kNuisXSecSpecFunc);
+	input_xsec_binde = skexp->GetNuXSec()->CurrentValue(conv::kNuisXSecBindE);
+	input_xsec_wshape = skexp->GetNuXSec()->CurrentValue(conv::kNuisXSecWshape);
+	input_xsec_ccothshape = skexp->GetNuXSec()->CurrentValue(conv::kNuisXSecShapeCCoth);
+	input_xsec_cc1pishape = skexp->GetNuXSec()->CurrentValue(conv::kNuisXSecENuShape);
+	input_xsec_pilessdelta = skexp->GetNuXSec()->CurrentValue(conv::kNuisXSecPiLessDelta);
+	input_xsec_normcccoh = skexp->GetNuXSec()->CurrentValue(conv::kNuisXSecNormCCcoh);
+	input_xsec_normnc1piC = skexp->GetNuXSec()->CurrentValue(conv::kNuisXSecNormNC1piC);
+	input_xsec_normnccoh = skexp->GetNuXSec()->CurrentValue(conv::kNuisXSecNormNCcoh);
+	input_xsec_normncoth = skexp->GetNuXSec()->CurrentValue(conv::kNuisXSecNormNCoth);
+	input_xsec_normnuetonumu = skexp->GetNuXSec()->CurrentValue(conv::kNuisXSecNormNuEToNuMu);
+	input_xsec_normantinutonu = skexp->GetNuXSec()->CurrentValue(conv::kNuisXSecNormAntiNuToNu);
+	input_skdet_energyscale = skexp->GetSuperkDetector()->CurrentValue(conv::kNuisSuperkEnergyScale);
+	input_skdet_ccqerc0 = skexp->GetSuperkDetector()->CurrentValue(conv::kNuisSuperkEff1RmuCCQErc0u);
+	input_skdet_ccqerc1 = skexp->GetSuperkDetector()->CurrentValue(conv::kNuisSuperkEff1RmuCCQErc1u);
+	input_skdet_ccqerc2 = skexp->GetSuperkDetector()->CurrentValue(conv::kNuisSuperkEff1RmuCCQErc2u);
+	input_skdet_ccqeoth = skexp->GetSuperkDetector()->CurrentValue(conv::kNuisSuperkEff1RmuCCQEoth);
+	input_skdet_ccnqe = skexp->GetSuperkDetector()->CurrentValue(conv::kNuisSuperkEff1RmuCCnonQE);
+	input_skdet_nc = skexp->GetSuperkDetector()->CurrentValue(conv::kNuisSuperkEff1RmuNC);
+	input_skdet_nuecc = skexp->GetSuperkDetector()->CurrentValue(conv::kNuisSuperkEff1RmuNueCC);
+	input_fsi_000 = skexp->GetFSI()->CurrentValue(conv::kNuisFSI000);
+	input_fsi_001 = skexp->GetFSI()->CurrentValue(conv::kNuisFSI001);
+	input_fsi_002 = skexp->GetFSI()->CurrentValue(conv::kNuisFSI002);
+	input_fsi_003 = skexp->GetFSI()->CurrentValue(conv::kNuisFSI003);
+	input_fsi_004 = skexp->GetFSI()->CurrentValue(conv::kNuisFSI004);
+	input_fsi_005 = skexp->GetFSI()->CurrentValue(conv::kNuisFSI005);
+	// generate mock data using the current PDF (incl. systematic variations) 
+	// + statistical fluctuations if requested (Poisson fluctuation in each bin)
+	cout << "- Generating toy-MC..." << endl;
+	applied_negevents_condition = skobs->CreateMockData(*skexp, PhysHypothesis(*fparm), stat_fluctuations);
+	// reset all systematics so that the PDF used in the fitter is the nominal one
+	cout << "- Reseting all systematic params in pdf..." << endl;
+	skexp->ResetSystematicVariations();
+	//skexp->PrintSystematicVariations();
+      } //systmode >0
+      else {       
+	// generate mock data using the current PDF (without systematic variations) 
+	// with statistical fluctuations if requested (Poisson fluctuation in each bin)
+	skexp->ResetSystematicVariations(); //make sure there are no systematic variations
+	cout << "- Generating toy-MC..." << endl;
+	applied_negevents_condition = skobs->CreateMockData(*skexp, PhysHypothesis(*fparm), stat_fluctuations); 
       }
-      skexp->PrintSystematicVariations();
-      // save the input systematics to the tree
-      input_banff_00 = skexp->GetBANFF()->CurrentValue(conv::kNuisBANFF00);
-      input_banff_01 = skexp->GetBANFF()->CurrentValue(conv::kNuisBANFF01);
-      input_banff_02 = skexp->GetBANFF()->CurrentValue(conv::kNuisBANFF02);
-      input_banff_03 = skexp->GetBANFF()->CurrentValue(conv::kNuisBANFF03);
-      input_banff_04 = skexp->GetBANFF()->CurrentValue(conv::kNuisBANFF04);
-      input_banff_05 = skexp->GetBANFF()->CurrentValue(conv::kNuisBANFF05);
-      input_banff_06 = skexp->GetBANFF()->CurrentValue(conv::kNuisBANFF06);
-      input_banff_07 = skexp->GetBANFF()->CurrentValue(conv::kNuisBANFF07);
-      input_banff_08 = skexp->GetBANFF()->CurrentValue(conv::kNuisBANFF08);
-      input_banff_09 = skexp->GetBANFF()->CurrentValue(conv::kNuisBANFF09);
-      input_banff_10 = skexp->GetBANFF()->CurrentValue(conv::kNuisBANFF10);
-      input_banff_11 = skexp->GetBANFF()->CurrentValue(conv::kNuisBANFF11);
-      input_banff_12 = skexp->GetBANFF()->CurrentValue(conv::kNuisBANFF12);
-      input_banff_13 = skexp->GetBANFF()->CurrentValue(conv::kNuisBANFF13);
-      input_banff_14 = skexp->GetBANFF()->CurrentValue(conv::kNuisBANFF14);
-      input_banff_15 = skexp->GetBANFF()->CurrentValue(conv::kNuisBANFF15);
-      input_banff_maqe = skexp->GetBANFF()->CurrentValue(conv::kNuisBANFFMAQE);
-      input_banff_mares = skexp->GetBANFF()->CurrentValue(conv::kNuisBANFFMARES);
-      input_banff_ccqeE0 = skexp->GetBANFF()->CurrentValue(conv::kNuisBANFFCCQEE0);
-      input_banff_ccqeE1 = skexp->GetBANFF()->CurrentValue(conv::kNuisBANFFCCQEE1);
-      input_banff_ccqeE2 = skexp->GetBANFF()->CurrentValue(conv::kNuisBANFFCCQEE2);
-      input_banff_cc1piE0 = skexp->GetBANFF()->CurrentValue(conv::kNuisBANFFCC1piE0);
-      input_banff_cc1piE1 = skexp->GetBANFF()->CurrentValue(conv::kNuisBANFFCC1piE1);
-      input_unbanff_00 = skexp->GetBANFF()->CurrentUncorrelatedValue(conv::kNuisUnBANFF00);
-      input_unbanff_01 = skexp->GetBANFF()->CurrentUncorrelatedValue(conv::kNuisUnBANFF01);
-      input_unbanff_02 = skexp->GetBANFF()->CurrentUncorrelatedValue(conv::kNuisUnBANFF02);
-      input_unbanff_03 = skexp->GetBANFF()->CurrentUncorrelatedValue(conv::kNuisUnBANFF03);
-      input_unbanff_04 = skexp->GetBANFF()->CurrentUncorrelatedValue(conv::kNuisUnBANFF04);
-      input_unbanff_05 = skexp->GetBANFF()->CurrentUncorrelatedValue(conv::kNuisUnBANFF05);
-      input_unbanff_06 = skexp->GetBANFF()->CurrentUncorrelatedValue(conv::kNuisUnBANFF06);
-      input_unbanff_07 = skexp->GetBANFF()->CurrentUncorrelatedValue(conv::kNuisUnBANFF07);
-      input_unbanff_08 = skexp->GetBANFF()->CurrentUncorrelatedValue(conv::kNuisUnBANFF08);
-      input_unbanff_09 = skexp->GetBANFF()->CurrentUncorrelatedValue(conv::kNuisUnBANFF09);
-      input_unbanff_10 = skexp->GetBANFF()->CurrentUncorrelatedValue(conv::kNuisUnBANFF10);
-      input_unbanff_11 = skexp->GetBANFF()->CurrentUncorrelatedValue(conv::kNuisUnBANFF11);
-      input_unbanff_12 = skexp->GetBANFF()->CurrentUncorrelatedValue(conv::kNuisUnBANFF12);
-      input_unbanff_13 = skexp->GetBANFF()->CurrentUncorrelatedValue(conv::kNuisUnBANFF13);
-      input_unbanff_14 = skexp->GetBANFF()->CurrentUncorrelatedValue(conv::kNuisUnBANFF14);
-      input_unbanff_15 = skexp->GetBANFF()->CurrentUncorrelatedValue(conv::kNuisUnBANFF15);
-      input_unbanff_16 = skexp->GetBANFF()->CurrentUncorrelatedValue(conv::kNuisUnBANFF16);
-      input_unbanff_17 = skexp->GetBANFF()->CurrentUncorrelatedValue(conv::kNuisUnBANFF17);
-      input_unbanff_18 = skexp->GetBANFF()->CurrentUncorrelatedValue(conv::kNuisUnBANFF18);
-      input_unbanff_19 = skexp->GetBANFF()->CurrentUncorrelatedValue(conv::kNuisUnBANFF19);
-      input_unbanff_20 = skexp->GetBANFF()->CurrentUncorrelatedValue(conv::kNuisUnBANFF20);
-      input_unbanff_21 = skexp->GetBANFF()->CurrentUncorrelatedValue(conv::kNuisUnBANFF21);
-      input_unbanff_22 = skexp->GetBANFF()->CurrentUncorrelatedValue(conv::kNuisUnBANFF22);
-      input_xsec_pf = skexp->GetNuXSec()->CurrentValue(conv::kNuisXSecFermiMom);
-      input_xsec_sf = skexp->GetNuXSec()->CurrentValue(conv::kNuisXSecSpecFunc);
-      input_xsec_binde = skexp->GetNuXSec()->CurrentValue(conv::kNuisXSecBindE);
-      input_xsec_wshape = skexp->GetNuXSec()->CurrentValue(conv::kNuisXSecWshape);
-      input_xsec_ccothshape = skexp->GetNuXSec()->CurrentValue(conv::kNuisXSecShapeCCoth);
-      input_xsec_cc1pishape = skexp->GetNuXSec()->CurrentValue(conv::kNuisXSecENuShape);
-      input_xsec_pilessdelta = skexp->GetNuXSec()->CurrentValue(conv::kNuisXSecPiLessDelta);
-      input_xsec_normcccoh = skexp->GetNuXSec()->CurrentValue(conv::kNuisXSecNormCCcoh);
-      input_xsec_normnc1piC = skexp->GetNuXSec()->CurrentValue(conv::kNuisXSecNormNC1piC);
-      input_xsec_normnccoh = skexp->GetNuXSec()->CurrentValue(conv::kNuisXSecNormNCcoh);
-      input_xsec_normncoth = skexp->GetNuXSec()->CurrentValue(conv::kNuisXSecNormNCoth);
-      input_xsec_normnuetonumu = skexp->GetNuXSec()->CurrentValue(conv::kNuisXSecNormNuEToNuMu);
-      input_xsec_normantinutonu = skexp->GetNuXSec()->CurrentValue(conv::kNuisXSecNormAntiNuToNu);
-      input_skdet_energyscale = skexp->GetSuperkDetector()->CurrentValue(conv::kNuisSuperkEnergyScale);
-      input_skdet_ccqerc0 = skexp->GetSuperkDetector()->CurrentValue(conv::kNuisSuperkEff1RmuCCQErc0u);
-      input_skdet_ccqerc1 = skexp->GetSuperkDetector()->CurrentValue(conv::kNuisSuperkEff1RmuCCQErc1u);
-      input_skdet_ccqerc2 = skexp->GetSuperkDetector()->CurrentValue(conv::kNuisSuperkEff1RmuCCQErc2u);
-      input_skdet_ccqeoth = skexp->GetSuperkDetector()->CurrentValue(conv::kNuisSuperkEff1RmuCCQEoth);
-      input_skdet_ccnqe = skexp->GetSuperkDetector()->CurrentValue(conv::kNuisSuperkEff1RmuCCnonQE);
-      input_skdet_nc = skexp->GetSuperkDetector()->CurrentValue(conv::kNuisSuperkEff1RmuNC);
-      input_skdet_nuecc = skexp->GetSuperkDetector()->CurrentValue(conv::kNuisSuperkEff1RmuNueCC);
-      input_fsi_000 = skexp->GetFSI()->CurrentValue(conv::kNuisFSI000);
-      input_fsi_001 = skexp->GetFSI()->CurrentValue(conv::kNuisFSI001);
-      input_fsi_002 = skexp->GetFSI()->CurrentValue(conv::kNuisFSI002);
-      input_fsi_003 = skexp->GetFSI()->CurrentValue(conv::kNuisFSI003);
-      input_fsi_004 = skexp->GetFSI()->CurrentValue(conv::kNuisFSI004);
-      input_fsi_005 = skexp->GetFSI()->CurrentValue(conv::kNuisFSI005);
-      // generate mock data using the current PDF (incl. systematic variations) 
-      // + statistical fluctuations if requested (Poisson fluctuation in each bin)
-      cout << "- Generating toy-MC..." << endl;
-      skobs->CreateMockData(*skexp, PhysHypothesis(*fparm), stat_fluctuations);
-      // reset all systematics so that the PDF used in the fitter is the nominal one
-      cout << "- Reseting all systematic params in pdf..." << endl;
-      skexp->ResetSystematicVariations();
-      //skexp->PrintSystematicVariations();
-    } else {       
-      // generate mock data using the current PDF (without systematic variations) 
-      // with statistical fluctuations if requested (Poisson fluctuation in each bin)
-      skexp->ResetSystematicVariations(); //make sure there are no systematic variations
-      cout << "- Generating toy-MC..." << endl;
-      skobs->CreateMockData(*skexp, PhysHypothesis(*fparm), stat_fluctuations); 
-    }
+    }//applied_negevents_condition
 
     // Get nominal number of events
     nsk_nom = skexp->CurrPredictedErecoSpectrum(conv::kSKsFCFV1RingMuLike)->Integral();
+
+    //Seed the FitParamList with true values
+    if(fit_param_list == "nuosc3f_numudisapp_fix4+nuisanceselection") {
+      fparm->SetInitValue(kPhypMixing12, input_mixing12);
+      fparm->SetInitValue(kPhypMixing13, input_mixing13);
+      if(input_mixing23 > 0.99)
+	fparm->SetInitValue(kPhypMixing23, 0.95);
+      else
+	fparm->SetInitValue(kPhypMixing23, input_mixing23);
+      fparm->SetInitValue(kPhypDeltaCP,  input_deltacp);
+      fparm->SetInitValue(kPhypDm12sq,   input_dm12sq);
+      fparm->SetInitValue(kPhypDm23sq,   input_dm23sq);
+      fparm->SetInitValue(conv::kNuisBANFFMAQE,            input_banff_maqe);
+      fparm->SetInitValue(conv::kNuisBANFFCCQEE0,          input_banff_ccqeE0);
+      fparm->SetInitValue(conv::kNuisXSecSpecFunc,         input_xsec_sf);
+      fparm->SetInitValue(conv::kNuisXSecBindE,            input_xsec_binde);
+      fparm->SetInitValue(conv::kNuisXSecPiLessDelta,      input_xsec_pilessdelta);
+      //fparm->SetInitValue(conv::kNuisSuperkEnergyScale,    input_skdet_energyscale);
+      fparm->SetInitValue(conv::kNuisSuperkEff1RmuCCnonQE, input_skdet_ccnqe);
+      fparm->SetInitValue(conv::kNuisSuperkEff1RmuNC,      input_skdet_nc);
+    }
 
     // Get fitter
     FitInputs * fit_inputs = new FitInputs(skobs,skexp,fparm);

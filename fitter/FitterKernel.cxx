@@ -186,6 +186,18 @@ bool FitterKernel::RunOnce(void)
   arglist[1] = 0.01; // tolerance
   fitter->ExecuteCommand("MIGRAD",arglist, 2);
 
+  // Print fit result
+#ifdef __show_fit_result__
+#ifdef __show_fit_steps__
+  cout << "FitterKernel/RunOnce >> Printing MIGRAD fit results..." << endl;
+#endif
+  Double_t aminn = 0;
+  fitter->PrintResults(3,aminn);
+#endif
+
+  //Use Hesse to make the errors better
+  fitter->ExecuteCommand("HESSE",arglist, 1);
+
   // Done! Copy current --> best-fit values
   fFitInputs->FitParams().CopyCurrToBestFitValues();
 
@@ -216,7 +228,7 @@ bool FitterKernel::RunOnce(void)
   // Print fit result
 #ifdef __show_fit_result__
 #ifdef __show_fit_steps__
-  cout << "FitterKernel/RunOnce >> Printing fit results..." << endl;
+  cout << "FitterKernel/RunOnce >> Printing HESSE fit results..." << endl;
 #endif
   Double_t amin = 0;
   fitter->PrintResults(3,amin);

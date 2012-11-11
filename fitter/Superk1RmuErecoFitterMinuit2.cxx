@@ -106,7 +106,7 @@ void Superk1RmuErecoFitterMinuit2::Analyze(Option_t * option)
      fFitInputs->FitParams().CopyBestFitToCurrValues();
 
      // generate expectation
-     fFitInputs->Expectation().Generate(fFitInputs->FitParams());
+     bool applied_negevents_condition = fFitInputs->Expectation().Generate(fFitInputs->FitParams());
 
      // copy & format Ereco spectra
      bestfit_tot = new TH1D(*fFitInputs->Expectation().CurrPredictedErecoSpectrum(s));

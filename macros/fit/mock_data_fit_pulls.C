@@ -873,6 +873,7 @@ void mock_data_fit_pulls(
     //ignore failed fits!
     h_fitstat->Fill(fitstatus);
     //if(fitstatus != 3) continue;
+    if(fitstatus == 9) continue;
     //if(TMath::Abs(bestfit_mixing23 - 1.) < 1E-3) continue;
 
     if(err_mode == 1) {

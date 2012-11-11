@@ -168,7 +168,7 @@ bool SuperkObservation::Read(string config_file, int data_set_id)
   return true;
 }
 //________________________________________________________________________________________
-void SuperkObservation::CreateMockData(
+bool SuperkObservation::CreateMockData(
       SuperkExpectation & skexp, const FitParamList & fp, bool fluctuate)
 {
 // Get observed reconstructed energy distribution
@@ -178,7 +178,7 @@ void SuperkObservation::CreateMockData(
   cout << "Obs >> Stat. fluctuations are turned-" << ((fluctuate)? "ON" : "OFF") << endl;
 
   TRandom3 rand(0);
-  skexp.Generate(fp); //generate prediction
+  bool applied_negevents_condition = skexp.Generate(fp); //generate prediction
 
   int idx = -1;
   idx = util::ArrIdx::Instance()->SuperkSampleIdx(kSKsFCFV1RingMuLike);
@@ -203,9 +203,10 @@ void SuperkObservation::CreateMockData(
        fErDistr[idx]->SetBinContent(ibin,nobs);
     }
   }
+  return applied_negevents_condition;
 }
 //________________________________________________________________________________________
-void SuperkObservation::CreateMockData(
+bool SuperkObservation::CreateMockData(
      SuperkExpectation & skexp, const PhysHypothesis & ph, bool fluctuate)
 {
 // Get observed reconstructed energy distribution
@@ -214,7 +215,7 @@ void SuperkObservation::CreateMockData(
   cout << "Obs >> Stat. fluctuations are turned-" << ((fluctuate)? "ON" : "OFF") << endl;
 
   TRandom3 rand(0);
-  skexp.Generate(ph); //generate prediction
+  bool applied_negevents_condition = skexp.Generate(ph); //generate prediction
 
   int idx = -1;
   idx = util::ArrIdx::Instance()->SuperkSampleIdx(kSKsFCFV1RingMuLike);
@@ -239,7 +240,7 @@ void SuperkObservation::CreateMockData(
        fErDistr[idx]->SetBinContent(ibin,nobs);
     }
   }
-
+  return applied_negevents_condition;
 }
 //________________________________________________________________________________________
 void SuperkObservation::Draw(TVirtualPad * c, Option_t * option) const
