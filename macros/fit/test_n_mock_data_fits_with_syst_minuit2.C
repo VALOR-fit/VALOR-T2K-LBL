@@ -851,12 +851,12 @@ void test_n_mock_data_fits_with_syst_minuit2
 	  break;
 	case 6:
 	  TRandom3 rand(0);
-	  skexp->GetNuXSec()->TweakSpecFunc      (rand.Gaus(0.,1.));
+	  skexp->GetNuXSec()->TweakSpecFunc      (rand.Uniform(0.,1.));
 	  skexp->GetNuXSec()->TweakBindE         (rand.Gaus(0.,1.));
 	  skexp->GetNuXSec()->TweakPiLessDelta   (rand.Gaus(0.,1.));
 	  skexp->GetSuperkDetector()->TweakEfficiency1RmuCCnonQE    (rand.Gaus(0.,1.));
 	  skexp->GetSuperkDetector()->TweakEfficiency1RmuNC         (rand.Gaus(0.,1.));
-	  skexp->GetSuperkDetector()->TweakEnergyScale              (rand.Gaus(0.,1.));
+	  //skexp->GetSuperkDetector()->TweakEnergyScale              (rand.Gaus(0.,1.));
 	  TVectorD twkv(skexp->GetBANFF()->BestFitValues());
 	  TVectorD cov (skexp->GetBANFF()->CovMatrix());
 	  PhysParamId_t p = conv::kNuisBANFFMAQE;

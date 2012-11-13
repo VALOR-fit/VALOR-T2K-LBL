@@ -872,8 +872,8 @@ void mock_data_fit_pulls(
     ch.GetEntry(i);
     //ignore failed fits!
     h_fitstat->Fill(fitstatus);
-    //if(fitstatus != 3) continue;
-    if(fitstatus == 9) continue;
+    if(fitstatus != 3) continue;
+    //if(fitstatus == 9) continue;
     //if(TMath::Abs(bestfit_mixing23 - 1.) < 1E-3) continue;
 
     if(err_mode == 1) {
@@ -1214,12 +1214,12 @@ void mock_data_fit_pulls(
       h_skdet_nc->Fill((bestfit_skdet_nc - input_skdet_nc));
       h_skdet_energyscale->Fill((bestfit_skdet_energyscale - input_skdet_energyscale));
       //pull histograms
-      hpull_xsec_sf->Fill((bestfit_xsec_sf - input_xsec_sf) / (pow(preerr_xsec_sf,2) - pow(err_xsec_sf,2)));
-      hpull_xsec_binde->Fill((bestfit_xsec_binde - input_xsec_binde) / (pow(preerr_xsec_binde,2) - pow(err_xsec_binde,2)));
-      hpull_xsec_pilessdelta->Fill((bestfit_xsec_pilessdelta - input_xsec_pilessdelta) / (pow(preerr_xsec_pilessdelta,2) - pow(err_xsec_pilessdelta,2)));
-      hpull_skdet_ccnqe->Fill((bestfit_skdet_ccnqe - input_skdet_ccnqe) / (pow(preerr_skdet_ccnqe,2) - pow(err_skdet_ccnqe,2)));
-      hpull_skdet_nc->Fill((bestfit_skdet_nc - input_skdet_nc) / (pow(preerr_skdet_nc,2) - pow(err_skdet_nc,2)));
-      hpull_skdet_energyscale->Fill((bestfit_skdet_energyscale - input_skdet_energyscale) / (pow(preerr_skdet_energyscale,2) - pow(err_skdet_energyscale,2)));
+      if(err_xsec_sf < preerr_xsec_sf) hpull_xsec_sf->Fill((bestfit_xsec_sf - input_xsec_sf) / sqrt(pow(preerr_xsec_sf,2) - pow(err_xsec_sf,2)));
+      if(err_xsec_binde < preerr_xsec_binde) hpull_xsec_binde->Fill((bestfit_xsec_binde - input_xsec_binde) / sqrt(pow(preerr_xsec_binde,2) - pow(err_xsec_binde,2)));
+      if(err_xsec_pilessdelta < preerr_xsec_pilessdelta) hpull_xsec_pilessdelta->Fill((bestfit_xsec_pilessdelta - input_xsec_pilessdelta) / sqrt(pow(preerr_xsec_pilessdelta,2) - pow(err_xsec_pilessdelta,2)));
+      if(err_skdet_ccnqe < preerr_skdet_ccnqe) hpull_skdet_ccnqe->Fill((bestfit_skdet_ccnqe - input_skdet_ccnqe) / sqrt(pow(preerr_skdet_ccnqe,2) - pow(err_skdet_ccnqe,2)));
+      if(err_skdet_nc < preerr_skdet_nc) hpull_skdet_nc->Fill((bestfit_skdet_nc - input_skdet_nc) / sqrt(pow(preerr_skdet_nc,2) - pow(err_skdet_nc,2)));
+      if(err_skdet_energyscale < preerr_skdet_energyscale) hpull_skdet_energyscale->Fill((bestfit_skdet_energyscale - input_skdet_energyscale) / sqrt(pow(preerr_skdet_energyscale,2) - pow(err_skdet_energyscale,2)));
       //distribution histograms
       h_unbanff_00->Fill((bestfit_unbanff_00 - input_unbanff_00));
       h_unbanff_01->Fill((bestfit_unbanff_01 - input_unbanff_01));
@@ -1269,53 +1269,53 @@ void mock_data_fit_pulls(
       h_banff_cc1piE1->Fill((bestfit_banff_cc1piE1 - input_banff_cc1piE1));
       //pull histograms
       /*
-      hpull_unbanff_00->Fill((bestfit_unbanff_00 - input_unbanff_00) / (pow(preerr_unbanff_00,2) - pow(err_unbanff_00,2)));
-      hpull_unbanff_01->Fill((bestfit_unbanff_01 - input_unbanff_01) / (pow(preerr_unbanff_01,2) - pow(err_unbanff_01,2)));
-      hpull_unbanff_02->Fill((bestfit_unbanff_02 - input_unbanff_02) / (pow(preerr_unbanff_02,2) - pow(err_unbanff_02,2)));
-      hpull_unbanff_03->Fill((bestfit_unbanff_03 - input_unbanff_03) / (pow(preerr_unbanff_03,2) - pow(err_unbanff_03,2)));
-      hpull_unbanff_04->Fill((bestfit_unbanff_04 - input_unbanff_04) / (pow(preerr_unbanff_04,2) - pow(err_unbanff_04,2)));
-      hpull_unbanff_05->Fill((bestfit_unbanff_05 - input_unbanff_05) / (pow(preerr_unbanff_05,2) - pow(err_unbanff_05,2)));
-      hpull_unbanff_06->Fill((bestfit_unbanff_06 - input_unbanff_06) / (pow(preerr_unbanff_06,2) - pow(err_unbanff_06,2)));
-      hpull_unbanff_07->Fill((bestfit_unbanff_07 - input_unbanff_07) / (pow(preerr_unbanff_07,2) - pow(err_unbanff_07,2)));
-      hpull_unbanff_08->Fill((bestfit_unbanff_08 - input_unbanff_08) / (pow(preerr_unbanff_08,2) - pow(err_unbanff_08,2)));
-      hpull_unbanff_09->Fill((bestfit_unbanff_09 - input_unbanff_09) / (pow(preerr_unbanff_09,2) - pow(err_unbanff_09,2)));
-      hpull_unbanff_10->Fill((bestfit_unbanff_10 - input_unbanff_10) / (pow(preerr_unbanff_10,2) - pow(err_unbanff_10,2)));
-      hpull_unbanff_11->Fill((bestfit_unbanff_11 - input_unbanff_11) / (pow(preerr_unbanff_11,2) - pow(err_unbanff_11,2)));
-      hpull_unbanff_12->Fill((bestfit_unbanff_12 - input_unbanff_12) / (pow(preerr_unbanff_12,2) - pow(err_unbanff_12,2)));
-      hpull_unbanff_13->Fill((bestfit_unbanff_13 - input_unbanff_13) / (pow(preerr_unbanff_13,2) - pow(err_unbanff_13,2)));
-      hpull_unbanff_14->Fill((bestfit_unbanff_14 - input_unbanff_14) / (pow(preerr_unbanff_14,2) - pow(err_unbanff_14,2)));
-      hpull_unbanff_15->Fill((bestfit_unbanff_15 - input_unbanff_15) / (pow(preerr_unbanff_15,2) - pow(err_unbanff_15,2)));
-      hpull_unbanff_16->Fill((bestfit_unbanff_16 - input_unbanff_16) / (pow(preerr_unbanff_16,2) - pow(err_unbanff_16,2)));
-      hpull_unbanff_17->Fill((bestfit_unbanff_17 - input_unbanff_17) / (pow(preerr_unbanff_17,2) - pow(err_unbanff_17,2)));
-      hpull_unbanff_18->Fill((bestfit_unbanff_18 - input_unbanff_18) / (pow(preerr_unbanff_18,2) - pow(err_unbanff_18,2)));
-      hpull_unbanff_19->Fill((bestfit_unbanff_19 - input_unbanff_19) / (pow(preerr_unbanff_19,2) - pow(err_unbanff_19,2)));
-      hpull_unbanff_20->Fill((bestfit_unbanff_20 - input_unbanff_20) / (pow(preerr_unbanff_20,2) - pow(err_unbanff_20,2)));
-      hpull_unbanff_21->Fill((bestfit_unbanff_21 - input_unbanff_21) / (pow(preerr_unbanff_21,2) - pow(err_unbanff_21,2)));
-      hpull_unbanff_22->Fill((bestfit_unbanff_22 - input_unbanff_22) / (pow(preerr_unbanff_22,2) - pow(err_unbanff_22,2)));
+      if(err_unbanff_00 < preerr_unbanff_00) hpull_unbanff_00->Fill((bestfit_unbanff_00 - input_unbanff_00) / sqrt(pow(preerr_unbanff_00,2) - pow(err_unbanff_00,2)));
+      if(err_unbanff_01 < preerr_unbanff_01) hpull_unbanff_01->Fill((bestfit_unbanff_01 - input_unbanff_01) / sqrt(pow(preerr_unbanff_01,2) - pow(err_unbanff_01,2)));
+      if(err_unbanff_02 < preerr_unbanff_02) hpull_unbanff_02->Fill((bestfit_unbanff_02 - input_unbanff_02) / sqrt(pow(preerr_unbanff_02,2) - pow(err_unbanff_02,2)));
+      if(err_unbanff_03 < preerr_unbanff_03) hpull_unbanff_03->Fill((bestfit_unbanff_03 - input_unbanff_03) / sqrt(pow(preerr_unbanff_03,2) - pow(err_unbanff_03,2)));
+      if(err_unbanff_04 < preerr_unbanff_04) hpull_unbanff_04->Fill((bestfit_unbanff_04 - input_unbanff_04) / sqrt(pow(preerr_unbanff_04,2) - pow(err_unbanff_04,2)));
+      if(err_unbanff_05 < preerr_unbanff_05) hpull_unbanff_05->Fill((bestfit_unbanff_05 - input_unbanff_05) / sqrt(pow(preerr_unbanff_05,2) - pow(err_unbanff_05,2)));
+      if(err_unbanff_06 < preerr_unbanff_06) hpull_unbanff_06->Fill((bestfit_unbanff_06 - input_unbanff_06) / sqrt(pow(preerr_unbanff_06,2) - pow(err_unbanff_06,2)));
+      if(err_unbanff_07 < preerr_unbanff_07) hpull_unbanff_07->Fill((bestfit_unbanff_07 - input_unbanff_07) / sqrt(pow(preerr_unbanff_07,2) - pow(err_unbanff_07,2)));
+      if(err_unbanff_08 < preerr_unbanff_08) hpull_unbanff_08->Fill((bestfit_unbanff_08 - input_unbanff_08) / sqrt(pow(preerr_unbanff_08,2) - pow(err_unbanff_08,2)));
+      if(err_unbanff_09 < preerr_unbanff_09) hpull_unbanff_09->Fill((bestfit_unbanff_09 - input_unbanff_09) / sqrt(pow(preerr_unbanff_09,2) - pow(err_unbanff_09,2)));
+      if(err_unbanff_10 < preerr_unbanff_10) hpull_unbanff_10->Fill((bestfit_unbanff_10 - input_unbanff_10) / sqrt(pow(preerr_unbanff_10,2) - pow(err_unbanff_10,2)));
+      if(err_unbanff_11 < preerr_unbanff_11) hpull_unbanff_11->Fill((bestfit_unbanff_11 - input_unbanff_11) / sqrt(pow(preerr_unbanff_11,2) - pow(err_unbanff_11,2)));
+      if(err_unbanff_12 < preerr_unbanff_12) hpull_unbanff_12->Fill((bestfit_unbanff_12 - input_unbanff_12) / sqrt(pow(preerr_unbanff_12,2) - pow(err_unbanff_12,2)));
+      if(err_unbanff_13 < preerr_unbanff_13) hpull_unbanff_13->Fill((bestfit_unbanff_13 - input_unbanff_13) / sqrt(pow(preerr_unbanff_13,2) - pow(err_unbanff_13,2)));
+      if(err_unbanff_14 < preerr_unbanff_14) hpull_unbanff_14->Fill((bestfit_unbanff_14 - input_unbanff_14) / sqrt(pow(preerr_unbanff_14,2) - pow(err_unbanff_14,2)));
+      if(err_unbanff_15 < preerr_unbanff_15) hpull_unbanff_15->Fill((bestfit_unbanff_15 - input_unbanff_15) / sqrt(pow(preerr_unbanff_15,2) - pow(err_unbanff_15,2)));
+      if(err_unbanff_16 < preerr_unbanff_16) hpull_unbanff_16->Fill((bestfit_unbanff_16 - input_unbanff_16) / sqrt(pow(preerr_unbanff_16,2) - pow(err_unbanff_16,2)));
+      if(err_unbanff_17 < preerr_unbanff_17) hpull_unbanff_17->Fill((bestfit_unbanff_17 - input_unbanff_17) / sqrt(pow(preerr_unbanff_17,2) - pow(err_unbanff_17,2)));
+      if(err_unbanff_18 < preerr_unbanff_18) hpull_unbanff_18->Fill((bestfit_unbanff_18 - input_unbanff_18) / sqrt(pow(preerr_unbanff_18,2) - pow(err_unbanff_18,2)));
+      if(err_unbanff_19 < preerr_unbanff_19) hpull_unbanff_19->Fill((bestfit_unbanff_19 - input_unbanff_19) / sqrt(pow(preerr_unbanff_19,2) - pow(err_unbanff_19,2)));
+      if(err_unbanff_20 < preerr_unbanff_20) hpull_unbanff_20->Fill((bestfit_unbanff_20 - input_unbanff_20) / sqrt(pow(preerr_unbanff_20,2) - pow(err_unbanff_20,2)));
+      if(err_unbanff_21 < preerr_unbanff_21) hpull_unbanff_21->Fill((bestfit_unbanff_21 - input_unbanff_21) / sqrt(pow(preerr_unbanff_21,2) - pow(err_unbanff_21,2)));
+      if(err_unbanff_22 < preerr_unbanff_22) hpull_unbanff_22->Fill((bestfit_unbanff_22 - input_unbanff_22) / sqrt(pow(preerr_unbanff_22,2) - pow(err_unbanff_22,2)));
       */
-      hpull_banff_00->Fill((bestfit_banff_00 - input_banff_00) / (pow(preerr_banff_00,2) - pow(err_banff_00,2)));
-      hpull_banff_01->Fill((bestfit_banff_01 - input_banff_01) / (pow(preerr_banff_01,2) - pow(err_banff_01,2)));
-      hpull_banff_02->Fill((bestfit_banff_02 - input_banff_02) / (pow(preerr_banff_02,2) - pow(err_banff_02,2)));
-      hpull_banff_03->Fill((bestfit_banff_03 - input_banff_03) / (pow(preerr_banff_03,2) - pow(err_banff_03,2)));
-      hpull_banff_04->Fill((bestfit_banff_04 - input_banff_04) / (pow(preerr_banff_04,2) - pow(err_banff_04,2)));
-      hpull_banff_05->Fill((bestfit_banff_05 - input_banff_05) / (pow(preerr_banff_05,2) - pow(err_banff_05,2)));
-      hpull_banff_06->Fill((bestfit_banff_06 - input_banff_06) / (pow(preerr_banff_06,2) - pow(err_banff_06,2)));
-      hpull_banff_07->Fill((bestfit_banff_07 - input_banff_07) / (pow(preerr_banff_07,2) - pow(err_banff_07,2)));
-      hpull_banff_08->Fill((bestfit_banff_08 - input_banff_08) / (pow(preerr_banff_08,2) - pow(err_banff_08,2)));
-      hpull_banff_09->Fill((bestfit_banff_09 - input_banff_09) / (pow(preerr_banff_09,2) - pow(err_banff_09,2)));
-      hpull_banff_10->Fill((bestfit_banff_10 - input_banff_10) / (pow(preerr_banff_10,2) - pow(err_banff_10,2)));
-      hpull_banff_11->Fill((bestfit_banff_11 - input_banff_11) / (pow(preerr_banff_11,2) - pow(err_banff_11,2)));
-      hpull_banff_12->Fill((bestfit_banff_12 - input_banff_12) / (pow(preerr_banff_12,2) - pow(err_banff_12,2)));
-      hpull_banff_13->Fill((bestfit_banff_13 - input_banff_13) / (pow(preerr_banff_13,2) - pow(err_banff_13,2)));
-      hpull_banff_14->Fill((bestfit_banff_14 - input_banff_14) / (pow(preerr_banff_14,2) - pow(err_banff_14,2)));
-      hpull_banff_15->Fill((bestfit_banff_15 - input_banff_15) / (pow(preerr_banff_15,2) - pow(err_banff_15,2)));
-      hpull_banff_maqe->Fill((bestfit_banff_maqe - input_banff_maqe) / (pow(preerr_banff_maqe,2) - pow(err_banff_maqe,2)));
-      hpull_banff_mares->Fill((bestfit_banff_mares - input_banff_mares) / (pow(preerr_banff_mares,2) - pow(err_banff_mares,2)));
-      hpull_banff_ccqeE0->Fill((bestfit_banff_ccqeE0 - input_banff_ccqeE0) / (pow(preerr_banff_ccqeE0,2) - pow(err_banff_ccqeE0,2)));
-      hpull_banff_ccqeE1->Fill((bestfit_banff_ccqeE1 - input_banff_ccqeE1) / (pow(preerr_banff_ccqeE1,2) - pow(err_banff_ccqeE1,2)));
-      hpull_banff_ccqeE2->Fill((bestfit_banff_ccqeE2 - input_banff_ccqeE2) / (pow(preerr_banff_ccqeE2,2) - pow(err_banff_ccqeE2,2)));
-      hpull_banff_cc1piE0->Fill((bestfit_banff_cc1piE0 - input_banff_cc1piE0) / (pow(preerr_banff_cc1piE0,2) - pow(err_banff_cc1piE0,2)));
-      hpull_banff_cc1piE1->Fill((bestfit_banff_cc1piE1 - input_banff_cc1piE1) / (pow(preerr_banff_cc1piE1,2) - pow(err_banff_cc1piE1,2)));
+      if(err_banff_00 < preerr_banff_00) hpull_banff_00->Fill((bestfit_banff_00 - input_banff_00) / sqrt(pow(preerr_banff_00,2) - pow(err_banff_00,2)));
+      if(err_banff_01 < preerr_banff_01) hpull_banff_01->Fill((bestfit_banff_01 - input_banff_01) / sqrt(pow(preerr_banff_01,2) - pow(err_banff_01,2)));
+      if(err_banff_02 < preerr_banff_02) hpull_banff_02->Fill((bestfit_banff_02 - input_banff_02) / sqrt(pow(preerr_banff_02,2) - pow(err_banff_02,2)));
+      if(err_banff_03 < preerr_banff_03) hpull_banff_03->Fill((bestfit_banff_03 - input_banff_03) / sqrt(pow(preerr_banff_03,2) - pow(err_banff_03,2)));
+      if(err_banff_04 < preerr_banff_04) hpull_banff_04->Fill((bestfit_banff_04 - input_banff_04) / sqrt(pow(preerr_banff_04,2) - pow(err_banff_04,2)));
+      if(err_banff_05 < preerr_banff_05) hpull_banff_05->Fill((bestfit_banff_05 - input_banff_05) / sqrt(pow(preerr_banff_05,2) - pow(err_banff_05,2)));
+      if(err_banff_06 < preerr_banff_06) hpull_banff_06->Fill((bestfit_banff_06 - input_banff_06) / sqrt(pow(preerr_banff_06,2) - pow(err_banff_06,2)));
+      if(err_banff_07 < preerr_banff_07) hpull_banff_07->Fill((bestfit_banff_07 - input_banff_07) / sqrt(pow(preerr_banff_07,2) - pow(err_banff_07,2)));
+      if(err_banff_08 < preerr_banff_08) hpull_banff_08->Fill((bestfit_banff_08 - input_banff_08) / sqrt(pow(preerr_banff_08,2) - pow(err_banff_08,2)));
+      if(err_banff_09 < preerr_banff_09) hpull_banff_09->Fill((bestfit_banff_09 - input_banff_09) / sqrt(pow(preerr_banff_09,2) - pow(err_banff_09,2)));
+      if(err_banff_10 < preerr_banff_10) hpull_banff_10->Fill((bestfit_banff_10 - input_banff_10) / sqrt(pow(preerr_banff_10,2) - pow(err_banff_10,2)));
+      if(err_banff_11 < preerr_banff_11) hpull_banff_11->Fill((bestfit_banff_11 - input_banff_11) / sqrt(pow(preerr_banff_11,2) - pow(err_banff_11,2)));
+      if(err_banff_12 < preerr_banff_12) hpull_banff_12->Fill((bestfit_banff_12 - input_banff_12) / sqrt(pow(preerr_banff_12,2) - pow(err_banff_12,2)));
+      if(err_banff_13 < preerr_banff_13) hpull_banff_13->Fill((bestfit_banff_13 - input_banff_13) / sqrt(pow(preerr_banff_13,2) - pow(err_banff_13,2)));
+      if(err_banff_14 < preerr_banff_14) hpull_banff_14->Fill((bestfit_banff_14 - input_banff_14) / sqrt(pow(preerr_banff_14,2) - pow(err_banff_14,2)));
+      if(err_banff_15 < preerr_banff_15) hpull_banff_15->Fill((bestfit_banff_15 - input_banff_15) / sqrt(pow(preerr_banff_15,2) - pow(err_banff_15,2)));
+      if(err_banff_maqe < preerr_banff_maqe) hpull_banff_maqe->Fill((bestfit_banff_maqe - input_banff_maqe) / sqrt(pow(preerr_banff_maqe,2) - pow(err_banff_maqe,2)));
+      if(err_banff_mares < preerr_banff_mares) hpull_banff_mares->Fill((bestfit_banff_mares - input_banff_mares) / sqrt(pow(preerr_banff_mares,2) - pow(err_banff_mares,2)));
+      if(err_banff_ccqeE0 < preerr_banff_ccqeE0) hpull_banff_ccqeE0->Fill((bestfit_banff_ccqeE0 - input_banff_ccqeE0) / sqrt(pow(preerr_banff_ccqeE0,2) - pow(err_banff_ccqeE0,2)));
+      if(err_banff_ccqeE1 < preerr_banff_ccqeE1) hpull_banff_ccqeE1->Fill((bestfit_banff_ccqeE1 - input_banff_ccqeE1) / sqrt(pow(preerr_banff_ccqeE1,2) - pow(err_banff_ccqeE1,2)));
+      if(err_banff_ccqeE2 < preerr_banff_ccqeE2) hpull_banff_ccqeE2->Fill((bestfit_banff_ccqeE2 - input_banff_ccqeE2) / sqrt(pow(preerr_banff_ccqeE2,2) - pow(err_banff_ccqeE2,2)));
+      if(err_banff_cc1piE0 < preerr_banff_cc1piE0) hpull_banff_cc1piE0->Fill((bestfit_banff_cc1piE0 - input_banff_cc1piE0) / sqrt(pow(preerr_banff_cc1piE0,2) - pow(err_banff_cc1piE0,2)));
+      if(err_banff_cc1piE1 < preerr_banff_cc1piE1) hpull_banff_cc1piE1->Fill((bestfit_banff_cc1piE1 - input_banff_cc1piE1) / sqrt(pow(preerr_banff_cc1piE1,2) - pow(err_banff_cc1piE1,2)));
     }
     if(fit_systematics_mode == 2) {
       h_xsec_pf->Fill((bestfit_xsec_pf - input_xsec_pf));
@@ -1339,26 +1339,26 @@ void mock_data_fit_pulls(
       h_fsi_004->Fill((bestfit_fsi_004 - input_fsi_004));
       h_fsi_005->Fill((bestfit_fsi_005 - input_fsi_005));
       //pull histograms
-      hpull_xsec_pf->Fill((bestfit_xsec_pf - input_xsec_pf) / (pow(preerr_xsec_pf,2) - pow(err_xsec_pf,2)));
-      hpull_xsec_wshape->Fill((bestfit_xsec_wshape - input_xsec_wshape) / (pow(preerr_xsec_wshape,2) - pow(err_xsec_wshape,2)));
-      hpull_xsec_ccothshape->Fill((bestfit_xsec_ccothshape - input_xsec_ccothshape) / (pow(preerr_xsec_ccothshape,2) - pow(err_xsec_ccothshape,2)));
-      hpull_xsec_cc1pishape->Fill((bestfit_xsec_cc1pishape - input_xsec_cc1pishape) / (pow(preerr_xsec_cc1pishape,2) - pow(err_xsec_cc1pishape,2)));
-      hpull_xsec_normcccoh->Fill((bestfit_xsec_normcccoh - input_xsec_normcccoh) / (pow(preerr_xsec_normcccoh,2) - pow(err_xsec_normcccoh,2)));
-      hpull_xsec_normnc1piC->Fill((bestfit_xsec_normnc1piC - input_xsec_normnc1piC) / (pow(preerr_xsec_normnc1piC,2) - pow(err_xsec_normnc1piC,2)));
-      hpull_xsec_normnccoh->Fill((bestfit_xsec_normnccoh - input_xsec_normnccoh) / (pow(preerr_xsec_normnccoh,2) - pow(err_xsec_normnccoh,2)));
-      hpull_xsec_normncoth->Fill((bestfit_xsec_normncoth - input_xsec_normncoth) / (pow(preerr_xsec_normncoth,2) - pow(err_xsec_normncoth,2)));
-      hpull_xsec_normnuetonumu->Fill((bestfit_xsec_normnuetonumu - input_xsec_normnuetonumu) / (pow(preerr_xsec_normnuetonumu,2) - pow(err_xsec_normnuetonumu,2)));
-      hpull_skdet_ccqerc0->Fill((bestfit_skdet_ccqerc0 - input_skdet_ccqerc0) / (pow(preerr_skdet_ccqerc0,2) - pow(err_skdet_ccqerc0,2)));
-      hpull_skdet_ccqerc1->Fill((bestfit_skdet_ccqerc1 - input_skdet_ccqerc1) / (pow(preerr_skdet_ccqerc1,2) - pow(err_skdet_ccqerc1,2)));
-      hpull_skdet_ccqerc2->Fill((bestfit_skdet_ccqerc2 - input_skdet_ccqerc2) / (pow(preerr_skdet_ccqerc2,2) - pow(err_skdet_ccqerc2,2)));
-      hpull_skdet_ccqeoth->Fill((bestfit_skdet_ccqeoth - input_skdet_ccqeoth) / (pow(preerr_skdet_ccqeoth,2) - pow(err_skdet_ccqeoth,2)));
-      hpull_skdet_nuecc->Fill((bestfit_skdet_nuecc - input_skdet_nuecc) / (pow(preerr_skdet_nuecc,2) - pow(err_skdet_nuecc,2)));
-      hpull_fsi_000->Fill((bestfit_fsi_000 - input_fsi_000) / (pow(preerr_fsi_000,2) - pow(err_fsi_000,2)));
-      hpull_fsi_001->Fill((bestfit_fsi_001 - input_fsi_001) / (pow(preerr_fsi_001,2) - pow(err_fsi_001,2)));
-      hpull_fsi_002->Fill((bestfit_fsi_002 - input_fsi_002) / (pow(preerr_fsi_002,2) - pow(err_fsi_002,2)));
-      hpull_fsi_003->Fill((bestfit_fsi_003 - input_fsi_003) / (pow(preerr_fsi_003,2) - pow(err_fsi_003,2)));
-      hpull_fsi_004->Fill((bestfit_fsi_004 - input_fsi_004) / (pow(preerr_fsi_004,2) - pow(err_fsi_004,2)));
-      hpull_fsi_005->Fill((bestfit_fsi_005 - input_fsi_005) / (pow(preerr_fsi_005,2) - pow(err_fsi_005,2)));
+      if(err_xsec_pf < preerr_xsec_pf) hpull_xsec_pf->Fill((bestfit_xsec_pf - input_xsec_pf) / sqrt(pow(preerr_xsec_pf,2) - pow(err_xsec_pf,2)));
+      if(err_xsec_wshape < preerr_xsec_wshape) hpull_xsec_wshape->Fill((bestfit_xsec_wshape - input_xsec_wshape) / sqrt(pow(preerr_xsec_wshape,2) - pow(err_xsec_wshape,2)));
+      if(err_xsec_ccothshape < preerr_xsec_ccothshape) hpull_xsec_ccothshape->Fill((bestfit_xsec_ccothshape - input_xsec_ccothshape) / sqrt(pow(preerr_xsec_ccothshape,2) - pow(err_xsec_ccothshape,2)));
+      if(err_xsec_cc1pishape < preerr_xsec_cc1pishape) hpull_xsec_cc1pishape->Fill((bestfit_xsec_cc1pishape - input_xsec_cc1pishape) / sqrt(pow(preerr_xsec_cc1pishape,2) - pow(err_xsec_cc1pishape,2)));
+      if(err_xsec_normcccoh < preerr_xsec_normcccoh) hpull_xsec_normcccoh->Fill((bestfit_xsec_normcccoh - input_xsec_normcccoh) / sqrt(pow(preerr_xsec_normcccoh,2) - pow(err_xsec_normcccoh,2)));
+      if(err_xsec_normnc1piC < preerr_xsec_normnc1piC) hpull_xsec_normnc1piC->Fill((bestfit_xsec_normnc1piC - input_xsec_normnc1piC) / sqrt(pow(preerr_xsec_normnc1piC,2) - pow(err_xsec_normnc1piC,2)));
+      if(err_xsec_normnccoh < preerr_xsec_normnccoh) hpull_xsec_normnccoh->Fill((bestfit_xsec_normnccoh - input_xsec_normnccoh) / sqrt(pow(preerr_xsec_normnccoh,2) - pow(err_xsec_normnccoh,2)));
+      if(err_xsec_normncoth < preerr_xsec_normncoth) hpull_xsec_normncoth->Fill((bestfit_xsec_normncoth - input_xsec_normncoth) / sqrt(pow(preerr_xsec_normncoth,2) - pow(err_xsec_normncoth,2)));
+      if(err_xsec_normnuetonumu < preerr_xsec_normnuetonumu) hpull_xsec_normnuetonumu->Fill((bestfit_xsec_normnuetonumu - input_xsec_normnuetonumu) / sqrt(pow(preerr_xsec_normnuetonumu,2) - pow(err_xsec_normnuetonumu,2)));
+      if(err_skdet_ccqerc0 < preerr_skdet_ccqerc0) hpull_skdet_ccqerc0->Fill((bestfit_skdet_ccqerc0 - input_skdet_ccqerc0) / sqrt(pow(preerr_skdet_ccqerc0,2) - pow(err_skdet_ccqerc0,2)));
+      if(err_skdet_ccqerc1 < preerr_skdet_ccqerc1) hpull_skdet_ccqerc1->Fill((bestfit_skdet_ccqerc1 - input_skdet_ccqerc1) / sqrt(pow(preerr_skdet_ccqerc1,2) - pow(err_skdet_ccqerc1,2)));
+      if(err_skdet_ccqerc2 < preerr_skdet_ccqerc2) hpull_skdet_ccqerc2->Fill((bestfit_skdet_ccqerc2 - input_skdet_ccqerc2) / sqrt(pow(preerr_skdet_ccqerc2,2) - pow(err_skdet_ccqerc2,2)));
+      if(err_skdet_ccqeoth < preerr_skdet_ccqeoth) hpull_skdet_ccqeoth->Fill((bestfit_skdet_ccqeoth - input_skdet_ccqeoth) / sqrt(pow(preerr_skdet_ccqeoth,2) - pow(err_skdet_ccqeoth,2)));
+      if(err_skdet_nuecc < preerr_skdet_nuecc) hpull_skdet_nuecc->Fill((bestfit_skdet_nuecc - input_skdet_nuecc) / sqrt(pow(preerr_skdet_nuecc,2) - pow(err_skdet_nuecc,2)));
+      if(err_fsi_000 < preerr_fsi_000) hpull_fsi_000->Fill((bestfit_fsi_000 - input_fsi_000) / sqrt(pow(preerr_fsi_000,2) - pow(err_fsi_000,2)));
+      if(err_fsi_001 < preerr_fsi_001) hpull_fsi_001->Fill((bestfit_fsi_001 - input_fsi_001) / sqrt(pow(preerr_fsi_001,2) - pow(err_fsi_001,2)));
+      if(err_fsi_002 < preerr_fsi_002) hpull_fsi_002->Fill((bestfit_fsi_002 - input_fsi_002) / sqrt(pow(preerr_fsi_002,2) - pow(err_fsi_002,2)));
+      if(err_fsi_003 < preerr_fsi_003) hpull_fsi_003->Fill((bestfit_fsi_003 - input_fsi_003) / sqrt(pow(preerr_fsi_003,2) - pow(err_fsi_003,2)));
+      if(err_fsi_004 < preerr_fsi_004) hpull_fsi_004->Fill((bestfit_fsi_004 - input_fsi_004) / sqrt(pow(preerr_fsi_004,2) - pow(err_fsi_004,2)));
+      if(err_fsi_005 < preerr_fsi_005) hpull_fsi_005->Fill((bestfit_fsi_005 - input_fsi_005) / sqrt(pow(preerr_fsi_005,2) - pow(err_fsi_005,2)));
     }
   }
 
@@ -1517,11 +1517,13 @@ void mock_data_fit_pulls(
     sigmasummary->SetBinContent(ifit, fit->GetParameter(2)); sigmasummary->SetBinError(ifit, fit->GetParError(2));
     ifit++;
     cextra->cd(2); hpull_skdet_energyscale->Draw(); hpull_skdet_energyscale->Fit("gaus");
-    fit = hpull_skdet_energyscale->GetFunction("gaus");
-    meansummary->GetXaxis()->SetBinLabel(ifit,"Escale"); sigmasummary->GetXaxis()->SetBinLabel(ifit,"Escale");
-    meansummary->SetBinContent(ifit, fit->GetParameter(1)); meansummary->SetBinError(ifit, fit->GetParError(1));
-    sigmasummary->SetBinContent(ifit, fit->GetParameter(2)); sigmasummary->SetBinError(ifit, fit->GetParError(2));
-    ifit++;
+      fit = hpull_skdet_energyscale->GetFunction("gaus");
+    if(fit) {
+      meansummary->GetXaxis()->SetBinLabel(ifit,"Escale"); sigmasummary->GetXaxis()->SetBinLabel(ifit,"Escale");
+      meansummary->SetBinContent(ifit, fit->GetParameter(1)); meansummary->SetBinError(ifit, fit->GetParError(1));
+      sigmasummary->SetBinContent(ifit, fit->GetParameter(2)); sigmasummary->SetBinError(ifit, fit->GetParError(2));
+      ifit++;
+    }
     TCanvas *cskdet = new TCanvas(); cskdet->Divide(1,2);
     cskdet->cd(1); hpull_skdet_ccnqe->Draw(); hpull_skdet_ccnqe->Fit("gaus");
     fit = hpull_skdet_ccnqe->GetFunction("gaus");

@@ -183,7 +183,7 @@ void test_sk_ereco_spectrum_twk_sys_throw
   
   // Output histograms
   TH1D * hErecoNominal = 0;
-  TH1D * hEreco[nexp];
+  TH1D * hEreco[nexp] = {0};
   TH1D * hNsk = new TH1D(Form("%s_nsk",modetitle.c_str()),Form("%s_nsk",modetitle.c_str()),3000,0,300);
   int nbanff = conv::kNumOfParamsInBANFFfit;
   int nfsi = conv::kNumOfFSIParams;
@@ -277,6 +277,7 @@ void test_sk_ereco_spectrum_twk_sys_throw
     hErecoNominal->Write("nominal");
 
   // Tweak!
+  int iskip = 0;
   for(int iexp = 0; iexp < nexp; iexp++) {
 
     cout << endl << "Experiment " << iexp << " for systematics: " << modetitle << endl;
@@ -374,7 +375,12 @@ void test_sk_ereco_spectrum_twk_sys_throw
     }//mode>=100
 
     // generate predictions
-    skexp.Generate(ph);
+    bool applied_negevents_condition = skexp.Generate(ph);
+    if(applied_negevents_condition) {
+      cout << "skipping" << endl;
+      iskip++;
+      continue;
+    }
 
     //store spectrum
     hEreco[iexp] = new TH1D(*skexp.CurrPredictedErecoSpectrum(s));
@@ -415,6 +421,7 @@ void test_sk_ereco_spectrum_twk_sys_throw
     hSysThrown[nbanff+nfsi+19]->Fill(skexp.GetNuXSec()->CurrentValue(util::PhysParamIdFromString("xsec_norm_antinutonu")));
     hSysThrown[nbanff+nfsi+20]->Fill(skexp.GetNuXSec()->CurrentValue(util::PhysParamIdFromString("xsec_bindE")));
   }//end loop over experiments
+  cout << iskip << " experiments skipped due to min events" << endl;
 
   //save some histograms
   for(int isys = 0; isys < nsys; isys++) {
@@ -431,8 +438,10 @@ void test_sk_ereco_spectrum_twk_sys_throw
     double nom   = hErecoNominal->GetBinContent(ibin);
     double sumsq = 0;
     for(int iexp = 0; iexp < nexp; iexp++) {
-       double N = hEreco[iexp]->GetBinContent(ibin);
-       sumsq += TMath::Power(N-nom,2);
+      if(hEreco[iexp]) {
+	double N = hEreco[iexp]->GetBinContent(ibin);
+	sumsq += TMath::Power(N-nom,2);
+      }
     }//iexp
     double sig = TMath::Sqrt(sumsq/nexp);
     double min = nom-sig;

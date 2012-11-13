@@ -173,7 +173,7 @@ double FitInputs::Chisquare(Option_t * option, conv::SuperkSample_t s0)
        << endl;
 #endif
 
-  if(applied_negevents_condition) chisq += 1E8;
+  //if(applied_negevents_condition) chisq += 1E8;
 
   return chisq; 
 }
@@ -710,7 +710,7 @@ double FitInputs::operator() (const std::vector<double>& x) const
        << endl;
 #endif
 
-  if(applied_negevents_condition) chisq += 1E8;
+  //if(applied_negevents_condition) chisq += 1E8;
 
   return chisq; 
 }
@@ -742,6 +742,3 @@ void t2kana::FitFunc (
 
 }
 //____________________________________________________________________________
-
-      
-

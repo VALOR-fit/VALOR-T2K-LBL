@@ -1011,13 +1011,16 @@ bool SuperkMC::ApplyEnergyScaleSystematicToTotalSpectrum(void)
     // loop over Ereco
     for(int ir = 1; ir <= reco_spectrum_tot->GetXaxis()->GetNbins(); ir++) {
       double nev_tot = reco_spectrum_tot->GetBinContent(ir);
-      if(nev_tot < 0 || (ir >= 5 && nev_tot < kASmallNum)) {
+      if(nev_tot < 0 || (ir >= 6 && nev_tot < kASmallNum)) {
 	// bin 5 is first bin expect events in (nominally empty, but can have events for negative energy scale) bin 4 is empty, except for more than 8 sigma tweak!
 #ifdef __show_negative_events_mesg_debug__
 	cout << "Exp/SKMC/ApplyEnergyScaleSystematicToTotalSpectrum >> set negative number of events " << reco_spectrum_tot->GetBinContent(ir)
 	     << " to " << kSetMinEventsTo << "\t" << " Ereco: " << reco_spectrum_tot->GetXaxis()->GetBinCenter(ir) << endl;
 #endif
 	applied_negevents_condition = true;
+	reco_spectrum_tot->SetBinContent(ir, kSetNegEventsTo);
+      }
+      else if(ir == 5 && nev_tot < kASmallNum) {
 	reco_spectrum_tot->SetBinContent(ir, kSetNegEventsTo);
       }
     }//ir
