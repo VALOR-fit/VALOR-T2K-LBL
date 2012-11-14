@@ -145,6 +145,7 @@ void FitParamList::SetMigradErrors(vector<double> err)
   }
   // vector only contains free parameters, so need to make sure we handle the
   // fixed parameters in the parameter list correctly
+  /*
   int ifree = 0;
   for(int ip = 0; ip < fNParams; ip++) {
     if(fIsFixed[ip]) {
@@ -154,6 +155,10 @@ void FitParamList::SetMigradErrors(vector<double> err)
       fMigradError[ip] = err[ifree];
       ifree++;
     }
+  }
+  */
+  for(int ip = 0; ip < fNParams; ip++) {
+    fMigradError [ip] = err[ip];
   }
   fMigradErrorsSet = true;
 }
@@ -166,6 +171,7 @@ void FitParamList::SetHesseErrors(vector<double> err)
 	 << this->GetNumberFreeParameters() << endl;
     exit(1);
   }
+  /*
   // vector only contains free parameters, so need to make sure we handle the
   // fixed parameters in the parameter list correctly
   int ifree = 0;
@@ -177,6 +183,10 @@ void FitParamList::SetHesseErrors(vector<double> err)
       fHesseError[ip] = err[ifree];
       ifree++;
     }
+  }
+  */
+  for(int ip = 0; ip < fNParams; ip++) {
+    fHesseError [ip] = err[ip];
   }
   fHesseErrorsSet = true;
 }
@@ -194,6 +204,7 @@ void FitParamList::SetMinosErrors(vector<double> plus, vector<double> minus)
 	 << " is not the same size as error vector size (minus): " << minus.size() << endl;
     exit(1);
   }
+  /*
   // vector only contains free parameters, so need to make sure we handle the
   // fixed parameters in the parameter list correctly
   int ifree = 0;
@@ -207,6 +218,11 @@ void FitParamList::SetMinosErrors(vector<double> plus, vector<double> minus)
       fMinusError[ip] = minus[ifree];
       ifree++;
     }
+  }
+  */
+  for(int ip = 0; ip < fNParams; ip++) {
+    fPlusError [ip] = plus [ip];
+    fMinusError[ip] = minus[ip];
   }
   fMinosErrorsSet = true;
 }
