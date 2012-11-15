@@ -204,7 +204,7 @@ void FitParamList::SetMinosErrors(vector<double> plus, vector<double> minus)
 	 << " is not the same size as error vector size (minus): " << minus.size() << endl;
     exit(1);
   }
-  /*
+
   // vector only contains free parameters, so need to make sure we handle the
   // fixed parameters in the parameter list correctly
   int ifree = 0;
@@ -219,11 +219,12 @@ void FitParamList::SetMinosErrors(vector<double> plus, vector<double> minus)
       ifree++;
     }
   }
-  */
+  /*
   for(int ip = 0; ip < fNParams; ip++) {
     fPlusError [ip] = plus [ip];
     fMinusError[ip] = minus[ip];
   }
+  */
   fMinosErrorsSet = true;
 }
 //________________________________________________________________________________________

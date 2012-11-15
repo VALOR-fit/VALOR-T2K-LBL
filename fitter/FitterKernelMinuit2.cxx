@@ -20,7 +20,7 @@
 #define __show_fit_steps_debug__
 #define __show_fit_cpu_time__
 #define __get_hesse_errors__
-//#define __get_minos_errors__
+#define __get_minos_errors__
 //#define __give_fitter_covariance_matrix__
 
 #include <cassert> 
@@ -446,8 +446,8 @@ bool FitterKernelMinuit2::RunOnce(void)
       continue;
     double up = minos.Upper(ip);
     double lo = minos.Lower(ip);
-    err_minosminus.push_back(pow(lo,2));
-    err_minosplus. push_back (pow(up,2));
+    err_minosminus.push_back(lo);
+    err_minosplus. push_back(up);
 #ifdef __show_fit_steps_debug__
     cout << "FitterKernelMinuit2/RunOnce >> par#" << ip << " = " << bestfit_params[ip].Value() << " +" << up << " -" << lo << " (minos)" << endl;
 #endif
