@@ -859,11 +859,25 @@ void test_n_mock_data_fits_with_syst_minuit2
 	  //skexp->GetSuperkDetector()->TweakEnergyScale              (rand.Gaus(0.,1.));
 	  TVectorD twkv(skexp->GetBANFF()->BestFitValues());
 	  TVectorD cov (skexp->GetBANFF()->CovMatrix());
-	  PhysParamId_t p = conv::kNuisBANFFMAQE;
-	  int ip   = util::ArrIdx::Instance()->BANFFSystIdx(kNuisBANFFMAQE);
-	  twkv[ip] = rand.Gaus(twkv[ip], cov[ip]);
-	  ip       = util::ArrIdx::Instance()->BANFFSystIdx(kNuisBANFFCCQEE0);
-	  twkv[ip] = rand.Gaus(twkv[ip], cov[ip]);
+	  PhysParamId_t p_maqe = conv::kNuisBANFFMAQE;
+	  int ip_maqe    = util::ArrIdx::Instance()->BANFFSystIdx(kNuisBANFFMAQE);
+	  twkv[ip_maqe]  = rand.Gaus(twkv[ip_maqe], cov[ip_maqe]);
+	  double sigma_maqe = (twkv[ip_maqe] - skexp->GetBANFF()->BestFitValue(p_maqe)) / cov[ip_maqe][ip_maqe];
+	  PhysParamId_t p_ccqe0 = kNuisBANFFCCQEE0;
+	  int ip_ccqe0       = util::ArrIdx::Instance()->BANFFSystIdx(kNuisBANFFCCQEE0);
+	  twkv[ip_ccqe0] = rand.Gaus(twkv[ip_ccqe0], cov[ip_ccqe0]);
+	  int ip_ccqe0 = util::ArrIdx::Instance()->BANFFSystIdx(p_ccqe0);
+	  double sigma_ccqe0 = (twkv[ip_ccqe0] - skexp->GetBANFF()->BestFitValue(p_ccqe0)) / cov[ip_ccqe0][ip_ccqe0];
+	  // now, tweak the other parameters according to the correlations between them and the fitted parameters
+	  for(int ip = 0; ip < nbanff; ip++) {
+	    int p_i = ip + (int)conv::kNuisBANFF00;
+	    conv::PhysParamId_t p = (conv::PhysParamId_t)p_i;
+	    if(p == kNuisBANFFMAQE || p == kNuisBANFFCCQEE0)
+	      continue;
+	    twkv[ip] = skexp->GetBANFF()->BestFitValue(p);
+	    twkv[ip] += sigma_maqe  * cov[ip_maqe] [ip];
+	    twkv[ip] += sigma_ccqe0 * cov[ip_ccqe0][ip];
+	  }
 	  skexp->GetBANFF()->Tweak(true,&twkv);
 	  break;
 	default:
