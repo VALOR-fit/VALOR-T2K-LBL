@@ -20,16 +20,16 @@ optionParser.add_option("--resource", action="store", type="string", dest="resou
 optionParser.add_option("--cputime", action="store", type="string", dest="cputime", default="11:50:00", help="Default: 11:50:00")
 optionParser.add_option("--runmode", action="store", type="string", dest="runmode", default="", help="\nPULLS (10000 fits at 2 oscillation points. \nIncludes systematics fluctuations if applicable), STARSTAT (10000 fits at 9 oscillation points. No systematic fluctuations. Only fits for osc params")
 optionParser.add_option("--fitparamlist", action="store", type="string", dest="fitparamlist", default="nuosc3f_numudisapp_fix4", help="Default: nuosc3f_numudisapp_fix4 (this is ignored in run mode 'starstat'")
-optionParser.add_option("--minuit", action="store_true", dest="minuit", default="false", help="Run with Minuit. Otherwise, use Minuit2")
+optionParser.add_option("--minuit", action="store_true", dest="minuit", default="False", help="Run with Minuit. Otherwise, use Minuit2")
 (opt, args) = optionParser.parse_args()
 
 #will create directories relative to the current working directory, if they don't already exist
 basedir = os.getenv("PWD")
 
 #initialise some variables
-fitstr = ""
-if not opt.minuit:
-   fitstr = "--minuit2"
+fitstr = "--minuit2"
+if opt.minuit == True:
+   fitstr = ""
 conffile = "analysis_configuration.xml"
 oscparams = []
 syst = -1
@@ -54,7 +54,7 @@ if not runmode:
 if runmode == "PULLS":
    #fill with oscillation parameters, in order mixing12, mixing13, mixing23, deltacp, dmsq12, dmsq23
    oscparams.append([-99, -99, 0.9, -99, -99, -99]) #mixing23=0.9 & global best fits
-   oscparams.append([-99, -99, -99, -99, -99, -99]) #use global best fits!
+   #oscparams.append([-99, -99, -99, -99, -99, -99]) #use global best fits!
    stat = " --stat-fluctuations "
    tag = "pull"
    if fitparamlist == "nuosc3f_numudisapp_fix4":
