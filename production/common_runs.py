@@ -118,7 +118,7 @@ for osc in oscparams:
    command = '$T2KOSCANA/production/submit_toyexpt_fitting_job_fitsyst_minuit2 --resource '+resource+' --softw-dir $T2KOSCANA --job-dir $PWD --cpu-time '+cputime+' --tweak-systematics '+str(syst)+' --nruns '+str(nruns)+' --nexpts '+str(nexpts)+' --sinsq2theta12 '+str(osc[0])+' --sinsq2theta13 '+str(osc[1])+' --sinsq2theta23 '+str(osc[2])+' --deltacp '+str(osc[3])+' --dm12sq '+str(osc[4])+' --dm23sq '+str(osc[5])+' --fit-param-list '+fitparamlist+' --config-file '+conffile+' --tag '+tag+' '+store_chisqsurf+' '+store_chisq_withsyst_surf+' '+store_toy_expts+' '+store_bestfit_spectra+' '+stat+' '+fitstr
 
    print command
-   os.system(command)
+   #os.system(command)
 
    os.chdir(basedir)
 

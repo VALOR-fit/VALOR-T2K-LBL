@@ -779,7 +779,7 @@ void FitParamList::AppendAllUncorrelatedXSecSystematics(FitParamList * fparm, in
 
   // XSec
   fparm->AddParam( ip++, kNuisXSecFermiMom,      0.0, -1.0*SYST_NSIGMA, 1.0*SYST_NSIGMA, SYST_STEP,  false, true);
-  fparm->AddParam( ip++, kNuisXSecSpecFunc,      0.0, -0.,              1.,              SYST_STEP,  false, true);
+  fparm->AddParam( ip++, kNuisXSecSpecFunc,      0.5, -0.,              1.,              SYST_STEP,  false, true);
   fparm->AddParam( ip++, kNuisXSecWshape,        0.0, -1.0*SYST_NSIGMA, 1.0*SYST_NSIGMA, SYST_STEP,  false, true);
   fparm->AddParam( ip++, kNuisXSecShapeCCoth,    0.0, -1.0*SYST_NSIGMA, 1.0*SYST_NSIGMA, SYST_STEP,  false, true);
   fparm->AddParam( ip++, kNuisXSecPiLessDelta,   0.0, -1.0*SYST_NSIGMA, 1.0*SYST_NSIGMA, SYST_STEP,  false, true);
@@ -933,7 +933,7 @@ void FitParamList::AppendSelectedNonBANFFSystematics(FitParamList * fparm, int s
   int ip = start; // first unallocated element in the param list
 
   // XSec
-  fparm->AddParam( ip++, kNuisXSecSpecFunc,      0.0, 0.,               1.,              SYST_STEP,  false, true);
+  fparm->AddParam( ip++, kNuisXSecSpecFunc,      0.5, 0.,               1.,              SYST_STEP,  false, true);
   fparm->AddParam( ip++, kNuisXSecPiLessDelta,   0.0, -1.0*SYST_NSIGMA, 1.0*SYST_NSIGMA, SYST_STEP,  false, true);
   fparm->AddParam( ip++, kNuisXSecBindE,         0.0, -1.0*SYST_NSIGMA, 1.0*SYST_NSIGMA, SYST_STEP,  false, true);
 
@@ -982,7 +982,7 @@ void FitParamList::AppendSelectedCorrelatedBANFFSystematics(FitParamList * fparm
   xml->FreeNode(root_node);
   delete xml;
 
-   // BANFF 
+  // BANFF 
   int bidx = util::ArrIdx::Instance()->BANFFSystIdx(kNuisBANFFMAQE);
   double bf  = BANFFBestFit[bidx];
   double err = sqrt(BANFFCov[bidx][bidx]);

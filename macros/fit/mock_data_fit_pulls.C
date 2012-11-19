@@ -4,7 +4,7 @@
 void mock_data_fit_pulls(
      const char * filenames,                                              /* add these filenames to the tree */
      int          fit_systematics_mode = 1,                               /* what was fit for? 0: osc only. 1: osc+selected nuisance. 2: osc+all nuisance */
-     int          err_mode = 1,                                           /* which errors to use for pulls. 1: migrad, 2 hesse, 3 minosplus, 4 minosminus*/
+     int          err_mode = 1,                                           /* which errors to use for pulls. 1: migrad, 2 hesse, 3 minos*/
      int          fitter_mode = 1,                                        /* which fitter has been used? 0: minuit. 1: minuit2 */
      const char * config_file          = "analysis_configuration.xml"     /* file to get the pre errors from */
 )
@@ -709,6 +709,9 @@ void mock_data_fit_pulls(
   //pull histograms
   TH1D * hpull_mixing23 = new TH1D("hpull_mixing23","hpull_mixing23",160,-5,5);
   TH1D * hpull_dm23sq   = new TH1D("hpull_dm23sq","hpull_dm23sq",120,-5,5);
+  //error histograms
+  TH1D * herr_mixing23 = new TH1D("herr_mixing23","herr_mixing23",300,0,0.0.05);
+  TH1D * herr_dm23sq   = new TH1D("herr_dm23sq","herr_dm23sq",100,0,1E-4);
   if(fit_systematics_mode >= 1) {
     //distribution histograms
     TH1D * h_xsec_sf = new TH1D("h_xsec_sf","h_xsec_sf",200,-3,3);
@@ -1048,164 +1051,84 @@ void mock_data_fit_pulls(
       err_fsi_005 = errhesse_fsi_005;
     }
     else if(err_mode == 3) {
-      err_mixing12 = errminosplus_mixing12;
-      err_mixing13 = errminosplus_mixing13;
-      err_mixing23 = errminosplus_mixing23;
-      err_deltacp = errminosplus_deltacp;
-      err_dm12sq = errminosplus_dm12sq;
-      err_dm23sq = errminosplus_dm23sq;
-      err_unbanff_00 = errminosplus_unbanff_00;
-      err_unbanff_01 = errminosplus_unbanff_01;
-      err_unbanff_02 = errminosplus_unbanff_02;
-      err_unbanff_03 = errminosplus_unbanff_03;
-      err_unbanff_04 = errminosplus_unbanff_04;
-      err_unbanff_05 = errminosplus_unbanff_05;
-      err_unbanff_06 = errminosplus_unbanff_06;
-      err_unbanff_07 = errminosplus_unbanff_07;
-      err_unbanff_08 = errminosplus_unbanff_08;
-      err_unbanff_09 = errminosplus_unbanff_09;
-      err_unbanff_10 = errminosplus_unbanff_10;
-      err_unbanff_11 = errminosplus_unbanff_11;
-      err_unbanff_12 = errminosplus_unbanff_12;
-      err_unbanff_13 = errminosplus_unbanff_13;
-      err_unbanff_14 = errminosplus_unbanff_14;
-      err_unbanff_15 = errminosplus_unbanff_15;
-      err_unbanff_16 = errminosplus_unbanff_16;
-      err_unbanff_17 = errminosplus_unbanff_17;
-      err_unbanff_18 = errminosplus_unbanff_18;
-      err_unbanff_19 = errminosplus_unbanff_19;
-      err_unbanff_20 = errminosplus_unbanff_20;
-      err_unbanff_21 = errminosplus_unbanff_21;
-      err_unbanff_22 = errminosplus_unbanff_22;
-      err_banff_00 = errminosplus_banff_00;
-      err_banff_01 = errminosplus_banff_01;
-      err_banff_02 = errminosplus_banff_02;
-      err_banff_03 = errminosplus_banff_03;
-      err_banff_04 = errminosplus_banff_04;
-      err_banff_05 = errminosplus_banff_05;
-      err_banff_06 = errminosplus_banff_06;
-      err_banff_07 = errminosplus_banff_07;
-      err_banff_08 = errminosplus_banff_08;
-      err_banff_09 = errminosplus_banff_09;
-      err_banff_10 = errminosplus_banff_10;
-      err_banff_11 = errminosplus_banff_11;
-      err_banff_12 = errminosplus_banff_12;
-      err_banff_13 = errminosplus_banff_13;
-      err_banff_14 = errminosplus_banff_14;
-      err_banff_15 = errminosplus_banff_15;
-      err_banff_maqe = errminosplus_banff_maqe;
-      err_banff_mares = errminosplus_banff_mares;
-      err_banff_ccqeE0 = errminosplus_banff_ccqeE0;
-      err_banff_ccqeE1 = errminosplus_banff_ccqeE1;
-      err_banff_ccqeE2 = errminosplus_banff_ccqeE2;
-      err_banff_cc1piE0 = errminosplus_banff_cc1piE0;
-      err_banff_cc1piE1 = errminosplus_banff_cc1piE1;
-      err_xsec_pf = errminosplus_xsec_pf;
-      err_xsec_sf = errminosplus_xsec_sf;
-      err_xsec_binde = errminosplus_xsec_binde;
-      err_xsec_wshape = errminosplus_xsec_wshape;
-      err_xsec_ccothshape = errminosplus_xsec_ccothshape;
-      err_xsec_cc1pishape = errminosplus_xsec_cc1pishape;
-      err_xsec_pilessdelta = errminosplus_xsec_pilessdelta;
-      err_xsec_normcccoh = errminosplus_xsec_normcccoh;
-      err_xsec_normnc1piC = errminosplus_xsec_normnc1piC;
-      err_xsec_normnccoh = errminosplus_xsec_normnccoh;
-      err_xsec_normncoth = errminosplus_xsec_normncoth;
-      err_xsec_normnuetonumu = errminosplus_xsec_normnuetonumu;
-      err_skdet_energyscale = errminosplus_skdet_energyscale;
-      err_skdet_ccqerc0 = errminosplus_skdet_ccqerc0;
-      err_skdet_ccqerc1 = errminosplus_skdet_ccqerc1;
-      err_skdet_ccqerc2 = errminosplus_skdet_ccqerc2;
-      err_skdet_ccqeoth = errminosplus_skdet_ccqeoth;
-      err_skdet_ccnqe = errminosplus_skdet_ccnqe;
-      err_skdet_nc = errminosplus_skdet_nc;
-      err_skdet_nuecc = errminosplus_skdet_nuecc;
-      err_fsi_000 = errminosplus_fsi_000;
-      err_fsi_001 = errminosplus_fsi_001;
-      err_fsi_002 = errminosplus_fsi_002;
-      err_fsi_003 = errminosplus_fsi_003;
-      err_fsi_004 = errminosplus_fsi_004;
-      err_fsi_005 = errminosplus_fsi_005;
-    }
-    else if(err_mode == 4) {
-      err_mixing12 = errminosminus_mixing12;
-      err_mixing13 = errminosminus_mixing13;
-      err_mixing23 = errminosminus_mixing23;
-      err_deltacp = errminosminus_deltacp;
-      err_dm12sq = errminosminus_dm12sq;
-      err_dm23sq = errminosminus_dm23sq;
-      err_unbanff_00 = errminosminus_unbanff_00;
-      err_unbanff_01 = errminosminus_unbanff_01;
-      err_unbanff_02 = errminosminus_unbanff_02;
-      err_unbanff_03 = errminosminus_unbanff_03;
-      err_unbanff_04 = errminosminus_unbanff_04;
-      err_unbanff_05 = errminosminus_unbanff_05;
-      err_unbanff_06 = errminosminus_unbanff_06;
-      err_unbanff_07 = errminosminus_unbanff_07;
-      err_unbanff_08 = errminosminus_unbanff_08;
-      err_unbanff_09 = errminosminus_unbanff_09;
-      err_unbanff_10 = errminosminus_unbanff_10;
-      err_unbanff_11 = errminosminus_unbanff_11;
-      err_unbanff_12 = errminosminus_unbanff_12;
-      err_unbanff_13 = errminosminus_unbanff_13;
-      err_unbanff_14 = errminosminus_unbanff_14;
-      err_unbanff_15 = errminosminus_unbanff_15;
-      err_unbanff_16 = errminosminus_unbanff_16;
-      err_unbanff_17 = errminosminus_unbanff_17;
-      err_unbanff_18 = errminosminus_unbanff_18;
-      err_unbanff_19 = errminosminus_unbanff_19;
-      err_unbanff_20 = errminosminus_unbanff_20;
-      err_unbanff_21 = errminosminus_unbanff_21;
-      err_unbanff_22 = errminosminus_unbanff_22;
-      err_banff_00 = errminosminus_banff_00;
-      err_banff_01 = errminosminus_banff_01;
-      err_banff_02 = errminosminus_banff_02;
-      err_banff_03 = errminosminus_banff_03;
-      err_banff_04 = errminosminus_banff_04;
-      err_banff_05 = errminosminus_banff_05;
-      err_banff_06 = errminosminus_banff_06;
-      err_banff_07 = errminosminus_banff_07;
-      err_banff_08 = errminosminus_banff_08;
-      err_banff_09 = errminosminus_banff_09;
-      err_banff_10 = errminosminus_banff_10;
-      err_banff_11 = errminosminus_banff_11;
-      err_banff_12 = errminosminus_banff_12;
-      err_banff_13 = errminosminus_banff_13;
-      err_banff_14 = errminosminus_banff_14;
-      err_banff_15 = errminosminus_banff_15;
-      err_banff_maqe = errminosminus_banff_maqe;
-      err_banff_mares = errminosminus_banff_mares;
-      err_banff_ccqeE0 = errminosminus_banff_ccqeE0;
-      err_banff_ccqeE1 = errminosminus_banff_ccqeE1;
-      err_banff_ccqeE2 = errminosminus_banff_ccqeE2;
-      err_banff_cc1piE0 = errminosminus_banff_cc1piE0;
-      err_banff_cc1piE1 = errminosminus_banff_cc1piE1;
-      err_xsec_pf = errminosminus_xsec_pf;
-      err_xsec_sf = errminosminus_xsec_sf;
-      err_xsec_binde = errminosminus_xsec_binde;
-      err_xsec_wshape = errminosminus_xsec_wshape;
-      err_xsec_ccothshape = errminosminus_xsec_ccothshape;
-      err_xsec_cc1pishape = errminosminus_xsec_cc1pishape;
-      err_xsec_pilessdelta = errminosminus_xsec_pilessdelta;
-      err_xsec_normcccoh = errminosminus_xsec_normcccoh;
-      err_xsec_normnc1piC = errminosminus_xsec_normnc1piC;
-      err_xsec_normnccoh = errminosminus_xsec_normnccoh;
-      err_xsec_normncoth = errminosminus_xsec_normncoth;
-      err_xsec_normnuetonumu = errminosminus_xsec_normnuetonumu;
-      err_skdet_energyscale = errminosminus_skdet_energyscale;
-      err_skdet_ccqerc0 = errminosminus_skdet_ccqerc0;
-      err_skdet_ccqerc1 = errminosminus_skdet_ccqerc1;
-      err_skdet_ccqerc2 = errminosminus_skdet_ccqerc2;
-      err_skdet_ccqeoth = errminosminus_skdet_ccqeoth;
-      err_skdet_ccnqe = errminosminus_skdet_ccnqe;
-      err_skdet_nc = errminosminus_skdet_nc;
-      err_skdet_nuecc = errminosminus_skdet_nuecc;
-      err_fsi_000 = errminosminus_fsi_000;
-      err_fsi_001 = errminosminus_fsi_001;
-      err_fsi_002 = errminosminus_fsi_002;
-      err_fsi_003 = errminosminus_fsi_003;
-      err_fsi_004 = errminosminus_fsi_004;
-      err_fsi_005 = errminosminus_fsi_005;
+      if(bestfit_mixing12 <= input_mixing12) err_mixing12 = errminosplus_mixing12; else err_mixing12 = -errminosminus_mixing12;
+      if(bestfit_mixing13 <= input_mixing13) err_mixing13 = errminosplus_mixing13; else err_mixing13 = -errminosminus_mixing13;
+      if(bestfit_mixing23 <= input_mixing23) err_mixing23 = errminosplus_mixing23; else err_mixing23 = -errminosminus_mixing23;
+      if(bestfit_deltacp <= input_deltacp) err_deltacp = errminosplus_deltacp; else err_deltacp = -errminosminus_deltacp;
+      if(bestfit_dm12sq <= input_dm12sq) err_dm12sq = errminosplus_dm12sq; else err_dm12sq = -errminosminus_dm12sq;
+      if(bestfit_dm23sq <= input_dm23sq) err_dm23sq = errminosplus_dm23sq; else err_dm23sq = -errminosminus_dm23sq;
+      if(bestfit_unbanff_00 <= input_unbanff_00) err_unbanff_00 = errminosplus_unbanff_00; else err_unbanff_00 = errminosminus_unbanff_00;
+      if(bestfit_unbanff_01 <= input_unbanff_01) err_unbanff_01 = errminosplus_unbanff_01; else err_unbanff_01 = errminosminus_unbanff_01;
+      if(bestfit_unbanff_02 <= input_unbanff_02) err_unbanff_02 = errminosplus_unbanff_02; else err_unbanff_02 = errminosminus_unbanff_02;
+      if(bestfit_unbanff_03 <= input_unbanff_03) err_unbanff_03 = errminosplus_unbanff_03; else err_unbanff_03 = errminosminus_unbanff_03;
+      if(bestfit_unbanff_04 <= input_unbanff_04) err_unbanff_04 = errminosplus_unbanff_04; else err_unbanff_04 = errminosminus_unbanff_04;
+      if(bestfit_unbanff_05 <= input_unbanff_05) err_unbanff_05 = errminosplus_unbanff_05; else err_unbanff_05 = errminosminus_unbanff_05;
+      if(bestfit_unbanff_06 <= input_unbanff_06) err_unbanff_06 = errminosplus_unbanff_06; else err_unbanff_06 = errminosminus_unbanff_06;
+      if(bestfit_unbanff_07 <= input_unbanff_07) err_unbanff_07 = errminosplus_unbanff_07; else err_unbanff_07 = errminosminus_unbanff_07;
+      if(bestfit_unbanff_08 <= input_unbanff_08) err_unbanff_08 = errminosplus_unbanff_08; else err_unbanff_08 = errminosminus_unbanff_08;
+      if(bestfit_unbanff_09 <= input_unbanff_09) err_unbanff_09 = errminosplus_unbanff_09; else err_unbanff_09 = errminosminus_unbanff_09;
+      if(bestfit_unbanff_10 <= input_unbanff_10) err_unbanff_10 = errminosplus_unbanff_10; else err_unbanff_10 = errminosminus_unbanff_10;
+      if(bestfit_unbanff_11 <= input_unbanff_11) err_unbanff_11 = errminosplus_unbanff_11; else err_unbanff_11 = errminosminus_unbanff_11;
+      if(bestfit_unbanff_12 <= input_unbanff_12) err_unbanff_12 = errminosplus_unbanff_12; else err_unbanff_12 = errminosminus_unbanff_12;
+      if(bestfit_unbanff_13 <= input_unbanff_13) err_unbanff_13 = errminosplus_unbanff_13; else err_unbanff_13 = errminosminus_unbanff_13;
+      if(bestfit_unbanff_14 <= input_unbanff_14) err_unbanff_14 = errminosplus_unbanff_14; else err_unbanff_14 = errminosminus_unbanff_14;
+      if(bestfit_unbanff_15 <= input_unbanff_15) err_unbanff_15 = errminosplus_unbanff_15; else err_unbanff_15 = errminosminus_unbanff_15;
+      if(bestfit_unbanff_16 <= input_unbanff_16) err_unbanff_16 = errminosplus_unbanff_16; else err_unbanff_16 = errminosminus_unbanff_16;
+      if(bestfit_unbanff_17 <= input_unbanff_17) err_unbanff_17 = errminosplus_unbanff_17; else err_unbanff_17 = errminosminus_unbanff_17;
+      if(bestfit_unbanff_18 <= input_unbanff_18) err_unbanff_18 = errminosplus_unbanff_18; else err_unbanff_18 = errminosminus_unbanff_18;
+      if(bestfit_unbanff_19 <= input_unbanff_19) err_unbanff_19 = errminosplus_unbanff_19; else err_unbanff_19 = errminosminus_unbanff_19;
+      if(bestfit_unbanff_20 <= input_unbanff_20) err_unbanff_20 = errminosplus_unbanff_20; else err_unbanff_20 = errminosminus_unbanff_20;
+      if(bestfit_unbanff_21 <= input_unbanff_21) err_unbanff_21 = errminosplus_unbanff_21; else err_unbanff_21 = errminosminus_unbanff_21;
+      if(bestfit_unbanff_22 <= input_unbanff_22) err_unbanff_22 = errminosplus_unbanff_22; else err_unbanff_22 = errminosminus_unbanff_22;
+      if(bestfit_banff_00 <= input_banff_00) err_banff_00 = errminosplus_banff_00; else err_banff_00 = errminosminus_banff_00;
+      if(bestfit_banff_01 <= input_banff_01) err_banff_01 = errminosplus_banff_01; else err_banff_01 = errminosminus_banff_01;
+      if(bestfit_banff_02 <= input_banff_02) err_banff_02 = errminosplus_banff_02; else err_banff_02 = errminosminus_banff_02;
+      if(bestfit_banff_03 <= input_banff_03) err_banff_03 = errminosplus_banff_03; else err_banff_03 = errminosminus_banff_03;
+      if(bestfit_banff_04 <= input_banff_04) err_banff_04 = errminosplus_banff_04; else err_banff_04 = errminosminus_banff_04;
+      if(bestfit_banff_05 <= input_banff_05) err_banff_05 = errminosplus_banff_05; else err_banff_05 = errminosminus_banff_05;
+      if(bestfit_banff_06 <= input_banff_06) err_banff_06 = errminosplus_banff_06; else err_banff_06 = errminosminus_banff_06;
+      if(bestfit_banff_07 <= input_banff_07) err_banff_07 = errminosplus_banff_07; else err_banff_07 = errminosminus_banff_07;
+      if(bestfit_banff_08 <= input_banff_08) err_banff_08 = errminosplus_banff_08; else err_banff_08 = errminosminus_banff_08;
+      if(bestfit_banff_09 <= input_banff_09) err_banff_09 = errminosplus_banff_09; else err_banff_09 = errminosminus_banff_09;
+      if(bestfit_banff_10 <= input_banff_10) err_banff_10 = errminosplus_banff_10; else err_banff_10 = errminosminus_banff_10;
+      if(bestfit_banff_11 <= input_banff_11) err_banff_11 = errminosplus_banff_11; else err_banff_11 = errminosminus_banff_11;
+      if(bestfit_banff_12 <= input_banff_12) err_banff_12 = errminosplus_banff_12; else err_banff_12 = errminosminus_banff_12;
+      if(bestfit_banff_13 <= input_banff_13) err_banff_13 = errminosplus_banff_13; else err_banff_13 = errminosminus_banff_13;
+      if(bestfit_banff_14 <= input_banff_14) err_banff_14 = errminosplus_banff_14; else err_banff_14 = errminosminus_banff_14;
+      if(bestfit_banff_15 <= input_banff_15) err_banff_15 = errminosplus_banff_15; else err_banff_15 = errminosminus_banff_15;
+      if(bestfit_banff_maqe <= input_banff_maqe) err_banff_maqe = errminosplus_banff_maqe; else err_banff_maqe = errminosminus_banff_maqe;
+      if(bestfit_banff_mares <= input_banff_mares) err_banff_mares = errminosplus_banff_mares; else err_banff_mares = errminosminus_banff_mares;
+      if(bestfit_banff_ccqeE0 <= input_banff_ccqeE0) err_banff_ccqeE0 = errminosplus_banff_ccqeE0; else err_banff_ccqeE0 = errminosminus_banff_ccqeE0;
+      if(bestfit_banff_ccqeE1 <= input_banff_ccqeE1) err_banff_ccqeE1 = errminosplus_banff_ccqeE1; else err_banff_ccqeE1 = errminosminus_banff_ccqeE1;
+      if(bestfit_banff_ccqeE2 <= input_banff_ccqeE2) err_banff_ccqeE2 = errminosplus_banff_ccqeE2; else err_banff_ccqeE2 = errminosminus_banff_ccqeE2;
+      if(bestfit_banff_cc1piE0 <= input_banff_cc1piE0) err_banff_cc1piE0 = errminosplus_banff_cc1piE0; else err_banff_cc1piE0 = errminosminus_banff_cc1piE0;
+      if(bestfit_banff_cc1piE1 <= input_banff_cc1piE1) err_banff_cc1piE1 = errminosplus_banff_cc1piE1; else err_banff_cc1piE1 = errminosminus_banff_cc1piE1;
+      if(bestfit_xsec_pf <= input_xsec_pf) err_xsec_pf = errminosplus_xsec_pf; else err_xsec_pf = errminosminus_xsec_pf;
+      if(bestfit_xsec_sf <= input_xsec_sf) err_xsec_sf = errminosplus_xsec_sf; else err_xsec_sf = errminosminus_xsec_sf;
+      if(bestfit_xsec_binde <= input_xsec_binde) err_xsec_binde = errminosplus_xsec_binde; else err_xsec_binde = errminosminus_xsec_binde;
+      if(bestfit_xsec_wshape <= input_xsec_wshape) err_xsec_wshape = errminosplus_xsec_wshape; else err_xsec_wshape = errminosminus_xsec_wshape;
+      if(bestfit_xsec_ccothshape <= input_xsec_ccothshape) err_xsec_ccothshape = errminosplus_xsec_ccothshape; else err_xsec_ccothshape = errminosminus_xsec_ccothshape;
+      if(bestfit_xsec_cc1pishape <= input_xsec_cc1pishape) err_xsec_cc1pishape = errminosplus_xsec_cc1pishape; else err_xsec_cc1pishape = errminosminus_xsec_cc1pishape;
+      if(bestfit_xsec_pilessdelta <= input_xsec_pilessdelta) err_xsec_pilessdelta = errminosplus_xsec_pilessdelta; else err_xsec_pilessdelta = errminosminus_xsec_pilessdelta;
+      if(bestfit_xsec_normcccoh <= input_xsec_normcccoh) err_xsec_normcccoh = errminosplus_xsec_normcccoh; else err_xsec_normcccoh = errminosminus_xsec_normcccoh;
+      if(bestfit_xsec_normnc1piC <= input_xsec_normnc1piC) err_xsec_normnc1piC = errminosplus_xsec_normnc1piC; else err_xsec_normnc1piC = errminosminus_xsec_normnc1piC;
+      if(bestfit_xsec_normnccoh <= input_xsec_normnccoh) err_xsec_normnccoh = errminosplus_xsec_normnccoh; else err_xsec_normnccoh = errminosminus_xsec_normnccoh;
+      if(bestfit_xsec_normncoth <= input_xsec_normncoth) err_xsec_normncoth = errminosplus_xsec_normncoth; else err_xsec_normncoth = errminosminus_xsec_normncoth;
+      if(bestfit_xsec_normnuetonumu <= input_xsec_normnuetonumu) err_xsec_normnuetonumu = errminosplus_xsec_normnuetonumu; else err_xsec_normnuetonumu = errminosminus_xsec_normnuetonumu;
+      if(bestfit_skdet_energyscale <= input_skdet_energyscale) err_skdet_energyscale = errminosplus_skdet_energyscale; else err_skdet_energyscale = errminosminus_skdet_energyscale;
+      if(bestfit_skdet_ccqerc0 <= input_skdet_ccqerc0) err_skdet_ccqerc0 = errminosplus_skdet_ccqerc0; else err_skdet_ccqerc0 = errminosminus_skdet_ccqerc0;
+      if(bestfit_skdet_ccqerc1 <= input_skdet_ccqerc1) err_skdet_ccqerc1 = errminosplus_skdet_ccqerc1; else err_skdet_ccqerc1 = errminosminus_skdet_ccqerc1;
+      if(bestfit_skdet_ccqerc2 <= input_skdet_ccqerc2) err_skdet_ccqerc2 = errminosplus_skdet_ccqerc2; else err_skdet_ccqerc2 = errminosminus_skdet_ccqerc2;
+      if(bestfit_skdet_ccqeoth <= input_skdet_ccqeoth) err_skdet_ccqeoth = errminosplus_skdet_ccqeoth; else err_skdet_ccqeoth = errminosminus_skdet_ccqeoth;
+      if(bestfit_skdet_ccnqe <= input_skdet_ccnqe) err_skdet_ccnqe = errminosplus_skdet_ccnqe; else err_skdet_ccnqe = errminosminus_skdet_ccnqe;
+      if(bestfit_skdet_nc <= input_skdet_nc) err_skdet_nc = errminosplus_skdet_nc; else err_skdet_nc = errminosminus_skdet_nc;
+      if(bestfit_skdet_nuecc <= input_skdet_nuecc) err_skdet_nuecc = errminosplus_skdet_nuecc; else err_skdet_nuecc = errminosminus_skdet_nuecc;
+      if(bestfit_fsi_000 <= input_fsi_000) err_fsi_000 = errminosplus_fsi_000; else err_fsi_000 = errminosminus_fsi_000;
+      if(bestfit_fsi_001 <= input_fsi_001) err_fsi_001 = errminosplus_fsi_001; else err_fsi_001 = errminosminus_fsi_001;
+      if(bestfit_fsi_002 <= input_fsi_002) err_fsi_002 = errminosplus_fsi_002; else err_fsi_002 = errminosminus_fsi_002;
+      if(bestfit_fsi_003 <= input_fsi_003) err_fsi_003 = errminosplus_fsi_003; else err_fsi_003 = errminosminus_fsi_003;
+      if(bestfit_fsi_004 <= input_fsi_004) err_fsi_004 = errminosplus_fsi_004; else err_fsi_004 = errminosminus_fsi_004;
+      if(bestfit_fsi_005 <= input_fsi_005) err_fsi_005 = errminosplus_fsi_005; else err_fsi_005 = errminosminus_fsi_005;
     }
 
 
@@ -1217,6 +1140,9 @@ void mock_data_fit_pulls(
     //pull histograms
     hpull_mixing23->Fill((bestfit_mixing23 - input_mixing23) / err_mixing23);
     hpull_dm23sq->Fill((bestfit_dm23sq - input_dm23sq) / err_dm23sq);
+    //error histograms
+    herr_mixing23->Fill(err_mixing23);
+    herr_dm23sq->Fill(err_dm23sq);
     if(fit_systematics_mode >= 1) {
       h_xsec_sf->Fill((bestfit_xsec_sf - input_xsec_sf));
       h_xsec_binde->Fill((bestfit_xsec_binde - input_xsec_binde));
@@ -1490,17 +1416,38 @@ void mock_data_fit_pulls(
 
 
   // pull histograms
-  gStyle->SetOptFit();
-  TCanvas *cosc = new TCanvas(); cosc->Divide(1,2);
-  cosc->cd(1); hpull_mixing23->Draw(); hpull_mixing23->Fit("gaus");
-  cosc->cd(2); hpull_dm23sq->Draw(); hpull_dm23sq->Fit("gaus");
-  cosc->SaveAs(Form("%f_osc_pull.pdf", input_mixing23));
 
   TH1D * meansummary = new TH1D("mean","mean",100,0,100);
   TH1D * sigmasummary = new TH1D("sigma","sigma",100,0,100);
   int ifit = 1;
   double mean = 0, meanerr = 0, sigma = 0, sigmaerr = 0;
   TF1 *fit = 0;
+  gStyle->SetOptFit();
+
+  
+
+  TCanvas *cosc = new TCanvas(); cosc->Divide(1,2);
+  cosc->cd(1); hpull_mixing23->Draw(); hpull_mixing23->Fit("gaus");
+  fit = hpull_mixing23->GetFunction("gaus");
+  if(fit) {
+    meansummary->GetXaxis()->SetBinLabel(ifit,"mixing23"); sigmasummary->GetXaxis()->SetBinLabel(ifit,"mixing23");
+    meansummary->SetBinContent(ifit, fit->GetParameter(1)); meansummary->SetBinError(ifit, fit->GetParError(1));
+    sigmasummary->SetBinContent(ifit, fit->GetParameter(2)); sigmasummary->SetBinError(ifit, fit->GetParError(2));
+    ifit++;
+  }
+  cosc->cd(2); hpull_dm23sq->Draw(); hpull_dm23sq->Fit("gaus");
+  fit = hpull_dm23sq->GetFunction("gaus");
+  if(fit) {
+    meansummary->GetXaxis()->SetBinLabel(ifit,"dm32sq"); sigmasummary->GetXaxis()->SetBinLabel(ifit,"dm32sq");
+    meansummary->SetBinContent(ifit, fit->GetParameter(1)); meansummary->SetBinError(ifit, fit->GetParError(1));
+    sigmasummary->SetBinContent(ifit, fit->GetParameter(2)); sigmasummary->SetBinError(ifit, fit->GetParError(2));
+    ifit++;
+  }
+  cosc->SaveAs(Form("%f_osc_pull.pdf", input_mixing23));
+
+  TCanvas *coscerr = new TCanvas(); coscerr->Divide(1,2);
+  coscerr->cd(1); herr_mixing23->Draw();
+  coscerr->cd(2); herr_dm23sq->Draw();
 
   if(fit_systematics_mode >= 1) {
 
