@@ -28,6 +28,7 @@ public:
 
    virtual bool       DoTheFit      (void)                  = 0; 
    virtual int        FitStatusCode (void)                  = 0; 
+   virtual double     FitTime       (void)                  = 0;
    virtual int        NDOF          (void)                  = 0;
    virtual int        NBinsInFit    (void)                  = 0;
    virtual int        NFitParams    (void)                  = 0;
