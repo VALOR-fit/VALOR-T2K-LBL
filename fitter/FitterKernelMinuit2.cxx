@@ -255,6 +255,7 @@ bool FitterKernelMinuit2::DoTheFit(void)
   TStopwatch w;
   w.Start();
 #endif
+  fFitTime = 0;
 
   // Run the fitter once - we have the option here to check the status code
   // and if the fitter failed, re-seed the fitter and try again (not needed
@@ -265,6 +266,7 @@ bool FitterKernelMinuit2::DoTheFit(void)
   w.Stop();
   cout << "FitterKernelMinuit2/DoTheFit >> Fit performed in " 
        << w.CpuTime() << " sec." << endl;
+  fFitTime = w.CpuTime();
 #endif
 
   return ok;

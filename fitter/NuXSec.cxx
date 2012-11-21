@@ -136,6 +136,7 @@ bool NuXSec::ReadSplines(TXMLEngine* xml, XMLNodePointer_t root_node)
   assert(spline_file);
 #endif
 
+#if SPLINE_TYPE != -1
   // loop over samples
   for(int is = 0; is < kns; is++) {
     SuperkSample_t s = kSKSamples[is];
@@ -303,6 +304,8 @@ bool NuXSec::ReadSplines(TXMLEngine* xml, XMLNodePointer_t root_node)
        }//p
     }//m
   }//s
+
+#endif //spline_type != -1
 
 #ifdef __show_init_mesg_info__
   cout << "Exp/NuXSec >> Done reading neutrino cross-section inputs (splines only)!" << endl;

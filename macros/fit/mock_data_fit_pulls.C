@@ -103,6 +103,7 @@ void mock_data_fit_pulls(
   //fit info
   int iexp;
   int fitstatus;
+  double fittime;
   double bestfit_chisq, true_chisq;
   double nsk_nom, nsk_bf;
   //oscillation parameters
@@ -190,6 +191,7 @@ void mock_data_fit_pulls(
   ch.GetEntry(0);
   ch.SetBranchAddress("iexp",&iexp);
   ch.SetBranchAddress("fitstatus",&fitstatus);
+  ch.SetBranchAddress("fittime",&fittime);
   ch.SetBranchAddress("bestfit_chisq",&bestfit_chisq);
   ch.SetBranchAddress("true_chisq",&true_chisq);
   ch.SetBranchAddress("nsk_nom",&nsk_nom);
@@ -701,10 +703,11 @@ void mock_data_fit_pulls(
 
   // Book histograms
   TH1I * h_fitstat  = new TH1I("h_fitstat","h_fitstat",11,-1,10);
+  TH1D * h_fittime  = new TH1D("h_fittime","h_fittime",1000,0,1000);
   TH1D * h_nsk_nom  = new TH1D("h_nsk_nom","h_nsk_nom",150,0,150);
   TH1D * h_nsk_bf   = new TH1D("h_nsk_bf","h_nsk_bf",150,0,150);
   TH1D * h_dchisq   = new TH1D("h_dchisq","h_dchisq",300,-5,25);
-  TH1D * h_mixing23 = new TH1D("h_mixing23","h_mixing23",250,0.5,1.0);
+  TH1D * h_mixing23 = new TH1D("h_mixing23","h_mixing23",500,0.5,1.5);
   TH1D * h_dm23sq   = new TH1D("h_dm23sq","h_dm23sq",300,1.5E-3,3.5E-3);
   //pull histograms
   TH1D * hpull_mixing23 = new TH1D("hpull_mixing23","hpull_mixing23",160,-5,5);
@@ -886,6 +889,7 @@ void mock_data_fit_pulls(
     ch.GetEntry(i);
     //ignore failed fits!
     h_fitstat->Fill(fitstatus);
+    h_fittime->Fill(fittime);
     if(fitstatus != 3 && fitter_mode == 0) continue;
     if(fitstatus == 9 && fitter_mode == 1) continue;
     //if(TMath::Abs(bestfit_mixing23 - 1.) < 1E-3) continue;
@@ -1311,6 +1315,7 @@ void mock_data_fit_pulls(
 
   // Draw
   new TCanvas(); h_fitstat->Draw();
+  new TCanvas(); h_fittime->Draw();
   new TCanvas(); h_nsk_nom->Draw();
   new TCanvas(); h_nsk_bf->Draw();
   new TCanvas(); h_dchisq->Draw();

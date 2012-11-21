@@ -128,6 +128,7 @@ public:
    // - "nuosc3f_numudisapp_fix4+nuisanceunbanff": As "nuosc3f" but fixing  sin^2(2theta12), sin^2(2theta13), delta_CP and Dm12^2 + all nuisance parameters (uncorrelated BANFF mode).
    // - "nuosc3f_nueapp_fix4"            : As "nuosc3f" but fixing  sin^2(2theta12), sin^2(2theta23), |Dm23^2| and Dm12^2.
    // - "numudisapp2f"                   : Fit for sin^2(2theta23) and |Dm23^2| (2-flavour formalism)
+   // - "numudisapp2f+nuisanceselection" : As "numudisapp2f" + selected nuisance parameters 
    // - "numudisapp2f+nuisance"          : As "numudisapp2f" + all nuisance parameters 
    // - "decay"                          : Fit for sin^2(2theta) and \alpha_{decay}
    // - "decoh"                          : Fit for sin^2(2theta) and \mu_{decoherence}
@@ -161,6 +162,7 @@ private:
    static FitParamList * NuOsc3FlavourFitWithSelectedSystFullBANFFUnBANFF (void);
    static FitParamList * NuOsc3FlavourFitWithSelectedSystNoBANFF (void);
    static FitParamList * NumuDisapFit                     (void);
+   static FitParamList * NumuDisapFitWithSelectedSyst     (void);
    static FitParamList * NumuDisapFitWithAllSyst          (void);
    static FitParamList * NumuDecayFit                     (void);
    static FitParamList * NumuDecohFit                     (void);

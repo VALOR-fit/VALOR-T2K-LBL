@@ -276,6 +276,9 @@ void test_sk_ereco_spectrum_twk_sys_throw
   if(!update_rootfile)
     hErecoNominal->Write("nominal");
 
+  TStopwatch w;
+  w.Start();
+
   // Tweak!
   int iskip = 0;
   for(int iexp = 0; iexp < nexp; iexp++) {
@@ -421,6 +424,7 @@ void test_sk_ereco_spectrum_twk_sys_throw
     hSysThrown[nbanff+nfsi+19]->Fill(skexp.GetNuXSec()->CurrentValue(util::PhysParamIdFromString("xsec_norm_antinutonu")));
     hSysThrown[nbanff+nfsi+20]->Fill(skexp.GetNuXSec()->CurrentValue(util::PhysParamIdFromString("xsec_bindE")));
   }//end loop over experiments
+  w.Stop();
   cout << iskip << " experiments skipped due to min events" << endl;
 
   //save some histograms
@@ -502,5 +506,6 @@ void test_sk_ereco_spectrum_twk_sys_throw
   outfile.write (streamer.str().c_str(),size);
   outfile.close();
 
-
+  cout << "Tweaks performed in " 
+       << w.CpuTime() << " sec." << endl;
 }

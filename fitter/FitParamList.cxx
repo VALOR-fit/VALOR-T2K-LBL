@@ -529,6 +529,11 @@ FitParamList * FitParamList::NamedParameterList(string name)
     fp -> SetParListName(name);
     return fp;
   }
+  if(name == "numudisapp2f+nuisanceselection") {
+    FitParamList * fp = FitParamList::NumuDisapFitWithSelectedSyst();
+    fp -> SetParListName(name);
+    return fp;
+  }
 
   //
   // numu decay fit
@@ -690,6 +695,21 @@ FitParamList * FitParamList::NumuDisapFitWithAllSyst(void)
   FitParamList::AppendAllSuperkDetectorSystematics  (fparm, 2+kNumOfParamsInBANFFfit);
   FitParamList::AppendAllFSISystematics             (fparm, 2+kNumOfParamsInBANFFfit+kNumOfSKDetParams);
   FitParamList::AppendAllUncorrelatedXSecSystematics(fparm, 2+kNumOfParamsInBANFFfit+kNumOfSKDetParams+kNumOfFSIParams);
+
+  return fparm;
+}
+//________________________________________________________________________________________
+FitParamList * FitParamList::NumuDisapFitWithSelectedSyst(void)
+{
+  FitParamList * fparm = new FitParamList(2+NSELECTED_NONBANFF+NSELECTED_BANFF);
+
+  FitParamList::Append2FlavourOscillation(fparm, 0);
+
+  //
+  // add nuisance params
+  //
+  FitParamList::AppendSelectedNonBANFFSystematics       (fparm, 2);
+  FitParamList::AppendSelectedCorrelatedBANFFSystematics(fparm, 2+NSELECTED_NONBANFF);
 
   return fparm;
 }

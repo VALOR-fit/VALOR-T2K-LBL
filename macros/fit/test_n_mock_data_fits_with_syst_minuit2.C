@@ -176,6 +176,7 @@ void test_n_mock_data_fits_with_syst_minuit2
   //fit info
   int iexp;
   int fitstatus;
+  double fittime;
   double bestfit_chisq;
   double true_chisq;
   double nsk_nom, nsk_bf;
@@ -277,6 +278,7 @@ void test_n_mock_data_fits_with_syst_minuit2
   //fit info
   nfitnt->Branch("iexp",&iexp,"iexp/I");
   nfitnt->Branch("fitstatus",&fitstatus,"fitstatus/I");
+  nfitnt->Branch("fittime",&fittime,"fittime/D");
   nfitnt->Branch("true_chisq",&true_chisq,"true_chisq/D");
   nfitnt->Branch("bestfit_chisq",&bestfit_chisq,"bestfit_chisq/D");
   nfitnt->Branch("nsk_nom",&nsk_nom,"nsk_nom/D");
@@ -1023,6 +1025,7 @@ void test_n_mock_data_fits_with_syst_minuit2
     fparm->ResetCurrToInitValues(); // reset osc params
     fitter->DoTheFit();
     fitstatus = fitter->FitStatusCode();
+    fittime = fitter->FitTime();
     bestfit_chisq = fit_inputs->BestFitChisquare();
 
     // Get bestfit number of events
