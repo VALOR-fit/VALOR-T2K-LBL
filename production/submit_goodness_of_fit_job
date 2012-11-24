@@ -76,7 +76,7 @@ while($irun <= $lastexpt) {
 
   $irun = $irun + 1;
 
-  print "$command \n"; next;
+  print "$command \n";
 
   #
   # RAL
