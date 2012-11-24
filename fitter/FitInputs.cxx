@@ -113,16 +113,25 @@ double FitInputs::Chisquare(Option_t * option, conv::SuperkSample_t s0)
   	  applied_negevents_condition = this->Expectation().Generate(this->FitParams(), fAllBANFFFit) || applied_negevents_condition;
 	  TH1D * obs_ereco_spectrum = this->Observation().ErecoSpectrum(s);
 	  TH1D * exp_ereco_spectrum = this->Expectation().CurrPredictedErecoSpectrum(s);
+#ifndef GOODNESSOFFIT
 	  int nbins = exp_ereco_spectrum->GetNbinsX();
-	  
+#else
+	  const int nbins = 5;
+	  double binedges[nbins+1] = {0.0,0.4,0.7,1.0,2.0,30.0}; 
+#endif
+
 #ifdef __show_bin_contributions_to_chisq__
 	  cout << "FitInputs::Chisquare()> nbins = " << nbins << endl;
 #endif
 	  //loop over Ereco bins
 	  for(int ibin = 1; ibin <= nbins; ibin++) {
+#ifndef GOODNESSOFFIT
 	    double nobs = obs_ereco_spectrum->GetBinContent(ibin);
 	    double nexp = exp_ereco_spectrum->GetBinContent(ibin);
-	    
+#else
+	    double nobs = obs_ereco_spectrum->Integral(binedges[ibin-1],binedges[ibin]);
+	    double nexp = exp_ereco_spectrum->Integral(binedges[ibin-1],binedges[ibin]);
+#endif
 	    double delta_chisq = 0.;
 	    if      (opt.Contains("poisson")) { delta_chisq = util::ChisqPoisson(nobs,nexp); }
 	    else if (opt.Contains("gauss")  ) { delta_chisq = util::ChisqGauss  (nobs,nexp); }
