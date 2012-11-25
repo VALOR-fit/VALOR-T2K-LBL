@@ -45,7 +45,7 @@ void test_n_mock_data_fits_with_syst_minuit2
  string       fit_param_list          = "nuosc3f_numudisapp_fix4+nuisanceselection", /* fit parameter list for the given physics hypothesis (see run_fitter.C) */
  const char * fit_option              = "minuit",                       /* fitter option (see run_fitter.C) */
  bool         store_chisq_surf        = false,                          /* by default storing only best-fit values, enable this to store the chisq surfaces   */
- bool         store_withsyst_chisq_surf = false,                        /* by default storing only best-fit values, enable this to store the chisq with systematics surfaces   */
+ bool         store_withsyst_chisq_surf = true,                        /* by default storing only best-fit values, enable this to store the chisq with systematics surfaces   */
  bool         store_toy_expts         = false,                          /* by default storing only best-fit values, enable this to store the toy MC expts     */
  bool         store_bestfit_spectrum  = false,                          /* by default storing only best-fit values, enable this to store the best-fit spectra */
  bool         use_minuit2             = true                            /* use minuit2, or minuit */
@@ -1967,7 +1967,7 @@ void test_n_mock_data_fits_with_syst_minuit2
       //NEXT
       //Loop over oscillation param bins, fix oscillation params and fit for the 7 systematics (*note* that was N before).
       //This will give lower chisq than before so you can calculate by how much you need to correct the deltachisq surface
-      /* Turn off for now.
+
       TH2D * chisq_surface_syst = new TH2D("chisq_surface_syst","#chi^{2} surface",
 		mixing23_nbins, mixing23_min - 0.5*mixing23_step, mixing23_max + 0.5*mixing23_step,
 		dm23sq_nbins, dm23sq_min - 0.5*dm23sq_step, dm23sq_max + 0.5*dm23sq_step);
@@ -2015,7 +2015,11 @@ void test_n_mock_data_fits_with_syst_minuit2
 	  //          cout << *fparm;
 	  //for some reason, need to make a new fitter when changing the FitParamList
 	  FitInputs * fit_inputs2 = new FitInputs(skobs,skexp,fparm);
-	  FitterABC * fitter2 = new Superk1RmuErecoFitterMinuit2(fit_inputs,fit_option);
+	  FitterABC * fitter2 = 0;
+	  if(use_minuit2) 
+	    fitter2 = new Superk1RmuErecoFitterMinuit2(fit_inputs,fit_option);
+	  else
+	    fitter2 = new Superk1RmuErecoFitter(fit_inputs,fit_option);
 	  fitter2->DoTheFit();
 	  double chisq = fit_inputs2->Chisquare();
 	  chisq_surface_syst->SetBinContent(i,j,chisq);
@@ -2030,7 +2034,7 @@ void test_n_mock_data_fits_with_syst_minuit2
 
       //Check the min(chisq)
       double min_chisq_syst = chisq_surface_syst->GetBinContent(chisq_surface_syst->GetMinimumBin());
-      cout << "Minima of the 2 chisq surface should agree: " << min_chisq << "\t" << min_chisq_syst << endl;
+      cout << "Minima of the 2 chisq surface should agree (approximately): " << min_chisq << "\t" << min_chisq_syst << endl;
 
       //save
       chisq_surface_syst  -> SetName(Form("chisq_surface_syst_1Rmu_%d",iexperiment));
@@ -2039,6 +2043,7 @@ void test_n_mock_data_fits_with_syst_minuit2
       chisq_surface_syst ->Write();
       dchisq_surface_syst->Write();
 
+      /*
       //FINALLY
       //correct the dchisq surface, using the dchisq surface with syst
       TH2D * dchisq_surface_corr = new TH2D("dchisq_surface_corr","#Delta#chi^{2} surface",
