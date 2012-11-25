@@ -404,16 +404,19 @@ FitParamList * FitParamList::NamedParameterList(string name)
   if(name == "nuosc3f") {
     FitParamList * fp = FitParamList::NuOsc3FlavourFit();
     fp -> SetParListName(name);
+    fp -> SetSystMode(0);
     return fp;
   }
   if(name == "nuosc3f+nuisance") {
     FitParamList * fp = FitParamList::NuOsc3FlavourFitWithAllSyst();
     fp -> SetParListName(name);
+    fp -> SetSystMode(1);
     return fp;
   }
   if(name == "nuosc3f+nuisanceselection") {
     FitParamList * fp = FitParamList::NuOsc3FlavourFitWithSelectedSyst();
     fp -> SetParListName(name);
+    fp -> SetSystMode(2);
     return fp;
   }
   //
@@ -425,6 +428,7 @@ FitParamList * FitParamList::NamedParameterList(string name)
     fp -> SetNuisance (kPhypMixing12, true);
     fp -> SetNuisance (kPhypDm12sq,   true);
     fp -> SetParListName(name);
+    fp -> SetSystMode(0);
     return fp;
   }
   if(name == "nuosc3f_12fix") {
@@ -432,6 +436,7 @@ FitParamList * FitParamList::NamedParameterList(string name)
     fp -> FixParameter (kPhypMixing12);
     fp -> FixParameter (kPhypDm12sq  );
     fp -> SetParListName(name);
+    fp -> SetSystMode(0);
     return fp;
   }
   if(name == "nuosc3f_numudisapp_fix4") {
@@ -441,6 +446,7 @@ FitParamList * FitParamList::NamedParameterList(string name)
     fp -> FixParameter (kPhypDeltaCP);
     fp -> FixParameter (kPhypDm12sq);
     fp -> SetParListName(name);
+    fp -> SetSystMode(0);
     return fp;
   }
   if(name == "nuosc3f_numudisapp_fix4+nuisance") {
@@ -450,6 +456,7 @@ FitParamList * FitParamList::NamedParameterList(string name)
     fp -> FixParameter (kPhypDeltaCP);
     fp -> FixParameter (kPhypDm12sq);
     fp -> SetParListName(name);
+    fp -> SetSystMode(1);
     return fp;
   }
   if(name == "nuosc3f_numudisapp_fix4+nuisanceselection") {
@@ -459,8 +466,10 @@ FitParamList * FitParamList::NamedParameterList(string name)
     fp -> FixParameter (kPhypDeltaCP);
     fp -> FixParameter (kPhypDm12sq);
     fp -> SetParListName(name);
+    fp -> SetSystMode(2);
     return fp;
   }
+  /*
   if(name == "nuosc3f_numudisapp_fix4+nuisanceselectionnobanff") {
     FitParamList * fp = FitParamList::NuOsc3FlavourFitWithSelectedSystNoBANFF();
     fp -> FixParameter (kPhypMixing13);
@@ -468,6 +477,7 @@ FitParamList * FitParamList::NamedParameterList(string name)
     fp -> FixParameter (kPhypDeltaCP);
     fp -> FixParameter (kPhypDm12sq);
     fp -> SetParListName(name);
+    fp -> SetSystMode();
     return fp;
   }
   if(name == "nuosc3f_numudisapp_fix4+nuisancefullbanffselection") {
@@ -477,6 +487,7 @@ FitParamList * FitParamList::NamedParameterList(string name)
     fp -> FixParameter (kPhypDeltaCP);
     fp -> FixParameter (kPhypDm12sq);
     fp -> SetParListName(name);
+    fp -> SetSystMode();
     return fp;
   }
   if(name == "nuosc3f_numudisapp_fix4+nuisanceunbanff") {
@@ -486,6 +497,7 @@ FitParamList * FitParamList::NamedParameterList(string name)
     fp -> FixParameter (kPhypDeltaCP);
     fp -> FixParameter (kPhypDm12sq);
     fp -> SetParListName(name);
+    fp -> SetSystMode();
     return fp;
   }
   if(name == "nuosc3f_numudisapp_fix4+nuisanceunbanffselection") {
@@ -495,6 +507,7 @@ FitParamList * FitParamList::NamedParameterList(string name)
     fp -> FixParameter (kPhypDeltaCP);
     fp -> FixParameter (kPhypDm12sq);
     fp -> SetParListName(name);
+    fp -> SetSystMode();
     return fp;
   }
   if(name == "nuosc3f_numudisapp_fix4+nuisanceunbanfffullbanffselection") {
@@ -504,8 +517,10 @@ FitParamList * FitParamList::NamedParameterList(string name)
     fp -> FixParameter (kPhypDeltaCP);
     fp -> FixParameter (kPhypDm12sq);
     fp -> SetParListName(name);
+    fp -> SetSystMode();
     return fp;
   }
+  */
   if(name == "nuosc3f_nueapp_fix4") {
     FitParamList * fp = FitParamList::NuOsc3FlavourFit();
     fp -> FixParameter (kPhypMixing23);
@@ -513,6 +528,7 @@ FitParamList * FitParamList::NamedParameterList(string name)
     fp -> FixParameter (kPhypDm23sq);
     fp -> FixParameter (kPhypDm12sq);
     fp -> SetParListName(name);
+    fp -> SetSystMode(0);
     return fp;
   }
 
@@ -522,16 +538,19 @@ FitParamList * FitParamList::NamedParameterList(string name)
   if(name == "numudisapp2f") {
     FitParamList * fp = FitParamList::NumuDisapFit();
     fp -> SetParListName(name);
+    fp -> SetSystMode(0);
     return fp;
   }
   if(name == "numudisapp2f+nuisance") {
     FitParamList * fp = FitParamList::NumuDisapFitWithAllSyst();
     fp -> SetParListName(name);
+    fp -> SetSystMode(1);
     return fp;
   }
   if(name == "numudisapp2f+nuisanceselection") {
     FitParamList * fp = FitParamList::NumuDisapFitWithSelectedSyst();
     fp -> SetParListName(name);
+    fp -> SetSystMode(2);
     return fp;
   }
 
@@ -541,6 +560,7 @@ FitParamList * FitParamList::NamedParameterList(string name)
   if(name == "decay") {
     FitParamList * fp = FitParamList::NumuDecayFit();
     fp -> SetParListName(name);
+    fp -> SetSystMode(0);
     return fp;
   }
 
@@ -550,6 +570,7 @@ FitParamList * FitParamList::NamedParameterList(string name)
   if(name == "decoh") {
     FitParamList * fp = FitParamList::NumuDecohFit();
     fp -> SetParListName(name);
+    fp -> SetSystMode(0);
     return fp;
   }
 
@@ -1076,6 +1097,7 @@ void FitParamList::Init(int nparams)
    assert(nparams>0);
 
    fParListName = "";
+   fSystMode = -1;
 
    fNParams = nparams; 
 
@@ -1119,6 +1141,7 @@ void FitParamList::CleanUp(void)
    delete [] fMinusError;
 
    fParListName = "";
+   fSystMode = -1;
 }
 //________________________________________________________________________________________
 int FitParamList::Id(PhysParamId_t p) const

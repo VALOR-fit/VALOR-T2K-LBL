@@ -219,6 +219,13 @@ double BANFF::CurrentValue(PhysParamId_t p) const
   return current_values[idx];
 }
 //________________________________________________________________________________________
+double BANFF::OneSigmaError(PhysParamId_t p) const
+{
+  const TMatrixD & cov = *fCovMtrx;
+  int idx = this->Param2Idx(p);
+  return TMath::Sqrt(cov[idx][idx]);
+}
+//________________________________________________________________________________________
 double BANFF::CurrentUncorrelatedValue(PhysParamId_t p) const
 {
   const TVectorD & current_uncorrelated_values = *fUncorrelatedCurrentValues;

@@ -59,22 +59,11 @@ void calculate_goodness_of_fit
   // random numbers
   TRandom3 rand(0);
 
-  // Parse the xml, to find the BANFF errors & bestfits
-  const char * config  = Form("%s/config/%s", gSystem->Getenv("T2KOSCANA"), config_file);
-  TXMLEngine* xml = new TXMLEngine;   
-  XMLDocPointer_t xmldoc = xml->ParseFile(config);
-  if (xmldoc==0) {
-    cerr << "Exp >> " << "Can not parse input: " << config << endl;
-    delete xml;
-    exit(1);
-  }
-  XMLNodePointer_t root_node = xml->DocGetRootElement(xmldoc);
-  TMatrixD * BANFFCovMtrx = util::XML2TMatrixD(xml,root_node, "banff/covariance_matrix");
-  double err_banff_maqe   = sqrt(BANFFCovMtrx(16,16));
-  double err_banff_ccqeE0 = sqrt(BANFFCovMtrx(18,18));
-  TVectorD * BANFFBestFit = util::XML2TVectorD(xml,root_node,"banff/best_fit_values");
-  double bf_banff_maqe    = BANFFBestFit(16);
-  double bf_banff_ccqeE0  = BANFFBestFit(18);
+  // Get the BANFF errors & bestfits
+  double err_banff_maqe   = skexp->GetBANFF()->OneSigmaError(conv::kNuisBANFFMAQE);
+  double err_banff_ccqeE0 = skexp->GetBANFF()->OneSigmaError(conv::kNuisBANFFCCQEE0);
+  double bf_banff_maqe    = skexp->GetBANFF()->BestFitValue(conv::kNuisBANFFMAQE);
+  double bf_banff_ccqeE0  = skexp->GetBANFF()->BestFitValue(conv::kNuisBANFFCCQEE0);
 
   // Loop over toy-MC experiments
   for(int iexperiment = first_experiment; iexperiment <= last_experiment; iexperiment++) {

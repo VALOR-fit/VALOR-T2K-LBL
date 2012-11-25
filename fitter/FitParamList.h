@@ -136,6 +136,7 @@ public:
 
    // Get the name used in NamedParameterList
    string GetParListName (void) const { return fParListName; }
+   int    GetSystMode     (void) const { return fSystMode;     }
 
    // Work-out the physics hypothesis
    conv::PhysHypothesis_t PhysicsHypothesis(void) const;
@@ -151,6 +152,7 @@ private:
    void Init    (int nparams);
    int  Id      (t2kana::conv::PhysParamId_t p) const; // PhysParamId_t --> array slot
    void SetParListName (string s)   { fParListName = s; }
+   void SetSystMode     (int m)      { fSystMode     = m; }
 
    // Various functions called by NamedParameterList(name)
    static FitParamList * NuOsc3FlavourFit                 (void);
@@ -186,6 +188,7 @@ private:
    map<t2kana::conv::PhysParamId_t, int> fIdMap;
 
    string   fParListName;
+   int      fSystMode; // used in FitInputs to make deciding on what to include in the chisq penalty faster. 0 no syst, 1 all syst, 2 selected syst, ...
 
    int      fNParams;   
    double * fBestFitValue; //[fNParams]

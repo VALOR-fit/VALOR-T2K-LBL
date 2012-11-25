@@ -42,6 +42,7 @@ public:
   // Get BANFF fit param values (nominal + tweaked)
   double BestFitValue (conv::PhysParamId_t p) const;
   double CurrentValue (conv::PhysParamId_t p) const;
+  double OneSigmaError(conv::PhysParamId_t p) const;
   double CurrentUncorrelatedValue (conv::PhysParamId_t p) const;
   double CurrentEigenDecompValue  (conv::PhysParamId_t p) const;
   double BestFitEigenDecompValue  (conv::PhysParamId_t p) const;

@@ -53,7 +53,7 @@ fFitParams(fpar),
 fOpt(opt),
 fErrDef(errdef)
 { 
-  if(fFitParams->GetParListName() == "nuosc3f_numudisapp_fix4+nuisanceselection")
+  if(fFitParams->GetSystMode() == 2)
     fAllBANFFFit = false;
   else
     fAllBANFFFit = true;
@@ -110,9 +110,9 @@ double FitInputs::Chisquare(Option_t * option, conv::SuperkSample_t s0)
       // If we only want the nue appearance analysis only, then skip
       if ((s == conv::kSKsFCFV1RingMuLike) && (oscana != conv::kAnaNuEAppOnly))
       {
-  	  applied_negevents_condition = this->Expectation().Generate(this->FitParams(), fAllBANFFFit) || applied_negevents_condition;
-	  TH1D * obs_ereco_spectrum = this->Observation().ErecoSpectrum(s);
-	  TH1D * exp_ereco_spectrum = this->Expectation().CurrPredictedErecoSpectrum(s);
+  	  applied_negevents_condition = fExp->Generate(*fFitParams, fAllBANFFFit) || applied_negevents_condition;
+	  TH1D * obs_ereco_spectrum = fObs->ErecoSpectrum(s);
+	  TH1D * exp_ereco_spectrum = fExp->CurrPredictedErecoSpectrum(s);
 #ifndef GOODNESSOFFIT
 	  int nbins = exp_ereco_spectrum->GetNbinsX();
 #else
@@ -123,14 +123,15 @@ double FitInputs::Chisquare(Option_t * option, conv::SuperkSample_t s0)
 #ifdef __show_bin_contributions_to_chisq__
 	  cout << "FitInputs::Chisquare()> nbins = " << nbins << endl;
 #endif
+
 	  //loop over Ereco bins
 	  for(int ibin = 1; ibin <= nbins; ibin++) {
 #ifndef GOODNESSOFFIT
 	    double nobs = obs_ereco_spectrum->GetBinContent(ibin);
 	    double nexp = exp_ereco_spectrum->GetBinContent(ibin);
 #else
-	    double nobs = obs_ereco_spectrum->Integral(binedges[ibin-1],binedges[ibin]);
-	    double nexp = exp_ereco_spectrum->Integral(binedges[ibin-1],binedges[ibin]);
+	    double nobs = obs_ereco_spectrum->Integral(obs_ereco_spectrum->FindBin(binedges[ibin-1]),obs_ereco_spectrum->FindBin(binedges[ibin]));
+	    double nexp = exp_ereco_spectrum->Integral(exp_ereco_spectrum->FindBin(binedges[ibin-1]),exp_ereco_spectrum->FindBin(binedges[ibin]));
 #endif
 	    double delta_chisq = 0.;
 	    if      (opt.Contains("poisson")) { delta_chisq = util::ChisqPoisson(nobs,nexp); }
@@ -142,6 +143,7 @@ double FitInputs::Chisquare(Option_t * option, conv::SuperkSample_t s0)
 	    double xup = obs_ereco_spectrum->GetXaxis()->GetBinUpEdge(ibin);
 	    cout << "FitInputs::Chisquare()> delta_chisq (bin = " << ibin 
 		 << "; [" << xlo << ", " << xup << "] GeV) = " << delta_chisq << endl;
+	    cout << "\tNobs: " << nobs << "\tNexp:" << nexp << endl;
 #endif
 	  }//ibin
       }
@@ -151,10 +153,10 @@ double FitInputs::Chisquare(Option_t * option, conv::SuperkSample_t s0)
       else 
       if ((s == conv::kSKsFCFV1RingELike) && (oscana != conv::kAnaNuMuDisappOnly) )
       {
-	    applied_negevents_condition = this->Expectation().Generate(this->FitParams(), fAllBANFFFit) || applied_negevents_condition;
+	    applied_negevents_condition = fExp->Generate(*fFitParams, fAllBANFFFit) || applied_negevents_condition;
 	    // Note: Counting experiment for the time-being
-	    double nobs = this->Observation().ErecoSpectrum(s)->Integral();
-	    double nexp = this->Expectation().CurrPredictedErecoSpectrum(s)->Integral();
+	    double nobs = fObs->ErecoSpectrum(s)->Integral();
+	    double nexp = fExp->CurrPredictedErecoSpectrum(s)->Integral();
 	    
 	    double delta_chisq = 0.;
 	    if      (opt.Contains("poisson")) { delta_chisq = util::ChisqPoisson(nobs,nexp); }
@@ -173,7 +175,7 @@ double FitInputs::Chisquare(Option_t * option, conv::SuperkSample_t s0)
   //
   // Add penalty term for nuisance parameters
   //
-  double chisq_penalty = this->ChisquarePenaltyTerm();
+  double chisq_penalty = ChisquarePenaltyTerm();
   chisq += chisq_penalty;      
 
 #ifdef __show_chisq__
@@ -194,14 +196,13 @@ double FitInputs::ChisquarePenaltyTerm(void)
   double chisq_penalty = 0;
 
   // FitParamList's without nuisance parameters don't have penalty terms
-  if(this->FitParams().GetParListName().find("nuis") == string::npos)
-    if(this->FitParams().GetParListName() != "nuosc3f_12constrain")
-      return chisq_penalty;
+  int systmode = fFitParams->GetSystMode();
+  if(systmode == 0)
+    return chisq_penalty;
 
   // Check whether its a full or partial set of systematics
   bool all_syst = true;
-  if(this->FitParams().GetParListName().find("nuisancesel") != string::npos
-     || this->FitParams().GetParListName().find("unbanffselection") != string::npos)
+  if(systmode == 2)
     all_syst = false;
 
   //
@@ -210,6 +211,7 @@ double FitInputs::ChisquarePenaltyTerm(void)
   // list and were marked as nuisance parameters.
   //
   bool incl_banff_penalty = true;
+  /* this check is unnecessary, as long as the fitparamlist is correctly implemented
   if(all_syst) {
     const int np_banff = conv::kNumOfParamsInBANFFfit;
     for(int ip = 0; ip < np_banff; ip++) {
@@ -218,23 +220,24 @@ double FitInputs::ChisquarePenaltyTerm(void)
       if(p == kNuisBANFFNC1pi0) continue; // not used in numu analysis!
 #endif
       incl_banff_penalty = incl_banff_penalty && 
-	(this->FitParams().Exists(p) && this->FitParams().IsNuisance(p));
+	(fFitParams->Exists(p) && fFitParams->IsNuisance(p));
       if(!incl_banff_penalty) break;
     }
   }
   else {
     PhysParamId_t p = kNuisBANFFMAQE;
     incl_banff_penalty = incl_banff_penalty && 
-      (this->FitParams().Exists(p) && this->FitParams().IsNuisance(p));
+      (fFitParams->Exists(p) && fFitParams->IsNuisance(p));
     p = kNuisBANFFCCQEE0;
     incl_banff_penalty = incl_banff_penalty && 
-      (this->FitParams().Exists(p) && this->FitParams().IsNuisance(p));
+      (fFitParams->Exists(p) && fFitParams->IsNuisance(p));
   }
+  */
   if(incl_banff_penalty) {
 #ifdef __include_all_systematics_in_banff_penalty_term__
-    double dchisq_penalty = this->Expectation().GetBANFF()->ChisqPenalty();
+    double dchisq_penalty = fExp->GetBANFF()->ChisqPenalty();
 #else
-    double dchisq_penalty = this->Expectation().GetBANFF()->ChisqPenalty(all_syst);
+    double dchisq_penalty = fExp->GetBANFF()->ChisqPenalty(all_syst);
 #endif
     chisq_penalty += dchisq_penalty;
 #ifdef __show_contributions_to_penalty_term__
@@ -255,7 +258,7 @@ double FitInputs::ChisquarePenaltyTerm(void)
     for(int ip = 0; ip < np_banff; ip++) {
       PhysParamId_t p = PhysParamId_t ( (int) kNuisUnBANFF00 + ip );
       incl_banff_penalty = incl_banff_penalty && 
-	(this->FitParams().Exists(p) && this->FitParams().IsNuisance(p));
+	(fFitParams->Exists(p) && fFitParams->IsNuisance(p));
       if(!incl_banff_penalty) break;
     }
   }
@@ -264,10 +267,10 @@ double FitInputs::ChisquarePenaltyTerm(void)
     //currently no unbanff parameters are 'selected'; if they were, would do something like:
     //PhysParamId_t p = kNuisUnBANFF00;
     //incl_banff_penalty = incl_banff_penalty && 
-    //(this->FitParams().Exists(p) && this->FitParams().IsNuisance(p));
+    //(fFitParams->Exists(p) && fFitParams->IsNuisance(p));
   }
   if(incl_unbanff_penalty) {
-    double dchisq_penalty = this->Expectation().GetBANFF()->ChisqPenalty(all_syst);
+    double dchisq_penalty = fExp->GetBANFF()->ChisqPenalty(all_syst);
     chisq_penalty += dchisq_penalty;
 #ifdef __show_contributions_to_penalty_term__
       cout << "FitInputs::ChisquarePenaltyTerm >> Current BANFF param variation"
@@ -282,28 +285,30 @@ double FitInputs::ChisquarePenaltyTerm(void)
   // param list and set as nuisance
   //
   bool incl_skdet_penalty = true;
+  /* this check is unnecessary, as long as the fitparamlist is correctly implemented
   if(all_syst) {
     int np_skdet = 8; // 7 eff + energy scale
     for(int ip = 0; ip < np_skdet; ip++) {
       PhysParamId_t p = PhysParamId_t ( (int) kNuisSuperkEnergyScale  + ip );
       incl_skdet_penalty = incl_skdet_penalty &&
-	(this->FitParams().Exists(p) && this->FitParams().IsNuisance(p));
+	(fFitParams->Exists(p) && fFitParams->IsNuisance(p));
       if(!incl_skdet_penalty) break;
     }
   }
   else {
     PhysParamId_t p = kNuisSuperkEff1RmuCCnonQE;
     incl_skdet_penalty = incl_skdet_penalty &&
-      (this->FitParams().Exists(p) && this->FitParams().IsNuisance(p));
+      (fFitParams->Exists(p) && fFitParams->IsNuisance(p));
     p = kNuisSuperkEff1RmuNC;
     incl_skdet_penalty = incl_skdet_penalty &&
-      (this->FitParams().Exists(p) && this->FitParams().IsNuisance(p));
+      (fFitParams->Exists(p) && fFitParams->IsNuisance(p));
     //p = kNuisSuperkEnergyScale;
     //incl_skdet_penalty = incl_skdet_penalty &&
-    //(this->FitParams().Exists(p) && this->FitParams().IsNuisance(p));
+    //(fFitParams->Exists(p) && fFitParams->IsNuisance(p));
   }
+  */
   if(incl_skdet_penalty) {
-    double dchisq_penalty = this->Expectation().GetSuperkDetector()->ChisqPenalty(all_syst);
+    double dchisq_penalty = fExp->GetSuperkDetector()->ChisqPenalty(all_syst);
     chisq_penalty += dchisq_penalty;
 #ifdef __show_contributions_to_penalty_term__
     cout << "FitInputs::ChisquarePenaltyTerm >> Current variation of params considered by SuperkDetector"
@@ -315,6 +320,7 @@ double FitInputs::ChisquarePenaltyTerm(void)
   // Add penalty term for NuXSec params (other than the ones incl. in BANFF)
   //
   bool incl_xsec_penalty = true;
+  /* this check is unnecessary, as long as the fitparamlist is correctly implemented
   if(all_syst) {
 #if BANFF_BINS >= 2
     int np_xsec = 13;
@@ -326,23 +332,24 @@ double FitInputs::ChisquarePenaltyTerm(void)
       if(p == kNuisXSecNormNCcoh) continue; // not used in numu analysis!
       if(p == kNuisXSecENuShape)  continue; // not used in numu analysis!
       incl_xsec_penalty = incl_xsec_penalty &&
-	(this->FitParams().Exists(p) && this->FitParams().IsNuisance(p));
+	(fFitParams->Exists(p) && fFitParams->IsNuisance(p));
       if(!incl_xsec_penalty) break;
     }
   }
   else {
     PhysParamId_t p = kNuisXSecPiLessDelta;
     incl_xsec_penalty = incl_xsec_penalty &&
-      (this->FitParams().Exists(p) && this->FitParams().IsNuisance(p));
+      (fFitParams->Exists(p) && fFitParams->IsNuisance(p));
     p = kNuisXSecSpecFunc;
     incl_xsec_penalty = incl_xsec_penalty &&
-      (this->FitParams().Exists(p) && this->FitParams().IsNuisance(p));
+      (fFitParams->Exists(p) && fFitParams->IsNuisance(p));
     p = kNuisXSecBindE;
     incl_xsec_penalty = incl_xsec_penalty &&
-      (this->FitParams().Exists(p) && this->FitParams().IsNuisance(p));
+      (fFitParams->Exists(p) && fFitParams->IsNuisance(p));
   }
+  */
   if(incl_xsec_penalty) {
-    double dchisq_penalty = this->Expectation().GetNuXSec()->ChisqPenalty(all_syst);
+    double dchisq_penalty = fExp->GetNuXSec()->ChisqPenalty(all_syst);
     chisq_penalty += dchisq_penalty;
 #ifdef __show_contributions_to_penalty_term__
     cout << "FitInputs::ChisquarePenaltyTerm >> Current variation of params considered by NuXSec"
@@ -356,15 +363,17 @@ double FitInputs::ChisquarePenaltyTerm(void)
   //
   if(all_syst) {
     bool incl_fsi_penalty = true;
+    /* this check is unnecessary, as long as the fitparamlist is correctly implemented
     const int np_fsi = conv::kNumOfFSIParams;
     for(int ip = 0; ip < np_fsi; ip++) {
       PhysParamId_t p = PhysParamId_t ( (int) kNuisFSI000 + ip );
       incl_fsi_penalty = incl_fsi_penalty && 
-	(this->FitParams().Exists(p) && this->FitParams().IsNuisance(p));
+	(fFitParams->Exists(p) && fFitParams->IsNuisance(p));
       if(!incl_fsi_penalty) break;
     }
+    */
     if(incl_fsi_penalty) {
-      double dchisq_penalty = this->Expectation().GetFSI()->ChisqPenalty();
+      double dchisq_penalty = fExp->GetFSI()->ChisqPenalty();
       chisq_penalty += dchisq_penalty;
 #ifdef __show_contributions_to_penalty_term__
       cout << "FitInputs::ChisquarePenaltyTerm >> Current FSI param variation"
@@ -378,11 +387,11 @@ double FitInputs::ChisquarePenaltyTerm(void)
   // Add penalty term for marginalised oscillation parameters.
   // Penalize deviations from global analysis best-fit value.
   // ...
-
-  if( this->FitParams().Exists    (kPhypMixing23) && 
-      this->FitParams().IsNuisance(kPhypMixing23) )
+  /* don't actually need these for the current analysis
+  if( fFitParams->Exists    (kPhypMixing23) && 
+      fFitParams->IsNuisance(kPhypMixing23) )
   {
-    double mix = this->FitParams().CurrValue(kPhypMixing23);
+    double mix = fFitParams->CurrValue(kPhypMixing23);
     double nom = 0;
     double err = 0;
     NuOscMixParam_t omp = Opt::Instance()->gOscMixingParamChoice;
@@ -408,10 +417,10 @@ double FitInputs::ChisquarePenaltyTerm(void)
 #endif
   }//mix23
 
-  if( this->FitParams().Exists    (kPhypMixing13) && 
-      this->FitParams().IsNuisance(kPhypMixing13) )
+  if( fFitParams->Exists    (kPhypMixing13) && 
+      fFitParams->IsNuisance(kPhypMixing13) )
   {
-     double mix = this->FitParams().CurrValue(kPhypMixing13);
+     double mix = fFitParams->CurrValue(kPhypMixing13);
      double nom = 0;
      double err = 0;
      NuOscMixParam_t omp = Opt::Instance()->gOscMixingParamChoice;
@@ -438,10 +447,10 @@ double FitInputs::ChisquarePenaltyTerm(void)
   }//mix13
 
 
-  if( this->FitParams().Exists    (kPhypMixing12) && 
-      this->FitParams().IsNuisance(kPhypMixing12) )
+  if( fFitParams->Exists    (kPhypMixing12) && 
+      fFitParams->IsNuisance(kPhypMixing12) )
   {
-     double mix = this->FitParams().CurrValue(kPhypMixing12);
+     double mix = fFitParams->CurrValue(kPhypMixing12);
      double nom = 0;
      double err = 0;
      NuOscMixParam_t omp = Opt::Instance()->gOscMixingParamChoice;
@@ -467,10 +476,10 @@ double FitInputs::ChisquarePenaltyTerm(void)
 #endif
   }//mix12
 
-  if( this->FitParams().Exists    (kPhypDm12sq) && 
-      this->FitParams().IsNuisance(kPhypDm12sq) )
+  if( fFitParams->Exists    (kPhypDm12sq) && 
+      fFitParams->IsNuisance(kPhypDm12sq) )
   {
-     double dmsq = this->FitParams().CurrValue(kPhypDm12sq);
+     double dmsq = fFitParams->CurrValue(kPhypDm12sq);
      double nom  = kGlobFitDm12sq;
      double err  = kGlobFitDm12sq * kGlobFitErrDm12sq;
      double twk  = (dmsq - nom) / err;
@@ -483,10 +492,10 @@ double FitInputs::ChisquarePenaltyTerm(void)
 #endif
   }//dm12sq
 
-  if( this->FitParams().Exists    (kPhypDm23sq) && 
-      this->FitParams().IsNuisance(kPhypDm23sq) )
+  if( fFitParams->Exists    (kPhypDm23sq) && 
+      fFitParams->IsNuisance(kPhypDm23sq) )
   {
-      double dmsq = this->FitParams().CurrValue(kPhypDm23sq);
+      double dmsq = fFitParams->CurrValue(kPhypDm23sq);
       double nom  = kGlobFitDm23sq;
       double err  = kGlobFitDm23sq * kGlobFitErrDm23sq;
       double twk  = (dmsq - nom) / err;
@@ -498,7 +507,7 @@ double FitInputs::ChisquarePenaltyTerm(void)
            << " => \\delta\\chi^2_{penalty} = " << dchisq_penalty << endl;
 #endif
   }//dm23sq
-
+  */
 
   return chisq_penalty;
 }
@@ -506,7 +515,7 @@ double FitInputs::ChisquarePenaltyTerm(void)
 double FitInputs::BestFitChisquare(Option_t * opt)
 {
   fFitParams->CopyBestFitToCurrValues();
-  return this->Chisquare(opt);
+  return Chisquare(opt);
 }
 //____________________________________________________________________________ 
 // MINUIT fit functions 
@@ -519,7 +528,7 @@ double FitInputs::operator() (const std::vector<double>& x) const
   fFitParams->Sync(x);
 
   //would like to do:
-  // return this->Chisquare(fOpt.c_str());
+  //return Chisquare(fOpt.c_str());
   //but this doesn't work:
   // error: passing ‘const t2kana::FitInputs’ as ‘this’ argument of ‘double t2kana::FitInputs::ChisquarePenaltyTerm()’ discards qualifiers
   //so have to copy the 2 chisq methods into here
