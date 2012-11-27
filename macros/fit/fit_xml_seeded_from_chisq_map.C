@@ -167,7 +167,7 @@ void fit_xml_seeded_from_chisq_map
 
   //Output file
   //inputfile.Close();
-  TFile outputfile("fitresults.root","RECREATE");
+  TFile outputfile(Form("fitresults_%d.root",dataset_id),"RECREATE");
 
   // Now we have the best fits, lets plot them
   for(int ix = 1; ix <= hdchisq.GetNbinsX(); ix++) {
@@ -180,15 +180,15 @@ void fit_xml_seeded_from_chisq_map
 
   TCanvas *c0 = new TCanvas();
   hdchisq.Draw("colz");
-  c0->SaveAs("dchisq.pdf");
-  double constchisq[3] = {2.30, 4.61, 14.68};
-  hdchisq.SetContour(3, constchisq);
+  c0->SaveAs(Form("dchisq_%d.pdf",dataset_id));
+  double constchisq[2] = {2.30, 4.61};
+  hdchisq.SetContour(2, constchisq);
   hdchisq.SetDirectory(0);
   hdchisq.Write("hdchisq");
   TCanvas *c1 = new TCanvas();
   hdchisq.SetTitle("");
   hdchisq.Draw("cont1");
-  c1->SaveAs("contour.pdf");
+  c1->SaveAs(Form("contour_%d.pdf",dataset_id));
 
   // Also plot the pulls of the systematics
   TH1D * hsystpull = new TH1D("hsystpull","hsystpull",7,0,7);
@@ -210,7 +210,7 @@ void fit_xml_seeded_from_chisq_map
   //hsystpull->SetBinContent(8 ,bestfit_escale      / err_escale);
   TCanvas *c2 = new TCanvas();
   hsystpull->Draw();
-  c2->SaveAs("pulls.pdf");
+  c2->SaveAs(Form("pulls_%d.pdf",dataset_id));
   hsystpull->Write();
   
   //And plot the best fit spectra with the observation
@@ -219,7 +219,7 @@ void fit_xml_seeded_from_chisq_map
   observation_spectrum.GetXaxis()->SetRangeUser(0,9.99);
   observation_spectrum.Draw("E1");
   bestfit_spectrum.Draw("same");
-  c3->SaveAs("spectrum.pdf");
+  c3->SaveAs(Form("spectrum_%d.pdf",dataset_id));
   bestfit_spectrum.Write("bf_spectrum");
   observation_spectrum.Write("obs_spectrum");
 
