@@ -119,9 +119,10 @@ void sensitivity_from_many_chisq_surfaces
 
   //and plot
   gStyle->SetOptStat(0);
-  double constchisq[2] = {2.30, 4.61};
-  avdchisq->SetContour(2, constchisq);
+  avdchisq->SetTitle("deltachisq surface");
   TCanvas *c1 = new TCanvas(); avdchisq->Draw("colz");  c1->SaveAs("sensitivitycolz.pdf");
+  double constchisq[2] = {2.30, 4.61};
+  avdchisq->SetContour(2, constchisq); // this also reduces the colz palette to only 2 colors!
   TCanvas *c2 = new TCanvas();
   avdchisq->SetTitle("");
   avdchisq->Draw("cont1");
