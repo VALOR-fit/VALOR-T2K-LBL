@@ -18,7 +18,6 @@
 //	    \chi^{2} surface for the actual fit.
 //  - nsmoothings :
 //          How many times to smooth the critical \Delta\chi^{2} histograms.
-//  - show_constant_dchisq_contours     : (boolean) Show non-Feldman-Cousins contours
 //  - show_contours_with_systematics    : (boolean) Show Feldman-Cousins contours with stat+syst err
 //  - show_contours_without_systematics : (boolean) Show Feldman-Cousins contours with syst err only
 //  - show_external_contours            : (boolean) Show MINOS/K2K/SK contours
@@ -30,10 +29,15 @@
 //      Include this Dmsq systematic err at best-fit point (determined-separately)
 //  - sinsq2theta_frac_syst_err_bestfit :
 //      Include this sinsq2theta systematic err at best-fit point (determined-separately)
+//  - outfile :
+//       Name of the output ROOT file used for saving the confidence regions
 //
 // Initial version by N.Grant
 //
 // ChangeLog:
+// @ 27/11/2012, Costas 
+//   Remove non-FC contours. Add option to write ot contours in a ROOT file.
+//   Add new external contours.
 // @ 12/01/2011, Costas 
 //   Simplify. Remove internal arrays which were holding critical values of \Delta\chi2.
 //   Modify how \Delta\chi2 values are looked-up. Remove assumptions that \Delta\chi2_{crit},
@@ -54,7 +58,6 @@ void plot_feldman_cousins_contour(
   const char * delta_chisq_critical_file_mc_statsyst,
   const char * chisq_file_data,
   int nsmoothings = 1,
-  bool show_constant_dchisq_contours=false,
   bool show_contours_with_systematics=true,
   bool show_contours_without_systematics=true,
   bool show_external_contours=false,
@@ -63,7 +66,9 @@ void plot_feldman_cousins_contour(
   bool show_95cl=false,
   bool show_99cl=false,
   double dmsq_frac_syst_err_bestfit=-1.,
-  double sinsq2theta_frac_syst_err_bestfit=-1.)
+  double sinsq2theta_frac_syst_err_bestfit=-1.,
+  const char * outfile = "fc_contours.root"
+)
 {
   gROOT->Reset();
 
@@ -74,36 +79,27 @@ void plot_feldman_cousins_contour(
 //double mixing23_min   = 0.0;
   double mixing23_max   = 1.0;
   double mixing23_step  = 0.01;
-  double dm23sq_min          = 1.5E-3;
-//double dm23sq_min          = 1.0E-3;
-  double dm23sq_max          = 4.0E-3;
-//double dm23sq_max          = 6.0E-3;
-  double dm23sq_step         = 1.0E-4;
+  double dm23sq_min     = 1.5E-3;
+//double dm23sq_min     = 1.0E-3;
+  double dm23sq_max     = 4.0E-3;
+//double dm23sq_max     = 6.0E-3;
+  double dm23sq_step    = 1.0E-4;
 
   //
   // Define grid so that min and max are at the bin centre 
   // and not at the low/high edge of the first/last bin                                                                                                                               
   //
   const int mixing23_nbins = 1 + (int) ((mixing23_max - mixing23_min) / mixing23_step);
-  const int dm23sq_nbins        = 1 + (int) ((dm23sq_max        - dm23sq_min       ) / dm23sq_step       );
+  const int dm23sq_nbins   = 1 + (int) ((dm23sq_max   - dm23sq_min  ) / dm23sq_step  );
   
   double mixing23_grid_min = mixing23_min - 0.5*mixing23_step;
   double mixing23_grid_max = mixing23_max + 0.5*mixing23_step;
-  double dm23sq_grid_min        = dm23sq_min        - 0.5*dm23sq_step;
-  double dm23sq_grid_max        = dm23sq_max        + 0.5*dm23sq_step;
+  double dm23sq_grid_min   = dm23sq_min   - 0.5*dm23sq_step;
+  double dm23sq_grid_max   = dm23sq_max   + 0.5*dm23sq_step;
 
   //
   // Book confidence region histograms
   //
-
-  TH2D *hCL68StatOnlyNonFC = new TH2D("hCL68StatOnlyNonFC", "",
-            mixing23_nbins, mixing23_grid_min, mixing23_grid_max, dm23sq_nbins, dm23sq_grid_min, dm23sq_grid_max);
-  TH2D *hCL90StatOnlyNonFC = new TH2D("hCL90StatOnlyNonFC", "",
-            mixing23_nbins, mixing23_grid_min, mixing23_grid_max, dm23sq_nbins, dm23sq_grid_min, dm23sq_grid_max);
-  TH2D *hCL95StatOnlyNonFC = new TH2D("hCL95StatOnlyNonFC", "",
-            mixing23_nbins, mixing23_grid_min, mixing23_grid_max, dm23sq_nbins, dm23sq_grid_min, dm23sq_grid_max);
-  TH2D *hCL99StatOnlyNonFC = new TH2D("hCL99StatOnlyNonFC", "",
-            mixing23_nbins, mixing23_grid_min, mixing23_grid_max, dm23sq_nbins, dm23sq_grid_min, dm23sq_grid_max);
 
   TH2D *hCL68StatOnly = new TH2D("hCL68StatOnly", "",
             mixing23_nbins, mixing23_grid_min, mixing23_grid_max, dm23sq_nbins, dm23sq_grid_min, dm23sq_grid_max);
@@ -206,18 +202,9 @@ void plot_feldman_cousins_contour(
       for(int dm23sq_bin = 1; dm23sq_bin <= dm23sq_nbins; dm23sq_bin++) {
 
         double mixing23 = hCL68StatOnly->GetXaxis()->GetBinCenter(mixing23_bin);
-        double dm23sq        = hCL68StatOnly->GetYaxis()->GetBinCenter(dm23sq_bin);
+        double dm23sq   = hCL68StatOnly->GetYaxis()->GetBinCenter(dm23sq_bin);
 
-        double dchisq_data = fChisqSurface->GetBinContent(  fChisqSurface->GetXaxis()->FindBin(mixing23), fChisqSurface->GetYaxis()->FindBin(dm23sq) );
-
-        double dchisq68_crit_statonly_nonfc = 2.30;
-        double dchisq90_crit_statonly_nonfc = 4.61;
-        double dchisq95_crit_statonly_nonfc = 5.99;
-        double dchisq99_crit_statonly_nonfc = 9.21;
-	hCL68StatOnlyNonFC->SetBinContent(mixing23_bin, dm23sq_bin, dchisq_data - dchisq68_crit_statonly_nonfc);
-	hCL90StatOnlyNonFC->SetBinContent(mixing23_bin, dm23sq_bin, dchisq_data - dchisq90_crit_statonly_nonfc);
-	hCL95StatOnlyNonFC->SetBinContent(mixing23_bin, dm23sq_bin, dchisq_data - dchisq95_crit_statonly_nonfc);
-	hCL99StatOnlyNonFC->SetBinContent(mixing23_bin, dm23sq_bin, dchisq_data - dchisq99_crit_statonly_nonfc);
+        double dchisq_data = fChisqSurface->GetBinContent( fChisqSurface->GetXaxis()->FindBin(mixing23), fChisqSurface->GetYaxis()->FindBin(dm23sq) );
 
 	if(show_contours_without_systematics) {
 	  double dchisq68_crit_statonly = hDeltaChisqCrit68StatOnly->GetBinContent( hDeltaChisqCrit68StatOnly->GetXaxis()->FindBin(mixing23), hDeltaChisqCrit68StatOnly->GetYaxis()->FindBin(dm23sq) );
@@ -270,38 +257,30 @@ void plot_feldman_cousins_contour(
   hframe->GetYaxis()->CenterTitle();
   hframe->Draw();
 
-  set_contour_style(hCL68StatOnlyNonFC, kRed,   2, 3);
-  set_contour_style(hCL90StatOnlyNonFC, kBlue,  2, 3);
-  set_contour_style(hCL95StatOnlyNonFC, kGreen, 2, 3);
-  set_contour_style(hCL99StatOnlyNonFC, kBlack, 2, 3);
-  set_contour_style(hCL68StatOnly,      kRed,   2, 2);
-  set_contour_style(hCL90StatOnly,      kBlue,  2, 2);
-  set_contour_style(hCL95StatOnly,      kGreen, 2, 2);
-  set_contour_style(hCL99StatOnly,      kBlack, 2, 2);
-  set_contour_style(hCL68StatSyst,      kRed,   2, 1);
-  set_contour_style(hCL90StatSyst,      kBlue,  2, 1);
-  set_contour_style(hCL95StatSyst,      kGreen, 2, 1);
-  set_contour_style(hCL99StatSyst,      kBlack, 2, 1);
+  set_contour_style(hCL68StatSyst,      kRed,      2, kSolid);
+  set_contour_style(hCL90StatSyst,      kBlue,     2, kSolid);
+  set_contour_style(hCL95StatSyst,      kGreen,    2, kSolid);
+  set_contour_style(hCL99StatSyst,      kYellow+2, 2, kSolid);
+  set_contour_style(hCL68StatOnly,      kRed,      2, kDashed);
+  set_contour_style(hCL90StatOnly,      kBlue,     2, kDashed);
+  set_contour_style(hCL95StatOnly,      kGreen,    2, kDashed);
+  set_contour_style(hCL99StatOnly,      kYellow+2, 2, kDashed);
 
   if(show_99cl) {
-    if(show_contours_with_systematics    ) { hCL99StatSyst      -> Draw("cont3same");  }
-    if (show_contours_without_systematics) { hCL99StatOnly      -> Draw("cont3same");  }
-    if(show_constant_dchisq_contours     ) { hCL99StatOnlyNonFC -> Draw("cont3same");  }
+    if(show_contours_with_systematics    ) { hCL99StatSyst -> Draw("cont3same");  }
+    if (show_contours_without_systematics) { hCL99StatOnly -> Draw("cont3same");  }
   }    
   if(show_95cl) {
-    if (show_contours_with_systematics   ) { hCL95StatSyst      -> Draw("cont3same");  }
-    if (show_contours_without_systematics) { hCL95StatOnly      -> Draw("cont3same");  }
-    if (show_constant_dchisq_contours    ) { hCL95StatOnlyNonFC -> Draw("cont3same");  }
+    if (show_contours_with_systematics   ) { hCL95StatSyst -> Draw("cont3same");  }
+    if (show_contours_without_systematics) { hCL95StatOnly -> Draw("cont3same");  }
   }
   if(show_90cl) {
-    if (show_contours_with_systematics   ) { hCL90StatSyst      -> Draw("cont3same");  }
-    if (show_contours_without_systematics) { hCL90StatOnly      -> Draw("cont3same");  }
-    if (show_constant_dchisq_contours    ) { hCL90StatOnlyNonFC -> Draw("cont3same");  }
+    if (show_contours_with_systematics   ) { hCL90StatSyst -> Draw("cont3same");  }
+    if (show_contours_without_systematics) { hCL90StatOnly -> Draw("cont3same");  }
   }
   if(show_68cl) {
-    if (show_contours_with_systematics   ) { hCL68StatSyst      -> Draw("cont3same");  }
-    if (show_contours_without_systematics) { hCL68StatOnly      -> Draw("cont3same");  }
-    if (show_constant_dchisq_contours    ) { hCL68StatOnlyNonFC -> Draw("cont3same");  }
+    if (show_contours_with_systematics   ) { hCL68StatSyst -> Draw("cont3same");  }
+    if (show_contours_without_systematics) { hCL68StatOnly -> Draw("cont3same");  }
   }
 
   TMarker *bestFit = new TMarker(mixing23_bestfit, dm23sq_bestfit, 29);
@@ -310,45 +289,35 @@ void plot_feldman_cousins_contour(
   bestFit->Draw("same");
 
   // Plot external contours
-  TGraph * minos2011_68cl = 0;
-  TGraph * minos2011_90cl = 0;
-  TGraph * skle_90cl      = 0;
-  TGraph * sk_90cl        = 0;
+  TGraph * minos2012_90cl = 0;
+  TGraph * skle2012_90cl  = 0;
+  TGraph * skzen2012_90cl = 0;
   if(show_external_contours) {
-     const char * extcontourfile = Form("%s/inputs/external/contours/numu_disappearance.root", gSystem->Getenv("T2KOSCANA"));
+     const char * extcontourfile = Form("%s/inputs/external/contours/ext_contours.root", gSystem->Getenv("T2KOSCANA"));
      TFile f(extcontourfile,"read");
-     minos2011_68cl = new TGraph(* (TGraph*)f.Get("minos2011_68cl") );
-     minos2011_90cl = new TGraph(* (TGraph*)f.Get("minos2011_90cl") );
-     skle_90cl      = new TGraph(* (TGraph*)f.Get("skle_90cl")      );
-     sk_90cl        = new TGraph(* (TGraph*)f.Get("sk_90cl")        );
-     set_contour_style(minos2011_68cl, kBlack,     2, 3);
-     set_contour_style(minos2011_90cl, kBlack,     2, 1);
-     set_contour_style(skle_90cl,      kMagenta-3, 2, 1);
-     set_contour_style(sk_90cl,        kGreen+2,   2, 1);
+     minos2012_90cl = new TGraph(* (TGraph*)f.Get("minos2012_combined_90CL") );
+     skle2012_90cl  = new TGraph(* (TGraph*)f.Get("sk2012_le2nu_90CL")       );
+     skzen2012_90cl = new TGraph(* (TGraph*)f.Get("sk2012_zenith3nu_90CL")   );
+     set_contour_style(minos2012_90cl, kBlack,     1, kSolid);
+     set_contour_style(skle2012_90cl,  kMagenta-3, 1, kSolid);
+     set_contour_style(skzen2012_90cl, kGreen+2,   1, kSolid);
      if(show_90cl) {
-       minos2011_90cl->Draw("l");
-       skle_90cl->Draw("l");
-       sk_90cl->Draw("l");
-     }
-     if(show_68cl) {
-       minos2011_68cl->Draw("l");
+       minos2012_90cl->Draw("l");
+       skle2012_90cl ->Draw("l");
+       skzen2012_90cl->Draw("l");
      }
      f.Close();
   }
 
   // build legend labels
-  TString fc_68cl_statsyst = "Feldman-Cousins 68% CL (stat+syst)";
-  TString fc_90cl_statsyst = "Feldman-Cousins 90% CL (stat+syst)";
-  TString fc_95cl_statsyst = "Feldman-Cousins 95% CL (stat+syst)";
-  TString fc_99cl_statsyst = "Feldman-Cousins 99% CL (stat+syst)";
-  TString fc_68cl_statonly = "Feldman-Cousins 68% CL (stat)";
-  TString fc_90cl_statonly = "Feldman-Cousins 90% CL (stat)";
-  TString fc_95cl_statonly = "Feldman-Cousins 95% CL (stat)";
-  TString fc_99cl_statonly = "Feldman-Cousins 99% CL (stat)";
-  TString pl_68cl_statonly = "Plain (const. #Delta#chi^{2}_{crit.}(=2.30)) 68% CL (stat)";
-  TString pl_90cl_statonly = "Plain (const. #Delta#chi^{2}_{crit.}(=4.61)) 90% CL (stat)";
-  TString pl_95cl_statonly = "Plain (const. #Delta#chi^{2}_{crit.}(=5.99)) 95% CL (stat)";
-  TString pl_99cl_statonly = "Plain (const. #Delta#chi^{2}_{crit.}(=9.21)) 99% CL (stat)";
+  TString fc_68cl_statsyst = "FC 68% CL (stat+syst)";
+  TString fc_90cl_statsyst = "FC 90% CL (stat+syst)";
+  TString fc_95cl_statsyst = "FC 95% CL (stat+syst)";
+  TString fc_99cl_statsyst = "FC 99% CL (stat+syst)";
+  TString fc_68cl_statonly = "FC 68% CL (stat)";
+  TString fc_90cl_statonly = "FC 90% CL (stat)";
+  TString fc_95cl_statonly = "FC 95% CL (stat)";
+  TString fc_99cl_statonly = "FC 99% CL (stat)";
 
   if(label) {
     fc_68cl_statsyst = TString(label) + TString(", ") + fc_68cl_statsyst;
@@ -367,6 +336,7 @@ void plot_feldman_cousins_contour(
 
   TLegend * legend = new TLegend(0.17,0.72,0.36,0.9);
   legend->SetFillColor(0);
+  legend->SetFillStyle(0);
   if(show_contours_with_systematics) {
     if(show_99cl) { legend->AddEntry(hCL99StatSyst, fc_99cl_statsyst.Data(), "L");  }
     if(show_95cl) { legend->AddEntry(hCL95StatSyst, fc_95cl_statsyst.Data(), "L");  }
@@ -379,22 +349,11 @@ void plot_feldman_cousins_contour(
     if(show_90cl) { legend->AddEntry(hCL90StatOnly, fc_90cl_statonly.Data(), "L");  }
     if(show_68cl) { legend->AddEntry(hCL68StatOnly, fc_68cl_statonly.Data(), "L");  }
   }
-  if(show_constant_dchisq_contours) {
-    if(show_99cl) { legend->AddEntry(hCL99StatOnlyNonFC, pl_99cl_statonly.Data(), "L");  }
-    if(show_95cl) { legend->AddEntry(hCL95StatOnlyNonFC, pl_95cl_statonly.Data(), "L");  }
-    if(show_90cl) { legend->AddEntry(hCL90StatOnlyNonFC, pl_90cl_statonly.Data(), "L");  }
-    if(show_68cl) { legend->AddEntry(hCL68StatOnlyNonFC, pl_68cl_statonly.Data(), "L");  }
-  }
   if(show_external_contours) {
     if(show_90cl) {
-      legend->AddEntry(minos2011_90cl, "MINOS 2011 (7.25E+20 POT), 90% CL");
-    }
-    if(show_68cl) {
-      legend->AddEntry(minos2011_68cl, "MINOS 2011 (7.25E+20 POT), 68% CL");
-    }
-    if(show_90cl) {
-      legend->AddEntry(sk_90cl,        "Super-K, 90% CL");
-      legend->AddEntry(skle_90cl,      "Super-K L/E, 90% CL");
+      legend->AddEntry(minos2012_90cl, "MINOS 2012 (10.71#times10^{20} POT + 37.9 kton*yr), 90% CL");
+      legend->AddEntry(skzen2012_90cl, "SK1-4 zenith angle, 90% CL");
+      legend->AddEntry(skle2012_90cl,  "SK1-4 L/E, 90% CL");
     }
   }
   legend->SetBorderSize(0);
@@ -416,7 +375,18 @@ void plot_feldman_cousins_contour(
     line2->Draw("same");
   }
 
-//ConfidenceContour->SaveAs("ConfidenceContours.pdf");
+  TFile fout(outfile,"RECREATE");
+  fout.cd();
+  hCL68StatOnly -> Write();
+  hCL90StatOnly -> Write();
+  hCL95StatOnly -> Write();
+  hCL99StatOnly -> Write();
+  hCL68StatSyst -> Write();
+  hCL90StatSyst -> Write();
+  hCL95StatSyst -> Write();
+  hCL99StatSyst -> Write();
+  ConfidenceContour -> Write();
+  fout.Close();
 }
 
 void set_contour_style(TH2D *contour, Int_t color, Int_t width, Int_t style)
