@@ -58,7 +58,7 @@ void sensitivity_from_many_chisq_surfaces
   int minbin = avdchisq->GetMinimumBin();
   int minx, miny, minz;
   avdchisq->GetBinXYZ(minbin, minx, miny, minz);
-  cout << "average chisq " << minchisq << " at " << avdchisq->GetXaxis()->GetBinCenter(minx) << " " << avdchisq->GetYaxis()->GetBinCenter(miny) << endl;
+  cout << endl << endl << "average chisq " << minchisq << " at " << avdchisq->GetXaxis()->GetBinCenter(minx) << " " << avdchisq->GetYaxis()->GetBinCenter(miny) << endl;
 
   //subtract the average (if required)
   if(ischisq) {
@@ -70,21 +70,91 @@ void sensitivity_from_many_chisq_surfaces
     }//ix
   }//ischisq
 
+  // Get external contours
+  std::string line;
+  int ip = 0;
+  TGraph ext1_contour(100);
+  std::ifstream ext1file("/Users/thomasdealtry/T2K/ralrepo/t2k/t2kana/nuosc/trunk/inputs/external/contours/minos2012_10p71E20POT.data");
+  while (std::getline(ext1file, line)) {
+    std::istringstream iss(line);
+    double a, b;
+    if (!(iss >> a >> b)) { continue; } // header
+    ext1_contour.SetPoint(ip, a, b);
+    ip++;
+  }
+  ext1_contour.Set(ip);
+  ip = 0;
+  TGraph ext2_contour(100);
+  std::ifstream ext2file("/Users/thomasdealtry/T2K/ralrepo/t2k/t2kana/nuosc/trunk/inputs/external/contours/minos2012_10p71E20POT+37p9ktyr.data");
+  while (std::getline(ext2file, line)) {
+    std::istringstream iss(line);
+    double a, b;
+    if (!(iss >> a >> b)) { continue; } // header
+    ext2_contour.SetPoint(ip, a, b);
+    ip++;
+  }
+  ext2_contour.Set(ip);
+  ip = 0;
+  TGraph ext3_contour(100);
+  std::ifstream ext3file("/Users/thomasdealtry/T2K/ralrepo/t2k/t2kana/nuosc/trunk/inputs/external/contours/sk2012_runs1to4_LE2nu.data");
+  while (std::getline(ext3file, line)) {
+    std::istringstream iss(line);
+    double a, b;
+    if (!(iss >> a >> b)) { continue; } // header
+    ext3_contour.SetPoint(ip, a, b);
+    ip++;
+  }
+  ext3_contour.Set(ip);
+  ip = 0;
+  TGraph ext4_contour(100);
+  std::ifstream ext4file("/Users/thomasdealtry/T2K/ralrepo/t2k/t2kana/nuosc/trunk/inputs/external/contours/sk2012_runs1to4_zenith3nu.data");
+  while (std::getline(ext4file, line)) {
+    std::istringstream iss(line);
+    double a, b;
+    if (!(iss >> a >> b)) { continue; } // header
+    ext4_contour.SetPoint(ip, a, b);
+    ip++;
+  }
+  ext4_contour.Set(ip);
+
   //and plot
+  gStyle->SetOptStat(0);
   double constchisq[2] = {2.30, 4.61};
   avdchisq->SetContour(2, constchisq);
   TCanvas *c1 = new TCanvas(); avdchisq->Draw("colz");  c1->SaveAs("sensitivitycolz.pdf");
   TCanvas *c2 = new TCanvas();
+  avdchisq->SetTitle("");
   avdchisq->Draw("cont1");
   TFile fkit("of_constchi2_v3.root");
-  TH2D *kit68 = 0, *kit90=0;
-  fkit.GetObject("h_cont_68cl",kit68);
-  fkit.GetObject("h_cont_90cl",kit90);
-  kit68->SetLineStyle(2);
-  kit68->SetLineColor(kBlack);
-  kit90->SetLineStyle(2);
-  kit68->Draw("cont1same");
-  kit90->Draw("cont1same");
+  TH2D *kitdchisq = 0;
+  fkit.GetObject("h_dchi2",kitdchisq);
+  kitdchisq->SetLineStyle(2);
+  kitdchisq->SetContour(2, constchisq);
+  kitdchisq->Draw("cont1same");
+  ext1_contour.SetLineColor(kBlack);
+  ext1_contour.SetLineStyle(1);
+  ext2_contour.SetLineColor(kBlack);
+  ext2_contour.SetLineStyle(3);
+  ext3_contour.SetLineColor(kBlue);
+  ext3_contour.SetLineStyle(1);
+  ext4_contour.SetLineColor(kBlue);
+  ext4_contour.SetLineStyle(3);
+  ext1_contour.SetName("extcont1");;
+  ext2_contour.SetName("extcont2");;
+  ext3_contour.SetName("extcont3");;
+  ext4_contour.SetName("extcont4");;
+  ext1_contour.Draw("Csame");
+  ext2_contour.Draw("Csame");
+  ext3_contour.Draw("Csame");
+  ext4_contour.Draw("Csame");
+  TLegend *leg = new TLegend(0.0,0.8,0.25,1.0);
+  leg->AddEntry(avdchisq,"VaLOR");
+  leg->AddEntry(kitdchisq,"KIT");
+  leg->AddEntry("ext1cont","MINOS beam 90%","l");
+  leg->AddEntry("ext2cont","MINOS beam + atmospherics 90%","l");
+  leg->AddEntry("ext3cont","SK atmospherics L/E 90%","l");
+  leg->AddEntry("ext3cont","SK atmospherics zenith angle 90%","l");
+  leg->Draw();
   c2->SaveAs("sensitivitycont.pdf");
 
   TFile fout("sensitivity.root","RECREATE");
