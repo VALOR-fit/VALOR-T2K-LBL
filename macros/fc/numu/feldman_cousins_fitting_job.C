@@ -16,7 +16,7 @@ void feldman_cousins_fitting_job
   int          max_dm23sq_bin        =  51,                          /* -//- */
   int          min_mixing23_bin      =   1,                          /* generate toy MC with this range of 23 mixing (expressed in terms of either sinsq2theta, sinsqtheta, ...) */
   int          max_mixing23_bin      = 101,                          /* -//- */
-  const char * bin_list              = 0,                            /* if specified, run toy-MC expts only in the bins specified as long as they are in the range given above */
+  const char * bin_list              = "",                           /* if specified, run toy-MC expts only in the bins specified as long as they are in the range given above */
   const char * config_file           = "analysis_configuration.xml", /* analysis configuration file */
   bool         stat_fluctuations     = true,                         /* include statistical fluctuation in toy MC expts? */
   bool         tweak_systematics     = true,                         /* generate toy MC with randomized systematics? */
@@ -64,11 +64,28 @@ void feldman_cousins_fitting_job
   //
   // If a bin list was specified, read the 2-D bin numbers
   //
+
   const int buffsize = 2048; 
+
   vector<int> mixing23_bin_list;
   vector<int> dm23sq_bin_list;
-  if(bin_list) {
+
+  bool use_bin_list        = false;
+  bool bin_list_accessible = !gSystem->AccessPathName(bin_list);
+  bool bin_list_input      = (strlen(bin_list) > 0);
+  if(bin_list_input) {
+    if(!bin_list_accessible) {
+        cerr << "Input file: " << bin_list << " is not accessible." << endl;
+        exit(1);
+    }
+    use_bin_list = true;
+  }
+  if(use_bin_list) {
      ifstream inpbins(bin_list, ios::in);
+     if(!inpbins.is_open()) {
+       cerr << "Can't open file: " << bin_list << endl;
+       exit(1);
+     } 
      // read all lines
      while(1) 
      {
@@ -83,13 +100,17 @@ void feldman_cousins_fitting_job
            mixing23_bin_list.push_back(mixing23_bin);
            dm23sq_bin_list.push_back(dm23sq_bin);
        }
-     }//1     
+     }//1 
+  }//use bin list
+  if(use_bin_list && mixing23_bin_list.size() == 0) {
+     cerr << "Empty input list of bins... Discarding!" << endl; 
+     use_bin_list = false;
   }
    
   //
   // Print out job summary
   //
-  cout << "[Job inputs]" << endl;
+  cout << "\n[Job inputs]" << endl;
   cout << "- Job: " << tag << "/" << irun << endl;
   cout << "- Reading analysis configuration from: " << config << endl;
   cout << "- Toy-MC generation" << endl;
@@ -115,7 +136,7 @@ void feldman_cousins_fitting_job
   cout << "   - " << util::AsString(conv::kPhypDm23sq) 
        << " : [" << min_dm23sq_bin   << ", " << max_dm23sq_bin   << "]" << endl;
   cout << "- Input (" << util::AsString(conv::kPhypMixing23) << ", " << util::AsString(conv::kPhypDm23sq) << ") bin list " << endl; 
-  if(!bin_list) {
+  if(!use_bin_list) {
     cout << "   - none" << endl;
   } else {
     const int nb = mixing23_bin_list.size();
@@ -156,7 +177,7 @@ void feldman_cousins_fitting_job
      int input_mixing23_bin = -1;
      int input_dm23sq_bin   = -1;
      
-     if(!bin_list) {
+     if(!use_bin_list) {
        // If there was no input bin list, select a bin within the input range
        input_mixing23_bin = min_mixing23_bin + rand.Integer(1 + max_mixing23_bin - min_mixing23_bin);
        input_dm23sq_bin   = min_dm23sq_bin   + rand.Integer(1 + max_dm23sq_bin   - min_dm23sq_bin  );
