@@ -168,7 +168,8 @@ void test_n_mock_data_fits_xml
        chisq_surface_syst->GetYaxis()->SetTitleOffset(1);
        chisq_surface_syst->GetYaxis()->SetTitleSize(0.05);
        chisq_surface_syst->GetXaxis()->SetTitleSize(0.05);
-       
+
+       f.cd();
        chisq_surface_syst->Write(Form("chisqwithsyst_%d",iexperiment));
      }
 
