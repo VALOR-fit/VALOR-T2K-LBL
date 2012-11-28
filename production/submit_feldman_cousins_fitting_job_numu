@@ -17,6 +17,7 @@
 #  --max-dm23sq-bin         : Default:  51.
 #  --min-sinsq2theta23-bin  : Default:   1.
 #  --max-sinsq2theta23-bin  : Default: 101.
+#  --bin-list               : Default:  "" (no input file)
 #  --fit-param-list         : Fit parameter list. Default: "numudisapp2f". See FitParamList.h for allowed options.
 #  --fit-option             : Option passed to fitter. Default: "minuit".
 #  --job-dir                : Directory for job scripts and outputs. Default: `pwd`.
@@ -43,6 +44,7 @@ foreach (@ARGV) {
   if($_ eq '--max-dm23sq-bin'        ) { $max_dm23sq_bin        = $ARGV[$iarg+1]; }
   if($_ eq '--min-sinsq2theta23-bin' ) { $min_sinsq2theta23_bin = $ARGV[$iarg+1]; }
   if($_ eq '--max-sinsq2theta23-bin' ) { $max_sinsq2theta23_bin = $ARGV[$iarg+1]; }
+  if($_ eq '--bin-list'              ) { $bin_list              = $ARGV[$iarg+1]; }
   if($_ eq '--fit-param-list'        ) { $fitparamlist          = $ARGV[$iarg+1]; }
   if($_ eq '--fit-option'            ) { $fitoption             = $ARGV[$iarg+1]; }
   if($_ eq '--job-dir'               ) { $job_dir               = $ARGV[$iarg+1]; }
@@ -54,6 +56,7 @@ $min_dm23sq_bin         = 1                             unless defined $min_dm23
 $max_dm23sq_bin         = 51                            unless defined $max_dm23sq_bin; 
 $min_sinsq2theta23_bin  = 1                             unless defined $min_sinsq2theta23_bin;
 $max_sinsq2theta23_bin  = 101                           unless defined $max_sinsq2theta23_bin;
+$bin_list               = ""                            unless defined $bin_list;
 $resource               = "interactive"                 unless defined $resource;
 $tag                    = "fc"                          unless defined $tag;
 $nruns                  = 1                             unless defined $nruns;
@@ -81,7 +84,7 @@ while($irun < $nruns) {
 
   print "Submitting $tag run: $irun \n";
 
-  $command  = "root2k -l -b -q \'$softw_dir/macros/fc/numu/feldman_cousins_fitting_job.C(\"$tag\",$irun,$nexpts,$min_dm23sq_bin,$max_dm23sq_bin,$min_sinsq2theta23_bin,$max_sinsq2theta23_bin,\"$config_file\",$stat_fluct,$twk_systematics,$twk_non23osc,\"$fitparamlist\",\"$fitoption\")\'";
+  $command  = "root2k -l -b -q \'$softw_dir/macros/fc/numu/feldman_cousins_fitting_job.C(\"$tag\",$irun,$nexpts,$min_dm23sq_bin,$max_dm23sq_bin,$min_sinsq2theta23_bin,$max_sinsq2theta23_bin,\"$bin_list\",\"$config_file\",$stat_fluct,$twk_systematics,$twk_non23osc,\"$fitparamlist\",\"$fitoption\")\'";
   print "$command \n";
 
   #
