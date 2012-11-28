@@ -16,6 +16,7 @@ void feldman_cousins_fitting_job
   int          max_dm23sq_bin        =  51,                          /* -//- */
   int          min_mixing23_bin      =   1,                          /* generate toy MC with this range of 23 mixing (expressed in terms of either sinsq2theta, sinsqtheta, ...) */
   int          max_mixing23_bin      = 101,                          /* -//- */
+  const char * bin_list              = 0,                            /* if specified, run toy-MC expts only in the bins specified as long as they are in the range given above */
   const char * config_file           = "analysis_configuration.xml", /* analysis configuration file */
   bool         stat_fluctuations     = true,                         /* include statistical fluctuation in toy MC expts? */
   bool         tweak_systematics     = true,                         /* generate toy MC with randomized systematics? */
@@ -59,6 +60,31 @@ void feldman_cousins_fitting_job
        dm23sq_nbins, 
        dm23sq_min - 0.5*dm23sq_step, 
        dm23sq_max + 0.5*dm23sq_step);
+
+  //
+  // If a bin list was specified, read the 2-D bin numbers
+  //
+  const int buffsize = 2048; 
+  vector<int> mixing23_bin_list;
+  vector<int> dm23sq_bin_list;
+  if(bin_list) {
+     ifstream inpbins(bin_list, ios::in);
+     // read all lines
+     while(1) 
+     {
+        // ignore comment lines starting with #
+        if(inpbins.peek() == '#') {
+           inpbins.ignore(buffsize, '\n');
+        } else {       
+           int mixing23_bin = -1;
+           int dm23sq_bin   = -1; 
+           inpbins >> mixing23_bin >> dm23sq_bin;
+           if(inpbins.eof()) break;
+           mixing23_bin_list.push_back(mixing23_bin);
+           dm23sq_bin_list.push_back(dm23sq_bin);
+       }
+     }//1     
+  }
    
   //
   // Print out job summary
@@ -88,6 +114,20 @@ void feldman_cousins_fitting_job
        << " : [" << min_mixing23_bin << ", " << max_mixing23_bin << "]" << endl;
   cout << "   - " << util::AsString(conv::kPhypDm23sq) 
        << " : [" << min_dm23sq_bin   << ", " << max_dm23sq_bin   << "]" << endl;
+  cout << "- Input (" << util::AsString(conv::kPhypMixing23) << ", " << util::AsString(conv::kPhypDm23sq) << ") bin list " << endl; 
+  if(!bin_list) {
+    cout << "   - none" << endl;
+  } else {
+    const int nb = mixing23_bin_list.size();
+    cout << "   - The following " << mixing23_bin_list.size() << " bins were specified: \n     ";
+    for(int i = 0; i < nb; i++) {
+        cout << "(" << mixing23_bin_list[i] << ", " << dm23sq_bin_list[i] << ")";
+        if(i < nb-1) { 
+          cout << ", "; 
+        }
+    }
+    cout << endl;
+  }
 
   // get superk spectrum PDF & configure
   SuperkExpectation * skexp = new SuperkExpectation;
@@ -95,16 +135,14 @@ void feldman_cousins_fitting_job
 
   TRandom3 rand(0);
 
-  // ntuple to store results
+  // Create n-tuple to store results
   TNtupleD * fcnt = new TNtupleD("fcnt","", 
      "iexp:irun:input_mixing23_bin:input_dm23sq_bin:input_mixing23:input_dm23sq:chisq_for_input_params:mixing23:dm23sq:chisq");
   
   for(int iexperiment = 0; iexperiment < nexperiments; iexperiment++) {
      cout << "\n\n** Pseudo-experiment = " << iexperiment << endl;
 
-     //
      // Get the specified fit parameter list
-     //
      FitParamList * fparm = FitParamList::NamedParameterList(fit_param_list);
      conv::PhysHypothesis_t hyp = fparm->PhysicsHypothesis();
      if(iexperiment==0) {
@@ -112,23 +150,54 @@ void feldman_cousins_fitting_job
      }
 
      //     
-     // get dm23sq and mixing23 at the centre of a bin randomly selected within the input range
+     // Random selection of dm23sq and mixing23 bin
      //     
-     int input_mixing23_bin = min_mixing23_bin + rand.Integer(1 + max_mixing23_bin - min_mixing23_bin);
-     int input_dm23sq_bin   = min_dm23sq_bin   + rand.Integer(1 + max_dm23sq_bin   - min_dm23sq_bin  );
+     
+     int input_mixing23_bin = -1;
+     int input_dm23sq_bin   = -1;
+     
+     if(!bin_list) {
+       // If there was no input bin list, select a bin within the input range
+       input_mixing23_bin = min_mixing23_bin + rand.Integer(1 + max_mixing23_bin - min_mixing23_bin);
+       input_dm23sq_bin   = min_dm23sq_bin   + rand.Integer(1 + max_dm23sq_bin   - min_dm23sq_bin  );
+     } else {
+       // If a bin list was input, select a bin from that list and accept it if it is within the input range
+       const int nb = mixing23_bin_list.size();
+       while(1) {
+           int i = rand.Integer(nb); // random in [0, nb-1] range
+           input_mixing23_bin = mixing23_bin_list[i]; 
+           input_dm23sq_bin   = dm23sq_bin_list[i];
+           bool accept = false;
+           if(input_mixing23_bin >= min_mixing23_bin &&
+              input_mixing23_bin <= max_mixing23_bin &&
+              input_dm23sq_bin   >= min_dm23sq_bin   &&
+              input_dm23sq_bin   <= max_dm23sq_bin)
+           {
+             accept = true;
+           }  
+           if(accept) break; // exit inf loop
+       }//1
+     }
+     // Sanity check on bin range
      input_mixing23_bin = TMath::Max(1,              input_mixing23_bin);
      input_mixing23_bin = TMath::Min(mixing23_nbins, input_mixing23_bin);
      input_dm23sq_bin   = TMath::Max(1,              input_dm23sq_bin  );
      input_dm23sq_bin   = TMath::Min(dm23sq_nbins,   input_dm23sq_bin  );
 
+     cout << "- Toy-MC > Selected 23-sector params bin: " 
+          << util::AsString(conv::kPhypMixing23) << " bin # = " << input_mixing23_bin << ", "
+          << util::AsString(conv::kPhypDm23sq)   << " bin # = " << input_dm23sq_bin
+          << endl;
+
+     // Get dm23sq and mixing23 at the centre of the randomly selected bin
      double input_mixing23 = osc_param_space->GetXaxis()->GetBinCenter(input_mixing23_bin);
      double input_dm23sq   = osc_param_space->GetYaxis()->GetBinCenter(input_dm23sq_bin  );
      input_mixing23 = TMath::Max(0.,input_mixing23); // protection from rnd-err
      input_mixing23 = TMath::Min(1.,input_mixing23); // protection from rnd-err
 
      cout << "- Toy-MC > True 23-sector params: " 
-          << util::AsString(conv::kPhypDm23sq)   << " = " << input_dm23sq << " eV^2, "
-          << util::AsString(conv::kPhypMixing23) << " = " << input_mixing23 
+          << util::AsString(conv::kPhypMixing23) << " = " << input_mixing23 << ", "
+          << util::AsString(conv::kPhypDm23sq)   << " = " << input_dm23sq   << " eV^2"
           << endl;
 
      //
@@ -146,10 +215,10 @@ void feldman_cousins_fitting_job
          input_deltacp  = util::RandomizeDeltaCP();
          input_dm12sq   = util::RandomizeDm12sq(); 
          cout << "- Toy-MC > True (randomized) non-23-sector params: " 
-              << util::AsString(conv::kPhypDm12sq)   << " = " << input_dm12sq   << " eV^2, "
               << util::AsString(conv::kPhypMixing12) << " = " << input_mixing12 << ", "
-              << util::AsString(conv::kPhypDeltaCP)  << " = " << input_deltacp  << " rad, "
-              << util::AsString(conv::kPhypMixing12) << " = " << input_mixing13 
+              << util::AsString(conv::kPhypDm12sq)   << " = " << input_dm12sq   << " eV^2, "
+              << util::AsString(conv::kPhypMixing12) << " = " << input_mixing13 << ", "
+              << util::AsString(conv::kPhypDeltaCP)  << " = " << input_deltacp  << " rad "
               << endl;
      }
 
@@ -210,8 +279,8 @@ void feldman_cousins_fitting_job
      double bestfit_chisq    = fit_inputs->BestFitChisquare();
 
      cout << "- Chisq (Best-fit params:" 
-          << util::AsString(conv::kPhypDm23sq)   << " = " << bestfit_dm23sq   << " eV^2, "
-          << util::AsString(conv::kPhypMixing23) << " = " << bestfit_mixing23 
+          << util::AsString(conv::kPhypMixing23) << " = " << bestfit_mixing23 << ", "
+          << util::AsString(conv::kPhypDm23sq)   << " = " << bestfit_dm23sq   << " eV^2"
           << ") = " << bestfit_chisq << endl;
 
      cout << "- DeltaChisq = " << chisq_for_input_params - bestfit_chisq << endl;
