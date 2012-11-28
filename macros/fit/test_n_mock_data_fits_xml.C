@@ -82,7 +82,7 @@ void test_n_mock_data_fits_xml
 
      // Write-out results
      fitter->Analyze(output_option);
-     fitter->Save("mockfit.root");
+     fitter->Save(Form("mockfit_%d.root",iexperiment));
 
      // Get best-fit chisquare
      double bestfit_chisq = fit_inputs->BestFitChisquare();
