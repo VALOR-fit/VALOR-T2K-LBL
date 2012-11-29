@@ -46,12 +46,13 @@ ClassImp(FitInputs)
 
 //________________________________________________________________________________________
 FitInputs::FitInputs(
-	   SuperkObservation * skobs, SuperkExpectation * skexp, FitParamList * fpar, string opt, double errdef) :
+	  SuperkObservation * skobs, SuperkExpectation * skexp, FitParamList * fpar, string opt, double errdef, bool goodnessoffit) :
 fObs(skobs), 
 fExp(skexp), 
 fFitParams(fpar),
 fOpt(opt),
-fErrDef(errdef)
+fErrDef(errdef),
+fGoodnessOfFit(goodnessoffit)
 { 
   if(fFitParams->GetSystMode() == 2)
     fAllBANFFFit = false;
@@ -113,40 +114,57 @@ double FitInputs::Chisquare(Option_t * option, conv::SuperkSample_t s0)
   	  applied_negevents_condition = fExp->Generate(*fFitParams, fAllBANFFFit) || applied_negevents_condition;
 	  TH1D * obs_ereco_spectrum = fObs->ErecoSpectrum(s);
 	  TH1D * exp_ereco_spectrum = fExp->CurrPredictedErecoSpectrum(s);
-#ifndef GOODNESSOFFIT
-	  int nbins = exp_ereco_spectrum->GetNbinsX();
-#else
-	  const int nbins = 5;
-	  double binedges[nbins+1] = {0.0,0.4,0.7,1.0,2.0,30.0}; 
+	  if(!fGoodnessOfFit) {
+	    int nbins = exp_ereco_spectrum->GetNbinsX();
+#ifdef __show_bin_contributions_to_chisq__
+	    cout << "FitInputs::Chisquare()> nbins = " << nbins << endl;
 #endif
+	    //loop over Ereco bins
+	    for(int ibin = 1; ibin <= nbins; ibin++) {
+	      double nobs = obs_ereco_spectrum->GetBinContent(ibin);
+	      double nexp = exp_ereco_spectrum->GetBinContent(ibin);
+	      double delta_chisq = 0.;
+	      if      (opt.Contains("poisson")) { delta_chisq = util::ChisqPoisson(nobs,nexp); }
+	      else if (opt.Contains("gauss")  ) { delta_chisq = util::ChisqGauss  (nobs,nexp); }
+	      chisq += delta_chisq;
 
 #ifdef __show_bin_contributions_to_chisq__
-	  cout << "FitInputs::Chisquare()> nbins = " << nbins << endl;
+	      double xlo = obs_ereco_spectrum->GetXaxis()->GetBinLowEdge(ibin);  
+	      double xup = obs_ereco_spectrum->GetXaxis()->GetBinUpEdge(ibin);
+	      cout << "FitInputs::Chisquare()> delta_chisq (bin = " << ibin 
+		   << "; [" << xlo << ", " << xup << "] GeV) = " << delta_chisq << endl;
+	      cout << "\tNobs: " << nobs << "\tNexp:" << nexp << endl;
 #endif
+	    }//ibin
 
-	  //loop over Ereco bins
-	  for(int ibin = 1; ibin <= nbins; ibin++) {
-#ifndef GOODNESSOFFIT
-	    double nobs = obs_ereco_spectrum->GetBinContent(ibin);
-	    double nexp = exp_ereco_spectrum->GetBinContent(ibin);
-#else
-	    double nobs = obs_ereco_spectrum->Integral(obs_ereco_spectrum->FindBin(binedges[ibin-1]),obs_ereco_spectrum->FindBin(binedges[ibin]));
-	    double nexp = exp_ereco_spectrum->Integral(exp_ereco_spectrum->FindBin(binedges[ibin-1]),exp_ereco_spectrum->FindBin(binedges[ibin]));
-#endif
-	    double delta_chisq = 0.;
-	    if      (opt.Contains("poisson")) { delta_chisq = util::ChisqPoisson(nobs,nexp); }
-	    else if (opt.Contains("gauss")  ) { delta_chisq = util::ChisqGauss  (nobs,nexp); }
-	    chisq += delta_chisq;
+	  }//!goodnessoffit
+	  else {
+	    const int nbins = 5;
+	    double binedges[nbins+1] = {0.0,0.4,0.7,1.0,2.0,30.0}; 
 
 #ifdef __show_bin_contributions_to_chisq__
-	    double xlo = obs_ereco_spectrum->GetXaxis()->GetBinLowEdge(ibin);  
-	    double xup = obs_ereco_spectrum->GetXaxis()->GetBinUpEdge(ibin);
-	    cout << "FitInputs::Chisquare()> delta_chisq (bin = " << ibin 
-		 << "; [" << xlo << ", " << xup << "] GeV) = " << delta_chisq << endl;
-	    cout << "\tNobs: " << nobs << "\tNexp:" << nexp << endl;
+	    cout << "FitInputs::Chisquare()> nbins = " << nbins << endl;
 #endif
-	  }//ibin
-      }
+
+	    //loop over Ereco bins
+	    for(int ibin = 1; ibin <= nbins; ibin++) {
+	      double nobs = obs_ereco_spectrum->Integral(obs_ereco_spectrum->FindBin(binedges[ibin-1]),obs_ereco_spectrum->FindBin(binedges[ibin]));
+	      double nexp = exp_ereco_spectrum->Integral(exp_ereco_spectrum->FindBin(binedges[ibin-1]),exp_ereco_spectrum->FindBin(binedges[ibin]));
+	      double delta_chisq = 0.;
+	      if      (opt.Contains("poisson")) { delta_chisq = util::ChisqPoisson(nobs,nexp); }
+	      else if (opt.Contains("gauss")  ) { delta_chisq = util::ChisqGauss  (nobs,nexp); }
+	      chisq += delta_chisq;
+	      
+#ifdef __show_bin_contributions_to_chisq__
+	      double xlo = obs_ereco_spectrum->GetXaxis()->GetBinLowEdge(ibin);  
+	      double xup = obs_ereco_spectrum->GetXaxis()->GetBinUpEdge(ibin);
+	      cout << "FitInputs::Chisquare()> delta_chisq (bin = " << ibin 
+		   << "; [" << xlo << ", " << xup << "] GeV) = " << delta_chisq << endl;
+	      cout << "\tNobs: " << nobs << "\tNexp:" << nexp << endl;
+#endif
+	    }//ibin
+	  }//goodnessoffit
+      }//1Rmu
       
       // Add chisq for 1Re sample
       // If we only want the numu disappearance analysis only, then skip

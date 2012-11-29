@@ -22,10 +22,6 @@ Changes since 2011_v0.9.0:
 #include "Rtypes.h"
 #endif
 
-#ifndef GOODNESSOFFIT
-//#define GOODNESSOFFIT
-#endif
-
 #ifndef BANFF_BINS
 //#define BANFF_BINS 1 // Coarse binning (numu using same binning as 2012 nue analyses, 11 numu bins)
 //#define BANFF_BINS -1 // Fine binning (numu using same binning as 2010 numu analyses, 20 numu bins)

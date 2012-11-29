@@ -31,12 +31,15 @@ class SuperkExpectation;
 class FitInputs: public ROOT::Minuit2::FCNBase, public TObject
 {
 public :
-  FitInputs(SuperkObservation * o, SuperkExpectation * e, FitParamList * p, string opt = "poisson", double errdef = 1);
+  FitInputs(SuperkObservation * o, SuperkExpectation * e, FitParamList * p, string opt = "poisson", double errdef = 1, bool goodnessoffit = false);
  ~FitInputs();
 
   SuperkObservation & Observation(void);
   SuperkExpectation & Expectation(void);
   FitParamList &      FitParams  (void);
+
+  // set the chisq definition 5 bins vs 73 bins
+  void SetChisqDefinition (bool goodnessoffit) { fGoodnessOfFit = goodnessoffit; }
 
   // judge the agreement between the input data and the current prediction
   double Chisquare (Option_t * opt = "poisson", conv::SuperkSample_t s = conv::kSKsUndefined);
@@ -65,6 +68,7 @@ private:
   string              fOpt;
   double              fErrDef;
   bool                fAllBANFFFit;
+  bool                fGoodnessOfFit;
 
 ClassDef(FitInputs, 4)
 

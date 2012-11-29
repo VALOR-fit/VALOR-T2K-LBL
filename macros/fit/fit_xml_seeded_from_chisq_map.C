@@ -53,15 +53,15 @@ void fit_xml_seeded_from_chisq_map
   // Open the file to read the chisq map from it
   TFile inputfile(chisqfile,"READ");
   TH2D *hchisq = 0;
-  inputfile.GetObject("chisq_surface_1Rmu",hchisq);
+  inputfile.GetObject(Form("chisqwithsyst_%d",dataset_id),hchisq);
   TH2D & hdchisq = *hchisq;
   
   // Find the minimum, and convert into mixing23 & dm23sq. This will give the seeds for the osc parameters
   int globalbin = hchisq->GetMinimumBin();
   int xbin, ybin, zbin;
   hchisq->GetBinXYZ(globalbin, xbin, ybin, zbin);
-  double input_mixing23 = chisq_surface_1Rmu->GetXaxis()->GetBinCenter(xbin);
-  double input_dm23sq   = chisq_surface_1Rmu->GetYaxis()->GetBinCenter(ybin);
+  double input_mixing23 = hchisq->GetXaxis()->GetBinCenter(xbin);
+  double input_dm23sq   = hchisq->GetYaxis()->GetBinCenter(ybin);
 
   // Seed the oscillation parameters
   fparm->SetInitValue(conv::kPhypMixing23, input_mixing23);

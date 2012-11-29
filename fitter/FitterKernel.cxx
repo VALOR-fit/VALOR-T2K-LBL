@@ -184,8 +184,8 @@ bool FitterKernel::RunOnce(void)
   cout << "FitterKernel/RunOnce >> Running MIGRAD..." << endl;
 #endif
   Double_t arglist[100];
-  arglist[0] = 5000; // num of func calls
-  arglist[1] = 0.01; // tolerance
+  arglist[0] = 50000; // num of func calls
+  arglist[1] = 0.01;  // tolerance
   fitter->ExecuteCommand("MIGRAD",arglist, 2);
 
   // Print fit result

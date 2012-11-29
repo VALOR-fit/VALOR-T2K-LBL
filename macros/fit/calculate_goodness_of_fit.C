@@ -70,7 +70,8 @@ void calculate_goodness_of_fit
 
      cout << "\n\n *** Pseudo-experiment = " << iexperiment << endl;
 
-     double bestfit_chisq = 9999999;
+     double bestfit_chisq = 9999999; // 5 bin
+     double bestfit_chisq_full = 9999999; // 73 bin
      double bestfit_mixing23 = -1;
      double bestfit_dm23sq = -1;
 
@@ -104,8 +105,11 @@ void calculate_goodness_of_fit
        int fitstatus = fitter->FitStatusCode();
 
        // Get best-fit values (if this seed has found a better minimum)
-       if(fit_inputs->BestFitChisquare() < bestfit_chisq) {
+       if(fit_inputs->BestFitChisquare() < bestfit_chisq_full) {
+	 bestfit_chisq_full = fit_inputs->BestFitChisquare();
+	 fit_inputs->SetChisqDefinition(true);
 	 bestfit_chisq = fit_inputs->BestFitChisquare();
+	 fit_inputs->SetChisqDefinition(false);
 	 bestfit_mixing23 = fparm->BestFitValue(t2kana::conv::kPhypMixing23);
 	 bestfit_dm23sq   = fparm->BestFitValue(t2kana::conv::kPhypDm23sq);
 	 // Print-out best-fit params
