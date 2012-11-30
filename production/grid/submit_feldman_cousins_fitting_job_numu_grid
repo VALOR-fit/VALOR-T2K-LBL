@@ -160,8 +160,10 @@ while($irun < $nruns) {
       print SH "ls -ltr \n";
       print SH "tar xvfz trunk_GRID.tar.gz \n";
       print SH "echo \"*** Copying input files from GRID...\" \n";
-      print SH "lcg-cp -v --vo t2k.org lfn:/grid/t2k.org/contrib/lorena/inputs/data.xml file:./trunk_GRID/inputs/data.xml\n";
+      print SH "lcg-cp -v --vo t2k.org lfn:/grid/t2k.org/contrib/lorena/inputs/data_new.xml file:./trunk_GRID/inputs/data.xml\n";
+      print SH "lcg-cp -v --vo t2k.org lfn:/grid/t2k.org/contrib/lorena/inputs/fakedata.xml file:./trunk_GRID/inputs/fakedata.xml\n";
       print SH "lcg-cp -v --vo t2k.org lfn:/grid/t2k.org/contrib/lorena/inputs/official/2012/banff/postfit_banff_v8_osc_marg_MAQE.root file:./trunk_GRID/inputs/official/2012/banff/postfit_banff_v8_osc_marg_MAQE.root\n";
+      print SH "lcg-cp -v --vo t2k.org lfn:/grid/t2k.org/contrib/lorena/inputs/official/2012/banff/postfit_banff_v8_osc_marg_MAQE_EBfix.root file:./trunk_GRID/inputs/official/2012/banff/postfit_banff_v8_osc_marg_MAQE_EBfix.root\n";
       print SH "lcg-cp -v --vo t2k.org lfn:/grid/t2k.org/contrib/lorena/inputs/official/2012/flux/11b_v3.2_run1-3c/sk_tuned11bv3.2_11anom_run1-run3c_fine.root file:./trunk_GRID/inputs/official/2012/flux/11b_v3.2_run1-3c/sk_tuned11bv3.2_11anom_run1-run3c_fine.root\n";
       print SH "lcg-cp -v --vo t2k.org lfn:/grid/t2k.org/contrib/lorena/inputs/official/2012/fsi/FSIandSIError_ICL_SKDetectorBinning.root file:./trunk_GRID/inputs/official/2012/fsi/FSIandSIError_ICL_SKDetectorBinning.root\n";
       print SH "lcg-cp -v --vo t2k.org lfn:/grid/t2k.org/contrib/lorena/inputs/official/2012/superk/err/sk_ccqe_rc_err_covariance.root file:./trunk_GRID/inputs/official/2012/superk/err/sk_ccqe_rc_err_covariance.root\n";
