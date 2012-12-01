@@ -113,7 +113,7 @@ bool SuperkObservation::Read(string config_file, int data_set_id)
   if (xmldoc==0) {
     cerr << "Obs >> " << "Can not parse input: " << config_file << endl;
     delete xml;
-    return false;
+    exit(1);
   }
   XMLNodePointer_t root_node = xml->DocGetRootElement(xmldoc);
 

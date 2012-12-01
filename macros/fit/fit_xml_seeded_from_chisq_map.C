@@ -224,11 +224,12 @@ void fit_xml_seeded_from_chisq_map
   observation_spectrum.Write("obs_spectrum");
 
   //And not forgetting the value & error of the mixing angles
-  TVectorD v(4);
+  TVectorD v(5);
   v[0] = bestfit_mixing23;
   v[1] = err_mixing23;
   v[2] = bestfit_dm23sq;
   v[3] = err_dm23sq;
+  v[4] = bestfit_chisq;
   cout << endl << "Bestfit of oscillation parameters yield chisq: " << bestfit_chisq << endl
        << "\tMixing23: " << bestfit_mixing23 << " +- " << err_mixing23 << endl
        << "\tDm32sq:   "   << bestfit_dm23sq << " +- "   << err_dm23sq << endl << endl;

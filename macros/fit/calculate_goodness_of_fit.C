@@ -152,6 +152,9 @@ void calculate_goodness_of_fit
        FitInputs * fit_inputs = new FitInputs(skobs,skexp,fparm);
        FitterABC * fitter = new Superk1RmuErecoFitter(fit_inputs,fit_option);
        
+       //Make sure we're getting the correct chisq (i.e. the 5 bin one)
+       fit_inputs->SetChisqDefinition(true);
+
        // Do the fit
        fitter->DoTheFit();
        int fitstatus = fitter->FitStatusCode();
