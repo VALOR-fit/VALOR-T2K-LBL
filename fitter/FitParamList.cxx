@@ -768,12 +768,12 @@ void FitParamList::Append3FlavourOscillation(FitParamList * fparm, int start)
   NuOscMixParam_t omp = Opt::Instance()->gOscMixingParamChoice;
   switch(omp) {
   case(kNuMixSinsq2Theta):
-     fparm->AddParam( ip++, kPhypMixing23,  kInitFitSinsq2Theta23,  kMinFitSinsq2Theta23,  kMaxFitSinsq2Theta23,  1.0E-2,  false, false);
+     fparm->AddParam( ip++, kPhypMixing23,  kInitFitSinsq2Theta23,  kMinFitSinsq2Theta23,  kMaxFitSinsq2Theta23,  5.0E-3,  false, false);
      fparm->AddParam( ip++, kPhypMixing13,  kInitFitSinsq2Theta13,  kMinFitSinsq2Theta13,  kMaxFitSinsq2Theta13,  1.0E-3,  false, false);
      fparm->AddParam( ip++, kPhypMixing12,  kInitFitSinsq2Theta12,  kMinFitSinsq2Theta12,  kMaxFitSinsq2Theta12,  1.0E-2,  false, false);
      break;
   case(kNuMixSinsqTheta):
-     fparm->AddParam( ip++, kPhypMixing23,  kInitFitSinsqTheta23,   kMinFitSinsqTheta23,   kMaxFitSinsqTheta23,   1.0E-2,  false, false);
+     fparm->AddParam( ip++, kPhypMixing23,  kInitFitSinsqTheta23,   kMinFitSinsqTheta23,   kMaxFitSinsqTheta23,   5.0E-3,  false, false);
      fparm->AddParam( ip++, kPhypMixing13,  kInitFitSinsqTheta13,   kMinFitSinsqTheta13,   kMaxFitSinsqTheta13,   1.0E-3,  false, false);
      fparm->AddParam( ip++, kPhypMixing12,  kInitFitSinsqTheta12,   kMinFitSinsqTheta12,   kMaxFitSinsqTheta12,   1.0E-2,  false, false);
      break;
@@ -798,10 +798,10 @@ void FitParamList::Append2FlavourOscillation(FitParamList * fparm, int start)
   NuOscMixParam_t omp = Opt::Instance()->gOscMixingParamChoice;
   switch(omp) {
   case(kNuMixSinsq2Theta):
-    fparm->AddParam( ip++, kPhypMixing23, kInitFitSinsq2Theta23, kMinFitSinsq2Theta23,  kMaxFitSinsq2Theta23,  0.01,  false, false);
+    fparm->AddParam( ip++, kPhypMixing23, kInitFitSinsq2Theta23, kMinFitSinsq2Theta23,  kMaxFitSinsq2Theta23,  0.005,  false, false);
     break;
   case(kNuMixSinsqTheta):
-    fparm->AddParam( ip++, kPhypMixing23, kInitFitSinsqTheta23,  kMinFitSinsqTheta23,   kMaxFitSinsqTheta23,   0.01,  false, false);
+    fparm->AddParam( ip++, kPhypMixing23, kInitFitSinsqTheta23,  kMinFitSinsqTheta23,   kMaxFitSinsqTheta23,   0.005,  false, false);
     break;
   default:
     delete fparm;
