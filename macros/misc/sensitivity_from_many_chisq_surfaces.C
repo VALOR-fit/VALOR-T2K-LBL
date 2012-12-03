@@ -140,10 +140,10 @@ void sensitivity_from_many_chisq_surfaces
   ext3_contour.SetLineStyle(1);
   ext4_contour.SetLineColor(kBlue);
   ext4_contour.SetLineStyle(3);
-  ext1_contour.SetName("extcont1");;
-  ext2_contour.SetName("extcont2");;
-  ext3_contour.SetName("extcont3");;
-  ext4_contour.SetName("extcont4");;
+  ext1_contour.SetName("extcont1");
+  ext2_contour.SetName("extcont2");
+  ext3_contour.SetName("extcont3");
+  ext4_contour.SetName("extcont4");
   ext1_contour.Draw("Csame");
   ext2_contour.Draw("Csame");
   ext3_contour.Draw("Csame");
