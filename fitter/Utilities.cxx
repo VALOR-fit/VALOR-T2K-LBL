@@ -3538,6 +3538,7 @@ const double * t2kana::util::VariableMCEtrueBinEdges(t2kana::conv::SuperkSample_
   int im = util::ArrIdx::Instance()->SuperkModeIdx(s,m);
   if(im == -1)
     return 0;
+
   return t2kana::conv::kMCEtrueBinEdges[is][im];
 }
 //___________________________________________________________________________
@@ -5000,6 +5001,20 @@ void t2kana::util::ArrIdx::Init(void)
      cout << "Util/ArrIdx >> FSI: " 
           << util::AsString(p)
           << " is at slot: " << fFSISystIdx [p] << endl;
+#endif
+  }
+  //PhysParam
+  for(int i = 0; i < knppmax; i++) {
+    fPhysParamIdx[i] = -1;
+  }
+  for(int ip = 0; ip < kNumOfFSIParams; ip++) {
+    PhysParamId_t p = PhysParamId_t(ip);
+    if(p == kPhypUndefined) continue;
+    fPhysParamIdx[p] = ip;
+#ifdef __show_arr_idx_mesg_debug__
+     cout << "Util/ArrIdx >> PhysParam: " 
+          << util::AsString(p)
+          << " is at slot: " << fPhysParamIdx [p] << endl;
 #endif
   }
 }
