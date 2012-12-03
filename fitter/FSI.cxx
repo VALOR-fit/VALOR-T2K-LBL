@@ -59,12 +59,13 @@ void FSI::Init(void)
   fCovMtrx       = 0;
   fCovMtrxChoL   = 0;
 
+  /*
   for(int is = 0; is < kns; is++) {
     for(int im = 0; im < knm; im++) {
       fFracTun[is][im] = 0;
     }
   }
-
+  */
 }
 //________________________________________________________________________________________
 void FSI::CleanUp(void)
@@ -74,11 +75,13 @@ void FSI::CleanUp(void)
   if ( fCovMtrx       ) delete fCovMtrx;
   if ( fCovMtrxChoL   ) delete fCovMtrxChoL;
 
+  /*
   for(int is = 0; is < kns; is++) {
     for(int im = 0; im < knm; im++) {
       if (fFracTun[is]) delete fFracTun[is][im];
     }
   }
+  */
 }
 //________________________________________________________________________________________
 bool FSI::Read(TXMLEngine* xml, XMLNodePointer_t root_node)
@@ -128,7 +131,7 @@ bool FSI::Read(TXMLEngine* xml, XMLNodePointer_t root_node)
   //
   //
   //
-
+  /*
   for(int is = 0; is < kns; is++) {
      conv::SuperkSample_t s = conv::kSKSamples[is];
      if(s == conv::kSKsUndefined) continue;
@@ -146,6 +149,7 @@ bool FSI::Read(TXMLEngine* xml, XMLNodePointer_t root_node)
        fFracTun[is][im]->GetYaxis()->SetTitle("Fraction");
      }//im
   }//is
+  */
 
 #ifdef __show_init_mesg_info__
   cout << "Exp/FSI >> Done reading neutrino cross-section inputs!" << endl;
@@ -365,9 +369,9 @@ void FSI::PrintSystematicVariations(ostream & stream) const
 void FSI::BuildFracMCTemplates(TH2D* input_mctempl_array[kns][knm])
 {
 #ifdef __show_build_frac_template_mesg_info__
-       cout << "Exp/FSI >> Building MC template fractions... " << endl;
+  cout << "Exp/FSI >> Building MC template fractions... " << endl;
 #endif  
-
+  /*
   for(int is = 0; is < kns; is++) {
      conv::SuperkSample_t s = conv::kSKSamples[is];
      if(s == conv::kSKsUndefined) continue;
@@ -436,7 +440,7 @@ void FSI::BuildFracMCTemplates(TH2D* input_mctempl_array[kns][knm])
      }//ip
 
   }//is
-     
+  */
 }
 //________________________________________________________________________________________
 bool FSI::ApplySyst(

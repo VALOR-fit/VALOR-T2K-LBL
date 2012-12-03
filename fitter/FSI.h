@@ -82,7 +82,7 @@ private:
   TMatrixD * fCovMtrx;          ///< FSI covariance matrix
   TMatrixD * fCovMtrxInv;       ///< Inverse FSI covariance matrix
   TMatrixD * fCovMtrxChoL;      ///< Triangular matrix from Cholesky decomp. of FSI covar. matrix
-  TH1D     * fFracTun[kns][knm];///<
+  //TH1D     * fFracTun[kns][knm];///<
 
 ClassDef(FSI, 1);
 };
