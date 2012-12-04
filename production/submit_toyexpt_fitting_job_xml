@@ -17,6 +17,7 @@
 #  --job-dir                : Directory for job scripts and outputs, default: `pwd`
 #  --softw-dir              : Oscillation code top-level directory, default: `pwd`
 #  --config-file            : Analysis configuration file from the config/ directory, default: "analysis_configuration.xml"
+#  --proxy-id               : Id used to delegate the proxy
 #  --no-chisq-surf-withsyst : Don't do the chisq surface with systematics
 #
 # C.Andreopoulos
@@ -39,6 +40,7 @@ foreach (@ARGV) {
   if($_ eq '--job-dir'        ) { $job_dir       = $ARGV[$iarg+1]; }
   if($_ eq '--softw-dir'      ) { $softw_dir     = $ARGV[$iarg+1]; }
   if($_ eq '--config-file'    ) { $config_file   = $ARGV[$iarg+1]; }
+  if($_ eq '--proxy-id'       ) { $proxy_id      = $ARGV[$iarg+1]; }
   if($_ eq '--no-chisq-surf-withsyst' ) {$chisq_syst = 0;          }
   $iarg++;
 }
@@ -56,6 +58,7 @@ $job_dir                = `pwd`                         unless defined $job_dir;
 $softw_dir              = `pwd`                         unless defined $softw_dir;
 $config_file            = "analysis_configuration.xml"  unless defined $config_file;
 $chisq_syst             = 1                             unless defined $chisq_syst;
+$proxy_id               = "valor"                       unless defined $proxy_id;
 $output_option          = "Observation+BestFitSpectra+ChisqSurface+Canvases";
 
 if( !defined $cput) {
