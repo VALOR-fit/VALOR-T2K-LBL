@@ -22,10 +22,10 @@ void generate_toymc_ensemble
   const char * config_file             = "analysis_configuration.xml",   /* analysis configuration file */
   bool         stat_fluctuations       = true,                           /* include statistical fluctuation in toy MC expts? */
   int          tweak_systematics       = 1,                              /* generate toy MC with randomized systematics? Numbers greater than 1 are special options */
-  bool         save_in_xml_format      = true,                           /* */
+  bool         save_in_xml_format      = true,                           /* also save in txt format */
   bool         save_in_root_format     = true,                           /* */
   const char * points_to_add           = 0,                              /* comma separated-list of data-points to add, eg when creating hybrid data/toy-MC experiments */
-  bool         save_fluct_in_xml       = true                            /* save the values of the variations in the xml file? */
+  bool         save_fluct_in_xml       = false                           /* save the values of the variations in the xml file? */
 )
 {
   using namespace std;
@@ -106,6 +106,7 @@ void generate_toymc_ensemble
   }
 
   ofstream fxml;
+  ofstream ftxt;
   if(save_in_xml_format) {
     ostringstream xml_filename;
     xml_filename << tag << "-" << run << ".xml";
@@ -116,6 +117,9 @@ void generate_toymc_ensemble
     fxml << "    <observation>       " << endl;
     fxml << "       <one_mu_ring>    " << endl;
     fxml << "         <ereco_values> " << endl;
+    ostringstream txt_filename;
+    txt_filename << tag << "-" << run << ".txt";
+    ftxt.open(txt_filename.str().c_str());
   }
 
   // Create & config superk spectrum predictor
@@ -197,16 +201,20 @@ void generate_toymc_ensemble
             double E = Emin + rand.Uniform() * (Emax-Emin);
             if(ievtot > 0) {
               fxml << ","; 
+	      ftxt << ","; 
             }
             fxml << E; 
+            ftxt << E; 
             ievtot++;
          }//iev
        }//ibin
        // add extra data-points, if any
        if(points_to_add) {
          fxml << "," << points_to_add;
+         ftxt << "," << points_to_add;
        }
        fxml << endl;
+       ftxt << endl;
        fxml << "           " << Form("</data_set_%d>",iexperiment) << endl;
      }//xml
 
