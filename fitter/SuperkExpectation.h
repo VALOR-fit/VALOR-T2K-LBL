@@ -74,6 +74,7 @@ public:
    // Access calculated SK reconstructed energy spectrum for each sample/mode
    TH1D* CurrPredictedErecoSpectrum (t2kana::conv::SuperkSample_t s) const;
    TH1D* CurrPredictedErecoSpectrum (t2kana::conv::SuperkSample_t s, t2kana::conv::SuperkMode_t m) const;
+   double* CurrPredictedErecoSpectrumArray (t2kana::conv::SuperkSample_t s);
 
    // Read inputs from input XML file
    bool Read(string config_file);
@@ -109,6 +110,7 @@ private:
 
    TH1D *  fPredictErecoSpectrum[kns][knm];  ///< Ereco spectrum = f(sample,mode)
    TH1D *  fPredictErecoSpectrumTot[kns];    ///< Ereco spectrum = f(sample), sum over modes
+   double  fPredictErecoSpectrumArrayTot[kns][conv::kNErecoBins1Rmu];
 
 ClassDef(SuperkExpectation, 5)
 };

@@ -14,7 +14,7 @@
 
 //structure to store results
 struct nsk_t {
-  double nsk = 0, nskmc = 0, nskmucc = 0, nskmubarcc = 0, nskecc = 0, nskebarcc = 0, nsksigecc = 0, nsknc = 0;
+  double nsk = 0, nskmc = 0, nskmucc = 0, nskmubarcc = 0, nskecc = 0, nskebarcc = 0, nsksigecc = 0, nsknc = 0, nskarr = 0;
 };
 
 using namespace std;
@@ -78,13 +78,13 @@ void test_nsk
 
   nsk_t osc_banff, noosc_banff, osc_nobanff, noosc_nobanff;
 
-  osc_banff.nsk = 0; osc_banff.nskmc = 0; osc_banff.nskmucc = 0; osc_banff.nskmubarcc = 0;
+  osc_banff.nsk = 0; osc_banff.nskarr = 0; osc_banff.nskmc = 0; osc_banff.nskmucc = 0; osc_banff.nskmubarcc = 0;
   osc_banff.nskecc = 0; osc_banff.nskebarcc = 0; osc_banff.nsksigecc = 0; osc_banff.nsknc = 0;
-  noosc_banff.nsk = 0; noosc_banff.nskmc = 0; noosc_banff.nskmucc = 0; noosc_banff.nskmubarcc = 0;
+  noosc_banff.nsk = 0; noosc_banff.nskarr = 0; noosc_banff.nskmc = 0; noosc_banff.nskmucc = 0; noosc_banff.nskmubarcc = 0;
   noosc_banff.nskecc = 0; noosc_banff.nskebarcc = 0; noosc_banff.nsksigecc = 0; noosc_banff.nsknc = 0;
-  osc_nobanff.nsk = 0; osc_nobanff.nskmc = 0; osc_nobanff.nskmucc = 0; osc_nobanff.nskmubarcc = 0;
+  osc_nobanff.nsk = 0; osc_nobanff.nskarr = 0; osc_nobanff.nskmc = 0; osc_nobanff.nskmucc = 0; osc_nobanff.nskmubarcc = 0;
   osc_nobanff.nskecc = 0; osc_nobanff.nskebarcc = 0; osc_nobanff.nsksigecc = 0; osc_nobanff.nsknc = 0;
-  noosc_nobanff.nsk = 0; noosc_nobanff.nskmc = 0; noosc_nobanff.nskmucc = 0; noosc_nobanff.nskmubarcc = 0;
+  noosc_nobanff.nsk = 0; noosc_nobanff.nskarr = 0; noosc_nobanff.nskmc = 0; noosc_nobanff.nskmucc = 0; noosc_nobanff.nskmubarcc = 0;
   noosc_nobanff.nskecc = 0; noosc_nobanff.nskebarcc = 0; noosc_nobanff.nsksigecc = 0; noosc_nobanff.nsknc = 0;
 
   // generate predictions for no oscillation, with BANFF
@@ -134,13 +134,53 @@ void test_nsk
   cout << "\n\n\nWithout BANFF tuning or osc" << endl;
   nsk_print(noosc_nobanff,0);
 
-  //summary table, w & w/o banff & osc
+  //setup the output table variables
   stringstream streamer;
   string endcolumn  = " & ";
   string endrow     = " \\\\ ";
   int ncol1   = 30;
   int ncolnev = 15;
-  int nprecisionnev = 3;
+  int nprecisionnev = 8;
+
+  //for debugging moving to arrays
+  streamer << endl << endl;
+  streamer << setw(ncol1)  << setfill(' ') << "Total (skmc)"
+	   << endcolumn
+	   << setw(ncolnev)  << setfill(' ') << setprecision(nprecisionnev) << osc_nobanff.nskmc 
+	   << endcolumn
+	   << setw(ncolnev)  << setfill(' ') << setprecision(nprecisionnev) << osc_banff.nskmc
+	   << endcolumn
+	   << setw(ncolnev)  << setfill(' ') << setprecision(nprecisionnev) << noosc_nobanff.nskmc 
+	   << endcolumn
+	   << setw(ncolnev)  << setfill(' ') << setprecision(nprecisionnev) << noosc_banff.nskmc
+	   << endrow
+	   << endl;
+  streamer << setw(ncol1)  << setfill(' ') << "Total (skexp)"
+	   << endcolumn
+	   << setw(ncolnev)  << setfill(' ') << setprecision(nprecisionnev) << osc_nobanff.nsk 
+	   << endcolumn
+	   << setw(ncolnev)  << setfill(' ') << setprecision(nprecisionnev) << osc_banff.nsk
+	   << endcolumn
+	   << setw(ncolnev)  << setfill(' ') << setprecision(nprecisionnev) << noosc_nobanff.nsk
+	   << endcolumn
+	   << setw(ncolnev)  << setfill(' ') << setprecision(nprecisionnev) << noosc_banff.nsk
+	   << endrow
+	   << endl;
+  streamer << setw(ncol1)  << setfill(' ') << "Total (skexp arr)"
+	   << endcolumn
+	   << setw(ncolnev)  << setfill(' ') << setprecision(nprecisionnev) << osc_nobanff.nskarr 
+	   << endcolumn
+	   << setw(ncolnev)  << setfill(' ') << setprecision(nprecisionnev) << osc_banff.nskarr
+	   << endcolumn
+	   << setw(ncolnev)  << setfill(' ') << setprecision(nprecisionnev) << noosc_nobanff.nskarr
+	   << endcolumn
+	   << setw(ncolnev)  << setfill(' ') << setprecision(nprecisionnev) << noosc_banff.nskarr
+	   << endrow
+	   << endl;
+  streamer << endl << endl;
+
+  //summary table, w & w/o banff & osc
+  nprecisionnev = 5;
   streamer << "\\begin{table}"   << endl;
   streamer << "\\footnotesize" << endl;
   //streamer << "\\centering"     << endl;
@@ -292,28 +332,33 @@ nsk_t nsk_integration(nsk_t n, SuperkExpectation *skexp, conv::SuperkSample_t s,
   int is = util::ArrIdx::Instance()->SuperkSampleIdx(s);
   // integrate Ereco distribution
   double n.nsk = skexp->CurrPredictedErecoSpectrum(s)->Integral();
+  double n.nskarr = 0;
+  for(int ir = 0; ir < conv::kNErecoBins1Rmu; ir++)
+    n.nskarr += skexp->CurrPredictedErecoSpectrumArray(s)[ir];
   double n.nskmc = 0, n.nskmucc = 0, n.nskmubarcc = 0, n.nskecc = 0, n.nskebarcc = 0, n.nsksigecc = 0, n.nsknc = 0;
   for(int im = 0; im < conv::knm; im++) {
     conv::SuperkMode_t m = conv::kSKReactionModes[is][im];
     if(m == conv::kSKmUndefined)
       continue;
-    n.nskmc += skexp->GetSuperkMC()->Template(s, m, t)->Integral();
+    if(skexp->GetSuperkMC()->Template(s, m, t)) {
+      n.nskmc += skexp->GetSuperkMC()->Template(s, m, t)->Integral();
 
-    //split into categories (all NC, CC numu, CC numubar, CC nue, CC nuebar, CC signue)
-    if(util::IsNC(m))
-      n.nsknc += skexp->GetSuperkMC()->Template(s, m, t)->Integral();
-    else {
-      if(util::IsNuMu(m))
-	n.nskmucc += skexp->GetSuperkMC()->Template(s, m, t)->Integral();
-      else if(util::IsNuMuBar(m))
-	n.nskmubarcc += skexp->GetSuperkMC()->Template(s, m, t)->Integral();
-      else if(util::IsNuE(m))
-	n.nskecc += skexp->GetSuperkMC()->Template(s, m, t)->Integral();
-      else if(util::IsNuEBar(m))
-	n.nskebarcc += skexp->GetSuperkMC()->Template(s, m, t)->Integral();
-      else if(util::IsSignalNuE(m))
-	n.nsksigecc += skexp->GetSuperkMC()->Template(s, m, t)->Integral();
-    }//CC?
-  }
+      //split into categories (all NC, CC numu, CC numubar, CC nue, CC nuebar, CC signue)
+      if(util::IsNC(m))
+	n.nsknc += skexp->GetSuperkMC()->Template(s, m, t)->Integral();
+      else {
+	if(util::IsNuMu(m))
+	  n.nskmucc += skexp->GetSuperkMC()->Template(s, m, t)->Integral();
+	else if(util::IsNuMuBar(m))
+	  n.nskmubarcc += skexp->GetSuperkMC()->Template(s, m, t)->Integral();
+	else if(util::IsNuE(m))
+	  n.nskecc += skexp->GetSuperkMC()->Template(s, m, t)->Integral();
+	else if(util::IsNuEBar(m))
+	  n.nskebarcc += skexp->GetSuperkMC()->Template(s, m, t)->Integral();
+	else if(util::IsSignalNuE(m))
+	  n.nsksigecc += skexp->GetSuperkMC()->Template(s, m, t)->Integral();
+      }//CC?
+    }
+  }//im
   return n;
 }

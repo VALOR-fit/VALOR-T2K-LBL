@@ -436,8 +436,8 @@ double NuXSec::FinTuningWght_1p(
 #if SPLINE_TYPE == -1
     return wght;
 #endif
-     bool ev = this->IsThereAnEvent(s, m, Ereco, Etrue);
-     if(ev) {
+     //bool ev = this->IsThereAnEvent(s, m, Ereco, Etrue); //already done in SKMC
+     //if(ev) {
        TSpline3 * wght_spl = this->FindWghtSpline(p,s,m,Ereco,Etrue);
        assert(wght_spl);
        double tb = fBANFF->BestFitValue(p);
@@ -452,7 +452,7 @@ double NuXSec::FinTuningWght_1p(
 	 relerr = fSplineMARESRelErr;
        double numerator = (tb-1) / relerr;
        wght = wght_spl->Eval(numerator) / 1.;
-     }
+       //}
   }
 
   //
@@ -587,8 +587,8 @@ double NuXSec::SystWght_1p(
 #if SPLINE_TYPE == -1
     return wght;
 #endif
-     bool ev = this->IsThereAnEvent(s, m, Ereco, Etrue);
-     if(ev) {
+     //bool ev = this->IsThereAnEvent(s, m, Ereco, Etrue);//already done in SKMC
+     //if(ev) {
        TSpline3 * wght_spl = this->FindWghtSpline(p,s,m,Ereco,Etrue);
        assert(wght_spl);
        double tb = fBANFF->BestFitValue(p);
@@ -605,7 +605,7 @@ double NuXSec::SystWght_1p(
        double denominator = (tb-1) / relerr;
        double numerator = (tc-1) / relerr;
        wght = wght_spl->Eval(numerator) / wght_spl->Eval(denominator);
-     }
+       //}
   }
 
   //
@@ -648,13 +648,13 @@ double NuXSec::SystWght_1p(
 #if SPLINE_TYPE == -1
     return wght;
 #endif
-    bool ev = this->IsThereAnEvent(s, m, Ereco, Etrue);
-    if(ev) {
+    //bool ev = this->IsThereAnEvent(s, m, Ereco, Etrue);//already done in SKMC
+    //if(ev) {
       TSpline3 * wght_spl = this->FindWghtSpline(p,s,m,Ereco,Etrue);
       assert(wght_spl);
       double tc = this->CurrentValue(p);
       wght = wght_spl->Eval(tc) / 1.; //wght_spl->Eval(0);
-    }
+      //}
   }
 
   //

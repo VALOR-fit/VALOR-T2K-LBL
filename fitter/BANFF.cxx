@@ -559,12 +559,12 @@ void BANFF::RestoreNominalMC(void)
   fIsFluxWghtUpdated = false;
 
   TVectorD & current_values = *fCurrentValues;
-  TVectorD & current_uncorrelated_values = *fUncorrelatedCurrentValues;
+  //TVectorD & current_uncorrelated_values = *fUncorrelatedCurrentValues;
 
   const int np = conv::kNumOfParamsInBANFFfit;
   for(int i=0; i<np; i++) {
     current_values[i] = 1.;
-    current_uncorrelated_values[i] = 0.;
+    //current_uncorrelated_values[i] = 0.;
   }
 }
 //________________________________________________________________________________________

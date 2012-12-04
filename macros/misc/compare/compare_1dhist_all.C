@@ -17,7 +17,7 @@ void compare_1dhist_all(
   double xmin = -9999999,           /* minimum of x axis to draw */
   double xmax = +9999999,           /* maximum of x axis to draw */
   bool save_canvas = false,         /* save canvas to a .pdf? */
-  bool dividingTwoRatios = true    /* special option to use to compare 2 ratio histograms. Needs zerOverZeroIsZero = false */
+  bool dividingTwoRatios = false    /* special option to use to compare 2 ratio histograms. Needs zerOverZeroIsZero = false */
 )
 {
   char *s = new char[50];
@@ -89,7 +89,7 @@ void compare_1dhist_all(
 	 && (ratio->GetBinContent(ratio->GetMinimumBin()) > 1 - ratiotest)) {
 	cout << "skipping due to maximum/minimum ratio test" << endl;
 	cout << "Max " << ratio->GetBinContent(ratio->GetMaximumBin()) << "\tMin " << ratio->GetBinContent(ratio->GetMinimumBin()) << endl;
-	//continue;
+	continue;
       }
       //draw
       TCanvas * c = new TCanvas("c","",10,10,600,600);

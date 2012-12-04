@@ -84,14 +84,18 @@ bool SuperkExpectation::Generate(const PhysHypothesis & ph)
     if(s == kSKsUndefined) continue;
     const int nbins = util::NumErecoBins(s);
     for(int ibin = 1; ibin <= nbins; ibin++) {
-       double ns = fSuperkMC->CurrErecoSpectrum(s)->GetBinContent(ibin);
-       this->CurrPredictedErecoSpectrum(s)->SetBinContent(ibin, ns);
-       for(int im = 0; im < knm; im++) {
-           SuperkMode_t m = kSKReactionModes[is][im];
-           if(m == kSKmUndefined) continue;
-           double nsm = fSuperkMC->CurrErecoSpectrum(s,m)->GetBinContent(ibin);
-           this->CurrPredictedErecoSpectrum(s,m)->SetBinContent(ibin, nsm);       
-       }//m	
+      //double ns = fSuperkMC->CurrErecoSpectrum(s)->GetBinContent(ibin);
+      double ns = fSuperkMC->CurrErecoSpectrumArray(s)[ibin-1];
+      this->CurrPredictedErecoSpectrumArray(s)[ibin-1] = ns;
+#ifndef PRODUCTIONMODE
+      this->CurrPredictedErecoSpectrum(s)->SetBinContent(ibin, ns);
+      for(int im = 0; im < knm; im++) {
+	SuperkMode_t m = kSKReactionModes[is][im];
+	if(m == kSKmUndefined) continue;
+	double nsm = fSuperkMC->CurrErecoSpectrum(s,m)->GetBinContent(ibin);
+	this->CurrPredictedErecoSpectrum(s,m)->SetBinContent(ibin, nsm);
+      }//m	
+#endif
     }//ibin
   }//s
   return applied_negevents_condition;
@@ -141,6 +145,15 @@ TH1D* SuperkExpectation::CurrPredictedErecoSpectrum(
   return fPredictErecoSpectrum[sidx][midx]; 
 }
 //________________________________________________________________________________________
+double* SuperkExpectation::CurrPredictedErecoSpectrumArray(t2kana::conv::SuperkSample_t s) 
+{
+  int sidx = util::ArrIdx::Instance()->SuperkSampleIdx(s);
+  if(sidx == -1) {
+    return 0;
+  }
+  return fPredictErecoSpectrumArrayTot[sidx];  
+}
+//________________________________________________________________________________________
 void SuperkExpectation::ResetSystematicVariations(void)
 {
 #ifdef __show_syst_reset_mesg__
@@ -156,8 +169,8 @@ void SuperkExpectation::ResetSystematicVariations(void)
   this->GetSuperkDetector()->TweakEfficiency1RmuNuECC            (0.);
 
   // BANFF
-  this->GetBANFF()->Tweak(true,0,3); //update eigendecomposition to best fit (will also update correlated to best fit)
-  this->GetBANFF()->Tweak(true,0,2); //update uncorrelated to zero (will also update correlated to best fit, via cholesky)
+  //this->GetBANFF()->Tweak(true,0,3); //update eigendecomposition to best fit (will also update correlated to best fit)
+  //this->GetBANFF()->Tweak(true,0,2); //update uncorrelated to zero (will also update correlated to best fit, via cholesky)
   this->GetBANFF()->Tweak(true,0,1); //update correlated to best fit exactly
 
   // FSI
@@ -328,6 +341,7 @@ void SuperkExpectation::TweakSystematic(string systematic, double twkdial, bool 
   if(systematic == "banff") {
     this->GetBANFF()->Tweak(false,0,1); //< Cholesky method
   }
+  /*
   // tweak all uncorrelated BANFF parameters
   else
   if(systematic == "unbanff") {
@@ -376,6 +390,7 @@ void SuperkExpectation::TweakSystematic(string systematic, double twkdial, bool 
 #endif
     this->GetBANFF()->Tweak(true,&twkv,3);
   }
+  */
   // tweak an individual BANFF parameter (ignores correlations, debug)
   else
   if(systematic.find("banff_") != string::npos) {
@@ -660,6 +675,9 @@ void SuperkExpectation::Init(void)
     for(int im=0; im<knm; im++) {
       fPredictErecoSpectrum[is][im] = 0;
     }//im
+    for(int ir=0; ir<kNErecoBins1Rmu; ir++) {
+      fPredictErecoSpectrumArrayTot[is][ir] = 0;
+    }//ir
   }//is
 }
 //________________________________________________________________________________________

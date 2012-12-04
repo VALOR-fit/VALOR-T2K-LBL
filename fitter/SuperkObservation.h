@@ -48,6 +48,7 @@ public:
   double NumOfEvents (double Er, t2kana::conv::SuperkSample_t s = t2kana::conv::kSKsUndefined) const;  
 
   TH1D*  ErecoSpectrum (t2kana::conv::SuperkSample_t s) const; 
+  double*  ErecoSpectrumArray (t2kana::conv::SuperkSample_t s); 
 
   // Draw.
   // Set option to "1RmuEreco"  to show the reconstructed Ereco distributions
@@ -60,6 +61,7 @@ private:
   void CleanUp (void);
 
   TH1D *  fErDistr[kns];  ///< Reconstructed energy spectrum for each sample
+  double  fErDistrArray[kns][conv::kNErecoBins1Rmu];
 
 ClassDef(SuperkObservation, 3)
 };

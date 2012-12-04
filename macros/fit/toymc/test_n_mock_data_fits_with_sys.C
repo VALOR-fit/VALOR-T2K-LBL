@@ -982,7 +982,9 @@ void test_n_mock_data_fits_with_syst_minuit2
     }//applied_negevents_condition
 
     // Get nominal number of events
-    nsk_nom = skexp->CurrPredictedErecoSpectrum(conv::kSKsFCFV1RingMuLike)->Integral();
+    nsk_nom = 0;
+    for(int ir = 0; ir < kNErecoBins1Rmu; ir++)
+      nsk_nom += skexp->CurrPredictedErecoSpectrumArray(conv::kSKsFCFV1RingMuLike)[ir];
 
     //Seed the FitParamList with true values
     if(fit_param_list == "nuosc3f_numudisapp_fix4+nuisanceselection") {
@@ -1029,7 +1031,9 @@ void test_n_mock_data_fits_with_syst_minuit2
     bestfit_chisq = fit_inputs->BestFitChisquare();
 
     // Get bestfit number of events
-    nsk_bf = skexp->CurrPredictedErecoSpectrum(conv::kSKsFCFV1RingMuLike)->Integral();
+    nsk_bf = 0;
+    for(int ir = 0; ir < kNErecoBins1Rmu; ir++)
+      nsk_bf += skexp->CurrPredictedErecoSpectrumArray(conv::kSKsFCFV1RingMuLike)[ir];
 
     // Print-out best-fit params
     fparm->ShowOnlyBestFitValuesInNextPrint();

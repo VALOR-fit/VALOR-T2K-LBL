@@ -61,9 +61,9 @@ double SuperkObservation::NumOfEvents(SuperkSample_t s) const
   }
 
   int is = util::ArrIdx::Instance()->SuperkSampleIdx(s);
-  TH1D * h = fErDistr[is];
-  assert(h);
-  nev = h->Integral();
+  for(int ir = 0; ir < kNErecoBins1Rmu; ir++)
+    nev += fErDistrArray[is][ir];
+
 #ifdef __show_num_of_events_mesg_debug__
   cout << "Obs >> NEvents(" 
        << util::AsString(s) << ") = " << nev << endl;
@@ -103,6 +103,16 @@ TH1D* SuperkObservation::ErecoSpectrum (t2kana::conv::SuperkSample_t s) const
   return fErDistr[is];
 }
 //________________________________________________________________________________________
+double* SuperkObservation::ErecoSpectrumArray (t2kana::conv::SuperkSample_t s)
+{
+  if(s == kSKsUndefined) {
+    return 0;
+  }
+
+  int is = util::ArrIdx::Instance()->SuperkSampleIdx(s);
+  return fErDistrArray[is];
+}
+//________________________________________________________________________________________
 bool SuperkObservation::Read(string config_file, int data_set_id)
 {
   cout << "Obs >> " << "Reading config file: " << config_file << endl;
@@ -139,11 +149,14 @@ bool SuperkObservation::Read(string config_file, int data_set_id)
      }
      cout << "Obs >> Read: " << fErDistr[idx]->Integral() 
        << " " << util::AsString(kSKsFCFV1RingMuLike) << " events." << endl;
+     for(int ibin = 1; ibin <= kNErecoBins1Rmu; ibin++) {
+       double nobs = fErDistr[idx]->GetBinContent(ibin);
+       fErDistrArray[idx][ibin-1] = nobs;
+     }
   }
   else {
      cerr << "Obs >> Node " << datanode1Rmu.str() << " does not exist!" << endl;
   }
-
 
   ostringstream datanode1Re;
   datanode1Re << "superk/observation/one_e_ring/event_count" << "/data_set_" << data_set_id;
@@ -156,6 +169,10 @@ bool SuperkObservation::Read(string config_file, int data_set_id)
      fErDistr[idx]->SetBinContent(1,nev); ///// just put the number in the 1st bin
      cout << "Obs >> Read: " << fErDistr[idx]->Integral() 
        << " " << util::AsString(kSKsFCFV1RingELike) << " events." << endl;
+     for(int ibin = 1; ibin <= kNErecoBins1Rmu; ibin++) {
+       double nobs = fErDistr[idx]->GetBinContent(ibin);
+       fErDistrArray[idx][ibin-1] = nobs;
+     }
   }
   else {
      cerr << "Obs >> Node " << datanode1Re.str() << " does not exist!" << endl;
@@ -185,11 +202,14 @@ bool SuperkObservation::CreateMockData(
   if(idx != -1) {
     fErDistr[idx] = new TH1D("", "", kNErecoBins1Rmu,kErecoBinEdges1Rmu);
     fErDistr[idx] -> SetDirectory(0);
-    TH1D* h1Rmu = skexp.CurrPredictedErecoSpectrum(kSKsFCFV1RingMuLike);
-    for(int ibin = 1; ibin <= h1Rmu->GetNbinsX(); ibin++) {
-       double nexp  = h1Rmu->GetBinContent(ibin);
+    //TH1D* h1Rmu = skexp.CurrPredictedErecoSpectrum(kSKsFCFV1RingMuLike);
+    for(int ibin = 1; ibin <= kNErecoBins1Rmu; ibin++) {
+       double nexp  = skexp.CurrPredictedErecoSpectrumArray(kSKsFCFV1RingMuLike)[ibin-1];
        double nobs  = (fluctuate) ? rand.Poisson(nexp) : nexp;
+#ifndef PRODUCTIONMODE
        fErDistr[idx]->SetBinContent(ibin,nobs);
+#endif
+       fErDistrArray[idx][ibin-1] = nobs;
     }
   }
   idx = util::ArrIdx::Instance()->SuperkSampleIdx(kSKsFCFV1RingELike);
@@ -197,10 +217,13 @@ bool SuperkObservation::CreateMockData(
     fErDistr[idx]  = new TH1D("", "", kNErecoBins1Re, kErecoBinEdges1Re);
     fErDistr[idx]  -> SetDirectory(0);
     TH1D* h1Re = skexp.CurrPredictedErecoSpectrum(kSKsFCFV1RingELike);
-    for(int ibin = 1; ibin <= h1Re->GetNbinsX(); ibin++) {
+    for(int ibin = 1; ibin <= kNErecoBins1Re; ibin++) {
        double nexp  = h1Re->GetBinContent(ibin);
        double nobs  = (fluctuate) ? rand.Poisson(nexp) : nexp;
+ #ifndef PRODUCTIONMODE
        fErDistr[idx]->SetBinContent(ibin,nobs);
+#endif
+       fErDistrArray[idx][ibin-1] = nobs;
     }
   }
   return applied_negevents_condition;
@@ -222,11 +245,14 @@ bool SuperkObservation::CreateMockData(
   if(idx != -1) {
     fErDistr[idx] = new TH1D("", "", kNErecoBins1Rmu,kErecoBinEdges1Rmu);
     fErDistr[idx] -> SetDirectory(0);
-    TH1D* h1Rmu = skexp.CurrPredictedErecoSpectrum(kSKsFCFV1RingMuLike);
-    for(int ibin = 1; ibin <= h1Rmu->GetNbinsX(); ibin++) {
-       double nexp  = h1Rmu->GetBinContent(ibin);
+    //TH1D* h1Rmu = skexp.CurrPredictedErecoSpectrum(kSKsFCFV1RingMuLike);
+    for(int ibin = 1; ibin <= kNErecoBins1Rmu; ibin++) {
+       double nexp  = skexp.CurrPredictedErecoSpectrumArray(kSKsFCFV1RingMuLike)[ibin-1];
        double nobs  = (fluctuate) ? rand.Poisson(nexp) : nexp;
+#ifndef PRODUCTIONMODE
        fErDistr[idx]->SetBinContent(ibin,nobs);
+#endif
+       fErDistrArray[idx][ibin-1] = nobs;
     }
   }
   idx = util::ArrIdx::Instance()->SuperkSampleIdx(kSKsFCFV1RingELike);
@@ -234,10 +260,13 @@ bool SuperkObservation::CreateMockData(
     fErDistr[idx]  = new TH1D("", "", kNErecoBins1Re, kErecoBinEdges1Re);
     fErDistr[idx]  -> SetDirectory(0);
     TH1D* h1Re = skexp.CurrPredictedErecoSpectrum(kSKsFCFV1RingELike);
-    for(int ibin = 1; ibin <= h1Re->GetNbinsX(); ibin++) {
+    for(int ibin = 1; ibin <= kNErecoBins1Re; ibin++) {
        double nexp  = h1Re->GetBinContent(ibin);
        double nobs  = (fluctuate) ? rand.Poisson(nexp) : nexp;
+#ifndef PRODUCTIONMODE
        fErDistr[idx]->SetBinContent(ibin,nobs);
+#endif
+       fErDistrArray[idx][ibin-1] = nobs;
     }
   }
   return applied_negevents_condition;
@@ -273,6 +302,9 @@ void SuperkObservation::Init(void)
 //
   for(int is=0; is<kns; is++) {
     fErDistr[is] = 0;
+    for(int ir=0; ir<kNErecoBins1Rmu; ir++) {
+      fErDistrArray[is][ir-1] = 0;
+    }
   }
 }
 //________________________________________________________________________________________

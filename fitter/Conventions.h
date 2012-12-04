@@ -22,6 +22,10 @@ Changes since 2011_v0.9.0:
 #include "Rtypes.h"
 #endif
 
+#ifndef PRODUCTIONMODE
+#define PRODUCTIONMODE
+#endif
+
 #ifndef BANFF_BINS
 //#define BANFF_BINS 1 // Coarse binning (numu using same binning as 2012 nue analyses, 11 numu bins)
 //#define BANFF_BINS -1 // Fine binning (numu using same binning as 2010 numu analyses, 20 numu bins)
@@ -266,7 +270,7 @@ OscChannelId_t;
 
 // Enumeration of event samples that may be included in the analysis
 // Actual choice for current analysis is given in `Configuration' section.
-static const int kNSuperkSamples  = 2;  // number of samples 
+static const int kNSuperkSamples  = 1;  // number of samples 
 static const int kns = kNSuperkSamples; // as above - shorter name
 typedef enum ESuperkSample 
 {
@@ -751,8 +755,8 @@ PhysParamId_t;
 //
 
 static const SuperkSample_t kSKSamples[kns] = {
-    kSKsFCFV1RingMuLike,
-    kSKsUndefined            //<-- add kSKsFCFV1RingELike for the combined fit
+    kSKsFCFV1RingMuLike/*,
+			 kSKsFCFV1RingELike*/
 };
 
 //
@@ -808,7 +812,9 @@ static const SuperkMode_t kSKReactionModes[kns][knm] = {
     kSKmUndefined,
     kSKmUndefined,
     kSKmUndefined
-  },
+  }
+
+  /*,
 
   // > 1 electron-like ring (nue appearance)
   {
@@ -856,6 +862,7 @@ static const SuperkMode_t kSKReactionModes[kns][knm] = {
     kSKmUndefined,
     kSKmUndefined
   }
+  */
 };
 
 //
@@ -1554,7 +1561,8 @@ static const bool kXsApplyXSecSystToSKMode[kns][knm][kNumOfXSecSyst] = {
     {  0, 0, 0, 0, 0,  0, 0, 0, 0, 0, 0,  0, 0, 0,  0, 0, 0, 0, 0 }, // kSKmUndefined
     {  0, 0, 0, 0, 0,  0, 0, 0, 0, 0, 0,  0, 0, 0,  0, 0, 0, 0, 0 }, // kSKmUndefined
     {  0, 0, 0, 0, 0,  0, 0, 0, 0, 0, 0,  0, 0, 0,  0, 0, 0, 0, 0 }  // kSKmUndefined
-  },
+  }
+  /*,
   // > 1 electron-like ring 
   {
     {  0, 0, 0, 0, 0,  0, 0, 0, 0, 0, 0,  0, 0, 0,  0, 0, 0, 0, 0 }, // kSKmNuMuCCQE        
@@ -1603,6 +1611,7 @@ static const bool kXsApplyXSecSystToSKMode[kns][knm][kNumOfXSecSyst] = {
     {  0, 0, 0, 0, 0,  0, 0, 0, 0, 0, 0,  0, 0, 0,  0, 0, 0, 0, 0 }, // kSKmUndefined
     {  0, 0, 0, 0, 0,  0, 0, 0, 0, 0, 0,  0, 0, 0,  0, 0, 0, 0, 0 }  // kSKmUndefined
   }
+  */
 };
 #elif BANFF_BINS == 2
 static const bool kXsApplyXSecSystToSKMode[kns][knm][kNumOfXSecSyst] = {
@@ -1657,7 +1666,8 @@ static const bool kXsApplyXSecSystToSKMode[kns][knm][kNumOfXSecSyst] = {
     {  0, 0, 0, 0, 0,  0, 0, 0,  0, 0, 0, 0, 0, 0,  0, 0, 0, 0, 0 }, // kSKmUndefined
     {  0, 0, 0, 0, 0,  0, 0, 0,  0, 0, 0, 0, 0, 0,  0, 0, 0, 0, 0 }, // kSKmUndefined
     {  0, 0, 0, 0, 0,  0, 0, 0,  0, 0, 0, 0, 0, 0,  0, 0, 0, 0, 0 }  // kSKmUndefined
-  },
+  }
+  /*,
   // > 1 electron-like ring 
   {
     {  0, 0, 0, 0, 0,  0, 0, 0,  0, 0, 0, 0, 0, 0,  0, 0, 0, 0, 0 }, // kSKmNuMuCCQE        
@@ -1706,6 +1716,7 @@ static const bool kXsApplyXSecSystToSKMode[kns][knm][kNumOfXSecSyst] = {
     {  0, 0, 0, 0, 0,  0, 0, 0,  0, 0, 0, 0, 0, 0,  0, 0, 0, 0, 0 }, // kSKmUndefined
     {  0, 0, 0, 0, 0,  0, 0, 0,  0, 0, 0, 0, 0, 0,  0, 0, 0, 0, 0 }  // kSKmUndefined
   }
+  */
 };
 #elif BANFF_BINS >= 3
 static const bool kXsApplyXSecSystToSKMode[kns][knm][kNumOfXSecSyst] = {
@@ -1760,7 +1771,8 @@ static const bool kXsApplyXSecSystToSKMode[kns][knm][kNumOfXSecSyst] = {
     {  0, 0, 0, 0, 0,  0, 0,  0, 0, 0, 0, 0, 0,  0, 0, 0, 0, 0 }, // kSKmUndefined
     {  0, 0, 0, 0, 0,  0, 0,  0, 0, 0, 0, 0, 0,  0, 0, 0, 0, 0 }, // kSKmUndefined
     {  0, 0, 0, 0, 0,  0, 0,  0, 0, 0, 0, 0, 0,  0, 0, 0, 0, 0 }  // kSKmUndefined
-  },
+  }
+  /*,
   // > 1 electron-like ring 
   {
     {  0, 0, 0, 0, 0,  0, 0,  0, 0, 0, 0, 0, 0,  0, 0, 0, 0, 0 }, // kSKmNuMuCCQE        
@@ -1809,6 +1821,7 @@ static const bool kXsApplyXSecSystToSKMode[kns][knm][kNumOfXSecSyst] = {
     {  0, 0, 0, 0, 0,  0, 0,  0, 0, 0, 0, 0, 0,  0, 0, 0, 0, 0 }, // kSKmUndefined
     {  0, 0, 0, 0, 0,  0, 0,  0, 0, 0, 0, 0, 0,  0, 0, 0, 0, 0 }  // kSKmUndefined
   }
+  */
 };
 #endif
 //
@@ -1960,7 +1973,8 @@ static const double kXsEtrueBinEdges[kns][knm][kXsNEtrueBins+1] = {
     { -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000 }, // kSKmUndefined
     { -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000 }, // kSKmUndefined
     { -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000 }  // kSKmUndefined
-  },
+  }
+  /*,
   // > 1 electron-like ring 
   {
     {  0.000,  0.400,  0.500,  0.600,  0.700,  1.000,  1.500,  2.500,  3.500,  5.000,  7.000, 30.000 }, // kSKmNuMuCCQE 
@@ -2009,6 +2023,7 @@ static const double kXsEtrueBinEdges[kns][knm][kXsNEtrueBins+1] = {
     { -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000 }, // kSKmUndefined
     { -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000 }  // kSKmUndefined
   }
+  */
 };
 #elif BANFF_BINS == -1
 static const int kXsNEtrueBins = 20;
@@ -2105,7 +2120,8 @@ static const double kXsEtrueBinEdges[kns][knm][kXsNEtrueBins+1] = {
       -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000 }, // kSKmUndefined
     { -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000,  
       -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000 }  // kSKmUndefined
-  },
+  }
+  /*,
   // > 1 electron-like ring 
   {
     {  0.000,  0.400,  0.500,  0.600,  0.700,  1.000,  1.500,  2.500,  3.500,  5.000,  7.000,
@@ -2199,6 +2215,7 @@ static const double kXsEtrueBinEdges[kns][knm][kXsNEtrueBins+1] = {
     { -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000,  
       -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000 }  // kSKmUndefined
   }
+  */
 };
 #endif
 
@@ -2210,7 +2227,7 @@ static const double kXsEtrueBinEdges[kns][knm][kXsNEtrueBins+1] = {
 //
 #if BANFF_BINS >= 1
 static const int kMCNEtrueBins = 11;
-static const double kMCEtrueBinEdges[kns][knm][kXsNEtrueBins+1] = {
+static const double kMCEtrueBinEdges[kns][knm][kMCNEtrueBins+1] = {
   // > 1 muon-like ring 
   {
     {  0.000,  0.400,  0.500,  0.600,  0.700,  1.000,  1.500,  2.500,  3.500,  5.000,  7.000, 30.000 }, // kSKmNuMuCCQE         
@@ -2258,7 +2275,8 @@ static const double kMCEtrueBinEdges[kns][knm][kXsNEtrueBins+1] = {
     { -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000 }, // kSKmUndefined
     { -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000 }, // kSKmUndefined
     { -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000 }  // kSKmUndefined
-  },
+  }
+  /*,
   // > 1 electron-like ring 
   {
     {  0.000,  0.400,  0.500,  0.600,  0.700,  1.000,  1.500,  2.500,  3.500,  5.000,  7.000, 30.000 }, // kSKmNuMuCCQE 
@@ -2307,10 +2325,11 @@ static const double kMCEtrueBinEdges[kns][knm][kXsNEtrueBins+1] = {
     { -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000 }, // kSKmUndefined
     { -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000 }  // kSKmUndefined
   }
+  */
 };
 #elif BANFF_BINS == -1
 static const int kMCNEtrueBins = 20;
-static const double kMCEtrueBinEdges[kns][knm][kXsNEtrueBins+1] = {
+static const double kMCEtrueBinEdges[kns][knm][kMCNEtrueBins+1] = {
   // > 1 muon-like ring 
   {
     {  0.000,  0.100,  0.200,  0.300,  0.400,  0.500,  0.600,  0.700,  0.800,  1.000, 1.200, 
@@ -2403,7 +2422,8 @@ static const double kMCEtrueBinEdges[kns][knm][kXsNEtrueBins+1] = {
       -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000 }, // kSKmUndefined
     { -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000,  
       -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000 }  // kSKmUndefined
-  },
+  }
+  /*,
   // > 1 electron-like ring 
   {
     {  0.000,  0.400,  0.500,  0.600,  0.700,  1.000,  1.500,  2.500,  3.500,  5.000,  7.000,
@@ -2497,6 +2517,7 @@ static const double kMCEtrueBinEdges[kns][knm][kXsNEtrueBins+1] = {
     { -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000,  
       -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000 }  // kSKmUndefined
   }
+  */
 };
 #endif
 
@@ -2707,7 +2728,8 @@ static const bool kFSIApplyFSIParamToSKMode[kns][knm][kNumOfFSIParams] = {
     {  0, 0, 0,  0, 0, 0,  0, 0, 0,  0, 0, 0,  0, 0, 0 }, // kSKmUndefined
     {  0, 0, 0,  0, 0, 0,  0, 0, 0,  0, 0, 0,  0, 0, 0 }, // kSKmUndefined
     {  0, 0, 0,  0, 0, 0,  0, 0, 0,  0, 0, 0,  0, 0, 0 }  // kSKmUndefined
-  },
+  }
+  /*,
   // > 1 electron-like ring 
   {
     {  0, 0, 0,  0, 0, 0,  0, 0, 0,  0, 0, 0,  0, 0, 0 }, // kSKmNuMuCCQE        
@@ -2756,6 +2778,7 @@ static const bool kFSIApplyFSIParamToSKMode[kns][knm][kNumOfFSIParams] = {
     {  0, 0, 0,  0, 0, 0,  0, 0, 0,  0, 0, 0,  0, 0, 0 }, // kSKmUndefined
     {  0, 0, 0,  0, 0, 0,  0, 0, 0,  0, 0, 0,  0, 0, 0 }  // kSKmUndefined
   }
+  */
 };
 #elif FSI_BINS == 1
 static const bool kFSIApplyFSIParamToSKMode[kns][knm][kNumOfFSIParams] = {
@@ -2808,7 +2831,8 @@ static const bool kFSIApplyFSIParamToSKMode[kns][knm][kNumOfFSIParams] = {
     {  0, 0, 0,  0, 0, 0 }, // kSKmUndefined
     {  0, 0, 0,  0, 0, 0 }, // kSKmUndefined
     {  0, 0, 0,  0, 0, 0 }  // kSKmUndefined
-  },
+  }
+  /*,
   // > 1 electron-like ring 
   {
     {  0, 0, 0,  0, 0, 0 }, // kSKmNuMuCCQE        
@@ -2857,6 +2881,7 @@ static const bool kFSIApplyFSIParamToSKMode[kns][knm][kNumOfFSIParams] = {
     {  0, 0, 0,  0, 0, 0 }, // kSKmUndefined
     {  0, 0, 0,  0, 0, 0 }  // kSKmUndefined
   }
+  */
 };
 #elif FSI_BINS == 3
 static const bool kFSIApplyFSIParamToSKMode[kns][knm][kNumOfFSIParams] = {
@@ -2956,7 +2981,8 @@ static const bool kFSIApplyFSIParamToSKMode[kns][knm][kNumOfFSIParams] = {
        0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,  0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 }, // kSKmUndefined
     {  0,  0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
        0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,  0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 }  // kSKmUndefined
-  },
+  }
+  /*,
   // > 1 electron-like ring 
   {
     {  0,  0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
@@ -3050,6 +3076,7 @@ static const bool kFSIApplyFSIParamToSKMode[kns][knm][kNumOfFSIParams] = {
     {  0,  0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
        0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,  0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 }  // kSKmUndefined
   }
+  */
 };
 #endif
 
@@ -3113,7 +3140,8 @@ static const int kSKHistoAttributes[kns][knm][kNGraphicAttributes] = {
     {   -1,        -1, -1, -1,     -1 }, // kSKmUndefined
     {   -1,        -1, -1, -1,     -1 }, // kSKmUndefined
     {   -1,        -1, -1, -1,     -1 }  // kSKmUndefined
-  },
+  }
+  /*,
 
   // > 1 electron-like ring 
   {
@@ -3164,6 +3192,7 @@ static const int kSKHistoAttributes[kns][knm][kNGraphicAttributes] = {
     {   -1,        -1, -1, -1,     -1 }  // kSKmUndefined
 
   }
+  */
 };
 
 //
@@ -3220,7 +3249,8 @@ static const SuperkMode_t kSKReactionModesOrderInStack[kns][knm] = {
     kSKmUndefined,
     kSKmUndefined,
     kSKmUndefined
-  },
+  }
+  /*,
 
   // > 1 electron-like ring (nue appearance)
   {
@@ -3270,6 +3300,7 @@ static const SuperkMode_t kSKReactionModesOrderInStack[kns][knm] = {
     kSKmUndefined,
     kSKmUndefined
   }
+  */
 };
 
 //

@@ -52,6 +52,7 @@ public:
   bool  UpdateErecoSpectra  (void);
   TH1D* CurrErecoSpectrum   (conv::SuperkSample_t s) const;
   TH1D* CurrErecoSpectrum   (conv::SuperkSample_t s, conv::SuperkMode_t m) const;
+  double* CurrErecoSpectrumArray   (conv::SuperkSample_t s);
       
   // MC event samples used to fill-in MC templates and POT exposure for each
   TTree * MCTree (conv::SuperkSample_t s, conv::SuperkMode_t m);
@@ -59,6 +60,7 @@ public:
 
   // Access MC templates
   TH2D * Template (conv::SuperkSample_t s, conv::SuperkMode_t m, conv::SKMCTemplateType_t type) const;
+  TH2D * VarTemplate (conv::SuperkSample_t s, conv::SuperkMode_t m) const;
 
   // POT of analysed data sample (MC is scaled to that POT value)
   double AnalyzedSamplePOT(void) const;
@@ -125,12 +127,24 @@ private:
   // input MC templates (nominal, nominal + systematics, nominal + systematics + physics hypothesis) and Ereco spectra
   TH2D *     fMCTemplOri[kns][knm];        ///< Ereco-Etrue MC template(sample,mode): nominal (doesn't even have pot weighting applied)
   TH2D *     fMCTemplNom[kns][knm];        ///< Ereco-Etrue MC template(sample,mode): nominal + ext/tuning
+#ifndef PRODUCTIONMODE
   TH2D *     fMCTemplTun[kns][knm];        ///< Ereco-Etrue MC template(sample,mode): nominal + ext/tuning + nd280/tuning
   TH2D *     fMCTemplSys[kns][knm];        ///< Ereco-Etrue MC template(sample,mode): nominal + ext/tuning + nd280/tuning + systematics 
   TH2D *     fMCTemplFin[kns][knm];        ///< Ereco-Etrue MC template(sample,mode): nominal + ext/tuning + nd280/tuning + systematics + physics hypothesis
+#endif
+  TH2D *     fMCVariableTempl[kns][knm];
+  int        fMCVariableTemplArray[kns][knm][conv::kMCNEtrueBins][conv::kXsNErecoBins];
+  int        fMCTemplArrayOri[kns][knm][conv::kNEtrueBins][conv::kNErecoBins1Rmu];
+  //double     fMCTemplArrayNom[kns][knm][conv::kNEtrueBins][conv::kNErecoBins1Rmu];
+  double     fMCTemplArrayTun[kns][knm][conv::kNEtrueBins][conv::kNErecoBins1Rmu];
+  //double     fMCTemplArraySys[kns][knm][conv::kNEtrueBins][conv::kNErecoBins1Rmu];
+  double     fMCTemplArrayFin[kns][knm][conv::kNEtrueBins][conv::kNErecoBins1Rmu];
+
   TH1D *     fMCErecoSpectrum[kns][knm];   ///< Ereco MC spectrum (sample,mode)     : nominal + ext/tuning + nd280/tuning + systematics + physics hypothesis
   TH1D *     fMCErecoSpectrumTot[kns];     ///< Ereco MC spectrum (sample)          : nominal + ext/tuning + nd280/tuning + systematics + physics hypothesis
   TH1D *     fMCEtrueSpectrumTot[kns];     ///< Etrue MC spectrum (sample)          : nominal
+  double     fMCEtrueSpectrumTotArray[kns][conv::kNEtrueBins];
+  double     fMCErecoSpectrumTotArray[kns][conv::kNErecoBins1Rmu];
 
   // input event trees and normalisation factors
   TTree*     fMCTreeNuMu1Rmu;              ///< input MC event tree /  sample: numu                         / cuts: 1-ring mu-like 
@@ -138,11 +152,13 @@ private:
   TTree*     fMCTreeNuE1Rmu;               ///< input MC event tree /  sample: nue (intrinsic)              / cuts: 1-ring mu-like 
   TTree*     fMCTreeNuEBar1Rmu;            ///< input MC event tree /  sample: nuebar (intrinsic)           / cuts: 1-ring mu-like 
   TTree*     fMCTreeSigNuE1Rmu;            ///< input MC event tree /  sample: nue (signal, 100% numu->nue) / cuts: 1-ring mu-like 
+  /*
   TTree*     fMCTreeNuMu1Re;               ///< input MC event tree /  sample: numu                         / cuts: 1-ring e-like 
   TTree*     fMCTreeNuMuBar1Re;            ///< input MC event tree /  sample: numubar                      / cuts: 1-ring e-like 
   TTree*     fMCTreeNuE1Re;                ///< input MC event tree /  sample: nue (intrinsic)              / cuts: 1-ring e-like 
   TTree*     fMCTreeNuEBar1Re;             ///< input MC event tree /  sample: nuebar (intrinsic)           / cuts: 1-ring e-like 
   TTree*     fMCTreeSigNuE1Re;             ///< input MC event tree /  sample: nue (signal, 100% numu->nue) / cuts: 1-ring e-like 
+  */
   TH1D*      fMCPOTHistNuMu;               ///< input MC event sample POT histogram : numu
   TH1D*      fMCPOTHistNuMuBar;            ///< input MC event sample POT histogram : numubar
   TH1D*      fMCPOTHistNuE;                ///< input MC event sample POT histogram : nue 
