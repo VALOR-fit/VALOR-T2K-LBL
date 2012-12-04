@@ -1,0 +1,20 @@
+STEPS IN SUMMARY:
+        - Run the a perl production script, with the GRID option: $ perl submit_feldman_cousins_fitting_job_numu_grid
+		This creates a few files:
+			a lot of .sh files that setup the enviroment and run the script (these are like .pbs files)
+			a lot of .jdl files that send the files to the grid 	
+			a single .sh file that sets up your proxy, creates the tar ball, and submits all the jobs
+        - Run the .sh single script: $ ./fc.sh
+        - Insert GRID password (twice)
+		All jobs have now been sent
+        - glite-wms-job-status -i $tag.jid
+		To see the status of the jobs (press "a" to get the status of all)
+        - glite-wms-job-output --dir ./outputs/ -i $tag.jid 
+		To get the outputs (if you sent 1000s, better to wait for all of them to finish and retrieve all of them at once)
+
+
+
+
+# view proxy info
+myproxy-info -d
+voms-proxy-info
