@@ -150,9 +150,9 @@ static const double kMinFitSinsqTheta12      = 0.00;
 static const double kMaxFitSinsqTheta12      = 1.00;
 
 // fitter chisq surface ranges
-static const double kMinChisqSurfaceDm23sq            = 1.0E-3;
-static const double kMaxChisqSurfaceDm23sq            = 4.0E-3;
-static const double kMinChisqSurfaceSinsq2Theta23     = 0.60;
+static const double kMinChisqSurfaceDm23sq            = 1.5E-3;
+static const double kMaxChisqSurfaceDm23sq            = 3.3E-3;
+static const double kMinChisqSurfaceSinsq2Theta23     = 0.80;
 static const double kMaxChisqSurfaceSinsq2Theta23     = 1.00;
 
 
