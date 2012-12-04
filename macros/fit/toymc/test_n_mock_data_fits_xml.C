@@ -9,11 +9,11 @@
 
 void test_n_mock_data_fits_xml
 (
-  const char * tag = "test",                                                /* */
-  int          run = 0,                                                /* */
-  const char * xmlfile = "/home/dealtry/spare_trunk/trunk/inputs/fakedata.xml",                                            /* input XML file with toy MC experiments */
-  int          first_experiment = 1,                                   /* */
-  int          last_experiment = 1,                                    /* */
+  const char * tag,                                                /* */
+  int          run,                                                /* */
+  const char * xmlfile,                                            /* input XML file with toy MC experiments */
+  int          first_experiment    = 0,                            /* */
+  int          last_experiment     = 0,                            /* */
   const char * config_file         = "analysis_configuration.xml", /* analysis configuration file */
   const char * fit_param_list      = "nuosc3f_numudisapp_fix4+nuisanceselection",    /* fit parameter list for the given physics hypothesis (see run_fitter.C) */
   const char * fit_option          = "minuit",                     /* fitter option (see run_fitter.C) */

@@ -182,13 +182,13 @@ void generate_toymc_ensemble
      // If an XML file was specified, add an entry
      if(save_in_xml_format) {
        fxml << "           " << Form("<data_set_%d>",iexperiment) << endl;
-       fxml << "\t\t" << "<!-- ";
        if(save_fluct_in_xml) {
+	 fxml << "\t\t" << "<!-- ";
 	 ph.Print(fxml);
 	 if(tweak_systematics)
 	   skexp->PrintSystematicVariations(fxml);
+	 fxml << " -->" << endl;
        }
-       fxml << " -->" << endl;
        fxml << "\t\t";
        // Adding Ereco values as a comma separated list.
        // Assuming uniform distribution within each bin, randomize values within each bin.
