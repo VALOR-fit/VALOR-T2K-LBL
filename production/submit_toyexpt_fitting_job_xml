@@ -283,12 +283,12 @@ if($resource eq "Grid") {
     print SH0 "mkdir trunk_GRID/inputs/official/2012/superk/mc\n";
     print SH0 "mkdir trunk_GRID/inputs/official/2012/superk/mc/neut\n";
     print SH0 "mkdir trunk_GRID/inputs/official/2012/superk/mc/neut/11c\n";
-    print SH0 "mkdir trunk_GRID/macros/";
-    print SH0 "mkdir trunk_GRID/macros/fit/";
-    print SH0 "mkdir trunk_GRID/macros/fit/toymc";
-    print SH0 "cp $softw_dir/macros/fit/toymc/*.C trunk_GRID/macros/fit/toymc"
-    print SH0 "mkdir trunk_GRID/macros/fit/stat";
-    print SH0 "cp $softw_dir/macros/fit/stat/*.C trunk_GRID/macros/fit/stat"
+    print SH0 "mkdir trunk_GRID/macros/\n";
+    print SH0 "mkdir trunk_GRID/macros/fit/\n";
+    print SH0 "mkdir trunk_GRID/macros/fit/toymc\n";
+    print SH0 "cp $softw_dir/macros/fit/toymc/*.C trunk_GRID/macros/fit/toymc\n";
+    print SH0 "mkdir trunk_GRID/macros/fit/stat\n";
+    print SH0 "cp $softw_dir/macros/fit/stat/*.C trunk_GRID/macros/fit/stat\n";
     print SH0 "tar -pczf trunk_GRID.tar.gz trunk_GRID\n";
     print SH0 "echo \"*** Submitting jobs to the GRID...\" \n";
     $irun = 0;
