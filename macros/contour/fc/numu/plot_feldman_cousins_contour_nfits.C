@@ -286,7 +286,7 @@ void plot_feldman_cousins_contour_nfits
   TGraph * skle2012_90cl  = 0;
   TGraph * skzen2012_90cl = 0;
   if(show_external_contours) {
-     const char * extcontourfile = Form("%s/inputs/external/contours/ext_contours.root", gSystem->Getenv("T2KOSCANA"));
+     const char * extcontourfile = Form("%s/inputs/contours/contours_nont2k.root", gSystem->Getenv("T2KOSCANA"));
      TFile f(extcontourfile,"read");
      minos2012_90cl = new TGraph(* (TGraph*)f.Get("minos2012_combined_90CL") );
      skle2012_90cl  = new TGraph(* (TGraph*)f.Get("sk2012_le2nu_90CL")       );
