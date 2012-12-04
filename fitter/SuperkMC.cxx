@@ -1282,9 +1282,10 @@ void SuperkMC::ApplyPhysHypothesisToTemplates(void)
         // calculate oscillation probabilities (incl. matter effects) for the current Etrue value
         double Etrue = (kEtrueBinEdges[it-1] + kEtrueBinEdges[it] ) / 2;
 
+
 	// skip unnecessary calculations
 	bool bin_is_not_empty = this->IsThereAnEvent(s, Etrue);
-	if(!bin_is_not_empty) {cout << "skipping " << Etrue << endl; continue; }
+	if(!bin_is_not_empty) continue;
 
         double p_numu_numu       = fNuOsc3Flavour.CalcMatterOscProb(kPdgNuMu,    kPdgNuMu,    Etrue);
         double p_numubar_numubar = fNuOsc3Flavour.CalcMatterOscProb(kPdgNuMuBar, kPdgNuMuBar, Etrue);
