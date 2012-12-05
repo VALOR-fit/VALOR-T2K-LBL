@@ -17,18 +17,18 @@
 
 void sensitivity_from_many_chisq_surfaces
 (
- const char * fileprefix    = "minos",                      // prefix of the root file where the surfaces are located
- const char * kitfilename   = "of_constchi2_v3.root",       // location of a kit file, to compare with
- const char * surfacename   = "chisqwithsyst_0",            // name of the dchisq surfaces
- int          nfiles        = 1000,                         // number of files to access
- bool         ischisq       = true                          // Input is chisq if true; dchisq if false
+ const char * fileprefix         = "minos",                      // prefix of the root file where the surfaces are located
+ const char * kitfilename        = "of_constchi2_v3.root",       // location of a kit file, to compare with
+ const char * surfacenameprefix  = "chisqwithsyst",              // name of the dchisq surfaces
+ int          nfiles             = 1000,                         // number of files to access
+ bool         ischisq            = true                          // Input is chisq if true; dchisq if false
 )
 {
   //need to initialise avdchisq outside the loop, or segfaults ensue
   const char * filename1 = Form("%s-run_%d-expts_%d_%d.root", fileprefix, 0, 0, 0);
   TFile f1(filename1);
   TH2D * dchisq1 = 0;
-  f1.GetObject(surfacename,dchisq1);
+  f1.GetObject(Form("%s_%d",surfacenameprefix,0),dchisq1);
   if(!dchisq1) { f1.Close(); return; }
   TH2D * avdchisq = new TH2D(dchisq1->GetTitle(), dchisq1->GetName(), dchisq1->GetNbinsX(), dchisq1->GetXaxis()->GetXmin(), dchisq1->GetXaxis()->GetXmax(), dchisq1->GetNbinsY(), dchisq1->GetYaxis()->GetXmin(), dchisq1->GetYaxis()->GetXmax());
 
@@ -38,7 +38,7 @@ void sensitivity_from_many_chisq_surfaces
     const char * filename = Form("%s-run_%d-expts_%d_%d.root", fileprefix, ifile, ifile, ifile);
     TFile f(filename);
     TH2D * dchisq = 0;
-    f.GetObject(surfacename,dchisq);
+    f.GetObject(Form("%s_%d",surfacenameprefix,ifile),dchisq);
     if(!dchisq) { f.Close(); continue;}
     nfilesexist++;
     for(int ix = 1; ix <= dchisq->GetNbinsX(); ix++) {
@@ -65,6 +65,7 @@ void sensitivity_from_many_chisq_surfaces
   int minx, miny, minz;
   avdchisq->GetBinXYZ(minbin, minx, miny, minz);
   cout << endl << endl << "average chisq " << minchisq << " at " << avdchisq->GetXaxis()->GetBinCenter(minx) << " " << avdchisq->GetYaxis()->GetBinCenter(miny) << endl;
+  cout << "Average of " << nfilesexist << " files" << endl;
 
   //subtract the average (if required)
   if(ischisq) {
@@ -216,7 +217,7 @@ void sensitivity_from_many_chisq_surfaces
     kitdchisq->Draw("cont1same");
     leg->AddEntry(kitdchisq,"KIT","l");
     leg->Draw();
-    c2->SaveAs("senstivitiycont_comparisononly.pdf");
+    c2->SaveAs("sensitivitycont_comparisononly.pdf");
   }
   //add externals (minos/sk)
   ext1_contour.Draw("Csame");
