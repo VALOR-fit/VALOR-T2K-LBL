@@ -19,6 +19,8 @@ void sensitivity_from_many_chisq_surfaces
 (
  const char * fileprefix         = "minos",                      // prefix of the root file where the surfaces are located
  const char * kitfilename        = "of_constchi2_v3.root",       // location of a kit file, to compare with
+ const char * kitsurfacename     = "h_dchi2",                    // name of the surface in the KIT file
+ const char * kitlegendname      = "KIT",                        // name of the 'kit' contour in the legend (i.e. it can be non KIT!)
  const char * surfacenameprefix  = "chisqwithsyst",              // name of the dchisq surfaces
  int          nfiles             = 1000,                         // number of files to access
  bool         ischisq            = true                          // Input is chisq if true; dchisq if false
@@ -37,6 +39,7 @@ void sensitivity_from_many_chisq_surfaces
   for(int ifile = 0; ifile < nfiles; ifile++) {
     const char * filename = Form("%s-run_%d-expts_%d_%d.root", fileprefix, ifile, ifile, ifile);
     TFile f(filename);
+    if(f.IsZombie()) continue;
     TH2D * dchisq = 0;
     f.GetObject(Form("%s_%d",surfacenameprefix,ifile),dchisq);
     if(!dchisq) { f.Close(); continue;}
@@ -211,11 +214,11 @@ void sensitivity_from_many_chisq_surfaces
   TH2D *kitdchisq = 0;
   TFile fkit(kitfilename);
   if(!fkit.IsZombie()) {
-    fkit.GetObject("h_dchi2",kitdchisq);
+    fkit.GetObject(kitsurfacename,kitdchisq);
     kitdchisq->SetLineStyle(2);
     kitdchisq->SetContour(2, constchisq);
     kitdchisq->Draw("cont1same");
-    leg->AddEntry(kitdchisq,"KIT","l");
+    leg->AddEntry(kitdchisq,kitlegendname,"l");
     leg->Draw();
     c2->SaveAs("sensitivitycont_comparisononly.pdf");
   }
