@@ -18,13 +18,13 @@ void test_feldman_cousins_nfits(const char * directory)
   // dm23sq, mixing23 range and step
   double mixing23_min   = 0.0;
   double mixing23_max   = 1.0;
-  double mixing23_step  = 0.01;
-  double dm23sq_min          = 1E-3;
-  double dm23sq_max          = 6E-3;
-  double dm23sq_step         = 1E-4;
+  double mixing23_step  = 0.005;
+  double dm23sq_min     = 1E-3;
+  double dm23sq_max     = 6E-3;
+  double dm23sq_step    = 1E-4;
   // make sure that min and max are at the bin centre and not at the low/high edge of the first/last bin
   int mixing23_nbins = 1 + (int) ((mixing23_max - mixing23_min) / mixing23_step);
-  int dm23sq_nbins        = 1 + (int) ((dm23sq_max        - dm23sq_min       ) / dm23sq_step       );
+  int dm23sq_nbins   = 1 + (int) ((dm23sq_max   - dm23sq_min  ) / dm23sq_step  );
 
   cout << "mixing23_nbins = " << mixing23_nbins << ", dm23sq_nbins = " << dm23sq_nbins<<endl;
 

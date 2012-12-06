@@ -26,18 +26,16 @@ void merge_feldman_cousins_deltachisqcrit_surfaces(
   //
           
   // dm23sq, mixing23 range and step
-  double mixing23_min   = 0.0;
+  double mixing23_min   = 0.5;
   double mixing23_max   = 1.0;
-  double mixing23_step  = 0.01;
-  double dm23sq_min          = 1E-3;
-  double dm23sq_max          = 6E-3;
-  double dm23sq_step         = 1E-4;
+  double mixing23_step  = 0.005;
+  double dm23sq_min     = 1E-3;
+  double dm23sq_max     = 6E-3;
+  double dm23sq_step    = 1E-4;
   // make sure that min and max are at the bin centre and not at the low/high edge of the first/last bin
   int mixing23_nbins = 1 + (int) ((mixing23_max - mixing23_min) / mixing23_step);
-  int dm23sq_nbins        = 1 + (int) ((dm23sq_max        - dm23sq_min       ) / dm23sq_step       );
-  
-  cout << "mixing23_nbins = " << mixing23_nbins << ", dm23sq_nbins = " << dm23sq_nbins<<endl;
-  
+  int dm23sq_nbins   = 1 + (int) ((dm23sq_max   - dm23sq_min  ) / dm23sq_step  );
+    
   TH2D * hDeltaChi2Surface[nConfidenceLevel];
   for(int icl = 0; icl < nConfidenceLevel; icl++) { 
     const char * histname = Form("hDeltaChi2Surface%02d", confidenceLevel[icl]);
@@ -50,7 +48,6 @@ void merge_feldman_cousins_deltachisqcrit_surfaces(
           dm23sq_min - 0.5*dm23sq_step,
           dm23sq_max + 0.5*dm23sq_step);
   }
-
 
   //
   // Load inputs

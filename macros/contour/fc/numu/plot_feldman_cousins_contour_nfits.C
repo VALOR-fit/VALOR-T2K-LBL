@@ -53,9 +53,9 @@ void plot_feldman_cousins_contour_nfits
   //
   // Define dm23sq, mixing23 range and step  
   //
-  double mixing23_min   = 0.3; // 0.0;
+  double mixing23_min   = 0.75; // 0.0;
   double mixing23_max   = 1.0;
-  double mixing23_step  = 0.01;
+  double mixing23_step  = 0.005;
   double dm23sq_min     = 1.0E-3; //1E-3;
   double dm23sq_max     = 5.0E-3; //6E-3;
   double dm23sq_step    = 1E-4;

@@ -43,9 +43,9 @@ void feldman_cousins_fitting_job
   //
 
   // dm23sq, mixing23 range and step
-  double mixing23_min   = 0.0;
+  double mixing23_min   = 0.5;
   double mixing23_max   = 1.0;
-  double mixing23_step  = 0.01;
+  double mixing23_step  = 0.005;
   double dm23sq_min     = 1E-3;
   double dm23sq_max     = 6E-3;
   double dm23sq_step    = 1E-4;

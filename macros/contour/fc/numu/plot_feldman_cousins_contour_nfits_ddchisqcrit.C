@@ -74,7 +74,7 @@ void plot_feldman_cousins_contour_nfits_ddchisqcrit
   //
   double mixing23_min   = 0.75;
   double mixing23_max   = 1.00;
-  double mixing23_step  = 0.01;
+  double mixing23_step  = 0.005;
   double dm23sq_min     = 1.5E-3;
   double dm23sq_max     = 4.0E-3;
   double dm23sq_step    = 1.0E-4;
