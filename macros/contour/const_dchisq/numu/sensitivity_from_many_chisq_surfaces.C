@@ -18,7 +18,7 @@
 void sensitivity_from_many_chisq_surfaces
 (
  const char * fileprefix         = "minos",                      // prefix of the root file where the surfaces are located
- const char * kitfilename        = "of_constchi2_v3.root",       // location of a kit file, to compare with
+ const char * kitfilename        = "of_constchi2_sensitivity.root",       // location of a kit file, to compare with
  const char * kitsurfacename     = "h_dchi2",                    // name of the surface in the KIT file
  const char * kitlegendname      = "KIT",                        // name of the 'kit' contour in the legend (i.e. it can be non KIT!)
  const char * surfacenameprefix  = "chisqwithsyst",              // name of the dchisq surfaces
@@ -34,6 +34,40 @@ void sensitivity_from_many_chisq_surfaces
   if(!dchisq1) { f1.Close(); return; }
   TH2D * avdchisq = new TH2D(dchisq1->GetTitle(), dchisq1->GetName(), dchisq1->GetNbinsX(), dchisq1->GetXaxis()->GetXmin(), dchisq1->GetXaxis()->GetXmax(), dchisq1->GetNbinsY(), dchisq1->GetYaxis()->GetXmin(), dchisq1->GetYaxis()->GetXmax());
 
+  //Histogram to store the left-most point in mixing23
+  TH1D * mixing23_exclude90 = new TH1D("mixing23_exclude_90","mixing23_exclude_90",40,0.8,1);
+  TH1D * mixing23_exclude68 = new TH1D("mixing23_exclude_68","mixing23_exclude_68",40,0.8,1);
+
+  //Get the KIT file first (we need to find out its mixing23 exclusion first)
+  TH2D *kitdchisq = 0;
+  TFile fkit(kitfilename);
+  if(!fkit.IsZombie()) {
+    fkit.GetObject(kitsurfacename,kitdchisq);
+  }
+  double kitexcluded90 = 1, kitexcluded68 = 1;
+  if(kitdchisq) {
+    double chisqmin = kitdchisq->GetMinimum();
+    for(int ix = 1; ix <= kitdchisq->GetNbinsX(); ix++) {
+      for(int iy = 1; iy <= kitdchisq->GetNbinsY(); iy++) {
+	double extra   =   kitdchisq->GetBinContent(ix,iy);
+	if((extra - chisqmin) <= 4.61) {
+	  double bincenter = kitdchisq->GetXaxis()->GetBinCenter(ix);
+	  if(bincenter < kitexcluded90) {
+	    kitexcluded90 = bincenter;
+	  }
+	  if((extra - chisqmin) <= 2.30) {
+	    if(bincenter < kitexcluded68) {
+	      kitexcluded68 = bincenter;
+	    }
+	  }
+	}//kitdchisq<4.61
+      }//iy
+    }//ix
+  }
+  TLine lkitexcluded90(kitexcluded90,0,kitexcluded90,1000);
+  TLine lkitexcluded68(kitexcluded68,0,kitexcluded68,1000);
+  double pvalue90 = 0, pvalue68 = 0;
+
   //first add everything up
   int nfilesexist = 0;
   for(int ifile = 0; ifile < nfiles; ifile++) {
@@ -44,15 +78,36 @@ void sensitivity_from_many_chisq_surfaces
     f.GetObject(Form("%s_%d",surfacenameprefix,ifile),dchisq);
     if(!dchisq) { f.Close(); continue;}
     nfilesexist++;
+    double exclude90 = 1, exclude68 = 1;
+    double chisqmin = dchisq->GetMinimum();
     for(int ix = 1; ix <= dchisq->GetNbinsX(); ix++) {
       for(int iy = 1; iy <= dchisq->GetNbinsY(); iy++) {
 	double current = avdchisq->GetBinContent(ix,iy);
 	double extra   =   dchisq->GetBinContent(ix,iy);
-	avdchisq->SetBinContent(ix,iy,current+extra);	
+	avdchisq->SetBinContent(ix,iy,current+extra);
+	if((extra - chisqmin) <= 4.61) {
+	  double bincenter = dchisq->GetXaxis()->GetBinCenter(ix);
+	  if(bincenter < exclude90) {
+	    exclude90 = bincenter;
+	  }
+	  if((extra - chisqmin) <= 2.30) {
+	    if(bincenter < exclude68) {
+	      exclude68 = bincenter;
+	    }
+	  }
+	}//dchisq<4.61
       }//iy
     }//ix
+    mixing23_exclude90->Fill(exclude90);
+    mixing23_exclude68->Fill(exclude68);
+    if(exclude90 > kitexcluded90) pvalue90++;
+    if(exclude68 > kitexcluded68) pvalue68++;
     f.Close();
   }//ifile
+  pvalue90 /= nfilesexist;
+  pvalue68 /= nfilesexist;
+
+  cout << "Exclusion p-values: 90% " << pvalue90 << "\t 68% " << pvalue68 << endl;
 
   //now do the average
   for(int ix = 1; ix <= avdchisq->GetNbinsX(); ix++) {
@@ -221,10 +276,7 @@ void sensitivity_from_many_chisq_surfaces
   TLegend *leg = new TLegend(0.0,0.8,0.25,1.0);
   leg->SetFillColor(0);
   leg->AddEntry(avdchisq,"VaLOR","l");
-  TH2D *kitdchisq = 0;
-  TFile fkit(kitfilename);
-  if(!fkit.IsZombie()) {
-    fkit.GetObject(kitsurfacename,kitdchisq);
+  if(kitdchisq) {
     kitdchisq->SetLineStyle(2);
     kitdchisq->SetContour(2, constchisq);
     kitdchisq->Draw("cont1same");
@@ -264,6 +316,27 @@ void sensitivity_from_many_chisq_surfaces
   leg->AddEntry("t2k_I_90cont","T2K run I 90%","l");
   leg->Draw();
   c2->SaveAs("sensitivitycont_witht2kI.pdf");
+  leg->Clear();
+  //Now, get the exclusion of mixing angle
+  mixing23_exclude68->SetTitle("");
+  mixing23_exclude68->SetLineColor(kBlack);
+  mixing23_exclude68->Draw();
+  mixing23_exclude90->SetLineColor(kRed);
+  mixing23_exclude90->Draw("same");
+  lkitexcluded90.SetLineColor(kRed);
+  lkitexcluded90.SetLineStyle(2);
+  lkitexcluded68.SetLineStyle(2);
+  lkitexcluded90.Draw("same");
+  lkitexcluded68.Draw("same");
+  leg->AddEntry(mixing23_exclude90,"90% exclusion","l");
+  leg->AddEntry(mixing23_exclude68,"68% exclusion","l");
+  leg->Draw();
+  TText * texclude90 = new TText(0.8,80,Form("90%: Data %0.3f, p-value %0.3f",kitexcluded90,pvalue90));
+  texclude90->Draw("same");
+  TText * texclude68 = new TText(0.8,60,Form("68%: Data %0.3f, p-value %0.3f",kitexcluded68,pvalue68));
+  texclude68->Draw("same");
+  c2->SaveAs("exclusion.pdf");
+  leg->Clear();
 
   fout.Close();
 }
