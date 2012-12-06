@@ -54,6 +54,7 @@ void fit_xml_seeded_from_chisq_map
   TFile inputfile(chisqfile,"READ");
   TH2D *hchisq = 0;
   inputfile.GetObject(Form("chisqwithsyst_%d",dataset_id),hchisq);
+  if(!hchisq) return;
   TH2D & hdchisq = *hchisq;
   
   // Find the minimum, and convert into mixing23 & dm23sq. This will give the seeds for the osc parameters
