@@ -14,8 +14,9 @@
 #      A tag (eg. genie-statsyst, neut-statonly-v2, ...) to be used as prefix for the
 #      output ROOT files and the batch scripts and error logs.
 # --num-sinsq2theta23-bins-per-job :
-#      In this analysis there are 101 sinsq2theta23 bins. The first bin is centered at 0
-#      and the last bin is centered at 1. The bin width is 0.01.
+#      In this analysis there are 101 sinsq2theta23 bins. 
+#      The first bin is centered at 0.5 and the last bin is centered at 1.0. 
+#      The bin width is 0.005.
 #      To parallelize the \Delta\chi^{2} surface making tasks, each job will process a
 #      few sinsq2theta23 bins only. Use this argument to specify the number of bins per
 #      job. Use a number that divides 100. As there are 101 bins, the last job will 

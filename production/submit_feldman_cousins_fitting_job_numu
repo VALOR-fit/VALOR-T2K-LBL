@@ -18,7 +18,7 @@
 #  --min-sinsq2theta23-bin  : Default:   1.
 #  --max-sinsq2theta23-bin  : Default: 101.
 #  --bin-list               : Default:  "" (no input file)
-#  --fit-param-list         : Fit parameter list. Default: "numudisapp2f". See FitParamList.h for allowed options.
+#  --fit-param-list         : Fit parameter list. Default: "nuosc3f_numudisapp_fix4". See FitParamList.h for allowed options.
 #  --fit-option             : Option passed to fitter. Default: "minuit".
 #  --job-dir                : Directory for job scripts and outputs. Default: `pwd`.
 #  --softw-dir              : Oscillation code top-level directory. Default: `pwd`.
@@ -64,7 +64,7 @@ $nexpts                 = 1000                          unless defined $nexpts;
 $stat_fluct             = 0                             unless defined $stat_fluct;
 $twk_systematics        = 0                             unless defined $twk_systematics;
 $twk_non23osc           = 0                             unless defined $twk_non23osc;
-$fitparamlist           = "numudisapp2f"                unless defined $fitparamlist;
+$fitparamlist           = "nuosc3f_numudisapp_fix4"     unless defined $fitparamlist;
 $fitoption              = "minuit"                      unless defined $fitoption;
 $job_dir                = `pwd`                         unless defined $job_dir;
 $softw_dir              = `pwd`                         unless defined $softw_dir;
@@ -84,7 +84,7 @@ while($irun < $nruns) {
 
   print "Submitting $tag run: $irun \n";
 
-  $command  = "root2k -l -b -q \'$softw_dir/macros/fc/numu/feldman_cousins_fitting_job.C(\"$tag\",$irun,$nexpts,$min_dm23sq_bin,$max_dm23sq_bin,$min_sinsq2theta23_bin,$max_sinsq2theta23_bin,\"$bin_list\",\"$config_file\",$stat_fluct,$twk_systematics,$twk_non23osc,\"$fitparamlist\",\"$fitoption\")\'";
+  $command  = "root2k -l -b -q \'$softw_dir/macros/contour/fc/numu/feldman_cousins_fitting_job.C(\"$tag\",$irun,$nexpts,$min_dm23sq_bin,$max_dm23sq_bin,$min_sinsq2theta23_bin,$max_sinsq2theta23_bin,\"$bin_list\",\"$config_file\",$stat_fluct,$twk_systematics,$twk_non23osc,\"$fitparamlist\",\"$fitoption\")\'";
   print "$command \n";
 
   #
