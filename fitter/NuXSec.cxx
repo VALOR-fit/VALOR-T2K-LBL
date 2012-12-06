@@ -859,7 +859,7 @@ void NuXSec::PrintSystematicVariations(ostream & stream) const
   stream << "         >> W-shape             " << fWshapeTwkDial        << endl;
   stream << "         >> CC-oth shape        " << fShapeCCothTwkDial    << endl;
   stream << "         >> Pi-less delta decay " << fPiLessDeltaTwkDial   << endl;
-  stream << "         >> CC1pi ENu Shape     " << fENuShapeTwkDial      << endl;
+  //stream << "         >> CC1pi ENu Shape     " << fENuShapeTwkDial      << endl;
   stream << "         >> Binding energy      " << fBindETwkDial         << endl;
 #if BANFF_BINS <= 1
   stream << "         >> CCQE bin1 norm      " << fNormCCQEE1TwkDial    << endl;
@@ -868,7 +868,7 @@ void NuXSec::PrintSystematicVariations(ostream & stream) const
 #endif
   stream << "         >> CC-coh norm         " << fNormCCcohTwkDial     << endl;
   stream << "         >> NC-1piC norm        " << fNormNC1piCTwkDial    << endl;
-  stream << "         >> NC-coh norm         " << fNormNCcohTwkDial     << endl;
+  //stream << "         >> NC-coh norm         " << fNormNCcohTwkDial     << endl;
   stream << "         >> NC-oth norm         " << fNormNCothTwkDial     << endl;
   stream << "         >> NuE to NuMu norm    " << fNormNuEToNuMuTwkDial << endl;
   stream << "         >> AntiNu to Nu norm   " << fNormAntiNuToNuTwkDial<< endl;
