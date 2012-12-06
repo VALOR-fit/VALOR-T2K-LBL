@@ -202,8 +202,18 @@ void sensitivity_from_many_chisq_surfaces
   avdchisq->SetTitle("deltachisq surface");
   //dchisq surface
   TCanvas *c1 = new TCanvas(); avdchisq->Draw("colz");  c1->SaveAs("sensitivitycolz.pdf");
+  TFile fout("sensitivity.root","RECREATE");
+  avdchisq->SetDirectory(0);
+  avdchisq->Write("dchisq_for_colz");
+  double constchisq90[1] = {4.61};
+  avdchisq->SetContour(1, constchisq90);
+  avdchisq->Write("dchisq_for_cont1_90");
+  double constchisq68[1] = {2.30};
+  avdchisq->SetContour(1, constchisq68);
+  avdchisq->Write("dchisq_for_cont1_68");
   double constchisq[2] = {2.30, 4.61};
   avdchisq->SetContour(2, constchisq); // this also reduces the colz palette to only 2 colors!
+  avdchisq->Write("dchisq_for_cont1");
   //contour
   TCanvas *c2 = new TCanvas();
   avdchisq->SetTitle("");
@@ -255,8 +265,5 @@ void sensitivity_from_many_chisq_surfaces
   leg->Draw();
   c2->SaveAs("sensitivitycont_witht2kI.pdf");
 
-  TFile fout("sensitivity.root","RECREATE");
-  avdchisq->SetDirectory(0);
-  avdchisq->Write();
   fout.Close();
 }
