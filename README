@@ -1,9 +1,7 @@
 +--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+
-T2K OSCILLATION ANALYSIS 
+VaLOR (Valencia-Lancaster-Oxford-Rutherford) T2K oscillation analysis
 
-Developed at Rutherford Appleton Lab + Oxford Univ + Lancs Univ + Valencia Univ.
-
-(c) 2010-11 All Rights Reserved
+(c) 2010-13 All Rights Reserved
 +--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+
 
 Current authors:
@@ -11,44 +9,43 @@ Current authors:
 - Andreopoulos, Costas <costas.andreopoulos \at stfc.ac.uk> 
 - Dealtry, Thomas <Thomas.Dealtry \at physics.ox.ac.uk>
 - Escudero, Lorena <loressa \at ific.uv.es>
-- Grant, Nick <nick.grant \at stfc.ac.uk>
-- Ilic, Jelena <Jelena.Ilic \at stfc.ac.uk>
-- Pearce, Geoff <geoff.pearce \at stfc.ac.uk>
-- Weber, Alfons <alfons.weber \at stfc.ac.uk>
+- Grant, Nick <n.grant \at lancaster.ac.uk>
 
 Legacy authors:
 
 - Dobson, James <j.dobson07 \at imperial.ac.uk>
-- Haigh, Martin <m.haigh1 \at physics.ox.ac.uk>
+- Ilic, Jelena <Jelena.Ilic \at stfc.ac.uk>
 
 +--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+
 
-* WHAT IS INCLUDED IN THIS PACKAGE?
+* WHAT IS INCLUDED IN THIS PACKAGE? 
+ 
+Schematic based on the SVN trunk (latest) version
 
 <top_level>
     |
     |-- config                    : Analysis configuration XML files
     |
-    |-- fitter                    : SuperK spectrum prediction / fitting code
+    |-- fitter                    : SuperK spectrum prediction code (with systematics) + fitting code
     |
     |-- inputs                    : Analysis inputs / data-files
     |      |-- official           
-    |            |-- 2012         : Inputs for 2012 analysis
-    |            |    |-- flux    :  - from the Beam group 
-    |            |    |-- banff   :  - from the BANFF group
-    |            |    |-- xsec    :  - from the NIWG group 
-    |            |    |-- superk  :  - from SuperK MC (mini-DSTs with MC events passing various SuperK selections)
-    |            |       
-    |            |-- 2010         :
+    |      |     |-- 2012         : Inputs for 2012 analysis
+    |      |     |    |-- banff   :  - BANFF inputs (best-fit parameters and error matrix)
+    |      |     |    |-- flux    :  - flux inputs (nominal and NA61-tuned fluxes)
+    |      |     |    |-- fsi     :  - FSI systematic error inputs
+    |      |     |    |-- xsec    :  - SuperK MC re-weighting splines to account for the effect of tweaked cross-section params
+    |      |     |    |-- superk  :  - SuperK MC mini-DSTs with MC events passing various SuperK selections
+    |      |            
+    |      |-- contour            : External contours that may eb super-imposed with our results
+    |      |-- test               : Data used for test purposes
+    |
     |
     |-- macros                    : Our analysis procedures
-    |     |------ physin          :  - macros used for testing analysis physics inputs (spectra/systematics)
+    |     |------ spectra         :  - macros used for testing nominal and tweaked SuperK spectra
     |     |------ fit             :  - macros used for fitting data or toy MC expts
-    |     |------ fc              :  - macros used for implementing the Feldman-Cousins (FC) method
-    |     |        |-- numu       :     > FC macros specific to the numu disappearance analysis
-    |     |        |-- nue        :     > FC macros specific to the nue appearance analysis
-    |     |        |-- global     :     > FC macros specific to the global (numu disappearance + nue appearance) analysis
-    |     |------ misc            :  - misc. macros such as those used for preparing various plots shown in T2K-TN-36/64
+    |     |------ contour         :  - macros used for building confidence regions (eg implementing the Feldman-Cousins method)
+    |     |------ misc            :  - etc macros 
     |
     |-- production                : Batch production scripts for RAL/IN2P3/Oxford farms
     |
@@ -84,17 +81,26 @@ make sure there are NO spaces within ''.
 * RELEASES & CHANGELOG
 
 
+List of code releases:
+  - 2010_v1.0.0
+  - 2010_v2.0.0
+  - 2010_v2.1.0
+  - 2010_v3.0.0
+  - 2012_v0.9.0
+  - 2012_v1.0.0
+Details may be found below.
+
+
+
 Version: 2010_v1.0.0
 ............................................................................................................................
-This is the code which was used for the 2010 0.323E+20 POT muon-disappearance analysis.
+This is the code which was used for the 2010a 0.323E+20 POT muon-disappearance analysis.
 Details may be found in T2K-TN-36 (v4).
-
-
 
 Version: 2010_v2.0.0 
 ............................................................................................................................
-
-This is the code which was used for the 2010 1.431E+20 POT muon-disappearance analysis.
+This is the code which was used for the 2010b 1.431E+20 POT muon-disappearance analysis.
+Details may be found in T2K-TN-64 (v3).
 
 The following changes were installed (wrt 2010_v1.0.0) :
 > Upgraded SK flux (10d_v2 --> 10d_v3). The official 10d_v3 flux was obtained from: 
@@ -129,9 +135,7 @@ The following changes were installed (wrt 2010_v1.0.0) :
 > Added analysis configuration files for Run1-only, Run2-only and Run1+Run2 analysis, both for NEUT and GENIE. 
   The Run1+Run2 flux is a POT-weighted 10d_v3 flux (taking into account Run1 and Run2 flux differences).
 
-In addition, the code structure was modified significantly (to allow for future 2011 analysis improvements).
-Details may be found in T2K-TN-64.
-
+In addition, the code structure was modified significantly to allow for future analysis improvements.
 
 2010_v2.1.0
 ............................................................................................................................
@@ -144,6 +148,9 @@ Similar to 2010_v2.0.0 but with the following change requested during the analys
 
 2010_v3.0.0
 ............................................................................................................................
+
+This code was used for the 2010b 1.431E+20 POT 3-flavour muon-neutrino disappearance analysis (details in T2K-TN-88)
+and for the 2010b 1.431E+20 POT joint 3-flavour analysis (details in T2K-TN-131)
 
 Similar to 2010_v2.1.0 but with the following additions: 
 
@@ -171,12 +178,30 @@ Similar to 2010_v2.1.0 but with the following additions:
 > Many structural changes to allow the 3-flavour numu analysis and the global nue+numu 3-flavour analysis
 > Committed a various macros used to prepare plots for T2K-TN-64 which previously weren't under version control
 
-More details for the 3-flavour disappearance analysis may be found in T2K-TN-??
-More details for the combined 3-flavour disappearance + appearance analysis may be found in T2K-TN-??
 
+2012_v0.9.0
+............................................................................................................................
+
+A *major* re-write of the analysis to use the official 2012 inputs.
+Contains numerous technical and physics improvements wrt to the 2010_* series of branches.
+Details, too numerous to mention here, may be found in T2K-TN-141.
+This is the first freeze of the fully validated 2012 code: This branch contains experimental and 
+deprecated features that will be removed from a near-future "streamlined" revision.
+
+2012_v1.0.0
+............................................................................................................................
+
+As 2012_v0.9.0 but drastically cleaned-up.
+This is the code used for the official analysis.
+Experimental FSI and BANFF systematic binnings, systematics not used in the analysis were removed. 
+Deprecated data files, macros and scripts were removed. 
+Code experimenting with the use of principal components analysis in the study of the effect of systematics 
+in the oscillation fit was deleted.
+The main Minuit and the experimental Minuit2 fit implementations were "unified" 
+so that one can switch between the two transparently.
 
 Current trunk
 ............................................................................................................................
-2012a development code
+2012a joint analysis development code
 
 
