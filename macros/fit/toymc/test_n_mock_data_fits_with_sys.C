@@ -1906,8 +1906,8 @@ void test_n_mock_data_fits_with_sys
       double dm23sq_step   = fparm->StepSize(conv::kPhypDm23sq);
 
       // make sure that min and max are at the bin centre
-      int mixing23_nbins = 1 + (int) ((mixing23_max - mixing23_min) / mixing23_step);
-      int dm23sq_nbins   = 1 + (int) ((dm23sq_max -   dm23sq_min )  / dm23sq_step );
+      int mixing23_nbins = 1 + TMath::CeilNint((mixing23_max - mixing23_min) / mixing23_step);
+      int dm23sq_nbins   = 1 + TMath::CeilNint((dm23sq_max -   dm23sq_min )  / dm23sq_step );
 
       //FIRST
       // Use the 7 best-fit systematics, the N-7 nominal systematics, loop over oscillation params and calculate chisq (this is the chisq surface

@@ -307,8 +307,8 @@ TH2D * Superk1RmuErecoFitter::BuildChisqSurfaceNuMuDisap2ParamFit(void)
    double dm23sq_step   = fp.StepSize(conv::kPhypDm23sq);
 
    // make sure that min and max are at the bin centre
-   int mixing23_nbins = 1 + (int) ((mixing23_max - mixing23_min) / mixing23_step);
-   int dm23sq_nbins   = 1 + (int) ((dm23sq_max -   dm23sq_min )  / dm23sq_step );
+   int mixing23_nbins = 1 + TMath::CeilNint((mixing23_max - mixing23_min) / mixing23_step);
+   int dm23sq_nbins   = 1 + TMath::CeilNint((dm23sq_max -   dm23sq_min )  / dm23sq_step );
 
    TH2D * chisq_surface;
    chisq_surface = new TH2D(
