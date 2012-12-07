@@ -15,7 +15,7 @@
 
 #define SYST_NSIGMA 5   // number of sigma away from nominal nuisance parameters are allowed to be
 #define SYST_STEP   0.1 // step size (in units of sigma)
-#define NSELECTED_NONBANFF 5
+#define NSELECTED_NONBANFF 6
 #define NSELECTED_BANFF    2
 #define NSELECTED_UNBANFF  0
 
@@ -981,7 +981,7 @@ void FitParamList::AppendSelectedNonBANFFSystematics(FitParamList * fparm, int s
   // SK detector
   fparm->AddParam( ip++, kNuisSuperkEff1RmuCCnonQE,  0.0, -1.0*SYST_NSIGMA, 1.0*SYST_NSIGMA, SYST_STEP,  false, true);
   fparm->AddParam( ip++, kNuisSuperkEff1RmuNC,       0.0, -1.0*SYST_NSIGMA, 1.0*SYST_NSIGMA, SYST_STEP,  false, true);
-  //fparm->AddParam( ip++, kNuisSuperkEnergyScale,     0.0, -1.0*SYST_NSIGMA, 1.0*SYST_NSIGMA, SYST_STEP,  false, true);
+  fparm->AddParam( ip++, kNuisSuperkEnergyScale,     0.0, -1.0*SYST_NSIGMA, 1.0*SYST_NSIGMA, SYST_STEP,  false, true);
 
 }
 //________________________________________________________________________________________

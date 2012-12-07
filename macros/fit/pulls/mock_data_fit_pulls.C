@@ -1,5 +1,21 @@
 #include <TXMLEngine.h>
+#include <TH1D.h>
+#include <TH2D.h>
+#include <TTree.h>
+#include <TChain.h>
+#include <TMatrixD.h>
+#include <TVectorD.h>
+#include <TCanvas.h>
+#include <TF1.h>
+#include <TStyle.h>
+#include <TSystem.h>
+
+#include <Utilities.h>
+#include <Conventions.h>
+
 #include <iomanip.h>
+#include <stdio.h>
+#include <math.h>
 
 void mock_data_fit_pulls(
      const char * filenames,                                              /* add these filenames to the tree */
@@ -43,7 +59,8 @@ void mock_data_fit_pulls(
       //"detector_systematics/superk/efficiency_relative_error/one_mu_ring/nuecc");
 
   //BANFF
-  TMatrixD * BANFFCovMtrx = util::XML2TMatrixD(xml,root_node, "banff/covariance_matrix");
+  TMatrixD * BANFFCovMtrxP = util::XML2TMatrixD(xml,root_node, "banff/covariance_matrix");
+  const TMatrixD & BANFFCovMtrx = *BANFFCovMtrxP;
   double preerr_banff_00 = sqrt(BANFFCovMtrx(0,0));
   double preerr_banff_01 = sqrt(BANFFCovMtrx(1,1));
   double preerr_banff_02 = sqrt(BANFFCovMtrx(2,2));
@@ -69,7 +86,8 @@ void mock_data_fit_pulls(
   double preerr_banff_cc1piE1 = sqrt(BANFFCovMtrx(22,22));
 
   //FSI
-  TMatrixD *FSICovMtrx = util::XML2TMatrixD(xml,root_node, "fsi/covariance_matrix");
+  TMatrixD *FSICovMtrxP = util::XML2TMatrixD(xml,root_node, "fsi/covariance_matrix");
+  const TMatrixD & FSICovMtrx = *FSICovMtrxP;
   double preerr_fsi_000 = sqrt(FSICovMtrx(0,0));
   double preerr_fsi_001 = sqrt(FSICovMtrx(1,1));
   double preerr_fsi_002 = sqrt(FSICovMtrx(2,2));
@@ -113,29 +131,6 @@ void mock_data_fit_pulls(
   double input_deltacp, bestfit_deltacp, errminosplus_deltacp, errminosminus_deltacp, errmigrad_deltacp, errhesse_deltacp, err_deltacp;
   double input_dm12sq, bestfit_dm12sq, errminosplus_dm12sq, errminosminus_dm12sq, errmigrad_dm12sq, errhesse_dm12sq, err_dm12sq;
   double input_dm23sq, bestfit_dm23sq, errminosplus_dm23sq, errminosminus_dm23sq, errmigrad_dm23sq, errhesse_dm23sq, err_dm23sq;
-  double input_unbanff_00, bestfit_unbanff_00, errminosplus_unbanff_00, errminosminus_unbanff_00, errmigrad_unbanff_00, errhesse_unbanff_00, err_unbanff_00;
-  double input_unbanff_01, bestfit_unbanff_01, errminosplus_unbanff_01, errminosminus_unbanff_01, errmigrad_unbanff_01, errhesse_unbanff_01, err_unbanff_01;
-  double input_unbanff_02, bestfit_unbanff_02, errminosplus_unbanff_02, errminosminus_unbanff_02, errmigrad_unbanff_02, errhesse_unbanff_02, err_unbanff_02;
-  double input_unbanff_03, bestfit_unbanff_03, errminosplus_unbanff_03, errminosminus_unbanff_03, errmigrad_unbanff_03, errhesse_unbanff_03, err_unbanff_03;
-  double input_unbanff_04, bestfit_unbanff_04, errminosplus_unbanff_04, errminosminus_unbanff_04, errmigrad_unbanff_04, errhesse_unbanff_04, err_unbanff_04;
-  double input_unbanff_05, bestfit_unbanff_05, errminosplus_unbanff_05, errminosminus_unbanff_05, errmigrad_unbanff_05, errhesse_unbanff_05, err_unbanff_05;
-  double input_unbanff_06, bestfit_unbanff_06, errminosplus_unbanff_06, errminosminus_unbanff_06, errmigrad_unbanff_06, errhesse_unbanff_06, err_unbanff_06;
-  double input_unbanff_07, bestfit_unbanff_07, errminosplus_unbanff_07, errminosminus_unbanff_07, errmigrad_unbanff_07, errhesse_unbanff_07, err_unbanff_07;
-  double input_unbanff_08, bestfit_unbanff_08, errminosplus_unbanff_08, errminosminus_unbanff_08, errmigrad_unbanff_08, errhesse_unbanff_08, err_unbanff_08;
-  double input_unbanff_09, bestfit_unbanff_09, errminosplus_unbanff_09, errminosminus_unbanff_09, errmigrad_unbanff_09, errhesse_unbanff_09, err_unbanff_09;
-  double input_unbanff_10, bestfit_unbanff_10, errminosplus_unbanff_10, errminosminus_unbanff_10, errmigrad_unbanff_10, errhesse_unbanff_10, err_unbanff_10;
-  double input_unbanff_11, bestfit_unbanff_11, errminosplus_unbanff_11, errminosminus_unbanff_11, errmigrad_unbanff_11, errhesse_unbanff_11, err_unbanff_11;
-  double input_unbanff_12, bestfit_unbanff_12, errminosplus_unbanff_12, errminosminus_unbanff_12, errmigrad_unbanff_12, errhesse_unbanff_12, err_unbanff_12;
-  double input_unbanff_13, bestfit_unbanff_13, errminosplus_unbanff_13, errminosminus_unbanff_13, errmigrad_unbanff_13, errhesse_unbanff_13, err_unbanff_13;
-  double input_unbanff_14, bestfit_unbanff_14, errminosplus_unbanff_14, errminosminus_unbanff_14, errmigrad_unbanff_14, errhesse_unbanff_14, err_unbanff_14;
-  double input_unbanff_15, bestfit_unbanff_15, errminosplus_unbanff_15, errminosminus_unbanff_15, errmigrad_unbanff_15, errhesse_unbanff_15, err_unbanff_15;
-  double input_unbanff_16, bestfit_unbanff_16, errminosplus_unbanff_16, errminosminus_unbanff_16, errmigrad_unbanff_16, errhesse_unbanff_16, err_unbanff_16;
-  double input_unbanff_17, bestfit_unbanff_17, errminosplus_unbanff_17, errminosminus_unbanff_17, errmigrad_unbanff_17, errhesse_unbanff_17, err_unbanff_17;
-  double input_unbanff_18, bestfit_unbanff_18, errminosplus_unbanff_18, errminosminus_unbanff_18, errmigrad_unbanff_18, errhesse_unbanff_18, err_unbanff_18;
-  double input_unbanff_19, bestfit_unbanff_19, errminosplus_unbanff_19, errminosminus_unbanff_19, errmigrad_unbanff_19, errhesse_unbanff_19, err_unbanff_19;
-  double input_unbanff_20, bestfit_unbanff_20, errminosplus_unbanff_20, errminosminus_unbanff_20, errmigrad_unbanff_20, errhesse_unbanff_20, err_unbanff_20;
-  double input_unbanff_21, bestfit_unbanff_21, errminosplus_unbanff_21, errminosminus_unbanff_21, errmigrad_unbanff_21, errhesse_unbanff_21, err_unbanff_21;
-  double input_unbanff_22, bestfit_unbanff_22, errminosplus_unbanff_22, errminosminus_unbanff_22, errmigrad_unbanff_22, errhesse_unbanff_22, err_unbanff_22;
   double input_banff_00, bestfit_banff_00, errminosplus_banff_00, errminosminus_banff_00, errmigrad_banff_00, errhesse_banff_00, err_banff_00;
   double input_banff_01, bestfit_banff_01, errminosplus_banff_01, errminosminus_banff_01, errmigrad_banff_01, errhesse_banff_01, err_banff_01;
   double input_banff_02, bestfit_banff_02, errminosplus_banff_02, errminosminus_banff_02, errmigrad_banff_02, errhesse_banff_02, err_banff_02;
@@ -280,31 +275,6 @@ void mock_data_fit_pulls(
     ch.SetBranchAddress("errhesse_skdet_energyscale",&errhesse_skdet_energyscale);
 
     //inputs
-    /*
-    ch.SetBranchAddress("input_unbanff_00",&input_unbanff_00);
-    ch.SetBranchAddress("input_unbanff_01",&input_unbanff_01);
-    ch.SetBranchAddress("input_unbanff_02",&input_unbanff_02);
-    ch.SetBranchAddress("input_unbanff_03",&input_unbanff_03);
-    ch.SetBranchAddress("input_unbanff_04",&input_unbanff_04);
-    ch.SetBranchAddress("input_unbanff_05",&input_unbanff_05);
-    ch.SetBranchAddress("input_unbanff_06",&input_unbanff_06);
-    ch.SetBranchAddress("input_unbanff_07",&input_unbanff_07);
-    ch.SetBranchAddress("input_unbanff_08",&input_unbanff_08);
-    ch.SetBranchAddress("input_unbanff_09",&input_unbanff_09);
-    ch.SetBranchAddress("input_unbanff_10",&input_unbanff_10);
-    ch.SetBranchAddress("input_unbanff_11",&input_unbanff_11);
-    ch.SetBranchAddress("input_unbanff_12",&input_unbanff_12);
-    ch.SetBranchAddress("input_unbanff_13",&input_unbanff_13);
-    ch.SetBranchAddress("input_unbanff_14",&input_unbanff_14);
-    ch.SetBranchAddress("input_unbanff_15",&input_unbanff_15);
-    ch.SetBranchAddress("input_unbanff_16",&input_unbanff_16);
-    ch.SetBranchAddress("input_unbanff_17",&input_unbanff_17);
-    ch.SetBranchAddress("input_unbanff_18",&input_unbanff_18);
-    ch.SetBranchAddress("input_unbanff_19",&input_unbanff_19);
-    ch.SetBranchAddress("input_unbanff_20",&input_unbanff_20);
-    ch.SetBranchAddress("input_unbanff_21",&input_unbanff_21);
-    ch.SetBranchAddress("input_unbanff_22",&input_unbanff_22);
-    */
     ch.SetBranchAddress("input_banff_00",&input_banff_00);
     ch.SetBranchAddress("input_banff_01",&input_banff_01);
     ch.SetBranchAddress("input_banff_02",&input_banff_02);
@@ -329,31 +299,6 @@ void mock_data_fit_pulls(
     ch.SetBranchAddress("input_banff_cc1piE0",&input_banff_cc1piE0);
     ch.SetBranchAddress("input_banff_cc1piE1",&input_banff_cc1piE1);
     //bestfits
-    /*
-    ch.SetBranchAddress("bestfit_unbanff_00",&bestfit_unbanff_00);
-    ch.SetBranchAddress("bestfit_unbanff_01",&bestfit_unbanff_01);
-    ch.SetBranchAddress("bestfit_unbanff_02",&bestfit_unbanff_02);
-    ch.SetBranchAddress("bestfit_unbanff_03",&bestfit_unbanff_03);
-    ch.SetBranchAddress("bestfit_unbanff_04",&bestfit_unbanff_04);
-    ch.SetBranchAddress("bestfit_unbanff_05",&bestfit_unbanff_05);
-    ch.SetBranchAddress("bestfit_unbanff_06",&bestfit_unbanff_06);
-    ch.SetBranchAddress("bestfit_unbanff_07",&bestfit_unbanff_07);
-    ch.SetBranchAddress("bestfit_unbanff_08",&bestfit_unbanff_08);
-    ch.SetBranchAddress("bestfit_unbanff_09",&bestfit_unbanff_09);
-    ch.SetBranchAddress("bestfit_unbanff_10",&bestfit_unbanff_10);
-    ch.SetBranchAddress("bestfit_unbanff_11",&bestfit_unbanff_11);
-    ch.SetBranchAddress("bestfit_unbanff_12",&bestfit_unbanff_12);
-    ch.SetBranchAddress("bestfit_unbanff_13",&bestfit_unbanff_13);
-    ch.SetBranchAddress("bestfit_unbanff_14",&bestfit_unbanff_14);
-    ch.SetBranchAddress("bestfit_unbanff_15",&bestfit_unbanff_15);
-    ch.SetBranchAddress("bestfit_unbanff_16",&bestfit_unbanff_16);
-    ch.SetBranchAddress("bestfit_unbanff_17",&bestfit_unbanff_17);
-    ch.SetBranchAddress("bestfit_unbanff_18",&bestfit_unbanff_18);
-    ch.SetBranchAddress("bestfit_unbanff_19",&bestfit_unbanff_19);
-    ch.SetBranchAddress("bestfit_unbanff_20",&bestfit_unbanff_20);
-    ch.SetBranchAddress("bestfit_unbanff_21",&bestfit_unbanff_21);
-    ch.SetBranchAddress("bestfit_unbanff_22",&bestfit_unbanff_22);
-    */
     ch.SetBranchAddress("bestfit_banff_00",&bestfit_banff_00);
     ch.SetBranchAddress("bestfit_banff_01",&bestfit_banff_01);
     ch.SetBranchAddress("bestfit_banff_02",&bestfit_banff_02);
@@ -378,31 +323,6 @@ void mock_data_fit_pulls(
     ch.SetBranchAddress("bestfit_banff_cc1piE0",&bestfit_banff_cc1piE0);
     ch.SetBranchAddress("bestfit_banff_cc1piE1",&bestfit_banff_cc1piE1);
     //errminospluss
-    /*
-    ch.SetBranchAddress("errminosplus_unbanff_00",&errminosplus_unbanff_00);
-    ch.SetBranchAddress("errminosplus_unbanff_01",&errminosplus_unbanff_01);
-    ch.SetBranchAddress("errminosplus_unbanff_02",&errminosplus_unbanff_02);
-    ch.SetBranchAddress("errminosplus_unbanff_03",&errminosplus_unbanff_03);
-    ch.SetBranchAddress("errminosplus_unbanff_04",&errminosplus_unbanff_04);
-    ch.SetBranchAddress("errminosplus_unbanff_05",&errminosplus_unbanff_05);
-    ch.SetBranchAddress("errminosplus_unbanff_06",&errminosplus_unbanff_06);
-    ch.SetBranchAddress("errminosplus_unbanff_07",&errminosplus_unbanff_07);
-    ch.SetBranchAddress("errminosplus_unbanff_08",&errminosplus_unbanff_08);
-    ch.SetBranchAddress("errminosplus_unbanff_09",&errminosplus_unbanff_09);
-    ch.SetBranchAddress("errminosplus_unbanff_10",&errminosplus_unbanff_10);
-    ch.SetBranchAddress("errminosplus_unbanff_11",&errminosplus_unbanff_11);
-    ch.SetBranchAddress("errminosplus_unbanff_12",&errminosplus_unbanff_12);
-    ch.SetBranchAddress("errminosplus_unbanff_13",&errminosplus_unbanff_13);
-    ch.SetBranchAddress("errminosplus_unbanff_14",&errminosplus_unbanff_14);
-    ch.SetBranchAddress("errminosplus_unbanff_15",&errminosplus_unbanff_15);
-    ch.SetBranchAddress("errminosplus_unbanff_16",&errminosplus_unbanff_16);
-    ch.SetBranchAddress("errminosplus_unbanff_17",&errminosplus_unbanff_17);
-    ch.SetBranchAddress("errminosplus_unbanff_18",&errminosplus_unbanff_18);
-    ch.SetBranchAddress("errminosplus_unbanff_19",&errminosplus_unbanff_19);
-    ch.SetBranchAddress("errminosplus_unbanff_20",&errminosplus_unbanff_20);
-    ch.SetBranchAddress("errminosplus_unbanff_21",&errminosplus_unbanff_21);
-    ch.SetBranchAddress("errminosplus_unbanff_22",&errminosplus_unbanff_22);
-    */
     ch.SetBranchAddress("errminosplus_banff_00",&errminosplus_banff_00);
     ch.SetBranchAddress("errminosplus_banff_01",&errminosplus_banff_01);
     ch.SetBranchAddress("errminosplus_banff_02",&errminosplus_banff_02);
@@ -427,31 +347,6 @@ void mock_data_fit_pulls(
     ch.SetBranchAddress("errminosplus_banff_cc1piE0",&errminosplus_banff_cc1piE0);
     ch.SetBranchAddress("errminosplus_banff_cc1piE1",&errminosplus_banff_cc1piE1);
     //errminosminuss
-    /*
-    ch.SetBranchAddress("errminosminus_unbanff_00",&errminosminus_unbanff_00);
-    ch.SetBranchAddress("errminosminus_unbanff_01",&errminosminus_unbanff_01);
-    ch.SetBranchAddress("errminosminus_unbanff_02",&errminosminus_unbanff_02);
-    ch.SetBranchAddress("errminosminus_unbanff_03",&errminosminus_unbanff_03);
-    ch.SetBranchAddress("errminosminus_unbanff_04",&errminosminus_unbanff_04);
-    ch.SetBranchAddress("errminosminus_unbanff_05",&errminosminus_unbanff_05);
-    ch.SetBranchAddress("errminosminus_unbanff_06",&errminosminus_unbanff_06);
-    ch.SetBranchAddress("errminosminus_unbanff_07",&errminosminus_unbanff_07);
-    ch.SetBranchAddress("errminosminus_unbanff_08",&errminosminus_unbanff_08);
-    ch.SetBranchAddress("errminosminus_unbanff_09",&errminosminus_unbanff_09);
-    ch.SetBranchAddress("errminosminus_unbanff_10",&errminosminus_unbanff_10);
-    ch.SetBranchAddress("errminosminus_unbanff_11",&errminosminus_unbanff_11);
-    ch.SetBranchAddress("errminosminus_unbanff_12",&errminosminus_unbanff_12);
-    ch.SetBranchAddress("errminosminus_unbanff_13",&errminosminus_unbanff_13);
-    ch.SetBranchAddress("errminosminus_unbanff_14",&errminosminus_unbanff_14);
-    ch.SetBranchAddress("errminosminus_unbanff_15",&errminosminus_unbanff_15);
-    ch.SetBranchAddress("errminosminus_unbanff_16",&errminosminus_unbanff_16);
-    ch.SetBranchAddress("errminosminus_unbanff_17",&errminosminus_unbanff_17);
-    ch.SetBranchAddress("errminosminus_unbanff_18",&errminosminus_unbanff_18);
-    ch.SetBranchAddress("errminosminus_unbanff_19",&errminosminus_unbanff_19);
-    ch.SetBranchAddress("errminosminus_unbanff_20",&errminosminus_unbanff_20);
-    ch.SetBranchAddress("errminosminus_unbanff_21",&errminosminus_unbanff_21);
-    ch.SetBranchAddress("errminosminus_unbanff_22",&errminosminus_unbanff_22);
-    */
     ch.SetBranchAddress("errminosminus_banff_00",&errminosminus_banff_00);
     ch.SetBranchAddress("errminosminus_banff_01",&errminosminus_banff_01);
     ch.SetBranchAddress("errminosminus_banff_02",&errminosminus_banff_02);
@@ -476,31 +371,6 @@ void mock_data_fit_pulls(
     ch.SetBranchAddress("errminosminus_banff_cc1piE0",&errminosminus_banff_cc1piE0);
     ch.SetBranchAddress("errminosminus_banff_cc1piE1",&errminosminus_banff_cc1piE1);
     //errmigrad
-    /*
-    ch.SetBranchAddress("errmigrad_unbanff_00",&errmigrad_unbanff_00);
-    ch.SetBranchAddress("errmigrad_unbanff_01",&errmigrad_unbanff_01);
-    ch.SetBranchAddress("errmigrad_unbanff_02",&errmigrad_unbanff_02);
-    ch.SetBranchAddress("errmigrad_unbanff_03",&errmigrad_unbanff_03);
-    ch.SetBranchAddress("errmigrad_unbanff_04",&errmigrad_unbanff_04);
-    ch.SetBranchAddress("errmigrad_unbanff_05",&errmigrad_unbanff_05);
-    ch.SetBranchAddress("errmigrad_unbanff_06",&errmigrad_unbanff_06);
-    ch.SetBranchAddress("errmigrad_unbanff_07",&errmigrad_unbanff_07);
-    ch.SetBranchAddress("errmigrad_unbanff_08",&errmigrad_unbanff_08);
-    ch.SetBranchAddress("errmigrad_unbanff_09",&errmigrad_unbanff_09);
-    ch.SetBranchAddress("errmigrad_unbanff_10",&errmigrad_unbanff_10);
-    ch.SetBranchAddress("errmigrad_unbanff_11",&errmigrad_unbanff_11);
-    ch.SetBranchAddress("errmigrad_unbanff_12",&errmigrad_unbanff_12);
-    ch.SetBranchAddress("errmigrad_unbanff_13",&errmigrad_unbanff_13);
-    ch.SetBranchAddress("errmigrad_unbanff_14",&errmigrad_unbanff_14);
-    ch.SetBranchAddress("errmigrad_unbanff_15",&errmigrad_unbanff_15);
-    ch.SetBranchAddress("errmigrad_unbanff_16",&errmigrad_unbanff_16);
-    ch.SetBranchAddress("errmigrad_unbanff_17",&errmigrad_unbanff_17);
-    ch.SetBranchAddress("errmigrad_unbanff_18",&errmigrad_unbanff_18);
-    ch.SetBranchAddress("errmigrad_unbanff_19",&errmigrad_unbanff_19);
-    ch.SetBranchAddress("errmigrad_unbanff_20",&errmigrad_unbanff_20);
-    ch.SetBranchAddress("errmigrad_unbanff_21",&errmigrad_unbanff_21);
-    ch.SetBranchAddress("errmigrad_unbanff_22",&errmigrad_unbanff_22);
-    */
     ch.SetBranchAddress("errmigrad_banff_00",&errmigrad_banff_00);
     ch.SetBranchAddress("errmigrad_banff_01",&errmigrad_banff_01);
     ch.SetBranchAddress("errmigrad_banff_02",&errmigrad_banff_02);
@@ -525,31 +395,6 @@ void mock_data_fit_pulls(
     ch.SetBranchAddress("errmigrad_banff_cc1piE0",&errmigrad_banff_cc1piE0);
     ch.SetBranchAddress("errmigrad_banff_cc1piE1",&errmigrad_banff_cc1piE1);
     //errhesse
-    /*
-    ch.SetBranchAddress("errhesse_unbanff_00",&errhesse_unbanff_00);
-    ch.SetBranchAddress("errhesse_unbanff_01",&errhesse_unbanff_01);
-    ch.SetBranchAddress("errhesse_unbanff_02",&errhesse_unbanff_02);
-    ch.SetBranchAddress("errhesse_unbanff_03",&errhesse_unbanff_03);
-    ch.SetBranchAddress("errhesse_unbanff_04",&errhesse_unbanff_04);
-    ch.SetBranchAddress("errhesse_unbanff_05",&errhesse_unbanff_05);
-    ch.SetBranchAddress("errhesse_unbanff_06",&errhesse_unbanff_06);
-    ch.SetBranchAddress("errhesse_unbanff_07",&errhesse_unbanff_07);
-    ch.SetBranchAddress("errhesse_unbanff_08",&errhesse_unbanff_08);
-    ch.SetBranchAddress("errhesse_unbanff_09",&errhesse_unbanff_09);
-    ch.SetBranchAddress("errhesse_unbanff_10",&errhesse_unbanff_10);
-    ch.SetBranchAddress("errhesse_unbanff_11",&errhesse_unbanff_11);
-    ch.SetBranchAddress("errhesse_unbanff_12",&errhesse_unbanff_12);
-    ch.SetBranchAddress("errhesse_unbanff_13",&errhesse_unbanff_13);
-    ch.SetBranchAddress("errhesse_unbanff_14",&errhesse_unbanff_14);
-    ch.SetBranchAddress("errhesse_unbanff_15",&errhesse_unbanff_15);
-    ch.SetBranchAddress("errhesse_unbanff_16",&errhesse_unbanff_16);
-    ch.SetBranchAddress("errhesse_unbanff_17",&errhesse_unbanff_17);
-    ch.SetBranchAddress("errhesse_unbanff_18",&errhesse_unbanff_18);
-    ch.SetBranchAddress("errhesse_unbanff_19",&errhesse_unbanff_19);
-    ch.SetBranchAddress("errhesse_unbanff_20",&errhesse_unbanff_20);
-    ch.SetBranchAddress("errhesse_unbanff_21",&errhesse_unbanff_21);
-    ch.SetBranchAddress("errhesse_unbanff_22",&errhesse_unbanff_22);
-    */
     ch.SetBranchAddress("errhesse_banff_00",&errhesse_banff_00);
     ch.SetBranchAddress("errhesse_banff_01",&errhesse_banff_01);
     ch.SetBranchAddress("errhesse_banff_02",&errhesse_banff_02);
@@ -797,31 +642,6 @@ void mock_data_fit_pulls(
     ch.SetBranchStatus("errhesse_skdet_energyscale",1);
 
     //inputs
-    /*
-    ch.SetBranchStatus("input_unbanff_00",1);
-    ch.SetBranchStatus("input_unbanff_01",1);
-    ch.SetBranchStatus("input_unbanff_02",1);
-    ch.SetBranchStatus("input_unbanff_03",1);
-    ch.SetBranchStatus("input_unbanff_04",1);
-    ch.SetBranchStatus("input_unbanff_05",1);
-    ch.SetBranchStatus("input_unbanff_06",1);
-    ch.SetBranchStatus("input_unbanff_07",1);
-    ch.SetBranchStatus("input_unbanff_08",1);
-    ch.SetBranchStatus("input_unbanff_09",1);
-    ch.SetBranchStatus("input_unbanff_10",1);
-    ch.SetBranchStatus("input_unbanff_11",1);
-    ch.SetBranchStatus("input_unbanff_12",1);
-    ch.SetBranchStatus("input_unbanff_13",1);
-    ch.SetBranchStatus("input_unbanff_14",1);
-    ch.SetBranchStatus("input_unbanff_15",1);
-    ch.SetBranchStatus("input_unbanff_16",1);
-    ch.SetBranchStatus("input_unbanff_17",1);
-    ch.SetBranchStatus("input_unbanff_18",1);
-    ch.SetBranchStatus("input_unbanff_19",1);
-    ch.SetBranchStatus("input_unbanff_20",1);
-    ch.SetBranchStatus("input_unbanff_21",1);
-    ch.SetBranchStatus("input_unbanff_22",1);
-    */
     ch.SetBranchStatus("input_banff_00",1);
     ch.SetBranchStatus("input_banff_01",1);
     ch.SetBranchStatus("input_banff_02",1);
@@ -846,31 +666,6 @@ void mock_data_fit_pulls(
     ch.SetBranchStatus("input_banff_cc1piE0",1);
     ch.SetBranchStatus("input_banff_cc1piE1",1);
     //bestfits
-    /*
-    ch.SetBranchStatus("bestfit_unbanff_00",1);
-    ch.SetBranchStatus("bestfit_unbanff_01",1);
-    ch.SetBranchStatus("bestfit_unbanff_02",1);
-    ch.SetBranchStatus("bestfit_unbanff_03",1);
-    ch.SetBranchStatus("bestfit_unbanff_04",1);
-    ch.SetBranchStatus("bestfit_unbanff_05",1);
-    ch.SetBranchStatus("bestfit_unbanff_06",1);
-    ch.SetBranchStatus("bestfit_unbanff_07",1);
-    ch.SetBranchStatus("bestfit_unbanff_08",1);
-    ch.SetBranchStatus("bestfit_unbanff_09",1);
-    ch.SetBranchStatus("bestfit_unbanff_10",1);
-    ch.SetBranchStatus("bestfit_unbanff_11",1);
-    ch.SetBranchStatus("bestfit_unbanff_12",1);
-    ch.SetBranchStatus("bestfit_unbanff_13",1);
-    ch.SetBranchStatus("bestfit_unbanff_14",1);
-    ch.SetBranchStatus("bestfit_unbanff_15",1);
-    ch.SetBranchStatus("bestfit_unbanff_16",1);
-    ch.SetBranchStatus("bestfit_unbanff_17",1);
-    ch.SetBranchStatus("bestfit_unbanff_18",1);
-    ch.SetBranchStatus("bestfit_unbanff_19",1);
-    ch.SetBranchStatus("bestfit_unbanff_20",1);
-    ch.SetBranchStatus("bestfit_unbanff_21",1);
-    ch.SetBranchStatus("bestfit_unbanff_22",1);
-    */
     ch.SetBranchStatus("bestfit_banff_00",1);
     ch.SetBranchStatus("bestfit_banff_01",1);
     ch.SetBranchStatus("bestfit_banff_02",1);
@@ -895,31 +690,6 @@ void mock_data_fit_pulls(
     ch.SetBranchStatus("bestfit_banff_cc1piE0",1);
     ch.SetBranchStatus("bestfit_banff_cc1piE1",1);
     //errminospluss
-    /*
-    ch.SetBranchStatus("errminosplus_unbanff_00",1);
-    ch.SetBranchStatus("errminosplus_unbanff_01",1);
-    ch.SetBranchStatus("errminosplus_unbanff_02",1);
-    ch.SetBranchStatus("errminosplus_unbanff_03",1);
-    ch.SetBranchStatus("errminosplus_unbanff_04",1);
-    ch.SetBranchStatus("errminosplus_unbanff_05",1);
-    ch.SetBranchStatus("errminosplus_unbanff_06",1);
-    ch.SetBranchStatus("errminosplus_unbanff_07",1);
-    ch.SetBranchStatus("errminosplus_unbanff_08",1);
-    ch.SetBranchStatus("errminosplus_unbanff_09",1);
-    ch.SetBranchStatus("errminosplus_unbanff_10",1);
-    ch.SetBranchStatus("errminosplus_unbanff_11",1);
-    ch.SetBranchStatus("errminosplus_unbanff_12",1);
-    ch.SetBranchStatus("errminosplus_unbanff_13",1);
-    ch.SetBranchStatus("errminosplus_unbanff_14",1);
-    ch.SetBranchStatus("errminosplus_unbanff_15",1);
-    ch.SetBranchStatus("errminosplus_unbanff_16",1);
-    ch.SetBranchStatus("errminosplus_unbanff_17",1);
-    ch.SetBranchStatus("errminosplus_unbanff_18",1);
-    ch.SetBranchStatus("errminosplus_unbanff_19",1);
-    ch.SetBranchStatus("errminosplus_unbanff_20",1);
-    ch.SetBranchStatus("errminosplus_unbanff_21",1);
-    ch.SetBranchStatus("errminosplus_unbanff_22",1);
-    */
     ch.SetBranchStatus("errminosplus_banff_00",1);
     ch.SetBranchStatus("errminosplus_banff_01",1);
     ch.SetBranchStatus("errminosplus_banff_02",1);
@@ -945,31 +715,6 @@ void mock_data_fit_pulls(
     ch.SetBranchStatus("errminosplus_banff_cc1piE1",1);
 
     //errminosminuss
-    /*
-    ch.SetBranchStatus("errminosminus_unbanff_00",1);
-    ch.SetBranchStatus("errminosminus_unbanff_01",1);
-    ch.SetBranchStatus("errminosminus_unbanff_02",1);
-    ch.SetBranchStatus("errminosminus_unbanff_03",1);
-    ch.SetBranchStatus("errminosminus_unbanff_04",1);
-    ch.SetBranchStatus("errminosminus_unbanff_05",1);
-    ch.SetBranchStatus("errminosminus_unbanff_06",1);
-    ch.SetBranchStatus("errminosminus_unbanff_07",1);
-    ch.SetBranchStatus("errminosminus_unbanff_08",1);
-    ch.SetBranchStatus("errminosminus_unbanff_09",1);
-    ch.SetBranchStatus("errminosminus_unbanff_10",1);
-    ch.SetBranchStatus("errminosminus_unbanff_11",1);
-    ch.SetBranchStatus("errminosminus_unbanff_12",1);
-    ch.SetBranchStatus("errminosminus_unbanff_13",1);
-    ch.SetBranchStatus("errminosminus_unbanff_14",1);
-    ch.SetBranchStatus("errminosminus_unbanff_15",1);
-    ch.SetBranchStatus("errminosminus_unbanff_16",1);
-    ch.SetBranchStatus("errminosminus_unbanff_17",1);
-    ch.SetBranchStatus("errminosminus_unbanff_18",1);
-    ch.SetBranchStatus("errminosminus_unbanff_19",1);
-    ch.SetBranchStatus("errminosminus_unbanff_20",1);
-    ch.SetBranchStatus("errminosminus_unbanff_21",1);
-    ch.SetBranchStatus("errminosminus_unbanff_22",1);
-    */
     ch.SetBranchStatus("errminosminus_banff_00",1);
     ch.SetBranchStatus("errminosminus_banff_01",1);
     ch.SetBranchStatus("errminosminus_banff_02",1);
@@ -994,31 +739,6 @@ void mock_data_fit_pulls(
     ch.SetBranchStatus("errminosminus_banff_cc1piE0",1);
     ch.SetBranchStatus("errminosminus_banff_cc1piE1",1);
     //errmigrad
-    /*
-    ch.SetBranchStatus("errmigrad_unbanff_00",1);
-    ch.SetBranchStatus("errmigrad_unbanff_01",1);
-    ch.SetBranchStatus("errmigrad_unbanff_02",1);
-    ch.SetBranchStatus("errmigrad_unbanff_03",1);
-    ch.SetBranchStatus("errmigrad_unbanff_04",1);
-    ch.SetBranchStatus("errmigrad_unbanff_05",1);
-    ch.SetBranchStatus("errmigrad_unbanff_06",1);
-    ch.SetBranchStatus("errmigrad_unbanff_07",1);
-    ch.SetBranchStatus("errmigrad_unbanff_08",1);
-    ch.SetBranchStatus("errmigrad_unbanff_09",1);
-    ch.SetBranchStatus("errmigrad_unbanff_10",1);
-    ch.SetBranchStatus("errmigrad_unbanff_11",1);
-    ch.SetBranchStatus("errmigrad_unbanff_12",1);
-    ch.SetBranchStatus("errmigrad_unbanff_13",1);
-    ch.SetBranchStatus("errmigrad_unbanff_14",1);
-    ch.SetBranchStatus("errmigrad_unbanff_15",1);
-    ch.SetBranchStatus("errmigrad_unbanff_16",1);
-    ch.SetBranchStatus("errmigrad_unbanff_17",1);
-    ch.SetBranchStatus("errmigrad_unbanff_18",1);
-    ch.SetBranchStatus("errmigrad_unbanff_19",1);
-    ch.SetBranchStatus("errmigrad_unbanff_20",1);
-    ch.SetBranchStatus("errmigrad_unbanff_21",1);
-    ch.SetBranchStatus("errmigrad_unbanff_22",1);
-    */
     ch.SetBranchStatus("errmigrad_banff_00",1);
     ch.SetBranchStatus("errmigrad_banff_01",1);
     ch.SetBranchStatus("errmigrad_banff_02",1);
@@ -1043,31 +763,6 @@ void mock_data_fit_pulls(
     ch.SetBranchStatus("errmigrad_banff_cc1piE0",1);
     ch.SetBranchStatus("errmigrad_banff_cc1piE1",1);
     //errhesse
-    /*
-    ch.SetBranchStatus("errhesse_unbanff_00",1);
-    ch.SetBranchStatus("errhesse_unbanff_01",1);
-    ch.SetBranchStatus("errhesse_unbanff_02",1);
-    ch.SetBranchStatus("errhesse_unbanff_03",1);
-    ch.SetBranchStatus("errhesse_unbanff_04",1);
-    ch.SetBranchStatus("errhesse_unbanff_05",1);
-    ch.SetBranchStatus("errhesse_unbanff_06",1);
-    ch.SetBranchStatus("errhesse_unbanff_07",1);
-    ch.SetBranchStatus("errhesse_unbanff_08",1);
-    ch.SetBranchStatus("errhesse_unbanff_09",1);
-    ch.SetBranchStatus("errhesse_unbanff_10",1);
-    ch.SetBranchStatus("errhesse_unbanff_11",1);
-    ch.SetBranchStatus("errhesse_unbanff_12",1);
-    ch.SetBranchStatus("errhesse_unbanff_13",1);
-    ch.SetBranchStatus("errhesse_unbanff_14",1);
-    ch.SetBranchStatus("errhesse_unbanff_15",1);
-    ch.SetBranchStatus("errhesse_unbanff_16",1);
-    ch.SetBranchStatus("errhesse_unbanff_17",1);
-    ch.SetBranchStatus("errhesse_unbanff_18",1);
-    ch.SetBranchStatus("errhesse_unbanff_19",1);
-    ch.SetBranchStatus("errhesse_unbanff_20",1);
-    ch.SetBranchStatus("errhesse_unbanff_21",1);
-    ch.SetBranchStatus("errhesse_unbanff_22",1);
-    */
     ch.SetBranchStatus("errhesse_banff_00",1);
     ch.SetBranchStatus("errhesse_banff_01",1);
     ch.SetBranchStatus("errhesse_banff_02",1);
@@ -1236,171 +931,122 @@ void mock_data_fit_pulls(
   TH1D * hpull_mixing23 = new TH1D("hpull_mixing23","hpull_mixing23",250,-5,5);
   TH1D * hpull_dm23sq   = new TH1D("hpull_dm23sq","hpull_dm23sq",250,-5,5);
   //error histograms
-  TH1D * herr_mixing23 = new TH1D("herr_mixing23","herr_mixing23",300,0,0.0.05);
+  TH1D * herr_mixing23 = new TH1D("herr_mixing23","herr_mixing23",300,0,0.05);
   TH1D * herr_dm23sq   = new TH1D("herr_dm23sq","herr_dm23sq",100,0,1E-4);
-  if(fit_systematics_mode >= 1) {
-    //distribution histograms
-    TH1D * h_xsec_sf = new TH1D("h_xsec_sf","h_xsec_sf",200,-3,3);
-    TH1D * h_xsec_binde = new TH1D("h_xsec_binde","h_xsec_binde",200,-3,3);
-    TH1D * h_xsec_pilessdelta = new TH1D("h_xsec_pilessdelta","h_xsec_pilessdelta",200,-3,3);
-    TH1D * h_skdet_ccnqe = new TH1D("h_skdet_ccnqe","h_skdet_ccnqe",200,-3,3);
-    TH1D * h_skdet_nc = new TH1D("h_skdet_nc","h_skdet_nc",200,-3,3);
-    TH1D * h_skdet_energyscale = new TH1D("h_skdet_energyscale","h_skdet_energyscale",200,-3,3);
-    //pull histograms
-    TH1D * hpull_xsec_sf = new TH1D("hpull_xsec_sf","hpull_xsec_sf",100,-5,5);
-    TH1D * hpull_xsec_binde = new TH1D("hpull_xsec_binde","hpull_xsec_binde",100,-10,10);
-    TH1D * hpull_xsec_pilessdelta = new TH1D("hpull_xsec_pilessdelta","hpull_xsec_pilessdelta",100,-5,5);
-    TH1D * hpull_skdet_ccnqe = new TH1D("hpull_skdet_ccnqe","hpull_skdet_ccnqe",100,-5,5);
-    TH1D * hpull_skdet_nc = new TH1D("hpull_skdet_nc","hpull_skdet_nc",100,-5,5);
-    TH1D * hpull_skdet_energyscale = new TH1D("hpull_skdet_energyscale","hpull_skdet_energyscale",100,-5,5);
-    //alterative pull histograms
-    TH1D * haltpull_xsec_sf = new TH1D("haltpull_xsec_sf","haltpull_xsec_sf",100,-5,5);
-    TH1D * haltpull_xsec_binde = new TH1D("haltpull_xsec_binde","haltpull_xsec_binde",100,-10,10);
-    TH1D * haltpull_xsec_pilessdelta = new TH1D("haltpull_xsec_pilessdelta","haltpull_xsec_pilessdelta",100,-5,5);
-    TH1D * haltpull_skdet_ccnqe = new TH1D("haltpull_skdet_ccnqe","haltpull_skdet_ccnqe",100,-5,5);
-    TH1D * haltpull_skdet_nc = new TH1D("haltpull_skdet_nc","haltpull_skdet_nc",100,-5,5);
-    TH1D * haltpull_skdet_energyscale = new TH1D("haltpull_skdet_energyscale","haltpull_skdet_energyscale",100,-5,5);
-    //distribution histograms
-    TH1D * h_unbanff_00 = new TH1D("h_unbanff_00","h_unbanff_00",100,-5,5);
-    TH1D * h_unbanff_01 = new TH1D("h_unbanff_01","h_unbanff_01",100,-5,5);
-    TH1D * h_unbanff_02 = new TH1D("h_unbanff_02","h_unbanff_02",100,-5,5);
-    TH1D * h_unbanff_03 = new TH1D("h_unbanff_03","h_unbanff_03",100,-5,5);
-    TH1D * h_unbanff_04 = new TH1D("h_unbanff_04","h_unbanff_04",100,-5,5);
-    TH1D * h_unbanff_05 = new TH1D("h_unbanff_05","h_unbanff_05",100,-5,5);
-    TH1D * h_unbanff_06 = new TH1D("h_unbanff_06","h_unbanff_06",100,-5,5);
-    TH1D * h_unbanff_07 = new TH1D("h_unbanff_07","h_unbanff_07",100,-5,5);
-    TH1D * h_unbanff_08 = new TH1D("h_unbanff_08","h_unbanff_08",100,-5,5);
-    TH1D * h_unbanff_09 = new TH1D("h_unbanff_09","h_unbanff_09",100,-5,5);
-    TH1D * h_unbanff_10 = new TH1D("h_unbanff_10","h_unbanff_10",100,-5,5);
-    TH1D * h_unbanff_11 = new TH1D("h_unbanff_11","h_unbanff_11",100,-5,5);
-    TH1D * h_unbanff_12 = new TH1D("h_unbanff_12","h_unbanff_12",100,-5,5);
-    TH1D * h_unbanff_13 = new TH1D("h_unbanff_13","h_unbanff_13",100,-5,5);
-    TH1D * h_unbanff_14 = new TH1D("h_unbanff_14","h_unbanff_14",100,-5,5);
-    TH1D * h_unbanff_15 = new TH1D("h_unbanff_15","h_unbanff_15",100,-5,5);
-    TH1D * h_unbanff_16 = new TH1D("h_unbanff_16","h_unbanff_16",100,-5,5);
-    TH1D * h_unbanff_17 = new TH1D("h_unbanff_17","h_unbanff_17",100,-5,5);
-    TH1D * h_unbanff_18 = new TH1D("h_unbanff_18","h_unbanff_18",100,-5,5);
-    TH1D * h_unbanff_19 = new TH1D("h_unbanff_19","h_unbanff_19",100,-5,5);
-    TH1D * h_unbanff_20 = new TH1D("h_unbanff_20","h_unbanff_20",100,-5,5);
-    TH1D * h_unbanff_21 = new TH1D("h_unbanff_21","h_unbanff_21",100,-5,5);
-    TH1D * h_unbanff_22 = new TH1D("h_unbanff_22","h_unbanff_22",100,-5,5);
-    TH1D * h_banff_00 = new TH1D("h_banff_00","h_banff_00",200,-3,3);
-    TH1D * h_banff_01 = new TH1D("h_banff_01","h_banff_01",200,-3,3);
-    TH1D * h_banff_02 = new TH1D("h_banff_02","h_banff_02",200,-3,3);
-    TH1D * h_banff_03 = new TH1D("h_banff_03","h_banff_03",200,-3,3);
-    TH1D * h_banff_04 = new TH1D("h_banff_04","h_banff_04",200,-3,3);
-    TH1D * h_banff_05 = new TH1D("h_banff_05","h_banff_05",200,-3,3);
-    TH1D * h_banff_06 = new TH1D("h_banff_06","h_banff_06",200,-3,3);
-    TH1D * h_banff_07 = new TH1D("h_banff_07","h_banff_07",200,-3,3);
-    TH1D * h_banff_08 = new TH1D("h_banff_08","h_banff_08",200,-3,3);
-    TH1D * h_banff_09 = new TH1D("h_banff_09","h_banff_09",200,-3,3);
-    TH1D * h_banff_10 = new TH1D("h_banff_10","h_banff_10",200,-3,3);
-    TH1D * h_banff_11 = new TH1D("h_banff_11","h_banff_11",200,-3,3);
-    TH1D * h_banff_12 = new TH1D("h_banff_12","h_banff_12",200,-3,3);
-    TH1D * h_banff_13 = new TH1D("h_banff_13","h_banff_13",200,-3,3);
-    TH1D * h_banff_14 = new TH1D("h_banff_14","h_banff_14",200,-3,3);
-    TH1D * h_banff_15 = new TH1D("h_banff_15","h_banff_15",200,-3,3);
-    TH1D * h_banff_maqe = new TH1D("h_banff_maqe","h_banff_maqe",200,-3,3);
-    TH1D * h_banff_mares = new TH1D("h_banff_mares","h_banff_mares",200,-3,3);
-    TH1D * h_banff_ccqeE0 = new TH1D("h_banff_ccqeE0","h_banff_ccqeE0",200,-3,3);
-    TH1D * h_banff_ccqeE1 = new TH1D("h_banff_ccqeE1","h_banff_ccqeE1",200,-3,3);
-    TH1D * h_banff_ccqeE2 = new TH1D("h_banff_ccqeE2","h_banff_ccqeE2",200,-3,3);
-    TH1D * h_banff_cc1piE0 = new TH1D("h_banff_cc1piE0","h_banff_cc1piE0",200,-3,3);
-    TH1D * h_banff_cc1piE1 = new TH1D("h_banff_cc1piE1","h_banff_cc1piE1",200,-3,3);
-    //pull histograms
-    TH1D * hpull_unbanff_00 = new TH1D("hpull_unbanff_00","hpull_unbanff_00",100,-5,5);
-    TH1D * hpull_unbanff_01 = new TH1D("hpull_unbanff_01","hpull_unbanff_01",100,-5,5);
-    TH1D * hpull_unbanff_02 = new TH1D("hpull_unbanff_02","hpull_unbanff_02",100,-5,5);
-    TH1D * hpull_unbanff_03 = new TH1D("hpull_unbanff_03","hpull_unbanff_03",100,-5,5);
-    TH1D * hpull_unbanff_04 = new TH1D("hpull_unbanff_04","hpull_unbanff_04",100,-5,5);
-    TH1D * hpull_unbanff_05 = new TH1D("hpull_unbanff_05","hpull_unbanff_05",100,-5,5);
-    TH1D * hpull_unbanff_06 = new TH1D("hpull_unbanff_06","hpull_unbanff_06",100,-5,5);
-    TH1D * hpull_unbanff_07 = new TH1D("hpull_unbanff_07","hpull_unbanff_07",100,-5,5);
-    TH1D * hpull_unbanff_08 = new TH1D("hpull_unbanff_08","hpull_unbanff_08",100,-5,5);
-    TH1D * hpull_unbanff_09 = new TH1D("hpull_unbanff_09","hpull_unbanff_09",100,-5,5);
-    TH1D * hpull_unbanff_10 = new TH1D("hpull_unbanff_10","hpull_unbanff_10",100,-5,5);
-    TH1D * hpull_unbanff_11 = new TH1D("hpull_unbanff_11","hpull_unbanff_11",100,-5,5);
-    TH1D * hpull_unbanff_12 = new TH1D("hpull_unbanff_12","hpull_unbanff_12",100,-5,5);
-    TH1D * hpull_unbanff_13 = new TH1D("hpull_unbanff_13","hpull_unbanff_13",100,-5,5);
-    TH1D * hpull_unbanff_14 = new TH1D("hpull_unbanff_14","hpull_unbanff_14",100,-5,5);
-    TH1D * hpull_unbanff_15 = new TH1D("hpull_unbanff_15","hpull_unbanff_15",100,-5,5);
-    TH1D * hpull_unbanff_16 = new TH1D("hpull_unbanff_16","hpull_unbanff_16",100,-5,5);
-    TH1D * hpull_unbanff_17 = new TH1D("hpull_unbanff_17","hpull_unbanff_17",100,-5,5);
-    TH1D * hpull_unbanff_18 = new TH1D("hpull_unbanff_18","hpull_unbanff_18",100,-5,5);
-    TH1D * hpull_unbanff_19 = new TH1D("hpull_unbanff_19","hpull_unbanff_19",100,-5,5);
-    TH1D * hpull_unbanff_20 = new TH1D("hpull_unbanff_20","hpull_unbanff_20",100,-5,5);
-    TH1D * hpull_unbanff_21 = new TH1D("hpull_unbanff_21","hpull_unbanff_21",100,-5,5);
-    TH1D * hpull_unbanff_22 = new TH1D("hpull_unbanff_22","hpull_unbanff_22",100,-5,5);
-    TH1D * hpull_banff_00 = new TH1D("hpull_banff_00","hpull_banff_00",100,-5,5);
-    TH1D * hpull_banff_01 = new TH1D("hpull_banff_01","hpull_banff_01",100,-5,5);
-    TH1D * hpull_banff_02 = new TH1D("hpull_banff_02","hpull_banff_02",100,-5,5);
-    TH1D * hpull_banff_03 = new TH1D("hpull_banff_03","hpull_banff_03",100,-5,5);
-    TH1D * hpull_banff_04 = new TH1D("hpull_banff_04","hpull_banff_04",100,-5,5);
-    TH1D * hpull_banff_05 = new TH1D("hpull_banff_05","hpull_banff_05",100,-5,5);
-    TH1D * hpull_banff_06 = new TH1D("hpull_banff_06","hpull_banff_06",100,-5,5);
-    TH1D * hpull_banff_07 = new TH1D("hpull_banff_07","hpull_banff_07",100,-5,5);
-    TH1D * hpull_banff_08 = new TH1D("hpull_banff_08","hpull_banff_08",100,-5,5);
-    TH1D * hpull_banff_09 = new TH1D("hpull_banff_09","hpull_banff_09",100,-5,5);
-    TH1D * hpull_banff_10 = new TH1D("hpull_banff_10","hpull_banff_10",100,-5,5);
-    TH1D * hpull_banff_11 = new TH1D("hpull_banff_11","hpull_banff_11",100,-5,5);
-    TH1D * hpull_banff_12 = new TH1D("hpull_banff_12","hpull_banff_12",100,-5,5);
-    TH1D * hpull_banff_13 = new TH1D("hpull_banff_13","hpull_banff_13",100,-5,5);
-    TH1D * hpull_banff_14 = new TH1D("hpull_banff_14","hpull_banff_14",100,-5,5);
-    TH1D * hpull_banff_15 = new TH1D("hpull_banff_15","hpull_banff_15",100,-5,5);
-    TH1D * hpull_banff_maqe = new TH1D("hpull_banff_maqe","hpull_banff_maqe",100,-5,5);
-    TH1D * hpull_banff_mares = new TH1D("hpull_banff_mares","hpull_banff_mares",100,-5,5);
-    TH1D * hpull_banff_ccqeE0 = new TH1D("hpull_banff_ccqeE0","hpull_banff_ccqeE0",100,-5,5);
-    TH1D * hpull_banff_ccqeE1 = new TH1D("hpull_banff_ccqeE1","hpull_banff_ccqeE1",100,-5,5);
-    TH1D * hpull_banff_ccqeE2 = new TH1D("hpull_banff_ccqeE2","hpull_banff_ccqeE2",100,-5,5);
-    TH1D * hpull_banff_cc1piE0 = new TH1D("hpull_banff_cc1piE0","hpull_banff_cc1piE0",100,-5,5);
-    TH1D * hpull_banff_cc1piE1 = new TH1D("hpull_banff_cc1piE1","hpull_banff_cc1piE1",100,-5,5);
-    //alt pull
-    TH1D * haltpull_banff_maqe = new TH1D("haltpull_banff_maqe","haltpull_banff_maqe",100,-5,5);
-    TH1D * haltpull_banff_ccqeE0 = new TH1D("haltpull_banff_ccqeE0","haltpull_banff_ccqeE0",100,-5,5);
-  }
-  if(fit_systematics_mode == 2) {
-    TH1D * h_xsec_pf = new TH1D("h_xsec_pf","h_xsec_pf",50,-5,5);
-    TH1D * h_xsec_wshape = new TH1D("h_xsec_wshape","h_xsec_wshape",50,-5,5);
-    TH1D * h_xsec_ccothshape = new TH1D("h_xsec_ccothshape","h_xsec_ccothshape",50,-5,5);
-    TH1D * h_xsec_cc1pishape = new TH1D("h_xsec_cc1pishape","h_xsec_cc1pishape",50,-5,5);
-    TH1D * h_xsec_normcccoh = new TH1D("h_xsec_normcccoh","h_xsec_normcccoh",50,-5,5);
-    TH1D * h_xsec_normnc1piC = new TH1D("h_xsec_normnc1piC","h_xsec_normnc1piC",50,-5,5);
-    TH1D * h_xsec_normnccoh = new TH1D("h_xsec_normnccoh","h_xsec_normnccoh",50,-5,5);
-    TH1D * h_xsec_normncoth = new TH1D("h_xsec_normncoth","h_xsec_normncoth",50,-5,5);
-    TH1D * h_xsec_normnuetonumu = new TH1D("h_xsec_normnuetonumu","h_xsec_normnuetonumu",50,-5,5);
-    TH1D * h_skdet_ccqerc0 = new TH1D("h_skdet_ccqerc0","h_skdet_ccqerc0",50,-5,5);
-    TH1D * h_skdet_ccqerc1 = new TH1D("h_skdet_ccqerc1","h_skdet_ccqerc1",50,-5,5);
-    TH1D * h_skdet_ccqerc2 = new TH1D("h_skdet_ccqerc2","h_skdet_ccqerc2",50,-5,5);
-    TH1D * h_skdet_ccqeoth = new TH1D("h_skdet_ccqeoth","h_skdet_ccqeoth",50,-5,5);
-    TH1D * h_skdet_nuecc = new TH1D("h_skdet_nuecc","h_skdet_nuecc",50,-5,5);
-    TH1D * h_fsi_000 = new TH1D("h_fsi_000","h_fsi_000",50,-5,5);
-    TH1D * h_fsi_001 = new TH1D("h_fsi_001","h_fsi_001",50,-5,5);
-    TH1D * h_fsi_002 = new TH1D("h_fsi_002","h_fsi_002",50,-5,5);
-    TH1D * h_fsi_003 = new TH1D("h_fsi_003","h_fsi_003",50,-5,5);
-    TH1D * h_fsi_004 = new TH1D("h_fsi_004","h_fsi_004",50,-5,5);
-    TH1D * h_fsi_005 = new TH1D("h_fsi_005","h_fsi_005",50,-5,5); 
-    //pull histograms
-    TH1D * hpull_xsec_pf = new TH1D("hpull_xsec_pf","hpull_xsec_pf",50,-5,5);
-    TH1D * hpull_xsec_wshape = new TH1D("hpull_xsec_wshape","hpull_xsec_wshape",50,-5,5);
-    TH1D * hpull_xsec_ccothshape = new TH1D("hpull_xsec_ccothshape","hpull_xsec_ccothshape",50,-5,5);
-    TH1D * hpull_xsec_cc1pishape = new TH1D("hpull_xsec_cc1pishape","hpull_xsec_cc1pishape",50,-5,5);
-    TH1D * hpull_xsec_normcccoh = new TH1D("hpull_xsec_normcccoh","hpull_xsec_normcccoh",50,-5,5);
-    TH1D * hpull_xsec_normnc1piC = new TH1D("hpull_xsec_normnc1piC","hpull_xsec_normnc1piC",50,-5,5);
-    TH1D * hpull_xsec_normnccoh = new TH1D("hpull_xsec_normnccoh","hpull_xsec_normnccoh",50,-5,5);
-    TH1D * hpull_xsec_normncoth = new TH1D("hpull_xsec_normncoth","hpull_xsec_normncoth",50,-5,5);
-    TH1D * hpull_xsec_normnuetonumu = new TH1D("hpull_xsec_normnuetonumu","hpull_xsec_normnuetonumu",50,-5,5);
-    TH1D * hpull_skdet_ccqerc0 = new TH1D("hpull_skdet_ccqerc0","hpull_skdet_ccqerc0",50,-5,5);
-    TH1D * hpull_skdet_ccqerc1 = new TH1D("hpull_skdet_ccqerc1","hpull_skdet_ccqerc1",50,-5,5);
-    TH1D * hpull_skdet_ccqerc2 = new TH1D("hpull_skdet_ccqerc2","hpull_skdet_ccqerc2",50,-5,5);
-    TH1D * hpull_skdet_ccqeoth = new TH1D("hpull_skdet_ccqeoth","hpull_skdet_ccqeoth",50,-5,5);
-    TH1D * hpull_skdet_nuecc = new TH1D("hpull_skdet_nuecc","hpull_skdet_nuecc",50,-5,5);
-    TH1D * hpull_fsi_000 = new TH1D("hpull_fsi_000","hpull_fsi_000",50,-5,5);
-    TH1D * hpull_fsi_001 = new TH1D("hpull_fsi_001","hpull_fsi_001",50,-5,5);
-    TH1D * hpull_fsi_002 = new TH1D("hpull_fsi_002","hpull_fsi_002",50,-5,5);
-    TH1D * hpull_fsi_003 = new TH1D("hpull_fsi_003","hpull_fsi_003",50,-5,5);
-    TH1D * hpull_fsi_004 = new TH1D("hpull_fsi_004","hpull_fsi_004",50,-5,5);
-    TH1D * hpull_fsi_005 = new TH1D("hpull_fsi_005","hpull_fsi_005",50,-5,5);
-  }
+  //distribution histograms
+  TH1D * h_xsec_sf = new TH1D("h_xsec_sf","h_xsec_sf",200,-3,3);
+  TH1D * h_xsec_binde = new TH1D("h_xsec_binde","h_xsec_binde",200,-3,3);
+  TH1D * h_xsec_pilessdelta = new TH1D("h_xsec_pilessdelta","h_xsec_pilessdelta",200,-3,3);
+  TH1D * h_skdet_ccnqe = new TH1D("h_skdet_ccnqe","h_skdet_ccnqe",200,-3,3);
+  TH1D * h_skdet_nc = new TH1D("h_skdet_nc","h_skdet_nc",200,-3,3);
+  TH1D * h_skdet_energyscale = new TH1D("h_skdet_energyscale","h_skdet_energyscale",200,-3,3);
+  //pull histograms
+  TH1D * hpull_xsec_sf = new TH1D("hpull_xsec_sf","hpull_xsec_sf",100,-5,5);
+  TH1D * hpull_xsec_binde = new TH1D("hpull_xsec_binde","hpull_xsec_binde",100,-10,10);
+  TH1D * hpull_xsec_pilessdelta = new TH1D("hpull_xsec_pilessdelta","hpull_xsec_pilessdelta",100,-5,5);
+  TH1D * hpull_skdet_ccnqe = new TH1D("hpull_skdet_ccnqe","hpull_skdet_ccnqe",100,-5,5);
+  TH1D * hpull_skdet_nc = new TH1D("hpull_skdet_nc","hpull_skdet_nc",100,-5,5);
+  TH1D * hpull_skdet_energyscale = new TH1D("hpull_skdet_energyscale","hpull_skdet_energyscale",100,-5,5);
+  //alterative pull histograms
+  TH1D * haltpull_xsec_sf = new TH1D("haltpull_xsec_sf","haltpull_xsec_sf",100,-5,5);
+  TH1D * haltpull_xsec_binde = new TH1D("haltpull_xsec_binde","haltpull_xsec_binde",100,-10,10);
+  TH1D * haltpull_xsec_pilessdelta = new TH1D("haltpull_xsec_pilessdelta","haltpull_xsec_pilessdelta",100,-5,5);
+  TH1D * haltpull_skdet_ccnqe = new TH1D("haltpull_skdet_ccnqe","haltpull_skdet_ccnqe",100,-5,5);
+  TH1D * haltpull_skdet_nc = new TH1D("haltpull_skdet_nc","haltpull_skdet_nc",100,-5,5);
+  TH1D * haltpull_skdet_energyscale = new TH1D("haltpull_skdet_energyscale","haltpull_skdet_energyscale",100,-5,5);
+  //distribution histograms
+  TH1D * h_banff_00 = new TH1D("h_banff_00","h_banff_00",200,-3,3);
+  TH1D * h_banff_01 = new TH1D("h_banff_01","h_banff_01",200,-3,3);
+  TH1D * h_banff_02 = new TH1D("h_banff_02","h_banff_02",200,-3,3);
+  TH1D * h_banff_03 = new TH1D("h_banff_03","h_banff_03",200,-3,3);
+  TH1D * h_banff_04 = new TH1D("h_banff_04","h_banff_04",200,-3,3);
+  TH1D * h_banff_05 = new TH1D("h_banff_05","h_banff_05",200,-3,3);
+  TH1D * h_banff_06 = new TH1D("h_banff_06","h_banff_06",200,-3,3);
+  TH1D * h_banff_07 = new TH1D("h_banff_07","h_banff_07",200,-3,3);
+  TH1D * h_banff_08 = new TH1D("h_banff_08","h_banff_08",200,-3,3);
+  TH1D * h_banff_09 = new TH1D("h_banff_09","h_banff_09",200,-3,3);
+  TH1D * h_banff_10 = new TH1D("h_banff_10","h_banff_10",200,-3,3);
+  TH1D * h_banff_11 = new TH1D("h_banff_11","h_banff_11",200,-3,3);
+  TH1D * h_banff_12 = new TH1D("h_banff_12","h_banff_12",200,-3,3);
+  TH1D * h_banff_13 = new TH1D("h_banff_13","h_banff_13",200,-3,3);
+  TH1D * h_banff_14 = new TH1D("h_banff_14","h_banff_14",200,-3,3);
+  TH1D * h_banff_15 = new TH1D("h_banff_15","h_banff_15",200,-3,3);
+  TH1D * h_banff_maqe = new TH1D("h_banff_maqe","h_banff_maqe",200,-3,3);
+  TH1D * h_banff_mares = new TH1D("h_banff_mares","h_banff_mares",200,-3,3);
+  TH1D * h_banff_ccqeE0 = new TH1D("h_banff_ccqeE0","h_banff_ccqeE0",200,-3,3);
+  TH1D * h_banff_ccqeE1 = new TH1D("h_banff_ccqeE1","h_banff_ccqeE1",200,-3,3);
+  TH1D * h_banff_ccqeE2 = new TH1D("h_banff_ccqeE2","h_banff_ccqeE2",200,-3,3);
+  TH1D * h_banff_cc1piE0 = new TH1D("h_banff_cc1piE0","h_banff_cc1piE0",200,-3,3);
+  TH1D * h_banff_cc1piE1 = new TH1D("h_banff_cc1piE1","h_banff_cc1piE1",200,-3,3);
+  //pull histograms
+  TH1D * hpull_banff_00 = new TH1D("hpull_banff_00","hpull_banff_00",100,-5,5);
+  TH1D * hpull_banff_01 = new TH1D("hpull_banff_01","hpull_banff_01",100,-5,5);
+  TH1D * hpull_banff_02 = new TH1D("hpull_banff_02","hpull_banff_02",100,-5,5);
+  TH1D * hpull_banff_03 = new TH1D("hpull_banff_03","hpull_banff_03",100,-5,5);
+  TH1D * hpull_banff_04 = new TH1D("hpull_banff_04","hpull_banff_04",100,-5,5);
+  TH1D * hpull_banff_05 = new TH1D("hpull_banff_05","hpull_banff_05",100,-5,5);
+  TH1D * hpull_banff_06 = new TH1D("hpull_banff_06","hpull_banff_06",100,-5,5);
+  TH1D * hpull_banff_07 = new TH1D("hpull_banff_07","hpull_banff_07",100,-5,5);
+  TH1D * hpull_banff_08 = new TH1D("hpull_banff_08","hpull_banff_08",100,-5,5);
+  TH1D * hpull_banff_09 = new TH1D("hpull_banff_09","hpull_banff_09",100,-5,5);
+  TH1D * hpull_banff_10 = new TH1D("hpull_banff_10","hpull_banff_10",100,-5,5);
+  TH1D * hpull_banff_11 = new TH1D("hpull_banff_11","hpull_banff_11",100,-5,5);
+  TH1D * hpull_banff_12 = new TH1D("hpull_banff_12","hpull_banff_12",100,-5,5);
+  TH1D * hpull_banff_13 = new TH1D("hpull_banff_13","hpull_banff_13",100,-5,5);
+  TH1D * hpull_banff_14 = new TH1D("hpull_banff_14","hpull_banff_14",100,-5,5);
+  TH1D * hpull_banff_15 = new TH1D("hpull_banff_15","hpull_banff_15",100,-5,5);
+  TH1D * hpull_banff_maqe = new TH1D("hpull_banff_maqe","hpull_banff_maqe",100,-5,5);
+  TH1D * hpull_banff_mares = new TH1D("hpull_banff_mares","hpull_banff_mares",100,-5,5);
+  TH1D * hpull_banff_ccqeE0 = new TH1D("hpull_banff_ccqeE0","hpull_banff_ccqeE0",100,-5,5);
+  TH1D * hpull_banff_ccqeE1 = new TH1D("hpull_banff_ccqeE1","hpull_banff_ccqeE1",100,-5,5);
+  TH1D * hpull_banff_ccqeE2 = new TH1D("hpull_banff_ccqeE2","hpull_banff_ccqeE2",100,-5,5);
+  TH1D * hpull_banff_cc1piE0 = new TH1D("hpull_banff_cc1piE0","hpull_banff_cc1piE0",100,-5,5);
+  TH1D * hpull_banff_cc1piE1 = new TH1D("hpull_banff_cc1piE1","hpull_banff_cc1piE1",100,-5,5);
+  //alt pull
+  TH1D * haltpull_banff_maqe = new TH1D("haltpull_banff_maqe","haltpull_banff_maqe",100,-5,5);
+  TH1D * haltpull_banff_ccqeE0 = new TH1D("haltpull_banff_ccqeE0","haltpull_banff_ccqeE0",100,-5,5);
+  //fit_systematics_mode == 2
+  TH1D * h_xsec_pf = new TH1D("h_xsec_pf","h_xsec_pf",50,-5,5);
+  TH1D * h_xsec_wshape = new TH1D("h_xsec_wshape","h_xsec_wshape",50,-5,5);
+  TH1D * h_xsec_ccothshape = new TH1D("h_xsec_ccothshape","h_xsec_ccothshape",50,-5,5);
+  TH1D * h_xsec_cc1pishape = new TH1D("h_xsec_cc1pishape","h_xsec_cc1pishape",50,-5,5);
+  TH1D * h_xsec_normcccoh = new TH1D("h_xsec_normcccoh","h_xsec_normcccoh",50,-5,5);
+  TH1D * h_xsec_normnc1piC = new TH1D("h_xsec_normnc1piC","h_xsec_normnc1piC",50,-5,5);
+  TH1D * h_xsec_normnccoh = new TH1D("h_xsec_normnccoh","h_xsec_normnccoh",50,-5,5);
+  TH1D * h_xsec_normncoth = new TH1D("h_xsec_normncoth","h_xsec_normncoth",50,-5,5);
+  TH1D * h_xsec_normnuetonumu = new TH1D("h_xsec_normnuetonumu","h_xsec_normnuetonumu",50,-5,5);
+  TH1D * h_skdet_ccqerc0 = new TH1D("h_skdet_ccqerc0","h_skdet_ccqerc0",50,-5,5);
+  TH1D * h_skdet_ccqerc1 = new TH1D("h_skdet_ccqerc1","h_skdet_ccqerc1",50,-5,5);
+  TH1D * h_skdet_ccqerc2 = new TH1D("h_skdet_ccqerc2","h_skdet_ccqerc2",50,-5,5);
+  TH1D * h_skdet_ccqeoth = new TH1D("h_skdet_ccqeoth","h_skdet_ccqeoth",50,-5,5);
+  TH1D * h_skdet_nuecc = new TH1D("h_skdet_nuecc","h_skdet_nuecc",50,-5,5);
+  TH1D * h_fsi_000 = new TH1D("h_fsi_000","h_fsi_000",50,-5,5);
+  TH1D * h_fsi_001 = new TH1D("h_fsi_001","h_fsi_001",50,-5,5);
+  TH1D * h_fsi_002 = new TH1D("h_fsi_002","h_fsi_002",50,-5,5);
+  TH1D * h_fsi_003 = new TH1D("h_fsi_003","h_fsi_003",50,-5,5);
+  TH1D * h_fsi_004 = new TH1D("h_fsi_004","h_fsi_004",50,-5,5);
+  TH1D * h_fsi_005 = new TH1D("h_fsi_005","h_fsi_005",50,-5,5); 
+  //pull histograms
+  TH1D * hpull_xsec_pf = new TH1D("hpull_xsec_pf","hpull_xsec_pf",50,-5,5);
+  TH1D * hpull_xsec_wshape = new TH1D("hpull_xsec_wshape","hpull_xsec_wshape",50,-5,5);
+  TH1D * hpull_xsec_ccothshape = new TH1D("hpull_xsec_ccothshape","hpull_xsec_ccothshape",50,-5,5);
+  TH1D * hpull_xsec_cc1pishape = new TH1D("hpull_xsec_cc1pishape","hpull_xsec_cc1pishape",50,-5,5);
+  TH1D * hpull_xsec_normcccoh = new TH1D("hpull_xsec_normcccoh","hpull_xsec_normcccoh",50,-5,5);
+  TH1D * hpull_xsec_normnc1piC = new TH1D("hpull_xsec_normnc1piC","hpull_xsec_normnc1piC",50,-5,5);
+  TH1D * hpull_xsec_normnccoh = new TH1D("hpull_xsec_normnccoh","hpull_xsec_normnccoh",50,-5,5);
+  TH1D * hpull_xsec_normncoth = new TH1D("hpull_xsec_normncoth","hpull_xsec_normncoth",50,-5,5);
+  TH1D * hpull_xsec_normnuetonumu = new TH1D("hpull_xsec_normnuetonumu","hpull_xsec_normnuetonumu",50,-5,5);
+  TH1D * hpull_skdet_ccqerc0 = new TH1D("hpull_skdet_ccqerc0","hpull_skdet_ccqerc0",50,-5,5);
+  TH1D * hpull_skdet_ccqerc1 = new TH1D("hpull_skdet_ccqerc1","hpull_skdet_ccqerc1",50,-5,5);
+  TH1D * hpull_skdet_ccqerc2 = new TH1D("hpull_skdet_ccqerc2","hpull_skdet_ccqerc2",50,-5,5);
+  TH1D * hpull_skdet_ccqeoth = new TH1D("hpull_skdet_ccqeoth","hpull_skdet_ccqeoth",50,-5,5);
+  TH1D * hpull_skdet_nuecc = new TH1D("hpull_skdet_nuecc","hpull_skdet_nuecc",50,-5,5);
+  TH1D * hpull_fsi_000 = new TH1D("hpull_fsi_000","hpull_fsi_000",50,-5,5);
+  TH1D * hpull_fsi_001 = new TH1D("hpull_fsi_001","hpull_fsi_001",50,-5,5);
+  TH1D * hpull_fsi_002 = new TH1D("hpull_fsi_002","hpull_fsi_002",50,-5,5);
+  TH1D * hpull_fsi_003 = new TH1D("hpull_fsi_003","hpull_fsi_003",50,-5,5);
+  TH1D * hpull_fsi_004 = new TH1D("hpull_fsi_004","hpull_fsi_004",50,-5,5);
+  TH1D * hpull_fsi_005 = new TH1D("hpull_fsi_005","hpull_fsi_005",50,-5,5);
 
   cout << ch.GetEntries() << " entries in TChain" << endl;
   if(ch.GetEntries() == 0)
@@ -1414,22 +1060,24 @@ void mock_data_fit_pulls(
     h_fitstat      ->Fill(fitstatus);
     h_migradfitstat->Fill(migradfitstatus);
     h_hessefitstat ->Fill(hessefitstatus);
-    h_fittime->Fill(fittime);
+    h_fittime      ->Fill(fittime);
     //minuit
     if(fittermode == 0) {
-      if(migradfitstatus == 4)
-	continue; //migrad didn't converge
-      if(fitstatus != 3)
-	continue; //error matrix inaccurate
+      if(migradfitstatus == 4) continue; //migrad didn't converge
+      if(fitstatus != 3) continue; //error matrix inaccurate
     }
     //minuit2
-    else if(fittermode == 1) {
-      if(fitstatus == 9)
-	continue; //
-    }
-
-    if(bestfit_mixing23 > 0.997) continue;
-    //if(TMath::Abs(bestfit_mixing23 - 1.) < 1E-3) continue;
+    //else if(fittermode == 1) {
+    //if(fitstatus == 9)
+    //continue; //
+    //}
+  
+    /*
+    if(bestfit_mixing23 > 0.997)
+      continue; 
+    if(TMath::Abs(bestfit_mixing23 - 1.) < 1E-3)
+      continue; 
+    */
 
     if(err_mode == 1) {
       err_mixing12 = errmigrad_mixing12;
@@ -1438,29 +1086,6 @@ void mock_data_fit_pulls(
       err_deltacp = errmigrad_deltacp;
       err_dm12sq = errmigrad_dm12sq;
       err_dm23sq = errmigrad_dm23sq;
-      err_unbanff_00 = errmigrad_unbanff_00;
-      err_unbanff_01 = errmigrad_unbanff_01;
-      err_unbanff_02 = errmigrad_unbanff_02;
-      err_unbanff_03 = errmigrad_unbanff_03;
-      err_unbanff_04 = errmigrad_unbanff_04;
-      err_unbanff_05 = errmigrad_unbanff_05;
-      err_unbanff_06 = errmigrad_unbanff_06;
-      err_unbanff_07 = errmigrad_unbanff_07;
-      err_unbanff_08 = errmigrad_unbanff_08;
-      err_unbanff_09 = errmigrad_unbanff_09;
-      err_unbanff_10 = errmigrad_unbanff_10;
-      err_unbanff_11 = errmigrad_unbanff_11;
-      err_unbanff_12 = errmigrad_unbanff_12;
-      err_unbanff_13 = errmigrad_unbanff_13;
-      err_unbanff_14 = errmigrad_unbanff_14;
-      err_unbanff_15 = errmigrad_unbanff_15;
-      err_unbanff_16 = errmigrad_unbanff_16;
-      err_unbanff_17 = errmigrad_unbanff_17;
-      err_unbanff_18 = errmigrad_unbanff_18;
-      err_unbanff_19 = errmigrad_unbanff_19;
-      err_unbanff_20 = errmigrad_unbanff_20;
-      err_unbanff_21 = errmigrad_unbanff_21;
-      err_unbanff_22 = errmigrad_unbanff_22;
       err_banff_00 = errmigrad_banff_00;
       err_banff_01 = errmigrad_banff_01;
       err_banff_02 = errmigrad_banff_02;
@@ -1510,7 +1135,7 @@ void mock_data_fit_pulls(
       err_fsi_003 = errmigrad_fsi_003;
       err_fsi_004 = errmigrad_fsi_004;
       err_fsi_005 = errmigrad_fsi_005;
-    }
+    }//errmode == 1
     else if(err_mode == 2) {
       err_mixing12 = errhesse_mixing12;
       err_mixing13 = errhesse_mixing13;
@@ -1518,29 +1143,6 @@ void mock_data_fit_pulls(
       err_deltacp = errhesse_deltacp;
       err_dm12sq = errhesse_dm12sq;
       err_dm23sq = errhesse_dm23sq;
-      err_unbanff_00 = errhesse_unbanff_00;
-      err_unbanff_01 = errhesse_unbanff_01;
-      err_unbanff_02 = errhesse_unbanff_02;
-      err_unbanff_03 = errhesse_unbanff_03;
-      err_unbanff_04 = errhesse_unbanff_04;
-      err_unbanff_05 = errhesse_unbanff_05;
-      err_unbanff_06 = errhesse_unbanff_06;
-      err_unbanff_07 = errhesse_unbanff_07;
-      err_unbanff_08 = errhesse_unbanff_08;
-      err_unbanff_09 = errhesse_unbanff_09;
-      err_unbanff_10 = errhesse_unbanff_10;
-      err_unbanff_11 = errhesse_unbanff_11;
-      err_unbanff_12 = errhesse_unbanff_12;
-      err_unbanff_13 = errhesse_unbanff_13;
-      err_unbanff_14 = errhesse_unbanff_14;
-      err_unbanff_15 = errhesse_unbanff_15;
-      err_unbanff_16 = errhesse_unbanff_16;
-      err_unbanff_17 = errhesse_unbanff_17;
-      err_unbanff_18 = errhesse_unbanff_18;
-      err_unbanff_19 = errhesse_unbanff_19;
-      err_unbanff_20 = errhesse_unbanff_20;
-      err_unbanff_21 = errhesse_unbanff_21;
-      err_unbanff_22 = errhesse_unbanff_22;
       err_banff_00 = errhesse_banff_00;
       err_banff_01 = errhesse_banff_01;
       err_banff_02 = errhesse_banff_02;
@@ -1590,7 +1192,7 @@ void mock_data_fit_pulls(
       err_fsi_003 = errhesse_fsi_003;
       err_fsi_004 = errhesse_fsi_004;
       err_fsi_005 = errhesse_fsi_005;
-    }
+    }//errmode == 2
     else if(err_mode == 3) {
       if(bestfit_mixing12 <= input_mixing12) err_mixing12 = errminosplus_mixing12; else err_mixing12 = -errminosminus_mixing12;
       if(bestfit_mixing13 <= input_mixing13) err_mixing13 = errminosplus_mixing13; else err_mixing13 = -errminosminus_mixing13;
@@ -1598,29 +1200,6 @@ void mock_data_fit_pulls(
       if(bestfit_deltacp <= input_deltacp) err_deltacp = errminosplus_deltacp; else err_deltacp = -errminosminus_deltacp;
       if(bestfit_dm12sq <= input_dm12sq) err_dm12sq = errminosplus_dm12sq; else err_dm12sq = -errminosminus_dm12sq;
       if(bestfit_dm23sq <= input_dm23sq) err_dm23sq = errminosplus_dm23sq; else err_dm23sq = -errminosminus_dm23sq;
-      if(bestfit_unbanff_00 <= input_unbanff_00) err_unbanff_00 = errminosplus_unbanff_00; else err_unbanff_00 = errminosminus_unbanff_00;
-      if(bestfit_unbanff_01 <= input_unbanff_01) err_unbanff_01 = errminosplus_unbanff_01; else err_unbanff_01 = errminosminus_unbanff_01;
-      if(bestfit_unbanff_02 <= input_unbanff_02) err_unbanff_02 = errminosplus_unbanff_02; else err_unbanff_02 = errminosminus_unbanff_02;
-      if(bestfit_unbanff_03 <= input_unbanff_03) err_unbanff_03 = errminosplus_unbanff_03; else err_unbanff_03 = errminosminus_unbanff_03;
-      if(bestfit_unbanff_04 <= input_unbanff_04) err_unbanff_04 = errminosplus_unbanff_04; else err_unbanff_04 = errminosminus_unbanff_04;
-      if(bestfit_unbanff_05 <= input_unbanff_05) err_unbanff_05 = errminosplus_unbanff_05; else err_unbanff_05 = errminosminus_unbanff_05;
-      if(bestfit_unbanff_06 <= input_unbanff_06) err_unbanff_06 = errminosplus_unbanff_06; else err_unbanff_06 = errminosminus_unbanff_06;
-      if(bestfit_unbanff_07 <= input_unbanff_07) err_unbanff_07 = errminosplus_unbanff_07; else err_unbanff_07 = errminosminus_unbanff_07;
-      if(bestfit_unbanff_08 <= input_unbanff_08) err_unbanff_08 = errminosplus_unbanff_08; else err_unbanff_08 = errminosminus_unbanff_08;
-      if(bestfit_unbanff_09 <= input_unbanff_09) err_unbanff_09 = errminosplus_unbanff_09; else err_unbanff_09 = errminosminus_unbanff_09;
-      if(bestfit_unbanff_10 <= input_unbanff_10) err_unbanff_10 = errminosplus_unbanff_10; else err_unbanff_10 = errminosminus_unbanff_10;
-      if(bestfit_unbanff_11 <= input_unbanff_11) err_unbanff_11 = errminosplus_unbanff_11; else err_unbanff_11 = errminosminus_unbanff_11;
-      if(bestfit_unbanff_12 <= input_unbanff_12) err_unbanff_12 = errminosplus_unbanff_12; else err_unbanff_12 = errminosminus_unbanff_12;
-      if(bestfit_unbanff_13 <= input_unbanff_13) err_unbanff_13 = errminosplus_unbanff_13; else err_unbanff_13 = errminosminus_unbanff_13;
-      if(bestfit_unbanff_14 <= input_unbanff_14) err_unbanff_14 = errminosplus_unbanff_14; else err_unbanff_14 = errminosminus_unbanff_14;
-      if(bestfit_unbanff_15 <= input_unbanff_15) err_unbanff_15 = errminosplus_unbanff_15; else err_unbanff_15 = errminosminus_unbanff_15;
-      if(bestfit_unbanff_16 <= input_unbanff_16) err_unbanff_16 = errminosplus_unbanff_16; else err_unbanff_16 = errminosminus_unbanff_16;
-      if(bestfit_unbanff_17 <= input_unbanff_17) err_unbanff_17 = errminosplus_unbanff_17; else err_unbanff_17 = errminosminus_unbanff_17;
-      if(bestfit_unbanff_18 <= input_unbanff_18) err_unbanff_18 = errminosplus_unbanff_18; else err_unbanff_18 = errminosminus_unbanff_18;
-      if(bestfit_unbanff_19 <= input_unbanff_19) err_unbanff_19 = errminosplus_unbanff_19; else err_unbanff_19 = errminosminus_unbanff_19;
-      if(bestfit_unbanff_20 <= input_unbanff_20) err_unbanff_20 = errminosplus_unbanff_20; else err_unbanff_20 = errminosminus_unbanff_20;
-      if(bestfit_unbanff_21 <= input_unbanff_21) err_unbanff_21 = errminosplus_unbanff_21; else err_unbanff_21 = errminosminus_unbanff_21;
-      if(bestfit_unbanff_22 <= input_unbanff_22) err_unbanff_22 = errminosplus_unbanff_22; else err_unbanff_22 = errminosminus_unbanff_22;
       if(bestfit_banff_00 <= input_banff_00) err_banff_00 = errminosplus_banff_00; else err_banff_00 = errminosminus_banff_00;
       if(bestfit_banff_01 <= input_banff_01) err_banff_01 = errminosplus_banff_01; else err_banff_01 = errminosminus_banff_01;
       if(bestfit_banff_02 <= input_banff_02) err_banff_02 = errminosplus_banff_02; else err_banff_02 = errminosminus_banff_02;
@@ -1670,8 +1249,7 @@ void mock_data_fit_pulls(
       if(bestfit_fsi_003 <= input_fsi_003) err_fsi_003 = errminosplus_fsi_003; else err_fsi_003 = errminosminus_fsi_003;
       if(bestfit_fsi_004 <= input_fsi_004) err_fsi_004 = errminosplus_fsi_004; else err_fsi_004 = errminosminus_fsi_004;
       if(bestfit_fsi_005 <= input_fsi_005) err_fsi_005 = errminosplus_fsi_005; else err_fsi_005 = errminosminus_fsi_005;
-    }
-
+    }//errmode == 3
 
     h_nsk_nom->Fill(nsk_nom);
     h_nsk_bf->Fill(nsk_bf);
@@ -1706,29 +1284,6 @@ void mock_data_fit_pulls(
       haltpull_skdet_nc->Fill((bestfit_skdet_nc - input_skdet_nc) / err_skdet_nc);
       haltpull_skdet_energyscale->Fill((bestfit_skdet_energyscale - input_skdet_energyscale) / err_skdet_energyscale);
       //distribution histograms
-      h_unbanff_00->Fill((bestfit_unbanff_00 - input_unbanff_00));
-      h_unbanff_01->Fill((bestfit_unbanff_01 - input_unbanff_01));
-      h_unbanff_02->Fill((bestfit_unbanff_02 - input_unbanff_02));
-      h_unbanff_03->Fill((bestfit_unbanff_03 - input_unbanff_03));
-      h_unbanff_04->Fill((bestfit_unbanff_04 - input_unbanff_04));
-      h_unbanff_05->Fill((bestfit_unbanff_05 - input_unbanff_05));
-      h_unbanff_06->Fill((bestfit_unbanff_06 - input_unbanff_06));
-      h_unbanff_07->Fill((bestfit_unbanff_07 - input_unbanff_07));
-      h_unbanff_08->Fill((bestfit_unbanff_08 - input_unbanff_08));
-      h_unbanff_09->Fill((bestfit_unbanff_09 - input_unbanff_09));
-      h_unbanff_10->Fill((bestfit_unbanff_10 - input_unbanff_10));
-      h_unbanff_11->Fill((bestfit_unbanff_11 - input_unbanff_11));
-      h_unbanff_12->Fill((bestfit_unbanff_12 - input_unbanff_12));
-      h_unbanff_13->Fill((bestfit_unbanff_13 - input_unbanff_13));
-      h_unbanff_14->Fill((bestfit_unbanff_14 - input_unbanff_14));
-      h_unbanff_15->Fill((bestfit_unbanff_15 - input_unbanff_15));
-      h_unbanff_16->Fill((bestfit_unbanff_16 - input_unbanff_16));
-      h_unbanff_17->Fill((bestfit_unbanff_17 - input_unbanff_17));
-      h_unbanff_18->Fill((bestfit_unbanff_18 - input_unbanff_18));
-      h_unbanff_19->Fill((bestfit_unbanff_19 - input_unbanff_19));
-      h_unbanff_20->Fill((bestfit_unbanff_20 - input_unbanff_20));
-      h_unbanff_21->Fill((bestfit_unbanff_21 - input_unbanff_21));
-      h_unbanff_22->Fill((bestfit_unbanff_22 - input_unbanff_22));
       h_banff_00->Fill((bestfit_banff_00 - input_banff_00)/preerr_banff_00);
       h_banff_01->Fill((bestfit_banff_01 - input_banff_01)/preerr_banff_01);
       h_banff_02->Fill((bestfit_banff_02 - input_banff_02)/preerr_banff_02);
@@ -1753,31 +1308,6 @@ void mock_data_fit_pulls(
       h_banff_cc1piE0->Fill((bestfit_banff_cc1piE0 - input_banff_cc1piE0)/preerr_banff_cc1piE0);
       h_banff_cc1piE1->Fill((bestfit_banff_cc1piE1 - input_banff_cc1piE1)/preerr_banff_cc1piE1);
       //pull histograms
-      /*
-      if(err_unbanff_00 < preerr_unbanff_00) hpull_unbanff_00->Fill((bestfit_unbanff_00 - input_unbanff_00) / sqrt(pow(preerr_unbanff_00,2) - pow(err_unbanff_00,2)));
-      if(err_unbanff_01 < preerr_unbanff_01) hpull_unbanff_01->Fill((bestfit_unbanff_01 - input_unbanff_01) / sqrt(pow(preerr_unbanff_01,2) - pow(err_unbanff_01,2)));
-      if(err_unbanff_02 < preerr_unbanff_02) hpull_unbanff_02->Fill((bestfit_unbanff_02 - input_unbanff_02) / sqrt(pow(preerr_unbanff_02,2) - pow(err_unbanff_02,2)));
-      if(err_unbanff_03 < preerr_unbanff_03) hpull_unbanff_03->Fill((bestfit_unbanff_03 - input_unbanff_03) / sqrt(pow(preerr_unbanff_03,2) - pow(err_unbanff_03,2)));
-      if(err_unbanff_04 < preerr_unbanff_04) hpull_unbanff_04->Fill((bestfit_unbanff_04 - input_unbanff_04) / sqrt(pow(preerr_unbanff_04,2) - pow(err_unbanff_04,2)));
-      if(err_unbanff_05 < preerr_unbanff_05) hpull_unbanff_05->Fill((bestfit_unbanff_05 - input_unbanff_05) / sqrt(pow(preerr_unbanff_05,2) - pow(err_unbanff_05,2)));
-      if(err_unbanff_06 < preerr_unbanff_06) hpull_unbanff_06->Fill((bestfit_unbanff_06 - input_unbanff_06) / sqrt(pow(preerr_unbanff_06,2) - pow(err_unbanff_06,2)));
-      if(err_unbanff_07 < preerr_unbanff_07) hpull_unbanff_07->Fill((bestfit_unbanff_07 - input_unbanff_07) / sqrt(pow(preerr_unbanff_07,2) - pow(err_unbanff_07,2)));
-      if(err_unbanff_08 < preerr_unbanff_08) hpull_unbanff_08->Fill((bestfit_unbanff_08 - input_unbanff_08) / sqrt(pow(preerr_unbanff_08,2) - pow(err_unbanff_08,2)));
-      if(err_unbanff_09 < preerr_unbanff_09) hpull_unbanff_09->Fill((bestfit_unbanff_09 - input_unbanff_09) / sqrt(pow(preerr_unbanff_09,2) - pow(err_unbanff_09,2)));
-      if(err_unbanff_10 < preerr_unbanff_10) hpull_unbanff_10->Fill((bestfit_unbanff_10 - input_unbanff_10) / sqrt(pow(preerr_unbanff_10,2) - pow(err_unbanff_10,2)));
-      if(err_unbanff_11 < preerr_unbanff_11) hpull_unbanff_11->Fill((bestfit_unbanff_11 - input_unbanff_11) / sqrt(pow(preerr_unbanff_11,2) - pow(err_unbanff_11,2)));
-      if(err_unbanff_12 < preerr_unbanff_12) hpull_unbanff_12->Fill((bestfit_unbanff_12 - input_unbanff_12) / sqrt(pow(preerr_unbanff_12,2) - pow(err_unbanff_12,2)));
-      if(err_unbanff_13 < preerr_unbanff_13) hpull_unbanff_13->Fill((bestfit_unbanff_13 - input_unbanff_13) / sqrt(pow(preerr_unbanff_13,2) - pow(err_unbanff_13,2)));
-      if(err_unbanff_14 < preerr_unbanff_14) hpull_unbanff_14->Fill((bestfit_unbanff_14 - input_unbanff_14) / sqrt(pow(preerr_unbanff_14,2) - pow(err_unbanff_14,2)));
-      if(err_unbanff_15 < preerr_unbanff_15) hpull_unbanff_15->Fill((bestfit_unbanff_15 - input_unbanff_15) / sqrt(pow(preerr_unbanff_15,2) - pow(err_unbanff_15,2)));
-      if(err_unbanff_16 < preerr_unbanff_16) hpull_unbanff_16->Fill((bestfit_unbanff_16 - input_unbanff_16) / sqrt(pow(preerr_unbanff_16,2) - pow(err_unbanff_16,2)));
-      if(err_unbanff_17 < preerr_unbanff_17) hpull_unbanff_17->Fill((bestfit_unbanff_17 - input_unbanff_17) / sqrt(pow(preerr_unbanff_17,2) - pow(err_unbanff_17,2)));
-      if(err_unbanff_18 < preerr_unbanff_18) hpull_unbanff_18->Fill((bestfit_unbanff_18 - input_unbanff_18) / sqrt(pow(preerr_unbanff_18,2) - pow(err_unbanff_18,2)));
-      if(err_unbanff_19 < preerr_unbanff_19) hpull_unbanff_19->Fill((bestfit_unbanff_19 - input_unbanff_19) / sqrt(pow(preerr_unbanff_19,2) - pow(err_unbanff_19,2)));
-      if(err_unbanff_20 < preerr_unbanff_20) hpull_unbanff_20->Fill((bestfit_unbanff_20 - input_unbanff_20) / sqrt(pow(preerr_unbanff_20,2) - pow(err_unbanff_20,2)));
-      if(err_unbanff_21 < preerr_unbanff_21) hpull_unbanff_21->Fill((bestfit_unbanff_21 - input_unbanff_21) / sqrt(pow(preerr_unbanff_21,2) - pow(err_unbanff_21,2)));
-      if(err_unbanff_22 < preerr_unbanff_22) hpull_unbanff_22->Fill((bestfit_unbanff_22 - input_unbanff_22) / sqrt(pow(preerr_unbanff_22,2) - pow(err_unbanff_22,2)));
-      */
       if(err_banff_00 < preerr_banff_00) hpull_banff_00->Fill((bestfit_banff_00 - input_banff_00) / sqrt(pow(preerr_banff_00,2) - pow(err_banff_00,2)));
       if(err_banff_01 < preerr_banff_01) hpull_banff_01->Fill((bestfit_banff_01 - input_banff_01) / sqrt(pow(preerr_banff_01,2) - pow(err_banff_01,2)));
       if(err_banff_02 < preerr_banff_02) hpull_banff_02->Fill((bestfit_banff_02 - input_banff_02) / sqrt(pow(preerr_banff_02,2) - pow(err_banff_02,2)));
@@ -1804,7 +1334,7 @@ void mock_data_fit_pulls(
       //alt pull
       haltpull_banff_maqe->Fill((bestfit_banff_maqe - input_banff_maqe) / err_banff_maqe);
       haltpull_banff_ccqeE0->Fill((bestfit_banff_ccqeE0 - input_banff_ccqeE0) / err_banff_ccqeE0);
-    }
+    }//fit_systematics_mode >= 1
     if(fit_systematics_mode == 2) {
       h_xsec_pf->Fill((bestfit_xsec_pf - input_xsec_pf));
       h_xsec_wshape->Fill((bestfit_xsec_wshape - input_xsec_wshape));
@@ -1847,8 +1377,8 @@ void mock_data_fit_pulls(
       if(err_fsi_003 < preerr_fsi_003) hpull_fsi_003->Fill((bestfit_fsi_003 - input_fsi_003) / sqrt(pow(preerr_fsi_003,2) - pow(err_fsi_003,2)));
       if(err_fsi_004 < preerr_fsi_004) hpull_fsi_004->Fill((bestfit_fsi_004 - input_fsi_004) / sqrt(pow(preerr_fsi_004,2) - pow(err_fsi_004,2)));
       if(err_fsi_005 < preerr_fsi_005) hpull_fsi_005->Fill((bestfit_fsi_005 - input_fsi_005) / sqrt(pow(preerr_fsi_005,2) - pow(err_fsi_005,2)));
-    }
-  }
+    }//fit_systematic_mode == 2
+  }//end loop over chain
 
   // Draw
   new TCanvas(); h_fitstat->Draw();
@@ -1884,29 +1414,6 @@ void mock_data_fit_pulls(
     cextra->SaveAs(Form("%f_extra.pdf", input_mixing23));
     cskdet->SaveAs(Form("%f_skdet.pdf", input_mixing23));
     /*
-    new TCanvas(); h_unbanff_00->Draw();
-    new TCanvas(); h_unbanff_01->Draw();
-    new TCanvas(); h_unbanff_02->Draw();
-    new TCanvas(); h_unbanff_03->Draw();
-    new TCanvas(); h_unbanff_04->Draw();
-    new TCanvas(); h_unbanff_05->Draw();
-    new TCanvas(); h_unbanff_06->Draw();
-    new TCanvas(); h_unbanff_07->Draw();
-    new TCanvas(); h_unbanff_08->Draw();
-    new TCanvas(); h_unbanff_09->Draw();
-    new TCanvas(); h_unbanff_10->Draw();
-    new TCanvas(); h_unbanff_11->Draw();
-    new TCanvas(); h_unbanff_12->Draw();
-    new TCanvas(); h_unbanff_13->Draw();
-    new TCanvas(); h_unbanff_14->Draw();
-    new TCanvas(); h_unbanff_15->Draw();
-    new TCanvas(); h_unbanff_16->Draw();
-    new TCanvas(); h_unbanff_17->Draw();
-    new TCanvas(); h_unbanff_18->Draw();
-    new TCanvas(); h_unbanff_19->Draw();
-    new TCanvas(); h_unbanff_20->Draw();
-    new TCanvas(); h_unbanff_21->Draw();
-    new TCanvas(); h_unbanff_22->Draw();
     new TCanvas(); h_banff_00->Draw();
     new TCanvas(); h_banff_01->Draw();
     new TCanvas(); h_banff_02->Draw();
@@ -1966,14 +1473,12 @@ void mock_data_fit_pulls(
   TH1D * meansummary = new TH1D("mean","mean",100,0,100);
   TH1D * sigmasummary = new TH1D("sigma","sigma",100,0,100);
   int ifit = 1;
-  double mean = 0, meanerr = 0, sigma = 0, sigmaerr = 0;
   TF1 *fit = 0;
   gStyle->SetOptFit();
-
   
 
-  TCanvas *cosc = new TCanvas(); cosc->Divide(1,2);
-  cosc->cd(1); hpull_mixing23->Draw(); hpull_mixing23->Fit("gaus");
+  TCanvas *coscpull = new TCanvas(); coscpull->Divide(1,2);
+  coscpull->cd(1); hpull_mixing23->Draw(); hpull_mixing23->Fit("gaus");
   fit = hpull_mixing23->GetFunction("gaus");
   if(fit) {
     meansummary->GetXaxis()->SetBinLabel(ifit,"mixing23"); sigmasummary->GetXaxis()->SetBinLabel(ifit,"mixing23");
@@ -1981,7 +1486,7 @@ void mock_data_fit_pulls(
     sigmasummary->SetBinContent(ifit, fit->GetParameter(2)); sigmasummary->SetBinError(ifit, fit->GetParError(2));
     ifit++;
   }
-  cosc->cd(2); hpull_dm23sq->Draw(); hpull_dm23sq->Fit("gaus");
+  coscpull->cd(2); hpull_dm23sq->Draw(); hpull_dm23sq->Fit("gaus");
   fit = hpull_dm23sq->GetFunction("gaus");
   if(fit) {
     meansummary->GetXaxis()->SetBinLabel(ifit,"dm32sq"); sigmasummary->GetXaxis()->SetBinLabel(ifit,"dm32sq");
@@ -1989,7 +1494,7 @@ void mock_data_fit_pulls(
     sigmasummary->SetBinContent(ifit, fit->GetParameter(2)); sigmasummary->SetBinError(ifit, fit->GetParError(2));
     ifit++;
   }
-  cosc->SaveAs(Form("%f_osc_pull.pdf", input_mixing23));
+  coscpull->SaveAs(Form("%f_osc_pull.pdf", input_mixing23));
 
   TCanvas *coscerr = new TCanvas(); coscerr->Divide(1,2);
   coscerr->cd(1); herr_mixing23->Draw();
@@ -2148,75 +1653,6 @@ void mock_data_fit_pulls(
     caltskdet->SaveAs(Form("%f_skdet_altpull.pdf", input_mixing23));
 
     /*
-    new TCanvas(); hpull_unbanff_00->Draw(); hpull_unbanff_00->Fit("gaus");  fit = hpull_unbanff_00->GetFunction("gaus"); 
-    meansummary->SetBinContent(ifit, fit->GetParameter(1)); meansummary->SetBinError(ifit, fit->GetParError(1)); 
-    sigmasummary->SetBinContent(ifit, fit->GetParameter(2)); sigmasummary->SetBinError(ifit, fit->GetParError(2)); ifit++;
-    new TCanvas(); hpull_unbanff_01->Draw(); hpull_unbanff_01->Fit("gaus"); fit = hpull_unbanff_01->GetFunction("gaus");
-    meansummary->SetBinContent(ifit, fit->GetParameter(1)); meansummary->SetBinError(ifit, fit->GetParError(1));
-    sigmasummary->SetBinContent(ifit, fit->GetParameter(2)); sigmasummary->SetBinError(ifit, fit->GetParError(2)); ifit++;
-    new TCanvas(); hpull_unbanff_02->Draw(); hpull_unbanff_02->Fit("gaus"); fit = hpull_unbanff_02->GetFunction("gaus");
-    meansummary->SetBinContent(ifit, fit->GetParameter(1)); meansummary->SetBinError(ifit, fit->GetParError(1));
-    sigmasummary->SetBinContent(ifit, fit->GetParameter(2)); sigmasummary->SetBinError(ifit, fit->GetParError(2)); ifit++;
-    new TCanvas(); hpull_unbanff_03->Draw(); hpull_unbanff_03->Fit("gaus"); fit = hpull_unbanff_03->GetFunction("gaus");
-    meansummary->SetBinContent(ifit, fit->GetParameter(1)); meansummary->SetBinError(ifit, fit->GetParError(1));
-    sigmasummary->SetBinContent(ifit, fit->GetParameter(2)); sigmasummary->SetBinError(ifit, fit->GetParError(2)); ifit++;
-    new TCanvas(); hpull_unbanff_04->Draw(); hpull_unbanff_04->Fit("gaus"); fit = hpull_unbanff_04->GetFunction("gaus");
-    meansummary->SetBinContent(ifit, fit->GetParameter(1)); meansummary->SetBinError(ifit, fit->GetParError(1));
-    sigmasummary->SetBinContent(ifit, fit->GetParameter(2)); sigmasummary->SetBinError(ifit, fit->GetParError(2)); ifit++;
-    new TCanvas(); hpull_unbanff_05->Draw(); hpull_unbanff_05->Fit("gaus"); fit = hpull_unbanff_05->GetFunction("gaus");
-    meansummary->SetBinContent(ifit, fit->GetParameter(1)); meansummary->SetBinError(ifit, fit->GetParError(1));
-    sigmasummary->SetBinContent(ifit, fit->GetParameter(2)); sigmasummary->SetBinError(ifit, fit->GetParError(2)); ifit++;
-    new TCanvas(); hpull_unbanff_06->Draw(); hpull_unbanff_06->Fit("gaus"); fit = hpull_unbanff_06->GetFunction("gaus");
-    meansummary->SetBinContent(ifit, fit->GetParameter(1)); meansummary->SetBinError(ifit, fit->GetParError(1));
-    sigmasummary->SetBinContent(ifit, fit->GetParameter(2)); sigmasummary->SetBinError(ifit, fit->GetParError(2)); ifit++;
-    new TCanvas(); hpull_unbanff_07->Draw(); hpull_unbanff_07->Fit("gaus"); fit = hpull_unbanff_07->GetFunction("gaus");
-    meansummary->SetBinContent(ifit, fit->GetParameter(1)); meansummary->SetBinError(ifit, fit->GetParError(1));
-    sigmasummary->SetBinContent(ifit, fit->GetParameter(2)); sigmasummary->SetBinError(ifit, fit->GetParError(2)); ifit++;
-    new TCanvas(); hpull_unbanff_08->Draw(); hpull_unbanff_08->Fit("gaus"); fit = hpull_unbanff_08->GetFunction("gaus");
-    meansummary->SetBinContent(ifit, fit->GetParameter(1)); meansummary->SetBinError(ifit, fit->GetParError(1));
-    sigmasummary->SetBinContent(ifit, fit->GetParameter(2)); sigmasummary->SetBinError(ifit, fit->GetParError(2)); ifit++;
-    new TCanvas(); hpull_unbanff_09->Draw(); hpull_unbanff_09->Fit("gaus"); fit = hpull_unbanff_09->GetFunction("gaus");
-    meansummary->SetBinContent(ifit, fit->GetParameter(1)); meansummary->SetBinError(ifit, fit->GetParError(1));
-    sigmasummary->SetBinContent(ifit, fit->GetParameter(2)); sigmasummary->SetBinError(ifit, fit->GetParError(2)); ifit++;
-    new TCanvas(); hpull_unbanff_10->Draw(); hpull_unbanff_10->Fit("gaus"); fit = hpull_unbanff_10->GetFunction("gaus");
-    meansummary->SetBinContent(ifit, fit->GetParameter(1)); meansummary->SetBinError(ifit, fit->GetParError(1));
-    sigmasummary->SetBinContent(ifit, fit->GetParameter(2)); sigmasummary->SetBinError(ifit, fit->GetParError(2)); ifit++;
-    new TCanvas(); hpull_unbanff_11->Draw(); hpull_unbanff_11->Fit("gaus"); fit = hpull_unbanff_11->GetFunction("gaus");
-    meansummary->SetBinContent(ifit, fit->GetParameter(1)); meansummary->SetBinError(ifit, fit->GetParError(1));
-    sigmasummary->SetBinContent(ifit, fit->GetParameter(2)); sigmasummary->SetBinError(ifit, fit->GetParError(2)); ifit++;
-    new TCanvas(); hpull_unbanff_12->Draw(); hpull_unbanff_12->Fit("gaus"); fit = hpull_unbanff_12->GetFunction("gaus");
-    meansummary->SetBinContent(ifit, fit->GetParameter(1)); meansummary->SetBinError(ifit, fit->GetParError(1));
-    sigmasummary->SetBinContent(ifit, fit->GetParameter(2)); sigmasummary->SetBinError(ifit, fit->GetParError(2)); ifit++;
-    new TCanvas(); hpull_unbanff_13->Draw(); hpull_unbanff_13->Fit("gaus"); fit = hpull_unbanff_13->GetFunction("gaus");
-    meansummary->SetBinContent(ifit, fit->GetParameter(1)); meansummary->SetBinError(ifit, fit->GetParError(1));
-    sigmasummary->SetBinContent(ifit, fit->GetParameter(2)); sigmasummary->SetBinError(ifit, fit->GetParError(2)); ifit++;
-    new TCanvas(); hpull_unbanff_14->Draw(); hpull_unbanff_14->Fit("gaus"); fit = hpull_unbanff_14->GetFunction("gaus");
-    meansummary->SetBinContent(ifit, fit->GetParameter(1)); meansummary->SetBinError(ifit, fit->GetParError(1));
-    sigmasummary->SetBinContent(ifit, fit->GetParameter(2)); sigmasummary->SetBinError(ifit, fit->GetParError(2)); ifit++;
-    new TCanvas(); hpull_unbanff_15->Draw(); hpull_unbanff_15->Fit("gaus"); fit = hpull_unbanff_15->GetFunction("gaus");
-    meansummary->SetBinContent(ifit, fit->GetParameter(1)); meansummary->SetBinError(ifit, fit->GetParError(1));
-    sigmasummary->SetBinContent(ifit, fit->GetParameter(2)); sigmasummary->SetBinError(ifit, fit->GetParError(2)); ifit++;
-    new TCanvas(); hpull_unbanff_16->Draw(); hpull_unbanff_16->Fit("gaus"); fit = hpull_unbanff_16->GetFunction("gaus");
-    meansummary->SetBinContent(ifit, fit->GetParameter(1)); meansummary->SetBinError(ifit, fit->GetParError(1));
-    sigmasummary->SetBinContent(ifit, fit->GetParameter(2)); sigmasummary->SetBinError(ifit, fit->GetParError(2)); ifit++;
-    new TCanvas(); hpull_unbanff_17->Draw(); hpull_unbanff_17->Fit("gaus"); fit = hpull_unbanff_17->GetFunction("gaus");
-    meansummary->SetBinContent(ifit, fit->GetParameter(1)); meansummary->SetBinError(ifit, fit->GetParError(1));
-    sigmasummary->SetBinContent(ifit, fit->GetParameter(2)); sigmasummary->SetBinError(ifit, fit->GetParError(2)); ifit++;
-    new TCanvas(); hpull_unbanff_18->Draw(); hpull_unbanff_18->Fit("gaus"); fit = hpull_unbanff_18->GetFunction("gaus");
-    meansummary->SetBinContent(ifit, fit->GetParameter(1)); meansummary->SetBinError(ifit, fit->GetParError(1));
-    sigmasummary->SetBinContent(ifit, fit->GetParameter(2)); sigmasummary->SetBinError(ifit, fit->GetParError(2)); ifit++;
-    new TCanvas(); hpull_unbanff_19->Draw(); hpull_unbanff_19->Fit("gaus"); fit = hpull_unbanff_19->GetFunction("gaus");
-    meansummary->SetBinContent(ifit, fit->GetParameter(1)); meansummary->SetBinError(ifit, fit->GetParError(1));
-    sigmasummary->SetBinContent(ifit, fit->GetParameter(2)); sigmasummary->SetBinError(ifit, fit->GetParError(2)); ifit++;
-    new TCanvas(); hpull_unbanff_20->Draw(); hpull_unbanff_20->Fit("gaus"); fit = hpull_unbanff_20->GetFunction("gaus");
-    meansummary->SetBinContent(ifit, fit->GetParameter(1)); meansummary->SetBinError(ifit, fit->GetParError(1));
-    sigmasummary->SetBinContent(ifit, fit->GetParameter(2)); sigmasummary->SetBinError(ifit, fit->GetParError(2)); ifit++;
-    new TCanvas(); hpull_unbanff_21->Draw(); hpull_unbanff_21->Fit("gaus"); fit = hpull_unbanff_21->GetFunction("gaus");
-    meansummary->SetBinContent(ifit, fit->GetParameter(1)); meansummary->SetBinError(ifit, fit->GetParError(1));
-    sigmasummary->SetBinContent(ifit, fit->GetParameter(2)); sigmasummary->SetBinError(ifit, fit->GetParError(2)); ifit++;
-    new TCanvas(); hpull_unbanff_22->Draw(); hpull_unbanff_22->Fit("gaus"); fit = hpull_unbanff_22->GetFunction("gaus");
-    meansummary->SetBinContent(ifit, fit->GetParameter(1)); meansummary->SetBinError(ifit, fit->GetParError(1));
-    sigmasummary->SetBinContent(ifit, fit->GetParameter(2)); sigmasummary->SetBinError(ifit, fit->GetParError(2)); ifit++;
     new TCanvas(); hpull_banff_00->Draw(); hpull_banff_00->Fit("gaus"); fit = hpull_banff_00->GetFunction("gaus");
     meansummary->SetBinContent(ifit, fit->GetParameter(1)); meansummary->SetBinError(ifit, fit->GetParError(1));
     sigmasummary->SetBinContent(ifit, fit->GetParameter(2)); sigmasummary->SetBinError(ifit, fit->GetParError(2)); ifit++;
@@ -2347,9 +1783,6 @@ void mock_data_fit_pulls(
     meansummary->SetBinContent(ifit, fit->GetParameter(1)); meansummary->SetBinError(ifit, fit->GetParError(1));
     sigmasummary->SetBinContent(ifit, fit->GetParameter(2)); sigmasummary->SetBinError(ifit, fit->GetParError(2)); ifit++;
     new TCanvas(); hpull_fsi_005->Draw(); hpull_fsi_005->Fit("gaus"); fit = hpull_fsi_005->GetFunction("gaus");
-    meansummary->SetBinContent(ifit, fit->GetParameter(1)); meansummary->SetBinError(ifit, fit->GetParError(1));
-    sigmasummary->SetBinContent(ifit, fit->GetParameter(2)); sigmasummary->SetBinError(ifit, fit->GetParError(2)); ifit++;
-    new TCanvas(); hpull_fsi_006->Draw(); hpull_fsi_006->Fit("gaus"); fit = hpull_fsi_006->GetFunction("gaus");
     meansummary->SetBinContent(ifit, fit->GetParameter(1)); meansummary->SetBinError(ifit, fit->GetParError(1));
     sigmasummary->SetBinContent(ifit, fit->GetParameter(2)); sigmasummary->SetBinError(ifit, fit->GetParError(2)); ifit++;
   }

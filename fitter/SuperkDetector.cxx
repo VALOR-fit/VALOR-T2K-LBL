@@ -271,7 +271,7 @@ double SuperkDetector::ChisqPenalty(bool all_syst) const
   if(!all_syst) {
     if (fEff1RmuCCnonQETwkDial) chisq_penalty += fEff1RmuCCnonQETwkDial*fEff1RmuCCnonQETwkDial;
     if (fEff1RmuNCTwkDial     ) chisq_penalty += fEff1RmuNCTwkDial*fEff1RmuNCTwkDial;
-    //if (fEnergyScaleTwkDial   ) chisq_penalty += fEnergyScaleTwkDial*fEnergyScaleTwkDial;
+    if (fEnergyScaleTwkDial   ) chisq_penalty += fEnergyScaleTwkDial*fEnergyScaleTwkDial;
     return chisq_penalty;
   }
 

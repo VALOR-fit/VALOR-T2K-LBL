@@ -860,7 +860,7 @@ void test_n_mock_data_fits_with_sys
 	  skexp->GetNuXSec()->TweakPiLessDelta   (rand.Gaus(0.,1.));
 	  skexp->GetSuperkDetector()->TweakEfficiency1RmuCCnonQE    (rand.Gaus(0.,1.));
 	  skexp->GetSuperkDetector()->TweakEfficiency1RmuNC         (rand.Gaus(0.,1.));
-	  //skexp->GetSuperkDetector()->TweakEnergyScale              (rand.Gaus(0.,1.));
+	  skexp->GetSuperkDetector()->TweakEnergyScale              (rand.Gaus(0.,1.));
 	  TVectorD twkv(skexp->GetBANFF()->BestFitValues());
 	  TMatrixD cov (skexp->GetBANFF()->CovMatrix());
 	  PhysParamId_t p_maqe = conv::kNuisBANFFMAQE;
