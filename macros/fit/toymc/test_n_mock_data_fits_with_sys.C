@@ -28,10 +28,10 @@
   #include "Superk1RmuErecoFitter.h"
 */
 
-void test_n_mock_data_fits_with_syst_minuit2
+void test_n_mock_data_fits_with_sys
 (
  const char * tag                     = "toyexptfitswithsyst",          /* tag for output file */
- int          syst_mode               = 6,                              /* which systematics to tweak? 0 none. 1 all. 2 BANFF. 3 Unconstrained XSec. 4 SK detector. 5 FSI. 6 Selected. */
+ int          syst_mode               = 1,                              /* which systematics to tweak? 0 none. 1 all. 2 BANFF. 3 Unconstrained XSec. 4 SK detector. 5 FSI. 6 Selected. */
  int          run                     = 0,                              /* run number */
  int          nexperiments            = 1,                              /* number of toy MC experiment fits */
  double       input_mixing12          = -99,                            /* 12-mixing, sinq2theta or sinsqtheta depending on user choice, if -999 then randomize */
@@ -45,10 +45,10 @@ void test_n_mock_data_fits_with_syst_minuit2
  string       fit_param_list          = "nuosc3f_numudisapp_fix4+nuisanceselection", /* fit parameter list for the given physics hypothesis (see run_fitter.C) */
  const char * fit_option              = "minuit",                       /* fitter option (see run_fitter.C) */
  bool         store_chisq_surf        = false,                          /* by default storing only best-fit values, enable this to store the chisq surfaces   */
- bool         store_withsyst_chisq_surf = true,                        /* by default storing only best-fit values, enable this to store the chisq with systematics surfaces   */
+ bool         store_withsyst_chisq_surf = false,                        /* by default storing only best-fit values, enable this to store the chisq with systematics surfaces   */
  bool         store_toy_expts         = false,                          /* by default storing only best-fit values, enable this to store the toy MC expts     */
  bool         store_bestfit_spectrum  = false,                          /* by default storing only best-fit values, enable this to store the best-fit spectra */
- bool         use_minuit2             = true                            /* use minuit2, or minuit */
+ bool         use_minuit2             = false                           /* use minuit2, or minuit */
  )
 {
   using namespace std;
@@ -175,7 +175,7 @@ void test_n_mock_data_fits_with_syst_minuit2
   ///////////////////////////////////////////////////////////////////////////////////////////////
   //fit info
   int iexp;
-  int fitstatus;
+  int fitstatus, migradfitstatus, hessefitstatus;
   double fittime;
   double bestfit_chisq;
   double true_chisq;
@@ -278,6 +278,8 @@ void test_n_mock_data_fits_with_syst_minuit2
   //fit info
   nfitnt->Branch("iexp",&iexp,"iexp/I");
   nfitnt->Branch("fitstatus",&fitstatus,"fitstatus/I");
+  nfitnt->Branch("migradfitstatus",&migradfitstatus,"migradfitstatus/I");
+  nfitnt->Branch("hessefitstatus",&hessefitstatus,"hessefitstatus/I");
   nfitnt->Branch("fittime",&fittime,"fittime/D");
   nfitnt->Branch("true_chisq",&true_chisq,"true_chisq/D");
   nfitnt->Branch("bestfit_chisq",&bestfit_chisq,"bestfit_chisq/D");
@@ -1002,7 +1004,8 @@ void test_n_mock_data_fits_with_syst_minuit2
       fparm->SetInitValue(conv::kNuisXSecSpecFunc,         input_xsec_sf);
       fparm->SetInitValue(conv::kNuisXSecBindE,            input_xsec_binde);
       fparm->SetInitValue(conv::kNuisXSecPiLessDelta,      input_xsec_pilessdelta);
-      //fparm->SetInitValue(conv::kNuisSuperkEnergyScale,    input_skdet_energyscale);
+      if(fparm->Exists(conv::kNuisSuperkEnergyScale) && !fparm->IsFixed(conv::kNuisSuperkEnergyScale))
+	 fparm->SetInitValue(conv::kNuisSuperkEnergyScale,    input_skdet_energyscale);
       fparm->SetInitValue(conv::kNuisSuperkEff1RmuCCnonQE, input_skdet_ccnqe);
       fparm->SetInitValue(conv::kNuisSuperkEff1RmuNC,      input_skdet_nc);
     }
@@ -1026,7 +1029,9 @@ void test_n_mock_data_fits_with_syst_minuit2
     // Do the fit
     fparm->ResetCurrToInitValues(); // reset osc params
     fitter->DoTheFit();
-    fitstatus = fitter->FitStatusCode();
+    fitstatus       = fitter->FitStatusCode();
+    migradfitstatus = fitter->FitMigradStatusCode();
+    hessefitstatus  = fitter->FitHesseStatusCode();
     fittime = fitter->FitTime();
     bestfit_chisq = fit_inputs->BestFitChisquare();
 

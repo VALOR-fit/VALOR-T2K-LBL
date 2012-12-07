@@ -33,6 +33,8 @@ public:
 
    virtual bool       DoTheFit      (void);
    virtual int        FitStatusCode (void)        { return fStatusCode;                 }
+   virtual int        FitMigradStatusCode (void)  { return fMigradStatusCode;           }
+   virtual int        FitHesseStatusCode  (void)  { return fHesseStatusCode;            }
    virtual double     FitTime       (void)        { return fFitTime;                    }
    virtual int        NDOF          (void)        { return fNFitBins - fNFreeFitParams; }
    virtual int        NBinsInFit    (void)        { return fNFitBins;                   }
@@ -52,6 +54,8 @@ protected:
    FitInputs*  fFitInputs;        ///< fit inputs
    TString     fOption;           ///< fit option
    int         fStatusCode;       ///< fit status code
+   int         fMigradStatusCode; ///< return value of the MIGRAD command
+   int         fHesseStatusCode;  ///< return value of the HESSE command
    double      fFitTime;          ///< time taken to do the fit
    int         fNFitBins;         ///< number of bins in fit
    int         fNFreeFitParams;   ///< number of free params in fit

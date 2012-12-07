@@ -4,8 +4,8 @@
 void mock_data_fit_pulls(
      const char * filenames,                                              /* add these filenames to the tree */
      int          fit_systematics_mode = 1,                               /* what was fit for? 0: osc only. 1: osc+selected nuisance. 2: osc+all nuisance */
-     int          err_mode = 1,                                           /* which errors to use for pulls. 1: migrad, 2 hesse, 3 minos*/
-     int          fitter_mode = 1,                                        /* which fitter has been used? 0: minuit. 1: minuit2 */
+     int          err_mode             = 1,                               /* which errors to use for pulls. 1: migrad, 2 hesse, 3 minos*/
+     int          fittermode           = 0,                               /* which fitter has been used? 0: minuit. 1: minuit2 */
      const char * config_file          = "analysis_configuration.xml"     /* file to get the pre errors from */
 )
 {
@@ -102,7 +102,7 @@ void mock_data_fit_pulls(
   // Declaration of leaf types
   //fit info
   int iexp;
-  int fitstatus;
+  int fitstatus, migradfitstatus, hessefitstatus;
   double fittime;
   double bestfit_chisq, true_chisq;
   double nsk_nom, nsk_bf;
@@ -191,6 +191,8 @@ void mock_data_fit_pulls(
   ch.GetEntry(0);
   ch.SetBranchAddress("iexp",&iexp);
   ch.SetBranchAddress("fitstatus",&fitstatus);
+  ch.SetBranchAddress("migradfitstatus",&migradfitstatus);
+  ch.SetBranchAddress("hessefitstatus",&hessefitstatus);
   ch.SetBranchAddress("fittime",&fittime);
   ch.SetBranchAddress("bestfit_chisq",&bestfit_chisq);
   ch.SetBranchAddress("true_chisq",&true_chisq);
@@ -705,6 +707,8 @@ void mock_data_fit_pulls(
   ch.SetBranchStatus("*",0);
   ch.SetBranchStatus("iexp",1);
   ch.SetBranchStatus("fitstatus",1);
+  ch.SetBranchStatus("migradfitstatus",1);
+  ch.SetBranchStatus("hessefitstatus",1);
   ch.SetBranchStatus("fittime",1);
   ch.SetBranchStatus("bestfit_chisq",1);
   ch.SetBranchStatus("true_chisq",1);
@@ -747,6 +751,7 @@ void mock_data_fit_pulls(
   ch.SetBranchStatus("errhesse_deltacp",1);
   ch.SetBranchStatus("errhesse_dm12sq",1);
   ch.SetBranchStatus("errhesse_dm23sq",1);
+
   if(fit_systematics_mode >= 1) {
     //inputs
     ch.SetBranchStatus("input_xsec_sf",1);
@@ -938,6 +943,7 @@ void mock_data_fit_pulls(
     ch.SetBranchStatus("errminosplus_banff_ccqeE2",1);
     ch.SetBranchStatus("errminosplus_banff_cc1piE0",1);
     ch.SetBranchStatus("errminosplus_banff_cc1piE1",1);
+
     //errminosminuss
     /*
     ch.SetBranchStatus("errminosminus_unbanff_00",1);
@@ -1217,7 +1223,9 @@ void mock_data_fit_pulls(
  
 
   // Book histograms
-  TH1I * h_fitstat  = new TH1I("h_fitstat","h_fitstat",11,-1,10);
+  TH1I * h_fitstat        = new TH1I("h_fitstat","h_fitstat",11,-1,10);
+  TH1I * h_migradfitstat  = new TH1I("h_migradfitstat","h_migradfitstat",14,-1,13);
+  TH1I * h_hessefitstat   = new TH1I("h_hessefitstat","h_hessefitstat",14,-1,13);
   TH1D * h_fittime  = new TH1D("h_fittime","h_fittime",1000,0,1000);
   TH1D * h_nsk_nom  = new TH1D("h_nsk_nom","h_nsk_nom",150,0,150);
   TH1D * h_nsk_bf   = new TH1D("h_nsk_bf","h_nsk_bf",150,0,150);
@@ -1403,10 +1411,22 @@ void mock_data_fit_pulls(
   for(int i = 0; i < ch.GetEntries(); i++) {
     ch.GetEntry(i);
     //ignore failed fits!
-    h_fitstat->Fill(fitstatus);
+    h_fitstat      ->Fill(fitstatus);
+    h_migradfitstat->Fill(migradfitstatus);
+    h_hessefitstat ->Fill(hessefitstatus);
     h_fittime->Fill(fittime);
-    if(fitstatus != 3 && fitter_mode == 0) continue;
-    if(fitstatus == 9 && fitter_mode == 1) continue;
+    //minuit
+    if(fittermode == 0) {
+      if(migradfitstatus == 4)
+	continue; //migrad didn't converge
+      if(fitstatus != 3)
+	continue; //error matrix inaccurate
+    }
+    //minuit2
+    else if(fittermode == 1) {
+      if(fitstatus == 9)
+	continue; //
+    }
 
     if(bestfit_mixing23 > 0.997) continue;
     //if(TMath::Abs(bestfit_mixing23 - 1.) < 1E-3) continue;
@@ -1832,6 +1852,8 @@ void mock_data_fit_pulls(
 
   // Draw
   new TCanvas(); h_fitstat->Draw();
+  new TCanvas(); h_migradfitstat->Draw();
+  new TCanvas(); h_hessefitstat->Draw();
   new TCanvas(); h_fittime->Draw();
   new TCanvas(); h_nsk_nom->Draw();
   new TCanvas(); h_nsk_bf->Draw();

@@ -24,6 +24,7 @@
 #include <sstream>
 
 #include <TMath.h> 
+#include <TRandom3.h> 
 #include <TVirtualFitter.h> 
 #include <TGraph.h> 
 #include <TH2D.h> 
@@ -44,6 +45,7 @@
 #include "FitParamList.h" 
 #include "Utilities.h"
 #include "Conventions.h"
+#include "Opt.h"
 
 using std::cerr; 
 using std::cout; 
@@ -151,9 +153,28 @@ bool FitterKernel::DoTheFit(void)
   fFitTime = 0;
 
   // Run the fitter once - we have the option here to check the status code
-  // and if the fitter failed, re-seed the fitter and try again (not needed
-  // so far).
+  // and if the fitter failed, re-seed the fitter and try again
   bool ok = this->RunOnce();
+
+  // 4: migrad not converged
+  while(fMigradStatusCode == 4) {
+    NuOscMixParam_t omp = Opt::Instance()->gOscMixingParamChoice;
+    TRandom3 rand(0);
+    switch(omp) {
+    case(conv::kNuMixSinsq2Theta):
+      fFitInputs->FitParams().SetInitValue(conv::kPhypMixing23, rand.Uniform(0.80,0.98));
+      break;
+    case(conv::kNuMixSinsqTheta):
+      fFitInputs->FitParams().SetInitValue(conv::kPhypMixing23, rand.Uniform(0.35,0.55));
+      break;
+    case(conv::kNuMixUndefined):
+      cerr << "Mixing parameter type undefinded. Exiting..." << endl;
+      exit(1);
+      break;
+    }
+    fFitInputs->FitParams().SetInitValue(conv::kPhypDm23sq, rand.Uniform(0.0020,0.0030));
+    this->RunOnce();
+  }
 
 #ifdef __show_fit_cpu_time__
   w.Stop();
@@ -186,7 +207,7 @@ bool FitterKernel::RunOnce(void)
   Double_t arglist[100];
   arglist[0] = 50000; // num of func calls
   arglist[1] = 0.01;  // tolerance
-  fitter->ExecuteCommand("MIGRAD",arglist, 2);
+  fMigradStatusCode = fitter->ExecuteCommand("MIGRAD",arglist, 2);
 
   // Print fit result
 #ifdef __show_fit_result__
@@ -198,7 +219,7 @@ bool FitterKernel::RunOnce(void)
 #endif
 
   //Use Hesse to make the errors better
-  fitter->ExecuteCommand("HESSE",arglist, 1);
+  fHesseStatusCode = fitter->ExecuteCommand("HESSE",arglist, 1);
 
   // Done! Copy current --> best-fit values
   fFitInputs->FitParams().CopyCurrToBestFitValues();
