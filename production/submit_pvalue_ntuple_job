@@ -61,7 +61,7 @@ die("$job_dir doesn't exist") unless -d $job_dir;
 $irun = 0;
 while($irun < $nruns) {
   print "Submitting run: $irun \n";
-  $command = "root2k -l -b -q \'$softw_dir/macros/make_pvalue_ntuple.C(\"$tag\",$irun,$nexpts,\"$config_file\",$stat_fluctuation,$tweak_systematics,\"$fitparamlist\")\'";
+  $command = "root2k -l -b -q \'$softw_dir/macros/stat/make_pvalue_ntuple.C(\"$tag\",$irun,$nexpts,\"$config_file\",$stat_fluctuation,$tweak_systematics,\"$fitparamlist\")\'";
   print "$command \n";
 
   #

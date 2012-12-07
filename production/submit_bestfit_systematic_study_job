@@ -84,7 +84,7 @@ foreach(@systlist) {
   while($irun < $nruns) {
     print "Submitting $systematic run: $irun \n";
     $batch_script  = "syst-$systematic-$irun.pbs";
-    $command  = "root2k -l -b -q \'$softw_dir/macros/fit/bestfit_systematic_study_fitting_job.C(\"$systematic\",\"$fitparamlist\",$irun,$sinsq2theta12,$sinsq2theta13,$sinsq2theta23,$deltacp,$dm12sq,$dm23sq,$nexpts,\"$config_file\")\'";
+    $command  = "root2k -l -b -q \'$softw_dir/macros/fit/syst/best_fit_point_spread/bestfit_systematic_study_fitting_job.C(\"$systematic\",\"$fitparamlist\",$irun,$sinsq2theta12,$sinsq2theta13,$sinsq2theta23,$deltacp,$dm12sq,$dm23sq,$nexpts,\"$config_file\")\'";
     print "$command \n";
     print "$job_dir/$batch_script";
 

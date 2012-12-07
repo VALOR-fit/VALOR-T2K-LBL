@@ -81,7 +81,7 @@ while($irun < $nruns) {
 
   print "Submitting $tag run: $irun \n";
 
-  $command  = "root2k -l -b -q \'$softw_dir/macros/fc/nue/feldman_cousins_fitting_job.C(\"$tag\",$irun,$nexpts,$min_deltacp_bin,$max_deltacp_bin,$min_sinsq2theta13_bin,$max_sinsq2theta13_bin,\"$config_file\",$stat_fluct,$twk_systematics,$twk_oth_osc,\"$fitparamlist\",\"$fitoption\")\'";
+  $command  = "root2k -l -b -q \'$softw_dir/macros/contour/fc/nue/feldman_cousins_fitting_job.C(\"$tag\",$irun,$nexpts,$min_deltacp_bin,$max_deltacp_bin,$min_sinsq2theta13_bin,$max_sinsq2theta13_bin,\"$config_file\",$stat_fluct,$twk_systematics,$twk_oth_osc,\"$fitparamlist\",\"$fitoption\")\'";
   print "$command \n";
 
   #

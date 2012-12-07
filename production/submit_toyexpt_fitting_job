@@ -91,7 +91,7 @@ die("$job_dir doesn't exist") unless -d $job_dir;
 $irun = 0;
 while($irun < $nruns) {
   print "Submitting run: $irun \n";
-  $command = "root2k -l -b -q \'$softw_dir/macros/fit/test_n_mock_data_fits.C(\"$tag\",$irun,$nexpts,$sinsq2theta12,$sinsq2theta13,$sinsq2theta23,$deltacp,$dm12sq,$dm23sq,\"$config_file\",$stat_fluct,$twk_systematics,\"$fitparamlist\",\"$fitoption\",$store_chisq_surf,$store_toy_expts,$store_bestfit_spectra)\'";
+  $command = "root2k -l -b -q \'$softw_dir/macros/fit/toymc/test_n_mock_data_fits.C(\"$tag\",$irun,$nexpts,$sinsq2theta12,$sinsq2theta13,$sinsq2theta23,$deltacp,$dm12sq,$dm23sq,\"$config_file\",$stat_fluct,$twk_systematics,\"$fitparamlist\",\"$fitoption\",$store_chisq_surf,$store_toy_expts,$store_bestfit_spectra)\'";
   print "$command \n";
 
   #

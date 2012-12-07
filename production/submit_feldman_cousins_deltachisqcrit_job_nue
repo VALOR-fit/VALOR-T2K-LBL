@@ -72,7 +72,7 @@ while($ijob < $njobs) {
      $curr_job_bin_max++; #odd number of bins, last job has 1 more
   }
   $outputfile = "$tag$ijob.root";
-  $command    = "root2k -l -b -q \'$softw_dir/macros/fc/nue/make_feldman_cousins_deltachisqcrit_surface.C(\"$inputdir\",\"$outputfile\",$curr_job_bin_min,$curr_job_bin_max)\'"; 
+  $command    = "root2k -l -b -q \'$softw_dir/macros/contour/fc/nue/make_feldman_cousins_deltachisqcrit_surface.C(\"$inputdir\",\"$outputfile\",$curr_job_bin_min,$curr_job_bin_max)\'"; 
 
   print "Submitting job... $ijob \n";
   print "  $command \n";

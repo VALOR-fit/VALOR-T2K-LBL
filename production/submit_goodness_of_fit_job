@@ -72,7 +72,7 @@ while($irun <= $lastexpt) {
   $batch_script  = "$tag-$irun.pbs";
   $job_name      = "$tag-$irun";
 
-  $command = "root2k -l -b -q \'$softw_dir/macros/fit/calculate_goodness_of_fit.C(\"$tag\",$irun,\"$toyexptsfile\",$irun,$irun,\"$config_file\",\"$fitparamlist\",\"$fitoption\")\'";
+  $command = "root2k -l -b -q \'$softw_dir/macros/fit/stat/calculate_goodness_of_fit.C(\"$tag\",$irun,\"$toyexptsfile\",$irun,$irun,\"$config_file\",\"$fitparamlist\",\"$fitoption\")\'";
 
   print "$command \n";
 

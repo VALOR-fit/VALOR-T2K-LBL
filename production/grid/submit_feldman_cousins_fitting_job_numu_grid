@@ -43,17 +43,20 @@ foreach (@ARGV) {
   if($_ eq '--max-dm23sq-bin'        ) { $max_dm23sq_bin        = $ARGV[$iarg+1]; }
   if($_ eq '--min-sinsq2theta23-bin' ) { $min_sinsq2theta23_bin = $ARGV[$iarg+1]; }
   if($_ eq '--max-sinsq2theta23-bin' ) { $max_sinsq2theta23_bin = $ARGV[$iarg+1]; }
+  if($_ eq '--bin-list'              ) { $bin_list              = $ARGV[$iarg+1]; }
   if($_ eq '--fit-param-list'        ) { $fitparamlist          = $ARGV[$iarg+1]; }
   if($_ eq '--fit-option'            ) { $fitoption             = $ARGV[$iarg+1]; }
   if($_ eq '--job-dir'               ) { $job_dir               = $ARGV[$iarg+1]; }
   if($_ eq '--softw-dir'             ) { $softw_dir             = $ARGV[$iarg+1]; }
   if($_ eq '--config-file'           ) { $config_file           = $ARGV[$iarg+1]; }
+  if($_ eq '--proxy-id'              ) { $proxy_id              = $ARGV[$iarg+1]; }
   $iarg++;
 }
 $min_dm23sq_bin         = 1                             unless defined $min_dm23sq_bin;
 $max_dm23sq_bin         = 51                            unless defined $max_dm23sq_bin; 
 $min_sinsq2theta23_bin  = 1                             unless defined $min_sinsq2theta23_bin;
 $max_sinsq2theta23_bin  = 101                           unless defined $max_sinsq2theta23_bin;
+$bin_list               = 0                             unless defined $bin_list;
 $resource               = "GRID"                        unless defined $resource;
 $tag                    = "fc"                          unless defined $tag;
 $nruns                  = 1                             unless defined $nruns;
@@ -75,13 +78,14 @@ if( !defined $cput) {
 
 mkpath ($job_dir, {verbose => 1, mode=>0777});
 die("$job_dir doesn't exist") unless -d $job_dir;
+die("$proxy_id doesn't exist") unless $proxy_id;
 
 $irun = 0;
 while($irun < $nruns) {
 
   print "Submitting $tag run: $irun \n";
 
-  $command  = "root2k -l -b -q \'feldman_cousins_fitting_job.C(\"$tag\",$irun,$nexpts,$min_dm23sq_bin,$max_dm23sq_bin,$min_sinsq2theta23_bin,$max_sinsq2theta23_bin,\"$config_file\",$stat_fluct,$twk_systematics,$twk_non23osc,\"$fitparamlist\",\"$fitoption\")\'";
+  $command  = "root2k -l -b -q \'feldman_cousins_fitting_job.C(\"$tag\",$irun,$nexpts,$min_dm23sq_bin,$max_dm23sq_bin,$min_sinsq2theta23_bin,$max_sinsq2theta23_bin,$bin_list,\"$config_file\",$stat_fluct,$twk_systematics,$twk_non23osc,\"$fitparamlist\",\"$fitoption\")\'";
   print "$command \n";
 
   #
@@ -239,48 +243,51 @@ while($irun < $nruns) {
   $irun++;
 }
 
-  if($resource eq "GRID") {
-      # Finally write the sh bash script to handle the job submission
-      open(SH0, ">$tag.sh") or die("Can not create the .sh batch script");
-      print SH0 "#!/bin/bash \n";
-      print SH0 "echo \"*** Creating proxy...\" \n";
-      print SH0 "voms-proxy-init -voms t2k.org\n";
-      print SH0 "echo \"*** Preparing the code...\" \n";
-      print SH0 "rm -fr trunk_GRID \n";
-      print SH0 "mkdir trunk_GRID \n";
-      print SH0 "mkdir trunk_GRID/fitter \n";
-      print SH0 "cp $softw_dir/fitter/*.cxx trunk_GRID/fitter\n";
-      print SH0 "cp $softw_dir/fitter/*.h trunk_GRID/fitter\n";
-      print SH0 "cp $softw_dir/fitter/Make* trunk_GRID/fitter\n";
-      print SH0 "cp $softw_dir/fitter/VERSION trunk_GRID/fitter\n";
-      print SH0 "mkdir trunk_GRID/config \n";
-      print SH0 "cp $softw_dir/config/* trunk_GRID/config\n";
-      print SH0 "mkdir trunk_GRID/root \n";
-      print SH0 "cp $softw_dir/root/* trunk_GRID/root\n";
-      print SH0 "cp $softw_dir/setup/setup_at_grid.sh trunk_GRID\n";
-      print SH0 "cp $softw_dir/Makefile trunk_GRID\n";
-      print SH0 "cp $softw_dir/macros/fc/numu/feldman_cousins_fitting_job.C trunk_GRID\n";
-      print SH0 "mkdir trunk_GRID/inputs\n";
-      print SH0 "mkdir trunk_GRID/inputs/official\n";    
-      print SH0 "mkdir trunk_GRID/inputs/official/2012\n";
-      print SH0 "mkdir trunk_GRID/inputs/official/2012/banff\n";
-      print SH0 "mkdir trunk_GRID/inputs/official/2012/flux\n";
-      print SH0 "mkdir trunk_GRID/inputs/official/2012/flux/11b_v3.2_run1-3c\n";
-      print SH0 "mkdir trunk_GRID/inputs/official/2012/fsi\n";
-      print SH0 "mkdir trunk_GRID/inputs/official/2012/xsec\n";
-      print SH0 "mkdir trunk_GRID/inputs/official/2012/superk\n";
-      print SH0 "mkdir trunk_GRID/inputs/official/2012/superk/err\n";
-      print SH0 "mkdir trunk_GRID/inputs/official/2012/superk/mc\n";
-      print SH0 "mkdir trunk_GRID/inputs/official/2012/superk/mc/neut\n";
-      print SH0 "mkdir trunk_GRID/inputs/official/2012/superk/mc/neut/11c\n";
-      print SH0 "tar -pczf trunk_GRID.tar.gz trunk_GRID\n";
-      print SH0 "echo \"*** Submitting jobs to the GRID...\" \n";
-      $irun = 0;
-      while($irun < $nruns) {
-	  print SH0 "glite-wms-job-submit -a -c $softw_dir/production/grid/autowms.conf -o $tag.jid $tag-$irun.jdl \n";
-	  $irun++;
-      }
-      `chmod +x $tag.sh`;
-#      `./$tag.sh`;
-  }
+if($resource eq "GRID") {
+    # Finally write the sh bash script to handle the job submission
+    open(SH0, ">$tag.sh") or die("Can not create the .sh batch script");
+    print SH0 "#!/bin/bash \n";
+    print SH0 "echo \"*** Creating proxy...\" \n";
+    print SH0 "voms-proxy-init -voms t2k.org\n";
+    print SH0 "export MYPROXY_SERVER=lcgrbp01.gridpp.rl.ac.uk\n";
+    print SH0 "myproxy-init -v -d -n -s \$MYPROXY_SERVER\n";
+    print SH0 "glite-wms-job-delegate-proxy -d $proxy_id -e https://lcgwms03.gridpp.rl.ac.uk:7443/glite_wms_wmproxy_server;\n";
+    print SH0 "echo \"*** Preparing the code...\" \n";
+    print SH0 "rm -fr trunk_GRID \n";
+    print SH0 "mkdir trunk_GRID \n";
+    print SH0 "mkdir trunk_GRID/fitter \n";
+    print SH0 "cp $softw_dir/fitter/*.cxx trunk_GRID/fitter\n";
+    print SH0 "cp $softw_dir/fitter/*.h trunk_GRID/fitter\n";
+    print SH0 "cp $softw_dir/fitter/Make* trunk_GRID/fitter\n";
+    print SH0 "cp $softw_dir/fitter/VERSION trunk_GRID/fitter\n";
+    print SH0 "mkdir trunk_GRID/config \n";
+    print SH0 "cp $softw_dir/config/* trunk_GRID/config\n";
+    print SH0 "mkdir trunk_GRID/root \n";
+    print SH0 "cp $softw_dir/root/* trunk_GRID/root\n";
+    print SH0 "cp $softw_dir/setup/setup_at_grid.sh trunk_GRID\n";
+    print SH0 "cp $softw_dir/Makefile trunk_GRID\n";
+    print SH0 "cp $softw_dir/macros/fc/numu/feldman_cousins_fitting_job.C trunk_GRID\n";
+    print SH0 "mkdir trunk_GRID/inputs\n";
+    print SH0 "mkdir trunk_GRID/inputs/official\n";    
+    print SH0 "mkdir trunk_GRID/inputs/official/2012\n";
+    print SH0 "mkdir trunk_GRID/inputs/official/2012/banff\n";
+    print SH0 "mkdir trunk_GRID/inputs/official/2012/flux\n";
+    print SH0 "mkdir trunk_GRID/inputs/official/2012/flux/11b_v3.2_run1-3c\n";
+    print SH0 "mkdir trunk_GRID/inputs/official/2012/fsi\n";
+    print SH0 "mkdir trunk_GRID/inputs/official/2012/xsec\n";
+    print SH0 "mkdir trunk_GRID/inputs/official/2012/superk\n";
+    print SH0 "mkdir trunk_GRID/inputs/official/2012/superk/err\n";
+    print SH0 "mkdir trunk_GRID/inputs/official/2012/superk/mc\n";
+    print SH0 "mkdir trunk_GRID/inputs/official/2012/superk/mc/neut\n";
+    print SH0 "mkdir trunk_GRID/inputs/official/2012/superk/mc/neut/11c\n";
+    print SH0 "tar -pczf trunk_GRID.tar.gz trunk_GRID\n";
+    print SH0 "echo \"*** Submitting jobs to the GRID...\" \n";
+    $irun = 0;
+    while($irun < $nruns) {
+	print SH0 "glite-wms-job-submit -d $proxy_id -c $softw_dir/production/grid/autowms.conf -o $tag.jid $tag-$irun.jdl\n";
+	$irun++;
+    }
+    `chmod +x $tag.sh`;
+#    `./$tag.sh`;
+}
 
