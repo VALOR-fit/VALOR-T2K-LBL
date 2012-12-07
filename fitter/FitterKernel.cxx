@@ -154,10 +154,11 @@ bool FitterKernel::DoTheFit(void)
 
   // Run the fitter once - we have the option here to check the status code
   // and if the fitter failed, re-seed the fitter and try again
-  bool ok = this->RunOnce();
+  bool ok = this->RunOnce(false);
 
   // 4: migrad not converged
-  while(fMigradStatusCode == 4) {
+  int ntries = 0;
+  while(fMigradStatusCode == 4 && ntries < 10) {
     NuOscMixParam_t omp = Opt::Instance()->gOscMixingParamChoice;
     TRandom3 rand(0);
     switch(omp) {
@@ -173,8 +174,12 @@ bool FitterKernel::DoTheFit(void)
       break;
     }
     fFitInputs->FitParams().SetInitValue(conv::kPhypDm23sq, rand.Uniform(0.0020,0.0030));
-    this->RunOnce();
+    this->RunOnce(false);
+    ntries++;
   }
+
+  if(fMigradStatusCode == 4)
+    this->RunOnce(true);
 
 #ifdef __show_fit_cpu_time__
   w.Stop();
@@ -186,8 +191,10 @@ bool FitterKernel::DoTheFit(void)
   return ok;
 }
 //____________________________________________________________________________ 
-bool FitterKernel::RunOnce(void) 
+bool FitterKernel::RunOnce(bool use_minimize) 
 {
+  fHesseStatusCode = -1;
+
   // Get the fitter
 #ifdef __show_fit_steps__
   cout << "FitterKernel/RunOnce >> Getting the fitter..." << endl;
@@ -207,7 +214,15 @@ bool FitterKernel::RunOnce(void)
   Double_t arglist[100];
   arglist[0] = 50000; // num of func calls
   arglist[1] = 0.01;  // tolerance
-  fMigradStatusCode = fitter->ExecuteCommand("MIGRAD",arglist, 2);
+  if(!use_minimize)
+    fMigradStatusCode = fitter->ExecuteCommand("MIGRAD",arglist, 2);
+  //MINIMIZE calls MIGRAD, then SIMPLEX if MIGRAD fails
+  else
+    fMigradStatusCode = fitter->ExecuteCommand("MINIMIZE",arglist, 2);
+
+  //return on not converged
+  if(fMigradStatusCode == 4)
+    return false;
 
   // Print fit result
 #ifdef __show_fit_result__
