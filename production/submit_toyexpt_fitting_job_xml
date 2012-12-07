@@ -147,7 +147,7 @@ while($irun < $nruns) {
       print JDL "StdOutput = \"$tag-$irun.out\"; \n";
       print JDL "StdError = \"$tag-$irun.err\"; \n";
       print JDL "InputSandbox = {\"$tag-$irun.sh\",\"trunk_GRID.tar.gz\"}; \n";
-      print JDL "OutputSandbox = {\"$tag-$irun.out\",\"$tag-$irun.err\",\"$tag-run_$irun.root\"}; \n";
+      print JDL "OutputSandbox = {\"$tag-$irun.out\",\"$tag-$irun.err\",\"$tag-run_$irun-expts_$first_$last.root\",\"mockfit_$irun.root\"}; \n";
       print JDL "VirtualOrganisation = \"t2k.org\"; \n";
       print JDL "Requirements = RegExp(\"ic.ac.uk\", other.GlueCEUniqueId); \n";
 

@@ -18,3 +18,14 @@ STEPS IN SUMMARY:
 # view proxy info
 myproxy-info -d
 voms-proxy-info
+
+
+
+A template on how to add GRID options to production scripts is in: submit_toyexpt_fitting_job_xml
+Important things to note are:
+
+ - the ouput sandbox needs to be specified exactly. Unfortunately wildcards don't work (e.g. *.root), so you need to be careful to get back all you need
+
+ - the only macros copied are fit/toymc/* and fit/stat/* - if you need any from anywhere else, remember to copy them
+
+The template isn't quite ready for full production - there is a problem with proxy delegation not always working. I'm chasing this up (and specifying ROOT version on worker nodes) today, hope to be able to start grid production this evening
