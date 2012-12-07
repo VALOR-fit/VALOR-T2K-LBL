@@ -751,6 +751,10 @@ void SuperkExpectation::SetNuisanceParams(const FitParamList & fp, bool all_banf
      double twk = fp.CurrValue(kNuisSuperkEff1RmuNueCC);
      this->GetSuperkDetector()->TweakEfficiency1RmuNuECC(twk);
    }
+   if(fp.Exists(kNuisSuperkEnergyScale)) {
+     double twk = fp.CurrValue(kNuisSuperkEnergyScale);
+     this->GetSuperkDetector()->TweakEnergyScale(twk);
+   }
 
    // 
    // BANFF systematics
