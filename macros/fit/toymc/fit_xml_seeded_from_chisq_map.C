@@ -119,6 +119,9 @@ void fit_xml_seeded_from_chisq_map
     //fparm->SetInitValue(conv::kNuisSuperkEnergyScale,    rand.Gaus(0,1));
     fparm->SetInitValue(conv::kNuisBANFFMAQE,            rand.Gaus(bf_banff_maqe,   err_banff_maqe));
     fparm->SetInitValue(conv::kNuisBANFFCCQEE0,          rand.Gaus(bf_banff_ccqeE0, err_banff_ccqeE0));
+    // Set the osc params to be within 3 bins of the chisq surfaces' best fit
+    fparm->SetInitValue(conv::kPhypMixing23, rand.Uniform(input_mixing23 - 0.015,  TMath::Min(input_mixing23 + 0.015, 1.0)));
+    fparm->SetInitValue(conv::kPhypDm23sq,   rand.Uniform(input_dm23sq   - 0.0003, input_dm23sq - 0.0003));
 
     // Re-seed fitter (reset current values to specified init values)
     fparm->ResetCurrToInitValues();
