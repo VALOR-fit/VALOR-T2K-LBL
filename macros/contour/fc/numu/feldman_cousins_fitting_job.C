@@ -158,7 +158,7 @@ void feldman_cousins_fitting_job
 
   // Create n-tuple to store results
   TNtupleD * fcnt = new TNtupleD("fcnt","", 
-     "iexp:irun:input_mixing23_bin:input_dm23sq_bin:input_mixing23:input_dm23sq:chisq_for_input_params:mixing23:dm23sq:chisq");
+     "iexp:irun:input_mixing23_bin:input_dm23sq_bin:input_mixing23:input_dm23sq:chisq_for_input_params:mixing23:dm23sq:chisq:status");
   
   for(int iexperiment = 0; iexperiment < nexperiments; iexperiment++) {
      cout << "\n\n** Pseudo-experiment = " << iexperiment << endl;
@@ -286,8 +286,13 @@ void feldman_cousins_fitting_job
      // (marginalised non-"23"-sector params are treared as systematics and in the chisq_true calculation
      // they are set to nominal (constant) values used in the fit).
      fparm->ResetCurrToInitValues();
+     //help the fitter out by setting a new initial value
+     fparm->SetInitValue(conv::kPhypMixing23, TMath::Min(input_mixing23,0.98));
+     fparm->SetInitValue(conv::kPhypDm23sq,   input_dm23sq);
      fparm->Update(conv::kPhypMixing23, input_mixing23);
      fparm->Update(conv::kPhypDm23sq,   input_dm23sq);
+     //spec func is special. it is nominally 0, but this is the fit boundary (so 'init' is 0.5)
+     fparm->Update(conv::kNuisXSecSpecFunc, 0);
      double chisq_for_input_params = fit_inputs->Chisquare();
      cout << "- Chisq (input/true oscillation params) = " << chisq_for_input_params << endl;
 
@@ -296,29 +301,37 @@ void feldman_cousins_fitting_job
      Superk1RmuErecoFitter fitter(fit_inputs,fit_option);
      fitter.DoTheFit();
 
-     // get best-fit params
-     double bestfit_mixing23 = fparm->BestFitValue(conv::kPhypMixing23);
-     double bestfit_dm23sq   = fparm->BestFitValue(conv::kPhypDm23sq);
-     double bestfit_chisq    = fit_inputs->BestFitChisquare();
+     // get fitter status
+     int migradfitstatus = fitter.FitMigradStatusCode();
 
-     cout << "- Chisq (Best-fit params:" 
-          << util::AsString(conv::kPhypMixing23) << " = " << bestfit_mixing23 << ", "
-          << util::AsString(conv::kPhypDm23sq)   << " = " << bestfit_dm23sq   << " eV^2"
-          << ") = " << bestfit_chisq << endl;
+     if(migradfitstatus != 4) { //converged
+       double fitstatus    = (double)fitter.FitStatusCode();
 
-     cout << "- DeltaChisq = " << chisq_for_input_params - bestfit_chisq << endl;
+       // get best-fit params
+       double bestfit_mixing23 = fparm->BestFitValue(conv::kPhypMixing23);
+       double bestfit_dm23sq   = fparm->BestFitValue(conv::kPhypDm23sq);
+       double bestfit_chisq    = fit_inputs->BestFitChisquare();
 
-     // store results for this pseudo-experiment
-     fcnt->Fill(iexperiment, 
-                irun, 
-                input_mixing23_bin,
-                input_dm23sq_bin,
-                input_mixing23,
-                input_dm23sq,
-                chisq_for_input_params,
-                bestfit_mixing23, 
-                bestfit_dm23sq, 
-                bestfit_chisq);
+       cout << "- Chisq (Best-fit params:" 
+	    << util::AsString(conv::kPhypMixing23) << " = " << bestfit_mixing23 << ", "
+	    << util::AsString(conv::kPhypDm23sq)   << " = " << bestfit_dm23sq   << " eV^2"
+	    << ") = " << bestfit_chisq << endl;
+       
+       cout << "- DeltaChisq = " << chisq_for_input_params - bestfit_chisq << endl;
+       
+       // store results for this pseudo-experiment
+       fcnt->Fill(iexperiment, 
+		  irun, 
+		  input_mixing23_bin,
+		  input_dm23sq_bin,
+		  input_mixing23,
+		  input_dm23sq,
+		  chisq_for_input_params,
+		  bestfit_mixing23, 
+		  bestfit_dm23sq, 
+		  bestfit_chisq,
+		  fitstatus);
+     }//converged
 
      // clean-up
      delete fit_inputs;
