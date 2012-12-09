@@ -259,6 +259,8 @@ void feldman_cousins_fitting_job
      // get superk spectrum observation (toy experiment)
      //
      SuperkObservation * skobs = new SuperkObservation;
+     //Use PhysHypothesis (instead of FitParamList) so that we don't need to Update the values of systematics with the values from TweakAllSystematics()
+     PhysHypothesis physhyp(*fparm);
      if(tweak_systematics) {   
         // tweak all sources of systematic err (gaussian err)
         cout << "- Randomizing all systematic params in pdf..." << endl; 
@@ -266,7 +268,7 @@ void feldman_cousins_fitting_job
         skexp->PrintSystematicVariations();
         // generate mock data using the current PDF (incl. systematic variations)
         cout << "- Generating toy-MC..." << endl; 
-        skobs->CreateMockData(*skexp, *fparm, stat_fluctuations);
+        skobs->CreateMockData(*skexp, physhyp, stat_fluctuations);
         // reset all systematics so that the PDF used in the fitter is the nominal one
         cout << "- Reseting all systematic params in pdf..." << endl; 
         skexp->ResetSystematicVariations();
@@ -274,7 +276,7 @@ void feldman_cousins_fitting_job
      } else {
         // generate mock data using the current PDF (without systematic variations)
         cout << "- Generating toy-MC..." << endl; 
-        skobs->CreateMockData(*skexp, *fparm, stat_fluctuations);
+        skobs->CreateMockData(*skexp, physhyp, stat_fluctuations);
      }
 
      // create fit inputs
