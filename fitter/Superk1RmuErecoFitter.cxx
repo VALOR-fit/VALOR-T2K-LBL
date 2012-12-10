@@ -148,6 +148,12 @@ void Superk1RmuErecoFitter::Analyze(Option_t * option)
   //
   if(opt.Contains("ChisqSurface")) {
 
+    //We want to put the systematics back to nominal before we calculate the chisq
+    fFitInputs->FitParams().ResetCurrToInitValues();
+    //spec func is special
+    if(fFitInputs->FitParams().Exists(conv::kNuisXSecSpecFunc))
+      fFitInputs->FitParams().Update(conv::kNuisXSecSpecFunc, 0);
+
      PhysHypothesis_t phyp = fFitInputs->FitParams().PhysicsHypothesis();
 
      if(phyp == kHypNuMuDisapp2F || phyp == kHypOsc3F) {
