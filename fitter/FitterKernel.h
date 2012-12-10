@@ -39,10 +39,12 @@ public:
    virtual int        NDOF          (void)        { return fNFitBins - fNFreeFitParams; }
    virtual int        NBinsInFit    (void)        { return fNFitBins;                   }
    virtual int        NFitParams    (void)        { return fNFreeFitParams;             }
+/*
    virtual TObjArray& GetResults    (void) const  { return *fResults;                   }
    virtual void       Analyze       (Option_t*)   { }
    virtual void       Save          (const char*) { }
    void               SetHesseErrors(bool evaluate_hesse) { fGetHesseErrors = evaluate_hesse; }
+*/
 
 protected:
    FitterKernel();
@@ -60,7 +62,9 @@ protected:
    double      fFitTime;          ///< time taken to do the fit
    int         fNFitBins;         ///< number of bins in fit
    int         fNFreeFitParams;   ///< number of free params in fit
+/*
    TObjArray*  fResults;          ///<
+*/
    bool        fGetHesseErrors;   ///< get hesse errors?
 };
 

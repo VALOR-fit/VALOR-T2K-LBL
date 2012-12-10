@@ -16,8 +16,8 @@
 #ifndef _t2kana_fitter_abc_h_
 #define _t2kana_fitter_abc_h_
 
-#include <TString.h>
-#include <TObjArray.h>
+//#include <TString.h>
+//#include <TObjArray.h>
 
 namespace t2kana {
 
@@ -34,10 +34,11 @@ public:
    virtual int        NDOF          (void)                  = 0;
    virtual int        NBinsInFit    (void)                  = 0;
    virtual int        NFitParams    (void)                  = 0;
-   virtual TObjArray& GetResults    (void) const            = 0;
-   virtual void       Analyze       (Option_t * option)     = 0;
-   virtual void       Save          (const char * filename) = 0;
-   virtual void       Save          (const char * filename, const char* opt_file) = 0;
+
+//   virtual TObjArray& GetResults    (void) const            = 0;
+//   virtual void       Analyze       (Option_t * option)     = 0;
+//   virtual void       Save          (const char * filename) = 0;
+//   virtual void       Save          (const char * filename, const char* opt_file) = 0;
 
 protected:
    FitterABC();

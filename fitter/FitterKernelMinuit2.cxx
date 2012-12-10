@@ -84,7 +84,7 @@ FitterABC()
 //____________________________________________________________________________ 
 FitterKernelMinuit2::~FitterKernelMinuit2() 
 {
-  if(fResults)    { delete fResults;    }
+//////////  if(fResults)    { delete fResults;    }
   if(fCovMtrx)    { delete fCovMtrx;    }
 }
 //____________________________________________________________________________ 
@@ -94,7 +94,7 @@ void FitterKernelMinuit2::Init(void)
   fOption         = "";
   fNFreeFitParams = 0;
   fNFitBins       = 0;
-  fResults        = 0;
+  ////////////fResults        = 0;
 }
 //____________________________________________________________________________ 
 void FitterKernelMinuit2::Init(FitInputs * fit_inputs, Option_t * /*option*/) 
@@ -105,7 +105,7 @@ void FitterKernelMinuit2::Init(FitInputs * fit_inputs, Option_t * /*option*/)
 
   this->Init();
 
-  fResults = new TObjArray();
+  ////////////fResults = new TObjArray();
 
   fFitInputs = fit_inputs;
   if(!fFitInputs) {

@@ -41,10 +41,11 @@ public:
    virtual int        NDOF          (void)        { return fNFitBins - fNFreeFitParams; }
    virtual int        NBinsInFit    (void)        { return fNFitBins;                   }
    virtual int        NFitParams    (void)        { return fNFreeFitParams;             }
+/*
    virtual TObjArray& GetResults    (void) const  { return *fResults;                   }
    virtual void       Analyze       (Option_t*)   { }
    virtual void       Save          (const char*) { }
-
+*/
 protected:
    FitterKernelMinuit2 ();
    FitterKernelMinuit2 (FitInputs * inputs, Option_t * option = "minuit2");
@@ -61,7 +62,9 @@ protected:
    double      fFitTime;          ///< fit time
    int         fNFitBins;         ///< number of bins in fit
    int         fNFreeFitParams;   ///< number of free params in fit
+/*
    TObjArray*  fResults;          ///<
+*/
    TMatrixD*   fCovMtrx;          ///< covariance matrix of all free parameters in the fit
 
    ROOT::Minuit2::MnUserParameters fUserParams;   ///< store the user parameters

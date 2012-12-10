@@ -70,7 +70,7 @@ FitterABC()
 //____________________________________________________________________________ 
 FitterKernel::~FitterKernel() 
 {
-//  if(fResults) { delete fResults; }
+/////////  if(fResults) { delete fResults; }
 }
 //____________________________________________________________________________ 
 void FitterKernel::Init(void) 
@@ -79,7 +79,7 @@ void FitterKernel::Init(void)
   fOption         = "";
   fNFreeFitParams = 0;
   fNFitBins       = 0;
-  fResults        = 0;
+///////////  fResults        = 0;
   fGetHesseErrors = true;
 }
 //____________________________________________________________________________ 
@@ -91,7 +91,7 @@ void FitterKernel::Init(FitInputs * fit_inputs, Option_t * option)
 
   this->Init();
 
-  fResults = new TObjArray();
+/////////  fResults = new TObjArray();
 
   fFitInputs = fit_inputs;
   if(!fFitInputs) {

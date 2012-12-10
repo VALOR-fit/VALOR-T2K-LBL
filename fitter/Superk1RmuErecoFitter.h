@@ -29,17 +29,19 @@ public:
    Superk1RmuErecoFitter(FitInputs * inputs, Option_t * option = "minuit");
   ~Superk1RmuErecoFitter();
 
+/*
    void Analyze (Option_t * option);
    void Save    (const char * filename);
    void Save    (const char * filename, const char * option_file);
-
+*/
 private:
-
+/*
   TH2D * BuildChisqSurfaceNuMuDisap2ParamFit(void);
   TH2D * BuildChisqSurfaceNuMuDecay2ParamFit(void);
   TH2D * BuildChisqSurfaceNuMuDecoh2ParamFit(void);
 
   TH2D * fDChisq_surface;
+*/
 
 };
 

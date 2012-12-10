@@ -67,6 +67,7 @@ Superk1RmuErecoFitter::~Superk1RmuErecoFitter()
 
 }
 //____________________________________________________________________________ 
+/*
 void Superk1RmuErecoFitter::Analyze(Option_t * option) 
 {
   util::SetDefaultStyle();
@@ -429,3 +430,4 @@ TH2D * Superk1RmuErecoFitter::BuildChisqSurfaceNuMuDecoh2ParamFit(void)
 
 
 
+*/

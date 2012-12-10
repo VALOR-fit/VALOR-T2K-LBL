@@ -67,6 +67,7 @@ Superk1RmuErecoFitterMinuit2::~Superk1RmuErecoFitterMinuit2()
 
 }
 //____________________________________________________________________________ 
+/*
 void Superk1RmuErecoFitterMinuit2::Analyze(Option_t * option) 
 {
   util::SetDefaultStyle();
@@ -380,23 +381,22 @@ TH2D * Superk1RmuErecoFitterMinuit2::BuildChisqSurfaceNuMuDisapWithSystParamFit(
    chisq_surface->GetXaxis()->SetRangeUser(0.,1.);
 
    cout << "Superk1RmuErecoFitterMinuit2/BuildChisqSurfaceNuMuDisapWithSystParamFit not implemented correctly. Returning zero chisq surface" << endl;
-   /* this doesn't work! we're changing a copy of the FitParamList, not the FitParamList its self
-   for(int i = 1; i <= chisq_surface->GetNbinsX(); i++) {
-     for(int j = 1; j <= chisq_surface->GetNbinsY(); j++) {
-         fp.ResetCurrToInitValues();
-         double mixing23 = chisq_surface->GetXaxis()->GetBinCenter(i);
-         double dm23sq   = chisq_surface->GetYaxis()->GetBinCenter(j);
-         fp.Update( conv::kPhypMixing23, mixing23 );
-         fp.Update( conv::kPhypDm23sq,   dm23sq   );
-	 fp.FixParameter(conv::kPhypMixing23);
-	 fp.FixParameter(conv::kPhypDm23sq);
-	 cout << fp.CurrValue(conv::kPhypMixing23) << "\t" << mixing23 << endl;
-	 this->DoTheFit();
-         double chisq = fFitInputs->Chisquare();
-         chisq_surface->SetBinContent(i,j,chisq);
-     }//j
-   }//i
-   */
+//   this doesn't work! we're changing a copy of the FitParamList, not the FitParamList its self
+//   for(int i = 1; i <= chisq_surface->GetNbinsX(); i++) {
+//     for(int j = 1; j <= chisq_surface->GetNbinsY(); j++) {
+//         fp.ResetCurrToInitValues();
+//         double mixing23 = chisq_surface->GetXaxis()->GetBinCenter(i);
+//         double dm23sq   = chisq_surface->GetYaxis()->GetBinCenter(j);
+//         fp.Update( conv::kPhypMixing23, mixing23 );
+//         fp.Update( conv::kPhypDm23sq,   dm23sq   );
+//	 fp.FixParameter(conv::kPhypMixing23);
+//	 fp.FixParameter(conv::kPhypDm23sq);
+//	 cout << fp.CurrValue(conv::kPhypMixing23) << "\t" << mixing23 << endl;
+//	 this->DoTheFit();
+//         double chisq = fFitInputs->Chisquare();
+//         chisq_surface->SetBinContent(i,j,chisq);
+//     }//j
+//   }//i
 
    chisq_surface->GetXaxis()->SetTitle("sin^{2}(2#theta_{23})");
    chisq_surface->GetYaxis()->SetTitle("|#Deltam_{32}^{2}| (eV^{2}/c^{4})");
@@ -494,3 +494,4 @@ TH2D * Superk1RmuErecoFitterMinuit2::BuildChisqSurfaceNuMuDecoh2ParamFit(void)
 
 
 
+*/

@@ -24,8 +24,6 @@
 
 #pragma link C++ class t2kana::Superk1RmuErecoFitter;
 #pragma link C++ class t2kana::Superk1RmuErecoFitterMinuit2;
-#pragma link C++ class t2kana::Superk1ReNFitter;
-#pragma link C++ class t2kana::SuperkCombinedFitter;
 #pragma link C++ class t2kana::FitterKernel;
 #pragma link C++ class t2kana::FitterKernelMinuit2;
 #pragma link C++ class t2kana::FitterABC;
