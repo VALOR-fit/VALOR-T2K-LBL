@@ -42,7 +42,7 @@ public :
   void SetChisqDefinition (bool goodnessoffit) { fGoodnessOfFit = goodnessoffit; }
 
   // judge the agreement between the input data and the current prediction
-  double Chisquare (Option_t * opt = "poisson", conv::SuperkSample_t s = conv::kSKsUndefined);
+  double Chisquare (Option_t * opt = "poisson", conv::SuperkSample_t s = conv::kSKsUndefined) const;
 
   // get chisquare for the best fit prediction
   double BestFitChisquare (Option_t * opt = "poisson");
@@ -60,11 +60,11 @@ public :
       
 private:
 
-  double ChisquarePenaltyTerm(void);
+  double ChisquarePenaltyTerm(void) const;
 
-  SuperkObservation * fObs;
-  SuperkExpectation * fExp;
-  FitParamList *      fFitParams;
+  SuperkObservation *         fObs;
+  mutable SuperkExpectation * fExp;
+  mutable FitParamList *      fFitParams;
   string              fOpt;
   double              fErrDef;
   bool                fAllBANFFFit;
