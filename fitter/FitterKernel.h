@@ -49,7 +49,7 @@ protected:
 
    void  Init    (void);
    void  Init    (FitInputs * fit_inputs, Option_t * option = "minuit");
-   bool  RunOnce (bool use_minimize);
+   bool  RunOnce (bool use_simplex);
 
    FitInputs*  fFitInputs;        ///< fit inputs
    TString     fOption;           ///< fit option

@@ -159,6 +159,7 @@ bool FitterKernel::DoTheFit(void)
   // 4: migrad not converged
   int ntries = 0;
   while(fMigradStatusCode == 4 && ntries < 10) {
+    cout << "Original fit failed; reseeding & trying again. Attempt: " << ntries << endl;
     NuOscMixParam_t omp = Opt::Instance()->gOscMixingParamChoice;
     TRandom3 rand(0);
     switch(omp) {
@@ -178,8 +179,10 @@ bool FitterKernel::DoTheFit(void)
     ntries++;
   }
 
-  if(fMigradStatusCode == 4)
+  if(fMigradStatusCode == 4) {
+    cout << "Fits still failed; trying SIMPLEX" << endl;
     this->RunOnce(true);
+  }
 
 #ifdef __show_fit_cpu_time__
   w.Stop();
@@ -191,7 +194,7 @@ bool FitterKernel::DoTheFit(void)
   return ok;
 }
 //____________________________________________________________________________ 
-bool FitterKernel::RunOnce(bool use_minimize) 
+bool FitterKernel::RunOnce(bool use_simplex) 
 {
   fHesseStatusCode = -1;
 
@@ -214,15 +217,22 @@ bool FitterKernel::RunOnce(bool use_minimize)
   Double_t arglist[100];
   arglist[0] = 50000; // num of func calls
   arglist[1] = 0.01;  // tolerance
-  if(!use_minimize)
+  if(!use_simplex)
     fMigradStatusCode = fitter->ExecuteCommand("MIGRAD",arglist, 2);
-  //MINIMIZE calls MIGRAD, then SIMPLEX if MIGRAD fails
-  else
-    fMigradStatusCode = fitter->ExecuteCommand("MINIMIZE",arglist, 2);
+  //SIMPLEX
+  else {
+    arglist[1] = 0.1; // higher tolerance
+    fMigradStatusCode = fitter->ExecuteCommand("SIMPLEX",arglist, 2);
+  }
 
   //return on not converged
-  if(fMigradStatusCode == 4)
+  if(fMigradStatusCode == 4 && !use_simplex)
     return false;
+  else if(fMigradStatusCode == 4 && use_simplex) {
+    //copy current to best fit, to stop horrible crashes
+    fFitInputs->FitParams().CopyCurrToBestFitValues();
+    return false;
+  }
 
   // Print fit result
 #ifdef __show_fit_result__

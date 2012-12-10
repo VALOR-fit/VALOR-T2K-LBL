@@ -279,9 +279,6 @@ void feldman_cousins_fitting_job
         skobs->CreateMockData(*skexp, physhyp, stat_fluctuations);
      }
 
-     // create fit inputs
-     FitInputs * fit_inputs = new FitInputs(skobs,skexp,fparm);
-
      // get chisq for true (input) "23"-sector point (sinsq2theta,dmsq) 
      // (marginalised non-"23"-sector params are treared as systematics and in the chisq_true calculation
      // they are set to nominal (constant) values used in the fit).
@@ -289,12 +286,11 @@ void feldman_cousins_fitting_job
      //help the fitter out by setting a new initial value
      fparm->SetInitValue(conv::kPhypMixing23, TMath::Min(input_mixing23,0.98));
      fparm->SetInitValue(conv::kPhypDm23sq,   input_dm23sq);
-     fparm->Update(conv::kPhypMixing23, input_mixing23);
-     fparm->Update(conv::kPhypDm23sq,   input_dm23sq);
      //spec func is special. it is nominally 0, but this is the fit boundary (so 'init' is 0.5)
      fparm->Update(conv::kNuisXSecSpecFunc, 0);
-     double chisq_for_input_params = fit_inputs->Chisquare();
-     cout << "- Chisq (input/true oscillation params) = " << chisq_for_input_params << endl;
+
+     // create fit inputs
+     FitInputs * fit_inputs = new FitInputs(skobs,skexp,fparm);
 
      // get the specified fitter and perform the fit
      fparm->ResetCurrToInitValues();
@@ -312,11 +308,23 @@ void feldman_cousins_fitting_job
        double bestfit_dm23sq   = fparm->BestFitValue(conv::kPhypDm23sq);
        double bestfit_chisq    = fit_inputs->BestFitChisquare();
 
+       // Now do a 0+N parameter fit, to get the chisq true
+       fparm->Update(conv::kPhypMixing23, input_mixing23);
+       fparm->Update(conv::kPhypDm23sq,   input_dm23sq);
+       fparm->FixParameter(conv::kPhypMixing23);
+       fparm->FixParameter(conv::kPhypDm23sq);
+
+       // Need to make a new FitInputs & fitter
+       FitInputs * fit_inputs2 = new FitInputs(skobs,skexp,fparm);
+       Superk1RmuErecoFitter fitter2(fit_inputs2,fit_option);
+       fitter2.DoTheFit();
+       double chisq_for_input_params = fit_inputs2.Chisquare();
+
+       //  Print out result
        cout << "- Chisq (Best-fit params:" 
 	    << util::AsString(conv::kPhypMixing23) << " = " << bestfit_mixing23 << ", "
 	    << util::AsString(conv::kPhypDm23sq)   << " = " << bestfit_dm23sq   << " eV^2"
 	    << ") = " << bestfit_chisq << endl;
-       
        cout << "- DeltaChisq = " << chisq_for_input_params - bestfit_chisq << endl;
        
        // store results for this pseudo-experiment
@@ -331,6 +339,8 @@ void feldman_cousins_fitting_job
 		  bestfit_dm23sq, 
 		  bestfit_chisq,
 		  fitstatus);
+
+       delete fit_inputs2;
      }//converged
 
      // clean-up

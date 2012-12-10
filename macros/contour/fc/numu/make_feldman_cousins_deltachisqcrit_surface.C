@@ -27,6 +27,10 @@
 //   only run once at the end of the analysis.
 // @ 15/01/2011, Costas 
 //   Added input mixing23 bin range so that (if needed) task can be parallelized in a batch farm
+// @ 10/12/2012, Tom
+//   Added input dm23sq bin range so that the job is quicker (skip unrequired bins)
+//   Also added an 'error' histogram - suggestion by Alex Himmel to see how the binomial error on
+//    the position of percentile effects the contour
 //
 //-----------------------------------------------------------------------------------------------------
 //
@@ -45,7 +49,9 @@ void make_feldman_cousins_deltachisqcrit_surface(
   const char * input_data_directory, 
   const char * output_data_file="delta_chisq_critical.root",
   int sinsq2theta_min_bin=-1, 
-  int sinsq2theta_max_bin=999999)
+  int sinsq2theta_max_bin=999999,
+  int dm23sq_min_bin=-1,
+  int dm23sq_max_bin=999999)
 {
   const int nConfidenceLevel = 4;
  
@@ -71,10 +77,28 @@ void make_feldman_cousins_deltachisqcrit_surface(
   cout << "mixing23_nbins = " << mixing23_nbins << ", dm23sq_nbins = " << dm23sq_nbins<<endl;
 
   TH2D * hDeltaChi2Surface[nConfidenceLevel];
+  TH2D * hDeltaChi2SurfaceMin[nConfidenceLevel];
+  TH2D * hDeltaChi2SurfaceMax[nConfidenceLevel];
   for(int i = 0; i < nConfidenceLevel; i++) {
     const char * histname = Form("hDeltaChi2Surface%02d", confidenceLevel[i]);
     hDeltaChi2Surface[i] =
        new TH2D(histname, "",
+          mixing23_nbins,
+          mixing23_min - 0.5*mixing23_step,
+          mixing23_max + 0.5*mixing23_step,
+          dm23sq_nbins,
+          dm23sq_min - 0.5*dm23sq_step,
+          dm23sq_max + 0.5*dm23sq_step);
+    hDeltaChi2SurfaceMin[i] =
+      new TH2D(Form("%s_Min",histname), "",
+          mixing23_nbins,
+          mixing23_min - 0.5*mixing23_step,
+          mixing23_max + 0.5*mixing23_step,
+          dm23sq_nbins,
+          dm23sq_min - 0.5*dm23sq_step,
+          dm23sq_max + 0.5*dm23sq_step);
+    hDeltaChi2SurfaceMax[i] =
+       new TH2D(Form("%s_Max",histname), "",
           mixing23_nbins,
           mixing23_min - 0.5*mixing23_step,
           mixing23_max + 0.5*mixing23_step,
@@ -97,9 +121,11 @@ void make_feldman_cousins_deltachisqcrit_surface(
   TChain chain("fcnt");
   chain.Add(Form("%s/*root", input_data_directory));
 
-  int nx1 = TMath::Max(1,                   sinsq2theta_min_bin);
+  int nx1 = TMath::Max(1,              sinsq2theta_min_bin);
   int nx2 = TMath::Min(mixing23_nbins, sinsq2theta_max_bin);
-  int ntot2dbins = (nx2-nx1+1) * dm23sq_nbins;
+  int ny1 = TMath::Max(1,              dm23sq_min_bin);
+  int ny2 = TMath::Min(dm23sq_nbins,   dm23sq_max_bin);
+  int ntot2dbins = (nx2-nx1+1) * (ny2-ny1+1);
   int n2dbins    = 0;
 
   for(int imixing23_bin = 1; imixing23_bin <= mixing23_nbins; imixing23_bin++) {
@@ -109,6 +135,18 @@ void make_feldman_cousins_deltachisqcrit_surface(
     if(!in_range) continue;
 
     for(int idm23sq_bin = 1; idm23sq_bin <= dm23sq_nbins; idm23sq_bin++) {
+
+      bool in_range_dm23sq = (idm23sq_bin >= dm23sq_min_bin && 
+			      idm23sq_bin <= dm23sq_max_bin &&);
+      if(!in_range_dm23sq) {
+	//still fill the full dm23sq surface
+	for(int i=0; i<nConfidenceLevel; i++) {
+	  hDeltaChi2Surface[i]->SetBinContent(imixing23_bin, idm23sq_bin, stdDeltaChi2[i]);    
+	  hDeltaChi2SurfaceMin[i]->SetBinContent(imixing23_bin, idm23sq_bin, stdDeltaChi2[i]);    
+	  hDeltaChi2SurfaceMax[i]->SetBinContent(imixing23_bin, idm23sq_bin, stdDeltaChi2[i]);     
+	}
+	continue;
+      }
 
       n2dbins++;
       cout << "Macro is " << 100 * (double)n2dbins / (double)ntot2dbins << "% done..." << endl;
@@ -146,14 +184,26 @@ void make_feldman_cousins_deltachisqcrit_surface(
 
          for(int i=0; i<nConfidenceLevel; i++) {
            percentile[i] = (int)(0.01*confidenceLevel[i]*deltaChi2.size());
+	   percentile_error[i] = (int)(sqrt(confidenceLevel[i] * (1-confidenceLevel[i]) * deltaChi2.size()));
            if(imixing23_bin<4) {
              cout<<"Size / percentile / critical value = "<<deltaChi2.size()<<" / "<<percentile[i];
            }
            deltaChi2Iter = deltaChi2.begin() + percentile[i];
            if(imixing23_bin<4) {
-             cout<<" / "<<(*deltaChi2Iter)<<endl;
+             cout<<" / "<<(*deltaChi2Iter);
            }
-           hDeltaChi2Surface[i]->SetBinContent(imixing23_bin, idm23sq_bin, (*deltaChi2Iter));    
+           hDeltaChi2Surface[i]->SetBinContent(imixing23_bin, idm23sq_bin, (*deltaChi2Iter));
+	   // now get the error
+	   deltaChi2Iter = deltaChi2.begin() + percentile[i] - percentile_error[i];
+	   if(mixing23_bin<4) {
+	     cout<<" min "<<(*deltaChi2Iter);
+	   }
+	   hDeltaChi2SurfaceMin[i]->SetBinContent(imixing23_bin, idm23sq_bin, (*deltaChi2Iter));
+	   deltaChi2Iter = deltaChi2.begin() + percentile[i] + percentile_error[i];
+	   if(mixing23_bin<4) {
+	     cout<<" max "<<(*deltaChi2Iter)<<endl;
+	   }
+	   hDeltaChi2SurfaceMax[i]->SetBinContent(imixing23_bin, idm23sq_bin, (*deltaChi2Iter));
          }  
          if(imixing23_bin<4) {
            cout<<endl;
@@ -163,6 +213,8 @@ void make_feldman_cousins_deltachisqcrit_surface(
       else {
          for(int i=0; i<nConfidenceLevel; i++) {
            hDeltaChi2Surface[i]->SetBinContent(imixing23_bin, idm23sq_bin, stdDeltaChi2[i]);    
+           hDeltaChi2SurfaceMin[i]->SetBinContent(imixing23_bin, idm23sq_bin, stdDeltaChi2[i]);    
+           hDeltaChi2SurfaceMax[i]->SetBinContent(imixing23_bin, idm23sq_bin, stdDeltaChi2[i]);    
          }
       }//=0 fits
 
@@ -175,11 +227,13 @@ void make_feldman_cousins_deltachisqcrit_surface(
   hDeltaChi2Surface[1]->SetStats(0);
   hDeltaChi2Surface[1]->Draw("lego");
   hDeltaChi2Surface[1]->GetXaxis()->SetTitle("sin^{2}(2#theta_{23})");
-  hDeltaChi2Surface[1]->GetYaxis()->SetTitle("#Deltam_{23}^{2}");
+  hDeltaChi2Surface[1]->GetYaxis()->SetTitle("#Deltam_{32}^{2}");
   
   TFile * fout = new TFile(output_data_file, "RECREATE");
   for(int i=0; i<nConfidenceLevel; i++) {
      hDeltaChi2Surface[i]->Write();
+     hDeltaChi2SurfaceMin[i]->Write();
+     hDeltaChi2SurfaceMax[i]->Write();
   }
   hNFitsVsOscPar->Write();
   fout->Close();
