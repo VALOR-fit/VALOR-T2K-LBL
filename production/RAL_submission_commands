@@ -1,6 +1,14 @@
 FC (give each set a unique tag)
 
+#submit the FC jobs
 $T2KOSCANA/production/submit_feldman_cousins_fitting_job_numu --resource RAL --nruns 1000 --nexpts 2000 --cpu-time 24:00:00 --stat-fluctuations --tweak-systematics --bin-list /home/ppd/tdealtry/RAL_repoistory/t2k/t2kana/nuosc/trunk/inputs/FCbinlist/binlist_2+8_statsyst.data --fit-param-list nuosc3f_numudisapp_fix4+nuisanceselection  --job-dir $PWD --softw-dir $T2KOSCANA --tag 28statsyst_1
+
+#check how many fits have been done at each point
+root2k -l 'macros/contour/fc/numu/test_feldman_cousins_nfits.C("2012results/FC2+8statsystProduction/2012_12_08")'
+
+#make a FC surface
+root2k -l -b -q 'macros/contour/fc/numu/make_feldman_cousins_deltachisqcrit_surface.C("2012results/FC2+8statsystProduction/2012_12_08","delta_chisq_critical.root",85,9999,10,22)'
+
 
 
 

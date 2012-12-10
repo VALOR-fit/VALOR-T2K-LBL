@@ -57,7 +57,8 @@ void plot_feldman_cousins_contour(
   const char * delta_chisq_critical_file_mc_statonly,
   const char * delta_chisq_critical_file_mc_statsyst,
   const char * chisq_file_data,
-  int nsmoothings = 1,
+  const char * chisq_histname_data = "chisq_surface",
+  int nsmoothings = 0,
   bool show_contours_with_systematics=true,
   bool show_contours_without_systematics=true,
   bool show_external_contours=false,
@@ -168,7 +169,7 @@ void plot_feldman_cousins_contour(
 
   TFile *dataFile = TFile::Open(chisq_file_data, "READ");
   dataFile->cd();
-  TH2D * h2 = (TH2D*)dataFile->Get("chisq_surface");
+  TH2D * h2 = (TH2D*)dataFile->Get(chisq_histname_data);
   TH2D * fChisqSurface = new TH2D(*h2);
 
   double chisq_min = 999999.0;
