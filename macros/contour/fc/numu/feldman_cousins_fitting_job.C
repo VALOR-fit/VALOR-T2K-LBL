@@ -318,7 +318,7 @@ void feldman_cousins_fitting_job
        FitInputs * fit_inputs2 = new FitInputs(skobs,skexp,fparm);
        Superk1RmuErecoFitter fitter2(fit_inputs2,fit_option);
        fitter2.DoTheFit();
-       double chisq_for_input_params = fit_inputs2.Chisquare();
+       double chisq_for_input_params = fit_inputs2->Chisquare();
 
        //  Print out result
        cout << "- Chisq (Best-fit params:" 
