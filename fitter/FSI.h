@@ -61,9 +61,6 @@ public:
 
   // Read inputs from XML file
   bool Read (TXMLEngine* xml, XMLNodePointer_t root_node);
-
-  //
-  void BuildFracMCTemplates(TH2D* input_mctempl_array[kns][knm]);
    
 private:
 
@@ -82,7 +79,6 @@ private:
   TMatrixD * fCovMtrx;          ///< FSI covariance matrix
   TMatrixD * fCovMtrxInv;       ///< Inverse FSI covariance matrix
   TMatrixD * fCovMtrxChoL;      ///< Triangular matrix from Cholesky decomp. of FSI covar. matrix
-  //TH1D     * fFracTun[kns][knm];///<
 
 ClassDef(FSI, 1);
 };

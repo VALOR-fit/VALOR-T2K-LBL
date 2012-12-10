@@ -500,16 +500,6 @@ FitParamList * FitParamList::NamedParameterList(string name)
     fp -> SetSystMode();
     return fp;
   }
-  if(name == "nuosc3f_numudisapp_fix4+nuisanceunbanffselection") {
-    FitParamList * fp = FitParamList::NuOsc3FlavourFitWithSelectedSystUnBANFF();
-    fp -> FixParameter (kPhypMixing13);
-    fp -> FixParameter (kPhypMixing12);
-    fp -> FixParameter (kPhypDeltaCP);
-    fp -> FixParameter (kPhypDm12sq);
-    fp -> SetParListName(name);
-    fp -> SetSystMode();
-    return fp;
-  }
   if(name == "nuosc3f_numudisapp_fix4+nuisanceunbanfffullbanffselection") {
     FitParamList * fp = FitParamList::NuOsc3FlavourFitWithSelectedSystFullBANFFUnBANFF();
     fp -> FixParameter (kPhypMixing13);
@@ -646,21 +636,6 @@ FitParamList * FitParamList::NuOsc3FlavourFitWithAllSystUnBANFF(void)
   FitParamList::AppendAllSuperkDetectorSystematics   (fparm, 6+kNumOfParamsInBANFFfit);
   FitParamList::AppendAllFSISystematics              (fparm, 6+kNumOfParamsInBANFFfit+kNumOfSKDetParams);
   FitParamList::AppendAllUncorrelatedXSecSystematics (fparm, 6+kNumOfParamsInBANFFfit+kNumOfSKDetParams+kNumOfFSIParams);
-
-  return fparm;
-}
-//________________________________________________________________________________________
-FitParamList * FitParamList::NuOsc3FlavourFitWithSelectedSystUnBANFF(void)
-{
-  FitParamList * fparm = new FitParamList(6+NSELECTED_NONBANFF+NSELECTED_UNBANFF); // NOTE: This will have to change for the 2012a 1Re and joint analysis
-
-  FitParamList::Append3FlavourOscillation(fparm, 0);
-
-  //
-  // add nuisance params
-  //
-  FitParamList::AppendSelectedNonBANFFSystematics         (fparm, 6);
-  FitParamList::AppendSelectedUncorrelatedBANFFSystematics(fparm, 6+NSELECTED_NONBANFF);
 
   return fparm;
 }
@@ -1034,20 +1009,6 @@ void FitParamList::AppendSelectedCorrelatedBANFFSystematics(FitParamList * fparm
   err = sqrt(BANFFCov[bidx][bidx]);
   lowerr = TMath::Max(0., bf-(err*SYST_NSIGMA));
   fparm->AddParam( ip++, kNuisBANFFCCQEE0,  bf, lowerr, bf+(err*SYST_NSIGMA),  err*SYST_STEP,  false, true);
-
-}
-//________________________________________________________________________________________
-void FitParamList::AppendSelectedUncorrelatedBANFFSystematics(FitParamList * fparm, int start)
-{
-// Add nuisance params
-//
-  return;
-
-  //int ip = start; // first unallocated element in the param list
-
-  // Uncorrelated BANFF 
-  //don't have any selected, but if we did, it'd be lines like:
-  //fparm->AddParam( ip++, kNuisUnBANFF00, 0.0, -1.0*SYST_NSIGMA, 1.0*SYST_NSIGMA, SYST_STEP,  false, true);
 
 }
 //________________________________________________________________________________________

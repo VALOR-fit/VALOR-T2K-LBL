@@ -97,7 +97,7 @@ void FitterKernelMinuit2::Init(void)
   fResults        = 0;
 }
 //____________________________________________________________________________ 
-void FitterKernelMinuit2::Init(FitInputs * fit_inputs, Option_t * option) 
+void FitterKernelMinuit2::Init(FitInputs * fit_inputs, Option_t * /*option*/) 
 {
 #ifdef __show_fit_init_info__
   cout << "FitterKernelMinuit2/Init >> Fitter initialization..." << endl;

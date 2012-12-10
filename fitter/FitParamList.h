@@ -123,7 +123,6 @@ public:
    // - "nuosc3f_numudisapp_fix4+nuisanceselectionnobanff": As "nuosc3f" but fixing  sin^2(2theta12), sin^2(2theta13), delta_CP and Dm12^2 + a selection of nuisance parameters (no BANFF"s included).
    // - "nuosc3f_numudisapp_fix4+nuisancefullbanffselection": As "nuosc3f" but fixing  sin^2(2theta12), sin^2(2theta13), delta_CP and Dm12^2 + a selection of nuisance parameters (including the full BANFF matrix).
    // - "nuosc3f_numudisapp_fix4+nuisance": As "nuosc3f" but fixing  sin^2(2theta12), sin^2(2theta13), delta_CP and Dm12^2 + all nuisance parameters.
-   // - "nuosc3f_numudisapp_fix4+nuisanceunbanffselection": As "nuosc3f" but fixing  sin^2(2theta12), sin^2(2theta13), delta_CP and Dm12^2 + a selection of nuisance parameters (uncorrelated BANFF mode).
    // - "nuosc3f_numudisapp_fix4+nuisanceunbanfffullbanffselection": As "nuosc3f" but fixing  sin^2(2theta12), sin^2(2theta13), delta_CP and Dm12^2 + a selection of nuisance parameters (including the full uncorrelated BANFF matrix).
    // - "nuosc3f_numudisapp_fix4+nuisanceunbanff": As "nuosc3f" but fixing  sin^2(2theta12), sin^2(2theta13), delta_CP and Dm12^2 + all nuisance parameters (uncorrelated BANFF mode).
    // - "nuosc3f_nueapp_fix4"            : As "nuosc3f" but fixing  sin^2(2theta12), sin^2(2theta23), |Dm23^2| and Dm12^2.
@@ -160,7 +159,6 @@ private:
    static FitParamList * NuOsc3FlavourFitWithSelectedSyst (void);
    static FitParamList * NuOsc3FlavourFitWithSelectedSystFullBANFF (void);
    static FitParamList * NuOsc3FlavourFitWithAllSystUnBANFF      (void);
-   static FitParamList * NuOsc3FlavourFitWithSelectedSystUnBANFF (void);
    static FitParamList * NuOsc3FlavourFitWithSelectedSystFullBANFFUnBANFF (void);
    static FitParamList * NuOsc3FlavourFitWithSelectedSystNoBANFF (void);
    static FitParamList * NumuDisapFit                     (void);
@@ -177,7 +175,6 @@ private:
    static void           AppendAllUncorrelatedBANFFSystematics      (FitParamList * fp, int start);
    static void           AppendSelectedNonBANFFSystematics          (FitParamList * fp, int start);
    static void           AppendSelectedCorrelatedBANFFSystematics   (FitParamList * fp, int start);
-   static void           AppendSelectedUncorrelatedBANFFSystematics (FitParamList * fp, int start);
 
    //
    // Private data members

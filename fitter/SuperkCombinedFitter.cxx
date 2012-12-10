@@ -89,7 +89,7 @@ void SuperkCombinedFitter::Analyze(Option_t * option)
   
 }
 //____________________________________________________________________________ 
-void SuperkCombinedFitter::Save(const char * filename, const char * opt_file) 
+void SuperkCombinedFitter::Save(const char * filename, const char * /*opt_file*/) 
 {
   Save(filename);
 }

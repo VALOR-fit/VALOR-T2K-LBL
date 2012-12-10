@@ -563,7 +563,7 @@ double FitInputs::operator() (const std::vector<double>& x) const
 
   //Generate the Ereco spectra
   SuperkSample_t s = conv::kSKsFCFV1RingMuLike;
-  bool applied_negevents_condition = fExp->Generate(*fFitParams, fAllBANFFFit);
+  fExp->Generate(*fFitParams, fAllBANFFFit);
 #ifdef __show_bin_contributions_to_chisq__
   TH1D * obs_ereco_spectrum = fObs->ErecoSpectrum(s);
 #endif

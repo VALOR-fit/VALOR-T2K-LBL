@@ -18,7 +18,6 @@
 #define __show_fsi_cholesky_mesg_info__
 //#define __show_fsi_cholesky_mesg_debug__
 //#define __show_fsi_tweak_mesg_debug__
-//#define __show_build_frac_template_mesg_info__
 //#define __show_chisqpenalty_mesg_debug__
 //#define __show_fsi_applysyst_mesg_debug__
 
@@ -58,14 +57,6 @@ void FSI::Init(void)
   fNominalValues = 0;
   fCovMtrx       = 0;
   fCovMtrxChoL   = 0;
-
-  /*
-  for(int is = 0; is < kns; is++) {
-    for(int im = 0; im < knm; im++) {
-      fFracTun[is][im] = 0;
-    }
-  }
-  */
 }
 //________________________________________________________________________________________
 void FSI::CleanUp(void)
@@ -74,14 +65,6 @@ void FSI::CleanUp(void)
   if ( fNominalValues ) delete fNominalValues;
   if ( fCovMtrx       ) delete fCovMtrx;
   if ( fCovMtrxChoL   ) delete fCovMtrxChoL;
-
-  /*
-  for(int is = 0; is < kns; is++) {
-    for(int im = 0; im < knm; im++) {
-      if (fFracTun[is]) delete fFracTun[is][im];
-    }
-  }
-  */
 }
 //________________________________________________________________________________________
 bool FSI::Read(TXMLEngine* xml, XMLNodePointer_t root_node)
@@ -128,29 +111,6 @@ bool FSI::Read(TXMLEngine* xml, XMLNodePointer_t root_node)
      (*fNominalValues)[ip] = 1.;
   }
 
-  //
-  //
-  //
-  /*
-  for(int is = 0; is < kns; is++) {
-     conv::SuperkSample_t s = conv::kSKSamples[is];
-     if(s == conv::kSKsUndefined) continue;
-     const int      n_ereco_bins    = util::NumErecoBins (s);
-     const double * ereco_bin_edges = util::ErecoBinEdges(s);
-     for(int im = 0; im < knm; im++) {
-       conv::SuperkMode_t m = conv::kSKReactionModes[is][im];
-       if(m == conv::kSKmUndefined) continue;
-       fFracTun[is][im] = new TH1D(
-		 Form("nsk_tun_%d_%d",is,im),
-		 Form("%s_%s",util::AsStringCompact(s).c_str(), util::AsStringCompact(m).c_str()),
-		 n_ereco_bins, ereco_bin_edges);
-       fFracTun[is][im]->SetDirectory(0);
-       fFracTun[is][im]->GetXaxis()->SetTitle("E_{reco} (GeV)");
-       fFracTun[is][im]->GetYaxis()->SetTitle("Fraction");
-     }//im
-  }//is
-  */
-
 #ifdef __show_init_mesg_info__
   cout << "Exp/FSI >> Done reading neutrino cross-section inputs!" << endl;
 #endif
@@ -192,25 +152,6 @@ double FSI::SystWght(
   if(!tweaked) {
     return 1.;
   }
-
-  /*
-  // get fraction of events in current MC template Ereco bin relative to the 
-  // number of events in the current (wider) FSI Ereco bin
-  int is =  util::ArrIdx::Instance()->SuperkSampleIdx(s); 
-  if(is < 0) {
-     cerr << "Exp/FSI >> Negative idx for sample: " << util::AsString(s) << endl;
-     exit(1);
-  }
-  int im =  util::ArrIdx::Instance()->SuperkModeIdx(s,m); 
-  if(im < 0) {
-     cerr << "Exp/FSI >> Negative idx for mode: " << util::AsString(s) << endl;
-     exit(1);
-  }
-  int ir =  fFracTun[is][im]->FindBin(Ereco); 
-  double frac = fFracTun[is][im]->GetBinContent(ir);
-  // Calculate FSI weight for current MC template bin
-  double fsi_wght = frac * fsi_param_value;
-  */
 
   double fsi_wght = fsi_param_value;
   return fsi_wght;
@@ -364,83 +305,6 @@ void FSI::PrintSystematicVariations(ostream & stream) const
   const TVectorD & curr_fsi_params = *fCurrentValues;
   stream << "Exp/FSI >> FSI parameters: " << endl;
   util::PrintCompact(curr_fsi_params,15,6,"FSI params",stream);
-}
-//________________________________________________________________________________________
-void FSI::BuildFracMCTemplates(TH2D* input_mctempl_array[kns][knm])
-{
-#ifdef __show_build_frac_template_mesg_info__
-  cout << "Exp/FSI >> Building MC template fractions... " << endl;
-#endif  
-  /*
-  for(int is = 0; is < kns; is++) {
-     conv::SuperkSample_t s = conv::kSKSamples[is];
-     if(s == conv::kSKsUndefined) continue;
-
-     // First, fill the histograms as 1D Ereco spectra
-     for(int im = 0; im < knm; im++) {
-       conv::SuperkMode_t m = conv::kSKReactionModes[is][im];
-       if(m == conv::kSKmUndefined) continue;
-       TH1D * mctempl_frac = fFracTun[is][im];
-       assert(mctempl_frac);
-       // Loop over Ereco bins (MC template binning scheme)
-       int nr = mctempl_frac->GetXaxis()->GetNbins();
-       for(int ir = 1; ir <= nr; ir++) {
-	 // Loop over Etrue bins and calculate the number of events
-	 double nev = 0;
-	 const TH2D * mctempl = input_mctempl_array[is][im];
-	 assert(mctempl);
-	 int nt = mctempl->GetYaxis()->GetNbins();
-	 for(int it = 1; it <= nt; it++) {
-	   nev += mctempl->GetBinContent(ir,it);
-	 }//it
-	 mctempl_frac->SetBinContent(ir,nev);
-       }//ir
-     }//im
-
-     // Next, divide each bin by the total in that FSI bin (total is integral over Ereco & modes)
-     // Find the FSI parameter(s) that affects the given mode
-     for(int ip = 0; ip < conv::kNumOfFSIParams; ip++) {
-       conv::PhysParamId_t p = conv::kListOfFSIParams[ip];
-       // look-up the Ereco energy range for the current FSI parameter
-       double Ereco_min = conv::kFSIParamsErecoCut[ip][0];
-       double Ereco_max = conv::kFSIParamsErecoCut[ip][1];
-       if(Ereco_min < 0 || Ereco_max < 0) continue;
-       Ereco_min += conv::kOneMeV;
-       Ereco_max -= conv::kOneMeV;
-       // find the sum of the FSI bin
-       double sum = 0;
-       for(int im = 0; im < knm; im++) {
-	 conv::SuperkMode_t m = conv::kSKReactionModes[is][im];
-	 if(m == conv::kSKmUndefined) continue;
-	 // Is the current systematic parameter applied to current sample/mode end energy bin?
-	 bool apply2mode = this->ApplySystToSKMode(p,s,m);
-	 if(!apply2mode) continue;
-	 TH1D * mctempl_frac = fFracTun[is][im];
-	 int ir_min = mctempl_frac->GetXaxis()->FindBin(Ereco_min);
-	 int ir_max = mctempl_frac->GetXaxis()->FindBin(Ereco_max);
-	 for(int ir = ir_min; ir <= ir_max; ir++) {
-	   double n = mctempl_frac->GetBinContent(ir);
-	   sum += n;
-	 }//ir
-       }//im
-       // divide the FSI bin contents by the sum (make them fractional!)
-       for(int im = 0; im < knm; im++) {
-	 conv::SuperkMode_t m = conv::kSKReactionModes[is][im];
-	 bool apply2mode = this->ApplySystToSKMode(p,s,m);
-	 if(!apply2mode) continue;
-	 TH1D * mctempl_frac = fFracTun[is][im];
-	 int ir_min = mctempl_frac->GetXaxis()->FindBin(Ereco_min);
-	 int ir_max = mctempl_frac->GetXaxis()->FindBin(Ereco_max);
-	 for(int ir = ir_min; ir <= ir_max; ir++) {
-	   double n = mctempl_frac->GetBinContent(ir);
-	   double frac = (sum>0) ? n/sum : 0;
-	   mctempl_frac->SetBinContent(ir,frac);
-	 }//ir
-       }//im
-     }//ip
-
-  }//is
-  */
 }
 //________________________________________________________________________________________
 bool FSI::ApplySyst(
