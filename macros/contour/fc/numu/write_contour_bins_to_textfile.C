@@ -41,7 +41,14 @@ void write_contour_bins_to_textfile
   const char * hstname_cl68_statsyst = "hCL68StatSyst", 
   const char * hstname_cl90_statsyst = "hCL90StatSyst", 
   const char * hstname_cl95_statsyst = "hCL95StatSyst",
-  const char * hstname_cl99_statsyst = "hCL99StatSyst"
+  const char * hstname_cl99_statsyst = "hCL99StatSyst",
+
+  //set this if you are inputting a single dchisq surface, that has not had dchisqcrit subtracted
+  //(it will subtract the conventional dchisqcrit, e.g. 2.30 for 68%)
+  bool constdchisqsurface = true,
+
+  //convert output of a limited range histogram into one that sits on the nominal fc surface
+  bool convert_to_fc_surface_range = true
 )
 {
   cout << "Writing bin numbers in a band " << bandWidth
@@ -52,17 +59,43 @@ void write_contour_bins_to_textfile
   TFile *contourfile = TFile::Open(infile, "READ");
   contourfile->cd();
 
-  TH2D *hContStatOnly[4];
-  hContStatOnly[0] = (TH2D*) contourfile->Get(hstname_cl68_statonly);
-  hContStatOnly[1] = (TH2D*) contourfile->Get(hstname_cl90_statonly);
-  hContStatOnly[2] = (TH2D*) contourfile->Get(hstname_cl95_statonly);
-  hContStatOnly[3] = (TH2D*) contourfile->Get(hstname_cl99_statonly);
+  TH2D *hContStatOnlyF[4] = {0};
+  hContStatOnlyF[0] = (TH2D*) contourfile->Get(hstname_cl68_statonly);
+  hContStatOnlyF[1] = (TH2D*) contourfile->Get(hstname_cl90_statonly);
+  hContStatOnlyF[2] = (TH2D*) contourfile->Get(hstname_cl95_statonly);
+  hContStatOnlyF[3] = (TH2D*) contourfile->Get(hstname_cl99_statonly);
+  //clone histograms (for case where the inputs are the same histogram)
+  TH2D *hContStatOnly[4] = {0};
+  hContStatOnly[0] = (TH2D*)hContStatOnlyF[0]->Clone("hContStatOnly0");
+  hContStatOnly[1] = (TH2D*)hContStatOnlyF[1]->Clone("hContStatOnly1");
+  hContStatOnly[2] = (TH2D*)hContStatOnlyF[2]->Clone("hContStatOnly2");
+  hContStatOnly[3] = (TH2D*)hContStatOnlyF[3]->Clone("hContStatOnly3");
 
-  TH2D *hContStatSyst[4];
-  hContStatSyst[0] = (TH2D*) contourfile->Get(hstname_cl68_statsyst);
-  hContStatSyst[1] = (TH2D*) contourfile->Get(hstname_cl90_statsyst);
-  hContStatSyst[2] = (TH2D*) contourfile->Get(hstname_cl95_statsyst);
-  hContStatSyst[3] = (TH2D*) contourfile->Get(hstname_cl99_statsyst);
+  TH2D *hContStatSystF[4] = {0};
+  hContStatSystF[0] = (TH2D*) contourfile->Get(hstname_cl68_statsyst);
+  hContStatSystF[1] = (TH2D*) contourfile->Get(hstname_cl90_statsyst);
+  hContStatSystF[2] = (TH2D*) contourfile->Get(hstname_cl95_statsyst);
+  hContStatSystF[3] = (TH2D*) contourfile->Get(hstname_cl99_statsyst);
+  //clone histograms (for case where the inputs are the same histogram)
+  TH2D *hContStatSyst[4] = {0};
+  hContStatSyst[0] = (TH2D*)hContStatSystF[0]->Clone("hContStatSyst0");
+  hContStatSyst[1] = (TH2D*)hContStatSystF[1]->Clone("hContStatSyst1");
+  hContStatSyst[2] = (TH2D*)hContStatSystF[2]->Clone("hContStatSyst2");
+  hContStatSyst[3] = (TH2D*)hContStatSystF[3]->Clone("hContStatSyst3");
+
+  // The 'default' FC surface binning
+  // dm23sq, mixing23 range and step
+  double mixing23_min   = 0.5;
+  double mixing23_max   = 1.0;
+  double mixing23_step  = 0.005;
+  double dm23sq_min     = 1E-3;
+  double dm23sq_max     = 6E-3;
+  double dm23sq_step    = 1E-4;
+  // make sure that min and max are at the bin centre and not at the low/high edge of the first/last bin
+  int mixing23_nbins = 1 + TMath::CeilNint((mixing23_max - mixing23_min) / mixing23_step);
+  int dm23sq_nbins   = 1 + TMath::CeilNint((dm23sq_max   - dm23sq_min  ) / dm23sq_step  );
+  TH2D * visualise_output_statonly = new TH2D("","",mixing23_nbins+1,mixing23_min,mixing23_max+mixing23_step,dm23sq_nbins+1,dm23sq_min,dm23sq_max+mixing23_step);
+  TH2D * visualise_output_staysyst = new TH2D("","",mixing23_nbins+1,mixing23_min,mixing23_max+mixing23_step,dm23sq_nbins+1,dm23sq_min,dm23sq_max+mixing23_step);
 
   TString outfilename;
 
@@ -73,6 +106,7 @@ void write_contour_bins_to_textfile
   bool equalBinsStatOnly = true;
   for(int i=0; i<4; i++)
     {
+    if(!hContStatOnly[i]) continue;
     for(int j=0; j<4; j++)
       {
       if(hContStatOnly[i]->GetNbinsX() != hContStatOnly[j]->GetNbinsX() || hContStatOnly[i]->GetNbinsY() != hContStatOnly[j]->GetNbinsY())
@@ -83,12 +117,97 @@ void write_contour_bins_to_textfile
   bool equalBinsStatSyst = true;
   for(int i=0; i<4; i++)
     {
+    if(!hContStatSyst[i]) continue;
     for(int j=0; j<4; j++)
       {
       if(hContStatSyst[i]->GetNbinsX() != hContStatSyst[j]->GetNbinsX() || hContStatSyst[i]->GetNbinsY() != hContStatSyst[j]->GetNbinsY())
 	equalBinsStatSyst = false;
       }
     }
+
+  if(constdchisqsurface) {
+    double constdchisq[4] = {2.30, 4.61, 5.99, 9.21};
+    cout << "Converting constant dchisq surface into const dchisqcrit-subtracted surface" << endl;
+
+    //stat only
+    for(int is=0; is<4; is++) {
+      if(!hContStatOnly[is]) continue;
+      for(int ix = 1; ix <= hContStatOnly[is]->GetNbinsX(); ix++)
+	for(int iy = 1; iy <= hContStatOnly[is]->GetNbinsY(); iy++)
+	  hContStatOnly[is]->SetBinContent(ix,iy, hContStatOnly[is]->GetBinContent(ix,iy) - constdchisq[is]);
+    }
+
+    //stat+syst
+    for(int is=0; is<4; is++) {
+      if(!hContStatSyst[is]) continue;
+      for(int ix = 1; ix <= hContStatSyst[is]->GetNbinsX(); ix++)
+	for(int iy = 1; iy <= hContStatSyst[is]->GetNbinsY(); iy++)
+	  hContStatSyst[is]->SetBinContent(ix,iy, hContStatSyst[is]->GetBinContent(ix,iy) - constdchisq[is]);
+    }
+  }//constdchisqsurface
+
+
+  //if requested, convert the input dchisq surface histogram range to the 'FC' binning scheme
+  int nbinx_addon_statonly = 0, nbiny_addon_statonly = 0;
+  if(equalBinsStatOnly) {
+    cout << hContStatOnly[0]->GetNbinsX() << " bins in x, from " << hContStatOnly[0]->GetXaxis()->GetXmin() << " to " << hContStatOnly[0]->GetXaxis()->GetXmax() << endl;
+    cout << hContStatOnly[0]->GetNbinsY() << " bins in y, from " << hContStatOnly[0]->GetYaxis()->GetXmin() << " to " << hContStatOnly[0]->GetYaxis()->GetXmax() << endl;
+    if(convert_to_fc_surface_range) {
+      cout << mixing23_nbins << " bins in x(fc), from " << mixing23_min << " to " << mixing23_max << endl
+	   << dm23sq_nbins   << " bins in y(fc), from " << dm23sq_min   << " to " << dm23sq_max   << endl;
+
+      //find conversion for x
+      double xstep = (hContStatOnly[0]->GetXaxis()->GetXmax() - hContStatOnly[0]->GetXaxis()->GetXmin()) / (double)hContStatOnly[0]->GetNbinsX();
+      double xnbins = hContStatOnly[0]->GetNbinsX();
+      if(TMath::Abs(xstep - mixing23_step) > 1E-8)
+	cout << "Cannot convert xaxis to fc axis. Different step size" << endl;
+      else {
+	nbinx_addon_statonly = TMath::CeilNint((hContStatOnly[0]->GetXaxis()->GetXmin() - mixing23_min) / mixing23_step);
+	cout << "Adding " << nbinx_addon_statonly << " to the x axis bins" << endl;
+      }
+
+      //find conversion for y
+      double ystep = (hContStatOnly[0]->GetYaxis()->GetXmax() - hContStatOnly[0]->GetYaxis()->GetXmin()) / (double)hContStatOnly[0]->GetNbinsY();
+      double ynbins = hContStatOnly[0]->GetNbinsY();
+      if(TMath::Abs(ystep - dm23sq_step) > 1E-8)
+	cout << "Cannot convert yaxis to fc axis. Different step size" << endl;
+      else {
+	nbiny_addon_statonly = TMath::CeilNint((hContStatOnly[0]->GetYaxis()->GetXmin() - dm23sq_min) / dm23sq_step);
+	cout << "Adding " << nbiny_addon_statonly << " to the y axis bins" << endl;
+      }
+    }
+  }
+
+  //if requested, convert the input dchisq surface histogram range to the 'FC' binning scheme
+  int nbinx_addon_statsyst = 0, nbiny_addon_statsyst = 0;
+  if(equalBinsStatSyst) {
+    cout << hContStatSyst[0]->GetNbinsX() << " bins in x, from " << hContStatSyst[0]->GetXaxis()->GetXmin() << " to " << hContStatSyst[0]->GetXaxis()->GetXmax() << endl;
+    cout << hContStatSyst[0]->GetNbinsY() << " bins in y, from " << hContStatSyst[0]->GetYaxis()->GetXmin() << " to " << hContStatSyst[0]->GetYaxis()->GetXmax() << endl;
+    if(convert_to_fc_surface_range) {
+      cout << mixing23_nbins << " bins in x(fc), from " << mixing23_min << " to " << mixing23_max << endl
+	   << dm23sq_nbins   << " bins in y(fc), from " << dm23sq_min   << " to " << dm23sq_max   << endl;
+
+      //find conversion for x
+      double xstep = (hContStatSyst[0]->GetXaxis()->GetXmax() - hContStatSyst[0]->GetXaxis()->GetXmin()) / (double)hContStatSyst[0]->GetNbinsX();
+      double xnbins = hContStatSyst[0]->GetNbinsX();
+      if(TMath::Abs(xstep - mixing23_step) > 1E-8)
+	cout << "Cannot convert xaxis to fc axis. Different step size" << endl;
+      else {
+	nbinx_addon_statsyst = TMath::CeilNint((hContStatSyst[0]->GetXaxis()->GetXmin() - mixing23_min) / mixing23_step);
+	cout << "Adding " << nbinx_addon_statsyst << " to the x axis bins" << endl;
+      }
+
+      //find conversion for y
+      double ystep = (hContStatSyst[0]->GetYaxis()->GetXmax() - hContStatSyst[0]->GetYaxis()->GetXmin()) / (double)hContStatSyst[0]->GetNbinsY();
+      double ynbins = hContStatSyst[0]->GetNbinsY();
+      if(TMath::Abs(ystep - dm23sq_step) > 1E-8)
+	cout << "Cannot convert yaxis to fc axis. Different step size" << endl;
+      else {
+	nbiny_addon_statsyst = TMath::CeilNint((hContStatSyst[0]->GetYaxis()->GetXmin() - dm23sq_min) / dm23sq_step);
+	cout << "Adding " << nbiny_addon_statsyst << " to the y axis bins" << endl;
+      }
+    }
+  }
 
   if(write_contours_without_systematics)
     {
@@ -146,8 +265,10 @@ void write_contour_bins_to_textfile
                     {
                     for(int l=yZeroBin-bandWidth; l<=yZeroBin+bandWidth; l++)
                       {
-		      if(k >=1 && k <= hContStatOnly[h]->GetNbinsX() && l >=1 && l <= hContStatOnly[h]->GetNbinsY())
-		        StatOnlyBins << k << "\t" << l << "\n";
+			if(k >=1 && k <= hContStatOnly[h]->GetNbinsX() && l >=1 && l <= hContStatOnly[h]->GetNbinsY()) {
+			  StatOnlyBins << k+nbinx_addon_statonly << "\t" << l+nbiny_addon_statonly << "\n";
+			  visualise_output_statonly->SetBinContent(k+nbinx_addon_statonly,l+nbiny_addon_statonly,100);
+			}
                       }
                     }
                   firstXBinFound = true;
@@ -155,9 +276,11 @@ void write_contour_bins_to_textfile
                 for(int m=yZeroBin-bandWidth; m<=yZeroBin+bandWidth; m++)
                   {
                   //the if(m > yMaxBin) condition is to avoid duplicating the bin numbers                                                                                                   
-		  if(i >= 1 && i <= hContStatOnly[h]->GetNbinsX() && m >= 1 && m <= hContStatOnly[h]->GetNbinsY() && m > yMaxBin)
-                    StatOnlyBins << i << "\t" << m <<"\n";
-                  }
+		    if(i >= 1 && i <= hContStatOnly[h]->GetNbinsX() && m >= 1 && m <= hContStatOnly[h]->GetNbinsY() && m > yMaxBin) {
+		      StatOnlyBins << i+nbinx_addon_statonly << "\t" << m+nbiny_addon_statonly <<"\n";
+		      visualise_output_statonly->SetBinContent(i+nbinx_addon_statonly,m+nbiny_addon_statonly,100);
+		    }
+                 }
                 yMaxBin = yZeroBin+bandWidth;
                 }//end of if((hContStatOnly[h]->GetBinContent(i, j) > 0 && hContStatOnly[h]->GetBinContent(i, j-1) < 0).....                                                                     
 	      }//end of for(int h=0; h<4; h++)
@@ -192,8 +315,10 @@ void write_contour_bins_to_textfile
 		    {
 		    for(int l=yZeroBin-bandWidth; l<=yZeroBin+bandWidth; l++)
 		      {
-		      if(k >=1 && k <= hContStatOnly[h]->GetNbinsX() && l >=1 && l <= hContStatOnly[h]->GetNbinsY())
-		        StatOnlyBins << k << "\t" << l << "\n";
+			if(k >=1 && k <= hContStatOnly[h]->GetNbinsX() && l >=1 && l <= hContStatOnly[h]->GetNbinsY()) {
+			  StatOnlyBins << k+nbinx_addon_statonly << "\t" << l+nbiny_addon_statonly << "\n";
+			  visualise_output_statonly->SetBinContent(k+nbinx_addon_statonly,l+nbiny_addon_statonly,100);
+			}
 		      }
 		    }
 		  firstXBinFound = true;
@@ -201,8 +326,10 @@ void write_contour_bins_to_textfile
 		for(int m=yZeroBin-bandWidth; m<=yZeroBin+bandWidth; m++)
 		  {
 		  //the if(m > yMaxBin) condition is to avoid duplicating the bin numbers 
-		  if(i >= 1 && i <= hContStatOnly[h]->GetNbinsX() && m >= 1 && m <= hContStatOnly[h]->GetNbinsY() && m > yMaxBin)
-		    StatOnlyBins << i << "\t" << m <<"\n";
+		    if(i >= 1 && i <= hContStatOnly[h]->GetNbinsX() && m >= 1 && m <= hContStatOnly[h]->GetNbinsY() && m > yMaxBin) {
+		      StatOnlyBins << i+nbinx_addon_statonly << "\t" << m+nbiny_addon_statonly <<"\n";
+		      visualise_output_statonly->SetBinContent(i+nbinx_addon_statonly,m+nbiny_addon_statonly,100);
+		    }
 		  }
 		  yMaxBin = yZeroBin+bandWidth;
 		}//end of if((hContStatOnly[h]->GetBinContent(i, j) > 0 && hContStatOnly[h]->GetBinContent(i, j-1) < 0).....                                                                       
@@ -272,7 +399,10 @@ void write_contour_bins_to_textfile
 		  for(int l=yZeroBin-bandWidth; l<=yZeroBin+bandWidth; l++)
 		    {
 		    if(k >=1 && k <= hContStatSyst[h]->GetNbinsX() && l >= 1 && l <= hContStatSyst[h]->GetNbinsY())
-		      StatSystBins << k << "\t" << l << "\n";
+		      {
+			StatSystBins << k+nbinx_addon_statsyst << "\t" << l+nbiny_addon_statsyst << "\n";
+			visualise_output_statsyst->SetBinContent(k+nbinx_addon_statsyst,l+nbiny_addon_statsyst,100);
+		      }
 		    }
 		  }
 		  firstXBinFound = true;
@@ -281,7 +411,10 @@ void write_contour_bins_to_textfile
 		  {
 		  //the if(m > yMaxBin) condition is to avoid duplicating the bin numbers
 		  if(i >= 1 && i <= hContStatSyst[h]->GetNbinsX() && m >= 1 && m <= hContStatSyst[h]->GetNbinsY() && m > yMaxBin)
-		    StatSystBins << i << "\t" << m <<"\n";
+		    {
+		      StatSystBins << i+nbinx_addon_statsyst << "\t" << m+nbiny_addon_statsyst <<"\n";
+		      visualise_output_statsyst->SetBinContent(i+nbinx_addon_statsyst,m+nbiny_addon_statsyst,100);
+		    }
 		  }
 		    yMaxBin = yZeroBin+bandWidth;
 		}//end of if((hContStatSyst[h]->GetBinContent(i, j) > 0 && hContStatSyst[h]->GetBinContent(i, j-1) < 0).....                                                                        
@@ -317,7 +450,10 @@ void write_contour_bins_to_textfile
 		  for(int l=yZeroBin-bandWidth; l<=yZeroBin+bandWidth; l++)
 		    {
 		    if(k >=1 && k <= hContStatSyst[h]->GetNbinsX() && l>=1 && l <= hContStatSyst[h]->GetNbinsY())
-		      StatSystBins << k << "\t" << l << "\n";  
+		      {
+			StatSystBins << k+nbinx_addon_statsyst << "\t" << l+nbiny_addon_statsyst << "\n";  
+			visualise_output_statsyst->SetBinContent(k+nbinx_addon_statsyst,l+nbiny_addon_statsyst,100);
+		      }
 		    }
 	       	  }
                 firstXBinFound = true;
@@ -326,7 +462,10 @@ void write_contour_bins_to_textfile
 	        {
 		//the if(m > yMaxBin) statement is to avoid duplicating the bin numbers
 		if(i >= 1 && i <= hContStatSyst[h]->GetNbinsX() && m >= 1 && m <= hContStatSyst[h]->GetNbinsY() && m > yMaxBin)
-                  StatSystBins << i << "\t" << m <<"\n";
+		  {
+		    StatSystBins << i+nbinx_addon_statsyst << "\t" << m+nbiny_addon_statsyst <<"\n";
+		    visualise_output_statsyst->SetBinContent(i+nbinx_addon_statsyst,m+nbiny_addon_statsyst,100);
+		  }
 	        }
               yMaxBin = yZeroBin+bandWidth;	            
 	    }//end of if((hContStatSyst[h]->GetBinContent(i, j) > 0 && hContStatSyst[h]->GetBinContent(i, j-1) < 0).....
@@ -339,4 +478,9 @@ void write_contour_bins_to_textfile
     }//end of else to if(write_single_list)
   }//end of if(write_contours_with_systematics)
   
+  TCanvas * c = new TCanvas();
+  visualise_output_statonly->Draw("colz");
+  c->SaveAs("visual_statonly.pdf");
+  visualise_output_statsyst->Draw("colz");
+  c->SaveAs("visual_statsyst.pdf");
 }
