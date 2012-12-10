@@ -295,6 +295,8 @@ void feldman_cousins_fitting_job
      // get the specified fitter and perform the fit
      fparm->ResetCurrToInitValues();
      Superk1RmuErecoFitter fitter(fit_inputs,fit_option);
+     //turn hesse errors off: we're not even saving errors!
+     fitter.SetHesseErrors(false);
      fitter.DoTheFit();
 
      // get fitter status
@@ -317,6 +319,8 @@ void feldman_cousins_fitting_job
        // Need to make a new FitInputs & fitter
        FitInputs * fit_inputs2 = new FitInputs(skobs,skexp,fparm);
        Superk1RmuErecoFitter fitter2(fit_inputs2,fit_option);
+       //turn hesse errors off: we're not even saving errors!
+       fitter2.SetHesseErrors(false);
        fitter2.DoTheFit();
        double chisq_for_input_params = fit_inputs2->Chisquare();
 

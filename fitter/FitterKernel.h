@@ -42,6 +42,7 @@ public:
    virtual TObjArray& GetResults    (void) const  { return *fResults;                   }
    virtual void       Analyze       (Option_t*)   { }
    virtual void       Save          (const char*) { }
+   void               SetHesseErrors(bool evaluate_hesse) { fGetHesseErrors = evaluate_hesse; }
 
 protected:
    FitterKernel();
@@ -60,6 +61,7 @@ protected:
    int         fNFitBins;         ///< number of bins in fit
    int         fNFreeFitParams;   ///< number of free params in fit
    TObjArray*  fResults;          ///<
+   bool        fGetHesseErrors;   ///< get hesse errors?
 };
 
 } // t2kana

@@ -13,7 +13,7 @@
 */ 
 //____________________________________________________________________________
 
-#define __show_fit_init_info__ 
+//#define __show_fit_init_info__ 
 #define __show_fit_result__ 
 //#define __show_fit_steps__ 
 #define __show_fit_cpu_time__
@@ -80,6 +80,7 @@ void FitterKernel::Init(void)
   fNFreeFitParams = 0;
   fNFitBins       = 0;
   fResults        = 0;
+  fGetHesseErrors = true;
 }
 //____________________________________________________________________________ 
 void FitterKernel::Init(FitInputs * fit_inputs, Option_t * option) 
@@ -243,8 +244,16 @@ bool FitterKernel::RunOnce(bool use_simplex)
   fitter->PrintResults(3,aminn);
 #endif
 
+  // Get the error matrix status
+  double ha(0.0);     // dummy vars
+  double edm, errdef; // dummy vars
+  int nvpar, nparx;   // dummy vars
+  int errMatrixStatus = fitter->GetStats(ha, edm, errdef, nvpar, nparx);
+  fStatusCode = errMatrixStatus;
+
   //Use Hesse to make the errors better
-  fHesseStatusCode = fitter->ExecuteCommand("HESSE",arglist, 1);
+  if(fGetHesseErrors || fStatusCode != 3)
+    fHesseStatusCode = fitter->ExecuteCommand("HESSE",arglist, 1);
 
   // Done! Copy current --> best-fit values
   fFitInputs->FitParams().CopyCurrToBestFitValues();
@@ -253,10 +262,7 @@ bool FitterKernel::RunOnce(bool use_simplex)
 #ifdef __show_fit_steps__
   cout << "FitterKernel/RunOnce >> Getting error matrix status..." << endl;
 #endif
-  double ha(0.0);     // dummy vars
-  double edm, errdef; // dummy vars
-  int nvpar, nparx;   // dummy vars
-  int errMatrixStatus = fitter->GetStats(ha, edm, errdef, nvpar, nparx);
+  errMatrixStatus = fitter->GetStats(ha, edm, errdef, nvpar, nparx);
   fStatusCode = errMatrixStatus;
 
   // Get errors
@@ -278,9 +284,11 @@ bool FitterKernel::RunOnce(bool use_simplex)
 #ifdef __show_fit_steps__
   cout << "FitterKernel/RunOnce >> Printing HESSE fit results..." << endl;
 #endif
-  Double_t amin = 0;
-  fitter->PrintResults(3,amin);
-  //fitter->PrintResults(1,amin); // prints limits
+  if(fGetHesseErrors) {
+    Double_t amin = 0;
+    fitter->PrintResults(3,amin);
+    //fitter->PrintResults(1,amin); // prints limits
+  }
   cout << "FitterKernel/RunOnce >> Final error matrix status = " 
        << fStatusCode << endl;
  
