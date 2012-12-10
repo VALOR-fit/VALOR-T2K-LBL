@@ -1,9 +1,9 @@
 //____________________________________________________________________________
 /*!
 
-\class    t2kana::FitterKernel
+\class    t2kana::FitterMinuit
 
-\brief    Fitter kernel
+\brief    T2KAna fitter based on Minuit
 
 \author   Costas Andreopoulos <costas.andreopoulos \at stfc.ac.uk>
           STFC, Rutherford Appleton Laboratory
@@ -13,8 +13,8 @@
 */
 //____________________________________________________________________________
 
-#ifndef _t2kana_fitter_kernel_h_
-#define _t2kana_fitter_kernel_h_
+#ifndef _t2kana_fitter_minuit_h_
+#define _t2kana_fitter_minuit_h_
 
 #include <TMinuit.h>
 #include <TString.h>
@@ -26,10 +26,12 @@ namespace t2kana {
 
 class FitInputs;
 
-class FitterKernel: public FitterABC
+class FitterMinuit: public FitterABC
 {
 public:
-   virtual ~FitterKernel();
+   FitterMinuit();
+   FitterMinuit(FitInputs * inputs, Option_t * option = "minuit");
+   virtual ~FitterMinuit();
 
    virtual bool       DoTheFit      (void);
    virtual int        FitStatusCode (void)        { return fStatusCode;                 }
@@ -39,16 +41,8 @@ public:
    virtual int        NDOF          (void)        { return fNFitBins - fNFreeFitParams; }
    virtual int        NBinsInFit    (void)        { return fNFitBins;                   }
    virtual int        NFitParams    (void)        { return fNFreeFitParams;             }
-/*
-   virtual TObjArray& GetResults    (void) const  { return *fResults;                   }
-   virtual void       Analyze       (Option_t*)   { }
-   virtual void       Save          (const char*) { }
-   void               SetHesseErrors(bool evaluate_hesse) { fGetHesseErrors = evaluate_hesse; }
-*/
 
 protected:
-   FitterKernel();
-   FitterKernel(FitInputs * inputs, Option_t * option = "minuit");
 
    void  Init    (void);
    void  Init    (FitInputs * fit_inputs, Option_t * option = "minuit");
@@ -62,9 +56,6 @@ protected:
    double      fFitTime;          ///< time taken to do the fit
    int         fNFitBins;         ///< number of bins in fit
    int         fNFreeFitParams;   ///< number of free params in fit
-/*
-   TObjArray*  fResults;          ///<
-*/
    bool        fGetHesseErrors;   ///< get hesse errors?
 };
 

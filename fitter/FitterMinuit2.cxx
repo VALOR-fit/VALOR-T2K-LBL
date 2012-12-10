@@ -50,7 +50,7 @@
 #include <Minuit2/MnMinos.h>
 #include <Minuit2/MnPrint.h>
 
-#include "FitterKernelMinuit2.h" 
+#include "FitterMinuit2.h" 
 #include "SuperkObservation.h" 
 #include "SuperkExpectation.h" 
 #include "FitInputs.h" 
@@ -70,46 +70,42 @@ using namespace t2kana;
 using namespace t2kana::conv;
    
 //____________________________________________________________________________ 
-FitterKernelMinuit2::FitterKernelMinuit2() :
+FitterMinuit2::FitterMinuit2() :
 FitterABC()
 {
   this->Init();
 }
 //____________________________________________________________________________ 
-FitterKernelMinuit2::FitterKernelMinuit2(FitInputs * fit_inputs, Option_t * option) :
+FitterMinuit2::FitterMinuit2(FitInputs * fit_inputs, Option_t * option) :
 FitterABC()
 {
   this->Init(fit_inputs, option);
 }
 //____________________________________________________________________________ 
-FitterKernelMinuit2::~FitterKernelMinuit2() 
+FitterMinuit2::~FitterMinuit2() 
 {
-//////////  if(fResults)    { delete fResults;    }
   if(fCovMtrx)    { delete fCovMtrx;    }
 }
 //____________________________________________________________________________ 
-void FitterKernelMinuit2::Init(void) 
+void FitterMinuit2::Init(void) 
 {
   fFitInputs      = 0;
   fOption         = "";
   fNFreeFitParams = 0;
   fNFitBins       = 0;
-  ////////////fResults        = 0;
 }
 //____________________________________________________________________________ 
-void FitterKernelMinuit2::Init(FitInputs * fit_inputs, Option_t * /*option*/) 
+void FitterMinuit2::Init(FitInputs * fit_inputs, Option_t * /*option*/) 
 {
 #ifdef __show_fit_init_info__
-  cout << "FitterKernelMinuit2/Init >> Fitter initialization..." << endl;
+  cout << "FitterMinuit2/Init >> Fitter initialization..." << endl;
 #endif
 
   this->Init();
 
-  ////////////fResults = new TObjArray();
-
   fFitInputs = fit_inputs;
   if(!fFitInputs) {
-     cerr << "FitterKernelMinuit2/Init >> ** Null fit inputs!" << endl;
+     cerr << "FitterMinuit2/Init >> ** Null fit inputs!" << endl;
      exit(1);
   }
 
@@ -117,7 +113,7 @@ void FitterKernelMinuit2::Init(FitInputs * fit_inputs, Option_t * /*option*/)
   int param_list_size = fit_params.Size();
 
 #ifdef __show_fit_init_info__
-  cout << "FitterKernelMinuit2/Init >> Fit parameter list size = " 
+  cout << "FitterMinuit2/Init >> Fit parameter list size = " 
        << param_list_size << endl;
 #endif
   
@@ -128,21 +124,21 @@ void FitterKernelMinuit2::Init(FitInputs * fit_inputs, Option_t * /*option*/)
 #endif
 
   // calculate degrees of freedom
-  fNFitBins       = kNErecoBins1Rmu;
+  fNFitBins       = kNErecoBins1Rmu; // HERE, FIX
   fNFreeFitParams = fit_params.GetNumberFreeParameters();
 
 #ifdef __show_fit_init_info__
-  cout << "FitterKernelMinuit2/Init >> NDoF = " << this->NDOF()
+  cout << "FitterMinuit2/Init >> NDoF = " << this->NDOF()
        << " (Number of bins = " << this->NBinsInFit()
        << ", Number of free parameters = " << this->NFitParams() << ")"
        << endl;
 #endif
 }
 //____________________________________________________________________________ 
-void FitterKernelMinuit2::ConstructCovMatrix(void)
+void FitterMinuit2::ConstructCovMatrix(void)
 {
 #ifdef __show_fit_cov_matrix_debug__
-  cout << "FitterKernelMinuit2/ConstructCovMatrix >> Constructing covariance matrix" << endl;
+  cout << "FitterMinuit2/ConstructCovMatrix >> Constructing covariance matrix" << endl;
 #endif
 
   //Get number of free parameters
@@ -243,13 +239,13 @@ void FitterKernelMinuit2::ConstructCovMatrix(void)
   fCovMtrx = new TMatrixD(total_covariance);
 
 #ifdef __show_fit_cov_matrix_debug__
-  cout << "FitterKernelMinuit2/ConstructCovMatrix >> Covariance matrix:" << endl;
+  cout << "FitterMinuit2/ConstructCovMatrix >> Covariance matrix:" << endl;
   total_covariance.Print();
 #endif
 
 }
 //____________________________________________________________________________ 
-bool FitterKernelMinuit2::DoTheFit(void) 
+bool FitterMinuit2::DoTheFit(void) 
 {
 #ifdef __show_fit_cpu_time__
   TStopwatch w;
@@ -264,7 +260,7 @@ bool FitterKernelMinuit2::DoTheFit(void)
 
 #ifdef __show_fit_cpu_time__
   w.Stop();
-  cout << "FitterKernelMinuit2/DoTheFit >> Fit performed in " 
+  cout << "FitterMinuit2/DoTheFit >> Fit performed in " 
        << w.CpuTime() << " sec." << endl;
   fFitTime = w.CpuTime();
 #endif
@@ -272,7 +268,7 @@ bool FitterKernelMinuit2::DoTheFit(void)
   return ok;
 }
 //____________________________________________________________________________ 
-bool FitterKernelMinuit2::RunOnce(void) 
+bool FitterMinuit2::RunOnce(void) 
 {
   // a few arrays to store parameters
   unsigned int nfreeparams = (unsigned int)fNFreeFitParams;
@@ -306,7 +302,7 @@ bool FitterKernelMinuit2::RunOnce(void)
     }
   }
 #ifdef __show_fit_cov_matrix_debug__
-  cout << "FitterKernelMinuit2/RunOnce >> Input covariance matrix:" << endl;
+  cout << "FitterMinuit2/RunOnce >> Input covariance matrix:" << endl;
   cout << input_cov << endl;
 #endif
 #else
@@ -315,7 +311,7 @@ bool FitterKernelMinuit2::RunOnce(void)
 
   // Get the fitter & pass it the inputs
 #ifdef __show_fit_steps__
-  cout << "FitterKernelMinuit2/RunOnce >> Getting the fitter & giving it inputs (data & pdf)..." << endl;
+  cout << "FitterMinuit2/RunOnce >> Getting the fitter & giving it inputs (data & pdf)..." << endl;
 #endif
 
 #ifdef __give_fitter_covariance_matrix__
@@ -326,7 +322,7 @@ bool FitterKernelMinuit2::RunOnce(void)
 
   // Run MINUIT's minimization step
 #ifdef __show_fit_steps__
-  cout << "FitterKernelMinuit2/RunOnce >> Running MIGRAD..." << endl;
+  cout << "FitterMinuit2/RunOnce >> Running MIGRAD..." << endl;
 #endif
 
   // max number of function calls
@@ -342,11 +338,11 @@ bool FitterKernelMinuit2::RunOnce(void)
   ROOT::Minuit2::FunctionMinimum bestfit = migrad(max_calls, tolerance);
 
 #ifdef __show_fit_steps__
-  cout << "FitterKernelMinuit2/RunOnce >> MIGRAD minimisation complete" << endl;
+  cout << "FitterMinuit2/RunOnce >> MIGRAD minimisation complete" << endl;
 #endif
 
 #ifdef __show_fit_steps__
-  cout << "FitterKernelMinuit2/RunOnce >> Getting fit success status..." << endl;
+  cout << "FitterMinuit2/RunOnce >> Getting fit success status..." << endl;
 #endif
 
   // Done! Copy current --> best-fit values
@@ -355,7 +351,7 @@ bool FitterKernelMinuit2::RunOnce(void)
   //Check if fit succeeded
   GetStatusCode(bestfit);
   if(fStatusCode == 9) {
-    cerr << "FitterKernelMinuit2/RunOnce >> Fit failed. Returning..." << endl;
+    cerr << "FitterMinuit2/RunOnce >> Fit failed. Returning..." << endl;
     return false;
   }
 
@@ -366,13 +362,13 @@ bool FitterKernelMinuit2::RunOnce(void)
       bestfit_free.push_back(bestfit_params[ip].Value());
     }
 #ifdef __show_fit_steps_debug__
-    cout << "FitterKernelMinuit2/RunOnce >> Bestfit for par#" << ip << " = " << bestfit_params[ip].Value() << endl;
+    cout << "FitterMinuit2/RunOnce >> Bestfit for par#" << ip << " = " << bestfit_params[ip].Value() << endl;
 #endif
   }
 
   // Get errors
 #ifdef __show_fit_steps__
-  cout << endl << "FitterKernelMinuit2/RunOnce >> Getting Migrad errors..." << endl;
+  cout << endl << "FitterMinuit2/RunOnce >> Getting Migrad errors..." << endl;
 #endif
 
   // migrad covariance
@@ -385,7 +381,7 @@ bool FitterKernelMinuit2::RunOnce(void)
       double tmp = sqrt(cov_migrad(ip,ip));
       err_migrad_cov.push_back(tmp);
 #ifdef __show_fit_steps_debug__
-      cout << "FitterKernelMinuit2/RunOnce >> Migrad covariance for par#" << ip << " = " << bestfit_free[ip] << " +/- " << err_migrad_cov[ip] << endl;
+      cout << "FitterMinuit2/RunOnce >> Migrad covariance for par#" << ip << " = " << bestfit_free[ip] << " +/- " << err_migrad_cov[ip] << endl;
 #endif
     }
   }
@@ -394,7 +390,7 @@ bool FitterKernelMinuit2::RunOnce(void)
   err_migrad_err =  bestfit.UserParameters().Errors(); 
   for(unsigned int ip = 0; ip < nparams; ip++) {
 #ifdef __show_fit_steps_debug__
-    cout << "FitterKernelMinuit2/RunOnce >> Migrad error for par#" << ip << " = " << bestfit_free[ip] << " +/- " << err_migrad_err[ip] << endl;
+    cout << "FitterMinuit2/RunOnce >> Migrad error for par#" << ip << " = " << bestfit_free[ip] << " +/- " << err_migrad_err[ip] << endl;
 #endif
   }
   fFitInputs->FitParams().SetMigradErrors(err_migrad_err);
@@ -402,7 +398,7 @@ bool FitterKernelMinuit2::RunOnce(void)
 #ifdef __get_hesse_errors__
   //Get Hesse errors
 #ifdef __show_fit_steps__
-  cout << endl << "FitterKernelMinuit2/RunOnce >> Getting Hesse errors..." << endl;
+  cout << endl << "FitterMinuit2/RunOnce >> Getting Hesse errors..." << endl;
 #endif
   // argument is strategy
   ROOT::Minuit2::MnHesse hesse(2);
@@ -420,7 +416,7 @@ bool FitterKernelMinuit2::RunOnce(void)
     for(unsigned int ip = 0; ip < nfreeparams && ip < cov_hesse.Nrow(); ip++) {
       err_hesse_cov.push_back(sqrt(cov_hesse(ip,ip)));
 #ifdef __show_fit_steps_debug__
-      cout << "FitterKernelMinuit2/RunOnce >> Hesse covariance for par#" << ip << " = " << bestfit_free[ip] << " +/- " << err_hesse_cov[ip] << endl;
+      cout << "FitterMinuit2/RunOnce >> Hesse covariance for par#" << ip << " = " << bestfit_free[ip] << " +/- " << err_hesse_cov[ip] << endl;
 #endif
     }
   }
@@ -430,7 +426,7 @@ bool FitterKernelMinuit2::RunOnce(void)
   fFitInputs->FitParams().SetHesseErrors(err_hesse_err);
   for(unsigned int ip = 0; ip < nparams; ip++) {
 #ifdef __show_fit_steps_debug__
-    cout << "FitterKernelMinuit2/RunOnce >> Hesse error for par#" << ip << " = " << bestfit_free[ip] << " +/- " << err_hesse_err[ip] << endl;
+    cout << "FitterMinuit2/RunOnce >> Hesse error for par#" << ip << " = " << bestfit_free[ip] << " +/- " << err_hesse_err[ip] << endl;
 #endif
   }
   GetStatusCode(bestfit);
@@ -438,7 +434,7 @@ bool FitterKernelMinuit2::RunOnce(void)
 
 #ifdef __get_minos_errors__
 #ifdef __show_fit_steps__
-  cout << endl << "FitterKernelMinuit2/RunOnce >> Getting Minos errors..." << endl;
+  cout << endl << "FitterMinuit2/RunOnce >> Getting Minos errors..." << endl;
 #endif
 
   //Get Minos Errors
@@ -451,7 +447,7 @@ bool FitterKernelMinuit2::RunOnce(void)
     err_minosminus.push_back(lo);
     err_minosplus. push_back(up);
 #ifdef __show_fit_steps_debug__
-    cout << "FitterKernelMinuit2/RunOnce >> par#" << ip << " = " << bestfit_params[ip].Value() << " +" << up << " -" << lo << " (minos)" << endl;
+    cout << "FitterMinuit2/RunOnce >> par#" << ip << " = " << bestfit_params[ip].Value() << " +" << up << " -" << lo << " (minos)" << endl;
 #endif
   }
   fFitInputs->FitParams().SetMinosErrors(err_minosplus, err_minosminus);
@@ -460,79 +456,80 @@ bool FitterKernelMinuit2::RunOnce(void)
   // Print fit result
 #ifdef __show_fit_result__
 #ifdef __show_fit_steps__
-  cout << endl << "FitterKernelMinuit2/RunOnce >> Printing fit results..." << endl;
+  cout << endl << "FitterMinuit2/RunOnce >> Printing fit results..." << endl;
 #endif
-  cout << "FitterKernelMinuit2/RunOnce >> fcn =  " << bestfit.Fval() << endl;
-  cout << "FitterKernelMinuit2/RunOnce >> chi2 = " << fFitInputs->Chisquare() << endl;
+  cout << "FitterMinuit2/RunOnce >> fcn =  " << bestfit.Fval() << endl;
+  cout << "FitterMinuit2/RunOnce >> chi2 = " << fFitInputs->Chisquare() << endl;
   cout << bestfit << endl;
-  cout << "FitterKernelMinuit2/RunOnce >> fit status code = " << fStatusCode << endl;
+  cout << "FitterMinuit2/RunOnce >> fit status code = " << fStatusCode << endl;
 #endif
 
 #ifdef __show_fit_steps__
-  cout << "FitterKernelMinuit2/RunOnce >> Done" << endl;
+  cout << "FitterMinuit2/RunOnce >> Done" << endl;
 #endif
 
   return (fStatusCode == 0);
 }
 //____________________________________________________________________________ 
-void FitterKernelMinuit2::GetStatusCode(ROOT::Minuit2::FunctionMinimum bestfit) {
+void FitterMinuit2::GetStatusCode(ROOT::Minuit2::FunctionMinimum bestfit) 
+{
   if(!bestfit.IsValid()) {
 #ifdef __show_fit_steps__
-    cout << "FitterKernelMinuit2/GetStatusCode >> Minuit failed." << endl;
+    cout << "FitterMinuit2/GetStatusCode >> Minuit failed." << endl;
 #endif
     fStatusCode = 9;
   }
   else if (bestfit.HasReachedCallLimit()) {
     #ifdef __show_fit_steps__
-    cout << "FitterKernelMinuit2/GetStatusCode >> Minuit reached the specified call limit (maxcalls)." << endl;
+    cout << "FitterMinuit2/GetStatusCode >> Minuit reached the specified call limit (maxcalls)." << endl;
 #endif
     fStatusCode = 1;
   }
   else if (bestfit.IsAboveMaxEdm()) {
 #ifdef __show_fit_steps__
-    cout << "FitterKernelMinuit2/GetStatusCode >> Function value is above the specified estimated distance to the minimum (edm)." << endl;
+    cout << "FitterMinuit2/GetStatusCode >> Function value is above the specified estimated distance to the minimum (edm)." << endl;
 #endif
     fStatusCode = 2;
   }
   else if (!bestfit.HasPosDefCovar()) {
 #ifdef __show_fit_steps__
-    cout << "FitterKernelMinuit2/GetStatusCode >> Covariance is not positive definite." << endl;
+    cout << "FitterMinuit2/GetStatusCode >> Covariance is not positive definite." << endl;
 #endif
     fStatusCode = 3;
   }
   else if (!bestfit.HasMadePosDefCovar()) {
 #ifdef __show_fit_steps__
-    cout << "FitterKernelMinuit2/GetStatusCode >> Covariance could not be made positive definite." << endl;
+    cout << "FitterMinuit2/GetStatusCode >> Covariance could not be made positive definite." << endl;
 #endif
     fStatusCode = 4;
   }
   else if (!bestfit.HasAccurateCovar()) {
 #ifdef __show_fit_steps__
-    cout << "FitterKernelMinuit2/GetStatusCode >> Covariance is not accurate." << endl;
+    cout << "FitterMinuit2/GetStatusCode >> Covariance is not accurate." << endl;
 #endif
     fStatusCode = 5;
   }
   else if (!bestfit.HasValidCovariance()) {
 #ifdef __show_fit_steps__
-    cout << "FitterKernelMinuit2/GetStatusCode >> Covariance is not valid." << endl;
+    cout << "FitterMinuit2/GetStatusCode >> Covariance is not valid." << endl;
 #endif
     fStatusCode = 6;
   }
   else if (bestfit.HesseFailed()) {
 #ifdef __show_fit_steps__
-    cout << "FitterKernelMinuit2/GetStatusCode >> HESSE failed." << endl;
+    cout << "FitterMinuit2/GetStatusCode >> HESSE failed." << endl;
 #endif
     fStatusCode = 7;
   }
   else if (!bestfit.HasValidParameters()) {
 #ifdef __show_fit_steps__
-    cout << "FitterKernelMinuit2/GetStatusCode >> Parameters are not valid." << endl;
+    cout << "FitterMinuit2/GetStatusCode >> Parameters are not valid." << endl;
 #endif
     fStatusCode = 8;
   }
   else {
 #ifdef __show_fit_steps__
-    cout << "FitterKernelMinuit2/GetStatusCode >> Fit valid" << endl;
+    cout << "FitterMinuit2/GetStatusCode >> Fit valid" << endl;
 #endif
     fStatusCode = 0;
   }

@@ -13,7 +13,13 @@
 #pragma link C++ enum  t2kana::conv::SuperkSample_t;
 #pragma link C++ enum  t2kana::conv::SuperkMode_t;
 
+#pragma link C++ class t2kana::util::ArrIdx;
+#pragma link C++ class t2kana::Opt;
+#pragma link C++ class t2kana::PhysHypothesis;
+#pragma link C++ class t2kana::NuOsc3Flavour;
+
 #pragma link C++ class t2kana::SuperkObservation;
+
 #pragma link C++ class t2kana::SuperkExpectation;
 #pragma link C++ class t2kana::SuperkDetector;
 #pragma link C++ class t2kana::SuperkMC;
@@ -22,16 +28,12 @@
 #pragma link C++ class t2kana::NuFlux;
 #pragma link C++ class t2kana::FSI;
 
-#pragma link C++ class t2kana::Superk1RmuErecoFitter;
-#pragma link C++ class t2kana::Superk1RmuErecoFitterMinuit2;
-#pragma link C++ class t2kana::FitterKernel;
-#pragma link C++ class t2kana::FitterKernelMinuit2;
 #pragma link C++ class t2kana::FitterABC;
+#pragma link C++ class t2kana::FitterMinuit;
+#pragma link C++ class t2kana::FitterMinuit2;
+
 #pragma link C++ class t2kana::FitParamList;
+
 #pragma link C++ class t2kana::FitInputs;
-#pragma link C++ class t2kana::PhysHypothesis;
-#pragma link C++ class t2kana::NuOsc3Flavour;
-#pragma link C++ class t2kana::Opt;
-#pragma link C++ class t2kana::util::ArrIdx;
 
 #endif

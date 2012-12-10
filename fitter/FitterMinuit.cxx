@@ -38,7 +38,7 @@
 #include <TSystem.h>
 #include <TStopwatch.h>
 
-#include "FitterKernel.h" 
+#include "FitterMinuit.h" 
 #include "SuperkObservation.h" 
 #include "SuperkExpectation.h" 
 #include "FitInputs.h" 
@@ -56,46 +56,43 @@ using namespace t2kana;
 using namespace t2kana::conv;
    
 //____________________________________________________________________________ 
-FitterKernel::FitterKernel() :
+FitterMinuit::FitterMinuit() :
 FitterABC()
 {
   this->Init();
 }
 //____________________________________________________________________________ 
-FitterKernel::FitterKernel(FitInputs * fit_inputs, Option_t * option) :
+FitterMinuit::FitterMinuit(FitInputs * fit_inputs, Option_t * option) :
 FitterABC()
 {
   this->Init(fit_inputs, option);
 }
 //____________________________________________________________________________ 
-FitterKernel::~FitterKernel() 
+FitterMinuit::~FitterMinuit() 
 {
-/////////  if(fResults) { delete fResults; }
+
 }
 //____________________________________________________________________________ 
-void FitterKernel::Init(void) 
+void FitterMinuit::Init(void) 
 {
   fFitInputs      = 0;
   fOption         = "";
   fNFreeFitParams = 0;
   fNFitBins       = 0;
-///////////  fResults        = 0;
   fGetHesseErrors = true;
 }
 //____________________________________________________________________________ 
-void FitterKernel::Init(FitInputs * fit_inputs, Option_t * option) 
+void FitterMinuit::Init(FitInputs * fit_inputs, Option_t * option) 
 {
 #ifdef __show_fit_init_info__
-  cout << "FitterKernel/Init >> Fitter initialization..." << endl;
+  cout << "FitterMinuit/Init >> Fitter initialization..." << endl;
 #endif
 
   this->Init();
 
-/////////  fResults = new TObjArray();
-
   fFitInputs = fit_inputs;
   if(!fFitInputs) {
-     cerr << "FitterKernel/Init >> ** Null fit inputs!" << endl;
+     cerr << "FitterMinuit/Init >> ** Null fit inputs!" << endl;
      exit(1);
   }
 
@@ -103,7 +100,7 @@ void FitterKernel::Init(FitInputs * fit_inputs, Option_t * option)
   int param_list_size = fit_params.Size();
 
 #ifdef __show_fit_init_info__
-  cout << "FitterKernel/Init >> Fit parameter list size = " 
+  cout << "FitterMinuit/Init >> Fit parameter list size = " 
        << param_list_size << endl;
 #endif
 
@@ -134,18 +131,18 @@ void FitterKernel::Init(FitInputs * fit_inputs, Option_t * option)
 
   // calculate degrees of freedom
 
-  fNFitBins       = kNErecoBins1Rmu;
+  fNFitBins       = kNErecoBins1Rmu; // HERE, FIX
   fNFreeFitParams = fit_params.GetNumberFreeParameters();
 
 #ifdef __show_fit_init_info__
-  cout << "FitterKernel/Init >> NDoF = " << this->NDOF()
+  cout << "FitterMinuit/Init >> NDoF = " << this->NDOF()
        << " (Number of bins = " << this->NBinsInFit()
        << ", Number of free parameters = " << this->NFitParams() << ")"
        << endl;
 #endif
 }
 //____________________________________________________________________________ 
-bool FitterKernel::DoTheFit(void) 
+bool FitterMinuit::DoTheFit(void) 
 {
 #ifdef __show_fit_cpu_time__
   TStopwatch w;
@@ -187,7 +184,7 @@ bool FitterKernel::DoTheFit(void)
 
 #ifdef __show_fit_cpu_time__
   w.Stop();
-  cout << "FitterKernel/DoTheFit >> Fit performed in " 
+  cout << "FitterMinuit/DoTheFit >> Fit performed in " 
        << w.CpuTime() << " sec." << endl;
   fFitTime = w.CpuTime();
 #endif
@@ -195,25 +192,25 @@ bool FitterKernel::DoTheFit(void)
   return ok;
 }
 //____________________________________________________________________________ 
-bool FitterKernel::RunOnce(bool use_simplex) 
+bool FitterMinuit::RunOnce(bool use_simplex) 
 {
   fHesseStatusCode = -1;
 
   // Get the fitter
 #ifdef __show_fit_steps__
-  cout << "FitterKernel/RunOnce >> Getting the fitter..." << endl;
+  cout << "FitterMinuit/RunOnce >> Getting the fitter..." << endl;
 #endif
   TVirtualFitter * fitter = TVirtualFitter::GetFitter();
 
   // Pass fit inputs (data, pdf) to MINUIT
 #ifdef __show_fit_steps__
-  cout << "FitterKernel/RunOnce >> Passing fit inputs (data & pdf)..." << endl;
+  cout << "FitterMinuit/RunOnce >> Passing fit inputs (data & pdf)..." << endl;
 #endif
   gMinuit->SetObjectFit(fFitInputs);
 
   // Run MINUIT's minimization step
 #ifdef __show_fit_steps__
-  cout << "FitterKernel/RunOnce >> Running MIGRAD..." << endl;
+  cout << "FitterMinuit/RunOnce >> Running MIGRAD..." << endl;
 #endif
   Double_t arglist[100];
   arglist[0] = 50000; // num of func calls
@@ -238,7 +235,7 @@ bool FitterKernel::RunOnce(bool use_simplex)
   // Print fit result
 #ifdef __show_fit_result__
 #ifdef __show_fit_steps__
-  cout << "FitterKernel/RunOnce >> Printing MIGRAD fit results..." << endl;
+  cout << "FitterMinuit/RunOnce >> Printing MIGRAD fit results..." << endl;
 #endif
   Double_t aminn = 0;
   fitter->PrintResults(3,aminn);
@@ -260,14 +257,14 @@ bool FitterKernel::RunOnce(bool use_simplex)
 
   // Get error matrix status
 #ifdef __show_fit_steps__
-  cout << "FitterKernel/RunOnce >> Getting error matrix status..." << endl;
+  cout << "FitterMinuit/RunOnce >> Getting error matrix status..." << endl;
 #endif
   errMatrixStatus = fitter->GetStats(ha, edm, errdef, nvpar, nparx);
   fStatusCode = errMatrixStatus;
 
   // Get errors
 #ifdef __show_fit_steps__
-  cout << "FitterKernel/RunOnce >> Getting errors..." << endl;
+  cout << "FitterMinuit/RunOnce >> Getting errors..." << endl;
 #endif
   const int nparamsmax = knppmax;
   double errplus [nparamsmax] = {0.};
@@ -282,30 +279,19 @@ bool FitterKernel::RunOnce(bool use_simplex)
   // Print fit result
 #ifdef __show_fit_result__
 #ifdef __show_fit_steps__
-  cout << "FitterKernel/RunOnce >> Printing HESSE fit results..." << endl;
+  cout << "FitterMinuit/RunOnce >> Printing HESSE fit results..." << endl;
 #endif
   if(fGetHesseErrors) {
     Double_t amin = 0;
     fitter->PrintResults(3,amin);
     //fitter->PrintResults(1,amin); // prints limits
   }
-  cout << "FitterKernel/RunOnce >> Final error matrix status = " 
-       << fStatusCode << endl;
- 
-//  TString smpl = fFitInputs->FitParams().GetTheSample(); 
-//  cout << "FitterKernel/RunOnce >> Final chisq = ";
-//  if (smpl =="numu"){
-//        cout<<fFitInputs->Chisquare("poisson",conv::kSKsFCFV1RingMuLike)<< endl;
-//  }else if(smpl =="nue"){
-//        cout<<fFitInputs->Chisquare("poisson",conv::kSKsFCFV1RingELike)<< endl;
-//  }else{
-//        cout<<fFitInputs->Chisquare() << endl;
-//  }
-
+  cout << "FitterMinuit/RunOnce >> Final error matrix status = " 
+       << fStatusCode << endl; 
 #endif
 
 #ifdef __show_fit_steps__
-  cout << "FitterKernel/RunOnce >> Done" << endl;
+  cout << "FitterMinuit/RunOnce >> Done" << endl;
 #endif
 
   return (fStatusCode == 3);
