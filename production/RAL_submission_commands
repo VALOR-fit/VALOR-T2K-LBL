@@ -1,13 +1,20 @@
 FC (give each set a unique tag)
 
+#get a bin list from a contour
+root2k -l '$T2KOSCANA/macros/contour/fc/numu/write_contour_bins_to_textfile.C("$T2KOSCANA/2012results/2012_12_07/data_28/fitresults_3.root",2,true,true,false,true,true,false,false,"hdchisq","hdchisq","hdchisq","hdchisq","hdchisq","hdchisq","hdchisq","hdchisq",true,true)'
+
 #submit the FC jobs
-$T2KOSCANA/production/submit_feldman_cousins_fitting_job_numu --resource RAL --nruns 1000 --nexpts 2000 --cpu-time 24:00:00 --stat-fluctuations --tweak-systematics --bin-list /home/ppd/tdealtry/RAL_repoistory/t2k/t2kana/nuosc/trunk/inputs/FCbinlist/binlist_2+8_statsyst.data --fit-param-list nuosc3f_numudisapp_fix4+nuisanceselection  --job-dir $PWD --softw-dir $T2KOSCANA --tag 28statsyst_1
+$T2KOSCANA/production/submit_feldman_cousins_fitting_job_numu --resource RAL --nruns 1000 --nexpts 2000 --cpu-time 24:00:00 --stat-fluctuations --tweak-systematics --bin-list /home/ppd/tdealtry/RAL_repoistory/t2k/t2kana/nuosc/trunk/inputs/FCbinlist/binlist_2+8_statsyst.data --fit-param-list nuosc3f_numudisapp_fix4+nuisanceselection  --job-dir $PWD --softw-dir $T2KOSCANA --tag FC28statsyst_1
 
 #check how many fits have been done at each point
-root2k -l 'macros/contour/fc/numu/test_feldman_cousins_nfits.C("2012results/FC2+8statsystProduction/2012_12_08")'
+root2k -l '$T2KOSCANA/macros/contour/fc/numu/test_feldman_cousins_nfits.C("2012results/FC2+8statsystProduction/2012_12_08")'
 
 #make a FC surface
-root2k -l -b -q 'macros/contour/fc/numu/make_feldman_cousins_deltachisqcrit_surface.C("2012results/FC2+8statsystProduction/2012_12_08","delta_chisq_critical.root",85,9999,10,22)'
+root2k -l -b -q '$T2KOSCANA/macros/contour/fc/numu/make_feldman_cousins_deltachisqcrit_surface.C("2012results/FC2+8statsystProduction/2012_12_08","delta_chisq_critical.root",80,9999,8,25)'
+
+#plot a contour (run1-3)
+root2k -l '$T2KOSCANA/macros/contour/fc/numu/plot_feldman_cousins_contour.C("delta_chisq_critical.root","delta_chisq_critical.root","delta_chisq_critical.root","$T2KOSCANA/2012results/2012_12_07/data_28/fitresults_3.root","hdchisq")'
+
 
 
 

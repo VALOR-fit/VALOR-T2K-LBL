@@ -94,8 +94,6 @@ void write_contour_bins_to_textfile
   // make sure that min and max are at the bin centre and not at the low/high edge of the first/last bin
   int mixing23_nbins = 1 + TMath::CeilNint((mixing23_max - mixing23_min) / mixing23_step);
   int dm23sq_nbins   = 1 + TMath::CeilNint((dm23sq_max   - dm23sq_min  ) / dm23sq_step  );
-  TH2D * visualise_output_statonly = new TH2D("","",mixing23_nbins+1,mixing23_min,mixing23_max+mixing23_step,dm23sq_nbins+1,dm23sq_min,dm23sq_max+mixing23_step);
-  TH2D * visualise_output_staysyst = new TH2D("","",mixing23_nbins+1,mixing23_min,mixing23_max+mixing23_step,dm23sq_nbins+1,dm23sq_min,dm23sq_max+mixing23_step);
 
   TString outfilename;
 
@@ -177,6 +175,20 @@ void write_contour_bins_to_textfile
       }
     }
   }
+
+  //setup the visualisation histograms (with appropriate binning)
+  TH2D * visualise_output_statonly = 0;
+  TH2D * visualise_output_statsyst = 0;
+  TRandom3 rand(0);
+  if(convert_to_fc_surface_range) {
+    visualise_output_statonly = new TH2D("","",mixing23_nbins+1,mixing23_min,mixing23_max+mixing23_step,dm23sq_nbins+1,dm23sq_min,dm23sq_max+mixing23_step);
+    visualise_output_statsyst = new TH2D("","",mixing23_nbins+1,mixing23_min,mixing23_max+mixing23_step,dm23sq_nbins+1,dm23sq_min,dm23sq_max+mixing23_step);
+  }
+  else {
+    visualise_output_statonly = new TH2D("","",hContStatOnly[0]->GetNbinsX(),hContStatOnly[0]->GetXaxis()->GetXmin(),hContStatOnly[0]->GetXaxis()->GetXmax(),hContStatOnly[0]->GetNbinsY(),hContStatOnly[0]->GetYaxis()->GetXmin(),hContStatOnly[0]->GetYaxis()->GetXmax());
+    visualise_output_statsyst = new TH2D("","",hContStatSyst[0]->GetNbinsX(),hContStatSyst[0]->GetXaxis()->GetXmin(),hContStatSyst[0]->GetXaxis()->GetXmax(),hContStatSyst[0]->GetNbinsY(),hContStatSyst[0]->GetYaxis()->GetXmin(),hContStatSyst[0]->GetYaxis()->GetXmax());
+  }
+
 
   //if requested, convert the input dchisq surface histogram range to the 'FC' binning scheme
   int nbinx_addon_statsyst = 0, nbiny_addon_statsyst = 0;
@@ -267,7 +279,7 @@ void write_contour_bins_to_textfile
                       {
 			if(k >=1 && k <= hContStatOnly[h]->GetNbinsX() && l >=1 && l <= hContStatOnly[h]->GetNbinsY()) {
 			  StatOnlyBins << k+nbinx_addon_statonly << "\t" << l+nbiny_addon_statonly << "\n";
-			  visualise_output_statonly->SetBinContent(k+nbinx_addon_statonly,l+nbiny_addon_statonly,100);
+			  visualise_output_statonly->SetBinContent(k+nbinx_addon_statonly,l+nbiny_addon_statonly,rand.Uniform(10,100));
 			}
                       }
                     }
@@ -278,7 +290,7 @@ void write_contour_bins_to_textfile
                   //the if(m > yMaxBin) condition is to avoid duplicating the bin numbers                                                                                                   
 		    if(i >= 1 && i <= hContStatOnly[h]->GetNbinsX() && m >= 1 && m <= hContStatOnly[h]->GetNbinsY() && m > yMaxBin) {
 		      StatOnlyBins << i+nbinx_addon_statonly << "\t" << m+nbiny_addon_statonly <<"\n";
-		      visualise_output_statonly->SetBinContent(i+nbinx_addon_statonly,m+nbiny_addon_statonly,100);
+		      visualise_output_statonly->SetBinContent(i+nbinx_addon_statonly,m+nbiny_addon_statonly,rand.Uniform(10,100));
 		    }
                  }
                 yMaxBin = yZeroBin+bandWidth;
@@ -317,7 +329,7 @@ void write_contour_bins_to_textfile
 		      {
 			if(k >=1 && k <= hContStatOnly[h]->GetNbinsX() && l >=1 && l <= hContStatOnly[h]->GetNbinsY()) {
 			  StatOnlyBins << k+nbinx_addon_statonly << "\t" << l+nbiny_addon_statonly << "\n";
-			  visualise_output_statonly->SetBinContent(k+nbinx_addon_statonly,l+nbiny_addon_statonly,100);
+			  visualise_output_statonly->SetBinContent(k+nbinx_addon_statonly,l+nbiny_addon_statonly,rand.Uniform(10,100));
 			}
 		      }
 		    }
@@ -328,7 +340,7 @@ void write_contour_bins_to_textfile
 		  //the if(m > yMaxBin) condition is to avoid duplicating the bin numbers 
 		    if(i >= 1 && i <= hContStatOnly[h]->GetNbinsX() && m >= 1 && m <= hContStatOnly[h]->GetNbinsY() && m > yMaxBin) {
 		      StatOnlyBins << i+nbinx_addon_statonly << "\t" << m+nbiny_addon_statonly <<"\n";
-		      visualise_output_statonly->SetBinContent(i+nbinx_addon_statonly,m+nbiny_addon_statonly,100);
+		      visualise_output_statonly->SetBinContent(i+nbinx_addon_statonly,m+nbiny_addon_statonly,rand.Uniform(10,100));
 		    }
 		  }
 		  yMaxBin = yZeroBin+bandWidth;
@@ -401,7 +413,7 @@ void write_contour_bins_to_textfile
 		    if(k >=1 && k <= hContStatSyst[h]->GetNbinsX() && l >= 1 && l <= hContStatSyst[h]->GetNbinsY())
 		      {
 			StatSystBins << k+nbinx_addon_statsyst << "\t" << l+nbiny_addon_statsyst << "\n";
-			visualise_output_statsyst->SetBinContent(k+nbinx_addon_statsyst,l+nbiny_addon_statsyst,100);
+			visualise_output_statsyst->SetBinContent(k+nbinx_addon_statsyst,l+nbiny_addon_statsyst,rand.Uniform(10,100));
 		      }
 		    }
 		  }
@@ -413,7 +425,7 @@ void write_contour_bins_to_textfile
 		  if(i >= 1 && i <= hContStatSyst[h]->GetNbinsX() && m >= 1 && m <= hContStatSyst[h]->GetNbinsY() && m > yMaxBin)
 		    {
 		      StatSystBins << i+nbinx_addon_statsyst << "\t" << m+nbiny_addon_statsyst <<"\n";
-		      visualise_output_statsyst->SetBinContent(i+nbinx_addon_statsyst,m+nbiny_addon_statsyst,100);
+		      visualise_output_statsyst->SetBinContent(i+nbinx_addon_statsyst,m+nbiny_addon_statsyst,rand.Uniform(10,100));
 		    }
 		  }
 		    yMaxBin = yZeroBin+bandWidth;
@@ -452,7 +464,7 @@ void write_contour_bins_to_textfile
 		    if(k >=1 && k <= hContStatSyst[h]->GetNbinsX() && l>=1 && l <= hContStatSyst[h]->GetNbinsY())
 		      {
 			StatSystBins << k+nbinx_addon_statsyst << "\t" << l+nbiny_addon_statsyst << "\n";  
-			visualise_output_statsyst->SetBinContent(k+nbinx_addon_statsyst,l+nbiny_addon_statsyst,100);
+			visualise_output_statsyst->SetBinContent(k+nbinx_addon_statsyst,l+nbiny_addon_statsyst,rand.Uniform(10,100));
 		      }
 		    }
 	       	  }
@@ -464,7 +476,7 @@ void write_contour_bins_to_textfile
 		if(i >= 1 && i <= hContStatSyst[h]->GetNbinsX() && m >= 1 && m <= hContStatSyst[h]->GetNbinsY() && m > yMaxBin)
 		  {
 		    StatSystBins << i+nbinx_addon_statsyst << "\t" << m+nbiny_addon_statsyst <<"\n";
-		    visualise_output_statsyst->SetBinContent(i+nbinx_addon_statsyst,m+nbiny_addon_statsyst,100);
+		    visualise_output_statsyst->SetBinContent(i+nbinx_addon_statsyst,m+nbiny_addon_statsyst,rand.Uniform(10,100));
 		  }
 	        }
               yMaxBin = yZeroBin+bandWidth;	            
@@ -479,8 +491,28 @@ void write_contour_bins_to_textfile
   }//end of if(write_contours_with_systematics)
   
   TCanvas * c = new TCanvas();
-  visualise_output_statonly->Draw("colz");
-  c->SaveAs("visual_statonly.pdf");
-  visualise_output_statsyst->Draw("colz");
-  c->SaveAs("visual_statsyst.pdf");
+  if(write_contours_without_systematics) {
+    visualise_output_statonly->SetStats(0);
+    visualise_output_statonly->Draw("colz");
+    for(int i = 0; i < 4; i++) {
+      if((i==0 && !write_68cl) || (i==1 && !write_90cl) || (i==2 && !write_95cl) ||(i==3 && !write_99cl))
+	continue;
+      hContStatOnly[i]->SetContour(1);
+      hContStatOnly[i]->SetContourLevel(0,0);
+      hContStatOnly[i]->Draw("cont3same");
+    }
+    c->SaveAs("visual_statonly.pdf");
+  }
+  if(write_contours_with_systematics) {
+    visualise_output_statsyst->SetStats(0);
+    visualise_output_statsyst->Draw("colz");
+    for(int i = 0; i < 4; i++) {
+      if((i==0 && !write_68cl) || (i==1 && !write_90cl) || (i==2 && !write_95cl) ||(i==3 && !write_99cl))
+	continue;
+      hContStatSyst[i]->SetContour(1);
+      hContStatSyst[i]->SetContourLevel(0,0);
+      hContStatSyst[i]->Draw("cont3same");
+    }
+    c->SaveAs("visual_statsyst.pdf");
+  }
 }
