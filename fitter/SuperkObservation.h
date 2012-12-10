@@ -19,7 +19,7 @@
 #include <string>
 
 class TH1D;
-class TVirtualPad;
+class TObjArray;
 
 #include "Conventions.h"
 #include "SuperkExpectation.h"
@@ -50,10 +50,9 @@ public:
   TH1D*  ErecoSpectrum (t2kana::conv::SuperkSample_t s) const; 
   double*  ErecoSpectrumArray (t2kana::conv::SuperkSample_t s); 
 
-  // Draw.
-  // Set option to "1RmuEreco"  to show the reconstructed Ereco distributions
-  // Set option to ... to show ...
-  void Draw(TVirtualPad * c, Option_t * opt = "Ereco") const;
+  // Write datasets to the input container or to the input file
+  bool Write(TObjArray * data_collection, const char * tag = "data");
+  bool Write(const char * filename, const char * tag = "data", const char * option_file="update");
 
 private:
 

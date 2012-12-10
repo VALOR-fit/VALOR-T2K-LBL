@@ -90,6 +90,10 @@ public:
    // Print
    void PrintSystematicVariations(ostream & stream = std::cout) const;
 
+   // Write all predictions to the input container or to the input file
+   bool Write(TObjArray * data_collection, const char * tag = "pdf");
+   bool Write(const char * filename, const char * tag = "pdf", const char * option_file="update");
+
 private:
 
    // Initialise and clean-up

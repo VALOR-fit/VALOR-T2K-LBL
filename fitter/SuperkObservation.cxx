@@ -20,11 +20,12 @@
 #include <iostream>
 #include <sstream>
 
+#include <TFile.h>
+#include <TObjArray.h>
+#include <TXMLEngine.h>
 #include <TString.h>
 #include <TAxis.h>
 #include <TH1D.h>
-#include <TCanvas.h>
-#include <TXMLEngine.h>
 #include <TRandom3.h>
 #include <TMath.h>
 
@@ -52,65 +53,25 @@ SuperkObservation::~SuperkObservation(void)
   this->CleanUp();
 }
 //________________________________________________________________________________________
-double SuperkObservation::NumOfEvents(SuperkSample_t s) const
+void SuperkObservation::Init(void)
 {
-  double nev = 0;
-
-  if(s == kSKsUndefined) {
-    return nev;
+// Initialize priv data members
+//
+  for(int is=0; is<kns; is++) {
+    fErDistr[is] = 0;
+    for(int ir=0; ir<kNErecoBins1Rmu; ir++) {
+      fErDistrArray[is][ir-1] = 0;
+    }
   }
-
-  int is = util::ArrIdx::Instance()->SuperkSampleIdx(s);
-  for(int ir = 0; ir < kNErecoBins1Rmu; ir++)
-    nev += fErDistrArray[is][ir];
-
-#ifdef __show_num_of_events_mesg_debug__
-  cout << "Obs >> NEvents(" 
-       << util::AsString(s) << ") = " << nev << endl;
-#endif
-
-  return nev;
 }
 //________________________________________________________________________________________
-double SuperkObservation::NumOfEvents(double Er, SuperkSample_t s) const
+void SuperkObservation::CleanUp(void)
 {
-  double nev = 0;
-
-  if(s == kSKsUndefined) {
-    return nev;
+// De-allocate all memory taken up by this object
+//
+  for(int is=0; is<kns; is++) {
+    if(fErDistr[is]) delete fErDistr[is];
   }
-
-  int is = util::ArrIdx::Instance()->SuperkSampleIdx(s);
-  TH1D * h = fErDistr[is];
-  assert(h);
-  int bin = h->FindBin(Er);
-  nev = h->GetBinContent(bin);
-#ifdef __show_num_of_events_mesg_debug__
-  cout << "Obs >> NEvents(" 
-       << util::AsString(s) << ", Ereco = " << Er << " GeV) = " << nev << endl;
-#endif
-
-  return nev;
-}
-//________________________________________________________________________________________
-TH1D* SuperkObservation::ErecoSpectrum (t2kana::conv::SuperkSample_t s) const
-{
-  if(s == kSKsUndefined) {
-    return 0;
-  }
-
-  int is = util::ArrIdx::Instance()->SuperkSampleIdx(s);
-  return fErDistr[is];
-}
-//________________________________________________________________________________________
-double* SuperkObservation::ErecoSpectrumArray (t2kana::conv::SuperkSample_t s)
-{
-  if(s == kSKsUndefined) {
-    return 0;
-  }
-
-  int is = util::ArrIdx::Instance()->SuperkSampleIdx(s);
-  return fErDistrArray[is];
 }
 //________________________________________________________________________________________
 bool SuperkObservation::Read(string config_file, int data_set_id)
@@ -183,6 +144,67 @@ bool SuperkObservation::Read(string config_file, int data_set_id)
   delete xml;
 
   return true;
+}
+//________________________________________________________________________________________
+double SuperkObservation::NumOfEvents(SuperkSample_t s) const
+{
+  double nev = 0;
+
+  if(s == kSKsUndefined) {
+    return nev;
+  }
+
+  int is = util::ArrIdx::Instance()->SuperkSampleIdx(s);
+  for(int ir = 0; ir < kNErecoBins1Rmu; ir++)
+    nev += fErDistrArray[is][ir];
+
+#ifdef __show_num_of_events_mesg_debug__
+  cout << "Obs >> NEvents(" 
+       << util::AsString(s) << ") = " << nev << endl;
+#endif
+
+  return nev;
+}
+//________________________________________________________________________________________
+double SuperkObservation::NumOfEvents(double Er, SuperkSample_t s) const
+{
+  double nev = 0;
+
+  if(s == kSKsUndefined) {
+    return nev;
+  }
+
+  int is = util::ArrIdx::Instance()->SuperkSampleIdx(s);
+  TH1D * h = fErDistr[is];
+  assert(h);
+  int bin = h->FindBin(Er);
+  nev = h->GetBinContent(bin);
+#ifdef __show_num_of_events_mesg_debug__
+  cout << "Obs >> NEvents(" 
+       << util::AsString(s) << ", Ereco = " << Er << " GeV) = " << nev << endl;
+#endif
+
+  return nev;
+}
+//________________________________________________________________________________________
+TH1D* SuperkObservation::ErecoSpectrum (t2kana::conv::SuperkSample_t s) const
+{
+  if(s == kSKsUndefined) {
+    return 0;
+  }
+
+  int is = util::ArrIdx::Instance()->SuperkSampleIdx(s);
+  return fErDistr[is];
+}
+//________________________________________________________________________________________
+double* SuperkObservation::ErecoSpectrumArray (t2kana::conv::SuperkSample_t s)
+{
+  if(s == kSKsUndefined) {
+    return 0;
+  }
+
+  int is = util::ArrIdx::Instance()->SuperkSampleIdx(s);
+  return fErDistrArray[is];
 }
 //________________________________________________________________________________________
 bool SuperkObservation::CreateMockData(
@@ -272,48 +294,44 @@ bool SuperkObservation::CreateMockData(
   return applied_negevents_condition;
 }
 //________________________________________________________________________________________
-void SuperkObservation::Draw(TVirtualPad * c, Option_t * option) const
+bool SuperkObservation::Write(TObjArray * data_collection, const char * data_tag)
 {
-  if(!c) return;
+  if(!data_collection) return false;
 
-  c->cd();
-
-  TString opt = option;
   util::SetDefaultStyle();
 
-  if(opt.Contains("1RmuEreco")) { 
-     int idx = util::ArrIdx::Instance()->SuperkSampleIdx(kSKsFCFV1RingMuLike);
-     fErDistr[idx]->SetLineColor(kBlack);
-     fErDistr[idx]->SetLineWidth(2);
-     fErDistr[idx]->SetMarkerColor(kBlack);
-     fErDistr[idx]->SetMarkerStyle(20);
-     fErDistr[idx]->SetMarkerSize(1);
-     fErDistr[idx]->Draw("E");
-     fErDistr[idx]->GetXaxis()->SetTitle("E (GeV)");
-     fErDistr[idx]->GetYaxis()->SetTitle("Number of 1Rmu events");
+  for(int is=0; is<kns; is++) {
+    SuperkSample_t s = kSKSamples[is];
+    if(s == kSKsUndefined) continue;
+
+    TH1D * data = new TH1D(*fErDistr[is]);
+    data -> SetDirectory(0);
+    data -> SetMarkerStyle(20);
+    data -> SetMarkerSize(1);
+    data -> GetXaxis()->SetTitle("E_{reco} (GeV)");
+    data -> GetYaxis()->SetTitle(Form("Number of %s events",util::AsString(s).c_str()));
+    data -> SetName( 
+       Form( "%s_%s", 
+              data_tag,
+              util::AsStringCompact(s).c_str() ) 
+            );
+
+    data_collection -> Add(data);
   }
 
-  c->Update();
+  return true;
 }
 //________________________________________________________________________________________
-void SuperkObservation::Init(void)
+bool SuperkObservation::Write(
+  const char * filename, const char * data_tag, const char * option_file)
 {
-// Initialize priv data members
-//
-  for(int is=0; is<kns; is++) {
-    fErDistr[is] = 0;
-    for(int ir=0; ir<kNErecoBins1Rmu; ir++) {
-      fErDistrArray[is][ir-1] = 0;
-    }
-  }
-}
-//________________________________________________________________________________________
-void SuperkObservation::CleanUp(void)
-{
-// De-allocate all memory taken up by this object
-//
-  for(int is=0; is<kns; is++) {
-    if(fErDistr[is]) delete fErDistr[is];
-  }
+  TObjArray * array = new TObjArray();
+  this->Write(array, data_tag);
+
+  TFile f(filename, option_file);
+  array->Write();
+  f.Close();
+
+  return true;
 }
 //________________________________________________________________________________________

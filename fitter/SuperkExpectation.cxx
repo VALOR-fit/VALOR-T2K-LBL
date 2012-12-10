@@ -21,13 +21,14 @@
 #include <cstdlib>
 #include <iostream>
 
+#include <TSystem.h>
 #include <TFile.h>
+#include <TObjArray.h>
 #include <TTree.h>
 #include <TString.h>
 #include <TLegend.h>
 #include <TSpline.h>
 #include <TRandom3.h>
-#include <TSystem.h>
 
 #include "SuperkExpectation.h"
 #include "SuperkDetector.h"
@@ -57,6 +58,122 @@ SuperkExpectation::SuperkExpectation()
 SuperkExpectation::~SuperkExpectation(void)
 {
   this->CleanUp();
+}
+//________________________________________________________________________________________
+void SuperkExpectation::Init(void)
+{
+  fIsConfigured = false;
+
+  fSuperkDetector = 0;
+  fSuperkMC       = 0;
+  fNuFlux         = 0;
+  fNuXSec         = 0;
+  fFSI            = 0;
+  fBANFF          = 0;
+
+  for(int is=0; is<kns; is++) {
+    fPredictErecoSpectrumTot[is] = 0;
+    for(int im=0; im<knm; im++) {
+      fPredictErecoSpectrum[is][im] = 0;
+    }//im
+    for(int ir=0; ir<kNErecoBins1Rmu; ir++) {
+      fPredictErecoSpectrumArrayTot[is][ir] = 0;
+    }//ir
+  }//is
+}
+//________________________________________________________________________________________
+void SuperkExpectation::Book(void)
+{
+  for(int is = 0; is < kns; is++) {
+     SuperkSample_t s = kSKSamples[is];
+     if(s == kSKsUndefined) continue;
+     const int      n_ereco_bins    = util::NumErecoBins (s);
+     const double * ereco_bin_edges = util::ErecoBinEdges(s);
+     fPredictErecoSpectrumTot[is] = new TH1D("","", n_ereco_bins, ereco_bin_edges);
+     fPredictErecoSpectrumTot[is]->SetDirectory(0);
+     fPredictErecoSpectrumTot[is]->SetLineWidth(2);
+     fPredictErecoSpectrumTot[is]->SetLineColor(kBlack);
+     for(int im = 0; im < knm; im++) {
+         SuperkMode_t m = kSKReactionModes[is][im];
+         if(m == kSKmUndefined) continue;
+         fPredictErecoSpectrum[is][im] = new TH1D("","", n_ereco_bins, ereco_bin_edges);
+         fPredictErecoSpectrum[is][im]->SetDirectory(0);
+         util::SetDefaultSKSpectrumStyle(s,m,fPredictErecoSpectrum[is][im]);
+     }//m	
+  }//s
+}
+//________________________________________________________________________________________
+void SuperkExpectation::CleanUp(void)
+{
+  if (fSuperkDetector ) delete fSuperkDetector;
+  if (fSuperkMC       ) delete fSuperkMC;
+  if (fNuFlux         ) delete fNuFlux; 
+  if (fNuXSec         ) delete fNuXSec;
+  if (fBANFF          ) delete fBANFF;
+  if (fFSI            ) delete fFSI;
+
+  for(int is = 0; is < kns; is++) {
+     if (fPredictErecoSpectrumTot[is]) delete fPredictErecoSpectrumTot[is];
+     for(int im = 0; im < knm; im++) {
+       if (fPredictErecoSpectrum[is][im]) delete fPredictErecoSpectrum[is][im];
+     }
+  }
+}
+//________________________________________________________________________________________
+bool SuperkExpectation::Read(string config_file)
+{
+  cout << "Exp >> Reading config file: " << config_file << endl;
+
+  if(fIsConfigured) {
+    this->CleanUp();
+  } 
+
+  // Instantiate all necessary histograms
+  this->Book();
+
+  // Create components used for building-up the p.d.f & implemeting its systematic variation
+  fBANFF          = new BANFF;
+  fNuFlux         = new NuFlux; 
+  fNuXSec         = new NuXSec; 
+  fFSI            = new FSI; 
+  fSuperkDetector = new SuperkDetector; 
+  fSuperkMC       = new SuperkMC;
+
+  // Configure inter-dependencies.
+  fNuFlux   -> TellMeAboutTheBANFFfit   (fBANFF);
+  fNuXSec   -> TellMeAboutTheBANFFfit   (fBANFF);
+  fSuperkMC -> TellMeAboutTheDetector   (fSuperkDetector);
+  fSuperkMC -> TellMeAboutCrossSections (fNuXSec);
+  fSuperkMC -> TellMeAboutTheFlux       (fNuFlux);
+  fSuperkMC -> TellMeAboutFSI           (fFSI);
+
+  // Parse the input XML configuration file
+  TXMLEngine* xml = new TXMLEngine;   
+  XMLDocPointer_t xmldoc = xml->ParseFile(config_file.c_str());
+  if (xmldoc==0) {
+    cerr << "Exp >> " << "Can not parse input: " << config_file << endl;
+    delete xml;
+    return false;  
+  }
+  XMLNodePointer_t root_node = xml->DocGetRootElement(xmldoc);
+
+  // Configure each of the components 
+  if ( ! this->GetBANFF          () -> Read (xml, root_node) ) return false;
+  if ( ! this->GetNuFlux         () -> Read (xml, root_node) ) return false;
+  if ( ! this->GetNuXSec         () -> Read (xml, root_node) ) return false;
+  if ( ! this->GetFSI            () -> Read (xml, root_node) ) return false;
+  if ( ! this->GetSuperkDetector () -> Read (xml, root_node) ) return false;
+  if ( ! this->GetSuperkMC       () -> Read (xml, root_node) ) return false;
+
+  fIsConfigured = true;
+
+  // Release memory
+  xml->FreeDoc(xmldoc);
+  delete xml;
+
+  cout << "Exp >> Done configuring Superk spectrum predictor... \n\n" << endl;
+
+  return true;
 }
 //________________________________________________________________________________________
 bool SuperkExpectation::Generate(const PhysHypothesis & ph)
@@ -152,6 +269,67 @@ double* SuperkExpectation::CurrPredictedErecoSpectrumArray(t2kana::conv::SuperkS
     return 0;
   }
   return fPredictErecoSpectrumArrayTot[sidx];  
+}
+//________________________________________________________________________________________
+void SuperkExpectation::PrintSystematicVariations(ostream & stream) const
+{
+  cout << "Exp >> SuperK PDF tweaks: " << endl;
+  fSuperkDetector -> PrintSystematicVariations(stream);
+  fBANFF          -> PrintSystematicVariations(stream);
+  fNuXSec         -> PrintSystematicVariations(stream);
+  fFSI            -> PrintSystematicVariations(stream);
+}
+//________________________________________________________________________________________
+bool SuperkExpectation::Write(TObjArray * array, const char * pdf_tag)
+{
+  if(!array) return false;
+
+  util::SetDefaultStyle();
+
+  const char * append_begin = Form("%s_", pdf_tag);
+
+  for(int is=0; is<kns; is++) {
+    SuperkSample_t s = kSKSamples[is];
+    if(s == kSKsUndefined) continue;
+
+    TH1D * spectrum = 0;
+    TH1D * spectrum_mode[knm] = {0};
+
+     // copy & format Ereco spectra
+     spectrum = new TH1D(*this->CurrPredictedErecoSpectrum(s));
+     spectrum->SetDirectory (0);
+     for(int im = 0; im < knm; im++) {
+        SuperkMode_t m = kSKReactionModes[is][im];
+        if(m == kSKmUndefined) continue;
+        spectrum_mode[im] = new TH1D(*this->CurrPredictedErecoSpectrum(s,m));
+        spectrum_mode[im]->SetDirectory (0);
+     }//imode
+
+     // add spectra to the results array
+     spectrum->SetName(util::AsStringCompact(s,kSKmUndefined,append_begin).c_str());
+     array->Add(spectrum);
+     for(int im = 0; im < knm; im++) {
+        SuperkMode_t m = kSKReactionModes[is][im];
+        if(m == kSKmUndefined) continue;
+        spectrum_mode[im]->SetName(util::AsStringCompact(s,m,append_begin).c_str());
+        array->Add(spectrum_mode[im]);
+     }//im
+  }//is
+
+  return true;
+}
+//________________________________________________________________________________________
+bool SuperkExpectation::Write(
+  const char * filename, const char * pdf_tag, const char * option_file)
+{
+  TObjArray * array = new TObjArray();
+  this->Write(array,pdf_tag);
+
+  TFile f(filename, option_file);
+  array->Write();
+  f.Close();
+
+  return true;
 }
 //________________________________________________________________________________________
 void SuperkExpectation::ResetSystematicVariations(void)
@@ -592,131 +770,6 @@ void SuperkExpectation::TweakAllSKDetectorSystematics(void)
   this->GetSuperkDetector()->TweakEfficiency1RmuCCnonQE    (rand.Gaus(0.,1.));
   this->GetSuperkDetector()->TweakEfficiency1RmuNC         (rand.Gaus(0.,1.));
   this->GetSuperkDetector()->TweakEfficiency1RmuNuECC      (rand.Gaus(0.,1.));
-}
-//________________________________________________________________________________________
-void SuperkExpectation::PrintSystematicVariations(ostream & stream) const
-{
-  cout << "Exp >> SuperK PDF tweaks: " << endl;
-  fSuperkDetector -> PrintSystematicVariations(stream);
-  fBANFF          -> PrintSystematicVariations(stream);
-  fNuXSec         -> PrintSystematicVariations(stream);
-  fFSI            -> PrintSystematicVariations(stream);
-}
-//________________________________________________________________________________________
-bool SuperkExpectation::Read(string config_file)
-{
-  cout << "Exp >> Reading config file: " << config_file << endl;
-
-  if(fIsConfigured) {
-    this->CleanUp();
-  } 
-
-  // Instantiate all necessary histograms
-  this->Book();
-
-  // Create components used for building-up the p.d.f & implemeting its systematic variation
-  fBANFF          = new BANFF;
-  fNuFlux         = new NuFlux; 
-  fNuXSec         = new NuXSec; 
-  fFSI            = new FSI; 
-  fSuperkDetector = new SuperkDetector; 
-  fSuperkMC       = new SuperkMC;
-
-  // Configure inter-dependencies.
-  fNuFlux   -> TellMeAboutTheBANFFfit   (fBANFF);
-  fNuXSec   -> TellMeAboutTheBANFFfit   (fBANFF);
-  fSuperkMC -> TellMeAboutTheDetector   (fSuperkDetector);
-  fSuperkMC -> TellMeAboutCrossSections (fNuXSec);
-  fSuperkMC -> TellMeAboutTheFlux       (fNuFlux);
-  fSuperkMC -> TellMeAboutFSI           (fFSI);
-
-  // Parse the input XML configuration file
-  TXMLEngine* xml = new TXMLEngine;   
-  XMLDocPointer_t xmldoc = xml->ParseFile(config_file.c_str());
-  if (xmldoc==0) {
-    cerr << "Exp >> " << "Can not parse input: " << config_file << endl;
-    delete xml;
-    return false;  
-  }
-  XMLNodePointer_t root_node = xml->DocGetRootElement(xmldoc);
-
-  // Configure each of the components 
-  if ( ! this->GetBANFF          () -> Read (xml, root_node) ) return false;
-  if ( ! this->GetNuFlux         () -> Read (xml, root_node) ) return false;
-  if ( ! this->GetNuXSec         () -> Read (xml, root_node) ) return false;
-  if ( ! this->GetFSI            () -> Read (xml, root_node) ) return false;
-  if ( ! this->GetSuperkDetector () -> Read (xml, root_node) ) return false;
-  if ( ! this->GetSuperkMC       () -> Read (xml, root_node) ) return false;
-
-  fIsConfigured = true;
-
-  // Release memory
-  xml->FreeDoc(xmldoc);
-  delete xml;
-
-  cout << "Exp >> Done configuring Superk spectrum predictor... \n\n" << endl;
-
-  return true;
-}
-//________________________________________________________________________________________
-void SuperkExpectation::Init(void)
-{
-  fIsConfigured = false;
-
-  fSuperkDetector = 0;
-  fSuperkMC       = 0;
-  fNuFlux         = 0;
-  fNuXSec         = 0;
-  fFSI            = 0;
-  fBANFF          = 0;
-
-  for(int is=0; is<kns; is++) {
-    fPredictErecoSpectrumTot[is] = 0;
-    for(int im=0; im<knm; im++) {
-      fPredictErecoSpectrum[is][im] = 0;
-    }//im
-    for(int ir=0; ir<kNErecoBins1Rmu; ir++) {
-      fPredictErecoSpectrumArrayTot[is][ir] = 0;
-    }//ir
-  }//is
-}
-//________________________________________________________________________________________
-void SuperkExpectation::Book(void)
-{
-  for(int is = 0; is < kns; is++) {
-     SuperkSample_t s = kSKSamples[is];
-     if(s == kSKsUndefined) continue;
-     const int      n_ereco_bins    = util::NumErecoBins (s);
-     const double * ereco_bin_edges = util::ErecoBinEdges(s);
-     fPredictErecoSpectrumTot[is] = new TH1D("","", n_ereco_bins, ereco_bin_edges);
-     fPredictErecoSpectrumTot[is]->SetDirectory(0);
-     fPredictErecoSpectrumTot[is]->SetLineWidth(2);
-     fPredictErecoSpectrumTot[is]->SetLineColor(kBlack);
-     for(int im = 0; im < knm; im++) {
-         SuperkMode_t m = kSKReactionModes[is][im];
-         if(m == kSKmUndefined) continue;
-         fPredictErecoSpectrum[is][im] = new TH1D("","", n_ereco_bins, ereco_bin_edges);
-         fPredictErecoSpectrum[is][im]->SetDirectory(0);
-         util::SetDefaultSKSpectrumStyle(s,m,fPredictErecoSpectrum[is][im]);
-     }//m	
-  }//s
-}
-//________________________________________________________________________________________
-void SuperkExpectation::CleanUp(void)
-{
-  if (fSuperkDetector ) delete fSuperkDetector;
-  if (fSuperkMC       ) delete fSuperkMC;
-  if (fNuFlux         ) delete fNuFlux; 
-  if (fNuXSec         ) delete fNuXSec;
-  if (fBANFF          ) delete fBANFF;
-  if (fFSI            ) delete fFSI;
-
-  for(int is = 0; is < kns; is++) {
-     if (fPredictErecoSpectrumTot[is]) delete fPredictErecoSpectrumTot[is];
-     for(int im = 0; im < knm; im++) {
-       if (fPredictErecoSpectrum[is][im]) delete fPredictErecoSpectrum[is][im];
-     }
-  }
 }
 //________________________________________________________________________________________
 void SuperkExpectation::SetNuisanceParams(const FitParamList & fp, bool all_banff_fit)
