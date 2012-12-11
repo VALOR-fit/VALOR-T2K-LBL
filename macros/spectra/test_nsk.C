@@ -100,7 +100,7 @@ void test_nsk
 
   //restore banff
   TVectorD twkv(skexp.GetBANFF()->BestFitValues());
-  skexp.GetBANFF()->Tweak(true,&twkv,1);
+  skexp.GetBANFF()->Tweak(true,&twkv);
   // oscillate!
   ph.SetCurrValue(t2kana::conv::kPhypMixing23, input_mixing23);
   ph.SetCurrValue(t2kana::conv::kPhypMixing13, input_mixing13);

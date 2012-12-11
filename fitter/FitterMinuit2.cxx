@@ -191,14 +191,6 @@ void FitterMinuit2::ConstructCovMatrix(void)
       total_covariance(ipf, ipf) = 1;
     else if(p == kNuisXSecBindE)
       total_covariance(ipf, ipf) = 1;
-#if BANFF_BINS <= 1
-    else if(p == kNuisXSecNormCCQEE1)
-      total_covariance(ipf, ipf) = 1;
-    else if(p == kNuisXSecNormCCQEE2)
-      total_covariance(ipf, ipf) = 1;
-    else if(p == kNuisXSecNormCC1piE1)
-      total_covariance(ipf, ipf) = 1;
-#endif
     else if(p == kNuisXSecNormCCcoh)
       total_covariance(ipf, ipf) = 1;
     else if(p == kNuisXSecNormNC1piC)
@@ -209,24 +201,12 @@ void FitterMinuit2::ConstructCovMatrix(void)
       total_covariance(ipf, ipf) = 1;
     else if(p == kNuisXSecNormAntiNuToNu)
       total_covariance(ipf, ipf) = 1;
-    else if(p == kNuisXSecENuShape)
-      total_covariance(ipf, ipf) = 1;
-    else if(p == kNuisXSecNormNCcoh)
-      total_covariance(ipf, ipf) = 1;
     //FSI
     else if(util::ArrIdx::Instance()->FSISystIdx(p) >= 0) {
       if(util::ArrIdx::Instance()->FSISystIdx(p) == 0) {
 	const TMatrixD & sub_cov = fFitInputs->Expectation().GetFSI()->CovMatrix();
 	total_covariance.SetSub(ipf, ipf, sub_cov);
       }
-    }
-    //UnBANFF
-    else if(util::ArrIdx::Instance()->UnBANFFSystIdx(p) >= 0) {
-      total_covariance(ipf, ipf) = 1;
-    }
-    //EDBANFF
-    else if(util::ArrIdx::Instance()->EDBANFFSystIdx(p) >= 0) {
-      total_covariance(ipf, ipf) = fFitInputs->Expectation().GetBANFF()->EigenDecompEigenValue(p);
     }
     else
       continue;

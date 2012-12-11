@@ -165,30 +165,20 @@ void test_systematic_error_propagation_all
   systematics.push_back("banff_maqe");
   systematics.push_back("banff_mares");
   systematics.push_back("banff_ccqeE0");
-  
   systematics.push_back("banff_ccqeE1");
   systematics.push_back("banff_ccqeE2");
-
   systematics.push_back("banff_cc1piE0");
-
   systematics.push_back("banff_cc1piE1");
-
-  //systematics.push_back("banff_nc1pi0");
 
   systematics.push_back("xsec_pf");
   systematics.push_back("xsec_sf");
   systematics.push_back("xsec_wshape");
   systematics.push_back("xsec_shape_ccoth");
   systematics.push_back("xsec_pilessdelta");
-  systematics.push_back("xsec_enushape");
   systematics.push_back("xsec_bindE");
-  //systematics.push_back("xsec_norm_ccqeE1");
-  //systematics.push_back("xsec_norm_ccqeE2");
-  //systematics.push_back("xsec_norm_cc1piE1");
 
   systematics.push_back("xsec_norm_cccoh");
   systematics.push_back("xsec_norm_nc1piC");
-  systematics.push_back("xsec_norm_nccoh");
   systematics.push_back("xsec_norm_ncoth");
   systematics.push_back("xsec_norm_nuetonumu");
   systematics.push_back("xsec_norm_antinutonu");
@@ -202,13 +192,6 @@ void test_systematic_error_propagation_all
   systematics.push_back("sk_1Rmu_nc_eff");
   systematics.push_back("sk_1Rmu_nuecc_eff");
   systematics.push_back("sk_energy_scale");
-
-  /*
-  //systematics.push_back("unbanff"); //not supported in this macro
-  for(int ib = 0; ib < conv::kNumOfParamsInBANFFfit; ib++) {
-    systematics.push_back(Form("unbanff_%02d",ib));
-  }
-  */
 
   bool use_tex = true;
 
@@ -233,10 +216,6 @@ void test_systematic_error_propagation_all
       show_sk_ccqe_spectral_info_ereco = false;
     //banff flux
     else if(systematic.find("banff_") == 0) {
-      show_sk_spectral_info_etrue_flux_binning = true;
-    }
-    //unbanff
-    else if(systematic.find("unbanff_") == 0) {
       show_sk_spectral_info_etrue_flux_binning = true;
     }
     //xsec

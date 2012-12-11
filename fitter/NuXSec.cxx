@@ -79,16 +79,9 @@ void NuXSec::Init(void)
   fWshapeTwkDial        = 0;
   fShapeCCothTwkDial    = 0;
   fPiLessDeltaTwkDial   = 0;
-  fENuShapeTwkDial      = 0;
   fBindETwkDial         = 0;
-#if BANFF_BINS <= 1
-  fNormCCQEE1TwkDial    = 0;
-  fNormCCQEE2TwkDial    = 0;
-  fNormCC1piE1TwkDial   = 0;
-#endif
   fNormCCcohTwkDial     = 0;
   fNormNC1piCTwkDial    = 0;
-  fNormNCcohTwkDial     = 0;
   fNormNCothTwkDial     = 0;
   fNormNuEToNuMuTwkDial = 0;
 
@@ -112,31 +105,19 @@ bool NuXSec::ReadSplines(TXMLEngine* xml, XMLNodePointer_t root_node)
 #ifdef __show_init_mesg_info__
   cout << "Exp/NuXSec >> Reading neutrino generator inputs (splines only) from input XML file." << endl;
 #endif
-#if SPLINE_TYPE == -1
-  cout << "Exp/NuXSec >> Special mode turned on in which splines are not read, and weights involving splines are set to 1" << endl;
-  return true;
-#endif
+
   //
   // Load cross-section weight splines
   //
 
-#if SPLINE_TYPE == 0
-  TFile * spline_file_numu = util::XML2TFile(xml,root_node,"xsec/weight_splines/numu");
-  assert(spline_file_numu);
-  TFile * spline_file_numubar = util::XML2TFile(xml,root_node,"xsec/weight_splines/numubar");
-  assert(spline_file_numubar);
-  TFile * spline_file_nue = util::XML2TFile(xml,root_node,"xsec/weight_splines/nue");
-  assert(spline_file_nue);
-  TFile * spline_file_nuebar = util::XML2TFile(xml,root_node,"xsec/weight_splines/nuebar");
-  assert(spline_file_nuebar);
-  TFile * spline_file_signue = util::XML2TFile(xml,root_node,"xsec/weight_splines/signue");
-  assert(spline_file_signue);
+#if SPLINE_TYPE == -1
+  cout << "Exp/NuXSec >> Special mode turned on in which splines are not read, and weights involving splines are set to 1" << endl;
+  return true;
 #elif SPLINE_TYPE == 1
   TFile * spline_file = util::XML2TFile(xml,root_node,"xsec/weight_splines");
   assert(spline_file);
 #endif
 
-#if SPLINE_TYPE != -1
   // loop over samples
   for(int is = 0; is < kns; is++) {
     SuperkSample_t s = kSKSamples[is];
@@ -145,21 +126,6 @@ bool NuXSec::ReadSplines(TXMLEngine* xml, XMLNodePointer_t root_node)
     for(int im = 0; im < knm; im++) {
        SuperkMode_t m = kSKReactionModes[is][im];
        if(m == kSKmUndefined) continue;
-
-#if SPLINE_TYPE == 0
-       // get correct spline file
-       TFile * spline_file = 0;
-       if(IsNuMu(m))
-	 spline_file = spline_file_numu;
-       else if(IsNuMuBar(m))
-	 spline_file = spline_file_numubar;
-       else if(IsNuE(m))
-	 spline_file = spline_file_nue;
-       else if(IsNuEBar(m))
-	 spline_file = spline_file_nuebar;
-       else if(IsSignalNuE(m))
-	 spline_file = spline_file_signue;
-#endif
 
        // loop over cross-section systematic parameters
        for(int ip = 0; ip < kNumOfXSecSyst; ip++) {
@@ -188,21 +154,12 @@ bool NuXSec::ReadSplines(TXMLEngine* xml, XMLNodePointer_t root_node)
 #endif
                 // Build spline name
                 ostringstream splname;
-#if SPLINE_TYPE == 0
-		vector<string> mode = util::Tokens(util::AsStringCompact_Japan(m), "_");
-		splname << "spl_"
-                        << util::AsStringCompact_Japan(p) << "_"
-                        << mode[1] << "_"
-                        << "enu"  << it << "_" 
-                        << "erec" << ir;
-#elif SPLINE_TYPE == 1
                 splname << "spl_"
                         << util::AsStringCompact(s) << "_"
                         << util::AsStringCompact(m) << "_"
                         << util::AsStringCompact(p) << "_"
                         << ir << "_" 
                         << it;
-#endif
 
 #ifdef __show_init_mesg_debug__
                 cout << "Exp/NuXSec >> Loading cross-section weight spline: " 
@@ -216,9 +173,6 @@ bool NuXSec::ReadSplines(TXMLEngine* xml, XMLNodePointer_t root_node)
 #ifdef __show_init_mesg_debug__
 		    cout << "Exp/NuXSec >> No events or spline for: "
 			 << splname.str()
-#if SPLINE_TYPE == 0
-			 << ", " << mode[0]
-#endif
 			 << endl;
 #endif
 		    continue;
@@ -226,15 +180,11 @@ bool NuXSec::ReadSplines(TXMLEngine* xml, XMLNodePointer_t root_node)
 		  else {
 		    cerr << "Exp/NuXSec >> Null cross-section weight spline: " 
 			 << splname.str() 
-#if SPLINE_TYPE == 0
-			 << ", " << mode[0]
-#endif
 			 << " Ereco: " << Ereco << ", Etrue: " << Etrue << endl;
 		    exit(1); 
 		  }
 		}
 		else {
-#if SPLINE_TYPE != 0 // KIT splines exist for empty bins, so don't do this test
 		  if(!bin_is_not_empty) {
 		    cerr << "Exp/NuXSec >> Spline exists for empty bin: "
 			 << splname.str() 
@@ -243,11 +193,9 @@ bool NuXSec::ReadSplines(TXMLEngine* xml, XMLNodePointer_t root_node)
 			 << endl;
 		    exit(1);
 		  }
-#endif
 		}
 
 #ifndef __skip_unexpected_spline_test_in_readsplines__
-#if SPLINE_TYPE == 1 // number of events information is only available in VaLOR splines
 		string spln(spl->GetTitle());
 		spln.erase(spln.end()-7,spln.end());
 		int nevents_spl = atoi(spln.c_str());
@@ -260,24 +208,13 @@ bool NuXSec::ReadSplines(TXMLEngine* xml, XMLNodePointer_t root_node)
 		       << "; Ereco: " << Ereco << ", Etrue: " << Etrue << endl;
 		  exit(1);
 		}
-#endif
 #endif	
 
                 // Get index for current weight spline
                 int idx = this->WghtSplineIdx(p,s,m,Ereco,Etrue);     
-//		if(idx == -2) {
-//#ifdef __show_init_mesg_debug__
-//                cout << "Exp/NuXSec >> Skipping spline due to invalid Etrue bin for Etrue: " 
-//                     << Etrue << endl;
-//#endif
-//		  continue;
-//		}
 		if(idx < 0) {
 		  cerr << "Exp/NuXSec >> WghtSplineIdx returned invalid index for spline: " 
                        << splname.str()
-#if SPLINE_TYPE == 0
-			 << ", " << mode[0]
-#endif
 			 << endl;
 		  exit(1);
 		}
@@ -285,10 +222,8 @@ bool NuXSec::ReadSplines(TXMLEngine* xml, XMLNodePointer_t root_node)
 #ifdef __show_init_mesg_debug__
                 cout << "Exp/NuXSec >> Storing cross-section weight spline at slot: " 
                      << idx << endl;
-#if SPLINE_TYPE == 1
 		cout << "Exp/NuXSec >> Spline thinks there are " 
 		     << spl->GetTitle() << endl;
-#endif
 #endif
                 fXSecWghtSpl[idx] = new TSpline3(*spl);
 
@@ -304,8 +239,6 @@ bool NuXSec::ReadSplines(TXMLEngine* xml, XMLNodePointer_t root_node)
        }//p
     }//m
   }//s
-
-#endif //spline_type != -1
 
 #ifdef __show_init_mesg_info__
   cout << "Exp/NuXSec >> Done reading neutrino cross-section inputs (splines only)!" << endl;
@@ -345,20 +278,10 @@ bool NuXSec::Read(TXMLEngine* xml, XMLNodePointer_t root_node)
      }
   }
 
-#if BANFF_BINS <= 1
-  fNormCCQEE1RelErr =
-    util::XML2Dbl(xml,root_node,"xsec/normalisations/ccqee1");
-  fNormCCQEE2RelErr =
-    util::XML2Dbl(xml,root_node,"xsec/normalisations/ccqee2");
-  fNormCC1piE1RelErr =
-    util::XML2Dbl(xml,root_node,"xsec/normalisations/cc1pie1");
-#endif
   fNormCCcohRelErr =
     util::XML2Dbl(xml,root_node,"xsec/normalisations/cccoh");
   fNormNC1piCRelErr =
     util::XML2Dbl(xml,root_node,"xsec/normalisations/nc1piC");
-  fNormNCcohRelErr =
-    util::XML2Dbl(xml,root_node,"xsec/normalisations/nccoh");
   fNormNCothRelErr =
     util::XML2Dbl(xml,root_node,"xsec/normalisations/ncoth");
   fNormNuEToNuMuRelErr =
@@ -420,7 +343,6 @@ double NuXSec::FinTuningWght_1p(
 // - BANFF param, CCQE   normalization, 3.5 - 30.0 GeV (Etrue)
 // - BANFF param, CC1pi  normalization, 0 - 2.5 GeV (Etrue)
 // - BANFF param, CC1pi  normalization, 2.5 - 30.0 GeV (Etrue)
-// - BANFF param, NC1pi0 normalization
 //
 
   // if( ! this->ApplySyst(p,s,m,Ereco,Etrue) ) return 1.; // check already made in function that calls this one
@@ -443,9 +365,9 @@ double NuXSec::FinTuningWght_1p(
        double tb = fBANFF->BestFitValue(p);
        double relerr = 0;       
        if(p == kNuisBANFFMAQE)
-#if BANFF_BINS <= 3
+#ifndef ONEOVERMAQE
 	 relerr = fSplineMAQERelErr;
-#elif BANFF_BINS == 4
+#else
 	 relerr = fSpline1overMAQE2RelErr;
 #endif
        else if(p == kNuisBANFFMARES)
@@ -465,17 +387,10 @@ double NuXSec::FinTuningWght_1p(
   //  
   else
   if(p == kNuisBANFFCCQEE0
-#if BANFF_BINS >= 2
      || p == kNuisBANFFCCQEE1
      || p == kNuisBANFFCCQEE2
-#endif
      || p == kNuisBANFFCC1piE0
-#if BANFF_BINS >= 2
      || p == kNuisBANFFCC1piE1
-#endif
-#if BANFF_BINS <= 2
-     || p == kNuisBANFFNC1pi0
-#endif
      )
   {
      wght = fBANFF->BestFitValue(p);
@@ -560,18 +475,9 @@ double NuXSec::SystWght_1p(
   PhysParamId_t p, SuperkSample_t s, SuperkMode_t m, double Ereco, double Etrue) const
 {
 //
-// This method provides weights to account for systematic variations to the BANFF params.
+// This method provides weights to account for systematic variations to the XSec params.
 // The weights are relative to MC reweighted to the BANFF best-fit point.
-// It handles the 4 BANFF cross-section parameters which are correlated with the BANFF 
-// flux parameters. In the current incarnation of the BANFF fit, these parameters are:
-// - BANFF param, M_{A} QE
-// - BANFF param, M_{A} RES
-// - BANFF param, CCQE   normalization, 0 - 1.5 GeV (Etrue)
-// - BANFF param, CCQE   normalization, 1.5 - 3.5 GeV (Etrue)
-// - BANFF param, CCQE   normalization, 3.5 - 30.0 GeV (Etrue)
-// - BANFF param, CC1pi  normalization, 0 - 2.5 GeV (Etrue)
-// - BANFF param, CC1pi  normalization, 2.5 - 30.0 GeV (Etrue)
-// - BANFF param, NC1pi0 normalization
+// It handles both the BANFF and uncorelated XSec params.
 //
 
   // if( ! this->ApplySyst(p,s,m,Ereco,Etrue) ) return 1.; // check already made in function that calls this one
@@ -595,9 +501,9 @@ double NuXSec::SystWght_1p(
        double tc = fBANFF->CurrentValue(p);   
        double relerr = 0;
        if(p == kNuisBANFFMAQE)
-#if BANFF_BINS <= 3
+#ifndef ONEOVERMAQE
 	 relerr = fSplineMAQERelErr;
-#elif BANFF_BINS == 4
+#else
 	 relerr = fSpline1overMAQE2RelErr;
 #endif
        else if(p == kNuisBANFFMARES)
@@ -619,17 +525,10 @@ double NuXSec::SystWght_1p(
   // 
   else
   if(p == kNuisBANFFCCQEE0
-#if BANFF_BINS >= 2
      || p == kNuisBANFFCCQEE1
      || p == kNuisBANFFCCQEE2
-#endif
      || p == kNuisBANFFCC1piE0
-#if BANFF_BINS >= 2
      || p == kNuisBANFFCC1piE1
-#endif
-#if BANFF_BINS <= 2
-     || p == kNuisBANFFNC1pi0
-#endif
      )
   {
      wght = fBANFF->CurrentValue(p) / fBANFF->BestFitValue(p);
@@ -643,7 +542,7 @@ double NuXSec::SystWght_1p(
   //
   else
   if(p == kNuisXSecFermiMom || p == kNuisXSecSpecFunc || p == kNuisXSecWshape || p == kNuisXSecShapeCCoth ||
-     p == kNuisXSecPiLessDelta || p == kNuisXSecENuShape || p == kNuisXSecBindE)
+     p == kNuisXSecPiLessDelta || p == kNuisXSecBindE)
   {
 #if SPLINE_TYPE == -1
     return wght;
@@ -669,10 +568,7 @@ double NuXSec::SystWght_1p(
   //
   else
   if(
-#if BANFF_BINS <= 1
-     p == kNuisXSecNormCCQEE1 || p == kNuisXSecNormCCQEE2 || p == kNuisXSecNormCC1piE1 ||
-#endif
-     p == kNuisXSecNormCCcoh || p == kNuisXSecNormNC1piC || p == kNuisXSecNormNCcoh ||
+     p == kNuisXSecNormCCcoh || p == kNuisXSecNormNC1piC ||
      p == kNuisXSecNormNCoth || p == kNuisXSecNormNuEToNuMu || p == kNuisXSecNormAntiNuToNu)
   {
     wght = 1 + (this->CurrentValue(p) * this->RelativeError(p));
@@ -745,31 +641,14 @@ double NuXSec::CurrentValue(PhysParamId_t p) const
     case kNuisXSecPiLessDelta:
       return fPiLessDeltaTwkDial;
       break;
-    case kNuisXSecENuShape:
-      return fENuShapeTwkDial;
-      break;
     case kNuisXSecBindE:
       return fBindETwkDial;
       break;
-#if BANFF_BINS <= 1
-    case kNuisXSecNormCCQEE1:
-      return fNormCCQEE1TwkDial;
-      break;
-    case kNuisXSecNormCCQEE2:
-      return fNormCCQEE2TwkDial;
-      break;
-    case kNuisXSecNormCC1piE1:
-      return fNormCC1piE1TwkDial;
-      break;
-#endif
     case kNuisXSecNormCCcoh:
       return fNormCCcohTwkDial;
       break;
     case kNuisXSecNormNC1piC:
       return fNormNC1piCTwkDial;
-      break;
-    case kNuisXSecNormNCcoh:
-      return fNormNCcohTwkDial;
       break;
     case kNuisXSecNormNCoth:
       return fNormNCothTwkDial;
@@ -783,17 +662,10 @@ double NuXSec::CurrentValue(PhysParamId_t p) const
     case kNuisBANFFMAQE:
     case kNuisBANFFMARES:
     case kNuisBANFFCCQEE0:
-#if BANFF_BINS >= 2
     case kNuisBANFFCCQEE1:
     case kNuisBANFFCCQEE2:
-#endif
     case kNuisBANFFCC1piE0:
-#if BANFF_BINS >= 2
     case kNuisBANFFCC1piE1:
-#endif
-#if BANFF_BINS <= 2
-    case kNuisBANFFNC1pi0:
-#endif
       return fBANFF->CurrentValue(p);
       break;
     default:
@@ -805,25 +677,11 @@ double NuXSec::CurrentValue(PhysParamId_t p) const
 double NuXSec::RelativeError(PhysParamId_t p) const
 {
   switch(p) {
-#if BANFF_BINS <= 1
-    case kNuisXSecNormCCQEE1:
-      return fNormCCQEE1RelErr;
-      break;
-    case kNuisXSecNormCCQEE2:
-      return fNormCCQEE2RelErr;
-      break;
-    case kNuisXSecNormCC1piE1:
-      return fNormCC1piE1RelErr;
-      break;
-#endif
     case kNuisXSecNormCCcoh:
       return fNormCCcohRelErr;
       break;
     case kNuisXSecNormNC1piC:
       return fNormNC1piCRelErr;
-      break;
-    case kNuisXSecNormNCcoh:
-      return fNormNCcohRelErr;
       break;
     case kNuisXSecNormNCoth:
       return fNormNCothRelErr;
@@ -835,9 +693,9 @@ double NuXSec::RelativeError(PhysParamId_t p) const
       return fNormAntiNuToNuRelErr;
       break;
     case kNuisBANFFMAQE:
-#if BANFF_BINS <= 3
+#ifndef ONEOVERMAQE
 	 return fSplineMAQERelErr;
-#elif BANFF_BINS == 4
+#else
 	 return fSpline1overMAQE2RelErr;
 #endif
       break;
@@ -859,16 +717,9 @@ void NuXSec::PrintSystematicVariations(ostream & stream) const
   stream << "         >> W-shape             " << fWshapeTwkDial        << endl;
   stream << "         >> CC-oth shape        " << fShapeCCothTwkDial    << endl;
   stream << "         >> Pi-less delta decay " << fPiLessDeltaTwkDial   << endl;
-  //stream << "         >> CC1pi ENu Shape     " << fENuShapeTwkDial      << endl;
   stream << "         >> Binding energy      " << fBindETwkDial         << endl;
-#if BANFF_BINS <= 1
-  stream << "         >> CCQE bin1 norm      " << fNormCCQEE1TwkDial    << endl;
-  stream << "         >> CCQE bin2 norm      " << fNormCCQEE2TwkDial    << endl;
-  stream << "         >> CC1pi bin1 norm     " << fNormCC1piE1TwkDial   << endl;
-#endif
   stream << "         >> CC-coh norm         " << fNormCCcohTwkDial     << endl;
   stream << "         >> NC-1piC norm        " << fNormNC1piCTwkDial    << endl;
-  //stream << "         >> NC-coh norm         " << fNormNCcohTwkDial     << endl;
   stream << "         >> NC-oth norm         " << fNormNCothTwkDial     << endl;
   stream << "         >> NuE to NuMu norm    " << fNormNuEToNuMuTwkDial << endl;
   stream << "         >> AntiNu to Nu norm   " << fNormAntiNuToNuTwkDial<< endl;
@@ -1183,16 +1034,9 @@ double NuXSec::ChisqPenalty(bool all_syst) const
   if (fWshapeTwkDial)         chisq_penalty += fWshapeTwkDial*fWshapeTwkDial;
   if (fShapeCCothTwkDial)     chisq_penalty += fShapeCCothTwkDial*fShapeCCothTwkDial;
   if (fPiLessDeltaTwkDial)    chisq_penalty += fPiLessDeltaTwkDial*fPiLessDeltaTwkDial;
-  //if (fENuShapeTwkDial)       chisq_penalty += fENuShapeTwkDial*fENuShapeTwkDial; // not used in numu analysis!
   if (fBindETwkDial)          chisq_penalty += fBindETwkDial*fBindETwkDial;
-#if BANFF_BINS <= 1
-  if (fNormCCQEE1TwkDial)     chisq_penalty += fNormCCQEE1TwkDial*fNormCCQEE1TwkDial;
-  if (fNormCCQEE2TwkDial)     chisq_penalty += fNormCCQEE2TwkDial*fNormCCQEE2TwkDial;
-  if (fNormCC1piE1TwkDial)    chisq_penalty += fNormCC1piE1TwkDial*fNormCC1piE1TwkDial;
-#endif
   if (fNormCCcohTwkDial)      chisq_penalty += fNormCCcohTwkDial*fNormCCcohTwkDial;
   if (fNormNC1piCTwkDial)     chisq_penalty += fNormNC1piCTwkDial*fNormNC1piCTwkDial;
-  //if (fNormNCcohTwkDial)      chisq_penalty += fNormNCcohTwkDial*fNormNCcohTwkDial; // not used in numu analysis!
   if (fNormNCothTwkDial)      chisq_penalty += fNormNCothTwkDial*fNormNCothTwkDial;
   if (fNormNuEToNuMuTwkDial)  chisq_penalty += fNormNuEToNuMuTwkDial*fNormNuEToNuMuTwkDial;
   if (fNormAntiNuToNuTwkDial) chisq_penalty += fNormAntiNuToNuTwkDial*fNormAntiNuToNuTwkDial;

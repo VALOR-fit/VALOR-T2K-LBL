@@ -1905,7 +1905,7 @@ void SuperkMC::NevDebug(SKMCTemplateType_t t, string name)
       nsk += mctempl->Integral();
 
       //fill a 1D ereco spectrum
-      TH1D * hrec = new TH1D(Form("erec_int_%s",AsStringCompact_Japan(m).c_str()), Form("erec_int_%s",AsStringCompact_Japan(m).c_str()), erecobins, erecobinedges);
+      TH1D * hrec = new TH1D(Form("erec_int_%s",AsStringCompact_KIT(m).c_str()), Form("erec_int_%s",AsStringCompact_KIT(m).c_str()), erecobins, erecobinedges);
       // loop over Ereco
       for(int ir = 1; ir <= hrec->GetNbinsX(); ir++) {
 	//find low and high of ereco for current bin
@@ -1922,7 +1922,7 @@ void SuperkMC::NevDebug(SKMCTemplateType_t t, string name)
       delete hrec;
 
       //fill a 1D ereco spectrum (fine binning)
-      TH1D * hrecf = new TH1D(Form("erec_int_%s_fine",AsStringCompact_Japan(m).c_str()), Form("erec_int_%s",AsStringCompact_Japan(m).c_str()), mctempl->GetNbinsX(), mctempl->GetXaxis()->GetXbins()->GetArray());
+      TH1D * hrecf = new TH1D(Form("erec_int_%s_fine",AsStringCompact_KIT(m).c_str()), Form("erec_int_%s",AsStringCompact_KIT(m).c_str()), mctempl->GetNbinsX(), mctempl->GetXaxis()->GetXbins()->GetArray());
       // loop over Ereco
       for(int ir = 1; ir <= hrecf->GetNbinsX(); ir++) {
 	//find low and high of ereco for current bin
@@ -1939,7 +1939,7 @@ void SuperkMC::NevDebug(SKMCTemplateType_t t, string name)
       delete hrecf;
 
       //fill a 1D etrue spectrum
-      TH1D * htru = new TH1D(Form("enu_int_%s",AsStringCompact_Japan(m).c_str()), Form("enu_int_%s",AsStringCompact_Japan(m).c_str()), util::NumVariableXsEtrueBins(s,m), util::VariableXsEtrueBinEdges(s,m));
+      TH1D * htru = new TH1D(Form("enu_int_%s",AsStringCompact_KIT(m).c_str()), Form("enu_int_%s",AsStringCompact_KIT(m).c_str()), util::NumVariableXsEtrueBins(s,m), util::VariableXsEtrueBinEdges(s,m));
       // loop over Etrue
       for(int it = 1; it <= htru->GetNbinsX(); it++) {
 	//find low and high of etrue for current bin

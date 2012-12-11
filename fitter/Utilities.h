@@ -97,9 +97,9 @@ namespace util {
   string AsStringCompact (conv::SuperkSample_t s, conv::SuperkMode_t m, string append_begin="", string append_end="");
   string AsStringCompact (conv::SuperkSample_t     s);
   string AsStringCompact (conv::SuperkMode_t       m);
-  string AsStringCompact_Japan (conv::SuperkMode_t m);
+  string AsStringCompact_KIT (conv::SuperkMode_t m);
   string AsStringCompact (conv::PhysParamId_t      p);
-  string AsStringCompact_Japan (conv::PhysParamId_t p);
+  string AsStringCompact_KIT (conv::PhysParamId_t p);
   string Pdg2String      (int pdg_code);
 
   conv::PhysHypothesis_t   PhysHypFromString         (string h);
@@ -229,10 +229,8 @@ namespace util {
     int SuperkModeIdx   (conv::SuperkSample_t s, conv::SuperkMode_t m) { return fSuperkModeIdx  [s][m]; }
     int XSecSystIdx     (conv::PhysParamId_t p)                        { return fXSecSystIdx    [p];    }
     int BANFFSystIdx    (conv::PhysParamId_t p)                        { return fBANFFSystIdx   [p];    }
-    int UnBANFFSystIdx  (conv::PhysParamId_t p)                        { return fUnBANFFSystIdx [p];    }
-    int EDBANFFSystIdx  (conv::PhysParamId_t p)                        { return fEDBANFFSystIdx [p];    }
     int FSISystIdx      (conv::PhysParamId_t p)                        { return fFSISystIdx     [p];    }
-    int PhysParamIdx    (conv::PhysParamId_t p)                        { return fPhysParamIdx   [p];   }
+    int PhysParamIdx    (conv::PhysParamId_t p)                        { return fPhysParamIdx   [p];    }
   private:
     ArrIdx();
     ArrIdx(const ArrIdx &) {}
@@ -242,8 +240,6 @@ namespace util {
     int fSuperkModeIdx   [2*conv::kns][2*conv::knm];     ///< maps sample/mode to kSKReactionModes array index
     int fXSecSystIdx     [conv::knppmax];                ///< maps physics param to kListOfXSecSyst array index
     int fBANFFSystIdx    [conv::knppmax];                ///< maps physics param to BANFF covariance matrix
-    int fUnBANFFSystIdx  [conv::knppmax];                ///< maps physics param to Uncorrelated BANFF id
-    int fEDBANFFSystIdx  [conv::knppmax];                ///< maps physics param to EigenDecomposition BANFF id
     int fFSISystIdx      [conv::knppmax];                ///< maps physics param to FSI covariance matrix
     int fPhysParamIdx    [conv::knppmax];                ///< maps physics param
     static ArrIdx * fInstance;

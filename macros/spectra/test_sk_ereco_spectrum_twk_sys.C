@@ -6,19 +6,17 @@
 //
 // There are many run modes:
 //
-//   0 tweak all parameters (BANFF correlated)
-//   1 tweak all BANFF (correlated)
-//   2 tweak all BANFF flux (correlated)
-//   3 tweak all BANFF xsec (correlated)
+//   0 tweak all parameters
+//   1 tweak all BANFF
+//   2 tweak all BANFF flux
+//   3 tweak all BANFF xsec
 //   4 tweak all unconstrained xsec
-//   5 tweak all xsec (BANFF (correlated) + unconstrained)
+//   5 tweak all xsec (BANFF + unconstrained)
 //   6 tweak all sk detector (without energy scale)
 //   7 tweak all sk ccqe ring counting efficiency
 //   8 tweak all sk detector
 //   9 tweak all fsi
-//  10 tweak all (except energy scale!) (BANFF correlated)
-//  11 tweak all BANFF uncorrelated
-//  12 tweak all BANFF eigendecomposition
+//  10 tweak all (except energy scale!)
 //
 // 100 tweak banff00
 // 101 tweak banff01
@@ -30,13 +28,8 @@
 // 202 tweak xsec_wshape
 // 203 tweak xsec_shape_ccoth
 // 204 tweak xsec_pilessdelta
-// 205 tweak xsec_enushape
-// 206 tweak xsec_norm_ccqeE1
-// 207 tweak xsec_norm_ccqeE2
-// 208 tweak xsec_norm_cc1piE1
 // 209 tweak xsec_norm_cccoh
 // 210 tweak xsec_norm_nc1piC
-// 211 tweak xsec_norm_nccoh
 // 212 tweak xsec_norm_ncoth
 // 213 tweak xsec_norm_nuetonumu
 // 214 tweak xsec_norm_antinutonumu
@@ -62,11 +55,6 @@
 // 502 ring counting 2 + other
 // 503 all ring counting + other
 // 504 tweak xsec_pilessdelta, put name it fsiabs
-//
-// 600 tweak unbanff00
-// 601 tweak unbanff01
-// ...
-// 600+kNumOfParamsInBANFFfit tweak last uncorrelated banff parameter
 //
 //
 // Tom Dealtry
@@ -119,10 +107,6 @@ void test_sk_ereco_spectrum_twk_sys
       modetitle = "fsi"; break;
     case 10:
       modetitle = "all(without-energy-scale)"; break;
-    case 11:
-      modetitle = "BANFF-uncorrelated"; break;
-    case 12:
-      modetitle = "BANFF-eigendecomposition"; break;
 
     case 200:
       modetitle = "xsec_pf"; break;
@@ -191,9 +175,6 @@ void test_sk_ereco_spectrum_twk_sys
       }
       else if(mode >= 400 && mode < 400+conv::kNumOfFSIParams) {
 	modetitle = Form("fsi_%03d",mode-400); break;
-      }
-      if(mode >= 600 && mode < 600+conv::kNumOfParamsInBANFFfit) {
-	modetitle = Form("unbanff_%02d",mode-100); break;
       }
       else {
 	cout << "Unknown mode " << mode << endl; exit(1); break;
@@ -333,7 +314,7 @@ void test_sk_ereco_spectrum_twk_sys
 	for(int ib = 0; ib < conv::kNumOfParamsInBANFFfit; ib++) {
 	  v[ib] = skexp.GetBANFF()->BestFitValues()[ib] + (tweak * sqrt(skexp.GetBANFF()->CovMatrix()[ib][ib]));
 	}
-	skexp.GetBANFF()->Tweak(true,&v,1);
+	skexp.GetBANFF()->Tweak(true,&v);
       }
 
       //BANFF flux only correlated
@@ -343,7 +324,7 @@ void test_sk_ereco_spectrum_twk_sys
 	for(int ib = 0; ib < conv::kNumOfFluxParamsInBANFFfit; ib++) {
 	  v[ib] = skexp.GetBANFF()->BestFitValues()[ib] + (tweak * sqrt(skexp.GetBANFF()->CovMatrix()[ib][ib]));
 	}
-	skexp.GetBANFF()->Tweak(true,&v,1);
+	skexp.GetBANFF()->Tweak(true,&v);
       }
 
       //BANFF xsec only correlated
@@ -353,7 +334,7 @@ void test_sk_ereco_spectrum_twk_sys
 	for(int ib = conv::kNumOfFluxParamsInBANFFfit; ib < conv::kNumOfParamsInBANFFfit; ib++) {
 	  v[ib] = skexp.GetBANFF()->BestFitValues()[ib] + (tweak * sqrt(skexp.GetBANFF()->CovMatrix()[ib][ib]));
 	}
-	skexp.GetBANFF()->Tweak(true,&v,1);
+	skexp.GetBANFF()->Tweak(true,&v);
       }
 
       //Uncorrelated xsec
@@ -363,16 +344,9 @@ void test_sk_ereco_spectrum_twk_sys
 	skexp.TweakSystematic("xsec_wshape",tweak);
 	skexp.TweakSystematic("xsec_shape_ccoth",tweak);
 	skexp.TweakSystematic("xsec_pilessdelta",tweak);
-	skexp.TweakSystematic("xsec_enushape",tweak);
 	skexp.TweakSystematic("xsec_bindE",tweak);
-	/*
-	  skexp.TweakSystematic("xsec_norm_ccqeE1",tweak);
-	  skexp.TweakSystematic("xsec_norm_ccqeE2",tweak);
-	  skexp.TweakSystematic("xsec_norm_cc1piE1",tweak);
-	*/
 	skexp.TweakSystematic("xsec_norm_cccoh",tweak);
 	skexp.TweakSystematic("xsec_norm_nc1piC",tweak);
-	skexp.TweakSystematic("xsec_norm_nccoh",tweak);
 	skexp.TweakSystematic("xsec_norm_ncoth",tweak);
 	skexp.TweakSystematic("xsec_norm_nuetonumu",tweak);
 	skexp.TweakSystematic("xsec_norm_antinutonu",tweak);
@@ -405,28 +379,6 @@ void test_sk_ereco_spectrum_twk_sys
 	skexp.GetFSI()->Tweak(true,&v);
       }
 
-      //all BANFF uncorrelated
-      if(mode == 11) {
-	TVectorD v(conv::kNumOfParamsInBANFFfit);
-	v = skexp.GetBANFF()->CurrentUncorrelatedValues();
-	for(int ib = 0; ib < conv::kNumOfParamsInBANFFfit; ib++) {
-	  v[ib] = tweak;
-	}
-	skexp.GetBANFF()->Tweak(true,&v,2);
-      }
-
-      //all BANFF eigen decomposition
-      if(mode == 12) {
-	TVectorD v(conv::kNumOfParamsInBANFFfit);
-	v = skexp.GetBANFF()->CurrentEigenDecompValues();
-	TVectorD ev(conv::kNumOfParamsInBANFFfit);
-	ev = skexp.GetBANFF()->EigenDecompEigenValues();
-	for(int ib = 0; ib < conv::kNumOfParamsInBANFFfit; ib++) {
-	  v[ib] += sqrt(ev[ib]) * tweak;
-	}
-	skexp.GetBANFF()->Tweak(true,&v,3);
-      }
-
     }//mode<100
 
     else {
@@ -442,20 +394,10 @@ void test_sk_ereco_spectrum_twk_sys
 	  skexp.TweakSystematic("xsec_shape_ccoth",tweak); break;
         case 204:
 	  skexp.TweakSystematic("xsec_pilessdelta",tweak); break;
-        case 205:
-	  skexp.TweakSystematic("xsec_enushape",tweak); break;
-        case 206:
-	  skexp.TweakSystematic("xsec_norm_ccqeE1",tweak); break;
-        case 207:
-	  skexp.TweakSystematic("xsec_norm_ccqeE2",tweak); break;
-        case 208:
-	  skexp.TweakSystematic("xsec_norm_cc1piE1",tweak); break;
         case 209:
 	  skexp.TweakSystematic("xsec_norm_cccoh",tweak); break;
         case 210:
 	  skexp.TweakSystematic("xsec_norm_nc1piC",tweak); break;
-        case 211:
-	  skexp.TweakSystematic("xsec_norm_nccoh",tweak); break;
         case 212:
 	  skexp.TweakSystematic("xsec_norm_ncoth",tweak); break;
         case 213:
@@ -505,7 +447,7 @@ void test_sk_ereco_spectrum_twk_sys
 	    v = skexp.GetBANFF()->BestFitValues();
 	    int ib = mode - 100;
 	    v[ib] = skexp.GetBANFF()->BestFitValues()[ib] + (tweak * sqrt(skexp.GetBANFF()->CovMatrix()[ib][ib]));
-	    skexp.GetBANFF()->Tweak(true,&v,1);
+	    skexp.GetBANFF()->Tweak(true,&v);
 	    break;
 	  }
 	  else if(mode >= 400 && mode < 400+conv::kNumOfFSIParams) {
@@ -516,16 +458,6 @@ void test_sk_ereco_spectrum_twk_sys
 	    int ib = mode - 400;
 	    v[ib] = 1 + (tweak * sqrt(skexp.GetFSI()->CovMatrix()[ib][ib]));
 	    skexp.GetFSI()->Tweak(true,&v);
-	    break;
-	  }
-	  if(mode >= 600 && mode < 600+conv::kNumOfParamsInBANFFfit) {
-	    TVectorD v(conv::kNumOfParamsInBANFFfit);
-	    for(int ip = 0; ip < conv::kNumOfParamsInBANFFfit; ip++) {
-	      v[ip] = 0;
-	    }
-	    int ib = mode - 600;
-	    v[ib] = tweak;
-	    skexp.GetBANFF()->Tweak(true,&v,2);
 	    break;
 	  }
 	  else {
@@ -685,219 +617,211 @@ void test_sk_ereco_spectrum_twk_sys
   }
 
   if(!summary_p) {
-    int nbins = (2*conv::kNumOfParamsInBANFFfit) + 19 + 8 + conv::kNumOfFSIParams;
+    int nbins = conv::kNumOfNuisanceParams1Rmu;
     summary_p = new TH1D("summary_p","summary_p",nbins,0,nbins);
     summary_p->SetLineColor(kRed);
     summary_p->GetYaxis()->SetTitle("% change");
-    for(int i = 0; i < conv::kNumOfParamsInBANFFfit; i++)
+    int i = 0;
+    for(; i < conv::kNumOfParamsInBANFFfit; i++)
       summary_p->GetXaxis()->SetBinLabel(i+1,Form("banff_%02d",i));
-    summary_p->GetXaxis()->SetBinLabel(conv::kNumOfParamsInBANFFfit+1,"xsec_pf");
-    summary_p->GetXaxis()->SetBinLabel(conv::kNumOfParamsInBANFFfit+2,"xsec_sf");
-    summary_p->GetXaxis()->SetBinLabel(conv::kNumOfParamsInBANFFfit+3,"xsec_wshape");
-    summary_p->GetXaxis()->SetBinLabel(conv::kNumOfParamsInBANFFfit+4,"xsec_shape_ccoth");
-    summary_p->GetXaxis()->SetBinLabel(conv::kNumOfParamsInBANFFfit+5,"xsec_pilessdelta");
-    summary_p->GetXaxis()->SetBinLabel(conv::kNumOfParamsInBANFFfit+6,"xsec_enushape");
-    summary_p->GetXaxis()->SetBinLabel(conv::kNumOfParamsInBANFFfit+7,"xsec_norm_ccqeE1");
-    summary_p->GetXaxis()->SetBinLabel(conv::kNumOfParamsInBANFFfit+8,"xsec_norm_ccqeE2");
-    summary_p->GetXaxis()->SetBinLabel(conv::kNumOfParamsInBANFFfit+9,"xsec_norm_cc1piE1");
-    summary_p->GetXaxis()->SetBinLabel(conv::kNumOfParamsInBANFFfit+10,"xsec_norm_cccoh");
-    summary_p->GetXaxis()->SetBinLabel(conv::kNumOfParamsInBANFFfit+11,"xsec_norm_nc1piC");
-    summary_p->GetXaxis()->SetBinLabel(conv::kNumOfParamsInBANFFfit+12,"xsec_norm_nccoh");
-    summary_p->GetXaxis()->SetBinLabel(conv::kNumOfParamsInBANFFfit+13,"xsec_norm_ncoth");
-    summary_p->GetXaxis()->SetBinLabel(conv::kNumOfParamsInBANFFfit+14,"xsec_norm_nuetonumu");
-    summary_p->GetXaxis()->SetBinLabel(conv::kNumOfParamsInBANFFfit+15,"xsec_norm_antinutonu");
-    summary_p->GetXaxis()->SetBinLabel(conv::kNumOfParamsInBANFFfit+16,"sk_energy_scale");
-    summary_p->GetXaxis()->SetBinLabel(conv::kNumOfParamsInBANFFfit+17,"sk_1Rmu_ccqe_other_eff");
-    summary_p->GetXaxis()->SetBinLabel(conv::kNumOfParamsInBANFFfit+18,"sk_1Rmu_ccnonqe_eff");
-    summary_p->GetXaxis()->SetBinLabel(conv::kNumOfParamsInBANFFfit+19,"sk_1Rmu_nc_eff");
-    summary_p->GetXaxis()->SetBinLabel(conv::kNumOfParamsInBANFFfit+20,"sk_1Rmu_nuecc_eff");
-    summary_p->GetXaxis()->SetBinLabel(conv::kNumOfParamsInBANFFfit+21,"sk_1Rmu_ccqe_ring_counting_eff_0");
-    summary_p->GetXaxis()->SetBinLabel(conv::kNumOfParamsInBANFFfit+22,"sk_1Rmu_ccqe_ring_counting_eff_1");
-    summary_p->GetXaxis()->SetBinLabel(conv::kNumOfParamsInBANFFfit+23,"sk_1Rmu_ccqe_ring_counting_eff_2");
-    summary_p->GetXaxis()->SetBinLabel(conv::kNumOfParamsInBANFFfit+24,"xsec_bindE");
-    for(int i = 0; i < conv::kNumOfFSIParams; i++)
-      summary_p->GetXaxis()->SetBinLabel(i+conv::kNumOfParamsInBANFFfit+23,Form("fsi_%03d",i));
-    for(int i = 0; i < conv::kNumOfParamsInBANFFfit; i++)
-      summary_p->GetXaxis()->SetBinLabel(i+conv::kNumOfParamsInBANFFfit+23+conv::kNumOfFSIParams,Form("unbanff_%02d",i));
+    summary_p->GetXaxis()->SetBinLabel(i+1"xsec_pf"); i++;
+    summary_p->GetXaxis()->SetBinLabel(i+1"xsec_sf"); i++;
+    summary_p->GetXaxis()->SetBinLabel(i+1"xsec_wshape"); i++;
+    summary_p->GetXaxis()->SetBinLabel(i+1"xsec_shape_ccoth"); i++;
+    summary_p->GetXaxis()->SetBinLabel(i+1"xsec_pilessdelta"); i++;
+    summary_p->GetXaxis()->SetBinLabel(i+1"xsec_enushape"); i++;
+    summary_p->GetXaxis()->SetBinLabel(i+1"xsec_norm_ccqeE1"); i++;
+    summary_p->GetXaxis()->SetBinLabel(i+1"xsec_norm_ccqeE2"); i++;
+    summary_p->GetXaxis()->SetBinLabel(i+1"xsec_norm_cc1piE1"); i++;
+    summary_p->GetXaxis()->SetBinLabel(i+1"xsec_norm_cccoh"); i++;
+    summary_p->GetXaxis()->SetBinLabel(i+1"xsec_norm_nc1piC"); i++;
+    summary_p->GetXaxis()->SetBinLabel(i+1"xsec_norm_nccoh"); i++;
+    summary_p->GetXaxis()->SetBinLabel(i+1"xsec_norm_ncoth"); i++;
+    summary_p->GetXaxis()->SetBinLabel(i+1"xsec_norm_nuetonumu"); i++;
+    summary_p->GetXaxis()->SetBinLabel(i+1"xsec_norm_antinutonu"); i++;
+    summary_p->GetXaxis()->SetBinLabel(i+1"sk_energy_scale"); i++;
+    summary_p->GetXaxis()->SetBinLabel(i+1"sk_1Rmu_ccqe_other_eff"); i++;
+    summary_p->GetXaxis()->SetBinLabel(i+1"sk_1Rmu_ccnonqe_eff"); i++;
+    summary_p->GetXaxis()->SetBinLabel(i+1"sk_1Rmu_nc_eff"); i++;
+    summary_p->GetXaxis()->SetBinLabel(i+1"sk_1Rmu_nuecc_eff"); i++;
+    summary_p->GetXaxis()->SetBinLabel(i+1"sk_1Rmu_ccqe_ring_counting_eff_0"); i++;
+    summary_p->GetXaxis()->SetBinLabel(i+1"sk_1Rmu_ccqe_ring_counting_eff_1"); i++;
+    summary_p->GetXaxis()->SetBinLabel(i+1"sk_1Rmu_ccqe_ring_counting_eff_2"); i++;
+    summary_p->GetXaxis()->SetBinLabel(i+1"xsec_bindE"); i++;
+    for(j = 0; j < conv::kNumOfFSIParams; j++, i++)
+      summary_p->GetXaxis()->SetBinLabel(i+1Form("fsi_%03d",j));
   }
   if(!summary_m) {
-    int nbins =  (2*conv::kNumOfParamsInBANFFfit) + 19 + 8 + conv::kNumOfFSIParams;
+    int nbins =  conv::kNumOfNuisanceParams1Rmu;
     summary_m = new TH1D("summary_m","summary_m",nbins,0,nbins);
     summary_m->SetLineColor(kBlue);
     summary_m->GetYaxis()->SetTitle("% change");
-    for(int i = 0; i < conv::kNumOfParamsInBANFFfit; i++)
+    int i = 0;
+    for(; i < conv::kNumOfParamsInBANFFfit; i++)
       summary_m->GetXaxis()->SetBinLabel(i+1,Form("banff_%02d",i));
     summary_m->GetXaxis()->SetBinLabel(conv::kNumOfParamsInBANFFfit+1,"xsec_pf");
-    summary_m->GetXaxis()->SetBinLabel(conv::kNumOfParamsInBANFFfit+2,"xsec_sf");
-    summary_m->GetXaxis()->SetBinLabel(conv::kNumOfParamsInBANFFfit+3,"xsec_wshape");
-    summary_m->GetXaxis()->SetBinLabel(conv::kNumOfParamsInBANFFfit+4,"xsec_shape_ccoth");
-    summary_m->GetXaxis()->SetBinLabel(conv::kNumOfParamsInBANFFfit+5,"xsec_pilessdelta");
-    summary_m->GetXaxis()->SetBinLabel(conv::kNumOfParamsInBANFFfit+6,"xsec_enushape");
-    summary_m->GetXaxis()->SetBinLabel(conv::kNumOfParamsInBANFFfit+7,"xsec_norm_ccqeE1");
-    summary_m->GetXaxis()->SetBinLabel(conv::kNumOfParamsInBANFFfit+8,"xsec_norm_ccqeE2");
-    summary_m->GetXaxis()->SetBinLabel(conv::kNumOfParamsInBANFFfit+9,"xsec_norm_cc1piE1");
-    summary_m->GetXaxis()->SetBinLabel(conv::kNumOfParamsInBANFFfit+10,"xsec_norm_cccoh");
-    summary_m->GetXaxis()->SetBinLabel(conv::kNumOfParamsInBANFFfit+11,"xsec_norm_nc1piC");
-    summary_m->GetXaxis()->SetBinLabel(conv::kNumOfParamsInBANFFfit+12,"xsec_norm_nccoh");
-    summary_m->GetXaxis()->SetBinLabel(conv::kNumOfParamsInBANFFfit+13,"xsec_norm_ncoth");
-    summary_m->GetXaxis()->SetBinLabel(conv::kNumOfParamsInBANFFfit+14,"xsec_norm_nuetonumu");
-    summary_m->GetXaxis()->SetBinLabel(conv::kNumOfParamsInBANFFfit+15,"xsec_norm_antinutonu");
-    summary_m->GetXaxis()->SetBinLabel(conv::kNumOfParamsInBANFFfit+16,"sk_energy_scale");
-    summary_m->GetXaxis()->SetBinLabel(conv::kNumOfParamsInBANFFfit+17,"sk_1Rmu_ccqe_other_eff");
-    summary_m->GetXaxis()->SetBinLabel(conv::kNumOfParamsInBANFFfit+18,"sk_1Rmu_ccnonqe_eff");
-    summary_m->GetXaxis()->SetBinLabel(conv::kNumOfParamsInBANFFfit+19,"sk_1Rmu_nc_eff");
-    summary_m->GetXaxis()->SetBinLabel(conv::kNumOfParamsInBANFFfit+20,"sk_1Rmu_nuecc_eff");
-    summary_m->GetXaxis()->SetBinLabel(conv::kNumOfParamsInBANFFfit+21,"sk_1Rmu_ccqe_ring_counting_eff_0");
-    summary_m->GetXaxis()->SetBinLabel(conv::kNumOfParamsInBANFFfit+22,"sk_1Rmu_ccqe_ring_counting_eff_1");
-    summary_m->GetXaxis()->SetBinLabel(conv::kNumOfParamsInBANFFfit+23,"sk_1Rmu_ccqe_ring_counting_eff_2");
-    summary_m->GetXaxis()->SetBinLabel(conv::kNumOfParamsInBANFFfit+24,"xsec_bindE");
-    for(int i = 0; i < conv::kNumOfFSIParams; i++)
-      summary_m->GetXaxis()->SetBinLabel(i+conv::kNumOfParamsInBANFFfit+23,Form("fsi_%03d",i));
-    for(int i = 0; i < conv::kNumOfParamsInBANFFfit; i++)
-      summary_m->GetXaxis()->SetBinLabel(i+conv::kNumOfParamsInBANFFfit+23+conv::kNumOfFSIParams,Form("unbanff_%02d",i));
+    summary_m->GetXaxis()->SetBinLabel(i+1,"xsec_sf");
+    summary_m->GetXaxis()->SetBinLabel(i+1,"xsec_wshape");
+    summary_m->GetXaxis()->SetBinLabel(i+1,"xsec_shape_ccoth");
+    summary_m->GetXaxis()->SetBinLabel(i+1,"xsec_pilessdelta");
+    summary_m->GetXaxis()->SetBinLabel(i+1,"xsec_enushape");
+    summary_m->GetXaxis()->SetBinLabel(i+1,"xsec_norm_ccqeE1");
+    summary_m->GetXaxis()->SetBinLabel(i+1,"xsec_norm_ccqeE2");
+    summary_m->GetXaxis()->SetBinLabel(i+1,"xsec_norm_cc1piE1");
+    summary_m->GetXaxis()->SetBinLabel(i+1,"xsec_norm_cccoh");
+    summary_m->GetXaxis()->SetBinLabel(i+1,"xsec_norm_nc1piC");
+    summary_m->GetXaxis()->SetBinLabel(i+1,"xsec_norm_nccoh");
+    summary_m->GetXaxis()->SetBinLabel(i+1,"xsec_norm_ncoth");
+    summary_m->GetXaxis()->SetBinLabel(i+1,"xsec_norm_nuetonumu");
+    summary_m->GetXaxis()->SetBinLabel(i+1,"xsec_norm_antinutonu");
+    summary_m->GetXaxis()->SetBinLabel(i+1,"sk_energy_scale");
+    summary_m->GetXaxis()->SetBinLabel(i+1,"sk_1Rmu_ccqe_other_eff");
+    summary_m->GetXaxis()->SetBinLabel(i+1,"sk_1Rmu_ccnonqe_eff");
+    summary_m->GetXaxis()->SetBinLabel(i+1,"sk_1Rmu_nc_eff");
+    summary_m->GetXaxis()->SetBinLabel(i+1,"sk_1Rmu_nuecc_eff");
+    summary_m->GetXaxis()->SetBinLabel(i+1,"sk_1Rmu_ccqe_ring_counting_eff_0");
+    summary_m->GetXaxis()->SetBinLabel(i+1,"sk_1Rmu_ccqe_ring_counting_eff_1");
+    summary_m->GetXaxis()->SetBinLabel(i+1,"sk_1Rmu_ccqe_ring_counting_eff_2");
+    summary_m->GetXaxis()->SetBinLabel(i+1,"xsec_bindE");
+    for(j = 0; j < conv::kNumOfFSIParams; j++, i++)
+      summary_m->GetXaxis()->SetBinLabel(i+1,Form("fsi_%03d",j));
   }
   if(!categories_p) {
-    categories_p = new TH1D("categories_p","categories_p",12,0,12);
+    categories_p = new TH1D("categories_p","categories_p",11,0,11);
     categories_p->SetLineColor(kRed);
     categories_p->GetYaxis()->SetTitle("% change");
-    categories_p->GetXaxis()->SetBinLabel(1,"all");
-    categories_p->GetXaxis()->SetBinLabel(2,"all(without-energy-scale)");
-    categories_p->GetXaxis()->SetBinLabel(3,"BANFF");
-    categories_p->GetXaxis()->SetBinLabel(4,"BANFF-flux");
-    categories_p->GetXaxis()->SetBinLabel(5,"BANFF-xsec");
-    categories_p->GetXaxis()->SetBinLabel(6,"unconstrained-xsec");
-    categories_p->GetXaxis()->SetBinLabel(7,"xsec-all(BANFF+unconstrained)");
-    categories_p->GetXaxis()->SetBinLabel(8,"sk-detector");
-    categories_p->GetXaxis()->SetBinLabel(9,"sk-detector(without-energy-scale)");
-    categories_p->GetXaxis()->SetBinLabel(10,"sk-ccqe-ring-counting-efficiency");
-    categories_p->GetXaxis()->SetBinLabel(11,"fsi");
-    categories_p->GetXaxis()->SetBinLabel(12,"BANFF-uncorrelated");
+    categories_p->GetXaxis()->SetBinLabel(i+1,"all");
+    categories_p->GetXaxis()->SetBinLabel(i+1,"all(without-energy-scale)");
+    categories_p->GetXaxis()->SetBinLabel(i+1,"BANFF");
+    categories_p->GetXaxis()->SetBinLabel(i+1,"BANFF-flux");
+    categories_p->GetXaxis()->SetBinLabel(i+1,"BANFF-xsec");
+    categories_p->GetXaxis()->SetBinLabel(i+1,"unconstrained-xsec");
+    categories_p->GetXaxis()->SetBinLabel(i+1,"xsec-all(BANFF+unconstrained)");
+    categories_p->GetXaxis()->SetBinLabel(i+1,"sk-detector");
+    categories_p->GetXaxis()->SetBinLabel(i+1,"sk-detector(without-energy-scale)");
+    categories_p->GetXaxis()->SetBinLabel(i+1,"sk-ccqe-ring-counting-efficiency");
+    categories_p->GetXaxis()->SetBinLabel(i+1,"fsi");
   }
   if(!categories_m) {
-    categories_m = new TH1D("categories_m","categories_m",12,0,12);
+    categories_m = new TH1D("categories_m","categories_m",11,0,11);
     categories_m->SetLineColor(kRed);
     categories_m->GetYaxis()->SetTitle("% change");
-    categories_m->GetXaxis()->SetBinLabel(1,"all");
-    categories_m->GetXaxis()->SetBinLabel(2,"all(without-energy-scale)");
-    categories_m->GetXaxis()->SetBinLabel(3,"BANFF");
-    categories_m->GetXaxis()->SetBinLabel(4,"BANFF-flux");
-    categories_m->GetXaxis()->SetBinLabel(5,"BANFF-xsec");
-    categories_m->GetXaxis()->SetBinLabel(6,"unconstrained-xsec");
-    categories_m->GetXaxis()->SetBinLabel(7,"xsec-all(BANFF+unconstrained)");
-    categories_m->GetXaxis()->SetBinLabel(8,"sk-detector");
-    categories_m->GetXaxis()->SetBinLabel(9,"sk-detector(without-energy-scale)");
-    categories_m->GetXaxis()->SetBinLabel(10,"sk-ccqe-ring-counting-efficiency");
-    categories_m->GetXaxis()->SetBinLabel(11,"fsi");
-    categories_m->GetXaxis()->SetBinLabel(12,"BANFF-uncorrelated");
+    categories_m->GetXaxis()->SetBinLabel(i+1,"all");
+    categories_m->GetXaxis()->SetBinLabel(i+1,"all(without-energy-scale)");
+    categories_m->GetXaxis()->SetBinLabel(i+1,"BANFF");
+    categories_m->GetXaxis()->SetBinLabel(i+1,"BANFF-flux");
+    categories_m->GetXaxis()->SetBinLabel(i+1,"BANFF-xsec");
+    categories_m->GetXaxis()->SetBinLabel(i+1,"unconstrained-xsec");
+    categories_m->GetXaxis()->SetBinLabel(i+1,"xsec-all(BANFF+unconstrained)");
+    categories_m->GetXaxis()->SetBinLabel(i+1,"sk-detector");
+    categories_m->GetXaxis()->SetBinLabel(i+1,"sk-detector(without-energy-scale)");
+    categories_m->GetXaxis()->SetBinLabel(i+1,"sk-ccqe-ring-counting-efficiency");
+    categories_m->GetXaxis()->SetBinLabel(i+1,"fsi");
   }
   for(int im = 0; im < conv::knm; im++) {
     conv::SuperkMode_t m = conv::kSKReactionModes[is][im];
     if(m == conv::kSKmUndefined) continue;
     if(!summarymode_p[im]) {
-      int nbins = (2*conv::kNumOfParamsInBANFFfit) + 19 + 8 + conv::kNumOfFSIParams;
+      int nbins = conv::kNumOfNuisanceParams1Rmu;
       summarymode_p[im] = new TH1D(Form("summarymode_p_%s",util::AsStringCompact(m).c_str()),Form("summarymode_p_%s",util::AsStringCompact(m).c_str()),nbins,0,nbins);
       summarymode_p[im]->SetLineColor(kRed);
       summarymode_p[im]->GetYaxis()->SetTitle("% change");
-      for(int i = 0; i < conv::kNumOfParamsInBANFFfit; i++)
+      int i = 0;
+      for(; i < conv::kNumOfParamsInBANFFfit; i++)
 	summarymode_p[im]->GetXaxis()->SetBinLabel(i+1,Form("banff_%02d",i));
-      summarymode_p[im]->GetXaxis()->SetBinLabel(conv::kNumOfParamsInBANFFfit+1,"xsec_pf");
-      summarymode_p[im]->GetXaxis()->SetBinLabel(conv::kNumOfParamsInBANFFfit+2,"xsec_sf");
-      summarymode_p[im]->GetXaxis()->SetBinLabel(conv::kNumOfParamsInBANFFfit+3,"xsec_wshape");
-      summarymode_p[im]->GetXaxis()->SetBinLabel(conv::kNumOfParamsInBANFFfit+4,"xsec_shape_ccoth");
-      summarymode_p[im]->GetXaxis()->SetBinLabel(conv::kNumOfParamsInBANFFfit+5,"xsec_pilessdelta");
-      summarymode_p[im]->GetXaxis()->SetBinLabel(conv::kNumOfParamsInBANFFfit+6,"xsec_enushape");
-      summarymode_p[im]->GetXaxis()->SetBinLabel(conv::kNumOfParamsInBANFFfit+7,"xsec_norm_ccqeE1");
-      summarymode_p[im]->GetXaxis()->SetBinLabel(conv::kNumOfParamsInBANFFfit+8,"xsec_norm_ccqeE2");
-      summarymode_p[im]->GetXaxis()->SetBinLabel(conv::kNumOfParamsInBANFFfit+9,"xsec_norm_cc1piE1");
-      summarymode_p[im]->GetXaxis()->SetBinLabel(conv::kNumOfParamsInBANFFfit+10,"xsec_norm_cccoh");
-      summarymode_p[im]->GetXaxis()->SetBinLabel(conv::kNumOfParamsInBANFFfit+11,"xsec_norm_nc1piC");
-      summarymode_p[im]->GetXaxis()->SetBinLabel(conv::kNumOfParamsInBANFFfit+12,"xsec_norm_nccoh");
-      summarymode_p[im]->GetXaxis()->SetBinLabel(conv::kNumOfParamsInBANFFfit+13,"xsec_norm_ncoth");
-      summarymode_p[im]->GetXaxis()->SetBinLabel(conv::kNumOfParamsInBANFFfit+14,"xsec_norm_nuetonumu");
-      summarymode_p[im]->GetXaxis()->SetBinLabel(conv::kNumOfParamsInBANFFfit+15,"xsec_norm_antinutonu");
-      summarymode_p[im]->GetXaxis()->SetBinLabel(conv::kNumOfParamsInBANFFfit+16,"sk_energy_scale");
-      summarymode_p[im]->GetXaxis()->SetBinLabel(conv::kNumOfParamsInBANFFfit+17,"sk_1Rmu_ccqe_other_eff");
-      summarymode_p[im]->GetXaxis()->SetBinLabel(conv::kNumOfParamsInBANFFfit+18,"sk_1Rmu_ccnonqe_eff");
-      summarymode_p[im]->GetXaxis()->SetBinLabel(conv::kNumOfParamsInBANFFfit+19,"sk_1Rmu_nc_eff");
-      summarymode_p[im]->GetXaxis()->SetBinLabel(conv::kNumOfParamsInBANFFfit+20,"sk_1Rmu_nuecc_eff");
-      summarymode_p[im]->GetXaxis()->SetBinLabel(conv::kNumOfParamsInBANFFfit+21,"sk_1Rmu_ccqe_ring_counting_eff_0");
-      summarymode_p[im]->GetXaxis()->SetBinLabel(conv::kNumOfParamsInBANFFfit+22,"sk_1Rmu_ccqe_ring_counting_eff_1");
-      summarymode_p[im]->GetXaxis()->SetBinLabel(conv::kNumOfParamsInBANFFfit+23,"sk_1Rmu_ccqe_ring_counting_eff_2");
-      summarymode_p[im]->GetXaxis()->SetBinLabel(conv::kNumOfParamsInBANFFfit+24,"xsec_bindE");
-      for(int i = 0; i < conv::kNumOfFSIParams; i++)
-	summarymode_p[im]->GetXaxis()->SetBinLabel(i+conv::kNumOfParamsInBANFFfit+23,Form("fsi_%03d",i));
-      for(int i = 0; i < conv::kNumOfParamsInBANFFfit; i++)
-	summarymode_p[im]->GetXaxis()->SetBinLabel(i+conv::kNumOfParamsInBANFFfit+23+conv::kNumOfFSIParams,Form("unbanff_%02d",i));
+      summarymode_p[im]->GetXaxis()->SetBinLabel(i+1,"xsec_pf");
+      summarymode_p[im]->GetXaxis()->SetBinLabel(i+1,"xsec_sf");
+      summarymode_p[im]->GetXaxis()->SetBinLabel(i+1,"xsec_wshape");
+      summarymode_p[im]->GetXaxis()->SetBinLabel(i+1,"xsec_shape_ccoth");
+      summarymode_p[im]->GetXaxis()->SetBinLabel(i+1,"xsec_pilessdelta");
+      summarymode_p[im]->GetXaxis()->SetBinLabel(i+1,"xsec_enushape");
+      summarymode_p[im]->GetXaxis()->SetBinLabel(i+1,"xsec_norm_ccqeE1");
+      summarymode_p[im]->GetXaxis()->SetBinLabel(i+1,"xsec_norm_ccqeE2");
+      summarymode_p[im]->GetXaxis()->SetBinLabel(i+1,"xsec_norm_cc1piE1");
+      summarymode_p[im]->GetXaxis()->SetBinLabel(i+1,"xsec_norm_cccoh");
+      summarymode_p[im]->GetXaxis()->SetBinLabel(i+1,"xsec_norm_nc1piC");
+      summarymode_p[im]->GetXaxis()->SetBinLabel(i+1,"xsec_norm_nccoh");
+      summarymode_p[im]->GetXaxis()->SetBinLabel(i+1,"xsec_norm_ncoth");
+      summarymode_p[im]->GetXaxis()->SetBinLabel(i+1,"xsec_norm_nuetonumu");
+      summarymode_p[im]->GetXaxis()->SetBinLabel(i+1,"xsec_norm_antinutonu");
+      summarymode_p[im]->GetXaxis()->SetBinLabel(i+1,"sk_energy_scale");
+      summarymode_p[im]->GetXaxis()->SetBinLabel(i+1,"sk_1Rmu_ccqe_other_eff");
+      summarymode_p[im]->GetXaxis()->SetBinLabel(i+1,"sk_1Rmu_ccnonqe_eff");
+      summarymode_p[im]->GetXaxis()->SetBinLabel(i+1,"sk_1Rmu_nc_eff");
+      summarymode_p[im]->GetXaxis()->SetBinLabel(i+1,"sk_1Rmu_nuecc_eff");
+      summarymode_p[im]->GetXaxis()->SetBinLabel(i+1,"sk_1Rmu_ccqe_ring_counting_eff_0");
+      summarymode_p[im]->GetXaxis()->SetBinLabel(i+1,"sk_1Rmu_ccqe_ring_counting_eff_1");
+      summarymode_p[im]->GetXaxis()->SetBinLabel(i+1,"sk_1Rmu_ccqe_ring_counting_eff_2");
+      summarymode_p[im]->GetXaxis()->SetBinLabel(i+1,"xsec_bindE");
+      for(j = 0; j < conv::kNumOfFSIParams; j++, i++)
+	summarymode_p[im]->GetXaxis()->SetBinLabel(i+1,Form("fsi_%03d",j));
     }
     if(!summarymode_m[im]) {
-      int nbins = (2*conv::kNumOfParamsInBANFFfit) + 19 + 8 + conv::kNumOfFSIParams;
+      int nbins = conv::kNumOfNuisanceParams1Rmu;
       summarymode_m[im] = new TH1D(Form("summarymode_m_%s",util::AsStringCompact(m).c_str()),Form("summarymode_m_%s",util::AsStringCompact(m).c_str()),nbins,0,nbins);
       summarymode_m[im]->SetLineColor(kBlue);
       summarymode_m[im]->GetYaxis()->SetTitle("% change");
-      for(int i = 0; i < conv::kNumOfParamsInBANFFfit; i++)
+      int i = 0;
+      for(; i < conv::kNumOfParamsInBANFFfit; i++)
 	summarymode_m[im]->GetXaxis()->SetBinLabel(i+1,Form("banff_%02d",i));
-      summarymode_m[im]->GetXaxis()->SetBinLabel(conv::kNumOfParamsInBANFFfit+1,"xsec_pf");
-      summarymode_m[im]->GetXaxis()->SetBinLabel(conv::kNumOfParamsInBANFFfit+2,"xsec_sf");
-      summarymode_m[im]->GetXaxis()->SetBinLabel(conv::kNumOfParamsInBANFFfit+3,"xsec_wshape");
-      summarymode_m[im]->GetXaxis()->SetBinLabel(conv::kNumOfParamsInBANFFfit+4,"xsec_shape_ccoth");
-      summarymode_m[im]->GetXaxis()->SetBinLabel(conv::kNumOfParamsInBANFFfit+5,"xsec_pilessdelta");
-      summarymode_m[im]->GetXaxis()->SetBinLabel(conv::kNumOfParamsInBANFFfit+6,"xsec_enushape");
-      summarymode_m[im]->GetXaxis()->SetBinLabel(conv::kNumOfParamsInBANFFfit+7,"xsec_norm_ccqeE1");
-      summarymode_m[im]->GetXaxis()->SetBinLabel(conv::kNumOfParamsInBANFFfit+8,"xsec_norm_ccqeE2");
-      summarymode_m[im]->GetXaxis()->SetBinLabel(conv::kNumOfParamsInBANFFfit+9,"xsec_norm_cc1piE1");
-      summarymode_m[im]->GetXaxis()->SetBinLabel(conv::kNumOfParamsInBANFFfit+10,"xsec_norm_cccoh");
-      summarymode_m[im]->GetXaxis()->SetBinLabel(conv::kNumOfParamsInBANFFfit+11,"xsec_norm_nc1piC");
-      summarymode_m[im]->GetXaxis()->SetBinLabel(conv::kNumOfParamsInBANFFfit+12,"xsec_norm_nccoh");
-      summarymode_m[im]->GetXaxis()->SetBinLabel(conv::kNumOfParamsInBANFFfit+13,"xsec_norm_ncoth");
-      summarymode_m[im]->GetXaxis()->SetBinLabel(conv::kNumOfParamsInBANFFfit+14,"xsec_norm_nuetonumu");
-      summarymode_m[im]->GetXaxis()->SetBinLabel(conv::kNumOfParamsInBANFFfit+15,"xsec_norm_antinutonu");
-      summarymode_m[im]->GetXaxis()->SetBinLabel(conv::kNumOfParamsInBANFFfit+16,"sk_energy_scale");
-      summarymode_m[im]->GetXaxis()->SetBinLabel(conv::kNumOfParamsInBANFFfit+17,"sk_1Rmu_ccqe_other_eff");
-      summarymode_m[im]->GetXaxis()->SetBinLabel(conv::kNumOfParamsInBANFFfit+18,"sk_1Rmu_ccnonqe_eff");
-      summarymode_m[im]->GetXaxis()->SetBinLabel(conv::kNumOfParamsInBANFFfit+19,"sk_1Rmu_nc_eff");
-      summarymode_m[im]->GetXaxis()->SetBinLabel(conv::kNumOfParamsInBANFFfit+20,"sk_1Rmu_nuecc_eff");
-      summarymode_m[im]->GetXaxis()->SetBinLabel(conv::kNumOfParamsInBANFFfit+21,"sk_1Rmu_ccqe_ring_counting_eff_0");
-      summarymode_m[im]->GetXaxis()->SetBinLabel(conv::kNumOfParamsInBANFFfit+22,"sk_1Rmu_ccqe_ring_counting_eff_1");
-      summarymode_m[im]->GetXaxis()->SetBinLabel(conv::kNumOfParamsInBANFFfit+23,"sk_1Rmu_ccqe_ring_counting_eff_2");
-      summarymode_m[im]->GetXaxis()->SetBinLabel(conv::kNumOfParamsInBANFFfit+24,"xsec_bindE");
-      for(int i = 0; i < conv::kNumOfFSIParams; i++)
-	summarymode_m[im]->GetXaxis()->SetBinLabel(i+conv::kNumOfParamsInBANFFfit+23,Form("fsi_%03d",i));
-      for(int i = 0; i < conv::kNumOfParamsInBANFFfit; i++)
-	summarymode_m[im]->GetXaxis()->SetBinLabel(i+conv::kNumOfParamsInBANFFfit+23+conv::kNumOfFSIParams,Form("unbanff_%02d",i));
+      summarymode_m[im]->GetXaxis()->SetBinLabel(i+1,"xsec_pf");
+      summarymode_m[im]->GetXaxis()->SetBinLabel(i+1,"xsec_sf");
+      summarymode_m[im]->GetXaxis()->SetBinLabel(i+1,"xsec_wshape");
+      summarymode_m[im]->GetXaxis()->SetBinLabel(i+1,"xsec_shape_ccoth");
+      summarymode_m[im]->GetXaxis()->SetBinLabel(i+1,"xsec_pilessdelta");
+      summarymode_m[im]->GetXaxis()->SetBinLabel(i+1,"xsec_enushape");
+      summarymode_m[im]->GetXaxis()->SetBinLabel(i+1,"xsec_norm_ccqeE1");
+      summarymode_m[im]->GetXaxis()->SetBinLabel(i+1,"xsec_norm_ccqeE2");
+      summarymode_m[im]->GetXaxis()->SetBinLabel(i+1,"xsec_norm_cc1piE1");
+      summarymode_m[im]->GetXaxis()->SetBinLabel(i+1,"xsec_norm_cccoh");
+      summarymode_m[im]->GetXaxis()->SetBinLabel(i+1,"xsec_norm_nc1piC");
+      summarymode_m[im]->GetXaxis()->SetBinLabel(i+1,"xsec_norm_nccoh");
+      summarymode_m[im]->GetXaxis()->SetBinLabel(i+1,"xsec_norm_ncoth");
+      summarymode_m[im]->GetXaxis()->SetBinLabel(i+1,"xsec_norm_nuetonumu");
+      summarymode_m[im]->GetXaxis()->SetBinLabel(i+1,"xsec_norm_antinutonu");
+      summarymode_m[im]->GetXaxis()->SetBinLabel(i+1,"sk_energy_scale");
+      summarymode_m[im]->GetXaxis()->SetBinLabel(i+1,"sk_1Rmu_ccqe_other_eff");
+      summarymode_m[im]->GetXaxis()->SetBinLabel(i+1,"sk_1Rmu_ccnonqe_eff");
+      summarymode_m[im]->GetXaxis()->SetBinLabel(i+1,"sk_1Rmu_nc_eff");
+      summarymode_m[im]->GetXaxis()->SetBinLabel(i+1,"sk_1Rmu_nuecc_eff");
+      summarymode_m[im]->GetXaxis()->SetBinLabel(i+1,"sk_1Rmu_ccqe_ring_counting_eff_0");
+      summarymode_m[im]->GetXaxis()->SetBinLabel(i+1,"sk_1Rmu_ccqe_ring_counting_eff_1");
+      summarymode_m[im]->GetXaxis()->SetBinLabel(i+1,"sk_1Rmu_ccqe_ring_counting_eff_2");
+      summarymode_m[im]->GetXaxis()->SetBinLabel(i+1,"xsec_bindE");
+      for(j = 0; j < conv::kNumOfFSIParams; j++, i++)
+	summarymode_m[im]->GetXaxis()->SetBinLabel(i+1,Form("fsi_%03d",j));
     }
     if(!categoriesmode_p[im]) {
-      categoriesmode_p[im] = new TH1D(Form("categoriesmode_p_%s",util::AsStringCompact(m).c_str()),Form("categoriesmode_p_%s",util::AsStringCompact(m).c_str()),12,0,12);
+      categoriesmode_p[im] = new TH1D(Form("categoriesmode_p_%s",util::AsStringCompact(m).c_str()),Form("categoriesmode_p_%s",util::AsStringCompact(m).c_str()),11,0,11);
       categoriesmode_p[im]->SetLineColor(kRed);
       categoriesmode_p[im]->GetYaxis()->SetTitle("% change");
-      categoriesmode_p[im]->GetXaxis()->SetBinLabel(1,"all");
-      categoriesmode_p[im]->GetXaxis()->SetBinLabel(2,"all(without-energy-scale)");
-      categoriesmode_p[im]->GetXaxis()->SetBinLabel(3,"BANFF");
-      categoriesmode_p[im]->GetXaxis()->SetBinLabel(4,"BANFF-flux");
-      categoriesmode_p[im]->GetXaxis()->SetBinLabel(5,"BANFF-xsec");
-      categoriesmode_p[im]->GetXaxis()->SetBinLabel(6,"unconstrained-xsec");
-      categoriesmode_p[im]->GetXaxis()->SetBinLabel(7,"xsec-all(BANFF+unconstrained)");
-      categoriesmode_p[im]->GetXaxis()->SetBinLabel(8,"sk-detector");
-      categoriesmode_p[im]->GetXaxis()->SetBinLabel(9,"sk-detector(without-energy-scale)");
-      categoriesmode_p[im]->GetXaxis()->SetBinLabel(10,"sk-ccqe-ring-counting-efficiency");
-      categoriesmode_p[im]->GetXaxis()->SetBinLabel(11,"fsi");
-      categoriesmode_p[im]->GetXaxis()->SetBinLabel(12,"BANFF-uncorrelated");
+      categoriesmode_p[im]->GetXaxis()->SetBinLabel(i+1,"all");
+      categoriesmode_p[im]->GetXaxis()->SetBinLabel(i+1,"all(without-energy-scale)");
+      categoriesmode_p[im]->GetXaxis()->SetBinLabel(i+1,"BANFF");
+      categoriesmode_p[im]->GetXaxis()->SetBinLabel(i+1,"BANFF-flux");
+      categoriesmode_p[im]->GetXaxis()->SetBinLabel(i+1,"BANFF-xsec");
+      categoriesmode_p[im]->GetXaxis()->SetBinLabel(i+1,"unconstrained-xsec");
+      categoriesmode_p[im]->GetXaxis()->SetBinLabel(i+1,"xsec-all(BANFF+unconstrained)");
+      categoriesmode_p[im]->GetXaxis()->SetBinLabel(i+1,"sk-detector");
+      categoriesmode_p[im]->GetXaxis()->SetBinLabel(i+1,"sk-detector(without-energy-scale)");
+      categoriesmode_p[im]->GetXaxis()->SetBinLabel(i+1,"sk-ccqe-ring-counting-efficiency");
+      categoriesmode_p[im]->GetXaxis()->SetBinLabel(i+1,"fsi");
     }
     if(!categoriesmode_m[im]) {
-      categoriesmode_m[im] = new TH1D(Form("categoriesmode_m_%s",util::AsStringCompact(m).c_str()),Form("categoriesmode_m_%s",util::AsStringCompact(m).c_str()),12,0,12);
+      categoriesmode_m[im] = new TH1D(Form("categoriesmode_m_%s",util::AsStringCompact(m).c_str()),Form("categoriesmode_m_%s",util::AsStringCompact(m).c_str()),11,0,11);
       categoriesmode_m[im]->SetLineColor(kRed);
       categoriesmode_m[im]->GetYaxis()->SetTitle("% change");
-      categoriesmode_m[im]->GetXaxis()->SetBinLabel(1,"all");
-      categoriesmode_m[im]->GetXaxis()->SetBinLabel(2,"all(without-energy-scale)");
-      categoriesmode_m[im]->GetXaxis()->SetBinLabel(3,"BANFF");
-      categoriesmode_m[im]->GetXaxis()->SetBinLabel(4,"BANFF-flux");
-      categoriesmode_m[im]->GetXaxis()->SetBinLabel(5,"BANFF-xsec");
-      categoriesmode_m[im]->GetXaxis()->SetBinLabel(6,"unconstrained-xsec");
-      categoriesmode_m[im]->GetXaxis()->SetBinLabel(7,"xsec-all(BANFF+unconstrained)");
-      categoriesmode_m[im]->GetXaxis()->SetBinLabel(8,"sk-detector");
-      categoriesmode_m[im]->GetXaxis()->SetBinLabel(9,"sk-detector(without-energy-scale)");
-      categoriesmode_m[im]->GetXaxis()->SetBinLabel(10,"sk-ccqe-ring-counting-efficiency");
-      categoriesmode_m[im]->GetXaxis()->SetBinLabel(11,"fsi");
-      categoriesmode_m[im]->GetXaxis()->SetBinLabel(12,"BANFF-uncorrelated");
+      categoriesmode_m[im]->GetXaxis()->SetBinLabel(i+1,"all");
+      categoriesmode_m[im]->GetXaxis()->SetBinLabel(i+1,"all(without-energy-scale)");
+      categoriesmode_m[im]->GetXaxis()->SetBinLabel(i+1,"BANFF");
+      categoriesmode_m[im]->GetXaxis()->SetBinLabel(i+1,"BANFF-flux");
+      categoriesmode_m[im]->GetXaxis()->SetBinLabel(i+1,"BANFF-xsec");
+      categoriesmode_m[im]->GetXaxis()->SetBinLabel(i+1,"unconstrained-xsec");
+      categoriesmode_m[im]->GetXaxis()->SetBinLabel(i+1,"xsec-all(BANFF+unconstrained)");
+      categoriesmode_m[im]->GetXaxis()->SetBinLabel(i+1,"sk-detector");
+      categoriesmode_m[im]->GetXaxis()->SetBinLabel(i+1,"sk-detector(without-energy-scale)");
+      categoriesmode_m[im]->GetXaxis()->SetBinLabel(i+1,"sk-ccqe-ring-counting-efficiency");
+      categoriesmode_m[im]->GetXaxis()->SetBinLabel(i+1,"fsi");
     }
   }
 

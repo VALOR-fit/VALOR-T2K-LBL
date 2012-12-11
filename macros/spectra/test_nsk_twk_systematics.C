@@ -76,7 +76,7 @@ void test_nsk_twk_systematics
   
   const int nexperiments = 5000;
 
-  const int nsystematics = 22;
+  const int nsystematics = 18;
   string systematic[nsystematics] = {
     "sk_1Rmu_ccqe_ring_counting_eff", //0
     "sk_1Rmu_ccqe_other_eff",    //1
@@ -90,16 +90,12 @@ void test_nsk_twk_systematics
     "xsec_wshape",               //9
     "xsec_shape_ccoth",          //10
     "xsec_pilessdelta",          //11
-    "xsec_enushape",             //12
-    "xsec_norm_ccqeE1",          //13
-    "xsec_norm_ccqeE2",          //14
-    "xsec_norm_cc1piE1",         //15
-    "xsec_norm_cccoh",           //16
-    "xsec_norm_nccoh",           //17
-    "xsec_norm_ncoth",           //18
-    "xsec_norm_nuetonumu",       //19
-    "xsec_norm_antinutonu",      //20
-    "fsi"                        //21
+    "xsec_bindE",                //12
+    "xsec_norm_cccoh",           //13
+    "xsec_norm_ncoth",           //14
+    "xsec_norm_nuetonumu",       //15
+    "xsec_norm_antinutonu",      //16
+    "fsi"                        //17
   };
   bool generate_random[nsystematics] = {
     true,  /* sk_1Rmu_ccqe_ring_counting_eff */
@@ -114,12 +110,8 @@ void test_nsk_twk_systematics
     false, /* xsec_wshape               */
     false, /* xsec_shape_ccoth          */
     false, /* xsec_pilessdelta          */
-    false, /* xsec_enushape             */
-    false, /* xsec_norm_ccqeE1          */
-    false, /* xsec_norm_ccqeE2          */
-    false, /* xsec_norm_cc1piE1         */
+    false, /* xsec_bindE                */
     false, /* xsec_norm_cccoh           */
-    false, /* xsec_norm_nccoh           */
     false, /* xsec_norm_ncoth           */
     false, /* xsec_norm_nuetonumu       */
     false, /* xsec_norm_antinutonu      */
@@ -138,12 +130,8 @@ void test_nsk_twk_systematics
     false, /* xsec_wshape               */
     false, /* xsec_shape_ccoth          */
     false, /* xsec_pilessdelta          */
-    false, /* xsec_enushape             */
-    false, /* xsec_norm_ccqeE1          */
-    false, /* xsec_norm_ccqeE2          */
-    false, /* xsec_norm_cc1piE1         */
+    false, /* xsec_bindE                */
     false, /* xsec_norm_cccoh           */
-    false, /* xsec_norm_nccoh           */
     false, /* xsec_norm_ncoth           */
     false, /* xsec_norm_nuetonumu       */
     false, /* xsec_norm_antinutonu      */

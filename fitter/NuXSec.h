@@ -55,16 +55,9 @@ public:
   void TweakWshape        (double twkdial) { fWshapeTwkDial        = twkdial; }
   void TweakShapeCCoth    (double twkdial) { fShapeCCothTwkDial    = twkdial; }
   void TweakPiLessDelta   (double twkdial) { fPiLessDeltaTwkDial   = twkdial; }
-  void TweakENuShape      (double twkdial) { fENuShapeTwkDial      = twkdial; }
   void TweakBindE         (double twkdial) { fBindETwkDial         = twkdial; }
-#if BANFF_BINS <= 1
-  void TweakNormCCQEE1    (double twkdial) { fNormCCQEE1TwkDial    = twkdial; }
-  void TweakNormCCQEE2    (double twkdial) { fNormCCQEE2TwkDial    = twkdial; }
-  void TweakNormCC1piE1   (double twkdial) { fNormCC1piE1TwkDial   = twkdial; }
-#endif
   void TweakNormCCcoh     (double twkdial) { fNormCCcohTwkDial     = twkdial; }
   void TweakNormNC1piC    (double twkdial) { fNormNC1piCTwkDial    = twkdial; }
-  void TweakNormNCcoh     (double twkdial) { fNormNCcohTwkDial     = twkdial; }
   void TweakNormNCoth     (double twkdial) { fNormNCothTwkDial     = twkdial; }
   void TweakNormNuEToNuMu (double twkdial) { fNormNuEToNuMuTwkDial = twkdial; }
   void TweakNormAntiNuToNu(double twkdial) { fNormAntiNuToNuTwkDial= twkdial; }
@@ -138,29 +131,16 @@ private:
   double fWshapeTwkDial;
   double fShapeCCothTwkDial;
   double fPiLessDeltaTwkDial;
-  double fENuShapeTwkDial;
   double fBindETwkDial;
-#if BANFF_BINS <= 1
-  double fNormCCQEE1TwkDial;
-  double fNormCCQEE2TwkDial;
-  double fNormCC1piE1TwkDial;
-#endif
   double fNormCCcohTwkDial;
   double fNormNC1piCTwkDial;
-  double fNormNCcohTwkDial;
   double fNormNCothTwkDial;
   double fNormNuEToNuMuTwkDial;
   double fNormAntiNuToNuTwkDial;
 
   // relative errors
-#if BANFF_BINS <= 1
-  double fNormCCQEE1RelErr;
-  double fNormCCQEE2RelErr;
-  double fNormCC1piE1RelErr;
-#endif
   double fNormCCcohRelErr;
   double fNormNC1piCRelErr;
-  double fNormNCcohRelErr;
   double fNormNCothRelErr;
   double fNormNuEToNuMuRelErr;
   double fNormAntiNuToNuRelErr;

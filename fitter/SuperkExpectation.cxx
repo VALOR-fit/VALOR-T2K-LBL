@@ -347,9 +347,7 @@ void SuperkExpectation::ResetSystematicVariations(void)
   this->GetSuperkDetector()->TweakEfficiency1RmuNuECC            (0.);
 
   // BANFF
-  //this->GetBANFF()->Tweak(true,0,3); //update eigendecomposition to best fit (will also update correlated to best fit)
-  //this->GetBANFF()->Tweak(true,0,2); //update uncorrelated to zero (will also update correlated to best fit, via cholesky)
-  this->GetBANFF()->Tweak(true,0,1); //update correlated to best fit exactly
+  this->GetBANFF()->Tweak(true,0);
 
   // FSI
   this->GetFSI()->Tweak(true,0);
@@ -360,16 +358,9 @@ void SuperkExpectation::ResetSystematicVariations(void)
   this->GetNuXSec()->TweakWshape        (0.);
   this->GetNuXSec()->TweakShapeCCoth    (0.);
   this->GetNuXSec()->TweakPiLessDelta   (0.);
-  this->GetNuXSec()->TweakENuShape      (0.);
   this->GetNuXSec()->TweakBindE         (0.);
-#if BANFF_BINS <= 1
-  this->GetNuXSec()->TweakNormCCQEE1    (0.);
-  this->GetNuXSec()->TweakNormCCQEE2    (0.);
-  this->GetNuXSec()->TweakNormCC1piE1   (0.);
-#endif
   this->GetNuXSec()->TweakNormCCcoh     (0.);
   this->GetNuXSec()->TweakNormNC1piC    (0.);
-  this->GetNuXSec()->TweakNormNCcoh     (0.);
   this->GetNuXSec()->TweakNormNCoth     (0.);
   this->GetNuXSec()->TweakNormNuEToNuMu (0.);
   this->GetNuXSec()->TweakNormAntiNuToNu(0.);
@@ -427,34 +418,14 @@ void SuperkExpectation::TweakSystematic(string systematic, double twkdial, bool 
 //    - xsec_wshape
 //    - xsec_shape_ccoth
 //    - xsec_pilessdelta
-//    - xsec_enushape
 //    - xsec_bindE
-//    - xsec_norm_ccqeE1
-//    - xsec_norm_ccqeE2
-//    - xsec_norm_cc1piE1
 //    - xsec_norm_cccoh
 //    - xsec_norm_nc1piC
-//    - xsec_norm_nccoh
 //    - xsec_norm_ncoth
 //    - xsec_norm_nuetonumu
 //    - xsec_norm_antinutonu
 //
-// Uncorrelated BANFF
-//    - unbanff                             : tweak all uncorrelated BANFF params
-//      or   
-//      * unbanff_00                        : tweak only uncorrelated BANFF param 00, see Conventions.h for definition
-//      * unbanff_01                        : tweak only uncorrelated BANFF param 01, see Conventions.h for definition
-//      * ..     
-//      * unbanff_30(48)                    : tweak only uncorrelated BANFF param 35(48), see Conventions.h for definition
-//
-// EigenDecomposition BANFF
-//    - edbanff                             : tweak all eigendecomposition BANFF params
-//      or   
-//      * edbanff_00                        : tweak only eigendecomposition BANFF param 00, see Conventions.h for definition
-//      * edbanff_01                        : tweak only eigendecomposition BANFF param 01, see Conventions.h for definition
-//      * ..     
-//      * edbanff_30(48)                    : tweak only eigendecomposition BANFF param 35(48), see Conventions.h for definition
-//
+
 
   //
   // SK detector systematics
@@ -517,58 +488,9 @@ void SuperkExpectation::TweakSystematic(string systematic, double twkdial, bool 
   // tweak all BANFF parameters taking into account correlations
   else
   if(systematic == "banff") {
-    this->GetBANFF()->Tweak(false,0,1); //< Cholesky method
+    this->GetBANFF()->Tweak(false,0); //< Cholesky method
   }
-  /*
-  // tweak all uncorrelated BANFF parameters
-  else
-  if(systematic == "unbanff") {
-    this->GetBANFF()->Tweak(false,0,2); //< Gaussian randomise uncorrelated
-  }
-  // tweak all uncorrelated BANFF parameters
-  else
-  if(systematic == "edbanff") {
-    this->GetBANFF()->Tweak(false,0,3); //< Eigendecomposition
-  }
-  // tweak an indivual uncorrelated BANFF parameter
-  else
-  if(systematic.find("unbanff_") != string::npos) {
-    TVectorD twkv(this->GetBANFF()->CurrentUncorrelatedValues());
-    PhysParamId_t p = util::PhysParamIdFromString(systematic);
-    int ip = util::ArrIdx::Instance()->UnBANFFSystIdx(p);
-    if(ip < 0) {
-      cerr << "Exp >> Unknown systematic parameter (" << systematic << ")" << endl;
-      exit(1);
-    }
-    twkv[ip] = twkdial;
-#ifdef __show_syst_tweak_debug__
-    cout << "Exp >> Tweaking systematic string: " << systematic
-	 << ", NuisParam: " << util::AsString(p)
-	 << endl;
-    util::PrintCompact(twkv);
-#endif
-    this->GetBANFF()->Tweak(true,&twkv,2);
-  }
-  // tweak an indivual eigendecompostion BANFF parameter
-  else
-  if(systematic.find("edbanff_") != string::npos) {
-    TVectorD twkv(this->GetBANFF()->CurrentEigenDecompValues());
-    PhysParamId_t p = util::PhysParamIdFromString(systematic);
-    int ip = util::ArrIdx::Instance()->EDBANFFSystIdx(p);
-    if(ip < 0) {
-      cerr << "Exp >> Unknown systematic parameter (" << systematic << ")" << endl;
-      exit(1);
-    }
-    twkv[ip] = twkdial;
-#ifdef __show_syst_tweak_debug__
-    cout << "Exp >> Tweaking systematic string: " << systematic
-	 << ", NuisParam: " << util::AsString(p)
-	 << endl;
-    util::PrintCompact(twkv);
-#endif
-    this->GetBANFF()->Tweak(true,&twkv,3);
-  }
-  */
+
   // tweak an individual BANFF parameter (ignores correlations, debug)
   else
   if(systematic.find("banff_") != string::npos) {
@@ -590,7 +512,7 @@ void SuperkExpectation::TweakSystematic(string systematic, double twkdial, bool 
 	 << endl;
     util::PrintCompact(twkv);
 #endif
-    this->GetBANFF()->Tweak(true,&twkv,1);
+    this->GetBANFF()->Tweak(true,&twkv);
   }
 
 
@@ -641,24 +563,12 @@ void SuperkExpectation::TweakSystematic(string systematic, double twkdial, bool 
     this->GetNuXSec()->TweakShapeCCoth    (twkdial);
   else if(systematic == "xsec_pilessdelta")
     this->GetNuXSec()->TweakPiLessDelta   (twkdial);
-  else if(systematic == "xsec_enushape")
-    this->GetNuXSec()->TweakENuShape      (twkdial);
   else if(systematic == "xsec_bindE")
     this->GetNuXSec()->TweakBindE         (twkdial);
-#if BANFF_BINS <= 1
-  else if(systematic == "xsec_norm_ccqeE1")
-    this->GetNuXSec()->TweakNormCCQEE1    (twkdial);
-  else if(systematic == "xsec_norm_ccqeE2")
-    this->GetNuXSec()->TweakNormCCQEE2    (twkdial);
-  else if(systematic == "xsec_norm_cc1piE1")
-    this->GetNuXSec()->TweakNormCC1piE1   (twkdial);
-#endif
   else if(systematic == "xsec_norm_cccoh")
     this->GetNuXSec()->TweakNormCCcoh     (twkdial);
   else if(systematic == "xsec_norm_nc1piC")
     this->GetNuXSec()->TweakNormNC1piC    (twkdial);
-  else if(systematic == "xsec_norm_nccoh")
-    this->GetNuXSec()->TweakNormNCcoh     (twkdial);
   else if(systematic == "xsec_norm_ncoth")
     this->GetNuXSec()->TweakNormNCoth     (twkdial);
   else if(systematic == "xsec_norm_nuetonumu")
@@ -693,27 +603,7 @@ void SuperkExpectation::TweakAllBANFFSystematics(void)
 #endif
 
   // BANFF
-  this->GetBANFF()->Tweak(false,0,1); // <-- Cholesky method
-}
-//________________________________________________________________________________________
-void SuperkExpectation::TweakAllUncorrelatedBANFFSystematics(void)
-{
-#ifdef __show_syst_tweak_mesg__
-  cout << "Exp >> Generating random variations of all BANFF systematic params (Cholesky)" << endl;
-#endif
-
-  // Uncorrelated BANFF
-  this->GetBANFF()->Tweak(false,0,2); //< Gaussian randomise uncorrelated
-}
-//________________________________________________________________________________________
-void SuperkExpectation::TweakAllEigenDecompBANFFSystematics(void)
-{
-#ifdef __show_syst_tweak_mesg__
-  cout << "Exp >> Generating random variations of all BANFF systematic params (eigendecomposition)" << endl;
-#endif
-
-  // Uncorrelated BANFF
-  this->GetBANFF()->Tweak(false,0,3); //< Eigendecomposition
+  this->GetBANFF()->Tweak(false,0); // <-- Cholesky method
 }
 //________________________________________________________________________________________
 void SuperkExpectation::TweakAllFSISystematics(void)
@@ -740,16 +630,9 @@ void SuperkExpectation::TweakAllUncorrelatedXSecSystematics(void)
   this->GetNuXSec()->TweakWshape        (rand.Gaus(0.,1.));
   this->GetNuXSec()->TweakShapeCCoth    (rand.Gaus(0.,1.));
   this->GetNuXSec()->TweakPiLessDelta   (rand.Gaus(0.,1.));
-  //this->GetNuXSec()->TweakENuShape      (rand.Gaus(0.,1.)); //not used in numu analysis!
   this->GetNuXSec()->TweakBindE         (rand.Gaus(0.,1.));
-#if BANFF_BINS <= 1
-  this->GetNuXSec()->TweakNormCCQEE1    (rand.Gaus(0.,1.));
-  this->GetNuXSec()->TweakNormCCQEE2    (rand.Gaus(0.,1.));
-  this->GetNuXSec()->TweakNormCC1piE1   (rand.Gaus(0.,1.));
-#endif
   this->GetNuXSec()->TweakNormCCcoh     (rand.Gaus(0.,1.));
   this->GetNuXSec()->TweakNormNC1piC    (rand.Gaus(0.,1.));
-  //this->GetNuXSec()->TweakNormNCcoh     (rand.Gaus(0.,1.)); //not used in numu analysis!
   this->GetNuXSec()->TweakNormNCoth     (rand.Gaus(0.,1.));
   this->GetNuXSec()->TweakNormNuEToNuMu (rand.Gaus(0.,1.));
   this->GetNuXSec()->TweakNormAntiNuToNu(rand.Gaus(0.,1.));
@@ -859,59 +742,7 @@ void SuperkExpectation::SetNuisanceParams(const FitParamList & fp, bool all_banf
      }
    }//!all_banff_fit
    //And finally apply the tweak
-   this->GetBANFF()->Tweak(true,&twkv,1);
-
-   /*
-   // 
-   // Uncorrelated BANFF systematics
-   //
-   
-   // Uncorrelated BANFF params included in the fit param list?
-   TVectorD twkvu(nbanff);
-   bool need_to_tweak_unbanff = false;
-   for(int ip = 0; ip < nbanff; ip++) {
-     PhysParamId_t p = PhysParamId_t ((int) kNuisUnBANFF00 + ip);
-     bool incl_banff = fp.Exists(p);
-     // If BANFF param included, use current value stored in fit param list
-     // to tweak the BANFF object
-     if(incl_banff) {
-       twkvu[ip] = fp.CurrValue(p);
-       need_to_tweak_unbanff = true;
-     }
-     // Otherwise, use whatever is already stored in the BANFF object
-     else {
-       twkvu[ip] = this->GetBANFF()->CurrentUncorrelatedValue(p);
-     }
-   }
-   if(need_to_tweak_unbanff)
-     this->GetBANFF()->Tweak(true,&twkvu,2);
-   */
-
-   /*
-   // 
-   // Eigendecomposition BANFF systematics
-   //
-
-   // Eigendecomposition BANFF params included in the fit param list?
-   TVectorD twkve(nbanff);
-   bool need_to_tweak_edbanff = false;
-   for(int ip = 0; ip < nbanff; ip++) {
-     PhysParamId_t p = PhysParamId_t ((int) kNuisEDBANFF00 + ip);
-     bool incl_banff = fp.Exists(p);
-     // If BANFF param included, use current value stored in fit param list
-     // to tweak the BANFF object
-     if(incl_banff) {
-       twkve[ip] = fp.CurrValue(p);
-       need_to_tweak_edbanff = true;
-     }
-     // Otherwise, use whatever is already stored in the BANFF object
-     else {
-       twkve[ip] = this->GetBANFF()->CurrentEigenDecompValue(p);
-     }
-   }
-   if(need_to_tweak_edbanff)
-     this->GetBANFF()->Tweak(true,&twkve,3);
-   */
+   this->GetBANFF()->Tweak(true,&twkv);
 
    // 
    // Cross-section systematics (other than BANFF ones)
@@ -936,30 +767,10 @@ void SuperkExpectation::SetNuisanceParams(const FitParamList & fp, bool all_banf
      double twk = fp.CurrValue(kNuisXSecPiLessDelta);
      this->GetNuXSec()->TweakPiLessDelta(twk);
    }
-   /*
-   if(fp.Exists(kNuisXSecENuShape)) {
-     double twk = fp.CurrValue(kNuisXSecENuShape);
-     this->GetNuXSec()->TweakENuShape(twk);
-   }
-   */
    if(fp.Exists(kNuisXSecBindE)) {
      double twk = fp.CurrValue(kNuisXSecBindE);
      this->GetNuXSec()->TweakBindE(twk);
    }
-#if BANFF_BINS <= 1
-   if(fp.Exists(kNuisXSecNormCCQEE1)) {
-     double twk = fp.CurrValue(kNuisXSecNormCCQEE1);
-     this->GetNuXSec()->TweakNormCCQEE1(twk);
-   }
-   if(fp.Exists(kNuisXSecNormCCQEE2)) {
-     double twk = fp.CurrValue(kNuisXSecNormCCQEE2);
-     this->GetNuXSec()->TweakNormCCQEE2(twk);
-   }
-   if(fp.Exists(kNuisXSecNormCC1piE1)) {
-     double twk = fp.CurrValue(kNuisXSecNormCC1piE1);
-     this->GetNuXSec()->TweakNormCC1piE1(twk);
-   }
-#endif
    if(fp.Exists(kNuisXSecNormCCcoh)) {
      double twk = fp.CurrValue(kNuisXSecNormCCcoh);
      this->GetNuXSec()->TweakNormCCcoh(twk);
@@ -968,12 +779,6 @@ void SuperkExpectation::SetNuisanceParams(const FitParamList & fp, bool all_banf
      double twk = fp.CurrValue(kNuisXSecNormNC1piC);
      this->GetNuXSec()->TweakNormNC1piC(twk);
    }
-   /*
-   if(fp.Exists(kNuisXSecNormNCcoh)) {
-     double twk = fp.CurrValue(kNuisXSecNormNCcoh);
-     this->GetNuXSec()->TweakNormNCcoh(twk);
-   }
-   */
    if(fp.Exists(kNuisXSecNormNCoth)) {
      double twk = fp.CurrValue(kNuisXSecNormNCoth);
      this->GetNuXSec()->TweakNormNCoth(twk);

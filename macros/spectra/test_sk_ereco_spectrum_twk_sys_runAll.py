@@ -21,15 +21,14 @@ It will then create the .root, *.pdf, in the current working directory
 conffile = "analysis_configuration.xml"
 emax = 7
 
-modes1 = [0,1,2,3,4,5,6,7,8,9,10,11,12] #combinations
+modes1 = [0,1,2,3,4,5,6,7,8,9,10] #combinations
 modes2 = range(100,139) #banff
-modes3 = range(200,216) #unconstranied xsec
+modes3 = [200,201,202,203,204,209,210,212,213,214,215] #unconstranied xsec
 modes4 = range(300,308) #sk detector
 modes5 = range(400,449) #fsi
 modes6 = range(500,504) #special comparison tweaks
-modes7 = range(600,639) #uncorrelated banff
 
-modes = modes1 + modes2 + modes3 + modes4 + modes5 + modes7 #+ modes6
+modes = modes1 + modes2 + modes3 + modes4 + modes5 #+ modes6
 
 oscparams = [] #fill with oscillation parameters, in order mixing12, theta13, theta23, deltacp, dmsq12, dmsq23hypothesis
 oscparams.append([  0,   0,   0,   0,   0,   0]) #no oscillations!
@@ -48,25 +47,3 @@ for osc in oscparams:
             sys.exit(1)
         if update == "false":
             update = "true"
-
-"""
-new TCanvas();
-categories_p->Draw();
-categories_m->Draw("same");
-categories_p->GetYaxis()->SetRangeUser(-100,100);
-categories_p->SetTitle("");
-categories_p->GetXaxis()->SetLabelSize(0.03); 
-categories_m->SetLineColor(kBlue);
-TLine line_c(0,0,categories_p->GetNbinsX(),0);
-line_c->Draw();
-new TCanvas();
-summary_p->Draw();
-summary_m->Draw("same");
-summary_p->GetYaxis()->SetRangeUser(-10,10);
-summary_p->SetTitle("");
-summary_p->GetXaxis()->SetLabelSize(0.03); 
-summary_m->SetLineColor(kBlue);
-TLine line_s(0,0,summary_p->GetNbinsX(),0);
-line_s->Draw();
-
-"""

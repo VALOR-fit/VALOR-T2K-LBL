@@ -48,14 +48,11 @@ test_systematic_error_propagation_expectation(
   TMatrixD *FSICovMtrx = util::XML2TMatrixD(xml,root_node, "fsi/covariance_matrix");
 
   //XSec
-  double NormCCQE1RelErr = util::XML2Dbl(xml,root_node,"xsec/normalisations/ccqee1");
-  double NormCCQE2RelErr = util::XML2Dbl(xml,root_node,"xsec/normalisations/ccqee2");
-  double NormCC1pi1RelErr = util::XML2Dbl(xml,root_node,"xsec/normalisations/cc1pie1");
   double NormCCcohRelErr = util::XML2Dbl(xml,root_node,"xsec/normalisations/cccoh");
   double NormNC1piCRelErr = util::XML2Dbl(xml,root_node,"xsec/normalisations/nc1piC");
-  double NormNCcohRelErr = util::XML2Dbl(xml,root_node,"xsec/normalisations/nccoh");
   double NormNCothRelErr = util::XML2Dbl(xml,root_node,"xsec/normalisations/ncoth");
   double NormNuEToNuMuRelErr = util::XML2Dbl(xml,root_node,"xsec/normalisations/numu_to_nue");
+  double NormNuToAntiNuRelErr = util::XML2Dbl(xml,root_node,"xsec/normalisations/nu_to_antinu");
 
   // Release memory
   xml->FreeDoc(xmldoc);
@@ -128,7 +125,6 @@ test_systematic_error_propagation_expectation(
 	   << endrow << endl;
   for (int i = 0; i < conv::kNumOfParamsInBANFFfit; i++) {
     systematic = Form("banff %d",i);
-#line 0
     streamer << setw(ncol1)  << setfill(' ') << systematic << endcolumn
 	     << setw(ncolnev)  << setfill(' ') << setprecision(nprecisionnev)
 	     << sqrt(BANFFCovMtrx(i,i)) * 100 / BANNFBestFit(i) << pctsymbol;
@@ -141,21 +137,6 @@ test_systematic_error_propagation_expectation(
 	     << sqrt(FSICovMtrx(i,i)) * 100 << pctsymbol;
     streamer << endrow << endl;
   }
-  systematic = "Norm CCQE E1";
-  streamer << setw(ncol1)  << setfill(' ') << systematic << endcolumn
-	   << setw(ncolnev)  << setfill(' ') << setprecision(nprecisionnev)
-	   << NormCCQE1RelErr * 100 << pctsymbol
-	   << endrow << endl;
-  systematic = "Norm CCQE E2";
-  streamer << setw(ncol1)  << setfill(' ') << systematic << endcolumn
-	   << setw(ncolnev)  << setfill(' ') << setprecision(nprecisionnev)
-	   << NormCCQE2RelErr * 100 << pctsymbol
-	   << endrow << endl;
-  systematic = "Norm CC1pi E1";
-  streamer << setw(ncol1)  << setfill(' ') << systematic << endcolumn
-	   << setw(ncolnev)  << setfill(' ') << setprecision(nprecisionnev)
-	   << NormCC1pi1RelErr * 100 << pctsymbol
-	   << endrow << endl;
   systematic = "Norm CC coh";
   streamer << setw(ncol1)  << setfill(' ') << systematic << endcolumn
 	   << setw(ncolnev)  << setfill(' ') << setprecision(nprecisionnev)
@@ -166,11 +147,6 @@ test_systematic_error_propagation_expectation(
 	   << setw(ncolnev)  << setfill(' ') << setprecision(nprecisionnev)
 	   << NormNC1piCRelErr * 100 << pctsymbol
 	   << endrow << endl;
-  systematic = "Norm NC coh";
-  streamer << setw(ncol1)  << setfill(' ') << systematic << endcolumn
-	   << setw(ncolnev)  << setfill(' ') << setprecision(nprecisionnev)
-	   << NormNCcohRelErr * 100 << pctsymbol
-	   << endrow << endl;
   systematic = "Norm NC oth";
   streamer << setw(ncol1)  << setfill(' ') << systematic << endcolumn
 	   << setw(ncolnev)  << setfill(' ') << setprecision(nprecisionnev)
@@ -180,6 +156,11 @@ test_systematic_error_propagation_expectation(
   streamer << setw(ncol1)  << setfill(' ') << systematic << endcolumn
 	   << setw(ncolnev)  << setfill(' ') << setprecision(nprecisionnev)
 	   << NormNuEToNuMuRelErr * 100 << pctsymbol
+	   << endrow << endl;
+  systematic = "Norm Nu to AntiNu";
+  streamer << setw(ncol1)  << setfill(' ') << systematic << endcolumn
+	   << setw(ncolnev)  << setfill(' ') << setprecision(nprecisionnev)
+	   << NormNuToAntiNuRelErr * 100 << pctsymbol
 	   << endrow << endl;
 
   if(!use_tex) {

@@ -10,21 +10,14 @@
 //   2 tweak all unconstrained xsec
 //   3 tweak all sk detector
 //   4 tweak all fsi
-//   5 tweak all BANFF (correlated)
-//   6 tweak all BANFF (eigendecomposition)
 //
 // 200 tweak xsec_pf
 // 201 tweak xsec_sf
 // 202 tweak xsec_wshape
 // 203 tweak xsec_shape_ccoth
 // 204 tweak xsec_pilessdelta
-// 205 tweak xsec_enushape
-// 206 tweak xsec_norm_ccqeE1
-// 207 tweak xsec_norm_ccqeE2
-// 208 tweak xsec_norm_cc1piE1
 // 209 tweak xsec_norm_cccoh
 // 210 tweak xsec_norm_nc1piC
-// 211 tweak xsec_norm_nccoh
 // 212 tweak xsec_norm_ncoth
 // 213 tweak xsec_norm_nuetonumu
 // 214 tweak xsec_norm_antinutonu
@@ -74,13 +67,7 @@ void test_sk_ereco_spectrum_twk_sys_throw
     case 3:
       modetitle = "sk_detector"; break;
     case 4:
-      char fsibins[40] = "";
-      sprintf(fsibins, "fsi_%d", conv::kNumOfFSIParams);
-      modetitle = fsibins; break;
-    case 5:
-      modetitle = "BANFF_correlated"; break;
-    case 6:
-      modetitle = "BANFF_eigendecomposition"; break;
+      modetitle = "fsi"; break;
 
     case 200:
       modetitle = "xsec_pf"; break;
@@ -92,20 +79,10 @@ void test_sk_ereco_spectrum_twk_sys_throw
       modetitle = "xsec_shape_ccoth"; break;
     case 204:
       modetitle = "xsec_pilessdelta"; break;
-    case 205:
-      modetitle = "xsec_enushape"; break;
-    case 206:
-      modetitle = "xsec_norm_ccqeE1"; break;
-    case 207:
-      modetitle = "xsec_norm_ccqeE2"; break;
-    case 208:
-      modetitle = "xsec_norm_cc1piE1"; break;
     case 209:
       modetitle = "xsec_norm_cccoh"; break;
     case 210:
       modetitle = "xsec_norm_nc1piC"; break;
-    case 211:
-      modetitle = "xsec_norm_nccoh"; break;
     case 212:
       modetitle = "xsec_norm_ncoth"; break;
     case 213:
@@ -224,14 +201,10 @@ void test_sk_ereco_spectrum_twk_sys_throw
 	  sysstr = "xsec_shape_ccoth"; break;
         case(12) :
 	  sysstr = "xsec_pilessdelta"; break;
-        case(13) :
-	  sysstr = "xsec_enushape"; break;
         case(14) :
 	  sysstr = "xsec_norm_cccoh"; break;
         case(15) :
 	  sysstr = "xsec_norm_nc1piC"; break;
-        case(16) :
-	  sysstr = "xsec_norm_nccoh"; break;
         case(17) :
 	  sysstr = "xsec_norm_ncoth"; break;
         case(18) :
@@ -305,17 +278,6 @@ void test_sk_ereco_spectrum_twk_sys_throw
       // FSI
       if(mode == 0 || mode == 4) {
 	skexp.TweakAllFSISystematics();
-	//skexp.GetFSI()->PrintSystematicVariations();
-      }
-
-     // BANFF (correlated)
-      if(mode == 5) {
-	skexp.TweakAllBANFFSystematics();
-      }
-
-     // BANFF (eigendecompostion)
-      if(mode == 6) {
-	skexp.TweakAllEigenDecompBANFFSystematics();
       }
 
     }//mode<100
@@ -336,20 +298,10 @@ void test_sk_ereco_spectrum_twk_sys_throw
 	  skexp.TweakSystematic("xsec_shape_ccoth",tweak); break;
         case 204:
 	  skexp.TweakSystematic("xsec_pilessdelta",tweak); break;
-        case 205:
-	  skexp.TweakSystematic("xsec_enushape",tweak); break;
-        case 206:
-	  skexp.TweakSystematic("xsec_norm_ccqeE1",tweak); break;
-        case 207:
-	  skexp.TweakSystematic("xsec_norm_ccqeE2",tweak); break;
-        case 208:
-	  skexp.TweakSystematic("xsec_norm_cc1piE1",tweak); break;
         case 209:
 	  skexp.TweakSystematic("xsec_norm_cccoh",tweak); break;
         case 210:
 	  skexp.TweakSystematic("xsec_norm_nc1piC",tweak); break;
-        case 211:
-	  skexp.TweakSystematic("xsec_norm_nccoh",tweak); break;
         case 212:
 	  skexp.TweakSystematic("xsec_norm_ncoth",tweak); break;
         case 213:
@@ -415,10 +367,8 @@ void test_sk_ereco_spectrum_twk_sys_throw
     hSysThrown[nbanff+nfsi+10]->Fill(skexp.GetNuXSec()->CurrentValue(util::PhysParamIdFromString("xsec_wshape")));
     hSysThrown[nbanff+nfsi+11]->Fill(skexp.GetNuXSec()->CurrentValue(util::PhysParamIdFromString("xsec_shape_ccoth")));
     hSysThrown[nbanff+nfsi+12]->Fill(skexp.GetNuXSec()->CurrentValue(util::PhysParamIdFromString("xsec_pilessdelta")));
-    hSysThrown[nbanff+nfsi+13]->Fill(skexp.GetNuXSec()->CurrentValue(util::PhysParamIdFromString("xsec_enushape")));
     hSysThrown[nbanff+nfsi+14]->Fill(skexp.GetNuXSec()->CurrentValue(util::PhysParamIdFromString("xsec_norm_cccoh")));
     hSysThrown[nbanff+nfsi+15]->Fill(skexp.GetNuXSec()->CurrentValue(util::PhysParamIdFromString("xsec_norm_nc1piC")));
-    hSysThrown[nbanff+nfsi+16]->Fill(skexp.GetNuXSec()->CurrentValue(util::PhysParamIdFromString("xsec_norm_nccoh")));
     hSysThrown[nbanff+nfsi+17]->Fill(skexp.GetNuXSec()->CurrentValue(util::PhysParamIdFromString("xsec_norm_ncoth")));
     hSysThrown[nbanff+nfsi+18]->Fill(skexp.GetNuXSec()->CurrentValue(util::PhysParamIdFromString("xsec_norm_nuetonumu")));
     hSysThrown[nbanff+nfsi+19]->Fill(skexp.GetNuXSec()->CurrentValue(util::PhysParamIdFromString("xsec_norm_antinutonu")));

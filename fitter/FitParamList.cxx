@@ -17,7 +17,6 @@
 #define SYST_STEP   0.1 // step size (in units of sigma)
 #define NSELECTED_NONBANFF 6
 #define NSELECTED_BANFF    2
-#define NSELECTED_UNBANFF  0
 
 #include <cassert>
 #include <cstdlib>
@@ -490,26 +489,6 @@ FitParamList * FitParamList::NamedParameterList(string name)
     fp -> SetSystMode();
     return fp;
   }
-  if(name == "nuosc3f_numudisapp_fix4+nuisanceunbanff") {
-    FitParamList * fp = FitParamList::NuOsc3FlavourFitWithAllSystUnBANFF();
-    fp -> FixParameter (kPhypMixing13);
-    fp -> FixParameter (kPhypMixing12);
-    fp -> FixParameter (kPhypDeltaCP);
-    fp -> FixParameter (kPhypDm12sq);
-    fp -> SetParListName(name);
-    fp -> SetSystMode();
-    return fp;
-  }
-  if(name == "nuosc3f_numudisapp_fix4+nuisanceunbanfffullbanffselection") {
-    FitParamList * fp = FitParamList::NuOsc3FlavourFitWithSelectedSystFullBANFFUnBANFF();
-    fp -> FixParameter (kPhypMixing13);
-    fp -> FixParameter (kPhypMixing12);
-    fp -> FixParameter (kPhypDeltaCP);
-    fp -> FixParameter (kPhypDm12sq);
-    fp -> SetParListName(name);
-    fp -> SetSystMode();
-    return fp;
-  }
   */
   if(name == "nuosc3f_nueapp_fix4") {
     FitParamList * fp = FitParamList::NuOsc3FlavourFit();
@@ -619,38 +598,6 @@ FitParamList * FitParamList::NuOsc3FlavourFitWithSelectedSystFullBANFF(void)
   //
   FitParamList::AppendSelectedNonBANFFSystematics  (fparm, 6);
   FitParamList::AppendAllCorrelatedBANFFSystematics(fparm, 6+NSELECTED_NONBANFF);
-
-  return fparm;
-}
-//________________________________________________________________________________________
-FitParamList * FitParamList::NuOsc3FlavourFitWithAllSystUnBANFF(void)
-{
-  FitParamList * fparm = new FitParamList(6+kNumOfNuisanceParams1Rmu); // NOTE: This will have to change for the 2012a 1Re and joint analysis
-
-  FitParamList::Append3FlavourOscillation(fparm, 0);
-
-  //
-  // add nuisance params
-  //
-  FitParamList::AppendAllUncorrelatedBANFFSystematics(fparm, 6);
-  FitParamList::AppendAllSuperkDetectorSystematics   (fparm, 6+kNumOfParamsInBANFFfit);
-  FitParamList::AppendAllFSISystematics              (fparm, 6+kNumOfParamsInBANFFfit+kNumOfSKDetParams);
-  FitParamList::AppendAllUncorrelatedXSecSystematics (fparm, 6+kNumOfParamsInBANFFfit+kNumOfSKDetParams+kNumOfFSIParams);
-
-  return fparm;
-}
-//________________________________________________________________________________________
-FitParamList * FitParamList::NuOsc3FlavourFitWithSelectedSystFullBANFFUnBANFF(void)
-{
-  FitParamList * fparm = new FitParamList(6+NSELECTED_NONBANFF+kNumOfParamsInBANFFfit); // NOTE: This will have to change for the 2012a 1Re and joint analysis
-
-  FitParamList::Append3FlavourOscillation(fparm, 0);
-
-  //
-  // add nuisance params
-  //
-  FitParamList::AppendSelectedNonBANFFSystematics    (fparm, 6);
-  FitParamList::AppendAllUncorrelatedBANFFSystematics(fparm, 6+NSELECTED_NONBANFF);
 
   return fparm;
 }
@@ -799,16 +746,9 @@ void FitParamList::AppendAllUncorrelatedXSecSystematics(FitParamList * fparm, in
   fparm->AddParam( ip++, kNuisXSecWshape,        0.0, -1.0*SYST_NSIGMA, 1.0*SYST_NSIGMA, SYST_STEP,  false, true);
   fparm->AddParam( ip++, kNuisXSecShapeCCoth,    0.0, -1.0*SYST_NSIGMA, 1.0*SYST_NSIGMA, SYST_STEP,  false, true);
   fparm->AddParam( ip++, kNuisXSecPiLessDelta,   0.0, -1.0*SYST_NSIGMA, 1.0*SYST_NSIGMA, SYST_STEP,  false, true);
-  //fparm->AddParam( ip++, kNuisXSecENuShape,      0.0, -1.0*SYST_NSIGMA, 1.0*SYST_NSIGMA, SYST_STEP,  false, true); // not used in numu analysis!
   fparm->AddParam( ip++, kNuisXSecBindE,         0.0, -1.0*SYST_NSIGMA, 1.0*SYST_NSIGMA, SYST_STEP,  false, true);
-#if BANFF_BINS <= 1
-  fparm->AddParam( ip++, kNuisXSecNormCCQEE1,    0.0, -1.0*SYST_NSIGMA, 1.0*SYST_NSIGMA, SYST_STEP,  false, true);
-  fparm->AddParam( ip++, kNuisXSecNormCCQEE2,    0.0, -1.0*SYST_NSIGMA, 1.0*SYST_NSIGMA, SYST_STEP,  false, true);
-  fparm->AddParam( ip++, kNuisXSecNormCC1piE1,   0.0, -1.0*SYST_NSIGMA, 1.0*SYST_NSIGMA, SYST_STEP,  false, true);
-#endif
   fparm->AddParam( ip++, kNuisXSecNormCCcoh,     0.0, -1.0*SYST_NSIGMA, 1.0*SYST_NSIGMA, SYST_STEP,  false, true);
   fparm->AddParam( ip++, kNuisXSecNormNC1piC,    0.0, -1.0*SYST_NSIGMA, 1.0*SYST_NSIGMA, SYST_STEP,  false, true);
-  //fparm->AddParam( ip++, kNuisXSecNormNCcoh,     0.0, -1.0*SYST_NSIGMA, 1.0*SYST_NSIGMA, SYST_STEP,  false, true); // not used in numu analysis!
   fparm->AddParam( ip++, kNuisXSecNormNCoth,     0.0, -1.0*SYST_NSIGMA, 1.0*SYST_NSIGMA, SYST_STEP,  false, true);
   fparm->AddParam( ip++, kNuisXSecNormNuEToNuMu, 0.0, -1.0*SYST_NSIGMA, 1.0*SYST_NSIGMA, SYST_STEP,  false, true);
   fparm->AddParam( ip++, kNuisXSecNormAntiNuToNu,0.0, -1.0*SYST_NSIGMA, 1.0*SYST_NSIGMA, SYST_STEP,  false, true);
@@ -919,24 +859,6 @@ void FitParamList::AppendAllCorrelatedBANFFSystematics(FitParamList * fparm, int
     double err = sqrt(BANFFCov[i][i]);
     double lowerr = TMath::Max(0., bf-(err*SYST_NSIGMA));
     fparm->AddParam(ip++, p, bf, lowerr, bf+(err*SYST_NSIGMA),  err*SYST_STEP,  false, true);
-  }
-#if BANFF_BINS <= 2
-  fparm -> SetNuisance(kNuisBANFFNC1pi0 ,false); // not used in numu analysis!
-#endif
-
-}
-//________________________________________________________________________________________
-void FitParamList::AppendAllUncorrelatedBANFFSystematics(FitParamList * fparm, int start)
-{
-// Add nuisance params
-//
-
-  int ip = start; // first unallocated element in the param list
-
-  // Uncorrelated BANFF 
-  for(int i = 0; i < kNumOfParamsInBANFFfit; i++) {
-    PhysParamId_t p = PhysParamId_t ((int) kNuisUnBANFF00 + i);
-    fparm->AddParam( ip++, p, 0.0, -1.0*SYST_NSIGMA, 1.0*SYST_NSIGMA, SYST_STEP,  false, true);
   }
 
 }
