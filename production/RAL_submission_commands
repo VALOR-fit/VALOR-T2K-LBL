@@ -81,9 +81,51 @@ root2k -l -b -q '$T2KOSCANA/macros/fit/toymc/fit_xml_seeded_from_chisq_map.C("/h
 
 MINOS sensitivity:
 
+
+
+#Make the toy experiments  Δm2=(2.39+0.09-0.10 )x10-3 eV2, sin2(2Θ)=0.957+0.035-0.036
+#(make with +- 1,3 sigma errors in dm32sq, use edge of contour for mixing angle)
+#max mixing
+root2k -l -b -q '$T2KOSCANA/macros/fit/toymc/generate_toymc_ensemble.C("sensitivity_minos",1,1000,"3f_osc",-99,-99,1.000,-99,-99,0.00209)'
+root2k -l -b -q '$T2KOSCANA/macros/fit/toymc/generate_toymc_ensemble.C("sensitivity_minos",2,1000,"3f_osc",-99,-99,1.000,-99,-99,0.00229)'
+root2k -l -b -q '$T2KOSCANA/macros/fit/toymc/generate_toymc_ensemble.C("sensitivity_minos",3,1000,"3f_osc",-99,-99,1.000,-99,-99,0.00239)'
+root2k -l -b -q '$T2KOSCANA/macros/fit/toymc/generate_toymc_ensemble.C("sensitivity_minos",4,1000,"3f_osc",-99,-99,1.000,-99,-99,0.00248)'
+root2k -l -b -q '$T2KOSCANA/macros/fit/toymc/generate_toymc_ensemble.C("sensitivity_minos",5,1000,"3f_osc",-99,-99,1.000,-99,-99,0.00266)'
+#bestfit mixing
+root2k -l -b -q '$T2KOSCANA/macros/fit/toymc/generate_toymc_ensemble.C("sensitivity_minos",6,1000,"3f_osc",-99,-99,0.957,-99,-99,0.00209)'
+root2k -l -b -q '$T2KOSCANA/macros/fit/toymc/generate_toymc_ensemble.C("sensitivity_minos",7,1000,"3f_osc",-99,-99,0.957,-99,-99,0.00229)'
+#root2k -l -b -q '$T2KOSCANA/macros/fit/toymc/generate_toymc_ensemble.C("sensitivity_minos",0,1000,"3f_osc",-99,-99,0.957,-99,-99,0.00239)'
+root2k -l -b -q '$T2KOSCANA/macros/fit/toymc/generate_toymc_ensemble.C("sensitivity_minos",9,1000,"3f_osc",-99,-99,0.957,-99,-99,0.00248)'
+root2k -l -b -q '$T2KOSCANA/macros/fit/toymc/generate_toymc_ensemble.C("sensitivity_minos",10,1000,"3f_osc",-99,-99,0.957,-99,-99,0.00266)'
+#edge of contour mixing
+root2k -l -b -q '$T2KOSCANA/macros/fit/toymc/generate_toymc_ensemble.C("sensitivity_minos",11,1000,"3f_osc",-99,-99,0.877,-99,-99,0.00209)'
+root2k -l -b -q '$T2KOSCANA/macros/fit/toymc/generate_toymc_ensemble.C("sensitivity_minos",12,1000,"3f_osc",-99,-99,0.877,-99,-99,0.00229)'
+root2k -l -b -q '$T2KOSCANA/macros/fit/toymc/generate_toymc_ensemble.C("sensitivity_minos",13,1000,"3f_osc",-99,-99,0.877,-99,-99,0.00239)'
+root2k -l -b -q '$T2KOSCANA/macros/fit/toymc/generate_toymc_ensemble.C("sensitivity_minos",14,1000,"3f_osc",-99,-99,0.877,-99,-99,0.00248)'
+root2k -l -b -q '$T2KOSCANA/macros/fit/toymc/generate_toymc_ensemble.C("sensitivity_minos",15,1000,"3f_osc",-99,-99,0.877,-99,-99,0.00266)'
+
+
+
+
 2+8:
 
 $T2KOSCANA/production/submit_toyexpt_fitting_job_xml --resource RAL --tag minos --nruns 1000 --nexpts 1 --first-expt 0 --fit-param-list nuosc3f_numudisapp_fix4+nuisanceselection --job-dir $PWD --softw-dir $T2KOSCANA --toy-expts-file /home/ppd/tdealtry/RAL_repoistory/t2k/t2kana/nuosc/trunk/inputs/sensitivity_minosbestfit.xml --cpu-time 08:00:00
+
+$T2KOSCANA/production/submit_toyexpt_fitting_job_xml --resource RAL --tag minos1 --nruns 1000 --nexpts 1 --first-expt 0 --fit-param-list nuosc3f_numudisapp_fix4+nuisanceselection --job-dir $PWD --softw-dir $T2KOSCANA --toy-expts-file /home/ppd/tdealtry/RAL_repoistory/t2k/t2kana/nuosc/trunk/inputs/sensitivity_minos-1.xml --cpu-time 08:00:00
+$T2KOSCANA/production/submit_toyexpt_fitting_job_xml --resource RAL --tag minos2 --nruns 1000 --nexpts 1 --first-expt 0 --fit-param-list nuosc3f_numudisapp_fix4+nuisanceselection --job-dir $PWD --softw-dir $T2KOSCANA --toy-expts-file /home/ppd/tdealtry/RAL_repoistory/t2k/t2kana/nuosc/trunk/inputs/sensitivity_minos-2.xml --cpu-time 08:00:00
+$T2KOSCANA/production/submit_toyexpt_fitting_job_xml --resource RAL --tag minos3 --nruns 1000 --nexpts 1 --first-expt 0 --fit-param-list nuosc3f_numudisapp_fix4+nuisanceselection --job-dir $PWD --softw-dir $T2KOSCANA --toy-expts-file /home/ppd/tdealtry/RAL_repoistory/t2k/t2kana/nuosc/trunk/inputs/sensitivity_minos-3.xml --cpu-time 08:00:00
+$T2KOSCANA/production/submit_toyexpt_fitting_job_xml --resource RAL --tag minos4 --nruns 1000 --nexpts 1 --first-expt 0 --fit-param-list nuosc3f_numudisapp_fix4+nuisanceselection --job-dir $PWD --softw-dir $T2KOSCANA --toy-expts-file /home/ppd/tdealtry/RAL_repoistory/t2k/t2kana/nuosc/trunk/inputs/sensitivity_minos-4.xml --cpu-time 08:00:00
+$T2KOSCANA/production/submit_toyexpt_fitting_job_xml --resource RAL --tag minos5 --nruns 1000 --nexpts 1 --first-expt 0 --fit-param-list nuosc3f_numudisapp_fix4+nuisanceselection --job-dir $PWD --softw-dir $T2KOSCANA --toy-expts-file /home/ppd/tdealtry/RAL_repoistory/t2k/t2kana/nuosc/trunk/inputs/sensitivity_minos-5.xml --cpu-time 08:00:00
+$T2KOSCANA/production/submit_toyexpt_fitting_job_xml --resource RAL --tag minos6 --nruns 1000 --nexpts 1 --first-expt 0 --fit-param-list nuosc3f_numudisapp_fix4+nuisanceselection --job-dir $PWD --softw-dir $T2KOSCANA --toy-expts-file /home/ppd/tdealtry/RAL_repoistory/t2k/t2kana/nuosc/trunk/inputs/sensitivity_minos-6.xml --cpu-time 08:00:00
+$T2KOSCANA/production/submit_toyexpt_fitting_job_xml --resource RAL --tag minos7 --nruns 1000 --nexpts 1 --first-expt 0 --fit-param-list nuosc3f_numudisapp_fix4+nuisanceselection --job-dir $PWD --softw-dir $T2KOSCANA --toy-expts-file /home/ppd/tdealtry/RAL_repoistory/t2k/t2kana/nuosc/trunk/inputs/sensitivity_minos-7.xml --cpu-time 08:00:00
+$T2KOSCANA/production/submit_toyexpt_fitting_job_xml --resource RAL --tag minos9 --nruns 1000 --nexpts 1 --first-expt 0 --fit-param-list nuosc3f_numudisapp_fix4+nuisanceselection --job-dir $PWD --softw-dir $T2KOSCANA --toy-expts-file /home/ppd/tdealtry/RAL_repoistory/t2k/t2kana/nuosc/trunk/inputs/sensitivity_minos-9.xml --cpu-time 08:00:00
+$T2KOSCANA/production/submit_toyexpt_fitting_job_xml --resource RAL --tag minos10 --nruns 1000 --nexpts 1 --first-expt 0 --fit-param-list nuosc3f_numudisapp_fix4+nuisanceselection --job-dir $PWD --softw-dir $T2KOSCANA --toy-expts-file /home/ppd/tdealtry/RAL_repoistory/t2k/t2kana/nuosc/trunk/inputs/sensitivity_minos-10.xml --cpu-time 08:00:00
+$T2KOSCANA/production/submit_toyexpt_fitting_job_xml --resource RAL --tag minos11 --nruns 1000 --nexpts 1 --first-expt 0 --fit-param-list nuosc3f_numudisapp_fix4+nuisanceselection --job-dir $PWD --softw-dir $T2KOSCANA --toy-expts-file /home/ppd/tdealtry/RAL_repoistory/t2k/t2kana/nuosc/trunk/inputs/sensitivity_minos-11.xml --cpu-time 08:00:00
+$T2KOSCANA/production/submit_toyexpt_fitting_job_xml --resource RAL --tag minos12 --nruns 1000 --nexpts 1 --first-expt 0 --fit-param-list nuosc3f_numudisapp_fix4+nuisanceselection --job-dir $PWD --softw-dir $T2KOSCANA --toy-expts-file /home/ppd/tdealtry/RAL_repoistory/t2k/t2kana/nuosc/trunk/inputs/sensitivity_minos-12.xml --cpu-time 08:00:00
+$T2KOSCANA/production/submit_toyexpt_fitting_job_xml --resource RAL --tag minos13 --nruns 1000 --nexpts 1 --first-expt 0 --fit-param-list nuosc3f_numudisapp_fix4+nuisanceselection --job-dir $PWD --softw-dir $T2KOSCANA --toy-expts-file /home/ppd/tdealtry/RAL_repoistory/t2k/t2kana/nuosc/trunk/inputs/sensitivity_minos-13.xml --cpu-time 08:00:00
+$T2KOSCANA/production/submit_toyexpt_fitting_job_xml --resource RAL --tag minos14 --nruns 1000 --nexpts 1 --first-expt 0 --fit-param-list nuosc3f_numudisapp_fix4+nuisanceselection --job-dir $PWD --softw-dir $T2KOSCANA --toy-expts-file /home/ppd/tdealtry/RAL_repoistory/t2k/t2kana/nuosc/trunk/inputs/sensitivity_minos-14.xml --cpu-time 08:00:00
+$T2KOSCANA/production/submit_toyexpt_fitting_job_xml --resource RAL --tag minos15 --nruns 1000 --nexpts 1 --first-expt 0 --fit-param-list nuosc3f_numudisapp_fix4+nuisanceselection --job-dir $PWD --softw-dir $T2KOSCANA --toy-expts-file /home/ppd/tdealtry/RAL_repoistory/t2k/t2kana/nuosc/trunk/inputs/sensitivity_minos-15.xml --cpu-time 08:00:00
+
 
 2+all:
 
