@@ -1870,7 +1870,7 @@ void test_systematic_error_propagation_all
       }
       //cc total (sig nue)
       if ((s == conv::kSKsFCFV1RingMuLike && m == conv::kSKmSigNuECCoth_mu) || (s == conv::kSKsFCFV1RingELike && m == conv::kSKmSigNuECCoth_e)) {
-	temp = "$N_{SK}$ (" + util::AsStringTex(s) + "): $\\nu_{e}$ (signal) CC all";
+	temp = "$N_{SK}$ (" + util::AsStringTex(s) + "): oscillation $\\nu_e$  CC all";
 	streamer << setw(ncol1)  << setfill(' ') << temp
 		 << endcolumn
 		 << setw(ncolnev)  << setfill(' ') << setprecision(nprecisionnev) << nsknuesig_n
@@ -1997,7 +1997,7 @@ void test_systematic_error_propagation_all
 	for(int itb = 0; itb < NEtrueBinSigNuE; itb++) {
 	  snprintf(bufl, sizeof(bufl), "%g",  skexp->GetSuperkMC()->Template(s, conv::kSKmSigNuECCQE, conv::kSKMCtFin)->GetYaxis()->GetBinLowEdge(EtrueBinSigNuE[itb]+1));
 	  snprintf(bufu, sizeof(bufu), "%g",  skexp->GetSuperkMC()->Template(s, conv::kSKmSigNuECCQE, conv::kSKMCtFin)->GetYaxis()->GetBinUpEdge(EtrueBinSigNuE[itb+1]));
-	  temp = "$N_{SK}$ (" + util::AsStringTex(s) + "): $\\nu_{e}$ (signal) all (" + bufl + " $\\leq E_{t} <$ " + bufu + "GeV)";
+	  temp = "$N_{SK}$ (" + util::AsStringTex(s) + "): oscillation $\\nu_{e}$ all (" + bufl + " $\\leq E_{t} <$ " + bufu + "GeV)";
 	  streamer << setw(ncol1)  << setfill(' ') << temp
 		   << endcolumn
 		   << setw(ncolnev)  << setfill(' ') << setprecision(nprecisionnev) << nsksignue_etrue_n[itb]
@@ -2045,22 +2045,29 @@ void test_systematic_error_propagation_all
     if(use_tex) {
       streamer << "\\end{tabular}" << endl;
       string hypothesisstr(hypothesis);
-      string sys = util::AsStringTex(util::PhysParamIdFromString(systematic));
+      string sys = util::AsStringPaperTex(util::PhysParamIdFromString(systematic));
       size_t found=hypothesisstr.find_first_of("_");
       while(found!=string::npos) {
 	hypothesisstr[found]='-';
 	found=hypothesisstr.find_first_of("_",found+1);
       }
-      streamer << "\\caption{ Effect of " << sys << " for sample " << util::AsStringTex(s) 
-	       << " with oscillation hypothesis " <<  hypothesisstr
-	       << " using oscillation parameters: " 
-	       << " $\\sin^22\\theta_{12} = $"  << input_mixing12
-	       << "; $\\sin^22\\theta_{13} = $" << input_mixing13
-	       << "; $\\sin^22\\theta_{23} = $" << input_mixing23
-	       << "; $\\delta_{CP} = $        " << input_deltacp
-	       << "; $\\Delta m^2_{12} = $    " << input_dm12sq
-	       << "; $\\Delta m^2_{23} = $    " << input_dm23sq
-	       << ". }" << endl;
+      streamer << "\\caption{ Effect of " << sys << " for ";
+      if(input_mixing12 < conv::kASmallNum && input_mixing13 < conv::kASmallNum 
+	 && input_mixing23 < conv::kASmallNum && input_dm12sq < conv::kASmallNum
+	 && input_dm23sq < conv::kASmallNum && input_dm12sq < conv::kASmallNum) {
+	streamer << "no oscillations (all mixing parameters set to 0).";
+      }
+      else {
+	streamer << "for 3 flavour oscillations,"
+		 << " using oscillation parameters: " 
+		 << " $\\sin^22\\theta_{12} = $"  << input_mixing12
+		 << "; $\\sin^22\\theta_{13} = $" << input_mixing13
+		 << "; $\\sin^22\\theta_{23} = $" << input_mixing23
+		 << "; $\\delta_{CP} = $        " << input_deltacp
+		 << "; $\\Delta m^2_{12} = $    " << input_dm12sq
+		 << "; $\\Delta m^2_{32} = $    " << input_dm23sq;
+      }
+      streamer << ". }" << endl;
       string shortsamplestr = s==conv::kSKsFCFV1RingMuLike ? "1RmuT_" : "1ReT_";
       string spectralstrreco = show_sk_ccqe_spectral_info_ereco ? "_spectralreco" : "";
       string spectralstrtrue = show_sk_ccqe_spectral_info_ereco ? "_spectraltrue" : "";
