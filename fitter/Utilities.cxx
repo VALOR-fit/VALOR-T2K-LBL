@@ -1675,7 +1675,7 @@ string t2kana::util::AsStringPaperTex(PhysParamId_t p)
     case ( kNuisXSecSpecFunc   ) : return "$f_{SF; t, r}$";                  break; 
     case ( kNuisXSecWshape     ) : return "$f_{Wshape; t, r}$";              break;
     case ( kNuisXSecShapeCCoth ) : return "$f_{CCothShape; t, r}$";          break;
-    case ( kNuisXSecPiLessDelta) : return "$f_{\pi-less\Delta; t, r}$";      break;
+    case ( kNuisXSecPiLessDelta) : return "$f_{\\pi-less\\Delta; t, r}$";      break;
     case ( kNuisXSecENuShape   ) : return "Shape; CC1pi ENu";                break;
     case ( kNuisXSecBindE      ) : return "$f_{bindE; t, r}$";               break;
 
@@ -1686,10 +1686,10 @@ string t2kana::util::AsStringPaperTex(PhysParamId_t p)
 #endif
     case ( kNuisXSecNormCCcoh  ) : return "$f_{CCcoh; t}$";                  break;
     case ( kNuisXSecNormNCcoh  ) : return "Norm, NC Coh";                    break;
-    case ( kNuisXSecNormNC1piC ) : return "$f_{NC1\pi^\pm; t}$";             break;
+    case ( kNuisXSecNormNC1piC ) : return "$f_{NC1\\pi^\\pm; t}$";             break;
     case ( kNuisXSecNormNCoth  ) : return "$f_{NCoth; t}$";                  break;
-    case ( kNuisXSecNormNuEToNuMu  ) : return "$f_{CC\nu_e; t}$";            break;
-    case ( kNuisXSecNormAntiNuToNu ) : return "$f_{CC\bar{\nu}; t}$";        break;
+    case ( kNuisXSecNormNuEToNuMu  ) : return "$f_{CC\\nu_e; t}$";            break;
+    case ( kNuisXSecNormAntiNuToNu ) : return "$f_{CC\\bar{\\nu}; t}$";        break;
 
     case ( kNuisFSI000 ) :
     case ( kNuisFSI001 ) :
