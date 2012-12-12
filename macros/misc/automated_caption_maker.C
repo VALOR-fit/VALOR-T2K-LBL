@@ -56,7 +56,7 @@ void automated_caption_maker(
     streamer << "\\begin{figure}" << endl;
     streamer << "\\begin{center}" << endl;
     streamer << "\\resizebox{14cm}{!}{" 
-	     << Form("\\includegraphics{%s/%s%s}}",graphicslocation,graphicsprefix,syscompact.c_str()s) << endl;
+	     << Form("\\includegraphics{%s%s%s}}",graphicslocation,graphicsprefix,syscompact.c_str()s) << endl;
 
     //caption
     streamer << "\\caption" << endl;

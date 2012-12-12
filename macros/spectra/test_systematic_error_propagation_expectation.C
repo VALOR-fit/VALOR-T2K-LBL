@@ -84,7 +84,7 @@ test_systematic_error_propagation_expectation(
 
     streamer << "\\begin{table}"   << endl;
     streamer << "\\scriptsize" << endl;
-    //streamer << "\\centering"     << endl;
+    streamer << "\\centering"     << endl;
     streamer << "\\begin{tabular}{| l | r |}" << endl;
     streamer << "\\hline" << endl;
     streamer << setw(ncol1)  << setfill(' ') << "{\\bf Systematic}  " << endcolumn
@@ -92,54 +92,46 @@ test_systematic_error_propagation_expectation(
 	     << endl;
     streamer << "\\hline" << endl;
   }
- 
-  string systematic;
 
+  string systematic;
+  systematic = "$f_{E; r}^{SK}$";
+  streamer << setw(ncol1)  << setfill(' ') << systematic << endcolumn
+	   << setw(ncolnev)  << setfill(' ') << setprecision(nprecisionnev)
+	   << 0 << pctsymbol << " (movement in Ereco)"
+	   << endrow << endl;
+  systematic = "$f_{CCQEoth; r}^{SK}$";
+  streamer << setw(ncol1)  << setfill(' ') << systematic << endcolumn
+	   << setw(ncolnev)  << setfill(' ') << setprecision(nprecisionnev)
+	   << SKDetEff1RmuCCQEOthRelErr * 100 << pctsymbol
+	   << endrow << endl;
   for (int i = 0; i < 3; i++) {
-    systematic = Form("sk 1Rmu ccqe ring counting eff %d",i);
+    systematic = Form("$f_{CCQERC%d; r}^{SK}$",i);
     streamer << setw(ncol1)  << setfill(' ') << systematic << endcolumn
 	     << setw(ncolnev)  << setfill(' ') << setprecision(nprecisionnev)
 	     << TMath::Sqrt(SKDetEff1RmuCCQERCCovarRelErr(i,i)) * 100 << pctsymbol
 	     << endrow << endl;
   }
-  systematic = "sk 1Rmu ccqe other eff";
-  streamer << setw(ncol1)  << setfill(' ') << systematic << endcolumn
-	   << setw(ncolnev)  << setfill(' ') << setprecision(nprecisionnev)
-	   << SKDetEff1RmuCCQEOthRelErr * 100 << pctsymbol
-	   << endrow << endl;
-  systematic = "sk 1Rmu ccnonqe eff";
+  systematic = "$f_{CCnQE; r}^{SK}$";
   streamer << setw(ncol1)  << setfill(' ') << systematic << endcolumn
 	   << setw(ncolnev)  << setfill(' ') << setprecision(nprecisionnev)
 	   << SKDetEff1RmuCCnonQERelErr * 100 << pctsymbol
 	   << endrow << endl;
-  systematic = "sk 1Rmu nc eff";
+  systematic = "$f_{NC; r}^{SK}$";
   streamer << setw(ncol1)  << setfill(' ') << systematic << endcolumn
 	   << setw(ncolnev)  << setfill(' ') << setprecision(nprecisionnev)
 	   << SKDetEff1RmuNCRelErr * 100 << pctsymbol
 	   << endrow << endl;
-  systematic = "sk 1Rmu nuecc eff";
+  systematic = "$f_{\\nu_e; r}^{SK}$";
   streamer << setw(ncol1)  << setfill(' ') << systematic << endcolumn
 	   << setw(ncolnev)  << setfill(' ') << setprecision(nprecisionnev)
 	   << SKDetEff1RmuNuECCRelErr * 100 << pctsymbol
 	   << endrow << endl;
-  systematic = "sk energy scale";
-  streamer << setw(ncol1)  << setfill(' ') << systematic << endcolumn
-	   << setw(ncolnev)  << setfill(' ') << setprecision(nprecisionnev)
-	   << 0 << pctsymbol << " (movement in Ereco)"
-	   << endrow << endl;
   for (int i = 0; i < conv::kNumOfParamsInBANFFfit; i++) {
-    systematic = Form("banff %d",i);
-#line 0
+    if(i == 16 || i == 17) continue; //skip MAQE, MARES
+    systematic = Form("$f_{%d; t, r}^{banff}$",i);
     streamer << setw(ncol1)  << setfill(' ') << systematic << endcolumn
 	     << setw(ncolnev)  << setfill(' ') << setprecision(nprecisionnev)
 	     << sqrt(BANFFCovMtrx(i,i)) * 100 / BANNFBestFit(i) << pctsymbol;
-    streamer << endrow << endl;
-  }
-  for (int i = 0; i < conv::kNumOfFSIParams; i++) {
-    systematic = Form("fsi %d",i);
-    streamer << setw(ncol1)  << setfill(' ') << systematic << endcolumn
-	     << setw(ncolnev)  << setfill(' ') << setprecision(nprecisionnev)
-	     << sqrt(FSICovMtrx(i,i)) * 100 << pctsymbol;
     streamer << endrow << endl;
   }
   /*
@@ -159,12 +151,13 @@ test_systematic_error_propagation_expectation(
 	   << NormCC1pi1RelErr * 100 << pctsymbol
 	   << endrow << endl;
   */
-  systematic = "Norm CC coh";
+
+  systematic = "$f_{CCcoh; t}$";
   streamer << setw(ncol1)  << setfill(' ') << systematic << endcolumn
 	   << setw(ncolnev)  << setfill(' ') << setprecision(nprecisionnev)
 	   << NormCCcohRelErr * 100 << pctsymbol
 	   << endrow << endl;
-  systematic = "Norm NC 1piC";
+  systematic = "$f_{NC1\\pi^\\pm; t}$";
   streamer << setw(ncol1)  << setfill(' ') << systematic << endcolumn
 	   << setw(ncolnev)  << setfill(' ') << setprecision(nprecisionnev)
 	   << NormNC1piCRelErr * 100 << pctsymbol
@@ -176,21 +169,28 @@ test_systematic_error_propagation_expectation(
 	   << NormNCcohRelErr * 100 << pctsymbol
 	   << endrow << endl;
   */
-  systematic = "Norm NC oth";
+  systematic = "$f_{NCoth; t}$";
   streamer << setw(ncol1)  << setfill(' ') << systematic << endcolumn
 	   << setw(ncolnev)  << setfill(' ') << setprecision(nprecisionnev)
 	   << NormNCothRelErr * 100 << pctsymbol
 	   << endrow << endl;
-  systematic = "Norm NuE to NuMu";
+  systematic = "$f_{CC\\nu_e; t}$";
   streamer << setw(ncol1)  << setfill(' ') << systematic << endcolumn
 	   << setw(ncolnev)  << setfill(' ') << setprecision(nprecisionnev)
 	   << NormNuEToNuMuRelErr * 100 << pctsymbol
 	   << endrow << endl;
-  systematic = "Norm Nu to AntiNu";
+  systematic = "$f_{CC\\bar{\\nu}; t}$";
    streamer << setw(ncol1)  << setfill(' ') << systematic << endcolumn
 	   << setw(ncolnev)  << setfill(' ') << setprecision(nprecisionnev)
 	   << NormNuToAntiNuRelErr * 100 << pctsymbol
 	   << endrow << endl; NormNuToAntiNuRelErr
+  for (int i = 0; i < conv::kNumOfFSIParams; i++) {
+    systematic = Form("$f_{%d; t, r}^{FSI}$",i);
+    streamer << setw(ncol1)  << setfill(' ') << systematic << endcolumn
+	     << setw(ncolnev)  << setfill(' ') << setprecision(nprecisionnev)
+	     << sqrt(FSICovMtrx(i,i)) * 100 << pctsymbol;
+    streamer << endrow << endl;
+  }
 
   if(!use_tex) {
      streamer << setw(150)  << setfill('-') << " " << endl;
@@ -199,6 +199,7 @@ test_systematic_error_propagation_expectation(
   if(use_tex) {
      streamer << "\\hline" << endl;
      streamer << "\\end{tabular}" << endl;
+     streamer << "\\caption{Summary table, showing the magnitude of errors on the systematic parameters. The numbers should be compared to the changes in $N_{SK}$ in the following tables. Systematics with complicated energy dependence, treated with response functions, are not shown.}" << endl;
      streamer << "\\label{tab:expected}" << endl;
      streamer << "\\end{table}" << endl;
      streamer << "\\clearpage" << endl;

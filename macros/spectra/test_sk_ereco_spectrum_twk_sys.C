@@ -85,7 +85,8 @@ void test_sk_ereco_spectrum_twk_sys
   double       input_dm12sq       = -99,                            /* */
   double       input_dm23sq       = -99,                            /* */
   double       ereco_max_plot     = 7,                              /* maximum of the ereco axis (in GeV) to plot */
-  const char * config_file        = "analysis_configuration.xml"    /* */
+  const char * config_file        = "analysis_configuration.xml",   /* */
+  bool         save_all_canvases  = false                           /* if false, will not save the individual mode plots, or the 'fullrange' plots */
 )
 {
   using namespace std;
@@ -199,6 +200,11 @@ void test_sk_ereco_spectrum_twk_sys
 	cout << "Unknown mode " << mode << endl; exit(1); break;
       }
   }//switch mode
+  //name for the output plots
+  conv::PhysParamId_t p = util::PhysParamIdFromString(modetitle);
+  string modetitleplot = modetitle;
+  if(p != conv::kPhypUndefined)
+    modetitleplot = util::AsStringCompact(p);
 
   // Analysis configuration
   const char * config  = Form("%s/config/%s", gSystem->Getenv("T2KOSCANA"), config_file);
@@ -581,24 +587,41 @@ void test_sk_ereco_spectrum_twk_sys
     maxy = TMath::Max(maxy, hEreco[itweak]->GetMaximum());
     legend->AddEntry(hEreco[itweak], Form("%d sigma",tweaks[itweak]), "L" );
   }
+  maxy *= 1.1;
   hErecoNominal->GetYaxis()->SetRangeUser(0,maxy);
   legend->Draw();
   c->cd(2);
+  //find the relevant y axis range for the ratio
+  double yminratio = 0.75, ymaxratio = 1.25;
+  bool foundbig = false;
+  for(int itweak = 0; itweak < ntweaks; itweak++) {
+    if(foundbig) break;
+    for(int ibin = 1; ibin < hErecoRatio[itweak]->GetNbinsX(); ibin++) {
+      if(hErecoRatio[itweak]->GetBinContent(ibin) > ymaxratio) {
+	ymaxratio = 1.75;
+	yminratio = 0.25;
+	foundbig = true;
+	break;
+      }
+    }
+  }
   for(int itweak = 0; itweak < ntweaks; itweak++) {
     if(itweak==0){
       hErecoRatio[itweak]->GetXaxis()->SetRangeUser(0,ereco_max_plot-conv::kOneMeV);
       hErecoRatio[itweak]->GetXaxis()->SetTitle("E_{reco} (GeV)");
       hErecoRatio[itweak]->GetYaxis()->SetTitle("Ratio to nominal");
+      hErecoRatio[itweak]->GetYaxis()->SetRangeUser(yminratio,ymaxratio);
       hErecoRatio[itweak]->SetTitle("Ratio");
       hErecoRatio[itweak]->Draw();
       continue;
     }
     hErecoRatio[itweak]->Draw("same");
   }
-  c->SaveAs(Form("ereco_twk_%s.eps",modetitle.c_str()));
+  c->SaveAs(Form("ereco_twk_%s.eps",modetitleplot.c_str()));
   hErecoNominal->GetXaxis()->UnZoom();
   hErecoRatio[0]->GetXaxis()->UnZoom();
-  c->SaveAs(Form("ereco_twk_%s_fullrange.eps",modetitle.c_str()));
+  if(save_all_canvases)
+    c->SaveAs(Form("ereco_twk_%s_fullrange.eps",modetitleplot.c_str()));
   // Draw mode by mode
   TCanvas * cm = new TCanvas("cm","",20,20,500,500);
   gStyle->SetOptStat(0);
@@ -631,10 +654,12 @@ void test_sk_ereco_spectrum_twk_sys
       }
       hErecoModeRatio[im][itweak]->Draw("same");
     }
-    cm->SaveAs(Form("ereco_twk_%s_%s.eps",modetitle.c_str(),util::AsStringCompact(m).c_str()));
+    if(save_all_canvases)
+      cm->SaveAs(Form("ereco_twk_%s_%s.eps",modetitleplot.c_str(),util::AsStringCompact(m).c_str()));
     hErecoModeNominal[im]->GetXaxis()->UnZoom();
     hErecoModeRatio[im][0]->GetXaxis()->UnZoom();
-    cm->SaveAs(Form("ereco_twk_%s_%s_fullrange.eps",modetitle.c_str(),util::AsStringCompact(m).c_str()));
+    if(save_all_canvases)
+      cm->SaveAs(Form("ereco_twk_%s_%s_fullrange.eps",modetitleplot.c_str(),util::AsStringCompact(m).c_str()));
   }//loop over modes
 
   //
