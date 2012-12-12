@@ -29,11 +29,11 @@ modes5 = range(400,449) #fsi
 modes6 = range(500,504) #special comparison tweaks
 modes7 = range(600,639) #uncorrelated banff
 
-modes = modes1 + modes2 + modes3 + modes4 + modes5 + modes7 #+ modes6
+modes = modes1 + modes2 + modes3 + modes4 + modes5 #+ modes7 #+ modes6
 
 oscparams = [] #fill with oscillation parameters, in order mixing12, theta13, theta23, deltacp, dmsq12, dmsq23hypothesis
 oscparams.append([  0,   0,   0,   0,   0,   0]) #no oscillations!
-oscparams.append([-99, -99, -99, -99, -99, -99]) #use global best fits!
+#oscparams.append([-99, -99, -99, -99, -99, -99]) #use global best fits!
 #oscparams.append([0.86, 0.1,  1,  0,  7.58E-5,  2.32E-3])
 #oscparams.append([0.86, 0,    1,  0,  7.58E-5,  2.32E-3])
 
@@ -42,7 +42,7 @@ for osc in oscparams:
     update = "false"
     for mode in modes:
 
-        command = 'root2k -l -b -q \'$T2KOSCANA/macros/physin/test_sk_ereco_spectrum_twk_sys.C('+str(mode)+','+update+',"3f_osc",'+str(osc[0])+','+str(osc[1])+','+str(osc[2])+','+str(osc[3])+','+str(osc[4])+','+str(osc[5])+','+str(emax)+',"'+conffile+'")\''
+        command = 'root2k -l -b -q \'$T2KOSCANA/macros/spectra/test_sk_ereco_spectrum_twk_sys.C('+str(mode)+','+update+',"3f_osc",'+str(osc[0])+','+str(osc[1])+','+str(osc[2])+','+str(osc[3])+','+str(osc[4])+','+str(osc[5])+','+str(emax)+',"'+conffile+'")\''
         print command
         if os.system(command) == 1:
             sys.exit(1)

@@ -568,34 +568,37 @@ void test_sk_ereco_spectrum_twk_sys
   gStyle->SetOptStat(0);
   c->Divide(1,2);
   c->cd(1);
-  TLegend * legend = new TLegend(0.7, 0.4, 0.9, 0.85);
+  TLegend * legend = new TLegend(0.75, 0.63, 0.9, 0.9);
   legend->SetFillColor(0);
   legend->SetBorderSize(0);
   legend->AddEntry(hErecoNominal, "nominal", "L" );
   hErecoNominal->SetTitle(Form("%s",modetitle.c_str()));
   hErecoNominal->GetXaxis()->SetRangeUser(0,ereco_max_plot-conv::kOneMeV);
   hErecoNominal->Draw();
+  double maxy = hErecoNominal->GetMaximum();
   for(int itweak = 0; itweak < ntweaks; itweak++) {
     hEreco[itweak]->Draw("same");
+    maxy = TMath::Max(maxy, hEreco[itweak]->GetMaximum());
     legend->AddEntry(hEreco[itweak], Form("%d sigma",tweaks[itweak]), "L" );
   }
+  hErecoNominal->GetYaxis()->SetRangeUser(0,maxy);
   legend->Draw();
   c->cd(2);
   for(int itweak = 0; itweak < ntweaks; itweak++) {
     if(itweak==0){
       hErecoRatio[itweak]->GetXaxis()->SetRangeUser(0,ereco_max_plot-conv::kOneMeV);
       hErecoRatio[itweak]->GetXaxis()->SetTitle("E_{reco} (GeV)");
-      hErecoRatio[itweak]->GetYaxis()->SetTitle("Relative error");
+      hErecoRatio[itweak]->GetYaxis()->SetTitle("Ratio to nominal");
       hErecoRatio[itweak]->SetTitle("Ratio");
       hErecoRatio[itweak]->Draw();
       continue;
     }
     hErecoRatio[itweak]->Draw("same");
   }
-  c->SaveAs(Form("ereco_twk_%s.pdf",modetitle.c_str()));
+  c->SaveAs(Form("ereco_twk_%s.eps",modetitle.c_str()));
   hErecoNominal->GetXaxis()->UnZoom();
   hErecoRatio[0]->GetXaxis()->UnZoom();
-  c->SaveAs(Form("ereco_twk_%s_fullrange.pdf",modetitle.c_str()));
+  c->SaveAs(Form("ereco_twk_%s_fullrange.eps",modetitle.c_str()));
   // Draw mode by mode
   TCanvas * cm = new TCanvas("cm","",20,20,500,500);
   gStyle->SetOptStat(0);
@@ -621,17 +624,17 @@ void test_sk_ereco_spectrum_twk_sys
       if(itweak==0){
 	hErecoModeRatio[im][itweak]->GetXaxis()->SetRangeUser(0,ereco_max_plot-conv::kOneMeV);
 	hErecoModeRatio[im][itweak]->GetXaxis()->SetTitle("E_{reco} (GeV)");
-	hErecoModeRatio[im][itweak]->GetYaxis()->SetTitle("Relative error");
+	hErecoModeRatio[im][itweak]->GetYaxis()->SetTitle("Ratio to nominal");
 	hErecoModeRatio[im][itweak]->SetTitle("Ratio");
 	hErecoModeRatio[im][itweak]->Draw();
 	continue;
       }
       hErecoModeRatio[im][itweak]->Draw("same");
     }
-    cm->SaveAs(Form("ereco_twk_%s_%s.pdf",modetitle.c_str(),util::AsStringCompact(m).c_str()));
+    cm->SaveAs(Form("ereco_twk_%s_%s.eps",modetitle.c_str(),util::AsStringCompact(m).c_str()));
     hErecoModeNominal[im]->GetXaxis()->UnZoom();
     hErecoModeRatio[im][0]->GetXaxis()->UnZoom();
-    cm->SaveAs(Form("ereco_twk_%s_%s_fullrange.pdf",modetitle.c_str(),util::AsStringCompact(m).c_str()));
+    cm->SaveAs(Form("ereco_twk_%s_%s_fullrange.eps",modetitle.c_str(),util::AsStringCompact(m).c_str()));
   }//loop over modes
 
   //
