@@ -1578,13 +1578,13 @@ string t2kana::util::AsStringPaperTex(PhysParamId_t p)
     // SK detector
     //
     case ( kNuisSuperkEnergyScale     ) : return "$f_{E; r}^{SK}$  ";                 break;    
-    case ( kNuisSuperkEff1RmuCCQEoth  ) : return "SK efficiency, 1Rmu, CCQE//Other"; break;
-    case ( kNuisSuperkEff1RmuCCQErc0u ) : return "SK efficiency, 1Rmu, CCQE//RC0";   break;
-    case ( kNuisSuperkEff1RmuCCQErc1u ) : return "SK efficiency, 1Rmu, CCQE//RC1";   break;
-    case ( kNuisSuperkEff1RmuCCQErc2u ) : return "SK efficiency, 1Rmu, CCQE//RC2";   break;
-    case ( kNuisSuperkEff1RmuCCnonQE  ) : return "SK efficiency, 1Rmu, CCnonQE";    break;
-    case ( kNuisSuperkEff1RmuNC       ) : return "SK efficiency, 1Rmu, NC";         break;
-    case ( kNuisSuperkEff1RmuNueCC    ) : return "SK efficiency, 1Rmu, nue CC";     break;
+    case ( kNuisSuperkEff1RmuCCQEoth  ) : return "$f_{CCQEoth; r}^{SK}$";             break;
+    case ( kNuisSuperkEff1RmuCCQErc0u ) : return "$f_{CCQERC0; r}^{SK}$";             break;
+    case ( kNuisSuperkEff1RmuCCQErc1u ) : return "$f_{CCQERC1; r}^{SK}$";             break;
+    case ( kNuisSuperkEff1RmuCCQErc2u ) : return "$f_{CCQERC2; r}^{SK}$";             break;
+    case ( kNuisSuperkEff1RmuCCnonQE  ) : return "$f_{CCnQE; r}^{SK}$";               break;
+    case ( kNuisSuperkEff1RmuNC       ) : return "$f_{NC; r}^{SK}$";                  break;
+    case ( kNuisSuperkEff1RmuNueCC    ) : return "$f_{\\nu_e; r}^{SK}$";              break;
 
     //
     // BANFF flux and cross-section params
@@ -1675,7 +1675,7 @@ string t2kana::util::AsStringPaperTex(PhysParamId_t p)
     case ( kNuisXSecSpecFunc   ) : return "$f_{SF; t, r}$";                  break; 
     case ( kNuisXSecWshape     ) : return "$f_{Wshape; t, r}$";              break;
     case ( kNuisXSecShapeCCoth ) : return "$f_{CCothShape; t, r}$";          break;
-    case ( kNuisXSecPiLessDelta) : return "$f_{\\pi-less\\Delta; t, r}$";      break;
+    case ( kNuisXSecPiLessDelta) : return "$f_{\\pi-less\\Delta; t, r}$";    break;
     case ( kNuisXSecENuShape   ) : return "Shape; CC1pi ENu";                break;
     case ( kNuisXSecBindE      ) : return "$f_{bindE; t, r}$";               break;
 
@@ -1686,10 +1686,10 @@ string t2kana::util::AsStringPaperTex(PhysParamId_t p)
 #endif
     case ( kNuisXSecNormCCcoh  ) : return "$f_{CCcoh; t}$";                  break;
     case ( kNuisXSecNormNCcoh  ) : return "Norm, NC Coh";                    break;
-    case ( kNuisXSecNormNC1piC ) : return "$f_{NC1\\pi^\\pm; t}$";             break;
+    case ( kNuisXSecNormNC1piC ) : return "$f_{NC1\\pi^\\pm; t}$";           break;
     case ( kNuisXSecNormNCoth  ) : return "$f_{NCoth; t}$";                  break;
-    case ( kNuisXSecNormNuEToNuMu  ) : return "$f_{CC\\nu_e; t}$";            break;
-    case ( kNuisXSecNormAntiNuToNu ) : return "$f_{CC\\bar{\\nu}; t}$";        break;
+    case ( kNuisXSecNormNuEToNuMu  ) : return "$f_{CC\\nu_e; t}$";           break;
+    case ( kNuisXSecNormAntiNuToNu ) : return "$f_{CC\\bar{\\nu}; t}$";      break;
 
     case ( kNuisFSI000 ) :
     case ( kNuisFSI001 ) :
@@ -2800,6 +2800,15 @@ t2kana::conv::PhysParamId_t
   if(sh == "banff_47") return kNuisBANFF47;
   if(sh == "banff_48") return kNuisBANFF48;
 #endif
+#endif
+#if BANFF_BINS >= 3
+  if(sh == "banff_16")  return kNuisBANFFMAQE;
+  if(sh == "banff_17")  return kNuisBANFFMARES;
+  if(sh == "banff_18")  return kNuisBANFFCCQEE0;
+  if(sh == "banff_19")  return kNuisBANFFCCQEE1;
+  if(sh == "banff_20")  return kNuisBANFFCCQEE2;
+  if(sh == "banff_21")  return kNuisBANFFCC1piE0;
+  if(sh == "banff_22")  return kNuisBANFFCC1piE1;
 #endif
   if(sh == "banff_maqe")    return kNuisBANFFMAQE;
   if(sh == "banff_mares")   return kNuisBANFFMARES;
