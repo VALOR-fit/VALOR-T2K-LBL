@@ -2,7 +2,7 @@
 #include <iomanip.h>
 
 test_systematic_error_propagation_expectation(
-  bool         use_tex      = false,
+  bool         use_tex      = true,
   const char * output_file  = "systematic_tables_expectation.tex",
   const char * config_file  = "analysis_configuration.xml"    /* */
 )
@@ -56,6 +56,7 @@ test_systematic_error_propagation_expectation(
   double NormNCcohRelErr = util::XML2Dbl(xml,root_node,"xsec/normalisations/nccoh");
   double NormNCothRelErr = util::XML2Dbl(xml,root_node,"xsec/normalisations/ncoth");
   double NormNuEToNuMuRelErr = util::XML2Dbl(xml,root_node,"xsec/normalisations/numu_to_nue");
+  double NormNuToAntiNuRelErr = util::XML2Dbl(xml,root_node,"xsec/normalisations/nu_to_antinu");
 
   // Release memory
   xml->FreeDoc(xmldoc);
@@ -141,6 +142,7 @@ test_systematic_error_propagation_expectation(
 	     << sqrt(FSICovMtrx(i,i)) * 100 << pctsymbol;
     streamer << endrow << endl;
   }
+  /*
   systematic = "Norm CCQE E1";
   streamer << setw(ncol1)  << setfill(' ') << systematic << endcolumn
 	   << setw(ncolnev)  << setfill(' ') << setprecision(nprecisionnev)
@@ -156,6 +158,7 @@ test_systematic_error_propagation_expectation(
 	   << setw(ncolnev)  << setfill(' ') << setprecision(nprecisionnev)
 	   << NormCC1pi1RelErr * 100 << pctsymbol
 	   << endrow << endl;
+  */
   systematic = "Norm CC coh";
   streamer << setw(ncol1)  << setfill(' ') << systematic << endcolumn
 	   << setw(ncolnev)  << setfill(' ') << setprecision(nprecisionnev)
@@ -166,11 +169,13 @@ test_systematic_error_propagation_expectation(
 	   << setw(ncolnev)  << setfill(' ') << setprecision(nprecisionnev)
 	   << NormNC1piCRelErr * 100 << pctsymbol
 	   << endrow << endl;
+  /*
   systematic = "Norm NC coh";
   streamer << setw(ncol1)  << setfill(' ') << systematic << endcolumn
 	   << setw(ncolnev)  << setfill(' ') << setprecision(nprecisionnev)
 	   << NormNCcohRelErr * 100 << pctsymbol
 	   << endrow << endl;
+  */
   systematic = "Norm NC oth";
   streamer << setw(ncol1)  << setfill(' ') << systematic << endcolumn
 	   << setw(ncolnev)  << setfill(' ') << setprecision(nprecisionnev)
@@ -181,6 +186,11 @@ test_systematic_error_propagation_expectation(
 	   << setw(ncolnev)  << setfill(' ') << setprecision(nprecisionnev)
 	   << NormNuEToNuMuRelErr * 100 << pctsymbol
 	   << endrow << endl;
+  systematic = "Norm Nu to AntiNu";
+   streamer << setw(ncol1)  << setfill(' ') << systematic << endcolumn
+	   << setw(ncolnev)  << setfill(' ') << setprecision(nprecisionnev)
+	   << NormNuToAntiNuRelErr * 100 << pctsymbol
+	   << endrow << endl; NormNuToAntiNuRelErr
 
   if(!use_tex) {
      streamer << setw(150)  << setfill('-') << " " << endl;
