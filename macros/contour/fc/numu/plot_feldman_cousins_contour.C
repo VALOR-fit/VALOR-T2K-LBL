@@ -61,7 +61,8 @@ void plot_feldman_cousins_contour(
   int nsmoothings = 0,
   bool show_contours_with_systematics=true,
   bool show_contours_without_systematics=true,
-  bool show_external_contours=false,
+  bool show_external_contours=true,
+  const char * underlay_dchisqcrit = 0, /* Plot the dchisq_crit surface under the contours. e.g. "90statsyst", "99statonly" */
   bool show_68cl=true,
   bool show_90cl=true,
   bool show_95cl=false,
@@ -267,6 +268,26 @@ void plot_feldman_cousins_contour(
   set_contour_style(hCL95StatOnly,      kGreen,    2, kDashed);
   set_contour_style(hCL99StatOnly,      kYellow+2, 2, kDashed);
 
+  //Draw dchisq_crit surface under the contours. Used to see if there are any holes in the FC
+  //statonly
+  if(underlay_dchisqcrit == "68statonly" && show_contours_without_systematics)
+    hDeltaChisqCrit68StatOnly->Draw("colzsame");
+  if(underlay_dchisqcrit == "90statonly" && show_contours_without_systematics)
+    hDeltaChisqCrit90StatOnly->Draw("colzsame");
+  if(underlay_dchisqcrit == "95statonly" && show_contours_without_systematics)
+    hDeltaChisqCrit95StatOnly->Draw("colzsame");
+  if(underlay_dchisqcrit == "99statonly" && show_contours_without_systematics)
+    hDeltaChisqCrit99StatOnly->Draw("colzsame");
+  //statsyst
+  if(underlay_dchisqcrit == "68statsyst" && show_contours_with_systematics)
+    hDeltaChisqCrit68StatSyst->Draw("colzsame");
+  if(underlay_dchisqcrit == "90statsyst" && show_contours_with_systematics)
+    hDeltaChisqCrit90StatSyst->Draw("colzsame");
+  if(underlay_dchisqcrit == "95statsyst" && show_contours_with_systematics)
+    hDeltaChisqCrit95StatSyst->Draw("colzsame");
+  if(underlay_dchisqcrit == "99statsyst" && show_contours_with_systematics)
+    hDeltaChisqCrit99StatSyst->Draw("colzsame");
+    
   if(show_99cl) {
     if(show_contours_with_systematics    ) { hCL99StatSyst -> Draw("cont3same");  }
     if (show_contours_without_systematics) { hCL99StatOnly -> Draw("cont3same");  }
@@ -329,10 +350,10 @@ void plot_feldman_cousins_contour(
     fc_90cl_statonly = TString(label) + TString(", ") + fc_90cl_statonly;
     fc_95cl_statonly = TString(label) + TString(", ") + fc_95cl_statonly;
     fc_99cl_statonly = TString(label) + TString(", ") + fc_99cl_statonly;
-    pl_68cl_statonly = TString(label) + TString(", ") + pl_68cl_statonly;
-    pl_90cl_statonly = TString(label) + TString(", ") + pl_90cl_statonly;
-    pl_95cl_statonly = TString(label) + TString(", ") + pl_95cl_statonly;
-    pl_99cl_statonly = TString(label) + TString(", ") + pl_99cl_statonly;
+    //pl_68cl_statonly = TString(label) + TString(", ") + pl_68cl_statonly;
+    //pl_90cl_statonly = TString(label) + TString(", ") + pl_90cl_statonly;
+    //pl_95cl_statonly = TString(label) + TString(", ") + pl_95cl_statonly;
+    //pl_99cl_statonly = TString(label) + TString(", ") + pl_99cl_statonly;
   }
 
   TLegend * legend = new TLegend(0.17,0.72,0.36,0.9);
@@ -352,9 +373,12 @@ void plot_feldman_cousins_contour(
   }
   if(show_external_contours) {
     if(show_90cl) {
-      legend->AddEntry(minos2012_90cl, "MINOS 2012 (10.71#times10^{20} POT + 37.9 kton*yr), 90% CL");
-      legend->AddEntry(skzen2012_90cl, "SK1-4 zenith angle, 90% CL");
-      legend->AddEntry(skle2012_90cl,  "SK1-4 L/E, 90% CL");
+      minos2012_90cl->SetName("minos2012_90cl");
+      skzen2012_90cl->SetName("skzen2012_90cl");
+      skle2012_90cl ->SetName("skle2012_90cl");
+      legend->AddEntry("minos2012_90cl", "MINOS 2012 (10.71#times10^{20} POT + 37.9 kton*yr), 90% CL","L");
+      legend->AddEntry("skzen2012_90cl", "SK1-4 zenith angle, 90% CL","L");
+      legend->AddEntry("skle2012_90cl",  "SK1-4 L/E, 90% CL","L");
     }
   }
   legend->SetBorderSize(0);
