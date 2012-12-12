@@ -152,10 +152,16 @@ void test_systematic_error_propagation_all
 
   vector<string> systematics;
 
-  //systematics.push_back("fsi"); //not supported in this macro
-  for(int ib = 0; ib < conv::kNumOfFSIParams; ib++) {
-    systematics.push_back(Form("fsi_%03d",ib));
-  }
+  //systematics.push_back("sk_1Rmu_ccqe_ring_counting_eff"); //not supported in this macro
+  systematics.push_back("sk_energy_scale");
+  systematics.push_back("sk_1Rmu_ccqe_other_eff");
+  systematics.push_back("sk_1Rmu_ccqe_ring_counting_eff_0");
+  systematics.push_back("sk_1Rmu_ccqe_ring_counting_eff_1");
+  systematics.push_back("sk_1Rmu_ccqe_ring_counting_eff_2");
+  systematics.push_back("sk_1Rmu_ccnonqe_eff");
+  systematics.push_back("sk_1Rmu_nc_eff");
+  systematics.push_back("sk_1Rmu_nuecc_eff");
+
 
   //systematics.push_back("banff"); //not supported in this macro
   for(int ib = 0; ib < conv::kNumOfFluxParamsInBANFFfit; ib++) {
@@ -180,7 +186,7 @@ void test_systematic_error_propagation_all
   systematics.push_back("xsec_wshape");
   systematics.push_back("xsec_shape_ccoth");
   systematics.push_back("xsec_pilessdelta");
-  systematics.push_back("xsec_enushape");
+  //systematics.push_back("xsec_enushape");
   systematics.push_back("xsec_bindE");
   //systematics.push_back("xsec_norm_ccqeE1");
   //systematics.push_back("xsec_norm_ccqeE2");
@@ -188,20 +194,15 @@ void test_systematic_error_propagation_all
 
   systematics.push_back("xsec_norm_cccoh");
   systematics.push_back("xsec_norm_nc1piC");
-  systematics.push_back("xsec_norm_nccoh");
+  //systematics.push_back("xsec_norm_nccoh");
   systematics.push_back("xsec_norm_ncoth");
   systematics.push_back("xsec_norm_nuetonumu");
   systematics.push_back("xsec_norm_antinutonu");
 
-  //systematics.push_back("sk_1Rmu_ccqe_ring_counting_eff"); //not supported in this macro
-  systematics.push_back("sk_1Rmu_ccqe_ring_counting_eff_0");
-  systematics.push_back("sk_1Rmu_ccqe_ring_counting_eff_1");
-  systematics.push_back("sk_1Rmu_ccqe_ring_counting_eff_2");
-  systematics.push_back("sk_1Rmu_ccqe_other_eff");
-  systematics.push_back("sk_1Rmu_ccnonqe_eff");
-  systematics.push_back("sk_1Rmu_nc_eff");
-  systematics.push_back("sk_1Rmu_nuecc_eff");
-  systematics.push_back("sk_energy_scale");
+  //systematics.push_back("fsi"); //not supported in this macro
+  for(int ib = 0; ib < conv::kNumOfFSIParams; ib++) {
+    systematics.push_back(Form("fsi_%03d",ib));
+  }
 
   /*
   //systematics.push_back("unbanff"); //not supported in this macro
