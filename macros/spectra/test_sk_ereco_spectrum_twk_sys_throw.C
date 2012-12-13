@@ -473,7 +473,7 @@ void test_sk_ereco_spectrum_twk_sys_throw
   c->SaveAs(Form("%s_minuserr_%s.eps",modetitle.c_str(),oscparams.c_str()));
   hErecoMax->Draw();
   hErecoMin->Draw("same");
-  hNominal->Draw("same");
+  hErecoNominal->Draw("same");
   c->SaveAs(Form("%s_envelope_%s.eps",modetitle.c_str(),oscparams.c_str()));
 
   TCanvas * csys = new TCanvas();
