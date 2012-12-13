@@ -287,23 +287,28 @@ void test_sk_ereco_spectrum_twk_sys_throw
 
     if(mode < 100) {
 
+      // All
+      if(mode == 0) {
+	skexp.TweakAllSystematics();
+      }
+
       // BANFF (uncorrelated)
-      if(mode == 0 || mode == 1) {
+      if(mode == 1) {
 	skexp.TweakAllUncorrelatedBANFFSystematics();
       }
 
       // Uncorrelated XSec
-      if(mode == 0 || mode == 2) {
+      if(mode == 2) {
 	skexp.TweakAllUncorrelatedXSecSystematics();
       }
 
       // SK detector
-      if(mode == 0 || mode == 3) {
+      if(mode == 3) {
 	skexp.TweakAllSKDetectorSystematics();
       }
 
       // FSI
-      if(mode == 0 || mode == 4) {
+      if(mode == 4) {
 	skexp.TweakAllFSISystematics();
 	//skexp.GetFSI()->PrintSystematicVariations();
       }
@@ -461,11 +466,16 @@ void test_sk_ereco_spectrum_twk_sys_throw
   //Draw & save
   TCanvas * c = new TCanvas();
   hNsk->Draw();
-  c->SaveAs(Form("%s_nsk_%s.pdf",modetitle.c_str(),oscparams.c_str()));
+  c->SaveAs(Form("%s_nsk_%s.eps",modetitle.c_str(),oscparams.c_str()));
   hErecoMax->Draw();
-  c->SaveAs(Form("%s_pluserr_%s.pdf",modetitle.c_str(),oscparams.c_str()));
+  c->SaveAs(Form("%s_pluserr_%s.eps",modetitle.c_str(),oscparams.c_str()));
   hErecoMin->Draw();
-  c->SaveAs(Form("%s_minuserr_%s.pdf",modetitle.c_str(),oscparams.c_str()));
+  c->SaveAs(Form("%s_minuserr_%s.eps",modetitle.c_str(),oscparams.c_str()));
+  hErecoMax->Draw();
+  hErecoMin->Draw("same");
+  hNominal->Draw("same");
+  c->SaveAs(Form("%s_envelope_%s.eps",modetitle.c_str(),oscparams.c_str()));
+
   TCanvas * csys = new TCanvas();
   csys->Divide(ceil(sqrt(nsys)),ceil(sqrt(nsys)));
   for(int isys=0; isys < nsys; isys++) {
@@ -473,7 +483,7 @@ void test_sk_ereco_spectrum_twk_sys_throw
     hSysThrown[isys]->Draw();
     cout << isys << "\t" << hSysThrown[isys]->GetTitle() << endl;
   }
-  csys->SaveAs(Form("%s_throws_%s.pdf",modetitle.c_str(),oscparams.c_str()));
+  csys->SaveAs(Form("%s_throws_%s.eps",modetitle.c_str(),oscparams.c_str()));
   delete c;
   delete csys;
 
