@@ -86,12 +86,14 @@ void make_star_plot_for_disappearance_analysis
   osc_param_space->GetXaxis()->CenterTitle();
   osc_param_space->GetYaxis()->CenterTitle();
   TCanvas * c = new TCanvas("c","T2K numu disappearance analysis star plot",20,20,1000,1000);
+  c->SetLeftMargin(0.2);
   c->SetFillColor(0);
   c->SetBorderMode(0);
+  osc_param_space->GetYaxis()->SetTitleOffset(1.75);
   osc_param_space->Draw();
 
   // Add legend
-  TLegend * legend = new TLegend(0.80, 0.20, 0.95, 0.95);
+  TLegend * legend = new TLegend(0.80, 0.16, 0.95, 0.95);
   legend->SetFillColor(0);
   legend->SetBorderSize(1);
   legend->SetHeader("Systematic");
@@ -136,19 +138,19 @@ void make_star_plot_for_disappearance_analysis
          fit_data.ignore(1000, '\n');
 
        } else {
-         const char * systematic =  "";
-         double       bestfit_mixing12_p1sig  = 0;
-         double       bestfit_mixing13_p1sig  = 0.;
-         double       bestfit_mixing23_p1sig  = 0.;
-         double       bestfit_deltacp_p1sig   = 0.;
-         double       bestfit_dm12sq_p1sig    = 0.;
-         double       bestfit_dm23sq_p1sig    = 0.;
-         double       bestfit_mixing12_m1sig  = 0.;
-         double       bestfit_mixing13_m1sig  = 0.;
-         double       bestfit_mixing23_m1sig  = 0.;
-         double       bestfit_deltacp_m1sig   = 0.;
-         double       bestfit_dm12sq_m1sig    = 0.;
-         double       bestfit_dm23sq_m1sig    = 0.;
+         string systematic =  "";
+         double bestfit_mixing12_p1sig  = 0;
+         double bestfit_mixing13_p1sig  = 0.;
+         double bestfit_mixing23_p1sig  = 0.;
+         double bestfit_deltacp_p1sig   = 0.;
+         double bestfit_dm12sq_p1sig    = 0.;
+         double bestfit_dm23sq_p1sig    = 0.;
+         double bestfit_mixing12_m1sig  = 0.;
+         double bestfit_mixing13_m1sig  = 0.;
+         double bestfit_mixing23_m1sig  = 0.;
+         double bestfit_deltacp_m1sig   = 0.;
+         double bestfit_dm12sq_m1sig    = 0.;
+         double bestfit_dm23sq_m1sig    = 0.;
 
          fit_data >> systematic 
                   >> bestfit_mixing12_p1sig 
@@ -182,7 +184,9 @@ void make_star_plot_for_disappearance_analysis
          arr_m1sig->Draw();
 
          // add legend entry
-         legend->AddEntry(arr_p1sig, util::AsStringPaperTex(util::PhysParmIdFromString(systematic)), "L");
+	 if(systematic.find("osc_") != string::npos)
+	   systematic.erase(systematic.begin(), systematic.begin()+4);
+         legend->AddEntry(arr_p1sig, util::AsStringPaperRooTex(util::PhysParamIdFromString(systematic)).c_str(), "L");
 
          isyst++;
          // reset and re-use formatting styles, shouldn't have anywhere near that many systematics
@@ -195,8 +199,8 @@ void make_star_plot_for_disappearance_analysis
   fit_data.close();
 
   if(TMath::Abs(1.0-true_mixing23) < conv::kASmallNum) {
-    legend->SetX1(0.1);
-    legend->SetX2(0.25);
+    legend->SetX1(0.2);
+    legend->SetX2(0.35);
   }
   legend->Draw();
 

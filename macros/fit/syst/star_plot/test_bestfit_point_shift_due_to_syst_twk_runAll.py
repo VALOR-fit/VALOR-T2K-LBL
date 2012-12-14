@@ -167,7 +167,7 @@ for osc in oscparams:
             command = 'rm star_plot_line-all.data star_plot_line-banff[n,x]*.data star_plot_line-edbanff.data star_plot_line-unbanff.data star_plot_line-fsi.data star_plot_line-sk.data star_plot_line-xsec.data star_plot_line-correlated_banff.data'
             print command
             os.system(command)
-            command = 'cat star_plot_line-*.data > star_plot_line-all.data'
+            command = 'cat star_plot_line-{b,f,s,x}*.data > star_plot_line-all.data'
             print command
             os.system(command)
             command = 'root2k -l -b -q \'$T2KOSCANA/macros/fit/syst/star_plot/make_star_plot_for_disappearance_analysis.C("star_plot_line-all.data",'+str(osc[2])+','+str(osc[5])+','+errmixing23+','+errdm23sq+')\''
@@ -223,20 +223,22 @@ for osc in oscparams:
             os.system(command)
             """
 
-            command = 'cat star_plot_line-banff_ma*.data cat star_plot_line-banff_cc*.data > star_plot_line-banffxsec.data'
+            command = 'cat star_plot_line-banff_ma*.data cat star_plot_line-banff_ccqeE*.data star_plot_line-banff_cc1piE* > star_plot_line-banffxsec.data'
             print command
             os.system(command)
             command = 'root2k -l -b -q \'$T2KOSCANA/macros/fit/syst/star_plot/make_star_plot_for_disappearance_analysis.C("star_plot_line-banffxsec.data",'+str(osc[2])+','+str(osc[5])+','+errmixing23+','+errdm23sq+')\''
             print command
             os.system(command)
 
+            """
             command = 'cat star_plot_line-unbanff*.data cat > star_plot_line-unbanff.data'
             print command
             os.system(command)
             command = 'root2k -l -b -q \'$T2KOSCANA/macros/fit/syst/star_plot/make_star_plot_for_disappearance_analysis.C("star_plot_line-unbanff.data",'+str(osc[2])+','+str(osc[5])+','+errmixing23+','+errdm23sq+')\''
             print command
             os.system(command)
-
+            """
+            
             command = 'cat star_plot_line-correlated_banff*.data cat > star_plot_line-correlated_banff.data'
             print command
             os.system(command)
@@ -244,13 +246,15 @@ for osc in oscparams:
             print command
             os.system(command)
 
+            """
             command = 'cat star_plot_line-edbanff*.data cat > star_plot_line-edbanff.data'
             print command
             os.system(command)
             command = 'root2k -l -b -q \'$T2KOSCANA/macros/fit/syst/star_plot/make_star_plot_for_disappearance_analysis.C("star_plot_line-edbanff.data",'+str(osc[2])+','+str(osc[5])+','+errmixing23+','+errdm23sq+')\''
             print command
             os.system(command)
-
+            """
+            
             command = 'cat star_plot_line-fsi_*.data > star_plot_line-fsi.data'
             print command
             os.system(command)
