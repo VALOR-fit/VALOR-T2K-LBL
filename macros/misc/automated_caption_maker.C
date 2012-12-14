@@ -1,4 +1,6 @@
 /*
+used to create the captions for the 1 sigma, individual systematic, ereco spectra appendix
+
 
 root2k -l -b -q '$T2KOSCANA/macros/misc/automated_caption_maker.C("./images/spectrum_tweaked/unoscillated/","ereco_twk_","tweakspectra",0,0,0,0,0,0)'
 root2k -l -b -q '$T2KOSCANA/macros/misc/automated_caption_maker.C("./images/spectrum_tweaked/oscillated/","ereco_twk_","tweakspectra",-99,-99,-99,-99,-99,-99)'
@@ -69,7 +71,7 @@ void automated_caption_maker(
       oscstr = "noosc";
     }
     else {
-      streamer << "for 3 flavour oscillations,"
+      streamer << "3 flavour oscillations,"
 	       << " using oscillation parameters: " 
 	       << " $\\sin^22\\theta_{12} = $"  << input_mixing12
 	       << "; $\\sin^22\\theta_{13} = $" << input_mixing13
