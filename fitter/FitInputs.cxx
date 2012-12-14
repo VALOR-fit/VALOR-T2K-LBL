@@ -153,7 +153,7 @@ double FitInputs::Chisquare(Option_t * option, conv::SuperkSample_t s0) const
 	    double nobs = 0, nexp = 0;
 	    for(int ir = ErecoMinBin; ir <= ErecoMaxBin; ir++) {
 	      nobs += fObs->ErecoSpectrumArray             (s)[ir-1];
-	      nexp += fExp->CurrPredictedErecoSpectrumArray(s)[ibin-1];
+	      nexp += fExp->CurrPredictedErecoSpectrumArray(s)[ir-1];
 	    }
 	    double delta_chisq = 0.;
 	    if      (opt.Contains("poisson")) { delta_chisq = util::ChisqPoisson(nobs,nexp); }
