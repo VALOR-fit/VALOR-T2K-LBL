@@ -87,24 +87,31 @@ void automated_caption_maker_2(
   dm23sq.push_back(0.0026);
   dm23sq.push_back(0.003);
 
-  for(int iosc = 0; iosc < mixing23.size(); iosc++) {
+  for(int isys = 0; isys < systematics.size(); isys++) {
+    string systematic = systematics[isys];
+    string sysexplain = sysexplanation[isys];
+    string filesuffix = "_testzoom";
+    if(systematic == "important")
+      filesuffix = "_testbig";
 
-    double input_mixing23 = mixing23[iosc];
-    double input_dm23sq = dm23sq[iosc];
+    string sysexplainupper = systematics[isys];
+    sysexplainupper[0] = toupper(sysexplain[0]);
+    streamer << endl << "\\subsection{" << sysexplainupper << "}" << endl;
 
+    for(int iosc = 0; iosc < mixing23.size(); iosc++) {
 
-    for(int isys = 0; isys < systematics.size(); isys++) {
-      string systematic = systematics[isys];
-      string sysexplain = sysexplanation[isys];
-      string filesuffix = "_testzoom";
-      if(systematic == "important")
-	filesuffix = "_testbig";
+      double input_mixing23 = mixing23[iosc];
+      double input_dm23sq = dm23sq[iosc];
 
       //front matter
-      streamer << "\\begin{figure}" << endl;
-      streamer << "\\begin{center}" << endl;
-      streamer << "\\resizebox{14cm}{!}{" 
-	       << Form("\\includegraphics{{%s%s-%.6f-%.6f%s}.eps}}",graphicslocation,systematic.c_str(),input_mixing23,input_dm23sq,filesuffix.c_str()) << endl;
+      if(iosc % 4 == 0) {
+	streamer << "\\begin{figure*}[htb]" << endl;
+      }
+      streamer << "\\begin{minipage}[t]{0.48\\linewidth}" << endl;
+      streamer << "\\center" << endl;
+
+      //image
+      streamer << Form("\\includegraphics[width=18pc]{{%s%s-%.6f-%.6f%s}.eps}",graphicslocation,systematic.c_str(),input_mixing23,input_dm23sq,filesuffix.c_str()) << endl;
 
       //caption
       streamer << "\\caption" << endl;
@@ -134,9 +141,19 @@ void automated_caption_maker_2(
       streamer << Form("\\label{fig:star_%s_%.2f_%.4f}",systematic.c_str(),input_mixing23,input_dm23sq) << endl;
 
       //back matter
-      streamer << "\\end{center}" << endl;
-      streamer << "\\end{figure}" << endl;
-      streamer << "\\clearpage" << endl << endl;
+      streamer << "\\end{minipage}" << endl;
+      if(iosc % 4 == 3 || iosc == mixing23.size()-1) {
+	streamer << "\\end{figure*}" << endl;
+	streamer << "\\clearpage" << endl;
+	//if(iosc %4 == 1 || iosc == mixing23.size() -1) {
+      }
+      else if(iosc %4 == 0 || iosc %4 == 2){
+	streamer << "\\hspace{0.06\\linewidth}" << endl;
+      }
+      else if(iosc %4 == 1) {
+	streamer << "\\vfill" << endl;
+      }
+
 
     }//isys
   }//iosc
