@@ -77,6 +77,11 @@ root2k -l -b -q '$T2KOSCANA/macros/fit/toymc/fit_xml_seeded_from_chisq_map.C("/h
 root2k -l -b -q '$T2KOSCANA/macros/fit/toymc/fit_xml_seeded_from_chisq_map.C("/home/ppd/tdealtry/RAL_repoistory/t2k/t2kana/nuosc/branches/2012_v0.9.0/inputs/data.xml",5,"data3-run_0-expts_5_5.root",100,"analysis_configuration_2012a_run3_neut_finalBANFF_coarseErecoSplines_6binFSI+SI_MAQE.xml","nuosc3f_numudisapp_fix4+nuisance")'
 
 
+cd 28; qsub run123.pbs; qsub run12.pbs; qsub run3.pbs; cd ..;
+cd 2all; qsub run123.pbs; qsub run12.pbs; qsub run3.pbs; cd ..;
+
+cd FAKE28; qsub set0.pbs; qsub set1.pbs; qsub set2.pbs; qsub set3.pbs; qsub set4.pbs; qsub set5.pbs; cd ..;
+cd FAKE2all; qsub set0.pbs; qsub set1.pbs; qsub set2.pbs; qsub set3.pbs; qsub set4.pbs; qsub set5.pbs; cd ..;
 
 
 MINOS sensitivity:
