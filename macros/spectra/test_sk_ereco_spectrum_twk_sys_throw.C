@@ -12,6 +12,13 @@
 //   4 tweak all fsi
 //   5 tweak all BANFF (correlated)
 //   6 tweak all BANFF (eigendecomposition)
+//   7 tweak BANFF flux only
+//   8 tweak BANFF xsec only
+//
+// 100 tweak banff00
+// 101 tweak banff01
+// ...
+// 100+kNumOfParamsInBANFFfit tweak last banff parameter
 //
 // 200 tweak xsec_pf
 // 201 tweak xsec_sf
@@ -36,6 +43,14 @@
 // 303 tweak sk_1Rmu_nc_eff
 // 304 tweak sk_1Rmu_nuecc_eff
 // 305 tweak sk_1Rmu_ccqe_ring_counting
+// 306 tweak sk_1Rmu_ccqe_ring_counting0
+// 307 tweak sk_1Rmu_ccqe_ring_counting1
+// 308 tweak sk_1Rmu_ccqe_ring_counting2
+//
+// 400 tweak fsi00
+// 401 tweak fsi01
+// ...
+// 400+kNumOfFSIParams tweak last fsi parameter
 //
 // Tom Dealtry
 // ------------------------------------------------------------------------------------------------
@@ -81,6 +96,10 @@ void test_sk_ereco_spectrum_twk_sys_throw
       modetitle = "BANFF_correlated"; break;
     case 6:
       modetitle = "BANFF_eigendecomposition"; break;
+    case 7:
+      modetitle = "BANFF_flux"; break;
+    case 8:
+      modetitle = "BANFF_xsec"; break;
 
     case 200:
       modetitle = "xsec_pf"; break;
@@ -127,8 +146,21 @@ void test_sk_ereco_spectrum_twk_sys_throw
       modetitle = "sk_1Rmu_nuecc_eff"; break;
     case 305:
       modetitle = "sk_1Rmu_ccqe_ring_counting_eff"; break;
+    case 306:
+      modetitle = "sk_1Rmu_ccqe_ring_counting_eff_0"; break;
+    case 307:
+      modetitle = "sk_1Rmu_ccqe_ring_counting_eff_1"; break;
+    case 308:
+      modetitle = "sk_1Rmu_ccqe_ring_counting_eff_2"; break;
+
 
     default:
+      if(mode >= 100 && mode < 100+conv::kNumOfParamsInBANFFfit) {
+	modetitle = Form("banff_%02d",mode-100); break;
+      }
+      else if(mode >= 400 && mode < 400+conv::kNumOfFSIParams) {
+	modetitle = Form("fsi_%03d",mode-400); break;
+      }
       cout << "Unknown mode " << mode << endl; exit(1); break;
   }//switch mode
 
@@ -323,6 +355,26 @@ void test_sk_ereco_spectrum_twk_sys_throw
 	skexp.TweakAllEigenDecompBANFFSystematics();
       }
 
+      //BANFF (flux only)
+      if(mode == 7) {
+	TRandom3 rand(0);
+	for(int ib = 0; ib < conv::kNumOfFluxParamsInBANFFfit; ib++) {
+	  skexp.TweakSystematic(Form("banff_%02d",ib),rand.Gaus(0.,1.));
+	}
+      }
+
+      //BANFF (xsec only)
+      if(mode == 8) {
+	TRandom3 rand(0);
+	skexp.TweakSystematic("banff_maqe",rand.Gaus(0.,1.));
+	skexp.TweakSystematic("banff_mares",rand.Gaus(0.,1.));
+	skexp.TweakSystematic("banff_ccqeE0",rand.Gaus(0.,1.));
+	skexp.TweakSystematic("banff_ccqeE1",rand.Gaus(0.,1.));
+	skexp.TweakSystematic("banff_ccqeE2",rand.Gaus(0.,1.));
+	skexp.TweakSystematic("banff_cc1piE0",rand.Gaus(0.,1.));
+	skexp.TweakSystematic("banff_cc1piE1",rand.Gaus(0.,1.));	
+      }
+
     }//mode<100
 
     else {
@@ -376,8 +428,33 @@ void test_sk_ereco_spectrum_twk_sys_throw
 	  skexp.TweakSystematic("sk_1Rmu_nuecc_eff",tweak); break;
         case 305:
 	  skexp.GetSuperkDetector()->TweakEfficiency1RmuCCQERingCounting(); break;
+        case 306:
+	  skexp.TweakSystematic("sk_1Rmu_ccqe_ring_counting_eff_0",tweak); break;
+        case 307:
+	  skexp.TweakSystematic("sk_1Rmu_ccqe_ring_counting_eff_1",tweak); break;
+        case 308:
+	  skexp.TweakSystematic("sk_1Rmu_ccqe_ring_counting_eff_2",tweak); break;
+
 
         default:
+	  if(mode >= 100 && mode < 100+conv::kNumOfParamsInBANFFfit) {
+	    TVectorD v(conv::kNumOfParamsInBANFFfit);
+	    v = skexp.GetBANFF()->BestFitValues();
+	    int ib = mode - 100;
+	    v[ib] = skexp.GetBANFF()->BestFitValues()[ib] + (tweak * sqrt(skexp.GetBANFF()->CovMatrix()[ib][ib]));
+	    skexp.GetBANFF()->Tweak(true,&v,1);
+	    break;
+	  }
+	  else if(mode >= 400 && mode < 400+conv::kNumOfFSIParams) {
+	    TVectorD v(conv::kNumOfFSIParams);
+	    for (int ipf = 0; ipf < conv::kNumOfFSIParams; ipf++) {
+	      v[ipf] = 1;
+	    }
+	    int ib = mode - 400;
+	    v[ib] = 1 + (tweak * sqrt(skexp.GetFSI()->CovMatrix()[ib][ib]));
+	    skexp.GetFSI()->Tweak(true,&v);
+	    break;
+	  }
 	  cout << "Unknown mode " << mode << endl; exit(1); break;
       }//switch(mode)
     }//mode>=100

@@ -37,12 +37,15 @@ conffile = "analysis_configuration.xml"
 save_toy_expts = "false"
 
 modes1 = [0,2,3,4,5] #combinations
+modes2 = range(100,123) #banff
 modes3 = range(200,216) #unconstranied xsec
-modes4 = range(300,306) #sk detector
+modes4 = range(300,309) #sk detector
+modes5 = range(400,406) #fsi
+modes6 = [7,8] #banff flux / banff xsec individually
 
 modes = modes1
 if opt.do_all:
-    modes = modes + modes3 + modes4
+    modes = modes + modes2 + modes3 + modes4 + modes5 + modes6
 
 oscparams = [] #fill with oscillation parameters, in order mixing12, theta13, theta23, deltacp, dmsq12, dmsq23hypothesis
 oscparams.append([  0,   0,   0,   0,   0,   0]) #no oscillations!
@@ -64,7 +67,7 @@ for osc in oscparams:
             update = "true"
 
         #don't forget the banff prefit
-        if mode == 5 or mode == 0:
+        if mode == 5 or mode == 0 or (mode >= 100 and mode < 200):
             command = 'root2k -l -b -q \'$T2KOSCANA/macros/spectra/test_sk_ereco_spectrum_twk_sys_throw.C('+str(mode)+','+update+',"3f_osc",'+str(osc[0])+','+str(osc[1])+','+str(osc[2])+','+str(osc[3])+','+str(osc[4])+','+str(osc[5])+','+save_toy_expts+',"analysis_configuration_2012a_run1+2+3_neut_finalBANFF_coarseErecoSplines_6binFSI+SI_MAQE_prefit.xml",'+str(nexp)+')\''
             print command
             if os.system(command) == 1:
