@@ -18,7 +18,11 @@ void test_n_mock_data_fits_xml
   const char * fit_param_list      = "nuosc3f_numudisapp_fix4+nuisanceselection",    /* fit parameter list for the given physics hypothesis (see run_fitter.C) */
   const char * fit_option          = "minuit",                     /* fitter option (see run_fitter.C) */
   const char * output_option       = "Observation+BestFitSpectra+ChisqSurface+Canvases",  /* what to write-out once the fit is done */
-  bool chisqwithsyst = true
+  bool         chisqwithsyst       = true,
+  double       chisqsyst_mixing23_min = 0.6,
+  double       chisqsyst_mixing23_max = 1.0,
+  double       chisqsyst_dm23sq_min   = 0.001,
+  double       chisqsyst_dm23sq_max   = 0.004
 )
 {
   using namespace std;
@@ -122,11 +126,11 @@ void test_n_mock_data_fits_xml
 
      if(chisqwithsyst) {
        //now get the with-syst chisq surface
-       double mixing23_min  = conv::kMinChisqSurfaceSinsq2Theta23;
-       double mixing23_max  = conv::kMaxChisqSurfaceSinsq2Theta23;
+       double mixing23_min  = chisqsyst_mixing23_min < 0 ? conv::kMinChisqSurfaceSinsq2Theta23 : chisqsyst_mixing23_min;
+       double mixing23_max  = chisqsyst_mixing23_max < 0 ? conv::kMaxChisqSurfaceSinsq2Theta23 : chisqsyst_mixing23_max;
        double mixing23_step = fparm->StepSize(conv::kPhypMixing23);
-       double dm23sq_min    = conv::kMinChisqSurfaceDm23sq;
-       double dm23sq_max    = conv::kMaxChisqSurfaceDm23sq;
+       double dm23sq_min    = chisqsyst_dm23sq_min   < 0 ? conv::kMinChisqSurfaceDm23sq        : chisqsyst_dm23sq_min;
+       double dm23sq_max    = chisqsyst_dm23sq_max   < 0 ? conv::kMaxChisqSurfaceDm23sq        : chisqsyst_dm23sq_max;
        double dm23sq_step   = fparm->StepSize(conv::kPhypDm23sq);
 
        // make sure that min and max are at the bin centre

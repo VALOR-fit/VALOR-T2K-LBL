@@ -42,6 +42,11 @@ foreach (@ARGV) {
   if($_ eq '--config-file'    ) { $config_file   = $ARGV[$iarg+1]; }
   if($_ eq '--proxy-id'       ) { $proxy_id      = $ARGV[$iarg+1]; }
   if($_ eq '--no-chisq-surf-withsyst' ) {$chisq_syst = 0;          }
+  if($_ eq '--chisqsyst-mixing23-min' ) {$chisqsyst_mixing23_min = $ARGV[$iarg+1]; }
+  if($_ eq '--chisqsyst-mixing23-max' ) {$chisqsyst_mixing23_max = $ARGV[$iarg+1]; }
+  if($_ eq '--chisqsyst-dm23sq-min'   ) {$chisqsyst_dm23sq_min =   $ARGV[$iarg+1]; }
+  if($_ eq '--chisqsyst-dm23sq-max'   ) {$chisqsyst_dm23sq_max =   $ARGV[$iarg+1]; }
+)
   $iarg++;
 }
 
@@ -60,6 +65,10 @@ $config_file            = "analysis_configuration.xml"  unless defined $config_f
 $chisq_syst             = 1                             unless defined $chisq_syst;
 $proxy_id               = "valor"                       unless defined $proxy_id;
 $output_option          = "Observation+BestFitSpectra+ChisqSurface+Canvases";
+$chisqsyst_mixing23_min = 0.6                           unless defined $chisqsyst_mixing23_min;
+$chisqsyst_mixing23_max = 1.0                           unless defined $chisqsyst_mixing23_max;
+$chisqsyst_dm23sq_min   = 0.001                         unless defined $chisqsyst_dm23sq_min;
+$chisqsyst_dm23sq_max   = 0.004                         unless defined $chisqsyst_dm23sq_max;
 
 if( !defined $cput) {
   if($resource eq "RAL"   ) { $cput = "6:00:00";  }
@@ -84,7 +93,7 @@ while($irun < $nruns) {
   if( $resource eq "Grid") { $macro_dir = "./";       }
   else                     { $macro_dir = $softw_dir; }
 
-  $command = "root2k -l -b -q \'$macro_dir/macros/fit/toymc/test_n_mock_data_fits_xml.C(\"$tag\",$irun,\"$toyexptsfile\",$first,$last,\"$config_file\",\"$fitparamlist\",\"$fitoption\",\"$output_option\",$chisq_syst)\'";
+  $command = "root2k -l -b -q \'$macro_dir/macros/fit/toymc/test_n_mock_data_fits_xml.C(\"$tag\",$irun,\"$toyexptsfile\",$first,$last,\"$config_file\",\"$fitparamlist\",\"$fitoption\",\"$output_option\",$chisq_syst,$chisqsyst_mixing23_min,$chisqsyst_mixing23_max,$chisqsyst_dm23sq_min,$chisqsyst_dm23sq_max)\'";
 
   $first = $last  + 1;
   $last  = $first + $nexpts - 1;
