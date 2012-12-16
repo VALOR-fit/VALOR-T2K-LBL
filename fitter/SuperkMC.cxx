@@ -35,6 +35,10 @@
 //#define __apply_minevents_to_individual_modes__ //special debug mode that applies kSetNegEventsTo to all modes. Used for comparisons with the KIT 1 sigma spectra
 //#define NO_EVENTS_CAN_BE_NEGATIVE // if defined, will stop events being negative at all stages (not just building the Ereco spectra)
 #define APPLY_ESCALE_AT_SPECTRUM_STAGE
+//#define FLUXWEIGHTSAREONE
+//#define BANFFWEIGHTSAREONE
+//#define SYSTWEIGHTSAREONE
+//#define PHYSHYPWEIGHTSAREONE
 
 #include <cassert>
 #include <cstdlib>
@@ -465,12 +469,21 @@ void SuperkMC::FillTemplate(SuperkSample_t s, SuperkMode_t m)
      if(!use_it) continue;
   
      this -> Template(s,m,kSKMCtOri) -> Fill (fBrEreco/1000., fBrEtrue);
-     this -> Template(s,m,kSKMCtNom) -> Fill (fBrEreco/1000., fBrEtrue, fBrWght * pot_wght);
      fMCVariableTempl[sidx][midx]    -> Fill (fBrEreco/1000., fBrEtrue);
+#ifndef FLUXWEIGHTSAREONE
+     this -> Template(s,m,kSKMCtNom) -> Fill (fBrEreco/1000., fBrEtrue, fBrWght * pot_wght);
 #ifndef PRODUCTIONMODE
      this -> Template(s,m,kSKMCtTun) -> Fill (fBrEreco/1000., fBrEtrue, fBrWght * pot_wght);
      this -> Template(s,m,kSKMCtSys) -> Fill (fBrEreco/1000., fBrEtrue, fBrWght * pot_wght);
      this -> Template(s,m,kSKMCtFin) -> Fill (fBrEreco/1000., fBrEtrue, fBrWght * pot_wght);
+#endif
+#else
+     this -> Template(s,m,kSKMCtNom) -> Fill (fBrEreco/1000., fBrEtrue, pot_wght);
+#ifndef PRODUCTIONMODE
+     this -> Template(s,m,kSKMCtTun) -> Fill (fBrEreco/1000., fBrEtrue, pot_wght);
+     this -> Template(s,m,kSKMCtSys) -> Fill (fBrEreco/1000., fBrEtrue, pot_wght);
+     this -> Template(s,m,kSKMCtFin) -> Fill (fBrEreco/1000., fBrEtrue, pot_wght);
+#endif
 #endif
 
 #ifdef __show_init_mesg_debug__
@@ -729,7 +742,10 @@ void SuperkMC::ApplyBANFFTuningToTemplates(void)
 
 	   // Combined weight
 	   double wght = flux_wght * xsec_wght;
-	
+#ifdef BANFFWEIGHTSAREONE
+	   wght = 1;
+#endif
+
 	   // loop over 50MeV Ereco
 	   int ErecoMinBin = 1 + TMath::BinarySearch(kNErecoBins1Rmu,kErecoBinEdges1Rmu,ErecoVarMin);
 	   int ErecoMaxBin = 1 + TMath::BinarySearch(kNErecoBins1Rmu,kErecoBinEdges1Rmu,ErecoVarMax);
@@ -859,6 +875,9 @@ void SuperkMC::ApplySystematicsToTemplates_Multiplicative(void)
 
            // Combined weight
            double wght = skeff_wght * flux_wght * xsec_wght * fsi_wght;
+#ifdef SYSTWEIGHTSAREONE
+	   wght = 1;
+#endif
 
 	   // loop over 50MeV Ereco
 	   int ErecoMinBin = 1 + TMath::BinarySearch(kNErecoBins1Rmu,kErecoBinEdges1Rmu,ErecoVarMin);
@@ -1322,6 +1341,10 @@ void SuperkMC::ApplyPhysHypothesisToTemplates(void)
                 if( util::IsNuEBar(m)    ) { posc = p_nuebar_nuebar;   }
                 if( util::IsSignalNuE(m) ) { posc = p_numu_nue;        }
               }
+#ifdef PHYSHYPWEIGHTSAREONE
+	      posc = 1;
+	      if(util::IsSignalNuE(m)) posc = 0;
+#endif
               // number of events in (Ereco,Etrue) bin (oscillations + systematics applied)
               double nev_osc = nev * posc;
 #ifndef PRODUCTIONMODE
