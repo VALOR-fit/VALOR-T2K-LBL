@@ -11,6 +11,7 @@ void plot_tuning_steps_spectra
   TFile f_flux_osc ("fluxtune/flux_osc.root");
   TFile f_nom_noosc ("notune/nom_noosc.root");
   TFile f_nom_osc ("notune/nom_osc.root");
+  TFile f_nom_noosc_signue("notune_noosc_signuestillon/nom_noosc_withsignue.root");
 
   TH1D * h_ereco_tun_noosc = 0;
   f_tun_noosc.GetObject("ereco_spectrum",h_ereco_tun_noosc);
@@ -80,4 +81,30 @@ void plot_tuning_steps_spectra
   leg->AddEntry(h_ereco_tun_osc,"BANFF tuning applied","l");
   leg->Draw();
   c->SaveAs("spectra_tun_banfftuned.eps");
+
+  //Now get the templates
+  const int ntempl = 28;
+  TH2D * h_template[ntempl] = {0};
+  for(int i = 0; i < ntempl; i++) {
+    f_nom_noosc_signue.GetObject(Form("nsk_fin_0_%d",i),h_template[i]);
+    //h_template[i]->SetTitle("");
+  }
+  TCanvas * ctempl = new TCanvas();
+  ctempl->Divide(2, 3);
+  for(int i = 0; i < ntempl; i++) {
+    ctempl->cd((i%6) +1)->SetRightMargin(0.12);
+    h_template[i]->Draw("colz");
+    if(i%6 == 5) {
+      ctempl->SaveAs(Form("template_%d.eps",i));
+    }
+  }
+  //and the signue
+  TCanvas * ctemplsig = new TCanvas();
+  ctemplsig->Divide(2,2);
+  for(int i = ntempl-4; i < ntempl; i++) {
+    ctemplsig->cd((i%4) +1)->SetRightMargin(0.15);
+    h_template[i]->Draw("colz");
+  }
+  ctemplsig->SaveAs("template_27.eps");
+
 }
