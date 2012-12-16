@@ -6,14 +6,18 @@ root2k -l '$T2KOSCANA/macros/contour/fc/numu/write_contour_bins_to_textfile.C("$
 #submit the FC jobs
 $T2KOSCANA/production/submit_feldman_cousins_fitting_job_numu --resource RAL --nruns 500 --nexpts 2000 --cpu-time 24:00:00 --stat-fluctuations --tweak-systematics --bin-list /home/ppd/tdealtry/RAL_repoistory/t2k/t2kana/nuosc/branches/2012_v0.9.0/inputs/FCbinlist/binlist_2+8_statsyst.data --fit-param-list nuosc3f_numudisapp_fix4+nuisanceselection  --job-dir $PWD --softw-dir $T2KOSCANA --tag FC28statsyst_1
 
+#fill in the holes
+$T2KOSCANA/production/submit_feldman_cousins_fitting_job_numu --resource RAL --nruns 99 --nexpts 2000 --cpu-time 24:00:00 --stat-fluctuations --tweak-systematics --bin-list /home/ppd/tdealtry/RAL_repoistory/t2k/t2kana/nuosc/branches/2012_v0.9.0/inputs/FCbinlist/binlist_2+8_statsyst_holes.data --fit-param-list nuosc3f_numudisapp_fix4+nuisanceselection  --job-dir $PWD --softw-dir $T2KOSCANA --tag FC28statsyst_2
+
+
 #check how many fits have been done at each point
 root2k -l '$T2KOSCANA/macros/contour/fc/numu/test_feldman_cousins_nfits.C("$T2KOSCANA/2012results/FC/2+8statsyst")'
 
 #make a FC surface
-root2k -l -b -q '$T2KOSCANA/macros/contour/fc/numu/make_feldman_cousins_deltachisqcrit_surface.C("$T2KOSCANA/2012results/FC2+8statsystProduction/2012_12_08","delta_chisq_critical.root",80,9999,8,25)'
+root2k -l -b -q '$T2KOSCANA/macros/contour/fc/numu/make_feldman_cousins_deltachisqcrit_surface.C("$T2KOSCANA/2012results/FC/2+8statsyst","delta_chisq_critical.root",75,9999,8,25)'
 
 #plot a contour (run1-3, with 90% stat syst underlaid)
-root2k -l '$T2KOSCANA/macros/contour/fc/numu/plot_feldman_cousins_contour.C("delta_chisq_critical.root","delta_chisq_critical.root","delta_chisq_critical.root","$T2KOSCANA/2012results/TRUNK/2012_12_07/data_28/fitresults_3.root","hdchisq",0,true,false,true,"90statsyst")'
+root2k -l '$T2KOSCANA/macros/contour/fc/numu/plot_feldman_cousins_contour.C("delta_chisq_critical.root","delta_chisq_critical.root","delta_chisq_critical.root","$T2KOSCANA/2012results/TRUNK/2012_12_07/data_28/fitresults_3.root","hdchisq",0,true,false,false,"90statsyst")'
 
 
 
@@ -25,7 +29,7 @@ Fake data:
 2+8:
 
 #make chisq maps
-$T2KOSCANA/production/submit_toyexpt_fitting_job_xml --resource RAL --tag fakedata --nruns 6 --nexpts 1 --first-expt 0 --fit-param-list nuosc3f_numudisapp_fix4+nuisanceselection --job-dir $PWD --softw-dir $T2KOSCANA --toy-expts-file /home/ppd/tdealtry/RAL_repoistory/t2k/t2kana/nuosc/branches/2012_v0.9.0/inputs/toymc/fakedata.xml --cpu-time 08:00:00
+$T2KOSCANA/production/submit_toyexpt_fitting_job_xml --resource RAL --tag fakedata --nruns 6 --nexpts 1 --first-expt 0 --fit-param-list nuosc3f_numudisapp_fix4+nuisanceselection --job-dir $PWD --softw-dir $T2KOSCANA --toy-expts-file /home/ppd/tdealtry/RAL_repoistory/t2k/t2kana/nuosc/branches/2012_v0.9.0/inputs/toymc/fakedata.xml --cpu-time 24:00:00
 
 #find best fit
 root2k -l -b -q '$T2KOSCANA/macros/fit/toymc/fit_xml_seeded_from_chisq_map.C("/home/ppd/tdealtry/RAL_repoistory/t2k/t2kana/nuosc/branches/2012_v0.9.0/inputs/toymc/fakedata.xml",0,"fakedata-run_0-expts_0_0.root",100,"analysis_configuration.xml","nuosc3f_numudisapp_fix4+nuisanceselection")'
@@ -38,7 +42,7 @@ root2k -l -b -q '$T2KOSCANA/macros/fit/toymc/fit_xml_seeded_from_chisq_map.C("/h
 2+all:
 
 #make chisq maps
-$T2KOSCANA/production/submit_toyexpt_fitting_job_xml --resource RAL --tag fakedata --nruns 6 --nexpts 1 --first-expt 0 --fit-param-list nuosc3f_numudisapp_fix4+nuisance --job-dir $PWD --softw-dir $T2KOSCANA --toy-expts-file /home/ppd/tdealtry/RAL_repoistory/t2k/t2kana/nuosc/branches/2012_v0.9.0/inputs/toymc/fakedata.xml --cpu-time 48:00:00
+$T2KOSCANA/production/submit_toyexpt_fitting_job_xml --resource RAL --tag fakedata --nruns 6 --nexpts 1 --first-expt 0 --fit-param-list nuosc3f_numudisapp_fix4+nuisance --job-dir $PWD --softw-dir $T2KOSCANA --toy-expts-file /home/ppd/tdealtry/RAL_repoistory/t2k/t2kana/nuosc/branches/2012_v0.9.0/inputs/toymc/fakedata.xml --cpu-time 72:00:00
 
 #find best fit
 root2k -l -b -q '$T2KOSCANA/macros/fit/toymc/fit_xml_seeded_from_chisq_map.C("/home/ppd/tdealtry/RAL_repoistory/t2k/t2kana/nuosc/branches/2012_v0.9.0/inputs/toymc/fakedata.xml",0,"fakedata-run_0-expts_0_0.root",100,"analysis_configuration.xml","nuosc3f_numudisapp_fix4+nuisance")'
@@ -55,9 +59,9 @@ Data (including individual run periods):
 2+8:
 
 #make chisq maps
-$T2KOSCANA/production/submit_toyexpt_fitting_job_xml --resource RAL --tag data123 --nruns 1 --nexpts 1 --first-expt 3 --fit-param-list nuosc3f_numudisapp_fix4+nuisanceselection --job-dir $PWD --softw-dir $T2KOSCANA --toy-expts-file /home/ppd/tdealtry/RAL_repoistory/t2k/t2kana/nuosc/branches/2012_v0.9.0/inputs/data.xml --cpu-time 08:00:00
-$T2KOSCANA/production/submit_toyexpt_fitting_job_xml --resource RAL --tag data12 --nruns 1 --nexpts 1 --first-expt 4 --fit-param-list nuosc3f_numudisapp_fix4+nuisanceselection --job-dir $PWD --softw-dir $T2KOSCANA --toy-expts-file /home/ppd/tdealtry/RAL_repoistory/t2k/t2kana/nuosc/branches/2012_v0.9.0/inputs/data.xml --cpu-time 08:00:00 --config-file analysis_configuration_2012a_run1+2_neut_finalBANFF_coarseErecoSplines_6binFSI+SI_MAQE.xml
-$T2KOSCANA/production/submit_toyexpt_fitting_job_xml --resource RAL --tag data3 --nruns 1 --nexpts 1 --first-expt 5 --fit-param-list nuosc3f_numudisapp_fix4+nuisanceselection --job-dir $PWD --softw-dir $T2KOSCANA --toy-expts-file /home/ppd/tdealtry/RAL_repoistory/t2k/t2kana/nuosc/branches/2012_v0.9.0/inputs/data.xml --cpu-time 08:00:00 --config-file analysis_configuration_2012a_run3_neut_finalBANFF_coarseErecoSplines_6binFSI+SI_MAQE.xml
+$T2KOSCANA/production/submit_toyexpt_fitting_job_xml --resource RAL --tag data123 --nruns 1 --nexpts 1 --first-expt 3 --fit-param-list nuosc3f_numudisapp_fix4+nuisanceselection --job-dir $PWD --softw-dir $T2KOSCANA --toy-expts-file /home/ppd/tdealtry/RAL_repoistory/t2k/t2kana/nuosc/branches/2012_v0.9.0/inputs/data.xml --cpu-time 24:00:00
+$T2KOSCANA/production/submit_toyexpt_fitting_job_xml --resource RAL --tag data12 --nruns 1 --nexpts 1 --first-expt 4 --fit-param-list nuosc3f_numudisapp_fix4+nuisanceselection --job-dir $PWD --softw-dir $T2KOSCANA --toy-expts-file /home/ppd/tdealtry/RAL_repoistory/t2k/t2kana/nuosc/branches/2012_v0.9.0/inputs/data.xml --cpu-time 24:00:00 --config-file analysis_configuration_2012a_run1+2_neut_finalBANFF_coarseErecoSplines_6binFSI+SI_MAQE.xml
+$T2KOSCANA/production/submit_toyexpt_fitting_job_xml --resource RAL --tag data3 --nruns 1 --nexpts 1 --first-expt 5 --fit-param-list nuosc3f_numudisapp_fix4+nuisanceselection --job-dir $PWD --softw-dir $T2KOSCANA --toy-expts-file /home/ppd/tdealtry/RAL_repoistory/t2k/t2kana/nuosc/branches/2012_v0.9.0/inputs/data.xml --cpu-time 24:00:00 --config-file analysis_configuration_2012a_run3_neut_finalBANFF_coarseErecoSplines_6binFSI+SI_MAQE.xml
 
 #find best fit
 root2k -l -b -q '$T2KOSCANA/macros/fit/toymc/fit_xml_seeded_from_chisq_map.C("/home/ppd/tdealtry/RAL_repoistory/t2k/t2kana/nuosc/branches/2012_v0.9.0/inputs/data.xml",3,"data123-run_0-expts_3_3.root",100,"analysis_configuration.xml","nuosc3f_numudisapp_fix4+nuisanceselection")'
@@ -67,9 +71,9 @@ root2k -l -b -q '$T2KOSCANA/macros/fit/toymc/fit_xml_seeded_from_chisq_map.C("/h
 2+all:
 
 #make chisq maps
-$T2KOSCANA/production/submit_toyexpt_fitting_job_xml --resource RAL --tag data123 --nruns 1 --nexpts 1 --first-expt 3 --fit-param-list nuosc3f_numudisapp_fix4+nuisance --job-dir $PWD --softw-dir $T2KOSCANA --toy-expts-file /home/ppd/tdealtry/RAL_repoistory/t2k/t2kana/nuosc/branches/2012_v0.9.0/inputs/data.xml --cpu-time 48:00:00
-$T2KOSCANA/production/submit_toyexpt_fitting_job_xml --resource RAL --tag data12 --nruns 1 --nexpts 1 --first-expt 4 --fit-param-list nuosc3f_numudisapp_fix4+nuisance --job-dir $PWD --softw-dir $T2KOSCANA --toy-expts-file /home/ppd/tdealtry/RAL_repoistory/t2k/t2kana/nuosc/branches/2012_v0.9.0/inputs/data.xml --cpu-time 48:00:00 --config-file analysis_configuration_2012a_run1+2_neut_finalBANFF_coarseErecoSplines_6binFSI+SI_MAQE.xml
-$T2KOSCANA/production/submit_toyexpt_fitting_job_xml --resource RAL --tag data3 --nruns 1 --nexpts 1 --first-expt 5 --fit-param-list nuosc3f_numudisapp_fix4+nuisance --job-dir $PWD --softw-dir $T2KOSCANA --toy-expts-file /home/ppd/tdealtry/RAL_repoistory/t2k/t2kana/nuosc/branches/2012_v0.9.0/inputs/data.xml --cpu-time 48:00:00 --config-file analysis_configuration_2012a_run3_neut_finalBANFF_coarseErecoSplines_6binFSI+SI_MAQE.xml
+$T2KOSCANA/production/submit_toyexpt_fitting_job_xml --resource RAL --tag data123 --nruns 1 --nexpts 1 --first-expt 3 --fit-param-list nuosc3f_numudisapp_fix4+nuisance --job-dir $PWD --softw-dir $T2KOSCANA --toy-expts-file /home/ppd/tdealtry/RAL_repoistory/t2k/t2kana/nuosc/branches/2012_v0.9.0/inputs/data.xml --cpu-time 72:00:00
+$T2KOSCANA/production/submit_toyexpt_fitting_job_xml --resource RAL --tag data12 --nruns 1 --nexpts 1 --first-expt 4 --fit-param-list nuosc3f_numudisapp_fix4+nuisance --job-dir $PWD --softw-dir $T2KOSCANA --toy-expts-file /home/ppd/tdealtry/RAL_repoistory/t2k/t2kana/nuosc/branches/2012_v0.9.0/inputs/data.xml --cpu-time 72:00:00 --config-file analysis_configuration_2012a_run1+2_neut_finalBANFF_coarseErecoSplines_6binFSI+SI_MAQE.xml
+$T2KOSCANA/production/submit_toyexpt_fitting_job_xml --resource RAL --tag data3 --nruns 1 --nexpts 1 --first-expt 5 --fit-param-list nuosc3f_numudisapp_fix4+nuisance --job-dir $PWD --softw-dir $T2KOSCANA --toy-expts-file /home/ppd/tdealtry/RAL_repoistory/t2k/t2kana/nuosc/branches/2012_v0.9.0/inputs/data.xml --cpu-time 72:00:00 --config-file analysis_configuration_2012a_run3_neut_finalBANFF_coarseErecoSplines_6binFSI+SI_MAQE.xml
 
 #find best fit
 root2k -l -b -q '$T2KOSCANA/macros/fit/toymc/fit_xml_seeded_from_chisq_map.C("/home/ppd/tdealtry/RAL_repoistory/t2k/t2kana/nuosc/branches/2012_v0.9.0/inputs/data.xml",3,"data123-run_0-expts_3_3.root",100,"analysis_configuration.xml","nuosc3f_numudisapp_fix4+nuisance")'
@@ -114,22 +118,22 @@ root2k -l -b -q '$T2KOSCANA/macros/fit/toymc/generate_toymc_ensemble.C("sensitiv
 
 2+8:
 
-$T2KOSCANA/production/submit_toyexpt_fitting_job_xml --resource RAL --tag minos --nruns 1000 --nexpts 1 --first-expt 0 --fit-param-list nuosc3f_numudisapp_fix4+nuisanceselection --job-dir $PWD --softw-dir $T2KOSCANA --toy-expts-file /home/ppd/tdealtry/RAL_repoistory/t2k/t2kana/nuosc/branches/2012_v0.9.0/inputs/toymc/sensitivity_minosbestfit.xml --cpu-time 08:00:00
+$T2KOSCANA/production/submit_toyexpt_fitting_job_xml --resource RAL --tag minos --nruns 1000 --nexpts 1 --first-expt 0 --fit-param-list nuosc3f_numudisapp_fix4+nuisanceselection --job-dir $PWD --softw-dir $T2KOSCANA --toy-expts-file /home/ppd/tdealtry/RAL_repoistory/t2k/t2kana/nuosc/branches/2012_v0.9.0/inputs/toymc/sensitivity_minosbestfit.xml --cpu-time 12:00:00
 
-$T2KOSCANA/production/submit_toyexpt_fitting_job_xml --resource RAL --tag minos1 --nruns 1000 --nexpts 1 --first-expt 0 --fit-param-list nuosc3f_numudisapp_fix4+nuisanceselection --job-dir $PWD --softw-dir $T2KOSCANA --toy-expts-file /home/ppd/tdealtry/RAL_repoistory/t2k/t2kana/nuosc/branches/2012_v0.9.0/inputs/toymc/sensitivity_minos-1.xml --cpu-time 08:00:00
-$T2KOSCANA/production/submit_toyexpt_fitting_job_xml --resource RAL --tag minos2 --nruns 1000 --nexpts 1 --first-expt 0 --fit-param-list nuosc3f_numudisapp_fix4+nuisanceselection --job-dir $PWD --softw-dir $T2KOSCANA --toy-expts-file /home/ppd/tdealtry/RAL_repoistory/t2k/t2kana/nuosc/branches/2012_v0.9.0/inputs/toymc/sensitivity_minos-2.xml --cpu-time 08:00:00
-$T2KOSCANA/production/submit_toyexpt_fitting_job_xml --resource RAL --tag minos3 --nruns 1000 --nexpts 1 --first-expt 0 --fit-param-list nuosc3f_numudisapp_fix4+nuisanceselection --job-dir $PWD --softw-dir $T2KOSCANA --toy-expts-file /home/ppd/tdealtry/RAL_repoistory/t2k/t2kana/nuosc/branches/2012_v0.9.0/inputs/toymc/sensitivity_minos-3.xml --cpu-time 08:00:00
-$T2KOSCANA/production/submit_toyexpt_fitting_job_xml --resource RAL --tag minos4 --nruns 1000 --nexpts 1 --first-expt 0 --fit-param-list nuosc3f_numudisapp_fix4+nuisanceselection --job-dir $PWD --softw-dir $T2KOSCANA --toy-expts-file /home/ppd/tdealtry/RAL_repoistory/t2k/t2kana/nuosc/branches/2012_v0.9.0/inputs/toymc/sensitivity_minos-4.xml --cpu-time 08:00:00
-$T2KOSCANA/production/submit_toyexpt_fitting_job_xml --resource RAL --tag minos5 --nruns 1000 --nexpts 1 --first-expt 0 --fit-param-list nuosc3f_numudisapp_fix4+nuisanceselection --job-dir $PWD --softw-dir $T2KOSCANA --toy-expts-file /home/ppd/tdealtry/RAL_repoistory/t2k/t2kana/nuosc/branches/2012_v0.9.0/inputs/toymc/sensitivity_minos-5.xml --cpu-time 08:00:00
-$T2KOSCANA/production/submit_toyexpt_fitting_job_xml --resource RAL --tag minos6 --nruns 1000 --nexpts 1 --first-expt 0 --fit-param-list nuosc3f_numudisapp_fix4+nuisanceselection --job-dir $PWD --softw-dir $T2KOSCANA --toy-expts-file /home/ppd/tdealtry/RAL_repoistory/t2k/t2kana/nuosc/branches/2012_v0.9.0/inputs/toymc/sensitivity_minos-6.xml --cpu-time 08:00:00
-$T2KOSCANA/production/submit_toyexpt_fitting_job_xml --resource RAL --tag minos7 --nruns 1000 --nexpts 1 --first-expt 0 --fit-param-list nuosc3f_numudisapp_fix4+nuisanceselection --job-dir $PWD --softw-dir $T2KOSCANA --toy-expts-file /home/ppd/tdealtry/RAL_repoistory/t2k/t2kana/nuosc/branches/2012_v0.9.0/inputs/toymc/sensitivity_minos-7.xml --cpu-time 08:00:00
-$T2KOSCANA/production/submit_toyexpt_fitting_job_xml --resource RAL --tag minos9 --nruns 1000 --nexpts 1 --first-expt 0 --fit-param-list nuosc3f_numudisapp_fix4+nuisanceselection --job-dir $PWD --softw-dir $T2KOSCANA --toy-expts-file /home/ppd/tdealtry/RAL_repoistory/t2k/t2kana/nuosc/branches/2012_v0.9.0/inputs/toymc/sensitivity_minos-9.xml --cpu-time 08:00:00
-$T2KOSCANA/production/submit_toyexpt_fitting_job_xml --resource RAL --tag minos10 --nruns 1000 --nexpts 1 --first-expt 0 --fit-param-list nuosc3f_numudisapp_fix4+nuisanceselection --job-dir $PWD --softw-dir $T2KOSCANA --toy-expts-file /home/ppd/tdealtry/RAL_repoistory/t2k/t2kana/nuosc/branches/2012_v0.9.0/inputs/toymc/sensitivity_minos-10.xml --cpu-time 08:00:00
-$T2KOSCANA/production/submit_toyexpt_fitting_job_xml --resource RAL --tag minos11 --nruns 1000 --nexpts 1 --first-expt 0 --fit-param-list nuosc3f_numudisapp_fix4+nuisanceselection --job-dir $PWD --softw-dir $T2KOSCANA --toy-expts-file /home/ppd/tdealtry/RAL_repoistory/t2k/t2kana/nuosc/branches/2012_v0.9.0/inputs/toymc/sensitivity_minos-11.xml --cpu-time 08:00:00
-$T2KOSCANA/production/submit_toyexpt_fitting_job_xml --resource RAL --tag minos12 --nruns 1000 --nexpts 1 --first-expt 0 --fit-param-list nuosc3f_numudisapp_fix4+nuisanceselection --job-dir $PWD --softw-dir $T2KOSCANA --toy-expts-file /home/ppd/tdealtry/RAL_repoistory/t2k/t2kana/nuosc/branches/2012_v0.9.0/inputs/toymc/sensitivity_minos-12.xml --cpu-time 08:00:00
-$T2KOSCANA/production/submit_toyexpt_fitting_job_xml --resource RAL --tag minos13 --nruns 1000 --nexpts 1 --first-expt 0 --fit-param-list nuosc3f_numudisapp_fix4+nuisanceselection --job-dir $PWD --softw-dir $T2KOSCANA --toy-expts-file /home/ppd/tdealtry/RAL_repoistory/t2k/t2kana/nuosc/branches/2012_v0.9.0/inputs/toymc/sensitivity_minos-13.xml --cpu-time 08:00:00
-$T2KOSCANA/production/submit_toyexpt_fitting_job_xml --resource RAL --tag minos14 --nruns 1000 --nexpts 1 --first-expt 0 --fit-param-list nuosc3f_numudisapp_fix4+nuisanceselection --job-dir $PWD --softw-dir $T2KOSCANA --toy-expts-file /home/ppd/tdealtry/RAL_repoistory/t2k/t2kana/nuosc/branches/2012_v0.9.0/inputs/toymc/sensitivity_minos-14.xml --cpu-time 08:00:00
-$T2KOSCANA/production/submit_toyexpt_fitting_job_xml --resource RAL --tag minos15 --nruns 1000 --nexpts 1 --first-expt 0 --fit-param-list nuosc3f_numudisapp_fix4+nuisanceselection --job-dir $PWD --softw-dir $T2KOSCANA --toy-expts-file /home/ppd/tdealtry/RAL_repoistory/t2k/t2kana/nuosc/branches/2012_v0.9.0/inputs/toymc/sensitivity_minos-15.xml --cpu-time 08:00:00
+$T2KOSCANA/production/submit_toyexpt_fitting_job_xml --resource RAL --tag minos1 --nruns 1000 --nexpts 1 --first-expt 0 --fit-param-list nuosc3f_numudisapp_fix4+nuisanceselection --job-dir $PWD --softw-dir $T2KOSCANA --toy-expts-file /home/ppd/tdealtry/RAL_repoistory/t2k/t2kana/nuosc/branches/2012_v0.9.0/inputs/toymc/sensitivity_minos-1.xml --cpu-time 12:00:00
+$T2KOSCANA/production/submit_toyexpt_fitting_job_xml --resource RAL --tag minos2 --nruns 1000 --nexpts 1 --first-expt 0 --fit-param-list nuosc3f_numudisapp_fix4+nuisanceselection --job-dir $PWD --softw-dir $T2KOSCANA --toy-expts-file /home/ppd/tdealtry/RAL_repoistory/t2k/t2kana/nuosc/branches/2012_v0.9.0/inputs/toymc/sensitivity_minos-2.xml --cpu-time 12:00:00
+$T2KOSCANA/production/submit_toyexpt_fitting_job_xml --resource RAL --tag minos3 --nruns 1000 --nexpts 1 --first-expt 0 --fit-param-list nuosc3f_numudisapp_fix4+nuisanceselection --job-dir $PWD --softw-dir $T2KOSCANA --toy-expts-file /home/ppd/tdealtry/RAL_repoistory/t2k/t2kana/nuosc/branches/2012_v0.9.0/inputs/toymc/sensitivity_minos-3.xml --cpu-time 12:00:00
+$T2KOSCANA/production/submit_toyexpt_fitting_job_xml --resource RAL --tag minos4 --nruns 1000 --nexpts 1 --first-expt 0 --fit-param-list nuosc3f_numudisapp_fix4+nuisanceselection --job-dir $PWD --softw-dir $T2KOSCANA --toy-expts-file /home/ppd/tdealtry/RAL_repoistory/t2k/t2kana/nuosc/branches/2012_v0.9.0/inputs/toymc/sensitivity_minos-4.xml --cpu-time 12:00:00
+$T2KOSCANA/production/submit_toyexpt_fitting_job_xml --resource RAL --tag minos5 --nruns 1000 --nexpts 1 --first-expt 0 --fit-param-list nuosc3f_numudisapp_fix4+nuisanceselection --job-dir $PWD --softw-dir $T2KOSCANA --toy-expts-file /home/ppd/tdealtry/RAL_repoistory/t2k/t2kana/nuosc/branches/2012_v0.9.0/inputs/toymc/sensitivity_minos-5.xml --cpu-time 12:00:00
+$T2KOSCANA/production/submit_toyexpt_fitting_job_xml --resource RAL --tag minos6 --nruns 1000 --nexpts 1 --first-expt 0 --fit-param-list nuosc3f_numudisapp_fix4+nuisanceselection --job-dir $PWD --softw-dir $T2KOSCANA --toy-expts-file /home/ppd/tdealtry/RAL_repoistory/t2k/t2kana/nuosc/branches/2012_v0.9.0/inputs/toymc/sensitivity_minos-6.xml --cpu-time 12:00:00
+$T2KOSCANA/production/submit_toyexpt_fitting_job_xml --resource RAL --tag minos7 --nruns 1000 --nexpts 1 --first-expt 0 --fit-param-list nuosc3f_numudisapp_fix4+nuisanceselection --job-dir $PWD --softw-dir $T2KOSCANA --toy-expts-file /home/ppd/tdealtry/RAL_repoistory/t2k/t2kana/nuosc/branches/2012_v0.9.0/inputs/toymc/sensitivity_minos-7.xml --cpu-time 12:00:00
+$T2KOSCANA/production/submit_toyexpt_fitting_job_xml --resource RAL --tag minos9 --nruns 1000 --nexpts 1 --first-expt 0 --fit-param-list nuosc3f_numudisapp_fix4+nuisanceselection --job-dir $PWD --softw-dir $T2KOSCANA --toy-expts-file /home/ppd/tdealtry/RAL_repoistory/t2k/t2kana/nuosc/branches/2012_v0.9.0/inputs/toymc/sensitivity_minos-9.xml --cpu-time 12:00:00
+$T2KOSCANA/production/submit_toyexpt_fitting_job_xml --resource RAL --tag minos10 --nruns 1000 --nexpts 1 --first-expt 0 --fit-param-list nuosc3f_numudisapp_fix4+nuisanceselection --job-dir $PWD --softw-dir $T2KOSCANA --toy-expts-file /home/ppd/tdealtry/RAL_repoistory/t2k/t2kana/nuosc/branches/2012_v0.9.0/inputs/toymc/sensitivity_minos-10.xml --cpu-time 12:00:00
+$T2KOSCANA/production/submit_toyexpt_fitting_job_xml --resource RAL --tag minos11 --nruns 1000 --nexpts 1 --first-expt 0 --fit-param-list nuosc3f_numudisapp_fix4+nuisanceselection --job-dir $PWD --softw-dir $T2KOSCANA --toy-expts-file /home/ppd/tdealtry/RAL_repoistory/t2k/t2kana/nuosc/branches/2012_v0.9.0/inputs/toymc/sensitivity_minos-11.xml --cpu-time 12:00:00
+$T2KOSCANA/production/submit_toyexpt_fitting_job_xml --resource RAL --tag minos12 --nruns 1000 --nexpts 1 --first-expt 0 --fit-param-list nuosc3f_numudisapp_fix4+nuisanceselection --job-dir $PWD --softw-dir $T2KOSCANA --toy-expts-file /home/ppd/tdealtry/RAL_repoistory/t2k/t2kana/nuosc/branches/2012_v0.9.0/inputs/toymc/sensitivity_minos-12.xml --cpu-time 12:00:00
+$T2KOSCANA/production/submit_toyexpt_fitting_job_xml --resource RAL --tag minos13 --nruns 1000 --nexpts 1 --first-expt 0 --fit-param-list nuosc3f_numudisapp_fix4+nuisanceselection --job-dir $PWD --softw-dir $T2KOSCANA --toy-expts-file /home/ppd/tdealtry/RAL_repoistory/t2k/t2kana/nuosc/branches/2012_v0.9.0/inputs/toymc/sensitivity_minos-13.xml --cpu-time 12:00:00
+$T2KOSCANA/production/submit_toyexpt_fitting_job_xml --resource RAL --tag minos14 --nruns 1000 --nexpts 1 --first-expt 0 --fit-param-list nuosc3f_numudisapp_fix4+nuisanceselection --job-dir $PWD --softw-dir $T2KOSCANA --toy-expts-file /home/ppd/tdealtry/RAL_repoistory/t2k/t2kana/nuosc/branches/2012_v0.9.0/inputs/toymc/sensitivity_minos-14.xml --cpu-time 12:00:00
+$T2KOSCANA/production/submit_toyexpt_fitting_job_xml --resource RAL --tag minos15 --nruns 1000 --nexpts 1 --first-expt 0 --fit-param-list nuosc3f_numudisapp_fix4+nuisanceselection --job-dir $PWD --softw-dir $T2KOSCANA --toy-expts-file /home/ppd/tdealtry/RAL_repoistory/t2k/t2kana/nuosc/branches/2012_v0.9.0/inputs/toymc/sensitivity_minos-15.xml --cpu-time 12:00:00
 
 
 2+all:
@@ -141,18 +145,57 @@ $T2KOSCANA/production/submit_toyexpt_fitting_job_xml --resource RAL --tag minos 
 
 Fitter pulls:
 
+2+0:
+
+$T2KOSCANA/production/submit_toyexpt_fitting_job_with_sys --resource RAL --tag pull20all --nruns 10 --nexpts 1000 --fit-param-list nuosc3f_numudisapp_fix4+nuisanceselection --job-dir $PWD --softw-dir $T2KOSCANA --cpu-time 24:00:00 --stat-fluctuations --tweak-systematics 1
+$T2KOSCANA/production/submit_toyexpt_fitting_job_with_sys --resource RAL --tag pull20non --nruns 10 --nexpts 1000 --fit-param-list nuosc3f_numudisapp_fix4+nuisanceselection --job-dir $PWD --softw-dir $T2KOSCANA --cpu-time 24:00:00 --stat-fluctuations --tweak-systematics 0
+
+
 2+8:
 
-$T2KOSCANA/production/submit_toyexpt_fitting_job_with_sys --resource RAL --tag pull28all --nruns 10 --nexpts 1000 --fit-param-list nuosc3f_numudisapp_fix4+nuisanceselection --job-dir $PWD --softw-dir $T2KOSCANA --cpu-time 08:00:00 --stat-fluctuations --tweak-systematics 1
-$T2KOSCANA/production/submit_toyexpt_fitting_job_with_sys --resource RAL --tag pull28sel --nruns 10 --nexpts 1000 --fit-param-list nuosc3f_numudisapp_fix4+nuisanceselection --job-dir $PWD --softw-dir $T2KOSCANA --cpu-time 08:00:00 --stat-fluctuations --tweak-systematics 6
-$T2KOSCANA/production/submit_toyexpt_fitting_job_with_sys --resource RAL --tag pull28non --nruns 10 --nexpts 1000 --fit-param-list nuosc3f_numudisapp_fix4+nuisanceselection --job-dir $PWD --softw-dir $T2KOSCANA --cpu-time 08:00:00 --stat-fluctuations --tweak-systematics 0
+$T2KOSCANA/production/submit_toyexpt_fitting_job_with_sys --resource RAL --tag pull28all --nruns 10 --nexpts 1000 --fit-param-list nuosc3f_numudisapp_fix4+nuisanceselection --job-dir $PWD --softw-dir $T2KOSCANA --cpu-time 24:00:00 --stat-fluctuations --tweak-systematics 1
+$T2KOSCANA/production/submit_toyexpt_fitting_job_with_sys --resource RAL --tag pull28sel --nruns 10 --nexpts 1000 --fit-param-list nuosc3f_numudisapp_fix4+nuisanceselection --job-dir $PWD --softw-dir $T2KOSCANA --cpu-time 24:00:00 --stat-fluctuations --tweak-systematics 6
+$T2KOSCANA/production/submit_toyexpt_fitting_job_with_sys --resource RAL --tag pull28non --nruns 10 --nexpts 1000 --fit-param-list nuosc3f_numudisapp_fix4+nuisanceselection --job-dir $PWD --softw-dir $T2KOSCANA --cpu-time 24:00:00 --stat-fluctuations --tweak-systematics 0
 
 2+all:
 
-$T2KOSCANA/production/submit_toyexpt_fitting_job_with_sys --resource RAL --tag pull2allall --nruns 100 --nexpts 100 --fit-param-list nuosc3f_numudisapp_fix4+nuisance --job-dir $PWD --softw-dir $T2KOSCANA --cpu-time 18:00:00 --stat-fluctuations --tweak-systematics 1
-$T2KOSCANA/production/submit_toyexpt_fitting_job_with_sys --resource RAL --tag pull2allsel --nruns 100 --nexpts 100 --fit-param-list nuosc3f_numudisapp_fix4+nuisance --job-dir $PWD --softw-dir $T2KOSCANA --cpu-time 18:00:00 --stat-fluctuations --tweak-systematics 6
-$T2KOSCANA/production/submit_toyexpt_fitting_job_with_sys --resource RAL --tag pull2allnon --nruns 100 --nexpts 100 --fit-param-list nuosc3f_numudisapp_fix4+nuisance --job-dir $PWD --softw-dir $T2KOSCANA --cpu-time 18:00:00 --stat-fluctuations --tweak-systematics 0
+$T2KOSCANA/production/submit_toyexpt_fitting_job_with_sys --resource RAL --tag pull2allall --nruns 100 --nexpts 100 --fit-param-list nuosc3f_numudisapp_fix4+nuisance --job-dir $PWD --softw-dir $T2KOSCANA --cpu-time 48:00:00 --stat-fluctuations --tweak-systematics 1
+$T2KOSCANA/production/submit_toyexpt_fitting_job_with_sys --resource RAL --tag pull2allsel --nruns 100 --nexpts 100 --fit-param-list nuosc3f_numudisapp_fix4+nuisance --job-dir $PWD --softw-dir $T2KOSCANA --cpu-time 48:00:00 --stat-fluctuations --tweak-systematics 6
+$T2KOSCANA/production/submit_toyexpt_fitting_job_with_sys --resource RAL --tag pull2allnon --nruns 100 --nexpts 100 --fit-param-list nuosc3f_numudisapp_fix4+nuisance --job-dir $PWD --softw-dir $T2KOSCANA --cpu-time 48:00:00 --stat-fluctuations --tweak-systematics 0
 
 
 
 
+
+
+#analyse data & fake data results
+
+cd 28;
+root2k -l -b -q '$T2KOSCANA/macros/fit/toymc/analyse_output.C("data123-run_0-expts_3_3.root",3,"./","analysis_configuration.xml",7.0,false)';
+root2k -l -b -q '$T2KOSCANA/macros/fit/toymc/analyse_output.C("data12-run_0-expts_4_4.root",4,"./","analysis_configuration_2012a_run1+2_neut_finalBANFF_coarseErecoSplines_6binFSI+SI_MAQE.xml",7.0,false)';
+root2k -l -b -q '$T2KOSCANA/macros/fit/toymc/analyse_output.C("data3-run_0-expts_5_5.root",5,"./","analysis_configuration_2012a_run3_neut_finalBANFF_coarseErecoSplines_6binFSI+SI_MAQE.xml",7.0,false)';
+cd ..;
+
+cd 2all;
+root2k -l -b -q '$T2KOSCANA/macros/fit/toymc/analyse_output.C("data123-run_0-expts_3_3.root",3,"./","analysis_configuration.xml",7.0,false)';
+root2k -l -b -q '$T2KOSCANA/macros/fit/toymc/analyse_output.C("data12-run_0-expts_4_4.root",4,"./","analysis_configuration_2012a_run1+2_neut_finalBANFF_coarseErecoSplines_6binFSI+SI_MAQE.xml",7.0,false)';
+root2k -l -b -q '$T2KOSCANA/macros/fit/toymc/analyse_output.C("data3-run_0-expts_5_5.root",5,"./","analysis_configuration_2012a_run3_neut_finalBANFF_coarseErecoSplines_6binFSI+SI_MAQE.xml",7.0,false)';
+cd ..;
+
+cd FAKE28;
+root2k -l -b -q '$T2KOSCANA/macros/fit/toymc/analyse_output.C("fakedata-run_0-expts_0_0.root",0,"./","analysis_configuration.xml",7.0,false)';
+root2k -l -b -q '$T2KOSCANA/macros/fit/toymc/analyse_output.C("fakedata-run_1-expts_1_1.root",1,"./","analysis_configuration.xml",7.0,false)';
+root2k -l -b -q '$T2KOSCANA/macros/fit/toymc/analyse_output.C("fakedata-run_2-expts_2_2.root",2,"./","analysis_configuration.xml",7.0,false)';
+root2k -l -b -q '$T2KOSCANA/macros/fit/toymc/analyse_output.C("fakedata-run_3-expts_3_3.root",3,"./","analysis_configuration.xml",7.0,false)';
+root2k -l -b -q '$T2KOSCANA/macros/fit/toymc/analyse_output.C("fakedata-run_4-expts_4_4.root",4,"./","analysis_configuration.xml",7.0,false)';
+root2k -l -b -q '$T2KOSCANA/macros/fit/toymc/analyse_output.C("fakedata-run_5-expts_5_5.root",5,"./","analysis_configuration.xml",7.0,false)';
+cd ..;
+
+cd FAKE2all;
+root2k -l -b -q '$T2KOSCANA/macros/fit/toymc/analyse_output.C("fakedata-run_0-expts_0_0.root",0,"./","analysis_configuration.xml",7.0,false)';
+root2k -l -b -q '$T2KOSCANA/macros/fit/toymc/analyse_output.C("fakedata-run_1-expts_1_1.root",1,"./","analysis_configuration.xml",7.0,false)';
+root2k -l -b -q '$T2KOSCANA/macros/fit/toymc/analyse_output.C("fakedata-run_2-expts_2_2.root",2,"./","analysis_configuration.xml",7.0,false)';
+root2k -l -b -q '$T2KOSCANA/macros/fit/toymc/analyse_output.C("fakedata-run_3-expts_3_3.root",3,"./","analysis_configuration.xml",7.0,false)';
+root2k -l -b -q '$T2KOSCANA/macros/fit/toymc/analyse_output.C("fakedata-run_4-expts_4_4.root",4,"./","analysis_configuration.xml",7.0,false)';
+root2k -l -b -q '$T2KOSCANA/macros/fit/toymc/analyse_output.C("fakedata-run_5-expts_5_5.root",5,"./","analysis_configuration.xml",7.0,false)';
+cd ..;
