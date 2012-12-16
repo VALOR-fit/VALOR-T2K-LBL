@@ -125,7 +125,8 @@ void test_sk_ereco_spectrum_nominal
   TLegend * legend = new TLegend(0.6, 0.4, 0.9, 0.9);
   legend->SetFillColor(0);
   legend->SetBorderSize(0);
-  hErecoTot->GetXaxis()->SetRangeUser(0,7);
+  hErecoTot->GetXaxis()->SetRangeUser(0,7-conv::kOneMeV);
+  if(input_mixing23 == 1.0) hErecoTot->GetYaxis()->SetRangeUser(0,5);
   hErecoTot->Draw();
   hErecoTot->GetXaxis()->SetTitle("E_{reco} (GeV)");
   hErecoTot->GetYaxis()->SetTitle("Number of events");
@@ -147,7 +148,7 @@ void test_sk_ereco_spectrum_nominal
   }
   legend->Draw();
   c->Update();
-  c->SaveAs(Form("sk_ereco_spectrum-%s%s.pdf",oscparams.c_str(),(disable_banff_tuning ? "_nobanff" : "")));
+  c->SaveAs(Form("sk_ereco_spectrum-%f-%f%s.eps",input_mixing23,input_dm23sq,(disable_banff_tuning ? "_nobanff" : "")));
   hErecoTot->GetXaxis()->UnZoom();
 
   //draw coarse binned histograms
@@ -178,7 +179,7 @@ void test_sk_ereco_spectrum_nominal
   }
   legend_coarse->Draw();
   c_coarse->Update();
-  c_coarse->SaveAs(Form("sk_ereco_spectrum-%s%s_coarse.pdf",oscparams.c_str(),(disable_banff_tuning ? "_nobanff" : "")));
+  c_coarse->SaveAs(Form("sk_ereco_spectrum-%f-%f%s_coarse.eps",input_mixing23,input_dm23sq,(disable_banff_tuning ? "_nobanff" : "")));
 
 
   //can save this to file &/or print it
@@ -208,7 +209,7 @@ void test_sk_ereco_spectrum_nominal
      if(m == conv::kSKmUndefined) continue;
      double nmode = hErecoMode[im]->Integral();
      streamer << "Contrib from mode: " 
-          << setw(40) << setfill(' ') << util::AsString(m) << " : " 
+          << setw(40) << setfill(' ') << util::AsStringTex(m) << " : " 
           << setw(15) << setfill(' ') << setprecision(6) << nmode << " events ("
           << setw(10) << setfill(' ') << setprecision(6) << 100*nmode/ntot << " %)" << endl;
   }
