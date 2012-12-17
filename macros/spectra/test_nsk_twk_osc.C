@@ -10,6 +10,8 @@
 
 void test_nsk_twk_osc
 (
+  bool         thrownon23  = true,
+  const int    nthrows     = 100,
   const char * hier        = "normal",
   const char * config_file = "analysis_configuration.xml"
 )
@@ -49,10 +51,6 @@ void test_nsk_twk_osc
 
   // fit params
   PhysHypothesis ph(t2kana::conv::kHypOsc3F);
-  ph.SetCurrValue(conv::kPhypMixing12,  conv::kGlobFitSinsq2Theta12);
-  ph.SetCurrValue(conv::kPhypMixing13,  conv::kGlobFitSinsq2Theta13);
-  ph.SetCurrValue(conv::kPhypDeltaCP,   conv::kGlobFitDeltaCP);
-  ph.SetCurrValue(conv::kPhypDm12sq,    conv::kGlobFitDm12sq);
 
   // generate predictions
   for(int i = 1; i <= nsk_vs_osc_params->GetNbinsX(); i++) {
@@ -61,22 +59,36 @@ void test_nsk_twk_osc
        double dm23sq   = nsk_vs_osc_params->GetYaxis()->GetBinCenter(j);
        ph.SetCurrValue(t2kana::conv::kPhypMixing23, mixing23);
        ph.SetCurrValue(t2kana::conv::kPhypDm23sq,   dm23sq);
-
-       /*
-	 ph.SetCurrValue(conv::kPhypMixing12,  util::RandomizeMixing12());
-	 ph.SetCurrValue(conv::kPhypMixing13,  util::RandomizeMixing13());
-	 ph.SetCurrValue(conv::kPhypDeltaCP,   util::RandomizeDeltaCP());
-	 ph.SetCurrValue(conv::kPhypDm12sq,    util::RandomizeDm12sq());
-       */
+       ph.SetCurrValue(conv::kPhypMixing12,  conv::kGlobFitSinsq2Theta12);
+       ph.SetCurrValue(conv::kPhypMixing13,  conv::kGlobFitSinsq2Theta13);
+       ph.SetCurrValue(conv::kPhypDeltaCP,   conv::kGlobFitDeltaCP);
+       ph.SetCurrValue(conv::kPhypDm12sq,    conv::kGlobFitDm12sq);
 
        // generate predictions
        skexp.Generate(ph);
-       
+
        // integrate Ereco distribution
        double nsk = skexp.CurrPredictedErecoSpectrum(s)->Integral();
-    
+
+       if(thrownon23) {
+	 cout << nsk << "\t";
+	 double nsksq = 0;
+	 for(int t = 0; t < nthrows; t++) {
+	   ph.SetCurrValue(conv::kPhypMixing12,  util::RandomizeMixing12());
+	   ph.SetCurrValue(conv::kPhypMixing13,  util::RandomizeMixing13());
+	   ph.SetCurrValue(conv::kPhypDeltaCP,   util::RandomizeDeltaCP());
+	   ph.SetCurrValue(conv::kPhypDm12sq,    util::RandomizeDm12sq());
+	   skexp.Generate(ph);
+	   nsksq += pow(skexp.CurrPredictedErecoSpectrum(s)->Integral() - nsk, 2);
+	 }
+	 double nsksigma = sqrt(nsksq / (nthrows - 1));
+	 nsk = nsksigma / nsk;
+	 cout << nsksigma << "\t" << nsk << endl;
+       }
+
        nsk_vs_osc_params->SetBinContent(i,j,nsk);
     }//j
+    cout << "x bin " << i << " of " << nsk_vs_osc_params->GetNbinsX() << endl;
   }//i
 
   gStyle->SetOptStat(0);
