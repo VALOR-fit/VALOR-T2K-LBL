@@ -72,12 +72,14 @@ void SuperkExpectation::Init(void)
   fBANFF          = 0;
 
   for(int is=0; is<kns; is++) {
+    SuperkSample_t s = kSKSamples[is];
     fPredictErecoSpectrumTot[is] = 0;
     for(int im=0; im<knm; im++) {
       fPredictErecoSpectrum[is][im] = 0;
     }//im
-    for(int ir=0; ir<kNErecoBins1Rmu; ir++) {
-      fPredictErecoSpectrumArrayTot[is][ir] = 0;
+    for(int ir=0; ir<util::NumErecoBins(s); ir++) {
+      if (s==kSKsFCFV1RingMuLike) fPredictErecoSpectrumArrayTot1Rmu[ir] = 0;
+      else fPredictErecoSpectrumArrayTot1Re[ir] = 0;
     }//ir
   }//is
 }
@@ -201,7 +203,7 @@ bool SuperkExpectation::Generate(const PhysHypothesis & ph)
     if(s == kSKsUndefined) continue;
     const int nbins = util::NumErecoBins(s);
     for(int ibin = 1; ibin <= nbins; ibin++) {
-      //double ns = fSuperkMC->CurrErecoSpectrum(s)->GetBinContent(ibin);
+      //      double ns = fSuperkMC->CurrErecoSpectrum(s)->GetBinContent(ibin);
       double ns = fSuperkMC->CurrErecoSpectrumArray(s)[ibin-1];
       this->CurrPredictedErecoSpectrumArray(s)[ibin-1] = ns;
 #ifndef PRODUCTIONMODE
@@ -268,7 +270,8 @@ double* SuperkExpectation::CurrPredictedErecoSpectrumArray(t2kana::conv::SuperkS
   if(sidx == -1) {
     return 0;
   }
-  return fPredictErecoSpectrumArrayTot[sidx];  
+  if (s== kSKsFCFV1RingMuLike )return fPredictErecoSpectrumArrayTot1Rmu;  
+  else return fPredictErecoSpectrumArrayTot1Re;
 }
 //________________________________________________________________________________________
 void SuperkExpectation::PrintSystematicVariations(ostream & stream) const
