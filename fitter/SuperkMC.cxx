@@ -300,6 +300,7 @@ bool SuperkMC::Read(TXMLEngine* xml, XMLNodePointer_t root_node)
   // fill the etrue spectra
   this->FillEtrueSpectra();
 
+#ifdef PRODUCTIONMODE
   //don't need Ori or Nom templates anymore
   for(int is = 0; is < kns; is++) {
     for(int im = 0; im < knm; im++) {
@@ -307,6 +308,7 @@ bool SuperkMC::Read(TXMLEngine* xml, XMLNodePointer_t root_node)
       if(fMCTemplNom[is][im]) delete fMCTemplNom[is][im];
     }
   }
+#endif
 
 #ifdef __save_templates_debug__
   this->NevDebug(kSKMCtTun, "mcnorm_fluxtuned_banfftuned");
