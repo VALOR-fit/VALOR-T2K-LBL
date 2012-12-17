@@ -26,12 +26,12 @@ void make_fluxtune_plots
   }
 
   hnumu->Draw("");
-  c->SaveAs("fluxtune_numu.pdf");
+  c->SaveAs("fluxtune_numu.eps");
   hnumub->Draw("");
-  c->SaveAs("fluxtune_numub.pdf");
+  c->SaveAs("fluxtune_numub.eps");
   hnue->Draw("");
-  c->SaveAs("fluxtune_nue.pdf");
+  c->SaveAs("fluxtune_nue.eps");
   hnueb->Draw("");
-  c->SaveAs("fluxtune_nueb.pdf");
+  c->SaveAs("fluxtune_nueb.eps");
 
 }
