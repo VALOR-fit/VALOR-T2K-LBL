@@ -1,6 +1,7 @@
 void plot_tuning_steps_spectra
 (
- double erecomax = 7.0
+ double erecomax = 7.0,
+ double templemax = 10.0
 )
 {
   using namespace t2kana;
@@ -88,6 +89,8 @@ void plot_tuning_steps_spectra
   for(int i = 0; i < ntempl; i++) {
     f_nom_noosc_signue.GetObject(Form("nsk_fin_0_%d",i),h_template[i]);
     //h_template[i]->SetTitle("");
+    h_template[i]->GetXaxis()->SetRangeUser(0,templemax-conv::kOneMeV);
+    h_template[i]->GetYaxis()->SetRangeUser(0,templemax-conv::kOneMeV);
   }
   TCanvas * ctempl = new TCanvas();
   ctempl->Divide(2, 3);
