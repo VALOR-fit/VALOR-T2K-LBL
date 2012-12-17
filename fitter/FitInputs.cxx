@@ -114,7 +114,7 @@ double FitInputs::Chisquare(Option_t * option, conv::SuperkSample_t s0) const
 
 	applied_negevents_condition = fExp->Generate(*fFitParams, fAllBANFFFit) || applied_negevents_condition;
 	if(!fGoodnessOfFit) {
-	  int nbins = kNErecoBins1Rmu;
+	  int nbins = util::NumErecoBins(s);
 #ifdef __show_bin_contributions_to_chisq__
 	  cout << "FitInputs::Chisquare()> nbins = " << nbins << endl;
 #endif
@@ -129,8 +129,8 @@ double FitInputs::Chisquare(Option_t * option, conv::SuperkSample_t s0) const
 	    chisq += delta_chisq;
 
 #ifdef __show_bin_contributions_to_chisq__
-	    double xlo = kErecoBinEdges1Rmu[ibin-1];
-	    double xup = kErecoBinEdges1Rmu[ibin];
+	    double xlo = util::ErecoBinEdges(s,ibin-1);
+	    double xup = util::ErecoBinEdges(s,ibin);
 	    cout << "FitInputs::Chisquare()> delta_chisq (bin = " << ibin 
 		 << "; [" << xlo << ", " << xup << "] GeV) = " << delta_chisq << endl;
 	    cout << "\tNobs: " << nobs << "\tNexp:" << nexp << endl;
@@ -148,8 +148,8 @@ double FitInputs::Chisquare(Option_t * option, conv::SuperkSample_t s0) const
 
 	  //loop over Ereco bins
 	  for(int ibin = 1; ibin <= nbins; ibin++) {
-	    int ErecoMinBin = 1 + TMath::BinarySearch(kNErecoBins1Rmu,kErecoBinEdges1Rmu,binedges[ibin-1]);
-	    int ErecoMaxBin = 1 + TMath::BinarySearch(kNErecoBins1Rmu,kErecoBinEdges1Rmu,binedges[ibin]);
+	    int ErecoMinBin = 1 + TMath::BinarySearch(util::NumErecoBins(s),util::ErecoBinEdges(s),binedges[ibin-1]);
+	    int ErecoMaxBin = 1 + TMath::BinarySearch(util::NumErecoBins(s),util::ErecoBinEdges(s),binedges[ibin]);
 	    double nobs = 0, nexp = 0;
 	    for(int ir = ErecoMinBin; ir <= ErecoMaxBin; ir++) {
 	      nobs += fObs->ErecoSpectrumArray             (s)[ir-1];
@@ -161,8 +161,8 @@ double FitInputs::Chisquare(Option_t * option, conv::SuperkSample_t s0) const
 	    chisq += delta_chisq;
 	      
 #ifdef __show_bin_contributions_to_chisq__
-	    double xlo = kErecoBinEdges1Rmu[ibin-1];
-	    double xup = kErecoBinEdges1Rmu[ibin];
+	    double xlo = util::ErecoBinEdges(s,ibin-1);
+	    double xup = util::ErecoBinEdges(s,ibin);
 	    cout << "FitInputs::Chisquare()> delta_chisq (bin = " << ibin 
 		 << "; [" << xlo << ", " << xup << "] GeV) = " << delta_chisq << endl;
 	    cout << "\tNobs: " << nobs << "\tNexp:" << nexp << endl;

@@ -34,9 +34,14 @@ Changes since 2011_v0.9.0:
 // Changes output name in Utilities string methods, and well as relative error in NuXSec tweak methods.
 #endif 
 
-#ifndef ETRUE_BINS
-//#define ETRUE_BINS 1 // 50 MeV binning 0-30 GeV (600 bins)
-#define ETRUE_BINS 2 // DEFAULT 50 MeV 0-0.3 GeV, 25 MeV 0.3-1 GeV, 50 MeV 1-3 GeV, 100 MeV 3-3.5 GeV, 3.5-4 GeV, 4-5 GeV, 5-7 GeV, 7-10 GeV, 10-30 GeV (84 bins)
+#ifndef ETRUE_BINS_1RMU
+//#define ETRUE_BINS_1RMU 1 // 50 MeV binning 0-30 GeV (600 bins)
+#define ETRUE_BINS_1RMU 2 // DEFAULT 50 MeV 0-0.3 GeV, 25 MeV 0.3-1 GeV, 50 MeV 1-3 GeV, 100 MeV 3-3.5 GeV, 3.5-4 GeV, 4-5 GeV, 5-7 GeV, 7-10 GeV, 10-30 GeV (84 bins)
+#endif
+
+#ifndef ETRUE_BINS_1RE
+//#define ETRUE_BINS_1RE 1 // DEFAULT 50 MeV binning 0-3 GeV , 1GeV/bin 3-4 GeV,  10-30 GeV (69 bins)
+#define ETRUE_BINS_1RE 2 // 50 MeV 0-0.3 GeV, 25 MeV 0.3-1 GeV, 50 MeV 1-3 GeV, 100 MeV 3-3.5 GeV, 3.5-4 GeV, 4-5 GeV, 5-7 GeV, 7-10 GeV, 10-30 GeV (84 bins)
 #endif
 
 #ifndef ERECO_XSEC_BINS
@@ -57,9 +62,9 @@ Changes since 2011_v0.9.0:
 #endif
 
 #ifndef ERECO_BINS_1RE
-#define ERECO_BINS_1RE 1 // DEFAULT 200 MeV bins 0-1 GeV, 1 bin from 1-1.25 GeV (6 bins)
+//#define ERECO_BINS_1RE 1 // DEFAULT 200 MeV bins 0-1 GeV, 1 bin from 1-1.25 GeV (6 bins)
 //#define ERECO_BINS_1RE 2 // 1 bin (0-1.25 GeV)
-//#define ERECO_BINS_1RE 3 // 50 MeV bins 0-1.25 GeV (25 bins)
+#define ERECO_BINS_1RE 3 // 50 MeV bins 0-1.25 GeV (25 bins)
 #endif
 
 namespace t2kana {
@@ -85,9 +90,10 @@ static const int kPdgNuTauBar = -16;
 //
 
 // Dm^2 global fit results
-static const double kGlobFitDm23sq           = 2.4E-3;
+// Updated to 2012 PDG + reactors
+static const double kGlobFitDm23sq           = 2.32E-3;
 static const double kGlobFitDm12sq           = 7.5E-5;
-static const double kGlobFitErrDm23sq        = 0.04; // ~4%
+static const double kGlobFitErrDm23sq        = 0.05; // ~4%
 static const double kGlobFitErrDm12sq        = 0.03; // ~3%
 // deltacp global fit results
 static const double kGlobFitDeltaCP          = 0.0;
@@ -97,19 +103,19 @@ static const double kGlobFitSinsq2Theta23    = 1.00;
 static const double kGlobFitSinsq2Theta13    = 0.098;
 static const double kGlobFitSinsq2Theta12    = 0.857;
 static const double kGlobFitErrSinsq2Theta23 = 0.06; // ~6%
-static const double kGlobFitErrSinsq2Theta12 = 0.04; // ~4%
-static const double kGlobFitErrSinsq2Theta13 = 0.14; // ~14%
+static const double kGlobFitErrSinsq2Theta12 = 0.03; // ~4%
+static const double kGlobFitErrSinsq2Theta13 = 0.13; // ~14%
 // sinsqtheta global fit results
-static const double kGlobFitSinsqTheta23    = 0.420;
+static const double kGlobFitSinsqTheta23    = 0.60;
 static const double kGlobFitSinsqTheta13    = 0.025;
-static const double kGlobFitSinsqTheta12    = 0.312;
-static const double kGlobFitErrSinsqTheta23 = 0.261;  // ~26% (1 sigma range)
-static const double kGlobFitErrSinsqTheta12 = 0.110;  // ~11% (1 sigma range)
-static const double kGlobFitErrSinsqTheta13 = 0.560;  // ~56% (1 sigma range)
+static const double kGlobFitSinsqTheta12    = 0.311;
+static const double kGlobFitErrSinsqTheta23 = 0.06;  // ~26% (1 sigma range)
+static const double kGlobFitErrSinsqTheta12 = 0.03;  // ~11% (1 sigma range)
+static const double kGlobFitErrSinsqTheta13 = 0.13;  // ~56% (1 sigma range)
 
 // Dm^2 fitter init values and range
 static const double kInitFitDm23sq           = kGlobFitDm23sq;
-static const double kMinFitDm23sq            = 1.0E-4;
+static const double kMinFitDm23sq            = 1.0E-3;
 static const double kMaxFitDm23sq            = 6.0E-3;
 static const double kInitFitDm12sq           = kGlobFitDm12sq;
 static const double kMinFitDm12sq            = 6.0E-5;
@@ -125,12 +131,12 @@ static const double kInitFitSinsq2Theta12    = kGlobFitSinsq2Theta12;
 static const double kMinFitSinsq2Theta12     = 0.00;
 static const double kMaxFitSinsq2Theta12     = 1.00;
 // sinsqtheta fitter init values and range
-static const double kInitFitSinsqTheta23     = 0.45;
+static const double kInitFitSinsqTheta23     = 0.60;
 static const double kMinFitSinsqTheta23      = 0.00;
 static const double kMaxFitSinsqTheta23      = 1.00;
 static const double kInitFitSinsqTheta13     = kGlobFitSinsqTheta13;
 static const double kMinFitSinsqTheta13      = 0.00;
-static const double kMaxFitSinsqTheta13      = 0.00;
+static const double kMaxFitSinsqTheta13      = 1.00;
 static const double kInitFitSinsqTheta12     = kGlobFitSinsqTheta12;
 static const double kMinFitSinsqTheta12      = 0.00;
 static const double kMaxFitSinsqTheta12      = 1.00;
@@ -256,7 +262,7 @@ OscChannelId_t;
 
 // Enumeration of event samples that may be included in the analysis
 // Actual choice for current analysis is given in `Configuration' section.
-static const int kNSuperkSamples  = 1;  // number of samples 
+static const int kNSuperkSamples  = 2;  // number of samples 
 static const int kns = kNSuperkSamples; // as above - shorter name
 typedef enum ESuperkSample 
 {
@@ -460,8 +466,8 @@ PhysParamId_t;
 //
 
 static const SuperkSample_t kSKSamples[kns] = {
-    kSKsFCFV1RingMuLike/*,
-			 kSKsFCFV1RingELike*/
+  kSKsFCFV1RingMuLike,
+  kSKsFCFV1RingELike
 };
 
 //
@@ -519,7 +525,7 @@ static const SuperkMode_t kSKReactionModes[kns][knm] = {
     kSKmUndefined
   }
 
-  /*,
+  ,
 
   // > 1 electron-like ring (nue appearance)
   {
@@ -553,7 +559,9 @@ static const SuperkMode_t kSKReactionModes[kns][knm] = {
     kSKmNuEBarNCoth_e,
     kSKmSigNuECCQE,  
     kSKmSigNuECC1pi,  
+    kSKmSigNuECCcoh,
     kSKmSigNuECCoth_e,
+    kSKmUndefined,
     kSKmUndefined,
     kSKmUndefined,
     kSKmUndefined,
@@ -567,7 +575,7 @@ static const SuperkMode_t kSKReactionModes[kns][knm] = {
     kSKmUndefined,
     kSKmUndefined
   }
-  */
+  
 };
 
 //
@@ -858,7 +866,7 @@ static const bool kXsApplyXSecSystToSKMode[kns][knm][kNumOfXSecSyst] = {
     {  0, 0, 0, 0, 0,  0, 0,  0, 0, 0, 0, 0, 0,  0, 0, 0, 0, 0 }, // kSKmUndefined
     {  0, 0, 0, 0, 0,  0, 0,  0, 0, 0, 0, 0, 0,  0, 0, 0, 0, 0 }  // kSKmUndefined
   }
-  /*,
+  ,
   // > 1 electron-like ring 
   {
     {  0, 0, 0, 0, 0,  0, 0,  0, 0, 0, 0, 0, 0,  0, 0, 0, 0, 0 }, // kSKmNuMuCCQE        
@@ -891,8 +899,8 @@ static const bool kXsApplyXSecSystToSKMode[kns][knm][kNumOfXSecSyst] = {
     {  0, 0, 0, 0, 0,  0, 0,  0, 0, 0, 0, 0, 0,  0, 0, 0, 0, 0 }, // kSKmNuEBarNCoth_e
     {  0, 0, 0, 0, 0,  0, 0,  0, 0, 0, 0, 0, 0,  0, 0, 0, 0, 0 }, // kSKmSigNuECCQE        
     {  0, 0, 0, 0, 0,  0, 0,  0, 0, 0, 0, 0, 0,  0, 0, 0, 0, 0 }, // kSKmSigNuECC1pi
+    {  0, 0, 0, 0, 0,  0, 0,  0, 0, 0, 0, 0, 0,  0, 0, 0, 0, 0 }, // kSKmSigNuECCcoh
     {  0, 0, 0, 0, 0,  0, 0,  0, 0, 0, 0, 0, 0,  0, 0, 0, 0, 0 }, // kSKmSigNuECCoth_e
-    {  0, 0, 0, 0, 0,  0, 0,  0, 0, 0, 0, 0, 0,  0, 0, 0, 0, 0 }, // kSKmUndefined
     {  0, 0, 0, 0, 0,  0, 0,  0, 0, 0, 0, 0, 0,  0, 0, 0, 0, 0 }, // kSKmUndefined
     {  0, 0, 0, 0, 0,  0, 0,  0, 0, 0, 0, 0, 0,  0, 0, 0, 0, 0 }, // kSKmUndefined
     {  0, 0, 0, 0, 0,  0, 0,  0, 0, 0, 0, 0, 0,  0, 0, 0, 0, 0 }, // kSKmUndefined
@@ -907,7 +915,7 @@ static const bool kXsApplyXSecSystToSKMode[kns][knm][kNumOfXSecSyst] = {
     {  0, 0, 0, 0, 0,  0, 0,  0, 0, 0, 0, 0, 0,  0, 0, 0, 0, 0 }, // kSKmUndefined
     {  0, 0, 0, 0, 0,  0, 0,  0, 0, 0, 0, 0, 0,  0, 0, 0, 0, 0 }  // kSKmUndefined
   }
-  */
+  
 };
 
 
@@ -1050,7 +1058,7 @@ static const double kXsEtrueBinEdges[kns][knm][kXsNEtrueBins+1] = {
     { -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000 }, // kSKmUndefined
     { -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000 }  // kSKmUndefined
   }
-  /*,
+  ,
   // > 1 electron-like ring 
   {
     {  0.000,  0.400,  0.500,  0.600,  0.700,  1.000,  1.500,  2.500,  3.500,  5.000,  7.000, 30.000 }, // kSKmNuMuCCQE 
@@ -1083,8 +1091,8 @@ static const double kXsEtrueBinEdges[kns][knm][kXsNEtrueBins+1] = {
     {  0.000,  2.500, 30.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000 }, // kSKmNuEBarNCoth_e
     {  0.000,  0.400,  0.500,  0.600,  0.700,  1.000,  1.500,  2.500,  3.500,  5.000,  7.000, 30.000 }, // kSKmSigNuECCQE  
     {  0.000,  0.400,  0.500,  0.600,  0.700,  1.000,  1.500,  2.500,  3.500,  5.000,  7.000, 30.000 }, // kSKmSigNuECC1pi  
+    {  0.000,  0.400,  0.500,  0.600,  0.700,  1.000,  1.500,  2.500,  3.500,  5.000,  7.000, 30.000 }, // kSKmSigNuECCcoh
     {  0.000,  0.400,  0.500,  0.600,  0.700,  1.000,  1.500,  2.500,  3.500,  5.000,  7.000, 30.000 }, // kSKmSigNuECCoth_e
-    { -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000 }, // kSKmUndefined
     { -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000 }, // kSKmUndefined
     { -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000 }, // kSKmUndefined
     { -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000 }, // kSKmUndefined
@@ -1099,7 +1107,7 @@ static const double kXsEtrueBinEdges[kns][knm][kXsNEtrueBins+1] = {
     { -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000 }, // kSKmUndefined
     { -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000 }  // kSKmUndefined
   }
-  */
+  
 };
 
 //
@@ -1158,7 +1166,7 @@ static const double kMCEtrueBinEdges[kns][knm][kMCNEtrueBins+1] = {
     { -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000 }, // kSKmUndefined
     { -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000 }  // kSKmUndefined
   }
-  /*,
+  ,
   // > 1 electron-like ring 
   {
     {  0.000,  0.400,  0.500,  0.600,  0.700,  1.000,  1.500,  2.500,  3.500,  5.000,  7.000, 30.000 }, // kSKmNuMuCCQE 
@@ -1191,8 +1199,8 @@ static const double kMCEtrueBinEdges[kns][knm][kMCNEtrueBins+1] = {
     {  0.000,  1.500,  2.500,  3.500, 30.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000 }, // kSKmNuEBarNCoth_e
     {  0.000,  0.400,  0.500,  0.600,  0.700,  1.000,  1.500,  2.500,  3.500,  5.000,  7.000, 30.000 }, // kSKmSigNuECCQE  
     {  0.000,  0.400,  0.500,  0.600,  0.700,  1.000,  1.500,  2.500,  3.500,  5.000,  7.000, 30.000 }, // kSKmSigNuECC1pi  
+    {  0.000,  0.400,  0.500,  0.600,  0.700,  1.000,  1.500,  2.500,  3.500,  5.000,  7.000, 30.000 }, // kSKmSigNuECCcoh
     {  0.000,  0.400,  0.500,  0.600,  0.700,  1.000,  1.500,  2.500,  3.500,  5.000,  7.000, 30.000 }, // kSKmSigNuECCoth_e
-    { -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000 }, // kSKmUndefined
     { -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000 }, // kSKmUndefined
     { -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000 }, // kSKmUndefined
     { -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000 }, // kSKmUndefined
@@ -1207,7 +1215,7 @@ static const double kMCEtrueBinEdges[kns][knm][kMCNEtrueBins+1] = {
     { -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000 }, // kSKmUndefined
     { -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000 }  // kSKmUndefined
   }
-  */
+  
 };
 
 // Number of cross-section weight splines
@@ -1293,7 +1301,7 @@ static const bool kFSIApplyFSIParamToSKMode[kns][knm][kNumOfFSIParams] = {
     {  0, 0, 0,  0, 0, 0 }, // kSKmUndefined
     {  0, 0, 0,  0, 0, 0 }  // kSKmUndefined
   }
-  /*,
+  ,
   // > 1 electron-like ring 
   {
     {  0, 0, 0,  0, 0, 0 }, // kSKmNuMuCCQE        
@@ -1326,8 +1334,8 @@ static const bool kFSIApplyFSIParamToSKMode[kns][knm][kNumOfFSIParams] = {
     {  0, 0, 0,  0, 0, 0 }, // kSKmNuEBarNCoth_e
     {  0, 0, 0,  0, 0, 0 }, // kSKmSigNuECCQE        
     {  0, 0, 0,  0, 0, 0 }, // kSKmSigNuECC1pi
+    {  0, 0, 0,  0, 0, 0 }, // kSKmSigNuECCcoh
     {  0, 0, 0,  0, 0, 0 }, // kSKmSigNuECCoth_e
-    {  0, 0, 0,  0, 0, 0 }, // kSKmUndefined
     {  0, 0, 0,  0, 0, 0 }, // kSKmUndefined
     {  0, 0, 0,  0, 0, 0 }, // kSKmUndefined
     {  0, 0, 0,  0, 0, 0 }, // kSKmUndefined
@@ -1342,7 +1350,7 @@ static const bool kFSIApplyFSIParamToSKMode[kns][knm][kNumOfFSIParams] = {
     {  0, 0, 0,  0, 0, 0 }, // kSKmUndefined
     {  0, 0, 0,  0, 0, 0 }  // kSKmUndefined
   }
-  */
+  
 };
 
 
@@ -1407,7 +1415,7 @@ static const int kSKHistoAttributes[kns][knm][kNGraphicAttributes] = {
     {   -1,        -1, -1, -1,     -1 }, // kSKmUndefined
     {   -1,        -1, -1, -1,     -1 }  // kSKmUndefined
   }
-  /*,
+  ,
 
   // > 1 electron-like ring 
   {
@@ -1441,8 +1449,8 @@ static const int kSKHistoAttributes[kns][knm][kNGraphicAttributes] = {
     { 3006,    kBlack,  1,  1, kBlack }, // kSKmNuEBarNCoth_e
     { 3001,  kGreen+8,  1,  1, kBlack }, // kSKmSigNuECCQE
     { 3345, kGreen+10,  1,  1, kBlack }, // kSKmSigNuECC1pi
-    { 3354,      kRed,  1,  1, kBlack }, // kSKmSigNuECCoth_e
-    {   -1,        -1, -1, -1,     -1 }, // kSKmUndefined
+    { 3354,      kRed,  1,  1, kBlack }, // kSKmSigNuECCcoh
+    { 3354,    kRed-2,  1,  1, kBlack }, // kSKmSigNuECCoth_e
     {   -1,        -1, -1, -1,     -1 }, // kSKmUndefined
     {   -1,        -1, -1, -1,     -1 }, // kSKmUndefined
     {   -1,        -1, -1, -1,     -1 }, // kSKmUndefined
@@ -1458,7 +1466,7 @@ static const int kSKHistoAttributes[kns][knm][kNGraphicAttributes] = {
     {   -1,        -1, -1, -1,     -1 }  // kSKmUndefined
 
   }
-  */
+  
 };
 
 //
@@ -1516,7 +1524,7 @@ static const SuperkMode_t kSKReactionModesOrderInStack[kns][knm] = {
     kSKmUndefined,
     kSKmUndefined
   }
-  /*,
+  ,
 
   // > 1 electron-like ring (nue appearance)
   {
@@ -1550,8 +1558,8 @@ static const SuperkMode_t kSKReactionModesOrderInStack[kns][knm] = {
     kSKmNuENCoth_e,
     kSKmSigNuECCQE,  
     kSKmSigNuECC1pi,  
+    kSKmSigNuECCcoh,
     kSKmSigNuECCoth_e,
-    kSKmUndefined,
     kSKmUndefined,
     kSKmUndefined,
     kSKmUndefined,
@@ -1566,7 +1574,7 @@ static const SuperkMode_t kSKReactionModesOrderInStack[kns][knm] = {
     kSKmUndefined,
     kSKmUndefined
   }
-  */
+  
 };
 
 //
@@ -1578,10 +1586,10 @@ static const SuperkMode_t kSKReactionModesOrderInStack[kns][knm] = {
 //
 // Etrue binning for SK MC templates
 //
-#if ETRUE_BINS == 1
+#if ETRUE_BINS_1RMU == 1
 // 600 50-MeV bins from 0 to 30 GeV
-static const int kNEtrueBins = 600;
-static const double kEtrueBinEdges[kNEtrueBins+1] = 
+static const int kNEtrueBins1Rmu = 600;
+static const double kEtrueBinEdges1Rmu[kNEtrueBins1Rmu+1] = 
 {
    0.000,  0.050,  0.100,  0.150,  0.200,  0.250,  0.300,  0.350,  0.400,  0.450, 
    0.500,  0.550,  0.600,  0.650,  0.700,  0.750,  0.800,  0.850,  0.900,  0.950, 
@@ -1645,15 +1653,59 @@ static const double kEtrueBinEdges[kNEtrueBins+1] =
   29.500, 29.550, 29.600, 29.650, 29.700, 29.750, 29.800, 29.850, 29.900, 29.950, 
   30.000
 };
-#elif ETRUE_BINS == 2
+#elif ETRUE_BINS_1RMU == 2
 // Even finer binning around the oscillation maximum
 //  50-MeV bins from 0.0  to 0.3  GeV (6  bins)
-//  25-MeV bins from 0.0  to 1.0  GeV (28 bins)
+//  25-MeV bins from 0.3  to 1.0  GeV (28 bins)
 //  50-MeV bins from 1.0  to 3.0  GeV (40 bins)
 // 100-MeV bins from 3.0  to 3.5  GeV (5 bins)
 // Variable binning to 30 GeV (5 bins)
-static const int kNEtrueBins = 84;
-static const double kEtrueBinEdges[kNEtrueBins+1] = 
+static const int kNEtrueBins1Rmu = 84;
+static const double kEtrueBinEdges1Rmu[kNEtrueBins1Rmu+1] = 
+{
+   0.000,  0.050,  0.100,  0.150,  0.200,  0.250,
+   0.300,  0.325,  0.350,  0.375,  0.400,  0.425,  0.450,  0.475,  0.500,  0.525,
+   0.550,  0.575,  0.600,  0.625,  0.650,  0.675,  0.700,  0.725,  0.750,  0.775,
+   0.800,  0.825,  0.850,  0.875,  0.900,  0.925,  0.950,  0.975,
+   1.000,  1.050,  1.100,  1.150,  1.200,  1.250,  1.300,  1.350,  1.400,  1.450, 
+   1.500,  1.550,  1.600,  1.650,  1.700,  1.750,  1.800,  1.850,  1.900,  1.950, 
+   2.000,  2.050,  2.100,  2.150,  2.200,  2.250,  2.300,  2.350,  2.400,  2.450, 
+   2.500,  2.550,  2.600,  2.650,  2.700,  2.750,  2.800,  2.850,  2.900,  2.950, 
+   3.000,  3.100,  3.200,  3.300,  3.400, 
+   3.500,  4.000,  5.000,  7.000, 10.000,
+   30.000
+};
+#endif
+
+//E TRUE BINNING FOR 1RE
+#if ETRUE_BINS_1RE == 1
+// 50 MeV bins 0-1.25 GeV (25 bins)
+static const int kNEtrueBins1Re = 68;
+static const double kEtrueBinEdges1Re[kNEtrueBins1Re+1] = 
+  {
+    0.000,  0.050,  0.100,  0.150,  0.200,  0.250,
+    0.300,  0.350,  0.400,  0.450,  0.500,  0.550,
+    0.600,  0.650,  0.700,  0.750,  0.800,  0.850,
+    0.900,  0.950,  1.000,  1.050,  1.100,  1.150,
+    1.200,  1.250,  1.300,  1.350,  1.400,  1.450,
+    1.500,  1.550,  1.600,  1.650,  1.700,  1.750,
+    1.800,  1.850,  1.900,  1.950,  2.000,  2.050,
+    2.100,  2.150,  2.200,  2.250,  2.300,  2.350,
+    2.400,  2.450,  2.500,  2.550,  2.600,  2.650,
+    2.700,  2.750,  2.800,  2.850,  2.900,  2.950,
+    3.000,  4.000,  5.000,  6.000,  7.000,  8.000,
+    9.000,  10.00,  30.00
+  };
+
+#elif ETRUE_BINS_1RE == 2
+// Same binning as default for disappearance - goes up to 30 GeV!
+//  50-MeV bins from 0.0  to 0.3  GeV (6  bins)
+//  25-MeV bins from 0.3  to 1.0  GeV (28 bins)
+//  50-MeV bins from 1.0  to 3.0  GeV (40 bins)
+// 100-MeV bins from 3.0  to 3.5  GeV (5 bins)
+// Variable binning to 30 GeV (5 bins)
+static const int kNEtrueBins1Re = 84;
+static const double kEtrueBinEdges1Re[kNEtrueBins1Re+1] = 
 {
    0.000,  0.050,  0.100,  0.150,  0.200,  0.250,
    0.300,  0.325,  0.350,  0.375,  0.400,  0.425,  0.450,  0.475,  0.500,  0.525,

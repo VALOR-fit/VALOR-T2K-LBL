@@ -58,9 +58,11 @@ void SuperkObservation::Init(void)
 // Initialize priv data members
 //
   for(int is=0; is<kns; is++) {
+    SuperkSample_t s = kSKSamples[is];    
     fErDistr[is] = 0;
-    for(int ir=0; ir<kNErecoBins1Rmu; ir++) {
-      fErDistrArray[is][ir-1] = 0;
+    for(int ir=0; ir<util::NumErecoBins(s); ir++) {
+      if (s== kSKsFCFV1RingMuLike) fErDistrArray1Rmu[ir-1] = 0;
+      else fErDistrArray1Re[ir-1] = 0;
     }
   }
 }
@@ -112,7 +114,7 @@ bool SuperkObservation::Read(string config_file, int data_set_id)
        << " " << util::AsString(kSKsFCFV1RingMuLike) << " events." << endl;
      for(int ibin = 1; ibin <= kNErecoBins1Rmu; ibin++) {
        double nobs = fErDistr[idx]->GetBinContent(ibin);
-       fErDistrArray[idx][ibin-1] = nobs;
+       fErDistrArray1Rmu[ibin-1] = nobs;
      }
   }
   else {
@@ -130,9 +132,9 @@ bool SuperkObservation::Read(string config_file, int data_set_id)
      fErDistr[idx]->SetBinContent(1,nev); ///// just put the number in the 1st bin
      cout << "Obs >> Read: " << fErDistr[idx]->Integral() 
        << " " << util::AsString(kSKsFCFV1RingELike) << " events." << endl;
-     for(int ibin = 1; ibin <= kNErecoBins1Rmu; ibin++) {
+     for(int ibin = 1; ibin <= kNErecoBins1Re; ibin++) {
        double nobs = fErDistr[idx]->GetBinContent(ibin);
-       fErDistrArray[idx][ibin-1] = nobs;
+       fErDistrArray1Re[ibin-1] = nobs;
      }
   }
   else {
@@ -154,10 +156,11 @@ double SuperkObservation::NumOfEvents(SuperkSample_t s) const
     return nev;
   }
 
-  int is = util::ArrIdx::Instance()->SuperkSampleIdx(s);
-  for(int ir = 0; ir < kNErecoBins1Rmu; ir++)
-    nev += fErDistrArray[is][ir];
-
+  //  int is = util::ArrIdx::Instance()->SuperkSampleIdx(s);
+  for(int ir = 0; ir < util::NumErecoBins(s); ir++){
+    if (s== kSKsFCFV1RingMuLike) nev += fErDistrArray1Rmu[ir];
+    else nev += fErDistrArray1Re[ir];
+  }
 #ifdef __show_num_of_events_mesg_debug__
   cout << "Obs >> NEvents(" 
        << util::AsString(s) << ") = " << nev << endl;
@@ -203,8 +206,9 @@ double* SuperkObservation::ErecoSpectrumArray (t2kana::conv::SuperkSample_t s)
     return 0;
   }
 
-  int is = util::ArrIdx::Instance()->SuperkSampleIdx(s);
-  return fErDistrArray[is];
+  //  int is = util::ArrIdx::Instance()->SuperkSampleIdx(s);
+  if (s== kSKsFCFV1RingMuLike) return fErDistrArray1Rmu;
+  else return fErDistrArray1Re;
 }
 //________________________________________________________________________________________
 bool SuperkObservation::CreateMockData(
@@ -231,7 +235,7 @@ bool SuperkObservation::CreateMockData(
 #ifndef PRODUCTIONMODE
        fErDistr[idx]->SetBinContent(ibin,nobs);
 #endif
-       fErDistrArray[idx][ibin-1] = nobs;
+       fErDistrArray1Rmu[ibin-1] = nobs;
     }
   }
   idx = util::ArrIdx::Instance()->SuperkSampleIdx(kSKsFCFV1RingELike);
@@ -245,7 +249,7 @@ bool SuperkObservation::CreateMockData(
  #ifndef PRODUCTIONMODE
        fErDistr[idx]->SetBinContent(ibin,nobs);
 #endif
-       fErDistrArray[idx][ibin-1] = nobs;
+       fErDistrArray1Re[ibin-1] = nobs;
     }
   }
   return applied_negevents_condition;
@@ -274,7 +278,7 @@ bool SuperkObservation::CreateMockData(
 #ifndef PRODUCTIONMODE
        fErDistr[idx]->SetBinContent(ibin,nobs);
 #endif
-       fErDistrArray[idx][ibin-1] = nobs;
+       fErDistrArray1Rmu[ibin-1] = nobs;
     }
   }
   idx = util::ArrIdx::Instance()->SuperkSampleIdx(kSKsFCFV1RingELike);
@@ -288,7 +292,7 @@ bool SuperkObservation::CreateMockData(
 #ifndef PRODUCTIONMODE
        fErDistr[idx]->SetBinContent(ibin,nobs);
 #endif
-       fErDistrArray[idx][ibin-1] = nobs;
+       fErDistrArray1Re[ibin-1] = nobs;
     }
   }
   return applied_negevents_condition;

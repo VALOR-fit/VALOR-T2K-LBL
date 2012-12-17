@@ -130,6 +130,10 @@ namespace util {
 
   const int      NumErecoBins  (conv::SuperkSample_t s);
   const double * ErecoBinEdges (conv::SuperkSample_t s);
+  const double   ErecoBinEdges (conv::SuperkSample_t s, int i);
+  const int      NumEtrueBins  (conv::SuperkSample_t s);
+  const double * EtrueBinEdges (conv::SuperkSample_t s);
+  const double   EtrueBinEdges (conv::SuperkSample_t s, int i);
   const int      NumVariableXsEtrueBins(conv::SuperkSample_t s, conv::SuperkMode_t m);
   const double * VariableXsEtrueBinEdges(conv::SuperkSample_t s, conv::SuperkMode_t m);
   const int      NumVariableMCEtrueBins(conv::SuperkSample_t s, conv::SuperkMode_t m);

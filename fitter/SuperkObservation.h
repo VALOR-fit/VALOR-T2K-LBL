@@ -60,7 +60,8 @@ private:
   void CleanUp (void);
 
   TH1D *  fErDistr[kns];  ///< Reconstructed energy spectrum for each sample
-  double  fErDistrArray[kns][conv::kNErecoBins1Rmu];
+  double  fErDistrArray1Rmu[conv::kNErecoBins1Rmu];
+  double  fErDistrArray1Re[conv::kNErecoBins1Re];
 
 ClassDef(SuperkObservation, 3)
 };

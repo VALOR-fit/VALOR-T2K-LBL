@@ -112,7 +112,8 @@ private:
 
    TH1D *  fPredictErecoSpectrum[kns][knm];  ///< Ereco spectrum = f(sample,mode)
    TH1D *  fPredictErecoSpectrumTot[kns];    ///< Ereco spectrum = f(sample), sum over modes
-   double  fPredictErecoSpectrumArrayTot[kns][conv::kNErecoBins1Rmu];
+   double  fPredictErecoSpectrumArrayTot1Rmu[conv::kNErecoBins1Rmu];
+   double  fPredictErecoSpectrumArrayTot1Re[conv::kNErecoBins1Re];
 
 ClassDef(SuperkExpectation, 5)
 };

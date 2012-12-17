@@ -2142,6 +2142,46 @@ const double * t2kana::util::ErecoBinEdges(t2kana::conv::SuperkSample_t s)
   return 0;
 }
 //___________________________________________________________________________
+const double t2kana::util::ErecoBinEdges(t2kana::conv::SuperkSample_t s, int i)
+{
+  switch(s) {
+     case ( kSKsFCFV1RingMuLike ) : return kErecoBinEdges1Rmu[i]; break;
+     case ( kSKsFCFV1RingELike  ) : return kErecoBinEdges1Re[i];  break;
+     default                      : return 0;
+  }
+  return 0;
+}
+//___________________________________________________________________________
+const int t2kana::util::NumEtrueBins(t2kana::conv::SuperkSample_t s)
+{
+  switch(s) {
+     case ( kSKsFCFV1RingMuLike ) : return kNEtrueBins1Rmu; break;
+     case ( kSKsFCFV1RingELike  ) : return kNEtrueBins1Re;  break;
+     default                      : return 0;
+  }
+  return 0;
+}
+//___________________________________________________________________________
+const double * t2kana::util::EtrueBinEdges(t2kana::conv::SuperkSample_t s)
+{
+  switch(s) {
+     case ( kSKsFCFV1RingMuLike ) : return kEtrueBinEdges1Rmu; break;
+     case ( kSKsFCFV1RingELike  ) : return kEtrueBinEdges1Re;  break;
+     default                      : return 0;
+  }
+  return 0;
+}
+//___________________________________________________________________________
+const double  t2kana::util::EtrueBinEdges(t2kana::conv::SuperkSample_t s, int i)
+{
+  switch(s) {
+     case ( kSKsFCFV1RingMuLike ) : return kEtrueBinEdges1Rmu[i]; break;
+     case ( kSKsFCFV1RingELike  ) : return kEtrueBinEdges1Re[i];  break;
+     default                      : return 0;
+  }
+  return 0;
+}
+//___________________________________________________________________________
 const int t2kana::util::NumVariableXsEtrueBins(t2kana::conv::SuperkSample_t s,
 					       t2kana::conv::SuperkMode_t m)
 {

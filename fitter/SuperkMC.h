@@ -134,17 +134,22 @@ private:
 #endif
   TH2D *     fMCVariableTempl[kns][knm];
   int        fMCVariableTemplArray[kns][knm][conv::kMCNEtrueBins][conv::kXsNErecoBins];
-  int        fMCTemplArrayOri[kns][knm][conv::kNEtrueBins][conv::kNErecoBins1Rmu];
+  int        fMCTemplArrayOri1Rmu[knm][conv::kNEtrueBins1Rmu][conv::kNErecoBins1Rmu];
+  int        fMCTemplArrayOri1Re [knm][conv::kNEtrueBins1Re][conv::kNErecoBins1Re];
   //double     fMCTemplArrayNom[kns][knm][conv::kNEtrueBins][conv::kNErecoBins1Rmu];
-  double     fMCTemplArrayTun[kns][knm][conv::kNEtrueBins][conv::kNErecoBins1Rmu];
+  double     fMCTemplArrayTun1Rmu[knm][conv::kNEtrueBins1Rmu][conv::kNErecoBins1Rmu];
+  double     fMCTemplArrayTun1Re[knm][conv::kNEtrueBins1Re][conv::kNErecoBins1Re];
   //double     fMCTemplArraySys[kns][knm][conv::kNEtrueBins][conv::kNErecoBins1Rmu];
-  double     fMCTemplArrayFin[kns][knm][conv::kNEtrueBins][conv::kNErecoBins1Rmu];
+  double     fMCTemplArrayFin1Rmu[knm][conv::kNEtrueBins1Rmu][conv::kNErecoBins1Rmu];
+  double     fMCTemplArrayFin1Re[knm][conv::kNEtrueBins1Re][conv::kNErecoBins1Re];
 
   TH1D *     fMCErecoSpectrum[kns][knm];   ///< Ereco MC spectrum (sample,mode)     : nominal + ext/tuning + nd280/tuning + systematics + physics hypothesis
   TH1D *     fMCErecoSpectrumTot[kns];     ///< Ereco MC spectrum (sample)          : nominal + ext/tuning + nd280/tuning + systematics + physics hypothesis
   TH1D *     fMCEtrueSpectrumTot[kns];     ///< Etrue MC spectrum (sample)          : nominal
-  double     fMCEtrueSpectrumTotArray[kns][conv::kNEtrueBins];
-  double     fMCErecoSpectrumTotArray[kns][conv::kNErecoBins1Rmu];
+  double     fMCEtrueSpectrumTotArray1Rmu[conv::kNEtrueBins1Rmu];
+  double     fMCEtrueSpectrumTotArray1Re[conv::kNEtrueBins1Re];
+  double     fMCErecoSpectrumTotArray1Rmu[conv::kNErecoBins1Rmu];
+  double     fMCErecoSpectrumTotArray1Re[conv::kNErecoBins1Re];
 
   // input event trees and normalisation factors
   TTree*     fMCTreeNuMu1Rmu;              ///< input MC event tree /  sample: numu                         / cuts: 1-ring mu-like 
@@ -152,13 +157,13 @@ private:
   TTree*     fMCTreeNuE1Rmu;               ///< input MC event tree /  sample: nue (intrinsic)              / cuts: 1-ring mu-like 
   TTree*     fMCTreeNuEBar1Rmu;            ///< input MC event tree /  sample: nuebar (intrinsic)           / cuts: 1-ring mu-like 
   TTree*     fMCTreeSigNuE1Rmu;            ///< input MC event tree /  sample: nue (signal, 100% numu->nue) / cuts: 1-ring mu-like 
-  /*
+  
   TTree*     fMCTreeNuMu1Re;               ///< input MC event tree /  sample: numu                         / cuts: 1-ring e-like 
   TTree*     fMCTreeNuMuBar1Re;            ///< input MC event tree /  sample: numubar                      / cuts: 1-ring e-like 
   TTree*     fMCTreeNuE1Re;                ///< input MC event tree /  sample: nue (intrinsic)              / cuts: 1-ring e-like 
   TTree*     fMCTreeNuEBar1Re;             ///< input MC event tree /  sample: nuebar (intrinsic)           / cuts: 1-ring e-like 
   TTree*     fMCTreeSigNuE1Re;             ///< input MC event tree /  sample: nue (signal, 100% numu->nue) / cuts: 1-ring e-like 
-  */
+  
   TH1D*      fMCPOTHistNuMu;               ///< input MC event sample POT histogram : numu
   TH1D*      fMCPOTHistNuMuBar;            ///< input MC event sample POT histogram : numubar
   TH1D*      fMCPOTHistNuE;                ///< input MC event sample POT histogram : nue 
