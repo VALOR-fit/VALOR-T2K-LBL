@@ -258,7 +258,7 @@ if($resource eq "Grid") {
     open(SH0, ">$tag.sh") or die("Can not create the .sh batch script");
     print SH0 "#!/bin/bash \n";
     print SH0 "echo \"*** Creating proxy...\" \n";
-    print SH0 "voms-proxy-init -voms t2k.org\n";
+    print SH0 "voms-proxy-init -valid 72:0 -voms t2k.org\n";
     #print SH0 "export MYPROXY_SERVER=lcgrbp01.gridpp.rl.ac.uk\n";
     #print SH0 "myproxy-init -v -d -n -s \$MYPROXY_SERVER\n";
     #print SH0 "glite-wms-job-delegate-proxy -d $proxy_id -e https://lcgwms03.gridpp.rl.ac.uk:7443/glite_wms_wmproxy_server;\n";
