@@ -1,4 +1,8 @@
-void make_fluxtune_plots() {
+void make_fluxtune_plots
+(
+ double erecomax = 5.0
+)
+{
 
   TCanvas * c = new TCanvas();
 
@@ -8,6 +12,16 @@ void make_fluxtune_plots() {
   f.GetObject("enu_sk_tuned11b_numub_ratio",hnumub);
   f.GetObject("enu_sk_tuned11b_nue_ratio",hnue);
   f.GetObject("enu_sk_tuned11b_nueb_ratio",hnueb);
+
+  hnumu->GetXaxis()->SetRangeUser(0, erecomax - 0.001);
+  hnumub->GetXaxis()->SetRangeUser(0, erecomax - 0.001);
+  hnue->GetXaxis()->SetRangeUser(0, erecomax - 0.001);
+  hnueb->GetXaxis()->SetRangeUser(0, erecomax - 0.001);
+
+  hnumu->SetMarkerStyle(6);
+  hnumub->SetMarkerStyle(6);
+  hnue->SetMarkerStyle(6);
+  hnueb->SetMarkerStyle(6);
 
   hnumu->Draw("P");
   c->SaveAs("fluxtune_numu.eps");
