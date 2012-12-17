@@ -79,6 +79,7 @@ void fit_xml_seeded_from_chisq_map
 
   // Variables to save bestfits & errors in
   double bestfit_chisq = 9999999;
+  double bestfit_chisq5 = 9999999;
 
   double bestfit_mixing12 = -1, err_mixing12 = -1;
   double bestfit_mixing13 = -1, err_mixing13 = -1;
@@ -252,6 +253,10 @@ void fit_xml_seeded_from_chisq_map
     if(fit_inputs->BestFitChisquare() < bestfit_chisq) {
       bestfit_chisq = fit_inputs->BestFitChisquare();
 
+      fit_inputs->SetChisqDefinition(true);
+      bestfit_chisq5 = fit_inputs->BestFitChisquare();
+      fit_inputs->SetChisqDefinition(false);
+
       bestfit_mixing12 = fparm->BestFitValue(conv::kPhypMixing12);
       bestfit_mixing13 = fparm->BestFitValue(conv::kPhypMixing13);
       bestfit_mixing23 = fparm->BestFitValue(conv::kPhypMixing23);
@@ -373,6 +378,9 @@ void fit_xml_seeded_from_chisq_map
 	bestfit_spectrum->SetBinContent(ibin, skexp->CurrPredictedErecoSpectrumArray(conv::kSKsFCFV1RingMuLike)[ibin-1]);
 
       stringstream streamer;
+      streamer << "\\chi^2_{bf} \t" << bestfit_chisq << endl;
+      streamer << "\\chi^2_{gof} \t" << bestfit_chisq5 << endl << endl;
+
       streamer << util::AsStringPaperRooTex(conv::kPhypMixing12) << "\t" << bestfit_mixing12 << "\t" << err_mixing12 << endl;
       streamer << util::AsStringPaperRooTex(conv::kPhypMixing13) << "\t" << bestfit_mixing13 << "\t" << err_mixing13 << endl;
       streamer << util::AsStringPaperRooTex(conv::kPhypMixing23) << "\t" << bestfit_mixing23 << "\t" << err_mixing23 << endl;
@@ -653,15 +661,17 @@ void fit_xml_seeded_from_chisq_map
   observation_spectrum.Write("obs_spectrum");
 
   //And not forgetting the value & error of the mixing angles
-  TVectorD v(5);
+  TVectorD v(6);
   v[0] = bestfit_mixing23;
   v[1] = err_mixing23;
   v[2] = bestfit_dm23sq;
   v[3] = err_dm23sq;
   v[4] = bestfit_chisq;
+  v[5] = bestfit_chisq5;
   cout << endl << "Bestfit of oscillation parameters yield chisq: " << bestfit_chisq << endl
        << "\tMixing23: " << bestfit_mixing23 << " +- " << err_mixing23 << endl
-       << "\tDm32sq:   "   << bestfit_dm23sq << " +- "   << err_dm23sq << endl << endl;
+       << "\tDm32sq:   "   << bestfit_dm23sq << " +- "   << err_dm23sq << endl
+       << "\t5 bin chisq: " << bestfit_chisq5 << endl;
   v.Write("oscparams");
 
   //inputfile.Close();
