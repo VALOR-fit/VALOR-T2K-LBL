@@ -1,6 +1,6 @@
 void make_fluxtune_plots
 (
- double erecomax = 5.0
+ double erecomax = 10.0
 )
 {
 
@@ -18,19 +18,20 @@ void make_fluxtune_plots
   hnue->GetXaxis()->SetRangeUser(0, erecomax - 0.001);
   hnueb->GetXaxis()->SetRangeUser(0, erecomax - 0.001);
 
-  hnumu->SetMarkerStyle(6);
-  hnumub->SetMarkerStyle(6);
-  hnue->SetMarkerStyle(6);
-  hnueb->SetMarkerStyle(6);
+  for(int i = 1; i <= hnumu->GetNbinsX(); i++) {
+    hnumu->SetBinError(i,0);
+    hnumub->SetBinError(i,0);
+    hnue->SetBinError(i,0);
+    hnueb->SetBinError(i,0);
+  }
 
-  hnumu->Draw("P");
-  c->SaveAs("fluxtune_numu.eps");
-  hnumub->Draw("P");
-  c->SaveAs("fluxtune_numub.eps");
-  hnue->Draw("P");
-  c->SaveAs("fluxtune_nue.eps");
-  hnueb->Draw("P");
-  c->SaveAs("fluxtune_nueb.eps");
+  hnumu->Draw("");
+  c->SaveAs("fluxtune_numu.pdf");
+  hnumub->Draw("");
+  c->SaveAs("fluxtune_numub.pdf");
+  hnue->Draw("");
+  c->SaveAs("fluxtune_nue.pdf");
+  hnueb->Draw("");
+  c->SaveAs("fluxtune_nueb.pdf");
 
- 
 }

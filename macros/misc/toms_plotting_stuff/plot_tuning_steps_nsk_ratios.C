@@ -10,6 +10,7 @@ void plot_tuning_steps_nsk_ratios
   TFile f_nom("notune/nsk_vs_osc_params.root");
   TFile f_inv("inverted/nsk_vs_osc_params.root");
   TFile f_2f("2flavour/nsk_vs_osc_params.root");
+  TFile f_t23("tweak23/nsk_vs_osc_params.root");
 
   //histograms
   TH2D * h_tun = 0;
@@ -22,6 +23,8 @@ void plot_tuning_steps_nsk_ratios
   f_inv.GetObject("nsk_vs_osc_params",h_inv);
   TH2D * h_2f = 0;
   f_2f.GetObject("nsk_vs_osc_params",h_2f);
+  TH2D * h_t23 = 0;
+  f_t23.GetObject("nsk_vs_osc_params",h_t23);
 
   //ratios
   TH2D * h_ratio_tunflux = new TH2D(*h_tun);
@@ -51,6 +54,7 @@ void plot_tuning_steps_nsk_ratios
   h_tun->GetYaxis()->SetTitleOffset(1.3);
   h_ratio_invtun->GetYaxis()->SetTitleOffset(1.3);
   h_ratio_2ftun->GetYaxis()->SetTitleOffset(1.3);
+  h_t23->GetYaxis()->SetTitleOffset(1.3);
 
   h_ratio_tunflux->Draw("colz");
   c->SaveAs("nsk_diff_tunflux.eps");
@@ -62,5 +66,8 @@ void plot_tuning_steps_nsk_ratios
   c->SaveAs("nsk_diff_inv.eps");
   h_ratio_2ftun->Draw("colz");
   c->SaveAs("nsk_diff_2f.eps");
+  h_t23->Draw("colz");
+  c->SaveAs("nsk_diff_non23throw.eps");
+
 
 }
