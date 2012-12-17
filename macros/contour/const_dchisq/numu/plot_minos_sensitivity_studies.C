@@ -33,8 +33,8 @@ void plot_minos_sensitivity_studies() {
   f[7] = new TFile("minos_awayfrombest_28/7/sensitivity.root");
   f[8] = new TFile("minos_28/sensitivity.root");
   f[9] = new TFile("minos_awayfrombest_28/9/sensitivity.root");
-  /*f[10] = new TFile("minos_awayfrombest_28/10/sensitivity.root");
-  f[11] = new TFile("minos_awayfrombest_28/11/sensitivity.root");
+  //f[10] = new TFile("minos_awayfrombest_28/10/sensitivity.root");
+  /*f[11] = new TFile("minos_awayfrombest_28/11/sensitivity.root");
   f[12] = new TFile("minos_awayfrombest_28/12/sensitivity.root");
   f[13] = new TFile("minos_awayfrombest_28/13/sensitivity.root");
   f[14] = new TFile("minos_awayfrombest_28/14/sensitivity.root");
@@ -51,10 +51,17 @@ void plot_minos_sensitivity_studies() {
     if(hdchisq68[i])
       hdchisq68[i]->SetLineStyle(2);
   }
+  //external
+  TFile fext("$T2KOSCANA/inputs/contours/contours_nont2k.root");
+  TGraph * hminos_beamatm = 0;
+  fext.GetObject("minos2012_combined_90CL",hminos_beamatm);
+  hminos_beamatm->SetLineWidth(2);
+  hminos_beamatm->SetLineColor(kBlack);
+  hminos_beamatm->SetLineStyle(1);
 
   // param space
   // dm23sq, mixing23 range and step
-  double mixing23_min   = 0.6;
+  double mixing23_min   = 0.8;
   double mixing23_max   = 1.;
   double mixing23_step  = 0.005;
   double dm23sq_min     = 1.0E-3;
@@ -91,17 +98,20 @@ void plot_minos_sensitivity_studies() {
     //set colors
     Color_t col = kBlack;
     if(i <= 5) {
-      col = kBlack;
-    }
-    else if(i <= 10) {
       col = kRed;
     }
-    else if(i <= 15) {
+    else if(i <= 10) {
       col = kBlue;
+    }
+    else if(i <= 15) {
+      col = kGreen+2;
     }
     if(hdchisq68[i]) {
       hdchisq68[i]->SetLineColor(col);
       hdchisq68[i]->Draw("cont3same");
+    }
+    else {
+      continue;
     }
     if(hdchisq90[i]) {
       hdchisq90[i]->SetLineColor(col);
@@ -109,6 +119,7 @@ void plot_minos_sensitivity_studies() {
     }
     in[i]->SetMarkerColor(col);
     in[i]->Draw("Psame");
+    hminos_beamatm->Draw("sameL");
   }
 
   for(int ic = 0; ic < 5; ic++) {
