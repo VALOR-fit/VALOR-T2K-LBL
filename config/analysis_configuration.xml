@@ -95,8 +95,8 @@
                 <objtype>    TTree            </objtype>
              </one_mu_ring>
              <one_e_ring>
-                <filename>   inputs/official/2012/superk/mc/neut/11c/superk_1ReT_numu.root  </filename>
-                <objname>    selection_tree   </objname>
+                <filename>   inputs/official/2012/superk/mc/neut/11c/sk11c_1ReT_flx11bv32fine_10acuts.root  </filename>
+                <objname>    tnumu   </objname>
                 <objtype>    TTree            </objtype>
              </one_e_ring>
            </numu>
@@ -112,8 +112,8 @@
                 <objtype>    TTree            </objtype>
              </one_mu_ring>
              <one_e_ring>
-                <filename>   inputs/official/2012/superk/mc/neut/11c/superk_1ReT_numubar.root  </filename>
-                <objname>    selection_tree   </objname>
+                <filename>   inputs/official/2012/superk/mc/neut/11c/sk11c_1ReT_flx11bv32fine_10acuts.root  </filename>
+                <objname>    tnumubar   </objname>
                 <objtype>    TTree            </objtype>
              </one_e_ring>
            </numubar>
@@ -129,8 +129,8 @@
                 <objtype>    TTree            </objtype>
              </one_mu_ring>
              <one_e_ring>
-                <filename>   inputs/official/2012/superk/mc/neut/11c/superk_1ReT_nue.root  </filename>
-                <objname>    selection_tree   </objname>
+                <filename>   inputs/official/2012/superk/mc/neut/11c/sk11c_1ReT_flx11bv32fine_10acuts.root  </filename>
+                <objname>    tnue   </objname>
                 <objtype>    TTree            </objtype>
              </one_e_ring>
           </nue>
@@ -146,8 +146,8 @@
                 <objtype>    TTree            </objtype>
              </one_mu_ring>
              <one_e_ring>
-                <filename>   inputs/official/2012/superk/mc/neut/11c/superk_1ReT_nuebar.root  </filename>
-                <objname>    selection_tree   </objname>
+                <filename>   inputs/official/2012/superk/mc/neut/11c/sk11c_1ReT_flx11bv32fine_10acuts.root  </filename>
+                <objname>    tnuebar   </objname>
                 <objtype>    TTree            </objtype>
              </one_e_ring>
           </nuebar>
@@ -163,8 +163,8 @@
                 <objtype>    TTree            </objtype>
              </one_mu_ring>
              <one_e_ring>
-                <filename>   inputs/official/2012/superk/mc/neut/11c/superk_1ReT_nuesig.root  </filename>
-                <objname>    selection_tree   </objname>
+                <filename>   inputs/official/2012/superk/mc/neut/11c/sk11c_1ReT_flx11bv32fine_10acuts.root  </filename>
+                <objname>    tnuesig   </objname>
                 <objtype>    TTree            </objtype>
              </one_e_ring>
           </signal_nue>
