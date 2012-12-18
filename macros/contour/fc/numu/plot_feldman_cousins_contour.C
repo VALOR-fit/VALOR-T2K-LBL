@@ -69,7 +69,8 @@ void plot_feldman_cousins_contour(
   bool show_99cl=false,
   double dmsq_frac_syst_err_bestfit=-1.,
   double sinsq2theta_frac_syst_err_bestfit=-1.,
-  const char * outfile = "fc_contours.root"
+  const char * outfile = "fc_contours.root",
+  bool hack_away_the_high_dm32sq = false /* FC surface is too small in dm32sq. use this to get rid of the awful border along the top */
 )
 {
   gROOT->Reset();
@@ -228,6 +229,14 @@ void plot_feldman_cousins_contour(
 	  hCL90StatSyst->SetBinContent(mixing23_bin, dm23sq_bin, dchisq_data - dchisq90_crit_statsyst);
 	  hCL95StatSyst->SetBinContent(mixing23_bin, dm23sq_bin, dchisq_data - dchisq95_crit_statsyst);
 	  hCL99StatSyst->SetBinContent(mixing23_bin, dm23sq_bin, dchisq_data - dchisq99_crit_statsyst);
+	  if(hack_away_the_high_dm32sq) {
+	    if(dm23sq > 0.0033 && dchisq_data < conv::kASmallNum) {
+	      hCL68StatSyst->SetBinContent(mixing23_bin, dm23sq_bin, 999);
+	      hCL90StatSyst->SetBinContent(mixing23_bin, dm23sq_bin, 999);
+	      hCL95StatSyst->SetBinContent(mixing23_bin, dm23sq_bin, 999);
+	      hCL99StatSyst->SetBinContent(mixing23_bin, dm23sq_bin, 999);
+	    }
+	  }
 	}
 
       //cout << "Critical DeltaChiSq (68% CL) : (stat only) = " << dchisq68_crit_statonly << ", (stat+syst) = " << dchisq68_crit_statsyst << endl;
