@@ -71,19 +71,20 @@ void test_nsk_twk_osc
        double nsk = skexp.CurrPredictedErecoSpectrum(s)->Integral();
 
        if(thrownon23) {
-	 cout << nsk << "\t";
-	 double nsksq = 0;
+	 double nskmin = 99999;
+	 double nskmax = 0;
 	 for(int t = 0; t < nthrows; t++) {
 	   ph.SetCurrValue(conv::kPhypMixing12,  util::RandomizeMixing12());
 	   ph.SetCurrValue(conv::kPhypMixing13,  util::RandomizeMixing13());
 	   ph.SetCurrValue(conv::kPhypDeltaCP,   util::RandomizeDeltaCP());
 	   ph.SetCurrValue(conv::kPhypDm12sq,    util::RandomizeDm12sq());
 	   skexp.Generate(ph);
-	   nsksq += pow(skexp.CurrPredictedErecoSpectrum(s)->Integral() - nsk, 2);
+	   double thisnsk = skexp.CurrPredictedErecoSpectrum(s)->Integral();
+	   nsksq += pow(thisnsk - nsk, 2);
+	   nskmin = TMath::Min(thisnsk, nskmin);
+	   nskmax = TMath::Max(thisnsk, nskmax);
 	 }
-	 double nsksigma = sqrt(nsksq / (nthrows - 1));
-	 nsk = nsksigma / nsk;
-	 cout << nsksigma << "\t" << nsk << endl;
+	 nsk = (TMath::Abs(nsk-nskmin) > TMath::Abs(nsk-nskmax)) ? nskmin : nskmax;
        }
 
        nsk_vs_osc_params->SetBinContent(i,j,nsk);
