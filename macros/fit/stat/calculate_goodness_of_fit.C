@@ -13,14 +13,11 @@ void calculate_goodness_of_fit
 (
   const char * tag,                                                /* */
   const int    run,                                                /* */
-  const char * xmlfile,                                            /* input XML file with toy MC experiments */
-  const int    first_experiment,                                   /* */
-  const int    last_experiment,                                    /* */
+  const char * fitresults_file,                                    /* input file with results from fit_xml_seeded_from_chisq_map.C */
   const char * config_file         = "analysis_configuration.xml", /* analysis configuration file */
   const char * fit_param_list      = "nuosc3f_numudisapp_fix4+nuisanceselection",    /* fit parameter list for the given physics hypothesis (see run_fitter.C) */
   const char * fit_option          = "minuit",                     /* fitter option (see run_fitter.C) */
-  const int    nfits               = 10,                           /* number of times to seed each data fit */
-  const int    ntoys               = 1000                          /* number of toys to create to put into the histogram */
+  const int    ntoys               = 10                          /* number of toys to create to put into the histogram */
 )
 {
   using namespace std;
@@ -37,9 +34,6 @@ void calculate_goodness_of_fit
   cout << "\n[Job inputs]" << endl;
   cout << "- Job: " << tag << "/" << run << endl;
   cout << "- Reading analysis configuration from: " << config << endl;
-  cout << "- Toy-MC" << endl;
-  cout << "   - Reading experiments from: " << xmlfile << endl; 
-  cout << "   - Using experiments in range: [" << first_experiment << ", " << last_experiment << "]" << endl; 
   cout << "- Fit" << endl;
   cout << "   - Fit param list: " << fit_param_list << endl;
   cout << "   - Fitter option: " << fit_option << endl;
@@ -65,140 +59,101 @@ void calculate_goodness_of_fit
   double bf_banff_maqe    = skexp->GetBANFF()->BestFitValue(conv::kNuisBANFFMAQE);
   double bf_banff_ccqeE0  = skexp->GetBANFF()->BestFitValue(conv::kNuisBANFFCCQEE0);
 
-  // Loop over toy-MC experiments
-  for(int iexperiment = first_experiment; iexperiment <= last_experiment; iexperiment++) {
+  // Get the bestfits
+  TFile fin(fitresults_file);
+  if(fin.IsZombie()) return;
+  TVectorD * bfvecp = 0;
+  fin.GetObject("oscparams",bfvecp);
+  const TVectorD & bfvec = *bfvecp;
+  double bestfit_chisq    = bfvec[5];
+  double bestfit_mixing23 = bfvec[0];
+  double bestfit_dm23sq   = bfvec[2];
+  fin.Close();
 
-     cout << "\n\n *** Pseudo-experiment = " << iexperiment << endl;
+  //now we have the bestfit, we'll fit lots of toys (seeding them a few times each) and find the chisq of each
+  fparm->SetInitValue(conv::kPhypMixing23, bestfit_mixing23);
+  fparm->SetInitValue(conv::kPhypDm23sq,   bestfit_dm23sq);
 
-     double bestfit_chisq = 9999999; // 5 bin
-     double bestfit_chisq_full = 9999999; // 73 bin
-     double bestfit_mixing23 = -1;
-     double bestfit_dm23sq = -1;
+  //book histogram
+  TH1D * hchisq = new TH1D(Form("chisq_%d",run), Form("chisq_%d",run), 100000, 0, 1000);
 
-     // Get superk spectrum observation (toy experiment)
-     SuperkObservation * skobs = new SuperkObservation;
-     skobs->Read(xmlfile,iexperiment);
+  //counter for how many chisqs are greater than the data chisq
+  int dataset_counter = 0;
+  for(int itoy = 0; itoy < ntoys; itoy++) {
 
-     //want to do the fit a few times, with different seeds, to find the very best minimum
-     for(int ifit = 0; ifit < nfits; ifit++) {
-       // Randomise seeds
-       fparm->SetInitValue(conv::kNuisXSecSpecFunc,         rand.Uniform(0,1));
-       fparm->SetInitValue(conv::kNuisXSecPiLessDelta,      rand.Gaus(0,1));
-       fparm->SetInitValue(conv::kNuisXSecBindE,            rand.Gaus(0,1));
-       fparm->SetInitValue(conv::kNuisSuperkEff1RmuCCnonQE, rand.Gaus(0,1));
-       fparm->SetInitValue(conv::kNuisSuperkEff1RmuNC,      rand.Gaus(0,1));
-       //fparm->SetInitValue(conv::kNuisSuperkEnergyScale,    rand.Gaus(0,1));
-       fparm->SetInitValue(conv::kNuisBANFFMAQE,            rand.Gaus(bf_banff_maqe,   err_banff_maqe));
-       fparm->SetInitValue(conv::kNuisBANFFCCQEE0,          rand.Gaus(bf_banff_ccqeE0, err_banff_ccqeE0));
-       fparm->SetInitValue(conv::kPhypMixing23,             rand.Uniform(0.8,    0.95));
-       fparm->SetInitValue(conv::kPhypDm23sq,               rand.Uniform(0.0022, 0.0026));
+    //make some mock data, with statistical & all systematics fluctuations
+    skexp->TweakAllSystematics();
+    SuperkObservation * skobs = new SuperkObservation;
+    skobs->CreateMockData(*skexp, PhysHypothesis(*fparm), true);
+
+    //now do the fit, using the thrown values of the systematics as seeds
+    fparm->SetInitValue(conv::kNuisXSecSpecFunc,         skexp->GetNuXSec()->CurrentValue(conv::kNuisXSecSpecFunc));
+    fparm->SetInitValue(conv::kNuisXSecPiLessDelta,      skexp->GetNuXSec()->CurrentValue(conv::kNuisXSecPiLessDelta));
+    fparm->SetInitValue(conv::kNuisXSecBindE,            skexp->GetNuXSec()->CurrentValue(conv::kNuisXSecBindE));
+    fparm->SetInitValue(conv::kNuisSuperkEff1RmuCCnonQE, skexp->GetSuperkDetector()->CurrentValue(conv::kNuisSuperkEff1RmuCCnonQE));
+    fparm->SetInitValue(conv::kNuisSuperkEff1RmuNC,      skexp->GetSuperkDetector()->CurrentValue(conv::kNuisSuperkEff1RmuNC));
+    fparm->SetInitValue(conv::kNuisSuperkEnergyScale,    skexp->GetSuperkDetector()->CurrentValue(conv::kNuisSuperkEnergyScale));
+    fparm->SetInitValue(conv::kNuisBANFFMAQE,            skexp->GetBANFF()->CurrentValue(conv::kNuisBANFFMAQE));
+    fparm->SetInitValue(conv::kNuisBANFFCCQEE0,          skexp->GetBANFF()->CurrentValue(conv::kNuisBANFFCCQEE0));
      
-       // Re-seed fitter (reset current values to specified init values)
-       fparm->ResetCurrToInitValues();
+    // Re-seed fitter (reset current values to specified init values)
+    fparm->ResetCurrToInitValues();
 
-       // Get fitter
-       FitInputs * fit_inputs = new FitInputs(skobs,skexp,fparm);
-       FitterABC * fitter = new Superk1RmuErecoFitter(fit_inputs,fit_option);
+    // Get fitter
+    FitInputs * fit_inputs = new FitInputs(skobs,skexp,fparm);
+    FitterABC * fitter = new Superk1RmuErecoFitter(fit_inputs,fit_option);
        
-       // Do the fit
-       fitter->DoTheFit();
-       int fitstatus = fitter->FitStatusCode();
+    //Make sure we're getting the correct chisq (i.e. the 5 bin one)
+    fit_inputs->SetChisqDefinition(true);
 
-       // Get best-fit values (if this seed has found a better minimum)
-       if(fit_inputs->BestFitChisquare() < bestfit_chisq_full) {
-	 bestfit_chisq_full = fit_inputs->BestFitChisquare();
-	 fit_inputs->SetChisqDefinition(true);
-	 bestfit_chisq = fit_inputs->BestFitChisquare();
-	 fit_inputs->SetChisqDefinition(false);
-	 bestfit_mixing23 = fparm->BestFitValue(t2kana::conv::kPhypMixing23);
-	 bestfit_dm23sq   = fparm->BestFitValue(t2kana::conv::kPhypDm23sq);
-	 // Print-out best-fit params
-	 fparm->ShowOnlyBestFitValuesInNextPrint();
-	 cout << "- Best-fit oscillation params (below) yield chisq = " << bestfit_chisq 
-	      << *fparm;
-       }
-       //cleanup
-       delete fit_inputs;
-       delete fitter;
-     }//ifit
-     delete skobs;
+    // Do the fit
+    fitter->DoTheFit();
+    int fitstatus = fitter->FitStatusCode();
 
-     //now we have the bestfit, we'll fit lots of toys (seeding them a few times each) and find the chisq of each
-     fparm->SetInitValue(conv::kPhypMixing23, bestfit_mixing23);
-     fparm->SetInitValue(conv::kPhypDm23sq,   bestfit_dm23sq);
-     //book histogram
-     TH1D * hchisq = new TH1D(Form("chisq_%d",iexperiment), Form("chisq_%d",iexperiment), 100000, 0, 1000);
-     //counter for how many chisqs are greater than the data chisq
-     int dataset_counter = 0;
-     for(int itoy = 0; itoy < ntoys; itoy++) {
-       //make some mock data, with statistical & all systematics fluctuations
-       skexp->TweakAllSystematics();
-       SuperkObservation * skobs = new SuperkObservation;
-       skobs->CreateMockData(*skexp, PhysHypothesis(*fparm), true);
-       //now do the fit, using the thrown values of the systematics as seeds
-       fparm->SetInitValue(conv::kNuisXSecSpecFunc,         skexp->GetNuXSec()->CurrentValue(conv::kNuisXSecSpecFunc));
-       fparm->SetInitValue(conv::kNuisXSecPiLessDelta,      skexp->GetNuXSec()->CurrentValue(conv::kNuisXSecPiLessDelta));
-       fparm->SetInitValue(conv::kNuisXSecBindE,            skexp->GetNuXSec()->CurrentValue(conv::kNuisXSecBindE));
-       fparm->SetInitValue(conv::kNuisSuperkEff1RmuCCnonQE, skexp->GetSuperkDetector()->CurrentValue(conv::kNuisSuperkEff1RmuCCnonQE));
-       fparm->SetInitValue(conv::kNuisSuperkEff1RmuNC,      skexp->GetSuperkDetector()->CurrentValue(conv::kNuisSuperkEff1RmuNC));
-       //fparm->SetInitValue(conv::kNuisSuperkEnergyScale,    skexp->GetSuperkDetector()->CurrentValue(conv::kNuisSuperkEnergyScale));
-       fparm->SetInitValue(conv::kNuisBANFFMAQE,            skexp->GetBANFF()->CurrentValue(conv::kNuisBANFFMAQE));
-       fparm->SetInitValue(conv::kNuisBANFFCCQEE0,          skexp->GetBANFF()->CurrentValue(conv::kNuisBANFFCCQEE0));
-     
-       // Re-seed fitter (reset current values to specified init values)
-       fparm->ResetCurrToInitValues();
-
-       // Get fitter
-       FitInputs * fit_inputs = new FitInputs(skobs,skexp,fparm);
-       FitterABC * fitter = new Superk1RmuErecoFitter(fit_inputs,fit_option);
+    double toy_chisq = fit_inputs->BestFitChisquare();
        
-       //Make sure we're getting the correct chisq (i.e. the 5 bin one)
-       fit_inputs->SetChisqDefinition(true);
+    //cleanup
+    delete fit_inputs;
+    delete fitter;
+    delete skobs;
 
-       // Do the fit
-       fitter->DoTheFit();
-       int fitstatus = fitter->FitStatusCode();
+    //fill the histogram & increment counter (if required)
+    hchisq->Fill(toy_chisq);
+    if(toy_chisq > bestfit_chisq)
+      dataset_counter++;
+  }//itoy
 
-       double toy_chisq = fit_inputs->BestFitChisquare();
-       
-       //cleanup
-       delete fit_inputs;
-       delete fitter;
-       delete skobs;
+  //get the dataset probability
+  double dataset_prob = double(dataset_counter) / double(ntoys);
+  cout << "*** Data set probability is " << dataset_prob << endl;
+  cout << "*** Data chisq is " << bestfit_chisq << endl;
 
-       //fill the histogram & increment counter (if required)
-       hchisq->Fill(toy_chisq);
-       if(toy_chisq > bestfit_chisq)
-	 dataset_counter++;
-     }//itoy
+  // File, to save things to
+  TFile    f       (Form("goodness-of-fit-%s-run_%d.root", tag, run), "recreate");
+  ofstream outfile (Form("goodness-of-fit-%s-run_%d.txt",  tag, run), ios_base::trunc);
 
-     // File, to save things to
-     TFile f(Form("goodness-of-fit-%s-run_%d-expt_%d.root",
-		  tag, run, iexperiment), "recreate");
-     ofstream outfile (Form("goodness-of-fit-%s-run_%d-expt_%d.txt",
-		  tag, run, iexperiment), ios_base::trunc);
+  //save the histogram
+  hchisq->Write();
+  TCanvas *c = new TCanvas();
+  hchisq->Draw();
+  TLine l(bestfit_chisq, 0, bestfit_chisq, 200);
+  l.SetLineColor(kRed);
+  l.Draw();
+  l.Write(Form("line_%d",run));
+  c->SaveAs(Form("chisq_%d.pdf",run));
+  delete hchisq;
+  delete c;
+  TVectorD v(2);
+  v[0] = dataset_prob;
+  v[1] = bestfit_chisq;
+  v.Write("goodness_params");
 
-     //save and close the histogram
-     hchisq->Write();
-     TCanvas *c = new TCanvas();
-     hchisq->Draw();
-     TLine l(bestfit_chisq, 0, bestfit_chisq, 200);
-     l.SetLineColor(kRed);
-     l.Draw();
-     l.Write(Form("line_%d",iexperiment));
-     c->SaveAs(Form("chisq_%d.pdf",iexperiment));
-     delete hchisq;
-     delete c;
-     //get the dataset probability
-     double dataset_prob = double(dataset_counter) / double(ntoys);
-     cout << "*** Data set probability is " << dataset_prob << endl;
-     cout << "*** Data chisq is " << bestfit_chisq << endl;
-     TString outstring(Form("%d\t%f\t%f\n",iexperiment, dataset_prob, bestfit_chisq));
-     outfile.write (outstring.Data(), outstring.Sizeof());
-     //close
-     outfile.close();
-     f.Close();
-  }//iexperiment
+  //save the important numbers
+  TString outstring(Form("%d\t%f\t%f\n",run, dataset_prob, bestfit_chisq));
+  outfile.write (outstring.Data(), outstring.Sizeof());
 
+  //close
+  outfile.close();
+  f.Close();
 
 }

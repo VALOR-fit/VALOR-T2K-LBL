@@ -240,3 +240,21 @@ root2k -l -b -q '$T2KOSCANA/macros/fit/toymc/analyse_output.C("fakedata-run_3-ex
 root2k -l -b -q '$T2KOSCANA/macros/fit/toymc/analyse_output.C("fakedata-run_4-expts_4_4.root",4,"./","analysis_configuration.xml",7.0,false)';
 root2k -l -b -q '$T2KOSCANA/macros/fit/toymc/analyse_output.C("fakedata-run_5-expts_5_5.root",5,"./","analysis_configuration.xml",7.0,false)';
 cd ..;
+
+
+
+
+#goodness of fit
+
+$T2KOSCANA/production/submit_goodness_of_fit_job --resource RAL --tag 123good28 --run 3 --cpu-time 48:00:00 --job-dir $PWD --softw-dir $T2KOSCANA --ntoys 1000 --fitresults-file $T2KOSCANA/2012results/DATA/bigger_surface/28/fitresults_3.root
+
+$T2KOSCANA/production/submit_goodness_of_fit_job --resource RAL --tag 12good28 --rum 4 --cpu-time 48:00:00 --job-dir $PWD --softw-dir $T2KOSCANA --ntoys 1000 --config-file analysis_configuration_2012a_run1+2_neut_finalBANFF_coarseErecoSplines_6binFSI+SI_MAQE.xml --fitresults-file $T2KOSCANA/2012results/DATA/bigger_surface/28/fitresults_4.root
+
+$T2KOSCANA/production/submit_goodness_of_fit_job --resource RAL --tag 3good28 --run 5 --cpu-time 48:00:00 --job-dir $PWD --softw-dir $T2KOSCANA --ntoys 1000 --config-file analysis_configuration_2012a_run3_neut_finalBANFF_coarseErecoSplines_6binFSI+SI_MAQE.xml --fitresults-file $T2KOSCANA/2012results/DATA/bigger_surface/28/fitresults_5.root
+
+$T2KOSCANA/production/submit_goodness_of_fit_job --resource RAL --tag f0good28 --run 0 --cpu-time 48:00:00 --job-dir $PWD --softw-dir $T2KOSCANA --ntoys 1000 --fitresults-file $T2KOSCANA/2012results/DATA/bigger_surface/FAKE28/fitresults_0.root
+$T2KOSCANA/production/submit_goodness_of_fit_job --resource RAL --tag f1good28 --run 1 --cpu-time 48:00:00 --job-dir $PWD --softw-dir $T2KOSCANA --ntoys 1000 --fitresults-file $T2KOSCANA/2012results/DATA/bigger_surface/FAKE28/fitresults_1.root
+$T2KOSCANA/production/submit_goodness_of_fit_job --resource RAL --tag f2good28 --run 2 --cpu-time 48:00:00 --job-dir $PWD --softw-dir $T2KOSCANA --ntoys 1000 --fitresults-file $T2KOSCANA/2012results/DATA/bigger_surface/FAKE28/fitresults_2.root
+$T2KOSCANA/production/submit_goodness_of_fit_job --resource RAL --tag f3good28 --run 3 --cpu-time 48:00:00 --job-dir $PWD --softw-dir $T2KOSCANA --ntoys 1000 --fitresults-file $T2KOSCANA/2012results/DATA/bigger_surface/FAKE28/fitresults_3.root
+$T2KOSCANA/production/submit_goodness_of_fit_job --resource RAL --tag f4good28 --run 4 --cpu-time 48:00:00 --job-dir $PWD --softw-dir $T2KOSCANA --ntoys 1000 --fitresults-file $T2KOSCANA/2012results/DATA/bigger_surface/FAKE28/fitresults_4.root
+$T2KOSCANA/production/submit_goodness_of_fit_job --resource RAL --tag f5good28 --run 5 --cpu-time 48:00:00 --job-dir $PWD --softw-dir $T2KOSCANA --ntoys 1000 --fitresults-file $T2KOSCANA/2012results/DATA/bigger_surface/FAKE28/fitresults_5.root
