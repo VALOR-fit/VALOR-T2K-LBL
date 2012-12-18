@@ -11,16 +11,13 @@ $T2KOSCANA/production/submit_feldman_cousins_fitting_job_numu --resource RAL --n
 
 
 #check how many fits have been done at each point
-root2k -l '$T2KOSCANA/macros/contour/fc/numu/test_feldman_cousins_nfits.C("$T2KOSCANA/2012results/FC/2+8statsyst")'
+root2k -l '$T2KOSCANA/macros/contour/fc/numu/test_feldman_cousins_nfits.C("$T2KOSCANA/2012results/FC/rootfiles")'
 
 #make a FC surface
-root2k -l -b -q '$T2KOSCANA/macros/contour/fc/numu/make_feldman_cousins_deltachisqcrit_surface.C("$T2KOSCANA/2012results/FC/2+8statsyst","delta_chisq_critical.root",75,9999,8,25)'
+root2k -l -b -q '$T2KOSCANA/macros/contour/fc/numu/make_feldman_cousins_deltachisqcrit_surface.C("$T2KOSCANA/2012results/FC/rootfiles","delta_chisq_critical.root",75,9999,8,25)'
 
 #plot a contour (run1-3, with 90% stat syst underlaid)
-root2k -l '$T2KOSCANA/macros/contour/fc/numu/plot_feldman_cousins_contour.C("delta_chisq_critical.root","delta_chisq_critical.root","delta_chisq_critical.root","$T2KOSCANA/2012results/TRUNK/2012_12_07/data_28/fitresults_3.root","hdchisq",0,true,false,false,"90statsyst")'
-
-
-
+root2k -l '$T2KOSCANA/macros/contour/fc/numu/plot_feldman_cousins_contour.C("delta_chisq_critical.root","delta_chisq_critical.root","delta_chisq_critical.root","$T2KOSCANA/2012results/DATA/bigger_surface/28/fitresults_3.root","hdchisq",0,true,false,false,"90statsyst")'
 
 
 
@@ -258,3 +255,12 @@ $T2KOSCANA/production/submit_goodness_of_fit_job --resource RAL --tag f2good28 -
 $T2KOSCANA/production/submit_goodness_of_fit_job --resource RAL --tag f3good28 --run 3 --cpu-time 48:00:00 --job-dir $PWD --softw-dir $T2KOSCANA --ntoys 1000 --fitresults-file $T2KOSCANA/2012results/DATA/bigger_surface/FAKE28/fitresults_3.root
 $T2KOSCANA/production/submit_goodness_of_fit_job --resource RAL --tag f4good28 --run 4 --cpu-time 48:00:00 --job-dir $PWD --softw-dir $T2KOSCANA --ntoys 1000 --fitresults-file $T2KOSCANA/2012results/DATA/bigger_surface/FAKE28/fitresults_4.root
 $T2KOSCANA/production/submit_goodness_of_fit_job --resource RAL --tag f5good28 --run 5 --cpu-time 48:00:00 --job-dir $PWD --softw-dir $T2KOSCANA --ntoys 1000 --fitresults-file $T2KOSCANA/2012results/DATA/bigger_surface/FAKE28/fitresults_5.root
+
+
+
+
+#chisq of data at minos 2011 best fit
+
+root2k -l -b -q '$T2KOSCANA/macros/fit/stat/print_dataset_chisq.C(-99,-99,1.0,-99,-99,0.00232,"nuosc3f_numudisapp_fix4+nuisanceselection",3,"inputs/data.xml","analysis_configuration.xml")'
+root2k -l -b -q '$T2KOSCANA/macros/fit/stat/print_dataset_chisq.C(-99,-99,1.0,-99,-99,0.00232,"nuosc3f_numudisapp_fix4+nuisanceselection",4,"inputs/data.xml","analysis_configuration_2012a_run1+2_neut_finalBANFF_coarseErecoSplines_6binFSI+SI_MAQE.xml")'
+root2k -l -b -q '$T2KOSCANA/macros/fit/stat/print_dataset_chisq.C(-99,-99,1.0,-99,-99,0.00232,"nuosc3f_numudisapp_fix4+nuisanceselection",5,"inputs/data.xml","analysis_configuration_2012a_run3_neut_finalBANFF_coarseErecoSplines_6binFSI+SI_MAQE.xml")'
