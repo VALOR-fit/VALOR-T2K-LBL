@@ -1,3 +1,4 @@
+/*
 #include <TXMLEngine.h>
 #include <TH1D.h>
 #include <TH2D.h>
@@ -16,9 +17,11 @@
 #include <iomanip.h>
 #include <stdio.h>
 #include <math.h>
+*/
 
 void mock_data_fit_pulls(
      const char * filenames,                                              /* add these filenames to the tree */
+     const char * tag,                                                    /* tag for the output files */
      int          fit_systematics_mode = 1,                               /* what was fit for? 0: osc only. 1: osc+selected nuisance. 2: osc+all nuisance */
      int          err_mode             = 1,                               /* which errors to use for pulls. 1: migrad, 2 hesse, 3 minos*/
      int          fittermode           = 0,                               /* which fitter has been used? 0: minuit. 1: minuit2 */
@@ -1393,7 +1396,7 @@ void mock_data_fit_pulls(
   h_dm23sq->GetXaxis()->SetRangeUser(0.0018,0.0030);
   cosc->cd(1); h_mixing23->Draw();
   cosc->cd(2); h_dm23sq->Draw();
-  cosc->SaveAs(Form("%f_osc.pdf", input_mixing23));
+  cosc->SaveAs(Form("%s_%f_osc.pdf", tag, input_mixing23));
 
   if(fit_systematics_mode >= 1) {
     TCanvas *cbanff = new TCanvas(); cbanff->Divide(1,2);
@@ -1409,10 +1412,10 @@ void mock_data_fit_pulls(
     cskdet->cd(1); h_skdet_ccnqe->Draw();
     cskdet->cd(2); h_skdet_nc->Draw();
     
-    cbanff->SaveAs(Form("%f_banff.pdf", input_mixing23));
-    cxsec->SaveAs(Form("%f_xsec.pdf", input_mixing23));
-    cextra->SaveAs(Form("%f_extra.pdf", input_mixing23));
-    cskdet->SaveAs(Form("%f_skdet.pdf", input_mixing23));
+    cbanff->SaveAs(Form("%s_%f_banff.pdf", tag, input_mixing23));
+    cxsec->SaveAs(Form("%s_%f_xsec.pdf", tag, input_mixing23));
+    cextra->SaveAs(Form("%s_%f_extra.pdf", tag, input_mixing23));
+    cskdet->SaveAs(Form("%s_%f_skdet.pdf", tag, input_mixing23));
     /*
     new TCanvas(); h_banff_00->Draw();
     new TCanvas(); h_banff_01->Draw();
@@ -1494,7 +1497,7 @@ void mock_data_fit_pulls(
     sigmasummary->SetBinContent(ifit, fit->GetParameter(2)); sigmasummary->SetBinError(ifit, fit->GetParError(2));
     ifit++;
   }
-  coscpull->SaveAs(Form("%f_osc_pull.pdf", input_mixing23));
+  coscpull->SaveAs(Form("%s-%f_osc_pull.pdf", tag, input_mixing23));
 
   TCanvas *coscerr = new TCanvas(); coscerr->Divide(1,2);
   coscerr->cd(1); herr_mixing23->Draw();
@@ -1571,10 +1574,10 @@ void mock_data_fit_pulls(
       ifit++;
     }
 
-    cbanff->SaveAs(Form("%f_banff_pull.pdf", input_mixing23));
-    cxsec->SaveAs(Form("%f_xsec_pull.pdf", input_mixing23));
-    cextra->SaveAs(Form("%f_extra_pull.pdf", input_mixing23));
-    cskdet->SaveAs(Form("%f_skdet_pull.pdf", input_mixing23));
+    cbanff->SaveAs(Form("%s_%f_banff_pull.pdf", tag, input_mixing23));
+    cxsec->SaveAs(Form("%s_%f_xsec_pull.pdf", tag, input_mixing23));
+    cextra->SaveAs(Form("%s_%f_extra_pull.pdf", tag, input_mixing23));
+    cskdet->SaveAs(Form("%s_%f_skdet_pull.pdf", tag, input_mixing23));
 
     //altpull
     ifit++;
@@ -1647,10 +1650,10 @@ void mock_data_fit_pulls(
       ifit++;
     }
 
-    caltbanff->SaveAs(Form("%f_banff_altpull.pdf", input_mixing23));
-    caltxsec->SaveAs(Form("%f_xsec_altpull.pdf", input_mixing23));
-    caltextra->SaveAs(Form("%f_extra_altpull.pdf", input_mixing23));
-    caltskdet->SaveAs(Form("%f_skdet_altpull.pdf", input_mixing23));
+    caltbanff->SaveAs(Form("%s_%f_banff_altpull.pdf", tag, input_mixing23));
+    caltxsec->SaveAs(Form("%s_%f_xsec_altpull.pdf", tag, input_mixing23));
+    caltextra->SaveAs(Form("%s_%f_extra_altpull.pdf", tag, input_mixing23));
+    caltskdet->SaveAs(Form("%s_%f_skdet_altpull.pdf", tag, input_mixing23));
 
     /*
     new TCanvas(); hpull_banff_00->Draw(); hpull_banff_00->Fit("gaus"); fit = hpull_banff_00->GetFunction("gaus");
@@ -1796,7 +1799,251 @@ void mock_data_fit_pulls(
     }
     csummary->cd(1); meansummary->Draw();
     csummary->cd(2); sigmasummary->Draw();
-    csummary->SaveAs(Form("%f_summary_pull.pdf", input_mixing23));
+    csummary->SaveAs(Form("%s_%f_summary_pull.pdf", tag, input_mixing23));
     gStyle->SetOptStat(1);
   }
+
+
+  //some more plots (better versions, for the tech note)
+
+  TCanvas * c = new TCanvas();
+  h_mixing23->Draw(); c->SaveAs(Form("%s_%f_mixing23.eps", tag, input_mixing23));
+  h_dm23sq->Draw(); c->SaveAs(Form("%s_%f_dm23sq.eps", tag, input_mixing23));
+
+  hpull_mixing23->Draw(); c->SaveAs(Form("%s_%f_mixing23_pull.eps", tag, input_mixing23));
+  hpull_dm23sq->Draw(); c->SaveAs(Form("%s_%f_dm23sq_pull.eps", tag, input_mixing23));
+
+  if(fit_systematics_mode == 1) {
+    TCanvas * csum = new TCanvas();
+    sigmasummary->SetLineColor(kRed);
+    meansummary->GetXaxis()->SetRangeUser(0,10);
+    sigmasummary->GetXaxis()->SetRangeUser(0,10);
+    meansummary->GetYaxis()->SetRangeUser(0,5);
+    meansummary->Draw();
+    sigmasummary->Draw("same");
+    csum->SaveAs(Form("%s_%f_summary_altpull.eps", tag, input_mixing23));
+    meansummary->GetXaxis()->SetRangeUser(11,20);
+    sigmasummary->GetXaxis()->SetRangeUser(11,20);
+    meansummary->GetYaxis()->SetRangeUser(0,5);
+    meansummary->Draw();
+    sigmasummary->Draw("same");
+    csum->SaveAs(Form("%s_%f_summary_pull.eps", tag, input_mixing23));
+  }
+  else if(fit_systematics_mode == 2) {
+    TCanvas * csum = new TCanvas();
+    sigmasummary->SetLineColor(kRed);
+    meansummary->GetXaxis()->SetRangeUser(0,50);
+    sigmasummary->GetXaxis()->SetRangeUser(49,100);
+    meansummary->GetYaxis()->SetRangeUser(0,5);
+    meansummary->Draw();
+    sigmasummary->Draw("same");
+    csum->SaveAs(Form("%s_%f_summary_altpull.eps", tag, input_mixing23));
+    meansummary->GetXaxis()->SetRangeUser(11,20);
+    sigmasummary->GetXaxis()->SetRangeUser(11,20);
+    meansummary->GetYaxis()->SetRangeUser(0,5);
+    meansummary->Draw();
+    sigmasummary->Draw("same");
+    csum->SaveAs(Form("%s_%f_summary_pull.eps", tag, input_mixing23));
+  }
+
+  if(fit_systematics_mode == 1) {
+    TCanvas * cimp = new TCanvas();
+    cimp->Divide(2,4);
+
+    cimp->cd(1); h_skdet_energyscale->Draw();
+    cimp->cd(2); h_skdet_ccnqe->Draw();
+    cimp->cd(3); h_skdet_nc->Draw();
+    cimp->cd(4); h_banff_maqe->Draw();
+    cimp->cd(5); h_banff_ccqeE0->Draw();
+    cimp->cd(6); h_xsec_sf->Draw();
+    cimp->cd(7); h_xsec_binde->Draw();
+    cimp->cd(8); h_xsec_pilessdelta->Draw();
+    cimp->SaveAs(Form("%s_%f_important.eps", tag, input_mixing23));
+
+    cimp->cd(1); hpull_skdet_energyscale->Draw();
+    cimp->cd(2); hpull_skdet_ccnqe->Draw();
+    cimp->cd(3); hpull_skdet_nc->Draw();
+    cimp->cd(4); hpull_banff_maqe->Draw();
+    cimp->cd(5); hpull_banff_ccqeE0->Draw();
+    cimp->cd(6); hpull_xsec_sf->Draw();
+    cimp->cd(7); hpull_xsec_binde->Draw();
+    cimp->cd(8); hpull_xsec_pilessdelta->Draw();
+    cimp->SaveAs(Form("%s_%f_important_pull.eps", tag, input_mixing23));
+
+    cimp->cd(1); haltpull_skdet_energyscale->Draw();
+    cimp->cd(2); haltpull_skdet_ccnqe->Draw();
+    cimp->cd(3); haltpull_skdet_nc->Draw();
+    cimp->cd(4); haltpull_banff_maqe->Draw();
+    cimp->cd(5); haltpull_banff_ccqeE0->Draw();
+    cimp->cd(6); haltpull_xsec_sf->Draw();
+    cimp->cd(7); haltpull_xsec_binde->Draw();
+    cimp->cd(8); haltpull_xsec_pilessdelta->Draw();
+    cimp->SaveAs(Form("%s_%f_important_altpull.eps", tag, input_mixing23));
+  }
+  else if(fit_systematics_mode == 2) {
+    TCanvas * cban = new TCanvas();
+    cban->Divide(4,6);
+    TCanvas * coth = new TCanvas();
+    coth->Divide(4,6);
+
+    cban->cd(1); h_banff_00->Draw();
+    cban->cd(2); h_banff_01->Draw();
+    cban->cd(3); h_banff_02->Draw();
+    cban->cd(4); h_banff_03->Draw();
+    cban->cd(5); h_banff_04->Draw();
+    cban->cd(6); h_banff_05->Draw();
+    cban->cd(7); h_banff_06->Draw();
+    cban->cd(8); h_banff_07->Draw();
+    cban->cd(9); h_banff_08->Draw();
+    cban->cd(10); h_banff_09->Draw();
+    cban->cd(11); h_banff_10->Draw();
+    cban->cd(12); h_banff_11->Draw();
+    cban->cd(13); h_banff_12->Draw();
+    cban->cd(14); h_banff_13->Draw();
+    cban->cd(15); h_banff_14->Draw();
+    cban->cd(16); h_banff_15->Draw();
+    cban->cd(17); h_banff_maqe->Draw();
+    cban->cd(18); h_banff_mares->Draw();
+    cban->cd(19); h_banff_ccqeE0->Draw();
+    cban->cd(20); h_banff_ccqeE1->Draw();
+    cban->cd(21); h_banff_ccqeE2->Draw();
+    cban->cd(22); h_banff_cc1piE0->Draw();
+    cban->cd(23); h_banff_cc1piE1->Draw();
+    cban->cd(24); h_skdet_energyscale->Draw();
+    cban->SaveAs(Form("%s_%f_banff.eps", tag, input_mixing23));
+
+    coth->cd(1); h_xsec_pf->Draw();
+    coth->cd(2); h_xsec_sf->Draw();
+    coth->cd(3); h_xsec_wshape->Draw();
+    coth->cd(4); h_xsec_ccothshape->Draw();
+    coth->cd(5); h_xsec_cc1pishape->Draw();
+    coth->cd(6); h_xsec_pilessdelta->Draw();
+    coth->cd(7); h_xsec_binde->Draw();
+    coth->cd(8); h_xsec_normcccoh->Draw();
+    coth->cd(9); h_xsec_normnc1piC->Draw();
+    coth->cd(10); h_xsec_normncoth->Draw();
+    coth->cd(11); h_xsec_normnuetonumu->Draw();
+    coth->cd(12); h_skdet_ccqerc0->Draw();
+    coth->cd(13); h_skdet_ccqerc1->Draw();
+    coth->cd(14); h_skdet_ccqerc2->Draw();
+    coth->cd(15); h_skdet_ccqeoth->Draw();
+    coth->cd(16); h_skdet_ccnqe->Draw();
+    coth->cd(17); h_skdet_nc->Draw();
+    coth->cd(18); h_skdet_nuecc->Draw();
+    coth->cd(19); h_fsi_000->Draw();
+    coth->cd(20); h_fsi_001->Draw();
+    coth->cd(21); h_fsi_002->Draw();
+    coth->cd(22); h_fsi_003->Draw();
+    coth->cd(23); h_fsi_004->Draw();
+    coth->cd(24); h_fsi_005->Draw();
+    cban->SaveAs(Form("%s_%f_other.eps", tag, input_mixing23));
+
+
+    cban->cd(1); hpull_banff_00->Draw();
+    cban->cd(2); hpull_banff_01->Draw();
+    cban->cd(3); hpull_banff_02->Draw();
+    cban->cd(4); hpull_banff_03->Draw();
+    cban->cd(5); hpull_banff_04->Draw();
+    cban->cd(6); hpull_banff_05->Draw();
+    cban->cd(7); hpull_banff_06->Draw();
+    cban->cd(8); hpull_banff_07->Draw();
+    cban->cd(9); hpull_banff_08->Draw();
+    cban->cd(10); hpull_banff_09->Draw();
+    cban->cd(11); hpull_banff_10->Draw();
+    cban->cd(12); hpull_banff_11->Draw();
+    cban->cd(13); hpull_banff_12->Draw();
+    cban->cd(14); hpull_banff_13->Draw();
+    cban->cd(15); hpull_banff_14->Draw();
+    cban->cd(16); hpull_banff_15->Draw();
+    cban->cd(17); hpull_banff_maqe->Draw();
+    cban->cd(18); hpull_banff_mares->Draw();
+    cban->cd(19); hpull_banff_ccqeE0->Draw();
+    cban->cd(20); hpull_banff_ccqeE1->Draw();
+    cban->cd(21); hpull_banff_ccqeE2->Draw();
+    cban->cd(22); hpull_banff_cc1piE0->Draw();
+    cban->cd(23); hpull_banff_cc1piE1->Draw();
+    cban->cd(24); hpull_skdet_energyscale->Draw();
+    cban->SaveAs(Form("%s_%f_banff_pull.eps", tag, input_mixing23));
+
+    coth->cd(1); hpull_xsec_pf->Draw();
+    coth->cd(2); hpull_xsec_sf->Draw();
+    coth->cd(3); hpull_xsec_wshape->Draw();
+    coth->cd(4); hpull_xsec_ccothshape->Draw();
+    coth->cd(5); hpull_xsec_cc1pishape->Draw();
+    coth->cd(6); hpull_xsec_pilessdelta->Draw();
+    coth->cd(7); hpull_xsec_binde->Draw();
+    coth->cd(8); hpull_xsec_normcccoh->Draw();
+    coth->cd(9); hpull_xsec_normnc1piC->Draw();
+    coth->cd(10); hpull_xsec_normncoth->Draw();
+    coth->cd(11); hpull_xsec_normnuetonumu->Draw();
+    coth->cd(12); hpull_skdet_ccqerc0->Draw();
+    coth->cd(13); hpull_skdet_ccqerc1->Draw();
+    coth->cd(14); hpull_skdet_ccqerc2->Draw();
+    coth->cd(15); hpull_skdet_ccqeoth->Draw();
+    coth->cd(16); hpull_skdet_ccnqe->Draw();
+    coth->cd(17); hpull_skdet_nc->Draw();
+    coth->cd(18); hpull_skdet_nuecc->Draw();
+    coth->cd(19); hpull_fsi_000->Draw();
+    coth->cd(20); hpull_fsi_001->Draw();
+    coth->cd(21); hpull_fsi_002->Draw();
+    coth->cd(22); hpull_fsi_003->Draw();
+    coth->cd(23); hpull_fsi_004->Draw();
+    coth->cd(24); hpull_fsi_005->Draw();
+    cban->SaveAs(Form("%s_%f_other_pull.eps", tag, input_mixing23));
+
+
+    cban->cd(1); haltpull_banff_00->Draw();
+    cban->cd(2); haltpull_banff_01->Draw();
+    cban->cd(3); haltpull_banff_02->Draw();
+    cban->cd(4); haltpull_banff_03->Draw();
+    cban->cd(5); haltpull_banff_04->Draw();
+    cban->cd(6); haltpull_banff_05->Draw();
+    cban->cd(7); haltpull_banff_06->Draw();
+    cban->cd(8); haltpull_banff_07->Draw();
+    cban->cd(9); haltpull_banff_08->Draw();
+    cban->cd(10); haltpull_banff_09->Draw();
+    cban->cd(11); haltpull_banff_10->Draw();
+    cban->cd(12); haltpull_banff_11->Draw();
+    cban->cd(13); haltpull_banff_12->Draw();
+    cban->cd(14); haltpull_banff_13->Draw();
+    cban->cd(15); haltpull_banff_14->Draw();
+    cban->cd(16); haltpull_banff_15->Draw();
+    cban->cd(17); haltpull_banff_maqe->Draw();
+    cban->cd(18); haltpull_banff_mares->Draw();
+    cban->cd(19); haltpull_banff_ccqeE0->Draw();
+    cban->cd(20); haltpull_banff_ccqeE1->Draw();
+    cban->cd(21); haltpull_banff_ccqeE2->Draw();
+    cban->cd(22); haltpull_banff_cc1piE0->Draw();
+    cban->cd(23); haltpull_banff_cc1piE1->Draw();
+    cban->cd(24); haltpull_skdet_energyscale->Draw();
+    cban->SaveAs(Form("%s_%f_banff_altpull.eps", tag, input_mixing23));
+
+    coth->cd(1); haltpull_xsec_pf->Draw();
+    coth->cd(2); haltpull_xsec_sf->Draw();
+    coth->cd(3); haltpull_xsec_wshape->Draw();
+    coth->cd(4); haltpull_xsec_ccothshape->Draw();
+    coth->cd(5); haltpull_xsec_cc1pishape->Draw();
+    coth->cd(6); haltpull_xsec_pilessdelta->Draw();
+    coth->cd(7); haltpull_xsec_binde->Draw();
+    coth->cd(8); haltpull_xsec_normcccoh->Draw();
+    coth->cd(9); haltpull_xsec_normnc1piC->Draw();
+    coth->cd(10); haltpull_xsec_normncoth->Draw();
+    coth->cd(11); haltpull_xsec_normnuetonumu->Draw();
+    coth->cd(12); haltpull_skdet_ccqerc0->Draw();
+    coth->cd(13); haltpull_skdet_ccqerc1->Draw();
+    coth->cd(14); haltpull_skdet_ccqerc2->Draw();
+    coth->cd(15); haltpull_skdet_ccqeoth->Draw();
+    coth->cd(16); haltpull_skdet_ccnqe->Draw();
+    coth->cd(17); haltpull_skdet_nc->Draw();
+    coth->cd(18); haltpull_skdet_nuecc->Draw();
+    coth->cd(19); haltpull_fsi_000->Draw();
+    coth->cd(20); haltpull_fsi_001->Draw();
+    coth->cd(21); haltpull_fsi_002->Draw();
+    coth->cd(22); haltpull_fsi_003->Draw();
+    coth->cd(23); haltpull_fsi_004->Draw();
+    coth->cd(24); haltpull_fsi_005->Draw();
+    cban->SaveAs(Form("%s_%f_other_altpull.eps", tag, input_mixing23));
+
+  }
+
 }
