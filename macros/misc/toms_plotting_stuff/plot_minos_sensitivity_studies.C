@@ -33,10 +33,10 @@ void plot_minos_sensitivity_studies() {
   f[7] = new TFile("minos_awayfrombest_28/7/sensitivity.root");
   f[8] = new TFile("minos_28/sensitivity.root");
   f[9] = new TFile("minos_awayfrombest_28/9/sensitivity.root");
-  //f[10] = new TFile("minos_awayfrombest_28/10/sensitivity.root");
-  /*f[11] = new TFile("minos_awayfrombest_28/11/sensitivity.root");
+  f[10] = new TFile("minos_awayfrombest_28/10/sensitivity.root");
+  f[11] = new TFile("minos_awayfrombest_28/11/sensitivity.root");
   f[12] = new TFile("minos_awayfrombest_28/12/sensitivity.root");
-  f[13] = new TFile("minos_awayfrombest_28/13/sensitivity.root");
+  /*f[13] = new TFile("minos_awayfrombest_28/13/sensitivity.root");
   f[14] = new TFile("minos_awayfrombest_28/14/sensitivity.root");
   f[15] = new TFile("minos_awayfrombest_28/15/sensitivity.root");
   */
@@ -61,7 +61,7 @@ void plot_minos_sensitivity_studies() {
 
   // param space
   // dm23sq, mixing23 range and step
-  double mixing23_min   = 0.8;
+  double mixing23_min   = 0.70;
   double mixing23_max   = 1.;
   double mixing23_step  = 0.005;
   double dm23sq_min     = 1.0E-3;

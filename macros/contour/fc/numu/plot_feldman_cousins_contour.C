@@ -70,7 +70,8 @@ void plot_feldman_cousins_contour(
   double dmsq_frac_syst_err_bestfit=-1.,
   double sinsq2theta_frac_syst_err_bestfit=-1.,
   const char * outfile = "fc_contours.root",
-  bool hack_away_the_high_dm32sq = false /* FC surface is too small in dm32sq. use this to get rid of the awful border along the top */
+  bool hack_away_the_high_dm32sq = false, /* FC surface is too small in dm32sq. use this to get rid of the awful border along the top */
+  bool save_plots = true
 )
 {
   gROOT->Reset();
@@ -78,13 +79,13 @@ void plot_feldman_cousins_contour(
   //
   // Define dm23sq, mixing23 range and step  
   //
-  double mixing23_min   = 0.75;
+  double mixing23_min   = 0.9;
 //double mixing23_min   = 0.0;
   double mixing23_max   = 1.0;
   double mixing23_step  = 0.005;
   double dm23sq_min     = 1.5E-3;
 //double dm23sq_min     = 1.0E-3;
-  double dm23sq_max     = 4.0E-3;
+  double dm23sq_max     = 3.5E-3;
 //double dm23sq_max     = 6.0E-3;
   double dm23sq_step    = 1.0E-4;
 
@@ -256,6 +257,7 @@ void plot_feldman_cousins_contour(
   ConfidenceContour->cd(1);
   gPad->SetLeftMargin(0.15);
   gPad->SetBottomMargin(0.15);
+  gPad->SetRightMargin(0.1);
 
   TH2D * hframe = (TH2D*) gPad->DrawFrame(mixing23_min, dm23sq_min, mixing23_max, dm23sq_max);
   hframe->GetXaxis()->SetTitle("sin^{2}2#theta_{23}");
@@ -263,7 +265,7 @@ void plot_feldman_cousins_contour(
 //hframe->GetXaxis()->SetLimits(0.,1.002);
 //hframe->GetYaxis()->SetLimits(0.001,0.004);
   hframe->GetXaxis()->SetTitleOffset(1.2);
-  hframe->GetYaxis()->SetTitleOffset(1.4);
+  hframe->GetYaxis()->SetTitleOffset(1.2);
   hframe->GetXaxis()->CenterTitle();
   hframe->GetYaxis()->CenterTitle();
   hframe->Draw();
@@ -407,6 +409,16 @@ void plot_feldman_cousins_contour(
                               dm23sq_bestfit+dm23sq_bestfit*dmsq_frac_syst_err_bestfit);
     line1->Draw("same");
     line2->Draw("same");
+  }
+
+  if(save_plots) {
+    ConfidenceContour->SaveAs("FCcontour.pdf");
+    hframe->Draw();
+    hDeltaChisqCrit68StatSyst->Draw("colzsame");
+    ConfidenceContour->SaveAs("FCsurface68.pdf");
+    hframe->Draw();
+    hDeltaChisqCrit90StatSyst->Draw("colzsame");
+    ConfidenceContour->SaveAs("FCsurface90.eps");
   }
 
   TFile fout(outfile,"RECREATE");
