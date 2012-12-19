@@ -104,6 +104,8 @@ void analyse_output
   pulls->GetYaxis()->SetRangeUser(-0.75,0.75);
   pulls->GetXaxis()->LabelsOption("v");
   pulls->Draw("P");
+  TLine l(0,0,pulls->GetXaxis()->GetLast(),0);
+  l.Draw();
   cpull->SaveAs(Form("pulls_%d.eps",id));
   delete cpull;
 

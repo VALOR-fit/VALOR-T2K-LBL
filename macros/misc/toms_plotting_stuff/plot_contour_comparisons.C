@@ -174,9 +174,11 @@ void plot_contour_comparisons
   //osc_param_space->GetXaxis()->SetTitleOffset(1.2);
   osc_param_space->GetYaxis()->SetTitleOffset(1.4);
 
-  TLegend * leg = new TLegend(0.17,0.72,0.40,0.9);
+  TLegend * leg = new TLegend(0.17,0.65,0.43,0.9);
   leg->SetFillColor(0);
   leg->SetFillStyle(0);
+  leg->SetBorderSize(0);
+  leg->SetTextFont(42);
 
   //colors
   h_dc_123_68->SetLineColor(kRed);
@@ -253,8 +255,8 @@ void plot_contour_comparisons
   leg->Draw();
   c->SaveAs("compare_KIT_FC.eps");
 
-  //Run 1-3 const dchisq vs FC + externals to this plot
-  osc_param_space->GetXaxis()->SetRangeUser(0.8,1.0);
+  //Run 1-3 const dchisq vs FC + externals
+  osc_param_space->GetXaxis()->SetRangeUser(0.85,1.0);
   osc_param_space->GetYaxis()->SetRangeUser(0.0018,0.0035);
   osc_param_space->Draw();  
   h_dc_123_68->Draw("cont3same");
@@ -302,12 +304,12 @@ void plot_contour_comparisons
   h_dc_3_68->Draw("cont3same");
   h_dc_3_90->Draw("cont3same");
   leg->Clear();
-  leg->AddEntry(h_dc_123_68, "RunI-III const#Delta#chi^{2} 68% CL","l");
-  leg->AddEntry(h_dc_123_90, "RunI-III const#Delta#chi^{2} 90% CL","l");
-  leg->AddEntry(h_dc_12_68, "RunI+II const#Delta#chi^{2} 68% CL","l");
-  leg->AddEntry(h_dc_12_90, "RunI+II const#Delta#chi^{2} 90% CL","l");
-  leg->AddEntry(h_dc_3_68, "RunIII const#Delta#chi^{2} 68% CL","l");
-  leg->AddEntry(h_dc_3_90, "RunIII const#Delta#chi^{2} 90% CL","l");
+  leg->AddEntry(h_dc_123_68, "Run1+2+3 const#Delta#chi^{2} 68% CL","l");
+  leg->AddEntry(h_dc_123_90, "Run1+2+3 const#Delta#chi^{2} 90% CL","l");
+  leg->AddEntry(h_dc_12_68, "Run1+2 const#Delta#chi^{2} 68% CL","l");
+  leg->AddEntry(h_dc_12_90, "Run1+2 const#Delta#chi^{2} 90% CL","l");
+  leg->AddEntry(h_dc_3_68, "Run3 const#Delta#chi^{2} 68% CL","l");
+  leg->AddEntry(h_dc_3_90, "Run3 const#Delta#chi^{2} 90% CL","l");
   leg->Draw();
   c->SaveAs("compare_runs.eps");
 
@@ -327,6 +329,25 @@ void plot_contour_comparisons
   leg->Draw();
   c->SaveAs("compare_2all_28.eps");
 
+
+  //compare 2+8, 2+N const dchisq surfaces
+  TH2D * h_dc_dchisqratio_282N = new TH2D(*h_dcall_123);
+  for(int i = 1; i <= h_dcall_123->GetNbinsX(); i++) {
+    for(int j = 1; j <= h_dcall_123->GetNbinsY(); j++) {
+      double n28 = h_dc_123->GetBinContent(i,j);
+      double n2n = h_dcall_123->GetBinContent(i,j);
+      double frac = (n2n-n28)/(n2n+n28);
+      //cout << n28 << "\t" << n2n << "\t" << frac << endl;
+      h_dc_dchisqratio_282N->SetBinContent(i,j, frac);
+    }
+  }
+  osc_param_space->GetXaxis()->SetRangeUser(0.8,1.0);
+  osc_param_space->GetYaxis()->SetRangeUser(0.0015,0.0033);
+  osc_param_space->Draw();  
+  h_dc_dchisqratio_282N->SetContour(255);
+  c->SetRightMargin(0.13);
+  h_dc_dchisqratio_282N->Draw("colzsame");
+  c->SaveAs("compare_2all_28_dchisqdiff.eps");
 
 
 }
