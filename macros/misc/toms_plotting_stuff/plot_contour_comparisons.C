@@ -11,6 +11,8 @@ void plot_contour_comparisons
   TFile f_dcall_12("2012results/DATA/2all/fitresults_4.root");
   TFile f_dcall_3("2012results/DATA/2all/fitresults_5.root");
   TFile f_fc_123("2012results/FC/fc_contours.root");
+  TFile f_dc_kit("2012results/DATA/KIT/run1-3_constchi2_v2_fine.root");
+  TFile f_fc_kit("2012results/DATA/KIT/run1-3_fc.root");
 
   //28 const dchisq
   TH2D * h_dc_123 = 0;
@@ -92,6 +94,29 @@ void plot_contour_comparisons
   h_dcall_3_90->SetContourLevel(0,4.61);
   h_dcall_3_90->SetLineStyle(1);
 
+  //KIT DC
+  TH2D * h_dc_kit_68 = 0;
+  TH2D * h_dc_kit_90 = 0;
+  f_dc_kit.GetObject("h_cont_68cl",h_dc_kit_68);
+  f_dc_kit.GetObject("h_cont_90cl",h_dc_kit_90);
+  //h_dc_kit_68->SetContour(1);
+  //h_dc_kit_68->SetContourLevel(0,0.0);
+  h_dc_kit_68->SetLineStyle(2);
+  //h_dc_kit_90->SetContour(1);
+  //h_dc_kit_90->SetContourLevel(0,0.0);
+  h_dc_kit_90->SetLineStyle(1);
+  
+  //KIT FC
+  TH2D * h_fc_kit_68 = 0;
+  TH2D * h_fc_kit_90 = 0;
+  f_fc_kit.GetObject("h_fccont_68",h_fc_kit_68);
+  f_fc_kit.GetObject("h_fccont_90",h_fc_kit_90);
+  //h_fc_kit_68->SetContour(1);
+  //h_fc_kit_68->SetContourLevel(0,0.0);
+  h_fc_kit_68->SetLineStyle(2);
+  //h_fc_kit_90->SetContour(1);
+  //h_fc_kit_90->SetContourLevel(0,0.0);
+  h_fc_kit_90->SetLineStyle(1);
 
   //externals + olds
   TFile fext("$T2KOSCANA/inputs/contours/contours_nont2k.root");
@@ -125,6 +150,8 @@ void plot_contour_comparisons
   // param space
   TCanvas * c = new TCanvas();
   c->SetRightMargin(0.05);
+  c->SetLeftMargin(0.16);
+
   // dm23sq, mixing23 range and step
   double mixing23_min   = 0.6;
   double mixing23_max   = 1.;
@@ -145,7 +172,7 @@ void plot_contour_comparisons
   osc_param_space->GetXaxis()->SetTitle("sin^{2}(2#theta_{23})"); // adjust if mixing param is sinsqtheta rather than sinsq2theta...
   osc_param_space->GetYaxis()->SetTitle("|#Deltam_{32}^{2}| (eV^{2}/c^{4})");
   //osc_param_space->GetXaxis()->SetTitleOffset(1.2);
-  osc_param_space->GetYaxis()->SetTitleOffset(1.65);
+  osc_param_space->GetYaxis()->SetTitleOffset(1.4);
 
   TLegend * leg = new TLegend(0.17,0.72,0.40,0.9);
   leg->SetFillColor(0);
@@ -168,6 +195,10 @@ void plot_contour_comparisons
   h_fc_123_90->SetLineColor(kBlack);
   g_run12_68_statsyst->SetLineColor(kRed);
   g_run12_90_statsyst->SetLineColor(kRed);
+  h_dc_kit_68->SetLineColor(kGreen+2);
+  h_dc_kit_90->SetLineColor(kGreen+2);
+  h_fc_kit_68->SetLineColor(kGreen+2);
+  h_fc_kit_90->SetLineColor(kGreen+2);
 
   //get rid of the crap at the top of the FC contour
   h_fc_123_68->GetYaxis()->SetRangeUser(0,0.33);
@@ -189,6 +220,38 @@ void plot_contour_comparisons
   leg->AddEntry(h_fc_123_90, "FC 90% CL","l");
   leg->Draw();
   c->SaveAs("compare_FC_constchisq.eps");
+
+  //Run 1-3 const dchisq KIT vs VaLOR
+  osc_param_space->GetXaxis()->SetRangeUser(0.85,1.0);
+  osc_param_space->GetYaxis()->SetRangeUser(0.0018,0.0032);
+  osc_param_space->Draw();  
+  h_dc_123_68->Draw("cont3same");
+  h_dc_123_90->Draw("cont3same");
+  h_dc_kit_68->Draw("cont3same");
+  h_dc_kit_90->Draw("cont3same");
+  leg->Clear();
+  leg->AddEntry(h_dc_123_68, "VaLOR const#Delta#chi^{2} 68% CL","l");
+  leg->AddEntry(h_dc_123_90, "VaLOR const#Delta#chi^{2} 90% CL","l");
+  leg->AddEntry(h_dc_kit_68, "KIT const#Delta#chi^{2} 68% CL","l");
+  leg->AddEntry(h_dc_kit_90, "KIT const#Delta#chi^{2} 90% CL","l");
+  leg->Draw();
+  c->SaveAs("compare_KIT_constchisq.eps");
+
+  //Run 1-3 const dchisq KIT vs VaLOR
+  osc_param_space->GetXaxis()->SetRangeUser(0.85,1.0);
+  osc_param_space->GetYaxis()->SetRangeUser(0.0018,0.0032);
+  osc_param_space->Draw();  
+  h_fc_123_68->Draw("cont3same");
+  h_fc_123_90->Draw("cont3same");
+  h_fc_kit_68->Draw("cont3same");
+  h_fc_kit_90->Draw("cont3same");
+  leg->Clear();
+  leg->AddEntry(h_fc_123_68, "VaLOR FC 68% CL","l");
+  leg->AddEntry(h_fc_123_90, "VaLOR FC 90% CL","l");
+  leg->AddEntry(h_fc_kit_68, "KIT FC 68% CL","l");
+  leg->AddEntry(h_fc_kit_90, "KIT FC 90% CL","l");
+  leg->Draw();
+  c->SaveAs("compare_KIT_FC.eps");
 
   //Run 1-3 const dchisq vs FC + externals to this plot
   osc_param_space->GetXaxis()->SetRangeUser(0.8,1.0);
