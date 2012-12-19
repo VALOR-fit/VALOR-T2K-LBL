@@ -11,7 +11,11 @@ void analyse_output
  int          id,                                                  /* dataset id, from the xml file. Appears in the filenames, and some histograms */
  const char * path               = "./",                           /* dir with the root files in. fitresults_id.root, mockfit_id.root and chisqfile should all be in the same place */
  const char * config_file        = "analysis_configuration.xml",   /* for generate no-osc spectrum */
- double       spectrum_max_xaxis = 7.0,                            /* max of spectrum axes */
+ double       spectrum_max_xaxis = 5.9,                            /* max of spectrum axes */
+ double       mixing_min         = 0.8,
+ double       mixing_max         = 1.0,
+ double       dm_min             = 0.0015,
+ double       dm_max             = 0.0035,
  bool         external_contours  = false                           /* draw external contours? */
 )
 {
@@ -33,6 +37,9 @@ void analyse_output
   TFile f_mockfit(Form("%s/mockfit_%d.root",path,id));
 
   cout << Form("%s/fitresults_%d.root",path,id) << endl;
+
+  if(f_dchisq.IsZombie() || f_chisq.IsZombie() || f_mockfit.IsZombie())
+    return;
 
   //spectra
   TH1D * spectrum_obs = 0, * spectrum_bf = 0;
@@ -58,14 +65,16 @@ void analyse_output
   spectrum_noosc->GetXaxis()->SetRangeUser(0, spectrum_max_xaxis - conv::kOneMeV);
   spectrum_ratio_obs->GetXaxis()->SetRangeUser(0, spectrum_max_xaxis - conv::kOneMeV);
   spectrum_ratio_bf->GetXaxis()->SetRangeUser(0, spectrum_max_xaxis - conv::kOneMeV);
-  TLine * spectrum_line = new TLine(0,1, 7,1);
+  TLine * spectrum_line = new TLine(0,1, spectrum_max_xaxis,1);
   //styles
   spectrum_bf->SetLineColor(kRed);
   spectrum_obs->SetLineStyle(2);
+  spectrum_obs->SetMarkerSize(0.6);
   spectrum_ratio_bf->SetLineColor(kRed);
   spectrum_ratio_obs->SetLineStyle(2);
+  spectrum_ratio_obs->SetMarkerSize(0.6);
   //Now draw
-  TCanvas * cspec = new TCanvas();
+  TCanvas * cspec = new TCanvas("cspec","cspec",2);
   cspec->Divide(1,2);
   cspec->cd(1);
   spectrum_noosc->GetYaxis()->SetTitle("Events");
@@ -84,12 +93,22 @@ void analyse_output
   //pulls
   TH1D * pulls = 0;
   f_dchisq.GetObject("hsystpull",pulls);
-  c->cd();
-  pulls->GetYaxis()->SetRangeUser(-2,2);
-  pulls->Draw();
-  c->SaveAs(Form("pulls_%d.eps",id));
+  for(int i = 1; i<= pulls->GetEntries(); i++) {
+    if(i%2) {
+      pulls->GetXaxis()->SetBinLabel(i,Form("%s                         ",pulls->GetXaxis()->GetBinLabel(i)));
+    }
+  }
+  TCanvas * cpull = new TCanvas();
+  cpull->SetBottomMargin(0.4);
+  cpull->SetGridx(1);
+  pulls->GetYaxis()->SetRangeUser(-0.75,0.75);
+  pulls->GetXaxis()->LabelsOption("v");
+  pulls->Draw("P");
+  cpull->SaveAs(Form("pulls_%d.eps",id));
+  delete cpull;
 
   //chisqwithsyst
+  c->cd();
   c->SetLeftMargin(0.19);
   c->SetFillColor(0);
   c->SetBorderMode(0);
@@ -111,7 +130,7 @@ void analyse_output
   TPaletteAxis *palette = (TPaletteAxis*)dchisq->GetListOfFunctions()->FindObject("palette");
   palette->SetX1NDC(0.86);
   palette->SetX2NDC(0.90);
-  dchisq->GetZaxis()->SetRangeUser(0,dchisq->GetMaximum());
+  dchisq->GetZaxis()->SetRangeUser(0,70);
   dchisq->Draw("colz");
   c->SaveAs(Form("dchisq_%d.eps",id));
   cout << dchisq->GetZaxis()->GetTitleOffset() << endl;
@@ -133,20 +152,22 @@ void analyse_output
   bf->SetMarkerColor(1);
   //legend
   TLegend * leg = new TLegend(0.215517,0.190678,0.594828,0.483051);
+  leg->SetFillStyle(0);
+  leg->SetTextFont(42);
   leg->SetFillColor(0);
   leg->SetLineStyle(0);
   leg->SetBorderSize(0);
-  leg->AddEntry(dchisq90, "Const #Delta#chi^2 90\% ", "l");
-  leg->AddEntry(dchisq68, "Const #Delta#chi^2 68\% ", "l");
+  leg->AddEntry(dchisq90, "Const #Delta#chi^2 90\% CL", "l");
+  leg->AddEntry(dchisq68, "Const #Delta#chi^2 68\% CL", "l");
   leg->AddEntry(bf, "Best fit", "p");
   // param space
   c->SetRightMargin(0.05);
   // dm23sq, mixing23 range and step
-  double mixing23_min   = 0.6;
-  double mixing23_max   = 1.;
+  double mixing23_min   = mixing_min;
+  double mixing23_max   = mixing_max;
   double mixing23_step  = 0.005;
-  double dm23sq_min     = 1.0E-3;
-  double dm23sq_max     = 4.0E-3;
+  double dm23sq_min     = dm_min;
+  double dm23sq_max     = dm_max;
   double dm23sq_step    = 1E-4;
   // make sure that min and max are at the bin centre and not at the low/high edge of the first/last bin
   int mixing23_nbins = 1 + (int) ((mixing23_max - mixing23_min) / mixing23_step);
