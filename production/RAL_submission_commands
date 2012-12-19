@@ -17,7 +17,7 @@ root2k -l '$T2KOSCANA/macros/contour/fc/numu/test_feldman_cousins_nfits.C("$T2KO
 root2k -l -b -q '$T2KOSCANA/macros/contour/fc/numu/make_feldman_cousins_deltachisqcrit_surface.C("$T2KOSCANA/2012results/FC/rootfiles","delta_chisq_critical.root",75,9999,8,25)'
 
 #plot a contour (run1-3, with 90% stat syst underlaid)
-root2k -l '$T2KOSCANA/macros/contour/fc/numu/plot_feldman_cousins_contour.C("delta_chisq_critical.root","delta_chisq_critical.root","delta_chisq_critical.root","$T2KOSCANA/2012results/DATA/bigger_surface/28/fitresults_3.root","hdchisq",0,true,false,false,"90statsyst")'
+root2k -l '$T2KOSCANA/macros/contour/fc/numu/plot_feldman_cousins_contour.C("","$T2KOSCANA/2012results/FC/delta_chisq_critical.root","$T2KOSCANA/2012results/FC/delta_chisq_critical.root","$T2KOSCANA/2012results/DATA/bigger_surface/28/fitresults_3.root","hdchisq",0,true,false,false,"90statsyst")'
 
 
 
@@ -133,6 +133,9 @@ $T2KOSCANA/production/submit_toyexpt_fitting_job_xml --resource RAL --tag minos1
 $T2KOSCANA/production/submit_toyexpt_fitting_job_xml --resource RAL --tag minos15 --nruns 1000 --nexpts 1 --first-expt 0 --fit-param-list nuosc3f_numudisapp_fix4+nuisanceselection --job-dir $PWD --softw-dir $T2KOSCANA --toy-expts-file /home/ppd/tdealtry/RAL_repoistory/t2k/t2kana/nuosc/branches/2012_v0.9.0/inputs/toymc/sensitivity_minos-15.xml --cpu-time 12:00:00
 
 
+$T2KOSCANA/production/submit_toyexpt_fitting_job_xml --resource RAL --tag minos15 --nruns 1000 --nexpts 1 --first-expt 0 --fit-param-list nuosc3f_numudisapp_fix4+nuisanceselection --job-dir $PWD --softw-dir $T2KOSCANA --toy-expts-file /home/ppd/tdealtry/RAL_repoistory/t2k/t2kana/nuosc/branches/2012_v0.9.0/inputs/toymc/sensitivity_t2krun1-3bestfit.xml --cpu-time 12:00:00 --chisqsyst-mixing23-min 0.8 --chisqsyst-dm23sq-min 0.0017 --chisqsyst-dm23sq-max 0.0033
+
+
 analyse sensitivities:
 
 cd minos_28;
@@ -167,9 +170,25 @@ cd ..;
 cd 10;
 root2k -l -b -q '$T2KOSCANA/macros/contour/const_dchisq/numu/sensitivity_from_many_chisq_surfaces.C("minos10","","","","chisqwithsyst",1000,true)'
 cd ..;
+cd 11;
+root2k -l -b -q '$T2KOSCANA/macros/contour/const_dchisq/numu/sensitivity_from_many_chisq_surfaces.C("minos11","","","","chisqwithsyst",1000,true)'
+cd ..;
+cd 12;
+root2k -l -b -q '$T2KOSCANA/macros/contour/const_dchisq/numu/sensitivity_from_many_chisq_surfaces.C("minos12","","","","chisqwithsyst",1000,true)'
+cd ..;
+cd 13;
+#root2k -l -b -q '$T2KOSCANA/macros/contour/const_dchisq/numu/sensitivity_from_many_chisq_surfaces.C("minos13","","","","chisqwithsyst",1000,true)'
+cd ..;
+cd 14;
+#root2k -l -b -q '$T2KOSCANA/macros/contour/const_dchisq/numu/sensitivity_from_many_chisq_surfaces.C("minos14","","","","chisqwithsyst",1000,true)'
+cd ..;
+cd 15;
+#root2k -l -b -q '$T2KOSCANA/macros/contour/const_dchisq/numu/sensitivity_from_many_chisq_surfaces.C("minos15","","","","chisqwithsyst",1000,true)'
+cd ..;
+cd ..;
 
 
-
+root2k -l -b -q $T2KOSCANA/macros/contour/const_dchisq/numu/plot_minos_sensitivity_studies.C                          
 
 
 
@@ -265,14 +284,21 @@ $T2KOSCANA/production/submit_goodness_of_fit_job --resource RAL --tag f4good28 -
 $T2KOSCANA/production/submit_goodness_of_fit_job --resource RAL --tag f5good28 --run 5 --cpu-time 48:00:00 --job-dir $PWD --softw-dir $T2KOSCANA --ntoys 1000 --fitresults-file $T2KOSCANA/2012results/DATA/bigger_surface/FAKE28/fitresults_5.root
 
 
+$T2KOSCANA/production/submit_goodness_of_fit_job --resource RAL --tag 123good28 --run 3 --cpu-time 48:00:00 --job-dir $PWD --softw-dir $T2KOSCANA --ntoys 1000 --fitresults-file $T2KOSCANA/2012results/DATA/2all/fitresults_3.root
+$T2KOSCANA/production/submit_goodness_of_fit_job --resource RAL --tag 12good28 --rum 4 --cpu-time 48:00:00 --job-dir $PWD --softw-dir $T2KOSCANA --ntoys 1000 --config-file analysis_configuration_2012a_run1+2_neut_finalBANFF_coarseErecoSplines_6binFSI+SI_MAQE.xml --fitresults-file $T2KOSCANA/2012results/DATA/2all/fitresults_4.root
+$T2KOSCANA/production/submit_goodness_of_fit_job --resource RAL --tag 3good28 --run 5 --cpu-time 48:00:00 --job-dir $PWD --softw-dir $T2KOSCANA --ntoys 1000 --config-file analysis_configuration_2012a_run3_neut_finalBANFF_coarseErecoSplines_6binFSI+SI_MAQE.xml --fitresults-file $T2KOSCANA/2012results/DATA/2all/fitresults_5.root
+
+
 #analyse pulls
 
 root2k -l -b -q 'mock_data_fit_pulls.C("20/*systfluc_All*.root","20_all",0)'
 root2k -l -b -q 'mock_data_fit_pulls.C("20/*systfluc_none*.root","20_non",0)'
 
+
 root2k -l -b -q 'mock_data_fit_pulls.C("28/*systfluc_All*.root","28_all",1)'
 root2k -l -b -q 'mock_data_fit_pulls.C("28/*systfluc_none*.root","28_non",1)'
 root2k -l -b -q 'mock_data_fit_pulls.C("28/*systfluc_Selected*.root","28_sel",1)'
+
 
 
 
@@ -283,4 +309,22 @@ root2k -l -b -q 'mock_data_fit_pulls.C("28/*systfluc_Selected*.root","28_sel",1)
 root2k -l -b -q '$T2KOSCANA/macros/fit/stat/print_dataset_chisq.C(-99,-99,1.0,-99,-99,0.00232,"nuosc3f_numudisapp_fix4+nuisanceselection",3,"inputs/data.xml","analysis_configuration.xml")'
 root2k -l -b -q '$T2KOSCANA/macros/fit/stat/print_dataset_chisq.C(-99,-99,1.0,-99,-99,0.00232,"nuosc3f_numudisapp_fix4+nuisanceselection",4,"inputs/data.xml","analysis_configuration_2012a_run1+2_neut_finalBANFF_coarseErecoSplines_6binFSI+SI_MAQE.xml")'
 root2k -l -b -q '$T2KOSCANA/macros/fit/stat/print_dataset_chisq.C(-99,-99,1.0,-99,-99,0.00232,"nuosc3f_numudisapp_fix4+nuisanceselection",5,"inputs/data.xml","analysis_configuration_2012a_run3_neut_finalBANFF_coarseErecoSplines_6binFSI+SI_MAQE.xml")'
+
+
+
+
+#analyse goodness
+
+#data
+root2k -l -b -q '$T2KOSCANA/macros/misc/toms_plotting_stuff/plot_goodness_of_fit.C(3,"goodness-of-fit-123good28-run_3.root")'
+root2k -l -b -q '$T2KOSCANA/macros/misc/toms_plotting_stuff/plot_goodness_of_fit.C(0,"goodness-of-fit-12good28-run_0.root")'
+root2k -l -b -q '$T2KOSCANA/macros/misc/toms_plotting_stuff/plot_goodness_of_fit.C(5,"goodness-of-fit-3good28-run_5.root")'
+
+#fakedata
+root2k -l -b -q '$T2KOSCANA/macros/misc/toms_plotting_stuff/plot_goodness_of_fit.C(0,"goodness-of-fit-f0good28-run_0.root")'
+root2k -l -b -q '$T2KOSCANA/macros/misc/toms_plotting_stuff/plot_goodness_of_fit.C(1,"goodness-of-fit-f1good28-run_1.root")'
+root2k -l -b -q '$T2KOSCANA/macros/misc/toms_plotting_stuff/plot_goodness_of_fit.C(2,"goodness-of-fit-f2good28-run_2.root")'
+root2k -l -b -q '$T2KOSCANA/macros/misc/toms_plotting_stuff/plot_goodness_of_fit.C(3,"goodness-of-fit-f3good28-run_3.root")'
+root2k -l -b -q '$T2KOSCANA/macros/misc/toms_plotting_stuff/plot_goodness_of_fit.C(4,"goodness-of-fit-f4good28-run_4.root")'
+root2k -l -b -q '$T2KOSCANA/macros/misc/toms_plotting_stuff/plot_goodness_of_fit.C(5,"goodness-of-fit-f5good28-run_5.root")'
 
