@@ -9,6 +9,9 @@ $T2KOSCANA/production/submit_feldman_cousins_fitting_job_numu --resource RAL --n
 #fill in the holes
 $T2KOSCANA/production/submit_feldman_cousins_fitting_job_numu --resource RAL --nruns 99 --nexpts 2000 --cpu-time 24:00:00 --stat-fluctuations --tweak-systematics --bin-list /home/ppd/tdealtry/RAL_repoistory/t2k/t2kana/nuosc/branches/2012_v0.9.0/inputs/FCbinlist/binlist_2+8_statsyst_holes.data --fit-param-list nuosc3f_numudisapp_fix4+nuisanceselection  --job-dir $PWD --softw-dir $T2KOSCANA --tag FC28statsyst_2
 
+#redo the boundary
+$T2KOSCANA/production/submit_feldman_cousins_fitting_job_numu --resource RAL --nruns 260 --nexpts 2000 --cpu-time 24:00:00 --stat-fluctuations --tweak-systematics --bin-list /home/ppd/tdealtry/RAL_repoistory/t2k/t2kana/nuosc/branches/2012_v0.9.0/inputs/FCbinlist/binlist_2+8_statsyst_boundary.data --fit-param-list nuosc3f_numudisapp_fix4+nuisanceselection  --job-dir $PWD --softw-dir $T2KOSCANA --tag FC28statsyst_3
+
 
 #check how many fits have been done at each point
 root2k -l '$T2KOSCANA/macros/contour/fc/numu/test_feldman_cousins_nfits.C("$T2KOSCANA/2012results/FC/rootfiles")'
@@ -307,6 +310,7 @@ root2k -l -b -q '$T2KOSCANA/macros/fit/pulls/mock_data_fit_pulls.C("28/*systfluc
 root2k -l -b -q '$T2KOSCANA/macros/fit/pulls/mock_data_fit_pulls.C("28/*systfluc_Selected*.root","28_sel",1)'
 
 root2k -l -b -q '$T2KOSCANA/macros/fit/pulls/mock_data_fit_pulls.C("2all/*systfluc_All*.root","2all_all",2)'
+root2k -l -b -q '$T2KOSCANA/macros/fit/pulls/mock_data_fit_pulls.C("2all/*systfluc_none*.root","2all_non",2)'
 
 
 
