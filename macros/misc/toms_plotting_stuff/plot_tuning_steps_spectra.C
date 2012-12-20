@@ -53,33 +53,38 @@ void plot_tuning_steps_spectra
 
   TCanvas * c = new TCanvas();
   c->Divide(2,1);
-  TLegend * leg = new TLegend(0.92,0.9,0.45,0.7);
+  TLegend * leg = new TLegend(1.1,0.9,0.3,0.7);
   leg->SetFillColor(0);
   leg->SetLineColor(0);
+  leg->SetBorderSize(0);
+  leg->SetFillStyle(0);
+  leg->SetTextFont(42);
 
   //nom vs flux tuned
   leg->Clear();
+  leg->AddEntry(h_ereco_nom_osc,"Nominal","l");
+  leg->AddEntry(h_ereco_flux_osc,"Flux tuning applied","l");
   c->cd(1);
   h_ereco_flux_noosc->Draw();
   h_ereco_nom_noosc->Draw("same");
+  leg->Draw();
   c->cd(2);
   h_ereco_flux_osc->Draw();
   h_ereco_nom_osc->Draw("same");
-  leg->AddEntry(h_ereco_nom_osc,"Nominal","l");
-  leg->AddEntry(h_ereco_flux_osc,"Flux tuning applied","l");
   leg->Draw();
   c->SaveAs("spectra_nom_fluxtuned.eps");
 
   //flux tuned vs banff
   leg->Clear();
+  leg->AddEntry(h_ereco_flux_osc,"Flux tuning applied","l");
+  leg->AddEntry(h_ereco_tun_osc,"BANFF tuning applied","l");
   c->cd(1);
   h_ereco_flux_noosc->Draw();
   h_ereco_tun_noosc->Draw("same");
+  leg->Draw();
   c->cd(2);
   h_ereco_flux_osc->Draw();
   h_ereco_tun_osc->Draw("same");
-  leg->AddEntry(h_ereco_flux_osc,"Flux tuning applied","l");
-  leg->AddEntry(h_ereco_tun_osc,"BANFF tuning applied","l");
   leg->Draw();
   c->SaveAs("spectra_tun_banfftuned.eps");
 
