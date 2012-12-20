@@ -2011,6 +2011,7 @@ void mock_data_fit_pulls(
     cban->SaveAs(Form("%s_%f_other_pull.eps", tag, input_mixing23));
 
 
+    /*
     cban->cd(1); haltpull_banff_00->Draw();
     cban->cd(2); haltpull_banff_01->Draw();
     cban->cd(3); haltpull_banff_02->Draw();
@@ -2062,7 +2063,7 @@ void mock_data_fit_pulls(
     coth->cd(23); haltpull_fsi_004->Draw();
     coth->cd(24); haltpull_fsi_005->Draw();
     cban->SaveAs(Form("%s_%f_other_altpull.eps", tag, input_mixing23));
-
+    */
   }
 
 }

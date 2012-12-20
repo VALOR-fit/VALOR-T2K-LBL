@@ -188,6 +188,15 @@ cd ..;
 cd ..;
 
 
+#minos with 600 bins
+root2k -l -b -q '$T2KOSCANA/macros/contour/const_dchisq/numu/sensitivity_from_many_chisq_surfaces.C("minos500","","","","chisqwithsyst",1000,true)'
+
+#t2k
+root2k -l -b -q '$T2KOSCANA/macros/contour/const_dchisq/numu/sensitivity_from_many_chisq_surfaces.C("minos15","","","","chisqwithsyst",1000,true)'
+
+
+
+
 root2k -l -b -q $T2KOSCANA/macros/contour/const_dchisq/numu/plot_minos_sensitivity_studies.C                          
 
 
@@ -235,35 +244,32 @@ $T2KOSCANA/production/submit_toyexpt_fitting_job_with_sys --resource RAL --tag p
 
 #analyse data & fake data results
 
-cd 28;
-root2k -l -b -q '$T2KOSCANA/macros/fit/toymc/analyse_output.C("data123-run_0-expts_3_3.root",3,"./","analysis_configuration.xml",7.0,false)';
-root2k -l -b -q '$T2KOSCANA/macros/fit/toymc/analyse_output.C("data12-run_0-expts_4_4.root",4,"./","analysis_configuration_2012a_run1+2_neut_finalBANFF_coarseErecoSplines_6binFSI+SI_MAQE.xml",7.0,false)';
-root2k -l -b -q '$T2KOSCANA/macros/fit/toymc/analyse_output.C("data3-run_0-expts_5_5.root",5,"./","analysis_configuration_2012a_run3_neut_finalBANFF_coarseErecoSplines_6binFSI+SI_MAQE.xml",7.0,false)';
-cd ..;
+#28
+root2k -l -b -q '$T2KOSCANA/macros/fit/toymc/analyse_output.C("data123-run_0-expts_3_3.root",3,"$T2KOSCANA/2012results/DATA/bigger_surface/28/","analysis_configuration.xml",6.0,0.8,1,0.0015,0.0035,false)';
+root2k -l -b -q '$T2KOSCANA/macros/fit/toymc/analyse_output.C("data12-run_0-expts_4_4.root",4,"$T2KOSCANA/2012results/DATA/bigger_surface/28/","analysis_configuration_2012a_run1+2_neut_finalBANFF_coarseErecoSplines_6binFSI+SI_MAQE.xml",6.0,0.8,1,0.0015,0.0035,false)';
+root2k -l -b -q '$T2KOSCANA/macros/fit/toymc/analyse_output.C("data3-run_0-expts_5_5.root",5,"$T2KOSCANA/2012results/DATA/bigger_surface/28/","analysis_configuration_2012a_run3_neut_finalBANFF_coarseErecoSplines_6binFSI+SI_MAQE.xml",6.0,0.8,1,0.0015,0.0035,false)';
 
-cd 2all;
-root2k -l -b -q '$T2KOSCANA/macros/fit/toymc/analyse_output.C("data123-run_0-expts_3_3.root",3,"./","analysis_configuration.xml",7.0,false)';
-root2k -l -b -q '$T2KOSCANA/macros/fit/toymc/analyse_output.C("data12-run_0-expts_4_4.root",4,"./","analysis_configuration_2012a_run1+2_neut_finalBANFF_coarseErecoSplines_6binFSI+SI_MAQE.xml",7.0,false)';
-root2k -l -b -q '$T2KOSCANA/macros/fit/toymc/analyse_output.C("data3-run_0-expts_5_5.root",5,"./","analysis_configuration_2012a_run3_neut_finalBANFF_coarseErecoSplines_6binFSI+SI_MAQE.xml",7.0,false)';
-cd ..;
+#2all
+root2k -l -b -q '$T2KOSCANA/macros/fit/toymc/analyse_output.C("data123-run_0-expts_3_3.root",3,"$T2KOSCANA/2012results/DATA/2all/","analysis_configuration.xml",6.0,0.8,1,0.0015,0.0035,false)';
+root2k -l -b -q '$T2KOSCANA/macros/fit/toymc/analyse_output.C("data12-run_0-expts_4_4.root",4,"$T2KOSCANA/2012results/DATA/2all/","analysis_configuration_2012a_run1+2_neut_finalBANFF_coarseErecoSplines_6binFSI+SI_MAQE.xml",6.0,0.8,1,0.0015,0.0035,false)';
+root2k -l -b -q '$T2KOSCANA/macros/fit/toymc/analyse_output.C("data3-run_0-expts_5_5.root",5,"$T2KOSCANA/2012results/DATA/2all/","analysis_configuration_2012a_run3_neut_finalBANFF_coarseErecoSplines_6binFSI+SI_MAQE.xml",6.0,0.8,1,0.0015,0.0035,false)';
 
-cd FAKE28;
-root2k -l -b -q '$T2KOSCANA/macros/fit/toymc/analyse_output.C("fakedata-run_0-expts_0_0.root",0,"./","analysis_configuration.xml",7.0,false)';
-root2k -l -b -q '$T2KOSCANA/macros/fit/toymc/analyse_output.C("fakedata-run_1-expts_1_1.root",1,"./","analysis_configuration.xml",7.0,false)';
-root2k -l -b -q '$T2KOSCANA/macros/fit/toymc/analyse_output.C("fakedata-run_2-expts_2_2.root",2,"./","analysis_configuration.xml",7.0,false)';
-root2k -l -b -q '$T2KOSCANA/macros/fit/toymc/analyse_output.C("fakedata-run_3-expts_3_3.root",3,"./","analysis_configuration.xml",7.0,false)';
-root2k -l -b -q '$T2KOSCANA/macros/fit/toymc/analyse_output.C("fakedata-run_4-expts_4_4.root",4,"./","analysis_configuration.xml",7.0,false)';
-root2k -l -b -q '$T2KOSCANA/macros/fit/toymc/analyse_output.C("fakedata-run_5-expts_5_5.root",5,"./","analysis_configuration.xml",7.0,false)';
-cd ..;
 
-cd FAKE2all;
-root2k -l -b -q '$T2KOSCANA/macros/fit/toymc/analyse_output.C("fakedata-run_0-expts_0_0.root",0,"./","analysis_configuration.xml",7.0,false)';
-root2k -l -b -q '$T2KOSCANA/macros/fit/toymc/analyse_output.C("fakedata-run_1-expts_1_1.root",1,"./","analysis_configuration.xml",7.0,false)';
-root2k -l -b -q '$T2KOSCANA/macros/fit/toymc/analyse_output.C("fakedata-run_2-expts_2_2.root",2,"./","analysis_configuration.xml",7.0,false)';
-root2k -l -b -q '$T2KOSCANA/macros/fit/toymc/analyse_output.C("fakedata-run_3-expts_3_3.root",3,"./","analysis_configuration.xml",7.0,false)';
-root2k -l -b -q '$T2KOSCANA/macros/fit/toymc/analyse_output.C("fakedata-run_4-expts_4_4.root",4,"./","analysis_configuration.xml",7.0,false)';
-root2k -l -b -q '$T2KOSCANA/macros/fit/toymc/analyse_output.C("fakedata-run_5-expts_5_5.root",5,"./","analysis_configuration.xml",7.0,false)';
-cd ..;
+#fake28
+root2k -l -b -q '$T2KOSCANA/macros/fit/toymc/analyse_output.C("fakedata-run_0-expts_0_0.root",0,"$T2KOSCANA/2012results/DATA/bigger_surface/FAKE28/","analysis_configuration.xml",6.0,0.6,1,0.0010,0.0035,false)';
+root2k -l -b -q '$T2KOSCANA/macros/fit/toymc/analyse_output.C("fakedata-run_1-expts_1_1.root",1,"$T2KOSCANA/2012results/DATA/bigger_surface/FAKE28/","analysis_configuration.xml",6.0,0.6,1,0.0010,0.0035,false)';
+root2k -l -b -q '$T2KOSCANA/macros/fit/toymc/analyse_output.C("fakedata-run_2-expts_2_2.root",2,"$T2KOSCANA/2012results/DATA/bigger_surface/FAKE28/","analysis_configuration.xml",6.0,0.6,1,0.0010,0.0035,false)';
+root2k -l -b -q '$T2KOSCANA/macros/fit/toymc/analyse_output.C("fakedata-run_3-expts_3_3.root",3,"$T2KOSCANA/2012results/DATA/bigger_surface/FAKE28/","analysis_configuration.xml",6.0,0.6,1,0.0010,0.0035,false)';
+root2k -l -b -q '$T2KOSCANA/macros/fit/toymc/analyse_output.C("fakedata-run_4-expts_4_4.root",4,"$T2KOSCANA/2012results/DATA/bigger_surface/FAKE28/","analysis_configuration.xml",6.0,0.6,1,0.0010,0.0035,false)';
+root2k -l -b -q '$T2KOSCANA/macros/fit/toymc/analyse_output.C("fakedata-run_5-expts_5_5.root",5,"$T2KOSCANA/2012results/DATA/bigger_surface/FAKE28/","analysis_configuration.xml",6.0,0.6,1,0.0010,0.0035,false)';
+
+#fake2all
+root2k -l -b -q '$T2KOSCANA/macros/fit/toymc/analyse_output.C("$T2KOSCANA/2012results/DATA/FAKE2all/fakedata-run_0-expts_0_0.root",0,"./","analysis_configuration.xml",7.0,false)';
+root2k -l -b -q '$T2KOSCANA/macros/fit/toymc/analyse_output.C("$T2KOSCANA/2012results/DATA/FAKE2all/fakedata-run_1-expts_1_1.root",1,"./","analysis_configuration.xml",7.0,false)';
+root2k -l -b -q '$T2KOSCANA/macros/fit/toymc/analyse_output.C("$T2KOSCANA/2012results/DATA/FAKE2all/fakedata-run_2-expts_2_2.root",2,"./","analysis_configuration.xml",7.0,false)';
+root2k -l -b -q '$T2KOSCANA/macros/fit/toymc/analyse_output.C("$T2KOSCANA/2012results/DATA/FAKE2all/fakedata-run_3-expts_3_3.root",3,"./","analysis_configuration.xml",7.0,false)';
+root2k -l -b -q '$T2KOSCANA/macros/fit/toymc/analyse_output.C("$T2KOSCANA/2012results/DATA/FAKE2all/fakedata-run_4-expts_4_4.root",4,"./","analysis_configuration.xml",7.0,false)';
+root2k -l -b -q '$T2KOSCANA/macros/fit/toymc/analyse_output.C("$T2KOSCANA/2012results/DATA/FAKE2all/fakedata-run_5-expts_5_5.root",5,"./","analysis_configuration.xml",7.0,false)';
 
 
 
@@ -291,14 +297,16 @@ $T2KOSCANA/production/submit_goodness_of_fit_job --resource RAL --tag 3good28 --
 
 #analyse pulls
 
-root2k -l -b -q 'mock_data_fit_pulls.C("20/*systfluc_All*.root","20_all",0)'
-root2k -l -b -q 'mock_data_fit_pulls.C("20/*systfluc_none*.root","20_non",0)'
+root2k -l -b -q '$T2KOSCANA/macros/fit/pulls/mock_data_fit_pulls.C("20/*systfluc_All*.root","20_all",0)'
+root2k -l -b -q '$T2KOSCANA/macros/fit/pulls/mock_data_fit_pulls.C("20/*systfluc_none*.root","20_non",0)'
+root2k -l -b -q '$T2KOSCANA/macros/fit/pulls/mock_data_fit_pulls.C("20highpot/*systfluc_none*.root","20_non_highpot",0)'
 
 
-root2k -l -b -q 'mock_data_fit_pulls.C("28/*systfluc_All*.root","28_all",1)'
-root2k -l -b -q 'mock_data_fit_pulls.C("28/*systfluc_none*.root","28_non",1)'
-root2k -l -b -q 'mock_data_fit_pulls.C("28/*systfluc_Selected*.root","28_sel",1)'
+root2k -l -b -q '$T2KOSCANA/macros/fit/pulls/mock_data_fit_pulls.C("28/*systfluc_All*.root","28_all",1)'
+root2k -l -b -q '$T2KOSCANA/macros/fit/pulls/mock_data_fit_pulls.C("28/*systfluc_none*.root","28_non",1)'
+root2k -l -b -q '$T2KOSCANA/macros/fit/pulls/mock_data_fit_pulls.C("28/*systfluc_Selected*.root","28_sel",1)'
 
+root2k -l -b -q '$T2KOSCANA/macros/fit/pulls/mock_data_fit_pulls.C("2all/*systfluc_All*.root","2all_all",2)'
 
 
 
