@@ -13,6 +13,8 @@ void plot_contour_comparisons
   TFile f_fc_123("2012results/FC/fc_contours.root");
   TFile f_dc_kit("2012results/DATA/KIT/run1-3_constchi2_v2_fine.root");
   TFile f_fc_kit("2012results/DATA/KIT/run1-3_fc.root");
+  TFile f_crit("2012results/FC/delta_chisq_critical.root");
+  TFile f_crit_kit("2012results/FC/KIT/run1-3_criticalchi2.root");
 
   //28 const dchisq
   TH2D * h_dc_123 = 0;
@@ -358,4 +360,43 @@ void plot_contour_comparisons
   h_dc_dchisqratio2_282N->Draw("colzsame");
   c->SaveAs("compare_2all_28_dchisqdiff_nM8OnP8O2.eps");
 
+
+  //compare dchisq_crit sufaces
+  TH2D * h_crit_68 = 0;
+  f_crit.GetObject("hDeltaChi2Surface68",h_crit_68);
+  TH2D * h_crit_68_kit = 0;
+  f_crit_kit.GetObject("hcchi2_68",h_crit_68_kit);
+  TH2D * h_crit_ratio = new TH2D(*h_crit_68_kit);
+  h_crit_ratio->Clear();
+  for(int i = 1; i <= h_crit_ratio->GetNbinsX(); i++) {
+    int ibin = h_crit_68->GetXaxis()->FindBin(h_crit_ratio->GetXaxis()->GetBinCenter(i));
+    cout << i << endl;
+    for(int j = 1; j <= h_crit_ratio->GetNbinsY(); j++) {
+      h_crit_ratio->SetBinContent(i,j,0);
+      int jbin = h_crit_68->GetYaxis()->FindBin(h_crit_ratio->GetYaxis()->GetBinCenter(j));
+      double val = h_crit_68->GetBinContent(ibin, jbin);
+      double kit = h_crit_68_kit->GetBinContent(i,j);
+      double frac = 2*(val-kit)/(kit+val);
+      cout << i << "\t" << j << "\t" << val << "\t" << kit << "\t" << frac << endl;
+      h_crit_ratio->SetBinContent(i,j,frac);
+    }
+  }
+  osc_param_space->GetXaxis()->SetRangeUser(0.9,1.0);
+  osc_param_space->GetYaxis()->SetRangeUser(0.002,0.003);
+  osc_param_space->Draw("");
+  h_crit_ratio->SetContour(255);
+  h_crit_ratio->Draw("colzsame");
+  c->SaveAs("compare_fc_crit.pdf");
+
+  
+  h_crit_68->GetZaxis()->SetRangeUser(1,3);
+  h_crit_68_kit->GetZaxis()->SetRangeUser(1,3);
+
+  osc_param_space->Draw("");
+  h_crit_68->Draw("colzsame");
+  c->SaveAs("valcrit.pdf");
+  osc_param_space->Draw("");
+  h_crit_68_kit->Draw("colzsame");
+  c->SaveAs("kitcrit.pdf");
+  
 }
