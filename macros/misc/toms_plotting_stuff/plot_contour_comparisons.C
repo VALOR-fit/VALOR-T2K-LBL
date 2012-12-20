@@ -351,17 +351,37 @@ void plot_contour_comparisons
   osc_param_space->GetXaxis()->SetRangeUser(0.8,1.0);
   osc_param_space->GetYaxis()->SetRangeUser(0.0015,0.0033);
   osc_param_space->Draw();  
+  g_minos->SetLineColor(kBlack);
+  g_minos->SetLineWidth(2);
   h_dc_dchisqratio1_282N->SetContour(255);
   h_dc_dchisqratio2_282N->SetContour(255);
   c->SetRightMargin(0.13);
   h_dc_dchisqratio1_282N->Draw("colzsame");
+  g_minos->Draw("l");
   c->SaveAs("compare_2all_28_dchisqdiff_8MnOn.eps");
   osc_param_space->Draw();  
   h_dc_dchisqratio2_282N->Draw("colzsame");
+  g_minos->Draw("l");
   c->SaveAs("compare_2all_28_dchisqdiff_nM8OnP8O2.eps");
+  //zoom
+  osc_param_space->GetXaxis()->SetRangeUser(0.85,1.0);
+  osc_param_space->GetYaxis()->SetRangeUser(0.002,0.0028);
+  h_dc_dchisqratio1_282N->GetXaxis()->SetRangeUser(0.85,1.0);
+  h_dc_dchisqratio1_282N->GetYaxis()->SetRangeUser(0.002,0.0028);
+  h_dc_dchisqratio2_282N->GetXaxis()->SetRangeUser(0.85,1.0);
+  h_dc_dchisqratio2_282N->GetYaxis()->SetRangeUser(0.002,0.0028);
+  osc_param_space->Draw();  
+  h_dc_dchisqratio1_282N->Draw("colzsame");
+  g_minos->Draw("l");
+  c->SaveAs("compare_2all_28_dchisqdiff_8MnOn_zoom.eps");
+  osc_param_space->Draw();  
+  h_dc_dchisqratio2_282N->Draw("colzsame");
+  g_minos->Draw("l");
+  c->SaveAs("compare_2all_28_dchisqdiff_nM8OnP8O2_zoom.eps");
 
 
-  //compare dchisq_crit sufaces
+
+  //compare KIT/VaLOR dchisq_crit sufaces
   TH2D * h_crit_68 = 0;
   f_crit.GetObject("hDeltaChi2Surface68",h_crit_68);
   TH2D * h_crit_68_kit = 0;
