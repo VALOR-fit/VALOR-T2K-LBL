@@ -331,23 +331,31 @@ void plot_contour_comparisons
 
 
   //compare 2+8, 2+N const dchisq surfaces
-  TH2D * h_dc_dchisqratio_282N = new TH2D(*h_dcall_123);
+  TH2D * h_dc_dchisqratio1_282N = new TH2D(*h_dcall_123);
+  TH2D * h_dc_dchisqratio2_282N = new TH2D(*h_dcall_123);
   for(int i = 1; i <= h_dcall_123->GetNbinsX(); i++) {
+    int ibin = h_dc_123->GetXaxis()->FindBin(h_dcall_123->GetXaxis()->GetBinCenter(i));
     for(int j = 1; j <= h_dcall_123->GetNbinsY(); j++) {
-      double n28 = h_dc_123->GetBinContent(i,j);
+      int jbin = h_dc_123->GetYaxis()->FindBin(h_dcall_123->GetYaxis()->GetBinCenter(j));
+      double n28 = h_dc_123->GetBinContent(ibin, jbin);
       double n2n = h_dcall_123->GetBinContent(i,j);
-      double frac = (n2n-n28)/(n2n+n28);
-      //cout << n28 << "\t" << n2n << "\t" << frac << endl;
-      h_dc_dchisqratio_282N->SetBinContent(i,j, frac);
+      double frac1 = (n28-n2n)/n2n;
+      double frac2 = (n2n-n28)/((n2n+n28)/2);
+      cout << i << "\t" << j << "\t" << n28 << "\t" << n2n << "\t" << frac1 << "\t" << frac2 << endl;
+      h_dc_dchisqratio1_282N->SetBinContent(i,j, frac1);
+      h_dc_dchisqratio2_282N->SetBinContent(i,j, frac2);
     }
   }
   osc_param_space->GetXaxis()->SetRangeUser(0.8,1.0);
   osc_param_space->GetYaxis()->SetRangeUser(0.0015,0.0033);
   osc_param_space->Draw();  
-  h_dc_dchisqratio_282N->SetContour(255);
+  h_dc_dchisqratio1_282N->SetContour(255);
+  h_dc_dchisqratio2_282N->SetContour(255);
   c->SetRightMargin(0.13);
-  h_dc_dchisqratio_282N->Draw("colzsame");
-  c->SaveAs("compare_2all_28_dchisqdiff.eps");
-
+  h_dc_dchisqratio1_282N->Draw("colzsame");
+  c->SaveAs("compare_2all_28_dchisqdiff_8MnOn.eps");
+  osc_param_space->Draw();  
+  h_dc_dchisqratio2_282N->Draw("colzsame");
+  c->SaveAs("compare_2all_28_dchisqdiff_nM8OnP8O2.eps");
 
 }
