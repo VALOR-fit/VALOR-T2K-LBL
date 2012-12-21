@@ -240,6 +240,8 @@ void make_star_plot_for_disappearance_analysis
     c->SaveAs(Form("%s-%f-%f_zoom2.eps",group.c_str(),true_mixing23,true_dm23sq));
   }
   
+  //cout << osc_param_space->GetXaxis()->GetNdivisions() << endl;
+  osc_param_space->GetXaxis()->SetNdivisions(507,true);
   osc_param_space->GetXaxis()->SetRangeUser(true_mixing23 - (1.1* stat_av_mixing23), true_mixing23 + (1.1* stat_av_mixing23));
   osc_param_space->GetYaxis()->SetRangeUser(true_dm23sq - (1.1* stat_av_dm23sq), true_dm23sq + (1.1* stat_av_dm23sq));
   c->SaveAs(Form("%s-%f-%f_testbig.eps",group.c_str(),true_mixing23,true_dm23sq));
