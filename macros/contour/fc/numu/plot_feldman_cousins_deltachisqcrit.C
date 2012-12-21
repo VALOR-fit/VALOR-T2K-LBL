@@ -21,10 +21,10 @@ void plot_feldman_cousins_deltachisqcrit(
   const char * delta_chisq_critical_file_mc_statsyst,
   int nsmoothings=0)
 {
-  const double sinsq2theta_min = 0.75;
+  const double sinsq2theta_min = 0.925;
   const double sinsq2theta_max = 1.00;
-  const double dmsq_min        = 1.6E-3;
-  const double dmsq_max        = 3.7E-3;
+  const double dmsq_min        = 2.0E-3;
+  const double dmsq_max        = 3.0E-3;
   const double dchisq_2p_68    = 2.30; /// canonical 68% CL \delta\chi^{2} for 2 parameters
   const double dchisq_2p_90    = 4.61; /// canonical 90% CL \delta\chi^{2} for 2 parameters
 
@@ -97,9 +97,9 @@ void plot_feldman_cousins_deltachisqcrit(
   // Plot critical \delta\chi^{2}_{68} and \delta\chi^{2}_{90} vs sinsq2theta for 3 dmsq.
   //
 
-  double dmsq1 = 2.0E-3;
-  double dmsq2 = 2.5E-3;
-  double dmsq3 = 3.0E-3;
+  double dmsq1 = 2.7E-3;
+  double dmsq2 = 2.4E-3;
+  double dmsq3 = 2.1E-3;
 
   int n = hdchisq90_statonly->GetXaxis()->GetNbins();
 
@@ -145,7 +145,7 @@ void plot_feldman_cousins_deltachisqcrit(
   gr2_68->Draw("c");
   gr3_68->Draw("c");
   TLegend * legend_68 = new TLegend(0.5, 0.5, 0.9, 0.9);
-  legend_68->SetFillColor(0);
+  legend_68->SetFillStyle(0);
   legend_68->SetBorderSize(0);
   legend_68->AddEntry(gr1_68, Form("#Delta#chi^{2}_{68}, #Deltam^{2}_{23} = %.5f eV^{2}/c^{4}", dmsq1), "L");
   legend_68->AddEntry(gr2_68, Form("#Delta#chi^{2}_{68}, #Deltam^{2}_{23} = %.5f eV^{2}/c^{4}", dmsq2), "L");
@@ -167,7 +167,7 @@ void plot_feldman_cousins_deltachisqcrit(
   gr2_90->Draw("c");
   gr3_90->Draw("c");
   TLegend * legend_90 = new TLegend(0.5, 0.5, 0.9, 0.9);
-  legend_90->SetFillColor(0);
+  legend_90->SetFillStyle(0);
   legend_90->SetBorderSize(0);
   legend_90->AddEntry(gr1_90, Form("#Delta#chi^{2}_{90}, #Deltam^{2}_{23} = %.5f eV^{2}/c^{4}", dmsq1), "L");
   legend_90->AddEntry(gr2_90, Form("#Delta#chi^{2}_{90}, #Deltam^{2}_{23} = %.5f eV^{2}/c^{4}", dmsq2), "L");
@@ -182,8 +182,8 @@ void plot_feldman_cousins_deltachisqcrit(
   //
 
   double sinsq2theta1 = 1.00;
-  double sinsq2theta2 = 0.95;
-  double sinsq2theta3 = 0.90;
+  double sinsq2theta2 = 0.975;
+  double sinsq2theta3 = 0.95;
 
   int n2 = hdchisq90_statonly->GetYaxis()->GetNbins();
 
@@ -229,7 +229,7 @@ void plot_feldman_cousins_deltachisqcrit(
   gr2_dmsq_68->Draw("c");
   gr3_dmsq_68->Draw("c");
   TLegend * legend_dmsq_68 = new TLegend(0.5, 0.5, 0.9, 0.9);
-  legend_dmsq_68->SetFillColor(0);
+  legend_dmsq_68->SetFillStyle(0);
   legend_dmsq_68->SetBorderSize(0);
   legend_dmsq_68->AddEntry(gr1_68, Form("#Delta#chi^{2}_{68}, sin^{2}#theta_{23} = %.3f", sinsq2theta1), "L");
   legend_dmsq_68->AddEntry(gr2_68, Form("#Delta#chi^{2}_{68}, sin^{2}#theta_{23} = %.3f", sinsq2theta2), "L");
@@ -251,7 +251,7 @@ void plot_feldman_cousins_deltachisqcrit(
   gr2_dmsq_90->Draw("c");
   gr3_dmsq_90->Draw("c");
   TLegend * legend_dmsq_90 = new TLegend(0.5, 0.5, 0.9, 0.9);
-  legend_dmsq_90->SetFillColor(0);
+  legend_dmsq_90->SetFillStyle(0);
   legend_dmsq_90->SetBorderSize(0);
   legend_dmsq_90->AddEntry(gr1_dmsq_90, Form("#Delta#chi^{2}_{90}, sin^{2}#theta_{23} = %.3f", sinsq2theta1), "L");
   legend_dmsq_90->AddEntry(gr2_dmsq_90, Form("#Delta#chi^{2}_{90}, sin^{2}#theta_{23} = %.3f", sinsq2theta2), "L");
