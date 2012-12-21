@@ -354,3 +354,17 @@ root2k -l -b -q '$T2KOSCANA/macros/misc/toms_plotting_stuff/plot_goodness_of_fit
 root2k -l -b -q '$T2KOSCANA/macros/misc/toms_plotting_stuff/plot_goodness_of_fit.C(4,"goodness-of-fit-f4good28-run_4.root")'
 root2k -l -b -q '$T2KOSCANA/macros/misc/toms_plotting_stuff/plot_goodness_of_fit.C(5,"goodness-of-fit-f5good28-run_5.root")'
 
+
+
+
+#make best fit spectra (FAKE DATA)
+cd 0; root2k -l -b -q '$T2KOSCANA/macros/spectra/test_sk_ereco_spectrum_nominal_withsys.C(0,-99,-99,1.00,-99,-99,0.00225)'; cd ..;
+cd 1; root2k -l -b -q '$T2KOSCANA/macros/spectra/test_sk_ereco_spectrum_nominal_withsys.C(3,-99,-99,0.88,-99,-99,0.00250)'; cd ..;
+cd 2; root2k -l -b -q '$T2KOSCANA/macros/spectra/test_sk_ereco_spectrum_nominal_withsys.C(4,-99,-99,0.95,-99,-99,0.00300)'; cd ..;
+cd 3; root2k -l -b -q '$T2KOSCANA/macros/spectra/test_sk_ereco_spectrum_nominal_withsys.C(5,-99,-99,1.00,-99,-99,0.00220)'; cd ..;
+cd 4; root2k -l -b -q '$T2KOSCANA/macros/spectra/test_sk_ereco_spectrum_nominal_withsys.C(6,-99,-99,0.85,-99,-99,0.00270)'; cd ..;
+cd 5; root2k -l -b -q '$T2KOSCANA/macros/spectra/test_sk_ereco_spectrum_nominal_withsys.C(0,-99,-99,0.80,-99,-99,0.00200)'; cd ..;
+
+#and Run1-3 data fits
+cd 28; root2k -l -b -q '$T2KOSCANA/macros/spectra/test_sk_ereco_spectrum_nominal_withsys.C(1,-99,-99,1.00,-99,-99,0.002442)'; cd ..;
+cd 2N; root2k -l -b -q '$T2KOSCANA/macros/spectra/test_sk_ereco_spectrum_nominal_withsys.C(2,-99,-99,1.00,-99,-99,0.002442)'; cd ..;
