@@ -121,6 +121,7 @@ void make_feldman_cousins_deltachisqcrit_surface(
 
   TChain chain("fcnt");
   chain.Add(Form("%s/*root", input_data_directory));
+  cout << chain.GetEntries() << endl;
 
   int nx1 = TMath::Max(1,              sinsq2theta_min_bin);
   int nx2 = TMath::Min(mixing23_nbins, sinsq2theta_max_bin);

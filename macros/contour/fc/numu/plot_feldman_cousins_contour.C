@@ -412,10 +412,10 @@ void plot_feldman_cousins_contour(
   }
 
   if(save_plots) {
-    ConfidenceContour->SaveAs("FCcontour.pdf");
+    ConfidenceContour->SaveAs("FCcontour.eps");
     hframe->Draw();
     hDeltaChisqCrit68StatSyst->Draw("colzsame");
-    ConfidenceContour->SaveAs("FCsurface68.pdf");
+    ConfidenceContour->SaveAs("FCsurface68.eps");
     hframe->Draw();
     hDeltaChisqCrit90StatSyst->Draw("colzsame");
     ConfidenceContour->SaveAs("FCsurface90.eps");
