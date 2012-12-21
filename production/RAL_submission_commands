@@ -17,7 +17,11 @@ $T2KOSCANA/production/submit_feldman_cousins_fitting_job_numu --resource RAL --n
 root2k -l '$T2KOSCANA/macros/contour/fc/numu/test_feldman_cousins_nfits.C("$T2KOSCANA/2012results/FC/rootfiles")'
 
 #make a FC surface
-root2k -l -b -q '$T2KOSCANA/macros/contour/fc/numu/make_feldman_cousins_deltachisqcrit_surface.C("$T2KOSCANA/2012results/FC/rootfiles","delta_chisq_critical.root",75,9999,8,25)'
+root2k -l -b -q '$T2KOSCANA/macros/contour/fc/numu/make_feldman_cousins_deltachisqcrit_surface.C("$T2KOSCANA/2012results/FC/rootfiles","delta_chisq_critical_upto96.root",75,96)'
+root2k -l -b -q '$T2KOSCANA/macros/contour/fc/numu/make_feldman_cousins_deltachisqcrit_surface.C("$T2KOSCANA/2012results/FC/rootfiles","delta_chisq_critical_old97.root",97,97)'
+root2k -l -b -q '$T2KOSCANA/macros/contour/fc/numu/make_feldman_cousins_deltachisqcrit_surface.C("$T2KOSCANA/2012results/FC/2+8statsystboundary","delta_chisq_critical_new97.root",97,97)'
+root2k -l -b -q '$T2KOSCANA/macros/contour/fc/numu/make_feldman_cousins_deltachisqcrit_surface.C("$T2KOSCANA/2012results/FC/2+8statsystboundary","delta_chisq_critical_newbound.root",98,1000)'
+
 
 #plot a contour (run1-3, with 90% stat syst underlaid)
 root2k -l '$T2KOSCANA/macros/contour/fc/numu/plot_feldman_cousins_contour.C("","$T2KOSCANA/2012results/FC/delta_chisq_critical.root","$T2KOSCANA/2012results/FC/delta_chisq_critical.root","$T2KOSCANA/2012results/DATA/bigger_surface/28/fitresults_3.root","hdchisq",0,true,false,false,"90statsyst")'
@@ -267,12 +271,13 @@ root2k -l -b -q '$T2KOSCANA/macros/fit/toymc/analyse_output.C("fakedata-run_4-ex
 root2k -l -b -q '$T2KOSCANA/macros/fit/toymc/analyse_output.C("fakedata-run_5-expts_5_5.root",5,"$T2KOSCANA/2012results/DATA/bigger_surface/FAKE28/","analysis_configuration.xml",6.0,0.6,1,0.0010,0.0035,false)';
 
 #fake2all
-root2k -l -b -q '$T2KOSCANA/macros/fit/toymc/analyse_output.C("$T2KOSCANA/2012results/DATA/FAKE2all/fakedata-run_0-expts_0_0.root",0,"./","analysis_configuration.xml",7.0,false)';
-root2k -l -b -q '$T2KOSCANA/macros/fit/toymc/analyse_output.C("$T2KOSCANA/2012results/DATA/FAKE2all/fakedata-run_1-expts_1_1.root",1,"./","analysis_configuration.xml",7.0,false)';
-root2k -l -b -q '$T2KOSCANA/macros/fit/toymc/analyse_output.C("$T2KOSCANA/2012results/DATA/FAKE2all/fakedata-run_2-expts_2_2.root",2,"./","analysis_configuration.xml",7.0,false)';
-root2k -l -b -q '$T2KOSCANA/macros/fit/toymc/analyse_output.C("$T2KOSCANA/2012results/DATA/FAKE2all/fakedata-run_3-expts_3_3.root",3,"./","analysis_configuration.xml",7.0,false)';
-root2k -l -b -q '$T2KOSCANA/macros/fit/toymc/analyse_output.C("$T2KOSCANA/2012results/DATA/FAKE2all/fakedata-run_4-expts_4_4.root",4,"./","analysis_configuration.xml",7.0,false)';
-root2k -l -b -q '$T2KOSCANA/macros/fit/toymc/analyse_output.C("$T2KOSCANA/2012results/DATA/FAKE2all/fakedata-run_5-expts_5_5.root",5,"./","analysis_configuration.xml",7.0,false)';
+root2k -l -b -q '$T2KOSCANA/macros/fit/toymc/analyse_output.C("fakedata-run_0-expts_0_0.root",0,"$T2KOSCANA/2012results/DATA/FAKE2all/","analysis_configuration.xml",6.0,0.8,1,0.0015,0.0033,false)';
+root2k -l -b -q '$T2KOSCANA/macros/fit/toymc/analyse_output.C("fakedata-run_1-expts_1_1.root",1,"$T2KOSCANA/2012results/DATA/FAKE2all/","analysis_configuration.xml",6.0,0.8,1,0.0015,0.0033,false)';
+root2k -l -b -q '$T2KOSCANA/macros/fit/toymc/analyse_output.C("fakedata-run_2-expts_2_2.root",2,"$T2KOSCANA/2012results/DATA/FAKE2all/","analysis_configuration.xml",6.0,0.8,1,0.0015,0.0033,false)';
+root2k -l -b -q '$T2KOSCANA/macros/fit/toymc/analyse_output.C("fakedata-run_3-expts_3_3.root",3,"$T2KOSCANA/2012results/DATA/FAKE2all/","analysis_configuration.xml",6.0,0.8,1,0.0015,0.0033,false)';
+root2k -l -b -q '$T2KOSCANA/macros/fit/toymc/analyse_output.C("fakedata-run_4-expts_4_4.root",4,"$T2KOSCANA/2012results/DATA/FAKE2all/","analysis_configuration.xml",6.0,0.8,1,0.0015,0.0033,false)';
+root2k -l -b -q '$T2KOSCANA/macros/fit/toymc/analyse_output.C("fakedata-run_5-expts_5_5.root",5,"$T2KOSCANA/2012results/DATA/FAKE2all/","analysis_configuration.xml",6.0,0.8,1,0.0015,0.0033,false)';
+
 
 
 
