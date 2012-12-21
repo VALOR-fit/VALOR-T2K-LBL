@@ -11,11 +11,18 @@ void plot_contour_comparisons
   TFile f_dcall_12("2012results/DATA/2all/fitresults_4.root");
   TFile f_dcall_3("2012results/DATA/2all/fitresults_5.root");
   TFile f_fc_123("2012results/FC/fc_contours.root");
+  TFile f_fcall_123("2012results/FC/fc_contours_2all.root");
   TFile f_dc_kit("2012results/DATA/KIT/run1-3_constchi2_v2_fine.root");
   TFile f_fc_kit("2012results/DATA/KIT/run1-3_fc.root");
-  TFile f_crit("2012results/FC/delta_chisq_critical.root");
+  TFile f_crit("2012results/FC/mergesurfaces/merge.root");
   TFile f_crit_kit("2012results/FC/KIT/run1-3_criticalchi2.root");
   TFile f_sens("2012results/SENSITIVITY/t2k_28/sensitivity.root");
+
+  //Fill in TMarker's with the best fit point (is the same for 2+N, 2+8)
+  TMarker bestfit(1.000,0.002442,29);
+  bestfit->SetMarkerSize(1.8);
+  bestfit->SetMarkerColor(kBlack);
+
 
   //28 const dchisq
   TH2D * h_dc_123 = 0;
@@ -62,6 +69,18 @@ void plot_contour_comparisons
   h_fc_123_90->SetContour(1);
   h_fc_123_90->SetContourLevel(0,0.0);
   h_fc_123_90->SetLineStyle(1);
+
+  //2all FC
+  TH2D * h_fcall_123_68 = 0;
+  TH2D * h_fcall_123_90 = 0;
+  f_fcall_123.GetObject("hCL68StatSyst",h_fcall_123_68);
+  f_fcall_123.GetObject("hCL90StatSyst",h_fcall_123_90);
+  h_fcall_123_68->SetContour(1);
+  h_fcall_123_68->SetContourLevel(0,0.0);
+  h_fcall_123_68->SetLineStyle(2);
+  h_fcall_123_90->SetContour(1);
+  h_fcall_123_90->SetContourLevel(0,0.0);
+  h_fcall_123_90->SetLineStyle(1);
 
   //2all const dchisq
   TH2D * h_dcall_123 = 0;
@@ -192,12 +211,14 @@ void plot_contour_comparisons
   h_dc_3_90->SetLineColor(kGreen+2);
   h_dcall_123_68->SetLineColor(kBlack);
   h_dcall_123_90->SetLineColor(kBlack);
-  h_dcall_12_68->SetLineColor(kBlue+5);
-  h_dcall_12_90->SetLineColor(kBlue+5);
-  h_dcall_3_68->SetLineColor(kGreen+2+5);
-  h_dcall_3_90->SetLineColor(kGreen+2+5);
+  h_dcall_12_68->SetLineColor(kBlue+3);
+  h_dcall_12_90->SetLineColor(kBlue+3);
+  h_dcall_3_68->SetLineColor(kGreen+4);
+  h_dcall_3_90->SetLineColor(kGreen+4);
   h_fc_123_68->SetLineColor(kBlack);
   h_fc_123_90->SetLineColor(kBlack);
+  h_fcall_123_68->SetLineColor(kGreen+2);
+  h_fcall_123_90->SetLineColor(kGreen+2);
   g_run12_68_statsyst->SetLineColor(kRed);
   g_run12_90_statsyst->SetLineColor(kRed);
   h_dc_kit_68->SetLineColor(kGreen+2);
@@ -210,7 +231,7 @@ void plot_contour_comparisons
   h_fc_123_90->GetYaxis()->SetRangeUser(0,0.33);
 
 
-  //Run 1-3 const dchisq vs FC
+  //Run 1-3 const dchisq vs FC (2+8)
   osc_param_space->GetXaxis()->SetRangeUser(0.85,1.0);
   osc_param_space->GetYaxis()->SetRangeUser(0.0018,0.0032);
   osc_param_space->Draw();  
@@ -225,6 +246,22 @@ void plot_contour_comparisons
   leg->AddEntry(h_fc_123_90, "FC 90% CL","l");
   leg->Draw();
   c->SaveAs("compare_FC_constchisq.eps");
+
+  //Run 1-3 const dchisq vs FC (2+all)
+  osc_param_space->GetXaxis()->SetRangeUser(0.85,1.0);
+  osc_param_space->GetYaxis()->SetRangeUser(0.0018,0.0032);
+  osc_param_space->Draw();  
+  h_dcall_123_68->Draw("cont3same");
+  h_dcall_123_90->Draw("cont3same");
+  h_fcall_123_68->Draw("cont3same");
+  h_fcall_123_90->Draw("cont3same");
+  leg->Clear();
+  leg->AddEntry(h_dcall_123_68, "const#Delta#chi^{2} 68% CL","l");
+  leg->AddEntry(h_dcall_123_90, "const#Delta#chi^{2} 90% CL","l");
+  leg->AddEntry(h_fcall_123_68, "FC 68% CL","l");
+  leg->AddEntry(h_fcall_123_90, "FC 90% CL","l");
+  leg->Draw();
+  c->SaveAs("compare_FC_constchisq_2N.eps");
 
   //Run 1-3 const dchisq KIT vs VaLOR
   osc_param_space->GetXaxis()->SetRangeUser(0.85,1.0);
@@ -258,19 +295,19 @@ void plot_contour_comparisons
   leg->Draw();
   c->SaveAs("compare_KIT_FC.eps");
 
-  //Run 1-3 const dchisq vs FC + externals
+  //Run 1-3 const dchisq vs FC + externals (2+8)
   osc_param_space->GetXaxis()->SetRangeUser(0.85,1.0);
   osc_param_space->GetYaxis()->SetRangeUser(0.0018,0.0035);
   osc_param_space->Draw();  
-  h_dc_123_68->Draw("cont3same");
+  //h_dc_123_68->Draw("cont3same");
   h_dc_123_90->Draw("cont3same");
-  h_fc_123_68->Draw("cont3same");
+  //h_fc_123_68->Draw("cont3same");
   h_fc_123_90->Draw("cont3same");
   leg->Clear();
-  leg->AddEntry(h_dc_123_68, "const#Delta#chi^{2} 68% CL","l");
-  leg->AddEntry(h_dc_123_90, "const#Delta#chi^{2} 90% CL","l");
-  leg->AddEntry(h_fc_123_68, "FC 68% CL","l");
-  leg->AddEntry(h_fc_123_90, "FC 90% CL","l");
+  //leg->AddEntry(h_dc_123_68, "const#Delta#chi^{2} 68% CL","l");
+  leg->AddEntry(h_dc_123_90, "T2K const#Delta#chi^{2} 90% CL","l");
+  //leg->AddEntry(h_fc_123_68, "FC 68% CL","l");
+  leg->AddEntry(h_fc_123_90, "T2K FC 90% CL","l");
   g_minos->Draw("l");
   g_skle->Draw("l");
   g_skzen->Draw("l");
@@ -279,6 +316,28 @@ void plot_contour_comparisons
   leg->AddEntry("g_skzen", "SuperK 2012 zenith 3#nu 90% CL", "l");
   leg->Draw();
   c->SaveAs("compare_FC_constchisq_external.eps");
+
+  //Run 1-3 const dchisq vs FC + externals (2+N)
+  osc_param_space->GetXaxis()->SetRangeUser(0.85,1.0);
+  osc_param_space->GetYaxis()->SetRangeUser(0.0018,0.0035);
+  osc_param_space->Draw();  
+  //h_dcall_123_68->Draw("cont3same");
+  h_dcall_123_90->Draw("cont3same");
+  //h_fcall_123_68->Draw("cont3same");
+  h_fcall_123_90->Draw("cont3same");
+  leg->Clear();
+  //leg->AddEntry(h_dcall_123_68, "const#Delta#chi^{2} 68% CL","l");
+  leg->AddEntry(h_dcall_123_90, "T2K const#Delta#chi^{2} 90% CL","l");
+  //leg->AddEntry(h_fcall_123_68, "FC 68% CL","l");
+  leg->AddEntry(h_fcall_123_90, "T2K FC 90% CL","l");
+  g_minos->Draw("l");
+  g_skle->Draw("l");
+  g_skzen->Draw("l");
+  leg->AddEntry("g_minos", "MINOS 2012 90% CL", "l");
+  leg->AddEntry("g_skle", "SuperK 2012 L/E 90% CL", "l");
+  leg->AddEntry("g_skzen", "SuperK 2012 zenith 3#nu 90% CL", "l");
+  leg->Draw();
+  c->SaveAs("compare_FC_constchisq_external_2N.eps");
 
   //run1+2 2012 const dchisq vs 2010 FC
   osc_param_space->GetXaxis()->SetRangeUser(0.75,1.0);
@@ -296,7 +355,7 @@ void plot_contour_comparisons
   leg->Draw();
   c->SaveAs("compare_run12_2012_2010.eps");
 
-  //runs 123,12,3 constdchisq comparisons
+  //runs 123,12,3 constdchisq comparisons (2+8)
   osc_param_space->GetXaxis()->SetRangeUser(0.75,1.0);
   osc_param_space->GetYaxis()->SetRangeUser(0.0015,0.0035);
   osc_param_space->Draw();
@@ -316,6 +375,26 @@ void plot_contour_comparisons
   leg->Draw();
   c->SaveAs("compare_runs.eps");
 
+  //runs 123,12,3 constdchisq comparisons (2+N)
+  osc_param_space->GetXaxis()->SetRangeUser(0.75,1.0);
+  osc_param_space->GetYaxis()->SetRangeUser(0.0015,0.0035);
+  osc_param_space->Draw();
+  h_dcall_123_68->Draw("cont3same");
+  h_dcall_123_90->Draw("cont3same");
+  h_dcall_12_68->Draw("cont3same");
+  h_dcall_12_90->Draw("cont3same");
+  h_dcall_3_68->Draw("cont3same");
+  h_dcall_3_90->Draw("cont3same");
+  leg->Clear();
+  leg->AddEntry(h_dcall_123_68, "Run1+2+3 const#Delta#chi^{2} 68% CL","l");
+  leg->AddEntry(h_dcall_123_90, "Run1+2+3 const#Delta#chi^{2} 90% CL","l");
+  leg->AddEntry(h_dcall_12_68, "Run1+2 const#Delta#chi^{2} 68% CL","l");
+  leg->AddEntry(h_dcall_12_90, "Run1+2 const#Delta#chi^{2} 90% CL","l");
+  leg->AddEntry(h_dcall_3_68, "Run3 const#Delta#chi^{2} 68% CL","l");
+  leg->AddEntry(h_dcall_3_90, "Run3 const#Delta#chi^{2} 90% CL","l");
+  leg->Draw();
+  c->SaveAs("compare_runs_2N.eps");
+
   //Run 1-3 28, 2all const dchisq
   osc_param_space->GetXaxis()->SetRangeUser(0.9,1.0);
   osc_param_space->GetYaxis()->SetRangeUser(0.0015,0.0033);
@@ -331,6 +410,22 @@ void plot_contour_comparisons
   leg->AddEntry(h_dcall_123_90, "2+N const#Delta#chi^{2} 90% CL","l");
   leg->Draw();
   c->SaveAs("compare_2all_28.eps");
+
+  //Run 1-3 28, 2all FC
+  osc_param_space->GetXaxis()->SetRangeUser(0.9,1.0);
+  osc_param_space->GetYaxis()->SetRangeUser(0.0015,0.0033);
+  osc_param_space->Draw();  
+  h_fc_123_68->Draw("cont3same");
+  h_fc_123_90->Draw("cont3same");
+  h_fcall_123_68->Draw("cont3same");
+  h_fcall_123_90->Draw("cont3same");
+  leg->Clear();
+  leg->AddEntry(h_fc_123_68, "2+8 FC 68% CL","l");
+  leg->AddEntry(h_fc_123_90, "2+8 FC 90% CL","l");
+  leg->AddEntry(h_fcall_123_68, "2+N FC 68% CL","l");
+  leg->AddEntry(h_fcall_123_90, "2+N FC 90% CL","l");
+  leg->Draw();
+  c->SaveAs("compare_2all_28_FC.eps");
 
 
   //compare 2+8, 2+N const dchisq surfaces
@@ -449,6 +544,31 @@ void plot_contour_comparisons
   c->SaveAs("compare_FC_constchisq_sensitivity.eps");
   
 
+  //Run 1-3 2+8 FC only
+  osc_param_space->GetXaxis()->SetRangeUser(0.9,1.0);
+  osc_param_space->GetYaxis()->SetRangeUser(0.0015,0.0033);
+  osc_param_space->Draw();  
+  h_fc_123_68->Draw("cont3same");
+  h_fc_123_90->Draw("cont3same");
+  leg->Clear();
+  leg->AddEntry(h_fc_123_68, "2+8 FC 68% CL","l");
+  leg->AddEntry(h_fc_123_90, "2+8 FC 90% CL","l");
+  leg->Draw();
+  bestfit.Draw();
+  c->SaveAs("28_FC.eps");
+
+  //Run 1-3 2+N FC only
+  osc_param_space->GetXaxis()->SetRangeUser(0.9,1.0);
+  osc_param_space->GetYaxis()->SetRangeUser(0.0015,0.0033);
+  osc_param_space->Draw();  
+  h_fcall_123_68->Draw("cont3same");
+  h_fcall_123_90->Draw("cont3same");
+  leg->Clear();
+  leg->AddEntry(h_fcall_123_68, "2+N const#Delta#chi^{2} 68% CL","l");
+  leg->AddEntry(h_fcall_123_90, "2+N const#Delta#chi^{2} 90% CL","l");
+  leg->Draw();
+  bestfit.Draw();
+  c->SaveAs("2N_FC.eps");
 
 
 }
