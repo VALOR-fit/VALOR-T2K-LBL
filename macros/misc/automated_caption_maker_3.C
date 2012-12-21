@@ -43,7 +43,7 @@ void automated_caption_maker_3(
 
   stringstream streamer;
 
-
+  iplot = 0;
   //loop over systematic parameters
   for(int im = 0; im < conv::knm; im++) {
     conv::SuperkMode_t m = conv::kSKReactionModes[0][im];
@@ -55,10 +55,14 @@ void automated_caption_maker_3(
     string modelong = util::AsStringTex(m);
 
     //front matter
-    streamer << "\\begin{figure}" << endl;
-    streamer << "\\begin{center}" << endl;
-    streamer << "\\resizebox{14cm}{!}{" 
-	     << Form("\\includegraphics{%s%s%s_fine}}",graphicslocation,graphicsprefix,modecompactJ.c_str()) << endl;
+    if(iplot % 4 == 0) {
+      streamer << "\\begin{figure*}[htb]" << endl;
+    }
+    streamer << "\\begin{minipage}[t]{0.48\\linewidth}" << endl;
+    streamer << "\\center" << endl;
+
+    //image
+    streamer << Form("\\includegraphics[width=18pc]{%s%s%s_fine}",graphicslocation,graphicsprefix,modecompactJ.c_str()) << endl;
 
     //caption
     streamer << "\\caption" << endl;
@@ -82,9 +86,19 @@ void automated_caption_maker_3(
 
 
     //back matter
-    streamer << "\\end{center}" << endl;
-    streamer << "\\end{figure}" << endl;
-    streamer << "\\clearpage" << endl << endl;
+    streamer << "\\end{minipage}" << endl;
+    if(iplot % 4 == 3){// || iplot == mixing23.size()-1) {
+      streamer << "\\end{figure*}" << endl << endl;
+      streamer << "\\clearpage" << endl;
+      //if(iplot %4 == 1 || iplot == mixing23.size() -1) {
+    }
+    else if(iplot %4 == 0 || iplot %4 == 2){
+      streamer << "\\hspace{0.06\\linewidth}" << endl;
+    }
+    else if(iplot %4 == 1) {
+      streamer << "\\vfill" << endl;
+    }
+    iplot++;
 
   }
 
