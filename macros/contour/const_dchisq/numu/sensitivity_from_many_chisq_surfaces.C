@@ -31,7 +31,7 @@ void sensitivity_from_many_chisq_surfaces
   TFile f1(filename1);
   TH2D * dchisq1 = 0;
   f1.GetObject(Form("%s_%d",surfacenameprefix,0),dchisq1);
-  if(!dchisq1) { f1.Close(); return; }
+  if(!dchisq1) { f1.Close(); cout << Form("%s_%d",surfacenameprefix,0) << " does not exist. Exiting" << endl; return; }
   TH2D * avdchisq = new TH2D(dchisq1->GetTitle(), dchisq1->GetName(), dchisq1->GetNbinsX(), dchisq1->GetXaxis()->GetXmin(), dchisq1->GetXaxis()->GetXmax(), dchisq1->GetNbinsY(), dchisq1->GetYaxis()->GetXmin(), dchisq1->GetYaxis()->GetXmax());
 
   //Histogram to store the left-most point in mixing23
@@ -46,6 +46,7 @@ void sensitivity_from_many_chisq_surfaces
   }
   double kitexcluded90 = 1, kitexcluded68 = 1;
   if(kitdchisq) {
+    cout << "found chisq surface to compare with" << endl;
     double chisqmin = kitdchisq->GetMinimum();
     for(int ix = 1; ix <= kitdchisq->GetNbinsX(); ix++) {
       for(int iy = 1; iy <= kitdchisq->GetNbinsY(); iy++) {
@@ -275,6 +276,9 @@ void sensitivity_from_many_chisq_surfaces
   avdchisq->Draw("cont1");
   TLegend *leg = new TLegend(0.0,0.8,0.25,1.0);
   leg->SetFillColor(0);
+  leg->SetFillStyle(0);
+  leg->SetTextFont(42);
+  leg->SetBorderSize(0);
   leg->AddEntry(avdchisq,"VaLOR","l");
   if(kitdchisq) {
     kitdchisq->SetLineStyle(2);
@@ -320,22 +324,37 @@ void sensitivity_from_many_chisq_surfaces
   //Now, get the exclusion of mixing angle
   mixing23_exclude68->SetTitle("");
   mixing23_exclude68->SetLineColor(kBlack);
+  mixing23_exclude68->GetXaxis()->SetTitle("sin^{2}2#theta_{23}");
+  mixing23_exclude68->GetYaxis()->SetTitle("N fits");
   mixing23_exclude68->Draw();
   mixing23_exclude90->SetLineColor(kRed);
   mixing23_exclude90->Draw("same");
   lkitexcluded90.SetLineColor(kRed);
   lkitexcluded90.SetLineStyle(2);
   lkitexcluded68.SetLineStyle(2);
+  lkitexcluded90.SetLineWidth(2);
+  lkitexcluded68.SetLineWidth(2);
+  lkitexcluded90.SetY2(mixing23_exclude68->GetMaximum()*1.05);
+  lkitexcluded68.SetY2(mixing23_exclude68->GetMaximum()*1.05);
   lkitexcluded90.Draw("same");
   lkitexcluded68.Draw("same");
-  leg->AddEntry(mixing23_exclude90,"90% exclusion","l");
-  leg->AddEntry(mixing23_exclude68,"68% exclusion","l");
+  leg->SetX1NDC(0.15);
+  leg->SetX2NDC(0.45);
+  leg->SetY1NDC(0.6);
+  leg->SetY2NDC(0.9);
+  leg->AddEntry(mixing23_exclude90,"90% CL exclusion","l");
+  leg->AddEntry((TObject*)0, Form("Data %0.3f", kitexcluded90), "");
+  leg->AddEntry((TObject*)0, Form("p-value %0.3f", pvalue90), "");
+  leg->AddEntry(mixing23_exclude68,"68% CL exclusion","l");
+  leg->AddEntry((TObject*)0, Form("Data %0.3f", kitexcluded68), "");
+  leg->AddEntry((TObject*)0, Form("p-value %0.3f", pvalue68), "");
+  //leg->AddEntry((TObject*)0, Form("Data %0.3f, p-value %0.3f", kitexcluded68, pvalue68), "");
   leg->Draw();
   TText * texclude90 = new TText(0.8,80,Form("90%: Data %0.3f, p-value %0.3f",kitexcluded90,pvalue90));
-  texclude90->Draw("same");
+  //texclude90->Draw("same");
   TText * texclude68 = new TText(0.8,60,Form("68%: Data %0.3f, p-value %0.3f",kitexcluded68,pvalue68));
-  texclude68->Draw("same");
-  c2->SaveAs("exclusion.pdf");
+  //texclude68->Draw("same");
+  c2->SaveAs("exclusion.eps");
   leg->Clear();
 
   fout.Close();

@@ -15,6 +15,7 @@ void plot_contour_comparisons
   TFile f_fc_kit("2012results/DATA/KIT/run1-3_fc.root");
   TFile f_crit("2012results/FC/delta_chisq_critical.root");
   TFile f_crit_kit("2012results/FC/KIT/run1-3_criticalchi2.root");
+  TFile f_sens("2012results/SENSITIVITY/t2k_28/sensitivity.root");
 
   //28 const dchisq
   TH2D * h_dc_123 = 0;
@@ -241,7 +242,7 @@ void plot_contour_comparisons
   leg->Draw();
   c->SaveAs("compare_KIT_constchisq.eps");
 
-  //Run 1-3 const dchisq KIT vs VaLOR
+  //Run 1-3 FC KIT vs VaLOR
   osc_param_space->GetXaxis()->SetRangeUser(0.85,1.0);
   osc_param_space->GetYaxis()->SetRangeUser(0.0018,0.0032);
   osc_param_space->Draw();  
@@ -406,7 +407,7 @@ void plot_contour_comparisons
   osc_param_space->Draw("");
   h_crit_ratio->SetContour(255);
   h_crit_ratio->Draw("colzsame");
-  c->SaveAs("compare_fc_crit.pdf");
+  c->SaveAs("compare_fc_crit.eps");
 
   
   h_crit_68->GetZaxis()->SetRangeUser(1,3);
@@ -414,9 +415,40 @@ void plot_contour_comparisons
 
   osc_param_space->Draw("");
   h_crit_68->Draw("colzsame");
-  c->SaveAs("valcrit.pdf");
+  c->SaveAs("valcrit.eps");
   osc_param_space->Draw("");
   h_crit_68_kit->Draw("colzsame");
-  c->SaveAs("kitcrit.pdf");
+  c->SaveAs("kitcrit.eps");
   
+
+  //compare T2K result with expected sensitivity (const dchisq)
+  TH2D * h_sens_68 = 0;
+  f_sens.GetObject("dchisq_for_cont1_68",h_sens_68);
+  TH2D * h_sens_90 = 0;
+  f_sens.GetObject("dchisq_for_cont1_90",h_sens_90);
+  h_sens_68->SetLineStyle(2);
+  h_sens_68->SetLineColor(kBlue-3);
+  h_sens_90->SetLineColor(kBlue-3);
+  osc_param_space->GetXaxis()->SetRangeUser(0.85,1.0);
+  osc_param_space->GetYaxis()->SetRangeUser(0.0018,0.0032);
+  osc_param_space->Draw();  
+  h_dc_123_68->Draw("cont3same");
+  h_dc_123_90->Draw("cont3same");
+  //h_fc_123_68->Draw("cont3same");
+  //h_fc_123_90->Draw("cont3same");
+  h_sens_68->Draw("cont3same");
+  h_sens_90->Draw("cont3same");
+  leg->Clear();
+  leg->AddEntry(h_dc_123_68, "const#Delta#chi^{2} Run1-3 68% CL","l");
+  leg->AddEntry(h_dc_123_90, "const#Delta#chi^{2} Run1-3 90% CL","l");
+  //leg->AddEntry(h_fc_123_68, "FC 68% CL","l");
+  //leg->AddEntry(h_fc_123_90, "FC 90% CL","l");
+  leg->AddEntry(h_sens_68, "const#Delta#chi^{2} sensitivity 68% CL", "l");
+  leg->AddEntry(h_sens_90, "const#Delta#chi^{2} sensitivity 90% CL", "l");
+  leg->Draw();
+  c->SaveAs("compare_FC_constchisq_sensitivity.eps");
+  
+
+
+
 }
