@@ -318,9 +318,18 @@ root2k -l -b -q '$T2KOSCANA/macros/fit/pulls/mock_data_fit_pulls.C("2all/*systfl
 
 #chisq of data at minos 2011 best fit
 
+root2k -l -b -q '$T2KOSCANA/macros/fit/stat/print_dataset_chisq.C(-99,-99,1.0,-99,-99,0.00232,"nuosc3f_numudisapp_fix4",3,"inputs/data.xml","analysis_configuration.xml")'
+root2k -l -b -q '$T2KOSCANA/macros/fit/stat/print_dataset_chisq.C(-99,-99,1.0,-99,-99,0.00232,"nuosc3f_numudisapp_fix4",4,"inputs/data.xml","analysis_configuration_2012a_run1+2_neut_finalBANFF_coarseErecoSplines_6binFSI+SI_MAQE.xml")'
+root2k -l -b -q '$T2KOSCANA/macros/fit/stat/print_dataset_chisq.C(-99,-99,1.0,-99,-99,0.00232,"nuosc3f_numudisapp_fix4",5,"inputs/data.xml","analysis_configuration_2012a_run3_neut_finalBANFF_coarseErecoSplines_6binFSI+SI_MAQE.xml")'
+
+
 root2k -l -b -q '$T2KOSCANA/macros/fit/stat/print_dataset_chisq.C(-99,-99,1.0,-99,-99,0.00232,"nuosc3f_numudisapp_fix4+nuisanceselection",3,"inputs/data.xml","analysis_configuration.xml")'
 root2k -l -b -q '$T2KOSCANA/macros/fit/stat/print_dataset_chisq.C(-99,-99,1.0,-99,-99,0.00232,"nuosc3f_numudisapp_fix4+nuisanceselection",4,"inputs/data.xml","analysis_configuration_2012a_run1+2_neut_finalBANFF_coarseErecoSplines_6binFSI+SI_MAQE.xml")'
 root2k -l -b -q '$T2KOSCANA/macros/fit/stat/print_dataset_chisq.C(-99,-99,1.0,-99,-99,0.00232,"nuosc3f_numudisapp_fix4+nuisanceselection",5,"inputs/data.xml","analysis_configuration_2012a_run3_neut_finalBANFF_coarseErecoSplines_6binFSI+SI_MAQE.xml")'
+
+root2k -l -b -q '$T2KOSCANA/macros/fit/stat/print_dataset_chisq.C(-99,-99,1.0,-99,-99,0.00232,"nuosc3f_numudisapp_fix4+nuisance",3,"inputs/data.xml","analysis_configuration.xml")'
+root2k -l -b -q '$T2KOSCANA/macros/fit/stat/print_dataset_chisq.C(-99,-99,1.0,-99,-99,0.00232,"nuosc3f_numudisapp_fix4+nuisance",4,"inputs/data.xml","analysis_configuration_2012a_run1+2_neut_finalBANFF_coarseErecoSplines_6binFSI+SI_MAQE.xml")'
+root2k -l -b -q '$T2KOSCANA/macros/fit/stat/print_dataset_chisq.C(-99,-99,1.0,-99,-99,0.00232,"nuosc3f_numudisapp_fix4+nuisance",5,"inputs/data.xml","analysis_configuration_2012a_run3_neut_finalBANFF_coarseErecoSplines_6binFSI+SI_MAQE.xml")'
 
 
 
