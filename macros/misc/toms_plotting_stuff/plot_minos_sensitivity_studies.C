@@ -36,8 +36,8 @@ void plot_minos_sensitivity_studies() {
   f[10] = new TFile("minos_awayfrombest_28/10/sensitivity.root");
   f[11] = new TFile("minos_awayfrombest_28/11/sensitivity.root");
   f[12] = new TFile("minos_awayfrombest_28/12/sensitivity.root");
-  /*f[13] = new TFile("minos_awayfrombest_28/13/sensitivity.root");
-  f[14] = new TFile("minos_awayfrombest_28/14/sensitivity.root");
+  f[13] = new TFile("minos_awayfrombest_28/13/sensitivity.root");
+  /*f[14] = new TFile("minos_awayfrombest_28/14/sensitivity.root");
   f[15] = new TFile("minos_awayfrombest_28/15/sensitivity.root");
   */
 
@@ -109,6 +109,7 @@ void plot_minos_sensitivity_studies() {
     if(hdchisq68[i]) {
       hdchisq68[i]->SetLineColor(col);
       hdchisq68[i]->Draw("cont3same");
+      cout << "found histogram in slot " << i << ". Adding to canvas " << i%5 << endl;
     }
     else {
       continue;
@@ -126,4 +127,46 @@ void plot_minos_sensitivity_studies() {
     c[ic]->SaveAs(Form("sensitivity_%d.eps",ic));
   }
 
+
+
+
+  //compare minos best fit vs minos best fit (with 600 bins)
+  c[0]->cd();
+  osc_param_space->GetXaxis()->SetRangeUser(0.8,1.0);
+  osc_param_space->GetYaxis()->SetRangeUser(0.0017,0.0033);
+  osc_param_space->Draw();
+  TFile * f500 = new TFile("minos_28_500/sensitivity.root");
+  TH2D * hdchisq68500 = 0, * hdchisq90500 = 0;
+  f500->GetObject("dchisq_for_cont1_68",hdchisq68500);
+  f500->GetObject("dchisq_for_cont1_90",hdchisq90500);
+  if(hdchisq68500)
+    hdchisq68500->SetLineStyle(2);
+
+  TLegend * leg = new TLegend(0.2,0.75,0.5,0.9);
+  leg->SetBorderSize(0);
+  leg->SetFillStyle(0);
+
+  hdchisq68500->SetLineColor(kRed);
+  //hdchisq68500->SetLineStyle(3);
+  hdchisq90500->SetLineColor(kRed);
+  //hdchisq90500->SetLineStyle(3);
+
+  if(hdchisq68[8])
+    hdchisq68[8]->Draw("cont3same");
+  if(hdchisq90[8])
+    hdchisq90[8]->Draw("cont3same");
+  if(hdchisq68500)
+    hdchisq68500->Draw("cont3same");
+  if(hdchisq90500)
+    hdchisq90500->Draw("cont3same");
+
+  leg->AddEntry(hdchisq68500,"500 bin const#Delta#chi^{2} 68% CL","l");
+  leg->AddEntry(hdchisq90500,"500 bin const#Delta#chi^{2} 90% CL","l");
+  leg->AddEntry(hdchisq68[8],"73 bin const#Delta#chi^{2} 68% CL","l");
+  leg->AddEntry(hdchisq90[8],"73 bin const#Delta#chi^{2} 90% CL","l");
+  leg->Draw();
+
+  in[8]->Draw("Psame");
+  c[0]->SaveAs("sensitivity_binning.eps");
+  
 }
