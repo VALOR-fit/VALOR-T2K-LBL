@@ -4,13 +4,8 @@ FC (give each set a unique tag)
 root2k -l '$T2KOSCANA/macros/contour/fc/numu/write_contour_bins_to_textfile.C("$T2KOSCANA/2012results/2012_12_07/data_28/fitresults_3.root",2,true,true,false,true,true,false,false,"hdchisq","hdchisq","hdchisq","hdchisq","hdchisq","hdchisq","hdchisq","hdchisq",true,true)'
 
 #submit the FC jobs
-$T2KOSCANA/production/submit_feldman_cousins_fitting_job_numu --resource RAL --nruns 500 --nexpts 2000 --cpu-time 24:00:00 --stat-fluctuations --tweak-systematics --bin-list /home/ppd/tdealtry/RAL_repoistory/t2k/t2kana/nuosc/branches/2012_v0.9.0/inputs/FCbinlist/binlist_2+8_statsyst.data --fit-param-list nuosc3f_numudisapp_fix4+nuisanceselection  --job-dir $PWD --softw-dir $T2KOSCANA --tag FC28statsyst_1
+$T2KOSCANA/production/submit_feldman_cousins_fitting_job_numu --resource RAL --nruns 1500 --nexpts 2000 --cpu-time 24:00:00 --stat-fluctuations --tweak-systematics --bin-list /home/ppd/tdealtry/RAL_repoistory/t2k/t2kana/nuosc/branches/2012_v0.9.0/inputs/FCbinlist/binlist_2+8_statsyst_full.data --fit-param-list nuosc3f_numudisapp_fix4+nuisanceselection  --job-dir $PWD --softw-dir $T2KOSCANA --tag FC28statsyst_10
 
-#fill in the holes
-$T2KOSCANA/production/submit_feldman_cousins_fitting_job_numu --resource RAL --nruns 99 --nexpts 2000 --cpu-time 24:00:00 --stat-fluctuations --tweak-systematics --bin-list /home/ppd/tdealtry/RAL_repoistory/t2k/t2kana/nuosc/branches/2012_v0.9.0/inputs/FCbinlist/binlist_2+8_statsyst_holes.data --fit-param-list nuosc3f_numudisapp_fix4+nuisanceselection  --job-dir $PWD --softw-dir $T2KOSCANA --tag FC28statsyst_2
-
-#redo the boundary
-$T2KOSCANA/production/submit_feldman_cousins_fitting_job_numu --resource RAL --nruns 260 --nexpts 2000 --cpu-time 24:00:00 --stat-fluctuations --tweak-systematics --bin-list /home/ppd/tdealtry/RAL_repoistory/t2k/t2kana/nuosc/branches/2012_v0.9.0/inputs/FCbinlist/binlist_2+8_statsyst_boundary.data --fit-param-list nuosc3f_numudisapp_fix4+nuisanceselection  --job-dir $PWD --softw-dir $T2KOSCANA --tag FC28statsyst_3
 
 
 #check how many fits have been done at each point
@@ -29,7 +24,7 @@ root2k -l '$T2KOSCANA/macros/contour/fc/numu/plot_feldman_cousins_contour.C(0,"$
 # boundary fine surface
 #2 SMOOTHINGS!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 root2k -l '$T2KOSCANA/macros/contour/fc/numu/plot_feldman_cousins_contour.C(0,"$T2KOSCANA/2012results/FC/mergesurfaces/merge.root","$T2KOSCANA/2012results/FC/mergesurfaces/merge.root","$T2KOSCANA/2012results/DATA/bigger_surface/28/fitresults_3.root","hdchisq",2,true,false,false,"90statsyst")'
-root2k -l '$T2KOSCANA/macros/contour/fc/numu/plot_feldman_cousins_contour.C(0,"$T2KOSCANA/2012results/FC/mergesurfaces/merge.root","$T2KOSCANA/2012results/FC/mergesurfaces/merge.root","$T2KOSCANA/2012results/DATA/bigger_surface/28/fitresults_3.root","hdchisq",2,true,false,false,"90statsyst",true,true,false,false,-1,-1,"fc_contours_2all.root")'
+root2k -l '$T2KOSCANA/macros/contour/fc/numu/plot_feldman_cousins_contour.C(0,"$T2KOSCANA/2012results/FC/mergesurfaces/merge.root","$T2KOSCANA/2012results/FC/mergesurfaces/merge.root","$T2KOSCANA/2012results/DATA/2all/fitresults_3.root","hdchisq",2,true,false,false,"90statsyst",true,true,false,false,-1,-1,"fc_contours_2all.root")'
 
 #plot the crit (2D + 1D)
 root2k '/home/ppd/tdealtry/RAL_repoistory/t2k/t2kana/nuosc/branches/2012_v0.9.0/macros/contour/fc/numu/plot_feldman_cousins_deltachisqcrit.C("merge.root","merge.root")'

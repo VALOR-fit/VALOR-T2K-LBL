@@ -605,8 +605,8 @@ void plot_contour_comparisons
   h_fcall_123_68->Draw("cont3same");
   h_fcall_123_90->Draw("cont3same");
   leg->Clear();
-  leg->AddEntry(h_fcall_123_68, "2+N const#Delta#chi^{2} 68% CL","l");
-  leg->AddEntry(h_fcall_123_90, "2+N const#Delta#chi^{2} 90% CL","l");
+  leg->AddEntry(h_fcall_123_68, "2+N FC 68% CL","l");
+  leg->AddEntry(h_fcall_123_90, "2+N FC 90% CL","l");
   leg->Draw();
   bestfit.Draw();
   c->SaveAs("2N_FC.eps");
