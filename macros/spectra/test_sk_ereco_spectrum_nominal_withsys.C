@@ -6,6 +6,7 @@
 // ------------------------------------------------------------------------------------------------
 //
 
+/*
 #include <iomanip.h>
 #include <iostream>
 #include <sstream>
@@ -28,7 +29,7 @@
 #include "TString.h"
 
 #ifndef __CINT__
-void test_sk_ereco_spectrum_nominal_withsyst
+void test_sk_ereco_spectrum_nominal_withsys
 (
   const char * sk_sample            ,
   //const char * hypothesis           ,
@@ -96,10 +97,151 @@ void test_sk_ereco_spectrum_nominal_withsyst
   double       input_fsi_5
  );
 #endif
+*/
 
-void test_sk_ereco_spectrum_nominal_withsyst
+double * create_syst_array(int mode = 0)
+{
+  double sys[48] = {0};
+
+  //skdet
+  sys[0] = 0;
+  sys[1] = 0;
+  sys[2] = 0;
+  sys[3] = 0;
+  sys[4] = 0;
+  sys[5] = 0;
+  sys[6] = 0;
+  sys[7] = 0;
+  //banff
+  sys[8] =     0.994975356;
+  sys[9] =     1.006686263;
+  sys[10] =     1.001717758;
+  sys[11] =     0.962504019;
+  sys[12] =     0.900565463;
+  sys[13] =     0.909521076;
+  sys[14] =     0.936021362;
+  sys[15] =     0.967047925;
+  sys[16] =     0.988344347;
+  sys[17] =     0.997112586;
+  sys[18] =     1.003840461;
+  sys[19] =     0.980269599;
+  sys[20] =     0.957568592;
+  sys[21] =     0.946720515;
+  sys[22] =     0.953040190;
+  sys[23] =     0.984581514;
+  sys[24] =     1.048517110;
+  sys[25] =     1.010808890;
+  sys[26] =     0.950922419;
+  sys[27] =     0.708408251;
+  sys[28] =     1.346600558;
+  sys[29] =     1.369718196;
+  sys[30] =     1.015765518;
+  //xsec
+  sys[31] = 0;
+  sys[32] = 0;
+  sys[33] = 0;
+  sys[34] = 0;
+  sys[35] = 0;
+  sys[36] = 0;
+  sys[37] = 0;
+  sys[38] = 0;
+  sys[39] = 0;
+  sys[40] = 0;
+  sys[41] = 0;
+  //fsi
+  sys[42] = 1;
+  sys[43] = 1;
+  sys[44] = 1;
+  sys[45] = 1;
+  sys[46] = 1;
+  sys[47] = 1;
+
+  if(mode == 1) { //2+8 run1-3 best fit
+
+    sys[0]  = -1.93489e-05;
+    sys[5]  =  -0.044303;
+    sys[6]  = 0.254787;
+    sys[24] =  1.07436;
+    sys[26] = 0.94079;
+    sys[32] = 1.30807e-07;
+    sys[36] = 0.064003;
+    sys[35] =  -0.165958;
+  }
+  else if(mode == 2) { //2+all run1-3 best fit
+    sys[0] =    -3.3381e-06     ;
+    sys[2] =      0.0125947       ;
+    sys[3] =      0.0043772       ;
+    sys[4] =      0.121606        ;
+    sys[1] =      -0.000131565    ;
+    sys[5] =        -0.049803       ;
+    sys[6] =   0.246003        ;
+    sys[7] =        -0.00195244     ;
+    sys[8] =      0.991546        ;
+    sys[9] =      1.00095 ;
+    sys[10] =      0.995547        ;
+    sys[11] =      0.957774        ;
+    sys[12] =      0.896189        ;
+    sys[13] =      0.910326        ;
+    sys[14] =      0.938223        ;
+    sys[15] =      0.968709        ;
+    sys[16] =      0.987996        ;
+    sys[17] =      0.995195        ;
+    sys[18] =     1.00104 ;
+    sys[19] =     0.979558        ;
+    sys[20] =     0.957982        ;
+    sys[21] =     0.947926        ;
+    sys[22] =     0.955453        ;
+    sys[23] =     0.984811        ;
+    sys[24] =     1.07357 ;
+    sys[25] =     1.01054 ;
+    sys[26] =     0.945412        ;
+    sys[27] =     0.642925        ;
+    sys[28] =     1.38322 ;
+    sys[29] =     1.37186 ;
+    sys[30] =     1.01332 ;
+    sys[31] =     -0.0145648      ;
+    sys[32] =     5.06505e-09     ;
+    sys[36] =  0.0624528       ;
+    sys[33] =         -0.0496601      ;
+    sys[34] =     -0.011389       ;
+    sys[35] =         -0.166358       ;
+    sys[37] =     0.00470345      ;
+    sys[38] =         0.0328214       ;
+    sys[39] =     0.0507135       ;
+    sys[40] =    0.00363545      ;
+    sys[41] =       0.0337973       ;
+    sys[42] =        1       ;
+    sys[43] =        0.99999 ;
+    sys[44] =        0.999951        ;
+    sys[45] =        0.998348        ;
+    sys[46] =        1.00002 ;
+    sys[47] =        1.00171 ;
+  }//mode == 2
+
+  else if(mode == 3) {//fake data set 1
+    sys[6] = 1;
+  }
+  else if(mode == 4) {//fake data set 2
+    sys[31] = 1;
+    sys[24] = 1;
+  }
+  else if(mode == 5) {//fake data set 3
+    sys[0] = -1;
+  }
+  else if(mode == 6) {//fake data set 4
+    sys[8] = sys[8]*1.05;
+    sys[9] = sys[9]*1.05;
+    sys[10] = sys[10]*1.05;
+    sys[11] = sys[11]*1.05;
+  }
+
+  return sys;
+}
+
+void test_sk_ereco_spectrum_nominal_withsys
 (
-  const char * sk_sample            = "1Rmu",                         /* options: "1Rmu", "1Re" */
+ int systmode = 0,
+ //  double *     inputs_syst          = 0, /* see order below */
   //const char * hypothesis           = "3f_osc",                       /* options: "2f_numu_disap", "3f_osc" */
   double       input_mixing12       = -99,                            /* */
   double       input_mixing13       = -99,                            /* */
@@ -107,9 +249,11 @@ void test_sk_ereco_spectrum_nominal_withsyst
   double       input_deltacp        = -99,                            /* */
   double       input_dm12sq         = -99,                            /* */
   double       input_dm23sq         = -99,                            /* */
-  bool         disable_banff_tuning = false,                          /* */
+  const char * sk_sample            = "1Rmu",                         /* options: "1Rmu", "1Re" */
+  //bool         disable_banff_tuning = false,                          /* */
   const char * config_file          = "analysis_configuration.xml",   /* */
-  bool         print_spectrum       = false,                          /* */
+  bool         print_spectrum       = false                           /* */
+  /*
   //sk
   double       input_sk_escale = 0,
   double       input_sk_ccqeoth = 0,
@@ -163,6 +307,7 @@ void test_sk_ereco_spectrum_nominal_withsyst
   double       input_fsi_3 = 0,
   double       input_fsi_4 = 0,
   double       input_fsi_5 = 0
+  */
 )
 {
   using namespace std;
@@ -204,59 +349,62 @@ void test_sk_ereco_spectrum_nominal_withsyst
   }
   //set systematics
   fparm->Update(conv::kNuisXSecSpecFunc, 0);//spec func starts at 0.5!
+
+  double * inputs_syst = create_syst_array(systmode);
+
   //sk
-  fparm->Update(conv::kNuisSuperkEnergyScale,input_sk_escale);
-  fparm->Update(conv::kNuisSuperkEff1RmuCCQEoth,input_sk_ccqeoth);
-  fparm->Update(conv::kNuisSuperkEff1RmuCCQErc0u,input_sk_ccqerc0);
-  fparm->Update(conv::kNuisSuperkEff1RmuCCQErc1u,input_sk_ccqerc1);
-  fparm->Update(conv::kNuisSuperkEff1RmuCCQErc2u,input_sk_ccqerc2);
-  fparm->Update(conv::kNuisSuperkEff1RmuCCnonQE,input_sk_ccnqe);
-  fparm->Update(conv::kNuisSuperkEff1RmuNC,input_sk_nc);
-  fparm->Update(conv::kNuisSuperkEff1RmuNueCC,input_sk_nue);
+  fparm->Update(conv::kNuisSuperkEnergyScale,inputs_syst[0]);
+  fparm->Update(conv::kNuisSuperkEff1RmuCCQEoth,inputs_syst[1]);
+  fparm->Update(conv::kNuisSuperkEff1RmuCCQErc0u,inputs_syst[2]);
+  fparm->Update(conv::kNuisSuperkEff1RmuCCQErc1u,inputs_syst[3]);
+  fparm->Update(conv::kNuisSuperkEff1RmuCCQErc2u,inputs_syst[4]);
+  fparm->Update(conv::kNuisSuperkEff1RmuCCnonQE,inputs_syst[5]);
+  fparm->Update(conv::kNuisSuperkEff1RmuNC,inputs_syst[6]);
+  fparm->Update(conv::kNuisSuperkEff1RmuNueCC,inputs_syst[7]);
   //banff flux
-  fparm->Update(conv::kNuisBANFF00,input_banff_00);
-  fparm->Update(conv::kNuisBANFF01,input_banff_01);
-  fparm->Update(conv::kNuisBANFF02,input_banff_02);
-  fparm->Update(conv::kNuisBANFF03,input_banff_03);
-  fparm->Update(conv::kNuisBANFF04,input_banff_04);
-  fparm->Update(conv::kNuisBANFF05,input_banff_05);
-  fparm->Update(conv::kNuisBANFF06,input_banff_06);
-  fparm->Update(conv::kNuisBANFF07,input_banff_07);
-  fparm->Update(conv::kNuisBANFF08,input_banff_08);
-  fparm->Update(conv::kNuisBANFF09,input_banff_09);
-  fparm->Update(conv::kNuisBANFF10,input_banff_10);
-  fparm->Update(conv::kNuisBANFF11,input_banff_11);
-  fparm->Update(conv::kNuisBANFF12,input_banff_12);
-  fparm->Update(conv::kNuisBANFF13,input_banff_13);
-  fparm->Update(conv::kNuisBANFF14,input_banff_14);
-  fparm->Update(conv::kNuisBANFF15,input_banff_15);
+  fparm->Update(conv::kNuisBANFF00,inputs_syst[8]);
+  fparm->Update(conv::kNuisBANFF01,inputs_syst[9]);
+  fparm->Update(conv::kNuisBANFF02,inputs_syst[10]);
+  fparm->Update(conv::kNuisBANFF03,inputs_syst[11]);
+  fparm->Update(conv::kNuisBANFF04,inputs_syst[12]);
+  fparm->Update(conv::kNuisBANFF05,inputs_syst[13]);
+  fparm->Update(conv::kNuisBANFF06,inputs_syst[14]);
+  fparm->Update(conv::kNuisBANFF07,inputs_syst[15]);
+  fparm->Update(conv::kNuisBANFF08,inputs_syst[16]);
+  fparm->Update(conv::kNuisBANFF09,inputs_syst[17]);
+  fparm->Update(conv::kNuisBANFF10,inputs_syst[18]);
+  fparm->Update(conv::kNuisBANFF11,inputs_syst[19]);
+  fparm->Update(conv::kNuisBANFF12,inputs_syst[20]);
+  fparm->Update(conv::kNuisBANFF13,inputs_syst[21]);
+  fparm->Update(conv::kNuisBANFF14,inputs_syst[22]);
+  fparm->Update(conv::kNuisBANFF15,inputs_syst[23]);
   //banff xsec
-  fparm->Update(conv::kNuisBANFFMAQE,input_banff_16);
-  fparm->Update(conv::kNuisBANFFMARES,input_banff_17);
-  fparm->Update(conv::kNuisBANFFCCQEE0,input_banff_18);
-  fparm->Update(conv::kNuisBANFFCCQEE1,input_banff_19);
-  fparm->Update(conv::kNuisBANFFCCQEE2,input_banff_20);
-  fparm->Update(conv::kNuisBANFFCC1piE0,input_banff_21);
-  fparm->Update(conv::kNuisBANFFCC1piE1,input_banff_22);
+  fparm->Update(conv::kNuisBANFFMAQE,inputs_syst[24]);
+  fparm->Update(conv::kNuisBANFFMARES,inputs_syst[25]);
+  fparm->Update(conv::kNuisBANFFCCQEE0,inputs_syst[26]);
+  fparm->Update(conv::kNuisBANFFCCQEE1,inputs_syst[27]);
+  fparm->Update(conv::kNuisBANFFCCQEE2,inputs_syst[28]);
+  fparm->Update(conv::kNuisBANFFCC1piE0,inputs_syst[29]);
+  fparm->Update(conv::kNuisBANFFCC1piE1,inputs_syst[30]);
   //xsec
-  fparm->Update(conv::kNuisXSecFermiMom,input_xsec_pf);
-  fparm->Update(conv::kNuisXSecSpecFunc,input_xsec_sf);
-  fparm->Update(conv::kNuisXSecWshape,input_xsec_wshape);
-  fparm->Update(conv::kNuisXSecShapeCCoth,input_xsec_ccoth);
-  fparm->Update(conv::kNuisXSecPiLessDelta,input_xsec_piless);
-  fparm->Update(conv::kNuisXSecBindE,input_xsec_binde);
-  fparm->Update(conv::kNuisXSecNormCCcoh,input_xsec_cccoh);
-  fparm->Update(conv::kNuisXSecNormNC1piC,input_xsec_nc1pic);
-  fparm->Update(conv::kNuisXSecNormNCoth,input_xsec_ncoth);
-  fparm->Update(conv::kNuisXSecNormNuEToNuMu,input_xsec_nuetonumu);
-  fparm->Update(conv::kNuisXSecNormAntiNuToNu,input_xsec_antinutonu);
+  fparm->Update(conv::kNuisXSecFermiMom,inputs_syst[31]);
+  fparm->Update(conv::kNuisXSecSpecFunc,inputs_syst[32]);
+  fparm->Update(conv::kNuisXSecWshape,inputs_syst[33]);
+  fparm->Update(conv::kNuisXSecShapeCCoth,inputs_syst[34]);
+  fparm->Update(conv::kNuisXSecPiLessDelta,inputs_syst[35]);
+  fparm->Update(conv::kNuisXSecBindE,inputs_syst[36]);
+  fparm->Update(conv::kNuisXSecNormCCcoh,inputs_syst[37]);
+  fparm->Update(conv::kNuisXSecNormNC1piC,inputs_syst[38]);
+  fparm->Update(conv::kNuisXSecNormNCoth,inputs_syst[39]);
+  fparm->Update(conv::kNuisXSecNormNuEToNuMu,inputs_syst[40]);
+  fparm->Update(conv::kNuisXSecNormAntiNuToNu,inputs_syst[41]);
   //fsi
-  fparm->Update(conv::kNuisFSI000,input_fsi_0);
-  fparm->Update(conv::kNuisFSI001,input_fsi_1);
-  fparm->Update(conv::kNuisFSI002,input_fsi_2);
-  fparm->Update(conv::kNuisFSI003,input_fsi_3);
-  fparm->Update(conv::kNuisFSI004,input_fsi_4);
-  fparm->Update(conv::kNuisFSI005,input_fsi_5);
+  fparm->Update(conv::kNuisFSI000,inputs_syst[42]);
+  fparm->Update(conv::kNuisFSI001,inputs_syst[43]);
+  fparm->Update(conv::kNuisFSI002,inputs_syst[44]);
+  fparm->Update(conv::kNuisFSI003,inputs_syst[45]);
+  fparm->Update(conv::kNuisFSI004,inputs_syst[46]);
+  fparm->Update(conv::kNuisFSI005,inputs_syst[47]);
 
   string oscparams = util::AsString(fparm->PhysicsHypothesis(),
      input_mixing12,input_mixing13,input_mixing23,input_deltacp,input_dm12sq,input_dm23sq);
@@ -272,8 +420,7 @@ void test_sk_ereco_spectrum_nominal_withsyst
   cout << "\n[Job inputs]" << endl;
   cout << "- Reading analysis configuration from: " << config << endl;
   cout << "- Plotting spectra for sample: " << util::AsString(s) << endl;
-  cout << "- Disabling BANFF tuning: " << ((disable_banff_tuning) ? "YES" : "NO") << endl;
-  cout << "- Fit param list: " << fparm << endl;
+  cout << "- Fit param list: " << *fparm << endl;
   cout << *Opt::Instance() << endl;
 
   // Histogram booking
@@ -290,18 +437,10 @@ void test_sk_ereco_spectrum_nominal_withsyst
   SuperkExpectation skexp;
   skexp.Read(config);
 
-  // Disable BANFF tuning if requested
-  if(disable_banff_tuning) {
-    cout << "- Performing special systematic parameter variation which cancels the effect of BANFF tuning..." << endl;
-    skexp.GetBANFF()->RestoreNominalMC();
-  }
-
-
-
-
   // Generate prediction
   cout << "- Generating predictions..." << endl;
-  skexp.Generate(*fparm);
+  skexp.Generate(*fparm,true);
+  skexp.PrintSystematicVariations();
 
   // Get energy spectra
   for(int im = 0; im < conv::knm; im++) {
@@ -348,7 +487,7 @@ void test_sk_ereco_spectrum_nominal_withsyst
   }
   legend->Draw();
   c->Update();
-  c->SaveAs(Form("sk_ereco_spectrum-%f-%f%s.eps",input_mixing23,input_dm23sq,(disable_banff_tuning ? "_nobanff" : "")));
+  c->SaveAs(Form("sk_ereco_spectrum-%f-%f.eps",input_mixing23,input_dm23sq));
   hErecoTot->GetXaxis()->UnZoom();
 
   //draw coarse binned histograms
@@ -379,7 +518,7 @@ void test_sk_ereco_spectrum_nominal_withsyst
   }
   legend_coarse->Draw();
   c_coarse->Update();
-  c_coarse->SaveAs(Form("sk_ereco_spectrum-%f-%f%s_coarse.eps",input_mixing23,input_dm23sq,(disable_banff_tuning ? "_nobanff" : "")));
+  c_coarse->SaveAs(Form("sk_ereco_spectrum-%f-%f_coarse.eps",input_mixing23,input_dm23sq));
 
 
   //can save this to file &/or print it
@@ -418,7 +557,7 @@ void test_sk_ereco_spectrum_nominal_withsyst
   // Save histograms in a ROOT file
   //
 
-  TFile f(Form("sk_ereco_spectrum-%s%s.root",oscparams.c_str(),(disable_banff_tuning ? "_nobanff" : "")) ,"recreate");
+  TFile f(Form("sk_ereco_spectrum-%s.root",oscparams.c_str()) ,"recreate");
   hErecoTot -> Write(util::AsStringCompact(s,conv::kSKmUndefined,"sk_","total").c_str());
   hErecoTot_coarse->Write(Form("%s_coarse",util::AsStringCompact(s,conv::kSKmUndefined,"sk_","total").c_str()));
   for(int im = 0; im < conv::knm; im++) {
@@ -476,7 +615,7 @@ void test_sk_ereco_spectrum_nominal_withsyst
   streamer.seekg(0);
 
   //write to file
-  TString outname = Form("sk_ereco_spectrum-%s%s.txt",oscparams.c_str(),(disable_banff_tuning ? "_nobanff" : ""));
+  TString outname = Form("sk_ereco_spectrum-%s.txt",oscparams.c_str());
   ofstream outfile (outname);
   outfile.write (streamer.str().c_str(),size);
   outfile.close();
