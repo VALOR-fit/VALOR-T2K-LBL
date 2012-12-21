@@ -37,9 +37,9 @@ void plot_minos_sensitivity_studies() {
   f[11] = new TFile("minos_awayfrombest_28/11/sensitivity.root");
   f[12] = new TFile("minos_awayfrombest_28/12/sensitivity.root");
   f[13] = new TFile("minos_awayfrombest_28/13/sensitivity.root");
-  /*f[14] = new TFile("minos_awayfrombest_28/14/sensitivity.root");
-  f[15] = new TFile("minos_awayfrombest_28/15/sensitivity.root");
-  */
+  f[14] = new TFile("minos_awayfrombest_28/14/sensitivity.root");
+  //f[15] = new TFile("minos_awayfrombest_28/15/sensitivity.root");
+  
 
   //contours
   TH2D * hdchisq68[npoints+1] = {0}, * hdchisq90[npoints+1] = {0};
@@ -135,33 +135,33 @@ void plot_minos_sensitivity_studies() {
   osc_param_space->GetXaxis()->SetRangeUser(0.8,1.0);
   osc_param_space->GetYaxis()->SetRangeUser(0.0017,0.0033);
   osc_param_space->Draw();
-  TFile * f500 = new TFile("minos_28_500/sensitivity.root");
-  TH2D * hdchisq68500 = 0, * hdchisq90500 = 0;
-  f500->GetObject("dchisq_for_cont1_68",hdchisq68500);
-  f500->GetObject("dchisq_for_cont1_90",hdchisq90500);
-  if(hdchisq68500)
-    hdchisq68500->SetLineStyle(2);
+  TFile * f600 = new TFile("minos_28_500/sensitivity.root");
+  TH2D * hdchisq68600 = 0, * hdchisq90600 = 0;
+  f600->GetObject("dchisq_for_cont1_68",hdchisq68600);
+  f600->GetObject("dchisq_for_cont1_90",hdchisq90600);
+  if(hdchisq68600)
+    hdchisq68600->SetLineStyle(2);
 
   TLegend * leg = new TLegend(0.2,0.75,0.5,0.9);
   leg->SetBorderSize(0);
   leg->SetFillStyle(0);
 
-  hdchisq68500->SetLineColor(kRed);
-  //hdchisq68500->SetLineStyle(3);
-  hdchisq90500->SetLineColor(kRed);
-  //hdchisq90500->SetLineStyle(3);
+  hdchisq68600->SetLineColor(kRed);
+  //hdchisq68600->SetLineStyle(3);
+  hdchisq90600->SetLineColor(kRed);
+  //hdchisq90600->SetLineStyle(3);
 
   if(hdchisq68[8])
     hdchisq68[8]->Draw("cont3same");
   if(hdchisq90[8])
     hdchisq90[8]->Draw("cont3same");
-  if(hdchisq68500)
-    hdchisq68500->Draw("cont3same");
-  if(hdchisq90500)
-    hdchisq90500->Draw("cont3same");
+  if(hdchisq68600)
+    hdchisq68600->Draw("cont3same");
+  if(hdchisq90600)
+    hdchisq90600->Draw("cont3same");
 
-  leg->AddEntry(hdchisq68500,"500 bin const#Delta#chi^{2} 68% CL","l");
-  leg->AddEntry(hdchisq90500,"500 bin const#Delta#chi^{2} 90% CL","l");
+  leg->AddEntry(hdchisq68600,"600 bin const#Delta#chi^{2} 68% CL","l");
+  leg->AddEntry(hdchisq90600,"600 bin const#Delta#chi^{2} 90% CL","l");
   leg->AddEntry(hdchisq68[8],"73 bin const#Delta#chi^{2} 68% CL","l");
   leg->AddEntry(hdchisq90[8],"73 bin const#Delta#chi^{2} 90% CL","l");
   leg->Draw();
