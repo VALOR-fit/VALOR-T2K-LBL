@@ -69,7 +69,8 @@ void test_sk_ereco_spectrum_twk_sys_throw
   double       input_dm23sq       = -99,                            /* */
   bool         save_toy_expts     = false,                          /* save the ereco spectra? */
   const char * config_file        = "analysis_configuration.xml",   /* */
-  const int    nexp               = 20000                           /* number of experiments to make */
+  const int    nexp               = 20000,                          /* number of experiments to make */
+  bool         no_spectra         = true                            /* if true, won't try to get the spectra (for PRODUCTIONMODE) */
 )
 {
   using namespace std;
@@ -300,13 +301,15 @@ void test_sk_ereco_spectrum_twk_sys_throw
 
   // Get the nominal
   skexp.Generate(ph);
-  hErecoNominal = new TH1D(*skexp.CurrPredictedErecoSpectrum(s));
-  hErecoNominal->SetDirectory(0);
-  hErecoNominal->GetXaxis()->SetTitle("E_{reco} (GeV)");
-  hErecoNominal->GetYaxis()->SetTitle("Number of events");
-  hErecoNominal->SetLineWidth(2);
-  if(!update_rootfile)
-    hErecoNominal->Write("nominal");
+  if(!no_spectra) {
+    hErecoNominal = new TH1D(*skexp.CurrPredictedErecoSpectrum(s));
+    hErecoNominal->SetDirectory(0);
+    hErecoNominal->GetXaxis()->SetTitle("E_{reco} (GeV)");
+    hErecoNominal->GetYaxis()->SetTitle("Number of events");
+    hErecoNominal->SetLineWidth(2);
+    if(!update_rootfile)
+      hErecoNominal->Write("nominal");
+  }
 
   TStopwatch w;
   w.Start();
@@ -468,14 +471,20 @@ void test_sk_ereco_spectrum_twk_sys_throw
     }
 
     //store spectrum
-    hEreco[iexp] = new TH1D(*skexp.CurrPredictedErecoSpectrum(s));
-    hEreco[iexp]->SetDirectory(0);
-    hEreco[iexp]->SetTitle(Form("%s_exp%d",modetitle.c_str(),iexp));
-    if(save_toy_expts)
-      hEreco[iexp]->Write(Form("%s_exp%d",modetitle.c_str(),iexp));		    
-	
+    if(!no_spectra) {
+      hEreco[iexp] = new TH1D(*skexp.CurrPredictedErecoSpectrum(s));
+      hEreco[iexp]->SetDirectory(0);
+      hEreco[iexp]->SetTitle(Form("%s_exp%d",modetitle.c_str(),iexp));
+      if(save_toy_expts)
+	hEreco[iexp]->Write(Form("%s_exp%d",modetitle.c_str(),iexp));		    
+    }
+
+
     //store Nsk
-    hNsk->Fill(hEreco[iexp]->Integral());
+    double nskint = 0;
+    for(int ir = 1; ir <= conv::kNErecoBins1Rmu; ir++)
+      nskint += skexp->CurrPredictedErecoSpectrumArray(s)[ir-1];
+    hNsk->Fill(nskint);
 
     //store thrown parameter values
     for(int isys = 0; isys < nbanff; isys++) {
@@ -516,55 +525,59 @@ void test_sk_ereco_spectrum_twk_sys_throw
   hNsk->Write();
 
   // Find min/max and calculate fractional deviation from nominal
-  hErecoMax = new TH1D(*hErecoNominal);
-  hErecoMin = new TH1D(*hErecoNominal);
-  hErecoMax->SetDirectory(0);
-  hErecoMin->SetDirectory(0);
-  hErecoMaxEnv = new TH1D(*hErecoNominal);
-  hErecoMinEnv = new TH1D(*hErecoNominal);
-  hErecoMaxEnv->SetDirectory(0);
-  hErecoMinEnv->SetDirectory(0);
-  for(int ibin=1; ibin <= conv::kNErecoBins1Rmu; ibin++) {
-    double nom   = hErecoNominal->GetBinContent(ibin);
-    double sumsq = 0;
-    for(int iexp = 0; iexp < nexp; iexp++) {
-      if(hEreco[iexp]) {
-	double N = hEreco[iexp]->GetBinContent(ibin);
-	sumsq += TMath::Power(N-nom,2);
+  if(!no_spectra) {
+    hErecoMax = new TH1D(*hErecoNominal);
+    hErecoMin = new TH1D(*hErecoNominal);
+    hErecoMax->SetDirectory(0);
+    hErecoMin->SetDirectory(0);
+    hErecoMaxEnv = new TH1D(*hErecoNominal);
+    hErecoMinEnv = new TH1D(*hErecoNominal);
+    hErecoMaxEnv->SetDirectory(0);
+    hErecoMinEnv->SetDirectory(0);
+    for(int ibin=1; ibin <= conv::kNErecoBins1Rmu; ibin++) {
+      double nom   = hErecoNominal->GetBinContent(ibin);
+      double sumsq = 0;
+      for(int iexp = 0; iexp < nexp; iexp++) {
+	if(hEreco[iexp]) {
+	  double N = hEreco[iexp]->GetBinContent(ibin);
+	  sumsq += TMath::Power(N-nom,2);
+	}
+      }//iexp
+      double sig = TMath::Sqrt(sumsq/nexp);
+      double min = nom-sig;
+      double max = nom+sig;
+      if(nom>0){
+	hErecoMax -> SetBinContent (ibin,  (max-nom)/nom);
+	hErecoMin -> SetBinContent (ibin,  (min-nom)/nom);
+	hErecoMaxEnv -> SetBinContent (ibin,  max);
+	hErecoMinEnv -> SetBinContent (ibin,  min);
       }
-    }//iexp
-    double sig = TMath::Sqrt(sumsq/nexp);
-    double min = nom-sig;
-    double max = nom+sig;
-    if(nom>0){
-      hErecoMax -> SetBinContent (ibin,  (max-nom)/nom);
-      hErecoMin -> SetBinContent (ibin,  (min-nom)/nom);
-      hErecoMaxEnv -> SetBinContent (ibin,  max);
-      hErecoMinEnv -> SetBinContent (ibin,  min);
-    }
-  }//ibin
-  hErecoMax->Write(Form("%s_pluserr",modetitle.c_str()));
-  hErecoMin->Write(Form("%s_minuserr",modetitle.c_str()));
-  hErecoMaxEnv->Write(Form("%s_envpluserr",modetitle.c_str()));
-  hErecoMinEnv->Write(Form("%s_envminuserr",modetitle.c_str()));
+    }//ibin
+    hErecoMax->Write(Form("%s_pluserr",modetitle.c_str()));
+    hErecoMin->Write(Form("%s_minuserr",modetitle.c_str()));
+    hErecoMaxEnv->Write(Form("%s_envpluserr",modetitle.c_str()));
+    hErecoMinEnv->Write(Form("%s_envminuserr",modetitle.c_str()));
+  }
 
   //Draw & save
   TCanvas * c = new TCanvas();
   hNsk->Draw();
   c->SaveAs(Form("%s_nsk_%s.eps",modetitle.c_str(),oscparams.c_str()));
-  hErecoMax->Draw();
-  c->SaveAs(Form("%s_pluserr_%s.eps",modetitle.c_str(),oscparams.c_str()));
-  hErecoMin->Draw();
-  c->SaveAs(Form("%s_minuserr_%s.eps",modetitle.c_str(),oscparams.c_str()));
-  hErecoMaxEnv->GetXaxis()->SetRangeUser(0,7-conv::kOneMeV);
-  hErecoMaxEnv->SetLineStyle(2);
-  hErecoMinEnv->SetLineStyle(2);
-  hErecoMaxEnv->SetLineColor(kBlue+3);
-  hErecoMinEnv->SetLineColor(kBlue+3);
-  hErecoMaxEnv->Draw();
-  hErecoMinEnv->Draw("same");
-  hErecoNominal->Draw("same");
-  c->SaveAs(Form("%s_envelope_%s.eps",modetitle.c_str(),oscparams.c_str()));
+  if(!no_spectra) {
+    hErecoMax->Draw();
+    c->SaveAs(Form("%s_pluserr_%s.eps",modetitle.c_str(),oscparams.c_str()));
+    hErecoMin->Draw();
+    c->SaveAs(Form("%s_minuserr_%s.eps",modetitle.c_str(),oscparams.c_str()));
+    hErecoMaxEnv->GetXaxis()->SetRangeUser(0,7-conv::kOneMeV);
+    hErecoMaxEnv->SetLineStyle(2);
+    hErecoMinEnv->SetLineStyle(2);
+    hErecoMaxEnv->SetLineColor(kBlue+3);
+    hErecoMinEnv->SetLineColor(kBlue+3);
+    hErecoMaxEnv->Draw();
+    hErecoMinEnv->Draw("same");
+    hErecoNominal->Draw("same");
+    c->SaveAs(Form("%s_envelope_%s.eps",modetitle.c_str(),oscparams.c_str()));
+  }
 
   TCanvas * csys = new TCanvas();
   csys->Divide(ceil(sqrt(nsys)),ceil(sqrt(nsys)));
