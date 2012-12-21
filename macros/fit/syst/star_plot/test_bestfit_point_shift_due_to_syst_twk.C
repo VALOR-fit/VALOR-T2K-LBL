@@ -240,7 +240,7 @@ void test_bestfit_point_shift_due_to_syst_twk
   cout << "p.d.f parameters: " << endl;
   skexp->PrintSystematicVariations();
   skobs = new SuperkObservation;
-  skobs->CreateMockData(*skexp, *fparm, fluctuate_stat);
+  skobs->CreateMockData(*skexp, PhysHypothesis(*fparm), fluctuate_stat);
 
   // Reset systematic variation
   skexp->ResetSystematicVariations();
