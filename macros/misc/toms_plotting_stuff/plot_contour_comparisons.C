@@ -4,6 +4,7 @@ void plot_contour_comparisons
 )
 {
   //VaLOR data results
+  TFile f_dc_20("2012results/DATA/bigger_surface/20_from28/fitresults_3.root");
   TFile f_dc_123("2012results/DATA/bigger_surface/28/fitresults_3.root");
   TFile f_dc_12("2012results/DATA/bigger_surface/28/fitresults_4.root");
   TFile f_dc_3("2012results/DATA/bigger_surface/28/fitresults_5.root");
@@ -20,9 +21,20 @@ void plot_contour_comparisons
 
   //Fill in TMarker's with the best fit point (is the same for 2+N, 2+8)
   TMarker bestfit(1.000,0.002442,29);
-  bestfit->SetMarkerSize(1.8);
-  bestfit->SetMarkerColor(kBlack);
+  bestfit.SetMarkerSize(1.8);
+  bestfit.SetMarkerColor(kBlack);
 
+  //20 const dchisq
+  TH2D * h_dc_20 = 0;
+  f_dc_20.GetObject("hdchisq",h_dc_20);
+  TH2D * h_dc_20_68 = new TH2D(*h_dc_20);
+  TH2D * h_dc_20_90 = new TH2D(*h_dc_20);
+  h_dc_20_68->SetContour(1);
+  h_dc_20_68->SetContourLevel(0,2.30);
+  h_dc_20_68->SetLineStyle(2);
+  h_dc_20_90->SetContour(1);
+  h_dc_20_90->SetContourLevel(0,4.61);
+  h_dc_20_90->SetLineStyle(1);
 
   //28 const dchisq
   TH2D * h_dc_123 = 0;
@@ -203,6 +215,8 @@ void plot_contour_comparisons
   leg->SetTextFont(42);
 
   //colors
+  h_dc_20_68->SetLineColor(kBlue+1);
+  h_dc_20_90->SetLineColor(kBlue+1);
   h_dc_123_68->SetLineColor(kRed);
   h_dc_123_90->SetLineColor(kRed);
   h_dc_12_68->SetLineColor(kBlue);
@@ -410,6 +424,33 @@ void plot_contour_comparisons
   leg->AddEntry(h_dcall_123_90, "2+N const#Delta#chi^{2} 90% CL","l");
   leg->Draw();
   c->SaveAs("compare_2all_28.eps");
+
+  //Run 1-3 28, 2all const dchisq with 2+0
+  osc_param_space->GetXaxis()->SetRangeUser(0.9,1.0);
+  osc_param_space->GetYaxis()->SetRangeUser(0.0015,0.0033);
+  osc_param_space->Draw();  
+  h_dc_20_68->Draw("cont3same");
+  h_dc_20_90->Draw("cont3same");
+  h_dc_123_68->Draw("cont3same");
+  h_dc_123_90->Draw("cont3same");
+  h_dcall_123_68->Draw("cont3same");
+  h_dcall_123_90->Draw("cont3same");
+  leg->Clear();
+  leg->AddEntry(h_dc_20_68, "2+0 const#Delta#chi^{2} 68% CL","l");
+  leg->AddEntry(h_dc_20_90, "2+0 const#Delta#chi^{2} 90% CL","l");
+  leg->AddEntry(h_dc_123_68, "2+8 const#Delta#chi^{2} 68% CL","l");
+  leg->AddEntry(h_dc_123_90, "2+8 const#Delta#chi^{2} 90% CL","l");
+  leg->AddEntry(h_dcall_123_68, "2+N const#Delta#chi^{2} 68% CL","l");
+  leg->AddEntry(h_dcall_123_90, "2+N const#Delta#chi^{2} 90% CL","l");
+  leg->Draw();
+  bestfit.Draw();
+  TMarker bestfit20(1.000,0.002457,29);
+  bestfit20.SetMarkerSize(1.8);
+  bestfit20.SetMarkerColor(kBlue);
+  bestfit20.Draw();
+  c->SaveAs("compare_2all_28_20.eps");
+
+
 
   //Run 1-3 28, 2all FC
   osc_param_space->GetXaxis()->SetRangeUser(0.9,1.0);

@@ -15,7 +15,8 @@ void fit_xml_seeded_from_chisq_map
   const int    nfits,                                              /* number of fits to do (each with different seeds of the systematic parameters */
   const char * config_file         = "analysis_configuration.xml", /* analysis configuration file */
   const char * fit_param_list      = "nuosc3f_numudisapp_fix4+nuisanceselection",    /* fit parameter list for the given physics hypothesis (see run_fitter.C) */
-  const char * fit_option          = "minuit"                      /* fitter option (see run_fitter.C) */
+  const char * fit_option          = "minuit",                     /* fitter option (see run_fitter.C) */
+  const char * chisq_surface_name  = ""
 )
 {
   using namespace std;
@@ -54,7 +55,11 @@ void fit_xml_seeded_from_chisq_map
   TFile inputfile(chisqfile,"READ");
   TH2D *hchisq = 0;
   inputfile.GetObject(Form("chisqwithsyst_%d",dataset_id),hchisq);
-  if(!hchisq) return;
+  if(!hchisq) {
+    inputfile.GetObject(chisq_surface_name,hchisq);
+  }
+  if(!hchisq)
+    return;
   TH2D & hdchisq = *hchisq;
   
   // Find the minimum, and convert into mixing23 & dm23sq. This will give the seeds for the osc parameters
