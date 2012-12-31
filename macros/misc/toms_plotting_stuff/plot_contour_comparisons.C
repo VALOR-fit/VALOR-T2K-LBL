@@ -152,6 +152,15 @@ void plot_contour_comparisons
   //h_fc_kit_90->SetContourLevel(0,0.0);
   h_fc_kit_90->SetLineStyle(1);
 
+  //KIT BF
+  TGraph * kitbf = 0;
+  f_dc_kit.GetObject("g_bstosc",kitbf);
+  double kitx = 0, kity = 0;
+  kitbf->GetPoint(0,kitx,kity);
+  TMarker bestfit_kit(kitx,kity,29);
+  bestfit_kit.SetMarkerSize(1.8);
+  bestfit_kit.SetMarkerColor(kGreen+2);
+
   //externals + olds
   TFile fext("$T2KOSCANA/inputs/contours/contours_nont2k.root");
   TGraph * g_minos = 0;
@@ -450,8 +459,6 @@ void plot_contour_comparisons
   bestfit20.Draw();
   c->SaveAs("compare_2all_28_20.eps");
 
-
-
   //Run 1-3 28, 2all FC
   osc_param_space->GetXaxis()->SetRangeUser(0.9,1.0);
   osc_param_space->GetYaxis()->SetRangeUser(0.0015,0.0033);
@@ -610,6 +617,134 @@ void plot_contour_comparisons
   leg->Draw();
   bestfit.Draw();
   c->SaveAs("2N_FC.eps");
+
+
+
+
+  // different format / legends for PAC
+
+
+  //Run 1-3 const dchisq KIT vs VaLOR
+  osc_param_space->GetXaxis()->SetRangeUser(0.85,1.0);
+  osc_param_space->GetYaxis()->SetRangeUser(0.0018,0.0032);
+  osc_param_space->Draw();  
+  h_dc_123_68->Draw("cont3same");
+  h_dc_123_90->Draw("cont3same");
+  h_dc_kit_68->Draw("cont3same");
+  h_dc_kit_90->Draw("cont3same");
+  leg->Clear();
+  leg->AddEntry(h_dc_123_68, "A const#Delta#chi^{2} 3#nu 68% CL","l");
+  leg->AddEntry(h_dc_123_90, "A const#Delta#chi^{2} 3#nu 90% CL","l");
+  leg->AddEntry(h_dc_kit_68, "B const#Delta#chi^{2} 3#nu 68% CL","l");
+  leg->AddEntry(h_dc_kit_90, "B const#Delta#chi^{2} 3#nu 90% CL","l");
+  leg->Draw();
+  bestfit.Draw();
+  bestfit_kit.Draw();
+  c->SaveAs("compare_contours_AB_constdchisq.png");
+  c->SaveAs("compare_contours_AB_constdchisq.jpg");
+  c->SaveAs("compare_contours_AB_constdchisq.eps");
+  c->SaveAs("compare_contours_AB_constdchisq.pdf");
+  //again,with externals
+  osc_param_space->GetXaxis()->SetRangeUser(0.85,1.0);
+  osc_param_space->GetYaxis()->SetRangeUser(0.0018,0.0035);
+  osc_param_space->Draw();  
+  //h_dc_123_68->Draw("cont3same");
+  h_dc_123_90->Draw("cont3same");
+  //h_dc_kit_68->Draw("cont3same");
+  h_dc_kit_90->Draw("cont3same");
+  leg->Clear();
+  //leg->AddEntry(h_dc_123_68, "T2K A const#Delta#chi^{2} 3#nu 68% CL","l");
+  leg->AddEntry(h_dc_123_90, "T2K A const#Delta#chi^{2} 3#nu 90% CL","l");
+  //leg->AddEntry(h_dc_kit_68, "T2K B const#Delta#chi^{2} 3#nu 68% CL","l");
+  leg->AddEntry(h_dc_kit_90, "T2K B const#Delta#chi^{2} 3#nu 90% CL","l");
+  g_minos->Draw("l");
+  g_skle->Draw("l");
+  g_skzen->Draw("l");
+  leg->AddEntry("g_minos", "MINOS 2012 2#nu 90% CL", "l");
+  leg->AddEntry("g_skle", "SuperK 2012 L/E 2#nu 90% CL", "l");
+  leg->AddEntry("g_skzen", "SuperK 2012 zenith 3#nu 90% CL", "l");
+  leg->Draw();
+  bestfit.Draw();
+  bestfit_kit.Draw();
+  c->SaveAs("compare_contours_AB_constdchisq_ext.png");
+  c->SaveAs("compare_contours_AB_constdchisq_ext.jpg");
+  c->SaveAs("compare_contours_AB_constdchisq_ext.eps");
+  c->SaveAs("compare_contours_AB_constdchisq_ext.pdf");
+
+  //Run 1-3 FC KIT vs VaLOR
+  osc_param_space->GetXaxis()->SetRangeUser(0.85,1.0);
+  osc_param_space->GetYaxis()->SetRangeUser(0.0018,0.0032);
+  osc_param_space->Draw();  
+  h_fc_123_68->Draw("cont3same");
+  h_fc_123_90->Draw("cont3same");
+  h_fc_kit_68->Draw("cont3same");
+  h_fc_kit_90->Draw("cont3same");
+  leg->Clear();
+  leg->AddEntry(h_fc_123_68, "A FC 68% 3#nu CL","l");
+  leg->AddEntry(h_fc_123_90, "A FC 90% 3#nu CL","l");
+  leg->AddEntry(h_fc_kit_68, "B FC 68% 3#nu CL","l");
+  leg->AddEntry(h_fc_kit_90, "B FC 90% 3#nu CL","l");
+  leg->Draw();
+  bestfit.Draw();
+  bestfit_kit.Draw();
+  c->SaveAs("compare_contours_AB_FC.png");
+  c->SaveAs("compare_contours_AB_FC.jpg");
+  c->SaveAs("compare_contours_AB_FC.eps");
+  c->SaveAs("compare_contours_AB_FC.pdf");
+  //again,with externals
+  osc_param_space->GetXaxis()->SetRangeUser(0.85,1.0);
+  osc_param_space->GetYaxis()->SetRangeUser(0.0018,0.0035);
+  osc_param_space->Draw(); 
+  //h_fc_123_68->Draw("cont3same");
+  h_fc_123_90->Draw("cont3same");
+  //h_fc_kit_68->Draw("cont3same");
+  h_fc_kit_90->Draw("cont3same");
+  leg->Clear();
+  //leg->AddEntry(h_fc_123_68, "T2K A FC 68% 3#nu CL","l");
+  leg->AddEntry(h_fc_123_90, "T2K A FC 90% 3#nu CL","l");
+  //leg->AddEntry(h_fc_kit_68, "T2K B FC 68% 3#nu CL","l");
+  leg->AddEntry(h_fc_kit_90, "T2K B FC 90% 3#nu CL","l");
+  g_minos->Draw("l");
+  g_skle->Draw("l");
+  g_skzen->Draw("l");
+  leg->AddEntry("g_minos", "MINOS 2012 2#nu 90% CL", "l");
+  leg->AddEntry("g_skle", "SuperK 2012 L/E 2#nu 90% CL", "l");
+  leg->AddEntry("g_skzen", "SuperK 2012 zenith 3#nu 90% CL", "l");
+  leg->Draw();
+  bestfit.Draw();
+  bestfit_kit.Draw();
+  c->SaveAs("compare_contours_AB_FC_ext.png");
+  c->SaveAs("compare_contours_AB_FC_ext.jpg");
+  c->SaveAs("compare_contours_AB_FC_ext.eps");
+  c->SaveAs("compare_contours_AB_FC_ext.pdf");
+
+  //Run 1-3 28, 2all const dchisq with 2+0
+  osc_param_space->GetXaxis()->SetRangeUser(0.9,1.0);
+  osc_param_space->GetYaxis()->SetRangeUser(0.0015,0.0033);
+  osc_param_space->Draw();  
+  h_dc_20_68->Draw("cont3same");
+  h_dc_20_90->Draw("cont3same");
+  h_dc_123_68->Draw("cont3same");
+  h_dc_123_90->Draw("cont3same");
+  h_dcall_123_68->Draw("cont3same");
+  h_dcall_123_90->Draw("cont3same");
+  leg->Clear();
+  leg->AddEntry(h_dc_20_68, "2+0 const#Delta#chi^{2} 68% CL","l");
+  leg->AddEntry(h_dc_20_90, "2+0 const#Delta#chi^{2} 90% CL","l");
+  leg->AddEntry(h_dc_123_68, "2+8 const#Delta#chi^{2} 68% CL","l");
+  leg->AddEntry(h_dc_123_90, "2+8 const#Delta#chi^{2} 90% CL","l");
+  leg->AddEntry(h_dcall_123_68, "2+N const#Delta#chi^{2} 68% CL","l");
+  leg->AddEntry(h_dcall_123_90, "2+N const#Delta#chi^{2} 90% CL","l");
+  leg->Draw();
+  bestfit.Draw();
+  TMarker bestfit20(1.000,0.002457,29);
+  bestfit20.SetMarkerSize(1.8);
+  bestfit20.SetMarkerColor(kBlue);
+  bestfit20.Draw();
+  c->SaveAs("compare_contours_constdchisq_2all_28_20.jpg");
+  c->SaveAs("compare_contours_constdchisq_2all_28_20.png");
+  c->SaveAs("compare_contours_constdchisq_2all_28_20.eps");
+  c->SaveAs("compare_contours_constdchisq_2all_28_20.pdf");
 
 
 }

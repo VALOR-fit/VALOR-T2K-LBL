@@ -14,6 +14,7 @@
 //   6 tweak all BANFF (eigendecomposition)
 //   7 tweak BANFF flux only
 //   8 tweak BANFF xsec only
+//   9 tweak SKdet + FSI
 //
 // 100 tweak banff00
 // 101 tweak banff01
@@ -101,6 +102,8 @@ void test_sk_ereco_spectrum_twk_sys_throw
       modetitle = "BANFF_flux"; break;
     case 8:
       modetitle = "BANFF_xsec"; break;
+    case 9:
+      modetitle = "SKDet_FSI"; break;
 
     case 200:
       modetitle = "xsec_pf"; break;
@@ -166,7 +169,7 @@ void test_sk_ereco_spectrum_twk_sys_throw
   }//switch mode
 
   TString config_str(config_file);
-  if(config_str.Contains("prefitbanff"))
+  if(config_str.Contains("prefit"))
     modetitle += "prefit";
 
   // Analysis configuration
@@ -378,6 +381,12 @@ void test_sk_ereco_spectrum_twk_sys_throw
 	skexp.TweakSystematic("banff_cc1piE1",rand.Gaus(0.,1.));	
       }
 
+      //SK det + FSI
+      if(mode == 9) {
+	skexp.TweakAllSKDetectorSystematics();
+	skexp.TweakAllFSISystematics();
+      }
+
     }//mode<100
 
     else {
@@ -483,7 +492,7 @@ void test_sk_ereco_spectrum_twk_sys_throw
     //store Nsk
     double nskint = 0;
     for(int ir = 1; ir <= conv::kNErecoBins1Rmu; ir++)
-      nskint += skexp->CurrPredictedErecoSpectrumArray(s)[ir-1];
+      nskint += skexp.CurrPredictedErecoSpectrumArray(s)[ir-1];
     hNsk->Fill(nskint);
 
     //store thrown parameter values

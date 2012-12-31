@@ -31,6 +31,22 @@ root2k '/home/ppd/tdealtry/RAL_repoistory/t2k/t2kana/nuosc/branches/2012_v0.9.0/
 
 
 
+
+#new production
+# check nfits
+root2k -l '$T2KOSCANA/macros/contour/fc/numu/test_feldman_cousins_nfits.C("$T2KOSCANA/2012results/FC/2+8statsystMark2")'
+# make surface
+root2k -l -b -q '$T2KOSCANA/macros/contour/fc/numu/make_feldman_cousins_deltachisqcrit_surface.C("$T2KOSCANA/2012results/FC/2+8statsystMark2","delta_chisq_critical_Mark2.root",80,101)'
+# plot contour (run1-3, with 90% stat syst underlaid, 2+8, 2 smoothing)
+root2k -l -b -q '$T2KOSCANA/macros/contour/fc/numu/plot_feldman_cousins_contour.C(0,"$T2KOSCANA/2012results/FC/delta_chisq_critical_Mark2.root","$T2KOSCANA/2012results/FC/delta_chisq_critical_Mark2.root","$T2KOSCANA/2012results/DATA/bigger_surface/28/fitresults_3.root","hdchisq",2,true,false,false,"90statsyst")'
+# plot contour (run1-3, with 90% stat syst underlaid, 2+8, 2 smoothing)
+root2k -l -b -q '$T2KOSCANA/macros/contour/fc/numu/plot_feldman_cousins_contour.C(0,"$T2KOSCANA/2012results/FC/delta_chisq_critical_Mark2.root","$T2KOSCANA/2012results/FC/delta_chisq_critical_Mark2.root","$T2KOSCANA/2012results/DATA/2all/fitresults_3.root","hdchisq",2,true,false,false,"90statsyst",true,true,false,false,-1,-1,"fc_contours_2all.root")'
+#plot crit (2D+1D)
+root2k '$T2KOSCANA/macros/contour/fc/numu/plot_feldman_cousins_deltachisqcrit.C("delta_chisq_critical_Mark2.root","delta_chisq_critical_Mark2.root")'
+
+
+
+
 Fake data:
 
 2+8:

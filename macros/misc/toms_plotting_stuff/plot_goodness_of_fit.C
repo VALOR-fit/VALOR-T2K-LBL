@@ -32,5 +32,8 @@ void plot_goodness_of_fit
   pt.Draw("");
   c->SaveAs(Form("goodness_%d.eps",id));
 
-
+  //for PAC
+  c->SaveAs(Form("goodness_%d.png",id));
+  c->SaveAs(Form("goodness_%d.jpg",id));
+  c->SaveAs(Form("goodness_%d.pdf",id));
 }

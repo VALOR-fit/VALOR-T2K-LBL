@@ -90,6 +90,80 @@ void analyse_output
   cspec->SaveAs(Form("spectrum_%d.eps",id));
   delete cspec;
 
+
+  //for PAC
+  TLegend * legg = new TLegend(0.6,0.7,0.9,0.95);
+  legg->SetFillStyle(0);
+  legg->SetBorderSize(0);
+  c->cd();
+  spectrum_noosc->GetXaxis()->SetTitle("E_{reco} / GeV");
+  spectrum_noosc->Draw();
+  spectrum_obs->Draw("PEsame");
+  spectrum_bf->Draw("same");
+  legg->Clear();
+  legg->AddEntry(spectrum_obs, "Run 1-3 data", "pl");
+  legg->AddEntry(spectrum_bf, "Best fit", "l");
+  legg->AddEntry(spectrum_noosc, "No oscillations", "l");
+  legg->Draw();
+  c->SaveAs("spectrum.png");
+  c->SaveAs("spectrum.jpg");
+  c->SaveAs("spectrum.eps");
+  c->SaveAs("spectrum.pdf");
+  spectrum_ratio_obs->Draw("PE");
+  spectrum_ratio_bf->Draw("same");
+  spectrum_line->Draw("same");
+  legg->Clear();
+  legg->AddEntry(spectrum_ratio_obs, "Run 1-3 data", "pl");
+  legg->AddEntry(spectrum_ratio_bf, "Best fit", "l");
+  legg->Draw();
+  c->SaveAs("spectrum_ratio.png");
+  c->SaveAs("spectrum_ratio.jpg");
+  c->SaveAs("spectrum_ratio.eps");
+  c->SaveAs("spectrum_ratio.pdf");
+  //rebin
+  const int nbins = 19;
+  double binedges[nbins+1] = {0.0,0.1,0.2,0.3,0.4,0.5,0.6,0.7,0.8,0.9,1.0,1.2,1.4,1.6,2.0,2.5,3.0,4.0,6.0,30.0};
+  TH1D * spectrum_noosc_rebin = spectrum_noosc->Rebin(nbins,"spectrum_noosc_rebin",binedges);
+  TH1D * spectrum_obs_rebin = spectrum_obs->Rebin(nbins,"spectrum_obs_rebin",binedges);
+  TH1D * spectrum_bf_rebin = spectrum_bf->Rebin(nbins,"spectrum_bf_rebin",binedges);
+  //now copy the data & no-osc, and divide
+  TH1D * spectrum_ratio_bf_rebin = new TH1D("","", nbins, binedges), * spectrum_ratio_obs_rebin = new TH1D("","", nbins, binedges);
+  spectrum_ratio_bf_rebin->Divide(spectrum_bf_rebin, spectrum_noosc_rebin);
+  spectrum_ratio_obs_rebin->Divide(spectrum_obs_rebin, spectrum_noosc_rebin);
+  //axes range
+  spectrum_noosc_rebin->GetXaxis()->SetRangeUser(0,5.99);
+  spectrum_ratio_obs_rebin->GetXaxis()->SetRangeUser(0,5.99);
+  //style
+  spectrum_ratio_bf_rebin->SetLineColor(kRed);
+  spectrum_ratio_obs_rebin->SetLineStyle(2);
+  spectrum_ratio_obs_rebin->SetMarkerSize(0.6);
+  //draw rebins
+  spectrum_noosc_rebin->Draw();
+  spectrum_obs_rebin->Draw("PEsame");
+  spectrum_bf_rebin->Draw("same");
+  legg->Clear();
+  legg->AddEntry(spectrum_obs_rebin, "Run 1-3 data", "pl");
+  legg->AddEntry(spectrum_bf_rebin, "Best fit", "l");
+  legg->AddEntry(spectrum_noosc_rebin, "No oscillations", "l");
+  legg->Draw();
+  c->SaveAs("spectrum_rebin.png");
+  c->SaveAs("spectrum_rebin.jpg");
+  c->SaveAs("spectrum_rebin.eps");
+  c->SaveAs("spectrum_rebin.pdf");
+  spectrum_ratio_obs_rebin->Draw("PE");
+  spectrum_ratio_bf_rebin->Draw("same");
+  spectrum_line->Draw("same");
+  legg->Clear();
+  legg->AddEntry(spectrum_ratio_obs_rebin, "Run 1-3 data", "pl");
+  legg->AddEntry(spectrum_ratio_bf_rebin, "Best fit", "l");
+  legg->Draw();
+  c->SaveAs("spectrum_ratio_rebin.png");
+  c->SaveAs("spectrum_ratio_rebin.jpg");
+  c->SaveAs("spectrum_ratio_rebin.eps");
+  c->SaveAs("spectrum_ratio_rebin.pdf");
+
+
+
   //pulls
   TH1D * pulls = 0;
   f_dchisq.GetObject("hsystpull",pulls);
