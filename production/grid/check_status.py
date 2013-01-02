@@ -3,7 +3,7 @@
 
 f = open('stats','r')
 
-unknown = success = fail = running = scheduled = cleared = 0
+unknown = success = fail = running = scheduled = cleared = abort = 0
 
 for line in f:
     if "======================= glite-wms-job-status " in line:
@@ -15,18 +15,21 @@ for line in f:
             success = success + 1
         elif "Running" in line:
             running = running + 1
-        elif "Aborted" in line:
+        elif "Done (Failed)" in line:
             fail = fail + 1
+        elif "Aborted" in line:
+            abort = abort + 1
         elif "Scheduled" in line:
             scheduled = scheduled + 1
         elif "Cleared" in line:
             cleared = cleared + 1
         else:
-            print line
+            print line,
             unknown += 1
 
 print unknown, " Unknown jobs"
-print fail, " Fail jobs"
+print fail, " Failed jobs"
+print abort, " Aborted jobs"
 print scheduled, " Scheduled jobs"
 print running, " Running jobs"
 print success, " Success jobs"
