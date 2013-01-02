@@ -1,40 +1,22 @@
 FC (give each set a unique tag)
 
-#get a bin list from a contour
-root2k -l '$T2KOSCANA/macros/contour/fc/numu/write_contour_bins_to_textfile.C("$T2KOSCANA/2012results/2012_12_07/data_28/fitresults_3.root",2,true,true,false,true,true,false,false,"hdchisq","hdchisq","hdchisq","hdchisq","hdchisq","hdchisq","hdchisq","hdchisq",true,true)'
+#submit some 2+N FC jobs
+#RAL
+$T2KOSCANA/production/submit_feldman_cousins_fitting_job_numu --resource RAL --nruns 1500 --nexpts 150 --cpu-time 24:00:00 --stat-fluctuations --tweak-systematics --bin-list /home/ppd/tdealtry/RAL_repoistory/t2k/t2kana/nuosc/branches/2012_v0.9.0/inputs/FCbinlist/binlist_2+8_statsyst_full.data --fit-param-list nuosc3f_numudisapp_fix4+nuisance  --job-dir $PWD --softw-dir $T2KOSCANA --tag FC2Nstatsyst_2
+#Oxford
+$T2KOSCANA/production/submit_feldman_cousins_fitting_job_numu --resource Oxford --nruns 1500 --nexpts 150 --cpu-time 24:00:00 --stat-fluctuations --tweak-systematics --bin-list /data/t2k/dealtry/RAL_repoisitory/t2k/t2kana/nuosc/branches/2012_v0.9.0/inputs/FCbinlist/binlist_2+8_statsyst_full.data --fit-param-list nuosc3f_numudisapp_fix4+nuisance  --job-dir $PWD --softw-dir $T2KOSCANA --tag FC2Nstatsyst_10
+#Grid
+$T2KOSCANA/production/submit_feldman_cousins_fitting_job_numu --resource Grid --nruns 1000 --nexpts 500 --cpu-time 24:00:00 --stat-fluctuations --tweak-systematics --bin-list ./inputs/FCbinlist/binlist_2+8_statsyst_full.data --fit-param-list nuosc3f_numudisapp_fix4+nuisance  --job-dir $PWD --softw-dir $T2KOSCANA --tag FC2Nstatsyst_22
 
-#submit the FC jobs
-$T2KOSCANA/production/submit_feldman_cousins_fitting_job_numu --resource RAL --nruns 1500 --nexpts 2000 --cpu-time 24:00:00 --stat-fluctuations --tweak-systematics --bin-list /home/ppd/tdealtry/RAL_repoistory/t2k/t2kana/nuosc/branches/2012_v0.9.0/inputs/FCbinlist/binlist_2+8_statsyst_full.data --fit-param-list nuosc3f_numudisapp_fix4+nuisanceselection  --job-dir $PWD --softw-dir $T2KOSCANA --tag FC28statsyst_10
-
+#grid status checks
+glite-wms-job-status -i FC2Nstatsyst_2*.jid -o stats
+$T2KOSCANA/production/grid/check_status.py
 
 
 #check how many fits have been done at each point
-root2k -l '$T2KOSCANA/macros/contour/fc/numu/test_feldman_cousins_nfits.C("$T2KOSCANA/2012results/FC/rootfiles")'
-
-#make a FC surface
-root2k -l -b -q '$T2KOSCANA/macros/contour/fc/numu/make_feldman_cousins_deltachisqcrit_surface.C("$T2KOSCANA/2012results/FC/rootfiles","delta_chisq_critical_upto96.root",75,96)'
-root2k -l -b -q '$T2KOSCANA/macros/contour/fc/numu/make_feldman_cousins_deltachisqcrit_surface.C("$T2KOSCANA/2012results/FC/rootfiles","delta_chisq_critical_old97.root",97,97)'
-root2k -l -b -q '$T2KOSCANA/macros/contour/fc/numu/make_feldman_cousins_deltachisqcrit_surface.C("$T2KOSCANA/2012results/FC/2+8statsystboundary","delta_chisq_critical_new97.root",97,97)'
-root2k -l -b -q '$T2KOSCANA/macros/contour/fc/numu/make_feldman_cousins_deltachisqcrit_surface.C("$T2KOSCANA/2012results/FC/2+8statsystboundary","delta_chisq_critical_newbound.root",98,1000)'
+root2k -l '$T2KOSCANA/macros/contour/fc/numu/test_feldman_cousins_nfits.C("./")'
 
 
-#plot a contour (run1-3, with 90% stat syst underlaid)
-# - broken surface!
-root2k -l '$T2KOSCANA/macros/contour/fc/numu/plot_feldman_cousins_contour.C(0,"$T2KOSCANA/2012results/FC/delta_chisq_critical.root","$T2KOSCANA/2012results/FC/delta_chisq_critical.root","$T2KOSCANA/2012results/DATA/bigger_surface/28/fitresults_3.root","hdchisq",0,true,false,false,"90statsyst")'
-# boundary fine surface
-#2 SMOOTHINGS!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-root2k -l '$T2KOSCANA/macros/contour/fc/numu/plot_feldman_cousins_contour.C(0,"$T2KOSCANA/2012results/FC/mergesurfaces/merge.root","$T2KOSCANA/2012results/FC/mergesurfaces/merge.root","$T2KOSCANA/2012results/DATA/bigger_surface/28/fitresults_3.root","hdchisq",2,true,false,false,"90statsyst")'
-root2k -l '$T2KOSCANA/macros/contour/fc/numu/plot_feldman_cousins_contour.C(0,"$T2KOSCANA/2012results/FC/mergesurfaces/merge.root","$T2KOSCANA/2012results/FC/mergesurfaces/merge.root","$T2KOSCANA/2012results/DATA/2all/fitresults_3.root","hdchisq",2,true,false,false,"90statsyst",true,true,false,false,-1,-1,"fc_contours_2all.root")'
-
-#plot the crit (2D + 1D)
-root2k '/home/ppd/tdealtry/RAL_repoistory/t2k/t2kana/nuosc/branches/2012_v0.9.0/macros/contour/fc/numu/plot_feldman_cousins_deltachisqcrit.C("merge.root","merge.root")'
-
-
-
-
-#new production
-# check nfits
-root2k -l '$T2KOSCANA/macros/contour/fc/numu/test_feldman_cousins_nfits.C("$T2KOSCANA/2012results/FC/2+8statsystMark2")'
 # make surface
 root2k -l -b -q '$T2KOSCANA/macros/contour/fc/numu/make_feldman_cousins_deltachisqcrit_surface.C("$T2KOSCANA/2012results/FC/2+8statsystMark2","delta_chisq_critical_Mark2.root",80,101)'
 # plot contour (run1-3, with 90% stat syst underlaid, 2+8, 2 smoothing)
