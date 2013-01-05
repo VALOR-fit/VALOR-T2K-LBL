@@ -146,7 +146,7 @@ while($irun < $nruns) {
       print JDL "StdOutput = \"$tag-$irun.out\"; \n";
       print JDL "StdError = \"$tag-$irun.err\"; \n";
       print JDL "InputSandbox = {\"$tag-$irun.sh\",\"trunk_GRID.tar.gz\"}; \n";
-      print JDL "OutputSandbox = {\"$tag-$irun.out\",\"$tag-$irun.err\",\"$tag-run_$irun-expts_$first_$last.root\",\"mockfit_$irun.root\"}; \n";
+      print JDL "OutputSandbox = {\"$tag-$irun.out\",\"$tag-$irun.err\",\"$tag-run_$irun.root\"}; \n";
       print JDL "VirtualOrganisation = \"t2k.org\"; \n";
       #print JDL "Requirements = RegExp(\"ic.ac.uk\", other.GlueCEUniqueId); \n";
       print JDL "Requirements = Member(\"VO-t2k.org-ND280-v10r11p17\",other.GlueHostApplicationSoftwareRunTimeEnvironment) && other.GlueCEPolicyMaxCPUTime > 600; \n";
@@ -193,9 +193,10 @@ while($irun < $nruns) {
       print SH "source trunk_GRID/setup_at_grid.sh\n";
       print SH "echo \"*** Compiling the code...\"\n";
       print SH "cd trunk_GRID/\n";
-      print SH "ls -ltr $VO_T2K_ORG_SW_DIR/\n";
-      print SH "ls -ltr $VO_T2K_ORG_SW_DIR/nd280v10r11p17/ROOT/v5r30p02n01/\n";
-      print SH "ls -ltr $VO_T2K_ORG_SW_DIR/nd280v10r11p17/ROOT/v5r30p02n01/amd64_linux26/\n";
+      print SH "ls -ltr \$VO_T2K_ORG_SW_DIR/\n";
+      print SH "ls -ltr \$VO_T2K_ORG_SW_DIR/nd280v10r11p17/ROOT/\n";
+      print SH "ls -ltr \$VO_T2K_ORG_SW_DIR/nd280v10r11p17/ROOT/v5r30p02n01/\n";
+      print SH "ls -ltr \$VO_T2K_ORG_SW_DIR/nd280v10r11p17/ROOT/v5r30p02n01/amd64_linux26/\n";
       print SH "pwd\n";
       print SH "which root\n";
       print SH "make clean\n";
@@ -258,7 +259,7 @@ if($resource eq "Grid") {
     open(SH0, ">$tag.sh") or die("Can not create the .sh batch script");
     print SH0 "#!/bin/bash \n";
     print SH0 "echo \"*** Creating proxy...\" \n";
-    print SH0 "voms-proxy-init -valid 72:0 -voms t2k.org\n";
+    print SH0 "voms-proxy-init -valid 99:0 -voms t2k.org\n";
     #print SH0 "export MYPROXY_SERVER=lcgrbp01.gridpp.rl.ac.uk\n";
     #print SH0 "myproxy-init -v -d -n -s \$MYPROXY_SERVER\n";
     #print SH0 "glite-wms-job-delegate-proxy -d $proxy_id -e https://lcgwms03.gridpp.rl.ac.uk:7443/glite_wms_wmproxy_server;\n";
@@ -309,6 +310,7 @@ if($resource eq "Grid") {
     print SH0 "echo \"*** Submitting jobs to the GRID...\" \n";
     $irun = 0;
     while($irun < $nruns) {
+	print SH0 "echo $irun\n";
 	print SH0 "glite-wms-job-submit -a -c $softw_dir/production/grid/autowms.conf -o $tag.jid $tag-$irun.jdl\n";
 	$irun++;
     }
