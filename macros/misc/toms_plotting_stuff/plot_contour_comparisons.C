@@ -655,6 +655,7 @@ void plot_contour_comparisons
   g_minos->SetLineWidth(1);
   g_skle->SetLineWidth(1);
   g_skzen->SetLineWidth(1);
+  g_run12_90_statsyst->SetLineWidth(1);
   h_dc_123_68->SetLineWidth(2);
   h_dc_123_90->SetLineWidth(2);
   h_dc_kit_68->SetLineWidth(2);
@@ -666,6 +667,7 @@ void plot_contour_comparisons
   g_minos->SetLineColor(kGreen+2);
   g_skle->SetLineColor(kBlue);
   g_skzen->SetLineColor(kCyan+1);
+  g_run12_90_statsyst->SetLineColor(kMagenta+1);
   h_dc_123_68->SetLineColor(kBlack);
   h_dc_123_90->SetLineColor(kBlack);
   h_dc_kit_68->SetLineColor(kRed);
@@ -674,6 +676,8 @@ void plot_contour_comparisons
   h_fc_123_90->SetLineColor(kBlack);
   h_fc_kit_68->SetLineColor(kRed);
   h_fc_kit_90->SetLineColor(kRed);
+  bestfit.SetMarkerColor(kBlack);
+  bestfit_kit.SetMarkerColor(kRed);
 
   //Run 1-3 const dchisq KIT vs VaLOR
   osc_param_space->GetXaxis()->SetRangeUser(0.85,1.0);
@@ -696,8 +700,8 @@ void plot_contour_comparisons
   c->SaveAs("compare_contours_AB_constdchisq.eps");
   c->SaveAs("compare_contours_AB_constdchisq.pdf");
   //again,with externals
-  osc_param_space->GetXaxis()->SetRangeUser(0.85,1.0);
-  osc_param_space->GetYaxis()->SetRangeUser(0.0018,0.0035);
+  osc_param_space->GetXaxis()->SetRangeUser(0.82,1.0);
+  osc_param_space->GetYaxis()->SetRangeUser(0.0018,0.0038);
   osc_param_space->Draw();  
   //h_dc_123_68->Draw("cont3same");
   h_dc_123_90->Draw("cont3same");
@@ -708,12 +712,15 @@ void plot_contour_comparisons
   leg->AddEntry(h_dc_123_90, "T2K A const#Delta#chi^{2} 3#nu 90% CL","l");
   //leg->AddEntry(h_dc_kit_68, "T2K B const#Delta#chi^{2} 3#nu 68% CL","l");
   leg->AddEntry(h_dc_kit_90, "T2K B const#Delta#chi^{2} 3#nu 90% CL","l");
+  g_run12_90_statsyst->Draw("l");
   g_minos->Draw("l");
   g_skle->Draw("l");
   g_skzen->Draw("l");
+  leg->AddEntry("g_run12_90_statsyst", "T2K 2011 2#nu 90% CL", "l");
   leg->AddEntry("g_minos", "MINOS 2012 2#nu 90% CL", "l");
   leg->AddEntry("g_skle", "SuperK 2012 L/E 2#nu 90% CL", "l");
   leg->AddEntry("g_skzen", "SuperK 2012 zenith 3#nu 90% CL", "l");
+  leg->SetX2NDC(0.55);
   leg->Draw();
   bestfit.Draw();
   bestfit_kit.Draw();
@@ -735,6 +742,7 @@ void plot_contour_comparisons
   leg->AddEntry(h_fc_123_90, "A FC 90% 3#nu CL","l");
   leg->AddEntry(h_fc_kit_68, "B FC 68% 3#nu CL","l");
   leg->AddEntry(h_fc_kit_90, "B FC 90% 3#nu CL","l");
+  leg->SetX2NDC(0.43);
   leg->Draw();
   bestfit.Draw();
   bestfit_kit.Draw();
@@ -743,8 +751,8 @@ void plot_contour_comparisons
   c->SaveAs("compare_contours_AB_FC.eps");
   c->SaveAs("compare_contours_AB_FC.pdf");
   //again,with externals
-  osc_param_space->GetXaxis()->SetRangeUser(0.85,1.0);
-  osc_param_space->GetYaxis()->SetRangeUser(0.0018,0.0035);
+  osc_param_space->GetXaxis()->SetRangeUser(0.82,1.0);
+  osc_param_space->GetYaxis()->SetRangeUser(0.0018,0.0038);
   osc_param_space->Draw(); 
   //h_fc_123_68->Draw("cont3same");
   h_fc_123_90->Draw("cont3same");
@@ -755,12 +763,15 @@ void plot_contour_comparisons
   leg->AddEntry(h_fc_123_90, "T2K A FC 90% 3#nu CL","l");
   //leg->AddEntry(h_fc_kit_68, "T2K B FC 68% 3#nu CL","l");
   leg->AddEntry(h_fc_kit_90, "T2K B FC 90% 3#nu CL","l");
+  g_run12_90_statsyst->Draw("l");
   g_minos->Draw("l");
   g_skle->Draw("l");
   g_skzen->Draw("l");
+  leg->AddEntry("g_run12_90_statsyst", "T2K 2011 2#nu 90% CL", "l");
   leg->AddEntry("g_minos", "MINOS 2012 2#nu 90% CL", "l");
   leg->AddEntry("g_skle", "SuperK 2012 L/E 2#nu 90% CL", "l");
   leg->AddEntry("g_skzen", "SuperK 2012 zenith 3#nu 90% CL", "l");
+  leg->SetX2NDC(0.6);
   leg->Draw();
   bestfit.Draw();
   bestfit_kit.Draw();

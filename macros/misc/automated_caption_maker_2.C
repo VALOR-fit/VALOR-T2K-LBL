@@ -94,7 +94,7 @@ void automated_caption_maker_2(
     if(systematic == "important")
       filesuffix = "_testbig";
 
-    string sysexplainupper = systematics[isys];
+    string sysexplainupper = sysexplanation[isys];
     sysexplainupper[0] = toupper(sysexplain[0]);
     streamer << endl << "\\subsection{" << sysexplainupper << "}" << endl;
 
@@ -138,7 +138,7 @@ void automated_caption_maker_2(
       streamer << ". }" << endl;
 
       //label
-      streamer << Form("\\label{fig:star_%s_%.2f_%.4f}",systematic.c_str(),input_mixing23,input_dm23sq) << endl;
+      streamer << Form("\\label{fig:apdx_star_%s_%.2f_%.4f}",systematic.c_str(),input_mixing23,input_dm23sq) << endl;
 
       //back matter
       streamer << "\\end{minipage}" << endl;
