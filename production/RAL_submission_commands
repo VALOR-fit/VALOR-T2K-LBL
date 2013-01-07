@@ -2,19 +2,38 @@ FC (give each set a unique tag)
 
 #submit some 2+N FC jobs
 #RAL
-$T2KOSCANA/production/submit_feldman_cousins_fitting_job_numu --resource RAL --nruns 1500 --nexpts 150 --cpu-time 24:00:00 --stat-fluctuations --tweak-systematics --bin-list /home/ppd/tdealtry/RAL_repoistory/t2k/t2kana/nuosc/branches/2012_v0.9.0/inputs/FCbinlist/binlist_2+8_statsyst_full.data --fit-param-list nuosc3f_numudisapp_fix4+nuisance  --job-dir $PWD --softw-dir $T2KOSCANA --tag FC2Nstatsyst_2
+$T2KOSCANA/production/submit_feldman_cousins_fitting_job_numu --resource RAL --nruns 1500 --nexpts 150 --cpu-time 24:00:00 --stat-fluctuations --tweak-systematics --bin-list /home/ppd/tdealtry/RAL_repoistory/t2k/t2kana/nuosc/branches/2012_v0.9.0/inputs/FCbinlist/binlist_2+8_statsyst_full.data --fit-param-list nuosc3f_numudisapp_fix4+nuisance  --job-dir $PWD --softw-dir $T2KOSCANA --tag FC2Nstatsyst_5
 #Oxford
 $T2KOSCANA/production/submit_feldman_cousins_fitting_job_numu --resource Oxford --nruns 1500 --nexpts 150 --cpu-time 24:00:00 --stat-fluctuations --tweak-systematics --bin-list /data/t2k/dealtry/RAL_repoisitory/t2k/t2kana/nuosc/branches/2012_v0.9.0/inputs/FCbinlist/binlist_2+8_statsyst_full.data --fit-param-list nuosc3f_numudisapp_fix4+nuisance  --job-dir $PWD --softw-dir $T2KOSCANA --tag FC2Nstatsyst_10
 #Grid
-$T2KOSCANA/production/submit_feldman_cousins_fitting_job_numu --resource Grid --nruns 1000 --nexpts 500 --cpu-time 24:00:00 --stat-fluctuations --tweak-systematics --bin-list ./inputs/FCbinlist/binlist_2+8_statsyst_full.data --fit-param-list nuosc3f_numudisapp_fix4+nuisance  --job-dir $PWD --softw-dir $T2KOSCANA --tag FC2Nstatsyst_22
+$T2KOSCANA/production/submit_feldman_cousins_fitting_job_numu --resource Grid --nruns 1000 --nexpts 150 --cpu-time 24:00:00 --stat-fluctuations --tweak-systematics --bin-list ./inputs/FCbinlist/binlist_2+8_statsyst_full.data --fit-param-list nuosc3f_numudisapp_fix4+nuisance  --job-dir $PWD --softw-dir $T2KOSCANA --tag FC2Nstatsyst_40
+
 
 #grid status checks
-glite-wms-job-status -i FC2Nstatsyst_2*.jid -o stats
+glite-wms-job-status -i FC2Nstatsyst_*.jid -o stats --noint
 $T2KOSCANA/production/grid/check_status.py
+
+#get grid output
+glite-wms-job-output --dir ./ -i FC2Nstatsyst_*.jid --noint
+
+
+
+#gather root files
+#OXFORD
+cp 1[0-9]/*root oxroots/
+cp [2,3][0-9]/dealtry*/*root gridroots/
+#RAL
+rsync -rv --exclude='*.pbs' --exclude='*.out' --include='*.root' dealtry@pplxint5.physics.ox.ac.uk:/data/t2k/dealtry/RAL_repoisitory/t2k/t2kana/nuosc/branches/2012_v0.9.0/2012results/FC/2+Nstatsyst/*roots ./
+cp [0-9]/*.root ralroots
+cp 4[0-9]/tdealtry*/*.root ralgridroots
+cp *roots/*.root ROOTS/
+
 
 
 #check how many fits have been done at each point
-root2k -l '$T2KOSCANA/macros/contour/fc/numu/test_feldman_cousins_nfits.C("./")'
+root2k -l '$T2KOSCANA/macros/contour/fc/numu/test_feldman_cousins_nfits.C("$T2KOSCANA/2012results/FC/2+Nstatsyst/ROOTS")'
+
+
 
 
 # make surface
