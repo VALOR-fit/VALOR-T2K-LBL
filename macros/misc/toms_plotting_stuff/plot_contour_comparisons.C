@@ -15,7 +15,8 @@ void plot_contour_comparisons
   TFile f_fcall_123("2012results/FC/fc_contours_2all.root");
   TFile f_dc_kit("2012results/DATA/KIT/run1-3_constchi2_v2_fine.root");
   TFile f_fc_kit("2012results/DATA/KIT/run1-3_fc.root");
-  TFile f_crit("2012results/FC/mergesurfaces/merge.root");
+  TFile f_crit("2012results/FC/delta_chisq_critical_Mark2.root");
+  TFile f_crit_all("2012results/FC/delta_chisq_critical_2all.root");
   TFile f_crit_kit("2012results/FC/KIT/run1-3_criticalchi2.root");
   TFile f_sens("2012results/SENSITIVITY/t2k_28/sensitivity.root");
 
@@ -507,6 +508,19 @@ void plot_contour_comparisons
   h_dc_dchisqratio2_282N->Draw("colzsame");
   g_minos->Draw("l");
   c->SaveAs("compare_2all_28_dchisqdiff_nM8OnP8O2.eps");
+  //draw again, with t2k contour
+  Color_t fccol = h_fc_123_90->GetLineColor();
+  Width_t fcwid = h_fc_123_90->GetLineWidth();
+  h_fc_123_90->SetLineColor(kBlack);
+  h_fc_123_90->SetLineWidth(2);
+  osc_param_space->Draw();
+  h_dc_dchisqratio1_282N->Draw("colzsame");
+  h_fc_123_90->Draw("cont3same");
+  c->SaveAs("compare_2all_28_dchisqdiff_8MnOn_t2kcont.eps");
+  osc_param_space->Draw();  
+  h_dc_dchisqratio2_282N->Draw("colzsame");
+  h_fc_123_90->Draw("cont3same");
+  c->SaveAs("compare_2all_28_dchisqdiff_nM8OnP8O2_t2kcont.eps");
   //zoom
   osc_param_space->GetXaxis()->SetRangeUser(0.85,1.0);
   osc_param_space->GetYaxis()->SetRangeUser(0.002,0.0028);
@@ -522,10 +536,27 @@ void plot_contour_comparisons
   h_dc_dchisqratio2_282N->Draw("colzsame");
   g_minos->Draw("l");
   c->SaveAs("compare_2all_28_dchisqdiff_nM8OnP8O2_zoom.eps");
+  //zoom into t2k contour region
+  osc_param_space->GetXaxis()->SetRangeUser(0.9,1.0);
+  osc_param_space->GetYaxis()->SetRangeUser(0.002,0.003);
+  h_dc_dchisqratio1_282N->GetXaxis()->SetRangeUser(0.9,1.0);
+  h_dc_dchisqratio1_282N->GetYaxis()->SetRangeUser(0.002,0.003);
+  h_dc_dchisqratio2_282N->GetXaxis()->SetRangeUser(0.9,1.0);
+  h_dc_dchisqratio2_282N->GetYaxis()->SetRangeUser(0.002,0.003);
+  //draw again, with t2k contour
+  osc_param_space->Draw();
+  h_dc_dchisqratio1_282N->Draw("colzsame");
+  h_fc_123_90->Draw("cont3same");
+  c->SaveAs("compare_2all_28_dchisqdiff_8MnOn_zoom_t2kcont.eps");
+  osc_param_space->Draw();  
+  h_dc_dchisqratio2_282N->Draw("colzsame");
+  h_fc_123_90->Draw("cont3same");
+  c->SaveAs("compare_2all_28_dchisqdiff_nM8OnP8O2_zoom_t2kcont.eps");
+  h_fc_123_90->SetLineColor(fccol);
+  h_fc_123_90->SetLineWidth(fcwid);
 
 
-
-  //compare KIT/VaLOR dchisq_crit sufaces
+  //compare KIT/VaLOR dchisq_crit surfaces
   TH2D * h_crit_68 = 0;
   f_crit.GetObject("hDeltaChi2Surface68",h_crit_68);
   TH2D * h_crit_68_kit = 0;
@@ -563,6 +594,40 @@ void plot_contour_comparisons
   h_crit_68_kit->Draw("colzsame");
   c->SaveAs("kitcrit.eps");
   
+
+  //compare 2+8/2+N dchisq_crit surfaces
+  TH2D * h_crit_68_all = 0;
+  f_crit_all.GetObject("hDeltaChi2Surface68",h_crit_68_all);
+  TH2D * h_crit_ratio = new TH2D(*h_crit_68_all);
+  h_crit_ratio->Clear();
+  for(int i = 1; i <= h_crit_ratio->GetNbinsX(); i++) {
+    int ibin = h_crit_68->GetXaxis()->FindBin(h_crit_ratio->GetXaxis()->GetBinCenter(i));
+    cout << i << endl;
+    for(int j = 1; j <= h_crit_ratio->GetNbinsY(); j++) {
+      h_crit_ratio->SetBinContent(i,j,0);
+      int jbin = h_crit_68->GetYaxis()->FindBin(h_crit_ratio->GetYaxis()->GetBinCenter(j));
+      double val = h_crit_68->GetBinContent(ibin, jbin);
+      double all = h_crit_68_all->GetBinContent(i,j);
+      double frac = 2*(val-all)/(all+val);
+      if(val < 1E-8 && all < 1E-8)
+	frac = 0;
+      cout << i << "\t" << j << "\t" << val << "\t" << all << "\t" << frac << endl;
+      h_crit_ratio->SetBinContent(i,j,frac);
+    }
+  }
+  osc_param_space->GetXaxis()->SetRangeUser(0.9,1.0);
+  osc_param_space->GetYaxis()->SetRangeUser(0.002,0.003);
+  osc_param_space->Draw("");
+  h_crit_ratio->SetContour(255);
+  h_crit_ratio->Draw("colzsame");
+  c->SaveAs("compare_fc_crit_28_2N.eps");
+
+  h_crit_68_all->GetZaxis()->SetRangeUser(1,3);
+  osc_param_space->Draw("");
+  h_crit_68_all->Draw("colzsame");
+  c->SaveAs("allcrit.eps");
+  
+
 
   //compare T2K result with expected sensitivity (const dchisq)
   TH2D * h_sens_68 = 0;
