@@ -156,6 +156,7 @@ void plot_feldman_cousins_contour(
   }
 
   for(int ism = 0; ism < nsmoothings; ism++) {
+    cout << "Smoothing ... " << endl;
     if(hDeltaChisqCrit68StatOnly) hDeltaChisqCrit68StatOnly->Smooth();
     if(hDeltaChisqCrit90StatOnly) hDeltaChisqCrit90StatOnly->Smooth();
     if(hDeltaChisqCrit95StatOnly) hDeltaChisqCrit95StatOnly->Smooth();
