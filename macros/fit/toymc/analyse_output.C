@@ -54,11 +54,30 @@ void analyse_output
   const double * ereco_bin_edges = util::ErecoBinEdges(conv::kSKsFCFV1RingMuLike);
   TH1D * spectrum_noosc = new TH1D("","", n_ereco_bins, ereco_bin_edges);
   for(int ibin = 1; ibin <= n_ereco_bins; ibin++)
-    spectrum_noosc->SetBinContent(ibin, skexp->CurrPredictedErecoSpectrumArray(conv::kSKsFCFV1RingMuLike)[ibin-1]);
+    spectrum_noosc->SetBinContent(ibin, skexp->CurrPredictedErecoSpectrumArray(conv::kSKsFCFV1RingMuLike)[ibin-1]);   
   //now copy the data & no-osc, and divide
   TH1D * spectrum_ratio_bf = new TH1D("","", n_ereco_bins, ereco_bin_edges), * spectrum_ratio_obs = new TH1D("","", n_ereco_bins, ereco_bin_edges);
+  //spectrum_bf->Sumw2();
+  //spectrum_obs->Sumw2();
+  //spectrum_noosc->Sumw2();
+  //spectrum_ratio_bf->Sumw2();
+  //spectrum_ratio_obs->Sumw2();
   spectrum_ratio_bf->Divide(spectrum_bf, spectrum_noosc);
   spectrum_ratio_obs->Divide(spectrum_obs, spectrum_noosc);
+  //set error for the obs ratio
+  for(int io = 1; io <= spectrum_ratio_obs->GetNbinsX(); io++) {
+    double err = spectrum_obs->GetBinError(io);
+    if(err > 0)
+      spectrum_ratio_obs->SetBinError(io,1/err);
+    else
+      spectrum_ratio_obs->SetBinError(io,0);
+    cout << io << "\t" << spectrum_obs->GetBinContent(io) << "\t";
+    if(err > 0)
+      cout << 1/err << endl;
+    else
+      cout << endl;
+  }
+  
   //set the axes
   spectrum_obs->GetXaxis()->SetRangeUser(0, spectrum_max_xaxis - conv::kOneMeV);
   spectrum_bf->GetXaxis()->SetRangeUser(0, spectrum_max_xaxis - conv::kOneMeV);
@@ -77,19 +96,18 @@ void analyse_output
   TCanvas * cspec = new TCanvas("cspec","cspec",2);
   cspec->Divide(1,2);
   cspec->cd(1);
-  spectrum_noosc->GetYaxis()->SetTitle("Events");
+  spectrum_noosc->GetYaxis()->SetTitle("Events per bin");
   spectrum_noosc->Draw();
-  spectrum_obs->Draw("PEsame");
+  spectrum_obs->Draw("PE0same");
   spectrum_bf->Draw("same");
   cspec->cd(2);
   spectrum_ratio_obs->GetXaxis()->SetTitle("E_{reco} / GeV");
   spectrum_ratio_obs->GetYaxis()->SetTitle("Ratio");
-  spectrum_ratio_obs->Draw("PE");
+  spectrum_ratio_obs->Draw("PE0");
   spectrum_ratio_bf->Draw("same");
   spectrum_line->Draw("same");
   cspec->SaveAs(Form("spectrum_%d.eps",id));
   delete cspec;
-
 
   //for PAC
   TLegend * legg = new TLegend(0.6,0.7,0.9,0.95);
@@ -121,8 +139,12 @@ void analyse_output
   c->SaveAs("spectrum_ratio.eps");
   c->SaveAs("spectrum_ratio.pdf");
   //rebin
-  const int nbins = 20;
-  double binedges[nbins+1] = {0.0,0.1,0.2,0.3,0.4,0.5,0.6,0.7,0.8,0.9,1.0,1.2,1.4,1.6,2.0,2.5,3.0,4.0,6.0,10.0,30.0};
+  //VaLOR binning
+  const int nbins = 16;
+  double binedges[nbins+1] = {0.0,0.3,0.4,0.5,0.6,0.7,0.8,0.9,1.0,1.1,1.25,1.5,2,3,4,6,30};
+  //KIT binning
+  //const int nbins = 20;
+  //double binedges[nbins+1] = {0.0,0.1,0.2,0.3,0.4,0.5,0.6,0.7,0.8,0.9,1.0,1.2,1.4,1.6,2.0,2.5,3.0,4.0,6.0,10.0,30.0};
   TH1D * spectrum_noosc_rebin = spectrum_noosc->Rebin(nbins,"spectrum_noosc_rebin",binedges);
   TH1D * spectrum_obs_rebin = spectrum_obs->Rebin(nbins,"spectrum_obs_rebin",binedges);
   TH1D * spectrum_bf_rebin = spectrum_bf->Rebin(nbins,"spectrum_bf_rebin",binedges);
@@ -130,6 +152,19 @@ void analyse_output
   TH1D * spectrum_ratio_bf_rebin = new TH1D("","", nbins, binedges), * spectrum_ratio_obs_rebin = new TH1D("","", nbins, binedges);
   spectrum_ratio_bf_rebin->Divide(spectrum_bf_rebin, spectrum_noosc_rebin);
   spectrum_ratio_obs_rebin->Divide(spectrum_obs_rebin, spectrum_noosc_rebin);
+  //set error for the obs ratio
+  for(int io = 1; io <= spectrum_ratio_obs_rebin->GetNbinsX(); io++) {
+    double err = spectrum_obs_rebin->GetBinError(io);
+    if(err > 0)
+      spectrum_ratio_obs_rebin->SetBinError(io,1/err);
+    else
+      spectrum_ratio_obs_rebin->SetBinError(io,0);
+    cout << io << "\t" << spectrum_obs_rebin->GetBinContent(io) << "\t";
+    if(err > 0)
+      cout << 1/err << endl;
+    else
+      cout << endl;
+  }
   //axes range
   spectrum_noosc_rebin->GetXaxis()->SetRangeUser(0,5.99);
   spectrum_ratio_obs_rebin->GetXaxis()->SetRangeUser(0,5.99);
@@ -139,7 +174,7 @@ void analyse_output
   spectrum_ratio_obs_rebin->SetMarkerSize(0.6);
   //draw rebins
   spectrum_noosc_rebin->Draw();
-  spectrum_obs_rebin->Draw("PEsame");
+  spectrum_obs_rebin->Draw("PE0same");
   spectrum_bf_rebin->Draw("same");
   legg->Clear();
   legg->AddEntry(spectrum_obs_rebin, "Run 1-3 data", "pl");
@@ -150,7 +185,7 @@ void analyse_output
   c->SaveAs("spectrum_rebin.jpg");
   c->SaveAs("spectrum_rebin.eps");
   c->SaveAs("spectrum_rebin.pdf");
-  spectrum_ratio_obs_rebin->Draw("PE");
+  spectrum_ratio_obs_rebin->Draw("PE0");
   spectrum_ratio_bf_rebin->Draw("same");
   spectrum_line->Draw("same");
   legg->Clear();
@@ -206,7 +241,9 @@ void analyse_output
   TPaletteAxis *palette = (TPaletteAxis*)dchisq->GetListOfFunctions()->FindObject("palette");
   palette->SetX1NDC(0.86);
   palette->SetX2NDC(0.90);
-  dchisq->GetZaxis()->SetRangeUser(0,70);
+  dchisq->GetZaxis()->SetRangeUser(0,50);
+  dchisq->GetXaxis()->SetRangeUser(0.8,1.0);
+  dchisq->GetYaxis()->SetRangeUser(0.0015,0.0033);
   dchisq->Draw("colz");
   c->SaveAs(Form("dchisq_%d.eps",id));
   cout << dchisq->GetZaxis()->GetTitleOffset() << endl;

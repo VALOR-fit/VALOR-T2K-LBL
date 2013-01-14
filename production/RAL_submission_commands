@@ -8,6 +8,11 @@ $T2KOSCANA/production/submit_feldman_cousins_fitting_job_numu --resource Oxford 
 #Grid
 $T2KOSCANA/production/submit_feldman_cousins_fitting_job_numu --resource Grid --nruns 1000 --nexpts 150 --cpu-time 24:00:00 --stat-fluctuations --tweak-systematics --bin-list ./inputs/FCbinlist/binlist_2+8_statsyst_full.data --fit-param-list nuosc3f_numudisapp_fix4+nuisance  --job-dir $PWD --softw-dir $T2KOSCANA --tag FC2Nstatsyst_32
 
+#2+8
+$T2KOSCANA/production/submit_feldman_cousins_fitting_job_numu --resource RAL --nruns 750 --nexpts 2000 --cpu-time 24:00:00 --stat-fluctuations --tweak-systematics --bin-list /home/ppd/tdealtry/RAL_repoistory/t2k/t2kana/nuosc/branches/2012_v0.9.0/inputs/FCbinlist/binlist_2+8_statsyst_full.data --fit-param-list nuosc3f_numudisapp_fix4+nuisanceselection  --job-dir $PWD --softw-dir $T2KOSCANA --tag FC2Nstatonly
+
+
+
 
 #grid status checks
 glite-wms-job-status -i FC2Nstatsyst_*.jid -o stats --noint
@@ -42,7 +47,19 @@ root2k -l '$T2KOSCANA/macros/contour/fc/numu/test_feldman_cousins_nfits.C("$T2KO
 #2+8
 root2k -l -b -q '$T2KOSCANA/macros/contour/fc/numu/make_feldman_cousins_deltachisqcrit_surface.C("$T2KOSCANA/2012results/FC/2+8statsystMark2","delta_chisq_critical_Mark2.root",80,101)'
 #2+N
-root2k -l -b -q '$T2KOSCANA/macros/contour/fc/numu/make_feldman_cousins_deltachisqcrit_surface.C("$T2KOSCANA/2012results/FC/2+N/ROOTS","delta_chisq_critical_2all.root",80,101)'
+root2k -l -b -q '$T2KOSCANA/macros/contour/fc/numu/make_feldman_cousins_deltachisqcrit_surface.C("$T2KOSCANA/2012results/FC/2+Nstatsyst/ROOTS","delta_chisq_critical_2all.root",80,101)'
+
+
+#plot contour (finer dmsq binning)
+root2k -l -b -q '$T2KOSCANA/macros/contour/fc/numu/plot_feldman_cousins_contour.C(0,"$T2KOSCANA/2012results/FC/delta_chisq_critical_Mark2.root","$T2KOSCANA/2012results/FC/delta_chisq_critical_Mark2.root","$T2KOSCANA/2012results/DATA/fine_grain_28/fitresults_3.root","hdchisq",0,true,false,false,"90statsyst")'
+root2k -l -b -q '$T2KOSCANA/macros/contour/fc/numu/plot_feldman_cousins_contour.C(0,"$T2KOSCANA/2012results/FC/delta_chisq_critical_2all.root","$T2KOSCANA/2012results/FC/delta_chisq_critical_2all.root","$T2KOSCANA/2012results/DATA/fine_grain_2all/fitresults_3.root","hdchisq",0,true,false,false,"90statsyst",true,true,false,false,-1,-1,"fc_contours_2all.root")'
+
+#check difference between 28 extrapolation ("statonly") & not ("statsyst")
+root2k -l '$T2KOSCANA/macros/contour/fc/numu/plot_feldman_cousins_contour.C(0,"$T2KOSCANA/2012results/FC/delta_chisq_critical_test.root","$T2KOSCANA/2012results/FC/delta_chisq_critical_Mark2.root","$T2KOSCANA/2012results/DATA/fine_grain_28/fitresults_3.root","hdchisq",0,true,true,false,"",true,true,false,false,-1,-1,"fc_contours_test.root")'
+
+#check difference between 2N ("statsyst") 28 ("statonly") surfaces on 2N contour
+root2k -l '$T2KOSCANA/macros/contour/fc/numu/plot_feldman_cousins_contour.C(0,"$T2KOSCANA/2012results/FC/delta_chisq_critical_Mark2.root","$T2KOSCANA/2012results/FC/delta_chisq_critical_2all.root","$T2KOSCANA/2012results/DATA/fine_grain_2all/fitresults_3.root","hdchisq",0,true,true,false,"",true,true,false,false,-1,-1,"fc_contours_test2.root")'
+
 
 
 # plot contour (run1-3, with 90% stat syst underlaid, 2+8, 0 smoothing)
@@ -51,8 +68,8 @@ root2k -l -b -q '$T2KOSCANA/macros/contour/fc/numu/plot_feldman_cousins_contour.
 root2k -l -b -q '$T2KOSCANA/macros/contour/fc/numu/plot_feldman_cousins_contour.C(0,"$T2KOSCANA/2012results/FC/delta_chisq_critical_Mark2.root","$T2KOSCANA/2012results/FC/delta_chisq_critical_2all.root","$T2KOSCANA/2012results/DATA/2all/fitresults_3.root","hdchisq",0,true,false,false,"90statsyst",true,true,false,false,-1,-1,"fc_contours_2all.root")'
 
 
-#plot crit (2D+1D)
-root2k '$T2KOSCANA/macros/contour/fc/numu/plot_feldman_cousins_deltachisqcrit.C("delta_chisq_critical_Mark2.root","delta_chisq_critical_Mark2.root")'
+#plot crit (2D+1D) TOP is 2+8, BOTTOM is 2+N. SLICES are 2+8
+root2k '$T2KOSCANA/macros/contour/fc/numu/plot_feldman_cousins_deltachisqcrit.C("delta_chisq_critical_Mark2.root","delta_chisq_critical_2all.root")'
 
 
 
@@ -109,7 +126,7 @@ root2k -l -b -q '$T2KOSCANA/macros/fit/toymc/fit_xml_seeded_from_chisq_map.C("/h
 2+all:
 
 #make chisq maps
-$T2KOSCANA/production/submit_toyexpt_fitting_job_xml --resource RAL --tag data123 --nruns 1 --nexpts 1 --first-expt 3 --fit-param-list nuosc3f_numudisapp_fix4+nuisance --job-dir $PWD --softw-dir $T2KOSCANA --toy-expts-file /home/ppd/tdealtry/RAL_repoistory/t2k/t2kana/nuosc/branches/2012_v0.9.0/inputs/data.xml --cpu-time 72:00:00
+$T2KOSCANA/production/submit_toyexpt_fitting_job_xml --resource RAL --tag data123 --nruns 1 --nexpts 1 --first-expt 3 --fit-param-list nuosc3f_numudisapp_fix4+nuisance --job-dir $PWD --softw-dir $T2KOSCANA --toy-expts-file /home/ppd/tdealtry/RAL_repoistory/t2k/t2kana/nuosc/branches/2012_v0.9.0/inputs/data.xml --cpu-time 72:00:00 --chisqsyst-mixing23-min 0.9 --chisqsyst-mixing23-max 1.0 --chisqsyst-dm23sq-min 0.002 --chisqsyst-dm23sq-max 0.003
 $T2KOSCANA/production/submit_toyexpt_fitting_job_xml --resource RAL --tag data12 --nruns 1 --nexpts 1 --first-expt 4 --fit-param-list nuosc3f_numudisapp_fix4+nuisance --job-dir $PWD --softw-dir $T2KOSCANA --toy-expts-file /home/ppd/tdealtry/RAL_repoistory/t2k/t2kana/nuosc/branches/2012_v0.9.0/inputs/data.xml --cpu-time 72:00:00 --config-file analysis_configuration_2012a_run1+2_neut_finalBANFF_coarseErecoSplines_6binFSI+SI_MAQE.xml
 $T2KOSCANA/production/submit_toyexpt_fitting_job_xml --resource RAL --tag data3 --nruns 1 --nexpts 1 --first-expt 5 --fit-param-list nuosc3f_numudisapp_fix4+nuisance --job-dir $PWD --softw-dir $T2KOSCANA --toy-expts-file /home/ppd/tdealtry/RAL_repoistory/t2k/t2kana/nuosc/branches/2012_v0.9.0/inputs/data.xml --cpu-time 72:00:00 --config-file analysis_configuration_2012a_run3_neut_finalBANFF_coarseErecoSplines_6binFSI+SI_MAQE.xml
 
@@ -224,7 +241,7 @@ cd 14;
 root2k -l -b -q '$T2KOSCANA/macros/contour/const_dchisq/numu/sensitivity_from_many_chisq_surfaces.C("minos14","","","","chisqwithsyst",1000,true)'
 cd ..;
 cd 15;
-#root2k -l -b -q '$T2KOSCANA/macros/contour/const_dchisq/numu/sensitivity_from_many_chisq_surfaces.C("minos15","","","","chisqwithsyst",1000,true)'
+root2k -l -b -q '$T2KOSCANA/macros/contour/const_dchisq/numu/sensitivity_from_many_chisq_surfaces.C("minos15","","","","chisqwithsyst",1000,true)'
 cd ..;
 cd ..;
 
