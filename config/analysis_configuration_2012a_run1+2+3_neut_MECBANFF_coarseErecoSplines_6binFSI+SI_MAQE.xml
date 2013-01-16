@@ -245,7 +245,7 @@
   <xsec>
       <weight_splines>
           <filename>
-               inputs/official/2012/xsec/XSecSplinesCoarse2012_coarseEreco.root
+               inputs/official/2012/xsec/XSecSplinesCoarse2012_coarseEreco_nopdd.root
           </filename>
           <numu>
                <filename>
