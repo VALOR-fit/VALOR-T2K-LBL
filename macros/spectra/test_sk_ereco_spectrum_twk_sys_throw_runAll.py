@@ -26,6 +26,7 @@ usage: %prog [options]
 #names of things
 optionParser.add_option("-a","--all", action="store_true", dest="do_all", default=False, help="If set, will run indiviudal systematics, as well as the categories")
 optionParser.add_option("-n","--nexp", action="store", dest="nexp", type="int", default=-1, help="How many experiments to generate at each point. Required")
+optionParser.add_option("-s","--spectra", action="store_true", dest="save_spectra", default=False, help="If set, will save the spectra. Requires PRODUCTIONMODE to be off")
 (opt, args) = optionParser.parse_args()
 
 nexp = opt.nexp
@@ -35,6 +36,10 @@ if nexp <= 0:
 conffile = "analysis_configuration.xml"
 
 save_toy_expts = "false"
+
+no_spectra = "true"
+if opt.save_spectra:
+    no_spectra = "false"
 
 modes1 = [0,2,3,4,5] #combinations
 modes2 = range(100,123) #banff
@@ -59,7 +64,7 @@ for osc in oscparams:
     
     for mode in modes:
 
-        command = 'root2k -l -b -q \'$T2KOSCANA/macros/spectra/test_sk_ereco_spectrum_twk_sys_throw.C('+str(mode)+','+update+',"3f_osc",'+str(osc[0])+','+str(osc[1])+','+str(osc[2])+','+str(osc[3])+','+str(osc[4])+','+str(osc[5])+','+save_toy_expts+',"'+conffile+'",'+str(nexp)+')\''
+        command = 'root2k -l -b -q \'$T2KOSCANA/macros/spectra/test_sk_ereco_spectrum_twk_sys_throw.C('+str(mode)+','+update+',"3f_osc",'+str(osc[0])+','+str(osc[1])+','+str(osc[2])+','+str(osc[3])+','+str(osc[4])+','+str(osc[5])+','+save_toy_expts+',"'+conffile+'",'+str(nexp)+','+no_spectra+')\''
         print command
         if os.system(command) == 1:
             sys.exit(1)
@@ -68,7 +73,7 @@ for osc in oscparams:
 
         #don't forget the banff prefit
         if mode == 5 or mode == 0 or (mode >= 100 and mode < 200):
-            command = 'root2k -l -b -q \'$T2KOSCANA/macros/spectra/test_sk_ereco_spectrum_twk_sys_throw.C('+str(mode)+','+update+',"3f_osc",'+str(osc[0])+','+str(osc[1])+','+str(osc[2])+','+str(osc[3])+','+str(osc[4])+','+str(osc[5])+','+save_toy_expts+',"analysis_configuration_2012a_run1+2+3_neut_finalBANFF_coarseErecoSplines_6binFSI+SI_MAQE_prefit.xml",'+str(nexp)+')\''
+            command = 'root2k -l -b -q \'$T2KOSCANA/macros/spectra/test_sk_ereco_spectrum_twk_sys_throw.C('+str(mode)+','+update+',"3f_osc",'+str(osc[0])+','+str(osc[1])+','+str(osc[2])+','+str(osc[3])+','+str(osc[4])+','+str(osc[5])+','+save_toy_expts+',"analysis_configuration_2012a_run1+2+3_neut_finalBANFF_coarseErecoSplines_6binFSI+SI_MAQE_prefit.xml",'+str(nexp)+','+no_spectra+')\''
             print command
             if os.system(command) == 1:
                 sys.exit(1)

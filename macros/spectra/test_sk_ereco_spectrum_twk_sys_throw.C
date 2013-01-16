@@ -308,7 +308,7 @@ void test_sk_ereco_spectrum_twk_sys_throw
     hErecoNominal = new TH1D(*skexp.CurrPredictedErecoSpectrum(s));
     hErecoNominal->SetDirectory(0);
     hErecoNominal->GetXaxis()->SetTitle("E_{reco} (GeV)");
-    hErecoNominal->GetYaxis()->SetTitle("Number of events");
+    hErecoNominal->GetYaxis()->SetTitle("Events per bin");
     hErecoNominal->SetLineWidth(2);
     if(!update_rootfile)
       hErecoNominal->Write("nominal");
