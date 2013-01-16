@@ -1493,7 +1493,7 @@ void mock_data_fit_pulls(
   TH1D * sigmasummary = new TH1D("sigma","sigma",100,0,100);
   int ifit = 1;
   TF1 *fit = 0;
-  gStyle->SetOptFit();
+  //gStyle->SetOptFit();
   
 
   TCanvas *coscpull = new TCanvas(); coscpull->Divide(1,2);
@@ -1539,7 +1539,8 @@ void mock_data_fit_pulls(
       ifit++;
     }
     TCanvas *cxsec = new TCanvas(); cxsec->Divide(1,2);
-    cxsec->cd(1); hpull_xsec_sf->Draw(); hpull_xsec_sf->Fit("gaus");
+    cxsec->cd(1); hpull_xsec_sf->Draw();
+    /* hpull_xsec_sf->Fit("gaus");
     if(fit) {
       fit = hpull_xsec_sf->GetFunction("gaus");
       meansummary->GetXaxis()->SetBinLabel(ifit,"SF"); sigmasummary->GetXaxis()->SetBinLabel(ifit,"SF");
@@ -1547,6 +1548,7 @@ void mock_data_fit_pulls(
       sigmasummary->SetBinContent(ifit, fit->GetParameter(2)); sigmasummary->SetBinError(ifit, fit->GetParError(2));
       ifit++;
     }
+    */
     cxsec->cd(2); hpull_xsec_pilessdelta->Draw(); hpull_xsec_pilessdelta->Fit("gaus");
     fit = hpull_xsec_pilessdelta->GetFunction("gaus");
     if(fit) {
@@ -1615,7 +1617,8 @@ void mock_data_fit_pulls(
       ifit++;
     }
     TCanvas *caltxsec = new TCanvas(); caltxsec->Divide(1,2);
-    caltxsec->cd(1); haltpull_xsec_sf->Draw(); haltpull_xsec_sf->Fit("gaus");
+    caltxsec->cd(1); haltpull_xsec_sf->Draw();
+    /* haltpull_xsec_sf->Fit("gaus");
     fit = haltpull_xsec_sf->GetFunction("gaus");
     if(fit) {
       meansummary->GetXaxis()->SetBinLabel(ifit,"SF"); sigmasummary->GetXaxis()->SetBinLabel(ifit,"SF");
@@ -1623,6 +1626,7 @@ void mock_data_fit_pulls(
       sigmasummary->SetBinContent(ifit, fit->GetParameter(2)); sigmasummary->SetBinError(ifit, fit->GetParError(2));
       ifit++;
     }
+    */
     caltxsec->cd(2); haltpull_xsec_pilessdelta->Draw(); haltpull_xsec_pilessdelta->Fit("gaus");
     if(fit) {
       fit = haltpull_xsec_pilessdelta->GetFunction("gaus");
@@ -1853,7 +1857,7 @@ void mock_data_fit_pulls(
 
   if(fit_systematics_mode > 0) {
     TCanvas * csummary = new TCanvas(); csummary->Divide(1,2);
-    gStyle->SetOptStat(0);
+    //gStyle->SetOptStat(0);
     if(fit_systematics_mode == 1) {
       meansummary->GetXaxis()->SetRangeUser(0,20);
       sigmasummary->GetXaxis()->SetRangeUser(0,20);
@@ -1861,7 +1865,7 @@ void mock_data_fit_pulls(
     csummary->cd(1); meansummary->Draw();
     csummary->cd(2); sigmasummary->Draw();
     csummary->SaveAs(Form("%s_%f_summary_pull.pdf", tag, input_mixing23));
-    gStyle->SetOptStat(1);
+    //gStyle->SetOptStat(1);
   }
 
 
@@ -1888,7 +1892,7 @@ void mock_data_fit_pulls(
     meansummary->GetYaxis()->SetRangeUser(0,5);
     meansummary->Draw();
     sigmasummary->Draw("same");
-    csum->SaveAs(Form("%s_%f_summary_pull.eps", tag, input_mixing23));
+    csum->SaveAs(Form("%s_%f_summary_pull.pdf", tag, input_mixing23));
   }
   else if(fit_systematics_mode == 2) {
     TCanvas * csum = new TCanvas();
@@ -1904,7 +1908,7 @@ void mock_data_fit_pulls(
     meansummary->GetYaxis()->SetRangeUser(0,5);
     meansummary->Draw();
     sigmasummary->Draw("same");
-    csum->SaveAs(Form("%s_%f_summary_pull.eps", tag, input_mixing23));
+    csum->SaveAs(Form("%s_%f_summary_pull.pdf", tag, input_mixing23));
   }
 
   if(fit_systematics_mode == 1) {
@@ -2053,7 +2057,6 @@ void mock_data_fit_pulls(
     cban->SaveAs(Form("%s_%f_other_pull.eps", tag, input_mixing23));
 
 
-    /*
     cban->cd(1); haltpull_banff_00->Draw();
     cban->cd(2); haltpull_banff_01->Draw();
     cban->cd(3); haltpull_banff_02->Draw();
@@ -2105,7 +2108,6 @@ void mock_data_fit_pulls(
     coth->cd(23); haltpull_fsi_004->Draw();
     coth->cd(24); haltpull_fsi_005->Draw();
     cban->SaveAs(Form("%s_%f_other_altpull.eps", tag, input_mixing23));
-    */
   }
 
 }
