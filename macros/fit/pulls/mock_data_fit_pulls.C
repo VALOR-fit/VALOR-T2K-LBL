@@ -87,6 +87,11 @@ void mock_data_fit_pulls(
   double preerr_banff_ccqeE2 = sqrt(BANFFCovMtrx(20,20));
   double preerr_banff_cc1piE0 = sqrt(BANFFCovMtrx(21,21));
   double preerr_banff_cc1piE1 = sqrt(BANFFCovMtrx(22,22));
+  //bestfit
+  TVectorD * BANFFBFP = util::XML2TVectorD(xml,root_node, "banff/best_fit_values");
+  const TVectorD & BANFFBF = *BANFFBFP;
+  double prebf_banff_maqe = BANFFBF[16];
+  double prebf_banff_ccqeE0 = BANFFBF[18];
 
   //FSI
   TMatrixD *FSICovMtrxP = util::XML2TMatrixD(xml,root_node, "fsi/covariance_matrix");
@@ -936,8 +941,8 @@ void mock_data_fit_pulls(
   TH1D * h_nsk_nom  = new TH1D("h_nsk_nom","h_nsk_nom",150,0,150);
   TH1D * h_nsk_bf   = new TH1D("h_nsk_bf","h_nsk_bf",150,0,150);
   TH1D * h_dchisq   = new TH1D("h_dchisq","h_dchisq",300,-5,25);
-  TH1D * h_mixing23 = new TH1D("h_mixing23","h_mixing23",500,0.5,1.0);
-  TH1D * h_dm23sq   = new TH1D("h_dm23sq","h_dm23sq",500,1.4E-3,3.4E-3);
+  TH1D * h_mixing23 = new TH1D("h_mixing23","h_mixing23:#sin^{2}_{23}",500,0.5,1.0);
+  TH1D * h_dm23sq   = new TH1D("h_dm23sq","h_dm23sq:|#Delta m^{2}_{32}|",500,1.4E-3,3.4E-3);
   //pull histograms
   TH1D * hpull_mixing23 = new TH1D("hpull_mixing23","hpull_mixing23",250,-5,5);
   TH1D * hpull_dm23sq   = new TH1D("hpull_dm23sq","hpull_dm23sq",250,-5,5);
@@ -945,12 +950,12 @@ void mock_data_fit_pulls(
   TH1D * herr_mixing23 = new TH1D("herr_mixing23","herr_mixing23",300,0,0.05);
   TH1D * herr_dm23sq   = new TH1D("herr_dm23sq","herr_dm23sq",100,0,1E-4);
   //distribution histograms
-  TH1D * h_xsec_sf = new TH1D("h_xsec_sf","h_xsec_sf",200,-3,3);
-  TH1D * h_xsec_binde = new TH1D("h_xsec_binde","h_xsec_binde",200,-3,3);
-  TH1D * h_xsec_pilessdelta = new TH1D("h_xsec_pilessdelta","h_xsec_pilessdelta",200,-3,3);
-  TH1D * h_skdet_ccnqe = new TH1D("h_skdet_ccnqe","h_skdet_ccnqe",200,-3,3);
-  TH1D * h_skdet_nc = new TH1D("h_skdet_nc","h_skdet_nc",200,-3,3);
-  TH1D * h_skdet_energyscale = new TH1D("h_skdet_energyscale","h_skdet_energyscale",200,-3,3);
+  TH1D * h_xsec_sf = new TH1D("h_xsec_sf","h_xsec_sf:#sigma",200,-3,3);
+  TH1D * h_xsec_binde = new TH1D("h_xsec_binde","h_xsec_binde:#sigma",200,-3,3);
+  TH1D * h_xsec_pilessdelta = new TH1D("h_xsec_pilessdelta","h_xsec_pilessdelta:#sigma",200,-3,3);
+  TH1D * h_skdet_ccnqe = new TH1D("h_skdet_ccnqe","h_skdet_ccnqe:#sigma",200,-3,3);
+  TH1D * h_skdet_nc = new TH1D("h_skdet_nc","h_skdet_nc:#sigma",200,-3,3);
+  TH1D * h_skdet_energyscale = new TH1D("h_skdet_energyscale","h_skdet_energyscale:#sigma",200,-3,3);
   //pull histograms
   TH1D * hpull_xsec_sf = new TH1D("hpull_xsec_sf","hpull_xsec_sf",100,-5,5);
   TH1D * hpull_xsec_binde = new TH1D("hpull_xsec_binde","hpull_xsec_binde",100,-10,10);
@@ -960,35 +965,42 @@ void mock_data_fit_pulls(
   TH1D * hpull_skdet_energyscale = new TH1D("hpull_skdet_energyscale","hpull_skdet_energyscale",100,-5,5);
   //alterative pull histograms
   TH1D * haltpull_xsec_sf = new TH1D("haltpull_xsec_sf","haltpull_xsec_sf",100,-5,5);
-  TH1D * haltpull_xsec_binde = new TH1D("haltpull_xsec_binde","haltpull_xsec_binde",100,-10,10);
+  TH1D * haltpull_xsec_binde = new TH1D("haltpull_xsec_binde","haltpull_xsec_binde",100,-5,5);
   TH1D * haltpull_xsec_pilessdelta = new TH1D("haltpull_xsec_pilessdelta","haltpull_xsec_pilessdelta",100,-5,5);
   TH1D * haltpull_skdet_ccnqe = new TH1D("haltpull_skdet_ccnqe","haltpull_skdet_ccnqe",100,-5,5);
   TH1D * haltpull_skdet_nc = new TH1D("haltpull_skdet_nc","haltpull_skdet_nc",100,-5,5);
   TH1D * haltpull_skdet_energyscale = new TH1D("haltpull_skdet_energyscale","haltpull_skdet_energyscale",100,-5,5);
+  //alterative2 pull histograms
+  TH1D * haltpull2_xsec_sf = new TH1D("haltpull2_xsec_sf","haltpull2_xsec_sf",100,-5,5);
+  TH1D * haltpull2_xsec_binde = new TH1D("haltpull2_xsec_binde","haltpull2_xsec_binde",100,-5,5);
+  TH1D * haltpull2_xsec_pilessdelta = new TH1D("haltpull2_xsec_pilessdelta","haltpull2_xsec_pilessdelta",100,-5,5);
+  TH1D * haltpull2_skdet_ccnqe = new TH1D("haltpull2_skdet_ccnqe","haltpull2_skdet_ccnqe",100,-5,5);
+  TH1D * haltpull2_skdet_nc = new TH1D("haltpull2_skdet_nc","haltpull2_skdet_nc",100,-5,5);
+  TH1D * haltpull2_skdet_energyscale = new TH1D("haltpull2_skdet_energyscale","haltpull2_skdet_energyscale",100,-5,5);
   //distribution histograms
-  TH1D * h_banff_00 = new TH1D("h_banff_00","h_banff_00",200,-3,3);
-  TH1D * h_banff_01 = new TH1D("h_banff_01","h_banff_01",200,-3,3);
-  TH1D * h_banff_02 = new TH1D("h_banff_02","h_banff_02",200,-3,3);
-  TH1D * h_banff_03 = new TH1D("h_banff_03","h_banff_03",200,-3,3);
-  TH1D * h_banff_04 = new TH1D("h_banff_04","h_banff_04",200,-3,3);
-  TH1D * h_banff_05 = new TH1D("h_banff_05","h_banff_05",200,-3,3);
-  TH1D * h_banff_06 = new TH1D("h_banff_06","h_banff_06",200,-3,3);
-  TH1D * h_banff_07 = new TH1D("h_banff_07","h_banff_07",200,-3,3);
-  TH1D * h_banff_08 = new TH1D("h_banff_08","h_banff_08",200,-3,3);
-  TH1D * h_banff_09 = new TH1D("h_banff_09","h_banff_09",200,-3,3);
-  TH1D * h_banff_10 = new TH1D("h_banff_10","h_banff_10",200,-3,3);
-  TH1D * h_banff_11 = new TH1D("h_banff_11","h_banff_11",200,-3,3);
-  TH1D * h_banff_12 = new TH1D("h_banff_12","h_banff_12",200,-3,3);
-  TH1D * h_banff_13 = new TH1D("h_banff_13","h_banff_13",200,-3,3);
-  TH1D * h_banff_14 = new TH1D("h_banff_14","h_banff_14",200,-3,3);
-  TH1D * h_banff_15 = new TH1D("h_banff_15","h_banff_15",200,-3,3);
-  TH1D * h_banff_maqe = new TH1D("h_banff_maqe","h_banff_maqe",200,-3,3);
-  TH1D * h_banff_mares = new TH1D("h_banff_mares","h_banff_mares",200,-3,3);
-  TH1D * h_banff_ccqeE0 = new TH1D("h_banff_ccqeE0","h_banff_ccqeE0",200,-3,3);
-  TH1D * h_banff_ccqeE1 = new TH1D("h_banff_ccqeE1","h_banff_ccqeE1",200,-3,3);
-  TH1D * h_banff_ccqeE2 = new TH1D("h_banff_ccqeE2","h_banff_ccqeE2",200,-3,3);
-  TH1D * h_banff_cc1piE0 = new TH1D("h_banff_cc1piE0","h_banff_cc1piE0",200,-3,3);
-  TH1D * h_banff_cc1piE1 = new TH1D("h_banff_cc1piE1","h_banff_cc1piE1",200,-3,3);
+  TH1D * h_banff_00 = new TH1D("h_banff_00","h_banff_00:#sigma",200,-3,3);
+  TH1D * h_banff_01 = new TH1D("h_banff_01","h_banff_01:#sigma",200,-3,3);
+  TH1D * h_banff_02 = new TH1D("h_banff_02","h_banff_02:#sigma",200,-3,3);
+  TH1D * h_banff_03 = new TH1D("h_banff_03","h_banff_03:#sigma",200,-3,3);
+  TH1D * h_banff_04 = new TH1D("h_banff_04","h_banff_04:#sigma",200,-3,3);
+  TH1D * h_banff_05 = new TH1D("h_banff_05","h_banff_05:#sigma",200,-3,3);
+  TH1D * h_banff_06 = new TH1D("h_banff_06","h_banff_06:#sigma",200,-3,3);
+  TH1D * h_banff_07 = new TH1D("h_banff_07","h_banff_07:#sigma",200,-3,3);
+  TH1D * h_banff_08 = new TH1D("h_banff_08","h_banff_08:#sigma",200,-3,3);
+  TH1D * h_banff_09 = new TH1D("h_banff_09","h_banff_09:#sigma",200,-3,3);
+  TH1D * h_banff_10 = new TH1D("h_banff_10","h_banff_10:#sigma",200,-3,3);
+  TH1D * h_banff_11 = new TH1D("h_banff_11","h_banff_11:#sigma",200,-3,3);
+  TH1D * h_banff_12 = new TH1D("h_banff_12","h_banff_12:#sigma",200,-3,3);
+  TH1D * h_banff_13 = new TH1D("h_banff_13","h_banff_13:#sigma",200,-3,3);
+  TH1D * h_banff_14 = new TH1D("h_banff_14","h_banff_14:#sigma",200,-3,3);
+  TH1D * h_banff_15 = new TH1D("h_banff_15","h_banff_15:#sigma",200,-3,3);
+  TH1D * h_banff_maqe = new TH1D("h_banff_maqe","h_banff_maqe:#sigma",200,-3,3);
+  TH1D * h_banff_mares = new TH1D("h_banff_mares","h_banff_mares:#sigma",200,-3,3);
+  TH1D * h_banff_ccqeE0 = new TH1D("h_banff_ccqeE0","h_banff_ccqeE0:#sigma",200,-3,3);
+  TH1D * h_banff_ccqeE1 = new TH1D("h_banff_ccqeE1","h_banff_ccqeE1:#sigma",200,-3,3);
+  TH1D * h_banff_ccqeE2 = new TH1D("h_banff_ccqeE2","h_banff_ccqeE2:#sigma",200,-3,3);
+  TH1D * h_banff_cc1piE0 = new TH1D("h_banff_cc1piE0","h_banff_cc1piE0:#sigma",200,-3,3);
+  TH1D * h_banff_cc1piE1 = new TH1D("h_banff_cc1piE1","h_banff_cc1piE1:#sigma",200,-3,3);
   //pull histograms
   TH1D * hpull_banff_00 = new TH1D("hpull_banff_00","hpull_banff_00",100,-5,5);
   TH1D * hpull_banff_01 = new TH1D("hpull_banff_01","hpull_banff_01",100,-5,5);
@@ -1016,28 +1028,31 @@ void mock_data_fit_pulls(
   //alt pull
   TH1D * haltpull_banff_maqe = new TH1D("haltpull_banff_maqe","haltpull_banff_maqe",100,-5,5);
   TH1D * haltpull_banff_ccqeE0 = new TH1D("haltpull_banff_ccqeE0","haltpull_banff_ccqeE0",100,-5,5);
+  //alt2 pull
+  TH1D * haltpull2_banff_maqe = new TH1D("haltpull2_banff_maqe","haltpull2_banff_maqe",100,-5,5);
+  TH1D * haltpull2_banff_ccqeE0 = new TH1D("haltpull2_banff_ccqeE0","haltpull2_banff_ccqeE0",100,-5,5);
   //fit_systematics_mode == 2
-  TH1D * h_xsec_pf = new TH1D("h_xsec_pf","h_xsec_pf",50,-5,5);
-  TH1D * h_xsec_wshape = new TH1D("h_xsec_wshape","h_xsec_wshape",50,-5,5);
-  TH1D * h_xsec_ccothshape = new TH1D("h_xsec_ccothshape","h_xsec_ccothshape",50,-5,5);
-  TH1D * h_xsec_cc1pishape = new TH1D("h_xsec_cc1pishape","h_xsec_cc1pishape",50,-5,5);
-  TH1D * h_xsec_normcccoh = new TH1D("h_xsec_normcccoh","h_xsec_normcccoh",50,-5,5);
-  TH1D * h_xsec_normnc1piC = new TH1D("h_xsec_normnc1piC","h_xsec_normnc1piC",50,-5,5);
-  TH1D * h_xsec_normnccoh = new TH1D("h_xsec_normnccoh","h_xsec_normnccoh",50,-5,5);
-  TH1D * h_xsec_normncoth = new TH1D("h_xsec_normncoth","h_xsec_normncoth",50,-5,5);
-  TH1D * h_xsec_normnuetonumu = new TH1D("h_xsec_normnuetonumu","h_xsec_normnuetonumu",50,-5,5);
-  TH1D * h_xsec_normantinutonu = new TH1D("h_xsec_normantinutonu","h_xsec_normantinutonu",50,-5,5);
-  TH1D * h_skdet_ccqerc0 = new TH1D("h_skdet_ccqerc0","h_skdet_ccqerc0",50,-5,5);
-  TH1D * h_skdet_ccqerc1 = new TH1D("h_skdet_ccqerc1","h_skdet_ccqerc1",50,-5,5);
-  TH1D * h_skdet_ccqerc2 = new TH1D("h_skdet_ccqerc2","h_skdet_ccqerc2",50,-5,5);
-  TH1D * h_skdet_ccqeoth = new TH1D("h_skdet_ccqeoth","h_skdet_ccqeoth",50,-5,5);
-  TH1D * h_skdet_nuecc = new TH1D("h_skdet_nuecc","h_skdet_nuecc",50,-5,5);
-  TH1D * h_fsi_000 = new TH1D("h_fsi_000","h_fsi_000",50,-5,5);
-  TH1D * h_fsi_001 = new TH1D("h_fsi_001","h_fsi_001",50,-5,5);
-  TH1D * h_fsi_002 = new TH1D("h_fsi_002","h_fsi_002",50,-5,5);
-  TH1D * h_fsi_003 = new TH1D("h_fsi_003","h_fsi_003",50,-5,5);
-  TH1D * h_fsi_004 = new TH1D("h_fsi_004","h_fsi_004",50,-5,5);
-  TH1D * h_fsi_005 = new TH1D("h_fsi_005","h_fsi_005",50,-5,5); 
+  TH1D * h_xsec_pf = new TH1D("h_xsec_pf","h_xsec_pf:#sigma",50,-5,5);
+  TH1D * h_xsec_wshape = new TH1D("h_xsec_wshape","h_xsec_wshape:#sigma",50,-5,5);
+  TH1D * h_xsec_ccothshape = new TH1D("h_xsec_ccothshape","h_xsec_ccothshape:#sigma",50,-5,5);
+  TH1D * h_xsec_cc1pishape = new TH1D("h_xsec_cc1pishape","h_xsec_cc1pishape:#sigma",50,-5,5);
+  TH1D * h_xsec_normcccoh = new TH1D("h_xsec_normcccoh","h_xsec_normcccoh:#sigma",50,-5,5);
+  TH1D * h_xsec_normnc1piC = new TH1D("h_xsec_normnc1piC","h_xsec_normnc1piC:#sigma",50,-5,5);
+  TH1D * h_xsec_normnccoh = new TH1D("h_xsec_normnccoh","h_xsec_normnccoh:#sigma",50,-5,5);
+  TH1D * h_xsec_normncoth = new TH1D("h_xsec_normncoth","h_xsec_normncoth:#sigma",50,-5,5);
+  TH1D * h_xsec_normnuetonumu = new TH1D("h_xsec_normnuetonumu","h_xsec_normnuetonumu:#sigma",50,-5,5);
+  TH1D * h_xsec_normantinutonu = new TH1D("h_xsec_normantinutonu","h_xsec_normantinutonu:#sigma",50,-5,5);
+  TH1D * h_skdet_ccqerc0 = new TH1D("h_skdet_ccqerc0","h_skdet_ccqerc0:#sigma",50,-5,5);
+  TH1D * h_skdet_ccqerc1 = new TH1D("h_skdet_ccqerc1","h_skdet_ccqerc1:#sigma",50,-5,5);
+  TH1D * h_skdet_ccqerc2 = new TH1D("h_skdet_ccqerc2","h_skdet_ccqerc2:#sigma",50,-5,5);
+  TH1D * h_skdet_ccqeoth = new TH1D("h_skdet_ccqeoth","h_skdet_ccqeoth:#sigma",50,-5,5);
+  TH1D * h_skdet_nuecc = new TH1D("h_skdet_nuecc","h_skdet_nuecc:#sigma",50,-5,5);
+  TH1D * h_fsi_000 = new TH1D("h_fsi_000","h_fsi_000:#sigma",50,-5,5);
+  TH1D * h_fsi_001 = new TH1D("h_fsi_001","h_fsi_001:#sigma",50,-5,5);
+  TH1D * h_fsi_002 = new TH1D("h_fsi_002","h_fsi_002:#sigma",50,-5,5);
+  TH1D * h_fsi_003 = new TH1D("h_fsi_003","h_fsi_003:#sigma",50,-5,5);
+  TH1D * h_fsi_004 = new TH1D("h_fsi_004","h_fsi_004:#sigma",50,-5,5);
+  TH1D * h_fsi_005 = new TH1D("h_fsi_005","h_fsi_005:#sigma",50,-5,5); 
   //pull histograms
   TH1D * hpull_xsec_pf = new TH1D("hpull_xsec_pf","hpull_xsec_pf",50,-5,5);
   TH1D * hpull_xsec_wshape = new TH1D("hpull_xsec_wshape","hpull_xsec_wshape",50,-5,5);
@@ -1299,6 +1314,13 @@ void mock_data_fit_pulls(
       haltpull_skdet_ccnqe->Fill((bestfit_skdet_ccnqe - input_skdet_ccnqe) / err_skdet_ccnqe);
       haltpull_skdet_nc->Fill((bestfit_skdet_nc - input_skdet_nc) / err_skdet_nc);
       haltpull_skdet_energyscale->Fill((bestfit_skdet_energyscale - input_skdet_energyscale) / err_skdet_energyscale);
+      //altpull2
+      haltpull2_xsec_sf->Fill((bestfit_xsec_sf - 0) / err_xsec_sf);
+      haltpull2_xsec_binde->Fill((bestfit_xsec_binde - 0) / err_xsec_binde);
+      haltpull2_xsec_pilessdelta->Fill((bestfit_xsec_pilessdelta - 0) / err_xsec_pilessdelta);
+      haltpull2_skdet_ccnqe->Fill((bestfit_skdet_ccnqe - 0) / err_skdet_ccnqe);
+      haltpull2_skdet_nc->Fill((bestfit_skdet_nc - 0) / err_skdet_nc);
+      haltpull2_skdet_energyscale->Fill((bestfit_skdet_energyscale - 0) / err_skdet_energyscale);
       //distribution histograms
       h_banff_00->Fill((bestfit_banff_00 - input_banff_00)/preerr_banff_00);
       h_banff_01->Fill((bestfit_banff_01 - input_banff_01)/preerr_banff_01);
@@ -1350,6 +1372,9 @@ void mock_data_fit_pulls(
       //alt pull
       haltpull_banff_maqe->Fill((bestfit_banff_maqe - input_banff_maqe) / err_banff_maqe);
       haltpull_banff_ccqeE0->Fill((bestfit_banff_ccqeE0 - input_banff_ccqeE0) / err_banff_ccqeE0);
+      //alt pull2
+      haltpull2_banff_maqe->Fill((bestfit_banff_maqe - prebf_banff_maqe) / err_banff_maqe);
+      haltpull2_banff_ccqeE0->Fill((bestfit_banff_ccqeE0 - prebf_banff_ccqeE0) / err_banff_ccqeE0);
     }//fit_systematics_mode >= 1
     if(fit_systematics_mode == 2) {
       h_xsec_pf->Fill((bestfit_xsec_pf - input_xsec_pf));
@@ -1697,7 +1722,7 @@ void mock_data_fit_pulls(
     new TCanvas(); hpull_banff_06->Draw(); hpull_banff_06->Fit("gaus"); fit = hpull_banff_06->GetFunction("gaus");
     meansummary->SetBinContent(ifit, fit->GetParameter(1)); meansummary->SetBinError(ifit, fit->GetParError(1));
     sigmasummary->SetBinContent(ifit, fit->GetParameter(2)); sigmasummary->SetBinError(ifit, fit->GetParError(2)); ifit++;
-    new TCanvas(); hpull_banff_07->Draw(); hpull_banff_07->Fit("gaus"); fit = hpull_banff_07->GetFunction("gaus");
+    new TCanvas(); hpull_banff_07->Draw(); hpull_banff_07->Fit("gauss"); fit = hpull_banff_07->GetFunction("gaus");
     meansummary->SetBinContent(ifit, fit->GetParameter(1)); meansummary->SetBinError(ifit, fit->GetParError(1));
     sigmasummary->SetBinContent(ifit, fit->GetParameter(2)); sigmasummary->SetBinError(ifit, fit->GetParError(2)); ifit++;
     new TCanvas(); hpull_banff_08->Draw(); hpull_banff_08->Fit("gaus"); fit = hpull_banff_08->GetFunction("gaus");
@@ -1746,6 +1771,16 @@ void mock_data_fit_pulls(
     meansummary->SetBinContent(ifit, fit->GetParameter(1)); meansummary->SetBinError(ifit, fit->GetParError(1));
     sigmasummary->SetBinContent(ifit, fit->GetParameter(2)); sigmasummary->SetBinError(ifit, fit->GetParError(2)); ifit++;
     */
+
+    //altpull2
+    haltpull_banff_maqe->Draw(); haltpull_banff_maqe->Fit("gaus");
+    haltpull_banff_ccqeE0->Draw(); haltpull_banff_ccqeE0->Fit("gaus");
+    haltpull_xsec_sf->Draw(); //haltpull_xsec_sf->Fit("gaus");
+    haltpull_xsec_pilessdelta->Draw(); haltpull_xsec_pilessdelta->Fit("gaus");
+    haltpull_xsec_binde->Draw(); haltpull_xsec_binde->Fit("gaus");
+    haltpull_skdet_energyscale->Draw(); haltpull_skdet_energyscale->Fit("gaus");
+    haltpull_skdet_ccnqe->Draw(); haltpull_skdet_ccnqe->Fit("gaus");
+    haltpull_skdet_nc->Draw(); haltpull_skdet_nc->Fit("gaus");
   }
   if(fit_systematics_mode == 2) {
     new TCanvas(); hpull_xsec_pf->Draw(); hpull_xsec_pf->Fit("gaus"); fit = hpull_xsec_pf->GetFunction("gaus");
@@ -1871,6 +1906,134 @@ void mock_data_fit_pulls(
 
   //some more plots (better versions, for the tech note)
 
+  //for some reason, need to set the axis titles
+  h_mixing23->GetXaxis()->SetTitle("sin^{2}(2#theta_{23})");
+  h_dm23sq->GetXaxis()->SetTitle("|#Delta m^{2}_{32}|");
+  hpull_mixing23->GetXaxis()->SetTitle("pull_{osc}");
+  hpull_dm23sq->GetXaxis()->SetTitle("pull_{osc}");
+  if(fit_systematics_mode == 1) {
+    h_banff_maqe->GetXaxis()->SetTitle("#sigma");
+    h_banff_ccqeE0->GetXaxis()->SetTitle("#sigma");
+    h_xsec_sf->GetXaxis()->SetTitle("#sigma");
+    h_xsec_pilessdelta->GetXaxis()->SetTitle("#sigma");
+    h_xsec_binde->GetXaxis()->SetTitle("#sigma");
+    h_skdet_energyscale->GetXaxis()->SetTitle("#sigma");
+    h_skdet_ccnqe->GetXaxis()->SetTitle("#sigma");
+    h_skdet_nc->GetXaxis()->SetTitle("#sigma");
+
+    haltpull_banff_maqe->GetXaxis()->SetTitle("pull_{osc}");
+    haltpull_banff_ccqeE0->GetXaxis()->SetTitle("pull_{osc}");
+    haltpull_xsec_sf->GetXaxis()->SetTitle("pull_{osc}");
+    haltpull_xsec_pilessdelta->GetXaxis()->SetTitle("pull_{osc}");
+    haltpull_xsec_binde->GetXaxis()->SetTitle("pull_{osc}");
+    haltpull_skdet_energyscale->GetXaxis()->SetTitle("pull_{osc}");
+    haltpull_skdet_ccnqe->GetXaxis()->SetTitle("pull_{osc}");
+    haltpull_skdet_nc->GetXaxis()->SetTitle("pull_{osc}");
+
+    haltpull2_banff_maqe->GetXaxis()->SetTitle("pull_{data}");
+    haltpull2_banff_ccqeE0->GetXaxis()->SetTitle("pull_{data}");
+    haltpull2_xsec_sf->GetXaxis()->SetTitle("pull_{data}");
+    haltpull2_xsec_pilessdelta->GetXaxis()->SetTitle("pull_{data}");
+    haltpull2_xsec_binde->GetXaxis()->SetTitle("pull_{data}");
+    haltpull2_skdet_energyscale->GetXaxis()->SetTitle("pull_{data}");
+    haltpull2_skdet_ccnqe->GetXaxis()->SetTitle("pull_{data}");
+    haltpull2_skdet_nc->GetXaxis()->SetTitle("pull_{data}");
+
+    hpull_banff_maqe->GetXaxis()->SetTitle("pull_{syst}");
+    hpull_banff_ccqeE0->GetXaxis()->SetTitle("pull_{syst}");
+    hpull_xsec_sf->GetXaxis()->SetTitle("pull_{syst}");
+    hpull_xsec_pilessdelta->GetXaxis()->SetTitle("pull_{syst}");
+    hpull_xsec_binde->GetXaxis()->SetTitle("pull_{syst}");
+    hpull_skdet_energyscale->GetXaxis()->SetTitle("pull_{syst}");
+    hpull_skdet_ccnqe->GetXaxis()->SetTitle("pull_{syst}");
+    hpull_skdet_nc->GetXaxis()->SetTitle("pull_{syst}");
+
+    cout << "hahahahha" << endl;
+  }//systmode 1
+  else if(fit_systematics_mode == 2) {
+    h_banff_00->GetXaxis()->SetTitle("#sigma");
+    h_banff_01->GetXaxis()->SetTitle("#sigma");
+    h_banff_02->GetXaxis()->SetTitle("#sigma");
+    h_banff_03->GetXaxis()->SetTitle("#sigma");
+    h_banff_04->GetXaxis()->SetTitle("#sigma");
+    h_banff_05->GetXaxis()->SetTitle("#sigma");
+    h_banff_06->GetXaxis()->SetTitle("#sigma");
+    h_banff_07->GetXaxis()->SetTitle("#sigma");
+    h_banff_08->GetXaxis()->SetTitle("#sigma");
+    h_banff_09->GetXaxis()->SetTitle("#sigma");
+    h_banff_10->GetXaxis()->SetTitle("#sigma");
+    h_banff_11->GetXaxis()->SetTitle("#sigma");
+    h_banff_12->GetXaxis()->SetTitle("#sigma");
+    h_banff_13->GetXaxis()->SetTitle("#sigma");
+    h_banff_14->GetXaxis()->SetTitle("#sigma");
+    h_banff_15->GetXaxis()->SetTitle("#sigma");
+    h_banff_mares->GetXaxis()->SetTitle("#sigma");
+    h_banff_ccqeE1->GetXaxis()->SetTitle("#sigma");
+    h_banff_ccqeE2->GetXaxis()->SetTitle("#sigma");
+    h_banff_cc1piE0->GetXaxis()->SetTitle("#sigma");
+    h_banff_cc1piE1->GetXaxis()->SetTitle("#sigma");
+    h_xsec_pf->GetXaxis()->SetTitle("#sigma");
+    h_xsec_wshape->GetXaxis()->SetTitle("#sigma");
+    h_xsec_ccothshape->GetXaxis()->SetTitle("#sigma");
+    h_xsec_normcccoh->GetXaxis()->SetTitle("#sigma");
+    h_xsec_normnc1piC->GetXaxis()->SetTitle("#sigma");
+    h_xsec_normncoth->GetXaxis()->SetTitle("#sigma");
+    h_xsec_normnuetonumu->GetXaxis()->SetTitle("#sigma");
+    h_xsec_normantinutonu->GetXaxis()->SetTitle("#sigma");
+    h_skdet_ccqerc0->GetXaxis()->SetTitle("#sigma");
+    h_skdet_ccqerc1->GetXaxis()->SetTitle("#sigma");
+    h_skdet_ccqerc2->GetXaxis()->SetTitle("#sigma");
+    h_skdet_ccqeoth->GetXaxis()->SetTitle("#sigma");
+    h_skdet_nuecc->GetXaxis()->SetTitle("#sigma");
+    h_fsi_000->GetXaxis()->SetTitle("#sigma");
+    h_fsi_001->GetXaxis()->SetTitle("#sigma");
+    h_fsi_002->GetXaxis()->SetTitle("#sigma");
+    h_fsi_003->GetXaxis()->SetTitle("#sigma");
+    h_fsi_004->GetXaxis()->SetTitle("#sigma");
+    h_fsi_005->GetXaxis()->SetTitle("#sigma");
+
+    hpull_banff_00->GetXaxis()->SetTitle("pull_{syst}");
+    hpull_banff_01->GetXaxis()->SetTitle("pull_{syst}");
+    hpull_banff_02->GetXaxis()->SetTitle("pull_{syst}");
+    hpull_banff_03->GetXaxis()->SetTitle("pull_{syst}");
+    hpull_banff_04->GetXaxis()->SetTitle("pull_{syst}");
+    hpull_banff_05->GetXaxis()->SetTitle("pull_{syst}");
+    hpull_banff_06->GetXaxis()->SetTitle("pull_{syst}");
+    hpull_banff_07->GetXaxis()->SetTitle("pull_{syst}");
+    hpull_banff_08->GetXaxis()->SetTitle("pull_{syst}");
+    hpull_banff_09->GetXaxis()->SetTitle("pull_{syst}");
+    hpull_banff_10->GetXaxis()->SetTitle("pull_{syst}");
+    hpull_banff_11->GetXaxis()->SetTitle("pull_{syst}");
+    hpull_banff_12->GetXaxis()->SetTitle("pull_{syst}");
+    hpull_banff_13->GetXaxis()->SetTitle("pull_{syst}");
+    hpull_banff_14->GetXaxis()->SetTitle("pull_{syst}");
+    hpull_banff_15->GetXaxis()->SetTitle("pull_{syst}");
+    hpull_banff_mares->GetXaxis()->SetTitle("pull_{syst}");
+    hpull_banff_ccqeE1->GetXaxis()->SetTitle("pull_{syst}");
+    hpull_banff_ccqeE2->GetXaxis()->SetTitle("pull_{syst}");
+    hpull_banff_cc1piE0->GetXaxis()->SetTitle("pull_{syst}");
+    hpull_banff_cc1piE1->GetXaxis()->SetTitle("pull_{syst}");
+    hpull_xsec_pf->GetXaxis()->SetTitle("pull_{syst}");
+    hpull_xsec_wshape->GetXaxis()->SetTitle("pull_{syst}");
+    hpull_xsec_ccothshape->GetXaxis()->SetTitle("pull_{syst}");
+    hpull_xsec_normcccoh->GetXaxis()->SetTitle("pull_{syst}");
+    hpull_xsec_normnc1piC->GetXaxis()->SetTitle("pull_{syst}");
+    hpull_xsec_normncoth->GetXaxis()->SetTitle("pull_{syst}");
+    hpull_xsec_normnuetonumu->GetXaxis()->SetTitle("pull_{syst}");
+    hpull_xsec_normantinutonu->GetXaxis()->SetTitle("pull_{syst}");
+    hpull_skdet_ccqerc0->GetXaxis()->SetTitle("pull_{syst}");
+    hpull_skdet_ccqerc1->GetXaxis()->SetTitle("pull_{syst}");
+    hpull_skdet_ccqerc2->GetXaxis()->SetTitle("pull_{syst}");
+    hpull_skdet_ccqeoth->GetXaxis()->SetTitle("pull_{syst}");
+    hpull_skdet_nuecc->GetXaxis()->SetTitle("pull_{syst}");
+    hpull_fsi_000->GetXaxis()->SetTitle("pull_{syst}");
+    hpull_fsi_001->GetXaxis()->SetTitle("pull_{syst}");
+    hpull_fsi_002->GetXaxis()->SetTitle("pull_{syst}");
+    hpull_fsi_003->GetXaxis()->SetTitle("pull_{syst}");
+    hpull_fsi_004->GetXaxis()->SetTitle("pull_{syst}");
+    hpull_fsi_005->GetXaxis()->SetTitle("pull_{syst}");
+  }//systmode 2
+
   TCanvas * c = new TCanvas();
   h_mixing23->Draw(); c->SaveAs(Form("%s_%f_mixing23.eps", tag, input_mixing23));
   h_dm23sq->Draw(); c->SaveAs(Form("%s_%f_dm23sq.eps", tag, input_mixing23));
@@ -1886,7 +2049,7 @@ void mock_data_fit_pulls(
     meansummary->GetYaxis()->SetRangeUser(0,5);
     meansummary->Draw();
     sigmasummary->Draw("same");
-    csum->SaveAs(Form("%s_%f_summary_altpull.eps", tag, input_mixing23));
+    csum->SaveAs(Form("%s_%f_summary_altpull.pdf", tag, input_mixing23));
     meansummary->GetXaxis()->SetRangeUser(11,20);
     sigmasummary->GetXaxis()->SetRangeUser(11,20);
     meansummary->GetYaxis()->SetRangeUser(0,5);
@@ -1902,7 +2065,7 @@ void mock_data_fit_pulls(
     meansummary->GetYaxis()->SetRangeUser(0,5);
     meansummary->Draw();
     sigmasummary->Draw("same");
-    csum->SaveAs(Form("%s_%f_summary_altpull.eps", tag, input_mixing23));
+    csum->SaveAs(Form("%s_%f_summary_altpull.pdf", tag, input_mixing23));
     meansummary->GetXaxis()->SetRangeUser(11,20);
     sigmasummary->GetXaxis()->SetRangeUser(11,20);
     meansummary->GetYaxis()->SetRangeUser(0,5);
@@ -1912,7 +2075,7 @@ void mock_data_fit_pulls(
   }
 
   if(fit_systematics_mode == 1) {
-    TCanvas * cimp = new TCanvas();
+    TCanvas * cimp = new TCanvas("","",500,700);
     cimp->Divide(2,4);
 
     cimp->cd(1); h_skdet_energyscale->Draw();
@@ -1944,6 +2107,16 @@ void mock_data_fit_pulls(
     cimp->cd(7); haltpull_xsec_binde->Draw();
     cimp->cd(8); haltpull_xsec_pilessdelta->Draw();
     cimp->SaveAs(Form("%s_%f_important_altpull.eps", tag, input_mixing23));
+
+    cimp->cd(1); haltpull2_skdet_energyscale->Draw();
+    cimp->cd(2); haltpull2_skdet_ccnqe->Draw();
+    cimp->cd(3); haltpull2_skdet_nc->Draw();
+    cimp->cd(4); haltpull2_banff_maqe->Draw();
+    cimp->cd(5); haltpull2_banff_ccqeE0->Draw();
+    cimp->cd(6); haltpull2_xsec_sf->Draw();
+    cimp->cd(7); haltpull2_xsec_binde->Draw();
+    cimp->cd(8); haltpull2_xsec_pilessdelta->Draw();
+    cimp->SaveAs(Form("%s_%f_important_altpull2.eps", tag, input_mixing23));
   }
   else if(fit_systematics_mode == 2) {
     TCanvas * cban = new TCanvas();
