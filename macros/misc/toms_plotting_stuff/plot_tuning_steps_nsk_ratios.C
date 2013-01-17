@@ -59,6 +59,14 @@ void plot_tuning_steps_nsk_ratios
   h_ratio_2ftun->GetYaxis()->SetTitleOffset(1.3);
   h_ratio_t23tun->GetYaxis()->SetTitleOffset(1.3);
 
+  h_ratio_tunflux->GetYaxis()->SetTitle("|#Deltam_{32}^{2}| (eV^{2}/c^{4})");;
+  h_ratio_nomflux->GetYaxis()->SetTitle("|#Deltam_{32}^{2}| (eV^{2}/c^{4})");;
+  h_tun->GetYaxis()->SetTitle("|#Deltam_{32}^{2}| (eV^{2}/c^{4})");;
+  h_ratio_invtun->GetYaxis()->SetTitle("|#Deltam_{32}^{2}| (eV^{2}/c^{4})");;
+  h_ratio_2ftun->GetYaxis()->SetTitle("|#Deltam_{32}^{2}| (eV^{2}/c^{4})");;
+  h_ratio_t23tun->GetYaxis()->SetTitle("|#Deltam_{32}^{2}| (eV^{2}/c^{4})");;
+
+
   TFile fext("$T2KOSCANA/inputs/contours/contours_nont2k.root");
   TGraph * minos = 0;
   fext.GetObject("minos2012_combined_90CL",minos);

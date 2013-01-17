@@ -183,10 +183,13 @@ void plot_contour_comparisons
   TFile fext("$T2KOSCANA/inputs/contours/contours_nont2k.root");
   TGraph * g_minos = 0;
   fext.GetObject("minos2012_combined_90CL",g_minos);
+  g_minos->SetLineColor(kBlack);
   TGraph * g_skle = 0;
   fext.GetObject("sk2012_le2nu_90CL",g_skle);
+  g_skle->SetLineColor(kGreen+2);
   TGraph * g_skzen = 0;
   fext.GetObject("sk2012_zenith3nu_90CL",g_skzen);
+  g_skzen->SetLineColor(kBlue);
 
   TFile fold("$T2KOSCANA/inputs/contours/contours_oldt2k.root");
   TGraph * g_run12_68_statsyst = 0;
@@ -292,16 +295,22 @@ void plot_contour_comparisons
   osc_param_space->GetXaxis()->SetRangeUser(0.85,1.0);
   osc_param_space->GetYaxis()->SetRangeUser(0.0018,0.0032);
   osc_param_space->Draw();  
+  h_dc_28_fine_68->SetLineColor(kRed);
+  h_dc_28_fine_90->SetLineColor(kRed);
+  h_fc_123_68->SetLineColor(kBlack);
+  h_fc_123_90->SetLineColor(kBlack);
   h_dc_28_fine_68->Draw("cont3same");
   h_dc_28_fine_90->Draw("cont3same");
   h_fc_123_68->Draw("cont3same");
   h_fc_123_90->Draw("cont3same");
   leg->Clear();
-  leg->AddEntry(h_dc_28_fine_68, "const#Delta#chi^{2} 68% CL","l");
-  leg->AddEntry(h_dc_28_fine_90, "const#Delta#chi^{2} 90% CL","l");
+  leg->AddEntry(h_dc_28_fine_68, "const #Delta#chi^{2} 68% CL","l");
+  leg->AddEntry(h_dc_28_fine_90, "const #Delta#chi^{2} 90% CL","l");
   leg->AddEntry(h_fc_123_68, "FC 68% CL","l");
   leg->AddEntry(h_fc_123_90, "FC 90% CL","l");
   leg->Draw();
+  bestfit.SetMarkerStyle(29);
+  bestfit.SetMarkerColor(kBlack);
   bestfit.Draw();
   c->SaveAs("compare_FC_constchisq.eps");
 
@@ -309,16 +318,22 @@ void plot_contour_comparisons
   osc_param_space->GetXaxis()->SetRangeUser(0.85,1.0);
   osc_param_space->GetYaxis()->SetRangeUser(0.0018,0.0032);
   osc_param_space->Draw();  
+  h_dcall_123_68->SetLineColor(kRed);
+  h_dcall_123_90->SetLineColor(kRed);
+  h_fcall_123_68->SetLineColor(kBlack);
+  h_fcall_123_90->SetLineColor(kBlack);
   h_dcall_123_68->Draw("cont3same");
   h_dcall_123_90->Draw("cont3same");
   h_fcall_123_68->Draw("cont3same");
   h_fcall_123_90->Draw("cont3same");
   leg->Clear();
-  leg->AddEntry(h_dcall_123_68, "const#Delta#chi^{2} 68% CL","l");
-  leg->AddEntry(h_dcall_123_90, "const#Delta#chi^{2} 90% CL","l");
+  leg->AddEntry(h_dcall_123_68, "const #Delta#chi^{2} 68% CL","l");
+  leg->AddEntry(h_dcall_123_90, "const #Delta#chi^{2} 90% CL","l");
   leg->AddEntry(h_fcall_123_68, "FC 68% CL","l");
   leg->AddEntry(h_fcall_123_90, "FC 90% CL","l");
   leg->Draw();
+  bestfit_2all.SetMarkerStyle(29);
+  bestfit_2all.SetMarkerColor(kBlack);
   bestfit_2all.Draw();
   c->SaveAs("compare_FC_constchisq_2N.eps");
 
@@ -331,10 +346,10 @@ void plot_contour_comparisons
   h_dc_kit_68->Draw("cont3same");
   h_dc_kit_90->Draw("cont3same");
   leg->Clear();
-  leg->AddEntry(h_dc_28_fine_68, "VaLOR const#Delta#chi^{2} 68% CL","l");
-  leg->AddEntry(h_dc_28_fine_90, "VaLOR const#Delta#chi^{2} 90% CL","l");
-  leg->AddEntry(h_dc_kit_68, "KIT const#Delta#chi^{2} 68% CL","l");
-  leg->AddEntry(h_dc_kit_90, "KIT const#Delta#chi^{2} 90% CL","l");
+  leg->AddEntry(h_dc_28_fine_68, "VaLOR const #Delta#chi^{2} 68% CL","l");
+  leg->AddEntry(h_dc_28_fine_90, "VaLOR const #Delta#chi^{2} 90% CL","l");
+  leg->AddEntry(h_dc_kit_68, "KIT const #Delta#chi^{2} 68% CL","l");
+  leg->AddEntry(h_dc_kit_90, "KIT const #Delta#chi^{2} 90% CL","l");
   leg->Draw();
   //bestfit.Draw();
   c->SaveAs("compare_KIT_constchisq.eps");
@@ -360,15 +375,19 @@ void plot_contour_comparisons
   osc_param_space->GetXaxis()->SetRangeUser(0.85,1.0);
   osc_param_space->GetYaxis()->SetRangeUser(0.0018,0.0035);
   osc_param_space->Draw();  
+  //h_dc_28_fine_68->SetLineColor(kRed);
+  h_dc_28_fine_90->SetLineColor(kRed);
+  //h_fc_123_68->SetLineColor(kBlack);
+  h_fc_123_90->SetLineColor(kBlack);
   //h_dc_28_fine_68->Draw("cont3same");
   h_dc_28_fine_90->Draw("cont3same");
   //h_fc_123_68->Draw("cont3same");
   h_fc_123_90->Draw("cont3same");
   leg->Clear();
-  //leg->AddEntry(h_dc_28_fine_68, "const#Delta#chi^{2} 68% CL","l");
-  leg->AddEntry(h_dc_28_fine_90, "T2K const#Delta#chi^{2} 3#nu 90% CL","l");
+  //leg->AddEntry(h_dc_28_fine_68, "const #Delta#chi^{2} 68% CL","l");
+  leg->AddEntry(h_dc_28_fine_90, "T2K const #Delta#chi^{2} 3#nu 90% CL","l");
   //leg->AddEntry(h_fc_123_68, "FC 68% CL","l");
-  leg->AddEntry(h_fc_123_90, "T2K FC 90% 3#nu CL","l");
+  leg->AddEntry(h_fc_123_90, "T2K FC 3#nu 90% CL","l");
   g_minos->Draw("l");
   g_skle->Draw("l");
   g_skzen->Draw("l");
@@ -376,6 +395,8 @@ void plot_contour_comparisons
   leg->AddEntry("g_skle", "SuperK 2012 L/E 2#nu 90% CL", "l");
   leg->AddEntry("g_skzen", "SuperK 2012 zenith 3#nu 90% CL", "l");
   leg->Draw();
+  bestfit.SetMarkerStyle(29);
+  bestfit.SetMarkerColor(kBlack);
   bestfit.Draw();
   c->SaveAs("compare_FC_constchisq_external.eps");
 
@@ -383,13 +404,17 @@ void plot_contour_comparisons
   osc_param_space->GetXaxis()->SetRangeUser(0.85,1.0);
   osc_param_space->GetYaxis()->SetRangeUser(0.0018,0.0035);
   osc_param_space->Draw();  
+  //h_dcall_123_68->SetLineColor(kRed);
+  h_dcall_123_90->SetLineColor(kRed);
+  //h_fcall_123_68->SetLineColor(kBlack);
+  h_fcall_123_90->SetLineColor(kBlack);
   //h_dcall_123_68->Draw("cont3same");
   h_dcall_123_90->Draw("cont3same");
   //h_fcall_123_68->Draw("cont3same");
   h_fcall_123_90->Draw("cont3same");
   leg->Clear();
-  //leg->AddEntry(h_dcall_123_68, "const#Delta#chi^{2} 68% CL","l");
-  leg->AddEntry(h_dcall_123_90, "T2K const#Delta#chi^{2} 3#nu 90% CL","l");
+  //leg->AddEntry(h_dcall_123_68, "const #Delta#chi^{2} 68% CL","l");
+  leg->AddEntry(h_dcall_123_90, "T2K const #Delta#chi^{2} 3#nu 90% CL","l");
   //leg->AddEntry(h_fcall_123_68, "FC 68% CL","l");
   leg->AddEntry(h_fcall_123_90, "T2K FC 3#nu 90% CL","l");
   g_minos->Draw("l");
@@ -399,6 +424,8 @@ void plot_contour_comparisons
   leg->AddEntry("g_skle", "SuperK 2012 L/E 2#nu 90% CL", "l");
   leg->AddEntry("g_skzen", "SuperK 2012 zenith 3#nu 90% CL", "l");
   leg->Draw();
+  bestfit_2all.SetMarkerStyle(29);
+  bestfit_2all.SetMarkerColor(kBlack);
   bestfit_2all.Draw();
   c->SaveAs("compare_FC_constchisq_external_2N.eps");
 
@@ -406,40 +433,62 @@ void plot_contour_comparisons
   osc_param_space->GetXaxis()->SetRangeUser(0.75,1.0);
   osc_param_space->GetYaxis()->SetRangeUser(0.0015,0.0035);
   osc_param_space->Draw();
+  h_dc_12_68->SetLineColor(kBlack);
+  h_dc_12_90->SetLineColor(kBlack);
   h_dc_12_68->Draw("cont3same");
   h_dc_12_90->Draw("cont3same");
   g_run12_68_statsyst->Draw("l");
   g_run12_90_statsyst->Draw("l");
   leg->Clear();
-  leg->AddEntry(h_dc_12_68, "2012 const#Delta#chi^{2} 68% CL","l");
-  leg->AddEntry(h_dc_12_90, "2012 const#Delta#chi^{2} 90% CL","l");
+  leg->AddEntry(h_dc_12_68, "2012 const #Delta#chi^{2} 68% CL","l");
+  leg->AddEntry(h_dc_12_90, "2012 const #Delta#chi^{2} 90% CL","l");
   leg->AddEntry("g_run12_68_statsyst", "2010 FC 68% CL", "l");
   leg->AddEntry("g_run12_90_statsyst", "2010 FC 90% CL", "l");
   leg->Draw();
-  //bestfit.Draw();
+  bestfit12.SetMarkerStyle(29);
+  bestfit12.SetMarkerColor(kBlack);
+  bestfit12.Draw();
+  TMarker bestfit12_2010(0.970,0.002600,29);
+  bestfit123.SetMarkerSize(1.8);
+  bestfit123.SetMarkerColor(kRed);
   c->SaveAs("compare_run12_2012_2010.eps");
 
   //Run 1-3 28, 2all const dchisq
   osc_param_space->GetXaxis()->SetRangeUser(0.9,1.0);
   osc_param_space->GetYaxis()->SetRangeUser(0.0015,0.0033);
   osc_param_space->Draw();  
+  h_dc_28_fine_68->SetLineColor(kBlack);
+  h_dc_28_fine_90->SetLineColor(kBlack);
+  h_dcall_123_68->SetLineColor(kRed);
+  h_dcall_123_90->SetLineColor(kRed);
   h_dc_28_fine_68->Draw("cont3same");
   h_dc_28_fine_90->Draw("cont3same");
   h_dcall_123_68->Draw("cont3same");
   h_dcall_123_90->Draw("cont3same");
   leg->Clear();
-  leg->AddEntry(h_dc_28_fine_68, "2+8 const#Delta#chi^{2} 68% CL","l");
-  leg->AddEntry(h_dc_28_fine_90, "2+8 const#Delta#chi^{2} 90% CL","l");
-  leg->AddEntry(h_dcall_123_68, "2+N const#Delta#chi^{2} 68% CL","l");
-  leg->AddEntry(h_dcall_123_90, "2+N const#Delta#chi^{2} 90% CL","l");
+  leg->AddEntry(h_dc_28_fine_68, "2+8 const #Delta#chi^{2} 68% CL","l");
+  leg->AddEntry(h_dc_28_fine_90, "2+8 const #Delta#chi^{2} 90% CL","l");
+  leg->AddEntry(h_dcall_123_68, "2+N const #Delta#chi^{2} 68% CL","l");
+  leg->AddEntry(h_dcall_123_90, "2+N const #Delta#chi^{2} 90% CL","l");
   leg->Draw();
+  bestfit.SetMarkerStyle(29);
+  bestfit.SetMarkerColor(kBlack);
+  bestfit.Draw();
+  bestfit_2all.SetMarkerColor(kRed);
+  bestfit_2all.SetMarkerStyle(24);
   bestfit_2all.Draw();
   c->SaveAs("compare_2all_28.eps");
 
   //Run 1-3 28, 2all const dchisq with 2+0
   osc_param_space->GetXaxis()->SetRangeUser(0.9,1.0);
   osc_param_space->GetYaxis()->SetRangeUser(0.0015,0.0033);
-  osc_param_space->Draw();  
+  osc_param_space->Draw();
+  h_dc_20_68->SetLineColor(kBlue);
+  h_dc_20_90->SetLineColor(kBlue);
+  h_dc_28_fine_68->SetLineColor(kBlack);
+  h_dc_28_fine_90->SetLineColor(kBlack);
+  h_dcall_123_68->SetLineColor(kRed);
+  h_dcall_123_90->SetLineColor(kRed);
   h_dc_20_68->Draw("cont3same");
   h_dc_20_90->Draw("cont3same");
   h_dc_28_fine_68->Draw("cont3same");
@@ -447,16 +496,20 @@ void plot_contour_comparisons
   h_dcall_123_68->Draw("cont3same");
   h_dcall_123_90->Draw("cont3same");
   leg->Clear();
-  leg->AddEntry(h_dc_20_68, "2+0 const#Delta#chi^{2} 68% CL","l");
-  leg->AddEntry(h_dc_20_90, "2+0 const#Delta#chi^{2} 90% CL","l");
-  leg->AddEntry(h_dc_28_fine_68, "2+8 const#Delta#chi^{2} 68% CL","l");
-  leg->AddEntry(h_dc_28_fine_90, "2+8 const#Delta#chi^{2} 90% CL","l");
-  leg->AddEntry(h_dcall_123_68, "2+N const#Delta#chi^{2} 68% CL","l");
-  leg->AddEntry(h_dcall_123_90, "2+N const#Delta#chi^{2} 90% CL","l");
+  leg->AddEntry(h_dc_20_68, "2+0 const #Delta#chi^{2} 68% CL","l");
+  leg->AddEntry(h_dc_20_90, "2+0 const #Delta#chi^{2} 90% CL","l");
+  leg->AddEntry(h_dc_28_fine_68, "2+8 const #Delta#chi^{2} 68% CL","l");
+  leg->AddEntry(h_dc_28_fine_90, "2+8 const #Delta#chi^{2} 90% CL","l");
+  leg->AddEntry(h_dcall_123_68, "2+N const #Delta#chi^{2} 68% CL","l");
+  leg->AddEntry(h_dcall_123_90, "2+N const #Delta#chi^{2} 90% CL","l");
   leg->Draw();
+  bestfit.SetMarkerStyle(29);
+  bestfit.SetMarkerColor(kBlack);
   bestfit.Draw();
+  bestfit_2all.SetMarkerStyle(24);
+  bestfit_2all.SetMarkerColor(kRed);
   bestfit_2all.Draw();
-  TMarker bestfit20(1.000,0.002457,29);
+  TMarker bestfit20(1.000,0.002457,25);
   bestfit20.SetMarkerSize(1.8);
   bestfit20.SetMarkerColor(kBlue);
   bestfit20.Draw();
@@ -466,6 +519,10 @@ void plot_contour_comparisons
   osc_param_space->GetXaxis()->SetRangeUser(0.9,1.0);
   osc_param_space->GetYaxis()->SetRangeUser(0.0015,0.0033);
   osc_param_space->Draw();  
+  h_fc_123_68->SetLineColor(kBlack);
+  h_fc_123_90->SetLineColor(kBlack);
+  h_fcall_123_68->SetLineColor(kRed);
+  h_fcall_123_90->SetLineColor(kRed);
   h_fc_123_68->Draw("cont3same");
   h_fc_123_90->Draw("cont3same");
   h_fcall_123_68->Draw("cont3same");
@@ -476,7 +533,11 @@ void plot_contour_comparisons
   leg->AddEntry(h_fcall_123_68, "2+N FC 68% CL","l");
   leg->AddEntry(h_fcall_123_90, "2+N FC 90% CL","l");
   leg->Draw();
+  bestfit.SetMarkerStyle(29);
+  bestfit.SetMarkerColor(kBlack);
   bestfit.Draw();
+  bestfit_2all.SetMarkerStyle(24);
+  bestfit_2all.SetMarkerColor(kRed);
   bestfit_2all.Draw();
   c->SaveAs("compare_2all_28_FC.eps");
 
@@ -492,7 +553,7 @@ void plot_contour_comparisons
       double n2n = h_dcall_123->GetBinContent(i,j);
       double frac1 = (n28-n2n)/n2n;
       double frac2 = (n2n-n28)/((n2n+n28)/2);
-      cout << i << "\t" << j << "\t" << n28 << "\t" << n2n << "\t" << frac1 << "\t" << frac2 << endl;
+      //cout << i << "\t" << j << "\t" << n28 << "\t" << n2n << "\t" << frac1 << "\t" << frac2 << endl;
       h_dc_dchisqratio1_282N->SetBinContent(i,j, frac1);
       h_dc_dchisqratio2_282N->SetBinContent(i,j, frac2);
     }
@@ -569,14 +630,14 @@ void plot_contour_comparisons
   h_crit_ratio->Clear();
   for(int i = 1; i <= h_crit_ratio->GetNbinsX(); i++) {
     int ibin = h_crit_68->GetXaxis()->FindBin(h_crit_ratio->GetXaxis()->GetBinCenter(i));
-    cout << i << endl;
+    //cout << i << endl;
     for(int j = 1; j <= h_crit_ratio->GetNbinsY(); j++) {
       h_crit_ratio->SetBinContent(i,j,0);
       int jbin = h_crit_68->GetYaxis()->FindBin(h_crit_ratio->GetYaxis()->GetBinCenter(j));
       double val = h_crit_68->GetBinContent(ibin, jbin);
       double kit = h_crit_68_kit->GetBinContent(i,j);
       double frac = 2*(val-kit)/(kit+val);
-      cout << i << "\t" << j << "\t" << val << "\t" << kit << "\t" << frac << endl;
+      //cout << i << "\t" << j << "\t" << val << "\t" << kit << "\t" << frac << endl;
       h_crit_ratio->SetBinContent(i,j,frac);
     }
   }
@@ -606,7 +667,7 @@ void plot_contour_comparisons
   h_crit_ratio->Clear();
   for(int i = 1; i <= h_crit_ratio->GetNbinsX(); i++) {
     int ibin = h_crit_68->GetXaxis()->FindBin(h_crit_ratio->GetXaxis()->GetBinCenter(i));
-    cout << i << endl;
+    //cout << i << endl;
     for(int j = 1; j <= h_crit_ratio->GetNbinsY(); j++) {
       h_crit_ratio->SetBinContent(i,j,0);
       int jbin = h_crit_68->GetYaxis()->FindBin(h_crit_ratio->GetYaxis()->GetBinCenter(j));
@@ -615,7 +676,7 @@ void plot_contour_comparisons
       double frac = 2*(val-all)/(all+val);
       if(val < 1E-8 && all < 1E-8)
 	frac = 0;
-      cout << i << "\t" << j << "\t" << val << "\t" << all << "\t" << frac << endl;
+      //cout << i << "\t" << j << "\t" << val << "\t" << all << "\t" << frac << endl;
       h_crit_ratio->SetBinContent(i,j,frac);
     }
   }
@@ -632,7 +693,7 @@ void plot_contour_comparisons
   c->SaveAs("allcrit.eps");
   
 
-
+  c->SetRightMargin(0.05);
   //compare T2K result with expected sensitivity (const dchisq)
   TH2D * h_sens_68 = 0;
   f_sens.GetObject("dchisq_for_cont1_68",h_sens_68);
@@ -643,7 +704,13 @@ void plot_contour_comparisons
   h_sens_90->SetLineColor(kBlue-3);
   osc_param_space->GetXaxis()->SetRangeUser(0.85,1.0);
   osc_param_space->GetYaxis()->SetRangeUser(0.0018,0.0032);
-  osc_param_space->Draw();  
+  osc_param_space->Draw();
+  h_dc_28_fine_68->SetLineColor(kBlack);
+  h_dc_28_fine_90->SetLineColor(kBlack);
+  //h_fc_123_68->SetLineColor(kBlue);
+  //h_fc_123_90->SetLineColor(kBlue);
+  h_sens_68->SetLineColor(kRed);
+  h_sens_90->SetLineColor(kRed);
   h_dc_28_fine_68->Draw("cont3same");
   h_dc_28_fine_90->Draw("cont3same");
   //h_fc_123_68->Draw("cont3same");
@@ -651,27 +718,31 @@ void plot_contour_comparisons
   h_sens_68->Draw("cont3same");
   h_sens_90->Draw("cont3same");
   leg->Clear();
-  leg->AddEntry(h_dc_28_fine_68, "const#Delta#chi^{2} Run1-3 68% CL","l");
-  leg->AddEntry(h_dc_28_fine_90, "const#Delta#chi^{2} Run1-3 90% CL","l");
+  leg->AddEntry(h_dc_28_fine_68, "Run 1-3 const #Delta#chi^{2} 68% CL","l");
+  leg->AddEntry(h_dc_28_fine_90, "Run 1-3 const #Delta#chi^{2} 90% CL","l");
   //leg->AddEntry(h_fc_123_68, "FC 68% CL","l");
   //leg->AddEntry(h_fc_123_90, "FC 90% CL","l");
-  leg->AddEntry(h_sens_68, "const#Delta#chi^{2} sensitivity 68% CL", "l");
-  leg->AddEntry(h_sens_90, "const#Delta#chi^{2} sensitivity 90% CL", "l");
+  leg->AddEntry(h_sens_68, "Sensitivity const #Delta#chi^{2} 68% CL", "l");
+  leg->AddEntry(h_sens_90, "Sensitivity const #Delta#chi^{2} 90% CL", "l");
   leg->Draw();
-  bestfit.Draw();
-  c->SaveAs("compare_FC_constchisq_sensitivity.eps");
+  //bestfit.Draw();
+  c->SaveAs("compare_constchisq_sensitivity.eps");
   
 
   //Run 1-3 2+8 FC only
   osc_param_space->GetXaxis()->SetRangeUser(0.9,1.0);
   osc_param_space->GetYaxis()->SetRangeUser(0.0015,0.0033);
   osc_param_space->Draw();  
+  h_fc_123_68->SetLineColor(kBlack);
+  h_fc_123_90->SetLineColor(kBlack);
   h_fc_123_68->Draw("cont3same");
   h_fc_123_90->Draw("cont3same");
   leg->Clear();
   leg->AddEntry(h_fc_123_68, "2+8 FC 68% CL","l");
   leg->AddEntry(h_fc_123_90, "2+8 FC 90% CL","l");
   leg->Draw();
+  bestfit.SetMarkerStyle(29);
+  bestfit.SetMarkerColor(kBlack);
   bestfit.Draw();
   c->SaveAs("28_FC.eps");
 
@@ -679,12 +750,16 @@ void plot_contour_comparisons
   osc_param_space->GetXaxis()->SetRangeUser(0.9,1.0);
   osc_param_space->GetYaxis()->SetRangeUser(0.0015,0.0033);
   osc_param_space->Draw();  
+  h_fcall_123_68->SetLineColor(kBlack);
+  h_fcall_123_90->SetLineColor(kBlack);
   h_fcall_123_68->Draw("cont3same");
   h_fcall_123_90->Draw("cont3same");
   leg->Clear();
   leg->AddEntry(h_fcall_123_68, "2+N FC 68% CL","l");
   leg->AddEntry(h_fcall_123_90, "2+N FC 90% CL","l");
   leg->Draw();
+  bestfit_2all.SetMarkerStyle(29);
+  bestfit_2all.SetMarkerColor(kBlack);
   bestfit_2all.Draw();
   c->SaveAs("2N_FC.eps");
 
@@ -692,6 +767,12 @@ void plot_contour_comparisons
   osc_param_space->GetXaxis()->SetRangeUser(0.75,1.0);
   osc_param_space->GetYaxis()->SetRangeUser(0.0015,0.0035);
   osc_param_space->Draw();
+  h_dc_123_68->SetLineColor(kBlack);
+  h_dc_123_90->SetLineColor(kBlack);
+  h_dc_12_68->SetLineColor(kBlue);
+  h_dc_12_90->SetLineColor(kBlue);
+  h_dc_3_68->SetLineColor(kRed);
+  h_dc_3_90->SetLineColor(kRed);
   h_dc_28_fine_68->Draw("cont3same");
   h_dc_28_fine_90->Draw("cont3same");
   h_dc_12_68->Draw("cont3same");
@@ -699,31 +780,35 @@ void plot_contour_comparisons
   h_dc_3_68->Draw("cont3same");
   h_dc_3_90->Draw("cont3same");
   leg->Clear();
-  leg->AddEntry(h_dc_28_fine_68, "Run1+2+3 const#Delta#chi^{2} 68% CL","l");
-  leg->AddEntry(h_dc_28_fine_90, "Run1+2+3 const#Delta#chi^{2} 90% CL","l");
-  leg->AddEntry(h_dc_12_68, "Run1+2 const#Delta#chi^{2} 68% CL","l");
-  leg->AddEntry(h_dc_12_90, "Run1+2 const#Delta#chi^{2} 90% CL","l");
-  leg->AddEntry(h_dc_3_68, "Run3 const#Delta#chi^{2} 68% CL","l");
-  leg->AddEntry(h_dc_3_90, "Run3 const#Delta#chi^{2} 90% CL","l");
+  leg->AddEntry(h_dc_28_fine_68, "Run1+2+3 const #Delta#chi^{2} 68% CL","l");
+  leg->AddEntry(h_dc_28_fine_90, "Run1+2+3 const #Delta#chi^{2} 90% CL","l");
+  leg->AddEntry(h_dc_12_68, "Run1+2 const #Delta#chi^{2} 68% CL","l");
+  leg->AddEntry(h_dc_12_90, "Run1+2 const #Delta#chi^{2} 90% CL","l");
+  leg->AddEntry(h_dc_3_68, "Run3 const #Delta#chi^{2} 68% CL","l");
+  leg->AddEntry(h_dc_3_90, "Run3 const #Delta#chi^{2} 90% CL","l");
   leg->Draw();
+  bestfit123.SetMarkerStyle(29);
+  bestfit123.SetMarkerColor(kBlack);
   bestfit123.Draw();
+  bestfit12.SetMarkerStyle(29);
+  bestfit12.SetMarkerColor(kBlue);
   bestfit12.Draw();
+  bestfit3.SetMarkerStyle(29);
+  bestfit3.SetMarkerColor(kRed);
   bestfit3.Draw();
   c->SaveAs("compare_runs.eps");
-
-  //WARNING COLOR CHANGE
-  h_dcall_123_68->SetLineColor(kRed);
-  h_dcall_123_90->SetLineColor(kRed);
-  h_dcall_12_68->SetLineColor(kBlue);
-  h_dcall_12_90->SetLineColor(kBlue);
-  h_dcall_3_68->SetLineColor(kGreen+2);
-  h_dcall_3_90->SetLineColor(kGreen+2);
-  bestfit_2all.SetMarkerColor(kRed);
 
   //runs 123,12,3 constdchisq comparisons (2+N)
   osc_param_space->GetXaxis()->SetRangeUser(0.75,1.0);
   osc_param_space->GetYaxis()->SetRangeUser(0.0015,0.0035);
   osc_param_space->Draw();
+  h_dcall_123_68->SetLineColor(kBlack);
+  h_dcall_123_90->SetLineColor(kBlack);
+  h_dcall_12_68->SetLineColor(kBlue);
+  h_dcall_12_90->SetLineColor(kBlue);
+  h_dcall_3_68->SetLineColor(kRed);
+  h_dcall_3_90->SetLineColor(kRed);
+  bestfit_2all.SetMarkerColor(kRed);
   h_dcall_123_68->Draw("cont3same");
   h_dcall_123_90->Draw("cont3same");
   h_dcall_12_68->Draw("cont3same");
@@ -731,13 +816,19 @@ void plot_contour_comparisons
   h_dcall_3_68->Draw("cont3same");
   h_dcall_3_90->Draw("cont3same");
   leg->Clear();
-  leg->AddEntry(h_dcall_123_68, "Run1+2+3 const#Delta#chi^{2} 68% CL","l");
-  leg->AddEntry(h_dcall_123_90, "Run1+2+3 const#Delta#chi^{2} 90% CL","l");
-  leg->AddEntry(h_dcall_12_68, "Run1+2 const#Delta#chi^{2} 68% CL","l");
-  leg->AddEntry(h_dcall_12_90, "Run1+2 const#Delta#chi^{2} 90% CL","l");
-  leg->AddEntry(h_dcall_3_68, "Run3 const#Delta#chi^{2} 68% CL","l");
-  leg->AddEntry(h_dcall_3_90, "Run3 const#Delta#chi^{2} 90% CL","l");
+  leg->AddEntry(h_dcall_123_68, "Run1+2+3 const #Delta#chi^{2} 68% CL","l");
+  leg->AddEntry(h_dcall_123_90, "Run1+2+3 const #Delta#chi^{2} 90% CL","l");
+  leg->AddEntry(h_dcall_12_68, "Run1+2 const #Delta#chi^{2} 68% CL","l");
+  leg->AddEntry(h_dcall_12_90, "Run1+2 const #Delta#chi^{2} 90% CL","l");
+  leg->AddEntry(h_dcall_3_68, "Run3 const #Delta#chi^{2} 68% CL","l");
+  leg->AddEntry(h_dcall_3_90, "Run3 const #Delta#chi^{2} 90% CL","l");
   leg->Draw();
+  bestfit_2all.SetMarkerStyle(29);
+  bestfit_2all.SetMarkerColor(kBlack);
+  bestfit12_2all.SetMarkerStyle(29);
+  bestfit12_2all.SetMarkerColor(kBlue);
+  bestfit3_2all.SetMarkerStyle(29);
+  bestfit3_2all.SetMarkerColor(kRed);
   bestfit_2all.Draw();
   bestfit12_2all.Draw();
   bestfit3_2all.Draw();
@@ -757,12 +848,12 @@ void plot_contour_comparisons
   h_dcall_123_68->Draw("cont3same");
   h_dcall_123_90->Draw("cont3same");
   leg->Clear();
-  leg->AddEntry(h_dc_20_68, "2+0 const#Delta#chi^{2} 68% CL","l");
-  leg->AddEntry(h_dc_20_90, "2+0 const#Delta#chi^{2} 90% CL","l");
-  leg->AddEntry(h_dc_28_fine_68, "2+8 const#Delta#chi^{2} 68% CL","l");
-  leg->AddEntry(h_dc_28_fine_90, "2+8 const#Delta#chi^{2} 90% CL","l");
-  leg->AddEntry(h_dcall_123_68, "2+N const#Delta#chi^{2} 68% CL","l");
-  leg->AddEntry(h_dcall_123_90, "2+N const#Delta#chi^{2} 90% CL","l");
+  leg->AddEntry(h_dc_20_68, "2+0 const #Delta#chi^{2} 68% CL","l");
+  leg->AddEntry(h_dc_20_90, "2+0 const #Delta#chi^{2} 90% CL","l");
+  leg->AddEntry(h_dc_28_fine_68, "2+8 const #Delta#chi^{2} 68% CL","l");
+  leg->AddEntry(h_dc_28_fine_90, "2+8 const #Delta#chi^{2} 90% CL","l");
+  leg->AddEntry(h_dcall_123_68, "2+N const #Delta#chi^{2} 68% CL","l");
+  leg->AddEntry(h_dcall_123_90, "2+N const #Delta#chi^{2} 90% CL","l");
   leg->Draw();
   bestfit.Draw();
   TMarker bestfit20(1.000,0.002457,29);
@@ -811,10 +902,10 @@ void plot_contour_comparisons
   h_dc_kit_68->Draw("cont3same");
   h_dc_kit_90->Draw("cont3same");
   leg->Clear();
-  leg->AddEntry(h_dc_28_fine_68, "A const#Delta#chi^{2} 3#nu 68% CL","l");
-  leg->AddEntry(h_dc_28_fine_90, "A const#Delta#chi^{2} 3#nu 90% CL","l");
-  leg->AddEntry(h_dc_kit_68, "B const#Delta#chi^{2} 3#nu 68% CL","l");
-  leg->AddEntry(h_dc_kit_90, "B const#Delta#chi^{2} 3#nu 90% CL","l");
+  leg->AddEntry(h_dc_28_fine_68, "A const #Delta#chi^{2} 3#nu 68% CL","l");
+  leg->AddEntry(h_dc_28_fine_90, "A const #Delta#chi^{2} 3#nu 90% CL","l");
+  leg->AddEntry(h_dc_kit_68, "B const #Delta#chi^{2} 3#nu 68% CL","l");
+  leg->AddEntry(h_dc_kit_90, "B const #Delta#chi^{2} 3#nu 90% CL","l");
   leg->Draw();
   bestfit.Draw();
   bestfit_kit.Draw();
@@ -831,10 +922,10 @@ void plot_contour_comparisons
   //h_dc_kit_68->Draw("cont3same");
   h_dc_kit_90->Draw("cont3same");
   leg->Clear();
-  //leg->AddEntry(h_dc_28_fine_68, "T2K A const#Delta#chi^{2} 3#nu 68% CL","l");
-  leg->AddEntry(h_dc_28_fine_90, "T2K A const#Delta#chi^{2} 3#nu 90% CL","l");
-  //leg->AddEntry(h_dc_kit_68, "T2K B const#Delta#chi^{2} 3#nu 68% CL","l");
-  leg->AddEntry(h_dc_kit_90, "T2K B const#Delta#chi^{2} 3#nu 90% CL","l");
+  //leg->AddEntry(h_dc_28_fine_68, "T2K A const #Delta#chi^{2} 3#nu 68% CL","l");
+  leg->AddEntry(h_dc_28_fine_90, "T2K A const #Delta#chi^{2} 3#nu 90% CL","l");
+  //leg->AddEntry(h_dc_kit_68, "T2K B const #Delta#chi^{2} 3#nu 68% CL","l");
+  leg->AddEntry(h_dc_kit_90, "T2K B const #Delta#chi^{2} 3#nu 90% CL","l");
   g_run12_90_statsyst->Draw("l");
   g_minos->Draw("l");
   g_skle->Draw("l");
@@ -861,10 +952,10 @@ void plot_contour_comparisons
   h_fc_kit_68->Draw("cont3same");
   h_fc_kit_90->Draw("cont3same");
   leg->Clear();
-  leg->AddEntry(h_fc_123_68, "A FC 68% 3#nu CL","l");
-  leg->AddEntry(h_fc_123_90, "A FC 90% 3#nu CL","l");
-  leg->AddEntry(h_fc_kit_68, "B FC 68% 3#nu CL","l");
-  leg->AddEntry(h_fc_kit_90, "B FC 90% 3#nu CL","l");
+  leg->AddEntry(h_fc_123_68, "A FC 3#nu 68% CL","l");
+  leg->AddEntry(h_fc_123_90, "A FC 3#nu 90% CL","l");
+  leg->AddEntry(h_fc_kit_68, "B FC 3#nu 68% CL","l");
+  leg->AddEntry(h_fc_kit_90, "B FC 3#nu 90% CL","l");
   leg->SetX2NDC(0.43);
   leg->Draw();
   bestfit.Draw();
@@ -882,10 +973,10 @@ void plot_contour_comparisons
   //h_fc_kit_68->Draw("cont3same");
   h_fc_kit_90->Draw("cont3same");
   leg->Clear();
-  //leg->AddEntry(h_fc_123_68, "T2K A FC 68% 3#nu CL","l");
-  leg->AddEntry(h_fc_123_90, "T2K A FC 90% 3#nu CL","l");
-  //leg->AddEntry(h_fc_kit_68, "T2K B FC 68% 3#nu CL","l");
-  leg->AddEntry(h_fc_kit_90, "T2K B FC 90% 3#nu CL","l");
+  //leg->AddEntry(h_fc_123_68, "T2K A FC 3#nu 68% CL","l");
+  leg->AddEntry(h_fc_123_90, "T2K A FC 3#nu 90% CL","l");
+  //leg->AddEntry(h_fc_kit_68, "T2K B FC 3#nu 68% CL","l");
+  leg->AddEntry(h_fc_kit_90, "T2K B FC 3#nu 90% CL","l");
   g_run12_90_statsyst->Draw("l");
   g_minos->Draw("l");
   g_skle->Draw("l");

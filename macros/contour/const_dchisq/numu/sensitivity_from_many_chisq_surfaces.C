@@ -324,7 +324,7 @@ void sensitivity_from_many_chisq_surfaces
   //Now, get the exclusion of mixing angle
   mixing23_exclude68->SetTitle("");
   mixing23_exclude68->SetLineColor(kBlack);
-  mixing23_exclude68->GetXaxis()->SetTitle("sin^{2}2#theta_{23}");
+  mixing23_exclude68->GetXaxis()->SetTitle("sin^{2}(2#theta_{23})");
   mixing23_exclude68->GetYaxis()->SetTitle("N fits");
   mixing23_exclude68->Draw();
   mixing23_exclude90->SetLineColor(kRed);
@@ -338,15 +338,23 @@ void sensitivity_from_many_chisq_surfaces
   lkitexcluded68.SetY2(mixing23_exclude68->GetMaximum()*1.05);
   lkitexcluded90.Draw("same");
   lkitexcluded68.Draw("same");
+  //make some histograms to pose as the TLines in the legend
+  TH1 * lkitexcluded90fake = new TH1F("", "", 1, 0, 1);
+  TH1 * lkitexcluded68fake = new TH1F("", "", 1, 0, 1);
+  lkitexcluded90fake->SetLineColor(kRed);
+  lkitexcluded90fake->SetLineStyle(2);
+  lkitexcluded68fake->SetLineStyle(2);
+  lkitexcluded90fake->SetLineWidth(2);
+  lkitexcluded68fake->SetLineWidth(2);
   leg->SetX1NDC(0.15);
   leg->SetX2NDC(0.45);
   leg->SetY1NDC(0.6);
   leg->SetY2NDC(0.9);
   leg->AddEntry(mixing23_exclude90,"90% CL exclusion","l");
-  leg->AddEntry((TObject*)0, Form("Data %0.3f", kitexcluded90), "");
+  leg->AddEntry(lkitexcluded90fake, Form("Data %0.3f", kitexcluded90), "l");
   leg->AddEntry((TObject*)0, Form("p-value %0.3f", pvalue90), "");
   leg->AddEntry(mixing23_exclude68,"68% CL exclusion","l");
-  leg->AddEntry((TObject*)0, Form("Data %0.3f", kitexcluded68), "");
+  leg->AddEntry(lkitexcluded68fake, Form("Data %0.3f", kitexcluded68), "l");
   leg->AddEntry((TObject*)0, Form("p-value %0.3f", pvalue68), "");
   //leg->AddEntry((TObject*)0, Form("Data %0.3f, p-value %0.3f", kitexcluded68, pvalue68), "");
   leg->Draw();

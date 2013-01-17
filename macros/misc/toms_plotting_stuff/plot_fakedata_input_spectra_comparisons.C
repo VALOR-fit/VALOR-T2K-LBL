@@ -28,7 +28,8 @@ void plot_fakedata_input_spectra_comparisons()
     leg->SetBorderSize(0);
     leg->SetFillStyle(0);
 
-    hob[i]->GetXaxis()->SetTitle("E_{reco}");
+    hob[i]->GetXaxis()->SetTitle("E_{reco}/GeV");
+    hob[i]->GetYaxis()->SetTitle("Events per bin");
     hob[i]->GetXaxis()->SetRangeUser(0,5.9999999);
 
     h28[i]->SetLineColor(kRed);

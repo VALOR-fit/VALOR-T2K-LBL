@@ -282,7 +282,7 @@ void test_sk_ereco_spectrum_twk_sys
   hErecoNominal = new TH1D(*skexp.CurrPredictedErecoSpectrum(s));
   hErecoNominal->SetDirectory(0);
   hErecoNominal->GetXaxis()->SetTitle("E_{reco} (GeV)");
-  hErecoNominal->GetYaxis()->SetTitle("Number of events");
+  hErecoNominal->GetYaxis()->SetTitle("Events per bin");
   hErecoNominal->SetLineWidth(2);
   for(int im = 0; im < conv::knm; im++) {
     conv::SuperkMode_t m = conv::kSKReactionModes[is][im];
@@ -293,7 +293,7 @@ void test_sk_ereco_spectrum_twk_sys
     hErecoModeNominal[im] = new TH1D(*h);
     hErecoModeNominal[im]->SetDirectory(0);
     hErecoModeNominal[im]->GetXaxis()->SetTitle("E_{reco} (GeV)");
-    hErecoModeNominal[im]->GetYaxis()->SetTitle("Number of events");
+    hErecoModeNominal[im]->GetYaxis()->SetTitle("Events per bin");
     hErecoModeNominal[im]->SetFillStyle(0);
   }
   if(!update_rootfile) {
@@ -583,6 +583,7 @@ void test_sk_ereco_spectrum_twk_sys
   hErecoNominal->Draw();
   double maxy = hErecoNominal->GetMaximum();
   for(int itweak = 0; itweak < ntweaks; itweak++) {
+    if(mode == 201 && itweak != 1) continue; //SF is only +1 sigma!
     hEreco[itweak]->Draw("same");
     maxy = TMath::Max(maxy, hEreco[itweak]->GetMaximum());
     legend->AddEntry(hEreco[itweak], Form("%d sigma",tweaks[itweak]), "L" );
@@ -595,6 +596,7 @@ void test_sk_ereco_spectrum_twk_sys
   double yminratio = 0.75, ymaxratio = 1.25;
   bool foundbig = false;
   for(int itweak = 0; itweak < ntweaks; itweak++) {
+    if(mode == 201 && itweak != 1) continue; //SF is only +1 sigma!
     if(foundbig) break;
     for(int ibin = 1; ibin < hErecoRatio[itweak]->GetNbinsX(); ibin++) {
       if(hErecoRatio[itweak]->GetBinContent(ibin) > ymaxratio) {
@@ -607,12 +609,14 @@ void test_sk_ereco_spectrum_twk_sys
   }
   for(int itweak = 0; itweak < ntweaks; itweak++) {
     if(itweak==0){
+      if(mode == 201) itweak++; //SF is only +1 sigma!
       hErecoRatio[itweak]->GetXaxis()->SetRangeUser(0,ereco_max_plot-conv::kOneMeV);
       hErecoRatio[itweak]->GetXaxis()->SetTitle("E_{reco} (GeV)");
       hErecoRatio[itweak]->GetYaxis()->SetTitle("Ratio to nominal");
       hErecoRatio[itweak]->GetYaxis()->SetRangeUser(yminratio,ymaxratio);
       hErecoRatio[itweak]->SetTitle("Ratio");
       hErecoRatio[itweak]->Draw();
+      if(mode == 201) break; //SF is only +1 sigma!
       continue;
     }
     hErecoRatio[itweak]->Draw("same");

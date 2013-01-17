@@ -67,22 +67,54 @@ void analyse_output
   //set error for the obs ratio
   for(int io = 1; io <= spectrum_ratio_obs->GetNbinsX(); io++) {
     double err = spectrum_obs->GetBinError(io);
-    if(err > 0)
-      spectrum_ratio_obs->SetBinError(io,1/err);
-    else
-      spectrum_ratio_obs->SetBinError(io,0);
+    if(err > 0) {
+      //spectrum_ratio_obs->SetBinError(io,1/err);
+      spectrum_ratio_obs->SetBinError(io,1/err*spectrum_ratio_obs->GetBinContent(io));
+      //spectrum_ratio_obs->SetBinError(io,1/err*spectrum_ratio_obs->GetBinContent(io)/spectrum_obs->GetBinContent(io));
+    }
+    else {
+      //spectrum_ratio_obs->SetBinError(io,0);
+    }
     cout << io << "\t" << spectrum_obs->GetBinContent(io) << "\t";
     if(err > 0)
       cout << 1/err << endl;
     else
       cout << endl;
   }
+  //try Sumw2();
+  TH1D * spectrum_ratio_obs2 = new TH1D("","", n_ereco_bins, ereco_bin_edges);
+  // cout << endl; for(int i = 1; i <= spectrum_ratio_obs->GetNbinsX(); i++) {
+  //   cout << spectrum_obs->GetBinError(i) << "\t"
+  // 	 << spectrum_noosc->GetBinError(i) << endl;
+  // }
+  spectrum_obs->Sumw2();
+  spectrum_noosc->Sumw2();
+  spectrum_ratio_obs2->Sumw2();
+  // cout << endl; for(int i = 1; i <= spectrum_ratio_obs->GetNbinsX(); i++) {
+  //   cout << spectrum_obs->GetBinError(i) << "\t"
+  // 	 << spectrum_noosc->GetBinError(i) << endl;
+  // }
+  spectrum_ratio_obs2->Divide(spectrum_obs, spectrum_noosc);
+  cout << endl;
+  for(int i = 1; i <= spectrum_ratio_obs->GetNbinsX(); i++) {
+    cout << spectrum_ratio_obs->GetBinError(i) << "\t"
+      << spectrum_ratio_obs2->GetBinError(i) << "\t";
+    /*if(spectrum_obs->GetBinError(i) > 0)
+      cout << 1/spectrum_obs->GetBinError(i) << "\t"
+	   << 1/err*spectrum_ratio_obs->GetBinContent(i) << "\t"
+	   << 1/err*spectrum_ratio_obs->GetBinContent(i)/spectrum_obs->GetBinContent(i) << endl;
+    else
+    */
+      cout << endl;
+
+      spectrum_ratio_obs2->SetBinError(i,spectrum_ratio_obs->GetBinError(i));
+  }
   
   //set the axes
   spectrum_obs->GetXaxis()->SetRangeUser(0, spectrum_max_xaxis - conv::kOneMeV);
   spectrum_bf->GetXaxis()->SetRangeUser(0, spectrum_max_xaxis - conv::kOneMeV);
   spectrum_noosc->GetXaxis()->SetRangeUser(0, spectrum_max_xaxis - conv::kOneMeV);
-  spectrum_ratio_obs->GetXaxis()->SetRangeUser(0, spectrum_max_xaxis - conv::kOneMeV);
+  spectrum_ratio_obs2->GetXaxis()->SetRangeUser(0, spectrum_max_xaxis - conv::kOneMeV);
   spectrum_ratio_bf->GetXaxis()->SetRangeUser(0, spectrum_max_xaxis - conv::kOneMeV);
   TLine * spectrum_line = new TLine(0,1, spectrum_max_xaxis,1);
   //styles
@@ -90,20 +122,22 @@ void analyse_output
   spectrum_obs->SetLineStyle(2);
   spectrum_obs->SetMarkerSize(0.6);
   spectrum_ratio_bf->SetLineColor(kRed);
-  spectrum_ratio_obs->SetLineStyle(2);
-  spectrum_ratio_obs->SetMarkerSize(0.6);
+  spectrum_ratio_obs2->SetLineStyle(2);
+  spectrum_ratio_obs2->SetMarkerSize(0.6);
   //Now draw
   TCanvas * cspec = new TCanvas("cspec","cspec",2);
   cspec->Divide(1,2);
   cspec->cd(1);
   spectrum_noosc->GetYaxis()->SetTitle("Events per bin");
-  spectrum_noosc->Draw();
+  for(int i = 1; i <= spectrum_noosc->GetNbinsX(); i++)
+    spectrum_noosc->SetBinError(i,0);
+  spectrum_noosc->Draw("");
   spectrum_obs->Draw("PE0same");
   spectrum_bf->Draw("same");
   cspec->cd(2);
-  spectrum_ratio_obs->GetXaxis()->SetTitle("E_{reco} / GeV");
-  spectrum_ratio_obs->GetYaxis()->SetTitle("Ratio");
-  spectrum_ratio_obs->Draw("PE0");
+  spectrum_ratio_obs2->GetXaxis()->SetTitle("E_{reco} / GeV");
+  spectrum_ratio_obs2->GetYaxis()->SetTitle("Ratio");
+  spectrum_ratio_obs2->Draw("PE0");
   spectrum_ratio_bf->Draw("same");
   spectrum_line->Draw("same");
   cspec->SaveAs(Form("spectrum_%d.eps",id));
@@ -270,8 +304,8 @@ void analyse_output
   leg->SetFillColor(0);
   leg->SetLineStyle(0);
   leg->SetBorderSize(0);
-  leg->AddEntry(dchisq90, "Const #Delta#chi^2 90\% CL", "l");
-  leg->AddEntry(dchisq68, "Const #Delta#chi^2 68\% CL", "l");
+  leg->AddEntry(dchisq90, "const #Delta#chi^{2} 90\% CL", "l");
+  leg->AddEntry(dchisq68, "const #Delta#chi^{2} 68\% CL", "l");
   leg->AddEntry(bf, "Best fit", "p");
   // param space
   c->SetRightMargin(0.05);
@@ -298,6 +332,8 @@ void analyse_output
   osc_param_space->GetYaxis()->SetTitleOffset(1.65);
   osc_param_space->Draw();
   //actually draw
+  dchisq90->SetLineColor(kBlack);
+  dchisq68->SetLineColor(kBlack);
   dchisq90->Draw("cont3same");
   dchisq68->Draw("cont3same");
   bf->Draw("Psame");

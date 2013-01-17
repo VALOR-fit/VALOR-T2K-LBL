@@ -22,18 +22,18 @@ conffile = "analysis_configuration.xml"
 emax = 7
 
 modes1 = [0,1,2,3,4,5,6,7,8,9,10,11,12] #combinations
-modes2 = range(100,139) #banff
+modes2 = range(100,125) #banff
 modes3 = range(200,216) #unconstranied xsec
 modes4 = range(300,308) #sk detector
-modes5 = range(400,449) #fsi
+modes5 = range(400,407) #fsi
 modes6 = range(500,504) #special comparison tweaks
 modes7 = range(600,639) #uncorrelated banff
 
 modes = modes2 + modes3 + modes4 + modes5 #+ modes1 + modes7 #+ modes6
 
 oscparams = [] #fill with oscillation parameters, in order mixing12, theta13, theta23, deltacp, dmsq12, dmsq23hypothesis
-oscparams.append([  0,   0,   0,   0,   0,   0]) #no oscillations!
-#oscparams.append([-99, -99, -99, -99, -99, -99]) #use global best fits!
+#oscparams.append([  0,   0,   0,   0,   0,   0]) #no oscillations!
+oscparams.append([-99, -99, -99, -99, -99, -99]) #use global best fits!
 #oscparams.append([0.86, 0.1,  1,  0,  7.58E-5,  2.32E-3])
 #oscparams.append([0.86, 0,    1,  0,  7.58E-5,  2.32E-3])
 

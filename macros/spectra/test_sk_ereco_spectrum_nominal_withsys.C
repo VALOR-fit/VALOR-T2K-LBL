@@ -166,6 +166,33 @@ double * create_syst_array(int mode = 0)
     sys[32] = 1.30807e-07;
     sys[36] = 0.064003;
     sys[35] =  -0.165958;
+
+    double sigma_maqe  = (1.07436 - 1.048517110) / 0.02564;
+    double sigma_ccqe0 = (0.94079 - 0.950922419) / 0.007343;
+
+    sys[8] += (sigma_maqe * -0.004611) + (sigma_ccqe0 * -0.003242);
+    sys[9] += (sigma_maqe * -0.005068) + (sigma_ccqe0 * -0.003668);
+    sys[10] += (sigma_maqe * -0.004867) + (sigma_ccqe0 * -0.003606);
+    sys[11] += (sigma_maqe * -0.004987) + (sigma_ccqe0 * -0.003691);
+    sys[12] += (sigma_maqe * -0.005563) + (sigma_ccqe0 * -0.004084);
+    sys[13] += (sigma_maqe * -0.004923) + (sigma_ccqe0 * -0.003193);
+    sys[14] += (sigma_maqe * -0.004009) + (sigma_ccqe0 * -0.002345);
+    sys[15] += (sigma_maqe * -0.003085) + (sigma_ccqe0 * -0.001678);
+    sys[16] += (sigma_maqe * -0.002521) + (sigma_ccqe0 * -0.001363);
+    sys[17] += (sigma_maqe * -0.002203) + (sigma_ccqe0 * -0.000759);
+    sys[18] += (sigma_maqe * -0.001638) + (sigma_ccqe0 * -0.0001584);
+    sys[19] += (sigma_maqe * -0.004763) + (sigma_ccqe0 * -0.003229);
+    sys[20] += (sigma_maqe * -0.004421) + (sigma_ccqe0 * -0.00293);
+    sys[21] += (sigma_maqe * -0.004349) + (sigma_ccqe0 * -0.002869);
+    sys[22] += (sigma_maqe * -0.003582) + (sigma_ccqe0 * -0.002077);
+    sys[23] += (sigma_maqe * -0.002025) + (sigma_ccqe0 * -0.0009498);
+
+    sys[25] += (sigma_maqe * -0.001327) + (sigma_ccqe0 * 0.0009846);
+
+    sys[27] += (sigma_maqe * -0.0158) + (sigma_ccqe0 * 0.006794);
+    sys[28] += (sigma_maqe * 0.0006522) + (sigma_ccqe0 * 0.00107);
+    sys[29] += (sigma_maqe * 0.003963) + (sigma_ccqe0 * 0.003639);
+    sys[30] += (sigma_maqe * -0.002518) + (sigma_ccqe0 * 0.001492);
   }
   else if(mode == 2) { //2+all run1-3 best fit
     sys[0] =    -3.3381e-06     ;
@@ -347,7 +374,7 @@ void test_sk_ereco_spectrum_nominal_withsys
     fparm->Update(conv::kPhypDm12sq,    input_dm12sq);
     fparm->Update(conv::kPhypDm23sq,    input_dm23sq);
   }
-  //set systematics
+  //set systematics to nominal
   fparm->Update(conv::kNuisXSecSpecFunc, 0);//spec func starts at 0.5!
 
   double * inputs_syst = create_syst_array(systmode);

@@ -55,14 +55,20 @@ void plot_feldman_cousins_deltachisqcrit(
   hdchisq90_statonly  -> GetXaxis() -> SetTitle("sin^{2}2#theta_{23}");
   hdchisq68_statsyst  -> GetXaxis() -> SetTitle("sin^{2}2#theta_{23}");
   hdchisq90_statsyst  -> GetXaxis() -> SetTitle("sin^{2}2#theta_{23}");
-  hdchisq68_statonly  -> GetYaxis() -> SetTitle("|#Deltam^{2}_{23}| (eV^{2}/c^{4})");
-  hdchisq90_statonly  -> GetYaxis() -> SetTitle("|#Deltam^{2}_{23}| (eV^{2}/c^{4})");
-  hdchisq68_statsyst  -> GetYaxis() -> SetTitle("|#Deltam^{2}_{23}| (eV^{2}/c^{4})");
-  hdchisq90_statsyst  -> GetYaxis() -> SetTitle("|#Deltam^{2}_{23}| (eV^{2}/c^{4})");
+  hdchisq68_statonly  -> GetYaxis() -> SetTitle("|#Deltam^{2}_{32}| (eV^{2}/c^{4})");
+  hdchisq90_statonly  -> GetYaxis() -> SetTitle("|#Deltam^{2}_{32}| (eV^{2}/c^{4})");
+  hdchisq68_statsyst  -> GetYaxis() -> SetTitle("|#Deltam^{2}_{32}| (eV^{2}/c^{4})");
+  hdchisq90_statsyst  -> GetYaxis() -> SetTitle("|#Deltam^{2}_{32}| (eV^{2}/c^{4})");
   hdchisq68_statonly  -> GetYaxis() -> SetTitleOffset(2.0);
   hdchisq90_statonly  -> GetYaxis() -> SetTitleOffset(2.0);
   hdchisq68_statsyst  -> GetYaxis() -> SetTitleOffset(2.0);
   hdchisq90_statsyst  -> GetYaxis() -> SetTitleOffset(2.0);
+
+  //equalise z axes
+  hdchisq68_statonly->GetZaxis()->SetRangeUser(1.4,2.5);
+  hdchisq68_statsyst->GetZaxis()->SetRangeUser(1.4,2.5);
+  hdchisq90_statonly->GetZaxis()->SetRangeUser(3.3,5.0);
+  hdchisq90_statsyst->GetZaxis()->SetRangeUser(3.3,5.0);
 
   TCanvas * c1 = new TCanvas("c1","",10,20,700,500);
   c1->Divide(2,2);
@@ -147,9 +153,9 @@ void plot_feldman_cousins_deltachisqcrit(
   TLegend * legend_68 = new TLegend(0.4, 0.65, 0.9, 0.9);
   legend_68->SetFillStyle(0);
   legend_68->SetBorderSize(0);
-  legend_68->AddEntry(gr1_68, Form("#Delta#chi^{2}_{68}, #Deltam^{2}_{23} = %.5f eV^{2}/c^{4}", dmsq1), "L");
-  legend_68->AddEntry(gr2_68, Form("#Delta#chi^{2}_{68}, #Deltam^{2}_{23} = %.5f eV^{2}/c^{4}", dmsq2), "L");
-  legend_68->AddEntry(gr3_68, Form("#Delta#chi^{2}_{68}, #Deltam^{2}_{23} = %.5f eV^{2}/c^{4}", dmsq3), "L");
+  legend_68->AddEntry(gr1_68, Form("#Delta#chi^{2}_{68}, |#Deltam^{2}_{32}| = %.5f eV^{2}/c^{4}", dmsq1), "L");
+  legend_68->AddEntry(gr2_68, Form("#Delta#chi^{2}_{68}, |#Deltam^{2}_{32}| = %.5f eV^{2}/c^{4}", dmsq2), "L");
+  legend_68->AddEntry(gr3_68, Form("#Delta#chi^{2}_{68}, |#Deltam^{2}_{32}| = %.5f eV^{2}/c^{4}", dmsq3), "L");
   legend_68->Draw();
   TLine * lc_68 = new TLine(sinsq2theta_min, dchisq_2p_68, sinsq2theta_max, dchisq_2p_68); /// canonical \delta\chi^{2}
   lc_68->Draw();
@@ -169,9 +175,9 @@ void plot_feldman_cousins_deltachisqcrit(
   TLegend * legend_90 = new TLegend(0.4, 0.65, 0.9, 0.9);
   legend_90->SetFillStyle(0);
   legend_90->SetBorderSize(0);
-  legend_90->AddEntry(gr1_90, Form("#Delta#chi^{2}_{90}, #Deltam^{2}_{23} = %.5f eV^{2}/c^{4}", dmsq1), "L");
-  legend_90->AddEntry(gr2_90, Form("#Delta#chi^{2}_{90}, #Deltam^{2}_{23} = %.5f eV^{2}/c^{4}", dmsq2), "L");
-  legend_90->AddEntry(gr3_90, Form("#Delta#chi^{2}_{90}, #Deltam^{2}_{23} = %.5f eV^{2}/c^{4}", dmsq3), "L");
+  legend_90->AddEntry(gr1_90, Form("#Delta#chi^{2}_{90}, |#Deltam^{2}_{32}| = %.5f eV^{2}/c^{4}", dmsq1), "L");
+  legend_90->AddEntry(gr2_90, Form("#Delta#chi^{2}_{90}, |#Deltam^{2}_{32}| = %.5f eV^{2}/c^{4}", dmsq2), "L");
+  legend_90->AddEntry(gr3_90, Form("#Delta#chi^{2}_{90}, |#Deltam^{2}_{32}| = %.5f eV^{2}/c^{4}", dmsq3), "L");
   legend_90->Draw();
   TLine * lc_90 = new TLine(sinsq2theta_min, dchisq_2p_90, sinsq2theta_max, dchisq_2p_90); /// canonical \delta\chi^{2}
   lc_90->Draw();
@@ -223,7 +229,7 @@ void plot_feldman_cousins_deltachisqcrit(
   gr2_dmsq_68->SetLineColor(kGreen);
   gr3_dmsq_68->SetLineColor(kRed);
   TH1F * hframe_dmsq_68 = (TH1F*)c3->GetPad(1)->DrawFrame(dmsq_min, 0., dmsq_max, 4.);
-  hframe_dmsq_68->GetXaxis()->SetTitle("#Deltam^{2}_{23}");
+  hframe_dmsq_68->GetXaxis()->SetTitle("|#Deltam^{2}_{32}| (eV^{2}/c^{4})");
   hframe_dmsq_68->GetYaxis()->SetTitle("#Delta#chi^{2}_{68}");
   hframe_dmsq_68->GetXaxis()->SetNdivisions(507,true); //fix so not too many axis labels
   gr1_dmsq_68->Draw("c");
@@ -246,7 +252,7 @@ void plot_feldman_cousins_deltachisqcrit(
   gr2_dmsq_90->SetLineColor(kGreen);
   gr3_dmsq_90->SetLineColor(kRed);
   TH1F * hframe_dmsq_90 = (TH1F*)c3->GetPad(2)->DrawFrame(dmsq_min, 0., dmsq_max, 8.);
-  hframe_dmsq_90->GetXaxis()->SetTitle("#Deltam^{2}_{23}");
+  hframe_dmsq_90->GetXaxis()->SetTitle("|#Deltam^{2}_{32}| (eV^{2}/c^{4})");
   hframe_dmsq_90->GetYaxis()->SetTitle("#Delta#chi^{2}_{90}");
   hframe_dmsq_90->GetXaxis()->SetNdivisions(507,true); //fix so not too many axis labels
   gr1_dmsq_90->Draw("c");

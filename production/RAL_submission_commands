@@ -424,7 +424,7 @@ cd 5; root2k -l -b -q '$T2KOSCANA/macros/spectra/test_sk_ereco_spectrum_nominal_
 
 #and Run1-3 data fits
 cd 28; root2k -l -b -q '$T2KOSCANA/macros/spectra/test_sk_ereco_spectrum_nominal_withsys.C(1,-99,-99,1.00,-99,-99,0.002442)'; cd ..;
-cd 2N; root2k -l -b -q '$T2KOSCANA/macros/spectra/test_sk_ereco_spectrum_nominal_withsys.C(2,-99,-99,1.00,-99,-99,0.002442)'; cd ..;
+cd 2N; root2k -l -b -q '$T2KOSCANA/macros/spectra/test_sk_ereco_spectrum_nominal_withsys.C(2,-99,-99,1.00,-99,-99,0.002443)'; cd ..;
 
 
 

@@ -65,6 +65,13 @@ void t2k_style()
   t2kStyle->SetOptStat(0);
   t2kStyle->SetOptFit(0);
 
+  /*
+  t2kStyle->SetOptStat(1100); // mean & RMS only
+  //t2kStyle->SetStatStyle(0); //make stat boxes see through
+  t2kStyle->SetStatBorderSize(0);
+  t2kStyle->SetTextFont(42); //less bold
+  */
+
   // put tick marks on top and RHS of plots
   t2kStyle->SetPadTickX(1);
   t2kStyle->SetPadTickY(1);
