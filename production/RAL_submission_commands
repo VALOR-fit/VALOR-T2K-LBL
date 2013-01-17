@@ -431,3 +431,19 @@ cd 5; root2k -l -b -q '$T2KOSCANA/macros/spectra/test_sk_ereco_spectrum_nominal_
 #and Run1-3 data fits
 cd 28; root2k -l -b -q '$T2KOSCANA/macros/spectra/test_sk_ereco_spectrum_nominal_withsys.C(1,-99,-99,1.00,-99,-99,0.002442)'; cd ..;
 cd 2N; root2k -l -b -q '$T2KOSCANA/macros/spectra/test_sk_ereco_spectrum_nominal_withsys.C(2,-99,-99,1.00,-99,-99,0.002442)'; cd ..;
+
+
+
+
+
+
+#Generate toys for MEC study
+root2k -l -b -q '$T2KOSCANA/macros/fit/toymc/generate_toymc_ensemble.C("mec_t2k",0,1000,"3f_osc",-99,-99,1.000,-99,-99,0.00244,"analysis_configuration_2012a_run1+2+3_neut_MECBANFF_coarseErecoSplines_6binFSI+SI_MAQE.xml",true,1,true,true,0,false)' >> t2k.log
+
+root2k -l -b -q '$T2KOSCANA/macros/fit/toymc/generate_toymc_ensemble.C("mec_minos",0,1000,"3f_osc",-99,-99,0.957,-99,-99,0.00239,"analysis_configuration_2012a_run1+2+3_neut_MECBANFF_coarseErecoSplines_6binFSI+SI_MAQE.xml",true,1,true,true,0,false)' >> minos.log
+
+
+#FIT them (2+8)
+$T2KOSCANA/production/submit_toyexpt_fitting_job_xml --resource RAL --tag mect2k --nruns 1000 --nexpts 1 --first-expt 0 --fit-param-list nuosc3f_numudisapp_fix4+nuisanceselection --job-dir $PWD --softw-dir $T2KOSCANA --toy-expts-file /home/ppd/tdealtry/RAL_repoistory/t2k/t2kana/nuosc/branches/2012_v0.9.0/inputs/toymc/mec/mec_t2k-0.xml --cpu-time 12:00:00
+
+$T2KOSCANA/production/submit_toyexpt_fitting_job_xml --resource RAL --tag mecminos --nruns 1000 --nexpts 1 --first-expt 0 --fit-param-list nuosc3f_numudisapp_fix4+nuisanceselection --job-dir $PWD --softw-dir $T2KOSCANA --toy-expts-file /home/ppd/tdealtry/RAL_repoistory/t2k/t2kana/nuosc/branches/2012_v0.9.0/inputs/toymc/mec/mec_minos-0.xml --cpu-time 12:00:00
