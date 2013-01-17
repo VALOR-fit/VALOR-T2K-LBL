@@ -365,22 +365,16 @@ root2k -l -b -q '$T2KOSCANA/macros/fit/pulls/mock_data_fit_pulls.C("28/*systfluc
 root2k -l -b -q '$T2KOSCANA/macros/fit/pulls/mock_data_fit_pulls.C("28/*systfluc_All*.root","28_all",1)'
 root2k -l -b -q '$T2KOSCANA/macros/fit/pulls/mock_data_fit_pulls.C("28/*systfluc_Selected*.root","28_sel",1)'
 
+cd ..
+root2k -l -b -q '$T2KOSCANA/macros/fit/pulls/mock_data_fit_pulls.C("28/*systfluc_All*.root","28_all",1)'
+
+
 root2k -l -b -q '$T2KOSCANA/macros/fit/pulls/mock_data_fit_pulls.C("2all/*systfluc_All*.root","2all_all",2)'
 root2k -l -b -q '$T2KOSCANA/macros/fit/pulls/mock_data_fit_pulls.C("2all/*systfluc_none*.root","2all_non",2)'
 
-#extra plots
-root2k
-TCanvas * c = new TCanvas();
-TChain ch("nfitnt");
-ch.Add("28/pull28all-*root");
-ch.GetEntries();
-ch.Draw("errmigrad_skdet_energyscale>>hnew:(120,0,1.2)");
-c->SaveAs("28_all_0.900000_escale_err.eps");
-ch.Draw("errmigrad_skdet_nc>>hnew:(120,0,1.2)");
-c->SaveAs("28_all_0.900000_nc_err.eps");
-ch.Draw("bestfit_xsec_sf>>hnew:(100,0,1)");
-c->SaveAs("28_all_0.900000_sf_bestfit.eps");
-.q
+#extra pull plots
+root2k -l -b -q $T2KOSCANA/macros/misc/toms_plotting_stuff/pull_plots.C
+
 
 
 
