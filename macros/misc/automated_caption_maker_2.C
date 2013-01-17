@@ -131,8 +131,8 @@ void automated_caption_maker_2(
 		 << "; $\\sin^22\\theta_{13} = $" << input_mixing13
 		 << "; $\\sin^22\\theta_{23} = $" << input_mixing23
 		 << "; $\\delta_{CP} = $        " << input_deltacp
-		 << "; $\\Delta m^2_{12} = $    " << input_dm12sq
-		 << "; $\\Delta m^2_{32} = $    " << input_dm23sq;
+		 << "; $\\Delta m^2_{21} = $    " << input_dm12sq << " eV^2/c^4"
+		 << "; $|\\Delta m^2_{32}| = $    " << input_dm23sq << " eV^2/c^4";
 	oscstr = "osc";
       }
       streamer << ". }" << endl;
