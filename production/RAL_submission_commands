@@ -441,3 +441,45 @@ root2k -l -b -q '$T2KOSCANA/macros/fit/toymc/generate_toymc_ensemble.C("mec_mino
 $T2KOSCANA/production/submit_toyexpt_fitting_job_xml --resource RAL --tag mect2k --nruns 1000 --nexpts 1 --first-expt 0 --fit-param-list nuosc3f_numudisapp_fix4+nuisanceselection --job-dir $PWD --softw-dir $T2KOSCANA --toy-expts-file /home/ppd/tdealtry/RAL_repoistory/t2k/t2kana/nuosc/branches/2012_v0.9.0/inputs/toymc/mec/mec_t2k-0.xml --cpu-time 12:00:00
 
 $T2KOSCANA/production/submit_toyexpt_fitting_job_xml --resource RAL --tag mecminos --nruns 1000 --nexpts 1 --first-expt 0 --fit-param-list nuosc3f_numudisapp_fix4+nuisanceselection --job-dir $PWD --softw-dir $T2KOSCANA --toy-expts-file /home/ppd/tdealtry/RAL_repoistory/t2k/t2kana/nuosc/branches/2012_v0.9.0/inputs/toymc/mec/mec_minos-0.xml --cpu-time 12:00:00
+
+
+$T2KOSCANA/production/submit_toyexpt_fitting_job_xml --resource RAL --tag mecminos --nruns 1000 --nexpts 1 --first-expt 0 --fit-param-list nuosc3f_numudisapp_fix4+nuisanceselection --job-dir $PWD --softw-dir $T2KOSCANA --toy-expts-file /home/ppd/tdealtry/RAL_repoistory/t2k/t2kana/nuosc/branches/2012_v0.9.0/inputs/toymc/mec/mec_minos_stat.xml --cpu-time 18:00:00
+$T2KOSCANA/production/submit_toyexpt_fitting_job_xml --resource RAL --tag mect2k --nruns 1000 --nexpts 1 --first-expt 0 --fit-param-list nuosc3f_numudisapp_fix4+nuisanceselection --job-dir $PWD --softw-dir $T2KOSCANA --toy-expts-file /home/ppd/tdealtry/RAL_repoistory/t2k/t2kana/nuosc/branches/2012_v0.9.0/inputs/toymc/mec/mec_t2k_stat.xml --cpu-time 18:00:00
+$T2KOSCANA/production/submit_toyexpt_fitting_job_xml --resource RAL --tag nomminos --nruns 1000 --nexpts 1 --first-expt 0 --fit-param-list nuosc3f_numudisapp_fix4+nuisanceselection --job-dir $PWD --softw-dir $T2KOSCANA --toy-expts-file /home/ppd/tdealtry/RAL_repoistory/t2k/t2kana/nuosc/branches/2012_v0.9.0/inputs/toymc/mec/nominal_v8_minos_stat.xml --cpu-time 18:00:00
+$T2KOSCANA/production/submit_toyexpt_fitting_job_xml --resource RAL --tag nomt2k --nruns 1000 --nexpts 1 --first-expt 0 --fit-param-list nuosc3f_numudisapp_fix4+nuisanceselection --job-dir $PWD --softw-dir $T2KOSCANA --toy-expts-file /home/ppd/tdealtry/RAL_repoistory/t2k/t2kana/nuosc/branches/2012_v0.9.0/inputs/toymc/mec/nominal_v8_t2k_stat.xml --cpu-time 18:00:00
+
+
+
+
+#generate toys for SKDET NC studies
+root2k -l -b -q '$T2KOSCANA/macros/fit/toymc/generate_toymc_ensemble.C("nc100_t2k",0,500,"3f_osc",-99,-99,1.000,-99,-99,0.00244,"analysis_configuration_run1-4.xml",true,1,true,true,0,false)' >> t2k.log
+root2k -l -b -q '$T2KOSCANA/macros/fit/toymc/generate_toymc_ensemble.C("nc100_minos",0,500,"3f_osc",-99,-99,0.957,-99,-99,0.00239,"analysis_configuration_run1-4.xml",true,1,true,true,0,false)' >> minos.log
+root2k -l -b -q '$T2KOSCANA/macros/fit/toymc/generate_toymc_ensemble.C("nc50_t2k",0,500,"3f_osc",-99,-99,1.000,-99,-99,0.00244,"analysis_configuration_run1-4_skdetnc50.xml",true,1,true,true,0,false)' >> t2k.log
+root2k -l -b -q '$T2KOSCANA/macros/fit/toymc/generate_toymc_ensemble.C("nc50_minos",0,500,"3f_osc",-99,-99,0.957,-99,-99,0.00239,"analysis_configuration_run1-4_skdetnc50.xml",true,1,true,true,0,false)' >> minos.log
+root2k -l -b -q '$T2KOSCANA/macros/fit/toymc/generate_toymc_ensemble.C("nc25_t2k",0,500,"3f_osc",-99,-99,1.000,-99,-99,0.00244,"analysis_configuration_run1-4_skdetnc25.xml",true,1,true,true,0,false)' >> t2k.log
+root2k -l -b -q '$T2KOSCANA/macros/fit/toymc/generate_toymc_ensemble.C("nc25_minos",0,500,"3f_osc",-99,-99,0.957,-99,-99,0.00239,"analysis_configuration_run1-4_skdetnc25.xml",true,1,true,true,0,false)' >> minos.log
+
+$T2KOSCANA/production/submit_toyexpt_fitting_job_xml --resource RAL --tag nc100_t2k --nruns 500 --nexpts 1 --first-expt 0 --fit-param-list nuosc3f_numudisapp_fix4+nuisanceselection --job-dir $PWD --softw-dir $T2KOSCANA --toy-expts-file /home/ppd/tdealtry/RAL_repoistory/t2k/t2kana/nuosc/branches/2012_v0.9.0/inputs/toymc/skdetNC/nc100_t2k-0.xml --cpu-time 12:00:00 --config-file analysis_configuration_run1-4.xml
+
+$T2KOSCANA/production/submit_toyexpt_fitting_job_xml --resource RAL --tag nc100_minos --nruns 500 --nexpts 1 --first-expt 0 --fit-param-list nuosc3f_numudisapp_fix4+nuisanceselection --job-dir $PWD --softw-dir $T2KOSCANA --toy-expts-file /home/ppd/tdealtry/RAL_repoistory/t2k/t2kana/nuosc/branches/2012_v0.9.0/inputs/toymc/skdetNC/nc100_minos-0.xml --cpu-time 12:00:00 --config-file analysis_configuration_run1-4.xml
+
+$T2KOSCANA/production/submit_toyexpt_fitting_job_xml --resource RAL --tag nc50_t2k --nruns 500 --nexpts 1 --first-expt 0 --fit-param-list nuosc3f_numudisapp_fix4+nuisanceselection --job-dir $PWD --softw-dir $T2KOSCANA --toy-expts-file /home/ppd/tdealtry/RAL_repoistory/t2k/t2kana/nuosc/branches/2012_v0.9.0/inputs/toymc/skdetNC/nc50_t2k-0.xml --cpu-time 12:00:00 --config-file analysis_configuration_run1-4_skdetnc50.xml
+
+$T2KOSCANA/production/submit_toyexpt_fitting_job_xml --resource RAL --tag nc50_minos --nruns 500 --nexpts 1 --first-expt 0 --fit-param-list nuosc3f_numudisapp_fix4+nuisanceselection --job-dir $PWD --softw-dir $T2KOSCANA --toy-expts-file /home/ppd/tdealtry/RAL_repoistory/t2k/t2kana/nuosc/branches/2012_v0.9.0/inputs/toymc/skdetNC/nc50_minos-0.xml --cpu-time 12:00:00 --config-file analysis_configuration_run1-4_skdetnc50.xml
+
+$T2KOSCANA/production/submit_toyexpt_fitting_job_xml --resource RAL --tag nc25_t2k --nruns 500 --nexpts 1 --first-expt 0 --fit-param-list nuosc3f_numudisapp_fix4+nuisanceselection --job-dir $PWD --softw-dir $T2KOSCANA --toy-expts-file /home/ppd/tdealtry/RAL_repoistory/t2k/t2kana/nuosc/branches/2012_v0.9.0/inputs/toymc/skdetNC/nc25_t2k-0.xml --cpu-time 12:00:00 --config-file analysis_configuration_run1-4_skdetnc25.xml
+
+$T2KOSCANA/production/submit_toyexpt_fitting_job_xml --resource RAL --tag nc25_minos --nruns 500 --nexpts 1 --first-expt 0 --fit-param-list nuosc3f_numudisapp_fix4+nuisanceselection --job-dir $PWD --softw-dir $T2KOSCANA --toy-expts-file /home/ppd/tdealtry/RAL_repoistory/t2k/t2kana/nuosc/branches/2012_v0.9.0/inputs/toymc/skdetNC/nc25_minos-0.xml --cpu-time 12:00:00 --config-file analysis_configuration_run1-4_skdetnc25.xml
+
+
+$T2KOSCANA/production/submit_toyexpt_fitting_job_xml --resource Oxford --tag nc100_t2k --nruns 500 --nexpts 1 --first-expt 0 --fit-param-list nuosc3f_numudisapp_fix4+nuisanceselection --job-dir $PWD --softw-dir $T2KOSCANA --toy-expts-file /data/t2k/dealtry/RAL_repoisitory/t2k/t2kana/nuosc/branches/2012_v0.9.0/inputs/toymc/skdetNC/nc100_t2k-0.xml --cpu-time 12:00:00 --config-file analysis_configuration_run1-4.xml
+
+$T2KOSCANA/production/submit_toyexpt_fitting_job_xml --resource Oxford --tag nc100_minos --nruns 500 --nexpts 1 --first-expt 0 --fit-param-list nuosc3f_numudisapp_fix4+nuisanceselection --job-dir $PWD --softw-dir $T2KOSCANA --toy-expts-file /data/t2k/dealtry/RAL_repoisitory/t2k/t2kana/nuosc/branches/2012_v0.9.0/inputs/toymc/skdetNC/nc100_minos-0.xml --cpu-time 12:00:00 --config-file analysis_configuration_run1-4.xml
+
+$T2KOSCANA/production/submit_toyexpt_fitting_job_xml --resource Oxford --tag nc50_t2k --nruns 500 --nexpts 1 --first-expt 0 --fit-param-list nuosc3f_numudisapp_fix4+nuisanceselection --job-dir $PWD --softw-dir $T2KOSCANA --toy-expts-file /data/t2k/dealtry/RAL_repoisitory/t2k/t2kana/nuosc/branches/2012_v0.9.0/inputs/toymc/skdetNC/nc50_t2k-0.xml --cpu-time 12:00:00 --config-file analysis_configuration_run1-4_skdetnc50.xml
+
+$T2KOSCANA/production/submit_toyexpt_fitting_job_xml --resource Oxford --tag nc50_minos --nruns 500 --nexpts 1 --first-expt 0 --fit-param-list nuosc3f_numudisapp_fix4+nuisanceselection --job-dir $PWD --softw-dir $T2KOSCANA --toy-expts-file /data/t2k/dealtry/RAL_repoisitory/t2k/t2kana/nuosc/branches/2012_v0.9.0/inputs/toymc/skdetNC/nc50_minos-0.xml --cpu-time 12:00:00 --config-file analysis_configuration_run1-4_skdetnc50.xml
+
+$T2KOSCANA/production/submit_toyexpt_fitting_job_xml --resource Oxford --tag nc25_t2k --nruns 500 --nexpts 1 --first-expt 0 --fit-param-list nuosc3f_numudisapp_fix4+nuisanceselection --job-dir $PWD --softw-dir $T2KOSCANA --toy-expts-file /data/t2k/dealtry/RAL_repoisitory/t2k/t2kana/nuosc/branches/2012_v0.9.0/inputs/toymc/skdetNC/nc25_t2k-0.xml --cpu-time 12:00:00 --config-file analysis_configuration_run1-4_skdetnc25.xml
+
+$T2KOSCANA/production/submit_toyexpt_fitting_job_xml --resource Oxford --tag nc25_minos --nruns 500 --nexpts 1 --first-expt 0 --fit-param-list nuosc3f_numudisapp_fix4+nuisanceselection --job-dir $PWD --softw-dir $T2KOSCANA --toy-expts-file /data/t2k/dealtry/RAL_repoisitory/t2k/t2kana/nuosc/branches/2012_v0.9.0/inputs/toymc/skdetNC/nc25_minos-0.xml --cpu-time 12:00:00 --config-file analysis_configuration_run1-4_skdetnc25.xml
