@@ -145,7 +145,7 @@ void plot_feldman_cousins_deltachisqcrit(
   gr2_68->SetLineColor(kGreen);
   gr3_68->SetLineColor(kRed);
   TH1F * hframe_68 = (TH1F*)c2->GetPad(1)->DrawFrame(sinsq2theta_min, 0., sinsq2theta_max, 4.);
-  hframe_68->GetXaxis()->SetTitle("sin^{2}#theta_{23}");
+  hframe_68->GetXaxis()->SetTitle("sin^{2}2#theta_{23}");
   hframe_68->GetYaxis()->SetTitle("#Delta#chi^{2}_{68}");
   gr1_68->Draw("c");
   gr2_68->Draw("c");
@@ -167,7 +167,7 @@ void plot_feldman_cousins_deltachisqcrit(
   gr2_90->SetLineColor(kGreen);
   gr3_90->SetLineColor(kRed);
   TH1F * hframe_90 = (TH1F*)c2->GetPad(2)->DrawFrame(sinsq2theta_min, 0., sinsq2theta_max, 8.);
-  hframe_90->GetXaxis()->SetTitle("sin^{2}#theta_{23}");
+  hframe_90->GetXaxis()->SetTitle("sin^{2}2#theta_{23}");
   hframe_90->GetYaxis()->SetTitle("#Delta#chi^{2}_{90}");
   gr1_90->Draw("c");
   gr2_90->Draw("c");
