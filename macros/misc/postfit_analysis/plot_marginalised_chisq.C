@@ -1,6 +1,5 @@
 //------------------------------------------------------------------------------------------------
 // Plot marginalised \Delta\chi^{2} distributions as function of |Dm^{2}_{32}| or sin^2(2theta23).
-// This is the macro used for Figs.25,26,35,36,37,38,39,40 of T2K-TN-64
 //
 // C.Andreopoulos
 //------------------------------------------------------------------------------------------------
@@ -16,7 +15,8 @@ void plot_marginalised_chisq(
   const char * label3    = 0,   /* ... can superimpose \Delta\chi^{2} for a 3rd data-set */
   const char * fitfile3  = 0,
   const char * label4    = 0,   /* ... can superimpose \Delta\chi^{2} for a 4th data-set */
-  const char * fitfile4  = 0
+  const char * fitfile4  = 0,
+  const char * chisqhstname = "hdchisq" /* name of chisq distribution in input files */
 )
 
 {
@@ -42,7 +42,7 @@ void plot_marginalised_chisq(
     mrgchisq_sinsq2q23[i] = 0;
     if(fitfile[i]) {
        f[i] = new TFile(fitfile[i],"read");
-       TH2D * h2d = (TH2D*) f[i]->Get("hdchisq");
+       TH2D * h2d = (TH2D*) f[i]->Get(chisqhstname);
        chisqsurf[i] = new TH2D(*h2d);
        mrgchisq_dm32sq   [i] = marginalise_chisq(chisqsurf[i], "marginalize_mixing23 + subtract_chisqmin",max_dmsq_bin);
        mrgchisq_sinsq2q23[i] = marginalise_chisq(chisqsurf[i], "marginalize_dm32sq + subtract_chisqmin");

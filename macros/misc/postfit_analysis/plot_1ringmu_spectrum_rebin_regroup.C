@@ -40,7 +40,6 @@ void plot_1ringmu_spectrum_rebin_regroup
   // 
   // Alternative binning scheme
   //
-
   const int kNErecoBins1Rmu = 16;
   const double kErecoBinEdges1Rmu[kNErecoBins1Rmu+1] = {
    0.000,  0.300,  0.400,  0.500,

@@ -1,24 +1,27 @@
+//------------------------------------------------------------------------------------------------
+// Compare best-fit spectra from 2 different analyses.
+// Superimpose, plot difference and ratio.
 //
-//  Compare best-fit spectra from different analyses
-//  Runs on the output of the fitter.
-//
+// C.Andreopoulos
+//------------------------------------------------------------------------------------------------
 
 void comp_bestfit_spectra
 (
-	const char * file1,
-	const char * label1 = "analysis a",
-	const char * file2,
-	const char * label2 = "analysis b",
-	const char * datafile = 0,
-	const char * nooscfile = 0,
-	bool rebin = false,
-        double emax = 6,
-	double nmax = 20
+  const char * file1,                  /* 1st best-fit spectrum */
+  const char * label1 = "analysis a",
+  const char * file2,                  /* 2nd best-fit spectrum */
+  const char * label2 = "analysis b",
+  const char * datafile  = 0,          /* if set, superimpose data */
+  const char * nooscfile = 0,          /* if set, superimpose no oscillation prediction	 */
+  bool rebin = false,
+  double emax = 6,
+  double nmax = 20
 )
 
 {
-  double emin = 0;
+  const double emin = 0;
 
+  // if rebin, use this binning
   const int kNErecoBins1Rmu = 16;
   const double kErecoBinEdges1Rmu[kNErecoBins1Rmu+1] = {
    0.000,  0.300,  0.400,  0.500,

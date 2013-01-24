@@ -1,39 +1,37 @@
+//------------------------------------------------------------------------------------------------
+// Show best-fit spectrum & ratio. 
 //
-//  Show best-fit spectrum & ratio. Runs on the output of the fitter.
-//
+// C.Andreopoulos
+//------------------------------------------------------------------------------------------------
 
 void show_bestfit_spectrum_and_ratio
 (
-	const char * file,
-	const char * label = "analysis",
-        const char * datafile = 0,
-	const char * nooscfile = 0,
-	bool rebin = false,
-        double emax = 6,
-	double nmax = 20
+  const char * bestfitfile,       /* contains best-fit spectrum    */
+  const char * label = "VaLOR",   /* label for analysis/fitter     */
+  const char * datafile,          /* contains the data */
+  const char * nooscfile,         /* contains the no-oscillation prediction */
+  bool rebin = false,             /* rebin? */
+  double emax = 6,                /* max energy plotted */
+  double nmax = 20                /* max oy y axis in spectrum plots */
 )
 
 {
-  double emin = 0;
-
-/*
-  const int kNErecoBins1Rmu = 3;
-  const double kErecoBinEdges1Rmu[kNErecoBins1Rmu+1] = {
-   0.000,  0.500,  1.000,  20.000
-  };
-*/
-  const int kNErecoBins1Rmu = 16;
-  const double kErecoBinEdges1Rmu[kNErecoBins1Rmu+1] = {
-   0.000,  0.300,  0.400,  0.500,
-   0.600,  0.700,  0.800,  0.900,  
-   1.000,  1.100,  1.250,  1.500,  2.000, 3.000,  4.000, 6.000, 20.000
-  };
-
   gStyle->SetOptStat(0);
 
-  TFile * f = new TFile(file,"read");
-  f->cd();
-  TH1D * hfit = (TH1D *) f->Get("sk_1Rmutotal");
+  const double emin = 0;
+
+  // binning used if spectra are rebinned
+  const int kNErecoBins1Rmu = 16;
+  const double kErecoBinEdges1Rmu[kNErecoBins1Rmu+1] = 
+  {
+    0.000,  0.300,  0.400,  0.500,
+    0.600,  0.700,  0.800,  0.900,  
+    1.000,  1.100,  1.250,  1.500,  2.000, 3.000,  4.000, 6.000, 20.000
+  };
+
+  TFile * ffit = new TFile(bestfitfile,"read");
+  ffit->cd();
+  TH1D * hfit = (TH1D *) fit->Get("sk_1Rmutotal");
   assert(hfit);
   TFile * fd = new TFile(datafile,"read");
   TH1D * hdata = (TH1D *) fd->Get("obs_spectrum");
@@ -137,6 +135,4 @@ void show_bestfit_spectrum_and_ratio
   low->SetGridy();
   ratio_fit->Draw("same");
   ratio_data->Draw("PE03X0 same");
-
-//  c1->SaveAs("marg_dchisq_comp.eps");
 }
