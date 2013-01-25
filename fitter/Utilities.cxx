@@ -5459,21 +5459,33 @@ double t2kana::util::NuMuSurvProbOsc2Flavour(
 // Note: Using only the numu disappearance analysis modes
 //
   if(m == kSKmNuMuNC1piC      || 
+     m == kSKmNuMuNC1pi0      ||
+     m == kSKmNuMuNCcoh       ||
      m == kSKmNuMuNCoth_mu    ||
+     m == kSKmNuMuNCoth_e     ||
      m == kSKmNuMuBarNC1piC   ||
+     m == kSKmNuMuBarNC1pi0   ||
+     m == kSKmNuMuBarNCcoh    ||
      m == kSKmNuMuBarNCoth_mu ||
+     m == kSKmNuMuBarNCoth_e  ||
      m == kSKmNuECCQE         ||
      m == kSKmNuECC1pi        ||
      m == kSKmNuECCcoh        ||
      m == kSKmNuECCoth_mu     ||
      m == kSKmNuENC1piC       ||
+     m == kSKmNuENC1pi0       ||
+     m == kSKmNuENCcoh        ||
      m == kSKmNuENCoth_mu     ||
+     m == kSKmNuENCoth_e      ||
      m == kSKmNuEBarCCQE      ||
      m == kSKmNuEBarCC1pi     ||
      m == kSKmNuEBarCCcoh     ||
      m == kSKmNuEBarCCoth_mu  ||
      m == kSKmNuEBarNC1piC    ||
-     m == kSKmNuEBarNCoth_mu  )
+     m == kSKmNuEBarNC1pi0    ||
+     m == kSKmNuEBarNCcoh     ||
+     m == kSKmNuEBarNCoth_mu  ||
+     m == kSKmNuEBarNCoth_e   )
   {
     return 1.;
   }
@@ -5482,10 +5494,12 @@ double t2kana::util::NuMuSurvProbOsc2Flavour(
      m == kSKmNuMuCC1pi       || 
      m == kSKmNuMuCCcoh       || 
      m == kSKmNuMuCCoth_mu    ||
+     m == kSKmNuMuCCoth_e     ||
      m == kSKmNuMuBarCCQE     ||
      m == kSKmNuMuBarCC1pi    ||
      m == kSKmNuMuBarCCcoh    ||
-     m == kSKmNuMuBarCCoth_mu) 
+     m == kSKmNuMuBarCCoth_mu || 
+     m == kSKmNuMuBarCCoth_e) 
   {
     return NuMuSurvProbOsc2Flavour(mixing23, dm23sq, Et);
   }

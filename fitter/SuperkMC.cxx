@@ -1369,21 +1369,23 @@ void SuperkMC::ApplyPhysHypothesisToTemplates(void)
     // loop over samples
     for(int is = 0; is < kns; is++) {
       SuperkSample_t s = kSKSamples[is];
+      //if(s == kSKsUndefined) continue;
       if(s != kSKsFCFV1RingMuLike) continue;
       // loop over sample modes
       for(int im = 0; im < knm; im++) { 
-         SuperkMode_t m = (SuperkMode_t) im;
-         // consider template?
-         bool skip = this->SkipTemplate(m);
+	 SuperkMode_t m = kSKReactionModes[is][im];
+	 if(m == kSKmUndefined) continue;
+	 // consider template?
+	 bool skip = this->SkipTemplate(m);
          if(skip) continue;
 #ifndef PRODUCTIONMODE
          // get source (systematics) and target (systematics + phys.hypothesis) template
          TH2D * mctempl_tgt = this -> Template(s,m,kSKMCtFin);
-         if(!mctempl_tgt) continue; 
+         if(!mctempl_tgt) exit(1);continue; 
 #endif
          // loop over Etrue
          for(int it = 1; it <= kNEtrueBins; it++) {
-           double Etrue = kEtrueBinEdges[it-1] + kOneMeV;
+           double Etrue = (kEtrueBinEdges[it-1] + kEtrueBinEdges[it]) / 2;
            double psurv = util::NuMuSurvProbOsc2Flavour(mixing23, dm23sq, Etrue, m);
            // loop over Ereco
            for(int ir = 1; ir <= kNErecoBins1Rmu; ir++) {
@@ -1412,7 +1414,8 @@ void SuperkMC::ApplyPhysHypothesisToTemplates(void)
       if(s != kSKsFCFV1RingMuLike) continue;
       // loop over sample modes
       for(int im = 0; im < knm; im++) { 
-         SuperkMode_t m = (SuperkMode_t) im;
+	 SuperkMode_t m = kSKReactionModes[is][im];
+	 if(m == kSKmUndefined) continue;
          // consider template?
          bool skip = this->SkipTemplate(m);
          if(skip) continue;
@@ -1423,7 +1426,7 @@ void SuperkMC::ApplyPhysHypothesisToTemplates(void)
 #endif
          // loop over Etrue
          for(int it = 1; it <= kNEtrueBins; it++) {
-           double Etrue = kEtrueBinEdges[it-1] + kOneMeV;
+           double Etrue = (kEtrueBinEdges[it-1] + kEtrueBinEdges[it]) / 2;
            double psurv = util::NuMuSurvProbDecay(sinsq2theta, alpha, Etrue, m);
            // loop over Ereco
            for(int ir = 1; ir <= kNErecoBins1Rmu; ir++) {
@@ -1453,7 +1456,8 @@ void SuperkMC::ApplyPhysHypothesisToTemplates(void)
       if(s != kSKsFCFV1RingMuLike) continue;
       // loop over sample modes
       for(int im = 0; im < knm; im++) { 
-         SuperkMode_t m = (SuperkMode_t) im;
+	 SuperkMode_t m = kSKReactionModes[is][im];
+	 if(m == kSKmUndefined) continue;
          // consider template?
          bool skip = this->SkipTemplate(m);
          if(skip) continue;
@@ -1462,7 +1466,7 @@ void SuperkMC::ApplyPhysHypothesisToTemplates(void)
          if(!mctempl_tgt) continue; 
          // loop over Etrue
          for(int it = 1; it <= kNEtrueBins; it++) {
-           double Etrue = kEtrueBinEdges[it-1] + kOneMeV;
+           double Etrue = (kEtrueBinEdges[it-1] + kEtrueBinEdges[it]) / 2;
            double psurv = util::NuMuSurvProbDecoh(sinsq2theta, musq, Etrue, m);
            // loop over Ereco
            for(int ir = 1; ir <= kNErecoBins1Rmu; ir++) {
