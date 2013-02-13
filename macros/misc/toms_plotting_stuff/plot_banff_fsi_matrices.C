@@ -1,10 +1,11 @@
 void plot_banff_fsi_matrices
 (
-
+ const char * banfffile = "inputs/official/2012/banff/postfit_banff_v8_osc_marg_MAQE_EBfix.root",
+ const char * fsifile   = "inputs/official/2012/fsi/FSIandSIError_ICL_SKDetectorBinning.root"
  )
 {
-  TFile fb("inputs/official/2012/banff/postfit_banff_v8_osc_marg_MAQE_EBfix.root");
-  TFile ff("inputs/official/2012/fsi/FSIandSIError_ICL_SKDetectorBinning.root");
+  TFile fb(banfffile);
+  TFile ff(fsifile);
 
   TCanvas * c = new TCanvas();
   c->SetRightMargin(0.15);
