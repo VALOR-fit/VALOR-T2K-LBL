@@ -50,6 +50,12 @@ void plot_tuning_steps_spectra
   h_ereco_flux_osc->GetXaxis()->SetTitle("E_{reco} / GeV");
   h_ereco_nom_noosc->GetXaxis()->SetTitle("E_{reco} / GeV");
   h_ereco_nom_osc->GetXaxis()->SetTitle("E_{reco} / GeV");
+  h_ereco_tun_noosc->GetYaxis()->SetTitle("Events per bin");
+  h_ereco_tun_osc->GetYaxis()->SetTitle("Events per bin");
+  h_ereco_flux_noosc->GetYaxis()->SetTitle("Events per bin");
+  h_ereco_flux_osc->GetYaxis()->SetTitle("Events per bin");
+  h_ereco_nom_noosc->GetYaxis()->SetTitle("Events per bin");
+  h_ereco_nom_osc->GetYaxis()->SetTitle("Events per bin");
 
   TCanvas * c = new TCanvas();
   c->Divide(2,1);
