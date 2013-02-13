@@ -69,6 +69,8 @@ void generate_toymc_ensemble
       tweak_sys_str = "All"; break;
     case(2):
       tweak_sys_str = "Special low energy numu flux increase"; break;
+    case(3):
+      tweak_sys_str = "Tweak all but SK and FSI"; break;
     default:
       tweak_sys_str = "None";
   }
@@ -168,6 +170,11 @@ void generate_toymc_ensemble
 	twkv[3] += 0.05;
         skexp->GetBANFF()->Tweak(true,&twkv);
         skexp->PrintSystematicVariations();
+     }
+     else if(tweak_systematics == 3) {
+       skexp->TweakAllBANFFSystematics();
+       skexp->TweakAllUncorrelatedXSecSystematics();
+       skexp->PrintSystematicVariations();
      }
 
      // Generate mock data

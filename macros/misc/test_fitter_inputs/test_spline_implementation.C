@@ -40,6 +40,7 @@ void test_spline_implementation
   // Create & config superk spectrum predictor
   SuperkExpectation skexp;
   if (!skexp.Read(config)) return;
+  skexp.Generate(ph);
 
   // Get the BANFF covariance matrix (for "1-sigma" BANFF tweaks)
   TMatrixD cov = skexp.GetBANFF()->CovMatrix();
@@ -88,8 +89,8 @@ void test_spline_implementation
       }//draw?
 
       //get the MC template (etrue-ereco)
-      //TH2D * mctempl = skexp.GetSuperkMC()->Template(conv::kSKsFCFV1RingMuLike,m,conv::kSKMCtOri);
-      TH2D * mctempl = skexp.GetNuXSec()->Template(conv::kSKsFCFV1RingMuLike,m);
+      TH2D * mctempl = skexp.GetSuperkMC()->Template(conv::kSKsFCFV1RingMuLike,m,conv::kSKMCtOri);
+      //TH2D * mctempl = skexp.GetNuXSec()->Template(conv::kSKsFCFV1RingMuLike,m);
 
       //loop over dials
       for(int idial = 0; idial < ntwkdials; idial++) {

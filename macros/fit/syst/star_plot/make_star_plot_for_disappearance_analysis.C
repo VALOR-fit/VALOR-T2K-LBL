@@ -86,12 +86,14 @@ void make_star_plot_for_disappearance_analysis
   osc_param_space->GetXaxis()->CenterTitle();
   osc_param_space->GetYaxis()->CenterTitle();
   TCanvas * c = new TCanvas("c","T2K numu disappearance analysis star plot",20,20,1000,1000);
+  c->SetLeftMargin(0.2);
   c->SetFillColor(0);
   c->SetBorderMode(0);
+  osc_param_space->GetYaxis()->SetTitleOffset(1.75);
   osc_param_space->Draw();
 
   // Add legend
-  TLegend * legend = new TLegend(0.80, 0.20, 0.95, 0.95);
+  TLegend * legend = new TLegend(0.80, 0.16, 0.95, 0.95);
   legend->SetFillColor(0);
   legend->SetBorderSize(1);
   legend->SetHeader("Systematic");
@@ -136,19 +138,19 @@ void make_star_plot_for_disappearance_analysis
          fit_data.ignore(1000, '\n');
 
        } else {
-         const char * systematic =  "";
-         double       bestfit_mixing12_p1sig  = 0;
-         double       bestfit_mixing13_p1sig  = 0.;
-         double       bestfit_mixing23_p1sig  = 0.;
-         double       bestfit_deltacp_p1sig   = 0.;
-         double       bestfit_dm12sq_p1sig    = 0.;
-         double       bestfit_dm23sq_p1sig    = 0.;
-         double       bestfit_mixing12_m1sig  = 0.;
-         double       bestfit_mixing13_m1sig  = 0.;
-         double       bestfit_mixing23_m1sig  = 0.;
-         double       bestfit_deltacp_m1sig   = 0.;
-         double       bestfit_dm12sq_m1sig    = 0.;
-         double       bestfit_dm23sq_m1sig    = 0.;
+         string systematic =  "";
+         double bestfit_mixing12_p1sig  = 0;
+         double bestfit_mixing13_p1sig  = 0.;
+         double bestfit_mixing23_p1sig  = 0.;
+         double bestfit_deltacp_p1sig   = 0.;
+         double bestfit_dm12sq_p1sig    = 0.;
+         double bestfit_dm23sq_p1sig    = 0.;
+         double bestfit_mixing12_m1sig  = 0.;
+         double bestfit_mixing13_m1sig  = 0.;
+         double bestfit_mixing23_m1sig  = 0.;
+         double bestfit_deltacp_m1sig   = 0.;
+         double bestfit_dm12sq_m1sig    = 0.;
+         double bestfit_dm23sq_m1sig    = 0.;
 
          fit_data >> systematic 
                   >> bestfit_mixing12_p1sig 
@@ -182,7 +184,9 @@ void make_star_plot_for_disappearance_analysis
          arr_m1sig->Draw();
 
          // add legend entry
-         legend->AddEntry(arr_p1sig, systematic, "L");
+	 if(systematic.find("osc_") != string::npos)
+	   systematic.erase(systematic.begin(), systematic.begin()+4);
+         legend->AddEntry(arr_p1sig, util::AsStringPaperRooTex(util::PhysParamIdFromString(systematic)).c_str(), "L");
 
          isyst++;
          // reset and re-use formatting styles, shouldn't have anywhere near that many systematics
@@ -195,8 +199,8 @@ void make_star_plot_for_disappearance_analysis
   fit_data.close();
 
   if(TMath::Abs(1.0-true_mixing23) < conv::kASmallNum) {
-    legend->SetX1(0.1);
-    legend->SetX2(0.25);
+    legend->SetX1(0.2);
+    legend->SetX2(0.35);
   }
   legend->Draw();
 
@@ -206,43 +210,45 @@ void make_star_plot_for_disappearance_analysis
   vector<string> groupname = util::Tokens(tokened, ".");
   string group = groupname[0];
 
-  c->SaveAs(Form("%s-%f-%f_big.pdf",group.c_str(),true_mixing23,true_dm23sq));
+  c->SaveAs(Form("%s-%f-%f_big.eps",group.c_str(),true_mixing23,true_dm23sq));
 
   if(TMath::Abs(0.9-true_mixing23) < conv::kASmallNum && TMath::Abs(2.4E-3-true_dm23sq) < conv::kASmallNum) {
     osc_param_space->GetXaxis()->SetRangeUser(0.878,0.916);
     osc_param_space->GetYaxis()->SetRangeUser(0.00227,0.00253);
-    c->SaveAs(Form("%s-%f-%f.pdf",group.c_str(),true_mixing23,true_dm23sq));
+    c->SaveAs(Form("%s-%f-%f.eps",group.c_str(),true_mixing23,true_dm23sq));
 
     osc_param_space->GetXaxis()->SetRangeUser(0.895,0.905);
     osc_param_space->GetYaxis()->SetRangeUser(0.002375,0.002425);
-    c->SaveAs(Form("%s-%f-%f_zoom.pdf",group.c_str(),true_mixing23,true_dm23sq));
+    c->SaveAs(Form("%s-%f-%f_zoom.eps",group.c_str(),true_mixing23,true_dm23sq));
 
     osc_param_space->GetXaxis()->SetRangeUser(0.898,0.902);
     osc_param_space->GetYaxis()->SetRangeUser(0.002395,0.002405);
-    c->SaveAs(Form("%s-%f-%f_zoom2.pdf",group.c_str(),true_mixing23,true_dm23sq));
+    c->SaveAs(Form("%s-%f-%f_zoom2.eps",group.c_str(),true_mixing23,true_dm23sq));
   }
 
   else if(TMath::Abs(1.0-true_mixing23) < conv::kASmallNum && TMath::Abs(2.4E-3-true_dm23sq) < conv::kASmallNum) {
     osc_param_space->GetXaxis()->SetRangeUser(0.982,1.);
     osc_param_space->GetYaxis()->SetRangeUser(0.00227,0.00253);
-    c->SaveAs(Form("%s-%f-%f.pdf",group.c_str(),true_mixing23,true_dm23sq));
+    c->SaveAs(Form("%s-%f-%f.eps",group.c_str(),true_mixing23,true_dm23sq));
 
     osc_param_space->GetXaxis()->SetRangeUser(0.995,1.);
     osc_param_space->GetYaxis()->SetRangeUser(0.002375,0.002425);
-    c->SaveAs(Form("%s-%f-%f_zoom.pdf",group.c_str(),true_mixing23,true_dm23sq));
+    c->SaveAs(Form("%s-%f-%f_zoom.eps",group.c_str(),true_mixing23,true_dm23sq));
 
     osc_param_space->GetXaxis()->SetRangeUser(0.998,1.);
     osc_param_space->GetYaxis()->SetRangeUser(0.002395,0.002405);
-    c->SaveAs(Form("%s-%f-%f_zoom2.pdf",group.c_str(),true_mixing23,true_dm23sq));
+    c->SaveAs(Form("%s-%f-%f_zoom2.eps",group.c_str(),true_mixing23,true_dm23sq));
   }
   
+  //cout << osc_param_space->GetXaxis()->GetNdivisions() << endl;
+  osc_param_space->GetXaxis()->SetNdivisions(507,true);
   osc_param_space->GetXaxis()->SetRangeUser(true_mixing23 - (1.1* stat_av_mixing23), true_mixing23 + (1.1* stat_av_mixing23));
   osc_param_space->GetYaxis()->SetRangeUser(true_dm23sq - (1.1* stat_av_dm23sq), true_dm23sq + (1.1* stat_av_dm23sq));
-  c->SaveAs(Form("%s-%f-%f_testbig.pdf",group.c_str(),true_mixing23,true_dm23sq));
+  c->SaveAs(Form("%s-%f-%f_testbig.eps",group.c_str(),true_mixing23,true_dm23sq));
 
   osc_param_space->GetXaxis()->SetRangeUser(true_mixing23 - (0.6* stat_av_mixing23), true_mixing23 + (0.6* stat_av_mixing23));
   osc_param_space->GetYaxis()->SetRangeUser(true_dm23sq - (0.6* stat_av_dm23sq), true_dm23sq + (0.6* stat_av_dm23sq));
-  c->SaveAs(Form("%s-%f-%f_testzoom.pdf",group.c_str(),true_mixing23,true_dm23sq));
+  c->SaveAs(Form("%s-%f-%f_testzoom.eps",group.c_str(),true_mixing23,true_dm23sq));
   
   cout << "Done! " << endl;
 }

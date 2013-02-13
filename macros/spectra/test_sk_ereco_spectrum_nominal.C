@@ -125,7 +125,7 @@ void test_sk_ereco_spectrum_nominal
   TLegend * legend = new TLegend(0.6, 0.4, 0.9, 0.9);
   legend->SetFillColor(0);
   legend->SetBorderSize(0);
-  hErecoTot->GetXaxis()->SetRangeUser(0,7);
+  hErecoTot->GetXaxis()->SetRangeUser(0,7-conv::kOneMeV);
   hErecoTot->Draw();
   hErecoTot->GetXaxis()->SetTitle("E_{reco} (GeV)");
   hErecoTot->GetYaxis()->SetTitle("Number of events");

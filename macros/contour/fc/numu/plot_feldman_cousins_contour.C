@@ -61,14 +61,17 @@ void plot_feldman_cousins_contour(
   int nsmoothings = 0,
   bool show_contours_with_systematics=true,
   bool show_contours_without_systematics=true,
-  bool show_external_contours=false,
+  bool show_external_contours=true,
+  const char * underlay_dchisqcrit = 0, /* Plot the dchisq_crit surface under the contours. e.g. "90statsyst", "99statonly" */
   bool show_68cl=true,
   bool show_90cl=true,
   bool show_95cl=false,
   bool show_99cl=false,
   double dmsq_frac_syst_err_bestfit=-1.,
   double sinsq2theta_frac_syst_err_bestfit=-1.,
-  const char * outfile = "fc_contours.root"
+  const char * outfile = "fc_contours.root",
+  bool hack_away_the_high_dm32sq = true, /* FC surface is too small in dm32sq. use this to get rid of the awful border along the top */
+  bool save_plots = true
 )
 {
   gROOT->Reset();
@@ -76,15 +79,15 @@ void plot_feldman_cousins_contour(
   //
   // Define dm23sq, mixing23 range and step  
   //
-  double mixing23_min   = 0.75;
+  double mixing23_min   = 0.9;
 //double mixing23_min   = 0.0;
   double mixing23_max   = 1.0;
   double mixing23_step  = 0.005;
-  double dm23sq_min     = 1.5E-3;
+  double dm23sq_min     = 2.05E-3;
 //double dm23sq_min     = 1.0E-3;
-  double dm23sq_max     = 4.0E-3;
+  double dm23sq_max     = 2.95E-3;
 //double dm23sq_max     = 6.0E-3;
-  double dm23sq_step    = 1.0E-4;
+  double dm23sq_step    = 5.0E-5;
 
   //
   // Define grid so that min and max are at the bin centre 
@@ -153,6 +156,7 @@ void plot_feldman_cousins_contour(
   }
 
   for(int ism = 0; ism < nsmoothings; ism++) {
+    cout << "Smoothing ... " << endl;
     if(hDeltaChisqCrit68StatOnly) hDeltaChisqCrit68StatOnly->Smooth();
     if(hDeltaChisqCrit90StatOnly) hDeltaChisqCrit90StatOnly->Smooth();
     if(hDeltaChisqCrit95StatOnly) hDeltaChisqCrit95StatOnly->Smooth();
@@ -227,6 +231,14 @@ void plot_feldman_cousins_contour(
 	  hCL90StatSyst->SetBinContent(mixing23_bin, dm23sq_bin, dchisq_data - dchisq90_crit_statsyst);
 	  hCL95StatSyst->SetBinContent(mixing23_bin, dm23sq_bin, dchisq_data - dchisq95_crit_statsyst);
 	  hCL99StatSyst->SetBinContent(mixing23_bin, dm23sq_bin, dchisq_data - dchisq99_crit_statsyst);
+	  if(hack_away_the_high_dm32sq) {
+	    if(dm23sq > 0.0033 && dchisq_data < 1E-8) {
+	      hCL68StatSyst->SetBinContent(mixing23_bin, dm23sq_bin, 999);
+	      hCL90StatSyst->SetBinContent(mixing23_bin, dm23sq_bin, 999);
+	      hCL95StatSyst->SetBinContent(mixing23_bin, dm23sq_bin, 999);
+	      hCL99StatSyst->SetBinContent(mixing23_bin, dm23sq_bin, 999);
+	    }
+	  }
 	}
 
       //cout << "Critical DeltaChiSq (68% CL) : (stat only) = " << dchisq68_crit_statonly << ", (stat+syst) = " << dchisq68_crit_statsyst << endl;
@@ -246,6 +258,7 @@ void plot_feldman_cousins_contour(
   ConfidenceContour->cd(1);
   gPad->SetLeftMargin(0.15);
   gPad->SetBottomMargin(0.15);
+  gPad->SetRightMargin(0.1);
 
   TH2D * hframe = (TH2D*) gPad->DrawFrame(mixing23_min, dm23sq_min, mixing23_max, dm23sq_max);
   hframe->GetXaxis()->SetTitle("sin^{2}2#theta_{23}");
@@ -253,7 +266,7 @@ void plot_feldman_cousins_contour(
 //hframe->GetXaxis()->SetLimits(0.,1.002);
 //hframe->GetYaxis()->SetLimits(0.001,0.004);
   hframe->GetXaxis()->SetTitleOffset(1.2);
-  hframe->GetYaxis()->SetTitleOffset(1.4);
+  hframe->GetYaxis()->SetTitleOffset(1.2);
   hframe->GetXaxis()->CenterTitle();
   hframe->GetYaxis()->CenterTitle();
   hframe->Draw();
@@ -267,6 +280,26 @@ void plot_feldman_cousins_contour(
   set_contour_style(hCL95StatOnly,      kGreen,    2, kDashed);
   set_contour_style(hCL99StatOnly,      kYellow+2, 2, kDashed);
 
+  //Draw dchisq_crit surface under the contours. Used to see if there are any holes in the FC
+  //statonly
+  if(underlay_dchisqcrit == "68statonly" && show_contours_without_systematics)
+    hDeltaChisqCrit68StatOnly->Draw("colzsame");
+  if(underlay_dchisqcrit == "90statonly" && show_contours_without_systematics)
+    hDeltaChisqCrit90StatOnly->Draw("colzsame");
+  if(underlay_dchisqcrit == "95statonly" && show_contours_without_systematics)
+    hDeltaChisqCrit95StatOnly->Draw("colzsame");
+  if(underlay_dchisqcrit == "99statonly" && show_contours_without_systematics)
+    hDeltaChisqCrit99StatOnly->Draw("colzsame");
+  //statsyst
+  if(underlay_dchisqcrit == "68statsyst" && show_contours_with_systematics)
+    hDeltaChisqCrit68StatSyst->Draw("colzsame");
+  if(underlay_dchisqcrit == "90statsyst" && show_contours_with_systematics)
+    hDeltaChisqCrit90StatSyst->Draw("colzsame");
+  if(underlay_dchisqcrit == "95statsyst" && show_contours_with_systematics)
+    hDeltaChisqCrit95StatSyst->Draw("colzsame");
+  if(underlay_dchisqcrit == "99statsyst" && show_contours_with_systematics)
+    hDeltaChisqCrit99StatSyst->Draw("colzsame");
+    
   if(show_99cl) {
     if(show_contours_with_systematics    ) { hCL99StatSyst -> Draw("cont3same");  }
     if (show_contours_without_systematics) { hCL99StatOnly -> Draw("cont3same");  }
@@ -329,10 +362,10 @@ void plot_feldman_cousins_contour(
     fc_90cl_statonly = TString(label) + TString(", ") + fc_90cl_statonly;
     fc_95cl_statonly = TString(label) + TString(", ") + fc_95cl_statonly;
     fc_99cl_statonly = TString(label) + TString(", ") + fc_99cl_statonly;
-    pl_68cl_statonly = TString(label) + TString(", ") + pl_68cl_statonly;
-    pl_90cl_statonly = TString(label) + TString(", ") + pl_90cl_statonly;
-    pl_95cl_statonly = TString(label) + TString(", ") + pl_95cl_statonly;
-    pl_99cl_statonly = TString(label) + TString(", ") + pl_99cl_statonly;
+    //pl_68cl_statonly = TString(label) + TString(", ") + pl_68cl_statonly;
+    //pl_90cl_statonly = TString(label) + TString(", ") + pl_90cl_statonly;
+    //pl_95cl_statonly = TString(label) + TString(", ") + pl_95cl_statonly;
+    //pl_99cl_statonly = TString(label) + TString(", ") + pl_99cl_statonly;
   }
 
   TLegend * legend = new TLegend(0.17,0.72,0.36,0.9);
@@ -352,9 +385,12 @@ void plot_feldman_cousins_contour(
   }
   if(show_external_contours) {
     if(show_90cl) {
-      legend->AddEntry(minos2012_90cl, "MINOS 2012 (10.71#times10^{20} POT + 37.9 kton*yr), 90% CL");
-      legend->AddEntry(skzen2012_90cl, "SK1-4 zenith angle, 90% CL");
-      legend->AddEntry(skle2012_90cl,  "SK1-4 L/E, 90% CL");
+      minos2012_90cl->SetName("minos2012_90cl");
+      skzen2012_90cl->SetName("skzen2012_90cl");
+      skle2012_90cl ->SetName("skle2012_90cl");
+      legend->AddEntry("minos2012_90cl", "MINOS 2012 (10.71#times10^{20} POT + 37.9 kton*yr), 90% CL","L");
+      legend->AddEntry("skzen2012_90cl", "SK1-4 zenith angle, 90% CL","L");
+      legend->AddEntry("skle2012_90cl",  "SK1-4 L/E, 90% CL","L");
     }
   }
   legend->SetBorderSize(0);
@@ -374,6 +410,16 @@ void plot_feldman_cousins_contour(
                               dm23sq_bestfit+dm23sq_bestfit*dmsq_frac_syst_err_bestfit);
     line1->Draw("same");
     line2->Draw("same");
+  }
+
+  if(save_plots) {
+    ConfidenceContour->SaveAs("FCcontour.eps");
+    hframe->Draw();
+    hDeltaChisqCrit68StatSyst->Draw("colzsame");
+    ConfidenceContour->SaveAs("FCsurface68.eps");
+    hframe->Draw();
+    hDeltaChisqCrit90StatSyst->Draw("colzsame");
+    ConfidenceContour->SaveAs("FCsurface90.eps");
   }
 
   TFile fout(outfile,"RECREATE");

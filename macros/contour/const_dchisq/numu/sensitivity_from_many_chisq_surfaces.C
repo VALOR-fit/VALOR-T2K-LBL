@@ -31,7 +31,7 @@ void sensitivity_from_many_chisq_surfaces
   TFile f1(filename1);
   TH2D * dchisq1 = 0;
   f1.GetObject(Form("%s_%d",surfacenameprefix,0),dchisq1);
-  if(!dchisq1) { f1.Close(); return; }
+  if(!dchisq1) { f1.Close(); cout << Form("%s_%d",surfacenameprefix,0) << " does not exist. Exiting" << endl; return; }
   TH2D * avdchisq = new TH2D(dchisq1->GetTitle(), dchisq1->GetName(), dchisq1->GetNbinsX(), dchisq1->GetXaxis()->GetXmin(), dchisq1->GetXaxis()->GetXmax(), dchisq1->GetNbinsY(), dchisq1->GetYaxis()->GetXmin(), dchisq1->GetYaxis()->GetXmax());
 
   //Histogram to store the left-most point in mixing23
@@ -46,6 +46,7 @@ void sensitivity_from_many_chisq_surfaces
   }
   double kitexcluded90 = 1, kitexcluded68 = 1;
   if(kitdchisq) {
+    cout << "found chisq surface to compare with" << endl;
     double chisqmin = kitdchisq->GetMinimum();
     for(int ix = 1; ix <= kitdchisq->GetNbinsX(); ix++) {
       for(int iy = 1; iy <= kitdchisq->GetNbinsY(); iy++) {
@@ -108,6 +109,7 @@ void sensitivity_from_many_chisq_surfaces
   pvalue68 /= nfilesexist;
 
   cout << "Exclusion p-values: 90% " << pvalue90 << "\t 68% " << pvalue68 << endl;
+  cout << "Data exclusion 90%: " << kitexcluded90 << "\t 68%: " << kitexcluded68 << endl;
 
   //now do the average
   for(int ix = 1; ix <= avdchisq->GetNbinsX(); ix++) {
@@ -125,6 +127,26 @@ void sensitivity_from_many_chisq_surfaces
   cout << endl << endl << "average chisq " << minchisq << " at " << avdchisq->GetXaxis()->GetBinCenter(minx) << " " << avdchisq->GetYaxis()->GetBinCenter(miny) << endl;
   cout << "Average of " << nfilesexist << " files" << endl;
 
+  //get the minimum < 1
+  avdchisq->GetXaxis()->SetRangeUser(0,1.0);
+  double minchisqb = avdchisq->GetMinimum();
+  cout << endl << endl << "average chisq " << minchisqb << endl;
+  avdchisq->GetXaxis()->SetRangeUser(0,2.0);
+  double chi = 9999;
+  int min2x, min2y, min2z;
+  for(int ix = 1; ix <= avdchisq->GetNbinsX(); ix++) {
+    if(avdchisq->GetBinCenter(ix) > 1.0) continue;
+    cout << avdchisq->GetBinCenter(ix) << endl;
+    for(int iy = 1; iy <= avdchisq->GetNbinsY(); iy++) {
+      if(avdchisq->GetBinContent(ix,iy) < chi) {
+	chi = avdchisq->GetBinContent(ix,iy);
+	min2x = ix;
+	min2y = iy;
+      }
+    }
+  }
+  cout << "average chisq " << chi << " at " << avdchisq->GetXaxis()->GetBinCenter(min2x) << " " << avdchisq->GetYaxis()->GetBinCenter(min2y) << endl;
+
   //subtract the average (if required)
   if(ischisq) {
     for(int ix = 1; ix <= avdchisq->GetNbinsX(); ix++) {
@@ -135,6 +157,26 @@ void sensitivity_from_many_chisq_surfaces
     }//ix
   }//ischisq
 
+  //expected exclusion
+  double expt_exclude90 = 1, expt_exclude68 = 1;
+  for(int ix = 1; ix <= avdchisq->GetNbinsX(); ix++) {
+    for(int iy = 1; iy <= avdchisq->GetNbinsY(); iy++) {
+      double current = avdchisq->GetBinContent(ix,iy);
+      if(current <= 4.61) {
+	double bincenter = avdchisq->GetXaxis()->GetBinCenter(ix);
+	if(bincenter < expt_exclude90) {
+	  expt_exclude90 = bincenter;
+	}
+	if(current <= 2.30) {
+	  if(bincenter < expt_exclude68) {
+	    expt_exclude68 = bincenter;
+	  }
+	}
+      }//dchisq<4.61
+    }//iy
+  }//ix
+  cout << "Expected exclusion 90%: " << expt_exclude90 << "\t 68%: " << expt_exclude68 << endl;
+  
   // Get external contours
   std::string line;
   int ip = 0;
@@ -275,6 +317,9 @@ void sensitivity_from_many_chisq_surfaces
   avdchisq->Draw("cont1");
   TLegend *leg = new TLegend(0.0,0.8,0.25,1.0);
   leg->SetFillColor(0);
+  leg->SetFillStyle(0);
+  leg->SetTextFont(42);
+  leg->SetBorderSize(0);
   leg->AddEntry(avdchisq,"VaLOR","l");
   if(kitdchisq) {
     kitdchisq->SetLineStyle(2);
@@ -320,23 +365,56 @@ void sensitivity_from_many_chisq_surfaces
   //Now, get the exclusion of mixing angle
   mixing23_exclude68->SetTitle("");
   mixing23_exclude68->SetLineColor(kBlack);
+  mixing23_exclude68->GetXaxis()->SetTitle("sin^{2}(2#theta_{23})");
+  mixing23_exclude68->GetYaxis()->SetTitle("N fits");
   mixing23_exclude68->Draw();
   mixing23_exclude90->SetLineColor(kRed);
   mixing23_exclude90->Draw("same");
   lkitexcluded90.SetLineColor(kRed);
   lkitexcluded90.SetLineStyle(2);
   lkitexcluded68.SetLineStyle(2);
+  lkitexcluded90.SetLineWidth(2);
+  lkitexcluded68.SetLineWidth(2);
+  lkitexcluded90.SetY2(mixing23_exclude68->GetMaximum()*1.05);
+  lkitexcluded68.SetY2(mixing23_exclude68->GetMaximum()*1.05);
   lkitexcluded90.Draw("same");
   lkitexcluded68.Draw("same");
-  leg->AddEntry(mixing23_exclude90,"90% exclusion","l");
-  leg->AddEntry(mixing23_exclude68,"68% exclusion","l");
+  //make some histograms to pose as the TLines in the legend
+  TH1 * lkitexcluded90fake = new TH1F("", "", 1, 0, 1);
+  TH1 * lkitexcluded68fake = new TH1F("", "", 1, 0, 1);
+  lkitexcluded90fake->SetLineColor(kRed);
+  lkitexcluded90fake->SetLineStyle(2);
+  lkitexcluded68fake->SetLineStyle(2);
+  lkitexcluded90fake->SetLineWidth(2);
+  lkitexcluded68fake->SetLineWidth(2);
+  leg->SetX1NDC(0.15);
+  leg->SetX2NDC(0.45);
+  leg->SetY1NDC(0.6);
+  leg->SetY2NDC(0.9);
+  leg->AddEntry(mixing23_exclude90,"90% CL exclusion","l");
+  leg->AddEntry(lkitexcluded90fake, Form("Data %0.3f", kitexcluded90), "l");
+  leg->AddEntry((TObject*)0, Form("p-value %0.3f", pvalue90), "");
+  leg->AddEntry(mixing23_exclude68,"68% CL exclusion","l");
+  leg->AddEntry(lkitexcluded68fake, Form("Data %0.3f", kitexcluded68), "l");
+  leg->AddEntry((TObject*)0, Form("p-value %0.3f", pvalue68), "");
+  //leg->AddEntry((TObject*)0, Form("Data %0.3f, p-value %0.3f", kitexcluded68, pvalue68), "");
   leg->Draw();
   TText * texclude90 = new TText(0.8,80,Form("90%: Data %0.3f, p-value %0.3f",kitexcluded90,pvalue90));
-  texclude90->Draw("same");
+  //texclude90->Draw("same");
   TText * texclude68 = new TText(0.8,60,Form("68%: Data %0.3f, p-value %0.3f",kitexcluded68,pvalue68));
-  texclude68->Draw("same");
-  c2->SaveAs("exclusion.pdf");
+  //texclude68->Draw("same");
+  c2->SaveAs("exclusion.eps");
   leg->Clear();
+
+
+  avdchisq->Draw("cont1");
+  TMarker bf(avdchisq->GetXaxis()->GetBinCenter(minx), avdchisq->GetYaxis()->GetBinCenter(miny), 29);
+  bf.SetMarkerSize(1.8);
+  bf.Draw();
+  TMarker bf2(avdchisq->GetXaxis()->GetBinCenter(min2x), avdchisq->GetYaxis()->GetBinCenter(min2y), 29);
+  bf2.SetMarkerSize(1.8);
+  bf2.Draw();
+  c2->SaveAs("contz.pdf");
 
   fout.Close();
 }

@@ -10,6 +10,9 @@
 
 void test_nsk_twk_osc
 (
+  bool         thrownon23  = true,
+  const int    nthrows     = 100,
+  const char * hier        = "normal",
   const char * config_file = "analysis_configuration.xml"
 )
 {
@@ -17,15 +20,16 @@ void test_nsk_twk_osc
   using namespace t2kana;
 
   conv::SuperkSample_t s = conv::kSKsFCFV1RingMuLike;
+  Opt::Instance()->gMassHierarchyAssumed = util::HierarchyFromString(hier);
 
   const char * config = Form("%s/config/%s", gSystem->Getenv("T2KOSCANA"), config_file);
   cout << "Reading analysis configuration from: " << config << endl;
 
-  double mixing23_min  =  0.0;
+  double mixing23_min  =  0.6;
   double mixing23_max  =  1.0;
-  double mixing23_step =  0.01;
-  double dm23sq_min    =  1E-3;
-  double dm23sq_max    = 30E-3;
+  double mixing23_step =  0.005;
+  double dm23sq_min    =  1.0E-3;
+  double dm23sq_max    =  4.0E-3;
   double dm23sq_step   =  1E-4;
 
  // make sure that min and max are at the bin centre
@@ -46,6 +50,7 @@ void test_nsk_twk_osc
   skexp.Read(config);
 
   // fit params
+  //PhysHypothesis ph(t2kana::conv::kHypOsc3F);
   PhysHypothesis ph(t2kana::conv::kHypNuMuDisapp2F);
 
   // generate predictions
@@ -55,6 +60,12 @@ void test_nsk_twk_osc
        double dm23sq   = nsk_vs_osc_params->GetYaxis()->GetBinCenter(j);
        ph.SetCurrValue(t2kana::conv::kPhypMixing23, mixing23);
        ph.SetCurrValue(t2kana::conv::kPhypDm23sq,   dm23sq);
+       if(ph.Hypothesis() == conv::kHypOsc3F) {
+	 ph.SetCurrValue(conv::kPhypMixing12,  conv::kGlobFitSinsq2Theta12);
+	 ph.SetCurrValue(conv::kPhypMixing13,  conv::kGlobFitSinsq2Theta13);
+	 ph.SetCurrValue(conv::kPhypDeltaCP,   conv::kGlobFitDeltaCP);
+	 ph.SetCurrValue(conv::kPhypDm12sq,    conv::kGlobFitDm12sq);
+       }
 
        // generate predictions
        skexp.Generate(ph);
@@ -62,8 +73,26 @@ void test_nsk_twk_osc
        // integrate Ereco distribution
        double nsk = skexp.CurrPredictedErecoSpectrum(s)->Integral();
 
+       if(thrownon23) {
+	 double nskmin = 99999;
+	 double nskmax = 0;
+	 for(int t = 0; t < nthrows; t++) {
+	   ph.SetCurrValue(conv::kPhypMixing12,  util::RandomizeMixing12());
+	   ph.SetCurrValue(conv::kPhypMixing13,  util::RandomizeMixing13());
+	   ph.SetCurrValue(conv::kPhypDeltaCP,   util::RandomizeDeltaCP());
+	   ph.SetCurrValue(conv::kPhypDm12sq,    util::RandomizeDm12sq());
+	   skexp.Generate(ph);
+	   double thisnsk = skexp.CurrPredictedErecoSpectrum(s)->Integral();
+	   nsksq += pow(thisnsk - nsk, 2);
+	   nskmin = TMath::Min(thisnsk, nskmin);
+	   nskmax = TMath::Max(thisnsk, nskmax);
+	 }
+	 nsk = (TMath::Abs(nsk-nskmin) > TMath::Abs(nsk-nskmax)) ? nskmin : nskmax;
+       }
+
        nsk_vs_osc_params->SetBinContent(i,j,nsk);
     }//j
+    cout << "x bin " << i << " of " << nsk_vs_osc_params->GetNbinsX() << endl;
   }//i
 
   gStyle->SetOptStat(0);

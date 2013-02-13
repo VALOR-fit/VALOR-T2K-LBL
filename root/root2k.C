@@ -69,6 +69,14 @@ void t2k_style()
   t2kStyle->SetPadTickX(1);
   t2kStyle->SetPadTickY(1);
 
+  //add the stat box
+  /*
+  t2kStyle->SetOptFit(1); // show fit results
+  t2kStyle->SetOptStat(1100); // show mean & RMS only
+  //t2kStyle->SetStatStyle(0); //make stat boxes see through
+  t2kStyle->SetStatBorderSize(0);
+  t2kStyle->SetTextFont(42); //less bold
+
   // Add a greyscale palette for 2D plots
   /*
   int ncol=50;

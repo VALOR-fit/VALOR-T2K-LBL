@@ -58,7 +58,8 @@ void make_feldman_cousins_deltachisqcrit_surface(
   int    confidenceLevel [nConfidenceLevel] = {68,   90,   95,   99   };
   double stdDeltaChi2    [nConfidenceLevel] = {2.30, 4.61, 5.99, 11.34};
   int    percentile      [nConfidenceLevel];
-  
+  int    percentile_error[nConfidenceLevel];
+
   //
   // Define grid
   //
@@ -120,6 +121,7 @@ void make_feldman_cousins_deltachisqcrit_surface(
 
   TChain chain("fcnt");
   chain.Add(Form("%s/*root", input_data_directory));
+  cout << chain.GetEntries() << endl;
 
   int nx1 = TMath::Max(1,              sinsq2theta_min_bin);
   int nx2 = TMath::Min(mixing23_nbins, sinsq2theta_max_bin);
@@ -137,7 +139,7 @@ void make_feldman_cousins_deltachisqcrit_surface(
     for(int idm23sq_bin = 1; idm23sq_bin <= dm23sq_nbins; idm23sq_bin++) {
 
       bool in_range_dm23sq = (idm23sq_bin >= dm23sq_min_bin && 
-			      idm23sq_bin <= dm23sq_max_bin &&);
+			      idm23sq_bin <= dm23sq_max_bin);
       if(!in_range_dm23sq) {
 	//still fill the full dm23sq surface
 	for(int i=0; i<nConfidenceLevel; i++) {
@@ -195,12 +197,12 @@ void make_feldman_cousins_deltachisqcrit_surface(
            hDeltaChi2Surface[i]->SetBinContent(imixing23_bin, idm23sq_bin, (*deltaChi2Iter));
 	   // now get the error
 	   deltaChi2Iter = deltaChi2.begin() + percentile[i] - percentile_error[i];
-	   if(mixing23_bin<4) {
+	   if(imixing23_bin<4) {
 	     cout<<" min "<<(*deltaChi2Iter);
 	   }
 	   hDeltaChi2SurfaceMin[i]->SetBinContent(imixing23_bin, idm23sq_bin, (*deltaChi2Iter));
 	   deltaChi2Iter = deltaChi2.begin() + percentile[i] + percentile_error[i];
-	   if(mixing23_bin<4) {
+	   if(imixing23_bin<4) {
 	     cout<<" max "<<(*deltaChi2Iter)<<endl;
 	   }
 	   hDeltaChi2SurfaceMax[i]->SetBinContent(imixing23_bin, idm23sq_bin, (*deltaChi2Iter));
@@ -220,6 +222,28 @@ void make_feldman_cousins_deltachisqcrit_surface(
 
     }//end of for(int idm23sq_bin=1; idm23sq_bin<dm23sq_nbins; idm23sq_bin++)
   }//end of for(int imixing23_bin=1; imixing23_bin<mixing23_nbins;imixing23_bin++)
+
+  //Print out the absolute error on the value of dchisq_crit
+  for(int i = 1; i <= hDeltaChi2Surface68->GetNbinsX(); i++) {
+    for(int j = 1; j <= hDeltaChi2Surface68->GetNbinsY(); j++) {
+      double max = hDeltaChi2Surface68_Max->GetBinContent(i,j);
+      double nom = hDeltaChi2Surface68->GetBinContent(i,j);
+      double min = hDeltaChi2Surface68_Min->GetBinContent(i,j);
+      if(TMath::Abs(2.30-nom) < 1E-8) continue; //skip non-FC
+      if(TMath::Abs(min-max) < 0.001) continue; //skip small errors
+      cout << "Min:" <<  min << "\t Nom: " << nom << "\t Max: " << max << "\t\t Min-Max: " << min-max << endl;
+    }
+  }
+  for(int i = 1; i <= hDeltaChi2Surface90->GetNbinsX(); i++) {
+    for(int j = 1; j <= hDeltaChi2Surface90->GetNbinsY(); j++) {
+      double max = hDeltaChi2Surface90_Max->GetBinContent(i,j);
+      double nom = hDeltaChi2Surface90->GetBinContent(i,j);
+      double min = hDeltaChi2Surface90_Min->GetBinContent(i,j);
+      if(TMath::Abs(4.61-nom) < 1E-8) continue; //skip non-FC
+      if(TMath::Abs(min-max) < 0.001) continue; //skip small errors
+      cout << "Min:" <<  min << "\t Nom: " << nom << "\t Max: " << max << "\t\t Min-Max: " << min-max << endl;
+    }
+  }
 
   TCanvas *DeltaChi2Surface = new TCanvas("DeltaChi2Surface", "DeltaChi2Surface", 600, 600);
   DeltaChi2Surface->Divide(1);

@@ -311,8 +311,8 @@ void feldman_cousins_fitting_job
        double bestfit_chisq    = fit_inputs->BestFitChisquare();
 
        // Now do a 0+N parameter fit, to get the chisq true
-       fparm->Update(conv::kPhypMixing23, input_mixing23);
-       fparm->Update(conv::kPhypDm23sq,   input_dm23sq);
+       fparm->SetInitValue(conv::kPhypMixing23, input_mixing23);
+       fparm->SetInitValue(conv::kPhypDm23sq,   input_dm23sq);
        fparm->FixParameter(conv::kPhypMixing23);
        fparm->FixParameter(conv::kPhypDm23sq);
 
@@ -322,7 +322,7 @@ void feldman_cousins_fitting_job
        //turn hesse errors off: we're not even saving errors!
        fitter2.SetHesseErrors(false);
        fitter2.DoTheFit();
-       double chisq_for_input_params = fit_inputs2->Chisquare();
+       double chisq_for_input_params = fit_inputs2->BestFitChisquare();
 
        //  Print out result
        cout << "- Chisq (Best-fit params:" 
