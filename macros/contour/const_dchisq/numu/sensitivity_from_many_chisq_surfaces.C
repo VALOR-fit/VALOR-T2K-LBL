@@ -109,6 +109,7 @@ void sensitivity_from_many_chisq_surfaces
   pvalue68 /= nfilesexist;
 
   cout << "Exclusion p-values: 90% " << pvalue90 << "\t 68% " << pvalue68 << endl;
+  cout << "Data exclusion 90%: " << kitexcluded90 << "\t 68%: " << kitexcluded68 << endl;
 
   //now do the average
   for(int ix = 1; ix <= avdchisq->GetNbinsX(); ix++) {
@@ -126,6 +127,26 @@ void sensitivity_from_many_chisq_surfaces
   cout << endl << endl << "average chisq " << minchisq << " at " << avdchisq->GetXaxis()->GetBinCenter(minx) << " " << avdchisq->GetYaxis()->GetBinCenter(miny) << endl;
   cout << "Average of " << nfilesexist << " files" << endl;
 
+  //get the minimum < 1
+  avdchisq->GetXaxis()->SetRangeUser(0,1.0);
+  double minchisqb = avdchisq->GetMinimum();
+  cout << endl << endl << "average chisq " << minchisqb << endl;
+  avdchisq->GetXaxis()->SetRangeUser(0,2.0);
+  double chi = 9999;
+  int min2x, min2y, min2z;
+  for(int ix = 1; ix <= avdchisq->GetNbinsX(); ix++) {
+    if(avdchisq->GetBinCenter(ix) > 1.0) continue;
+    cout << avdchisq->GetBinCenter(ix) << endl;
+    for(int iy = 1; iy <= avdchisq->GetNbinsY(); iy++) {
+      if(avdchisq->GetBinContent(ix,iy) < chi) {
+	chi = avdchisq->GetBinContent(ix,iy);
+	min2x = ix;
+	min2y = iy;
+      }
+    }
+  }
+  cout << "average chisq " << chi << " at " << avdchisq->GetXaxis()->GetBinCenter(min2x) << " " << avdchisq->GetYaxis()->GetBinCenter(min2y) << endl;
+
   //subtract the average (if required)
   if(ischisq) {
     for(int ix = 1; ix <= avdchisq->GetNbinsX(); ix++) {
@@ -136,6 +157,26 @@ void sensitivity_from_many_chisq_surfaces
     }//ix
   }//ischisq
 
+  //expected exclusion
+  double expt_exclude90 = 1, expt_exclude68 = 1;
+  for(int ix = 1; ix <= avdchisq->GetNbinsX(); ix++) {
+    for(int iy = 1; iy <= avdchisq->GetNbinsY(); iy++) {
+      double current = avdchisq->GetBinContent(ix,iy);
+      if(current <= 4.61) {
+	double bincenter = avdchisq->GetXaxis()->GetBinCenter(ix);
+	if(bincenter < expt_exclude90) {
+	  expt_exclude90 = bincenter;
+	}
+	if(current <= 2.30) {
+	  if(bincenter < expt_exclude68) {
+	    expt_exclude68 = bincenter;
+	  }
+	}
+      }//dchisq<4.61
+    }//iy
+  }//ix
+  cout << "Expected exclusion 90%: " << expt_exclude90 << "\t 68%: " << expt_exclude68 << endl;
+  
   // Get external contours
   std::string line;
   int ip = 0;
@@ -364,6 +405,16 @@ void sensitivity_from_many_chisq_surfaces
   //texclude68->Draw("same");
   c2->SaveAs("exclusion.eps");
   leg->Clear();
+
+
+  avdchisq->Draw("cont1");
+  TMarker bf(avdchisq->GetXaxis()->GetBinCenter(minx), avdchisq->GetYaxis()->GetBinCenter(miny), 29);
+  bf.SetMarkerSize(1.8);
+  bf.Draw();
+  TMarker bf2(avdchisq->GetXaxis()->GetBinCenter(min2x), avdchisq->GetYaxis()->GetBinCenter(min2y), 29);
+  bf2.SetMarkerSize(1.8);
+  bf2.Draw();
+  c2->SaveAs("contz.pdf");
 
   fout.Close();
 }

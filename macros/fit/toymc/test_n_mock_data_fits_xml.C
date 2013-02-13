@@ -84,10 +84,6 @@ void test_n_mock_data_fits_xml
      fitter->DoTheFit();
      int fitstatus = fitter->FitStatusCode();
 
-     // Write-out results
-     fitter->Analyze(output_option);
-     fitter->Save(Form("mockfit_%d.root",iexperiment));
-
      // Get best-fit chisquare
      double bestfit_chisq = fit_inputs->BestFitChisquare();
 
@@ -123,6 +119,10 @@ void test_n_mock_data_fits_xml
            bestfit_mixing12, bestfit_mixing13, bestfit_mixing23,
            bestfit_deltacp, bestfit_dm12sq, bestfit_dm23sq, 
            bestfit_chisq, fitstatus);
+
+     // Write-out results
+     fitter->Analyze(output_option);
+     fitter->Save(Form("mockfit_%d.root",iexperiment));
 
      if(chisqwithsyst) {
        //now get the with-syst chisq surface
@@ -186,6 +186,7 @@ void test_n_mock_data_fits_xml
   //
   // Store results
   //
+  f.cd();
   nfitnt->Write("nfitnt");
   f.Close();
 }

@@ -4,8 +4,8 @@ void plot_contour_comparisons
 )
 {
   //VaLOR data results
-  TFile f_dc_20nob("2012results/DATA/20_2flavour/noboundary/mockfit_3.root");
-  TFile f_dc_20b("2012results/DATA/20_2flavour/boundary/mockfit_3.root");
+  TFile f_dc_28nob("2012results/DATA/20_2flavour/sensitivity_nobound.root");
+  TFile f_dc_28b("2012results/DATA/20_2flavour/sensitivity.root");
   TFile f_dc_20("2012results/DATA/bigger_surface/20_from28/fitresults_3.root");
   TFile f_dc_123("2012results/DATA/bigger_surface/28/fitresults_3.root");
   TFile f_dc_12("2012results/DATA/bigger_surface/28/fitresults_4.root");
@@ -44,29 +44,27 @@ void plot_contour_comparisons
   h_dc_20_90->SetContourLevel(0,4.61);
   h_dc_20_90->SetLineStyle(1);
 
-  //20nob const dchisq
-  TH2D * h_dc_20nob = 0;
-  f_dc_20nob.GetObject("dchisq_surface_1Rmu",h_dc_20nob);
-  TH2D * h_dc_20nob_68 = new TH2D(*h_dc_20nob);
-  TH2D * h_dc_20nob_90 = new TH2D(*h_dc_20nob);
-  h_dc_20nob_68->SetContour(1);
-  h_dc_20nob_68->SetContourLevel(0,2.30);
-  h_dc_20nob_68->SetLineStyle(2);
-  h_dc_20nob_90->SetContour(1);
-  h_dc_20nob_90->SetContourLevel(0,4.61);
-  h_dc_20nob_90->SetLineStyle(1);
+  //28nob const dchisq
+  TH2D * h_dc_28nob_90 = 0, * h_dc_28nob_68 = 0;
+  f_dc_28nob.GetObject("dchisq_for_cont1_90",h_dc_28nob_90);
+  f_dc_28nob.GetObject("dchisq_for_cont1_68",h_dc_28nob_68);
+  h_dc_28nob_68->SetContour(1);
+  h_dc_28nob_68->SetContourLevel(0,2.30);
+  h_dc_28nob_68->SetLineStyle(2);
+  h_dc_28nob_90->SetContour(1);
+  h_dc_28nob_90->SetContourLevel(0,4.61);
+  h_dc_28nob_90->SetLineStyle(1);
 
-  //20b const dchisq
-  TH2D * h_dc_20b = 0;
-  f_dc_20b.GetObject("dchisq_surface_1Rmu",h_dc_20b);
-  TH2D * h_dc_20b_68 = new TH2D(*h_dc_20b);
-  TH2D * h_dc_20b_90 = new TH2D(*h_dc_20b);
-  h_dc_20b_68->SetContour(1);
-  h_dc_20b_68->SetContourLevel(0,2.30);
-  h_dc_20b_68->SetLineStyle(2);
-  h_dc_20b_90->SetContour(1);
-  h_dc_20b_90->SetContourLevel(0,4.61);
-  h_dc_20b_90->SetLineStyle(1);
+  //28b const dchisq
+  TH2D * h_dc_28b_90 = 0, * h_dc_28b_68 = 0;
+  f_dc_28b.GetObject("dchisq_for_cont1_90",h_dc_28b_90);
+  f_dc_28b.GetObject("dchisq_for_cont1_68",h_dc_28b_68);
+  h_dc_28b_68->SetContour(1);
+  h_dc_28b_68->SetContourLevel(0,2.30);
+  h_dc_28b_68->SetLineStyle(2);
+  h_dc_28b_90->SetContour(1);
+  h_dc_28b_90->SetContourLevel(0,4.61);
+  h_dc_28b_90->SetLineStyle(1);
 
   //28 const dchisq
   TH2D * h_dc_123 = 0;
@@ -541,34 +539,36 @@ void plot_contour_comparisons
   bestfit20.Draw();
   c->SaveAs("compare_2all_28_20.eps");
 
-  //compare 2+0 with/without boundary
-  osc_param_space->GetXaxis()->SetRangeUser(0.9,1.3);
+  //compare 2+8 with/without boundary
+  osc_param_space->GetXaxis()->SetRangeUser(0.8,1.2);
   osc_param_space->GetYaxis()->SetRangeUser(0.0018,0.0033);
   osc_param_space->Draw();
+  h_dc_28nob_68->SetLineColor(kRed);
+  h_dc_28nob_90->SetLineColor(kRed);
+  h_dc_28nob_68->Draw("cont3same");
+  h_dc_28nob_90->Draw("cont3same");
+  TMarker bestfit28nob(1.025,0.00247,29);
+  bestfit28nob.SetMarkerSize(1.8);
+  bestfit28nob.SetMarkerColor(kRed);
+  bestfit28nob.Draw();
+  c->SaveAs("compare_28nob_only.pdf");
+  h_dc_28b_68->SetLineColor(kBlack);
+  h_dc_28b_90->SetLineColor(kBlack);
+  h_dc_28b_68->GetXaxis()->SetRangeUser(0,1);
+  h_dc_28b_90->GetXaxis()->SetRangeUser(0,1);
+  h_dc_28b_68->Draw("cont3same");
+  h_dc_28b_90->Draw("cont3same");
+  TMarker bestfit28b(1.000,0.00247,29);
+  bestfit28b.SetMarkerSize(1.8);
+  bestfit28b.SetMarkerColor(kBlack);
+  bestfit28b.Draw();
   leg->Clear();
-  h_dc_20nob_68->SetLineColor(kRed);
-  h_dc_20nob_90->SetLineColor(kRed);
-  h_dc_20nob_68->Draw("cont3same");
-  h_dc_20nob_90->Draw("cont3same");
-  //leg->Draw();
-  TMarker bestfit20nob(1.045,0.002438,29);
-  bestfit20nob.SetMarkerSize(1.8);
-  bestfit20nob.SetMarkerColor(kRed);
-  bestfit20nob.Draw();
-  h_dc_20b_68->SetLineColor(kBlack);
-  h_dc_20b_90->SetLineColor(kBlack);
-  h_dc_20b_68->Draw("cont3same");
-  h_dc_20b_90->Draw("cont3same");
-  TMarker bestfit20b(1.000,0.002466,29);
-  bestfit20b.SetMarkerSize(1.8);
-  bestfit20b.SetMarkerColor(kBlack);
-  bestfit20b.Draw();
-  leg->AddEntry(h_dc_20b_68, "2+0 2#nu w/ boundary 68% CL","l");
-  leg->AddEntry(h_dc_20b_90, "2+0 2#nu w/ boundary 90% CL","l");
-  leg->AddEntry(h_dc_20nob_68, "2+0 2#nu w/o boundary 68% CL","l");
-  leg->AddEntry(h_dc_20nob_90, "2+0 2#nu w/o boundary 90% CL","l");
+  leg->AddEntry(h_dc_28b_68, "2#nu w/ boundary 68% CL","l");
+  leg->AddEntry(h_dc_28b_90, "2#nu w/ boundary 90% CL","l");
+  leg->AddEntry(h_dc_28nob_68, "2#nu w/o boundary 68% CL","l");
+  leg->AddEntry(h_dc_28nob_90, "2#nu w/o boundary 90% CL","l");
   leg->Draw();
-  c->SaveAs("compare_20_boundaries.eps");
+  c->SaveAs("compare_28_boundaries.pdf");
 
 
   //Run 1-3 28, 2all FC

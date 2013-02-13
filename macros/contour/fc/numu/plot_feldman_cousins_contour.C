@@ -83,11 +83,11 @@ void plot_feldman_cousins_contour(
 //double mixing23_min   = 0.0;
   double mixing23_max   = 1.0;
   double mixing23_step  = 0.005;
-  double dm23sq_min     = 1.5E-3;
+  double dm23sq_min     = 2.05E-3;
 //double dm23sq_min     = 1.0E-3;
-  double dm23sq_max     = 3.5E-3;
+  double dm23sq_max     = 2.95E-3;
 //double dm23sq_max     = 6.0E-3;
-  double dm23sq_step    = 1.0E-4;
+  double dm23sq_step    = 5.0E-5;
 
   //
   // Define grid so that min and max are at the bin centre 

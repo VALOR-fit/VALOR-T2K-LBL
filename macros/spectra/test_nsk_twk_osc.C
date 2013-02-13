@@ -28,8 +28,8 @@ void test_nsk_twk_osc
   double mixing23_min  =  0.6;
   double mixing23_max  =  1.0;
   double mixing23_step =  0.005;
-  double dm23sq_min    =  1E-3;
-  double dm23sq_max    =  4E-3;
+  double dm23sq_min    =  1.0E-3;
+  double dm23sq_max    =  4.0E-3;
   double dm23sq_step   =  1E-4;
 
  // make sure that min and max are at the bin centre
@@ -50,7 +50,8 @@ void test_nsk_twk_osc
   skexp.Read(config);
 
   // fit params
-  PhysHypothesis ph(t2kana::conv::kHypOsc3F);
+  //PhysHypothesis ph(t2kana::conv::kHypOsc3F);
+  PhysHypothesis ph(t2kana::conv::kHypNuMuDisapp2F);
 
   // generate predictions
   for(int i = 1; i <= nsk_vs_osc_params->GetNbinsX(); i++) {
@@ -59,10 +60,12 @@ void test_nsk_twk_osc
        double dm23sq   = nsk_vs_osc_params->GetYaxis()->GetBinCenter(j);
        ph.SetCurrValue(t2kana::conv::kPhypMixing23, mixing23);
        ph.SetCurrValue(t2kana::conv::kPhypDm23sq,   dm23sq);
-       ph.SetCurrValue(conv::kPhypMixing12,  conv::kGlobFitSinsq2Theta12);
-       ph.SetCurrValue(conv::kPhypMixing13,  conv::kGlobFitSinsq2Theta13);
-       ph.SetCurrValue(conv::kPhypDeltaCP,   conv::kGlobFitDeltaCP);
-       ph.SetCurrValue(conv::kPhypDm12sq,    conv::kGlobFitDm12sq);
+       if(ph.Hypothesis() == conv::kHypOsc3F) {
+	 ph.SetCurrValue(conv::kPhypMixing12,  conv::kGlobFitSinsq2Theta12);
+	 ph.SetCurrValue(conv::kPhypMixing13,  conv::kGlobFitSinsq2Theta13);
+	 ph.SetCurrValue(conv::kPhypDeltaCP,   conv::kGlobFitDeltaCP);
+	 ph.SetCurrValue(conv::kPhypDm12sq,    conv::kGlobFitDm12sq);
+       }
 
        // generate predictions
        skexp.Generate(ph);

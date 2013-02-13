@@ -90,8 +90,29 @@ void mock_data_fit_pulls(
   //bestfit
   TVectorD * BANFFBFP = util::XML2TVectorD(xml,root_node, "banff/best_fit_values");
   const TVectorD & BANFFBF = *BANFFBFP;
+  double prebf_banff_00 = BANFFBF[0];
+  double prebf_banff_01 = BANFFBF[1];
+  double prebf_banff_02 = BANFFBF[2];
+  double prebf_banff_03 = BANFFBF[3];
+  double prebf_banff_04 = BANFFBF[4];
+  double prebf_banff_05 = BANFFBF[5];
+  double prebf_banff_06 = BANFFBF[6];
+  double prebf_banff_07 = BANFFBF[7];
+  double prebf_banff_08 = BANFFBF[8];
+  double prebf_banff_09 = BANFFBF[9];
+  double prebf_banff_10 = BANFFBF[10];
+  double prebf_banff_11 = BANFFBF[11];
+  double prebf_banff_12 = BANFFBF[12];
+  double prebf_banff_13 = BANFFBF[13];
+  double prebf_banff_14 = BANFFBF[14];
+  double prebf_banff_15 = BANFFBF[15];
   double prebf_banff_maqe = BANFFBF[16];
+  double prebf_banff_mares = BANFFBF[17];
   double prebf_banff_ccqeE0 = BANFFBF[18];
+  double prebf_banff_ccqeE1 = BANFFBF[19];
+  double prebf_banff_ccqeE2 = BANFFBF[20];
+  double prebf_banff_cc1piE0 = BANFFBF[21];
+  double prebf_banff_cc1piE1 = BANFFBF[22];
 
   //FSI
   TMatrixD *FSICovMtrxP = util::XML2TMatrixD(xml,root_node, "fsi/covariance_matrix");
@@ -977,6 +998,13 @@ void mock_data_fit_pulls(
   TH1D * haltpull2_skdet_ccnqe = new TH1D("haltpull2_skdet_ccnqe","haltpull2_skdet_ccnqe",100,-5,5);
   TH1D * haltpull2_skdet_nc = new TH1D("haltpull2_skdet_nc","haltpull2_skdet_nc",100,-5,5);
   TH1D * haltpull2_skdet_energyscale = new TH1D("haltpull2_skdet_energyscale","haltpull2_skdet_energyscale",100,-5,5);
+  //err histograms
+  TH1D * herr_xsec_sf = new TH1D("herr_xsec_sf","herr_xsec_sf",100,0,1.5);
+  TH1D * herr_xsec_binde = new TH1D("herr_xsec_binde","herr_xsec_binde",100,0,1.5);
+  TH1D * herr_xsec_pilessdelta = new TH1D("herr_xsec_pilessdelta","herr_xsec_pilessdelta",100,0,1.5);
+  TH1D * herr_skdet_ccnqe = new TH1D("herr_skdet_ccnqe","herr_skdet_ccnqe",100,0,1.5);
+  TH1D * herr_skdet_nc = new TH1D("herr_skdet_nc","herr_skdet_nc",100,0,1.5);
+  TH1D * herr_skdet_energyscale = new TH1D("herr_skdet_energyscale","herr_skdet_energyscale",100,0,1.5);
   //distribution histograms
   TH1D * h_banff_00 = new TH1D("h_banff_00","h_banff_00:#sigma",200,-3,3);
   TH1D * h_banff_01 = new TH1D("h_banff_01","h_banff_01:#sigma",200,-3,3);
@@ -1025,12 +1053,78 @@ void mock_data_fit_pulls(
   TH1D * hpull_banff_ccqeE2 = new TH1D("hpull_banff_ccqeE2","hpull_banff_ccqeE2",100,-5,5);
   TH1D * hpull_banff_cc1piE0 = new TH1D("hpull_banff_cc1piE0","hpull_banff_cc1piE0",100,-5,5);
   TH1D * hpull_banff_cc1piE1 = new TH1D("hpull_banff_cc1piE1","hpull_banff_cc1piE1",100,-5,5);
-  //alt pull
+  //altpull histograms
+  TH1D * haltpull_banff_00 = new TH1D("haltpull_banff_00","haltpull_banff_00",100,-5,5);
+  TH1D * haltpull_banff_01 = new TH1D("haltpull_banff_01","haltpull_banff_01",100,-5,5);
+  TH1D * haltpull_banff_02 = new TH1D("haltpull_banff_02","haltpull_banff_02",100,-5,5);
+  TH1D * haltpull_banff_03 = new TH1D("haltpull_banff_03","haltpull_banff_03",100,-5,5);
+  TH1D * haltpull_banff_04 = new TH1D("haltpull_banff_04","haltpull_banff_04",100,-5,5);
+  TH1D * haltpull_banff_05 = new TH1D("haltpull_banff_05","haltpull_banff_05",100,-5,5);
+  TH1D * haltpull_banff_06 = new TH1D("haltpull_banff_06","haltpull_banff_06",100,-5,5);
+  TH1D * haltpull_banff_07 = new TH1D("haltpull_banff_07","haltpull_banff_07",100,-5,5);
+  TH1D * haltpull_banff_08 = new TH1D("haltpull_banff_08","haltpull_banff_08",100,-5,5);
+  TH1D * haltpull_banff_09 = new TH1D("haltpull_banff_09","haltpull_banff_09",100,-5,5);
+  TH1D * haltpull_banff_10 = new TH1D("haltpull_banff_10","haltpull_banff_10",100,-5,5);
+  TH1D * haltpull_banff_11 = new TH1D("haltpull_banff_11","haltpull_banff_11",100,-5,5);
+  TH1D * haltpull_banff_12 = new TH1D("haltpull_banff_12","haltpull_banff_12",100,-5,5);
+  TH1D * haltpull_banff_13 = new TH1D("haltpull_banff_13","haltpull_banff_13",100,-5,5);
+  TH1D * haltpull_banff_14 = new TH1D("haltpull_banff_14","haltpull_banff_14",100,-5,5);
+  TH1D * haltpull_banff_15 = new TH1D("haltpull_banff_15","haltpull_banff_15",100,-5,5);
   TH1D * haltpull_banff_maqe = new TH1D("haltpull_banff_maqe","haltpull_banff_maqe",100,-5,5);
+  TH1D * haltpull_banff_mares = new TH1D("haltpull_banff_mares","haltpull_banff_mares",100,-5,5);
   TH1D * haltpull_banff_ccqeE0 = new TH1D("haltpull_banff_ccqeE0","haltpull_banff_ccqeE0",100,-5,5);
-  //alt2 pull
+  TH1D * haltpull_banff_ccqeE1 = new TH1D("haltpull_banff_ccqeE1","haltpull_banff_ccqeE1",100,-5,5);
+  TH1D * haltpull_banff_ccqeE2 = new TH1D("haltpull_banff_ccqeE2","haltpull_banff_ccqeE2",100,-5,5);
+  TH1D * haltpull_banff_cc1piE0 = new TH1D("haltpull_banff_cc1piE0","haltpull_banff_cc1piE0",100,-5,5);
+  TH1D * haltpull_banff_cc1piE1 = new TH1D("haltpull_banff_cc1piE1","haltpull_banff_cc1piE1",100,-5,5);
+  //altpull2 histograms
+  TH1D * haltpull2_banff_00 = new TH1D("haltpull2_banff_00","haltpull2_banff_00",100,-5,5);
+  TH1D * haltpull2_banff_01 = new TH1D("haltpull2_banff_01","haltpull2_banff_01",100,-5,5);
+  TH1D * haltpull2_banff_02 = new TH1D("haltpull2_banff_02","haltpull2_banff_02",100,-5,5);
+  TH1D * haltpull2_banff_03 = new TH1D("haltpull2_banff_03","haltpull2_banff_03",100,-5,5);
+  TH1D * haltpull2_banff_04 = new TH1D("haltpull2_banff_04","haltpull2_banff_04",100,-5,5);
+  TH1D * haltpull2_banff_05 = new TH1D("haltpull2_banff_05","haltpull2_banff_05",100,-5,5);
+  TH1D * haltpull2_banff_06 = new TH1D("haltpull2_banff_06","haltpull2_banff_06",100,-5,5);
+  TH1D * haltpull2_banff_07 = new TH1D("haltpull2_banff_07","haltpull2_banff_07",100,-5,5);
+  TH1D * haltpull2_banff_08 = new TH1D("haltpull2_banff_08","haltpull2_banff_08",100,-5,5);
+  TH1D * haltpull2_banff_09 = new TH1D("haltpull2_banff_09","haltpull2_banff_09",100,-5,5);
+  TH1D * haltpull2_banff_10 = new TH1D("haltpull2_banff_10","haltpull2_banff_10",100,-5,5);
+  TH1D * haltpull2_banff_11 = new TH1D("haltpull2_banff_11","haltpull2_banff_11",100,-5,5);
+  TH1D * haltpull2_banff_12 = new TH1D("haltpull2_banff_12","haltpull2_banff_12",100,-5,5);
+  TH1D * haltpull2_banff_13 = new TH1D("haltpull2_banff_13","haltpull2_banff_13",100,-5,5);
+  TH1D * haltpull2_banff_14 = new TH1D("haltpull2_banff_14","haltpull2_banff_14",100,-5,5);
+  TH1D * haltpull2_banff_15 = new TH1D("haltpull2_banff_15","haltpull2_banff_15",100,-5,5);
   TH1D * haltpull2_banff_maqe = new TH1D("haltpull2_banff_maqe","haltpull2_banff_maqe",100,-5,5);
+  TH1D * haltpull2_banff_mares = new TH1D("haltpull2_banff_mares","haltpull2_banff_mares",100,-5,5);
   TH1D * haltpull2_banff_ccqeE0 = new TH1D("haltpull2_banff_ccqeE0","haltpull2_banff_ccqeE0",100,-5,5);
+  TH1D * haltpull2_banff_ccqeE1 = new TH1D("haltpull2_banff_ccqeE1","haltpull2_banff_ccqeE1",100,-5,5);
+  TH1D * haltpull2_banff_ccqeE2 = new TH1D("haltpull2_banff_ccqeE2","haltpull2_banff_ccqeE2",100,-5,5);
+  TH1D * haltpull2_banff_cc1piE0 = new TH1D("haltpull2_banff_cc1piE0","haltpull2_banff_cc1piE0",100,-5,5);
+  TH1D * haltpull2_banff_cc1piE1 = new TH1D("haltpull2_banff_cc1piE1","haltpull2_banff_cc1piE1",100,-5,5);
+  //err histograms
+  TH1D * herr_banff_00 = new TH1D("herr_banff_00","herr_banff_00",100,0,1.5);
+  TH1D * herr_banff_01 = new TH1D("herr_banff_01","herr_banff_01",100,0,1.5);
+  TH1D * herr_banff_02 = new TH1D("herr_banff_02","herr_banff_02",100,0,1.5);
+  TH1D * herr_banff_03 = new TH1D("herr_banff_03","herr_banff_03",100,0,1.5);
+  TH1D * herr_banff_04 = new TH1D("herr_banff_04","herr_banff_04",100,0,1.5);
+  TH1D * herr_banff_05 = new TH1D("herr_banff_05","herr_banff_05",100,0,1.5);
+  TH1D * herr_banff_06 = new TH1D("herr_banff_06","herr_banff_06",100,0,1.5);
+  TH1D * herr_banff_07 = new TH1D("herr_banff_07","herr_banff_07",100,0,1.5);
+  TH1D * herr_banff_08 = new TH1D("herr_banff_08","herr_banff_08",100,0,1.5);
+  TH1D * herr_banff_09 = new TH1D("herr_banff_09","herr_banff_09",100,0,1.5);
+  TH1D * herr_banff_10 = new TH1D("herr_banff_10","herr_banff_10",100,0,1.5);
+  TH1D * herr_banff_11 = new TH1D("herr_banff_11","herr_banff_11",100,0,1.5);
+  TH1D * herr_banff_12 = new TH1D("herr_banff_12","herr_banff_12",100,0,1.5);
+  TH1D * herr_banff_13 = new TH1D("herr_banff_13","herr_banff_13",100,0,1.5);
+  TH1D * herr_banff_14 = new TH1D("herr_banff_14","herr_banff_14",100,0,1.5);
+  TH1D * herr_banff_15 = new TH1D("herr_banff_15","herr_banff_15",100,0,1.5);
+  TH1D * herr_banff_maqe = new TH1D("herr_banff_maqe","herr_banff_maqe",100,0,1.5);
+  TH1D * herr_banff_mares = new TH1D("herr_banff_mares","herr_banff_mares",100,0,1.5);
+  TH1D * herr_banff_ccqeE0 = new TH1D("herr_banff_ccqeE0","herr_banff_ccqeE0",100,0,1.5);
+  TH1D * herr_banff_ccqeE1 = new TH1D("herr_banff_ccqeE1","herr_banff_ccqeE1",100,0,1.5);
+  TH1D * herr_banff_ccqeE2 = new TH1D("herr_banff_ccqeE2","herr_banff_ccqeE2",100,0,1.5);
+  TH1D * herr_banff_cc1piE0 = new TH1D("herr_banff_cc1piE0","herr_banff_cc1piE0",100,0,1.5);
+  TH1D * herr_banff_cc1piE1 = new TH1D("herr_banff_cc1piE1","herr_banff_cc1piE1",100,0,1.5);
   //fit_systematics_mode == 2
   TH1D * h_xsec_pf = new TH1D("h_xsec_pf","h_xsec_pf:#sigma",50,-5,5);
   TH1D * h_xsec_wshape = new TH1D("h_xsec_wshape","h_xsec_wshape:#sigma",50,-5,5);
@@ -1075,6 +1169,72 @@ void mock_data_fit_pulls(
   TH1D * hpull_fsi_003 = new TH1D("hpull_fsi_003","hpull_fsi_003",50,-5,5);
   TH1D * hpull_fsi_004 = new TH1D("hpull_fsi_004","hpull_fsi_004",50,-5,5);
   TH1D * hpull_fsi_005 = new TH1D("hpull_fsi_005","hpull_fsi_005",50,-5,5);
+  //altpull histograms
+  TH1D * haltpull_xsec_pf = new TH1D("haltpull_xsec_pf","haltpull_xsec_pf",50,-5,5);
+  TH1D * haltpull_xsec_wshape = new TH1D("haltpull_xsec_wshape","haltpull_xsec_wshape",50,-5,5);
+  TH1D * haltpull_xsec_ccothshape = new TH1D("haltpull_xsec_ccothshape","haltpull_xsec_ccothshape",50,-5,5);
+  TH1D * haltpull_xsec_cc1pishape = new TH1D("haltpull_xsec_cc1pishape","haltpull_xsec_cc1pishape",50,-5,5);
+  TH1D * haltpull_xsec_normcccoh = new TH1D("haltpull_xsec_normcccoh","haltpull_xsec_normcccoh",50,-5,5);
+  TH1D * haltpull_xsec_normnc1piC = new TH1D("haltpull_xsec_normnc1piC","haltpull_xsec_normnc1piC",50,-5,5);
+  TH1D * haltpull_xsec_normnccoh = new TH1D("haltpull_xsec_normnccoh","haltpull_xsec_normnccoh",50,-5,5);
+  TH1D * haltpull_xsec_normncoth = new TH1D("haltpull_xsec_normncoth","haltpull_xsec_normncoth",50,-5,5);
+  TH1D * haltpull_xsec_normnuetonumu = new TH1D("haltpull_xsec_normnuetonumu","haltpull_xsec_normnuetonumu",50,-5,5);
+  TH1D * haltpull_xsec_normantinutonu = new TH1D("haltpull_xsec_normantinutonu","haltpull_xsec_normantinutonu",50,-5,5);
+  TH1D * haltpull_skdet_ccqerc0 = new TH1D("haltpull_skdet_ccqerc0","haltpull_skdet_ccqerc0",50,-5,5);
+  TH1D * haltpull_skdet_ccqerc1 = new TH1D("haltpull_skdet_ccqerc1","haltpull_skdet_ccqerc1",50,-5,5);
+  TH1D * haltpull_skdet_ccqerc2 = new TH1D("haltpull_skdet_ccqerc2","haltpull_skdet_ccqerc2",50,-5,5);
+  TH1D * haltpull_skdet_ccqeoth = new TH1D("haltpull_skdet_ccqeoth","haltpull_skdet_ccqeoth",50,-5,5);
+  TH1D * haltpull_skdet_nuecc = new TH1D("haltpull_skdet_nuecc","haltpull_skdet_nuecc",50,-5,5);
+  TH1D * haltpull_fsi_000 = new TH1D("haltpull_fsi_000","haltpull_fsi_000",50,-5,5);
+  TH1D * haltpull_fsi_001 = new TH1D("haltpull_fsi_001","haltpull_fsi_001",50,-5,5);
+  TH1D * haltpull_fsi_002 = new TH1D("haltpull_fsi_002","haltpull_fsi_002",50,-5,5);
+  TH1D * haltpull_fsi_003 = new TH1D("haltpull_fsi_003","haltpull_fsi_003",50,-5,5);
+  TH1D * haltpull_fsi_004 = new TH1D("haltpull_fsi_004","haltpull_fsi_004",50,-5,5);
+  TH1D * haltpull_fsi_005 = new TH1D("haltpull_fsi_005","haltpull_fsi_005",50,-5,5);
+  //altpull2 histograms
+  TH1D * haltpull2_xsec_pf = new TH1D("haltpull2_xsec_pf","haltpull2_xsec_pf",50,-5,5);
+  TH1D * haltpull2_xsec_wshape = new TH1D("haltpull2_xsec_wshape","haltpull2_xsec_wshape",50,-5,5);
+  TH1D * haltpull2_xsec_ccothshape = new TH1D("haltpull2_xsec_ccothshape","haltpull2_xsec_ccothshape",50,-5,5);
+  TH1D * haltpull2_xsec_cc1pishape = new TH1D("haltpull2_xsec_cc1pishape","haltpull2_xsec_cc1pishape",50,-5,5);
+  TH1D * haltpull2_xsec_normcccoh = new TH1D("haltpull2_xsec_normcccoh","haltpull2_xsec_normcccoh",50,-5,5);
+  TH1D * haltpull2_xsec_normnc1piC = new TH1D("haltpull2_xsec_normnc1piC","haltpull2_xsec_normnc1piC",50,-5,5);
+  TH1D * haltpull2_xsec_normnccoh = new TH1D("haltpull2_xsec_normnccoh","haltpull2_xsec_normnccoh",50,-5,5);
+  TH1D * haltpull2_xsec_normncoth = new TH1D("haltpull2_xsec_normncoth","haltpull2_xsec_normncoth",50,-5,5);
+  TH1D * haltpull2_xsec_normnuetonumu = new TH1D("haltpull2_xsec_normnuetonumu","haltpull2_xsec_normnuetonumu",50,-5,5);
+  TH1D * haltpull2_xsec_normantinutonu = new TH1D("haltpull2_xsec_normantinutonu","haltpull2_xsec_normantinutonu",50,-5,5);
+  TH1D * haltpull2_skdet_ccqerc0 = new TH1D("haltpull2_skdet_ccqerc0","haltpull2_skdet_ccqerc0",50,-5,5);
+  TH1D * haltpull2_skdet_ccqerc1 = new TH1D("haltpull2_skdet_ccqerc1","haltpull2_skdet_ccqerc1",50,-5,5);
+  TH1D * haltpull2_skdet_ccqerc2 = new TH1D("haltpull2_skdet_ccqerc2","haltpull2_skdet_ccqerc2",50,-5,5);
+  TH1D * haltpull2_skdet_ccqeoth = new TH1D("haltpull2_skdet_ccqeoth","haltpull2_skdet_ccqeoth",50,-5,5);
+  TH1D * haltpull2_skdet_nuecc = new TH1D("haltpull2_skdet_nuecc","haltpull2_skdet_nuecc",50,-5,5);
+  TH1D * haltpull2_fsi_000 = new TH1D("haltpull2_fsi_000","haltpull2_fsi_000",50,-5,5);
+  TH1D * haltpull2_fsi_001 = new TH1D("haltpull2_fsi_001","haltpull2_fsi_001",50,-5,5);
+  TH1D * haltpull2_fsi_002 = new TH1D("haltpull2_fsi_002","haltpull2_fsi_002",50,-5,5);
+  TH1D * haltpull2_fsi_003 = new TH1D("haltpull2_fsi_003","haltpull2_fsi_003",50,-5,5);
+  TH1D * haltpull2_fsi_004 = new TH1D("haltpull2_fsi_004","haltpull2_fsi_004",50,-5,5);
+  TH1D * haltpull2_fsi_005 = new TH1D("haltpull2_fsi_005","haltpull2_fsi_005",50,-5,5);
+  //err histograms
+  TH1D * herr_xsec_pf = new TH1D("herr_xsec_pf","herr_xsec_pf",50,0,1.5);
+  TH1D * herr_xsec_wshape = new TH1D("herr_xsec_wshape","herr_xsec_wshape",50,0,1.5);
+  TH1D * herr_xsec_ccothshape = new TH1D("herr_xsec_ccothshape","herr_xsec_ccothshape",50,0,1.5);
+  TH1D * herr_xsec_cc1pishape = new TH1D("herr_xsec_cc1pishape","herr_xsec_cc1pishape",50,0,1.5);
+  TH1D * herr_xsec_normcccoh = new TH1D("herr_xsec_normcccoh","herr_xsec_normcccoh",50,0,1.5);
+  TH1D * herr_xsec_normnc1piC = new TH1D("herr_xsec_normnc1piC","herr_xsec_normnc1piC",50,0,1.5);
+  TH1D * herr_xsec_normnccoh = new TH1D("herr_xsec_normnccoh","herr_xsec_normnccoh",50,0,1.5);
+  TH1D * herr_xsec_normncoth = new TH1D("herr_xsec_normncoth","herr_xsec_normncoth",50,0,1.5);
+  TH1D * herr_xsec_normnuetonumu = new TH1D("herr_xsec_normnuetonumu","herr_xsec_normnuetonumu",50,0,1.5);
+  TH1D * herr_xsec_normantinutonu = new TH1D("herr_xsec_normantinutonu","herr_xsec_normantinutonu",50,0,1.5);
+  TH1D * herr_skdet_ccqerc0 = new TH1D("herr_skdet_ccqerc0","herr_skdet_ccqerc0",50,0,1.5);
+  TH1D * herr_skdet_ccqerc1 = new TH1D("herr_skdet_ccqerc1","herr_skdet_ccqerc1",50,0,1.5);
+  TH1D * herr_skdet_ccqerc2 = new TH1D("herr_skdet_ccqerc2","herr_skdet_ccqerc2",50,0,1.5);
+  TH1D * herr_skdet_ccqeoth = new TH1D("herr_skdet_ccqeoth","herr_skdet_ccqeoth",50,0,1.5);
+  TH1D * herr_skdet_nuecc = new TH1D("herr_skdet_nuecc","herr_skdet_nuecc",50,0,1.5);
+  TH1D * herr_fsi_000 = new TH1D("herr_fsi_000","herr_fsi_000",50,0,1.5);
+  TH1D * herr_fsi_001 = new TH1D("herr_fsi_001","herr_fsi_001",50,0,1.5);
+  TH1D * herr_fsi_002 = new TH1D("herr_fsi_002","herr_fsi_002",50,0,1.5);
+  TH1D * herr_fsi_003 = new TH1D("herr_fsi_003","herr_fsi_003",50,0,1.5);
+  TH1D * herr_fsi_004 = new TH1D("herr_fsi_004","herr_fsi_004",50,0,1.5);
+  TH1D * herr_fsi_005 = new TH1D("herr_fsi_005","herr_fsi_005",50,0,1.5);
 
   cout << ch.GetEntries() << " entries in TChain" << endl;
   if(ch.GetEntries() == 0)
@@ -1321,6 +1481,13 @@ void mock_data_fit_pulls(
       haltpull2_skdet_ccnqe->Fill((bestfit_skdet_ccnqe - 0) / err_skdet_ccnqe);
       haltpull2_skdet_nc->Fill((bestfit_skdet_nc - 0) / err_skdet_nc);
       haltpull2_skdet_energyscale->Fill((bestfit_skdet_energyscale - 0) / err_skdet_energyscale);
+      //err
+      herr_xsec_sf->Fill(err_xsec_sf);
+      herr_xsec_binde->Fill(err_xsec_binde);
+      herr_xsec_pilessdelta->Fill(err_xsec_pilessdelta);
+      herr_skdet_ccnqe->Fill(err_skdet_ccnqe);
+      herr_skdet_nc->Fill(err_skdet_nc);
+      herr_skdet_energyscale->Fill(err_skdet_energyscale);
       //distribution histograms
       h_banff_00->Fill((bestfit_banff_00 - input_banff_00)/preerr_banff_00);
       h_banff_01->Fill((bestfit_banff_01 - input_banff_01)/preerr_banff_01);
@@ -1369,12 +1536,78 @@ void mock_data_fit_pulls(
       if(err_banff_ccqeE2 < preerr_banff_ccqeE2) hpull_banff_ccqeE2->Fill((bestfit_banff_ccqeE2 - input_banff_ccqeE2) / sqrt(pow(preerr_banff_ccqeE2,2) - pow(err_banff_ccqeE2,2)));
       if(err_banff_cc1piE0 < preerr_banff_cc1piE0) hpull_banff_cc1piE0->Fill((bestfit_banff_cc1piE0 - input_banff_cc1piE0) / sqrt(pow(preerr_banff_cc1piE0,2) - pow(err_banff_cc1piE0,2)));
       if(err_banff_cc1piE1 < preerr_banff_cc1piE1) hpull_banff_cc1piE1->Fill((bestfit_banff_cc1piE1 - input_banff_cc1piE1) / sqrt(pow(preerr_banff_cc1piE1,2) - pow(err_banff_cc1piE1,2)));
-      //alt pull
-      haltpull_banff_maqe->Fill((bestfit_banff_maqe - input_banff_maqe) / err_banff_maqe);
-      haltpull_banff_ccqeE0->Fill((bestfit_banff_ccqeE0 - input_banff_ccqeE0) / err_banff_ccqeE0);
-      //alt pull2
-      haltpull2_banff_maqe->Fill((bestfit_banff_maqe - prebf_banff_maqe) / err_banff_maqe);
-      haltpull2_banff_ccqeE0->Fill((bestfit_banff_ccqeE0 - prebf_banff_ccqeE0) / err_banff_ccqeE0);
+      //altpull
+      haltpull_banff_00->Fill((bestfit_banff_00 - input_banff_00)/ err_banff_00);
+      haltpull_banff_01->Fill((bestfit_banff_01 - input_banff_01)/ err_banff_01);
+      haltpull_banff_02->Fill((bestfit_banff_02 - input_banff_02)/ err_banff_02);
+      haltpull_banff_03->Fill((bestfit_banff_03 - input_banff_03)/ err_banff_03);
+      haltpull_banff_04->Fill((bestfit_banff_04 - input_banff_04)/ err_banff_04);
+      haltpull_banff_05->Fill((bestfit_banff_05 - input_banff_05)/ err_banff_05);
+      haltpull_banff_06->Fill((bestfit_banff_06 - input_banff_06)/ err_banff_06);
+      haltpull_banff_07->Fill((bestfit_banff_07 - input_banff_07)/ err_banff_07);
+      haltpull_banff_08->Fill((bestfit_banff_08 - input_banff_08)/ err_banff_08);
+      haltpull_banff_09->Fill((bestfit_banff_09 - input_banff_09)/ err_banff_09);
+      haltpull_banff_10->Fill((bestfit_banff_10 - input_banff_10)/ err_banff_10);
+      haltpull_banff_11->Fill((bestfit_banff_11 - input_banff_11)/ err_banff_11);
+      haltpull_banff_12->Fill((bestfit_banff_12 - input_banff_12)/ err_banff_12);
+      haltpull_banff_13->Fill((bestfit_banff_13 - input_banff_13)/ err_banff_13);
+      haltpull_banff_14->Fill((bestfit_banff_14 - input_banff_14)/ err_banff_14);
+      haltpull_banff_15->Fill((bestfit_banff_15 - input_banff_15)/ err_banff_15);
+      haltpull_banff_maqe->Fill((bestfit_banff_maqe - input_banff_maqe)/ err_banff_maqe);
+      haltpull_banff_mares->Fill((bestfit_banff_mares - input_banff_mares)/ err_banff_mares);
+      haltpull_banff_ccqeE0->Fill((bestfit_banff_ccqeE0 - input_banff_ccqeE0)/ err_banff_ccqeE0);
+      haltpull_banff_ccqeE1->Fill((bestfit_banff_ccqeE1 - input_banff_ccqeE1)/ err_banff_ccqeE1);
+      haltpull_banff_ccqeE2->Fill((bestfit_banff_ccqeE2 - input_banff_ccqeE2)/ err_banff_ccqeE2);
+      haltpull_banff_cc1piE0->Fill((bestfit_banff_cc1piE0 - input_banff_cc1piE0)/ err_banff_cc1piE0);
+      haltpull_banff_cc1piE1->Fill((bestfit_banff_cc1piE1 - input_banff_cc1piE1)/ err_banff_cc1piE1);
+      //altpull2
+      haltpull2_banff_00->Fill((bestfit_banff_00 - prebf_banff_00)/ err_banff_00);
+      haltpull2_banff_01->Fill((bestfit_banff_01 - prebf_banff_01)/ err_banff_01);
+      haltpull2_banff_02->Fill((bestfit_banff_02 - prebf_banff_02)/ err_banff_02);
+      haltpull2_banff_03->Fill((bestfit_banff_03 - prebf_banff_03)/ err_banff_03);
+      haltpull2_banff_04->Fill((bestfit_banff_04 - prebf_banff_04)/ err_banff_04);
+      haltpull2_banff_05->Fill((bestfit_banff_05 - prebf_banff_05)/ err_banff_05);
+      haltpull2_banff_06->Fill((bestfit_banff_06 - prebf_banff_06)/ err_banff_06);
+      haltpull2_banff_07->Fill((bestfit_banff_07 - prebf_banff_07)/ err_banff_07);
+      haltpull2_banff_08->Fill((bestfit_banff_08 - prebf_banff_08)/ err_banff_08);
+      haltpull2_banff_09->Fill((bestfit_banff_09 - prebf_banff_09)/ err_banff_09);
+      haltpull2_banff_10->Fill((bestfit_banff_10 - prebf_banff_10)/ err_banff_10);
+      haltpull2_banff_11->Fill((bestfit_banff_11 - prebf_banff_11)/ err_banff_11);
+      haltpull2_banff_12->Fill((bestfit_banff_12 - prebf_banff_12)/ err_banff_12);
+      haltpull2_banff_13->Fill((bestfit_banff_13 - prebf_banff_13)/ err_banff_13);
+      haltpull2_banff_14->Fill((bestfit_banff_14 - prebf_banff_14)/ err_banff_14);
+      haltpull2_banff_15->Fill((bestfit_banff_15 - prebf_banff_15)/ err_banff_15);
+      haltpull2_banff_maqe->Fill((bestfit_banff_maqe - prebf_banff_maqe)/ err_banff_maqe);
+      haltpull2_banff_mares->Fill((bestfit_banff_mares - prebf_banff_mares)/ err_banff_mares);
+      haltpull2_banff_ccqeE0->Fill((bestfit_banff_ccqeE0 - prebf_banff_ccqeE0)/ err_banff_ccqeE0);
+      haltpull2_banff_ccqeE1->Fill((bestfit_banff_ccqeE1 - prebf_banff_ccqeE1)/ err_banff_ccqeE1);
+      haltpull2_banff_ccqeE2->Fill((bestfit_banff_ccqeE2 - prebf_banff_ccqeE2)/ err_banff_ccqeE2);
+      haltpull2_banff_cc1piE0->Fill((bestfit_banff_cc1piE0 - prebf_banff_cc1piE0)/ err_banff_cc1piE0);
+      haltpull2_banff_cc1piE1->Fill((bestfit_banff_cc1piE1 - prebf_banff_cc1piE1)/ err_banff_cc1piE1);
+      //err
+      herr_banff_00->Fill(err_banff_00);
+      herr_banff_01->Fill(err_banff_01);
+      herr_banff_02->Fill(err_banff_02);
+      herr_banff_03->Fill(err_banff_03);
+      herr_banff_04->Fill(err_banff_04);
+      herr_banff_05->Fill(err_banff_05);
+      herr_banff_06->Fill(err_banff_06);
+      herr_banff_07->Fill(err_banff_07);
+      herr_banff_08->Fill(err_banff_08);
+      herr_banff_09->Fill(err_banff_09);
+      herr_banff_10->Fill(err_banff_10);
+      herr_banff_11->Fill(err_banff_11);
+      herr_banff_12->Fill(err_banff_12);
+      herr_banff_13->Fill(err_banff_13);
+      herr_banff_14->Fill(err_banff_14);
+      herr_banff_15->Fill(err_banff_15);
+      herr_banff_maqe->Fill(err_banff_maqe);
+      herr_banff_mares->Fill(err_banff_mares);
+      herr_banff_ccqeE0->Fill(err_banff_ccqeE0);
+      herr_banff_ccqeE1->Fill(err_banff_ccqeE1);
+      herr_banff_ccqeE2->Fill(err_banff_ccqeE2);
+      herr_banff_cc1piE0->Fill(err_banff_cc1piE0);
+      herr_banff_cc1piE1->Fill(err_banff_cc1piE1);
     }//fit_systematics_mode >= 1
     if(fit_systematics_mode == 2) {
       h_xsec_pf->Fill((bestfit_xsec_pf - input_xsec_pf));
@@ -1420,6 +1653,72 @@ void mock_data_fit_pulls(
       if(err_fsi_003 < preerr_fsi_003) hpull_fsi_003->Fill((bestfit_fsi_003 - input_fsi_003) / sqrt(pow(preerr_fsi_003,2) - pow(err_fsi_003,2)));
       if(err_fsi_004 < preerr_fsi_004) hpull_fsi_004->Fill((bestfit_fsi_004 - input_fsi_004) / sqrt(pow(preerr_fsi_004,2) - pow(err_fsi_004,2)));
       if(err_fsi_005 < preerr_fsi_005) hpull_fsi_005->Fill((bestfit_fsi_005 - input_fsi_005) / sqrt(pow(preerr_fsi_005,2) - pow(err_fsi_005,2)));
+      //altpull
+      haltpull_xsec_pf->Fill((bestfit_xsec_pf - input_xsec_pf) / err_xsec_pf);
+      haltpull_xsec_wshape->Fill((bestfit_xsec_wshape - input_xsec_wshape) / err_xsec_wshape);
+      haltpull_xsec_ccothshape->Fill((bestfit_xsec_ccothshape - input_xsec_ccothshape) / err_xsec_ccothshape);
+      haltpull_xsec_cc1pishape->Fill((bestfit_xsec_cc1pishape - input_xsec_cc1pishape) / err_xsec_cc1pishape);
+      haltpull_xsec_normcccoh->Fill((bestfit_xsec_normcccoh - input_xsec_normcccoh) / err_xsec_normcccoh);
+      haltpull_xsec_normnc1piC->Fill((bestfit_xsec_normnc1piC - input_xsec_normnc1piC) / err_xsec_normnc1piC);
+      haltpull_xsec_normnccoh->Fill((bestfit_xsec_normnccoh - input_xsec_normnccoh) / err_xsec_normnccoh);
+      haltpull_xsec_normncoth->Fill((bestfit_xsec_normncoth - input_xsec_normncoth) / err_xsec_normncoth);
+      haltpull_xsec_normnuetonumu->Fill((bestfit_xsec_normnuetonumu - input_xsec_normnuetonumu) / err_xsec_normnuetonumu);
+      haltpull_xsec_normantinutonu->Fill((bestfit_xsec_normantinutonu - input_xsec_normantinutonu) / err_xsec_normantinutonu);
+      haltpull_skdet_ccqerc0->Fill((bestfit_skdet_ccqerc0 - input_skdet_ccqerc0) / err_skdet_ccqerc0);
+      haltpull_skdet_ccqerc1->Fill((bestfit_skdet_ccqerc1 - input_skdet_ccqerc1) / err_skdet_ccqerc1);
+      haltpull_skdet_ccqerc2->Fill((bestfit_skdet_ccqerc2 - input_skdet_ccqerc2) / err_skdet_ccqerc2);
+      haltpull_skdet_ccqeoth->Fill((bestfit_skdet_ccqeoth - input_skdet_ccqeoth) / err_skdet_ccqeoth);
+      haltpull_skdet_nuecc->Fill((bestfit_skdet_nuecc - input_skdet_nuecc) / err_skdet_nuecc);
+      haltpull_fsi_000->Fill((bestfit_fsi_000 - input_fsi_000) / err_fsi_000);
+      haltpull_fsi_001->Fill((bestfit_fsi_001 - input_fsi_001) / err_fsi_001);
+      haltpull_fsi_002->Fill((bestfit_fsi_002 - input_fsi_002) / err_fsi_002);
+      haltpull_fsi_003->Fill((bestfit_fsi_003 - input_fsi_003) / err_fsi_003);
+      haltpull_fsi_004->Fill((bestfit_fsi_004 - input_fsi_004) / err_fsi_004);
+      haltpull_fsi_005->Fill((bestfit_fsi_005 - input_fsi_005) / err_fsi_005);
+      //altpull2
+      haltpull2_xsec_pf->Fill((bestfit_xsec_pf - 0) / err_xsec_pf);
+      haltpull2_xsec_wshape->Fill((bestfit_xsec_wshape - 0) / err_xsec_wshape);
+      haltpull2_xsec_ccothshape->Fill((bestfit_xsec_ccothshape - 0) / err_xsec_ccothshape);
+      haltpull2_xsec_cc1pishape->Fill((bestfit_xsec_cc1pishape - 0) / err_xsec_cc1pishape);
+      haltpull2_xsec_normcccoh->Fill((bestfit_xsec_normcccoh - 0) / err_xsec_normcccoh);
+      haltpull2_xsec_normnc1piC->Fill((bestfit_xsec_normnc1piC - 0) / err_xsec_normnc1piC);
+      haltpull2_xsec_normnccoh->Fill((bestfit_xsec_normnccoh - 0) / err_xsec_normnccoh);
+      haltpull2_xsec_normncoth->Fill((bestfit_xsec_normncoth - 0) / err_xsec_normncoth);
+      haltpull2_xsec_normnuetonumu->Fill((bestfit_xsec_normnuetonumu - 0) / err_xsec_normnuetonumu);
+      haltpull2_xsec_normantinutonu->Fill((bestfit_xsec_normantinutonu - 0) / err_xsec_normantinutonu);
+      haltpull2_skdet_ccqerc0->Fill((bestfit_skdet_ccqerc0 - 0) / err_skdet_ccqerc0);
+      haltpull2_skdet_ccqerc1->Fill((bestfit_skdet_ccqerc1 - 0) / err_skdet_ccqerc1);
+      haltpull2_skdet_ccqerc2->Fill((bestfit_skdet_ccqerc2 - 0) / err_skdet_ccqerc2);
+      haltpull2_skdet_ccqeoth->Fill((bestfit_skdet_ccqeoth - 0) / err_skdet_ccqeoth);
+      haltpull2_skdet_nuecc->Fill((bestfit_skdet_nuecc - 0) / err_skdet_nuecc);
+      haltpull2_fsi_000->Fill((bestfit_fsi_000 - 0) / err_fsi_000);
+      haltpull2_fsi_001->Fill((bestfit_fsi_001 - 0) / err_fsi_001);
+      haltpull2_fsi_002->Fill((bestfit_fsi_002 - 0) / err_fsi_002);
+      haltpull2_fsi_003->Fill((bestfit_fsi_003 - 0) / err_fsi_003);
+      haltpull2_fsi_004->Fill((bestfit_fsi_004 - 0) / err_fsi_004);
+      haltpull2_fsi_005->Fill((bestfit_fsi_005 - 0) / err_fsi_005);
+      //err
+      herr_xsec_pf->Fill(err_xsec_pf);
+      herr_xsec_wshape->Fill(err_xsec_wshape);
+      herr_xsec_ccothshape->Fill(err_xsec_ccothshape);
+      herr_xsec_cc1pishape->Fill(err_xsec_cc1pishape);
+      herr_xsec_normcccoh->Fill(err_xsec_normcccoh);
+      herr_xsec_normnc1piC->Fill(err_xsec_normnc1piC);
+      herr_xsec_normnccoh->Fill(err_xsec_normnccoh);
+      herr_xsec_normncoth->Fill(err_xsec_normncoth);
+      herr_xsec_normnuetonumu->Fill(err_xsec_normnuetonumu);
+      herr_xsec_normantinutonu->Fill(err_xsec_normantinutonu);
+      herr_skdet_ccqerc0->Fill(err_skdet_ccqerc0);
+      herr_skdet_ccqerc1->Fill(err_skdet_ccqerc1);
+      herr_skdet_ccqerc2->Fill(err_skdet_ccqerc2);
+      herr_skdet_ccqeoth->Fill(err_skdet_ccqeoth);
+      herr_skdet_nuecc->Fill(err_skdet_nuecc);
+      herr_fsi_000->Fill(err_fsi_000);
+      herr_fsi_001->Fill(err_fsi_001);
+      herr_fsi_002->Fill(err_fsi_002);
+      herr_fsi_003->Fill(err_fsi_003);
+      herr_fsi_004->Fill(err_fsi_004);
+      herr_fsi_005->Fill(err_fsi_005);
     }//fit_systematic_mode == 2
   }//end loop over chain
 
@@ -1700,78 +1999,6 @@ void mock_data_fit_pulls(
     caltextra->SaveAs(Form("%s_%f_extra_altpull.pdf", tag, input_mixing23));
     caltskdet->SaveAs(Form("%s_%f_skdet_altpull.pdf", tag, input_mixing23));
 
-    /*
-    new TCanvas(); hpull_banff_00->Draw(); hpull_banff_00->Fit("gaus"); fit = hpull_banff_00->GetFunction("gaus");
-    meansummary->SetBinContent(ifit, fit->GetParameter(1)); meansummary->SetBinError(ifit, fit->GetParError(1));
-    sigmasummary->SetBinContent(ifit, fit->GetParameter(2)); sigmasummary->SetBinError(ifit, fit->GetParError(2)); ifit++;
-    new TCanvas(); hpull_banff_01->Draw(); hpull_banff_01->Fit("gaus"); fit = hpull_banff_01->GetFunction("gaus");
-    meansummary->SetBinContent(ifit, fit->GetParameter(1)); meansummary->SetBinError(ifit, fit->GetParError(1));
-    sigmasummary->SetBinContent(ifit, fit->GetParameter(2)); sigmasummary->SetBinError(ifit, fit->GetParError(2)); ifit++;
-    new TCanvas(); hpull_banff_02->Draw(); hpull_banff_02->Fit("gaus"); fit = hpull_banff_02->GetFunction("gaus");
-    meansummary->SetBinContent(ifit, fit->GetParameter(1)); meansummary->SetBinError(ifit, fit->GetParError(1));
-    sigmasummary->SetBinContent(ifit, fit->GetParameter(2)); sigmasummary->SetBinError(ifit, fit->GetParError(2)); ifit++;
-    new TCanvas(); hpull_banff_03->Draw(); hpull_banff_03->Fit("gaus"); fit = hpull_banff_03->GetFunction("gaus");
-    meansummary->SetBinContent(ifit, fit->GetParameter(1)); meansummary->SetBinError(ifit, fit->GetParError(1));
-    sigmasummary->SetBinContent(ifit, fit->GetParameter(2)); sigmasummary->SetBinError(ifit, fit->GetParError(2)); ifit++;
-    new TCanvas(); hpull_banff_04->Draw(); hpull_banff_04->Fit("gaus"); fit = hpull_banff_04->GetFunction("gaus");
-    meansummary->SetBinContent(ifit, fit->GetParameter(1)); meansummary->SetBinError(ifit, fit->GetParError(1));
-    sigmasummary->SetBinContent(ifit, fit->GetParameter(2)); sigmasummary->SetBinError(ifit, fit->GetParError(2)); ifit++;
-    new TCanvas(); hpull_banff_05->Draw(); hpull_banff_05->Fit("gaus"); fit = hpull_banff_05->GetFunction("gaus");
-    meansummary->SetBinContent(ifit, fit->GetParameter(1)); meansummary->SetBinError(ifit, fit->GetParError(1));
-    sigmasummary->SetBinContent(ifit, fit->GetParameter(2)); sigmasummary->SetBinError(ifit, fit->GetParError(2)); ifit++;
-    new TCanvas(); hpull_banff_06->Draw(); hpull_banff_06->Fit("gaus"); fit = hpull_banff_06->GetFunction("gaus");
-    meansummary->SetBinContent(ifit, fit->GetParameter(1)); meansummary->SetBinError(ifit, fit->GetParError(1));
-    sigmasummary->SetBinContent(ifit, fit->GetParameter(2)); sigmasummary->SetBinError(ifit, fit->GetParError(2)); ifit++;
-    new TCanvas(); hpull_banff_07->Draw(); hpull_banff_07->Fit("gauss"); fit = hpull_banff_07->GetFunction("gaus");
-    meansummary->SetBinContent(ifit, fit->GetParameter(1)); meansummary->SetBinError(ifit, fit->GetParError(1));
-    sigmasummary->SetBinContent(ifit, fit->GetParameter(2)); sigmasummary->SetBinError(ifit, fit->GetParError(2)); ifit++;
-    new TCanvas(); hpull_banff_08->Draw(); hpull_banff_08->Fit("gaus"); fit = hpull_banff_08->GetFunction("gaus");
-    meansummary->SetBinContent(ifit, fit->GetParameter(1)); meansummary->SetBinError(ifit, fit->GetParError(1));
-    sigmasummary->SetBinContent(ifit, fit->GetParameter(2)); sigmasummary->SetBinError(ifit, fit->GetParError(2)); ifit++;
-    new TCanvas(); hpull_banff_09->Draw(); hpull_banff_09->Fit("gaus"); fit = hpull_banff_09->GetFunction("gaus");
-    meansummary->SetBinContent(ifit, fit->GetParameter(1)); meansummary->SetBinError(ifit, fit->GetParError(1));
-    sigmasummary->SetBinContent(ifit, fit->GetParameter(2)); sigmasummary->SetBinError(ifit, fit->GetParError(2)); ifit++;
-    new TCanvas(); hpull_banff_10->Draw(); hpull_banff_10->Fit("gaus"); fit = hpull_banff_10->GetFunction("gaus");
-    meansummary->SetBinContent(ifit, fit->GetParameter(1)); meansummary->SetBinError(ifit, fit->GetParError(1));
-    sigmasummary->SetBinContent(ifit, fit->GetParameter(2)); sigmasummary->SetBinError(ifit, fit->GetParError(2)); ifit++;
-    new TCanvas(); hpull_banff_11->Draw(); hpull_banff_11->Fit("gaus"); fit = hpull_banff_11->GetFunction("gaus");
-    meansummary->SetBinContent(ifit, fit->GetParameter(1)); meansummary->SetBinError(ifit, fit->GetParError(1));
-    sigmasummary->SetBinContent(ifit, fit->GetParameter(2)); sigmasummary->SetBinError(ifit, fit->GetParError(2)); ifit++;
-    new TCanvas(); hpull_banff_12->Draw(); hpull_banff_12->Fit("gaus"); fit = hpull_banff_12->GetFunction("gaus");
-    meansummary->SetBinContent(ifit, fit->GetParameter(1)); meansummary->SetBinError(ifit, fit->GetParError(1));
-    sigmasummary->SetBinContent(ifit, fit->GetParameter(2)); sigmasummary->SetBinError(ifit, fit->GetParError(2)); ifit++;
-    new TCanvas(); hpull_banff_13->Draw(); hpull_banff_13->Fit("gaus"); fit = hpull_banff_13->GetFunction("gaus");
-    meansummary->SetBinContent(ifit, fit->GetParameter(1)); meansummary->SetBinError(ifit, fit->GetParError(1));
-    sigmasummary->SetBinContent(ifit, fit->GetParameter(2)); sigmasummary->SetBinError(ifit, fit->GetParError(2)); ifit++;
-    new TCanvas(); hpull_banff_14->Draw(); hpull_banff_14->Fit("gaus"); fit = hpull_banff_14->GetFunction("gaus");
-    meansummary->SetBinContent(ifit, fit->GetParameter(1)); meansummary->SetBinError(ifit, fit->GetParError(1));
-    sigmasummary->SetBinContent(ifit, fit->GetParameter(2)); sigmasummary->SetBinError(ifit, fit->GetParError(2)); ifit++;
-    new TCanvas(); hpull_banff_15->Draw(); hpull_banff_15->Fit("gaus"); fit = hpull_banff_15->GetFunction("gaus");
-    meansummary->SetBinContent(ifit, fit->GetParameter(1)); meansummary->SetBinError(ifit, fit->GetParError(1));
-    sigmasummary->SetBinContent(ifit, fit->GetParameter(2)); sigmasummary->SetBinError(ifit, fit->GetParError(2)); ifit++;
-    new TCanvas(); hpull_banff_maqe->Draw(); hpull_banff_maqe->Fit("gaus"); fit = hpull_banff_maqe->GetFunction("gaus");
-    meansummary->SetBinContent(ifit, fit->GetParameter(1)); meansummary->SetBinError(ifit, fit->GetParError(1));
-    sigmasummary->SetBinContent(ifit, fit->GetParameter(2)); sigmasummary->SetBinError(ifit, fit->GetParError(2)); ifit++;
-    new TCanvas(); hpull_banff_mares->Draw(); hpull_banff_mares->Fit("gaus"); fit = hpull_banff_mares->GetFunction("gaus");
-    meansummary->SetBinContent(ifit, fit->GetParameter(1)); meansummary->SetBinError(ifit, fit->GetParError(1));
-    sigmasummary->SetBinContent(ifit, fit->GetParameter(2)); sigmasummary->SetBinError(ifit, fit->GetParError(2)); ifit++;
-    new TCanvas(); hpull_banff_ccqeE0->Draw(); hpull_banff_ccqeE0->Fit("gaus"); fit = hpull_banff_ccqeE0->GetFunction("gaus");
-    meansummary->SetBinContent(ifit, fit->GetParameter(1)); meansummary->SetBinError(ifit, fit->GetParError(1));
-    sigmasummary->SetBinContent(ifit, fit->GetParameter(2)); sigmasummary->SetBinError(ifit, fit->GetParError(2)); ifit++;
-    new TCanvas(); hpull_banff_ccqeE1->Draw(); hpull_banff_ccqeE1->Fit("gaus"); fit = hpull_banff_ccqeE1->GetFunction("gaus");
-    meansummary->SetBinContent(ifit, fit->GetParameter(1)); meansummary->SetBinError(ifit, fit->GetParError(1));
-    sigmasummary->SetBinContent(ifit, fit->GetParameter(2)); sigmasummary->SetBinError(ifit, fit->GetParError(2)); ifit++;
-    new TCanvas(); hpull_banff_ccqeE2->Draw(); hpull_banff_ccqeE2->Fit("gaus"); fit = hpull_banff_ccqeE2->GetFunction("gaus");
-    meansummary->SetBinContent(ifit, fit->GetParameter(1)); meansummary->SetBinError(ifit, fit->GetParError(1));
-    sigmasummary->SetBinContent(ifit, fit->GetParameter(2)); sigmasummary->SetBinError(ifit, fit->GetParError(2)); ifit++;
-    new TCanvas(); hpull_banff_cc1piE0->Draw(); hpull_banff_cc1piE0->Fit("gaus"); fit = hpull_banff_cc1piE0->GetFunction("gaus");
-    meansummary->SetBinContent(ifit, fit->GetParameter(1)); meansummary->SetBinError(ifit, fit->GetParError(1));
-    sigmasummary->SetBinContent(ifit, fit->GetParameter(2)); sigmasummary->SetBinError(ifit, fit->GetParError(2)); ifit++;
-    new TCanvas(); hpull_banff_cc1piE1->Draw(); hpull_banff_cc1piE1->Fit("gaus"); fit = hpull_banff_cc1piE1->GetFunction("gaus");
-    meansummary->SetBinContent(ifit, fit->GetParameter(1)); meansummary->SetBinError(ifit, fit->GetParError(1));
-    sigmasummary->SetBinContent(ifit, fit->GetParameter(2)); sigmasummary->SetBinError(ifit, fit->GetParError(2)); ifit++;
-    */
-
     //altpull2
     haltpull_banff_maqe->Draw(); haltpull_banff_maqe->Fit("gaus");
     haltpull_banff_ccqeE0->Draw(); haltpull_banff_ccqeE0->Fit("gaus");
@@ -1783,6 +2010,111 @@ void mock_data_fit_pulls(
     haltpull_skdet_nc->Draw(); haltpull_skdet_nc->Fit("gaus");
   }
   if(fit_systematics_mode == 2) {
+    new TCanvas(); hpull_banff_00->Draw(); hpull_banff_00->Fit("gaus"); fit = hpull_banff_00->GetFunction("gaus");
+    if(fit) {
+      meansummary->SetBinContent(ifit, fit->GetParameter(1)); meansummary->SetBinError(ifit, fit->GetParError(1));
+      sigmasummary->SetBinContent(ifit, fit->GetParameter(2)); sigmasummary->SetBinError(ifit, fit->GetParError(2)); ifit++;
+      new TCanvas(); hpull_banff_01->Draw(); hpull_banff_01->Fit("gaus"); fit = hpull_banff_01->GetFunction("gaus");
+    }
+    if(fit) {
+      meansummary->SetBinContent(ifit, fit->GetParameter(1)); meansummary->SetBinError(ifit, fit->GetParError(1));
+      sigmasummary->SetBinContent(ifit, fit->GetParameter(2)); sigmasummary->SetBinError(ifit, fit->GetParError(2)); ifit++;
+      new TCanvas(); hpull_banff_02->Draw(); hpull_banff_02->Fit("gaus"); fit = hpull_banff_02->GetFunction("gaus");
+    }
+    if(fit) {
+      meansummary->SetBinContent(ifit, fit->GetParameter(1)); meansummary->SetBinError(ifit, fit->GetParError(1));
+      sigmasummary->SetBinContent(ifit, fit->GetParameter(2)); sigmasummary->SetBinError(ifit, fit->GetParError(2)); ifit++;
+      new TCanvas(); hpull_banff_03->Draw(); hpull_banff_03->Fit("gaus"); fit = hpull_banff_03->GetFunction("gaus");
+    }
+    if(fit) {
+      meansummary->SetBinContent(ifit, fit->GetParameter(1)); meansummary->SetBinError(ifit, fit->GetParError(1));
+      sigmasummary->SetBinContent(ifit, fit->GetParameter(2)); sigmasummary->SetBinError(ifit, fit->GetParError(2)); ifit++;
+      new TCanvas(); hpull_banff_04->Draw(); hpull_banff_04->Fit("gaus"); fit = hpull_banff_04->GetFunction("gaus");
+    }
+    if(fit) {
+      meansummary->SetBinContent(ifit, fit->GetParameter(1)); meansummary->SetBinError(ifit, fit->GetParError(1));
+      sigmasummary->SetBinContent(ifit, fit->GetParameter(2)); sigmasummary->SetBinError(ifit, fit->GetParError(2)); ifit++;
+      new TCanvas(); hpull_banff_05->Draw(); hpull_banff_05->Fit("gaus"); fit = hpull_banff_05->GetFunction("gaus");
+    }
+    if(fit) {
+      meansummary->SetBinContent(ifit, fit->GetParameter(1)); meansummary->SetBinError(ifit, fit->GetParError(1));
+      sigmasummary->SetBinContent(ifit, fit->GetParameter(2)); sigmasummary->SetBinError(ifit, fit->GetParError(2)); ifit++;
+      new TCanvas(); hpull_banff_06->Draw(); hpull_banff_06->Fit("gaus"); fit = hpull_banff_06->GetFunction("gaus");
+    }
+    if(fit) {
+      meansummary->SetBinContent(ifit, fit->GetParameter(1)); meansummary->SetBinError(ifit, fit->GetParError(1));
+      sigmasummary->SetBinContent(ifit, fit->GetParameter(2)); sigmasummary->SetBinError(ifit, fit->GetParError(2)); ifit++;
+      new TCanvas(); hpull_banff_07->Draw(); hpull_banff_07->Fit("gauss"); fit = hpull_banff_07->GetFunction("gaus");
+    }
+    if(fit) {
+      meansummary->SetBinContent(ifit, fit->GetParameter(1)); meansummary->SetBinError(ifit, fit->GetParError(1));
+      sigmasummary->SetBinContent(ifit, fit->GetParameter(2)); sigmasummary->SetBinError(ifit, fit->GetParError(2)); ifit++;
+      new TCanvas(); hpull_banff_08->Draw(); hpull_banff_08->Fit("gaus"); fit = hpull_banff_08->GetFunction("gaus");
+    }
+    if(fit) {
+      meansummary->SetBinContent(ifit, fit->GetParameter(1)); meansummary->SetBinError(ifit, fit->GetParError(1));
+      sigmasummary->SetBinContent(ifit, fit->GetParameter(2)); sigmasummary->SetBinError(ifit, fit->GetParError(2)); ifit++;
+      new TCanvas(); hpull_banff_09->Draw(); hpull_banff_09->Fit("gaus"); fit = hpull_banff_09->GetFunction("gaus");
+    }
+    if(fit) {
+      meansummary->SetBinContent(ifit, fit->GetParameter(1)); meansummary->SetBinError(ifit, fit->GetParError(1));
+      sigmasummary->SetBinContent(ifit, fit->GetParameter(2)); sigmasummary->SetBinError(ifit, fit->GetParError(2)); ifit++;
+      new TCanvas(); hpull_banff_10->Draw(); hpull_banff_10->Fit("gaus"); fit = hpull_banff_10->GetFunction("gaus");
+    }
+    if(fit) {
+      meansummary->SetBinContent(ifit, fit->GetParameter(1)); meansummary->SetBinError(ifit, fit->GetParError(1));
+      sigmasummary->SetBinContent(ifit, fit->GetParameter(2)); sigmasummary->SetBinError(ifit, fit->GetParError(2)); ifit++;
+      new TCanvas(); hpull_banff_11->Draw(); hpull_banff_11->Fit("gaus"); fit = hpull_banff_11->GetFunction("gaus");
+    }
+    if(fit) {
+      meansummary->SetBinContent(ifit, fit->GetParameter(1)); meansummary->SetBinError(ifit, fit->GetParError(1));
+      sigmasummary->SetBinContent(ifit, fit->GetParameter(2)); sigmasummary->SetBinError(ifit, fit->GetParError(2)); ifit++;
+      new TCanvas(); hpull_banff_12->Draw(); hpull_banff_12->Fit("gaus"); fit = hpull_banff_12->GetFunction("gaus");
+    }
+    if(fit) {
+      meansummary->SetBinContent(ifit, fit->GetParameter(1)); meansummary->SetBinError(ifit, fit->GetParError(1));
+      sigmasummary->SetBinContent(ifit, fit->GetParameter(2)); sigmasummary->SetBinError(ifit, fit->GetParError(2)); ifit++;
+      new TCanvas(); hpull_banff_13->Draw(); hpull_banff_13->Fit("gaus"); fit = hpull_banff_13->GetFunction("gaus");
+    }
+    if(fit) {
+      meansummary->SetBinContent(ifit, fit->GetParameter(1)); meansummary->SetBinError(ifit, fit->GetParError(1));
+      sigmasummary->SetBinContent(ifit, fit->GetParameter(2)); sigmasummary->SetBinError(ifit, fit->GetParError(2)); ifit++;
+      new TCanvas(); hpull_banff_14->Draw(); hpull_banff_14->Fit("gaus"); fit = hpull_banff_14->GetFunction("gaus");
+    }
+    if(fit) {
+      meansummary->SetBinContent(ifit, fit->GetParameter(1)); meansummary->SetBinError(ifit, fit->GetParError(1));
+      sigmasummary->SetBinContent(ifit, fit->GetParameter(2)); sigmasummary->SetBinError(ifit, fit->GetParError(2)); ifit++;
+      new TCanvas(); hpull_banff_15->Draw(); hpull_banff_15->Fit("gaus"); fit = hpull_banff_15->GetFunction("gaus");
+    }
+    if(fit) {
+      meansummary->SetBinContent(ifit, fit->GetParameter(1)); meansummary->SetBinError(ifit, fit->GetParError(1));
+      sigmasummary->SetBinContent(ifit, fit->GetParameter(2)); sigmasummary->SetBinError(ifit, fit->GetParError(2)); ifit++;
+      new TCanvas(); hpull_banff_mares->Draw(); hpull_banff_mares->Fit("gaus"); fit = hpull_banff_mares->GetFunction("gaus");
+    }
+    if(fit) {
+      meansummary->SetBinContent(ifit, fit->GetParameter(1)); meansummary->SetBinError(ifit, fit->GetParError(1));
+      sigmasummary->SetBinContent(ifit, fit->GetParameter(2)); sigmasummary->SetBinError(ifit, fit->GetParError(2)); ifit++;
+      new TCanvas(); hpull_banff_ccqeE1->Draw(); hpull_banff_ccqeE1->Fit("gaus"); fit = hpull_banff_ccqeE1->GetFunction("gaus");
+    }
+    if(fit) {
+      meansummary->SetBinContent(ifit, fit->GetParameter(1)); meansummary->SetBinError(ifit, fit->GetParError(1));
+      sigmasummary->SetBinContent(ifit, fit->GetParameter(2)); sigmasummary->SetBinError(ifit, fit->GetParError(2)); ifit++;
+      new TCanvas(); hpull_banff_ccqeE2->Draw(); hpull_banff_ccqeE2->Fit("gaus"); fit = hpull_banff_ccqeE2->GetFunction("gaus");
+    }
+    if(fit) {
+      meansummary->SetBinContent(ifit, fit->GetParameter(1)); meansummary->SetBinError(ifit, fit->GetParError(1));
+      sigmasummary->SetBinContent(ifit, fit->GetParameter(2)); sigmasummary->SetBinError(ifit, fit->GetParError(2)); ifit++;
+      new TCanvas(); hpull_banff_cc1piE0->Draw(); hpull_banff_cc1piE0->Fit("gaus"); fit = hpull_banff_cc1piE0->GetFunction("gaus");
+    }
+    if(fit) {
+      meansummary->SetBinContent(ifit, fit->GetParameter(1)); meansummary->SetBinError(ifit, fit->GetParError(1));
+      sigmasummary->SetBinContent(ifit, fit->GetParameter(2)); sigmasummary->SetBinError(ifit, fit->GetParError(2)); ifit++;
+      new TCanvas(); hpull_banff_cc1piE1->Draw(); hpull_banff_cc1piE1->Fit("gaus"); fit = hpull_banff_cc1piE1->GetFunction("gaus");
+    }
+    if(fit) {
+      meansummary->SetBinContent(ifit, fit->GetParameter(1)); meansummary->SetBinError(ifit, fit->GetParError(1));
+      sigmasummary->SetBinContent(ifit, fit->GetParameter(2)); sigmasummary->SetBinError(ifit, fit->GetParError(2)); ifit++;
+    }
     new TCanvas(); hpull_xsec_pf->Draw(); hpull_xsec_pf->Fit("gaus"); fit = hpull_xsec_pf->GetFunction("gaus");
     if(fit) {
       meansummary->SetBinContent(ifit, fit->GetParameter(1)); meansummary->SetBinError(ifit, fit->GetParError(1));
@@ -2032,6 +2364,88 @@ void mock_data_fit_pulls(
     hpull_fsi_003->GetXaxis()->SetTitle("pull_{2}");
     hpull_fsi_004->GetXaxis()->SetTitle("pull_{2}");
     hpull_fsi_005->GetXaxis()->SetTitle("pull_{2}");
+
+    haltpull_banff_00->GetXaxis()->SetTitle("pull_{1}");
+    haltpull_banff_01->GetXaxis()->SetTitle("pull_{1}");
+    haltpull_banff_02->GetXaxis()->SetTitle("pull_{1}");
+    haltpull_banff_03->GetXaxis()->SetTitle("pull_{1}");
+    haltpull_banff_04->GetXaxis()->SetTitle("pull_{1}");
+    haltpull_banff_05->GetXaxis()->SetTitle("pull_{1}");
+    haltpull_banff_06->GetXaxis()->SetTitle("pull_{1}");
+    haltpull_banff_07->GetXaxis()->SetTitle("pull_{1}");
+    haltpull_banff_08->GetXaxis()->SetTitle("pull_{1}");
+    haltpull_banff_09->GetXaxis()->SetTitle("pull_{1}");
+    haltpull_banff_10->GetXaxis()->SetTitle("pull_{1}");
+    haltpull_banff_11->GetXaxis()->SetTitle("pull_{1}");
+    haltpull_banff_12->GetXaxis()->SetTitle("pull_{1}");
+    haltpull_banff_13->GetXaxis()->SetTitle("pull_{1}");
+    haltpull_banff_14->GetXaxis()->SetTitle("pull_{1}");
+    haltpull_banff_15->GetXaxis()->SetTitle("pull_{1}");
+    haltpull_banff_mares->GetXaxis()->SetTitle("pull_{1}");
+    haltpull_banff_ccqeE1->GetXaxis()->SetTitle("pull_{1}");
+    haltpull_banff_ccqeE2->GetXaxis()->SetTitle("pull_{1}");
+    haltpull_banff_cc1piE0->GetXaxis()->SetTitle("pull_{1}");
+    haltpull_banff_cc1piE1->GetXaxis()->SetTitle("pull_{1}");
+    haltpull_xsec_pf->GetXaxis()->SetTitle("pull_{1}");
+    haltpull_xsec_wshape->GetXaxis()->SetTitle("pull_{1}");
+    haltpull_xsec_ccothshape->GetXaxis()->SetTitle("pull_{1}");
+    haltpull_xsec_normcccoh->GetXaxis()->SetTitle("pull_{1}");
+    haltpull_xsec_normnc1piC->GetXaxis()->SetTitle("pull_{1}");
+    haltpull_xsec_normncoth->GetXaxis()->SetTitle("pull_{1}");
+    haltpull_xsec_normnuetonumu->GetXaxis()->SetTitle("pull_{1}");
+    haltpull_xsec_normantinutonu->GetXaxis()->SetTitle("pull_{1}");
+    haltpull_skdet_ccqerc0->GetXaxis()->SetTitle("pull_{1}");
+    haltpull_skdet_ccqerc1->GetXaxis()->SetTitle("pull_{1}");
+    haltpull_skdet_ccqerc2->GetXaxis()->SetTitle("pull_{1}");
+    haltpull_skdet_ccqeoth->GetXaxis()->SetTitle("pull_{1}");
+    haltpull_skdet_nuecc->GetXaxis()->SetTitle("pull_{1}");
+    haltpull_fsi_000->GetXaxis()->SetTitle("pull_{1}");
+    haltpull_fsi_001->GetXaxis()->SetTitle("pull_{1}");
+    haltpull_fsi_002->GetXaxis()->SetTitle("pull_{1}");
+    haltpull_fsi_003->GetXaxis()->SetTitle("pull_{1}");
+    haltpull_fsi_004->GetXaxis()->SetTitle("pull_{1}");
+    haltpull_fsi_005->GetXaxis()->SetTitle("pull_{1}");
+
+    haltpull2_banff_00->GetXaxis()->SetTitle("pull_{3}");
+    haltpull2_banff_01->GetXaxis()->SetTitle("pull_{3}");
+    haltpull2_banff_02->GetXaxis()->SetTitle("pull_{3}");
+    haltpull2_banff_03->GetXaxis()->SetTitle("pull_{3}");
+    haltpull2_banff_04->GetXaxis()->SetTitle("pull_{3}");
+    haltpull2_banff_05->GetXaxis()->SetTitle("pull_{3}");
+    haltpull2_banff_06->GetXaxis()->SetTitle("pull_{3}");
+    haltpull2_banff_07->GetXaxis()->SetTitle("pull_{3}");
+    haltpull2_banff_08->GetXaxis()->SetTitle("pull_{3}");
+    haltpull2_banff_09->GetXaxis()->SetTitle("pull_{3}");
+    haltpull2_banff_10->GetXaxis()->SetTitle("pull_{3}");
+    haltpull2_banff_11->GetXaxis()->SetTitle("pull_{3}");
+    haltpull2_banff_12->GetXaxis()->SetTitle("pull_{3}");
+    haltpull2_banff_13->GetXaxis()->SetTitle("pull_{3}");
+    haltpull2_banff_14->GetXaxis()->SetTitle("pull_{3}");
+    haltpull2_banff_15->GetXaxis()->SetTitle("pull_{3}");
+    haltpull2_banff_mares->GetXaxis()->SetTitle("pull_{3}");
+    haltpull2_banff_ccqeE1->GetXaxis()->SetTitle("pull_{3}");
+    haltpull2_banff_ccqeE2->GetXaxis()->SetTitle("pull_{3}");
+    haltpull2_banff_cc1piE0->GetXaxis()->SetTitle("pull_{3}");
+    haltpull2_banff_cc1piE1->GetXaxis()->SetTitle("pull_{3}");
+    haltpull2_xsec_pf->GetXaxis()->SetTitle("pull_{3}");
+    haltpull2_xsec_wshape->GetXaxis()->SetTitle("pull_{3}");
+    haltpull2_xsec_ccothshape->GetXaxis()->SetTitle("pull_{3}");
+    haltpull2_xsec_normcccoh->GetXaxis()->SetTitle("pull_{3}");
+    haltpull2_xsec_normnc1piC->GetXaxis()->SetTitle("pull_{3}");
+    haltpull2_xsec_normncoth->GetXaxis()->SetTitle("pull_{3}");
+    haltpull2_xsec_normnuetonumu->GetXaxis()->SetTitle("pull_{3}");
+    haltpull2_xsec_normantinutonu->GetXaxis()->SetTitle("pull_{3}");
+    haltpull2_skdet_ccqerc0->GetXaxis()->SetTitle("pull_{3}");
+    haltpull2_skdet_ccqerc1->GetXaxis()->SetTitle("pull_{3}");
+    haltpull2_skdet_ccqerc2->GetXaxis()->SetTitle("pull_{3}");
+    haltpull2_skdet_ccqeoth->GetXaxis()->SetTitle("pull_{3}");
+    haltpull2_skdet_nuecc->GetXaxis()->SetTitle("pull_{3}");
+    haltpull2_fsi_000->GetXaxis()->SetTitle("pull_{3}");
+    haltpull2_fsi_001->GetXaxis()->SetTitle("pull_{3}");
+    haltpull2_fsi_002->GetXaxis()->SetTitle("pull_{3}");
+    haltpull2_fsi_003->GetXaxis()->SetTitle("pull_{3}");
+    haltpull2_fsi_004->GetXaxis()->SetTitle("pull_{3}");
+    haltpull2_fsi_005->GetXaxis()->SetTitle("pull_{3}");
   }//systmode 2
 
   TCanvas * c = new TCanvas();
@@ -2040,6 +2454,9 @@ void mock_data_fit_pulls(
 
   hpull_mixing23->Draw(); c->SaveAs(Form("%s_%f_mixing23_pull.eps", tag, input_mixing23));
   hpull_dm23sq->Draw(); c->SaveAs(Form("%s_%f_dm23sq_pull.eps", tag, input_mixing23));
+
+  herr_mixing23->Draw(); c->SaveAs(Form("%s_%f_mixing23_err.eps", tag, input_mixing23));
+  herr_dm23sq->Draw(); c->SaveAs(Form("%s_%f_dm23sq_err.eps", tag, input_mixing23));
 
   if(fit_systematics_mode == 1) {
     TCanvas * csum = new TCanvas();
@@ -2117,6 +2534,16 @@ void mock_data_fit_pulls(
     cimp->cd(7); haltpull2_xsec_binde->Draw();
     cimp->cd(8); haltpull2_xsec_pilessdelta->Draw();
     cimp->SaveAs(Form("%s_%f_important_altpull2.eps", tag, input_mixing23));
+
+    cimp->cd(1); herr_skdet_energyscale->Draw();
+    cimp->cd(2); herr_skdet_ccnqe->Draw();
+    cimp->cd(3); herr_skdet_nc->Draw();
+    cimp->cd(4); herr_banff_maqe->Draw();
+    cimp->cd(5); herr_banff_ccqeE0->Draw();
+    cimp->cd(6); herr_xsec_sf->Draw();
+    cimp->cd(7); herr_xsec_binde->Draw();
+    cimp->cd(8); herr_xsec_pilessdelta->Draw();
+    cimp->SaveAs(Form("%s_%f_important_err.eps", tag, input_mixing23));
   }
   else if(fit_systematics_mode == 2) {
     TCanvas * cban = new TCanvas();
@@ -2281,6 +2708,110 @@ void mock_data_fit_pulls(
     coth->cd(23); haltpull_fsi_004->Draw();
     coth->cd(24); haltpull_fsi_005->Draw();
     cban->SaveAs(Form("%s_%f_other_altpull.eps", tag, input_mixing23));
+
+    cban->cd(1); haltpull2_banff_00->Draw();
+    cban->cd(2); haltpull2_banff_01->Draw();
+    cban->cd(3); haltpull2_banff_02->Draw();
+    cban->cd(4); haltpull2_banff_03->Draw();
+    cban->cd(5); haltpull2_banff_04->Draw();
+    cban->cd(6); haltpull2_banff_05->Draw();
+    cban->cd(7); haltpull2_banff_06->Draw();
+    cban->cd(8); haltpull2_banff_07->Draw();
+    cban->cd(9); haltpull2_banff_08->Draw();
+    cban->cd(10); haltpull2_banff_09->Draw();
+    cban->cd(11); haltpull2_banff_10->Draw();
+    cban->cd(12); haltpull2_banff_11->Draw();
+    cban->cd(13); haltpull2_banff_12->Draw();
+    cban->cd(14); haltpull2_banff_13->Draw();
+    cban->cd(15); haltpull2_banff_14->Draw();
+    cban->cd(16); haltpull2_banff_15->Draw();
+    cban->cd(17); haltpull2_banff_maqe->Draw();
+    cban->cd(18); haltpull2_banff_mares->Draw();
+    cban->cd(19); haltpull2_banff_ccqeE0->Draw();
+    cban->cd(20); haltpull2_banff_ccqeE1->Draw();
+    cban->cd(21); haltpull2_banff_ccqeE2->Draw();
+    cban->cd(22); haltpull2_banff_cc1piE0->Draw();
+    cban->cd(23); haltpull2_banff_cc1piE1->Draw();
+    cban->cd(24); haltpull2_skdet_energyscale->Draw();
+    cban->SaveAs(Form("%s_%f_banff_altpull2.eps", tag, input_mixing23));
+
+    coth->cd(1); haltpull2_xsec_pf->Draw();
+    coth->cd(2); haltpull2_xsec_sf->Draw();
+    coth->cd(3); haltpull2_xsec_wshape->Draw();
+    coth->cd(4); haltpull2_xsec_ccothshape->Draw();
+    coth->cd(5); haltpull2_xsec_pilessdelta->Draw();
+    coth->cd(6); haltpull2_xsec_binde->Draw();
+    coth->cd(7); haltpull2_xsec_normcccoh->Draw();
+    coth->cd(8); haltpull2_xsec_normnc1piC->Draw();
+    coth->cd(9); haltpull2_xsec_normncoth->Draw();
+    coth->cd(10); haltpull2_xsec_normnuetonumu->Draw();
+    coth->cd(11); haltpull2_xsec_normantinutonu->Draw();
+    coth->cd(12); haltpull2_skdet_ccqerc0->Draw();
+    coth->cd(13); haltpull2_skdet_ccqerc1->Draw();
+    coth->cd(14); haltpull2_skdet_ccqerc2->Draw();
+    coth->cd(15); haltpull2_skdet_ccqeoth->Draw();
+    coth->cd(16); haltpull2_skdet_ccnqe->Draw();
+    coth->cd(17); haltpull2_skdet_nc->Draw();
+    coth->cd(18); haltpull2_skdet_nuecc->Draw();
+    coth->cd(19); haltpull2_fsi_000->Draw();
+    coth->cd(20); haltpull2_fsi_001->Draw();
+    coth->cd(21); haltpull2_fsi_002->Draw();
+    coth->cd(22); haltpull2_fsi_003->Draw();
+    coth->cd(23); haltpull2_fsi_004->Draw();
+    coth->cd(24); haltpull2_fsi_005->Draw();
+    cban->SaveAs(Form("%s_%f_other_altpull2.eps", tag, input_mixing23));
+
+    cban->cd(1); herr_banff_00->Draw();
+    cban->cd(2); herr_banff_01->Draw();
+    cban->cd(3); herr_banff_02->Draw();
+    cban->cd(4); herr_banff_03->Draw();
+    cban->cd(5); herr_banff_04->Draw();
+    cban->cd(6); herr_banff_05->Draw();
+    cban->cd(7); herr_banff_06->Draw();
+    cban->cd(8); herr_banff_07->Draw();
+    cban->cd(9); herr_banff_08->Draw();
+    cban->cd(10); herr_banff_09->Draw();
+    cban->cd(11); herr_banff_10->Draw();
+    cban->cd(12); herr_banff_11->Draw();
+    cban->cd(13); herr_banff_12->Draw();
+    cban->cd(14); herr_banff_13->Draw();
+    cban->cd(15); herr_banff_14->Draw();
+    cban->cd(16); herr_banff_15->Draw();
+    cban->cd(17); herr_banff_maqe->Draw();
+    cban->cd(18); herr_banff_mares->Draw();
+    cban->cd(19); herr_banff_ccqeE0->Draw();
+    cban->cd(20); herr_banff_ccqeE1->Draw();
+    cban->cd(21); herr_banff_ccqeE2->Draw();
+    cban->cd(22); herr_banff_cc1piE0->Draw();
+    cban->cd(23); herr_banff_cc1piE1->Draw();
+    cban->cd(24); herr_skdet_energyscale->Draw();
+    cban->SaveAs(Form("%s_%f_banff_err.eps", tag, input_mixing23));
+
+    coth->cd(1); herr_xsec_pf->Draw();
+    coth->cd(2); herr_xsec_sf->Draw();
+    coth->cd(3); herr_xsec_wshape->Draw();
+    coth->cd(4); herr_xsec_ccothshape->Draw();
+    coth->cd(5); herr_xsec_pilessdelta->Draw();
+    coth->cd(6); herr_xsec_binde->Draw();
+    coth->cd(7); herr_xsec_normcccoh->Draw();
+    coth->cd(8); herr_xsec_normnc1piC->Draw();
+    coth->cd(9); herr_xsec_normncoth->Draw();
+    coth->cd(10); herr_xsec_normnuetonumu->Draw();
+    coth->cd(11); herr_xsec_normantinutonu->Draw();
+    coth->cd(12); herr_skdet_ccqerc0->Draw();
+    coth->cd(13); herr_skdet_ccqerc1->Draw();
+    coth->cd(14); herr_skdet_ccqerc2->Draw();
+    coth->cd(15); herr_skdet_ccqeoth->Draw();
+    coth->cd(16); herr_skdet_ccnqe->Draw();
+    coth->cd(17); herr_skdet_nc->Draw();
+    coth->cd(18); herr_skdet_nuecc->Draw();
+    coth->cd(19); herr_fsi_000->Draw();
+    coth->cd(20); herr_fsi_001->Draw();
+    coth->cd(21); herr_fsi_002->Draw();
+    coth->cd(22); herr_fsi_003->Draw();
+    coth->cd(23); herr_fsi_004->Draw();
+    coth->cd(24); herr_fsi_005->Draw();
+    cban->SaveAs(Form("%s_%f_other_err.eps", tag, input_mixing23));
   }
 
 }

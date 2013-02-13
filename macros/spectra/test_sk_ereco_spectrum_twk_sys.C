@@ -72,7 +72,7 @@
 // Tom Dealtry
 // ------------------------------------------------------------------------------------------------
 //
-#define NTWEAKS 4 //2 or 4!
+#define NTWEAKS 4 //2 or 4 or 6!
 void test_sk_ereco_spectrum_twk_sys
 (
   int          mode,                                                /* options: see above */
@@ -254,14 +254,18 @@ void test_sk_ereco_spectrum_twk_sys
   // Output histograms and graphs
 #if NTWEAKS == 4
   const int ntweaks = 4;
-  int * tweaks[ntweaks] = {+3, +1, -1, -3};
+  int tweaks[ntweaks] = {+3, +1, -1, -3};
 #elif NTWEAKS == 2
   const int ntweaks = 2;
-  int * tweaks[ntweaks] = {+1, -1};
+  int tweaks[ntweaks] = {+1, -1};
+#elif NTWEAKS == 6
+  const int ntweaks = 6;
+  double tweaks[ntweaks] = {+1., +0.4545, +0.2273, -0.2273, -0.4545, -1.};
 #else
   cerr << "Unknown NTWEAKS" << endl;
   exit(1);
 #endif
+
   TH1D * hErecoNominal = 0;
   TH1D * hEreco[ntweaks];
   TH1D * hErecoRatio[ntweaks];
@@ -307,7 +311,11 @@ void test_sk_ereco_spectrum_twk_sys
 
   // Tweak!
   for(int itweak = 0; itweak < ntweaks; itweak++) {
+#if NTWEAKS == 6
+    double tweak = tweaks[itweak];
+#else
     int tweak = tweaks[itweak];
+#endif
 
     cout << endl << "Tweaking by " << tweak << " sigma for systematics: " << modetitle << endl;
 
@@ -324,8 +332,14 @@ void test_sk_ereco_spectrum_twk_sys
         histcolor = kGreen+3;
         break;
       case 3:
-        histcolor = kOrange+7;
+        histcolor = kMagenta+1;
         break;
+      case 4:
+	histcolor = kYellow-4;
+	break;
+      case 5:
+	histcolor = kOrange+7;
+	break;
       default:
 	histcolor = kBlack;
     }
@@ -574,8 +588,8 @@ void test_sk_ereco_spectrum_twk_sys
   gStyle->SetOptStat(0);
   c->Divide(1,2);
   c->cd(1);
-  TLegend * legend = new TLegend(0.75, 0.63, 0.9, 0.9);
-  legend->SetFillColor(0);
+  TLegend * legend = new TLegend(0.75, 0.53, 0.95, 0.9);
+  legend->SetFillStyle(0);
   legend->SetBorderSize(0);
   legend->AddEntry(hErecoNominal, "nominal", "L" );
   hErecoNominal->SetTitle(Form("%s",modetitle.c_str()));
@@ -586,7 +600,33 @@ void test_sk_ereco_spectrum_twk_sys
     if(mode == 201 && itweak != 1) continue; //SF is only +1 sigma!
     hEreco[itweak]->Draw("same");
     maxy = TMath::Max(maxy, hEreco[itweak]->GetMaximum());
+#if NTWEAKS==6
+    /*
+    //this is specific for the NC systematic error study I did
+    string legstr;
+    switch(itweak) {
+      case(0):
+	legstr = "+110%"; break;
+      case(1):
+	legstr = "+50%"; break;
+      case(2):
+	legstr = "+25%"; break;
+      case(3):
+	legstr = "-25%"; break;
+      case(4):
+	legstr = "-50%"; break;
+      case(5):
+	legstr = "-110%"; break;
+      default:
+	legstr = "?%"; break;
+    }
+    legend->AddEntry(hEreco[itweak], legstr.c_str(), "L" );
+    */
+    //this is the general form
+    legend->AddEntry(hEreco[itweak], Form("%f sigma",tweaks[itweak]), "L" );
+#else
     legend->AddEntry(hEreco[itweak], Form("%d sigma",tweaks[itweak]), "L" );
+#endif
   }
   maxy *= 1.1;
   hErecoNominal->GetYaxis()->SetRangeUser(0,maxy);
