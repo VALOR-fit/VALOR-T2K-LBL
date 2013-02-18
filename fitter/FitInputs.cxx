@@ -8,7 +8,8 @@
  
  Changes since 2011_v0.9.0:
 
- @
+ @ 18/2/13 LE
+ Added back Fogli and Lisi schema in the penalty term.
 
 */
 //________________________________________________________________________________________
@@ -108,44 +109,46 @@ double FitInputs::Chisquare(Option_t * option, conv::SuperkSample_t s0) const
       // an input sample was specified and the current one is not it: skip
       if(s0 != conv::kSKsUndefined && s != s0) continue;      
 
-      // Add chisq for 1Rmu sample
-      // If we only want the nue appearance analysis only, then skip
-      if ((s == conv::kSKsFCFV1RingMuLike) && (oscana != conv::kAnaNuEAppOnly)) {
-
-	applied_negevents_condition = fExp->Generate(*fFitParams, fAllBANFFFit) || applied_negevents_condition;
-	if(!fGoodnessOfFit) {
-	  int nbins = util::NumErecoBins(s);
+      // Add chisq for each sample
+      // If we only want the nue appearance analysis and sample is 1Rmu, then skip
+      if ((s == conv::kSKsFCFV1RingMuLike) && (oscana == conv::kAnaNuEAppOnly))    continue;
+      // If we only want the numu disappearance analysis and sample is 1Re, then skip
+      if ((s == conv::kSKsFCFV1RingELike)  && (oscana == conv::kAnaNuMuDisappOnly))continue;
+      
+      applied_negevents_condition = fExp->Generate(*fFitParams, fAllBANFFFit) || applied_negevents_condition;
+      if(!fGoodnessOfFit) {
+	int nbins = util::NumErecoBins(s);
 #ifdef __show_bin_contributions_to_chisq__
-	  cout << "FitInputs::Chisquare()> nbins = " << nbins << endl;
+	cout << "FitInputs::Chisquare()> nbins = " << nbins << endl;
 #endif
-	  //loop over Ereco bins
-	  for(int ibin = 1; ibin <= nbins; ibin++) {
-	    double nobs = fObs->ErecoSpectrumArray             (s)[ibin-1];
-	    double nexp = fExp->CurrPredictedErecoSpectrumArray(s)[ibin-1];
-	    
-	    double delta_chisq = 0.;
-	    if      (opt.Contains("poisson")) { delta_chisq = util::ChisqPoisson(nobs,nexp); }
-	    else if (opt.Contains("gauss")  ) { delta_chisq = util::ChisqGauss  (nobs,nexp); }
-	    chisq += delta_chisq;
-
+	//loop over Ereco bins
+	for(int ibin = 1; ibin <= nbins; ibin++) {
+	  double nobs = fObs->ErecoSpectrumArray             (s)[ibin-1];
+	  double nexp = fExp->CurrPredictedErecoSpectrumArray(s)[ibin-1];
+	  
+	  double delta_chisq = 0.;
+	  if      (opt.Contains("poisson")) { delta_chisq = util::ChisqPoisson(nobs,nexp); }
+	  else if (opt.Contains("gauss")  ) { delta_chisq = util::ChisqGauss  (nobs,nexp); }
+	  chisq += delta_chisq;
+	  
 #ifdef __show_bin_contributions_to_chisq__
-	    double xlo = util::ErecoBinEdges(s,ibin-1);
-	    double xup = util::ErecoBinEdges(s,ibin);
+	  double xlo = util::ErecoBinEdges(s,ibin-1);
+	  double xup = util::ErecoBinEdges(s,ibin);
 	    cout << "FitInputs::Chisquare()> delta_chisq (bin = " << ibin 
 		 << "; [" << xlo << ", " << xup << "] GeV) = " << delta_chisq << endl;
 	    cout << "\tNobs: " << nobs << "\tNexp:" << nexp << endl;
 #endif
-	  }//ibin
-
-	}//!goodnessoffit
-	else {
-	  const int nbins = 5;
-	  double binedges[nbins+1] = {0.0,0.4,0.7,1.0,2.0,30.0}; 
-
+	}//ibin
+	
+      }//!goodnessoffit
+      else {
+	const int nbins = 5;
+	double binedges[nbins+1] = {0.0,0.4,0.7,1.0,2.0,30.0}; 
+	
 #ifdef __show_bin_contributions_to_chisq__
-	  cout << "FitInputs::Chisquare()> nbins = " << nbins << endl;
+	cout << "FitInputs::Chisquare()> nbins = " << nbins << endl;
 #endif
-
+	
 	  //loop over Ereco bins
 	  for(int ibin = 1; ibin <= nbins; ibin++) {
 	    int ErecoMinBin = 1 + TMath::BinarySearch(util::NumErecoBins(s),util::ErecoBinEdges(s),binedges[ibin-1]);
@@ -169,10 +172,10 @@ double FitInputs::Chisquare(Option_t * option, conv::SuperkSample_t s0) const
 #endif
 	  }//ibin
 	}//goodnessoffit
-      }//1Rmu
-      
+      //      }//1Rmu
+      /*
       // Add chisq for 1Re sample
-      // If we only want the numu disappearance analysis only, then skip
+      // If we only want the numu disappearance analysis, then skip
       else 
       if ((s == conv::kSKsFCFV1RingELike) && (oscana != conv::kAnaNuMuDisappOnly) )
       {
@@ -192,23 +195,24 @@ double FitInputs::Chisquare(Option_t * option, conv::SuperkSample_t s0) const
 		 << endl;
 #endif
       }
-  
-    }//loop over samples
+      */  
 
+  }//loop over samples
+  
   //
   // Add penalty term for nuisance parameters
   //
   double chisq_penalty = ChisquarePenaltyTerm();
   chisq += chisq_penalty;      
-
+  
 #ifdef __show_chisq__
   cout << "FitInputs::Chisquare()> chisq = " << chisq 
        << " (contribution from penalty term = " << chisq_penalty << ")" 
        << endl;
 #endif
-
+  
   //if(applied_negevents_condition) chisq += 1E8;
-
+  
   return chisq; 
 }
 //____________________________________________________________________________ 
@@ -368,8 +372,9 @@ double FitInputs::ChisquarePenaltyTerm(void) const
   // Add penalty term for marginalised oscillation parameters.
   // Penalize deviations from global analysis best-fit value.
   // ...
-  /* don't actually need these for the current analysis
-  if( fFitParams->Exists    (kPhypMixing23) && 
+  // don't actually need these for the current analysis
+  /*
+    if( fFitParams->Exists    (kPhypMixing23) && 
       fFitParams->IsNuisance(kPhypMixing23) )
   {
     double mix = fFitParams->CurrValue(kPhypMixing23);
@@ -472,13 +477,25 @@ double FitInputs::ChisquarePenaltyTerm(void) const
           << " => \\delta\\chi^2_{penalty} = " << dchisq_penalty << endl;
 #endif
   }//dm12sq
-
+  
   if( fFitParams->Exists    (kPhypDm23sq) && 
       fFitParams->IsNuisance(kPhypDm23sq) )
-  {
+    {
       double dmsq = fFitParams->CurrValue(kPhypDm23sq);
-      double nom  = kGlobFitDm23sq;
-      double err  = kGlobFitDm23sq * kGlobFitErrDm23sq;
+      double nom = 0.;
+      NuOscDmsqScheme_t odmsq = Opt::Instance()->gOscDmsqScheme;
+      switch (odmsq) {
+      case(kNuDmsqFogliLisi):
+	nom  =  kGlobFitDmsqFL;
+	break;
+      case(kNuDmsq12andAbs23):
+	nom  = kGlobFitDm23sq;
+	break;
+      default:
+	nom  = kGlobFitDm23sq;
+      }
+      //      double nom  = kGlobFitDm23sq;
+      double err  = nom * kGlobFitErrDm23sq;
       double twk  = (dmsq - nom) / err;
       double dchisq_penalty = twk*twk;
       chisq_penalty += dchisq_penalty;
@@ -488,8 +505,8 @@ double FitInputs::ChisquarePenaltyTerm(void) const
            << " => \\delta\\chi^2_{penalty} = " << dchisq_penalty << endl;
 #endif
   }//dm23sq
-  */
-
+  
+*/
   return chisq_penalty;
 }
 //____________________________________________________________________________ 

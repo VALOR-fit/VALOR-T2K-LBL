@@ -8,14 +8,15 @@
  
  Changes since 2011_v0.9.0:
 
- @
+ @ 18/2/13 LE
+ Added TweakFluxOnly method for comparisons with official appearance analysis. Updated last banff parameter.
 
 */
 //________________________________________________________________________________________
 
 #define __show_init_mesg_info__  
 //#define __show_init_mesg_debug__   
-#define __show_cholesky_mesg_info__
+//#define __show_cholesky_mesg_info__
 //#define __show_cholesky_mesg_debug__
 //#define __show_tweak_mesg_debug__
 //#define __show_update_correlated_mesg_debug__
@@ -65,6 +66,7 @@ void BANFF::Init(void)
   fCovMtrxChoL        = 0; 
   fIsTweaked          = false;
   fIsFluxWghtUpdated  = true;
+  fIsNominalMCRestored= false;
 }
 //________________________________________________________________________________________
 void BANFF::CleanUp(void)
@@ -129,9 +131,9 @@ bool BANFF::Read(TXMLEngine* xml, XMLNodePointer_t root_node)
   }
 #ifdef __show_init_mesg_debug__
   cout << "Exp/BANFF >> Input BANFF covariance matrix: " << endl; 
-  util::PrintCompact(cov,7,4);
+  util::PrintCompact(cov,7,5);
   cout << "Exp/BANFF >> Inverse BANFF covariance matrix: " << endl;
-  util::PrintCompact(*fCovMtrxInv,7,4);
+  util::PrintCompact(*fCovMtrxInv,7,5);
 #endif
 
 #ifdef __show_init_mesg_info__
@@ -143,8 +145,16 @@ bool BANFF::Read(TXMLEngine* xml, XMLNodePointer_t root_node)
 //________________________________________________________________________________________
 double BANFF::BestFitValue(PhysParamId_t p) const
 {
+  if (fIsNominalMCRestored) return 1.;
   const TVectorD & bestfit = this->BestFitValues();
   int idx = this->Param2Idx(p);
+  return bestfit[idx];
+}
+//________________________________________________________________________________________
+double BANFF::BestFitValue(int idx) const
+{
+  if (fIsNominalMCRestored) return 1.;
+  const TVectorD & bestfit = this->BestFitValues();
   return bestfit[idx];
 }
 //________________________________________________________________________________________
@@ -157,8 +167,16 @@ double BANFF::CurrentValue(PhysParamId_t p) const
 //________________________________________________________________________________________
 double BANFF::OneSigmaError(PhysParamId_t p) const
 {
+  if (fIsNominalMCRestored) return 1.;
   const TMatrixD & cov = *fCovMtrx;
   int idx = this->Param2Idx(p);
+  return TMath::Sqrt(cov[idx][idx]);
+}
+//________________________________________________________________________________________
+double BANFF::OneSigmaError(int idx) const
+{
+  if (fIsNominalMCRestored) return 1.;
+  const TMatrixD & cov = *fCovMtrx;
   return TMath::Sqrt(cov[idx][idx]);
 }
 //________________________________________________________________________________________
@@ -234,6 +252,83 @@ void BANFF::Tweak(
 
 }
 //________________________________________________________________________________________
+void BANFF::TweakFluxOnly(
+  bool       force_inputs, /* force the input params or generate random ones internally  */
+  TVectorD * input_vec    /* input vector of BANFF params - Set to 0 to reset to best-fit ones */
+)
+{
+#ifdef __show_tweak_mesg_debug__
+  cout << "Exp/BANFF/TweakFluxOnly >> Tweaking BANFF flux parameters" << endl;
+#endif
+
+  // Switch flags
+  fIsTweaked         = true;
+  fIsFluxWghtUpdated = false;
+
+  //
+  // If this is the first time this function is called, then run the Cholesky 
+  // decomposition of the flux covariance matrix
+  //
+
+  if(fCovMtrxChoL == 0) 
+    this->CholeskyDecomposeMatrix();
+
+  //
+  // Get best-fit and current BANFF params
+  //
+
+  TVectorD & bestfit_values = *fBestFitValues;
+  TVectorD & current_values = *fCurrentValues;
+
+  //
+  // Force input BANFF parameters
+  //
+  if(force_inputs) 
+  {
+     // Input vector is NULL.
+     // This resets the BANFF params to their best-fit values.
+     if(input_vec==0) {
+#ifdef __show_tweak_mesg_debug__
+        cout << "Exp/BANFF/TweakFluxOnly >> Reset BANFF flux params to best-fit values." << endl;
+#endif
+        fIsTweaked = false;
+        current_values = bestfit_values;
+        return;
+     }
+     else     
+     {
+#ifdef __show_tweak_mesg_debug__
+        cout << "Exp/BANFF/TweakFluxOnly >> Forcing input BANFF flux parameters. " << endl;
+#endif
+        TVectorD & vec = *input_vec;
+        assert(vec.GetNoElements() == conv::kNumOfFluxParamsInBANFFfit);
+	for (int i=0; i< conv::kNumOfFluxParamsInBANFFfit; i++){
+	  current_values[i] = vec[i];
+	}
+        return;
+     }
+  }//force_inputs?
+
+  //
+  // If the tweaking dials were not forced, generate correlated tweaking dials
+  // using the Cholesky method
+  //
+  else
+  {
+#ifdef __show_tweak_mesg_debug__
+     cout << "Exp/BANFF/TweakFluxOnly >> Generating random twk dials (correlated)! " << endl;
+#endif
+     TMatrixD & L = *fCovMtrxChoL;
+     TVectorD vec = util::CholeskyGenerateCorrelatedParams(L,bestfit_values);
+     for (int i=0; i< conv::kNumOfParamsInBANFFfit; i++){
+       if(i<conv::kNumOfFluxParamsInBANFFfit) current_values[i] = vec[i];
+       else current_values[i] = bestfit_values[i];
+     }
+     return;
+  }
+
+}
+//________________________________________________________________________________________
 void BANFF::CholeskyDecomposeMatrix()
 {
 #ifdef __show_cholesky_mesg_info__  
@@ -244,14 +339,14 @@ void BANFF::CholeskyDecomposeMatrix()
     TMatrixD cov(this->CovMatrix());
 #ifdef __show_cholesky_mesg_debug__
     cout << "Exp/BANFF/CholeskyDecomposeMatrix >> BANFF covariance matrix: " << endl; 
-    util::PrintCompact(cov,7,4);
+    util::PrintCompact(cov,7,5);
 #endif
 
     TMatrixD L = util::CholeskyDecomposition(cov);
     fCovMtrxChoL = new TMatrixD(L);
 #ifdef __show_cholesky_mesg_debug__
     cout << "Exp/BANFF/CholeskyDecomposeMatrix >> Cholesky decomposition of BANFF covariance matrix: " << endl;
-    util::PrintCompact(*fCovMtrxChoL,7,4);
+    util::PrintCompact(*fCovMtrxChoL,7,5);
 #endif
 }
 //________________________________________________________________________________________
@@ -264,12 +359,18 @@ void BANFF::RestoreNominalMC(void)
 
   fIsTweaked         = true;
   fIsFluxWghtUpdated = false;
+  fIsNominalMCRestored = true;
 
+  //this is doing nothing at end, because NuFlux and NuXSec
+  //are still reading bestfit values from fBestFitValues
+  //we need to modify BestFitValue(p) 
   TVectorD & current_values = *fCurrentValues;
+  TVectorD & bestfit_values = *fBestFitValues;
 
   const int np = conv::kNumOfParamsInBANFFfit;
   for(int i=0; i<np; i++) {
     current_values[i] = 1.;
+    bestfit_values[i] = 1.;
   }
 }
 //________________________________________________________________________________________
@@ -317,9 +418,9 @@ double BANFF::ChisqPenalty(bool all_syst) const
 
 #ifdef __show_chisqpenalty_mesg_debug__
     cout << "Exp/BANFF/ChisqPenalty >> BANFF covariance sub matrix : " << endl;
-    util::PrintCompact(covSub,7,4);
+    util::PrintCompact(covSub,7,5);
     cout << "Exp/BANFF/ChisqPenalty >> Inverse BANFF covariance sub matrix : " << endl;
-    util::PrintCompact(covInvSub,7,4);
+    util::PrintCompact(covInvSub,7,5);
 #endif
 
 #ifdef __show_chisqpenalty_mesg_debug2__
@@ -351,16 +452,16 @@ double BANFF::ChisqPenalty(bool all_syst) const
 
 #ifdef __show_chisqpenalty_mesg_debug2__
     cout << "Exp/BANFF/ChisqPenalty >> BANFF covariance matrix: " << endl;
-    util::PrintCompact(cov,7,4);
+    util::PrintCompact(cov,7,5);
     cout << "Exp/BANFF/ChisqPenalty >> Inverse BANFF covariance matrix: " << endl;
-    util::PrintCompact(covInv,7,4);
+    util::PrintCompact(covInv,7,5);
 #endif
 
     //Check the inverse:
 #ifdef __show_chisqpenalty_mesg_debug2__
     TMatrixD prod = cov*covInv;
     cout << "Exp/BANFF/ChisqPenalty >> check of product cov*(cov)^-1 : "<< endl;
-    util::PrintCompact(prod,7,4);
+    util::PrintCompact(prod,7,5);
 #endif
 
     TMatrixD chisqpenalty =  dev * covInv * devT;
@@ -391,7 +492,7 @@ int BANFF::Param2Idx(PhysParamId_t p) const
 {
   int iparam = (int) p;
   int first  = (int) kNuisBANFF00;
-  int last   = (int) kNuisBANFFCC1piE1;
+  int last   = (int) kNuisBANFFNC1pi0;
 
   if(! (iparam >= first && iparam <= last) )
     cout << AsString(p) << endl;

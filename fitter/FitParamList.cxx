@@ -8,7 +8,8 @@
 
  Changes since 2011_v0.9.0:
 
- @
+ @ 18/2/13 LE
+ Added new parameters for 1Re sample. Separated append methods for disappearance and appearance only, updated lists for appearance and joint analyses.
 
 */
 //________________________________________________________________________________________
@@ -395,6 +396,69 @@ void FitParamList::Print(ostream & stream) const
 
 }
 //________________________________________________________________________________________
+void FitParamList::Print() const
+{
+  if(fShowBestFitValuesOnly) {
+     fShowBestFitValuesOnly = false; // has one-off effect
+     cout << endl
+            << setw(6)  << "id"
+            << setw(50) << "name"
+            << setw(15) << "best-fit"
+            << endl;
+     for(int ip=0; ip<fNParams;  ip++) {
+       cout << setw(6)  << ip 
+              << setw(50) << fName[ip]
+              << setprecision(6)
+              << setw(15) << fBestFitValue[ip]
+              << endl;
+     }
+  } 
+  else
+  if(fShowCurrValuesOnly) {
+     fShowCurrValuesOnly = false; // has one-off effect
+     cout << endl
+            << setw(6)  << "id"
+            << setw(50) << "name"
+            << setw(15) << "curr"
+            << endl;
+     for(int ip=0; ip<fNParams;  ip++) {
+       cout << setw(6)  << ip 
+              << setw(50) << fName[ip]
+              << setprecision(6)
+              << setw(15) << fCurrValue[ip]
+              << endl;
+     }
+  } 
+  else 
+  {
+     cout << endl
+            << setw(6)  << "id"
+            << setw(50) << "name"
+            << setw(15) << "curr"
+            << setw(15) << "init"
+            << setw(15) << "min"
+            << setw(15) << "max"
+            << setw(15) << "step"
+            << setw(8)  << "fixed?"
+            << setw(10) << "nuisance?"
+            << endl;
+     for(int ip=0; ip<fNParams;  ip++) {
+       cout << setw(6)  << ip 
+              << setw(50) << fName[ip]
+              << setprecision(6)
+              << setw(15) << fCurrValue[ip]
+              << setw(15) << fInitValue[ip]
+              << setw(15) << fMinValue[ip]
+              << setw(15) << fMaxValue[ip]
+              << setw(15) << fStepSize[ip]
+              << setw(8) << ((fIsFixed[ip])    ? " **yes** " : "no")
+              << setw(8) << ((fIsNuisance[ip]) ? " **yes** " : "no")
+              << endl;
+     }
+  }
+
+}
+//________________________________________________________________________________________
 FitParamList * FitParamList::NamedParameterList(string name)
 {
   //
@@ -438,6 +502,14 @@ FitParamList * FitParamList::NamedParameterList(string name)
     fp -> SetSystMode(0);
     return fp;
   }
+  if(name == "nuosc3f_12fix+nuisance") {
+    FitParamList * fp = FitParamList::NuOsc3FlavourFitWithAllSyst();
+    fp -> FixParameter (kPhypMixing12);
+    fp -> FixParameter (kPhypDm12sq  );
+    fp -> SetParListName(name);
+    fp -> SetSystMode(1);
+    return fp;
+  }
   if(name == "nuosc3f_numudisapp_fix4") {
     FitParamList * fp = FitParamList::NuOsc3FlavourFit();
     fp -> FixParameter (kPhypMixing13);
@@ -449,7 +521,7 @@ FitParamList * FitParamList::NamedParameterList(string name)
     return fp;
   }
   if(name == "nuosc3f_numudisapp_fix4+nuisance") {
-    FitParamList * fp = FitParamList::NuOsc3FlavourFitWithAllSyst();
+    FitParamList * fp = FitParamList::NuOsc3FlavourFitWithAllSystDisap();
     fp -> FixParameter (kPhypMixing13);
     fp -> FixParameter (kPhypMixing12);
     fp -> FixParameter (kPhypDeltaCP);
@@ -468,6 +540,28 @@ FitParamList * FitParamList::NamedParameterList(string name)
     fp -> SetSystMode(2);
     return fp;
   }
+
+  if(name == "nuosc3f_nueapp_fix4") {
+    FitParamList * fp = FitParamList::NuOsc3FlavourFit();
+    fp -> FixParameter (kPhypMixing23);
+    fp -> FixParameter (kPhypMixing12);
+    fp -> FixParameter (kPhypDm23sq);
+    fp -> FixParameter (kPhypDm12sq);
+    fp -> SetParListName(name);
+    fp -> SetSystMode(0);
+    return fp;
+  }
+  if(name == "nuosc3f_nueapp_fix4+nuisance") {
+    FitParamList * fp = FitParamList::NuOsc3FlavourFitWithAllSystApp();
+    fp -> FixParameter (kPhypMixing23);
+    fp -> FixParameter (kPhypMixing12);
+    fp -> FixParameter (kPhypDm23sq);
+    fp -> FixParameter (kPhypDm12sq);
+    fp -> SetParListName(name);
+    fp -> SetSystMode(1);
+    return fp;
+  }
+
   /*
   if(name == "nuosc3f_numudisapp_fix4+nuisanceselectionnobanff") {
     FitParamList * fp = FitParamList::NuOsc3FlavourFitWithSelectedSystNoBANFF();
@@ -490,16 +584,6 @@ FitParamList * FitParamList::NamedParameterList(string name)
     return fp;
   }
   */
-  if(name == "nuosc3f_nueapp_fix4") {
-    FitParamList * fp = FitParamList::NuOsc3FlavourFit();
-    fp -> FixParameter (kPhypMixing23);
-    fp -> FixParameter (kPhypMixing12);
-    fp -> FixParameter (kPhypDm23sq);
-    fp -> FixParameter (kPhypDm12sq);
-    fp -> SetParListName(name);
-    fp -> SetSystMode(0);
-    return fp;
-  }
 
   //
   // 2-flavour numu-disappearance oscillation fit with/without systematics included 
@@ -557,7 +641,7 @@ FitParamList * FitParamList::NuOsc3FlavourFit(void)
 //________________________________________________________________________________________
 FitParamList * FitParamList::NuOsc3FlavourFitWithAllSyst(void)
 {
-  FitParamList * fparm = new FitParamList(6+kNumOfNuisanceParams1Rmu); // NOTE: This will have to change for the 2012a 1Re and joint analysis
+  FitParamList * fparm = new FitParamList(6+kNumOfNuisanceParamsJoint); // NOTE: This will have to change for the 2012a 1Re and joint analysis
 
   FitParamList::Append3FlavourOscillation(fparm, 0);
 
@@ -568,6 +652,40 @@ FitParamList * FitParamList::NuOsc3FlavourFitWithAllSyst(void)
   FitParamList::AppendAllSuperkDetectorSystematics  (fparm, 6+kNumOfParamsInBANFFfit);
   FitParamList::AppendAllFSISystematics             (fparm, 6+kNumOfParamsInBANFFfit+kNumOfSKDetParams);
   FitParamList::AppendAllUncorrelatedXSecSystematics(fparm, 6+kNumOfParamsInBANFFfit+kNumOfSKDetParams+kNumOfFSIParams);
+
+  return fparm;
+}
+//________________________________________________________________________________________
+FitParamList * FitParamList::NuOsc3FlavourFitWithAllSystDisap(void)
+{
+  FitParamList * fparm = new FitParamList(6+kNumOfNuisanceParams1Rmu); // NOTE: This will have to change for the 2012a 1Re and joint analysis
+
+  FitParamList::Append3FlavourOscillation(fparm, 0);
+
+  //
+  // add nuisance params
+  //
+  FitParamList::AppendCorrelatedBANFFSystematicsDisap (fparm, 6);
+  FitParamList::AppendSuperkDetectorSystematicsDisap  (fparm, 6+kNumOfParamsInBANFFfit-1);
+  FitParamList::AppendFSISystematicsDisap             (fparm, 6+kNumOfParamsInBANFFfit-1+kNumOfSKDetParams1Rmu);
+  FitParamList::AppendUncorrelatedXSecSystematicsDisap(fparm, 6+kNumOfParamsInBANFFfit-1+kNumOfSKDetParams1Rmu+kNumOfFSIParams1Rmu);
+
+  return fparm;
+}
+//________________________________________________________________________________________
+FitParamList * FitParamList::NuOsc3FlavourFitWithAllSystApp(void)
+{
+  FitParamList * fparm = new FitParamList(6+kNumOfNuisanceParams1Re); // NOTE: This will have to change for the 2012a 1Re and joint analysis
+
+  FitParamList::Append3FlavourOscillation(fparm, 0);
+
+  //
+  // add nuisance params
+  //
+  FitParamList::AppendAllCorrelatedBANFFSystematics   (fparm, 6);
+  FitParamList::AppendSuperkDetectorSystematicsApp    (fparm, 6+kNumOfParamsInBANFFfit);
+  FitParamList::AppendFSISystematicsApp               (fparm, 6+kNumOfParamsInBANFFfit+1+kNumOfSKDetParams1Re);
+  FitParamList::AppendUncorrelatedXSecSystematicsApp  (fparm, 6+kNumOfParamsInBANFFfit+1+kNumOfSKDetParams1Re+kNumOfFSIParams1Re);
 
   return fparm;
 }
@@ -634,10 +752,10 @@ FitParamList * FitParamList::NumuDisapFitWithAllSyst(void)
   //
   // add nuisance params
   //
-  FitParamList::AppendAllCorrelatedBANFFSystematics (fparm, 2);
-  FitParamList::AppendAllSuperkDetectorSystematics  (fparm, 2+kNumOfParamsInBANFFfit);
-  FitParamList::AppendAllFSISystematics             (fparm, 2+kNumOfParamsInBANFFfit+kNumOfSKDetParams);
-  FitParamList::AppendAllUncorrelatedXSecSystematics(fparm, 2+kNumOfParamsInBANFFfit+kNumOfSKDetParams+kNumOfFSIParams);
+  FitParamList::AppendCorrelatedBANFFSystematicsDisap (fparm, 2);
+  FitParamList::AppendSuperkDetectorSystematicsDisap  (fparm, 2+kNumOfParamsInBANFFfit-1);
+  FitParamList::AppendFSISystematicsDisap             (fparm, 2+kNumOfParamsInBANFFfit-1+kNumOfSKDetParams1Rmu);
+  FitParamList::AppendUncorrelatedXSecSystematicsDisap(fparm, 2+kNumOfParamsInBANFFfit-1+kNumOfSKDetParams1Rmu+kNumOfFSIParams1Rmu);
 
   return fparm;
 }
@@ -703,8 +821,23 @@ void FitParamList::Append3FlavourOscillation(FitParamList * fparm, int start)
      delete fparm;
      return;
   }
+  
   fparm->AddParam( ip++, kPhypDeltaCP,   0,                -kpi,          kpi,           1.0E-2,  false, false);
-  fparm->AddParam( ip++, kPhypDm23sq,    kInitFitDm23sq,   kMinFitDm23sq, kMaxFitDm23sq, 1.0E-4,  false, false);
+  
+  //  fparm->AddParam( ip++, kPhypDm23sq,    kInitFitDm23sq,   kMinFitDm23sq, kMaxFitDm23sq, 1.0E-4,  false, false);
+  NuOscDmsqScheme_t odmsq = Opt::Instance()->gOscDmsqScheme;
+  switch (odmsq) {
+  case(kNuDmsqFogliLisi):
+    fparm->AddParam( ip++, kPhypDm23sq,    kGlobFitDmsqFL,   kMinFitDm23sq, kMaxFitDm23sq, 1.0E-4,  false, false);
+    break;
+  case(kNuDmsq12andAbs23):
+    fparm->AddParam( ip++, kPhypDm23sq,    kInitFitDm23sq,   kMinFitDm23sq, kMaxFitDm23sq, 1.0E-4,  false, false);
+    break;
+  default:
+    delete fparm;
+    return;
+  }
+  
   fparm->AddParam( ip++, kPhypDm12sq,    kInitFitDm12sq,   kMinFitDm12sq, kMaxFitDm12sq, 2.0E-6,  false, false);
 
 }
@@ -749,6 +882,51 @@ void FitParamList::AppendAllUncorrelatedXSecSystematics(FitParamList * fparm, in
   fparm->AddParam( ip++, kNuisXSecBindE,         0.0, -1.0*SYST_NSIGMA, 1.0*SYST_NSIGMA, SYST_STEP,  false, true);
   fparm->AddParam( ip++, kNuisXSecNormCCcoh,     0.0, -1.0*SYST_NSIGMA, 1.0*SYST_NSIGMA, SYST_STEP,  false, true);
   fparm->AddParam( ip++, kNuisXSecNormNC1piC,    0.0, -1.0*SYST_NSIGMA, 1.0*SYST_NSIGMA, SYST_STEP,  false, true);
+  fparm->AddParam( ip++, kNuisXSecNormNCcoh,     0.0, -1.0*SYST_NSIGMA, 1.0*SYST_NSIGMA, SYST_STEP,  false, true);
+  fparm->AddParam( ip++, kNuisXSecNormNCoth,     0.0, -1.0*SYST_NSIGMA, 1.0*SYST_NSIGMA, SYST_STEP,  false, true);
+  fparm->AddParam( ip++, kNuisXSecNormNuEToNuMu, 0.0, -1.0*SYST_NSIGMA, 1.0*SYST_NSIGMA, SYST_STEP,  false, true);
+  fparm->AddParam( ip++, kNuisXSecNormAntiNuToNu,0.0, -1.0*SYST_NSIGMA, 1.0*SYST_NSIGMA, SYST_STEP,  false, true);
+
+}
+//________________________________________________________________________________________
+void FitParamList::AppendUncorrelatedXSecSystematicsDisap(FitParamList * fparm, int start)
+{
+// Add nuisance params
+//
+
+  int ip = start; // first unallocated element in the param list
+
+  // XSec
+  fparm->AddParam( ip++, kNuisXSecFermiMom,      0.0, -1.0*SYST_NSIGMA, 1.0*SYST_NSIGMA, SYST_STEP,  false, true);
+  fparm->AddParam( ip++, kNuisXSecSpecFunc,      0.5, 0.,               1.,              SYST_STEP,  false, true);
+  fparm->AddParam( ip++, kNuisXSecWshape,        0.0, -1.0*SYST_NSIGMA, 1.0*SYST_NSIGMA, SYST_STEP,  false, true);
+  fparm->AddParam( ip++, kNuisXSecShapeCCoth,    0.0, -1.0*SYST_NSIGMA, 1.0*SYST_NSIGMA, SYST_STEP,  false, true);
+  fparm->AddParam( ip++, kNuisXSecPiLessDelta,   0.0, -1.0*SYST_NSIGMA, 1.0*SYST_NSIGMA, SYST_STEP,  false, true);
+  fparm->AddParam( ip++, kNuisXSecBindE,         0.0, -1.0*SYST_NSIGMA, 1.0*SYST_NSIGMA, SYST_STEP,  false, true);
+  fparm->AddParam( ip++, kNuisXSecNormCCcoh,     0.0, -1.0*SYST_NSIGMA, 1.0*SYST_NSIGMA, SYST_STEP,  false, true);
+  fparm->AddParam( ip++, kNuisXSecNormNC1piC,    0.0, -1.0*SYST_NSIGMA, 1.0*SYST_NSIGMA, SYST_STEP,  false, true);
+  fparm->AddParam( ip++, kNuisXSecNormNCoth,     0.0, -1.0*SYST_NSIGMA, 1.0*SYST_NSIGMA, SYST_STEP,  false, true);
+  fparm->AddParam( ip++, kNuisXSecNormNuEToNuMu, 0.0, -1.0*SYST_NSIGMA, 1.0*SYST_NSIGMA, SYST_STEP,  false, true);
+  fparm->AddParam( ip++, kNuisXSecNormAntiNuToNu,0.0, -1.0*SYST_NSIGMA, 1.0*SYST_NSIGMA, SYST_STEP,  false, true);
+
+}
+//________________________________________________________________________________________
+void FitParamList::AppendUncorrelatedXSecSystematicsApp(FitParamList * fparm, int start)
+{
+// Add nuisance params
+//
+
+  int ip = start; // first unallocated element in the param list
+
+  // XSec
+  fparm->AddParam( ip++, kNuisXSecFermiMom,      0.0, -1.0*SYST_NSIGMA, 1.0*SYST_NSIGMA, SYST_STEP,  false, true);
+  fparm->AddParam( ip++, kNuisXSecSpecFunc,      0.5, 0.,               1.,              SYST_STEP,  false, true);
+  fparm->AddParam( ip++, kNuisXSecWshape,        0.0, -1.0*SYST_NSIGMA, 1.0*SYST_NSIGMA, SYST_STEP,  false, true);
+  fparm->AddParam( ip++, kNuisXSecShapeCCoth,    0.0, -1.0*SYST_NSIGMA, 1.0*SYST_NSIGMA, SYST_STEP,  false, true);
+  fparm->AddParam( ip++, kNuisXSecPiLessDelta,   0.0, -1.0*SYST_NSIGMA, 1.0*SYST_NSIGMA, SYST_STEP,  false, true);
+  fparm->AddParam( ip++, kNuisXSecBindE,         0.0, -1.0*SYST_NSIGMA, 1.0*SYST_NSIGMA, SYST_STEP,  false, true);
+  fparm->AddParam( ip++, kNuisXSecNormCCcoh,     0.0, -1.0*SYST_NSIGMA, 1.0*SYST_NSIGMA, SYST_STEP,  false, true);
+  fparm->AddParam( ip++, kNuisXSecNormNCcoh,     0.0, -1.0*SYST_NSIGMA, 1.0*SYST_NSIGMA, SYST_STEP,  false, true);
   fparm->AddParam( ip++, kNuisXSecNormNCoth,     0.0, -1.0*SYST_NSIGMA, 1.0*SYST_NSIGMA, SYST_STEP,  false, true);
   fparm->AddParam( ip++, kNuisXSecNormNuEToNuMu, 0.0, -1.0*SYST_NSIGMA, 1.0*SYST_NSIGMA, SYST_STEP,  false, true);
   fparm->AddParam( ip++, kNuisXSecNormAntiNuToNu,0.0, -1.0*SYST_NSIGMA, 1.0*SYST_NSIGMA, SYST_STEP,  false, true);
@@ -772,7 +950,107 @@ void FitParamList::AppendAllSuperkDetectorSystematics(FitParamList * fparm, int 
   fparm->AddParam( ip++, kNuisSuperkEff1RmuNueCC,    0.0, -1.0*SYST_NSIGMA, 1.0*SYST_NSIGMA, SYST_STEP,  false, true);
   fparm->AddParam( ip++, kNuisSuperkEnergyScale,     0.0, -1.0*SYST_NSIGMA, 1.0*SYST_NSIGMA, SYST_STEP,  false, true);
 
-} //________________________________________________________________________________________
+  // Adding the part corresponding to 1Re efficiencies (with covariance matrix) 
+
+  //    Get the covariance matrices & best fits of SKDet
+  //    to have something sensible to initialise to
+  // Parse the input XML configuration file
+  const char * config_file = Form("%s/config/%s", gSystem->Getenv("T2KOSCANA"), "analysis_configuration.xml");
+  TXMLEngine* xml = new TXMLEngine;   
+  XMLDocPointer_t xmldoc = xml->ParseFile(config_file);
+  if (xmldoc==0) {
+    cerr << "Exp >> " << "Can not parse input: " << config_file << endl;
+    delete xml;
+    exit(1);  
+  }
+  XMLNodePointer_t root_node = xml->DocGetRootElement(xmldoc);
+  // Get FSI covariance matrix
+  TMatrixD * SKDet1ReCovMtrx = util::XML2TMatrixD(xml,root_node,"detector_systematics/superk/efficiency_relative_error/one_e_ring");
+  if(!SKDet1ReCovMtrx) {
+    cerr << "FitParamList/AppendSystematics >> No SKDet 1Re eff covariance matrix was found." << endl;
+    exit(1);
+  }
+  const TMatrixD & SKDet1ReCov = *SKDet1ReCovMtrx;
+  // Release memory
+  //  xml->FreeDoc(xmldoc);
+  xml->FreeNode(root_node);
+  delete xml;
+
+  // SKDet 1Re eff
+  for(int i = 0; i < kNumOfSKDetParams1Re; i++) {
+    PhysParamId_t p = PhysParamId_t ((int) kNuisSuperkEff1ReNueSigCC0 + i);
+    double err = sqrt(SKDet1ReCov[i][i]);
+    double lowerr = TMath::Max(0., 1.0-(err*SYST_NSIGMA));
+    fparm->AddParam(ip++, p,  1.0, lowerr, 1.0+(err*SYST_NSIGMA),  err*SYST_STEP,  false, true);
+  }
+
+}
+//________________________________________________________________________________________
+void FitParamList::AppendSuperkDetectorSystematicsDisap(FitParamList * fparm, int start)
+{
+// Add nuisance params
+//
+
+  int ip = start; // first unallocated element in the param list
+
+  // SK detector
+  fparm->AddParam( ip++, kNuisSuperkEff1RmuCCQEoth,  0.0, -1.0*SYST_NSIGMA, 1.0*SYST_NSIGMA, SYST_STEP,  false, true);
+  fparm->AddParam( ip++, kNuisSuperkEff1RmuCCQErc0u, 0.0, -1.0*SYST_NSIGMA, 1.0*SYST_NSIGMA, SYST_STEP,  false, true);
+  fparm->AddParam( ip++, kNuisSuperkEff1RmuCCQErc1u, 0.0, -1.0*SYST_NSIGMA, 1.0*SYST_NSIGMA, SYST_STEP,  false, true);
+  fparm->AddParam( ip++, kNuisSuperkEff1RmuCCQErc2u, 0.0, -1.0*SYST_NSIGMA, 1.0*SYST_NSIGMA, SYST_STEP,  false, true);
+  fparm->AddParam( ip++, kNuisSuperkEff1RmuCCnonQE,  0.0, -1.0*SYST_NSIGMA, 1.0*SYST_NSIGMA, SYST_STEP,  false, true);
+  fparm->AddParam( ip++, kNuisSuperkEff1RmuNC,       0.0, -1.0*SYST_NSIGMA, 1.0*SYST_NSIGMA, SYST_STEP,  false, true);
+  fparm->AddParam( ip++, kNuisSuperkEff1RmuNueCC,    0.0, -1.0*SYST_NSIGMA, 1.0*SYST_NSIGMA, SYST_STEP,  false, true);
+  fparm->AddParam( ip++, kNuisSuperkEnergyScale,     0.0, -1.0*SYST_NSIGMA, 1.0*SYST_NSIGMA, SYST_STEP,  false, true);
+
+}
+//________________________________________________________________________________________
+void FitParamList::AppendSuperkDetectorSystematicsApp(FitParamList * fparm, int start)
+{
+// Add nuisance params
+//
+
+  int ip = start; // first unallocated element in the param list
+
+  // SK detector
+  fparm->AddParam( ip++, kNuisSuperkEnergyScale,     0.0, -1.0*SYST_NSIGMA, 1.0*SYST_NSIGMA, SYST_STEP,  false, true);
+
+  // Adding the part corresponding to 1Re efficiencies (with covariance matrix) 
+
+  //    Get the covariance matrices & best fits of SKDet
+  //    to have something sensible to initialise to
+  // Parse the input XML configuration file
+  const char * config_file = Form("%s/config/%s", gSystem->Getenv("T2KOSCANA"), "analysis_configuration.xml");
+  TXMLEngine* xml = new TXMLEngine;   
+  XMLDocPointer_t xmldoc = xml->ParseFile(config_file);
+  if (xmldoc==0) {
+    cerr << "Exp >> " << "Can not parse input: " << config_file << endl;
+    delete xml;
+    exit(1);  
+  }
+  XMLNodePointer_t root_node = xml->DocGetRootElement(xmldoc);
+  // Get FSI covariance matrix
+  TMatrixD * SKDet1ReCovMtrx = util::XML2TMatrixD(xml,root_node,"detector_systematics/superk/efficiency_relative_error/one_e_ring");
+  if(!SKDet1ReCovMtrx) {
+    cerr << "FitParamList/AppendSystematics >> No SKDet 1Re eff covariance matrix was found." << endl;
+    exit(1);
+  }
+  const TMatrixD & SKDet1ReCov = *SKDet1ReCovMtrx;
+  // Release memory
+  //  xml->FreeDoc(xmldoc);
+  xml->FreeNode(root_node);
+  delete xml;
+
+  // SKDet 1Re eff
+  for(int i = 0; i < kNumOfSKDetParams1Re; i++) {
+    PhysParamId_t p = PhysParamId_t ((int) kNuisSuperkEff1ReNueSigCC0 + i);
+    double err = sqrt(SKDet1ReCov[i][i]);
+    double lowerr = TMath::Max(0., 1.0-(err*SYST_NSIGMA));
+    fparm->AddParam(ip++, p,  1.0, lowerr, 1.0+(err*SYST_NSIGMA),  err*SYST_STEP,  false, true);
+  }
+
+} 
+//________________________________________________________________________________________
 void FitParamList::AppendAllFSISystematics(FitParamList * fparm, int start)
 {
 // Add nuisance params
@@ -807,6 +1085,88 @@ void FitParamList::AppendAllFSISystematics(FitParamList * fparm, int start)
   // FSI
   for(int i = 0; i < kNumOfFSIParams; i++) {
     PhysParamId_t p = PhysParamId_t ((int) kNuisFSI000 + i);
+    double err = sqrt(FSICov[i][i]);
+    double lowerr = TMath::Max(0., 1.0-(err*SYST_NSIGMA));
+    fparm->AddParam(ip++, p,  1.0, lowerr, 1.0+(err*SYST_NSIGMA),  err*SYST_STEP,  false, true);
+  }
+
+}
+//________________________________________________________________________________________
+void FitParamList::AppendFSISystematicsDisap(FitParamList * fparm, int start)
+{
+// Add nuisance params
+//
+
+  int ip = start; // first unallocated element in the param list
+
+  //    Get the covariance matrices & best fits of FSI & BANFF from xml, 
+  //    to have something sensible to initialise to
+  // Parse the input XML configuration file
+  const char * config_file = Form("%s/config/%s", gSystem->Getenv("T2KOSCANA"), "analysis_configuration.xml");
+  TXMLEngine* xml = new TXMLEngine;   
+  XMLDocPointer_t xmldoc = xml->ParseFile(config_file);
+  if (xmldoc==0) {
+    cerr << "Exp >> " << "Can not parse input: " << config_file << endl;
+    delete xml;
+    exit(1);  
+  }
+  XMLNodePointer_t root_node = xml->DocGetRootElement(xmldoc);
+  // Get FSI covariance matrix
+  TMatrixD * FSICovMtrx = util::XML2TMatrixD(xml,root_node,"fsi/covariance_matrix");
+  if(!FSICovMtrx) {
+    cerr << "FitParamList/AppendSystematics >> No FSI covariance matrix was found." << endl;
+    exit(1);
+  }
+  const TMatrixD & FSICov = *FSICovMtrx;
+  // Release memory
+  //  xml->FreeDoc(xmldoc);
+  xml->FreeNode(root_node);
+  delete xml;
+
+  // FSI
+  for(int i = 0; i < kNumOfFSIParams1Rmu; i++) {
+    PhysParamId_t p = PhysParamId_t ((int) kNuisFSI000 + i);
+    double err = sqrt(FSICov[i][i]);
+    double lowerr = TMath::Max(0., 1.0-(err*SYST_NSIGMA));
+    fparm->AddParam(ip++, p,  1.0, lowerr, 1.0+(err*SYST_NSIGMA),  err*SYST_STEP,  false, true);
+  }
+
+}
+//________________________________________________________________________________________
+void FitParamList::AppendFSISystematicsApp(FitParamList * fparm, int start)
+{
+// Add nuisance params
+//
+
+  int ip = start; // first unallocated element in the param list
+
+  //    Get the covariance matrices & best fits of FSI & BANFF from xml, 
+  //    to have something sensible to initialise to
+  // Parse the input XML configuration file
+  const char * config_file = Form("%s/config/%s", gSystem->Getenv("T2KOSCANA"), "analysis_configuration.xml");
+  TXMLEngine* xml = new TXMLEngine;   
+  XMLDocPointer_t xmldoc = xml->ParseFile(config_file);
+  if (xmldoc==0) {
+    cerr << "Exp >> " << "Can not parse input: " << config_file << endl;
+    delete xml;
+    exit(1);  
+  }
+  XMLNodePointer_t root_node = xml->DocGetRootElement(xmldoc);
+  // Get FSI covariance matrix
+  TMatrixD * FSICovMtrx = util::XML2TMatrixD(xml,root_node,"fsi/covariance_matrix");
+  if(!FSICovMtrx) {
+    cerr << "FitParamList/AppendSystematics >> No FSI covariance matrix was found." << endl;
+    exit(1);
+  }
+  const TMatrixD & FSICov = *FSICovMtrx;
+  // Release memory
+  //  xml->FreeDoc(xmldoc);
+  xml->FreeNode(root_node);
+  delete xml;
+
+  // FSI
+  for(int i = 0; i < kNumOfFSIParams1Re; i++) {
+    PhysParamId_t p = PhysParamId_t ((int) kNuisFSI1Re000 + i);
     double err = sqrt(FSICov[i][i]);
     double lowerr = TMath::Max(0., 1.0-(err*SYST_NSIGMA));
     fparm->AddParam(ip++, p,  1.0, lowerr, 1.0+(err*SYST_NSIGMA),  err*SYST_STEP,  false, true);
@@ -854,6 +1214,55 @@ void FitParamList::AppendAllCorrelatedBANFFSystematics(FitParamList * fparm, int
 
   // BANFF 
   for(int i = 0; i < kNumOfParamsInBANFFfit; i++) {
+    PhysParamId_t p = PhysParamId_t ((int) kNuisBANFF00 + i);
+    double bf = BANFFBestFit[i];
+    double err = sqrt(BANFFCov[i][i]);
+    double lowerr = TMath::Max(0., bf-(err*SYST_NSIGMA));
+    fparm->AddParam(ip++, p, bf, lowerr, bf+(err*SYST_NSIGMA),  err*SYST_STEP,  false, true);
+  }
+
+}
+//________________________________________________________________________________________
+void FitParamList::AppendCorrelatedBANFFSystematicsDisap(FitParamList * fparm, int start)
+{
+// Add nuisance params
+//
+
+  int ip = start; // first unallocated element in the param list
+
+  //    Get the covariance matrices & best fits of FSI & BANFF from xml, 
+  //    to have something sensible to initialise to
+  // Parse the input XML configuration file
+  const char * config_file = Form("%s/config/%s", gSystem->Getenv("T2KOSCANA"), "analysis_configuration.xml");
+  TXMLEngine* xml = new TXMLEngine;   
+  XMLDocPointer_t xmldoc = xml->ParseFile(config_file);
+  if (xmldoc==0) {
+    cerr << "Exp >> " << "Can not parse input: " << config_file << endl;
+    delete xml;
+    exit(1);  
+  }
+  XMLNodePointer_t root_node = xml->DocGetRootElement(xmldoc);
+  // Get BANFF fit central values
+  TVectorD * BANFFBestFitValues = util::XML2TVectorD(xml,root_node,"banff/best_fit_values");
+  if(!BANFFBestFitValues) {
+    cerr << "FitParamList/AppendSystematics >> No BANFF best-fit parameter vector was found." << endl;
+    exit(1);
+  }
+  const TVectorD & BANFFBestFit = *BANFFBestFitValues;
+  // Get BANFF fit covariance matrix
+  TMatrixD * BANFFCovMtrx = util::XML2TMatrixD(xml,root_node,"banff/covariance_matrix");
+  if(!BANFFCovMtrx) {
+    cerr << "FitParamList/AppendSystematics >> No BANFF covariance matrix was found." << endl;
+    exit(1);
+  }
+  const TMatrixD & BANFFCov = *BANFFCovMtrx;
+  // Release memory
+  //  xml->FreeDoc(xmldoc);
+  xml->FreeNode(root_node);
+  delete xml;
+
+  // BANFF 
+  for(int i = 0; i < (kNumOfParamsInBANFFfit-1); i++) {
     PhysParamId_t p = PhysParamId_t ((int) kNuisBANFF00 + i);
     double bf = BANFFBestFit[i];
     double err = sqrt(BANFFCov[i][i]);
@@ -1031,7 +1440,7 @@ int FitParamList::Id(PhysParamId_t p) const
 {
    map<PhysParamId_t, int>::const_iterator it = fIdMap.find(p);
    if(it == fIdMap.end()) {
-     cerr << "FitParamList::Id() >> Parameter: " << util::AsString(p) 
+     cerr << "FitParamList::Id() >> Parameter: " << util::AsString(p) << " PhysParamId_t p = " << p 
           << " was not included in current fit parameter list" << endl;
      exit(1);
    }

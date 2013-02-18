@@ -41,8 +41,10 @@ public:
 
   // Get BANFF fit param values (nominal + tweaked)
   double BestFitValue (conv::PhysParamId_t p) const;
+  double BestFitValue (int idx) const;
   double CurrentValue (conv::PhysParamId_t p) const;
   double OneSigmaError(conv::PhysParamId_t p) const;
+  double OneSigmaError(int idx) const;
    
   // Get BANFF best fit values, covariance matrix and cholesky decomposition of covariance matrix
   const TVectorD & BestFitValues              (void) const { return *fBestFitValues;             }
@@ -52,6 +54,7 @@ public:
 
   // Systematic variations (wrt the best-fit BANFF params)
   void Tweak             (bool force_inputs = false, TVectorD * input_vec = 0); ///>
+  void TweakFluxOnly     (bool force_inputs = false, TVectorD * input_vec = 0); ///>
 
   // A special systematic variation which cancels the effect of BANFF tuning and reverts back to the nominal MC
   void RestoreNominalMC(void);
@@ -84,6 +87,7 @@ private:
   TMatrixD *  fCovMtrxChoL;       ///< Triangular matrix obtained from Cholesky decomposition of BANFF covariance matrix
   bool        fIsTweaked;         ///< Were BANF params tweaked?
   bool        fIsFluxWghtUpdated; ///< Were Flux weights updated as a result of the last BANFF param variation
+  bool        fIsNominalMCRestored; ///< Were BANFF params set such as no BANFF tuning is applied?
 
 ClassDef(BANFF, 1)
 };

@@ -8,7 +8,9 @@
 
  Changes since 2011_v0.9.0:
 
- @
+ @18/2/13 LE
+ Read Ereco spectrum for 1Re.
+ Doubled arrays (independent ones for 1Rmu and 1Re)
 
 */
 //________________________________________________________________________________________
@@ -61,8 +63,8 @@ void SuperkObservation::Init(void)
     SuperkSample_t s = kSKSamples[is];    
     fErDistr[is] = 0;
     for(int ir=0; ir<util::NumErecoBins(s); ir++) {
-      if (s== kSKsFCFV1RingMuLike) fErDistrArray1Rmu[ir-1] = 0;
-      else fErDistrArray1Re[ir-1] = 0;
+      if (s== kSKsFCFV1RingMuLike) fErDistrArray1Rmu[ir] = 0;
+      else fErDistrArray1Re[ir] = 0;
     }
   }
 }
@@ -122,8 +124,34 @@ bool SuperkObservation::Read(string config_file, int data_set_id)
   }
 
   ostringstream datanode1Re;
-  datanode1Re << "superk/observation/one_e_ring/event_count" << "/data_set_" << data_set_id;
+  //Ereco spectrum
+  datanode1Re << "superk/observation/one_e_ring/ereco_values" << "/data_set_" << data_set_id;
+  if(util::NodeExists(xml,root_node,datanode1Re.str())) {
+     int idx = util::ArrIdx::Instance()->SuperkSampleIdx(kSKsFCFV1RingELike);
+     fErDistr[idx] = new TH1D("", "", kNErecoBins1Re,kErecoBinEdges1Re);
+     fErDistr[idx]->SetDirectory(0);
+     vector<double> values = util::XML2DblArray(xml,root_node,datanode1Re.str());
+     vector<double>::const_iterator value_iter = values.begin();
+     for( ; value_iter != values.end(); ++value_iter) {
+       double Ereco = *value_iter;
+       fErDistr[idx]->Fill(Ereco);
+     }
+     cout << "Obs >> Read: " << fErDistr[idx]->Integral() 
+       << " " << util::AsString(kSKsFCFV1RingELike) << " events." << endl;
+     for(int ibin = 1; ibin <= kNErecoBins1Re; ibin++) {
+       double nobs = fErDistr[idx]->GetBinContent(ibin);
+       fErDistrArray1Re[ibin-1] = nobs;
+     }
+  }
 
+  else {
+     cerr << "Obs >> Node " << datanode1Re.str() << " does not exist!" << endl;
+  }
+
+
+  //Treat as counting experiment
+  /*
+  datanode1Re << "superk/observation/one_e_ring/event_count" << "/data_set_" << data_set_id;
   if(util::NodeExists(xml,root_node,datanode1Re.str())) {
      int idx = util::ArrIdx::Instance()->SuperkSampleIdx(kSKsFCFV1RingELike);
      fErDistr[idx] = new TH1D("", "", kNErecoBins1Re,kErecoBinEdges1Re);
@@ -137,9 +165,7 @@ bool SuperkObservation::Read(string config_file, int data_set_id)
        fErDistrArray1Re[ibin-1] = nobs;
      }
   }
-  else {
-     cerr << "Obs >> Node " << datanode1Re.str() << " does not exist!" << endl;
-  }
+  */
 
   // Release memory
   xml->FreeDoc(xmldoc);
@@ -242,10 +268,10 @@ bool SuperkObservation::CreateMockData(
   if(idx != -1) {
     fErDistr[idx]  = new TH1D("", "", kNErecoBins1Re, kErecoBinEdges1Re);
     fErDistr[idx]  -> SetDirectory(0);
-    TH1D* h1Re = skexp.CurrPredictedErecoSpectrum(kSKsFCFV1RingELike);
+    //    TH1D* h1Re = skexp.CurrPredictedErecoSpectrum(kSKsFCFV1RingELike);
     for(int ibin = 1; ibin <= kNErecoBins1Re; ibin++) {
-       double nexp  = h1Re->GetBinContent(ibin);
-       double nobs  = (fluctuate) ? rand.Poisson(nexp) : nexp;
+      double nexp  = skexp.CurrPredictedErecoSpectrumArray(kSKsFCFV1RingELike)[ibin-1];
+      double nobs  = (fluctuate) ? rand.Poisson(nexp) : nexp;
  #ifndef PRODUCTIONMODE
        fErDistr[idx]->SetBinContent(ibin,nobs);
 #endif
@@ -260,8 +286,8 @@ bool SuperkObservation::CreateMockData(
 {
 // Get observed reconstructed energy distribution
 
-  cout << "Obs >> Generating a toy-MC expt with the following params: " << ph;
-  cout << "Obs >> Stat. fluctuations are turned-" << ((fluctuate)? "ON" : "OFF") << endl;
+//  cout << "Obs >> Generating a toy-MC expt with the following params: " << ph;
+  // cout << "Obs >> Stat. fluctuations are turned-" << ((fluctuate)? "ON" : "OFF") << endl;
 
   TRandom3 rand(0);
   bool applied_negevents_condition = skexp.Generate(ph); //generate prediction
@@ -285,10 +311,10 @@ bool SuperkObservation::CreateMockData(
   if(idx != -1) {
     fErDistr[idx]  = new TH1D("", "", kNErecoBins1Re, kErecoBinEdges1Re);
     fErDistr[idx]  -> SetDirectory(0);
-    TH1D* h1Re = skexp.CurrPredictedErecoSpectrum(kSKsFCFV1RingELike);
+    //    TH1D* h1Re = skexp.CurrPredictedErecoSpectrum(kSKsFCFV1RingELike);
     for(int ibin = 1; ibin <= kNErecoBins1Re; ibin++) {
-       double nexp  = h1Re->GetBinContent(ibin);
-       double nobs  = (fluctuate) ? rand.Poisson(nexp) : nexp;
+      double nexp  = skexp.CurrPredictedErecoSpectrumArray(kSKsFCFV1RingELike)[ibin-1];
+      double nobs  = (fluctuate) ? rand.Poisson(nexp) : nexp;
 #ifndef PRODUCTIONMODE
        fErDistr[idx]->SetBinContent(ibin,nobs);
 #endif

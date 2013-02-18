@@ -8,7 +8,8 @@
 
  Changes since 2011_v0.9.0:
 
- @
+  @ 18/2/13 - LE                                                                                                              
+  Added methods to handle efficiencies for 1Re (covariance matrix)
 
 */
 //________________________________________________________________________________________
@@ -18,6 +19,10 @@
 #define __show_rc_cholesky_mesg_info__
 //#define __show_rc_cholesky_mesg_debug__ 
 //#define __show_effic_weight_mesg_debug__
+//#define __show_skdet_tweak_mesg_debug__
+//#define __show_skdet_cholesky_mesg_debug__
+//#define __show_skdet_cholesky_mesg_info__
+//#define __show_skdet_applysyst_mesg_debug__
 
 #include <cassert>
 #include <cstdlib>
@@ -52,6 +57,7 @@ SuperkDetector::~SuperkDetector()
 void SuperkDetector::Init(void)
 {
   fEnergyScale1RmuRelErr      = 0.;
+  fEnergyScale1ReRelErr       = 0.;
   fEff1RmuCCQEOthRelErr       = 0.;
   fEff1RmuCCQERCCovarRelErr   = 0;
   fEff1RmuCCQERCInvCovarRelErr= 0;
@@ -71,6 +77,14 @@ void SuperkDetector::Init(void)
   fEff1RmuNuECCTwkDial        = 0.;
 
   fEff1RmuCCQERCCovarChoLRelErr = 0;  
+
+  fEff1ReCovarRelErr   = 0;
+  fEff1ReInvCovarRelErr= 0;
+  fEff1ReCovarChoLRelErr = 0;  
+
+  f1ReCurrentValues = 0;
+  f1ReNominalValues = 0;
+
 }
 //________________________________________________________________________________________
 void SuperkDetector::CleanUp(void)
@@ -89,6 +103,9 @@ bool SuperkDetector::Read(TXMLEngine* xml, XMLNodePointer_t root_node)
   fEnergyScale1RmuRelErr = 
     util::XML2Dbl(xml,root_node,
      "detector_systematics/superk/energy_scale_relative_error/one_mu_ring");
+  fEnergyScale1ReRelErr = 
+    util::XML2Dbl(xml,root_node,
+     "detector_systematics/superk/energy_scale_relative_error/one_e_ring");
   // Get relative error on various efficiencies
   fEff1RmuCCQEOthRelErr =
     util::XML2Dbl(xml,root_node,
@@ -111,6 +128,9 @@ bool SuperkDetector::Read(TXMLEngine* xml, XMLNodePointer_t root_node)
   fEff1RmuNuECCRelErr =
     util::XML2Dbl(xml,root_node, 
       "detector_systematics/superk/efficiency_relative_error/one_mu_ring/nuecc");
+  fEff1ReCovarRelErr = 
+    util::XML2TMatrixD(xml,root_node,
+      "detector_systematics/superk/efficiency_relative_error/one_e_ring");
 
   if(!fEff1RmuCCQERCCovarRelErr) {
     cerr << "Exp/SKDet >> No input SuperK CCQE ring-counting error covariance matrix!" << endl;
@@ -121,9 +141,32 @@ bool SuperkDetector::Read(TXMLEngine* xml, XMLNodePointer_t root_node)
     fEff1RmuCCQERCInvCovarRelErr = new TMatrixD(*fEff1RmuCCQERCCovarRelErr);
     (*fEff1RmuCCQERCInvCovarRelErr).Invert(&det);
   }
-  
+
+  if(!fEff1ReCovarRelErr) {
+    cerr << "Exp/SKDet >> No input SuperK 1Re efficiency covariance matrix!" << endl;
+    exit(1);
+  }
+  if (fEff1ReCovarRelErr){
+    double det;
+    fEff1ReInvCovarRelErr = new TMatrixD(*fEff1ReCovarRelErr);
+    (*fEff1ReInvCovarRelErr).Invert(&det);
+  }
+ 
+  // Create/init current 1Re eff params                                                                                                                                                                     
+  const int np = conv::kNumOfSKDetParams1Re;
+  f1ReCurrentValues = new TVectorD(np);
+  f1ReNominalValues = new TVectorD(np);
+  for(int ip = 0; ip < np; ip++)
+    {
+      (*f1ReCurrentValues)[ip] = 1.;
+      (*f1ReNominalValues)[ip] = 1.;
+    }
+
+
+ 
 #ifdef __show_init_mesg_info__      
   cout << "Exp/SKDet >> " << "Error {EnergyScale;1Rmu}    : " << fEnergyScale1RmuRelErr  << endl;
+  cout << "Exp/SKDet >> " << "Error {EnergyScale;1Re}    : " << fEnergyScale1ReRelErr  << endl;
   cout << "Exp/SKDet >> " << "Error {Efficiency;1Rmu/CCQE/Oth} : " << fEff1RmuCCQEOthRelErr << endl;
   cout << "Exp/SKDet >> " << "Error {Efficiency;1Rmu/CCQE/RC}  : " << endl;
   cout << " - The ring-counting efficiency error is given for the following 3 Ereco bins : ";
@@ -135,6 +178,9 @@ bool SuperkDetector::Read(TXMLEngine* xml, XMLNodePointer_t root_node)
   cout << "Exp/SKDet >> " << "Error {Efficiency;1Rmu/CCnonQE} : " << fEff1RmuCCnonQERelErr  << endl;
   cout << "Exp/SKDet >> " << "Error {Efficiency;1Rmu/NC} : "      << fEff1RmuNCRelErr       << endl;
   cout << "Exp/SKDet >> " << "Error {Efficiency;1Rmu/NuECC} : "   << fEff1RmuNuECCRelErr    << endl;
+  cout << "Exp/SKDet >> " << "The efficiency error matrix for 1Re sample is: " << endl;
+  util::PrintCompact(*fEff1ReCovarRelErr,12,12);
+
 #endif
   
 #ifdef __show_init_mesg_info__      
@@ -248,6 +294,89 @@ void SuperkDetector::TweakEfficiency1RmuCCQERingCounting
   fEff1RmuCCQERC2TwkDial = twkv(2) / TMath::Sqrt(rc_err_matrix(2,2));
 }
 //________________________________________________________________________________________
+void SuperkDetector::TweakEfficiencies1Re(
+     bool force_inputs, 
+     TVectorD * input_params
+)
+{
+#ifdef __show_skdet_cholesky_mesg_debug__
+  cout << "Exp/SKDet/Tweak >> Tweaking Efficiencies for 1Re" << endl;
+#endif
+
+  TVectorD & current_values = *f1ReCurrentValues;
+
+  //                                                                                                                                                                                              
+  // Force input 1Re eff parameters                                                                                                                                                                        
+  //                                                                                                                                                                                                    
+  if(force_inputs)
+    {
+      // Input vector is NULL.     
+      // This resets the 1Re eff params to their best-fit values.                                                                                                                                           
+      if(input_params==0) {
+#ifdef __show_skdet_tweak_mesg_debug__
+        cout << "Exp/SKDet/Tweak >> Reset Efficiency params for 1Re to nominal values." << endl;
+#endif
+        const int np = conv::kNumOfSKDetParams1Re;
+        for(int ip = 0; ip < np; ip++) {
+	  current_values[ip] = 1.;
+        }
+        return;
+      }
+      else
+	{
+#ifdef __show_skdet_tweak_mesg_debug__
+	  cout << "Exp/SKDet/Tweak >> Forcing input 1Re efficiency parameters. " << endl;
+#endif
+	  TVectorD & vec = *input_params;
+	  current_values = vec;
+	  return;
+	}
+    }//force_inputs?           
+
+  //  
+  // If this is the first time this function is called, then run the Cholesky  
+  // decomposition of the flux covariance matrix 
+  // 
+
+  if(fEff1ReCovarChoLRelErr == 0)
+    {
+#ifdef __show_skdet_cholesky_mesg_info__
+      cout << "Exp/SKDet/Tweak >> "
+	   << "Running Cholesky's decomposition method on the 1Re efficiency covariance matrix." << endl;
+#endif
+
+      TMatrixD cov(*fEff1ReCovarRelErr);
+#ifdef __show_skdet_cholesky_mesg_debug__
+      cout << "Exp/SKDet/Tweak >> SKDet 1Re covariance matrix: " << endl;
+      util::PrintCompact(cov,12,12);
+#endif
+
+      TMatrixD L = util::CholeskyDecomposition(cov);
+      fEff1ReCovarChoLRelErr = new TMatrixD(L);
+#ifdef __show_skdet_cholesky_mesg_debug__
+      cout << "Exp/SKDet/Tweak >> Cholesky decomposition of 1Re efficiencies covariance matrix: " << endl;
+      util::PrintCompact(*fEff1ReCovarChoLRelErr,12,12);
+#endif
+    }
+
+  //                                     
+  // If the tweaking dials were not forced, generate correlated tweaking dials 
+  // using the Cholesky method 
+  //              
+  if(!force_inputs)
+    {
+#ifdef __show_skdet_tweak_mesg_debug__
+      cout << "Exp/SKDet/Tweak >> Generating random 1Re efficiency params (correlated)! " << endl;
+#endif
+      TMatrixD & L = *fEff1ReCovarChoLRelErr;
+      TVectorD & nominal_values = *f1ReNominalValues;
+      TVectorD vec = util::CholeskyGenerateCorrelatedParams(L,nominal_values);
+      current_values = vec;
+      return;
+    }
+
+}
+//________________________________________________________________________________________
 void SuperkDetector::TweakEfficiency1RmuCCnonQE(double twkdial) 
 { 
   fEff1RmuCCnonQETwkDial = twkdial; 
@@ -306,11 +435,35 @@ double SuperkDetector::ChisqPenalty(bool all_syst) const
   double dchisq = chisqpenalty[0][0];
   if (dchisq) chisq_penalty += dchisq;
 
+  //add the contribution from the 1Re efficiency
+  TMatrixD & err_matrix_1Re     = *fEff1ReCovarRelErr;
+  TMatrixD & err_matrix_inv_1Re = *fEff1ReInvCovarRelErr;
+  TMatrixD prod_1Re = err_matrix_1Re * err_matrix_inv_1Re;
+  //prod.Print();
+  const TVectorD & bestfit_values   = *f1ReNominalValues;
+  const TVectorD & current_values   = *f1ReCurrentValues;
+  const int np = conv::kNumOfSKDetParams1Re;
+  TMatrixD dev_1Re  (1,np); //vector of deviations in one column matrix form for multiplication
+  TMatrixD devT_1Re (np,1); //vector of deviations in one row matrix form for multiplication
+
+  for (int i = 0; i < np; i++){
+    dev_1Re[0][i]  = current_values[i]-bestfit_values[i];
+    devT_1Re[i][0] = current_values[i]-bestfit_values[i];
+  }
+  //cout << "Deviations" << endl;
+  //dev.Print();
+  //devT.Print();
+  TMatrixD chisqpenalty_1Re =  dev_1Re * err_matrix_inv_1Re * devT_1Re;
+  double dchisq_1Re = chisqpenalty_1Re[0][0];
+  if (dchisq_1Re) chisq_penalty += dchisq_1Re;
+
+  //final chisq penalty value
   return chisq_penalty;
 }
 //________________________________________________________________________________________
 void SuperkDetector::PrintSystematicVariations(ostream & stream) const
 {
+  const TVectorD & curr_params = *f1ReCurrentValues;
   stream << "Exp/SKDet >> SuperK detector systematics: " << endl
 	 << " > 1Rmu energy scale twk        = "  << fEnergyScaleTwkDial      << endl
 	 << " > 1Rmu CCQE RC0 efficiency twk = "  << fEff1RmuCCQERC0TwkDial   << endl
@@ -320,6 +473,7 @@ void SuperkDetector::PrintSystematicVariations(ostream & stream) const
 	 << " > 1Rmu CCnonQE efficiency twk  = "  << fEff1RmuCCnonQETwkDial   << endl
 	 << " > 1Rmu NC efficiency twk       = "  << fEff1RmuNCTwkDial        << endl
 	 << " > 1Rmu nu_e CC efficiency twk  = "  << fEff1RmuNuECCTwkDial     << endl;
+  util::PrintCompact(curr_params,12,12," > 1Re efficiency covariance matrix");
 }
 //________________________________________________________________________________________
 double SuperkDetector::EfficiencyWeight(
@@ -435,55 +589,46 @@ double SuperkDetector::EfficiencyWeight(
   // 1-ring e-like sample
   //
   else if ( s == kSKsFCFV1RingELike ) {
-    switch(m) {
-       case ( kSKmNuMuCCQE        ) : 
-       case ( kSKmNuMuCC1pi       ) : 
-       case ( kSKmNuMuCCcoh       ) : 
-       case ( kSKmNuMuCCoth_e     ) : 
-       case ( kSKmNuMuNC1pi0      ) : 
-       case ( kSKmNuMuNCcoh       ) : 
-       case ( kSKmNuMuNCoth_e     ) : 
-       case ( kSKmNuMuBarCCQE     ) : 
-       case ( kSKmNuMuBarCC1pi    ) : 
-       case ( kSKmNuMuBarCCcoh    ) : 
-       case ( kSKmNuMuBarCCoth_e  ) : 
-       case ( kSKmNuMuBarNC1pi0   ) : 
-       case ( kSKmNuMuBarNCcoh    ) : 
-       case ( kSKmNuMuBarNCoth_e  ) : 
-       case ( kSKmNuECCQE         ) : 
-       case ( kSKmNuECC1pi        ) : 
-       case ( kSKmNuECCcoh        ) : 
-       case ( kSKmNuECCoth_e      ) : 
-       case ( kSKmNuENC1pi0       ) : 
-       case ( kSKmNuENCcoh        ) : 
-       case ( kSKmNuENCoth_e      ) : 
-       case ( kSKmNuEBarCCQE      ) : 
-       case ( kSKmNuEBarCC1pi     ) : 
-       case ( kSKmNuEBarCCcoh     ) : 
-       case ( kSKmNuEBarCCoth_e   ) : 
-       case ( kSKmNuEBarNC1pi0    ) : 
-       case ( kSKmNuEBarNCcoh     ) : 
-       case ( kSKmNuEBarNCoth_e   ) :
-/////////	 {
-/////////	   double relerr  = fEff1ReBkgRelErr;
-/////////	   double twkdial = fEff1ReBkgTwkDial;
-/////////	   weight  = (1. + twkdial*relerr);
-/////////	   return weight;
-/////////	   break;
-/////////	 }
-       case ( kSKmSigNuECCQE      ) : 
-       case ( kSKmSigNuECC1pi     ) : 
-       case ( kSKmSigNuECCoth_e   ) : 
-/////////	 {
-/////////	   double relerr  = fEff1ReSigRelErr;
-/////////	   double twkdial = fEff1ReSigTwkDial;
-/////////	   weight  = (1. + twkdial*relerr);
-/////////	   return weight;
-/////////	   break;
-/////////	 }
-       default:
-	 return 0.;
-    }//mode
+    // find which sk det param we have to apply
+    int iparam = -1;
+    for(int ip = 0; ip < conv::kNumOfSKDetParams1Re; ip++) {
+      conv::PhysParamId_t p = conv::kListOfSKDet1ReParams[ip];
+      //      cout << "Param = " << util::AsString(p) << endl;
+      // Is the current systematic parameter applied to current sample/mode end energy bin? 
+      bool apply = this->ApplySyst1Re(p,s,m,Ereco);
+      if(!apply) continue;
+      if(iparam != -1) {
+	cerr << "Exp/SKDet/EfficiencyWght >> Found multiple SK 1Re eff params for sample, mode, Ereco combination!" << endl
+	     << util::AsString(s) << "\t" << util::AsString(m) << "\t" << Ereco << endl
+	     << util::AsString((conv::PhysParamId_t)(iparam+conv::kNuisSuperkEff1ReNueSigCC0)) << "\t" <<  util::AsString(p) << endl;
+	exit(1);
+      }
+      iparam = util::ArrIdx::Instance()->SKDet1ReSystIdx(p);
+    }
+    //    cout << "iparam =" << iparam << endl;
+    const int np = conv::kNumOfSKDetParams1Re;
+    if(iparam < 0 || iparam >= np) {
+      cerr << "Exp/SKDet/EfficiencyWght >> Weird index: " << iparam << " for Ereco value = " << Ereco
+	   << " sample " << util::AsString(s) << " mode " << util::AsString(m) << endl;
+      exit(1);
+    }
+    // get current value of iparam^th SK 1Re eff param 
+    const TVectorD & current_values   = *f1ReCurrentValues;
+    //    current_values.Print();
+    double param_value = current_values[iparam];
+    //    cout << "param_value=" << param_value << endl;
+
+    // param tweaked           
+    bool tweaked = TMath::Abs(param_value - 1.) > conv::kASmallNum;
+    if(!tweaked) {
+      weight  = 1.0;
+    }
+
+    double eff_1Re_wght = param_value;
+    weight  = eff_1Re_wght;
+    
+    //    cout << "1Re eff weight = " << weight << endl;
+    
   }//1-ring e-like sample
 
   return weight;
@@ -500,12 +645,15 @@ double SuperkDetector::EnergyScaleRelErr(SuperkSample_t s, SuperkMode_t m) const
   }
   else 
   if (s == kSKsFCFV1RingELike) {
-    if( util::IsSignalNuE(m)) {
+    return fEnergyScale1RmuRelErr;
+    
+    //lorena - so far never seen different energy scale for signal/background
+    //    if( util::IsSignalNuE(m)) {
 /////////      return fEnergyScale1ReSigRelErr;
-    }
-    else {
+    // }
+    //else {
 /////////      return fEnergyScale1ReBkgRelErr;
-    }
+    //}
   }
   return 0; 
 }
@@ -557,9 +705,68 @@ double SuperkDetector::CurrentValue(PhysParamId_t p) const
     case kNuisSuperkEff1RmuNueCC:
       return fEff1RmuNuECCTwkDial;
       break;
+    case kNuisSuperkEff1ReNueSigCC0:
+    case kNuisSuperkEff1ReNueSigCC1:
+    case kNuisSuperkEff1ReNueSigCC2:
+    case kNuisSuperkEff1ReNumuCC0:
+    case kNuisSuperkEff1ReNumuCC1:
+    case kNuisSuperkEff1ReNumuCC2:
+    case kNuisSuperkEff1ReNueCC0:
+    case kNuisSuperkEff1ReNueCC1:
+    case kNuisSuperkEff1ReNueCC2:
+    case kNuisSuperkEff1ReNC0:
+    case kNuisSuperkEff1ReNC1:
+    case kNuisSuperkEff1ReNC2:
+      {
+      const TVectorD & current_values = *f1ReCurrentValues;
+      int idx = util::ArrIdx::Instance()->SKDet1ReSystIdx(p);
+      return current_values[idx];
+      }
     default:
       return 0;
   }
   return 0;
 }
 //________________________________________________________________________________________
+bool SuperkDetector::ApplySyst1Re(
+		    conv::PhysParamId_t p, conv::SuperkSample_t s, conv::SuperkMode_t m, double Ereco) const
+{
+  bool apply2mode = this->ApplySystToSKMode(p,s,m);
+  bool apply2bin  = this->ApplySystToEnergyBin(p,Ereco);
+  bool apply = apply2mode && apply2bin;
+  return apply;
+}
+//________________________________________________________________________________________                                                                                                               
+bool SuperkDetector::ApplySystToSKMode(conv::PhysParamId_t p, conv::SuperkSample_t s, conv::SuperkMode_t m) const
+{
+  int idx = util::ArrIdx::Instance()->SKDet1ReSystIdx(p);
+  if (idx == -1) return false;
+  int is = util::ArrIdx::Instance()->SuperkSampleIdx(s);
+  if (is == -1) return false;
+  int im = util::ArrIdx::Instance()->SuperkModeIdx(s,m);
+  if (im == -1) return false;
+
+  bool apply = conv::kSKDet1ReApplyParamToSKMode[is][im][idx];
+#ifdef __show_skdet_applysyst_mesg_debug__
+  string applystr;
+  applystr = apply ? "Passed" : "Failed";
+  cout << applystr << "\t" << util::AsString(p) << "\t" << util::AsString(s) << "\t" << util::AsString(m) << endl;
+#endif
+  return apply;
+}
+//________________________________________________________________________________________                                                                                                               
+bool SuperkDetector::ApplySystToEnergyBin(conv::PhysParamId_t p, double Ereco) const
+{
+  int idx = util::ArrIdx::Instance()->SKDet1ReSystIdx(p);
+  if (idx == -1) return false;
+
+  bool apply = Ereco >= conv::kSKDet1ReParamsErecoCut[idx][0] &&
+    Ereco <  conv::kSKDet1ReParamsErecoCut[idx][1];
+#ifdef __show_skdet_applysyst_mesg_debug__
+  string applystr;
+  applystr = apply ? "Passed" : "Failed";
+  cout << applystr << "\t" << util::AsString(p) << "\t" << Ereco << endl;
+#endif
+  return apply;
+}
+//________________________________________________________________________________________                                                                                                               

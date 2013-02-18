@@ -47,6 +47,8 @@ public:
   void TweakEfficiency1RmuCCnonQE          (double twkdial);
   void TweakEfficiency1RmuNC               (double twkdial);
   void TweakEfficiency1RmuNuECC            (double twkdial);
+  // Tweak systematic parameters for 1Re - they go in a single covariance matrix
+  void TweakEfficiencies1Re                (bool force_inputs = false, TVectorD * input_params = 0);
 
   // Calculate weight due to efficiency tweaks
   double  EfficiencyWeight (conv::SuperkSample_t s, conv::SuperkMode_t m, double Ereco) const;
@@ -72,11 +74,21 @@ public:
   const TMatrixD & Eff1RmuCCQERCCovarRelErr (void) const { return *fEff1RmuCCQERCCovarRelErr; }
   const TMatrixD & Eff1RmuCCQERCInvCovarRelErr (void) const { return *fEff1RmuCCQERCInvCovarRelErr; }
 
+  // Access the elements of the efficiency matrix for 1Re
+  const TMatrixD & Eff1ReCovarRelErr (void) const { return *fEff1ReCovarRelErr; }
+  const TMatrixD & Eff1ReInvCovarRelErr (void) const { return *fEff1ReInvCovarRelErr; }
+
 private:
 
   // Init and clean-up
   void Init    (void);
   void CleanUp (void);
+
+  // Apply the given SK 1Re eff parameter to the given sample, mode, Ereco?                                                                                                                              
+  bool ApplySyst1Re         (conv::PhysParamId_t p, conv::SuperkSample_t s, conv::SuperkMode_t m, double Ereco) const;
+  bool ApplySystToSKMode    (conv::PhysParamId_t p, conv::SuperkSample_t s, conv::SuperkMode_t m) const;
+  bool ApplySystToEnergyBin (conv::PhysParamId_t p, double Ereco) const;
+
 
   //
   // Private data members
@@ -85,6 +97,7 @@ private:
   // systematic uncertainties: 1 sigma fractional errors & covariance matrices
   // > 1Rmu
   double     fEnergyScale1RmuRelErr;       ///< 1Rmu energy scale relative error
+  double     fEnergyScale1ReRelErr;        ///< 1Re energy scale relative error
   double     fEff1RmuCCQEOthRelErr;        ///< 1Rmu CCQE other (all but ring-counting) efficiency relative error 
   TMatrixD * fEff1RmuCCQERCCovarRelErr;    ///< 1Rmu CCQE ring-counting efficiency relative error covariance matrix (3x3)
   TMatrixD * fEff1RmuCCQERCInvCovarRelErr; ///< 1Rmu CCQE ring-counting efficiency inverse of relative error covariance matrix (3x3)
@@ -95,8 +108,9 @@ private:
   double     fEff1RmuNCRelErr;             ///< 1Rmu NC efficiency relative error
   double     fEff1RmuNuECCRelErr;          ///< 1Rmu nue CC efficiency relative error
   // > 1Re
-  //...
-  //...
+  TMatrixD * fEff1ReCovarRelErr;    ///< 1Re efficiencies relative error covariance matrix (12x12)
+  TMatrixD * fEff1ReInvCovarRelErr; ///< 1Re efficiencies inverse of relative error covariance matrix (12x12)
+  TMatrixD * fEff1ReCovarChoLRelErr;///<  -  Cholesky decomposition (trangular matrix L) of fEff1ReCovarRelErr covariance matrix
 
   // systematic uncertainties: tweaking dials
   // > 1Rmu + 1Re
@@ -110,8 +124,8 @@ private:
   double     fEff1RmuNCTwkDial;            ///< 1Rmu NC efficiency tweaking dial
   double     fEff1RmuNuECCTwkDial;         ///< 1Rmu nue CC efficiency tweaking dial
   // > 1Re
-  //...
-  //...
+  TVectorD * f1ReCurrentValues;    ///< Current values of 1Re efficiencies
+  TVectorD * f1ReNominalValues;    ///< Nominal values of 1Re efficiencies  
 
 ClassDef(SuperkDetector, 1);
 };

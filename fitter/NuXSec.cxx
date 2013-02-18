@@ -8,7 +8,8 @@
 
  Changes since 2011_v0.9.0:
 
- @
+ @ 18/2/13 LE
+ Added parameters for NC1pi0 (BANFF) and NCcoh normalization, added splines for 1Re as well.
 
 */
 //________________________________________________________________________________________
@@ -64,8 +65,11 @@ void NuXSec::Init(void)
 {
   fBANFF = 0;
 
-  for(int ispl = 0; ispl < knwspl; ispl++) {
-     fXSecWghtSpl[ispl] = 0;
+  for(int ispl = 0; ispl < knwspl1Rmu; ispl++) {
+     fXSecWghtSpl1Rmu[ispl] = 0;
+  }
+  for(int ispl = 0; ispl < knwspl1Re; ispl++) {
+     fXSecWghtSpl1Re[ispl] = 0;
   }
 
   for(int is=0; is<kns; is++) {
@@ -74,23 +78,28 @@ void NuXSec::Init(void)
     }
   }
 
-  fFermiMomTwkDial      = 0;
-  fSpecFuncTwkDial      = 0;
-  fWshapeTwkDial        = 0;
-  fShapeCCothTwkDial    = 0;
-  fPiLessDeltaTwkDial   = 0;
-  fBindETwkDial         = 0;
-  fNormCCcohTwkDial     = 0;
-  fNormNC1piCTwkDial    = 0;
-  fNormNCothTwkDial     = 0;
-  fNormNuEToNuMuTwkDial = 0;
+  fFermiMomTwkDial       = 0;
+  fSpecFuncTwkDial       = 0;
+  fWshapeTwkDial         = 0;
+  fShapeCCothTwkDial     = 0;
+  fPiLessDeltaTwkDial    = 0;
+  fBindETwkDial          = 0;
+  fNormCCcohTwkDial      = 0;
+  fNormNC1piCTwkDial     = 0;
+  fNormNCcohTwkDial      = 0;
+  fNormNCothTwkDial      = 0;
+  fNormNuEToNuMuTwkDial  = 0;
+  fNormAntiNuToNuTwkDial = 0;
 
 }
 //________________________________________________________________________________________
 void NuXSec::CleanUp(void)
 {
-  for(int ispl = 0; ispl < knwspl; ispl++) {
-     if (fXSecWghtSpl[ispl]) delete fXSecWghtSpl[ispl];
+  for(int ispl = 0; ispl < knwspl1Rmu; ispl++) {
+     if (fXSecWghtSpl1Rmu[ispl]) delete fXSecWghtSpl1Rmu[ispl];
+  }
+  for(int ispl = 0; ispl < knwspl1Re; ispl++) {
+     if (fXSecWghtSpl1Re[ispl]) delete fXSecWghtSpl1Re[ispl];
   }
 
   for(int is=0; is<kns; is++) {
@@ -114,8 +123,10 @@ bool NuXSec::ReadSplines(TXMLEngine* xml, XMLNodePointer_t root_node)
   cout << "Exp/NuXSec >> Special mode turned on in which splines are not read, and weights involving splines are set to 1" << endl;
   return true;
 #elif SPLINE_TYPE == 1
-  TFile * spline_file = util::XML2TFile(xml,root_node,"xsec/weight_splines");
-  assert(spline_file);
+  TFile * spline_file_1Rmu = util::XML2TFile(xml,root_node,"xsec/weight_splines/one_mu_ring");
+  assert(spline_file_1Rmu);
+  TFile * spline_file_1Re = util::XML2TFile(xml,root_node,"xsec/weight_splines/one_e_ring");
+  assert(spline_file_1Re);
 #endif
 
   // loop over samples
@@ -138,8 +149,8 @@ bool NuXSec::ReadSplines(TXMLEngine* xml, XMLNodePointer_t root_node)
           bool is_applied = kXsApplyXSecSystToSKMode[is][im][ip];
           if(!is_applied) continue;
           // loop over the var.-size  Ereco and Etrue bins for which weight splines were pre-computed
-          for(int ir = 0; ir < kXsNErecoBins; ir++) {
-             double Ereco = kXsErecoBinEdges[ir] + kOneMeV;
+          for(int ir = 0; ir < util::NumXsecErecoBins(s); ir++) {
+	    double Ereco = util::XsecErecoBinEdges(s,ir) + kOneMeV;
              for(int it = 0; it < kXsNEtrueBins; it++) {
                 double Etrue = kXsEtrueBinEdges[is][im][it] + kOneMeV;
 
@@ -149,13 +160,14 @@ bool NuXSec::ReadSplines(TXMLEngine* xml, XMLNodePointer_t root_node)
 		bool bin_is_not_empty = this->IsThereAnEvent(s, m, Ereco, Etrue);
 
 #ifdef __skip_unexpected_spline_test_in_readsplines__
-		if(!bin_is_not_empty)
+		if(!bin_is_not_empty)                 
 		  continue;
 #endif
                 // Build spline name
                 ostringstream splname;
                 splname << "spl_"
-                        << util::AsStringCompact(s) << "_"
+		  //<< util::AsStringCompact(kSKsFCFV1RingMuLike) << "_"
+			<< util::AsStringCompact(s) << "_"
                         << util::AsStringCompact(m) << "_"
                         << util::AsStringCompact(p) << "_"
                         << ir << "_" 
@@ -166,7 +178,9 @@ bool NuXSec::ReadSplines(TXMLEngine* xml, XMLNodePointer_t root_node)
                      << splname.str() << " for Ereco: " << Ereco << ", Etrue: " << Etrue << endl;
 #endif
                 // Copy spline from input file
-                TSpline3 * spl = (TSpline3 *) spline_file->Get(splname.str().c_str());
+		TSpline3 * spl;
+		if (s==kSKsFCFV1RingMuLike)   spl = (TSpline3 *) spline_file_1Rmu->Get(splname.str().c_str());
+		else                          spl = (TSpline3 *) spline_file_1Re ->Get(splname.str().c_str()); 
 	     
 		if(!spl) {
 		  if(!bin_is_not_empty) {
@@ -182,6 +196,7 @@ bool NuXSec::ReadSplines(TXMLEngine* xml, XMLNodePointer_t root_node)
 			 << splname.str() 
 			 << " Ereco: " << Ereco << ", Etrue: " << Etrue << endl;
 		    exit(1); 
+		    continue;
 		  }
 		}
 		else {
@@ -225,14 +240,22 @@ bool NuXSec::ReadSplines(TXMLEngine* xml, XMLNodePointer_t root_node)
 		cout << "Exp/NuXSec >> Spline thinks there are " 
 		     << spl->GetTitle() << endl;
 #endif
-                fXSecWghtSpl[idx] = new TSpline3(*spl);
+                if (s == kSKsFCFV1RingMuLike) fXSecWghtSpl1Rmu[idx] = new TSpline3(*spl);
+		else                          fXSecWghtSpl1Re[idx] = new TSpline3(*spl);
 
 #ifdef __show_init_mesg_debug2__
 		//check that the spline is not flat
-		cout << "Exp/NuXSec >> Spline weights at -1,0,+1 are: "
-		     << fXSecWghtSpl[idx]->Eval(-1) << "\t"
-		     << fXSecWghtSpl[idx]->Eval(0) << "\t"
-		     << fXSecWghtSpl[idx]->Eval(+1) << endl;
+		cout << "Exp/NuXSec >> Spline weights at -1,0,+1 are: " ;
+		  if (s == kSKsFCFV1RingMuLike){
+		    cout << fXSecWghtSpl1Rmu[idx]->Eval(-1) << "\t"
+			 << fXSecWghtSpl1Rmu[idx]->Eval(0) << "\t"
+			 << fXSecWghtSpl1Rmu[idx]->Eval(+1) << endl;
+		  }
+		  else {
+		    cout << fXSecWghtSpl1Re[idx]->Eval(-1) << "\t"
+			 << fXSecWghtSpl1Re[idx]->Eval(0) << "\t"
+			 << fXSecWghtSpl1Re[idx]->Eval(+1) << endl;
+		  }
 #endif
              }//Etrue
           }//Ereco
@@ -262,8 +285,8 @@ bool NuXSec::Read(TXMLEngine* xml, XMLNodePointer_t root_node)
   for(int is = 0; is < kns; is++) {
      SuperkSample_t s = kSKSamples[is];
      if(s == kSKsUndefined) continue;
-     const int      n_ereco_bins    = conv::kXsNErecoBins;
-     const double * ereco_bin_edges = conv::kXsErecoBinEdges;
+     const int      n_ereco_bins    = util::NumXsecErecoBins(s);
+     const double * ereco_bin_edges = util::XsecErecoBinEdges(s);
      for(int im = 0; im < knm; im++) {
        SuperkMode_t m = kSKReactionModes[is][im];
        if(m == kSKmUndefined) continue;
@@ -282,6 +305,8 @@ bool NuXSec::Read(TXMLEngine* xml, XMLNodePointer_t root_node)
     util::XML2Dbl(xml,root_node,"xsec/normalisations/cccoh");
   fNormNC1piCRelErr =
     util::XML2Dbl(xml,root_node,"xsec/normalisations/nc1piC");
+  fNormNCcohRelErr =
+    util::XML2Dbl(xml,root_node,"xsec/normalisations/nccoh");
   fNormNCothRelErr =
     util::XML2Dbl(xml,root_node,"xsec/normalisations/ncoth");
   fNormNuEToNuMuRelErr =
@@ -358,25 +383,25 @@ double NuXSec::FinTuningWght_1p(
 #if SPLINE_TYPE == -1
     return wght;
 #endif
-     //bool ev = this->IsThereAnEvent(s, m, Ereco, Etrue); //already done in SKMC
-     //if(ev) {
-       TSpline3 * wght_spl = this->FindWghtSpline(p,s,m,Ereco,Etrue);
-       assert(wght_spl);
-       double tb = fBANFF->BestFitValue(p);
-       double relerr = 0;       
-       if(p == kNuisBANFFMAQE)
+    // bool ev = this->IsThereAnEvent(s, m, Ereco, Etrue); //already done in SKMC
+    //if(ev) {
+    TSpline3 * wght_spl = this->FindWghtSpline(p,s,m,Ereco,Etrue);
+    assert(wght_spl);
+    double tb = fBANFF->BestFitValue(p);
+    double relerr = 0;       
+    if(p == kNuisBANFFMAQE)
 #ifndef ONEOVERMAQE
-	 relerr = fSplineMAQERelErr;
+      relerr = fSplineMAQERelErr;
 #else
-	 relerr = fSpline1overMAQE2RelErr;
+    relerr = fSpline1overMAQE2RelErr;
 #endif
-       else if(p == kNuisBANFFMARES)
-	 relerr = fSplineMARESRelErr;
-       double numerator = (tb-1) / relerr;
-       wght = wght_spl->Eval(numerator) / 1.;
-       //}
+    else if(p == kNuisBANFFMARES)
+      relerr = fSplineMARESRelErr;
+    double numerator = (tb-1) / relerr;
+    wght = wght_spl->Eval(numerator) / 1.;
+    // }
   }
-
+  
   //
   // BANFF param, CCQE   normalization, 0 - 1.5 GeV
   // BANFF param, CCQE   normalization, 1.5 - 3.5 GeV
@@ -391,6 +416,7 @@ double NuXSec::FinTuningWght_1p(
      || p == kNuisBANFFCCQEE2
      || p == kNuisBANFFCC1piE0
      || p == kNuisBANFFCC1piE1
+     || p == kNuisBANFFNC1pi0
      )
   {
      wght = fBANFF->BestFitValue(p);
@@ -411,9 +437,9 @@ double NuXSec::FinTuningWght_1p(
   if(TMath::Abs(wght) > conv::kMaxAllowedWght) {
     //get the ereco & etrue bin indexes (to be used to check whether the spline is sensible)
     int ireco = -1; 
-    for (int i = 0; i < kXsNErecoBins; i++) {
-      if(kXsErecoBinEdges[i]   <= Ereco && 
-	 kXsErecoBinEdges[i+1] >  Ereco) 
+    for (int i = 0; i < util::NumXsecErecoBins(s); i++) {
+      if(util::XsecErecoBinEdges(s,i)   <= Ereco && 
+	 util::XsecErecoBinEdges(s,i+1) >  Ereco) 
 	{
 	  ireco = i;
 	  break;
@@ -459,7 +485,7 @@ double NuXSec::SystWght(
      else
        dt = TMath::Abs(this->CurrentValue(p)); // non-banff normalisations
      if(dt < kASmallNum) continue;
-
+     
      // Is the current systematic parameter applied to current sample/mode end energy bin?
      bool apply = this->ApplySyst(p,s,m,Ereco,Etrue);
      if(!apply) continue;
@@ -529,6 +555,7 @@ double NuXSec::SystWght_1p(
      || p == kNuisBANFFCCQEE2
      || p == kNuisBANFFCC1piE0
      || p == kNuisBANFFCC1piE1
+     || p == kNuisBANFFNC1pi0
      )
   {
      wght = fBANFF->CurrentValue(p) / fBANFF->BestFitValue(p);
@@ -547,12 +574,12 @@ double NuXSec::SystWght_1p(
 #if SPLINE_TYPE == -1
     return wght;
 #endif
-    //bool ev = this->IsThereAnEvent(s, m, Ereco, Etrue);//already done in SKMC
+    //    bool ev = this->IsThereAnEvent(s, m, Ereco, Etrue);//already done in SKMC
     //if(ev) {
       TSpline3 * wght_spl = this->FindWghtSpline(p,s,m,Ereco,Etrue);
       assert(wght_spl);
       double tc = this->CurrentValue(p);
-      wght = wght_spl->Eval(tc) / 1.; //wght_spl->Eval(0);
+      wght = wght_spl->Eval(tc) / 1.; //wght_spl->Eval(0); 
       //}
   }
 
@@ -568,7 +595,7 @@ double NuXSec::SystWght_1p(
   //
   else
   if(
-     p == kNuisXSecNormCCcoh || p == kNuisXSecNormNC1piC ||
+     p == kNuisXSecNormCCcoh || p == kNuisXSecNormNC1piC || p == kNuisXSecNormNCcoh ||
      p == kNuisXSecNormNCoth || p == kNuisXSecNormNuEToNuMu || p == kNuisXSecNormAntiNuToNu)
   {
     wght = 1 + (this->CurrentValue(p) * this->RelativeError(p));
@@ -590,9 +617,9 @@ double NuXSec::SystWght_1p(
   if(TMath::Abs(wght) > conv::kMaxAllowedWght) {
     //get the ereco & etrue bin indexes (to be used to check whether the spline is sensible)
     int ireco = -1; 
-    for (int i = 0; i < kXsNErecoBins; i++) {
-      if(kXsErecoBinEdges[i]   <= Ereco && 
-	 kXsErecoBinEdges[i+1] >  Ereco) 
+    for (int i = 0; i < util::NumXsecErecoBins(s); i++) {
+      if(util::XsecErecoBinEdges(s,i)   <= Ereco && 
+	 util::XsecErecoBinEdges(s,i+1) >  Ereco) 
 	{
 	  ireco = i;
 	  break;
@@ -653,6 +680,9 @@ double NuXSec::CurrentValue(PhysParamId_t p) const
     case kNuisXSecNormNCoth:
       return fNormNCothTwkDial;
       break;
+    case kNuisXSecNormNCcoh:
+      return fNormNCcohTwkDial;
+      break;
     case kNuisXSecNormNuEToNuMu:
       return fNormNuEToNuMuTwkDial;
       break;
@@ -666,6 +696,7 @@ double NuXSec::CurrentValue(PhysParamId_t p) const
     case kNuisBANFFCCQEE2:
     case kNuisBANFFCC1piE0:
     case kNuisBANFFCC1piE1:
+    case kNuisBANFFNC1pi0:
       return fBANFF->CurrentValue(p);
       break;
     default:
@@ -682,6 +713,9 @@ double NuXSec::RelativeError(PhysParamId_t p) const
       break;
     case kNuisXSecNormNC1piC:
       return fNormNC1piCRelErr;
+      break;
+    case kNuisXSecNormNCcoh:
+      return fNormNCcohRelErr;
       break;
     case kNuisXSecNormNCoth:
       return fNormNCothRelErr;
@@ -720,6 +754,7 @@ void NuXSec::PrintSystematicVariations(ostream & stream) const
   stream << "         >> Binding energy      " << fBindETwkDial         << endl;
   stream << "         >> CC-coh norm         " << fNormCCcohTwkDial     << endl;
   stream << "         >> NC-1piC norm        " << fNormNC1piCTwkDial    << endl;
+  stream << "         >> NC-coh norm         " << fNormNCcohTwkDial     << endl;
   stream << "         >> NC-oth norm         " << fNormNCothTwkDial     << endl;
   stream << "         >> NuE to NuMu norm    " << fNormNuEToNuMuTwkDial << endl;
   stream << "         >> AntiNu to Nu norm   " << fNormAntiNuToNuTwkDial<< endl;
@@ -747,7 +782,8 @@ TSpline3 * NuXSec::FindWghtSpline(
     exit(1);
   }
 
-  return fXSecWghtSpl[idx];
+  if (s == kSKsFCFV1RingMuLike) return fXSecWghtSpl1Rmu[idx];
+  else return fXSecWghtSpl1Re[idx];
 }
 //________________________________________________________________________________________
 int NuXSec::WghtSplineIdx(
@@ -799,9 +835,9 @@ int NuXSec::WghtSplineIdx(
     return -1;
   }
   int ireco = -1; 
-  for (int i = 0; i < kXsNErecoBins; i++) {
-    if(kXsErecoBinEdges[i]   <= Ereco && 
-       kXsErecoBinEdges[i+1] >  Ereco) 
+  for (int i = 0; i < util::NumXsecErecoBins(s); i++) {
+    if(util::XsecErecoBinEdges(s,i)   <= Ereco && 
+       util::XsecErecoBinEdges(s,i+1) >  Ereco) 
     {
         ireco = i;
         break;
@@ -840,9 +876,9 @@ int NuXSec::WghtSplineIdx(
 
   int idx = itrue 
           + ireco * kXsNEtrueBins 
-          + ip    * kXsNEtrueBins * kXsNErecoBins
-          + im    * kXsNEtrueBins * kXsNErecoBins * kNumOfXSecSyst
-          + is    * kXsNEtrueBins * kXsNErecoBins * kNumOfXSecSyst * kNSuperkModes;
+	  + ip    * kXsNEtrueBins * util::NumXsecErecoBins(s)
+	  + im    * kXsNEtrueBins * util::NumXsecErecoBins(s) * kNumOfXSecSyst;
+	    //	  + is    * kXsNEtrueBins * util::NumXsecErecoBins(s) * kNumOfXSecSyst * kNSuperkModes;
 
   return idx;
 }
@@ -866,6 +902,7 @@ bool NuXSec::ApplySystToSKMode(PhysParamId_t p, SuperkSample_t s, SuperkMode_t m
   if (im == -1) return false;
 
   bool apply = kXsApplyXSecSystToSKMode[is][im][isyst];
+
   return apply;
 }
 //________________________________________________________________________________________
@@ -958,7 +995,7 @@ bool NuXSec::IsThereAnEvent(SuperkSample_t s, SuperkMode_t m, double Ereco, doub
   bool ev = mctempl_xsbinning->GetBinContent(ir,it) > kASmallNum;
 
 #ifdef __show_isanevent_mesg_debug__
-  if(ev)
+  if(ev)//&& (s == conv::kSKsFCFV1RingELike))
     cout << "Exp/NuXSec >> There are " << mctempl_xsbinning->GetBinContent(ir,it)
 	 << " events for sample = " << util::AsString(s) 
 	 << ", mode = " << util::AsString(m)
@@ -1037,6 +1074,7 @@ double NuXSec::ChisqPenalty(bool all_syst) const
   if (fBindETwkDial)          chisq_penalty += fBindETwkDial*fBindETwkDial;
   if (fNormCCcohTwkDial)      chisq_penalty += fNormCCcohTwkDial*fNormCCcohTwkDial;
   if (fNormNC1piCTwkDial)     chisq_penalty += fNormNC1piCTwkDial*fNormNC1piCTwkDial;
+  if (fNormNCcohTwkDial)      chisq_penalty += fNormNCcohTwkDial*fNormNCcohTwkDial;
   if (fNormNCothTwkDial)      chisq_penalty += fNormNCothTwkDial*fNormNCothTwkDial;
   if (fNormNuEToNuMuTwkDial)  chisq_penalty += fNormNuEToNuMuTwkDial*fNormNuEToNuMuTwkDial;
   if (fNormAntiNuToNuTwkDial) chisq_penalty += fNormAntiNuToNuTwkDial*fNormAntiNuToNuTwkDial;

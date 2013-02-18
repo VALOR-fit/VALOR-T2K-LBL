@@ -53,6 +53,9 @@ public:
    double PlusError      (t2kana::conv::PhysParamId_t p) const { return fPlusError    [this->Id(p)];   }
    double MinusError     (t2kana::conv::PhysParamId_t p) const { return fMinusError   [this->Id(p)];   }
 
+   void SetMinValue (t2kana::conv::PhysParamId_t p, double min) { fMinValue     [this->Id(p)] = min ;   }
+   void SetMaxValue (t2kana::conv::PhysParamId_t p, double max) { fMaxValue     [this->Id(p)] = max ;   }
+
    // Add a parameter
    bool AddParam (
      int ip, t2kana::conv::PhysParamId_t p, double init, 
@@ -104,6 +107,7 @@ public:
 
    // Print
    void Print (ostream & stream) const;
+   void Print () const;
    friend ostream & operator << (ostream & stream, const FitParamList & plst);
 
    // Methods with an one-off effect in Print()
@@ -154,6 +158,8 @@ private:
    // Various functions called by NamedParameterList(name)
    static FitParamList * NuOsc3FlavourFit                 (void);
    static FitParamList * NuOsc3FlavourFitWithAllSyst      (void);
+   static FitParamList * NuOsc3FlavourFitWithAllSystDisap (void);
+   static FitParamList * NuOsc3FlavourFitWithAllSystApp   (void);
    static FitParamList * NuOsc3FlavourFitWithSelectedSyst (void);
    static FitParamList * NuOsc3FlavourFitWithSelectedSystFullBANFF (void);
    static FitParamList * NuOsc3FlavourFitWithSelectedSystNoBANFF (void);
@@ -165,9 +171,16 @@ private:
    static void           Append3FlavourOscillation                  (FitParamList * fp, int start);
    static void           Append2FlavourOscillation                  (FitParamList * fp, int start);
    static void           AppendAllUncorrelatedXSecSystematics       (FitParamList * fp, int start);
+   static void           AppendUncorrelatedXSecSystematicsDisap     (FitParamList * fp, int start);
+   static void           AppendUncorrelatedXSecSystematicsApp       (FitParamList * fp, int start);
    static void           AppendAllSuperkDetectorSystematics         (FitParamList * fp, int start);
+   static void           AppendSuperkDetectorSystematicsDisap       (FitParamList * fp, int start);
+   static void           AppendSuperkDetectorSystematicsApp         (FitParamList * fp, int start);
    static void           AppendAllFSISystematics                    (FitParamList * fp, int start);
+   static void           AppendFSISystematicsDisap                  (FitParamList * fp, int start);
+   static void           AppendFSISystematicsApp                    (FitParamList * fp, int start);
    static void           AppendAllCorrelatedBANFFSystematics        (FitParamList * fp, int start);
+   static void           AppendCorrelatedBANFFSystematicsDisap      (FitParamList * fp, int start);
    static void           AppendAllUncorrelatedBANFFSystematics      (FitParamList * fp, int start);
    static void           AppendSelectedNonBANFFSystematics          (FitParamList * fp, int start);
    static void           AppendSelectedCorrelatedBANFFSystematics   (FitParamList * fp, int start);

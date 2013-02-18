@@ -27,7 +27,8 @@
 
 using t2kana::conv::kns;
 using t2kana::conv::knm;
-using t2kana::conv::knwspl;
+using t2kana::conv::knwspl1Rmu;
+using t2kana::conv::knwspl1Re;
 
 namespace t2kana {
 
@@ -58,6 +59,7 @@ public:
   void TweakBindE         (double twkdial) { fBindETwkDial         = twkdial; }
   void TweakNormCCcoh     (double twkdial) { fNormCCcohTwkDial     = twkdial; }
   void TweakNormNC1piC    (double twkdial) { fNormNC1piCTwkDial    = twkdial; }
+  void TweakNormNCcoh     (double twkdial) { fNormNCcohTwkDial     = twkdial; }
   void TweakNormNCoth     (double twkdial) { fNormNCothTwkDial     = twkdial; }
   void TweakNormNuEToNuMu (double twkdial) { fNormNuEToNuMuTwkDial = twkdial; }
   void TweakNormAntiNuToNu(double twkdial) { fNormAntiNuToNuTwkDial= twkdial; }
@@ -89,6 +91,22 @@ public:
 
   // Penalty term included in the chisq if NuXSec nuisance terms are included in the fit
   double ChisqPenalty(bool all_syst = true) const;
+
+  //ask for splines stored - to plot them
+  /*
+    TSpline3 * XSecSpl(conv::SuperkSample_t s, int idx){ 
+    if (s == conv::kSKsFCFV1RingMuLike){
+    //if ( *fXSecWghtSpl1Rmu[idx]) 
+    return *fXSecWghtSpl1Rmu[idx];
+    //else return 0.;
+    }
+    else{
+    //if(*fXSecWghtSpl1Re[idx]) 
+    return *fXSecWghtSpl1Re[idx];
+      //else return 0.;
+      }
+      }*/
+
 
 private:
 
@@ -122,7 +140,8 @@ private:
   //
 
   BANFF *     fBANFF;               ///< BANFF fit info
-  TSpline3 *  fXSecWghtSpl[knwspl]; ///< Weight splines. Index is function of sample, mode, systematic param, Ereco bin, Etrue bin
+  TSpline3 *  fXSecWghtSpl1Rmu[knwspl1Rmu]; ///< Weight splines. Index is function of sample, mode, systematic param, Ereco bin, Etrue bin
+  TSpline3 *  fXSecWghtSpl1Re[knwspl1Re]; ///< Weight splines. Index is function of sample, mode, systematic param, Ereco bin, Etrue bin
   TH2D *      fXsBinningTempl[kns][knm]; ///< Ereco-Etrue templates in XSec binning scheme
 
   // tweaking dials
@@ -134,6 +153,7 @@ private:
   double fBindETwkDial;
   double fNormCCcohTwkDial;
   double fNormNC1piCTwkDial;
+  double fNormNCcohTwkDial;
   double fNormNCothTwkDial;
   double fNormNuEToNuMuTwkDial;
   double fNormAntiNuToNuTwkDial;
@@ -141,6 +161,7 @@ private:
   // relative errors
   double fNormCCcohRelErr;
   double fNormNC1piCRelErr;
+  double fNormNCcohRelErr;
   double fNormNCothRelErr;
   double fNormNuEToNuMuRelErr;
   double fNormAntiNuToNuRelErr;

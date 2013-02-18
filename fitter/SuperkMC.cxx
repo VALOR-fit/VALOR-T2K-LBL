@@ -8,7 +8,10 @@
 
  Changes since 2011_v0.9.0:
 
- @
+ @ 18/2/13 - LE
+ Added back the selection of dmsq schema,from branch 2010_v3: in the 3-flavour analyses, take the global NuOscDmsqScheme_t option into account. 
+ Doubled arrays (independent ones for 1Rmu and 1Re)
+ Number of Etrue, Ereco bins can be different for 1Rmu and 1Re.
 
 */
 //________________________________________________________________________________________
@@ -34,11 +37,18 @@
 // 7 number of events, weighted by pot & mc normalisation, flux tuning, banff tuning, multiplicative systematic variations, nonmultiplicative systematic variations, physics hypothesis
 //#define __apply_minevents_to_individual_modes__ //special debug mode that applies kSetNegEventsTo to all modes. Used for comparisons with the KIT 1 sigma spectra
 //#define NO_EVENTS_CAN_BE_NEGATIVE // if defined, will stop events being negative at all stages (not just building the Ereco spectra)
+
 #define APPLY_ESCALE_AT_SPECTRUM_STAGE
+//#define FLUXWEIGHTSAREONE                                                                                                                                                       
+//#define BANFFWEIGHTSAREONE                                                                                                                                                      
+//#define SYSTWEIGHTSAREONE                                                                                                                                                       
+//#define PHYSHYPWEIGHTSAREONE  
 
 #include <cassert>
 #include <cstdlib>
+#include <fstream>
 #include <iostream>
+#include <sstream>
 
 #include <TTree.h>
 #include <TH2D.h>
@@ -108,8 +118,9 @@ void SuperkMC::Init(void)
 	}//ir
       }//it
       for(int itv=0; itv<kMCNEtrueBins; itv++) {
-	for(int irv=0; irv<kXsNErecoBins; irv++) {
-	  fMCVariableTemplArray[is][im][itv][irv] = 0;
+	for(int irv=0; irv<util::NumXsecErecoBins(s); irv++) {
+	  if (s==kSKsFCFV1RingMuLike) fMCVariableTemplArray1Rmu[is][im][itv][irv] = 0;
+	  else fMCVariableTemplArray1Re[is][im][itv][irv] = 0;
 	}//irv
       }//itv
     }//im
@@ -366,8 +377,8 @@ void SuperkMC::Book(void)
      if(s == kSKsUndefined) continue;
      const int      n_ereco_bins    = util::NumErecoBins (s);
      const double * ereco_bin_edges = util::ErecoBinEdges(s);
-     const int      var_n_ereco_bins    = conv::kXsNErecoBins;
-     const double * var_ereco_bin_edges = conv::kXsErecoBinEdges;
+     const int      var_n_ereco_bins    = util::NumXsecErecoBins(s);
+     const double * var_ereco_bin_edges = util::XsecErecoBinEdges(s);
      for(int im = 0; im < knm; im++) {
        SuperkMode_t m = kSKReactionModes[is][im];
        if(m == kSKmUndefined) continue;
@@ -475,13 +486,23 @@ void SuperkMC::FillTemplate(SuperkSample_t s, SuperkMode_t m)
      if(!use_it) continue;
   
      this -> Template(s,m,kSKMCtOri) -> Fill (fBrEreco/1000., fBrEtrue);
-     this -> Template(s,m,kSKMCtNom) -> Fill (fBrEreco/1000., fBrEtrue, fBrWght * pot_wght);
      fMCVariableTempl[sidx][midx]    -> Fill (fBrEreco/1000., fBrEtrue);
+#ifndef FLUXWEIGHTSAREONE
+     this -> Template(s,m,kSKMCtNom) -> Fill (fBrEreco/1000., fBrEtrue, fBrWght * pot_wght);
 #ifndef PRODUCTIONMODE
      this -> Template(s,m,kSKMCtTun) -> Fill (fBrEreco/1000., fBrEtrue, fBrWght * pot_wght);
      this -> Template(s,m,kSKMCtSys) -> Fill (fBrEreco/1000., fBrEtrue, fBrWght * pot_wght);
      this -> Template(s,m,kSKMCtFin) -> Fill (fBrEreco/1000., fBrEtrue, fBrWght * pot_wght);
 #endif
+#else
+     this -> Template(s,m,kSKMCtNom) -> Fill (fBrEreco/1000., fBrEtrue, pot_wght);
+#ifndef PRODUCTIONMODE
+     this -> Template(s,m,kSKMCtTun) -> Fill (fBrEreco/1000., fBrEtrue, pot_wght);
+     this -> Template(s,m,kSKMCtSys) -> Fill (fBrEreco/1000., fBrEtrue, pot_wght);
+     this -> Template(s,m,kSKMCtFin) -> Fill (fBrEreco/1000., fBrEtrue, pot_wght);
+#endif
+#endif
+
 
 #ifdef __show_init_mesg_debug__
      if(fBrEtrue <= 0 || fBrEtrue >= this->Template(s,m,kSKMCtOri)->GetYaxis()->GetBinUpEdge(this->Template(s,m,kSKMCtOri)->GetNbinsY()))
@@ -516,7 +537,8 @@ void SuperkMC::FillTemplate(SuperkSample_t s, SuperkMode_t m)
       // loop over variable Ereco
       for(int irv = 1; irv <= fMCVariableTempl[sidx][midx]->GetXaxis()->GetNbins(); irv++) {
 	int nev = (int)fMCVariableTempl[sidx][midx]->GetBinContent(irv,itv);
-	fMCVariableTemplArray[sidx][midx][itv-1][irv-1] = nev;
+	if (s==kSKsFCFV1RingMuLike) fMCVariableTemplArray1Rmu[sidx][midx][itv-1][irv-1] = nev;
+	else fMCVariableTemplArray1Re[sidx][midx][itv-1][irv-1] = nev;
       }//irv
     }//itv
   }  
@@ -741,18 +763,26 @@ void SuperkMC::ApplyBANFFTuningToTemplates(void)
 	 double flux_wght = fNuFlux->SuperkFluxFinTuningWght(s,m,EtrueVarMin);
 	   
 	 //loop over variable Ereco
-	 for(int irv = 1; irv <= kXsNErecoBins; irv++) {
+	 for(int irv = 1; irv <= util::NumXsecErecoBins(s); irv++) {
 	   //skip if the big bin is empty
-	   if(fMCVariableTemplArray[is][im][itv-1][irv-1] <= 0) continue;
-	   double ErecoVarMin = kXsErecoBinEdges[irv-1] + kOneMeV;
-	   double ErecoVarMax = kXsErecoBinEdges[irv]   - kOneMeV;
+	   if (s == kSKsFCFV1RingMuLike ) {
+	     if(fMCVariableTemplArray1Rmu[is][im][itv-1][irv-1] <= 0) continue;
+	   }
+	   else {
+	     if(fMCVariableTemplArray1Re[is][im][itv-1][irv-1] <= 0) continue;
+	   }
+	   double ErecoVarMin = util::XsecErecoBinEdges(s,irv-1) + kOneMeV;
+	   double ErecoVarMax = util::XsecErecoBinEdges(s,irv)   - kOneMeV;
 
 	   // Plug-in BANFF & other xsec systematics 
 	   double xsec_wght = fNuXSec->FinTuningWght(s,m,ErecoVarMin,EtrueVarMin); 
 
 	   // Combined weight
 	   double wght = flux_wght * xsec_wght;
-	
+	   	
+#ifdef BANFFWEIGHTSAREONE
+           wght = 1;
+#endif
 	   // loop over 50MeV Ereco
 	   int ErecoMinBin = 1 + TMath::BinarySearch(util::NumErecoBins(s),util::ErecoBinEdges(s),ErecoVarMin);
 	   int ErecoMaxBin = 1 + TMath::BinarySearch(util::NumErecoBins(s),util::ErecoBinEdges(s),ErecoVarMax);
@@ -870,13 +900,18 @@ void SuperkMC::ApplySystematicsToTemplates_Multiplicative(void)
 
 	 // Plug-in BANFF flux systematics
 	 double flux_wght = fNuFlux->SuperkFluxSystWght(s,m,EtrueVarMin);
-	   
+
 	 //loop over variable Ereco
-	 for(int irv = 1; irv <= kXsNErecoBins; irv++) {
+	 for(int irv = 1; irv <= util::NumXsecErecoBins(s); irv++) {
 	   //skip if the big bin is empty
-	   if(fMCVariableTemplArray[is][im][itv-1][irv-1] <= 0) continue;
-	   double ErecoVarMin = kXsErecoBinEdges[irv-1] + kOneMeV;
-	   double ErecoVarMax = kXsErecoBinEdges[irv]   - kOneMeV;
+	   if(s == kSKsFCFV1RingMuLike){
+	     if(fMCVariableTemplArray1Rmu[is][im][itv-1][irv-1] <= 0) continue;
+	   }
+	   else{
+	     if(fMCVariableTemplArray1Re[is][im][itv-1][irv-1] <= 0) continue;
+	   }
+	   double ErecoVarMin = util::XsecErecoBinEdges(s,irv-1) + kOneMeV;
+	   double ErecoVarMax = util::XsecErecoBinEdges(s,irv)   - kOneMeV;
 
 	   // Plug-in SK efficiency uncertainty due to fiducial volume, reduction chain, OD cut,
 	   // ring-counting, PID, momentum cut and decay e- cut.
@@ -891,6 +926,10 @@ void SuperkMC::ApplySystematicsToTemplates_Multiplicative(void)
 
            // Combined weight
            double wght = skeff_wght * flux_wght * xsec_wght * fsi_wght;
+
+#ifdef SYSTWEIGHTSAREONE
+           wght = 1;
+#endif
 
 	   // loop over 50MeV Ereco
 	   int ErecoMinBin = 1 + TMath::BinarySearch(util::NumErecoBins(s),util::ErecoBinEdges(s),ErecoVarMin);
@@ -1001,7 +1040,6 @@ void SuperkMC::ApplySystematicsToTemplates_NonMultiplicative(void)
       else memcpy (mctemplarry_no_ereco_scale, fMCTemplArrayFin1Re[im], sizeof (fMCTemplArrayFin1Re[im]));
       // get energy scale
       double escale = fSKDet->EnergyScale(s,m);
-      
       // energy scale > 1 : 
       // For a given bin, events are gained from bins on the left (lower Ereco bins) and 
       // are lost to bins on the right (higher Ereco bins)
@@ -1170,11 +1208,10 @@ bool SuperkMC::ApplyEnergyScaleSystematicToTotalSpectrum(void)
     //clone
     TH1D * reco_spectrum_tot_no_ereco_scale = new TH1D(*reco_spectrum_tot);
     double reco_spectrum_tot_arry_no_ereco_scale[kns][util::NumErecoBins(s)];
-    if (s==kSKsFCFV1RingMuLike) memcpy(reco_spectrum_tot_arry_no_ereco_scale, fMCErecoSpectrumTotArray1Rmu, sizeof (fMCErecoSpectrumTotArray1Rmu)) ;
-    else memcpy(reco_spectrum_tot_arry_no_ereco_scale, fMCErecoSpectrumTotArray1Re, sizeof (fMCErecoSpectrumTotArray1Re)) ;
+    if (s==kSKsFCFV1RingMuLike) memcpy(reco_spectrum_tot_arry_no_ereco_scale[is], fMCErecoSpectrumTotArray1Rmu, sizeof (fMCErecoSpectrumTotArray1Rmu)) ;
+    else memcpy(reco_spectrum_tot_arry_no_ereco_scale[is], fMCErecoSpectrumTotArray1Re, sizeof (fMCErecoSpectrumTotArray1Re)) ;
     // get energy scale
     double escale = fSKDet->EnergyScale(s);
-
     // energy scale > 1 : 
     // For a given bin, events are gained from bins on the left (lower Ereco bins) and 
     // are lost to bins on the right (higher Ereco bins)
@@ -1323,13 +1360,52 @@ void SuperkMC::ApplyPhysHypothesisToTemplates(void)
     double mixing12 = fPhysHypothesis.CurrValue(kPhypMixing12);
     double mixing13 = fPhysHypothesis.CurrValue(kPhypMixing13);
     double mixing23 = fPhysHypothesis.CurrValue(kPhypMixing23);
-    double dm12sq   = fPhysHypothesis.CurrValue(kPhypDm12sq);
-    double dm23sq   = fPhysHypothesis.CurrValue(kPhypDm23sq);
+    //    double dm12sq   = fPhysHypothesis.CurrValue(kPhypDm12sq);
+    //double dm23sq   = fPhysHypothesis.CurrValue(kPhypDm23sq);
+    double dmsq     = fPhysHypothesis.CurrValue(kPhypDm12sq);
+    double Dmsq     = fPhysHypothesis.CurrValue(kPhypDm23sq);
     double delta_cp = fPhysHypothesis.CurrValue(kPhypDeltaCP);
 #ifdef __show_hypothesis__
     cout << "**  Exp/SKMC >> " << fPhysHypothesis;
 #endif
     NuOscMixParam_t omp = Opt::Instance()->gOscMixingParamChoice;
+    NuOscDmsqScheme_t  dmsqscheme = Opt::Instance()->gOscDmsqScheme;
+
+    // mixing params are: sin^2(2*theta)
+    // independent squared mass splittings are: dm^2 = Dm^2_{12}, Dm^2 = |Dm^2_{23}|                                                                                             
+    if(dmsqscheme == kNuDmsq12andAbs23 && omp == kNuMixSinsq2Theta)
+      {
+	fNuOsc3Flavour.SetOscParameters(mixing12,mixing13,mixing23,dmsq,Dmsq,delta_cp);
+      }
+    // mixing params are: sin^2(theta)                                                                                                                                         
+    // independent squared mass splittings are: dm^2 = Dm^2_{12}, Dm^2 = |Dm^2_{23}|                                                                                              
+    else
+      if(dmsqscheme == kNuDmsq12andAbs23 && omp == kNuMixSinsqTheta)
+	{
+	  fNuOsc3Flavour.SetOscParametersSinSqTAll(mixing12,mixing13,mixing23,dmsq,Dmsq,delta_cp);
+	}
+    // mixing params are: sin^2(2*theta)                                                                                                                                        
+    // independent squared mass splittings are: dm^2 = Dm^2_{12}, Dm^2 = |m^2_{3} - (m^2_{1} + m^2_{1})/2|                                                                        
+      else
+	if(dmsqscheme == kNuDmsqFogliLisi && omp == kNuMixSinsq2Theta)
+	  {
+	    fNuOsc3Flavour.SetOscParametersSSq2TDmAtmSol(mixing12,mixing13,mixing23,dmsq,Dmsq,delta_cp);
+	  }
+    // mixing params are: sin^2(theta)                                                                                                                                             
+    // independent squared mass splittings are: dm^2 = Dm^2_{12}, Dm^2 = |m^2_{3} - (m^2_{1} + m^2_{1})/2|                                                                         
+	else
+	  if(dmsqscheme == kNuDmsqFogliLisi && omp == kNuMixSinsqTheta)
+	    {
+	      fNuOsc3Flavour.SetOscParametersDmsqAtmSol(mixing12,mixing13,mixing23,dmsq,Dmsq,delta_cp);
+	    }
+	  else {
+	    cerr << "**  Exp/SKMC >> Can't handle choice of "
+		 << "\n oscillation mixing params: " << util::AsString(omp)
+		 << "\n and independent squared mass-splittings: " << util::AsString(dmsqscheme)
+		 << endl;
+	    exit(1);
+	  }
+    /*
     switch(omp) {
        // mixing params are sin^2(2*theta)
        case(kNuMixSinsq2Theta) : 
@@ -1344,7 +1420,8 @@ void SuperkMC::ApplyPhysHypothesisToTemplates(void)
               << util::AsString(omp) << ")" << endl;
          exit(1);
     }
-    
+    */
+
     // loop over samples
     for(int is = 0; is < kns; is++) {
      SuperkSample_t s = kSKSamples[is];
@@ -1360,24 +1437,23 @@ void SuperkMC::ApplyPhysHypothesisToTemplates(void)
         // calculate oscillation probabilities (incl. matter effects) for the current Etrue value
        double Etrue = (util::EtrueBinEdges(s,it-1) + util::EtrueBinEdges(s,it) ) / 2;
 
-
 	// skip unnecessary calculations
 	bool bin_is_not_empty = this->IsThereAnEvent(s, Etrue);
 	if(!bin_is_not_empty) continue;
-
-        double p_numu_numu       = fNuOsc3Flavour.CalcMatterOscProb(kPdgNuMu,    kPdgNuMu,    Etrue);
-        double p_numubar_numubar = fNuOsc3Flavour.CalcMatterOscProb(kPdgNuMuBar, kPdgNuMuBar, Etrue);
-        double p_nue_nue         = fNuOsc3Flavour.CalcMatterOscProb(kPdgNuE,     kPdgNuE,     Etrue);
-        double p_nuebar_nuebar   = fNuOsc3Flavour.CalcMatterOscProb(kPdgNuEBar,  kPdgNuEBar,  Etrue);
-      //double p_nue_numu        = fNuOsc3Flavour.CalcMatterOscProb(kPdgNuE,     kPdgNuMu,    Etrue);
-        double p_numu_nue        = fNuOsc3Flavour.CalcMatterOscProb(kPdgNuMu,    kPdgNuE,     Etrue);
+	
+	double p_numu_numu       = fNuOsc3Flavour.CalcMatterOscProb(kPdgNuMu,    kPdgNuMu,    Etrue);
+	double p_numubar_numubar = fNuOsc3Flavour.CalcMatterOscProb(kPdgNuMuBar, kPdgNuMuBar, Etrue);
+	double p_nue_nue         = fNuOsc3Flavour.CalcMatterOscProb(kPdgNuE,     kPdgNuE,     Etrue);
+	double p_nuebar_nuebar   = fNuOsc3Flavour.CalcMatterOscProb(kPdgNuEBar,  kPdgNuEBar,  Etrue);
+	double p_numu_nue        = fNuOsc3Flavour.CalcMatterOscProb(kPdgNuMu,    kPdgNuE,     Etrue);
+	
 #ifdef __show_hypothesis_probabilities__
-        cout << "Exp/SKMC >>  E = " << Etrue << " GeV" << endl;
+        cout << "Exp/SKMC >>  E = " << Etrue << " GeV" << endl;	
         cout << "Exp/SKMC >>  * P (numu     -> numu   ) = " << p_numu_numu       << endl;
         cout << "Exp/SKMC >>  * P (numubar  -> numubar) = " << p_numubar_numubar << endl;
         cout << "Exp/SKMC >>  * P (nue      -> nue    ) = " << p_nue_nue         << endl;
         cout << "Exp/SKMC >>  * P (nuebar   -> nuebar ) = " << p_nuebar_nuebar   << endl;
-      //cout << "Exp/SKMC >>  * P (nue      -> numu   ) = " << p_nue_numu        << endl;
+	//cout << "Exp/SKMC >>  * P (nue      -> numu   ) = " << p_nue_numu      << endl;
         cout << "Exp/SKMC >>  * P (numu     -> nue    ) = " << p_numu_nue        << endl;
 #endif
 
@@ -1396,12 +1472,16 @@ void SuperkMC::ApplyPhysHypothesisToTemplates(void)
               double posc = 1.;
               if( util::IsCC(m) ) 
               {
-                if( util::IsNuMu(m)      ) { posc = p_numu_numu;       }
-                if( util::IsNuMuBar(m)   ) { posc = p_numubar_numubar; }
-                if( util::IsNuE(m)       ) { posc = p_nue_nue;         }
-                if( util::IsNuEBar(m)    ) { posc = p_nuebar_nuebar;   }
-                if( util::IsSignalNuE(m) ) { posc = p_numu_nue;        }
+                if( util::IsNuMu(m)      ) { posc = p_numu_numu; }
+                if( util::IsNuMuBar(m)   ) { posc = p_numubar_numubar;}
+                if( util::IsNuE(m)       ) { posc = p_nue_nue;} 
+                if( util::IsNuEBar(m)    ) { posc = p_nuebar_nuebar;}
+                if( util::IsSignalNuE(m) ) { posc = p_numu_nue;}
               }
+#ifdef PHYSHYPWEIGHTSAREONE
+              posc = 1;
+              if(util::IsSignalNuE(m)) posc = 0;
+#endif
               // number of events in (Ereco,Etrue) bin (oscillations + systematics applied)
               double nev_osc = nev * posc;
 #ifndef PRODUCTIONMODE
@@ -1992,7 +2072,7 @@ void SuperkMC::NevDebug(SKMCTemplateType_t t, string name)
 
       //first write the 2d template, and cout the mode integral
       mctempl->Write();
-      cout << name << " " << util::AsString(s) << " " << util::AsString(m) << " " << mctempl->Integral() << endl;
+      //      cout << name << " " << util::AsString(s) << " " << util::AsString(m) << " " << mctempl->Integral() << endl;
       nsk += mctempl->Integral();
 
       //fill a 1D ereco spectrum
@@ -2051,7 +2131,7 @@ void SuperkMC::NevDebug(SKMCTemplateType_t t, string name)
     TH1D * hfull = this->CurrErecoSpectrum(s);
     hfull->Write("ereco_spectrum");
 
-    cout << "Total: " << nsk << endl << endl;
+    //    cout << "Total: " << nsk << endl << endl;
   }//sample
   out.Close();
 }

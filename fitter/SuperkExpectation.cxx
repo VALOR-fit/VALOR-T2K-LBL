@@ -8,7 +8,8 @@
 
  Changes since 2011_v0.9.0:
 
- @
+ @ 18/2/13 LE
+ Added tweaking methods for new parameters for the 1Re sample
 
 */
 //________________________________________________________________________________________
@@ -348,6 +349,13 @@ void SuperkExpectation::ResetSystematicVariations(void)
   this->GetSuperkDetector()->TweakEfficiency1RmuCCnonQE          (0.);
   this->GetSuperkDetector()->TweakEfficiency1RmuNC               (0.);     
   this->GetSuperkDetector()->TweakEfficiency1RmuNuECC            (0.);
+  // SuperK detector systematics for 1Re
+  const int neff1Re = conv::kNumOfSKDetParams1Re;
+  TVectorD twkv(neff1Re);
+  for (int ip = 0; ip < neff1Re; ip++) {
+    twkv[ip] = 0;
+  }
+  this->GetSuperkDetector()->TweakEfficiencies1Re                (true,&twkv);
 
   // BANFF
   this->GetBANFF()->Tweak(true,0);
@@ -363,6 +371,7 @@ void SuperkExpectation::ResetSystematicVariations(void)
   this->GetNuXSec()->TweakPiLessDelta   (0.);
   this->GetNuXSec()->TweakBindE         (0.);
   this->GetNuXSec()->TweakNormCCcoh     (0.);
+  this->GetNuXSec()->TweakNormNCcoh     (0.);
   this->GetNuXSec()->TweakNormNC1piC    (0.);
   this->GetNuXSec()->TweakNormNCoth     (0.);
   this->GetNuXSec()->TweakNormNuEToNuMu (0.);
@@ -390,6 +399,8 @@ void SuperkExpectation::TweakSystematic(string systematic, double twkdial, bool 
 //   - sk_1Rmu_ccnonqe_eff                  :
 //   - sk_1Rmu_nc_eff                       :
 //   - sk_1Rmu_nuecc_eff                    :
+//   - sk_1Re_eff                           :
+//   - sk_1Re_eff_...                       :
 //
 // BANFF
 //    - banff                               : tweak all BANFF params, correlations taken into account (Cholesky method)
@@ -483,7 +494,35 @@ void SuperkExpectation::TweakSystematic(string systematic, double twkdial, bool 
   if(systematic == "sk_1Rmu_nuecc_eff") {
      this->GetSuperkDetector()->TweakEfficiency1RmuNuECC(twkdial);
   }
-     
+  // tweak 1Re efficiency generating random
+  // efficiency tweaks and taking into account bin-to-bin correlations
+  else
+  if(systematic == "sk_1Re_eff") {
+    this->GetSuperkDetector()->TweakEfficiencies1Re();
+  }
+  else
+  if(systematic.find("sk_1Re_eff_") != string::npos) {
+    bool found = false;
+    const int neff1Re = conv::kNumOfSKDetParams1Re;
+    TVectorD twkv(neff1Re);
+    for (int ip = 0; ip < neff1Re; ip++) {
+      twkv[ip] = 1;
+    }
+    for (int ip = 0; ip < neff1Re; ip++) {
+      if(systematic == Form("sk_1Re_eff_%03i",ip)) {
+	twkv[ip]=twkdial;
+	this->GetSuperkDetector()->TweakEfficiencies1Re(true,&twkv);
+	found = true;
+	break;
+      }
+    }//ib                                                                                                                                                                                                    
+    if(!found) {
+      cerr << "Exp >> Unknown systematic parameter (" << systematic << ")" << endl;
+      exit(1);
+    }
+  }
+
+
   //
   // BANFF & Uncorrelated BANFF
   //
@@ -535,27 +574,27 @@ void SuperkExpectation::TweakSystematic(string systematic, double twkdial, bool 
      const int nfsi = conv::kNumOfFSIParams;
      TVectorD twkv(nfsi);
      for (int ip = 0; ip < nfsi; ip++) {
-        twkv[ip] = 1;
+       twkv[ip] = 1;
      }
      for (int ip = 0; ip < nfsi; ip++) {
-	if(systematic == Form("fsi_%03i",ip)) {
-	   twkv[ip]=twkdial;
-	   this->GetFSI()->Tweak(true,&twkv);
-	   found = true;
-	   break;
-	}
+       if(systematic == Form("fsi_%03i",ip)) {
+	 twkv[ip]=twkdial;
+	 this->GetFSI()->Tweak(true,&twkv);
+	 found = true;
+	 break;
+       }
      }//ib
      if(!found) {
-        cerr << "Exp >> Unknown systematic parameter (" << systematic << ")" << endl;
-	exit(1);
+       cerr << "Exp >> Unknown systematic parameter (" << systematic << ")" << endl;
+       exit(1);
      }   
   }
-
-
+  
+  
   //
   // XSec
   //
-
+  
   else if(systematic == "xsec_pf")
     this->GetNuXSec()->TweakFermiMom      (twkdial);
   else if(systematic == "xsec_sf")
@@ -570,6 +609,8 @@ void SuperkExpectation::TweakSystematic(string systematic, double twkdial, bool 
     this->GetNuXSec()->TweakBindE         (twkdial);
   else if(systematic == "xsec_norm_cccoh")
     this->GetNuXSec()->TweakNormCCcoh     (twkdial);
+  else if(systematic == "xsec_norm_nccoh")
+    this->GetNuXSec()->TweakNormNCcoh     (twkdial);
   else if(systematic == "xsec_norm_nc1piC")
     this->GetNuXSec()->TweakNormNC1piC    (twkdial);
   else if(systematic == "xsec_norm_ncoth")
@@ -635,6 +676,7 @@ void SuperkExpectation::TweakAllUncorrelatedXSecSystematics(void)
   this->GetNuXSec()->TweakPiLessDelta   (rand.Gaus(0.,1.));
   this->GetNuXSec()->TweakBindE         (rand.Gaus(0.,1.));
   this->GetNuXSec()->TweakNormCCcoh     (rand.Gaus(0.,1.));
+  this->GetNuXSec()->TweakNormNCcoh     (rand.Gaus(0.,1.));
   this->GetNuXSec()->TweakNormNC1piC    (rand.Gaus(0.,1.));
   this->GetNuXSec()->TweakNormNCoth     (rand.Gaus(0.,1.));
   this->GetNuXSec()->TweakNormNuEToNuMu (rand.Gaus(0.,1.));
@@ -656,6 +698,7 @@ void SuperkExpectation::TweakAllSKDetectorSystematics(void)
   this->GetSuperkDetector()->TweakEfficiency1RmuCCnonQE    (rand.Gaus(0.,1.));
   this->GetSuperkDetector()->TweakEfficiency1RmuNC         (rand.Gaus(0.,1.));
   this->GetSuperkDetector()->TweakEfficiency1RmuNuECC      (rand.Gaus(0.,1.));
+  this->GetSuperkDetector()->TweakEfficiencies1Re          (); // <-- Cholesky method
 }
 //________________________________________________________________________________________
 void SuperkExpectation::SetNuisanceParams(const FitParamList & fp, bool all_banff_fit)
@@ -694,6 +737,26 @@ void SuperkExpectation::SetNuisanceParams(const FitParamList & fp, bool all_banf
      double twk = fp.CurrValue(kNuisSuperkEnergyScale);
      this->GetSuperkDetector()->TweakEnergyScale(twk);
    }
+
+   const int neff1Re = conv::kNumOfSKDetParams1Re;
+   // 1Re eff params included in the fit param list?                                                                                                                                                    
+   bool incl_eff1Re = true;
+   for(int ip = 0; ip < neff1Re; ip++) {
+     PhysParamId_t p = PhysParamId_t ((int) kNuisSuperkEff1ReNueSigCC0 + ip);
+     incl_eff1Re = incl_eff1Re && fp.Exists(p);
+     if(!incl_eff1Re) break;
+   }
+   // If 1Re eff params included, use current values stored in fit param list                                                                                                                                
+   // to tweak the 1Re eff object 
+   if(incl_eff1Re) {
+     TVectorD twkv(neff1Re);
+     for(int ip = 0; ip < neff1Re; ip++) {
+       PhysParamId_t p = PhysParamId_t ((int) kNuisSuperkEff1ReNueSigCC0 + ip);
+       twkv[ip] = fp.CurrValue(p);
+     }
+     this->GetSuperkDetector()->TweakEfficiencies1Re(true,&twkv);
+   }
+
 
    // 
    // BANFF systematics
@@ -777,6 +840,10 @@ void SuperkExpectation::SetNuisanceParams(const FitParamList & fp, bool all_banf
    if(fp.Exists(kNuisXSecNormCCcoh)) {
      double twk = fp.CurrValue(kNuisXSecNormCCcoh);
      this->GetNuXSec()->TweakNormCCcoh(twk);
+   }
+   if(fp.Exists(kNuisXSecNormNCcoh)) {
+     double twk = fp.CurrValue(kNuisXSecNormNCcoh);
+     this->GetNuXSec()->TweakNormNCcoh(twk);
    }
    if(fp.Exists(kNuisXSecNormNC1piC)) {
      double twk = fp.CurrValue(kNuisXSecNormNC1piC);

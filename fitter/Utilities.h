@@ -77,30 +77,33 @@ namespace util {
 
   void SetDefaultSKSpectrumStyle (conv::SuperkSample_t s, conv::SuperkMode_t m, TH1D * histogram);
 
-  string AsString        (conv::PhysHypothesis_t hyp, double mix12, double mix13, double mix23, double deltacp, double dm12sq, double dm23sq);
-  string AsString        (conv::OscAnaType_t       a);
-  string AsString        (conv::NuMassHierarchy_t  m);
-  string AsString        (conv::NuOscMixParam_t    p);
-  string AsString        (conv::PhysHypothesis_t   h);
-  string AsString        (conv::PhysParamId_t      p);
-  string AsString        (conv::SuperkSample_t     s);
-  string AsString        (conv::SuperkMode_t       m);
-  string AsString        (conv::SKMCTemplateType_t t);
-  string AsString        (conv::FluxType_t         f);
-  string AsString        (conv::OscChannelId_t     o);
-  string AsStringTex     (conv::SuperkSample_t     s);
-  string AsStringTex     (conv::SuperkMode_t       m);
-  string AsStringTex     (conv::PhysParamId_t      p);
-  string AsStringRooTex  (conv::SuperkSample_t s, conv::SuperkMode_t m, string append_begin="", string append_end="");
-  string AsStringRooTex  (conv::SuperkSample_t     s);
-  string AsStringRooTex  (conv::SuperkMode_t       m);
-  string AsStringCompact (conv::SuperkSample_t s, conv::SuperkMode_t m, string append_begin="", string append_end="");
-  string AsStringCompact (conv::SuperkSample_t     s);
-  string AsStringCompact (conv::SuperkMode_t       m);
-  string AsStringCompact_KIT (conv::SuperkMode_t m);
-  string AsStringCompact (conv::PhysParamId_t      p);
-  string AsStringCompact_KIT (conv::PhysParamId_t p);
-  string Pdg2String      (int pdg_code);
+  string AsString           (conv::PhysHypothesis_t hyp, double mix12, double mix13, double mix23, double deltacp, double dm12sq, double dm23sq);
+  string AsString           (conv::OscAnaType_t       a);
+  string AsString           (conv::NuMassHierarchy_t  m);
+  string AsString           (conv::NuOscMixParam_t    p);
+  string AsString           (t2kana::conv::NuOscDmsqScheme_t dmsqs);
+  string AsString           (conv::PhysHypothesis_t   h);
+  string AsString           (conv::PhysParamId_t      p);
+  string AsString           (conv::SuperkSample_t     s);
+  string AsString           (conv::SuperkMode_t       m);
+  string AsString           (conv::SKMCTemplateType_t t);
+  string AsString           (conv::FluxType_t         f);
+  string AsString           (conv::OscChannelId_t     o);
+  string AsStringTex        (conv::SuperkSample_t     s);
+  string AsStringTex        (conv::SuperkMode_t       m);
+  string AsStringTex        (conv::PhysParamId_t      p);
+  string AsStringPaperTex   (conv::PhysParamId_t      p);
+  string AsStringPaperRooTex(conv::PhysParamId_t      p);
+  string AsStringRooTex     (conv::SuperkSample_t s, conv::SuperkMode_t m, string append_begin="", string append_end="");
+  string AsStringRooTex     (conv::SuperkSample_t     s);
+  string AsStringRooTex     (conv::SuperkMode_t       m);
+  string AsStringCompact    (conv::SuperkSample_t s, conv::SuperkMode_t m, string append_begin="", string append_end="");
+  string AsStringCompact    (conv::SuperkSample_t     s);
+  string AsStringCompact    (conv::SuperkMode_t       m);
+  string AsStringCompact_KIT(conv::SuperkMode_t m);
+  string AsStringCompact    (conv::PhysParamId_t      p);
+  string AsStringCompact_KIT(conv::PhysParamId_t p);
+  string Pdg2String         (int pdg_code);
 
   conv::PhysHypothesis_t   PhysHypFromString         (string h);
   conv::SuperkSample_t     SKSampleFromString        (string h);
@@ -131,6 +134,9 @@ namespace util {
   const int      NumErecoBins  (conv::SuperkSample_t s);
   const double * ErecoBinEdges (conv::SuperkSample_t s);
   const double   ErecoBinEdges (conv::SuperkSample_t s, int i);
+  const int      NumXsecErecoBins  (conv::SuperkSample_t s);
+  const double * XsecErecoBinEdges (conv::SuperkSample_t s);
+  const double   XsecErecoBinEdges (conv::SuperkSample_t s, int i);
   const int      NumEtrueBins  (conv::SuperkSample_t s);
   const double * EtrueBinEdges (conv::SuperkSample_t s);
   const double   EtrueBinEdges (conv::SuperkSample_t s, int i);
@@ -234,6 +240,7 @@ namespace util {
     int XSecSystIdx     (conv::PhysParamId_t p)                        { return fXSecSystIdx    [p];    }
     int BANFFSystIdx    (conv::PhysParamId_t p)                        { return fBANFFSystIdx   [p];    }
     int FSISystIdx      (conv::PhysParamId_t p)                        { return fFSISystIdx     [p];    }
+    int SKDet1ReSystIdx (conv::PhysParamId_t p)                        { return fSKDet1ReSystIdx[p];    }
     int PhysParamIdx    (conv::PhysParamId_t p)                        { return fPhysParamIdx   [p];    }
   private:
     ArrIdx();
@@ -245,6 +252,7 @@ namespace util {
     int fXSecSystIdx     [conv::knppmax];                ///< maps physics param to kListOfXSecSyst array index
     int fBANFFSystIdx    [conv::knppmax];                ///< maps physics param to BANFF covariance matrix
     int fFSISystIdx      [conv::knppmax];                ///< maps physics param to FSI covariance matrix
+    int fSKDet1ReSystIdx [conv::knppmax];                ///< maps physics param to 1Re eff covariance matrix
     int fPhysParamIdx    [conv::knppmax];                ///< maps physics param
     static ArrIdx * fInstance;
     struct Cleaner {

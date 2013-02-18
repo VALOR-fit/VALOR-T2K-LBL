@@ -8,7 +8,8 @@
 
  Changes since 2011_v0.9.0:
 
- @
+ @ 18/2/13 - LE                                                                                                                               
+ Added back the selection of dmsq schema,from branch 2010_v3: choice between usual Dm12sq + Dm23sq and Fogli&Lisi schema
 
 */
 //________________________________________________________________________________________
@@ -61,6 +62,7 @@ void Opt::SetDefaults(void)
 {
   gMassHierarchyAssumed = kNmhNormal;
   gOscMixingParamChoice = kNuMixSinsq2Theta;
+  gOscDmsqScheme        = kNuDmsq12andAbs23;
 
   bool fit_1Rmu = false;
   bool fit_1Re  = false;
@@ -97,6 +99,9 @@ void Opt::Print(ostream & stream) const
          << endl;
   stream << " - Mixing param choice: " 
          << util::AsString(gOscMixingParamChoice) 
+         << endl;
+  stream << " - Independent squared mass splittings: "
+         << util::AsString(gOscDmsqScheme)
          << endl;
   stream << " - Oscillation analysis choice: " 
          << util::AsString(gOscAnaTypeChoice) 

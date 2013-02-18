@@ -8,7 +8,8 @@
 
  Changes since 2011_v0.9.0:
 
- @
+ @ 18/2/13 - LE                                                                                                              
+ Added back the selection of dmsq schema,from branch 2010_v3: choice between usual Dm12sq + Dm23sq and Fogli&Lisi schema      
 
 */
 //________________________________________________________________________________________
@@ -93,6 +94,8 @@ void NuOsc3Flavour::SetOscParameters(
 
   // The input values of dmsq23 and dmsq12  uniquely define the value of dmsq13
   dmsq13 = dmsq12 + dmsq23;
+
+  //  cout << "  dmsq12=" << dmsq12 << "  dmsq23=" << dmsq23 << " and dmsq13=" << dmsq13 << endl;
 
   // Code returns NaN if sin^2(mixing angle) is unphysical.
   // Don't let sin^2(mixing angle) be below 0 or above 1.
@@ -294,6 +297,7 @@ void NuOsc3Flavour::SetOscParametersSSq2TDmAtmSol(
   dmsq23 = dmsqAtm - 0.5*dmsq12;
   dmsq13 = dmsqAtm + 0.5*dmsq12;
 
+  //  cout << "dmsqAtm=" <<dmsqAtm << "  dmsq12=" << dmsq12 << "  dmsq23=" << dmsq23 << " and dmsq13=" << dmsq13 << endl;
   // Code returns NaN if sin^2(mixing angle) is unphysical.                                                                                                                                           
   // Don't let sin^2(mixing angle) be below 0 or above 1.                                                                                                                                           
   sinsq2theta12 = TMath::Min(1.,sinsq2theta12);
@@ -360,7 +364,7 @@ void NuOsc3Flavour::SetOscParametersSSq2TDmAtmSol(
   if(deltaCP > 3.10 && deltaCP < 3.18 && sinsq2theta13 > 1.0e-8)
     useEquations12 = false;
 
-  //if 2 mixing angles are very small, treat it as a 2-flavour calculation                                                                                                                           
+  //if 2 mixing angles are very small, treat it as a 2-flavour calculation                                                                                                         
   if(sinsq2theta13 < 1.0e-5 && sinsq2theta23 < 1.0e-5 && sinsq2theta12 >= 1.0e-6)
     nFlavourIndex = 12;
   else if(sinsq2theta12 < 1.0e-4 && sinsq2theta23 < 1.0e-6 && sinsq2theta13 >= 1.0e-6)
@@ -369,12 +373,11 @@ void NuOsc3Flavour::SetOscParametersSSq2TDmAtmSol(
     nFlavourIndex = 23;
   else
     nFlavourIndex = -1;
-  //if all 3 mixing angles are very small, take it that there are no oscillations                                                                                                                     
+  //if all 3 mixing angles are very small, take it that there are no oscillations                                                                                                 
   if(sinsq2theta12 < 1.0e-6 && sinsq2theta13 < 1.0e-6 && sinsq2theta23 < 1.0e-6)
     nFlavourIndex = 0;
 }
-
-//________________________________________________________________________________________                                                                                                            
+//________________________________________________________________________________________                                                                                         
   void NuOsc3Flavour::SetOscParametersDmsqAtmSol(
 					      double sinsqtheta12, double sinsqtheta13, double sinsqtheta23,
 					      double dmsq12_in, double dmsqAtm_in,
@@ -382,19 +385,20 @@ void NuOsc3Flavour::SetOscParametersSSq2TDmAtmSol(
 {
   dmsq12 = dmsq12_in;
   dmsqAtm = dmsqAtm_in;
-  // Note: The input value of dmsqAtm is the absolute one. The sign of dmsqAtm depends on                                                                                                                
-  // the mass hierarchy. In the normal mass hierarchy, dmsqAtm is positive. In the inverted                                                                                                              
-  // mass hierarchy, dmsqAtm is NEGATIVE. Set the appropriate sign.                                                                                                                                    
+  // Note: The input value of dmsqAtm is the absolute one. The sign of dmsqAtm depends on                                                                                     
+  // the mass hierarchy. In the normal mass hierarchy, dmsqAtm is positive. In the inverted                                                                                     
+  // mass hierarchy, dmsqAtm is NEGATIVE. Set the appropriate sign.                                                                                                             
   if(fMassHierarchy == kNmhInverted) {
     dmsqAtm = -dmsqAtm;
   }
 
-  // The input values of dmsqAtm and dmsq12  uniquely define the value of dmsq23 and dmsq13                                                                                                           
+  // The input values of dmsqAtm and dmsq12  uniquely define the value of dmsq23 and dmsq13                                                                                      
   dmsq23 = dmsqAtm - 0.5*dmsq12;
   dmsq13 = dmsqAtm + 0.5*dmsq12;
+  //  cout << "dmsqAtm=" <<dmsqAtm << "  dmsq12=" << dmsq12 << "  dmsq23=" << dmsq23 << " and dmsq13=" << dmsq13 << endl;
 
-  // Code returns NaN if sin^2(mixing angle) is unphysical.                                                                                                                                             
-  // Don't let sin^2(mixing angle) be below 0 or above 1.                                                                                                                                            
+  // Code returns NaN if sin^2(mixing angle) is unphysical.                                                                                                                      
+  // Don't let sin^2(mixing angle) be below 0 or above 1.                                                                                                                          
   sinsqtheta12 = TMath::Min(1.,sinsqtheta12);
   sinsqtheta12 = TMath::Max(0.,sinsqtheta12);
   sinsqtheta13 = TMath::Min(1.,sinsqtheta13);
@@ -402,11 +406,11 @@ void NuOsc3Flavour::SetOscParametersSSq2TDmAtmSol(
   sinsqtheta23 = TMath::Min(1.,sinsqtheta23);
   sinsqtheta23 = TMath::Max(0.,sinsqtheta23);
 
-  // Calculate sin(mixingAngle) from sin^2(mixingAngle)                                                                                                                                               
+  // Calculate sin(mixingAngle) from sin^2(mixingAngle)                                                                                                                             
   double s12 = sqrt(sinsqtheta12);
   double s13 = sqrt(sinsqtheta13);
   double s23 = sqrt(sinsqtheta23);
-  // Calculate cos(mixingAngle) from sin(mixingAngle)                                                                                                                                                  
+  // Calculate cos(mixingAngle) from sin(mixingAngle)                                                                                                                              
   double c12 = sqrt(1 - s12 * s12);
   double c13 = sqrt(1 - s13 * s13);
   double c23 = sqrt(1 - s23 * s23);
@@ -459,7 +463,7 @@ void NuOsc3Flavour::SetOscParametersSSq2TDmAtmSol(
   if(deltaCP > 3.10 && deltaCP < 3.18 && sinsqtheta13 > 3.0e-9)
     useEquations12 = false;
 
-  //if 2 mixing angles are very small, treat it as a 2-flavour calculation                                                                                                                            
+  //if 2 mixing angles are very small, treat it as a 2-flavour calculation                                                                                                         
   if(sinsqtheta13 < 3.0e-6 && sinsqtheta23 < 3.0e-6 && sinsqtheta12 >= 3.0e-7)
     nFlavourIndex = 12;
   else if(sinsqtheta12 < 3.0e-5 && sinsqtheta23 < 3.0e-7 && sinsqtheta13 >= 3.0e-7)
@@ -468,7 +472,7 @@ void NuOsc3Flavour::SetOscParametersSSq2TDmAtmSol(
     nFlavourIndex = 23;
   else
     nFlavourIndex = -1;
-  //if all 3 mixing angles are very small, take it that there are no oscillations                                                                                                                      
+  //if all 3 mixing angles are very small, take it that there are no oscillations                                                                                               
   if(sinsqtheta12 < 3.0e-7 && sinsqtheta13 < 3.0e-7 && sinsqtheta23 < 3.0e-7)
     nFlavourIndex = 0;
 }

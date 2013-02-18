@@ -8,7 +8,8 @@
 
  Changes since 2011_v0.9.0:
 
- @
+ @ 18/2/13 LE
+ Fixed number of degrees of freedom depending on the sample (1Rmu or 1Re). Updated reseeding when MIGRAD does not converge.
 
 */ 
 //____________________________________________________________________________
@@ -131,7 +132,14 @@ void FitterMinuit::Init(FitInputs * fit_inputs, Option_t * option)
 
   // calculate degrees of freedom
 
-  fNFitBins       = kNErecoBins1Rmu; // HERE, FIX
+  fNFitBins       = 0;
+
+  for(int is = 0; is < kns; is++) {
+    SuperkSample_t s = kSKSamples[is];
+    if(s == kSKsFCFV1RingMuLike) fNFitBins += kNErecoBins1Rmu;
+    if(s == kSKsFCFV1RingELike ) fNFitBins += kNErecoBins1Re;
+  }
+
   fNFreeFitParams = fit_params.GetNumberFreeParameters();
 
 #ifdef __show_fit_init_info__
@@ -154,18 +162,22 @@ bool FitterMinuit::DoTheFit(void)
   // and if the fitter failed, re-seed the fitter and try again
   bool ok = this->RunOnce(false);
 
+  
   // 4: migrad not converged
   int ntries = 0;
-  while(fMigradStatusCode == 4 && ntries < 10) {
+  while(fMigradStatusCode == 4 && ntries < 25) {
     cout << "Original fit failed; reseeding & trying again. Attempt: " << ntries << endl;
     NuOscMixParam_t omp = Opt::Instance()->gOscMixingParamChoice;
     TRandom3 rand(0);
     switch(omp) {
     case(conv::kNuMixSinsq2Theta):
       fFitInputs->FitParams().SetInitValue(conv::kPhypMixing23, rand.Uniform(0.80,0.98));
+      fFitInputs->FitParams().SetInitValue(conv::kPhypMixing13, rand.Uniform(0.05,0.15));
       break;
     case(conv::kNuMixSinsqTheta):
-      fFitInputs->FitParams().SetInitValue(conv::kPhypMixing23, rand.Uniform(0.35,0.55));
+      if (fFitInputs->FitParams().InitValue(conv::kPhypMixing23)< 0.515) fFitInputs->FitParams().SetInitValue(conv::kPhypMixing23, rand.Uniform(0.35,0.5));
+      else fFitInputs->FitParams().SetInitValue(conv::kPhypMixing23, rand.Uniform(0.5,0.65));
+      fFitInputs->FitParams().SetInitValue(conv::kPhypMixing13, rand.Uniform(0.015,0.035));
       break;
     case(conv::kNuMixUndefined):
       cerr << "Mixing parameter type undefinded. Exiting..." << endl;
@@ -181,7 +193,7 @@ bool FitterMinuit::DoTheFit(void)
     cout << "Fits still failed; trying SIMPLEX" << endl;
     this->RunOnce(true);
   }
-
+  
 #ifdef __show_fit_cpu_time__
   w.Stop();
   cout << "FitterMinuit/DoTheFit >> Fit performed in " 
