@@ -12,6 +12,7 @@ void test_nsk_twk_osc
 (
   bool         thrownon23  = true,
   const int    nthrows     = 100,
+  const char * hypothesis  = "3f_osc",                       /* options: "2f_numu_disap", "3f_osc" */
   const char * hier        = "normal",
   const char * config_file = "analysis_configuration.xml"
 )
@@ -50,8 +51,7 @@ void test_nsk_twk_osc
   skexp.Read(config);
 
   // fit params
-  //PhysHypothesis ph(t2kana::conv::kHypOsc3F);
-  PhysHypothesis ph(t2kana::conv::kHypNuMuDisapp2F);
+  PhysHypothesis ph(hypothesis);
 
   // generate predictions
   for(int i = 1; i <= nsk_vs_osc_params->GetNbinsX(); i++) {
