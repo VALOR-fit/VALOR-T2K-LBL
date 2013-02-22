@@ -6,10 +6,18 @@
 // There are many run modes:
 //
 //   0 tweak all parameters
-//   1 tweak all BANFF (uncorrelated)
+//   1 tweak all BANFF
 //   2 tweak all unconstrained xsec
 //   3 tweak all sk detector
 //   4 tweak all fsi
+//   7 tweak BANFF flux only
+//   8 tweak BANFF xsec only
+//   9 tweak SKdet + FSI
+//
+// 100 tweak banff00
+// 101 tweak banff01
+// ...
+// 100+kNumOfParamsInBANFFfit tweak last banff parameter
 //
 // 200 tweak xsec_pf
 // 201 tweak xsec_sf
@@ -29,6 +37,14 @@
 // 303 tweak sk_1Rmu_nc_eff
 // 304 tweak sk_1Rmu_nuecc_eff
 // 305 tweak sk_1Rmu_ccqe_ring_counting
+// 306 tweak sk_1Rmu_ccqe_ring_counting0
+// 307 tweak sk_1Rmu_ccqe_ring_counting1
+// 308 tweak sk_1Rmu_ccqe_ring_counting2
+//
+// 400 tweak fsi00
+// 401 tweak fsi01
+// ...
+// 400+kNumOfFSIParams tweak last fsi parameter
 //
 // Tom Dealtry
 // ------------------------------------------------------------------------------------------------
@@ -47,7 +63,8 @@ void test_sk_ereco_spectrum_twk_sys_throw
   double       input_dm23sq       = -99,                            /* */
   bool         save_toy_expts     = false,                          /* save the ereco spectra? */
   const char * config_file        = "analysis_configuration.xml",   /* */
-  const int    nexp               = 20000                           /* number of experiments to make */
+  const int    nexp               = 20000,                          /* number of experiments to make */
+  bool         no_spectra         = true                            /* if true, won't try to get the spectra (for PRODUCTIONMODE) */
 )
 {
   using namespace std;
@@ -61,13 +78,21 @@ void test_sk_ereco_spectrum_twk_sys_throw
     case 0:
       modetitle = "all"; break;
     case 1:
-      modetitle = "BANFF_uncorrelated"; break;
+      modetitle = "BANFF"; break;
     case 2:
       modetitle = "unconstrained_xsec"; break;
     case 3:
       modetitle = "sk_detector"; break;
     case 4:
-      modetitle = "fsi"; break;
+      char fsibins[40] = "";
+      sprintf(fsibins, "fsi_%d", conv::kNumOfFSIParams);
+      modetitle = fsibins; break;
+    case 7:
+      modetitle = "BANFF_flux"; break;
+    case 8:
+      modetitle = "BANFF_xsec"; break;
+    case 9:
+      modetitle = "SKDet_FSI"; break;
 
     case 200:
       modetitle = "xsec_pf"; break;
@@ -104,13 +129,26 @@ void test_sk_ereco_spectrum_twk_sys_throw
       modetitle = "sk_1Rmu_nuecc_eff"; break;
     case 305:
       modetitle = "sk_1Rmu_ccqe_ring_counting_eff"; break;
+    case 306:
+      modetitle = "sk_1Rmu_ccqe_ring_counting_eff_0"; break;
+    case 307:
+      modetitle = "sk_1Rmu_ccqe_ring_counting_eff_1"; break;
+    case 308:
+      modetitle = "sk_1Rmu_ccqe_ring_counting_eff_2"; break;
+
 
     default:
+      if(mode >= 100 && mode < 100+conv::kNumOfParamsInBANFFfit) {
+	modetitle = Form("banff_%02d",mode-100); break;
+      }
+      else if(mode >= 400 && mode < 400+conv::kNumOfFSIParams) {
+	modetitle = Form("fsi_%03d",mode-400); break;
+      }
       cout << "Unknown mode " << mode << endl; exit(1); break;
   }//switch mode
 
   TString config_str(config_file);
-  if(config_str.Contains("prefitbanff"))
+  if(config_str.Contains("prefit"))
     modetitle += "prefit";
 
   // Analysis configuration
@@ -241,13 +279,15 @@ void test_sk_ereco_spectrum_twk_sys_throw
 
   // Get the nominal
   skexp.Generate(ph);
-  hErecoNominal = new TH1D(*skexp.CurrPredictedErecoSpectrum(s));
-  hErecoNominal->SetDirectory(0);
-  hErecoNominal->GetXaxis()->SetTitle("E_{reco} (GeV)");
-  hErecoNominal->GetYaxis()->SetTitle("Number of events");
-  hErecoNominal->SetLineWidth(2);
-  if(!update_rootfile)
-    hErecoNominal->Write("nominal");
+  if(!no_spectra) {
+    hErecoNominal = new TH1D(*skexp.CurrPredictedErecoSpectrum(s));
+    hErecoNominal->SetDirectory(0);
+    hErecoNominal->GetXaxis()->SetTitle("E_{reco} (GeV)");
+    hErecoNominal->GetYaxis()->SetTitle("Events per bin");
+    hErecoNominal->SetLineWidth(2);
+    if(!update_rootfile)
+      hErecoNominal->Write("nominal");
+  }
 
   TStopwatch w;
   w.Start();
@@ -260,23 +300,55 @@ void test_sk_ereco_spectrum_twk_sys_throw
 
     if(mode < 100) {
 
-      // BANFF (uncorrelated)
-      if(mode == 0 || mode == 1) {
-	skexp.TweakAllUncorrelatedBANFFSystematics();
+      // All
+      if(mode == 0) {
+	skexp.TweakAllSystematics();
+      }
+
+      // BANFF
+      if(mode == 1) {
+	skexp.TweakAllBANFFSystematics();
       }
 
       // Uncorrelated XSec
-      if(mode == 0 || mode == 2) {
+      if(mode == 2) {
 	skexp.TweakAllUncorrelatedXSecSystematics();
       }
 
       // SK detector
-      if(mode == 0 || mode == 3) {
+      if(mode == 3) {
 	skexp.TweakAllSKDetectorSystematics();
       }
 
       // FSI
-      if(mode == 0 || mode == 4) {
+      if(mode == 4) {
+	skexp.TweakAllFSISystematics();
+	//skexp.GetFSI()->PrintSystematicVariations();
+      }
+
+      //BANFF (flux only)
+      if(mode == 7) {
+	TRandom3 rand(0);
+	for(int ib = 0; ib < conv::kNumOfFluxParamsInBANFFfit; ib++) {
+	  skexp.TweakSystematic(Form("banff_%02d",ib),rand.Gaus(0.,1.));
+	}
+      }
+
+      //BANFF (xsec only)
+      if(mode == 8) {
+	TRandom3 rand(0);
+	skexp.TweakSystematic("banff_maqe",rand.Gaus(0.,1.));
+	skexp.TweakSystematic("banff_mares",rand.Gaus(0.,1.));
+	skexp.TweakSystematic("banff_ccqeE0",rand.Gaus(0.,1.));
+	skexp.TweakSystematic("banff_ccqeE1",rand.Gaus(0.,1.));
+	skexp.TweakSystematic("banff_ccqeE2",rand.Gaus(0.,1.));
+	skexp.TweakSystematic("banff_cc1piE0",rand.Gaus(0.,1.));
+	skexp.TweakSystematic("banff_cc1piE1",rand.Gaus(0.,1.));	
+      }
+
+      //SK det + FSI
+      if(mode == 9) {
+	skexp.TweakAllSKDetectorSystematics();
 	skexp.TweakAllFSISystematics();
       }
 
@@ -323,8 +395,33 @@ void test_sk_ereco_spectrum_twk_sys_throw
 	  skexp.TweakSystematic("sk_1Rmu_nuecc_eff",tweak); break;
         case 305:
 	  skexp.GetSuperkDetector()->TweakEfficiency1RmuCCQERingCounting(); break;
+        case 306:
+	  skexp.TweakSystematic("sk_1Rmu_ccqe_ring_counting_eff_0",tweak); break;
+        case 307:
+	  skexp.TweakSystematic("sk_1Rmu_ccqe_ring_counting_eff_1",tweak); break;
+        case 308:
+	  skexp.TweakSystematic("sk_1Rmu_ccqe_ring_counting_eff_2",tweak); break;
+
 
         default:
+	  if(mode >= 100 && mode < 100+conv::kNumOfParamsInBANFFfit) {
+	    TVectorD v(conv::kNumOfParamsInBANFFfit);
+	    v = skexp.GetBANFF()->BestFitValues();
+	    int ib = mode - 100;
+	    v[ib] = skexp.GetBANFF()->BestFitValues()[ib] + (tweak * sqrt(skexp.GetBANFF()->CovMatrix()[ib][ib]));
+	    skexp.GetBANFF()->Tweak(true,&v,1);
+	    break;
+	  }
+	  else if(mode >= 400 && mode < 400+conv::kNumOfFSIParams) {
+	    TVectorD v(conv::kNumOfFSIParams);
+	    for (int ipf = 0; ipf < conv::kNumOfFSIParams; ipf++) {
+	      v[ipf] = 1;
+	    }
+	    int ib = mode - 400;
+	    v[ib] = 1 + (tweak * sqrt(skexp.GetFSI()->CovMatrix()[ib][ib]));
+	    skexp.GetFSI()->Tweak(true,&v);
+	    break;
+	  }
 	  cout << "Unknown mode " << mode << endl; exit(1); break;
       }//switch(mode)
     }//mode>=100
@@ -338,14 +435,20 @@ void test_sk_ereco_spectrum_twk_sys_throw
     }
 
     //store spectrum
-    hEreco[iexp] = new TH1D(*skexp.CurrPredictedErecoSpectrum(s));
-    hEreco[iexp]->SetDirectory(0);
-    hEreco[iexp]->SetTitle(Form("%s_exp%d",modetitle.c_str(),iexp));
-    if(save_toy_expts)
-      hEreco[iexp]->Write(Form("%s_exp%d",modetitle.c_str(),iexp));		    
-	
+    if(!no_spectra) {
+      hEreco[iexp] = new TH1D(*skexp.CurrPredictedErecoSpectrum(s));
+      hEreco[iexp]->SetDirectory(0);
+      hEreco[iexp]->SetTitle(Form("%s_exp%d",modetitle.c_str(),iexp));
+      if(save_toy_expts)
+	hEreco[iexp]->Write(Form("%s_exp%d",modetitle.c_str(),iexp));		    
+    }
+
+
     //store Nsk
-    hNsk->Fill(hEreco[iexp]->Integral());
+    double nskint = 0;
+    for(int ir = 1; ir <= conv::kNErecoBins1Rmu; ir++)
+      nskint += skexp.CurrPredictedErecoSpectrumArray(s)[ir-1];
+    hNsk->Fill(nskint);
 
     //store thrown parameter values
     for(int isys = 0; isys < nbanff; isys++) {
@@ -367,12 +470,12 @@ void test_sk_ereco_spectrum_twk_sys_throw
     hSysThrown[nbanff+nfsi+10]->Fill(skexp.GetNuXSec()->CurrentValue(util::PhysParamIdFromString("xsec_wshape")));
     hSysThrown[nbanff+nfsi+11]->Fill(skexp.GetNuXSec()->CurrentValue(util::PhysParamIdFromString("xsec_shape_ccoth")));
     hSysThrown[nbanff+nfsi+12]->Fill(skexp.GetNuXSec()->CurrentValue(util::PhysParamIdFromString("xsec_pilessdelta")));
-    hSysThrown[nbanff+nfsi+14]->Fill(skexp.GetNuXSec()->CurrentValue(util::PhysParamIdFromString("xsec_norm_cccoh")));
-    hSysThrown[nbanff+nfsi+15]->Fill(skexp.GetNuXSec()->CurrentValue(util::PhysParamIdFromString("xsec_norm_nc1piC")));
-    hSysThrown[nbanff+nfsi+17]->Fill(skexp.GetNuXSec()->CurrentValue(util::PhysParamIdFromString("xsec_norm_ncoth")));
-    hSysThrown[nbanff+nfsi+18]->Fill(skexp.GetNuXSec()->CurrentValue(util::PhysParamIdFromString("xsec_norm_nuetonumu")));
-    hSysThrown[nbanff+nfsi+19]->Fill(skexp.GetNuXSec()->CurrentValue(util::PhysParamIdFromString("xsec_norm_antinutonu")));
-    hSysThrown[nbanff+nfsi+20]->Fill(skexp.GetNuXSec()->CurrentValue(util::PhysParamIdFromString("xsec_bindE")));
+    hSysThrown[nbanff+nfsi+13]->Fill(skexp.GetNuXSec()->CurrentValue(util::PhysParamIdFromString("xsec_norm_cccoh")));
+    hSysThrown[nbanff+nfsi+14]->Fill(skexp.GetNuXSec()->CurrentValue(util::PhysParamIdFromString("xsec_norm_nc1piC")));
+    hSysThrown[nbanff+nfsi+15]->Fill(skexp.GetNuXSec()->CurrentValue(util::PhysParamIdFromString("xsec_norm_ncoth")));
+    hSysThrown[nbanff+nfsi+16]->Fill(skexp.GetNuXSec()->CurrentValue(util::PhysParamIdFromString("xsec_norm_nuetonumu")));
+    hSysThrown[nbanff+nfsi+17]->Fill(skexp.GetNuXSec()->CurrentValue(util::PhysParamIdFromString("xsec_norm_antinutonu")));
+    hSysThrown[nbanff+nfsi+18]->Fill(skexp.GetNuXSec()->CurrentValue(util::PhysParamIdFromString("xsec_bindE")));
   }//end loop over experiments
   w.Stop();
   cout << iskip << " experiments skipped due to min events" << endl;
@@ -384,38 +487,60 @@ void test_sk_ereco_spectrum_twk_sys_throw
   hNsk->Write();
 
   // Find min/max and calculate fractional deviation from nominal
-  hErecoMax = new TH1D(*hErecoNominal);
-  hErecoMin = new TH1D(*hErecoNominal);
-  hErecoMax->SetDirectory(0);
-  hErecoMin->SetDirectory(0);
-  for(int ibin=1; ibin <= conv::kNErecoBins1Rmu; ibin++) {
-    double nom   = hErecoNominal->GetBinContent(ibin);
-    double sumsq = 0;
-    for(int iexp = 0; iexp < nexp; iexp++) {
-      if(hEreco[iexp]) {
-	double N = hEreco[iexp]->GetBinContent(ibin);
-	sumsq += TMath::Power(N-nom,2);
+  if(!no_spectra) {
+    hErecoMax = new TH1D(*hErecoNominal);
+    hErecoMin = new TH1D(*hErecoNominal);
+    hErecoMax->SetDirectory(0);
+    hErecoMin->SetDirectory(0);
+    hErecoMaxEnv = new TH1D(*hErecoNominal);
+    hErecoMinEnv = new TH1D(*hErecoNominal);
+    hErecoMaxEnv->SetDirectory(0);
+    hErecoMinEnv->SetDirectory(0);
+    for(int ibin=1; ibin <= conv::kNErecoBins1Rmu; ibin++) {
+      double nom   = hErecoNominal->GetBinContent(ibin);
+      double sumsq = 0;
+      for(int iexp = 0; iexp < nexp; iexp++) {
+	if(hEreco[iexp]) {
+	  double N = hEreco[iexp]->GetBinContent(ibin);
+	  sumsq += TMath::Power(N-nom,2);
+	}
+      }//iexp
+      double sig = TMath::Sqrt(sumsq/nexp);
+      double min = nom-sig;
+      double max = nom+sig;
+      if(nom>0){
+	hErecoMax -> SetBinContent (ibin,  (max-nom)/nom);
+	hErecoMin -> SetBinContent (ibin,  (min-nom)/nom);
+	hErecoMaxEnv -> SetBinContent (ibin,  max);
+	hErecoMinEnv -> SetBinContent (ibin,  min);
       }
-    }//iexp
-    double sig = TMath::Sqrt(sumsq/nexp);
-    double min = nom-sig;
-    double max = nom+sig;
-    if(nom>0){
-      hErecoMax -> SetBinContent (ibin,  (max-nom)/nom);
-      hErecoMin -> SetBinContent (ibin,  (min-nom)/nom);
-    }
-  }//ibin
-  hErecoMax->Write(Form("%s_pluserr",modetitle.c_str()));
-  hErecoMin->Write(Form("%s_minuserr",modetitle.c_str()));
+    }//ibin
+    hErecoMax->Write(Form("%s_pluserr",modetitle.c_str()));
+    hErecoMin->Write(Form("%s_minuserr",modetitle.c_str()));
+    hErecoMaxEnv->Write(Form("%s_envpluserr",modetitle.c_str()));
+    hErecoMinEnv->Write(Form("%s_envminuserr",modetitle.c_str()));
+  }
 
   //Draw & save
   TCanvas * c = new TCanvas();
   hNsk->Draw();
-  c->SaveAs(Form("%s_nsk_%s.pdf",modetitle.c_str(),oscparams.c_str()));
-  hErecoMax->Draw();
-  c->SaveAs(Form("%s_pluserr_%s.pdf",modetitle.c_str(),oscparams.c_str()));
-  hErecoMin->Draw();
-  c->SaveAs(Form("%s_minuserr_%s.pdf",modetitle.c_str(),oscparams.c_str()));
+  c->SaveAs(Form("%s_nsk_%s.eps",modetitle.c_str(),oscparams.c_str()));
+  if(!no_spectra) {
+    hErecoMax->Draw();
+    c->SaveAs(Form("%s_pluserr_%s.eps",modetitle.c_str(),oscparams.c_str()));
+    hErecoMin->Draw();
+    c->SaveAs(Form("%s_minuserr_%s.eps",modetitle.c_str(),oscparams.c_str()));
+    hErecoMaxEnv->GetXaxis()->SetRangeUser(0,7-conv::kOneMeV);
+    hErecoMaxEnv->SetLineStyle(2);
+    hErecoMinEnv->SetLineStyle(2);
+    hErecoMaxEnv->SetLineColor(kBlue+3);
+    hErecoMinEnv->SetLineColor(kBlue+3);
+    hErecoMaxEnv->Draw();
+    hErecoMinEnv->Draw("same");
+    hErecoNominal->Draw("same");
+    c->SaveAs(Form("%s_envelope_%s.eps",modetitle.c_str(),oscparams.c_str()));
+  }
+
   TCanvas * csys = new TCanvas();
   csys->Divide(ceil(sqrt(nsys)),ceil(sqrt(nsys)));
   for(int isys=0; isys < nsys; isys++) {
@@ -423,7 +548,7 @@ void test_sk_ereco_spectrum_twk_sys_throw
     hSysThrown[isys]->Draw();
     cout << isys << "\t" << hSysThrown[isys]->GetTitle() << endl;
   }
-  csys->SaveAs(Form("%s_throws_%s.pdf",modetitle.c_str(),oscparams.c_str()));
+  csys->SaveAs(Form("%s_throws_%s.eps",modetitle.c_str(),oscparams.c_str()));
   delete c;
   delete csys;
 

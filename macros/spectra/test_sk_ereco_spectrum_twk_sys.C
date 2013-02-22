@@ -60,7 +60,7 @@
 // Tom Dealtry
 // ------------------------------------------------------------------------------------------------
 //
-#define NTWEAKS 4 //2 or 4!
+#define NTWEAKS 4 //2 or 4 or 6!
 void test_sk_ereco_spectrum_twk_sys
 (
   int          mode,                                                /* options: see above */
@@ -73,7 +73,8 @@ void test_sk_ereco_spectrum_twk_sys
   double       input_dm12sq       = -99,                            /* */
   double       input_dm23sq       = -99,                            /* */
   double       ereco_max_plot     = 7,                              /* maximum of the ereco axis (in GeV) to plot */
-  const char * config_file        = "analysis_configuration.xml"    /* */
+  const char * config_file        = "analysis_configuration.xml",   /* */
+  bool         save_all_canvases  = false                           /* if false, will not save the individual mode plots, or the 'fullrange' plots */
 )
 {
   using namespace std;
@@ -180,6 +181,11 @@ void test_sk_ereco_spectrum_twk_sys
 	cout << "Unknown mode " << mode << endl; exit(1); break;
       }
   }//switch mode
+  //name for the output plots
+  conv::PhysParamId_t p = util::PhysParamIdFromString(modetitle);
+  string modetitleplot = modetitle;
+  if(p != conv::kPhypUndefined)
+    modetitleplot = util::AsStringCompact(p);
 
   // Analysis configuration
   const char * config  = Form("%s/config/%s", gSystem->Getenv("T2KOSCANA"), config_file);
@@ -229,14 +235,18 @@ void test_sk_ereco_spectrum_twk_sys
   // Output histograms and graphs
 #if NTWEAKS == 4
   const int ntweaks = 4;
-  int * tweaks[ntweaks] = {+3, +1, -1, -3};
+  int tweaks[ntweaks] = {+3, +1, -1, -3};
 #elif NTWEAKS == 2
   const int ntweaks = 2;
-  int * tweaks[ntweaks] = {+1, -1};
+  int tweaks[ntweaks] = {+1, -1};
+#elif NTWEAKS == 6
+  const int ntweaks = 6;
+  double tweaks[ntweaks] = {+1., +0.4545, +0.2273, -0.2273, -0.4545, -1.};
 #else
   cerr << "Unknown NTWEAKS" << endl;
   exit(1);
 #endif
+
   TH1D * hErecoNominal = 0;
   TH1D * hEreco[ntweaks];
   TH1D * hErecoRatio[ntweaks];
@@ -257,7 +267,7 @@ void test_sk_ereco_spectrum_twk_sys
   hErecoNominal = new TH1D(*skexp.CurrPredictedErecoSpectrum(s));
   hErecoNominal->SetDirectory(0);
   hErecoNominal->GetXaxis()->SetTitle("E_{reco} (GeV)");
-  hErecoNominal->GetYaxis()->SetTitle("Number of events");
+  hErecoNominal->GetYaxis()->SetTitle("Events per bin");
   hErecoNominal->SetLineWidth(2);
   for(int im = 0; im < conv::knm; im++) {
     conv::SuperkMode_t m = conv::kSKReactionModes[is][im];
@@ -268,7 +278,7 @@ void test_sk_ereco_spectrum_twk_sys
     hErecoModeNominal[im] = new TH1D(*h);
     hErecoModeNominal[im]->SetDirectory(0);
     hErecoModeNominal[im]->GetXaxis()->SetTitle("E_{reco} (GeV)");
-    hErecoModeNominal[im]->GetYaxis()->SetTitle("Number of events");
+    hErecoModeNominal[im]->GetYaxis()->SetTitle("Events per bin");
     hErecoModeNominal[im]->SetFillStyle(0);
   }
   if(!update_rootfile) {
@@ -282,7 +292,11 @@ void test_sk_ereco_spectrum_twk_sys
 
   // Tweak!
   for(int itweak = 0; itweak < ntweaks; itweak++) {
+#if NTWEAKS == 6
+    double tweak = tweaks[itweak];
+#else
     int tweak = tweaks[itweak];
+#endif
 
     cout << endl << "Tweaking by " << tweak << " sigma for systematics: " << modetitle << endl;
 
@@ -301,6 +315,12 @@ void test_sk_ereco_spectrum_twk_sys
       case 3:
         histcolor = kOrange+7;
         break;
+      case 4:
+	histcolor = kYellow-4;
+	break;
+      case 5:
+	histcolor = kMagenta+1;
+	break;
       default:
 	histcolor = kBlack;
     }
@@ -500,34 +520,59 @@ void test_sk_ereco_spectrum_twk_sys
   gStyle->SetOptStat(0);
   c->Divide(1,2);
   c->cd(1);
-  TLegend * legend = new TLegend(0.7, 0.4, 0.9, 0.85);
+  TLegend * legend = new TLegend(0.75, 0.53, 0.95, 0.9);
+  legend->SetFillStyle(0);
   legend->SetFillColor(0);
   legend->SetBorderSize(0);
   legend->AddEntry(hErecoNominal, "nominal", "L" );
   hErecoNominal->SetTitle(Form("%s",modetitle.c_str()));
   hErecoNominal->GetXaxis()->SetRangeUser(0,ereco_max_plot-conv::kOneMeV);
   hErecoNominal->Draw();
+  double maxy = hErecoNominal->GetMaximum();
   for(int itweak = 0; itweak < ntweaks; itweak++) {
+    if(mode == 201 && itweak != 1) continue; //SF is only +1 sigma!
     hEreco[itweak]->Draw("same");
+    maxy = TMath::Max(maxy, hEreco[itweak]->GetMaximum());
     legend->AddEntry(hEreco[itweak], Form("%d sigma",tweaks[itweak]), "L" );
   }
+  maxy *= 1.1;
+  hErecoNominal->GetYaxis()->SetRangeUser(0,maxy);
   legend->Draw();
   c->cd(2);
+  //find the relevant y axis range for the ratio
+  double yminratio = 0.75, ymaxratio = 1.25;
+  bool foundbig = false;
+  for(int itweak = 0; itweak < ntweaks; itweak++) {
+    if(mode == 201 && itweak != 1) continue; //SF is only +1 sigma!
+    if(foundbig) break;
+    for(int ibin = 1; ibin < hErecoRatio[itweak]->GetNbinsX(); ibin++) {
+      if(hErecoRatio[itweak]->GetBinContent(ibin) > ymaxratio) {
+	ymaxratio = 1.75;
+	yminratio = 0.25;
+	foundbig = true;
+	break;
+      }
+    }
+  }
   for(int itweak = 0; itweak < ntweaks; itweak++) {
     if(itweak==0){
+      if(mode == 201) itweak++; //SF is only +1 sigma!
       hErecoRatio[itweak]->GetXaxis()->SetRangeUser(0,ereco_max_plot-conv::kOneMeV);
       hErecoRatio[itweak]->GetXaxis()->SetTitle("E_{reco} (GeV)");
-      hErecoRatio[itweak]->GetYaxis()->SetTitle("Relative error");
+      hErecoRatio[itweak]->GetYaxis()->SetTitle("Ratio to nominal");
+      hErecoRatio[itweak]->GetYaxis()->SetRangeUser(yminratio,ymaxratio);
       hErecoRatio[itweak]->SetTitle("Ratio");
       hErecoRatio[itweak]->Draw();
+      if(mode == 201) break; //SF is only +1 sigma!
       continue;
     }
     hErecoRatio[itweak]->Draw("same");
   }
-  c->SaveAs(Form("ereco_twk_%s.pdf",modetitle.c_str()));
+  c->SaveAs(Form("ereco_twk_%s.eps",modetitleplot.c_str()));
   hErecoNominal->GetXaxis()->UnZoom();
   hErecoRatio[0]->GetXaxis()->UnZoom();
-  c->SaveAs(Form("ereco_twk_%s_fullrange.pdf",modetitle.c_str()));
+  if(save_all_canvases)
+    c->SaveAs(Form("ereco_twk_%s_fullrange.eps",modetitleplot.c_str()));
   // Draw mode by mode
   TCanvas * cm = new TCanvas("cm","",20,20,500,500);
   gStyle->SetOptStat(0);
@@ -553,17 +598,19 @@ void test_sk_ereco_spectrum_twk_sys
       if(itweak==0){
 	hErecoModeRatio[im][itweak]->GetXaxis()->SetRangeUser(0,ereco_max_plot-conv::kOneMeV);
 	hErecoModeRatio[im][itweak]->GetXaxis()->SetTitle("E_{reco} (GeV)");
-	hErecoModeRatio[im][itweak]->GetYaxis()->SetTitle("Relative error");
+	hErecoModeRatio[im][itweak]->GetYaxis()->SetTitle("Ratio to nominal");
 	hErecoModeRatio[im][itweak]->SetTitle("Ratio");
 	hErecoModeRatio[im][itweak]->Draw();
 	continue;
       }
       hErecoModeRatio[im][itweak]->Draw("same");
     }
-    cm->SaveAs(Form("ereco_twk_%s_%s.pdf",modetitle.c_str(),util::AsStringCompact(m).c_str()));
+    if(save_all_canvases)
+      cm->SaveAs(Form("ereco_twk_%s_%s.eps",modetitleplot.c_str(),util::AsStringCompact(m).c_str()));
     hErecoModeNominal[im]->GetXaxis()->UnZoom();
     hErecoModeRatio[im][0]->GetXaxis()->UnZoom();
-    cm->SaveAs(Form("ereco_twk_%s_%s_fullrange.pdf",modetitle.c_str(),util::AsStringCompact(m).c_str()));
+    if(save_all_canvases)
+      cm->SaveAs(Form("ereco_twk_%s_%s_fullrange.eps",modetitleplot.c_str(),util::AsStringCompact(m).c_str()));
   }//loop over modes
 
   //
