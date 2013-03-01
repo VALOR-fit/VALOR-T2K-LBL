@@ -47,6 +47,13 @@ public:
   // For the BANFF parameters, the weight is relative to the best-fit (tuned MC) parameter, not the nominal MC one
   double SystWght(conv::SuperkSample_t s, conv::SuperkMode_t m, double Ereco, double Etrue) const;
 
+  // Calculate the weight for MEC
+  // This is not included in the 'SystWght' method because it uses different (much finer) binning than the other systematics
+  //  and is also not a function of SuperkMode
+#if BANFF_BINS == 5
+  double MECWght(int ErecoBin, int EtrueBin) const;
+#endif
+
   // Tweak systematic parameters held in this object.
   // Note: BANFF cross-section systematic parameters are tweaked via the BANFF object and they are 
   // correlated with the flux systematic params.
@@ -167,6 +174,10 @@ private:
   double fSplineMAQERelErr;
   double fSpline1overMAQE2RelErr;
   double fSplineMARESRelErr;
+#if BANFF_BINS == 5
+  TH2D * fMECErrorHist;
+  double fMECErrorArray[conv::kNEtrueBins][conv::kNErecoBins1Rmu];
+#endif
 
 ClassDef(NuXSec, 4);
 };

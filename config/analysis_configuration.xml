@@ -222,7 +222,7 @@
         Central values from BANFF fit
        -->
        <best_fit_values>
-          <filename>   inputs/official/2012/banff/postfit_banff_v8_osc_marg_MAQE_EBfix.root  </filename>
+          <filename>   inputs/official/2012/banff/postfit_banff_with_mec_param.root  </filename>
           <objname>    postfit_params   </objname>
           <objtype>    TVectorD         </objtype>
         </best_fit_values>
@@ -230,7 +230,7 @@
         Covariance of fit parameters
        -->
        <covariance_matrix>
-          <filename>   inputs/official/2012/banff/postfit_banff_v8_osc_marg_MAQE_EBfix.root  </filename>
+          <filename>   inputs/official/2012/banff/postfit_banff_with_mec_param.root  </filename>
           <objname>    postfit_cov      </objname>
           <objtype>    TMatrixD         </objtype>
         </covariance_matrix>     
@@ -330,6 +330,11 @@
 	  <nu_to_antinu>
 	       0.40
 	  </nu_to_antinu>
+	  <mec>
+	       <filename>   inputs/official/2012/xsec/sk_mec_erec_etrue.root </filename>
+	       <objname>    sk_martini_erec_etrue </objname>
+	       <objtype>    TH2D                  </objtype>
+	  </mec>
       </normalisations>
   </xsec>
 

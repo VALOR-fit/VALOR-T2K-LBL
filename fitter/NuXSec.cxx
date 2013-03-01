@@ -92,6 +92,15 @@ void NuXSec::Init(void)
   fNormNCothTwkDial     = 0;
   fNormNuEToNuMuTwkDial = 0;
 
+#if BANFF_BINS == 5
+  fMECErrorHist         = 0;
+  for(int it=0; it<kNEtrueBins; it++) {
+    for(int ir=0; ir<kNErecoBins1Rmu; ir++) {
+      fMECErrorArray[it][ir] = 0;
+    }//ir
+  }//it
+#endif
+
 }
 //________________________________________________________________________________________
 void NuXSec::CleanUp(void)
@@ -105,6 +114,11 @@ void NuXSec::CleanUp(void)
       if (fXsBinningTempl [is][im]) delete fXsBinningTempl [is][im]; 
     }
   }
+
+#if BANFF_BINS == 5
+  if (fMECErrorHist) delete fMECErrorHist;
+#endif
+
 }
 //________________________________________________________________________________________
 bool NuXSec::ReadSplines(TXMLEngine* xml, XMLNodePointer_t root_node)
@@ -372,6 +386,21 @@ bool NuXSec::Read(TXMLEngine* xml, XMLNodePointer_t root_node)
   fSplineMARESRelErr =
     util::XML2Dbl(xml,root_node,"xsec/splines/mares");
 
+#if BANFF_BINS == 5
+  fMECErrorHist = util::XML2TH2D(xml,root_node,"xsec/normalisations/mec");
+  if(!fMECErrorHist) {
+    cerr << "Exp/NuXSec >> No input MEC histogram!" << endl;
+    exit(1);
+  }
+  //loop over Etrue
+  for(int it = 1; it <= fMECErrorHist->GetYaxis()->GetNbins(); it++) {
+    // loop over Ereco
+    for(int ir = 1; ir <= fMECErrorHist->GetXaxis()->GetNbins(); ir++) {
+      fMECErrorArray[it-1][ir-1] = fMECErrorHist->GetBinContent(ir,it);
+    }//ir
+  }//it
+#endif
+
 #ifdef __show_init_mesg_info__
   cout << "Exp/NuXSec >> Done reading neutrino cross-section inputs (not splines)!" << endl;
 #endif
@@ -444,6 +473,8 @@ double NuXSec::FinTuningWght_1p(
        double relerr = 0;       
        if(p == kNuisBANFFMAQE)
 #if BANFF_BINS <= 3
+	 relerr = fSplineMAQERelErr;
+#elif BANFF_BINS == 5
 	 relerr = fSplineMAQERelErr;
 #elif BANFF_BINS == 4
 	 relerr = fSpline1overMAQE2RelErr;
@@ -597,6 +628,8 @@ double NuXSec::SystWght_1p(
        if(p == kNuisBANFFMAQE)
 #if BANFF_BINS <= 3
 	 relerr = fSplineMAQERelErr;
+#elif BANFF_BINS == 5
+	 relerr = fSplineMAQERelErr;
 #elif BANFF_BINS == 4
 	 relerr = fSpline1overMAQE2RelErr;
 #endif
@@ -727,6 +760,26 @@ double NuXSec::SystWght_1p(
   return wght;
 }
 //________________________________________________________________________________________
+#if BANFF_BINS == 5
+double NuXSec::MECWght(int ErecoBin, int EtrueBin) const
+{
+  PhysParamId_t p = kNuisBANFFMEC;
+  // Was tweaked?
+  double dt = TMath::Abs(fBANFF->CurrentValue(p) - fBANFF->BestFitValue(p)); // banff parameters
+  if(dt < kASmallNum) 
+    return 1;
+
+  double wght = 1 + (fBANFF->CurrentValue(p) * fMECErrorArray[EtrueBin-1][ErecoBin-1]);
+
+  if(wght != 1)
+    cout << "Ereco " << kErecoBinEdges1Rmu[ErecoBin-1] << " " << kErecoBinEdges1Rmu[ErecoBin]
+	 << "\t\tEtrue " << kEtrueBinEdges[EtrueBin-1] << " " << kEtrueBinEdges[EtrueBin]
+	 << "\t\t" << wght << endl;
+
+  return wght;
+}
+#endif
+//________________________________________________________________________________________
 double NuXSec::CurrentValue(PhysParamId_t p) const
 {
   switch(p) {
@@ -836,6 +889,8 @@ double NuXSec::RelativeError(PhysParamId_t p) const
       break;
     case kNuisBANFFMAQE:
 #if BANFF_BINS <= 3
+	 return fSplineMAQERelErr;
+#elif BANFF_BINS == 5
 	 return fSplineMAQERelErr;
 #elif BANFF_BINS == 4
 	 return fSpline1overMAQE2RelErr;

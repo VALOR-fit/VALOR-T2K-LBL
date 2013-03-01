@@ -153,7 +153,7 @@ void test_systematic_error_propagation_all
   vector<string> systematics;
 
   //systematics.push_back("sk_1Rmu_ccqe_ring_counting_eff"); //not supported in this macro
-  systematics.push_back("sk_energy_scale");
+  /*  systematics.push_back("sk_energy_scale");
   systematics.push_back("sk_1Rmu_ccqe_other_eff");
   systematics.push_back("sk_1Rmu_ccqe_ring_counting_eff_0");
   systematics.push_back("sk_1Rmu_ccqe_ring_counting_eff_1");
@@ -161,7 +161,6 @@ void test_systematic_error_propagation_all
   systematics.push_back("sk_1Rmu_ccnonqe_eff");
   systematics.push_back("sk_1Rmu_nc_eff");
   systematics.push_back("sk_1Rmu_nuecc_eff");
-
 
   //systematics.push_back("banff"); //not supported in this macro
   for(int ib = 0; ib < conv::kNumOfFluxParamsInBANFFfit; ib++) {
@@ -180,7 +179,9 @@ void test_systematic_error_propagation_all
   systematics.push_back("banff_cc1piE1");
 
   //systematics.push_back("banff_nc1pi0");
-
+*/
+  systematics.push_back("banff_mec");
+  /*
   systematics.push_back("xsec_pf");
   systematics.push_back("xsec_sf");
   systematics.push_back("xsec_wshape");
@@ -743,7 +744,11 @@ void test_systematic_error_propagation_all
     // -1 sigma (relative to untuned BANFF)
     //
     cout << "\n\nApplying -1 sigma tweak" << endl;
-    if(systematic.find("banff_") == 0) {
+    if(systematic.find("banff_mec") == 0 || systematic.find("xsec_sf") == 0) {
+      //reset to nominal - they are only defined in the range 0-1 sigma
+      skexp->TweakSystematic(systematic,0.);
+    }
+    else if(systematic.find("banff_") == 0) {
       conv::PhysParamId_t p = util::PhysParamIdFromString(systematic);
       int ip = util::ArrIdx::Instance()->BANFFSystIdx(p);
       // curr/nominal = 1 + (nsigma * x)

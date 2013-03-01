@@ -918,6 +918,10 @@ void FitParamList::AppendAllCorrelatedBANFFSystematics(FitParamList * fparm, int
     double bf = BANFFBestFit[i];
     double err = sqrt(BANFFCov[i][i]);
     double lowerr = TMath::Max(0., bf-(err*SYST_NSIGMA));
+#if BANFF_BINS == 5
+    if(p == kNuisBANFFMEC)
+      fparm->AddParam(ip++, p, bf, 0, 1,  err*SYST_STEP,  false, true);
+#endif
     fparm->AddParam(ip++, p, bf, lowerr, bf+(err*SYST_NSIGMA),  err*SYST_STEP,  false, true);
   }
 #if BANFF_BINS <= 2

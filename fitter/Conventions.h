@@ -30,8 +30,9 @@ Changes since 2011_v0.9.0:
 //#define BANFF_BINS 1 // Coarse binning (numu using same binning as 2012 nue analyses, 11 numu bins)
 //#define BANFF_BINS -1 // Fine binning (numu using same binning as 2010 numu analyses, 20 numu bins)
 //#define BANFF_BINS 2 // Coarse binning, with high energy ccqe & cc1pi bins included in BANFF
-#define BANFF_BINS 3 // DEFAULT Final BANFF matrix. MAQE. Coarser binning for numubar. No nue/nuebar bins. High energy ccqe & cc1pi bins
+//#define BANFF_BINS 3 // DEFAULT Final BANFF matrix. MAQE. Coarser binning for numubar. No nue/nuebar bins. High energy ccqe & cc1pi bins
 //#define BANFF_BINS 4 // Final BANFF matrix. 1/MAQE^2. Coarser binning for numubar. No nue/nuebar bins. High energy ccqe & cc1pi bins
+#define BANFF_BINS 5 // DEFAULT Final BANNF + MEC.
 #endif
 
 #ifndef FSI_BINS
@@ -58,9 +59,9 @@ Changes since 2011_v0.9.0:
 #ifndef SPLINE_TYPE
 // NOTE1: binning is identical; just produced by different people
 // NOTE2: don't need to change config xml file
-//#define SPLINE_TYPE -1 // Special mode turned on in which splines are not read, and weights involving splines are set to 1
+#define SPLINE_TYPE -1 // Special mode turned on in which splines are not read, and weights involving splines are set to 1
 //#define SPLINE_TYPE 0 // Use KIT splines (DEFAULT for collab meeting)
-#define SPLINE_TYPE 1 // DEFAULT Use VaLOR splines
+//#define SPLINE_TYPE 1 // DEFAULT Use VaLOR splines
 #endif
 
 #ifndef ERECO_BINS_1RMU
@@ -516,6 +517,9 @@ typedef enum EPhysParamId
 #if BANFF_BINS <= 2
    kNuisBANFFNC1pi0,           // # NC1pi0 normalization
 #endif
+#if BANFF_BINS == 5
+   kNuisBANFFMEC,              // # Meson exchange current parameterisation
+#endif
 
    /*
     * Cross-section parameters (excluding cross-section params which were included in BANFF fit and are correlated with the flux params)
@@ -883,12 +887,16 @@ static const int kNumOfParamsInBANFFfit = 36;
 static const int kNumOfParamsInBANFFfit = 39;
 #elif BANFF_BINS == -1
 static const int kNumOfParamsInBANFFfit = 54;
+#elif BANFF_BINS == 5
+static const int kNumOfParamsInBANFFfit = 24;
 #elif BANFF_BINS >= 3
 static const int kNumOfParamsInBANFFfit = 23;
 #endif
 #if BANFF_BINS <= 1
 static const int kNumOfFluxParamsInBANFFfit = kNumOfParamsInBANFFfit - 5;
 #elif BANFF_BINS == 2
+static const int kNumOfFluxParamsInBANFFfit = kNumOfParamsInBANFFfit - 8;
+#elif BANFF_BINS == 5
 static const int kNumOfFluxParamsInBANFFfit = kNumOfParamsInBANFFfit - 8;
 #elif BANFF_BINS >= 3
 static const int kNumOfFluxParamsInBANFFfit = kNumOfParamsInBANFFfit - 7;
@@ -966,7 +974,10 @@ static const bool kParamInBANFFfitIsSuperkFluxParam[kNumOfParamsInBANFFfit] =
    false,                // kNuisBANFFCC1piE0
 #endif
 #if BANFF_BINS <= 2
-   false                 // kNuisBANFFNC1pi0
+   false,                // kNuisBANFFNC1pi0
+#endif
+#if BANFF_BINS == 5
+   false                 // kNuisBANFFMEC
 #endif
 };
 
@@ -1079,7 +1090,10 @@ static const int kNuPdgCodeOfFluxParamInBANFFfit[kNumOfParamsInBANFFfit] =
    0,                    // kNuisBANFFCCQEE1, not a flux param
    0,                    // kNuisBANFFCCQEE2, not a flux param
    0,                    // kNuisBANFFCC1piE0, not a flux param
-   0                     // kNuisBANFFCC1piE1, not a flux param
+   0,                    // kNuisBANFFCC1piE1, not a flux param
+#if BANFF_BINS == 5
+   0                     // kNuisBANFFMEC, not a flux param
+#endif
 };
 #elif BANFF_BINS == -1
 static const int kNuPdgCodeOfFluxParamInBANFFfit[kNumOfParamsInBANFFfit] =
@@ -1252,6 +1266,9 @@ static const double kEtrueRangeOfFluxParamInBANFFfit[kNumOfParamsInBANFFfit][2] 
    {  -1,   -1 },        // kNuisBANFFCCQEE2, not a flux param
    {  -1,   -1 },        // kNuisBANFFCC1piE0, not a flux param
    {  -1,   -1 },        // kNuisBANFFCC1piE1, not a flux param
+#if BANFF_BINS == 5
+   {  -1,   -1 }         // kNuisBANFFMEC, not a flux param
+#endif
 };
 #elif BANFF_BINS == -1
 static const double kEtrueRangeOfFluxParamInBANFFfit[kNumOfParamsInBANFFfit][2] =
@@ -1324,6 +1341,8 @@ static const double kNomMARES = 1.21;
 // Number of cross-section related systematics 
 #if BANFF_BINS <= 2
 static const int kNumOfXSecSyst = 19;
+//#elif BANFF_BINS == 5
+//static const int kNumOfXSecSyst = 19;
 #elif BANFF_BINS >= 3
 static const int kNumOfXSecSyst = 18;
 #endif
@@ -1344,6 +1363,9 @@ static const PhysParamId_t kListOfXSecSyst[kNumOfXSecSyst] =
 #endif
 #if BANFF_BINS <= 2
    kNuisBANFFNC1pi0,           // BANFF, NC1pi0 normalization
+#endif
+#if BANFF_BINS == 5
+   //   kNuisBANFFMEC,              // BANFF, meson exchange current parameterisation
 #endif
    kNuisXSecFermiMom,          // Fermi momentum
    kNuisXSecSpecFunc,          // spectral function on/off
@@ -1382,6 +1404,9 @@ static const bool kXSecSystHasWghtSplines[kNumOfXSecSyst] =
 #if BANFF_BINS <= 2
    false,                     // kNuisBANFFNC1pi0
 #endif
+#if BANFF_BINS == 5
+   //   false,                     // kNuisBANFFMEC
+#endif
    true,                      // Fermi momentum
    true,                      // spectral function on/off
    true,                      // W-shape
@@ -1419,6 +1444,9 @@ static const bool kXSecSystIncludedInBANFF[kNumOfXSecSyst] =
 #if BANFF_BINS <= 2
    true,                      // kNuisBANFFNC1pi0
 #endif
+#if BANFF_BINS == 5
+   //   true,                      // kNuisBANFFMEC
+#endif
    false,                     // Fermi momentum
    false,                     // spectral function on/off
    false,                     // W-shape
@@ -1454,6 +1482,9 @@ static const double kXSecSystErecoCut[kNumOfXSecSyst][2] =
 #if BANFF_BINS <= 2
    { 0.0, 100.0 },            // kNuisBANFFNC1pi0
 #endif
+#if BANFF_BINS == 5
+   //   { 0.0, 100.0 },            // kNuisBANFFMEC
+#endif
    { 0.0, 100.0 },            // Fermi momentum
    { 0.0, 100.0 },            // spectral function on/off
    { 0.0, 100.0 },            // W-shape
@@ -1486,6 +1517,9 @@ static const double kXSecSystEtrueCut[kNumOfXSecSyst][2] =
 #endif
 #if BANFF_BINS <= 2
    { 0.0, 100.0 },            // kNuisBANFFNC1pi0
+#endif
+#if BANFF_BINS == 5
+   //   { 0.0, 100.0 },            // kNuisBANFFMEC
 #endif
    { 0.0, 100.0 },            // Fermi momentum
    { 0.0, 100.0 },            // spectral function on/off
@@ -1718,6 +1752,61 @@ static const bool kXsApplyXSecSystToSKMode[kns][knm][kNumOfXSecSyst] = {
   }
   */
 };
+/*#elif BANFF_BINS == 5
+static const bool kXsApplyXSecSystToSKMode[kns][knm][kNumOfXSecSyst] = {
+  // > 1 muon-like ring 
+  {
+    // banffmaqe banffmares banffccqeE0 banffccqeE1 banffccqeE2
+    // banffcc1piE0 banffcc1piE1 banffmec
+    // pF  spectral   W-shape  ccothshape pilessdelta bindE
+    // cccoh    nc1piC   ncoth    nue/numu antinu/nu
+    {  1, 0, 1, 1, 1,  0, 0, 1,  1, 1, 0, 0, 0, 1,  0, 0, 0, 0, 0 }, // kSKmNuMuCCQE        
+    {  0, 1, 0, 0, 0,  1, 1, 1,  0, 0, 0, 0, 1, 0,  0, 0, 0, 0, 0 }, // kSKmNuMuCC1pi
+    {  0, 0, 0, 0, 0,  0, 0, 1,  0, 0, 0, 0, 0, 0,  1, 0, 0, 0, 0 }, // kSKmNuMuCCcoh
+    {  0, 1, 0, 0, 0,  0, 0, 1,  0, 0, 0, 1, 0, 0,  0, 0, 0, 0, 0 }, // kSKmNuMuCCoth_mu
+    {  0, 1, 0, 0, 0,  0, 0, 1,  0, 0, 1, 0, 1, 0,  0, 1, 0, 0, 0 }, // kSKmNuMuNC1piC
+    {  0, 1, 0, 0, 0,  0, 0, 1,  0, 0, 1, 0, 1, 0,  0, 0, 1, 0, 0 }, // kSKmNuMuNCoth_mu
+    {  1, 0, 1, 1, 1,  0, 0, 1,  1, 1, 0, 0, 0, 1,  0, 0, 0, 0, 1 }, // kSKmNuMuBarCCQE        
+    {  0, 1, 0, 0, 0,  1, 1, 1,  0, 0, 0, 0, 1, 0,  0, 0, 0, 0, 1 }, // kSKmNuMuBarCC1pi
+    {  0, 0, 0, 0, 0,  0, 0, 1,  0, 0, 0, 0, 0, 0,  1, 0, 0, 0, 1 }, // kSKmNuMuBarCCcoh
+    {  0, 1, 0, 0, 0,  0, 0, 1,  0, 0, 0, 1, 0, 0,  0, 0, 0, 0, 1 }, // kSKmNuMuBarCCoth_mu
+    {  0, 1, 0, 0, 0,  0, 0, 1,  0, 0, 1, 0, 1, 0,  0, 1, 0, 0, 0 }, // kSKmNuMuBarNC1piC
+    {  0, 1, 0, 0, 0,  0, 0, 1,  0, 0, 1, 0, 1, 0,  0, 0, 1, 0, 0 }, // kSKmNuMuBarNCoth_mu
+    {  1, 0, 1, 1, 1,  0, 0, 1,  1, 1, 0, 0, 0, 1,  0, 0, 0, 1, 0 }, // kSKmNuECCQE        
+    {  0, 1, 0, 0, 0,  1, 1, 1,  0, 0, 0, 0, 1, 0,  0, 0, 0, 1, 0 }, // kSKmNuECC1pi
+    {  0, 0, 0, 0, 0,  0, 0, 1,  0, 0, 0, 0, 0, 0,  1, 0, 0, 1, 0 }, // kSKmNuECCcoh
+    {  0, 1, 0, 0, 0,  0, 0, 1,  0, 0, 0, 1, 0, 0,  0, 0, 0, 1, 0 }, // kSKmNuECCoth_mu
+    {  0, 1, 0, 0, 0,  0, 0, 1,  0, 0, 1, 0, 1, 0,  0, 1, 0, 0, 0 }, // kSKmNuENC1piC
+    {  0, 1, 0, 0, 0,  0, 0, 1,  0, 0, 1, 0, 1, 0,  0, 0, 1, 0, 0 }, // kSKmNuENCoth_mu
+    {  1, 0, 1, 1, 1,  0, 0, 1,  1, 1, 0, 0, 0, 1,  0, 0, 0, 1, 1 }, // kSKmNuEBarCCQE        
+    {  0, 1, 0, 0, 0,  1, 1, 1,  0, 0, 0, 0, 1, 0,  0, 0, 0, 1, 1 }, // kSKmNuEBarCC1pi
+    {  0, 0, 0, 0, 0,  0, 0, 1,  0, 0, 0, 0, 0, 0,  1, 0, 0, 1, 1 }, // kSKmNuEBarCCcoh
+    {  0, 1, 0, 0, 0,  0, 0, 1,  0, 0, 0, 1, 0, 0,  0, 0, 0, 1, 1 }, // kSKmNuEBarCCoth_mu
+    {  0, 1, 0, 0, 0,  0, 0, 1,  0, 0, 1, 0, 1, 0,  0, 1, 0, 0, 0 }, // kSKmNuEBarNC1piC
+    {  0, 1, 0, 0, 0,  0, 0, 1,  0, 0, 1, 0, 1, 0,  0, 0, 1, 0, 0 }, // kSKmNuEBarNCoth_mu
+    {  1, 0, 1, 1, 1,  0, 0, 1,  1, 1, 0, 0, 0, 1,  0, 0, 0, 1, 0 }, // kSKmSigNuECCQE        
+    {  0, 1, 0, 0, 0,  1, 1, 1,  0, 0, 0, 0, 1, 0,  0, 0, 0, 1, 0 }, // kSKmSigNuECC1pi
+    {  0, 0, 0, 0, 0,  0, 0, 1,  0, 0, 0, 0, 0, 0,  1, 0, 0, 1, 0 }, // kSKmSigNuECCcoh
+    {  0, 1, 0, 0, 0,  0, 0, 1,  0, 0, 0, 1, 0, 0,  0, 0, 0, 1, 0 }, // kSKmSigNuECCoth_mu
+    {  0, 0, 0, 0, 0,  0, 0, 0,  0, 0, 0, 0, 0, 0,  0, 0, 0, 0, 0 }, // kSKmUndefined
+    {  0, 0, 0, 0, 0,  0, 0, 0,  0, 0, 0, 0, 0, 0,  0, 0, 0, 0, 0 }, // kSKmUndefined
+    {  0, 0, 0, 0, 0,  0, 0, 0,  0, 0, 0, 0, 0, 0,  0, 0, 0, 0, 0 }, // kSKmUndefined
+    {  0, 0, 0, 0, 0,  0, 0, 0,  0, 0, 0, 0, 0, 0,  0, 0, 0, 0, 0 }, // kSKmUndefined
+    {  0, 0, 0, 0, 0,  0, 0, 0,  0, 0, 0, 0, 0, 0,  0, 0, 0, 0, 0 }, // kSKmUndefined
+    {  0, 0, 0, 0, 0,  0, 0, 0,  0, 0, 0, 0, 0, 0,  0, 0, 0, 0, 0 }, // kSKmUndefined
+    {  0, 0, 0, 0, 0,  0, 0, 0,  0, 0, 0, 0, 0, 0,  0, 0, 0, 0, 0 }, // kSKmUndefined
+    {  0, 0, 0, 0, 0,  0, 0, 0,  0, 0, 0, 0, 0, 0,  0, 0, 0, 0, 0 }, // kSKmUndefined
+    {  0, 0, 0, 0, 0,  0, 0, 0,  0, 0, 0, 0, 0, 0,  0, 0, 0, 0, 0 }, // kSKmUndefined
+    {  0, 0, 0, 0, 0,  0, 0, 0,  0, 0, 0, 0, 0, 0,  0, 0, 0, 0, 0 }, // kSKmUndefined
+    {  0, 0, 0, 0, 0,  0, 0, 0,  0, 0, 0, 0, 0, 0,  0, 0, 0, 0, 0 }, // kSKmUndefined
+    {  0, 0, 0, 0, 0,  0, 0, 0,  0, 0, 0, 0, 0, 0,  0, 0, 0, 0, 0 }, // kSKmUndefined
+    {  0, 0, 0, 0, 0,  0, 0, 0,  0, 0, 0, 0, 0, 0,  0, 0, 0, 0, 0 }, // kSKmUndefined
+    {  0, 0, 0, 0, 0,  0, 0, 0,  0, 0, 0, 0, 0, 0,  0, 0, 0, 0, 0 }, // kSKmUndefined
+    {  0, 0, 0, 0, 0,  0, 0, 0,  0, 0, 0, 0, 0, 0,  0, 0, 0, 0, 0 }, // kSKmUndefined
+    {  0, 0, 0, 0, 0,  0, 0, 0,  0, 0, 0, 0, 0, 0,  0, 0, 0, 0, 0 }, // kSKmUndefined
+    {  0, 0, 0, 0, 0,  0, 0, 0,  0, 0, 0, 0, 0, 0,  0, 0, 0, 0, 0 }  // kSKmUndefined
+  }
+  }*/
 #elif BANFF_BINS >= 3
 static const bool kXsApplyXSecSystToSKMode[kns][knm][kNumOfXSecSyst] = {
   // > 1 muon-like ring 

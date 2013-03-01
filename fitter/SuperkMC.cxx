@@ -894,7 +894,14 @@ void SuperkMC::ApplySystematicsToTemplates_Multiplicative(void)
 	       //check for empty bins
 	       if(fMCTemplArrayOri[is][im][it-1][ir-1] <= 0) continue;
 	       //double Etrue = kEtrueBinEdges[it-1] + kOneMeV;
-   
+
+#if BANFF_BINS == 5
+	       wght *= fNuXSec->MECWght(ir, it);
+#ifdef SYSTWEIGHTSAREONE
+	       wght = 1;
+#endif
+#endif   
+
 	       // get number of events in current bin of source MC template
 	       double nev = fMCTemplArrayTun[is][im][it-1][ir-1];
 	       nev = TMath::Max(0.,nev);

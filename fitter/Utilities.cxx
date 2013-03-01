@@ -840,6 +840,9 @@ string t2kana::util::AsString(PhysParamId_t p)
 #if BANFF_BINS <= 2
     case ( kNuisBANFFNC1pi0  ) : return "BANFF; Norm; NC 1pi0";                   break;
 #endif
+#if BANFF_BINS == 5
+    case ( kNuisBANFFMEC     ) : return "BANFF; MEC";                             break;
+#endif
 
     //
     // XSec params not correlated with flux
@@ -1254,6 +1257,9 @@ string t2kana::util::AsStringTex(PhysParamId_t p)
 #if BANFF_BINS <= 2
     case ( kNuisBANFFNC1pi0  ) : return "BANFF, Norm, NC 1pi0";                   break;
 #endif
+#if BANFF_BINS == 5
+    case ( kNuisBANFFMEC     ) : return "BANFF; MEC";                             break;
+#endif
 
     //
     // XSec params not correlated with flux
@@ -1660,6 +1666,9 @@ string t2kana::util::AsStringPaperTex(PhysParamId_t p)
 #if BANFF_BINS <= 2
     case ( kNuisBANFFNC1pi0  ) :
 #endif
+#if BANFF_BINS == 5
+    case ( kNuisBANFFMEC     ) : 
+#endif
     {
       int ip = (int)p - (int)kNuisBANFF00;
       return Form("$f_{%d; t, r}^{banff}$", ip);
@@ -2022,6 +2031,9 @@ string t2kana::util::AsStringPaperRooTex(PhysParamId_t p)
 #if BANFF_BINS <= 2
     case ( kNuisBANFFNC1pi0  ) :
 #endif
+#if BANFF_BINS == 5
+    case ( kNuisBANFFMEC     ) : 
+#endif
     {
       int ip = (int)p - (int)kNuisBANFF00;
       return Form("f_{%d; t, r}^{banff}", ip);
@@ -2378,6 +2390,9 @@ string t2kana::util::AsStringCompact(PhysParamId_t p)
 #endif
 #if BANFF_BINS <= 2
     case ( kNuisBANFFNC1pi0           ) : return "f_banffnc1pi0";  break;
+#endif
+#if BANFF_BINS == 5
+    case ( kNuisBANFFMEC              ) : return "f_banffmec";     break;
 #endif
 
     case ( kNuisXSecFermiMom          ) : return "f_pfermi";       break;
@@ -3186,6 +3201,9 @@ t2kana::conv::PhysParamId_t
 #if BANFF_BINS <= 2
   if(sh == "banff_nc1pi0")  return kNuisBANFFNC1pi0;
 #endif
+#if BANFF_BINS == 5
+  if(sh == "banff_mec")     return kNuisBANFFMEC;
+#endif
 
   if(sh == "xsec_pf")           return kNuisXSecFermiMom;
   if(sh == "xsec_sf")           return kNuisXSecSpecFunc;
@@ -3436,6 +3454,9 @@ t2kana::conv::PhysParamId_t t2kana::util::PhysParamIdFromLongString(string sh)
 #endif
 #if BANFF_BINS <= 2
   if(sh == "BANFF; Norm; NC 1pi0"               ) return kNuisBANFFNC1pi0;
+#endif
+#if BANFF_BINS == 5
+  if(sh == "BANFF; MEC"                         ) return kNuisBANFFMEC;
 #endif
 
     //
@@ -3950,6 +3971,9 @@ bool t2kana::util::IsSystematic(PhysParamId_t p)
 #endif
 #if BANFF_BINS <= 2
     case ( kNuisBANFFNC1pi0           ) : return true;  break;
+#endif
+#if BANFF_BINS == 5
+    case ( kNuisBANFFMEC              ) : return true;  break;
 #endif
 
     case ( kNuisXSecFermiMom          ) : return true;  break;

@@ -566,6 +566,9 @@ void BANFF::RestoreNominalMC(void)
     current_values[i] = 1.;
     //current_uncorrelated_values[i] = 0.;
   }
+#if BANFF_BINS == 5
+  current_values[np-1] = 0.; //mec!
+#endif
 }
 //________________________________________________________________________________________
 double BANFF::ChisqPenalty(bool all_syst, int mode) const
@@ -752,6 +755,8 @@ int BANFF::Param2Idx(PhysParamId_t p) const
   int first  = (int) kNuisBANFF00;
 #if BANFF_BINS <= 2
   int last   = (int) kNuisBANFFNC1pi0;
+#elif BANFF_BINS == 5
+  int last   = (int) kNuisBANFFMEC;
 #elif BANFF_BINS >= 3
   int last   = (int) kNuisBANFFCC1piE1;
 #endif
