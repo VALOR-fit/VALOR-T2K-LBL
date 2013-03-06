@@ -23,6 +23,7 @@
 
 #include <TVirtualFitter.h>
 #include <Minuit2/MnUserParameters.h>
+#include <Math/Minimizer.h>
 
 #include "Conventions.h"
 
@@ -97,9 +98,10 @@ public:
    // Set parameter list to input TVirtualFitter 
    void SetTo (TVirtualFitter * fitter);
    void SetTo (ROOT::Minuit2::MnUserParameters & params);
+   void SetTo (ROOT::Math::Minimizer * minimizer);
    
    // Sync fit param values stored this object with the values stored in the input array.
-   void Sync (double * par);
+   void Sync (const double * par);
    void Sync (std::vector<double> par);
 
    // Get number of free (not fixed) parameters

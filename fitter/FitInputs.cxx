@@ -556,3 +556,29 @@ void t2kana::FitFunc (
 
 }
 //____________________________________________________________________________
+
+FitFunctor::FitFunctor(FitInputs * inputs) 
+{ 
+  fFitInputs = inputs; 
+}
+FitFunctor::~FitFunctor() 
+{
+
+}
+double FitFunctor::operator() (const double * x) const
+{
+  return this->DoEval(x);
+}
+double FitFunctor::DoEval(const double * x) const 
+{
+  fFitInputs->FitParams().Sync(x);
+  return fFitInputs->Chisquare("poisson");
+}
+ROOT::Math::IBaseFunctionMultiDim* FitFunctor::Clone(void) const 
+{
+  return new FitFunctor(fFitInputs);
+}
+unsigned int FitFunctor::NDim(void) const 
+{ 
+  return 1;
+}

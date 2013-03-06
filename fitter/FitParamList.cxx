@@ -304,6 +304,30 @@ void FitParamList::SetTo(ROOT::Minuit2::MnUserParameters & params)
   }//loop over params
 }
 //________________________________________________________________________________________
+void FitParamList::SetTo(ROOT::Math::Minimizer * fitter)
+{
+  if(!fitter) return;
+  fitter->Clear();
+  map<t2kana::conv::PhysParamId_t, int>::const_iterator iter = fIdMap.begin();
+  for ( ; iter != fIdMap.end(); ++iter) {
+    PhysParamId_t p = iter->first;
+    int iparam = iter->second;
+    fitter->SetLimitedVariable(
+      iparam, 
+      this->Name(p).c_str(), 
+      this->InitValue(p), 
+      this->StepSize(p),
+      this->MinValue(p),
+      this->MaxValue(p) );
+    if(this->IsFixed(p)) {
+     fitter->SetFixedVariable(
+       iparam,
+       this->Name(p).c_str(), 
+       this->InitValue(p));
+    }
+  }
+}
+//________________________________________________________________________________________
 void FitParamList::Sync(std::vector<double> par)
 {
   if(par.size() <= 0) return;
@@ -312,7 +336,7 @@ void FitParamList::Sync(std::vector<double> par)
   }
 }
 //________________________________________________________________________________________
-void FitParamList::Sync(double * par)
+void FitParamList::Sync(const double * par)
 {
   if(!par) return;
   for(int ip = 0; ip < fNParams; ip++) {

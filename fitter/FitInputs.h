@@ -19,6 +19,7 @@
 #define _t2kana_fit_inputs_h_
 
 #include <Minuit2/FCNBase.h>
+#include <Math/IFunction.h>
 
 #include "FitParamList.h"
 #include "Conventions.h"
@@ -27,6 +28,22 @@ namespace t2kana {
 
 class SuperkObservation;
 class SuperkExpectation;
+
+class FitInputs;
+
+class FitFunctor: public ROOT::Math::IBaseFunctionMultiDim 
+{
+public:
+   FitFunctor(FitInputs * inputs);
+  ~FitFunctor();
+   double operator() (const double * x) const;
+   double DoEval(const double * x) const;
+   ROOT::Math::IBaseFunctionMultiDim* Clone(void) const;
+   unsigned int	NDim(void) const;
+private:
+   FitInputs * fFitInputs;
+};
+
 
 class FitInputs: public ROOT::Minuit2::FCNBase, public TObject
 {
@@ -55,9 +72,12 @@ public :
   double ErrorDef    (void) const    { return Up();   }
   void   SetErrorDef (double errdef) { fErrDef = errdef; }
 
-  // Minuit2: Returns Chi square
+  // Minuit2: Returns chi^2
   double operator() (const std::vector<double>& x) const;
-      
+
+ // GSL
+ ROOT::Math::IBaseFunctionMultiDim * AsFunctor(void) { return new FitFunctor(this); }
+
 private:
 
   double ChisquarePenaltyTerm(void) const;
@@ -75,7 +95,7 @@ ClassDef(FitInputs, 4)
 };
 
 //
-// MINUIT fit functions
+// MINUIT, GSL fit functions
 //
 
 void FitFunc (Int_t &, Double_t *, Double_t &f, Double_t *par, Int_t iflag);
