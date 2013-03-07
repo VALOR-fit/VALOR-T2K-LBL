@@ -12,7 +12,8 @@
   gSystem->Load("libRIO");
   gSystem->Load("libXMLIO");
   gSystem->Load("libMinuit");
-  gSystem->Load("libMinuit2"); 
+  gSystem->Load("libMinuit2");
+  gSystem->Load("libMathMore"); 
 
   gSystem->Load("libT2KNuOsc.so");
 ////  gSystem->Load("$T2KOSCANA/fitter/libT2KNuOsc.so");
