@@ -17,8 +17,11 @@
 #include <sstream>
 
 #include <TStopwatch.h>
+#include <Math/GSLMinimizer.h>
+#include <Math/GSLNLSMinimizer.h>
+#include <Math/GSLSimAnMinimizer.h>
 
-#include "FitterLevembergMarquardt.h" 
+#include "FitterGSL.h" 
 #include "SuperkObservation.h" 
 #include "SuperkExpectation.h" 
 #include "FitInputs.h" 
@@ -38,25 +41,24 @@ using namespace t2kana;
 using namespace t2kana::conv;
    
 //____________________________________________________________________________ 
-FitterLevembergMarquardt::FitterLevembergMarquardt() :
+FitterGSL::FitterGSL() :
 FitterABC()
 {
   this->Init();
 }
 //____________________________________________________________________________ 
-FitterLevembergMarquardt::FitterLevembergMarquardt(
-  FitInputs * fit_inputs, Option_t * option) :
+FitterGSL::FitterGSL(FitInputs * fit_inputs, Option_t * option) :
 FitterABC()
 {
   this->Init(fit_inputs, option);
 }
 //____________________________________________________________________________ 
-FitterLevembergMarquardt::~FitterLevembergMarquardt() 
+FitterGSL::~FitterGSL() 
 {
 
 }
 //____________________________________________________________________________ 
-void FitterLevembergMarquardt::Init(void) 
+void FitterGSL::Init(void) 
 {
   fFitInputs      = 0;
   fOption         = "";
@@ -67,29 +69,57 @@ void FitterLevembergMarquardt::Init(void)
   fMinimizer = 0;
 }
 //____________________________________________________________________________ 
-void FitterLevembergMarquardt::Init(FitInputs * fit_inputs, Option_t * /*option*/) 
+void FitterGSL::Init(FitInputs * fit_inputs, Option_t * option) 
 {
 #ifdef __show_fit_init_info__
-  cout << "FitterLevembergMarquardt/Init >> Fitter initialization..." << endl;
+  cout << "FitterGSL/Init >> Fitter initialization..." << endl;
 #endif
 
   this->Init();
 
   fFitInputs = fit_inputs;
   if(!fFitInputs) {
-     cerr << "FitterLevembergMarquardt/Init >> ** Null fit inputs!" << endl;
+     cerr << "FitterGSL/Init >> ** Null fit inputs!" << endl;
      exit(1);
   }
+
+  fOption = option;
 
   FitParamList & fit_params = fFitInputs->FitParams();
   int param_list_size = fit_params.Size();
 
 #ifdef __show_fit_init_info__
-  cout << "FitterLevembergMarquardt/Init >> Fit parameter list size = " 
+  cout << "FitterGSL/Init >> Fit parameter list size = " 
        << param_list_size << endl;
 #endif
 
-  fMinimizer = new ROOT::Math::GSLNLSMinimizer;
+  if(fOption.Contains("SimAnneal")) {
+    fMinimizer = new ROOT::Math::GSLSimAnMinimizer;
+  }
+  else
+  if(fOption.Contains("LevMarq")) {
+    fMinimizer = new ROOT::Math::GSLNLSMinimizer;
+  }
+  else
+  if(fOption.Contains("ConjugateFR")) {
+    fMinimizer = new ROOT::Math::GSLMinimizer(ROOT::Math::kConjugateFR);
+  }
+  else
+  if(fOption.Contains("ConjugatePR")) {
+    fMinimizer = new ROOT::Math::GSLMinimizer(ROOT::Math::kConjugatePR);
+  }
+  else
+  if(fOption.Contains("VectorBFGS")) {
+    fMinimizer = new ROOT::Math::GSLMinimizer(ROOT::Math::kVectorBFGS2);
+  }
+  else
+  if(fOption.Contains("SteepestDescent")) {
+    fMinimizer = new ROOT::Math::GSLMinimizer(ROOT::Math::kSteepestDescent);
+  }
+  else {
+     cout << "FitterGSL/Init >> Can not handle option: " << option << endl;
+     exit(1);
+  }
 
   fMinimizer->SetMaxFunctionCalls(1000000);
   fMinimizer->SetMaxIterations(100000);
@@ -106,14 +136,14 @@ void FitterLevembergMarquardt::Init(FitInputs * fit_inputs, Option_t * /*option*
   fNFreeFitParams = fit_params.GetNumberFreeParameters();
 
 #ifdef __show_fit_init_info__
-  cout << "FitterLevembergMarquardt/Init >> NDoF = " << this->NDOF()
+  cout << "FitterGSL/Init >> NDoF = " << this->NDOF()
        << " (Number of bins = " << this->NBinsInFit()
        << ", Number of free parameters = " << this->NFitParams() << ")"
        << endl;
 #endif
 }
 //____________________________________________________________________________ 
-bool FitterLevembergMarquardt::DoTheFit(void) 
+bool FitterGSL::DoTheFit(void) 
 {
 #ifdef __show_fit_cpu_time__
   TStopwatch w;
@@ -128,7 +158,7 @@ bool FitterLevembergMarquardt::DoTheFit(void)
 
 #ifdef __show_fit_cpu_time__
   w.Stop();
-  cout << "FitterLevembergMarquardt/DoTheFit >> Fit performed in " 
+  cout << "FitterGSL/DoTheFit >> Fit performed in " 
        << w.CpuTime() << " sec." << endl;
   fFitTime = w.CpuTime();
 #endif

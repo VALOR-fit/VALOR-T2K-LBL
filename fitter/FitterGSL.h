@@ -1,9 +1,23 @@
 //____________________________________________________________________________
 /*!
 
-\class    t2kana::FitterLevembergMarquardt
+\class    t2kana::FitterGSL
 
-\brief    T2KAna fitter based on GSL Levemberg-Marquardt
+\brief    T2KAna fitter based on GSL implementation of the following algoritms:
+
+          ....................................................................
+           Algorithm name                                 | GSL fitter option
+          ....................................................................
+	   Simulated annealing                            | SimAnneal
+	   Levemberg-Marquardt                            | LevMarq
+           Fletcher-Reeves conjugate gradient             | ConjugateFR
+           Polak-Ribiere conjugate gradient               | ConjugatePR
+           Vector Broyden-Fletcher-Goldfarb-Shanno (BFGS) | VectorBFGS
+           Steepest Descent                               | SteepestDescent
+          ....................................................................
+
+\reference
+          http://www.gnu.org/software/gsl/manual/html_node/Multidimensional-Minimization.html
 
 \author   Costas Andreopoulos <costas.andreopoulos \at stfc.ac.uk>
           STFC, Rutherford Appleton Laboratory
@@ -13,13 +27,13 @@
 */
 //____________________________________________________________________________
 
-#ifndef _t2kana_fitter_levemberg_marquardt_h_
-#define _t2kana_fitter_levemberg_marquardt_h_
+#ifndef _t2kana_fitter_gsl_h_
+#define _t2kana_fitter_gsl_h_
 
 #include <TString.h>
 #include <TObject.h>
 #include <TMatrixD.h>
-#include <Math/GSLNLSMinimizer.h>
+#include <Math/Minimizer.h>
 #include <Math/IFunction.h>
 
 #include "Conventions.h"
@@ -28,12 +42,12 @@
 
 namespace t2kana {
 
-class FitterLevembergMarquardt: public FitterABC
+class FitterGSL: public FitterABC
 {
 public:
-   FitterLevembergMarquardt();
-   FitterLevembergMarquardt(FitInputs * inputs, Option_t * option);
-   virtual ~FitterLevembergMarquardt();
+   FitterGSL();
+   FitterGSL(FitInputs * inputs, Option_t * option);
+   virtual ~FitterGSL();
 
    virtual bool       DoTheFit      (void);
    virtual int        FitStatusCode (void)        { return fStatusCode;                 }
@@ -59,7 +73,7 @@ protected:
    int         fNFreeFitParams;   ///< number of free params in fit
 
    ROOT::Math::IBaseFunctionMultiDim * fFunc;
-   ROOT::Math::GSLNLSMinimizer * fMinimizer;
+   ROOT::Math::Minimizer * fMinimizer;
 };
 
 

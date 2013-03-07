@@ -32,8 +32,7 @@ T2KANA_INCLUDES := -I./
 #-------------------------------------------------------------------
 # ROOT headers and libraries
 ROOT_INCLUDES  = -I$(shell root-config --incdir)
-ROOT_LIBRARIES = $(shell root-config --glibs) \
-                        -lMinuit  -lGeom -lEG -lEGPythia6
+ROOT_LIBRARIES = $(shell root-config --glibs) -lMinuit -lMinuit2 -lMathMore 
 
 #-------------------------------------------------------------------
 #                   PROFILING / DEBUGING OPTIONS

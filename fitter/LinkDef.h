@@ -31,7 +31,7 @@
 #pragma link C++ class t2kana::FitterABC;
 #pragma link C++ class t2kana::FitterMinuit;
 #pragma link C++ class t2kana::FitterMinuit2;
-#pragma link C++ class t2kana::FitterLevembergMarquardt;
+#pragma link C++ class t2kana::FitterGSL;
 
 #pragma link C++ class t2kana::FitParamList;
 
