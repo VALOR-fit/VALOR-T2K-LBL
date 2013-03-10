@@ -523,9 +523,9 @@ double FitInputs::operator() (const std::vector<double>& x) const
 {
 // To be used with Minuit2
 
-  fFitParams->Sync(x);
+ fFitParams->Sync(x);
 
-  return this->Chisquare(fOpt.c_str());
+ return  this->Chisquare(fOpt.c_str());
 }
 //____________________________________________________________________________ 
 void t2kana::FitFunc (
@@ -580,5 +580,5 @@ ROOT::Math::IBaseFunctionMultiDim* FitFunctor::Clone(void) const
 }
 unsigned int FitFunctor::NDim(void) const 
 { 
-  return 1;
+  return fFitInputs->FitParams().GetNumberParameters();
 }

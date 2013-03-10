@@ -31,14 +31,16 @@ class SuperkExpectation;
 
 class FitInputs;
 
-class FitFunctor: public ROOT::Math::IBaseFunctionMultiDim 
+//class FitFunctor: public ROOT::Math::IBaseFunctionMultiDim 
+ class FitFunctor: public ROOT::Math::IMultiGenFunction
 {
 public:
    FitFunctor(FitInputs * inputs);
   ~FitFunctor();
    double operator() (const double * x) const;
    double DoEval(const double * x) const;
-   ROOT::Math::IBaseFunctionMultiDim* Clone(void) const;
+   //ROOT::Math::IBaseFunctionMultiDim * Clone(void) const;
+   ROOT::Math::IMultiGenFunction * Clone(void) const;
    unsigned int	NDim(void) const;
 private:
    FitInputs * fFitInputs;
@@ -76,7 +78,8 @@ public :
   double operator() (const std::vector<double>& x) const;
 
  // GSL
- ROOT::Math::IBaseFunctionMultiDim * AsFunctor(void) { return new FitFunctor(this); }
+  // ROOT::Math::IBaseFunctionMultiDim * AsFunctor(void) { return new FitFunctor(this); }
+  ROOT::Math::IMultiGenFunction * AsFunctor(void) { return new FitFunctor(this); }
 
 private:
 
