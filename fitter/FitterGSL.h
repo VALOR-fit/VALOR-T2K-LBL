@@ -72,7 +72,9 @@ protected:
    int         fNFitBins;         ///< number of bins in fit
    int         fNFreeFitParams;   ///< number of free params in fit
 
-   ROOT::Math::IBaseFunctionMultiDim * fFunc;
+   //   ROOT::Math::IBaseFunctionMultiDim * fFunc;
+   ROOT::Math::IMultiGenFunction * fFunc;
+   ROOT::Math::FitMethodFunction * fFitMethodFunc;
    ROOT::Math::Minimizer * fMinimizer;
 };
 

@@ -26,6 +26,8 @@
 #include <TMinuit.h>
 #include <TString.h>
 #include <TMath.h>
+#include "Math/FitMethodFunction.h"
+#include "HFitInterface.h"
 
 #include "Conventions.h"
 #include "SuperkObservation.h"
@@ -56,6 +58,8 @@ fOpt(opt),
 fErrDef(errdef),
 fGoodnessOfFit(goodnessoffit)
 { 
+  fNPoints = 101;
+  fNDim = (*fFitParams).GetNumberParameters();
   if(fFitParams->GetSystMode() == 2)
     fAllBANFFFit = false;
   else
@@ -556,7 +560,6 @@ void t2kana::FitFunc (
 
 }
 //____________________________________________________________________________
-
 FitFunctor::FitFunctor(FitInputs * inputs) 
 { 
   fFitInputs = inputs; 
@@ -574,11 +577,53 @@ double FitFunctor::DoEval(const double * x) const
   fFitInputs->FitParams().Sync(x);
   return fFitInputs->Chisquare("poisson");
 }
-ROOT::Math::IBaseFunctionMultiDim* FitFunctor::Clone(void) const 
+ROOT::Math::IBaseFunctionMultiDim * FitFunctor::Clone(void) const 
 {
   return new FitFunctor(fFitInputs);
 }
 unsigned int FitFunctor::NDim(void) const 
 { 
   return fFitInputs->FitParams().GetNumberParameters();
+}
+//____________________________________________________________________________
+FitMethodFunc::~FitMethodFunc() 
+{
+
+}
+double FitMethodFunc::operator() (const double * x) const
+{
+  return this->DoEval(x);
+}
+double FitMethodFunc::DoEval(const double * x) const 
+{
+  fFitInputs2->FitParams().Sync(x);
+  return fFitInputs2->Chisquare("poisson");
+}
+unsigned int FitMethodFunc::NDim(void) const 
+{ 
+  return fFitInputs2->FitParams().GetNumberParameters();
+}
+unsigned int FitMethodFunc::NCalls(void) const 
+{ 
+  return fNCalls;
+}
+unsigned int FitMethodFunc::NPoints(void) const 
+{ 
+  return fFitInputs2->GetNPoints();
+}
+void FitMethodFunc::ResetNCalls(void) const 
+{ 
+  fNCalls=0;
+}
+void FitMethodFunc::UpdateNCalls(void) const 
+{ 
+  fNCalls++;
+}
+ROOT::Math::BasicFitMethodFunction<ROOT::Math::IBaseFunctionMultiDim>::Type_t FitMethodFunc::Type(void) const
+{
+  return ROOT::Math::FitMethodFunction::kLeastSquare;
+}
+double  FitMethodFunc::DataElement(const double *par, unsigned int ipoint, double *g) const 
+{
+  return 1.;
 }

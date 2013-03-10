@@ -39,6 +39,7 @@ using std::ostringstream;
 
 using namespace t2kana; 
 using namespace t2kana::conv;
+
    
 //____________________________________________________________________________ 
 FitterGSL::FitterGSL() :
@@ -125,16 +126,21 @@ void FitterGSL::Init(FitInputs * fit_inputs, Option_t * option)
   fMinimizer->SetMaxIterations(100000);
   fMinimizer->SetTolerance(0.001);
 
-  fFunc = fFitInputs->AsFunctor(); 
-  fMinimizer->SetFunction(*fFunc);
-
-  // set params
-  fit_params.SetTo(fMinimizer);
-
   // calculate degrees of freedom
   fNFitBins       = kNErecoBins1Rmu; // HERE, FIX
   fNFreeFitParams = fit_params.GetNumberFreeParameters();
 
+  if (!fOption.Contains("LevMarq") ){ 
+    fFitMethodFunc = fFitInputs->AsFitMethodFunction(); 
+    fMinimizer->SetFunction(*fFitMethodFunc);
+  }
+  else{
+    fFunc = fFitInputs->AsFunctor(); 
+    fMinimizer->SetFunction(*fFunc);
+  }
+  fit_params.SetTo(fMinimizer);
+
+  
 #ifdef __show_fit_init_info__
   cout << "FitterGSL/Init >> NDoF = " << this->NDOF()
        << " (Number of bins = " << this->NBinsInFit()
@@ -163,6 +169,7 @@ bool FitterGSL::DoTheFit(void)
   fFitTime = w.CpuTime();
 #endif
 
+  fFitInputs->FitParams().CopyCurrToBestFitValues();
   return true;
 }
 //____________________________________________________________________________ 
