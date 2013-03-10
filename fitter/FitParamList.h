@@ -106,6 +106,7 @@ public:
 
    // Get number of free (not fixed) parameters
    int GetNumberFreeParameters(void);
+   int GetNumberParameters(void);
 
    // Print
    void Print (ostream & stream) const;

@@ -309,21 +309,27 @@ void FitParamList::SetTo(ROOT::Math::Minimizer * fitter)
   if(!fitter) return;
   fitter->Clear();
   map<t2kana::conv::PhysParamId_t, int>::const_iterator iter = fIdMap.begin();
-  for ( ; iter != fIdMap.end(); ++iter) {
-    PhysParamId_t p = iter->first;
-    int iparam = iter->second;
-    fitter->SetLimitedVariable(
-      iparam, 
-      this->Name(p).c_str(), 
-      this->InitValue(p), 
-      this->StepSize(p),
-      this->MinValue(p),
-      this->MaxValue(p) );
+  // for ( ; iter != fIdMap.end(); ++iter) {
+  for(int ip = 0; ip < fNParams; ip++) {  
+    //    PhysParamId_t p = iter->first;
+    PhysParamId_t p = WhichParam(ip);
+    //    int iparam = iter->second;
+    int iparam = ip;
+
     if(this->IsFixed(p)) {
-     fitter->SetFixedVariable(
+      fitter->SetFixedVariable(
        iparam,
        this->Name(p).c_str(), 
        this->InitValue(p));
+    }
+    else{
+      fitter->SetLimitedVariable(
+	  iparam, 
+	  this->Name(p).c_str(), 
+	  this->InitValue(p), 
+	  this->StepSize(p),
+	  this->MinValue(p),
+	  this->MaxValue(p) );
     }
   }
 }
@@ -353,6 +359,16 @@ int FitParamList::GetNumberFreeParameters(void)
     if(!is_fixed) {
       nparams++;
     }
+  }
+  return nparams;
+}
+//________________________________________________________________________________________
+int FitParamList::GetNumberParameters(void)
+{
+  int nparams = 0;
+
+  for(int ip=0; ip<fNParams;  ip++) {
+    nparams++;
   }
   return nparams;
 }
