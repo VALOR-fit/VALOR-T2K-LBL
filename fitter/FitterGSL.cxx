@@ -130,9 +130,8 @@ void FitterGSL::Init(FitInputs * fit_inputs, Option_t * option)
   fNFitBins       = kNErecoBins1Rmu; // HERE, FIX
   fNFreeFitParams = fit_params.GetNumberFreeParameters();
 
-  if (!fOption.Contains("LevMarq") ){ 
+  if (fOption.Contains("LevMarq") ){ 
     fFitMethodFunc = fFitInputs->AsFitMethodFunction(); 
-    fMinimizer->SetFunction(*fFitMethodFunc);
   }
   else{
     fFunc = fFitInputs->AsFunctor(); 
@@ -157,18 +156,29 @@ bool FitterGSL::DoTheFit(void)
 #endif
   fFitTime = 0;
 
-  if(!fMinimizer) return false;
-
-  // Run the fitter once 
-  fMinimizer->Minimize();
-
+  if (fOption.Contains("LevMarq") ){
+    ROOT::Fit::Fitter fitter;
+    fFitInputs->FitParams().SetTo(&fitter);
+    //fitter.Config().MinimizerOptions().SetPrintLevel(1);
+    fitter.Config().MinimizerOptions().SetMinimizerType("GSLMultiFit");
+    
+    fitter.FitFCN(*fFitMethodFunc,0,fFitInputs->GetNPoints(),true);
+    ROOT::Fit::FitResult result = fitter.Result();
+    result.Print(std::cout);
+  }
+  else{
+    if(!fMinimizer) return false;
+    // Run the fitter once 
+    fMinimizer->Minimize();
+  }
+  
 #ifdef __show_fit_cpu_time__
   w.Stop();
   cout << "FitterGSL/DoTheFit >> Fit performed in " 
        << w.CpuTime() << " sec." << endl;
   fFitTime = w.CpuTime();
 #endif
-
+  
   fFitInputs->FitParams().CopyCurrToBestFitValues();
   return true;
 }

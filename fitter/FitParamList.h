@@ -24,6 +24,7 @@
 #include <TVirtualFitter.h>
 #include <Minuit2/MnUserParameters.h>
 #include <Math/Minimizer.h>
+#include <Fit/Fitter.h>
 
 #include "Conventions.h"
 
@@ -99,6 +100,7 @@ public:
    void SetTo (TVirtualFitter * fitter);
    void SetTo (ROOT::Minuit2::MnUserParameters & params);
    void SetTo (ROOT::Math::Minimizer * minimizer);
+   void SetTo (ROOT::Fit::Fitter * fitter);
    
    // Sync fit param values stored this object with the values stored in the input array.
    void Sync (const double * par);

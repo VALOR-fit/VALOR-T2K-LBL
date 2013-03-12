@@ -51,31 +51,22 @@ public:
 class FitMethodFunc : public ROOT::Math::FitMethodFunction 
 {
  public:
-  //(ROOT::Math::FitMethodFunction & f, FitInputs * inputs);//(int dim, int npoints, FitInputs * inputs);
  FitMethodFunc( int dim, int npoints,  FitInputs * inputs) :
   ROOT::Math::FitMethodFunction(dim,npoints),
-    fFitInputs2(inputs) {}
+    fFitInputs(inputs) {}
   ~FitMethodFunc();
   double operator() (const double * x) const;
   ROOT::Math::IMultiGenFunction * Clone(void) const{
     return new FitMethodFunc(*this);
   }
-  virtual double DataElement(const double* x, unsigned int i, double* g = 0) const;
-  unsigned int   NDim(void) const;
-  unsigned int   NCalls(void) const;
-  unsigned int   NPoints(void) const;
-  virtual void   ResetNCalls(void) const;
-  virtual void   UpdateNCalls(void) const;
+  double DataElement(const double* x, unsigned int i, double* g = 0) const;
+  
   virtual  ROOT::Math::BasicFitMethodFunction<ROOT::Math::IBaseFunctionMultiDim>::Type_t Type(void) const ;
   
  private:
-  FitInputs * fFitInputs2;
-  double DoEval(const double * x) const;
-  mutable unsigned int fNCalls;
+  mutable FitInputs * fFitInputs;
+  virtual double DoEval(const double * x) const;
   
-  //int fNDim;
-  //int fNPoints;
-  //ROOT::Math::FitMethodFunction * fChi2;
 };
   
 class FitInputs: public ROOT::Minuit2::FCNBase, public TObject
@@ -92,7 +83,7 @@ public :
   void SetChisqDefinition (bool goodnessoffit) { fGoodnessOfFit = goodnessoffit; }
   
   // judge the agreement between the input data and the current prediction
-  double Chisquare (Option_t * opt = "poisson", conv::SuperkSample_t s = conv::kSKsUndefined) const;
+  double Chisquare (Option_t * opt = "poisson", conv::SuperkSample_t s = conv::kSKsUndefined, int point = -1) const;
   
   // get chisquare for the best fit prediction
   double BestFitChisquare (Option_t * opt = "poisson");
@@ -115,11 +106,11 @@ public :
   
   int GetNDim(void) const {return fNDim;}
   int GetNPoints (void) const {return fNPoints;}
-  
+
 private:
   
   double ChisquarePenaltyTerm(void) const;
-  
+
   SuperkObservation *         fObs;
   mutable SuperkExpectation * fExp;
   mutable FitParamList *      fFitParams;

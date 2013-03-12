@@ -58,7 +58,7 @@ fOpt(opt),
 fErrDef(errdef),
 fGoodnessOfFit(goodnessoffit)
 { 
-  fNPoints = 101;
+  fNPoints = util::NumErecoBins(conv::kSKsFCFV1RingELike)+ util::NumErecoBins(conv::kSKsFCFV1RingMuLike);
   fNDim = (*fFitParams).GetNumberParameters();
   if(fFitParams->GetSystMode() == 2)
     fAllBANFFFit = false;
@@ -86,7 +86,7 @@ FitParamList & FitInputs::FitParams(void)
   return *fFitParams; 
 }
 //________________________________________________________________________________________
-double FitInputs::Chisquare(Option_t * option, conv::SuperkSample_t s0) const
+double FitInputs::Chisquare(Option_t * option, conv::SuperkSample_t s0, int point) const
 {
 // If input is s0 = kSKsUndefined then go ahead and calculate a chisq which is the sum of 
 // chisq for all SK samples included in the analysis.
@@ -127,12 +127,15 @@ double FitInputs::Chisquare(Option_t * option, conv::SuperkSample_t s0) const
 #endif
 	//loop over Ereco bins
 	for(int ibin = 1; ibin <= nbins; ibin++) {
+	  if((point!=-1) && (point != ibin)) continue;
 	  double nobs = fObs->ErecoSpectrumArray             (s)[ibin-1];
 	  double nexp = fExp->CurrPredictedErecoSpectrumArray(s)[ibin-1];
 	  
 	  double delta_chisq = 0.;
 	  if      (opt.Contains("poisson")) { delta_chisq = util::ChisqPoisson(nobs,nexp); }
 	  else if (opt.Contains("gauss")  ) { delta_chisq = util::ChisqGauss  (nobs,nexp); }
+	  
+	  if((point!=-1) && (point == ibin)) return delta_chisq;
 	  chisq += delta_chisq;
 	  
 #ifdef __show_bin_contributions_to_chisq__
@@ -596,28 +599,8 @@ double FitMethodFunc::operator() (const double * x) const
 }
 double FitMethodFunc::DoEval(const double * x) const 
 {
-  fFitInputs2->FitParams().Sync(x);
-  return fFitInputs2->Chisquare("poisson");
-}
-unsigned int FitMethodFunc::NDim(void) const 
-{ 
-  return fFitInputs2->FitParams().GetNumberParameters();
-}
-unsigned int FitMethodFunc::NCalls(void) const 
-{ 
-  return fNCalls;
-}
-unsigned int FitMethodFunc::NPoints(void) const 
-{ 
-  return fFitInputs2->GetNPoints();
-}
-void FitMethodFunc::ResetNCalls(void) const 
-{ 
-  fNCalls=0;
-}
-void FitMethodFunc::UpdateNCalls(void) const 
-{ 
-  fNCalls++;
+  fFitInputs->FitParams().Sync(x);
+  return fFitInputs->Chisquare("poisson");
 }
 ROOT::Math::BasicFitMethodFunction<ROOT::Math::IBaseFunctionMultiDim>::Type_t FitMethodFunc::Type(void) const
 {
@@ -625,5 +608,11 @@ ROOT::Math::BasicFitMethodFunction<ROOT::Math::IBaseFunctionMultiDim>::Type_t Fi
 }
 double  FitMethodFunc::DataElement(const double *par, unsigned int ipoint, double *g) const 
 {
-  return 1.;
+  fFitInputs->FitParams().Sync(par);
+  double chisqbin = 0;
+  if (ipoint < (unsigned int) conv::kNErecoBins1Rmu) chisqbin = fFitInputs->Chisquare("poisson",conv::kSKsFCFV1RingMuLike,ipoint); 
+  else chisqbin = fFitInputs->Chisquare("poisson",conv::kSKsFCFV1RingELike,ipoint-conv::kNErecoBins1Rmu); 
+  //  if (g!=0) ;
+  //  cout << "DataElement: chisqbin = " << chisqbin << " for point = " << ipoint << endl;
+  return chisqbin;
 }

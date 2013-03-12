@@ -334,6 +334,33 @@ void FitParamList::SetTo(ROOT::Math::Minimizer * fitter)
   }
 }
 //________________________________________________________________________________________
+void FitParamList::SetTo(ROOT::Fit::Fitter * fitter)
+{
+  if(!fitter) return;
+  map<t2kana::conv::PhysParamId_t, int>::const_iterator iter = fIdMap.begin();
+  // for ( ; iter != fIdMap.end(); ++iter) {
+  double par0[fNParams];
+  for(int ip = 0; ip < fNParams; ip++) {
+    PhysParamId_t p = WhichParam(ip);
+    par0[ip] = this->InitValue(p);
+  }
+  (fitter->Config()).SetParamsSettings(fNParams,par0);
+
+  for(int ip = 0; ip < fNParams; ip++) {  
+    //    PhysParamId_t p = iter->first;
+    PhysParamId_t p = WhichParam(ip);
+    //    int iparam = iter->second;
+    int iparam = ip;
+
+    if(this->IsFixed(p)) {
+      (fitter->Config()).ParSettings(iparam).Set(this->Name(p).c_str(),this->InitValue(p));
+    }
+    else{
+      (fitter->Config()).ParSettings(iparam).Set(this->Name(p).c_str(),this->InitValue(p),this->StepSize(p),this->MinValue(p),this->MaxValue(p) );
+    }
+  }
+}
+//________________________________________________________________________________________
 void FitParamList::Sync(std::vector<double> par)
 {
   if(par.size() <= 0) return;
