@@ -44,6 +44,8 @@ public:
 
   // Tweak FSI params (either force the input params or generate correlated params using the Cholesky method)
   void Tweak (bool force_inputs = false, TVectorD * input_params = 0);
+  void TweakOnly1Rmu (bool force_inputs = false, TVectorD * input_params = 0);
+  void TweakOnly1Re (bool force_inputs = false, TVectorD * input_params = 0);
 
   // Get current value of systematic params handled by this class
   double CurrentValue (conv::PhysParamId_t p) const;

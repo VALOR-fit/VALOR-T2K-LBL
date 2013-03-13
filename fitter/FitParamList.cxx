@@ -123,6 +123,13 @@ void FitParamList::CopyBestFitToCurrValues(void)
   }
 }
 //________________________________________________________________________________________
+void FitParamList::CopyBestFitToInitValues(void)
+{
+  for(int ip = 0; ip < fNParams; ip++) {
+     fInitValue[ip] = fBestFitValue[ip];
+  }
+}
+//________________________________________________________________________________________
 void FitParamList::SetErrors(double * errplus, double * errminus, double * errmigrad)
 {
   for(int ip = 0; ip < fNParams; ip++) {
@@ -607,7 +614,6 @@ FitParamList * FitParamList::NamedParameterList(string name)
     fp -> SetSystMode(2);
     return fp;
   }
-
   if(name == "nuosc3f_nueapp_fix4") {
     FitParamList * fp = FitParamList::NuOsc3FlavourFit();
     fp -> FixParameter (kPhypMixing23);
@@ -726,7 +732,7 @@ FitParamList * FitParamList::NuOsc3FlavourFitWithAllSyst(void)
 FitParamList * FitParamList::NuOsc3FlavourFitWithAllSystDisap(void)
 {
   FitParamList * fparm = new FitParamList(6+kNumOfNuisanceParams1Rmu); // NOTE: This will have to change for the 2012a 1Re and joint analysis
-
+  
   FitParamList::Append3FlavourOscillation(fparm, 0);
 
   //
@@ -743,7 +749,7 @@ FitParamList * FitParamList::NuOsc3FlavourFitWithAllSystDisap(void)
 FitParamList * FitParamList::NuOsc3FlavourFitWithAllSystApp(void)
 {
   FitParamList * fparm = new FitParamList(6+kNumOfNuisanceParams1Re); // NOTE: This will have to change for the 2012a 1Re and joint analysis
-
+  
   FitParamList::Append3FlavourOscillation(fparm, 0);
 
   //
@@ -1335,6 +1341,7 @@ void FitParamList::AppendCorrelatedBANFFSystematicsDisap(FitParamList * fparm, i
     double err = sqrt(BANFFCov[i][i]);
     double lowerr = TMath::Max(0., bf-(err*SYST_NSIGMA));
     fparm->AddParam(ip++, p, bf, lowerr, bf+(err*SYST_NSIGMA),  err*SYST_STEP,  false, true);
+
   }
 
 }

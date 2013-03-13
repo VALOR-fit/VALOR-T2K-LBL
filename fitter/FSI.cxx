@@ -30,6 +30,7 @@
 
 #include "FSI.h"
 #include "Utilities.h"
+#include "Opt.h"
 
 using std::cout;
 using std::cerr;
@@ -173,6 +174,17 @@ void FSI::Tweak(
   cout << "Exp/FSI/Tweak >> Tweaking FSI parameters" << endl;
 #endif
 
+  if (Opt::Instance()->gOscAnaTypeChoice == conv::kAnaNuMuDisappOnly) {
+    this->TweakOnly1Rmu(force_inputs,input_fsi_params);
+    return;
+  }
+
+  if (Opt::Instance()->gOscAnaTypeChoice == conv::kAnaNuEAppOnly) {
+    this->TweakOnly1Re(force_inputs,input_fsi_params);
+    return;
+  }
+  
+
   TVectorD & current_values = *fCurrentValues;
 
   //
@@ -242,6 +254,182 @@ void FSI::Tweak(
      TVectorD & nominal_values = *fNominalValues;
      TVectorD vec = util::CholeskyGenerateCorrelatedParams(L,nominal_values);
      current_values = vec;
+     return;
+  }
+}
+//________________________________________________________________________________________
+void FSI::TweakOnly1Rmu(
+  bool       force_inputs,    /* force the input params or generate random ones internally  */
+  TVectorD * input_fsi_params /* input vector of FSI params - Set to NULL to reset to nominal ones */
+)
+{
+#ifdef __show_fsi_cholesky_mesg_debug__
+  cout << "Exp/FSI/TweakOnly1Rmu >> Tweaking FSI parameters" << endl;
+#endif
+
+  TVectorD & current_values = *fCurrentValues;
+
+  //
+  // Force input FSI parameters
+  //
+  if(force_inputs)
+  {
+     // Input vector is NULL.
+     // This resets the FSI params to their best-fit values.
+     if(input_fsi_params==0) {
+#ifdef __show_fsi_tweak_mesg_debug__
+        cout << "Exp/FSI/TweakOnly1Rmu >> Reset FSI params to nominal values." << endl;
+#endif
+        const int np = conv::kNumOfFSIParams1Rmu;
+        for(int ip = 0; ip < np; ip++) {
+           current_values[ip] = 1.;
+        }
+        return;
+     }
+     else
+     {
+#ifdef __show_fsi_tweak_mesg_debug__
+        cout << "Exp/FSI/TweakOnly1Rmu >> Forcing input FSI parameters. " << endl;
+#endif
+        TVectorD & vec = *input_fsi_params;
+	const int np = conv::kNumOfFSIParams1Rmu;
+	for(int ip = 0; ip < np; ip++) {
+	  current_values[ip] = vec[ip];
+	}      
+        return;
+     }
+  }//force_inputs?
+
+  //
+  // If this is the first time this function is called, then run the Cholesky
+  // decomposition of the flux covariance matrix
+  //
+
+  if(fCovMtrxChoL == 0)
+  {
+#ifdef __show_fsi_cholesky_mesg_info__
+    cout << "Exp/FSI/TweakOnly1Rmu >> "
+         << "Running Cholesky's decomposition method on the FSI covariance matrix." << endl;
+#endif
+    
+    TMatrixD cov(this->CovMatrix());
+#ifdef __show_fsi_cholesky_mesg_debug__
+    cout << "Exp/FSI/TweakOnly1Rmu >> FSI covariance matrix: " << endl;
+    util::PrintCompact(cov,7,4);
+#endif
+
+    TMatrixD L = util::CholeskyDecomposition(cov);
+    fCovMtrxChoL = new TMatrixD(L);
+#ifdef __show_fsi_cholesky_mesg_debug__
+    cout << "Exp/FSI/TweakOnly1Rmu >> Cholesky decomposition of FSI covariance matrix: " << endl;
+    util::PrintCompact(*fCovMtrxChoL,7,4);
+#endif
+  }
+
+  //
+  // If the tweaking dials were not forced, generate correlated tweaking dials
+  // using the Cholesky method
+  //
+  if(!force_inputs)
+  {   
+#ifdef __show_fsi_tweak_mesg_debug__
+     cout << "Exp/FSI/TweakOnly1Rmu >> Generating random FSI params (correlated)! " << endl;
+#endif
+     TMatrixD & L = *fCovMtrxChoL; 
+     TVectorD & nominal_values = *fNominalValues;
+     TVectorD vec = util::CholeskyGenerateCorrelatedParams(L,nominal_values);
+     const int np = conv::kNumOfFSIParams1Rmu;
+     for(int ip = 0; ip < np; ip++) {
+       current_values[ip] = vec[ip];
+     }
+     return;
+  }
+}
+//________________________________________________________________________________________
+void FSI::TweakOnly1Re(
+  bool       force_inputs,    /* force the input params or generate random ones internally  */
+  TVectorD * input_fsi_params /* input vector of FSI params - Set to NULL to reset to nominal ones */
+)
+{
+#ifdef __show_fsi_cholesky_mesg_debug__
+  cout << "Exp/FSI/TweakOnly1Re >> Tweaking FSI parameters" << endl;
+#endif
+
+  TVectorD & current_values = *fCurrentValues;
+
+  //
+  // Force input FSI parameters
+  //
+  if(force_inputs)
+  {
+     // Input vector is NULL.
+     // This resets the FSI params to their best-fit values.
+     if(input_fsi_params==0) {
+#ifdef __show_fsi_tweak_mesg_debug__
+        cout << "Exp/FSI/TweakOnly1Re >> Reset FSI params to nominal values." << endl;
+#endif
+        const int np = conv::kNumOfFSIParams1Re;
+        for(int ip = 0; ip < np; ip++) {
+	  current_values[ip+conv::kNumOfFSIParams1Rmu] = 1.;
+        }
+        return;
+     }
+     else
+     {
+#ifdef __show_fsi_tweak_mesg_debug__
+        cout << "Exp/FSI/TweakOnly1Re >> Forcing input FSI parameters. " << endl;
+#endif
+        TVectorD & vec = *input_fsi_params;
+	const int np = conv::kNumOfFSIParams1Re;
+	for(int ip = 0; ip < np; ip++) {
+	  current_values[ip+conv::kNumOfFSIParams1Rmu] = vec[ip];
+	}
+        return;
+     }
+  }//force_inputs?
+
+  //
+  // If this is the first time this function is called, then run the Cholesky
+  // decomposition of the flux covariance matrix
+  //
+
+  if(fCovMtrxChoL == 0)
+  {
+#ifdef __show_fsi_cholesky_mesg_info__
+    cout << "Exp/FSI/TweakOnly1Re >> "
+         << "Running Cholesky's decomposition method on the FSI covariance matrix." << endl;
+#endif
+    
+    TMatrixD cov(this->CovMatrix());
+#ifdef __show_fsi_cholesky_mesg_debug__
+    cout << "Exp/FSI/TweakOnly1Re >> FSI covariance matrix: " << endl;
+    util::PrintCompact(cov,7,4);
+#endif
+
+    TMatrixD L = util::CholeskyDecomposition(cov);
+    fCovMtrxChoL = new TMatrixD(L);
+#ifdef __show_fsi_cholesky_mesg_debug__
+    cout << "Exp/FSI/TweakOnly1Re >> Cholesky decomposition of FSI covariance matrix: " << endl;
+    util::PrintCompact(*fCovMtrxChoL,7,4);
+#endif
+  }
+
+  //
+  // If the tweaking dials were not forced, generate correlated tweaking dials
+  // using the Cholesky method
+  //
+  if(!force_inputs)
+  {   
+#ifdef __show_fsi_tweak_mesg_debug__
+     cout << "Exp/FSI/TweakOnly1Re >> Generating random FSI params (correlated)! " << endl;
+#endif
+     TMatrixD & L = *fCovMtrxChoL; 
+     TVectorD & nominal_values = *fNominalValues;
+     TVectorD vec = util::CholeskyGenerateCorrelatedParams(L,nominal_values);
+     const int np = conv::kNumOfFSIParams1Re;
+     for(int ip = conv::kNumOfFSIParams1Rmu; ip < np+conv::kNumOfFSIParams1Rmu; ip++) {
+       current_values[ip] = vec[ip];
+     }
      return;
   }
 }

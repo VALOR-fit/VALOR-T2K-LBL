@@ -78,6 +78,7 @@ public:
    // Copy current param values to best-fit values & vice-versa
    void CopyCurrToBestFitValues (void);
    void CopyBestFitToCurrValues (void);
+   void CopyBestFitToInitValues (void);
 
    // Set the errors
    // used with FitterKernel

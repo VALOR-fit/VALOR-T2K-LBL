@@ -40,6 +40,7 @@
 #include "FSI.h"
 #include "Conventions.h"
 #include "Utilities.h"
+#include "Opt.h"
 
 using std::cout;
 using std::cerr;
@@ -273,6 +274,16 @@ double* SuperkExpectation::CurrPredictedErecoSpectrumArray(t2kana::conv::SuperkS
   }
   if (s== kSKsFCFV1RingMuLike )return fPredictErecoSpectrumArrayTot1Rmu;  
   else return fPredictErecoSpectrumArrayTot1Re;
+}
+//________________________________________________________________________________________
+double  SuperkExpectation::CurrPredictedErecoSpectrumArray(t2kana::conv::SuperkSample_t s, int i) 
+{
+  int sidx = util::ArrIdx::Instance()->SuperkSampleIdx(s);
+  if(sidx == -1) {
+    return 0;
+  }
+  if (s== kSKsFCFV1RingMuLike )return fPredictErecoSpectrumArrayTot1Rmu[i];  
+  else return fPredictErecoSpectrumArrayTot1Re[i];
 }
 //________________________________________________________________________________________
 void SuperkExpectation::PrintSystematicVariations(ostream & stream) const
@@ -565,7 +576,7 @@ void SuperkExpectation::TweakSystematic(string systematic, double twkdial, bool 
   // tweak all FSI parameters taking into account correlations
   else
   if(systematic == "fsi") {
-     this->GetFSI()->Tweak(); //< Cholesky method
+    this->GetFSI()->Tweak(); //< Cholesky method
   }
   // tweak an individual FSI parameter (ignores correlations, debug)
   else
@@ -865,24 +876,61 @@ void SuperkExpectation::SetNuisanceParams(const FitParamList & fp, bool all_banf
    // 
    // FSI systematics
    //
-
+   
    const int nfsi = conv::kNumOfFSIParams;
+   const int nfsi_1Rmu = conv::kNumOfFSIParams1Rmu;
+   const int nfsi_1Re = conv::kNumOfFSIParams1Re;
    // FSI params included in the fit param list?
-   bool incl_fsi = true;   
-   for(int ip = 0; ip < nfsi; ip++) {
-      PhysParamId_t p = PhysParamId_t ((int) kNuisFSI000 + ip);
-      incl_fsi = incl_fsi && fp.Exists(p);
-      if(!incl_fsi) break;
+   bool incl_fsi = true;
+
+   if (Opt::Instance()->gOscAnaTypeChoice == conv::kAnaNuMuDisappOnly){
+     for(int ip = 0; ip < nfsi_1Rmu; ip++) {
+       PhysParamId_t p = PhysParamId_t ((int) kNuisFSI000 + ip);
+       incl_fsi = incl_fsi && fp.Exists(p);
+       if(!incl_fsi) break;
+     }
+   }
+   else if (Opt::Instance()->gOscAnaTypeChoice == conv::kAnaNuEAppOnly){
+     for(int ip = nfsi_1Rmu; ip < nfsi; ip++) {
+       PhysParamId_t p = PhysParamId_t ((int) kNuisFSI000 + ip);
+       incl_fsi = incl_fsi && fp.Exists(p);
+       if(!incl_fsi) break;
+     }
+   }
+   else{
+     for(int ip = 0; ip < nfsi; ip++) {
+       PhysParamId_t p = PhysParamId_t ((int) kNuisFSI000 + ip);
+       incl_fsi = incl_fsi && fp.Exists(p);
+       if(!incl_fsi) break;
+     }
    }
    // If FSI params included, use current values stored in fit param list
    // to tweak the FSI object
    if(incl_fsi) {
-     TVectorD twkv(nfsi);
-     for(int ip = 0; ip < nfsi; ip++) {
-        PhysParamId_t p = PhysParamId_t ((int) kNuisFSI000 + ip);
-        twkv[ip] = fp.CurrValue(p);
+     if (Opt::Instance()->gOscAnaTypeChoice == conv::kAnaNuMuDisappOnly){
+       TVectorD twkv(nfsi_1Rmu);
+       for(int ip = 0; ip < nfsi_1Rmu; ip++) {
+         PhysParamId_t p = PhysParamId_t ((int) kNuisFSI000 + ip);
+         twkv[ip] = fp.CurrValue(p);
+       }
+       this->GetFSI()->TweakOnly1Rmu(true,&twkv);
      }
-     this->GetFSI()->Tweak(true,&twkv);    
+     else if (Opt::Instance()->gOscAnaTypeChoice == conv::kAnaNuEAppOnly){
+       TVectorD twkv(nfsi_1Re);
+       for(int ip = 0; ip < nfsi_1Re; ip++) {
+         PhysParamId_t p = PhysParamId_t ((int) kNuisFSI000 + ip + nfsi_1Rmu);
+         twkv[ip] = fp.CurrValue(p);
+       }
+       this->GetFSI()->TweakOnly1Re(true,&twkv);
+     }
+     else {
+       TVectorD twkv(nfsi);
+       for(int ip = 0; ip < nfsi; ip++) {
+	 PhysParamId_t p = PhysParamId_t ((int) kNuisFSI000 + ip);
+	 twkv[ip] = fp.CurrValue(p);
+       }
+       this->GetFSI()->Tweak(true,&twkv);    
+     }
    }
 }
 //________________________________________________________________________________________
