@@ -823,6 +823,11 @@ void SuperkMC::ApplySystematicsToTemplates_Multiplicative(void)
   cout << "Exp/SKMC >> Applying multiplicative systematics" << endl;
 #endif
 
+#if BANFF_BINS == 5
+  //check if the mec parameter has been tweaked
+  bool apply_mec = fNuXSec->ApplyMEC();
+#endif
+
   // Loop over samples
   for(int is = 0; is < kns; is++) {
     SuperkSample_t s = kSKSamples[is];
@@ -880,12 +885,15 @@ void SuperkMC::ApplySystematicsToTemplates_Multiplicative(void)
 #ifdef SYSTWEIGHTSAREONE
 	   wght = 1;
 #endif
+	   double wght_preloop = wght;
 
 	   // loop over 50MeV Ereco
 	   int ErecoMinBin = 1 + TMath::BinarySearch(kNErecoBins1Rmu,kErecoBinEdges1Rmu,ErecoVarMin);
 	   int ErecoMaxBin = 1 + TMath::BinarySearch(kNErecoBins1Rmu,kErecoBinEdges1Rmu,ErecoVarMax);
 	   for(int ir = ErecoMinBin; ir <= ErecoMaxBin; ir++) {
-	     //double Ereco = kErecoBinEdges1Rmu[ir-1] + kOneMeV;
+#ifdef __show_syst_var_wght_mesg_debug__ 
+	     double Ereco = kErecoBinEdges1Rmu[ir-1] + kOneMeV;
+#endif
 
 	     // loop over 50MeV Etrue
 	     int EtrueMinBin = 1 + TMath::BinarySearch(kNEtrueBins,kEtrueBinEdges,EtrueVarMin);
@@ -893,10 +901,17 @@ void SuperkMC::ApplySystematicsToTemplates_Multiplicative(void)
 	     for(int it = EtrueMinBin; it <= EtrueMaxBin; it++) {
 	       //check for empty bins
 	       if(fMCTemplArrayOri[is][im][it-1][ir-1] <= 0) continue;
-	       //double Etrue = kEtrueBinEdges[it-1] + kOneMeV;
+#ifdef __show_syst_var_wght_mesg_debug__ 
+	       double Etrue = kEtrueBinEdges[it-1] + kOneMeV;
+#endif
 
 #if BANFF_BINS == 5
-	       wght *= fNuXSec->MECWght(ir, it);
+	       //don't forget the mec parameter
+	       double mec_wght = 1.;
+	       if(apply_mec) {
+		 mec_wght = fNuXSec->MECWght(it, ir);
+		 wght = mec_wght * wght_preloop;
+	       }
 #ifdef SYSTWEIGHTSAREONE
 	       wght = 1;
 #endif
@@ -911,19 +926,26 @@ void SuperkMC::ApplySystematicsToTemplates_Multiplicative(void)
 	       if( skeff_wght != 1. || 
 		   flux_wght  != 1. || 
 		   xsec_wght  != 1. ||
+#if BANFF_BINS == 5
+		   mec_wght   != 1. ||
+#endif
 		   fsi_wght   != 1. )
 		 {
 		   // Get the energy of the current 50MeV Etrue bin
-		   double Etrue = kEtrueBinEdges[it-1] + kOneMeV;
 		   cout << "Exp/SKMC/SystVarWght >> "
 			<< "Sample = " << util::AsString(s) << " / Mode = " << util::AsString(m) 
 			<< ", Ereco = " << Ereco << " GeV" 
-			<< ", Etrue = " << Etrue << " GeV => Weights: " 
+			<< ", Etrue = " << Etrue << " GeV" << endl
+			<< "\t=>Weights: " 
 			<< "SK eff = "  << skeff_wght
 			<< ", Flux = "  << flux_wght
 			<< ", XSec = "  << xsec_wght
 			<< ", FSI  = "  << fsi_wght
+#if BANFF_BINS == 5
+			<< ", MEC  = "  << mec_wght
+#endif
 			<< " (total = " << wght << ")"
+			<< skeff_wght * flux_wght * xsec_wght * fsi_wght * mec_wght
 			<< endl;
 		 }
 #endif

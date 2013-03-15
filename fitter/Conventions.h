@@ -59,9 +59,9 @@ Changes since 2011_v0.9.0:
 #ifndef SPLINE_TYPE
 // NOTE1: binning is identical; just produced by different people
 // NOTE2: don't need to change config xml file
-#define SPLINE_TYPE -1 // Special mode turned on in which splines are not read, and weights involving splines are set to 1
+//#define SPLINE_TYPE -1 // Special mode turned on in which splines are not read, and weights involving splines are set to 1
 //#define SPLINE_TYPE 0 // Use KIT splines (DEFAULT for collab meeting)
-//#define SPLINE_TYPE 1 // DEFAULT Use VaLOR splines
+#define SPLINE_TYPE 1 // DEFAULT Use VaLOR splines
 #endif
 
 #ifndef ERECO_BINS_1RMU

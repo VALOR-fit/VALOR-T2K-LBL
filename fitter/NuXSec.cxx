@@ -30,6 +30,7 @@
 #include <cassert>
 #include <cstdlib>
 #include <iostream>
+#include <iomanip>
 #include <sstream>
 
 #include <TMath.h>
@@ -392,13 +393,13 @@ bool NuXSec::Read(TXMLEngine* xml, XMLNodePointer_t root_node)
     cerr << "Exp/NuXSec >> No input MEC histogram!" << endl;
     exit(1);
   }
-  //loop over Etrue
-  for(int it = 1; it <= fMECErrorHist->GetYaxis()->GetNbins(); it++) {
-    // loop over Ereco
-    for(int ir = 1; ir <= fMECErrorHist->GetXaxis()->GetNbins(); ir++) {
+  // loop over Ereco
+  for(int ir = 1; ir <= fMECErrorHist->GetXaxis()->GetNbins(); ir++) {
+    //loop over Etrue
+    for(int it = 1; it <= fMECErrorHist->GetYaxis()->GetNbins(); it++) {
       fMECErrorArray[it-1][ir-1] = fMECErrorHist->GetBinContent(ir,it);
-    }//ir
-  }//it
+    }//it
+  }//ir
 #endif
 
 #ifdef __show_init_mesg_info__
@@ -761,20 +762,30 @@ double NuXSec::SystWght_1p(
 }
 //________________________________________________________________________________________
 #if BANFF_BINS == 5
-double NuXSec::MECWght(int ErecoBin, int EtrueBin) const
+bool NuXSec::ApplyMEC() const
 {
   PhysParamId_t p = kNuisBANFFMEC;
   // Was tweaked?
   double dt = TMath::Abs(fBANFF->CurrentValue(p) - fBANFF->BestFitValue(p)); // banff parameters
   if(dt < kASmallNum) 
-    return 1;
+    return false;
 
-  double wght = 1 + (fBANFF->CurrentValue(p) * fMECErrorArray[EtrueBin-1][ErecoBin-1]);
+  return true;
+}
+//________________________________________________________________________________________
+double NuXSec::MECWght(int EtrueBin, int ErecoBin) const
+{
+  double wght = 1 + (fBANFF->CurrentValue(kNuisBANFFMEC) * fMECErrorArray[EtrueBin-1][ErecoBin-1]);
 
+#ifdef __show_mec_wght_mesg_debug__
   if(wght != 1)
-    cout << "Ereco " << kErecoBinEdges1Rmu[ErecoBin-1] << " " << kErecoBinEdges1Rmu[ErecoBin]
-	 << "\t\tEtrue " << kEtrueBinEdges[EtrueBin-1] << " " << kEtrueBinEdges[EtrueBin]
-	 << "\t\t" << wght << endl;
+    cout << std::fixed << std::setprecision(8)
+	 << "Ereco: " << kErecoBinEdges1Rmu[ErecoBin-1] << " " << kErecoBinEdges1Rmu[ErecoBin]
+	 << "      Etrue: " << kEtrueBinEdges[EtrueBin-1] << " " << kEtrueBinEdges[EtrueBin]
+	 << "\t\tWght:" << wght
+      //<< "      Wght: " << fMECErrorArray[EtrueBin-1][ErecoBin-1]
+	 << endl;
+#endif
 
   return wght;
 }

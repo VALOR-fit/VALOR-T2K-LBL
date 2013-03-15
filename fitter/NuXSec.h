@@ -51,7 +51,8 @@ public:
   // This is not included in the 'SystWght' method because it uses different (much finer) binning than the other systematics
   //  and is also not a function of SuperkMode
 #if BANFF_BINS == 5
-  double MECWght(int ErecoBin, int EtrueBin) const;
+  bool   ApplyMEC() const;
+  double MECWght(int EtrueBin, int ErecoBin) const;
 #endif
 
   // Tweak systematic parameters held in this object.
