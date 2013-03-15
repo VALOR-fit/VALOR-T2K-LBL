@@ -321,7 +321,7 @@ root2k -l -b -q '$T2KOSCANA/macros/fit/toymc/analyse_output.C("data12-run_0-expt
 root2k -l -b -q '$T2KOSCANA/macros/fit/toymc/analyse_output.C("data3-run_0-expts_5_5.root",5,"$T2KOSCANA/2012results/DATA/bigger_surface/28/","analysis_configuration_2012a_run3_neut_finalBANFF_coarseErecoSplines_6binFSI+SI_MAQE.xml",6.0,0.8,1,0.0015,0.0035,false)';
 
 #2all
-root2k -l -b -q '$T2KOSCANA/macros/fit/toymc/analyse_output.C("data123-run_0-expts_3_3.root",3,"$T2KOSCANA/2012results/DATA/2all/","analysis_configuration.xml",6.0,0.8,1,0.0015,0.0035,false)';
+root2k -l -b -q '$T2KOSCANA/macros/fit/toymc/analyse_output.C("data123-run_0-expts_3_3.root",3,"$T2KOSCANA/2012results/DATA/2all/","analysis_configuration.xml",6.0,0.8,1,0.0015,0.0035,false,"$T2KOSCANA/2012results/DATA/KIT/of_erec_spec_fin3_run1-3.root")';
 root2k -l -b -q '$T2KOSCANA/macros/fit/toymc/analyse_output.C("data12-run_0-expts_4_4.root",4,"$T2KOSCANA/2012results/DATA/2all/","analysis_configuration_2012a_run1+2_neut_finalBANFF_coarseErecoSplines_6binFSI+SI_MAQE.xml",6.0,0.8,1,0.0015,0.0035,false)';
 root2k -l -b -q '$T2KOSCANA/macros/fit/toymc/analyse_output.C("data3-run_0-expts_5_5.root",5,"$T2KOSCANA/2012results/DATA/2all/","analysis_configuration_2012a_run3_neut_finalBANFF_coarseErecoSplines_6binFSI+SI_MAQE.xml",6.0,0.8,1,0.0015,0.0035,false)';
 
