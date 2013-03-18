@@ -3868,7 +3868,11 @@ static const double kErecoBinEdges1Re[kNErecoBins1Re+1] =
 //   -
 //
 static const int kNumOfSKDetParams = 8;
-static const int kNumOfNuisanceParams1Rmu  = kNumOfParamsInBANFFfit + kNumOfFSIParams + kNumOfXSecSyst - (kNumOfParamsInBANFFfit - kNumOfFluxParamsInBANFFfit) + kNumOfSKDetParams;  
+static const int kNumOfNuisanceParams1Rmu  = kNumOfParamsInBANFFfit + kNumOfFSIParams + kNumOfXSecSyst - (kNumOfParamsInBANFFfit - kNumOfFluxParamsInBANFFfit) + kNumOfSKDetParams
+#if BANFF_BINS == 5
+  + 1 /*MEC: a banff param, not a flux param, not included in kNumOfXSecSyst*/
+#endif
+  ;
 static const int kNumOfNuisanceParams1Re   = 0;  // not implemented for 2012a yet
 static const int kNumOfNuisanceParamsJoint = 0;  // not implemented for 2012a yet
 

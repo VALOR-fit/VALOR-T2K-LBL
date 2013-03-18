@@ -408,8 +408,16 @@ void BANFF::TweakCorrelated(
      cout << "Exp/BANFF/Tweak >> Generating random twk dials (correlated)! " << endl;
 #endif
      TMatrixD & L = *fCovMtrxChoL;
-     TVectorD vec = util::CholeskyGenerateCorrelatedParams(L,bestfit_values);
-     current_values = vec;
+     while(1) {
+       TVectorD vec = util::CholeskyGenerateCorrelatedParams(L,bestfit_values);
+       current_values = vec;
+#if BANFF_BINS == 5
+       if(this->CurrentValue(kNuisBANFFMEC) >= 0)
+	 break;
+#else
+       break;
+#endif
+     }
      return;
   }
 
