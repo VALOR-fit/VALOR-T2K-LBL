@@ -360,13 +360,8 @@ void SuperkExpectation::ResetSystematicVariations(void)
   this->GetSuperkDetector()->TweakEfficiency1RmuCCnonQE          (0.);
   this->GetSuperkDetector()->TweakEfficiency1RmuNC               (0.);     
   this->GetSuperkDetector()->TweakEfficiency1RmuNuECC            (0.);
-  // SuperK detector systematics for 1Re
-  const int neff1Re = conv::kNumOfSKDetParams1Re;
-  TVectorD twkv(neff1Re);
-  for (int ip = 0; ip < neff1Re; ip++) {
-    twkv[ip] = 0;
-  }
-  this->GetSuperkDetector()->TweakEfficiencies1Re                (true,&twkv);
+
+  this->GetSuperkDetector()->TweakEfficiencies1Re                (true,0);
 
   // BANFF
   this->GetBANFF()->Tweak(true,0);
