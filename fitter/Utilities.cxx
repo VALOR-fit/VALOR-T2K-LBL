@@ -1247,18 +1247,18 @@ string t2kana::util::AsStringPaperTex(PhysParamId_t p)
   case ( kNuisSuperkEff1RmuNC       ) : return "$f_{NC; r}^{SK}$";                  break;
   case ( kNuisSuperkEff1RmuNueCC    ) : return "$f_{\\nu_e; r}^{SK}$";              break;
 
-  case ( kNuisSuperkEff1ReNueSigCC0  )   : return "f_{1Re: osc \\nu_e CC E0; r}^{SK}";     break;
-  case ( kNuisSuperkEff1ReNueSigCC1  )   : return "f_{1Re: osc \\nu_e CC E1; r}^{SK}";     break;
-  case ( kNuisSuperkEff1ReNueSigCC2  )   : return "f_{1Re: osc \\nu_e CC E2; r}^{SK}";     break;
-  case ( kNuisSuperkEff1ReNumuCC0    )   : return "f_{1Re: \\nu_{\\mu} CC E0; r}^{SK}";     break;
-  case ( kNuisSuperkEff1ReNumuCC1    )   : return "f_{1Re: \\nu_{\\mu} CC E1; r}^{SK}";   break;
-  case ( kNuisSuperkEff1ReNumuCC2    )   : return "f_{1Re: \\nu_{\\mu} CC E2; r}^{SK}";   break;
-  case ( kNuisSuperkEff1ReNueCC0     )   : return "f_{1Re: \\nu_{e} CC E0; r}^{SK}";   break;
-  case ( kNuisSuperkEff1ReNueCC1     )   : return "f_{1Re: \\nu_{e} CC E1; r}^{SK}";   break;
-  case ( kNuisSuperkEff1ReNueCC2     )   : return "f_{1Re: \\nu_{e} CC E2; r}^{SK}";   break;
-  case ( kNuisSuperkEff1ReNC0        )   : return "f_{1Re: NC E0; r}^{SK}";   break;
-  case ( kNuisSuperkEff1ReNC1        )   : return "f_{1Re: NC E1; r}^{SK}";   break;
-  case ( kNuisSuperkEff1ReNC2        )   : return "f_{1Re: NC E2; r}^{SK}";   break;
+  case ( kNuisSuperkEff1ReNueSigCC0  )   : return "$f_{1Re: osc \\nu_e CC E0; r}^{SK}$";     break;
+  case ( kNuisSuperkEff1ReNueSigCC1  )   : return "$f_{1Re: osc \\nu_e CC E1; r}^{SK}$";     break;
+  case ( kNuisSuperkEff1ReNueSigCC2  )   : return "$f_{1Re: osc \\nu_e CC E2; r}^{SK}$";     break;
+  case ( kNuisSuperkEff1ReNumuCC0    )   : return "$f_{1Re: \\nu_{\\mu} CC E0; r}^{SK}$";     break;
+  case ( kNuisSuperkEff1ReNumuCC1    )   : return "$f_{1Re: \\nu_{\\mu} CC E1; r}^{SK}$";   break;
+  case ( kNuisSuperkEff1ReNumuCC2    )   : return "$f_{1Re: \\nu_{\\mu} CC E2; r}^{SK}$";   break;
+  case ( kNuisSuperkEff1ReNueCC0     )   : return "$f_{1Re: \\nu_{e} CC E0; r}^{SK}$";   break;
+  case ( kNuisSuperkEff1ReNueCC1     )   : return "$f_{1Re: \\nu_{e} CC E1; r}^{SK}$";   break;
+  case ( kNuisSuperkEff1ReNueCC2     )   : return "$f_{1Re: \\nu_{e} CC E2; r}^{SK}$";   break;
+  case ( kNuisSuperkEff1ReNC0        )   : return "$f_{1Re: NC E0; r}^{SK}$";   break;
+  case ( kNuisSuperkEff1ReNC1        )   : return "$f_{1Re: NC E1; r}^{SK}$";   break;
+  case ( kNuisSuperkEff1ReNC2        )   : return "$f_{1Re: NC E2; r}^{SK}$";   break;
 
 
     //                                                          
@@ -1315,7 +1315,7 @@ string t2kana::util::AsStringPaperTex(PhysParamId_t p)
   case ( kNuisXSecBindE      ) : return "$f_{bindE; t, r}$";               break;
 
   case ( kNuisXSecNormCCcoh  ) : return "$f_{CCcoh; t}$";                  break;
-  case ( kNuisXSecNormNCcoh  ) : return "Norm, NC Coh";                    break;
+  case ( kNuisXSecNormNCcoh  ) : return "$f_{NCcoh; t}$";                  break;
   case ( kNuisXSecNormNC1piC ) : return "$f_{NC1\\pi^\\pm; t}$";           break;
   case ( kNuisXSecNormNCoth  ) : return "$f_{NCoth; t}$";                  break;
   case ( kNuisXSecNormNuEToNuMu  ) : return "$f_{CC\\nu_e; t}$";           break;
@@ -2208,12 +2208,12 @@ t2kana::conv::PhysParamId_t
   if(sh == "sk_1Re_eff_signue_0") return kNuisSuperkEff1ReNueSigCC0;
   if(sh == "sk_1Re_eff_signue_1") return kNuisSuperkEff1ReNueSigCC1;
   if(sh == "sk_1Re_eff_signue_2") return kNuisSuperkEff1ReNueSigCC2;
-  if(sh == "sk_1Re_eff_numu_cc_0") return kNuisSuperkEff1ReNumuCC0;
-  if(sh == "sk_1Re_eff_numu_cc_1") return kNuisSuperkEff1ReNumuCC1;
-  if(sh == "sk_1Re_eff_numu_cc_2") return kNuisSuperkEff1ReNumuCC2;
-  if(sh == "sk_1Re_eff_nue_cc_0") return kNuisSuperkEff1ReNueCC0;
-  if(sh == "sk_1Re_eff_nue_cc_1") return kNuisSuperkEff1ReNueCC1;
-  if(sh == "sk_1Re_eff_nue_cc_2") return kNuisSuperkEff1ReNueCC2;
+  if(sh == "sk_1Re_eff_numu_0") return kNuisSuperkEff1ReNumuCC0;
+  if(sh == "sk_1Re_eff_numu_1") return kNuisSuperkEff1ReNumuCC1;
+  if(sh == "sk_1Re_eff_numu_2") return kNuisSuperkEff1ReNumuCC2;
+  if(sh == "sk_1Re_eff_nue_0") return kNuisSuperkEff1ReNueCC0;
+  if(sh == "sk_1Re_eff_nue_1") return kNuisSuperkEff1ReNueCC1;
+  if(sh == "sk_1Re_eff_nue_2") return kNuisSuperkEff1ReNueCC2;
   if(sh == "sk_1Re_eff_nc_0") return kNuisSuperkEff1ReNC0;
   if(sh == "sk_1Re_eff_nc_1") return kNuisSuperkEff1ReNC1;
   if(sh == "sk_1Re_eff_nc_2") return kNuisSuperkEff1ReNC2;
@@ -2640,6 +2640,188 @@ bool t2kana::util::IsNC(t2kana::conv::SuperkMode_t m)
   }
   return false;
 }
+//____________________________________________________________________________
+bool t2kana::util::IsBANFF(PhysParamId_t p)
+{
+  switch(p) {
+    case ( kNuisBANFF00               ) : return true;  break;
+    case ( kNuisBANFF01               ) : return true;  break;
+    case ( kNuisBANFF02               ) : return true;  break;
+    case ( kNuisBANFF03               ) : return true;  break;
+    case ( kNuisBANFF04               ) : return true;  break;
+    case ( kNuisBANFF05               ) : return true;  break;
+    case ( kNuisBANFF06               ) : return true;  break;
+    case ( kNuisBANFF07               ) : return true;  break;
+    case ( kNuisBANFF08               ) : return true;  break;
+    case ( kNuisBANFF09               ) : return true;  break;
+    case ( kNuisBANFF10               ) : return true;  break;
+    case ( kNuisBANFF11               ) : return true;  break;
+    case ( kNuisBANFF12               ) : return true;  break;
+    case ( kNuisBANFF13               ) : return true;  break;
+    case ( kNuisBANFF14               ) : return true;  break;
+    case ( kNuisBANFF15               ) : return true;  break;
+    case ( kNuisBANFF16               ) : return true;  break;
+    case ( kNuisBANFF17               ) : return true;  break;
+    case ( kNuisBANFF18               ) : return true;  break;
+    case ( kNuisBANFF19               ) : return true;  break;
+    case ( kNuisBANFF20               ) : return true;  break;
+    case ( kNuisBANFF21               ) : return true;  break;
+    case ( kNuisBANFF22               ) : return true;  break;
+    case ( kNuisBANFF23               ) : return true;  break;
+    case ( kNuisBANFF24               ) : return true;  break;
+
+    case ( kNuisBANFFMAQE             ) : return true;  break;
+    case ( kNuisBANFFMARES            ) : return true;  break;
+    case ( kNuisBANFFCCQEE0           ) : return true;  break;
+    case ( kNuisBANFFCCQEE1           ) : return true;  break;
+    case ( kNuisBANFFCCQEE2           ) : return true;  break;
+    case ( kNuisBANFFCC1piE0          ) : return true;  break;
+    case ( kNuisBANFFCC1piE1          ) : return true;  break;
+    case ( kNuisBANFFNC1pi0           ) : return true;  break;
+  
+  default : 
+    return false;
+  }
+  return false;
+  
+}
+//____________________________________________________________________________                                                                                
+bool t2kana::util::IsXSec(PhysParamId_t p)
+{
+  switch(p) {
+    case ( kNuisXSecFermiMom          ) : return true;  break;
+    case ( kNuisXSecSpecFunc          ) : return true;  break; 
+    case ( kNuisXSecWshape            ) : return true;  break;
+    case ( kNuisXSecShapeCCoth        ) : return true;  break;
+    case ( kNuisXSecPiLessDelta       ) : return true;  break;
+    case ( kNuisXSecBindE             ) : return true;  break;
+
+    case ( kNuisXSecNormCCcoh         ) : return true;  break;
+    case ( kNuisXSecNormNC1piC        ) : return true;  break;
+    case ( kNuisXSecNormNCcoh         ) : return true;  break;
+    case ( kNuisXSecNormNCoth         ) : return true;  break;
+    case ( kNuisXSecNormNuEToNuMu     ) : return true;  break;
+    case ( kNuisXSecNormAntiNuToNu    ) : return true;  break;
+    
+  default : 
+    return false;
+  }
+  return false;
+}
+//____________________________________________________________________________                                                                                
+bool t2kana::util::IsUsingSplines(PhysParamId_t p)
+{
+  switch(p) {
+  case ( kNuisXSecFermiMom          ) : return true;  break;
+  case ( kNuisXSecSpecFunc          ) : return true;  break;
+  case ( kNuisXSecWshape            ) : return true;  break;
+  case ( kNuisXSecShapeCCoth        ) : return true;  break;
+  case ( kNuisXSecPiLessDelta       ) : return true;  break;
+  case ( kNuisXSecBindE             ) : return true;  break;
+  case ( kNuisBANFFMAQE             ) : return true;  break;
+  case ( kNuisBANFFMARES            ) : return true;  break;
+    
+  default :
+    return false;
+  }
+  return false;
+}
+//____________________________________________________________________________                                                                                
+bool t2kana::util::IsEff1Rmu(PhysParamId_t p)
+{
+  switch(p) {
+  case ( kNuisSuperkEnergyScale     ) : return true;  break;
+  case ( kNuisSuperkEff1RmuCCQEoth  ) : return true;  break;
+  case ( kNuisSuperkEff1RmuCCQErc0u ) : return true;  break;
+  case ( kNuisSuperkEff1RmuCCQErc1u ) : return true;  break;
+  case ( kNuisSuperkEff1RmuCCQErc2u ) : return true;  break;
+  case ( kNuisSuperkEff1RmuCCnonQE  ) : return true;  break;
+  case ( kNuisSuperkEff1RmuNC       ) : return true;  break;
+  case ( kNuisSuperkEff1RmuNueCC    ) : return true;  break;
+  default :
+    return false;
+  }
+  return false; 
+}
+//____________________________________________________________________________                                                                                  
+bool t2kana::util::IsEff1Re(PhysParamId_t p)
+{
+  switch(p) {
+  case ( kNuisSuperkEnergyScale     ) : return true;  break;
+  case ( kNuisSuperkEff1ReNueSigCC0 ) : return true;  break;
+  case ( kNuisSuperkEff1ReNueSigCC1 ) : return true;  break;
+  case ( kNuisSuperkEff1ReNueSigCC2 ) : return true;  break;
+  case ( kNuisSuperkEff1ReNumuCC0   ) : return true;  break;
+  case ( kNuisSuperkEff1ReNumuCC1   ) : return true;  break;
+  case ( kNuisSuperkEff1ReNumuCC2   ) : return true;  break;
+  case ( kNuisSuperkEff1ReNueCC0    ) : return true;  break;
+  case ( kNuisSuperkEff1ReNueCC1    ) : return true;  break;
+  case ( kNuisSuperkEff1ReNueCC2    ) : return true;  break;
+  case ( kNuisSuperkEff1ReNC0       ) : return true;  break;
+  case ( kNuisSuperkEff1ReNC1       ) : return true;  break;
+  case ( kNuisSuperkEff1ReNC2       ) : return true;  break;
+  default :
+    return false;
+  }
+  return false;
+}
+//____________________________________________________________________________                                                                                 
+bool t2kana::util::IsEff(PhysParamId_t p)
+{
+  switch(p) {
+  case ( kNuisSuperkEnergyScale     ) : return true;  break;
+  case ( kNuisSuperkEff1RmuCCQEoth  ) : return true;  break;
+  case ( kNuisSuperkEff1RmuCCQErc0u ) : return true;  break;
+  case ( kNuisSuperkEff1RmuCCQErc1u ) : return true;  break;
+  case ( kNuisSuperkEff1RmuCCQErc2u ) : return true;  break;
+  case ( kNuisSuperkEff1RmuCCnonQE  ) : return true;  break;
+  case ( kNuisSuperkEff1RmuNC       ) : return true;  break;
+  case ( kNuisSuperkEff1RmuNueCC    ) : return true;  break;
+  case ( kNuisSuperkEff1ReNueSigCC0 ) : return true;  break;
+  case ( kNuisSuperkEff1ReNueSigCC1 ) : return true;  break;
+  case ( kNuisSuperkEff1ReNueSigCC2 ) : return true;  break;
+  case ( kNuisSuperkEff1ReNumuCC0   ) : return true;  break;
+  case ( kNuisSuperkEff1ReNumuCC1   ) : return true;  break;
+  case ( kNuisSuperkEff1ReNumuCC2   ) : return true;  break;
+  case ( kNuisSuperkEff1ReNueCC0    ) : return true;  break;
+  case ( kNuisSuperkEff1ReNueCC1    ) : return true;  break;
+  case ( kNuisSuperkEff1ReNueCC2    ) : return true;  break;
+  case ( kNuisSuperkEff1ReNC0       ) : return true;  break;
+  case ( kNuisSuperkEff1ReNC1       ) : return true;  break;
+  case ( kNuisSuperkEff1ReNC2       ) : return true;  break;
+  default :
+    return false;
+  }
+  return false;
+}
+//____________________________________________________________________________                                                                                   
+bool t2kana::util::IsFSI(PhysParamId_t p)
+{
+  switch(p) {
+    case ( kNuisFSI000                ) : return true;  break;
+    case ( kNuisFSI001                ) : return true;  break;
+    case ( kNuisFSI002                ) : return true;  break;
+    case ( kNuisFSI003                ) : return true;  break;
+    case ( kNuisFSI004                ) : return true;  break;
+    case ( kNuisFSI005                ) : return true;  break;
+    case ( kNuisFSI1Re000             ) : return true;  break;
+    case ( kNuisFSI1Re001             ) : return true;  break;
+    case ( kNuisFSI1Re002             ) : return true;  break;
+    case ( kNuisFSI1Re003             ) : return true;  break;
+    case ( kNuisFSI1Re004             ) : return true;  break;
+    case ( kNuisFSI1Re005             ) : return true;  break;
+    case ( kNuisFSI1Re006             ) : return true;  break;
+    case ( kNuisFSI1Re007             ) : return true;  break;
+    case ( kNuisFSI1Re008             ) : return true;  break;
+    case ( kNuisFSI1Re009             ) : return true;  break;
+    case ( kNuisFSI1Re010             ) : return true;  break;
+    case ( kNuisFSI1Re011             ) : return true;  break;
+  default :
+    return false;
+  }
+  return false;
+}
+
 //____________________________________________________________________________
 bool t2kana::util::IsSystematic(PhysParamId_t p)
 {

@@ -128,6 +128,13 @@ namespace util {
   bool IsNC           (conv::SuperkMode_t  m);
   bool IsSystematic   (conv::PhysParamId_t p);
   bool IsMixingAngle  (conv::PhysParamId_t p);
+  bool IsBANFF        (conv::PhysParamId_t p);
+  bool IsXSec         (conv::PhysParamId_t p);
+  bool IsUsingSplines (conv::PhysParamId_t p);
+  bool IsEff          (conv::PhysParamId_t p);
+  bool IsEff1Rmu      (conv::PhysParamId_t p);
+  bool IsEff1Re       (conv::PhysParamId_t p);
+  bool IsFSI          (conv::PhysParamId_t p);
   bool IsNeutrino     (int pdg_code);
   bool IsAntiNeutrino (int pdg_code);
 
