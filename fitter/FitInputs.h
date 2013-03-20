@@ -78,7 +78,8 @@ public :
   SuperkObservation & Observation(void);
   SuperkExpectation & Expectation(void);
   FitParamList &      FitParams  (void);
-  
+  void UpdateParamList(FitParamList * fpar);
+
   // set the chisq definition 5 bins vs 73 bins
   void SetChisqDefinition (bool goodnessoffit) { fGoodnessOfFit = goodnessoffit; }
   

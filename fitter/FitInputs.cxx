@@ -71,6 +71,11 @@ FitInputs::~FitInputs()
 
 }
 //________________________________________________________________________________________
+void FitInputs::UpdateParamList(FitParamList * fpar)
+{
+  fFitParams = fpar;
+}
+//________________________________________________________________________________________
 SuperkObservation & FitInputs::Observation(void) 
 { 
   return *fObs;       
