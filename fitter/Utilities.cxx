@@ -1239,26 +1239,26 @@ string t2kana::util::AsStringPaperTex(PhysParamId_t p)
     // SK detector  
     //                                                                                                                                                                                 
   case ( kNuisSuperkEnergyScale     ) : return "$f_{E; r}^{SK}$  ";                 break;
-  case ( kNuisSuperkEff1RmuCCQEoth  ) : return "$f_{CCQEoth; r}^{SK}$";             break;
-  case ( kNuisSuperkEff1RmuCCQErc0u ) : return "$f_{CCQERC0; r}^{SK}$";             break;
-  case ( kNuisSuperkEff1RmuCCQErc1u ) : return "$f_{CCQERC1; r}^{SK}$";             break;
-  case ( kNuisSuperkEff1RmuCCQErc2u ) : return "$f_{CCQERC2; r}^{SK}$";             break;
-  case ( kNuisSuperkEff1RmuCCnonQE  ) : return "$f_{CCnQE; r}^{SK}$";               break;
-  case ( kNuisSuperkEff1RmuNC       ) : return "$f_{NC; r}^{SK}$";                  break;
-  case ( kNuisSuperkEff1RmuNueCC    ) : return "$f_{\\nu_e; r}^{SK}$";              break;
+  case ( kNuisSuperkEff1RmuCCQEoth  ) : return "$f_{1R_{\\mu}: CCQEoth; r}^{SK}$";             break;
+  case ( kNuisSuperkEff1RmuCCQErc0u ) : return "$f_{1R_{\\mu}: CCQERC0; r}^{SK}$";             break;
+  case ( kNuisSuperkEff1RmuCCQErc1u ) : return "$f_{1R_{\\mu}: CCQERC1; r}^{SK}$";             break;
+  case ( kNuisSuperkEff1RmuCCQErc2u ) : return "$f_{1R_{\\mu}: CCQERC2; r}^{SK}$";             break;
+  case ( kNuisSuperkEff1RmuCCnonQE  ) : return "$f_{1R_{\\mu}: CCnQE; r}^{SK}$";               break;
+  case ( kNuisSuperkEff1RmuNC       ) : return "$f_{1R_{\\mu}: NC; r}^{SK}$";                  break;
+  case ( kNuisSuperkEff1RmuNueCC    ) : return "$f_{1R_{\\mu}: \\nu_e; r}^{SK}$";              break;
 
-  case ( kNuisSuperkEff1ReNueSigCC0  )   : return "$f_{1Re: osc \\nu_e CC E0; r}^{SK}$";     break;
-  case ( kNuisSuperkEff1ReNueSigCC1  )   : return "$f_{1Re: osc \\nu_e CC E1; r}^{SK}$";     break;
-  case ( kNuisSuperkEff1ReNueSigCC2  )   : return "$f_{1Re: osc \\nu_e CC E2; r}^{SK}$";     break;
-  case ( kNuisSuperkEff1ReNumuCC0    )   : return "$f_{1Re: \\nu_{\\mu} CC E0; r}^{SK}$";     break;
-  case ( kNuisSuperkEff1ReNumuCC1    )   : return "$f_{1Re: \\nu_{\\mu} CC E1; r}^{SK}$";   break;
-  case ( kNuisSuperkEff1ReNumuCC2    )   : return "$f_{1Re: \\nu_{\\mu} CC E2; r}^{SK}$";   break;
-  case ( kNuisSuperkEff1ReNueCC0     )   : return "$f_{1Re: \\nu_{e} CC E0; r}^{SK}$";   break;
-  case ( kNuisSuperkEff1ReNueCC1     )   : return "$f_{1Re: \\nu_{e} CC E1; r}^{SK}$";   break;
-  case ( kNuisSuperkEff1ReNueCC2     )   : return "$f_{1Re: \\nu_{e} CC E2; r}^{SK}$";   break;
-  case ( kNuisSuperkEff1ReNC0        )   : return "$f_{1Re: NC E0; r}^{SK}$";   break;
-  case ( kNuisSuperkEff1ReNC1        )   : return "$f_{1Re: NC E1; r}^{SK}$";   break;
-  case ( kNuisSuperkEff1ReNC2        )   : return "$f_{1Re: NC E2; r}^{SK}$";   break;
+  case ( kNuisSuperkEff1ReNueSigCC0  )   : return "$f_{1R_{e}: osc \\nu_e CC E0; r}^{SK}$";     break;
+  case ( kNuisSuperkEff1ReNueSigCC1  )   : return "$f_{1R_{e}: osc \\nu_e CC E1; r}^{SK}$";     break;
+  case ( kNuisSuperkEff1ReNueSigCC2  )   : return "$f_{1R_{e}: osc \\nu_e CC E2; r}^{SK}$";     break;
+  case ( kNuisSuperkEff1ReNumuCC0    )   : return "$f_{1R_{e}: \\nu_{\\mu} CC E0; r}^{SK}$";     break;
+  case ( kNuisSuperkEff1ReNumuCC1    )   : return "$f_{1R_{e}: \\nu_{\\mu} CC E1; r}^{SK}$";   break;
+  case ( kNuisSuperkEff1ReNumuCC2    )   : return "$f_{1R_{e}: \\nu_{\\mu} CC E2; r}^{SK}$";   break;
+  case ( kNuisSuperkEff1ReNueCC0     )   : return "$f_{1R_{e}: \\nu_{e} CC E0; r}^{SK}$";   break;
+  case ( kNuisSuperkEff1ReNueCC1     )   : return "$f_{1R_{e}: \\nu_{e} CC E1; r}^{SK}$";   break;
+  case ( kNuisSuperkEff1ReNueCC2     )   : return "$f_{1R_{e}: \\nu_{e} CC E2; r}^{SK}$";   break;
+  case ( kNuisSuperkEff1ReNC0        )   : return "$f_{1R_{e}: NC E0; r}^{SK}$";   break;
+  case ( kNuisSuperkEff1ReNC1        )   : return "$f_{1R_{e}: NC E1; r}^{SK}$";   break;
+  case ( kNuisSuperkEff1ReNC2        )   : return "$f_{1R_{e}: NC E2; r}^{SK}$";   break;
 
 
     //                                                          
@@ -1418,26 +1418,26 @@ string t2kana::util::AsStringPaperRooTex(PhysParamId_t p)
     // SK detector 
     //                                                                                                                                                                                 
   case ( kNuisSuperkEnergyScale     ) : return "f_{E; r}^{SK}  ";                 break;
-  case ( kNuisSuperkEff1RmuCCQEoth  ) : return "f_{CCQEoth; r}^{SK}";             break;
-  case ( kNuisSuperkEff1RmuCCQErc0u ) : return "f_{CCQERC0; r}^{SK}";             break;
-  case ( kNuisSuperkEff1RmuCCQErc1u ) : return "f_{CCQERC1; r}^{SK}";             break;
-  case ( kNuisSuperkEff1RmuCCQErc2u ) : return "f_{CCQERC2; r}^{SK}";             break;
-  case ( kNuisSuperkEff1RmuCCnonQE  ) : return "f_{CCnQE; r}^{SK}";               break;
-  case ( kNuisSuperkEff1RmuNC       ) : return "f_{NC; r}^{SK}";                  break;
-  case ( kNuisSuperkEff1RmuNueCC    ) : return "f_{#nu_e; r}^{SK}";              break;
+  case ( kNuisSuperkEff1RmuCCQEoth  ) : return "f_{1R_{#mu}: CCQEoth; r}^{SK}";             break;
+  case ( kNuisSuperkEff1RmuCCQErc0u ) : return "f_{1R_{#mu}: CCQERC0; r}^{SK}";             break;
+  case ( kNuisSuperkEff1RmuCCQErc1u ) : return "f_{1R_{#mu}: CCQERC1; r}^{SK}";             break;
+  case ( kNuisSuperkEff1RmuCCQErc2u ) : return "f_{1R_{#mu}: CCQERC2; r}^{SK}";             break;
+  case ( kNuisSuperkEff1RmuCCnonQE  ) : return "f_{1R_{#mu}: CCnQE; r}^{SK}";               break;
+  case ( kNuisSuperkEff1RmuNC       ) : return "f_{1R_{#mu}: NC; r}^{SK}";                  break;
+  case ( kNuisSuperkEff1RmuNueCC    ) : return "f_{1R_{#mu}: #nu_e; r}^{SK}";              break;
 
-  case ( kNuisSuperkEff1ReNueSigCC0  )   : return "f_{1Re: osc #nu_e CC E0; r}^{SK}";     break;
-  case ( kNuisSuperkEff1ReNueSigCC1  )   : return "f_{1Re: osc #nu_e CC E1; r}^{SK}";     break;
-  case ( kNuisSuperkEff1ReNueSigCC2  )   : return "f_{1Re: osc #nu_e CC E2; r}^{SK}";     break;
-  case ( kNuisSuperkEff1ReNumuCC0    )   : return "f_{1Re: #nu_{#mu} CC E0; r}^{SK}";     break;
-  case ( kNuisSuperkEff1ReNumuCC1    )   : return "f_{1Re: #nu_{#mu} CC E1; r}^{SK}";   break;
-  case ( kNuisSuperkEff1ReNumuCC2    )   : return "f_{1Re: #nu_{#mu} CC E2; r}^{SK}";   break;
-  case ( kNuisSuperkEff1ReNueCC0     )   : return "f_{1Re: #nu_{e} CC E0; r}^{SK}";   break;
-  case ( kNuisSuperkEff1ReNueCC1     )   : return "f_{1Re: #nu_{e} CC E1; r}^{SK}";   break;
-  case ( kNuisSuperkEff1ReNueCC2     )   : return "f_{1Re: #nu_{e} CC E2; r}^{SK}";   break;
-  case ( kNuisSuperkEff1ReNC0        )   : return "f_{1Re: NC E0; r}^{SK}";   break;
-  case ( kNuisSuperkEff1ReNC1        )   : return "f_{1Re: NC E1; r}^{SK}";   break;
-  case ( kNuisSuperkEff1ReNC2        )   : return "f_{1Re: NC E2; r}^{SK}";   break;
+  case ( kNuisSuperkEff1ReNueSigCC0  )   : return "f_{1R_{e}: osc #nu_e CC E0; r}^{SK}";     break;
+  case ( kNuisSuperkEff1ReNueSigCC1  )   : return "f_{1R_{e}: osc #nu_e CC E1; r}^{SK}";     break;
+  case ( kNuisSuperkEff1ReNueSigCC2  )   : return "f_{1R_{e}: osc #nu_e CC E2; r}^{SK}";     break;
+  case ( kNuisSuperkEff1ReNumuCC0    )   : return "f_{1R_{e}: #nu_{#mu} CC E0; r}^{SK}";     break;
+  case ( kNuisSuperkEff1ReNumuCC1    )   : return "f_{1R_{e}: #nu_{#mu} CC E1; r}^{SK}";   break;
+  case ( kNuisSuperkEff1ReNumuCC2    )   : return "f_{1R_{e}: #nu_{#mu} CC E2; r}^{SK}";   break;
+  case ( kNuisSuperkEff1ReNueCC0     )   : return "f_{1R_{e}: #nu_{e} CC E0; r}^{SK}";   break;
+  case ( kNuisSuperkEff1ReNueCC1     )   : return "f_{1R_{e}: #nu_{e} CC E1; r}^{SK}";   break;
+  case ( kNuisSuperkEff1ReNueCC2     )   : return "f_{1R_{e}: #nu_{e} CC E2; r}^{SK}";   break;
+  case ( kNuisSuperkEff1ReNC0        )   : return "f_{1R_{e}: NC E0; r}^{SK}";   break;
+  case ( kNuisSuperkEff1ReNC1        )   : return "f_{1R_{e}: NC E1; r}^{SK}";   break;
+  case ( kNuisSuperkEff1ReNC2        )   : return "f_{1R_{e}: NC E2; r}^{SK}";   break;
     
     //
     // BANFF flux and cross-section params 
