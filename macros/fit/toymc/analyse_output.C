@@ -378,24 +378,25 @@ void analyse_output
   }//spectrum_other_rebin
   //draw them on the same canvas
   if(spectrum_other_rebin) {
+    double top_plot_fraction = 0.6;
     TCanvas *csaxis = new TCanvas();
     csaxis->cd(1);
-    csaxis->SetBottomMargin(0.3);
+    csaxis->SetBottomMargin(1-top_plot_fraction);
     spectrum_noosc_rebin->SetLabelSize(0);
     spectrum_noosc_rebin->Draw("");
     spectrum_obs_rebin->Draw("PE0same");
-    spectrum_other_rebin->Draw("same");
+    //spectrum_other_rebin->Draw("same");
     spectrum_bf_rebin->Draw("same");
 
     legg->Clear();
     legg->AddEntry(spectrum_obs_rebin, "T2K Run 1-3 data", "pl");
     legg->AddEntry(spectrum_noosc_rebin, "No oscillation hypothesis", "l");
     legg->AddEntry(spectrum_bf_rebin, "T2K best fit", "l");
-    legg->AddEntry(spectrum_other_rebin, "T2K best fit alternative analysis", "l");
+    //legg->AddEntry(spectrum_other_rebin, "T2K best fit alternative analysis", "l");
     legg->Draw();
 
     TPad * pad = new TPad("pad","pad",0,0,1,1);
-    pad->SetTopMargin(0.7);
+    pad->SetTopMargin(top_plot_fraction);
     pad->SetFillColor(0);
     pad->SetFillStyle(0);
     pad->Draw();
@@ -403,8 +404,9 @@ void analyse_output
     spectrum_ratio_obs_rebin->GetYaxis()->SetNdivisions(505);
     spectrum_ratio_obs_rebin->GetYaxis()->SetRangeUser(0,1.9);
     spectrum_ratio_obs_rebin->GetYaxis()->SetTitle("#splitline{Ratio to no}{oscillations}");
+    spectrum_ratio_obs_rebin->GetXaxis()->SetTitle("Reconstructed #nu energy / GeV");
     spectrum_ratio_obs_rebin->Draw("PE0");
-    spectrum_ratio_other_rebin->Draw("same");
+    //spectrum_ratio_other_rebin->Draw("same");
     spectrum_ratio_bf_rebin->Draw("sameH");
     spectrum_line->Draw("same");
 

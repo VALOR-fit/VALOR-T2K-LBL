@@ -394,6 +394,8 @@ void plot_contour_comparisons
   leg->Draw();
   //bestfit.Draw();
   c->SaveAs("compare_KIT_FC.eps");
+  leg->Clear()
+  c->SaveAs("compare_KIT_FC.pdf");
 
   //Run 1-3 const dchisq vs FC + externals (2+8)
   osc_param_space->GetXaxis()->SetRangeUser(0.85,1.0);
@@ -1102,6 +1104,14 @@ void plot_contour_comparisons
   leg->SetX2NDC(0.43);
   leg->Draw();
   c->SaveAs("compare_contours_ratiomax_FC.eps");
+  leg->Clear();
+  leg->AddEntry(h_fcall_123_68, "Likelihood ratio FC 3#nu 68% CL","l");
+  leg->AddEntry(h_fcall_123_90, "Likelihood ratio FC 3#nu 90% CL","l");
+  leg->AddEntry(h_fc_kit_68, "Max likelihood FC 3#nu 68% CL","l");
+  leg->AddEntry(h_fc_kit_90, "Max likelihood FC 3#nu 90% CL","l");
+  leg->SetX2NDC(0.43);
+  leg->Draw();
+  c->SaveAs("compare_contours_ratiomax_FC.eps");
 
   //again,with externals
   osc_param_space->GetXaxis()->SetRangeUser(0.82,1.0);
@@ -1365,4 +1375,44 @@ void plot_contour_comparisons
   c->SaveAs("contour_compare_constdchisq_external_old.pdf");
   c->SaveAs("contour_compare_constdchisq_external_old.eps");
   c->SaveAs("contour_compare_constdchisq_external_old.png");
+
+
+
+
+  //PAPER
+  TH2D * osc_param_space2 = new TH2D("osc_param_space2", "",
+				     mixing23_nbins, 0.92, 1,
+				     dm23sq_nbins, 0.00205, 0.00305);
+  osc_param_space2->GetXaxis()->SetTitle("sin^{2}(2#theta_{23})"); // adjust if mixing param is sinsqtheta rather than sinsq2theta...
+  osc_param_space2->GetYaxis()->SetTitle("|#Deltam_{32}^{2}| (eV^{2}/c^{4})");
+  //osc_param_space2->GetXaxis()->SetTitleOffset(1.2);
+  osc_param_space2->GetYaxis()->SetTitleOffset(1.4);
+  osc_param_space2->Draw();  
+  h_fcall_123_68->SetLineColor(kBlack);;
+  h_fcall_123_90->SetLineColor(kBlack);;
+  h_fc_kit_68->SetLineColor(kRed);;
+  h_fc_kit_90->SetLineColor(kRed);;
+  h_fcall_123_68->Draw("cont3same");
+  h_fcall_123_90->Draw("cont3same");
+  h_fc_kit_68->Draw("cont3same");
+  h_fc_kit_90->Draw("cont3same");
+  bestfit_2all.Draw();
+  bestfit_kit.SetMarkerStyle(24);
+  bestfit_kit.SetMarkerColor(kRed);
+  bestfit_kit.Draw();
+  TLegend * leg2 = new TLegend(0.17,0.7,0.65,0.92);
+  leg2->SetFillColor(0);
+  leg2->SetFillStyle(0);
+  leg2->SetBorderSize(0);
+  leg2->SetTextFont(42);
+  leg2->AddEntry(h_fcall_123_68, "Likelihood ratio analysis 68% C.L.","l");
+  leg2->AddEntry(h_fcall_123_90, "Likelihood ratio analysis 90% C.L.","l");
+  leg2->AddEntry(h_fc_kit_68, "Max likelihood analysis 68% C.L.","l");
+  leg2->AddEntry(h_fc_kit_90, "Max likelihood analysis 90% C.L.","l");
+  leg2->SetX2NDC(0.43);
+  leg2->Draw();
+  c->SaveAs("contour_compare_methods.eps");
+  c->SaveAs("contour_compare_methods.pdf");
+  c->SaveAs("contour_compare_methods.png");
+
 }
