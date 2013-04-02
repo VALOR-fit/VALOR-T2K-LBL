@@ -27,7 +27,7 @@ optionParser.add_option("--minuit", action="store_true", dest="minuit", default=
 basedir = os.getenv("PWD")
 
 #initialise some variables
-fitstr = "--minuit2"
+fitstr = "--minuit"
 if opt.minuit == True:
    fitstr = ""
 conffile = "analysis_configuration.xml"

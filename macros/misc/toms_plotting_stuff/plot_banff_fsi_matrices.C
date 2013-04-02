@@ -1,14 +1,16 @@
 void plot_banff_fsi_matrices
 (
  const char * banfffile = "inputs/official/2012/banff/postfit_banff_v8_osc_marg_MAQE_EBfix.root",
- const char * fsifile   = "inputs/official/2012/fsi/FSIandSIError_ICL_SKDetectorBinning.root"
+ const char * fsifile   = "inputs/official/2012/fsi/FSIandSIError_ICL_SKDetectorBinning.root",
+ bool         summary   = false
  )
 {
   TFile fb(banfffile);
   TFile ff(fsifile);
 
   TCanvas * c = new TCanvas();
-  c->SetRightMargin(0.15);
+  if(!summary)
+    c->SetRightMargin(0.15);
 
   // FSI+SI
 
@@ -91,7 +93,10 @@ void plot_banff_fsi_matrices
     if(i%2 == 0) {
       banff_xaxis->SetBinLabel(i+1,Form("f_{%d; t, r}^{banff}", i));
       banff_yaxis->SetBinLabel(i+1,Form("f_{%d; t, r}^{banff}", i));
-      banff_diag_sqrt_xaxis->SetBinLabel(i+1,Form("f_{%d; t, r}^{banff}", i));
+      if(summary)
+	banff_diag_sqrt_xaxis->SetBinLabel(i+1,Form("", i));
+      else
+	banff_diag_sqrt_xaxis->SetBinLabel(i+1,Form("f_{%d; t, r}^{banff}", i));
     }
   }
   
@@ -109,6 +114,27 @@ void plot_banff_fsi_matrices
   banff_diag_sqrt_pre->SetBarOffset(0.5);
   banff_diag_sqrt_pre->SetStats(0);
   banff_diag_sqrt_pre->Draw("bar same");
+
+  TLatex l1(0.2,-0.05,"#uparrow #nu_{#mu} flux #rightarrow");
+  l1.SetTextSize(0.05);
+  TLatex l2(11.2,-0.05,"#uparrow #bar{#nu_{#mu}} flux #rightarrow");
+  l2.SetTextSize(0.05);
+  TLatex l3(16.2,-0.05,"#uparrow cross section #rightarrow");
+  l3.SetTextSize(0.05);
+  
+  TLegend * leg = new TLegend(0.1,0.7,0.48,0.9);
+  leg->SetFillColor(kRed);
+  leg->AddEntry(banff_diag_sqrt_pre, "Pre ND280 fit", "f");
+  leg->AddEntry(banff_diag_sqrt, "Post ND280 fit", "f");
+
+  if(summary) {
+    l1.Draw();
+    l2.Draw();
+    l3.Draw();
+    leg->Draw(); 
+  }
+
+  c->Update();
 
   c->SaveAs("banff_diag_sqrt.eps");
 }
