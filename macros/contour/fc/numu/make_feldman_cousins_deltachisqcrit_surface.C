@@ -70,7 +70,7 @@ void make_feldman_cousins_deltachisqcrit_surface(
   double mixing23_step  = 0.005;
   double dm23sq_min     = 1E-3;
   double dm23sq_max     = 6E-3;
-  double dm23sq_step    = 1E-4;
+  double dm23sq_step    = 5E-5;
   // make sure that min and max are at the bin centre and not at the low/high edge of the first/last bin
   int mixing23_nbins = 1 + (int) ((mixing23_max - mixing23_min) / mixing23_step);
   int dm23sq_nbins   = 1 + (int) ((dm23sq_max   - dm23sq_min  ) / dm23sq_step  );

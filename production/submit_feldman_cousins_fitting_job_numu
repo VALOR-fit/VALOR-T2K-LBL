@@ -50,6 +50,8 @@ foreach (@ARGV) {
   if($_ eq '--job-dir'               ) { $job_dir               = $ARGV[$iarg+1]; }
   if($_ eq '--softw-dir'             ) { $softw_dir             = $ARGV[$iarg+1]; }
   if($_ eq '--config-file'           ) { $config_file           = $ARGV[$iarg+1]; }
+  if($_ eq '--dm23sqonly'            ) { $dm23sq_only           = 1;              }
+  if($_ eq '--mixing23only'          ) { $mixing23_only         = 1;              }
   $iarg++;
 }
 $min_dm23sq_bin         = 1                             unless defined $min_dm23sq_bin;
@@ -69,6 +71,8 @@ $fitoption              = "minuit"                      unless defined $fitoptio
 $job_dir                = `pwd`                         unless defined $job_dir;
 $softw_dir              = `pwd`                         unless defined $softw_dir;
 $config_file            = "analysis_configuration.xml"  unless defined $config_file;
+$dm23sq_only            = 0                             unless defined $dm23sq_only;
+$mixing23_only          = 0                             unless defined $mixing23_only;
 
 if( !defined $cput) {
   if($resource eq "RAL"   ) { $cput = "6:00:00";  }
@@ -87,7 +91,7 @@ while($irun < $nruns) {
 
   print "Submitting $tag run: $irun \n";
 
-  $command  = "root2k -l -b -q \'$macro_dir/macros/contour/fc/numu/feldman_cousins_fitting_job.C(\"$tag\",$irun,$nexpts,$min_dm23sq_bin,$max_dm23sq_bin,$min_sinsq2theta23_bin,$max_sinsq2theta23_bin,\"$bin_list\",\"$config_file\",$stat_fluct,$twk_systematics,$twk_non23osc,\"$fitparamlist\",\"$fitoption\")\'";
+  $command  = "root2k -l -b -q \'$macro_dir/macros/contour/fc/numu/feldman_cousins_fitting_job.C(\"$tag\",$irun,$nexpts,$min_dm23sq_bin,$max_dm23sq_bin,$min_sinsq2theta23_bin,$max_sinsq2theta23_bin,\"$bin_list\",\"$config_file\",$stat_fluct,$twk_systematics,$twk_non23osc,\"$fitparamlist\",\"$fitoption\",$dm23sq_only,$mixing23_only)\'";
   print "$command \n";
 
   #

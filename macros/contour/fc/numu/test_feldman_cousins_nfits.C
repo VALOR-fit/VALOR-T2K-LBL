@@ -21,7 +21,7 @@ void test_feldman_cousins_nfits(const char * directory)
   double mixing23_step  = 0.005;
   double dm23sq_min     = 1E-3;
   double dm23sq_max     = 6E-3;
-  double dm23sq_step    = 1E-4;
+  double dm23sq_step    = 5E-5;
   // make sure that min and max are at the bin centre and not at the low/high edge of the first/last bin
   int mixing23_nbins = 1 + (int) ((mixing23_max - mixing23_min) / mixing23_step);
   int dm23sq_nbins   = 1 + (int) ((dm23sq_max   - dm23sq_min  ) / dm23sq_step  );
@@ -36,6 +36,16 @@ void test_feldman_cousins_nfits(const char * directory)
           dm23sq_min - 0.5*dm23sq_step,
           dm23sq_max + 0.5*dm23sq_step);
 
+  TH1D* hNFitsVsOscParMixing = new TH2D("hNFitsVsOscParMixing", "",
+          mixing23_nbins, 
+          mixing23_min - 0.5*mixing23_step,
+          mixing23_max + 0.5*mixing23_step);
+
+  TH2D* hNFitsVsOscParDmsq = new TH2D("hNFitsVsOscParDmsq", "",
+          dm23sq_nbins,
+          dm23sq_min - 0.5*dm23sq_step,
+          dm23sq_max + 0.5*dm23sq_step);
+
   //          
   // Load results of toy-experiment fits
   //          
@@ -44,7 +54,13 @@ void test_feldman_cousins_nfits(const char * directory)
   chain.Add(Form("%s/*root",directory));
 
   chain.Draw("input_dm23sq:input_mixing23>>hNFitsVsOscPar","","goff");
+  chain.Draw("input_mixing23>>hNFitsVsOscParMixing","","goff");
+  chain.Draw("input_dm23sq>>hNFitsVsOscParDmsq","","goff");
 
   TCanvas * c = new TCanvas("c", "", 20, 20, 600, 600);
   hNFitsVsOscPar->Draw("colz");  
+  TCanvas * cm = new TCanvas("cm", "", 20, 20, 600, 600);
+  hNFitsVsOscParMixing->Draw("colz");  
+  TCanvas * cd = new TCanvas("cd", "", 20, 20, 600, 600);
+  hNFitsVsOscParDmsq->Draw("colz");  
 }
