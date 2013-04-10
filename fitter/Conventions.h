@@ -35,6 +35,12 @@ Changes since 2011_v0.9.0:
 #define BANFF_BINS 5 // DEFAULT Final BANNF + MEC.
 #endif
 
+#if BANFF_BINS == 5
+#ifndef FITMEC
+#define FITMEC // have this uncommented to add MEC to the "nuisanceselection" parameter lists
+#endif
+#endif
+
 #ifndef FSI_BINS
 #define FSI_BINS 1 // DEFAULT 6 bins (0-0.4, 0.4-1.1, 1.1-30.0 GeV Ereco) for numu(bar)CCQE, numu(bar)CCnQE, nueCC, allNC (DEFAULT for collab meeting)
 //#define FSI_BINS 2 // 15 bins (0-0.4, 0.4-1.1, 1.1-30.0 GeV Ereco) x (numu, numubar, nue, nuebar, oscnue)

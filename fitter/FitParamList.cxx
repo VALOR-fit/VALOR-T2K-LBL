@@ -16,7 +16,7 @@
 #define SYST_NSIGMA 5   // number of sigma away from nominal nuisance parameters are allowed to be
 #define SYST_STEP   0.1 // step size (in units of sigma)
 #define NSELECTED_NONBANFF 6
-#define NSELECTED_BANFF    2
+#define NSELECTED_BANFF    3
 #define NSELECTED_UNBANFF  0
 
 #include <cassert>
@@ -1013,6 +1013,13 @@ void FitParamList::AppendSelectedCorrelatedBANFFSystematics(FitParamList * fparm
   err = sqrt(BANFFCov[bidx][bidx]);
   lowerr = TMath::Max(0., bf-(err*SYST_NSIGMA));
   fparm->AddParam( ip++, kNuisBANFFCCQEE0,  bf, lowerr, bf+(err*SYST_NSIGMA),  err*SYST_STEP,  false, true);
+#ifdef FITMEC
+  bidx = util::ArrIdx::Instance()->BANFFSystIdx(kNuisBANFFMEC);
+  bf  = BANFFBestFit[bidx];
+  err = sqrt(BANFFCov[bidx][bidx]);
+  lowerr = TMath::Max(0., bf-(err*SYST_NSIGMA));
+  fparm->AddParam( ip++, kNuisBANFFMEC,  bf, lowerr, bf+(err*SYST_NSIGMA),  err*SYST_STEP,  false, true);
+#endif
 
 }
 //________________________________________________________________________________________

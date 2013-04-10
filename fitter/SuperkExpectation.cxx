@@ -796,14 +796,31 @@ void SuperkExpectation::SetNuisanceParams(const FitParamList & fp, bool all_banf
      else
        twkv[ip_ccqe0] = this->GetBANFF()->CurrentValue(p_ccqe0);
      double sigma_ccqe0 = (twkv[ip_ccqe0] - this->GetBANFF()->BestFitValue(p_ccqe0)) / cov[ip_ccqe0][ip_ccqe0];
+#ifdef FITMEC
+     PhysParamId_t p_mec = kNuisBANFFMEC;
+     int ip_mec = util::ArrIdx::Instance()->BANFFSystIdx(p_mec);
+     bool incl_mec = fp.Exists(p_mec);
+     if(incl_mec)
+       twkv[ip_mec] = fp.CurrValue(p_mec);
+     else
+       twkv[ip_mec] = this->GetBANFF()->CurrentValue(p_mec);
+     double sigma_mec = (twkv[ip_mec] - this->GetBANFF()->BestFitValue(p_mec)) / cov[ip_mec][ip_mec];
+#endif
      // now, tweak the other parameters according to the correlations between them and the fitted parameters
      for(int ip = 0; ip < nbanff; ip++) {
        PhysParamId_t p = PhysParamId_t ((int) kNuisBANFF00 + ip);
-       if(p == kNuisBANFFMAQE || p == kNuisBANFFCCQEE0)
+       if(p == kNuisBANFFMAQE || p == kNuisBANFFCCQEE0
+#ifdef FITMEC
+	  || kNuisBANFFMEC
+#endif
+	  )
 	 continue;
        twkv[ip] = this->GetBANFF()->BestFitValue(p);
        twkv[ip] += sigma_maqe  * cov[ip_maqe] [ip];
        twkv[ip] += sigma_ccqe0 * cov[ip_ccqe0][ip];
+#ifdef FITMEC
+       twkv[ip] += sigma_mec   * cov[ip_mec]  [ip];
+#endif
      }
    }//!all_banff_fit
    //And finally apply the tweak
