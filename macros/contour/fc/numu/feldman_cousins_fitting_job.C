@@ -161,7 +161,7 @@ void feldman_cousins_fitting_job
     cout << "Doing a 1D FC scanning dm32sq only" << endl;
   else if(mixing23_only)
     cout << "Doing a 1D FC scanning mixing23 only" << endl;
-  else()
+  else
     cout << "Doing a 2D FC scanning dm32sq and mixing23" << endl;
   if(dm23sq_only && mixing23_only) {
     cerr << "Cannot do 1D dm32sq and 1D mixing23 in the same job. Please check your options" << endl;
@@ -261,15 +261,17 @@ void feldman_cousins_fitting_job
               << endl;
      }
      if(mixing23_only) {
-       input_dm23sq   = util::RandomizeDm23sq(); 
+       //input_dm23sq   = util::RandomizeDm23sq(); 
+       input_dm23sq   = conv::kGlobFitDm23sq
        cout << "- Toy-MC > True (randomized) dm32sq: " 
-	    << util::AsString(conv::kPhypDm23sq)   << " = " << input_dm23sq   << " eV^2, "
+	    << util::AsString(conv::kPhypDm23sq)   << " = " << input_dm23sq   << " eV^2"
 	    << endl;
      }
      if(dm23sq_only) {
-       input_mixing23 = util::RandomizeMixing23();
+       //input_mixing23 = util::RandomizeMixing23();
+       input_mixing23 = conv::kGlobFitSinsq2Theta23;
        cout << "- Toy-MC > True (randomized) mixing23: " 
-	    << util::AsString(conv::kPhypMixing23) << " = " << input_mixing23 << ", "
+	    << util::AsString(conv::kPhypMixing23) << " = " << input_mixing23
 	    << endl;
      }
 
