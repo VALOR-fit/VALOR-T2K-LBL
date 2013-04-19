@@ -7,6 +7,6 @@
 #
 
 setenv T2KOSCANA $1
-setenv ROOTSYS /usr/local/root/v5.28.00d/
+setenv ROOTSYS /usr/local/root/v5.34.03
 setenv LD_LIBRARY_PATH ${T2KOSCANA}/fitter:${ROOTSYS}/lib:${LD_LIBRARY_PATH}
 setenv PATH ${T2KOSCANA}/root:${T2KOSCANA}/production:${ROOTSYS}/bin:${PATH}
