@@ -78,7 +78,7 @@ void test_n_mock_data_fits_xml
 
      // Get fitter
      FitInputs * fit_inputs = new FitInputs(skobs,skexp,fparm);
-     FitterABC * fitter = new Superk1RmuErecoFitter(fit_inputs,fit_option);
+     FitterABC * fitter = util::GetFitter(fit_inputs,fit_option);
 
      // Do the fit
      fitter->DoTheFit();

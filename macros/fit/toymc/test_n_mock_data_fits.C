@@ -90,6 +90,7 @@ void test_n_mock_data_fits
   cout << "     - Storing best-fit spectra: "    << ((store_bestfit_spectrum) ? "YES " : "NO") << endl;
   cout << endl;
   cout << *Opt::Instance() << endl;
+  cout << *Rnd::Instance() << endl;
 
   // Fit parameter list
   FitParamList * fparm = FitParamList::NamedParameterList(fit_param_list);
@@ -160,7 +161,7 @@ void test_n_mock_data_fits
 
      // Get fitter
      FitInputs * fit_inputs = new FitInputs(skobs,skexp,fparm);
-     FitterABC * fitter = new Superk1RmuErecoFitter(fit_inputs,fit_option);
+     FitterABC * fitter = util::GetFitter(fit_inputs,fit_option);
 
      // Chisq for true (input) params
      double true_chisq = fit_inputs->Chisquare();
@@ -209,36 +210,18 @@ void test_n_mock_data_fits
 		  input_mixing12, input_mixing13, input_mixing23, 
                   input_deltacp, input_dm12sq, input_dm23sq);
 
-     string output_option = "";
-     if ( store_toy_expts        ) { output_option += "Observation";     }
-     if ( store_bestfit_spectrum ) { output_option += "+BestFitSpectra"; }
-     if ( store_chisq_surf       ) { output_option += "+ChisqSurface";   }
-     fitter->Analyze(output_option.c_str());
-
      // Store toy-MC expt (if asked)
      if(store_toy_expts) {
-        TH1D * h = (TH1D*) fitter->GetResults().FindObject("data");
-        TH1D * toyexpspectrum = new TH1D(*h);
-        f.cd();
-        toyexpspectrum->SetName(Form("toyexp_ereco_spectrum_1Rmu_%d",iexperiment));
-        toyexpspectrum->Write();
+       //....
      }
 
      // Store best-fit spectrum (if asked)
      if(store_bestfit_spectrum) {
-        TH1D * h = (TH1D*) fitter->GetResults().FindObject("bestfit_tot");
-        TH1D * bestfitspectrum = new TH1D(*h);
-        bestfitspectrum->SetName(Form("bestfit_ereco_spectrum_1Rmu_%d",iexperiment));
-        f.cd();
-        bestfitspectrum->Write();
+       //....
      }
      // Store chisq surface (if asked)
      if(store_chisq_surf) {
-        TH2D * h2 = (TH2D*) fitter->GetResults().FindObject("chisq_surface");
-        TH2D * chisqsurf = new TH2D(*h2); 
-	chisqsurf->SetName(Form("chisqsurf_%d",iexperiment)); 
-	f.cd();
-	chisqsurf->Write();
+       //....
      }
 
      delete skobs;

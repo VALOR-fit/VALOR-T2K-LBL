@@ -6,26 +6,6 @@
 // Costas Andreopoulos
 // ------------------------------------------------------------------------------------------------
 //
-/*
-  #include <string>
-  #include <sstream>
-  #include <cstdlib>
-  #include <TSystem.h>
-  #include <TH1D.h>
-  #include <TRandom3.h>
-  #include <TObject.h>
-  #include <TNtupleD.h>
-
-  #include "Conventions.h"
-  #include "SuperkExpectation.h"
-  #include "FitParamList.h"
-  #include "Utilities.h"
-  #include "SuperkObservation.h"
-  #include "FitInputs.h"
-  #include "FitterABC.h"
-  #include "Opt.h"
-  #include "Superk1RmuErecoFitter.h"
-*/
 
 void test_n_mock_data_fits_with_sys_xml
 (
@@ -218,7 +198,7 @@ void test_n_mock_data_fits_with_sys_xml
 
     // Get fitter
     FitInputs * fit_inputs = new FitInputs(skobs,skexp,fparm);
-    FitterABC * fitter = new Superk1RmuErecoFitter(fit_inputs,fit_option);
+    FitterABC * fitter = util::GetFitter(fit_inputs,fit_option);
 
     // Get nominal number of events
     nsk_nom = 0;

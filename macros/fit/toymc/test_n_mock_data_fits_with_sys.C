@@ -6,27 +6,6 @@
 // Costas Andreopoulos
 // ------------------------------------------------------------------------------------------------
 //
-/*
-  #include <string>
-  #include <sstream>
-  #include <cstdlib>
-  #include <TSystem.h>
-  #include <TH1D.h>
-  #include <TRandom3.h>
-  #include <TObject.h>
-  #include <TNtupleD.h>
-
-  #include "Conventions.h"
-  #include "SuperkExpectation.h"
-  #include "FitParamList.h"
-  #include "Utilities.h"
-  #include "SuperkObservation.h"
-  #include "FitInputs.h"
-  #include "FitterABC.h"
-  #include "Opt.h"
-  #include "Superk1RmuErecoFitterMinuit2.h"
-  #include "Superk1RmuErecoFitter.h"
-*/
 
 void test_n_mock_data_fits_with_sys
 (
@@ -1012,11 +991,7 @@ void test_n_mock_data_fits_with_sys
 
     // Get fitter
     FitInputs * fit_inputs = new FitInputs(skobs,skexp,fparm);
-    FitterABC * fitter = 0;
-    if(use_minuit2)
-      fitter = new Superk1RmuErecoFitterMinuit2(fit_inputs,fit_option);
-    else
-      fitter = new Superk1RmuErecoFitter(fit_inputs,fit_option);
+    FitterABC * fitter = util::GetFitter(fit_inputs,fit_option);
 
     // Chisq for true (input) params
     true_chisq = fit_inputs->Chisquare();
@@ -1889,11 +1864,6 @@ void test_n_mock_data_fits_with_sys
     ///////////////////////////////////////////////////////////////////////////////////////////
     nfitnt->Fill();
 
-    string output_option = "";
-    if ( store_toy_expts          ) { output_option += "Observation";     }
-    if ( store_bestfit_spectrum   ) { output_option += "+BestFitSpectra"; }
-    if ( store_chisq_surf         ) { output_option += "+ChisqSurface";   }
-    fitter->Analyze(output_option.c_str());
 
     if ( store_withsyst_chisq_surf) {
 
@@ -2024,11 +1994,7 @@ void test_n_mock_data_fits_with_sys
 	  //          cout << *fparm;
 	  //for some reason, need to make a new fitter when changing the FitParamList
 	  FitInputs * fit_inputs2 = new FitInputs(skobs,skexp,fparm);
-	  FitterABC * fitter2 = 0;
-	  if(use_minuit2) 
-	    fitter2 = new Superk1RmuErecoFitterMinuit2(fit_inputs,fit_option);
-	  else
-	    fitter2 = new Superk1RmuErecoFitter(fit_inputs,fit_option);
+          FitterABC * fitter2 = util::GetFitter(fit_inputs,fit_option);
 	  fitter2->DoTheFit();
 	  double chisq = fit_inputs2->Chisquare();
 	  chisq_surface_syst->SetBinContent(i,j,chisq);
@@ -2077,23 +2043,28 @@ void test_n_mock_data_fits_with_sys
 
     // Store toy-MC expt (if asked)
     if(store_toy_expts) {
+/*
       TH1D * h = (TH1D*) fitter->GetResults().FindObject("data_1Rmu");
       TH1D * toyexpspectrum = new TH1D(*h);
       f.cd();
       toyexpspectrum->SetName(Form("toyexp_ereco_spectrum_1Rmu_%d",iexperiment));
       toyexpspectrum->Write();
+*/
     }
 
     // Store best-fit spectrum (if asked)
     if(store_bestfit_spectrum) {
+/*
       TH1D * h = (TH1D*) fitter->GetResults().FindObject("bestfit_1Rmu");
       TH1D * bestfitspectrum = new TH1D(*h);
       bestfitspectrum->SetName(Form("bestfit_ereco_spectrum_1Rmu_%d",iexperiment));
       f.cd();
       bestfitspectrum->Write();
+*/
     }
     // Store chisq surface (if asked)
     if(store_chisq_surf) {
+/*
       TH2D * h2 = (TH2D*) fitter->GetResults().FindObject("chisq_surface_1Rmu");
       if(h2) {
 	TH2D * chisqsurf = new TH2D(*h2); 
@@ -2108,6 +2079,7 @@ void test_n_mock_data_fits_with_sys
 	f.cd();
 	dchisqsurf->Write();
       }
+*/
     }
     /* doesn't currently work
     // Store chisq syst surface (if asked)
