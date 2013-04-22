@@ -57,7 +57,7 @@ using std::ostringstream;
 using namespace t2kana;
 using namespace t2kana::conv;
 
-TRandom3 gR(89289281);
+TRandom3 gR(0);
 
 //____________________________________________________________________________
 double t2kana::util::DeltaChisquare(
