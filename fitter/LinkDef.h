@@ -15,6 +15,7 @@
 
 #pragma link C++ class t2kana::util::ArrIdx;
 #pragma link C++ class t2kana::Opt;
+#pragma link C++ class t2kana::Rnd;
 #pragma link C++ class t2kana::PhysHypothesis;
 #pragma link C++ class t2kana::NuOsc3Flavour;
 
