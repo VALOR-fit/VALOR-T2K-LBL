@@ -4,7 +4,7 @@
 #include "FitterABC.h"
 #include "FitterGSL.h"
 #include "FitterMinuit.h"
-#include "FitterMInuit2.h"
+#include "FitterMinuit2.h"
 #include "FitInputs.h"
 
 namespace t2kana {
