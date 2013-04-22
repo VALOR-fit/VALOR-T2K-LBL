@@ -8,8 +8,8 @@
 #include "FitInputs.h"
 
 namespace t2kana {
+namespace util {
 
-//
 // Option:
 //   - minuit
 //   - minuit2
@@ -19,10 +19,10 @@ namespace t2kana {
 //   - ConjugatePR
 //   - VectorBFGS
 //   - SteepestDescent
-//
 
 FitterABC * GetFitter (FitInputs * inputs, Option_t * option);
 
+} // util
 } // t2kana
 
 #endif
