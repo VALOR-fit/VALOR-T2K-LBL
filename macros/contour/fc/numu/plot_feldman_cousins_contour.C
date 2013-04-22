@@ -70,6 +70,7 @@ void plot_feldman_cousins_contour(
   double dmsq_frac_syst_err_bestfit=-1.,
   double sinsq2theta_frac_syst_err_bestfit=-1.,
   const char * outfile = "fc_contours.root",
+  double dm23sq_step = 5E-5,
   bool hack_away_the_high_dm32sq = true, /* FC surface is too small in dm32sq. use this to get rid of the awful border along the top */
   bool save_plots = true
 )
@@ -83,18 +84,18 @@ void plot_feldman_cousins_contour(
 //double mixing23_min   = 0.0;
   double mixing23_max   = 1.0;
   double mixing23_step  = 0.005;
-  double dm23sq_min     = 2.05E-3;
+  double dm23sq_min     = 2.00E-3;
 //double dm23sq_min     = 1.0E-3;
-  double dm23sq_max     = 2.95E-3;
+  double dm23sq_max     = 3.00E-3;
 //double dm23sq_max     = 6.0E-3;
-  double dm23sq_step    = 5.0E-5;
+  //double dm23sq_step    = 5.0E-5; //now an argument
 
   //
   // Define grid so that min and max are at the bin centre 
   // and not at the low/high edge of the first/last bin                                                                                                                               
   //
-  const int mixing23_nbins = 1 + (int) ((mixing23_max - mixing23_min) / mixing23_step);
-  const int dm23sq_nbins   = 1 + (int) ((dm23sq_max   - dm23sq_min  ) / dm23sq_step  );
+  const int mixing23_nbins = 1 + TMath::CeilNint((mixing23_max - mixing23_min) / mixing23_step);
+  const int dm23sq_nbins   = 1 + TMath::CeilNint((dm23sq_max   - dm23sq_min  ) / dm23sq_step  );
   
   double mixing23_grid_min = mixing23_min - 0.5*mixing23_step;
   double mixing23_grid_max = mixing23_max + 0.5*mixing23_step;
@@ -190,23 +191,26 @@ void plot_feldman_cousins_contour(
       }
     }//j loop
   }//i loop
+  cout << "chi\2_{min} = " << chisq_min << endl;
+  cout << "dm23sq_{bestfit} = " << dm23sq_bestfit << " at bin " << idm23sq_bestfit << endl;
+  cout << "sinsq2theta_{bestfit} = " << mixing23_bestfit << " at bin " << imixing23_bestfit << endl;
+  /*
+  //DON'T subtract minimum chisq on the surface; have a better min chisq (not from the grid) that has already been subtracted
   for(int i = 1; i <= fChisqSurface->GetNbinsX(); i++) {
     for(int j = 1; j <= fChisqSurface->GetNbinsY(); j++) {
       double chisq = fChisqSurface->GetBinContent(i,j);
       fChisqSurface->SetBinContent(i,j, TMath::Max(0.,chisq-chisq_min));
     }//j loop
   }//i loop
-  cout << "chi\2_{min} = " << chisq_min << endl;
-  cout << "dm23sq_{bestfit} = " << dm23sq_bestfit << endl;
-  cout << "sinsq2theta_{bestfit} = " << mixing23_bestfit << endl;
+  */
 
 //TCanvas * c00 = new TCanvas("c00","",10,10,600,600);
 //fChisqSurface->Draw("colz");
 
   for(int mixing23_bin = 1; mixing23_bin <= mixing23_nbins; mixing23_bin++) {
+      double mixing23 = hCL68StatOnly->GetXaxis()->GetBinCenter(mixing23_bin);
       for(int dm23sq_bin = 1; dm23sq_bin <= dm23sq_nbins; dm23sq_bin++) {
 
-        double mixing23 = hCL68StatOnly->GetXaxis()->GetBinCenter(mixing23_bin);
         double dm23sq   = hCL68StatOnly->GetYaxis()->GetBinCenter(dm23sq_bin);
 
         double dchisq_data = fChisqSurface->GetBinContent( fChisqSurface->GetXaxis()->FindBin(mixing23), fChisqSurface->GetYaxis()->FindBin(dm23sq) );
