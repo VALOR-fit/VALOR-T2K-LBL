@@ -16,10 +16,15 @@
 #include <iostream> 
 #include <sstream>
 
+#include "Build.h"
+
 #include <TStopwatch.h>
+
+#ifdef __GSL_ENABLED__
 #include <Math/GSLMinimizer.h>
 #include <Math/GSLNLSMinimizer.h>
 #include <Math/GSLSimAnMinimizer.h>
+#endif
 
 #include "FitterGSL.h" 
 #include "SuperkObservation.h" 
@@ -65,9 +70,10 @@ void FitterGSL::Init(void)
   fOption         = "";
   fNFreeFitParams = 0;
   fNFitBins       = 0;
-
-  fFunc      = 0;
-  fMinimizer = 0;
+#ifdef __GSL_ENABLED__
+  fFunc           = 0;
+  fMinimizer      = 0;
+#endif
 }
 //____________________________________________________________________________ 
 void FitterGSL::Init(FitInputs * fit_inputs, Option_t * option) 
@@ -94,6 +100,7 @@ void FitterGSL::Init(FitInputs * fit_inputs, Option_t * option)
        << param_list_size << endl;
 #endif
 
+#ifdef __GSL_ENABLED__
   if(fOption.Contains("SimAnneal")) {
     fMinimizer = new ROOT::Math::GSLSimAnMinimizer;
   }
@@ -137,19 +144,21 @@ void FitterGSL::Init(FitInputs * fit_inputs, Option_t * option)
     fFunc = fFitInputs->AsFunctor(); 
     fMinimizer->SetFunction(*fFunc);
   }
-  fit_params.SetTo(fMinimizer);
-
-  
+  fit_params.SetTo(fMinimizer);  
 #ifdef __show_fit_init_info__
   cout << "FitterGSL/Init >> NDoF = " << this->NDOF()
        << " (Number of bins = " << this->NBinsInFit()
        << ", Number of free parameters = " << this->NFitParams() << ")"
        << endl;
 #endif
+
+#endif // GSL
 }
 //____________________________________________________________________________ 
 bool FitterGSL::DoTheFit(void) 
 {
+#ifdef __GSL_ENABLED__
+
 #ifdef __show_fit_cpu_time__
   TStopwatch w;
   w.Start();
@@ -181,5 +190,10 @@ bool FitterGSL::DoTheFit(void)
   
   fFitInputs->FitParams().CopyCurrToBestFitValues();
   return true;
+
+#endif // GSL
+
+  cout << "FitterGSL/DoTheFit >> GSL not enabed." << endl;
+  return false;
 }
 //____________________________________________________________________________ 

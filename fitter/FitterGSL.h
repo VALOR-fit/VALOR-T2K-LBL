@@ -30,11 +30,16 @@
 #ifndef _t2kana_fitter_gsl_h_
 #define _t2kana_fitter_gsl_h_
 
+#include "Build.h"
+
 #include <TString.h>
 #include <TObject.h>
 #include <TMatrixD.h>
+
+#ifdef __GSL_ENABLED__
 #include <Math/Minimizer.h>
 #include <Math/IFunction.h>
+#endif
 
 #include "Conventions.h"
 #include "FitterABC.h"
@@ -72,10 +77,11 @@ protected:
    int         fNFitBins;         ///< number of bins in fit
    int         fNFreeFitParams;   ///< number of free params in fit
 
-   //   ROOT::Math::IBaseFunctionMultiDim * fFunc;
+#ifdef __GSL_ENABLED__
    ROOT::Math::IMultiGenFunction * fFunc;
    ROOT::Math::FitMethodFunction * fFitMethodFunc;
-   ROOT::Math::Minimizer * fMinimizer;
+   ROOT::Math::Minimizer *         fMinimizer;
+#endif
 };
 
 
