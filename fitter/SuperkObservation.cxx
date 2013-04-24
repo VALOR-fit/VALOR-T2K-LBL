@@ -33,6 +33,7 @@
 
 #include "SuperkObservation.h"
 #include "Utilities.h"
+#include "Rnd.h"
 
 using std::ostringstream;
 using std::cout;
@@ -246,7 +247,6 @@ bool SuperkObservation::CreateMockData(
   cout << "Obs >> Generating a toy-MC expt with the following params: " << fp;
   cout << "Obs >> Stat. fluctuations are turned-" << ((fluctuate)? "ON" : "OFF") << endl;
 
-  TRandom3 rand(0);
   bool applied_negevents_condition = skexp.Generate(fp); //generate prediction
 
   int idx = -1;
@@ -257,7 +257,7 @@ bool SuperkObservation::CreateMockData(
     //TH1D* h1Rmu = skexp.CurrPredictedErecoSpectrum(kSKsFCFV1RingMuLike);
     for(int ibin = 1; ibin <= kNErecoBins1Rmu; ibin++) {
        double nexp  = skexp.CurrPredictedErecoSpectrumArray(kSKsFCFV1RingMuLike)[ibin-1];
-       double nobs  = (fluctuate) ? rand.Poisson(nexp) : nexp;
+       double nobs  = (fluctuate) ? Rnd::Instance()->RndToyMCstat().Poisson(nexp) : nexp;
 #ifndef PRODUCTIONMODE
        fErDistr[idx]->SetBinContent(ibin,nobs);
 #endif
@@ -271,7 +271,7 @@ bool SuperkObservation::CreateMockData(
     //    TH1D* h1Re = skexp.CurrPredictedErecoSpectrum(kSKsFCFV1RingELike);
     for(int ibin = 1; ibin <= kNErecoBins1Re; ibin++) {
       double nexp  = skexp.CurrPredictedErecoSpectrumArray(kSKsFCFV1RingELike)[ibin-1];
-      double nobs  = (fluctuate) ? rand.Poisson(nexp) : nexp;
+      double nobs  = (fluctuate) ? Rnd::Instance()->RndToyMCstat().Poisson(nexp) : nexp;
  #ifndef PRODUCTIONMODE
        fErDistr[idx]->SetBinContent(ibin,nobs);
 #endif
@@ -289,7 +289,6 @@ bool SuperkObservation::CreateMockData(
 //  cout << "Obs >> Generating a toy-MC expt with the following params: " << ph;
   // cout << "Obs >> Stat. fluctuations are turned-" << ((fluctuate)? "ON" : "OFF") << endl;
 
-  TRandom3 rand(0);
   bool applied_negevents_condition = skexp.Generate(ph); //generate prediction
 
   int idx = -1;
@@ -300,7 +299,7 @@ bool SuperkObservation::CreateMockData(
     //TH1D* h1Rmu = skexp.CurrPredictedErecoSpectrum(kSKsFCFV1RingMuLike);
     for(int ibin = 1; ibin <= kNErecoBins1Rmu; ibin++) {
        double nexp  = skexp.CurrPredictedErecoSpectrumArray(kSKsFCFV1RingMuLike)[ibin-1];
-       double nobs  = (fluctuate) ? rand.Poisson(nexp) : nexp;
+       double nobs  = (fluctuate) ? Rnd::Instance()->RndToyMCstat().Poisson(nexp) : nexp;
 #ifndef PRODUCTIONMODE
        fErDistr[idx]->SetBinContent(ibin,nobs);
 #endif
@@ -314,7 +313,7 @@ bool SuperkObservation::CreateMockData(
     //    TH1D* h1Re = skexp.CurrPredictedErecoSpectrum(kSKsFCFV1RingELike);
     for(int ibin = 1; ibin <= kNErecoBins1Re; ibin++) {
       double nexp  = skexp.CurrPredictedErecoSpectrumArray(kSKsFCFV1RingELike)[ibin-1];
-      double nobs  = (fluctuate) ? rand.Poisson(nexp) : nexp;
+      double nobs  = (fluctuate) ? Rnd::Instance()->RndToyMCstat().Poisson(nexp) : nexp;
 #ifndef PRODUCTIONMODE
        fErDistr[idx]->SetBinContent(ibin,nobs);
 #endif
