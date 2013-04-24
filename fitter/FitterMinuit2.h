@@ -45,6 +45,10 @@ public:
    virtual int        NBinsInFit    (void)        { return fNFitBins;                   }
    virtual int        NFitParams    (void)        { return fNFreeFitParams;             }
 
+   virtual void       SetTol        (double tol) {}
+   virtual void       SetStr        (int str   ) {}
+
+
 protected:
 
    void  Init    (void);

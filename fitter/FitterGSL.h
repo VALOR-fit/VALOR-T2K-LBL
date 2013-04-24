@@ -60,6 +60,9 @@ public:
    virtual int        NDOF          (void)        { return fNFitBins - fNFreeFitParams; }
    virtual int        NBinsInFit    (void)        { return fNFitBins;                   }
    virtual int        NFitParams    (void)        { return fNFreeFitParams;             }
+   virtual void       SetTol        (double tol)  {}
+   virtual void       SetStr        (int str   )  {}
+
 
 //rm
    virtual int        FitMigradStatusCode (void)  { return -1;   }

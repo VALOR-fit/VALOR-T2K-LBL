@@ -41,7 +41,9 @@ public:
    virtual int        NDOF          (void)        { return fNFitBins - fNFreeFitParams; }
    virtual int        NBinsInFit    (void)        { return fNFitBins;                   }
    virtual int        NFitParams    (void)        { return fNFreeFitParams;             }
-
+   virtual void       SetTol        (double tol)  { fTol  = tol ;                       }
+   virtual void       SetStr        (int str   )  { fStr  = str ;                       }
+   
 protected:
 
    void  Init    (void);
@@ -53,10 +55,15 @@ protected:
    int         fStatusCode;       ///< fit status code
    int         fMigradStatusCode; ///< return value of the MIGRAD command
    int         fHesseStatusCode;  ///< return value of the HESSE command
+   int         fMinosStatusCode;  ///< return value of the HESSE command
+   int         fImproveStatusCode;  ///< return value of the HESSE command
    double      fFitTime;          ///< time taken to do the fit
    int         fNFitBins;         ///< number of bins in fit
    int         fNFreeFitParams;   ///< number of free params in fit
    bool        fGetHesseErrors;   ///< get hesse errors?
+   bool        fSimplex;   ///< get hesse errors?
+   double      fTol;
+   int         fStr;
 };
 
 } // t2kana

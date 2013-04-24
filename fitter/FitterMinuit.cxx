@@ -47,6 +47,7 @@
 #include "Utilities.h"
 #include "Conventions.h"
 #include "Opt.h"
+#include "Rnd.h"
 
 using std::cerr; 
 using std::cout; 
@@ -80,7 +81,10 @@ void FitterMinuit::Init(void)
   fOption         = "";
   fNFreeFitParams = 0;
   fNFitBins       = 0;
-  fGetHesseErrors = true;
+  fGetHesseErrors = false;
+  fSimplex        = false;
+  fTol            = 0.1;
+  fStr            = 1;
 }
 //____________________________________________________________________________ 
 void FitterMinuit::Init(FitInputs * fit_inputs, Option_t * option) 
@@ -111,80 +115,99 @@ void FitterMinuit::Init(FitInputs * fit_inputs, Option_t * option)
     // get fitter
     TVirtualFitter::SetDefaultFitter("Minuit");
     TVirtualFitter * fitter = TVirtualFitter::Fitter(0,param_list_size);
-
+    
     // set print level
     Double_t arglist[5];
     arglist[0] = -1;
     fitter->ExecuteCommand("SET PRINT",arglist,1);
-
+    
     // set params
     fit_params.SetTo(fitter);
-
+    
     // set minimization function
     fitter->SetFCN(FitFunc);
-
+    
+    
     /*
     // free parameters
     arglist[0] = 4; //deltacp
     fitter->ExecuteCommand("SET LIMits",arglist, 1);
     */
+    
   }
-
+  /*
+    if(fOption.Contains("simplex")) {
+    TVirtualFitter::SetDefaultFitter("Simplex");
+    TVirtualFitter * fitter = TVirtualFitter::Fitter(0,param_list_size);
+    
+    // set print level                                                                                                                                                                 
+    Double_t arglist[5];
+    arglist[0] = -1;
+    fitter->ExecuteCommand("SET PRINT",arglist,1);
+    
+    // set params                                                                                                                                                                      
+    fit_params.SetTo(fitter);
+    
+    // set minimization function                                                                                                                                                       
+    fitter->SetFCN(FitFunc);
+    fSimplex = true;
+    }*/
   // calculate degrees of freedom
-
+  
   fNFitBins       = 0;
-
+  
   for(int is = 0; is < kns; is++) {
     SuperkSample_t s = kSKSamples[is];
     if(s == kSKsFCFV1RingMuLike) fNFitBins += kNErecoBins1Rmu;
     if(s == kSKsFCFV1RingELike ) fNFitBins += kNErecoBins1Re;
   }
-
+  
   fNFreeFitParams = fit_params.GetNumberFreeParameters();
-
+  
 #ifdef __show_fit_init_info__
   cout << "FitterMinuit/Init >> NDoF = " << this->NDOF()
        << " (Number of bins = " << this->NBinsInFit()
        << ", Number of free parameters = " << this->NFitParams() << ")"
        << endl;
 #endif
+  
 }
 //____________________________________________________________________________ 
 bool FitterMinuit::DoTheFit(void) 
 {
+
 #ifdef __show_fit_cpu_time__
   TStopwatch w;
   w.Start();
 #endif
   fFitTime = 0;
 
+
   // Run the fitter once - we have the option here to check the status code
   // and if the fitter failed, re-seed the fitter and try again
   bool ok = this->RunOnce(false);
-
   
   // 4: migrad not converged
   int ntries = 0;
   while(fMigradStatusCode == 4 && ntries < 25) {
     cout << "Original fit failed; reseeding & trying again. Attempt: " << ntries << endl;
     NuOscMixParam_t omp = Opt::Instance()->gOscMixingParamChoice;
-    TRandom3 rand(0);
     switch(omp) {
     case(conv::kNuMixSinsq2Theta):
-      fFitInputs->FitParams().SetInitValue(conv::kPhypMixing23, rand.Uniform(0.80,0.98));
-      fFitInputs->FitParams().SetInitValue(conv::kPhypMixing13, rand.Uniform(0.05,0.15));
+      fFitInputs->FitParams().SetInitValue(conv::kPhypMixing23, Rnd::Instance()->RndFitter().Uniform(0.80,0.98));
+      fFitInputs->FitParams().SetInitValue(conv::kPhypMixing13, Rnd::Instance()->RndFitter().Uniform(0.05,0.15));
       break;
     case(conv::kNuMixSinsqTheta):
-      if (fFitInputs->FitParams().InitValue(conv::kPhypMixing23)< 0.515) fFitInputs->FitParams().SetInitValue(conv::kPhypMixing23, rand.Uniform(0.35,0.5));
-      else fFitInputs->FitParams().SetInitValue(conv::kPhypMixing23, rand.Uniform(0.5,0.65));
-      fFitInputs->FitParams().SetInitValue(conv::kPhypMixing13, rand.Uniform(0.015,0.035));
+      if (fFitInputs->FitParams().InitValue(conv::kPhypMixing23)< 0.515) fFitInputs->FitParams().SetInitValue(conv::kPhypMixing23, Rnd::Instance()->RndFitter().Uniform(0.35,0.5));
+      else fFitInputs->FitParams().SetInitValue(conv::kPhypMixing23, Rnd::Instance()->RndFitter().Uniform(0.5,0.65));
+      fFitInputs->FitParams().SetInitValue(conv::kPhypMixing13, Rnd::Instance()->RndFitter().Uniform(0.015,0.035));
       break;
     case(conv::kNuMixUndefined):
       cerr << "Mixing parameter type undefinded. Exiting..." << endl;
       exit(1);
       break;
     }
-    fFitInputs->FitParams().SetInitValue(conv::kPhypDm23sq, rand.Uniform(0.0020,0.0030));
+    fFitInputs->FitParams().SetInitValue(conv::kPhypDm23sq, Rnd::Instance()->RndFitter().Uniform(0.0020,0.0030));
     this->RunOnce(false);
     ntries++;
   }
@@ -194,6 +217,7 @@ bool FitterMinuit::DoTheFit(void)
     this->RunOnce(true);
   }
   
+
 #ifdef __show_fit_cpu_time__
   w.Stop();
   cout << "FitterMinuit/DoTheFit >> Fit performed in " 
@@ -214,6 +238,11 @@ bool FitterMinuit::RunOnce(bool use_simplex)
 #endif
   TVirtualFitter * fitter = TVirtualFitter::GetFitter();
 
+  Double_t arg[5];
+  arg[0] = fStr;
+  fitter->ExecuteCommand("SET STRategy",arg,1);  
+  
+
   // Pass fit inputs (data, pdf) to MINUIT
 #ifdef __show_fit_steps__
   cout << "FitterMinuit/RunOnce >> Passing fit inputs (data & pdf)..." << endl;
@@ -226,7 +255,7 @@ bool FitterMinuit::RunOnce(bool use_simplex)
 #endif
   Double_t arglist[100];
   arglist[0] = 50000; // num of func calls
-  arglist[1] = 0.01;  // tolerance
+  arglist[1] = fTol;  // tolerance
   if(!use_simplex)
     fMigradStatusCode = fitter->ExecuteCommand("MIGRAD",arglist, 2);
   //SIMPLEX
@@ -234,7 +263,7 @@ bool FitterMinuit::RunOnce(bool use_simplex)
     arglist[1] = 0.1; // higher tolerance
     fMigradStatusCode = fitter->ExecuteCommand("SIMPLEX",arglist, 2);
   }
-
+  
   //return on not converged
   if(fMigradStatusCode == 4 && !use_simplex)
     return false;
@@ -253,6 +282,7 @@ bool FitterMinuit::RunOnce(bool use_simplex)
   fitter->PrintResults(3,aminn);
 #endif
 
+
   // Get the error matrix status
   double ha(0.0);     // dummy vars
   double edm, errdef; // dummy vars
@@ -261,8 +291,10 @@ bool FitterMinuit::RunOnce(bool use_simplex)
   fStatusCode = errMatrixStatus;
 
   //Use Hesse to make the errors better
-  if(fGetHesseErrors || fStatusCode != 3)
+  if(fGetHesseErrors )//|| fStatusCode != 3)
     fHesseStatusCode = fitter->ExecuteCommand("HESSE",arglist, 1);
+  
+  //fMinosStatusCode = fitter->ExecuteCommand("MINOS",arglist, 1);
 
   // Done! Copy current --> best-fit values
   fFitInputs->FitParams().CopyCurrToBestFitValues();

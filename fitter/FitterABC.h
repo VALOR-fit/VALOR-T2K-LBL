@@ -34,6 +34,8 @@ public:
    virtual int        NDOF          (void)                  = 0;
    virtual int        NBinsInFit    (void)                  = 0;
    virtual int        NFitParams    (void)                  = 0;
+   virtual void       SetTol        (double tol)            = 0;
+   virtual void       SetStr        (int str   )            = 0;
 
 //   virtual TObjArray& GetResults    (void) const            = 0;
 //   virtual void       Analyze       (Option_t * option)     = 0;
