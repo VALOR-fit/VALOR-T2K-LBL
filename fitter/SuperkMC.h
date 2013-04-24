@@ -38,6 +38,7 @@ class NuFlux;
 class NuXSec;
 class FSI;
 class SuperkDetector;
+class SuperkDetectorFSI;
 
 class SuperkMC: public TObject
 {
@@ -76,6 +77,7 @@ public:
   void TellMeAboutCrossSections (NuXSec *         xsec ) { fNuXSec = xsec; }
   void TellMeAboutFSI           (FSI *            fsi  ) { fFSI    = fsi;  }
   void TellMeAboutTheDetector   (SuperkDetector * skdet) { fSKDet  = skdet; }
+  void TellMeAboutTheDetectorFSI(SuperkDetectorFSI * skdetfsi) { fSKDetFSI  = skdetfsi; }
 
   // Draw inputs:
   // ...
@@ -185,6 +187,7 @@ private:
   NuXSec *         fNuXSec;                ///< Neutrino cross-section inputs
   FSI *            fFSI;                   ///< FSI inputs
   SuperkDetector * fSKDet;                 ///< SuperK detector efficiency error etc
+  SuperkDetectorFSI * fSKDetFSI;           ///< SuperK detector efficiency error etc
 
   // utility objects for defining physics hypothesis (oscillations, decay, ...) & computing probabilities
   PhysHypothesis fPhysHypothesis;          ///< Physics hypothesis 

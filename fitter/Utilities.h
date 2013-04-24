@@ -247,6 +247,7 @@ namespace util {
     int XSecSystIdx     (conv::PhysParamId_t p)                        { return fXSecSystIdx    [p];    }
     int BANFFSystIdx    (conv::PhysParamId_t p)                        { return fBANFFSystIdx   [p];    }
     int FSISystIdx      (conv::PhysParamId_t p)                        { return fFSISystIdx     [p];    }
+    int SKDetFSISystIdx (conv::PhysParamId_t p)                        { return fSKDetFSISystIdx[p];    }
     int SKDet1ReSystIdx (conv::PhysParamId_t p)                        { return fSKDet1ReSystIdx[p];    }
     int PhysParamIdx    (conv::PhysParamId_t p)                        { return fPhysParamIdx   [p];    }
   private:
@@ -259,6 +260,7 @@ namespace util {
     int fXSecSystIdx     [conv::knppmax];                ///< maps physics param to kListOfXSecSyst array index
     int fBANFFSystIdx    [conv::knppmax];                ///< maps physics param to BANFF covariance matrix
     int fFSISystIdx      [conv::knppmax];                ///< maps physics param to FSI covariance matrix
+    int fSKDetFSISystIdx [conv::knppmax];                ///< maps physics param to FSI covariance matrix
     int fSKDet1ReSystIdx [conv::knppmax];                ///< maps physics param to 1Re eff covariance matrix
     int fPhysParamIdx    [conv::knppmax];                ///< maps physics param
     static ArrIdx * fInstance;

@@ -58,6 +58,7 @@
 
 #include "SuperkMC.h"
 #include "SuperkDetector.h"
+#include "SuperkDetectorFSI.h"
 #include "FSI.h"
 #include "NuXSec.h"
 #include "NuFlux.h"
@@ -161,6 +162,7 @@ void SuperkMC::Init(void)
   fNuXSec              = 0;  
   fFSI                 = 0;  
   fSKDet               = 0;
+  fSKDetFSI            = 0;
 
   cout << "init complete" << endl;
 
@@ -913,19 +915,31 @@ void SuperkMC::ApplySystematicsToTemplates_Multiplicative(void)
 	   double ErecoVarMin = util::XsecErecoBinEdges(s,irv-1) + kOneMeV;
 	   double ErecoVarMax = util::XsecErecoBinEdges(s,irv)   - kOneMeV;
 
+
+           // Plug-in BANFF & other xsec systematics 
+           double xsec_wght = fNuXSec->SystWght(s,m,ErecoVarMin,EtrueVarMin); 
+
+	   double wght = 1;
+
+#ifdef SKFSITOGETHER
+	   // Plug-in SK efficiency + FSI uncertainties
+	   double skfsi_wght = fSKDetFSI->SystWght(s,m,ErecoVarMin,EtrueVarMin);
+	   // Combined weight                                          
+           wght = skfsi_wght * flux_wght * xsec_wght;
+#endif
+	
+#ifndef SKFSITOGETHER
 	   // Plug-in SK efficiency uncertainty due to fiducial volume, reduction chain, OD cut,
 	   // ring-counting, PID, momentum cut and decay e- cut.
 	   // The ring-counting error for CCQE has Ereco-dependence.
 	   double skeff_wght = fSKDet->EfficiencyWeight(s,m,ErecoVarMin);
 
-           // Plug-in BANFF & other xsec systematics 
-           double xsec_wght = fNuXSec->SystWght(s,m,ErecoVarMin,EtrueVarMin); 
-
            // Plug-in FSI weights
            double fsi_wght = fFSI->SystWght(s,m,ErecoVarMin,EtrueVarMin); 
 
            // Combined weight
-           double wght = skeff_wght * flux_wght * xsec_wght * fsi_wght;
+           wght = skeff_wght * flux_wght * xsec_wght * fsi_wght;
+#endif
 
 #ifdef SYSTWEIGHTSAREONE
            wght = 1;
@@ -935,7 +949,7 @@ void SuperkMC::ApplySystematicsToTemplates_Multiplicative(void)
 	   int ErecoMinBin = 1 + TMath::BinarySearch(util::NumErecoBins(s),util::ErecoBinEdges(s),ErecoVarMin);
 	   int ErecoMaxBin = 1 + TMath::BinarySearch(util::NumErecoBins(s),util::ErecoBinEdges(s),ErecoVarMax);
 	   for(int ir = ErecoMinBin; ir <= ErecoMaxBin; ir++) {
-	     //double Ereco = util::ErecoBinEdges(s,ir-1) + kOneMeV;
+	     //	     double Ereco = util::ErecoBinEdges(s,ir-1) + kOneMeV;
 
 	     // loop over 50MeV Etrue
 	     int EtrueMinBin = 1 + TMath::BinarySearch(util::NumEtrueBins(s),util::EtrueBinEdges(s),EtrueVarMin);
@@ -958,6 +972,7 @@ void SuperkMC::ApplySystematicsToTemplates_Multiplicative(void)
 	       double nev_systm = nev * wght;
 
 #ifdef __show_syst_var_wght_mesg_debug__ 
+#ifndef SKFSITOGETHER	       
 	       if( skeff_wght != 1. || 
 		   flux_wght  != 1. || 
 		   xsec_wght  != 1. ||
@@ -975,6 +990,25 @@ void SuperkMC::ApplySystematicsToTemplates_Multiplicative(void)
 			<< ", FSI  = "  << fsi_wght
 			<< " (total = " << wght << ")"
 			<< endl;
+#endif
+#ifdef SKFSITOGETHER
+		   if( skfsi_wght != 1. ||
+		       flux_wght  != 1. ||
+		       xsec_wght  != 1. )
+		     {
+		       // Get the energy of the current 50MeV Etrue bin                                                                                                                    
+		       double Etrue = util::EtrueBinEdges(s,it-1) + kOneMeV;
+		       cout << "Exp/SKMC/SystVarWght >> "
+			    << "Sample = " << util::AsString(s) << " / Mode = " << util::AsString(m)
+			    << ", Ereco = " << Ereco << " GeV"
+			    << ", Etrue = " << Etrue << " GeV => Weights: "
+			    << "SK+FSI = "  << skfsi_wght
+			    << ", Flux = "  << flux_wght
+			    << ", XSec = "  << xsec_wght
+			    << " (total = " << wght << ")"
+			    << endl;
+#endif
+
 		 }
 #endif
 #ifdef NO_EVENTS_CAN_BE_NEGATIVE
@@ -1039,7 +1073,13 @@ void SuperkMC::ApplySystematicsToTemplates_NonMultiplicative(void)
       if (s==kSKsFCFV1RingMuLike)       memcpy (mctemplarry_no_ereco_scale, fMCTemplArrayFin1Rmu[im], sizeof (fMCTemplArrayFin1Rmu[im])) ;
       else memcpy (mctemplarry_no_ereco_scale, fMCTemplArrayFin1Re[im], sizeof (fMCTemplArrayFin1Re[im]));
       // get energy scale
-      double escale = fSKDet->EnergyScale(s,m);
+      double escale = 1;
+#ifdef SKFSITOGETHER
+      escale = fSKDetFSI->EnergyScale(s,m);
+#endif 
+#ifndef SKFSITOGETHER
+      escale = fSKDet->EnergyScale(s,m);
+#endif
       // energy scale > 1 : 
       // For a given bin, events are gained from bins on the left (lower Ereco bins) and 
       // are lost to bins on the right (higher Ereco bins)
@@ -1211,7 +1251,13 @@ bool SuperkMC::ApplyEnergyScaleSystematicToTotalSpectrum(void)
     if (s==kSKsFCFV1RingMuLike) memcpy(reco_spectrum_tot_arry_no_ereco_scale[is], fMCErecoSpectrumTotArray1Rmu, sizeof (fMCErecoSpectrumTotArray1Rmu)) ;
     else memcpy(reco_spectrum_tot_arry_no_ereco_scale[is], fMCErecoSpectrumTotArray1Re, sizeof (fMCErecoSpectrumTotArray1Re)) ;
     // get energy scale
-    double escale = fSKDet->EnergyScale(s);
+    double escale = 1;
+#ifdef SKFSITOGETHER
+    escale = fSKDetFSI->EnergyScale(s);
+#endif
+#ifndef SKFSITOGETHER
+    escale = fSKDet->EnergyScale(s);
+#endif
     // energy scale > 1 : 
     // For a given bin, events are gained from bins on the left (lower Ereco bins) and 
     // are lost to bins on the right (higher Ereco bins)
@@ -1309,7 +1355,7 @@ bool SuperkMC::ApplyEnergyScaleSystematicToTotalSpectrum(void)
       double nev_tot = 0;
       if (s==kSKsFCFV1RingMuLike) nev_tot = fMCErecoSpectrumTotArray1Rmu[ir-1];
       else nev_tot = fMCErecoSpectrumTotArray1Re[ir-1];
-      if(nev_tot < 0 || (ir >= 6 && nev_tot < kASmallNum)) {
+      if(nev_tot < 0 || (s==kSKsFCFV1RingMuLike  && (ir >= 6 && nev_tot < kASmallNum)) || (s==kSKsFCFV1RingELike  && (ir >= 3 && nev_tot < kASmallNum))) {
 	// bin 5 is first bin expect events in (nominally empty, but can have events for negative energy scale) bin 4 is empty, except for more than 8 sigma tweak!
 #ifdef __show_negative_events_mesg_debug__
 	cout << "Exp/SKMC/ApplyEnergyScaleSystematicToTotalSpectrum >> set negative number of events " << nev_tot
@@ -1669,7 +1715,7 @@ bool SuperkMC::UpdateErecoSpectra(void)
 #endif
        }//im
 #ifndef APPLY_ESCALE_AT_SPECTRUM_STAGE
-       if(nev_tot < 0 || (ir >= 5 && nev_tot < kASmallNum)) {
+       if(nev_tot < 0 || (s==kSKsFCFV1RingMuLike && (ir >= 5 && nev_tot < kASmallNum)) || (s==kSKsFCFV1RingELike && (ir >= 2 && nev_tot < kASmallNum))) {
 	 // bin 5 is first bin expect events in (nominally empty, but can have events for negative energy scale) bin 4 is empty, except for more than 8 sigma tweak!
 #ifdef __show_negative_events_mesg_debug__
 	 cout << "Exp/SKMC/UpdateErecoSpectra >> set negative number of events " << nev_tot 

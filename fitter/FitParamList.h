@@ -43,12 +43,15 @@ public:
    int    Size           (void)                          const { return fNParams;                      }
    string Name           (t2kana::conv::PhysParamId_t p) const { return fName         [this->Id(p)];   }
    double BestFitValue   (t2kana::conv::PhysParamId_t p) const { return fBestFitValue [this->Id(p)];   }
+   double BestFitValue   (int i                        ) const { return fBestFitValue [i];             }
    double CurrValue      (t2kana::conv::PhysParamId_t p) const { return fCurrValue    [this->Id(p)];   }
+   double CurrValue      (int i                        ) const { return fCurrValue    [i];             }
    double InitValue      (t2kana::conv::PhysParamId_t p) const { return fInitValue    [this->Id(p)];   }
    double MinValue       (t2kana::conv::PhysParamId_t p) const { return fMinValue     [this->Id(p)];   }
    double MaxValue       (t2kana::conv::PhysParamId_t p) const { return fMaxValue     [this->Id(p)];   }
    double StepSize       (t2kana::conv::PhysParamId_t p) const { return fStepSize     [this->Id(p)];   }
    bool   IsFixed        (t2kana::conv::PhysParamId_t p) const { return fIsFixed      [this->Id(p)];   }
+   //   bool   IsFixed        (int i                        ) const { return fIsFixed      [i];             }
    bool   IsNuisance     (t2kana::conv::PhysParamId_t p) const { return fIsNuisance   [this->Id(p)];   }
    double MigradError    (t2kana::conv::PhysParamId_t p) const { return fMigradError  [this->Id(p)];   }
    double HesseError     (t2kana::conv::PhysParamId_t p) const { return fHesseError   [this->Id(p)];   }
@@ -90,9 +93,11 @@ public:
 
    // Fix a parameter
    void FixParameter (t2kana::conv::PhysParamId_t p); 
+   void FixParameter (int ip); 
 
    // Free a parameter
    void FreeParameter (t2kana::conv::PhysParamId_t p); 
+   void FreeParameter (int ip); 
 
    // Set as nuisance parameter (contributes to \chi^{2}_{penalty})
    void SetNuisance (t2kana::conv::PhysParamId_t p, bool tf);
@@ -153,11 +158,14 @@ public:
    bool HesseErrorsSet  (void) const { return fHesseErrorsSet;  }
    bool MinosErrorsSet  (void) const { return fMinosErrorsSet;  }
 
+   int  Id      (t2kana::conv::PhysParamId_t p) const; // PhysParamId_t --> array slot
+   t2kana::conv::PhysParamId_t WhichParam(int id) const; // array slot --> PhysParamId_t
+   
+
 private:
 
    void CleanUp (void);
    void Init    (int nparams);
-   int  Id      (t2kana::conv::PhysParamId_t p) const; // PhysParamId_t --> array slot
    void SetParListName (string s)   { fParListName = s; }
    void SetSystMode     (int m)      { fSystMode     = m; }
 
@@ -179,6 +187,9 @@ private:
    static void           AppendAllUncorrelatedXSecSystematics       (FitParamList * fp, int start);
    static void           AppendUncorrelatedXSecSystematicsDisap     (FitParamList * fp, int start);
    static void           AppendUncorrelatedXSecSystematicsApp       (FitParamList * fp, int start);
+   static void           AppendAllSuperkDetectorFSISystematics      (FitParamList * fp, int start);
+   static void           AppendSuperkDetectorFSISystematicsDisap    (FitParamList * fp, int start);
+   static void           AppendSuperkDetectorFSISystematicsApp      (FitParamList * fp, int start);
    static void           AppendAllSuperkDetectorSystematics         (FitParamList * fp, int start);
    static void           AppendSuperkDetectorSystematicsDisap       (FitParamList * fp, int start);
    static void           AppendSuperkDetectorSystematicsApp         (FitParamList * fp, int start);
@@ -195,7 +206,6 @@ private:
    // Private data members
    //
 
-   t2kana::conv::PhysParamId_t WhichParam(int id) const; // array slot --> PhysParamId_t
 
    map<t2kana::conv::PhysParamId_t, int> fIdMap;
 

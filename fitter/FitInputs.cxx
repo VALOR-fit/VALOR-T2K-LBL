@@ -33,6 +33,7 @@
 #include "SuperkObservation.h"
 #include "SuperkExpectation.h"
 #include "SuperkDetector.h"
+#include "SuperkDetectorFSI.h"
 #include "BANFF.h"
 #include "NuXSec.h"
 #include "FSI.h"
@@ -61,9 +62,14 @@ fGoodnessOfFit(goodnessoffit)
   fNPoints = util::NumErecoBins(conv::kSKsFCFV1RingELike)+ util::NumErecoBins(conv::kSKsFCFV1RingMuLike);
   fNDim = (*fFitParams).GetNumberParameters();
   if(fFitParams->GetSystMode() == 2)
-    fAllBANFFFit = false;
-  else
+    {
+      fAllBANFFFit = false;
+      fAll1ReEff = false;
+    }
+  else{
     fAllBANFFFit = true;
+    fAll1ReEff = true;
+  }
 }
 //________________________________________________________________________________________
 FitInputs::~FitInputs()  
@@ -124,7 +130,7 @@ double FitInputs::Chisquare(Option_t * option, conv::SuperkSample_t s0, int poin
       // If we only want the numu disappearance analysis and sample is 1Re, then skip
       if ((s == conv::kSKsFCFV1RingELike)  && (oscana == conv::kAnaNuMuDisappOnly))continue;
       
-      applied_negevents_condition = fExp->Generate(*fFitParams, fAllBANFFFit) || applied_negevents_condition;
+      applied_negevents_condition = fExp->Generate(*fFitParams, fAllBANFFFit, fAll1ReEff) || applied_negevents_condition;
       if(!fGoodnessOfFit) {
 	int nbins = util::NumErecoBins(s);
 #ifdef __show_bin_contributions_to_chisq__
@@ -183,7 +189,7 @@ double FitInputs::Chisquare(Option_t * option, conv::SuperkSample_t s0, int poin
 	    cout << "\tNobs: " << nobs << "\tNexp:" << nexp << endl;
 #endif
 	  }//ibin
-	}//goodnessoffit
+      }//goodnessoffit
       //      }//1Rmu
       /*
       // Add chisq for 1Re sample
@@ -287,7 +293,18 @@ double FitInputs::ChisquarePenaltyTerm(void) const
   // First check all the parms considered by SuperkDetector are included in the fit
   // param list and set as nuisance
   //
-  bool incl_skdet_penalty = true;
+
+  bool incl_skdet_penalty = false;
+  bool incl_fsi_penalty = false;
+  bool incl_skdetfsi_penalty = false;
+#ifndef SKFSITOGETHER
+  incl_skdet_penalty = true;
+  incl_fsi_penalty = true;
+#endif
+#ifdef SKFSITOGETHER
+  incl_skdetfsi_penalty = true;
+#endif
+
   /* this check is unnecessary, as long as the fitparamlist is correctly implemented
   if(all_syst) {
     int np_skdet = 8; // 7 eff + energy scale
@@ -359,7 +376,7 @@ double FitInputs::ChisquarePenaltyTerm(void) const
   // Add penalty term for FSI params 
   //
   if(all_syst) {
-    bool incl_fsi_penalty = true;
+    //bool incl_fsi_penalty = true;
     /* this check is unnecessary, as long as the fitparamlist is correctly implemented
     const int np_fsi = conv::kNumOfFSIParams;
     for(int ip = 0; ip < np_fsi; ip++) {
@@ -377,6 +394,17 @@ double FitInputs::ChisquarePenaltyTerm(void) const
            << " => \\delta\\chi^2_{penalty} = " << dchisq_penalty << endl;
 #endif
     }
+    
+    if(incl_skdetfsi_penalty) {
+      double dchisq_penalty = fExp->GetSuperkDetectorFSI()->ChisqPenalty();
+      chisq_penalty += dchisq_penalty;
+#ifdef __show_contributions_to_penalty_term__
+      cout << "FitInputs::ChisquarePenaltyTerm >> Current SK+FSI param variation"
+           << " => \\delta\\chi^2_{penalty} = " << dchisq_penalty << endl;
+#endif
+    }
+
+
   }
 
 

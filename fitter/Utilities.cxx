@@ -45,6 +45,7 @@
 
 #include "Utilities.h"
 #include "Opt.h"
+#include "Rnd.h"
 
 using std::cout;
 using std::cerr;
@@ -59,8 +60,6 @@ using std::ostringstream;
 
 using namespace t2kana;
 using namespace t2kana::conv;
-
-TRandom3 gR(0);
 
 //____________________________________________________________________________
 double t2kana::util::DeltaChisquare(
@@ -218,7 +217,7 @@ TVectorD t2kana::util::CholeskyGenerateCorrelatedParams (
   // and multiply by Lt to introduce the appropriate correlations
   TVectorD g(n);
   for (int k = 0; k < n; ++k) {
-    g(k) = gR.Gaus();
+    g(k) = Rnd::Instance()->RndOther().Gaus();
   }
   g *= cholesky_triangular;
 
@@ -325,7 +324,7 @@ TVectorD t2kana::util::CholeskyGenerateCorrelatedParamVariations (
   // and multiply by Lt to introduce the appropriate correlations
   TVectorD g(n);
   for (int k = 0; k < n; ++k) {
-    g(k) = gR.Gaus();
+    g(k) = Rnd::Instance()->RndOther().Gaus();
   }
   g *= cholesky_triangular;
 
@@ -362,8 +361,6 @@ TVectorD t2kana::util::CholeskyCalculateCorrelatedParamVariations (
 //____________________________________________________________________________
 double t2kana::util::RandomizeMixing12(void)
 {
-  TRandom3 rand(0);
-
   double mix = 0;
 
   NuOscMixParam_t omp = Opt::Instance()->gOscMixingParamChoice;
@@ -372,7 +369,7 @@ double t2kana::util::RandomizeMixing12(void)
    {
      double mean  = conv::kGlobFitSinsq2Theta12; 
      double sigma = conv::kGlobFitSinsq2Theta12 * conv::kGlobFitErrSinsq2Theta12;
-     double sinsq2theta = rand.Gaus(mean,sigma);
+     double sinsq2theta = Rnd::Instance()->RndToyMCosc().Gaus(mean,sigma);
      mix = sinsq2theta;
      break;
    }
@@ -380,7 +377,7 @@ double t2kana::util::RandomizeMixing12(void)
    {
      double mean  = conv::kGlobFitSinsqTheta12; 
      double sigma = conv::kGlobFitSinsqTheta12 * conv::kGlobFitErrSinsqTheta12;
-     double sinsqtheta = rand.Gaus(mean,sigma);
+     double sinsqtheta = Rnd::Instance()->RndToyMCosc().Gaus(mean,sigma);
      mix = sinsqtheta;
      break;
    }
@@ -399,7 +396,6 @@ double t2kana::util::RandomizeMixing12(void)
 //____________________________________________________________________________
 double t2kana::util::RandomizeMixing23(void)
 {
-  TRandom3 rand(0);
 
   double mix = 0;
 
@@ -409,7 +405,7 @@ double t2kana::util::RandomizeMixing23(void)
    {
      double mean  = conv::kGlobFitSinsq2Theta23; 
      double sigma = conv::kGlobFitSinsq2Theta23 * conv::kGlobFitErrSinsq2Theta23;
-     double sinsq2theta = rand.Gaus(mean,sigma);
+     double sinsq2theta = Rnd::Instance()->RndToyMCosc().Gaus(mean,sigma);
      mix = sinsq2theta;
      break;
    }
@@ -417,7 +413,7 @@ double t2kana::util::RandomizeMixing23(void)
    {
      double mean  = conv::kGlobFitSinsqTheta23; 
      double sigma = conv::kGlobFitSinsqTheta23 * conv::kGlobFitErrSinsqTheta23;
-     double sinsqtheta = rand.Gaus(mean,sigma);
+     double sinsqtheta = Rnd::Instance()->RndToyMCosc().Gaus(mean,sigma);
      mix = sinsqtheta;
      break;
    }
@@ -436,7 +432,6 @@ double t2kana::util::RandomizeMixing23(void)
 //____________________________________________________________________________
 double t2kana::util::RandomizeMixing13(void)
 {
-  TRandom3 rand(0);
 
   double mix = 0;
 
@@ -446,7 +441,7 @@ double t2kana::util::RandomizeMixing13(void)
     {
       double mean  = conv::kGlobFitSinsq2Theta13;
       double sigma = conv::kGlobFitSinsq2Theta13 * conv::kGlobFitErrSinsq2Theta13;
-      double sinsq2theta = rand.Gaus(mean,sigma);
+      double sinsq2theta = Rnd::Instance()->RndToyMCosc().Gaus(mean,sigma);
       mix = sinsq2theta;
       break;
     }
@@ -454,7 +449,7 @@ double t2kana::util::RandomizeMixing13(void)
     {
       double mean  = conv::kGlobFitSinsqTheta13;
       double sigma = conv::kGlobFitSinsqTheta13 * conv::kGlobFitErrSinsqTheta13;
-      double sinsqtheta = rand.Gaus(mean,sigma);
+      double sinsqtheta = Rnd::Instance()->RndToyMCosc().Gaus(mean,sigma);
       mix = sinsqtheta;
       break;
     }
@@ -473,23 +468,20 @@ double t2kana::util::RandomizeMixing13(void)
 //____________________________________________________________________________
 double t2kana::util::RandomizeDeltaCP(void)
 {
-  TRandom3 rand(0);
   double min = -conv::kpi;
   double max =  conv::kpi;
-  return rand.Uniform(min,max);
+  return Rnd::Instance()->RndToyMCosc().Uniform(min,max);
 }
 //____________________________________________________________________________
 double t2kana::util::RandomizeDm12sq(void)
 {
-  TRandom3 rand(0);
   double mean  = conv::kGlobFitDm12sq; 
   double sigma = conv::kGlobFitDm12sq * conv::kGlobFitErrDm12sq;
-  return rand.Gaus(mean,sigma);
+  return Rnd::Instance()->RndToyMCosc().Gaus(mean,sigma);
 }
 //____________________________________________________________________________
 double t2kana::util::RandomizeDm23sq(void)
 {
-  TRandom3 rand(0);
   double mean  = 0.0;
   NuOscDmsqScheme_t odmsq = Opt::Instance()->gOscDmsqScheme;                                                                                                                                              
   switch (odmsq) {                                                                                                                                                                                        
@@ -503,7 +495,7 @@ double t2kana::util::RandomizeDm23sq(void)
     mean  = kGlobFitDm23sq;  
   }       
   double sigma = mean * kGlobFitErrDm23sq;
-  return rand.Gaus(mean,sigma);
+  return Rnd::Instance()->RndToyMCosc().Gaus(mean,sigma);
 }
 //____________________________________________________________________________
 void t2kana::util::SetDefaultSKSpectrumStyle (
@@ -950,6 +942,76 @@ string t2kana::util::AsString(PhysParamId_t p)
 		  kFSIParamsErecoCut[ip][0],kFSIParamsErecoCut[ip][1],nutypes.c_str());     
       break;
       }
+
+    //
+    // SKDET+FSI
+    //
+
+    case ( kNuisSKDetFSI000 ) :
+    case ( kNuisSKDetFSI001 ) :
+    case ( kNuisSKDetFSI002 ) :
+    case ( kNuisSKDetFSI003 ) :
+    case ( kNuisSKDetFSI004 ) :
+    case ( kNuisSKDetFSI005 ) :
+    {
+      int ip = (int)p - (int)kNuisSKDetFSI000;
+      string nutypes = "";
+      switch(p) {
+        case (kNuisSKDetFSI000) :
+        case (kNuisSKDetFSI001) :
+        case (kNuisSKDetFSI002) :
+	  nutypes = "numu/numubar CCQE (1Rmu)"; break;
+        case (kNuisSKDetFSI003) :
+	  nutypes = "numu/numubar CCnQE (1Rmu)"; break;
+        case (kNuisSKDetFSI004) :
+	  nutypes = "nue/nuebar/signue CC (1Rmu)"; break;
+        case (kNuisSKDetFSI005) :
+	  nutypes = "all NC (1Rmu)"; break;
+        default : nutypes = "--";
+      }
+      return Form("SKDet + FSI/SI %2d; Ereco range %.1f - %.1f GeV; %s",ip,
+		  kSKDetFSIParamsErecoCut[ip][0],kSKDetFSIParamsErecoCut[ip][1],nutypes.c_str());     
+      break;
+    }//FSI for 1Rmu
+
+    case ( kNuisSKDetFSI006 ) :
+    case ( kNuisSKDetFSI007 ) :
+    case ( kNuisSKDetFSI008 ) :
+    case ( kNuisSKDetFSI009 ) :
+    case ( kNuisSKDetFSI010 ) :
+    case ( kNuisSKDetFSI011 ) :
+    case ( kNuisSKDetFSI012 ) :
+    case ( kNuisSKDetFSI013 ) :
+    case ( kNuisSKDetFSI014 ) :
+    case ( kNuisSKDetFSI015 ) :
+    case ( kNuisSKDetFSI016 ) :
+    case ( kNuisSKDetFSI017 ) :
+      {   
+      int ip = (int)p - (int)kNuisSKDetFSI000;
+      string nutypes = "";
+	switch(p) {
+        case (kNuisSKDetFSI006) :
+        case (kNuisSKDetFSI007) :
+        case (kNuisSKDetFSI008) :
+	  nutypes = "oscillated nue CC (1Re)"; break;
+        case (kNuisSKDetFSI009) :
+        case (kNuisSKDetFSI010) :
+        case (kNuisSKDetFSI011) :
+	  nutypes = "numu/numubar CC (1Re)"; break;
+        case (kNuisSKDetFSI012) :
+        case (kNuisSKDetFSI013) :
+        case (kNuisSKDetFSI014) :
+	  nutypes = "nue/nuebar CC (1Re)"; break;
+        case (kNuisSKDetFSI015) :
+        case (kNuisSKDetFSI016) :
+        case (kNuisSKDetFSI017) :
+	  nutypes = "all NC (1Re)"; break;
+        default : nutypes = "--";
+	}
+      return Form("SKDet + FSI/SI %2d; Ereco range %.1f - %.1f GeV; %s",ip,
+		  kSKDetFSIParamsErecoCut[ip][0],kSKDetFSIParamsErecoCut[ip][1],nutypes.c_str());     
+      break;
+      }
   
   
     default : 
@@ -1165,6 +1227,73 @@ string t2kana::util::AsStringTex(PhysParamId_t p)
       break;
     }//FSI for 1Re
 
+    case ( kNuisSKDetFSI000 ) :
+    case ( kNuisSKDetFSI001 ) :
+    case ( kNuisSKDetFSI002 ) :
+    case ( kNuisSKDetFSI003 ) :
+    case ( kNuisSKDetFSI004 ) :
+    case ( kNuisSKDetFSI005 ) :
+    {
+      string nutypes = "";
+      int ip = (int)p - (int)kNuisSKDetFSI000;
+      switch(p) {
+        case (kNuisSKDetFSI000) :
+        case (kNuisSKDetFSI001) :
+        case (kNuisSKDetFSI002) :
+	  nutypes = "$\\nu_\\mu$/$\\bar{\\nu_\\mu}$ CCQE ($1R_{\\mu}$)"; break;
+        case (kNuisSKDetFSI003) :
+	  nutypes = "$\\nu_\\mu$/$\\bar{\\nu_\\mu}$ CCnQE ($1R_{\\mu}$)"; break;
+        case (kNuisSKDetFSI004) :
+	  nutypes = "$\\nu_e$/$\\bar{\\nu_e}$/sig$\\nu_e$ CC ($1R_{\\mu}$)"; break;
+        case (kNuisSKDetFSI005) :
+	  nutypes = "all NC ($1R_{\\mu}$)"; break;
+        default : nutypes = "--";
+      }
+      return Form("SKDet + FSI/SI %2d; Ereco range %.1f - %.1f GeV; %s",ip,
+		  kSKDetFSIParamsErecoCut[ip][0],kSKDetFSIParamsErecoCut[ip][1],nutypes.c_str());     
+      break;
+    }//FSI for 1Rmu
+
+    case ( kNuisSKDetFSI006 ) :
+    case ( kNuisSKDetFSI007 ) :
+    case ( kNuisSKDetFSI008 ) :
+    case ( kNuisSKDetFSI009 ) :
+    case ( kNuisSKDetFSI010 ) :
+    case ( kNuisSKDetFSI011 ) :
+    case ( kNuisSKDetFSI012 ) :
+    case ( kNuisSKDetFSI013 ) :
+    case ( kNuisSKDetFSI014 ) :
+    case ( kNuisSKDetFSI015 ) :
+    case ( kNuisSKDetFSI016 ) :
+    case ( kNuisSKDetFSI017 ) :
+
+    {
+      string nutypes = "";
+      int ip = (int)p - (int)kNuisSKDetFSI000;
+      switch(p) {
+        case (kNuisSKDetFSI006) :
+        case (kNuisSKDetFSI007) :
+        case (kNuisSKDetFSI008) :
+	  nutypes = "Osc. $\\nu_e$ CC ($1R_{e}$)"; break;
+        case (kNuisSKDetFSI009) :
+        case (kNuisSKDetFSI010) :
+        case (kNuisSKDetFSI011) :
+	  nutypes = "$\\nu_\\mu$/$\\bar{\\nu_\\mu}$ CC ($1R_{e}$)"; break;
+        case (kNuisSKDetFSI012) :
+        case (kNuisSKDetFSI013) :
+        case (kNuisSKDetFSI014) :
+	  nutypes = "$\\nu_e$/$\\bar{\\nu_e}$ CC ($1R_{e}$)"; break;
+        case (kNuisSKDetFSI015) :
+        case (kNuisSKDetFSI016) :
+        case (kNuisSKDetFSI017) :
+	  nutypes = "all NC ($1R_{e}$)"; break;
+        default : nutypes = "--";
+      }
+      return Form("SKDet + FSI/SI %2d; Ereco range %.1f - %.1f GeV; %s",ip,
+		  kSKDetFSIParamsErecoCut[ip][0],kSKDetFSIParamsErecoCut[ip][1],nutypes.c_str());     
+      break;
+    }//FSI for 1Re
+
     default : 
       return "--";
   }
@@ -1342,6 +1471,29 @@ string t2kana::util::AsStringPaperTex(PhysParamId_t p)
     {
       int ip = (int)p - (int)kNuisFSI000;
       return Form("$f_{%d; t, r}^{FSI}$", ip);
+      break;
+    }//FSI                
+  case ( kNuisSKDetFSI000 ) :
+  case ( kNuisSKDetFSI001 ) :
+  case ( kNuisSKDetFSI002 ) :
+  case ( kNuisSKDetFSI003 ) :
+  case ( kNuisSKDetFSI004 ) :
+  case ( kNuisSKDetFSI005 ) :
+  case ( kNuisSKDetFSI006 ) :
+  case ( kNuisSKDetFSI007 ) :
+  case ( kNuisSKDetFSI008 ) :
+  case ( kNuisSKDetFSI009 ) :
+  case ( kNuisSKDetFSI010 ) :
+  case ( kNuisSKDetFSI011 ) :
+  case ( kNuisSKDetFSI012 ) :
+  case ( kNuisSKDetFSI013 ) :
+  case ( kNuisSKDetFSI014 ) :
+  case ( kNuisSKDetFSI015 ) :
+  case ( kNuisSKDetFSI016 ) :
+  case ( kNuisSKDetFSI017 ) :
+    {
+      int ip = (int)p - (int)kNuisSKDetFSI000;
+      return Form("$f_{%d; t, r}^{SK+FSI}$", ip);
       break;
     }//FSI                
   default :
@@ -1522,6 +1674,29 @@ string t2kana::util::AsStringPaperRooTex(PhysParamId_t p)
       return Form("f_{%d; t, r}^{FSI}", ip);
       break;
     }//FSI      
+  case ( kNuisSKDetFSI000 ) :
+  case ( kNuisSKDetFSI001 ) :
+  case ( kNuisSKDetFSI002 ) :
+  case ( kNuisSKDetFSI003 ) :
+  case ( kNuisSKDetFSI004 ) :
+  case ( kNuisSKDetFSI005 ) :
+  case ( kNuisSKDetFSI006 ) :
+  case ( kNuisSKDetFSI007 ) :
+  case ( kNuisSKDetFSI008 ) :
+  case ( kNuisSKDetFSI009 ) :
+  case ( kNuisSKDetFSI010 ) :
+  case ( kNuisSKDetFSI011 ) :
+  case ( kNuisSKDetFSI012 ) :
+  case ( kNuisSKDetFSI013 ) :
+  case ( kNuisSKDetFSI014 ) :
+  case ( kNuisSKDetFSI015 ) :
+  case ( kNuisSKDetFSI016 ) :
+  case ( kNuisSKDetFSI017 ) :
+    {
+      int ip = (int)p - (int)kNuisSKDetFSI000;
+      return Form("f_{%d; t, r}^{SK+FSI}", ip);
+      break;
+    }//FSI      
   default :
     return "--";
   }
@@ -1670,6 +1845,25 @@ string t2kana::util::AsStringCompact(PhysParamId_t p)
     case ( kNuisFSI1Re009 ) : return "f_fsi1Re009"; break;
     case ( kNuisFSI1Re010 ) : return "f_fsi1Re010"; break;
     case ( kNuisFSI1Re011 ) : return "f_fsi1Re011"; break;
+
+    case ( kNuisSKDetFSI000 ) : return "f_skdetfsi000"; break;
+    case ( kNuisSKDetFSI001 ) : return "f_skdetfsi001"; break;
+    case ( kNuisSKDetFSI002 ) : return "f_skdetfsi002"; break;
+    case ( kNuisSKDetFSI003 ) : return "f_skdetfsi003"; break;
+    case ( kNuisSKDetFSI004 ) : return "f_skdetfsi004"; break;
+    case ( kNuisSKDetFSI005 ) : return "f_skdetfsi005"; break;
+    case ( kNuisSKDetFSI006 ) : return "f_skdetfsi006"; break;
+    case ( kNuisSKDetFSI007 ) : return "f_skdetfsi007"; break;
+    case ( kNuisSKDetFSI008 ) : return "f_skdetfsi008"; break;
+    case ( kNuisSKDetFSI009 ) : return "f_skdetfsi009"; break;
+    case ( kNuisSKDetFSI010 ) : return "f_skdetfsi010"; break;
+    case ( kNuisSKDetFSI011 ) : return "f_skdetfsi011"; break;
+    case ( kNuisSKDetFSI012 ) : return "f_skdetfsi012"; break;
+    case ( kNuisSKDetFSI013 ) : return "f_skdetfsi013"; break;
+    case ( kNuisSKDetFSI014 ) : return "f_skdetfsi014"; break;
+    case ( kNuisSKDetFSI015 ) : return "f_skdetfsi015"; break;
+    case ( kNuisSKDetFSI016 ) : return "f_skdetfsi016"; break;
+    case ( kNuisSKDetFSI017 ) : return "f_skdetfsi017"; break;
 
     default : 
       return "--";
@@ -2295,6 +2489,25 @@ t2kana::conv::PhysParamId_t
   if(sh == "fsi_1Re010") return kNuisFSI1Re010;
   if(sh == "fsi_1Re011") return kNuisFSI1Re011;
 
+  if(sh == "skdetfsi_000") return kNuisSKDetFSI000;
+  if(sh == "skdetfsi_001") return kNuisSKDetFSI001;
+  if(sh == "skdetfsi_002") return kNuisSKDetFSI002;
+  if(sh == "skdetfsi_003") return kNuisSKDetFSI003;
+  if(sh == "skdetfsi_004") return kNuisSKDetFSI004;
+  if(sh == "skdetfsi_005") return kNuisSKDetFSI005;
+  if(sh == "skdetfsi_006") return kNuisSKDetFSI006;
+  if(sh == "skdetfsi_007") return kNuisSKDetFSI007;
+  if(sh == "skdetfsi_008") return kNuisSKDetFSI008;
+  if(sh == "skdetfsi_009") return kNuisSKDetFSI009;
+  if(sh == "skdetfsi_010") return kNuisSKDetFSI010;
+  if(sh == "skdetfsi_011") return kNuisSKDetFSI011;
+  if(sh == "skdetfsi_012") return kNuisSKDetFSI012;
+  if(sh == "skdetfsi_013") return kNuisSKDetFSI013;
+  if(sh == "skdetfsi_014") return kNuisSKDetFSI014;
+  if(sh == "skdetfsi_015") return kNuisSKDetFSI015;
+  if(sh == "skdetfsi_016") return kNuisSKDetFSI016;
+  if(sh == "skdetfsi_017") return kNuisSKDetFSI017;
+
   cout << sh << " not yet supported in util::PhysParamIdFromString()" << endl;
   return kPhypUndefined;
 }
@@ -2396,6 +2609,29 @@ t2kana::conv::PhysParamId_t t2kana::util::PhysParamIdFromLongString(string sh)
    string comp = Form("FSI/SI %2d; Ereco range %.1f - %.1f GeV; %s",ip,
 		      kFSIParamsErecoCut[ip][0],kFSIParamsErecoCut[ip][1],nutypes.c_str());     
    if(sh == comp) return (PhysParamId_t)((int)kNuisFSI000+ip);
+ }
+
+ for(int ip = 0; ip < kNumOfSKDetFSIParams; ip++) {
+   string nutypes = "";
+   if(ip < 3)
+     nutypes = "numu/numubar CCQE (1Rmu)";
+   else if(ip < 4)
+     nutypes = "numu/numubar CCnQE (1Rmu)";
+   else if(ip < 5)
+     nutypes = "nue/nuebar/signue CC (1Rmu)";
+   else if(ip < 6)
+     nutypes = "all NC (1Rmu)";
+   else if(ip < 9)
+     nutypes = "Osc. nue CC (1Re)";
+   else if(ip < 12)
+     nutypes = "numu/numubar CC (1Re)";
+   else if(ip < 15)
+     nutypes = "nue/nuebar CC (1Re)";
+   else if(ip < 18)
+     nutypes = "all NC (1Re)";
+   string comp = Form("SKDet + FSI/SI %2d; Ereco range %.1f - %.1f GeV; %s",ip,
+		      kSKDetFSIParamsErecoCut[ip][0],kSKDetFSIParamsErecoCut[ip][1],nutypes.c_str());     
+   if(sh == comp) return (PhysParamId_t)((int)kNuisSKDetFSI000+ip);
  }
 
 
@@ -2924,7 +3160,24 @@ bool t2kana::util::IsSystematic(PhysParamId_t p)
     case ( kNuisFSI1Re010             ) : return true;  break;
     case ( kNuisFSI1Re011             ) : return true;  break;
 
-
+    case ( kNuisSKDetFSI000           ) : return true;  break;
+    case ( kNuisSKDetFSI001           ) : return true;  break;
+    case ( kNuisSKDetFSI002           ) : return true;  break;
+    case ( kNuisSKDetFSI003           ) : return true;  break;
+    case ( kNuisSKDetFSI004           ) : return true;  break;
+    case ( kNuisSKDetFSI005           ) : return true;  break;
+    case ( kNuisSKDetFSI006           ) : return true;  break;
+    case ( kNuisSKDetFSI007           ) : return true;  break;
+    case ( kNuisSKDetFSI008           ) : return true;  break;
+    case ( kNuisSKDetFSI009           ) : return true;  break;
+    case ( kNuisSKDetFSI010           ) : return true;  break;
+    case ( kNuisSKDetFSI011           ) : return true;  break;
+    case ( kNuisSKDetFSI012           ) : return true;  break;
+    case ( kNuisSKDetFSI013           ) : return true;  break;
+    case ( kNuisSKDetFSI014           ) : return true;  break;
+    case ( kNuisSKDetFSI015           ) : return true;  break;
+    case ( kNuisSKDetFSI016           ) : return true;  break;
+    case ( kNuisSKDetFSI017           ) : return true;  break;
 
     default : 
       return false;
@@ -4573,6 +4826,21 @@ void t2kana::util::ArrIdx::Init(void)
      cout << "Util/ArrIdx >> FSI: " 
           << util::AsString(p)
           << " is at slot: " << fFSISystIdx [p] << endl;
+#endif
+  }
+
+  //SKDET + FSI
+  for(int i = 0; i < knppmax; i++) {
+    fSKDetFSISystIdx[i] = -1;
+  }
+  for(int ip = 0; ip < kNumOfSKDetFSIParams; ip++) {
+    PhysParamId_t p = PhysParamId_t ((int) kNuisSKDetFSI000 + ip);
+    if(p == kPhypUndefined) continue;
+    fSKDetFSISystIdx[p] = ip;
+#ifdef __show_arr_idx_mesg_debug__
+     cout << "Util/ArrIdx >> SKDet+FSI: " 
+          << util::AsString(p)
+          << " is at slot: " << fSKDetFSISystIdx [p] << endl;
 #endif
   }
 

@@ -33,6 +33,7 @@
 
 #include "SuperkExpectation.h"
 #include "SuperkDetector.h"
+#include "SuperkDetectorFSI.h"
 #include "SuperkMC.h"
 #include "NuFlux.h"
 #include "NuXSec.h"
@@ -41,6 +42,7 @@
 #include "Conventions.h"
 #include "Utilities.h"
 #include "Opt.h"
+#include "Rnd.h"
 
 using std::cout;
 using std::cerr;
@@ -67,6 +69,7 @@ void SuperkExpectation::Init(void)
   fIsConfigured = false;
 
   fSuperkDetector = 0;
+  fSuperkDetectorFSI = 0;
   fSuperkMC       = 0;
   fNuFlux         = 0;
   fNuXSec         = 0;
@@ -110,6 +113,7 @@ void SuperkExpectation::Book(void)
 void SuperkExpectation::CleanUp(void)
 {
   if (fSuperkDetector ) delete fSuperkDetector;
+  if (fSuperkDetectorFSI ) delete fSuperkDetectorFSI;
   if (fSuperkMC       ) delete fSuperkMC;
   if (fNuFlux         ) delete fNuFlux; 
   if (fNuXSec         ) delete fNuXSec;
@@ -141,14 +145,16 @@ bool SuperkExpectation::Read(string config_file)
   fNuXSec         = new NuXSec; 
   fFSI            = new FSI; 
   fSuperkDetector = new SuperkDetector; 
+  fSuperkDetectorFSI = new SuperkDetectorFSI; 
   fSuperkMC       = new SuperkMC;
 
   // Configure inter-dependencies.
   fNuFlux   -> TellMeAboutTheBANFFfit   (fBANFF);
   fNuXSec   -> TellMeAboutTheBANFFfit   (fBANFF);
-  fSuperkMC -> TellMeAboutTheDetector   (fSuperkDetector);
   fSuperkMC -> TellMeAboutCrossSections (fNuXSec);
   fSuperkMC -> TellMeAboutTheFlux       (fNuFlux);
+  fSuperkMC -> TellMeAboutTheDetectorFSI(fSuperkDetectorFSI);
+  fSuperkMC -> TellMeAboutTheDetector   (fSuperkDetector);
   fSuperkMC -> TellMeAboutFSI           (fFSI);
 
   // Parse the input XML configuration file
@@ -162,12 +168,13 @@ bool SuperkExpectation::Read(string config_file)
   XMLNodePointer_t root_node = xml->DocGetRootElement(xmldoc);
 
   // Configure each of the components 
-  if ( ! this->GetBANFF          () -> Read (xml, root_node) ) return false;
-  if ( ! this->GetNuFlux         () -> Read (xml, root_node) ) return false;
-  if ( ! this->GetNuXSec         () -> Read (xml, root_node) ) return false;
-  if ( ! this->GetFSI            () -> Read (xml, root_node) ) return false;
-  if ( ! this->GetSuperkDetector () -> Read (xml, root_node) ) return false;
-  if ( ! this->GetSuperkMC       () -> Read (xml, root_node) ) return false;
+  if ( ! this->GetBANFF            () -> Read (xml, root_node) ) return false;
+  if ( ! this->GetNuFlux           () -> Read (xml, root_node) ) return false;
+  if ( ! this->GetNuXSec           () -> Read (xml, root_node) ) return false;
+  if ( ! this->GetFSI              () -> Read (xml, root_node) ) return false;
+  if ( ! this->GetSuperkDetectorFSI() -> Read (xml, root_node) ) return false;
+  if ( ! this->GetSuperkDetector   () -> Read (xml, root_node) ) return false;
+  if ( ! this->GetSuperkMC         () -> Read (xml, root_node) ) return false;
 
   fIsConfigured = true;
 
@@ -222,7 +229,7 @@ bool SuperkExpectation::Generate(const PhysHypothesis & ph)
   return applied_negevents_condition;
 }
 //________________________________________________________________________________________
-bool SuperkExpectation::Generate(const FitParamList & fp, bool all_banff_fit)
+bool SuperkExpectation::Generate(const FitParamList & fp, bool all_banff_fit, bool all_1Re_eff)
 {
 // SuperkExpectation interface method for fitters.
 // Calculate dN^{exp}_{SuperK}(E_{reco}) / dE_{reco} for the input E_{reco} and 
@@ -231,7 +238,7 @@ bool SuperkExpectation::Generate(const FitParamList & fp, bool all_banff_fit)
 
   // set values of nuisance parameters 
   // (if any nuisance parameter is included in the fit)
-  this->SetNuisanceParams(fp, all_banff_fit);
+  this->SetNuisanceParams(fp, all_banff_fit, all_1Re_eff);
 
   // extract the values of params driving the oscillation, decoherence or decay model
   PhysHypothesis ph(fp);
@@ -289,10 +296,15 @@ double  SuperkExpectation::CurrPredictedErecoSpectrumArray(t2kana::conv::SuperkS
 void SuperkExpectation::PrintSystematicVariations(ostream & stream) const
 {
   cout << "Exp >> SuperK PDF tweaks: " << endl;
-  fSuperkDetector -> PrintSystematicVariations(stream);
   fBANFF          -> PrintSystematicVariations(stream);
   fNuXSec         -> PrintSystematicVariations(stream);
+#ifdef SKFSITOGETHER
+  fSuperkDetectorFSI -> PrintSystematicVariations(stream);
+#endif
+#ifndef SKFSITOGETHER
+  fSuperkDetector -> PrintSystematicVariations(stream);
   fFSI            -> PrintSystematicVariations(stream);
+#endif
 }
 //________________________________________________________________________________________
 bool SuperkExpectation::Write(TObjArray * array, const char * pdf_tag)
@@ -353,6 +365,7 @@ void SuperkExpectation::ResetSystematicVariations(void)
   cout << "Exp >> Reseting all systematic variations." << endl;
 #endif
 
+#ifndef SKFSITOGETHER
   // SuperK detector systematics
   this->GetSuperkDetector()->TweakEnergyScale                    (0.);
   this->GetSuperkDetector()->TweakEfficiency1RmuCCQEOther        (0.);
@@ -363,11 +376,17 @@ void SuperkExpectation::ResetSystematicVariations(void)
 
   this->GetSuperkDetector()->TweakEfficiencies1Re                (true,0);
 
+  // FSI
+  this->GetFSI()->Tweak(true,0);
+#endif
+#ifdef SKFSITOGETHER
+  this->GetSuperkDetectorFSI()->TweakEnergyScale(0.);
+  this->GetSuperkDetectorFSI()->Tweak(true,0);
+#endif
+
   // BANFF
   this->GetBANFF()->Tweak(true,0);
 
-  // FSI
-  this->GetFSI()->Tweak(true,0);
 
   // X Section
   this->GetNuXSec()->TweakFermiMom      (0.);
@@ -454,6 +473,8 @@ void SuperkExpectation::TweakSystematic(string systematic, double twkdial, bool 
   if(systematic == "sk_energy_scale") {
      this->GetSuperkDetector()->TweakEnergyScale(twkdial);
   }
+
+#ifndef SKFSITOGETHER
   else
   if(systematic == "sk_1Rmu_ccqe_other_eff") {
      this->GetSuperkDetector()->TweakEfficiency1RmuCCQEOther(twkdial);
@@ -527,7 +548,74 @@ void SuperkExpectation::TweakSystematic(string systematic, double twkdial, bool 
       exit(1);
     }
   }
+  //
+  // FSI
+  //
 
+  // tweak all FSI parameters taking into account correlations
+  else
+  if(systematic == "fsi") {
+    this->GetFSI()->Tweak(); //< Cholesky method
+  }
+  // tweak an individual FSI parameter (ignores correlations, debug)
+  else
+  if(systematic.find("fsi_") != string::npos) {
+     bool found = false;
+     const int nfsi = conv::kNumOfFSIParams;
+     TVectorD twkv(nfsi);
+     for (int ip = 0; ip < nfsi; ip++) {
+       twkv[ip] = 1;
+     }
+     for (int ip = 0; ip < nfsi; ip++) {
+       if(systematic == Form("fsi_%03i",ip)) {
+	 twkv[ip]=twkdial;
+	 this->GetFSI()->Tweak(true,&twkv);
+	 found = true;
+	 break;
+       }
+     }//ib
+     if(!found) {
+       cerr << "Exp >> Unknown systematic parameter (" << systematic << ")" << endl;
+       exit(1);
+     }   
+  }  
+#endif
+
+#ifdef SKFSITOGETHER
+  //
+  // sKDET + FSI
+  //
+
+  // tweak all FSI parameters taking into account correlations
+  else
+  if(systematic == "skdetfsi") {
+    this->GetSuperkDetectorFSI()->Tweak(); //< Cholesky method
+  }
+  // tweak an individual FSI parameter (ignores correlations, debug)
+  else
+  if(systematic.find("skdetfsi_") != string::npos) {
+     bool found = false;
+     const int nskdetfsi = conv::kNumOfSKDetFSIParams;
+     TVectorD twkv(nskdetfsi);
+     for (int ip = 0; ip < nskdetfsi; ip++) {
+       twkv[ip] = 1;
+     }
+     for (int ip = 0; ip < nskdetfsi; ip++) {
+       if(systematic == Form("skdetfsi_%03i",ip)) {
+	 twkv[ip]=twkdial;
+	 this->GetSuperkDetectorFSI()->Tweak(true,&twkv);
+	 found = true;
+	 break;
+       }
+     }//ib
+     if(!found) {
+       cerr << "Exp >> Unknown systematic parameter (" << systematic << ")" << endl;
+       exit(1);
+     }   
+  }
+  
+  
+#endif
 
   //
   // BANFF & Uncorrelated BANFF
@@ -564,39 +652,6 @@ void SuperkExpectation::TweakSystematic(string systematic, double twkdial, bool 
   }
 
 
-  //
-  // FSI
-  //
-
-  // tweak all FSI parameters taking into account correlations
-  else
-  if(systematic == "fsi") {
-    this->GetFSI()->Tweak(); //< Cholesky method
-  }
-  // tweak an individual FSI parameter (ignores correlations, debug)
-  else
-  if(systematic.find("fsi_") != string::npos) {
-     bool found = false;
-     const int nfsi = conv::kNumOfFSIParams;
-     TVectorD twkv(nfsi);
-     for (int ip = 0; ip < nfsi; ip++) {
-       twkv[ip] = 1;
-     }
-     for (int ip = 0; ip < nfsi; ip++) {
-       if(systematic == Form("fsi_%03i",ip)) {
-	 twkv[ip]=twkdial;
-	 this->GetFSI()->Tweak(true,&twkv);
-	 found = true;
-	 break;
-       }
-     }//ib
-     if(!found) {
-       cerr << "Exp >> Unknown systematic parameter (" << systematic << ")" << endl;
-       exit(1);
-     }   
-  }
-  
-  
   //
   // XSec
   //
@@ -641,9 +696,14 @@ void SuperkExpectation::TweakAllSystematics(void)
 #endif
 
   this->TweakAllBANFFSystematics();
-  this->TweakAllFSISystematics();
   this->TweakAllUncorrelatedXSecSystematics();
+#ifndef SKFSITOGETHER
+  this->TweakAllFSISystematics();
   this->TweakAllSKDetectorSystematics();
+#endif
+#ifdef SKFSITOGETHER
+  this->TweakAllSKDetectorFSISystematics();
+#endif
 }
 //________________________________________________________________________________________
 void SuperkExpectation::TweakAllBANFFSystematics(void)
@@ -654,6 +714,16 @@ void SuperkExpectation::TweakAllBANFFSystematics(void)
 
   // BANFF
   this->GetBANFF()->Tweak(false,0); // <-- Cholesky method
+}
+//________________________________________________________________________________________
+void SuperkExpectation::TweakAllSKDetectorFSISystematics(void)
+{
+#ifdef __show_syst_tweak_mesg__
+  cout << "Exp >> Generating random variations of all SKDET + FSI systematic params." << endl;
+#endif
+
+  this->GetSuperkDetectorFSI()->TweakEnergyScale              (Rnd::Instance()->RndToyMCsyst().Gaus(0.,1.));
+  this->GetSuperkDetectorFSI()->Tweak(); // <-- Cholesky method
 }
 //________________________________________________________________________________________
 void SuperkExpectation::TweakAllFSISystematics(void)
@@ -672,21 +742,19 @@ void SuperkExpectation::TweakAllUncorrelatedXSecSystematics(void)
   cout << "Exp >> Generating random variations of all Uncorrelated XSec systematic params." << endl;
 #endif
 
-  TRandom3 rand(0);
-
   // XSec
-  this->GetNuXSec()->TweakFermiMom      (rand.Gaus(0.,1.));
-  this->GetNuXSec()->TweakSpecFunc      (rand.Uniform(0.,1.));
-  this->GetNuXSec()->TweakWshape        (rand.Gaus(0.,1.));
-  this->GetNuXSec()->TweakShapeCCoth    (rand.Gaus(0.,1.));
-  this->GetNuXSec()->TweakPiLessDelta   (rand.Gaus(0.,1.));
-  this->GetNuXSec()->TweakBindE         (rand.Gaus(0.,1.));
-  this->GetNuXSec()->TweakNormCCcoh     (rand.Gaus(0.,1.));
-  this->GetNuXSec()->TweakNormNCcoh     (rand.Gaus(0.,1.));
-  this->GetNuXSec()->TweakNormNC1piC    (rand.Gaus(0.,1.));
-  this->GetNuXSec()->TweakNormNCoth     (rand.Gaus(0.,1.));
-  this->GetNuXSec()->TweakNormNuEToNuMu (rand.Gaus(0.,1.));
-  this->GetNuXSec()->TweakNormAntiNuToNu(rand.Gaus(0.,1.));
+  this->GetNuXSec()->TweakFermiMom      (Rnd::Instance()->RndToyMCsyst().Gaus(0.,1.));
+  this->GetNuXSec()->TweakSpecFunc      (Rnd::Instance()->RndToyMCsyst().Uniform(0.,1.));
+  this->GetNuXSec()->TweakWshape        (Rnd::Instance()->RndToyMCsyst().Gaus(0.,1.));
+  this->GetNuXSec()->TweakShapeCCoth    (Rnd::Instance()->RndToyMCsyst().Gaus(0.,1.));
+  this->GetNuXSec()->TweakPiLessDelta   (Rnd::Instance()->RndToyMCsyst().Gaus(0.,1.));
+  this->GetNuXSec()->TweakBindE         (Rnd::Instance()->RndToyMCsyst().Gaus(0.,1.));
+  this->GetNuXSec()->TweakNormCCcoh     (Rnd::Instance()->RndToyMCsyst().Gaus(0.,1.));
+  this->GetNuXSec()->TweakNormNCcoh     (Rnd::Instance()->RndToyMCsyst().Gaus(0.,1.));
+  this->GetNuXSec()->TweakNormNC1piC    (Rnd::Instance()->RndToyMCsyst().Gaus(0.,1.));
+  this->GetNuXSec()->TweakNormNCoth     (Rnd::Instance()->RndToyMCsyst().Gaus(0.,1.));
+  this->GetNuXSec()->TweakNormNuEToNuMu (Rnd::Instance()->RndToyMCsyst().Gaus(0.,1.));
+  this->GetNuXSec()->TweakNormAntiNuToNu(Rnd::Instance()->RndToyMCsyst().Gaus(0.,1.));
 }
 //________________________________________________________________________________________
 void SuperkExpectation::TweakAllSKDetectorSystematics(void)
@@ -695,29 +763,29 @@ void SuperkExpectation::TweakAllSKDetectorSystematics(void)
   cout << "Exp >> Generating random variations of all SKDetector systematic params." << endl;
 #endif
 
-  TRandom3 rand(0);
 
   // SuperK detector systematics
-  this->GetSuperkDetector()->TweakEnergyScale              (rand.Gaus(0.,1.));
-  this->GetSuperkDetector()->TweakEfficiency1RmuCCQEOther  (rand.Gaus(0.,1.));
+  this->GetSuperkDetector()->TweakEnergyScale              (Rnd::Instance()->RndToyMCsyst().Gaus(0.,1.));
+  this->GetSuperkDetector()->TweakEfficiency1RmuCCQEOther  (Rnd::Instance()->RndToyMCsyst().Gaus(0.,1.));
   this->GetSuperkDetector()->TweakEfficiency1RmuCCQERingCounting  (); // <-- Cholesky method
-  this->GetSuperkDetector()->TweakEfficiency1RmuCCnonQE    (rand.Gaus(0.,1.));
-  this->GetSuperkDetector()->TweakEfficiency1RmuNC         (rand.Gaus(0.,1.));
-  this->GetSuperkDetector()->TweakEfficiency1RmuNuECC      (rand.Gaus(0.,1.));
+  this->GetSuperkDetector()->TweakEfficiency1RmuCCnonQE    (Rnd::Instance()->RndToyMCsyst().Gaus(0.,1.));
+  this->GetSuperkDetector()->TweakEfficiency1RmuNC         (Rnd::Instance()->RndToyMCsyst().Gaus(0.,1.));
+  this->GetSuperkDetector()->TweakEfficiency1RmuNuECC      (Rnd::Instance()->RndToyMCsyst().Gaus(0.,1.));
   this->GetSuperkDetector()->TweakEfficiencies1Re          (); // <-- Cholesky method
 }
 //________________________________________________________________________________________
-void SuperkExpectation::SetNuisanceParams(const FitParamList & fp, bool all_banff_fit)
+void SuperkExpectation::SetNuisanceParams(const FitParamList & fp, bool all_banff_fit, bool all_1Re_eff)
 {
    //this->ResetSystematicVariations();
-
-   // 
-   // SuperK detector systematics
-   //
-
-   if(fp.Exists(kNuisSuperkEff1RmuCCQEoth)) {
-     double twk = fp.CurrValue(kNuisSuperkEff1RmuCCQEoth);
-     this->GetSuperkDetector()->TweakEfficiency1RmuCCQEOther(twk);
+  
+#ifndef SKFSITOGETHER
+  // 
+  // SuperK detector systematics
+  //
+  
+  if(fp.Exists(kNuisSuperkEff1RmuCCQEoth)) {
+    double twk = fp.CurrValue(kNuisSuperkEff1RmuCCQEoth);
+    this->GetSuperkDetector()->TweakEfficiency1RmuCCQEOther(twk);
    }
    if(fp.Exists(kNuisSuperkEff1RmuCCQErc0u) &&
       fp.Exists(kNuisSuperkEff1RmuCCQErc1u) &&
@@ -745,7 +813,9 @@ void SuperkExpectation::SetNuisanceParams(const FitParamList & fp, bool all_banf
    }
 
    const int neff1Re = conv::kNumOfSKDetParams1Re;
-   // 1Re eff params included in the fit param list?                                                                                                                                                    
+   TVectorD twkv1Re(neff1Re); 
+   // 1Re eff params included in the fit param list?                                                                                                                             
+   /*                       
    bool incl_eff1Re = true;
    for(int ip = 0; ip < neff1Re; ip++) {
      PhysParamId_t p = PhysParamId_t ((int) kNuisSuperkEff1ReNueSigCC0 + ip);
@@ -762,112 +832,57 @@ void SuperkExpectation::SetNuisanceParams(const FitParamList & fp, bool all_banf
      }
      this->GetSuperkDetector()->TweakEfficiencies1Re(true,&twkv);
    }
-
-
-   // 
-   // BANFF systematics
-   //
-
-   const int nbanff = conv::kNumOfParamsInBANFFfit;
-   // BANFF params included in the fit param list?
-   TVectorD twkv(nbanff);
-   if(all_banff_fit) {
-     for(int ip = 0; ip < nbanff; ip++) {
-       PhysParamId_t p = PhysParamId_t ((int) kNuisBANFF00 + ip);
-       bool incl_banff = fp.Exists(p);
-       // If BANFF param included, use current value stored in fit param list
-       // to tweak the BANFF object
-       if(incl_banff)
-	 twkv[ip] = fp.CurrValue(p);
-       // Otherwise, use whatever is already stored in the BANFF object
+   */
+   if(all_1Re_eff){
+     for(int ip = 0; ip < neff1Re; ip++) {
+       PhysParamId_t p = PhysParamId_t ((int) kNuisSuperkEff1ReNueSigCC0 + ip);
+       bool incl_1Re_eff = fp.Exists(p);
+       if(incl_1Re_eff)
+         twkv1Re[ip] = fp.CurrValue(p);
        else
-	 twkv[ip] = this->GetBANFF()->CurrentValue(p);
+         twkv1Re[ip] = this->GetSuperkDetector()->CurrentValue(p);
      }
-   }//all_banff_fit
+   }
    else{
-     const TMatrixD & cov = this->GetBANFF()->CovMatrix();
-     // get the value of things we're actually fitting
-     PhysParamId_t p_maqe = kNuisBANFFMAQE;
-     int ip_maqe = util::ArrIdx::Instance()->BANFFSystIdx(p_maqe);
-     bool incl_maqe = fp.Exists(p_maqe);
-     if(incl_maqe)
-       twkv[ip_maqe] = fp.CurrValue(p_maqe);
+     const TMatrixD & cov = this->GetSuperkDetector()->Eff1ReCovarRelErr();
+     // get the value of things we're actually fitting 
+     PhysParamId_t p_signue2 = kNuisSuperkEff1ReNueSigCC2;
+     bool incl_signue2 = fp.Exists(p_signue2);
+     if(incl_signue2)
+       twkv1Re[2] = fp.CurrValue(p_signue2);
      else
-       twkv[ip_maqe] = this->GetBANFF()->CurrentValue(p_maqe);
-     double sigma_maqe = (twkv[ip_maqe] - this->GetBANFF()->BestFitValue(p_maqe)) / cov[ip_maqe][ip_maqe];
-     PhysParamId_t p_ccqe0 = kNuisBANFFCCQEE0;
-     int ip_ccqe0 = util::ArrIdx::Instance()->BANFFSystIdx(p_ccqe0);
-     bool incl_ccqe0 = fp.Exists(p_ccqe0);
-     if(incl_ccqe0)
-       twkv[ip_ccqe0] = fp.CurrValue(p_ccqe0);
+       twkv1Re[2] = this->GetSuperkDetector()->CurrentValue(p_signue2);
+     double sigma_signue2 = (twkv1Re[2] - 1.0) / cov[2][2];
+
+     PhysParamId_t p_nue2 = kNuisSuperkEff1ReNueCC2;
+     bool incl_nue2 = fp.Exists(p_nue2);
+     if(incl_nue2)
+       twkv1Re[8] = fp.CurrValue(p_nue2);
      else
-       twkv[ip_ccqe0] = this->GetBANFF()->CurrentValue(p_ccqe0);
-     double sigma_ccqe0 = (twkv[ip_ccqe0] - this->GetBANFF()->BestFitValue(p_ccqe0)) / cov[ip_ccqe0][ip_ccqe0];
-     // now, tweak the other parameters according to the correlations between them and the fitted parameters
-     for(int ip = 0; ip < nbanff; ip++) {
-       PhysParamId_t p = PhysParamId_t ((int) kNuisBANFF00 + ip);
-       if(p == kNuisBANFFMAQE || p == kNuisBANFFCCQEE0)
-	 continue;
-       twkv[ip] = this->GetBANFF()->BestFitValue(p);
-       twkv[ip] += sigma_maqe  * cov[ip_maqe] [ip];
-       twkv[ip] += sigma_ccqe0 * cov[ip_ccqe0][ip];
+       twkv1Re[8] = this->GetSuperkDetector()->CurrentValue(p_nue2);
+     double sigma_nue2 = (twkv1Re[8] - 1.0) / cov[8][8];
+
+     PhysParamId_t p_nc2 = kNuisSuperkEff1ReNC2;
+     bool incl_nc2 = fp.Exists(p_nc2);
+     if(incl_nc2)
+       twkv1Re[11] = fp.CurrValue(p_nc2);
+     else
+       twkv1Re[11] = this->GetSuperkDetector()->CurrentValue(p_nc2);
+     double sigma_nc2 = (twkv1Re[11] - 1.0) / cov[11][11];
+
+     for(int ip = 0; ip < neff1Re; ip++) {
+       PhysParamId_t p = PhysParamId_t ((int) kNuisSuperkEff1ReNueSigCC0 + ip);
+       if(p == kNuisSuperkEff1ReNueSigCC2 || p == kNuisSuperkEff1ReNueCC2 || p == kNuisSuperkEff1ReNC2)
+         continue;
+       twkv1Re[ip] = 1.0;
+       twkv1Re[ip] += sigma_signue2  * cov[2] [ip];
+       twkv1Re[ip] += sigma_nue2 * cov[8][ip];
+       twkv1Re[ip] += sigma_nc2 * cov[11][ip];
      }
-   }//!all_banff_fit
-   //And finally apply the tweak
-   this->GetBANFF()->Tweak(true,&twkv);
-
-   // 
-   // Cross-section systematics (other than BANFF ones)
-   //
-   if(fp.Exists(kNuisXSecFermiMom)) {
-     double twk = fp.CurrValue(kNuisXSecFermiMom);
-     this->GetNuXSec()->TweakFermiMom(twk);
-   }
-   if(fp.Exists(kNuisXSecSpecFunc)) {
-     double twk = fp.CurrValue(kNuisXSecSpecFunc);
-     this->GetNuXSec()->TweakSpecFunc(twk);
-   }
-   if(fp.Exists(kNuisXSecWshape)) {
-     double twk = fp.CurrValue(kNuisXSecWshape);
-     this->GetNuXSec()->TweakWshape(twk);
-   }
-   if(fp.Exists(kNuisXSecShapeCCoth)) {
-     double twk = fp.CurrValue(kNuisXSecShapeCCoth);
-     this->GetNuXSec()->TweakShapeCCoth(twk);
-   }
-   if(fp.Exists(kNuisXSecPiLessDelta)) {
-     double twk = fp.CurrValue(kNuisXSecPiLessDelta);
-     this->GetNuXSec()->TweakPiLessDelta(twk);
-   }
-   if(fp.Exists(kNuisXSecBindE)) {
-     double twk = fp.CurrValue(kNuisXSecBindE);
-     this->GetNuXSec()->TweakBindE(twk);
-   }
-   if(fp.Exists(kNuisXSecNormCCcoh)) {
-     double twk = fp.CurrValue(kNuisXSecNormCCcoh);
-     this->GetNuXSec()->TweakNormCCcoh(twk);
-   }
-   if(fp.Exists(kNuisXSecNormNCcoh)) {
-     double twk = fp.CurrValue(kNuisXSecNormNCcoh);
-     this->GetNuXSec()->TweakNormNCcoh(twk);
-   }
-   if(fp.Exists(kNuisXSecNormNC1piC)) {
-     double twk = fp.CurrValue(kNuisXSecNormNC1piC);
-     this->GetNuXSec()->TweakNormNC1piC(twk);
-   }
-   if(fp.Exists(kNuisXSecNormNCoth)) {
-     double twk = fp.CurrValue(kNuisXSecNormNCoth);
-     this->GetNuXSec()->TweakNormNCoth(twk);
-   }
-   if(fp.Exists(kNuisXSecNormNuEToNuMu)) {
-     double twk = fp.CurrValue(kNuisXSecNormNuEToNuMu);
-     this->GetNuXSec()->TweakNormNuEToNuMu(twk);
-   }
-   if(fp.Exists(kNuisXSecNormAntiNuToNu)) {
-     double twk = fp.CurrValue(kNuisXSecNormAntiNuToNu);
-     this->GetNuXSec()->TweakNormAntiNuToNu(twk);
-   }
-
+   }//!all_1Re_eff
+   //And finally apply the tweak 
+   this->GetSuperkDetector()->TweakEfficiencies1Re(true,&twkv1Re);
+   
    // 
    // FSI systematics
    //
@@ -927,6 +942,201 @@ void SuperkExpectation::SetNuisanceParams(const FitParamList & fp, bool all_banf
        this->GetFSI()->Tweak(true,&twkv);    
      }
    }
+
+#endif
+
+#ifdef SKFSITOGETHER
+
+   // 
+   // SKDET + FSI systematics
+   //
+
+   if(fp.Exists(kNuisSuperkEnergyScale)) {
+     double twk = fp.CurrValue(kNuisSuperkEnergyScale);
+     this->GetSuperkDetectorFSI()->TweakEnergyScale(twk);
+   }
+   
+   const int nskdetfsi = conv::kNumOfSKDetFSIParams;
+   const int nskdetfsi_1Rmu = conv::kNumOfSKDetFSIParams1Rmu;
+   const int nskdetfsi_1Re = conv::kNumOfSKDetFSIParams1Re;
+   // SKDET + FSI params included in the fit param list?
+   bool incl_skdetfsi = true;
+
+   if (Opt::Instance()->gOscAnaTypeChoice == conv::kAnaNuMuDisappOnly){
+     for(int ip = 0; ip < nskdetfsi_1Rmu; ip++) {
+       PhysParamId_t p = PhysParamId_t ((int) kNuisSKDetFSI000 + ip);
+       incl_skdetfsi = incl_skdetfsi && fp.Exists(p);
+       if(!incl_skdetfsi) break;
+     }
+   }
+   else if (Opt::Instance()->gOscAnaTypeChoice == conv::kAnaNuEAppOnly){
+     for(int ip = nskdetfsi_1Rmu; ip < nskdetfsi; ip++) {
+       PhysParamId_t p = PhysParamId_t ((int) kNuisSKDetFSI000 + ip);
+       incl_skdetfsi = incl_skdetfsi && fp.Exists(p);
+       if(!incl_skdetfsi) break;
+     }
+   }
+   else{
+     for(int ip = 0; ip < nskdetfsi; ip++) {
+       PhysParamId_t p = PhysParamId_t ((int) kNuisSKDetFSI000 + ip);
+       incl_skdetfsi = incl_skdetfsi && fp.Exists(p);
+       if(!incl_skdetfsi) break;
+     }
+   }
+   // If SKDET + FSI params included, use current values stored in fit param list
+   // to tweak the SKDET + FSI object
+   if(incl_skdetfsi) {
+     if (Opt::Instance()->gOscAnaTypeChoice == conv::kAnaNuMuDisappOnly){
+       TVectorD twkv(nskdetfsi_1Rmu);
+       for(int ip = 0; ip < nskdetfsi_1Rmu; ip++) {
+         PhysParamId_t p = PhysParamId_t ((int) kNuisSKDetFSI000 + ip);
+         twkv[ip] = fp.CurrValue(p);
+       }
+       this->GetSuperkDetectorFSI()->TweakOnly1Rmu(true,&twkv);
+     }
+     else if (Opt::Instance()->gOscAnaTypeChoice == conv::kAnaNuEAppOnly){
+       TVectorD twkv(nskdetfsi_1Re);
+       for(int ip = 0; ip < nskdetfsi_1Re; ip++) {
+         PhysParamId_t p = PhysParamId_t ((int) kNuisSKDetFSI000 + ip + nskdetfsi_1Rmu);
+         twkv[ip] = fp.CurrValue(p);
+       }
+       this->GetSuperkDetectorFSI()->TweakOnly1Re(true,&twkv);
+     }
+     else {
+       TVectorD twkv(nskdetfsi);
+       for(int ip = 0; ip < nskdetfsi; ip++) {
+	 PhysParamId_t p = PhysParamId_t ((int) kNuisSKDetFSI000 + ip);
+	 twkv[ip] = fp.CurrValue(p);
+       }
+       this->GetSuperkDetectorFSI()->Tweak(true,&twkv);    
+     }
+   }
+
+#endif
+
+   // 
+   // BANFF systematics
+   //
+
+   const int nbanff = conv::kNumOfParamsInBANFFfit;
+   // BANFF params included in the fit param list?
+   TVectorD twkv(nbanff);
+   if(all_banff_fit) {
+     for(int ip = 0; ip < nbanff; ip++) {
+       PhysParamId_t p = PhysParamId_t ((int) kNuisBANFF00 + ip);
+       bool incl_banff = fp.Exists(p);
+       // If BANFF param included, use current value stored in fit param list
+       // to tweak the BANFF object
+       if(incl_banff)
+	 twkv[ip] = fp.CurrValue(p);
+       // Otherwise, use whatever is already stored in the BANFF object
+       else
+	 twkv[ip] = this->GetBANFF()->CurrentValue(p);
+     }
+   }//all_banff_fit
+   else{
+     const TMatrixD & cov = this->GetBANFF()->CovMatrix();
+     // get the value of things we're actually fitting
+     PhysParamId_t p_maqe = kNuisBANFFMAQE;
+     int ip_maqe = util::ArrIdx::Instance()->BANFFSystIdx(p_maqe);
+     bool incl_maqe = fp.Exists(p_maqe);
+     if(incl_maqe)
+       twkv[ip_maqe] = fp.CurrValue(p_maqe);
+     else
+       twkv[ip_maqe] = this->GetBANFF()->CurrentValue(p_maqe);
+     double sigma_maqe = (twkv[ip_maqe] - this->GetBANFF()->BestFitValue(p_maqe)) / cov[ip_maqe][ip_maqe];
+
+     PhysParamId_t p_ccqe0 = kNuisBANFFCCQEE0;
+     int ip_ccqe0 = util::ArrIdx::Instance()->BANFFSystIdx(p_ccqe0);
+     bool incl_ccqe0 = fp.Exists(p_ccqe0);
+     if(incl_ccqe0)
+       twkv[ip_ccqe0] = fp.CurrValue(p_ccqe0);
+     else
+       twkv[ip_ccqe0] = this->GetBANFF()->CurrentValue(p_ccqe0);
+     double sigma_ccqe0 = (twkv[ip_ccqe0] - this->GetBANFF()->BestFitValue(p_ccqe0)) / cov[ip_ccqe0][ip_ccqe0];
+     //new - joint
+     double sigma_banff1 = 0;
+     int ip_banff1 = -1;
+     if (Opt::Instance()->gOscAnaTypeChoice == conv::kAnaCombined){
+       PhysParamId_t p_banff1 = kNuisBANFF01;
+       ip_banff1 = util::ArrIdx::Instance()->BANFFSystIdx(p_banff1);
+       bool incl_banff1 = fp.Exists(p_banff1);
+       if(incl_banff1)
+	 twkv[ip_banff1] = fp.CurrValue(p_banff1);
+       else
+	 twkv[ip_banff1] = this->GetBANFF()->CurrentValue(p_banff1);
+       sigma_banff1 = (twkv[ip_banff1] - this->GetBANFF()->BestFitValue(p_banff1)) / cov[ip_banff1][ip_banff1];
+     }
+     // now, tweak the other parameters according to the correlations between them and the fitted parameters
+     for(int ip = 0; ip < nbanff; ip++) {
+       PhysParamId_t p = PhysParamId_t ((int) kNuisBANFF00 + ip);
+       if(p == kNuisBANFFMAQE || p == kNuisBANFFCCQEE0 )
+	 continue;
+       if (Opt::Instance()->gOscAnaTypeChoice == conv::kAnaCombined) {
+	 if (p == kNuisBANFF01) continue;
+       }
+       twkv[ip] = this->GetBANFF()->BestFitValue(p);
+       twkv[ip] += sigma_maqe  * cov[ip_maqe] [ip];
+       twkv[ip] += sigma_ccqe0 * cov[ip_ccqe0][ip];
+       if (Opt::Instance()->gOscAnaTypeChoice == conv::kAnaCombined) twkv[ip] += sigma_banff1 * cov[ip_banff1][ip];
+     }
+   }//!all_banff_fit
+   //And finally apply the tweak
+   this->GetBANFF()->Tweak(true,&twkv);
+
+   // 
+   // Cross-section systematics (other than BANFF ones)
+   //
+   if(fp.Exists(kNuisXSecFermiMom)) {
+     double twk = fp.CurrValue(kNuisXSecFermiMom);
+     this->GetNuXSec()->TweakFermiMom(twk);
+   }
+   if(fp.Exists(kNuisXSecSpecFunc)) {
+     double twk = fp.CurrValue(kNuisXSecSpecFunc);
+     this->GetNuXSec()->TweakSpecFunc(twk);
+   }
+   if(fp.Exists(kNuisXSecWshape)) {
+     double twk = fp.CurrValue(kNuisXSecWshape);
+     this->GetNuXSec()->TweakWshape(twk);
+   }
+   if(fp.Exists(kNuisXSecShapeCCoth)) {
+     double twk = fp.CurrValue(kNuisXSecShapeCCoth);
+     this->GetNuXSec()->TweakShapeCCoth(twk);
+   }
+   if(fp.Exists(kNuisXSecPiLessDelta)) {
+     double twk = fp.CurrValue(kNuisXSecPiLessDelta);
+     this->GetNuXSec()->TweakPiLessDelta(twk);
+   }
+   if(fp.Exists(kNuisXSecBindE)) {
+     double twk = fp.CurrValue(kNuisXSecBindE);
+     this->GetNuXSec()->TweakBindE(twk);
+   }
+   if(fp.Exists(kNuisXSecNormCCcoh)) {
+     double twk = fp.CurrValue(kNuisXSecNormCCcoh);
+     this->GetNuXSec()->TweakNormCCcoh(twk);
+   }
+   if(fp.Exists(kNuisXSecNormNCcoh)) {
+     double twk = fp.CurrValue(kNuisXSecNormNCcoh);
+     this->GetNuXSec()->TweakNormNCcoh(twk);
+   }
+   if(fp.Exists(kNuisXSecNormNC1piC)) {
+     double twk = fp.CurrValue(kNuisXSecNormNC1piC);
+     this->GetNuXSec()->TweakNormNC1piC(twk);
+   }
+   if(fp.Exists(kNuisXSecNormNCoth)) {
+     double twk = fp.CurrValue(kNuisXSecNormNCoth);
+     this->GetNuXSec()->TweakNormNCoth(twk);
+   }
+   if(fp.Exists(kNuisXSecNormNuEToNuMu)) {
+     double twk = fp.CurrValue(kNuisXSecNormNuEToNuMu);
+     this->GetNuXSec()->TweakNormNuEToNuMu(twk);
+   }
+   if(fp.Exists(kNuisXSecNormAntiNuToNu)) {
+     double twk = fp.CurrValue(kNuisXSecNormAntiNuToNu);
+     this->GetNuXSec()->TweakNormAntiNuToNu(twk);
+   }
+
+
 }
 //________________________________________________________________________________________
 

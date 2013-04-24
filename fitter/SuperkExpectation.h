@@ -40,6 +40,7 @@ using t2kana::conv::knm;
 namespace t2kana {
 
 class SuperkDetector;    ///< SuperK detector systematics
+class SuperkDetectorFSI; ///< SuperK detector systematics + FSI
 class SuperkMC;          ///< SuperK MC templates
 class NuFlux;            ///< Neutrino flux info
 class NuXSec;            ///< Neutrino generator / cross-section info
@@ -64,10 +65,11 @@ public:
    void TweakAllFSISystematics               (void);           ///< random variation of all FSI systematics
    void TweakAllUncorrelatedXSecSystematics  (void);           ///< random variation of all Uncorrelated XSec systematics
    void TweakAllSKDetectorSystematics        (void);           ///< random variation of all SK Detector systematics
+   void TweakAllSKDetectorFSISystematics     (void);           ///< random variation of all SK Detector systematics
 
    // Interface method for fitters. The fit parameter list can contain info for both the 
    // physics hypothesis and the systematic variations.
-   bool Generate (const FitParamList & fp, bool all_banff_fit);
+   bool Generate (const FitParamList & fp, bool all_banff_fit, bool all_1Re_eff);
 
    // Access calculated SK reconstructed energy spectrum for each sample/mode
    TH1D* CurrPredictedErecoSpectrum (t2kana::conv::SuperkSample_t s) const;
@@ -80,6 +82,7 @@ public:
 
    // Access inputs used for building-up the expected spectrum at SK
    SuperkDetector * GetSuperkDetector (void) { return fSuperkDetector; }
+   SuperkDetectorFSI * GetSuperkDetectorFSI (void) { return fSuperkDetectorFSI; }
    SuperkMC *       GetSuperkMC       (void) { return fSuperkMC;       }
    NuFlux *         GetNuFlux         (void) { return fNuFlux;         }
    NuXSec *         GetNuXSec         (void) { return fNuXSec;         }
@@ -101,10 +104,11 @@ private:
    void CleanUp (void);
 
    // Use the nuisance param values in the input FitParamList to tweak the pdfs.
-   void SetNuisanceParams (const FitParamList & fp, bool all_banff_fit);
+   void SetNuisanceParams (const FitParamList & fp, bool all_banff_fit, bool all_1Re_eff);
 
    bool             fIsConfigured;                ///< Is this object properly configured?
    SuperkDetector * fSuperkDetector;              ///< SuperK detector info
+   SuperkDetectorFSI * fSuperkDetectorFSI;              ///< SuperK detector info + FSI
    SuperkMC *       fSuperkMC;                    ///< SuperK MC templates
    NuFlux *         fNuFlux;                      ///< Neutrino flux simulation inputs
    NuXSec *         fNuXSec;                      ///< Neutrino generator / cross section inputs

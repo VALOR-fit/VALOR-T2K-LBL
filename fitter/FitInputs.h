@@ -118,6 +118,7 @@ private:
   string              fOpt;
   double              fErrDef;
   bool                fAllBANFFFit;
+  bool                fAll1ReEff;
   bool                fGoodnessOfFit;
   int                 fNPoints;
   int                 fNDim;
