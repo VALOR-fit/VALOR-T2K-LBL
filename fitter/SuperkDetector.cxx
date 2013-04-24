@@ -15,7 +15,7 @@
 //________________________________________________________________________________________
 
 #define __show_init_mesg_info__
-#define __show_init_mesg_debug__
+//#define __show_init_mesg_debug__
 #define __show_rc_cholesky_mesg_info__
 //#define __show_rc_cholesky_mesg_debug__ 
 //#define __show_effic_weight_mesg_debug__
@@ -32,6 +32,7 @@
 
 #include "SuperkDetector.h"
 #include "Utilities.h"
+#include "Opt.h"
 
 using std::cout;
 using std::cerr;
@@ -401,6 +402,45 @@ double SuperkDetector::ChisqPenalty(bool all_syst) const
     if (fEff1RmuCCnonQETwkDial) chisq_penalty += fEff1RmuCCnonQETwkDial*fEff1RmuCCnonQETwkDial;
     if (fEff1RmuNCTwkDial     ) chisq_penalty += fEff1RmuNCTwkDial*fEff1RmuNCTwkDial;
     if (fEnergyScaleTwkDial   ) chisq_penalty += fEnergyScaleTwkDial*fEnergyScaleTwkDial;
+
+    if (Opt::Instance()->gOscAnaTypeChoice == conv::kAnaCombined){
+      //add the contribution from the 1Re efficiency 
+      TMatrixD & cov     = *fEff1ReCovarRelErr;
+      const TVectorD & bestfit_values   = *f1ReNominalValues;
+      const TVectorD & current_values   = *f1ReCurrentValues;
+      
+      const int np = 3;
+      TMatrixD dev  (1,np); //vector of one column in matrix form for multiplication 
+      TMatrixD devT (np,1); //vector of one row in matrix form for multiplication 
+      int isignue2    = 2;
+      int inue2 = 8;
+      int inc2  = 11;
+      dev [0][0] = current_values[isignue2]   - bestfit_values[isignue2];
+      devT[0][0] = current_values[isignue2]   - bestfit_values[isignue2];
+      dev [0][1] = current_values[inue2] - bestfit_values[inue2];
+      devT[1][0] = current_values[inue2] - bestfit_values[inue2];
+      dev [0][2] = current_values[inc2] - bestfit_values[inc2];
+      devT[2][0] = current_values[inc2] - bestfit_values[inc2];
+      
+      TMatrixD covSub(np, np);
+      covSub[0][0] = cov[isignue2]   [isignue2];
+      covSub[1][1] = cov[inue2] [inue2];
+      covSub[2][2] = cov[inc2] [inc2];
+      covSub[0][1] = cov[isignue2]   [inue2];
+      covSub[0][2] = cov[isignue2]   [inc2];
+      covSub[1][0] = cov[inue2] [isignue2];
+      covSub[1][2] = cov[inue2] [inc2];
+      covSub[2][0] = cov[inc2] [isignue2];
+      covSub[2][1] = cov[inc2] [inue2];
+      //invert the sub matrix 
+      double det;
+      TMatrixD covInvSub(covSub);
+      covInvSub.Invert(&det);
+      
+      TMatrixD chisqpenalty1Re =  dev * covInvSub * devT;
+      double dchisq_1Re = chisqpenalty1Re[0][0]; //The final matrix is 1x1, just a number
+      if (dchisq_1Re) chisq_penalty += dchisq_1Re;
+    } 
     return chisq_penalty;
   }
 

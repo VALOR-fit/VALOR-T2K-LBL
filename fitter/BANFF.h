@@ -43,6 +43,7 @@ public:
   double BestFitValue (conv::PhysParamId_t p) const;
   double BestFitValue (int idx) const;
   double CurrentValue (conv::PhysParamId_t p) const;
+  double CurrentValue (int idx) const;
   double OneSigmaError(conv::PhysParamId_t p) const;
   double OneSigmaError(int idx) const;
    

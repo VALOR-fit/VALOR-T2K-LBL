@@ -1063,6 +1063,7 @@ double NuXSec::ChisqPenalty(bool all_syst) const
     if (fPiLessDeltaTwkDial)  chisq_penalty += fPiLessDeltaTwkDial*fPiLessDeltaTwkDial;
     if (fSpecFuncTwkDial)     chisq_penalty += fSpecFuncTwkDial*fSpecFuncTwkDial;
     if (fBindETwkDial)        chisq_penalty += fBindETwkDial*fBindETwkDial;
+    if (fWshapeTwkDial)       chisq_penalty += fWshapeTwkDial*fWshapeTwkDial;
     return chisq_penalty;
   }
 

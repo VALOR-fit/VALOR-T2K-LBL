@@ -33,6 +33,7 @@
 #include "BANFF.h" 
 #include "Conventions.h" 
 #include "Utilities.h" 
+#include "Opt.h"
 
 using std::cout;
 using std::cerr;
@@ -156,6 +157,13 @@ double BANFF::BestFitValue(int idx) const
   if (fIsNominalMCRestored) return 1.;
   const TVectorD & bestfit = this->BestFitValues();
   return bestfit[idx];
+}
+//________________________________________________________________________________________
+double BANFF::CurrentValue(int idx) const
+{
+  if (fIsNominalMCRestored) return 1.;
+  const TVectorD & current_values = *fCurrentValues;
+  return current_values[idx];
 }
 //________________________________________________________________________________________
 double BANFF::CurrentValue(PhysParamId_t p) const
@@ -389,53 +397,109 @@ double BANFF::ChisqPenalty(bool all_syst) const
   const TMatrixD covInv (this->CovMatrixInv());
 
   if(!all_syst) {
-    //Vector with deviations of current values from  best fit values
-    const int np = 2;
-    TMatrixD dev  (1,np); //vector of one column in matrix form for multiplication
-    TMatrixD devT (np,1); //vector of one row in matrix form for multiplication
-    int imaqe    = util::ArrIdx::Instance()->BANFFSystIdx(kNuisBANFFMAQE);
-    int iccqeE0  = util::ArrIdx::Instance()->BANFFSystIdx(kNuisBANFFCCQEE0);
-    dev [0][0] = current_values[imaqe]   - bestfit_values[imaqe];
-    devT[0][0] = current_values[imaqe]   - bestfit_values[imaqe];
-    dev [0][1] = current_values[iccqeE0] - bestfit_values[iccqeE0];
-    devT[1][0] = current_values[iccqeE0] - bestfit_values[iccqeE0];
-
+    if (Opt::Instance()->gOscAnaTypeChoice == conv::kAnaCombined){
+      //Vector with deviations of current values from  best fit values
+      const int np = 3;
+      TMatrixD dev  (1,np); //vector of one column in matrix form for multiplication
+      TMatrixD devT (np,1); //vector of one row in matrix form for multiplication
+      int imaqe    = util::ArrIdx::Instance()->BANFFSystIdx(kNuisBANFFMAQE);
+      int iccqeE0  = util::ArrIdx::Instance()->BANFFSystIdx(kNuisBANFFCCQEE0);
+      int iBANFF1  = util::ArrIdx::Instance()->BANFFSystIdx(kNuisBANFF01);
+      dev [0][0] = current_values[imaqe]   - bestfit_values[imaqe];
+      devT[0][0] = current_values[imaqe]   - bestfit_values[imaqe];
+      dev [0][1] = current_values[iccqeE0] - bestfit_values[iccqeE0];
+      devT[1][0] = current_values[iccqeE0] - bestfit_values[iccqeE0];
+      dev [0][2] = current_values[iBANFF1] - bestfit_values[iBANFF1];
+      devT[2][0] = current_values[iBANFF1] - bestfit_values[iBANFF1];
+      
 #ifdef __show_chisqpenalty_mesg_debug2__
-    cout << "Exp/ChisqPenalty >> deviations in BANFF parameters: " << endl;
-    util::PrintCompact(TMatrixDRow(dev,0), 12,6,"BANFF selected fit params");
+      cout << "Exp/ChisqPenalty >> deviations in BANFF parameters: " << endl;
+      util::PrintCompact(TMatrixDRow(dev,0), 12,6,"BANFF selected fit params");
 #endif
       
-    //fill sub cov matrix
-    TMatrixD covSub(np, np);
-    covSub[0][0] = cov[imaqe]   [imaqe];
-    covSub[1][1] = cov[iccqeE0] [iccqeE0];
-    covSub[0][1] = cov[imaqe]   [iccqeE0];
-    covSub[1][0] = cov[iccqeE0] [imaqe];
-    //invert the sub matrix
-    double det;
-    TMatrixD covInvSub(covSub);
-    covInvSub.Invert(&det);
-
+      //fill sub cov matrix
+      TMatrixD covSub(np, np);
+      covSub[0][0] = cov[imaqe]   [imaqe];
+      covSub[1][1] = cov[iccqeE0] [iccqeE0];
+      covSub[2][2] = cov[iBANFF1] [iBANFF1];
+      covSub[0][1] = cov[imaqe]   [iccqeE0];
+      covSub[0][2] = cov[imaqe]   [iBANFF1];
+      covSub[1][0] = cov[iccqeE0] [imaqe];
+      covSub[1][2] = cov[iccqeE0] [iBANFF1];
+      covSub[2][0] = cov[iBANFF1] [imaqe];
+      covSub[2][1] = cov[iBANFF1] [iccqeE0];
+      //invert the sub matrix
+      double det;
+      TMatrixD covInvSub(covSub);
+      covInvSub.Invert(&det);
+      
 #ifdef __show_chisqpenalty_mesg_debug__
-    cout << "Exp/BANFF/ChisqPenalty >> BANFF covariance sub matrix : " << endl;
-    util::PrintCompact(covSub,7,5);
-    cout << "Exp/BANFF/ChisqPenalty >> Inverse BANFF covariance sub matrix : " << endl;
-    util::PrintCompact(covInvSub,7,5);
+      cout << "Exp/BANFF/ChisqPenalty >> BANFF covariance sub matrix : " << endl;
+      util::PrintCompact(covSub,7,5);
+      cout << "Exp/BANFF/ChisqPenalty >> Inverse BANFF covariance sub matrix : " << endl;
+      util::PrintCompact(covInvSub,7,5);
 #endif
 
 #ifdef __show_chisqpenalty_mesg_debug2__
-    //check the inverse
-    TMatrixD prod = covSub * covInvSub;
-    cout << "Exp/BANFF/ChisqPenalty >> check of product covsub*(covsub)^-1 : "<< endl;
-    util::PrintCompact(prod,7,4);
+      //check the inverse
+      TMatrixD prod = covSub * covInvSub;
+      cout << "Exp/BANFF/ChisqPenalty >> check of product covsub*(covsub)^-1 : "<< endl;
+      util::PrintCompact(prod,7,4);
+#endif
+      
+      TMatrixD chisqpenalty =  dev * covInvSub * devT;
+      double chisq_penalty = chisqpenalty[0][0]; //The final matrix is 1x1, just a number
+      return chisq_penalty;
+    }
+    else{
+  //Vector with deviations of current values from  best fit values
+      const int np = 2;
+      TMatrixD dev  (1,np); //vector of one column in matrix form for multiplication
+      TMatrixD devT (np,1); //vector of one row in matrix form for multiplication
+      int imaqe    = util::ArrIdx::Instance()->BANFFSystIdx(kNuisBANFFMAQE);
+      int iccqeE0  = util::ArrIdx::Instance()->BANFFSystIdx(kNuisBANFFCCQEE0);
+      dev [0][0] = current_values[imaqe]   - bestfit_values[imaqe];
+      devT[0][0] = current_values[imaqe]   - bestfit_values[imaqe];
+      dev [0][1] = current_values[iccqeE0] - bestfit_values[iccqeE0];
+      devT[1][0] = current_values[iccqeE0] - bestfit_values[iccqeE0];
+      
+#ifdef __show_chisqpenalty_mesg_debug2__
+      cout << "Exp/ChisqPenalty >> deviations in BANFF parameters: " << endl;
+      util::PrintCompact(TMatrixDRow(dev,0), 12,6,"BANFF selected fit params");
+#endif
+      
+      //fill sub cov matrix
+      TMatrixD covSub(np, np);
+      covSub[0][0] = cov[imaqe]   [imaqe];
+      covSub[1][1] = cov[iccqeE0] [iccqeE0];
+      covSub[0][1] = cov[imaqe]   [iccqeE0];
+      covSub[1][0] = cov[iccqeE0] [imaqe];
+      //invert the sub matrix
+      double det;
+      TMatrixD covInvSub(covSub);
+      covInvSub.Invert(&det);
+      
+#ifdef __show_chisqpenalty_mesg_debug__
+      cout << "Exp/BANFF/ChisqPenalty >> BANFF covariance sub matrix : " << endl;
+      util::PrintCompact(covSub,7,5);
+      cout << "Exp/BANFF/ChisqPenalty >> Inverse BANFF covariance sub matrix : " << endl;
+      util::PrintCompact(covInvSub,7,5);
 #endif
 
-    TMatrixD chisqpenalty =  dev * covInvSub * devT;
-    double chisq_penalty = chisqpenalty[0][0]; //The final matrix is 1x1, just a number
-    return chisq_penalty;
+#ifdef __show_chisqpenalty_mesg_debug2__
+      //check the inverse
+      TMatrixD prod = covSub * covInvSub;
+      cout << "Exp/BANFF/ChisqPenalty >> check of product covsub*(covsub)^-1 : "<< endl;
+      util::PrintCompact(prod,7,4);
+#endif
+      
+      TMatrixD chisqpenalty =  dev * covInvSub * devT;
+      double chisq_penalty = chisqpenalty[0][0]; //The final matrix is 1x1, just a number
+      return chisq_penalty;
+    
+    }
   }
-
-  else {
+    else {
     //Vector with deviations of current values from  best fit values
     const int np = conv::kNumOfParamsInBANFFfit;
     TMatrixD dev  (1,np); //vector of one column in matrix form for multiplication
