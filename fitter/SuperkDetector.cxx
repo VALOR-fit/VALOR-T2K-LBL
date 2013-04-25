@@ -675,7 +675,7 @@ double SuperkDetector::EfficiencyWeight(
 
 }
 //________________________________________________________________________________________
-double SuperkDetector::EnergyScaleRelErr(SuperkSample_t s, SuperkMode_t m) const
+double SuperkDetector::EnergyScaleRelErr(SuperkSample_t s, SuperkMode_t /*m*/) const
 {
 // energy scale relative error
 
@@ -685,15 +685,7 @@ double SuperkDetector::EnergyScaleRelErr(SuperkSample_t s, SuperkMode_t m) const
   }
   else 
   if (s == kSKsFCFV1RingELike) {
-    return fEnergyScale1RmuRelErr;
-    
-    //lorena - so far never seen different energy scale for signal/background
-    //    if( util::IsSignalNuE(m)) {
-/////////      return fEnergyScale1ReSigRelErr;
-    // }
-    //else {
-/////////      return fEnergyScale1ReBkgRelErr;
-    //}
+    return fEnergyScale1RmuRelErr;    
   }
   return 0; 
 }
