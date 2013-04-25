@@ -16,8 +16,7 @@
 #ifndef _t2kana_fitter_abc_h_
 #define _t2kana_fitter_abc_h_
 
-//#include <TString.h>
-//#include <TObjArray.h>
+#include <TString.h>
 
 namespace t2kana {
 
@@ -26,25 +25,17 @@ class FitterABC
 public:
    virtual ~FitterABC();
 
-   virtual bool       DoTheFit      (void)                  = 0; 
-   virtual int        FitStatusCode (void)                  = 0; 
-   virtual int        FitMigradStatusCode (void)            = 0; 
-   virtual int        FitHesseStatusCode  (void)            = 0; 
-   virtual double     FitTime       (void)                  = 0;
-   virtual int        NDOF          (void)                  = 0;
-   virtual int        NBinsInFit    (void)                  = 0;
-   virtual int        NFitParams    (void)                  = 0;
-   virtual void       SetTol        (double tol)            = 0;
-   virtual void       SetStr        (int str   )            = 0;
-
-//   virtual TObjArray& GetResults    (void) const            = 0;
-//   virtual void       Analyze       (Option_t * option)     = 0;
-//   virtual void       Save          (const char * filename) = 0;
-//   virtual void       Save          (const char * filename, const char* opt_file) = 0;
+   virtual bool       DoTheFit      (void)                   = 0; 
+   virtual int        FitStatusCode (Option_t * option = "") = 0; 
+   virtual double     FitTime       (void)                   = 0;
+   virtual int        NDOF          (void)                   = 0;
+   virtual int        NBinsInFit    (void)                   = 0;
+   virtual int        NFitParams    (void)                   = 0;
+   virtual void       SetTol        (double tol)             = 0;
+   virtual void       SetStr        (int str   )             = 0;
 
 protected:
    FitterABC();
-
 };
 
 } // t2kana

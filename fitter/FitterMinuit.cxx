@@ -87,6 +87,18 @@ void FitterMinuit::Init(void)
   fStr            = 1;
 }
 //____________________________________________________________________________ 
+int FitterMinuit::FitStatusCode (Option_t * option) 
+{ 
+  if(!option) return 9999;
+
+  TString opt(option);
+
+  if ( opt.Contains("migrad") ) return fMigradStatusCode;
+  if ( opt.Contains("hesse")  ) return fHesseStatusCode;
+  
+  return fStatusCode;
+}
+//____________________________________________________________________________ 
 void FitterMinuit::Init(FitInputs * fit_inputs, Option_t * option) 
 {
 #ifdef __show_fit_init_info__

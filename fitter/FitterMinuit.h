@@ -34,15 +34,13 @@ public:
    virtual ~FitterMinuit();
 
    virtual bool       DoTheFit      (void);
-   virtual int        FitStatusCode (void)        { return fStatusCode;                 }
-   virtual int        FitMigradStatusCode (void)  { return fMigradStatusCode;           }
-   virtual int        FitHesseStatusCode  (void)  { return fHesseStatusCode;            }
-   virtual double     FitTime       (void)        { return fFitTime;                    }
-   virtual int        NDOF          (void)        { return fNFitBins - fNFreeFitParams; }
-   virtual int        NBinsInFit    (void)        { return fNFitBins;                   }
-   virtual int        NFitParams    (void)        { return fNFreeFitParams;             }
-   virtual void       SetTol        (double tol)  { fTol  = tol ;                       }
-   virtual void       SetStr        (int str   )  { fStr  = str ;                       }
+   virtual int        FitStatusCode (Option_t * option = "");
+   virtual double     FitTime       (void)              { return fFitTime;                    }
+   virtual int        NDOF          (void)              { return fNFitBins - fNFreeFitParams; }
+   virtual int        NBinsInFit    (void)              { return fNFitBins;                   }
+   virtual int        NFitParams    (void)              { return fNFreeFitParams;             }
+   virtual void       SetTol        (double tol)        { fTol  = tol ;                       }
+   virtual void       SetStr        (int str   )        { fStr  = str ;                       }
    
 protected:
 

@@ -225,6 +225,18 @@ void FitterMinuit2::ConstructCovMatrix(void)
 
 }
 //____________________________________________________________________________ 
+int FitterMinuit2::FitStatusCode(Option_t * option)
+{
+  if(!option) return 9999;
+
+  TString opt(option);
+
+  if ( opt.Contains("migrad") ) return fMigradStatusCode;
+  if ( opt.Contains("hesse")  ) return fHesseStatusCode;
+
+  return fStatusCode;
+}
+//____________________________________________________________________________
 bool FitterMinuit2::DoTheFit(void) 
 {
 #ifdef __show_fit_cpu_time__
