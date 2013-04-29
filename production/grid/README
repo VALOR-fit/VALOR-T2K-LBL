@@ -43,3 +43,14 @@ Some changes are necessary for working in the Tier2 CE, concerning essentially e
 
 production/grid/submit_sensitivity_study_joint_grid_1D -> working for IC farm
 production/grid/submit_sensitivity_study_joint_grid_1D_Tier2 -> working for RAL PP Tier2 farm
+
+PROXY DELEGATION
+
+The following should work to delegate proxy and get it renewed every 12 hours (for next four months) so that jobs can keep running after the usual 24 hours.
+
+First do:
+myproxy-init -n -d -c 672 -s lcgrbp01.gridpp.rl.ac.uk
+you have to do this once every 4 weeks, it should delegate to proxy to myproxyserver at RAL (gridpp)
+Then, changes added in autowms.conf to use the same myproxyserver and wms gridpp so that they trust each other. 
+When submitting jobs the voms-proxy-init command line to be used is the same.
+This should work now to be able to run jobs for > 24 hours - testing it.
