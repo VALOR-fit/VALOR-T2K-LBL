@@ -16,7 +16,8 @@ void analyse_output
  double       mixing_max         = 1.0,
  double       dm_min             = 0.0015,
  double       dm_max             = 0.0035,
- bool         external_contours  = false                           /* draw external contours? */
+ bool         external_contours  = false,                          /* draw external contours? */
+ const char * other_spectrum_file = ""
 )
 {
   using namespace std;
@@ -58,7 +59,7 @@ void analyse_output
   //now copy the data & no-osc, and divide
   TH1D * spectrum_ratio_bf = new TH1D("","", n_ereco_bins, ereco_bin_edges), * spectrum_ratio_obs = new TH1D("","", n_ereco_bins, ereco_bin_edges);
   //spectrum_bf->Sumw2();
-  //spectrum_obs->Sumw2();
+  spectrum_obs->Sumw2();
   //spectrum_noosc->Sumw2();
   //spectrum_ratio_bf->Sumw2();
   //spectrum_ratio_obs->Sumw2();
@@ -69,7 +70,7 @@ void analyse_output
     double err = spectrum_obs->GetBinError(io);
     if(err > 0) {
       //spectrum_ratio_obs->SetBinError(io,1/err);
-      spectrum_ratio_obs->SetBinError(io,1/err*spectrum_ratio_obs->GetBinContent(io));
+      //spectrum_ratio_obs->SetBinError(io,1/err*spectrum_ratio_obs->GetBinContent(io));
       //spectrum_ratio_obs->SetBinError(io,1/err*spectrum_ratio_obs->GetBinContent(io)/spectrum_obs->GetBinContent(io));
     }
     else {
@@ -87,9 +88,9 @@ void analyse_output
   //   cout << spectrum_obs->GetBinError(i) << "\t"
   // 	 << spectrum_noosc->GetBinError(i) << endl;
   // }
-  spectrum_obs->Sumw2();
-  spectrum_noosc->Sumw2();
-  spectrum_ratio_obs2->Sumw2();
+  //spectrum_obs->Sumw2();
+  //spectrum_noosc->Sumw2();
+  //spectrum_ratio_obs2->Sumw2();
   // cout << endl; for(int i = 1; i <= spectrum_ratio_obs->GetNbinsX(); i++) {
   //   cout << spectrum_obs->GetBinError(i) << "\t"
   // 	 << spectrum_noosc->GetBinError(i) << endl;
@@ -107,7 +108,7 @@ void analyse_output
     */
       cout << endl;
 
-      spectrum_ratio_obs2->SetBinError(i,spectrum_ratio_obs->GetBinError(i));
+      //spectrum_ratio_obs2->SetBinError(i,spectrum_ratio_obs->GetBinError(i));
   }
   
   //set the axes
@@ -144,7 +145,7 @@ void analyse_output
   delete cspec;
 
   //for PAC
-  TLegend * legg = new TLegend(0.6,0.7,0.9,0.95);
+  TLegend * legg = new TLegend(0.5,0.6,0.95,0.95);
   legg->SetFillStyle(0);
   legg->SetBorderSize(0);
   c->cd();
@@ -174,20 +175,22 @@ void analyse_output
   c->SaveAs("spectrum_ratio.pdf");
   //rebin
   //VaLOR binning
-  const int nbins = 16;
-  double binedges[nbins+1] = {0.0,0.3,0.4,0.5,0.6,0.7,0.8,0.9,1.0,1.1,1.25,1.5,2,3,4,6,30};
+  //const int nbins = 16;
+  //double binedges[nbins+1] = {0.0,0.3,0.4,0.5,0.6,0.7,0.8,0.9,1.0,1.1,1.25,1.5,2,3,4,6,30};
   //KIT binning
-  //const int nbins = 20;
-  //double binedges[nbins+1] = {0.0,0.1,0.2,0.3,0.4,0.5,0.6,0.7,0.8,0.9,1.0,1.2,1.4,1.6,2.0,2.5,3.0,4.0,6.0,10.0,30.0};
+  const int nbins = 20;
+  double binedges[nbins+1] = {0.0,0.1,0.2,0.3,0.4,0.5,0.6,0.7,0.8,0.9,1.0,1.2,1.4,1.6,2.0,2.5,3.0,4.0,6.0,10.0,30.0};
   TH1D * spectrum_noosc_rebin = spectrum_noosc->Rebin(nbins,"spectrum_noosc_rebin",binedges);
   TH1D * spectrum_obs_rebin = spectrum_obs->Rebin(nbins,"spectrum_obs_rebin",binedges);
   TH1D * spectrum_bf_rebin = spectrum_bf->Rebin(nbins,"spectrum_bf_rebin",binedges);
   //now copy the data & no-osc, and divide
   TH1D * spectrum_ratio_bf_rebin = new TH1D("","", nbins, binedges), * spectrum_ratio_obs_rebin = new TH1D("","", nbins, binedges);
+  //spectrum_obs_rebin->Sumw2();
+  //spectrum_noosc_rebin->Sumw2();
   spectrum_ratio_bf_rebin->Divide(spectrum_bf_rebin, spectrum_noosc_rebin);
   spectrum_ratio_obs_rebin->Divide(spectrum_obs_rebin, spectrum_noosc_rebin);
   //set error for the obs ratio
-  for(int io = 1; io <= spectrum_ratio_obs_rebin->GetNbinsX(); io++) {
+  /*for(int io = 1; io <= spectrum_ratio_obs_rebin->GetNbinsX(); io++) {
     double err = spectrum_obs_rebin->GetBinError(io);
     if(err > 0)
       spectrum_ratio_obs_rebin->SetBinError(io,1/err);
@@ -198,7 +201,7 @@ void analyse_output
       cout << 1/err << endl;
     else
       cout << endl;
-  }
+  }*/
   //axes range
   spectrum_noosc_rebin->GetXaxis()->SetRangeUser(0,5.99);
   spectrum_ratio_obs_rebin->GetXaxis()->SetRangeUser(0,5.99);
@@ -231,7 +234,222 @@ void analyse_output
   c->SaveAs("spectrum_ratio_rebin.eps");
   c->SaveAs("spectrum_ratio_rebin.pdf");
 
+  //get comparison hists
+  TH1D * spectrum_other = 0, *spectrum_other_rebin = 0;
+  TFile f_other_spectra(other_spectrum_file);
+  f_other_spectra.GetObject("hrec_fit_0", spectrum_other);
+  f_other_spectra.GetObject("hrec_fit2_0", spectrum_other_rebin);
+  TH1D * spectrum_ratio_other = new TH1D("","", n_ereco_bins, ereco_bin_edges);
+  TH1D * spectrum_ratio_other_rebin = new TH1D("","", nbins, binedges);
+  //draw comparison (spectrum, 73 bins)
+  if(spectrum_other) {
+    spectrum_other->SetLineColor(kBlue);
+    spectrum_noosc->SetLineWidth(2);
+    spectrum_obs->SetLineWidth(2);
+    spectrum_bf->SetLineWidth(2);
+    spectrum_other->SetLineWidth(2);
+    spectrum_noosc->Draw();
+    spectrum_obs->Draw("PE0same");
+    spectrum_bf->Draw("same");
+    spectrum_other->Draw("same");
+    legg->Clear();
+    legg->AddEntry(spectrum_obs, "T2K data", "pl");
+    legg->AddEntry(spectrum_noosc, "No oscillations", "l");
+    legg->AddEntry(spectrum_bf, "A best fit", "l");
+    legg->AddEntry(spectrum_other, "B best fit", "l");
+    legg->Draw();
+    c->SaveAs("spectrum_AB.eps");
+    legg->Clear();
+    legg->AddEntry(spectrum_obs, "T2K data", "pl");
+    legg->AddEntry(spectrum_noosc, "No oscillations", "l");
+    legg->AddEntry(spectrum_bf, "VaLOR best fit", "l");
+    legg->AddEntry(spectrum_other, "KIT best fit", "l");
+    legg->Draw();
+    c->SaveAs("spectrum_KITVALOR.eps");
+    legg->Clear();
+    legg->AddEntry(spectrum_obs, "T2K data", "pl");
+    legg->AddEntry(spectrum_noosc, "No oscillations", "l");
+    legg->AddEntry(spectrum_bf, "Likelihood ratio best fit", "l");
+    legg->AddEntry(spectrum_other, "Max likelihood best fit", "l");
+    legg->Draw();
+    c->SaveAs("spectrum_ratiomax.eps");
+    //draw ratio
+    spectrum_ratio_other->Divide(spectrum_other, spectrum_noosc);
+    for(int i = 1; i <= n_ereco_bins; i++) {
+      spectrum_ratio_other->SetBinError(i,0);
+      spectrum_ratio_bf->SetBinError(i,0);
+    }
+    spectrum_ratio_obs->GetXaxis()->SetRangeUser(0,5.99);
+    spectrum_ratio_obs->GetXaxis()->SetTitle("E_{reco} / GeV");
+    spectrum_ratio_obs->GetYaxis()->SetTitle("Ratio to no oscillations");
+    spectrum_ratio_other->SetLineColor(kBlue);
+    spectrum_ratio_obs->SetLineWidth(2);
+    spectrum_ratio_obs->SetLineStyle(1);
+    spectrum_ratio_obs->SetMarkerSize(1.2);
+    spectrum_ratio_bf->SetLineWidth(2);
+    spectrum_ratio_other->SetLineWidth(2);
+    spectrum_line->SetLineWidth(2);
+    spectrum_line->SetLineStyle(2);
+    spectrum_ratio_obs->Draw("PEL0");
+    spectrum_ratio_bf->Draw("same");
+    spectrum_ratio_other->Draw("same");
+    spectrum_line->Draw("same");
+    legg->Clear();
+    legg->AddEntry(spectrum_ratio_obs, "T2K data", "pl");
+    legg->AddEntry(spectrum_ratio_bf, "A best fit", "l");
+    legg->AddEntry(spectrum_ratio_other, "B best fit", "l");
+    legg->Draw();
+    c->SaveAs("spectrum_ratio_AB.eps");
+    //Also, check the ratio between the 2 spectra, and find the highest difference
+    TH1D * spectrum_compare(*spectrum_bf);
+    double max_value = 0; int imax = 0;
+    for(int ibin = 1; ibin <= spectrum_compare->GetNbinsX(); ibin++) {
+      //cout << spectrum_bf->GetXaxis()->GetBinCenter(ibin) << "\t" << spectrum_other->GetXaxis()->GetBinCenter(ibin) << endl;
+      double x = spectrum_bf->GetBinContent(ibin);
+      double y = spectrum_other->GetBinContent(ibin);
+      double value = 0;
+      if(x > 0 || y > 0)
+	value = 2*(x-y)/(x+y) * 100;
+      cout << ibin << "\t" << x << "\t" << y << "\t" << value << std::endl;
+      if(value > max_value) {
+	max_value = value;
+	imax = ibin;
+      }
+      spectrum_compare->SetBinContent(ibin, value);
+    }
+    spectrum_compare->GetYaxis()->SetRangeUser(-2,2);
+    spectrum_compare->Draw();
+    c->SaveAs("spectrum_compare.pdf");
+    cout << endl << max_value << " is the max % difference between the contours in bin " << imax << endl;
+    return;
+  }//spectrum_other
+  //draw comparison (spectrum, 20 bins)
+  if(spectrum_other_rebin) {
+    spectrum_other_rebin->SetLineColor(kBlue);
+    spectrum_noosc_rebin->SetLineWidth(2);
+    spectrum_obs_rebin->SetLineWidth(2);
+    spectrum_bf_rebin->SetLineWidth(2);
+    spectrum_other_rebin->SetLineWidth(2);
+    spectrum_noosc_rebin->Draw();
+    spectrum_obs_rebin->Draw("PE0same");
+    spectrum_bf_rebin->Draw("same");
+    spectrum_other_rebin->Draw("same");
+    legg->Clear();
+    legg->AddEntry(spectrum_obs_rebin, "T2K data", "pl");
+    legg->AddEntry(spectrum_noosc_rebin, "No oscillations", "l");
+    legg->AddEntry(spectrum_bf_rebin, "A best fit", "l");
+    legg->AddEntry(spectrum_other_rebin, "B best fit", "l");
+    legg->Draw();
+    c->SaveAs("spectrum_AB_coarse.eps");
+    legg->Clear();
+    legg->AddEntry(spectrum_obs_rebin, "T2K data", "pl");
+    legg->AddEntry(spectrum_noosc_rebin, "No oscillations", "l");
+    legg->AddEntry(spectrum_bf_rebin, "VaLOR best fit", "l");
+    legg->AddEntry(spectrum_other_rebin, "KIT best fit", "l");
+    legg->Draw();
+    c->SaveAs("spectrum_KITVALOR_coarse.eps");
+    legg->Clear();
+    legg->AddEntry(spectrum_obs_rebin, "T2K data", "pl");
+    legg->AddEntry(spectrum_noosc_rebin, "No oscillations", "l");
+    legg->AddEntry(spectrum_bf_rebin, "Likelihood ratio best fit", "l");
+    legg->AddEntry(spectrum_other_rebin, "Max likelihood best fit", "l");
+    legg->Draw();
+    c->SaveAs("spectrum_ratiomax_coarse.eps");
+    //draw ratio
+    spectrum_ratio_other_rebin->Divide(spectrum_other_rebin, spectrum_noosc_rebin);
+    for(int i = 1; i <= nbins; i++) {
+      spectrum_ratio_other_rebin->SetBinError(i,0);
+      spectrum_ratio_bf_rebin->SetBinError(i,0);
+    }
+    spectrum_ratio_obs_rebin->GetXaxis()->SetRangeUser(0,5.99);
+    spectrum_ratio_obs_rebin->GetXaxis()->SetTitle("E_{reco} / GeV");
+    spectrum_ratio_obs_rebin->GetYaxis()->SetTitle("Ratio to no oscillations");
+    spectrum_ratio_other_rebin->SetLineColor(kBlue);
+    spectrum_ratio_obs_rebin->SetLineWidth(2);
+    spectrum_ratio_obs_rebin->SetLineStyle(1);
+    spectrum_ratio_obs_rebin->SetMarkerSize(1.2);
+    spectrum_ratio_bf_rebin->SetLineWidth(2);
+    spectrum_ratio_other_rebin->SetLineWidth(2);
+    spectrum_line->SetLineWidth(2);
+    spectrum_line->SetLineStyle(2);
+    spectrum_ratio_obs_rebin->Draw("PE0");
+    spectrum_ratio_bf_rebin->Draw("sameH");
+    spectrum_ratio_other_rebin->Draw("same");
+    spectrum_line->Draw("same");
+    TLegend * leggratio = new TLegend(0.55,0.18,0.98,0.4);
+    leggratio->SetFillStyle(0);
+    leggratio->SetBorderSize(0);
+    leggratio->Clear();
+    leggratio->AddEntry(spectrum_ratio_obs_rebin, "T2K data", "pl");
+    leggratio->AddEntry(spectrum_ratio_bf_rebin, "A best fit", "l");
+    leggratio->AddEntry(spectrum_ratio_other_rebin, "B best fit", "l");
+    leggratio->Draw();
+    c->SaveAs("spectrum_ratio_AB_rebin.eps");
+    leggratio->Clear();
+    leggratio->AddEntry(spectrum_ratio_obs_rebin, "T2K data", "pl");
+    leggratio->AddEntry(spectrum_ratio_bf_rebin, "VaLOR best fit", "l");
+    leggratio->AddEntry(spectrum_ratio_other_rebin, "KIT best fit", "l");
+    leggratio->Draw();
+    c->SaveAs("spectrum_ratio_KITVALOR_rebin.eps");
+    leggratio->Clear();
+    leggratio->AddEntry(spectrum_ratio_obs_rebin, "T2K data", "pl");
+    leggratio->AddEntry(spectrum_ratio_bf_rebin, "Likelihood ratio best fit", "l");
+    leggratio->AddEntry(spectrum_ratio_other_rebin, "Max likelihood best fit", "l");
+    leggratio->Draw();
+    c->SaveAs("spectrum_ratio_ratiomax_rebin.eps");
+  }//spectrum_other_rebin
+  //draw them on the same canvas
+  if(spectrum_other_rebin) {
+    //PAPER
+    double top_plot_fraction = 0.6;
+    TCanvas *csaxis = new TCanvas();
+    csaxis->cd(1);
+    csaxis->SetBottomMargin(1-top_plot_fraction);
+    spectrum_noosc_rebin->SetLabelSize(0);
+    spectrum_noosc_rebin->Draw("");
+    //spectrum_other_rebin->Draw("same");
+    spectrum_bf_rebin->Draw("same");
+    spectrum_other_rebin->SetLineStyle(2);
+    spectrum_other_rebin->Draw("same");
+    spectrum_obs_rebin->Draw("PE0same");
 
+    legg->Clear();
+    delete legg;
+    legg = new TLegend(0.3,0.6,0.95,0.95);
+    legg->SetFillStyle(0);
+    legg->SetBorderSize(0);
+    //legg->SetTextFont(42);
+    legg->AddEntry(spectrum_obs_rebin, "T2K Run 1-3 data", "pl");
+    legg->AddEntry(spectrum_noosc_rebin, "No oscillation hypothesis", "l");
+    legg->AddEntry(spectrum_bf_rebin, "T2K best fit", "l");
+    legg->AddEntry(spectrum_other_rebin, "T2K best fit alternative analysis", "l");
+    legg->Draw();
+
+    TPad * pad = new TPad("pad","pad",0,0,1,1);
+    pad->SetTopMargin(top_plot_fraction);
+    pad->SetFillColor(0);
+    pad->SetFillStyle(0);
+    pad->Draw();
+    pad->cd(0);
+    spectrum_ratio_obs_rebin->GetYaxis()->SetNdivisions(505);
+    spectrum_ratio_obs_rebin->GetYaxis()->SetRangeUser(0,1.9);
+    spectrum_ratio_obs_rebin->GetYaxis()->SetTitle("#splitline{Ratio to no}{oscillations}");
+    spectrum_ratio_obs_rebin->GetXaxis()->SetTitle("Reconstructed #nu energy / GeV");
+    spectrum_ratio_bf_rebin->GetYaxis()->SetNdivisions(505);
+    spectrum_ratio_bf_rebin->GetXaxis()->SetRangeUser(0,5.9);
+    spectrum_ratio_bf_rebin->GetYaxis()->SetRangeUser(0,1.9);
+    spectrum_ratio_bf_rebin->GetYaxis()->SetTitle("#splitline{Ratio to no}{oscillations}");
+    spectrum_ratio_bf_rebin->GetXaxis()->SetTitle("Reconstructed #nu energy / GeV");
+    //spectrum_ratio_other_rebin->Draw("same");
+    spectrum_ratio_bf_rebin->Draw("");
+    spectrum_ratio_other_rebin->SetLineStyle(2);
+    spectrum_ratio_other_rebin->Draw("same");
+    spectrum_line->Draw("same");
+    spectrum_ratio_obs_rebin->Draw("PE0same");
+
+    csaxis->SaveAs("sk_spectrum_and_ratio.pdf");
+    csaxis->SaveAs("sk_spectrum_and_ratio.eps");
+  }//spectrum_other_rebin
 
   //pulls
   TH1D * pulls = 0;
@@ -251,6 +469,57 @@ void analyse_output
   l.Draw();
   cpull->SaveAs(Form("pulls_%d.eps",id));
   delete cpull;
+  //copy to only get the most important ones
+  int nbig = 0;
+  for(int i = 1; i <= pulls->GetNbinsX(); i++) {
+    if(TMath::Abs(pulls->GetBinContent(i)) >= 0.1) 
+      nbig++;
+  }
+  TH1D * imppull = new TH1D("","",nbig,0,nbig);
+  int j = 1;
+  for(int i = 1; i <= pulls->GetNbinsX(); i++) {
+    if(TMath::Abs(pulls->GetBinContent(i)) < 0.1) continue;
+    imppull->SetBinContent(j, pulls->GetBinContent(i));
+    string label = "";
+    switch(j) {
+      case(1):
+	label = "#splitline{SuperK detector}{#splitline{CCQE ring counting}{E_{reco} > 1.1 GeV}}";
+	break;
+      case(2):
+	label = "#splitline{SuperK detector}{NC}";
+	break;
+      case(3):
+	label = "#splitline{ND280-correlated}{CCQE axial mass}";
+	break;
+      case(4):
+	label = "#splitline{ND280-correlated}{#splitline{CCQE normalisation}{1.5 < E_{true} < 3.5 GeV}}";
+	break;
+      case(5):
+	label = "#splitline{ND280-correlated}{#splitline{CCQE normalisation}{E_{true} > 3.5 GeV}}";
+	break;
+      case(6):
+	label = "#splitline{ND280-uncorrelated}{#pi-less #Delta-decay}";
+	break;
+    }
+    imppull->GetXaxis()->SetBinLabel(j, label.c_str());
+    cout << pulls->GetXaxis()->GetBinLabel(i) << endl;
+    j++;
+  }
+  TCanvas * cpull2 = new TCanvas("","",1000,500);
+  cpull2->SetGridx(0);
+  cpull2->SetBottomMargin(0.16);
+  cpull2->SetLeftMargin(0.07);
+  cpull2->SetRightMargin(0.01);
+  imppull->GetXaxis()->SetLabelSize(0.06);
+  imppull->GetYaxis()->SetTitleOffset(0.55);
+  imppull->GetYaxis()->SetTitle("pull");
+  imppull->GetYaxis()->SetRangeUser(-0.4,0.4);
+  imppull->GetXaxis()->LabelsOption("h");
+  imppull->Draw("P");
+  TLine impl(0,0,imppull->GetXaxis()->GetLast(),0);
+  impl.Draw();
+  cpull2->SaveAs("pulls_important.pdf");
+  delete cpull2;
 
   //chisqwithsyst
   c->cd();
