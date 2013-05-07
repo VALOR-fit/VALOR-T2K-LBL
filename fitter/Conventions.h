@@ -99,7 +99,7 @@ static const int kPdgNuTauBar = -16;
 //
 
 // Dm^2 global fit results
-static const double kGlobFitDm23sq           = 2.44E-3;
+static const double kGlobFitDm23sq           = 2.4E-3;
 static const double kGlobFitDm12sq           = 7.5E-5;
 static const double kGlobFitErrDm23sq        = 0.04; // ~4%
 static const double kGlobFitErrDm12sq        = 0.027; // ~2.7%
