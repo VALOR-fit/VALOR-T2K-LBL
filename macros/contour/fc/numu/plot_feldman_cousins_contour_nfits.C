@@ -25,7 +25,7 @@ void plot_feldman_cousins_contour_nfits
   /* Values of \Delta\chi^{2}_{critical} for each \Deltam^{2}, sin^{2}2\theta value for 1st fit (stat+syst err) */   
   const char * delta_chisq_critical_file_mc_statsyst,     
 
-  /* Text file pointing to fit results, 1 line per fit - 3 entries per line: `input_mixing23 input_dm23sq  path/to/the/output/fit/file.root' */
+  /* Text file pointing to fit results, 1 line per fit - 3 entries per line: `input_mixing23 input_dm23sq  path/to/the/output/fit/deltachisq/file.root' */
   const char * fit_result_list,                           
 
   /* Number of fits in above file */
@@ -64,8 +64,8 @@ void plot_feldman_cousins_contour_nfits
   // Define grid so that min and max are at the bin centre 
   // and not at the low/high edge of the first/last bin                                                                                                                               
   //
-  const int mixing23_nbins = 1 + (int) ((mixing23_max - mixing23_min) / mixing23_step);
-  const int dm23sq_nbins   = 1 + (int) ((dm23sq_max   - dm23sq_min  ) / dm23sq_step  );
+  const int mixing23_nbins = 1 + TMath::CeilNint((mixing23_max - mixing23_min) / mixing23_step);
+  const int dm23sq_nbins   = 1 + TMath::CeilNint((dm23sq_max   - dm23sq_min  ) / dm23sq_step  );
   
   double mixing23_grid_min = mixing23_min - 0.5*mixing23_step;
   double mixing23_grid_max = mixing23_max + 0.5*mixing23_step;
@@ -175,12 +175,16 @@ void plot_feldman_cousins_contour_nfits
           }
       }//j loop
     }//i loop
+    /*
+      DON'T subtract minimum chisq on the surface; we have a better minimum already (not constrained to the grid)
+      that has already been subtracted
     for(int i = 1; i <= fChisqSurface->GetNbinsX(); i++) {
       for(int j = 1; j <= fChisqSurface->GetNbinsY(); j++) {
         double chisq = fChisqSurface->GetBinContent(i,j);
         fChisqSurface->SetBinContent(i,j, TMath::Max(0.,chisq-chisq_min));
       }//j loop
     }//i loop
+    */
     cout << "chi\2_{min} = " << chisq_min << endl;
     cout << "dm23sq_{bestfit} = " << dm23sq_bestfit << endl;
     cout << "sinsq2theta_{bestfit} = " << mixing23_bestfit << endl;

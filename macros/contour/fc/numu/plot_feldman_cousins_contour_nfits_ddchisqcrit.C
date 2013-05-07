@@ -20,7 +20,7 @@ void plot_feldman_cousins_contour_nfits_ddchisqcrit
   /* Text file pointing to results allowing to plot the contour for each fit.
      The input file contains 4 lines per fit.
        - a label for the fit (to appear on the plot legend)
-       - chisq_file (with full path)  
+       - dchisq_file (with full path)  
        - delta_chisq_crit_file_statonly (with full path)
        - delta_chisq_crit_file_statsyst (with full path)  
      Lines starting with # will be ignored so they can be used for adding comments for each fit.
@@ -83,8 +83,8 @@ void plot_feldman_cousins_contour_nfits_ddchisqcrit
   // Define grid so that min and max are at the bin centre 
   // and not at the low/high edge of the first/last bin                                                                                                                               
   //
-  const int mixing23_nbins = 1 + (int) ((mixing23_max - mixing23_min) / mixing23_step);
-  const int dm23sq_nbins   = 1 + (int) ((dm23sq_max   - dm23sq_min  ) / dm23sq_step  );
+  const int mixing23_nbins = 1 + TMath::CeilNint((mixing23_max - mixing23_min) / mixing23_step);
+  const int dm23sq_nbins   = 1 + TMath::CeilNint((dm23sq_max   - dm23sq_min  ) / dm23sq_step  );
   
   double mixing23_grid_min = mixing23_min - 0.5*mixing23_step;
   double mixing23_grid_max = mixing23_max + 0.5*mixing23_step;
@@ -188,12 +188,16 @@ void plot_feldman_cousins_contour_nfits_ddchisqcrit
           }
       }//j loop
     }//i loop
+    /*
+      DON'T subtract minimum chisq on the surface; we have a better minimum already (not constrained to the grid)
+      that has already been subtracted
     for(int i = 1; i <= fChisqSurface->GetNbinsX(); i++) {
       for(int j = 1; j <= fChisqSurface->GetNbinsY(); j++) {
         double chisq = fChisqSurface->GetBinContent(i,j);
         fChisqSurface->SetBinContent(i,j, TMath::Max(0.,chisq-chisq_min));
       }//j loop
     }//i loop
+    */
     cout << "chi\2_{min} = " << chisq_min << endl;
     cout << "dm23sq_{bestfit} = " << dm23sq_bestfit << " eV^2" << endl;
     cout << "sinsq2theta_{bestfit} = " << mixing23_bestfit << endl;

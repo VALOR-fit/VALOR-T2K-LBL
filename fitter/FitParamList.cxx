@@ -938,14 +938,14 @@ void FitParamList::Append3FlavourOscillation(FitParamList * fparm, int start)
   NuOscMixParam_t omp = Opt::Instance()->gOscMixingParamChoice;
   switch(omp) {
   case(kNuMixSinsq2Theta):
-     fparm->AddParam( ip++, kPhypMixing23,  kInitFitSinsq2Theta23,  kMinFitSinsq2Theta23,  kMaxFitSinsq2Theta23,  5.0E-3,  false, false);
-     fparm->AddParam( ip++, kPhypMixing13,  kInitFitSinsq2Theta13,  kMinFitSinsq2Theta13,  kMaxFitSinsq2Theta13,  1.0E-3,  false, false);
-     fparm->AddParam( ip++, kPhypMixing12,  kInitFitSinsq2Theta12,  kMinFitSinsq2Theta12,  kMaxFitSinsq2Theta12,  1.0E-2,  false, false);
+     fparm->AddParam( ip++, kPhypMixing23,  kInitFitSinsq2Theta23,  kMinFitSinsq2Theta23,  kMaxFitSinsq2Theta23,  kStepSinsq2Theta23,  false, false);
+     fparm->AddParam( ip++, kPhypMixing13,  kInitFitSinsq2Theta13,  kMinFitSinsq2Theta13,  kMaxFitSinsq2Theta13,  kStepSinsq2Theta13,  false, false);
+     fparm->AddParam( ip++, kPhypMixing12,  kInitFitSinsq2Theta12,  kMinFitSinsq2Theta12,  kMaxFitSinsq2Theta12,  kStepSinsq2Theta12,  false, false);
      break;
   case(kNuMixSinsqTheta):
-     fparm->AddParam( ip++, kPhypMixing23,  kInitFitSinsqTheta23,   kMinFitSinsqTheta23,   kMaxFitSinsqTheta23,   5.0E-3,  false, false);
-     fparm->AddParam( ip++, kPhypMixing13,  kInitFitSinsqTheta13,   kMinFitSinsqTheta13,   kMaxFitSinsqTheta13,   1.0E-3,  false, false);
-     fparm->AddParam( ip++, kPhypMixing12,  kInitFitSinsqTheta12,   kMinFitSinsqTheta12,   kMaxFitSinsqTheta12,   1.0E-2,  false, false);
+     fparm->AddParam( ip++, kPhypMixing23,  kInitFitSinsqTheta23,   kMinFitSinsqTheta23,   kMaxFitSinsqTheta23,   kStepSinsqTheta23,  false, false);
+     fparm->AddParam( ip++, kPhypMixing13,  kInitFitSinsqTheta13,   kMinFitSinsqTheta13,   kMaxFitSinsqTheta13,   kStepSinsqTheta13,  false, false);
+     fparm->AddParam( ip++, kPhypMixing12,  kInitFitSinsqTheta12,   kMinFitSinsqTheta12,   kMaxFitSinsqTheta12,   kStepSinsqTheta12,  false, false);
      break;
   default:
      delete fparm;
@@ -958,17 +958,17 @@ void FitParamList::Append3FlavourOscillation(FitParamList * fparm, int start)
   NuOscDmsqScheme_t odmsq = Opt::Instance()->gOscDmsqScheme;
   switch (odmsq) {
   case(kNuDmsqFogliLisi):
-    fparm->AddParam( ip++, kPhypDm23sq,    kGlobFitDmsqFL,   kMinFitDm23sq, kMaxFitDm23sq, 1.0E-4,  false, false);
+    fparm->AddParam( ip++, kPhypDm23sq,    kGlobFitDmsqFL,   kMinFitDm23sq, kMaxFitDm23sq, kStepDm23sq,  false, false);
     break;
   case(kNuDmsq12andAbs23):
-    fparm->AddParam( ip++, kPhypDm23sq,    kInitFitDm23sq,   kMinFitDm23sq, kMaxFitDm23sq, 1.0E-4,  false, false);
+    fparm->AddParam( ip++, kPhypDm23sq,    kInitFitDm23sq,   kMinFitDm23sq, kMaxFitDm23sq, kStepDm23sq,  false, false);
     break;
   default:
     delete fparm;
     return;
   }
   
-  fparm->AddParam( ip++, kPhypDm12sq,    kInitFitDm12sq,   kMinFitDm12sq, kMaxFitDm12sq, 2.0E-6,  false, false);
+  fparm->AddParam( ip++, kPhypDm12sq,    kInitFitDm12sq,   kMinFitDm12sq, kMaxFitDm12sq, kStepDm12sq,  false, false);
 
 }
 //________________________________________________________________________________________
@@ -983,16 +983,16 @@ void FitParamList::Append2FlavourOscillation(FitParamList * fparm, int start)
   NuOscMixParam_t omp = Opt::Instance()->gOscMixingParamChoice;
   switch(omp) {
   case(kNuMixSinsq2Theta):
-    fparm->AddParam( ip++, kPhypMixing23, kInitFitSinsq2Theta23, kMinFitSinsq2Theta23,  kMaxFitSinsq2Theta23,  0.005,  false, false);
+    fparm->AddParam( ip++, kPhypMixing23, kInitFitSinsq2Theta23, kMinFitSinsq2Theta23,  kMaxFitSinsq2Theta23,  kStepSinsq2Theta23,  false, false);
     break;
   case(kNuMixSinsqTheta):
-    fparm->AddParam( ip++, kPhypMixing23, kInitFitSinsqTheta23,  kMinFitSinsqTheta23,   kMaxFitSinsqTheta23,   0.005,  false, false);
+    fparm->AddParam( ip++, kPhypMixing23, kInitFitSinsqTheta23,  kMinFitSinsqTheta23,   kMaxFitSinsqTheta23,   kStepSinsq2Theta23,  false, false);
     break;
   default:
     delete fparm;
     return;
   }
-  fparm->AddParam( ip++, kPhypDm23sq, kInitFitDm23sq, kMinFitDm23sq, kMaxFitDm23sq, 1E-4, false, false);
+  fparm->AddParam( ip++, kPhypDm23sq, kInitFitDm23sq, kMinFitDm23sq, kMaxFitDm23sq, kStepDm23sq, false, false);
 
 }
 //________________________________________________________________________________________

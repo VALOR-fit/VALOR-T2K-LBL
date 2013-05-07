@@ -116,7 +116,7 @@ static const double kGlobFitErrDeltaCP       = 0.10; // ~10%
 static const double kGlobFitSinsq2Theta23    = 1.00;
 static const double kGlobFitSinsq2Theta13    = 0.098;
 static const double kGlobFitSinsq2Theta12    = 0.857;
-static const double kGlobFitErrSinsq2Theta23 = 0.06; // ~6%
+static const double kGlobFitErrSinsq2Theta23 = 0.05; // ~5%
 static const double kGlobFitErrSinsq2Theta12 = 0.029; // ~2.9%
 static const double kGlobFitErrSinsq2Theta13 = 0.133; // ~13.3%
 // sinsqtheta global fit results
@@ -127,33 +127,41 @@ static const double kGlobFitErrSinsqTheta23 = 0.06;  // ~26% (1 sigma range)
 static const double kGlobFitErrSinsqTheta12 = 0.029;  // ~11% (1 sigma range)
 static const double kGlobFitErrSinsqTheta13 = 0.133;  // ~56% (1 sigma range)
 
-// Dm^2 fitter init values and range
+// Dm^2 fitter init values and range and step
 static const double kInitFitDm23sq           = kGlobFitDm23sq;
 static const double kMinFitDm23sq            = 1.0E-3;
 static const double kMaxFitDm23sq            = 6.0E-3;
+static const double kStepDm23sq              = 1.0E-4;
 static const double kInitFitDm12sq           = kGlobFitDm12sq;
 static const double kMinFitDm12sq            = 6.0E-5;
 static const double kMaxFitDm12sq            = 9.0E-5;
+static const double kStepDm12sq              = 2.0E-6;
 // sinsq2theta fitter init values and range
 static const double kInitFitSinsq2Theta23    = 0.90;
 static const double kMinFitSinsq2Theta23     = 0.00;
 static const double kMaxFitSinsq2Theta23     = 1.00;
+static const double kStepSinsq2Theta23       = 5.0E-3;
 static const double kInitFitSinsq2Theta13    = kGlobFitSinsq2Theta13;
 static const double kMinFitSinsq2Theta13     = 0.00;
 static const double kMaxFitSinsq2Theta13     = 1.00;
+static const double kStepSinsq2Theta13       = 1.0E-3;
 static const double kInitFitSinsq2Theta12    = kGlobFitSinsq2Theta12;
 static const double kMinFitSinsq2Theta12     = 0.00;
 static const double kMaxFitSinsq2Theta12     = 1.00;
+static const double kStepSinsq2Theta12       = 1.0E-2;
 // sinsqtheta fitter init values and range
 static const double kInitFitSinsqTheta23     = 0.60;
 static const double kMinFitSinsqTheta23      = 0.00;
 static const double kMaxFitSinsqTheta23      = 1.00;
+static const double kStepSinsqTheta23        = 5.0E-3;
 static const double kInitFitSinsqTheta13     = kGlobFitSinsqTheta13;
 static const double kMinFitSinsqTheta13      = 0.00;
 static const double kMaxFitSinsqTheta13      = 1.00;
+static const double kStepSinsqTheta13        = 1.0E-3;
 static const double kInitFitSinsqTheta12     = kGlobFitSinsqTheta12;
 static const double kMinFitSinsqTheta12      = 0.00;
 static const double kMaxFitSinsqTheta12      = 1.00;
+static const double kStepSinsqTheta12        = 1.0E-2;
 
 // fitter chisq surface ranges
 static const double kMinChisqSurfaceDm23sq            = 1.5E-3;
