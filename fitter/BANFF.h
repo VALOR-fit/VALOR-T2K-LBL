@@ -50,6 +50,7 @@ public:
    
   // Get BANFF best fit values, covariance matrix and cholesky decomposition of covariance matrix
   const TVectorD & BestFitValues              (void) const { return *fBestFitValues;             }
+  const TVectorD & CurrentValues              (void) const { return *fCurrentValues;             }
   const TVectorD & CurrentUncorrelatedValues  (void) const { return *fUncorrelatedCurrentValues; }
   const TVectorD & BestFitEigenDecompValues   (void) const { return *fEigenBestFitValues;        }
   const TVectorD & CurrentEigenDecompValues   (void) const { return *fEigenCurrentValues;        }

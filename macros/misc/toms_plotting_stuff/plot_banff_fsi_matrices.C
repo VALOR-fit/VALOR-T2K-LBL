@@ -2,7 +2,7 @@ void plot_banff_fsi_matrices
 (
  const char * banfffile = "inputs/official/2012/banff/postfit_banff_v8_osc_marg_MAQE_EBfix.root",
  const char * fsifile   = "inputs/official/2012/fsi/FSIandSIError_ICL_SKDetectorBinning.root",
- bool         summary   = false
+ bool         summary   = true
  )
 {
   TFile fb(banfffile);
@@ -46,15 +46,24 @@ void plot_banff_fsi_matrices
   }
   
   fsi->Draw("colz");
-  c->SaveAs("fsi.eps");
+  c->SaveAs("fsi.pdf");
 
   fsi_diag_sqrt->SetFillColor(4);
   fsi_diag_sqrt->SetBarWidth(0.4);
   fsi_diag_sqrt->SetBarOffset(0.1);
   fsi_diag_sqrt->SetMinimum(0);
   fsi_diag_sqrt->SetMaximum(0.15);
+  if(summary) {
+    fsi_diag_sqrt_xaxis->SetBinLabel(1,"#nu_{#mu} RC E1");
+    fsi_diag_sqrt_xaxis->SetBinLabel(2,"#nu_{#mu} RC E2");
+    fsi_diag_sqrt_xaxis->SetBinLabel(3,"#nu_{#mu} RC E3");
+    fsi_diag_sqrt_xaxis->SetBinLabel(4,"#nu_{#mu} CCnonQE");
+    fsi_diag_sqrt_xaxis->SetBinLabel(5,"#nu_{e}");
+    fsi_diag_sqrt_xaxis->SetBinLabel(6,"NC");
+    fsi_diag_sqrt_xaxis->SetLabelSize(1.2*fsi_diag_sqrt_xaxis->GetLabelSize());
+  }
   fsi_diag_sqrt->Draw("bar");
-  c->SaveAs("fsi_diag_sqrt.eps");
+  c->SaveAs("fsi_diag_sqrt.pdf");
 
   // BANFF
 
@@ -98,10 +107,32 @@ void plot_banff_fsi_matrices
       else
 	banff_diag_sqrt_xaxis->SetBinLabel(i+1,Form("f_{%d; t, r}^{banff}", i));
     }
+    if(summary) {
+      banff_xaxis->SetBinLabel(i+1,Form("", i));
+      banff_yaxis->SetBinLabel(i+1,Form("", i));
+    }
   }
   
-  banff->Draw("colz");
-  c->SaveAs("banff.eps");
+  double right = c->GetRightMargin();
+
+  if(true) {
+    TLatex l1(0.2,-1.5,"#uparrow #nu_{#mu} flux #rightarrow");
+    l1.SetTextSize(0.05);
+    TLatex l2(11.2,-1.5,"#uparrow #bar{#nu_{#mu}} flux #rightarrow");
+    l2.SetTextSize(0.05);
+    TLatex l3(16.2,-1.5,"#uparrow cross section #rightarrow");
+    l3.SetTextSize(0.05);
+
+    c->SetRightMargin(0.15);
+    banff->GetZaxis()->SetRangeUser(-0.075,0.075);
+    banff->Draw("colz");
+    if(summary) {
+      l1.Draw();
+      l2.Draw();
+      l3.Draw();
+    }
+    c->SaveAs("banff.pdf");
+  }
 
   banff_diag_sqrt->SetFillColor(4);
   banff_diag_sqrt->SetBarWidth(0.4);
@@ -113,7 +144,15 @@ void plot_banff_fsi_matrices
   banff_diag_sqrt_pre->SetBarWidth(0.4);
   banff_diag_sqrt_pre->SetBarOffset(0.5);
   banff_diag_sqrt_pre->SetStats(0);
+  c->SetRightMargin(right);
   banff_diag_sqrt_pre->Draw("bar same");
+
+  TLegend * leg = new TLegend(0.2,0.7,0.58,0.9);
+  leg->SetFillColor(kWhite);
+  leg->SetLineWidth(0);
+  leg->SetLineColor(kWhite);
+  leg->AddEntry(banff_diag_sqrt_pre, "Pre ND280 fit", "f");
+  leg->AddEntry(banff_diag_sqrt, "Post ND280 fit", "f");
 
   TLatex l1(0.2,-0.05,"#uparrow #nu_{#mu} flux #rightarrow");
   l1.SetTextSize(0.05);
@@ -121,11 +160,6 @@ void plot_banff_fsi_matrices
   l2.SetTextSize(0.05);
   TLatex l3(16.2,-0.05,"#uparrow cross section #rightarrow");
   l3.SetTextSize(0.05);
-  
-  TLegend * leg = new TLegend(0.1,0.7,0.48,0.9);
-  leg->SetFillColor(kRed);
-  leg->AddEntry(banff_diag_sqrt_pre, "Pre ND280 fit", "f");
-  leg->AddEntry(banff_diag_sqrt, "Post ND280 fit", "f");
 
   if(summary) {
     l1.Draw();
@@ -136,5 +170,5 @@ void plot_banff_fsi_matrices
 
   c->Update();
 
-  c->SaveAs("banff_diag_sqrt.eps");
+  c->SaveAs("banff_diag_sqrt.pdf");
 }

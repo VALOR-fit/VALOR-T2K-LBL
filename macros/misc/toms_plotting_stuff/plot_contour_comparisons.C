@@ -16,19 +16,23 @@ void plot_contour_comparisons
   TFile f_dcall_3("2012results/DATA/2all/fitresults_5.root");
   TFile f_dcall_28_fine("2012results/DATA/fine_grain_2all/fitresults_3.root");
   TFile f_fc_123("2012results/FC/fc_contours.root");
-  TFile f_fcall_123("2012results/FC/fc_contours_2all.root");
+  //  TFile f_fcall_123("2012results/FC/fc_contours_2all.root");
+  //TFile f_fcall_123("fc_contours_2all.root");
+  TFile f_fcall_123("fc_oldsurf_newres_5E5.root");
   TFile f_dc_kit("2012results/DATA/KIT/run1-3_constchi2_v2_fine.root");
-  TFile f_fc_kit("2012results/DATA/KIT/run1-3_fc.root");
+  //TFile f_fc_kit("2012results/DATA/KIT/run1-3_fc.root");
+  //TFile f_fc_kit("of_fc_valor.root");
+  TFile f_fc_kit("of_fc_kit.root");
   TFile f_crit("2012results/FC/delta_chisq_critical_Mark2.root");
   TFile f_crit_all("2012results/FC/delta_chisq_critical_2all.root");
   TFile f_crit_kit("2012results/FC/KIT/run1-3_criticalchi2.root");
   TFile f_sens("2012results/SENSITIVITY/t2k_28/sensitivity.root");
 
   //Fill in TMarker's with the best fit point (is the same for 2+N, 2+8)
-  TMarker bestfit(1.000,0.002442,29);
+  TMarker bestfit(1.000,0.00244,29);
   bestfit.SetMarkerSize(1.8);
   bestfit.SetMarkerColor(kBlack);
-  TMarker bestfit_2all(1.000,0.002443,29);
+  TMarker bestfit_2all(1.000,0.00244,29);
   bestfit_2all.SetMarkerSize(1.8);
   bestfit_2all.SetMarkerColor(kBlack);
 
@@ -187,19 +191,38 @@ void plot_contour_comparisons
   TH2D * h_fc_kit_90 = 0;
   f_fc_kit.GetObject("h_fccont_68",h_fc_kit_68);
   f_fc_kit.GetObject("h_fccont_90",h_fc_kit_90);
-  //h_fc_kit_68->SetContour(1);
-  //h_fc_kit_68->SetContourLevel(0,0.0);
+  if(!h_fc_kit_68 || !h_fc_kit_90) {
+    f_fc_kit.GetObject("hfccontvalor",h_fc_kit_68);
+    f_fc_kit.GetObject("hfccontvalor",h_fc_kit_90);
+    /*
+    TH2D * h_fc_kit_temp = 0;
+    f_fc_kit.GetObject("hfccontvalor",h_fc_kit_temp);
+    h_fc_kit_68 = new TH2D(*h_fc_kit_temp);
+    //h_fc_kit_68->SetContour(1);
+    //h_fc_kit_68->SetContourLevel(0,2.30);
+    h_fc_kit_90 = new TH2D(*h_fc_kit_temp);
+    //h_fc_kit_90->SetContour(1);
+    //h_fc_kit_90->SetContourLevel(0,4.61);
+    */
+  }
+  if(!h_fc_kit_68 || !h_fc_kit_90) {
+    f_fc_kit.GetObject("hfccontkit68",h_fc_kit_68);
+    f_fc_kit.GetObject("hfccontkit90",h_fc_kit_90);
+  }
   h_fc_kit_68->SetLineStyle(2);
-  //h_fc_kit_90->SetContour(1);
-  //h_fc_kit_90->SetContourLevel(0,0.0);
   h_fc_kit_90->SetLineStyle(1);
 
+
+
   //KIT BF
-  TGraph * kitbf = 0;
-  f_dc_kit.GetObject("g_bstosc",kitbf);
-  double kitx = 0, kity = 0;
-  kitbf->GetPoint(0,kitx,kity);
-  TMarker bestfit_kit(kitx,kity,29);
+  /*
+    TGraph * kitbf = 0;
+    f_dc_kit.GetObject("g_bstosc",kitbf);
+    double kitx = 0, kity = 0;
+    kitbf->GetPoint(0,kitx,kity);
+    TMarker bestfit_kit(kitx,kity,29);
+  */
+  TMarker bestfit_kit(1.000,0.00244,29);
   bestfit_kit.SetMarkerSize(1.8);
   bestfit_kit.SetMarkerColor(kGreen+2);
 
@@ -208,12 +231,16 @@ void plot_contour_comparisons
   TGraph * g_minos = 0;
   fext.GetObject("minos2012_combined_90CL",g_minos);
   g_minos->SetLineColor(kBlack);
+  TFile fskle("$T2KOSCANA/inputs/contours/contours_skloe.root");
   TGraph * g_skle = 0;
-  fext.GetObject("sk2012_le2nu_90CL",g_skle);
+  fskle.GetObject("sk3f_loe_90cl",g_skle);
   g_skle->SetLineColor(kGreen+2);
+  g_skle->SetLineStyle(1);
+  TFile fskz("$T2KOSCANA/inputs/contours/contours_skzen.root");
   TGraph * g_skzen = 0;
-  fext.GetObject("sk2012_zenith3nu_90CL",g_skzen);
+  fskz.GetObject("sk3f_23vars_overlay_normal_q13_fixed",g_skzen);
   g_skzen->SetLineColor(kBlue);
+  g_skzen->SetLineStyle(1);
 
   TFile fold("$T2KOSCANA/inputs/contours/contours_oldt2k.root");
   TGraph * g_run12_68_statsyst = 0;
@@ -394,7 +421,7 @@ void plot_contour_comparisons
   leg->Draw();
   //bestfit.Draw();
   c->SaveAs("compare_KIT_FC.eps");
-  leg->Clear()
+  leg->Clear();
   c->SaveAs("compare_KIT_FC.pdf");
 
   //Run 1-3 const dchisq vs FC + externals (2+8)
@@ -1298,13 +1325,17 @@ void plot_contour_comparisons
   leg->AddEntry(h_fcall_123_90, "T2K 3#nu 90% CL","l");
   leg->AddEntry("g_run12_90_statsyst", "T2K 2011 2#nu 90% CL", "l");
   leg->AddEntry("g_minos", "MINOS 2012 2#nu 90% CL", "l");
-  leg->AddEntry("g_skle", "SuperK 2012 L/E 2#nu 90% CL", "l");
-  leg->AddEntry("g_skzen", "SuperK 2012 zenith 3#nu 90% CL", "l");
+  leg->AddEntry("g_skle", "SuperK L/E 2012 2#nu 90% CL", "l");
+  leg->AddEntry("g_skzen", "SuperK zenith 2012 3#nu 90% CL", "l");
   leg->SetX2NDC(0.6);
   leg->Draw();
   c->SaveAs("contour_compare_FC_external_old.pdf");
   c->SaveAs("contour_compare_FC_external_old.png");
   c->SaveAs("contour_compare_FC_external_old.eps");
+  //PAPER
+  c->SaveAs("contour_compare_external.pdf");
+  c->SaveAs("contour_compare_external.png");
+  c->SaveAs("contour_compare_external.eps");
 
   //Run 1-3 constdchisq only with externals
   osc_param_space->GetXaxis()->SetRangeUser(0.82,1.0);
@@ -1392,10 +1423,10 @@ void plot_contour_comparisons
   h_fcall_123_90->SetLineColor(kBlack);;
   h_fc_kit_68->SetLineColor(kRed);;
   h_fc_kit_90->SetLineColor(kRed);;
-  h_fcall_123_68->Draw("cont3same");
-  h_fcall_123_90->Draw("cont3same");
   h_fc_kit_68->Draw("cont3same");
   h_fc_kit_90->Draw("cont3same");
+  h_fcall_123_68->Draw("cont3same");
+  h_fcall_123_90->Draw("cont3same");
   bestfit_2all.Draw();
   bestfit_kit.SetMarkerStyle(24);
   bestfit_kit.SetMarkerColor(kRed);
@@ -1404,15 +1435,73 @@ void plot_contour_comparisons
   leg2->SetFillColor(0);
   leg2->SetFillStyle(0);
   leg2->SetBorderSize(0);
-  leg2->SetTextFont(42);
-  leg2->AddEntry(h_fcall_123_68, "Likelihood ratio analysis 68% C.L.","l");
-  leg2->AddEntry(h_fcall_123_90, "Likelihood ratio analysis 90% C.L.","l");
-  leg2->AddEntry(h_fc_kit_68, "Max likelihood analysis 68% C.L.","l");
-  leg2->AddEntry(h_fc_kit_90, "Max likelihood analysis 90% C.L.","l");
+  //leg2->SetTextFont(42);
+  leg2->AddEntry(h_fcall_123_68, "T2K 68% C.L.","l");
+  leg2->AddEntry(h_fcall_123_90, "T2K 90% C.L.","l");
+  leg2->AddEntry(h_fc_kit_68, "T2K 68% C.L. alternative analysis","l");
+  leg2->AddEntry(h_fc_kit_90, "T2K 90% C.L. alternative analysis","l");
   leg2->SetX2NDC(0.43);
   leg2->Draw();
   c->SaveAs("contour_compare_methods.eps");
   c->SaveAs("contour_compare_methods.pdf");
   c->SaveAs("contour_compare_methods.png");
+  leg2->Clear();
+  delete leg2;
+  leg2 = new TLegend(0.17,0.7,0.65,0.92);
+  leg2->SetFillColor(0);
+  leg2->SetFillStyle(0);
+  leg2->SetBorderSize(0);
+  //leg2->SetTextFont(42);
+  leg2->AddEntry(h_fcall_123_68, "T2K 68% C.L.","l");
+  leg2->AddEntry(h_fcall_123_90, "T2K 90% C.L.","l");
+  leg2->AddEntry(h_fc_kit_68, "T2K 68% C.L. (alternative analysis)","l");
+  leg2->AddEntry(h_fc_kit_90, "T2K 90% C.L. (alternative analysis)","l");
+  leg2->SetX2NDC(0.43);
+  leg2->Draw();
+  c->SaveAs("contour_compare_methods_brackets.eps");
+  c->SaveAs("contour_compare_methods_brackets.pdf");
+  c->SaveAs("contour_compare_methods_brackets.png");
+
+  //PAPER
+  //Run 1-3 FC only with externals + old t2k
+  osc_param_space->GetXaxis()->SetRangeUser(0.82,1.0);
+  osc_param_space->GetYaxis()->SetRangeUser(0.0018,0.0038);
+  osc_param_space->Draw(); 
+  h_fcall_123_68->SetLineWidth(2);
+  h_fcall_123_90->SetLineWidth(2);
+  //h_fcall_123_68->Draw("cont3same");
+  g_run12_90_statsyst->SetLineStyle(2);
+  g_run12_90_statsyst->SetLineColor(kBlack);
+  g_run12_90_statsyst->SetLineWidth(1);
+  g_minos->SetLineColor(kRed);
+  g_minos->SetLineWidth(1);
+  g_skle->SetLineColor(kGreen+2);
+  g_skle->SetLineWidth(1);
+  g_skzen->SetLineColor(kBlue);
+  g_skzen->SetLineWidth(1);
+  g_skzen->Draw("l");
+  g_skle->Draw("l");
+  g_minos->Draw("l");
+  g_run12_90_statsyst->Draw("l");
+  h_fcall_123_90->Draw("cont3same");
+  bestfit_2all.Draw();
+  leg2->Clear();
+  delete leg2;
+  leg2 = new TLegend(0.17,0.7,0.65,0.92);
+  leg2->SetFillColor(0);
+  leg2->SetFillStyle(0);
+  leg2->SetBorderSize(0);
+  //leg2->SetTextFont(42);
+  //leg2->AddEntry(h_fcall_123_68, "T2K 3#nu 68% CL","l");
+  leg2->AddEntry(h_fcall_123_90, "T2K 3#nu 90% CL","l");
+  leg2->AddEntry("g_run12_90_statsyst", "T2K 2011 2#nu 90% CL", "l");
+  leg2->AddEntry("g_minos", "MINOS 2012 2#nu 90% CL", "l");
+  leg2->AddEntry("g_skle", "SuperK L/E 2012 2#nu 90% CL", "l");
+  leg2->AddEntry("g_skzen", "SuperK zenith 2012 3#nu 90% CL", "l");
+  leg2->SetX2NDC(0.6);
+  leg2->Draw();
+  c->SaveAs("contour_compare_external.pdf");
+  c->SaveAs("contour_compare_external.png");
+  c->SaveAs("contour_compare_external.eps");
 
 }

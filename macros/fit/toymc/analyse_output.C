@@ -300,6 +300,28 @@ void analyse_output
     legg->AddEntry(spectrum_ratio_other, "B best fit", "l");
     legg->Draw();
     c->SaveAs("spectrum_ratio_AB.eps");
+    //Also, check the ratio between the 2 spectra, and find the highest difference
+    TH1D * spectrum_compare(*spectrum_bf);
+    double max_value = 0; int imax = 0;
+    for(int ibin = 1; ibin <= spectrum_compare->GetNbinsX(); ibin++) {
+      //cout << spectrum_bf->GetXaxis()->GetBinCenter(ibin) << "\t" << spectrum_other->GetXaxis()->GetBinCenter(ibin) << endl;
+      double x = spectrum_bf->GetBinContent(ibin);
+      double y = spectrum_other->GetBinContent(ibin);
+      double value = 0;
+      if(x > 0 || y > 0)
+	value = 2*(x-y)/(x+y) * 100;
+      cout << ibin << "\t" << x << "\t" << y << "\t" << value << std::endl;
+      if(value > max_value) {
+	max_value = value;
+	imax = ibin;
+      }
+      spectrum_compare->SetBinContent(ibin, value);
+    }
+    spectrum_compare->GetYaxis()->SetRangeUser(-2,2);
+    spectrum_compare->Draw();
+    c->SaveAs("spectrum_compare.pdf");
+    cout << endl << max_value << " is the max % difference between the contours in bin " << imax << endl;
+    return;
   }//spectrum_other
   //draw comparison (spectrum, 20 bins)
   if(spectrum_other_rebin) {
@@ -378,21 +400,29 @@ void analyse_output
   }//spectrum_other_rebin
   //draw them on the same canvas
   if(spectrum_other_rebin) {
+    //PAPER
     double top_plot_fraction = 0.6;
     TCanvas *csaxis = new TCanvas();
     csaxis->cd(1);
     csaxis->SetBottomMargin(1-top_plot_fraction);
     spectrum_noosc_rebin->SetLabelSize(0);
     spectrum_noosc_rebin->Draw("");
-    spectrum_obs_rebin->Draw("PE0same");
     //spectrum_other_rebin->Draw("same");
     spectrum_bf_rebin->Draw("same");
+    spectrum_other_rebin->SetLineStyle(2);
+    spectrum_other_rebin->Draw("same");
+    spectrum_obs_rebin->Draw("PE0same");
 
     legg->Clear();
+    delete legg;
+    legg = new TLegend(0.3,0.6,0.95,0.95);
+    legg->SetFillStyle(0);
+    legg->SetBorderSize(0);
+    //legg->SetTextFont(42);
     legg->AddEntry(spectrum_obs_rebin, "T2K Run 1-3 data", "pl");
     legg->AddEntry(spectrum_noosc_rebin, "No oscillation hypothesis", "l");
     legg->AddEntry(spectrum_bf_rebin, "T2K best fit", "l");
-    //legg->AddEntry(spectrum_other_rebin, "T2K best fit alternative analysis", "l");
+    legg->AddEntry(spectrum_other_rebin, "T2K best fit alternative analysis", "l");
     legg->Draw();
 
     TPad * pad = new TPad("pad","pad",0,0,1,1);
@@ -405,12 +435,20 @@ void analyse_output
     spectrum_ratio_obs_rebin->GetYaxis()->SetRangeUser(0,1.9);
     spectrum_ratio_obs_rebin->GetYaxis()->SetTitle("#splitline{Ratio to no}{oscillations}");
     spectrum_ratio_obs_rebin->GetXaxis()->SetTitle("Reconstructed #nu energy / GeV");
-    spectrum_ratio_obs_rebin->Draw("PE0");
+    spectrum_ratio_bf_rebin->GetYaxis()->SetNdivisions(505);
+    spectrum_ratio_bf_rebin->GetXaxis()->SetRangeUser(0,5.9);
+    spectrum_ratio_bf_rebin->GetYaxis()->SetRangeUser(0,1.9);
+    spectrum_ratio_bf_rebin->GetYaxis()->SetTitle("#splitline{Ratio to no}{oscillations}");
+    spectrum_ratio_bf_rebin->GetXaxis()->SetTitle("Reconstructed #nu energy / GeV");
     //spectrum_ratio_other_rebin->Draw("same");
-    spectrum_ratio_bf_rebin->Draw("sameH");
+    spectrum_ratio_bf_rebin->Draw("");
+    spectrum_ratio_other_rebin->SetLineStyle(2);
+    spectrum_ratio_other_rebin->Draw("same");
     spectrum_line->Draw("same");
+    spectrum_ratio_obs_rebin->Draw("PE0same");
 
     csaxis->SaveAs("sk_spectrum_and_ratio.pdf");
+    csaxis->SaveAs("sk_spectrum_and_ratio.eps");
   }//spectrum_other_rebin
 
   //pulls

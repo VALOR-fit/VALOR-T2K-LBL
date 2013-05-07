@@ -230,7 +230,7 @@ namespace util {
     int SuperkSampleIdx (conv::SuperkSample_t s)                       { return fSuperkSampleIdx[s];    }
     int SuperkModeIdx   (conv::SuperkSample_t s, conv::SuperkMode_t m) { return fSuperkModeIdx  [s][m]; }
     int XSecSystIdx     (conv::PhysParamId_t p)                        { return fXSecSystIdx    [p];    }
-    int BANFFSystIdx    (conv::PhysParamId_t p)                        { return fBANFFSystIdx   [p];    }
+    int BANFFSystIdx    (conv::PhysParamId_t p)                        { return fBANFFSystIdx   [p];    } // int ip = util::ArrIdx::Instance()->BANFFSystIdx(p)
     int UnBANFFSystIdx  (conv::PhysParamId_t p)                        { return fUnBANFFSystIdx [p];    }
     int EDBANFFSystIdx  (conv::PhysParamId_t p)                        { return fEDBANFFSystIdx [p];    }
     int FSISystIdx      (conv::PhysParamId_t p)                        { return fFSISystIdx     [p];    }
