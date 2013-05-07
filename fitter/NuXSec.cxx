@@ -119,12 +119,12 @@ bool NuXSec::ReadSplines(TXMLEngine* xml, XMLNodePointer_t root_node)
   //
   // Load cross-section weight splines
   //
-
+  /*
   double x[5] = {-5,-2,0,+2,+5};
   double y[5] = {1,1,1,1,1};
   int n = 5;
   TSpline3 *flatspline = new TSpline3("",x,y,n);
-
+  */
 
 #if SPLINE_TYPE == 0
   TFile * spline_file_numu = util::XML2TFile(xml,root_node,"xsec/weight_splines/numu");
@@ -230,16 +230,15 @@ bool NuXSec::ReadSplines(TXMLEngine* xml, XMLNodePointer_t root_node)
 		    continue;
 		  }
 		  else {
-		    /*cerr << "Exp/NuXSec >> Null cross-section weight spline: " 
+		    cerr << "Exp/NuXSec >> Null cross-section weight spline: " 
 			 << splname.str() 
 #if SPLINE_TYPE == 0
 			 << ", " << mode[0]
 #endif
 			 << " Ereco: " << Ereco << ", Etrue: " << Etrue << endl;
-		    */
 		    //need to do something bad until we get new splines for 13a SKMC
-		    //exit(1);
-		    spl = flatspline;
+		    exit(1);
+		    //spl = flatspline;
 		  }
 		}
 		else {
