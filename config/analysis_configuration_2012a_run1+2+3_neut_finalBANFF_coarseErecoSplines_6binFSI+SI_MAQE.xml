@@ -185,7 +185,7 @@
                0.023  
             </one_mu_ring>
             <one_e_ring>
-	       0.023
+	        0.023
             </one_e_ring>
          </energy_scale_relative_error>
          <efficiency_relative_error>  
@@ -356,9 +356,10 @@
           <filename>   inputs/official/2012/fsi/FSIandSIError_JointOA.root  </filename>
           <objname>    fsi_cov         </objname>
           <objtype>    TMatrixD         </objtype>
-        </covariance_matrix>     
+       </covariance_matrix>     
   </fsi>
 
+  <!--
   ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
   SKDET+FSI
   ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
