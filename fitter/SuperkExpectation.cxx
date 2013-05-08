@@ -112,13 +112,16 @@ void SuperkExpectation::Book(void)
 //________________________________________________________________________________________
 void SuperkExpectation::CleanUp(void)
 {
-  if (fSuperkDetector ) delete fSuperkDetector;
+#ifdef SKFSITOGETHER
   if (fSuperkDetectorFSI ) delete fSuperkDetectorFSI;
+#else
+  if (fSuperkDetector ) delete fSuperkDetector;
+  if (fFSI            ) delete fFSI;
+#endif
   if (fSuperkMC       ) delete fSuperkMC;
   if (fNuFlux         ) delete fNuFlux; 
   if (fNuXSec         ) delete fNuXSec;
   if (fBANFF          ) delete fBANFF;
-  if (fFSI            ) delete fFSI;
 
   for(int is = 0; is < kns; is++) {
      if (fPredictErecoSpectrumTot[is]) delete fPredictErecoSpectrumTot[is];
@@ -143,9 +146,12 @@ bool SuperkExpectation::Read(string config_file)
   fBANFF          = new BANFF;
   fNuFlux         = new NuFlux; 
   fNuXSec         = new NuXSec; 
+#ifdef SKFSITOGETHER
+  fSuperkDetectorFSI = new SuperkDetectorFSI; 
+#else
   fFSI            = new FSI; 
   fSuperkDetector = new SuperkDetector; 
-  fSuperkDetectorFSI = new SuperkDetectorFSI; 
+#endif
   fSuperkMC       = new SuperkMC;
 
   // Configure inter-dependencies.
@@ -153,9 +159,12 @@ bool SuperkExpectation::Read(string config_file)
   fNuXSec   -> TellMeAboutTheBANFFfit   (fBANFF);
   fSuperkMC -> TellMeAboutCrossSections (fNuXSec);
   fSuperkMC -> TellMeAboutTheFlux       (fNuFlux);
+#ifdef SKFSITOGETHER
   fSuperkMC -> TellMeAboutTheDetectorFSI(fSuperkDetectorFSI);
+#else
   fSuperkMC -> TellMeAboutTheDetector   (fSuperkDetector);
   fSuperkMC -> TellMeAboutFSI           (fFSI);
+#endif
 
   // Parse the input XML configuration file
   TXMLEngine* xml = new TXMLEngine;   
@@ -171,9 +180,12 @@ bool SuperkExpectation::Read(string config_file)
   if ( ! this->GetBANFF            () -> Read (xml, root_node) ) return false;
   if ( ! this->GetNuFlux           () -> Read (xml, root_node) ) return false;
   if ( ! this->GetNuXSec           () -> Read (xml, root_node) ) return false;
-  if ( ! this->GetFSI              () -> Read (xml, root_node) ) return false;
+#ifdef SKFSITOGETHER
   if ( ! this->GetSuperkDetectorFSI() -> Read (xml, root_node) ) return false;
+#else
   if ( ! this->GetSuperkDetector   () -> Read (xml, root_node) ) return false;
+  if ( ! this->GetFSI              () -> Read (xml, root_node) ) return false;
+#endif
   if ( ! this->GetSuperkMC         () -> Read (xml, root_node) ) return false;
 
   fIsConfigured = true;

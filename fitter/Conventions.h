@@ -29,11 +29,13 @@ Changes since 2011_v0.9.0:
 // fits are faster in this way. 
 #endif
 
+/*Done in configure/Build.h now
 #ifndef PRODUCTIONMODE
 #define PRODUCTIONMODE
 // If turned on, code is made faster by not filling (or even initialising) histograms.
 // This causes some macros to fail (mostly those in spectra)
 #endif
+*/
 
 #ifndef ONEOVERMAQE
 //#define ONEOVERMAQE
