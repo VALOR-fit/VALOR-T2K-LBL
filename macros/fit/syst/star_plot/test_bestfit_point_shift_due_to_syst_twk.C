@@ -278,7 +278,7 @@ void test_bestfit_point_shift_due_to_syst_twk
   delete fitter;
   skexp->ResetSystematicVariations();
   fparm->ResetCurrToInitValues();
-
+  
   //
   //
   // -1 sigma (relative to tuned BANFF)
@@ -386,6 +386,21 @@ void test_bestfit_point_shift_due_to_syst_twk
   else if(hyp == conv::kHypNuMuDisapp2F) {
     bestfit_mixing23_m1sig = fparm->BestFitValue(conv::kPhypMixing23);
     bestfit_dm23sq_m1sig   = fparm->BestFitValue(conv::kPhypDm23sq);
+  }
+  if(sys == "xsec_sf") {
+    //SF has no -1 sigma tweak!
+    if(hyp == conv::kHypOsc3F) {
+      bestfit_mixing12_m1sig = fparm->InitValue(conv::kPhypMixing12);
+      bestfit_mixing13_m1sig = fparm->InitValue(conv::kPhypMixing13);
+      bestfit_mixing23_m1sig = fparm->InitValue(conv::kPhypMixing23);
+      bestfit_deltacp_m1sig  = fparm->InitValue(conv::kPhypDeltaCP);
+      bestfit_dm12sq_m1sig   = fparm->InitValue(conv::kPhypDm12sq);
+      bestfit_dm23sq_m1sig   = fparm->InitValue(conv::kPhypDm23sq);
+    }
+    else if(hyp == conv::kHypNuMuDisapp2F) {
+      bestfit_mixing23_m1sig = fparm->InitValue(conv::kPhypMixing23);
+      bestfit_dm23sq_m1sig   = fparm->InitValue(conv::kPhypDm23sq);
+    }
   }
 
   // Clean-up in preparation for exiting
