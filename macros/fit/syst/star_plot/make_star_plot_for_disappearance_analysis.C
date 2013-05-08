@@ -181,7 +181,8 @@ void make_star_plot_for_disappearance_analysis
          arr_m1sig->SetLineColor(kArrowColour[isyst]);
          arr_m1sig->SetFillColor(kArrowColour[isyst]);
          arr_m1sig->SetLineStyle(kArrowLineStyle[isyst]);
-         arr_m1sig->Draw();
+	 if(systematic != "xsec_sf")
+	   arr_m1sig->Draw();
 
          // add legend entry
 	 if(systematic.find("osc_") != string::npos)
