@@ -118,16 +118,16 @@ void test_bestfit_point_shift_due_to_syst_twk
   conv::PhysHypothesis_t hyp = fparm->PhysicsHypothesis();
   cout << "- The following physics hypothesis is used in the fit: " << util::AsString(hyp) << endl;
   if(hyp == conv::kHypOsc3F) {
-    fparm->Update(conv::kPhypMixing12, input_mixing12);
-    fparm->Update(conv::kPhypMixing13, input_mixing13);
-    fparm->Update(conv::kPhypMixing23, input_mixing23);
-    fparm->Update(conv::kPhypDeltaCP,  input_deltacp);
-    fparm->Update(conv::kPhypDm12sq,   input_dm12sq);
-    fparm->Update(conv::kPhypDm23sq,   input_dm23sq);
+    fparm->SetInitValue(conv::kPhypMixing12, input_mixing12);
+    fparm->SetInitValue(conv::kPhypMixing13, input_mixing13);
+    fparm->SetInitValue(conv::kPhypMixing23, input_mixing23);
+    fparm->SetInitValue(conv::kPhypDeltaCP,  input_deltacp);
+    fparm->SetInitValue(conv::kPhypDm12sq,   input_dm12sq);
+    fparm->SetInitValue(conv::kPhypDm23sq,   input_dm23sq);
   }
   else if(hyp == conv::kHypNuMuDisapp2F) {
-    fparm->Update(conv::kPhypMixing23, input_mixing23);
-    fparm->Update(conv::kPhypDm23sq,   input_dm23sq);
+    fparm->SetInitValue(conv::kPhypMixing23, input_mixing23);
+    fparm->SetInitValue(conv::kPhypDm23sq,   input_dm23sq);
   }  
   else {
     return;
@@ -277,7 +277,8 @@ void test_bestfit_point_shift_due_to_syst_twk
   delete fit_inputs;
   delete fitter;
   skexp->ResetSystematicVariations();
-
+  fparm->ResetCurrToInitValues();
+  
   //
   //
   // -1 sigma (relative to tuned BANFF)
@@ -385,6 +386,21 @@ void test_bestfit_point_shift_due_to_syst_twk
   else if(hyp == conv::kHypNuMuDisapp2F) {
     bestfit_mixing23_m1sig = fparm->BestFitValue(conv::kPhypMixing23);
     bestfit_dm23sq_m1sig   = fparm->BestFitValue(conv::kPhypDm23sq);
+  }
+  if(sys == "xsec_sf") {
+    //SF has no -1 sigma tweak!
+    if(hyp == conv::kHypOsc3F) {
+      bestfit_mixing12_m1sig = fparm->InitValue(conv::kPhypMixing12);
+      bestfit_mixing13_m1sig = fparm->InitValue(conv::kPhypMixing13);
+      bestfit_mixing23_m1sig = fparm->InitValue(conv::kPhypMixing23);
+      bestfit_deltacp_m1sig  = fparm->InitValue(conv::kPhypDeltaCP);
+      bestfit_dm12sq_m1sig   = fparm->InitValue(conv::kPhypDm12sq);
+      bestfit_dm23sq_m1sig   = fparm->InitValue(conv::kPhypDm23sq);
+    }
+    else if(hyp == conv::kHypNuMuDisapp2F) {
+      bestfit_mixing23_m1sig = fparm->InitValue(conv::kPhypMixing23);
+      bestfit_dm23sq_m1sig   = fparm->InitValue(conv::kPhypDm23sq);
+    }
   }
 
   // Clean-up in preparation for exiting

@@ -11,7 +11,8 @@ void plot_contour_comparisons
   TFile f_dc_12("2012results/DATA/bigger_surface/28/fitresults_4.root");
   TFile f_dc_3("2012results/DATA/bigger_surface/28/fitresults_5.root");
   TFile f_dc_28_fine("2012results/DATA/fine_grain_28/fitresults_3.root");
-  TFile f_dcall_123("2012results/DATA/2all/fitresults_3.root");
+  //TFile f_dcall_123("2012results/DATA/2all/fitresults_3.root");
+  TFile f_dcall_123("NEWRESULTS/datafit/dchisq_2all.root");
   TFile f_dcall_12("2012results/DATA/2all/fitresults_4.root");
   TFile f_dcall_3("2012results/DATA/2all/fitresults_5.root");
   TFile f_dcall_28_fine("2012results/DATA/fine_grain_2all/fitresults_3.root");
