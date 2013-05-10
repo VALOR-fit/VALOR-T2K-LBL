@@ -1,5 +1,5 @@
 +--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+
-VaLOR (Valencia-Lancaster-Oxford-Rutherford) T2K oscillation analysis
+VaLOR T2K oscillation analysis
 
 (c) 2010-13 All Rights Reserved
 +--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+
@@ -15,6 +15,7 @@ Legacy authors:
 
 - Dobson, James <j.dobson07 \at imperial.ac.uk>
 - Ilic, Jelena <Jelena.Ilic \at stfc.ac.uk>
+
 
 +--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+
 
@@ -66,8 +67,8 @@ Example:
 * BUILDING THE OSCILLATION ANALYSIS CODE
 
 % cd /path/to/t2kana/nuosc/top/level/dir (or % cd $T2KOSCANA)
+% ./configure --enable-gsl-fitter --production-mode
 % make
-
 
 * RUNNING THE ANALYSIS MACROS
 
@@ -78,18 +79,7 @@ make sure there are NO spaces within ''.
 
 +--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+
 
-* RELEASES & CHANGELOG
-
-
-List of code releases:
-  - 2010_v1.0.0
-  - 2010_v2.0.0
-  - 2010_v2.1.0
-  - 2010_v3.0.0
-  - 2012_v0.9.0
-  - 2012_v1.0.0
-Details may be found below.
-
+* RELEASES 
 
 
 Version: 2010_v1.0.0
@@ -102,106 +92,53 @@ Version: 2010_v2.0.0
 This is the code which was used for the 2010b 1.431E+20 POT muon-disappearance analysis.
 Details may be found in T2K-TN-64 (v3).
 
-The following changes were installed (wrt 2010_v1.0.0) :
-> Upgraded SK flux (10d_v2 --> 10d_v3). The official 10d_v3 flux was obtained from: 
-  http://www.t2k.org/beam/NuFlux/FluxRelease/10d/10dtunev3
-> Upgraded Nsk/Nnd error calculation code (v2.2 -> v3.1). The updated error calculation code was downloaded from: 
-  http://www.t2k.org/beam/NuFlux/FluxRelease/10d/nsknnderrv3
-> Upgraded flux shape error (v2.2 -> v3.1). The updated flux fractional covariance matrix was downloaded from: 
-  http://www.t2k.org/beam/NuFlux/FluxRelease/10d/shapeerrorv31
-> Used the updated ND280 event histograms (updated with 10d_v3 flux). The histograms were downloaded from: 
-  http://www.t2k.org/asg/oagroup/nd280-offaxis/
-> Used revised SuperK ring-counting (RC) efficiency errors computed by M.Otani and J.Kameda.
-  numu CCQE RC eff. err.:   
-    7.6% --> 1.7% (Ereco<0.4GeV), 3.5% (0.4GeV<Ereco<1.1GeV), 9.3% (Ereco>1.1GeV)
-                             /   (1.7%)^2    0.59 * 1.7% * 3.5%    0.33 * 1.7% * 9.3% \
-       + covariance matrix = |                   (3.5%)^2          0.61 * 3.5% * 9.3% |
-                             \                                         (9.3%)^2       /
-  numu CCnonQE  RC eff. err.:  
-    25.4% --> 19.9%
-  numu/nutau NC RC eff. err.:  
-    57.0% --> 48.2%
-  The updated RC efficiency error brings the total FC 1-ring mu-like efficiency err 
-  (fiducial + reduction + OD cut + RC + PID + momentum cut + decay e cut) is
-  numu CCQE eff. err.:   
-    7.8% -->   1.7% + RC shape error given above.
-  numu CCnonQE eff. err.:  
-    25.5% -->  20.0%
-  numu/nutau NC eff. err.: 
-    115.1% --> 111.0%
-  Details are given in: T2K-TN-65
-> Used revised SuperK energy scale error (1% --> 2.3%) computed by Obayashi.
-  Details are given in: ?
-> Added analysis configuration files for Run1-only, Run2-only and Run1+Run2 analysis, both for NEUT and GENIE. 
-  The Run1+Run2 flux is a POT-weighted 10d_v3 flux (taking into account Run1 and Run2 flux differences).
-
-In addition, the code structure was modified significantly to allow for future analysis improvements.
-
 2010_v2.1.0
 ............................................................................................................................
-
 Similar to 2010_v2.0.0 but with the following change requested during the analysis review:
-
 > The nd280 efficiency error was increased from +/-5% to +5.6% -5.2% to match the one used in the nue analysis.
 > The statistical error of the ND280 CC inclusive measurement (~2.7%) was also propagated to SK.
 
 
 2010_v3.0.0
 ............................................................................................................................
-
 This code was used for the 2010b 1.431E+20 POT 3-flavour muon-neutrino disappearance analysis (details in T2K-TN-88)
 and for the 2010b 1.431E+20 POT joint 3-flavour analysis (details in T2K-TN-131)
 
-Similar to 2010_v2.1.0 but with the following additions: 
-
-> Added option to fit for systematics (any/all of the ~30-40 systematic parameters considered in 2010 analysis).
-> Added code to calculate oscillation probabilities in vacuum and matter in a 3-flavour framework.
-> Modified numu disappearance analysis to work in 3-flavour framework.
-  Capability to perform analysis in 2-flavour framework was retained for backward-compatibility.
-  In the 3-flavour disappearance fit, oscillation parameters Dm^2_{12}, sin^2(2theta_{12}), sin^2(2theta_{13}) 
-  and delta_{cp} can either a) be considered on equal footing as |Dm^2_{23}|, sin^2(2theta_{23}), b) fixed or
-  c) treated as nuisance parameters and be marginalised. The latter option is used in our analysis (marginalization).
-> Extended code so that it can also predict SK 1Re distributions and perform a 3-flavour nue appearance analysis.
-> Extected code so it can perform a global numu disappearance + nue appearance analysis.
-> For the oscillation analyses, add capability to fit for either sin^2(2*theta_ij) or sin^2(theta_ij) 
-  depending on configuration options. Fitting for sin^2(theta_ij) is preferred for the global 3-flavour analysis.
-> Added event templates from the `nue signal' MC (nue interactions generated with the numu flux). 
-  Needed for the 3-flavour numu disappearance analysis and for the nue appearance analysis.
-  The normalization factor for the sample used for the newly added `nue signal' templates is:
-    nue(signal) / GENIE  :  1376.9700 events / 1E+21 POT / 22.5 kt fiducial mass
-    nue(signal) / NEUT   :  ????.???? events / 1E+21 POT / 22.5 kt fiducial mass
-> Minor update to the GENIE MC normalization, using flux histograms which were not affected by the `ignored decay modes'
-  bug. The normalization factors were updated as follows:
-    numu      : 1325.4200 --> 1323.6500 events / 1E+21 POT / 22.5 kt fiducial mass
-    numubar   :   65.1023 -->   66.1802 events / 1E+21 POT / 22.5 kt fiducial mass
-    nue(beam) :   25.9600 -->   26.1256 events / 1E+21 POT / 22.5 kt fiducial mass
-> Many structural changes to allow the 3-flavour numu analysis and the global nue+numu 3-flavour analysis
-> Committed a various macros used to prepare plots for T2K-TN-64 which previously weren't under version control
-
-
-2012_v0.9.0
-............................................................................................................................
-
-A *major* re-write of the analysis to use the official 2012 inputs.
-Contains numerous technical and physics improvements wrt to the 2010_* series of branches.
-Details, too numerous to mention here, may be found in T2K-TN-141.
-This is the first freeze of the fully validated 2012 code: This branch contains experimental and 
-deprecated features that will be removed from a near-future "streamlined" revision.
-
 2012_v1.0.0
 ............................................................................................................................
+This is the code used for the official 2012 3+E_20 POT 3-flavour muon-neutrino disappearance analysis.
+A *major* re-write of the analysis wrt to the 2010 releases since the analysis inputs and
+the analysis procedure (fitting for systematics) were very different.
+Details, too numerous to mention here, may be found in T2K-TN-141 (v4).
+This is the first freeze of the fully validated 2012 code: This branch also contains experimental and 
+deprecated features (experimental FSI and BANFF binnings, systematics not used in the final analysis,
+deprecated macros etc) that will be removed from a near-future "streamlined" revision.
 
-As 2012_v0.9.0 but drastically cleaned-up.
-This is the code used for the official analysis.
-Experimental FSI and BANFF systematic binnings, systematics not used in the analysis were removed. 
-Deprecated data files, macros and scripts were removed. 
-Code experimenting with the use of principal components analysis in the study of the effect of systematics 
-in the oscillation fit was deleted.
-The main Minuit and the experimental Minuit2 fit implementations were "unified" 
-so that one can switch between the two transparently.
+2012_v1.1.0
+............................................................................................................................
+2012_v1.0.0 revision with small bugs fixed while writing the 2012 analysis PRL and resolving final differences with KIT
+
+
+2012_v2.0.0
+............................................................................................................................
+Implemented the 2012 3-flavour electron-neutrino appearance analysis and the 2012 joint 3-flavour oscillation analysis.
+The source tree was cleaned-up (Experimental FSI and BANFF systematic binnings, systematics not used in the analysis 
+were removed.  Deprecated data files, macros and scripts were removed.  Code experimenting with the use of principal 
+components analysis in the study of the effect of systematics in the oscillation fit was deleted.)
+The main Minuit and the experimental Minuit2 fit implementations were "unified" so that one can switch between the two 
+transparently. A GSL fitter was implementing, adding the following fit methods in our analysis:
+Simulated annealing, Levemberg-Marquardt, Fletcher-Reeves conjugate gradient, Polak-Ribiere conjugate gradient,
+Vector Broyden-Fletcher-Goldfarb-Shanno (BFGS), Steepest Descent.
+Significant fit CPU-efficiency improvement as the jont analysis considers ~90 systematics.
 
 Current trunk
 ............................................................................................................................
-2012a joint analysis development code
+2013 6E+20 POT muon-neutrino disappearance development code.
 
 
+Future releases:
+
+
+2013_v1.0.0
+............................................................................................................................
+This is the code used for the official 2013 6+E_20 POT 3-flavour muon-neutrino disappearance analysis.
