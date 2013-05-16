@@ -24,6 +24,7 @@ void fit_xml_seeded_from_chisq_map
 
   // Analysis configuration
   const char * config = Form("%s/config/%s", gSystem->Getenv("T2KOSCANA"), config_file);
+  TString xmlfile2 = Form("%s/inputs/%s", gSystem->Getenv("T2KOSCANA"), xmlfile);
 
   // Global options
   Opt::Instance()->gOscMixingParamChoice = conv::kNuMixSinsq2Theta;
@@ -33,7 +34,7 @@ void fit_xml_seeded_from_chisq_map
   cout << "\n[Job inputs]" << endl;
   cout << "- Reading analysis configuration from: " << config << endl;
   cout << "- Toy-MC" << endl;
-  cout << "   - Reading experiment " << dataset_id << " from: " << xmlfile << endl;
+  cout << "   - Reading experiment " << dataset_id << " from: " << xmlfile2 << endl;
   cout << "   - Reading chisq map from: " << chisqfile << endl;
   cout << "- Fit" << endl;
   cout << "   - Fit param list: " << fit_param_list << endl;
@@ -166,7 +167,7 @@ void fit_xml_seeded_from_chisq_map
 
   // Get superk spectrum observation (toy experiment)
   SuperkObservation * skobs = new SuperkObservation;
-  skobs->Read(xmlfile,dataset_id);
+  skobs->Read(xmlfile2.Data(),dataset_id);
 
   //Get spectra
   const int      n_ereco_bins    = util::NumErecoBins (conv::kSKsFCFV1RingMuLike);
