@@ -47,9 +47,9 @@ foreach (@ARGV) {
   $iarg++;
 }
 $min_dm23sq_bin         = 1                             unless defined $min_dm23sq_bin;
-$max_dm23sq_bin         = 51                            unless defined $max_dm23sq_bin; 
+$max_dm23sq_bin         = 41                            unless defined $max_dm23sq_bin; 
 $min_sinsq2theta23_bin  = 1                             unless defined $min_sinsq2theta23_bin;
-$max_sinsq2theta23_bin  = 101                           unless defined $max_sinsq2theta23_bin;
+$max_sinsq2theta23_bin  = 31                           unless defined $max_sinsq2theta23_bin;
 $resource               = "interactive"                 unless defined $resource;
 $tag                    = "chisqsurf"                   unless defined $tag;
 $run                    = 0                             unless defined $run;
@@ -79,7 +79,7 @@ for($mix23bin = $min_sinsq2theta23_bin; $mix23bin <= $max_sinsq2theta23_bin; $mi
 
   print "Submitting $tag job for mix23 bin: $mix23bin and dm23sq bin: $dm23sqbin \n";
 
-  $command  = "root2k -l -b -q \'$macro_dir/macros/fit/toymc/test_n_mock_data_fits_xml_parallelized.C(\"$tag\",$run,\"$exptfile\",$nexpt,$nexpt,\"$config_file\",\"$fitparamlist\",\"$fitoption\",$mix23bin,$dm23sqbin,true,0.9,1.0,0.002,0.003,false,0.001,false,0.00001)\'";
+  $command  = "root2k -l -b -q \'$macro_dir/macros/fit/toymc/test_n_mock_data_fits_xml_parallelized.C(\"$tag\",$run,\"$exptfile\",$nexpt,$nexpt,\"$config_file\",\"$fitparamlist\",\"$fitoption\",$mix23bin,$dm23sqbin,true,0.85,1.0,1.5E-3,3.5E-3,false,0.005,false,0.05E-3)\'";
   print "$command \n";
 
   #
