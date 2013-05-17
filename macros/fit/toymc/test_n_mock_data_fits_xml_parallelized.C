@@ -88,11 +88,11 @@ void test_n_mock_data_fits_xml_parallelized
 
      // Do the fit
      skexp->PrintSystematicVariations();
-     fitter->DoTheFit();
-     int fitstatus = fitter->FitStatusCode();
+     // fitter->DoTheFit();
+     // int fitstatus = fitter->FitStatusCode();
 
      // Get best-fit chisquare
-     double bestfit_chisq = fit_inputs->BestFitChisquare();
+     double bestfit_chisq = 0;//fit_inputs->BestFitChisquare();
 
      // Get best-fit params
      double bestfit_mixing12 = -1;
@@ -101,35 +101,35 @@ void test_n_mock_data_fits_xml_parallelized
      double bestfit_deltacp  = -1;
      double bestfit_dm12sq   = -1;
      double bestfit_dm23sq   = -1;
-     if(hyp == conv::kHypOsc3F) {
-        bestfit_mixing12 = fparm->BestFitValue(t2kana::conv::kPhypMixing12);
-        bestfit_mixing13 = fparm->BestFitValue(t2kana::conv::kPhypMixing13);
-        bestfit_mixing23 = fparm->BestFitValue(t2kana::conv::kPhypMixing23);
-        bestfit_deltacp  = fparm->BestFitValue(t2kana::conv::kPhypDeltaCP);
-        bestfit_dm12sq   = fparm->BestFitValue(t2kana::conv::kPhypDm12sq);
-        bestfit_dm23sq   = fparm->BestFitValue(t2kana::conv::kPhypDm23sq);
-     } 
-     else
-     if(hyp == conv::kHypNuMuDisapp2F) {
-        bestfit_mixing23 = fparm->BestFitValue(t2kana::conv::kPhypMixing23);
-        bestfit_dm23sq   = fparm->BestFitValue(t2kana::conv::kPhypDm23sq);
-     }
+     //if(hyp == conv::kHypOsc3F) {
+     //    bestfit_mixing12 = fparm->BestFitValue(t2kana::conv::kPhypMixing12);
+     //    bestfit_mixing13 = fparm->BestFitValue(t2kana::conv::kPhypMixing13);
+     //    bestfit_mixing23 = fparm->BestFitValue(t2kana::conv::kPhypMixing23);
+     //    bestfit_deltacp  = fparm->BestFitValue(t2kana::conv::kPhypDeltaCP);
+     //    bestfit_dm12sq   = fparm->BestFitValue(t2kana::conv::kPhypDm12sq);
+     //    bestfit_dm23sq   = fparm->BestFitValue(t2kana::conv::kPhypDm23sq);
+     // } 
+     // else
+     // if(hyp == conv::kHypNuMuDisapp2F) {
+     //    bestfit_mixing23 = fparm->BestFitValue(t2kana::conv::kPhypMixing23);
+     //    bestfit_dm23sq   = fparm->BestFitValue(t2kana::conv::kPhypDm23sq);
+     // }
 
      // Print-out best-fit params
-     fparm->ShowOnlyBestFitValuesInNextPrint();
-     cout << "- Best-fit oscillation params (below) yield chisq = " << bestfit_chisq 
-          << *fparm;
+     // fparm->ShowOnlyBestFitValuesInNextPrint();
+     // cout << "- Best-fit oscillation params (below) yield chisq = " << bestfit_chisq 
+     //      << *fparm;
 
      // Store best-fit values
-     nfitnt->Fill(
-           iexperiment, 
-           bestfit_mixing12, bestfit_mixing13, bestfit_mixing23,
-           bestfit_deltacp, bestfit_dm12sq, bestfit_dm23sq, 
-           bestfit_chisq, fitstatus);
+     //nfitnt->Fill(
+           // iexperiment, 
+           // bestfit_mixing12, bestfit_mixing13, bestfit_mixing23,
+           // bestfit_deltacp, bestfit_dm12sq, bestfit_dm23sq, 
+           // bestfit_chisq, fitstatus);
 
      // Write-out results
-     fitter->Analyze(output_option);
-     fitter->Save(Form("mockfit_%d.root",iexperiment));
+     //fitter->Analyze(output_option);
+     //fitter->Save(Form("mockfit_%d.root",iexperiment));
 
      if(chisqwithsyst) {
        //now get the with-syst chisq surface
