@@ -86,7 +86,7 @@ for($mix23bin = $min_sinsq2theta23_bin; $mix23bin <= $max_sinsq2theta23_bin; $mi
   # RAL
   #
   if($resource eq "RAL") {
-     open(PBS, ">$job_dir/$tag-$irun.pbs") or die("Can not create the PBS batch script");
+     open(PBS, ">$job_dir/$tag-$nexpt-$mix23bin-$dm23sqbin.pbs") or die("Can not create the PBS batch script");
      print PBS "#!/bin/bash \n";
      print PBS "#PBS -N $tag-$nexpt-$mix23bin-$dm23sqbin \n";
      print PBS "#PBS -l walltime=$cput \n";
@@ -234,7 +234,7 @@ for($mix23bin = $min_sinsq2theta23_bin; $mix23bin <= $max_sinsq2theta23_bin; $mi
      system($command);
   }
 
- }#bins
+}#bins
 }#bins
 
 
@@ -300,4 +300,4 @@ if($resource eq "Grid") {
     }
     `chmod +x $tag.sh`;
 #    `./$tag.sh`;
-}
+  }
