@@ -65,8 +65,8 @@ void test_n_mock_data_fits_xml_parallelized
   skexp->Read(config);
 
   // Store oscillation fit results
-  TFile f(Form("%s-run_%d-expts_%d_%d.root",
-               tag, run, first_experiment, last_experiment), "recreate");
+  TFile f(Form("%s-run_%d-expts_%d_%d-bins_%d_%d.root",
+               tag, run, first_experiment, last_experiment,input_mixing23_bin,input_dm23sq_bin), "recreate");
   TNtupleD * nfitnt = new TNtupleD("nfitnt","", 
      "iexp:mixing12:mixing13:mixing23:deltacp:dm12sq:dm23sq:chisq:fitstatus");
 
