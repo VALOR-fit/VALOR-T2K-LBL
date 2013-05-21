@@ -71,6 +71,10 @@ void generate_toymc_ensemble
       tweak_sys_str = "Special low energy numu flux increase"; break;
     case(3):
       tweak_sys_str = "Tweak all but SK and FSI"; break;
+    case(4):
+      tweak_sys_str = "NC1pi norm = 0.5"; break;
+    case(5):
+      tweak_sys_str = "High energy >1.5 GeV flux increase"; break;
     default:
       tweak_sys_str = "None";
   }
@@ -176,6 +180,24 @@ void generate_toymc_ensemble
        skexp->TweakAllUncorrelatedXSecSystematics();
        skexp->PrintSystematicVariations();
      }
+     else if(tweak_systematics == 4) {
+       skexp->TweakSystematic("xsec_norm_nc1piC",-0.5);
+       skexp->PrintSystematicVariations();
+     }
+     else if(tweak_systematics == 5) {
+       cout << "- Increasing flux parameters >1500MeV by 15% in pdf..." << endl;
+       TVectorD twkv(skexp->GetBANFF()->BestFitValues());
+       twkv[6]  += 0.15;
+       twkv[7]  += 0.15;
+       twkv[8]  += 0.15;
+       twkv[9]  += 0.15;
+       twkv[10] += 0.15;
+       twkv[14] += 0.15;
+       twkv[15] += 0.15;
+       skexp->GetBANFF()->Tweak(true,&twkv);
+       skexp->PrintSystematicVariations();
+     }
+
 
      // Generate mock data
      cout << "- Generating toy-MC..." << endl;
@@ -183,7 +205,10 @@ void generate_toymc_ensemble
      skobs->CreateMockData(*skexp, ph, stat_fluctuations);
 
      // Get 1-ring mu-like Ereco spectrum
-     TH1D* mock_data = skobs->ErecoSpectrum(kSKsFCFV1RingMuLike);
+     TH1D* mock_data = new TH1D("","", util::NumErecoBins(kSKsFCFV1RingMuLike), util::ErecoBinEdges(kSKsFCFV1RingMuLike));
+     for(int ib = 1; ib <= util::NumErecoBins(kSKsFCFV1RingMuLike); ib++) {
+       mock_data->SetBinContent(ib, skobs->ErecoSpectrumArray(kSKsFCFV1RingMuLike)[ib-1]);
+     }
      mock_data->SetDirectory(0);
 
      // If an XML file was specified, add an entry

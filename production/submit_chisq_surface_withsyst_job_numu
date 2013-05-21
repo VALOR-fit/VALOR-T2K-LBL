@@ -48,8 +48,8 @@ foreach (@ARGV) {
 }
 $min_dm23sq_bin         = 1                             unless defined $min_dm23sq_bin;
 $max_dm23sq_bin         = 41                            unless defined $max_dm23sq_bin; 
-$min_sinsq2theta23_bin  = 1                             unless defined $min_sinsq2theta23_bin;
-$max_sinsq2theta23_bin  = 31                           unless defined $max_sinsq2theta23_bin;
+$min_sinsq2theta23_bin  = 32                            unless defined $min_sinsq2theta23_bin;
+$max_sinsq2theta23_bin  = 32                           unless defined $max_sinsq2theta23_bin;
 $resource               = "interactive"                 unless defined $resource;
 $tag                    = "chisqsurf"                   unless defined $tag;
 $run                    = 0                             unless defined $run;
