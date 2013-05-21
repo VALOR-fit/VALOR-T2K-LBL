@@ -192,8 +192,8 @@ void plot_feldman_cousins_contour(
     }//j loop
   }//i loop
   cout << "chi\2_{min} = " << chisq_min << endl;
-  cout << "dm23sq_{bestfit} = " << dm23sq_bestfit << " at bin " << idm23sq_bestfit << endl;
-  cout << "sinsq2theta_{bestfit} = " << mixing23_bestfit << " at bin " << imixing23_bestfit << endl;
+  cout << "dm23sq_{bestfit} = " << dm23sq_bestfit << endl;//" at bin " << idm23sq_bestfit << endl;
+  cout << "sinsq2theta_{bestfit} = " << mixing23_bestfit << endl;//" at bin " << imixing23_bestfit << endl;
   /*
   //DON'T subtract minimum chisq on the surface; have a better min chisq (not from the grid) that has already been subtracted
   for(int i = 1; i <= fChisqSurface->GetNbinsX(); i++) {

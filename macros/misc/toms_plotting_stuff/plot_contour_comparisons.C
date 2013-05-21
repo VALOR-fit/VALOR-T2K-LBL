@@ -16,10 +16,11 @@ void plot_contour_comparisons
   TFile f_dcall_12("2012results/DATA/2all/fitresults_4.root");
   TFile f_dcall_3("2012results/DATA/2all/fitresults_5.root");
   TFile f_dcall_28_fine("2012results/DATA/fine_grain_2all/fitresults_3.root");
-  TFile f_fc_123("2012results/FC/fc_contours.root");
+  //TFile f_fc_123("2012results/FC/fc_contours.root");
+  TFile f_fc_123("fc_contours.root");
   //  TFile f_fcall_123("2012results/FC/fc_contours_2all.root");
   //TFile f_fcall_123("fc_contours_2all.root");
-  TFile f_fcall_123("fc_oldsurf_newres_5E5.root");
+  TFile f_fcall_123("fc_oldsurf_newres_5E5_nosub.root");
   TFile f_dc_kit("2012results/DATA/KIT/run1-3_constchi2_v2_fine.root");
   //TFile f_fc_kit("2012results/DATA/KIT/run1-3_fc.root");
   //TFile f_fc_kit("of_fc_valor.root");
@@ -30,10 +31,10 @@ void plot_contour_comparisons
   TFile f_sens("2012results/SENSITIVITY/t2k_28/sensitivity.root");
 
   //Fill in TMarker's with the best fit point (is the same for 2+N, 2+8)
-  TMarker bestfit(1.000,0.00244,29);
+  TMarker bestfit(1.000,0.002442,29);
   bestfit.SetMarkerSize(1.8);
   bestfit.SetMarkerColor(kBlack);
-  TMarker bestfit_2all(1.000,0.00244,29);
+  TMarker bestfit_2all(1.000,0.002443,29);
   bestfit_2all.SetMarkerSize(1.8);
   bestfit_2all.SetMarkerColor(kBlack);
 
@@ -223,7 +224,7 @@ void plot_contour_comparisons
     kitbf->GetPoint(0,kitx,kity);
     TMarker bestfit_kit(kitx,kity,29);
   */
-  TMarker bestfit_kit(1.000,0.00244,29);
+  TMarker bestfit_kit(1.000,0.002444,29);
   bestfit_kit.SetMarkerSize(1.8);
   bestfit_kit.SetMarkerColor(kGreen+2);
 
@@ -626,6 +627,25 @@ void plot_contour_comparisons
   bestfit_2all.SetMarkerColor(kRed);
   bestfit_2all.Draw();
   c->SaveAs("compare_2all_28_FC.eps");
+
+  //Run 1-3 2all FC with 1D limits
+  osc_param_space->GetXaxis()->SetRangeUser(0.92,1.0);
+  osc_param_space->GetYaxis()->SetRangeUser(0.002,0.003);
+  osc_param_space->Draw();  
+  h_fcall_123_68->SetLineColor(kBlack);
+  h_fcall_123_90->SetLineColor(kBlack);
+  h_fcall_123_68->Draw("cont3same");
+  h_fcall_123_90->Draw("cont3same");
+  TLine l_limit_mix    (0.95,0.00200,0.95,0.00300);
+  TLine l_limit_dm_low (0.92,0.00229,1.00,0.00229);
+  TLine l_limit_dm_high(0.92,0.00261,1.00,0.00261);
+  l_limit_mix.SetLineColor(kRed);
+  l_limit_dm_low.SetLineColor(kRed);
+  l_limit_dm_high.SetLineColor(kRed);
+  l_limit_mix.Draw();
+  l_limit_dm_low.Draw();
+  l_limit_dm_high.Draw();
+  c->SaveAs("2D_contour_with_1D_limits.pdf");
 
 
   //compare 2+8, 2+N const dchisq surfaces
@@ -1436,7 +1456,7 @@ void plot_contour_comparisons
   leg2->SetFillColor(0);
   leg2->SetFillStyle(0);
   leg2->SetBorderSize(0);
-  //leg2->SetTextFont(42);
+  leg2->SetTextFont(132);
   leg2->AddEntry(h_fcall_123_68, "T2K 68% C.L.","l");
   leg2->AddEntry(h_fcall_123_90, "T2K 90% C.L.","l");
   leg2->AddEntry(h_fc_kit_68, "T2K 68% C.L. alternative analysis","l");
@@ -1452,7 +1472,7 @@ void plot_contour_comparisons
   leg2->SetFillColor(0);
   leg2->SetFillStyle(0);
   leg2->SetBorderSize(0);
-  //leg2->SetTextFont(42);
+  leg2->SetTextFont(132);
   leg2->AddEntry(h_fcall_123_68, "T2K 68% C.L.","l");
   leg2->AddEntry(h_fcall_123_90, "T2K 90% C.L.","l");
   leg2->AddEntry(h_fc_kit_68, "T2K 68% C.L. (alternative analysis)","l");
@@ -1467,6 +1487,8 @@ void plot_contour_comparisons
   //Run 1-3 FC only with externals + old t2k
   osc_param_space->GetXaxis()->SetRangeUser(0.82,1.0);
   osc_param_space->GetYaxis()->SetRangeUser(0.0018,0.0038);
+  cout <<   osc_param_space->GetXaxis()->GetTitleFont() << endl;
+  osc_param_space->GetXaxis()->SetTitleFont(132);
   osc_param_space->Draw(); 
   h_fcall_123_68->SetLineWidth(2);
   h_fcall_123_90->SetLineWidth(2);
@@ -1492,7 +1514,9 @@ void plot_contour_comparisons
   leg2->SetFillColor(0);
   leg2->SetFillStyle(0);
   leg2->SetBorderSize(0);
-  //leg2->SetTextFont(42);
+  cout << leg2->GetTextFont() << endl;
+  leg2->SetTextFont(132);
+  cout << leg2->GetTextFont() << endl;
   //leg2->AddEntry(h_fcall_123_68, "T2K 3#nu 68% CL","l");
   leg2->AddEntry(h_fcall_123_90, "T2K 3#nu 90% CL","l");
   leg2->AddEntry("g_run12_90_statsyst", "T2K 2011 2#nu 90% CL", "l");
