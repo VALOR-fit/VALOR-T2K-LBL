@@ -19,10 +19,14 @@ void test_n_mock_data_fits_xml
   const char * fit_option          = "minuit",                     /* fitter option (see run_fitter.C) */
   const char * output_option       = "Observation+BestFitSpectra+ChisqSurface+Canvases",  /* what to write-out once the fit is done */
   bool         chisqwithsyst       = true,
-  double       chisqsyst_mixing23_min = 0.6,
+  double       chisqsyst_mixing23_min = 0.9,
   double       chisqsyst_mixing23_max = 1.0,
-  double       chisqsyst_dm23sq_min   = 0.001,
-  double       chisqsyst_dm23sq_max   = 0.004
+  double       chisqsyst_dm23sq_min   = 0.002,
+  double       chisqsyst_dm23sq_max   = 0.003,
+  bool         chisqwithsyst_mixing23 = true,
+  double       chisqwithsyst_mixing23_step = 0.001,
+  bool         chisqwithsyst_dm23sq = true,
+  double       chisqwithsyst_dm23sq_step = 0.00001
 )
 {
   using namespace std;
@@ -81,6 +85,7 @@ void test_n_mock_data_fits_xml
      FitterABC * fitter = util::GetFitter(fit_inputs,fit_option);
 
      // Do the fit
+     skexp->PrintSystematicVariations();
      fitter->DoTheFit();
      int fitstatus = fitter->FitStatusCode();
 
@@ -128,10 +133,10 @@ void test_n_mock_data_fits_xml
        //now get the with-syst chisq surface
        double mixing23_min  = (chisqsyst_mixing23_min < 0) ? (conv::kMinChisqSurfaceSinsq2Theta23) : (chisqsyst_mixing23_min);
        double mixing23_max  = (chisqsyst_mixing23_max < 0) ? (conv::kMaxChisqSurfaceSinsq2Theta23) : (chisqsyst_mixing23_max);
-       double mixing23_step = fparm->StepSize(conv::kPhypMixing23);
+       double mixing23_step = (chisqwithsyst_mixing23_step < 0) ? (fparm->StepSize(conv::kPhypMixing23)) : (chisqwithsyst_mixing23_step);
        double dm23sq_min    = (chisqsyst_dm23sq_min   < 0) ? (conv::kMinChisqSurfaceDm23sq)        : (chisqsyst_dm23sq_min);
        double dm23sq_max    = (chisqsyst_dm23sq_max   < 0) ? (conv::kMaxChisqSurfaceDm23sq)        : (chisqsyst_dm23sq_max);
-       double dm23sq_step   = fparm->StepSize(conv::kPhypDm23sq);
+       double dm23sq_step   = (chisqwithsyst_dm23sq_step < 0) ? (fparm->StepSize(conv::kPhypDm23sq)) : (chisqwithsyst_dm23sq_step);
 
        // make sure that min and max are at the bin centre
        int mixing23_nbins = 1 + TMath::CeilNint((mixing23_max - mixing23_min) / mixing23_step);
@@ -158,7 +163,8 @@ void test_n_mock_data_fits_xml
 	   cout << *fparm;
 	   //for some reason, need to make a new fitter when changing the FitParamList
 	   FitInputs * fit_inputs2 = new FitInputs(skobs,skexp,fparm);
-	   FitterABC * fitter2 = new Superk1RmuErecoFitter(fit_inputs,fit_option);
+	   Superk1RmuErecoFitter * fitter2 = new Superk1RmuErecoFitter(fit_inputs,fit_option);
+	   fitter2->SetHesseErrors(false);
 	   fitter2->DoTheFit();
 	   double chisq = fit_inputs2->Chisquare();
 	   chisq_surface_syst->SetBinContent(i,j,chisq);
@@ -177,11 +183,91 @@ void test_n_mock_data_fits_xml
        chisq_surface_syst->Write(Form("chisqwithsyst_%d",iexperiment));
      }
 
+     if(chisqwithsyst_mixing23) {
+       //now get the with-syst chisq mixing23
+       double mixing23_min  = (chisqsyst_mixing23_min < 0) ? (conv::kMinChisqSurfaceSinsq2Theta23) : (chisqsyst_mixing23_min);
+       double mixing23_max  = (chisqsyst_mixing23_max < 0) ? (conv::kMaxChisqSurfaceSinsq2Theta23) : (chisqsyst_mixing23_max);
+       double mixing23_step = (chisqwithsyst_mixing23_step < 0) ? (fparm->StepSize(conv::kPhypMixing23)) : (chisqwithsyst_mixing23_step);
+       // make sure that min and max are at the bin centre
+       int mixing23_nbins = 1 + TMath::CeilNint((mixing23_max - mixing23_min) / mixing23_step);
+
+       TH1D * chisq_mixing23_syst = new TH1D(
+					     "chisq_mixing23_syst","#chi^{2} mixing23_syst",
+					     mixing23_nbins, mixing23_min - 0.5*mixing23_step, mixing23_max + 0.5*mixing23_step);
+       chisq_mixing23_syst->SetDirectory(0);
+       chisq_mixing23_syst->GetXaxis()->SetRangeUser(0.,1.);
+
+       fparm->SetInitValue (conv::kPhypDm23sq,   conv::kInitFitDm23sq);
+       fparm->FreeParameter(conv::kPhypDm23sq);
+
+       for(int i = 1; i <= chisq_mixing23_syst->GetNbinsX(); i++) {
+	 fparm->ResetCurrToInitValues();
+	 double mixing23 = chisq_mixing23_syst->GetXaxis()->GetBinCenter(i);
+	 fparm->Update( conv::kPhypMixing23, mixing23 );
+	 fparm->SetInitValue( conv::kPhypMixing23, mixing23 );
+	 fparm->FixParameter(conv::kPhypMixing23);
+	 cout << *fparm;
+	 //for some reason, need to make a new fitter when changing the FitParamList
+	 FitInputs * fit_inputs2 = new FitInputs(skobs,skexp,fparm);
+	 Superk1RmuErecoFitter * fitter2 = new Superk1RmuErecoFitter(fit_inputs,fit_option);
+	 fitter2->SetHesseErrors(false);
+	 fitter2->DoTheFit();
+	 double chisq = fit_inputs2->Chisquare();
+	 chisq_mixing23_syst->SetBinContent(i,chisq);
+	 delete fitter2;
+	 delete fit_inputs2;
+       }//i
+       chisq_mixing23_syst->GetXaxis()->SetTitle("sin^{2}(2#theta_{23})");
+       chisq_mixing23_syst->GetXaxis()->SetTitleSize(0.05);
+       f.cd();
+       chisq_mixing23_syst->Write(Form("chisqwithsyst_mixing23_%d",iexperiment));
+     }//chisqwithsyst_mixing23
+
+     if(chisqwithsyst_dm23sq) {
+       //now get the with-syst chisq dm23sq
+       double dm23sq_min  = (chisqsyst_dm23sq_min < 0) ? (conv::kMinChisqSurfaceDm23sq) : (chisqsyst_dm23sq_min);
+       double dm23sq_max  = (chisqsyst_dm23sq_max < 0) ? (conv::kMaxChisqSurfaceDm23sq) : (chisqsyst_dm23sq_max);
+       double dm23sq_step = (chisqwithsyst_dm23sq_step < 0) ? (fparm->StepSize(conv::kPhypDm23sq)) : (chisqwithsyst_dm23sq_step);
+       // make sure that min and max are at the bin centre
+       int dm23sq_nbins = 1 + TMath::CeilNint((dm23sq_max - dm23sq_min) / dm23sq_step);
+
+       TH1D * chisq_dm23sq_syst = new TH1D(
+					     "chisq_dm23sq_syst","#chi^{2} dm23sq_syst",
+					     dm23sq_nbins, dm23sq_min - 0.5*dm23sq_step, dm23sq_max + 0.5*dm23sq_step);
+       chisq_dm23sq_syst->SetDirectory(0);
+       chisq_dm23sq_syst->GetXaxis()->SetRangeUser(0.,1.);
+
+       fparm->SetInitValue (conv::kPhypMixing23,   conv::kInitFitSinsq2Theta23);
+       fparm->FreeParameter(conv::kPhypMixing23);
+
+       for(int i = 1; i <= chisq_dm23sq_syst->GetNbinsX(); i++) {
+	 fparm->ResetCurrToInitValues();
+	 double dm23sq = chisq_dm23sq_syst->GetXaxis()->GetBinCenter(i);
+	 fparm->Update( conv::kPhypDm23sq, dm23sq );
+	 fparm->SetInitValue( conv::kPhypDm23sq, dm23sq );
+	 fparm->FixParameter(conv::kPhypDm23sq);
+	 cout << *fparm;
+	 //for some reason, need to make a new fitter when changing the FitParamList
+	 FitInputs * fit_inputs2 = new FitInputs(skobs,skexp,fparm);
+	 Superk1RmuErecoFitter * fitter2 = new Superk1RmuErecoFitter(fit_inputs,fit_option);
+	 fitter2->SetHesseErrors(false);
+	 fitter2->DoTheFit();
+	 double chisq = fit_inputs2->Chisquare();
+	 chisq_dm23sq_syst->SetBinContent(i,chisq);
+	 delete fitter2;
+	 delete fit_inputs2;
+       }//i
+       chisq_dm23sq_syst->GetXaxis()->SetTitle("sin^{2}(2#theta_{23})");
+       chisq_dm23sq_syst->GetXaxis()->SetTitleSize(0.05);
+       f.cd();
+       chisq_dm23sq_syst->Write(Form("chisqwithsyst_dm23sq_%d",iexperiment));
+     }//chisqwithsyst_dm23sq
+
 
      delete skobs;
      delete fit_inputs;
      delete fitter;
-  }
+  }//iexperiment
 
   //
   // Store results

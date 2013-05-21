@@ -10,24 +10,27 @@ void max_deviation_table(const char * filename = "readfile.root")
   using namespace std;
   using namespace t2kana;
 
-  TFile f(filename);
+  /*TFile f(filename);
   TTree * tree = 0;
-  f.GetObject("tree",tree);
+  f.GetObject("tree",tree);*/
+  TChain tree("tree");
+  cout << tree.Add(filename) << " files" << endl;
+  cout << tree.GetEntries() << " entries" << endl;
   double maxmix = 0;
   double maxdm = 0;
 
   double var_mix23P = 0, var_mix23M = 0, var_inmix23 = 0, var_stmix23 = 0;
   double var_dm23P = 0, var_dm23M = 0, var_indm23 = 0, var_stdm23 = 0;
   char var_name[100];
-  tree->SetBranchAddress("mix23P",&var_mix23P);
-  tree->SetBranchAddress("mix23M",&var_mix23M);
-  tree->SetBranchAddress("inmix23",&var_inmix23);
-  tree->SetBranchAddress("stmix23",&var_stmix23);
-  tree->SetBranchAddress("dm23P",&var_dm23P);
-  tree->SetBranchAddress("dm23M",&var_dm23M);
-  tree->SetBranchAddress("indm23",&var_indm23);
-  tree->SetBranchAddress("stdm23",&var_stdm23);
-  tree->SetBranchAddress("name",var_name);
+  tree.SetBranchAddress("mix23P",&var_mix23P);
+  tree.SetBranchAddress("mix23M",&var_mix23M);
+  tree.SetBranchAddress("inmix23",&var_inmix23);
+  tree.SetBranchAddress("stmix23",&var_stmix23);
+  tree.SetBranchAddress("dm23P",&var_dm23P);
+  tree.SetBranchAddress("dm23M",&var_dm23M);
+  tree.SetBranchAddress("indm23",&var_indm23);
+  tree.SetBranchAddress("stdm23",&var_stdm23);
+  tree.SetBranchAddress("name",var_name);
 
   cout << fixed;
   cout.precision(4);
@@ -90,8 +93,8 @@ void max_deviation_table(const char * filename = "readfile.root")
 
     maxmix = 0; maxdm = 0;
 
-    for(int ie = 0; ie < tree->GetEntries(); ie++) {
-      tree->GetEntry(ie);
+    for(int ie = 0; ie < tree.GetEntries(); ie++) {
+      tree.GetEntry(ie);
       if(var_name != name) continue;
       
       maxmix = TMath::Max(maxmix, TMath::Max( TMath::Abs((var_mix23P-var_inmix23)/var_stmix23), TMath::Abs((var_mix23M-var_inmix23)/var_stmix23) ));
