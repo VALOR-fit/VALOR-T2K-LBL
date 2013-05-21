@@ -405,7 +405,6 @@ void analyse_output
     spectrum_compare->Draw();
     c->SaveAs("spectrum_compare.pdf");
     cout << endl << max_value << " is the max % difference between the contours in bin " << imax << endl;
-    return;
   }//spectrum_other
   //draw comparison (spectrum, 20 bins)
   if(spectrum_other_rebin) {
@@ -485,6 +484,7 @@ void analyse_output
   //draw them on the same canvas
   if(spectrum_other_rebin) {
     //PAPER
+    double marksize = 0.8;
     double top_plot_fraction = 0.6;
     TCanvas *csaxis = new TCanvas();
     csaxis->cd(1);
@@ -492,17 +492,21 @@ void analyse_output
     spectrum_noosc_rebin->SetLabelSize(0);
     spectrum_noosc_rebin->Draw("");
     //spectrum_other_rebin->Draw("same");
-    spectrum_bf_rebin->Draw("same");
+    //spectrum_bf_rebin->Draw("same");
     spectrum_other_rebin->SetLineStyle(2);
     spectrum_other_rebin->Draw("same");
+    spectrum_bf_rebin->SetLineStyle(3);
+    spectrum_bf_rebin->Draw("same");
+    spectrum_obs_rebin->SetLineStyle(1);
+    spectrum_obs_rebin->SetMarkerSize(marksize);
     spectrum_obs_rebin->Draw("PE0same");
 
     legg->Clear();
     delete legg;
-    legg = new TLegend(0.3,0.6,0.95,0.95);
+    legg = new TLegend(0.3,0.6,0.95,0.9);
     legg->SetFillStyle(0);
     legg->SetBorderSize(0);
-    //legg->SetTextFont(42);
+    legg->SetTextFont(132);
     legg->AddEntry(spectrum_obs_rebin, "T2K Data", "pl");
     legg->AddEntry(spectrum_noosc_rebin, "No oscillation hypothesis", "l");
     legg->AddEntry(spectrum_bf_rebin, "T2K best fit", "l");
@@ -526,9 +530,11 @@ void analyse_output
     spectrum_ratio_bf_rebin->GetXaxis()->SetTitle("Reconstructed #nu energy / GeV");
     //spectrum_ratio_other_rebin->Draw("same");
     spectrum_ratio_bf_rebin->Draw("");
-    spectrum_ratio_other_rebin->SetLineStyle(2);
+    gStyle->SetLineStyleString(11,"10 18");
+    spectrum_ratio_other_rebin->SetLineStyle(11);
     spectrum_ratio_other_rebin->Draw("same");
     spectrum_line->Draw("same");
+    spectrum_ratio_obs_rebin->SetMarkerSize(marksize);
     spectrum_ratio_obs_rebin->Draw("PE0same");
 
     csaxis->SaveAs("sk_spectrum_and_ratio.pdf");
