@@ -27,9 +27,10 @@ usage: %prog [options]
 optionParser.add_option("--syst", action="store_true", dest="do_syst", default=False, help="If set, will produce .data files for each systematic")
 optionParser.add_option("--stat", action="store_true", dest="do_stat", default=False, help="Stat is not implemented in this macro. Please run the production script, and use the code snippet at the bottom of $T2KOSCANA/macros/fit/syst/star_plot/test_bestfit_point_shift_due_to_syst_twk.C to get stat errors, then replace the numbers instat.data: $T2KOSCANA/production/submit_toyexpt_fitting_job_fitsyst --resource Oxford --softw-dir $T2KOSCANA --job-dir $PWD --cpu-time 01:59:00 --tweak-systematics 1 --nruns 100 --nexpts 100 --dm23sq 0.0024 --sinsq2theta23 1. --stat-fluctuations --fit-param-list nuosc3f_numudisapp_fix4")
 optionParser.add_option("--draw", action="store_true", dest="do_draw", default=False, help="If set, will draw all the plots")
+optionParser.add_option("--table", action="store_true", dest="do_table", default=False, help="If set, will make the max deviation table")
 (opt, args) = optionParser.parse_args()
 
-if not (opt.do_syst or opt.do_stat or opt.do_draw):
+if not (opt.do_syst or opt.do_stat or opt.do_draw or opt.do_table):
    optionParser.print_usage()
    sys.exit(1)
 
@@ -273,3 +274,24 @@ for osc in oscparams:
          if syst == systematics[len(systematics)-1]:
 
             os.chdir(basedir)
+
+            
+      if opt.do_table:
+         os.chdir(basedir)
+         file = open(dirname+'/stat.data', 'r')
+         errmixing23 = file.readline().strip('\n')
+         errdm23sq   = file.readline().strip('\n')
+         file.close()
+         if(osc[2] == -99):
+            osc[2] = 1
+         if(osc[5] == -99):
+            osc[5] = 0.0024
+         command = 'root2k -l -b -q \'$T2KOSCANA/macros/fit/syst/star_plot/text_to_root.C('+str(osc[2])+','+str(osc[5])+','+errmixing23+','+errdm23sq+',"'+dirname+'/star_plot_line-all.data")\''
+         print command
+         os.system(command)
+
+
+if opt.do_table:
+   command = 'root2k -l -b -q \'$T2KOSCANA/macros/fit/syst/star_plot/max_deviation_table.C("readfile*.root")\''
+   print command
+   os.system(command)

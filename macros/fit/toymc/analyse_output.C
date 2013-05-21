@@ -1,3 +1,15 @@
+//
+// Macro to make a series of plots, using the result of the macro fit_xml_seeded_from_chisq_map.C
+//
+// 1. Bestfit spectrum, ratio, comparison with other spectrum (e.g. KIT), ...
+// 2. Pull plot (both full, and summary for 'large' pulls
+// 3. chisq
+// 4. dchisq
+// 5. contour (constant dchisq method)
+//
+// This macro has been used to make plots for TN141, as well as the spectrum plot for the paper
+//
+
 void set_contour_style(TGraph *contour, Int_t color, Int_t width, Int_t style)
 {
   contour->SetLineWidth(width);
@@ -17,7 +29,10 @@ void analyse_output
  double       dm_min             = 0.0015,
  double       dm_max             = 0.0035,
  bool         external_contours  = false,                          /* draw external contours? */
- const char * other_spectrum_file = ""
+ bool         draw_2012_contour  = false,
+ bool         draw_oldt2k_contours  = false,
+ const char * other_spectrum_file = "",
+ int          fake                = -1
 )
 {
   using namespace std;
@@ -35,12 +50,15 @@ void analyse_output
 
   TFile f_dchisq(Form("%s/fitresults_%d.root",path,id));
   TFile f_chisq(Form("%s/%s",path,chisqfile));
-  TFile f_mockfit(Form("%s/mockfit_%d.root",path,id));
+  //TFile f_mockfit(Form("%s/mockfit_%d.root",path,id));
 
   cout << Form("%s/fitresults_%d.root",path,id) << endl;
 
-  if(f_dchisq.IsZombie() || f_chisq.IsZombie() || f_mockfit.IsZombie())
-    return;
+  if(f_dchisq.IsZombie())// || f_chisq.IsZombie())// || f_mockfit.IsZombie()) {
+    {
+      cout << "Die" << endl;
+      return;
+    }
 
   //spectra
   TH1D * spectrum_obs = 0, * spectrum_bf = 0;
@@ -56,6 +74,47 @@ void analyse_output
   TH1D * spectrum_noosc = new TH1D("","", n_ereco_bins, ereco_bin_edges);
   for(int ibin = 1; ibin <= n_ereco_bins; ibin++)
     spectrum_noosc->SetBinContent(ibin, skexp->CurrPredictedErecoSpectrumArray(conv::kSKsFCFV1RingMuLike)[ibin-1]);   
+  //add a fake data experiment
+  if(fake == 0) {
+    skexp->TweakSystematic("xsec_norm_nc1piC",-0.5);
+    ph.SetCurrValue(conv::kPhypDm23sq,2.30E-3);
+    ph.SetCurrValue(conv::kPhypMixing23,0.920);
+  }
+  else if(fake == 1) {
+    TVectorD twkv(skexp->GetBANFF()->BestFitValues());
+    twkv[0] += 0.15;
+    twkv[1] += 0.15;
+    twkv[2] += 0.15;
+    twkv[3] += 0.15;
+    twkv[4] += 0.15;
+    twkv[5] += 0.15;
+    twkv[11] += 0.15;
+    twkv[12] += 0.15;
+    twkv[13] += 0.15;
+    skexp->GetBANFF()->Tweak(true,&twkv);
+    ph.SetCurrValue(conv::kPhypDm23sq,2.65E-3);
+    ph.SetCurrValue(conv::kPhypMixing23,0.990);
+  }
+  else if(fake == 2) {
+    //nominal systematics
+    ph.SetCurrValue(conv::kPhypDm23sq,2.20E-3);
+    ph.SetCurrValue(conv::kPhypMixing23,0.980);
+  }
+  else if(fake == 3) {
+    TVectorD twkv(skexp->GetBANFF()->BestFitValues());
+    twkv[21] += 0.20;
+    twkv[22] += 0.20;
+    skexp->GetBANFF()->Tweak(true,&twkv);
+    ph.SetCurrValue(conv::kPhypDm23sq,2.55E-3);
+    ph.SetCurrValue(conv::kPhypMixing23,0.960);
+  }
+  skexp->PrintSystematicVariations();
+  cout << ph << endl;
+  skexp->Generate(ph);
+  TH1D * spectrum_fake = new TH1D("","", n_ereco_bins, ereco_bin_edges);
+  for(int ibin = 1; ibin <= n_ereco_bins; ibin++)
+    spectrum_fake->SetBinContent(ibin, skexp->CurrPredictedErecoSpectrumArray(conv::kSKsFCFV1RingMuLike)[ibin-1]);   
+
   //now copy the data & no-osc, and divide
   TH1D * spectrum_ratio_bf = new TH1D("","", n_ereco_bins, ereco_bin_edges), * spectrum_ratio_obs = new TH1D("","", n_ereco_bins, ereco_bin_edges);
   //spectrum_bf->Sumw2();
@@ -142,6 +201,7 @@ void analyse_output
   spectrum_ratio_bf->Draw("same");
   spectrum_line->Draw("same");
   cspec->SaveAs(Form("spectrum_%d.eps",id));
+  cspec->SaveAs(Form("spectrum_%d.pdf",id));
   delete cspec;
 
   //for PAC
@@ -154,7 +214,7 @@ void analyse_output
   spectrum_obs->Draw("PEsame");
   spectrum_bf->Draw("same");
   legg->Clear();
-  legg->AddEntry(spectrum_obs, "Run 1-3 data", "pl");
+  legg->AddEntry(spectrum_obs, "Data", "pl");
   legg->AddEntry(spectrum_bf, "Best fit", "l");
   legg->AddEntry(spectrum_noosc, "No oscillations", "l");
   legg->Draw();
@@ -162,17 +222,21 @@ void analyse_output
   c->SaveAs("spectrum.jpg");
   c->SaveAs("spectrum.eps");
   c->SaveAs("spectrum.pdf");
+  c->SaveAs(Form("spectrum_pac_%d.eps",id));
+  c->SaveAs(Form("spectrum_pac_%d.pdf",id));
   spectrum_ratio_obs->Draw("PE");
   spectrum_ratio_bf->Draw("same");
   spectrum_line->Draw("same");
   legg->Clear();
-  legg->AddEntry(spectrum_ratio_obs, "Run 1-3 data", "pl");
+  legg->AddEntry(spectrum_ratio_obs, "Data", "pl");
   legg->AddEntry(spectrum_ratio_bf, "Best fit", "l");
   legg->Draw();
   c->SaveAs("spectrum_ratio.png");
   c->SaveAs("spectrum_ratio.jpg");
   c->SaveAs("spectrum_ratio.eps");
   c->SaveAs("spectrum_ratio.pdf");
+  c->SaveAs(Form("spectrum_pac_ratio_%d.eps",id));
+  c->SaveAs(Form("spectrum_pac_ratio_%d.pdf",id));
   //rebin
   //VaLOR binning
   //const int nbins = 16;
@@ -203,8 +267,8 @@ void analyse_output
       cout << endl;
   }*/
   //axes range
-  spectrum_noosc_rebin->GetXaxis()->SetRangeUser(0,5.99);
-  spectrum_ratio_obs_rebin->GetXaxis()->SetRangeUser(0,5.99);
+  spectrum_noosc_rebin->GetXaxis()->SetRangeUser(0,spectrum_max_xaxis-0.001);
+  spectrum_ratio_obs_rebin->GetXaxis()->SetRangeUser(0,spectrum_max_xaxis-0.001);
   //style
   spectrum_ratio_bf_rebin->SetLineColor(kRed);
   spectrum_ratio_obs_rebin->SetLineStyle(2);
@@ -214,7 +278,7 @@ void analyse_output
   spectrum_obs_rebin->Draw("PE0same");
   spectrum_bf_rebin->Draw("same");
   legg->Clear();
-  legg->AddEntry(spectrum_obs_rebin, "Run 1-3 data", "pl");
+  legg->AddEntry(spectrum_obs_rebin, "Data", "pl");
   legg->AddEntry(spectrum_bf_rebin, "Best fit", "l");
   legg->AddEntry(spectrum_noosc_rebin, "No oscillations", "l");
   legg->Draw();
@@ -222,17 +286,24 @@ void analyse_output
   c->SaveAs("spectrum_rebin.jpg");
   c->SaveAs("spectrum_rebin.eps");
   c->SaveAs("spectrum_rebin.pdf");
+  c->SaveAs(Form("spectrum_pac_rebin_%d.eps",id));
+  c->SaveAs(Form("spectrum_pac_rebin_%d.pdf",id));
   spectrum_ratio_obs_rebin->Draw("PE0");
+  for(int ix = 1; ix <= spectrum_ratio_bf_rebin->GetNbinsX(); ix++)
+    spectrum_ratio_bf_rebin->SetBinError(ix,0);
   spectrum_ratio_bf_rebin->Draw("same");
   spectrum_line->Draw("same");
   legg->Clear();
-  legg->AddEntry(spectrum_ratio_obs_rebin, "Run 1-3 data", "pl");
+  legg->AddEntry(spectrum_ratio_obs_rebin, "Data", "pl");
   legg->AddEntry(spectrum_ratio_bf_rebin, "Best fit", "l");
   legg->Draw();
   c->SaveAs("spectrum_ratio_rebin.png");
   c->SaveAs("spectrum_ratio_rebin.jpg");
   c->SaveAs("spectrum_ratio_rebin.eps");
   c->SaveAs("spectrum_ratio_rebin.pdf");
+  c->SaveAs(Form("spectrum_pac_ratio_rebin_%d.eps",id));
+  c->SaveAs(Form("spectrum_pac_ratio_rebin_%d.pdf",id));
+
 
   //get comparison hists
   TH1D * spectrum_other = 0, *spectrum_other_rebin = 0;
@@ -241,8 +312,14 @@ void analyse_output
   f_other_spectra.GetObject("hrec_fit2_0", spectrum_other_rebin);
   TH1D * spectrum_ratio_other = new TH1D("","", n_ereco_bins, ereco_bin_edges);
   TH1D * spectrum_ratio_other_rebin = new TH1D("","", nbins, binedges);
+  cout << fake << endl;
+  if(fake >= 0 && !spectrum_other) {
+    spectrum_other = spectrum_fake;
+    cout << "spectrum_other cloning spectrum_fake" << endl;
+  }
   //draw comparison (spectrum, 73 bins)
   if(spectrum_other) {
+    cout << "spectrum_other found" << endl;
     spectrum_other->SetLineColor(kBlue);
     spectrum_noosc->SetLineWidth(2);
     spectrum_obs->SetLineWidth(2);
@@ -273,13 +350,20 @@ void analyse_output
     legg->AddEntry(spectrum_other, "Max likelihood best fit", "l");
     legg->Draw();
     c->SaveAs("spectrum_ratiomax.eps");
+    legg->Clear();
+    legg->AddEntry(spectrum_obs, "Data", "pl");
+    legg->AddEntry(spectrum_noosc, "No oscillations", "l");
+    legg->AddEntry(spectrum_bf, "VaLOR", "l");
+    legg->AddEntry(spectrum_other, "Input", "l");
+    legg->Draw();
+    c->SaveAs(Form("spectrum_input_%d.pdf",id));
     //draw ratio
     spectrum_ratio_other->Divide(spectrum_other, spectrum_noosc);
     for(int i = 1; i <= n_ereco_bins; i++) {
       spectrum_ratio_other->SetBinError(i,0);
       spectrum_ratio_bf->SetBinError(i,0);
     }
-    spectrum_ratio_obs->GetXaxis()->SetRangeUser(0,5.99);
+    spectrum_ratio_obs->GetXaxis()->SetRangeUser(0,spectrum_max_xaxis-0.001);
     spectrum_ratio_obs->GetXaxis()->SetTitle("E_{reco} / GeV");
     spectrum_ratio_obs->GetYaxis()->SetTitle("Ratio to no oscillations");
     spectrum_ratio_other->SetLineColor(kBlue);
@@ -361,7 +445,7 @@ void analyse_output
       spectrum_ratio_other_rebin->SetBinError(i,0);
       spectrum_ratio_bf_rebin->SetBinError(i,0);
     }
-    spectrum_ratio_obs_rebin->GetXaxis()->SetRangeUser(0,5.99);
+    spectrum_ratio_obs_rebin->GetXaxis()->SetRangeUser(0,spectrum_max_xaxis-0.001);
     spectrum_ratio_obs_rebin->GetXaxis()->SetTitle("E_{reco} / GeV");
     spectrum_ratio_obs_rebin->GetYaxis()->SetTitle("Ratio to no oscillations");
     spectrum_ratio_other_rebin->SetLineColor(kBlue);
@@ -419,7 +503,7 @@ void analyse_output
     legg->SetFillStyle(0);
     legg->SetBorderSize(0);
     //legg->SetTextFont(42);
-    legg->AddEntry(spectrum_obs_rebin, "T2K Run 1-3 data", "pl");
+    legg->AddEntry(spectrum_obs_rebin, "T2K Data", "pl");
     legg->AddEntry(spectrum_noosc_rebin, "No oscillation hypothesis", "l");
     legg->AddEntry(spectrum_bf_rebin, "T2K best fit", "l");
     legg->AddEntry(spectrum_other_rebin, "T2K best fit alternative analysis", "l");
@@ -462,12 +546,13 @@ void analyse_output
   TCanvas * cpull = new TCanvas();
   cpull->SetBottomMargin(0.4);
   cpull->SetGridx(1);
-  pulls->GetYaxis()->SetRangeUser(-0.75,0.75);
+  pulls->GetYaxis()->SetRangeUser(-1,1);
   pulls->GetXaxis()->LabelsOption("v");
   pulls->Draw("P");
   TLine l(0,0,pulls->GetXaxis()->GetLast(),0);
   l.Draw();
   cpull->SaveAs(Form("pulls_%d.eps",id));
+  cpull->SaveAs(Form("pulls_%d.pdf",id));
   delete cpull;
   //copy to only get the most important ones
   int nbig = 0;
@@ -521,18 +606,93 @@ void analyse_output
   cpull2->SaveAs("pulls_important.pdf");
   delete cpull2;
 
+  //fits
+  TH1D * fits = 0;
+  f_dchisq.GetObject("hsystfit",fits);
+  if(fits) {
+    for(int i = 1; i<= fits->GetEntries(); i++) {
+      if(i%2) {
+	fits->GetXaxis()->SetBinLabel(i,Form("%s                         ",fits->GetXaxis()->GetBinLabel(i)));
+      }
+    }
+    TCanvas * cfit = new TCanvas();
+    cfit->SetBottomMargin(0.4);
+    cfit->SetGridx(1);
+    //fits->GetYaxis()->SetRangeUser(-1,1);
+    fits->GetXaxis()->LabelsOption("v");
+    fits->Draw("P");
+    TLine l(0,0,fits->GetXaxis()->GetLast(),0);
+    l.Draw();
+    cfit->SaveAs(Form("fits_%d.eps",id));
+    cfit->SaveAs(Form("fits_%d.pdf",id));
+    delete cfit;
+    //copy to only get the most important ones
+    int nbig = 0;
+    for(int i = 1; i <= fits->GetNbinsX(); i++) {
+      if(TMath::Abs(fits->GetBinContent(i)) >= 0.1) 
+	nbig++;
+    }
+    TH1D * impfit = new TH1D("","",nbig,0,nbig);
+    int j = 1;
+    for(int i = 1; i <= fits->GetNbinsX(); i++) {
+      if(TMath::Abs(fits->GetBinContent(i)) < 0.1) continue;
+      impfit->SetBinContent(j, fits->GetBinContent(i));
+      string label = "";
+      switch(j) {
+      case(1):
+	label = "#splitline{SuperK detector}{#splitline{CCQE ring counting}{E_{reco} > 1.1 GeV}}";
+	break;
+      case(2):
+	label = "#splitline{SuperK detector}{NC}";
+	break;
+      case(3):
+	label = "#splitline{ND280-correlated}{CCQE axial mass}";
+	break;
+      case(4):
+	label = "#splitline{ND280-correlated}{#splitline{CCQE normalisation}{1.5 < E_{true} < 3.5 GeV}}";
+	break;
+      case(5):
+	label = "#splitline{ND280-correlated}{#splitline{CCQE normalisation}{E_{true} > 3.5 GeV}}";
+	break;
+      case(6):
+	label = "#splitline{ND280-uncorrelated}{#pi-less #Delta-decay}";
+	break;
+      }
+      impfit->GetXaxis()->SetBinLabel(j, label.c_str());
+      cout << fits->GetXaxis()->GetBinLabel(i) << endl;
+      j++;
+    }
+    TCanvas * cfit2 = new TCanvas("","",1000,500);
+    cfit2->SetGridx(0);
+    cfit2->SetBottomMargin(0.16);
+    cfit2->SetLeftMargin(0.07);
+    cfit2->SetRightMargin(0.01);
+    impfit->GetXaxis()->SetLabelSize(0.06);
+    impfit->GetYaxis()->SetTitleOffset(0.55);
+    impfit->GetYaxis()->SetTitle("fit");
+    impfit->GetYaxis()->SetRangeUser(-0.4,0.4);
+    impfit->GetXaxis()->LabelsOption("h");
+    impfit->Draw("P");
+    TLine impl(0,0,impfit->GetXaxis()->GetLast(),0);
+    impl.Draw();
+    cfit2->SaveAs("fits_important.pdf");
+    delete cfit2;
+  }//fits
+
   //chisqwithsyst
   c->cd();
   c->SetLeftMargin(0.19);
   c->SetFillColor(0);
   c->SetBorderMode(0);
   c->SetRightMargin(0.15);
+  /*
   TH2D * chisq_with_syst = 0;
   f_chisq.GetObject(Form("chisqwithsyst_%d",id),chisq_with_syst);
   chisq_with_syst->GetYaxis()->SetTitleOffset(1.65);
   chisq_with_syst->Draw("colz");
   cout << chisq_with_syst->GetZaxis()->GetTitleOffset() << endl;
   c->SaveAs(Form("chisq_with_syst_%d.eps",id));
+  c->SaveAs(Form("chisq_with_syst_%d.pdf",id));*/
 
   //dchisq's & contours
   TH2D * dchisq = 0;
@@ -544,11 +704,12 @@ void analyse_output
   TPaletteAxis *palette = (TPaletteAxis*)dchisq->GetListOfFunctions()->FindObject("palette");
   palette->SetX1NDC(0.86);
   palette->SetX2NDC(0.90);
-  dchisq->GetZaxis()->SetRangeUser(0,50);
-  dchisq->GetXaxis()->SetRangeUser(0.8,1.0);
+  dchisq->GetZaxis()->SetRangeUser(0,dchisq->GetMaximum()*1.05);//50);
+  //  dchisq->GetXaxis()->SetRangeUser(0.8,1.0);
   dchisq->GetYaxis()->SetRangeUser(0.0015,0.0033);
   dchisq->Draw("colz");
   c->SaveAs(Form("dchisq_%d.eps",id));
+  c->SaveAs(Form("dchisq_%d.pdf",id));
   cout << dchisq->GetZaxis()->GetTitleOffset() << endl;
 
   //copy to be able to set the same color for the different (68%, 90%) contours
@@ -630,8 +791,42 @@ void analyse_output
     leg->AddEntry("skzen2012_90cl", "SK1-4 zenith angle, 90% CL","L");
     leg->AddEntry("skle2012_90cl",  "SK1-4 L/E, 90% CL","L");
   }
+  if(draw_2012_contour) {
+    TFile ft2k2012("/Users/thomasdealtry/T2K/ralrepo/t2k/t2kana/nuosc/branches/2012_v1.0.0_evolution/fc_oldsurf_newres_5E5_nosub.root");
+    TH2D * hvalor2012_90 = 0;
+    TH2D * hvalor2012_68 = 0;
+    ft2k2012.GetObject("hCL68StatSyst",hvalor2012_68);
+    ft2k2012.GetObject("hCL90StatSyst",hvalor2012_90);
+    hvalor2012_68->SetContour(1);
+    hvalor2012_68->SetContourLevel(0,0.0);
+    hvalor2012_68->SetLineStyle(2);
+    hvalor2012_68->SetLineColor(kRed);
+    hvalor2012_90->SetContour(1);
+    hvalor2012_90->SetContourLevel(0,0.0);
+    hvalor2012_90->SetLineStyle(1);
+    hvalor2012_90->SetLineColor(kRed);
+    hvalor2012_90->Draw("samecont3");
+    hvalor2012_68->Draw("samecont3");
+    leg->AddEntry(hvalor2012_90, "T2K Run 1-3", "l");
+  }
+  if(draw_oldt2k_contours) {
+    const char * extcontourfile = Form("%s/inputs/contours/contours_oldt2k.root", gSystem->Getenv("T2KOSCANA"));
+    TFile f(extcontourfile,"read");
+    t2krun1_90cl  = new TGraph(* (TGraph*)f.Get("t2k2010_run1_90CL_statsyst")       );
+    t2krun12_90cl = new TGraph(* (TGraph*)f.Get("t2k2010_run1p2_90CL_statsyst")   );
+    set_contour_style(t2krun1_90cl,  kMagenta-3, 1, kSolid);
+    set_contour_style(t2krun12_90cl, kGreen+2,   1, kSolid);
+    t2krun1_90cl ->Draw("l");
+    t2krun12_90cl->Draw("l");
+    f.Close();
+    t2krun1_90cl->SetName("t2krun1_90cl");
+    t2krun12_90cl ->SetName("t2krun12_90cl");
+    leg->AddEntry("t2krun12_90cl",  "T2K Run 1+2","L");
+    leg->AddEntry("t2krun1_90cl", "T2K Run 1","L");
+  }
   leg->Draw();
   c->SaveAs(Form("contours_%d.eps",id));
+  c->SaveAs(Form("contours_%d.pdf",id));
 
   delete c;
 }

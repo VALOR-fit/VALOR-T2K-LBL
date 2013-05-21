@@ -52,6 +52,10 @@ foreach (@ARGV) {
   if($_ eq '--chisqwithsyst-dm23sq'        ) { $chisqwithsyst_dm23sq        = 1;              }
   if($_ eq '--chisqwithsyst-dm23sq-step'   ) { $chisqwithsyst_dm23sq_step   = $ARGV[$iarg+1]; }
   if($_ eq '--gridpath'                    ) { $gridpath                    = $ARGV[$iarg+1]; }
+  if($_ eq '--chisqwithsyst-mixing23'      ) { $chisqwithsyst_mixing23      = 1;              }
+  if($_ eq '--chisqwithsyst-mixing23-step' ) { $chisqwithsyst_mixing23_step = $ARGV[$iarg+1]; }
+  if($_ eq '--chisqwithsyst-dm23sq'        ) { $chisqwithsyst_dm23sq        = 1;              }
+  if($_ eq '--chisqwithsyst-dm23sq-step'   ) { $chisqwithsyst_dm23sq_step   = $ARGV[$iarg+1]; }
   $iarg++;
 }
 
@@ -79,6 +83,11 @@ $chisqwithsyst_mixing23 = 0                             unless defined $chisqwit
 $chisqwithsyst_mixing23_step = 0.01                     unless defined $chisqwithsyst_mixing23_step;
 $chisqwithsyst_dm23sq   = 0                             unless defined $chisqwithsyst_dm23sq;
 $chisqwithsyst_dm23sq_step = 0.01                       unless defined $chisqwithsyst_dm23sq_step;
+$chisqwithsyst_mixing23 = 0                             unless defined $chisqwithsyst_mixing23;
+$chisqwithsyst_mixing23_step = 0.01                     unless defined $chisqwithsyst_mixing23_step;
+$chisqwithsyst_dm23sq   = 0                             unless defined $chisqwithsyst_dm23sq;
+$chisqwithsyst_dm23sq_step = 0.01                       unless defined $chisqwithsyst_dm23sq_step;
+
 
 if( !defined $cput) {
   if($resource eq "RAL"   ) { $cput = "6:00:00";  }
