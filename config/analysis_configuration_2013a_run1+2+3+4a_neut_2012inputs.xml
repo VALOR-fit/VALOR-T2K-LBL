@@ -246,34 +246,16 @@
 
   <xsec>
       <weight_splines>
-          <filename>
-               inputs/official/2012/xsec/XSecSplinesCoarse2012_coarseEreco.root
-          </filename>
-          <numu>
-               <filename>
-                    inputs/official/2012/xsec/spl_numuoa_sk11c_flx11bv31_numu.root
-               </filename>
-          </numu>
-          <numubar>
-               <filename>
-                    inputs/official/2012/xsec/spl_numuoa_sk11c_flx11bv31_numubar.root
-               </filename>
-          </numubar>
-          <nue>
-               <filename>
-                    inputs/official/2012/xsec/spl_numuoa_sk11c_flx11bv31_nue.root
-               </filename>
-          </nue>
-          <nuebar>
-               <filename>
-                    inputs/official/2012/xsec/spl_numuoa_sk11c_flx11bv31_nuebar.root
-               </filename>
-          </nuebar>
-          <signue>
-               <filename>
-                    inputs/official/2012/xsec/spl_numuoa_sk11c_flx11bv31_signalnue.root
-               </filename>
-          </signue>
+          <one_mu_ring>
+                <filename>
+                    inputs/official/2012/xsec/XSecSplinesCoarse2012_coarseEreco.root
+                </filename>
+          </one_mu_ring>
+          <one_e_ring>
+                <filename>
+                    inputs/official/2012/xsec/XSecSplines1Re2012.root
+                </filename>
+          </one_e_ring>
       </weight_splines>
       <splines>
 	  <maqe>
@@ -285,24 +267,6 @@
 	  <mares>
 	       0.107
 	  </mares>
-	  <pf>
-	       0.133
-	  </pf>
-	  <sf>
-	       1
-	  </sf>
-	  <wshape>
-	       0.516
-	  </wshape>
-	  <ccothshape>
-	       0.4
-	  </ccothshape>
-	  <cc1pishape>
-	       0.5
-	  </cc1pishape>
-	  <pilessdelta>
-	       0.2
-	  </pilessdelta>
       </splines>
       <normalisations>
 	  <ccqee1>

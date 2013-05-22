@@ -408,7 +408,7 @@ double NuXSec::FinTuningWght_1p(
 #ifndef ONEOVERMAQE
       relerr = fSplineMAQERelErr;
 #else
-    relerr = fSpline1overMAQE2RelErr;
+      relerr = fSpline1overMAQE2RelErr;
 #endif
     else if(p == kNuisBANFFMARES)
       relerr = fSplineMARESRelErr;
@@ -431,10 +431,12 @@ double NuXSec::FinTuningWght_1p(
      || p == kNuisBANFFCCQEE2
      || p == kNuisBANFFCC1piE0
      || p == kNuisBANFFCC1piE1
+#if BANFF_BINS == 1
      || p == kNuisBANFFNC1pi0
+#endif
      )
   {
-     wght = fBANFF->BestFitValue(p);
+    wght = fBANFF->BestFitValue(p);
   }
 
 #ifdef __show_banff_tuning_wght_mesg_debug__
@@ -539,16 +541,16 @@ double NuXSec::SystWght_1p(
        TSpline3 * wght_spl = this->FindWghtSpline(p,s,m,Ereco,Etrue);
        assert(wght_spl);
        double tb = fBANFF->BestFitValue(p);
-       double tc = fBANFF->CurrentValue(p);   
+       double tc = fBANFF->CurrentValue(p);
        double relerr = 0;
        if(p == kNuisBANFFMAQE)
-#ifndef ONEOVERMAQE
-	 relerr = fSplineMAQERelErr;
-#else
-	 relerr = fSpline1overMAQE2RelErr;
+#if BANFF_BINS <= 3
+         relerr = fSplineMAQERelErr;
+#elif BANFF_BINS == 4
+         relerr = fSpline1overMAQE2RelErr;
 #endif
        else if(p == kNuisBANFFMARES)
-	 relerr = fSplineMARESRelErr;
+         relerr = fSplineMARESRelErr;
        double denominator = (tb-1) / relerr;
        double numerator = (tc-1) / relerr;
        wght = wght_spl->Eval(numerator) / wght_spl->Eval(denominator);
@@ -570,7 +572,9 @@ double NuXSec::SystWght_1p(
      || p == kNuisBANFFCCQEE2
      || p == kNuisBANFFCC1piE0
      || p == kNuisBANFFCC1piE1
+#if BANFF_BINS == 1
      || p == kNuisBANFFNC1pi0
+#endif
      )
   {
      wght = fBANFF->CurrentValue(p) / fBANFF->BestFitValue(p);
@@ -711,7 +715,9 @@ double NuXSec::CurrentValue(PhysParamId_t p) const
     case kNuisBANFFCCQEE2:
     case kNuisBANFFCC1piE0:
     case kNuisBANFFCC1piE1:
+#if BANFF_BINS == 1
     case kNuisBANFFNC1pi0:
+#endif
       return fBANFF->CurrentValue(p);
       break;
     default:

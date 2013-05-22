@@ -373,12 +373,12 @@ void BANFF::RestoreNominalMC(void)
   //are still reading bestfit values from fBestFitValues
   //we need to modify BestFitValue(p) 
   TVectorD & current_values = *fCurrentValues;
-  TVectorD & bestfit_values = *fBestFitValues;
+  //TVectorD & bestfit_values = *fBestFitValues;
 
   const int np = conv::kNumOfParamsInBANFFfit;
   for(int i=0; i<np; i++) {
     current_values[i] = 1.;
-    bestfit_values[i] = 1.;
+    //bestfit_values[i] = 1.;
   }
 }
 //________________________________________________________________________________________
@@ -556,7 +556,11 @@ int BANFF::Param2Idx(PhysParamId_t p) const
 {
   int iparam = (int) p;
   int first  = (int) kNuisBANFF00;
+#if BANFF_BINS == 1
   int last   = (int) kNuisBANFFNC1pi0;
+#elif BANFF_BINS == 2
+  int last   = (int) kNuisBANFFCC1piE1;
+#endif
 
   if(! (iparam >= first && iparam <= last) )
     cout << AsString(p) << endl;

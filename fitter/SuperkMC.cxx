@@ -39,10 +39,10 @@
 //#define NO_EVENTS_CAN_BE_NEGATIVE // if defined, will stop events being negative at all stages (not just building the Ereco spectra)
 
 #define APPLY_ESCALE_AT_SPECTRUM_STAGE
-//#define FLUXWEIGHTSAREONE                                                                                                                                                       
-//#define BANFFWEIGHTSAREONE                                                                                                                                                      
-//#define SYSTWEIGHTSAREONE                                                                                                                                                       
-//#define PHYSHYPWEIGHTSAREONE  
+//#define FLUXWEIGHTSAREONE
+//#define BANFFWEIGHTSAREONE
+//#define SYSTWEIGHTSAREONE
+//#define PHYSHYPWEIGHTSAREONE
 
 #include <cassert>
 #include <cstdlib>
@@ -524,13 +524,19 @@ void SuperkMC::FillTemplate(SuperkSample_t s, SuperkMode_t m)
     for(int it = 1; it <= this->Template(s,m,kSKMCtNom)->GetYaxis()->GetNbins(); it++) {
       // loop over Ereco
       for(int ir = 1; ir <= this->Template(s,m,kSKMCtNom)->GetXaxis()->GetNbins(); ir++) {
-	if (s==kSKsFCFV1RingMuLike) fMCTemplArrayOri1Rmu[midx][it-1][ir-1] = (int)this->Template(s,m,kSKMCtOri)->GetBinContent(ir,it);
-	else fMCTemplArrayOri1Re[midx][it-1][ir-1] = (int)this->Template(s,m,kSKMCtOri)->GetBinContent(ir,it);
+	if (s==kSKsFCFV1RingMuLike)
+	  fMCTemplArrayOri1Rmu[midx][it-1][ir-1] = (int)this->Template(s,m,kSKMCtOri)->GetBinContent(ir,it);
+	else
+	  fMCTemplArrayOri1Re[midx][it-1][ir-1] = (int)this->Template(s,m,kSKMCtOri)->GetBinContent(ir,it);
 	double nev = this->Template(s,m,kSKMCtNom)->GetBinContent(ir,it);
-	if (s==kSKsFCFV1RingMuLike) fMCTemplArrayTun1Rmu[midx][it-1][ir-1] = nev;
-	else fMCTemplArrayTun1Re[midx][it-1][ir-1] = nev;
-	if (s==kSKsFCFV1RingMuLike) fMCTemplArrayFin1Rmu[midx][it-1][ir-1] = nev;
-	else fMCTemplArrayFin1Re[midx][it-1][ir-1] = nev;
+	if (s==kSKsFCFV1RingMuLike)
+	  fMCTemplArrayTun1Rmu[midx][it-1][ir-1] = nev;
+	else
+	  fMCTemplArrayTun1Re[midx][it-1][ir-1] = nev;
+	if (s==kSKsFCFV1RingMuLike)
+	  fMCTemplArrayFin1Rmu[midx][it-1][ir-1] = nev;
+	else
+	  fMCTemplArrayFin1Re[midx][it-1][ir-1] = nev;
       }//ir
     }//it
     //now loop over the variable binning scheme (used to calculate weights only as many times as we need to)
@@ -681,8 +687,10 @@ void SuperkMC::ApplyFluxExtTuningToTemplates(void)
 	   double Etrue = util::EtrueBinEdges(s,it-1) + kOneMeV;
            // get number of events
            double nev = 0;
-	   if (s==kSKsFCFV1RingMuLike) nev = fMCTemplArrayTun1Rmu[im][it-1][ir-1];
-	   else nev = fMCTemplArrayTun1Re[im][it-1][ir-1];
+	   if (s==kSKsFCFV1RingMuLike)
+	     nev = fMCTemplArrayTun1Rmu[im][it-1][ir-1];
+	   else
+	     nev = fMCTemplArrayTun1Re[im][it-1][ir-1];
 	   nev = TMath::Max(0.,nev);
            // get tuning weights
            double wght = fNuFlux->SuperkFluxExtTuningWght(s,m,Etrue);
@@ -706,10 +714,14 @@ void SuperkMC::ApplyFluxExtTuningToTemplates(void)
            this->Template(s,m,kSKMCtSys)->SetBinContent(ir,it,nev);
            this->Template(s,m,kSKMCtFin)->SetBinContent(ir,it,nev);
 #endif
-	   if (s==kSKsFCFV1RingMuLike) fMCTemplArrayTun1Rmu[im][it-1][ir-1] = nev;
-	   else fMCTemplArrayTun1Re[im][it-1][ir-1] = nev;
-	   if (s==kSKsFCFV1RingMuLike) fMCTemplArrayFin1Rmu[im][it-1][ir-1] = nev;
-	   else fMCTemplArrayFin1Re[im][it-1][ir-1] = nev;
+	   if (s==kSKsFCFV1RingMuLike)
+	     fMCTemplArrayTun1Rmu[im][it-1][ir-1] = nev;
+	   else
+	     fMCTemplArrayTun1Re[im][it-1][ir-1] = nev;
+	   if
+	     (s==kSKsFCFV1RingMuLike) fMCTemplArrayFin1Rmu[im][it-1][ir-1] = nev;
+	   else
+	     fMCTemplArrayFin1Re[im][it-1][ir-1] = nev;
          }//it
        }//ir
     }//im
@@ -806,8 +818,10 @@ void SuperkMC::ApplyBANFFTuningToTemplates(void)
    
 	       // get number of events in current bin of source MC template
 	       double nev = 0;
-	       if (s==kSKsFCFV1RingMuLike) nev = fMCTemplArrayTun1Rmu[im][it-1][ir-1];
-	       else nev = fMCTemplArrayTun1Re[im][it-1][ir-1];
+	       if (s==kSKsFCFV1RingMuLike)
+		 nev = fMCTemplArrayTun1Rmu[im][it-1][ir-1];
+	       else
+		 nev = fMCTemplArrayTun1Re[im][it-1][ir-1];
 	       nev = TMath::Max(0.,nev);
 	       double nev_tuned = nev * wght;
 
@@ -827,10 +841,14 @@ void SuperkMC::ApplyBANFFTuningToTemplates(void)
 	       this->Template(s,m,kSKMCtSys)->SetBinContent(ir,it,nev_tuned);
 	       this->Template(s,m,kSKMCtFin)->SetBinContent(ir,it,nev_tuned);
 #endif
-	       if (s==kSKsFCFV1RingMuLike) fMCTemplArrayTun1Rmu[im][it-1][ir-1] = nev_tuned;
-	       else fMCTemplArrayTun1Re[im][it-1][ir-1] = nev_tuned;
-	       if (s==kSKsFCFV1RingMuLike) fMCTemplArrayFin1Rmu[im][it-1][ir-1] = nev_tuned;
-	       else fMCTemplArrayFin1Re[im][it-1][ir-1] = nev_tuned;
+	       if (s==kSKsFCFV1RingMuLike)
+		 fMCTemplArrayTun1Rmu[im][it-1][ir-1] = nev_tuned;
+	       else
+		 fMCTemplArrayTun1Re[im][it-1][ir-1] = nev_tuned;
+	       if (s==kSKsFCFV1RingMuLike)
+		 fMCTemplArrayFin1Rmu[im][it-1][ir-1] = nev_tuned;
+	       else
+		 fMCTemplArrayFin1Re[im][it-1][ir-1] = nev_tuned;
 	     }//it
 	   }//ir
 	 }//irv
@@ -926,9 +944,7 @@ void SuperkMC::ApplySystematicsToTemplates_Multiplicative(void)
 	   double skfsi_wght = fSKDetFSI->SystWght(s,m,ErecoVarMin,EtrueVarMin);
 	   // Combined weight                                          
            wght = skfsi_wght * flux_wght * xsec_wght;
-#endif
-	
-#ifndef SKFSITOGETHER
+#else
 	   // Plug-in SK efficiency uncertainty due to fiducial volume, reduction chain, OD cut,
 	   // ring-counting, PID, momentum cut and decay e- cut.
 	   // The ring-counting error for CCQE has Ereco-dependence.
@@ -939,7 +955,7 @@ void SuperkMC::ApplySystematicsToTemplates_Multiplicative(void)
 
            // Combined weight
            wght = skeff_wght * flux_wght * xsec_wght * fsi_wght;
-#endif
+#endif//!SKFSITOGETHER
 
 #ifdef SYSTWEIGHTSAREONE
            wght = 1;
@@ -966,8 +982,10 @@ void SuperkMC::ApplySystematicsToTemplates_Multiplicative(void)
    
 	       // get number of events in current bin of source MC template
 	       double nev = 0;
-	       if (s==kSKsFCFV1RingMuLike) nev = fMCTemplArrayTun1Rmu[im][it-1][ir-1];
-	       else nev = fMCTemplArrayTun1Re[im][it-1][ir-1];
+	       if (s==kSKsFCFV1RingMuLike)
+		 nev = fMCTemplArrayTun1Rmu[im][it-1][ir-1];
+	       else
+		 nev = fMCTemplArrayTun1Re[im][it-1][ir-1];
 	       nev = TMath::Max(0.,nev);
 	       double nev_systm = nev * wght;
 
@@ -990,42 +1008,44 @@ void SuperkMC::ApplySystematicsToTemplates_Multiplicative(void)
 			<< ", FSI  = "  << fsi_wght
 			<< " (total = " << wght << ")"
 			<< endl;
-#endif
-#ifdef SKFSITOGETHER
-		   if( skfsi_wght != 1. ||
-		       flux_wght  != 1. ||
-		       xsec_wght  != 1. )
-		     {
-		       // Get the energy of the current 50MeV Etrue bin                                                                                                                    
-		       double Etrue = util::EtrueBinEdges(s,it-1) + kOneMeV;
-		       cout << "Exp/SKMC/SystVarWght >> "
-			    << "Sample = " << util::AsString(s) << " / Mode = " << util::AsString(m)
-			    << ", Ereco = " << Ereco << " GeV"
-			    << ", Etrue = " << Etrue << " GeV => Weights: "
-			    << "SK+FSI = "  << skfsi_wght
-			    << ", Flux = "  << flux_wght
-			    << ", XSec = "  << xsec_wght
-			    << " (total = " << wght << ")"
-			    << endl;
-#endif
-
 		 }
-#endif
+#else
+	       if( skfsi_wght != 1. ||
+		   flux_wght  != 1. ||
+		   xsec_wght  != 1. )
+		 {
+		   // Get the energy of the current 50MeV Etrue bin
+		   double Etrue = util::EtrueBinEdges(s,it-1) + kOneMeV;
+		   cout << "Exp/SKMC/SystVarWght >> "
+			<< "Sample = " << util::AsString(s) << " / Mode = " << util::AsString(m)
+			<< ", Ereco = " << Ereco << " GeV"
+			<< ", Etrue = " << Etrue << " GeV => Weights: "
+			<< "SK+FSI = "  << skfsi_wght
+			<< ", Flux = "  << flux_wght
+			<< ", XSec = "  << xsec_wght
+			<< " (total = " << wght << ")"
+			<< endl;
+		 }
+#endif//SKFSITOGETHER
+#endif//__show_syst_var_wght_mesg_debug__ 
+
 #ifdef NO_EVENTS_CAN_BE_NEGATIVE
 	       if(nev_systm < 0) {
 #ifdef __show_negative_events_mesg_debug__
 		 cout << "Exp/SKMC/ApplySystematicsToTemplates_Multiplicative >> set negative number of events " << nev_systm
 		      << " to " << 0 << "\t" << " Ereco: " << Ereco << endl;
-#endif
+#endif//__show_negative_events_mesg_debug__
 		 nev_systm = 0;
 	       }
-#endif
+#endif// NO_EVENTS_CAN_BE_NEGATIVE
 	       // Update target MC template
 #ifndef PRODUCTIONMODE
 	       mctempl_tgt->SetBinContent(ir,it,nev_systm);
 #endif
-	       if (s==kSKsFCFV1RingMuLike) fMCTemplArrayFin1Rmu[im][it-1][ir-1] = nev_systm;
-	       else fMCTemplArrayFin1Re[im][it-1][ir-1] = nev_systm;
+	       if (s==kSKsFCFV1RingMuLike)
+		 fMCTemplArrayFin1Rmu[im][it-1][ir-1] = nev_systm;
+	       else
+		 fMCTemplArrayFin1Re[im][it-1][ir-1] = nev_systm;
 	     }//it
 	   }//ir
 	 }//irv
@@ -2113,6 +2133,7 @@ void SuperkMC::NevDebug(SKMCTemplateType_t t, string name)
   for(int is = 0; is < kns; is++) {
     SuperkSample_t s = kSKSamples[is];
     if(s == kSKsUndefined) continue;
+    if(s == kSKsFCFV1RingELike) continue;
     double nsk = 0;
     for(int im = 0; im < knm; im++) {
       SuperkMode_t m = kSKReactionModes[is][im];

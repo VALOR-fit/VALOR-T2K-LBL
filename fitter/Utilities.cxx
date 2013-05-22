@@ -825,6 +825,7 @@ string t2kana::util::AsString(PhysParamId_t p)
     case ( kNuisBANFF13 ) :
     case ( kNuisBANFF14 ) :
     case ( kNuisBANFF15 ) :
+#if BANFF_BINS == 1
     case ( kNuisBANFF16 ) :
     case ( kNuisBANFF17 ) :
     case ( kNuisBANFF18 ) :
@@ -834,6 +835,7 @@ string t2kana::util::AsString(PhysParamId_t p)
     case ( kNuisBANFF22 ) :
     case ( kNuisBANFF23 ) :
     case ( kNuisBANFF24 ) :
+#endif
     {
       int ip = (int)p - (int)kNuisBANFF00;
       return Form("BANFF %2d; SK %s flux; %.1f - %.1f GeV",
@@ -853,7 +855,9 @@ string t2kana::util::AsString(PhysParamId_t p)
     case ( kNuisBANFFCCQEE2  ) : return "BANFF; Norm; CC QE; 3.5 - 30.0 GeV";     break;
     case ( kNuisBANFFCC1piE0 ) : return "BANFF; Norm; CC 1pi; 0.0 - 2.5 GeV";     break;
     case ( kNuisBANFFCC1piE1 ) : return "BANFF; Norm; CC 1pi; 2.5 - 30.0 GeV";    break;
+#if BANFF_BINS == 1
     case ( kNuisBANFFNC1pi0  ) : return "BANFF; Norm; NC 1pi0; 0.0 - 30.0 GeV";    break;
+#endif
 
     //
     // XSec params not correlated with flux
@@ -1112,6 +1116,7 @@ string t2kana::util::AsStringTex(PhysParamId_t p)
     case ( kNuisBANFF13 ) :
     case ( kNuisBANFF14 ) :
     case ( kNuisBANFF15 ) :
+#if BANFF_BINS == 1
     case ( kNuisBANFF16 ) :
     case ( kNuisBANFF17 ) :
     case ( kNuisBANFF18 ) :
@@ -1121,6 +1126,7 @@ string t2kana::util::AsStringTex(PhysParamId_t p)
     case ( kNuisBANFF22 ) :
     case ( kNuisBANFF23 ) :
     case ( kNuisBANFF24 ) :
+#endif
     {
       int ip = (int)p - (int)kNuisBANFF00;
       return Form("BANFF %2d, SK %s flux, %.1f - %.1f GeV",
@@ -1140,7 +1146,9 @@ string t2kana::util::AsStringTex(PhysParamId_t p)
     case ( kNuisBANFFCCQEE2  ) : return "BANFF; Norm; CC QE; 3.5 - 30.0 GeV";     break;
     case ( kNuisBANFFCC1piE0 ) : return "BANFF; Norm; CC 1pi; 0.0 - 2.5 GeV";     break;
     case ( kNuisBANFFCC1piE1 ) : return "BANFF; Norm; CC 1pi; 2.5 - 30.0 GeV";    break;
+#if BANFF_BINS == 1
     case ( kNuisBANFFNC1pi0  ) : return "BANFF; Norm; NC 1pi0; 2.5 - 30.0 GeV";    break;
+#endif
 
     //
     // XSec params not correlated with flux
@@ -1409,6 +1417,7 @@ string t2kana::util::AsStringPaperTex(PhysParamId_t p)
   case ( kNuisBANFF13 ) :
   case ( kNuisBANFF14 ) :
   case ( kNuisBANFF15 ) :
+#if BANFF_BINS == 1
   case ( kNuisBANFF16 ) :
   case ( kNuisBANFF17 ) :
   case ( kNuisBANFF18 ) :
@@ -1418,6 +1427,7 @@ string t2kana::util::AsStringPaperTex(PhysParamId_t p)
   case ( kNuisBANFF22 ) :
   case ( kNuisBANFF23 ) :
   case ( kNuisBANFF24 ) :
+#endif
   case ( kNuisBANFFMAQE ) :
   case ( kNuisBANFFMARES ) :
   case ( kNuisBANFFCCQEE0 ) :
@@ -1425,7 +1435,9 @@ string t2kana::util::AsStringPaperTex(PhysParamId_t p)
   case ( kNuisBANFFCCQEE2 ) :
   case ( kNuisBANFFCC1piE0 ) :
   case ( kNuisBANFFCC1piE1 ) :
+#if BANFF_BINS == 1
   case ( kNuisBANFFNC1pi0 ) :
+#endif
     {
       int ip = (int)p - (int)kNuisBANFF00;
       return Form("$f_{%d; t, r}^{banff}$", ip);
@@ -1610,6 +1622,7 @@ string t2kana::util::AsStringPaperRooTex(PhysParamId_t p)
   case ( kNuisBANFF13 ) :
   case ( kNuisBANFF14 ) :
   case ( kNuisBANFF15 ) :
+#if BANFF_BINS == 1
   case ( kNuisBANFF16 ) :
   case ( kNuisBANFF17 ) :
   case ( kNuisBANFF18 ) :
@@ -1619,6 +1632,7 @@ string t2kana::util::AsStringPaperRooTex(PhysParamId_t p)
   case ( kNuisBANFF22 ) :
   case ( kNuisBANFF23 ) :
   case ( kNuisBANFF24 ) :
+#endif
   case ( kNuisBANFFMAQE ) :
   case ( kNuisBANFFMARES ) :
   case ( kNuisBANFFCCQEE0 ) :
@@ -1626,7 +1640,9 @@ string t2kana::util::AsStringPaperRooTex(PhysParamId_t p)
   case ( kNuisBANFFCCQEE2 ) :
   case ( kNuisBANFFCC1piE0 ) :
   case ( kNuisBANFFCC1piE1 ) :
+#if BANFF_BINS == 1
   case ( kNuisBANFFNC1pi0 ) :
+#endif
     {
       int ip = (int)p - (int)kNuisBANFF00;
       return Form("f_{%d; t, r}^{banff}", ip);
@@ -1790,6 +1806,7 @@ string t2kana::util::AsStringCompact(PhysParamId_t p)
     case ( kNuisBANFF13               ) : return "f_banff13";      break;
     case ( kNuisBANFF14               ) : return "f_banff14";      break;
     case ( kNuisBANFF15               ) : return "f_banff15";      break;
+#if BANFF_BINS == 1
     case ( kNuisBANFF16               ) : return "f_banff16";      break;
     case ( kNuisBANFF17               ) : return "f_banff17";      break;
     case ( kNuisBANFF18               ) : return "f_banff18";      break;
@@ -1799,6 +1816,7 @@ string t2kana::util::AsStringCompact(PhysParamId_t p)
     case ( kNuisBANFF22               ) : return "f_banff22";      break;
     case ( kNuisBANFF23               ) : return "f_banff23";      break;
     case ( kNuisBANFF24               ) : return "f_banff24";      break;
+#endif
 
 #ifndef ONEOVERMAQE
     case ( kNuisBANFFMAQE             ) : return "f_banffmaqe";    break;
@@ -1811,7 +1829,9 @@ string t2kana::util::AsStringCompact(PhysParamId_t p)
     case ( kNuisBANFFCCQEE2           ) : return "f_banffccqee2";  break;
     case ( kNuisBANFFCC1piE0          ) : return "f_banffcc1pie0"; break;
     case ( kNuisBANFFCC1piE1          ) : return "f_banffcc1pie1"; break;
+#if BANFF_BINS == 1
     case ( kNuisBANFFNC1pi0           ) : return "f_banffNc1pi0"; break;
+#endif
 
     case ( kNuisXSecFermiMom          ) : return "f_pfermi";       break;
     case ( kNuisXSecSpecFunc          ) : return "f_specfunc";     break; 
@@ -2428,6 +2448,7 @@ t2kana::conv::PhysParamId_t
   if(sh == "banff_13") return kNuisBANFF13;
   if(sh == "banff_14") return kNuisBANFF14;
   if(sh == "banff_15") return kNuisBANFF15;
+#if BANFF_BINS == 1
   if(sh == "banff_16") return kNuisBANFF16;
   if(sh == "banff_17") return kNuisBANFF17;
   if(sh == "banff_18") return kNuisBANFF18;
@@ -2437,6 +2458,7 @@ t2kana::conv::PhysParamId_t
   if(sh == "banff_22") return kNuisBANFF22;
   if(sh == "banff_23") return kNuisBANFF23;
   if(sh == "banff_24") return kNuisBANFF24;
+#endif
 
   if(sh == "banff_maqe")    return kNuisBANFFMAQE; 
   if(sh == "banff_mares")   return kNuisBANFFMARES;
@@ -2445,8 +2467,11 @@ t2kana::conv::PhysParamId_t
   if(sh == "banff_ccqeE2")  return kNuisBANFFCCQEE2;
   if(sh == "banff_cc1piE0") return kNuisBANFFCC1piE0;
   if(sh == "banff_cc1piE1") return kNuisBANFFCC1piE1;
+#if BANFF_BINS == 1
   if(sh == "banff_nc1pi0") return kNuisBANFFNC1pi0;
+#endif
 
+#if BANFF_BINS == 1
   if(sh == "banff_25")    return kNuisBANFFMAQE; 
   if(sh == "banff_26")   return kNuisBANFFMARES;
   if(sh == "banff_27")  return kNuisBANFFCCQEE0;
@@ -2455,6 +2480,15 @@ t2kana::conv::PhysParamId_t
   if(sh == "banff_30") return kNuisBANFFCC1piE0;
   if(sh == "banff_31") return kNuisBANFFCC1piE1;
   if(sh == "banff_32") return kNuisBANFFNC1pi0;
+#elif BANFF_BINS == 2
+  if(sh == "banff_16")    return kNuisBANFFMAQE; 
+  if(sh == "banff_17")   return kNuisBANFFMARES;
+  if(sh == "banff_18")  return kNuisBANFFCCQEE0;
+  if(sh == "banff_19")  return kNuisBANFFCCQEE1;
+  if(sh == "banff_20")  return kNuisBANFFCCQEE2;
+  if(sh == "banff_21") return kNuisBANFFCC1piE0;
+  if(sh == "banff_22") return kNuisBANFFCC1piE1;
+#endif
 
   if(sh == "xsec_pf")           return kNuisXSecFermiMom;
   if(sh == "xsec_sf")           return kNuisXSecSpecFunc;
@@ -2568,7 +2602,9 @@ t2kana::conv::PhysParamId_t t2kana::util::PhysParamIdFromLongString(string sh)
   if(sh == "BANFF; Norm; CC QE; 3.5 - 30.0 GeV" ) return kNuisBANFFCCQEE2;
   if(sh == "BANFF; Norm; CC 1pi; 0.0 - 2.5 GeV" ) return kNuisBANFFCC1piE0;
   if(sh == "BANFF; Norm; CC 1pi; 2.5 - 30.0 GeV") return kNuisBANFFCC1piE1;
+#if BANFF_BINS == 1
   if(sh == "BANFF; Norm; NC 1pi0; 0.0 - 30.0 GeV") return kNuisBANFFNC1pi0;
+#endif
 
     //
     // XSec params not correlated with flux
@@ -2896,6 +2932,7 @@ bool t2kana::util::IsBANFF(PhysParamId_t p)
     case ( kNuisBANFF13               ) : return true;  break;
     case ( kNuisBANFF14               ) : return true;  break;
     case ( kNuisBANFF15               ) : return true;  break;
+#if BANFF_BINS == 1
     case ( kNuisBANFF16               ) : return true;  break;
     case ( kNuisBANFF17               ) : return true;  break;
     case ( kNuisBANFF18               ) : return true;  break;
@@ -2905,6 +2942,7 @@ bool t2kana::util::IsBANFF(PhysParamId_t p)
     case ( kNuisBANFF22               ) : return true;  break;
     case ( kNuisBANFF23               ) : return true;  break;
     case ( kNuisBANFF24               ) : return true;  break;
+#endif
 
     case ( kNuisBANFFMAQE             ) : return true;  break;
     case ( kNuisBANFFMARES            ) : return true;  break;
@@ -2913,8 +2951,10 @@ bool t2kana::util::IsBANFF(PhysParamId_t p)
     case ( kNuisBANFFCCQEE2           ) : return true;  break;
     case ( kNuisBANFFCC1piE0          ) : return true;  break;
     case ( kNuisBANFFCC1piE1          ) : return true;  break;
+#if BANFF_BINS == 1
     case ( kNuisBANFFNC1pi0           ) : return true;  break;
-  
+#endif
+
   default : 
     return false;
   }
@@ -3108,6 +3148,7 @@ bool t2kana::util::IsSystematic(PhysParamId_t p)
     case ( kNuisBANFF13               ) : return true;  break;
     case ( kNuisBANFF14               ) : return true;  break;
     case ( kNuisBANFF15               ) : return true;  break;
+#if BANFF_BINS == 1
     case ( kNuisBANFF16               ) : return true;  break;
     case ( kNuisBANFF17               ) : return true;  break;
     case ( kNuisBANFF18               ) : return true;  break;
@@ -3117,6 +3158,7 @@ bool t2kana::util::IsSystematic(PhysParamId_t p)
     case ( kNuisBANFF22               ) : return true;  break;
     case ( kNuisBANFF23               ) : return true;  break;
     case ( kNuisBANFF24               ) : return true;  break;
+#endif
 
     case ( kNuisBANFFMAQE             ) : return true;  break;
     case ( kNuisBANFFMARES            ) : return true;  break;
@@ -3125,7 +3167,9 @@ bool t2kana::util::IsSystematic(PhysParamId_t p)
     case ( kNuisBANFFCCQEE2           ) : return true;  break;
     case ( kNuisBANFFCC1piE0          ) : return true;  break;
     case ( kNuisBANFFCC1piE1          ) : return true;  break;
+#if BANFF_BINS == 1
     case ( kNuisBANFFNC1pi0           ) : return true;  break;
+#endif
 
     case ( kNuisXSecFermiMom          ) : return true;  break;
     case ( kNuisXSecSpecFunc          ) : return true;  break; 
