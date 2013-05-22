@@ -24,6 +24,7 @@ void fit_xml_seeded_from_chisq_map
 
   // Analysis configuration
   const char * config = Form("%s/config/%s", gSystem->Getenv("T2KOSCANA"), config_file);
+  TString xmlfile2 = Form("%s/inputs/%s", gSystem->Getenv("T2KOSCANA"), xmlfile);
 
   // Global options
   Opt::Instance()->gOscMixingParamChoice = conv::kNuMixSinsq2Theta;
@@ -33,7 +34,7 @@ void fit_xml_seeded_from_chisq_map
   cout << "\n[Job inputs]" << endl;
   cout << "- Reading analysis configuration from: " << config << endl;
   cout << "- Toy-MC" << endl;
-  cout << "   - Reading experiment " << dataset_id << " from: " << xmlfile << endl;
+  cout << "   - Reading experiment " << dataset_id << " from: " << xmlfile2 << endl;
   cout << "   - Reading chisq map from: " << chisqfile << endl;
   cout << "- Fit" << endl;
   cout << "   - Fit param list: " << fit_param_list << endl;
@@ -166,7 +167,7 @@ void fit_xml_seeded_from_chisq_map
 
   // Get superk spectrum observation (toy experiment)
   SuperkObservation * skobs = new SuperkObservation;
-  skobs->Read(xmlfile,dataset_id);
+  skobs->Read(xmlfile2.Data(),dataset_id);
 
   //Get spectra
   const int      n_ereco_bins    = util::NumErecoBins (conv::kSKsFCFV1RingMuLike);
@@ -248,7 +249,7 @@ void fit_xml_seeded_from_chisq_map
 
     // Get fitter
     FitInputs * fit_inputs = new FitInputs(skobs,skexp,fparm);
-    FitterABC * fitter = util::GetFitter(fit_inputs,fit_option);
+    FitterABC * fitter = new Superk1RmuErecoFitter(fit_inputs,fit_option);
 
     // Do the fit
     fitter->DoTheFit();
@@ -483,8 +484,9 @@ void fit_xml_seeded_from_chisq_map
   hdchisq.Draw("cont1");
   c1->SaveAs(Form("contour_%d.pdf",dataset_id));
 
-  // Also plot the pulls of the systematics
+  // Also plot the pulls & fitted values of the systematics
   TH1D * hsystpull = new TH1D("hsystpull","hsystpull",fparm->Size()-6,0,fparm->Size()-6);
+  TH1D * hsystfit = new TH1D("hsystfit","hsystfit",fparm->Size()-6,0,fparm->Size()-6);
   if(fit_param_list == "nuosc3f_numudisapp_fix4+nuisanceselection") {
     hsystpull->GetXaxis()->SetBinLabel(1, "SF");
     hsystpull->GetXaxis()->SetBinLabel(2, "Piless-Delta");
@@ -502,6 +504,22 @@ void fit_xml_seeded_from_chisq_map
     hsystpull->SetBinContent(6, (bestfit_banff_maqe   - bf_banff_maqe  )  / err_banff_maqe);
     hsystpull->SetBinContent(7, (bestfit_banff_ccqeE0 - bf_banff_ccqeE0)  / err_banff_ccqeE0);
     hsystpull->SetBinContent(8 ,bestfit_skdet_energyscale      / err_skdet_energyscale);
+    hsystfit->GetXaxis()->SetBinLabel(1, "SF");
+    hsystfit->GetXaxis()->SetBinLabel(2, "Piless-Delta");
+    hsystfit->GetXaxis()->SetBinLabel(3, "Binding-E");
+    hsystfit->GetXaxis()->SetBinLabel(4, "CCnQE-eff");
+    hsystfit->GetXaxis()->SetBinLabel(5, "NC-eff");
+    hsystfit->GetXaxis()->SetBinLabel(6, "MAQE");
+    hsystfit->GetXaxis()->SetBinLabel(7, "CCQE-E0");
+    hsystfit->GetXaxis()->SetBinLabel(8,"E-scale");
+    hsystfit->SetBinContent(1, bestfit_xsec_sf          / err_xsec_sf);
+    hsystfit->SetBinContent(2, bestfit_xsec_pilessdelta      / err_xsec_pilessdelta);
+    hsystfit->SetBinContent(3, bestfit_xsec_binde       / err_xsec_binde);
+    hsystfit->SetBinContent(4, bestfit_skdet_ccnqe    / err_skdet_ccnqe);
+    hsystfit->SetBinContent(5, bestfit_skdet_nc       / err_skdet_nc);
+    hsystfit->SetBinContent(6, (bestfit_banff_maqe   - bf_banff_maqe  )  / err_banff_maqe);
+    hsystfit->SetBinContent(7, (bestfit_banff_ccqeE0 - bf_banff_ccqeE0)  / err_banff_ccqeE0);
+    hsystfit->SetBinContent(8 ,bestfit_skdet_energyscale      / err_skdet_energyscale);
   }
   else if(fit_param_list == "nuosc3f_numudisapp_fix4+nuisance") {
     int ip = 1;
@@ -649,11 +667,160 @@ void fit_xml_seeded_from_chisq_map
     hsystpull->GetXaxis()->SetBinLabel(ip, util::AsStringPaperRooTex(conv::kNuisFSI005).c_str());
     hsystpull->SetBinContent(ip, (bestfit_fsi_005 - 1) / err_fsi_005);
     ip++;
+    //best fits
+    ip = 1;
+    hsystfit->GetXaxis()->SetBinLabel(ip, util::AsStringPaperRooTex(conv::kNuisSuperkEnergyScale).c_str());
+    hsystfit->SetBinContent(ip, (bestfit_skdet_energyscale));
+    ip++;
+    hsystfit->GetXaxis()->SetBinLabel(ip, util::AsStringPaperRooTex(conv::kNuisSuperkEff1RmuCCQEoth).c_str());
+    hsystfit->SetBinContent(ip, (bestfit_skdet_ccqeoth));
+    ip++;
+    hsystfit->GetXaxis()->SetBinLabel(ip, util::AsStringPaperRooTex(conv::kNuisSuperkEff1RmuCCQErc0u).c_str());
+    hsystfit->SetBinContent(ip, (bestfit_skdet_ccqerc0));
+    ip++;
+    hsystfit->GetXaxis()->SetBinLabel(ip, util::AsStringPaperRooTex(conv::kNuisSuperkEff1RmuCCQErc1u).c_str());
+    hsystfit->SetBinContent(ip, (bestfit_skdet_ccqerc1));
+    ip++;
+    hsystfit->GetXaxis()->SetBinLabel(ip, util::AsStringPaperRooTex(conv::kNuisSuperkEff1RmuCCQErc2u).c_str());
+    hsystfit->SetBinContent(ip, (bestfit_skdet_ccqerc2));
+    ip++;
+    hsystfit->GetXaxis()->SetBinLabel(ip, util::AsStringPaperRooTex(conv::kNuisSuperkEff1RmuCCnonQE).c_str());
+    hsystfit->SetBinContent(ip, (bestfit_skdet_ccnqe));
+    ip++;
+    hsystfit->GetXaxis()->SetBinLabel(ip, util::AsStringPaperRooTex(conv::kNuisSuperkEff1RmuNC).c_str());
+    hsystfit->SetBinContent(ip, (bestfit_skdet_nc));
+    ip++;
+    hsystfit->GetXaxis()->SetBinLabel(ip, util::AsStringPaperRooTex(conv::kNuisSuperkEff1RmuNueCC).c_str());
+    hsystfit->SetBinContent(ip, (bestfit_skdet_nuecc));
+    ip++;
+    hsystfit->GetXaxis()->SetBinLabel(ip, util::AsStringPaperRooTex(conv::kNuisBANFF00).c_str());
+    hsystfit->SetBinContent(ip, (bestfit_banff_00));
+    ip++;
+    hsystfit->GetXaxis()->SetBinLabel(ip, util::AsStringPaperRooTex(conv::kNuisBANFF01).c_str());
+    hsystfit->SetBinContent(ip, (bestfit_banff_01));
+    ip++;
+    hsystfit->GetXaxis()->SetBinLabel(ip, util::AsStringPaperRooTex(conv::kNuisBANFF02).c_str());
+    hsystfit->SetBinContent(ip, (bestfit_banff_02));
+    ip++;
+    hsystfit->GetXaxis()->SetBinLabel(ip, util::AsStringPaperRooTex(conv::kNuisBANFF03).c_str());
+    hsystfit->SetBinContent(ip, (bestfit_banff_03));
+    ip++;
+    hsystfit->GetXaxis()->SetBinLabel(ip, util::AsStringPaperRooTex(conv::kNuisBANFF04).c_str());
+    hsystfit->SetBinContent(ip, (bestfit_banff_04));
+    ip++;
+    hsystfit->GetXaxis()->SetBinLabel(ip, util::AsStringPaperRooTex(conv::kNuisBANFF05).c_str());
+    hsystfit->SetBinContent(ip, (bestfit_banff_05));
+    ip++;
+    hsystfit->GetXaxis()->SetBinLabel(ip, util::AsStringPaperRooTex(conv::kNuisBANFF06).c_str());
+    hsystfit->SetBinContent(ip, (bestfit_banff_06));
+    ip++;
+    hsystfit->GetXaxis()->SetBinLabel(ip, util::AsStringPaperRooTex(conv::kNuisBANFF07).c_str());
+    hsystfit->SetBinContent(ip, (bestfit_banff_07));
+    ip++;
+    hsystfit->GetXaxis()->SetBinLabel(ip, util::AsStringPaperRooTex(conv::kNuisBANFF08).c_str());
+    hsystfit->SetBinContent(ip, (bestfit_banff_08));
+    ip++;
+    hsystfit->GetXaxis()->SetBinLabel(ip, util::AsStringPaperRooTex(conv::kNuisBANFF09).c_str());
+    hsystfit->SetBinContent(ip, (bestfit_banff_09));
+    ip++;
+    hsystfit->GetXaxis()->SetBinLabel(ip, util::AsStringPaperRooTex(conv::kNuisBANFF10).c_str());
+    hsystfit->SetBinContent(ip, (bestfit_banff_10));
+    ip++;
+    hsystfit->GetXaxis()->SetBinLabel(ip, util::AsStringPaperRooTex(conv::kNuisBANFF11).c_str());
+    hsystfit->SetBinContent(ip, (bestfit_banff_11));
+    ip++;
+    hsystfit->GetXaxis()->SetBinLabel(ip, util::AsStringPaperRooTex(conv::kNuisBANFF12).c_str());
+    hsystfit->SetBinContent(ip, (bestfit_banff_12));
+    ip++;
+    hsystfit->GetXaxis()->SetBinLabel(ip, util::AsStringPaperRooTex(conv::kNuisBANFF13).c_str());
+    hsystfit->SetBinContent(ip, (bestfit_banff_13));
+    ip++;
+    hsystfit->GetXaxis()->SetBinLabel(ip, util::AsStringPaperRooTex(conv::kNuisBANFF14).c_str());
+    hsystfit->SetBinContent(ip, (bestfit_banff_14));
+    ip++;
+    hsystfit->GetXaxis()->SetBinLabel(ip, util::AsStringPaperRooTex(conv::kNuisBANFF15).c_str());
+    hsystfit->SetBinContent(ip, (bestfit_banff_15));
+    ip++;
+    hsystfit->GetXaxis()->SetBinLabel(ip, util::AsStringPaperRooTex(conv::kNuisBANFFMAQE).c_str());
+    hsystfit->SetBinContent(ip, (bestfit_banff_maqe));
+    ip++;
+    hsystfit->GetXaxis()->SetBinLabel(ip, util::AsStringPaperRooTex(conv::kNuisBANFFMARES).c_str());
+    hsystfit->SetBinContent(ip, (bestfit_banff_mares));
+    ip++;
+    hsystfit->GetXaxis()->SetBinLabel(ip, util::AsStringPaperRooTex(conv::kNuisBANFFCCQEE0).c_str());
+    hsystfit->SetBinContent(ip, (bestfit_banff_ccqeE0));
+    ip++;
+    hsystfit->GetXaxis()->SetBinLabel(ip, util::AsStringPaperRooTex(conv::kNuisBANFFCCQEE1).c_str());
+    hsystfit->SetBinContent(ip, (bestfit_banff_ccqeE1));
+    ip++;
+    hsystfit->GetXaxis()->SetBinLabel(ip, util::AsStringPaperRooTex(conv::kNuisBANFFCCQEE2).c_str());
+    hsystfit->SetBinContent(ip, (bestfit_banff_ccqeE2));
+    ip++;
+    hsystfit->GetXaxis()->SetBinLabel(ip, util::AsStringPaperRooTex(conv::kNuisBANFFCC1piE0).c_str());
+    hsystfit->SetBinContent(ip, (bestfit_banff_cc1piE0));
+    ip++;
+    hsystfit->GetXaxis()->SetBinLabel(ip, util::AsStringPaperRooTex(conv::kNuisBANFFCC1piE1).c_str());
+    hsystfit->SetBinContent(ip, (bestfit_banff_cc1piE1));
+    ip++;
+    hsystfit->GetXaxis()->SetBinLabel(ip, util::AsStringPaperRooTex(conv::kNuisXSecFermiMom).c_str());
+    hsystfit->SetBinContent(ip, (bestfit_xsec_pf));
+    ip++;
+    hsystfit->GetXaxis()->SetBinLabel(ip, util::AsStringPaperRooTex(conv::kNuisXSecSpecFunc).c_str());
+    hsystfit->SetBinContent(ip, (bestfit_xsec_sf));
+    ip++;
+    hsystfit->GetXaxis()->SetBinLabel(ip, util::AsStringPaperRooTex(conv::kNuisXSecBindE).c_str());
+    hsystfit->SetBinContent(ip, (bestfit_xsec_binde));
+    ip++;
+    hsystfit->GetXaxis()->SetBinLabel(ip, util::AsStringPaperRooTex(conv::kNuisXSecWshape).c_str());
+    hsystfit->SetBinContent(ip, (bestfit_xsec_wshape));
+    ip++;
+    hsystfit->GetXaxis()->SetBinLabel(ip, util::AsStringPaperRooTex(conv::kNuisXSecShapeCCoth).c_str());
+    hsystfit->SetBinContent(ip, (bestfit_xsec_ccothshape));
+    ip++;
+    hsystfit->GetXaxis()->SetBinLabel(ip, util::AsStringPaperRooTex(conv::kNuisXSecPiLessDelta).c_str());
+    hsystfit->SetBinContent(ip, (bestfit_xsec_pilessdelta));
+    ip++;
+    hsystfit->GetXaxis()->SetBinLabel(ip, util::AsStringPaperRooTex(conv::kNuisXSecNormCCcoh).c_str());
+    hsystfit->SetBinContent(ip, (bestfit_xsec_normcccoh));
+    ip++;
+    hsystfit->GetXaxis()->SetBinLabel(ip, util::AsStringPaperRooTex(conv::kNuisXSecNormNC1piC).c_str());
+    hsystfit->SetBinContent(ip, (bestfit_xsec_normnc1piC));
+    ip++;
+    hsystfit->GetXaxis()->SetBinLabel(ip, util::AsStringPaperRooTex(conv::kNuisXSecNormNCoth).c_str());
+    hsystfit->SetBinContent(ip, (bestfit_xsec_normncoth));
+    ip++;
+    hsystfit->GetXaxis()->SetBinLabel(ip, util::AsStringPaperRooTex(conv::kNuisXSecNormNuEToNuMu).c_str());
+    hsystfit->SetBinContent(ip, (bestfit_xsec_normnuetonumu));
+    ip++;
+    hsystfit->GetXaxis()->SetBinLabel(ip, util::AsStringPaperRooTex(conv::kNuisXSecNormAntiNuToNu).c_str());
+    hsystfit->SetBinContent(ip, (bestfit_xsec_normantinutonu));
+    ip++;
+    hsystfit->GetXaxis()->SetBinLabel(ip, util::AsStringPaperRooTex(conv::kNuisFSI000).c_str());
+    hsystfit->SetBinContent(ip, (bestfit_fsi_000));
+    ip++;
+    hsystfit->GetXaxis()->SetBinLabel(ip, util::AsStringPaperRooTex(conv::kNuisFSI001).c_str());
+    hsystfit->SetBinContent(ip, (bestfit_fsi_001));
+    ip++;
+    hsystfit->GetXaxis()->SetBinLabel(ip, util::AsStringPaperRooTex(conv::kNuisFSI002).c_str());
+    hsystfit->SetBinContent(ip, (bestfit_fsi_002));
+    ip++;
+    hsystfit->GetXaxis()->SetBinLabel(ip, util::AsStringPaperRooTex(conv::kNuisFSI003).c_str());
+    hsystfit->SetBinContent(ip, (bestfit_fsi_003));
+    ip++;
+    hsystfit->GetXaxis()->SetBinLabel(ip, util::AsStringPaperRooTex(conv::kNuisFSI004).c_str());
+    hsystfit->SetBinContent(ip, (bestfit_fsi_004));
+    ip++;
+    hsystfit->GetXaxis()->SetBinLabel(ip, util::AsStringPaperRooTex(conv::kNuisFSI005).c_str());
+    hsystfit->SetBinContent(ip, (bestfit_fsi_005));
+    ip++;
   }
   TCanvas *c2 = new TCanvas();
   hsystpull->Draw();
   c2->SaveAs(Form("pulls_%d.pdf",dataset_id));
   hsystpull->Write();
+  hsystfit->Draw();
+  c2->SaveAs(Form("fits_%d.pdf",dataset_id));
+  hsystfit->Write();
   
   //And plot the best fit spectra with the observation
   TCanvas *c3 = new TCanvas();
