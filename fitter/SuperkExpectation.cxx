@@ -864,7 +864,7 @@ void SuperkExpectation::SetNuisanceParams(const FitParamList & fp, bool all_banf
        twkv1Re[2] = fp.CurrValue(p_signue2);
      else
        twkv1Re[2] = this->GetSuperkDetector()->CurrentValue(p_signue2);
-     double sigma_signue2 = (twkv1Re[2] - 1.0) / cov[2][2];
+     double sigma_signue2 = (twkv1Re[2] - 1.0) / sqrt(cov[2][2]);
 
      PhysParamId_t p_nue2 = kNuisSuperkEff1ReNueCC2;
      bool incl_nue2 = fp.Exists(p_nue2);
@@ -872,7 +872,7 @@ void SuperkExpectation::SetNuisanceParams(const FitParamList & fp, bool all_banf
        twkv1Re[8] = fp.CurrValue(p_nue2);
      else
        twkv1Re[8] = this->GetSuperkDetector()->CurrentValue(p_nue2);
-     double sigma_nue2 = (twkv1Re[8] - 1.0) / cov[8][8];
+     double sigma_nue2 = (twkv1Re[8] - 1.0) / sqrt(cov[8][8]);
 
      PhysParamId_t p_nc2 = kNuisSuperkEff1ReNC2;
      bool incl_nc2 = fp.Exists(p_nc2);
@@ -880,7 +880,7 @@ void SuperkExpectation::SetNuisanceParams(const FitParamList & fp, bool all_banf
        twkv1Re[11] = fp.CurrValue(p_nc2);
      else
        twkv1Re[11] = this->GetSuperkDetector()->CurrentValue(p_nc2);
-     double sigma_nc2 = (twkv1Re[11] - 1.0) / cov[11][11];
+     double sigma_nc2 = (twkv1Re[11] - 1.0) / sqrt(cov[11][11]);
 
      for(int ip = 0; ip < neff1Re; ip++) {
        PhysParamId_t p = PhysParamId_t ((int) kNuisSuperkEff1ReNueSigCC0 + ip);
@@ -1056,7 +1056,7 @@ void SuperkExpectation::SetNuisanceParams(const FitParamList & fp, bool all_banf
        twkv[ip_maqe] = fp.CurrValue(p_maqe);
      else
        twkv[ip_maqe] = this->GetBANFF()->CurrentValue(p_maqe);
-     double sigma_maqe = (twkv[ip_maqe] - this->GetBANFF()->BestFitValue(p_maqe)) / cov[ip_maqe][ip_maqe];
+     double sigma_maqe = (twkv[ip_maqe] - this->GetBANFF()->BestFitValue(p_maqe)) / this->GetBANFF()->OneSigmaError(p_maqe);
 
      PhysParamId_t p_ccqe0 = kNuisBANFFCCQEE0;
      int ip_ccqe0 = util::ArrIdx::Instance()->BANFFSystIdx(p_ccqe0);
@@ -1065,7 +1065,7 @@ void SuperkExpectation::SetNuisanceParams(const FitParamList & fp, bool all_banf
        twkv[ip_ccqe0] = fp.CurrValue(p_ccqe0);
      else
        twkv[ip_ccqe0] = this->GetBANFF()->CurrentValue(p_ccqe0);
-     double sigma_ccqe0 = (twkv[ip_ccqe0] - this->GetBANFF()->BestFitValue(p_ccqe0)) / cov[ip_ccqe0][ip_ccqe0];
+     double sigma_ccqe0 = (twkv[ip_ccqe0] - this->GetBANFF()->BestFitValue(p_ccqe0)) / this->GetBANFF()->OneSigmaError(p_ccqe0);
      //new - joint
      double sigma_banff1 = 0;
      int ip_banff1 = -1;
@@ -1077,7 +1077,7 @@ void SuperkExpectation::SetNuisanceParams(const FitParamList & fp, bool all_banf
 	 twkv[ip_banff1] = fp.CurrValue(p_banff1);
        else
 	 twkv[ip_banff1] = this->GetBANFF()->CurrentValue(p_banff1);
-       sigma_banff1 = (twkv[ip_banff1] - this->GetBANFF()->BestFitValue(p_banff1)) / cov[ip_banff1][ip_banff1];
+       sigma_banff1 = (twkv[ip_banff1] - this->GetBANFF()->BestFitValue(p_banff1)) / this->GetBANFF()->OneSigmaError(p_banff1);
      }
      // now, tweak the other parameters according to the correlations between them and the fitted parameters
      for(int ip = 0; ip < nbanff; ip++) {

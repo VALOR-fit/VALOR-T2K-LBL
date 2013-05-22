@@ -10,7 +10,7 @@
 
   <data_pot>
      <superk> 
-        3.010E+20 
+        6.3933E+20 
      </superk> 
   </data_pot>
 
@@ -85,12 +85,12 @@
         <nominal>     
            <numu>
              <pot> 
-	       <filename>   inputs/official/2012/superk/mc/neut/11c/smallnt_numu_sk11c_flx11bv32fine_r1-3cfull_10acut.root </filename>
-	       <objname>    h_stat_snt_tnumu  </objname>
-	       <objtype>    TH1D                  </objtype>
+	       <filename>    inputs/official/2013/superk/mc/neut/13a/smallnt_numu_sk13a_flx11bv32_run1-4mid_10acut.root </filename>
+	       <objname>     h_stat_snt_tnumu  </objname>
+	       <objtype>     TH1D                  </objtype>
              </pot>
              <one_mu_ring>
-                <filename>   inputs/official/2012/superk/mc/neut/11c/smallnt_numu_sk11c_flx11bv32fine_r1-3cfull_10acut.root  </filename>
+                <filename>   inputs/official/2013/superk/mc/neut/13a/smallnt_numu_sk13a_flx11bv32_run1-4mid_10acut.root  </filename>
                 <objname>    tnumu   </objname>
                 <objtype>    TTree            </objtype>
              </one_mu_ring>
@@ -102,12 +102,12 @@
            </numu>
            <numubar>
              <pot> 
-	       <filename>   inputs/official/2012/superk/mc/neut/11c/smallnt_numu_sk11c_flx11bv32fine_r1-3cfull_10acut.root </filename>
-	       <objname>    h_stat_snt_tnumubar  </objname>
-	       <objtype>    TH1D                  </objtype>
+	       <filename>    inputs/official/2013/superk/mc/neut/13a/smallnt_numu_sk13a_flx11bv32_run1-4mid_10acut.root </filename>
+	       <objname>     h_stat_snt_tnumubar  </objname>
+	       <objtype>     TH1D                  </objtype>
              </pot>
              <one_mu_ring>
-                <filename>   inputs/official/2012/superk/mc/neut/11c/smallnt_numu_sk11c_flx11bv32fine_r1-3cfull_10acut.root  </filename>
+                <filename>   inputs/official/2013/superk/mc/neut/13a/smallnt_numu_sk13a_flx11bv32_run1-4mid_10acut.root  </filename>
                 <objname>    tnumubar   </objname>
                 <objtype>    TTree            </objtype>
              </one_mu_ring>
@@ -119,12 +119,12 @@
            </numubar>
            <nue>
              <pot> 
-	       <filename>   inputs/official/2012/superk/mc/neut/11c/smallnt_numu_sk11c_flx11bv32fine_r1-3cfull_10acut.root </filename>
-	       <objname>    h_stat_snt_tnue  </objname>
-	       <objtype>    TH1D                  </objtype>
+	       <filename>    inputs/official/2013/superk/mc/neut/13a/smallnt_numu_sk13a_flx11bv32_run1-4mid_10acut.root </filename>
+	       <objname>     h_stat_snt_tnue  </objname>
+	       <objtype>     TH1D                  </objtype>
              </pot>
              <one_mu_ring>
-                <filename>   inputs/official/2012/superk/mc/neut/11c/smallnt_numu_sk11c_flx11bv32fine_r1-3cfull_10acut.root  </filename>
+                <filename>   inputs/official/2013/superk/mc/neut/13a/smallnt_numu_sk13a_flx11bv32_run1-4mid_10acut.root  </filename>
                 <objname>    tnue   </objname>
                 <objtype>    TTree            </objtype>
              </one_mu_ring>
@@ -136,12 +136,12 @@
           </nue>
           <nuebar>
              <pot> 
-	       <filename>   inputs/official/2012/superk/mc/neut/11c/smallnt_numu_sk11c_flx11bv32fine_r1-3cfull_10acut.root </filename>
-	       <objname>    h_stat_snt_tnuebar  </objname>
-	       <objtype>    TH1D                  </objtype>
+	       <filename>    inputs/official/2013/superk/mc/neut/13a/smallnt_numu_sk13a_flx11bv32_run1-4mid_10acut.root </filename>
+	       <objname>     h_stat_snt_tnuebar  </objname>
+	       <objtype>     TH1D                  </objtype>
              </pot>
              <one_mu_ring>
-                <filename>   inputs/official/2012/superk/mc/neut/11c/smallnt_numu_sk11c_flx11bv32fine_r1-3cfull_10acut.root  </filename>
+                <filename>   inputs/official/2013/superk/mc/neut/13a/smallnt_numu_sk13a_flx11bv32_run1-4mid_10acut.root  </filename>
                 <objname>    tnuebar   </objname>
                 <objtype>    TTree            </objtype>
              </one_mu_ring>
@@ -153,12 +153,12 @@
           </nuebar>
           <signal_nue>
              <pot> 
-	       <filename>   inputs/official/2012/superk/mc/neut/11c/smallnt_numu_sk11c_flx11bv32fine_r1-3cfull_10acut.root </filename>
-	       <objname>    h_stat_snt_tnuesig  </objname>
-	       <objtype>    TH1D                  </objtype>
+	       <filename>    inputs/official/2013/superk/mc/neut/13a/smallnt_numu_sk13a_flx11bv32_run1-4mid_10acut.root </filename>
+	       <objname>     h_stat_snt_tnuesig  </objname>
+	       <objtype>     TH1D                  </objtype>
              </pot>
              <one_mu_ring>
-                <filename>   inputs/official/2012/superk/mc/neut/11c/smallnt_numu_sk11c_flx11bv32fine_r1-3cfull_10acut.root  </filename>
+                <filename>   inputs/official/2013/superk/mc/neut/13a/smallnt_numu_sk13a_flx11bv32_run1-4mid_10acut.root  </filename>
                 <objname>    tnuesig   </objname>
                 <objtype>    TTree            </objtype>
              </one_mu_ring>
@@ -182,10 +182,10 @@
      <superk>
          <energy_scale_relative_error>
             <one_mu_ring>
-               0.023  
+               0.024
             </one_mu_ring>
             <one_e_ring>
-               0.023
+               0.024
             </one_e_ring>
          </energy_scale_relative_error>
          <efficiency_relative_error>  
@@ -205,9 +205,9 @@
                <nuecc>     1.000 </nuecc>
             </one_mu_ring>
             <one_e_ring>
-	      <filename>      inputs/official/2012/superk/err/SKMay.root </filename>
-	      <objname>       mat_cov_all </objname>
-	      <objtype>       TMatrixD </objtype>
+              <filename>      inputs/official/2012/superk/err/SKMay.root </filename>
+              <objname>       mat_cov_all </objname>
+              <objtype>       TMatrixD </objtype>
             </one_e_ring>
          </efficiency_relative_error>  
      </superk>
@@ -224,7 +224,7 @@
         Central values from BANFF fit
        -->
        <best_fit_values>
-          <filename>   inputs/official/2012/banff/postfit_banff_v8_20121129.root  </filename>
+          <filename>   inputs/official/2012/banff/postfit_banff_v8_osc_marg_MAQE_EBfix.root  </filename>
           <objname>    postfit_params   </objname>
           <objtype>    TVectorD         </objtype>
         </best_fit_values>
@@ -232,7 +232,7 @@
         Covariance of fit parameters
        -->
        <covariance_matrix>
-          <filename>   inputs/official/2012/banff/postfit_banff_v8_20121129.root  </filename>
+          <filename>   inputs/official/2012/banff/postfit_banff_v8_osc_marg_MAQE_EBfix.root  </filename>
           <objname>    postfit_cov      </objname>
           <objtype>    TMatrixD         </objtype>
         </covariance_matrix>     
@@ -246,16 +246,9 @@
 
   <xsec>
       <weight_splines>
-          <one_mu_ring>
-               <filename>
-                 inputs/official/2012/xsec/XSecSplinesCoarse2012_coarseEreco.root
-               </filename>
-	  </one_mu_ring>
-	  <one_e_ring>
-               <filename>
-                 inputs/official/2012/xsec/XSecSplines1Re2012.root
-               </filename>
-	  </one_e_ring>
+          <filename>
+               inputs/official/2012/xsec/XSecSplinesCoarse2012_coarseEreco.root
+          </filename>
           <numu>
                <filename>
                     inputs/official/2012/xsec/spl_numuoa_sk11c_flx11bv31_numu.root
@@ -284,13 +277,13 @@
       </weight_splines>
       <splines>
 	  <maqe>
-	       0.153
+	       0.149
 	  </maqe>
 	  <oneovermaqesq>
 	       0.274
 	  </oneovermaqesq>
 	  <mares>
-	       0.104
+	       0.107
 	  </mares>
 	  <pf>
 	       0.133
@@ -353,14 +346,13 @@
         Covariance matrix of FSI parameters
        -->
        <covariance_matrix>
-        <!-- <filename>   inputs/official/2012/fsi/fsi_covariance_2012_joint.root  </filename> -->
-	<filename>   inputs/official/2012/fsi/FSIandSIError_JointOA.root  </filename> 
+          <filename>   inputs/official/2012/fsi/FSIandSIError_JointOA.root  </filename>
           <objname>    fsi_cov         </objname>
           <objtype>    TMatrixD         </objtype>
         </covariance_matrix>     
   </fsi>
 
-  <!--
+  <--
   ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
   SKDET+FSI
   ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -370,11 +362,12 @@
         Covariance matrix of FSI parameters
       -->
     <covariance_matrix>
-      <filename>   inputs/official/2012/superk/err/skdet_fsi_cov_2012_joint.root  </filename> 
+      <filename>   inputs/official/2012/superk/err/skdet_fsi_cov_2012_joint.root  </filename>
       <objname>    skdet_fsi_cov         </objname>
       <objtype>    TMatrixD         </objtype>
-    </covariance_matrix>     
+    </covariance_matrix>
   </skdetfsi>
-  
-  
+
+
+
 </analysis_inputs>

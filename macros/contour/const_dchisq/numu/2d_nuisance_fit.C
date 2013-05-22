@@ -41,8 +41,8 @@ void 2d_nuisance_fit
       double dm23sq_step         = 1E-4;
 
       // make sure that min and max are at the bin centre and not at the low/high edge of the first/last bin
-      int sinsq2theta23_nbins = 1 + (int) ((sinsq2theta23_max - sinsq2theta23_min) / sinsq2theta23_step);
-      int dm23sq_nbins        = 1 + (int) ((dm23sq_max        - dm23sq_min       ) / dm23sq_step       );
+      int sinsq2theta23_nbins = 1 + TMath::CeilNint ((sinsq2theta23_max - sinsq2theta23_min) / sinsq2theta23_step);
+      int dm23sq_nbins        = 1 + TMath::CeilNint ((dm23sq_max        - dm23sq_min       ) / dm23sq_step       );
       cout<< "sinsq2theta23_nbins =" << sinsq2theta23_nbins<<endl;
       cout<< "dm23sq_nbins =" << dm23sq_nbins<<endl;
       // param space - use a histo to select dmSq and sinSq2theta

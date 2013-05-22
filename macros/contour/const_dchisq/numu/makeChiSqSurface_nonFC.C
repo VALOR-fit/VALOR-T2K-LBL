@@ -19,8 +19,8 @@ void makeChiSqSurface_nonFC(const char * input_data_directory)
 
       // Define grid so that min and max are at the bin centre 
       // and not at the low/high edge of the first/last bin 
-      const int sinsq2theta23_nbins = 1 + (int) ((sinsq2theta23_max - sinsq2theta23_min) / sinsq2theta23_step);
-      const int dm23sq_nbins        = 1 + (int) ((dm23sq_max        - dm23sq_min       ) / dm23sq_step       );
+      const int sinsq2theta23_nbins = 1 + TMath::CeilNint ((sinsq2theta23_max - sinsq2theta23_min) / sinsq2theta23_step);
+      const int dm23sq_nbins        = 1 + TMath::CeilNint ((dm23sq_max        - dm23sq_min       ) / dm23sq_step       );
 
       double sinsq2theta23_grid_min = sinsq2theta23_min - 0.5*sinsq2theta23_step;
       double sinsq2theta23_grid_max = sinsq2theta23_max + 0.5*sinsq2theta23_step;

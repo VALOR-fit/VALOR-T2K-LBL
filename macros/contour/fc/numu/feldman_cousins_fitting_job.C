@@ -11,18 +11,20 @@ void feldman_cousins_fitting_job
 (
   const char * tag                   = "fc",                         /* tag for output filename */ 
   int          irun                  = 0,                            /* run number */
-  int          nexperiments          = 1000,                         /* number of toy MC expt fits in current run */
-  int          min_dm23sq_bin        =   1,                          /* generate toy MC with this range of Dm^2_{23} */
-  int          max_dm23sq_bin        =  51,                          /* -//- */
-  int          min_mixing23_bin      =   1,                          /* generate toy MC with this range of 23 mixing (expressed in terms of either sinsq2theta, sinsqtheta, ...) */
+  int          nexperiments          = 10,                         /* number of toy MC expt fits in current run */
+  int          min_dm23sq_bin        =  21,                          /* generate toy MC with this range of Dm^2_{23} */
+  int          max_dm23sq_bin        =  41,                          /* -//- */
+  int          min_mixing23_bin      =  81,                          /* generate toy MC with this range of 23 mixing (expressed in terms of either sinsq2theta, sinsqtheta, ...) */
   int          max_mixing23_bin      = 101,                          /* -//- */
   const char * bin_list              = "",                           /* if specified, run toy-MC expts only in the bins specified as long as they are in the range given above */
   const char * config_file           = "analysis_configuration.xml", /* analysis configuration file */
   bool         stat_fluctuations     = true,                         /* include statistical fluctuation in toy MC expts? */
   bool         tweak_systematics     = true,                         /* generate toy MC with randomized systematics? */
   bool         tweak_non23oscparams  = true,                         /* generate toy MC with randomized dmsq12,theta12,theta13,dcp / only in 3-flavour fmwk */
-  const char * fit_param_list        = "nuosc3f_numudisapp_fix4",    /* fit parameter list for the given physics hypothesis (see run_fitter.C) */
-  const char * fit_option            = "minuit"                      /* fitter option (see run_fitter.C) */
+  const char * fit_param_list        = "nuosc3f_numudisapp_fix4+nuisanceselection",    /* fit parameter list for the given physics hypothesis (see run_fitter.C) */
+  const char * fit_option            = "minuit",                     /* fitter option (see run_fitter.C) */
+  bool         dm23sq_only           = false,                        /* do a 1D scan over dm32sq, with fixed mixing angle */
+  bool         mixing23_only         = true                         /* do a 1D scan over mixing23, with fixed dm23sq */
 )
 {
   using namespace std;
@@ -48,7 +50,7 @@ void feldman_cousins_fitting_job
   double mixing23_step  = 0.005;
   double dm23sq_min     = 1E-3;
   double dm23sq_max     = 6E-3;
-  double dm23sq_step    = 1E-4;
+  double dm23sq_step    = 5E-5;
   // make sure that min and max are at the bin centre and not at the low/high edge of the first/last bin
   int mixing23_nbins = 1 + TMath::CeilNint((mixing23_max - mixing23_min) / mixing23_step);
   int dm23sq_nbins   = 1 + TMath::CeilNint((dm23sq_max   - dm23sq_min  ) / dm23sq_step  );
@@ -132,9 +134,15 @@ void feldman_cousins_fitting_job
        << osc_param_space->GetYaxis()->GetXmax() << ") eV^2/c^4" << endl;
   cout << "- Input bin range " << endl;
   cout << "   - " << util::AsString(conv::kPhypMixing23) 
-       << " : [" << min_mixing23_bin << ", " << max_mixing23_bin << "]" << endl;
+       << " : [" << min_mixing23_bin << ", " << max_mixing23_bin << "]"
+       << " : [" << osc_param_space->GetXaxis()->GetBinCenter(min_mixing23_bin)
+       << ", "   << osc_param_space->GetXaxis()->GetBinCenter(max_mixing23_bin)
+       << "]" << endl;
   cout << "   - " << util::AsString(conv::kPhypDm23sq) 
-       << " : [" << min_dm23sq_bin   << ", " << max_dm23sq_bin   << "]" << endl;
+       << " : [" << min_dm23sq_bin   << ", " << max_dm23sq_bin   << "]"
+       << " : [" << osc_param_space->GetYaxis()->GetBinCenter(min_dm23sq_bin)
+       << ", "   << osc_param_space->GetYaxis()->GetBinCenter(max_dm23sq_bin)
+       << "]" << endl;
   cout << "- Input (" << util::AsString(conv::kPhypMixing23) << ", " << util::AsString(conv::kPhypDm23sq) << ") bin list " << endl; 
   if(!use_bin_list) {
     cout << "   - none" << endl;
@@ -148,6 +156,16 @@ void feldman_cousins_fitting_job
         }
     }
     cout << endl;
+  }
+  if(dm23sq_only)
+    cout << "Doing a 1D FC scanning dm32sq only" << endl;
+  else if(mixing23_only)
+    cout << "Doing a 1D FC scanning mixing23 only" << endl;
+  else
+    cout << "Doing a 2D FC scanning dm32sq and mixing23" << endl;
+  if(dm23sq_only && mixing23_only) {
+    cerr << "Cannot do 1D dm32sq and 1D mixing23 in the same job. Please check your options" << endl;
+    exit(1);
   }
 
   // get superk spectrum PDF & configure
@@ -231,16 +249,38 @@ void feldman_cousins_fitting_job
      double input_deltacp  = -1;
      double input_dm12sq   = -1;
      if(hyp == conv::kHypOsc3F) {
+       if(tweak_non23oscparams) {
          input_mixing12 = util::RandomizeMixing12(); 
          input_mixing13 = util::RandomizeMixing13(); 
          input_deltacp  = util::RandomizeDeltaCP();
          input_dm12sq   = util::RandomizeDm12sq(); 
+       }
+       else {
+         input_mixing12 = conv::kGlobFitSinsq2Theta12;
+         input_mixing13 = conv::kGlobFitSinsq2Theta13;
+         input_deltacp  = conv::kGlobFitDeltaCP;
+         input_dm12sq   = conv::kGlobFitDm12sq;
+       }
          cout << "- Toy-MC > True (randomized) non-23-sector params: " 
               << util::AsString(conv::kPhypMixing12) << " = " << input_mixing12 << ", "
               << util::AsString(conv::kPhypDm12sq)   << " = " << input_dm12sq   << " eV^2, "
               << util::AsString(conv::kPhypMixing12) << " = " << input_mixing13 << ", "
               << util::AsString(conv::kPhypDeltaCP)  << " = " << input_deltacp  << " rad "
               << endl;
+     }
+     if(mixing23_only) {
+       //input_dm23sq   = util::RandomizeDm23sq(); 
+       input_dm23sq   = conv::kGlobFitDm23sq;
+       cout << "- Toy-MC > True (randomized) dm32sq: " 
+	    << util::AsString(conv::kPhypDm23sq)   << " = " << input_dm23sq   << " eV^2"
+	    << endl;
+     }
+     if(dm23sq_only) {
+       //input_mixing23 = util::RandomizeMixing23();
+       input_mixing23 = conv::kGlobFitSinsq2Theta23;
+       cout << "- Toy-MC > True (randomized) mixing23: " 
+	    << util::AsString(conv::kPhypMixing23) << " = " << input_mixing23
+	    << endl;
      }
 
      //
@@ -261,23 +301,26 @@ void feldman_cousins_fitting_job
      SuperkObservation * skobs = new SuperkObservation;
      //Use PhysHypothesis (instead of FitParamList) so that we don't need to Update the values of systematics with the values from TweakAllSystematics()
      PhysHypothesis physhyp(*fparm);
-     if(tweak_systematics) {   
-        // tweak all sources of systematic err (gaussian err)
-        cout << "- Randomizing all systematic params in pdf..." << endl; 
-        skexp->TweakAllSystematics();
-        skexp->PrintSystematicVariations();
-        // generate mock data using the current PDF (incl. systematic variations)
-        cout << "- Generating toy-MC..." << endl; 
-        skobs->CreateMockData(*skexp, physhyp, stat_fluctuations);
-        // reset all systematics so that the PDF used in the fitter is the nominal one
-        cout << "- Reseting all systematic params in pdf..." << endl; 
-        skexp->ResetSystematicVariations();
-        //skexp->PrintSystematicVariations();
-     } else {
-        // generate mock data using the current PDF (without systematic variations)
-        cout << "- Generating toy-MC..." << endl; 
-        skobs->CreateMockData(*skexp, physhyp, stat_fluctuations);
-     }
+     bool applied_negevents_condition = true;
+     while(applied_negevents_condition) {
+       if(tweak_systematics) {   
+	 // tweak all sources of systematic err (gaussian err)
+	 cout << "- Randomizing all systematic params in pdf..." << endl; 
+	 skexp->TweakAllSystematics();
+	 skexp->PrintSystematicVariations();
+	 // generate mock data using the current PDF (incl. systematic variations)
+	 cout << "- Generating toy-MC..." << endl; 
+	 applied_negevents_condition = skobs->CreateMockData(*skexp, physhyp, stat_fluctuations);
+	 // reset all systematics so that the PDF used in the fitter is the nominal one
+	 cout << "- Reseting all systematic params in pdf..." << endl; 
+	 skexp->ResetSystematicVariations();
+	 //skexp->PrintSystematicVariations();
+       } else {
+	 // generate mock data using the current PDF (without systematic variations)
+	 cout << "- Generating toy-MC..." << endl; 
+	 applied_negevents_condition = skobs->CreateMockData(*skexp, physhyp, stat_fluctuations);
+       }
+     }//applied_negevents_condition
 
      // get chisq for true (input) "23"-sector point (sinsq2theta,dmsq) 
      // (marginalised non-"23"-sector params are treared as systematics and in the chisq_true calculation
@@ -287,7 +330,7 @@ void feldman_cousins_fitting_job
      fparm->SetInitValue(conv::kPhypMixing23, TMath::Min(input_mixing23,0.98));
      fparm->SetInitValue(conv::kPhypDm23sq,   input_dm23sq);
      //spec func is special. it is nominally 0, but this is the fit boundary (so 'init' is 0.5)
-     fparm->Update(conv::kNuisXSecSpecFunc, 0);
+     //fparm->Update(conv::kNuisXSecSpecFunc, 0);
 
      // create fit inputs
      FitInputs * fit_inputs = new FitInputs(skobs,skexp,fparm);
@@ -313,8 +356,10 @@ void feldman_cousins_fitting_job
        // Now do a 0+N parameter fit, to get the chisq true
        fparm->SetInitValue(conv::kPhypMixing23, input_mixing23);
        fparm->SetInitValue(conv::kPhypDm23sq,   input_dm23sq);
-       fparm->FixParameter(conv::kPhypMixing23);
-       fparm->FixParameter(conv::kPhypDm23sq);
+       if(!dm23sq_only)
+	 fparm->FixParameter(conv::kPhypMixing23);
+       if(!mixing23_only)
+	 fparm->FixParameter(conv::kPhypDm23sq);
 
        // Need to make a new FitInputs & fitter
        FitInputs * fit_inputs2 = new FitInputs(skobs,skexp,fparm);

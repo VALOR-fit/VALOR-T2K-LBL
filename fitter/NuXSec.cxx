@@ -27,6 +27,7 @@
 //#define __show_isanevent_mesg_debug__
 //#define __save_ori_templates_init_debug__
 #define __skip_unexpected_spline_test_in_readsplines__ // skip looking for splines we don't expect (due to our empty bins) - speedy!
+#define __use_flat_splines_for_missing_splines__ // DON'T USE! will use flat splines for missing splines. Only used between SK MC versions (new SKMC, old splines)
 
 #include <cassert>
 #include <cstdlib>
@@ -129,6 +130,14 @@ bool NuXSec::ReadSplines(TXMLEngine* xml, XMLNodePointer_t root_node)
   assert(spline_file_1Re);
 #endif
 
+  // Make a flat spline
+#ifdef __use_flat_splines_for_missing_splines__
+  double x[5] = {-5,-2,0,+2,+5};
+  double y[5] = {1,1,1,1,1};
+  int n = 5;
+  TSpline3 *flatspline = new TSpline3("",x,y,n);
+#endif //__use_flat_splines_for_missing_splines__
+
   // loop over samples
   for(int is = 0; is < kns; is++) {
     SuperkSample_t s = kSKSamples[is];
@@ -192,11 +201,17 @@ bool NuXSec::ReadSplines(TXMLEngine* xml, XMLNodePointer_t root_node)
 		    continue;
 		  }
 		  else {
+#ifndef __use_flat_splines_for_missing_splines__
 		    cerr << "Exp/NuXSec >> Null cross-section weight spline: " 
 			 << splname.str() 
+#if SPLINE_TYPE == 0
+			 << ", " << mode[0]
+#endif
 			 << " Ereco: " << Ereco << ", Etrue: " << Etrue << endl;
-		    exit(1); 
-		    continue;
+		    exit(1);
+#else
+		    spl = flatspline;
+#endif //__use_flat_splines_for_missing_splines__
 		  }
 		}
 		else {
