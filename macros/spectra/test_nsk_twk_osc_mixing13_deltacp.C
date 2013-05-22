@@ -32,8 +32,8 @@ void test_nsk_twk_osc_mixing13_deltacp
   double deltacp_step       =  2*pi/90.;
 
   // make sure that min and max are at the bin centre
-  int mixing13_nbins      = 1 + (int) ((mixing13_max - mixing13_min) / mixing13_step);
-  int deltacp_nbins       = 1 + (int) ((deltacp_max       - deltacp_min      ) / deltacp_step      );
+  int mixing13_nbins      = 1 + TMath::CeilNint ((mixing13_max - mixing13_min) / mixing13_step);
+  int deltacp_nbins       = 1 + TMath::CeilNint ((deltacp_max       - deltacp_min      ) / deltacp_step      );
 
   TH2D * nsk_vs_osc_params = 
    new TH2D("nsk_vs_osc_params", "number of 1-ring e-like events",
@@ -194,8 +194,8 @@ void test_nsk_twk_osc_mixing13_deltacp
   double dm23sq_step =  0.1E-3;
 
   // make sure that min and max are at the bin centre
-  int mixing13_nbins = 1 + (int) ((mixing13_max - mixing13_min) / mixing13_step);
-  int dm23sq_nbins       = 1 + (int) ((dm23sq_max       - dm23sq_min      ) / dm23sq_step      );
+  int mixing13_nbins = 1 + TMath::CeilNint ((mixing13_max - mixing13_min) / mixing13_step);
+  int dm23sq_nbins       = 1 + TMath::CeilNint ((dm23sq_max       - dm23sq_min      ) / dm23sq_step      );
 
   TH2D * nsk_vs_osc_params_bis = 
    new TH2D("nsk_vs_osc_params_bis", "number of 1-ring e-like events",

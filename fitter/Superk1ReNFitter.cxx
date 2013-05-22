@@ -615,8 +615,8 @@ TH2D * Superk1ReNFitter::BuildChisqSurfaceNuEApp2ParamFit(void)
    double deltacp_step        = fp.StepSize(conv::kPhypDeltaCP);
 
    // make sure that min and max are at the bin centre
-   int mixing13_nbins  = 1 + (int) ((mixing13_max - mixing13_min) / mixing13_step);
-   int deltacp_nbins        = 1 + (int) ((deltacp_max -        deltacp_min )       / deltacp_step );
+   int mixing13_nbins  = 1 + TMath::CeilNint ((mixing13_max - mixing13_min) / mixing13_step);
+   int deltacp_nbins        = 1 + TMath::CeilNint ((deltacp_max -        deltacp_min )       / deltacp_step );
 
    TH2D * chisq_surface = new TH2D(
 				   "chisq_surface","#chi^{2} surface",

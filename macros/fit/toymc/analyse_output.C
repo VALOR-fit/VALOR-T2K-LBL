@@ -753,8 +753,8 @@ void analyse_output
   double dm23sq_max     = dm_max;
   double dm23sq_step    = 1E-4;
   // make sure that min and max are at the bin centre and not at the low/high edge of the first/last bin
-  int mixing23_nbins = 1 + (int) ((mixing23_max - mixing23_min) / mixing23_step);
-  int dm23sq_nbins   = 1 + (int) ((dm23sq_max   - dm23sq_min  ) / dm23sq_step  );
+  int mixing23_nbins = 1 + TMath::CeilNint ((mixing23_max - mixing23_min) / mixing23_step);
+  int dm23sq_nbins   = 1 + TMath::CeilNint ((dm23sq_max   - dm23sq_min  ) / dm23sq_step  );
   TH2D * osc_param_space = new TH2D("osc_param_space", "",
        mixing23_nbins, 
        mixing23_min - 0.5*mixing23_step, 

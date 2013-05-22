@@ -23,8 +23,8 @@ void feldman_cousins_fitting_job
   bool         tweak_non23oscparams  = true,                         /* generate toy MC with randomized dmsq12,theta12,theta13,dcp / only in 3-flavour fmwk */
   const char * fit_param_list        = "nuosc3f_numudisapp_fix4+nuisanceselection",    /* fit parameter list for the given physics hypothesis (see run_fitter.C) */
   const char * fit_option            = "minuit",                     /* fitter option (see run_fitter.C) */
-  bool         dm23sq_only           = false,                        /* do a 1D scan over dm32sq */
-  bool         mixing23_only         = true                         /* do a 1D scan over mixing23 */
+  bool         dm23sq_only           = false,                        /* do a 1D scan over dm32sq, with fixed mixing angle */
+  bool         mixing23_only         = true                         /* do a 1D scan over mixing23, with fixed dm23sq */
 )
 {
   using namespace std;
@@ -249,10 +249,18 @@ void feldman_cousins_fitting_job
      double input_deltacp  = -1;
      double input_dm12sq   = -1;
      if(hyp == conv::kHypOsc3F) {
+       if(tweak_non23oscparams) {
          input_mixing12 = util::RandomizeMixing12(); 
          input_mixing13 = util::RandomizeMixing13(); 
          input_deltacp  = util::RandomizeDeltaCP();
          input_dm12sq   = util::RandomizeDm12sq(); 
+       }
+       else {
+         input_mixing12 = conv::kGlobFitSinsq2Theta12;
+         input_mixing13 = conv::kGlobFitSinsq2Theta13;
+         input_deltacp  = conv::kGlobFitDeltaCP;
+         input_dm12sq   = conv::kGlobFitDm12sq;
+       }
          cout << "- Toy-MC > True (randomized) non-23-sector params: " 
               << util::AsString(conv::kPhypMixing12) << " = " << input_mixing12 << ", "
               << util::AsString(conv::kPhypDm12sq)   << " = " << input_dm12sq   << " eV^2, "
@@ -262,7 +270,7 @@ void feldman_cousins_fitting_job
      }
      if(mixing23_only) {
        //input_dm23sq   = util::RandomizeDm23sq(); 
-       input_dm23sq   = conv::kGlobFitDm23sq
+       input_dm23sq   = conv::kGlobFitDm23sq;
        cout << "- Toy-MC > True (randomized) dm32sq: " 
 	    << util::AsString(conv::kPhypDm23sq)   << " = " << input_dm23sq   << " eV^2"
 	    << endl;
@@ -293,23 +301,26 @@ void feldman_cousins_fitting_job
      SuperkObservation * skobs = new SuperkObservation;
      //Use PhysHypothesis (instead of FitParamList) so that we don't need to Update the values of systematics with the values from TweakAllSystematics()
      PhysHypothesis physhyp(*fparm);
-     if(tweak_systematics) {   
-        // tweak all sources of systematic err (gaussian err)
-        cout << "- Randomizing all systematic params in pdf..." << endl; 
-        skexp->TweakAllSystematics();
-        skexp->PrintSystematicVariations();
-        // generate mock data using the current PDF (incl. systematic variations)
-        cout << "- Generating toy-MC..." << endl; 
-        skobs->CreateMockData(*skexp, physhyp, stat_fluctuations);
-        // reset all systematics so that the PDF used in the fitter is the nominal one
-        cout << "- Reseting all systematic params in pdf..." << endl; 
-        skexp->ResetSystematicVariations();
-        //skexp->PrintSystematicVariations();
-     } else {
-        // generate mock data using the current PDF (without systematic variations)
-        cout << "- Generating toy-MC..." << endl; 
-        skobs->CreateMockData(*skexp, physhyp, stat_fluctuations);
-     }
+     bool applied_negevents_condition = true;
+     while(applied_negevents_condition) {
+       if(tweak_systematics) {   
+	 // tweak all sources of systematic err (gaussian err)
+	 cout << "- Randomizing all systematic params in pdf..." << endl; 
+	 skexp->TweakAllSystematics();
+	 skexp->PrintSystematicVariations();
+	 // generate mock data using the current PDF (incl. systematic variations)
+	 cout << "- Generating toy-MC..." << endl; 
+	 applied_negevents_condition = skobs->CreateMockData(*skexp, physhyp, stat_fluctuations);
+	 // reset all systematics so that the PDF used in the fitter is the nominal one
+	 cout << "- Reseting all systematic params in pdf..." << endl; 
+	 skexp->ResetSystematicVariations();
+	 //skexp->PrintSystematicVariations();
+       } else {
+	 // generate mock data using the current PDF (without systematic variations)
+	 cout << "- Generating toy-MC..." << endl; 
+	 applied_negevents_condition = skobs->CreateMockData(*skexp, physhyp, stat_fluctuations);
+       }
+     }//applied_negevents_condition
 
      // get chisq for true (input) "23"-sector point (sinsq2theta,dmsq) 
      // (marginalised non-"23"-sector params are treared as systematics and in the chisq_true calculation

@@ -83,10 +83,10 @@ void generate_osc_prob_tables
   double dm23sq_step    = 2.0E-5;
 
   // make sure that min and max are at the bin centre and not at the low/high edge of the first/last bin
-  int mixing13_nbins = 1 + (int) ((mixing13_max - mixing13_min) / mixing13_step);
-  int deltacp_nbins  = 1 + (int) ((deltacp_max       - deltacp_min      ) / deltacp_step      );
-  int mixing23_nbins = 1 + (int)  ((mixing23_max - mixing23_min) / mixing23_step);                         
-  int dm23sq_nbins   = 1 + (int) ((dm23sq_max       - dm23sq_min      ) / dm23sq_step      );
+  int mixing13_nbins = 1 + TMath::CeilNint ((mixing13_max - mixing13_min) / mixing13_step);
+  int deltacp_nbins  = 1 + TMath::CeilNint ((deltacp_max       - deltacp_min      ) / deltacp_step      );
+  int mixing23_nbins = 1 + TMath::CeilNint  ((mixing23_max - mixing23_min) / mixing23_step);                         
+  int dm23sq_nbins   = 1 + TMath::CeilNint ((dm23sq_max       - dm23sq_min      ) / dm23sq_step      );
   //  cout << "deltacp_nbins=" << deltacp_nbins << endl;
   //cout << "dm23sq_nbins=" << dm23sq_nbins << endl;
   //cout << "mixing23_nbins=" << mixing23_nbins << endl;

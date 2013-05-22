@@ -244,6 +244,9 @@ bool FitterKernel::RunOnce(bool use_simplex)
   fitter->PrintResults(3,aminn);
 #endif
 
+  // Found best fit! Copy current --> best-fit values
+  fFitInputs->FitParams().CopyCurrToBestFitValues();
+
   // Get the error matrix status
   double ha(0.0);     // dummy vars
   double edm, errdef; // dummy vars
@@ -252,11 +255,8 @@ bool FitterKernel::RunOnce(bool use_simplex)
   fStatusCode = errMatrixStatus;
 
   //Use Hesse to make the errors better
-  if(fGetHesseErrors || fStatusCode != 3)
+  if(fGetHesseErrors)// || fStatusCode != 3)
     fHesseStatusCode = fitter->ExecuteCommand("HESSE",arglist, 1);
-
-  // Done! Copy current --> best-fit values
-  fFitInputs->FitParams().CopyCurrToBestFitValues();
 
   // Get error matrix status
 #ifdef __show_fit_steps__

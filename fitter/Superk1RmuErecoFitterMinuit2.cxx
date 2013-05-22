@@ -307,8 +307,8 @@ TH2D * Superk1RmuErecoFitterMinuit2::BuildChisqSurfaceNuMuDisap2ParamFit(void)
    double dm23sq_step   = fp.StepSize(conv::kPhypDm23sq);
 
    // make sure that min and max are at the bin centre
-   int mixing23_nbins = 1 + (int) ((mixing23_max - mixing23_min) / mixing23_step);
-   int dm23sq_nbins   = 1 + (int) ((dm23sq_max -   dm23sq_min )  / dm23sq_step );
+   int mixing23_nbins = 1 + TMath::CeilNint ((mixing23_max - mixing23_min) / mixing23_step);
+   int dm23sq_nbins   = 1 + TMath::CeilNint ((dm23sq_max -   dm23sq_min )  / dm23sq_step );
 
    TH2D * chisq_surface;
    chisq_surface = new TH2D(
@@ -369,8 +369,8 @@ TH2D * Superk1RmuErecoFitterMinuit2::BuildChisqSurfaceNuMuDisapWithSystParamFit(
    double dm23sq_step   = fp.StepSize(conv::kPhypDm23sq);
 
    // make sure that min and max are at the bin centre
-   int mixing23_nbins = 1 + (int) ((mixing23_max - mixing23_min) / mixing23_step);
-   int dm23sq_nbins   = 1 + (int) ((dm23sq_max -   dm23sq_min )  / dm23sq_step );
+   int mixing23_nbins = 1 + TMath::CeilNint ((mixing23_max - mixing23_min) / mixing23_step);
+   int dm23sq_nbins   = 1 + TMath::CeilNint ((dm23sq_max -   dm23sq_min )  / dm23sq_step );
 
    TH2D * chisq_surface = new TH2D(
       "chisq_surface","#chi^{2} surface",
@@ -419,8 +419,8 @@ TH2D * Superk1RmuErecoFitterMinuit2::BuildChisqSurfaceNuMuDecay2ParamFit(void)
    double alpha_step       = fp.StepSize(conv::kPhypAlphaDecay);
 
    // make sure that min and max are at the bin centre
-   int sinsq2theta_nbins = 1 + (int) ((sinsq2theta_max - sinsq2theta_min) / sinsq2theta_step);
-   int alpha_nbins       = 1 + (int) ((alpha_max -       alpha_min )      / alpha_step );
+   int sinsq2theta_nbins = 1 + TMath::CeilNint ((sinsq2theta_max - sinsq2theta_min) / sinsq2theta_step);
+   int alpha_nbins       = 1 + TMath::CeilNint ((alpha_max -       alpha_min )      / alpha_step );
 
    TH2D * chisq_surface = new TH2D(
       "chisq_surface","#chi^{2} surface",
@@ -461,8 +461,8 @@ TH2D * Superk1RmuErecoFitterMinuit2::BuildChisqSurfaceNuMuDecoh2ParamFit(void)
    double musq_step        = fp.StepSize(conv::kPhypMusqDecoh);
 
    // make sure that min and max are at the bin centre
-   int sinsq2theta_nbins = 1 + (int) ((sinsq2theta_max - sinsq2theta_min) / sinsq2theta_step);
-   int musq_nbins        = 1 + (int) ((musq_max -        musq_min )       / musq_step );
+   int sinsq2theta_nbins = 1 + TMath::CeilNint ((sinsq2theta_max - sinsq2theta_min) / sinsq2theta_step);
+   int musq_nbins        = 1 + TMath::CeilNint ((musq_max -        musq_min )       / musq_step );
 
    TH2D * chisq_surface = new TH2D(
       "chisq_surface","#chi^{2} surface",
