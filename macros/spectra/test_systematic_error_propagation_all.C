@@ -189,8 +189,13 @@ void test_systematic_error_propagation_all
   systematics.push_back("xsec_norm_antinutonu");
 
   //systematics.push_back("fsi"); //not supported in this macro
-  for(int ib = 0; ib < conv::kNumOfFSIParams; ib++) {
+  for(int ib = 0; ib < conv::kNumOfFSIParams1Rmu; ib++) {
     systematics.push_back(Form("fsi_%03d",ib));
+  }
+
+  //systematics.push_back("skdetfsi"); //not supported in this macro
+  for(int ib = 0; ib < conv::kNumOfSKDetFSIParams1Rmu; ib++) {
+    systematics.push_back(Form("skdetfsi_%03d",ib));
   }
 
   bool use_tex = true;
@@ -230,7 +235,7 @@ void test_systematic_error_propagation_all
       else
 	show_sk_spectral_info_etrue_flux_binning = true;
     }
-    else if(systematic.find("fsi_") == 0) {
+    else if(systematic.find("fsi_") == 0 || systematic.find("skdetfsi_") == 0) {
       show_sk_ccqe_spectral_info_ereco = true;
     }
 
@@ -563,6 +568,12 @@ void test_systematic_error_propagation_all
       skexp->TweakSystematic(systematic, 1 + (1 * sqrt(skexp->GetFSI()->CovMatrix()(ip,ip))));
       skexp->GetFSI()->PrintSystematicVariations();
     }
+    else if(systematic.find("skdetfsi_") == 0) {
+      conv::PhysParamId_t p = util::PhysParamIdFromString(systematic);
+      int ip = util::ArrIdx::Instance()->SKDetFSISystIdx(p);
+      skexp->TweakSystematic(systematic, 1 + (1 * sqrt(skexp->GetSuperkDetectorFSI()->CovMatrix()(ip,ip))));
+      skexp->GetSuperkDetectorFSI()->PrintSystematicVariations();
+    }
     else if(systematic.find("xsec_") == 0) {
       skexp->TweakSystematic(systematic,+1.);
       skexp->GetNuXSec()->PrintSystematicVariations();
@@ -733,6 +744,12 @@ void test_systematic_error_propagation_all
       int ip = util::ArrIdx::Instance()->FSISystIdx(p);
       skexp->TweakSystematic(systematic, 1 + (-1 * sqrt(skexp->GetFSI()->CovMatrix()(ip,ip))));
       skexp->GetFSI()->PrintSystematicVariations();
+    }
+    else if(systematic.find("skdetfsi_") == 0) {
+      conv::PhysParamId_t p = util::PhysParamIdFromString(systematic);
+      int ip = util::ArrIdx::Instance()->SKDetFSISystIdx(p);
+      skexp->TweakSystematic(systematic, 1 + (-1 * sqrt(skexp->GetSuperkDetectorFSI()->CovMatrix()(ip,ip))));
+      skexp->GetSuperkDetectorFSI()->PrintSystematicVariations();
     }
     else if(systematic.find("xsec_") == 0) {
       skexp->TweakSystematic(systematic,-1.);

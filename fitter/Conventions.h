@@ -24,7 +24,7 @@ Changes since 2011_v0.9.0:
 #endif
 
 #ifndef SKFSITOGETHER
-//#define SKFSITOGETHER
+#define SKFSITOGETHER
 // If turned on, errors for SK detector efficiencies and FSI are combined
 // fits are faster in this way. 
 #endif

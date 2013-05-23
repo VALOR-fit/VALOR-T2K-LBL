@@ -47,6 +47,9 @@ test_systematic_error_propagation_expectation(
   //FSI
   TMatrixD *FSICovMtrx = util::XML2TMatrixD(xml,root_node, "fsi/covariance_matrix");
 
+  //SKDetFSI
+  TMatrixD *SKDetFSICovMtrx = util::XML2TMatrixD(xml,root_node, "skdetfsi/covariance_matrix");
+
   //XSec
   double NormCCcohRelErr = util::XML2Dbl(xml,root_node,"xsec/normalisations/cccoh");
   double NormNC1piCRelErr = util::XML2Dbl(xml,root_node,"xsec/normalisations/nc1piC");
@@ -152,18 +155,24 @@ test_systematic_error_propagation_expectation(
 	   << NormNuEToNuMuRelErr * 100 << pctsymbol
 	   << endrow << endl;
   systematic = "$f_{CC\\bar{\\nu}; t}$";
-   streamer << setw(ncol1)  << setfill(' ') << systematic << endcolumn
+  streamer << setw(ncol1)  << setfill(' ') << systematic << endcolumn
 	   << setw(ncolnev)  << setfill(' ') << setprecision(nprecisionnev)
 	   << NormNuToAntiNuRelErr * 100 << pctsymbol
-	   << endrow << endl; NormNuToAntiNuRelErr
-  for (int i = 0; i < conv::kNumOfFSIParams; i++) {
+	   << endrow << endl; NormNuToAntiNuRelErr;
+  for (int i = 0; i < conv::kNumOfFSIParams1Rmu; i++) {
     systematic = Form("$f_{%d; t, r}^{FSI}$",i);
     streamer << setw(ncol1)  << setfill(' ') << systematic << endcolumn
 	     << setw(ncolnev)  << setfill(' ') << setprecision(nprecisionnev)
 	     << sqrt(FSICovMtrx(i,i)) * 100 << pctsymbol;
     streamer << endrow << endl;
   }
-
+  for (int i = 0; i < conv::kNumOfSKDetFSIParams1Rmu; i++) {
+    systematic = Form("$f_{%d; t, r}^{SKFSI}$",i);
+    streamer << setw(ncol1)  << setfill(' ') << systematic << endcolumn
+	     << setw(ncolnev)  << setfill(' ') << setprecision(nprecisionnev)
+	     << sqrt(SKDetFSICovMtrx(i,i)) * 100 << pctsymbol;
+    streamer << endrow << endl;
+  }
   if(!use_tex) {
      streamer << setw(150)  << setfill('-') << " " << endl;
   }
