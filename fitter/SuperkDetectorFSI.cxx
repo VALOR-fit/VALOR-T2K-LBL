@@ -149,6 +149,9 @@ void SuperkDetectorFSI::TweakEnergyScale(double twkdial)
 double SuperkDetectorFSI::SystWght(
   conv::SuperkSample_t s, conv::SuperkMode_t m, double Ereco, double /*Etrue*/) const
 {
+  //MEC has no detector or MEC systematics!
+  if(m == conv::kSKmMEC)
+    return 1.;
 
   // find SuperkDetector+FSI param which corresponds to the current Ereco param
   int iparam = -1;

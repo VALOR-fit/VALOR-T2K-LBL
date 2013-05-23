@@ -26,9 +26,6 @@ void test_sk_ereco_spectrum_nominal
   using namespace std;
   using namespace t2kana;
 
-  // Analysis configuration
-  const char * config  = Form("%s/config/%s", gSystem->Getenv("T2KOSCANA"), config_file);
-
   // Global options
   Opt::Instance()->gOscMixingParamChoice = conv::kNuMixSinsq2Theta;
   Opt::Instance()->gMassHierarchyAssumed = conv::kNmhNormal;
@@ -70,6 +67,9 @@ void test_sk_ereco_spectrum_nominal
     return;
   }
   int is = util::ArrIdx::Instance()->SuperkSampleIdx(s); // index of specified sample
+
+  // Analysis configuration
+  const char * config  = Form("%s/config/%s", gSystem->Getenv("T2KOSCANA"), config_file);
 
   // Print options
   cout << "\n[Job inputs]" << endl;

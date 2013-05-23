@@ -91,6 +91,7 @@ void SuperkMC::Init(void)
 {
   fPOT = 0;
 
+  fMCTemplMEC = 0;
   for(int is=0; is<kns; is++) {
     SuperkSample_t s = kSKSamples[is];
     fMCErecoSpectrumTot[is] = 0;
@@ -186,6 +187,7 @@ void SuperkMC::CleanUp(void)
   if(fMCTreeSigNuE1Re   ) delete fMCTreeSigNuE1Re;
   */
 
+  if(fMCTemplMEC) delete fMCTemplMEC;
   for(int is = 0; is < kns; is++) {
      for(int im = 0; im < knm; im++) {
        //already deleted Ori & Nom (the if doesn't work!)
@@ -282,7 +284,10 @@ bool SuperkMC::Read(TXMLEngine* xml, XMLNodePointer_t root_node)
   cout << "Exp/SKMC >> " << "Nev {MC; nue[sig]; 1Re } = " << fMCTreeSigNuE1Re   -> GetEntries()  << endl;
   
 #endif
-    
+
+  // get MEC template
+  fMCTemplMEC    = util::XML2TH2D  (xml,root_node,"mec/template");
+
   // initialise physics hypothesis
   // need to initialise as 3 flavour oscillation, otherwise ExtTuning (NA61) and FinTuning (BANFF) is not applied to nuesig modes
   fPhysHypothesis.Init(kHypOsc3F);
@@ -442,6 +447,52 @@ void SuperkMC::FillTemplate(SuperkSample_t s, SuperkMode_t m)
   int sidx = util::ArrIdx::Instance()->SuperkSampleIdx(s);
   int midx = util::ArrIdx::Instance()->SuperkModeIdx(s,m);
 
+  //special template that isn't in the tree! Don't need to apply POT weights or flux weights!
+  if(s == kSKsFCFV1RingMuLike && m == kSKmMEC) {
+    double data_pot = this->AnalyzedSamplePOT();
+    double mec_template_pot = 3.0100E20;
+    double pot_scale = data_pot / mec_template_pot;
+
+    // loop over Etrue
+    for(int it = 1; it <= this->Template(s,m,kSKMCtNom)->GetYaxis()->GetNbins(); it++) {
+      double Etrue = this->Template(s,m,kSKMCtNom)->GetYaxis()->GetBinCenter(it);
+      // loop over Ereco
+      for(int ir = 1; ir <= this->Template(s,m,kSKMCtNom)->GetXaxis()->GetNbins(); ir++) {
+	double Ereco = this->Template(s,m,kSKMCtNom)->GetXaxis()->GetBinCenter(ir);
+	//get nevents
+	double nev = fMCTemplMEC->GetBinContent(ir,it);
+	//put MEC into Ori templates
+	//only used to decide which bins to use
+	fMCTemplArrayOri1Rmu[midx][it-1][ir-1] = TMath::CeilNint(nev);
+	this->Template(s,m,kSKMCtOri)->SetBinContent(ir,it,TMath::CeilNint(nev));
+	//apply pot wght
+	nev *= pot_scale;
+	//put MEC into Nom,Tun,Sys,Fin templates
+	fMCTemplArrayTun1Rmu[midx][it-1][ir-1] = nev;
+	fMCTemplArrayFin1Rmu[midx][it-1][ir-1] = nev;
+	this->Template(s,m,kSKMCtNom)->SetBinContent(ir,it,nev);
+#ifndef PRODUCTIONMODE
+	this->Template(s,m,kSKMCtTun)->SetBinContent(ir,it,nev);
+	this->Template(s,m,kSKMCtSys)->SetBinContent(ir,it,nev);
+	this->Template(s,m,kSKMCtFin)->SetBinContent(ir,it,nev);
+#endif
+	//fill the variable template
+	fMCVariableTempl[sidx][midx]->Fill(Ereco,Etrue,nev);
+      }//ir
+    }//it
+
+    //now loop over the variable binning scheme (used to calculate weights only as many times as we need to)
+    //loop over variable Etrue
+    for(int itv = 1; itv <= fMCVariableTempl[sidx][midx]->GetYaxis()->GetNbins(); itv++) {
+      // loop over variable Ereco
+      for(int irv = 1; irv <= fMCVariableTempl[sidx][midx]->GetXaxis()->GetNbins(); irv++) {
+	int nev = TMath::CeilNint(fMCVariableTempl[sidx][midx]->GetBinContent(irv,itv));
+	fMCVariableTemplArray1Rmu[sidx][midx][itv-1][irv-1] = nev;
+      }//irv
+    }//itv
+    return;
+  }//if kSKmMEC
+
   TTree * mctree = this->MCTree(s,m);
   double  mcpot  = this->MCPOT (s,m);
 
@@ -496,15 +547,15 @@ void SuperkMC::FillTemplate(SuperkSample_t s, SuperkMode_t m)
      this -> Template(s,m,kSKMCtTun) -> Fill (fBrEreco/1000., fBrEtrue, fBrWght * pot_wght);
      this -> Template(s,m,kSKMCtSys) -> Fill (fBrEreco/1000., fBrEtrue, fBrWght * pot_wght);
      this -> Template(s,m,kSKMCtFin) -> Fill (fBrEreco/1000., fBrEtrue, fBrWght * pot_wght);
-#endif
+#endif//PRODUCTIONMODE
 #else
      this -> Template(s,m,kSKMCtNom) -> Fill (fBrEreco/1000., fBrEtrue, pot_wght);
 #ifndef PRODUCTIONMODE
      this -> Template(s,m,kSKMCtTun) -> Fill (fBrEreco/1000., fBrEtrue, pot_wght);
      this -> Template(s,m,kSKMCtSys) -> Fill (fBrEreco/1000., fBrEtrue, pot_wght);
      this -> Template(s,m,kSKMCtFin) -> Fill (fBrEreco/1000., fBrEtrue, pot_wght);
-#endif
-#endif
+#endif//PRODUCTIONMODE
+#endif//FLUXWEIGHTSAREONE
 
 
 #ifdef __show_init_mesg_debug__
@@ -513,10 +564,10 @@ void SuperkMC::FillTemplate(SuperkSample_t s, SuperkMode_t m)
 #ifdef __show_init_mesg_debug2__
      if(fBrEreco/1000 <= 0)
        cout << "Exp/SKMC/CreateTemplate >> Ereco is out of template range " << AsString(s) << " " << AsString(m) << " " << fBrEreco/1000 << endl;
-#endif
+#endif// __show_init_mesg_debug2__
      if(fBrEreco/1000 >= this->Template(s,m,kSKMCtOri)->GetXaxis()->GetBinUpEdge(this->Template(s,m,kSKMCtOri)->GetNbinsX()))
        cout << "Exp/SKMC/CreateTemplate >> Ereco is out of template range " << AsString(s) << " " << AsString(m) << " " << fBrEreco/1000 << endl;
-#endif
+#endif// __show_init_mesg_debug__
 
   }//iev
 
@@ -776,7 +827,6 @@ void SuperkMC::ApplyBANFFTuningToTemplates(void)
 
 	 // Plug-in BANFF flux systematics
 	 double flux_wght = fNuFlux->SuperkFluxFinTuningWght(s,m,EtrueVarMin);
-	   
 	 //loop over variable Ereco
 	 for(int irv = 1; irv <= util::NumXsecErecoBins(s); irv++) {
 	   //skip if the big bin is empty

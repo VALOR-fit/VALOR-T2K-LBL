@@ -134,6 +134,7 @@ private:
   TH2D *     fMCTemplSys[kns][knm];        ///< Ereco-Etrue MC template(sample,mode): nominal + ext/tuning + nd280/tuning + systematics 
   TH2D *     fMCTemplFin[kns][knm];        ///< Ereco-Etrue MC template(sample,mode): nominal + ext/tuning + nd280/tuning + systematics + physics hypothesis
 #endif
+  TH2D *     fMCTemplMEC;                  ///< MEC template
   TH2D *     fMCVariableTempl[kns][knm];
   int        fMCVariableTemplArray1Rmu[kns][knm][conv::kMCNEtrueBins][conv::kXsNErecoBins1Rmu];
   int        fMCVariableTemplArray1Re[kns][knm][conv::kMCNEtrueBins][conv::kXsNErecoBins1Re];
