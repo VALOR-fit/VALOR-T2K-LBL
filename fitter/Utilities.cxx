@@ -2746,7 +2746,7 @@ string t2kana::util::AsStringTex(t2kana::conv::SuperkMode_t m)
      case ( kSKmNuMuNC1pi0      ) : return "$\\nu_\\mu$/$\\nu_\\tau$ NC 1$\\pi^0$";                          break;
      case ( kSKmNuMuNCcoh       ) : return "$\\nu_\\mu$/$\\nu_\\tau$ NC coherent";                           break;
      case ( kSKmNuMuNCoth_e     ) : return "$\\nu_\\mu$/$\\nu_\\tau$ NC other ($\\nu_e$ app)";               break;
-     case ( kSKmNuMuNCoth_mu    ) : return "$\\nu_\\mu$/$\\nu_\\tau$ NC other ($\\nu_\\mu$ app)";            break;
+     case ( kSKmNuMuNCoth_mu    ) : return "$\\nu_\\mu$/$\\nu_\\tau$ NC other ($\\nu_\\mu$ disap)";            break;
      case ( kSKmNuMuBarCCQE     ) : return "$\\bar{\\nu_\\mu}$ CCQE";                                        break;
      case ( kSKmNuMuBarCC1pi    ) : return "$\\bar{\\nu_\\mu}$ CC 1$\\pi$";                                  break;
      case ( kSKmNuMuBarCCcoh    ) : return "$\\bar{\\nu_\\mu}$ CC coherent";                                 break;
@@ -2756,7 +2756,7 @@ string t2kana::util::AsStringTex(t2kana::conv::SuperkMode_t m)
      case ( kSKmNuMuBarNC1pi0   ) : return "$\\bar{\\nu_\\mu}$/$\\bar{\\nu_\\tau}$ NC 1$\\pi^0$";            break;
      case ( kSKmNuMuBarNCcoh    ) : return "$\\bar{\\nu_\\mu}$/$\\bar{\\nu_\\tau}$ NC coherent";             break;
      case ( kSKmNuMuBarNCoth_e  ) : return "$\\bar{\\nu_\\mu}$/$\\bar{\\nu_\\tau}$ NC other ($\\nu_e$ app)"; break;
-     case ( kSKmNuMuBarNCoth_mu ) : return "$\\bar{\\nu_\\mu}$/$\\bar{\\nu_\\tau}$ NC other ($\\nu_\\mu$ app)";break;
+     case ( kSKmNuMuBarNCoth_mu ) : return "$\\bar{\\nu_\\mu}$/$\\bar{\\nu_\\tau}$ NC other ($\\nu_\\mu$ disap)";break;
      case ( kSKmNuECCQE         ) : return "$\\nu_e$ CCQE";                                                  break;
      case ( kSKmNuECC1pi        ) : return "$\\nu_e$ CC 1$\\pi$";                                            break;
      case ( kSKmNuECCcoh        ) : return "$\\nu_e$ CC coherent";                                           break;
@@ -2766,7 +2766,7 @@ string t2kana::util::AsStringTex(t2kana::conv::SuperkMode_t m)
      case ( kSKmNuENC1pi0       ) : return "$\\nu_e$ NC 1$\\pi^0$";                                          break;
      case ( kSKmNuENCcoh        ) : return "$\\nu_e$ NC coherent";                                           break;
      case ( kSKmNuENCoth_e      ) : return "$\\nu_e$ NC other ($\\nu_e$ app)";                               break;
-     case ( kSKmNuENCoth_mu     ) : return "$\\nu_e$ NC other ($\\nu_\\mu$ app)";                            break;
+     case ( kSKmNuENCoth_mu     ) : return "$\\nu_e$ NC other ($\\nu_\\mu$ disap)";                            break;
      case ( kSKmNuEBarCCQE      ) : return "$\\bar{\\nu_e}$ CCQE";                                           break;
      case ( kSKmNuEBarCC1pi     ) : return "$\\bar{\\nu_e}$ CC 1$\\pi$";                                     break;
      case ( kSKmNuEBarCCcoh     ) : return "$\\bar{\\nu_e}$ CC coherent";                                    break;
@@ -2776,12 +2776,12 @@ string t2kana::util::AsStringTex(t2kana::conv::SuperkMode_t m)
      case ( kSKmNuEBarNC1pi0    ) : return "$\\bar{\\nu_e}$ NC 1$\\pi^0$";                                   break;
      case ( kSKmNuEBarNCcoh     ) : return "$\\bar{\\nu_e}$ NC coherent";                                    break;
      case ( kSKmNuEBarNCoth_e   ) : return "$\\bar{\\nu_e}$ NC other ($\\nu_e$ app)";                        break;
-     case ( kSKmNuEBarNCoth_mu  ) : return "$\\bar{\\nu_e}$ NC other ($\\nu_\\mu$ app)";                     break;
-     case ( kSKmSigNuECCQE      ) : return "oscillation $\\nu_e$ CCQE";                                           break;
-     case ( kSKmSigNuECC1pi     ) : return "oscillation $\\nu_e$ CC 1$\\pi$";                                     break;
-     case ( kSKmSigNuECCcoh     ) : return "oscillation $\\nu_e$ CC coherent";                                    break;
-     case ( kSKmSigNuECCoth_mu  ) : return "oscillation $\\nu_e$ CC other ($\\nu_\\mu$ app)";                     break;
-     case ( kSKmSigNuECCoth_e   ) : return "oscillation $\\nu_e$ CC other ($\\nu_e$ app)";                        break;
+     case ( kSKmNuEBarNCoth_mu  ) : return "$\\bar{\\nu_e}$ NC other ($\\nu_\\mu$ disap)";                     break;
+     case ( kSKmSigNuECCQE      ) : return "Osc. $\\nu_e$ CCQE";                                           break;
+     case ( kSKmSigNuECC1pi     ) : return "Osc. $\\nu_e$ CC 1$\\pi$";                                     break;
+     case ( kSKmSigNuECCcoh     ) : return "Osc. $\\nu_e$ CC coherent";                                    break;
+     case ( kSKmSigNuECCoth_mu  ) : return "Osc. $\\nu_e$ CC other ($\\nu_\\mu$ disap)";                     break;
+     case ( kSKmSigNuECCoth_e   ) : return "Osc. $\\nu_e$ CC other ($\\nu_e$ app)";                        break;
      default                      : return "--";
   }
   return "";

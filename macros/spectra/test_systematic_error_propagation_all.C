@@ -1871,7 +1871,7 @@ void test_systematic_error_propagation_all
       }
       //cc total (sig nue)
       if ((s == conv::kSKsFCFV1RingMuLike && m == conv::kSKmSigNuECCoth_mu) || (s == conv::kSKsFCFV1RingELike && m == conv::kSKmSigNuECCoth_e)) {
-	temp = "$N_{SK}$ (" + util::AsStringTex(s) + "): oscillation $\\nu_e$  CC all";
+	temp = "$N_{SK}$ (" + util::AsStringTex(s) + "): oscillation $\\nu_e$ CC all";
 	streamer << setw(ncol1)  << setfill(' ') << temp
 		 << endcolumn
 		 << setw(ncolnev)  << setfill(' ') << setprecision(nprecisionnev) << nsknuesig_n
