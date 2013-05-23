@@ -100,7 +100,7 @@ void test_systematic_error_propagation_all
   Long64_t EtrueBin1CCResNorm = skexp->GetSuperkMC()->Template(s, conv::kSKmNuMuCCQE, conv::kSKMCtFin)->GetYaxis()->FindBin(2.5-conv::kASmallNum);
 
   // Get the ETrue bin edges for NuMuCCQE
-  int NEtrueBinTempl = conv::kNEtrueBins;
+  int NEtrueBinTempl = conv::kNEtrueBins1Rmu;
   int NEtrueBinNuMu = conv::kXsNEtrueBins;
   Long64_t EtrueBinNuMu[conv::kXsNEtrueBins+1];
   for(int itb = 0; itb < conv::kXsNEtrueBins+1; itb++) {
@@ -1976,7 +1976,7 @@ void test_systematic_error_propagation_all
 	for(int itb = 0; itb < NEtrueBinSigNuE; itb++) {
 	  snprintf(bufl, sizeof(bufl), "%g",  skexp->GetSuperkMC()->Template(s, conv::kSKmSigNuECCQE, conv::kSKMCtFin)->GetYaxis()->GetBinLowEdge(EtrueBinSigNuE[itb]+1));
 	  snprintf(bufu, sizeof(bufu), "%g",  skexp->GetSuperkMC()->Template(s, conv::kSKmSigNuECCQE, conv::kSKMCtFin)->GetYaxis()->GetBinUpEdge(EtrueBinSigNuE[itb+1]));
-	  temp = "$N_{SK}$ (" + util::AsStringTex(s) + "): oscillation $\\nu_e$ all (" + bufl + " $\\leq E_{t} <$ " + bufu + "GeV)";
+	  temp = "$N_{SK}$ (" + util::AsStringTex(s) + "): oscillation $\\nu_{e}$ all (" + bufl + " $\\leq E_{t} <$ " + bufu + "GeV)";
 	  streamer << setw(ncol1)  << setfill(' ') << temp
 		   << endcolumn
 		   << setw(ncolnev)  << setfill(' ') << setprecision(nprecisionnev) << nsksignue_etrue_n[itb]

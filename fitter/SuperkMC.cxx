@@ -43,6 +43,7 @@
 //#define BANFFWEIGHTSAREONE
 //#define SYSTWEIGHTSAREONE
 //#define PHYSHYPWEIGHTSAREONE
+//#define PHYSHYPWEIGHTAREONEANDNUEISZERO
 
 #include <cassert>
 #include <cstdlib>
@@ -779,7 +780,7 @@ void SuperkMC::ApplyBANFFTuningToTemplates(void)
 	 //loop over variable Ereco
 	 for(int irv = 1; irv <= util::NumXsecErecoBins(s); irv++) {
 	   //skip if the big bin is empty
-	   if (s == kSKsFCFV1RingMuLike ) {
+	   if(s == kSKsFCFV1RingMuLike ) {
 	     if(fMCVariableTemplArray1Rmu[is][im][itv-1][irv-1] <= 0) continue;
 	   }
 	   else {
@@ -1546,7 +1547,9 @@ void SuperkMC::ApplyPhysHypothesisToTemplates(void)
               }
 #ifdef PHYSHYPWEIGHTSAREONE
               posc = 1;
+#ifdef PHYSHYPWEIGHTAREONEANDNUEISZERO
               if(util::IsSignalNuE(m)) posc = 0;
+#endif
 #endif
               // number of events in (Ereco,Etrue) bin (oscillations + systematics applied)
               double nev_osc = nev * posc;

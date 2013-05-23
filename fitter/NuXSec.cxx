@@ -20,7 +20,6 @@
 //#define __show_banff_tuning_wght_mesg_info__
 //#define __show_banff_tuning_wght_mesg_debug__
 //#define __show_syst_var_wght_mesg_debug__
-//#define __show_syst_var_wght_mesg_debug2__
 //#define __show_build_xsbinning_template_mesg_info__
 //#define __show_build_xsbinning_template_mesg_debug__
 //#define __show_wght_spline_idx_mesg_debug__
@@ -544,9 +543,9 @@ double NuXSec::SystWght_1p(
        double tc = fBANFF->CurrentValue(p);
        double relerr = 0;
        if(p == kNuisBANFFMAQE)
-#if BANFF_BINS <= 3
+#ifndef ONEOVERMAQE
          relerr = fSplineMAQERelErr;
-#elif BANFF_BINS == 4
+#else
          relerr = fSpline1overMAQE2RelErr;
 #endif
        else if(p == kNuisBANFFMARES)

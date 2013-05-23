@@ -67,7 +67,6 @@ void BANFF::Init(void)
   fCovMtrxChoL        = 0; 
   fIsTweaked          = false;
   fIsFluxWghtUpdated  = true;
-  fIsNominalMCRestored= false;
 }
 //________________________________________________________________________________________
 void BANFF::CleanUp(void)
@@ -146,7 +145,6 @@ bool BANFF::Read(TXMLEngine* xml, XMLNodePointer_t root_node)
 //________________________________________________________________________________________
 double BANFF::BestFitValue(PhysParamId_t p) const
 {
-  if (fIsNominalMCRestored) return 1.;
   const TVectorD & bestfit = this->BestFitValues();
   int idx = this->Param2Idx(p);
   return bestfit[idx];
@@ -154,14 +152,12 @@ double BANFF::BestFitValue(PhysParamId_t p) const
 //________________________________________________________________________________________
 double BANFF::BestFitValue(int idx) const
 {
-  if (fIsNominalMCRestored) return 1.;
   const TVectorD & bestfit = this->BestFitValues();
   return bestfit[idx];
 }
 //________________________________________________________________________________________
 double BANFF::CurrentValue(int idx) const
 {
-  if (fIsNominalMCRestored) return 1.;
   const TVectorD & current_values = *fCurrentValues;
   return current_values[idx];
 }
@@ -175,7 +171,6 @@ double BANFF::CurrentValue(PhysParamId_t p) const
 //________________________________________________________________________________________
 double BANFF::OneSigmaError(PhysParamId_t p) const
 {
-  if (fIsNominalMCRestored) return 1.;
   const TMatrixD & cov = *fCovMtrx;
   int idx = this->Param2Idx(p);
   return TMath::Sqrt(cov[idx][idx]);
@@ -183,7 +178,6 @@ double BANFF::OneSigmaError(PhysParamId_t p) const
 //________________________________________________________________________________________
 double BANFF::OneSigmaError(int idx) const
 {
-  if (fIsNominalMCRestored) return 1.;
   const TMatrixD & cov = *fCovMtrx;
   return TMath::Sqrt(cov[idx][idx]);
 }
@@ -367,7 +361,6 @@ void BANFF::RestoreNominalMC(void)
 
   fIsTweaked         = true;
   fIsFluxWghtUpdated = false;
-  fIsNominalMCRestored = true;
 
   //this is doing nothing at end, because NuFlux and NuXSec
   //are still reading bestfit values from fBestFitValues
