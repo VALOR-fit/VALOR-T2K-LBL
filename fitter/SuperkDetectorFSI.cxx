@@ -91,7 +91,7 @@ bool SuperkDetectorFSI::Read(TXMLEngine* xml, XMLNodePointer_t root_node)
   const int np = conv::kNumOfSKDetFSIParams;
 
   // Get SuperkDetectorFSI covariance matrix
-  fCovMtrx = util::XML2TMatrixD(xml,root_node,"skdetfsi/covariance_matrix");
+  fCovMtrx= util::XML2TMatrixD(xml,root_node,"skdetfsi/covariance_matrix");
   if(!fCovMtrx) {
     cerr << "Exp/SuperkDetectorFSI >> No SuperkDetector+FSI covariance matrix was found." << endl;
     exit(1);

@@ -85,10 +85,11 @@ private:
   void CleanUp (void);
 
   // Apply the given SK 1Re eff parameter to the given sample, mode, Ereco?                                                                                                                              
+#if FSI_BINS == 1
   bool ApplySyst1Re         (conv::PhysParamId_t p, conv::SuperkSample_t s, conv::SuperkMode_t m, double Ereco) const;
   bool ApplySystToSKMode    (conv::PhysParamId_t p, conv::SuperkSample_t s, conv::SuperkMode_t m) const;
   bool ApplySystToEnergyBin (conv::PhysParamId_t p, double Ereco) const;
-
+#endif
 
   //
   // Private data members

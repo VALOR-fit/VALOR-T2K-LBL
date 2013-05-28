@@ -629,6 +629,7 @@ double SuperkDetector::EfficiencyWeight(
   // 1-ring e-like sample
   //
   else if ( s == kSKsFCFV1RingELike ) {
+#if FSI_BINS == 1
     // find which sk det param we have to apply
     int iparam = -1;
     for(int ip = 0; ip < conv::kNumOfSKDetParams1Re; ip++) {
@@ -668,7 +669,7 @@ double SuperkDetector::EfficiencyWeight(
     weight  = eff_1Re_wght;
     
     //    cout << "1Re eff weight = " << weight << endl;
-    
+#endif
   }//1-ring e-like sample
 
   return weight;
@@ -737,6 +738,7 @@ double SuperkDetector::CurrentValue(PhysParamId_t p) const
     case kNuisSuperkEff1RmuNueCC:
       return fEff1RmuNuECCTwkDial;
       break;
+#if FSI_BINS == 1
     case kNuisSuperkEff1ReNueSigCC0:
     case kNuisSuperkEff1ReNueSigCC1:
     case kNuisSuperkEff1ReNueSigCC2:
@@ -753,13 +755,16 @@ double SuperkDetector::CurrentValue(PhysParamId_t p) const
       const TVectorD & current_values = *f1ReCurrentValues;
       int idx = util::ArrIdx::Instance()->SKDet1ReSystIdx(p);
       return current_values[idx];
+      break;
       }
+#endif
     default:
       return 0;
   }
   return 0;
 }
 //________________________________________________________________________________________
+#if FSI_BINS == 1
 bool SuperkDetector::ApplySyst1Re(
 		    conv::PhysParamId_t p, conv::SuperkSample_t s, conv::SuperkMode_t m, double Ereco) const
 {
@@ -801,4 +806,5 @@ bool SuperkDetector::ApplySystToEnergyBin(conv::PhysParamId_t p, double Ereco) c
 #endif
   return apply;
 }
+#endif
 //________________________________________________________________________________________                                                                                                               

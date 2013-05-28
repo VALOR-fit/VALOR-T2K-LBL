@@ -1080,6 +1080,7 @@ void FitParamList::AppendAllSuperkDetectorSystematics(FitParamList * fparm, int 
   fparm->AddParam( ip++, kNuisSuperkEff1RmuNueCC,    0.0, -1.0*SYST_NSIGMA, 1.0*SYST_NSIGMA, SYST_STEP,  false, true);
   fparm->AddParam( ip++, kNuisSuperkEnergyScale,     0.0, -1.0*SYST_NSIGMA, 1.0*SYST_NSIGMA, SYST_STEP,  false, true);
 
+#if FSI_BINS == 1
   // Adding the part corresponding to 1Re efficiencies (with covariance matrix) 
 
   //    Get the covariance matrices & best fits of SKDet
@@ -1113,6 +1114,7 @@ void FitParamList::AppendAllSuperkDetectorSystematics(FitParamList * fparm, int 
     double lowerr = TMath::Max(0., 1.0-(err*SYST_NSIGMA));
     fparm->AddParam(ip++, p,  1.0, lowerr, 1.0+(err*SYST_NSIGMA),  err*SYST_STEP,  false, true);
   }
+#endif
 
 }
 //________________________________________________________________________________________
@@ -1140,6 +1142,7 @@ void FitParamList::AppendSuperkDetectorSystematicsApp(FitParamList * fparm, int 
 // Add nuisance params
 //
 
+#if FSI_BINS == 1
   int ip = start; // first unallocated element in the param list
 
   // SK detector
@@ -1178,6 +1181,7 @@ void FitParamList::AppendSuperkDetectorSystematicsApp(FitParamList * fparm, int 
     double lowerr = TMath::Max(0., 1.0-(err*SYST_NSIGMA));
     fparm->AddParam(ip++, p,  1.0, lowerr, 1.0+(err*SYST_NSIGMA),  err*SYST_STEP,  false, true);
   }
+#endif
 
 } 
 //________________________________________________________________________________________
@@ -1272,6 +1276,7 @@ void FitParamList::AppendSuperkDetectorFSISystematicsApp(FitParamList * fparm, i
 // Add nuisance params
 //
 
+#if FSI_BINS == 1
   int ip = start; // first unallocated element in the param list
   // SK detector energy scale
   fparm->AddParam( ip++, kNuisSuperkEnergyScale,     0.0, -1.0*SYST_NSIGMA, 1.0*SYST_NSIGMA, SYST_STEP,  false, true);
@@ -1307,6 +1312,7 @@ void FitParamList::AppendSuperkDetectorFSISystematicsApp(FitParamList * fparm, i
     double lowerr = TMath::Max(0., 1.0-(err*SYST_NSIGMA));
     fparm->AddParam(ip++, p,  1.0, lowerr, 1.0+(err*SYST_NSIGMA),  err*SYST_STEP,  false, true);
   }
+#endif
 
 }
 //________________________________________________________________________________________
@@ -1397,6 +1403,7 @@ void FitParamList::AppendFSISystematicsApp(FitParamList * fparm, int start)
 // Add nuisance params
 //
 
+#if FSI_BINS == 1
   int ip = start; // first unallocated element in the param list
 
   //    Get the covariance matrices & best fits of FSI & BANFF from xml, 
@@ -1430,6 +1437,7 @@ void FitParamList::AppendFSISystematicsApp(FitParamList * fparm, int start)
     double lowerr = TMath::Max(0., 1.0-(err*SYST_NSIGMA));
     fparm->AddParam(ip++, p,  1.0, lowerr, 1.0+(err*SYST_NSIGMA),  err*SYST_STEP,  false, true);
   }
+#endif
 
 }
 //________________________________________________________________________________________
@@ -1550,6 +1558,7 @@ void FitParamList::AppendSelectedNonBANFFSystematics(FitParamList * fparm, int s
   fparm->AddParam( ip++, kNuisSuperkEff1RmuNC,       0.0, -1.0*SYST_NSIGMA, 1.0*SYST_NSIGMA, SYST_STEP,  false, true);
   fparm->AddParam( ip++, kNuisSuperkEnergyScale,     0.0, -1.0*SYST_NSIGMA, 1.0*SYST_NSIGMA, SYST_STEP,  false, true);
   //new - joint
+#if FSI_BINS == 1
   if (Opt::Instance()->gOscAnaTypeChoice == conv::kAnaCombined){
     const char * config_file = Form("%s/config/%s", gSystem->Getenv("T2KOSCANA"), "analysis_configuration.xml");
     TXMLEngine* xml = new TXMLEngine;
@@ -1577,6 +1586,7 @@ void FitParamList::AppendSelectedNonBANFFSystematics(FitParamList * fparm, int s
 	fparm->AddParam(ip++, p,  1.0, lowerr, 1.0+(err*SYST_NSIGMA),  err*SYST_STEP,  false, true);
     }
   }
+#endif
 
 }
 //________________________________________________________________________________________

@@ -172,6 +172,7 @@ namespace util {
 
   string           XML2RootFileName(TXMLEngine * xmleng, XMLNodePointer_t topnode, string path);
   string           XML2RootObjName (TXMLEngine * xmleng, XMLNodePointer_t topnode, string path);
+  string           XML2RootObjType (TXMLEngine * xmleng, XMLNodePointer_t topnode, string path);
 
   TFile *          XML2TFile       (TXMLEngine * xmleng, XMLNodePointer_t topnode, string path);
   TH1F *           XML2TH1F        (TXMLEngine * xmleng, XMLNodePointer_t topnode, string path);
@@ -181,6 +182,7 @@ namespace util {
   TVectorD *       XML2TVectorD    (TXMLEngine * xmleng, XMLNodePointer_t topnode, string path);
   TMatrixDSym *    XML2TMatrixDSym (TXMLEngine * xmleng, XMLNodePointer_t topnode, string path);
   TMatrixD *       XML2TMatrixD    (TXMLEngine * xmleng, XMLNodePointer_t topnode, string path);
+  TMatrixD *       XML2TH2D2TMatrixD (TXMLEngine * xmleng, XMLNodePointer_t topnode, string path);
   TSpline3 *       XML2TSpline3    (TXMLEngine * xmleng, XMLNodePointer_t topnode, string path);
   
   //

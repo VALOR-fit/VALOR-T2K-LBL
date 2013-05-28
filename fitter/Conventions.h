@@ -19,6 +19,8 @@ Changes since 2011_v0.9.0:
 #ifndef _t2kana_conv_h_
 #define _t2kana_conv_h_
 
+#include "Build.h"
+
 #ifndef ROOT_Rtypes
 #include "Rtypes.h"
 #endif
@@ -30,17 +32,20 @@ Changes since 2011_v0.9.0:
 #endif
 
 #ifndef BANFF_BINS
-//#define BANFF_BINS 1 //joint analysis, 33 bins
+#ifndef __NUMUONLY__
+#define BANFF_BINS 1 //joint analysis, 33 bins
+#else
 #define BANFF_BINS 2 //numu disapp analysis, 23 bins
 #endif
-
-/*Done in configure/Build.h now
-#ifndef PRODUCTIONMODE
-#define PRODUCTIONMODE
-// If turned on, code is made faster by not filling (or even initialising) histograms.
-// This causes some macros to fail (mostly those in spectra)
 #endif
-*/
+
+#ifndef FSI_BINS
+#ifndef __NUMUONLY__
+#define FSI_BINS 1 //joint analysis, 18 bins
+#else
+#define FSI_BINS 2 //numu disapp analysis, 6 bins
+#endif
+#endif
 
 #ifndef ONEOVERMAQE
 //#define ONEOVERMAQE
@@ -424,6 +429,7 @@ typedef enum EPhysParamId
    kNuisSuperkEff1RmuNC,       // SK 1Rmu NC efficiency
    kNuisSuperkEff1RmuNueCC,    // SK 1Rmu nue CC efficiency
 
+#if FSI_BINS == 1
    kNuisSuperkEff1ReNueSigCC0,    // SK 1Re CC eff for osc nue Ereco bin 0
    kNuisSuperkEff1ReNueSigCC1,    // SK 1Re CC eff for osc nue Ereco bin 1
    kNuisSuperkEff1ReNueSigCC2,    // SK 1Re CC eff for osc nue Ereco bin 2
@@ -436,6 +442,7 @@ typedef enum EPhysParamId
    kNuisSuperkEff1ReNC0,          // SK 1Re NC eff Ereco bin 0
    kNuisSuperkEff1ReNC1,          // SK 1Re NC eff Ereco bin 1
    kNuisSuperkEff1ReNC2,          // SK 1Re NC eff Ereco bin 2
+#endif
 
    /*
     * (flux and cross-section) corellated parameters used in the BANFF fit
@@ -513,6 +520,7 @@ typedef enum EPhysParamId
    kNuisFSI005,
 
    // FSI matrix 12x12 for 1Re
+#if FSI_BINS == 1
    kNuisFSI1Re000,
    kNuisFSI1Re001,
    kNuisFSI1Re002,
@@ -525,6 +533,7 @@ typedef enum EPhysParamId
    kNuisFSI1Re009,
    kNuisFSI1Re010,
    kNuisFSI1Re011,
+#endif
 
    // SKDET+FSI matrix 18x18
    kNuisSKDetFSI000,
@@ -533,6 +542,7 @@ typedef enum EPhysParamId
    kNuisSKDetFSI003,
    kNuisSKDetFSI004,
    kNuisSKDetFSI005,
+#if FSI_BINS == 1
    kNuisSKDetFSI006,
    kNuisSKDetFSI007,
    kNuisSKDetFSI008,
@@ -545,6 +555,7 @@ typedef enum EPhysParamId
    kNuisSKDetFSI015,
    kNuisSKDetFSI016,
    kNuisSKDetFSI017
+#endif
 
 } 
 PhysParamId_t;
@@ -569,8 +580,11 @@ PhysParamId_t;
 
 static const SuperkSample_t kSKSamples[kns] = {
   kSKsFCFV1RingMuLike,
+#ifdef __NUMUONLY__
   kSKsUndefined
-  //kSKsFCFV1RingELike
+#else
+  kSKsFCFV1RingELike
+#endif
 };
 
 //
@@ -1587,9 +1601,15 @@ static const int knwspl1Re = kNumOfXSecSystWghtSpl1Re; // as above - shorter nam
 
 // Number of SKDET+FSI systematic params
 
+#if FSI_BINS == 1
 static const int kNumOfSKDetFSIParams     = 18;
 static const int kNumOfSKDetFSIParams1Rmu = 6;
-static const int kNumOfSKDetFSIParams1Re = 12;
+static const int kNumOfSKDetFSIParams1Re  = 12;
+#else
+static const int kNumOfSKDetFSIParams     = 6;
+static const int kNumOfSKDetFSIParams1Rmu = 6;
+static const int kNumOfSKDetFSIParams1Re  = 0;
+#endif
 
 // The following is the list of the above kNumOfFSIParams
 static const PhysParamId_t kListOfSKDetFSIParams[kNumOfSKDetFSIParams] = 
@@ -1600,6 +1620,7 @@ static const PhysParamId_t kListOfSKDetFSIParams[kNumOfSKDetFSIParams] =
     kNuisSKDetFSI003,
     kNuisSKDetFSI004,
     kNuisSKDetFSI005,
+#if FSI_BINS == 1
     kNuisSKDetFSI006,
     kNuisSKDetFSI007,
     kNuisSKDetFSI008,
@@ -1612,6 +1633,7 @@ static const PhysParamId_t kListOfSKDetFSIParams[kNumOfSKDetFSIParams] =
     kNuisSKDetFSI015,
     kNuisSKDetFSI016,
     kNuisSKDetFSI017
+#endif
 };
 
 static const double kSKDetFSIParamsErecoCut[kNumOfSKDetFSIParams][2] =
@@ -1622,6 +1644,7 @@ static const double kSKDetFSIParamsErecoCut[kNumOfSKDetFSIParams][2] =
   { 0.0,  30.0 }, // FSI003
   { 0.0,  30.0 }, // FSI004
   { 0.0,  30.0 }, // FSI005
+#if FSI_BINS == 1
   { 0.0,  0.35 }, // FSI1Re000
   { 0.35,  0.8 }, // FSI1Re001
   { 0.8,  1.25 }, // FSI1Re002
@@ -1634,8 +1657,10 @@ static const double kSKDetFSIParamsErecoCut[kNumOfSKDetFSIParams][2] =
   { 0.0,  0.35 }, // FSI1Re009
   { 0.35,  0.8 }, // FSI1Re010
   { 0.8,  1.25 }  // FSI1Re011
+#endif
 };
 
+#if FSI_BINS == 1
 static const bool kSKDetFSIApplySKDetFSIParamToSKMode[kns][knm][kNumOfSKDetFSIParams] = {
   // > 1 muon-like ring 
   {
@@ -1750,6 +1775,122 @@ static const bool kSKDetFSIApplySKDetFSIParamToSKMode[kns][knm][kNumOfSKDetFSIPa
   }
   
 };
+#elif FSI_BINS == 2
+static const bool kSKDetFSIApplySKDetFSIParamToSKMode[kns][knm][kNumOfSKDetFSIParams] = {
+  // > 1 muon-like ring 
+  {
+    // FSI000 FSI001 FSI002  FSI003 FSI004 FSI005
+    {  1, 1, 1, 0, 0, 0 }, // kSKmNuMuCCQE        
+    {  0, 0, 0, 1, 0, 0 }, // kSKmNuMuCC1pi
+    {  0, 0, 0, 1, 0, 0 }, // kSKmNuMuCCcoh
+    {  0, 0, 0, 1, 0, 0 }, // kSKmNuMuCCoth_mu
+    {  0, 0, 0, 0, 0, 1 }, // kSKmNuMuNC1piC
+    {  0, 0, 0, 0, 0, 1 }, // kSKmNuMuNCoth_mu
+
+    {  1, 1, 1, 0, 0, 0 }, // kSKmNuMuBarCCQE        
+    {  0, 0, 0, 1, 0, 0 }, // kSKmNuMuBarCC1pi
+    {  0, 0, 0, 1, 0, 0 }, // kSKmNuMuBarCCcoh
+    {  0, 0, 0, 1, 0, 0 }, // kSKmNuMuBarCCoth_mu
+    {  0, 0, 0, 0, 0, 1 }, // kSKmNuMuBarNC1piC
+    {  0, 0, 0, 0, 0, 1 }, // kSKmNuMuBarNCoth_mu
+
+    {  0, 0, 0, 0, 1, 0 }, // kSKmNuECCQE        
+    {  0, 0, 0, 0, 1, 0 }, // kSKmNuECC1pi
+    {  0, 0, 0, 0, 1, 0 }, // kSKmNuECCcoh
+    {  0, 0, 0, 0, 1, 0 }, // kSKmNuECCoth_mu
+    {  0, 0, 0, 0, 0, 1 }, // kSKmNuENC1piC
+    {  0, 0, 0, 0, 0, 1 }, // kSKmNuENCoth_mu
+
+    {  0, 0, 0, 0, 1, 0 }, // kSKmNuEBarCCQE        
+    {  0, 0, 0, 0, 1, 0 }, // kSKmNuEBarCC1pi
+    {  0, 0, 0, 0, 1, 0 }, // kSKmNuEBarCCcoh
+    {  0, 0, 0, 0, 1, 0 }, // kSKmNuEBarCCoth_mu
+    {  0, 0, 0, 0, 0, 1 }, // kSKmNuEBarNC1piC
+    {  0, 0, 0, 0, 0, 1 }, // kSKmNuEBarNCoth_mu
+
+    {  0, 0, 0, 0, 1, 0 }, // kSKmSigNuECCQE        
+    {  0, 0, 0, 0, 1, 0 }, // kSKmSigNuECC1pi
+    {  0, 0, 0, 0, 1, 0 }, // kSKmSigNuECCcoh
+    {  0, 0, 0, 0, 1, 0 }, // kSKmSigNuECCoth_mu
+
+    {  0, 0, 0, 0, 0, 0 }, // kSKmMEC
+
+    {  0, 0, 0, 0, 0, 0 }, // kSKmUndefined
+    {  0, 0, 0, 0, 0, 0 }, // kSKmUndefined
+    {  0, 0, 0, 0, 0, 0 }, // kSKmUndefined
+    {  0, 0, 0, 0, 0, 0 }, // kSKmUndefined
+    {  0, 0, 0, 0, 0, 0 }, // kSKmUndefined
+    {  0, 0, 0, 0, 0, 0 }, // kSKmUndefined
+    {  0, 0, 0, 0, 0, 0 }, // kSKmUndefined
+    {  0, 0, 0, 0, 0, 0 }, // kSKmUndefined
+    {  0, 0, 0, 0, 0, 0 }, // kSKmUndefined
+    {  0, 0, 0, 0, 0, 0 }, // kSKmUndefined
+    {  0, 0, 0, 0, 0, 0 }, // kSKmUndefined
+    {  0, 0, 0, 0, 0, 0 }, // kSKmUndefined
+    {  0, 0, 0, 0, 0, 0 }, // kSKmUndefined
+    {  0, 0, 0, 0, 0, 0 }, // kSKmUndefined
+    {  0, 0, 0, 0, 0, 0 }, // kSKmUndefined
+    {  0, 0, 0, 0, 0, 0 }, // kSKmUndefined
+    {  0, 0, 0, 0, 0, 0 }  // kSKmUndefined
+  }
+  ,
+  // > 1 electron-like ring 
+  {
+    {  0, 0, 0, 0, 0, 0 }, // kSKmNuMuCCQE        
+    {  0, 0, 0, 0, 0, 0 }, // kSKmNuMuCC1pi
+    {  0, 0, 0, 0, 0, 0 }, // kSKmNuMuCCcoh
+    {  0, 0, 0, 0, 0, 0 }, // kSKmNuMuCCoth_e
+    {  0, 0, 0, 0, 0, 0 }, // kSKmNuMuNC1pi0 
+    {  0, 0, 0, 0, 0, 0 }, // kSKmNuMuNCcoh 
+    {  0, 0, 0, 0, 0, 0 }, // kSKmNuMuNCoth_e
+
+    {  0, 0, 0, 0, 0, 0 }, // kSKmNuMuBarCCQE        
+    {  0, 0, 0, 0, 0, 0 }, // kSKmNuMuBarCC1pi
+    {  0, 0, 0, 0, 0, 0 }, // kSKmNuMuBarCCcoh
+    {  0, 0, 0, 0, 0, 0 }, // kSKmNuMuBarCCoth_e
+    {  0, 0, 0, 0, 0, 0 }, // kSKmNuMuBarNC1pi0 
+    {  0, 0, 0, 0, 0, 0 }, // kSKmNuMuBarNCcoh 
+    {  0, 0, 0, 0, 0, 0 }, // kSKmNuMuBarNCoth_e
+
+    {  0, 0, 0, 0, 0, 0 }, // kSKmNuECCQE        
+    {  0, 0, 0, 0, 0, 0 }, // kSKmNuECC1pi
+    {  0, 0, 0, 0, 0, 0 }, // kSKmNuECCcoh
+    {  0, 0, 0, 0, 0, 0 }, // kSKmNuECCoth_e
+    {  0, 0, 0, 0, 0, 0 }, // kSKmNuENC1pi0 
+    {  0, 0, 0, 0, 0, 0 }, // kSKmNuENCcoh 
+    {  0, 0, 0, 0, 0, 0 }, // kSKmNuENCoth_e
+
+    {  0, 0, 0, 0, 0, 0 }, // kSKmNuEBarCCQE        
+    {  0, 0, 0, 0, 0, 0 }, // kSKmNuEBarCC1pi
+    {  0, 0, 0, 0, 0, 0 }, // kSKmNuEBarCCcoh
+    {  0, 0, 0, 0, 0, 0 }, // kSKmNuEBarCCoth_e
+    {  0, 0, 0, 0, 0, 0 }, // kSKmNuEBarNC1pi0 
+    {  0, 0, 0, 0, 0, 0 }, // kSKmNuEBarNCcoh 
+    {  0, 0, 0, 0, 0, 0 }, // kSKmNuEBarNCoth_e
+
+    {  0, 0, 0, 0, 0, 0 }, // kSKmSigNuECCQE        
+    {  0, 0, 0, 0, 0, 0 }, // kSKmSigNuECC1pi
+    {  0, 0, 0, 0, 0, 0 }, // kSKmSigNuECCcoh
+    {  0, 0, 0, 0, 0, 0 }, // kSKmSigNuECCoth_e
+
+    {  0, 0, 0, 0, 0, 0 }, // kSKmUndefined
+    {  0, 0, 0, 0, 0, 0 }, // kSKmUndefined
+    {  0, 0, 0, 0, 0, 0 }, // kSKmUndefined
+    {  0, 0, 0, 0, 0, 0 }, // kSKmUndefined
+    {  0, 0, 0, 0, 0, 0 }, // kSKmUndefined
+    {  0, 0, 0, 0, 0, 0 }, // kSKmUndefined
+    {  0, 0, 0, 0, 0, 0 }, // kSKmUndefined
+    {  0, 0, 0, 0, 0, 0 }, // kSKmUndefined
+    {  0, 0, 0, 0, 0, 0 }, // kSKmUndefined
+    {  0, 0, 0, 0, 0, 0 }, // kSKmUndefined
+    {  0, 0, 0, 0, 0, 0 }, // kSKmUndefined
+    {  0, 0, 0, 0, 0, 0 }, // kSKmUndefined
+    {  0, 0, 0, 0, 0, 0 }, // kSKmUndefined
+    {  0, 0, 0, 0, 0, 0 }  // kSKmUndefined
+  }
+  
+};
+#endif
 
 
 //
@@ -1758,9 +1899,16 @@ static const bool kSKDetFSIApplySKDetFSIParamToSKMode[kns][knm][kNumOfSKDetFSIPa
 
 // Number of FSI systematic params
 
+#if FSI_BINS == 1
 static const int kNumOfFSIParams     = 18;
 static const int kNumOfFSIParams1Rmu = 6;
-static const int kNumOfFSIParams1Re = 12;
+static const int kNumOfFSIParams1Re  = 12;
+#else
+static const int kNumOfFSIParams     = 6;
+static const int kNumOfFSIParams1Rmu = 6;
+static const int kNumOfFSIParams1Re  = 0;
+
+#endif
 
 // The following is the list of the above kNumOfFSIParams
 static const PhysParamId_t kListOfFSIParams[kNumOfFSIParams] = 
@@ -1771,6 +1919,7 @@ static const PhysParamId_t kListOfFSIParams[kNumOfFSIParams] =
     kNuisFSI003,
     kNuisFSI004,
     kNuisFSI005,
+#if FSI_BINS == 1
     kNuisFSI1Re000,
     kNuisFSI1Re001,
     kNuisFSI1Re002,
@@ -1783,6 +1932,7 @@ static const PhysParamId_t kListOfFSIParams[kNumOfFSIParams] =
     kNuisFSI1Re009,
     kNuisFSI1Re010,
     kNuisFSI1Re011,
+#endif
 };
 
 static const double kFSIParamsErecoCut[kNumOfFSIParams][2] =
@@ -1793,6 +1943,7 @@ static const double kFSIParamsErecoCut[kNumOfFSIParams][2] =
   { 0.0,  30.0 }, // FSI003
   { 0.0,  30.0 }, // FSI004
   { 0.0,  30.0 }, // FSI005
+#if FSI_BINS == 1
   { 0.0,  0.35 }, // FSI1Re000
   { 0.35,  0.8 }, // FSI1Re001
   { 0.8,  1.25 }, // FSI1Re002
@@ -1805,8 +1956,11 @@ static const double kFSIParamsErecoCut[kNumOfFSIParams][2] =
   { 0.0,  0.35 }, // FSI1Re009
   { 0.35,  0.8 }, // FSI1Re010
   { 0.8,  1.25 }  // FSI1Re011
+#endif
 };
 
+
+#if FSI_BINS == 1
 static const bool kFSIApplyFSIParamToSKMode[kns][knm][kNumOfFSIParams] = {
   // > 1 muon-like ring 
   {
@@ -1921,12 +2075,131 @@ static const bool kFSIApplyFSIParamToSKMode[kns][knm][kNumOfFSIParams] = {
   }
   
 };
+#elif FSI_BINS == 2
+static const bool kFSIApplyFSIParamToSKMode[kns][knm][kNumOfFSIParams] = {
+  // > 1 muon-like ring 
+  {
+    // FSI000 FSI001 FSI002  FSI003 FSI004 FSI005
+    {  1, 1, 1, 0, 0, 0 }, // kSKmNuMuCCQE        
+    {  0, 0, 0, 1, 0, 0 }, // kSKmNuMuCC1pi
+    {  0, 0, 0, 1, 0, 0 }, // kSKmNuMuCCcoh
+    {  0, 0, 0, 1, 0, 0 }, // kSKmNuMuCCoth_mu
+    {  0, 0, 0, 0, 0, 1 }, // kSKmNuMuNC1piC
+    {  0, 0, 0, 0, 0, 1 }, // kSKmNuMuNCoth_mu
 
+    {  1, 1, 1, 0, 0, 0 }, // kSKmNuMuBarCCQE        
+    {  0, 0, 0, 1, 0, 0 }, // kSKmNuMuBarCC1pi
+    {  0, 0, 0, 1, 0, 0 }, // kSKmNuMuBarCCcoh
+    {  0, 0, 0, 1, 0, 0 }, // kSKmNuMuBarCCoth_mu
+    {  0, 0, 0, 0, 0, 1 }, // kSKmNuMuBarNC1piC
+    {  0, 0, 0, 0, 0, 1 }, // kSKmNuMuBarNCoth_mu
+
+    {  0, 0, 0, 0, 1, 0 }, // kSKmNuECCQE        
+    {  0, 0, 0, 0, 1, 0 }, // kSKmNuECC1pi
+    {  0, 0, 0, 0, 1, 0 }, // kSKmNuECCcoh
+    {  0, 0, 0, 0, 1, 0 }, // kSKmNuECCoth_mu
+    {  0, 0, 0, 0, 0, 1 }, // kSKmNuENC1piC
+    {  0, 0, 0, 0, 0, 1 }, // kSKmNuENCoth_mu
+
+    {  0, 0, 0, 0, 1, 0 }, // kSKmNuEBarCCQE        
+    {  0, 0, 0, 0, 1, 0 }, // kSKmNuEBarCC1pi
+    {  0, 0, 0, 0, 1, 0 }, // kSKmNuEBarCCcoh
+    {  0, 0, 0, 0, 1, 0 }, // kSKmNuEBarCCoth_mu
+    {  0, 0, 0, 0, 0, 1 }, // kSKmNuEBarNC1piC
+    {  0, 0, 0, 0, 0, 1 }, // kSKmNuEBarNCoth_mu
+
+    {  0, 0, 0, 0, 1, 0 }, // kSKmSigNuECCQE        
+    {  0, 0, 0, 0, 1, 0 }, // kSKmSigNuECC1pi
+    {  0, 0, 0, 0, 1, 0 }, // kSKmSigNuECCcoh
+    {  0, 0, 0, 0, 1, 0 }, // kSKmSigNuECCoth_mu
+
+    {  0, 0, 0, 0, 0, 0 }, // kSKmMEC
+
+    {  0, 0, 0, 0, 0, 0 }, // kSKmUndefined
+    {  0, 0, 0, 0, 0, 0 }, // kSKmUndefined
+    {  0, 0, 0, 0, 0, 0 }, // kSKmUndefined
+    {  0, 0, 0, 0, 0, 0 }, // kSKmUndefined
+    {  0, 0, 0, 0, 0, 0 }, // kSKmUndefined
+    {  0, 0, 0, 0, 0, 0 }, // kSKmUndefined
+    {  0, 0, 0, 0, 0, 0 }, // kSKmUndefined
+    {  0, 0, 0, 0, 0, 0 }, // kSKmUndefined
+    {  0, 0, 0, 0, 0, 0 }, // kSKmUndefined
+    {  0, 0, 0, 0, 0, 0 }, // kSKmUndefined
+    {  0, 0, 0, 0, 0, 0 }, // kSKmUndefined
+    {  0, 0, 0, 0, 0, 0 }, // kSKmUndefined
+    {  0, 0, 0, 0, 0, 0 }, // kSKmUndefined
+    {  0, 0, 0, 0, 0, 0 }, // kSKmUndefined
+    {  0, 0, 0, 0, 0, 0 }, // kSKmUndefined
+    {  0, 0, 0, 0, 0, 0 }, // kSKmUndefined
+    {  0, 0, 0, 0, 0, 0 }  // kSKmUndefined
+  }
+  ,
+  // > 1 electron-like ring 
+  {
+    {  0, 0, 0, 0, 0, 0 }, // kSKmNuMuCCQE        
+    {  0, 0, 0, 0, 0, 0 }, // kSKmNuMuCC1pi
+    {  0, 0, 0, 0, 0, 0 }, // kSKmNuMuCCcoh
+    {  0, 0, 0, 0, 0, 0 }, // kSKmNuMuCCoth_e
+    {  0, 0, 0, 0, 0, 0 }, // kSKmNuMuNC1pi0 
+    {  0, 0, 0, 0, 0, 0 }, // kSKmNuMuNCcoh 
+    {  0, 0, 0, 0, 0, 0 }, // kSKmNuMuNCoth_e
+
+    {  0, 0, 0, 0, 0, 0 }, // kSKmNuMuBarCCQE        
+    {  0, 0, 0, 0, 0, 0 }, // kSKmNuMuBarCC1pi
+    {  0, 0, 0, 0, 0, 0 }, // kSKmNuMuBarCCcoh
+    {  0, 0, 0, 0, 0, 0 }, // kSKmNuMuBarCCoth_e
+    {  0, 0, 0, 0, 0, 0 }, // kSKmNuMuBarNC1pi0 
+    {  0, 0, 0, 0, 0, 0 }, // kSKmNuMuBarNCcoh 
+    {  0, 0, 0, 0, 0, 0 }, // kSKmNuMuBarNCoth_e
+
+    {  0, 0, 0, 0, 0, 0 }, // kSKmNuECCQE        
+    {  0, 0, 0, 0, 0, 0 }, // kSKmNuECC1pi
+    {  0, 0, 0, 0, 0, 0 }, // kSKmNuECCcoh
+    {  0, 0, 0, 0, 0, 0 }, // kSKmNuECCoth_e
+    {  0, 0, 0, 0, 0, 0 }, // kSKmNuENC1pi0 
+    {  0, 0, 0, 0, 0, 0 }, // kSKmNuENCcoh 
+    {  0, 0, 0, 0, 0, 0 }, // kSKmNuENCoth_e
+
+    {  0, 0, 0, 0, 0, 0 }, // kSKmNuEBarCCQE        
+    {  0, 0, 0, 0, 0, 0 }, // kSKmNuEBarCC1pi
+    {  0, 0, 0, 0, 0, 0 }, // kSKmNuEBarCCcoh
+    {  0, 0, 0, 0, 0, 0 }, // kSKmNuEBarCCoth_e
+    {  0, 0, 0, 0, 0, 0 }, // kSKmNuEBarNC1pi0 
+    {  0, 0, 0, 0, 0, 0 }, // kSKmNuEBarNCcoh 
+    {  0, 0, 0, 0, 0, 0 }, // kSKmNuEBarNCoth_e
+
+    {  0, 0, 0, 0, 0, 0 }, // kSKmUndefined
+    {  0, 0, 0, 0, 0, 0 }, // kSKmUndefined
+    {  0, 0, 0, 0, 0, 0 }, // kSKmUndefined
+    {  0, 0, 0, 0, 0, 0 }, // kSKmUndefined
+    {  0, 0, 0, 0, 0, 0 }, // kSKmUndefined
+    {  0, 0, 0, 0, 0, 0 }, // kSKmUndefined
+    {  0, 0, 0, 0, 0, 0 }, // kSKmUndefined
+    {  0, 0, 0, 0, 0, 0 }, // kSKmUndefined
+    {  0, 0, 0, 0, 0, 0 }, // kSKmUndefined
+    {  0, 0, 0, 0, 0, 0 }, // kSKmUndefined
+    {  0, 0, 0, 0, 0, 0 }, // kSKmUndefined
+    {  0, 0, 0, 0, 0, 0 }, // kSKmUndefined
+    {  0, 0, 0, 0, 0, 0 }, // kSKmUndefined
+    {  0, 0, 0, 0, 0, 0 }  // kSKmUndefined
+  }
+  
+};
+#endif
+
+#if FSI_BINS == 1
 static const int kNumOfSKDetParams1Rmu = 8;
 static const int kNumOfSKDetParams1Re = 12; //only the specific for 1Re to read the matrix, Ereco scale not included then
 static const int kNumOfSKDetParams    = 20;
+#else
+static const int kNumOfSKDetParams1Rmu = 8;
+static const int kNumOfSKDetParams1Re  = 0; //only the specific for 1Re to read the matrix, Ereco scale not included then
+static const int kNumOfSKDetParams     = 8;
+
+#endif
 
 // The following is the list of the efficiency parameters in 1Re
+#if FSI_BINS == 1
 static const PhysParamId_t kListOfSKDet1ReParams[kNumOfSKDetParams1Re] = 
 {
   kNuisSuperkEff1ReNueSigCC0,    // SK 1Re CC eff for osc nue Ereco bin 0                                                                                                             
@@ -2077,6 +2350,7 @@ static const bool kSKDet1ReApplyParamToSKMode[kns][knm][kNumOfSKDetParams1Re] = 
   }
   
 };
+#endif
 
 //
 // ------------------------------------------------------------------------

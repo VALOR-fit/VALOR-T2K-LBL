@@ -122,12 +122,12 @@ bool NuXSec::ReadSplines(TXMLEngine* xml, XMLNodePointer_t root_node)
 #if SPLINE_TYPE == -1
   cout << "Exp/NuXSec >> Special mode turned on in which splines are not read, and weights involving splines are set to 1" << endl;
   return true;
-#elif SPLINE_TYPE == 1
+#endif
+
   TFile * spline_file_1Rmu = util::XML2TFile(xml,root_node,"xsec/weight_splines/one_mu_ring");
   assert(spline_file_1Rmu);
   TFile * spline_file_1Re = util::XML2TFile(xml,root_node,"xsec/weight_splines/one_e_ring");
   assert(spline_file_1Re);
-#endif
 
   // Make a flat spline
 #ifdef __use_flat_splines_for_missing_splines__
@@ -402,7 +402,9 @@ double NuXSec::FinTuningWght_1p(
     TSpline3 * wght_spl = this->FindWghtSpline(p,s,m,Ereco,Etrue);
     assert(wght_spl);
     double tb = fBANFF->BestFitValue(p);
-    double relerr = 0;       
+    /*
+    SPLINES now in terms of x_MA, rather than sigma
+    double relerr = 0;
     if(p == kNuisBANFFMAQE)
 #ifndef ONEOVERMAQE
       relerr = fSplineMAQERelErr;
@@ -413,6 +415,9 @@ double NuXSec::FinTuningWght_1p(
       relerr = fSplineMARESRelErr;
     double numerator = (tb-1) / relerr;
     wght = wght_spl->Eval(numerator) / 1.;
+    */
+    wght = wght_spl->Eval(tb);
+    wght = wght_spl->Eval(1);
     // }
   }
   
@@ -541,6 +546,8 @@ double NuXSec::SystWght_1p(
        assert(wght_spl);
        double tb = fBANFF->BestFitValue(p);
        double tc = fBANFF->CurrentValue(p);
+       /*
+       SPLINES now in terms of x_MA, rather than sigma
        double relerr = 0;
        if(p == kNuisBANFFMAQE)
 #ifndef ONEOVERMAQE
@@ -553,6 +560,9 @@ double NuXSec::SystWght_1p(
        double denominator = (tb-1) / relerr;
        double numerator = (tc-1) / relerr;
        wght = wght_spl->Eval(numerator) / wght_spl->Eval(denominator);
+       */
+       wght = wght_spl->Eval(tc) / wght_spl->Eval(tb);
+       wght_spl->Eval(1) / wght_spl->Eval(1);
        //}
   }
 

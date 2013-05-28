@@ -19,6 +19,7 @@
 //#define __show_cholesky_decomposition_mesg_debug__
 //#define __show_cholesky_gen_corr_param_variations_mesg_debug__
 //#define __show_xml_mesg_info__
+//#define __show_xml_mesg_debug__
 //#define __show_arr_idx_mesg_debug__
 
 #include <cassert>
@@ -793,6 +794,7 @@ string t2kana::util::AsString(PhysParamId_t p)
     case ( kNuisSuperkEff1RmuNC       ) : return "SK efficiency; 1Rmu; NC";         break;
     case ( kNuisSuperkEff1RmuNueCC    ) : return "SK efficiency; 1Rmu; nue CC";     break;
 
+#if FSI_BINS == 1
     case ( kNuisSuperkEff1ReNueSigCC0    ) : return "SK efficiency; 1Re; osc. nue CC E0";     break;
     case ( kNuisSuperkEff1ReNueSigCC1    ) : return "SK efficiency; 1Re; osc. nue CC E1";     break;
     case ( kNuisSuperkEff1ReNueSigCC2    ) : return "SK efficiency; 1Re; osc. nue CC E2";     break;
@@ -805,6 +807,7 @@ string t2kana::util::AsString(PhysParamId_t p)
     case ( kNuisSuperkEff1ReNC0        )   : return "SK efficiency; 1Re; NC E0";     break;
     case ( kNuisSuperkEff1ReNC1        )   : return "SK efficiency; 1Re; NC E1";     break;
     case ( kNuisSuperkEff1ReNC2        )   : return "SK efficiency; 1Re; NC E2";     break;
+#endif
 
     //
     // BANFF flux and cross-section params
@@ -908,6 +911,7 @@ string t2kana::util::AsString(PhysParamId_t p)
       break;
     }//FSI for 1Rmu
 
+#if FSI_BINS == 1
     case ( kNuisFSI1Re000 ) :
     case ( kNuisFSI1Re001 ) :
     case ( kNuisFSI1Re002 ) :
@@ -946,6 +950,7 @@ string t2kana::util::AsString(PhysParamId_t p)
 		  kFSIParamsErecoCut[ip][0],kFSIParamsErecoCut[ip][1],nutypes.c_str());     
       break;
       }
+#endif
 
     //
     // SKDET+FSI
@@ -978,6 +983,7 @@ string t2kana::util::AsString(PhysParamId_t p)
       break;
     }//FSI for 1Rmu
 
+#if FSI_BINS == 1
     case ( kNuisSKDetFSI006 ) :
     case ( kNuisSKDetFSI007 ) :
     case ( kNuisSKDetFSI008 ) :
@@ -1016,6 +1022,7 @@ string t2kana::util::AsString(PhysParamId_t p)
 		  kSKDetFSIParamsErecoCut[ip][0],kSKDetFSIParamsErecoCut[ip][1],nutypes.c_str());     
       break;
       }
+#endif
   
   
     default : 
@@ -1084,6 +1091,7 @@ string t2kana::util::AsStringTex(PhysParamId_t p)
     case ( kNuisSuperkEff1RmuNC       ) : return "SK efficiency, 1Rmu, NC";         break;
     case ( kNuisSuperkEff1RmuNueCC    ) : return "SK efficiency, 1Rmu, nue CC";     break;
 
+#if FSI_BINS == 1
     case ( kNuisSuperkEff1ReNueSigCC0 ) : return "SK efficiency, 1Re, Osc. $\\nu_{e}$ CC E0"; break;
     case ( kNuisSuperkEff1ReNueSigCC1 ) : return "SK efficiency, 1Re, Osc. $\\nu_{e}$ CC E1"; break;
     case ( kNuisSuperkEff1ReNueSigCC2 ) : return "SK efficiency, 1Re, Osc. $\\nu_{e}$ CC E2"; break;
@@ -1096,6 +1104,7 @@ string t2kana::util::AsStringTex(PhysParamId_t p)
     case ( kNuisSuperkEff1ReNC0 )    : return "SK efficiency, 1Re, NC E0"; break;
     case ( kNuisSuperkEff1ReNC1 )    : return "SK efficiency, 1Re, NC E1"; break;
     case ( kNuisSuperkEff1ReNC2 )    : return "SK efficiency, 1Re, NC E2"; break;
+#endif
 
     //
     // BANFF flux and cross-section params
@@ -1195,6 +1204,7 @@ string t2kana::util::AsStringTex(PhysParamId_t p)
       break;
     }//FSI for 1Rmu
 
+#if FSI_BINS == 1
     case ( kNuisFSI1Re000 ) :
     case ( kNuisFSI1Re001 ) :
     case ( kNuisFSI1Re002 ) :
@@ -1234,6 +1244,7 @@ string t2kana::util::AsStringTex(PhysParamId_t p)
 		  kFSIParamsErecoCut[ip][0],kFSIParamsErecoCut[ip][1],nutypes.c_str());     
       break;
     }//FSI for 1Re
+#endif
 
     case ( kNuisSKDetFSI000 ) :
     case ( kNuisSKDetFSI001 ) :
@@ -1262,6 +1273,7 @@ string t2kana::util::AsStringTex(PhysParamId_t p)
       break;
     }//FSI for 1Rmu
 
+#if FSI_BINS == 1
     case ( kNuisSKDetFSI006 ) :
     case ( kNuisSKDetFSI007 ) :
     case ( kNuisSKDetFSI008 ) :
@@ -1301,6 +1313,7 @@ string t2kana::util::AsStringTex(PhysParamId_t p)
 		  kSKDetFSIParamsErecoCut[ip][0],kSKDetFSIParamsErecoCut[ip][1],nutypes.c_str());     
       break;
     }//FSI for 1Re
+#endif
 
     default : 
       return "--";
@@ -1384,6 +1397,7 @@ string t2kana::util::AsStringPaperTex(PhysParamId_t p)
   case ( kNuisSuperkEff1RmuNC       ) : return "$f_{1R_{\\mu}: NC; r}^{SK}$";                  break;
   case ( kNuisSuperkEff1RmuNueCC    ) : return "$f_{1R_{\\mu}: \\nu_e; r}^{SK}$";              break;
 
+#if FSI_BINS == 1
   case ( kNuisSuperkEff1ReNueSigCC0  )   : return "$f_{1R_{e}: osc \\nu_e CC E0; r}^{SK}$";     break;
   case ( kNuisSuperkEff1ReNueSigCC1  )   : return "$f_{1R_{e}: osc \\nu_e CC E1; r}^{SK}$";     break;
   case ( kNuisSuperkEff1ReNueSigCC2  )   : return "$f_{1R_{e}: osc \\nu_e CC E2; r}^{SK}$";     break;
@@ -1396,7 +1410,7 @@ string t2kana::util::AsStringPaperTex(PhysParamId_t p)
   case ( kNuisSuperkEff1ReNC0        )   : return "$f_{1R_{e}: NC E0; r}^{SK}$";   break;
   case ( kNuisSuperkEff1ReNC1        )   : return "$f_{1R_{e}: NC E1; r}^{SK}$";   break;
   case ( kNuisSuperkEff1ReNC2        )   : return "$f_{1R_{e}: NC E2; r}^{SK}$";   break;
-
+#endif
 
     //                                                          
     // BANFF flux and cross-section params                                                                                                                                       
@@ -1468,6 +1482,7 @@ string t2kana::util::AsStringPaperTex(PhysParamId_t p)
   case ( kNuisFSI003 ) :
   case ( kNuisFSI004 ) :
   case ( kNuisFSI005 ) :
+#if FSI_BINS == 1
   case ( kNuisFSI1Re000 ) :
   case ( kNuisFSI1Re001 ) :
   case ( kNuisFSI1Re002 ) :
@@ -1480,6 +1495,7 @@ string t2kana::util::AsStringPaperTex(PhysParamId_t p)
   case ( kNuisFSI1Re009 ) :
   case ( kNuisFSI1Re010 ) :
   case ( kNuisFSI1Re011 ) :
+#endif
     {
       int ip = (int)p - (int)kNuisFSI000;
       return Form("$f_{%d; t, r}^{FSI}$", ip);
@@ -1491,6 +1507,7 @@ string t2kana::util::AsStringPaperTex(PhysParamId_t p)
   case ( kNuisSKDetFSI003 ) :
   case ( kNuisSKDetFSI004 ) :
   case ( kNuisSKDetFSI005 ) :
+#if FSI_BINS == 1
   case ( kNuisSKDetFSI006 ) :
   case ( kNuisSKDetFSI007 ) :
   case ( kNuisSKDetFSI008 ) :
@@ -1503,6 +1520,7 @@ string t2kana::util::AsStringPaperTex(PhysParamId_t p)
   case ( kNuisSKDetFSI015 ) :
   case ( kNuisSKDetFSI016 ) :
   case ( kNuisSKDetFSI017 ) :
+#endif
     {
       int ip = (int)p - (int)kNuisSKDetFSI000;
       return Form("$f_{%d; t, r}^{SK+FSI}$", ip);
@@ -1590,6 +1608,7 @@ string t2kana::util::AsStringPaperRooTex(PhysParamId_t p)
   case ( kNuisSuperkEff1RmuNC       ) : return "f_{1R_{#mu}: NC; r}^{SK}";                  break;
   case ( kNuisSuperkEff1RmuNueCC    ) : return "f_{1R_{#mu}: #nu_e; r}^{SK}";              break;
 
+#if FSI_BINS == 1
   case ( kNuisSuperkEff1ReNueSigCC0  )   : return "f_{1R_{e}: osc #nu_e CC E0; r}^{SK}";     break;
   case ( kNuisSuperkEff1ReNueSigCC1  )   : return "f_{1R_{e}: osc #nu_e CC E1; r}^{SK}";     break;
   case ( kNuisSuperkEff1ReNueSigCC2  )   : return "f_{1R_{e}: osc #nu_e CC E2; r}^{SK}";     break;
@@ -1602,7 +1621,8 @@ string t2kana::util::AsStringPaperRooTex(PhysParamId_t p)
   case ( kNuisSuperkEff1ReNC0        )   : return "f_{1R_{e}: NC E0; r}^{SK}";   break;
   case ( kNuisSuperkEff1ReNC1        )   : return "f_{1R_{e}: NC E1; r}^{SK}";   break;
   case ( kNuisSuperkEff1ReNC2        )   : return "f_{1R_{e}: NC E2; r}^{SK}";   break;
-    
+#endif
+   
     //
     // BANFF flux and cross-section params 
     //                                                                                                                                                                                 
@@ -1673,6 +1693,7 @@ string t2kana::util::AsStringPaperRooTex(PhysParamId_t p)
   case ( kNuisFSI003 ) :
   case ( kNuisFSI004 ) :
   case ( kNuisFSI005 ) :
+#if FSI_BINS == 1
   case ( kNuisFSI1Re000 ) :
   case ( kNuisFSI1Re001 ) :
   case ( kNuisFSI1Re002 ) :
@@ -1685,6 +1706,7 @@ string t2kana::util::AsStringPaperRooTex(PhysParamId_t p)
   case ( kNuisFSI1Re009 ) :
   case ( kNuisFSI1Re010 ) :
   case ( kNuisFSI1Re011 ) :
+#endif
     {
       int ip = (int)p - (int)kNuisFSI000;
       return Form("f_{%d; t, r}^{FSI}", ip);
@@ -1696,6 +1718,7 @@ string t2kana::util::AsStringPaperRooTex(PhysParamId_t p)
   case ( kNuisSKDetFSI003 ) :
   case ( kNuisSKDetFSI004 ) :
   case ( kNuisSKDetFSI005 ) :
+#if FSI_BINS == 1
   case ( kNuisSKDetFSI006 ) :
   case ( kNuisSKDetFSI007 ) :
   case ( kNuisSKDetFSI008 ) :
@@ -1708,6 +1731,7 @@ string t2kana::util::AsStringPaperRooTex(PhysParamId_t p)
   case ( kNuisSKDetFSI015 ) :
   case ( kNuisSKDetFSI016 ) :
   case ( kNuisSKDetFSI017 ) :
+#endif
     {
       int ip = (int)p - (int)kNuisSKDetFSI000;
       return Form("f_{%d; t, r}^{SK+FSI}", ip);
@@ -1776,6 +1800,7 @@ string t2kana::util::AsStringCompact(PhysParamId_t p)
     case ( kNuisSuperkEff1RmuNC       ) : return "f_sk_eff_1Rmu_nc";               break;
     case ( kNuisSuperkEff1RmuNueCC    ) : return "f_sk_eff_1Rmu_nuecc";            break;
 
+#if FSI_BINS == 1
     case ( kNuisSuperkEff1ReNueSigCC0 ) : return "sk_1Re_eff_signue_0";            break;
     case ( kNuisSuperkEff1ReNueSigCC1 ) : return "sk_1Re_eff_signue_1";            break;
     case ( kNuisSuperkEff1ReNueSigCC2 ) : return "sk_1Re_eff_signue_2";            break;
@@ -1788,7 +1813,7 @@ string t2kana::util::AsStringCompact(PhysParamId_t p)
     case ( kNuisSuperkEff1ReNC0       ) : return "sk_1Re_eff_nc_0";                break;
     case ( kNuisSuperkEff1ReNC1       ) : return "sk_1Re_eff_nc_1";                break;
     case ( kNuisSuperkEff1ReNC2       ) : return "sk_1Re_eff_nc_2";                break;
-
+#endif
 
     case ( kNuisBANFF00               ) : return "f_banff00";      break;
     case ( kNuisBANFF01               ) : return "f_banff01";      break;
@@ -1853,6 +1878,7 @@ string t2kana::util::AsStringCompact(PhysParamId_t p)
     case ( kNuisFSI003 ) : return "f_fsi003"; break;
     case ( kNuisFSI004 ) : return "f_fsi004"; break;
     case ( kNuisFSI005 ) : return "f_fsi005"; break;
+#if FSI_BINS == 1
     case ( kNuisFSI1Re000 ) : return "f_fsi1Re000"; break;
     case ( kNuisFSI1Re001 ) : return "f_fsi1Re001"; break;
     case ( kNuisFSI1Re002 ) : return "f_fsi1Re002"; break;
@@ -1865,6 +1891,7 @@ string t2kana::util::AsStringCompact(PhysParamId_t p)
     case ( kNuisFSI1Re009 ) : return "f_fsi1Re009"; break;
     case ( kNuisFSI1Re010 ) : return "f_fsi1Re010"; break;
     case ( kNuisFSI1Re011 ) : return "f_fsi1Re011"; break;
+#endif
 
     case ( kNuisSKDetFSI000 ) : return "f_skdetfsi000"; break;
     case ( kNuisSKDetFSI001 ) : return "f_skdetfsi001"; break;
@@ -1872,6 +1899,7 @@ string t2kana::util::AsStringCompact(PhysParamId_t p)
     case ( kNuisSKDetFSI003 ) : return "f_skdetfsi003"; break;
     case ( kNuisSKDetFSI004 ) : return "f_skdetfsi004"; break;
     case ( kNuisSKDetFSI005 ) : return "f_skdetfsi005"; break;
+#if FSI_BINS == 1
     case ( kNuisSKDetFSI006 ) : return "f_skdetfsi006"; break;
     case ( kNuisSKDetFSI007 ) : return "f_skdetfsi007"; break;
     case ( kNuisSKDetFSI008 ) : return "f_skdetfsi008"; break;
@@ -1884,6 +1912,7 @@ string t2kana::util::AsStringCompact(PhysParamId_t p)
     case ( kNuisSKDetFSI015 ) : return "f_skdetfsi015"; break;
     case ( kNuisSKDetFSI016 ) : return "f_skdetfsi016"; break;
     case ( kNuisSKDetFSI017 ) : return "f_skdetfsi017"; break;
+#endif
 
     default : 
       return "--";
@@ -2423,6 +2452,7 @@ t2kana::conv::PhysParamId_t
   if(sh == "sk_1Rmu_ccqe_ring_counting_eff_2") return kNuisSuperkEff1RmuCCQErc2u;
   if(sh == "sk_1Rmu_ccnonqe_eff") return kNuisSuperkEff1RmuCCnonQE;
   if(sh == "sk_1Rmu_nc_eff") return kNuisSuperkEff1RmuNC;
+#if FSI_BINS == 1
   if(sh == "sk_1Rmu_nuecc_eff") return kNuisSuperkEff1RmuNueCC;
   if(sh == "sk_1Re_eff_signue_0") return kNuisSuperkEff1ReNueSigCC0;
   if(sh == "sk_1Re_eff_signue_1") return kNuisSuperkEff1ReNueSigCC1;
@@ -2436,6 +2466,7 @@ t2kana::conv::PhysParamId_t
   if(sh == "sk_1Re_eff_nc_0") return kNuisSuperkEff1ReNC0;
   if(sh == "sk_1Re_eff_nc_1") return kNuisSuperkEff1ReNC1;
   if(sh == "sk_1Re_eff_nc_2") return kNuisSuperkEff1ReNC2;
+#endif
 
   if(sh == "banff_00") return kNuisBANFF00;
   if(sh == "banff_01") return kNuisBANFF01;
@@ -2515,6 +2546,7 @@ t2kana::conv::PhysParamId_t
   if(sh == "fsi_003") return kNuisFSI003;
   if(sh == "fsi_004") return kNuisFSI004;
   if(sh == "fsi_005") return kNuisFSI005;
+#if FSI_BINS == 1
   if(sh == "fsi_1Re000") return kNuisFSI1Re000;
   if(sh == "fsi_1Re001") return kNuisFSI1Re001;
   if(sh == "fsi_1Re002") return kNuisFSI1Re002;
@@ -2527,6 +2559,7 @@ t2kana::conv::PhysParamId_t
   if(sh == "fsi_1Re009") return kNuisFSI1Re009;
   if(sh == "fsi_1Re010") return kNuisFSI1Re010;
   if(sh == "fsi_1Re011") return kNuisFSI1Re011;
+#endif
 
   if(sh == "skdetfsi_000") return kNuisSKDetFSI000;
   if(sh == "skdetfsi_001") return kNuisSKDetFSI001;
@@ -2534,6 +2567,7 @@ t2kana::conv::PhysParamId_t
   if(sh == "skdetfsi_003") return kNuisSKDetFSI003;
   if(sh == "skdetfsi_004") return kNuisSKDetFSI004;
   if(sh == "skdetfsi_005") return kNuisSKDetFSI005;
+#if FSI_BINS == 1
   if(sh == "skdetfsi_006") return kNuisSKDetFSI006;
   if(sh == "skdetfsi_007") return kNuisSKDetFSI007;
   if(sh == "skdetfsi_008") return kNuisSKDetFSI008;
@@ -2546,6 +2580,7 @@ t2kana::conv::PhysParamId_t
   if(sh == "skdetfsi_015") return kNuisSKDetFSI015;
   if(sh == "skdetfsi_016") return kNuisSKDetFSI016;
   if(sh == "skdetfsi_017") return kNuisSKDetFSI017;
+#endif
 
   cout << sh << " not yet supported in util::PhysParamIdFromString()" << endl;
   return kPhypUndefined;
@@ -2575,6 +2610,7 @@ t2kana::conv::PhysParamId_t t2kana::util::PhysParamIdFromLongString(string sh)
   if(sh == "SK efficiency; 1Rmu; CCnonQE"   ) return kNuisSuperkEff1RmuCCnonQE;
   if(sh == "SK efficiency; 1Rmu; NC"        ) return kNuisSuperkEff1RmuNC;
   if(sh == "SK efficiency; 1Rmu; nue CC"    ) return kNuisSuperkEff1RmuNueCC;
+#if FSI_BINS == 1
   if(sh == "SK efficiency; 1Re; osc. nue CC E0") return kNuisSuperkEff1ReNueSigCC0;
   if(sh == "SK efficiency; 1Re; osc. nue CC E1") return kNuisSuperkEff1ReNueSigCC1;
   if(sh == "SK efficiency; 1Re; osc. nue CC E2") return kNuisSuperkEff1ReNueSigCC2;
@@ -2587,6 +2623,7 @@ t2kana::conv::PhysParamId_t t2kana::util::PhysParamIdFromLongString(string sh)
   if(sh == "SK efficiency; 1Re; NC E0") return kNuisSuperkEff1ReNC0;
   if(sh == "SK efficiency; 1Re; NC E1") return kNuisSuperkEff1ReNC1;
   if(sh == "SK efficiency; 1Re; NC E2") return kNuisSuperkEff1ReNC2;
+#endif
 
   for(int ip = 0; ip < kNumOfFluxParamsInBANFFfit; ip++) {
     string comp = Form("BANFF %2d; SK %s flux; %.1f - %.1f GeV",
@@ -3030,6 +3067,7 @@ bool t2kana::util::IsEff1Rmu(PhysParamId_t p)
 bool t2kana::util::IsEff1Re(PhysParamId_t p)
 {
   switch(p) {
+#if FSI_BINS == 1
   case ( kNuisSuperkEnergyScale     ) : return true;  break;
   case ( kNuisSuperkEff1ReNueSigCC0 ) : return true;  break;
   case ( kNuisSuperkEff1ReNueSigCC1 ) : return true;  break;
@@ -3043,6 +3081,7 @@ bool t2kana::util::IsEff1Re(PhysParamId_t p)
   case ( kNuisSuperkEff1ReNC0       ) : return true;  break;
   case ( kNuisSuperkEff1ReNC1       ) : return true;  break;
   case ( kNuisSuperkEff1ReNC2       ) : return true;  break;
+#endif
   default :
     return false;
   }
@@ -3060,6 +3099,7 @@ bool t2kana::util::IsEff(PhysParamId_t p)
   case ( kNuisSuperkEff1RmuCCnonQE  ) : return true;  break;
   case ( kNuisSuperkEff1RmuNC       ) : return true;  break;
   case ( kNuisSuperkEff1RmuNueCC    ) : return true;  break;
+#if FSI_BINS == 1
   case ( kNuisSuperkEff1ReNueSigCC0 ) : return true;  break;
   case ( kNuisSuperkEff1ReNueSigCC1 ) : return true;  break;
   case ( kNuisSuperkEff1ReNueSigCC2 ) : return true;  break;
@@ -3072,6 +3112,7 @@ bool t2kana::util::IsEff(PhysParamId_t p)
   case ( kNuisSuperkEff1ReNC0       ) : return true;  break;
   case ( kNuisSuperkEff1ReNC1       ) : return true;  break;
   case ( kNuisSuperkEff1ReNC2       ) : return true;  break;
+#endif
   default :
     return false;
   }
@@ -3087,6 +3128,7 @@ bool t2kana::util::IsFSI(PhysParamId_t p)
     case ( kNuisFSI003                ) : return true;  break;
     case ( kNuisFSI004                ) : return true;  break;
     case ( kNuisFSI005                ) : return true;  break;
+#if FSI_BINS == 1
     case ( kNuisFSI1Re000             ) : return true;  break;
     case ( kNuisFSI1Re001             ) : return true;  break;
     case ( kNuisFSI1Re002             ) : return true;  break;
@@ -3099,6 +3141,7 @@ bool t2kana::util::IsFSI(PhysParamId_t p)
     case ( kNuisFSI1Re009             ) : return true;  break;
     case ( kNuisFSI1Re010             ) : return true;  break;
     case ( kNuisFSI1Re011             ) : return true;  break;
+#endif
   default :
     return false;
   }
@@ -3127,6 +3170,7 @@ bool t2kana::util::IsSystematic(PhysParamId_t p)
     case ( kNuisSuperkEff1RmuCCnonQE  ) : return true;  break;
     case ( kNuisSuperkEff1RmuNC       ) : return true;  break;
     case ( kNuisSuperkEff1RmuNueCC    ) : return true;  break;
+#if FSI_BINS == 1
     case ( kNuisSuperkEff1ReNueSigCC0 ) : return true;  break;
     case ( kNuisSuperkEff1ReNueSigCC1 ) : return true;  break;
     case ( kNuisSuperkEff1ReNueSigCC2 ) : return true;  break;
@@ -3139,6 +3183,7 @@ bool t2kana::util::IsSystematic(PhysParamId_t p)
     case ( kNuisSuperkEff1ReNC0       ) : return true;  break;
     case ( kNuisSuperkEff1ReNC1       ) : return true;  break;
     case ( kNuisSuperkEff1ReNC2       ) : return true;  break;
+#endif
     case ( kNuisBANFF00               ) : return true;  break;
     case ( kNuisBANFF01               ) : return true;  break;
     case ( kNuisBANFF02               ) : return true;  break;
@@ -3198,6 +3243,7 @@ bool t2kana::util::IsSystematic(PhysParamId_t p)
     case ( kNuisFSI003                ) : return true;  break;
     case ( kNuisFSI004                ) : return true;  break;
     case ( kNuisFSI005                ) : return true;  break;
+#if FSI_BINS == 1
     case ( kNuisFSI1Re000             ) : return true;  break;
     case ( kNuisFSI1Re001             ) : return true;  break;
     case ( kNuisFSI1Re002             ) : return true;  break;
@@ -3210,6 +3256,7 @@ bool t2kana::util::IsSystematic(PhysParamId_t p)
     case ( kNuisFSI1Re009             ) : return true;  break;
     case ( kNuisFSI1Re010             ) : return true;  break;
     case ( kNuisFSI1Re011             ) : return true;  break;
+#endif
 
     case ( kNuisSKDetFSI000           ) : return true;  break;
     case ( kNuisSKDetFSI001           ) : return true;  break;
@@ -3217,6 +3264,7 @@ bool t2kana::util::IsSystematic(PhysParamId_t p)
     case ( kNuisSKDetFSI003           ) : return true;  break;
     case ( kNuisSKDetFSI004           ) : return true;  break;
     case ( kNuisSKDetFSI005           ) : return true;  break;
+#if FSI_BINS == 1
     case ( kNuisSKDetFSI006           ) : return true;  break;
     case ( kNuisSKDetFSI007           ) : return true;  break;
     case ( kNuisSKDetFSI008           ) : return true;  break;
@@ -3229,6 +3277,7 @@ bool t2kana::util::IsSystematic(PhysParamId_t p)
     case ( kNuisSKDetFSI015           ) : return true;  break;
     case ( kNuisSKDetFSI016           ) : return true;  break;
     case ( kNuisSKDetFSI017           ) : return true;  break;
+#endif
 
     default : 
       return false;
@@ -3874,6 +3923,16 @@ string t2kana::util::XML2RootObjName (
   return objname;
 }
 //___________________________________________________________________________
+string t2kana::util::XML2RootObjType (
+   TXMLEngine * xmleng, XMLNodePointer_t topnode, string path)
+{
+  string objtype = XML2String(xmleng,topnode,path+"/objtype");
+#ifdef __show_xml_mesg_info__
+  cout << "utils/XML2RootObjType >> objtype  : " << objtype  << endl;
+#endif
+  return objtype;
+}
+//___________________________________________________________________________
 TFile * t2kana::util::XML2TFile(
   TXMLEngine * xmleng, XMLNodePointer_t topnode, string path)
 {
@@ -4080,6 +4139,10 @@ TMatrixD * t2kana::util::XML2TMatrixD(
 {
 // Get a TMatrixD instance from the info in the input XML config file
 //
+  string objtype  = XML2RootObjType (xmleng,topnode,path);
+  if(objtype == "TH2D")
+    return XML2TH2D2TMatrixD(xmleng,topnode,path);
+
   string filename = XML2RootFileName(xmleng,topnode,path);
   string objname  = XML2RootObjName (xmleng,topnode,path);
 
@@ -4096,6 +4159,54 @@ TMatrixD * t2kana::util::XML2TMatrixD(
 
   TMatrixD * matrix_copy = new TMatrixD(*matrix);
   file->Close();
+
+  return matrix_copy;
+}
+//___________________________________________________________________________
+TMatrixD * t2kana::util::XML2TH2D2TMatrixD(
+  TXMLEngine * xmleng, XMLNodePointer_t topnode, string path)
+{
+// Get a TH2D instance from the info in the input XML config file
+//
+#ifdef __show_xml_mesg_info__
+  cout << "utils/XML2TH2D2TMatrixD >> Reading info at XML node path: " << path << endl;
+#endif
+
+  string filename = XML2RootFileName(xmleng,topnode,path);
+  string objname  = XML2RootObjName (xmleng,topnode,path);
+
+  TFile file(
+     Form("%s/%s", gSystem->Getenv("T2KOSCANA"), filename.c_str()), "read");    
+  TH2D * h2 = (TH2D*)file.Get(objname.c_str());
+  if(!h2) {
+    cerr << "utils/XML2TH2D2TMatrixD >> No " << objname << " in " << filename << endl;
+    file.Close();
+    //return 0;
+    exit(1);
+  }
+
+  TH2D * h2copy = new TH2D(*h2);
+  h2copy->SetDirectory(0);
+
+  file.Close();
+
+  const int nrows = h2copy->GetNbinsX();
+  const int ncols = h2copy->GetNbinsY();
+
+  TMatrixD matrix(nrows,ncols);
+  for(int i = 1; i <= nrows; i++) {
+    for(int j = 1; j <= ncols; j++) {
+      matrix(i-1,j-1)=h2copy->GetBinContent(i,j);
+#ifdef __show_xml_mesg_debug__
+      cout << i << "\t" << j << "\t" << h2copy->GetBinContent(i,j) << endl;
+#endif
+    }
+  }
+
+  TMatrixD * matrix_copy = new TMatrixD(matrix);
+#ifdef __show_xml_mesg_debug__
+  matrix_copy->Print();
+#endif
 
   return matrix_copy;
 }
@@ -4898,6 +5009,7 @@ void t2kana::util::ArrIdx::Init(void)
 #endif
   }
 
+#if FSI_BINS == 1
   //1Re SK eff
   for(int i = 0; i < knppmax; i++) {
     fSKDet1ReSystIdx[i] = -1;
@@ -4912,6 +5024,7 @@ void t2kana::util::ArrIdx::Init(void)
           << " is at slot: " << fSKDet1ReSystIdx [p] << endl;
 #endif
   }
+#endif
 
   //PhysParam
   for(int i = 0; i < knppmax; i++) {
