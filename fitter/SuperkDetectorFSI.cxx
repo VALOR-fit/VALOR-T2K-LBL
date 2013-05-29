@@ -576,7 +576,7 @@ bool SuperkDetectorFSI::ApplySystToEnergyBin(conv::PhysParamId_t p, double Ereco
   return apply;
 }
 //________________________________________________________________________________________
-double SuperkDetectorFSI::EnergyScaleRelErr(SuperkSample_t s, SuperkMode_t m) const
+double SuperkDetectorFSI::EnergyScaleRelErr(SuperkSample_t s, SuperkMode_t /* m */) const
 {
   // energy scale relative error
   if(s == kSKsFCFV1RingMuLike)

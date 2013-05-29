@@ -327,12 +327,6 @@ bool NuXSec::Read(TXMLEngine* xml, XMLNodePointer_t root_node)
     util::XML2Dbl(xml,root_node,"xsec/normalisations/numu_to_nue");
   fNormAntiNuToNuRelErr =
     util::XML2Dbl(xml,root_node,"xsec/normalisations/nu_to_antinu");
-  fSplineMAQERelErr =
-    util::XML2Dbl(xml,root_node,"xsec/splines/maqe");
-  fSpline1overMAQE2RelErr =
-    util::XML2Dbl(xml,root_node,"xsec/splines/oneovermaqesq");
-  fSplineMARESRelErr =
-    util::XML2Dbl(xml,root_node,"xsec/splines/mares");
 
 #ifdef __show_init_mesg_info__
   cout << "Exp/NuXSec >> Done reading neutrino cross-section inputs (not splines)!" << endl;
@@ -417,7 +411,6 @@ double NuXSec::FinTuningWght_1p(
     wght = wght_spl->Eval(numerator) / 1.;
     */
     wght = wght_spl->Eval(tb);
-    wght = wght_spl->Eval(1);
     // }
   }
   
@@ -562,7 +555,6 @@ double NuXSec::SystWght_1p(
        wght = wght_spl->Eval(numerator) / wght_spl->Eval(denominator);
        */
        wght = wght_spl->Eval(tc) / wght_spl->Eval(tb);
-       wght_spl->Eval(1) / wght_spl->Eval(1);
        //}
   }
 

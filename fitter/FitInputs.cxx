@@ -639,7 +639,7 @@ ROOT::Math::BasicFitMethodFunction<ROOT::Math::IBaseFunctionMultiDim>::Type_t Fi
 {
   return ROOT::Math::FitMethodFunction::kLeastSquare;
 }
-double  FitMethodFunc::DataElement(const double *par, unsigned int ipoint, double *g) const 
+double  FitMethodFunc::DataElement(const double *par, unsigned int ipoint, double * /* g */) const 
 {
   fFitInputs->FitParams().Sync(par);
   double chisqbin = 0;
