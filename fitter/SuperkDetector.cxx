@@ -593,6 +593,16 @@ double SuperkDetector::EfficiencyWeight(
        }
 
        //
+       // MEC
+       // No SK detector systematics!
+       //
+      case (kSKmMEC)            :
+      {
+	weight = 1.;
+	break;
+      }
+
+       //
        // nue CCQE, nue CC1pi, nue CCcoh, nue CCoth:
        // Apply the nue CC efficiency error. No energy dependence.
        //

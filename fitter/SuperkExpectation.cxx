@@ -824,6 +824,7 @@ void SuperkExpectation::SetNuisanceParams(const FitParamList & fp, bool all_banf
      this->GetSuperkDetector()->TweakEnergyScale(twk);
    }
 
+#if FSI_BINS == 1
    const int neff1Re = conv::kNumOfSKDetParams1Re;
    TVectorD twkv1Re(neff1Re); 
    // 1Re eff params included in the fit param list?                                                                                                                             
@@ -894,7 +895,8 @@ void SuperkExpectation::SetNuisanceParams(const FitParamList & fp, bool all_banf
    }//!all_1Re_eff
    //And finally apply the tweak 
    this->GetSuperkDetector()->TweakEfficiencies1Re(true,&twkv1Re);
-   
+#endif//FSI_BINS == 1
+
    // 
    // FSI systematics
    //
