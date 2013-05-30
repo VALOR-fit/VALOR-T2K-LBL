@@ -86,9 +86,19 @@ void test_valor_kdi_splines(
 	  if(compare_with_old_valor)
 	    //use val_splname
 	    kdi_spl = (TSpline3 *) fkdi->Get(val_splname.str().c_str());
-	  else
+	  else {
 	    //use kit_splname
-	    kdi_spl = (TSpline3 *) fkdi->Get(kdi_splname.str().c_str());
+	    TSpline3 * kdi_spl_temp = (TSpline3 *) fkdi->Get(kdi_splname.str().c_str());
+	    
+	    const int n = kdi_spl_temp->GetNp();
+	    double x[n] = {0}, y[n] = 0;
+	    for(int k = 0; k < n; k++) {
+	      kdi_spl_temp->GetKnot(k, x[k], y[k]);
+	      //x[k] += 1;
+	      //y[k] += 1;
+	    }//k
+	    kdi_spl = new TSpline3("",x,y,n);
+	  }//compare_with_old_valor
 
 	  if((!val_spl) || (!kdi_spl)) continue;
 
@@ -124,6 +134,7 @@ void test_valor_kdi_splines(
 	  }//ibin
 	  if(!problem)
 	    problem_free << val_splname.str() << "_" << val_splname.str() << endl;
+	  delete kdi_spl;
 	}//it
       }//ir
       //close the output pdf
