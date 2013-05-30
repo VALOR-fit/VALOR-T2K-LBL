@@ -174,6 +174,8 @@ void test_systematic_error_propagation_all
   systematics.push_back("banff_ccqeE2");
   systematics.push_back("banff_cc1piE0");
   systematics.push_back("banff_cc1piE1");
+  systematics.push_back("banff_mecnorm");
+  systematics.push_back("banff_pdd");
 
   systematics.push_back("xsec_pf");
   systematics.push_back("xsec_sf");

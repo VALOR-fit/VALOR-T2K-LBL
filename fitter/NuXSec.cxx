@@ -436,6 +436,37 @@ double NuXSec::FinTuningWght_1p(
     wght = fBANFF->BestFitValue(p);
   }
 
+  //
+  // BANFF param, MEC norm
+  //
+#if BANFF_BINS == 3
+  else
+  if(p == kNuisBANFFMECNorm)
+    {
+      wght = TMath::Abs(fBANFF->BestFitValue(p));
+    }
+#endif
+
+  //
+  // BANFF param, PDD double counting
+  //
+#if BANFF_BINS == 3
+  else if(p == kNuisBANFFPDDDoubleCount)
+    {
+#if SPLINE_TYPE == -1
+      return wght;
+#endif
+      // bool ev = this->IsThereAnEvent(s, m, Ereco, Etrue); //already done in SKMC
+      //if(ev) {
+      TSpline3 * wght_spl = this->FindWghtSpline(p,s,m,Ereco,Etrue);
+      assert(wght_spl);
+      double tb = TMath::Abs(fBANFF->BestFitValue(p));
+#warning Need to check PDD spline evaluation is correct
+      wght = wght_spl->Eval(tb);
+      //}
+    }
+#endif
+
 #ifdef __show_banff_tuning_wght_mesg_debug__
   if (wght != 1.)
   {
@@ -581,6 +612,39 @@ double NuXSec::SystWght_1p(
      wght = fBANFF->CurrentValue(p) / fBANFF->BestFitValue(p);
   }
 
+
+  //
+  // BANFF param, MEC norm
+  //
+#if BANFF_BINS == 3
+  else
+  if(p == kNuisBANFFMECNorm)
+    {
+      wght = TMath::Abs(fBANFF->CurrentValue(p)) / TMath::Abs(fBANFF->BestFitValue(p));
+    }
+#endif
+
+  //
+  // BANFF param, PDD double counting
+  //
+#if BANFF_BINS == 3
+  else if(p == kNuisBANFFPDDDoubleCount)
+    {
+#if SPLINE_TYPE == -1
+      return wght;
+#endif
+      // bool ev = this->IsThereAnEvent(s, m, Ereco, Etrue); //already done in SKMC
+      //if(ev) {
+      TSpline3 * wght_spl = this->FindWghtSpline(p,s,m,Ereco,Etrue);
+      assert(wght_spl);
+      double tb = TMath::Abs(fBANFF->BestFitValue(p));
+      double tc = TMath::Abs(fBANFF->CurrentValue(p));
+#warning Need to check PDD spline evaluation is correct
+      wght = wght_spl->Eval(tc) / wght_spl->Eval(tb);
+      //}
+    }
+#endif
+
   //
   // Fermi momentum
   // spectral function on/off
@@ -719,6 +783,10 @@ double NuXSec::CurrentValue(PhysParamId_t p) const
 #if BANFF_BINS == 1
     case kNuisBANFFNC1pi0:
 #endif
+#if BANFF_BINS == 3
+    case kNuisBANFFMECNorm:
+    case kNuisBANFFPDDDoubleCount:
+#endif
       return fBANFF->CurrentValue(p);
       break;
     default:
@@ -748,16 +816,6 @@ double NuXSec::RelativeError(PhysParamId_t p) const
     case kNuisXSecNormAntiNuToNu:
       return fNormAntiNuToNuRelErr;
       break;
-    case kNuisBANFFMAQE:
-#ifndef ONEOVERMAQE
-	 return fSplineMAQERelErr;
-#else
-	 return fSpline1overMAQE2RelErr;
-#endif
-      break;
-    case kNuisBANFFMARES:
-      return fSplineMARESRelErr;
-      break;
     default:
       cout << "Relative error is not defined for xsec parameter: " << AsString(p) << endl;
       return 0;
@@ -773,10 +831,14 @@ void NuXSec::PrintSystematicVariations(ostream & stream) const
   stream << "         >> W-shape             " << fWshapeTwkDial        << endl;
   stream << "         >> CC-oth shape        " << fShapeCCothTwkDial    << endl;
   stream << "         >> Pi-less delta decay " << fPiLessDeltaTwkDial   << endl;
+#ifndef __NUMUONLY__ 
   stream << "         >> Binding energy      " << fBindETwkDial         << endl;
+#endif
   stream << "         >> CC-coh norm         " << fNormCCcohTwkDial     << endl;
   stream << "         >> NC-1piC norm        " << fNormNC1piCTwkDial    << endl;
+#ifndef __NUMUONLY__ 
   stream << "         >> NC-coh norm         " << fNormNCcohTwkDial     << endl;
+#endif
   stream << "         >> NC-oth norm         " << fNormNCothTwkDial     << endl;
   stream << "         >> NuE to NuMu norm    " << fNormNuEToNuMuTwkDial << endl;
   stream << "         >> AntiNu to Nu norm   " << fNormAntiNuToNuTwkDial<< endl;

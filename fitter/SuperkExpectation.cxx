@@ -454,6 +454,8 @@ void SuperkExpectation::TweakSystematic(string systematic, double twkdial, bool 
 //      * banff_cc1pi0E0                    : tweak only BANFF cc1piE0 parameter
 //      * banff_cc1pi0E1                    : tweak only BANFF cc1piE1 parameter
 //      * banff_nc1pi0                      : tweak only BANFF nc1pi0 parameter
+//      * banff_mecnorm                     : tweak only BANFF MEC norm parameter
+//      * banff_pdd                         : tweak only BANFF PDD double counting parameter
 //
 // FSI
 //    - fsi                                 : tweak all FSI params, correlations taken into account (Cholesky method)

@@ -22,7 +22,7 @@ conffile = "analysis_configuration.xml"
 emax = 7
 
 modes1 = [0,1,2,3,4,5,6,7,8,9,10] #combinations
-modes2 = range(100,139) #banff
+modes2 = range(100,126) #banff
 modes3 = [200,201,202,203,204,209,210,212,213,214,215] #unconstranied xsec
 modes4 = range(300,308) #sk detector
 modes5 = range(400,449) #fsi

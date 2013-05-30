@@ -859,7 +859,11 @@ string t2kana::util::AsString(PhysParamId_t p)
     case ( kNuisBANFFCC1piE0 ) : return "BANFF; Norm; CC 1pi; 0.0 - 2.5 GeV";     break;
     case ( kNuisBANFFCC1piE1 ) : return "BANFF; Norm; CC 1pi; 2.5 - 30.0 GeV";    break;
 #if BANFF_BINS == 1
-    case ( kNuisBANFFNC1pi0  ) : return "BANFF; Norm; NC 1pi0; 0.0 - 30.0 GeV";    break;
+    case ( kNuisBANFFNC1pi0  ) : return "BANFF; Norm; NC 1pi0; 0.0 - 30.0 GeV";   break;
+#endif
+#if BANFF_BINS == 3
+    case ( kNuisBANFFMECNorm ) : return "BANFF; Norm; MEC";                       break;
+    case ( kNuisBANFFPDDDoubleCount ) : return "BANFF; PDD double counting";      break;
 #endif
 
     //
@@ -1158,6 +1162,10 @@ string t2kana::util::AsStringTex(PhysParamId_t p)
 #if BANFF_BINS == 1
     case ( kNuisBANFFNC1pi0  ) : return "BANFF; Norm; NC 1pi0; 2.5 - 30.0 GeV";    break;
 #endif
+#if BANFF_BINS == 3
+    case ( kNuisBANFFMECNorm ) : return "BANFF; Norm; MEC";                       break;
+    case ( kNuisBANFFPDDDoubleCount ) : return "BANFF; PDD double counting";      break;
+#endif
 
     //
     // XSec params not correlated with flux
@@ -1452,6 +1460,10 @@ string t2kana::util::AsStringPaperTex(PhysParamId_t p)
 #if BANFF_BINS == 1
   case ( kNuisBANFFNC1pi0 ) :
 #endif
+#if BANFF_BINS == 3
+    case ( kNuisBANFFMECNorm ) :
+    case ( kNuisBANFFPDDDoubleCount ) :
+#endif
     {
       int ip = (int)p - (int)kNuisBANFF00;
       return Form("$f_{%d; t, r}^{banff}$", ip);
@@ -1663,6 +1675,10 @@ string t2kana::util::AsStringPaperRooTex(PhysParamId_t p)
 #if BANFF_BINS == 1
   case ( kNuisBANFFNC1pi0 ) :
 #endif
+#if BANFF_BINS == 3
+    case ( kNuisBANFFMECNorm ) :
+    case ( kNuisBANFFPDDDoubleCount ) :
+#endif
     {
       int ip = (int)p - (int)kNuisBANFF00;
       return Form("f_{%d; t, r}^{banff}", ip);
@@ -1855,9 +1871,12 @@ string t2kana::util::AsStringCompact(PhysParamId_t p)
     case ( kNuisBANFFCC1piE0          ) : return "f_banffcc1pie0"; break;
     case ( kNuisBANFFCC1piE1          ) : return "f_banffcc1pie1"; break;
 #if BANFF_BINS == 1
-    case ( kNuisBANFFNC1pi0           ) : return "f_banffNc1pi0"; break;
+    case ( kNuisBANFFNC1pi0           ) : return "f_banffNc1pi0";  break;
 #endif
-
+#if BANFF_BINS == 3
+    case ( kNuisBANFFMECNorm          ) : return "f_banffmec";     break;
+    case ( kNuisBANFFPDDDoubleCount   ) : return "f_banffpdd";     break;
+#endif
     case ( kNuisXSecFermiMom          ) : return "f_pfermi";       break;
     case ( kNuisXSecSpecFunc          ) : return "f_specfunc";     break; 
     case ( kNuisXSecWshape            ) : return "f_wshape";       break;
@@ -2506,6 +2525,11 @@ t2kana::conv::PhysParamId_t
 #if BANFF_BINS == 1
   if(sh == "banff_nc1pi0") return kNuisBANFFNC1pi0;
 #endif
+#if BANFF_BINS == 3
+  if(sh == "banff_mecnorm")  return kNuisBANFFMECNorm;
+  if(sh == "banff_pdd")      return kNuisBANFFPDDDoubleCount;
+#endif
+
 
 #if BANFF_BINS == 1
   if(sh == "banff_25")    return kNuisBANFFMAQE; 
@@ -2516,7 +2540,7 @@ t2kana::conv::PhysParamId_t
   if(sh == "banff_30") return kNuisBANFFCC1piE0;
   if(sh == "banff_31") return kNuisBANFFCC1piE1;
   if(sh == "banff_32") return kNuisBANFFNC1pi0;
-#elif BANFF_BINS == 2
+#elif BANFF_BINS >= 2
   if(sh == "banff_16")    return kNuisBANFFMAQE; 
   if(sh == "banff_17")   return kNuisBANFFMARES;
   if(sh == "banff_18")  return kNuisBANFFCCQEE0;
@@ -2524,6 +2548,10 @@ t2kana::conv::PhysParamId_t
   if(sh == "banff_20")  return kNuisBANFFCCQEE2;
   if(sh == "banff_21") return kNuisBANFFCC1piE0;
   if(sh == "banff_22") return kNuisBANFFCC1piE1;
+#if BANFF_BINS == 3
+  if(sh == "banff_23")  return kNuisBANFFMECNorm;
+  if(sh == "banff_24")  return kNuisBANFFPDDDoubleCount;
+#endif
 #endif
 
   if(sh == "xsec_pf")           return kNuisXSecFermiMom;
@@ -2647,6 +2675,11 @@ t2kana::conv::PhysParamId_t t2kana::util::PhysParamIdFromLongString(string sh)
 #if BANFF_BINS == 1
   if(sh == "BANFF; Norm; NC 1pi0; 0.0 - 30.0 GeV") return kNuisBANFFNC1pi0;
 #endif
+#if BANFF_BINS == 3
+  if(sh == "BANFF; Norm; MEC")                     return kNuisBANFFMECNorm;
+  if(sh == "BANFF; PDD double counting")           return kNuisBANFFPDDDoubleCount;
+#endif
+
 
     //
     // XSec params not correlated with flux
@@ -2998,6 +3031,10 @@ bool t2kana::util::IsBANFF(PhysParamId_t p)
 #if BANFF_BINS == 1
     case ( kNuisBANFFNC1pi0           ) : return true;  break;
 #endif
+#if BANFF_BINS == 3
+    case ( kNuisBANFFMECNorm          ) : return true;  break;
+    case ( kNuisBANFFPDDDoubleCount   ) : return true;  break;
+#endif
 
   default : 
     return false;
@@ -3040,7 +3077,11 @@ bool t2kana::util::IsUsingSplines(PhysParamId_t p)
   case ( kNuisXSecBindE             ) : return true;  break;
   case ( kNuisBANFFMAQE             ) : return true;  break;
   case ( kNuisBANFFMARES            ) : return true;  break;
-    
+#if BANFF_BINS == 3
+  case ( kNuisBANFFMECNorm          ) : return true;  break;
+  case ( kNuisBANFFPDDDoubleCount   ) : return true;  break;
+#endif
+
   default :
     return false;
   }
@@ -3221,6 +3262,10 @@ bool t2kana::util::IsSystematic(PhysParamId_t p)
     case ( kNuisBANFFCC1piE1          ) : return true;  break;
 #if BANFF_BINS == 1
     case ( kNuisBANFFNC1pi0           ) : return true;  break;
+#endif
+#if BANFF_BINS == 3
+    case ( kNuisBANFFMECNorm          ) : return true;  break;
+    case ( kNuisBANFFPDDDoubleCount   ) : return true;  break;
 #endif
 
     case ( kNuisXSecFermiMom          ) : return true;  break;

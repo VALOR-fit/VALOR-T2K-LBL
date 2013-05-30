@@ -553,6 +553,8 @@ int BANFF::Param2Idx(PhysParamId_t p) const
   int last   = (int) kNuisBANFFNC1pi0;
 #elif BANFF_BINS == 2
   int last   = (int) kNuisBANFFCC1piE1;
+#elif BANFF_BINS == 3
+  int last   = (int) kNuisBANFFPDDDoubleCount;
 #endif
 
   if(! (iparam >= first && iparam <= last) )

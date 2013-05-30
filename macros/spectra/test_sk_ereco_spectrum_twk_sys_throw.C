@@ -343,7 +343,9 @@ void test_sk_ereco_spectrum_twk_sys_throw
 	skexp.TweakSystematic("banff_ccqeE1",rand.Gaus(0.,1.));
 	skexp.TweakSystematic("banff_ccqeE2",rand.Gaus(0.,1.));
 	skexp.TweakSystematic("banff_cc1piE0",rand.Gaus(0.,1.));
-	skexp.TweakSystematic("banff_cc1piE1",rand.Gaus(0.,1.));	
+	skexp.TweakSystematic("banff_cc1piE1",rand.Gaus(0.,1.));
+	skexp.TweakSystematic("banff_mecnorm",rand.Gaus(0.,1.));
+	skexp.TweakSystematic("banff_pdd",rand.Gaus(0.,1.));
       }
 
       //SK det + FSI

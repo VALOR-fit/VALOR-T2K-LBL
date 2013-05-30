@@ -332,9 +332,9 @@
         Covariance matrix of FSI parameters
       -->
     <covariance_matrix>
-      <filename>   inputs/official/2013/skdetfsi/FSIandSIErrors2013.root  </filename>
+      <filename>   inputs/official/2013/skdetfsi/SKDetFSISIErrors2013.root  </filename>
       <objname>    FSICovariance         </objname>
-      <objtype>    TH2D         </objtype>
+      <objtype>    TMatrixD              </objtype>
     </covariance_matrix>
   </skdetfsi>
 

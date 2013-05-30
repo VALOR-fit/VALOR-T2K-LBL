@@ -534,6 +534,7 @@ double SuperkDetector::EfficiencyWeight(
        //
        case (kSKmNuMuCCQE)    : 
        case (kSKmNuMuBarCCQE) : 
+       case (kSKmMEC)         :
        {
           // other efficiency err
           double relerr_oth  = fEff1RmuCCQEOthRelErr;
@@ -591,16 +592,6 @@ double SuperkDetector::EfficiencyWeight(
           weight  = (1. + twkdial*relerr);
           break;
        }
-
-       //
-       // MEC
-       // No SK detector systematics!
-       //
-      case (kSKmMEC)            :
-      {
-	weight = 1.;
-	break;
-      }
 
        //
        // nue CCQE, nue CC1pi, nue CCcoh, nue CCoth:

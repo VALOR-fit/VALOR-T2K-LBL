@@ -42,7 +42,7 @@ if opt.save_spectra:
     no_spectra = "false"
 
 modes1 = [0,2,3,4,5] #combinations
-modes2 = range(100,123) #banff
+modes2 = range(100,126) #banff
 modes3 = range(200,216) #unconstranied xsec
 modes4 = range(300,309) #sk detector
 modes5 = range(400,406) #fsi
