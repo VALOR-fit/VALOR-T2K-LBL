@@ -1528,8 +1528,8 @@ void plot_contour_comparisons
   leg2->AddEntry(h_fcall_123_90, "T2K 3#nu 90% CL","l");
   leg2->AddEntry("g_run12_90_statsyst", "T2K 2011 2#nu 90% CL", "l");
   leg2->AddEntry(ll_minos, "MINOS 2013 2#nu 90% CL", "l");
-  leg2->AddEntry("g_skle", "SuperK L/E 2012 2#nu 90% CL", "l");
-  leg2->AddEntry("g_skzen", "SuperK zenith 2012 3#nu 90% CL", "l");
+  leg2->AddEntry("g_skle", "SK L/E 2012 2#nu 90% CL", "l");
+  leg2->AddEntry("g_skzen", "SK zenith 2012 3#nu 90% CL", "l");
   leg2->SetX2NDC(0.6);
   leg2->SetTextSize(0.05);
   leg2->Draw();
