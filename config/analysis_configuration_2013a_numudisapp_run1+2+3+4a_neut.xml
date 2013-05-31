@@ -219,7 +219,7 @@
   ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
   -->
 
-  <banff>
+ <banff>
        <!--
         Central values from BANFF fit
        -->
@@ -235,7 +235,7 @@
           <filename>   inputs/official/2013/banff/postfit_banff_2013_disappearance_v0.root  </filename>
           <objname>    postfit_cov      </objname>
           <objtype>    TMatrixD         </objtype>
-        </covariance_matrix>     
+        </covariance_matrix>
   </banff>
 
   <!--
@@ -248,7 +248,7 @@
       <weight_splines>
           <one_mu_ring>
                 <filename>
-                    inputs/official/2012/xsec/XSecSplinesCoarse2012_coarseEreco.root
+                    inputs/official/2013/xsec/XSecSplinesCoarse2013_coarseEreco.root
                 </filename>
           </one_mu_ring>
           <one_e_ring>
@@ -257,17 +257,6 @@
                 </filename>
           </one_e_ring>
       </weight_splines>
-      <splines>
-	  <maqe>
-	       0.149
-	  </maqe>
-	  <oneovermaqesq>
-	       0.274
-	  </oneovermaqesq>
-	  <mares>
-	       0.107
-	  </mares>
-      </splines>
       <normalisations>
 	  <ccqee1>
 	       0.23
@@ -310,7 +299,7 @@
         MEC template
        -->
        <template>
-	   <filename>   inputs/official/2013/xsec/sk_mec_erec_etrue.root </filename>
+	   <filename>   inputs/official/2012/xsec/sk_mec_erec_etrue.root </filename>
 	   <objname>    sk_martini_erec_etrue </objname>
 	   <objtype>    TH2D                  </objtype>
        </template>
@@ -327,9 +316,9 @@
         Covariance matrix of FSI parameters
        -->
        <covariance_matrix>
-          <filename>   inputs/official/2012/fsi/FSIandSIError_JointOA.root  </filename>
-          <objname>    fsi_cov         </objname>
-          <objtype>    TMatrixD         </objtype>
+          <filename>   inputs/official/2013/skdetfsi/FSIandSIErrors2013.root  </filename>
+          <objname>    FSICovariance    </objname>
+          <objtype>    TH2D             </objtype>
        </covariance_matrix>     
   </fsi>
 
@@ -343,9 +332,9 @@
         Covariance matrix of FSI parameters
       -->
     <covariance_matrix>
-      <filename>   inputs/official/2012/superk/err/skdet_fsi_cov_2012_joint.root  </filename>
-      <objname>    skdet_fsi_cov         </objname>
-      <objtype>    TMatrixD         </objtype>
+      <filename>   inputs/official/2013/skdetfsi/SKDetFSISIErrors2013.root  </filename>
+      <objname>    FSICovariance         </objname>
+      <objtype>    TMatrixD              </objtype>
     </covariance_matrix>
   </skdetfsi>
 
