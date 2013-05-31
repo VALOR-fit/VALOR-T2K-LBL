@@ -94,11 +94,13 @@
                 <objname>    tnumu   </objname>
                 <objtype>    TTree            </objtype>
              </one_mu_ring>
+<!--
              <one_e_ring>
                 <filename>   inputs/official/2012/superk/mc/neut/11c/sk11c_1ReT_flx11bv32fine_10acuts_final.root  </filename>
                 <objname>    tnumu   </objname>
                 <objtype>    TTree            </objtype>
              </one_e_ring>
+-->
            </numu>
            <numubar>
              <pot> 
@@ -111,11 +113,13 @@
                 <objname>    tnumubar   </objname>
                 <objtype>    TTree            </objtype>
              </one_mu_ring>
+<!--
              <one_e_ring>
                 <filename>   inputs/official/2012/superk/mc/neut/11c/sk11c_1ReT_flx11bv32fine_10acuts_final.root  </filename>
                 <objname>    tnumubar   </objname>
                 <objtype>    TTree            </objtype>
              </one_e_ring>
+-->
            </numubar>
            <nue>
              <pot> 
@@ -128,11 +132,13 @@
                 <objname>    tnue   </objname>
                 <objtype>    TTree            </objtype>
              </one_mu_ring>
+<!--
              <one_e_ring>
                 <filename>   inputs/official/2012/superk/mc/neut/11c/sk11c_1ReT_flx11bv32fine_10acuts_final.root  </filename>
                 <objname>    tnue   </objname>
                 <objtype>    TTree            </objtype>
              </one_e_ring>
+-->
           </nue>
           <nuebar>
              <pot> 
@@ -145,11 +151,13 @@
                 <objname>    tnuebar   </objname>
                 <objtype>    TTree            </objtype>
              </one_mu_ring>
+<!--
              <one_e_ring>
                 <filename>   inputs/official/2012/superk/mc/neut/11c/sk11c_1ReT_flx11bv32fine_10acuts_final.root  </filename>
                 <objname>    tnuebar   </objname>
                 <objtype>    TTree            </objtype>
              </one_e_ring>
+-->
           </nuebar>
           <signal_nue>
              <pot> 
@@ -162,11 +170,13 @@
                 <objname>    tnuesig   </objname>
                 <objtype>    TTree            </objtype>
              </one_mu_ring>
+<!--
              <one_e_ring>
                 <filename>   inputs/official/2012/superk/mc/neut/11c/sk11c_1ReT_flx11bv32fine_10acuts_final.root  </filename>
                 <objname>    tnuesig   </objname>
                 <objtype>    TTree            </objtype>
              </one_e_ring>
+-->
           </signal_nue>
        </nominal>
      </superk>
