@@ -2,22 +2,27 @@ using namespace std;
 using namespace t2kana;
 using namespace t2kana::util;
 
-void test_valor_kdi_splines(
-			    bool   compare_with_old_valor = false,
-			    double check                  = -1
-) {
-  TFile * fval         = new TFile("$T2KOSCANA/inputs/official/2013/xsec/XSecSplinesCoarse2013_coarseEreco.root");
+void test_valor_kdi_splines
+(
+   bool   compare_with_old_valor = false,
+   double check                  = -1
+) 
+{
+  // compare response funcs here:
+  TFile * fval = new TFile("$T2KOSCANA/inputs/official/2013/xsec/XSecSplinesCoarse2013_coarseEreco.root");
+
+  // with reference response funcs here:
+  TFile * fref = 0;
+
+  // locations of reference response funcs (old VaLOR, or KDI)
+  TFile * fval_old     = new TFile("$T2KOSCANA/inputs/official/2012/xsec/XSecSplinesCoarse2012_coarseEreco.root");
   TFile * fkdi_numu    = new TFile("$T2KOSCANA/inputs/official/2013/xsec/spl_numuoa_sk13a_flx11bv32_numu.root");
   TFile * fkdi_numubar = new TFile("$T2KOSCANA/inputs/official/2013/xsec/spl_numuoa_sk13a_flx11bv32_numubar.root");
   TFile * fkdi_nue     = new TFile("$T2KOSCANA/inputs/official/2013/xsec/spl_numuoa_sk13a_flx11bv32_nue.root");
   TFile * fkdi_nuebar  = new TFile("$T2KOSCANA/inputs/official/2013/xsec/spl_numuoa_sk13a_flx11bv32_nuebar.root");
   TFile * fkdi_signue  = new TFile("$T2KOSCANA/inputs/official/2013/xsec/spl_numuoa_sk13a_flx11bv32_signalnue.root");
-  TFile * fkdi         = 0;
-  if(compare_with_old_valor)
-    fkdi = new TFile("$T2KOSCANA/inputs/official/2012/xsec/XSecSplinesCoarse2012_coarseEreco.root");
 
   TCanvas can;
-
   stringstream problem_free;
 
   //sample
@@ -27,30 +32,43 @@ void test_valor_kdi_splines(
   for(int im = 0; im < conv::knm; im++) {
     conv::SuperkMode_t m = conv::kSKReactionModes[is][im];
     if(m == conv::kSKmUndefined) continue;
+    cout << "Current sample/mode: " << util::AsString(s) << "/" << util::AsString(m) << endl;
     if(!compare_with_old_valor) {
       //find the KDI spline file
       if(util::IsNuMu(m))
-	fkdi = fkdi_numu;
+	fref = fkdi_numu;
       else if(util::IsNuMuBar(m))
-	fkdi = fkdi_numubar;
+	fref = fkdi_numubar;
       else if(util::IsNuE(m))
-	fkdi = fkdi_nue;
+	fref = fkdi_nue;
       else if(util::IsNuEBar(m))
-	fkdi = fkdi_nuebar;
+	fref = fkdi_nuebar;
       else if(util::IsSignalNuE(m))
-	fkdi = fkdi_signue;
+	fref = fkdi_signue;
+    } else {
+        fref = fval_old;
     }
-    vector<string> mode = util::Tokens(util::AsStringCompact_Japan(m), "_");
+    assert(fref!=0);
+    vector<string> mode = util::Tokens(util::AsStringCompact_KIT(m), "_");
     //loop over systematics
     for(int ip = 0; ip < conv::kNumOfXSecSyst; ip++) {
       conv::PhysParamId_t p = conv::kListOfXSecSyst[ip];    
+      cout << "** Comparing response functions for cross-section systematic: " << util::AsString(p) << endl;
       if(p == conv::kPhypUndefined) continue;
       // do we need weight splines for the current systematic parameter?
       bool need_splines = conv::kXSecSystHasWghtSplines[ip];
-      if(!need_splines) continue;
+      if(!need_splines) {
+         cout << "We don't use response functions for systematic: " << util::AsString(p) << endl;
+         continue;
+      }
       // is the current systematic parameter going to be applied to current sample/mode?
       bool is_applied = conv::kXsApplyXSecSystToSKMode[is][im][ip];
-      if(!is_applied) continue;
+      if(!is_applied) {
+         cout << "Systematic: " << util::AsString(p) 
+              << " is not applied to current sample/mode: " 
+              << util::AsString(s) << "/" << util::AsString(m) << endl;
+         continue;
+      }
 
       //open the output pdf
       TString filename, filenameo, filenamec;
@@ -60,15 +78,16 @@ void test_valor_kdi_splines(
       can.Print(filenameo.Data(),"pdf");
 
       //loop over energy bins
-      for(int ir = 0; ir < conv::kXsNErecoBins; ir++) {
-	double Ereco = conv::kXsErecoBinEdges[ir] + conv::kOneMeV;
+      for(int ir = 0; ir < conv::kXsNErecoBins1Rmu; ir++) {
+	double Ereco = conv::kXsErecoBinEdges1Rmu[ir] + conv::kOneMeV;
 	for(int it = 0; it < conv::kXsNEtrueBins; it++) {
 	  double Etrue = conv::kXsEtrueBinEdges[is][im][it] + conv::kOneMeV;
 	  
 	  //now finally can get the splines!
 	  ostringstream kdi_splname;
 	  kdi_splname << "spl_"
-		      << util::AsStringCompact_Japan(p) << "_"
+//		      << util::AsStringCompact_Japan(p) << "_"
+		      << util::AsStringCompact_KIT(p) << "_"
 		      << mode[1] << "_"
 		      << "enu"  << it << "_" 
 		      << "erec" << ir;
@@ -82,37 +101,41 @@ void test_valor_kdi_splines(
 
 	  // Copy splines from input file
 	  TSpline3 * val_spl = (TSpline3 *) fval->Get(val_splname.str().c_str());
-	  TSpline3 * kdi_spl = 0;
+	  TSpline3 * ref_spl = 0;
 	  if(compare_with_old_valor)
 	    //use val_splname
-	    kdi_spl = (TSpline3 *) fkdi->Get(val_splname.str().c_str());
+	    ref_spl = (TSpline3 *) fref->Get(val_splname.str().c_str());
 	  else {
-	    //use kit_splname
-	    TSpline3 * kdi_spl_temp = (TSpline3 *) fkdi->Get(kdi_splname.str().c_str());
+	    //use kdi_splname
+	    TSpline3 * ref_spl_temp = (TSpline3 *) fref->Get(kdi_splname.str().c_str());
 	    
-	    const int n = kdi_spl_temp->GetNp();
-	    double x[n] = {0}, y[n] = 0;
+	    const int n = ref_spl_temp->GetNp();
+//	    double x[n] = {0}, y[n] = 0;
+	    double * x = new double[n];
+	    double * y = new double[n];
 	    for(int k = 0; k < n; k++) {
-	      kdi_spl_temp->GetKnot(k, x[k], y[k]);
+	      ref_spl_temp->GetKnot(k, x[k], y[k]);
 	      //x[k] += 1;
 	      //y[k] += 1;
 	    }//k
-	    kdi_spl = new TSpline3("",x,y,n);
+	    ref_spl = new TSpline3("",x,y,n);
+//          delete [] x;
+//          delete [] y;
 	  }//compare_with_old_valor
 
-	  if((!val_spl) || (!kdi_spl)) continue;
+	  if((!val_spl) || (!ref_spl)) continue;
 
 	  bool problem = false;
 	  for(int ibin = -3; ibin <= 3; ibin++) {
-	    if(TMath::Abs(val_spl->Eval(ibin) - kdi_spl->Eval(ibin)) > check) {
-	      kdi_spl->SetLineColor(kRed);
-	      kdi_spl->SetMarkerColor(kRed);
-	      kdi_spl->SetMarkerSize(1);
-	      kdi_spl->SetMarkerStyle(8);
+	    if(TMath::Abs(val_spl->Eval(ibin) - ref_spl->Eval(ibin)) > check) {
+	      ref_spl->SetLineColor(kRed);
+	      ref_spl->SetMarkerColor(kRed);
+	      ref_spl->SetMarkerSize(1);
+	      ref_spl->SetMarkerStyle(8);
 	      val_spl->SetMarkerSize(1);
 	      val_spl->SetMarkerStyle(8);
 	      val_spl->Draw("LP");
-	      kdi_spl->Draw("LPsame");
+	      ref_spl->Draw("LPsame");
 	      TPaveText * leg1 = new TPaveText (0,0,1.,0.05,"NDC");
 	      leg1->SetBorderSize(0);
 	      leg1->SetFillStyle(0);
@@ -122,9 +145,9 @@ void test_valor_kdi_splines(
 	      leg2->SetBorderSize(0);
 	      leg2->SetFillStyle(0);
 	      if(compare_with_old_valor)
-		leg2->AddText(Form("%s %s",val_splname.str().c_str(), kdi_spl->GetTitle()));
+		leg2->AddText(Form("%s %s",val_splname.str().c_str(), ref_spl->GetTitle()));
 	      else
-		leg2->AddText(Form("%s %s",kdi_splname.str().c_str(), kdi_spl->GetTitle()));
+		leg2->AddText(Form("%s %s",kdi_splname.str().c_str(), ref_spl->GetTitle()));
 	      leg2->SetTextColor(kRed);
 	      leg2->Draw();
 	      can.Print(filename.Data(),"pdf");
@@ -134,7 +157,7 @@ void test_valor_kdi_splines(
 	  }//ibin
 	  if(!problem)
 	    problem_free << val_splname.str() << "_" << val_splname.str() << endl;
-	  delete kdi_spl;
+	  delete ref_spl;
 	}//it
       }//ir
       //close the output pdf
