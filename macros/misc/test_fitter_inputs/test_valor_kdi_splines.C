@@ -22,7 +22,8 @@ void test_valor_kdi_splines
   TFile * fkdi_nuebar  = new TFile("$T2KOSCANA/inputs/official/2013/xsec/spl_numuoa_sk13a_flx11bv32_nuebar.root");
   TFile * fkdi_signue  = new TFile("$T2KOSCANA/inputs/official/2013/xsec/spl_numuoa_sk13a_flx11bv32_signalnue.root");
 
-  TCanvas can;
+  TCanvas * can = new TCanvas("can");
+
   stringstream problem_free;
 
   //sample
@@ -70,19 +71,15 @@ void test_valor_kdi_splines
          continue;
       }
 
-      //open the output pdf
-      TString filename, filenameo, filenamec;
-      filenameo.Form("%s_%s.pdf[",util::AsStringCompact(p).c_str(),util::AsStringCompact(m).c_str());
-      filename.Form ("%s_%s.pdf", util::AsStringCompact(p).c_str(),util::AsStringCompact(m).c_str());
-      filenamec.Form("%s_%s.pdf]",util::AsStringCompact(p).c_str(),util::AsStringCompact(m).c_str());
-      can.Print(filenameo.Data(),"pdf");
+      TString filename;
+      filename.Form ("%s_%s.ps", util::AsStringCompact(p).c_str(),util::AsStringCompact(m).c_str());
+      TPostScript * ps = new TPostScript(filename.Data(), 111);
 
       //loop over energy bins
       for(int ir = 0; ir < conv::kXsNErecoBins1Rmu; ir++) {
 	double Ereco = conv::kXsErecoBinEdges1Rmu[ir] + conv::kOneMeV;
 	for(int it = 0; it < conv::kXsNEtrueBins; it++) {
-	  double Etrue = conv::kXsEtrueBinEdges[is][im][it] + conv::kOneMeV;
-	  
+	  double Etrue = conv::kXsEtrueBinEdges[is][im][it] + conv::kOneMeV;	  
 	  //now finally can get the splines!
 	  ostringstream kdi_splname;
 	  kdi_splname << "spl_"
@@ -118,12 +115,11 @@ void test_valor_kdi_splines
                cerr << "No " << kdi_splname.str() << " response func" << endl;
             }
 	    const int n = ref_spl_temp->GetNp();
-//	    double x[n] = {0}, y[n] = 0;
 	    double * x = new double[n];
 	    double * y = new double[n];
 	    for(int k = 0; k < n; k++) {
 	      ref_spl_temp->GetKnot(k, x[k], y[k]);
-	      //x[k] += 1;
+              x[k] += 1;
 	      //y[k] += 1;
 	    }//k
 	    ref_spl = new TSpline3("",x,y,n);
@@ -136,6 +132,7 @@ void test_valor_kdi_splines
 	  bool problem = false;
 	  for(int ibin = -3; ibin <= 3; ibin++) {
 	    if(TMath::Abs(val_spl->Eval(ibin) - ref_spl->Eval(ibin)) > check) {
+              // draw
 	      ref_spl->SetLineColor(kRed);
 	      ref_spl->SetMarkerColor(kRed);
 	      ref_spl->SetMarkerSize(1);
@@ -158,7 +155,7 @@ void test_valor_kdi_splines
 		leg2->AddText(Form("%s %s",kdi_splname.str().c_str(), ref_spl->GetTitle()));
 	      leg2->SetTextColor(kRed);
 	      leg2->Draw();
-	      can.Print(filename.Data(),"pdf");
+              can->Update(); 
 	      problem = true;
 	      break;
 	    }
@@ -168,11 +165,19 @@ void test_valor_kdi_splines
 	  delete ref_spl;
 	}//it
       }//ir
-      //close the output pdf
-      can.Print(filenamec.Data(),"pdf");
+
+      ps->Close();
+      delete ps;
+
+      // convert to pdf and erase original ps
+      gSystem->Exec(Form("ps2pdf14 %s",filename.Data()));
+      gSystem->Exec(Form("rm %s",filename.Data()));
+
     }//ip
   }//im
   cout << problem_free.str() << endl;
+
+  delete can;
 
   ofstream outfile ("spl_compare.txt");
   long size;
