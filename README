@@ -114,6 +114,11 @@ This is the first freeze of the fully validated 2012 code: This branch also cont
 deprecated features (experimental FSI and BANFF binnings, systematics not used in the final analysis,
 deprecated macros etc) that will be removed from a near-future "streamlined" revision.
 
+2012_v1.1.0
+............................................................................................................................
+2012_v1.0.0 revision with small bugs fixed while writing the 2012 analysis PRL and resolving final differences with KIT
+
+
 2012_v2.0.0
 ............................................................................................................................
 Implemented the 2012 3-flavour electron-neutrino appearance analysis and the 2012 joint 3-flavour oscillation analysis.

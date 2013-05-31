@@ -1,18 +1,9 @@
 //____________________________________________________________________________
 /*
 
- >> ChangeLog:
+\copyright (c) 2010-2013, VaLOR group.
 
- For changes up to version 2010_v3.0.0 (last implementation of the 2010-era analysis)
- see code in the corresponding SVN branch.
 
- Changes since 2011_v0.9.0:
-
- @ 18/2/13 LE
- Included Fogli and Lisi convention for dmsq schema in RandomizeDm23sq.
- Updated methods (to/from string, etc.) with new parameters, nuesig CC coh included for 1Re
- Added method to handle different number and edges of Etrue and Ereco bins for 1Rmu and 1Re.
-   
 */
 //____________________________________________________________________________
 
@@ -1939,9 +1930,9 @@ string t2kana::util::AsStringCompact(PhysParamId_t p)
   return "--";
 }
 //____________________________________________________________________________
-string t2kana::util::AsStringCompact_KIT(PhysParamId_t p)
+string t2kana::util::AsStringCompact_KDI(PhysParamId_t p)
 {
-  //Uses the KIT conventions (where different)
+  //Uses the KDI conventions (where different)
 
   switch(p) {
 
@@ -1952,6 +1943,7 @@ string t2kana::util::AsStringCompact_KIT(PhysParamId_t p)
     case ( kNuisXSecWshape            ) : return "mdel";     break;
     case ( kNuisXSecShapeCCoth        ) : return "ccothshp"; break;
     case ( kNuisXSecPiLessDelta       ) : return "pdd";      break;
+    case ( kNuisXSecBindE             ) : return "eb";       break;
 
     default : 
       return AsStringCompact(p);
@@ -2333,7 +2325,7 @@ string t2kana::util::AsStringCompact (t2kana::conv::SuperkMode_t m)
   return "";
 }
 //____________________________________________________________________________
-string t2kana::util::AsStringCompact_KIT (t2kana::conv::SuperkMode_t m)
+string t2kana::util::AsStringCompact_KDI (t2kana::conv::SuperkMode_t m)
 {
 // Compact string used for naming output histograms stored ROOT files
 // using the Japanese analysis naming convention

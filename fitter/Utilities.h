@@ -10,6 +10,8 @@
           
 \created  Oct 20, 2010
 
+\copyright (c) 2010-2013, VaLOR group.
+
 */
 //____________________________________________________________________________
 
@@ -100,9 +102,9 @@ namespace util {
   string AsStringCompact    (conv::SuperkSample_t s, conv::SuperkMode_t m, string append_begin="", string append_end="");
   string AsStringCompact    (conv::SuperkSample_t     s);
   string AsStringCompact    (conv::SuperkMode_t       m);
-  string AsStringCompact_KIT(conv::SuperkMode_t m);
+  string AsStringCompact_KDI(conv::SuperkMode_t m);
   string AsStringCompact    (conv::PhysParamId_t      p);
-  string AsStringCompact_KIT(conv::PhysParamId_t p);
+  string AsStringCompact_KDI(conv::PhysParamId_t p);
   string Pdg2String         (int pdg_code);
 
   conv::PhysHypothesis_t   PhysHypFromString         (string h);

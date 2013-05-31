@@ -49,7 +49,7 @@ void test_valor_kdi_splines
         fref = fval_old;
     }
     assert(fref!=0);
-    vector<string> mode = util::Tokens(util::AsStringCompact_KIT(m), "_");
+    vector<string> mode = util::Tokens(util::AsStringCompact_KDI(m), "_");
     //loop over systematics
     for(int ip = 0; ip < conv::kNumOfXSecSyst; ip++) {
       conv::PhysParamId_t p = conv::kListOfXSecSyst[ip];    
@@ -86,8 +86,7 @@ void test_valor_kdi_splines
 	  //now finally can get the splines!
 	  ostringstream kdi_splname;
 	  kdi_splname << "spl_"
-//		      << util::AsStringCompact_Japan(p) << "_"
-		      << util::AsStringCompact_KIT(p) << "_"
+		      << util::AsStringCompact_KDI(p) << "_"
 		      << mode[1] << "_"
 		      << "enu"  << it << "_" 
 		      << "erec" << ir;
@@ -99,16 +98,25 @@ void test_valor_kdi_splines
 		      << ir << "_" 
 		      << it;
 
-	  // Copy splines from input file
+	  // Get VaLOR spline
+          cout << "Getting VaLOR response function: " << val_splname.str() << endl;
 	  TSpline3 * val_spl = (TSpline3 *) fval->Get(val_splname.str().c_str());
+          if(!val_spl) {
+             cerr << "No " << val_splname.str() << " response func" << endl;
+          }
+          // Get reference spline
 	  TSpline3 * ref_spl = 0;
-	  if(compare_with_old_valor)
+	  if(compare_with_old_valor) {
 	    //use val_splname
+            cout << "Getting VaLOR old response function: " << val_splname.str() << endl;
 	    ref_spl = (TSpline3 *) fref->Get(val_splname.str().c_str());
-	  else {
+	  } else {
 	    //use kdi_splname
+            cout << "Getting KDI response function: " << kdi_splname.str() << endl;
 	    TSpline3 * ref_spl_temp = (TSpline3 *) fref->Get(kdi_splname.str().c_str());
-	    
+	    if(!ref_spl_temp) {
+               cerr << "No " << kdi_splname.str() << " response func" << endl;
+            }
 	    const int n = ref_spl_temp->GetNp();
 //	    double x[n] = {0}, y[n] = 0;
 	    double * x = new double[n];
