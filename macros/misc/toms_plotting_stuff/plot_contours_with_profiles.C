@@ -3,6 +3,7 @@ void plot_contours_with_profiles()
   TFile f_val_cont("2012results/NEWRESULTS/FINALFCCONTOURS/fc_oldsurf_newres_5E5_nosub.root");
   TFile f_kit_cont("2012results/DATA/KIT/of_fc_kit.root");
 
+  TCanvas * ctemp = new TCanvas();
 
   double chisq_bf = 56.04;
 
@@ -77,7 +78,7 @@ void plot_contours_with_profiles()
 				     dm23sq_nbins, 0.00205, 0.00305);
   osc_param_space2->GetXaxis()->SetTitle("sin^{2}(2#theta_{23})"); // adjust if mixing param is sinsqtheta rather than sinsq2theta...
   osc_param_space2->GetYaxis()->SetTitle("|#Deltam_{32}^{2}| (eV^{2}/c^{4})");
-  //osc_param_space2->GetXaxis()->SetTitleOffset(1.2);
+  osc_param_space2->GetXaxis()->SetTitleOffset(1.25);
   osc_param_space2->GetYaxis()->SetTitleOffset(1.4);
   osc_param_space2->Draw();  
 
@@ -96,9 +97,9 @@ void plot_contours_with_profiles()
   bestfit_kit.Draw();
 
   //legend
-  TLegend * leg2 = new TLegend(0.17,0.7,0.5,0.92);
+  TLegend * leg2 = new TLegend(0.18,0.6,0.41,0.81);
   leg2->SetFillColor(0);
-  leg2->SetFillStyle(0);
+  //leg2->SetFillStyle(0);
   leg2->SetBorderSize(0);
   leg2->SetTextFont(132);
   leg2->AddEntry(h_fcall_68, "T2K 68% C.L.","l");
@@ -111,7 +112,7 @@ void plot_contours_with_profiles()
   leg2->SetTextSize(0.05);
   leg2->Draw();
 
-  //draw 1d mixing
+  //draw mixing pad
   TPad * pad_top = new TPad("pad_top","pad_top",0,0,1,1);
   pad_top->SetBottomMargin(1-top_fraction);
   pad_top->SetRightMargin(right_fraction);
@@ -120,14 +121,73 @@ void plot_contours_with_profiles()
   pad_top->SetFillStyle(0);
   pad_top->Draw();
   pad_top->cd(0);
+
+  //draw mixing frame
+  Int_t mix_xnbins  = h_val_mix->GetNbinsX();
+  Int_t mix_ynbins  = h_val_mix->GetNbinsY();
+  Float_t mix_ymin = 0;
+  Float_t mix_ymax = 6;//1.*h_val_mix->GetMaximum();
+  Float_t mix_xmin = osc_param_space2->GetXaxis()->GetXmin();
+  Float_t mix_xmax = osc_param_space2->GetXaxis()->GetXmax();
+  TH2D * mix_frame = new TH2D("","",mix_xnbins,mix_xmin,mix_xmax,mix_ynbins,mix_ymin,mix_ymax);
+  mix_frame->GetXaxis()->SetLabelSize(0);
+  mix_frame->GetYaxis()->SetLabelFont(132);
+  mix_frame->GetYaxis()->SetNdivisions(3,5,0);
+  mix_frame->GetYaxis()->SetTitle("#Delta#chi^{2}");
+  mix_frame->GetYaxis()->SetTitleOffset(osc_param_space2->GetYaxis()->GetTitleOffset());
+  mix_frame->GetYaxis()->SetLabelOffset(0.077);
+  mix_frame->GetYaxis()->SetTickLength(0.12);
+  mix_frame->Draw();
+
+  //draw mixing data
+  TLine *l1, *l2;
+  int mix_nbins = h_val_mix->GetNbinsX();
+  cout << h_val_mix->GetXaxis()->GetXmax() << endl << endl;
+  for (Int_t i=1;i<=mix_nbins;i++) {
+    Float_t width = 0.5;
+    if(i == 1 || i == mix_nbins)
+      width = 0.25;
+    Float_t mix_ybinmax = h_val_mix->GetBinContent(i);
+    Float_t mix_ybinmax_previous = h_val_mix->GetBinContent(i-1);
+    Float_t mix_xbin = h_val_mix->GetBinCenter(i);
+    Float_t mix_xbinmin = mix_xbin -width*h_val_mix->GetBinWidth(i);
+    Float_t mix_xbinmax = mix_xbin +width*h_val_mix->GetBinWidth(i);
+    if(mix_xbinmin < mix_xmin)
+      continue;
+    if(mix_ybinmax > mix_ymax)
+      continue;
+    l1 = new TLine(mix_xbinmin,mix_ybinmax,mix_xbinmax,mix_ybinmax);
+    l1->Draw();
+    double extra = 0.039;
+    double extra_high = extra, extra_low = extra;
+    if(i == 1)
+      extra_high == 0;
+    l2 = new TLine(mix_xbinmin,mix_ybinmax_previous+extra_high,mix_xbinmin,mix_ybinmax-extra_low);
+    //l2->SetLineColor(kBlue);
+    if(l2->GetY2() > mix_ymax || l2->GetY1() > mix_ymax) continue;
+    if(i != mix_nbins) l2->Draw();
+    //cout << mix_xbin << endl;
+  }
+
+  //draw mix const dchisq lines
+  TLine * l68_mix = new TLine(mix_xmin,1.00,mix_xmax,1.00);
+  TLine * l90_mix = new TLine(mix_xmin,2.71,mix_xmax,2.71);
+  l68_mix->SetLineStyle(2);
+  l90_mix->SetLineStyle(3);
+  l68_mix->Draw();
+  l90_mix->Draw();
+
   h_val_mix->SetLabelSize(0);
   h_val_mix->GetXaxis()->SetTitle("");
   h_val_mix->GetXaxis()->SetRangeUser(mixing23_min,mixing23_max);
   //h_val_mix->GetYaxis()->SetRangeUser(0,4);
   h_val_mix->GetYaxis()->SetLabelFont(132);
-  h_val_mix->Draw("");
+  h_val_mix->SetLineStyle(2);
+  h_val_mix->SetLineWidth(1);
+  h_val_mix->SetLineColor(kRed);
+  //h_val_mix->Draw("same");
 
-  //draw 1D dm
+  //draw dm pad
   TPad * pad_right = new TPad("pad_right","pad_right",0,0,1,1);
   pad_right->SetTopMargin(top_fraction);
   pad_right->SetLeftMargin(1-right_fraction);
@@ -135,21 +195,89 @@ void plot_contours_with_profiles()
   pad_right->SetFillStyle(0);
   pad_right->Draw();
   pad_right->cd(0);
-  h_val_dm->SetLabelSize(0);
-  h_val_dm->GetXaxis()->SetTitle("");
-  h_val_dm->GetXaxis()->SetRangeUser(dm23sq_min,dm23sq_max);
 
-  //TCanvas * ctemp = new TCanvas();
-  h_val_dm->Draw("");
+  //draw dm frame
+  Int_t xnbins  = 100;//h_val_dm->GetNbinsX();
+  Int_t ynbins  = h_val_dm->GetNbinsY();
+  Float_t xmin = 0;
+  Float_t xmax = 10;//1.*h_val_dm->GetMaximum();
+  Float_t ymin = osc_param_space2->GetYaxis()->GetXmin();
+  Float_t ymax = osc_param_space2->GetYaxis()->GetXmax();
+  TH2D * dm_frame = new TH2D("","",xnbins,xmin,xmax,ynbins,ymin,ymax);
+  dm_frame->GetYaxis()->SetLabelSize(0);
+  dm_frame->GetYaxis()->SetLabelFont(132);
+  dm_frame->GetXaxis()->SetNdivisions(5,5,0);
+  dm_frame->GetXaxis()->SetTitle("#Delta#chi^{2}");
+  dm_frame->GetXaxis()->SetTitleOffset(1.25);
+  dm_frame->GetXaxis()->SetLabelOffset(0.05);
   /*
-  TImage *img = TImage::Create();
-  img->FromPad(ctemp);
-  img->Flip(90);
-  pad_right->cd();
-  img->Draw("x");
-  pad_right->Update();
+  for(int i = 1; i <= xnbins; i++) {
+    double center = dm_frame->GetXaxis()->GetBinUpEdge(i);
+    if(TMath::Abs(center-0) < 1E-8)
+      dm_frame->GetXaxis()->SetBinLabel(i,"0");
+    else if(TMath::Abs(center-2) < 1E-8)
+      dm_frame->GetXaxis()->SetBinLabel(i,"2");
+    else if(TMath::Abs(center-4) < 1E-8)
+      dm_frame->GetXaxis()->SetBinLabel(i,"4");
+    else if(TMath::Abs(center-6) < 1E-8)
+      dm_frame->GetXaxis()->SetBinLabel(i,"6");
+    else if(TMath::Abs(center-8) < 1E-8)
+      dm_frame->GetXaxis()->SetBinLabel(i,"8");
+    else if(TMath::Abs(center-10) < 1E-8)
+      dm_frame->GetXaxis()->SetBinLabel(i,"10");
+    else
+      dm_frame->GetXaxis()->SetBinLabel(i,"");
+  }
+  dm_frame->GetXaxis()->SetNdivisions(5,5,5);
+  dm_frame->GetXaxis()->LabelsOption("h");
+  dm_frame->GetXaxis()->SetLabelSize(0.07);
   */
+  dm_frame->GetXaxis()->SetTickLength(0.12);
+  dm_frame->Draw("axis");
+
+  //draw dm data
+  Float_t xbinmin = ymin;
+  int nbins = h_val_dm->GetNbinsX();
+  cout << h_val_dm->GetXaxis()->GetXmax() << endl << endl;
+  for (Int_t i=1;i<=nbins;i++) {
+    Float_t width = 0.5;
+    if(i == 1 || i == nbins)
+      width = 0.25;
+    Float_t xbinmax = h_val_dm->GetBinContent(i);
+    Float_t xbinmax_previous = h_val_dm->GetBinContent(i-1);
+    Float_t ybin = h_val_dm->GetBinCenter(i);
+    Float_t ybinmin = ybin -width*h_val_dm->GetBinWidth(i);
+    Float_t ybinmax = ybin +width*h_val_dm->GetBinWidth(i);
+    if(ybinmin < ymin && ybinmax < ymin) continue;
+    if(ybinmin < ymin) ybinmin = ymin;
+    l1 = new TLine(xbinmax,ybinmin,xbinmax,ybinmax);
+    if(xbinmax > xmax) break;
+    l1->Draw(); //up-down
+    if(ybinmin < ymin) continue;
+    double extra = 0.044;
+    if(xbinmax_previous < xbinmax)
+      l2 = new TLine(xbinmax_previous-extra,ybinmin,xbinmax+extra,ybinmin);
+    else
+      l2 = new TLine(xbinmax_previous+extra,ybinmin,xbinmax-extra,ybinmin);
+    l2->Draw(); //left-right
+    //cout << ybin << endl;
+  }
+
+  //draw dm const dchisq lines
+  TLine * l68_dm = new TLine(1.00,ymin,1.00,ymax);
+  TLine * l90_dm = new TLine(2.71,ymin,2.71,ymax);
+  l68_dm->SetLineStyle(2);
+  l90_dm->SetLineStyle(3);
+  l68_dm->Draw();
+  l90_dm->Draw();
+
+  //draw the markers again (draws them over dm plot)
+  c->cd();
+  bestfit_kit.Draw();
+  bestfit_2all.Draw();
+
   c->SaveAs("contour_compare_methods2.pdf");
+  c->SaveAs("contour_compare_methods2.eps");
   leg2->Clear();
   delete leg2;
 
