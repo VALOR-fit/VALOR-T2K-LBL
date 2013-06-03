@@ -1,15 +1,17 @@
 +--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+
 RUNNING THE VALOR ANALYSES
-Pointers to macros used for the standard analysis procedures 
+Pointers to macros used for the standard analysis procedures. See the macros for detailed documentation.
 
 Contents
   0.  Generic goodies.
   1.  Comparison of VaLOR analysis inputs against inputs used by alternative analyses
-  2.  Generation of basic VaLOR SK predictions (*) and comparisons against alternative analyses
-  3.  
-  4.  
+  2.  Generation of basic VaLOR SK predictions (*) and comparison against predictions from alternative analyses
+  3.  Running fit bias studies
+  4.  Running sensitivity studies
+  5.  Running fit on fake and actual data
+  6.  Computing p-values for fits
 
-(*) number of events and spectra, for specific physics hypotheses and with/withoit systematic variations
+(*) number of events and spectra, for specific physics hypotheses and with/without systematic variations
 
 +--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+
 
@@ -17,9 +19,10 @@ Contents
 0. Generic goodies
 ............................................................................................................................
 
-Comparing 1-D histograms: If you have 2 files that contain some histograms that have the same name (compare_str has to be 
-contained in the histogram name; can be "" if you want to compare all histograms), then this macro will divide the 
-2 (if they're not identical) & draw the comparison. Can also save to pdf. To compare quickly, use -b:
+Comparing 1-D histograms.
+If you have 2 files that contain some histograms that have the same name (compare_str has to be contained in the histogram 
+name; can be "" if you want to compare all histograms), then this macro will divide the 2 (if they're not identical) & 
+draw the comparison. Can also save to pdf. To compare quickly, use -b:
 root2k -l '$T2KOSCANA/macros/misc/compare/compare_1dhist_all.C("/path/to/file1.root","path/to/file2.root","compare_str")'
 
 
@@ -34,7 +37,7 @@ Comparing VaLOR FSI coveriance matrix with old Imperial FSI matrix
 macros/misc/test_fitter_inputs/test_fsi_matrices.C
 
 
-2. Generation of basic VaLOR SK predictions and comparisons against alternative analyses
+2. Generation of basic VaLOR SK predictions and comparison against predictions from alternative analyses
 ............................................................................................................................
 
 Test VaLOR Nsk. Generates summary tables (modes grouped) with/without BANFF tuning
@@ -62,7 +65,6 @@ The root files have mode by mode:
  1D Ereco spectra (e.g. erec_int_nueb_ncoth_fine) names use KDI notation. Use the 73 bins in the analysis
 and also:
  1D total Ereco spectrum: ereco_spectrum
-
 Have the cases:
  No BANFF tuning, no oscillations
  No BANFF tuning, with oscillations
