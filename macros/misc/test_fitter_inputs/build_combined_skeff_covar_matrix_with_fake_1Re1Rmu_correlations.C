@@ -81,7 +81,7 @@ using namespace std;
 
 void print_matrix(TMatrixD * m, int w, int prec);
 
-void build_combined_skeff_covar_matrix(int k=0, int l=0, int m=0)
+void build_combined_skeff_covar_matrix_with_fake_1Re1Rmu_correlations(int k=0, int l=0, int m=0)
 {
   gSystem->Load("libMatrix");
 
