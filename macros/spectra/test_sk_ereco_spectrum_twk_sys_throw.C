@@ -201,7 +201,8 @@ void test_sk_ereco_spectrum_twk_sys_throw
   TH1D * hEreco[nexp] = {0};
   TH1D * hNsk = new TH1D(Form("%s_nsk",modetitle.c_str()),Form("%s_nsk",modetitle.c_str()),3000,0,300);
   int nbanff = conv::kNumOfParamsInBANFFfit;
-  int nfsi = conv::kNumOfFSIParams;
+  //int nfsi = conv::kNumOfFSIParams;
+  int nfsi = conv::kNumOfSKDetFSIParams;
   const int nsys = nbanff + nfsi + 8 + 13;
   TH1D * hSysThrown[nsys];
   for(int isys = 0; isys < nsys; isys++) {
@@ -445,7 +446,6 @@ void test_sk_ereco_spectrum_twk_sys_throw
 	hEreco[iexp]->Write(Form("%s_exp%d",modetitle.c_str(),iexp));		    
     }
 
-
     //store Nsk
     double nskint = 0;
     for(int ir = 1; ir <= conv::kNErecoBins1Rmu; ir++)
@@ -456,11 +456,12 @@ void test_sk_ereco_spectrum_twk_sys_throw
     for(int isys = 0; isys < nbanff; isys++) {
       hSysThrown[isys]->Fill(skexp.GetBANFF()->CurrentValue(conv::kNuisBANFF00 + isys));
     }
-    for(int isys = 0; isys < nfsi; isys++) {
+    //for(int isys = 0; isys < nfsi; isys++) {
       //hSysThrown[isys+nbanff]->Fill(skexp.GetFSI()->CurrentValue(util::PhysParamIdFromString(Form("fsi_%03d",isys))));
-      hSysThrown[isys+nbanff]->Fill(skexp.GetSuperkDetectorFSI()->CurrentValue(util::PhysParamIdFromString(Form("fsi_%03d",isys))));
+    for(int isys = 0; isys < nfsi-1; isys++) {
+      hSysThrown[isys+nbanff]->Fill(skexp.GetSuperkDetectorFSI()->CurrentValue(util::PhysParamIdFromString(Form("skdetfsi_%03d",isys))));
     }
-    hSysThrown[nbanff+nfsi+0 ]->Fill(skexp.GetSuperkDetectorFSI()->CurrentValue(util::PhysParamIdFromString("sk_energy_scale")));
+    hSysThrown[nbanff+nfsi ]->Fill(skexp.GetSuperkDetectorFSI()->CurrentValue(util::PhysParamIdFromString("sk_energy_scale")));
     /*
     hSysThrown[nbanff+nfsi+0 ]->Fill(skexp.GetSuperkDetector()->CurrentValue(util::PhysParamIdFromString("sk_energy_scale")));
     hSysThrown[nbanff+nfsi+1 ]->Fill(skexp.GetSuperkDetector()->CurrentValue(util::PhysParamIdFromString("sk_1Rmu_ccqe_ring_counting_eff_0")));
