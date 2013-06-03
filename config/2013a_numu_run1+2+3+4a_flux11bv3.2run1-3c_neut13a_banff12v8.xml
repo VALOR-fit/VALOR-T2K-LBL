@@ -268,15 +268,6 @@
           </one_e_ring>
       </weight_splines>
       <normalisations>
-	  <ccqee1>
-	       0.23
-	  </ccqee1>
-	  <ccqee2>
-	       0.252
-	  </ccqee2>
-	  <cc1pie1>
-	       0.297
-	  </cc1pie1>
 	  <cccoh>
 	       1.0
 	  </cccoh>
@@ -339,11 +330,11 @@
   -->
   <skdetfsi>
     <!--
-        Covariance matrix of FSI parameters
+        Covariance matrix of SKDet FSI parameters
       -->
     <covariance_matrix>
       <filename>   inputs/official/2013/skdetfsi/SKDetFSISIErrors2013.root  </filename>
-      <objname>    FSICovariance         </objname>
+      <objname>    skdet_fsi_cov         </objname>
       <objtype>    TMatrixD              </objtype>
     </covariance_matrix>
   </skdetfsi>

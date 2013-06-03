@@ -108,6 +108,8 @@ void test_sk_ereco_spectrum_twk_sys
       modetitle = "fsi"; break;
     case 10:
       modetitle = "all(without-energy-scale)"; break;
+    case 11:
+      modetitle = "skdetfsi"; break;
 
     case 200:
       modetitle = "xsec_pf"; break;
@@ -176,6 +178,9 @@ void test_sk_ereco_spectrum_twk_sys
       }
       else if(mode >= 400 && mode < 400+conv::kNumOfFSIParams) {
 	modetitle = Form("fsi_%03d",mode-400); break;
+      }
+      else if(mode >= 600 && mode < 600+conv::kNumOfSKDetFSIParams) {
+	modetitle = Form("skdetfsi_%03d",mode-600); break;
       }
       else {
 	cout << "Unknown mode " << mode << endl; exit(1); break;
@@ -326,7 +331,7 @@ void test_sk_ereco_spectrum_twk_sys
     }
 
     if(mode < 100) {
-
+      
       //all BANFF correlated
       if(mode == 0 || mode == 1 || mode == 10) {
 	TVectorD v(conv::kNumOfParamsInBANFFfit);
@@ -373,8 +378,8 @@ void test_sk_ereco_spectrum_twk_sys
       }
 
       //SK det uncorrelated
-      if(mode == 0 || mode == 6 || mode == 8 || mode == 10) {
-	if(mode == 0 || mode == 8)
+      if(mode == 6 || mode == 8 || mode == 10) {
+	if(mode == 8)
 	  skexp.TweakSystematic("sk_energy_scale",tweak);
 	skexp.TweakSystematic("sk_1Rmu_ccqe_other_eff",tweak);
 	skexp.TweakSystematic("sk_1Rmu_ccnonqe_eff",tweak);
@@ -383,20 +388,30 @@ void test_sk_ereco_spectrum_twk_sys
       }
 
       //SK det ring counting
-      if(mode == 0 || mode == 6 || mode == 7 || mode == 8 || mode == 10) {
+      if(mode == 6 || mode == 7 || mode == 8 || mode == 10) {
 	skexp.TweakSystematic("sk_1Rmu_ccqe_ring_counting_eff_0",tweak);
 	skexp.TweakSystematic("sk_1Rmu_ccqe_ring_counting_eff_1",tweak);
 	skexp.TweakSystematic("sk_1Rmu_ccqe_ring_counting_eff_2",tweak);
       }
 
       //FSI
-      if(mode == 0 || mode == 9 || mode == 10) {
+      if(mode == 9 || mode == 10) {
 	TVectorD v(conv::kNumOfFSIParams);
 	v.Zero();
 	for(int ib = 0; ib < conv::kNumOfFSIParams; ib++) {
 	  v[ib] = 1 + (tweak * sqrt(skexp.GetFSI()->CovMatrix()[ib][ib]));
 	}
 	skexp.GetFSI()->Tweak(true,&v);
+      }
+
+      //SKDET FSI
+      if(mode == 11 || mode == 0) {
+	TVectorD v(conv::kNumOfSuperKDetectorFSIParams);
+	v.Zero();
+	for(int ib = 0; ib < conv::kNumOfSuperKDetectorFSIParams; ib++) {
+	  v[ib] = 1 + (tweak * sqrt(skexp.GetSuperkDetectorFSI()->CovMatrix()[ib][ib]));
+	}
+	skexp.GetSuperkDetectorFSI()->Tweak(true,&v);
       }
 
     }//mode<100
@@ -478,6 +493,16 @@ void test_sk_ereco_spectrum_twk_sys
 	    int ib = mode - 400;
 	    v[ib] = 1 + (tweak * sqrt(skexp.GetFSI()->CovMatrix()[ib][ib]));
 	    skexp.GetFSI()->Tweak(true,&v);
+	    break;
+	  }
+	  else if(mode >= 600 && mode < 600+conv::kNumOfSKDetFSIParams) {
+	    TVectorD v(conv::kNumOfSKDetFSIParams);
+	    for (int ipf = 0; ipf < conv::kNumOfSKDetFSIParams; ipf++) {
+	      v[ipf] = 1;
+	    }
+	    int ib = mode - 600;
+	    v[ib] = 1 + (tweak * sqrt(skexp.GetSuperkDetectorFSI()->CovMatrix()[ib][ib]));
+	    skexp.GetSuperkDetectorFSI()->Tweak(true,&v);
 	    break;
 	  }
 	  else {
