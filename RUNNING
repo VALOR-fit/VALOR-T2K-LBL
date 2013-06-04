@@ -13,10 +13,13 @@ Contents
   4.     Running sensitivity studies
   5.     Running fit on fake and actual data
   6.     Computing p-values for fits
+  7.     Feldman-Cousins
+  8.     Plot-macro cross reference
 
 (*) number of events and spectra, for specific physics hypotheses and with/without systematic variations
 
 +--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+
+
 
 
 0. Basic validation tools and goodies
@@ -81,6 +84,7 @@ draw the comparison. Can also save to pdf. To compare quickly, use -b:
 root2k -l '$T2KOSCANA/macros/misc/compare/compare_1dhist_all.C("/path/to/file1.root","path/to/file2.root","compare_str")'
 
 
+
 1. Comparison of VaLOR analysis inputs against inputs used by alternative analyses
 ............................................................................................................................
 
@@ -90,6 +94,7 @@ macros/misc/test_fitter_inputs/test_valor_kdi_splines.C
 --
 Comparing VaLOR FSI coveriance matrix with old Imperial FSI matrix
 macros/misc/test_fitter_inputs/test_fsi_matrices.C
+
 
 
 2. Generation of basic VaLOR SK predictions and comparison against predictions from alternative analyses
@@ -146,3 +151,146 @@ root2k -l -b -q $T2KOSCANA/macros/spectra/test_systematic_error_propagation_all.
 
 Norm systematics can be checked against the input, using
 root2k -l -b -q $T2KOSCANA/macros/spectra/test_systematic_error_propagation_expectation.C
+
+
+
+3.     Running fit bias studies
+............................................................................................................................
+Do the fits using:
+	$T2KOSCANA/production/submit_toyexpt_fitting_job_with_sys --resource RAL --tag bias_now --nruns 300 --nexpts 34 --fit-param-list nuosc3f_numudisapp_fix4+nuisance --job-dir $PWD --softw-dir $T2KOSCANA --cpu-time 48:00:00 --stat-fluctuations --tweak-systematics 1 --sinsq2theta23 0.9
+Analysis using:
+	root2k -l -b -q '$T2KOSCANA/macros/fit/pulls/mock_data_fit_pulls.C("bias_now*.root","bias_now",2,1,0,"analysis_configuration.xml",false)'
+
+
+
+4. Running sensitivity studies
+............................................................................................................................
+Make toys using:
+	 $T2KOSCANA/macros/fit/toymc/generate_toymc_ensemble.C
+Submit chisq surface jobs using (be sensible with step size (not too small) & not too wide with min/max, or jobs will take forever):
+	$T2KOSCANA/production/submit_toyexpt_fitting_job_xml --resource RAL --tag minos --nruns 1000 --nexpts 1 --first-expt 0 --fit-param-list nuosc3f_numudisapp_fix4+nuisance --job-dir $PWD --softw-dir $T2KOSCANA --toy-expts-file /path/to/xml/file --cpu-time 72:00:00 --chisqsyst-mixing23-min 0.93 --chisqsyst-mixing23-max 1.00 --chisqsyst-dm23sq-min 0.0021 --chisqsyst-dm23sq-max 0.0029 --chisqwithsyst-mixing23-step 0.01 --chisqwithsyst-dm23sq-step 1E-5
+Make sensitivity
+	$T2KOSCANA/macros/contour/const_dchisq/numu/sensitivity_from_many_chisq_surfaces.C
+Plot a few sensitivities on the same graph
+	macros/misc/toms_plotting_stuff/plot_minos_sensitivity_studies.C
+
+
+
+5.     Running fit on fake and actual data
+............................................................................................................................
+Check the granularity is sufficient inside:
+	$T2KOSCANA/macros/fit/toymc/test_n_mock_data_fits_xml_parallelized.C
+Make the chisq surface (check the min/max):
+	$T2KOSCANA/production/submit_toyexpt_fitting_job_xml_parallelized --resource RAL --tag data --expt-file /opt/ppd/t2k/dealtry/MORE/2012_v1.1.0_test/inputs/data.xml --nexpt 6 --job-dir $PWD --softw-dir $T2KOSCANA --min-dm23sq-bin 1 --max-dm23sq-bin 101 --min-sinsq2theta23-bin 1 --max-sinsq2theta23-bin 51 
+Hadd the root files together:
+	hadd data*.root
+Find a better best fit (not confined to the grid), make n > 10. Output gives chisq_bf, sinsq2theta23_bf, dm32sq_bf, bestfit spectrum, pulls & fitted values of systematics, dchisq surface
+	$T2KOSCANA/macros/fit/toymc/fit_xml_seeded_from_chisq_map.C
+Analyse the output (make some plots)
+	$T2KOSCANA/macros/fit/toymc/analyse_output.C
+Profile likelihoods:
+	$T2KOSCANA/production/submit_toyexpt_fitting_job_xml --no-chisq-surf-withsyst --chisqwithsyst-mixing23
+
+
+
+6.     Computing p-values for fits
+............................................................................................................................
+Goodness of fit (use 1000 toys):
+	$T2KOSCANA/production/submit_goodness_of_fit_job
+Likelihood of achieving our sensitivity:
+
+
+
+7. Feldman-Cousins
+............................................................................................................................
+Check the granularity of the grid:
+	$T2KOSCANA/macros/contour/fc/numu/feldman_cousins_fitting_job.C
+Use the const dchisq from DATA to make a bin list (make sure grid in this macro is same as fitting job macro!)
+	$T2KOSCANA/macros/contour/fc/numu/write_contour_bins_to_textfile.C
+Run the jobs:
+	$T2KOSCANA/production/submit_feldman_cousins_fitting_job_numu
+Make the FC critical surface:
+	$T2KOSCANA/macros/contour/fc/numu/make_feldman_cousins_deltachisqcrit_surface.C
+Make the FC contour:
+	$T2KOSCANA/macros/contour/fc/numu/plot_deltachisq_surface.C
+
+
+
+8. TN plot-macro cross reference
+Figure & table numbers refer to TN155 template, as of midday June 4th
+............................................................................................................................
+Fig1.  $T2KOSCANA/macros/spectra/test_nsk_twk_osc.C. No throws & make sure it's 3 flavour
+Fig2.  $T2KOSCANA/macros/spectra/test_sk_ereco_spectrum_nominal.C gives all modes, not sure where all mode break-down is
+Fig3.  $T2KOSCANA/macros/spectra/test_sk_ereco_spectrum_nominal.C gives all modes, not sure where corresponding macro for grouped modes is
+Fig4.  Need to tweak things in SuperkMC (turn Syst & Banff weights off, run with & without Flux weights on (to get flux tuned & nominal respectively)). Use $T2KOSCANA/macros/spectra/test_nsk_twk_osc.C. Use $T2KOSCANA/macros/misc/toms_plotting_stuff/plot_tuning_steps_nsk_ratios.C to make the plot
+Fig5.  Need to tweak things in SuperkMC (turn Syst weights off, run with & without BANFF weights on (to get banff tuned & flux tuned respectively)). Use $T2KOSCANA/macros/spectra/test_nsk_twk_osc.C. Use $T2KOSCANA/macros/misc/toms_plotting_stuff/plot_tuning_steps_nsk_ratios.C to make the plot
+Fig6.  Need to tweak things in SuperkMC (turn Syst & Banff weights off, run with & without Flux weights on (to get flux tuned & nominal respectively)). Use $T2KOSCANA/macros/spectra/test_sk_ereco_spectrum_nominal.C. Use $T2KOSCANA/macros/misc/toms_plotting_stuff/plot_tuning_steps_spectra.C to make the plots
+Fig7.  Need to tweak things in SuperkMC (turn Syst weights off, run with & without BANFF weights on (to get banff tuned & flux tuned respectively)). Use $T2KOSCANA/macros/spectra/test_sk_ereco_spectrum_nominal.C. Use $T2KOSCANA/macros/misc/toms_plotting_stuff/plot_tuning_steps_spectra.C to make the plots
+Fig8.  $T2KOSCANA/macros/spectra/test_nsk_twk_osc.C. Use throws & make sure it's 3 flavour. Need to analyse to make a 'maximum fractional difference' plot
+Fig9.  $T2KOSCANA/macros/spectra/test_nsk_twk_osc.C. No throws & make sure it's 3 flavour. Need to analyse to make a 'fractional difference' plot
+Fig10. $T2KOSCANA/macros/spectra/test_sk_ereco_spectrum_twk_sys_throw_runAll.py -n 100000 (or more)
+Fig11. $T2KOSCANA/macros/spectra/test_sk_ereco_spectrum_twk_sys_throw_runAll.py -n 100000 (or more)
+Fig12. $T2KOSCANA/macros/spectra/test_sk_ereco_spectrum_twk_sys_throw_runAll.py -n 100000 (or more)
+Fig13. $T2KOSCANA/macros/spectra/test_sk_ereco_spectrum_twk_sys_throw_runAll.py -n 100000 (or more)
+Fig14. $T2KOSCANA/macros/spectra/test_sk_ereco_spectrum_twk_sys_throw_runAll.py -n 100000 (or more)
+Fig15. See section 3
+Fig16. See section 3. CHECK config file. RECOMMEND to use final T2K POT: 7.8E21 (reference TN151v2.2)
+Fig17. See section 3
+Fig18. See section 3. CHECK config file. RECOMMEND to use final T2K POT: 7.8E21 (reference TN151v2.2)
+Fig19. $T2KOSCANA/macros/misc/toms_plotting_stuff/plot_ext_contours_and_sensitivity_grid.C. I don't think we will have time for all points listed
+Fig20. See section 4.
+Fig21. See section 4.
+Fig22. See section 4.
+Fig23. See section 4.
+Fig24. See section 4.
+Fig25. See section 5. analyse_output.C
+Fig26. See section 5. analyse_output.C
+Fig27. See section 5. analyse_output.C
+Fig28. See section 6.
+Fig29. See section 5. analyse_output.C
+Fig30. See section 5. analyse_output.C
+Fig31. See section 5. analyse_output.C
+Fig32. See section 5. analyse_output.C
+Fig33. See section 5. analyse_output.C
+Fig34. See section 5. analyse_output.C
+Fig35. See section 5. Need to modify analyse_output.C to draw the stack
+Fig36. See section 5. analyse_output.C
+Fig37. See section 5. analyse_output.C
+Fig38. See section 5. analyse_output.C
+Fig39. See section 5. Use the profile mode of $T2KOSCANA/production/submit_toyexpt_fitting_job_xml. No plot macro committed yet
+Fig40. See section 5. Use the profile mode of $T2KOSCANA/production/submit_toyexpt_fitting_job_xml. No plot macro committed yet
+Fig41. See section 5. analyse_output.C
+Fig42. See section 5. analyse_output.C
+Fig43. See section 5. analyse_output.C
+Fig44. macros/contour/fc/numu/plot_feldman_cousins_deltachisqcrit.C
+Fig45. macros/contour/fc/numu/plot_feldman_cousins_deltachisqcrit.C
+Fig46. macros/contour/fc/numu/plot_feldman_cousins_deltachisqcrit.C
+Fig47. macros/contour/fc/numu/plot_feldman_cousins_contour.C
+Fig48. Maybe use macros/contour/fc/numu/plot_feldman_cousins_contour_nfits.C
+Fig49. Maybe use macros/contour/fc/numu/plot_feldman_cousins_contour_nfits.C. Update MINOS & SK contours to use data given by the collaborations (not paper scans)
+Fig50. Maybe use macros/contour/fc/numu/plot_feldman_cousins_contour_nfits.C. Caption seems wrong
+Fig51. Maybe use macros/contour/fc/numu/plot_feldman_cousins_contour_nfits.C
+
+
+Tab4. Need to tweak things in SuperkMC (turn off Syst weights, run with the following 3 combinations of Flux/BANFF: off/off (nominal), on/off (NA61-tuned), on-on (BANFF-tuned). For each, run $T2KOSCANA/macros/spectra/test_sk_ereco_spectrum_nominal.C and copy the 'Contrib from mode:' into the table format
+Tab5. Need to tweak things in SuperkMC (turn off Syst weights, run with the following 3 combinations of Flux/BANFF: off/off (nominal), on/off (NA61-tuned), on-on (BANFF-tuned). For each, run $T2KOSCANA/macros/spectra/test_sk_ereco_spectrum_nominal.C and copy the 'Contrib from mode:' into the table format
+Tab6. $T2KOSCANA/macros/spectra/test_sk_ereco_spectrum_twk_sys_throw_runAll.py -n 100000 (or more). Need to add the appropriate config filename for the BANFF prefit. For "totals", ignore the value, but instead calculate from adding in quadrature
+Tab7. Need to modify $T2KOSCANA/macros/spectra/test_systematic_error_propagation_all.C to make a summary table
+Tab8. See sections 5, 6.
+
+
+Extra figures:
+FigA. Need to calculate a measure of how we compare with sensitivity. Suggest to modify the measure we used last time in $T2KOSCANA/macros/contour/const_dchisq/numu/sensitivity_from_many_chisq_surfaces.C, but instead of using left most point, use 90%(or68%) limit
+
+
+Extra tables:
+TabA. Need to calculate a measure of which systematics are dominant. Suggest to create a 'star plot table', like we showed last time. Need to:
+	1 pick some points to study
+	2 use $T2KOSCANA/macros/fit/syst/star_plot/test_bestfit_point_shift_due_to_syst_twk_runAll.py --syst to get the effect of the systematics
+	3 use $T2KOSCANA/production/submit_toyexpt_fitting_job --tweak-systematics 0 --stat-fluctuations --fit-param-list nuosc3f_numudisapp_fix4 to get stat error at those points
+	4 get stat error: root2k -b -q $T2KOSCANA/macros/fit/syst/star_plot/get_starplot_staterror.C;
+	5 put stat error into SYST folder: mv stat.data bestfit__________
+	6 draw the star plots (if you're interested) $T2KOSCANA/macros/fit/syst/star_plot/test_bestfit_point_shift_due_to_syst_twk_runAll.py --draw
+	7 Convert the text files to ROOT files. root2k -l -b -q '$T2KOSCANA/macros/fit/syst/star_plot/text_to_root.C(0.95,2.44E-3,0.0340877,0.000154913,"bestfit_point_shift_1Rmu_-99_-99_0.95_-99_-99_0.00244/star_plot_line-all.data")'
+	8 Make the table root2k -l -b -q '$T2KOSCANA/macros/fit/syst/star_plot/max_deviation_table.C("readfile*.root")'
+
