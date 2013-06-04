@@ -7,7 +7,7 @@
 // ------------------------------------------------------------------------------------------------
 //
 
-#include "Conventions.h"
+//#include "Conventions.h"
 
 void plot_numu_surv_prob_var_hypotheses()
 {
@@ -41,7 +41,7 @@ void plot_numu_surv_prob_var_hypotheses()
     l_e[i] = TMath::Log10(295.3/e[i]);
     log_le_min = TMath::Min(log_le_min, l_e[i]);
     log_le_max = TMath::Max(log_le_max, l_e[i]);
-    surv_prob_disap[i] = util::NuMuSurvProbOsc2D(input_sinsq2theta_osc,   input_dmsq,        e[i]);
+    surv_prob_disap[i] = util::NuMuSurvProbOsc2Flavour(input_sinsq2theta_osc,   input_dmsq,        e[i]);
     surv_prob_decay[i] = util::NuMuSurvProbDecay(input_sinsq2theta_decay, input_alpha_decay, e[i]);
     surv_prob_decoh[i] = util::NuMuSurvProbDecoh(input_sinsq2theta_decoh, input_musq_decoh,  e[i]);
   }

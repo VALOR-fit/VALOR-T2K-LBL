@@ -1,9 +1,23 @@
-/*
-root2k -l -b -q '$T2KOSCANA/macros/misc/osc/plot_3f_disap_prob.C(0.957,0.00239)'
-root2k -l -b -q '$T2KOSCANA/macros/misc/osc/plot_3f_disap_prob.C(1.000,0.00244)'
-*/
+//
+// ------------------------------------------------------------------------------------------------
+// Plot 3-flavour oscillation probabilities :
+//  - P (numu     -> numu   )
+//  - P (numubar  -> numubar)
+//  - P (nue      -> nue    )
+//  - P (nuebar   -> nuebar )
+//  - P (numu     -> nue    )
+//
+// Probabilities are plotted for the input oscillated params.
+// Defaults are used for unset oscillation params.
+// 
+// Examples:
+// % root2k -l -b -q '$T2KOSCANA/macros/misc/osc/plot_3f_osc_prob.C(0.957,0.00239)'
+// % root2k -l -b -q '$T2KOSCANA/macros/misc/osc/plot_3f_osc_prob.C(1.000,0.00244)'
+//
+// ------------------------------------------------------------------------------------------------
+//
 
-void plot_3f_disap_prob
+void plot_3f_osc_prob
 (
   double       mixing23   = -99,                            /* */
   double       dm23sq     = -99,                            /* */
@@ -16,13 +30,16 @@ void plot_3f_disap_prob
   using namespace std;
   using namespace t2kana;
 
+  // Global options
+  Opt::Instance()->gOscMixingParamChoice = conv::kNuMixSinsq2Theta;
+  Opt::Instance()->gMassHierarchyAssumed = conv::kNmhNormal;
+
   if(mixing13 < -1) mixing13 = conv::kGlobFitSinsq2Theta13;
   if(mixing23 < -1) mixing23 = conv::kGlobFitSinsq2Theta23;
   if(mixing12 < -1) mixing12 = conv::kGlobFitSinsq2Theta12;
   if(dm23sq < -1)   dm23sq   = conv::kGlobFitDm23sq;
   if(dm12sq < -1)   dm12sq   = conv::kGlobFitDm12sq;
   if(deltacp < -90) deltacp  = conv::kGlobFitDeltaCP;
-
 
   //outfile
   string oscparams = util::AsString(conv::kHypOsc3F,
@@ -55,7 +72,6 @@ void plot_3f_disap_prob
   double p_nuebar_nuebar  [nbins];
   double p_numu_nue       [nbins];
 
-
   // loop over Etrue
   for(int it = 1; it <= nbins; it++) {
     // calculate oscillation probabilities (incl. matter effects) for the current Etrue value
@@ -68,12 +84,13 @@ void plot_3f_disap_prob
     p_nuebar_nuebar  [it-1] = fNuOsc3Flavour.CalcMatterOscProb(conv::kPdgNuEBar,  conv::kPdgNuEBar,  Etrue);
     p_numu_nue       [it-1] = fNuOsc3Flavour.CalcMatterOscProb(conv::kPdgNuMu,    conv::kPdgNuE,     Etrue);
 
-    cout << "Exp/SKMC >>  E = " << Etrue << " GeV" << endl;
-    /*cout << "Exp/SKMC >>  * P (numu     -> numu   ) = " << p_numu_numu      [it-1] << endl;
-    cout << "Exp/SKMC >>  * P (numubar  -> numubar) = " << p_numubar_numubar[it-1] << endl;
-    cout << "Exp/SKMC >>  * P (nue      -> nue    ) = " << p_nue_nue        [it-1] << endl;
-    cout << "Exp/SKMC >>  * P (nuebar   -> nuebar ) = " << p_nuebar_nuebar  [it-1] << endl;
-    cout << "Exp/SKMC >>  * P (numu     -> nue    ) = " << p_numu_nue       [it-1] << endl;
+    /*
+    cout << " >>  E = " << Etrue << " GeV" << endl;
+    cout << "     P (numu     -> numu   ) = " << p_numu_numu      [it-1] << endl;
+    cout << "     P (numubar  -> numubar) = " << p_numubar_numubar[it-1] << endl;
+    cout << "     P (nue      -> nue    ) = " << p_nue_nue        [it-1] << endl;
+    cout << "     P (nuebar   -> nuebar ) = " << p_nuebar_nuebar  [it-1] << endl;
+    cout << "     P (numu     -> nue    ) = " << p_numu_nue       [it-1] << endl;
     */
   }
 
@@ -86,11 +103,11 @@ void plot_3f_disap_prob
   TGraph * g_numu_nue        = new TGraph(nbins, binning, p_numu_nue);
 
   //Draw
-  new TCanvas(); g_numu_numu->Draw("PA");
-  new TCanvas(); g_numubar_numubar->Draw("PA");
-  new TCanvas(); g_nue_nue->Draw("PA");
-  new TCanvas(); g_nuebar_nuebar->Draw("PA");
-  new TCanvas(); g_numu_nue->Draw("PA");
+  new TCanvas(); g_numu_numu->Draw("LPA");
+  new TCanvas(); g_numubar_numubar->Draw("LPA");
+  new TCanvas(); g_nue_nue->Draw("LPA");
+  new TCanvas(); g_nuebar_nuebar->Draw("LPA");
+  new TCanvas(); g_numu_nue->Draw("LPA");
 
   //Save
   g_numu_numu      ->Write("g_numu_numu");

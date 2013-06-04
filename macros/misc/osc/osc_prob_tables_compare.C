@@ -1,14 +1,14 @@
 
-void compare_osc_tables(){
-
+void osc_prob_tables_compare()
+{
   //Notice: make sure these ranges coincide with input root files 
   double kpi = 3.14159;
   double mixing13_min   = 0.0;
   double mixing13_max   = 0.4;
   double mixing13_step  = 0.004;
-  double deltacp_min         = -1 * kpi;
-  double deltacp_max         = kpi;
-  double deltacp_step        = 2*kpi/100.;
+  double deltacp_min    = -1 * kpi;
+  double deltacp_max    = kpi;
+  double deltacp_step   = 2*kpi/100.;
   double mixing23_min   = 0.8;
   double mixing23_max   = 1.0;
   double mixing23_step  = 0.002;
@@ -16,14 +16,13 @@ void compare_osc_tables(){
   double dm23sq_max     = 3.5E-3;
   double dm23sq_step    = 2.0E-5;
 
-
   // Make sure that min and max are at the bin centre and not at the low/high edge of the first/last bin                               
-  int deltacp_nbins    = 1 + TMath::Nint( (deltacp_max    - deltacp_min   ) / deltacp_step    );
+  int deltacp_nbins   = 1 + TMath::Nint( (deltacp_max    - deltacp_min ) / deltacp_step   );
   int mixing13_nbins  = 1 + TMath::Nint( (mixing13_max  - mixing13_min ) / mixing13_step  );
   int mixing23_nbins  = 1 + TMath::Nint( (mixing23_max  - mixing23_min ) / mixing23_step  );
-  int dm23sq_nbins = 1 + TMath::Nint( (dm23sq_max - dm23sq_min) / dm23sq_step );
+  int dm23sq_nbins    = 1 + TMath::Nint( (dm23sq_max - dm23sq_min)       / dm23sq_step    );
 
-  //  cout << "deltacp_nbins=" << deltacp_nbins << endl;
+  //cout << "deltacp_nbins=" << deltacp_nbins << endl;
   //cout << "dm23sq_nbins=" << dm23sq_nbins << endl;
   //cout << "mixing13_nbins=" << mixing13_nbins << endl;
   //cout << "mixing23_nbins=" << mixing23_nbins << endl;
