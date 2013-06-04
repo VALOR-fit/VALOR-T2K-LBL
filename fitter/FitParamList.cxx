@@ -1,15 +1,7 @@
 //________________________________________________________________________________________
 /*
 
- >> ChangeLog:
-
- For changes up to version 2010_v3.0.0 (last implementation of the 2010-era analysis)
- see code in the corresponding SVN branch.
-
- Changes since 2011_v0.9.0:
-
- @ 18/2/13 LE
- Added new parameters for 1Re sample. Separated append methods for disappearance and appearance only, updated lists for appearance and joint analyses.
+ \copyright (c) 2010-2013, VaLOR group.
 
 */
 //________________________________________________________________________________________
@@ -42,6 +34,8 @@ using std::setprecision;
 using namespace t2kana;
 using namespace t2kana::conv;
 
+ClassImp(FitParamList)
+
 //________________________________________________________________________________________
 namespace t2kana {
   ostream & operator << (ostream & stream, const FitParamList & plst)
@@ -51,9 +45,23 @@ namespace t2kana {
   }
 }
 //________________________________________________________________________________________
-FitParamList::FitParamList(int nparams)
+FitParamList::FitParamList() :
+TObject()
+{
+  this->Init(0);
+}
+//________________________________________________________________________________________
+FitParamList::FitParamList(int nparams) :
+TObject()
 {
   this->Init(nparams);
+}
+//________________________________________________________________________________________
+FitParamList::FitParamList(const FitParamList & plst) :
+TObject()
+{
+  this->Init(plst.fNParams);
+  this->Copy(plst);
 }
 //________________________________________________________________________________________
 FitParamList::~FitParamList()
@@ -73,6 +81,7 @@ bool FitParamList::AddParam (int ip, PhysParamId_t p,
     name = util::AsString(p);
   }
 
+  fName         [ip].SetString(name.c_str());
   fBestFitValue [ip] = -99999999;
   fCurrValue    [ip] = init;
   fInitValue    [ip] = init;
@@ -81,7 +90,6 @@ bool FitParamList::AddParam (int ip, PhysParamId_t p,
   fStepSize     [ip] = step; 
   fIsFixed      [ip] = fix;  
   fIsNuisance   [ip] = nuis;  
-  fName         [ip] = ( (name == "") ? util::AsString(p) : name );
 
   return true;
 }
@@ -425,12 +433,12 @@ void FitParamList::Print(ostream & stream) const
      fShowBestFitValuesOnly = false; // has one-off effect
      stream << endl
             << setw(6)  << "id"
-            << setw(50) << "name"
+            << setw(80) << "name"
             << setw(15) << "best-fit"
             << endl;
      for(int ip=0; ip<fNParams;  ip++) {
        stream << setw(6)  << ip 
-              << setw(50) << fName[ip]
+              << setw(80) << fName[ip].GetString().Data()
               << setprecision(6)
               << setw(15) << fBestFitValue[ip]
               << endl;
@@ -441,12 +449,12 @@ void FitParamList::Print(ostream & stream) const
      fShowCurrValuesOnly = false; // has one-off effect
      stream << endl
             << setw(6)  << "id"
-            << setw(50) << "name"
+            << setw(80) << "name"
             << setw(15) << "curr"
             << endl;
      for(int ip=0; ip<fNParams;  ip++) {
        stream << setw(6)  << ip 
-              << setw(50) << fName[ip]
+              << setw(80) << fName[ip].GetString().Data()
               << setprecision(6)
               << setw(15) << fCurrValue[ip]
               << endl;
@@ -456,7 +464,7 @@ void FitParamList::Print(ostream & stream) const
   {
      stream << endl
             << setw(6)  << "id"
-            << setw(50) << "name"
+            << setw(80) << "name"
             << setw(15) << "curr"
             << setw(15) << "init"
             << setw(15) << "min"
@@ -467,15 +475,15 @@ void FitParamList::Print(ostream & stream) const
             << endl;
      for(int ip=0; ip<fNParams;  ip++) {
        stream << setw(6)  << ip 
-              << setw(50) << fName[ip]
+              << setw(80) << fName[ip].GetString().Data()
               << setprecision(6)
               << setw(15) << fCurrValue[ip]
               << setw(15) << fInitValue[ip]
               << setw(15) << fMinValue[ip]
               << setw(15) << fMaxValue[ip]
               << setw(15) << fStepSize[ip]
-              << setw(8) << ((fIsFixed[ip])    ? " **yes** " : "no")
-              << setw(8) << ((fIsNuisance[ip]) ? " **yes** " : "no")
+              << setw(8) << ((fIsFixed[ip])    ? "yes" : "no")
+              << setw(8) << ((fIsNuisance[ip]) ? "yes" : "no")
               << endl;
      }
   }
@@ -484,65 +492,7 @@ void FitParamList::Print(ostream & stream) const
 //________________________________________________________________________________________
 void FitParamList::Print() const
 {
-  if(fShowBestFitValuesOnly) {
-     fShowBestFitValuesOnly = false; // has one-off effect
-     cout << endl
-            << setw(6)  << "id"
-            << setw(50) << "name"
-            << setw(15) << "best-fit"
-            << endl;
-     for(int ip=0; ip<fNParams;  ip++) {
-       cout << setw(6)  << ip 
-              << setw(50) << fName[ip]
-              << setprecision(6)
-              << setw(15) << fBestFitValue[ip]
-              << endl;
-     }
-  } 
-  else
-  if(fShowCurrValuesOnly) {
-     fShowCurrValuesOnly = false; // has one-off effect
-     cout << endl
-            << setw(6)  << "id"
-            << setw(50) << "name"
-            << setw(15) << "curr"
-            << endl;
-     for(int ip=0; ip<fNParams;  ip++) {
-       cout << setw(6)  << ip 
-              << setw(50) << fName[ip]
-              << setprecision(6)
-              << setw(15) << fCurrValue[ip]
-              << endl;
-     }
-  } 
-  else 
-  {
-     cout << endl
-            << setw(6)  << "id"
-            << setw(50) << "name"
-            << setw(15) << "curr"
-            << setw(15) << "init"
-            << setw(15) << "min"
-            << setw(15) << "max"
-            << setw(15) << "step"
-            << setw(8)  << "fixed?"
-            << setw(10) << "nuisance?"
-            << endl;
-     for(int ip=0; ip<fNParams;  ip++) {
-       cout << setw(6)  << ip 
-              << setw(50) << fName[ip]
-              << setprecision(6)
-              << setw(15) << fCurrValue[ip]
-              << setw(15) << fInitValue[ip]
-              << setw(15) << fMinValue[ip]
-              << setw(15) << fMaxValue[ip]
-              << setw(15) << fStepSize[ip]
-              << setw(8) << ((fIsFixed[ip])    ? " **yes** " : "no")
-              << setw(8) << ((fIsNuisance[ip]) ? " **yes** " : "no")
-              << endl;
-     }
-  }
-
+  this->Print(cout);
 }
 //________________________________________________________________________________________
 FitParamList * FitParamList::NamedParameterList(string name)
@@ -1690,28 +1640,79 @@ PhysHypothesis_t FitParamList::PhysicsHypothesis(void) const
   return kHypUndefined;
 }
 //________________________________________________________________________________________
+void FitParamList::Copy(const FitParamList & plst)
+{
+  if(this->fNParams != plst.fNParams)
+  {
+     this->CleanUp();
+     this->Init(plst.fNParams);
+  }
+
+  this->fParListName = plst.fParListName;
+  this->fSystMode    = plst.fSystMode;
+
+  this->fIdMap.insert(plst.fIdMap.begin(),  plst.fIdMap.end());
+
+  for(int i = 0; i < plst.fNParams; i++) {
+     this->fName[i].SetString(plst.fName[i].GetString().Data());
+     this->fBestFitValue[i] = plst.fBestFitValue[i];
+     this->fCurrValue[i]    = plst.fCurrValue[i];
+     this->fInitValue[i]    = plst.fInitValue[i];
+     this->fMinValue[i]     = plst.fMinValue[i];
+     this->fMaxValue[i]     = plst.fMaxValue[i];
+     this->fStepSize[i]     = plst.fStepSize[i];
+     this->fIsFixed[i]      = plst.fIsFixed[i];
+     this->fIsNuisance[i]   = plst.fIsNuisance[i];
+     this->fMigradError[i]  = plst.fMigradError[i];
+     this->fHesseError[i]   = plst.fHesseError[i];
+     this->fPlusError[i]    = plst.fPlusError[i];
+     this->fMinusError[i]   = plst.fMinusError[i];
+   } 
+
+   fShowCurrValuesOnly    = plst.fShowCurrValuesOnly;
+   fShowBestFitValuesOnly = plst.fShowBestFitValuesOnly;
+
+   fMigradErrorsSet = plst.fMigradErrorsSet;
+   fHesseErrorsSet  = plst.fHesseErrorsSet;
+   fMinosErrorsSet  = plst.fMinosErrorsSet;
+}
+//________________________________________________________________________________________
 void FitParamList::Init(int nparams)
 {
-   assert(nparams>0);
-
    fParListName = "";
    fSystMode = -1;
 
    fNParams = nparams; 
 
-   fBestFitValue = new double[fNParams];
-   fCurrValue    = new double[fNParams];
-   fInitValue    = new double[fNParams];
-   fMinValue     = new double[fNParams];
-   fMaxValue     = new double[fNParams];
-   fStepSize     = new double[fNParams];
-   fName         = new string[fNParams];
-   fIsFixed      = new bool  [fNParams];
-   fIsNuisance   = new bool  [fNParams];
-   fMigradError  = new double[fNParams];
-   fHesseError   = new double[fNParams];
-   fPlusError    = new double[fNParams];
-   fMinusError   = new double[fNParams];
+   if(nparams>0) {
+     fName         = new TObjString[fNParams];
+     fBestFitValue = new double[fNParams];
+     fCurrValue    = new double[fNParams];
+     fInitValue    = new double[fNParams];
+     fMinValue     = new double[fNParams];
+     fMaxValue     = new double[fNParams];
+     fStepSize     = new double[fNParams];
+     fIsFixed      = new bool  [fNParams];
+     fIsNuisance   = new bool  [fNParams];
+     fMigradError  = new double[fNParams];
+     fHesseError   = new double[fNParams];
+     fPlusError    = new double[fNParams];
+     fMinusError   = new double[fNParams];
+   } else {
+     fName         = 0;
+     fBestFitValue = 0;
+     fCurrValue    = 0;
+     fInitValue    = 0;
+     fMinValue     = 0;
+     fMaxValue     = 0;
+     fStepSize     = 0;
+     fIsFixed      = 0;
+     fIsNuisance   = 0;
+     fMigradError  = 0;
+     fHesseError   = 0;
+     fPlusError    = 0;
+     fMinusError   = 0;
+   }
 
    fShowCurrValuesOnly    = false;
    fShowBestFitValuesOnly = false;
@@ -1724,19 +1725,34 @@ void FitParamList::Init(int nparams)
 void FitParamList::CleanUp(void)
 {
    fIdMap.clear();
+
+   delete [] fName;
    delete [] fBestFitValue;
    delete [] fCurrValue;
    delete [] fInitValue;
    delete [] fMinValue;
    delete [] fMaxValue;
    delete [] fStepSize;
-   delete [] fName;
    delete [] fIsFixed;
    delete [] fIsNuisance;
    delete [] fMigradError;
    delete [] fHesseError;
    delete [] fPlusError;
    delete [] fMinusError;
+
+   fName         = 0;
+   fBestFitValue = 0;
+   fCurrValue    = 0;
+   fInitValue    = 0;
+   fMinValue     = 0;
+   fMaxValue     = 0;
+   fStepSize     = 0;
+   fIsFixed      = 0;
+   fIsNuisance   = 0;
+   fMigradError  = 0;
+   fHesseError   = 0;
+   fPlusError    = 0;
+   fMinusError   = 0;
 
    fParListName = "";
    fSystMode = -1;

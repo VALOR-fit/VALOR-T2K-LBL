@@ -10,6 +10,8 @@
 
 \created  October 20, 2010
 
+\copyright (c) 2010-2013, VaLOR group.
+
 */
 //____________________________________________________________________________
 
@@ -21,6 +23,8 @@
 #include <map>
 #include <vector>
 
+#include <TObject.h>
+#include <TObjString.h>
 #include <TVirtualFitter.h>
 #include <Minuit2/MnUserParameters.h>
 #include <Math/Minimizer.h>
@@ -33,33 +37,34 @@ using std::map;
 
 namespace t2kana {
 
-class FitParamList {
+class FitParamList: public TObject {
 
 public:
+   FitParamList();
    FitParamList(int nparams);
+   FitParamList(const FitParamList & plst);
   ~FitParamList();
 
    // Get information for the fit parameters
-   int    Size           (void)                          const { return fNParams;                      }
-   string Name           (t2kana::conv::PhysParamId_t p) const { return fName         [this->Id(p)];   }
-   double BestFitValue   (t2kana::conv::PhysParamId_t p) const { return fBestFitValue [this->Id(p)];   }
-   double BestFitValue   (int i                        ) const { return fBestFitValue [i];             }
-   double CurrValue      (t2kana::conv::PhysParamId_t p) const { return fCurrValue    [this->Id(p)];   }
-   double CurrValue      (int i                        ) const { return fCurrValue    [i];             }
-   double InitValue      (t2kana::conv::PhysParamId_t p) const { return fInitValue    [this->Id(p)];   }
-   double MinValue       (t2kana::conv::PhysParamId_t p) const { return fMinValue     [this->Id(p)];   }
-   double MaxValue       (t2kana::conv::PhysParamId_t p) const { return fMaxValue     [this->Id(p)];   }
-   double StepSize       (t2kana::conv::PhysParamId_t p) const { return fStepSize     [this->Id(p)];   }
-   bool   IsFixed        (t2kana::conv::PhysParamId_t p) const { return fIsFixed      [this->Id(p)];   }
-   //   bool   IsFixed        (int i                        ) const { return fIsFixed      [i];             }
-   bool   IsNuisance     (t2kana::conv::PhysParamId_t p) const { return fIsNuisance   [this->Id(p)];   }
-   double MigradError    (t2kana::conv::PhysParamId_t p) const { return fMigradError  [this->Id(p)];   }
-   double HesseError     (t2kana::conv::PhysParamId_t p) const { return fHesseError   [this->Id(p)];   }
-   double PlusError      (t2kana::conv::PhysParamId_t p) const { return fPlusError    [this->Id(p)];   }
-   double MinusError     (t2kana::conv::PhysParamId_t p) const { return fMinusError   [this->Id(p)];   }
+   int    Size           (void)                          const { return fNParams;  }
+   string Name           (t2kana::conv::PhysParamId_t p) const { return fName[this->Id(p)].GetString().Data();   }
+   double BestFitValue   (t2kana::conv::PhysParamId_t p) const { return fBestFitValue[this->Id(p)]; }
+   double BestFitValue   (int i                        ) const { return fBestFitValue[i];           }
+   double CurrValue      (t2kana::conv::PhysParamId_t p) const { return fCurrValue   [this->Id(p)]; }
+   double CurrValue      (int i                        ) const { return fCurrValue   [i];           }
+   double InitValue      (t2kana::conv::PhysParamId_t p) const { return fInitValue   [this->Id(p)]; }
+   double MinValue       (t2kana::conv::PhysParamId_t p) const { return fMinValue    [this->Id(p)]; }
+   double MaxValue       (t2kana::conv::PhysParamId_t p) const { return fMaxValue    [this->Id(p)]; }
+   double StepSize       (t2kana::conv::PhysParamId_t p) const { return fStepSize    [this->Id(p)]; }
+   bool   IsFixed        (t2kana::conv::PhysParamId_t p) const { return fIsFixed     [this->Id(p)]; }
+   bool   IsNuisance     (t2kana::conv::PhysParamId_t p) const { return fIsNuisance  [this->Id(p)]; }
+   double MigradError    (t2kana::conv::PhysParamId_t p) const { return fMigradError [this->Id(p)]; }
+   double HesseError     (t2kana::conv::PhysParamId_t p) const { return fHesseError  [this->Id(p)]; }
+   double PlusError      (t2kana::conv::PhysParamId_t p) const { return fPlusError   [this->Id(p)]; }
+   double MinusError     (t2kana::conv::PhysParamId_t p) const { return fMinusError  [this->Id(p)]; }
 
-   void SetMinValue (t2kana::conv::PhysParamId_t p, double min) { fMinValue     [this->Id(p)] = min ;   }
-   void SetMaxValue (t2kana::conv::PhysParamId_t p, double max) { fMaxValue     [this->Id(p)] = max ;   }
+   void SetMinValue (t2kana::conv::PhysParamId_t p, double min) { fMinValue [this->Id(p)] = min; }
+   void SetMaxValue (t2kana::conv::PhysParamId_t p, double max) { fMaxValue [this->Id(p)] = max; }
 
    // Add a parameter
    bool AddParam (
@@ -161,13 +166,13 @@ public:
    int  Id      (t2kana::conv::PhysParamId_t p) const; // PhysParamId_t --> array slot
    t2kana::conv::PhysParamId_t WhichParam(int id) const; // array slot --> PhysParamId_t
    
-
 private:
 
-   void CleanUp (void);
-   void Init    (int nparams);
+   void CleanUp        (void);
+   void Init           (int nparams);
+   void Copy           (const FitParamList & plst);
    void SetParListName (string s)   { fParListName = s; }
-   void SetSystMode     (int m)      { fSystMode     = m; }
+   void SetSystMode    (int m)      { fSystMode    = m; }
 
    // Various functions called by NamedParameterList(name)
    static FitParamList * NuOsc3FlavourFit                 (void);
@@ -209,23 +214,23 @@ private:
 
    map<t2kana::conv::PhysParamId_t, int> fIdMap;
 
-   string   fParListName;
-   int      fSystMode; // used in FitInputs to make deciding on what to include in the chisq penalty faster. 0 no syst, 1 all syst, 2 selected syst, ...
+   string       fParListName;
+   int          fSystMode; // used in FitInputs to make deciding on what to include in the chisq penalty faster. 0 no syst, 1 all syst, 2 selected syst, ...
 
-   int      fNParams;   
-   double * fBestFitValue; //[fNParams]
-   double * fCurrValue;    //[fNParams]
-   double * fInitValue;    //[fNParams]
-   double * fMinValue;     //[fNParams]
-   double * fMaxValue;     //[fNParams]
-   double * fStepSize;     //[fNParams]
-   string * fName;         //[fNParams]
-   bool *   fIsFixed;      //[fNParams]
-   bool *   fIsNuisance;   //[fNParams]
-   double * fMigradError;  //[fNParams]
-   double * fHesseError;   //[fNParams]
-   double * fPlusError;    //[fNParams]
-   double * fMinusError;   //[fNParams]
+   int          fNParams;   
+   TObjString * fName;         //[fNParams]
+   double *     fBestFitValue; //[fNParams]
+   double *     fCurrValue;    //[fNParams]
+   double *     fInitValue;    //[fNParams]
+   double *     fMinValue;     //[fNParams]
+   double *     fMaxValue;     //[fNParams]
+   double *     fStepSize;     //[fNParams]
+   bool *       fIsFixed;      //[fNParams]
+   bool *       fIsNuisance;   //[fNParams]
+   double *     fMigradError;  //[fNParams]
+   double *     fHesseError;   //[fNParams]
+   double *     fPlusError;    //[fNParams]
+   double *     fMinusError;   //[fNParams]
 
    bool fMigradErrorsSet;
    bool fHesseErrorsSet;
@@ -233,6 +238,8 @@ private:
 
    mutable bool fShowCurrValuesOnly;
    mutable bool fShowBestFitValuesOnly;
+
+ClassDef(FitParamList,1)
 };
 
 } // t2kana
