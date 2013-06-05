@@ -1,6 +1,7 @@
 //
 // ------------------------------------------------------------------------------------------------
-// Run fits to toy MC experiments generated on-the-fly and store best-fit values.
+// Run fits to toy MC experiments generated on-the-fly and store the toy MC, the best-fit parameter
+// values and the best-fit spectra, and the true input parameter values.
 //
 // Costas Andreopoulos
 // ------------------------------------------------------------------------------------------------
