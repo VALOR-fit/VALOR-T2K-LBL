@@ -36,6 +36,7 @@
 #pragma link C++ class t2kana::FitterGSL;
 
 #pragma link C++ class t2kana::FitParamList+;
+#pragma link C++ class t2kana::PhysParamList+;
 
 #pragma link C++ class t2kana::FitInputs;
 
