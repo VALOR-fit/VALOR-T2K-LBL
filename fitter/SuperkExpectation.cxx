@@ -394,7 +394,6 @@ void SuperkExpectation::ResetSystematicVariations(void)
   // BANFF
   this->GetBANFF()->Tweak(true,0);
 
-
   // X Section
   this->GetNuXSec()->TweakFermiMom      (0.);
   this->GetNuXSec()->TweakSpecFunc      (0.);
@@ -796,6 +795,94 @@ PhysParamList SuperkExpectation::Tweaks(void)
      double v = this->GetBANFF()->CurrentValue(p);
      pl.SetValue(p,v);
   }
+
+  // 
+  //  Uncorrelated xsec
+  // 
+  pl.SetValue( kNuisXSecFermiMom,        this->GetNuXSec()->CurrentValue(kNuisXSecFermiMom)       );
+  pl.SetValue( kNuisXSecSpecFunc,        this->GetNuXSec()->CurrentValue(kNuisXSecSpecFunc)       );
+  pl.SetValue( kNuisXSecWshape,          this->GetNuXSec()->CurrentValue(kNuisXSecWshape)         );
+  pl.SetValue( kNuisXSecShapeCCoth,      this->GetNuXSec()->CurrentValue(kNuisXSecShapeCCoth)     );
+  pl.SetValue( kNuisXSecPiLessDelta,     this->GetNuXSec()->CurrentValue(kNuisXSecPiLessDelta)    );
+  pl.SetValue( kNuisXSecBindE,           this->GetNuXSec()->CurrentValue(kNuisXSecBindE)          );
+  pl.SetValue( kNuisXSecNormCCcoh,       this->GetNuXSec()->CurrentValue(kNuisXSecNormCCcoh)      );
+  pl.SetValue( kNuisXSecNormNC1piC,      this->GetNuXSec()->CurrentValue(kNuisXSecNormNC1piC)     );
+  pl.SetValue( kNuisXSecNormNCcoh,       this->GetNuXSec()->CurrentValue(kNuisXSecNormNCcoh)      );
+  pl.SetValue( kNuisXSecNormNCoth,       this->GetNuXSec()->CurrentValue(kNuisXSecNormNCoth)      );
+  pl.SetValue( kNuisXSecNormNuEToNuMu,   this->GetNuXSec()->CurrentValue(kNuisXSecNormNuEToNuMu)  );
+  pl.SetValue( kNuisXSecNormAntiNuToNu,  this->GetNuXSec()->CurrentValue(kNuisXSecNormAntiNuToNu) );
+
+  // 
+  // SuperK detector + FSI systematics
+  //
+
+#ifndef SKFSITOGETHER
+  pl.SetValue( kNuisSuperkEnergyScale,      this->GetSuperkDetector()->CurrentValue(kNuisSuperkEnergyScale)     );
+  pl.SetValue( kNuisSuperkEff1RmuCCQEoth,   this->GetSuperkDetector()->CurrentValue(kNuisSuperkEff1RmuCCQEoth)  );
+  pl.SetValue( kNuisSuperkEff1RmuCCQErc0u,  this->GetSuperkDetector()->CurrentValue(kNuisSuperkEff1RmuCCQErc0u) );
+  pl.SetValue( kNuisSuperkEff1RmuCCQErc1u,  this->GetSuperkDetector()->CurrentValue(kNuisSuperkEff1RmuCCQErc1u) );
+  pl.SetValue( kNuisSuperkEff1RmuCCQErc2u,  this->GetSuperkDetector()->CurrentValue(kNuisSuperkEff1RmuCCQErc2u) );
+  pl.SetValue( kNuisSuperkEff1RmuCCnonQE,   this->GetSuperkDetector()->CurrentValue(kNuisSuperkEff1RmuCCnonQE)  );
+  pl.SetValue( kNuisSuperkEff1RmuNC,        this->GetSuperkDetector()->CurrentValue(kNuisSuperkEff1RmuNC)       );
+  pl.SetValue( kNuisSuperkEff1RmuNueCC,     this->GetSuperkDetector()->CurrentValue(kNuisSuperkEff1RmuNueCC)    );
+#if FSI_BINS == 1
+  pl.SetValue( kNuisSuperkEff1ReNueSigCC0,  this->GetSuperkDetector()->CurrentValue(kNuisSuperkEff1ReNueSigCC0) ); 
+  pl.SetValue( kNuisSuperkEff1ReNueSigCC1,  this->GetSuperkDetector()->CurrentValue(kNuisSuperkEff1ReNueSigCC1) ); 
+  pl.SetValue( kNuisSuperkEff1ReNueSigCC2,  this->GetSuperkDetector()->CurrentValue(kNuisSuperkEff1ReNueSigCC2) ); 
+  pl.SetValue( kNuisSuperkEff1ReNumuCC0,    this->GetSuperkDetector()->CurrentValue(kNuisSuperkEff1ReNumuCC0)   ); 
+  pl.SetValue( kNuisSuperkEff1ReNumuCC1,    this->GetSuperkDetector()->CurrentValue(kNuisSuperkEff1ReNumuCC1)   ); 
+  pl.SetValue( kNuisSuperkEff1ReNumuCC2,    this->GetSuperkDetector()->CurrentValue(kNuisSuperkEff1ReNumuCC2)   ); 
+  pl.SetValue( kNuisSuperkEff1ReNueCC0,     this->GetSuperkDetector()->CurrentValue(kNuisSuperkEff1ReNueCC0)    ); 
+  pl.SetValue( kNuisSuperkEff1ReNueCC1,     this->GetSuperkDetector()->CurrentValue(kNuisSuperkEff1ReNueCC1)    ); 
+  pl.SetValue( kNuisSuperkEff1ReNueCC2,     this->GetSuperkDetector()->CurrentValue(kNuisSuperkEff1ReNueCC2)    ); 
+  pl.SetValue( kNuisSuperkEff1ReNC0,        this->GetSuperkDetector()->CurrentValue(kNuisSuperkEff1ReNC0)       );  
+  pl.SetValue( kNuisSuperkEff1ReNC1,        this->GetSuperkDetector()->CurrentValue(kNuisSuperkEff1ReNC1)       );  
+  pl.SetValue( kNuisSuperkEff1ReNC2,        this->GetSuperkDetector()->CurrentValue(kNuisSuperkEff1ReNC2)       );  
+#endif // FSI_BINS=1
+  pl.SetValue( kNuisFSI000,  this->GetFSI()->CurrentValue(kNuisFSI000) );
+  pl.SetValue( kNuisFSI001,  this->GetFSI()->CurrentValue(kNuisFSI001) );
+  pl.SetValue( kNuisFSI002,  this->GetFSI()->CurrentValue(kNuisFSI002) );
+  pl.SetValue( kNuisFSI003,  this->GetFSI()->CurrentValue(kNuisFSI003) );
+  pl.SetValue( kNuisFSI004,  this->GetFSI()->CurrentValue(kNuisFSI004) );
+  pl.SetValue( kNuisFSI005,  this->GetFSI()->CurrentValue(kNuisFSI005) );
+#if FSI_BINS == 1
+  pl.SetValue( kNuisFSI1Re000,  this->GetFSI()->CurrentValue(kNuisFSI1Re000) );
+  pl.SetValue( kNuisFSI1Re001,  this->GetFSI()->CurrentValue(kNuisFSI1Re001) );
+  pl.SetValue( kNuisFSI1Re002,  this->GetFSI()->CurrentValue(kNuisFSI1Re002) );
+  pl.SetValue( kNuisFSI1Re003,  this->GetFSI()->CurrentValue(kNuisFSI1Re003) );
+  pl.SetValue( kNuisFSI1Re004,  this->GetFSI()->CurrentValue(kNuisFSI1Re004) );
+  pl.SetValue( kNuisFSI1Re005,  this->GetFSI()->CurrentValue(kNuisFSI1Re005) );
+  pl.SetValue( kNuisFSI1Re006,  this->GetFSI()->CurrentValue(kNuisFSI1Re006) );
+  pl.SetValue( kNuisFSI1Re007,  this->GetFSI()->CurrentValue(kNuisFSI1Re007) );
+  pl.SetValue( kNuisFSI1Re008,  this->GetFSI()->CurrentValue(kNuisFSI1Re008) );
+  pl.SetValue( kNuisFSI1Re009,  this->GetFSI()->CurrentValue(kNuisFSI1Re009) );
+  pl.SetValue( kNuisFSI1Re010,  this->GetFSI()->CurrentValue(kNuisFSI1Re010) );
+  pl.SetValue( kNuisFSI1Re011,  this->GetFSI()->CurrentValue(kNuisFSI1Re011) );
+#endif // FSI_BINS=1
+
+#else // SKFSITOGETHER
+  pl.SetValue( kNuisSuperkEnergyScale,  this->GetSuperkDetectorFSI()->CurrentValue(kNuisSuperkEnergyScale) );
+  pl.SetValue( kNuisSKDetFSI000,  this->GetSuperkDetectorFSI()->CurrentValue(kNuisSKDetFSI000) );
+  pl.SetValue( kNuisSKDetFSI001,  this->GetSuperkDetectorFSI()->CurrentValue(kNuisSKDetFSI001) );
+  pl.SetValue( kNuisSKDetFSI002,  this->GetSuperkDetectorFSI()->CurrentValue(kNuisSKDetFSI002) );
+  pl.SetValue( kNuisSKDetFSI003,  this->GetSuperkDetectorFSI()->CurrentValue(kNuisSKDetFSI003) );
+  pl.SetValue( kNuisSKDetFSI004,  this->GetSuperkDetectorFSI()->CurrentValue(kNuisSKDetFSI004) );
+  pl.SetValue( kNuisSKDetFSI005,  this->GetSuperkDetectorFSI()->CurrentValue(kNuisSKDetFSI005) );
+#if FSI_BINS == 1 
+  pl.SetValue( kNuisSKDetFSI006,  this->GetSuperkDetectorFSI()->CurrentValue(kNuisSKDetFSI006) );
+  pl.SetValue( kNuisSKDetFSI007,  this->GetSuperkDetectorFSI()->CurrentValue(kNuisSKDetFSI007) );
+  pl.SetValue( kNuisSKDetFSI008,  this->GetSuperkDetectorFSI()->CurrentValue(kNuisSKDetFSI008) );
+  pl.SetValue( kNuisSKDetFSI009,  this->GetSuperkDetectorFSI()->CurrentValue(kNuisSKDetFSI009) );
+  pl.SetValue( kNuisSKDetFSI010,  this->GetSuperkDetectorFSI()->CurrentValue(kNuisSKDetFSI010) );
+  pl.SetValue( kNuisSKDetFSI011,  this->GetSuperkDetectorFSI()->CurrentValue(kNuisSKDetFSI011) );
+  pl.SetValue( kNuisSKDetFSI012,  this->GetSuperkDetectorFSI()->CurrentValue(kNuisSKDetFSI012) );
+  pl.SetValue( kNuisSKDetFSI013,  this->GetSuperkDetectorFSI()->CurrentValue(kNuisSKDetFSI013) );
+  pl.SetValue( kNuisSKDetFSI014,  this->GetSuperkDetectorFSI()->CurrentValue(kNuisSKDetFSI014) );
+  pl.SetValue( kNuisSKDetFSI015,  this->GetSuperkDetectorFSI()->CurrentValue(kNuisSKDetFSI015) );
+  pl.SetValue( kNuisSKDetFSI016,  this->GetSuperkDetectorFSI()->CurrentValue(kNuisSKDetFSI016) );
+  pl.SetValue( kNuisSKDetFSI017,  this->GetSuperkDetectorFSI()->CurrentValue(kNuisSKDetFSI017) );
+#endif // FSI_BINS=1
+#endif // SKFSITOGETHER
 
   return pl;
 }
