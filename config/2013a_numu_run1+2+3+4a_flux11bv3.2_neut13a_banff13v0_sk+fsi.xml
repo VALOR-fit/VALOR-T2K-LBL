@@ -1,6 +1,6 @@
 <?xml version="1.0"?>
 
-<analysis_inputs analysis="T2K/VaLOR13a/numu" mc="NEUT">
+<analysis_inputs analysis="T2K/VaLOR13a/numu" data="run1234a" flux="11b/v3.2" mc="neut/13a" ndfit="banff/13v0" oth="sk+fsi">
 
   <!--
   ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
