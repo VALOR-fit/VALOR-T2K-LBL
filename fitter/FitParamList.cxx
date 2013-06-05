@@ -19,6 +19,7 @@
 #include <iomanip>
 #include <math.h>
 
+#include "PhysParamList.h"
 #include "FitParamList.h"
 #include "Utilities.h"
 #include "Opt.h"
@@ -402,6 +403,24 @@ void FitParamList::Sync(const double * par)
   for(int ip = 0; ip < fNParams; ip++) {
      fCurrValue[ip] = par[ip];
   }
+}
+//________________________________________________________________________________________
+PhysParamList FitParamList::AsPhysParamList(Option_t * option) const
+{
+  PhysParamList pl;
+  TString opt(option);
+  map<PhysParamId_t, int>::const_iterator iter = fIdMap.begin();
+  for( ; iter != fIdMap.end(); ++iter)
+  {
+    PhysParamId_t p = iter->first;
+    int ip = iter->second;
+    double v = 0;
+    if      ( opt.Contains("initial")  ) v = fInitValue[ip];
+    else if ( opt.Contains("current")  ) v = fCurrValue[ip];
+    else if ( opt.Contains("best-fit") ) v = fBestFitValue[ip];
+    pl.SetValue(p,v);
+  }
+  return pl;
 }
 //________________________________________________________________________________________
 int FitParamList::GetNumberFreeParameters(void)

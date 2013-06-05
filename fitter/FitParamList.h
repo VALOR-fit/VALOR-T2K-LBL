@@ -37,6 +37,8 @@ using std::map;
 
 namespace t2kana {
 
+class PhysParamList;
+
 class FitParamList: public TObject {
 
 public:
@@ -116,6 +118,9 @@ public:
    // Sync fit param values stored this object with the values stored in the input array.
    void Sync (const double * par);
    void Sync (std::vector<double> par);
+
+   // copy initial, current or best-fit values to a PhysParamList 
+   t2kana::PhysParamList AsPhysParamList(Option_t * option = "current") const;
 
    // Get number of free (not fixed) parameters
    int GetNumberFreeParameters(void);
