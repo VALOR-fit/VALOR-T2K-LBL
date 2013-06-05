@@ -1063,7 +1063,7 @@ static const double kXSecSystFracErr[kNumOfXSecSyst] =
   -9999,          // BANFF, PDD double counting systematic
 #endif
   0.13333,        // Fermi momentum
-  -9999,          // spectral function on/off
+  1.0,            // spectral function on/off
   0.516,          // W-shape
   0.4,            // CC other shape
   0.2,            // Pion-less delta decay
