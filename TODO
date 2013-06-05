@@ -37,6 +37,33 @@ with a single
   void Tweak(conv::PhysParamId_t p, double twkdial)
 
 
+Various small issues
++--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+
+
+Note that SuperKMC has a hardcoded mec_template_pot = 3.0100E20;
+
+--
+When I run macros to get the SK spectrum, eg macros/spectra/test_sk_ereco_spectrum_nominal.C, I get:
+-rw-r--r--   1 costas  staff   9761  5 Jun 15:05 sk_ereco_spectrum-sinsq2theta
+-rw-r--r--   1 costas  staff  96599  5 Jun 15:05 sk_ereco_spectrum-sinsq2theta[12_0.857,13_0.098,23_1.000],dcp_0.000,dmsq[12_0.00007500,23_0.002400]eV2.root
+-rw-r--r--   1 costas  staff   3247  5 Jun 15:05 sk_ereco_spectrum-sinsq2theta[12_0.857,13_0.098,23_1.000],dcp_0.000,dmsq[12_0.00007500,23_0.002400]eV2.txt
+What is that first file??
+It probably thinks it is a PDF, because
+% more sk_ereco_spectrum-sinsq2theta
+%PDF-1.4
+%<E2><E3><CF><D3>
+1 0 obj
+<<
+/Type /Catalog
+/Pages 4 0 R
+/Outlines 3 0 R
+/PageMode /UseOutlines
+...
+...
+...
+...
+
+
 Physics improvements
 +--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+
 
