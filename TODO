@@ -40,6 +40,7 @@ with a single
 Various small issues
 +--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+
 
+
 Note that SuperKMC has a hardcoded mec_template_pot = 3.0100E20;
 
 --
@@ -62,6 +63,23 @@ It probably thinks it is a PDF, because
 ...
 ...
 ...
+
+--
+There are lots 4 macros like: macros/fit/toymc/test_n_mock_data_fits*.C, corresponding to:
+ read toy MC from file / generate on the fly
+ save systematic tweaks & best fits / not
+The _with_sys macros should be removed, and the remaining macros should save:
+ the best fit values of all parameters
+ the fit errors of all parameters
+ and the on-the-fly macro should also save the tweak values of all parameters
+
+macros/fit/pulls/mock_data_fit_pulls.C also requires a major rewrite after this change
+
+__
+macros/contour/fc/numu/feldman_cousins_fitting_job.C should save tweak value, best fit, and error of all systematics
+
+__
+macros/spectra/test_sk_ereco_spectrum_twk_sys_throw.C should save tweak value of all systematics
 
 
 Physics improvements
