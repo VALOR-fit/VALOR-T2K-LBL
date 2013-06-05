@@ -1,32 +1,10 @@
 //
 // ------------------------------------------------------------------------------------------------
-// Run numu disappearance fits to N toy experiments and store best fit values.
-// The toy experiments are generated on the fly.
+// Run fits to toy MC experiments generated on-the-fly and store best-fit values.
 //
 // Costas Andreopoulos
 // ------------------------------------------------------------------------------------------------
 //
-
-/*
-#include <string>
-#include <sstream>
-#include <cstdlib>
-#include <TSystem.h>
-#include <TH1D.h>
-#include <TRandom3.h>
-#include <TObject.h>
-#include <TNtupleD.h>
-
-#include "Conventions.h"
-#include "SuperkExpectation.h"
-#include "FitParamList.h"
-#include "Utilities.h"
-#include "SuperkObservation.h"
-#include "FitInputs.h"
-#include "FitterABC.h"
-#include "Opt.h"
-#include "Superk1RmuErecoFitter.h"
-*/
 
 void test_n_mock_data_fits
 (
@@ -44,9 +22,8 @@ void test_n_mock_data_fits
   bool         tweak_systematics       = true,                           /* generate toy MC with randomized systematics? */
   const char * fit_param_list          = "nuosc3f_numudisapp_fix4",      /* fit parameter list for the given physics hypothesis (see run_fitter.C) */
   const char * fit_option              = "minuit",                       /* fitter option (see run_fitter.C) */
-  bool         store_chisq_surf        = false,                          /* by default storing only best-fit values, enable this to store the chisq surfaces   */
-  bool         store_toy_expts         = false,                          /* by default storing only best-fit values, enable this to store the toy MC expts     */
-  bool         store_bestfit_spectrum  = false                           /* by default storing only best-fit values, enable this to store the best-fit spectra */
+  bool         store_toy_expts         = true,                           /* disable this if you don't want to store the toy MC expts     */
+  bool         store_bestfit_spectrum  = true                            /* disable this if you don't want to store the best-fit spectra */
 )
 {
   using namespace std;
@@ -85,7 +62,6 @@ void test_n_mock_data_fits
   cout << "   - Fit Parameter List: " << fit_param_list << endl;
   cout << "   - Fitter option: " << fit_option << endl;
   cout << "- Outputs" << endl;
-  cout << "     - Storing chisq surfaces: "      << ((store_chisq_surf) ?       "YES " : "NO") << endl;
   cout << "     - Storing toy MC experiments:  " << ((store_toy_expts) ?        "YES " : "NO") << endl;
   cout << "     - Storing best-fit spectra: "    << ((store_bestfit_spectrum) ? "YES " : "NO") << endl;
   cout << endl;
@@ -101,13 +77,25 @@ void test_n_mock_data_fits
   SuperkExpectation * skexp = new SuperkExpectation;
   skexp->Read(config);
 
+  // Object for storing input oscillation and nuisance params in each toy-MC
+  PhysParamList * iparm = new PhysParamList;
+
+  // Arrays for storing all pieces of fit data and the best-fit pdf (and its components) for each toy-MC.
+  TObjArray * dat_array = new TObjArray;
+  TObjArray * pdf_array = new TObjArray;
+  dat_array->SetOwner(false);
+  pdf_array->SetOwner(false);
+
   // Create file to store results
   string oscstr = util::AsString(hyp,input_mixing12,input_mixing13,input_mixing23,input_deltacp,input_dm12sq,input_dm23sq);
   TFile f(Form("%s-run_%d-%s.root", tag, run, oscstr.c_str()), "recreate");
 
-  // Create ntuple to store oscillation fit results
-  TNtupleD * nfitnt = new TNtupleD("nfitnt","",
-     "iexp:bestfit_mixing12:bestfit_mixing13:bestfit_mixing23:bestfit_deltacp:bestfit_dm12sq:bestfit_dm23sq:bestfit_chisq:fitstatus:input_mixing12:input_mixing13:input_mixing23:input_deltacp:input_dm12sq:input_dm23sq");
+  // Create tree to store outputs
+  TTree * fitnt = new TTree("fitnt","Results of VaLOR data and/or toy-MC experiment fits");
+  fitnt->Branch("best_fit_params", "t2kana::FitParamList",  &fparm,     1280000,0);
+  fitnt->Branch("input_params",    "t2kana::PhysParamList", &iparm,     1280000,0);
+  fitnt->Branch("data",            "TObjArray",             &dat_array, 1280000,0);
+  fitnt->Branch("best_fit_pdf",    "TObjArray",             &pdf_array, 1280000,0);
 
   // Loop over toy-MC experiments
   for(int iexperiment = 0; iexperiment < nexperiments; iexperiment++) {
@@ -135,15 +123,28 @@ void test_n_mock_data_fits
        fparm->Update(kPhypDm23sq,   input_dm23sq);
      }
 
+     // Reset all output spectra
+     dat_array->Clear();
+     pdf_array->Clear();
+
+     // Reset input true params and add true oscillation params
+     iparm->Clear();
+     PhysParamList true_oscillation_params = fparm->AsPhysParamList("current");
+     iparm->Append(true_oscillation_params);
+
      //
-     // get superk spectrum observation (toy experiment)
+     // get toy MC with/without systematics
      //
      SuperkObservation * skobs = new SuperkObservation;
-     if(tweak_systematics) {
-        // tweak all sources of systematic err (gaussian err)
+     if(tweak_systematics) 
+     {
+        // tweak all sources of systematic error
         cout << "- Randomizing all systematic params in pdf..." << endl;
         skexp->TweakAllSystematics();     
         skexp->PrintSystematicVariations();
+        // keep track of all nuisance params set so as to add in output tree
+        PhysParamList true_nuisance_params = skexp->Tweaks();
+        iparm->Append(true_nuisance_params);
         // generate mock data using the current PDF (incl. systematic variations) 
         // + statistical fluctuations if requested (Poisson fluctuation in each bin)
         cout << "- Generating toy-MC..." << endl;
@@ -158,7 +159,7 @@ void test_n_mock_data_fits
         cout << "- Generating toy-MC..." << endl;
         skobs->CreateMockData(*skexp, *fparm, stat_fluctuations); 
      }
-
+     
      // Get fitter
      FitInputs * fit_inputs = new FitInputs(skobs,skexp,fparm);
      FitterABC * fitter = util::GetFitter(fit_inputs,fit_option);
@@ -177,61 +178,31 @@ void test_n_mock_data_fits
      int fitstatus = fitter->FitStatusCode();
      double bestfit_chisq = fit_inputs->BestFitChisquare();
 
+     // Save spectra (data and best-fit prediction)
+     if(store_toy_expts) {
+        skobs->Write(dat_array, "obs");
+     }
+     if(store_bestfit_spectrum) {
+        skexp->Write(pdf_array, "pdf");
+     }
+
      // Print-out best-fit params
      fparm->ShowOnlyBestFitValuesInNextPrint();
      cout << "- Best-fit oscillation params (below) yield chisq = " << bestfit_chisq 
           << *fparm;
 
-     // Get & store best-fit params
-     // Init best-fit values
-     double bestfit_mixing12 = -1;
-     double bestfit_mixing13 = -1;
-     double bestfit_mixing23 = -1;
-     double bestfit_deltacp  = -1;
-     double bestfit_dm12sq   = -1;
-     double bestfit_dm23sq   = -1;
+     // Add all results in the tree
+     fitnt->Fill();
 
-     if(hyp == kHypOsc3F) {
-        bestfit_mixing12 = fparm->BestFitValue(kPhypMixing12);
-        bestfit_mixing13 = fparm->BestFitValue(kPhypMixing13);
-        bestfit_mixing23 = fparm->BestFitValue(kPhypMixing23);
-        bestfit_deltacp  = fparm->BestFitValue(kPhypDeltaCP);
-        bestfit_dm12sq   = fparm->BestFitValue(kPhypDm12sq);
-        bestfit_dm23sq   = fparm->BestFitValue(kPhypDm23sq);
-     } else
-     if(hyp == kHypNuMuDisapp2F) {
-        bestfit_mixing23 = fparm->BestFitValue(kPhypMixing23);
-        bestfit_dm23sq   = fparm->BestFitValue(kPhypDm23sq);
-     }
-     nfitnt->Fill(iexperiment, 
-                  bestfit_mixing12, bestfit_mixing13, bestfit_mixing23, 
-                  bestfit_deltacp, bestfit_dm12sq, bestfit_dm23sq, 
-                  bestfit_chisq, fitstatus,
-		  input_mixing12, input_mixing13, input_mixing23, 
-                  input_deltacp, input_dm12sq, input_dm23sq);
-
-     // Store toy-MC expt (if asked)
-     if(store_toy_expts) {
-       //....
-     }
-
-     // Store best-fit spectrum (if asked)
-     if(store_bestfit_spectrum) {
-       //....
-     }
-     // Store chisq surface (if asked)
-     if(store_chisq_surf) {
-       //....
-     }
-
+     // Clean-up
      delete skobs;
      delete fit_inputs;
      delete fitter;
+
   }
 
   // Store ntuple with best-fit results
   f.cd();
-  nfitnt->Write("nfitnt");
-
+  fitnt->Write();
   f.Close();
 }
