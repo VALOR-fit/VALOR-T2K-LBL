@@ -1044,6 +1044,37 @@ static const double kXSecSystEtrueCut[kNumOfXSecSyst][2] =
    { 0.0, 100.0 }             // antinu / nu cross section
 };
 
+//Fractional error of systematic parameters, as of BANFF 2012v8
+// ONLY USE FOR: macros/misc/test_fitter_inputs/test_valor_kdi_splines.C
+static const double kXSecSystFracErr[kNumOfXSecSyst] =
+{
+  0.153,          // BANFF, M_{A}QE
+  0.104,          // BANFF, M_{A}RES
+  0.09,           // BANFF, CCQE   normalization, 0 - 1.5 GeV
+  0.3,            // BANFF, CCQE   normalization, 1.5 - 3.5 GeV
+  0.3,            // BANFF, CCQE   normalization, 3.5 - 30.0 GeV
+  0.149,          // BANFF, CC1pi  normalization, 0 - 2.5 GeV
+  0.4,            // BANFF, CC1pi  normalization, 2.5 - 30.0 GeV
+#if BANFF_BINS == 1
+  0.3,            // BANFF, NC1pi0 normalization, 0.0 - 30.0 GeV 
+#endif
+#if BANFF_BINS == 3
+  -9999,          // BANFF, MEC template normalisation
+  -9999,          // BANFF, PDD double counting systematic
+#endif
+  0.13333,        // Fermi momentum
+  -9999,          // spectral function on/off
+  0.516,          // W-shape
+  0.4,            // CC other shape
+  0.2,            // Pion-less delta decay
+  0.33333,        // Binding enery
+  1.0,            // CC coherent norm
+  0.3,            // NC 1piC norm
+  0.3,            // NC coh norm
+  0.3,            // NC other norm
+  0.03,           // nue / numu cross section
+  0.4             // antinu / nu cross section
+};
 
 // The following list describles in which MC templates we are supposed to apply the
 // weights as a result of tweaking any of the above systematic parameters.
