@@ -77,6 +77,22 @@ void PhysParamList::SetValue(PhysParamId_t p, double v)
   fParams[p] = v;
 }
 //________________________________________________________________________________________
+void PhysParamList::Clear(void)
+{
+  this->fParams.clear();
+}
+//________________________________________________________________________________________
+void PhysParamList::Append(const PhysParamList & pl)
+{
+   const map<int,double> & m = pl.Map();
+   map<int,double>::const_iterator iter = m.begin();
+   for( ; iter != m.end(); ++iter) {
+      PhysParamId_t p = (PhysParamId_t) iter->first;
+      double v = iter->second;
+      this->SetValue(p,v);
+   }
+}
+//________________________________________________________________________________________
 void PhysParamList::Print(ostream & stream) const
 {
   int i=0;

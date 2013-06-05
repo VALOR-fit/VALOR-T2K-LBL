@@ -43,6 +43,8 @@ public:
    int    NParams  (void) const;
    double Value    (conv::PhysParamId_t p) const;
    void   SetValue (conv::PhysParamId_t p, double v);
+   void   Clear    (void);
+   void   Append   (const PhysParamList & pl);
    void   Print    (ostream & stream) const;
 
    double           operator () (conv::PhysParamId_t p) const;
