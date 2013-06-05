@@ -11,6 +11,8 @@
 
 \created  February 09, 2012
 
+\copyright (c) 2010-2013, VaLOR group.
+
 */
 //____________________________________________________________________________
 
@@ -48,14 +50,14 @@ public:
   double OneSigmaError(int idx) const;
    
   // Get BANFF best fit values, covariance matrix and cholesky decomposition of covariance matrix
-  const TVectorD & BestFitValues              (void) const { return *fBestFitValues;             }
-  const TMatrixD & CovMatrix                  (void) const { return *fCovMtrx;                   }
-  const TMatrixD & CovMatrixInv               (void) const { return *fCovMtrxInv;                }
-  const TMatrixD & CovMatrixCholesky          (void) const { return *fCovMtrxChoL;               }
+  const TVectorD & BestFitValues              (void) const { return *fBestFitValues; }
+  const TMatrixD & CovMatrix                  (void) const { return *fCovMtrx;       }
+  const TMatrixD & CovMatrixInv               (void) const { return *fCovMtrxInv;    }
+  const TMatrixD & CovMatrixCholesky          (void) const { return *fCovMtrxChoL;   }
 
   // Systematic variations (wrt the best-fit BANFF params)
-  void Tweak             (bool force_inputs = false, TVectorD * input_vec = 0); ///>
-  void TweakFluxOnly     (bool force_inputs = false, TVectorD * input_vec = 0); ///>
+  void Tweak             (bool force_inputs = false, TVectorD * input_vec = 0); 
+  void TweakFluxOnly     (bool force_inputs = false, TVectorD * input_vec = 0); 
 
   // A special systematic variation which cancels the effect of BANFF tuning and reverts back to the nominal MC
   void RestoreNominalMC(void);

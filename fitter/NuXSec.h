@@ -10,6 +10,8 @@
 
 \created  October 20, 2010
 
+\copyright (c) 2010-2013, VaLOR group.
+
 */
 //____________________________________________________________________________
    
@@ -18,8 +20,6 @@
 
 #include <TObject.h>
 #include <TXMLEngine.h>
-//#include <TMatrixD.h>
-//#include <TVectorD.h>
 #include <TH2.h>
 #include <TSpline.h>
 
@@ -77,7 +77,7 @@ public:
   void PrintSystematicVariations (ostream & stream = std::cout) const;
 
   // Read inputs from XML file
-  bool Read (TXMLEngine* xml, XMLNodePointer_t root_node);
+  bool Read        (TXMLEngine* xml, XMLNodePointer_t root_node);
   bool ReadSplines (TXMLEngine* xml, XMLNodePointer_t root_node);
 
   // Set BANFF fit info

@@ -1,15 +1,7 @@
 //________________________________________________________________________________________
 /*
 
- >> ChangeLog:
-
- For changes up to version 2010_v3.0.0 (last implementation of the 2010-era analysis) 
- see code in the corresponding SVN branch.
- 
- Changes since 2011_v0.9.0:
-
- @ 18/2/13 LE
- Added TweakFluxOnly method for comparisons with official appearance analysis. Updated last banff parameter.
+ \copyright (c) 2010-2013, VaLOR group.
 
 */
 //________________________________________________________________________________________

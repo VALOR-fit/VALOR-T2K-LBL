@@ -731,7 +731,7 @@ void SuperkExpectation::TweakAllSKDetectorFSISystematics(void)
   cout << "Exp >> Generating random variations of all SKDET + FSI systematic params." << endl;
 #endif
 
-  this->GetSuperkDetectorFSI()->TweakEnergyScale              (Rnd::Instance()->RndToyMCsyst().Gaus(0.,1.));
+  this->GetSuperkDetectorFSI()->TweakEnergyScale(Rnd::Instance()->RndToyMCsyst().Gaus(0.,1.));
   this->GetSuperkDetectorFSI()->Tweak(); // <-- Cholesky method
 }
 //________________________________________________________________________________________
@@ -781,6 +781,23 @@ void SuperkExpectation::TweakAllSKDetectorSystematics(void)
   this->GetSuperkDetector()->TweakEfficiency1RmuNC         (Rnd::Instance()->RndToyMCsyst().Gaus(0.,1.));
   this->GetSuperkDetector()->TweakEfficiency1RmuNuECC      (Rnd::Instance()->RndToyMCsyst().Gaus(0.,1.));
   this->GetSuperkDetector()->TweakEfficiencies1Re          (); // <-- Cholesky method
+}
+//________________________________________________________________________________________
+PhysParamList SuperkExpectation::Tweaks(void) 
+{
+  PhysParamList pl;
+
+  //
+  // BANFF
+  //
+  const int nbanff = conv::kNumOfParamsInBANFFfit;
+  for(int ip = 0; ip < nbanff; ip++) {
+     PhysParamId_t p = PhysParamId_t ((int) kNuisBANFF00 + ip);
+     double v = this->GetBANFF()->CurrentValue(p);
+     pl.SetValue(p,v);
+  }
+
+  return pl;
 }
 //________________________________________________________________________________________
 void SuperkExpectation::SetNuisanceParams(const FitParamList & fp, bool all_banff_fit, bool all_1Re_eff)
@@ -1146,7 +1163,6 @@ void SuperkExpectation::SetNuisanceParams(const FitParamList & fp, bool all_banf
      double twk = fp.CurrValue(kNuisXSecNormAntiNuToNu);
      this->GetNuXSec()->TweakNormAntiNuToNu(twk);
    }
-
 
 }
 //________________________________________________________________________________________

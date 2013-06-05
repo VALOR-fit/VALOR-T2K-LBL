@@ -31,6 +31,7 @@
 #include <TXMLEngine.h>
 
 #include "FitParamList.h"
+#include "PhysParamList.h"
 #include "PhysHypothesis.h"
 #include "Conventions.h"
 #include "Utilities.h"
@@ -69,13 +70,15 @@ public:
    void TweakAllSKDetectorSystematics        (void);           ///< random variation of all SK Detector systematics
    void TweakAllSKDetectorFSISystematics     (void);           ///< random variation of all SK Detector systematics
 
+   PhysParamList Tweaks(void);
+
    // Interface method for fitters. The fit parameter list can contain info for both the 
    // physics hypothesis and the systematic variations.
    bool Generate (const FitParamList & fp, bool all_banff_fit, bool all_1Re_eff);
 
    // Access calculated SK reconstructed energy spectrum for each sample/mode
-   TH1D* CurrPredictedErecoSpectrum (t2kana::conv::SuperkSample_t s) const;
-   TH1D* CurrPredictedErecoSpectrum (t2kana::conv::SuperkSample_t s, t2kana::conv::SuperkMode_t m) const;
+   TH1D*   CurrPredictedErecoSpectrum      (t2kana::conv::SuperkSample_t s) const;
+   TH1D*   CurrPredictedErecoSpectrum      (t2kana::conv::SuperkSample_t s, t2kana::conv::SuperkMode_t m) const;
    double* CurrPredictedErecoSpectrumArray (t2kana::conv::SuperkSample_t s);
    double  CurrPredictedErecoSpectrumArray (t2kana::conv::SuperkSample_t s, int i);
 
