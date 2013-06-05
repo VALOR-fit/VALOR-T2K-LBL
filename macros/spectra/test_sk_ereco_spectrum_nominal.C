@@ -213,11 +213,15 @@ void test_sk_ereco_spectrum_nominal
           << setw(10) << setfill(' ') << setprecision(6) << 100*nmode/ntot << " %)" << endl;
   }
 
+  // get tweaks
+  PhysParamList nuisance_params = skexp.Tweaks();
+
   //
   // Save histograms in a ROOT file
   //
 
   TFile f(Form("sk_ereco_spectrum-%s%s.root",oscparams.c_str(),(disable_banff_tuning ? "_nobanff" : "")) ,"recreate");
+  nuisance_params.Write("nuisance_params");
   hErecoTot -> Write(util::AsStringCompact(s,conv::kSKmUndefined,"sk_","total").c_str());
   hErecoTot_coarse->Write(Form("%s_coarse",util::AsStringCompact(s,conv::kSKmUndefined,"sk_","total").c_str()));
   for(int im = 0; im < conv::knm; im++) {
