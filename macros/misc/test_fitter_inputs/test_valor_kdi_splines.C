@@ -2,7 +2,7 @@ using namespace std;
 using namespace t2kana;
 using namespace t2kana::util;
 
-void test_valor_kdi_splines_nick
+void test_valor_kdi_splines
 (
    bool   compare_with_old_valor = false,
    double check                  = -1
@@ -30,15 +30,14 @@ void test_valor_kdi_splines_nick
 
   cout<<"conv::kNumOfXSecSyst = "<<conv::kNumOfXSecSyst<<endl;
 
-  for(int ip = 0; ip < conv::kNumOfXSecSyst; ip++) 
-    {
+  for(int ip = 0; ip < conv::kNumOfXSecSyst; ip++) {
     conv::PhysParamId_t p = conv::kListOfXSecSyst[ip];
     cout<<util::AsString(p) << endl;
     if(util::AsString(p) == "BANFF; Ma QE")
       cout<<"Found MaQE !!"<<endl;
     if(util::AsString(p) == "BANFF; Ma RES")
       cout<<"Found MaRes !!"<<endl;
-    }
+  }
 
   //sample
   conv::SuperkSample_t s = conv::kSKsFCFV1RingMuLike;
@@ -60,9 +59,10 @@ void test_valor_kdi_splines_nick
 	fref = fkdi_nuebar;
       else if(util::IsSignalNuE(m))
 	fref = fkdi_signue;
-    } else {
-        fref = fval_old;
-     }
+    } 
+    else {
+      fref = fval_old;
+    }
     assert(fref!=0);
     vector<string> mode = util::Tokens(util::AsStringCompact_KDI(m), "_");
     //loop over systematics
@@ -112,11 +112,10 @@ void test_valor_kdi_splines_nick
 	  // Get VaLOR spline
           cout << "Getting VaLOR response function: " << val_splname.str() << endl;
           //ip == 0 is MaQE, ip == 1 is MaRes
-	  if(ip == 0 || ip == 1)
-            {
+	  TSpline3 * val_spl = 0;
+	  if(ip == 0 || ip == 1) {
             TSpline3 * val_spl_temp = (TSpline3 *) fval->Get(val_splname.str().c_str());
-            if(val_spl_temp)
-	      {
+            if(val_spl_temp) {
 	      const int nval = val_spl_temp->GetNp();
 	      double * xval = new double[nval];
 	      double * yval = new double[nval];
@@ -127,20 +126,19 @@ void test_valor_kdi_splines_nick
 	          xval[k] = (xval[k] * conv::kNomMAQE - conv::kNomMAQE) / conv::kXSecSystFracErr[ip];
                 else if(ip == 1)
                   xval[k] = (xval[k] * conv::kNomMARES - conv::kNomMARES) / conv::kXSecSystFracErr[ip];
-	        }//k
-	      }//val_spl_temp
+	      }//k
+	      val_spl = new TSpline3("",xval,yval,nval);
+	      val_spl->SetTitle(val_spl_temp->GetTitle());
+	    }//val_spl_temp
 	    else
               cerr << "No " << val_splname.str() << " response func" << endl; 
-	    TSpline3 * val_spl = 0;
-            val_spl = new TSpline3("",xval,yval,nval);  
-	    }//ip
-          else 
-	    {
-	    TSpline3 * val_spl = (TSpline3 *) fval->Get(val_splname.str().c_str());
+	  }//ip
+          else {
+	    val_spl = (TSpline3 *) fval->Get(val_splname.str().c_str());
 	    if(!val_spl) {
 	      cerr << "No " << val_splname.str() << " response func" << endl;
-	      }
 	    }
+	  }
           // Get reference spline
 	  TSpline3 * ref_spl = 0;
 	  if(compare_with_old_valor) {
@@ -150,27 +148,29 @@ void test_valor_kdi_splines_nick
 	    if(!ref_spl) {
 	      cerr << "No " << val_splname.str() << " response func" << endl;
 	      }
-	  } else {
+	  }
+	  else {
 	    //use kdi_splname
             cout << "Getting KDI response function: " << kdi_splname.str() << endl;
 	    TSpline3 * ref_spl_temp = (TSpline3 *) fref->Get(kdi_splname.str().c_str());
             if(ref_spl_temp) {
-	    const int n = ref_spl_temp->GetNp();
-	    double * x = new double[n];
-	    double * y = new double[n];
-	    for(int k = 0; k < n; k++) {
-	      ref_spl_temp->GetKnot(k, x[k], y[k]);
-              //the horizontal axes of KDI splines are in units of fractional change in the parameter
-	      //divide by fractional error in parameter to convert horizontal axes to units of sigma
-              x[k] = x[k] / conv::kXSecSystFracErr[ip];
-	    }//k
-	    ref_spl = new TSpline3("",x,y,n);
-//          delete [] x;
-//          delete [] y;
+	      const int n = ref_spl_temp->GetNp();
+	      double * x = new double[n];
+	      double * y = new double[n];
+	      for(int k = 0; k < n; k++) {
+		ref_spl_temp->GetKnot(k, x[k], y[k]);
+		//the horizontal axes of KDI splines are in units of fractional change in the parameter
+		//divide by fractional error in parameter to convert horizontal axes to units of sigma
+		x[k] = x[k] / conv::kXSecSystFracErr[ip];
+	      }//k
+	      ref_spl = new TSpline3("",x,y,n);
+	      ref_spl->SetTitle(fref->GetTitle());
+//            delete [] x;
+//            delete [] y;
 	    }//ref_spl_temp
 	    else
 	      cerr << "No " << kdi_splname.str() << " response func" << endl;
-	    }//compare_with_old_valor
+	  }//compare_with_old_valor
 
 	  if((!val_spl) || (!ref_spl)) continue;
 
