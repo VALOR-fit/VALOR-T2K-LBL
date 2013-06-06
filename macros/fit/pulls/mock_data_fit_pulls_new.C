@@ -9,9 +9,8 @@ void mock_data_fit_pulls
 (
   const char * filenames,                                              /* add these filenames to the tree */
   const char * tag,                                                    /* tag for the output files */
-  int          fit_systematics_mode = 1,                               /* what was fit for? 0: osc only. 1: osc+selected nuisance. 2: osc+all nuisance */
-  int          err_mode             = 1,                               /* which errors to use for pulls. 1: migrad, 2 hesse, 3 minos*/
-  int          fittermode           = 0,                               /* which fitter has been used? 0: minuit. 1: minuit2 */
+  int          err_mode             = 1,                               /* which errors to use for pulls (1: migrad, 2 hesse, 3 minos) */
+  int          fitter               = 0,                               /* which fitter has been used (0: minuit, 1: minuit2) */
   const char * config_file          = "analysis_configuration.xml",    /* file to get the pre errors from */
   bool         do_gaus_fits         = false
 )
@@ -25,7 +24,6 @@ void mock_data_fit_pulls
   //gStyle->SetStatStyle(0); //make stat boxes see through
   gStyle->SetStatBorderSize(0);
   gStyle->SetTextFont(42); //less bold
-
 
   //
   // Parameters in the fit
@@ -199,6 +197,60 @@ void mock_data_fit_pulls
   delete xml;
 
   //
+  // Book histograms
+  //
+
+  const int    nbins_pull = 100;
+  const double min_pull   = -5;
+  const double max_pull   =  5;
+
+  TH1I * h_fitstat        = new TH1I("h_fitstat",       "fit status",         11, -1,   10);
+  TH1I * h_migradfitstat  = new TH1I("h_migradfitstat", "migrad fit status",  14, -1,   13);
+  TH1I * h_hessefitstat   = new TH1I("h_hessefitstat",  "hesse fit status",   14, -1,   13);
+  TH1D * h_fittime        = new TH1D("h_fittime",       "fit time",         1000,  0, 1000);
+  TH1D * h_nsk_nom        = new TH1D("h_nsk_nom",       "nsk nom",           150,  0,  150);
+  TH1D * h_nsk_bf         = new TH1D("h_nsk_bf",        "nsk best-fit",      150,  0,  150);
+  TH1D * h_dchisq         = new TH1D("h_dchisq",        "h_dchisq",          300, -5,   25);
+
+  TH1D * h_bestfit   [nparams] = { 0 }; //
+  TH1D * h_pull_1    [nparams] = { 0 }; //
+  TH1D * h_pull_2    [nparams] = { 0 }; //
+  TH1D * h_pull_3    [nparams] = { 0 }; //
+  TH1D * h_err_minos [nparams] = { 0 }; //
+  TH1D * h_err_hesse [nparams] = { 0 }; //
+
+  for(int ip = 0; ip < nparams; ip++) 
+  {
+     PhysParamId_t p params[ip];
+
+     h_bestfit[ip] = new TH1D( 
+         Form("h_bestfit_%s",util::AsStringCompact(p).c_str()), 
+         Form("Best-fit distribution for %s", util::AsString(p).c_str()), 
+         nbins_pull, min_pull, max_pull);
+     h_pull_1[ip] = new TH1D( 
+         Form("h_pull_1_%s",util::AsStringCompact(p).c_str()), 
+         Form("Pull_1 for %s", util::AsString(p).c_str()), 
+         nbins_pull, min_pull, max_pull);
+     h_pull_2[ip] = new TH1D( 
+         Form("h_pull_2_%s",util::AsStringCompact(p).c_str()), 
+         Form("Pull_2 for %s", util::AsString(p).c_str()), 
+         nbins_pull, min_pull, max_pull);
+     h_pull_3[ip] = new TH1D( 
+         Form("h_pull_3_%s",util::AsStringCompact(p).c_str()), 
+         Form("Pull_3 for %s", util::AsString(p).c_str()), 
+         nbins_pull, min_pull, max_pull);
+     h_err_minos[ip] = new TH1D( 
+         Form("h_err_minos_%s",util::AsStringCompact(p).c_str()), 
+         Form("Minos error for %s", util::AsString(p).c_str()), 
+         nbins_pull, min_pull, max_pull);
+     h_err_hesse[ip] = new TH1D( 
+         Form("h_err_hesse_%s",util::AsStringCompact(p).c_str()), 
+         Form("Hesse error for %s", util::AsString(p).c_str()), 
+         nbins_pull, min_pull, max_pull);
+  }//p
+
+
+  //
   // Set up chain
   //
 
@@ -209,791 +261,77 @@ void mock_data_fit_pulls
   PhysParamList * iparm = 0;
 
 //  TTree * fitnt = (TTree*)f.Get("fitnt");
-//  ch.GetEntry(0);
   ch.SetBranchAddress("best_fit_params", &fparm);
   ch.SetBranchAddress("input_params",    &iparm);
 
-
-
-
-//  int fitstatus, migradfitstatus, hessefitstatus;
-//  double fittime;
-//  double bestfit_chisq, true_chisq;
-//  double nsk_nom, nsk_bf;
-//  oscillation parameters
-
-  // Book histograms
-  TH1I * h_fitstat        = new TH1I("h_fitstat",       "fit status",         11, -1,   10);
-  TH1I * h_migradfitstat  = new TH1I("h_migradfitstat", "migrad fit status",  14, -1,   13);
-  TH1I * h_hessefitstat   = new TH1I("h_hessefitstat",  "hesse fit status",   14, -1,   13);
-  TH1D * h_fittime        = new TH1D("h_fittime",       "fit time",         1000,  0, 1000);
-  TH1D * h_nsk_nom        = new TH1D("h_nsk_nom",       "nsk nom",           150,  0,  150);
-  TH1D * h_nsk_bf         = new TH1D("h_nsk_bf",        "nsk best-fit",      150,  0,  150);
-  TH1D * h_dchisq         = new TH1D("h_dchisq",        "h_dchisq",          300, -5,   25);
-
-  TH1D * hpull[nparams]
-
-  TH1D * h_mixing23       = new TH1D("h_mixing23","h_mixing23:#sin^{2}_{23}",500,0.5,1.0);
-  TH1D * h_dm23sq         = new TH1D("h_dm23sq","h_dm23sq:|#Delta m^{2}_{32}|",500,1.4E-3,3.4E-3);
-  //pull histograms
-  TH1D * hpull_mixing23   = new TH1D("hpull_mixing23","hpull_mixing23",250,-5,5);
-  TH1D * hpull_dm23sq     = new TH1D("hpull_dm23sq","hpull_dm23sq",250,-5,5);
-  //error histograms
-  TH1D * herr_mixing23    = new TH1D("herr_mixing23","herr_mixing23",300,0,0.05);
-  TH1D * herr_dm23sq      = new TH1D("herr_dm23sq","herr_dm23sq",100,0,1E-4);
-  //distribution histograms
-  TH1D * h_xsec_sf           = new TH1D("h_xsec_sf","h_xsec_sf:#sigma",200,-3,3);
-  TH1D * h_xsec_binde        = new TH1D("h_xsec_binde","h_xsec_binde:#sigma",200,-3,3);
-  TH1D * h_xsec_pilessdelta  = new TH1D("h_xsec_pilessdelta","h_xsec_pilessdelta:#sigma",200,-3,3);
-  TH1D * h_skdet_ccnqe       = new TH1D("h_skdet_ccnqe","h_skdet_ccnqe:#sigma",200,-3,3);
-  TH1D * h_skdet_nc          = new TH1D("h_skdet_nc","h_skdet_nc:#sigma",200,-3,3);
-  TH1D * h_skdet_energyscale = new TH1D("h_skdet_energyscale","h_skdet_energyscale:#sigma",200,-3,3);
-  //pull histograms
-  TH1D * hpull_xsec_sf = new TH1D("hpull_xsec_sf","hpull_xsec_sf",100,-5,5);
-  TH1D * hpull_xsec_binde = new TH1D("hpull_xsec_binde","hpull_xsec_binde",100,-10,10);
-  TH1D * hpull_xsec_pilessdelta = new TH1D("hpull_xsec_pilessdelta","hpull_xsec_pilessdelta",100,-5,5);
-  TH1D * hpull_skdet_ccnqe = new TH1D("hpull_skdet_ccnqe","hpull_skdet_ccnqe",100,-5,5);
-  TH1D * hpull_skdet_nc = new TH1D("hpull_skdet_nc","hpull_skdet_nc",100,-5,5);
-  TH1D * hpull_skdet_energyscale = new TH1D("hpull_skdet_energyscale","hpull_skdet_energyscale",100,-5,5);
-  //alterative pull histograms
-  TH1D * haltpull_xsec_sf = new TH1D("haltpull_xsec_sf","haltpull_xsec_sf",100,-5,5);
-  TH1D * haltpull_xsec_binde = new TH1D("haltpull_xsec_binde","haltpull_xsec_binde",100,-5,5);
-  TH1D * haltpull_xsec_pilessdelta = new TH1D("haltpull_xsec_pilessdelta","haltpull_xsec_pilessdelta",100,-5,5);
-  TH1D * haltpull_skdet_ccnqe = new TH1D("haltpull_skdet_ccnqe","haltpull_skdet_ccnqe",100,-5,5);
-  TH1D * haltpull_skdet_nc = new TH1D("haltpull_skdet_nc","haltpull_skdet_nc",100,-5,5);
-  TH1D * haltpull_skdet_energyscale = new TH1D("haltpull_skdet_energyscale","haltpull_skdet_energyscale",100,-5,5);
-  //alterative2 pull histograms
-  TH1D * haltpull2_xsec_sf = new TH1D("haltpull2_xsec_sf","haltpull2_xsec_sf",100,-5,5);
-  TH1D * haltpull2_xsec_binde = new TH1D("haltpull2_xsec_binde","haltpull2_xsec_binde",100,-5,5);
-  TH1D * haltpull2_xsec_pilessdelta = new TH1D("haltpull2_xsec_pilessdelta","haltpull2_xsec_pilessdelta",100,-5,5);
-  TH1D * haltpull2_skdet_ccnqe = new TH1D("haltpull2_skdet_ccnqe","haltpull2_skdet_ccnqe",100,-5,5);
-  TH1D * haltpull2_skdet_nc = new TH1D("haltpull2_skdet_nc","haltpull2_skdet_nc",100,-5,5);
-  TH1D * haltpull2_skdet_energyscale = new TH1D("haltpull2_skdet_energyscale","haltpull2_skdet_energyscale",100,-5,5);
-  //err histograms
-  TH1D * herr_xsec_sf = new TH1D("herr_xsec_sf","herr_xsec_sf",100,0,1.5);
-  TH1D * herr_xsec_binde = new TH1D("herr_xsec_binde","herr_xsec_binde",100,0,1.5);
-  TH1D * herr_xsec_pilessdelta = new TH1D("herr_xsec_pilessdelta","herr_xsec_pilessdelta",100,0,1.5);
-  TH1D * herr_skdet_ccnqe = new TH1D("herr_skdet_ccnqe","herr_skdet_ccnqe",100,0,1.5);
-  TH1D * herr_skdet_nc = new TH1D("herr_skdet_nc","herr_skdet_nc",100,0,1.5);
-  TH1D * herr_skdet_energyscale = new TH1D("herr_skdet_energyscale","herr_skdet_energyscale",100,0,1.5);
-  //distribution histograms
-  TH1D * h_banff_00 = new TH1D("h_banff_00","h_banff_00:#sigma",200,-3,3);
-  TH1D * h_banff_01 = new TH1D("h_banff_01","h_banff_01:#sigma",200,-3,3);
-  TH1D * h_banff_02 = new TH1D("h_banff_02","h_banff_02:#sigma",200,-3,3);
-  TH1D * h_banff_03 = new TH1D("h_banff_03","h_banff_03:#sigma",200,-3,3);
-  TH1D * h_banff_04 = new TH1D("h_banff_04","h_banff_04:#sigma",200,-3,3);
-  TH1D * h_banff_05 = new TH1D("h_banff_05","h_banff_05:#sigma",200,-3,3);
-  TH1D * h_banff_06 = new TH1D("h_banff_06","h_banff_06:#sigma",200,-3,3);
-  TH1D * h_banff_07 = new TH1D("h_banff_07","h_banff_07:#sigma",200,-3,3);
-  TH1D * h_banff_08 = new TH1D("h_banff_08","h_banff_08:#sigma",200,-3,3);
-  TH1D * h_banff_09 = new TH1D("h_banff_09","h_banff_09:#sigma",200,-3,3);
-  TH1D * h_banff_10 = new TH1D("h_banff_10","h_banff_10:#sigma",200,-3,3);
-  TH1D * h_banff_11 = new TH1D("h_banff_11","h_banff_11:#sigma",200,-3,3);
-  TH1D * h_banff_12 = new TH1D("h_banff_12","h_banff_12:#sigma",200,-3,3);
-  TH1D * h_banff_13 = new TH1D("h_banff_13","h_banff_13:#sigma",200,-3,3);
-  TH1D * h_banff_14 = new TH1D("h_banff_14","h_banff_14:#sigma",200,-3,3);
-  TH1D * h_banff_15 = new TH1D("h_banff_15","h_banff_15:#sigma",200,-3,3);
-  TH1D * h_banff_maqe = new TH1D("h_banff_maqe","h_banff_maqe:#sigma",200,-3,3);
-  TH1D * h_banff_mares = new TH1D("h_banff_mares","h_banff_mares:#sigma",200,-3,3);
-  TH1D * h_banff_ccqeE0 = new TH1D("h_banff_ccqeE0","h_banff_ccqeE0:#sigma",200,-3,3);
-  TH1D * h_banff_ccqeE1 = new TH1D("h_banff_ccqeE1","h_banff_ccqeE1:#sigma",200,-3,3);
-  TH1D * h_banff_ccqeE2 = new TH1D("h_banff_ccqeE2","h_banff_ccqeE2:#sigma",200,-3,3);
-  TH1D * h_banff_cc1piE0 = new TH1D("h_banff_cc1piE0","h_banff_cc1piE0:#sigma",200,-3,3);
-  TH1D * h_banff_cc1piE1 = new TH1D("h_banff_cc1piE1","h_banff_cc1piE1:#sigma",200,-3,3);
-  //pull histograms
-  TH1D * hpull_banff_00 = new TH1D("hpull_banff_00","hpull_banff_00",100,-5,5);
-  TH1D * hpull_banff_01 = new TH1D("hpull_banff_01","hpull_banff_01",100,-5,5);
-  TH1D * hpull_banff_02 = new TH1D("hpull_banff_02","hpull_banff_02",100,-5,5);
-  TH1D * hpull_banff_03 = new TH1D("hpull_banff_03","hpull_banff_03",100,-5,5);
-  TH1D * hpull_banff_04 = new TH1D("hpull_banff_04","hpull_banff_04",100,-5,5);
-  TH1D * hpull_banff_05 = new TH1D("hpull_banff_05","hpull_banff_05",100,-5,5);
-  TH1D * hpull_banff_06 = new TH1D("hpull_banff_06","hpull_banff_06",100,-5,5);
-  TH1D * hpull_banff_07 = new TH1D("hpull_banff_07","hpull_banff_07",100,-5,5);
-  TH1D * hpull_banff_08 = new TH1D("hpull_banff_08","hpull_banff_08",100,-5,5);
-  TH1D * hpull_banff_09 = new TH1D("hpull_banff_09","hpull_banff_09",100,-5,5);
-  TH1D * hpull_banff_10 = new TH1D("hpull_banff_10","hpull_banff_10",100,-5,5);
-  TH1D * hpull_banff_11 = new TH1D("hpull_banff_11","hpull_banff_11",100,-5,5);
-  TH1D * hpull_banff_12 = new TH1D("hpull_banff_12","hpull_banff_12",100,-5,5);
-  TH1D * hpull_banff_13 = new TH1D("hpull_banff_13","hpull_banff_13",100,-5,5);
-  TH1D * hpull_banff_14 = new TH1D("hpull_banff_14","hpull_banff_14",100,-5,5);
-  TH1D * hpull_banff_15 = new TH1D("hpull_banff_15","hpull_banff_15",100,-5,5);
-  TH1D * hpull_banff_maqe = new TH1D("hpull_banff_maqe","hpull_banff_maqe",100,-5,5);
-  TH1D * hpull_banff_mares = new TH1D("hpull_banff_mares","hpull_banff_mares",100,-5,5);
-  TH1D * hpull_banff_ccqeE0 = new TH1D("hpull_banff_ccqeE0","hpull_banff_ccqeE0",100,-5,5);
-  TH1D * hpull_banff_ccqeE1 = new TH1D("hpull_banff_ccqeE1","hpull_banff_ccqeE1",100,-5,5);
-  TH1D * hpull_banff_ccqeE2 = new TH1D("hpull_banff_ccqeE2","hpull_banff_ccqeE2",100,-5,5);
-  TH1D * hpull_banff_cc1piE0 = new TH1D("hpull_banff_cc1piE0","hpull_banff_cc1piE0",100,-5,5);
-  TH1D * hpull_banff_cc1piE1 = new TH1D("hpull_banff_cc1piE1","hpull_banff_cc1piE1",100,-5,5);
-  //altpull histograms
-  TH1D * haltpull_banff_00 = new TH1D("haltpull_banff_00","haltpull_banff_00",100,-5,5);
-  TH1D * haltpull_banff_01 = new TH1D("haltpull_banff_01","haltpull_banff_01",100,-5,5);
-  TH1D * haltpull_banff_02 = new TH1D("haltpull_banff_02","haltpull_banff_02",100,-5,5);
-  TH1D * haltpull_banff_03 = new TH1D("haltpull_banff_03","haltpull_banff_03",100,-5,5);
-  TH1D * haltpull_banff_04 = new TH1D("haltpull_banff_04","haltpull_banff_04",100,-5,5);
-  TH1D * haltpull_banff_05 = new TH1D("haltpull_banff_05","haltpull_banff_05",100,-5,5);
-  TH1D * haltpull_banff_06 = new TH1D("haltpull_banff_06","haltpull_banff_06",100,-5,5);
-  TH1D * haltpull_banff_07 = new TH1D("haltpull_banff_07","haltpull_banff_07",100,-5,5);
-  TH1D * haltpull_banff_08 = new TH1D("haltpull_banff_08","haltpull_banff_08",100,-5,5);
-  TH1D * haltpull_banff_09 = new TH1D("haltpull_banff_09","haltpull_banff_09",100,-5,5);
-  TH1D * haltpull_banff_10 = new TH1D("haltpull_banff_10","haltpull_banff_10",100,-5,5);
-  TH1D * haltpull_banff_11 = new TH1D("haltpull_banff_11","haltpull_banff_11",100,-5,5);
-  TH1D * haltpull_banff_12 = new TH1D("haltpull_banff_12","haltpull_banff_12",100,-5,5);
-  TH1D * haltpull_banff_13 = new TH1D("haltpull_banff_13","haltpull_banff_13",100,-5,5);
-  TH1D * haltpull_banff_14 = new TH1D("haltpull_banff_14","haltpull_banff_14",100,-5,5);
-  TH1D * haltpull_banff_15 = new TH1D("haltpull_banff_15","haltpull_banff_15",100,-5,5);
-  TH1D * haltpull_banff_maqe = new TH1D("haltpull_banff_maqe","haltpull_banff_maqe",100,-5,5);
-  TH1D * haltpull_banff_mares = new TH1D("haltpull_banff_mares","haltpull_banff_mares",100,-5,5);
-  TH1D * haltpull_banff_ccqeE0 = new TH1D("haltpull_banff_ccqeE0","haltpull_banff_ccqeE0",100,-5,5);
-  TH1D * haltpull_banff_ccqeE1 = new TH1D("haltpull_banff_ccqeE1","haltpull_banff_ccqeE1",100,-5,5);
-  TH1D * haltpull_banff_ccqeE2 = new TH1D("haltpull_banff_ccqeE2","haltpull_banff_ccqeE2",100,-5,5);
-  TH1D * haltpull_banff_cc1piE0 = new TH1D("haltpull_banff_cc1piE0","haltpull_banff_cc1piE0",100,-5,5);
-  TH1D * haltpull_banff_cc1piE1 = new TH1D("haltpull_banff_cc1piE1","haltpull_banff_cc1piE1",100,-5,5);
-  //altpull2 histograms
-  TH1D * haltpull2_banff_00 = new TH1D("haltpull2_banff_00","haltpull2_banff_00",100,-5,5);
-  TH1D * haltpull2_banff_01 = new TH1D("haltpull2_banff_01","haltpull2_banff_01",100,-5,5);
-  TH1D * haltpull2_banff_02 = new TH1D("haltpull2_banff_02","haltpull2_banff_02",100,-5,5);
-  TH1D * haltpull2_banff_03 = new TH1D("haltpull2_banff_03","haltpull2_banff_03",100,-5,5);
-  TH1D * haltpull2_banff_04 = new TH1D("haltpull2_banff_04","haltpull2_banff_04",100,-5,5);
-  TH1D * haltpull2_banff_05 = new TH1D("haltpull2_banff_05","haltpull2_banff_05",100,-5,5);
-  TH1D * haltpull2_banff_06 = new TH1D("haltpull2_banff_06","haltpull2_banff_06",100,-5,5);
-  TH1D * haltpull2_banff_07 = new TH1D("haltpull2_banff_07","haltpull2_banff_07",100,-5,5);
-  TH1D * haltpull2_banff_08 = new TH1D("haltpull2_banff_08","haltpull2_banff_08",100,-5,5);
-  TH1D * haltpull2_banff_09 = new TH1D("haltpull2_banff_09","haltpull2_banff_09",100,-5,5);
-  TH1D * haltpull2_banff_10 = new TH1D("haltpull2_banff_10","haltpull2_banff_10",100,-5,5);
-  TH1D * haltpull2_banff_11 = new TH1D("haltpull2_banff_11","haltpull2_banff_11",100,-5,5);
-  TH1D * haltpull2_banff_12 = new TH1D("haltpull2_banff_12","haltpull2_banff_12",100,-5,5);
-  TH1D * haltpull2_banff_13 = new TH1D("haltpull2_banff_13","haltpull2_banff_13",100,-5,5);
-  TH1D * haltpull2_banff_14 = new TH1D("haltpull2_banff_14","haltpull2_banff_14",100,-5,5);
-  TH1D * haltpull2_banff_15 = new TH1D("haltpull2_banff_15","haltpull2_banff_15",100,-5,5);
-  TH1D * haltpull2_banff_maqe = new TH1D("haltpull2_banff_maqe","haltpull2_banff_maqe",100,-5,5);
-  TH1D * haltpull2_banff_mares = new TH1D("haltpull2_banff_mares","haltpull2_banff_mares",100,-5,5);
-  TH1D * haltpull2_banff_ccqeE0 = new TH1D("haltpull2_banff_ccqeE0","haltpull2_banff_ccqeE0",100,-5,5);
-  TH1D * haltpull2_banff_ccqeE1 = new TH1D("haltpull2_banff_ccqeE1","haltpull2_banff_ccqeE1",100,-5,5);
-  TH1D * haltpull2_banff_ccqeE2 = new TH1D("haltpull2_banff_ccqeE2","haltpull2_banff_ccqeE2",100,-5,5);
-  TH1D * haltpull2_banff_cc1piE0 = new TH1D("haltpull2_banff_cc1piE0","haltpull2_banff_cc1piE0",100,-5,5);
-  TH1D * haltpull2_banff_cc1piE1 = new TH1D("haltpull2_banff_cc1piE1","haltpull2_banff_cc1piE1",100,-5,5);
-  //err histograms
-  TH1D * herr_banff_00 = new TH1D("herr_banff_00","herr_banff_00",100,0,1.5);
-  TH1D * herr_banff_01 = new TH1D("herr_banff_01","herr_banff_01",100,0,1.5);
-  TH1D * herr_banff_02 = new TH1D("herr_banff_02","herr_banff_02",100,0,1.5);
-  TH1D * herr_banff_03 = new TH1D("herr_banff_03","herr_banff_03",100,0,1.5);
-  TH1D * herr_banff_04 = new TH1D("herr_banff_04","herr_banff_04",100,0,1.5);
-  TH1D * herr_banff_05 = new TH1D("herr_banff_05","herr_banff_05",100,0,1.5);
-  TH1D * herr_banff_06 = new TH1D("herr_banff_06","herr_banff_06",100,0,1.5);
-  TH1D * herr_banff_07 = new TH1D("herr_banff_07","herr_banff_07",100,0,1.5);
-  TH1D * herr_banff_08 = new TH1D("herr_banff_08","herr_banff_08",100,0,1.5);
-  TH1D * herr_banff_09 = new TH1D("herr_banff_09","herr_banff_09",100,0,1.5);
-  TH1D * herr_banff_10 = new TH1D("herr_banff_10","herr_banff_10",100,0,1.5);
-  TH1D * herr_banff_11 = new TH1D("herr_banff_11","herr_banff_11",100,0,1.5);
-  TH1D * herr_banff_12 = new TH1D("herr_banff_12","herr_banff_12",100,0,1.5);
-  TH1D * herr_banff_13 = new TH1D("herr_banff_13","herr_banff_13",100,0,1.5);
-  TH1D * herr_banff_14 = new TH1D("herr_banff_14","herr_banff_14",100,0,1.5);
-  TH1D * herr_banff_15 = new TH1D("herr_banff_15","herr_banff_15",100,0,1.5);
-  TH1D * herr_banff_maqe = new TH1D("herr_banff_maqe","herr_banff_maqe",100,0,1.5);
-  TH1D * herr_banff_mares = new TH1D("herr_banff_mares","herr_banff_mares",100,0,1.5);
-  TH1D * herr_banff_ccqeE0 = new TH1D("herr_banff_ccqeE0","herr_banff_ccqeE0",100,0,1.5);
-  TH1D * herr_banff_ccqeE1 = new TH1D("herr_banff_ccqeE1","herr_banff_ccqeE1",100,0,1.5);
-  TH1D * herr_banff_ccqeE2 = new TH1D("herr_banff_ccqeE2","herr_banff_ccqeE2",100,0,1.5);
-  TH1D * herr_banff_cc1piE0 = new TH1D("herr_banff_cc1piE0","herr_banff_cc1piE0",100,0,1.5);
-  TH1D * herr_banff_cc1piE1 = new TH1D("herr_banff_cc1piE1","herr_banff_cc1piE1",100,0,1.5);
-  //fit_systematics_mode == 2
-  TH1D * h_xsec_pf = new TH1D("h_xsec_pf","h_xsec_pf:#sigma",50,-5,5);
-  TH1D * h_xsec_wshape = new TH1D("h_xsec_wshape","h_xsec_wshape:#sigma",50,-5,5);
-  TH1D * h_xsec_ccothshape = new TH1D("h_xsec_ccothshape","h_xsec_ccothshape:#sigma",50,-5,5);
-  TH1D * h_xsec_cc1pishape = new TH1D("h_xsec_cc1pishape","h_xsec_cc1pishape:#sigma",50,-5,5);
-  TH1D * h_xsec_normcccoh = new TH1D("h_xsec_normcccoh","h_xsec_normcccoh:#sigma",50,-5,5);
-  TH1D * h_xsec_normnc1piC = new TH1D("h_xsec_normnc1piC","h_xsec_normnc1piC:#sigma",50,-5,5);
-  TH1D * h_xsec_normnccoh = new TH1D("h_xsec_normnccoh","h_xsec_normnccoh:#sigma",50,-5,5);
-  TH1D * h_xsec_normncoth = new TH1D("h_xsec_normncoth","h_xsec_normncoth:#sigma",50,-5,5);
-  TH1D * h_xsec_normnuetonumu = new TH1D("h_xsec_normnuetonumu","h_xsec_normnuetonumu:#sigma",50,-5,5);
-  TH1D * h_xsec_normantinutonu = new TH1D("h_xsec_normantinutonu","h_xsec_normantinutonu:#sigma",50,-5,5);
-  TH1D * h_skdet_ccqerc0 = new TH1D("h_skdet_ccqerc0","h_skdet_ccqerc0:#sigma",50,-5,5);
-  TH1D * h_skdet_ccqerc1 = new TH1D("h_skdet_ccqerc1","h_skdet_ccqerc1:#sigma",50,-5,5);
-  TH1D * h_skdet_ccqerc2 = new TH1D("h_skdet_ccqerc2","h_skdet_ccqerc2:#sigma",50,-5,5);
-  TH1D * h_skdet_ccqeoth = new TH1D("h_skdet_ccqeoth","h_skdet_ccqeoth:#sigma",50,-5,5);
-  TH1D * h_skdet_nuecc = new TH1D("h_skdet_nuecc","h_skdet_nuecc:#sigma",50,-5,5);
-  TH1D * h_fsi_000 = new TH1D("h_fsi_000","h_fsi_000:#sigma",50,-5,5);
-  TH1D * h_fsi_001 = new TH1D("h_fsi_001","h_fsi_001:#sigma",50,-5,5);
-  TH1D * h_fsi_002 = new TH1D("h_fsi_002","h_fsi_002:#sigma",50,-5,5);
-  TH1D * h_fsi_003 = new TH1D("h_fsi_003","h_fsi_003:#sigma",50,-5,5);
-  TH1D * h_fsi_004 = new TH1D("h_fsi_004","h_fsi_004:#sigma",50,-5,5);
-  TH1D * h_fsi_005 = new TH1D("h_fsi_005","h_fsi_005:#sigma",50,-5,5); 
-  //pull histograms
-  TH1D * hpull_xsec_pf = new TH1D("hpull_xsec_pf","hpull_xsec_pf",50,-5,5);
-  TH1D * hpull_xsec_wshape = new TH1D("hpull_xsec_wshape","hpull_xsec_wshape",50,-5,5);
-  TH1D * hpull_xsec_ccothshape = new TH1D("hpull_xsec_ccothshape","hpull_xsec_ccothshape",50,-5,5);
-  TH1D * hpull_xsec_cc1pishape = new TH1D("hpull_xsec_cc1pishape","hpull_xsec_cc1pishape",50,-5,5);
-  TH1D * hpull_xsec_normcccoh = new TH1D("hpull_xsec_normcccoh","hpull_xsec_normcccoh",50,-5,5);
-  TH1D * hpull_xsec_normnc1piC = new TH1D("hpull_xsec_normnc1piC","hpull_xsec_normnc1piC",50,-5,5);
-  TH1D * hpull_xsec_normnccoh = new TH1D("hpull_xsec_normnccoh","hpull_xsec_normnccoh",50,-5,5);
-  TH1D * hpull_xsec_normncoth = new TH1D("hpull_xsec_normncoth","hpull_xsec_normncoth",50,-5,5);
-  TH1D * hpull_xsec_normnuetonumu = new TH1D("hpull_xsec_normnuetonumu","hpull_xsec_normnuetonumu",50,-5,5);
-  TH1D * hpull_xsec_normantinutonu = new TH1D("hpull_xsec_normantinutonu","hpull_xsec_normantinutonu",50,-5,5);
-  TH1D * hpull_skdet_ccqerc0 = new TH1D("hpull_skdet_ccqerc0","hpull_skdet_ccqerc0",50,-5,5);
-  TH1D * hpull_skdet_ccqerc1 = new TH1D("hpull_skdet_ccqerc1","hpull_skdet_ccqerc1",50,-5,5);
-  TH1D * hpull_skdet_ccqerc2 = new TH1D("hpull_skdet_ccqerc2","hpull_skdet_ccqerc2",50,-5,5);
-  TH1D * hpull_skdet_ccqeoth = new TH1D("hpull_skdet_ccqeoth","hpull_skdet_ccqeoth",50,-5,5);
-  TH1D * hpull_skdet_nuecc = new TH1D("hpull_skdet_nuecc","hpull_skdet_nuecc",50,-5,5);
-  TH1D * hpull_fsi_000 = new TH1D("hpull_fsi_000","hpull_fsi_000",50,-5,5);
-  TH1D * hpull_fsi_001 = new TH1D("hpull_fsi_001","hpull_fsi_001",50,-5,5);
-  TH1D * hpull_fsi_002 = new TH1D("hpull_fsi_002","hpull_fsi_002",50,-5,5);
-  TH1D * hpull_fsi_003 = new TH1D("hpull_fsi_003","hpull_fsi_003",50,-5,5);
-  TH1D * hpull_fsi_004 = new TH1D("hpull_fsi_004","hpull_fsi_004",50,-5,5);
-  TH1D * hpull_fsi_005 = new TH1D("hpull_fsi_005","hpull_fsi_005",50,-5,5);
-  //altpull histograms
-  TH1D * haltpull_xsec_pf = new TH1D("haltpull_xsec_pf","haltpull_xsec_pf",50,-5,5);
-  TH1D * haltpull_xsec_wshape = new TH1D("haltpull_xsec_wshape","haltpull_xsec_wshape",50,-5,5);
-  TH1D * haltpull_xsec_ccothshape = new TH1D("haltpull_xsec_ccothshape","haltpull_xsec_ccothshape",50,-5,5);
-  TH1D * haltpull_xsec_cc1pishape = new TH1D("haltpull_xsec_cc1pishape","haltpull_xsec_cc1pishape",50,-5,5);
-  TH1D * haltpull_xsec_normcccoh = new TH1D("haltpull_xsec_normcccoh","haltpull_xsec_normcccoh",50,-5,5);
-  TH1D * haltpull_xsec_normnc1piC = new TH1D("haltpull_xsec_normnc1piC","haltpull_xsec_normnc1piC",50,-5,5);
-  TH1D * haltpull_xsec_normnccoh = new TH1D("haltpull_xsec_normnccoh","haltpull_xsec_normnccoh",50,-5,5);
-  TH1D * haltpull_xsec_normncoth = new TH1D("haltpull_xsec_normncoth","haltpull_xsec_normncoth",50,-5,5);
-  TH1D * haltpull_xsec_normnuetonumu = new TH1D("haltpull_xsec_normnuetonumu","haltpull_xsec_normnuetonumu",50,-5,5);
-  TH1D * haltpull_xsec_normantinutonu = new TH1D("haltpull_xsec_normantinutonu","haltpull_xsec_normantinutonu",50,-5,5);
-  TH1D * haltpull_skdet_ccqerc0 = new TH1D("haltpull_skdet_ccqerc0","haltpull_skdet_ccqerc0",50,-5,5);
-  TH1D * haltpull_skdet_ccqerc1 = new TH1D("haltpull_skdet_ccqerc1","haltpull_skdet_ccqerc1",50,-5,5);
-  TH1D * haltpull_skdet_ccqerc2 = new TH1D("haltpull_skdet_ccqerc2","haltpull_skdet_ccqerc2",50,-5,5);
-  TH1D * haltpull_skdet_ccqeoth = new TH1D("haltpull_skdet_ccqeoth","haltpull_skdet_ccqeoth",50,-5,5);
-  TH1D * haltpull_skdet_nuecc = new TH1D("haltpull_skdet_nuecc","haltpull_skdet_nuecc",50,-5,5);
-  TH1D * haltpull_fsi_000 = new TH1D("haltpull_fsi_000","haltpull_fsi_000",50,-5,5);
-  TH1D * haltpull_fsi_001 = new TH1D("haltpull_fsi_001","haltpull_fsi_001",50,-5,5);
-  TH1D * haltpull_fsi_002 = new TH1D("haltpull_fsi_002","haltpull_fsi_002",50,-5,5);
-  TH1D * haltpull_fsi_003 = new TH1D("haltpull_fsi_003","haltpull_fsi_003",50,-5,5);
-  TH1D * haltpull_fsi_004 = new TH1D("haltpull_fsi_004","haltpull_fsi_004",50,-5,5);
-  TH1D * haltpull_fsi_005 = new TH1D("haltpull_fsi_005","haltpull_fsi_005",50,-5,5);
-  //altpull2 histograms
-  TH1D * haltpull2_xsec_pf = new TH1D("haltpull2_xsec_pf","haltpull2_xsec_pf",50,-5,5);
-  TH1D * haltpull2_xsec_wshape = new TH1D("haltpull2_xsec_wshape","haltpull2_xsec_wshape",50,-5,5);
-  TH1D * haltpull2_xsec_ccothshape = new TH1D("haltpull2_xsec_ccothshape","haltpull2_xsec_ccothshape",50,-5,5);
-  TH1D * haltpull2_xsec_cc1pishape = new TH1D("haltpull2_xsec_cc1pishape","haltpull2_xsec_cc1pishape",50,-5,5);
-  TH1D * haltpull2_xsec_normcccoh = new TH1D("haltpull2_xsec_normcccoh","haltpull2_xsec_normcccoh",50,-5,5);
-  TH1D * haltpull2_xsec_normnc1piC = new TH1D("haltpull2_xsec_normnc1piC","haltpull2_xsec_normnc1piC",50,-5,5);
-  TH1D * haltpull2_xsec_normnccoh = new TH1D("haltpull2_xsec_normnccoh","haltpull2_xsec_normnccoh",50,-5,5);
-  TH1D * haltpull2_xsec_normncoth = new TH1D("haltpull2_xsec_normncoth","haltpull2_xsec_normncoth",50,-5,5);
-  TH1D * haltpull2_xsec_normnuetonumu = new TH1D("haltpull2_xsec_normnuetonumu","haltpull2_xsec_normnuetonumu",50,-5,5);
-  TH1D * haltpull2_xsec_normantinutonu = new TH1D("haltpull2_xsec_normantinutonu","haltpull2_xsec_normantinutonu",50,-5,5);
-  TH1D * haltpull2_skdet_ccqerc0 = new TH1D("haltpull2_skdet_ccqerc0","haltpull2_skdet_ccqerc0",50,-5,5);
-  TH1D * haltpull2_skdet_ccqerc1 = new TH1D("haltpull2_skdet_ccqerc1","haltpull2_skdet_ccqerc1",50,-5,5);
-  TH1D * haltpull2_skdet_ccqerc2 = new TH1D("haltpull2_skdet_ccqerc2","haltpull2_skdet_ccqerc2",50,-5,5);
-  TH1D * haltpull2_skdet_ccqeoth = new TH1D("haltpull2_skdet_ccqeoth","haltpull2_skdet_ccqeoth",50,-5,5);
-  TH1D * haltpull2_skdet_nuecc = new TH1D("haltpull2_skdet_nuecc","haltpull2_skdet_nuecc",50,-5,5);
-  TH1D * haltpull2_fsi_000 = new TH1D("haltpull2_fsi_000","haltpull2_fsi_000",50,-5,5);
-  TH1D * haltpull2_fsi_001 = new TH1D("haltpull2_fsi_001","haltpull2_fsi_001",50,-5,5);
-  TH1D * haltpull2_fsi_002 = new TH1D("haltpull2_fsi_002","haltpull2_fsi_002",50,-5,5);
-  TH1D * haltpull2_fsi_003 = new TH1D("haltpull2_fsi_003","haltpull2_fsi_003",50,-5,5);
-  TH1D * haltpull2_fsi_004 = new TH1D("haltpull2_fsi_004","haltpull2_fsi_004",50,-5,5);
-  TH1D * haltpull2_fsi_005 = new TH1D("haltpull2_fsi_005","haltpull2_fsi_005",50,-5,5);
-  //err histograms
-  TH1D * herr_xsec_pf = new TH1D("herr_xsec_pf","herr_xsec_pf",50,0,1.5);
-  TH1D * herr_xsec_wshape = new TH1D("herr_xsec_wshape","herr_xsec_wshape",50,0,1.5);
-  TH1D * herr_xsec_ccothshape = new TH1D("herr_xsec_ccothshape","herr_xsec_ccothshape",50,0,1.5);
-  TH1D * herr_xsec_cc1pishape = new TH1D("herr_xsec_cc1pishape","herr_xsec_cc1pishape",50,0,1.5);
-  TH1D * herr_xsec_normcccoh = new TH1D("herr_xsec_normcccoh","herr_xsec_normcccoh",50,0,1.5);
-  TH1D * herr_xsec_normnc1piC = new TH1D("herr_xsec_normnc1piC","herr_xsec_normnc1piC",50,0,1.5);
-  TH1D * herr_xsec_normnccoh = new TH1D("herr_xsec_normnccoh","herr_xsec_normnccoh",50,0,1.5);
-  TH1D * herr_xsec_normncoth = new TH1D("herr_xsec_normncoth","herr_xsec_normncoth",50,0,1.5);
-  TH1D * herr_xsec_normnuetonumu = new TH1D("herr_xsec_normnuetonumu","herr_xsec_normnuetonumu",50,0,1.5);
-  TH1D * herr_xsec_normantinutonu = new TH1D("herr_xsec_normantinutonu","herr_xsec_normantinutonu",50,0,1.5);
-  TH1D * herr_skdet_ccqerc0 = new TH1D("herr_skdet_ccqerc0","herr_skdet_ccqerc0",50,0,1.5);
-  TH1D * herr_skdet_ccqerc1 = new TH1D("herr_skdet_ccqerc1","herr_skdet_ccqerc1",50,0,1.5);
-  TH1D * herr_skdet_ccqerc2 = new TH1D("herr_skdet_ccqerc2","herr_skdet_ccqerc2",50,0,1.5);
-  TH1D * herr_skdet_ccqeoth = new TH1D("herr_skdet_ccqeoth","herr_skdet_ccqeoth",50,0,1.5);
-  TH1D * herr_skdet_nuecc = new TH1D("herr_skdet_nuecc","herr_skdet_nuecc",50,0,1.5);
-  TH1D * herr_fsi_000 = new TH1D("herr_fsi_000","herr_fsi_000",50,0,1.5);
-  TH1D * herr_fsi_001 = new TH1D("herr_fsi_001","herr_fsi_001",50,0,1.5);
-  TH1D * herr_fsi_002 = new TH1D("herr_fsi_002","herr_fsi_002",50,0,1.5);
-  TH1D * herr_fsi_003 = new TH1D("herr_fsi_003","herr_fsi_003",50,0,1.5);
-  TH1D * herr_fsi_004 = new TH1D("herr_fsi_004","herr_fsi_004",50,0,1.5);
-  TH1D * herr_fsi_005 = new TH1D("herr_fsi_005","herr_fsi_005",50,0,1.5);
-
   cout << ch.GetEntries() << " entries in TChain" << endl;
-  if(ch.GetEntries() == 0)
-    return;
+  if(ch.GetEntries() == 0) return;
 
-  ch.SetBranchStatus("*",1);
   // Loop over events & fill histograms
   for(int i = 0; i < ch.GetEntries(); i++) {
+
     ch.GetEntry(i);
-    //ignore failed fits!
-    h_fitstat      ->Fill(fitstatus);
-    h_migradfitstat->Fill(migradfitstatus);
-    h_hessefitstat ->Fill(hessefitstatus);
-    h_fittime      ->Fill(fittime);
-    //minuit
-    if(fittermode == 0) {
-      if(migradfitstatus == 4) continue; //migrad didn't converge
-      if(fitstatus != 3) continue; //error matrix inaccurate
+
+    int    fitstat        = 0; // get from where?
+    int    migradfitstat  = 0; // get from where?
+    int    hessefitstat   = 0; // get from where?
+    double fittime        = 0; // get from where?
+
+    h_fitstat        -> Fill(fitstat);
+    h_migradfitstat  -> Fill(migradfitstat);
+    h_hessefitstat   -> Fill(hessefitstat);
+    h_fittime        -> Fill(fittime);
+
+    //
+    // ignore failed fits!    
+    //
+
+    // MINUIT
+    if(fitter == 0) {
+      if (migradfitstatus == 4) continue; // migrad didn't converge
+      if (fitstatus       != 3) continue; // error matrix inaccurate
     }
-    //minuit2
-    //else if(fittermode == 1) {
-    //if(fitstatus == 9)
-    //continue; //
-    //}
+    // MINUIT2
+    else 
+    if(fitter == 1) {
+      if (fitstatus == 9) continue; //
+    }
   
-    /*
-    if(bestfit_mixing23 > 0.997)
-      continue; 
-    if(TMath::Abs(bestfit_mixing23 - 1.) < 1E-3)
-      continue; 
-    */
+    double nsk_nom  = 0; // get from where?
+    double nsk_bf   = 0; // get from where?
+    double dchisq   = 0; // get from where?
 
-    if(err_mode == 1) {
-      err_mixing12 = errmigrad_mixing12;
-      err_mixing13 = errmigrad_mixing13;
-      err_mixing23 = errmigrad_mixing23;
-      err_deltacp = errmigrad_deltacp;
-      err_dm12sq = errmigrad_dm12sq;
-      err_dm23sq = errmigrad_dm23sq;
-      err_banff_00 = errmigrad_banff_00;
-      err_banff_01 = errmigrad_banff_01;
-      err_banff_02 = errmigrad_banff_02;
-      err_banff_03 = errmigrad_banff_03;
-      err_banff_04 = errmigrad_banff_04;
-      err_banff_05 = errmigrad_banff_05;
-      err_banff_06 = errmigrad_banff_06;
-      err_banff_07 = errmigrad_banff_07;
-      err_banff_08 = errmigrad_banff_08;
-      err_banff_09 = errmigrad_banff_09;
-      err_banff_10 = errmigrad_banff_10;
-      err_banff_11 = errmigrad_banff_11;
-      err_banff_12 = errmigrad_banff_12;
-      err_banff_13 = errmigrad_banff_13;
-      err_banff_14 = errmigrad_banff_14;
-      err_banff_15 = errmigrad_banff_15;
-      err_banff_maqe = errmigrad_banff_maqe;
-      err_banff_mares = errmigrad_banff_mares;
-      err_banff_ccqeE0 = errmigrad_banff_ccqeE0;
-      err_banff_ccqeE1 = errmigrad_banff_ccqeE1;
-      err_banff_ccqeE2 = errmigrad_banff_ccqeE2;
-      err_banff_cc1piE0 = errmigrad_banff_cc1piE0;
-      err_banff_cc1piE1 = errmigrad_banff_cc1piE1;
-      err_xsec_pf = errmigrad_xsec_pf;
-      err_xsec_sf = errmigrad_xsec_sf;
-      err_xsec_binde = errmigrad_xsec_binde;
-      err_xsec_wshape = errmigrad_xsec_wshape;
-      err_xsec_ccothshape = errmigrad_xsec_ccothshape;
-      err_xsec_cc1pishape = errmigrad_xsec_cc1pishape;
-      err_xsec_pilessdelta = errmigrad_xsec_pilessdelta;
-      err_xsec_normcccoh = errmigrad_xsec_normcccoh;
-      err_xsec_normnc1piC = errmigrad_xsec_normnc1piC;
-      err_xsec_normnccoh = errmigrad_xsec_normnccoh;
-      err_xsec_normncoth = errmigrad_xsec_normncoth;
-      err_xsec_normnuetonumu = errmigrad_xsec_normnuetonumu;
-      err_xsec_normantinutonu = errmigrad_xsec_normantinutonu;
-      err_skdet_energyscale = errmigrad_skdet_energyscale;
-      err_skdet_ccqerc0 = errmigrad_skdet_ccqerc0;
-      err_skdet_ccqerc1 = errmigrad_skdet_ccqerc1;
-      err_skdet_ccqerc2 = errmigrad_skdet_ccqerc2;
-      err_skdet_ccqeoth = errmigrad_skdet_ccqeoth;
-      err_skdet_ccnqe = errmigrad_skdet_ccnqe;
-      err_skdet_nc = errmigrad_skdet_nc;
-      err_skdet_nuecc = errmigrad_skdet_nuecc;
-      err_fsi_000 = errmigrad_fsi_000;
-      err_fsi_001 = errmigrad_fsi_001;
-      err_fsi_002 = errmigrad_fsi_002;
-      err_fsi_003 = errmigrad_fsi_003;
-      err_fsi_004 = errmigrad_fsi_004;
-      err_fsi_005 = errmigrad_fsi_005;
-    }//errmode == 1
-    else if(err_mode == 2) {
-      err_mixing12 = errhesse_mixing12;
-      err_mixing13 = errhesse_mixing13;
-      err_mixing23 = errhesse_mixing23;
-      err_deltacp = errhesse_deltacp;
-      err_dm12sq = errhesse_dm12sq;
-      err_dm23sq = errhesse_dm23sq;
-      err_banff_00 = errhesse_banff_00;
-      err_banff_01 = errhesse_banff_01;
-      err_banff_02 = errhesse_banff_02;
-      err_banff_03 = errhesse_banff_03;
-      err_banff_04 = errhesse_banff_04;
-      err_banff_05 = errhesse_banff_05;
-      err_banff_06 = errhesse_banff_06;
-      err_banff_07 = errhesse_banff_07;
-      err_banff_08 = errhesse_banff_08;
-      err_banff_09 = errhesse_banff_09;
-      err_banff_10 = errhesse_banff_10;
-      err_banff_11 = errhesse_banff_11;
-      err_banff_12 = errhesse_banff_12;
-      err_banff_13 = errhesse_banff_13;
-      err_banff_14 = errhesse_banff_14;
-      err_banff_15 = errhesse_banff_15;
-      err_banff_maqe = errhesse_banff_maqe;
-      err_banff_mares = errhesse_banff_mares;
-      err_banff_ccqeE0 = errhesse_banff_ccqeE0;
-      err_banff_ccqeE1 = errhesse_banff_ccqeE1;
-      err_banff_ccqeE2 = errhesse_banff_ccqeE2;
-      err_banff_cc1piE0 = errhesse_banff_cc1piE0;
-      err_banff_cc1piE1 = errhesse_banff_cc1piE1;
-      err_xsec_pf = errhesse_xsec_pf;
-      err_xsec_sf = errhesse_xsec_sf;
-      err_xsec_binde = errhesse_xsec_binde;
-      err_xsec_wshape = errhesse_xsec_wshape;
-      err_xsec_ccothshape = errhesse_xsec_ccothshape;
-      err_xsec_cc1pishape = errhesse_xsec_cc1pishape;
-      err_xsec_pilessdelta = errhesse_xsec_pilessdelta;
-      err_xsec_normcccoh = errhesse_xsec_normcccoh;
-      err_xsec_normnc1piC = errhesse_xsec_normnc1piC;
-      err_xsec_normnccoh = errhesse_xsec_normnccoh;
-      err_xsec_normncoth = errhesse_xsec_normncoth;
-      err_xsec_normnuetonumu = errhesse_xsec_normnuetonumu;
-      err_xsec_normantinutonu = errhesse_xsec_normantinutonu;
-      err_skdet_energyscale = errhesse_skdet_energyscale;
-      err_skdet_ccqerc0 = errhesse_skdet_ccqerc0;
-      err_skdet_ccqerc1 = errhesse_skdet_ccqerc1;
-      err_skdet_ccqerc2 = errhesse_skdet_ccqerc2;
-      err_skdet_ccqeoth = errhesse_skdet_ccqeoth;
-      err_skdet_ccnqe = errhesse_skdet_ccnqe;
-      err_skdet_nc = errhesse_skdet_nc;
-      err_skdet_nuecc = errhesse_skdet_nuecc;
-      err_fsi_000 = errhesse_fsi_000;
-      err_fsi_001 = errhesse_fsi_001;
-      err_fsi_002 = errhesse_fsi_002;
-      err_fsi_003 = errhesse_fsi_003;
-      err_fsi_004 = errhesse_fsi_004;
-      err_fsi_005 = errhesse_fsi_005;
-    }//errmode == 2
-    else if(err_mode == 3) {
-      if(bestfit_mixing12 <= input_mixing12) err_mixing12 = errminosplus_mixing12; else err_mixing12 = -errminosminus_mixing12;
-      if(bestfit_mixing13 <= input_mixing13) err_mixing13 = errminosplus_mixing13; else err_mixing13 = -errminosminus_mixing13;
-      if(bestfit_mixing23 <= input_mixing23) err_mixing23 = errminosplus_mixing23; else err_mixing23 = -errminosminus_mixing23;
-      if(bestfit_deltacp <= input_deltacp) err_deltacp = errminosplus_deltacp; else err_deltacp = -errminosminus_deltacp;
-      if(bestfit_dm12sq <= input_dm12sq) err_dm12sq = errminosplus_dm12sq; else err_dm12sq = -errminosminus_dm12sq;
-      if(bestfit_dm23sq <= input_dm23sq) err_dm23sq = errminosplus_dm23sq; else err_dm23sq = -errminosminus_dm23sq;
-      if(bestfit_banff_00 <= input_banff_00) err_banff_00 = errminosplus_banff_00; else err_banff_00 = errminosminus_banff_00;
-      if(bestfit_banff_01 <= input_banff_01) err_banff_01 = errminosplus_banff_01; else err_banff_01 = errminosminus_banff_01;
-      if(bestfit_banff_02 <= input_banff_02) err_banff_02 = errminosplus_banff_02; else err_banff_02 = errminosminus_banff_02;
-      if(bestfit_banff_03 <= input_banff_03) err_banff_03 = errminosplus_banff_03; else err_banff_03 = errminosminus_banff_03;
-      if(bestfit_banff_04 <= input_banff_04) err_banff_04 = errminosplus_banff_04; else err_banff_04 = errminosminus_banff_04;
-      if(bestfit_banff_05 <= input_banff_05) err_banff_05 = errminosplus_banff_05; else err_banff_05 = errminosminus_banff_05;
-      if(bestfit_banff_06 <= input_banff_06) err_banff_06 = errminosplus_banff_06; else err_banff_06 = errminosminus_banff_06;
-      if(bestfit_banff_07 <= input_banff_07) err_banff_07 = errminosplus_banff_07; else err_banff_07 = errminosminus_banff_07;
-      if(bestfit_banff_08 <= input_banff_08) err_banff_08 = errminosplus_banff_08; else err_banff_08 = errminosminus_banff_08;
-      if(bestfit_banff_09 <= input_banff_09) err_banff_09 = errminosplus_banff_09; else err_banff_09 = errminosminus_banff_09;
-      if(bestfit_banff_10 <= input_banff_10) err_banff_10 = errminosplus_banff_10; else err_banff_10 = errminosminus_banff_10;
-      if(bestfit_banff_11 <= input_banff_11) err_banff_11 = errminosplus_banff_11; else err_banff_11 = errminosminus_banff_11;
-      if(bestfit_banff_12 <= input_banff_12) err_banff_12 = errminosplus_banff_12; else err_banff_12 = errminosminus_banff_12;
-      if(bestfit_banff_13 <= input_banff_13) err_banff_13 = errminosplus_banff_13; else err_banff_13 = errminosminus_banff_13;
-      if(bestfit_banff_14 <= input_banff_14) err_banff_14 = errminosplus_banff_14; else err_banff_14 = errminosminus_banff_14;
-      if(bestfit_banff_15 <= input_banff_15) err_banff_15 = errminosplus_banff_15; else err_banff_15 = errminosminus_banff_15;
-      if(bestfit_banff_maqe <= input_banff_maqe) err_banff_maqe = errminosplus_banff_maqe; else err_banff_maqe = errminosminus_banff_maqe;
-      if(bestfit_banff_mares <= input_banff_mares) err_banff_mares = errminosplus_banff_mares; else err_banff_mares = errminosminus_banff_mares;
-      if(bestfit_banff_ccqeE0 <= input_banff_ccqeE0) err_banff_ccqeE0 = errminosplus_banff_ccqeE0; else err_banff_ccqeE0 = errminosminus_banff_ccqeE0;
-      if(bestfit_banff_ccqeE1 <= input_banff_ccqeE1) err_banff_ccqeE1 = errminosplus_banff_ccqeE1; else err_banff_ccqeE1 = errminosminus_banff_ccqeE1;
-      if(bestfit_banff_ccqeE2 <= input_banff_ccqeE2) err_banff_ccqeE2 = errminosplus_banff_ccqeE2; else err_banff_ccqeE2 = errminosminus_banff_ccqeE2;
-      if(bestfit_banff_cc1piE0 <= input_banff_cc1piE0) err_banff_cc1piE0 = errminosplus_banff_cc1piE0; else err_banff_cc1piE0 = errminosminus_banff_cc1piE0;
-      if(bestfit_banff_cc1piE1 <= input_banff_cc1piE1) err_banff_cc1piE1 = errminosplus_banff_cc1piE1; else err_banff_cc1piE1 = errminosminus_banff_cc1piE1;
-      if(bestfit_xsec_pf <= input_xsec_pf) err_xsec_pf = errminosplus_xsec_pf; else err_xsec_pf = errminosminus_xsec_pf;
-      if(bestfit_xsec_sf <= input_xsec_sf) err_xsec_sf = errminosplus_xsec_sf; else err_xsec_sf = errminosminus_xsec_sf;
-      if(bestfit_xsec_binde <= input_xsec_binde) err_xsec_binde = errminosplus_xsec_binde; else err_xsec_binde = errminosminus_xsec_binde;
-      if(bestfit_xsec_wshape <= input_xsec_wshape) err_xsec_wshape = errminosplus_xsec_wshape; else err_xsec_wshape = errminosminus_xsec_wshape;
-      if(bestfit_xsec_ccothshape <= input_xsec_ccothshape) err_xsec_ccothshape = errminosplus_xsec_ccothshape; else err_xsec_ccothshape = errminosminus_xsec_ccothshape;
-      if(bestfit_xsec_cc1pishape <= input_xsec_cc1pishape) err_xsec_cc1pishape = errminosplus_xsec_cc1pishape; else err_xsec_cc1pishape = errminosminus_xsec_cc1pishape;
-      if(bestfit_xsec_pilessdelta <= input_xsec_pilessdelta) err_xsec_pilessdelta = errminosplus_xsec_pilessdelta; else err_xsec_pilessdelta = errminosminus_xsec_pilessdelta;
-      if(bestfit_xsec_normcccoh <= input_xsec_normcccoh) err_xsec_normcccoh = errminosplus_xsec_normcccoh; else err_xsec_normcccoh = errminosminus_xsec_normcccoh;
-      if(bestfit_xsec_normnc1piC <= input_xsec_normnc1piC) err_xsec_normnc1piC = errminosplus_xsec_normnc1piC; else err_xsec_normnc1piC = errminosminus_xsec_normnc1piC;
-      if(bestfit_xsec_normnccoh <= input_xsec_normnccoh) err_xsec_normnccoh = errminosplus_xsec_normnccoh; else err_xsec_normnccoh = errminosminus_xsec_normnccoh;
-      if(bestfit_xsec_normncoth <= input_xsec_normncoth) err_xsec_normncoth = errminosplus_xsec_normncoth; else err_xsec_normncoth = errminosminus_xsec_normncoth;
-      if(bestfit_xsec_normnuetonumu <= input_xsec_normnuetonumu) err_xsec_normnuetonumu = errminosplus_xsec_normnuetonumu; else err_xsec_normnuetonumu = errminosminus_xsec_normnuetonumu;
-      if(bestfit_xsec_normantinutonu <= input_xsec_normantinutonu) err_xsec_normantinutonu = errminosplus_xsec_normantinutonu; else err_xsec_normantinutonu = errminosminus_xsec_normantinutonu;
-      if(bestfit_skdet_energyscale <= input_skdet_energyscale) err_skdet_energyscale = errminosplus_skdet_energyscale; else err_skdet_energyscale = errminosminus_skdet_energyscale;
-      if(bestfit_skdet_ccqerc0 <= input_skdet_ccqerc0) err_skdet_ccqerc0 = errminosplus_skdet_ccqerc0; else err_skdet_ccqerc0 = errminosminus_skdet_ccqerc0;
-      if(bestfit_skdet_ccqerc1 <= input_skdet_ccqerc1) err_skdet_ccqerc1 = errminosplus_skdet_ccqerc1; else err_skdet_ccqerc1 = errminosminus_skdet_ccqerc1;
-      if(bestfit_skdet_ccqerc2 <= input_skdet_ccqerc2) err_skdet_ccqerc2 = errminosplus_skdet_ccqerc2; else err_skdet_ccqerc2 = errminosminus_skdet_ccqerc2;
-      if(bestfit_skdet_ccqeoth <= input_skdet_ccqeoth) err_skdet_ccqeoth = errminosplus_skdet_ccqeoth; else err_skdet_ccqeoth = errminosminus_skdet_ccqeoth;
-      if(bestfit_skdet_ccnqe <= input_skdet_ccnqe) err_skdet_ccnqe = errminosplus_skdet_ccnqe; else err_skdet_ccnqe = errminosminus_skdet_ccnqe;
-      if(bestfit_skdet_nc <= input_skdet_nc) err_skdet_nc = errminosplus_skdet_nc; else err_skdet_nc = errminosminus_skdet_nc;
-      if(bestfit_skdet_nuecc <= input_skdet_nuecc) err_skdet_nuecc = errminosplus_skdet_nuecc; else err_skdet_nuecc = errminosminus_skdet_nuecc;
-      if(bestfit_fsi_000 <= input_fsi_000) err_fsi_000 = errminosplus_fsi_000; else err_fsi_000 = errminosminus_fsi_000;
-      if(bestfit_fsi_001 <= input_fsi_001) err_fsi_001 = errminosplus_fsi_001; else err_fsi_001 = errminosminus_fsi_001;
-      if(bestfit_fsi_002 <= input_fsi_002) err_fsi_002 = errminosplus_fsi_002; else err_fsi_002 = errminosminus_fsi_002;
-      if(bestfit_fsi_003 <= input_fsi_003) err_fsi_003 = errminosplus_fsi_003; else err_fsi_003 = errminosminus_fsi_003;
-      if(bestfit_fsi_004 <= input_fsi_004) err_fsi_004 = errminosplus_fsi_004; else err_fsi_004 = errminosminus_fsi_004;
-      if(bestfit_fsi_005 <= input_fsi_005) err_fsi_005 = errminosplus_fsi_005; else err_fsi_005 = errminosminus_fsi_005;
-    }//errmode == 3
+    h_nsk_nom  -> Fill(nsk_nom);
+    h_nsk_bf   -> Fill(nsk_bf);
+    h_dchisq   -> Fill(dchisq);
 
-    h_nsk_nom->Fill(nsk_nom);
-    h_nsk_bf->Fill(nsk_bf);
-    h_dchisq->Fill(true_chisq - bestfit_chisq);
-    h_mixing23->Fill((bestfit_mixing23));
-    h_dm23sq->Fill((bestfit_dm23sq));
-    //pull histograms
-    hpull_mixing23->Fill((bestfit_mixing23 - input_mixing23) / err_mixing23);
-    hpull_dm23sq->Fill((bestfit_dm23sq - input_dm23sq) / err_dm23sq);
-    //error histograms
-    herr_mixing23->Fill(err_mixing23);
-    herr_dm23sq->Fill(err_dm23sq);
-    if(fit_systematics_mode >= 1) {
-      h_xsec_sf->Fill((bestfit_xsec_sf - input_xsec_sf));
-      h_xsec_binde->Fill((bestfit_xsec_binde - input_xsec_binde));
-      h_xsec_pilessdelta->Fill((bestfit_xsec_pilessdelta - input_xsec_pilessdelta));
-      h_skdet_ccnqe->Fill((bestfit_skdet_ccnqe - input_skdet_ccnqe));
-      h_skdet_nc->Fill((bestfit_skdet_nc - input_skdet_nc));
-      h_skdet_energyscale->Fill((bestfit_skdet_energyscale - input_skdet_energyscale));
-      //pull histograms
-      if(err_xsec_sf < preerr_xsec_sf) hpull_xsec_sf->Fill((bestfit_xsec_sf - input_xsec_sf) / sqrt(pow(preerr_xsec_sf,2) - pow(err_xsec_sf,2)));
-      if(err_xsec_binde < preerr_xsec_binde) hpull_xsec_binde->Fill((bestfit_xsec_binde - input_xsec_binde) / sqrt(pow(preerr_xsec_binde,2) - pow(err_xsec_binde,2)));
-      if(err_xsec_pilessdelta < preerr_xsec_pilessdelta) hpull_xsec_pilessdelta->Fill((bestfit_xsec_pilessdelta - input_xsec_pilessdelta) / sqrt(pow(preerr_xsec_pilessdelta,2) - pow(err_xsec_pilessdelta,2)));
-      if(err_skdet_ccnqe < preerr_skdet_ccnqe) hpull_skdet_ccnqe->Fill((bestfit_skdet_ccnqe - input_skdet_ccnqe) / sqrt(pow(preerr_skdet_ccnqe,2) - pow(err_skdet_ccnqe,2)));
-      if(err_skdet_nc < preerr_skdet_nc) hpull_skdet_nc->Fill((bestfit_skdet_nc - input_skdet_nc) / sqrt(pow(preerr_skdet_nc,2) - pow(err_skdet_nc,2)));
-      if(err_skdet_energyscale < preerr_skdet_energyscale) hpull_skdet_energyscale->Fill((bestfit_skdet_energyscale - input_skdet_energyscale) / sqrt(pow(preerr_skdet_energyscale,2) - pow(err_skdet_energyscale,2)));
-      //altpull
-      haltpull_xsec_sf->Fill((bestfit_xsec_sf - input_xsec_sf) / err_xsec_sf);
-      haltpull_xsec_binde->Fill((bestfit_xsec_binde - input_xsec_binde) / err_xsec_binde);
-      haltpull_xsec_pilessdelta->Fill((bestfit_xsec_pilessdelta - input_xsec_pilessdelta) / err_xsec_pilessdelta);
-      haltpull_skdet_ccnqe->Fill((bestfit_skdet_ccnqe - input_skdet_ccnqe) / err_skdet_ccnqe);
-      haltpull_skdet_nc->Fill((bestfit_skdet_nc - input_skdet_nc) / err_skdet_nc);
-      haltpull_skdet_energyscale->Fill((bestfit_skdet_energyscale - input_skdet_energyscale) / err_skdet_energyscale);
-      //altpull2
-      haltpull2_xsec_sf->Fill((bestfit_xsec_sf - 0) / err_xsec_sf);
-      haltpull2_xsec_binde->Fill((bestfit_xsec_binde - 0) / err_xsec_binde);
-      haltpull2_xsec_pilessdelta->Fill((bestfit_xsec_pilessdelta - 0) / err_xsec_pilessdelta);
-      haltpull2_skdet_ccnqe->Fill((bestfit_skdet_ccnqe - 0) / err_skdet_ccnqe);
-      haltpull2_skdet_nc->Fill((bestfit_skdet_nc - 0) / err_skdet_nc);
-      haltpull2_skdet_energyscale->Fill((bestfit_skdet_energyscale - 0) / err_skdet_energyscale);
-      //err
-      herr_xsec_sf->Fill(err_xsec_sf);
-      herr_xsec_binde->Fill(err_xsec_binde);
-      herr_xsec_pilessdelta->Fill(err_xsec_pilessdelta);
-      herr_skdet_ccnqe->Fill(err_skdet_ccnqe);
-      herr_skdet_nc->Fill(err_skdet_nc);
-      herr_skdet_energyscale->Fill(err_skdet_energyscale);
-      //distribution histograms
-      h_banff_00->Fill((bestfit_banff_00 - input_banff_00)/preerr_banff_00);
-      h_banff_01->Fill((bestfit_banff_01 - input_banff_01)/preerr_banff_01);
-      h_banff_02->Fill((bestfit_banff_02 - input_banff_02)/preerr_banff_02);
-      h_banff_03->Fill((bestfit_banff_03 - input_banff_03)/preerr_banff_03);
-      h_banff_04->Fill((bestfit_banff_04 - input_banff_04)/preerr_banff_04);
-      h_banff_05->Fill((bestfit_banff_05 - input_banff_05)/preerr_banff_05);
-      h_banff_06->Fill((bestfit_banff_06 - input_banff_06)/preerr_banff_06);
-      h_banff_07->Fill((bestfit_banff_07 - input_banff_07)/preerr_banff_07);
-      h_banff_08->Fill((bestfit_banff_08 - input_banff_08)/preerr_banff_08);
-      h_banff_09->Fill((bestfit_banff_09 - input_banff_09)/preerr_banff_09);
-      h_banff_10->Fill((bestfit_banff_10 - input_banff_10)/preerr_banff_10);
-      h_banff_11->Fill((bestfit_banff_11 - input_banff_11)/preerr_banff_11);
-      h_banff_12->Fill((bestfit_banff_12 - input_banff_12)/preerr_banff_12);
-      h_banff_13->Fill((bestfit_banff_13 - input_banff_13)/preerr_banff_13);
-      h_banff_14->Fill((bestfit_banff_14 - input_banff_14)/preerr_banff_14);
-      h_banff_15->Fill((bestfit_banff_15 - input_banff_15)/preerr_banff_15);
-      h_banff_maqe->Fill((bestfit_banff_maqe - input_banff_maqe)/preerr_banff_maqe);
-      h_banff_mares->Fill((bestfit_banff_mares - input_banff_mares)/preerr_banff_mares);
-      h_banff_ccqeE0->Fill((bestfit_banff_ccqeE0 - input_banff_ccqeE0)/preerr_banff_ccqeE0);
-      h_banff_ccqeE1->Fill((bestfit_banff_ccqeE1 - input_banff_ccqeE1)/preerr_banff_ccqeE1);
-      h_banff_ccqeE2->Fill((bestfit_banff_ccqeE2 - input_banff_ccqeE2)/preerr_banff_ccqeE2);
-      h_banff_cc1piE0->Fill((bestfit_banff_cc1piE0 - input_banff_cc1piE0)/preerr_banff_cc1piE0);
-      h_banff_cc1piE1->Fill((bestfit_banff_cc1piE1 - input_banff_cc1piE1)/preerr_banff_cc1piE1);
-      //pull histograms
-      if(err_banff_00 < preerr_banff_00) hpull_banff_00->Fill((bestfit_banff_00 - input_banff_00) / sqrt(pow(preerr_banff_00,2) - pow(err_banff_00,2)));
-      if(err_banff_01 < preerr_banff_01) hpull_banff_01->Fill((bestfit_banff_01 - input_banff_01) / sqrt(pow(preerr_banff_01,2) - pow(err_banff_01,2)));
-      if(err_banff_02 < preerr_banff_02) hpull_banff_02->Fill((bestfit_banff_02 - input_banff_02) / sqrt(pow(preerr_banff_02,2) - pow(err_banff_02,2)));
-      if(err_banff_03 < preerr_banff_03) hpull_banff_03->Fill((bestfit_banff_03 - input_banff_03) / sqrt(pow(preerr_banff_03,2) - pow(err_banff_03,2)));
-      if(err_banff_04 < preerr_banff_04) hpull_banff_04->Fill((bestfit_banff_04 - input_banff_04) / sqrt(pow(preerr_banff_04,2) - pow(err_banff_04,2)));
-      if(err_banff_05 < preerr_banff_05) hpull_banff_05->Fill((bestfit_banff_05 - input_banff_05) / sqrt(pow(preerr_banff_05,2) - pow(err_banff_05,2)));
-      if(err_banff_06 < preerr_banff_06) hpull_banff_06->Fill((bestfit_banff_06 - input_banff_06) / sqrt(pow(preerr_banff_06,2) - pow(err_banff_06,2)));
-      if(err_banff_07 < preerr_banff_07) hpull_banff_07->Fill((bestfit_banff_07 - input_banff_07) / sqrt(pow(preerr_banff_07,2) - pow(err_banff_07,2)));
-      if(err_banff_08 < preerr_banff_08) hpull_banff_08->Fill((bestfit_banff_08 - input_banff_08) / sqrt(pow(preerr_banff_08,2) - pow(err_banff_08,2)));
-      if(err_banff_09 < preerr_banff_09) hpull_banff_09->Fill((bestfit_banff_09 - input_banff_09) / sqrt(pow(preerr_banff_09,2) - pow(err_banff_09,2)));
-      if(err_banff_10 < preerr_banff_10) hpull_banff_10->Fill((bestfit_banff_10 - input_banff_10) / sqrt(pow(preerr_banff_10,2) - pow(err_banff_10,2)));
-      if(err_banff_11 < preerr_banff_11) hpull_banff_11->Fill((bestfit_banff_11 - input_banff_11) / sqrt(pow(preerr_banff_11,2) - pow(err_banff_11,2)));
-      if(err_banff_12 < preerr_banff_12) hpull_banff_12->Fill((bestfit_banff_12 - input_banff_12) / sqrt(pow(preerr_banff_12,2) - pow(err_banff_12,2)));
-      if(err_banff_13 < preerr_banff_13) hpull_banff_13->Fill((bestfit_banff_13 - input_banff_13) / sqrt(pow(preerr_banff_13,2) - pow(err_banff_13,2)));
-      if(err_banff_14 < preerr_banff_14) hpull_banff_14->Fill((bestfit_banff_14 - input_banff_14) / sqrt(pow(preerr_banff_14,2) - pow(err_banff_14,2)));
-      if(err_banff_15 < preerr_banff_15) hpull_banff_15->Fill((bestfit_banff_15 - input_banff_15) / sqrt(pow(preerr_banff_15,2) - pow(err_banff_15,2)));
-      if(err_banff_maqe < preerr_banff_maqe) hpull_banff_maqe->Fill((bestfit_banff_maqe - input_banff_maqe) / sqrt(pow(preerr_banff_maqe,2) - pow(err_banff_maqe,2)));
-      if(err_banff_mares < preerr_banff_mares) hpull_banff_mares->Fill((bestfit_banff_mares - input_banff_mares) / sqrt(pow(preerr_banff_mares,2) - pow(err_banff_mares,2)));
-      if(err_banff_ccqeE0 < preerr_banff_ccqeE0) hpull_banff_ccqeE0->Fill((bestfit_banff_ccqeE0 - input_banff_ccqeE0) / sqrt(pow(preerr_banff_ccqeE0,2) - pow(err_banff_ccqeE0,2)));
-      if(err_banff_ccqeE1 < preerr_banff_ccqeE1) hpull_banff_ccqeE1->Fill((bestfit_banff_ccqeE1 - input_banff_ccqeE1) / sqrt(pow(preerr_banff_ccqeE1,2) - pow(err_banff_ccqeE1,2)));
-      if(err_banff_ccqeE2 < preerr_banff_ccqeE2) hpull_banff_ccqeE2->Fill((bestfit_banff_ccqeE2 - input_banff_ccqeE2) / sqrt(pow(preerr_banff_ccqeE2,2) - pow(err_banff_ccqeE2,2)));
-      if(err_banff_cc1piE0 < preerr_banff_cc1piE0) hpull_banff_cc1piE0->Fill((bestfit_banff_cc1piE0 - input_banff_cc1piE0) / sqrt(pow(preerr_banff_cc1piE0,2) - pow(err_banff_cc1piE0,2)));
-      if(err_banff_cc1piE1 < preerr_banff_cc1piE1) hpull_banff_cc1piE1->Fill((bestfit_banff_cc1piE1 - input_banff_cc1piE1) / sqrt(pow(preerr_banff_cc1piE1,2) - pow(err_banff_cc1piE1,2)));
-      //altpull
-      haltpull_banff_00->Fill((bestfit_banff_00 - input_banff_00)/ err_banff_00);
-      haltpull_banff_01->Fill((bestfit_banff_01 - input_banff_01)/ err_banff_01);
-      haltpull_banff_02->Fill((bestfit_banff_02 - input_banff_02)/ err_banff_02);
-      haltpull_banff_03->Fill((bestfit_banff_03 - input_banff_03)/ err_banff_03);
-      haltpull_banff_04->Fill((bestfit_banff_04 - input_banff_04)/ err_banff_04);
-      haltpull_banff_05->Fill((bestfit_banff_05 - input_banff_05)/ err_banff_05);
-      haltpull_banff_06->Fill((bestfit_banff_06 - input_banff_06)/ err_banff_06);
-      haltpull_banff_07->Fill((bestfit_banff_07 - input_banff_07)/ err_banff_07);
-      haltpull_banff_08->Fill((bestfit_banff_08 - input_banff_08)/ err_banff_08);
-      haltpull_banff_09->Fill((bestfit_banff_09 - input_banff_09)/ err_banff_09);
-      haltpull_banff_10->Fill((bestfit_banff_10 - input_banff_10)/ err_banff_10);
-      haltpull_banff_11->Fill((bestfit_banff_11 - input_banff_11)/ err_banff_11);
-      haltpull_banff_12->Fill((bestfit_banff_12 - input_banff_12)/ err_banff_12);
-      haltpull_banff_13->Fill((bestfit_banff_13 - input_banff_13)/ err_banff_13);
-      haltpull_banff_14->Fill((bestfit_banff_14 - input_banff_14)/ err_banff_14);
-      haltpull_banff_15->Fill((bestfit_banff_15 - input_banff_15)/ err_banff_15);
-      haltpull_banff_maqe->Fill((bestfit_banff_maqe - input_banff_maqe)/ err_banff_maqe);
-      haltpull_banff_mares->Fill((bestfit_banff_mares - input_banff_mares)/ err_banff_mares);
-      haltpull_banff_ccqeE0->Fill((bestfit_banff_ccqeE0 - input_banff_ccqeE0)/ err_banff_ccqeE0);
-      haltpull_banff_ccqeE1->Fill((bestfit_banff_ccqeE1 - input_banff_ccqeE1)/ err_banff_ccqeE1);
-      haltpull_banff_ccqeE2->Fill((bestfit_banff_ccqeE2 - input_banff_ccqeE2)/ err_banff_ccqeE2);
-      haltpull_banff_cc1piE0->Fill((bestfit_banff_cc1piE0 - input_banff_cc1piE0)/ err_banff_cc1piE0);
-      haltpull_banff_cc1piE1->Fill((bestfit_banff_cc1piE1 - input_banff_cc1piE1)/ err_banff_cc1piE1);
-      //altpull2
-      haltpull2_banff_00->Fill((bestfit_banff_00 - prebf_banff_00)/ err_banff_00);
-      haltpull2_banff_01->Fill((bestfit_banff_01 - prebf_banff_01)/ err_banff_01);
-      haltpull2_banff_02->Fill((bestfit_banff_02 - prebf_banff_02)/ err_banff_02);
-      haltpull2_banff_03->Fill((bestfit_banff_03 - prebf_banff_03)/ err_banff_03);
-      haltpull2_banff_04->Fill((bestfit_banff_04 - prebf_banff_04)/ err_banff_04);
-      haltpull2_banff_05->Fill((bestfit_banff_05 - prebf_banff_05)/ err_banff_05);
-      haltpull2_banff_06->Fill((bestfit_banff_06 - prebf_banff_06)/ err_banff_06);
-      haltpull2_banff_07->Fill((bestfit_banff_07 - prebf_banff_07)/ err_banff_07);
-      haltpull2_banff_08->Fill((bestfit_banff_08 - prebf_banff_08)/ err_banff_08);
-      haltpull2_banff_09->Fill((bestfit_banff_09 - prebf_banff_09)/ err_banff_09);
-      haltpull2_banff_10->Fill((bestfit_banff_10 - prebf_banff_10)/ err_banff_10);
-      haltpull2_banff_11->Fill((bestfit_banff_11 - prebf_banff_11)/ err_banff_11);
-      haltpull2_banff_12->Fill((bestfit_banff_12 - prebf_banff_12)/ err_banff_12);
-      haltpull2_banff_13->Fill((bestfit_banff_13 - prebf_banff_13)/ err_banff_13);
-      haltpull2_banff_14->Fill((bestfit_banff_14 - prebf_banff_14)/ err_banff_14);
-      haltpull2_banff_15->Fill((bestfit_banff_15 - prebf_banff_15)/ err_banff_15);
-      haltpull2_banff_maqe->Fill((bestfit_banff_maqe - prebf_banff_maqe)/ err_banff_maqe);
-      haltpull2_banff_mares->Fill((bestfit_banff_mares - prebf_banff_mares)/ err_banff_mares);
-      haltpull2_banff_ccqeE0->Fill((bestfit_banff_ccqeE0 - prebf_banff_ccqeE0)/ err_banff_ccqeE0);
-      haltpull2_banff_ccqeE1->Fill((bestfit_banff_ccqeE1 - prebf_banff_ccqeE1)/ err_banff_ccqeE1);
-      haltpull2_banff_ccqeE2->Fill((bestfit_banff_ccqeE2 - prebf_banff_ccqeE2)/ err_banff_ccqeE2);
-      haltpull2_banff_cc1piE0->Fill((bestfit_banff_cc1piE0 - prebf_banff_cc1piE0)/ err_banff_cc1piE0);
-      haltpull2_banff_cc1piE1->Fill((bestfit_banff_cc1piE1 - prebf_banff_cc1piE1)/ err_banff_cc1piE1);
-      //err
-      herr_banff_00->Fill(err_banff_00);
-      herr_banff_01->Fill(err_banff_01);
-      herr_banff_02->Fill(err_banff_02);
-      herr_banff_03->Fill(err_banff_03);
-      herr_banff_04->Fill(err_banff_04);
-      herr_banff_05->Fill(err_banff_05);
-      herr_banff_06->Fill(err_banff_06);
-      herr_banff_07->Fill(err_banff_07);
-      herr_banff_08->Fill(err_banff_08);
-      herr_banff_09->Fill(err_banff_09);
-      herr_banff_10->Fill(err_banff_10);
-      herr_banff_11->Fill(err_banff_11);
-      herr_banff_12->Fill(err_banff_12);
-      herr_banff_13->Fill(err_banff_13);
-      herr_banff_14->Fill(err_banff_14);
-      herr_banff_15->Fill(err_banff_15);
-      herr_banff_maqe->Fill(err_banff_maqe);
-      herr_banff_mares->Fill(err_banff_mares);
-      herr_banff_ccqeE0->Fill(err_banff_ccqeE0);
-      herr_banff_ccqeE1->Fill(err_banff_ccqeE1);
-      herr_banff_ccqeE2->Fill(err_banff_ccqeE2);
-      herr_banff_cc1piE0->Fill(err_banff_cc1piE0);
-      herr_banff_cc1piE1->Fill(err_banff_cc1piE1);
-    }//fit_systematics_mode >= 1
-    if(fit_systematics_mode == 2) {
-      h_xsec_pf->Fill((bestfit_xsec_pf - input_xsec_pf));
-      h_xsec_wshape->Fill((bestfit_xsec_wshape - input_xsec_wshape));
-      h_xsec_ccothshape->Fill((bestfit_xsec_ccothshape - input_xsec_ccothshape));
-      h_xsec_cc1pishape->Fill((bestfit_xsec_cc1pishape - input_xsec_cc1pishape));
-      h_xsec_normcccoh->Fill((bestfit_xsec_normcccoh - input_xsec_normcccoh));
-      h_xsec_normnc1piC->Fill((bestfit_xsec_normnc1piC - input_xsec_normnc1piC));
-      h_xsec_normnccoh->Fill((bestfit_xsec_normnccoh - input_xsec_normnccoh));
-      h_xsec_normncoth->Fill((bestfit_xsec_normncoth - input_xsec_normncoth));
-      h_xsec_normnuetonumu->Fill((bestfit_xsec_normnuetonumu - input_xsec_normnuetonumu));
-      h_xsec_normantinutonu->Fill((bestfit_xsec_normantinutonu - input_xsec_normantinutonu));
-      h_skdet_ccqerc0->Fill((bestfit_skdet_ccqerc0 - input_skdet_ccqerc0));
-      h_skdet_ccqerc1->Fill((bestfit_skdet_ccqerc1 - input_skdet_ccqerc1));
-      h_skdet_ccqerc2->Fill((bestfit_skdet_ccqerc2 - input_skdet_ccqerc2));
-      h_skdet_ccqeoth->Fill((bestfit_skdet_ccqeoth - input_skdet_ccqeoth));
-      h_skdet_nuecc->Fill((bestfit_skdet_nuecc - input_skdet_nuecc));
-      h_fsi_000->Fill((bestfit_fsi_000 - input_fsi_000));
-      h_fsi_001->Fill((bestfit_fsi_001 - input_fsi_001));
-      h_fsi_002->Fill((bestfit_fsi_002 - input_fsi_002));
-      h_fsi_003->Fill((bestfit_fsi_003 - input_fsi_003));
-      h_fsi_004->Fill((bestfit_fsi_004 - input_fsi_004));
-      h_fsi_005->Fill((bestfit_fsi_005 - input_fsi_005));
-      //pull histograms
-      if(err_xsec_pf < preerr_xsec_pf) hpull_xsec_pf->Fill((bestfit_xsec_pf - input_xsec_pf) / sqrt(pow(preerr_xsec_pf,2) - pow(err_xsec_pf,2)));
-      if(err_xsec_wshape < preerr_xsec_wshape) hpull_xsec_wshape->Fill((bestfit_xsec_wshape - input_xsec_wshape) / sqrt(pow(preerr_xsec_wshape,2) - pow(err_xsec_wshape,2)));
-      if(err_xsec_ccothshape < preerr_xsec_ccothshape) hpull_xsec_ccothshape->Fill((bestfit_xsec_ccothshape - input_xsec_ccothshape) / sqrt(pow(preerr_xsec_ccothshape,2) - pow(err_xsec_ccothshape,2)));
-      if(err_xsec_cc1pishape < preerr_xsec_cc1pishape) hpull_xsec_cc1pishape->Fill((bestfit_xsec_cc1pishape - input_xsec_cc1pishape) / sqrt(pow(preerr_xsec_cc1pishape,2) - pow(err_xsec_cc1pishape,2)));
-      if(err_xsec_normcccoh < preerr_xsec_normcccoh) hpull_xsec_normcccoh->Fill((bestfit_xsec_normcccoh - input_xsec_normcccoh) / sqrt(pow(preerr_xsec_normcccoh,2) - pow(err_xsec_normcccoh,2)));
-      if(err_xsec_normnc1piC < preerr_xsec_normnc1piC) hpull_xsec_normnc1piC->Fill((bestfit_xsec_normnc1piC - input_xsec_normnc1piC) / sqrt(pow(preerr_xsec_normnc1piC,2) - pow(err_xsec_normnc1piC,2)));
-      if(err_xsec_normnccoh < preerr_xsec_normnccoh) hpull_xsec_normnccoh->Fill((bestfit_xsec_normnccoh - input_xsec_normnccoh) / sqrt(pow(preerr_xsec_normnccoh,2) - pow(err_xsec_normnccoh,2)));
-      if(err_xsec_normncoth < preerr_xsec_normncoth) hpull_xsec_normncoth->Fill((bestfit_xsec_normncoth - input_xsec_normncoth) / sqrt(pow(preerr_xsec_normncoth,2) - pow(err_xsec_normncoth,2)));
-      if(err_xsec_normnuetonumu < preerr_xsec_normnuetonumu) hpull_xsec_normnuetonumu->Fill((bestfit_xsec_normnuetonumu - input_xsec_normnuetonumu) / sqrt(pow(preerr_xsec_normnuetonumu,2) - pow(err_xsec_normnuetonumu,2)));
-      if(err_xsec_normantinutonu < preerr_xsec_normantinutonu) hpull_xsec_normantinutonu->Fill((bestfit_xsec_normantinutonu - input_xsec_normantinutonu) / sqrt(pow(preerr_xsec_normantinutonu,2) - pow(err_xsec_normantinutonu,2)));
-      if(err_skdet_ccqerc0 < preerr_skdet_ccqerc0) hpull_skdet_ccqerc0->Fill((bestfit_skdet_ccqerc0 - input_skdet_ccqerc0) / sqrt(pow(preerr_skdet_ccqerc0,2) - pow(err_skdet_ccqerc0,2)));
-      if(err_skdet_ccqerc1 < preerr_skdet_ccqerc1) hpull_skdet_ccqerc1->Fill((bestfit_skdet_ccqerc1 - input_skdet_ccqerc1) / sqrt(pow(preerr_skdet_ccqerc1,2) - pow(err_skdet_ccqerc1,2)));
-      if(err_skdet_ccqerc2 < preerr_skdet_ccqerc2) hpull_skdet_ccqerc2->Fill((bestfit_skdet_ccqerc2 - input_skdet_ccqerc2) / sqrt(pow(preerr_skdet_ccqerc2,2) - pow(err_skdet_ccqerc2,2)));
-      if(err_skdet_ccqeoth < preerr_skdet_ccqeoth) hpull_skdet_ccqeoth->Fill((bestfit_skdet_ccqeoth - input_skdet_ccqeoth) / sqrt(pow(preerr_skdet_ccqeoth,2) - pow(err_skdet_ccqeoth,2)));
-      if(err_skdet_nuecc < preerr_skdet_nuecc) hpull_skdet_nuecc->Fill((bestfit_skdet_nuecc - input_skdet_nuecc) / sqrt(pow(preerr_skdet_nuecc,2) - pow(err_skdet_nuecc,2)));
-      if(err_fsi_000 < preerr_fsi_000) hpull_fsi_000->Fill((bestfit_fsi_000 - input_fsi_000) / sqrt(pow(preerr_fsi_000,2) - pow(err_fsi_000,2)));
-      if(err_fsi_001 < preerr_fsi_001) hpull_fsi_001->Fill((bestfit_fsi_001 - input_fsi_001) / sqrt(pow(preerr_fsi_001,2) - pow(err_fsi_001,2)));
-      if(err_fsi_002 < preerr_fsi_002) hpull_fsi_002->Fill((bestfit_fsi_002 - input_fsi_002) / sqrt(pow(preerr_fsi_002,2) - pow(err_fsi_002,2)));
-      if(err_fsi_003 < preerr_fsi_003) hpull_fsi_003->Fill((bestfit_fsi_003 - input_fsi_003) / sqrt(pow(preerr_fsi_003,2) - pow(err_fsi_003,2)));
-      if(err_fsi_004 < preerr_fsi_004) hpull_fsi_004->Fill((bestfit_fsi_004 - input_fsi_004) / sqrt(pow(preerr_fsi_004,2) - pow(err_fsi_004,2)));
-      if(err_fsi_005 < preerr_fsi_005) hpull_fsi_005->Fill((bestfit_fsi_005 - input_fsi_005) / sqrt(pow(preerr_fsi_005,2) - pow(err_fsi_005,2)));
-      //altpull
-      haltpull_xsec_pf->Fill((bestfit_xsec_pf - input_xsec_pf) / err_xsec_pf);
-      haltpull_xsec_wshape->Fill((bestfit_xsec_wshape - input_xsec_wshape) / err_xsec_wshape);
-      haltpull_xsec_ccothshape->Fill((bestfit_xsec_ccothshape - input_xsec_ccothshape) / err_xsec_ccothshape);
-      haltpull_xsec_cc1pishape->Fill((bestfit_xsec_cc1pishape - input_xsec_cc1pishape) / err_xsec_cc1pishape);
-      haltpull_xsec_normcccoh->Fill((bestfit_xsec_normcccoh - input_xsec_normcccoh) / err_xsec_normcccoh);
-      haltpull_xsec_normnc1piC->Fill((bestfit_xsec_normnc1piC - input_xsec_normnc1piC) / err_xsec_normnc1piC);
-      haltpull_xsec_normnccoh->Fill((bestfit_xsec_normnccoh - input_xsec_normnccoh) / err_xsec_normnccoh);
-      haltpull_xsec_normncoth->Fill((bestfit_xsec_normncoth - input_xsec_normncoth) / err_xsec_normncoth);
-      haltpull_xsec_normnuetonumu->Fill((bestfit_xsec_normnuetonumu - input_xsec_normnuetonumu) / err_xsec_normnuetonumu);
-      haltpull_xsec_normantinutonu->Fill((bestfit_xsec_normantinutonu - input_xsec_normantinutonu) / err_xsec_normantinutonu);
-      haltpull_skdet_ccqerc0->Fill((bestfit_skdet_ccqerc0 - input_skdet_ccqerc0) / err_skdet_ccqerc0);
-      haltpull_skdet_ccqerc1->Fill((bestfit_skdet_ccqerc1 - input_skdet_ccqerc1) / err_skdet_ccqerc1);
-      haltpull_skdet_ccqerc2->Fill((bestfit_skdet_ccqerc2 - input_skdet_ccqerc2) / err_skdet_ccqerc2);
-      haltpull_skdet_ccqeoth->Fill((bestfit_skdet_ccqeoth - input_skdet_ccqeoth) / err_skdet_ccqeoth);
-      haltpull_skdet_nuecc->Fill((bestfit_skdet_nuecc - input_skdet_nuecc) / err_skdet_nuecc);
-      haltpull_fsi_000->Fill((bestfit_fsi_000 - input_fsi_000) / err_fsi_000);
-      haltpull_fsi_001->Fill((bestfit_fsi_001 - input_fsi_001) / err_fsi_001);
-      haltpull_fsi_002->Fill((bestfit_fsi_002 - input_fsi_002) / err_fsi_002);
-      haltpull_fsi_003->Fill((bestfit_fsi_003 - input_fsi_003) / err_fsi_003);
-      haltpull_fsi_004->Fill((bestfit_fsi_004 - input_fsi_004) / err_fsi_004);
-      haltpull_fsi_005->Fill((bestfit_fsi_005 - input_fsi_005) / err_fsi_005);
-      //altpull2
-      haltpull2_xsec_pf->Fill((bestfit_xsec_pf - 0) / err_xsec_pf);
-      haltpull2_xsec_wshape->Fill((bestfit_xsec_wshape - 0) / err_xsec_wshape);
-      haltpull2_xsec_ccothshape->Fill((bestfit_xsec_ccothshape - 0) / err_xsec_ccothshape);
-      haltpull2_xsec_cc1pishape->Fill((bestfit_xsec_cc1pishape - 0) / err_xsec_cc1pishape);
-      haltpull2_xsec_normcccoh->Fill((bestfit_xsec_normcccoh - 0) / err_xsec_normcccoh);
-      haltpull2_xsec_normnc1piC->Fill((bestfit_xsec_normnc1piC - 0) / err_xsec_normnc1piC);
-      haltpull2_xsec_normnccoh->Fill((bestfit_xsec_normnccoh - 0) / err_xsec_normnccoh);
-      haltpull2_xsec_normncoth->Fill((bestfit_xsec_normncoth - 0) / err_xsec_normncoth);
-      haltpull2_xsec_normnuetonumu->Fill((bestfit_xsec_normnuetonumu - 0) / err_xsec_normnuetonumu);
-      haltpull2_xsec_normantinutonu->Fill((bestfit_xsec_normantinutonu - 0) / err_xsec_normantinutonu);
-      haltpull2_skdet_ccqerc0->Fill((bestfit_skdet_ccqerc0 - 0) / err_skdet_ccqerc0);
-      haltpull2_skdet_ccqerc1->Fill((bestfit_skdet_ccqerc1 - 0) / err_skdet_ccqerc1);
-      haltpull2_skdet_ccqerc2->Fill((bestfit_skdet_ccqerc2 - 0) / err_skdet_ccqerc2);
-      haltpull2_skdet_ccqeoth->Fill((bestfit_skdet_ccqeoth - 0) / err_skdet_ccqeoth);
-      haltpull2_skdet_nuecc->Fill((bestfit_skdet_nuecc - 0) / err_skdet_nuecc);
-      haltpull2_fsi_000->Fill((bestfit_fsi_000 - 0) / err_fsi_000);
-      haltpull2_fsi_001->Fill((bestfit_fsi_001 - 0) / err_fsi_001);
-      haltpull2_fsi_002->Fill((bestfit_fsi_002 - 0) / err_fsi_002);
-      haltpull2_fsi_003->Fill((bestfit_fsi_003 - 0) / err_fsi_003);
-      haltpull2_fsi_004->Fill((bestfit_fsi_004 - 0) / err_fsi_004);
-      haltpull2_fsi_005->Fill((bestfit_fsi_005 - 0) / err_fsi_005);
-      //err
-      herr_xsec_pf->Fill(err_xsec_pf);
-      herr_xsec_wshape->Fill(err_xsec_wshape);
-      herr_xsec_ccothshape->Fill(err_xsec_ccothshape);
-      herr_xsec_cc1pishape->Fill(err_xsec_cc1pishape);
-      herr_xsec_normcccoh->Fill(err_xsec_normcccoh);
-      herr_xsec_normnc1piC->Fill(err_xsec_normnc1piC);
-      herr_xsec_normnccoh->Fill(err_xsec_normnccoh);
-      herr_xsec_normncoth->Fill(err_xsec_normncoth);
-      herr_xsec_normnuetonumu->Fill(err_xsec_normnuetonumu);
-      herr_xsec_normantinutonu->Fill(err_xsec_normantinutonu);
-      herr_skdet_ccqerc0->Fill(err_skdet_ccqerc0);
-      herr_skdet_ccqerc1->Fill(err_skdet_ccqerc1);
-      herr_skdet_ccqerc2->Fill(err_skdet_ccqerc2);
-      herr_skdet_ccqeoth->Fill(err_skdet_ccqeoth);
-      herr_skdet_nuecc->Fill(err_skdet_nuecc);
-      herr_fsi_000->Fill(err_fsi_000);
-      herr_fsi_001->Fill(err_fsi_001);
-      herr_fsi_002->Fill(err_fsi_002);
-      herr_fsi_003->Fill(err_fsi_003);
-      herr_fsi_004->Fill(err_fsi_004);
-      herr_fsi_005->Fill(err_fsi_005);
-    }//fit_systematic_mode == 2
+    for(int ip = 0; ip < nparams; ip++) 
+    {
+       PhysParamId_t p params[ip];
+  
+       double bestfit    = 0;
+       double true       = 0;
+       double err_prefit = 0;
+       double err_minos  = 0;
+       double err_hesse  = 0;
+       double pull_1     = 0;
+       double pull_2     = 0;
+       double pull_3     = 0;
+
+       h_bestfit   [ip] -> Fill();
+       h_pull_1    [ip] -> Fill();
+       h_pull_2    [ip] -> Fill();
+       h_pull_3    [ip] -> Fill();
+       h_err_minos [ip] -> Fill();
+       h_err_hesse [ip] -> Fill();
+    }//p
+
   }//end loop over chain
 
+  //
   // Draw
+  //
+
   new TCanvas(); h_fitstat->Draw();
   new TCanvas(); h_migradfitstat->Draw();
   new TCanvas(); h_hessefitstat->Draw();
@@ -1001,88 +339,30 @@ void mock_data_fit_pulls
   new TCanvas(); h_nsk_nom->Draw();
   new TCanvas(); h_nsk_bf->Draw();
   new TCanvas(); h_dchisq->Draw();
-  TCanvas *cosc = new TCanvas(); cosc->Divide(1,2);
-  h_mixing23->GetXaxis()->SetRangeUser(0.8,1.0);
-  h_dm23sq->GetXaxis()->SetRangeUser(0.0018,0.0030);
-  cosc->cd(1); h_mixing23->Draw();
-  cosc->cd(2); h_dm23sq->Draw();
-  cosc->SaveAs(Form("%s_%f_osc.pdf", tag, input_mixing23));
 
-  if(fit_systematics_mode >= 1) {
-    TCanvas *cbanff = new TCanvas(); cbanff->Divide(1,2);
-    cbanff->cd(1); h_banff_maqe->Draw();
-    cbanff->cd(2); h_banff_ccqeE0->Draw();
-    TCanvas *cxsec = new TCanvas(); cxsec->Divide(1,2);
-    cxsec->cd(1); h_xsec_sf->Draw();
-    cxsec->cd(2); h_xsec_pilessdelta->Draw();
-    TCanvas *cextra = new TCanvas(); cextra->Divide(1,2);
-    cextra->cd(1); h_xsec_binde->Draw();
-    cextra->cd(2); h_skdet_energyscale->Draw();
-    TCanvas *cskdet = new TCanvas(); cskdet->Divide(1,2);
-    cskdet->cd(1); h_skdet_ccnqe->Draw();
-    cskdet->cd(2); h_skdet_nc->Draw();
-    
-    cbanff->SaveAs(Form("%s_%f_banff.pdf", tag, input_mixing23));
-    cxsec->SaveAs(Form("%s_%f_xsec.pdf", tag, input_mixing23));
-    cextra->SaveAs(Form("%s_%f_extra.pdf", tag, input_mixing23));
-    cskdet->SaveAs(Form("%s_%f_skdet.pdf", tag, input_mixing23));
-    /*
-    new TCanvas(); h_banff_00->Draw();
-    new TCanvas(); h_banff_01->Draw();
-    new TCanvas(); h_banff_02->Draw();
-    new TCanvas(); h_banff_03->Draw();
-    new TCanvas(); h_banff_04->Draw();
-    new TCanvas(); h_banff_05->Draw();
-    new TCanvas(); h_banff_06->Draw();
-    new TCanvas(); h_banff_07->Draw();
-    new TCanvas(); h_banff_08->Draw();
-    new TCanvas(); h_banff_09->Draw();
-    new TCanvas(); h_banff_10->Draw();
-    new TCanvas(); h_banff_11->Draw();
-    new TCanvas(); h_banff_12->Draw();
-    new TCanvas(); h_banff_13->Draw();
-    new TCanvas(); h_banff_14->Draw();
-    new TCanvas(); h_banff_15->Draw();
-    new TCanvas(); h_banff_maqe->Draw();
-    new TCanvas(); h_banff_mares->Draw();
-    new TCanvas(); h_banff_ccqeE0->Draw();
-    new TCanvas(); h_banff_ccqeE1->Draw();
-    new TCanvas(); h_banff_ccqeE2->Draw();
-    new TCanvas(); h_banff_cc1piE0->Draw();
-    new TCanvas(); h_banff_cc1piE1->Draw();
-    */
-  }
-  if(fit_systematics_mode == 2) {
-    new TCanvas(); h_xsec_pf->Draw();
-    new TCanvas(); h_xsec_sf->Draw();
-    new TCanvas(); h_xsec_wshape->Draw();
-    new TCanvas(); h_xsec_ccothshape->Draw();
-    //new TCanvas(); h_xsec_cc1pishape->Draw();
-    new TCanvas(); h_xsec_pilessdelta->Draw();
-    new TCanvas(); h_xsec_normcccoh->Draw();
-    new TCanvas(); h_xsec_normnc1piC->Draw();
-    //new TCanvas(); h_xsec_normnccoh->Draw();
-    new TCanvas(); h_xsec_normncoth->Draw();
-    new TCanvas(); h_xsec_normnuetonumu->Draw();
-    new TCanvas(); h_xsec_normantinutonu->Draw();
-    new TCanvas(); h_skdet_energyscale->Draw();
-    new TCanvas(); h_skdet_ccqerc0->Draw();
-    new TCanvas(); h_skdet_ccqerc1->Draw();
-    new TCanvas(); h_skdet_ccqerc2->Draw();
-    new TCanvas(); h_skdet_ccqeoth->Draw();
-    new TCanvas(); h_skdet_ccnqe->Draw();
-    new TCanvas(); h_skdet_nc->Draw();
-    new TCanvas(); h_skdet_nuecc->Draw();
-    new TCanvas(); h_fsi_000->Draw();
-    new TCanvas(); h_fsi_001->Draw();
-    new TCanvas(); h_fsi_002->Draw();
-    new TCanvas(); h_fsi_003->Draw();
-    new TCanvas(); h_fsi_004->Draw();
-    new TCanvas(); h_fsi_005->Draw();
-  }
+  for(int ip = 0; ip < nparams; ip++) 
+  {
+     PhysParamId_t p params[ip];
+  
+       double bestfit    = 0;
+       double true       = 0;
+       double err_prefit = 0;
+       double err_minos  = 0;
+       double err_hesse  = 0;
+       double pull_1     = 0;
+       double pull_2     = 0;
+       double pull_3     = 0;
+
+       h_bestfit   [ip] -> Fill();
+       h_pull_1    [ip] -> Fill();
+       h_pull_2    [ip] -> Fill();
+       h_pull_3    [ip] -> Fill();
+       h_err_minos [ip] -> Fill();
+       h_err_hesse [ip] -> Fill();
+    }//p
 
 
-  // pull histograms
+
 
   TH1D * meansummary = new TH1D("mean","mean",100,0,100);
   TH1D * sigmasummary = new TH1D("sigma","sigma",100,0,100);
