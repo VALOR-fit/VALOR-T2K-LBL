@@ -2,7 +2,7 @@ using namespace std;
 using namespace t2kana;
 using namespace t2kana::util;
 
-void test_valor_kdi_splines
+void test_valor_kdi_splines_nick
 (
    bool   compare_with_old_valor = false,
    double check                  = -1
@@ -23,8 +23,22 @@ void test_valor_kdi_splines
   TFile * fkdi_signue  = new TFile("$T2KOSCANA/inputs/official/2013/xsec/spl_numuoa_sk13a_flx11bv32_signalnue.root");
 
   TCanvas * can = new TCanvas("can");
+  can->SetTopMargin(0.13);
+  can->SetBottomMargin(0.12);
 
   stringstream problem_free;
+
+  cout<<"conv::kNumOfXSecSyst = "<<conv::kNumOfXSecSyst<<endl;
+
+  for(int ip = 0; ip < conv::kNumOfXSecSyst; ip++) 
+    {
+    conv::PhysParamId_t p = conv::kListOfXSecSyst[ip];
+    cout<<util::AsString(p) << endl;
+    if(util::AsString(p) == "BANFF; Ma QE")
+      cout<<"Found MaQE !!"<<endl;
+    if(util::AsString(p) == "BANFF; Ma RES")
+      cout<<"Found MaRes !!"<<endl;
+    }
 
   //sample
   conv::SuperkSample_t s = conv::kSKsFCFV1RingMuLike;
@@ -48,7 +62,7 @@ void test_valor_kdi_splines
 	fref = fkdi_signue;
     } else {
         fref = fval_old;
-    }
+     }
     assert(fref!=0);
     vector<string> mode = util::Tokens(util::AsStringCompact_KDI(m), "_");
     //loop over systematics
@@ -97,35 +111,66 @@ void test_valor_kdi_splines
 
 	  // Get VaLOR spline
           cout << "Getting VaLOR response function: " << val_splname.str() << endl;
-	  TSpline3 * val_spl = (TSpline3 *) fval->Get(val_splname.str().c_str());
-          if(!val_spl) {
-             cerr << "No " << val_splname.str() << " response func" << endl;
-          }
+          //ip == 0 is MaQE, ip == 1 is MaRes
+	  if(ip == 0 || ip == 1)
+            {
+            TSpline3 * val_spl_temp = (TSpline3 *) fval->Get(val_splname.str().c_str());
+            if(val_spl_temp)
+	      {
+	      const int nval = val_spl_temp->GetNp();
+	      double * xval = new double[nval];
+	      double * yval = new double[nval];
+	      for(int k = 0; k < nval; k++) {
+	        val_spl_temp->GetKnot(k, xval[k], yval[k]);
+                //convert horizontal axis from units of x_Ma to units of sigma for VaLOR MaQE and MaRes splines
+	        if(ip == 0)
+	          xval[k] = (xval[k] * conv::kNomMAQE - conv::kNomMAQE) / conv::kXSecSystFracErr[ip];
+                else if(ip == 1)
+                  xval[k] = (xval[k] * conv::kNomMARES - conv::kNomMARES) / conv::kXSecSystFracErr[ip];
+	        }//k
+	      }//val_spl_temp
+	    else
+              cerr << "No " << val_splname.str() << " response func" << endl; 
+	    TSpline3 * val_spl = 0;
+            val_spl = new TSpline3("",xval,yval,nval);  
+	    }//ip
+          else 
+	    {
+	    TSpline3 * val_spl = (TSpline3 *) fval->Get(val_splname.str().c_str());
+	    if(!val_spl) {
+	      cerr << "No " << val_splname.str() << " response func" << endl;
+	      }
+	    }
           // Get reference spline
 	  TSpline3 * ref_spl = 0;
 	  if(compare_with_old_valor) {
 	    //use val_splname
             cout << "Getting VaLOR old response function: " << val_splname.str() << endl;
 	    ref_spl = (TSpline3 *) fref->Get(val_splname.str().c_str());
+	    if(!ref_spl) {
+	      cerr << "No " << val_splname.str() << " response func" << endl;
+	      }
 	  } else {
 	    //use kdi_splname
             cout << "Getting KDI response function: " << kdi_splname.str() << endl;
 	    TSpline3 * ref_spl_temp = (TSpline3 *) fref->Get(kdi_splname.str().c_str());
-	    if(!ref_spl_temp) {
-               cerr << "No " << kdi_splname.str() << " response func" << endl;
-            }
+            if(ref_spl_temp) {
 	    const int n = ref_spl_temp->GetNp();
 	    double * x = new double[n];
 	    double * y = new double[n];
 	    for(int k = 0; k < n; k++) {
 	      ref_spl_temp->GetKnot(k, x[k], y[k]);
-              x[k] += 1;
-	      //y[k] += 1;
+              //the horizontal axes of KDI splines are in units of fractional change in the parameter
+	      //divide by fractional error in parameter to convert horizontal axes to units of sigma
+              x[k] = x[k] / conv::kXSecSystFracErr[ip];
 	    }//k
 	    ref_spl = new TSpline3("",x,y,n);
 //          delete [] x;
 //          delete [] y;
-	  }//compare_with_old_valor
+	    }//ref_spl_temp
+	    else
+	      cerr << "No " << kdi_splname.str() << " response func" << endl;
+	    }//compare_with_old_valor
 
 	  if((!val_spl) || (!ref_spl)) continue;
 
@@ -136,23 +181,23 @@ void test_valor_kdi_splines
 	      ref_spl->SetLineColor(kRed);
 	      ref_spl->SetMarkerColor(kRed);
 	      ref_spl->SetMarkerSize(1);
-	      ref_spl->SetMarkerStyle(8);
+	      ref_spl->SetMarkerStyle(8); 
 	      val_spl->SetMarkerSize(1);
 	      val_spl->SetMarkerStyle(8);
 	      val_spl->Draw("LP");
 	      ref_spl->Draw("LPsame");
-	      TPaveText * leg1 = new TPaveText (0,0,1.,0.05,"NDC");
+	      TPaveText * leg1 = new TPaveText (0,0.94,1.,1.,"NDC");
 	      leg1->SetBorderSize(0);
 	      leg1->SetFillStyle(0);
-	      leg1->AddText(Form("%s %s",val_splname.str().c_str(), val_spl->GetTitle()));
+	      leg1->AddText(Form("VaLOR: %s %s",val_splname.str().c_str(), val_spl->GetTitle()));
 	      leg1->Draw();
-	      TPaveText * leg2 = new TPaveText (0,0.05,1.,0.1,"NDC");
+	      TPaveText * leg2 = new TPaveText (0,0.88,1.,0.94,"NDC");
 	      leg2->SetBorderSize(0);
 	      leg2->SetFillStyle(0);
 	      if(compare_with_old_valor)
-		leg2->AddText(Form("%s %s",val_splname.str().c_str(), ref_spl->GetTitle()));
+		leg2->AddText(Form("VaLOR: %s %s",val_splname.str().c_str(), ref_spl->GetTitle()));
 	      else
-		leg2->AddText(Form("%s %s",kdi_splname.str().c_str(), ref_spl->GetTitle()));
+		leg2->AddText(Form("KDI: %s %s",kdi_splname.str().c_str(), ref_spl->GetTitle()));
 	      leg2->SetTextColor(kRed);
 	      leg2->Draw();
               can->Update(); 
