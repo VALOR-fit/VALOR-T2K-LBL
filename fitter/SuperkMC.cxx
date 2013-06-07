@@ -1044,10 +1044,10 @@ void SuperkMC::ApplySystematicsToTemplates_Multiplicative(void)
 #ifdef SYSTWEIGHTSAREONE
            wght = 1;
 #endif
-
+/*
 	   if(util::IsMEC(m))
 	     cout << "SK: " << skfsi_wght << "\tFlux: " << flux_wght << "\tXSec: " << xsec_wght << "\tTotal: " << wght << endl;
-
+*/
 	   // loop over 50MeV Ereco
 	   int ErecoMinBin = 1 + TMath::BinarySearch(util::NumErecoBins(s),util::ErecoBinEdges(s),ErecoVarMin);
 	   int ErecoMaxBin = 1 + TMath::BinarySearch(util::NumErecoBins(s),util::ErecoBinEdges(s),ErecoVarMax);
