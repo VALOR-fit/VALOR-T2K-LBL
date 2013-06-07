@@ -136,6 +136,8 @@ private:
 #endif
   TH2D *     fMCTemplMECMartini;           ///< Martini MEC template
   TH2D *     fMCTemplMECNieves;            ///< Nieves MEC template
+  double     fMCTemplArrayMECMartini[conv::kNEtrueBins1Rmu][conv::kNErecoBins1Rmu]; ///< Martini MEC template
+  double     fMCTemplArrayMECNieves [conv::kNEtrueBins1Rmu][conv::kNErecoBins1Rmu]; ///< Nieves MEC template
   TH2D *     fMCVariableTempl[kns][knm];
   int        fMCVariableTemplArray1Rmu[kns][knm][conv::kMCNEtrueBins][conv::kXsNErecoBins1Rmu];
   int        fMCVariableTemplArray1Re [kns][knm][conv::kMCNEtrueBins][conv::kXsNErecoBins1Re];

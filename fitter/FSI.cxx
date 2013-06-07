@@ -122,10 +122,6 @@ bool FSI::Read(TXMLEngine* xml, XMLNodePointer_t root_node)
 double FSI::SystWght(
   conv::SuperkSample_t s, conv::SuperkMode_t m, double Ereco, double /*Etrue*/) const
 {
-  //MEC has no FSI error
-  if(util::IsMEC(m))
-    return 1.;
-
   // find FSI param which corresponds to the current Ereco param
   int iparam = -1;
   for(int ip = 0; ip < conv::kNumOfFSIParams; ip++) {

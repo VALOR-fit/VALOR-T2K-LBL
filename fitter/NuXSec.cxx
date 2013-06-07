@@ -429,35 +429,6 @@ double NuXSec::FinTuningWght_1p(
   }
 
   //
-  // BANFF param, MEC norm
-  //
-  // This is a fun one:
-  // For -1 to 0 it would interpolates between no MEC and Nieves template
-  // For 0 to 1 it would interpolates between the Nieves template and the Martini template.
-  //
-#if BANFF_BINS == 3
-  else
-  if(p == kNuisBANFFMECNorm)
-    {
-      double tb = fBANFF->BestFitValue(p);
-      if(tb <= 0) {
-	if(m == kSKmMECNieves)
-	  wght = TMath::Min(1, tb + 1);
-	else
-	  wght = 0;
-      }
-      else {
-	if(m == kSKmMECNieves)
-	  wght = TMath::Max(0, 1 - tb);
-	else if(m == kSKmMECMartini)
-	  wght = TMath::Min(1, tb);
-	else
-	  wght = 0;
-      }
-    }
-#endif
-
-  //
   // BANFF param, PDD double counting
   //
 #if BANFF_BINS == 3
@@ -622,39 +593,6 @@ double NuXSec::SystWght_1p(
      wght = fBANFF->CurrentValue(p) / fBANFF->BestFitValue(p);
   }
 
-
-  //
-  // BANFF param, MEC norm
-  // This is a fun one:
-  // For -1 to 0 it would interpolates between no MEC and Nieves template
-  // For 0 to 1 it would interpolates between the Nieves template and the Martini template.
-  //
-#if BANFF_BINS == 3
-  else
-  if(p == kNuisBANFFMECNorm)
-    {
-      //get the nominal->current weight
-      //note that we are given the NOMINAL, not BANFF-TUNED nev for MEC modes
-      double tc = fBANFF->CurrentValue(p);
-      if(tc <= 0) {
-	if(m == kSKmMECNieves)
-	  wght = TMath::Min(1, tc + 1);
-	else
-	  wght = 0;
-      }
-      else {
-	if(m == kSKmMECNieves)
-	  wght = TMath::Max(0, 1 - tc);
-	else if(m == kSKmMECMartini)
-	  wght = TMath::Min(1, tc);
-	else
-	  wght = 0;
-      }
-      if(wght < 0)
-	wght = 0;
-    }
-#endif
-
   //
   // BANFF param, PDD double counting
   //
@@ -666,10 +604,12 @@ double NuXSec::SystWght_1p(
 #endif
       // bool ev = this->IsThereAnEvent(s, m, Ereco, Etrue); //already done in SKMC
       //if(ev) {
-      //note that we are given the NOMINAL, not BANFF-TUNED nev for MEC modes
       TSpline3 * wght_spl = this->FindWghtSpline(p,s,m,Ereco,Etrue);
       assert(wght_spl);
-      double tc = TMath::Abs(fBANFF->CurrentValue(p));
+      //Don't de-tune the MEC BANFF parameters
+      //double tb = fBANFF->BestFitValue(p);
+      double tc = fBANFF->CurrentValue(p);
+      //wght = wght_spl->Eval(tc) / wght_spl->Eval(tb);
       wght = wght_spl->Eval(tc);
       //}
     }
@@ -823,6 +763,15 @@ double NuXSec::CurrentValue(PhysParamId_t p) const
       return 0;
   }
   return 0;
+}
+//________________________________________________________________________________________
+double NuXSec::MECBestFitValue() const
+{
+  double value = -1;
+#if BANFF_BINS == 3
+  value = fBANFF->BestFitValue(kNuisBANFFMECNorm);
+#endif
+  return value;
 }
 //________________________________________________________________________________________
 double NuXSec::RelativeError(PhysParamId_t p) const

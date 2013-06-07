@@ -534,8 +534,7 @@ double SuperkDetector::EfficiencyWeight(
        //
        case (kSKmNuMuCCQE)    : 
        case (kSKmNuMuBarCCQE) : 
-       case (kSKmMECMartini)  :
-       case (kSKmMECNieves)   :
+       case (kSKmMEC)         :
        {
           // other efficiency err
           double relerr_oth  = fEff1RmuCCQEOthRelErr;

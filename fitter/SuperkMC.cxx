@@ -93,6 +93,12 @@ void SuperkMC::Init(void)
 
   fMCTemplMECMartini = 0;
   fMCTemplMECNieves  = 0;
+  for(int it=0; it<util::NumEtrueBins(kSKsFCFV1RingMuLike); it++) {
+    for(int ir=0; ir<util::NumErecoBins(kSKsFCFV1RingMuLike); ir++) {
+      fMCTemplArrayMECMartini[it][ir] = 0;
+      fMCTemplArrayMECNieves [it][ir] = 0;
+    }
+  }
   for(int is=0; is<kns; is++) {
     SuperkSample_t s = kSKSamples[is];
     fMCErecoSpectrumTot[is] = 0;
@@ -455,8 +461,11 @@ void SuperkMC::FillTemplate(SuperkSample_t s, SuperkMode_t m)
   int sidx = util::ArrIdx::Instance()->SuperkSampleIdx(s);
   int midx = util::ArrIdx::Instance()->SuperkModeIdx(s,m);
 
-  //special templates that aren't in the tree! Don't need to apply POT weights or flux weights!
-  if(s == kSKsFCFV1RingMuLike && (m == kSKmMECMartini || m == kSKmMECNieves)) {
+  //special template that isnt't in the tree! Don't need to apply POT weights or flux weights!
+  //initalise the MEC mode template as empty
+  //Here, just put the histogram in arrays (for quicker access)
+  // and also fill the variable binning array (for skipping calls to find weights)
+  if(s == kSKsFCFV1RingMuLike && util::IsMEC(m)) {
     // loop over Etrue
     for(int it = 1; it <= this->Template(s,m,kSKMCtNom)->GetYaxis()->GetNbins(); it++) {
       double Etrue = this->Template(s,m,kSKMCtNom)->GetYaxis()->GetBinCenter(it);
@@ -464,27 +473,14 @@ void SuperkMC::FillTemplate(SuperkSample_t s, SuperkMode_t m)
       for(int ir = 1; ir <= this->Template(s,m,kSKMCtNom)->GetXaxis()->GetNbins(); ir++) {
 	double Ereco = this->Template(s,m,kSKMCtNom)->GetXaxis()->GetBinCenter(ir);
 	//get nevents
-	double nev = 0;
-	if(m == kSKmMECMartini)
-	  nev = fMCTemplMECMartini->GetBinContent(ir,it);
-	else if(m == kSKmMECNieves)
-	  nev = fMCTemplMECNieves->GetBinContent(ir,it);
-	//put MEC into Ori templates
-	//only used to decide which bins to use
-	fMCTemplArrayOri1Rmu[midx][it-1][ir-1] = TMath::CeilNint(nev);
-	this->Template(s,m,kSKMCtOri)->SetBinContent(ir,it,TMath::CeilNint(nev));
-	//put MEC into Nom,Tun,Sys,Fin templates
-	fMCTemplArrayNom1Rmu[midx][it-1][ir-1] = nev;
-	fMCTemplArrayTun1Rmu[midx][it-1][ir-1] = nev;
-	fMCTemplArrayFin1Rmu[midx][it-1][ir-1] = nev;
-	this->Template(s,m,kSKMCtNom)->SetBinContent(ir,it,nev);
-#ifndef PRODUCTIONMODE
-	this->Template(s,m,kSKMCtTun)->SetBinContent(ir,it,nev);
-	this->Template(s,m,kSKMCtSys)->SetBinContent(ir,it,nev);
-	this->Template(s,m,kSKMCtFin)->SetBinContent(ir,it,nev);
-#endif
-	//fill the variable template
-	fMCVariableTempl[sidx][midx]->Fill(Ereco,Etrue,nev);
+	double nev_martini = fMCTemplMECMartini->GetBinContent(ir,it);
+	double nev_nieves  = fMCTemplMECNieves-> GetBinContent(ir,it);
+	//fill the variable template (with both)
+	fMCVariableTempl[sidx][midx]->Fill(Ereco,Etrue,nev_martini);
+	fMCVariableTempl[sidx][midx]->Fill(Ereco,Etrue,nev_nieves);
+	//fill the mec arrays
+	fMCTemplArrayMECMartini[it-1][ir-1] = nev_martini;
+	fMCTemplArrayMECNieves [it-1][ir-1] = nev_nieves;
       }//ir
     }//it
 
@@ -498,7 +494,7 @@ void SuperkMC::FillTemplate(SuperkSample_t s, SuperkMode_t m)
       }//irv
     }//itv
     return;
-  }//if MEC mode
+  }//if MEC
 
   TTree * mctree = this->MCTree(s,m);
   double  mcpot  = this->MCPOT (s,m);
@@ -822,6 +818,12 @@ void SuperkMC::ApplyBANFFTuningToTemplates(void)
        if(!mctempl_tgt) continue; 
 #endif
 
+       double x_mec = 0;
+#if BANFF_BINS == 3
+       if(util::IsMEC(m))
+	 x_mec = fNuXSec->MECBestFitValue();
+#endif
+
        //
        // There are 600 50MeV Etrue energy bins in the templates, but
        // the flux/xsec systematics only have up to ~10 Etrue bins (same as flux binning), so
@@ -871,7 +873,8 @@ void SuperkMC::ApplyBANFFTuningToTemplates(void)
 	     for(int it = EtrueMinBin; it <= EtrueMaxBin; it++) {
 	       //check for empty bins
 	       if (s==kSKsFCFV1RingMuLike) {
-		 if(fMCTemplArrayOri1Rmu[im][it-1][ir-1] <= 0) continue;
+		 if(!util::IsMEC(m))
+		   if(fMCTemplArrayOri1Rmu[im][it-1][ir-1] <= 0) continue;
 	       }
 	       else{
 		 if(fMCTemplArrayOri1Re[im][it-1][ir-1] <= 0) continue;
@@ -880,7 +883,20 @@ void SuperkMC::ApplyBANFFTuningToTemplates(void)
    
 	       // get number of events in current bin of source MC template
 	       double nev = 0;
-	       if (s==kSKsFCFV1RingMuLike)
+	       if(util::IsMEC(m)) {
+		 double nev_martini = fMCTemplArrayMECMartini[it-1][ir-1];
+		 double nev_nieves  = fMCTemplArrayMECNieves [it-1][ir-1];
+		 //-1 nominal -> 0 nieves
+		 if(x_mec < 0) {
+		   nev  = nev_nieves * (1 + x_mec);
+		 }
+		 // 0 nieves -> +1 martini
+		 else {
+		   nev += TMath::Min(nev_martini, nev_martini * x_mec);
+		   nev += nev_nieves * (1 - x_mec);
+		 }
+	       }//MEC
+	       else if (s==kSKsFCFV1RingMuLike)
 		 nev = fMCTemplArrayNom1Rmu[im][it-1][ir-1];
 	       else
 		 nev = fMCTemplArrayNom1Re[im][it-1][ir-1];
@@ -966,6 +982,12 @@ void SuperkMC::ApplySystematicsToTemplates_Multiplicative(void)
        if(!mctempl_tgt) continue;
 #endif
 
+       double x_mec = -1;
+#if BANFF_BINS == 3
+       if(util::IsMEC(m))
+	 x_mec = fNuXSec->CurrentValue(kNuisBANFFMECNorm);
+#endif
+
        //
        // There are 600 50MeV Etrue energy bins in the templates, but
        // the flux/xsec systematics only have up to ~10 Etrue bins (same as flux binning), so
@@ -1023,6 +1045,9 @@ void SuperkMC::ApplySystematicsToTemplates_Multiplicative(void)
            wght = 1;
 #endif
 
+	   if(util::IsMEC(m))
+	     cout << "SK: " << skfsi_wght << "\tFlux: " << flux_wght << "\tXSec: " << xsec_wght << "\tTotal: " << wght << endl;
+
 	   // loop over 50MeV Ereco
 	   int ErecoMinBin = 1 + TMath::BinarySearch(util::NumErecoBins(s),util::ErecoBinEdges(s),ErecoVarMin);
 	   int ErecoMaxBin = 1 + TMath::BinarySearch(util::NumErecoBins(s),util::ErecoBinEdges(s),ErecoVarMax);
@@ -1035,7 +1060,8 @@ void SuperkMC::ApplySystematicsToTemplates_Multiplicative(void)
 	     for(int it = EtrueMinBin; it <= EtrueMaxBin; it++) {
 	       //check for empty bins
 	       if (s==kSKsFCFV1RingMuLike){
-		 if(fMCTemplArrayOri1Rmu[im][it-1][ir-1] <= 0) continue;
+		 if(!util::IsMEC(m))
+		   if(fMCTemplArrayOri1Rmu[im][it-1][ir-1] <= 0) continue;
 	       }
 	       else{
 		 if(fMCTemplArrayOri1Re[im][it-1][ir-1] <= 0) continue;
@@ -1044,12 +1070,23 @@ void SuperkMC::ApplySystematicsToTemplates_Multiplicative(void)
    
 	       // get number of events in current bin of source MC template
 	       double nev = 0;
-	       if (s==kSKsFCFV1RingMuLike) {
-		 if(util::IsMEC(m))
-		   nev = fMCTemplArrayNom1Rmu[im][it-1][ir-1];
-		 else
-		   nev = fMCTemplArrayTun1Rmu[im][it-1][ir-1];
-	       }
+	       if(util::IsMEC(m)) {
+		 double nev_martini = fMCTemplArrayMECMartini[it-1][ir-1];
+		 double nev_nieves  = fMCTemplArrayMECNieves [it-1][ir-1];
+		 //-1 nominal -> 0 nieves
+		 if(x_mec < 0) {
+		   nev  = nev_nieves * (1 + x_mec);
+		 }
+		 // 0 nieves -> +1 martini
+		 else {
+		   nev += TMath::Min(nev_martini, nev_martini * x_mec);
+		   nev += nev_nieves * (1 - x_mec);
+		 }
+		 if(nev > 0)
+		   cout << nev_martini << "\t" << nev_nieves << "\t" << nev << endl;
+	       }//MEC
+	       else if (s==kSKsFCFV1RingMuLike)
+		 nev = fMCTemplArrayTun1Rmu[im][it-1][ir-1];
 	       else
 		 nev = fMCTemplArrayTun1Re[im][it-1][ir-1];
 	       nev = TMath::Max(0.,nev);
