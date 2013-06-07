@@ -27,8 +27,7 @@ void build_chisq_surface_disapp_parallelized
   double       input_mixing23_step = 0.001,
   double       input_dm32sq_min    = 0.002,
   double       input_dm32sq_max    = 0.003,
-  double       input_dm32sq_step   = 0.00001,
-  bool         save_bestfit_params_at_each_bin_of_each_expt = false
+  double       input_dm32sq_step   = 0.00001
 )
 {
   using namespace std;
