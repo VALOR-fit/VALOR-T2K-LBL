@@ -40,6 +40,7 @@ public:
   double SuperkFluxExtTuningWght  (int neutrino_pdg, double Etrue) const;  // wght: nominal --> ext/tuned flux
   double SuperkFluxFinTuningWght  (int neutrino_pdg, double Etrue) const;  // wght: ext/tuned --> fin/tuned flux
   double SuperkFluxSystWght       (int neutrino_pdg, double Etrue) const;  // wght: fin/tuned flux -> current (incl. syst. variation)
+  double SuperkFluxMECSystWght    (int neutrino_pdg, double Etrue) const;  // wght: ext/tuned flux -> current (incl. syst. variation)
 
   // ... as above, slighty different interface
   double SuperkFluxExtTuningWght  (conv::SuperkSample_t s, conv::SuperkMode_t m, double Etrue) const;  

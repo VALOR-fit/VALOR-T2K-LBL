@@ -2009,7 +2009,8 @@ string t2kana::util::AsString(t2kana::conv::SuperkMode_t m)
      case ( kSKmSigNuECCcoh     ) : return "oscillation nue CC coh";                 break;
      case ( kSKmSigNuECCoth_mu  ) : return "oscillation nue CC oth (numu disap)";    break;
      case ( kSKmSigNuECCoth_e   ) : return "oscillation nue CC oth (nue app)";       break;
-     case ( kSKmMEC             ) : return "MEC";                                    break;
+     case ( kSKmMECMartini      ) : return "MEC; Martini model";                     break;
+     case ( kSKmMECNieves       ) : return "MEC; Nieves model";                      break;
      default                      : return "--";
   }
   return "";
@@ -2133,7 +2134,8 @@ string t2kana::util::AsStringTex(t2kana::conv::SuperkMode_t m)
      case ( kSKmSigNuECCcoh     ) : return "Osc. $\\nu_e$ CC coherent";                                    break;
      case ( kSKmSigNuECCoth_mu  ) : return "Osc. $\\nu_e$ CC other ($\\nu_\\mu$ disap)";                     break;
      case ( kSKmSigNuECCoth_e   ) : return "Osc. $\\nu_e$ CC other";                        break;
-     case ( kSKmMEC             ) : return "MEC";                                    break;
+     case ( kSKmMECMartini      ) : return "MEC; Martini model";                            break;
+     case ( kSKmMECNieves       ) : return "MEC; Nieves model";                             break;
      default                      : return "--";
   }
   return "";
@@ -2200,7 +2202,8 @@ string t2kana::util::AsStringRooTex(t2kana::conv::SuperkMode_t m)
      case ( kSKmSigNuECCcoh     ) : return "oscillation #nu_{e} CC coherent";                    break;
      case ( kSKmSigNuECCoth_mu  ) : return "oscillation #nu_{e} CC other";                       break;
      case ( kSKmSigNuECCoth_e   ) : return "oscillation #nu_{e} CC other";                       break;
-     case ( kSKmMEC             ) : return "MEC";                                           break;
+     case ( kSKmMECMartini      ) : return "MEC; Martini model";                            break;
+     case ( kSKmMECNieves       ) : return "MEC; Nieves model";                             break;
      default                      : return "";
   }
   return "";
@@ -2319,7 +2322,8 @@ string t2kana::util::AsStringCompact (t2kana::conv::SuperkMode_t m)
      case ( kSKmSigNuECCcoh     ) : return "signuecccoh";    break;
      case ( kSKmSigNuECCoth_mu  ) : return "signueccoth";    break;
      case ( kSKmSigNuECCoth_e   ) : return "signueccoth";    break;
-     case ( kSKmMEC             ) : return "mec";            break;
+     case ( kSKmMECMartini      ) : return "mecmartini";     break;
+     case ( kSKmMECNieves       ) : return "mecnieves";      break;
      default                      : return "";
   }
   return "";
@@ -2376,7 +2380,8 @@ string t2kana::util::AsStringCompact_KDI (t2kana::conv::SuperkMode_t m)
      case ( kSKmSigNuECCcoh     ) : return "signue_cccoh";    break;
      case ( kSKmSigNuECCoth_mu  ) : return "signue_ccoth";    break;
      case ( kSKmSigNuECCoth_e   ) : return "signue_ccoth";    break;
-     case ( kSKmMEC             ) : return "mec";            break;
+     case ( kSKmMECMartini      ) : return "mecmartini";     break;
+     case ( kSKmMECNieves       ) : return "mecnieves";      break;
      default                      : return "";
   }
   return "";
@@ -2819,7 +2824,8 @@ bool t2kana::util::IsNuMu(t2kana::conv::SuperkMode_t  m)
      case (kSKmNuMuNCcoh   ):
      case (kSKmNuMuNCoth_e ):
      case (kSKmNuMuNCoth_mu):
-     case (kSKmMEC         ): //mec uses numu flux
+     case (kSKmMECMartini  ): //mec uses numu flux
+     case (kSKmMECNieves   ): //mec uses numu flux
        return true;
        break;
      default :                
@@ -2940,7 +2946,8 @@ bool t2kana::util::IsCC(t2kana::conv::SuperkMode_t m)
      case ( kSKmSigNuECCcoh     ) : 
      case ( kSKmSigNuECCoth_mu  ) : 
      case ( kSKmSigNuECCoth_e   ) : 
-     case ( kSKmMEC             ) :
+     case ( kSKmMECMartini      ) :
+     case ( kSKmMECNieves       ) :
 	return true;
 	break;
      default: 
@@ -2975,6 +2982,20 @@ bool t2kana::util::IsNC(t2kana::conv::SuperkMode_t m)
      case ( kSKmNuEBarNCoth_mu  ) : 
 	return true;
         break;
+     default: 
+	return false;
+	break;
+  }
+  return false;
+}
+//____________________________________________________________________________
+bool t2kana::util::IsMEC(t2kana::conv::SuperkMode_t m)
+{
+  switch(m) {
+     case ( kSKmMECMartini      ) :
+     case ( kSKmMECNieves       ) :
+	return true;
+	break;
      default: 
 	return false;
 	break;
@@ -4804,7 +4825,8 @@ double t2kana::util::NuMuSurvProbOsc2Flavour(
      m == kSKmNuMuBarCCcoh    ||
      m == kSKmNuMuBarCCoth_mu || 
      m == kSKmNuMuBarCCoth_e  ||
-     m == kSKmMEC)
+     m == kSKmMECMartini      ||
+     m == kSKmMECNieves       )
   {
     return NuMuSurvProbOsc2Flavour(mixing23, dm23sq, Et);
   }
@@ -4869,7 +4891,8 @@ double t2kana::util::NuMuSurvProbDecay (
      m == kSKmNuMuBarCCoth_mu ||
      m == kSKmNuMuBarNC1piC   ||
      m == kSKmNuMuBarNCoth_mu ||
-     m == kSKmMEC)
+     m == kSKmMECMartini      ||
+     m == kSKmMECNieves       )
   {
     return NuMuSurvProbDecay(sinsq2theta, alpha, Et);
   }
@@ -4930,7 +4953,8 @@ double t2kana::util::NuMuSurvProbDecoh (
      m == kSKmNuMuBarCCoth_mu ||
      m == kSKmNuMuBarNC1piC   ||
      m == kSKmNuMuBarNCoth_mu ||
-     m == kSKmMEC)
+     m == kSKmMECMartini      ||
+     m == kSKmMECNieves       )
    {
     return NuMuSurvProbDecoh(sinsq2theta, musq, Et);
   }

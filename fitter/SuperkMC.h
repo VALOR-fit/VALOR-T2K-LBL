@@ -134,18 +134,20 @@ private:
   TH2D *     fMCTemplSys[kns][knm];        ///< Ereco-Etrue MC template(sample,mode): nominal + ext/tuning + nd280/tuning + systematics 
   TH2D *     fMCTemplFin[kns][knm];        ///< Ereco-Etrue MC template(sample,mode): nominal + ext/tuning + nd280/tuning + systematics + physics hypothesis
 #endif
-  TH2D *     fMCTemplMEC;                  ///< MEC template
+  TH2D *     fMCTemplMECMartini;           ///< Martini MEC template
+  TH2D *     fMCTemplMECNieves;            ///< Nieves MEC template
   TH2D *     fMCVariableTempl[kns][knm];
   int        fMCVariableTemplArray1Rmu[kns][knm][conv::kMCNEtrueBins][conv::kXsNErecoBins1Rmu];
-  int        fMCVariableTemplArray1Re[kns][knm][conv::kMCNEtrueBins][conv::kXsNErecoBins1Re];
+  int        fMCVariableTemplArray1Re [kns][knm][conv::kMCNEtrueBins][conv::kXsNErecoBins1Re];
   int        fMCTemplArrayOri1Rmu[knm][conv::kNEtrueBins1Rmu][conv::kNErecoBins1Rmu];
   int        fMCTemplArrayOri1Re [knm][conv::kNEtrueBins1Re][conv::kNErecoBins1Re];
-  //double     fMCTemplArrayNom[kns][knm][conv::kNEtrueBins][conv::kNErecoBins1Rmu];
+  double     fMCTemplArrayNom1Rmu[knm][conv::kNEtrueBins1Rmu][conv::kNErecoBins1Rmu];
+  double     fMCTemplArrayNom1Re [knm][conv::kNEtrueBins1Re][conv::kNErecoBins1Re];
   double     fMCTemplArrayTun1Rmu[knm][conv::kNEtrueBins1Rmu][conv::kNErecoBins1Rmu];
-  double     fMCTemplArrayTun1Re[knm][conv::kNEtrueBins1Re][conv::kNErecoBins1Re];
+  double     fMCTemplArrayTun1Re [knm][conv::kNEtrueBins1Re][conv::kNErecoBins1Re];
   //double     fMCTemplArraySys[kns][knm][conv::kNEtrueBins][conv::kNErecoBins1Rmu];
   double     fMCTemplArrayFin1Rmu[knm][conv::kNEtrueBins1Rmu][conv::kNErecoBins1Rmu];
-  double     fMCTemplArrayFin1Re[knm][conv::kNEtrueBins1Re][conv::kNErecoBins1Re];
+  double     fMCTemplArrayFin1Re [knm][conv::kNEtrueBins1Re][conv::kNErecoBins1Re];
 
   TH1D *     fMCErecoSpectrum[kns][knm];   ///< Ereco MC spectrum (sample,mode)     : nominal + ext/tuning + nd280/tuning + systematics + physics hypothesis
   TH1D *     fMCErecoSpectrumTot[kns];     ///< Ereco MC spectrum (sample)          : nominal + ext/tuning + nd280/tuning + systematics + physics hypothesis

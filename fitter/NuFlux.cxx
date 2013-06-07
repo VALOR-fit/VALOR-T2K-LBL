@@ -437,6 +437,21 @@ double NuFlux::SuperkFluxSystWght(int nu_pdg, double Etrue) const
   return wght;
 }
 //________________________________________________________________________________________
+double NuFlux::SuperkFluxMECSystWght(int nu_pdg, double Etrue) const
+{
+// Weights required to re-weight ext/tuned flux to current (fin/tuned + systematic
+// variarions) flux
+//
+  double flux_twk = this->SuperkFlux(nu_pdg, Etrue, conv::kFlxCurrent    );
+  double flux     = this->SuperkFlux(nu_pdg, Etrue, conv::kFlxExtTuning  );
+
+  double wght = 1.0;
+  if(flux >= 0) {
+    wght = flux_twk / flux;
+  }
+  return wght;
+}
+//________________________________________________________________________________________
 double NuFlux::SuperkFluxExtTuningWght(
   conv::SuperkSample_t /*s*/, conv::SuperkMode_t m, double Etrue) const
 {
@@ -455,7 +470,10 @@ double NuFlux::SuperkFluxSystWght(
   conv::SuperkSample_t /*s*/, conv::SuperkMode_t m, double Etrue) const
 {
   int flux_nu_pdg = util::SuperkMode2FluxNuPdg(m);
-  return this->SuperkFluxSystWght(flux_nu_pdg,Etrue);
+  if(util::IsMEC(m))
+    return this->SuperkFluxMECSystWght(flux_nu_pdg,Etrue);
+  else
+    return this->SuperkFluxSystWght(flux_nu_pdg,Etrue);
 }
 //________________________________________________________________________________________
 TH1D * NuFlux::SuperkFluxSpectrum(int nu_pdg, conv::FluxType_t flxtype) const

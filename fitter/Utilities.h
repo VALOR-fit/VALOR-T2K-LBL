@@ -128,6 +128,7 @@ namespace util {
   bool IsSignalNuE    (conv::SuperkMode_t  m);
   bool IsCC           (conv::SuperkMode_t  m);
   bool IsNC           (conv::SuperkMode_t  m);
+  bool IsMEC          (conv::SuperkMode_t  m);
   bool IsSystematic   (conv::PhysParamId_t p);
   bool IsMixingAngle  (conv::PhysParamId_t p);
   bool IsBANFF        (conv::PhysParamId_t p);

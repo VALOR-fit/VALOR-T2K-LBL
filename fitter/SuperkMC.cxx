@@ -91,7 +91,8 @@ void SuperkMC::Init(void)
 {
   fPOT = 0;
 
-  fMCTemplMEC = 0;
+  fMCTemplMECMartini = 0;
+  fMCTemplMECNieves  = 0;
   for(int is=0; is<kns; is++) {
     SuperkSample_t s = kSKSamples[is];
     fMCErecoSpectrumTot[is] = 0;
@@ -110,11 +111,13 @@ void SuperkMC::Init(void)
 	for(int ir=0; ir<util::NumErecoBins(s); ir++) {
 	  if (s==kSKsFCFV1RingMuLike){
 	    fMCTemplArrayOri1Rmu[im][it][ir] = 0;
+	    fMCTemplArrayNom1Rmu[im][it][ir] = 0;
 	    fMCTemplArrayTun1Rmu[im][it][ir] = 0;
 	    fMCTemplArrayFin1Rmu[im][it][ir] = 0;
 	  }
 	  else {
 	    fMCTemplArrayOri1Re[im][it][ir] = 0;
+	    fMCTemplArrayNom1Re[im][it][ir] = 0;
 	    fMCTemplArrayTun1Re[im][it][ir] = 0;
 	    fMCTemplArrayFin1Re[im][it][ir] = 0;
 	  }
@@ -187,7 +190,8 @@ void SuperkMC::CleanUp(void)
   if(fMCTreeSigNuE1Re   ) delete fMCTreeSigNuE1Re;
   */
 
-  if(fMCTemplMEC) delete fMCTemplMEC;
+  if(fMCTemplMECMartini) delete fMCTemplMECMartini;
+  if(fMCTemplMECNieves ) delete fMCTemplMECNieves;
   for(int is = 0; is < kns; is++) {
      for(int im = 0; im < knm; im++) {
        //already deleted Ori & Nom (the if doesn't work!)
@@ -289,7 +293,8 @@ bool SuperkMC::Read(TXMLEngine* xml, XMLNodePointer_t root_node)
 #endif
 
   // get MEC template
-  fMCTemplMEC    = util::XML2TH2D  (xml,root_node,"mec/template");
+  fMCTemplMECMartini    = util::XML2TH2D  (xml,root_node,"mec/templates/martini");
+  fMCTemplMECNieves     = util::XML2TH2D  (xml,root_node,"mec/templates/nieves");
 
   // initialise physics hypothesis
   // need to initialise as 3 flavour oscillation, otherwise ExtTuning (NA61) and FinTuning (BANFF) is not applied to nuesig modes
@@ -450,12 +455,8 @@ void SuperkMC::FillTemplate(SuperkSample_t s, SuperkMode_t m)
   int sidx = util::ArrIdx::Instance()->SuperkSampleIdx(s);
   int midx = util::ArrIdx::Instance()->SuperkModeIdx(s,m);
 
-  //special template that isn't in the tree! Don't need to apply POT weights or flux weights!
-  if(s == kSKsFCFV1RingMuLike && m == kSKmMEC) {
-    double data_pot = this->AnalyzedSamplePOT();
-    double mec_template_pot = 3.0100E20;
-    double pot_scale = data_pot / mec_template_pot;
-
+  //special templates that aren't in the tree! Don't need to apply POT weights or flux weights!
+  if(s == kSKsFCFV1RingMuLike && (m == kSKmMECMartini || m == kSKmMECNieves)) {
     // loop over Etrue
     for(int it = 1; it <= this->Template(s,m,kSKMCtNom)->GetYaxis()->GetNbins(); it++) {
       double Etrue = this->Template(s,m,kSKMCtNom)->GetYaxis()->GetBinCenter(it);
@@ -463,14 +464,17 @@ void SuperkMC::FillTemplate(SuperkSample_t s, SuperkMode_t m)
       for(int ir = 1; ir <= this->Template(s,m,kSKMCtNom)->GetXaxis()->GetNbins(); ir++) {
 	double Ereco = this->Template(s,m,kSKMCtNom)->GetXaxis()->GetBinCenter(ir);
 	//get nevents
-	double nev = fMCTemplMEC->GetBinContent(ir,it);
+	double nev = 0;
+	if(m == kSKmMECMartini)
+	  nev = fMCTemplMECMartini->GetBinContent(ir,it);
+	else if(m == kSKmMECNieves)
+	  nev = fMCTemplMECNieves->GetBinContent(ir,it);
 	//put MEC into Ori templates
 	//only used to decide which bins to use
 	fMCTemplArrayOri1Rmu[midx][it-1][ir-1] = TMath::CeilNint(nev);
 	this->Template(s,m,kSKMCtOri)->SetBinContent(ir,it,TMath::CeilNint(nev));
-	//apply pot wght
-	nev *= pot_scale;
 	//put MEC into Nom,Tun,Sys,Fin templates
+	fMCTemplArrayNom1Rmu[midx][it-1][ir-1] = nev;
 	fMCTemplArrayTun1Rmu[midx][it-1][ir-1] = nev;
 	fMCTemplArrayFin1Rmu[midx][it-1][ir-1] = nev;
 	this->Template(s,m,kSKMCtNom)->SetBinContent(ir,it,nev);
@@ -494,7 +498,7 @@ void SuperkMC::FillTemplate(SuperkSample_t s, SuperkMode_t m)
       }//irv
     }//itv
     return;
-  }//if kSKmMEC
+  }//if MEC mode
 
   TTree * mctree = this->MCTree(s,m);
   double  mcpot  = this->MCPOT (s,m);
@@ -584,14 +588,16 @@ void SuperkMC::FillTemplate(SuperkSample_t s, SuperkMode_t m)
 	else
 	  fMCTemplArrayOri1Re[midx][it-1][ir-1] = (int)this->Template(s,m,kSKMCtOri)->GetBinContent(ir,it);
 	double nev = this->Template(s,m,kSKMCtNom)->GetBinContent(ir,it);
-	if (s==kSKsFCFV1RingMuLike)
+	if (s==kSKsFCFV1RingMuLike) {
+	  fMCTemplArrayNom1Rmu[midx][it-1][ir-1] = nev;
 	  fMCTemplArrayTun1Rmu[midx][it-1][ir-1] = nev;
-	else
-	  fMCTemplArrayTun1Re[midx][it-1][ir-1] = nev;
-	if (s==kSKsFCFV1RingMuLike)
 	  fMCTemplArrayFin1Rmu[midx][it-1][ir-1] = nev;
-	else
+	}
+	else {
+	  fMCTemplArrayNom1Re[midx][it-1][ir-1] = nev;
+	  fMCTemplArrayTun1Re[midx][it-1][ir-1] = nev;
 	  fMCTemplArrayFin1Re[midx][it-1][ir-1] = nev;
+	}
       }//ir
     }//it
     //now loop over the variable binning scheme (used to calculate weights only as many times as we need to)
@@ -743,9 +749,9 @@ void SuperkMC::ApplyFluxExtTuningToTemplates(void)
            // get number of events
            double nev = 0;
 	   if (s==kSKsFCFV1RingMuLike)
-	     nev = fMCTemplArrayTun1Rmu[im][it-1][ir-1];
+	     nev = fMCTemplArrayNom1Rmu[im][it-1][ir-1];
 	   else
-	     nev = fMCTemplArrayTun1Re[im][it-1][ir-1];
+	     nev = fMCTemplArrayNom1Re[im][it-1][ir-1];
 	   nev = TMath::Max(0.,nev);
            // get tuning weights
            double wght = fNuFlux->SuperkFluxExtTuningWght(s,m,Etrue);
@@ -769,14 +775,16 @@ void SuperkMC::ApplyFluxExtTuningToTemplates(void)
            this->Template(s,m,kSKMCtSys)->SetBinContent(ir,it,nev);
            this->Template(s,m,kSKMCtFin)->SetBinContent(ir,it,nev);
 #endif
-	   if (s==kSKsFCFV1RingMuLike)
+	   if (s==kSKsFCFV1RingMuLike) {
+	     fMCTemplArrayNom1Rmu[im][it-1][ir-1] = nev;
 	     fMCTemplArrayTun1Rmu[im][it-1][ir-1] = nev;
-	   else
+	     fMCTemplArrayFin1Rmu[im][it-1][ir-1] = nev;
+	   }
+	   else {
+	     fMCTemplArrayNom1Re[im][it-1][ir-1] = nev;
 	     fMCTemplArrayTun1Re[im][it-1][ir-1] = nev;
-	   if
-	     (s==kSKsFCFV1RingMuLike) fMCTemplArrayFin1Rmu[im][it-1][ir-1] = nev;
-	   else
 	     fMCTemplArrayFin1Re[im][it-1][ir-1] = nev;
+	   }
          }//it
        }//ir
     }//im
@@ -873,9 +881,9 @@ void SuperkMC::ApplyBANFFTuningToTemplates(void)
 	       // get number of events in current bin of source MC template
 	       double nev = 0;
 	       if (s==kSKsFCFV1RingMuLike)
-		 nev = fMCTemplArrayTun1Rmu[im][it-1][ir-1];
+		 nev = fMCTemplArrayNom1Rmu[im][it-1][ir-1];
 	       else
-		 nev = fMCTemplArrayTun1Re[im][it-1][ir-1];
+		 nev = fMCTemplArrayNom1Re[im][it-1][ir-1];
 	       nev = TMath::Max(0.,nev);
 	       double nev_tuned = nev * wght;
 
@@ -895,14 +903,14 @@ void SuperkMC::ApplyBANFFTuningToTemplates(void)
 	       this->Template(s,m,kSKMCtSys)->SetBinContent(ir,it,nev_tuned);
 	       this->Template(s,m,kSKMCtFin)->SetBinContent(ir,it,nev_tuned);
 #endif
-	       if (s==kSKsFCFV1RingMuLike)
+	       if (s==kSKsFCFV1RingMuLike) {
 		 fMCTemplArrayTun1Rmu[im][it-1][ir-1] = nev_tuned;
-	       else
-		 fMCTemplArrayTun1Re[im][it-1][ir-1] = nev_tuned;
-	       if (s==kSKsFCFV1RingMuLike)
 		 fMCTemplArrayFin1Rmu[im][it-1][ir-1] = nev_tuned;
-	       else
+	       }
+	       else {
+		 fMCTemplArrayTun1Re[im][it-1][ir-1] = nev_tuned;
 		 fMCTemplArrayFin1Re[im][it-1][ir-1] = nev_tuned;
+	       }
 	     }//it
 	   }//ir
 	 }//irv
@@ -1036,8 +1044,12 @@ void SuperkMC::ApplySystematicsToTemplates_Multiplicative(void)
    
 	       // get number of events in current bin of source MC template
 	       double nev = 0;
-	       if (s==kSKsFCFV1RingMuLike)
-		 nev = fMCTemplArrayTun1Rmu[im][it-1][ir-1];
+	       if (s==kSKsFCFV1RingMuLike) {
+		 if(util::IsMEC(m))
+		   nev = fMCTemplArrayNom1Rmu[im][it-1][ir-1];
+		 else
+		   nev = fMCTemplArrayTun1Rmu[im][it-1][ir-1];
+	       }
 	       else
 		 nev = fMCTemplArrayTun1Re[im][it-1][ir-1];
 	       nev = TMath::Max(0.,nev);

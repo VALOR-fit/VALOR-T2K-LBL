@@ -123,7 +123,7 @@ double FSI::SystWght(
   conv::SuperkSample_t s, conv::SuperkMode_t m, double Ereco, double /*Etrue*/) const
 {
   //MEC has no FSI error
-  if(m == conv::kSKmMEC)
+  if(util::IsMEC(m))
     return 1.;
 
   // find FSI param which corresponds to the current Ereco param
