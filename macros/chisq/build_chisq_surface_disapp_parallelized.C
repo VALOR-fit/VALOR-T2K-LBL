@@ -2,9 +2,10 @@
 // ------------------------------------------------------------------------------------------------
 // Build chisq surface (incl. the effect of systematics) for the numu disappearance analysis.
 // When all systematics are included this is a CPU-intensive task and it can be pallalelized,
-// with each job calculating the chisq value for a single bin in the osc parameter space.
+// with each job calculating the chisq value for a single bin (or a row or a column of bins)
+// in the osc parameter space. If bin numbers are left at -1, the task is not parallelized.
 // The experiment (toy MC or data) is read from the input XML file.
-// A range of experiments can also be read and chisq is averaged (for sensitivity studies)
+// A range of experiments can also be read and chisq is averaged (for sensitivity studies).
 //
 // Costas Andreopoulos
 // ------------------------------------------------------------------------------------------------
@@ -18,15 +19,16 @@ void build_chisq_surface_disapp_parallelized
   int          last_experiment     = 0,                                     /* */
   const char * config_file         = "analysis_configuration.xml",          /* analysis configuration file */
   const char * fit_param_list      = "nuosc3f_numudisapp_fix4+nuisance",    /* fit parameter list for the given physics hypothesis (see FitParamList.h) */
-  const char * fit_option          = "minuit",                              /* fitter option (see run_fitter.C) */
+  const char * fit_option          = "minuit",                              /* fitter option */
   int          input_mixing23_bin  = -1,                                    /* if !=-1, will run only for the specified bin */
-  int          input_dm23sq_bin    = -1,                                    /* if !=-1, will run only for the specified bin */
+  int          input_dm32sq_bin    = -1,                                    /* if !=-1, will run only for the specified bin */
   double       input_mixing23_min  = 0.9,
   double       input_mixing23_max  = 1.0,
   double       input_mixing23_step = 0.001,
-  double       input_dm23sq_min    = 0.002,
-  double       input_dm23sq_max    = 0.003,
-  double       input_dm23sq_step   = 0.00001
+  double       input_dm32sq_min    = 0.002,
+  double       input_dm32sq_max    = 0.003,
+  double       input_dm32sq_step   = 0.00001,
+  bool         save_bestfit_params_at_each_bin_of_each_expt = false
 )
 {
   using namespace std;
@@ -42,7 +44,7 @@ void build_chisq_surface_disapp_parallelized
 
   // Print settings
   cout << "\n[Job inputs]" << endl;
-  cout << "- Job: " << tag << "/" << run << endl;
+  cout << "- Job: " << tag << endl;
   cout << "- Reading analysis configuration from: " << config << endl;
   cout << "- Toy-MC or data:" << endl;
   cout << "   - Reading experiments from: " << xmlfile << endl;
@@ -67,34 +69,44 @@ void build_chisq_surface_disapp_parallelized
   ostringstream filename;
   filename << tag << "-";
   if(first_experiment == last_experiment) {
-    filename = "expt_" << first_experiment;
+    filename << "expt_" << first_experiment;
   } else {
     filename = "expt_" << first_experiment << "_" << last_experiment;
   }
-  if(input_mixing23_bin == -1 && input_dm23sq_bin == -1) {
+  if(input_mixing23_bin == -1 && input_dm32sq_bin == -1) {
     filename << "-all_bins";
   } else {
     if(input_mixing23_bin != -1) { filename << "-mix23bin_"  << input_mixing23_bin; }
-    if(input_dm23sq_bin   != -1) { filename << "-dm32sqbin_" << input_dm23sq_bin;   }
+    if(input_dm32sq_bin   != -1) { filename << "-dm32sqbin_" << input_dm32sq_bin;   }
   }
   filename << ".root";
-  TFile f(Form("%s-expt_%d-bins_%d_%d.root", tag, experiment_id, input_mixing23_bin,input_dm23sq_bin), "recreate");
+  TFile f(filename.str().c_str(), "recreate");
+
+  // Tree for storing best-fit params and each bin and for each expt
+  int iexpt   = 0; // expt number
+  int idm32sq = 0; // dm32sq bin
+  int imix23  = 0; // mixing23 bin
+  TTree * fitnt = new TTree("fitnt","Results of VaLOR data and/or toy-MC experiment fits");
+  fitnt->Branch("best_fit_params", "t2kana::FitParamList",  &fparm,     1280000,0);
+  fitnt->Branch("iexpt",   &iexpt,   "iexpt/I");
+  fitnt->Branch("idm32sq", &idm32sq, "idm32sq/I");
+  fitnt->Branch("imix23",  &imix23,  "imix23/I");
 
   // Define 2D osc param space range and binning
   double mixing23_min  = (input_mixing23_min  < 0) ? (conv::kMinChisqSurfaceSinsq2Theta23)  : (input_mixing23_min);
   double mixing23_max  = (input_mixing23_max  < 0) ? (conv::kMaxChisqSurfaceSinsq2Theta23)  : (input_mixing23_max);
   double mixing23_step = (input_mixing23_step < 0) ? (fparm->StepSize(conv::kPhypMixing23)) : (input_mixing23_step);
-  double dm23sq_min    = (input_dm23sq_min    < 0) ? (conv::kMinChisqSurfaceDm23sq)         : (input_dm23sq_min);
-  double dm23sq_max    = (input_dm23sq_max    < 0) ? (conv::kMaxChisqSurfaceDm23sq)         : (input_dm23sq_max);
-  double dm23sq_step   = (input_dm23sq_step   < 0) ? (fparm->StepSize(conv::kPhypDm23sq))   : (input_dm23sq_step);
+  double dm32sq_min    = (input_dm32sq_min    < 0) ? (conv::kMinChisqSurfaceDm23sq)         : (input_dm32sq_min);
+  double dm32sq_max    = (input_dm32sq_max    < 0) ? (conv::kMaxChisqSurfaceDm23sq)         : (input_dm32sq_max);
+  double dm32sq_step   = (input_dm32sq_step   < 0) ? (fparm->StepSize(conv::kPhypDm23sq))   : (input_dm32sq_step);
 
   // Make sure that min and max are at the bin centre
   int mixing23_nbins = 1 + TMath::CeilNint((mixing23_max - mixing23_min) / mixing23_step);
-  int dm23sq_nbins   = 1 + TMath::CeilNint((dm23sq_max -   dm23sq_min )  / dm23sq_step );
+  int dm32sq_nbins   = 1 + TMath::CeilNint((dm32sq_max -   dm32sq_min )  / dm32sq_step );
 
   TH2D * chisq_surface = new TH2D("chisq_surface","VaLOR #chi^{2} surface for numu disappearance analysis",
 		mixing23_nbins, mixing23_min - 0.5*mixing23_step, mixing23_max + 0.5*mixing23_step,
-		dm23sq_nbins,   dm23sq_min   - 0.5*dm23sq_step,   dm23sq_max   + 0.5*dm23sq_step  );
+		dm32sq_nbins,   dm32sq_min   - 0.5*dm32sq_step,   dm32sq_max   + 0.5*dm32sq_step  );
   chisq_surface->SetDirectory(0);
   chisq_surface->GetXaxis()->SetRangeUser(0.,1.);
   chisq_surface->Reset();
@@ -113,28 +125,45 @@ void build_chisq_surface_disapp_parallelized
 
      // Loop over bins and calc the chisq fixing osc params to the true ones at the centre
      // of the bin and minimize with respect to all systematics (and, potentially, all other osc params).
+     bool use_single_mixing23_bin = (input_mixing23_bin != -1);
+     bool use_single_dm32sq_bin   = (input_dm32sq_bin   != -1);
      for(int i = 1; i <= chisq_surface->GetNbinsX(); i++) {
+        if(use_single_mixing23_bin) {
+          bool bin_match = (input_mixing23_bin == i);
+          if(!bin_match) continue;
+        }
         for(int j = 1; j <= chisq_surface->GetNbinsY(); j++) {
-           double chisq = 0;
-           if(i == input_mixing23_bin && j == input_dm23sq_bin) {
-               fparm->ResetCurrToInitValues();
-               double mixing23 = chisq_surface->GetXaxis()->GetBinCenter(i);
-               double dm23sq   = chisq_surface->GetYaxis()->GetBinCenter(j);
-               fparm->Update( conv::kPhypMixing23, mixing23 );
-               fparm->Update( conv::kPhypDm23sq,   dm23sq   );
-               fparm->SetInitValue( conv::kPhypMixing23, mixing23 );
-               fparm->SetInitValue( conv::kPhypDm23sq,   dm23sq   );
-               fparm->FixParameter(conv::kPhypMixing23);
-               fparm->FixParameter(conv::kPhypDm23sq);
-               cout << *fparm;
-               FitInputs * fit_inputs = new FitInputs(skobs,skexp,fparm);
-               FitterABC * fitter = util::GetFitter(fit_inputs,fit_option);
-               fitter->SetHesseErrors(false);
-               fitter->DoTheFit();
-               chisq = fit_inputs->Chisquare();
-               delete fitter;
-               delete fit_inputs;
-           }// = input bin?
+          if(use_single_dm32sq_bin) {
+            bool bin_match = (input_dm32sq_bin == j);
+            if(!bin_match) continue;
+           }
+           // init and fix params as needed
+           fparm->ResetCurrToInitValues();
+           double mixing23 = chisq_surface->GetXaxis()->GetBinCenter(i);
+           double dm32sq   = chisq_surface->GetYaxis()->GetBinCenter(j);
+           fparm->Update( conv::kPhypMixing23, mixing23 );
+           fparm->Update( conv::kPhypDm23sq,   dm32sq   );
+           fparm->SetInitValue( conv::kPhypMixing23, mixing23 );
+           fparm->SetInitValue( conv::kPhypDm23sq,   dm32sq   );
+           fparm->FixParameter(conv::kPhypMixing23);
+           fparm->FixParameter(conv::kPhypDm23sq);
+           cout << *fparm;
+           // do the fit
+           FitInputs * fit_inputs = new FitInputs(skobs,skexp,fparm);
+           FitterABC * fitter = util::GetFitter(fit_inputs,fit_option);
+         //fitter->SetHesseErrors(false);
+           cout << "Computing chisq for bin centered at mix23 = " << mixing23 << ", Dm^2 = " << dm32sq << " eV^2" << endl;
+           cout << "Fit has " << fparm->GetNumberFreeParameters() << " free parameters" << endl;
+           fitter->DoTheFit();
+           double chisq = fit_inputs->Chisquare();
+           delete fitter;
+           delete fit_inputs;               
+           // store best-fit results in tree
+           iexpt   = iexperiment;
+           imix23  = i; 
+           idm32sq = j;
+           fitnt->Fill();
+           // update chisq surface
 	   chisq_surface->SetBinContent(i,j,chisq+chisq_surface->GetBinContent(i,j));
            nexperiments++;
         }//j
@@ -156,6 +185,7 @@ void build_chisq_surface_disapp_parallelized
   chisq_surface->GetXaxis()->SetTitleSize(0.05);
 
   f.cd();
-  chisq_surface_syst->Write("chisq_surface");
+  chisq_surface->Write("chisq_surface");
+  fitnt->Write("fitnt");
   f.Close();
 }
