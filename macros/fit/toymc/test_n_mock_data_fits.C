@@ -9,22 +9,22 @@
 
 void test_n_mock_data_fits
 (
-  const char * tag                     = "toyexptfits",                  /* tag for output file */
-  int          run                     = 0,                              /* run number */
-  int          nexperiments            = 1000,                           /* number of toy MC experiment fits */
-  double       input_mixing12          = 0.86,                           /* 12-mixing, sinq2theta or sinsqtheta depending on user choice, if -999 then randomize */
-  double       input_mixing13          = 0.10,                           /* 13-mixing, sinq2theta or sinsqtheta depending on user choice, if -999 then randomize */
-  double       input_mixing23          = 1.00,                           /* 23-mixing, sinq2theta or sinsqtheta depending on user choice */
-  double       input_deltacp           = 0.00,                           /* deltacp, if -999 then randomize */
-  double       input_dm12sq            = 7.58E-5,                        /* Dm^2_{12}, if -999 then randomize */
-  double       input_dm23sq            = 2.32E-3,                        /* |Dm^2_{23}| */
-  const char * config_file             = "analysis_configuration.xml",   /* analysis configuration file */
-  bool         stat_fluctuations       = true,                           /* include statistical fluctuation in toy MC expts? */
-  bool         tweak_systematics       = true,                           /* generate toy MC with randomized systematics? */
-  const char * fit_param_list          = "nuosc3f_numudisapp_fix4",      /* fit parameter list for the given physics hypothesis (see run_fitter.C) */
-  const char * fit_option              = "minuit",                       /* fitter option (see run_fitter.C) */
-  bool         store_toy_expts         = true,                           /* disable this if you don't want to store the toy MC expts     */
-  bool         store_bestfit_spectrum  = true                            /* disable this if you don't want to store the best-fit spectra */
+  const char * tag                     = "toyexptfits",                       /* tag for output file */
+  int          run                     = 0,                                   /* run number */
+  int          nexperiments            = 1000,                                /* number of toy MC experiment fits */
+  double       input_mixing12          = 0.86,                                /* 12-mixing, sinq2theta or sinsqtheta depending on user choice, if -999 then randomize */
+  double       input_mixing13          = 0.10,                                /* 13-mixing, sinq2theta or sinsqtheta depending on user choice, if -999 then randomize */
+  double       input_mixing23          = 1.00,                                /* 23-mixing, sinq2theta or sinsqtheta depending on user choice */
+  double       input_deltacp           = 0.00,                                /* deltacp, if -999 then randomize */
+  double       input_dm12sq            = 7.58E-5,                             /* Dm^2_{12}, if -999 then randomize */
+  double       input_dm23sq            = 2.32E-3,                             /* |Dm^2_{23}| */
+  const char * config_file             = "analysis_configuration.xml",        /* analysis configuration file */
+  bool         stat_fluctuations       = true,                                /* include statistical fluctuation in toy MC expts? */
+  bool         tweak_systematics       = true,                                /* generate toy MC with randomized systematics? */
+  const char * fit_param_list          = "nuosc3f_numudisapp_fix4+nuisance",  /* fit parameter list for the given physics hypothesis (see FitParamList.h) */
+  const char * fit_option              = "minuit",                            /* fitter option */
+  bool         store_toy_expts         = true,                                /* disable this if you don't want to store the toy MC expts     */
+  bool         store_bestfit_spectrum  = true                                 /* disable this if you don't want to store the best-fit spectra */
 )
 {
   using namespace std;
@@ -36,6 +36,7 @@ void test_n_mock_data_fits
 
   // Global options
   Opt::Instance()->gOscMixingParamChoice = kNuMixSinsq2Theta;
+  Opt::Instance()->gOscDmsqScheme        = kNuDmsq12andAbs23;
   Opt::Instance()->gMassHierarchyAssumed = kNmhNormal;
 
   // Check whether some osc. params need to be randomized
