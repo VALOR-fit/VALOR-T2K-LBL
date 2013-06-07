@@ -66,7 +66,7 @@ void run_fit_xml
   // Create tree to store outputs
   TTree * fitnt = new TTree("fitnt","Results of VaLOR data and/or toy-MC experiment fits");
   fitnt->Branch("best_fit_params", "t2kana::FitParamList",  &fparm,     1280000,0);
-  fitnt->Branch("input_params",    "t2kana::PhysParamList", &iparm,     1280000,0);
+//fitnt->Branch("input_params",    "t2kana::PhysParamList", &iparm,     1280000,0);
   fitnt->Branch("data",            "TObjArray",             &dat_array, 1280000,0);
   fitnt->Branch("best_fit_pdf",    "TObjArray",             &pdf_array, 1280000,0);
 
