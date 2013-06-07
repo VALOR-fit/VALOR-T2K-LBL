@@ -7,7 +7,7 @@
 // ------------------------------------------------------------------------------------------------
 //
 
-void test_n_mock_data_fits
+void run_fit
 (
   const char * tag                     = "toyexptfits",                       /* tag for output file */
   int          run                     = 0,                                   /* run number */
