@@ -40,31 +40,22 @@ with a single
 Various small issues
 +--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+
 
-
 Need to update the error on sinsq2theta12. The best fit has been updated to 0.8495 (like nue groups). Can't find the reference
-
 --
 Can we put an Etrue cut on the new PDD parameter of 1.5 GeV? conv::kXSecSystEtrueCut
-
 --
 Need to check evaluation of kNuisBANFFPDDDoubleCount splines is correct. NuXSec::SystWght_1p() and FinTuningWght_1p()
 
---
-There are lots 4 macros like: macros/fit/toymc/test_n_mock_data_fits*.C, corresponding to:
- read toy MC from file / generate on the fly
- save systematic tweaks & best fits / not
-The _with_sys macros should be removed, and the remaining macros should save:
- the best fit values of all parameters
- the fit errors of all parameters
- and the on-the-fly macro should also save the tweak values of all parameters
 
-macros/fit/pulls/mock_data_fit_pulls.C also requires a major rewrite after this change
+Work needed in macros and production scripts:
++--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+
 
+macros/fit/pulls/mock_data_fit_pulls.C requires a major rewrite 
 __
 macros/contour/fc/numu/feldman_cousins_fitting_job.C should save tweak value, best fit, and error of all systematics
-
 __
 macros/spectra/test_sk_ereco_spectrum_twk_sys_throw.C should save tweak value of all systematics
+
 
 
 Physics improvements
