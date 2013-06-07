@@ -2,23 +2,26 @@
 
 #
 #---------------------------------------------------------------------------------------------------------------------------- 
-# Submit a batch of test_n_mock_data_fits_xml.C jobs
+# Submit a batch of run_fit_xml.C jobs
 #
 # Inputs
-#  --resource               : Computer resource, <RAL, IN2P3, Oxford, Grid, interactive>. Default: "interactive"
+#  --resource               : Computer resource, <RAL, Oxford, Grid, interactive>. Default: "interactive"
 #  --tag                    : Tag for output files. Default: "toyexptfits"
 #  --nruns                  : Number of runs (jobs). Default: 1.
 #  --nexpts                 : Number of experiments to fit per run. . Default: 1000.
 #  --first-expt             : ID of first toy MC expt to fit in first job
-#  --cpu-time               : default: "6:00:00" for RAL, "1500000" for IN2P3, "11:50:00" for Oxford
-#  --fit-param-list         : Fit parameter list. Default: "numudisapp2f". See FitParamList.h for allowed options.
+#  --cpu-time               : default: "6:00:00" for RAL, "11:50:00" for Oxford
+#  --fit-param-list         : Fit parameter list. Default: "nuosc3f_numudisapp_fix4+nuisance". See FitParamList.h for allowed options.
 #  --fit-option             : Option passed to fitter. Default: "minuit".
 #  --toy-expts-file         : XML file with toy MC experiments (including full path)
+#  --store-toy-expts        : Store the generated toy MC expts? Default: No.                                
+#  --store-bestfit-spectra  : Store the best-fit spectra? Default: No.               
+#  --config-file            : Analysis configuration file from the config/ directory, default: "analysis_configuration.xml"
 #  --job-dir                : Directory for job scripts and outputs, default: `pwd`
 #  --softw-dir              : Oscillation code top-level directory, default: `pwd`
-#  --config-file            : Analysis configuration file from the config/ directory, default: "analysis_configuration.xml"
+#  --grid-local-dir         :
 #  --proxy-id               : Id used to delegate the proxy
-#  --no-chisq-surf-withsyst : Don't do the chisq surface with systematics
+#  --gridpath               :
 #
 # C.Andreopoulos
 #---------------------------------------------------------------------------------------------------------------------------- 
@@ -28,70 +31,45 @@ use File::Path;
 
 $iarg=0;
 foreach (@ARGV) {
-  if($_ eq '--resource'       ) { $resource      = $ARGV[$iarg+1]; }
-  if($_ eq '--tag'            ) { $tag           = $ARGV[$iarg+1]; }
-  if($_ eq '--nruns'          ) { $nruns         = $ARGV[$iarg+1]; }
-  if($_ eq '--nexpts'         ) { $nexpts        = $ARGV[$iarg+1]; }
-  if($_ eq '--first-expt'     ) { $firstexpt     = $ARGV[$iarg+1]; }
-  if($_ eq '--cpu-time'       ) { $cput          = $ARGV[$iarg+1]; }
-  if($_ eq '--fit-param-list' ) { $fitparamlist  = $ARGV[$iarg+1]; }
-  if($_ eq '--fit-option'     ) { $fitoption     = $ARGV[$iarg+1]; }
-  if($_ eq '--toy-expts-file' ) { $toyexptsfile  = $ARGV[$iarg+1]; }
-  if($_ eq '--job-dir'        ) { $job_dir       = $ARGV[$iarg+1]; }
-  if($_ eq '--grid-local-dir'        ) { $grid_local_dir       = $ARGV[$iarg+1]; }
-  if($_ eq '--softw-dir'      ) { $softw_dir     = $ARGV[$iarg+1]; }
-  if($_ eq '--config-file'    ) { $config_file   = $ARGV[$iarg+1]; }
-  if($_ eq '--proxy-id'       ) { $proxy_id      = $ARGV[$iarg+1]; }
-  if($_ eq '--no-chisq-surf-withsyst' ) { $chisq_syst             = 0; }
-  if($_ eq '--chisqsyst-mixing23-min' ) { $chisqsyst_mixing23_min = $ARGV[$iarg+1]; }
-  if($_ eq '--chisqsyst-mixing23-max' ) { $chisqsyst_mixing23_max = $ARGV[$iarg+1]; }
-  if($_ eq '--chisqsyst-dm23sq-min'   ) { $chisqsyst_dm23sq_min   = $ARGV[$iarg+1]; }
-  if($_ eq '--chisqsyst-dm23sq-max'   ) { $chisqsyst_dm23sq_max   = $ARGV[$iarg+1]; }
-  if($_ eq '--chisqwithsyst-mixing23'      ) { $chisqwithsyst_mixing23      = 1;              }
-  if($_ eq '--chisqwithsyst-mixing23-step' ) { $chisqwithsyst_mixing23_step = $ARGV[$iarg+1]; }
-  if($_ eq '--chisqwithsyst-dm23sq'        ) { $chisqwithsyst_dm23sq        = 1;              }
-  if($_ eq '--chisqwithsyst-dm23sq-step'   ) { $chisqwithsyst_dm23sq_step   = $ARGV[$iarg+1]; }
-  if($_ eq '--gridpath'                    ) { $gridpath                    = $ARGV[$iarg+1]; }
-  if($_ eq '--chisqwithsyst-mixing23'      ) { $chisqwithsyst_mixing23      = 1;              }
-  if($_ eq '--chisqwithsyst-mixing23-step' ) { $chisqwithsyst_mixing23_step = $ARGV[$iarg+1]; }
-  if($_ eq '--chisqwithsyst-dm23sq'        ) { $chisqwithsyst_dm23sq        = 1;              }
-  if($_ eq '--chisqwithsyst-dm23sq-step'   ) { $chisqwithsyst_dm23sq_step   = $ARGV[$iarg+1]; }
+  if($_ eq '--resource'               ) { $resource              = $ARGV[$iarg+1]; }
+  if($_ eq '--tag'                    ) { $tag                   = $ARGV[$iarg+1]; }
+  if($_ eq '--nruns'                  ) { $nruns                 = $ARGV[$iarg+1]; }
+  if($_ eq '--nexpts'                 ) { $nexpts                = $ARGV[$iarg+1]; }
+  if($_ eq '--first-expt'             ) { $firstexpt             = $ARGV[$iarg+1]; }
+  if($_ eq '--cpu-time'               ) { $cput                  = $ARGV[$iarg+1]; }
+  if($_ eq '--fit-param-list'         ) { $fitparamlist          = $ARGV[$iarg+1]; }
+  if($_ eq '--fit-option'             ) { $fitoption             = $ARGV[$iarg+1]; }
+  if($_ eq '--toy-expts-file'         ) { $toyexptsfile          = $ARGV[$iarg+1]; }
+  if($_ eq '--store-toy-expts'        ) { $store_toy_expts       = 1;              }
+  if($_ eq '--store-bestfit-spectra'  ) { $store_bestfit_spectra = 1;              }
+  if($_ eq '--config-file'            ) { $config_file           = $ARGV[$iarg+1]; }
+  if($_ eq '--job-dir'                ) { $job_dir               = $ARGV[$iarg+1]; }
+  if($_ eq '--softw-dir'              ) { $softw_dir             = $ARGV[$iarg+1]; }
+  if($_ eq '--grid-local-dir'         ) { $grid_local_dir        = $ARGV[$iarg+1]; }
+  if($_ eq '--proxy-id'               ) { $proxy_id              = $ARGV[$iarg+1]; }
+  if($_ eq '--gridpath'               ) { $gridpath              = $ARGV[$iarg+1]; }
   $iarg++;
 }
 
 die("Please specify a toy experiment file using --toy-expts-file") unless defined $toyexptsfile;
 
-$resource               = "interactive"                 unless defined $resource;
-$tag                    = "toyexptfits"                 unless defined $tag;
-$nruns                  = 1                             unless defined $nruns;
-$nexpts                 = 1                             unless defined $nexpts;
-$firstexpt              = 0                             unless defined $firstexpt;
-$fitparamlist           = "nuosc3f_numudisapp_fix4"     unless defined $fitparamlist;
-$fitoption              = "minuit"                      unless defined $fitoption;
-$job_dir                = `pwd`                         unless defined $job_dir;
-$grid_local_dir         = `pwd`                         unless defined $grid_local_dir;
-$softw_dir              = `pwd`                         unless defined $softw_dir;
-$config_file            = "analysis_configuration.xml"  unless defined $config_file;
-$chisq_syst             = 1                             unless defined $chisq_syst;
-$proxy_id               = "valor"                       unless defined $proxy_id;
-$output_option          = "Observation+BestFitSpectra+ChisqSurface+Canvases";
-$chisqsyst_mixing23_min = 0.6                           unless defined $chisqsyst_mixing23_min;
-$chisqsyst_mixing23_max = 1.0                           unless defined $chisqsyst_mixing23_max;
-$chisqsyst_dm23sq_min   = 0.001                         unless defined $chisqsyst_dm23sq_min;
-$chisqsyst_dm23sq_max   = 0.004                         unless defined $chisqsyst_dm23sq_max;
-$chisqwithsyst_mixing23 = 0                             unless defined $chisqwithsyst_mixing23;
-$chisqwithsyst_mixing23_step = 0.01                     unless defined $chisqwithsyst_mixing23_step;
-$chisqwithsyst_dm23sq   = 0                             unless defined $chisqwithsyst_dm23sq;
-$chisqwithsyst_dm23sq_step = 0.01                       unless defined $chisqwithsyst_dm23sq_step;
-$chisqwithsyst_mixing23 = 0                             unless defined $chisqwithsyst_mixing23;
-$chisqwithsyst_mixing23_step = 0.01                     unless defined $chisqwithsyst_mixing23_step;
-$chisqwithsyst_dm23sq   = 0                             unless defined $chisqwithsyst_dm23sq;
-$chisqwithsyst_dm23sq_step = 0.01                       unless defined $chisqwithsyst_dm23sq_step;
-
+$resource               = "interactive"                        unless defined $resource;
+$tag                    = "toyexptfits"                        unless defined $tag;
+$nruns                  = 1                                    unless defined $nruns;
+$nexpts                 = 1                                    unless defined $nexpts;
+$firstexpt              = 0                                    unless defined $firstexpt;
+$fitparamlist           = "nuosc3f_numudisapp_fix4+nuisance"   unless defined $fitparamlist;
+$fitoption              = "minuit"                             unless defined $fitoption;
+$store_toy_expts        = 0                                    unless defined $store_toy_expts;
+$store_bestfit_spectra  = 0                                    unless defined $store_bestfit_spectra;
+$config_file            = "analysis_configuration.xml"         unless defined $config_file;
+$softw_dir              = `pwd`                                unless defined $softw_dir;
+$job_dir                = `pwd`                                unless defined $job_dir;
+$proxy_id               = "valor"                              unless defined $proxy_id;
+$grid_local_dir         = `pwd`                                unless defined $grid_local_dir;
 
 if( !defined $cput) {
   if($resource eq "RAL"   ) { $cput = "6:00:00";  }
-  if($resource eq "IN2P3" ) { $cput = 1500000;    }
   if($resource eq "Oxford") { $cput = "11:50:00"; }
 }
 
@@ -110,15 +88,14 @@ while($irun < $nruns) {
   $batch_script  = "$tag-$irun.pbs";
   $job_name      = "$tag-$irun";
 
-  if( $resource eq "Grid") { $macro_dir = "\$T2KOSCANA";       }
-  else                     { $macro_dir = $softw_dir; }
+  if( $resource eq "Grid") { $macro_dir = "\$T2KOSCANA"; }
+  else                     { $macro_dir = $softw_dir;    }
 
-  $command = "root2k -l -b -q \'$macro_dir/macros/fit/toymc/test_n_mock_data_fits_xml.C(\"$tag\",$irun,\"$toyexptsfile\",$first,$last,\"$config_file\",\"$fitparamlist\",\"$fitoption\",\"$output_option\",$chisq_syst,$chisqsyst_mixing23_min,$chisqsyst_mixing23_max,$chisqsyst_dm23sq_min,$chisqsyst_dm23sq_max,$chisqwithsyst_mixing23,$chisqwithsyst_mixing23_step,$chisqwithsyst_dm23sq,$chisqwithsyst_dm23sq_step)\'";
+  $command = "root2k -l -b -q \'$macro_dir/macros/fit/run_fit_xml.C(\"$tag\",$irun,\"$toyexptsfile\",$first,$last,\"$config_file\",\"$fitparamlist\",\"$fitoption\",\"$output_option\",$store_toy_expts,$store_bestfit_spectra)\'";
+  print "$command \n";
 
   $first = $last  + 1;
   $last  = $first + $nexpts - 1;
-
-  print "$command \n";
 
   #
   # RAL
@@ -136,19 +113,6 @@ while($irun < $nruns) {
      print PBS "$command \n";
      close(PBS);
      `qsub -q prod $job_dir/$batch_script`;
-  }
-  #
-  # IN2P3
-  #
-  if($resource eq "IN2P3") {
-     open(PBS, ">$job_dir/$batch_script") or die("Can not create the PBS batch script");
-     print PBS "#!/bin/tcsh \n";
-     print PBS "cd $job_dir \n";
-     print PBS "source $softw_dir/setup/setup_at_in2p3.csh $softw_dir \n";
-     print PBS "$command \n";
-     close(PBS);
-     `chmod +x $job_dir/$batch_script`;
-     `qsub -eo -V -l platform=LINUX,t=$cput,M=2200MB,scratch=500MB,u_sps_babar -o $tag-$irun.pbs.out -N $job_name $job_dir/$batch_script`;
   }
   #
   # Oxford
@@ -211,7 +175,6 @@ while($irun < $nruns) {
     print SH "#echo Done!\n";
   }
 
-
   #
   # interactive
   #
@@ -221,7 +184,6 @@ while($irun < $nruns) {
 
   $irun++;
 }
-
 
 if($resource eq "Grid") {
   # Finally write the sh bash script to handle the job submission
