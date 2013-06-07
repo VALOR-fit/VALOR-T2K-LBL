@@ -1,6 +1,6 @@
 <?xml version="1.0"?>
 
-<analysis_inputs analysis="T2K/OscillantionAnalysis2012a/RAL+Ox+Lancs+IFIC" mc="NEUT">
+<analysis_inputs analysis="T2K/VaLOR13a/numu" data="run1234a" flux="11b/v3.2" mc="neut/13a" ndfit="banff/13v0" oth="sk+fsi">
 
   <!--
   ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -26,22 +26,22 @@
        -->
        <tuned>
          <numu>
-            <filename>   inputs/official/2012/flux/11b_v3.2_run1-3c/sk_tuned11bv3.2_11anom_run1-run3c_fine.root </filename>
+            <filename>   inputs/official/2013/flux/11b_v3.2_run1-4a/sk_tuned11bv3.2_11anom_run1-run4_fine.root </filename>
             <objname>    enu_sk_tuned11b_numu  </objname>
             <objtype>    TH1D                  </objtype>
          </numu>
          <numubar>
-            <filename>   inputs/official/2012/flux/11b_v3.2_run1-3c/sk_tuned11bv3.2_11anom_run1-run3c_fine.root </filename>
+            <filename>   inputs/official/2013/flux/11b_v3.2_run1-4a/sk_tuned11bv3.2_11anom_run1-run4_fine.root </filename>
             <objname>    enu_sk_tuned11b_numub </objname>
             <objtype>    TH1D                  </objtype>
          </numubar>
          <nue>
-            <filename>   inputs/official/2012/flux/11b_v3.2_run1-3c/sk_tuned11bv3.2_11anom_run1-run3c_fine.root </filename>
+            <filename>   inputs/official/2013/flux/11b_v3.2_run1-4a/sk_tuned11bv3.2_11anom_run1-run4_fine.root </filename>
             <objname>    enu_sk_tuned11b_nue   </objname>
             <objtype>    TH1D                  </objtype>
          </nue>
          <nuebar>
-            <filename>   inputs/official/2012/flux/11b_v3.2_run1-3c/sk_tuned11bv3.2_11anom_run1-run3c_fine.root </filename>
+            <filename>   inputs/official/2013/flux/11b_v3.2_run1-4a/sk_tuned11bv3.2_11anom_run1-run4_fine.root </filename>
             <objname>    enu_sk_tuned11b_nueb  </objname>
             <objtype>    TH1D                  </objtype>
          </nuebar>
@@ -51,22 +51,22 @@
        -->
        <tuning_weights>
          <numu>
-            <filename>   inputs/official/2012/flux/11b_v3.2_run1-3c/sk_tuned11bv3.2_11anom_run1-run3c_fine.root </filename>
+            <filename>   inputs/official/2013/flux/11b_v3.2_run1-4a/sk_tuned11bv3.2_11anom_run1-run4_fine.root </filename>
             <objname>    enu_sk_tuned11b_numu_ratio   </objname>
             <objtype>    TH1D                         </objtype>
          </numu>
          <numubar>
-            <filename>   inputs/official/2012/flux/11b_v3.2_run1-3c/sk_tuned11bv3.2_11anom_run1-run3c_fine.root </filename>
+            <filename>   inputs/official/2013/flux/11b_v3.2_run1-4a/sk_tuned11bv3.2_11anom_run1-run4_fine.root </filename>
             <objname>    enu_sk_tuned11b_numub_ratio  </objname>
             <objtype>    TH1D                         </objtype>
          </numubar>
          <nue>
-            <filename>   inputs/official/2012/flux/11b_v3.2_run1-3c/sk_tuned11bv3.2_11anom_run1-run3c_fine.root </filename>
+            <filename>   inputs/official/2013/flux/11b_v3.2_run1-4a/sk_tuned11bv3.2_11anom_run1-run4_fine.root </filename>
             <objname>    enu_sk_tuned11b_nue_ratio    </objname>
             <objtype>    TH1D                         </objtype>
          </nue>
          <nuebar>
-            <filename>   inputs/official/2012/flux/11b_v3.2_run1-3c/sk_tuned11bv3.2_11anom_run1-run3c_fine.root </filename>
+            <filename>   inputs/official/2013/flux/11b_v3.2_run1-4a/sk_tuned11bv3.2_11anom_run1-run4_fine.root </filename>
             <objname>    enu_sk_tuned11b_nueb_ratio   </objname>
             <objtype>    TH1D                         </objtype>
          </nuebar>
@@ -76,7 +76,7 @@
 
   <!--
   ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-  SuperK MC inputs 
+  SuperK MC inputs for VaLOR MC templates
   ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
   -->
 
@@ -184,44 +184,28 @@
 
   <!--
   ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-  SuperK detector systematics
+  Additional templates: MEC
   ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
   -->
 
-  <detector_systematics>
-     <superk>
-         <energy_scale_relative_error>
-            <one_mu_ring>
-               0.024
-            </one_mu_ring>
-            <one_e_ring>
-               0.024
-            </one_e_ring>
-         </energy_scale_relative_error>
-         <efficiency_relative_error>  
-            <one_mu_ring>
-               <ccqe>
-                  <other_error>   0.018  </other_error>          
-                  <rc_error>          
-                     <filename>  inputs/official/2012/superk/err/sk_ccqe_rc_err_covariance.root </filename>
-                     <objname>   ccqe_rc_err_covariance  </objname>
-                     <objtype>   TMatrixD </objtype>
-                  </rc_error>                     
-                  <rc_ereco_high_bin1>   0.4  </rc_ereco_high_bin1>          
-                  <rc_ereco_high_bin2>   1.1  </rc_ereco_high_bin2>   
-               </ccqe>
-               <ccnonqe>   0.200 </ccnonqe>
-               <nc>        1.110 </nc>
-               <nuecc>     1.000 </nuecc>
-            </one_mu_ring>
-            <one_e_ring>
-              <filename>      inputs/official/2012/superk/err/SKMay.root </filename>
-              <objname>       mat_cov_all </objname>
-              <objtype>       TMatrixD </objtype>
-            </one_e_ring>
-         </efficiency_relative_error>  
-     </superk>
-  </detector_systematics>
+  <mec>
+       <!--
+        MEC templates
+       -->
+       <templates>
+         <martini>
+	   <filename>   inputs/official/2013/xsec/sk_mec_erec_etrue_run1to4.root </filename>
+	   <objname>    sk_martini_erec_etrue </objname>
+	   <objtype>    TH2D                  </objtype>
+	 </martini>
+	 <nieves>
+	   <filename>   inputs/official/2013/xsec/sk_mec_erec_etrue_run1to4.root </filename>
+	   <objname>    sk_nieves_erec_etrue  </objname>
+	   <objtype>    TH2D                  </objtype>
+	 </nieves>
+       </templates>
+  </mec>
+
 
   <!--
   ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -229,12 +213,12 @@
   ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
   -->
 
-  <banff>
+ <banff>
        <!--
         Central values from BANFF fit
        -->
        <best_fit_values>
-          <filename>   inputs/official/2012/banff/postfit_banff_v8_osc_marg_MAQE_EBfix.root  </filename>
+          <filename>   inputs/official/2013/banff/postfit_banff_2013_disappearance_v0.root  </filename>
           <objname>    postfit_params   </objname>
           <objtype>    TVectorD         </objtype>
         </best_fit_values>
@@ -242,7 +226,7 @@
         Covariance of fit parameters
        -->
        <covariance_matrix>
-          <filename>   inputs/official/2012/banff/postfit_banff_v8_osc_marg_MAQE_EBfix.root  </filename>
+          <filename>   inputs/official/2013/banff/postfit_banff_2013_disappearance_v0.root  </filename>
           <objname>    postfit_cov      </objname>
           <objtype>    TMatrixD         </objtype>
         </covariance_matrix>
@@ -289,22 +273,50 @@
       </normalisations>
   </xsec>
 
+
   <!--
   ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-  MEC
+  SuperK detector systematics
   ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
   -->
 
-  <mec>
-       <!--
-        MEC template
-       -->
-       <template>
-	   <filename>   inputs/official/2012/xsec/sk_mec_erec_etrue.root </filename>
-	   <objname>    sk_martini_erec_etrue </objname>
-	   <objtype>    TH2D                  </objtype>
-       </template>
-  </mec>
+  <detector_systematics>
+     <superk>
+         <energy_scale_relative_error>
+            <one_mu_ring>
+               0.024
+            </one_mu_ring>
+            <one_e_ring>
+               0.024
+            </one_e_ring>
+         </energy_scale_relative_error>
+<!--
+         <efficiency_relative_error>  
+            <one_mu_ring>
+               <ccqe>
+                  <other_error>   0.018  </other_error>          
+                  <rc_error>          
+                     <filename>  inputs/official/2012/superk/err/sk_ccqe_rc_err_covariance.root </filename>
+                     <objname>   ccqe_rc_err_covariance  </objname>
+                     <objtype>   TMatrixD </objtype>
+                  </rc_error>                     
+                  <rc_ereco_high_bin1>   0.4  </rc_ereco_high_bin1>          
+                  <rc_ereco_high_bin2>   1.1  </rc_ereco_high_bin2>   
+               </ccqe>
+               <ccnonqe>   0.200 </ccnonqe>
+               <nc>        1.110 </nc>
+               <nuecc>     1.000 </nuecc>
+            </one_mu_ring>
+            <one_e_ring>
+              <filename>      inputs/official/2012/superk/err/SKMay.root </filename>
+              <objname>       mat_cov_all </objname>
+              <objtype>       TMatrixD </objtype>
+            </one_e_ring>
+         </efficiency_relative_error>  
+-->
+     </superk>
+  </detector_systematics>
+
 
   <!--
   ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -316,11 +328,13 @@
        <!--
         Covariance matrix of FSI parameters
        -->
+<!--
        <covariance_matrix>
           <filename>   inputs/official/2013/skdetfsi/FSIandSIErrors2013.root  </filename>
           <objname>    FSICovariance    </objname>
           <objtype>    TH2D             </objtype>
        </covariance_matrix>     
+-->
   </fsi>
 
   <!--

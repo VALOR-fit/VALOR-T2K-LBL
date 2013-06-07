@@ -199,7 +199,7 @@ void test_sk_ereco_spectrum_twk_sys_throw
   // Output histograms
   TH1D * hErecoNominal = 0;
   TH1D * hEreco[nexp] = {0};
-  TH1D * hNsk = new TH1D(Form("%s_nsk",modetitle.c_str()),Form("%s_nsk",modetitle.c_str()),3000,0,300);
+  TH1D * hNsk = new TH1D(Form("%s_nsk",modetitle.c_str()),Form("%s_nsk",modetitle.c_str()),10000,0,1000);
   int nbanff = conv::kNumOfParamsInBANFFfit;
   //int nfsi = conv::kNumOfFSIParams;
   int nfsi = conv::kNumOfSKDetFSIParams;

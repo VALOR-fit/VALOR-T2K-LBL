@@ -147,7 +147,7 @@ void test_sk_ereco_spectrum_nominal
   }
   legend->Draw();
   c->Update();
-  c->SaveAs(Form("sk_ereco_spectrum-%s%s.pdf",oscparams.c_str(),(disable_banff_tuning ? "_nobanff" : "")));
+  c->SaveAs(Form("sk_ereco_spectrum-%s_%f_%f.pdf",input_mixing23, input_dm23sq, (disable_banff_tuning ? "_nobanff" : "")));
   hErecoTot->GetXaxis()->UnZoom();
 
   //draw coarse binned histograms
@@ -178,7 +178,7 @@ void test_sk_ereco_spectrum_nominal
   }
   legend_coarse->Draw();
   c_coarse->Update();
-  c_coarse->SaveAs(Form("sk_ereco_spectrum-%s%s_coarse.pdf",oscparams.c_str(),(disable_banff_tuning ? "_nobanff" : "")));
+  c_coarse->SaveAs(Form("sk_ereco_spectrum-%s_%f_%f.pdf",input_mixing23, input_dm23sq, (disable_banff_tuning ? "_nobanff" : "")));
 
 
   //can save this to file &/or print it

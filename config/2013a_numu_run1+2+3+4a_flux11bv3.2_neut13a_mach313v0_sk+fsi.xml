@@ -191,13 +191,20 @@
 
   <mec>
        <!--
-        MEC template
+        MEC templates
        -->
-       <template>
-	   <filename>   inputs/official/2012/xsec/sk_mec_erec_etrue.root </filename>
+       <templates>
+         <martini>
+	   <filename>   inputs/official/2013/xsec/sk_mec_erec_etrue_run1to4.root </filename>
 	   <objname>    sk_martini_erec_etrue </objname>
 	   <objtype>    TH2D                  </objtype>
-       </template>
+	 </martini>
+	 <nieves>
+	   <filename>   inputs/official/2013/xsec/sk_mec_erec_etrue_run1to4.root </filename>
+	   <objname>    sk_nieves_erec_etrue  </objname>
+	   <objtype>    TH2D                  </objtype>
+	 </nieves>
+       </templates>
   </mec>
 
 
