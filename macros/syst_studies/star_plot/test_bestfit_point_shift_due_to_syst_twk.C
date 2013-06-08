@@ -67,7 +67,7 @@
 
 void test_bestfit_point_shift_due_to_syst_twk
 (
- const char * systematic="banff_00",                                                  /* options: see above */
+ const char * systematic="sk_energy_scale",                                                  /* options: see above */
  const char * sksample                   = "1Rmu",                         /* options: "1Rmu", "1Re" */
  const char * fit_param_list             = "nuosc3f_numudisapp_fix4",      /* */
  const char * fit_option                 = "minuit",                       /* oscillation fitter (see run_fitter.C) */
@@ -78,11 +78,13 @@ void test_bestfit_point_shift_due_to_syst_twk
  double       input_dm12sq               = -99,                            /* */
  double       input_dm23sq               = -99,                            /* */
  const char * config_file                = "analysis_configuration.xml",   /* */
- bool         correlated_banff           = true                           /* tweak banff parameters respecting correlations? */
+ bool         correlated_parameters      = false,                          /* tweak matrix parameters respecting correlations? */
+ const int    throw_n_toys               = 0                               /* if <=0, will use +1 and -1 sigma tweaks. Otherwise, throw n toys & find standard deviation */
  )
 {
   using namespace std;
   using namespace t2kana;
+  using namespace t2kana::conv;
 
   // Analysis configuration
   const char * config  = Form("%s/config/%s", gSystem->Getenv("T2KOSCANA"), config_file);
@@ -161,271 +163,543 @@ void test_bestfit_point_shift_due_to_syst_twk
   SuperkObservation * skobs = 0;
   FitInputs * fit_inputs = 0;
   FitterABC * fitter = 0;
-  
-  //
-  //
-  // +1 sigma (relative to tuned BANFF)
-  //
-  //
 
-  cout << "\n\nApplying +1 sigma tweak" << endl;
-  if(sys.find("banff_") == 0) {
-    //find parameter to tweak
-    conv::PhysParamId_t p = util::PhysParamIdFromString(systematic);
-    int ip = util::ArrIdx::Instance()->BANFFSystIdx(p);
-    //initialise tweak vector
-    const int nbanff = conv::kNumOfParamsInBANFFfit;
-    TVectorD twkv(nbanff);
-    const TMatrixD & cov = skexp->GetBANFF()->CovMatrix();
-    //tweak the parameter to tweak
-    twkv[ip] = skexp->GetBANFF()->BestFitValue(p) + (1 * sqrt(cov[ip][ip]));
-    //if we're tweaking the other parameters in a correlated way too
-    double sigma = (twkv[ip] - skexp->GetBANFF()->BestFitValue(p)) / cov[ip][ip];
-    for(int ipp = 0; ipp < nbanff; ipp++) {
-      int position = (int)conv::kNuisBANFF00 + ipp;
-      conv::PhysParamId_t pp = (conv::PhysParamId_t)position;
-      if(pp == p)
-	continue;
-      //set non-tweaked values to best fit
-      twkv[ipp] = skexp->GetBANFF()->BestFitValue(pp);
-      //now, tweak the other parameters according to the correlations between them and the fitted parameters
-      if(correlated_banff)
-	twkv[ipp] += sigma * cov[ip][ipp];
-    }
-    skexp->GetBANFF()->Tweak(true,&twkv,1);
-  }
-  else if(sys.find("edbanff_") == 0) {
-    conv::PhysParamId_t p = util::PhysParamIdFromString(systematic);
-    skexp->TweakSystematic(systematic, skexp->GetBANFF()->BestFitEigenDecompValue(p) + (1 * sqrt(skexp->GetBANFF()->EigenDecompEigenValue(p))));
-  }
-  else if(sys.find("fsi_") == 0) {
-    conv::PhysParamId_t p = util::PhysParamIdFromString(systematic);
-    int ip = util::ArrIdx::Instance()->FSISystIdx(p);
-    skexp->TweakSystematic(systematic, 1 + (1 * sqrt(skexp->GetFSI()->CovMatrix()(ip,ip))));
-  }
-  else if(sys.find("osc_mixing12") == 0) {
-    double tweak_mixing12 = input_mixing12 * (1 + conv::kGlobFitErrSinsq2Theta12);
-    if(tweak_mixing12 >  fparm->MaxValue(conv::kPhypMixing12)) tweak_mixing12 = fparm->MaxValue(conv::kPhypMixing12);
-    if(tweak_mixing12 <  fparm->MinValue(conv::kPhypMixing12)) tweak_mixing12 = fparm->MinValue(conv::kPhypMixing12);
-    fparm->Update(conv::kPhypMixing12, tweak_mixing12);
-    fparm->SetInitValue(conv::kPhypMixing12, tweak_mixing12);
-  }
-  else if(sys.find("osc_mixing13") == 0) {
-    double tweak_mixing13 = input_mixing13 * (1 + conv::kGlobFitErrSinsq2Theta13);
-    if(tweak_mixing13 >  fparm->MaxValue(conv::kPhypMixing13)) tweak_mixing13 = fparm->MaxValue(conv::kPhypMixing13);
-    if(tweak_mixing13 <  fparm->MinValue(conv::kPhypMixing13)) tweak_mixing13 = fparm->MinValue(conv::kPhypMixing13);
-    fparm->Update(conv::kPhypMixing13, tweak_mixing13);
-    fparm->SetInitValue(conv::kPhypMixing13, tweak_mixing13);
-  }
-  else if(sys.find("osc_dm12sq") == 0) {
-    double tweak_dm12sq = input_dm12sq * (1 + conv::kGlobFitErrDm12sq);
-    if(tweak_dm12sq >  fparm->MaxValue(conv::kPhypDm12sq)) tweak_dm12sq = fparm->MaxValue(conv::kPhypDm12sq);
-    if(tweak_dm12sq <  fparm->MinValue(conv::kPhypDm12sq)) tweak_dm12sq = fparm->MinValue(conv::kPhypDm12sq);
-    fparm->Update(conv::kPhypDm12sq, tweak_dm12sq);
-    fparm->SetInitValue(conv::kPhypDm12sq, tweak_dm12sq);
-  }
-  else if(sys.find("osc_deltacp") == 0) {
-    double tweak_deltacp = input_deltacp + (TMath::Pi()/2);
-    if(tweak_deltacp >  fparm->MaxValue(conv::kPhypDeltaCP)) tweak_deltacp = fparm->MaxValue(conv::kPhypDeltaCP);
-    if(tweak_deltacp <  fparm->MinValue(conv::kPhypDeltaCP)) tweak_deltacp = fparm->MinValue(conv::kPhypDeltaCP);
-    fparm->Update(conv::kPhypDeltaCP, tweak_deltacp);
-    fparm->SetInitValue(conv::kPhypDeltaCP, tweak_deltacp);
-  }
-  else {
-    skexp->TweakSystematic(systematic,+1.);
-  }
-
-  // Generate toy MC
-  cout << "Generating toy-MC..." << endl;
-  cout << "p.d.f parameters: " << endl;
-  skexp->PrintSystematicVariations();
-  skobs = new SuperkObservation;
-  skobs->CreateMockData(*skexp, PhysHypothesis(*fparm), fluctuate_stat);
-
-  // Reset systematic variation
-  skexp->ResetSystematicVariations();
-
-  // Get fitter
-  fit_inputs = new FitInputs(skobs,skexp,fparm);
-  fitter = new Superk1RmuErecoFitter(fit_inputs,fit_option);
-
-  // Do the fit
-  fitter->DoTheFit();
-
-  // Store best-fit params
+  //initialise output
   double bestfit_mixing12_p1sig = -1;
   double bestfit_mixing13_p1sig = -1;
   double bestfit_mixing23_p1sig = -1;
   double bestfit_deltacp_p1sig  = -1;
   double bestfit_dm12sq_p1sig   = -1;
   double bestfit_dm23sq_p1sig   = -1;
-  if(hyp == conv::kHypOsc3F) {
-    bestfit_mixing12_p1sig = fparm->BestFitValue(conv::kPhypMixing12);
-    bestfit_mixing13_p1sig = fparm->BestFitValue(conv::kPhypMixing13);
-    bestfit_mixing23_p1sig = fparm->BestFitValue(conv::kPhypMixing23);
-    bestfit_deltacp_p1sig  = fparm->BestFitValue(conv::kPhypDeltaCP);
-    bestfit_dm12sq_p1sig   = fparm->BestFitValue(conv::kPhypDm12sq);
-    bestfit_dm23sq_p1sig   = fparm->BestFitValue(conv::kPhypDm23sq);
-  }
-  else if(hyp == conv::kHypNuMuDisapp2F) {
-    bestfit_mixing23_p1sig = fparm->BestFitValue(conv::kPhypMixing23);
-    bestfit_dm23sq_p1sig   = fparm->BestFitValue(conv::kPhypDm23sq);
-  }
-
-  // Clean-up in preparation for the -1 sigma fit
-  delete skobs;
-  delete fit_inputs;
-  delete fitter;
-  skexp->ResetSystematicVariations();
-  fparm->ResetCurrToInitValues();
-  //need to do this, just incase InitValues were changed inside FitterKernel::DoTheFit()
-  if(hyp == conv::kHypOsc3F) {
-    fparm->SetInitValue(conv::kPhypMixing12, input_mixing12);
-    fparm->SetInitValue(conv::kPhypMixing13, input_mixing13);
-    fparm->SetInitValue(conv::kPhypMixing23, input_mixing23);
-    fparm->SetInitValue(conv::kPhypDeltaCP,  input_deltacp);
-    fparm->SetInitValue(conv::kPhypDm12sq,   input_dm12sq);
-    fparm->SetInitValue(conv::kPhypDm23sq,   input_dm23sq);
-  }
-  else if(hyp == conv::kHypNuMuDisapp2F) {
-    fparm->SetInitValue(conv::kPhypMixing23, input_mixing23);
-    fparm->SetInitValue(conv::kPhypDm23sq,   input_dm23sq);
-  }  
-  
-  //
-  //
-  // -1 sigma (relative to tuned BANFF)
-  //
-  //
-  cout << "\n\nApplying -1 sigma tweak" << endl;
-  if(sys.find("banff_") == 0) {
-    //find parameter to tweak
-    conv::PhysParamId_t p = util::PhysParamIdFromString(systematic);
-    int ip = util::ArrIdx::Instance()->BANFFSystIdx(p);
-    //initialise tweak vector
-    const int nbanff = conv::kNumOfParamsInBANFFfit;
-    TVectorD twkv(nbanff);
-    const TMatrixD & cov = skexp->GetBANFF()->CovMatrix();
-    //tweak the parameter to tweak
-    twkv[ip] = skexp->GetBANFF()->BestFitValue(p) + (-1 * sqrt(cov[ip][ip]));
-    //if we're tweaking the other parameters in a correlated way too
-    double sigma = (twkv[ip] - skexp->GetBANFF()->BestFitValue(p)) / cov[ip][ip];
-    for(int ipp = 0; ipp < nbanff; ipp++) {
-      int position = (int)conv::kNuisBANFF00 + ipp;
-      conv::PhysParamId_t pp = (conv::PhysParamId_t)position;
-      if(pp == p)
-	continue;
-      //set non-tweaked values to best fit
-      twkv[ipp] = skexp->GetBANFF()->BestFitValue(pp);
-      //now, tweak the other parameters according to the correlations between them and the fitted parameters
-      if(correlated_banff)
-	twkv[ipp] += sigma * cov[ip][ipp];
-    }
-    skexp->GetBANFF()->Tweak(true,&twkv,1);
-  }
-  else if(sys.find("edbanff_") == 0) {
-    conv::PhysParamId_t p = util::PhysParamIdFromString(systematic);
-    skexp->TweakSystematic(systematic, skexp->GetBANFF()->BestFitEigenDecompValue(p) + (-1 * sqrt(skexp->GetBANFF()->EigenDecompEigenValue(p))));
-  }
-  else if(sys.find("fsi_") == 0) {
-    conv::PhysParamId_t p = util::PhysParamIdFromString(systematic);
-    int ip = util::ArrIdx::Instance()->FSISystIdx(p);
-    skexp->TweakSystematic(systematic, 1 + (-1 * sqrt(skexp->GetFSI()->CovMatrix()(ip,ip))));
-  }
-  else if(sys.find("osc_mixing12") == 0) {
-    double tweak_mixing12 = input_mixing12 * (1 - conv::kGlobFitErrSinsq2Theta12);
-    if(tweak_mixing12 >  fparm->MaxValue(conv::kPhypMixing12)) tweak_mixing12 = fparm->MaxValue(conv::kPhypMixing12);
-    if(tweak_mixing12 <  fparm->MinValue(conv::kPhypMixing12)) tweak_mixing12 = fparm->MinValue(conv::kPhypMixing12);
-    fparm->Update(conv::kPhypMixing12, tweak_mixing12);
-    fparm->SetInitValue(conv::kPhypMixing12, tweak_mixing12);
-  }
-  else if(sys.find("osc_mixing13") == 0) {
-    double tweak_mixing13 = input_mixing13 * (1 - conv::kGlobFitErrSinsq2Theta13);
-    if(tweak_mixing13 >  fparm->MaxValue(conv::kPhypMixing13)) tweak_mixing13 = fparm->MaxValue(conv::kPhypMixing13);
-    if(tweak_mixing13 <  fparm->MinValue(conv::kPhypMixing13)) tweak_mixing13 = fparm->MinValue(conv::kPhypMixing13);
-    fparm->Update(conv::kPhypMixing13, tweak_mixing13);
-    fparm->SetInitValue(conv::kPhypMixing13, tweak_mixing13);
-  }
-  else if(sys.find("osc_dm12sq") == 0) {
-    double tweak_dm12sq = input_dm12sq * (1 - conv::kGlobFitErrDm12sq);
-    if(tweak_dm12sq >  fparm->MaxValue(conv::kPhypDm12sq)) tweak_dm12sq = fparm->MaxValue(conv::kPhypDm12sq);
-    if(tweak_dm12sq <  fparm->MinValue(conv::kPhypDm12sq)) tweak_dm12sq = fparm->MinValue(conv::kPhypDm12sq);
-    fparm->Update(conv::kPhypDm12sq, tweak_dm12sq);
-    fparm->SetInitValue(conv::kPhypDm12sq, tweak_dm12sq);
-  }
-  else if(sys.find("osc_deltacp") == 0) {
-    double tweak_deltacp = input_deltacp - (TMath::Pi()/2);
-    if(tweak_deltacp >  fparm->MaxValue(conv::kPhypDeltaCP)) tweak_deltacp = fparm->MaxValue(conv::kPhypDeltaCP);
-    if(tweak_deltacp <  fparm->MinValue(conv::kPhypDeltaCP)) tweak_deltacp = fparm->MinValue(conv::kPhypDeltaCP);
-    fparm->Update(conv::kPhypDeltaCP, tweak_deltacp);
-    fparm->SetInitValue(conv::kPhypDeltaCP, tweak_deltacp);
-  }
-  else {
-    skexp->TweakSystematic(systematic,-1.);
-  }
-
-  // Generate toy MC
-  cout << "Generating toy-MC..." << endl;
-  cout << "p.d.f parameters: " << endl;
-  skexp->PrintSystematicVariations();
-  skobs = new SuperkObservation;
-  skobs->CreateMockData(*skexp, *fparm, fluctuate_stat);
-
-  // Reset systematic variation
-  skexp->ResetSystematicVariations();
-
-  // Get fitter
-  fit_inputs = new FitInputs(skobs,skexp,fparm);
-  fitter = new Superk1RmuErecoFitter(fit_inputs,fit_option);
-
-  // Do the fit
-  fitter->DoTheFit();
-
-  // Store best-fit params
   double bestfit_mixing12_m1sig = -1;
   double bestfit_mixing13_m1sig = -1;
   double bestfit_mixing23_m1sig = -1;
   double bestfit_deltacp_m1sig  = -1;
   double bestfit_dm12sq_m1sig   = -1;
   double bestfit_dm23sq_m1sig   = -1;
-  if(hyp == conv::kHypOsc3F) {
-    bestfit_mixing12_m1sig = fparm->BestFitValue(conv::kPhypMixing12);
-    bestfit_mixing13_m1sig = fparm->BestFitValue(conv::kPhypMixing13);
-    bestfit_mixing23_m1sig = fparm->BestFitValue(conv::kPhypMixing23);
-    bestfit_deltacp_m1sig  = fparm->BestFitValue(conv::kPhypDeltaCP);
-    bestfit_dm12sq_m1sig   = fparm->BestFitValue(conv::kPhypDm12sq);
-    bestfit_dm23sq_m1sig   = fparm->BestFitValue(conv::kPhypDm23sq);
-  }
-  else if(hyp == conv::kHypNuMuDisapp2F) {
-    bestfit_mixing23_m1sig = fparm->BestFitValue(conv::kPhypMixing23);
-    bestfit_dm23sq_m1sig   = fparm->BestFitValue(conv::kPhypDm23sq);
-  }
-  if(sys == "xsec_sf") {
-    //SF has no -1 sigma tweak!
+  
+  if(throw_n_toys <= 0) {
+    //
+    //
+    // +1 sigma (relative to tuned BANFF)
+    //
+    //
+    
+    cout << "\n\nApplying +1 sigma tweak" << endl;
+    if(sys.find("banff_") == 0) {
+      //find parameter to tweak
+      conv::PhysParamId_t p = util::PhysParamIdFromString(systematic);
+      int ip = util::ArrIdx::Instance()->BANFFSystIdx(p);
+      //initialise tweak vector
+      const int nbanff = conv::kNumOfParamsInBANFFfit;
+      TVectorD twkv(nbanff);
+      const TMatrixD & cov = skexp->GetBANFF()->CovMatrix();
+      //tweak the parameter to tweak
+      twkv[ip] = skexp->GetBANFF()->BestFitValue(p) + (1 * sqrt(cov[ip][ip]));
+      //if we're tweaking the other parameters in a correlated way too
+      double sigma = (twkv[ip] - skexp->GetBANFF()->BestFitValue(p)) / cov[ip][ip];
+      for(int ipp = 0; ipp < nbanff; ipp++) {
+	int position = (int)conv::kNuisBANFF00 + ipp;
+	conv::PhysParamId_t pp = (conv::PhysParamId_t)position;
+	if(pp == p)
+	  continue;
+	//set non-tweaked values to best fit
+	twkv[ipp] = skexp->GetBANFF()->BestFitValue(pp);
+	//now, tweak the other parameters according to the correlations between them and the fitted parameters
+	if(correlated_parameters)
+	  twkv[ipp] += sigma * cov[ip][ipp];
+      }
+      skexp->GetBANFF()->Tweak(true,&twkv);
+    }
+    else if(sys.find("skdetfsi_") == 0) {
+      conv::PhysParamId_t p = util::PhysParamIdFromString(systematic);
+      int ip = util::ArrIdx::Instance()->SKDetFSISystIdx(p);
+      //initialise tweak vector
+      const int nskdetfsi = conv::kNumOfSKDetFSIParams;
+      TVectorD twkv(nskdetfsi);
+      const TMatrixD & cov = skexp->GetSuperkDetectorFSI()->CovMatrix();
+      //tweak the parameter to tweak
+      twkv[ip] = 1 + (1 * sqrt(cov[ip][ip]));
+      //if we're tweaking the other parameters in a correlated way too
+      double sigma = (twkv[ip] - 1) / cov[ip][ip];
+      for(int ipp = 0; ipp < nskdetfsi; ipp++) {
+	int position = (int)conv::kNuisSKDetFSI000 + ipp;
+	conv::PhysParamId_t pp = (conv::PhysParamId_t)position;
+	if(pp == p)
+	  continue;
+	//set non-tweaked values to best fit
+	twkv[ipp] = 1;
+	//now, tweak the other parameters according to the correlations between them and the fitted parameters
+	if(correlated_parameters)
+	  twkv[ipp] += sigma * cov[ip][ipp];
+      }
+      skexp->GetSuperkDetectorFSI()->Tweak(true,&twkv);
+    }
+    else if(sys.find("fsi_") == 0) {
+      conv::PhysParamId_t p = util::PhysParamIdFromString(systematic);
+      int ip = util::ArrIdx::Instance()->FSISystIdx(p);
+      //initialise tweak vector
+      const int nfsi = conv::kNumOfFSIParams;
+      TVectorD twkv(nfsi);
+      const TMatrixD & cov = skexp->GetFSI()->CovMatrix();
+      //tweak the parameter to tweak
+      twkv[ip] = 1 + (1 * sqrt(cov[ip][ip]));
+      //if we're tweaking the other parameters in a correlated way too
+      double sigma = (twkv[ip] - 1) / cov[ip][ip];
+      for(int ipp = 0; ipp < nfsi; ipp++) {
+	int position = (int)conv::kNuisFSI000 + ipp;
+	conv::PhysParamId_t pp = (conv::PhysParamId_t)position;
+	if(pp == p)
+	  continue;
+	//set non-tweaked values to best fit
+	twkv[ipp] = 1;
+	//now, tweak the other parameters according to the correlations between them and the fitted parameters
+	if(correlated_parameters)
+	  twkv[ipp] += sigma * cov[ip][ipp];
+      }
+      skexp->GetFSI()->Tweak(true,&twkv);
+    }
+    else if(sys.find("osc_mixing12") == 0) {
+      double tweak_mixing12 = input_mixing12 * (1 + conv::kGlobFitErrSinsq2Theta12);
+      if(tweak_mixing12 >  fparm->MaxValue(conv::kPhypMixing12)) tweak_mixing12 = fparm->MaxValue(conv::kPhypMixing12);
+      if(tweak_mixing12 <  fparm->MinValue(conv::kPhypMixing12)) tweak_mixing12 = fparm->MinValue(conv::kPhypMixing12);
+      fparm->Update(conv::kPhypMixing12, tweak_mixing12);
+      fparm->SetInitValue(conv::kPhypMixing12, tweak_mixing12);
+    }
+    else if(sys.find("osc_mixing13") == 0) {
+      double tweak_mixing13 = input_mixing13 * (1 + conv::kGlobFitErrSinsq2Theta13);
+      if(tweak_mixing13 >  fparm->MaxValue(conv::kPhypMixing13)) tweak_mixing13 = fparm->MaxValue(conv::kPhypMixing13);
+      if(tweak_mixing13 <  fparm->MinValue(conv::kPhypMixing13)) tweak_mixing13 = fparm->MinValue(conv::kPhypMixing13);
+      fparm->Update(conv::kPhypMixing13, tweak_mixing13);
+      fparm->SetInitValue(conv::kPhypMixing13, tweak_mixing13);
+    }
+    else if(sys.find("osc_dm12sq") == 0) {
+      double tweak_dm12sq = input_dm12sq * (1 + conv::kGlobFitErrDm12sq);
+      if(tweak_dm12sq >  fparm->MaxValue(conv::kPhypDm12sq)) tweak_dm12sq = fparm->MaxValue(conv::kPhypDm12sq);
+      if(tweak_dm12sq <  fparm->MinValue(conv::kPhypDm12sq)) tweak_dm12sq = fparm->MinValue(conv::kPhypDm12sq);
+      fparm->Update(conv::kPhypDm12sq, tweak_dm12sq);
+      fparm->SetInitValue(conv::kPhypDm12sq, tweak_dm12sq);
+    }
+    else if(sys.find("osc_deltacp") == 0) {
+      double tweak_deltacp = input_deltacp + (TMath::Pi()/2);
+      if(tweak_deltacp >  fparm->MaxValue(conv::kPhypDeltaCP)) tweak_deltacp = fparm->MaxValue(conv::kPhypDeltaCP);
+      if(tweak_deltacp <  fparm->MinValue(conv::kPhypDeltaCP)) tweak_deltacp = fparm->MinValue(conv::kPhypDeltaCP);
+      fparm->Update(conv::kPhypDeltaCP, tweak_deltacp);
+      fparm->SetInitValue(conv::kPhypDeltaCP, tweak_deltacp);
+    }
+    else {
+      skexp->TweakSystematic(systematic,+1.);
+    }
+
+    // Generate toy MC
+    cout << "Generating toy-MC..." << endl;
+    cout << "p.d.f parameters: " << endl;
+    skexp->PrintSystematicVariations();
+    skobs = new SuperkObservation;
+    skobs->CreateMockData(*skexp, PhysHypothesis(*fparm), fluctuate_stat);
+
+    // Reset systematic variation
+    skexp->ResetSystematicVariations();
+
+    // Get fitter
+    fit_inputs = new FitInputs(skobs,skexp,fparm);
+    fitter = new FitterMinuit(fit_inputs,fit_option);
+
+    // Do the fit
+    fitter->DoTheFit();
+
+    // Store best-fit params
     if(hyp == conv::kHypOsc3F) {
-      bestfit_mixing12_m1sig = fparm->InitValue(conv::kPhypMixing12);
-      bestfit_mixing13_m1sig = fparm->InitValue(conv::kPhypMixing13);
-      bestfit_mixing23_m1sig = fparm->InitValue(conv::kPhypMixing23);
-      bestfit_deltacp_m1sig  = fparm->InitValue(conv::kPhypDeltaCP);
-      bestfit_dm12sq_m1sig   = fparm->InitValue(conv::kPhypDm12sq);
-      bestfit_dm23sq_m1sig   = fparm->InitValue(conv::kPhypDm23sq);
+      bestfit_mixing12_p1sig = fparm->BestFitValue(conv::kPhypMixing12);
+      bestfit_mixing13_p1sig = fparm->BestFitValue(conv::kPhypMixing13);
+      bestfit_mixing23_p1sig = fparm->BestFitValue(conv::kPhypMixing23);
+      bestfit_deltacp_p1sig  = fparm->BestFitValue(conv::kPhypDeltaCP);
+      bestfit_dm12sq_p1sig   = fparm->BestFitValue(conv::kPhypDm12sq);
+      bestfit_dm23sq_p1sig   = fparm->BestFitValue(conv::kPhypDm23sq);
     }
     else if(hyp == conv::kHypNuMuDisapp2F) {
-      bestfit_mixing23_m1sig = fparm->InitValue(conv::kPhypMixing23);
-      bestfit_dm23sq_m1sig   = fparm->InitValue(conv::kPhypDm23sq);
+      bestfit_mixing23_p1sig = fparm->BestFitValue(conv::kPhypMixing23);
+      bestfit_dm23sq_p1sig   = fparm->BestFitValue(conv::kPhypDm23sq);
     }
-  }
 
-  // Clean-up in preparation for exiting
-  delete skobs;
-  delete fit_inputs;
-  delete fitter;
-  delete skexp;
+    // Clean-up in preparation for the -1 sigma fit
+    delete skobs;
+    delete fit_inputs;
+    delete fitter;
+    skexp->ResetSystematicVariations();
+    fparm->ResetCurrToInitValues();
+    //need to do this, just incase InitValues were changed inside FitterKernel::DoTheFit()
+    if(hyp == conv::kHypOsc3F) {
+      fparm->SetInitValue(conv::kPhypMixing12, input_mixing12);
+      fparm->SetInitValue(conv::kPhypMixing13, input_mixing13);
+      fparm->SetInitValue(conv::kPhypMixing23, input_mixing23);
+      fparm->SetInitValue(conv::kPhypDeltaCP,  input_deltacp);
+      fparm->SetInitValue(conv::kPhypDm12sq,   input_dm12sq);
+      fparm->SetInitValue(conv::kPhypDm23sq,   input_dm23sq);
+    }
+    else if(hyp == conv::kHypNuMuDisapp2F) {
+      fparm->SetInitValue(conv::kPhypMixing23, input_mixing23);
+      fparm->SetInitValue(conv::kPhypDm23sq,   input_dm23sq);
+    }  
   
+    //
+    //
+    // -1 sigma (relative to tuned BANFF)
+    //
+    //
+    cout << "\n\nApplying -1 sigma tweak" << endl;
+    if(sys.find("banff_") == 0) {
+      //find parameter to tweak
+      conv::PhysParamId_t p = util::PhysParamIdFromString(systematic);
+      int ip = util::ArrIdx::Instance()->BANFFSystIdx(p);
+      //initialise tweak vector
+      const int nbanff = conv::kNumOfParamsInBANFFfit;
+      TVectorD twkv(nbanff);
+      const TMatrixD & cov = skexp->GetBANFF()->CovMatrix();
+      //tweak the parameter to tweak
+      twkv[ip] = skexp->GetBANFF()->BestFitValue(p) + (-1 * sqrt(cov[ip][ip]));
+      //if we're tweaking the other parameters in a correlated way too
+      double sigma = (twkv[ip] - skexp->GetBANFF()->BestFitValue(p)) / cov[ip][ip];
+      for(int ipp = 0; ipp < nbanff; ipp++) {
+	int position = (int)conv::kNuisBANFF00 + ipp;
+	conv::PhysParamId_t pp = (conv::PhysParamId_t)position;
+	if(pp == p)
+	  continue;
+	//set non-tweaked values to best fit
+	twkv[ipp] = skexp->GetBANFF()->BestFitValue(pp);
+	//now, tweak the other parameters according to the correlations between them and the fitted parameters
+	if(correlated_parameters)
+	  twkv[ipp] += sigma * cov[ip][ipp];
+      }
+      skexp->GetBANFF()->Tweak(true,&twkv);
+    }
+    else if(sys.find("skdetfsi_") == 0) {
+      conv::PhysParamId_t p = util::PhysParamIdFromString(systematic);
+      int ip = util::ArrIdx::Instance()->SKDetFSISystIdx(p);
+      //initialise tweak vector
+      const int nskdetfsi = conv::kNumOfSKDetFSIParams;
+      TVectorD twkv(nskdetfsi);
+      const TMatrixD & cov = skexp->GetSuperkDetectorFSI()->CovMatrix();
+      //tweak the parameter to tweak
+      twkv[ip] = 1 (-1 * sqrt(cov[ip][ip]));
+      //if we're tweaking the other parameters in a correlated way too
+      double sigma = (twkv[ip] - 1) / cov[ip][ip];
+      for(int ipp = 0; ipp < nskdetfsi; ipp++) {
+	int position = (int)conv::kNuisSKDetFSI000 + ipp;
+	conv::PhysParamId_t pp = (conv::PhysParamId_t)position;
+	if(pp == p)
+	  continue;
+	//set non-tweaked values to best fit
+	twkv[ipp] = 1;
+	//now, tweak the other parameters according to the correlations between them and the fitted parameters
+	if(correlated_parameters)
+	  twkv[ipp] += sigma * cov[ip][ipp];
+      }
+      skexp->GetSuperkDetectorFSI()->Tweak(true,&twkv);
+    }
+    else if(sys.find("fsi_") == 0) {
+      conv::PhysParamId_t p = util::PhysParamIdFromString(systematic);
+      int ip = util::ArrIdx::Instance()->FSISystIdx(p);
+      //initialise tweak vector
+      const int nfsi = conv::kNumOfFSIParams;
+      TVectorD twkv(nfsi);
+      const TMatrixD & cov = skexp->GetFSI()->CovMatrix();
+      //tweak the parameter to tweak
+      twkv[ip] = 1 + (-1 * sqrt(cov[ip][ip]));
+      //if we're tweaking the other parameters in a correlated way too
+      double sigma = (twkv[ip] - 1) / cov[ip][ip];
+      for(int ipp = 0; ipp < nfsi; ipp++) {
+	int position = (int)conv::kNuisFSI000 + ipp;
+	conv::PhysParamId_t pp = (conv::PhysParamId_t)position;
+	if(pp == p)
+	  continue;
+	//set non-tweaked values to best fit
+	twkv[ipp] = 1;
+	//now, tweak the other parameters according to the correlations between them and the fitted parameters
+	if(correlated_parameters)
+	  twkv[ipp] += sigma * cov[ip][ipp];
+      }
+      skexp->GetFSI()->Tweak(true,&twkv);
+    }
+    else if(sys.find("osc_mixing12") == 0) {
+      double tweak_mixing12 = input_mixing12 * (1 - conv::kGlobFitErrSinsq2Theta12);
+      if(tweak_mixing12 >  fparm->MaxValue(conv::kPhypMixing12)) tweak_mixing12 = fparm->MaxValue(conv::kPhypMixing12);
+      if(tweak_mixing12 <  fparm->MinValue(conv::kPhypMixing12)) tweak_mixing12 = fparm->MinValue(conv::kPhypMixing12);
+      fparm->Update(conv::kPhypMixing12, tweak_mixing12);
+      fparm->SetInitValue(conv::kPhypMixing12, tweak_mixing12);
+    }
+    else if(sys.find("osc_mixing13") == 0) {
+      double tweak_mixing13 = input_mixing13 * (1 - conv::kGlobFitErrSinsq2Theta13);
+      if(tweak_mixing13 >  fparm->MaxValue(conv::kPhypMixing13)) tweak_mixing13 = fparm->MaxValue(conv::kPhypMixing13);
+      if(tweak_mixing13 <  fparm->MinValue(conv::kPhypMixing13)) tweak_mixing13 = fparm->MinValue(conv::kPhypMixing13);
+      fparm->Update(conv::kPhypMixing13, tweak_mixing13);
+      fparm->SetInitValue(conv::kPhypMixing13, tweak_mixing13);
+    }
+    else if(sys.find("osc_dm12sq") == 0) {
+      double tweak_dm12sq = input_dm12sq * (1 - conv::kGlobFitErrDm12sq);
+      if(tweak_dm12sq >  fparm->MaxValue(conv::kPhypDm12sq)) tweak_dm12sq = fparm->MaxValue(conv::kPhypDm12sq);
+      if(tweak_dm12sq <  fparm->MinValue(conv::kPhypDm12sq)) tweak_dm12sq = fparm->MinValue(conv::kPhypDm12sq);
+      fparm->Update(conv::kPhypDm12sq, tweak_dm12sq);
+      fparm->SetInitValue(conv::kPhypDm12sq, tweak_dm12sq);
+    }
+    else if(sys.find("osc_deltacp") == 0) {
+      double tweak_deltacp = input_deltacp - (TMath::Pi()/2);
+      if(tweak_deltacp >  fparm->MaxValue(conv::kPhypDeltaCP)) tweak_deltacp = fparm->MaxValue(conv::kPhypDeltaCP);
+      if(tweak_deltacp <  fparm->MinValue(conv::kPhypDeltaCP)) tweak_deltacp = fparm->MinValue(conv::kPhypDeltaCP);
+      fparm->Update(conv::kPhypDeltaCP, tweak_deltacp);
+      fparm->SetInitValue(conv::kPhypDeltaCP, tweak_deltacp);
+    }
+    else {
+      skexp->TweakSystematic(systematic,-1.);
+    }
+
+    // Generate toy MC
+    cout << "Generating toy-MC..." << endl;
+    cout << "p.d.f parameters: " << endl;
+    skexp->PrintSystematicVariations();
+    skobs = new SuperkObservation;
+    skobs->CreateMockData(*skexp, *fparm, fluctuate_stat);
+
+    // Reset systematic variation
+    skexp->ResetSystematicVariations();
+
+    // Get fitter
+    fit_inputs = new FitInputs(skobs,skexp,fparm);
+    fitter = new FitterMinuit(fit_inputs,fit_option);
+
+    // Do the fit
+    fitter->DoTheFit();
+
+    // Store best-fit params
+    if(hyp == conv::kHypOsc3F) {
+      bestfit_mixing12_m1sig = fparm->BestFitValue(conv::kPhypMixing12);
+      bestfit_mixing13_m1sig = fparm->BestFitValue(conv::kPhypMixing13);
+      bestfit_mixing23_m1sig = fparm->BestFitValue(conv::kPhypMixing23);
+      bestfit_deltacp_m1sig  = fparm->BestFitValue(conv::kPhypDeltaCP);
+      bestfit_dm12sq_m1sig   = fparm->BestFitValue(conv::kPhypDm12sq);
+      bestfit_dm23sq_m1sig   = fparm->BestFitValue(conv::kPhypDm23sq);
+    }
+    else if(hyp == conv::kHypNuMuDisapp2F) {
+      bestfit_mixing23_m1sig = fparm->BestFitValue(conv::kPhypMixing23);
+      bestfit_dm23sq_m1sig   = fparm->BestFitValue(conv::kPhypDm23sq);
+    }
+    if(sys == "xsec_sf") {
+      //SF has no -1 sigma tweak!
+      if(hyp == conv::kHypOsc3F) {
+	bestfit_mixing12_m1sig = fparm->InitValue(conv::kPhypMixing12);
+	bestfit_mixing13_m1sig = fparm->InitValue(conv::kPhypMixing13);
+	bestfit_mixing23_m1sig = fparm->InitValue(conv::kPhypMixing23);
+	bestfit_deltacp_m1sig  = fparm->InitValue(conv::kPhypDeltaCP);
+	bestfit_dm12sq_m1sig   = fparm->InitValue(conv::kPhypDm12sq);
+	bestfit_dm23sq_m1sig   = fparm->InitValue(conv::kPhypDm23sq);
+      }
+      else if(hyp == conv::kHypNuMuDisapp2F) {
+	bestfit_mixing23_m1sig = fparm->InitValue(conv::kPhypMixing23);
+	bestfit_dm23sq_m1sig   = fparm->InitValue(conv::kPhypDm23sq);
+      }
+    }
+
+    // Clean-up in preparation for exiting
+    delete skobs;
+    delete fit_inputs;
+    delete fitter;
+  }//throw_n_toys <= 0
+  else {
+
+    //initialise
+    double bestfit_mixing12_toys = 0;
+    double bestfit_mixing13_toys = 0;
+    double bestfit_mixing23_toys = 0;
+    double bestfit_deltacp_toys  = 0;
+    double bestfit_dm12sq_toys   = 0;
+    double bestfit_dm23sq_toys   = 0;
+
+    for(int itoy = 0; itoy < throw_n_toys; itoy++) {
+      cout << "\n\Toy " << itoy << endl;
+
+      // Reset systematic variation
+      skexp->ResetSystematicVariations();
+
+      //apply the tweak
+      if(sys.find("banff_") == 0) {
+	//find parameter to tweak
+	conv::PhysParamId_t p = util::PhysParamIdFromString(systematic);
+	int ip = util::ArrIdx::Instance()->BANFFSystIdx(p);
+	//initialise tweak vector
+	const int nbanff = conv::kNumOfParamsInBANFFfit;
+	TVectorD twkv(nbanff);
+	const TMatrixD & cov = skexp->GetBANFF()->CovMatrix();
+	//tweak the parameter to tweak
+	cout << *Rnd::Instance() << endl;
+	int seed = -1;
+	twkv[ip] = Rnd::Instance()->RndOther().Gaus(skexp->GetBANFF()->BestFitValue(p),sqrt(cov[ip][ip]));
+	//if we're tweaking the other parameters in a correlated way too
+	double sigma = (twkv[ip] - skexp->GetBANFF()->BestFitValue(p)) / cov[ip][ip];
+	for(int ipp = 0; ipp < nbanff; ipp++) {
+	  int position = (int)conv::kNuisBANFF00 + ipp;
+	  conv::PhysParamId_t pp = (conv::PhysParamId_t)position;
+	  if(pp == p)
+	    continue;
+	  //set non-tweaked values to best fit
+	  twkv[ipp] = skexp->GetBANFF()->BestFitValue(pp);
+	  //now, tweak the other parameters according to the correlations between them and the fitted parameters
+	  if(correlated_parameters)
+	    twkv[ipp] += sigma * cov[ip][ipp];
+	}
+	skexp->GetBANFF()->Tweak(true,&twkv);
+      }
+      else if(sys.find("skdetfsi_") == 0) {
+	conv::PhysParamId_t p = util::PhysParamIdFromString(systematic);
+	int ip = util::ArrIdx::Instance()->SKDetFSISystIdx(p);
+	//initialise tweak vector
+	const int nskdetfsi = conv::kNumOfSKDetFSIParams;
+	TVectorD twkv(nskdetfsi);
+	const TMatrixD & cov = skexp->GetSuperkDetectorFSI()->CovMatrix();
+	//tweak the parameter to tweak
+	twkv[ip] = Rnd::Instance()->RndOther().Gaus(1,sqrt(cov[ip][ip]));
+	//if we're tweaking the other parameters in a correlated way too
+	double sigma = (twkv[ip] - 1) / cov[ip][ip];
+	for(int ipp = 0; ipp < nskdetfsi; ipp++) {
+	  int position = (int)conv::kNuisSKDetFSI000 + ipp;
+	  conv::PhysParamId_t pp = (conv::PhysParamId_t)position;
+	  if(pp == p)
+	    continue;
+	  //set non-tweaked values to best fit
+	  twkv[ipp] = 1;
+	  //now, tweak the other parameters according to the correlations between them and the fitted parameters
+	  if(correlated_parameters)
+	    twkv[ipp] += sigma * cov[ip][ipp];
+	}
+	skexp->GetSuperkDetectorFSI()->Tweak(true,&twkv);
+      }
+      else if(sys.find("fsi_") == 0) {
+	conv::PhysParamId_t p = util::PhysParamIdFromString(systematic);
+	int ip = util::ArrIdx::Instance()->FSISystIdx(p);
+	//initialise tweak vector
+	const int nfsi = conv::kNumOfFSIParams;
+	TVectorD twkv(nfsi);
+	const TMatrixD & cov = skexp->GetFSI()->CovMatrix();
+	//tweak the parameter to tweak
+	twkv[ip] = Rnd::Instance()->RndOther().Gaus(1,sqrt(cov[ip][ip]));
+	//if we're tweaking the other parameters in a correlated way too
+	double sigma = (twkv[ip] - 1) / cov[ip][ip];
+	for(int ipp = 0; ipp < nfsi; ipp++) {
+	  int position = (int)conv::kNuisFSI000 + ipp;
+	  conv::PhysParamId_t pp = (conv::PhysParamId_t)position;
+	  if(pp == p)
+	    continue;
+	  //set non-tweaked values to best fit
+	  twkv[ipp] = 1;
+	  //now, tweak the other parameters according to the correlations between them and the fitted parameters
+	  if(correlated_parameters)
+	    twkv[ipp] += sigma * cov[ip][ipp];
+	}
+	skexp->GetFSI()->Tweak(true,&twkv);
+      }
+      else if(sys.find("osc_mixing12") == 0) {
+	double tweak_mixing12 = util::RandomizeMixing12();
+	if(tweak_mixing12 >  fparm->MaxValue(conv::kPhypMixing12)) tweak_mixing12 = fparm->MaxValue(conv::kPhypMixing12);
+	if(tweak_mixing12 <  fparm->MinValue(conv::kPhypMixing12)) tweak_mixing12 = fparm->MinValue(conv::kPhypMixing12);
+	fparm->Update(conv::kPhypMixing12, tweak_mixing12);
+	fparm->SetInitValue(conv::kPhypMixing12, tweak_mixing12);
+      }
+      else if(sys.find("osc_mixing13") == 0) {
+	double tweak_mixing13 = util::RandomizeMixing13();
+	if(tweak_mixing13 >  fparm->MaxValue(conv::kPhypMixing13)) tweak_mixing13 = fparm->MaxValue(conv::kPhypMixing13);
+	if(tweak_mixing13 <  fparm->MinValue(conv::kPhypMixing13)) tweak_mixing13 = fparm->MinValue(conv::kPhypMixing13);
+	fparm->Update(conv::kPhypMixing13, tweak_mixing13);
+	fparm->SetInitValue(conv::kPhypMixing13, tweak_mixing13);
+      }
+      else if(sys.find("osc_dm12sq") == 0) {
+	double tweak_dm12sq = util::RandomizeDm12sq();
+	if(tweak_dm12sq >  fparm->MaxValue(conv::kPhypDm12sq)) tweak_dm12sq = fparm->MaxValue(conv::kPhypDm12sq);
+	if(tweak_dm12sq <  fparm->MinValue(conv::kPhypDm12sq)) tweak_dm12sq = fparm->MinValue(conv::kPhypDm12sq);
+	fparm->Update(conv::kPhypDm12sq, tweak_dm12sq);
+	fparm->SetInitValue(conv::kPhypDm12sq, tweak_dm12sq);
+      }
+      else if(sys.find("osc_deltacp") == 0) {
+	double tweak_deltacp = util::RandomizeDeltaCP();
+	if(tweak_deltacp >  fparm->MaxValue(conv::kPhypDeltaCP)) tweak_deltacp = fparm->MaxValue(conv::kPhypDeltaCP);
+	if(tweak_deltacp <  fparm->MinValue(conv::kPhypDeltaCP)) tweak_deltacp = fparm->MinValue(conv::kPhypDeltaCP);
+	fparm->Update(conv::kPhypDeltaCP, tweak_deltacp);
+	fparm->SetInitValue(conv::kPhypDeltaCP, tweak_deltacp);
+      }
+      else if(sys.find("xsec_sf") == 0) {
+	double tweak_sf = Rnd::Instance()->RndOther().Uniform(0.,1.);
+	skexp->TweakSystematic(systematic, tweak_sf);
+      }
+      else {
+	double tweak = Rnd::Instance()->RndOther().Gaus(0.,1.);
+	skexp->TweakSystematic(systematic, tweak);
+      }
+
+      // Generate toy MC
+      cout << "Generating toy-MC..." << endl;
+      cout << "p.d.f parameters: " << endl;
+      skexp->PrintSystematicVariations();
+      skobs = new SuperkObservation;
+      skobs->CreateMockData(*skexp, *fparm, fluctuate_stat);
+
+      // Reset systematic variation
+      skexp->ResetSystematicVariations();
+
+      // Get fitter
+      fit_inputs = new FitInputs(skobs,skexp,fparm);
+      fitter = new FitterMinuit(fit_inputs,fit_option);
+
+      // Do the fit
+      fitter->DoTheFit();
+
+      // Store best-fit params
+      if(hyp == conv::kHypOsc3F) {
+	bestfit_mixing12_toys += fparm->BestFitValue(conv::kPhypMixing12);
+	bestfit_mixing13_toys += fparm->BestFitValue(conv::kPhypMixing13);
+	bestfit_mixing23_toys += fparm->BestFitValue(conv::kPhypMixing23);
+	bestfit_deltacp_toys  += fparm->BestFitValue(conv::kPhypDeltaCP);
+	bestfit_dm12sq_toys   += fparm->BestFitValue(conv::kPhypDm12sq);
+	bestfit_dm23sq_toys   += fparm->BestFitValue(conv::kPhypDm23sq);
+      }
+      else if(hyp == conv::kHypNuMuDisapp2F) {
+	bestfit_mixing23_toys += fparm->BestFitValue(conv::kPhypMixing23);
+	bestfit_dm23sq_toys   += fparm->BestFitValue(conv::kPhypDm23sq);
+      }
+
+      //clean
+      delete skobs;
+      delete fit_inputs;
+      delete fitter;
+    }//end loop over itoy
+    
+    // Store best-fit params
+    if(hyp == conv::kHypOsc3F) {
+      bestfit_mixing12_p1sig = bestfit_mixing12_toys / throw_n_toys;
+      bestfit_mixing13_p1sig = bestfit_mixing13_toys / throw_n_toys;
+      bestfit_mixing23_p1sig = bestfit_mixing23_toys / throw_n_toys;
+      bestfit_deltacp_p1sig  = bestfit_deltacp_toys  / throw_n_toys;
+      bestfit_dm12sq_p1sig   = bestfit_dm12sq_toys   / throw_n_toys;
+      bestfit_dm23sq_p1sig   = bestfit_dm23sq_toys   / throw_n_toys;
+      bestfit_mixing12_m1sig = bestfit_mixing12_toys / throw_n_toys;
+      bestfit_mixing13_m1sig = bestfit_mixing13_toys / throw_n_toys;
+      bestfit_mixing23_m1sig = bestfit_mixing23_toys / throw_n_toys;
+      bestfit_deltacp_m1sig  = bestfit_deltacp_toys  / throw_n_toys;
+      bestfit_dm12sq_m1sig   = bestfit_dm12sq_toys   / throw_n_toys;
+      bestfit_dm23sq_m1sig   = bestfit_dm23sq_toys   / throw_n_toys;
+    }
+    else if(hyp == conv::kHypNuMuDisapp2F) {
+      bestfit_mixing23_p1sig = bestfit_mixing23_toys / throw_n_toys;
+      bestfit_dm23sq_p1sig   = bestfit_dm23sq_toys   / throw_n_toys;
+      bestfit_mixing23_m1sig = bestfit_mixing23_toys / throw_n_toys;
+      bestfit_dm23sq_m1sig   = bestfit_dm23sq_toys   / throw_n_toys;
+    }
+
+  }//throw_n_toys > 0
+
+  delete skexp;
+
   // Write-out results
   ostringstream outfilename;
   string cor = "";
-  if(correlated_banff)
+  if(correlated_parameters)
     cor = "_correlated";
   outfilename << "star_plot_line-" << cor << systematic << ".data";
   ofstream outfile;

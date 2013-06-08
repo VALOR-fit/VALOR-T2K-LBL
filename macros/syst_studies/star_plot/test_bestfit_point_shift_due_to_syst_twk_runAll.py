@@ -28,6 +28,7 @@ optionParser.add_option("--syst", action="store_true", dest="do_syst", default=F
 optionParser.add_option("--stat", action="store_true", dest="do_stat", default=False, help="Stat is not implemented in this macro. Please run the production script, and use the code snippet at the bottom of $T2KOSCANA/macros/fit/syst/star_plot/test_bestfit_point_shift_due_to_syst_twk.C to get stat errors, then replace the numbers instat.data: $T2KOSCANA/production/submit_toyexpt_fitting_job_fitsyst --resource Oxford --softw-dir $T2KOSCANA --job-dir $PWD --cpu-time 01:59:00 --tweak-systematics 1 --nruns 100 --nexpts 100 --dm23sq 0.0024 --sinsq2theta23 1. --stat-fluctuations --fit-param-list nuosc3f_numudisapp_fix4")
 optionParser.add_option("--draw", action="store_true", dest="do_draw", default=False, help="If set, will draw all the plots")
 optionParser.add_option("--table", action="store_true", dest="do_table", default=False, help="If set, will make the max deviation table")
+optionParser.add_option("--interactive", action="store_true", dest="interactive", default=False, help="If set, will run +- 1 sigma jobs interactively; otherwise, throw 1000 toys")
 (opt, args) = optionParser.parse_args()
 
 if not (opt.do_syst or opt.do_stat or opt.do_draw or opt.do_table):
@@ -59,17 +60,12 @@ systematics.append("osc_dm12sq");
 systematics.append("osc_deltacp");
 #BANFF
 #systematics.append("banff")
-#BANFF flux
-for i in xrange(16):
+for i in xrange(30):
    systematics.append("banff_" + '%(number)02d' % {"number": i})
-#BANFF xsec
-systematics.append("banff_maqe")
-systematics.append("banff_mares")
-systematics.append("banff_ccqeE0")
-systematics.append("banff_ccqeE1")
-systematics.append("banff_ccqeE2")
-systematics.append("banff_cc1piE0")
-systematics.append("banff_cc1piE1")
+#SKDet FSI
+for i in xrange(6):
+   systematics.append("skdetfsi_" + '%(number)03d' % {"number": i})
+"""
 #SK
 #systematics.append("sk_1Rmu_ccqe_ring_counting_eff")
 systematics.append("sk_1Rmu_ccqe_ring_counting_eff_0")
@@ -80,6 +76,10 @@ systematics.append("sk_1Rmu_ccnonqe_eff")
 systematics.append("sk_1Rmu_nc_eff")
 systematics.append("sk_1Rmu_nuecc_eff")
 systematics.append("sk_energy_scale")
+#FSI
+for i in xrange(6):
+   systematics.append("fsi_" + '%(number)03d' % {"number": i})
+"""
 #XSec splines
 systematics.append("xsec_pf")
 systematics.append("xsec_sf")
@@ -96,20 +96,6 @@ systematics.append("xsec_norm_nc1piC")
 systematics.append("xsec_norm_ncoth")
 systematics.append("xsec_norm_nuetonumu")
 systematics.append("xsec_norm_antinutonu")
-#FSI
-for i in xrange(6):
-   systematics.append("fsi_" + '%(number)03d' % {"number": i})
-"""
-#UnBANFF
-#systematics.append("unbanff")
-for i in xrange(24):
-   systematics.append("unbanff_" + '%(number)02d' % {"number": i})
-
-#EDBANFF
-#systematics.append("edbanff")
-for i in xrange(24):
-   systematics.append("edbanff_" + '%(number)02d' % {"number": i})
-"""
 
    
 samples = []
@@ -117,7 +103,8 @@ samples.append("1Rmu")
 #samples.append("1Re")
 
 #fill with oscillation parameters, in order mixing12, mixing13, mixing23, deltacp, dmsq12, dmsq23
-oscparams = [] 
+oscparams = []
+"""
 oscparams.append([-99, -99, -99, -99, -99, -99]) #use global best fits!
 oscparams.append([-99, -99, 0.9, -99, -99, -99]) #mixing23=0.9 & global best fits
 oscparams.append([-99, -99, 0.95, -99, -99, -99]) #mixing23=0.9 & global best fits
@@ -133,6 +120,10 @@ oscparams.append([-99, -99, 0.8, -99, -99, 0.0030])
 oscparams.append([-99, -99, 0.8, -99, -99, 0.0024])
 oscparams.append([-99, -99, 1.0, -99, -99, 0.0020])
 oscparams.append([-99, -99, 1.0, -99, -99, 0.0030])
+"""
+#some experimental best fits
+oscparams.append([0.857, 0.098, 1.000, 0, 7.5E-5, 0.00244]) #t2k run1-3 best fit
+oscparams.append([0.857, 0.098, 0.957, 0, 7.5E-5, 0.00239]) #minos neutrino2012 best fit
 
 for osc in oscparams:
 
@@ -150,14 +141,54 @@ for osc in oscparams:
       for syst in systematics:
 
          if opt.do_syst:
-            command = 'root2k -l -b -q \'$T2KOSCANA/macros/fit/syst/star_plot/test_bestfit_point_shift_due_to_syst_twk.C("'+syst+'","'+sam+'","'+fitparamlist+'","'+fitter+'",'+str(osc[0])+','+str(osc[1])+','+str(osc[2])+','+str(osc[3])+','+str(osc[4])+','+str(osc[5])+',"'+conffile+'",false)\''
-            print command
-            os.system(command)
-
-            if syst.find("banff_") == 0:
-               command = 'root2k -l -b -q \'$T2KOSCANA/macros/fit/syst/star_plot/test_bestfit_point_shift_due_to_syst_twk.C("'+syst+'","'+sam+'","'+fitparamlist+'","'+fitter+'",'+str(osc[0])+','+str(osc[1])+','+str(osc[2])+','+str(osc[3])+','+str(osc[4])+','+str(osc[5])+',"'+conffile+'",true)\''
+            rootcommand = 'root2k -l -b -q \'$T2KOSCANA/macros/fit/syst/star_plot/test_bestfit_point_shift_due_to_syst_twk.C("'+syst+'","'+sam+'","'+fitparamlist+'","'+fitter+'",'+str(osc[0])+','+str(osc[1])+','+str(osc[2])+','+str(osc[3])+','+str(osc[4])+','+str(osc[5])+',"'+conffile
+            if opt.interactive:
+               command = rootcommand + '",false,0)\''
                print command
                os.system(command)
+            else:
+               command = rootcommand + '",false,1000)\''
+               print command
+               jobname = syst
+               f = open(jobname+".pbs",'w')
+               f.write("#!/bin/bash \n")
+               f.write("#PBS -N "+jobname+" \n")
+               f.write("#PBS -l walltime=24:00:00 \n")
+               f.write("#PBS -l cput=24:00:00 \n")
+               f.write("#PBS -o "+os.getcwd()+"/"+jobname+".out \n")
+               f.write("#PBS -e "+os.getcwd()+"/"+jobname+".err \n")
+               f.write(os.getcwd() +"  \n")
+               f.write("source "+os.environ['T2KOSCANA']+"/setup/setup_at_ral.sh "+os.environ['T2KOSCANA']+" \n")
+               f.write(command+"\n")
+               f.close()
+               submit = "qsub "+jobname+".pbs"
+               print submit
+               os.system(submit)
+
+            if syst.find("banff_") == 0 or syst.find("skdetfsi") == 0 or syst.find("fsi") == 0:
+               print command
+               if opt.interactive:
+                  command = rootcommand + '",true,0)\''
+                  print command
+                  os.system(command)
+               else:
+                  command = rootcommand + '",true,1000)\''
+                  print command
+                  jobname = syst+"_correlated"
+                  f = open(jobname+".pbs",'w')
+                  f.write("#!/bin/bash \n")
+                  f.write("#PBS -N "+jobname+" \n")
+                  f.write("#PBS -l walltime=24:00:00 \n")
+                  f.write("#PBS -l cput=24:00:00 \n")
+                  f.write("#PBS -o "+os.getcwd()+"/"+jobname+".out \n")
+                  f.write("#PBS -e "+os.getcwd()+"/"+jobname+".err \n")
+                  f.write(os.getcwd() +"  \n")
+                  f.write("source "+os.environ['T2KOSCANA']+"/setup/setup_at_ral.sh "+os.environ['T2KOSCANA']+" \n")
+                  f.write(command+"\n")
+                  f.close()
+                  submit = "qsub "+jobname+".pbs"
+                  print submit
+                  os.system(submit)
 
          if syst == systematics[len(systematics)-1] and opt.do_draw:
 

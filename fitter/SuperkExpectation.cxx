@@ -479,7 +479,11 @@ void SuperkExpectation::TweakSystematic(string systematic, double twkdial, bool 
   //
 
   if(systematic == "sk_energy_scale") {
+#ifndef SKFSITOGETHER
      this->GetSuperkDetector()->TweakEnergyScale(twkdial);
+#else
+     this->GetSuperkDetectorFSI()->TweakEnergyScale(twkdial);
+#endif
   }
 
 #ifndef SKFSITOGETHER
