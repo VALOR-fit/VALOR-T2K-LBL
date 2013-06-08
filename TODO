@@ -45,7 +45,14 @@ Need to update the error on sinsq2theta12. The best fit has been updated to 0.84
 Can we put an Etrue cut on the new PDD parameter of 1.5 GeV? conv::kXSecSystEtrueCut
 --
 Need to check evaluation of kNuisBANFFPDDDoubleCount splines is correct. NuXSec::SystWght_1p() and FinTuningWght_1p()
-
+--
+dm32sq, and dm23sq vars in scripts need to be replaced with dmsq_atm and then
+lookup conv::NuOscDmsqScheme_t from Opt to interpret what mass spltting exactly that is.
+Similarly with dm12sq -> dmsq_sol.
+--
+In macros/toymcgen/generate_toymc_ensemble.C, ideally the true params for the expts needs to be saved.
+In ROOT format, one can just write out a tree with the recently added PhysParamList obj returned by SuperkExpectation. 
+For XML format, the params could also be added. Trivial. But PhysParamList could be adjusted so that it can read itself from XML.
 
 Work needed in macros and production scripts:
 +--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+
