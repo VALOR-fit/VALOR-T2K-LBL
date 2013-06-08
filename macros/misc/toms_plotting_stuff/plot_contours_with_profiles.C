@@ -78,6 +78,8 @@ void plot_contours_with_profiles()
 				     dm23sq_nbins, 0.00205, 0.00305);
   osc_param_space2->GetXaxis()->SetTitle("sin^{2}(2#theta_{23})"); // adjust if mixing param is sinsqtheta rather than sinsq2theta...
   osc_param_space2->GetYaxis()->SetTitle("|#Deltam_{32}^{2}| (eV^{2}/c^{4})");
+  osc_param_space2->GetXaxis()->CenterTitle();
+  osc_param_space2->GetYaxis()->CenterTitle();
   osc_param_space2->GetXaxis()->SetTitleOffset(1.25);
   osc_param_space2->GetYaxis()->SetTitleOffset(1.4);
   osc_param_space2->Draw();  
@@ -97,7 +99,7 @@ void plot_contours_with_profiles()
   bestfit_kit.Draw();
 
   //legend
-  TLegend * leg2 = new TLegend(0.18,0.6,0.41,0.81);
+  TLegend * leg2 = new TLegend(0.18,0.61,0.41,0.78);
   leg2->SetFillColor(0);
   //leg2->SetFillStyle(0);
   leg2->SetBorderSize(0);
@@ -111,6 +113,18 @@ void plot_contours_with_profiles()
   leg2->SetTextSize(osc_param_space2->GetXaxis()->GetTitleSize()*2);
   leg2->SetTextSize(0.05);
   leg2->Draw();
+
+  TLegend * leg3 = new TLegend(0.18, 0.19, 0.41, 0.31);
+  leg3->SetFillColor(0);
+  //leg3->SetFillStyle(0);
+  leg3->SetBorderSize(0);
+  leg3->SetTextFont(132);
+  //bestfit_2all->SetName("bestfit_2all");
+  //bestfit_kit->SetName("bestfit_kit");
+  leg3->AddEntry(&bestfit_2all, "T2K best fit", "p");
+  leg3->AddEntry(&bestfit_kit, "T2K best fit alternative analysis", "p");
+  leg3->SetTextSize(0.05);
+  leg3->Draw();
 
   //draw mixing pad
   TPad * pad_top = new TPad("pad_top","pad_top",0,0,1,1);
@@ -135,6 +149,7 @@ void plot_contours_with_profiles()
   mix_frame->GetYaxis()->SetNdivisions(3,5,0);
   mix_frame->GetYaxis()->SetTitle("#Delta#chi^{2}");
   mix_frame->GetYaxis()->SetTitleOffset(osc_param_space2->GetYaxis()->GetTitleOffset());
+  mix_frame->GetYaxis()->CenterTitle();
   mix_frame->GetYaxis()->SetLabelOffset(0.077);
   mix_frame->GetYaxis()->SetTickLength(0.12);
   mix_frame->Draw();
@@ -200,7 +215,7 @@ void plot_contours_with_profiles()
   Int_t xnbins  = 100;//h_val_dm->GetNbinsX();
   Int_t ynbins  = h_val_dm->GetNbinsY();
   Float_t xmin = 0;
-  Float_t xmax = 10;//1.*h_val_dm->GetMaximum();
+  Float_t xmax = 6;//10;//1.*h_val_dm->GetMaximum();
   Float_t ymin = osc_param_space2->GetYaxis()->GetXmin();
   Float_t ymax = osc_param_space2->GetYaxis()->GetXmax();
   TH2D * dm_frame = new TH2D("","",xnbins,xmin,xmax,ynbins,ymin,ymax);
@@ -208,6 +223,7 @@ void plot_contours_with_profiles()
   dm_frame->GetYaxis()->SetLabelFont(132);
   dm_frame->GetXaxis()->SetNdivisions(5,5,0);
   dm_frame->GetXaxis()->SetTitle("#Delta#chi^{2}");
+  dm_frame->GetXaxis()->CenterTitle();
   dm_frame->GetXaxis()->SetTitleOffset(1.25);
   dm_frame->GetXaxis()->SetLabelOffset(0.05);
   /*
@@ -251,7 +267,8 @@ void plot_contours_with_profiles()
     if(ybinmin < ymin && ybinmax < ymin) continue;
     if(ybinmin < ymin) ybinmin = ymin;
     l1 = new TLine(xbinmax,ybinmin,xbinmax,ybinmax);
-    if(xbinmax > xmax) break;
+    if(xbinmax > xmax && i > 20) break;
+    if(xbinmax > xmax) continue;
     l1->Draw(); //up-down
     if(ybinmin < ymin) continue;
     double extra = 0.044;
