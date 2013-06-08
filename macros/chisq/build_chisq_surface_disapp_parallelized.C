@@ -20,14 +20,14 @@ void build_chisq_surface_disapp_parallelized
   const char * config_file         = "analysis_configuration.xml",          /* analysis configuration file */
   const char * fit_param_list      = "nuosc3f_numudisapp_fix4+nuisance",    /* fit parameter list for the given physics hypothesis (see FitParamList.h) */
   const char * fit_option          = "minuit",                              /* fitter option */
+  double       mixing23_min        = 0.9,
+  double       mixing23_max        = 1.0,
+  double       mixing23_step       = 0.001,
+  double       dm32sq_min          = 0.002,
+  double       dm32sq_max          = 0.003,
+  double       dm32sq_step         = 0.00001,
   int          input_mixing23_bin  = -1,                                    /* if !=-1, will run only for the specified bin */
-  int          input_dm32sq_bin    = -1,                                    /* if !=-1, will run only for the specified bin */
-  double       input_mixing23_min  = 0.9,
-  double       input_mixing23_max  = 1.0,
-  double       input_mixing23_step = 0.001,
-  double       input_dm32sq_min    = 0.002,
-  double       input_dm32sq_max    = 0.003,
-  double       input_dm32sq_step   = 0.00001
+  int          input_dm32sq_bin    = -1                                     /* if !=-1, will run only for the specified bin */
 )
 {
   using namespace std;
@@ -41,6 +41,16 @@ void build_chisq_surface_disapp_parallelized
   Opt::Instance()->gOscDmsqScheme        = conv::kNuDmsq12andAbs23;
   Opt::Instance()->gMassHierarchyAssumed = conv::kNmhNormal;
 
+  // Calc number of bins & make sure input bin numbers are within range
+  int mixing23_nbins = 1 + TMath::CeilNint((mixing23_max - mixing23_min) / mixing23_step);
+  int dm32sq_nbins   = 1 + TMath::CeilNint((dm32sq_max -   dm32sq_min )  / dm32sq_step );
+  if(input_mixing23_bin != -1) {
+    assert(input_mixing23_bin >= 1 && input_mixing23_bin <= mixing23_nbins);
+  }
+  if(input_dm32sq_bin != -1) {
+    assert(input_dm32sq_bin >= 1 && input_dm32sq_bin <= dm32sq_nbins);
+  }
+
   // Print settings
   cout << "\n[Job inputs]" << endl;
   cout << "- Job: " << tag << endl;
@@ -51,6 +61,14 @@ void build_chisq_surface_disapp_parallelized
   cout << "- Fit" << endl;
   cout << "   - Fit param list: " << fit_param_list << endl;
   cout << "   - Fitter option: " << fit_option << endl;
+  cout << "- Parameter ranges and step sizes: " << endl;
+  cout << "   - mix23  : [" << mixing23_min << ", " << mixing23_max << "], step = " << mixing23_step 
+       << ", nbins = " << mixing23_nbins << endl;
+  cout << "   - dm32sq : [" << dm32sq_min << ", " << dm32sq_max << "], step = " << dm32sq_step 
+       << ", nbins = " << dm32sq_nbins << endl;
+  cout << "- Specified bins: " << endl;
+  cout << "   - mix23  : " << input_mixing23_bin << endl;
+  cout << "   - dm32sq : " << input_dm32sq_bin   << endl;
   cout << endl;
   cout << *Opt::Instance() << endl;
 
@@ -91,18 +109,7 @@ void build_chisq_surface_disapp_parallelized
   fitnt->Branch("idm32sq", &idm32sq, "idm32sq/I");
   fitnt->Branch("imix23",  &imix23,  "imix23/I");
 
-  // Define 2D osc param space range and binning
-  double mixing23_min  = (input_mixing23_min  < 0) ? (conv::kMinChisqSurfaceSinsq2Theta23)  : (input_mixing23_min);
-  double mixing23_max  = (input_mixing23_max  < 0) ? (conv::kMaxChisqSurfaceSinsq2Theta23)  : (input_mixing23_max);
-  double mixing23_step = (input_mixing23_step < 0) ? (fparm->StepSize(conv::kPhypMixing23)) : (input_mixing23_step);
-  double dm32sq_min    = (input_dm32sq_min    < 0) ? (conv::kMinChisqSurfaceDm23sq)         : (input_dm32sq_min);
-  double dm32sq_max    = (input_dm32sq_max    < 0) ? (conv::kMaxChisqSurfaceDm23sq)         : (input_dm32sq_max);
-  double dm32sq_step   = (input_dm32sq_step   < 0) ? (fparm->StepSize(conv::kPhypDm23sq))   : (input_dm32sq_step);
-
-  // Make sure that min and max are at the bin centre
-  int mixing23_nbins = 1 + TMath::CeilNint((mixing23_max - mixing23_min) / mixing23_step);
-  int dm32sq_nbins   = 1 + TMath::CeilNint((dm32sq_max -   dm32sq_min )  / dm32sq_step );
-
+  // Define space. Min and max at the centre of first and last bin respectively.
   TH2D * chisq_surface = new TH2D("chisq_surface","VaLOR #chi^{2} surface for numu disappearance analysis",
 		mixing23_nbins, mixing23_min - 0.5*mixing23_step, mixing23_max + 0.5*mixing23_step,
 		dm32sq_nbins,   dm32sq_min   - 0.5*dm32sq_step,   dm32sq_max   + 0.5*dm32sq_step  );

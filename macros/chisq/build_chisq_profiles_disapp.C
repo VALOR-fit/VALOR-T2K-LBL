@@ -17,12 +17,12 @@ void build_chisq_profiles_disapp
   const char * config_file         = "analysis_configuration.xml",          /* analysis configuration file */
   const char * fit_param_list      = "nuosc3f_numudisapp_fix4+nuisance",    /* fit parameter list for the given physics hypothesis (see FitParamList.h) */
   const char * fit_option          = "minuit",                              /* fitter option */
-  double       input_mixing23_min  = 0.9,
-  double       input_mixing23_max  = 1.0,
-  double       input_mixing23_step = 0.001,
-  double       input_dm32sq_min    = 0.002,
-  double       input_dm32sq_max    = 0.003,
-  double       input_dm32sq_step   = 0.00001
+  double       mixing23_min        = 0.9,
+  double       mixing23_max        = 1.0,
+  double       mixing23_step       = 0.001,
+  double       dm32sq_min          = 0.002,
+  double       dm32sq_max          = 0.003,
+  double       dm32sq_step         = 0.00001
 )
 {
   using namespace std;
@@ -70,15 +70,7 @@ void build_chisq_profiles_disapp
   filename << ".root";
   TFile f(filename.str().c_str(), "recreate");
 
-  // Define osc param space range and binning
-  double mixing23_min  = (input_mixing23_min  < 0) ? (conv::kMinChisqSurfaceSinsq2Theta23)  : (input_mixing23_min);
-  double mixing23_max  = (input_mixing23_max  < 0) ? (conv::kMaxChisqSurfaceSinsq2Theta23)  : (input_mixing23_max);
-  double mixing23_step = (input_mixing23_step < 0) ? (fparm->StepSize(conv::kPhypMixing23)) : (input_mixing23_step);
-  double dm32sq_min    = (input_dm32sq_min    < 0) ? (conv::kMinChisqSurfaceDm23sq)         : (input_dm32sq_min);
-  double dm32sq_max    = (input_dm32sq_max    < 0) ? (conv::kMaxChisqSurfaceDm23sq)         : (input_dm32sq_max);
-  double dm32sq_step   = (input_dm32sq_step   < 0) ? (fparm->StepSize(conv::kPhypDm23sq))   : (input_dm32sq_step);
-
-  // Make sure that min and max are at the bin centre
+  // Define osc param space, making sure that min and max are at the bin centre
   int mixing23_nbins = 1 + TMath::CeilNint((mixing23_max - mixing23_min) / mixing23_step);
   int dm32sq_nbins   = 1 + TMath::CeilNint((dm32sq_max -   dm32sq_min )  / dm32sq_step );
 
