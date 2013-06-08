@@ -8,7 +8,7 @@
 #  --resource               : Computer resource, <RAL, Oxford, Grid, interactive>. Default: "interactive"
 #  --tag                    : Tag for output files. Default: "toyexptfits"
 #  --nruns                  : Number of runs (jobs). Default: 1.
-#  --nexpts                 : Number of experiments to fit per run. . Default: 1000.
+#  --nexpts                 : Number of experiments to fit. Default: 1.
 #  --first-expt             : ID of first toy MC expt to fit in first job
 #  --cpu-time               : default: "6:00:00" for RAL, "11:50:00" for Oxford
 #  --fit-param-list         : Fit parameter list. Default: "nuosc3f_numudisapp_fix4+nuisance". See FitParamList.h for allowed options.
