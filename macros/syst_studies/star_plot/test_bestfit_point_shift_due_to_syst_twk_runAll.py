@@ -141,7 +141,7 @@ for osc in oscparams:
       for syst in systematics:
 
          if opt.do_syst:
-            rootcommand = 'root2k -l -b -q \'$T2KOSCANA/macros/fit/syst/star_plot/test_bestfit_point_shift_due_to_syst_twk.C("'+syst+'","'+sam+'","'+fitparamlist+'","'+fitter+'",'+str(osc[0])+','+str(osc[1])+','+str(osc[2])+','+str(osc[3])+','+str(osc[4])+','+str(osc[5])+',"'+conffile
+            rootcommand = 'root2k -l -b -q \'$T2KOSCANA/macros/syst_studies/star_plot/test_bestfit_point_shift_due_to_syst_twk.C("'+syst+'","'+sam+'","'+fitparamlist+'","'+fitter+'",'+str(osc[0])+','+str(osc[1])+','+str(osc[2])+','+str(osc[3])+','+str(osc[4])+','+str(osc[5])+',"'+conffile
             if opt.interactive:
                command = rootcommand + '",false,0)\''
                print command
@@ -203,40 +203,40 @@ for osc in oscparams:
             command = 'cat star_plot_line-{b,f,s,x}*.data > star_plot_line-all.data'
             print command
             os.system(command)
-            command = 'root2k -l -b -q \'$T2KOSCANA/macros/fit/syst/star_plot/make_star_plot_for_disappearance_analysis.C("star_plot_line-all.data",'+str(osc[2])+','+str(osc[5])+','+errmixing23+','+errdm23sq+')\''
+            command = 'root2k -l -b -q \'$T2KOSCANA/macros/syst_studies/star_plot/make_star_plot_for_disappearance_analysis.C("star_plot_line-all.data",'+str(osc[2])+','+str(osc[5])+','+errmixing23+','+errdm23sq+')\''
             print command
             os.system(command)
             command = 'cat star_plot_line-osc*.data > star_plot_line-osc.data'
             print command
             os.system(command)
-            command = 'root2k -l -b -q \'$T2KOSCANA/macros/fit/syst/star_plot/make_star_plot_for_disappearance_analysis.C("star_plot_line-osc.data",'+str(osc[2])+','+str(osc[5])+','+errmixing23+','+errdm23sq+')\''
+            command = 'root2k -l -b -q \'$T2KOSCANA/macros/syst_studies/star_plot/make_star_plot_for_disappearance_analysis.C("star_plot_line-osc.data",'+str(osc[2])+','+str(osc[5])+','+errmixing23+','+errdm23sq+')\''
             print command
             os.system(command)
             command = 'cat star_plot_line-sk_*.data > star_plot_line-sk.data'
             print command
             os.system(command)
-            command = 'root2k -l -b -q \'$T2KOSCANA/macros/fit/syst/star_plot/make_star_plot_for_disappearance_analysis.C("star_plot_line-sk.data",'+str(osc[2])+','+str(osc[5])+','+errmixing23+','+errdm23sq+')\''
+            command = 'root2k -l -b -q \'$T2KOSCANA/macros/syst_studies/star_plot/make_star_plot_for_disappearance_analysis.C("star_plot_line-sk.data",'+str(osc[2])+','+str(osc[5])+','+errmixing23+','+errdm23sq+')\''
             print command
             os.system(command)
 
             command = 'cat star_plot_line-xsec_*.data > star_plot_line-xsec.data'
             print command
             os.system(command)
-            command = 'root2k -l -b -q \'$T2KOSCANA/macros/fit/syst/star_plot/make_star_plot_for_disappearance_analysis.C("star_plot_line-xsec.data",'+str(osc[2])+','+str(osc[5])+','+errmixing23+','+errdm23sq+')\''
+            command = 'root2k -l -b -q \'$T2KOSCANA/macros/syst_studies/star_plot/make_star_plot_for_disappearance_analysis.C("star_plot_line-xsec.data",'+str(osc[2])+','+str(osc[5])+','+errmixing23+','+errdm23sq+')\''
             print command
             os.system(command)
 
             command = 'for i in {00..10}; do printf -v ii "%02i" $i; cat star_plot_line-banff_$ii* >> star_plot_line-banffnumu.data; done'
             print command
             os.system(command)
-            command = 'root2k -l -b -q \'$T2KOSCANA/macros/fit/syst/star_plot/make_star_plot_for_disappearance_analysis.C("star_plot_line-banffnumu.data",'+str(osc[2])+','+str(osc[5])+','+errmixing23+','+errdm23sq+')\''
+            command = 'root2k -l -b -q \'$T2KOSCANA/macros/syst_studies/star_plot/make_star_plot_for_disappearance_analysis.C("star_plot_line-banffnumu.data",'+str(osc[2])+','+str(osc[5])+','+errmixing23+','+errdm23sq+')\''
             print command
             os.system(command)
 
             command = 'for i in {11..21}; do printf -v ii "%02i" $i; cat star_plot_line-banff_$ii* >> star_plot_line-banffnumubar.data; done'
             print command
             os.system(command)
-            command = 'root2k -l -b -q \'$T2KOSCANA/macros/fit/syst/star_plot/make_star_plot_for_disappearance_analysis.C("star_plot_line-banffnumubar.data",'+str(osc[2])+','+str(osc[5])+','+errmixing23+','+errdm23sq+')\''
+            command = 'root2k -l -b -q \'$T2KOSCANA/macros/syst_studies/star_plot/make_star_plot_for_disappearance_analysis.C("star_plot_line-banffnumubar.data",'+str(osc[2])+','+str(osc[5])+','+errmixing23+','+errdm23sq+')\''
             print command
             os.system(command)
 
@@ -244,14 +244,14 @@ for osc in oscparams:
             command = 'for i in {22..28}; do printf -v ii "%02i" $i; cat star_plot_line-banff_$ii* >> star_plot_line-banffnue.data; done'
             print command
             os.system(command)
-            command = 'root2k -l -b -q \'$T2KOSCANA/macros/fit/syst/star_plot/make_star_plot_for_disappearance_analysis.C("star_plot_line-banffnue.data",'+str(osc[2])+','+str(osc[5])+','+errmixing23+','+errdm23sq+')\''
+            command = 'root2k -l -b -q \'$T2KOSCANA/macros/syst_studies/star_plot/make_star_plot_for_disappearance_analysis.C("star_plot_line-banffnue.data",'+str(osc[2])+','+str(osc[5])+','+errmixing23+','+errdm23sq+')\''
             print command
             os.system(command)
             
             command = 'for i in {29..30}; do printf -v ii "%02i" $i; cat star_plot_line-banff_$ii* >> star_plot_line-banffnuebar.data; done'
             print command
             os.system(command)
-            command = 'root2k -l -b -q \'$T2KOSCANA/macros/fit/syst/star_plot/make_star_plot_for_disappearance_analysis.C("star_plot_line-banffnuebar.data",'+str(osc[2])+','+str(osc[5])+','+errmixing23+','+errdm23sq+')\''
+            command = 'root2k -l -b -q \'$T2KOSCANA/macros/syst_studies/star_plot/make_star_plot_for_disappearance_analysis.C("star_plot_line-banffnuebar.data",'+str(osc[2])+','+str(osc[5])+','+errmixing23+','+errdm23sq+')\''
             print command
             os.system(command)
             """
@@ -259,7 +259,7 @@ for osc in oscparams:
             command = 'cat star_plot_line-banff_ma*.data cat star_plot_line-banff_ccqeE*.data star_plot_line-banff_cc1piE* > star_plot_line-banffxsec.data'
             print command
             os.system(command)
-            command = 'root2k -l -b -q \'$T2KOSCANA/macros/fit/syst/star_plot/make_star_plot_for_disappearance_analysis.C("star_plot_line-banffxsec.data",'+str(osc[2])+','+str(osc[5])+','+errmixing23+','+errdm23sq+')\''
+            command = 'root2k -l -b -q \'$T2KOSCANA/macros/syst_studies/star_plot/make_star_plot_for_disappearance_analysis.C("star_plot_line-banffxsec.data",'+str(osc[2])+','+str(osc[5])+','+errmixing23+','+errdm23sq+')\''
             print command
             os.system(command)
 
@@ -267,7 +267,7 @@ for osc in oscparams:
             command = 'cat star_plot_line-unbanff*.data cat > star_plot_line-unbanff.data'
             print command
             os.system(command)
-            command = 'root2k -l -b -q \'$T2KOSCANA/macros/fit/syst/star_plot/make_star_plot_for_disappearance_analysis.C("star_plot_line-unbanff.data",'+str(osc[2])+','+str(osc[5])+','+errmixing23+','+errdm23sq+')\''
+            command = 'root2k -l -b -q \'$T2KOSCANA/macros/syst_studies/star_plot/make_star_plot_for_disappearance_analysis.C("star_plot_line-unbanff.data",'+str(osc[2])+','+str(osc[5])+','+errmixing23+','+errdm23sq+')\''
             print command
             os.system(command)
             """
@@ -275,7 +275,7 @@ for osc in oscparams:
             command = 'cat star_plot_line-correlated_banff*.data cat > star_plot_line-correlated_banff.data'
             print command
             os.system(command)
-            command = 'root2k -l -b -q \'$T2KOSCANA/macros/fit/syst/star_plot/make_star_plot_for_disappearance_analysis.C("star_plot_line-correlated_banff.data",'+str(osc[2])+','+str(osc[5])+','+errmixing23+','+errdm23sq+')\''
+            command = 'root2k -l -b -q \'$T2KOSCANA/macros/syst_studies/star_plot/make_star_plot_for_disappearance_analysis.C("star_plot_line-correlated_banff.data",'+str(osc[2])+','+str(osc[5])+','+errmixing23+','+errdm23sq+')\''
             print command
             os.system(command)
 
@@ -283,7 +283,7 @@ for osc in oscparams:
             command = 'cat star_plot_line-edbanff*.data cat > star_plot_line-edbanff.data'
             print command
             os.system(command)
-            command = 'root2k -l -b -q \'$T2KOSCANA/macros/fit/syst/star_plot/make_star_plot_for_disappearance_analysis.C("star_plot_line-edbanff.data",'+str(osc[2])+','+str(osc[5])+','+errmixing23+','+errdm23sq+')\''
+            command = 'root2k -l -b -q \'$T2KOSCANA/macros/syst_studies/star_plot/make_star_plot_for_disappearance_analysis.C("star_plot_line-edbanff.data",'+str(osc[2])+','+str(osc[5])+','+errmixing23+','+errdm23sq+')\''
             print command
             os.system(command)
             """
@@ -291,14 +291,14 @@ for osc in oscparams:
             command = 'cat star_plot_line-fsi_*.data > star_plot_line-fsi.data'
             print command
             os.system(command)
-            command = 'root2k -l -b -q \'$T2KOSCANA/macros/fit/syst/star_plot/make_star_plot_for_disappearance_analysis.C("star_plot_line-fsi.data",'+str(osc[2])+','+str(osc[5])+','+errmixing23+','+errdm23sq+')\''
+            command = 'root2k -l -b -q \'$T2KOSCANA/macros/syst_studies/star_plot/make_star_plot_for_disappearance_analysis.C("star_plot_line-fsi.data",'+str(osc[2])+','+str(osc[5])+','+errmixing23+','+errdm23sq+')\''
             print command
             os.system(command)
 
             command = 'cat star_plot_line-sk_1Rmu_ccnonqe_eff.data star_plot_line-sk_1Rmu_nc_eff.data star_plot_line-sk_energy_scale.data star_plot_line-xsec_pilessdelta.data star_plot_line-xsec_sf.data star_plot_line-xsec_bindE.data star_plot_line-banff_maqe.data star_plot_line-banff_ccqeE0.data > star_plot_line-important.data'
             print command
             os.system(command)
-            command = 'root2k -l -b -q \'$T2KOSCANA/macros/fit/syst/star_plot/make_star_plot_for_disappearance_analysis.C("star_plot_line-important.data",'+str(osc[2])+','+str(osc[5])+','+errmixing23+','+errdm23sq+')\''
+            command = 'root2k -l -b -q \'$T2KOSCANA/macros/syst_studies/star_plot/make_star_plot_for_disappearance_analysis.C("star_plot_line-important.data",'+str(osc[2])+','+str(osc[5])+','+errmixing23+','+errdm23sq+')\''
             print command
             os.system(command)
             
@@ -317,12 +317,12 @@ for osc in oscparams:
             osc[2] = 1
          if(osc[5] == -99):
             osc[5] = 0.0024
-         command = 'root2k -l -b -q \'$T2KOSCANA/macros/fit/syst/star_plot/text_to_root.C('+str(osc[2])+','+str(osc[5])+','+errmixing23+','+errdm23sq+',"'+dirname+'/star_plot_line-all.data")\''
+         command = 'root2k -l -b -q \'$T2KOSCANA/macros/syst_studies/star_plot/text_to_root.C('+str(osc[2])+','+str(osc[5])+','+errmixing23+','+errdm23sq+',"'+dirname+'/star_plot_line-all.data")\''
          print command
          os.system(command)
 
 
 if opt.do_table:
-   command = 'root2k -l -b -q \'$T2KOSCANA/macros/fit/syst/star_plot/max_deviation_table.C("readfile*.root")\''
+   command = 'root2k -l -b -q \'$T2KOSCANA/macros/syst_studies/star_plot/max_deviation_table.C("readfile*.root")\''
    print command
    os.system(command)
