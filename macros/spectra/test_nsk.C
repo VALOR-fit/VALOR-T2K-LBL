@@ -14,7 +14,7 @@
 
 //structure to store results
 struct nsk_t {
-  double nsk = 0, nskmc = 0, nskmucc = 0, nskmubarcc = 0, nskecc = 0, nskebarcc = 0, nsksigecc = 0, nsknc = 0, nskarr = 0;
+  double nsk = 0, nskmc = 0, nskmucc = 0, nskmubarcc = 0, nskecc = 0, nskebarcc = 0, nsksigecc = 0, nskmec = 0, nsknc = 0, nskarr = 0;
 };
 
 using namespace std;
@@ -86,6 +86,7 @@ void test_nsk
   osc_nobanff.nskecc = 0; osc_nobanff.nskebarcc = 0; osc_nobanff.nsksigecc = 0; osc_nobanff.nsknc = 0;
   noosc_nobanff.nsk = 0; noosc_nobanff.nskarr = 0; noosc_nobanff.nskmc = 0; noosc_nobanff.nskmucc = 0; noosc_nobanff.nskmubarcc = 0;
   noosc_nobanff.nskecc = 0; noosc_nobanff.nskebarcc = 0; noosc_nobanff.nsksigecc = 0; noosc_nobanff.nsknc = 0;
+  osc_banff.nskmec = 0; noosc_banff.nskmec = 0; osc_nobanff.nskmec = 0; noosc_nobanff.nskmec = 0;
 
   // generate predictions for no oscillation, with BANFF
   skexp.Generate(ph);
@@ -281,6 +282,17 @@ void test_nsk
 	   << setw(ncolnev)  << setfill(' ') << setprecision(nprecisionnev) << noosc_banff.nsknc
 	   << endrow
 	   << endl;
+  streamer << setw(ncol1)  << setfill(' ') << "MEC"
+	   << endcolumn
+	   << setw(ncolnev)  << setfill(' ') << setprecision(nprecisionnev) << osc_nobanff.nskmec 
+	   << endcolumn
+	   << setw(ncolnev)  << setfill(' ') << setprecision(nprecisionnev) << osc_banff.nskmec
+	   << endcolumn
+	   << setw(ncolnev)  << setfill(' ') << setprecision(nprecisionnev) << noosc_nobanff.nskmec 
+	   << endcolumn
+	   << setw(ncolnev)  << setfill(' ') << setprecision(nprecisionnev) << noosc_banff.nskmec
+	   << endrow
+	   << endl;
 
   streamer << "\\hline" << endl;
   streamer << "\\end{tabular}" << endl;
@@ -306,25 +318,27 @@ void test_nsk
 void nsk_print(nsk_t n, double input_dm23sq) {
   //output in form of table 16, TN52
   cout << endl << " dm23sq is " << input_dm23sq << endl;
-  cout << "     " << n.nskmucc + n.nskmubarcc + n.nskecc + n.nskebarcc + n.nsksigecc + n.nsknc << " beam total" << endl;
+  cout << "     " << n.nskmucc + n.nskmubarcc + n.nskecc + n.nskebarcc + n.nsksigecc + n.nsknc + n.nskmec << " beam total" << endl;
   cout << "     " << n.nskmucc + n.nskmubarcc << " numu+numubar CC" << endl;
   cout << "     " << n.nskecc + n.nskebarcc << " nue+nuebar beam CC" << endl;
   cout << "     " << n.nsknc << " all NC" << endl;
   cout << "     " << n.nsksigecc << " nue signal CC" << endl;
+  cout << "     " << n.nskmec << " MEC" << endl;
 
   //output a bit more broken down
   cout << endl << " dm23sq is " << input_dm23sq << endl;
-  cout << "     " << n.nskmucc + n.nskmubarcc + n.nskecc + n.nskebarcc + n.nsksigecc + n.nsknc << " beam total" << endl;
+  cout << "     " << n.nskmucc + n.nskmubarcc + n.nskecc + n.nskebarcc + n.nsksigecc + n.nsknc + n.nskmec << " beam total" << endl;
   cout << "     " << n.nskmucc << " numu CC" << endl;
   cout << "     " << n.nskmubarcc << " numubar CC" << endl;
   cout << "     " << n.nskecc << " nue beam CC" << endl;
   cout << "     " << n.nskebarcc << " nuebar beam CC" << endl;
   cout << "     " << n.nsknc << " all NC" << endl;
   cout << "     " << n.nsksigecc << " nue appearance CC" << endl;
+  cout << "     " << n.nskmec << " MEC" << endl;
 
   //the total
   cout << endl << "Number of predicted events at SK is: "
-       << n.nskmucc + n.nskmubarcc + n.nskecc + n.nskebarcc + n.nsksigecc + n.nsknc
+       << n.nskmucc + n.nskmubarcc + n.nskecc + n.nskebarcc + n.nsksigecc + n.nsknc + n.nskmec
        << "     = " << n.nskmc << endl;
 }
 
@@ -335,7 +349,7 @@ nsk_t nsk_integration(nsk_t n, SuperkExpectation *skexp, conv::SuperkSample_t s,
   double n.nskarr = 0;
   for(int ir = 0; ir < conv::kNErecoBins1Rmu; ir++)
     n.nskarr += skexp->CurrPredictedErecoSpectrumArray(s)[ir];
-  double n.nskmc = 0, n.nskmucc = 0, n.nskmubarcc = 0, n.nskecc = 0, n.nskebarcc = 0, n.nsksigecc = 0, n.nsknc = 0;
+  double n.nskmc = 0, n.nskmucc = 0, n.nskmubarcc = 0, n.nskecc = 0, n.nskebarcc = 0, n.nsksigecc = 0, n.nsknc = 0, n.nskmec = 0;
   for(int im = 0; im < conv::knm; im++) {
     conv::SuperkMode_t m = conv::kSKReactionModes[is][im];
     if(m == conv::kSKmUndefined)
@@ -347,7 +361,9 @@ nsk_t nsk_integration(nsk_t n, SuperkExpectation *skexp, conv::SuperkSample_t s,
       if(util::IsNC(m))
 	n.nsknc += skexp->GetSuperkMC()->Template(s, m, t)->Integral();
       else {
-	if(util::IsNuMu(m))
+	if(util::IsMEC(m))
+	  n.nskmec += skexp->GetSuperkMC()->Template(s, m, t)->Integral();
+	else if(util::IsNuMu(m))
 	  n.nskmucc += skexp->GetSuperkMC()->Template(s, m, t)->Integral();
 	else if(util::IsNuMuBar(m))
 	  n.nskmubarcc += skexp->GetSuperkMC()->Template(s, m, t)->Integral();
