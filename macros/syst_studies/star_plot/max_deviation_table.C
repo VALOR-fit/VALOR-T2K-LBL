@@ -37,6 +37,7 @@ void max_deviation_table(const char * filename = "readfile.root")
 
   vector<string> systematics;
   systematics.push_back("sk_energy_scale");
+  /*
   systematics.push_back("sk_1Rmu_ccqe_other_eff");
   systematics.push_back("sk_1Rmu_ccqe_ring_counting_eff_0");
   systematics.push_back("sk_1Rmu_ccqe_ring_counting_eff_1");
@@ -44,6 +45,19 @@ void max_deviation_table(const char * filename = "readfile.root")
   systematics.push_back("sk_1Rmu_ccnonqe_eff");
   systematics.push_back("sk_1Rmu_nc_eff");
   systematics.push_back("sk_1Rmu_nuecc_eff");
+  systematics.push_back("fsi_000");
+  systematics.push_back("fsi_001");
+  systematics.push_back("fsi_002");
+  systematics.push_back("fsi_003");
+  systematics.push_back("fsi_004");
+  systematics.push_back("fsi_005");
+  */
+  systematics.push_back("skdetfsi_000");
+  systematics.push_back("skdetfsi_001");
+  systematics.push_back("skdetfsi_002");
+  systematics.push_back("skdetfsi_003");
+  systematics.push_back("skdetfsi_004");
+  systematics.push_back("skdetfsi_005");
   systematics.push_back("banff_00");
   systematics.push_back("banff_01");
   systematics.push_back("banff_02");
@@ -78,12 +92,7 @@ void max_deviation_table(const char * filename = "readfile.root")
   systematics.push_back("xsec_norm_ncoth");
   systematics.push_back("xsec_norm_nuetonumu");
   systematics.push_back("xsec_norm_antinutonu");
-  systematics.push_back("fsi_000");
-  systematics.push_back("fsi_001");
-  systematics.push_back("fsi_002");
-  systematics.push_back("fsi_003");
-  systematics.push_back("fsi_004");
-  systematics.push_back("fsi_005");
+
 
   for(int isys = 0; isys < systematics.size(); isys++) {
     string name = systematics[isys];
