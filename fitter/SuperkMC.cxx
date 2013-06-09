@@ -818,7 +818,7 @@ void SuperkMC::ApplyBANFFTuningToTemplates(void)
        if(!mctempl_tgt) continue; 
 #endif
 
-       double x_mec = 0;
+       double x_mec = -1;
 #if BANFF_BINS == 3
        if(util::IsMEC(m))
 	 x_mec = fNuXSec->MECBestFitValue();
