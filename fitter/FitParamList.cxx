@@ -6,7 +6,7 @@
 */
 //________________________________________________________________________________________
 
-#define SYST_NSIGMA 2   // number of sigma away from nominal nuisance parameters are allowed to be
+#define SYST_NSIGMA 5   // number of sigma away from nominal nuisance parameters are allowed to be
 #define SYST_STEP   0.1 // step size (in units of sigma)
 #define NSELECTED_NONBANFF 10
 #define NSELECTED_NONBANFF_DISAP 6
