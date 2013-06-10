@@ -328,9 +328,9 @@
        -->
 <!--
        <covariance_matrix>
-          <filename>   inputs/official/2013/skdetfsi/FSIandSIErrors2013.root  </filename>
-          <objname>    FSICovariance    </objname>
-          <objtype>    TH2D             </objtype>
+          <filename>   inputs/official/2013/skdetfsi/skdet_mat_numuoa_2013a.root  </filename>
+          <objname>    covmat_fsi       </objname>
+          <objtype>    TMatrixD         </objtype>
        </covariance_matrix>     
 -->
   </fsi>
@@ -345,8 +345,8 @@
         Covariance matrix of SKDet FSI parameters
       -->
     <covariance_matrix>
-      <filename>   inputs/official/2013/skdetfsi/SKDetFSISIErrors2013.root  </filename>
-      <objname>    skdet_fsi_cov         </objname>
+      <filename>   inputs/official/2013/skdetfsi/skdet_mat_numuoa_2013a_valor.root  </filename>
+      <objname>    covmat_sk_fsi         </objname>
       <objtype>    TMatrixD              </objtype>
     </covariance_matrix>
   </skdetfsi>
