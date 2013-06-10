@@ -18,7 +18,7 @@
 //#define __show_isanevent_mesg_debug__
 //#define __save_ori_templates_init_debug__
 #define __skip_unexpected_spline_test_in_readsplines__ // skip looking for splines we don't expect (due to our empty bins) - speedy!
-#define __use_flat_splines_for_missing_splines__ // DON'T USE! will use flat splines for missing splines. Only used between SK MC versions (new SKMC, old splines)
+//#define __use_flat_splines_for_missing_splines__ // DON'T USE! will use flat splines for missing splines. Only used between SK MC versions (new SKMC, old splines)
 
 #include <cassert>
 #include <cstdlib>
@@ -226,8 +226,10 @@ bool NuXSec::ReadSplines(TXMLEngine* xml, XMLNodePointer_t root_node)
 		       << "Spline thinks there are: " << nevents_spl
 		       << ", Histogram thinks there are: " << nevents_hist
 		       << "; " << splname.str()
-		       << "; Ereco: " << Ereco << ", Etrue: " << Etrue << endl;
-		  exit(1);
+		       << "; Ereco: " << Ereco - kOneMeV << " to " << util::XsecErecoBinEdges(s,ir+1)
+		       << ", Etrue: " << Etrue - kOneMeV << " to " << kXsEtrueBinEdges[is][im][it+1]
+		       << endl;
+		  //exit(1);
 		}
 #endif	
 

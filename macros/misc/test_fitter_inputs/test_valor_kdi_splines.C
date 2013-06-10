@@ -211,6 +211,8 @@ void test_valor_kdi_splines
 	}//it
       }//ir
 
+      can->Clear();
+      can->Update();
       ps->Close();
       delete ps;
 
