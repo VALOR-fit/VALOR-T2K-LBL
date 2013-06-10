@@ -36,6 +36,7 @@ void max_deviation_table(const char * filename = "readfile.root")
   cout.precision(4);
 
   vector<string> systematics;
+  systematics.push_back("nominal");
   systematics.push_back("sk_energy_scale");
   /*
   systematics.push_back("sk_1Rmu_ccqe_other_eff");
@@ -74,6 +75,14 @@ void max_deviation_table(const char * filename = "readfile.root")
   systematics.push_back("banff_13");
   systematics.push_back("banff_14");
   systematics.push_back("banff_15");
+  systematics.push_back("banff_16");
+  systematics.push_back("banff_17");
+  systematics.push_back("banff_18");
+  systematics.push_back("banff_19");
+  systematics.push_back("banff_20");
+  systematics.push_back("banff_21");
+  systematics.push_back("banff_22");
+  /*
   systematics.push_back("banff_maqe");
   systematics.push_back("banff_mares");
   systematics.push_back("banff_ccqeE0");
@@ -81,6 +90,7 @@ void max_deviation_table(const char * filename = "readfile.root")
   systematics.push_back("banff_ccqeE2");
   systematics.push_back("banff_cc1piE0");
   systematics.push_back("banff_cc1piE1");
+  */
   systematics.push_back("xsec_pf");
   systematics.push_back("xsec_bindE");
   systematics.push_back("xsec_sf");
@@ -110,12 +120,16 @@ void max_deviation_table(const char * filename = "readfile.root")
       maxdm = TMath::Max(maxdm, TMath::Max( TMath::Abs((var_dm23P-var_indm23)/var_stdm23), TMath::Abs((var_dm23M-var_indm23)/var_stdm23) ));
 
     }
-    if(maxmix > 0.25 || maxdm > 0.25)
-      cout << "{\\color{red}";
+    if(maxmix > 0.25 || maxdm > 0.25) cout << "{\\color{red}";
 
-    cout << util::AsStringPaperTex(util::PhysParamIdFromString(name));
+    if(name == "nominal")
+      cout << name;
+    else 
+      cout << util::AsStringPaperTex(util::PhysParamIdFromString(name));
     if(maxmix > 0.25 || maxdm > 0.25)
       cout << "}";
+
+    std::cout.precision(8);
 
     cout << "\t & " << maxmix << "\t & " << maxdm << " \\\\" << endl;
 

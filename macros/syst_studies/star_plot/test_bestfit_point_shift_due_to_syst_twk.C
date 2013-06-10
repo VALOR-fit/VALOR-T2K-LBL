@@ -287,6 +287,9 @@ void test_bestfit_point_shift_due_to_syst_twk
       fparm->Update(conv::kPhypDeltaCP, tweak_deltacp);
       fparm->SetInitValue(conv::kPhypDeltaCP, tweak_deltacp);
     }
+    else if(sys == "nominal") {
+      //do nothing
+    }
     else {
       skexp->TweakSystematic(systematic,+1.);
     }
@@ -448,6 +451,9 @@ void test_bestfit_point_shift_due_to_syst_twk
       if(tweak_deltacp <  fparm->MinValue(conv::kPhypDeltaCP)) tweak_deltacp = fparm->MinValue(conv::kPhypDeltaCP);
       fparm->Update(conv::kPhypDeltaCP, tweak_deltacp);
       fparm->SetInitValue(conv::kPhypDeltaCP, tweak_deltacp);
+    }
+    else if(sys == "nominal") {
+      //do nothing
     }
     else {
       skexp->TweakSystematic(systematic,-1.);
@@ -628,6 +634,9 @@ void test_bestfit_point_shift_due_to_syst_twk
 	double tweak_sf = Rnd::Instance()->RndOther().Uniform(0.,1.);
 	skexp->TweakSystematic(systematic, tweak_sf);
       }
+      else if(sys == "nominal") {
+	//do nothing
+      }
       else {
 	double tweak = Rnd::Instance()->RndOther().Gaus(0.,1.);
 	skexp->TweakSystematic(systematic, tweak);
@@ -668,6 +677,22 @@ void test_bestfit_point_shift_due_to_syst_twk
       delete skobs;
       delete fit_inputs;
       delete fitter;
+
+      //reset osc params to initial
+      fparm->ResetCurrToInitValues();
+      //need to do this, just incase InitValues were changed inside FitterKernel::DoTheFit()
+      if(hyp == conv::kHypOsc3F) {
+	fparm->SetInitValue(conv::kPhypMixing12, input_mixing12);
+	fparm->SetInitValue(conv::kPhypMixing13, input_mixing13);
+	fparm->SetInitValue(conv::kPhypMixing23, input_mixing23);
+	fparm->SetInitValue(conv::kPhypDeltaCP,  input_deltacp);
+	fparm->SetInitValue(conv::kPhypDm12sq,   input_dm12sq);
+	fparm->SetInitValue(conv::kPhypDm23sq,   input_dm23sq);
+      }
+      else if(hyp == conv::kHypNuMuDisapp2F) {
+	fparm->SetInitValue(conv::kPhypMixing23, input_mixing23);
+	fparm->SetInitValue(conv::kPhypDm23sq,   input_dm23sq);
+      }  
     }//end loop over itoy
     
     // Store best-fit params

@@ -187,7 +187,10 @@ void make_star_plot_for_disappearance_analysis
          // add legend entry
 	 if(systematic.find("osc_") != string::npos)
 	   systematic.erase(systematic.begin(), systematic.begin()+4);
-         legend->AddEntry(arr_p1sig, util::AsStringPaperRooTex(util::PhysParamIdFromString(systematic)).c_str(), "L");
+	 if(systematic == "nominal")
+	   legend->AddEntry(arr_p1sig, "nominal", "L");
+	 else
+	   legend->AddEntry(arr_p1sig, util::AsStringPaperRooTex(util::PhysParamIdFromString(systematic)).c_str(), "L");
 
          isyst++;
          // reset and re-use formatting styles, shouldn't have anywhere near that many systematics
