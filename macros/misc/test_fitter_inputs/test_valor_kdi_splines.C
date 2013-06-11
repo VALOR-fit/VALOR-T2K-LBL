@@ -207,6 +207,7 @@ void test_valor_kdi_splines
 	  }//ibin
 	  if(!problem)
 	    problem_free << val_splname.str() << "_" << val_splname.str() << endl;
+	  delete val_spl;
 	  delete ref_spl;
 	}//it
       }//ir
