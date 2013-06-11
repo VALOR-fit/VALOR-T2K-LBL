@@ -32,11 +32,11 @@ class FitterMinuit: public FitterABC
 {
 public:
    FitterMinuit();
-   FitterMinuit(FitInputs * inputs, Option_t * option = "minuit");
+   FitterMinuit(FitInputs * inputs, Option_t * option = "minuit"); // option: "minuit","minuit+hesse","minuit+minos"
    virtual ~FitterMinuit();
 
    virtual bool       DoTheFit      (void);
-   virtual int        FitStatusCode (Option_t * option = "");
+   virtual int        FitStatusCode (Option_t * option = ""); // option: "", "migrad", "hesse", "minos"
    virtual double     FitTime       (void)              { return fFitTime;                    }
    virtual int        NDOF          (void)              { return fNFitBins - fNFreeFitParams; }
    virtual int        NBinsInFit    (void)              { return fNFitBins;                   }
