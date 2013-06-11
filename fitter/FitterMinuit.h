@@ -10,6 +10,8 @@
 
 \created  October 20, 2010
 
+\copyright (c) 2010-2013, VaLOR group.
+
 */
 //____________________________________________________________________________
 
@@ -48,19 +50,19 @@ protected:
    void  Init    (FitInputs * fit_inputs, Option_t * option = "minuit");
    bool  RunOnce (bool use_simplex);
 
-   FitInputs*  fFitInputs;        ///< fit inputs
-   TString     fOption;           ///< fit option
-   int         fStatusCode;       ///< fit status code
-   int         fMigradStatusCode; ///< return value of the MIGRAD command
-   int         fHesseStatusCode;  ///< return value of the HESSE command
-   int         fMinosStatusCode;  ///< return value of the HESSE command
-   int         fImproveStatusCode;  ///< return value of the HESSE command
-   double      fFitTime;          ///< time taken to do the fit
-   int         fNFitBins;         ///< number of bins in fit
-   int         fNFreeFitParams;   ///< number of free params in fit
-   bool        fGetHesseErrors;   ///< get hesse errors?
-   bool        fSimplex;   ///< get hesse errors?
-   double      fTol;
+   FitInputs*  fFitInputs;         ///< fit inputs
+   TString     fOption;            ///< fit option
+   int         fStatusCode;        ///< fit status code
+   int         fMigradStatusCode;  ///< MIGRAD status code
+   int         fHesseStatusCode;   ///< HESSE status code
+   int         fMinosStatusCode;   ///< MINOS status code
+   double      fFitTime;           ///< time taken to do the fit
+   int         fNFitBins;          ///< number of bins in fit
+   int         fNFreeFitParams;    ///< number of free params in fit
+   bool        fCalcHesseErrors;   ///< calculate HESSE errors?
+   bool        fCalcMinosErrors;   ///< calculate MINOS errors?
+ //bool        fSimplex;           ///< 
+   double      fTol;               ///< set tolerance?
    int         fStr;
 };
 

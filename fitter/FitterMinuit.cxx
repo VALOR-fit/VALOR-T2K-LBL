@@ -1,15 +1,7 @@
 //____________________________________________________________________________ 
 /*
 
- >> ChangeLog:
-
- For changes up to version 2010_v3.0.0 (last implementation of the 2010-era analysis)
- see code in the corresponding SVN branch.
-
- Changes since 2011_v0.9.0:
-
- @ 18/2/13 LE
- Fixed number of degrees of freedom depending on the sample (1Rmu or 1Re). Updated reseeding when MIGRAD does not converge.
+ \copyright (c) 2010-2013, VaLOR group.
 
 */ 
 //____________________________________________________________________________
@@ -77,14 +69,20 @@ FitterMinuit::~FitterMinuit()
 //____________________________________________________________________________ 
 void FitterMinuit::Init(void) 
 {
-  fFitInputs      = 0;
-  fOption         = "";
-  fNFreeFitParams = 0;
-  fNFitBins       = 0;
-  fGetHesseErrors = false;
-  fSimplex        = false;
-  fTol            = 0.1;
-  fStr            = 1;
+  fFitInputs        = 0;
+  fOption           = "";
+  fNFreeFitParams   = 0;
+  fNFitBins         = 0;
+  fCalcHesseErrors  = false;
+  fCalcMinosErrors  = false;
+//fSimplex          = false;
+  fTol              = 0.1;
+  fStr              = 1;
+  fStatusCode       = -999;      
+  fMigradStatusCode = -999;
+  fHesseStatusCode  = -999; 
+  fMinosStatusCode  = -999; 
+  fFitTime          = 0;
 }
 //____________________________________________________________________________ 
 int FitterMinuit::FitStatusCode (Option_t * option) 
@@ -95,6 +93,7 @@ int FitterMinuit::FitStatusCode (Option_t * option)
 
   if ( opt.Contains("migrad") ) return fMigradStatusCode;
   if ( opt.Contains("hesse")  ) return fHesseStatusCode;
+  if ( opt.Contains("minos")  ) return fMinosStatusCode;
   
   return fStatusCode;
 }
@@ -123,6 +122,10 @@ void FitterMinuit::Init(FitInputs * fit_inputs, Option_t * option)
 
   fOption = option;
 
+  // calc HESSE or MINOS errors after fit
+  fCalcHesseErrors = fOption.Contains("hesse");
+  fCalcMinosErrors = fOption.Contains("minos");
+
   if(fOption.Contains("minuit")) {
     // get fitter
     TVirtualFitter::SetDefaultFitter("Minuit");
@@ -137,18 +140,11 @@ void FitterMinuit::Init(FitInputs * fit_inputs, Option_t * option)
     fit_params.SetTo(fitter);
     
     // set minimization function
-    fitter->SetFCN(FitFunc);
-    
-    
-    /*
-    // free parameters
-    arglist[0] = 4; //deltacp
-    fitter->ExecuteCommand("SET LIMits",arglist, 1);
-    */
-    
+    fitter->SetFCN(FitFunc);            
   }
-  /*
-    if(fOption.Contains("simplex")) {
+
+/*
+  if(fOption.Contains("simplex")) {
     TVirtualFitter::SetDefaultFitter("Simplex");
     TVirtualFitter * fitter = TVirtualFitter::Fitter(0,param_list_size);
     
@@ -163,17 +159,16 @@ void FitterMinuit::Init(FitInputs * fit_inputs, Option_t * option)
     // set minimization function                                                                                                                                                       
     fitter->SetFCN(FitFunc);
     fSimplex = true;
-    }*/
-  // calculate degrees of freedom
-  
-  fNFitBins       = 0;
-  
+  }
+*/
+
+  // calculate degrees of freedom  
+  fNFitBins = 0;  
   for(int is = 0; is < kns; is++) {
     SuperkSample_t s = kSKSamples[is];
     if(s == kSKsFCFV1RingMuLike) fNFitBins += kNErecoBins1Rmu;
     if(s == kSKsFCFV1RingELike ) fNFitBins += kNErecoBins1Re;
-  }
-  
+  }  
   fNFreeFitParams = fit_params.GetNumberFreeParameters();
   
 #ifdef __show_fit_init_info__
@@ -187,13 +182,11 @@ void FitterMinuit::Init(FitInputs * fit_inputs, Option_t * option)
 //____________________________________________________________________________ 
 bool FitterMinuit::DoTheFit(void) 
 {
-
 #ifdef __show_fit_cpu_time__
   TStopwatch w;
   w.Start();
 #endif
   fFitTime = 0;
-
 
   // Run the fitter once - we have the option here to check the status code
   // and if the fitter failed, re-seed the fitter and try again
@@ -252,8 +245,7 @@ bool FitterMinuit::RunOnce(bool use_simplex)
 
   Double_t arg[5];
   arg[0] = fStr;
-  fitter->ExecuteCommand("SET STRategy",arg,1);  
-  
+  fitter->ExecuteCommand("SET STRategy",arg,1);    
 
   // Pass fit inputs (data, pdf) to MINUIT
 #ifdef __show_fit_steps__
@@ -304,11 +296,13 @@ bool FitterMinuit::RunOnce(bool use_simplex)
   // Found best fit! Copy current --> best-fit values
   fFitInputs->FitParams().CopyCurrToBestFitValues();
 
-  //Use Hesse to make the errors better
-  if(fGetHesseErrors )//|| fStatusCode != 3)
+  // Calculate HESSE or MINOS errors
+  if(fCalcHesseErrors) {
     fHesseStatusCode = fitter->ExecuteCommand("HESSE",arglist, 1);
-  
-  //fMinosStatusCode = fitter->ExecuteCommand("MINOS",arglist, 1);
+  }
+  else if(fCalcMinosErrors) {
+    fMinosStatusCode = fitter->ExecuteCommand("MINOS",arglist, 1);
+  }
 
   // Get error matrix status
 #ifdef __show_fit_steps__
@@ -336,10 +330,10 @@ bool FitterMinuit::RunOnce(bool use_simplex)
 #ifdef __show_fit_steps__
   cout << "FitterMinuit/RunOnce >> Printing HESSE fit results..." << endl;
 #endif
-  if(fGetHesseErrors) {
+  if(fCalcHesseErrors) {
     Double_t amin = 0;
     fitter->PrintResults(3,amin);
-    //fitter->PrintResults(1,amin); // prints limits
+  //fitter->PrintResults(1,amin); // prints limits
   }
   cout << "FitterMinuit/RunOnce >> Final error matrix status = " 
        << fStatusCode << endl; 
