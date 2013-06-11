@@ -91,7 +91,7 @@ while($irun < $nruns) {
   if( $resource eq "Grid") { $macro_dir = "\$T2KOSCANA"; }
   else                     { $macro_dir = $softw_dir;    }
 
-  $command = "root2k -l -b -q \'$macro_dir/macros/fit/run_fit_xml.C(\"$tag\",$irun,\"$toyexptsfile\",$first,$last,\"$config_file\",\"$fitparamlist\",\"$fitoption\",\"$output_option\",$store_toy_expts,$store_bestfit_spectra)\'";
+  $command = "root2k -l -b -q \'$macro_dir/macros/fit/run_fit_xml.C(\"$tag\",$irun,\"$toyexptsfile\",$first,$last,\"$config_file\",\"$fitparamlist\",\"$fitoption\",$store_toy_expts,$store_bestfit_spectra)\'";
   print "$command \n";
 
   $first = $last  + 1;

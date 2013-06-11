@@ -27,7 +27,8 @@ void build_chisq_surface_disapp_parallelized
   double       dm32sq_max          = 0.003,
   double       dm32sq_step         = 0.00001,
   int          input_mixing23_bin  = -1,                                    /* if !=-1, will run only for the specified bin */
-  int          input_dm32sq_bin    = -1                                     /* if !=-1, will run only for the specified bin */
+  int          input_dm32sq_bin    = -1,                                     /* if !=-1, will run only for the specified bin */
+  int          input_dm32sq_bin_max = -1
 )
 {
   using namespace std;
@@ -140,7 +141,7 @@ void build_chisq_surface_disapp_parallelized
         }
         for(int j = 1; j <= chisq_surface->GetNbinsY(); j++) {
           if(use_single_dm32sq_bin) {
-            bool bin_match = (input_dm32sq_bin == j);
+            bool bin_match = (j >= input_dm32sq_bin && j <= input_dm32sq_bin_max);
             if(!bin_match) continue;
            }
            // init and fix params as needed
