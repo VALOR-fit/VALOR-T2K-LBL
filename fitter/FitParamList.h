@@ -127,12 +127,13 @@ public:
    int GetNumberParameters(void);
 
    // Set and get other fit properties: chisq at best-fit point, fit time, status codes etc
-   void   SetStatusCode   (string st, int code);
-   void   SetBestFitChisq (double chisq_bf) { fBestFitChisq = chisq_bf; }
-   void   SetFitTime      (double fit_time) { fFitTime      = fit_time; }
-   int    GetStatusCode   (string st) const;
-   double GetBestFitChisq (void) const      { return fBestFitChisq;     }
-   double GetFitTime      (void) const      { return fFitTime;          }
+   void   ClearStatusCodes (void);
+   void   SetStatusCode    (string st, int code);
+   int    GetStatusCode    (string st) const;
+   void   SetBestFitChisq  (double chisq_bf) { fBestFitChisq = chisq_bf; }
+   double GetBestFitChisq  (void) const      { return fBestFitChisq;     }
+   void   SetFitTime       (double fit_time) { fFitTime      = fit_time; }
+   double GetFitTime       (void) const      { return fFitTime;          }
 
    // Print
    void Print (ostream & stream) const;

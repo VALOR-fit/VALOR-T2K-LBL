@@ -189,9 +189,11 @@ bool FitterMinuit::DoTheFit(void)
 
   fFitTime = 0;
 
-  // reset fit time and bestfit chisq to persistable FitParamList obj
-  fFitInputs->FitParams().SetFitTime      (0);
-  fFitInputs->FitParams().SetBestFitChisq (0);
+  // reset fit time, bestfit chisq and status codes in
+  // persistable FitParamList obj
+  fFitInputs->FitParams().SetFitTime(0);
+  fFitInputs->FitParams().SetBestFitChisq(0);
+  fFitInputs->FitParams().ClearStatusCodes();
 
   // Run the fitter once - we have the option here to check the status code
   // and if the fitter failed, re-seed the fitter and try again
@@ -235,9 +237,21 @@ bool FitterMinuit::DoTheFit(void)
        << fFitTime << " sec." << endl;
 #endif
 
-  // copy fit time and bestfit chisq to persistable FitParamList obj
+  // copy fit time and bestfit chisq and status codes 
+  // to persistable FitParamList obj
+
   fFitInputs->FitParams().SetFitTime ( fFitTime );
   fFitInputs->FitParams().SetBestFitChisq ( fFitInputs->BestFitChisquare());
+
+  fFitInputs->FitParams().SetStatusCode("migrad_min", fMigradMinStatusCode);
+  fFitInputs->FitParams().SetStatusCode("migrad_err", fMigradErrStatusCode);
+
+  if(fCalcHesseErrors) {
+    fFitInputs->FitParams().SetStatusCode("hesse_err", fHesseErrStatusCode);
+  }
+  if(fCalcMinosErrors) {
+    fFitInputs->FitParams().SetStatusCode("minos_err", fMinosErrStatusCode);
+  }
 
   return ok;
 }

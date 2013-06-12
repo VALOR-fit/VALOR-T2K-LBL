@@ -446,6 +446,11 @@ int FitParamList::GetNumberParameters(void)
   return nparams;
 }
 //________________________________________________________________________________________
+void FitParamList::ClearStatusCodes(void)
+{
+  fStatusCodes.clear();
+}
+//________________________________________________________________________________________
 void FitParamList::SetStatusCode(string st, int code)
 {
   fStatusCodes[st] = code;
@@ -457,7 +462,7 @@ int FitParamList::GetStatusCode(string st) const
   if(sciter != fStatusCodes.end()) {
     return sciter->second;
   }
-  return -999;
+  return -9876;
 }
 //________________________________________________________________________________________
 void FitParamList::Print(ostream & stream) const
@@ -528,7 +533,7 @@ void FitParamList::Print(ostream & stream) const
     int code = sciter->second;
     stream << setw(20) << name << setw(10) << code << endl;  
   }
-  stream << "Fit time: " << fFitTime << endl;
+  stream << "Fit time: " << fFitTime << " sec" << endl;
   stream << "Best-fit chisq: " << fBestFitChisq << endl;  
 }
 //________________________________________________________________________________________
