@@ -1,14 +1,7 @@
 //____________________________________________________________________________ 
 /*
 
- >> ChangeLog:
-
- For changes up to version 2010_v3.0.0 (last implementation of the 2010-era analysis)
- see code in the corresponding SVN branch.
-
- Changes since 2011_v0.9.0:
-
- @
+ \copyright (c) 2010-2013, VaLOR group.
 
 */ 
 //____________________________________________________________________________
@@ -93,6 +86,7 @@ void FitterMinuit2::Init(void)
   fOption         = "";
   fNFreeFitParams = 0;
   fNFitBins       = 0;
+  fStatusCode     = -999;
 }
 //____________________________________________________________________________ 
 void FitterMinuit2::Init(FitInputs * fit_inputs, Option_t * /*option*/) 
@@ -225,15 +219,8 @@ void FitterMinuit2::ConstructCovMatrix(void)
 
 }
 //____________________________________________________________________________ 
-int FitterMinuit2::FitStatusCode(Option_t * option)
+int FitterMinuit2::FitStatusCode(Option_t * /*option*/)
 {
-  if(!option) return 9999;
-
-  TString opt(option);
-
-  if ( opt.Contains("migrad") ) return fMigradStatusCode;
-  if ( opt.Contains("hesse")  ) return fHesseStatusCode;
-
   return fStatusCode;
 }
 //____________________________________________________________________________
