@@ -126,6 +126,15 @@ public:
    int GetNumberFreeParameters(void);
    int GetNumberParameters(void);
 
+   // Set and get other fit properties: chisq at best-fit point, fit time etc
+   void   SetBestFitChisq (double chisq_bf) { fBestFitChisq = chisq_bf; }
+   void   SetFitTime      (double fit_time) { fFitTime      = fit_time; }
+   double GetBestFitChisq (void) const      { return fBestFitChisq;     }
+   double GetFitTime      (void) const      { return fFitTime;          }
+
+   // Set and get fit time
+
+
    // Print
    void Print (ostream & stream) const;
    void Print () const;
@@ -236,6 +245,8 @@ private:
    double *     fHesseError;   //[fNParams]
    double *     fPlusError;    //[fNParams]
    double *     fMinusError;   //[fNParams]
+   double       fBestFitChisq; 
+   double       fFitTime;
 
    bool fMigradErrorsSet;
    bool fHesseErrorsSet;

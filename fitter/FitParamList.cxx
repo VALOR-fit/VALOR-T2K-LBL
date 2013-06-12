@@ -1736,6 +1736,9 @@ void FitParamList::Init(int nparams)
    fShowCurrValuesOnly    = false;
    fShowBestFitValuesOnly = false;
 
+   fBestFitChisq = 0.;
+   fFitTime      = 0.;
+
    fMigradErrorsSet = false;
    fHesseErrorsSet  = false;
    fMinosErrorsSet  = false;
