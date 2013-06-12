@@ -148,15 +148,15 @@ void FitterMinuit::Init(FitInputs * fit_inputs, Option_t * option)
     TVirtualFitter::SetDefaultFitter("Simplex");
     TVirtualFitter * fitter = TVirtualFitter::Fitter(0,param_list_size);
     
-    // set print level                                                                                                                                                                 
+    // set print level              
     Double_t arglist[5];
     arglist[0] = -1;
     fitter->ExecuteCommand("SET PRINT",arglist,1);
     
-    // set params                                                                                                                                                                      
+    // set params                
     fit_params.SetTo(fitter);
     
-    // set minimization function                                                                                                                                                       
+    // set minimization function     
     fitter->SetFCN(FitFunc);
     fSimplex = true;
   }
@@ -182,11 +182,15 @@ void FitterMinuit::Init(FitInputs * fit_inputs, Option_t * option)
 //____________________________________________________________________________ 
 bool FitterMinuit::DoTheFit(void) 
 {
-#ifdef __show_fit_cpu_time__
+  // start clock
   TStopwatch w;
   w.Start();
-#endif
+
   fFitTime = 0;
+
+  // reset fit time and bestfit chisq to persistable FitParamList obj
+  fFitInputs->FitParams().SetFitTime      (0);
+  fFitInputs->FitParams().SetBestFitChisq (0);
 
   // Run the fitter once - we have the option here to check the status code
   // and if the fitter failed, re-seed the fitter and try again
@@ -220,15 +224,19 @@ bool FitterMinuit::DoTheFit(void)
   if(fMigradStatusCode == 4) {
     cout << "Fits still failed; trying SIMPLEX" << endl;
     this->RunOnce(true);
-  }
-  
+  }  
 
-#ifdef __show_fit_cpu_time__
+  // stop clock
   w.Stop();
-  cout << "FitterMinuit/DoTheFit >> Fit performed in " 
-       << w.CpuTime() << " sec." << endl;
   fFitTime = w.CpuTime();
+#ifdef __show_fit_cpu_time__
+  cout << "FitterMinuit/DoTheFit >> Fit performed in " 
+       << fFitTime << " sec." << endl;
 #endif
+
+  // copy fit time and bestfit chisq to persistable FitParamList obj
+  fFitInputs->FitParams().SetFitTime ( fFitTime );
+  fFitInputs->FitParams().SetBestFitChisq ( fFitInputs->BestFitChisquare());
 
   return ok;
 }
