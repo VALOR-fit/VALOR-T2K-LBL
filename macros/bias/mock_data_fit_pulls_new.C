@@ -32,6 +32,10 @@ void mock_data_fit_pulls_new
   //
   const int nparams = 44;
 
+  const int nosc     = 2; // nu of osc params in list below (osc params are plotted on separate canvas)
+  const int nsystcol = 3; // number of columns on canvases showing residual/pulls for systematics
+  const int nsystrow = 4; // number of rows    on canvases showing residual/pulls for systematics
+
   PhysParamId_t params[nparams] = {
      kPhypMixing23,             
    //kPhypMixing13,  
@@ -236,13 +240,13 @@ void mock_data_fit_pulls_new
   const double max_pull   =  5;
   const int    nbins_err  = 100;
 
-  TH1I * h_fitstat        = new TH1I("h_fitstat",       "fit status",           11, -1,   10);
-  TH1I * h_migradfitstat  = new TH1I("h_migradfitstat", "migrad fit status",    14, -1,   13);
-  TH1I * h_hessefitstat   = new TH1I("h_hessefitstat",  "hesse fit status",     14, -1,   13);
-  TH1D * h_fittime        = new TH1D("h_fittime",       "fit time",           1000,  0, 1000);
-  TH1D * h_nsk_nom        = new TH1D("h_nsk_nom",       "nsk(1Rmu) nom",       500,  0,  500);
-  TH1D * h_nsk_bf         = new TH1D("h_nsk_bf",        "nsk(1Rmu) best-fit",  500,  0,  500);
-  TH1D * h_dchisq         = new TH1D("h_dchisq",        "h_dchisq",            300, -5,   25);
+  TH1I * h_migradminstat  = new TH1I("h_migradminstat", "migrad minimization status",  11, -1,   10);
+  TH1I * h_migraderrstat  = new TH1I("h_migraderrstat", "migrad error status",         14, -1,   13);
+  TH1I * h_hesseerrstat   = new TH1I("h_hesseerrstat",  "hesse error status",          14, -1,   13);
+  TH1D * h_fittime        = new TH1D("h_fittime",       "fit time",                  1000,  0, 1000);
+  TH1D * h_chisqbf        = new TH1D("h_chisqbf",       "best-fit chisq",             300, -5,   25);
+  TH1D * h_nsk_nom        = new TH1D("h_nsk_nom",       "nsk(1Rmu) nom",              500,  0,  500);
+  TH1D * h_nsk_bf         = new TH1D("h_nsk_bf",        "nsk(1Rmu) best-fit",         500,  0,  500);
 
   TH1D * h_bestfit    [nparams] = { 0 }; // best-fit param distributions
   TH1D * h_residuals  [nparams] = { 0 }; // residuals
@@ -329,57 +333,63 @@ void mock_data_fit_pulls_new
     if(i%1 == 0) { cout << "Getting entry... " << i << endl; }
     ch.GetEntry(i);
 
-    int    fitstat        = 0; // get from where?
-    int    migradfitstat  = 0; // get from where?
-    int    hessefitstat   = 0; // get from where?
-    double fittime        = 0; // get from where?
-
-    h_fitstat        -> Fill(fitstat);
-    h_migradfitstat  -> Fill(migradfitstat);
-    h_hessefitstat   -> Fill(hessefitstat);
-    h_fittime        -> Fill(fittime);
-
-    //
+    // 
     // ignore failed fits!    
     //
-/*
     // MINUIT
     if(fitter == 0) {
-      if (migradfitstat == 4) continue; // migrad didn't converge
-      if (fitstat       != 3) continue; // error matrix inaccurate
+      int migradminstat = fparm->GetStatusCode("migrad_min");
+      int migraderrstat = fparm->GetStatusCode("migrad_err");
+      int hesseerrstat  = fparm->GetStatusCode("hesse_err");
+      h_migradminstat -> Fill(migradminstat);
+      h_migraderrstat -> Fill(migraderrstat);
+      h_hesseerrstat  -> Fill(hesseerrstat);
+      if (migradminstat == 4) continue; // migrad didn't converge
+      if (migraderrstat != 3) continue; // error matrix inaccurate
     }
     // MINUIT2
     else 
     if(fitter == 1) {
-      if (fitstat == 9) continue; //
+      //int fitstat = fparm->GetStatusCode("??"); // currently not set by minuit2
+      //if (fitstat == 9) continue; //
     }
-*/
   
+    double fittime = fparm->GetFitTime();
+    double chisqbf = fparm->GetBestFitChisq();
+    h_fittime -> Fill(fittime);
+    h_chisqbf -> Fill(chisqbf);
+
+/*
     double nsk_nom  = 0; // get from where?
     double nsk_bf   = 0; // get from where?
-    double dchisq   = 0; // get from where?
-
     h_nsk_nom  -> Fill(nsk_nom);
     h_nsk_bf   -> Fill(nsk_bf);
-    h_dchisq   -> Fill(dchisq);
+*/
 
     // loop over params in the fit
     for(int ip = 0; ip < nparams; ip++) 
     {
        PhysParamId_t p = params[ip];
-  
+
+       if(!fparm->Exists(p)) {
+          if(i<100) {
+            cerr << "**** Parameter " << util::AsStringCompact(p) << " doesn't exist in input parameter list" << endl;
+          }
+          continue;
+       }
+
        double bestfit    = fparm->BestFitValue(p);
        double true       = iparm->Value(p);
 
-       cout << ip << "best: " << bestfit << ", true: " << true << endl;
+       cout << "#" << ip << " => best-fit = " << bestfit << ", true = " << true << endl;
 
        double nominal    = nominal_array[ip];
        double err_prefit = prefit_err_array[ip];
-       double err_migrad = 0;
-       double err_hesse  = 0;
-       double err_minos  = 0;
+       double err_migrad = fparm->MigradError(p);
+       double err_hesse  = fparm->HesseError(p);
+     //double err_minos  = TMath::Max(fparm->PlusError(p), fparm->MinusError(p));
+       double err_minos  = 0.5*(fparm->PlusError(p) + fparm->MinusError(p));
        double err_fit    = 0;
-
        if      (err_mode == 1) err_fit = err_migrad;
        else if (err_mode == 2) err_fit = err_hesse;
        else if (err_mode == 3) err_fit = err_minos;
@@ -391,8 +401,7 @@ void mock_data_fit_pulls_new
        if(err_fit <= 0) {
          cerr << "** err_fit[p = " << util::AsStringCompact(p) 
               << "; err_mode = " << err_mode << "] = " << err_fit << endl;
-//         exit(1);
-         err_fit = 1;//HERE!
+         exit(1);
        }
 
        double residuals  = (bestfit-true);
@@ -416,31 +425,79 @@ void mock_data_fit_pulls_new
   // Draw
   //
 
-  new TCanvas(); h_fitstat->Draw();
-  new TCanvas(); h_migradfitstat->Draw();
-  new TCanvas(); h_hessefitstat->Draw();
+  // >> Plot etc
+  new TCanvas(); h_migradminstat->Draw();
+  new TCanvas(); h_migraderrstat->Draw();
+  new TCanvas(); h_hesseerrstat->Draw();
   new TCanvas(); h_fittime->Draw();
+  new TCanvas(); h_chisqbf->Draw();
+/*
   new TCanvas(); h_nsk_nom->Draw();
   new TCanvas(); h_nsk_bf->Draw();
-  new TCanvas(); h_dchisq->Draw();
-
+*/
+  TCanvas * c = 0;
+  // >> Plot residuals 
+  // put all osc params in one canvas (1 columnn x nosc rows)
+  // put all syst params in few canvases with (nsystcol columns x nsystrow rows)
+  int ipc=0;//plot nu in curr canvas
+  int ipcmax=0;//max nu of plot in curr canvas
   for(int ip = 0; ip < nparams; ip++) 
   {
      PhysParamId_t p = params[ip];
- 
+     if(ipc==0 && ip==0) {
+        c = new TCanvas();
+        c->Divide(1,nosc);
+        ipcmax = nosc;
+     }
+     if(ipc==0 && ip>=nosc) {
+        c = new TCanvas();
+        c->Divide(nsystcol,nsystrow);
+        ipcmax = nsystcol*nsystrow;
+     }
+     c->cd(ipc+1);
+     h_residuals[ip]->Draw();
+     ipc++;
+     if(ipc > ipcmax) { ipc=0; c->Update(); }
   }//p
+  // >> Plot pulls (all pull 1,2 and 3 on same plot), same logic as before
+  ipc=0;//plot nu in curr canvas
+  ipcmax=0;//max nu of plot in curr canvas
+  for(int ip = 0; ip < nparams; ip++) 
+  {
+     PhysParamId_t p = params[ip];
+     if(ipc==0 && ip==0) {
+        c = new TCanvas();
+        c->Divide(1,nosc);
+        ipcmax = nosc;
+     }
+     if(ipc==0 && ip>=nosc) {
+        c = new TCanvas();
+        c->Divide(nsystcol,nsystrow);
+        ipcmax = nsystcol*nsystrow;
+     }
+     c->cd(ipc+1);
+     h_pull_1[ip]->SetLineColor(kBlack);
+     h_pull_2[ip]->SetLineColor(kRed);
+     h_pull_3[ip]->SetLineColor(kGreen);
+     h_pull_1[ip]->Draw();
+     h_pull_2[ip]->Draw("same");
+     h_pull_3[ip]->Draw("same");
+     ipc++;
+     if(ipc > ipcmax) { ipc=0; c->Update(); }
+  }//p
+  // >> Plot pulls, same logic as before
 
   //
   // Store
   //
   TFile foutput("./valor_fit_bias_study.root","recreate");
-  h_fitstat       -> Write();
-  h_migradfitstat -> Write();
-  h_hessefitstat  -> Write();
+  h_migradminstat       -> Write();
+  h_migraderrstat -> Write();
+  h_hesseerrstat  -> Write();
   h_fittime       -> Write();
+  h_chisqbf       -> Write();
   h_nsk_nom       -> Write();
   h_nsk_bf        -> Write();
-  h_dchisq        -> Write();
   for(int ip = 0; ip < nparams; ip++) 
   {
      h_bestfit    [ip] -> Write();
