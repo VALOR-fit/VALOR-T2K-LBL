@@ -446,6 +446,20 @@ int FitParamList::GetNumberParameters(void)
   return nparams;
 }
 //________________________________________________________________________________________
+void FitParamList::SetStatusCode(string st, int code)
+{
+  fStatusCodes[st] = code;
+}
+//________________________________________________________________________________________
+int FitParamList::GetStatusCode(string st) const
+{
+  map<string,int>::const_iterator sciter = fStatusCodes.find(st);
+  if(sciter != fStatusCodes.end()) {
+    return sciter->second;
+  }
+  return -999;
+}
+//________________________________________________________________________________________
 void FitParamList::Print(ostream & stream) const
 {
   if(fShowBestFitValuesOnly) {
@@ -507,6 +521,15 @@ void FitParamList::Print(ostream & stream) const
      }
   }
 
+  stream << "Status codes: " << endl;  
+  map<string,int>::const_iterator sciter = fStatusCodes.begin();
+  for( ; sciter != fStatusCodes.end(); ++sciter) {
+    string name = sciter->first;
+    int code = sciter->second;
+    stream << setw(20) << name << setw(10) << code << endl;  
+  }
+  stream << "Fit time: " << fFitTime << endl;
+  stream << "Best-fit chisq: " << fBestFitChisq << endl;  
 }
 //________________________________________________________________________________________
 void FitParamList::Print() const
@@ -1688,16 +1711,23 @@ void FitParamList::Copy(const FitParamList & plst)
      this->fMinusError[i]   = plst.fMinusError[i];
    } 
 
-   fShowCurrValuesOnly    = plst.fShowCurrValuesOnly;
-   fShowBestFitValuesOnly = plst.fShowBestFitValuesOnly;
+   this->fBestFitChisq = plst.fBestFitChisq;
+   this->fFitTime      = plst.fFitTime;
 
-   fMigradErrorsSet = plst.fMigradErrorsSet;
-   fHesseErrorsSet  = plst.fHesseErrorsSet;
-   fMinosErrorsSet  = plst.fMinosErrorsSet;
+   this->fStatusCodes.insert(plst.fStatusCodes.begin(),  plst.fStatusCodes.end());
+
+   this->fMigradErrorsSet = plst.fMigradErrorsSet;
+   this->fHesseErrorsSet  = plst.fHesseErrorsSet;
+   this->fMinosErrorsSet  = plst.fMinosErrorsSet;
+
+   this->fShowCurrValuesOnly    = plst.fShowCurrValuesOnly;
+   this->fShowBestFitValuesOnly = plst.fShowBestFitValuesOnly;
 }
 //________________________________________________________________________________________
 void FitParamList::Init(int nparams)
 {
+   fIdMap.clear();
+
    fParListName = "";
    fSystMode = -1;
 
@@ -1739,6 +1769,8 @@ void FitParamList::Init(int nparams)
    fBestFitChisq = 0.;
    fFitTime      = 0.;
 
+   fStatusCodes.clear();
+
    fMigradErrorsSet = false;
    fHesseErrorsSet  = false;
    fMinosErrorsSet  = false;
@@ -1747,6 +1779,7 @@ void FitParamList::Init(int nparams)
 void FitParamList::CleanUp(void)
 {
    fIdMap.clear();
+   fStatusCodes.clear();
 
    delete [] fName;
    delete [] fBestFitValue;
@@ -1775,6 +1808,9 @@ void FitParamList::CleanUp(void)
    fHesseError   = 0;
    fPlusError    = 0;
    fMinusError   = 0;
+
+   fBestFitChisq = 0.;
+   fFitTime      = 0.;
 
    fParListName = "";
    fSystMode = -1;
