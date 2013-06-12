@@ -3161,12 +3161,12 @@ static const double kErecoBinEdges1Re[kNErecoBins1Re+1] =
 //
 
 #ifdef SKFSITOGETHER
-static const int kNumOfNuisanceParams1Rmu  = kNumOfParamsInBANFFfit -1 + kNumOfSKDetFSIParams1Rmu + kNumOfUncXSecSyst - 1 + 1;  
+static const int kNumOfNuisanceParams1Rmu  = kNumOfParamsInBANFFfit + kNumOfSKDetFSIParams1Rmu + kNumOfUncXSecSyst;  
 static const int kNumOfNuisanceParams1Re   = kNumOfParamsInBANFFfit + kNumOfSKDetFSIParams1Re  + kNumOfUncXSecSyst - 1 + 1 ;  
 static const int kNumOfNuisanceParamsJoint = kNumOfParamsInBANFFfit + kNumOfSKDetFSIParams     + kNumOfXSecSyst - (kNumOfParamsInBANFFfit - kNumOfFluxParamsInBANFFfit) + 1;
 #endif
 #ifndef SKFSITOGETHER
-static const int kNumOfNuisanceParams1Rmu  = kNumOfParamsInBANFFfit -1 + kNumOfFSIParams1Rmu + kNumOfUncXSecSyst - 1 + kNumOfSKDetParams1Rmu;  
+static const int kNumOfNuisanceParams1Rmu  = kNumOfParamsInBANFFfit + kNumOfFSIParams1Rmu + kNumOfUncXSecSyst + kNumOfSKDetParams1Rmu;  
 static const int kNumOfNuisanceParams1Re   = kNumOfParamsInBANFFfit + kNumOfFSIParams1Re  + kNumOfUncXSecSyst - 1 + kNumOfSKDetParams1Re + 1 ;  
 static const int kNumOfNuisanceParamsJoint = kNumOfParamsInBANFFfit + kNumOfFSIParams     + kNumOfXSecSyst - (kNumOfParamsInBANFFfit - kNumOfFluxParamsInBANFFfit) + kNumOfSKDetParams;
 #endif

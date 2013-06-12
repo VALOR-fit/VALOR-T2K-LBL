@@ -27,8 +27,10 @@ void build_chisq_surface_disapp_parallelized
   double       dm32sq_max          = 0.003,
   double       dm32sq_step         = 0.00001,
   int          input_mixing23_bin  = -1,                                    /* if !=-1, will run only for the specified bin */
-  int          input_dm32sq_bin    = -1,                                     /* if !=-1, will run only for the specified bin */
-  int          input_dm32sq_bin_max = -1
+  int          input_dm32sq_bin    = -1,                                    /* if !=-1, will run only for the specified bin */
+  const char * dmsqscheme          = "abs23",                               /* abs23==kNuDmsq12andAbs23 fogli==kNuDmsqFogliLisi */
+  const char * mixparamchoice      = "2theta",                              /* 2theta==kNuMixSinsq2Theta theta==kNuMixSinsqTheta */
+  bool         apply_2nu_boundary  = false                                  /* if using the 2nu flavour osc prob, apply the physical boundary? */
 )
 {
   using namespace std;
@@ -38,8 +40,18 @@ void build_chisq_surface_disapp_parallelized
   const char * config = Form("%s/config/%s", gSystem->Getenv("T2KOSCANA"), config_file);
 
   // Global options
-  Opt::Instance()->gOscMixingParamChoice = conv::kNuMixSinsq2Theta;
-  Opt::Instance()->gOscDmsqScheme        = conv::kNuDmsq12andAbs23;
+  if(mixparamchoice == "2theta")
+    Opt::Instance()->gOscMixingParamChoice = conv::kNuMixSinsq2Theta;
+  else if(mixparamchoice == "theta")
+    Opt::Instance()->gOscMixingParamChoice = conv::kNuMixSinsqTheta;
+  else
+    exit(1);
+  if(dmsqscheme == "abs23")
+    Opt::Instance()->gOscDmsqScheme        = conv::kNuDmsq12andAbs23;
+  else if(dmsqscheme == "fogli")
+    Opt::Instance()->gOscDmsqScheme        = conv::kNuDmsqFogliLisi;
+  else
+    exit(1);
   Opt::Instance()->gMassHierarchyAssumed = conv::kNmhNormal;
 
   // Calc number of bins & make sure input bin numbers are within range
@@ -82,6 +94,12 @@ void build_chisq_surface_disapp_parallelized
   // Get superk spectrum predictor & configure
   SuperkExpectation * skexp = new SuperkExpectation;
   skexp->Read(config);
+
+  // Set whether the osc prob can be > 1 in 2 flavour world
+  if(apply_2nu_boundary && hyp == conv::kHypNuMuDisapp2F) {
+    skexp->GetSuperkMC()->SetUnphysicalOscProb(true);
+    fparm->SetMaxValue( conv::kPhypMixing23, 2);
+  }
 
   // Output file
   ostringstream filename;
@@ -140,10 +158,10 @@ void build_chisq_surface_disapp_parallelized
           if(!bin_match) continue;
         }
         for(int j = 1; j <= chisq_surface->GetNbinsY(); j++) {
-          if(use_single_dm32sq_bin) {
-            bool bin_match = (j >= input_dm32sq_bin && j <= input_dm32sq_bin_max);
-            if(!bin_match) continue;
-           }
+	   if(use_single_dm32sq_bin) {
+	     bool bin_match = (j == input_dm32sq_bin);
+	     if(!bin_match) continue;
+	   }
            // init and fix params as needed
            fparm->ResetCurrToInitValues();
            double mixing23 = chisq_surface->GetXaxis()->GetBinCenter(i);

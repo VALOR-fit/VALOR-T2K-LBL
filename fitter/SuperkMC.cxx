@@ -18,7 +18,7 @@
 
 #define __show_init_mesg_info__
 #define __show_init_mesg_debug__
-//#define __show_init_mesg_debug2__
+#define __show_init_mesg_debug2__
 //#define __show_update_mesg_info__
 //#define __show_hypothesis__ 
 //#define __show_hypothesis_probabilities__ 
@@ -90,6 +90,8 @@ SuperkMC::~SuperkMC()
 void SuperkMC::Init(void)
 {
   fPOT = 0;
+  fXMEC = -1;
+  fUnphysicalOscProb = false;
 
   fMCTemplMECMartini = 0;
   fMCTemplMECNieves  = 0;
@@ -818,7 +820,7 @@ void SuperkMC::ApplyBANFFTuningToTemplates(void)
        if(!mctempl_tgt) continue; 
 #endif
 
-       double x_mec = -1;
+       double x_mec = fXMEC;
 #if BANFF_BINS == 3
        if(util::IsMEC(m))
 	 x_mec = fNuXSec->MECBestFitValue();
@@ -982,7 +984,7 @@ void SuperkMC::ApplySystematicsToTemplates_Multiplicative(void)
        if(!mctempl_tgt) continue;
 #endif
 
-       double x_mec = -1;
+       double x_mec = fXMEC;
 #if BANFF_BINS == 3
        if(util::IsMEC(m))
 	 x_mec = fNuXSec->CurrentValue(kNuisBANFFMECNorm);
@@ -1082,8 +1084,6 @@ void SuperkMC::ApplySystematicsToTemplates_Multiplicative(void)
 		   nev += TMath::Min(nev_martini, nev_martini * x_mec);
 		   nev += nev_nieves * (1 - x_mec);
 		 }
-		 if(nev > 0)
-		   cout << nev_martini << "\t" << nev_nieves << "\t" << nev << endl;
 	       }//MEC
 	       else if (s==kSKsFCFV1RingMuLike)
 		 nev = fMCTemplArrayTun1Rmu[im][it-1][ir-1];
@@ -1692,7 +1692,7 @@ void SuperkMC::ApplyPhysHypothesisToTemplates(void)
          // loop over Etrue
          for(int it = 1; it <= util::NumEtrueBins(s); it++) {
            double Etrue = (util::EtrueBinEdges(s,it-1) + util::EtrueBinEdges(s,it)) / 2;
-           double psurv = util::NuMuSurvProbOsc2Flavour(mixing23, dm23sq, Etrue, m);
+           double psurv = util::NuMuSurvProbOsc2Flavour(mixing23, dm23sq, Etrue, m, fUnphysicalOscProb);
            // loop over Ereco
 	   for(int ir = 1; ir <= util::NumErecoBins(s); ir++) {
 	     double nev =  fMCTemplArrayFin1Rmu[im][it-1][ir-1];

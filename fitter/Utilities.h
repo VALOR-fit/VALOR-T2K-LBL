@@ -212,8 +212,8 @@ namespace util {
   // Code for 3-flavour oscillations incl. matter effects is in NuOsc3Flavour.cxx
   //
 
-  double NuMuSurvProbOsc2Flavour (double mixing23, double dm23sq, double Et);
-  double NuMuSurvProbOsc2Flavour (double mixing23, double dm23sq, double Et, conv::SuperkMode_t m);
+  double NuMuSurvProbOsc2Flavour (double mixing23, double dm23sq, double Et, bool unphysical_osc_prob);
+  double NuMuSurvProbOsc2Flavour (double mixing23, double dm23sq, double Et, conv::SuperkMode_t m, bool unphysical_osc_prob);
   double NuMuSurvProbDecay       (double sinsq2thetadecay, double alpha, double Et);
   double NuMuSurvProbDecay       (double sinsq2thetadecay, double alpha, double Et, conv::SuperkMode_t m);
   double NuMuSurvProbDecoh       (double sinsq2thetadecoh, double musq, double Et);

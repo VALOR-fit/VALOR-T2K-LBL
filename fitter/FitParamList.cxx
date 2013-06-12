@@ -762,13 +762,13 @@ FitParamList * FitParamList::NuOsc3FlavourFitWithAllSystDisap(void)
   //
   FitParamList::AppendCorrelatedBANFFSystematicsDisap (fparm, 6);
 #ifndef SKFSITOGETHER
-  FitParamList::AppendSuperkDetectorSystematicsDisap  (fparm, 6 +kNumOfParamsInBANFFfit-1);
-  FitParamList::AppendFSISystematicsDisap             (fparm, 6 +kNumOfParamsInBANFFfit-1+kNumOfSKDetParams1Rmu);
-  FitParamList::AppendUncorrelatedXSecSystematicsDisap(fparm, 6 +kNumOfParamsInBANFFfit-1+kNumOfSKDetParams1Rmu+kNumOfFSIParams1Rmu);
+  FitParamList::AppendSuperkDetectorSystematicsDisap  (fparm, 6 +kNumOfParamsInBANFFfit);
+  FitParamList::AppendFSISystematicsDisap             (fparm, 6 +kNumOfParamsInBANFFfit+kNumOfSKDetParams1Rmu);
+  FitParamList::AppendUncorrelatedXSecSystematicsDisap(fparm, 6 +kNumOfParamsInBANFFfit+kNumOfSKDetParams1Rmu+kNumOfFSIParams1Rmu);
 #endif
 #ifdef SKFSITOGETHER
-  FitParamList::AppendSuperkDetectorFSISystematicsDisap  (fparm, 6 +kNumOfParamsInBANFFfit-1);
-  FitParamList::AppendUncorrelatedXSecSystematicsDisap(fparm, 6 +kNumOfParamsInBANFFfit-1+kNumOfSKDetFSIParams1Rmu+1);
+  FitParamList::AppendSuperkDetectorFSISystematicsDisap(fparm, 6 +kNumOfParamsInBANFFfit);
+  FitParamList::AppendUncorrelatedXSecSystematicsDisap (fparm, 6 +kNumOfParamsInBANFFfit+kNumOfSKDetFSIParams1Rmu + 1 /*energy scale*/);
 #endif
 
   return fparm;
@@ -876,14 +876,15 @@ FitParamList * FitParamList::NumuDisapFitWithAllSyst(void)
   //
   FitParamList::AppendCorrelatedBANFFSystematicsDisap (fparm, 2);
 #ifndef SKFSITOGETHER
-  FitParamList::AppendSuperkDetectorSystematicsDisap  (fparm, 2+kNumOfParamsInBANFFfit-1);
-  FitParamList::AppendFSISystematicsDisap             (fparm, 2+kNumOfParamsInBANFFfit-1+kNumOfSKDetParams1Rmu);
-  FitParamList::AppendUncorrelatedXSecSystematicsDisap(fparm, 2+kNumOfParamsInBANFFfit-1+kNumOfSKDetParams1Rmu+kNumOfFSIParams1Rmu);
+  FitParamList::AppendSuperkDetectorSystematicsDisap  (fparm, 2+kNumOfParamsInBANFFfit);
+  FitParamList::AppendFSISystematicsDisap             (fparm, 2+kNumOfParamsInBANFFfit+kNumOfSKDetParams1Rmu);
+  FitParamList::AppendUncorrelatedXSecSystematicsDisap(fparm, 2+kNumOfParamsInBANFFfit+kNumOfSKDetParams1Rmu+kNumOfFSIParams1Rmu);
 #endif
 #ifdef SKFSITOGETHER
-  FitParamList::AppendSuperkDetectorFSISystematicsDisap  (fparm, 2+kNumOfParamsInBANFFfit-1);
-  FitParamList::AppendUncorrelatedXSecSystematicsDisap(fparm, 2+kNumOfParamsInBANFFfit-1+kNumOfSKDetFSIParams1Rmu+1);
+  FitParamList::AppendSuperkDetectorFSISystematicsDisap(fparm, 2+kNumOfParamsInBANFFfit);
+  FitParamList::AppendUncorrelatedXSecSystematicsDisap (fparm, 2+kNumOfParamsInBANFFfit+kNumOfSKDetFSIParams1Rmu+ 1/*energy scale*/);
 #endif
+
   return fparm;
 }
 //________________________________________________________________________________________
@@ -1526,7 +1527,7 @@ void FitParamList::AppendCorrelatedBANFFSystematicsDisap(FitParamList * fparm, i
   delete xml;
 
   // BANFF 
-  for(int i = 0; i < (kNumOfParamsInBANFFfit-1); i++) {
+  for(int i = 0; i < kNumOfParamsInBANFFfit; i++) {
     PhysParamId_t p = PhysParamId_t ((int) kNuisBANFF00 + i);
     double bf = BANFFBestFit[i];
     double err = sqrt(BANFFCov[i][i]);

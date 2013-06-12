@@ -4737,7 +4737,7 @@ bool t2kana::util::UseEventToFillInTemplate(
 }
 //___________________________________________________________________________
 double t2kana::util::NuMuSurvProbOsc2Flavour(
-  double mixing23, double dm23sq, double Et)
+  double mixing23, double dm23sq, double Et, bool unphysical_osc_prob = false)
 {
   if(Et <= 0.) return 0.;
 
@@ -4762,14 +4762,17 @@ double t2kana::util::NuMuSurvProbOsc2Flavour(
   double posc  = sinsq2theta23 * TMath::Power(osc,2);
   double psurv = 1-posc;
 
-  psurv = TMath::Min(1.,psurv);
-  psurv = TMath::Max(0.,psurv);
+  if(!unphysical_osc_prob) {
+    psurv = TMath::Min(1.,psurv);
+    psurv = TMath::Max(0.,psurv);
+  }
 
   return psurv;
 }
 //____________________________________________________________________________
 double t2kana::util::NuMuSurvProbOsc2Flavour(
-  double mixing23, double dm23sq, double Et, t2kana::conv::SuperkMode_t m)
+  double mixing23, double dm23sq, double Et, t2kana::conv::SuperkMode_t m,
+  bool unphysical_osc_prob = false)
 {
 // Note: Using only the numu disappearance analysis modes
 //
@@ -4819,7 +4822,7 @@ double t2kana::util::NuMuSurvProbOsc2Flavour(
      m == kSKmNuMuBarCCoth_e  ||
      m == kSKmMEC             )
   {
-    return NuMuSurvProbOsc2Flavour(mixing23, dm23sq, Et);
+    return NuMuSurvProbOsc2Flavour(mixing23, dm23sq, Et, unphysical_osc_prob);
   }
   else {
     cerr << "NuMuSurvProbOsc2D > Can't handle SK mode = " << m << endl;

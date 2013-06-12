@@ -483,8 +483,8 @@ double BANFF::ChisqPenalty(bool all_syst) const
       return chisq_penalty;
     
     }
-  }
-    else {
+  }//!all_syst
+  else {
     //Vector with deviations of current values from  best fit values
     const int np = conv::kNumOfParamsInBANFFfit;
     TMatrixD dev  (1,np); //vector of one column in matrix form for multiplication
@@ -521,7 +521,7 @@ double BANFF::ChisqPenalty(bool all_syst) const
 #endif
 
     if(chisq_penalty) return chisq_penalty;
-  }
+  }//all_syst
 
   return 0;
 }

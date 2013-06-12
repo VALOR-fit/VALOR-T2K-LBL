@@ -49,7 +49,10 @@ foreach (@ARGV) {
   if($_ eq '--config-file'           ) { $config_file           = $ARGV[$iarg+1]; }
   if($_ eq '--job-dir'               ) { $job_dir               = $ARGV[$iarg+1]; }
   if($_ eq '--softw-dir'             ) { $softw_dir             = $ARGV[$iarg+1]; }
-  if($_ eq '--n-fits-per-job'        ) { $nfitsperjob           = $ARGV[$iarg+1]; }
+  if($_ eq '--one-job-per-dmsq-row'  ) { $one_job_per_dmsq_row  = 1;              }
+  if($_ eq '--dmsq-scheme'           ) { $dmsqscheme            = $ARGV[$iarg+1]; }
+  if($_ eq '--mix-param-choice'      ) { $mixparamchoice        = $ARGV[$iarg+1]; }
+  if($_ eq '--allow-2nu-unphysical'  ) { $apply_2nu_boundary    = 0;              }
   $iarg++;
 }
 $nexpts                 = 1                                      unless defined $nexpts;
@@ -67,7 +70,9 @@ $fitoption              = "minuit"                               unless defined 
 $config_file            = "analysis_configuration.xml"           unless defined $config_file;
 $job_dir                = `pwd`                                  unless defined $job_dir;
 $softw_dir              = `pwd`                                  unless defined $softw_dir;
-$nfitsperjob            = 0                                      unless defined $nfitsperjob;
+$dmsqscheme             = "abs23"                                unless defined $dmsqscheme;
+$mixparamchoice         = "2theta"                               unless defined $mixparamchoice;
+$apply_2nu_boundary     = 1                                      unless defined $apply_2nu_boundary;
 
 die unless defined $exptfile;
 
@@ -95,9 +100,13 @@ print "experiment range: [$first, $last] \n";
 for ($mix23_bin = 1; $mix23_bin <= $mix23_nbins; $mix23_bin++) {
  for ($dm32sq_bin = 1; $dm32sq_bin <= $dm32sq_nbins; $dm32sq_bin++) {
 
+   if(defined $one_job_per_dmsq_row) {
+     $dm32sq_bin = -1;
+   }
+
   print "Submitting $tag job for mix23 bin: $mix23_bin and dm32sq bin: $dm32sq_bin \n";
 
-  $command  = "root2k -l -b -q \'$macro_dir/macros/chisq/build_chisq_surface_disapp_parallelized.C(\"$tag\",\"$exptfile\",$first,$last,\"$config_file\",\"$fitparamlist\",\"$fitoption\",$mix23_min,$mix23_max,$mix23_step,$dm32sq_min,$dm32sq_max,$dm32sq_step,$mix23_bin,$dm32sq_bin,$dm32sq_bin+$nfitsperjob)\'";
+  $command  = "root2k -l -b -q \'$macro_dir/macros/chisq/build_chisq_surface_disapp_parallelized.C(\"$tag\",\"$exptfile\",$first,$last,\"$config_file\",\"$fitparamlist\",\"$fitoption\",$mix23_min,$mix23_max,$mix23_step,$dm32sq_min,$dm32sq_max,$dm32sq_step,$mix23_bin,$dm32sq_bin,\"$dmsqscheme\",\"$mixparamchoice\",$apply_2nu_boundary)\'";
   print "$command \n";
 
   #
@@ -247,8 +256,9 @@ for ($mix23_bin = 1; $mix23_bin <= $mix23_nbins; $mix23_bin++) {
      system($command);
   }
 
-
-  $dm32sq_bin+=$nfitsperjob
+   if(defined $one_job_per_dmsq_row) {
+     last;
+   }
  }#bins
 }#bins
 

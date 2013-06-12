@@ -83,6 +83,12 @@ public:
   // ...
   void Draw(TVirtualPad * c, Option_t * opt = "") const;
 
+  // Hack for x_mec until we have a parameter we can tweak
+  void SetXMEC(double xmec)              { fXMEC = xmec; }
+
+  // Allow osc prob > 1 in 2 flavour oscillation?
+  void SetUnphysicalOscProb(bool unphys) { fUnphysicalOscProb = unphys; }
+
 private:
 
   // Init and clean-up
@@ -197,6 +203,10 @@ private:
   // utility objects for defining physics hypothesis (oscillations, decay, ...) & computing probabilities
   PhysHypothesis fPhysHypothesis;          ///< Physics hypothesis 
   NuOsc3Flavour  fNuOsc3Flavour;           ///< 3-flavour neutrino osc. probability calculations
+
+  double fXMEC; //hack x_mec until we have a parameter we can use
+
+  bool fUnphysicalOscProb; // Allow unphysical region (probs not in range [0,1]) in 2 flavour case
 
 ClassDef(SuperkMC, 5);
 };
