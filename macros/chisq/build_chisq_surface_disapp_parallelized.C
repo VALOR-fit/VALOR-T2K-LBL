@@ -30,7 +30,7 @@ void build_chisq_surface_disapp_parallelized
   int          input_dm32sq_bin    = -1,                                    /* if !=-1, will run only for the specified bin */
   const char * dmsqscheme          = "abs23",                               /* abs23==kNuDmsq12andAbs23 fogli==kNuDmsqFogliLisi */
   const char * mixparamchoice      = "2theta",                              /* 2theta==kNuMixSinsq2Theta theta==kNuMixSinsqTheta */
-  bool         apply_2nu_boundary  = false                                  /* if using the 2nu flavour osc prob, apply the physical boundary? */
+  bool         apply_2nu_boundary  = true                                   /* if using the 2nu flavour osc prob, apply the physical boundary? */
 )
 {
   using namespace std;
@@ -96,7 +96,7 @@ void build_chisq_surface_disapp_parallelized
   skexp->Read(config);
 
   // Set whether the osc prob can be > 1 in 2 flavour world
-  if(apply_2nu_boundary && hyp == conv::kHypNuMuDisapp2F) {
+  if(!apply_2nu_boundary && hyp == conv::kHypNuMuDisapp2F) {
     skexp->GetSuperkMC()->SetUnphysicalOscProb(true);
     fparm->SetMaxValue( conv::kPhypMixing23, 2);
   }
