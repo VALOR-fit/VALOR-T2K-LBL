@@ -69,20 +69,20 @@ FitterMinuit::~FitterMinuit()
 //____________________________________________________________________________ 
 void FitterMinuit::Init(void) 
 {
-  fFitInputs        = 0;
-  fOption           = "";
-  fNFreeFitParams   = 0;
-  fNFitBins         = 0;
-  fCalcHesseErrors  = false;
-  fCalcMinosErrors  = false;
-//fSimplex          = false;
-  fTol              = 0.1;
-  fStr              = 1;
-  fStatusCode       = -999;      
-  fMigradStatusCode = -999;
-  fHesseStatusCode  = -999; 
-  fMinosStatusCode  = -999; 
-  fFitTime          = 0;
+  fFitInputs           = 0;
+  fOption              = "";
+  fNFreeFitParams      = 0;
+  fNFitBins            = 0;
+  fCalcHesseErrors     = false;
+  fCalcMinosErrors     = false;
+//fSimplex             = false;
+  fTol                 = 0.1;
+  fStr                 = 1;
+  fMigradMinStatusCode = -999;
+  fMigradErrStatusCode = -999;      
+  fHesseErrStatusCode  = -999; 
+  fMinosErrStatusCode  = -999; 
+  fFitTime             = 0;
 }
 //____________________________________________________________________________ 
 int FitterMinuit::FitStatusCode (Option_t * option) 
@@ -91,11 +91,12 @@ int FitterMinuit::FitStatusCode (Option_t * option)
 
   TString opt(option);
 
-  if ( opt.Contains("migrad") ) return fMigradStatusCode;
-  if ( opt.Contains("hesse")  ) return fHesseStatusCode;
-  if ( opt.Contains("minos")  ) return fMinosStatusCode;
+  if ( opt.Contains("migrad_min") ) return fMigradMinStatusCode;
+  if ( opt.Contains("migrad_err") ) return fMigradErrStatusCode;
+  if ( opt.Contains("hesse_err")  ) return fHesseErrStatusCode;
+  if ( opt.Contains("minos_err")  ) return fMinosErrStatusCode;
   
-  return fStatusCode;
+  return -999;
 }
 //____________________________________________________________________________ 
 void FitterMinuit::Init(FitInputs * fit_inputs, Option_t * option) 
@@ -198,7 +199,7 @@ bool FitterMinuit::DoTheFit(void)
   
   // 4: migrad not converged
   int ntries = 0;
-  while(fMigradStatusCode == 4 && ntries < 25) {
+  while(fMigradMinStatusCode == 4 && ntries < 25) {
     cout << "Original fit failed; reseeding & trying again. Attempt: " << ntries << endl;
     NuOscMixParam_t omp = Opt::Instance()->gOscMixingParamChoice;
     switch(omp) {
@@ -221,7 +222,7 @@ bool FitterMinuit::DoTheFit(void)
     ntries++;
   }
 
-  if(fMigradStatusCode == 4) {
+  if(fMigradMinStatusCode == 4) {
     cout << "Fits still failed; trying SIMPLEX" << endl;
     this->RunOnce(true);
   }  
@@ -243,7 +244,7 @@ bool FitterMinuit::DoTheFit(void)
 //____________________________________________________________________________ 
 bool FitterMinuit::RunOnce(bool use_simplex) 
 {
-  fHesseStatusCode = -1;
+  fHesseErrStatusCode = -1;
 
   // Get the fitter
 #ifdef __show_fit_steps__
@@ -269,17 +270,17 @@ bool FitterMinuit::RunOnce(bool use_simplex)
   arglist[0] = 50000; // num of func calls
   arglist[1] = fTol;  // tolerance
   if(!use_simplex)
-    fMigradStatusCode = fitter->ExecuteCommand("MIGRAD",arglist, 2);
+    fMigradMinStatusCode = fitter->ExecuteCommand("MIGRAD",arglist, 2);
   //SIMPLEX
   else {
     arglist[1] = 0.1; // higher tolerance
-    fMigradStatusCode = fitter->ExecuteCommand("SIMPLEX",arglist, 2);
+    fMigradMinStatusCode = fitter->ExecuteCommand("SIMPLEX",arglist, 2);
   }
   
   //return on not converged
-  if(fMigradStatusCode == 4 && !use_simplex)
+  if(fMigradMinStatusCode == 4 && !use_simplex)
     return false;
-  else if(fMigradStatusCode == 4 && use_simplex) {
+  else if(fMigradMinStatusCode == 4 && use_simplex) {
     //copy current to best fit, to stop horrible crashes
     fFitInputs->FitParams().CopyCurrToBestFitValues();
     return false;
@@ -299,17 +300,17 @@ bool FitterMinuit::RunOnce(bool use_simplex)
   double edm, errdef; // dummy vars
   int nvpar, nparx;   // dummy vars
   int errMatrixStatus = fitter->GetStats(ha, edm, errdef, nvpar, nparx);
-  fStatusCode = errMatrixStatus;
+  fMigradErrStatusCode = errMatrixStatus;
 
   // Found best fit! Copy current --> best-fit values
   fFitInputs->FitParams().CopyCurrToBestFitValues();
 
   // Calculate HESSE or MINOS errors
   if(fCalcHesseErrors) {
-    fHesseStatusCode = fitter->ExecuteCommand("HESSE",arglist, 1);
+    fHesseErrStatusCode = fitter->ExecuteCommand("HESSE",arglist, 1);
   }
   else if(fCalcMinosErrors) {
-    fMinosStatusCode = fitter->ExecuteCommand("MINOS",arglist, 1);
+    fMinosErrStatusCode = fitter->ExecuteCommand("MINOS",arglist, 1);
   }
 
   // Get error matrix status
@@ -317,7 +318,7 @@ bool FitterMinuit::RunOnce(bool use_simplex)
   cout << "FitterMinuit/RunOnce >> Getting error matrix status..." << endl;
 #endif
   errMatrixStatus = fitter->GetStats(ha, edm, errdef, nvpar, nparx);
-  fStatusCode = errMatrixStatus;
+  fMigradErrStatusCode = errMatrixStatus;
 
   // Get errors
 #ifdef __show_fit_steps__
@@ -344,13 +345,13 @@ bool FitterMinuit::RunOnce(bool use_simplex)
   //fitter->PrintResults(1,amin); // prints limits
   }
   cout << "FitterMinuit/RunOnce >> Final error matrix status = " 
-       << fStatusCode << endl; 
+       << fMigradErrStatusCode << endl; 
 #endif
 
 #ifdef __show_fit_steps__
   cout << "FitterMinuit/RunOnce >> Done" << endl;
 #endif
 
-  return (fStatusCode == 3);
+  return (fMigradErrStatusCode == 3);
 }
 //____________________________________________________________________________ 
