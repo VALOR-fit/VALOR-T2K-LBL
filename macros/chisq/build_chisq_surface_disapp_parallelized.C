@@ -190,9 +190,9 @@ void build_chisq_surface_disapp_parallelized
            fitnt->Fill();
            // update chisq surface
 	   chisq_surface->SetBinContent(i,j,chisq+chisq_surface->GetBinContent(i,j));
-           nexperiments++;
         }//j
      }//i
+     nexperiments++;
      delete skobs;
   }//iexperiment
 
