@@ -233,7 +233,7 @@ void plot_contour_comparisons
   TH2D * ll_minos = 0;
   fminos->GetObject("LogLikelihoodSurface",ll_minos);
   ll_minos->SetContour(1);
-  ll_minos->SetContourLevel(0,4.61);
+  ll_minos->SetContourLevel(0,4.61/2);
   ll_minos->SetLineStyle(1);
   TFile fskle("$T2KOSCANA/inputs/contours/contours_skloe.root");
   TGraph * g_skle = 0;
@@ -1546,5 +1546,7 @@ void plot_contour_comparisons
   c->SaveAs("contour_compare_external.pdf");
   c->SaveAs("contour_compare_external.png");
   c->SaveAs("contour_compare_external.eps");
+  cout << osc_param_space->GetXaxis()->GetLabelSize() << endl;
+  cout << osc_param_space->GetXaxis()->GetTitleSize() << endl;
 
 }

@@ -189,8 +189,8 @@ void plot_contours_with_profiles()
   TLine * l90_mix = new TLine(mix_xmin,2.71,mix_xmax,2.71);
   l68_mix->SetLineStyle(2);
   l90_mix->SetLineStyle(3);
-  l68_mix->Draw();
-  l90_mix->Draw();
+  //l68_mix->Draw();
+  //l90_mix->Draw();
 
   h_val_mix->SetLabelSize(0);
   h_val_mix->GetXaxis()->SetTitle("");
@@ -285,8 +285,8 @@ void plot_contours_with_profiles()
   TLine * l90_dm = new TLine(2.71,ymin,2.71,ymax);
   l68_dm->SetLineStyle(2);
   l90_dm->SetLineStyle(3);
-  l68_dm->Draw();
-  l90_dm->Draw();
+  //l68_dm->Draw();
+  //l90_dm->Draw();
 
   //draw the markers again (draws them over dm plot)
   c->cd();
