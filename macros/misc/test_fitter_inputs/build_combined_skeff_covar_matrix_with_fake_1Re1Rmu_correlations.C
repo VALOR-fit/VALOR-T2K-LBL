@@ -252,7 +252,7 @@ void build_combined_skeff_covar_matrix_with_fake_1Re1Rmu_correlations(int k=0, i
      if(m!=0) {
        for(int ig=0; ig<ngroups; ig++) {
          for(int jg=0; jg<ngroups; jg++) {
-            if(lcov[ig][jg]!= 1) continue;
+            if(mcov[ig][jg]!= 1) continue;
             if(jg<ig) continue;
             for(int i=idx_range[ig][0]; i<=idx_range[ig][1]; i++) {
                for(int j=idx_range[jg][0]; j<=idx_range[jg][1]; j++) {
@@ -304,37 +304,43 @@ void build_combined_skeff_covar_matrix_with_fake_1Re1Rmu_correlations(int k=0, i
 
      if(isid) { 
        done = true; 
+       cout << "The inverse was sucessfully checked. Here is the prod = cov*covInv: " << endl;
+       print_matrix(id, 10, 6);
      } else {
        // tweak size of correlations
-       cerr << "tweak of the size of correlations not implemented yet" << endl;
+       cerr << "The matrix is not positive definite - INVERSE CANNOT BE CALCULATED!!! " << endl;
        exit(1);  // not done
      }
   }
 
   // printout matrix
+  cout << "Here is the covariance matrix:" << endl;
   print_matrix(cov, 10, 6);
 
   // save matrix
   ostringstream fname;
   fname << "cov";
+  
   if(k==0) fname << "0";
   else {
-    if(k>0) fname << "+";
-    if(k<0) fname << "-";
+    if(k>0) fname << k;//"+";
+    if(k<0) fname << "m" << -k;//"-";
   }
   if(l==0) fname << "0";
   else {
-    if(l>0) fname << "+";
-    if(l<0) fname << "-";
+    if(l>0) fname << l;//"+";
+    if(l<0) fname << "m" << -l; //"-";
   }
   if(m==0) fname << "0";
   else {
-    if(m>0) fname << "+";
-    if(m<0) fname << "-";
+    if(m>0) fname << m;//"+";
+    if(m<0) fname << "m" << -m ; //"-";
   }
-  fname << ".root";
-  TFile f(fname.str().c_str(),"recreate");
-  cov.Write("cov");
+  
+  // fname << ".root";
+  //  TFile f(fname.str().c_str(),"recreate");
+  TFile f("cov.root","update");
+  cov.Write(fname.str().c_str());
   f.Close();
 }
 
