@@ -122,9 +122,10 @@ void max_deviation_table(const char * filename = "readfile.root")
     }
     if(maxmix > 0.25 || maxdm > 0.25) cout << "{\\color{red}";
 
-    if(name == "nominal")
+    if(name == "nominal" || name == "mec")
       cout << name;
     else 
+      //cout << util::AsStringTex(util::PhysParamIdFromString(name));
       cout << util::AsStringPaperTex(util::PhysParamIdFromString(name));
     if(maxmix > 0.25 || maxdm > 0.25)
       cout << "}";

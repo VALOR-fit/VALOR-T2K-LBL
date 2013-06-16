@@ -96,7 +96,8 @@ systematics.append("xsec_norm_nc1piC")
 systematics.append("xsec_norm_ncoth")
 systematics.append("xsec_norm_nuetonumu")
 systematics.append("xsec_norm_antinutonu")
-
+#MEC
+systematics.append("mec")
 
 samples = []
 samples.append("1Rmu")

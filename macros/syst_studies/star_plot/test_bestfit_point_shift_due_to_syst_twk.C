@@ -67,7 +67,7 @@
 
 void test_bestfit_point_shift_due_to_syst_twk
 (
- const char * systematic="sk_energy_scale",                                                  /* options: see above */
+ const char * systematic,                                                  /* options: see above */
  const char * sksample                   = "1Rmu",                         /* options: "1Rmu", "1Re" */
  const char * fit_param_list             = "nuosc3f_numudisapp_fix4",      /* */
  const char * fit_option                 = "minuit",                       /* oscillation fitter (see run_fitter.C) */
@@ -637,6 +637,10 @@ void test_bestfit_point_shift_due_to_syst_twk
       else if(sys == "nominal") {
 	//do nothing
       }
+      else if(sys == "mec") {
+	double tweak_mec = Rnd::Instance()->RndOther().Gaus(-0.7,0.15);
+	skexp->GetSuperkMC()->SetXMEC(tweak_mec);
+      }
       else {
 	double tweak = Rnd::Instance()->RndOther().Gaus(0.,1.);
 	skexp->TweakSystematic(systematic, tweak);
@@ -651,6 +655,7 @@ void test_bestfit_point_shift_due_to_syst_twk
 
       // Reset systematic variation
       skexp->ResetSystematicVariations();
+      skexp->GetSuperkMC()->SetXMEC(-1);
 
       // Get fitter
       fit_inputs = new FitInputs(skobs,skexp,fparm);
