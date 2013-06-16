@@ -575,10 +575,45 @@ void test_sk_ereco_spectrum_nominal_withsys
      if(m == conv::kSKmUndefined) continue;
      double nmode = hErecoMode[im]->Integral();
      streamer << "Contrib from mode: " 
-          << setw(40) << setfill(' ') << util::AsStringTex(m) << " : " 
-          << setw(15) << setfill(' ') << setprecision(6) << nmode << " events ("
-          << setw(10) << setfill(' ') << setprecision(6) << 100*nmode/ntot << " %)" << endl;
+	      << setw(40) << setfill(' ') << util::AsStringTex(m) << " : " 
+	      << setw(15) << setfill(' ') << setprecision(6) << nmode << " events ("
+	      << setw(10) << setfill(' ') << setprecision(6) << 100*nmode/ntot << " %)" << endl;
   }
+
+  //combine modes
+  double nccqe = 0, nccnqe = 0, nnuecc = 0, nnc = 0;
+  for(int im = 0; im < conv::knm; im++) {
+    conv::SuperkMode_t m = conv::kSKReactionModes[is][im];
+    if(m == conv::kSKmUndefined) continue;
+    double nmode = hErecoMode[im]->Integral();
+    if(util::IsNC(m))
+      nnc += nmode;
+    else if(util::IsNuE(m) || util::IsNuEBar(m) || util::IsSignalNuE(m))
+      nnuecc += nmode;
+    else if(m == conv::kSKmNuMuCCQE || m == conv::kSKmNuMuBarCCQE)
+      nccqe += nmode;
+    else
+      nccnqe += nmode;
+  }
+  streamer << endl;
+  streamer << "Contrib from modes: " 
+	   << setw(40) << setfill(' ') << "CCQE" << " : " 
+	   << setw(15) << setfill(' ') << setprecision(6) << nccqe << " events ("
+	   << setw(10) << setfill(' ') << setprecision(6) << 100*nccqe/ntot << " %)" << endl;
+  streamer << "Contrib from modes: " 
+	   << setw(40) << setfill(' ') << "CCnQE" << " : " 
+	   << setw(15) << setfill(' ') << setprecision(6) << nccnqe << " events ("
+	   << setw(10) << setfill(' ') << setprecision(6) << 100*nccnqe/ntot << " %)" << endl;
+  streamer << "Contrib from modes: " 
+	   << setw(40) << setfill(' ') << "NC" << " : " 
+	   << setw(15) << setfill(' ') << setprecision(6) << nnc << " events ("
+	   << setw(10) << setfill(' ') << setprecision(6) << 100*nnc/ntot << " %)" << endl;
+  streamer << "Contrib from modes: " 
+	   << setw(40) << setfill(' ') << "$\\nu_e$CC" << " : " 
+	   << setw(15) << setfill(' ') << setprecision(6) << nnuecc << " events ("
+	   << setw(10) << setfill(' ') << setprecision(6) << 100*nnuecc/ntot << " %)" << endl;
+  streamer << nnuecc+nnc+nccnqe+nccqe << endl;
+
 
   //
   // Save histograms in a ROOT file
