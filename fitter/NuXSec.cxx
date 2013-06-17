@@ -832,8 +832,17 @@ void NuXSec::PrintSystematicVariations(ostream & stream) const
 
 //________________________________________________________________________________________
 TSpline3 * NuXSec::FindWghtSpline(
-   PhysParamId_t p, SuperkSample_t s, SuperkMode_t m, double Ereco, double Etrue) const
+   PhysParamId_t p, SuperkSample_t s, SuperkMode_t mp, double Ereco, double Etrue) const
 {
+  SuperkMode_t m = mp; // default
+  // HACK: for `osc numu' templates, use `numu' response functions
+  if ( mp == kSKmOscNuMuCCQE     ) { m = kSKmOscNuMuCCQE;     }
+  if ( mp == kSKmOscNuMuCC1pi    ) { m = kSKmOscNuMuCC1pi;    }
+  if ( mp == kSKmOscNuMuCCcoh    ) { m = kSKmOscNuMuCCcoh;    }
+  if ( mp == kSKmOscNuMuCCoth_mu ) { m = kSKmOscNuMuCCoth_mu; }
+  if ( mp == kSKmOscNuMuCCoth_e  ) { m = kSKmOscNuMuCCoth_e;  }
+
+
   int idx = this->WghtSplineIdx(p,s,m,Ereco,Etrue);
   if(idx == -1 || idx == -2) 
   {

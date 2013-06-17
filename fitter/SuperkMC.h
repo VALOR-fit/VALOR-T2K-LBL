@@ -96,8 +96,9 @@ private:
   void CleanUp (void);
   void Book    (void);
 
-  // Fill MC templates from the input event trees
+  // Fill MC templates from the input SK event tree or from other sources
   void FillTemplate (conv::SuperkSample_t s, conv::SuperkMode_t m);
+  void FillSpecialTemplates (void);
 
   // Apply any flux tuning based on external (NA61,...) data to nominal MC
   void ApplyFluxExtTuningToTemplates (void); 
