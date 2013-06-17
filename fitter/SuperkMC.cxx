@@ -465,41 +465,6 @@ void SuperkMC::FillTemplate(SuperkSample_t s, SuperkMode_t m)
   int sidx = util::ArrIdx::Instance()->SuperkSampleIdx(s);
   int midx = util::ArrIdx::Instance()->SuperkModeIdx(s,m);
 
-  //special template that isnt't in the tree! Don't need to apply POT weights or flux weights!
-  //initalise the MEC mode template as empty
-  //Here, just put the histogram in arrays (for quicker access)
-  // and also fill the variable binning array (for skipping calls to find weights)
-  if(s == kSKsFCFV1RingMuLike && util::IsMEC(m)) {
-    // loop over Etrue
-    for(int it = 1; it <= this->Template(s,m,kSKMCtNom)->GetYaxis()->GetNbins(); it++) {
-      double Etrue = this->Template(s,m,kSKMCtNom)->GetYaxis()->GetBinCenter(it);
-      // loop over Ereco
-      for(int ir = 1; ir <= this->Template(s,m,kSKMCtNom)->GetXaxis()->GetNbins(); ir++) {
-	double Ereco = this->Template(s,m,kSKMCtNom)->GetXaxis()->GetBinCenter(ir);
-	//get nevents
-	double nev_martini = fMCTemplMECMartini->GetBinContent(ir,it);
-	double nev_nieves  = fMCTemplMECNieves-> GetBinContent(ir,it);
-	//fill the variable template (with both)
-	fMCVariableTempl[sidx][midx]->Fill(Ereco,Etrue,nev_martini);
-	fMCVariableTempl[sidx][midx]->Fill(Ereco,Etrue,nev_nieves);
-	//fill the mec arrays
-	fMCTemplArrayMECMartini[it-1][ir-1] = nev_martini;
-	fMCTemplArrayMECNieves [it-1][ir-1] = nev_nieves;
-      }//ir
-    }//it
-
-    //now loop over the variable binning scheme (used to calculate weights only as many times as we need to)
-    //loop over variable Etrue
-    for(int itv = 1; itv <= fMCVariableTempl[sidx][midx]->GetYaxis()->GetNbins(); itv++) {
-      // loop over variable Ereco
-      for(int irv = 1; irv <= fMCVariableTempl[sidx][midx]->GetXaxis()->GetNbins(); irv++) {
-	int nev = TMath::CeilNint(fMCVariableTempl[sidx][midx]->GetBinContent(irv,itv));
-	fMCVariableTemplArray1Rmu[sidx][midx][itv-1][irv-1] = nev;
-      }//irv
-    }//itv
-    return;
-  }//if MEC
-
   TTree * mctree = this->MCTree(s,m);
   double  mcpot  = this->MCPOT (s,m);
 
