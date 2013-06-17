@@ -324,6 +324,7 @@ typedef enum ESuperkMode
 {
    kSKmUndefined = -1, 
    kSKmNuMuCCQE,         // numu CC QE
+   kSKmMEC,              // numu CC MEC
    kSKmNuMuCC1pi,        // numu CC 1pi
    kSKmNuMuCCcoh,        // numu CC coherent
    kSKmNuMuCCoth_mu,     // numu CC other, nu_mu disappearance analysis definition
@@ -333,6 +334,11 @@ typedef enum ESuperkMode
    kSKmNuMuNCcoh,        // numu NC coherent
    kSKmNuMuNCoth_mu,     // numu NC other, nu_mu appearance analysis definition
    kSKmNuMuNCoth_e,      // numu NC other, nu_e appearance analysis definition
+   kSKmOscNuMuCCQE,      // oscillated numu CCQE
+   kSKmOscNuMuCC1pi,     // oscillated numu CC 1pi
+   kSKmOscNuMuCCcoh,     // oscillated numu coh
+   kSKmOscNuMuCCoth_mu,  // oscillated numu other, nu_mu disappearance analysis definition
+   kSKmOscNuMuCCoth_e,   // oscillated numu other, nu_e appearance analysis definition
    kSKmNuMuBarCCQE,      // numubar CCQE
    kSKmNuMuBarCC1pi,     // numubar CC 1pi
    kSKmNuMuBarCCcoh,     // numubar CC coh
@@ -363,12 +369,11 @@ typedef enum ESuperkMode
    kSKmNuEBarNCcoh,      // nuebar NC coherent
    kSKmNuEBarNCoth_mu,   // nuebar NC other, nu_mu appearance analysis definition
    kSKmNuEBarNCoth_e,    // nuebar NC other, nu_e appearance analysis definition
-   kSKmSigNuECCQE,       // sig nue CCQE
-   kSKmSigNuECC1pi,      // sig nue CC 1pi
-   kSKmSigNuECCcoh,      // sig nue coh
-   kSKmSigNuECCoth_mu,   // sig nue other, nu_mu disappearance analysis definition
-   kSKmSigNuECCoth_e,    // sig nue other, nu_e appearance analysis definition
-   kSKmMEC               // MEC
+   kSKmSigNuECCQE,       // oscillated nue CCQE
+   kSKmSigNuECC1pi,      // oscillated nue CC 1pi
+   kSKmSigNuECCcoh,      // oscillated nue coh
+   kSKmSigNuECCoth_mu,   // oscillated nue other, nu_mu disappearance analysis definition
+   kSKmSigNuECCoth_e     // oscillated nue other, nu_e appearance analysis definition
 } 
 SuperkMode_t; 
 

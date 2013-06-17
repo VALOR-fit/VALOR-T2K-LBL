@@ -1965,30 +1965,36 @@ string t2kana::util::AsString(t2kana::conv::SuperkMode_t m)
 {
   switch(m) {
      case ( kSKmNuMuCCQE        ) : return "numu CC QE";                        break;
+     case ( kSKmMEC             ) : return "numu CC MEC";                       break;
      case ( kSKmNuMuCC1pi       ) : return "numu CC 1pi";                       break;
      case ( kSKmNuMuCCcoh       ) : return "numu CC coh";                       break;
-     case ( kSKmNuMuCCoth_mu    ) : return "numu CC oth ";          break;
-     case ( kSKmNuMuCCoth_e     ) : return "numu CC oth ";             break;
-     case ( kSKmNuMuNC1piC      ) : return "numu NC 1piC";                break;
+     case ( kSKmNuMuCCoth_mu    ) : return "numu CC oth ";                      break;
+     case ( kSKmNuMuCCoth_e     ) : return "numu CC oth ";                      break;
+     case ( kSKmNuMuNC1piC      ) : return "numu NC 1piC";                      break;
      case ( kSKmNuMuNC1pi0      ) : return "numu/nutau NC 1pi0";                break;
      case ( kSKmNuMuNCcoh       ) : return "numu/nutau NC coh";                 break;
-     case ( kSKmNuMuNCoth_e     ) : return "numu/nutau NC oth";       break;
-     case ( kSKmNuMuNCoth_mu    ) : return "numu/nutau NC oth";      break;
+     case ( kSKmNuMuNCoth_e     ) : return "numu/nutau NC oth";                 break;
+     case ( kSKmNuMuNCoth_mu    ) : return "numu/nutau NC oth";                 break;
+     case ( kSKmOscNuMuCCQE     ) : return "oscillated numu CC QE";             break;
+     case ( kSKmOscNuMuCC1pi    ) : return "oscillated numu CC 1pi";            break;  
+     case ( kSKmOscNuMuCCcoh    ) : return "oscillated numu CC coh";            break;
+     case ( kSKmOscNuMuCCoth_mu ) : return "oscillated numu CC oth ";           break;
+     case ( kSKmOscNuMuCCoth_e  ) : return "oscillated numu CC oth ";           break;
      case ( kSKmNuMuBarCCQE     ) : return "numubar CC QE";                     break;
      case ( kSKmNuMuBarCC1pi    ) : return "numubar CC 1pi";                    break;
      case ( kSKmNuMuBarCCcoh    ) : return "numubar CC coh";                    break;
-     case ( kSKmNuMuBarCCoth_mu ) : return "numubar CC oth";       break;
-     case ( kSKmNuMuBarCCoth_e  ) : return "numubar CC oth";          break;
+     case ( kSKmNuMuBarCCoth_mu ) : return "numubar CC oth";                    break;
+     case ( kSKmNuMuBarCCoth_e  ) : return "numubar CC oth";                    break;
      case ( kSKmNuMuBarNC1piC   ) : return "numubar/nutaubar NC 1piC";          break;
      case ( kSKmNuMuBarNC1pi0   ) : return "numubar/nutaubar NC 1pi0";          break;
      case ( kSKmNuMuBarNCcoh    ) : return "numubar/nutaubar NC coh";           break;
-     case ( kSKmNuMuBarNCoth_e  ) : return "numubar/nutaubar NC oth"; break;
-     case ( kSKmNuMuBarNCoth_mu ) : return "numubar/nutaubar NC oth";break;
+     case ( kSKmNuMuBarNCoth_e  ) : return "numubar/nutaubar NC oth";           break;
+     case ( kSKmNuMuBarNCoth_mu ) : return "numubar/nutaubar NC oth";           break;
      case ( kSKmNuECCQE         ) : return "nue CC QE";                         break;
      case ( kSKmNuECC1pi        ) : return "nue CC 1pi";                        break;
      case ( kSKmNuECCcoh        ) : return "nue CC coh";                        break;
-     case ( kSKmNuECCoth_mu     ) : return "nue CC oth";           break;
-     case ( kSKmNuECCoth_e      ) : return "nue CC oth";              break;
+     case ( kSKmNuECCoth_mu     ) : return "nue CC oth";                        break;
+     case ( kSKmNuECCoth_e      ) : return "nue CC oth";                        break;
      case ( kSKmNuENC1piC       ) : return "nue NC 1piC";                       break;
      case ( kSKmNuENC1pi0       ) : return "nue NC 1pi0";                       break;
      case ( kSKmNuENCcoh        ) : return "nue NC coh";                        break;
@@ -2009,7 +2015,6 @@ string t2kana::util::AsString(t2kana::conv::SuperkMode_t m)
      case ( kSKmSigNuECCcoh     ) : return "oscillation nue CC coh";                 break;
      case ( kSKmSigNuECCoth_mu  ) : return "oscillation nue CC oth (numu disap)";    break;
      case ( kSKmSigNuECCoth_e   ) : return "oscillation nue CC oth (nue app)";       break;
-     case ( kSKmMEC             ) : return "MEC";                                    break;
      default                      : return "--";
   }
   return "";
@@ -2089,15 +2094,21 @@ string t2kana::util::AsStringTex(t2kana::conv::SuperkMode_t m)
 {
   switch(m) {
      case ( kSKmNuMuCCQE        ) : return "$\\nu_\\mu$ CCQE";                                               break;
+     case ( kSKmMEC             ) : return "$\\nu_\\mu$ CC MEC";                                             break;
      case ( kSKmNuMuCC1pi       ) : return "$\\nu_\\mu$ CC 1$\\pi$";                                         break;
      case ( kSKmNuMuCCcoh       ) : return "$\\nu_\\mu$ CC coherent";                                        break;
      case ( kSKmNuMuCCoth_mu    ) : return "$\\nu_\\mu$ CC other ($\\nu_\\mu$ disap)";                       break;
-     case ( kSKmNuMuCCoth_e     ) : return "$\\nu_\\mu$ CC other";                            break;
+     case ( kSKmNuMuCCoth_e     ) : return "$\\nu_\\mu$ CC other";                                           break;
      case ( kSKmNuMuNC1piC      ) : return "$\\nu_\\mu$/$\\nu_\\tau$ NC 1$\\pi^{+/-}$";                      break;
      case ( kSKmNuMuNC1pi0      ) : return "$\\nu_\\mu$/$\\nu_\\tau$ NC 1$\\pi^0$";                          break;
      case ( kSKmNuMuNCcoh       ) : return "$\\nu_\\mu$/$\\nu_\\tau$ NC coherent";                           break;
-     case ( kSKmNuMuNCoth_e     ) : return "$\\nu_\\mu$/$\\nu_\\tau$ NC other";               break;
-     case ( kSKmNuMuNCoth_mu    ) : return "$\\nu_\\mu$/$\\nu_\\tau$ NC other ($\\nu_\\mu$ disap)";            break;
+     case ( kSKmNuMuNCoth_e     ) : return "$\\nu_\\mu$/$\\nu_\\tau$ NC other";                              break;
+     case ( kSKmNuMuNCoth_mu    ) : return "$\\nu_\\mu$/$\\nu_\\tau$ NC other ($\\nu_\\mu$ disap)";          break;
+     case ( kSKmOscNuMuCCQE     ) : return "Osc. $\\nu_\\mu$ CCQE";                                          break;
+     case ( kSKmOscNuMuCC1pi    ) : return "Osc. $\\nu_\\mu$ CC 1$\\pi$";                                    break;
+     case ( kSKmOscNuMuCCcoh    ) : return "Osc. $\\nu_\\mu$ CC coherent";                                   break; 
+     case ( kSKmOscNuMuCCoth_mu ) : return "Osc. $\\nu_\\mu$ CC other ($\\nu_\\mu$ disap)";                  break;
+     case ( kSKmOscNuMuCCoth_e  ) : return "Osc. $\\nu_\\mu$ CC other";                                      break;
      case ( kSKmNuMuBarCCQE     ) : return "$\\bar{\\nu_\\mu}$ CCQE";                                        break;
      case ( kSKmNuMuBarCC1pi    ) : return "$\\bar{\\nu_\\mu}$ CC 1$\\pi$";                                  break;
      case ( kSKmNuMuBarCCcoh    ) : return "$\\bar{\\nu_\\mu}$ CC coherent";                                 break;
@@ -2133,7 +2144,6 @@ string t2kana::util::AsStringTex(t2kana::conv::SuperkMode_t m)
      case ( kSKmSigNuECCcoh     ) : return "Osc. $\\nu_e$ CC coherent";                                    break;
      case ( kSKmSigNuECCoth_mu  ) : return "Osc. $\\nu_e$ CC other ($\\nu_\\mu$ disap)";                     break;
      case ( kSKmSigNuECCoth_e   ) : return "Osc. $\\nu_e$ CC other";                        break;
-     case ( kSKmMEC             ) : return "MEC;  model";                                   break;
      default                      : return "--";
   }
   return "";
@@ -2156,6 +2166,7 @@ string t2kana::util::AsStringRooTex(t2kana::conv::SuperkMode_t m)
 {
   switch(m) {
      case ( kSKmNuMuCCQE        ) : return "#nu_{#mu} CCQE";                                break;
+     case ( kSKmMEC             ) : return "#nu_{#mu} CC MEC";                              break;
      case ( kSKmNuMuCC1pi       ) : return "#nu_{#mu} CC 1#pi";                             break;
      case ( kSKmNuMuCCcoh       ) : return "#nu_{#mu} CC coherent";                         break;
      case ( kSKmNuMuCCoth_mu    ) : return "#nu_{#mu} CC other";                            break;
@@ -2165,6 +2176,11 @@ string t2kana::util::AsStringRooTex(t2kana::conv::SuperkMode_t m)
      case ( kSKmNuMuNCcoh       ) : return "#nu_{#mu}/#nu_{#tau} NC coherent";              break;
      case ( kSKmNuMuNCoth_e     ) : return "#nu_{#mu}/#nu_{#tau} NC other";                 break;
      case ( kSKmNuMuNCoth_mu    ) : return "#nu_{#mu}/#nu_{#tau} NC other";                 break;
+     case ( kSKmOscNuMuCCQE     ) : return "Osc. #nu_{#mu} CCQE";                           break;
+     case ( kSKmOscNuMuCC1pi    ) : return "Osc. #nu_{#mu} CC 1#pi";                        break;
+     case ( kSKmOscNuMuCCcoh    ) : return "Osc. #nu_{#mu} CC coherent";                    break;
+     case ( kSKmOscNuMuCCoth_mu ) : return "Osc. #nu_{#mu} CC other";                       break;
+     case ( kSKmOscNuMuCCoth_e  ) : return "Osc. #nu_{#mu} CC other";                       break;
      case ( kSKmNuMuBarCCQE     ) : return "#bar{#nu_{#mu}} CCQE";                          break;
      case ( kSKmNuMuBarCC1pi    ) : return "#bar{#nu_{#mu}} CC 1#pi";                       break;
      case ( kSKmNuMuBarCCcoh    ) : return "#bar{#nu_{#mu}} CC coherent";                   break;
@@ -2195,12 +2211,11 @@ string t2kana::util::AsStringRooTex(t2kana::conv::SuperkMode_t m)
      case ( kSKmNuEBarNCcoh     ) : return "#bar{#nu_{e}} NC coherent";                     break;
      case ( kSKmNuEBarNCoth_e   ) : return "#bar{#nu_{e}} NC other";                        break;
      case ( kSKmNuEBarNCoth_mu  ) : return "#bar{#nu_{e}} NC other";                        break;
-     case ( kSKmSigNuECCQE      ) : return "oscillation #nu_{e} CCQE";                           break;
-     case ( kSKmSigNuECC1pi     ) : return "oscillation #nu_{e} CC 1#pi";                        break;
-     case ( kSKmSigNuECCcoh     ) : return "oscillation #nu_{e} CC coherent";                    break;
-     case ( kSKmSigNuECCoth_mu  ) : return "oscillation #nu_{e} CC other";                       break;
-     case ( kSKmSigNuECCoth_e   ) : return "oscillation #nu_{e} CC other";                       break;
-     case ( kSKmMEC             ) : return "MEC;  model";                                        break;
+     case ( kSKmSigNuECCQE      ) : return "Osc. #nu_{e} CCQE";                             break;
+     case ( kSKmSigNuECC1pi     ) : return "Osc. #nu_{e} CC 1#pi";                          break;
+     case ( kSKmSigNuECCcoh     ) : return "Osc. #nu_{e} CC coherent";                      break;
+     case ( kSKmSigNuECCoth_mu  ) : return "Osc. #nu_{e} CC other";                         break;
+     case ( kSKmSigNuECCoth_e   ) : return "Osc. #nu_{e} CC other";                         break;
      default                      : return "";
   }
   return "";
@@ -2275,6 +2290,7 @@ string t2kana::util::AsStringCompact (t2kana::conv::SuperkMode_t m)
 //
   switch(m) {
      case ( kSKmNuMuCCQE        ) : return "numuccqe";       break;
+     case ( kSKmMEC             ) : return "mec";            break;
      case ( kSKmNuMuCC1pi       ) : return "numucc1pi";      break;
      case ( kSKmNuMuCCcoh       ) : return "numucccoh";      break;
      case ( kSKmNuMuCCoth_mu    ) : return "numuccoth";      break;
@@ -2284,6 +2300,11 @@ string t2kana::util::AsStringCompact (t2kana::conv::SuperkMode_t m)
      case ( kSKmNuMuNCcoh       ) : return "numunccoh";      break;
      case ( kSKmNuMuNCoth_e     ) : return "numuncoth";      break;
      case ( kSKmNuMuNCoth_mu    ) : return "numuncoth";      break;
+     case ( kSKmOscNuMuCCQE     ) : return "oscnumuccqe";    break;
+     case ( kSKmOscNuMuCC1pi    ) : return "oscnumucc1pi";   break;
+     case ( kSKmOscNuMuCCcoh    ) : return "oscnumucccoh";   break;
+     case ( kSKmOscNuMuCCoth_mu ) : return "oscnumuccoth";   break;
+     case ( kSKmOscNuMuCCoth_e  ) : return "oscnumuccoth";   break;
      case ( kSKmNuMuBarCCQE     ) : return "numubarccqe";    break;
      case ( kSKmNuMuBarCC1pi    ) : return "numubarcc1pi";   break;
      case ( kSKmNuMuBarCCcoh    ) : return "numubarcccoh";   break;
@@ -2319,7 +2340,6 @@ string t2kana::util::AsStringCompact (t2kana::conv::SuperkMode_t m)
      case ( kSKmSigNuECCcoh     ) : return "signuecccoh";    break;
      case ( kSKmSigNuECCoth_mu  ) : return "signueccoth";    break;
      case ( kSKmSigNuECCoth_e   ) : return "signueccoth";    break;
-     case ( kSKmMEC             ) : return "mec";            break;
      default                      : return "";
   }
   return "";
@@ -2332,6 +2352,7 @@ string t2kana::util::AsStringCompact_KDI (t2kana::conv::SuperkMode_t m)
 //
   switch(m) {
      case ( kSKmNuMuCCQE        ) : return "numu_ccqe";       break;
+     case ( kSKmMEC             ) : return "mec";             break;
      case ( kSKmNuMuCC1pi       ) : return "numu_ccpi";       break;
      case ( kSKmNuMuCCcoh       ) : return "numu_cccoh";      break;
      case ( kSKmNuMuCCoth_mu    ) : return "numu_ccoth";      break;
@@ -2341,6 +2362,11 @@ string t2kana::util::AsStringCompact_KDI (t2kana::conv::SuperkMode_t m)
      case ( kSKmNuMuNCcoh       ) : return "numu_nccoh";      break;
      case ( kSKmNuMuNCoth_e     ) : return "numu_ncoth";      break;
      case ( kSKmNuMuNCoth_mu    ) : return "numu_ncoth";      break;
+     case ( kSKmOscNuMuCCQE     ) : return "do_not_know_kdi_name_numu_ccqe";       break;
+     case ( kSKmOscNuMuCC1pi    ) : return "do_not_know_kdi_name_numu_ccpi";       break;
+     case ( kSKmOscNuMuCCcoh    ) : return "do_not_know_kdi_name_numu_cccoh";      break;
+     case ( kSKmOscNuMuCCoth_mu ) : return "do_not_know_kdi_name_numu_ccoth";      break;
+     case ( kSKmOscNuMuCCoth_e  ) : return "do_not_know_kdi_name_numu_ccoth";      break;
      case ( kSKmNuMuBarCCQE     ) : return "numb_ccqe";    break;
      case ( kSKmNuMuBarCC1pi    ) : return "numb_ccpi";    break;
      case ( kSKmNuMuBarCCcoh    ) : return "numb_cccoh";   break;
@@ -2376,7 +2402,6 @@ string t2kana::util::AsStringCompact_KDI (t2kana::conv::SuperkMode_t m)
      case ( kSKmSigNuECCcoh     ) : return "signue_cccoh";    break;
      case ( kSKmSigNuECCoth_mu  ) : return "signue_ccoth";    break;
      case ( kSKmSigNuECCoth_e   ) : return "signue_ccoth";    break;
-     case ( kSKmMEC             ) : return "mec";             break;
      default                      : return "";
   }
   return "";
@@ -2809,17 +2834,22 @@ int t2kana::util::SuperkMode2SKMCPdg(t2kana::conv::SuperkMode_t m)
 bool t2kana::util::IsNuMu(t2kana::conv::SuperkMode_t  m)
 {
   switch(m) {
-     case (kSKmNuMuCCQE    ):
-     case (kSKmNuMuCC1pi   ):
-     case (kSKmNuMuCCcoh   ):
-     case (kSKmNuMuCCoth_mu):
-     case (kSKmNuMuCCoth_e ):
-     case (kSKmNuMuNC1piC  ):
-     case (kSKmNuMuNC1pi0  ):
-     case (kSKmNuMuNCcoh   ):
-     case (kSKmNuMuNCoth_e ):
-     case (kSKmNuMuNCoth_mu):
-     case (kSKmMEC         ): //mec uses numu flux
+     case ( kSKmNuMuCCQE        ) :
+     case ( kSKmMEC             ) : 
+     case ( kSKmNuMuCC1pi       ) :
+     case ( kSKmNuMuCCcoh       ) :
+     case ( kSKmNuMuCCoth_mu    ) :
+     case ( kSKmNuMuCCoth_e     ) :
+     case ( kSKmNuMuNC1piC      ) :
+     case ( kSKmNuMuNC1pi0      ) :
+     case ( kSKmNuMuNCcoh       ) :
+     case ( kSKmNuMuNCoth_e     ) :
+     case ( kSKmNuMuNCoth_mu    ) :
+     case ( kSKmOscNuMuCCQE     ) : 
+     case ( kSKmOscNuMuCC1pi    ) :
+     case ( kSKmOscNuMuCCcoh    ) :
+     case ( kSKmOscNuMuCCoth_mu ) :
+     case ( kSKmOscNuMuCCoth_e  ) :
        return true;
        break;
      default :                
@@ -2920,6 +2950,11 @@ bool t2kana::util::IsCC(t2kana::conv::SuperkMode_t m)
      case ( kSKmNuMuCCcoh       ) : 
      case ( kSKmNuMuCCoth_mu    ) : 
      case ( kSKmNuMuCCoth_e     ) : 
+     case ( kSKmOscNuMuCCQE     ) : 
+     case ( kSKmOscNuMuCC1pi    ) :
+     case ( kSKmOscNuMuCCcoh    ) :
+     case ( kSKmOscNuMuCCoth_mu ) :
+     case ( kSKmOscNuMuCCoth_e  ) :
      case ( kSKmNuMuBarCCQE     ) : 
      case ( kSKmNuMuBarCC1pi    ) : 
      case ( kSKmNuMuBarCCcoh    ) : 
@@ -4824,6 +4859,15 @@ double t2kana::util::NuMuSurvProbOsc2Flavour(
   {
     return NuMuSurvProbOsc2Flavour(mixing23, dm23sq, Et, unphysical_osc_prob);
   }
+  else 
+  if(m == kSKmOscNuMuCCQE     ||
+     m == kSKmOscNuMuCC1pi    ||
+     m == kSKmOscNuMuCCcoh    ||
+     m == kSKmOscNuMuCCoth_mu ||
+     m == kSKmOscNuMuCCoth_e  )
+  {
+    return 0;
+  }
   else {
     cerr << "NuMuSurvProbOsc2D > Can't handle SK mode = " << m << endl;
     exit(1);
@@ -4889,6 +4933,15 @@ double t2kana::util::NuMuSurvProbDecay (
   {
     return NuMuSurvProbDecay(sinsq2theta, alpha, Et);
   }
+  else 
+  if(m == kSKmOscNuMuCCQE     ||
+     m == kSKmOscNuMuCC1pi    ||
+     m == kSKmOscNuMuCCcoh    ||
+     m == kSKmOscNuMuCCoth_mu ||
+     m == kSKmOscNuMuCCoth_e  )
+  {
+    return 0;
+  }
   else {
     cerr << "NuMuSurvProbDecay > Can't handle SK mode = " << m << endl;
     exit(1);
@@ -4949,6 +5002,15 @@ double t2kana::util::NuMuSurvProbDecoh (
      m == kSKmMEC             )
    {
     return NuMuSurvProbDecoh(sinsq2theta, musq, Et);
+  }
+  else 
+  if(m == kSKmOscNuMuCCQE     ||
+     m == kSKmOscNuMuCC1pi    ||
+     m == kSKmOscNuMuCCcoh    ||
+     m == kSKmOscNuMuCCoth_mu ||
+     m == kSKmOscNuMuCCoth_e  )
+  {
+    return 0;
   }
   else {
     cerr << "NuMuSurvProbDecoh > Can't handle SK mode = " << m << endl;
