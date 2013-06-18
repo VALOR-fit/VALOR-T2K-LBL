@@ -214,16 +214,19 @@ void test_sk_ereco_spectrum_nominal
   }
 
   //combine modes
-  double nccqe = 0, nccnqe = 0, nnuecc = 0, nnc = 0;
+  double nccqe = 0, nccnqe = 0, nnuecc = 0, nnc = 0, nmec = 0;
   for(int im = 0; im < conv::knm; im++) {
     conv::SuperkMode_t m = conv::kSKReactionModes[is][im];
     if(m == conv::kSKmUndefined) continue;
     double nmode = hErecoMode[im]->Integral();
     if(util::IsNC(m))
       nnc += nmode;
+    else if(util::IsMEC(m))
+      nmec += nmode;
     else if(util::IsNuE(m) || util::IsNuEBar(m) || util::IsSignalNuE(m))
       nnuecc += nmode;
-    else if(m == conv::kSKmNuMuCCQE || m == conv::kSKmNuMuBarCCQE)
+    else if(m == conv::kSKmNuMuCCQE || m == conv::kSKmNuMuBarCCQE
+	    || m == conv::kSKmOscNuMuCCQE || m == conv::kSKmOscNuMuBarCCQE)
       nccqe += nmode;
     else
       nccnqe += nmode;
@@ -245,7 +248,11 @@ void test_sk_ereco_spectrum_nominal
 	   << setw(40) << setfill(' ') << "$\\nu_e$CC" << " : " 
 	   << setw(15) << setfill(' ') << setprecision(6) << nnuecc << " events ("
 	   << setw(10) << setfill(' ') << setprecision(6) << 100*nnuecc/ntot << " %)" << endl;
-  streamer << nnuecc+nnc+nccnqe+nccqe << endl;
+  streamer << "Contrib from modes: " 
+	   << setw(40) << setfill(' ') << "MEC" << " : " 
+	   << setw(15) << setfill(' ') << setprecision(6) << nmec << " events ("
+	   << setw(10) << setfill(' ') << setprecision(6) << 100*nmec/ntot << " %)" << endl;
+  streamer << nnuecc+nnc+nccnqe+nccqe+nmec << endl;
 
 
   // get tweaks
@@ -258,6 +265,7 @@ void test_sk_ereco_spectrum_nominal
   TFile f(Form("sk_ereco_spectrum-%s%s.root",oscparams.c_str(),(disable_banff_tuning ? "_nobanff" : "")) ,"recreate");
   nuisance_params.Write("nuisance_params");
   hErecoTot -> Write(util::AsStringCompact(s,conv::kSKmUndefined,"sk_","total").c_str());
+  hErecoTot -> Write("erec_sk"); //KDI
   hErecoTot_coarse->Write(Form("%s_coarse",util::AsStringCompact(s,conv::kSKmUndefined,"sk_","total").c_str()));
   for(int im = 0; im < conv::knm; im++) {
     conv::SuperkMode_t m = conv::kSKReactionModes[is][im];
