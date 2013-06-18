@@ -44,6 +44,7 @@
 //#define SYSTWEIGHTSAREONE
 //#define PHYSHYPWEIGHTSAREONE
 //#define PHYSHYPWEIGHTAREONEANDNUEISZERO
+//#define INCLUDEEVENTSOVERTHIRTYGEV // include Ereco overflow events in the last bin?
 
 #include <cassert>
 #include <cstdlib>
@@ -462,6 +463,10 @@ void SuperkMC::FillTemplate(SuperkSample_t s, SuperkMode_t m)
        << util::AsString(s) << " / " << util::AsString(m) << endl;
 #endif
 
+  //filled in FillSpecialTemplates()
+  if(util::IsMEC(m) || util::IsOscNuMu(m))
+    return;
+
   int sidx = util::ArrIdx::Instance()->SuperkSampleIdx(s);
   int midx = util::ArrIdx::Instance()->SuperkModeIdx(s,m);
 
@@ -546,6 +551,27 @@ void SuperkMC::FillTemplate(SuperkSample_t s, SuperkMode_t m)
   if(sidx > -1 && midx > -1) {
     // loop over Etrue
     for(int it = 1; it <= this->Template(s,m,kSKMCtNom)->GetYaxis()->GetNbins(); it++) {
+#ifdef INCLUDEEVENTSOVERTHIRTYGEV
+      //move the histogram overflow content into the last bin
+      int ir_overflow         = this->Template(s,m,kSKMCtNom)->GetXaxis()->GetNbins() + 1;
+      int ir_last             = this->Template(s,m,kSKMCtNom)->GetXaxis()->GetNbins();
+      double nev_overflow     = this->Template(s,m,kSKMCtNom)->GetBinContent(ir_overflow,it);
+      double nev_last         = this->Template(s,m,kSKMCtNom)->GetBinContent(ir_last,    it);
+      double ori_nev_overflow = this->Template(s,m,kSKMCtOri)->GetBinContent(ir_overflow,it);
+      double ori_nev_last     = this->Template(s,m,kSKMCtOri)->GetBinContent(ir_last,    it);
+      this->Template(s,m,kSKMCtOri)->SetBinContent(ir_last,     ori_nev_overflow + ori_nev_last);
+      this->Template(s,m,kSKMCtOri)->SetBinContent(ir_overflow, 0);
+      this->Template(s,m,kSKMCtNom)->SetBinContent(ir_last,     nev_overflow + nev_last);
+      this->Template(s,m,kSKMCtNom)->SetBinContent(ir_overflow, 0);
+#ifndef PRODUCTIONMODE
+      this->Template(s,m,kSKMCtTun)->SetBinContent(ir_last,     nev_overflow + nev_last);
+      this->Template(s,m,kSKMCtTun)->SetBinContent(ir_overflow, 0);
+      this->Template(s,m,kSKMCtSys)->SetBinContent(ir_last,     nev_overflow + nev_last);
+      this->Template(s,m,kSKMCtSys)->SetBinContent(ir_overflow, 0);
+      this->Template(s,m,kSKMCtFin)->SetBinContent(ir_last,     nev_overflow + nev_last);
+      this->Template(s,m,kSKMCtFin)->SetBinContent(ir_overflow, 0);
+#endif
+#endif//INCLUDEEVENTSOVERTHIRTYGEV
       // loop over Ereco
       for(int ir = 1; ir <= this->Template(s,m,kSKMCtNom)->GetXaxis()->GetNbins(); ir++) {
 	if (s==kSKsFCFV1RingMuLike)
@@ -568,6 +594,15 @@ void SuperkMC::FillTemplate(SuperkSample_t s, SuperkMode_t m)
     //now loop over the variable binning scheme (used to calculate weights only as many times as we need to)
     //loop over variable Etrue
     for(int itv = 1; itv <= fMCVariableTempl[sidx][midx]->GetYaxis()->GetNbins(); itv++) {
+#ifdef INCLUDEEVENTSOVERTHIRTYGEV
+      //move the histogram overflow content into the last bin
+      int ir_overflow = fMCVariableTempl[sidx][midx]->GetXaxis()->GetNbins() + 1;
+      int ir_last     = fMCVariableTempl[sidx][midx]->GetXaxis()->GetNbins();
+      double nev_overflow = fMCVariableTempl[sidx][midx]->GetBinContent(ir_overflow,it);
+      double nev_last     = fMCVariableTempl[sidx][midx]->GetBinContent(ir_last,    it);
+      fMCVariableTempl[sidx][midx]->SetBinContent(ir_last,     nev_overflow + nev_last);
+      fMCVariableTempl[sidx][midx]->SetBinContent(ir_overflow, 0);
+#endif//INCLUDEEVENTSOVERTHIRTYGEV
       // loop over variable Ereco
       for(int irv = 1; irv <= fMCVariableTempl[sidx][midx]->GetXaxis()->GetNbins(); irv++) {
 	int nev = (int)fMCVariableTempl[sidx][midx]->GetBinContent(irv,itv);
@@ -648,6 +683,9 @@ void SuperkMC::FillSpecialTemplates(void)
 
   for(int i=0; i<n; i++) {
 
+    int tgt_midx = util::ArrIdx::Instance()->SuperkModeIdx(s,tgt_modes[i]);
+    int src_midx = util::ArrIdx::Instance()->SuperkModeIdx(s,src_modes[i]);
+
     TH2D * src_ori = this->Template(s,src_modes[i],kSKMCtOri);
     TH2D * tgt_ori = this->Template(s,tgt_modes[i],kSKMCtOri);
     TH2D * src_nom = this->Template(s,src_modes[i],kSKMCtNom);
@@ -681,12 +719,27 @@ void SuperkMC::FillSpecialTemplates(void)
         this -> Template(s,tgt_modes[i],kSKMCtSys) -> Fill (Ereco,Etrue, weighted_nev_nom);
         this -> Template(s,tgt_modes[i],kSKMCtFin) -> Fill (Ereco,Etrue, weighted_nev_nom);
 #endif//PRODUCTIONMODE
-
+	int    nev_tgt_ori = TMath::CeilNint(tgt_ori->GetBinContent(ir,it));
+	double nev_tgt_nom = tgt_nom->GetBinContent(ir,it);
+	fMCTemplArrayOri1Rmu[tgt_midx][it-1][ir-1] = nev_tgt_ori;
+	fMCTemplArrayNom1Rmu[tgt_midx][it-1][ir-1] = nev_tgt_nom;
+	fMCTemplArrayTun1Rmu[tgt_midx][it-1][ir-1] = nev_tgt_nom;
+	fMCTemplArrayFin1Rmu[tgt_midx][it-1][ir-1] = nev_tgt_nom;
       }//ir
     }//it
+    //one more loop, for the variable binning scheme.
+    //just set the OscNuMu equal to the NuMu
+    //loop over variable Etrue
+    for(int itv = 1; itv <= fMCVariableTempl[sidx][tgt_midx]->GetYaxis()->GetNbins(); itv++) {
+      // loop over variable Ereco
+      for(int irv = 1; irv <= fMCVariableTempl[sidx][tgt_midx]->GetXaxis()->GetNbins(); irv++) {
+	int nev = fMCVariableTemplArray1Rmu[sidx][src_midx][itv-1][irv-1];
+	fMCVariableTemplArray1Rmu[sidx][tgt_midx][itv-1][irv-1] = nev;
+      }//irv
+    }//itv
   }//i
 
-#endif
+#endif// __USE_OSC_NUMU_MC_TEMPLATES__
 
 }
 //________________________________________________________________________________________

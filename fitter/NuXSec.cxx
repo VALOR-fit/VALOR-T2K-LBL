@@ -137,6 +137,7 @@ bool NuXSec::ReadSplines(TXMLEngine* xml, XMLNodePointer_t root_node)
     for(int im = 0; im < knm; im++) {
        SuperkMode_t m = kSKReactionModes[is][im];
        if(m == kSKmUndefined) continue;
+       if(util::IsOscNuMu(m)) continue; //using NuMu splines
 
        // loop over cross-section systematic parameters
        for(int ip = 0; ip < kNumOfXSecSyst; ip++) {
@@ -385,7 +386,7 @@ double NuXSec::FinTuningWght_1p(
 #if SPLINE_TYPE == -1
     return wght;
 #endif
-    // bool ev = this->IsThereAnEvent(s, m, Ereco, Etrue); //already done in SKMC
+    //bool ev = this->IsThereAnEvent(s, m, Ereco, Etrue); //already done in SKMC
     //if(ev) {
     TSpline3 * wght_spl = this->FindWghtSpline(p,s,m,Ereco,Etrue);
     assert(wght_spl);
@@ -836,11 +837,11 @@ TSpline3 * NuXSec::FindWghtSpline(
 {
   SuperkMode_t m = mp; // default
   // HACK: for `osc numu' templates, use `numu' response functions
-  if ( mp == kSKmOscNuMuCCQE     ) { m = kSKmOscNuMuCCQE;     }
-  if ( mp == kSKmOscNuMuCC1pi    ) { m = kSKmOscNuMuCC1pi;    }
-  if ( mp == kSKmOscNuMuCCcoh    ) { m = kSKmOscNuMuCCcoh;    }
-  if ( mp == kSKmOscNuMuCCoth_mu ) { m = kSKmOscNuMuCCoth_mu; }
-  if ( mp == kSKmOscNuMuCCoth_e  ) { m = kSKmOscNuMuCCoth_e;  }
+  if ( mp == kSKmOscNuMuCCQE     ) { m = kSKmNuMuCCQE;     }
+  if ( mp == kSKmOscNuMuCC1pi    ) { m = kSKmNuMuCC1pi;    }
+  if ( mp == kSKmOscNuMuCCcoh    ) { m = kSKmNuMuCCcoh;    }
+  if ( mp == kSKmOscNuMuCCoth_mu ) { m = kSKmNuMuCCoth_mu; }
+  if ( mp == kSKmOscNuMuCCoth_e  ) { m = kSKmNuMuCCoth_e;  }
 
 
   int idx = this->WghtSplineIdx(p,s,m,Ereco,Etrue);
@@ -881,7 +882,7 @@ int NuXSec::WghtSplineIdx(
 	 << ". util::ArrIdx returned "
 	 << util::ArrIdx::Instance()->SuperkSampleIdx(s)
 	 << endl;
-#endif
+#endif //__show_wght_spline_idx_mesg_debug__
     return -1;
   }
   int im = util::ArrIdx::Instance()->SuperkModeIdx(s,m);
@@ -894,7 +895,7 @@ int NuXSec::WghtSplineIdx(
 	 << ". util::ArrIdx returned "
 	 << util::ArrIdx::Instance()->SuperkModeIdx(s,m)
 	 << endl;
-#endif
+#endif //__show_wght_spline_idx_mesg_debug__
     return -1;
   }
   int ip = util::ArrIdx::Instance()->XSecSystIdx(p);
@@ -905,23 +906,23 @@ int NuXSec::WghtSplineIdx(
 	 << ". util::ArrIdx returned "
 	 << util::ArrIdx::Instance()->XSecSystIdx(p)
 	 << endl;
-#endif
+#endif//__show_wght_spline_idx_mesg_debug__
     return -1;
   }
   int ireco = -1; 
   for (int i = 0; i < util::NumXsecErecoBins(s); i++) {
     if(util::XsecErecoBinEdges(s,i)   <= Ereco && 
        util::XsecErecoBinEdges(s,i+1) >  Ereco) 
-    {
+      {
         ireco = i;
         break;
-    }
+      }
   }
   if(ireco == -1) {
 #ifdef __show_wght_spline_idx_mesg_debug__
     cout << "Exp/NuXSec/WghtSplineIdx >> Didn't find ERecoBin for ereco value "
 	 << Ereco << endl;
-#endif
+#endif//__show_wght_spline_idx_mesg_debug__
     return -1;
   }
 
@@ -929,10 +930,10 @@ int NuXSec::WghtSplineIdx(
   for (int i = 0; i < kXsNEtrueBins; i++) {
     if(kXsEtrueBinEdges[is][im][i]   <= Etrue && 
        kXsEtrueBinEdges[is][im][i+1] >  Etrue) 
-    {
+      {
         itrue = i;
         break;
-    }
+      }
   }
   if(itrue == -1) {
 #ifdef __show_wght_spline_idx_mesg_debug__
@@ -943,8 +944,7 @@ int NuXSec::WghtSplineIdx(
 	 << " in sample "
 	 << util::AsString(s)
 	 << endl;
-      }
-#endif
+#endif//__show_wght_spline_idx_mesg_debug__
     return -2;
   }
 
