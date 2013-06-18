@@ -1688,6 +1688,7 @@ void SuperkMC::ApplyPhysHypothesisToTemplates(void)
 	double p_nue_nue         = fNuOsc3Flavour.CalcMatterOscProb(kPdgNuE,     kPdgNuE,     Etrue);
 	double p_nuebar_nuebar   = fNuOsc3Flavour.CalcMatterOscProb(kPdgNuEBar,  kPdgNuEBar,  Etrue);
 	double p_numu_nue        = fNuOsc3Flavour.CalcMatterOscProb(kPdgNuMu,    kPdgNuE,     Etrue);
+	double p_nue_numu        = fNuOsc3Flavour.CalcMatterOscProb(kPdgNuE,     kPdgNuMu,    Etrue);
 	
 #ifdef __show_hypothesis_probabilities__
         cout << "Exp/SKMC >>  E = " << Etrue << " GeV" << endl;	
@@ -1695,8 +1696,8 @@ void SuperkMC::ApplyPhysHypothesisToTemplates(void)
         cout << "Exp/SKMC >>  * P (numubar  -> numubar) = " << p_numubar_numubar << endl;
         cout << "Exp/SKMC >>  * P (nue      -> nue    ) = " << p_nue_nue         << endl;
         cout << "Exp/SKMC >>  * P (nuebar   -> nuebar ) = " << p_nuebar_nuebar   << endl;
-	//cout << "Exp/SKMC >>  * P (nue      -> numu   ) = " << p_nue_numu      << endl;
         cout << "Exp/SKMC >>  * P (numu     -> nue    ) = " << p_numu_nue        << endl;
+	cout << "Exp/SKMC >>  * P (nue      -> numu   ) = " << p_nue_numu      << endl;
 #endif
 
         // loop over Ereco
@@ -1714,11 +1715,12 @@ void SuperkMC::ApplyPhysHypothesisToTemplates(void)
               double posc = 1.;
               if( util::IsCC(m) ) 
               {
-                if( util::IsNuMu(m)      ) { posc = p_numu_numu; }
-                if( util::IsNuMuBar(m)   ) { posc = p_numubar_numubar;}
-                if( util::IsNuE(m)       ) { posc = p_nue_nue;} 
-                if( util::IsNuEBar(m)    ) { posc = p_nuebar_nuebar;}
-                if( util::IsSignalNuE(m) ) { posc = p_numu_nue;}
+                if( util::IsNuMu(m)      ) { posc = p_numu_numu;       }
+                if( util::IsNuMuBar(m)   ) { posc = p_numubar_numubar; }
+                if( util::IsNuE(m)       ) { posc = p_nue_nue;         } 
+                if( util::IsNuEBar(m)    ) { posc = p_nuebar_nuebar;   }
+                if( util::IsOscNuMu(m)   ) { posc = p_nue_numu;        }
+                if( util::IsSignalNuE(m) ) { posc = p_numu_nue;        }
               }
 #ifdef PHYSHYPWEIGHTSAREONE
               posc = 1;

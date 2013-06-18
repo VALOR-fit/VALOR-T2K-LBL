@@ -2808,6 +2808,7 @@ t2kana::conv::OscChannelId_t
 int t2kana::util::SuperkMode2FluxNuPdg(t2kana::conv::SuperkMode_t m)
 {
   if ( util::IsNuMu      (m) ) return kPdgNuMu;
+  if ( util::IsOscNuMu   (m) ) return kPdgNuE; /// nue -> numu
   if ( util::IsNuMuBar   (m) ) return kPdgNuMuBar;
   if ( util::IsNuE       (m) ) return kPdgNuE;
   if ( util::IsNuEBar    (m) ) return kPdgNuEBar;
@@ -2821,6 +2822,7 @@ int t2kana::util::SuperkMode2FluxNuPdg(t2kana::conv::SuperkMode_t m)
 int t2kana::util::SuperkMode2SKMCPdg(t2kana::conv::SuperkMode_t m)
 {
   if ( util::IsNuMu      (m) ) return kPdgNuMu;
+  if ( util::IsOscNuMu   (m) ) return kPdgNuMu;
   if ( util::IsNuMuBar   (m) ) return kPdgNuMuBar;
   if ( util::IsNuE       (m) ) return kPdgNuE;
   if ( util::IsNuEBar    (m) ) return kPdgNuEBar;
@@ -2845,6 +2847,18 @@ bool t2kana::util::IsNuMu(t2kana::conv::SuperkMode_t  m)
      case ( kSKmNuMuNCcoh       ) :
      case ( kSKmNuMuNCoth_e     ) :
      case ( kSKmNuMuNCoth_mu    ) :
+       return true;
+       break;
+     default :                
+       return false;
+       break;
+  }
+  return false;
+}
+//____________________________________________________________________________
+bool t2kana::util::IsOscNuMu(t2kana::conv::SuperkMode_t  m)
+{
+  switch(m) {
      case ( kSKmOscNuMuCCQE     ) : 
      case ( kSKmOscNuMuCC1pi    ) :
      case ( kSKmOscNuMuCCcoh    ) :

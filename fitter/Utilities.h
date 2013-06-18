@@ -122,6 +122,7 @@ namespace util {
   int SuperkMode2SKMCPdg  (conv::SuperkMode_t m);
 
   bool IsNuMu         (conv::SuperkMode_t  m);
+  bool IsOscNuMu      (conv::SuperkMode_t  m);
   bool IsNuMuBar      (conv::SuperkMode_t  m);
   bool IsNuE          (conv::SuperkMode_t  m);
   bool IsNuEBar       (conv::SuperkMode_t  m);
