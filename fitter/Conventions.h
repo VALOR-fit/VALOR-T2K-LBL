@@ -41,8 +41,8 @@ Changes since 2011_v0.9.0:
 #ifndef __NUMUONLY__
 #define BANFF_BINS 1 //joint analysis, 33 bins
 #else
-#define BANFF_BINS 2 //numu disapp analysis, 23 bins
-//#define BANFF_BINS 3 //numu disapp analysis, 25 bins (includes MEC systematics)
+//#define BANFF_BINS 2 //numu disapp analysis, 23 bins
+#define BANFF_BINS 3 //numu disapp analysis, 25 bins (includes MEC systematics)
 #endif
 #endif
 
