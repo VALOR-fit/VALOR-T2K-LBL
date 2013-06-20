@@ -1944,6 +1944,9 @@ string t2kana::util::AsStringCompact_KDI(PhysParamId_t p)
     case ( kNuisXSecShapeCCoth        ) : return "ccothshp"; break;
     case ( kNuisXSecPiLessDelta       ) : return "pdd";      break;
     case ( kNuisXSecBindE             ) : return "eb";       break;
+#if BANFF_BINS == 3
+    case ( kNuisBANFFPDDDoubleCount   ) : return "pddonly";  break;
+#endif
 
     default : 
       return AsStringCompact(p);

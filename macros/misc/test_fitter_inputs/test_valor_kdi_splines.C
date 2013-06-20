@@ -28,15 +28,11 @@ void test_valor_kdi_splines
 
   stringstream problem_free;
 
+  //print number and names of cross-section systematics considered by this macro
   cout<<"conv::kNumOfXSecSyst = "<<conv::kNumOfXSecSyst<<endl;
-
   for(int ip = 0; ip < conv::kNumOfXSecSyst; ip++) {
     conv::PhysParamId_t p = conv::kListOfXSecSyst[ip];
     cout<<util::AsString(p) << endl;
-    if(util::AsString(p) == "BANFF; Ma QE")
-      cout<<"Found MaQE !!"<<endl;
-    if(util::AsString(p) == "BANFF; Ma RES")
-      cout<<"Found MaRes !!"<<endl;
   }
 
   //sample
