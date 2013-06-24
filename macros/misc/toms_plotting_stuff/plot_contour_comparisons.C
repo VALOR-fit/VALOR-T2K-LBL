@@ -245,6 +245,11 @@ void plot_contour_comparisons
   fskz.GetObject("sk3f_23vars_overlay_normal_q13_fixed",g_skzen);
   g_skzen->SetLineColor(kBlue);
   g_skzen->SetLineStyle(1);
+  TFile fextern("$T2KOSCANA/inputs/contours/contours_nont2k.root");
+  TGraph * g_ice = 0;
+  fextern.GetObject("icecube20102011_90CL",g_ice);
+  g_ice->SetLineColor(kBlue);
+  g_ice->SetLineStyle(1);
 
   TFile fold("$T2KOSCANA/inputs/contours/contours_oldt2k.root");
   TGraph * g_run12_68_statsyst = 0;
@@ -259,6 +264,7 @@ void plot_contour_comparisons
   //so we can put the graphs in the legends
   g_skle->SetName("g_skle");
   g_skzen->SetName("g_skzen");
+  g_ice->SetName("g_ice");
   g_run12_68_stat->SetName("g_run12_68_stat");
   g_run12_90_stat->SetName("g_run12_90_stat");
   g_run12_68_statsyst->SetName("g_run12_68_statsyst");
@@ -275,7 +281,7 @@ void plot_contour_comparisons
   double mixing23_max   = 1.5.;
   double mixing23_step  = 0.005;
   double dm23sq_min     = 1E-3;
-  double dm23sq_max     = 4E-3;
+  double dm23sq_max     = 6E-3;
   double dm23sq_step    = 1E-4;
   // make sure that min and max are at the bin centre and not at the low/high edge of the first/last bin
   int mixing23_nbins = 1 + TMath::CeilNint ((mixing23_max - mixing23_min) / mixing23_step);
@@ -1548,5 +1554,60 @@ void plot_contour_comparisons
   c->SaveAs("contour_compare_external.eps");
   cout << osc_param_space->GetXaxis()->GetLabelSize() << endl;
   cout << osc_param_space->GetXaxis()->GetTitleSize() << endl;
+
+
+  //LEPTON PHOTON
+  //Run 1-3 FC only with externals (including icecube)
+  osc_param_space->GetXaxis()->SetRangeUser(0.72,1.0);
+  osc_param_space->GetYaxis()->SetRangeUser(0.00134,0.00534);
+  osc_param_space->GetXaxis()->SetTitleFont(132);
+  osc_param_space->Draw(); 
+  h_fcall_123_68->SetLineWidth(2);
+  h_fcall_123_90->SetLineWidth(2);
+  ll_minos->SetLineColor(kRed);
+  ll_minos->SetLineWidth(2);
+  g_skle->SetLineColor(kBlue);
+  g_skle->SetLineWidth(2);
+  g_skle->SetLineStyle(2);
+  g_skzen->SetLineColor(kBlue);
+  g_skzen->SetLineWidth(2);
+  g_ice->SetLineColor(kGreen+2);
+  g_ice->SetLineWidth(2);
+  //draw
+  g_ice->Draw("l");
+  g_skzen->Draw("l");
+  g_skle->Draw("l");
+  ll_minos->Draw("cont3same");
+  h_fcall_123_90->Draw("cont3same");
+  //h_fcall_123_68->Draw("cont3same");
+  //bestfit_2all.Draw();
+  leg2->Clear();
+  delete leg2;
+  leg2 = new TLegend(0.185,0.63,0.45,0.92);
+  leg2->SetFillColor(0);
+  leg2->SetFillStyle(0);
+  leg2->SetBorderSize(0);
+  leg2->SetTextFont(132);
+  //leg2->AddEntry(h_fcall_123_68, "T2K 2013 3#nu 68% CL","l");
+  leg2->AddEntry(h_fcall_123_90, "T2K 2013 3#nu 90% CL","l");
+  leg2->AddEntry(ll_minos, "MINOS 2013 2#nu 90% CL", "l");
+  leg2->AddEntry("g_skzen", "SK zenith 2012 3#nu 90% CL", "l");
+  leg2->AddEntry("g_skle", "SK L/E 2012 2#nu 90% CL", "l");
+  leg2->AddEntry("g_ice", "IceCube-79 2013 2#nu 90% CL", "l");
+  leg2->SetX2NDC(0.6);
+  leg2->SetTextSize(0.06);
+  leg2->Draw();
+  TLegend * legbf = new TLegend(0.185, 0.11, 0.45, 0.35);
+  legbf->SetFillColor(0);
+  legbf->SetFillStyle(0);
+  legbf->SetBorderSize(0);
+  legbf->SetTextFont(132);
+  //legbf->AddEntry(&bestfit_2all, "T2K 3#nu best fit","p");
+  legbf->SetX2NDC(0.6);
+  legbf->SetTextSize(0.06);
+  legbf->Draw();
+  c->SaveAs("contour_compare_external_icecube.pdf");
+  c->SaveAs("contour_compare_external_icecube.png");
+  c->SaveAs("contour_compare_external_icecube.eps");
 
 }
