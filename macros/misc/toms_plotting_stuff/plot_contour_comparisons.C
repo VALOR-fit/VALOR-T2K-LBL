@@ -1,8 +1,23 @@
+#include "TFile.h"
+#include "TGraphPainter.h"
+#include "TH2D.h"
+#include "TMarker.h"
+#include "TStyle.h"
+#include "TLine.h"
+#include "TMath.h"
+#include "TGraph.h"
+#include "TCanvas.h"
+#include "TLegend.h"
+#include <stdio.h>
+#include <iostream>
+
 void plot_contour_comparisons
 (
 
 )
 {
+  using std::cout;
+
   //VaLOR data results
   TFile f_dc_28nob("2012results/DATA/20_2flavour/sensitivity_nobound.root");
   TFile f_dc_28b("2012results/DATA/20_2flavour/sensitivity.root");
@@ -231,7 +246,7 @@ void plot_contour_comparisons
   //externals + olds
   TFile fminos("$T2KOSCANA/inputs/contours/MINOS_NumuDisappearance_LogLikelihoodSurface_May2013.root");
   TH2D * ll_minos = 0;
-  fminos->GetObject("LogLikelihoodSurface",ll_minos);
+  fminos.GetObject("LogLikelihoodSurface",ll_minos);
   ll_minos->SetContour(1);
   ll_minos->SetContourLevel(0,4.61/2);
   ll_minos->SetLineStyle(1);
@@ -278,7 +293,7 @@ void plot_contour_comparisons
 
   // dm23sq, mixing23 range and step
   double mixing23_min   = 0.6;
-  double mixing23_max   = 1.5.;
+  double mixing23_max   = 1.5;
   double mixing23_step  = 0.005;
   double dm23sq_min     = 1E-3;
   double dm23sq_max     = 6E-3;
@@ -776,7 +791,8 @@ void plot_contour_comparisons
   //compare 2+8/2+N dchisq_crit surfaces
   TH2D * h_crit_68_all = 0;
   f_crit_all.GetObject("hDeltaChi2Surface68",h_crit_68_all);
-  TH2D * h_crit_ratio = new TH2D(*h_crit_68_all);
+  delete h_crit_ratio;
+  h_crit_ratio = new TH2D(*h_crit_68_all);
   h_crit_ratio->Clear();
   for(int i = 1; i <= h_crit_ratio->GetNbinsX(); i++) {
     int ibin = h_crit_68->GetXaxis()->FindBin(h_crit_ratio->GetXaxis()->GetBinCenter(i));
@@ -1574,6 +1590,8 @@ void plot_contour_comparisons
   g_ice->SetLineColor(kGreen+2);
   g_ice->SetLineWidth(2);
   //draw
+  //TGraphPainter paint;
+  //paint.Smooth(g_ice2, g_ice->GetN(), g_ice->GetX(), g_ice->GetY(), 0); //DOES NOTHING
   g_ice->Draw("l");
   g_skzen->Draw("l");
   g_skle->Draw("l");
@@ -1597,17 +1615,29 @@ void plot_contour_comparisons
   leg2->SetX2NDC(0.6);
   leg2->SetTextSize(0.06);
   leg2->Draw();
-  TLegend * legbf = new TLegend(0.185, 0.11, 0.45, 0.35);
+  legbf->Clear();
+  delete legbf;
+  legbf = new TLegend(0.185, 0.11, 0.45, 0.35);
   legbf->SetFillColor(0);
   legbf->SetFillStyle(0);
   legbf->SetBorderSize(0);
   legbf->SetTextFont(132);
-  //legbf->AddEntry(&bestfit_2all, "T2K 3#nu best fit","p");
+  legbf->AddEntry(&bestfit_2all, "T2K 3#nu best fit","p");
   legbf->SetX2NDC(0.6);
   legbf->SetTextSize(0.06);
-  legbf->Draw();
+  //legbf->Draw();
   c->SaveAs("contour_compare_external_icecube.pdf");
   c->SaveAs("contour_compare_external_icecube.png");
   c->SaveAs("contour_compare_external_icecube.eps");
-
+  //make lines thicker
+  double thicker = 5;
+  g_ice->SetLineWidth(thicker);
+  g_skzen->SetLineWidth(thicker);
+  g_skle->SetLineWidth(thicker);
+  ll_minos->SetLineWidth(thicker);
+  h_fcall_123_90->SetLineWidth(thicker);
+  h_fcall_123_68->SetLineWidth(thicker);
+  c->SaveAs("contour_compare_external_icecube_thick.pdf");
+  c->SaveAs("contour_compare_external_icecube_thick.png");
+  c->SaveAs("contour_compare_external_icecube_thick.eps");
 }
