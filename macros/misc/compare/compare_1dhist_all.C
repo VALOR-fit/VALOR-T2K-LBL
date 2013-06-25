@@ -16,10 +16,12 @@ void compare_1dhist_all(
   bool draw_only_ratio = false,     /* draw only the ratio? or also plot the 2 histograms overlaid */
   double xmin = -9999999,           /* minimum of x axis to draw */
   double xmax = +9999999,           /* maximum of x axis to draw */
-  bool save_canvas = false,         /* save canvas to a .pdf? */
+  bool save_canvas = false,         /* save canvases to a .pdf? Also turns on batch mode*/
   bool dividingTwoRatios = false    /* special option to use to compare 2 ratio histograms. Needs zerOverZeroIsZero = false */
 )
 {
+  if(save_canvas)
+    gROOT->SetBatch(true);
   char *s = new char[50];
   int i = 0;
   TString histoname;
@@ -28,7 +30,11 @@ void compare_1dhist_all(
   TFile * f2 = new TFile(filename2,"read");
 
   //need to make this, otherwise the real canvas isn't made in the loop
-  TCanvas * ct = new TCanvas("c","",10,10,600,600);
+  TCanvas * ct = new TCanvas("ct","",10,10,600,600);
+  if(!draw_only_ratio)
+    ct->Divide(1,2);
+  if(save_canvas)
+    ct->Print("comparisons.pdf[");
 
   //cycles through histogram names in file 1
   TKey *key;
@@ -93,6 +99,9 @@ void compare_1dhist_all(
       }
       //draw
       TCanvas * c = new TCanvas("c","",10,10,600,600);
+      TLegend * leg = new TLegend(0.0,0.0,0.8,0.1);
+      leg->SetFillStyle(0);
+      leg->AddEntry((TObject*)0,histoname.Data(),"");
       if(!draw_only_ratio) {
 	c->Divide(1,2);
 	c->cd(1);
@@ -108,10 +117,25 @@ void compare_1dhist_all(
       ratio->GetXaxis()->SetRangeUser(xmin, xmax);
       ratio->Draw();
       c->Update();
-      if(save_canvas)
-	c->SaveAs(Form("plot_%s.pdf",histoname.Data()));
+      if(save_canvas) {
+	if(!draw_only_ratio) {
+	  ct->cd(1);
+	  h1->Draw("p");
+	  h2->Draw("same");
+	  ct->cd(2);
+	}
+	else
+	  ct->cd();
+	ratio->Draw();
+	ct->Update();
+	leg->Draw();
+	ct->Print("comparisons.pdf");
+      }
 
-      gets(s); //waits for a [RETURN] entry on the command line.
+      if(!save_canvas)
+	gets(s); //waits for a [RETURN] entry on the command line.
+      else
+	s = "0";
       //Can type a number to skip n histograms
       i = atoi(s);
       if(i>0)
@@ -120,4 +144,6 @@ void compare_1dhist_all(
     else
       i-=1;
   }//while there are TKeys
+  if(save_canvas)
+    ct->Print("comparisons.pdf]");
 }
