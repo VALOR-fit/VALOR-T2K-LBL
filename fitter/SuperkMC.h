@@ -109,6 +109,7 @@ private:
   // Apply systematic variations to MC templates
   void ApplySystematicsToTemplates                   (void); 
   void ApplySystematicsToTemplates_Multiplicative    (void); 
+  void ApplyMECRenormalisationToTemplates            (void); 
   void ApplySystematicsToTemplates_NonMultiplicative (void); 
   bool ApplyEnergyScaleSystematicToTotalSpectrum     (void);
 

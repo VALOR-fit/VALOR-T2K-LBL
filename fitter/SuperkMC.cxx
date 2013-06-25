@@ -19,7 +19,7 @@
 #define __show_init_mesg_info__
 #define __show_init_mesg_debug__
 #define __show_init_mesg_debug2__
-//#define __show_update_mesg_info__
+#define __show_update_mesg_info__
 //#define __show_hypothesis__ 
 //#define __show_hypothesis_probabilities__ 
 //#define __show_syst_var_wght_mesg_debug__ 
@@ -45,6 +45,7 @@
 //#define PHYSHYPWEIGHTSAREONE
 //#define PHYSHYPWEIGHTAREONEANDNUEISZERO
 //#define INCLUDEEVENTSOVERTHIRTYGEV // include Ereco overflow events in the last bin?
+//#define RENORMALISE_MEC // NEEDS CHECKING renormalise non-MEC templates so that MEC isn't an arbitary addition of events, but respects the total normalisation
 
 #include <cassert>
 #include <cstdlib>
@@ -1080,6 +1081,9 @@ void SuperkMC::ApplySystematicsToTemplates(void)
 // Apply systematic variations to MC templates
 //
   this->ApplySystematicsToTemplates_Multiplicative   ();
+#ifdef RENORMALISE_MEC
+  this->ApplyMECRenormalisationToTemplates();
+#endif
 #ifndef APPLY_ESCALE_AT_SPECTRUM_STAGE
   this->ApplySystematicsToTemplates_NonMultiplicative();
 #endif
@@ -1284,6 +1288,158 @@ void SuperkMC::ApplySystematicsToTemplates_Multiplicative(void)
 
 #ifdef __save_templates_debug__
   this->NevDebug(kSKMCtSys, "mcnorm_fluxtuned_banfftuned_syst_multi");
+#endif
+}
+//________________________________________________________________________________________
+void SuperkMC::ApplyMECRenormalisationToTemplates(void) 
+{
+// For use when the BANFF doesn't give us an updated MEC matrix
+// MEC is just an addition of events, so we can renormalise non-MEC events
+// to be more realistic with it's effect
+//
+#ifdef __show_update_mesg_info__
+  cout << "Exp/SKMC >> Applying MEC renormalisation" << endl;
+#endif
+
+  //MEC only included in 1Rmu sample
+  SuperkSample_t s = kSKsFCFV1RingMuLike;
+
+  //define which modes we're interested in normalising to.
+  // to turn off, swap a mode with kSKmUndefined
+  const SuperkMode_t RenormModes1Rmu[knm] = {
+    kSKmNuMuCCQE,         
+    kSKmNuMuCC1pi,
+    kSKmNuMuCCcoh,
+    kSKmNuMuCCoth_mu,                      
+    kSKmUndefined, //kSKmNuMuNC1piC,
+    kSKmUndefined, //kSKmNuMuNCoth_mu,          
+    kSKmOscNuMuCCQE,
+    kSKmOscNuMuCC1pi,
+    kSKmOscNuMuCCcoh,
+    kSKmOscNuMuCCoth_mu,
+    kSKmNuMuBarCCQE,      
+    kSKmNuMuBarCC1pi,
+    kSKmNuMuBarCCcoh,
+    kSKmNuMuBarCCoth_mu,                  
+    kSKmUndefined, //kSKmNuMuBarNC1piC,
+    kSKmUndefined, //kSKmNuMuBarNCoth_mu,
+    kSKmNuECCQE, 
+    kSKmNuECC1pi,
+    kSKmNuECCcoh,
+    kSKmNuECCoth_mu,                                
+    kSKmUndefined, //kSKmNuENC1piC,
+    kSKmUndefined, //kSKmNuENCoth_mu,
+    kSKmNuEBarCCQE,
+    kSKmNuEBarCC1pi,
+    kSKmNuEBarCCcoh,
+    kSKmNuEBarCCoth_mu,
+    kSKmUndefined, //kSKmNuEBarNC1piC,
+    kSKmUndefined, //kSKmNuEBarNCoth_mu,
+    kSKmSigNuECCQE,
+    kSKmSigNuECC1pi,
+    kSKmSigNuECCcoh,
+    kSKmSigNuECCoth_mu,
+    kSKmUndefined,//kSKmMEC, //keep MEC templates here - they won't be renormalised!
+    kSKmUndefined,
+    kSKmUndefined,
+    kSKmUndefined,
+    kSKmUndefined,
+    kSKmUndefined,
+    kSKmUndefined,
+    kSKmUndefined,
+    kSKmUndefined,
+    kSKmUndefined,
+    kSKmUndefined,
+    kSKmUndefined,
+    kSKmUndefined,
+    kSKmUndefined,
+    kSKmUndefined,
+    kSKmUndefined,
+    kSKmUndefined,
+    kSKmUndefined,
+    kSKmUndefined
+  };
+
+  //FIRST integrate the templates
+  double integrals[knm] = {0};
+  // Loop over Renorm modes
+  for(int im = 0; im < knm; im++) { 
+    SuperkMode_t m = kSKReactionModes[0][im];//RenormModes1Rmu[im];
+    if(m == kSKmUndefined) continue;
+    // Consider template?
+    bool skip = this->SkipTemplate(m);
+    if(skip) continue;
+    //initialise
+    integrals[im] = 0;
+    //loop over Ereco
+    for(int ir = 1; ir <= util::NumErecoBins(s); ir++) {
+      // loop over Etrue
+      for(int it = 1; it <= util::NumEtrueBins(s); it++) {
+	double nev = fMCTemplArrayFin1Rmu[im][it-1][ir-1];
+	nev = TMath::Max(0.,nev);
+	integrals[im] += nev;
+      }//it
+    }//ir
+    cout << integrals[im] << "\t" << util::AsStringCompact(m) << endl;
+  }//im
+
+  //NEXT get total number of events
+  double renorm_total = 0;
+  double renorm_mec   = 0;
+  double renorm_templ = 0;
+  // Loop over Renorm modes
+  for(int im = 0; im < knm; im++) { 
+    SuperkMode_t m = kSKReactionModes[0][im];//RenormModes1Rmu[im];
+    if(m == kSKmUndefined) continue;
+    // Consider template?
+    bool skip = this->SkipTemplate(m);
+    if(skip) continue;
+    if(util::IsMEC(m))
+      renorm_mec   += integrals[im];
+    else
+      renorm_total += integrals[im];
+  }
+  for(int im = 0; im < knm; im++) { 
+    SuperkMode_t m = RenormModes1Rmu[im];
+    if(m == kSKmUndefined) continue;
+    // Consider template?
+    bool skip = this->SkipTemplate(m);
+    if(skip) continue;
+    renorm_templ += integrals[im];
+  }
+  //and calculate the renorm factor
+  double renorm_factor = (renorm_templ - renorm_mec)/renorm_templ;  
+  cout << "Exp/SKMC >> " << renorm_mec   << " MEC events"           << endl;
+  cout << "Exp/SKMC >> " << renorm_total << " total non-MEC events" << endl;
+  cout << "Exp/SKMC >> " << renorm_templ << " events in templates we're renormalising" << endl;
+  cout << "Exp/SKMC >> " << renorm_total - renorm_templ << " events in templates we're not renormalising" << endl;
+  cout << "Exp/SKMC >> MEC renormalisation factor is " << renorm_factor << endl;
+
+  //FINALLY apply the factor
+  // Loop over Renormsample modes
+  for(int im = 0; im < knm; im++) { 
+    SuperkMode_t m = RenormModes1Rmu[im];
+    if(m == kSKmUndefined) continue;
+    // Consider template?
+    bool skip = this->SkipTemplate(m);
+    if(skip) continue;
+    if(util::IsMEC(m)) continue;
+    //loop over Ereco
+    for(int ir = 1; ir <= util::NumErecoBins(s); ir++) {
+      // loop over Etrue
+      for(int it = 1; it <= util::NumEtrueBins(s); it++) {
+	fMCTemplArrayFin1Rmu[im][it-1][ir-1] *= renorm_factor;
+#ifndef PRODUCTIONMODE
+	TH2D * mctempl_tgt = this -> Template(s,m,kSKMCtSys);
+	if(mctempl_tgt)
+	  mctempl_tgt->SetBinContent(ir,it,fMCTemplArrayFin1Rmu[im][it-1][ir-1]);
+#endif
+      }//it
+    }//ir
+  }//im
+
+#ifdef __save_templates_debug__
+  this->NevDebug(kSKMCtFin, "mcnorm_fluxtuned_banfftuned_syst_multi_mecrenorm");
 #endif
 }
 //________________________________________________________________________________________

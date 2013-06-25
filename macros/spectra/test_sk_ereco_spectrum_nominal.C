@@ -101,6 +101,7 @@ void test_sk_ereco_spectrum_nominal
 
   // Generate prediction
   cout << "- Generating predictions..." << endl;
+  skexp.GetSuperkMC()->SetXMEC(1);
   skexp.Generate(ph);
 
   // Get energy spectra
@@ -226,7 +227,7 @@ void test_sk_ereco_spectrum_nominal
     else if(util::IsNuE(m) || util::IsNuEBar(m) || util::IsSignalNuE(m))
       nnuecc += nmode;
     else if(m == conv::kSKmNuMuCCQE || m == conv::kSKmNuMuBarCCQE
-	    || m == conv::kSKmOscNuMuCCQE || m == conv::kSKmOscNuMuBarCCQE)
+	    || m == conv::kSKmOscNuMuCCQE)// || m == conv::kSKmOscNuMuBarCCQE)
       nccqe += nmode;
     else
       nccnqe += nmode;
@@ -252,6 +253,16 @@ void test_sk_ereco_spectrum_nominal
 	   << setw(40) << setfill(' ') << "MEC" << " : " 
 	   << setw(15) << setfill(' ') << setprecision(6) << nmec << " events ("
 	   << setw(10) << setfill(' ') << setprecision(6) << 100*nmec/ntot << " %)" << endl;
+
+  streamer << endl;
+  streamer << "Contrib from modes: " 
+	   << setw(40) << setfill(' ') << "Non-MEC" << " : " 
+	   << setw(15) << setfill(' ') << setprecision(6) << nnuecc+nnc+nccnqe+nccqe << " events ("
+	   << setw(10) << setfill(' ') << setprecision(6) << 100*(nnuecc+nnc+nccnqe+nccqe)/ntot << " %)" << endl;
+  streamer << "Contrib from modes: " 
+	   << setw(40) << setfill(' ') << "Non-MEC or NC" << " : " 
+	   << setw(15) << setfill(' ') << setprecision(6) << nnuecc+nccnqe+nccqe << " events ("
+	   << setw(10) << setfill(' ') << setprecision(6) << 100*(nnuecc+nccnqe+nccqe)/ntot << " %)" << endl;
   streamer << nnuecc+nnc+nccnqe+nccqe+nmec << endl;
 
 

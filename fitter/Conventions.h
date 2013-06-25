@@ -46,6 +46,10 @@ Changes since 2011_v0.9.0:
 #endif
 #endif
 
+#ifndef USE_MEC
+//#define USE_MEC //if this is turned off, kSKmMEC is not included in kSKReactionModes
+#endif
+
 #ifndef FSI_BINS
 #ifndef __NUMUONLY__
 #define FSI_BINS 1 //joint analysis, 18 bins
@@ -649,7 +653,11 @@ static const SuperkMode_t kSKReactionModes[kns][knm] = {
     kSKmSigNuECC1pi,
     kSKmSigNuECCcoh,
     kSKmSigNuECCoth_mu,
+#ifdef USE_MEC
     kSKmMEC,
+#else
+    kSKmUndefined,
+#endif
     kSKmUndefined,
     kSKmUndefined,
     kSKmUndefined,
@@ -2840,7 +2848,11 @@ static const SuperkMode_t kSKReactionModesOrderInStack[kns][knm] = {
 
   // > 1 muon-like ring (numu disappearance)
   {
+#ifdef USE_MEC
     kSKmMEC,
+#else
+    kSKmUndefined,
+#endif
     kSKmSigNuECCcoh, 
     kSKmSigNuECC1pi,
     kSKmSigNuECCoth_mu,
