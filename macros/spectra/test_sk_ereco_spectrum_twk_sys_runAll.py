@@ -24,11 +24,13 @@ emax = 7
 modes1 = [0,1,2,3,4,5,6,7,8,9,10] #combinations
 modes2 = range(100,126) #banff
 modes3 = [200,201,202,203,204,209,210,212,213,214,215] #unconstranied xsec
-modes4 = range(300,308) #sk detector
-modes5 = range(400,449) #fsi
+modes4 = [300]#sk energy scale #range(300,308) #sk detector
+modes5 = range(600,606) #skdetfsi #modes5 = range(400,449) #fsi
 modes6 = range(500,504) #special comparison tweaks
 
-modes = modes1 + modes2 + modes3 + modes4 + modes5 #+ modes6
+modes = modes2 + modes3 + modes4 + modes5
+#modes = modes + modes1
+#modes = modes + modes6
 
 oscparams = [] #fill with oscillation parameters, in order mixing12, theta13, theta23, deltacp, dmsq12, dmsq23hypothesis
 oscparams.append([  0,   0,   0,   0,   0,   0]) #no oscillations!
