@@ -151,9 +151,13 @@ bool NuXSec::ReadSplines(TXMLEngine* xml, XMLNodePointer_t root_node)
           if(!is_applied) continue;
           // loop over the var.-size  Ereco and Etrue bins for which weight splines were pre-computed
           for(int ir = 0; ir < util::NumXsecErecoBins(s); ir++) {
-	    double Ereco = util::XsecErecoBinEdges(s,ir) + kOneMeV;
+	    double Ereco     = util::XsecErecoBinEdges(s,ir) + kOneMeV;
+	    double Ereco_min = util::XsecErecoBinEdges(s,ir);
+	    double Ereco_max = util::XsecErecoBinEdges(s,ir+1);
              for(int it = 0; it < kXsNEtrueBins; it++) {
-                double Etrue = kXsEtrueBinEdges[is][im][it] + kOneMeV;
+                double Etrue     = kXsEtrueBinEdges[is][im][it] + kOneMeV;
+                double Etrue_min = kXsEtrueBinEdges[is][im][it];
+                double Etrue_max = kXsEtrueBinEdges[is][im][it+1];
 
                 bool bin_is_beyond_end_of_range = (kXsEtrueBinEdges[is][im][it+1] < 0.);
                 if(bin_is_beyond_end_of_range) continue;
@@ -210,7 +214,8 @@ bool NuXSec::ReadSplines(TXMLEngine* xml, XMLNodePointer_t root_node)
 		  if(!bin_is_not_empty) {
 		    cerr << "Exp/NuXSec >> Spline exists for empty bin: "
 			 << splname.str() 
-			 << " Ereco: " << Ereco << ", Etrue: " << Etrue
+			 << " Ereco: "  << Ereco_min << "-" << Ereco_max 
+			 << ", Etrue: " << Etrue_min << "-" << Etrue_max 
 			 << ". Spline thinks there are " << spl->GetTitle()
 			 << endl;
 		    exit(1);

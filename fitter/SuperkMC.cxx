@@ -44,7 +44,7 @@
 //#define SYSTWEIGHTSAREONE
 //#define PHYSHYPWEIGHTSAREONE
 //#define PHYSHYPWEIGHTAREONEANDNUEISZERO
-//#define INCLUDEEVENTSOVERTHIRTYGEV // include Ereco overflow events in the last bin?
+#define INCLUDEEVENTSOVERTHIRTYGEV // include Ereco overflow events in the last bin?
 //#define RENORMALISE_MEC // NEEDS CHECKING renormalise non-MEC templates so that MEC isn't an arbitary addition of events, but respects the total normalisation
 
 #include <cassert>
@@ -516,35 +516,47 @@ void SuperkMC::FillTemplate(SuperkSample_t s, SuperkMode_t m)
      // use current entry for mode m template?
      bool use_it = util::UseEventToFillInTemplate(m,util::SuperkMode2SKMCPdg(m),fBrGenCode);
      if(!use_it) continue;
-  
-     this -> Template(s,m,kSKMCtOri) -> Fill (fBrEreco/1000., fBrEtrue);
-     fMCVariableTempl[sidx][midx]    -> Fill (fBrEreco/1000., fBrEtrue);
+
+     double ereco_fill = fBrEreco/1000.;
+
+#ifdef INCLUDEEVENTSOVERTHIRTYGEV
+     ereco_fill = TMath::Min(29.9, ereco_fill);
+#endif
+     if(m == kSKmNuMuCC1pi && ereco_fill > 9 && fBrEtrue > 6)
+       cout << fBrEtrue << "\t" << ereco_fill << endl;
+
+
+     this -> Template(s,m,kSKMCtOri) -> Fill (ereco_fill, fBrEtrue);
+     fMCVariableTempl[sidx][midx]    -> Fill (ereco_fill, fBrEtrue);
 #ifndef FLUXWEIGHTSAREONE
-     this -> Template(s,m,kSKMCtNom) -> Fill (fBrEreco/1000., fBrEtrue, fBrWght * pot_wght);
+     this -> Template(s,m,kSKMCtNom) -> Fill (ereco_fill, fBrEtrue, fBrWght * pot_wght);
 #ifndef PRODUCTIONMODE
-     this -> Template(s,m,kSKMCtTun) -> Fill (fBrEreco/1000., fBrEtrue, fBrWght * pot_wght);
-     this -> Template(s,m,kSKMCtSys) -> Fill (fBrEreco/1000., fBrEtrue, fBrWght * pot_wght);
-     this -> Template(s,m,kSKMCtFin) -> Fill (fBrEreco/1000., fBrEtrue, fBrWght * pot_wght);
+     this -> Template(s,m,kSKMCtTun) -> Fill (ereco_fill, fBrEtrue, fBrWght * pot_wght);
+     this -> Template(s,m,kSKMCtSys) -> Fill (ereco_fill, fBrEtrue, fBrWght * pot_wght);
+     this -> Template(s,m,kSKMCtFin) -> Fill (ereco_fill, fBrEtrue, fBrWght * pot_wght);
 #endif//PRODUCTIONMODE
 #else
-     this -> Template(s,m,kSKMCtNom) -> Fill (fBrEreco/1000., fBrEtrue, pot_wght);
+     this -> Template(s,m,kSKMCtNom) -> Fill (ereco_fill, fBrEtrue, pot_wght);
 #ifndef PRODUCTIONMODE
-     this -> Template(s,m,kSKMCtTun) -> Fill (fBrEreco/1000., fBrEtrue, pot_wght);
-     this -> Template(s,m,kSKMCtSys) -> Fill (fBrEreco/1000., fBrEtrue, pot_wght);
-     this -> Template(s,m,kSKMCtFin) -> Fill (fBrEreco/1000., fBrEtrue, pot_wght);
+     this -> Template(s,m,kSKMCtTun) -> Fill (ereco_fill, fBrEtrue, pot_wght);
+     this -> Template(s,m,kSKMCtSys) -> Fill (ereco_fill, fBrEtrue, pot_wght);
+     this -> Template(s,m,kSKMCtFin) -> Fill (ereco_fill, fBrEtrue, pot_wght);
 #endif//PRODUCTIONMODE
 #endif//FLUXWEIGHTSAREONE
 
 
 #ifdef __show_init_mesg_debug__
      if(fBrEtrue <= 0 || fBrEtrue >= this->Template(s,m,kSKMCtOri)->GetYaxis()->GetBinUpEdge(this->Template(s,m,kSKMCtOri)->GetNbinsY()))
-       cout << "Exp/SKMC/CreateTemplate >> Etrue is out of template range " << AsString(s) << " " << AsString(m) << " " << fBrEtrue << endl;
+       cout << "Exp/SKMC/CreateTemplate >> Etrue is out of template range " << AsString(s) << " " << AsString(m) << " " << fBrEtrue 
+	    << " (Ereco = " << fBrEreco/1000 << ")" << endl;
 #ifdef __show_init_mesg_debug2__
      if(fBrEreco/1000 <= 0)
-       cout << "Exp/SKMC/CreateTemplate >> Ereco is out of template range " << AsString(s) << " " << AsString(m) << " " << fBrEreco/1000 << endl;
+       cout << "Exp/SKMC/CreateTemplate >> Ereco is out of template range " << AsString(s) << " " << AsString(m) << " " << fBrEreco/1000
+	    << " (Etrue = " << fBrEtrue << ")" << endl;
 #endif// __show_init_mesg_debug2__
      if(fBrEreco/1000 >= this->Template(s,m,kSKMCtOri)->GetXaxis()->GetBinUpEdge(this->Template(s,m,kSKMCtOri)->GetNbinsX()))
-       cout << "Exp/SKMC/CreateTemplate >> Ereco is out of template range " << AsString(s) << " " << AsString(m) << " " << fBrEreco/1000 << endl;
+       cout << "Exp/SKMC/CreateTemplate >> Ereco is out of template range " << AsString(s) << " " << AsString(m) << " " << fBrEreco/1000
+	    << " (Etrue = " << fBrEtrue << ")" << endl;
 #endif// __show_init_mesg_debug__
 
   }//iev
@@ -552,27 +564,6 @@ void SuperkMC::FillTemplate(SuperkSample_t s, SuperkMode_t m)
   if(sidx > -1 && midx > -1) {
     // loop over Etrue
     for(int it = 1; it <= this->Template(s,m,kSKMCtNom)->GetYaxis()->GetNbins(); it++) {
-#ifdef INCLUDEEVENTSOVERTHIRTYGEV
-      //move the histogram overflow content into the last bin
-      int ir_overflow         = this->Template(s,m,kSKMCtNom)->GetXaxis()->GetNbins() + 1;
-      int ir_last             = this->Template(s,m,kSKMCtNom)->GetXaxis()->GetNbins();
-      double nev_overflow     = this->Template(s,m,kSKMCtNom)->GetBinContent(ir_overflow,it);
-      double nev_last         = this->Template(s,m,kSKMCtNom)->GetBinContent(ir_last,    it);
-      double ori_nev_overflow = this->Template(s,m,kSKMCtOri)->GetBinContent(ir_overflow,it);
-      double ori_nev_last     = this->Template(s,m,kSKMCtOri)->GetBinContent(ir_last,    it);
-      this->Template(s,m,kSKMCtOri)->SetBinContent(ir_last,     ori_nev_overflow + ori_nev_last);
-      this->Template(s,m,kSKMCtOri)->SetBinContent(ir_overflow, 0);
-      this->Template(s,m,kSKMCtNom)->SetBinContent(ir_last,     nev_overflow + nev_last);
-      this->Template(s,m,kSKMCtNom)->SetBinContent(ir_overflow, 0);
-#ifndef PRODUCTIONMODE
-      this->Template(s,m,kSKMCtTun)->SetBinContent(ir_last,     nev_overflow + nev_last);
-      this->Template(s,m,kSKMCtTun)->SetBinContent(ir_overflow, 0);
-      this->Template(s,m,kSKMCtSys)->SetBinContent(ir_last,     nev_overflow + nev_last);
-      this->Template(s,m,kSKMCtSys)->SetBinContent(ir_overflow, 0);
-      this->Template(s,m,kSKMCtFin)->SetBinContent(ir_last,     nev_overflow + nev_last);
-      this->Template(s,m,kSKMCtFin)->SetBinContent(ir_overflow, 0);
-#endif
-#endif//INCLUDEEVENTSOVERTHIRTYGEV
       // loop over Ereco
       for(int ir = 1; ir <= this->Template(s,m,kSKMCtNom)->GetXaxis()->GetNbins(); ir++) {
 	if (s==kSKsFCFV1RingMuLike)
@@ -595,15 +586,6 @@ void SuperkMC::FillTemplate(SuperkSample_t s, SuperkMode_t m)
     //now loop over the variable binning scheme (used to calculate weights only as many times as we need to)
     //loop over variable Etrue
     for(int itv = 1; itv <= fMCVariableTempl[sidx][midx]->GetYaxis()->GetNbins(); itv++) {
-#ifdef INCLUDEEVENTSOVERTHIRTYGEV
-      //move the histogram overflow content into the last bin
-      int ir_overflow = fMCVariableTempl[sidx][midx]->GetXaxis()->GetNbins() + 1;
-      int ir_last     = fMCVariableTempl[sidx][midx]->GetXaxis()->GetNbins();
-      double nev_overflow = fMCVariableTempl[sidx][midx]->GetBinContent(ir_overflow,it);
-      double nev_last     = fMCVariableTempl[sidx][midx]->GetBinContent(ir_last,    it);
-      fMCVariableTempl[sidx][midx]->SetBinContent(ir_last,     nev_overflow + nev_last);
-      fMCVariableTempl[sidx][midx]->SetBinContent(ir_overflow, 0);
-#endif//INCLUDEEVENTSOVERTHIRTYGEV
       // loop over variable Ereco
       for(int irv = 1; irv <= fMCVariableTempl[sidx][midx]->GetXaxis()->GetNbins(); irv++) {
 	int nev = (int)fMCVariableTempl[sidx][midx]->GetBinContent(irv,itv);
@@ -611,7 +593,7 @@ void SuperkMC::FillTemplate(SuperkSample_t s, SuperkMode_t m)
 	else fMCVariableTemplArray1Re[sidx][midx][itv-1][irv-1] = nev;
       }//irv
     }//itv
-  }  
+  }
 
 #ifdef __show_init_mesg_debug__        
   cout << "Exp/SKMC/CreateTemplate >>      "
