@@ -818,9 +818,7 @@ void NuXSec::PrintSystematicVariations(ostream & stream) const
   stream << "         >> W-shape             " << fWshapeTwkDial        << endl;
   stream << "         >> CC-oth shape        " << fShapeCCothTwkDial    << endl;
   stream << "         >> Pi-less delta decay " << fPiLessDeltaTwkDial   << endl;
-#ifndef __NUMUONLY__ 
   stream << "         >> Binding energy      " << fBindETwkDial         << endl;
-#endif
   stream << "         >> CC-coh norm         " << fNormCCcohTwkDial     << endl;
   stream << "         >> NC-1piC norm        " << fNormNC1piCTwkDial    << endl;
 #ifndef __NUMUONLY__ 

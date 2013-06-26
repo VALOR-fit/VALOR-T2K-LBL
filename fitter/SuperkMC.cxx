@@ -19,7 +19,7 @@
 #define __show_init_mesg_info__
 #define __show_init_mesg_debug__
 #define __show_init_mesg_debug2__
-#define __show_update_mesg_info__
+//#define __show_update_mesg_info__
 //#define __show_hypothesis__ 
 //#define __show_hypothesis_probabilities__ 
 //#define __show_syst_var_wght_mesg_debug__ 
@@ -522,10 +522,6 @@ void SuperkMC::FillTemplate(SuperkSample_t s, SuperkMode_t m)
 #ifdef INCLUDEEVENTSOVERTHIRTYGEV
      ereco_fill = TMath::Min(29.9, ereco_fill);
 #endif
-     if(m == kSKmNuMuCC1pi && ereco_fill > 9 && fBrEtrue > 6)
-       cout << fBrEtrue << "\t" << ereco_fill << endl;
-
-
      this -> Template(s,m,kSKMCtOri) -> Fill (ereco_fill, fBrEtrue);
      fMCVariableTempl[sidx][midx]    -> Fill (ereco_fill, fBrEtrue);
 #ifndef FLUXWEIGHTSAREONE
