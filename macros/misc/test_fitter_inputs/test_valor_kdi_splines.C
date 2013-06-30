@@ -45,8 +45,11 @@ void test_valor_kdi_splines
     cout << "Current sample/mode: " << util::AsString(s) << "/" << util::AsString(m) << endl;
     if(!compare_with_old_valor) {
       //find the KDI spline file
+      //continue for oscillated numu (nue->numu) as there is no sample 
       if(util::IsNuMu(m))
 	fref = fkdi_numu;
+      else if(util::IsOscNuMu(m))
+        continue;
       else if(util::IsNuMuBar(m))
 	fref = fkdi_numubar;
       else if(util::IsNuE(m))
