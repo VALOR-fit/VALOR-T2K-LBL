@@ -44,6 +44,9 @@ void plot_contour_comparisons
   TFile f_crit_all("2012results/FC/delta_chisq_critical_2all.root");
   TFile f_crit_kit("2012results/FC/KIT/run1-3_criticalchi2.root");
   TFile f_sens("2012results/SENSITIVITY/t2k_28/sensitivity.root");
+  TFile f_dcall_banff13v0("2012results/DATA/banff13v0/combination/fitresults_3.root");
+  TFile f_dcall_banff13v3("2012results/DATA/banff13v3/combination/fitresults_3.root");
+  TFile f_dcall_octant2only23("2012results/DATA/octant2_23only/combination/fitresults_3.root");
 
   //Fill in TMarker's with the best fit point (is the same for 2+N, 2+8)
   TMarker bestfit(1.000,0.002442,29);
@@ -190,6 +193,40 @@ void plot_contour_comparisons
   h_dcall_3_90->SetContour(1);
   h_dcall_3_90->SetContourLevel(0,4.61);
   h_dcall_3_90->SetLineStyle(1);
+
+  //2all with 2013 banff
+  TH2D * h_dcall_banff13v0 = 0;
+  f_dcall_banff13v0.GetObject("hdchisq",h_dcall_banff13v0);
+  TH2D * h_dcall_banff13v0_68 = new TH2D(*h_dcall_banff13v0);
+  TH2D * h_dcall_banff13v0_90 = new TH2D(*h_dcall_banff13v0);
+  h_dcall_banff13v0_68->SetContour(1);
+  h_dcall_banff13v0_68->SetContourLevel(0,2.30);
+  h_dcall_banff13v0_68->SetLineStyle(2);
+  h_dcall_banff13v0_90->SetContour(1);
+  h_dcall_banff13v0_90->SetContourLevel(0,4.61);
+  h_dcall_banff13v0_90->SetLineStyle(1);
+
+  TH2D * h_dcall_banff13v3 = 0;
+  f_dcall_banff13v3.GetObject("hdchisq",h_dcall_banff13v3);
+  TH2D * h_dcall_banff13v3_68 = new TH2D(*h_dcall_banff13v3);
+  TH2D * h_dcall_banff13v3_90 = new TH2D(*h_dcall_banff13v3);
+  h_dcall_banff13v3_68->SetContour(1);
+  h_dcall_banff13v3_68->SetContourLevel(0,2.30);
+  h_dcall_banff13v3_68->SetLineStyle(2);
+  h_dcall_banff13v3_90->SetContour(1);
+  h_dcall_banff13v3_90->SetContourLevel(0,4.61);
+  h_dcall_banff13v3_90->SetLineStyle(1);
+
+  TH2D * h_dcall_octant2only23 = 0;
+  f_dcall_octant2only23.GetObject("hdchisq",h_dcall_octant2only23);
+  TH2D * h_dcall_octant2only23_68 = new TH2D(*h_dcall_octant2only23);
+  TH2D * h_dcall_octant2only23_90 = new TH2D(*h_dcall_octant2only23);
+  h_dcall_octant2only23_68->SetContour(1);
+  h_dcall_octant2only23_68->SetContourLevel(0,2.30);
+  h_dcall_octant2only23_68->SetLineStyle(2);
+  h_dcall_octant2only23_90->SetContour(1);
+  h_dcall_octant2only23_90->SetContourLevel(0,4.61);
+  h_dcall_octant2only23_90->SetLineStyle(1);
 
   //KIT DC
   TH2D * h_dc_kit_68 = 0;
@@ -411,6 +448,78 @@ void plot_contour_comparisons
   bestfit_2all.SetMarkerColor(kBlack);
   bestfit_2all.Draw();
   c->SaveAs("compare_FC_constchisq_2N.eps");
+
+  //Run 1-3 const dchisq banff 12v8 vs 13v0
+  osc_param_space->GetXaxis()->SetRangeUser(0.9,1.0);
+  osc_param_space->GetYaxis()->SetRangeUser(0.0018,0.0032);
+  osc_param_space->Draw();  
+  h_dcall_123_68->SetLineColor(kRed);
+  h_dcall_123_90->SetLineColor(kRed);
+  h_dcall_banff13v0_68->SetLineColor(kBlack);
+  h_dcall_banff13v0_90->SetLineColor(kBlack);
+  h_dcall_123_68->Draw("cont3same");
+  h_dcall_123_90->Draw("cont3same");
+  h_dcall_banff13v0_68->Draw("cont3same");
+  h_dcall_banff13v0_90->Draw("cont3same");
+  leg->Clear();
+  leg->AddEntry(h_dcall_123_68, "BANFF12v8 68% CL","l");
+  leg->AddEntry(h_dcall_123_90, "BANFF12v8 90% CL","l");
+  leg->AddEntry(h_dcall_banff13v0_68, "BANFF13v0 68% CL","l");
+  leg->AddEntry(h_dcall_banff13v0_90, "BANFF13v0 90% CL","l");
+  leg->Draw();
+  bestfit_2all.SetMarkerStyle(29);
+  bestfit_2all.SetMarkerColor(kBlack);
+  bestfit_2all.Draw();
+  c->SaveAs("compare_banff_12v8_13v0.pdf");
+
+  //Run 1-3 const dchisq banff 12v8 vs 13v3
+  osc_param_space->GetXaxis()->SetRangeUser(0.9,1.0);
+  osc_param_space->GetYaxis()->SetRangeUser(0.0018,0.0032);
+  osc_param_space->Draw();  
+  h_dcall_123_68->SetLineColor(kRed);
+  h_dcall_123_90->SetLineColor(kRed);
+  h_dcall_banff13v3_68->SetLineColor(kBlack);
+  h_dcall_banff13v3_90->SetLineColor(kBlack);
+  h_dcall_123_68->Draw("cont3same");
+  h_dcall_123_90->Draw("cont3same");
+  h_dcall_banff13v3_68->Draw("cont3same");
+  h_dcall_banff13v3_90->Draw("cont3same");
+  leg->Clear();
+  leg->AddEntry(h_dcall_123_68, "BANFF12v8 68% CL","l");
+  leg->AddEntry(h_dcall_123_90, "BANFF12v8 90% CL","l");
+  leg->AddEntry(h_dcall_banff13v3_68, "BANFF13v3 68% CL","l");
+  leg->AddEntry(h_dcall_banff13v3_90, "BANFF13v3 90% CL","l");
+  leg->Draw();
+  bestfit_2all.SetMarkerStyle(29);
+  bestfit_2all.SetMarkerColor(kBlack);
+  bestfit_2all.Draw();
+  c->SaveAs("compare_banff_12v8_13v3.pdf");
+
+  //Run 1-3 const dchisq octant 1 vs octant 2 (23 only)
+  osc_param_space->GetXaxis()->SetRangeUser(0.9,1.0);
+  osc_param_space->GetYaxis()->SetRangeUser(0.0018,0.0032);
+  osc_param_space->Draw();  
+  h_dcall_123_68->SetLineColor(kRed);
+  h_dcall_123_90->SetLineColor(kRed);
+  h_dcall_octant2only23_68->SetLineColor(kBlack);
+  h_dcall_octant2only23_90->SetLineColor(kBlack);
+  h_dcall_123_68->Draw("cont3same");
+  h_dcall_123_90->Draw("cont3same");
+  h_dcall_octant2only23_68->Draw("cont3same");
+  h_dcall_octant2only23_90->Draw("cont3same");
+  leg->Clear();
+  leg->AddEntry(h_dcall_123_68, "Octant1 68% CL","l");
+  leg->AddEntry(h_dcall_123_90, "Octant1 90% CL","l");
+  leg->AddEntry(h_dcall_octant2only23_68, "Octant2 68% CL","l");
+  leg->AddEntry(h_dcall_octant2only23_90, "Octant2 90% CL","l");
+  leg->Draw();
+  bestfit_2all.SetMarkerStyle(29);
+  bestfit_2all.SetMarkerColor(kRed);
+  bestfit_2all.Draw();
+  //TMarker bestfit_octant2only23(0.992,0.0024414,27);
+  //bestfit_octant2only23.SetMarkerColor(kBlack);
+  //bestfit_octant2only23.Draw();
+  c->SaveAs("compare_octants.pdf");
 
   //Run 1-3 const dchisq KIT vs VaLOR
   osc_param_space->GetXaxis()->SetRangeUser(0.85,1.0);
@@ -1570,6 +1679,16 @@ void plot_contour_comparisons
   c->SaveAs("contour_compare_external.eps");
   cout << osc_param_space->GetXaxis()->GetLabelSize() << endl;
   cout << osc_param_space->GetXaxis()->GetTitleSize() << endl;
+  double thick = 2, thick_t2k = 3;
+  g_skzen->SetLineWidth(thick);
+  g_skle->SetLineWidth(thick);
+  ll_minos->SetLineWidth(thick);
+  h_fcall_123_90->SetLineWidth(thick_t2k);
+  h_fcall_123_68->SetLineWidth(thick_t2k);
+  g_run12_90_statsyst->SetLineWidth(thick);
+  c->SaveAs("contour_compare_external_thick.pdf");
+  c->SaveAs("contour_compare_external_thick.png");
+  c->SaveAs("contour_compare_external_thick.eps");
 
 
   //LEPTON PHOTON
