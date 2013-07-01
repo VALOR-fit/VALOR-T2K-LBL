@@ -38,6 +38,7 @@ void build_chisq_surface_disapp_parallelized
 
   // Analysis configuration
   const char * config = Form("%s/config/%s", gSystem->Getenv("T2KOSCANA"), config_file);
+  TString xmlfile2 = Form("%s/inputs/%s", gSystem->Getenv("T2KOSCANA"), xmlfile);
 
   // Global options
   if(mixparamchoice == "2theta")
@@ -69,7 +70,7 @@ void build_chisq_surface_disapp_parallelized
   cout << "- Job: " << tag << endl;
   cout << "- Reading analysis configuration from: " << config << endl;
   cout << "- Toy-MC or data:" << endl;
-  cout << "   - Reading experiments from: " << xmlfile << endl;
+  cout << "   - Reading experiments from: " << xmlfile2 << endl;
   cout << "   - Using experiments in range: [" << first_experiment << ", " << last_experiment << "]" << endl;
   cout << "- Fit" << endl;
   cout << "   - Fit param list: " << fit_param_list << endl;
@@ -146,7 +147,7 @@ void build_chisq_surface_disapp_parallelized
 
      // Read SuperK spectrum (toy MC or data)
      SuperkObservation * skobs = new SuperkObservation;
-     skobs->Read(xmlfile, iexperiment);
+     skobs->Read(xmlfile2.Data(), iexperiment);
 
      // Loop over bins and calc the chisq fixing osc params to the true ones at the centre
      // of the bin and minimize with respect to all systematics (and, potentially, all other osc params).
