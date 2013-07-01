@@ -49,7 +49,7 @@ void read_fit_results(const char * filename)
     TH1D * data1Rmu    = (TH1D*) dat_array->FindObject("obs_1Rmu");
     TH1D * bestfit1Rmu = (TH1D*) pdf_array->FindObject("pdf_1Rmu");
     data1Rmu->Draw("perr");
-    bestfit1Rmu->Draw("lsame");
+    bestfit1Rmu->Draw("same");
     c->Update();
   }
 }

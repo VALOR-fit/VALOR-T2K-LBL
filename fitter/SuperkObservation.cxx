@@ -286,8 +286,8 @@ bool SuperkObservation::CreateMockData(
 {
 // Get observed reconstructed energy distribution
 
-//  cout << "Obs >> Generating a toy-MC expt with the following params: " << ph;
-  // cout << "Obs >> Stat. fluctuations are turned-" << ((fluctuate)? "ON" : "OFF") << endl;
+  cout << "Obs >> Generating a toy-MC expt with the following params: " << ph;
+  cout << "Obs >> Stat. fluctuations are turned-" << ((fluctuate)? "ON" : "OFF") << endl;
 
   bool applied_negevents_condition = skexp.Generate(ph); //generate prediction
 
@@ -325,7 +325,10 @@ bool SuperkObservation::CreateMockData(
 //________________________________________________________________________________________
 bool SuperkObservation::Write(TObjArray * data_collection, const char * data_tag)
 {
-  if(!data_collection) return false;
+  if(!data_collection) {
+    cout << "Obs >> Null TObjArray. Not writing data" << endl;
+    return false;
+  }
 
   util::SetDefaultStyle();
 
@@ -344,6 +347,14 @@ bool SuperkObservation::Write(TObjArray * data_collection, const char * data_tag
               data_tag,
               util::AsStringCompact(s).c_str() ) 
             );
+#ifdef PRODUCTIONMODE
+    for(int ir = 1; ir <= data->GetNbinsX(); ir++) {
+      if(s == kSKsFCFV1RingMuLike)
+	data->SetBinContent(ir, fErDistrArray1Rmu[ir-1]);
+      else if(s == kSKsFCFV1RingELike)
+	data->SetBinContent(ir, fErDistrArray1Re[ir-1]);
+    }//ir
+#endif
 
     data_collection -> Add(data);
   }

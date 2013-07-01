@@ -25,6 +25,7 @@ void run_fit_xml
 
   // Analysis configuration
   const char * config = Form("%s/config/%s", gSystem->Getenv("T2KOSCANA"), config_file);
+  TString xmlfile2 = Form("%s/inputs/%s", gSystem->Getenv("T2KOSCANA"), xmlfile);
 
   // Global options
   Opt::Instance()->gOscMixingParamChoice = conv::kNuMixSinsq2Theta;
@@ -36,7 +37,7 @@ void run_fit_xml
   cout << "- Job: " << tag << "/" << run << endl;
   cout << "- Reading analysis configuration from: " << config << endl;
   cout << "- Toy-MC" << endl;
-  cout << "   - Reading experiments from: " << xmlfile << endl; 
+  cout << "   - Reading experiments from: " << xmlfile2 << endl; 
   cout << "   - Using experiments in range: [" << first_experiment << ", " << last_experiment << "]" << endl; 
   cout << "- Fit" << endl;
   cout << "   - Fit param list: " << fit_param_list << endl;
@@ -84,7 +85,7 @@ void run_fit_xml
 
      // Get superk spectrum observation (toy experiment)
      SuperkObservation * skobs = new SuperkObservation;
-     skobs->Read(xmlfile,iexperiment);
+     skobs->Read(xmlfile2.Data(),iexperiment);
 
      // Get fitter
      FitInputs * fit_inputs = new FitInputs(skobs,skexp,fparm);

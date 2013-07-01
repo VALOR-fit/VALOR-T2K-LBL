@@ -80,6 +80,7 @@ public:
    TH1D*   CurrPredictedErecoSpectrum      (t2kana::conv::SuperkSample_t s) const;
    TH1D*   CurrPredictedErecoSpectrum      (t2kana::conv::SuperkSample_t s, t2kana::conv::SuperkMode_t m) const;
    double* CurrPredictedErecoSpectrumArray (t2kana::conv::SuperkSample_t s);
+   double* CurrPredictedErecoSpectrumArrayMode (t2kana::conv::SuperkSample_t s, t2kana::conv::SuperkMode_t m);
    double  CurrPredictedErecoSpectrumArray (t2kana::conv::SuperkSample_t s, int i);
 
    // Read inputs from input XML file
@@ -123,7 +124,9 @@ private:
    TH1D *  fPredictErecoSpectrum[kns][knm];  ///< Ereco spectrum = f(sample,mode)
    TH1D *  fPredictErecoSpectrumTot[kns];    ///< Ereco spectrum = f(sample), sum over modes
    double  fPredictErecoSpectrumArrayTot1Rmu[conv::kNErecoBins1Rmu];
-   double  fPredictErecoSpectrumArrayTot1Re[conv::kNErecoBins1Re];
+   double  fPredictErecoSpectrumArrayTot1Re [conv::kNErecoBins1Re];
+   double  fPredictErecoSpectrumArray1Rmu   [conv::knm][conv::kNErecoBins1Rmu];
+   double  fPredictErecoSpectrumArray1Re    [conv::knm][conv::kNErecoBins1Re];
 
 ClassDef(SuperkExpectation, 5)
 };

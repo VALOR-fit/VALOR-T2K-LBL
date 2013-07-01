@@ -75,8 +75,16 @@ void SuperkExpectation::Init(void)
       fPredictErecoSpectrum[is][im] = 0;
     }//im
     for(int ir=0; ir<util::NumErecoBins(s); ir++) {
-      if (s==kSKsFCFV1RingMuLike) fPredictErecoSpectrumArrayTot1Rmu[ir] = 0;
-      else fPredictErecoSpectrumArrayTot1Re[ir] = 0;
+      if (s==kSKsFCFV1RingMuLike)
+	fPredictErecoSpectrumArrayTot1Rmu[ir] = 0;
+      else
+	fPredictErecoSpectrumArrayTot1Re[ir] = 0;
+      for(int im=0; im<knm; im++) {
+	if (s==kSKsFCFV1RingMuLike)
+	  fPredictErecoSpectrumArray1Rmu[im][ir] = 0;
+	else
+	  fPredictErecoSpectrumArray1Re[im][ir] = 0;
+      }//im
     }//ir
   }//is
 }
@@ -224,13 +232,16 @@ bool SuperkExpectation::Generate(const PhysHypothesis & ph)
       this->CurrPredictedErecoSpectrumArray(s)[ibin-1] = ns;
 #ifndef PRODUCTIONMODE
       this->CurrPredictedErecoSpectrum(s)->SetBinContent(ibin, ns);
+#endif
       for(int im = 0; im < knm; im++) {
 	SuperkMode_t m = kSKReactionModes[is][im];
 	if(m == kSKmUndefined) continue;
 	double nsm = fSuperkMC->CurrErecoSpectrum(s,m)->GetBinContent(ibin);
+	this->CurrPredictedErecoSpectrumArrayMode(s,m)[ibin-1] = nsm;
+#ifndef PRODUCTIONMODE
 	this->CurrPredictedErecoSpectrum(s,m)->SetBinContent(ibin, nsm);
-      }//m	
 #endif
+      }//m	
     }//ibin
   }//s
   return applied_negevents_condition;
@@ -286,8 +297,28 @@ double* SuperkExpectation::CurrPredictedErecoSpectrumArray(t2kana::conv::SuperkS
   if(sidx == -1) {
     return 0;
   }
-  if (s== kSKsFCFV1RingMuLike )return fPredictErecoSpectrumArrayTot1Rmu;  
-  else return fPredictErecoSpectrumArrayTot1Re;
+  if (s== kSKsFCFV1RingMuLike )
+    return fPredictErecoSpectrumArrayTot1Rmu;  
+  else
+    return fPredictErecoSpectrumArrayTot1Re;
+}
+//________________________________________________________________________________________
+double* SuperkExpectation::CurrPredictedErecoSpectrumArrayMode(
+  t2kana::conv::SuperkSample_t s, t2kana::conv::SuperkMode_t m)
+{ 
+  int sidx = util::ArrIdx::Instance()->SuperkSampleIdx(s);
+  if(sidx == -1) {
+    return 0;
+  }
+  int midx = util::ArrIdx::Instance()->SuperkModeIdx(s,m);
+  if(midx == -1) {
+    return 0;
+  }
+
+  if (s== kSKsFCFV1RingMuLike )
+    return fPredictErecoSpectrumArray1Rmu[midx];
+  else
+    return fPredictErecoSpectrumArray1Re[midx];
 }
 //________________________________________________________________________________________
 double  SuperkExpectation::CurrPredictedErecoSpectrumArray(t2kana::conv::SuperkSample_t s, int i) 
@@ -332,11 +363,21 @@ bool SuperkExpectation::Write(TObjArray * array, const char * pdf_tag)
      // copy & format Ereco spectra
      spectrum = new TH1D(*this->CurrPredictedErecoSpectrum(s));
      spectrum->SetDirectory (0);
+#ifdef PRODUCTIONMODE
+     for(int ir = 1; ir <= spectrum->GetNbinsX(); ir++) {
+       spectrum->SetBinContent(ir, this->CurrPredictedErecoSpectrumArray(s)[ir-1]);
+     }
+#endif
      for(int im = 0; im < knm; im++) {
         SuperkMode_t m = kSKReactionModes[is][im];
         if(m == kSKmUndefined) continue;
         spectrum_mode[im] = new TH1D(*this->CurrPredictedErecoSpectrum(s,m));
         spectrum_mode[im]->SetDirectory (0);
+#ifdef PRODUCTIONMODE
+	for(int ir = 1; ir <= spectrum->GetNbinsX(); ir++) {
+	  spectrum_mode[im]->SetBinContent(ir, this->CurrPredictedErecoSpectrumArrayMode(s,m)[ir-1]);
+	}
+#endif
      }//imode
 
      // add spectra to the results array

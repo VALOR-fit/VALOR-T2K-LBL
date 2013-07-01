@@ -11,7 +11,7 @@ void run_fit
 (
   const char * tag                     = "toyexptfits",                       /* tag for output file */
   int          run                     = 0,                                   /* run number */
-  int          nexperiments            = 1000,                                /* number of toy MC experiment fits */
+  int          nexperiments            = 1,                                   /* number of toy MC experiment fits */
   double       input_mixing12          = 0.86,                                /* 12-mixing, sinq2theta or sinsqtheta depending on user choice, if -999 then randomize */
   double       input_mixing13          = 0.10,                                /* 13-mixing, sinq2theta or sinsqtheta depending on user choice, if -999 then randomize */
   double       input_mixing23          = 1.00,                                /* 23-mixing, sinq2theta or sinsqtheta depending on user choice */
@@ -150,16 +150,19 @@ void run_fit
         // generate mock data using the current PDF (incl. systematic variations) 
         // + statistical fluctuations if requested (Poisson fluctuation in each bin)
         cout << "- Generating toy-MC..." << endl;
-        skobs->CreateMockData(*skexp, *fparm, stat_fluctuations);
+	//note that fparm does not contain the tweaks, so use only the PhysHyp here
+        skobs->CreateMockData(*skexp, PhysHypothesis(*fparm), stat_fluctuations);
         // reset all systematics so that the PDF used in the fitter is the nominal one
         cout << "- Reseting all systematic params in pdf..." << endl;
         skexp->ResetSystematicVariations();
         //skexp->PrintSystematicVariations();
      } else {       
+        //make sure systematics are reset
+	skexp->ResetSystematicVariations();
         // generate mock data using the current PDF (without systematic variations) 
         // with statistical fluctuations if requested (Poisson fluctuation in each bin)
         cout << "- Generating toy-MC..." << endl;
-        skobs->CreateMockData(*skexp, *fparm, stat_fluctuations); 
+        skobs->CreateMockData(*skexp, PhysHypothesis(*fparm), stat_fluctuations); 
      }
      
      // Get fitter
