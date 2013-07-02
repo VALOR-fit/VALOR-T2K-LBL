@@ -139,6 +139,7 @@ namespace util {
   bool IsEff1Rmu      (conv::PhysParamId_t p);
   bool IsEff1Re       (conv::PhysParamId_t p);
   bool IsFSI          (conv::PhysParamId_t p);
+  bool IsSKDetFSI     (conv::PhysParamId_t p);
   bool IsNeutrino     (int pdg_code);
   bool IsAntiNeutrino (int pdg_code);
 

@@ -194,6 +194,14 @@ double SuperkDetectorFSI::CurrentValue(conv::PhysParamId_t p) const
   return current_values[idx];
 }
 //________________________________________________________________________________________
+double SuperkDetectorFSI::OneSigmaError(PhysParamId_t p) const
+{
+  if(p == kNuisSuperkEnergyScale)
+    return 1;
+  const TMatrixD & cov = *fCovMtrx;
+  int idx = util::ArrIdx::Instance()->SKDetFSISystIdx(p);
+  return TMath::Sqrt(cov[idx][idx]);
+}//________________________________________________________________________________________
 void SuperkDetectorFSI::Tweak(
   bool       force_inputs,    /* force the input params or generate random ones internally  */
   TVectorD * input_skdetfsi_params /* input vector of FSI params - Set to NULL to reset to nominal ones */

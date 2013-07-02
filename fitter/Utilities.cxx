@@ -1543,8 +1543,8 @@ string t2kana::util::AsStringPaperRooTex(PhysParamId_t p)
     {
       NuOscMixParam_t omp = Opt::Instance()->gOscMixingParamChoice;
       switch(omp) {
-      case(kNuMixSinsq2Theta) : return "sin{^2}(2#theta_{23})"; break;
-      case(kNuMixSinsqTheta ) : return "sin{^2}(#theta_{23})";   break;
+      case(kNuMixSinsq2Theta) : return "sin^{2}(2#theta_{23})"; break;
+      case(kNuMixSinsqTheta ) : return "sin^{2}(#theta_{23})";   break;
       default                 : return "--";                break;
       }
     }
@@ -1553,8 +1553,8 @@ string t2kana::util::AsStringPaperRooTex(PhysParamId_t p)
     {
       NuOscMixParam_t omp = Opt::Instance()->gOscMixingParamChoice;
       switch(omp) {
-      case(kNuMixSinsq2Theta) : return "sin{^2}(2#theta_{13})";  break;
-      case(kNuMixSinsqTheta ) : return "sin{^2}(#theta_{13})";    break;
+      case(kNuMixSinsq2Theta) : return "sin^{2}(2#theta_{13})";  break;
+      case(kNuMixSinsqTheta ) : return "sin^{2}(#theta_{13})";    break;
       default                 : return "--";                 break;
       }
     }
@@ -1563,8 +1563,8 @@ string t2kana::util::AsStringPaperRooTex(PhysParamId_t p)
     {
       NuOscMixParam_t omp = Opt::Instance()->gOscMixingParamChoice;
       switch(omp) {
-      case(kNuMixSinsq2Theta) : return "sin{^2}(2#theta_{12})";  break;
-      case(kNuMixSinsqTheta ) : return "sin{^2}(#theta_{12})";    break;
+      case(kNuMixSinsq2Theta) : return "sin^{2}(2#theta_{12})";  break;
+      case(kNuMixSinsqTheta ) : return "sin^{2}(#theta_{12})";    break;
       default                 : return "--";                 break;
       }
     }
@@ -1575,8 +1575,8 @@ string t2kana::util::AsStringPaperRooTex(PhysParamId_t p)
     {
       NuOscDmsqScheme_t omp = Opt::Instance()->gOscDmsqScheme;
       switch(omp) {
-      case(kNuDmsqFogliLisi):	return "$|#Deltam^2| = |m^2_{3} - (m^2_{1} + m^2_{1})/2|$";                  break;
-      case(kNuDmsq12andAbs23):	return "$|#Deltam^2_{32}|$";                  break;
+      case(kNuDmsqFogliLisi):	return "|#Deltam^{2}| = |m^{2}_{3} - (m^{2}_{1} + m^{2}_{1})/2|";                  break;
+      case(kNuDmsq12andAbs23):	return "|#Deltam^{2}_{32}|";                  break;
       default                 : return "--";                 break;
       }
     }
@@ -1584,16 +1584,16 @@ string t2kana::util::AsStringPaperRooTex(PhysParamId_t p)
     {
       NuOscDmsqScheme_t omp = Opt::Instance()->gOscDmsqScheme;
       switch(omp) {
-      case(kNuDmsqFogliLisi):  return "$#deltam^2 = #Deltam^2_{12}$";                    break;
-      case(kNuDmsq12andAbs23):  return "$#Deltam^2_{12}$";                    break;
+      case(kNuDmsqFogliLisi):   return "#deltam^{2} = #Deltam^{2}_{12}";                    break;
+      case(kNuDmsq12andAbs23):  return "#Deltam^{2}_{12}";                    break;
       default                 : return "--";                 break;
       }
     }
 
   case ( kPhypAlphaDecay            ) : return "#alpha_{decay}";                break;
-  case ( kPhypSinsq2ThetaDecay      ) : return "sin{^2}(2#theta_{decay})";       break;
-  case ( kPhypMusqDecoh             ) : return "#mu{^2}_{decoh}";                 break;
-  case ( kPhypSinsq2ThetaDecoh      ) : return "sin{^2}(2#theta_{decoh})";       break;
+  case ( kPhypSinsq2ThetaDecay      ) : return "sin^{2}(2#theta_{decay})";       break;
+  case ( kPhypMusqDecoh             ) : return "#mu^{2}_{decoh}";                 break;
+  case ( kPhypSinsq2ThetaDecoh      ) : return "sin^{2}(2#theta_{decoh})";       break;
 
     /*                                   
      * 2011-analysis nuisance parameters
@@ -3245,7 +3245,36 @@ bool t2kana::util::IsFSI(PhysParamId_t p)
   }
   return false;
 }
-
+//____________________________________________________________________________                                                                                   
+bool t2kana::util::IsSKDetFSI(PhysParamId_t p)
+{
+  switch(p) {
+    case ( kNuisSuperkEnergyScale          ) : return true;  break;
+    case ( kNuisSKDetFSI000                ) : return true;  break;
+    case ( kNuisSKDetFSI001                ) : return true;  break;
+    case ( kNuisSKDetFSI002                ) : return true;  break;
+    case ( kNuisSKDetFSI003                ) : return true;  break;
+    case ( kNuisSKDetFSI004                ) : return true;  break;
+    case ( kNuisSKDetFSI005                ) : return true;  break;
+#if FSI_BINS == 1
+    case ( kNuisSKDetFSI1Re000             ) : return true;  break;
+    case ( kNuisSKDetFSI1Re001             ) : return true;  break;
+    case ( kNuisSKDetFSI1Re002             ) : return true;  break;
+    case ( kNuisSKDetFSI1Re003             ) : return true;  break;
+    case ( kNuisSKDetFSI1Re004             ) : return true;  break;
+    case ( kNuisSKDetFSI1Re005             ) : return true;  break;
+    case ( kNuisSKDetFSI1Re006             ) : return true;  break;
+    case ( kNuisSKDetFSI1Re007             ) : return true;  break;
+    case ( kNuisSKDetFSI1Re008             ) : return true;  break;
+    case ( kNuisSKDetFSI1Re009             ) : return true;  break;
+    case ( kNuisSKDetFSI1Re010             ) : return true;  break;
+    case ( kNuisSKDetFSI1Re011             ) : return true;  break;
+#endif
+  default :
+    return false;
+  }
+  return false;
+}
 //____________________________________________________________________________
 bool t2kana::util::IsSystematic(PhysParamId_t p)
 {

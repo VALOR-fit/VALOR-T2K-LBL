@@ -55,6 +55,7 @@ public:
 
   // Get current value of systematic params handled by this class
   double CurrentValue (conv::PhysParamId_t p) const;
+  double OneSigmaError(conv::PhysParamId_t p) const; //square root of cov matrix
 
   // Get input FSI covariance matrix and its Cholesky decomposition
   const TMatrixD & CovMatrix         (void) const { return *fCovMtrx;       }
