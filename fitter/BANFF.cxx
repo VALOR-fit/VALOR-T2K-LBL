@@ -14,6 +14,7 @@
 //#define __show_update_correlated_mesg_debug__
 //#define __show_chisqpenalty_mesg_debug__
 //#define __show_chisqpenalty_mesg_debug2__
+//#define __BANFF_BESTFIT_IS_ONE__ //debug mode to turn the best fit vector into a vector of 1's (i.e. BANFF tuned == flux tuned)
 
 #include <cassert>
 #include <cstdlib>
@@ -80,11 +81,19 @@ bool BANFF::Read(TXMLEngine* xml, XMLNodePointer_t root_node)
   const int np = conv::kNumOfParamsInBANFFfit;
 
   // Get BANFF fit central values
+
+#ifndef __BANFF_BESTFIT_IS_ONE__
   fBestFitValues = util::XML2TVectorD(xml,root_node,"banff/best_fit_values");
   if(!fBestFitValues) {
     cerr << "Exp/BANFF >> No BANFF best-fit parameter vector was found." << endl;
     exit(1);
   }
+#else
+  double init[np];
+  for(int ip = 0; ip < np; ip++)
+    init[ip] = 1;
+  fBestFitValues = new TVectorD(np, init);
+#endif
 
   const TVectorD & bestfit = *fBestFitValues;
   if(bestfit.GetNoElements() != np) 
