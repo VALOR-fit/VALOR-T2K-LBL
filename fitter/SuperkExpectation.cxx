@@ -227,7 +227,6 @@ bool SuperkExpectation::Generate(const PhysHypothesis & ph)
     if(s == kSKsUndefined) continue;
     const int nbins = util::NumErecoBins(s);
     for(int ibin = 1; ibin <= nbins; ibin++) {
-      //      double ns = fSuperkMC->CurrErecoSpectrum(s)->GetBinContent(ibin);
       double ns = fSuperkMC->CurrErecoSpectrumArray(s)[ibin-1];
       this->CurrPredictedErecoSpectrumArray(s)[ibin-1] = ns;
 #ifndef PRODUCTIONMODE
@@ -236,7 +235,7 @@ bool SuperkExpectation::Generate(const PhysHypothesis & ph)
       for(int im = 0; im < knm; im++) {
 	SuperkMode_t m = kSKReactionModes[is][im];
 	if(m == kSKmUndefined) continue;
-	double nsm = fSuperkMC->CurrErecoSpectrum(s,m)->GetBinContent(ibin);
+	double nsm = fSuperkMC->CurrErecoSpectrumArray(s,m)[ibin-1];
 	this->CurrPredictedErecoSpectrumArrayMode(s,m)[ibin-1] = nsm;
 #ifndef PRODUCTIONMODE
 	this->CurrPredictedErecoSpectrum(s,m)->SetBinContent(ibin, nsm);

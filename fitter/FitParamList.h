@@ -121,6 +121,7 @@ public:
 
    // copy initial, current or best-fit values to a PhysParamList 
    t2kana::PhysParamList AsPhysParamList(Option_t * option = "current") const;
+   void FromPhysParamList(t2kana::PhysParamList pl, Option_t * option, bool skip_osc_params);
 
    // Get number of free (not fixed) parameters
    int GetNumberFreeParameters(void);

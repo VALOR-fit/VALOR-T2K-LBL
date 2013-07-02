@@ -54,6 +54,7 @@ public:
   TH1D* CurrErecoSpectrum   (conv::SuperkSample_t s) const;
   TH1D* CurrErecoSpectrum   (conv::SuperkSample_t s, conv::SuperkMode_t m) const;
   double* CurrErecoSpectrumArray   (conv::SuperkSample_t s);
+  double* CurrErecoSpectrumArray   (conv::SuperkSample_t s, conv::SuperkMode_t m);
       
   // MC event samples used to fill-in MC templates and POT exposure for each
   TTree * MCTree (conv::SuperkSample_t s, conv::SuperkMode_t m);
@@ -166,6 +167,8 @@ private:
   double     fMCEtrueSpectrumTotArray1Re[conv::kNEtrueBins1Re];
   double     fMCErecoSpectrumTotArray1Rmu[conv::kNErecoBins1Rmu];
   double     fMCErecoSpectrumTotArray1Re[conv::kNErecoBins1Re];
+  double     fMCErecoSpectrumArray1Rmu[conv::knm][conv::kNErecoBins1Rmu];
+  double     fMCErecoSpectrumArray1Re [conv::knm][conv::kNErecoBins1Re];
 
   // input event trees and normalisation factors
   TTree*     fMCTreeNuMu1Rmu;              ///< input MC event tree /  sample: numu                         / cuts: 1-ring mu-like 

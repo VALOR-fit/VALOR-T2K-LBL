@@ -423,6 +423,25 @@ PhysParamList FitParamList::AsPhysParamList(Option_t * option) const
   return pl;
 }
 //________________________________________________________________________________________
+void FitParamList::FromPhysParamList(t2kana::PhysParamList pl, Option_t * option, bool skip_osc_params)
+{
+  TString opt(option);
+  map<PhysParamId_t, int>::const_iterator iter = fIdMap.begin();
+  for( ; iter != fIdMap.end(); ++iter)
+  {
+    PhysParamId_t p = iter->first;
+    if(skip_osc_params && !util::IsSystematic(p))
+      continue;
+    int ip = iter->second;
+    double input = pl.Value(p);
+    if(input > -99998) {
+      if      ( opt.Contains("initial")  ) fInitValue[ip]    = input;
+      else if ( opt.Contains("current")  ) fCurrValue[ip]    = input;
+      else if ( opt.Contains("best-fit") ) fBestFitValue[ip] = input;
+    }
+  }
+}
+//________________________________________________________________________________________
 int FitParamList::GetNumberFreeParameters(void)
 {
   int nparams = 0;

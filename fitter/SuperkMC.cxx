@@ -143,6 +143,12 @@ void SuperkMC::Init(void)
     for(int ir=0; ir<util::NumErecoBins(s); ir++) {
       if (s==kSKsFCFV1RingMuLike) fMCErecoSpectrumTotArray1Rmu[ir] = 0;
       else fMCErecoSpectrumTotArray1Re[ir] = 0;
+      for(int im=0; im<conv::knm; im++) {
+	if (s==kSKsFCFV1RingMuLike)
+	  fMCErecoSpectrumArray1Rmu[im][ir] = 0;
+	else
+	  fMCErecoSpectrumArray1Re [im][ir] = 0;
+      }//im
     }//ir
     for(int it=0; it<util::NumEtrueBins(s); it++) {
       if (s==kSKsFCFV1RingMuLike) fMCEtrueSpectrumTotArray1Rmu[it] = 0;
@@ -759,6 +765,22 @@ double* SuperkMC::CurrErecoSpectrumArray(SuperkSample_t s)
   }
   if (s==kSKsFCFV1RingMuLike) return fMCErecoSpectrumTotArray1Rmu;
   else return fMCErecoSpectrumTotArray1Re;
+}
+//________________________________________________________________________________________
+double* SuperkMC::CurrErecoSpectrumArray(SuperkSample_t s, SuperkMode_t m)                               
+{ 
+  int sidx = util::ArrIdx::Instance()->SuperkSampleIdx(s);
+  if(sidx == -1) {
+    return 0;
+  }
+  int midx = util::ArrIdx::Instance()->SuperkModeIdx(s,m);
+  if(midx == -1) {
+    return 0;
+  }
+  if (s==kSKsFCFV1RingMuLike)
+    return fMCErecoSpectrumArray1Rmu[midx];
+  else 
+    return fMCErecoSpectrumArray1Re[midx];
 }
 //________________________________________________________________________________________
 TH2D * SuperkMC::Template(SuperkSample_t s, SuperkMode_t m, SKMCTemplateType_t type) const
@@ -2107,6 +2129,10 @@ bool SuperkMC::UpdateErecoSpectra(void)
 #ifndef PRODUCTIONMODE
           reco_spectrum->SetBinContent(ir,nev);
 #endif
+	  if (s==kSKsFCFV1RingMuLike)
+	    fMCErecoSpectrumArray1Rmu[im][ir-1] = nev;
+	  else
+	    fMCErecoSpectrumArray1Re [im][ir-1] = nev;
        }//im
 #ifndef APPLY_ESCALE_AT_SPECTRUM_STAGE
        if(nev_tot < 0 || (s==kSKsFCFV1RingMuLike && (ir >= 5 && nev_tot < kASmallNum)) || (s==kSKsFCFV1RingELike && (ir >= 2 && nev_tot < kASmallNum))) {
