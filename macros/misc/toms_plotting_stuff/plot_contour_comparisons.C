@@ -516,9 +516,10 @@ void plot_contour_comparisons
   bestfit_2all.SetMarkerStyle(29);
   bestfit_2all.SetMarkerColor(kRed);
   bestfit_2all.Draw();
-  //TMarker bestfit_octant2only23(0.992,0.0024414,27);
-  //bestfit_octant2only23.SetMarkerColor(kBlack);
-  //bestfit_octant2only23.Draw();
+  TMarker bestfit_octant2only23(0.9992,0.0024414,25);
+  bestfit_octant2only23.SetMarkerColor(kBlack);
+  bestfit_octant2only23.SetMarkerSize(1.8);
+  bestfit_octant2only23.Draw();
   c->SaveAs("compare_octants.pdf");
 
   //Run 1-3 const dchisq KIT vs VaLOR

@@ -72,7 +72,7 @@ void run_fit_xml_seeded
     cerr << "Chisq surface not found. Exiting..." << endl;
     return;
   }
-  TH2D & hdchisq = *hchisq;
+  TH2D * hdchisq = new TH2D(*hchisq);
   
   // Find the minimum, and convert into mixing23 & dm23sq. This will give the seeds for the osc parameters
   int globalbin = hchisq->GetMinimumBin();
@@ -151,9 +151,9 @@ void run_fit_xml_seeded
   delete skobs;
 
   // Now we have the best fit, make the dchisq surface
-  for(int ix = 1; ix <= hdchisq.GetNbinsX(); ix++) {
-    for(int iy = 1; iy <= hdchisq.GetNbinsY(); iy++) {
-      hdchisq.SetBinContent(ix, iy, hdchisq.GetBinContent(ix, iy) - bestfit_chisq);
+  for(int ix = 1; ix <= hdchisq->GetNbinsX(); ix++) {
+    for(int iy = 1; iy <= hdchisq->GetNbinsY(); iy++) {
+      hdchisq->SetBinContent(ix, iy, hdchisq->GetBinContent(ix, iy) - bestfit_chisq);
     }//iy
   }//ix
 
@@ -163,11 +163,11 @@ void run_fit_xml_seeded
   pdf_array->Write();
   global_bestfit_fparm->Write("fparm");
   hchisq->Write("chisq");
-  hdchisq.Write("dchisq");
-  hdchisq.SetContour(1);
-  hdchisq.SetContourLevel(0,2.30);
-  hdchisq.Write("dchisq_cont68");
-  hdchisq.SetContourLevel(0,4.61);
-  hdchisq.Write("dchisq_cont90");
+  hdchisq->Write("dchisq");
+  hdchisq->SetContour(1);
+  hdchisq->SetContourLevel(0,2.30);
+  hdchisq->Write("dchisq_cont68");
+  hdchisq->SetContourLevel(0,4.61);
+  hdchisq->Write("dchisq_cont90");
   f.Close();
 }
