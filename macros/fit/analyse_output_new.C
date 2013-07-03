@@ -602,14 +602,14 @@ void analyse_output_new
   //set_line_style(g_ice,  kBlue, 2, 2);
   //legend
   delete l;
-  l = new TLegend(0.2,0.5,0.6,0.9);
+  l = new TLegend(0.2,0.55,0.6,0.9);
   set_legend_style(l);
   l->AddEntry(hcont90,  "T2K Run 1-4 3#nu 90% C.L.","l");
   l->AddEntry(h_run123_90,  "T2K Run 1-3 3#nu 90% C.L.","l");
   l->AddEntry(ll_minos, "MINOS 2013 2#nu 90% CL", "l");
-  l->AddEntry("g_skzen", "SK zenith 2012 3#nu 90% CL", "l");
-  l->AddEntry("g_skle", "SK L/E 2012 2#nu 90% CL", "l");
-  //l->AddEntry("g_ice", "IceCube-79 2013 2#nu 90% CL", "l");
+  l->AddEntry(g_skzen, "SK zenith 2012 3#nu 90% CL", "l");
+  l->AddEntry(g_skle, "SK L/E 2012 2#nu 90% CL", "l");
+  //l->AddEntry(g_ice, "IceCube-79 2013 2#nu 90% CL", "l");
   l->AddEntry(markbf,   "T2K Run 1-4 Best fit","P");
   //axis range
   osc_param_space->GetXaxis()->SetRangeUser(0.85, 1.0);
