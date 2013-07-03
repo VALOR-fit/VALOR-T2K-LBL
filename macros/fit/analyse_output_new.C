@@ -1,7 +1,7 @@
 //
 // Macro to make a series of plots, using the result of the macro run_fit_xml_seeded.C
 //
-// 1. Bestfit spectrum, ratio, (comparison with other spectrum), ...
+// 1. Bestfit spectrum, ratio, (comparison with other spectrum - TO IMPLEMENT), ...
 // 2. Pull plot, best fit sys point plot
 // 3. chisq
 // 4. dchisq
@@ -581,7 +581,7 @@ void analyse_output_new
   TGraph * g_run12_90_stat = 0;
   fold.GetObject("t2k2010_run1p2_90CL_stat",g_run12_90_stat);
   g_run12_90_stat->SetName("g_run12_90_stat");
-  TFile ft2krun123("2012results/NEWRESULTS/FINALFCCONTOURS/fc_oldsurf_newres_5E5_nosub.root");
+  TFile ft2krun123("$T2KOSCANA/2012results/NEWRESULTS/FINALFCCONTOURS/fc_oldsurf_newres_5E5_nosub.root");
   TH2D * h_run123_68 = 0;
   TH2D * h_run123_90 = 0;
   ft2krun123.GetObject("hCL68StatSyst",h_run123_68);

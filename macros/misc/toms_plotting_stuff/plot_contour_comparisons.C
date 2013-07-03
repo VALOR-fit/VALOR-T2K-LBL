@@ -46,7 +46,8 @@ void plot_contour_comparisons
   TFile f_sens("2012results/SENSITIVITY/t2k_28/sensitivity.root");
   TFile f_dcall_banff13v0("2012results/DATA/banff13v0/combination/fitresults_3.root");
   TFile f_dcall_banff13v3("2012results/DATA/banff13v3/combination/fitresults_3.root");
-  TFile f_dcall_octant2only23("2012results/DATA/octant2_23only/combination/fitresults_3.root");
+  //TFile f_dcall_octant2only23("2012results/DATA/octant2_23only/combination/fitresults_3.root");
+  TFile f_dcall_octant2only23("2012results/DATA/octant2_23only/combination/final.root");
 
   //Fill in TMarker's with the best fit point (is the same for 2+N, 2+8)
   TMarker bestfit(1.000,0.002442,29);
@@ -218,14 +219,16 @@ void plot_contour_comparisons
   h_dcall_banff13v3_90->SetLineStyle(1);
 
   TH2D * h_dcall_octant2only23 = 0;
-  f_dcall_octant2only23.GetObject("hdchisq",h_dcall_octant2only23);
+  double octant2only23_chisq_bf = 56.03;
+  //f_dcall_octant2only23.GetObject("hdchisq",h_dcall_octant2only23);
+  f_dcall_octant2only23.GetObject("chisqwithsyst_3",h_dcall_octant2only23);
   TH2D * h_dcall_octant2only23_68 = new TH2D(*h_dcall_octant2only23);
   TH2D * h_dcall_octant2only23_90 = new TH2D(*h_dcall_octant2only23);
   h_dcall_octant2only23_68->SetContour(1);
-  h_dcall_octant2only23_68->SetContourLevel(0,2.30);
+  h_dcall_octant2only23_68->SetContourLevel(0,2.30+octant2only23_chisq_bf);
   h_dcall_octant2only23_68->SetLineStyle(2);
   h_dcall_octant2only23_90->SetContour(1);
-  h_dcall_octant2only23_90->SetContourLevel(0,4.61);
+  h_dcall_octant2only23_90->SetContourLevel(0,4.61+octant2only23_chisq_bf);
   h_dcall_octant2only23_90->SetLineStyle(1);
 
   //KIT DC
