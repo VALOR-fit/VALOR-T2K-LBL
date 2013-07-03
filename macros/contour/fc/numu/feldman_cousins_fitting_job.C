@@ -24,7 +24,7 @@ void feldman_cousins_fitting_job
   const char * fit_param_list        = "nuosc3f_numudisapp_fix4+nuisanceselection",    /* fit parameter list for the given physics hypothesis (see run_fitter.C) */
   const char * fit_option            = "minuit",                     /* fitter option (see run_fitter.C) */
   bool         dm23sq_only           = false,                        /* do a 1D scan over dm32sq, with fixed mixing angle */
-  bool         mixing23_only         = true                         /* do a 1D scan over mixing23, with fixed dm23sq */
+  bool         mixing23_only         = false                         /* do a 1D scan over mixing23, with fixed dm23sq */
 )
 {
   using namespace std;

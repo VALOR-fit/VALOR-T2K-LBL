@@ -104,9 +104,19 @@ void NuOsc3Flavour::SetOscParameters(
   sinsq2theta23 = TMath::Max(0.,sinsq2theta23);
  
   // Calculate sin(mixingAngle) from sin^2(2*mixingAngle) 
+#if OCTANTCHOICE == 1
   double s12 = sqrt(0.5 * (1 - sqrt(1 - sinsq2theta12)));
   double s13 = sqrt(0.5 * (1 - sqrt(1 - sinsq2theta13)));
   double s23 = sqrt(0.5 * (1 - sqrt(1 - sinsq2theta23)));
+#elif OCTANTCHOICE == 2
+  double s12 = sqrt(1 - (0.5 * (1 - sqrt(1 - sinsq2theta12))));
+  double s13 = sqrt(1 - (0.5 * (1 - sqrt(1 - sinsq2theta13))));
+  double s23 = sqrt(1 - (0.5 * (1 - sqrt(1 - sinsq2theta23))));
+#elif OCTANTCHOICE == 3
+  double s12 = sqrt(0.5 * (1 - sqrt(1 - sinsq2theta12)));
+  double s13 = sqrt(0.5 * (1 - sqrt(1 - sinsq2theta13)));
+  double s23 = sqrt(1 - (0.5 * (1 - sqrt(1 - sinsq2theta23))));
+#endif
   // Calculate cos(mixingAngle) from sin(mixingAngle)     
   double c12 = sqrt(1 - s12 * s12);
   double c13 = sqrt(1 - s13 * s13);
@@ -303,10 +313,20 @@ void NuOsc3Flavour::SetOscParametersSSq2TDmAtmSol(
   sinsq2theta23 = TMath::Min(1.,sinsq2theta23);
   sinsq2theta23 = TMath::Max(0.,sinsq2theta23);
 
-  // Calculate sin(mixingAngle) from sin^2(2*mixingAngle)                                                                                                                                             
+  // Calculate sin(mixingAngle) from sin^2(2*mixingAngle)
+#if OCTANTCHOICE == 1
   double s12 = sqrt(0.5 * (1 - sqrt(1 - sinsq2theta12)));
   double s13 = sqrt(0.5 * (1 - sqrt(1 - sinsq2theta13)));
   double s23 = sqrt(0.5 * (1 - sqrt(1 - sinsq2theta23)));
+#elif OCTANTCHOICE == 2
+  double s12 = sqrt(1 - (0.5 * (1 - sqrt(1 - sinsq2theta12))));
+  double s13 = sqrt(1 - (0.5 * (1 - sqrt(1 - sinsq2theta13))));
+  double s23 = sqrt(1 - (0.5 * (1 - sqrt(1 - sinsq2theta23))));
+#elif OCTANTCHOICE == 3
+  double s12 = sqrt(0.5 * (1 - sqrt(1 - sinsq2theta12)));
+  double s13 = sqrt(0.5 * (1 - sqrt(1 - sinsq2theta13)));
+  double s23 = sqrt(1 - (0.5 * (1 - sqrt(1 - sinsq2theta23))));
+#endif
   // Calculate cos(mixingAngle) from sin(mixingAngle)                                                                                                                                                 
   double c12 = sqrt(1 - s12 * s12);
   double c13 = sqrt(1 - s13 * s13);

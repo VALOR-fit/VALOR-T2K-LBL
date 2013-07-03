@@ -486,27 +486,44 @@ void analyse_output
     //PAPER
     double marksize = 0.8;
     double top_plot_fraction = 0.6;
+    double ymax = 35;
+    gStyle->SetLineStyleString(11,"10 18");
+
+    spectrum_noosc_rebin->SetLabelSize(0);
+    spectrum_other_rebin->SetLineStyle(11);
+    spectrum_bf_rebin->SetLineStyle(1);
+    spectrum_obs_rebin->SetLineStyle(1);
+    spectrum_obs_rebin->SetMarkerSize(marksize);
+    legg->Clear();
+    if(legg) delete legg;
+    spectrum_ratio_obs_rebin->GetYaxis()->SetNdivisions(505);
+    spectrum_ratio_obs_rebin->GetYaxis()->SetRangeUser(0,1.9);
+    spectrum_ratio_obs_rebin->GetYaxis()->SetTitle("#splitline{Ratio to no}{oscillations}");
+    spectrum_ratio_obs_rebin->GetXaxis()->SetTitle("Reconstructed #nu energy (GeV)");
+    spectrum_ratio_bf_rebin->GetYaxis()->SetNdivisions(505);
+    spectrum_ratio_bf_rebin->GetXaxis()->SetRangeUser(0,5.9);
+    spectrum_ratio_bf_rebin->GetYaxis()->SetRangeUser(0,1.9);
+    spectrum_ratio_bf_rebin->GetYaxis()->SetTitle("#splitline{Ratio to no}{oscillations}");
+    spectrum_ratio_bf_rebin->GetXaxis()->SetTitle("Reconstructed #nu energy (GeV)");
+    spectrum_ratio_bf->GetXaxis()->SetTitleOffset(0.8*spectrum_ratio_bf->GetXaxis()->GetTitleOffset());
+    spectrum_ratio_other_rebin->SetLineStyle(11);
+    spectrum_ratio_obs_rebin->SetMarkerSize(marksize);
+
+
     TCanvas *csaxis = new TCanvas();
     csaxis->cd(1);
     csaxis->SetBottomMargin(1-top_plot_fraction);
-    spectrum_noosc_rebin->SetLabelSize(0);
+    spectrum_noosc_rebin->GetYaxis()->SetRangeUser(0,ymax);
     spectrum_noosc_rebin->Draw("");
-    //spectrum_other_rebin->Draw("same");
-    //spectrum_bf_rebin->Draw("same");
-    spectrum_other_rebin->SetLineStyle(2);
-    spectrum_other_rebin->Draw("same");
-    spectrum_bf_rebin->SetLineStyle(3);
     spectrum_bf_rebin->Draw("same");
-    spectrum_obs_rebin->SetLineStyle(1);
-    spectrum_obs_rebin->SetMarkerSize(marksize);
-    spectrum_obs_rebin->Draw("PE0same");
+    spectrum_other_rebin->Draw("same");
+    //spectrum_obs_rebin->Draw("PE0same");
 
-    legg->Clear();
-    delete legg;
-    legg = new TLegend(0.3,0.6,0.95,0.9);
+    legg = new TLegend(0.3,0.6,0.9,0.9);
     legg->SetFillStyle(0);
     legg->SetBorderSize(0);
     legg->SetTextFont(132);
+    legg->SetTextSize(0.06);
     legg->AddEntry(spectrum_obs_rebin, "T2K Data", "pl");
     legg->AddEntry(spectrum_noosc_rebin, "No oscillation hypothesis", "l");
     legg->AddEntry(spectrum_bf_rebin, "T2K best fit", "l");
@@ -519,26 +536,134 @@ void analyse_output
     pad->SetFillStyle(0);
     pad->Draw();
     pad->cd(0);
-    spectrum_ratio_obs_rebin->GetYaxis()->SetNdivisions(505);
-    spectrum_ratio_obs_rebin->GetYaxis()->SetRangeUser(0,1.9);
-    spectrum_ratio_obs_rebin->GetYaxis()->SetTitle("#splitline{Ratio to no}{oscillations}");
-    spectrum_ratio_obs_rebin->GetXaxis()->SetTitle("Reconstructed #nu energy / GeV");
-    spectrum_ratio_bf_rebin->GetYaxis()->SetNdivisions(505);
-    spectrum_ratio_bf_rebin->GetXaxis()->SetRangeUser(0,5.9);
-    spectrum_ratio_bf_rebin->GetYaxis()->SetRangeUser(0,1.9);
-    spectrum_ratio_bf_rebin->GetYaxis()->SetTitle("#splitline{Ratio to no}{oscillations}");
-    spectrum_ratio_bf_rebin->GetXaxis()->SetTitle("Reconstructed #nu energy / GeV");
-    //spectrum_ratio_other_rebin->Draw("same");
     spectrum_ratio_bf_rebin->Draw("");
-    gStyle->SetLineStyleString(11,"10 18");
-    spectrum_ratio_other_rebin->SetLineStyle(11);
     spectrum_ratio_other_rebin->Draw("same");
     spectrum_line->Draw("same");
-    spectrum_ratio_obs_rebin->SetMarkerSize(marksize);
     spectrum_ratio_obs_rebin->Draw("PE0same");
+
+    csaxis->cd(0);
+    spectrum_obs_rebin->Draw("PE0same");
+
+    //again, without KIT
+    spectrum_bf_rebin->SetLineStyle(1);
+    spectrum_ratio_bf_rebin->SetLineStyle(1);
+    csaxis->cd(1);
+    csaxis->SetBottomMargin(1-top_plot_fraction);
+    spectrum_noosc_rebin->Draw("");
+    spectrum_bf_rebin->Draw("same");
+    delete legg;
+    legg = new TLegend(0.3,0.7,0.9,0.9);
+    legg->SetFillStyle(0);
+    legg->SetBorderSize(0);
+    legg->SetTextFont(132);
+    legg->SetTextSize(0.06);
+    legg->AddEntry(spectrum_obs_rebin, "T2K Data", "p");
+    legg->AddEntry(spectrum_noosc_rebin, "No oscillation hypothesis", "l");
+    legg->AddEntry(spectrum_bf_rebin, "T2K best fit", "l");
+    legg->Draw();
+    TPad * pad2 = new TPad("pad2","pad2",0,0,1,1);
+    pad2->SetTopMargin(top_plot_fraction);
+    pad2->SetFillColor(0);
+    pad2->SetFillStyle(0);
+    pad2->Draw();
+    pad2->cd(0);
+    spectrum_ratio_bf_rebin->Draw("");
+    spectrum_line->Draw("same");
+    spectrum_ratio_obs_rebin->Draw("PE0same");
+    csaxis->cd(0);
+    spectrum_obs_rebin->Draw("PE0same");
 
     csaxis->SaveAs("sk_spectrum_and_ratio.pdf");
     csaxis->SaveAs("sk_spectrum_and_ratio.eps");
+
+    //convert to events/0.1 GeV
+    TH1D * per_obs   = new TH1D(*spectrum_obs_rebin);
+    TH1D * per_noosc = new TH1D(*spectrum_noosc_rebin);
+    TH1D * per_bf    = new TH1D(*spectrum_bf_rebin);
+    for(int i = 1; i <= per_obs->GetNbinsX(); i++) {
+      per_obs->  SetBinContent(i, (per_obs->  GetBinContent(i) / per_obs->  GetBinWidth(i)) * 0.1);
+      per_noosc->SetBinContent(i, (per_noosc->GetBinContent(i) / per_noosc->GetBinWidth(i)) * 0.1);
+      per_bf->   SetBinContent(i, (per_bf->   GetBinContent(i) / per_bf->   GetBinWidth(i)) * 0.1);
+
+      //per_obs->  SetBinError(i, TMath::Sqrt(per_obs->  GetBinContent(i)));
+    }
+    //draw spectra
+    csaxis->cd(1);
+    csaxis->SetBottomMargin(1-top_plot_fraction);
+    per_noosc->GetYaxis()->SetTitle("Events / (0.1 GeV)");
+    per_noosc->GetXaxis()->SetTitle("");
+    per_noosc->GetYaxis()->SetRangeUser(0,ymax);
+    per_noosc->Draw("");
+    per_bf->Draw("same");
+    delete legg;
+    legg = new TLegend(0.3,0.7,0.9,0.9);
+    legg->SetFillStyle(0);
+    legg->SetBorderSize(0);
+    legg->SetTextFont(132);
+    legg->SetTextSize(0.06);
+    legg->AddEntry(per_obs, "T2K data", "p");
+    legg->AddEntry(per_noosc, "No oscillation hypothesis", "l");
+    legg->AddEntry(per_bf, "T2K best fit", "l");
+    legg->Draw();
+    //divide the 0.1 GeV lines
+    TH1D * per_ratio_obs = new TH1D("","", nbins, binedges);
+    TH1D * per_ratio_bf  = new TH1D("","", nbins, binedges);
+    per_obs->Sumw2();
+    per_noosc->Sumw2();
+    per_ratio_obs->Sumw2();
+    per_ratio_bf-> Divide(per_bf,  per_noosc);
+    per_ratio_obs->Divide(per_obs, per_noosc); 
+    for(int i = 1; i <= per_ratio_obs->GetNbinsX(); i++) {
+      //per_ratio_bf-> SetBinContent(i, per_bf-> GetBinContent(i) / per_noosc->GetBinContent(i));
+      if(per_noosc->GetBinContent(i)) {
+	//per_ratio_obs->SetBinContent(i, per_obs->GetBinContent(i) / per_noosc->GetBinContent(i));
+	//per_ratio_obs->SetBinError(i, (per_obs->GetBinContent(i)+per_bf->GetBinError(i)) / per_noosc->GetBinContent(i) - per_ratio_obs->GetBinContent(i));
+	cout << per_bf->GetBinContent(i) / per_noosc->GetBinContent(i) << endl;
+      }
+      //else	per_ratio_obs->SetBinContent(i, 0);
+      if(per_ratio_obs->GetBinContent(i) > conv::kASmallNum)
+	per_ratio_obs->SetBinError(i, per_ratio_obs->GetBinContent(i) * per_obs->GetBinError(i) / spectrum_obs_rebin->GetBinContent(i));
+    }
+    for(int ix = 1; ix <= per_ratio_bf->GetNbinsX(); ix++)
+      per_ratio_bf->SetBinError(ix,0);
+    //ratio style
+    per_ratio_bf->SetLineColor(kRed);
+    per_ratio_bf->SetLineWidth(2);
+    per_ratio_obs->SetLineWidth(2);
+    per_ratio_obs->GetYaxis()->SetNdivisions(505);
+    //per_ratio_obs->GetYaxis()->SetRangeUser(0,2.9);
+    per_ratio_obs->GetYaxis()->SetTitle("#splitline{Ratio to no}{oscillations}");
+    per_ratio_obs->GetXaxis()->SetTitle("Reconstructed #nu energy (GeV)");
+    per_ratio_bf->GetYaxis()->SetNdivisions(505);
+    per_ratio_bf->GetXaxis()->SetRangeUser(0,5.9);
+    per_ratio_bf->GetYaxis()->SetRangeUser(0,1.9);//3.9);
+    per_ratio_bf->GetYaxis()->SetTitle("#splitline{Ratio to no}{oscillations}");
+    per_ratio_bf->GetXaxis()->SetTitle("Reconstructed #nu energy (GeV)");
+    per_ratio_obs->SetMarkerSize(marksize);
+    //draw ratio
+    TPad * pad3 = new TPad("pad3","pad3",0,0,1,1);
+    pad3->SetTopMargin(top_plot_fraction);
+    pad3->SetFillColor(0);
+    pad3->SetFillStyle(0);
+    pad3->Draw();
+    pad3->cd(0);
+    per_ratio_bf->Draw("");
+    spectrum_line->Draw("same");
+    per_ratio_obs->Draw("PE0same");
+    csaxis->cd(0);
+    per_obs->Draw("PE0same");
+    csaxis->SaveAs("sk_spectrum_and_ratio_per100mev.eps");
+    csaxis->SaveAs("sk_spectrum_and_ratio_per100mev.pdf");
+
+    for(int ix = 1; ix <= per_ratio_bf->GetNbinsX(); ix++) {
+      if(spectrum_obs_rebin->GetBinContent(ix) != per_obs->GetBinContent(ix))
+	cout << "nevents: " << spectrum_obs_rebin->GetBinContent(ix)
+	     << " +-: "     << spectrum_obs_rebin->GetBinError(ix)
+	     << "\t per:  " << per_obs->GetBinContent(ix)
+	     << " +-:     " << per_obs->GetBinError(ix)
+	     << endl;
+    }
+
   }//spectrum_other_rebin
 
   //pulls
