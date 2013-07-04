@@ -186,7 +186,7 @@ while($irun < $nruns) {
     print SH "#!/bin/bash \n";
     print SH "# time as a UNIX timestamp \n" ;                                                                                                                                  
     print SH "T0=\"\$\(date +\%s)\"\n";
-    print SH "# setup env vars \n";                                                                                                                                                               
+    print SH "# setup env vars \n";
     print SH "export LFC_HOST=lfc.gridpp.rl.ac.uk\n";
     print SH "export GLOBUS_FTP_CLIENT_GRIDFTP2=true\n";
     print SH "# trap error and remove code if error happens \n";

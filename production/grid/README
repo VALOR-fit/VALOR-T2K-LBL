@@ -54,3 +54,14 @@ you have to do this once every 4 weeks, it should delegate to proxy to myproxyse
 Then, changes added in autowms.conf to use the same myproxyserver and wms gridpp so that they trust each other. 
 When submitting jobs the voms-proxy-init command line to be used is the same.
 This should work now to be able to run jobs for > 24 hours - testing it.
+
+
+
+#CREATE DIRECTORY
+lfc-mkdir /grid/t2k.org/nd280/contrib/dealtry/DIR
+
+#DELETE DIRECTORY
+#first need to delete all files
+lcg-del  -v --vo t2k.org -a lfn:/grid/t2k.org/nd280/contrib/dealtry/DIR/FILENAME
+#then delete the directory
+lfc-rm -r /grid/t2k.org/nd280/contrib/dealtry/DIR
