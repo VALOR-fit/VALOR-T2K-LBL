@@ -6,7 +6,12 @@
 
 #include <vector>
 
-void test_feldman_cousins_nfits(const char * directory)
+void test_feldman_cousins_nfits(const char * directory,
+				double mix_min = 0.89, //to zoomin 2D plot
+				double mix_max = 1.0,
+				double dm_min  = 0.0019,
+				double dm_max  = 0.0030
+				)
 {
   gROOT->Reset();
   gStyle->SetOptStat(11);
@@ -16,7 +21,7 @@ void test_feldman_cousins_nfits(const char * directory)
   //
 
   // dm23sq, mixing23 range and step
-  double mixing23_min   = 0.0;
+  double mixing23_min   = 0.5;
   double mixing23_max   = 1.0;
   double mixing23_step  = 0.005;
   double dm23sq_min     = 1E-3;
@@ -36,12 +41,12 @@ void test_feldman_cousins_nfits(const char * directory)
           dm23sq_min - 0.5*dm23sq_step,
           dm23sq_max + 0.5*dm23sq_step);
 
-  TH1D* hNFitsVsOscParMixing = new TH2D("hNFitsVsOscParMixing", "",
+  TH1D* hNFitsVsOscParMixing = new TH1D("hNFitsVsOscParMixing", "",
           mixing23_nbins, 
           mixing23_min - 0.5*mixing23_step,
           mixing23_max + 0.5*mixing23_step);
 
-  TH2D* hNFitsVsOscParDmsq = new TH2D("hNFitsVsOscParDmsq", "",
+  TH1D* hNFitsVsOscParDmsq = new TH1D("hNFitsVsOscParDmsq", "",
           dm23sq_nbins,
           dm23sq_min - 0.5*dm23sq_step,
           dm23sq_max + 0.5*dm23sq_step);
@@ -57,10 +62,14 @@ void test_feldman_cousins_nfits(const char * directory)
   chain.Draw("input_mixing23>>hNFitsVsOscParMixing","","goff");
   chain.Draw("input_dm23sq>>hNFitsVsOscParDmsq","","goff");
 
-  TCanvas * c = new TCanvas("c", "", 20, 20, 600, 600);
-  hNFitsVsOscPar->Draw("colz");  
   TCanvas * cm = new TCanvas("cm", "", 20, 20, 600, 600);
-  hNFitsVsOscParMixing->Draw("colz");  
+  hNFitsVsOscParMixing->Draw();  
   TCanvas * cd = new TCanvas("cd", "", 20, 20, 600, 600);
-  hNFitsVsOscParDmsq->Draw("colz");  
+  hNFitsVsOscParDmsq->Draw();  
+  TCanvas * c = new TCanvas("c", "", 20, 20, 600, 600);
+  c->SetRightMargin(0.15);
+  c->SetTopMargin(0.15);
+  hNFitsVsOscPar->GetXaxis()->SetRangeUser(mix_min,mix_max);
+  hNFitsVsOscPar->GetYaxis()->SetRangeUser(dm_min,dm_max);
+  hNFitsVsOscPar->Draw("colz");  
 }
