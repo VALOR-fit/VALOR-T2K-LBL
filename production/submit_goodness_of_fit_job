@@ -28,6 +28,7 @@ foreach (@ARGV) {
   if($_ eq '--tag'            ) { $tag           = $ARGV[$iarg+1]; }
   if($_ eq '--run'            ) { $run           = $ARGV[$iarg+1]; }
   if($_ eq '--ntoys'          ) { $ntoys         = $ARGV[$iarg+1]; }
+  if($_ eq '--nruns'          ) { $nruns         = $ARGV[$iarg+1]; }
   if($_ eq '--fitresults-file') { $fitresultsfile = $ARGV[$iarg+1]; }
   if($_ eq '--cpu-time'       ) { $cput          = $ARGV[$iarg+1]; }
   if($_ eq '--fit-param-list' ) { $fitparamlist  = $ARGV[$iarg+1]; }
@@ -43,7 +44,8 @@ die("Please specify a fit results file using --fitresults-file") unless defined 
 $resource               = "interactive"                 unless defined $resource;
 $tag                    = "goodness"                    unless defined $tag;
 $run                    = 0                             unless defined $run;
-$ntoys                  = 1000                          unless defined $ntoys;
+$ntoys                  = 50                            unless defined $ntoys;
+$nruns                  = 20                            unless defined $ntoys;
 $fitparamlist           = "nuosc3f_numudisapp_fix4+nuisanceselection"     unless defined $fitparamlist;
 $fitoption              = "minuit"                      unless defined $fitoption;
 $job_dir                = `pwd`                         unless defined $job_dir;
@@ -59,69 +61,73 @@ if( !defined $cput) {
 mkpath ($job_dir, {verbose => 1, mode=>0777}); 
 die("$job_dir doesn't exist") unless -d $job_dir;
 
-$batch_script  = "$tag-$run.pbs";
-$job_name      = "$tag-$run";
+$batch_script  = "$tag-$irun-$run.pbs";
+$job_name      = "$tag-$irun-$run";
 
-$command = "root2k -l -b -q \'$softw_dir/macros/fit/stat/calculate_goodness_of_fit.C(\"$tag\",$run,\"$fitresultsfile\",\"$config_file\",\"$fitparamlist\",\"$fitoption\",$ntoys)\'";
+$irun = 0;
+while($irun < $nruns) {
+  $command = "root2k -l -b -q \'$softw_dir/macros/fit/stat/calculate_goodness_of_fit.C(\"$tag-$irun\",$run,\"$fitresultsfile\",\"$config_file\",\"$fitparamlist\",\"$fitoption\",$ntoys)\'";
 
-print "$command \n";
+  print "$command \n";
 
-#
-# RAL
-#
-if ($resource eq "RAL") {
-  open(PBS, ">$job_dir/$batch_script") or die("Can not create the PBS batch script");
-  print PBS "#!/bin/bash \n";
-  print PBS "#PBS -N $job_name \n";
-  print PBS "#PBS -l cput=$cput \n";
-  print PBS "#PBS -l walltime=$cput \n";
-  print PBS "#PBS -o $job_dir/$tag-$irun.pbs.out \n";
-  print PBS "#PBS -e $job_dir/$tag-$irun.pbs.err \n";
-  print PBS "cd $job_dir \n";
-  print PBS "source $softw_dir/setup/setup_at_ral.sh $softw_dir \n";
-  print PBS "$command \n";
-  close(PBS);
-  `qsub -q prod $job_dir/$batch_script`;
+  #
+  # RAL
+  #
+  if ($resource eq "RAL") {
+    open(PBS, ">$job_dir/$batch_script") or die("Can not create the PBS batch script");
+    print PBS "#!/bin/bash \n";
+    print PBS "#PBS -N $job_name \n";
+    print PBS "#PBS -l cput=$cput \n";
+    print PBS "#PBS -l walltime=$cput \n";
+    print PBS "#PBS -o $job_dir/$tag-$irun.pbs.out \n";
+    print PBS "#PBS -e $job_dir/$tag-$irun.pbs.err \n";
+    print PBS "cd $job_dir \n";
+    print PBS "source $softw_dir/setup/setup_at_ral.sh $softw_dir \n";
+    print PBS "$command \n";
+    close(PBS);
+    `qsub -q prod $job_dir/$batch_script`;
+  }
+  #
+  # IN2P3
+  #
+  if ($resource eq "IN2P3") {
+    open(PBS, ">$job_dir/$batch_script") or die("Can not create the PBS batch script");
+    print PBS "#!/bin/tcsh \n";
+    print PBS "cd $job_dir \n";
+    print PBS "source $softw_dir/setup/setup_at_in2p3.csh $softw_dir \n";
+    print PBS "$command \n";
+    close(PBS);
+    `chmod +x $job_dir/$batch_script`;
+    `qsub -eo -V -l platform=LINUX,t=$cput,M=2200MB,scratch=500MB,u_sps_babar -o $tag-$irun.pbs.out -N $job_name $job_dir/$batch_script`;
+  }
+  #
+  # Oxford
+  #
+  if ($resource eq "Oxford") {
+    open(PBS, ">$job_dir/$batch_script") or die("Can not create the PBS batch script");
+    print PBS "#!/bin/bash \n";
+    print PBS "#PBS -N $job_name \n";
+    print PBS "#PBS -l cput=$cput \n";
+    print PBS "#PBS -o $job_dir/$tag-$irun.pbs.out \n";
+    print PBS "#PBS -e $job_dir/$tag-$irun.pbs.err \n";
+    print PBS "cd $job_dir \n";
+    print PBS "source $softw_dir/setup/setup_at_oxford.sh $softw_dir \n";
+    print PBS "$command \n";
+    close(PBS);
+    `qsub $job_dir/$batch_script`;
+  }
+  #
+  # Grid
+  #
+  if ($resource eq "Grid") {
+    print "Not supported just yet!\n";
+  }
+  #
+  # interactive
+  #
+  if ($resource eq "interactive") {
+    system($command);
+  }
+  
+  $irun++;
 }
-#
-# IN2P3
-#
-if ($resource eq "IN2P3") {
-  open(PBS, ">$job_dir/$batch_script") or die("Can not create the PBS batch script");
-  print PBS "#!/bin/tcsh \n";
-  print PBS "cd $job_dir \n";
-  print PBS "source $softw_dir/setup/setup_at_in2p3.csh $softw_dir \n";
-  print PBS "$command \n";
-  close(PBS);
-  `chmod +x $job_dir/$batch_script`;
-  `qsub -eo -V -l platform=LINUX,t=$cput,M=2200MB,scratch=500MB,u_sps_babar -o $tag-$irun.pbs.out -N $job_name $job_dir/$batch_script`;
-}
-#
-# Oxford
-#
-if ($resource eq "Oxford") {
-  open(PBS, ">$job_dir/$batch_script") or die("Can not create the PBS batch script");
-  print PBS "#!/bin/bash \n";
-  print PBS "#PBS -N $job_name \n";
-  print PBS "#PBS -l cput=$cput \n";
-  print PBS "#PBS -o $job_dir/$tag-$irun.pbs.out \n";
-  print PBS "#PBS -e $job_dir/$tag-$irun.pbs.err \n";
-  print PBS "cd $job_dir \n";
-  print PBS "source $softw_dir/setup/setup_at_oxford.sh $softw_dir \n";
-  print PBS "$command \n";
-  close(PBS);
-  `qsub $job_dir/$batch_script`;
-}
-#
-# Grid
-#
-if ($resource eq "Grid") {
-  print "Not supported just yet!\n";
-}
-#
-# interactive
-#
-if ($resource eq "interactive") {
-  system($command);
-}
-

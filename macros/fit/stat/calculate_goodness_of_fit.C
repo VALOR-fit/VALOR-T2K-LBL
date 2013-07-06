@@ -125,7 +125,9 @@ void calculate_goodness_of_fit
 
   //get the dataset probability
   double dataset_prob = double(dataset_counter) / double(ntoys);
+  cout << "*** Data set counter is " << dataset_counter << endl;
   cout << "*** Data set probability is " << dataset_prob << endl;
+  cout << "    from " << ntoys << " toys" << endl;
   cout << "*** Data chisq is " << bestfit_chisq << endl;
 
   // File, to save things to
@@ -143,9 +145,11 @@ void calculate_goodness_of_fit
   c->SaveAs(Form("chisq_%d.pdf",run));
   delete hchisq;
   delete c;
-  TVectorD v(2);
+  TVectorD v(4);
   v[0] = dataset_prob;
   v[1] = bestfit_chisq;
+  v[2] = dataset_counter;
+  v[3] = ntoys;
   v.Write("goodness_params");
 
   //save the important numbers
