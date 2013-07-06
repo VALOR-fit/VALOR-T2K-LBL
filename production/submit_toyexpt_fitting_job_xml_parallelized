@@ -44,6 +44,15 @@ foreach (@ARGV) {
   if($_ eq '--job-dir'               ) { $job_dir               = $ARGV[$iarg+1]; }
   if($_ eq '--softw-dir'             ) { $softw_dir             = $ARGV[$iarg+1]; }
   if($_ eq '--config-file'           ) { $config_file           = $ARGV[$iarg+1]; }
+  if($_ eq '--no-chisq-surface'      ) { $chisq2D               = 0;              }
+  if($_ eq '--1Dchisq-mixing'        ) { $chisq1D_mix           = 1;              }
+  if($_ eq '--1Dchisq-dm23sq'        ) { $chisq1D_dm            = 1;              }
+  if($_ eq '--dm23sq-step'           ) { $dm23sq_step           = $ARGV[$iarg+1]; }
+  if($_ eq '--mixing-step'           ) { $mixing_step           = $ARGV[$iarg+1]; }
+  if($_ eq '--dm23sq-min'            ) { $dm23sq_min            = $ARGV[$iarg+1]; }
+  if($_ eq '--mixing-min'            ) { $mixing_min            = $ARGV[$iarg+1]; }
+  if($_ eq '--dm23sq-max'            ) { $dm23sq_max            = $ARGV[$iarg+1]; }
+  if($_ eq '--mixing-max'            ) { $mixing_max            = $ARGV[$iarg+1]; }
   $iarg++;
 }
 $min_dm23sq_bin         = 1                             unless defined $min_dm23sq_bin;
@@ -58,6 +67,15 @@ $fitoption              = "minuit"                      unless defined $fitoptio
 $job_dir                = `pwd`                         unless defined $job_dir;
 $softw_dir              = `pwd`                         unless defined $softw_dir;
 $config_file            = "analysis_configuration.xml"  unless defined $config_file;
+$chisq2D                = 1                             unless defined $chisq2D;
+$chisq1D_mix            = 0                             unless defined $chisq1D_mix;
+$chisq1D_dm             = 0                             unless defined $chisq1D_dm;
+$dm23sq_step            = 0.05E-3                       unless defined $dm23sq_step;
+$mixing_step            = 0.005                         unless defined $mixing_step;
+$dm23sq_min             = 1.5E-3                        unless defined $dm23sq_min;
+$mixing_min             = 0.85                          unless defined $mixing_min;
+$dm23sq_max             = 3.5E-3                        unless defined $dm23sq_max;
+$mixing_max             = 1.000                         unless defined $mixing_max;
 
 die unless defined $exptfile;
 die unless defined $nexpt;
@@ -79,7 +97,7 @@ for($mix23bin = $min_sinsq2theta23_bin; $mix23bin <= $max_sinsq2theta23_bin; $mi
 
   print "Submitting $tag job for mix23 bin: $mix23bin and dm23sq bin: $dm23sqbin \n";
 
-  $command  = "root2k -l -b -q \'$macro_dir/macros/fit/toymc/test_n_mock_data_fits_xml_parallelized.C(\"$tag\",$run,\"$exptfile\",$nexpt,$nexpt,\"$config_file\",\"$fitparamlist\",\"$fitoption\",\"\",$mix23bin,$dm23sqbin,true,0.85,1.0,1.5E-3,3.5E-3,false,0.005,false,0.05E-3)\'";
+  $command  = "root2k -l -b -q \'$macro_dir/macros/fit/toymc/test_n_mock_data_fits_xml_parallelized.C(\"$tag\",$run,\"$exptfile\",$nexpt,$nexpt,\"$config_file\",\"$fitparamlist\",\"$fitoption\",\"\",$mix23bin,$dm23sqbin,$chisq2D,$mixing_min,$mixing_max,$dm23sq_min$dm23sq_max,$chisq1D_mix,$mixing_step,$chisq1D_dm,$dm23sq_step)\'";
   print "$command \n";
 
   #
