@@ -72,4 +72,6 @@ void test_feldman_cousins_nfits(const char * directory,
   hNFitsVsOscPar->GetXaxis()->SetRangeUser(mix_min,mix_max);
   hNFitsVsOscPar->GetYaxis()->SetRangeUser(dm_min,dm_max);
   hNFitsVsOscPar->Draw("colz");  
+
+  cout << endl << "Maximum of 2D plot is " << hNFitsVsOscPar->GetMaximum() << endl;
 }
