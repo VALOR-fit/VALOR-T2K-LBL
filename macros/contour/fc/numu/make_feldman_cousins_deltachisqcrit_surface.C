@@ -42,6 +42,7 @@
 #include <TCanvas.h>
 #include <TH2D.h>
 #include <TChain.h>
+#include <TRandom3.h>
 
 using namespace std;
 
@@ -51,8 +52,11 @@ void make_feldman_cousins_deltachisqcrit_surface(
   int sinsq2theta_min_bin=-1, 
   int sinsq2theta_max_bin=999999,
   int dm23sq_min_bin=-1,
-  int dm23sq_max_bin=999999)
+  int dm23sq_max_bin=999999,
+  double dm23sq_step    = 5E-5,
+  double frac = -1) //frac of toys to use in the critical calculation (negative = 100%)
 {
+  TRandom3 rand(0);
   const int nConfidenceLevel = 4;
  
   int    confidenceLevel [nConfidenceLevel] = {68,   90,   95,   99   };
@@ -70,7 +74,7 @@ void make_feldman_cousins_deltachisqcrit_surface(
   double mixing23_step  = 0.005;
   double dm23sq_min     = 1E-3;
   double dm23sq_max     = 6E-3;
-  double dm23sq_step    = 5E-5;
+  //double dm23sq_step    = 1E-4;
   // make sure that min and max are at the bin centre and not at the low/high edge of the first/last bin
   int mixing23_nbins = 1 + TMath::CeilNint ((mixing23_max - mixing23_min) / mixing23_step);
   int dm23sq_nbins   = 1 + TMath::CeilNint ((dm23sq_max   - dm23sq_min  ) / dm23sq_step  );
@@ -178,7 +182,8 @@ void make_feldman_cousins_deltachisqcrit_surface(
          vector<double> deltaChi2;
          for(int j = 0; j < nfits; j++) {
            double v = chain.GetV1()[j];
-           deltaChi2.push_back(v);
+	   if(frac < 0 || rand.Uniform() < frac) 
+	     deltaChi2.push_back(v);
          }
          sort(deltaChi2.begin(), deltaChi2.end());
    
