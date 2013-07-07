@@ -101,7 +101,7 @@ for($mix23bin = $min_sinsq2theta23_bin; $mix23bin <= $max_sinsq2theta23_bin; $mi
 
   print "Submitting $tag job for mix23 bin: $mix23bin and dm23sq bin: $dm23sqbin \n";
 
-  $command  = "root2k -l -b -q \'$macro_dir/macros/fit/toymc/test_n_mock_data_fits_xml_parallelized.C(\"$tag\",$run,\"$exptfile\",$nexpt,$nexpt,\"$config_file\",\"$fitparamlist\",\"$fitoption\",\"\",$mix23bin,$dm23sqbin,$chisq2D,$mixing_min,$mixing_max,$dm23sq_min,$dm23sq_max,$chisq1D_mix,$mixing_step,$chisq1D_dm,$dm23sq_step,$mixingmode,$hierarchy)\'";
+  $command  = "root2k -l -b -q \'$macro_dir/macros/fit/toymc/test_n_mock_data_fits_xml_parallelized.C(\"$tag\",$run,\"$exptfile\",$nexpt,$nexpt,\"$config_file\",\"$fitparamlist\",\"$fitoption\",\"\",$mix23bin,$dm23sqbin,$chisq2D,$mixing_min,$mixing_max,$dm23sq_min,$dm23sq_max,$chisq1D_mix,$mixing_step,$chisq1D_dm,$dm23sq_step,\"$mixingmode\",\"$hierarchy\")\'";
   print "$command \n";
 
   #
