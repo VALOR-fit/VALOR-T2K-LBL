@@ -28,7 +28,9 @@ void test_n_mock_data_fits_xml_parallelized
   bool         chisqwithsyst_mixing23 = true,
   double       chisqwithsyst_mixing23_step = 0.001,
   bool         chisqwithsyst_dm23sq = true,
-  double       chisqwithsyst_dm23sq_step = 0.00001
+  double       chisqwithsyst_dm23sq_step = 0.00001,
+  const char * mixing_mode          = "2theta",
+  const char * hierarchy_mode       = "normal"
 )
 {
   using namespace std;
@@ -38,8 +40,14 @@ void test_n_mock_data_fits_xml_parallelized
   const char * config = Form("%s/config/%s", gSystem->Getenv("T2KOSCANA"), config_file);
 
   // Global options
-  Opt::Instance()->gOscMixingParamChoice = conv::kNuMixSinsq2Theta;
-  Opt::Instance()->gMassHierarchyAssumed = conv::kNmhNormal;
+  if(mixing_mode == "theta")
+    Opt::Instance()->gOscMixingParamChoice = conv::kNuMixSinsqTheta;
+  else
+    Opt::Instance()->gOscMixingParamChoice = conv::kNuMixSinsq2Theta;
+  if(hierarchy_mode == "inverted")
+    Opt::Instance()->gMassHierarchyAssumed = conv::kNmhInverted;
+  else
+    Opt::Instance()->gMassHierarchyAssumed = conv::kNmhNormal;
 
   // Print settings
   cout << "\n[Job inputs]" << endl;
