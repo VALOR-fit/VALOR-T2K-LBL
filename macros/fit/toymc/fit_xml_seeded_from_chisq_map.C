@@ -16,7 +16,9 @@ void fit_xml_seeded_from_chisq_map
   const char * config_file         = "analysis_configuration.xml", /* analysis configuration file */
   const char * fit_param_list      = "nuosc3f_numudisapp_fix4+nuisanceselection",    /* fit parameter list for the given physics hypothesis (see run_fitter.C) */
   const char * fit_option          = "minuit",                     /* fitter option (see run_fitter.C) */
-  const char * chisq_surface_name  = ""
+  const char * chisq_surface_name  = "",
+  const char * mixing_mode         = "2theta",
+  const char * hierarchy_mode      = "normal"
 )
 {
   using namespace std;
@@ -27,8 +29,14 @@ void fit_xml_seeded_from_chisq_map
   TString xmlfile2 = Form("%s/inputs/%s", gSystem->Getenv("T2KOSCANA"), xmlfile);
 
   // Global options
-  Opt::Instance()->gOscMixingParamChoice = conv::kNuMixSinsq2Theta;
-  Opt::Instance()->gMassHierarchyAssumed = conv::kNmhNormal;
+  if(mixing_mode == "theta")
+    Opt::Instance()->gOscMixingParamChoice = conv::kNuMixSinsqTheta;
+  else
+    Opt::Instance()->gOscMixingParamChoice = conv::kNuMixSinsq2Theta;
+  if(hierarchy_mode == "inverted")
+    Opt::Instance()->gMassHierarchyAssumed = conv::kNmhInverted;
+  else
+    Opt::Instance()->gMassHierarchyAssumed = conv::kNmhNormal;
 
   // Print settings
   cout << "\n[Job inputs]" << endl;

@@ -160,8 +160,8 @@ void plot_theta_contour_from_2theta_contour
   double bestfit_sinsqtheta1o2 = 1 - (0.5 * (1 - sqrt(1 - bestfit_mixo1)));
   double bestfit_sinsqtheta2o1 = (0.5 * (1 - sqrt(1 - bestfit_mixo2)));
   double bestfit_sinsqtheta2o2 = 1 - (0.5 * (1 - sqrt(1 - bestfit_mixo2)));
-  TMarker bf1o1(bestfit_sinsqtheta1o1, bestfit_dmo2, 29);
-  TMarker bf1o2(bestfit_sinsqtheta1o2, bestfit_dmo2, 29);
+  TMarker bf1o1(bestfit_sinsqtheta1o1, bestfit_dmo1, 29);
+  TMarker bf1o2(bestfit_sinsqtheta1o2, bestfit_dmo1, 29);
   TMarker bf2o1(bestfit_sinsqtheta2o1, bestfit_dmo2, 29);
   TMarker bf2o2(bestfit_sinsqtheta2o2, bestfit_dmo2, 29);
   bf2o1.SetMarkerColor(kRed);
@@ -206,6 +206,8 @@ void plot_theta_contour_from_2theta_contour
   bf1o2.Draw();
   bf2o1.Draw();
   bf2o2.Draw();
+  bf1o1.Print();
+  bf2o2.Print();
   TLine l1(0.5,0.002,0.5,0.003);
   l1.Draw();
   c->SaveAs("contour_compare_octants_sinsqtheta.pdf");
