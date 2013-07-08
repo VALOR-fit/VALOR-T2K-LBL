@@ -1,7 +1,15 @@
+//plot contours in sinsqtheta23-dm32sq space
+//
+//takes 3 inputs
+// 2 sinsq2theta23 contours (one from each octant
+// 1 sinsqthet23 contour
+//sinsq2theta23 contours are converted to sinsqtheta23 contours
+
 void plot_theta_contour_from_2theta_contour
 (
  const char * filename1 = "2012results/NEWRESULTS/datafit/dchisq_2all.root",
- const char * filename2 = "2012results/DATA/octant2_23only/combination/fitresults_3.root"
+ const char * filename2 = "2012results/DATA/octant2_23only/combination/fitresults_3.root",
+ const char * filename_thetafit = "2012results/DATA/sintheta23/combine/combination/fitresults_3.root"
 )
 {
   TFile f1(filename1);
@@ -28,6 +36,20 @@ void plot_theta_contour_from_2theta_contour
   hsinsq2theta2_90->SetContourLevel(0,4.61);
   hsinsq2theta2_90->SetLineStyle(1);
 
+  TFile f3(filename_thetafit);
+  TH2D * hsinsqtheta3 = 0;
+  f3.GetObject("hdchisq",hsinsqtheta3);
+  TH2D * hsinsqtheta3_68 = new TH2D(*hsinsqtheta3);
+  TH2D * hsinsqtheta3_90 = new TH2D(*hsinsqtheta3);
+  hsinsqtheta3_68->SetContour(1);
+  hsinsqtheta3_68->SetContourLevel(0,2.30);
+  hsinsqtheta3_68->SetLineStyle(3);
+  hsinsqtheta3_90->SetContour(1);
+  hsinsqtheta3_90->SetContourLevel(0,4.61);
+  hsinsqtheta3_90->SetLineStyle(1);
+  hsinsqtheta3_68->SetLineColor(kBlue);
+  hsinsqtheta3_90->SetLineColor(kBlue);
+
   //make an array of sinsqtheta values from sinsq2theta axis
   const int nbinsx1  = hsinsq2theta1->GetNbinsX();
   const int nbinsy1  = hsinsq2theta1->GetNbinsY();
@@ -37,18 +59,23 @@ void plot_theta_contour_from_2theta_contour
   double axis1o1[100] = {0};
   double axis1o2[100] = {0};
   for(int ix = 1; ix <= nbinsx1; ix++) {
-    double sinsq2theta23 = hsinsq2theta1->GetXaxis()->GetBinCenter(ix);
+    //double sinsq2theta23 = hsinsq2theta1->GetXaxis()->GetBinCenter(ix);
+    double sinsq2theta23 = hsinsq2theta1->GetXaxis()->GetBinLowEdge(ix);
+    //sinsq2theta23 = TMath::Min(sinsq2theta23, 1.00);
     double s23sq_octant1 = (0.5 * (1 - sqrt(1 - sinsq2theta23)));
     double s23sq_octant2 = 1 - (0.5 * (1 - sqrt(1 - sinsq2theta23)));
     //cout << sinsq2theta23 << "\t" << s23sq_octant1 << endl;
-    axis1o1[ix] = s23sq_octant1;
-    axis1o2[nbinsx1-ix] = s23sq_octant2;
-    cout << "bin " << nbinsx1-ix << "\t" << s23sq_octant2 << endl;
+    axis1o1[ix-1] = s23sq_octant1;
+    //cout << "octant1 bin edge " << ix-1 << "\t" << s23sq_octant1 << endl;
+    axis1o2[nbinsx1-ix+1] = s23sq_octant2;
+    //cout << "octant2 bin edge " << nbinsx1-ix+1 << "\t" << s23sq_octant2 << endl;
   }
-  axis1o2[nbinsx1] = axis1o2[nbinsx1-1];
-  for(int ix = 0; ix < nbinsx1+1; ix++) {
-    cout << ix << "\t" << axis1o2[ix] << "\t" << axis1o1[ix] << endl;
-  }
+  axis1o1[nbinsx1] = 1 - axis1o1[nbinsx1-1];
+  //cout << "octant1 bin edge " << nbinsx1 << "\t" << axis1o1[nbinsx1] << endl;
+  axis1o2[0] = 1 - axis1o2[1];
+  //cout << "octant2 bin edge " << 0 << "\t" << axis1o2[0] << endl;
+  for(int ix = 0; ix <= nbinsx1; ix++) 
+    cout << "bin edges for octant 1,2: " << "\t" << axis1o1[ix] << "\t" << axis1o2[ix] << endl;
 
   //make an array of sinsqtheta values from sinsq2theta axis
   const int nbinsx2  = hsinsq2theta2->GetNbinsX();
@@ -59,18 +86,23 @@ void plot_theta_contour_from_2theta_contour
   double axis2o1[100] = {0};
   double axis2o2[100] = {0};
   for(int ix = 1; ix <= nbinsx2; ix++) {
-    double sinsq2theta23 = hsinsq2theta2->GetXaxis()->GetBinCenter(ix);
+    //double sinsq2theta23 = hsinsq2theta2->GetXaxis()->GetBinCenter(ix);
+    double sinsq2theta23 = hsinsq2theta2->GetXaxis()->GetBinLowEdge(ix);
+    //sinsq2theta23 = TMath::Min(sinsq2theta23, 1.00);
     double s23sq_octant1 = (0.5 * (1 - sqrt(1 - sinsq2theta23)));
     double s23sq_octant2 = 1 - (0.5 * (1 - sqrt(1 - sinsq2theta23)));
     //cout << sinsq2theta23 << "\t" << s23sq_octant1 << endl;
-    axis2o1[ix] = s23sq_octant1;
-    axis2o2[nbinsx2-ix] = s23sq_octant2;
-    cout << "bin " << nbinsx2-ix << "\t" << s23sq_octant2 << endl;
+    axis2o1[ix-1] = s23sq_octant1;
+    //cout << "octant1 bin edge " << ix-1 << "\t" << s23sq_octant1 << endl;
+    axis2o2[nbinsx2-ix+1] = s23sq_octant2;
+    //cout << "octant2 bin edge " << nbinsx2-ix+1 << "\t" << s23sq_octant2 << endl;
   }
-  axis2o2[nbinsx2] = axis2o2[nbinsx2-1];
-  for(int ix = 0; ix < nbinsx2+1; ix++) {
-    cout << ix << "\t" << axis2o2[ix] << "\t" << axis2o1[ix] << endl;
-  }
+  axis2o1[nbinsx2] = 1 - axis2o1[nbinsx2-1];
+  //cout << "octant1 bin edge " << nbinsx2 << "\t" << axis2o1[nbinsx1] << endl;
+  axis2o2[0] = 1 - axis2o2[1];
+  //cout << "octant2 bin edge " << 0 << "\t" << axis2o2[0] << endl;
+  for(int ix = 0; ix <= nbinsx2; ix++) 
+    cout << "bin edges for octant 1,2: " << "\t" << axis2o1[ix] << "\t" << axis2o2[ix] << endl;
 
   //make a histogram with the sinsqtheta x axis octant 1 & fill it
   TH2D * hsinsqtheta1o1_68 = new TH2D("","", nbinsx1, axis1o1, nbinsy1, binminy1, binmaxy1);
@@ -105,8 +137,8 @@ void plot_theta_contour_from_2theta_contour
   for(int ix = 1; ix <= nbinsx1; ix++) {
     for(int iy = 1; iy <= nbinsy1; iy++) {
       double dchisq = hsinsq2theta1->GetBinContent(ix,iy);
-      hsinsqtheta1o2_68->SetBinContent(nbinsx1-ix,iy, dchisq);
-      hsinsqtheta1o2_90->SetBinContent(nbinsx1-ix,iy, dchisq);
+      hsinsqtheta1o2_68->SetBinContent(nbinsx1-ix+1,iy, dchisq);
+      hsinsqtheta1o2_90->SetBinContent(nbinsx1-ix+1,iy, dchisq);
     }//iy
   }//ix
 
@@ -143,12 +175,13 @@ void plot_theta_contour_from_2theta_contour
   for(int ix = 1; ix <= nbinsx2; ix++) {
     for(int iy = 1; iy <= nbinsy2; iy++) {
       double dchisq = hsinsq2theta2->GetBinContent(ix,iy);
-      hsinsqtheta2o2_68->SetBinContent(nbinsx2-ix,iy, dchisq);
-      hsinsqtheta2o2_90->SetBinContent(nbinsx2-ix,iy, dchisq);
-      cout << ix << "\t" << iy << "\t" << dchisq << endl
-	   << hsinsqtheta2o2_68->GetXaxis()->GetBinCenter(ix) << "\t"
-	   << hsinsqtheta2o2_68->GetYaxis()->GetBinCenter(iy) << endl;
+      hsinsqtheta2o2_68->SetBinContent(nbinsx2-ix+1,iy, dchisq);
+      hsinsqtheta2o2_90->SetBinContent(nbinsx2-ix+1,iy, dchisq);
+      //cout << ix << "\t" << iy << "\t" << dchisq << endl
+      //<< hsinsqtheta2o2_68->GetXaxis()->GetBinCenter(ix) << "\t"
+      //<< hsinsqtheta2o2_68->GetYaxis()->GetBinCenter(iy) << endl;
     }//iy
+    cout << ix << "\t" << nbinsx2-ix+1 <<  "\t" << hsinsqtheta2o2_68->GetXaxis()->GetBinCenter(ix) << endl;
   }//ix
 
   //best fit markers
@@ -160,20 +193,22 @@ void plot_theta_contour_from_2theta_contour
   double bestfit_sinsqtheta1o2 = 1 - (0.5 * (1 - sqrt(1 - bestfit_mixo1)));
   double bestfit_sinsqtheta2o1 = (0.5 * (1 - sqrt(1 - bestfit_mixo2)));
   double bestfit_sinsqtheta2o2 = 1 - (0.5 * (1 - sqrt(1 - bestfit_mixo2)));
-  TMarker bf1o1(bestfit_sinsqtheta1o1, bestfit_dmo1, 29);
+  TMarker bf1o1(bestfit_sinsqtheta1o1, bestfit_dmo1, 25);
   TMarker bf1o2(bestfit_sinsqtheta1o2, bestfit_dmo1, 29);
   TMarker bf2o1(bestfit_sinsqtheta2o1, bestfit_dmo2, 29);
   TMarker bf2o2(bestfit_sinsqtheta2o2, bestfit_dmo2, 29);
+  TMarker bftheta(0.5139, 0.002441, 29);
   bf2o1.SetMarkerColor(kRed);
-  //bf2o2.SetMarkerColor(kRed);
+  bf2o2.SetMarkerColor(kRed);
+  bftheta.SetMarkerColor(kBlue);
 
   //osc param space
   // dm23sq, mixing23 range and step
-  double mixing23_min   = 0.15;
-  double mixing23_max   = 0.95;
-  double mixing23_step  = 0.005;
-  double dm23sq_min     = 2E-3;
-  double dm23sq_max     = 3E-3;
+  double mixing23_min   = 0.35;
+  double mixing23_max   = 0.68;
+  double mixing23_step  = 0.001;
+  double dm23sq_min     = 2.1E-3;
+  double dm23sq_max     = 3.1E-3;
   double dm23sq_step    = 5E-5;
   // make sure that min and max are at the bin centre and not at the low/high edge of the first/last bin
   int mixing23_nbins = 1 + TMath::CeilNint ((mixing23_max - mixing23_min) / mixing23_step);
@@ -185,7 +220,7 @@ void plot_theta_contour_from_2theta_contour
        dm23sq_nbins, 
        dm23sq_min - 0.5*dm23sq_step, 
        dm23sq_max + 0.5*dm23sq_step);
-  osc_param_space->GetXaxis()->SetTitle("sin^{2}(2#theta_{23})"); // adjust if mixing param is sinsqtheta rather than sinsq2theta...
+  osc_param_space->GetXaxis()->SetTitle("sin^{2}(#theta_{23})"); // adjust if mixing param is sinsqtheta rather than sinsq2theta...
   osc_param_space->GetYaxis()->SetTitle("|#Deltam_{32}^{2}| (eV^{2}/c^{4})");
   //osc_param_space->GetXaxis()->SetTitleOffset(1.2);
   osc_param_space->GetYaxis()->SetTitleOffset(1.4);
@@ -196,19 +231,33 @@ void plot_theta_contour_from_2theta_contour
   osc_param_space->Draw();
   hsinsqtheta1o1_90->Draw("cont3same");
   hsinsqtheta1o1_68->Draw("cont3same");
-  hsinsqtheta1o2_90->Draw("cont3same");
-  hsinsqtheta1o2_68->Draw("cont3same");
-  hsinsqtheta2o1_90->Draw("cont3same");
-  hsinsqtheta2o1_68->Draw("cont3same");
+  //hsinsqtheta1o2_90->Draw("cont3same");
+  //hsinsqtheta1o2_68->Draw("cont3same");
+  //hsinsqtheta2o1_90->Draw("cont3same");
+  //hsinsqtheta2o1_68->Draw("cont3same");
+  hsinsqtheta2o2_90->SetLineColor(kRed);
+  hsinsqtheta2o2_68->SetLineColor(kRed);
   hsinsqtheta2o2_90->Draw("cont3same");
   hsinsqtheta2o2_68->Draw("cont3same");
+  hsinsqtheta3_90->Draw("cont3same");
+  hsinsqtheta3_68->Draw("cont3same");
   bf1o1.Draw();
-  bf1o2.Draw();
-  bf2o1.Draw();
+  //bf1o2.Draw();
+  //bf2o1.Draw();
   bf2o2.Draw();
+  bftheta.Draw();
   bf1o1.Print();
   bf2o2.Print();
-  TLine l1(0.5,0.002,0.5,0.003);
+  TLine l1(0.5,0.0021,0.5,0.0031);
+  l1.SetLineStyle(2);
   l1.Draw();
+  TLegend * leg1 = new TLegend(0.25,0.75,0.55,0.9);
+  leg1->SetFillStyle(0);
+  leg1->SetLineColor(kWhite);
+  leg1->AddEntry(hsinsqtheta1o1_90, "Octant 1", "l");
+  leg1->AddEntry(hsinsqtheta2o2_90, "Octant 2", "l");
+  leg1->AddEntry(hsinsqtheta3_90, "sin^{2}#theta_{23}", "l");
+  leg1->Draw();
   c->SaveAs("contour_compare_octants_sinsqtheta.pdf");
+  c->SaveAs("contour_compare_octants_sinsqtheta.eps");
 }
