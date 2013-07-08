@@ -18,13 +18,15 @@ void comp_marg
 	const char * file2,
 	const char * label2 = "analysis b",
         const char * type, 
-        int id
+        int id,
+	double ymax
 )
 
 {
   gStyle->SetOptStat(0);
 
   const char * hname = Form("marg_%s_%d",type,id);
+  cout << hname << endl;
 
   TFile * f1 = new TFile(file1,"read");
   f1->cd();
@@ -56,10 +58,10 @@ void comp_marg
      h1->GetXaxis()->SetTitle("sin^{2}2#theta_{23}");
   }
 
-  h1->GetYaxis()->SetRangeUser(0,6.63);
+  h1->GetYaxis()->SetRangeUser(0,ymax);
 
-  h1->Draw();
-  h2->Draw("same");
+  h1->Draw("L");
+  h2->Draw("Lsame");
 
 
   TLegend * legend = new TLegend(0.5, 0.6, 0.9, 0.9);
@@ -71,5 +73,5 @@ void comp_marg
   legend->AddEntry(h2,label2,"L");
   legend->Draw();
 
-  c1->SaveAs("marg_dchisq_comp.eps");
+  c1->SaveAs(Form("marg_dchisq_comp_%s.eps",type));
 }

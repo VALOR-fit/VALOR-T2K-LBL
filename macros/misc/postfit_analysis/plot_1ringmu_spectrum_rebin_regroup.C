@@ -276,10 +276,13 @@ void plot_1ringmu_spectrum_rebin_regroup
   h_mc_numuccnonqe -> SetLineColor(kGray+3);
   h_mc_numuccnonqe -> SetFillColor(kGray+3);
   h_mc_numubarcc   -> SetLineColor(kGreen+1);
+  h_mc_numubarcc   -> SetFillStyle(1001);
   h_mc_numubarcc   -> SetFillColor(kGreen+1);
   h_mc_nuenuebarcc -> SetLineColor(kAzure-3);
+  h_mc_nuenuebarcc -> SetFillStyle(1001);
   h_mc_nuenuebarcc -> SetFillColor(kAzure-3);
   h_mc_nc          -> SetLineColor(kRed);
+  h_mc_nc          -> SetFillStyle(1001);
   h_mc_nc          -> SetFillColor(kRed);
   if(h_mc_all_alt) {
      h_mc_all_alt -> SetLineWidth(2);
@@ -305,7 +308,7 @@ void plot_1ringmu_spectrum_rebin_regroup
   // Start plotting
   //
 
-  TCanvas * c = new TCanvas("c","",20,20,500,500);
+  TCanvas * c = new TCanvas();//("c","",20,20,500,500); //squarer default used in TN
   TH1F * hframe = (TH1F*)c->DrawFrame(0,0,emax,nmax);
   hframe->GetXaxis()->SetTitle("E_{reco} (GeV)");
   hframe->GetYaxis()->SetTitle("Events per bin");

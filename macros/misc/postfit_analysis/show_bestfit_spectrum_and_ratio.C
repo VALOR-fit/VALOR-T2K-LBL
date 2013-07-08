@@ -31,7 +31,7 @@ void show_bestfit_spectrum_and_ratio
 
   TFile * ffit = new TFile(bestfitfile,"read");
   ffit->cd();
-  TH1D * hfit = (TH1D *) fit->Get("sk_1Rmutotal");
+  TH1D * hfit = (TH1D *) ffit->Get("sk_1Rmutotal");
   assert(hfit);
   TFile * fd = new TFile(datafile,"read");
   TH1D * hdata = (TH1D *) fd->Get("obs_spectrum");
@@ -95,7 +95,7 @@ void show_bestfit_spectrum_and_ratio
   ratio_data->SetMarkerStyle(8);
   ratio_data->SetLineStyle(kDashed);
 
-  TCanvas * c1 = new TCanvas("c1","",10,10,600,700);
+  TCanvas * c1 = new TCanvas;//("c1","",10,10,600,700); // a squarer default canvas is used in the TN
   TPad * upp = new TPad("upp","",0.05,0.30,0.95,0.97);
   TPad * low = new TPad("low","",0.05,0.03,0.95,0.28);
   low->SetBottomMargin(.2);
@@ -135,4 +135,6 @@ void show_bestfit_spectrum_and_ratio
   low->SetGridy();
   ratio_fit->Draw("same");
   ratio_data->Draw("PE03X0 same");
+
+  c1->SaveAs("spectrum_and_ratio_coarse.eps");
 }

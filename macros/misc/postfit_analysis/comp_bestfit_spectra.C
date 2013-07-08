@@ -74,10 +74,10 @@ void comp_bestfit_spectra
 
   TH1D * diff  = new TH1D(*histo_fit1);
   TH1D * ratio = new TH1D(*histo_fit1);
-  for(int i=1; i < histo_fit1->GetXaxis()->GetNbins(); i++) {
+  for(int i=1; i <= histo_fit1->GetXaxis()->GetNbins(); i++) {
 	double n1 = histo_fit1->GetBinContent(i);
 	double n2 = histo_fit2->GetBinContent(i);
-	double vratio = (n1!=0 && n2!=0) ? n1/n2 : 0;
+	double vratio = (n1>=1E-6 && n2>1E-6) ? n1/n2 : 0;
 	double vdiff  = n1-n2;
 	diff->SetBinContent(i,vdiff);
 	ratio->SetBinContent(i,vratio);
@@ -118,6 +118,14 @@ void comp_bestfit_spectra
   histo_fit1->Draw("same");
   histo_fit2->Draw("same");
   histo_data->Draw("PE03X0 same");
+  //need to really force an update, or weird things happen with the fit spectra
+  hframe->GetYaxis()->SetRangeUser(4,5);
+  upp->Update();
+  hframe->GetYaxis()->UnZoom();
+  upp->Update();
+
+  cout << histo_fit1->Integral() << endl;
+  cout << histo_fit2->Integral() << endl;
 
   TLegend * legend = new TLegend(0.5, 0.6, 0.9, 0.9);
   legend->SetBorderSize(0);
@@ -132,9 +140,10 @@ void comp_bestfit_spectra
   legend->Draw();
 
   low1->cd();
-  TH1F * hframelow1 = (TH1F*)low1->DrawFrame(emin,-0.2,emax,0.2);
+  TH1F * hframelow1 = (TH1F*)low1->DrawFrame(emin,-0.03,emax,0.03);
   hframelow1->GetXaxis()->SetTitle("E_{reco} (GeV)");
-  hframelow1->GetYaxis()->SetTitle("\'2+N\'-\'2+8\' (Events per bin)");
+  //hframelow1->GetYaxis()->SetTitle("\'2+N\'-\'2+8\' (Events per bin)");
+  hframelow1->GetYaxis()->SetTitle("#splitline{\'Octant 1\' - \'Octant 2\'}{(Events per bin)}");
   hframelow1->GetYaxis()->SetLabelSize(0.09);
   hframelow1->GetYaxis()->SetTitleSize(0.11);
   hframelow1->GetYaxis()->SetTitleOffset(0.62);
@@ -142,12 +151,16 @@ void comp_bestfit_spectra
   hframelow1->GetXaxis()->SetLabelSize(0.11);
   hframelow1->GetXaxis()->SetTitleSize(0.11);
   low1->SetGridy();
+  //force an update because default ymin is 0
+  diff->GetYaxis()->SetRangeUser(-1,1);
   diff->Draw("same");
+  low1->Update();
 
   low2->cd();
-  TH1F * hframelow2 = (TH1F*)low2->DrawFrame(emin,0,emax,2);
+  TH1F * hframelow2 = (TH1F*)low2->DrawFrame(emin,0.98,emax,1.02);
   hframelow2->GetXaxis()->SetTitle("E_{reco} (GeV)");
-  hframelow2->GetYaxis()->SetTitle("\'2+N\' / \'2+8\'");
+  //hframelow2->GetYaxis()->SetTitle("\'2+N\' / \'2+8\'");
+  hframelow2->GetYaxis()->SetTitle("\'Octant 1\' / \'Octant 2\'");
   hframelow2->GetYaxis()->SetLabelSize(0.09);
   hframelow2->GetYaxis()->SetTitleSize(0.11);
   hframelow2->GetYaxis()->SetTitleOffset(0.62);
@@ -157,5 +170,5 @@ void comp_bestfit_spectra
   low2->SetGridy();
   ratio->Draw("same");
 
-//  c1->SaveAs("marg_dchisq_comp.eps");
+  c1->SaveAs("spectrum_comparison.eps");
 }
