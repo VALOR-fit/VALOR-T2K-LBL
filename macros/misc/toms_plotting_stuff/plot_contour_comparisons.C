@@ -61,6 +61,8 @@ void plot_contour_comparisons
   bestfit_2all.SetMarkerSize(1.8);
   bestfit_2all.SetMarkerColor(kBlack);
 
+  double linewidth_val = 3;
+
   //20 const dchisq
   TH2D * h_dc_20 = 0;
   f_dc_20.GetObject("hdchisq",h_dc_20);
@@ -69,9 +71,11 @@ void plot_contour_comparisons
   h_dc_20_68->SetContour(1);
   h_dc_20_68->SetContourLevel(0,2.30);
   h_dc_20_68->SetLineStyle(2);
+  h_dc_20_68->SetLineWidth(linewidth_val);
   h_dc_20_90->SetContour(1);
   h_dc_20_90->SetContourLevel(0,4.61);
   h_dc_20_90->SetLineStyle(1);
+  h_dc_20_90->SetLineWidth(linewidth_val);
 
   //28nob const dchisq
   TH2D * h_dc_28nob_90 = 0, * h_dc_28nob_68 = 0;
@@ -80,9 +84,11 @@ void plot_contour_comparisons
   h_dc_28nob_68->SetContour(1);
   h_dc_28nob_68->SetContourLevel(0,2.30);
   h_dc_28nob_68->SetLineStyle(2);
+  h_dc_28nob_68->SetLineWidth(linewidth_val);
   h_dc_28nob_90->SetContour(1);
   h_dc_28nob_90->SetContourLevel(0,4.61);
   h_dc_28nob_90->SetLineStyle(1);
+  h_dc_28nob_90->SetLineWidth(linewidth_val);
 
   //28b const dchisq
   TH2D * h_dc_28b_90 = 0, * h_dc_28b_68 = 0;
@@ -91,9 +97,11 @@ void plot_contour_comparisons
   h_dc_28b_68->SetContour(1);
   h_dc_28b_68->SetContourLevel(0,2.30);
   h_dc_28b_68->SetLineStyle(2);
+  h_dc_28b_68->SetLineWidth(linewidth_val);
   h_dc_28b_90->SetContour(1);
   h_dc_28b_90->SetContourLevel(0,4.61);
   h_dc_28b_90->SetLineStyle(1);
+  h_dc_28b_90->SetLineWidth(linewidth_val);
 
   //28 const dchisq
   TH2D * h_dc_123 = 0;
@@ -103,9 +111,11 @@ void plot_contour_comparisons
   h_dc_123_68->SetContour(1);
   h_dc_123_68->SetContourLevel(0,2.30);
   h_dc_123_68->SetLineStyle(2);
+  h_dc_123_68->SetLineWidth(linewidth_val);
   h_dc_123_90->SetContour(1);
   h_dc_123_90->SetContourLevel(0,4.61);
   h_dc_123_90->SetLineStyle(1);
+  h_dc_123_90->SetLineWidth(linewidth_val);
 
   TH2D * h_dc_12 = 0;
   f_dc_12.GetObject("hdchisq",h_dc_12);
@@ -114,9 +124,11 @@ void plot_contour_comparisons
   h_dc_12_68->SetContour(1);
   h_dc_12_68->SetContourLevel(0,2.30);
   h_dc_12_68->SetLineStyle(2);
+  h_dc_12_68->SetLineWidth(linewidth_val);
   h_dc_12_90->SetContour(1);
   h_dc_12_90->SetContourLevel(0,4.61);
   h_dc_12_90->SetLineStyle(1);
+  h_dc_12_90->SetLineWidth(linewidth_val);
 
   TH2D * h_dc_3 = 0;
   f_dc_3.GetObject("hdchisq",h_dc_3);
@@ -125,9 +137,11 @@ void plot_contour_comparisons
   h_dc_3_68->SetContour(1);
   h_dc_3_68->SetContourLevel(0,2.30);
   h_dc_3_68->SetLineStyle(2);
+  h_dc_3_68->SetLineWidth(linewidth_val);
   h_dc_3_90->SetContour(1);
   h_dc_3_90->SetContourLevel(0,4.61);
   h_dc_3_90->SetLineStyle(1);
+  h_dc_3_90->SetLineWidth(linewidth_val);
 
   //28 const dchisq (fine grain)
   TH2D * h_dc_28_fine = 0;
@@ -137,9 +151,11 @@ void plot_contour_comparisons
   h_dc_28_fine_68->SetContour(1);
   h_dc_28_fine_68->SetContourLevel(0,2.30);
   h_dc_28_fine_68->SetLineStyle(2);
+  h_dc_28_fine_68->SetLineWidth(linewidth_val);
   h_dc_28_fine_90->SetContour(1);
   h_dc_28_fine_90->SetContourLevel(0,4.61);
   h_dc_28_fine_90->SetLineStyle(1);
+  h_dc_28_fine_90->SetLineWidth(linewidth_val);
 
   //28 FC
   TH2D * h_fc_123_68 = 0;
@@ -149,9 +165,11 @@ void plot_contour_comparisons
   h_fc_123_68->SetContour(1);
   h_fc_123_68->SetContourLevel(0,0.0);
   h_fc_123_68->SetLineStyle(2);
+  h_fc_123_68->SetLineWidth(linewidth_val);
   h_fc_123_90->SetContour(1);
   h_fc_123_90->SetContourLevel(0,0.0);
   h_fc_123_90->SetLineStyle(1);
+  h_fc_123_90->SetLineWidth(linewidth_val);
 
   //2all FC
   TH2D * h_fcall_123_68 = 0;
@@ -161,9 +179,11 @@ void plot_contour_comparisons
   h_fcall_123_68->SetContour(1);
   h_fcall_123_68->SetContourLevel(0,0.0);
   h_fcall_123_68->SetLineStyle(2);
+  h_fcall_123_68->SetLineWidth(linewidth_val);
   h_fcall_123_90->SetContour(1);
   h_fcall_123_90->SetContourLevel(0,0.0);
   h_fcall_123_90->SetLineStyle(1);
+  h_fcall_123_90->SetLineWidth(linewidth_val);
 
   //2all FC 2nd octant
   TH2D * h_fcall_octant2only23_68 = 0;
@@ -173,9 +193,11 @@ void plot_contour_comparisons
   h_fcall_octant2only23_68->SetContour(1);
   h_fcall_octant2only23_68->SetContourLevel(0,0.0);
   h_fcall_octant2only23_68->SetLineStyle(2);
+  h_fcall_octant2only23_68->SetLineWidth(linewidth_val);
   h_fcall_octant2only23_90->SetContour(1);
   h_fcall_octant2only23_90->SetContourLevel(0,0.0);
   h_fcall_octant2only23_90->SetLineStyle(1);
+  h_fcall_octant2only23_90->SetLineWidth(linewidth_val);
 
   //2all const dchisq
   TH2D * h_dcall_123 = 0;
@@ -185,9 +207,13 @@ void plot_contour_comparisons
   h_dcall_123_68->SetContour(1);
   h_dcall_123_68->SetContourLevel(0,2.30);
   h_dcall_123_68->SetLineStyle(2);
+  h_dcall_123_68->SetLineWidth(linewidth_val);
+  h_dcall_123_68->SetLineWidth(linewidth_val);
   h_dcall_123_90->SetContour(1);
   h_dcall_123_90->SetContourLevel(0,4.61);
   h_dcall_123_90->SetLineStyle(1);
+  h_dcall_123_90->SetLineWidth(linewidth_val);
+  h_dcall_123_90->SetLineWidth(linewidth_val);
 
   TH2D * h_dcall_12 = 0;
   f_dcall_12.GetObject("hdchisq",h_dcall_12);
@@ -196,9 +222,11 @@ void plot_contour_comparisons
   h_dcall_12_68->SetContour(1);
   h_dcall_12_68->SetContourLevel(0,2.30);
   h_dcall_12_68->SetLineStyle(2);
+  h_dcall_12_68->SetLineWidth(linewidth_val);
   h_dcall_12_90->SetContour(1);
   h_dcall_12_90->SetContourLevel(0,4.61);
   h_dcall_12_90->SetLineStyle(1);
+  h_dcall_12_90->SetLineWidth(linewidth_val);
 
   TH2D * h_dcall_3 = 0;
   f_dcall_3.GetObject("hdchisq",h_dcall_3);
@@ -207,9 +235,11 @@ void plot_contour_comparisons
   h_dcall_3_68->SetContour(1);
   h_dcall_3_68->SetContourLevel(0,2.30);
   h_dcall_3_68->SetLineStyle(2);
+  h_dcall_3_68->SetLineWidth(linewidth_val);
   h_dcall_3_90->SetContour(1);
   h_dcall_3_90->SetContourLevel(0,4.61);
   h_dcall_3_90->SetLineStyle(1);
+  h_dcall_3_90->SetLineWidth(linewidth_val);
 
   //2all with 2013 banff
   TH2D * h_dcall_banff13v0 = 0;
@@ -219,9 +249,11 @@ void plot_contour_comparisons
   h_dcall_banff13v0_68->SetContour(1);
   h_dcall_banff13v0_68->SetContourLevel(0,2.30);
   h_dcall_banff13v0_68->SetLineStyle(2);
+  h_dcall_banff13v0_68->SetLineWidth(linewidth_val);
   h_dcall_banff13v0_90->SetContour(1);
   h_dcall_banff13v0_90->SetContourLevel(0,4.61);
   h_dcall_banff13v0_90->SetLineStyle(1);
+  h_dcall_banff13v0_90->SetLineWidth(linewidth_val);
 
   TH2D * h_dcall_banff13v3 = 0;
   f_dcall_banff13v3.GetObject("hdchisq",h_dcall_banff13v3);
@@ -230,9 +262,11 @@ void plot_contour_comparisons
   h_dcall_banff13v3_68->SetContour(1);
   h_dcall_banff13v3_68->SetContourLevel(0,2.30);
   h_dcall_banff13v3_68->SetLineStyle(2);
+  h_dcall_banff13v3_68->SetLineWidth(linewidth_val);
   h_dcall_banff13v3_90->SetContour(1);
   h_dcall_banff13v3_90->SetContourLevel(0,4.61);
   h_dcall_banff13v3_90->SetLineStyle(1);
+  h_dcall_banff13v3_90->SetLineWidth(linewidth_val);
 
   //OCTANT 2
   TH2D * h_dcall_octant2only23 = 0;
@@ -243,10 +277,12 @@ void plot_contour_comparisons
   h_dcall_octant2only23_68->SetContourLevel(0,2.30);
   //h_dcall_octant2only23_68->SetContourLevel(1,2.30);
   h_dcall_octant2only23_68->SetLineStyle(2);
+  h_dcall_octant2only23_68->SetLineWidth(linewidth_val);
   h_dcall_octant2only23_90->SetContour(1);
   h_dcall_octant2only23_90->SetContourLevel(0,4.61);
   //h_dcall_octant2only23_90->SetContourLevel(1,4.61);
   h_dcall_octant2only23_90->SetLineStyle(1);
+  h_dcall_octant2only23_90->SetLineWidth(linewidth_val);
   cout << h_dcall_octant2only23_90->GetContourLevel(0) << "\t" << h_dcall_octant2only23_90->GetContourLevel(1) << endl;
   cout << h_dcall_octant2only23_68->GetContourLevel(0) << "\t" << h_dcall_octant2only23_68->GetContourLevel(1) << endl;
   /*
@@ -258,10 +294,14 @@ void plot_contour_comparisons
   h_dcall_octant2only23_68->SetContour(1);
   h_dcall_octant2only23_68->SetContourLevel(0,2.30+octant2only23_chisq_bf);
   h_dcall_octant2only23_68->SetLineStyle(2);
+  h_dcall_octant2only23_68->SetLineWidth(linewidth_val);
   h_dcall_octant2only23_90->SetContour(1);
   h_dcall_octant2only23_90->SetContourLevel(0,4.61+octant2only23_chisq_bf);
   h_dcall_octant2only23_90->SetLineStyle(1);
+  h_dcall_octant2only23_90->SetLineWidth(linewidth_val);
   */
+  h_dcall_octant2only23_90->SetLineWidth(2);
+  h_dcall_octant2only23_68->SetLineWidth(2);
 
   //KIT DC
   TH2D * h_dc_kit_68 = 0;
@@ -271,9 +311,11 @@ void plot_contour_comparisons
   //h_dc_kit_68->SetContour(1);
   //h_dc_kit_68->SetContourLevel(0,0.0);
   h_dc_kit_68->SetLineStyle(2);
+  h_dc_kit_68->SetLineWidth(linewidth_val);
   //h_dc_kit_90->SetContour(1);
   //h_dc_kit_90->SetContourLevel(0,0.0);
   h_dc_kit_90->SetLineStyle(1);
+  h_dc_kit_90->SetLineWidth(linewidth_val);
   
   //KIT FC
   TH2D * h_fc_kit_68 = 0;
@@ -299,7 +341,9 @@ void plot_contour_comparisons
     f_fc_kit.GetObject("hfccontkit90",h_fc_kit_90);
   }
   h_fc_kit_68->SetLineStyle(2);
+  h_fc_kit_68->SetLineWidth(linewidth_val);
   h_fc_kit_90->SetLineStyle(1);
+  h_fc_kit_90->SetLineWidth(linewidth_val);
 
 
 
@@ -356,6 +400,16 @@ void plot_contour_comparisons
   g_run12_90_stat->SetName("g_run12_90_stat");
   g_run12_68_statsyst->SetName("g_run12_68_statsyst");
   g_run12_90_statsyst->SetName("g_run12_90_statsyst");
+  //width
+  double linewidth_ext = 1.5;
+  g_skle->SetLineWidth(linewidth_ext);
+  g_skzen->SetLineWidth(linewidth_ext);
+  g_ice->SetLineWidth(linewidth_ext);
+  g_run12_68_stat->SetLineWidth(linewidth_ext);
+  g_run12_90_stat->SetLineWidth(linewidth_ext);
+  g_run12_68_statsyst->SetLineWidth(linewidth_ext);
+  g_run12_90_statsyst->SetLineWidth(linewidth_ext);
+  ll_minos->SetLineWidth(linewidth_ext);
 
 
   // param space
@@ -460,6 +514,7 @@ void plot_contour_comparisons
   bestfit.SetMarkerColor(kBlack);
   bestfit.Draw();
   c->SaveAs("compare_FC_constchisq.eps");
+  c->SaveAs("compare_FC_constchisq.C");
 
   //Run 1-3 const dchisq vs FC (2+all)
   osc_param_space->GetXaxis()->SetRangeUser(0.85,1.0);
@@ -506,6 +561,7 @@ void plot_contour_comparisons
   bestfit_2all_octant2.SetMarkerColor(kBlack);
   bestfit_2all_octant2.Draw();
   c->SaveAs("compare_FC_constchisq_2NO2.eps");
+  c->SaveAs("compare_FC_constchisq_2NO2.pdf");
 
   //Run 1-3 const dchisq banff 12v8 vs 13v0
   osc_param_space->GetXaxis()->SetRangeUser(0.9,1.0);
@@ -557,10 +613,10 @@ void plot_contour_comparisons
   osc_param_space->GetXaxis()->SetRangeUser(0.9,1.0);
   osc_param_space->GetYaxis()->SetRangeUser(0.002,0.0033);
   osc_param_space->Draw();  
-  h_dcall_123_68->SetLineColor(kRed);
-  h_dcall_123_90->SetLineColor(kRed);
-  h_dcall_octant2only23_68->SetLineColor(kBlack);
-  h_dcall_octant2only23_90->SetLineColor(kBlack);
+  h_dcall_123_68->SetLineColor(kBlack);
+  h_dcall_123_90->SetLineColor(kBlack);
+  h_dcall_octant2only23_68->SetLineColor(kRed);
+  h_dcall_octant2only23_90->SetLineColor(kRed);
   h_dcall_123_68->Draw("cont3same");
   h_dcall_123_90->Draw("cont3same");
   h_dcall_octant2only23_68->Draw("cont3same");
@@ -572,9 +628,10 @@ void plot_contour_comparisons
   leg->AddEntry(h_dcall_octant2only23_90, "Octant 2 const #Delta#chi^{2} 90% CL","l");
   leg->Draw();
   bestfit_2all.SetMarkerStyle(29);
-  bestfit_2all.SetMarkerColor(kRed);
+  bestfit_2all.SetMarkerColor(kBlack);
   bestfit_2all.Draw();
-  bestfit_2all_octant2.SetMarkerColor(kBlack);
+  bestfit_2all_octant2.SetMarkerStyle(25);
+  bestfit_2all_octant2.SetMarkerColor(kRed);
   bestfit_2all_octant2.SetMarkerSize(1.8);
   bestfit_2all_octant2.Draw();
   c->SaveAs("compare_octants.pdf");
@@ -584,10 +641,10 @@ void plot_contour_comparisons
   osc_param_space->GetXaxis()->SetRangeUser(0.9,1.0);
   osc_param_space->GetYaxis()->SetRangeUser(0.002,0.0033);
   osc_param_space->Draw();  
-  h_fcall_123_68->SetLineColor(kRed);
-  h_fcall_123_90->SetLineColor(kRed);
-  h_fcall_octant2only23_68->SetLineColor(kBlack);
-  h_fcall_octant2only23_90->SetLineColor(kBlack);
+  h_fcall_123_68->SetLineColor(kBlack);
+  h_fcall_123_90->SetLineColor(kBlack);
+  h_fcall_octant2only23_68->SetLineColor(kRed);
+  h_fcall_octant2only23_90->SetLineColor(kRed);
   h_fcall_123_68->Draw("cont3same");
   h_fcall_123_90->Draw("cont3same");
   h_fcall_octant2only23_68->Draw("cont3same");
@@ -599,9 +656,10 @@ void plot_contour_comparisons
   leg->AddEntry(h_fcall_octant2only23_90, "Octant 2 FC 90% CL","l");
   leg->Draw();
   bestfit_2all.SetMarkerStyle(29);
-  bestfit_2all.SetMarkerColor(kRed);
+  bestfit_2all.SetMarkerColor(kBlack);
   bestfit_2all.Draw();
-  bestfit_2all_octant2.SetMarkerColor(kBlack);
+  bestfit_2all_octant2.SetMarkerStyle(25);
+  bestfit_2all_octant2.SetMarkerColor(kRed);
   bestfit_2all_octant2.SetMarkerSize(1.8);
   bestfit_2all_octant2.Draw();
   c->SaveAs("compare_octants_FC.pdf");
@@ -734,21 +792,16 @@ void plot_contour_comparisons
   osc_param_space->GetXaxis()->SetRangeUser(0.85,1.0);
   osc_param_space->GetYaxis()->SetRangeUser(0.0018,0.0035);
   osc_param_space->Draw();  
-  h_dcall_octant2only23_90->SetLineColor(kRed);
-  h_dcall_123_90->SetLineColor(kBlack);
-  h_dcall_octant2only23_90->SetLineWidth(2);
-  h_dcall_123_90->SetLineWidth(2);
-  h_dcall_octant2only23_90->Draw("cont3same");
-  h_dcall_123_90->Draw("cont3same");
+  h_fcall_octant2only23_90->SetLineColor(kRed);
+  h_fcall_123_90->SetLineColor(kBlack);
+  h_fcall_octant2only23_90->Draw("cont3same");
+  h_fcall_123_90->Draw("cont3same");
   leg->Clear();
-  leg->AddEntry(h_dcall_123_90, "T2K FC 3#nu (octant 1) 90% CL","l");
-  leg->AddEntry(h_dcall_octant2only23_90, "T2K FC 3#nu (octant 2) 90% CL","l");
+  leg->AddEntry(h_fcall_123_90, "T2K FC 3#nu (octant 1) 90% CL","l");
+  leg->AddEntry(h_fcall_octant2only23_90, "T2K FC 3#nu (octant 2) 90% CL","l");
   ll_minos->SetLineColor(kBlack);
-  ll_minos->SetLineWidth(1);
   g_skzen->SetLineColor(kBlue);
-  g_skzen->SetLineWidth(1);
   g_skle->SetLineColor(kGreen+2);
-  g_skle->SetLineWidth(1);
   ll_minos->Draw("cont3same");
   g_skle->Draw("l");
   g_skzen->Draw("l");
@@ -756,8 +809,11 @@ void plot_contour_comparisons
   leg->AddEntry("g_skle", "SuperK 2012 L/E 2#nu 90% CL", "l");
   leg->AddEntry("g_skzen", "SuperK 2012 zenith 3#nu 90% CL", "l");
   leg->Draw();
-  bestfit_2all_octant2.SetMarkerStyle(29);
-  bestfit_2all_octant2.SetMarkerColor(kBlack);
+  bestfit_2all.SetMarkerStyle(29);
+  bestfit_2all.SetMarkerColor(kBlack);
+  bestfit_2all.Draw();
+  bestfit_2all_octant2.SetMarkerStyle(25);
+  bestfit_2all_octant2.SetMarkerColor(kRed);
   bestfit_2all_octant2.Draw();
   c->SaveAs("compare_FC_octants_external.eps");
   c->SaveAs("compare_FC_octants_external.pdf");
@@ -949,7 +1005,6 @@ void plot_contour_comparisons
   osc_param_space->GetYaxis()->SetRangeUser(0.002,0.003);
   osc_param_space->Draw();  
   ll_minos->SetLineColor(kBlack);
-  ll_minos->SetLineWidth(2);
   h_dc_dchisqratio1_282N->SetContour(255);
   h_dc_dchisqratio2_282N->SetContour(255);
   c->SetRightMargin(0.13);
@@ -962,9 +1017,7 @@ void plot_contour_comparisons
   c->SaveAs("compare_2all_28_dchisqdiff_nM8OnP8O2.eps");
   //draw again, with t2k contour
   Color_t fccol = h_fc_123_90->GetLineColor();
-  Width_t fcwid = h_fc_123_90->GetLineWidth();
   h_fc_123_90->SetLineColor(kBlack);
-  h_fc_123_90->SetLineWidth(2);
   osc_param_space->Draw();
   h_dc_dchisqratio1_282N->Draw("colzsame");
   h_fc_123_90->Draw("cont3same");
@@ -1005,7 +1058,6 @@ void plot_contour_comparisons
   h_fc_123_90->Draw("cont3same");
   c->SaveAs("compare_2all_28_dchisqdiff_nM8OnP8O2_zoom_t2kcont.eps");
   h_fc_123_90->SetLineColor(fccol);
-  h_fc_123_90->SetLineWidth(fcwid);
 
   //compare dchisq surfaces for different octants
   TH2D * h_dc_dchisqratio1_O1O2 = new TH2D(*h_dcall_octant2only23);
@@ -1042,7 +1094,6 @@ void plot_contour_comparisons
   osc_param_space->GetYaxis()->SetRangeUser(0.0021,0.0029);
   osc_param_space->Draw();  
   ll_minos->SetLineColor(kBlack);
-  ll_minos->SetLineWidth(2);
   h_dc_dchisqratio1_O1O2->SetContour(255);
   h_dc_dchisqratio2_O1O2->SetContour(255);
   c->SetRightMargin(0.13);
@@ -1055,9 +1106,7 @@ void plot_contour_comparisons
   c->SaveAs("compare_octants_dchisqdiff_nM8OnP8O2.eps");
   //draw again, with t2k contour
   Color_t fccol = h_fc_123_90->GetLineColor();
-  Width_t fcwid = h_fc_123_90->GetLineWidth();
   h_fc_123_90->SetLineColor(kBlack);
-  h_fc_123_90->SetLineWidth(2);
   osc_param_space->Draw();
   h_dc_dchisqratio1_O1O2->Draw("colzsame");
   h_fc_123_90->Draw("cont3same");
@@ -1098,8 +1147,6 @@ void plot_contour_comparisons
   h_fc_123_90->Draw("cont3same");
   c->SaveAs("compare_octants_dchisqdiff_nM8OnP8O2_zoom_t2kcont.eps");
   h_fc_123_90->SetLineColor(fccol);
-  h_fc_123_90->SetLineWidth(fcwid);
-  exit(1);
 
   //compare KIT/VaLOR dchisq_crit surfaces
   TH2D * h_crit_68 = 0;
@@ -1181,6 +1228,7 @@ void plot_contour_comparisons
   TH2D * h_sens_90 = 0;
   f_sens.GetObject("dchisq_for_cont1_90",h_sens_90);
   h_sens_68->SetLineStyle(2);
+  h_sens_68->SetLineWidth(linewidth_val);
   h_sens_68->SetLineColor(kBlue-3);
   h_sens_90->SetLineColor(kBlue-3);
   osc_param_space->GetXaxis()->SetRangeUser(0.85,1.0);
@@ -1364,18 +1412,6 @@ void plot_contour_comparisons
   c->SaveAs("compare_contours_constdchisq_2all_28_20.pdf");
 
   //change colors for kit comparisons
-  ll_minos->SetLineWidth(1);
-  g_skle->SetLineWidth(1);
-  g_skzen->SetLineWidth(1);
-  g_run12_90_statsyst->SetLineWidth(1);
-  h_dc_28_fine_68->SetLineWidth(2);
-  h_dc_28_fine_90->SetLineWidth(2);
-  h_dc_kit_68->SetLineWidth(2);
-  h_dc_kit_90->SetLineWidth(2);
-  h_fc_123_68->SetLineWidth(2);
-  h_fc_123_90->SetLineWidth(2);
-  h_fc_kit_68->SetLineWidth(2);
-  h_fc_kit_90->SetLineWidth(2);
   ll_minos->SetLineColor(kGreen+2);
   g_skle->SetLineColor(kBlue);
   g_skzen->SetLineColor(kCyan+1);
@@ -1563,13 +1599,9 @@ void plot_contour_comparisons
   h_fc_kit_90->Draw("cont3same");
   g_run12_90_statsyst->SetLineStyle(2);
   g_run12_90_statsyst->SetLineColor(kBlack);
-  g_run12_90_statsyst->SetLineWidth(1);
   ll_minos->SetLineColor(kBlack);
-  ll_minos->SetLineWidth(1);
   g_skle->SetLineColor(kGreen+2);
-  g_skle->SetLineWidth(1);
   g_skzen->SetLineColor(kBlue);
-  g_skzen->SetLineWidth(1);
   //g_run12_90_statsyst->Draw("l");
   ll_minos->Draw("cont3same");
   g_skle->Draw("l");
@@ -1623,13 +1655,9 @@ void plot_contour_comparisons
   h_fc_kit_90->Draw("cont3same");
   g_run12_90_statsyst->SetLineStyle(2);
   g_run12_90_statsyst->SetLineColor(kBlack);
-  g_run12_90_statsyst->SetLineWidth(1);
   ll_minos->SetLineColor(kBlack);
-  ll_minos->SetLineWidth(1);
   g_skle->SetLineColor(kGreen+2);
-  g_skle->SetLineWidth(1);
   g_skzen->SetLineColor(kBlue);
-  g_skzen->SetLineWidth(1);
   g_run12_90_statsyst->Draw("l");
   ll_minos->Draw("cont3same");
   g_skle->Draw("l");
@@ -1680,19 +1708,13 @@ void plot_contour_comparisons
   osc_param_space->GetXaxis()->SetRangeUser(0.82,1.0);
   osc_param_space->GetYaxis()->SetRangeUser(0.0018,0.0038);
   osc_param_space->Draw(); 
-  h_fcall_123_68->SetLineWidth(2);
-  h_fcall_123_90->SetLineWidth(2);
   //h_fcall_123_68->Draw("cont3same");
   h_fcall_123_90->Draw("cont3same");
   g_run12_90_statsyst->SetLineStyle(2);
   g_run12_90_statsyst->SetLineColor(kBlack);
-  g_run12_90_statsyst->SetLineWidth(1);
   ll_minos->SetLineColor(kRed);
-  ll_minos->SetLineWidth(1);
   g_skle->SetLineColor(kGreen+2);
-  g_skle->SetLineWidth(1);
   g_skzen->SetLineColor(kBlue);
-  g_skzen->SetLineWidth(1);
   //g_run12_90_statsyst->Draw("l");
   ll_minos->Draw("cont3same");
   g_skle->Draw("l");
@@ -1715,19 +1737,13 @@ void plot_contour_comparisons
   osc_param_space->GetXaxis()->SetRangeUser(0.82,1.0);
   osc_param_space->GetYaxis()->SetRangeUser(0.0018,0.0038);
   osc_param_space->Draw(); 
-  h_fcall_123_68->SetLineWidth(2);
-  h_fcall_123_90->SetLineWidth(2);
   //h_fcall_123_68->Draw("cont3same");
   h_fcall_123_90->Draw("cont3same");
   g_run12_90_statsyst->SetLineStyle(2);
   g_run12_90_statsyst->SetLineColor(kBlack);
-  g_run12_90_statsyst->SetLineWidth(1);
   ll_minos->SetLineColor(kRed);
-  ll_minos->SetLineWidth(1);
   g_skle->SetLineColor(kGreen+2);
-  g_skle->SetLineWidth(1);
   g_skzen->SetLineColor(kBlue);
-  g_skzen->SetLineWidth(1);
   g_run12_90_statsyst->Draw("l");
   ll_minos->Draw("cont3same");
   g_skle->Draw("l");
@@ -1754,19 +1770,13 @@ void plot_contour_comparisons
   osc_param_space->GetXaxis()->SetRangeUser(0.82,1.0);
   osc_param_space->GetYaxis()->SetRangeUser(0.0018,0.0038);
   osc_param_space->Draw(); 
-  h_dcall_123_68->SetLineWidth(2);
-  h_dcall_123_90->SetLineWidth(2);
   //h_dcall_123_68->Draw("cont3same");
   h_dcall_123_90->Draw("cont3same");
   g_run12_90_statsyst->SetLineStyle(2);
   g_run12_90_statsyst->SetLineColor(kBlack);
-  g_run12_90_statsyst->SetLineWidth(1);
   ll_minos->SetLineColor(kRed);
-  ll_minos->SetLineWidth(1);
   g_skle->SetLineColor(kGreen+2);
-  g_skle->SetLineWidth(1);
   g_skzen->SetLineColor(kBlue);
-  g_skzen->SetLineWidth(1);
   //g_run12_90_statsyst->Draw("l");
   ll_minos->Draw("cont3same");
   g_skle->Draw("l");
@@ -1789,19 +1799,13 @@ void plot_contour_comparisons
   osc_param_space->GetXaxis()->SetRangeUser(0.82,1.0);
   osc_param_space->GetYaxis()->SetRangeUser(0.0018,0.0038);
   osc_param_space->Draw(); 
-  h_dcall_123_68->SetLineWidth(2);
-  h_dcall_123_90->SetLineWidth(2);
   //h_dcall_123_68->Draw("cont3same");
   h_dcall_123_90->Draw("cont3same");
   g_run12_90_statsyst->SetLineStyle(2);
   g_run12_90_statsyst->SetLineColor(kBlack);
-  g_run12_90_statsyst->SetLineWidth(1);
   ll_minos->SetLineColor(kRed);
-  ll_minos->SetLineWidth(1);
   g_skle->SetLineColor(kGreen+2);
-  g_skle->SetLineWidth(1);
   g_skzen->SetLineColor(kBlue);
-  g_skzen->SetLineWidth(1);
   g_run12_90_statsyst->Draw("l");
   ll_minos->Draw("cont3same");
   g_skle->Draw("l");
@@ -1883,32 +1887,33 @@ void plot_contour_comparisons
 
   //PAPER
   //Run 1-3 FC only with externals + old t2k
+  c->SetRightMargin(0.01);
+  c->SetTopMargin(0.01);
+  c->SetBottomMargin(0.14);
   osc_param_space->GetXaxis()->SetRangeUser(0.82,1.0);
-  osc_param_space->GetYaxis()->SetRangeUser(0.0019,0.0039);
+  osc_param_space->GetYaxis()->SetRangeUser(0.0018,0.0042);
   cout <<   osc_param_space->GetXaxis()->GetTitleFont() << endl;
   osc_param_space->GetXaxis()->SetTitleFont(132);
   osc_param_space->Draw(); 
-  h_fcall_123_68->SetLineWidth(2);
-  h_fcall_123_90->SetLineWidth(2);
   //h_fcall_123_68->Draw("cont3same");
-  g_run12_90_statsyst->SetLineStyle(2);
+  g_run12_90_statsyst->SetLineStyle(3);
   g_run12_90_statsyst->SetLineColor(kBlack);
-  g_run12_90_statsyst->SetLineWidth(1);
+  h_fcall_octant2only23_90->SetLineStyle(2);
   ll_minos->SetLineColor(kRed);
-  ll_minos->SetLineWidth(1);
   g_skle->SetLineColor(kGreen+2);
-  g_skle->SetLineWidth(1);
   g_skzen->SetLineColor(kBlue);
-  g_skzen->SetLineWidth(1);
   g_skzen->Draw("l");
   g_skle->Draw("l");
   ll_minos->Draw("cont3same");
   g_run12_90_statsyst->Draw("l");
   h_fcall_123_90->Draw("cont3same");
+  h_fcall_octant2only23_90->Draw("cont3same");
   bestfit_2all.Draw();
+  bestfit_2all_octant2.SetMarkerStyle(25);
+  bestfit_2all_octant2.Draw();
   leg2->Clear();
   delete leg2;
-  leg2 = new TLegend(0.185,0.63,0.45,0.92);
+  leg2 = new TLegend(0.185,0.58,0.45,0.95);
   leg2->SetFillColor(0);
   leg2->SetFillStyle(0);
   leg2->SetBorderSize(0);
@@ -1916,7 +1921,8 @@ void plot_contour_comparisons
   leg2->SetTextFont(132);
   cout << leg2->GetTextFont() << endl;
   //leg2->AddEntry(h_fcall_123_68, "T2K 3#nu 68% CL","l");
-  leg2->AddEntry(h_fcall_123_90, "T2K 3#nu 90% CL","l");
+  leg2->AddEntry(h_fcall_123_90, "T2K 3#nu (sin^{2}#theta_{23} #leq 0.5) 90% CL","l");
+  leg2->AddEntry(h_fcall_octant2only23_90, "T2K 3#nu (sin^{2}#theta_{23} #geq 0.5) 90% CL","l");
   leg2->AddEntry("g_run12_90_statsyst", "T2K 2011 2#nu 90% CL", "l");
   leg2->AddEntry(ll_minos, "MINOS 2013 2#nu 90% CL", "l");
   leg2->AddEntry("g_skzen", "SK zenith 2012 3#nu 90% CL", "l");
@@ -1924,12 +1930,13 @@ void plot_contour_comparisons
   leg2->SetX2NDC(0.6);
   leg2->SetTextSize(0.06);
   leg2->Draw();
-  TLegend * legbf = new TLegend(0.185, 0.11, 0.45, 0.35);
+  TLegend * legbf = new TLegend(0.185, 0.17, 0.45, 0.30);
   legbf->SetFillColor(0);
   legbf->SetFillStyle(0);
   legbf->SetBorderSize(0);
   legbf->SetTextFont(132);
-  legbf->AddEntry(&bestfit_2all, "T2K 3#nu best fit","p");
+  legbf->AddEntry(&bestfit_2all, "T2K 3#nu (sin^{2}#theta_{23} #leq 0.5) best fit","p");
+  legbf->AddEntry(&bestfit_2all_octant2, "T2K 3#nu (sin^{2}#theta_{23} #geq 0.5) best fit","p");
   legbf->SetX2NDC(0.6);
   legbf->SetTextSize(0.06);
   legbf->Draw();
