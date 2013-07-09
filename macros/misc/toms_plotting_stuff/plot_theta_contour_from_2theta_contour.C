@@ -3,13 +3,16 @@
 //takes 3 inputs
 // 2 sinsq2theta23 contours (one from each octant
 // 1 sinsqthet23 contour
+// 1 contour from numu-only part of joint analysis
 //sinsq2theta23 contours are converted to sinsqtheta23 contours
 
 void plot_theta_contour_from_2theta_contour
 (
  const char * filename1 = "2012results/NEWRESULTS/datafit/dchisq_2all.root",
  const char * filename2 = "2012results/DATA/octant2_23only/combination/fitresults_3.root",
- const char * filename_thetafit = "2012results/DATA/sintheta23/combine/combination/fitresults_3.root"
+ const char * filename_thetafit = "2012results/DATA/sintheta23/combine/combination/fitresults_3.root",
+ const char * filename_thetafit_DM = "2012results/DATA/sintheta23_DM/contours_disap.root",
+ bool draw_DM = false
 )
 {
   TFile f1(filename1);
@@ -49,6 +52,47 @@ void plot_theta_contour_from_2theta_contour
   hsinsqtheta3_90->SetLineStyle(1);
   hsinsqtheta3_68->SetLineColor(kBlue);
   hsinsqtheta3_90->SetLineColor(kBlue);
+
+  TFile f4(filename_thetafit_DM);
+  TH2D * hsinsqtheta4_DM_68 = 0, * hsinsqtheta4_DM_90 = 0;
+  f4.GetObject("h_theta23_dm23sq_disap",   hsinsqtheta4_DM_90);
+  f4.GetObject("h_theta23_dm23sq_disap_68",hsinsqtheta4_DM_68);
+  hsinsqtheta4_DM_68->SetLineStyle(3);
+  hsinsqtheta4_DM_90->SetLineStyle(1);
+  hsinsqtheta4_DM_68->SetLineColor(kYellow+1);
+  hsinsqtheta4_DM_90->SetLineColor(kYellow+1);
+
+  //convert from DMsq to dm32sq
+  // get y axis array
+  int nxbins_DM = hsinsqtheta4_DM_68->GetNbinsX();
+  int nybins_DM = hsinsqtheta4_DM_68->GetNbinsY();
+  double xbins_dm32sq[100] = {0};
+  double ybins_dm32sq[100] = {0};
+  for(int i = 0; i <= nybins_DM; i++) {
+    ybins_dm32sq[i] = hsinsqtheta4_DM_68->GetYaxis()->GetBinUpEdge(i) - 3.75E-5; //subtract dm12sq/2
+  }
+  for(int i = 0; i <= nxbins_DM; i++) {
+    xbins_dm32sq[i] = hsinsqtheta4_DM_68->GetXaxis()->GetBinUpEdge(i);
+  }
+  //make new histograms
+  TH2D * hsinsqtheta4_68 = new TH2D("","",nxbins_DM,xbins_dm32sq,nybins_DM,ybins_dm32sq);
+  TH2D * hsinsqtheta4_90 = new TH2D("","",nxbins_DM,xbins_dm32sq,nybins_DM,ybins_dm32sq);
+  for(int ix = 1; ix <= nxbins_DM; ix++) {
+    for(int iy = 1; iy <= nybins_DM; iy++) {
+      hsinsqtheta4_68->SetBinContent(ix,iy, hsinsqtheta4_DM_68->GetBinContent(ix,iy));
+      hsinsqtheta4_90->SetBinContent(ix,iy, hsinsqtheta4_DM_90->GetBinContent(ix,iy));
+    }
+  }
+  hsinsqtheta4_68->SetContour(1);
+  hsinsqtheta4_68->SetContourLevel(0,0);
+  hsinsqtheta4_90->SetContour(1);
+  hsinsqtheta4_90->SetContourLevel(0,0);
+  hsinsqtheta4_68->SetLineStyle(3);
+  hsinsqtheta4_90->SetLineStyle(1);
+  hsinsqtheta4_68->SetLineColor(kYellow+1);
+  hsinsqtheta4_90->SetLineColor(kYellow+1);
+
+  
 
   //make an array of sinsqtheta values from sinsq2theta axis
   const int nbinsx1  = hsinsq2theta1->GetNbinsX();
@@ -241,6 +285,10 @@ void plot_theta_contour_from_2theta_contour
   hsinsqtheta2o2_68->Draw("cont3same");
   hsinsqtheta3_90->Draw("cont3same");
   hsinsqtheta3_68->Draw("cont3same");
+  if(draw_DM) {
+    hsinsqtheta4_90->Draw("cont3same");
+    hsinsqtheta4_68->Draw("cont3same");
+  }
   bf1o1.Draw();
   //bf1o2.Draw();
   //bf2o1.Draw();
@@ -257,6 +305,8 @@ void plot_theta_contour_from_2theta_contour
   leg1->AddEntry(hsinsqtheta1o1_90, "Octant 1", "l");
   leg1->AddEntry(hsinsqtheta2o2_90, "Octant 2", "l");
   leg1->AddEntry(hsinsqtheta3_90, "sin^{2}#theta_{23}", "l");
+  if(draw_DM)
+    leg1->AddEntry(hsinsqtheta3_90, "sin^{2}#theta_{23}-DMSQ", "l");
   leg1->Draw();
   c->SaveAs("contour_compare_octants_sinsqtheta.pdf");
   c->SaveAs("contour_compare_octants_sinsqtheta.eps");
