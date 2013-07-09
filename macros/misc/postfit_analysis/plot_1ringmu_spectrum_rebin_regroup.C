@@ -146,6 +146,7 @@ void plot_1ringmu_spectrum_rebin_regroup
      h_sk_1Rmu_signueccqe    = (TH1D*) sk_1Rmu_signueccqe    -> Rebin(kNErecoBins1Rmu, "h_sk_1Rmu_signueccqe",    kErecoBinEdges1Rmu);
      h_sk_1Rmu_signuecc1pi   = (TH1D*) sk_1Rmu_signuecc1pi   -> Rebin(kNErecoBins1Rmu, "h_sk_1Rmu_signuecc1pi",   kErecoBinEdges1Rmu);
      h_sk_1Rmu_signuecccoh   = (TH1D*) sk_1Rmu_signuecccoh   -> Rebin(kNErecoBins1Rmu, "h_sk_1Rmu_signuecccoh",   kErecoBinEdges1Rmu);
+     h_sk_1Rmu_signueccoth   = (TH1D*) sk_1Rmu_signueccoth   -> Rebin(kNErecoBins1Rmu, "h_sk_1Rmu_signueccoth",   kErecoBinEdges1Rmu);
   } else {
      h_sk_1Rmu_total         = new TH1D(*sk_1Rmutotal);
      h_sk_1Rmu_numuccqe      = new TH1D(*sk_1Rmu_numuccqe);
@@ -175,6 +176,7 @@ void plot_1ringmu_spectrum_rebin_regroup
      h_sk_1Rmu_signueccqe    = new TH1D(*sk_1Rmu_signueccqe);
      h_sk_1Rmu_signuecc1pi   = new TH1D(*sk_1Rmu_signuecc1pi);
      h_sk_1Rmu_signuecccoh   = new TH1D(*sk_1Rmu_signuecccoh);
+     h_sk_1Rmu_signueccoth   = new TH1D(*sk_1Rmu_signueccoth);
   }
 
 //  pdffile->Close();

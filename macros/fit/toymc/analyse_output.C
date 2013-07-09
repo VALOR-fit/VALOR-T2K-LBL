@@ -835,9 +835,10 @@ void analyse_output
   TPaletteAxis *palette = (TPaletteAxis*)dchisq->GetListOfFunctions()->FindObject("palette");
   palette->SetX1NDC(0.86);
   palette->SetX2NDC(0.90);
-  dchisq->GetZaxis()->SetRangeUser(0,dchisq->GetMaximum()*1.05);//50);
+  dchisq->GetZaxis()->SetRangeUser(0,50);//dchisq->GetMaximum()*1.05);//50);
   //  dchisq->GetXaxis()->SetRangeUser(0.8,1.0);
   dchisq->GetYaxis()->SetRangeUser(0.0015,0.0033);
+  dchisq->GetYaxis()->SetTitle("|#Deltam^{2}_{32}| (eV^{2}/c^{4})");
   dchisq->Draw("colz");
   c->SaveAs(Form("dchisq_%d.eps",id));
   c->SaveAs(Form("dchisq_%d.pdf",id));
