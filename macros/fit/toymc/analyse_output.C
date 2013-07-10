@@ -32,6 +32,7 @@ void analyse_output
  bool         draw_2012_contour  = false,
  bool         draw_oldt2k_contours  = false,
  const char * other_spectrum_file = "",
+ const char * other_spectrum_histname = "bf_spectrum",
  int          fake                = -1
 )
 {
@@ -306,10 +307,15 @@ void analyse_output
 
 
   //get comparison hists
-  TH1D * spectrum_other = 0, *spectrum_other_rebin = 0;
+  TH1D * spectrum_other = 0;//, *spectrum_other_rebin = 0;
   TFile f_other_spectra(other_spectrum_file);
-  f_other_spectra.GetObject("hrec_fit_0", spectrum_other);
-  f_other_spectra.GetObject("hrec_fit2_0", spectrum_other_rebin);
+  f_other_spectra.GetObject(other_spectrum_histname, spectrum_other);
+  if(!spectrum_other) {
+    f_other_spectra.ls();
+    cout << other_spectrum_histname << endl;
+    return;
+  }
+  TH1D * spectrum_other_rebin = spectrum_other->Rebin(nbins,"spectrum_noosc_rebin",binedges);
   TH1D * spectrum_ratio_other = new TH1D("","", n_ereco_bins, ereco_bin_edges);
   TH1D * spectrum_ratio_other_rebin = new TH1D("","", nbins, binedges);
   cout << fake << endl;
@@ -524,7 +530,7 @@ void analyse_output
     legg->SetBorderSize(0);
     legg->SetTextFont(132);
     legg->SetTextSize(0.06);
-    legg->AddEntry(spectrum_obs_rebin, "T2K Data", "pl");
+    legg->AddEntry(spectrum_obs_rebin, "T2K Data", "p");
     legg->AddEntry(spectrum_noosc_rebin, "No oscillation hypothesis", "l");
     legg->AddEntry(spectrum_bf_rebin, "T2K best fit", "l");
     legg->AddEntry(spectrum_other_rebin, "T2K best fit alternative analysis", "l");
@@ -543,6 +549,9 @@ void analyse_output
 
     csaxis->cd(0);
     spectrum_obs_rebin->Draw("PE0same");
+
+    csaxis->SaveAs("sk_spectrum_and_ratio_compare.pdf");
+    csaxis->SaveAs("sk_spectrum_and_ratio_compare.eps");
 
     //again, without KIT
     spectrum_bf_rebin->SetLineStyle(1);
@@ -576,14 +585,16 @@ void analyse_output
     csaxis->SaveAs("sk_spectrum_and_ratio.pdf");
     csaxis->SaveAs("sk_spectrum_and_ratio.eps");
 
-    //convert to events/0.1 GeV
+    //convert to events/0.1 GeV (100 MeV)
     TH1D * per_obs   = new TH1D(*spectrum_obs_rebin);
     TH1D * per_noosc = new TH1D(*spectrum_noosc_rebin);
     TH1D * per_bf    = new TH1D(*spectrum_bf_rebin);
+    TH1D * per_other = new TH1D(*spectrum_other_rebin);
     for(int i = 1; i <= per_obs->GetNbinsX(); i++) {
       per_obs->  SetBinContent(i, (per_obs->  GetBinContent(i) / per_obs->  GetBinWidth(i)) * 0.1);
       per_noosc->SetBinContent(i, (per_noosc->GetBinContent(i) / per_noosc->GetBinWidth(i)) * 0.1);
       per_bf->   SetBinContent(i, (per_bf->   GetBinContent(i) / per_bf->   GetBinWidth(i)) * 0.1);
+      per_other->SetBinContent(i, (per_other->GetBinContent(i) / per_other->GetBinWidth(i)) * 0.1);
 
       //per_obs->  SetBinError(i, TMath::Sqrt(per_obs->  GetBinContent(i)));
     }
@@ -595,6 +606,7 @@ void analyse_output
     per_noosc->GetYaxis()->SetRangeUser(0,ymax);
     per_noosc->Draw("");
     per_bf->Draw("same");
+    //per_other->Draw("same");
     delete legg;
     legg = new TLegend(0.3,0.7,0.9,0.9);
     legg->SetFillStyle(0);
@@ -603,16 +615,20 @@ void analyse_output
     legg->SetTextSize(0.06);
     legg->AddEntry(per_obs, "T2K data", "p");
     legg->AddEntry(per_noosc, "No oscillation hypothesis", "l");
-    legg->AddEntry(per_bf, "T2K best fit", "l");
+    legg->AddEntry(per_bf,    "T2K best fit", "l");
+    //legg->AddEntry(per_bf,    "T2K best fit (sin^{2}#theta_{23} #leq 0.5)", "l");
+    //legg->AddEntry(per_other, "T2K best fit (sin^{2}#theta_{23} #geq 0.5)", "l");
     legg->Draw();
     //divide the 0.1 GeV lines
-    TH1D * per_ratio_obs = new TH1D("","", nbins, binedges);
-    TH1D * per_ratio_bf  = new TH1D("","", nbins, binedges);
+    TH1D * per_ratio_obs   = new TH1D("","", nbins, binedges);
+    TH1D * per_ratio_bf    = new TH1D("","", nbins, binedges);
+    TH1D * per_ratio_other = new TH1D("","", nbins, binedges);
     per_obs->Sumw2();
     per_noosc->Sumw2();
     per_ratio_obs->Sumw2();
-    per_ratio_bf-> Divide(per_bf,  per_noosc);
-    per_ratio_obs->Divide(per_obs, per_noosc); 
+    per_ratio_bf   ->Divide(per_bf,    per_noosc);
+    per_ratio_other->Divide(per_other, per_noosc);
+    per_ratio_obs  ->Divide(per_obs,   per_noosc); 
     for(int i = 1; i <= per_ratio_obs->GetNbinsX(); i++) {
       //per_ratio_bf-> SetBinContent(i, per_bf-> GetBinContent(i) / per_noosc->GetBinContent(i));
       if(per_noosc->GetBinContent(i)) {
@@ -624,13 +640,17 @@ void analyse_output
       if(per_ratio_obs->GetBinContent(i) > conv::kASmallNum)
 	per_ratio_obs->SetBinError(i, per_ratio_obs->GetBinContent(i) * per_obs->GetBinError(i) / spectrum_obs_rebin->GetBinContent(i));
     }
-    for(int ix = 1; ix <= per_ratio_bf->GetNbinsX(); ix++)
-      per_ratio_bf->SetBinError(ix,0);
+    for(int ix = 1; ix <= per_ratio_bf->GetNbinsX(); ix++) {
+      per_ratio_bf   ->SetBinError(ix,0);
+      per_ratio_other->SetBinError(ix,0);
+    }
     //ratio style
-    per_ratio_bf->SetLineColor(kRed);
-    per_ratio_bf->SetLineWidth(2);
-    per_ratio_obs->SetLineWidth(2);
-    per_ratio_obs->GetYaxis()->SetNdivisions(505);
+    per_ratio_bf   ->SetLineColor(kRed);
+    per_ratio_bf   ->SetLineWidth(2);
+    per_ratio_other->SetLineColor(kBlue);
+    per_ratio_other->SetLineWidth(2);
+    per_ratio_obs  ->SetLineWidth(2);
+    per_ratio_obs  ->GetYaxis()->SetNdivisions(505);
     //per_ratio_obs->GetYaxis()->SetRangeUser(0,2.9);
     per_ratio_obs->GetYaxis()->SetTitle("#splitline{Ratio to no}{oscillations}");
     per_ratio_obs->GetXaxis()->SetTitle("Reconstructed #nu energy (GeV)");
@@ -648,6 +668,7 @@ void analyse_output
     pad3->Draw();
     pad3->cd(0);
     per_ratio_bf->Draw("");
+    //per_ratio_other->Draw("same");
     spectrum_line->Draw("same");
     per_ratio_obs->Draw("PE0same");
     csaxis->cd(0);
@@ -664,6 +685,10 @@ void analyse_output
 	     << endl;
     }
 
+    for(int ix = 1; ix <= per_ratio_bf->GetNbinsX(); ix++) {
+      cout << per_ratio_bf->GetBinContent(ix) << "\t" << per_ratio_other->GetBinContent(ix) << endl;
+    }
+    return;
   }//spectrum_other_rebin
 
   //pulls
