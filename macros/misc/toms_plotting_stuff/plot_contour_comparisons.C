@@ -1909,7 +1909,7 @@ void plot_contour_comparisons
   h_fcall_123_90->Draw("cont3same");
   h_fcall_octant2only23_90->Draw("cont3same");
   bestfit_2all.Draw();
-  bestfit_2all_octant2.SetMarkerStyle(25);
+  bestfit_2all_octant2.SetMarkerStyle(24);
   bestfit_2all_octant2.Draw();
   leg2->Clear();
   delete leg2;
@@ -2026,4 +2026,25 @@ void plot_contour_comparisons
   c->SaveAs("contour_compare_external_icecube_thick.pdf");
   c->SaveAs("contour_compare_external_icecube_thick.png");
   c->SaveAs("contour_compare_external_icecube_thick.eps");
+
+
+
+  ///checking contour changes
+  h_fcall_123_68->SetLineWidth(1);
+  h_fcall_123_90->SetLineWidth(1);
+  TH2D * h_fcall_123_copy_68 = new TH2D(*h_fcall_123_68);
+  TH2D * h_fcall_123_copy_90 = new TH2D(*h_fcall_123_90);
+  h_fcall_123_copy_68->SetContourLevel(0, h_fcall_123_copy_68->GetContourLevel(0) + 0.01);
+  h_fcall_123_copy_90->SetContourLevel(0, h_fcall_123_copy_90->GetContourLevel(0) + 0.01);
+  h_fcall_123_copy_68->SetLineColor(kRed);
+  h_fcall_123_copy_90->SetLineColor(kRed);
+  osc_param_space->GetXaxis()->SetRangeUser(0.9,1);
+  osc_param_space->GetYaxis()->SetRangeUser(0.002,0.003);
+  osc_param_space->Draw();
+  h_fcall_123_copy_68->Draw("cont3same");
+  h_fcall_123_copy_90->Draw("cont3same");
+  h_fcall_123_68->Draw("cont3same");
+  h_fcall_123_90->Draw("cont3same");
+  c->SaveAs("contour_check.pdf");
+
 }
