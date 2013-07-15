@@ -13,6 +13,8 @@ for line in f:
     if "Current Status:" in line:
         if "Done (Success)" in line:
             success = success + 1
+        elif "Done(Success)" in line:
+            success = success + 1
         elif "Running" in line:
             running = running + 1
         elif "Done (Failed)" in line:
