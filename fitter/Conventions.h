@@ -122,7 +122,7 @@ static const double kGlobFitErrSinsq2Theta13 = 0.133; // ~13.3%
 // sinsqtheta global fit results
 static const double kGlobFitSinsqTheta23    = 0.420;
 static const double kGlobFitSinsqTheta13    = 0.025;
-static const double kGlobFitSinsqTheta12    = 0.312;
+static const double kGlobFitSinsqTheta12    = 0.311;
 static const double kGlobFitErrSinsqTheta23 = 0.261;  // ~26% (1 sigma range)
 static const double kGlobFitErrSinsqTheta12 = 0.110;  // ~11% (1 sigma range)
 static const double kGlobFitErrSinsqTheta13 = 0.560;  // ~56% (1 sigma range)
