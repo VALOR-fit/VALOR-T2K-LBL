@@ -418,6 +418,7 @@ void plot_feldman_cousins_contour(
 
   if(save_plots) {
     ConfidenceContour->SaveAs("FCcontour.eps");
+    ConfidenceContour->SaveAs("FCcontour.pdf");
     hframe->Draw();
     hDeltaChisqCrit68StatSyst->Draw("colzsame");
     ConfidenceContour->SaveAs("FCsurface68.eps");
@@ -437,7 +438,7 @@ void plot_feldman_cousins_contour(
   hCL95StatSyst -> Write();
   hCL99StatSyst -> Write();
   ConfidenceContour -> Write();
-  fout.Close();
+  //fout.Close();
 }
 
 void set_contour_style(TH2D *contour, Int_t color, Int_t width, Int_t style)

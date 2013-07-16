@@ -410,7 +410,7 @@ void analyse_output
     spectrum_compare->GetYaxis()->SetRangeUser(-2,2);
     spectrum_compare->Draw();
     c->SaveAs("spectrum_compare.pdf");
-    cout << endl << max_value << " is the max % difference between the contours in bin " << imax << endl;
+    cout << endl << max_value << " is the max % difference between the contours in bin " << imax << "\t" << spectrum_compare->GetBinCenter(imax) << endl;
   }//spectrum_other
   //draw comparison (spectrum, 20 bins)
   if(spectrum_other_rebin) {

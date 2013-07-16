@@ -257,10 +257,16 @@ void feldman_cousins_fitting_job_sintheta
          input_dm12sq   = util::RandomizeDm12sq(); 
        }
        else {
-         input_mixing12 = conv::kGlobFitSinsq2Theta12;
-         input_mixing13 = conv::kGlobFitSinsq2Theta13;
-         input_deltacp  = conv::kGlobFitDeltaCP;
-         input_dm12sq   = conv::kGlobFitDm12sq;
+	 input_deltacp  = conv::kGlobFitDeltaCP;
+	 input_dm12sq   = conv::kGlobFitDm12sq;
+	 if(Opt::Instance()->gOscMixingParamChoice == conv::kNuMixSinsq2Theta) {
+	   input_mixing12 = conv::kGlobFitSinsq2Theta12;
+	   input_mixing13 = conv::kGlobFitSinsq2Theta13;
+	 }
+	 else {
+	   input_mixing12 = conv::kGlobFitSinsqTheta12;
+	   input_mixing13 = conv::kGlobFitSinsqTheta13;
+	 }
        }
          cout << "- Toy-MC > True (randomized) non-23-sector params: " 
               << util::AsString(conv::kPhypMixing12) << " = " << input_mixing12 << ", "
