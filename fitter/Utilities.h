@@ -82,7 +82,8 @@ namespace util {
   string AsString           (conv::PhysHypothesis_t hyp, double mix12, double mix13, double mix23, double deltacp, double dm12sq, double dm23sq);
   string AsString           (conv::OscAnaType_t       a);
   string AsString           (conv::NuMassHierarchy_t  m);
-  string AsString           (conv::NuOscMixParam_t    p);
+  string AsString           (conv::NuOscMixParam_t    o);
+  string AsString           (conv::NuOscOctant_t      p);
   string AsString           (t2kana::conv::NuOscDmsqScheme_t dmsqs);
   string AsString           (conv::PhysHypothesis_t   h);
   string AsString           (conv::PhysParamId_t      p);
@@ -111,7 +112,9 @@ namespace util {
   conv::SuperkSample_t     SKSampleFromString        (string h);
   conv::OscAnaType_t       OscAnaFromString          (string h);
   conv::NuMassHierarchy_t  HierarchyFromString       (string h);
+  conv::NuOscDmsqScheme_t  DmsqSchemeFromString      (string h);
   conv::NuOscMixParam_t    MixingTypeFromString      (string h);
+  conv::NuOscOctant_t      OctantFromString          (string h);
   conv::PhysParamId_t      PhysParamIdFromString     (string h);
   conv::PhysParamId_t      PhysParamIdFromLongString (string h);
   conv::SKMCTemplateType_t SKMCTemplateTypeFromString(string h);

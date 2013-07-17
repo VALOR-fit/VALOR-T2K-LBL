@@ -1,40 +1,81 @@
 void plot_contours_with_profiles
 (
+ bool plot_fc = false,
  bool plot_constdchisq_lines = false,
  bool plot_kit = false
 )
 {
+  //FC
   TFile f_val_cont("2012results/NEWRESULTS/FINALFCCONTOURS/fc_oldsurf_newres_5E5_nosub.root");
   TFile f_vo2_cont("2012results/FC/fc_contours_2all_octant2.root");
   TFile f_kit_cont("2012results/DATA/KIT/of_fc_kit.root");
+  //const dchisq
+  TFile f_val_cont_dchi("2012results/NEWRESULTS/datafit/dchisq_2all.root");
+  TFile f_vo2_cont_dchi("2012results/DATA/octant2_23only/combination/fitresults_3.root");
 
   TCanvas * ctemp = new TCanvas();
 
   double chisq_bf = 56.04;
 
-  //VaLOR FC
+
   TH2D * h_fcall_68 = 0;
   TH2D * h_fcall_90 = 0;
-  f_val_cont.GetObject("hCL68StatSyst",h_fcall_68);
-  f_val_cont.GetObject("hCL90StatSyst",h_fcall_90);
-  h_fcall_68->SetContour(1);
-  h_fcall_68->SetContourLevel(0,0.0);
-  h_fcall_68->SetLineStyle(2);
-  h_fcall_90->SetContour(1);
-  h_fcall_90->SetContourLevel(0,0.0);
-  h_fcall_90->SetLineStyle(1);
-
-  //VaLOR FC octant 2
   TH2D * h_fco2_68 = 0;
   TH2D * h_fco2_90 = 0;
-  f_vo2_cont.GetObject("hCL68StatSyst",h_fco2_68);
-  f_vo2_cont.GetObject("hCL90StatSyst",h_fco2_90);
-  h_fco2_68->SetContour(1);
-  h_fco2_68->SetContourLevel(0,0.0);
-  h_fco2_68->SetLineStyle(2);
-  h_fco2_90->SetContour(1);
-  h_fco2_90->SetContourLevel(0,0.0);
-  h_fco2_90->SetLineStyle(1);
+
+  //VaLOR FC
+  if(plot_fc) {
+    f_val_cont.GetObject("hCL68StatSyst",h_fcall_68);
+    f_val_cont.GetObject("hCL90StatSyst",h_fcall_90);
+    h_fcall_68->SetContour(1);
+    h_fcall_68->SetContourLevel(0,0.0);
+    h_fcall_68->SetLineStyle(2);
+    h_fcall_90->SetContour(1);
+    h_fcall_90->SetContourLevel(0,0.0);
+    h_fcall_90->SetLineStyle(1);
+    
+    //VaLOR FC octant 2
+    f_vo2_cont.GetObject("hCL68StatSyst",h_fco2_68);
+    f_vo2_cont.GetObject("hCL90StatSyst",h_fco2_90);
+    h_fco2_68->SetContour(1);
+    h_fco2_68->SetContourLevel(0,0.0);
+    h_fco2_68->SetLineStyle(2);
+    h_fco2_90->SetContour(1);
+    h_fco2_90->SetContourLevel(0,0.0);
+    h_fco2_90->SetLineStyle(1);
+  }
+  else {
+    //VaLOR const dchisq
+    TH2D * h_fcall = 0;
+    f_val_cont_dchi.GetObject("hdchisq",h_fcall);
+    h_fcall_68 = new TH2D(*h_fcall);
+    h_fcall_90 = new TH2D(*h_fcall);
+    h_fcall_68->SetContour(1);
+    h_fcall_68->SetContourLevel(0,2.30);
+    h_fcall_68->SetLineStyle(2);
+    h_fcall_90->SetContour(1);
+    h_fcall_90->SetContourLevel(0,4.61);
+    h_fcall_90->SetLineStyle(1);
+
+    //VaLOR const dchisq octant 2
+    TH2D * h_fco2 = 0;
+    f_vo2_cont_dchi.GetObject("hdchisq",h_fco2);
+    TH2D * h_fco2_68 = new TH2D(*h_fco2);
+    TH2D * h_fco2_90 = new TH2D(*h_fco2);
+    h_fco2_68->SetContour(1);
+    h_fco2_68->SetContourLevel(0,2.30);
+    h_fco2_68->SetLineStyle(2);
+    h_fco2_90->SetContour(1);
+    h_fco2_90->SetContourLevel(0,4.61);
+    h_fco2_90->SetLineStyle(1);
+  }
+
+  h_fcall_68->SetLineWidth(2);
+  h_fcall_90->SetLineWidth(2);
+  h_fcall_68->SetLineColor(kBlack);
+  h_fcall_90->SetLineColor(kBlack);
+  h_fco2_68->SetLineWidth(2);
+  h_fco2_90->SetLineWidth(2);
   h_fco2_68->SetLineColor(kRed);
   h_fco2_90->SetLineColor(kRed);
 
@@ -137,6 +178,7 @@ void plot_contours_with_profiles
   h_fcall_90->Draw("cont3same");
   h_fco2_68 ->Draw("cont3same");
   h_fco2_90 ->Draw("cont3same");
+  bestfit_2all.SetMarkerStyle(23);
   bestfit_2all.Draw();
   bestfit_2o2.Draw();
   bestfit_kit.SetMarkerStyle(24);
@@ -150,10 +192,10 @@ void plot_contours_with_profiles
   //leg2->SetFillStyle(0);
   leg2->SetBorderSize(0);
   leg2->SetTextFont(132);
-  leg2->AddEntry(h_fcall_68, "T2K (sin^{2}#theta_{23} #leq 0.5) 68% C.L.","l");
-  leg2->AddEntry(h_fcall_90, "T2K (sin^{2}#theta_{23} #leq 0.5) 90% C.L.","l");
-  leg2->AddEntry(h_fco2_68,  "T2K (sin^{2}#theta_{23} #geq 0.5) 68% C.L.","l");
-  leg2->AddEntry(h_fco2_90,  "T2K (sin^{2}#theta_{23} #geq 0.5) 90% C.L.","l");
+  leg2->AddEntry(h_fcall_68, "T2K (#theta_{23} #leq #pi/4) 68% C.L.","l");
+  leg2->AddEntry(h_fcall_90, "T2K (#theta_{23} #leq #pi/4) 90% C.L.","l");
+  leg2->AddEntry(h_fco2_68,  "T2K (#theta_{23} #geq #pi/4) 68% C.L.","l");
+  leg2->AddEntry(h_fco2_90,  "T2K (#theta_{23} #geq #pi/4) 90% C.L.","l");
   if(plot_kit) {
     leg2->AddEntry(h_fc_kit_68, "T2K 68% C.L. alternative analysis","l");
     leg2->AddEntry(h_fc_kit_90, "T2K 90% C.L. alternative analysis","l");
@@ -171,8 +213,8 @@ void plot_contours_with_profiles
   leg3->SetTextFont(132);
   //bestfit_2all->SetName("bestfit_2all");
   //bestfit_kit->SetName("bestfit_kit");
-  leg3->AddEntry(&bestfit_2all, "T2K best fit (sin^{2}#theta_{23} #leq 0.5)", "p");
-  leg3->AddEntry(&bestfit_2o2,  "T2K best fit (sin^{2}#theta_{23} #geq 0.5)", "p");
+  leg3->AddEntry(&bestfit_2all, "T2K best fit (#theta_{23} #leq #pi/4)", "p");
+  leg3->AddEntry(&bestfit_2o2,  "T2K best fit (#theta_{23} #geq #pi/4)", "p");
   if(plot_kit)
     leg3->AddEntry(&bestfit_kit, "T2K best fit alternative analysis", "p");
   leg3->SetTextSize(0.05);
@@ -434,10 +476,17 @@ void plot_contours_with_profiles
   c->cd();
   if(plot_kit)
     bestfit_kit.Draw();
+  bestfit_2o2.Draw();
   bestfit_2all.Draw();
 
-  c->SaveAs("contour_compare_methods2.pdf");
-  c->SaveAs("contour_compare_methods2.eps");
+  if(plot_fc) {
+    c->SaveAs("contour_compare_methods2.pdf");
+    c->SaveAs("contour_compare_methods2.eps");
+  }
+  else {
+    c->SaveAs("contour_compare_methods2_constdchisq.pdf");
+    c->SaveAs("contour_compare_methods2_constdchisq.eps");
+  }
   leg2->Clear();
   delete leg2;
 

@@ -9,15 +9,20 @@
 
 void run_fit_xml_seeded
 (
-  const char * chisqfile,                                              /* input ROOT file with chisq surface */
-  const int    nfits,                                                  /* number of attempts to fit */         
-  const char * tag,                                                    /* */
-  int          run,                                                    /* */
-  const char * xmlfile,                                                /* input XML file with toy MC experiments */
-  int          experiment_id,                                          /* */
-  const char * config_file      = "analysis_configuration.xml",        /* analysis configuration file */
-  const char * fit_param_list   = "nuosc3f_numudisapp_nuis4+nuisance", /* fit parameter list for the given physics hypothesis (see FitParamList.h) */
-  const char * fit_option       = "minuit"                             /* fitter option */
+  const char * chisqfile,                                                   /* input ROOT file with chisq surface */
+  const int    nfits,                                                       /* number of attempts to fit */         
+  const char * tag,                                                         /* */
+  int          run,                                                         /* */
+  const char * xmlfile,                                                     /* input XML file with toy MC experiments */
+  int          experiment_id,                                               /* */
+  const char * config_file         = "analysis_configuration.xml",          /* analysis configuration file */
+  const char * fit_param_list      = "nuosc3f_numudisapp_nuis4+nuisance",   /* fit parameter list for the given physics hypothesis (see FitParamList.h) */
+  const char * fit_option          = "minuit",                              /* fitter option */
+  const char * dmsqscheme          = "abs23",                               /* abs23==kNuDmsq12andAbs23 fogli==kNuDmsqFogliLisi */
+  const char * hierarchy           = "normal",                              /* normal or inverted */
+  const char * mixparamchoice      = "sinsq2theta",                         /* sinsq2theta or sinsqtheta */
+  const char * mixparamoctant      = "one",                                 /* one==kNuOctantOne two==kNuOctantTwo */
+  bool         apply_2nu_boundary  = true                                   /* if using the 2nu flavour osc prob, apply the physical boundary? */
 )
 {
   using namespace std;
@@ -28,9 +33,15 @@ void run_fit_xml_seeded
   TString xmlfile2 = Form("%s/inputs/%s", gSystem->Getenv("T2KOSCANA"), xmlfile);
 
   // Global options
-  Opt::Instance()->gOscMixingParamChoice = conv::kNuMixSinsq2Theta;
-  Opt::Instance()->gOscDmsqScheme        = conv::kNuDmsq12andAbs23;
-  Opt::Instance()->gMassHierarchyAssumed = conv::kNmhNormal;
+  Opt::Instance()->gMassHierarchyAssumed = util::HierarchyFromString(hierarchy);
+  Opt::Instance()->gOscDmsqScheme        = util::DmsqSchemeFromString(dmsqscheme);
+  Opt::Instance()->gOscMixingParamChoice = util::MixingTypeFromString(mixparamchoice);
+  Opt::Instance()->gOscOctantChoice      = util::OctantFromString(mixparamoctant);
+  if(Opt::Instance()->Undefined()) {
+    cerr << "Global options not defined correctly. Exiting..." << endl;
+    cerr << *Opt::Instance() << endl;
+    exit(1);
+  }
 
   // Print settings
   cout << "\n[Job inputs]" << endl;
@@ -54,6 +65,12 @@ void run_fit_xml_seeded
   // Get superk spectrum predictor & configure
   SuperkExpectation * skexp = new SuperkExpectation;
   skexp->Read(config);
+
+  // Set whether the osc prob can be > 1 in 2 flavour world
+  if(!apply_2nu_boundary && hyp == conv::kHypNuMuDisapp2F) {
+    skexp->GetSuperkMC()->SetUnphysicalOscProb(true);
+    fparm->SetMaxValue( conv::kPhypMixing23, 2);
+  }
 
   // Arrays for storing all pieces of fit data and the best-fit pdf (and its components) for each expt.
   TObjArray * dat_array = new TObjArray;

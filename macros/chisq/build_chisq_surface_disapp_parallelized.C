@@ -29,7 +29,9 @@ void build_chisq_surface_disapp_parallelized
   int          input_mixing23_bin  = -1,                                    /* if !=-1, will run only for the specified bin */
   int          input_dm32sq_bin    = -1,                                    /* if !=-1, will run only for the specified bin */
   const char * dmsqscheme          = "abs23",                               /* abs23==kNuDmsq12andAbs23 fogli==kNuDmsqFogliLisi */
-  const char * mixparamchoice      = "2theta",                              /* 2theta==kNuMixSinsq2Theta theta==kNuMixSinsqTheta */
+  const char * hierarchy           = "normal",                              /* normal or inverted */
+  const char * mixparamchoice      = "sinsq2theta",                         /* sinsq2theta or sinsqtheta */
+  const char * mixparamoctant      = "one",                                 /* one==kNuOctantOne two==kNuOctantTwo */
   bool         apply_2nu_boundary  = true                                   /* if using the 2nu flavour osc prob, apply the physical boundary? */
 )
 {
@@ -41,19 +43,15 @@ void build_chisq_surface_disapp_parallelized
   TString xmlfile2 = Form("%s/inputs/%s", gSystem->Getenv("T2KOSCANA"), xmlfile);
 
   // Global options
-  if(mixparamchoice == "2theta")
-    Opt::Instance()->gOscMixingParamChoice = conv::kNuMixSinsq2Theta;
-  else if(mixparamchoice == "theta")
-    Opt::Instance()->gOscMixingParamChoice = conv::kNuMixSinsqTheta;
-  else
+  Opt::Instance()->gMassHierarchyAssumed = util::HierarchyFromString(hierarchy);
+  Opt::Instance()->gOscDmsqScheme        = util::DmsqSchemeFromString(dmsqscheme);
+  Opt::Instance()->gOscMixingParamChoice = util::MixingTypeFromString(mixparamchoice);
+  Opt::Instance()->gOscOctantChoice      = util::OctantFromString(mixparamoctant);
+  if(Opt::Instance()->Undefined()) {
+    cerr << "Global options not defined correctly. Exiting..." << endl;
+    cerr << *Opt::Instance() << endl;
     exit(1);
-  if(dmsqscheme == "abs23")
-    Opt::Instance()->gOscDmsqScheme        = conv::kNuDmsq12andAbs23;
-  else if(dmsqscheme == "fogli")
-    Opt::Instance()->gOscDmsqScheme        = conv::kNuDmsqFogliLisi;
-  else
-    exit(1);
-  Opt::Instance()->gMassHierarchyAssumed = conv::kNmhNormal;
+  }
 
   // Calc number of bins & make sure input bin numbers are within range
   int mixing23_nbins = 1 + TMath::CeilNint((mixing23_max - mixing23_min) / mixing23_step);

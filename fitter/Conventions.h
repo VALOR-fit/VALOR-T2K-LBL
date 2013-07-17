@@ -281,6 +281,15 @@ typedef enum ENuOscMixParam
 } 
 NuOscMixParam_t;
 
+// Choices of oscillation mixing octant
+typedef enum ENuOscOctant
+{   
+   kNuOctantUndefined = -1, 
+   kNuOctantOne,      // sin^2(theta_{23}) <= 0.5
+   kNuOctantTwo       // sin^2(theta_{23}) >= 0.5
+} 
+NuOscOctant_t;
+
 // Choices of squared mass splittings                               
 typedef enum ENuOscDmsqScheme
 {

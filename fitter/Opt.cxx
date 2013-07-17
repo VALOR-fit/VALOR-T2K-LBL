@@ -63,6 +63,7 @@ void Opt::SetDefaults(void)
   gMassHierarchyAssumed = kNmhNormal;
   gOscMixingParamChoice = kNuMixSinsq2Theta;
   gOscDmsqScheme        = kNuDmsq12andAbs23;
+  gOscOctantChoice      = kNuOctantOne;
 
   bool fit_1Rmu = false;
   bool fit_1Re  = false;
@@ -90,6 +91,20 @@ void Opt::SetDefaults(void)
 
 }
 //____________________________________________________________________________
+bool Opt::Undefined(void)
+{
+  if(gMassHierarchyAssumed == kNmhUndefined)
+    return true;
+  if(gOscMixingParamChoice == kNuMixUndefined)
+    return true;
+  if(gOscDmsqScheme        == kNuDmsqUndefined)
+    return true;
+  if(gOscOctantChoice      == kNuOctantUndefined)
+    return true;
+
+  return false;
+}
+//____________________________________________________________________________
 void Opt::Print(ostream & stream) const
 {
   stream << "[Global analysis options]" 
@@ -100,6 +115,9 @@ void Opt::Print(ostream & stream) const
   stream << " - Mixing param choice: " 
          << util::AsString(gOscMixingParamChoice) 
          << endl;
+  stream << " - 23 octant choice: "
+	 << util::AsString(gOscOctantChoice)
+	 << endl;
   stream << " - Independent squared mass splittings: "
          << util::AsString(gOscDmsqScheme)
          << endl;

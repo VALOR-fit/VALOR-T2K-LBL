@@ -22,7 +22,13 @@
 #  --config-file            : Analysis configuration file from the config/ directory. Default: "analysis_configuration.xml".
 #  --job-dir                : Directory for job scripts and outputs. Default: `pwd`.
 #  --softw-dir              : Oscillation code top-level directory. Default: `pwd`.
-#
+#  --one-job-per-dmsq-row   : If set, it's one job per dm32sq row. Otherwise, it's one job per bin (remember, 2500 is the limit on number of jobs at RAL).
+#  --dmsq-scheme            : abs23 or fogli
+#  --hierarchy              : normal or inverted
+#  --mix-param-choice       : sinsq2theta or sinsqtheta
+#  --mix-param-octant       : one or two
+#  --allow-2nu-unphysical   : If set, will allow 2 neutrino oscillations to go into the unphysical region
+
 # C.Andreopoulos
 #----------------------------------------------------------------------------------------------------------------------------- 
 #
@@ -51,7 +57,9 @@ foreach (@ARGV) {
   if($_ eq '--softw-dir'             ) { $softw_dir             = $ARGV[$iarg+1]; }
   if($_ eq '--one-job-per-dmsq-row'  ) { $one_job_per_dmsq_row  = 1;              }
   if($_ eq '--dmsq-scheme'           ) { $dmsqscheme            = $ARGV[$iarg+1]; }
+  if($_ eq '--hierarchy'             ) { $masshierarchy         = $ARGV[$iarg+1]; }
   if($_ eq '--mix-param-choice'      ) { $mixparamchoice        = $ARGV[$iarg+1]; }
+  if($_ eq '--mix-param-octant'      ) { $mixparamoctant        = $ARGV[$iarg+1]; }
   if($_ eq '--allow-2nu-unphysical'  ) { $apply_2nu_boundary    = 0;              }
   $iarg++;
 }
@@ -71,7 +79,9 @@ $config_file            = "analysis_configuration.xml"           unless defined 
 $job_dir                = `pwd`                                  unless defined $job_dir;
 $softw_dir              = `pwd`                                  unless defined $softw_dir;
 $dmsqscheme             = "abs23"                                unless defined $dmsqscheme;
-$mixparamchoice         = "2theta"                               unless defined $mixparamchoice;
+$masshierarchy          = "normal"                               unless defined $masshierarchy;
+$mixparamchoice         = "sinsq2theta"                          unless defined $mixparamchoice;
+$mixparamoctant         = "one"                                  unless defined $mixparamoctant;
 $apply_2nu_boundary     = 1                                      unless defined $apply_2nu_boundary;
 
 die unless defined $exptfile;
@@ -106,7 +116,7 @@ for ($mix23_bin = 1; $mix23_bin <= $mix23_nbins; $mix23_bin++) {
 
   print "Submitting $tag job for mix23 bin: $mix23_bin and dm32sq bin: $dm32sq_bin \n";
 
-  $command  = "root2k -l -b -q \'$macro_dir/macros/chisq/build_chisq_surface_disapp_parallelized.C(\"$tag\",\"$exptfile\",$first,$last,\"$config_file\",\"$fitparamlist\",\"$fitoption\",$mix23_min,$mix23_max,$mix23_step,$dm32sq_min,$dm32sq_max,$dm32sq_step,$mix23_bin,$dm32sq_bin,\"$dmsqscheme\",\"$mixparamchoice\",$apply_2nu_boundary)\'";
+  $command  = "root2k -l -b -q \'$macro_dir/macros/chisq/build_chisq_surface_disapp_parallelized.C(\"$tag\",\"$exptfile\",$first,$last,\"$config_file\",\"$fitparamlist\",\"$fitoption\",$mix23_min,$mix23_max,$mix23_step,$dm32sq_min,$dm32sq_max,$dm32sq_step,$mix23_bin,$dm32sq_bin,\"$dmsqscheme\",\"$masshierarchy\",\"$mixparamchoice\",\"$mixparamoctant\",$apply_2nu_boundary)\'";
   print "$command \n";
 
   #

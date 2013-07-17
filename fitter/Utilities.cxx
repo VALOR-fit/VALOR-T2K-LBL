@@ -687,6 +687,22 @@ string t2kana::util::AsString(t2kana::conv::NuOscMixParam_t p)
   }
   return "";
 }
+//____________________________________________________________________________
+string t2kana::util::AsString(t2kana::conv::NuOscOctant_t o)
+{
+  switch(o) {   
+   case (kNuOctantOne) :
+     return "sin^2(theta_{23}) <= 0.5";
+     break;
+   case (kNuOctantTwo) :
+     return "sin^2(theta_{23}) >= 0.5";
+     break;
+   default :
+     return "Undefined"; 
+     break;
+  }
+  return "";
+}
 //____________________________________________________________________________                                                                                                                            
 string t2kana::util::AsString(t2kana::conv::NuOscDmsqScheme_t dmsqs)
 {
@@ -2452,6 +2468,15 @@ t2kana::conv::OscAnaType_t
   return kAnaUndefined;
 }
 //____________________________________________________________________________
+t2kana::conv::NuOscDmsqScheme_t  
+  t2kana::util::DmsqSchemeFromString(string sh) 
+{
+  if(sh == "abs23"    ) return kNuDmsq12andAbs23;
+  if(sh == "inverted" ) return kNuDmsqFogliLisi;
+  
+  return kNuDmsqUndefined;
+}
+//____________________________________________________________________________
 t2kana::conv::NuMassHierarchy_t  
   t2kana::util::HierarchyFromString(string sh) 
 {
@@ -2459,6 +2484,15 @@ t2kana::conv::NuMassHierarchy_t
   if(sh == "inverted" ) return kNmhInverted;
   
   return kNmhUndefined;
+}
+//____________________________________________________________________________
+t2kana::conv::NuOscOctant_t   
+  t2kana::util::OctantFromString(string sh) 
+{
+  if(sh == "one") return kNuOctantOne;
+  if(sh == "two") return kNuOctantTwo;
+  
+  return kNuOctantUndefined;
 }
 //____________________________________________________________________________
 t2kana::conv::NuOscMixParam_t   

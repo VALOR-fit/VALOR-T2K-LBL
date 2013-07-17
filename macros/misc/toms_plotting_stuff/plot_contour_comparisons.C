@@ -1921,8 +1921,8 @@ void plot_contour_comparisons
   leg2->SetTextFont(132);
   cout << leg2->GetTextFont() << endl;
   //leg2->AddEntry(h_fcall_123_68, "T2K 3#nu 68% CL","l");
-  leg2->AddEntry(h_fcall_123_90, "T2K 3#nu (sin^{2}#theta_{23} #leq 0.5) 90% CL","l");
-  leg2->AddEntry(h_fcall_octant2only23_90, "T2K 3#nu (sin^{2}#theta_{23} #geq 0.5) 90% CL","l");
+  leg2->AddEntry(h_fcall_123_90, "T2K 3#nu (#theta_{23} #leq #pi/4) 90% CL","l");
+  leg2->AddEntry(h_fcall_octant2only23_90, "T2K 3#nu (#theta_{23} #geq #pi/4) 90% CL","l");
   leg2->AddEntry("g_run12_90_statsyst", "T2K 2011 2#nu 90% CL", "l");
   leg2->AddEntry(ll_minos, "MINOS 2013 2#nu 90% CL", "l");
   leg2->AddEntry("g_skzen", "SK zenith 2012 3#nu 90% CL", "l");
@@ -1935,8 +1935,8 @@ void plot_contour_comparisons
   legbf->SetFillStyle(0);
   legbf->SetBorderSize(0);
   legbf->SetTextFont(132);
-  legbf->AddEntry(&bestfit_2all, "T2K 3#nu (sin^{2}#theta_{23} #leq 0.5) best fit","p");
-  legbf->AddEntry(&bestfit_2all_octant2, "T2K 3#nu (sin^{2}#theta_{23} #geq 0.5) best fit","p");
+  legbf->AddEntry(&bestfit_2all, "T2K 3#nu (#theta_{23} #leq #pi/4) best fit","p");
+  legbf->AddEntry(&bestfit_2all_octant2, "T2K 3#nu (#theta_{23} #geq #pi/4) best fit","p");
   legbf->SetX2NDC(0.6);
   legbf->SetTextSize(0.06);
   legbf->Draw();
@@ -1956,6 +1956,81 @@ void plot_contour_comparisons
   c->SaveAs("contour_compare_external_thick.pdf");
   c->SaveAs("contour_compare_external_thick.png");
   c->SaveAs("contour_compare_external_thick.eps");
+
+
+  //PAPER
+  //Run 1-3 const dchisq only with externals + old t2k
+  c->SetRightMargin(0.01);
+  c->SetTopMargin(0.01);
+  c->SetBottomMargin(0.14);
+  osc_param_space->GetXaxis()->SetRangeUser(0.82,1.0);
+  osc_param_space->GetYaxis()->SetRangeUser(0.0018,0.0042);
+  cout <<   osc_param_space->GetXaxis()->GetTitleFont() << endl;
+  osc_param_space->GetXaxis()->SetTitleFont(132);
+  osc_param_space->Draw(); 
+  //h_dcall_123_68->Draw("cont3same");
+  g_run12_90_statsyst->SetLineStyle(3);
+  g_run12_90_statsyst->SetLineColor(kBlack);
+  h_dcall_octant2only23_90->SetLineStyle(2);
+  h_dcall_octant2only23_90->SetLineColor(kBlack);
+  ll_minos->SetLineColor(kRed);
+  g_skle->SetLineColor(kGreen+2);
+  g_skzen->SetLineColor(kBlue);
+  g_skzen->Draw("l");
+  g_skle->Draw("l");
+  ll_minos->Draw("cont3same");
+  g_run12_90_statsyst->Draw("l");
+  h_dcall_123_90->Draw("cont3same");
+  h_dcall_octant2only23_90->Draw("cont3same");
+  bestfit_2all.SetMarkerStyle(23);
+  bestfit_2all.Draw();
+  bestfit_2all_octant2.SetMarkerStyle(24);
+  bestfit_2all_octant2.Draw();
+  leg2->Clear();
+  delete leg2;
+  leg2 = new TLegend(0.185,0.58,0.45,0.95);
+  leg2->SetFillColor(0);
+  leg2->SetFillStyle(0);
+  leg2->SetBorderSize(0);
+  cout << leg2->GetTextFont() << endl;
+  leg2->SetTextFont(132);
+  cout << leg2->GetTextFont() << endl;
+  //leg2->AddEntry(h_dcall_123_68, "T2K 3#nu 68% CL","l");
+  leg2->AddEntry(h_dcall_123_90, "T2K 3#nu (#theta_{23} #leq #pi/4) 90% CL","l");
+  leg2->AddEntry(h_dcall_octant2only23_90, "T2K 3#nu (#theta_{23} #geq #pi/4) 90% CL","l");
+  leg2->AddEntry("g_run12_90_statsyst", "T2K 2011 2#nu 90% CL", "l");
+  leg2->AddEntry(ll_minos, "MINOS 2013 2#nu 90% CL", "l");
+  leg2->AddEntry("g_skzen", "SK zenith 2012 3#nu 90% CL", "l");
+  leg2->AddEntry("g_skle", "SK L/E 2012 2#nu 90% CL", "l");
+  leg2->SetX2NDC(0.6);
+  leg2->SetTextSize(0.06);
+  leg2->Draw();
+  TLegend * legbf = new TLegend(0.185, 0.17, 0.45, 0.30);
+  legbf->SetFillColor(0);
+  legbf->SetFillStyle(0);
+  legbf->SetBorderSize(0);
+  legbf->SetTextFont(132);
+  legbf->AddEntry(&bestfit_2all, "T2K 3#nu (#theta_{23} #leq #pi/4) best fit","p");
+  legbf->AddEntry(&bestfit_2all_octant2, "T2K 3#nu (#theta_{23} #geq #pi/4) best fit","p");
+  legbf->SetX2NDC(0.6);
+  legbf->SetTextSize(0.06);
+  legbf->Draw();
+  cout << "text size " << leg2->GetTextSize() << endl;
+  c->SaveAs("contour_compare_constdchisq_external.pdf");
+  c->SaveAs("contour_compare_constdchisq_external.png");
+  c->SaveAs("contour_compare_constdchisq_external.eps");
+  cout << osc_param_space->GetXaxis()->GetLabelSize() << endl;
+  cout << osc_param_space->GetXaxis()->GetTitleSize() << endl;
+  double thick = 2, thick_t2k = 3;
+  g_skzen->SetLineWidth(thick);
+  g_skle->SetLineWidth(thick);
+  ll_minos->SetLineWidth(thick);
+  h_dcall_123_90->SetLineWidth(thick_t2k);
+  h_dcall_123_68->SetLineWidth(thick_t2k);
+  g_run12_90_statsyst->SetLineWidth(thick);
+  c->SaveAs("contour_compare_constdchisq_external_thick.pdf");
+  c->SaveAs("contour_compare_constdchisq_external_thick.png");
+  c->SaveAs("contour_compare_constdchisq_external_thick.eps");
 
 
   //LEPTON PHOTON

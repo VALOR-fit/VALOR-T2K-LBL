@@ -37,6 +37,10 @@ public:
   // Use sinsq2theta for the numu analysis, sinsqtheta for the global nue+numu analysis etc
   conv::NuOscMixParam_t gOscMixingParamChoice;
 
+  // Choice of mixing parameter octant for theta23 (1, 2)
+  // Only used when in sinsq2theta 3-flavour mode
+  conv::NuOscOctant_t gOscOctantChoice;
+
   // Choice of independent squared mass splittings, eg                                                                                                                           
   // - dm^2 = Dm^2_{12} and Dm^2 = |Dm^2_{23}|, or                                                                                                                                 
   // - dm^2 = Dm^2_{12} and Dm^2 = |m^2_{3} - (m^2_{1} + m^2_{1})/2| (Fogli,Lisi)                                                                                                  
@@ -48,6 +52,9 @@ public:
 
   void Print(ostream & stream) const;
   friend ostream & operator << (ostream & stream, const Opt & opt);
+
+  // Check for any parameters being undefined
+  bool Undefined(void);
 
 private:
 

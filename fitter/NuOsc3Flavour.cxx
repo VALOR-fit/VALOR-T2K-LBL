@@ -109,7 +109,11 @@ void NuOsc3Flavour::SetOscParameters(
   // Calculate sin(mixingAngle) from sin^2(2*mixingAngle) 
   double s12 = sqrt(0.5 * (1 - sqrt(1 - sinsq2theta12)));
   double s13 = sqrt(0.5 * (1 - sqrt(1 - sinsq2theta13)));
-  double s23 = sqrt(0.5 * (1 - sqrt(1 - sinsq2theta23)));
+  double s23 = 0;
+  if(Opt::Instance()->gOscOctantChoice == conv::kNuOctantOne)
+    s23 = sqrt(0.5 * (1 - sqrt(1 - sinsq2theta23)));
+  else if(Opt::Instance()->gOscOctantChoice == conv::kNuOctantTwo)
+    s23 = sqrt(1 - (0.5 * (1 - sqrt(1 - sinsq2theta23))));
   // Calculate cos(mixingAngle) from sin(mixingAngle)     
   double c12 = sqrt(1 - s12 * s12);
   double c13 = sqrt(1 - s13 * s13);
@@ -310,7 +314,11 @@ void NuOsc3Flavour::SetOscParametersSSq2TDmAtmSol(
   // Calculate sin(mixingAngle) from sin^2(2*mixingAngle)                                                                                                                                             
   double s12 = sqrt(0.5 * (1 - sqrt(1 - sinsq2theta12)));
   double s13 = sqrt(0.5 * (1 - sqrt(1 - sinsq2theta13)));
-  double s23 = sqrt(0.5 * (1 - sqrt(1 - sinsq2theta23)));
+  double s23 = 0;
+  if(Opt::Instance()->gOscOctantChoice == conv::kNuOctantOne)
+    s23 = sqrt(0.5 * (1 - sqrt(1 - sinsq2theta23)));
+  else if(Opt::Instance()->gOscOctantChoice == conv::kNuOctantTwo)
+    s23 = sqrt(1 - (0.5 * (1 - sqrt(1 - sinsq2theta23))));
   // Calculate cos(mixingAngle) from sin(mixingAngle)                                                                                                                                                 
   double c12 = sqrt(1 - s12 * s12);
   double c13 = sqrt(1 - s13 * s13);
