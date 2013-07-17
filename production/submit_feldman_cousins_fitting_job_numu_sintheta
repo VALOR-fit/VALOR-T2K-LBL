@@ -62,9 +62,9 @@ foreach (@ARGV) {
   $iarg++;
 }
 $min_dm23sq_bin         = 1                             unless defined $min_dm23sq_bin;
-$max_dm23sq_bin         = 51                            unless defined $max_dm23sq_bin; 
+$max_dm23sq_bin         = 101                            unless defined $max_dm23sq_bin; 
 $min_sinsq2theta23_bin  = 1                             unless defined $min_sinsq2theta23_bin;
-$max_sinsq2theta23_bin  = 101                           unless defined $max_sinsq2theta23_bin;
+$max_sinsq2theta23_bin  = 201                           unless defined $max_sinsq2theta23_bin;
 $bin_list               = ""                            unless defined $bin_list;
 $resource               = "interactive"                 unless defined $resource;
 $tag                    = "fc"                          unless defined $tag;
