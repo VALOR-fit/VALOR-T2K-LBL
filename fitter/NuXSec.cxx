@@ -410,7 +410,7 @@ double NuXSec::FinTuningWght_1p(
     double numerator = (tb-1) / relerr;
     wght = wght_spl->Eval(numerator) / 1.;
     */
-    wght = wght_spl->Eval(tb);
+    wght = wght_spl->Eval((1.21 * (tb - 1.)) + 1);
     // }
   }
   
@@ -574,7 +574,7 @@ double NuXSec::SystWght_1p(
        double numerator = (tc-1) / relerr;
        wght = wght_spl->Eval(numerator) / wght_spl->Eval(denominator);
        */
-       wght = wght_spl->Eval(tc) / wght_spl->Eval(tb);
+       wght = wght_spl->Eval((1.21 * (tc - 1.)) + 1) / wght_spl->Eval((1.21 * (tb - 1.)) + 1);
        //}
   }
 
