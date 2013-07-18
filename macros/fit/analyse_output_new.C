@@ -497,7 +497,7 @@ void analyse_output_new
   //CONTOUR
 
   //param space
-  double mixing23_min   = 0.6;
+  double mixing23_min   = 0.0;
   double mixing23_max   = 1.5;
   double mixing23_step  = 0.005;
   double dm23sq_min     = 1E-3;
