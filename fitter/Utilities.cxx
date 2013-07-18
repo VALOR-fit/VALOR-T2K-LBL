@@ -2472,7 +2472,7 @@ t2kana::conv::NuOscDmsqScheme_t
   t2kana::util::DmsqSchemeFromString(string sh) 
 {
   if(sh == "abs23"    ) return kNuDmsq12andAbs23;
-  if(sh == "inverted" ) return kNuDmsqFogliLisi;
+  if(sh == "folgi"    ) return kNuDmsqFogliLisi;
   
   return kNuDmsqUndefined;
 }
