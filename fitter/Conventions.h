@@ -146,7 +146,7 @@ static const double kGlobFitErrSinsq2Theta12 = 0.083; // ~8.3% fogli2011
 //static const double kGlobFitErrSinsq2Theta12 = 0.028; // ~2.8% pdg2012
 static const double kGlobFitErrSinsq2Theta13 = 0.133; // ~13.3%
 // sinsqtheta global fit results
-static const double kGlobFitSinsqTheta23    = 0.60;
+static const double kGlobFitSinsqTheta23    = 0.50;
 static const double kGlobFitSinsqTheta13    = 0.0251;
 static const double kGlobFitSinsqTheta12    = 0.306; //fogli2011
 //static const double kGlobFitSinsqTheta12    = 0.311; //pdg2012

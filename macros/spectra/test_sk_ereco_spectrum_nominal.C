@@ -20,15 +20,22 @@ void test_sk_ereco_spectrum_nominal
   double       input_dm23sq         = -99,                            /* */
   bool         disable_banff_tuning = false,                          /* */
   const char * config_file          = "analysis_configuration.xml",   /* */
-  bool         print_spectrum       = false                           /* */
+  bool         print_spectrum       = false,                          /* */
+  const char * mixparamchoice       = "sinsqtheta",
+  const char * hierarchy            = "normal"
 )
 {
   using namespace std;
   using namespace t2kana;
 
   // Global options
-  Opt::Instance()->gOscMixingParamChoice = conv::kNuMixSinsq2Theta;
-  Opt::Instance()->gMassHierarchyAssumed = conv::kNmhNormal;
+  Opt::Instance()->gMassHierarchyAssumed = util::HierarchyFromString(hierarchy);
+  Opt::Instance()->gOscMixingParamChoice = util::MixingTypeFromString(mixparamchoice);
+  if(Opt::Instance()->Undefined()) {
+    cerr << "Global options not defined correctly. Exiting..." << endl;
+    cerr << *Opt::Instance() << endl;
+    exit(1);
+  }
 
   // Set physics hypothesis
   if(Opt::Instance()->gOscMixingParamChoice == conv::kNuMixSinsq2Theta) {

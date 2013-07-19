@@ -548,10 +548,20 @@ string t2kana::util::AsString (
 //
 
   NuOscMixParam_t omp = Opt::Instance()->gOscMixingParamChoice;
+  NuOscOctant_t   oct = Opt::Instance()->gOscOctantChoice;
   string mixparam = "?";
   switch(omp) {
       case(kNuMixSinsq2Theta):
-         mixparam = "sinsq2theta";
+	 switch(oct) {
+	   case(kNuOctantOne):
+	     mixparam = "sinsq2theta_octantone";
+	     break;
+	   case(kNuOctantTwo):
+	     mixparam = "sinsq2theta_octanttwo";
+	     break;
+	   default:
+	     return "";
+	 }
          break;
       case(kNuMixSinsqTheta):
          mixparam = "sinsqtheta";
@@ -620,7 +630,7 @@ string t2kana::util::AsString (
 
     if(show_dmsq) 
     {
-       out << "dmsq[";
+      out << "dmsq_" << util::AsString(Opt::Instance()->gMassHierarchyAssumed) << "[";
        if(show_dm12sq) {
           out << "12_" << Form("%.8f",dm12sq);
        }
