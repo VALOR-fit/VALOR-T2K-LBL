@@ -62,11 +62,12 @@ void analyse_output_new
  const char * infile,
  const char * tag,
  const char * config_file          = "analysis_configuration.xml",   /* for generating no-osc spectrum */
- double       spectrum_max_xaxis   = 7,                            /* max of spectrum axes */
- double       mixing_min           = 0.93,                            /* chisq & contour boundaries */
+ double       spectrum_max_xaxis   = 7,                              /* max of spectrum axes */
+ double       mixing_min           = 0.93,                           /* chisq & contour boundaries */
  double       mixing_max           = 1.0,
  double       dm_min               = 0.002,
  double       dm_max               = 0.003,
+ const char * mixparamchoice      = "sinsq2theta",                   /* sinsq2theta or sinsqtheta, for the contour x-axis */
  const char * other_spectrum_file  = "",
  const char * other_spectrum_name  = ""
 )
@@ -74,15 +75,20 @@ void analyse_output_new
   using namespace std;
   using namespace t2kana;
 
+  //global options
+  Opt::Instance()->gMassHierarchyAssumed = conv::kNmhNormal;
+  Opt::Instance()->gOscMixingParamChoice = util::MixingTypeFromString(mixparamchoice);
+  if(Opt::Instance()->Undefined()) {
+    cerr << "Global options not defined correctly. Exiting..." << endl;
+    cerr << *Opt::Instance() << endl;
+    exit(1);
+  }
+
   conv::SuperkSample_t s = conv::kSKsFCFV1RingMuLike;
   int is = util::ArrIdx::Instance()->SuperkSampleIdx(s);
 
   // Analysis configuration
   const char * config = Form("%s/config/%s", gSystem->Getenv("T2KOSCANA"), config_file);
-
-  // Global options
-  Opt::Instance()->gOscMixingParamChoice = conv::kNuMixSinsq2Theta;
-  Opt::Instance()->gMassHierarchyAssumed = conv::kNmhNormal;
 
   TFile fin(infile,"READ");
   if(fin.IsZombie()) {
@@ -379,7 +385,7 @@ void analyse_output_new
   TH1D * pulls  = new TH1D("","",npfree,0,npfree);
   TH1D * values = new TH1D("","",npfree,0,npfree);
   //get deviation from best fit (in sigma)
-  for(int ip = 0, ipfree = 0; ip < np; ip++) {
+  for(int ip = 0, ipfree = 1; ip < np; ip++) {
     conv::PhysParamId_t p = fparm->WhichParam(ip);
     if(!fparm->IsNuisance(p)) continue;
     TString label;
@@ -398,16 +404,31 @@ void analyse_output_new
       error = fparm->MigradError(p);
     //osc params
     if(p == conv::kPhypMixing13) {
-      pulls-> SetBinContent(ipfree, (best - conv::kGlobFitSinsq2Theta13) / error);
-      values->SetBinContent(ipfree, (best - conv::kGlobFitSinsq2Theta13) / conv::kGlobFitErrSinsq2Theta13);
+      if(Opt::Instance()->gOscMixingParamChoice == conv::kNuMixSinsq2Theta) {
+	pulls-> SetBinContent(ipfree, (best - conv::kGlobFitSinsq2Theta13) / error);
+	values->SetBinContent(ipfree, (best - conv::kGlobFitSinsq2Theta13) / conv::kGlobFitErrSinsq2Theta13);
+      }
+      else if(Opt::Instance()->gOscMixingParamChoice == conv::kNuMixSinsqTheta) {
+	pulls-> SetBinContent(ipfree, (best - conv::kGlobFitSinsqTheta13) / error);
+	values->SetBinContent(ipfree, (best - conv::kGlobFitSinsqTheta13) / conv::kGlobFitErrSinsqTheta13);
+      }
     }
     else if(p == conv::kPhypMixing12) {
-      pulls-> SetBinContent(ipfree, (best - conv::kGlobFitSinsq2Theta12) / error);
-      values->SetBinContent(ipfree, (best - conv::kGlobFitSinsq2Theta12) / conv::kGlobFitErrSinsq2Theta12);
+      if(Opt::Instance()->gOscMixingParamChoice == conv::kNuMixSinsq2Theta) {
+	pulls-> SetBinContent(ipfree, (best - conv::kGlobFitSinsq2Theta12) / error);
+	values->SetBinContent(ipfree, (best - conv::kGlobFitSinsq2Theta12) / conv::kGlobFitErrSinsq2Theta12);
+      }
+      else if(Opt::Instance()->gOscMixingParamChoice == conv::kNuMixSinsqTheta) {
+	pulls-> SetBinContent(ipfree, (best - conv::kGlobFitSinsqTheta12) / error);
+	values->SetBinContent(ipfree, (best - conv::kGlobFitSinsqTheta12) / conv::kGlobFitErrSinsqTheta12);
+      }
     }
     else if(p == conv::kPhypDeltaCP) {
       pulls-> SetBinContent(ipfree, (best - conv::kGlobFitDeltaCP) / error);
       values->SetBinContent(ipfree, (best - conv::kGlobFitDeltaCP) / conv::kpi);//conv::kGlobFitErrDeltaCP);
+      cout << best << endl;
+      cout << error << endl;
+      cout << 2*conv::kpi << endl;
     }
     else if(p == conv::kPhypDm12sq) {
       pulls-> SetBinContent(ipfree, (best - conv::kGlobFitDm12sq) / error);

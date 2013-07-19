@@ -469,7 +469,13 @@ double t2kana::util::RandomizeDm12sq(void)
 {
   double mean  = conv::kGlobFitDm12sq; 
   double sigma = conv::kGlobFitDm12sq * conv::kGlobFitErrDm12sq;
-  return Rnd::Instance()->RndToyMCosc().Gaus(mean,sigma);
+  double dm    = Rnd::Instance()->RndToyMCosc().Gaus(mean,sigma);
+  // return if a physical value was generated
+  if(dm >= 0.) {
+    return dm;
+  }
+  //or try again
+  return util::RandomizeDm12sq();
 }
 //____________________________________________________________________________
 double t2kana::util::RandomizeDm23sq(void)
@@ -487,7 +493,13 @@ double t2kana::util::RandomizeDm23sq(void)
     mean  = kGlobFitDm23sq;  
   }       
   double sigma = mean * kGlobFitErrDm23sq;
-  return Rnd::Instance()->RndToyMCosc().Gaus(mean,sigma);
+  double dm    = Rnd::Instance()->RndToyMCosc().Gaus(mean,sigma);
+  // return if a physical value was generated
+  if(dm >= 0.) {
+    return dm;
+  }
+  //or try again
+  return util::RandomizeDm12sq();
 }
 //____________________________________________________________________________
 void t2kana::util::SetDefaultSKSpectrumStyle (

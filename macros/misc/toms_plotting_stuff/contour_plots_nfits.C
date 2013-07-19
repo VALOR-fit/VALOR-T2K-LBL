@@ -13,7 +13,8 @@ void contour_plots_nfits(
 	   double       mixing23_min = 0.9,  // edges of the canvas
 	   double       mixing23_max = 1.0,
 	   double       dm32sq_min   = 0.002,
-	   double       dm32sq_max   = 0.003
+	   double       dm32sq_max   = 0.003,
+	   const char * mixingparam  = "sinsq2theta" /* for the x-axis */
 )
 {
   using namespace std;
@@ -35,8 +36,12 @@ void contour_plots_nfits(
        dm32sq_nbins, 
        dm32sq_min - 0.5*dm32sq_step, 
        dm32sq_max + 0.5*dm32sq_step);
-  osc_param_space->GetXaxis()->SetTitle("sin^{2}(2#theta_{23})"); // adjust if mixing param is sinsqtheta rather than sinsq2theta...
-  osc_param_space->GetYaxis()->SetTitle("|#Deltam_{32}^{2}| (eV^{2}/c^{4})");
+  if(mixingparam == "sinsq2theta")
+    osc_param_space->GetXaxis()->SetTitle("sin^{2}(2#theta_{23})");
+  else if(mixingparam == "sinsqtheta")
+    osc_param_space->GetXaxis()->SetTitle("sin^{2}(#theta_{23})");
+  //osc_param_space->GetYaxis()->SetTitle("|#Deltam_{32}^{2}| (eV^{2}/c^{4})");
+  osc_param_space->GetYaxis()->SetTitle("#Deltam^{2} (eV^{2}/c^{4})");
   //osc_param_space->GetXaxis()->SetTitleOffset(1.2);
   osc_param_space->GetYaxis()->SetTitleOffset(1.4);
 
@@ -70,7 +75,7 @@ void contour_plots_nfits(
     string h90_histname     = "";
     string tag              = "";
 
-    fitinp >> mixing23_input >>  dm32sq_input >> h68_histname >> h90_histname >> tag >> fit_result_file;
+    fitinp >> mixing23_input >>  dm32sq_input >> mixing23_bestfit >> dm32sq_bestfit >> h68_histname >> h90_histname >> tag >> fit_result_file;
 
     if(tag.find("pddeff") != string::npos)
       fit_result_file = "";
@@ -94,13 +99,21 @@ void contour_plots_nfits(
     }
 
     //find best-fit point
+    bool mixing23_min_from_grid = true;
+    if(mixing23_bestfit > 0)
+      mixing23_min_from_grid = false;
+    bool dm32sq_min_from_grid = true;
+    if(mixing23_bestfit > 0)
+      dm32sq_min_from_grid = false;
     for(int i = 1; i <= h68[ifit]->GetNbinsX(); i++) {
       for(int j = 1; j <= h68[ifit]->GetNbinsY(); j++) {
         double chisq = h68[ifit]->GetBinContent(i,j);
 	if(chisq < chisq_min) {
 	  chisq_min        = chisq;
-	  mixing23_bestfit = h68[ifit]->GetXaxis()->GetBinCenter(i);
-	  dm32sq_bestfit   = h68[ifit]->GetYaxis()->GetBinCenter(j);
+	  if(mixing23_min_from_grid)
+	    mixing23_bestfit = h68[ifit]->GetXaxis()->GetBinCenter(i);
+	  if(dm32sq_min_from_grid)
+	    dm32sq_bestfit   = h68[ifit]->GetYaxis()->GetBinCenter(j);
 	}
       }//j loop
     }//i loop

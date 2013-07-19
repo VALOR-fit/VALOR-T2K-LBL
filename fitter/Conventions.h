@@ -139,17 +139,21 @@ static const double kGlobFitErrDeltaCP       = 0.10; // ~10%
 // sinsq2theta global fit results
 static const double kGlobFitSinsq2Theta23    = 1.00;
 static const double kGlobFitSinsq2Theta13    = 0.098;
-static const double kGlobFitSinsq2Theta12    = 0.8495;
-static const double kGlobFitErrSinsq2Theta23 = 0.05; // ~5%
-static const double kGlobFitErrSinsq2Theta12 = 0.029; // ~2.9%
+static const double kGlobFitSinsq2Theta12    = 0.8495; //fogli2011
+//static const double kGlobFitSinsq2Theta12    = 0.857; //pdg2012
+static const double kGlobFitErrSinsq2Theta23 = 0.05;  // ~5%
+static const double kGlobFitErrSinsq2Theta12 = 0.083; // ~8.3% fogli2011
+//static const double kGlobFitErrSinsq2Theta12 = 0.028; // ~2.8% pdg2012
 static const double kGlobFitErrSinsq2Theta13 = 0.133; // ~13.3%
 // sinsqtheta global fit results
 static const double kGlobFitSinsqTheta23    = 0.60;
-static const double kGlobFitSinsqTheta13    = 0.025;
-static const double kGlobFitSinsqTheta12    = 0.311;
+static const double kGlobFitSinsqTheta13    = 0.0251;
+static const double kGlobFitSinsqTheta12    = 0.306; //fogli2011
+//static const double kGlobFitSinsqTheta12    = 0.311; //pdg2012
 static const double kGlobFitErrSinsqTheta23 = 0.06;  // ~26% (1 sigma range)
-static const double kGlobFitErrSinsqTheta12 = 0.029;  // ~11% (1 sigma range)
-static const double kGlobFitErrSinsqTheta13 = 0.133;  // ~56% (1 sigma range)
+static const double kGlobFitErrSinsqTheta12 = 0.059;  // ~5.9% fogli2011
+//static const double kGlobFitErrSinsqTheta12 = 0.019;  // ~1.9% pdg2012
+static const double kGlobFitErrSinsqTheta13 = 0.131;  // ~13.1%
 
 // Dm^2 fitter init values and range and step
 static const double kInitFitDm23sq           = kGlobFitDm23sq;
