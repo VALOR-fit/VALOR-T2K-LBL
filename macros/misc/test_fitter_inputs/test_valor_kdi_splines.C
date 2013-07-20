@@ -9,18 +9,18 @@ void test_valor_kdi_splines
 ) 
 {
   // compare response funcs here:
-  TFile * fval = new TFile("$T2KOSCANA/inputs/official/2013/xsec/XSecSplinesCoarse2013_coarseEreco.root");
+  TFile * fval = new TFile("/opt/ppd/t2k/users/nick/t2kana2010v300/macros/nick/XSecSplinesNewPDD2013.root");
 
   // with reference response funcs here:
   TFile * fref = 0;
 
   // locations of reference response funcs (old VaLOR, or KDI)
   TFile * fval_old     = new TFile("$T2KOSCANA/inputs/official/2012/xsec/XSecSplinesCoarse2012_coarseEreco.root");
-  TFile * fkdi_numu    = new TFile("$T2KOSCANA/inputs/official/2013/xsec/spl_numuoa_sk13a_flx11bv32_numu.root");
-  TFile * fkdi_numubar = new TFile("$T2KOSCANA/inputs/official/2013/xsec/spl_numuoa_sk13a_flx11bv32_numubar.root");
-  TFile * fkdi_nue     = new TFile("$T2KOSCANA/inputs/official/2013/xsec/spl_numuoa_sk13a_flx11bv32_nue.root");
-  TFile * fkdi_nuebar  = new TFile("$T2KOSCANA/inputs/official/2013/xsec/spl_numuoa_sk13a_flx11bv32_nuebar.root");
-  TFile * fkdi_signue  = new TFile("$T2KOSCANA/inputs/official/2013/xsec/spl_numuoa_sk13a_flx11bv32_signalnue.root");
+  TFile * fkdi_numu    = new TFile("/opt/ppd/t2k/users/nick/t2kanalatest/macros/misc/test_fitter_inputs/spl_numuoa_sk13a_flx11bv32_numu.bothpdd.root");
+  TFile * fkdi_numubar = new TFile("/opt/ppd/t2k/users/nick/t2kanalatest/macros/misc/test_fitter_inputs/spl_numuoa_sk13a_flx11bv32_numubar.bothpdd.root");
+  TFile * fkdi_nue     = new TFile("/opt/ppd/t2k/users/nick/t2kanalatest/macros/misc/test_fitter_inputs/spl_numuoa_sk13a_flx11bv32_nue.bothpdd.root");
+  TFile * fkdi_nuebar  = new TFile("/opt/ppd/t2k/users/nick/t2kanalatest/macros/misc/test_fitter_inputs/spl_numuoa_sk13a_flx11bv32_nuebar.bothpdd.root");
+  TFile * fkdi_signue  = new TFile("/opt/ppd/t2k/users/nick/t2kanalatest/macros/misc/test_fitter_inputs/spl_numuoa_sk13a_flx11bv32_signalnue.bothpdd.root");
 
   TCanvas * can = new TCanvas("can");
   can->SetTopMargin(0.13);
@@ -28,8 +28,8 @@ void test_valor_kdi_splines
 
   stringstream problem_free;
 
-  //print number and names of cross-section systematics considered by this macro
   cout<<"conv::kNumOfXSecSyst = "<<conv::kNumOfXSecSyst<<endl;
+
   for(int ip = 0; ip < conv::kNumOfXSecSyst; ip++) {
     conv::PhysParamId_t p = conv::kListOfXSecSyst[ip];
     cout<<util::AsString(p) << endl;
@@ -45,11 +45,11 @@ void test_valor_kdi_splines
     cout << "Current sample/mode: " << util::AsString(s) << "/" << util::AsString(m) << endl;
     if(!compare_with_old_valor) {
       //find the KDI spline file
-      //continue for oscillated numu (nue->numu) as there is no sample 
+      //there is no oscillated numu sample -> continue 
       if(util::IsNuMu(m))
 	fref = fkdi_numu;
       else if(util::IsOscNuMu(m))
-        continue;
+	continue;
       else if(util::IsNuMuBar(m))
 	fref = fkdi_numubar;
       else if(util::IsNuE(m))
@@ -110,8 +110,8 @@ void test_valor_kdi_splines
 
 	  // Get VaLOR spline
           cout << "Getting VaLOR response function: " << val_splname.str() << endl;
-          //ip == 0 is MaQE, ip == 1 is MaRes
 	  TSpline3 * val_spl = 0;
+	  /*
 	  if(ip == 0 || ip == 1) {
             TSpline3 * val_spl_temp = (TSpline3 *) fval->Get(val_splname.str().c_str());
             if(val_spl_temp) {
@@ -131,13 +131,14 @@ void test_valor_kdi_splines
 	    }//val_spl_temp
 	    else
               cerr << "No " << val_splname.str() << " response func" << endl; 
-	  }//ip
-          else {
+          }//ip
+	  */
+          //else {
 	    val_spl = (TSpline3 *) fval->Get(val_splname.str().c_str());
 	    if(!val_spl) {
 	      cerr << "No " << val_splname.str() << " response func" << endl;
 	    }
-	  }
+	  //}
           // Get reference spline
 	  TSpline3 * ref_spl = 0;
 	  if(compare_with_old_valor) {
@@ -158,9 +159,15 @@ void test_valor_kdi_splines
 	      double * y = new double[n];
 	      for(int k = 0; k < n; k++) {
 		ref_spl_temp->GetKnot(k, x[k], y[k]);
-		//the horizontal axes of KDI splines are in units of fractional change in the parameter
-		//divide by fractional error in parameter to convert horizontal axes to units of sigma
-		x[k] = x[k] / conv::kXSecSystFracErr[ip];
+		//the horizontal axes of KDI MaQE and MaRes splines are in units of x_Ma but are offset by -1.0
+		//add 1.0 to these horizontal axes to compare with VaLOR splines
+                //ip == 0 is MaQE, ip == 1 is MaRes
+		//the horizontal axes of the other KDI splines are in units of fractional change in the parameter
+		//divide by the fractional error to convert to units of sigma to compare with the VaLOR splines
+		if(ip == 0 || ip == 1)
+		  x[k] = x[k] + 1.0;
+		else
+  		  x[k] = x[k] / conv::kXSecSystFracErr[ip];
 	      }//k
 	      ref_spl = new TSpline3("",x,y,n);
 	      ref_spl->SetTitle(fref->GetTitle());
