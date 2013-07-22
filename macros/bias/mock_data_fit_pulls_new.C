@@ -5,6 +5,11 @@
 // ------------------------------------------------------------------------------------------------
 //
 
+#define FITPARMLIST 0 // nuosc3f_numudisapp_fix4+nuisance
+#define FITPARMLIST 1 // nuosc3f_numudisapp_nuis4+nuisance
+
+//#define VERBOSE //print out name in 
+
 void mock_data_fit_pulls_new
 (
   const char * filenames,                                              /* add these filenames to the tree */
@@ -12,7 +17,8 @@ void mock_data_fit_pulls_new
   int          err_mode             = 1,                               /* which errors to use for pulls (1: migrad, 2 hesse, 3 minos) */
   int          fitter               = 0,                               /* which fitter has been used (0: minuit, 1: minuit2) */
   const char * config_file          = "analysis_configuration.xml",    /* file to get the pre errors from */
-  bool         do_gaus_fits         = false
+  bool         do_gaus_fits         = false,
+  bool         is_sinsqtheta        = true                             /* global best fit comes from sinsqtheta or sinsq2theta */
 )
 {
   using namespace std;
@@ -20,9 +26,16 @@ void mock_data_fit_pulls_new
   using namespace t2kana;
   using namespace t2kana::conv;
 
+  if(is_sinsqtheta)
+    Opt::Instance()->gOscMixingParamChoice = conv::kNuMixSinsqTheta;
+  else
+    Opt::Instance()->gOscMixingParamChoice = conv::kNuMixSinsq2Theta;
+
   // First get the expected systematic variations
 //gStyle->SetOptFit(1);         // show fit results
   gStyle->SetOptStat(1100);     // show mean & RMS only
+  gStyle->SetOptStat(1101);     // show mean, RMS, name
+  gStyle->SetOptStat(1111);     // show mean, RMS, number of entries, name
 //gStyle->SetStatStyle(0);      // make stat boxes see through
   gStyle->SetStatBorderSize(0); //
   gStyle->SetTextFont(42);      // less bold
@@ -30,19 +43,31 @@ void mock_data_fit_pulls_new
   //
   // Parameters in the fit
   //
-  const int nparams = 44;
+#if FITPARMLIST == 0
+  const int nparams = 43;
+#elif FITPARMLIST == 1
+  const int nparams = 47;
+#endif
 
+#if FITPARMLIST == 0
   const int nosc     = 2; // nu of osc params in list below (osc params are plotted on separate canvas)
+#elif FITPARMLIST == 1
+  const int nosc     = 6; // nu of osc params in list below (osc params are plotted on separate canvas)
+#endif
   const int nsystcol = 3; // number of columns on canvases showing residual/pulls for systematics
   const int nsystrow = 4; // number of rows    on canvases showing residual/pulls for systematics
 
   PhysParamId_t params[nparams] = {
-     kPhypMixing23,             
-   //kPhypMixing13,  
-   //kPhypMixing12,   
-   //kPhypDeltaCP, 
+     kPhypMixing23,
+#if FITPARMLIST == 1
+     kPhypMixing13,  
+     kPhypMixing12,   
+     kPhypDeltaCP,
+#endif
      kPhypDm23sq,  
-   //kPhypDm12sq, 
+#if FITPARMLIST == 1
+     kPhypDm12sq,
+#endif
      kNuisBANFF00,
      kNuisBANFF01,
      kNuisBANFF02,
@@ -76,7 +101,7 @@ void mock_data_fit_pulls_new
      kNuisXSecBindE,            
      kNuisXSecNormCCcoh,         
      kNuisXSecNormNC1piC,        
-     kNuisXSecNormNCcoh,         
+     //kNuisXSecNormNCcoh,         
      kNuisXSecNormNCoth,         
      kNuisXSecNormNuEToNuMu,     
      kNuisXSecNormAntiNuToNu,    
@@ -114,17 +139,36 @@ void mock_data_fit_pulls_new
   double escale_err = util::XML2Dbl(xml,root_node,
     "detector_systematics/superk/energy_scale_relative_error/one_mu_ring");
 
-  double mix23_err  = kGlobFitSinsq2Theta23 * kGlobFitErrSinsq2Theta23;
-  double dm32sq_err = kGlobFitDm23sq        * kGlobFitErrDm23sq;
+  double mix23_err   = 0;
+  double mix12_err   = 0;
+  double mix13_err   = 0;
+  double dm32sq_err  = kGlobFitDm23sq        * kGlobFitErrDm23sq;
+  double dm21sq_err  = kGlobFitDm12sq        * kGlobFitErrDm12sq;
+  double deltacp_err = conv::kpi             * conv::kpi;
+  if(is_sinsqtheta) {
+    mix23_err   = kGlobFitSinsqTheta23 * kGlobFitErrSinsqTheta23;
+    mix12_err   = kGlobFitSinsqTheta12 * kGlobFitErrSinsqTheta12;
+    mix13_err   = kGlobFitSinsqTheta13 * kGlobFitErrSinsqTheta13;
+    
+  }
+  else {
+    mix23_err   = kGlobFitSinsq2Theta23 * kGlobFitErrSinsq2Theta23;
+    mix12_err   = kGlobFitSinsq2Theta12 * kGlobFitErrSinsq2Theta12;
+    mix13_err   = kGlobFitSinsq2Theta13 * kGlobFitErrSinsq2Theta13;
+  }
 
   double prefit_err_array[nparams] = 
   {
      mix23_err,                    // kPhypMixing23
-                                   // kPhypMixing13
-                                   // kPhypMixing12
-                                   // kPhypDeltaCP
+#if FITPARMLIST == 1
+     mix13_err,                    // kPhypMixing13
+     mix12_err,                    // kPhypMixing12
+     deltacp_err,                  // kPhypDeltaCP
+#endif
      dm32sq_err,                   // kPhypDm23sq
-                                   // kPhypDm12sq
+#if FITPARMLIST == 1
+     dm21sq_err,                   // kPhypDm12sq
+#endif
      TMath::Sqrt(banffcov( 0, 0)), // kNuisBANFF00
      TMath::Sqrt(banffcov( 1, 1)), // kNuisBANFF01
      TMath::Sqrt(banffcov( 2, 2)), // kNuisBANFF02
@@ -158,7 +202,7 @@ void mock_data_fit_pulls_new
      1,                            // kNuisXSecBindE            
      1,                            // kNuisXSecNormCCcoh         
      1,                            // kNuisXSecNormNC1piC        
-     1,                            // kNuisXSecNormNCcoh         
+     //1,                            // kNuisXSecNormNCcoh         
      1,                            // kNuisXSecNormNCoth         
      1,                            // kNuisXSecNormNuEToNuMu     
      1,                            // kNuisXSecNormAntiNuToNu
@@ -172,14 +216,32 @@ void mock_data_fit_pulls_new
   };
 
 
+  double global_bestfit_mix23 = 0;
+  double global_bestfit_mix13 = 0;
+  double global_bestfit_mix12 = 0;
+  if(is_sinsqtheta) {
+    global_bestfit_mix23 = kGlobFitSinsqTheta23;
+    global_bestfit_mix13 = kGlobFitSinsqTheta13;
+    global_bestfit_mix12 = kGlobFitSinsqTheta12;
+  }
+  else {
+    global_bestfit_mix23 = kGlobFitSinsq2Theta23;
+    global_bestfit_mix13 = kGlobFitSinsq2Theta13;
+    global_bestfit_mix12 = kGlobFitSinsq2Theta12;
+  }
+
   double nominal_array[nparams] = 
   {
-     kGlobFitSinsq2Theta23,    // kPhypMixing23
-                               // kPhypMixing13
-                               // kPhypMixing12
-                               // kPhypDeltaCP
+     global_bestfit_mix23,     // kPhypMixing23
+#if FITPARMLIST == 1
+     global_bestfit_mix13,     // kPhypMixing13
+     global_bestfit_mix12,     // kPhypMixing12
+     kGlobFitDeltaCP,          // kPhypDeltaCP
+#endif
      kGlobFitDm23sq,           // kPhypDm23sq
-                               // kPhypDm12sq
+#if FITPARMLIST == 1
+     kGlobFitDm12sq,           // kPhypDm12sq
+#endif
      TMath::Sqrt(banffbf[ 0]), // kNuisBANFF00
      TMath::Sqrt(banffbf[ 1]), // kNuisBANFF01
      TMath::Sqrt(banffbf[ 2]), // kNuisBANFF02
@@ -213,7 +275,7 @@ void mock_data_fit_pulls_new
      0,                        // kNuisXSecBindE            
      0,                        // kNuisXSecNormCCcoh         
      0,                        // kNuisXSecNormNC1piC        
-     0,                        // kNuisXSecNormNCcoh         
+     //0,                        // kNuisXSecNormNCcoh         
      0,                        // kNuisXSecNormNCoth         
      0,                        // kNuisXSecNormNuEToNuMu     
      0,                        // kNuisXSecNormAntiNuToNu
@@ -244,9 +306,10 @@ void mock_data_fit_pulls_new
   TH1I * h_migraderrstat  = new TH1I("h_migraderrstat", "migrad error status",         14, -1,   13);
   TH1I * h_hesseerrstat   = new TH1I("h_hesseerrstat",  "hesse error status",          14, -1,   13);
   TH1D * h_fittime        = new TH1D("h_fittime",       "fit time",                  1000,  0, 1000);
-  TH1D * h_chisqbf        = new TH1D("h_chisqbf",       "best-fit chisq",             300, -5,   25);
+  TH1D * h_chisqbf        = new TH1D("h_chisqbf",       "best-fit chisq",             615, -5,  200);
   TH1D * h_nsk_nom        = new TH1D("h_nsk_nom",       "nsk(1Rmu) nom",              500,  0,  500);
   TH1D * h_nsk_bf         = new TH1D("h_nsk_bf",        "nsk(1Rmu) best-fit",         500,  0,  500);
+  TH1D * h_summary_nuis   = new TH1D("h_summary_nuis",  "summary of nuisance parameters", nparams, 0, nparams);
 
   TH1D * h_bestfit    [nparams] = { 0 }; // best-fit param distributions
   TH1D * h_residuals  [nparams] = { 0 }; // residuals
@@ -256,7 +319,6 @@ void mock_data_fit_pulls_new
   TH1D * h_err_migrad [nparams] = { 0 }; // migrad err distribution
   TH1D * h_err_hesse  [nparams] = { 0 }; // hesse  err distribution
   TH1D * h_err_minos  [nparams] = { 0 }; // minos  err distribution
-
   for(int ip = 0; ip < nparams; ip++) 
   {
      PhysParamId_t p = params[ip];
@@ -316,9 +378,13 @@ void mock_data_fit_pulls_new
 
   FitParamList *  fparm = 0;
   PhysParamList * iparm = 0;
+  TObjArray * dat_array = 0;
+  TObjArray * pdf_array = 0;
 
   ch.SetBranchAddress("best_fit_params", &fparm);
   ch.SetBranchAddress("input_params",    &iparm);
+  ch.SetBranchAddress("data",            &dat_array);
+  ch.SetBranchAddress("best_fit_pdf",    &pdf_array);
 
   const int nentries = ch.GetEntries();
   cout << nentries << " entries in TChain" << endl;
@@ -359,12 +425,12 @@ void mock_data_fit_pulls_new
     h_fittime -> Fill(fittime);
     h_chisqbf -> Fill(chisqbf);
 
-/*
-    double nsk_nom  = 0; // get from where?
-    double nsk_bf   = 0; // get from where?
+    TH1D * data1Rmu    = (TH1D*) dat_array->FindObject("obs_1Rmu");
+    TH1D * bestfit1Rmu = (TH1D*) pdf_array->FindObject("pdf_1Rmu");
+    double nsk_nom  = data1Rmu->Integral();
+    double nsk_bf   = bestfit1Rmu->Integral();
     h_nsk_nom  -> Fill(nsk_nom);
     h_nsk_bf   -> Fill(nsk_bf);
-*/
 
     // loop over params in the fit
     for(int ip = 0; ip < nparams; ip++) 
@@ -379,9 +445,13 @@ void mock_data_fit_pulls_new
        }
 
        double bestfit    = fparm->BestFitValue(p);
-       double true       = iparm->Value(p);
+       double truevalue  = iparm->Value(p);
 
-       cout << "#" << ip << " => best-fit = " << bestfit << ", true = " << true << endl;
+       cout << "#" << ip << " => best-fit = " << bestfit << ", true = " << truevalue;
+#ifdef VERBOSE
+       cout << "\t" << util::AsString(p);
+#endif
+       cout << endl;
 
        double nominal    = nominal_array[ip];
        double err_prefit = prefit_err_array[ip];
@@ -404,9 +474,9 @@ void mock_data_fit_pulls_new
          exit(1);
        }
 
-       double residuals  = (bestfit-true);
-       double pull_1     = (bestfit-true)/err_fit;
-       double pull_2     = (bestfit-true)/TMath::Sqrt(err_prefit*err_prefit-err_fit*err_fit);
+       double residuals  = (bestfit-truevalue);
+       double pull_1     = (bestfit-truevalue)/err_fit;
+       double pull_2     = (bestfit-truevalue)/TMath::Sqrt(err_prefit*err_prefit-err_fit*err_fit);
        double pull_3     = (bestfit-nominal)/err_fit;
 
        h_bestfit    [ip] -> Fill(bestfit);
@@ -422,6 +492,35 @@ void mock_data_fit_pulls_new
   }//end loop over chain
 
   //
+  // Summarise & fit
+  //
+  // loop over params in the fit
+  TF1 *fit = 0;
+  for(int ip = 0; ip < nparams; ip++) {
+    PhysParamId_t p = params[ip];
+    TString label;
+    if(ip%2)
+      label = Form("%s                         ",util::AsStringPaperRooTex(p).c_str());
+    else
+      label = Form("%s",util::AsStringPaperRooTex(p).c_str());
+    label = Form("%s",util::AsStringPaperRooTex(p).c_str());
+    h_summary_nuis->GetXaxis()->SetBinLabel(ip+1, label.Data());
+    if(!do_gaus_fits) {
+      h_summary_nuis->SetBinContent(ip+1, h_pull_1[ip]->GetMean());
+      h_summary_nuis->SetBinError(  ip+1, h_pull_1[ip]->GetRMS());
+    }
+    else {
+      h_pull_1[ip]->Draw();
+      h_pull_1[ip]->Fit("gaus");
+      fit = h_pull_1[ip]->GetFunction("gaus");
+      if(fit) {
+	h_summary_nuis->SetBinContent(ip+1, fit->GetParameter(1));
+	h_summary_nuis->SetBinError(  ip+1, fit->GetParameter(2));
+    }
+    }//do_gaus_fits
+  }
+
+  //
   // Draw
   //
 
@@ -431,10 +530,9 @@ void mock_data_fit_pulls_new
   new TCanvas(); h_hesseerrstat->Draw();
   new TCanvas(); h_fittime->Draw();
   new TCanvas(); h_chisqbf->Draw();
-/*
-  new TCanvas(); h_nsk_nom->Draw();
-  new TCanvas(); h_nsk_bf->Draw();
-*/
+  new TCanvas(); h_nsk_nom->Draw(); h_nsk_bf->SetLineColor(kRed); h_nsk_bf->Draw("same");
+  new TCanvas(); h_summary_nuis-> GetXaxis()->LabelsOption("v"); h_summary_nuis->Draw();
+
   TCanvas * c = 0;
   // >> Plot residuals 
   // put all osc params in one canvas (1 columnn x nosc rows)
@@ -490,7 +588,7 @@ void mock_data_fit_pulls_new
   //
   // Store
   //
-  TFile foutput("./valor_fit_bias_study.root","recreate");
+  TFile foutput(Form("./valor_fit_bias_study_%s.root",tag),"recreate");
   h_migradminstat       -> Write();
   h_migraderrstat -> Write();
   h_hesseerrstat  -> Write();
@@ -498,7 +596,8 @@ void mock_data_fit_pulls_new
   h_chisqbf       -> Write();
   h_nsk_nom       -> Write();
   h_nsk_bf        -> Write();
-  for(int ip = 0; ip < nparams; ip++) 
+  h_summary_nuis  -> Write();
+ for(int ip = 0; ip < nparams; ip++) 
   {
      h_bestfit    [ip] -> Write();
      h_residuals  [ip] -> Write();
