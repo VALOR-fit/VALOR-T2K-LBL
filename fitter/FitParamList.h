@@ -89,6 +89,7 @@ public:
    void CopyCurrToBestFitValues (void);
    void CopyBestFitToCurrValues (void);
    void CopyBestFitToInitValues (void);
+   void CopyBestFitToInitValues (const FitParamList & plst);
 
    // Set the errors
    // used with FitterKernel

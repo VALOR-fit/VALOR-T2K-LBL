@@ -22,6 +22,10 @@
 #  --grid-local-dir         :
 #  --proxy-id               : Id used to delegate the proxy
 #  --gridpath               :
+#  --dmsq-scheme            : abs23 or fogli
+#  --hierarchy              : normal or inverted
+#  --mix-param-choice       : sinsq2theta or sinsqtheta
+#  --mix-param-octant       : one or two
 #
 # C.Andreopoulos
 #---------------------------------------------------------------------------------------------------------------------------- 
@@ -48,6 +52,11 @@ foreach (@ARGV) {
   if($_ eq '--grid-local-dir'         ) { $grid_local_dir        = $ARGV[$iarg+1]; }
   if($_ eq '--proxy-id'               ) { $proxy_id              = $ARGV[$iarg+1]; }
   if($_ eq '--gridpath'               ) { $gridpath              = $ARGV[$iarg+1]; }
+  if($_ eq '--dmsq-scheme'            ) { $dmsqscheme            = $ARGV[$iarg+1]; }
+  if($_ eq '--hierarchy'              ) { $masshierarchy         = $ARGV[$iarg+1]; }
+  if($_ eq '--mix-param-choice'       ) { $mixparamchoice        = $ARGV[$iarg+1]; }
+  if($_ eq '--mix-param-octant'       ) { $mixparamoctant        = $ARGV[$iarg+1]; }
+  #if($_ eq '--allow-2nu-unphysical'   ) { $apply_2nu_boundary    = 0;              }
   $iarg++;
 }
 
@@ -67,6 +76,11 @@ $softw_dir              = `pwd`                                unless defined $s
 $job_dir                = `pwd`                                unless defined $job_dir;
 $proxy_id               = "valor"                              unless defined $proxy_id;
 $grid_local_dir         = `pwd`                                unless defined $grid_local_dir;
+$dmsqscheme             = "abs23"                              unless defined $dmsqscheme;
+$masshierarchy          = "normal"                             unless defined $masshierarchy;
+$mixparamchoice         = "sinsqtheta"                         unless defined $mixparamchoice;
+$mixparamoctant         = "one"                                unless defined $mixparamoctant;
+#$apply_2nu_boundary     = 1                                    unless defined $apply_2nu_boundary;
 
 if( !defined $cput) {
   if($resource eq "RAL"   ) { $cput = "6:00:00";  }
@@ -91,7 +105,7 @@ while($irun < $nruns) {
   if( $resource eq "Grid") { $macro_dir = "\$T2KOSCANA"; }
   else                     { $macro_dir = $softw_dir;    }
 
-  $command = "root2k -l -b -q \'$macro_dir/macros/fit/run_fit_xml.C(\"$tag\",$irun,\"$toyexptsfile\",$first,$last,\"$config_file\",\"$fitparamlist\",\"$fitoption\",$store_toy_expts,$store_bestfit_spectra)\'";
+  $command = "root2k -l -b -q \'$macro_dir/macros/fit/run_fit_xml.C(\"$tag\",$irun,\"$toyexptsfile\",$first,$last,\"$config_file\",\"$fitparamlist\",\"$fitoption\",$store_toy_expts,$store_bestfit_spectra,\"$dmsqscheme\",\"$masshierarchy\",\"$mixparamchoice\",\"$mixparamoctant\")\'";
   print "$command \n";
 
   $first = $last  + 1;

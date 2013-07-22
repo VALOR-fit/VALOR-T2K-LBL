@@ -77,9 +77,6 @@ void contour_plots_nfits(
 
     fitinp >> mixing23_input >>  dm32sq_input >> mixing23_bestfit >> dm32sq_bestfit >> h68_histname >> h90_histname >> tag >> fit_result_file;
 
-    if(tag.find("pddeff") != string::npos)
-      fit_result_file = "";
-
     cout << "Reading contours " << h68_histname << " and " << h90_histname << " from : " << fit_result_file << endl;
 
     TFile * dataFile = TFile::Open(fit_result_file.c_str(), "READ");
@@ -145,7 +142,7 @@ void contour_plots_nfits(
     case 4:
       icolor = kOrange+7; break;
     case 5:
-      icolor = kYellow-7; break;
+      icolor = kYellow+2; break;
     case 6:
       icolor = kMagenta+1; break;
     case 7:

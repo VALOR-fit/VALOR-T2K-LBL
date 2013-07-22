@@ -14,7 +14,7 @@ void run_fit
   int          nexperiments            = 1,                                   /* number of toy MC experiment fits */
   double       input_mixing12          = 0.86,                                /* 12-mixing, sinq2theta or sinsqtheta depending on user choice, if -999 then randomize */
   double       input_mixing13          = 0.10,                                /* 13-mixing, sinq2theta or sinsqtheta depending on user choice, if -999 then randomize */
-  double       input_mixing23          = 1.00,                                /* 23-mixing, sinq2theta or sinsqtheta depending on user choice */
+  double       input_mixing23          = 0.50,                                /* 23-mixing, sinq2theta or sinsqtheta depending on user choice */
   double       input_deltacp           = 0.00,                                /* deltacp, if -999 then randomize */
   double       input_dm12sq            = 7.58E-5,                             /* Dm^2_{12}, if -999 then randomize */
   double       input_dm23sq            = 2.32E-3,                             /* |Dm^2_{23}| */
@@ -24,7 +24,12 @@ void run_fit
   const char * fit_param_list          = "nuosc3f_numudisapp_fix4+nuisance",  /* fit parameter list for the given physics hypothesis (see FitParamList.h) */
   const char * fit_option              = "minuit",                            /* fitter option */
   bool         store_toy_expts         = true,                                /* disable this if you don't want to store the toy MC expts     */
-  bool         store_bestfit_spectrum  = true                                 /* disable this if you don't want to store the best-fit spectra */
+  bool         store_bestfit_spectrum  = true,                                /* disable this if you don't want to store the best-fit spectra */
+  const char * dmsqscheme              = "abs23",                             /* abs23==kNuDmsq12andAbs23 fogli==kNuDmsqFogliLisi */
+  const char * hierarchy               = "normal",                            /* normal or inverted */
+  const char * mixparamchoice          = "sinsqtheta",                        /* sinsq2theta or sinsqtheta */
+  const char * mixparamoctant          = "one"                                /* one==kNuOctantOne two==kNuOctantTwo */
+  //bool         apply_2nu_boundary      = true                                 /* if using the 2nu flavour osc prob, apply the physical boundary? */
 )
 {
   using namespace std;
@@ -32,12 +37,18 @@ void run_fit
   using namespace t2kana::conv;
 
   // Analysis configuration
-  const char * config = Form("%s/config/%s", gSystem->Getenv("T2KOSCANA"), config_file);
+  TString config = Form("%s/config/%s", gSystem->Getenv("T2KOSCANA"), config_file);
 
   // Global options
-  Opt::Instance()->gOscMixingParamChoice = kNuMixSinsq2Theta;
-  Opt::Instance()->gOscDmsqScheme        = kNuDmsq12andAbs23;
-  Opt::Instance()->gMassHierarchyAssumed = kNmhNormal;
+  Opt::Instance()->gMassHierarchyAssumed = util::HierarchyFromString(hierarchy);
+  Opt::Instance()->gOscDmsqScheme        = util::DmsqSchemeFromString(dmsqscheme);
+  Opt::Instance()->gOscMixingParamChoice = util::MixingTypeFromString(mixparamchoice);
+  Opt::Instance()->gOscOctantChoice      = util::OctantFromString(mixparamoctant);
+  if(Opt::Instance()->Undefined()) {
+    cerr << "Global options not defined correctly. Exiting..." << endl;
+    cerr << *Opt::Instance() << endl;
+    exit(1);
+  }
 
   // Check whether some osc. params need to be randomized
   bool randomize_mixing12 = (TMath::Abs(input_mixing12 + 999) < kASmallNum);
@@ -71,22 +82,32 @@ void run_fit
   cout << *Rnd::Instance() << endl;
 
   // Fit parameter list
-  FitParamList * fparm = FitParamList::NamedParameterList(fit_param_list);
-  PhysHypothesis_t hyp = fparm->PhysicsHypothesis();
+  FitParamList * fparm  = FitParamList::NamedParameterList(fit_param_list); //only used to initialise branch
+  FitParamList * fparm1 = FitParamList::NamedParameterList(fit_param_list);
+  FitParamList * fparm2 = FitParamList::NamedParameterList(fit_param_list);
+  PhysHypothesis_t hyp = fparm1->PhysicsHypothesis();
   cout << "- The following physics hypothesis is used in the fit: " << util::AsString(hyp) << endl;
 
   // Get superk spectrum predictor & configure
   SuperkExpectation * skexp = new SuperkExpectation;
-  skexp->Read(config);
+  skexp->Read(config.Data());
 
   // Object for storing input oscillation and nuisance params in each toy-MC
   PhysParamList * iparm = new PhysParamList;
 
   // Arrays for storing all pieces of fit data and the best-fit pdf (and its components) for each toy-MC.
-  TObjArray * dat_array = new TObjArray;
-  TObjArray * pdf_array = new TObjArray;
+  TObjArray * dat_array = new TObjArray; //only used to initialise branch
+  TObjArray * pdf_array = new TObjArray; //only used to initialise branch
   dat_array->SetOwner(false);
   pdf_array->SetOwner(false);
+  TObjArray * dat_array1 = new TObjArray;
+  TObjArray * pdf_array1 = new TObjArray;
+  dat_array1->SetOwner(false);
+  pdf_array1->SetOwner(false);
+  TObjArray * dat_array2 = new TObjArray;
+  TObjArray * pdf_array2 = new TObjArray;
+  dat_array2->SetOwner(false);
+  pdf_array2->SetOwner(false);
 
   // Create file to store results
   string oscstr = util::AsString(hyp,input_mixing12,input_mixing13,input_mixing23,input_deltacp,input_dm12sq,input_dm23sq);
@@ -94,10 +115,19 @@ void run_fit
 
   // Create tree to store outputs
   TTree * fitnt = new TTree("fitnt","Results of VaLOR data and/or toy-MC experiment fits");
-  fitnt->Branch("best_fit_params", "t2kana::FitParamList",  &fparm,     1280000,0);
-  fitnt->Branch("input_params",    "t2kana::PhysParamList", &iparm,     1280000,0);
-  fitnt->Branch("data",            "TObjArray",             &dat_array, 1280000,0);
-  fitnt->Branch("best_fit_pdf",    "TObjArray",             &pdf_array, 1280000,0);
+  fitnt->Branch("best_fit_params",      "t2kana::FitParamList",  &fparm,      1280000,0);
+  fitnt->Branch("best_fit_params_fit1", "t2kana::FitParamList",  &fparm1,     1280000,0);
+  fitnt->Branch("best_fit_params_fit2", "t2kana::FitParamList",  &fparm2,     1280000,0);
+  fitnt->Branch("input_params",         "t2kana::PhysParamList", &iparm,      1280000,0);
+  fitnt->Branch("data",                 "TObjArray",             &dat_array,  1280000,0);
+  fitnt->Branch("best_fit_pdf",         "TObjArray",             &pdf_array,  1280000,0);
+  fitnt->Branch("data_fit1",            "TObjArray",             &dat_array1, 1280000,0);
+  fitnt->Branch("best_fit_pdf_fit1",    "TObjArray",             &pdf_array1, 1280000,0);
+  fitnt->Branch("data_fit2",            "TObjArray",             &dat_array2, 1280000,0);
+  fitnt->Branch("best_fit_pdf_fit2",    "TObjArray",             &pdf_array2, 1280000,0);
+  TBranch * br_fparm     = fitnt->GetBranch("best_fit_params");
+  TBranch * br_obs_array = fitnt->GetBranch("data");
+  TBranch * br_bf_array  = fitnt->GetBranch("best_fit_pdf");
 
   // Loop over toy-MC experiments
   for(int iexperiment = 0; iexperiment < nexperiments; iexperiment++) {
@@ -112,26 +142,30 @@ void run_fit
 
      // set oscillation parameter inputs as necessary (used to generate toy-MC expt)
      if(hyp == kHypOsc3F) {
-       fparm->Update(kPhypMixing12, input_mixing12);
-       fparm->Update(kPhypMixing13, input_mixing13);
-       fparm->Update(kPhypMixing23, input_mixing23);
-       fparm->Update(kPhypDeltaCP,  input_deltacp);
-       fparm->Update(kPhypDm12sq,   input_dm12sq);
-       fparm->Update(kPhypDm23sq,   input_dm23sq);
+       fparm1->Update(kPhypMixing12, input_mixing12);
+       fparm1->Update(kPhypMixing13, input_mixing13);
+       fparm1->Update(kPhypMixing23, input_mixing23);
+       fparm1->Update(kPhypDeltaCP,  input_deltacp);
+       fparm1->Update(kPhypDm12sq,   input_dm12sq);
+       fparm1->Update(kPhypDm23sq,   input_dm23sq);
      }
      else
      if(hyp == kHypNuMuDisapp2F) {
-       fparm->Update(kPhypMixing23, input_mixing23);
-       fparm->Update(kPhypDm23sq,   input_dm23sq);
+       fparm1->Update(kPhypMixing23, input_mixing23);
+       fparm1->Update(kPhypDm23sq,   input_dm23sq);
      }
 
      // Reset all output spectra
-     dat_array->Clear();
-     pdf_array->Clear();
+     dat_array ->Clear();
+     pdf_array ->Clear();
+     dat_array1->Clear();
+     pdf_array1->Clear();
+     dat_array2->Clear();
+     pdf_array2->Clear();
 
      // Reset input true params and add true oscillation params
      iparm->Clear();
-     PhysParamList true_oscillation_params = fparm->AsPhysParamList("current");
+     PhysParamList true_oscillation_params = fparm1->AsPhysParamList("current");
      iparm->Append(true_oscillation_params);
 
      //
@@ -151,50 +185,104 @@ void run_fit
         // + statistical fluctuations if requested (Poisson fluctuation in each bin)
         cout << "- Generating toy-MC..." << endl;
 	//note that fparm does not contain the tweaks, so use only the PhysHyp here
-        skobs->CreateMockData(*skexp, PhysHypothesis(*fparm), stat_fluctuations);
+        skobs->CreateMockData(*skexp, PhysHypothesis(*fparm1), stat_fluctuations);
         // reset all systematics so that the PDF used in the fitter is the nominal one
         cout << "- Reseting all systematic params in pdf..." << endl;
         skexp->ResetSystematicVariations();
         //skexp->PrintSystematicVariations();
-     } else {       
+     } else {
         //make sure systematics are reset
 	skexp->ResetSystematicVariations();
         // generate mock data using the current PDF (without systematic variations) 
         // with statistical fluctuations if requested (Poisson fluctuation in each bin)
         cout << "- Generating toy-MC..." << endl;
-        skobs->CreateMockData(*skexp, PhysHypothesis(*fparm), stat_fluctuations); 
+        skobs->CreateMockData(*skexp, PhysHypothesis(*fparm1), stat_fluctuations); 
      }
      
      // Get fitter
-     FitInputs * fit_inputs = new FitInputs(skobs,skexp,fparm);
+     FitInputs * fit_inputs = new FitInputs(skobs,skexp,fparm1);
      FitterABC * fitter = util::GetFitter(fit_inputs,fit_option);
 
      // Chisq for true (input) params
      double true_chisq = fit_inputs->Chisquare();
 
      // Print-out true params
-     fparm->ShowOnlyCurrValuesInNextPrint();
+     fparm1->ShowOnlyCurrValuesInNextPrint();
      cout << "- True oscillation params (below) yield chisq = " << true_chisq
-          << *fparm;
+          << *fparm1;
 
      // Do the fit
-     fparm->ResetCurrToInitValues(); // reset osc params
+     fparm1->ResetCurrToInitValues(); // reset osc params
      fitter->DoTheFit();
      int fitstatus = fitter->FitStatusCode();
-     double bestfit_chisq = fit_inputs->BestFitChisquare();
+     double bestfit_chisq  = fit_inputs->BestFitChisquare();
+     double bestfit_chisq2 = 0;
 
      // Save spectra (data and best-fit prediction)
      if(store_toy_expts) {
-        skobs->Write(dat_array, "obs");
+        skobs->Write(dat_array1, "obs");
      }
      if(store_bestfit_spectrum) {
-        skexp->Write(pdf_array, "pdf");
+        skexp->Write(pdf_array1, "pdf");
      }
 
-     // Print-out best-fit params
-     fparm->ShowOnlyBestFitValuesInNextPrint();
-     cout << "- Best-fit oscillation params (below) yield chisq = " << bestfit_chisq 
-          << *fparm;
+     //Do the fit again
+     if(Opt::Instance()->gOscMixingParamChoice == conv::kNuMixSinsqTheta) {
+       //get the correct intial values (best fit points from first fit)
+       fparm2->CopyBestFitToInitValues(*fparm1);
+       //set the mixing23 seed to be the mirror point of the initial best fit
+       double sinsqtheta23_bestfit = fparm1->BestFitValue(conv::kPhypMixing23);
+       double sinsqtheta13_bestfit = fparm1->BestFitValue(conv::kPhypMixing13);
+       double centre = 1 / (2 * (1 - sinsqtheta13_bestfit));
+       double reseed = sinsqtheta23_bestfit;
+       if     (reseed < centre)
+	 reseed = centre + TMath::Abs(centre - sinsqtheta23_bestfit);
+       else if(reseed > centre)
+	 reseed = centre - TMath::Abs(centre - sinsqtheta23_bestfit);
+       fparm2->SetInitValue(conv::kPhypMixing23, reseed);
+       // Get fitter
+       FitInputs * fit_inputs2 = new FitInputs(skobs,skexp,fparm2);
+       FitterABC * fitter2 = util::GetFitter(fit_inputs2,fit_option);
+       fparm2->ResetCurrToInitValues(); // reset osc params
+       fitter2->DoTheFit();
+       bestfit_chisq2 = fit_inputs2->BestFitChisquare();
+       // Save spectra (data and best-fit prediction)
+       if(store_toy_expts) {
+	 skobs->Write(dat_array2, "obs");
+       }
+       if(store_bestfit_spectrum) {
+	 skexp->Write(pdf_array2, "pdf");
+       }
+     }
+
+     // Print-out best-fit params, and set the "best of the two fits" branches correctly
+     cout << "- Best-fit oscillation params (below) yield chisq = ";
+     if(Opt::Instance()->gOscMixingParamChoice == conv::kNuMixSinsqTheta) {
+       if(bestfit_chisq2 < bestfit_chisq) {
+	 cout << bestfit_chisq2 << " from the second seed fit" << endl;
+	 fparm2->ShowOnlyBestFitValuesInNextPrint();
+	 cout << *fparm2;
+	 br_fparm->SetAddress(&fparm2);
+	 br_obs_array->SetAddress(&dat_array2);
+	 br_bf_array->SetAddress(&pdf_array2);
+       }
+       else {
+	 cout << bestfit_chisq << " from the first seed fit" << endl;
+	 fparm1->ShowOnlyBestFitValuesInNextPrint();
+	 cout << *fparm1;
+	 br_fparm->SetAddress(&fparm1);
+	 br_obs_array->SetAddress(&dat_array1);
+	 br_bf_array->SetAddress(&pdf_array1);
+       }
+     }
+     else {
+       cout << bestfit_chisq << endl;
+       fparm1->ShowOnlyBestFitValuesInNextPrint();
+       cout << *fparm1;
+       br_fparm->SetAddress(&fparm1);
+       br_obs_array->SetAddress(&dat_array1);
+       br_bf_array->SetAddress(&pdf_array1);
+     }
 
      // Add all results in the tree
      fitnt->Fill();
@@ -203,6 +291,10 @@ void run_fit
      delete skobs;
      delete fit_inputs;
      delete fitter;
+     if(Opt::Instance()->gOscMixingParamChoice == conv::kNuMixSinsqTheta) {
+       delete fit_inputs2;
+       delete fitter2;
+     }
 
   }
 

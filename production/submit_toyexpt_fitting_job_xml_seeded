@@ -74,7 +74,7 @@ $softw_dir              = `pwd`                                unless defined $s
 $job_dir                = `pwd`                                unless defined $job_dir;
 $dmsqscheme             = "abs23"                              unless defined $dmsqscheme;
 $masshierarchy          = "normal"                             unless defined $masshierarchy;
-$mixparamchoice         = "sinsq2theta"                        unless defined $mixparamchoice;
+$mixparamchoice         = "sinsqtheta"                         unless defined $mixparamchoice;
 $mixparamoctant         = "one"                                unless defined $mixparamoctant;
 $apply_2nu_boundary     = 1                                    unless defined $apply_2nu_boundary;
 

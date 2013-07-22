@@ -141,6 +141,18 @@ void FitParamList::CopyBestFitToInitValues(void)
   }
 }
 //________________________________________________________________________________________
+void FitParamList::CopyBestFitToInitValues(const FitParamList & plst)
+{
+  if(plst.GetParListName() != fParListName) {
+    cerr << "Cannot copy BestFit values in FitParamList of type " << plst.GetParListName()
+	 << " to InitValues in FitParamList of type " << fParListName << endl;
+    exit(1);
+  }
+  for(int ip = 0; ip < fNParams; ip++) {
+    fInitValue[ip] = plst.BestFitValue(ip);
+  }
+}
+//________________________________________________________________________________________
 void FitParamList::SetErrors(double * errplus, double * errminus, double * errmigrad)
 {
   for(int ip = 0; ip < fNParams; ip++) {

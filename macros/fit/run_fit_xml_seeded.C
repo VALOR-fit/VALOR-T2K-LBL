@@ -97,6 +97,15 @@ void run_fit_xml_seeded
   hchisq->GetBinXYZ(globalbin, xbin, ybin, zbin);
   double input_mixing23 = hchisq->GetXaxis()->GetBinCenter(xbin);
   double input_dm23sq   = hchisq->GetYaxis()->GetBinCenter(ybin);
+  //think about the centre of symmetry
+  double input_mixing23_below = input_mixing23, input_mixing23_above = input_mixing23;
+  if(Opt::Instance()->gOscMixingParamChoice == conv::kNuMixSinsqTheta) {
+    double centre = 1 / (2 * (1 - fparm->InitValue(conv::kPhypMixing13)));
+    if     (input_mixing23 < centre)
+      input_mixing23_above = centre + TMath::Abs(centre - input_mixing23);
+    else if(input_mixing23 > centre)
+      input_mixing23_below = centre - TMath::Abs(centre - input_mixing23);
+  }
   cout << "Best fit on chisq surface is " << hchisq->GetMinimum() << " at (mixing23,dm32sq) = "
        << input_mixing23 << "," << input_dm23sq << endl;
 
@@ -127,6 +136,8 @@ void run_fit_xml_seeded
       fparm->SetInitValue(conv::kPhypDeltaCP,  util::RandomizeDeltaCP());
 
       // Set the osc params seed to be within 3 bins of the chisq surfaces' best fit
+      if(Opt::Instance()->gOscMixingParamChoice == conv::kNuMixSinsqTheta)
+	input_mixing23 = (Rnd::Instance()->RndOther().Uniform()) > 0.5 ? input_mixing23_below : input_mixing23_above;
       fparm->SetInitValue(conv::kPhypMixing23, Rnd::Instance()->RndOther().Uniform(input_mixing23 - 0.015,  TMath::Min(input_mixing23 + 0.015, 1.0)));
       fparm->SetInitValue(conv::kPhypDm23sq,   Rnd::Instance()->RndOther().Uniform(input_dm23sq   - 0.00015, input_dm23sq - 0.00015));
     }//ifit!=0
