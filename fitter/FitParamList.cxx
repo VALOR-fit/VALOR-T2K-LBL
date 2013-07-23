@@ -697,7 +697,7 @@ FitParamList * FitParamList::NamedParameterList(string name)
     fp -> SetNuisance  (kPhypMixing13, true);
     fp -> SetNuisance  (kPhypMixing12, true);
     fp -> SetNuisance  (kPhypDm12sq,   true);
-    fp -> FixParameter (kPhypDeltaCP,  true);
+    fp -> FixParameter (kPhypDeltaCP);
     fp -> SetParListName(name);
     fp -> SetSystMode(1);
     return fp;
