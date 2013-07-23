@@ -5,10 +5,18 @@
 // ------------------------------------------------------------------------------------------------
 //
 
-#define FITPARMLIST 0 // nuosc3f_numudisapp_fix4+nuisance
+//#define FITPARMLIST 0 // nuosc3f_numudisapp_fix4+nuisance
 #define FITPARMLIST 1 // nuosc3f_numudisapp_nuis4+nuisance
 
-//#define VERBOSE //print out parameter name in every event & parameter loop
+//#define VERBOSE //print out the best fit and input of every single parameter in every single event
+//#define VERYVERBOSE //print out parameter name too
+
+void save_canvas(TCanvas * c, const char * name, const char * tag) {
+  string name2(name); //don't ask me why I need to do this. I have no idea...
+  c->SaveAs(Form("%s_%s.pdf",tag,name));
+  c->SaveAs(Form("%s_%s.eps",tag,name));
+  c->SaveAs(Form("%s_%s.C",  tag,name2.c_str()));
+}
 
 void mock_data_fit_pulls_new
 (
@@ -32,11 +40,12 @@ void mock_data_fit_pulls_new
     Opt::Instance()->gOscMixingParamChoice = conv::kNuMixSinsq2Theta;
 
   // First get the expected systematic variations
-//gStyle->SetOptFit(1);         // show fit results
+  if(do_gaus_fits)
+    gStyle->SetOptFit(1);         // show fit results
   gStyle->SetOptStat(1100);     // show mean & RMS only
-  gStyle->SetOptStat(1101);     // show mean, RMS, name
-  gStyle->SetOptStat(1111);     // show mean, RMS, number of entries, name
-//gStyle->SetStatStyle(0);      // make stat boxes see through
+  //gStyle->SetOptStat(1101);     // show mean, RMS, name
+  //gStyle->SetOptStat(1111);     // show mean, RMS, number of entries, name
+  //gStyle->SetStatStyle(0);      // make stat boxes see through
   gStyle->SetStatBorderSize(0); //
   gStyle->SetTextFont(42);      // less bold
 
@@ -49,23 +58,17 @@ void mock_data_fit_pulls_new
   const int nparams = 47;
 #endif
 
-#if FITPARMLIST == 0
   const int nosc     = 2; // nu of osc params in list below (osc params are plotted on separate canvas)
-#elif FITPARMLIST == 1
-  const int nosc     = 6; // nu of osc params in list below (osc params are plotted on separate canvas)
-#endif
   const int nsystcol = 3; // number of columns on canvases showing residual/pulls for systematics
   const int nsystrow = 4; // number of rows    on canvases showing residual/pulls for systematics
 
   PhysParamId_t params[nparams] = {
      kPhypMixing23,
+     kPhypDm23sq,  
 #if FITPARMLIST == 1
      kPhypMixing13,  
      kPhypMixing12,   
      kPhypDeltaCP,
-#endif
-     kPhypDm23sq,  
-#if FITPARMLIST == 1
      kPhypDm12sq,
 #endif
      kNuisBANFF00,
@@ -160,13 +163,11 @@ void mock_data_fit_pulls_new
   double prefit_err_array[nparams] = 
   {
      mix23_err,                    // kPhypMixing23
+     dm32sq_err,                   // kPhypDm23sq
 #if FITPARMLIST == 1
      mix13_err,                    // kPhypMixing13
      mix12_err,                    // kPhypMixing12
      deltacp_err,                  // kPhypDeltaCP
-#endif
-     dm32sq_err,                   // kPhypDm23sq
-#if FITPARMLIST == 1
      dm21sq_err,                   // kPhypDm12sq
 #endif
      TMath::Sqrt(banffcov( 0, 0)), // kNuisBANFF00
@@ -233,13 +234,11 @@ void mock_data_fit_pulls_new
   double nominal_array[nparams] = 
   {
      global_bestfit_mix23,     // kPhypMixing23
+     kGlobFitDm23sq,           // kPhypDm23sq
 #if FITPARMLIST == 1
      global_bestfit_mix13,     // kPhypMixing13
      global_bestfit_mix12,     // kPhypMixing12
      kGlobFitDeltaCP,          // kPhypDeltaCP
-#endif
-     kGlobFitDm23sq,           // kPhypDm23sq
-#if FITPARMLIST == 1
      kGlobFitDm12sq,           // kPhypDm12sq
 #endif
      TMath::Sqrt(banffbf[ 0]), // kNuisBANFF00
@@ -336,36 +335,54 @@ void mock_data_fit_pulls_new
 
      h_bestfit[ip] = new TH1D( 
          Form("h_bestfit_%s",name2.c_str()), 
-         Form("Best-fit distribution for %s", util::AsString(p).c_str()), 
+         Form("Best-fit distribution for %s", util::AsStringCompact(p).c_str()), 
          nbins_pull, min_pull, max_pull);
+     double residual_lo = -5*prefit_err_array[ip];
+     double residual_hi =  5*prefit_err_array[ip];
+     if(p == kPhypMixing23) {
+       residual_lo = -0.5;
+       residual_hi =  0.5;
+     }
+     else if(p == kPhypDeltaCP) {
+       residual_lo = -10;
+       residual_hi =  10;
+     }
      h_residuals[ip] = new TH1D( 
          Form("h_residuals_%s",name2.c_str()), 
-         Form("Residuals for %s", util::AsString(p).c_str()), 
-         nbins_pull, -5*prefit_err_array[ip], +5*prefit_err_array[ip]);
+         Form("Residuals for %s", util::AsStringCompact(p).c_str()), 
+         nbins_pull, residual_lo, residual_hi);
      h_pull_1[ip] = new TH1D( 
          Form("h_pull_1_%s",name2.c_str()), 
-         Form("Pull_1 for %s", util::AsString(p).c_str()), 
+         Form("Pull_1 for %s", util::AsStringCompact(p).c_str()), 
          nbins_pull, min_pull, max_pull);
      h_pull_2[ip] = new TH1D( 
          Form("h_pull_2_%s",name2.c_str()), 
-         Form("Pull_2 for %s", util::AsString(p).c_str()), 
+         Form("Pull_2 for %s", util::AsStringCompact(p).c_str()), 
          nbins_pull, min_pull, max_pull);
      h_pull_3[ip] = new TH1D( 
          Form("h_pull_3_%s",name2.c_str()), 
-         Form("Pull_3 for %s", util::AsString(p).c_str()), 
+         Form("Pull_3 for %s", util::AsStringCompact(p).c_str()), 
          nbins_pull, min_pull, max_pull);
      h_err_migrad[ip] = new TH1D( 
          Form("h_err_migrad_%s",name2.c_str()), 
-         Form("Migrad error for %s", util::AsString(p).c_str()), 
+         Form("Migrad error for %s", util::AsStringCompact(p).c_str()), 
          nbins_err, 0., 2*prefit_err_array[ip]);
      h_err_hesse[ip] = new TH1D( 
          Form("h_err_hesse_%s",name2.c_str()), 
-         Form("Hesse error for %s", util::AsString(p).c_str()), 
+         Form("Hesse error for %s", util::AsStringCompact(p).c_str()), 
          nbins_err, 0., 2*prefit_err_array[ip]);
      h_err_minos[ip] = new TH1D( 
          Form("h_err_minos_%s",name2.c_str()), 
-         Form("Minos error for %s", util::AsString(p).c_str()), 
+         Form("Minos error for %s", util::AsStringCompact(p).c_str()), 
          nbins_err, 0., 2*prefit_err_array[ip]);
+     h_bestfit   [ip]->GetXaxis()->SetTitle(util::AsStringPaperRooTex(p).c_str());
+     h_residuals [ip]->GetXaxis()->SetTitle(util::AsStringPaperRooTex(p).c_str());
+     h_pull_1    [ip]->GetXaxis()->SetTitle(util::AsStringPaperRooTex(p).c_str());
+     h_pull_2    [ip]->GetXaxis()->SetTitle(util::AsStringPaperRooTex(p).c_str());
+     h_pull_3    [ip]->GetXaxis()->SetTitle(util::AsStringPaperRooTex(p).c_str());
+     h_err_migrad[ip]->GetXaxis()->SetTitle(util::AsStringPaperRooTex(p).c_str());
+     h_err_hesse [ip]->GetXaxis()->SetTitle(util::AsStringPaperRooTex(p).c_str());
+     h_err_minos [ip]->GetXaxis()->SetTitle(util::AsStringPaperRooTex(p).c_str());
   }//p
 
 
@@ -387,7 +404,7 @@ void mock_data_fit_pulls_new
   ch.SetBranchAddress("best_fit_pdf",    &pdf_array);
 
   const int nentries = ch.GetEntries();
-  cout << nentries << " entries in TChain" << endl;
+  cout << nentries << " entries in TChain from files " << filenames << endl;
   if(nentries == 0) return;
 
   //
@@ -447,11 +464,13 @@ void mock_data_fit_pulls_new
        double bestfit    = fparm->BestFitValue(p);
        double truevalue  = iparm->Value(p);
 
-       cout << "#" << ip << " => best-fit = " << bestfit << ", true = " << truevalue;
 #ifdef VERBOSE
+       cout << "#" << ip << " => best-fit = " << bestfit << ", true = " << truevalue;
+#ifdef VERYVERBOSE
        cout << "\t" << util::AsString(p);
 #endif
        cout << endl;
+#endif
 
        double nominal    = nominal_array[ip];
        double err_prefit = prefit_err_array[ip];
@@ -503,9 +522,8 @@ void mock_data_fit_pulls_new
       label = Form("%s                         ",util::AsStringPaperRooTex(p).c_str());
     else
       label = Form("%s",util::AsStringPaperRooTex(p).c_str());
-    label = Form("%s",util::AsStringPaperRooTex(p).c_str());
     h_summary_nuis->GetXaxis()->SetBinLabel(ip+1, label.Data());
-    if(!do_gaus_fits) {
+    if(!do_gaus_fits || p == conv::kPhypMixing23 || p == conv::kNuisXSecSpecFunc) {
       h_summary_nuis->SetBinContent(ip+1, h_pull_1[ip]->GetMean());
       h_summary_nuis->SetBinError(  ip+1, h_pull_1[ip]->GetRMS());
     }
@@ -523,22 +541,40 @@ void mock_data_fit_pulls_new
   //
   // Draw
   //
+  TCanvas * c = 0;
 
   // >> Plot etc
-  new TCanvas(); h_migradminstat->Draw();
-  new TCanvas(); h_migraderrstat->Draw();
-  new TCanvas(); h_hesseerrstat->Draw();
-  new TCanvas(); h_fittime->Draw();
-  new TCanvas(); h_chisqbf->Draw();
-  new TCanvas(); h_nsk_nom->Draw(); h_nsk_bf->SetLineColor(kRed); h_nsk_bf->Draw("same");
-  new TCanvas(); h_summary_nuis-> GetXaxis()->LabelsOption("v"); h_summary_nuis->Draw();
+  c = new TCanvas(); h_migradminstat->Draw();
+  save_canvas(c, "migrad_minimisation_status", tag);
+  c = new TCanvas(); h_migraderrstat->Draw();
+  save_canvas(c, "migrad_error_status", tag);
+  c = new TCanvas(); h_hesseerrstat->Draw();
+  save_canvas(c, "hesse_error_status", tag);
+  c = new TCanvas(); h_fittime->Draw();
+  save_canvas(c, "fit_time", tag);
+  c = new TCanvas(); h_chisqbf->Draw();
+  save_canvas(c, "bf_chisq", tag);
+  c = new TCanvas();
+  h_nsk_bf->SetLineColor(kRed);
+  if(h_nsk_nom->GetMaximum() > h_nsk_bf->GetMaximum()) {
+    h_nsk_nom->Draw();
+    h_nsk_bf->Draw("same");
+  }
+  else {
+    h_nsk_bf->Draw();
+    h_nsk_nom->Draw("same");
+  }
+  save_canvas(c, "nsk", tag);
 
-  TCanvas * c = 0;
   // >> Plot residuals 
   // put all osc params in one canvas (1 columnn x nosc rows)
   // put all syst params in few canvases with (nsystcol columns x nsystrow rows)
   int ipc=0;//plot nu in curr canvas
   int ipcmax=0;//max nu of plot in curr canvas
+  int icanvas=0;//number of the canvas
+  //int iposc=0;//plot nu in osc canvas
+  //TCanvas * cosc = new TCanvas();
+  //cosc->Divide(1,nosc);
   for(int ip = 0; ip < nparams; ip++) 
   {
      PhysParamId_t p = params[ip];
@@ -555,11 +591,18 @@ void mock_data_fit_pulls_new
      c->cd(ipc+1);
      h_residuals[ip]->Draw();
      ipc++;
-     if(ipc > ipcmax) { ipc=0; c->Update(); }
+     if(ipc >= ipcmax || ip == nparams-1) { 
+       ipc=0; c->Update();
+       save_canvas(c,Form("residual_%d",icanvas),tag);
+       icanvas++;
+     }
   }//p
+  //save_canvas(cosc,"residual_osc",tag);
+
   // >> Plot pulls (all pull 1,2 and 3 on same plot), same logic as before
   ipc=0;//plot nu in curr canvas
   ipcmax=0;//max nu of plot in curr canvas
+  icanvas=0;//number of the canvas
   for(int ip = 0; ip < nparams; ip++) 
   {
      PhysParamId_t p = params[ip];
@@ -581,9 +624,48 @@ void mock_data_fit_pulls_new
      h_pull_2[ip]->Draw("same");
      h_pull_3[ip]->Draw("same");
      ipc++;
-     if(ipc > ipcmax) { ipc=0; c->Update(); }
+     if(ipc >= ipcmax || ip == nparams-1) { 
+       ipc=0; c->Update();
+       save_canvas(c,Form("pull_all_%d",icanvas),tag);
+       icanvas++;
+     }
   }//p
   // >> Plot pulls, same logic as before
+  // >> Plot pulls (only pull 1), same logic as before
+  ipc=0;//plot nu in curr canvas
+  ipcmax=0;//max nu of plot in curr canvas
+  icanvas=0;//number of the canvas
+  for(int ip = 0; ip < nparams; ip++) 
+  {
+     PhysParamId_t p = params[ip];
+     if(ipc==0 && ip==0) {
+        c = new TCanvas();
+        c->Divide(1,nosc);
+        ipcmax = nosc;
+     }
+     if(ipc==0 && ip>=nosc) {
+        c = new TCanvas();
+        c->Divide(nsystcol,nsystrow);
+        ipcmax = nsystcol*nsystrow;
+     }
+     c->cd(ipc+1);
+     h_pull_1[ip]->SetLineColor(kBlack);
+     h_pull_1[ip]->Draw();
+     ipc++;
+     if(ipc >= ipcmax || ip == nparams-1) { 
+       ipc=0; c->Update();
+       save_canvas(c,Form("pull_1_%d",icanvas),tag);
+       icanvas++;
+     }
+  }//p
+  // >> Plot pulls, same logic as before
+
+  //plot summary at the end, because need to turn stat box off & also increase margin
+  c = new TCanvas(); c->SetBottomMargin(0.30);
+  gStyle->SetOptStat(0);
+  h_summary_nuis->GetXaxis()->LabelsOption("v");
+  h_summary_nuis->Draw();
+  save_canvas(c, "summary", tag);
 
   //
   // Store

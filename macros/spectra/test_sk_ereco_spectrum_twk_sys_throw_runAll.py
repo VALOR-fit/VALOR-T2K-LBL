@@ -61,7 +61,7 @@ oscparams.append([-99, -99, -99, -99, -99, -99]) #use global best fits!
 for osc in oscparams:
 
     update = "false"
-    
+
     for mode in modes:
 
         command = 'root2k -l -b -q \'$T2KOSCANA/macros/spectra/test_sk_ereco_spectrum_twk_sys_throw.C('+str(mode)+','+update+',"3f_osc",'+str(osc[0])+','+str(osc[1])+','+str(osc[2])+','+str(osc[3])+','+str(osc[4])+','+str(osc[5])+','+save_toy_expts+',"'+conffile+'",'+str(nexp)+','+no_spectra+')\''
@@ -72,11 +72,9 @@ for osc in oscparams:
             update = "true"
 
         #don't forget the banff prefit
-        """
-        if mode == 5 or mode == 0 or (mode >= 100 and mode < 200):
-            command = 'root2k -l -b -q \'$T2KOSCANA/macros/spectra/test_sk_ereco_spectrum_twk_sys_throw.C('+str(mode)+','+update+',"3f_osc",'+str(osc[0])+','+str(osc[1])+','+str(osc[2])+','+str(osc[3])+','+str(osc[4])+','+str(osc[5])+','+save_toy_expts+',"analysis_configuration_2012a_run1+2+3_neut_finalBANFF_coarseErecoSplines_6binFSI+SI_MAQE_prefit.xml",'+str(nexp)+','+no_spectra+')\''
+        if mode == 1 or mode == 0 or (mode >= 100 and mode < 200):
+            command = 'root2k -l -b -q \'$T2KOSCANA/macros/spectra/test_sk_ereco_spectrum_twk_sys_throw.C('+str(mode)+','+update+',"3f_osc",'+str(osc[0])+','+str(osc[1])+','+str(osc[2])+','+str(osc[3])+','+str(osc[4])+','+str(osc[5])+','+save_toy_expts+',"2013a_numu_run1+2+3+4a_flux11bv3.2_neut13a_banff13v4prefit_sk+fsi.xml",'+str(nexp)+','+no_spectra+')\''
             print command
             if os.system(command) == 1:
                 sys.exit(1)
-        """
             

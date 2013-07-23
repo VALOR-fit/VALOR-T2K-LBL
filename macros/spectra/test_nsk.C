@@ -190,8 +190,12 @@ void test_nsk
   streamer << "\\begin{tabular}{| l | c c | c c |}" << endl;
   streamer << "\\hline" << endl;
   streamer << " &  "
-	   << "\\multicolumn {2}{c|} {\\scriptsize Osc ($\\Delta{m}_{23}^2$ = " << input_dm23sq
-	   << ", $\\sin^2(2\\theta_{23})$ = " << input_mixing23 << ") }  &  "
+	   << "\\multicolumn {2}{c|} {\\scriptsize Osc ($\\Delta{m}_{32}^2$ = " << input_dm23sq;
+  if(Opt::Instance()->gOscMixingParamChoice == conv::kNuMixSinsqTheta)
+    streamer << ", $\\sin^2(\\theta_{23})$ = ";
+  else
+    streamer << ", $\\sin^2(2\\theta_{23})$ = ";
+  streamer << input_mixing23 << ") }  &  "
 	   << "\\multicolumn {2}{c|} { No osc } \\\\"
 	   << endl;
   streamer << " &  "

@@ -158,7 +158,8 @@ void test_sk_ereco_spectrum_twk_sys_throw
   const char * config  = Form("%s/config/%s", gSystem->Getenv("T2KOSCANA"), config_file);
     
   // Global options
-  Opt::Instance()->gOscMixingParamChoice = conv::kNuMixSinsq2Theta;
+  //Opt::Instance()->gOscMixingParamChoice = conv::kNuMixSinsq2Theta;
+  Opt::Instance()->gOscMixingParamChoice = conv::kNuMixSinsqTheta;
   Opt::Instance()->gMassHierarchyAssumed = conv::kNmhNormal;
 
   // Set physics hypothesis
@@ -354,8 +355,9 @@ void test_sk_ereco_spectrum_twk_sys_throw
 
       //SK det + FSI
       if(mode == 9) {
-	skexp.TweakAllSKDetectorSystematics();
-	skexp.TweakAllFSISystematics();
+	//skexp.TweakAllSKDetectorSystematics();
+	//skexp.TweakAllFSISystematics();
+	skexp.TweakAllSKDetectorFSISystematics();
       }
 
      //unconstrained xsec + BANFF

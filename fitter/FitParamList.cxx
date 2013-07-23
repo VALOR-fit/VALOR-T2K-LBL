@@ -692,6 +692,16 @@ FitParamList * FitParamList::NamedParameterList(string name)
     fp -> SetSystMode(2);
     return fp;
   }
+  if(name == "nuosc3f_numudisapp_nuis3fixdcp+nuisance") {
+    FitParamList * fp = FitParamList::NuOsc3FlavourFitWithAllSystDisap();
+    fp -> SetNuisance  (kPhypMixing13, true);
+    fp -> SetNuisance  (kPhypMixing12, true);
+    fp -> SetNuisance  (kPhypDm12sq,   true);
+    fp -> FixParameter (kPhypDeltaCP,  true);
+    fp -> SetParListName(name);
+    fp -> SetSystMode(1);
+    return fp;
+  }
   if(name == "nuosc3f_nueapp_fix4") {
     FitParamList * fp = FitParamList::NuOsc3FlavourFit();
     fp -> FixParameter (kPhypMixing23);
