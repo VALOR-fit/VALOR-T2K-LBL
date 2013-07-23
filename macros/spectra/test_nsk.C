@@ -42,6 +42,7 @@ void test_nsk
   conv::SKMCTemplateType_t t = util::SKMCTemplateTypeFromString(template_str);
 
   //Opt::Instance()->gMassHierarchyAssumed = conv::kNmhInverted;
+  Opt::Instance()->gOscMixingParamChoice = conv::kNuMixSinsqTheta;
 
   const char * config = Form("%s/config/%s", gSystem->Getenv("T2KOSCANA"), config_file);
   cout << "Reading analysis configuration from: " << config << endl;

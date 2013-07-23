@@ -8,7 +8,7 @@
 #define FITPARMLIST 0 // nuosc3f_numudisapp_fix4+nuisance
 #define FITPARMLIST 1 // nuosc3f_numudisapp_nuis4+nuisance
 
-//#define VERBOSE //print out name in 
+//#define VERBOSE //print out parameter name in every event & parameter loop
 
 void mock_data_fit_pulls_new
 (

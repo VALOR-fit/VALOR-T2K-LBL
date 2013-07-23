@@ -202,7 +202,7 @@ void build_chisq_surface_disapp_parallelized
   chisq_surface->Scale(scale_factor);
 
   // Set axes etc
-  if(Opt::Instance()->gOscMixingParamChoice == conv::kNuMixSinsqTheta) {
+  if(Opt::Instance()->gOscMixingParamChoice == conv::kNuMixSinsqTheta)
     chisq_surface->GetXaxis()->SetTitle("sin^{2}(#theta_{23})");
   else
     chisq_surface->GetXaxis()->SetTitle("sin^{2}(2#theta_{23})");
