@@ -86,8 +86,8 @@ die("$toyexptsfile doesn't exist") unless $toyexptsfile;
 die("$expt must be specified") unless $expt;
 die("$datafit_file doesn't exist") unless $datafit_file;
 
-$batch_script  = "$tag-$expt.pbs";
-$job_name      = "$tag-$expt";
+$batch_script  = "gof-$tag-$expt.pbs";
+$job_name      = "gof-$tag-$expt";
 
 $command = "root2k -l -b -q \'$softw_dir/macros/fit/stat/calculate_goodness_of_fit.C(\"$tag\",\"$datafit_file\",$ntoys,\"$toyexptsfile\",$expt,\"$config_file\",\"$fitparamlist\",\"$fitoption\",$store_toy_expts,$store_bestfit_spectra,\"$dmsqscheme\",\"$masshierarchy\",\"$mixparamchoice\",\"$mixparamoctant\")\'";
 
@@ -102,8 +102,8 @@ if($resource eq "RAL") {
   print PBS "#PBS -N $job_name \n";
   print PBS "#PBS -l cput=$cput \n";
   print PBS "#PBS -l walltime=$cput \n";
-  print PBS "#PBS -o $job_dir/$tag-$expt.pbs.out \n";
-  print PBS "#PBS -e $job_dir/$tag-$expt.pbs.err \n";
+  print PBS "#PBS -o $job_dir/gof-$tag-$expt.pbs.out \n";
+  print PBS "#PBS -e $job_dir/gof-$tag-$expt.pbs.err \n";
   print PBS "cd $job_dir \n";
   print PBS "source $softw_dir/setup/setup_at_ral.sh $softw_dir \n";
   print PBS "$command \n";
@@ -121,7 +121,7 @@ if($resource eq "IN2P3") {
   print PBS "$command \n";
   close(PBS);
   `chmod +x $job_dir/$batch_script`;
-  `qsub -eo -V -l platform=LINUX,t=$cput,M=2200MB,scratch=500MB,u_sps_babar -o $tag-$expt.pbs.out -N $job_name $job_dir/$batch_script`;
+  `qsub -eo -V -l platform=LINUX,t=$cput,M=2200MB,scratch=500MB,u_sps_babar -o gof-$tag-$expt.pbs.out -N $job_name $job_dir/$batch_script`;
 }
 #
 # Oxford
@@ -131,8 +131,8 @@ if($resource eq "Oxford") {
   print PBS "#!/bin/bash \n";
   print PBS "#PBS -N $job_name \n";
   print PBS "#PBS -l cput=$cput \n";
-  print PBS "#PBS -o $job_dir/$tag-$expt.pbs.out \n";
-  print PBS "#PBS -e $job_dir/$tag-$expt.pbs.err \n";
+  print PBS "#PBS -o $job_dir/gof-$tag-$expt.pbs.out \n";
+  print PBS "#PBS -e $job_dir/gof-$tag-$expt.pbs.err \n";
   print PBS "cd $job_dir \n";
   print PBS "source $softw_dir/setup/setup_at_oxford.sh $softw_dir \n";
   print PBS "$command \n";

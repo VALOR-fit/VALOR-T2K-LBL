@@ -58,13 +58,13 @@ foreach (@ARGV) {
 }
 
 die("Please specify a toy experiment file using --toy-expts-file") unless defined $toyexptsfile;
+die("Please specify a toy experiment number using --expt") unless defined $expt;
 die("Please specify a chisq surface file using --chisq-file") unless defined $chisq_file;
 
 $resource               = "interactive"                        unless defined $resource;
 $tag                    = "toyexptfits"                        unless defined $tag;
 $nfits                  = 10                                   unless defined $nfits;
 $irun                   = 0                                    unless defined $irun;
-$expt                   = 0                                    unless defined $expt;
 $fitparamlist           = "nuosc3f_numudisapp_fix4+nuisance"   unless defined $fitparamlist;
 $fitoption              = "minuit"                             unless defined $fitoption;
 $store_toy_expts        = 0                                    unless defined $store_toy_expts;
