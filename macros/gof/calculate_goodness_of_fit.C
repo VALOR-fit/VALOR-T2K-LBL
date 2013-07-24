@@ -32,7 +32,7 @@ void calculate_goodness_of_fit
   using namespace t2kana;
 
   // Analysis configuration
-  const char * config = Form("%s/config/%s", gSystem->Getenv("T2KOSCANA"), config_file);
+  TString config   = Form("%s/config/%s", gSystem->Getenv("T2KOSCANA"), config_file);
   TString xmlfile2 = Form("%s/inputs/%s", gSystem->Getenv("T2KOSCANA"), xmlfile);
 
   // Global options
@@ -68,7 +68,7 @@ void calculate_goodness_of_fit
 
   // Get superk spectrum predictor & configure
   SuperkExpectation * skexp = new SuperkExpectation;
-  skexp->Read(config);
+  skexp->Read(config.Data());
 
   // Object for storing input oscillation and nuisance params in each toy-MC
   PhysParamList * iparm = new PhysParamList;
