@@ -89,7 +89,7 @@ die("$datafit_file doesn't exist") unless $datafit_file;
 $batch_script  = "gof-$tag-$expt.pbs";
 $job_name      = "gof-$tag-$expt";
 
-$command = "root2k -l -b -q \'$softw_dir/macros/fit/stat/calculate_goodness_of_fit.C(\"$tag\",\"$datafit_file\",$ntoys,\"$toyexptsfile\",$expt,\"$config_file\",\"$fitparamlist\",\"$fitoption\",$store_toy_expts,$store_bestfit_spectra,\"$dmsqscheme\",\"$masshierarchy\",\"$mixparamchoice\",\"$mixparamoctant\")\'";
+$command = "root2k -l -b -q \'$softw_dir/macros/gof/calculate_goodness_of_fit.C(\"$tag\",\"$datafit_file\",$ntoys,\"$toyexptsfile\",$expt,\"$config_file\",\"$fitparamlist\",\"$fitoption\",$store_toy_expts,$store_bestfit_spectra,\"$dmsqscheme\",\"$masshierarchy\",\"$mixparamchoice\",\"$mixparamoctant\")\'";
 
 print "$command \n";
 
