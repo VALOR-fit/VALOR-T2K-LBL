@@ -6,7 +6,8 @@
 //
 
 //#define FITPARMLIST 0 // nuosc3f_numudisapp_fix4+nuisance
-#define FITPARMLIST 1 // nuosc3f_numudisapp_nuis4+nuisance
+#define FITPARMLIST 1 // nuosc3f_numudisapp_nuis3fixdcp+nuisance
+//#define FITPARMLIST 2 // nuosc3f_numudisapp_nuis4+nuisance
 
 //#define VERBOSE //print out the best fit and input of every single parameter in every single event
 //#define VERYVERBOSE //print out parameter name too
@@ -55,6 +56,8 @@ void mock_data_fit_pulls_new
 #if FITPARMLIST == 0
   const int nparams = 43;
 #elif FITPARMLIST == 1
+  const int nparams = 46;
+#elif FITPARMLIST == 2
   const int nparams = 47;
 #endif
 
@@ -65,11 +68,13 @@ void mock_data_fit_pulls_new
   PhysParamId_t params[nparams] = {
      kPhypMixing23,
      kPhypDm23sq,  
-#if FITPARMLIST == 1
+#if FITPARMLIST >= 1
      kPhypMixing13,  
      kPhypMixing12,   
-     kPhypDeltaCP,
      kPhypDm12sq,
+#if FITPARMLIST == 2
+     kPhypDeltaCP,
+#endif
 #endif
      kNuisBANFF00,
      kNuisBANFF01,
@@ -164,11 +169,13 @@ void mock_data_fit_pulls_new
   {
      mix23_err,                    // kPhypMixing23
      dm32sq_err,                   // kPhypDm23sq
-#if FITPARMLIST == 1
+#if FITPARMLIST >= 1
      mix13_err,                    // kPhypMixing13
      mix12_err,                    // kPhypMixing12
-     deltacp_err,                  // kPhypDeltaCP
      dm21sq_err,                   // kPhypDm12sq
+#if FITPARAMLIST == 2
+     deltacp_err,                  // kPhypDeltaCP
+#endif
 #endif
      TMath::Sqrt(banffcov( 0, 0)), // kNuisBANFF00
      TMath::Sqrt(banffcov( 1, 1)), // kNuisBANFF01
@@ -235,11 +242,13 @@ void mock_data_fit_pulls_new
   {
      global_bestfit_mix23,     // kPhypMixing23
      kGlobFitDm23sq,           // kPhypDm23sq
-#if FITPARMLIST == 1
+#if FITPARMLIST >= 1
      global_bestfit_mix13,     // kPhypMixing13
      global_bestfit_mix12,     // kPhypMixing12
-     kGlobFitDeltaCP,          // kPhypDeltaCP
      kGlobFitDm12sq,           // kPhypDm12sq
+#if FITPARMLIST == 2
+     kGlobFitDeltaCP,          // kPhypDeltaCP
+#endif
 #endif
      TMath::Sqrt(banffbf[ 0]), // kNuisBANFF00
      TMath::Sqrt(banffbf[ 1]), // kNuisBANFF01

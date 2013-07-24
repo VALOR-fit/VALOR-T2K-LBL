@@ -14,6 +14,7 @@
 //   8 tweak BANFF xsec only
 //   9 tweak SKdet + FSI
 //  10 tweak BANFF + unconstrained xsec
+//  11 oscillation parameters
 //
 // 100 tweak banff00
 // 101 tweak banff01
@@ -96,6 +97,8 @@ void test_sk_ereco_spectrum_twk_sys_throw
       modetitle = "SKDet_FSI"; break;
     case 10:
       modetitle = "BANFF_unconstrained_xsec"; break;
+    case 11:
+      modetitle = "Osc_param"; break;
 
     case 200:
       modetitle = "xsec_pf"; break;
@@ -364,6 +367,14 @@ void test_sk_ereco_spectrum_twk_sys_throw
       if(mode == 10) {
 	skexp.TweakAllUncorrelatedXSecSystematics();
 	skexp.TweakAllBANFFSystematics();
+      }
+
+      //non-23 oscillation parameters
+      if(mode == 11) {
+	ph.SetCurrValue(conv::kPhypMixing12,  util::RandomizeMixing12());
+	ph.SetCurrValue(conv::kPhypMixing13,  util::RandomizeMixing13());
+	ph.SetCurrValue(conv::kPhypDeltaCP,   util::RandomizeDeltaCP());
+	ph.SetCurrValue(conv::kPhypDm12sq,    util::RandomizeDm12sq());
       }
 
     }//mode<100
