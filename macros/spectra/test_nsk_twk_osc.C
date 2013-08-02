@@ -10,10 +10,11 @@
 
 void test_nsk_twk_osc
 (
-  bool         thrownon23  = true,
+  bool         thrownon23  = false,
   const int    nthrows     = 100,
   const char * hypothesis  = "3f_osc",                       /* options: "2f_numu_disap", "3f_osc" */
-  const char * hier        = "normal",
+  const char * mixparamchoice       = "sinsqtheta",
+  const char * hierarchy            = "normal",
   const char * config_file = "analysis_configuration.xml"
 )
 {
@@ -21,17 +22,23 @@ void test_nsk_twk_osc
   using namespace t2kana;
 
   conv::SuperkSample_t s = conv::kSKsFCFV1RingMuLike;
-  Opt::Instance()->gMassHierarchyAssumed = util::HierarchyFromString(hier);
+  Opt::Instance()->gMassHierarchyAssumed = util::HierarchyFromString(hierarchy);
+  Opt::Instance()->gOscMixingParamChoice = util::MixingTypeFromString(mixparamchoice);
+  if(Opt::Instance()->Undefined()) {
+    cerr << "Global options not defined correctly. Exiting..." << endl;
+    cerr << *Opt::Instance() << endl;
+    exit(1);
+  }
 
   const char * config = Form("%s/config/%s", gSystem->Getenv("T2KOSCANA"), config_file);
   cout << "Reading analysis configuration from: " << config << endl;
 
-  double mixing23_min  =  0.6;
+  double mixing23_min  =  0.0;
   double mixing23_max  =  1.0;
   double mixing23_step =  0.005;
   double dm23sq_min    =  1.0E-3;
   double dm23sq_max    =  4.0E-3;
-  double dm23sq_step   =  1E-4;
+  double dm23sq_step   =  5E-5;
 
  // make sure that min and max are at the bin centre
  int mixing23_nbins = 1 + TMath::CeilNint ((mixing23_max - mixing23_min) / mixing23_step);
@@ -83,7 +90,7 @@ void test_nsk_twk_osc
 	   ph.SetCurrValue(conv::kPhypDm12sq,    util::RandomizeDm12sq());
 	   skexp.Generate(ph);
 	   double thisnsk = skexp.CurrPredictedErecoSpectrum(s)->Integral();
-	   nsksq += pow(thisnsk - nsk, 2);
+	   //nsksq += pow(thisnsk - nsk, 2);
 	   nskmin = TMath::Min(thisnsk, nskmin);
 	   nskmax = TMath::Max(thisnsk, nskmax);
 	 }
@@ -97,8 +104,11 @@ void test_nsk_twk_osc
 
   gStyle->SetOptStat(0);
 
-  nsk_vs_osc_params->GetXaxis()->SetTitle("sin^{2}2#theta_{23}");
-  nsk_vs_osc_params->GetYaxis()->SetTitle("|#Deltam^{2}_{23}| (eV^{2}/c^{4})");
+  if(Opt::Instance()->gOscMixingParamChoice == conv::kNuMixSinsq2Theta)
+    nsk_vs_osc_params->GetXaxis()->SetTitle("sin^{2}2#theta_{23}");
+  else
+    nsk_vs_osc_params->GetXaxis()->SetTitle("sin^{2}#theta_{23}");
+  nsk_vs_osc_params->GetYaxis()->SetTitle("|#Deltam^{2}_{32}| (eV^{2}/c^{4})");
 
   nsk_vs_osc_params->Draw("colz");
 

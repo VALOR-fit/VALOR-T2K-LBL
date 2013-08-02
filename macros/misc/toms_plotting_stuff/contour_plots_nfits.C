@@ -14,7 +14,8 @@ void contour_plots_nfits(
 	   double       mixing23_max = 1.0,
 	   double       dm32sq_min   = 0.002,
 	   double       dm32sq_max   = 0.003,
-	   const char * mixingparam  = "sinsq2theta" /* for the x-axis */
+	   const char * mixingparam  = "sinsq2theta", /* for the x-axis */
+	   double       leg_font_size = 0.05
 )
 {
   using namespace std;
@@ -60,7 +61,7 @@ void contour_plots_nfits(
   leg->SetFillStyle(0);
   leg->SetBorderSize(0);
   leg->SetTextFont(42);
-  leg->SetTextSize(0.05);
+  leg->SetTextSize(leg_font_size);
 
   // Read in contours
   ifstream fitinp(contour_filelist, ios::in);
@@ -97,6 +98,12 @@ void contour_plots_nfits(
       continue;
     }
 
+    //swap '$' with ' ' in tag
+    for (int i = 0; i < tag.length(); ++i) {
+      if (tag[i] == '$')
+	tag[i] = ' ';
+    }
+
     //find best-fit point
     FitParamList * fparm = 0;
     dataFile->GetObject("fparm",fparm);
@@ -108,10 +115,8 @@ void contour_plots_nfits(
 	  double chisq = h68[ifit]->GetBinContent(i,j);
 	  if(chisq < chisq_min) {
 	    chisq_min        = chisq;
-	    if(mixing23_min_from_grid)
-	      mixing23_bestfit = h68[ifit]->GetXaxis()->GetBinCenter(i);
-	    if(dm32sq_min_from_grid)
-	      dm32sq_bestfit   = h68[ifit]->GetYaxis()->GetBinCenter(j);
+	    mixing23_bestfit = h68[ifit]->GetXaxis()->GetBinCenter(i);
+	    dm32sq_bestfit   = h68[ifit]->GetYaxis()->GetBinCenter(j);
 	  }
 	}//j loop
       }//i loop
@@ -256,7 +261,7 @@ void contour_plots_nfits(
     legext->SetFillStyle(0);
     legext->SetBorderSize(0);
     legext->SetTextFont(42);
-    legext->SetTextSize(0.05);
+    legext->SetTextSize(leg_font_size);
     legext->AddEntry(ll_minos, "MINOS 2013 2#nu", "l");
     legext->AddEntry(g_skle, "SuperK L/E 2012 2#nu", "l");
     legext->AddEntry(g_skzen, "SuperK zenith 2012 3#nu", "l");

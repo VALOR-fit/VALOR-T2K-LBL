@@ -100,13 +100,9 @@ void run_fit
   TObjArray * pdf_array = new TObjArray; //only used to initialise branch
   dat_array->SetOwner(false);
   pdf_array->SetOwner(false);
-  TObjArray * dat_array1 = new TObjArray;
   TObjArray * pdf_array1 = new TObjArray;
-  dat_array1->SetOwner(false);
   pdf_array1->SetOwner(false);
-  TObjArray * dat_array2 = new TObjArray;
   TObjArray * pdf_array2 = new TObjArray;
-  dat_array2->SetOwner(false);
   pdf_array2->SetOwner(false);
 
   // Create file to store results
@@ -121,12 +117,9 @@ void run_fit
   fitnt->Branch("input_params",         "t2kana::PhysParamList", &iparm,      1280000,0);
   fitnt->Branch("data",                 "TObjArray",             &dat_array,  1280000,0);
   fitnt->Branch("best_fit_pdf",         "TObjArray",             &pdf_array,  1280000,0);
-  fitnt->Branch("data_fit1",            "TObjArray",             &dat_array1, 1280000,0);
   fitnt->Branch("best_fit_pdf_fit1",    "TObjArray",             &pdf_array1, 1280000,0);
-  fitnt->Branch("data_fit2",            "TObjArray",             &dat_array2, 1280000,0);
   fitnt->Branch("best_fit_pdf_fit2",    "TObjArray",             &pdf_array2, 1280000,0);
   TBranch * br_fparm     = fitnt->GetBranch("best_fit_params");
-  TBranch * br_obs_array = fitnt->GetBranch("data");
   TBranch * br_bf_array  = fitnt->GetBranch("best_fit_pdf");
 
   // Loop over toy-MC experiments
@@ -158,9 +151,7 @@ void run_fit
      // Reset all output spectra
      dat_array ->Clear();
      pdf_array ->Clear();
-     dat_array1->Clear();
      pdf_array1->Clear();
-     dat_array2->Clear();
      pdf_array2->Clear();
 
      // Reset input true params and add true oscillation params
@@ -220,13 +211,13 @@ void run_fit
 
      // Save spectra (data and best-fit prediction)
      if(store_toy_expts) {
-        skobs->Write(dat_array1, "obs");
+        skobs->Write(dat_array, "obs");
      }
      if(store_bestfit_spectrum) {
         skexp->Write(pdf_array1, "pdf");
      }
 
-     //Do the fit again
+     //Do the fit again at the mirror point
      if(Opt::Instance()->gOscMixingParamChoice == conv::kNuMixSinsqTheta) {
        //get the correct intial values (best fit points from first fit)
        fparm2->CopyBestFitToInitValues(*fparm1);
@@ -246,10 +237,7 @@ void run_fit
        fparm2->ResetCurrToInitValues(); // reset osc params
        fitter2->DoTheFit();
        bestfit_chisq2 = fit_inputs2->BestFitChisquare();
-       // Save spectra (data and best-fit prediction)
-       if(store_toy_expts) {
-	 skobs->Write(dat_array2, "obs");
-       }
+       // Save spectra (best-fit prediction)
        if(store_bestfit_spectrum) {
 	 skexp->Write(pdf_array2, "pdf");
        }
@@ -263,7 +251,6 @@ void run_fit
 	 fparm2->ShowOnlyBestFitValuesInNextPrint();
 	 cout << *fparm2;
 	 br_fparm->SetAddress(&fparm2);
-	 br_obs_array->SetAddress(&dat_array2);
 	 br_bf_array->SetAddress(&pdf_array2);
        }
        else {
@@ -271,7 +258,6 @@ void run_fit
 	 fparm1->ShowOnlyBestFitValuesInNextPrint();
 	 cout << *fparm1;
 	 br_fparm->SetAddress(&fparm1);
-	 br_obs_array->SetAddress(&dat_array1);
 	 br_bf_array->SetAddress(&pdf_array1);
        }
      }
@@ -280,7 +266,6 @@ void run_fit
        fparm1->ShowOnlyBestFitValuesInNextPrint();
        cout << *fparm1;
        br_fparm->SetAddress(&fparm1);
-       br_obs_array->SetAddress(&dat_array1);
        br_bf_array->SetAddress(&pdf_array1);
      }
 

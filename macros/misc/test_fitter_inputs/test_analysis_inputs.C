@@ -55,7 +55,11 @@ void test_analysis_inputs
 
   if(opt.Contains("BANFF")) {
     util::PrintCompact(skexp->GetBANFF()->BestFitValues(),15,9,"BANFF fit params");
-    skexp->GetBANFF()->CovMatrix().Print();
+    skexp->GetBANFF()->CovMatrix().Print("f=%8.4f");
+    TMatrixDDiag diag(skexp->GetBANFF()->CovMatrix());
+    for(int i = 0; i < diag.GetNdiags(); i++) {
+      cout << std::fixed << std::setprecision(3) << TMath::Sqrt(diag(i)) << endl;
+    }
   }//BANFF
 
   if(opt.Contains("NuXSec")) {
@@ -69,7 +73,14 @@ void test_analysis_inputs
     }
   }//NuXSec
 
-  if(opt.Contains("FSI")) {
+  if(opt.Contains("SKDetFSI")) {
+   skexp->GetSuperkDetectorFSI()->CovMatrix().Print("f=%8.4f");
+   TMatrixDDiag diag(skexp->GetSuperkDetectorFSI()->CovMatrix());
+   for(int i = 0; i < diag.GetNdiags(); i++) {
+     cout << TMath::Sqrt(diag(i)) << endl;
+   }
+  }//SKDetFSI
+  else if(opt.Contains("FSI")) {
    skexp->GetFSI()->CovMatrix().Print();
   }//FSI
 }

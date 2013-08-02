@@ -34,7 +34,10 @@ void plot_1ringmu_spectrum_rebin_regroup
   double nmax = 20.0,
 
   /* show pdf components (shown only for the first pdf, for clarity) */
-  bool show_components = true
+  bool show_components = true,
+
+  /* use "1 #mu-like ring" as a legend header */
+  bool print_header = false
 )
 {
   // 
@@ -60,6 +63,10 @@ void plot_1ringmu_spectrum_rebin_regroup
   TH1D * sk_1Rmu_numuccoth     = (TH1D*) pdffile->Get("sk_1Rmu_numuccoth");
   TH1D * sk_1Rmu_numunc1piC    = (TH1D*) pdffile->Get("sk_1Rmu_numunc1piC");
   TH1D * sk_1Rmu_numuncoth     = (TH1D*) pdffile->Get("sk_1Rmu_numuncoth");
+  TH1D * sk_1Rmu_oscnumuccqe   = (TH1D*) pdffile->Get("sk_1Rmu_oscnumuccqe");
+  TH1D * sk_1Rmu_oscnumucc1pi  = (TH1D*) pdffile->Get("sk_1Rmu_oscnumucc1pi");
+  TH1D * sk_1Rmu_oscnumucccoh  = (TH1D*) pdffile->Get("sk_1Rmu_oscnumucccoh");
+  TH1D * sk_1Rmu_oscnumuccoth  = (TH1D*) pdffile->Get("sk_1Rmu_oscnumuccoth");
   TH1D * sk_1Rmu_numubarccqe   = (TH1D*) pdffile->Get("sk_1Rmu_numubarccqe");
   TH1D * sk_1Rmu_numubarcc1pi  = (TH1D*) pdffile->Get("sk_1Rmu_numubarcc1pi");
   TH1D * sk_1Rmu_numubarcccoh  = (TH1D*) pdffile->Get("sk_1Rmu_numubarcccoh");
@@ -94,6 +101,10 @@ void plot_1ringmu_spectrum_rebin_regroup
   TH1D * h_sk_1Rmu_numuccoth     = 0;
   TH1D * h_sk_1Rmu_numunc1piC    = 0;
   TH1D * h_sk_1Rmu_numuncoth     = 0;
+  TH1D * h_sk_1Rmu_oscnumuccqe   = 0;
+  TH1D * h_sk_1Rmu_oscnumucc1pi  = 0;
+  TH1D * h_sk_1Rmu_oscnumucccoh  = 0;
+  TH1D * h_sk_1Rmu_oscnumuccoth  = 0;
   TH1D * h_sk_1Rmu_numubarccqe   = 0;
   TH1D * h_sk_1Rmu_numubarcc1pi  = 0;
   TH1D * h_sk_1Rmu_numubarcccoh  = 0;
@@ -125,6 +136,10 @@ void plot_1ringmu_spectrum_rebin_regroup
      h_sk_1Rmu_numuccoth     = (TH1D*) sk_1Rmu_numuccoth     -> Rebin(kNErecoBins1Rmu, "h_sk_1Rmu_numuccoth",     kErecoBinEdges1Rmu);
      h_sk_1Rmu_numunc1piC    = (TH1D*) sk_1Rmu_numunc1piC    -> Rebin(kNErecoBins1Rmu, "h_sk_1Rmu_numunc1piC",    kErecoBinEdges1Rmu);
      h_sk_1Rmu_numuncoth     = (TH1D*) sk_1Rmu_numuncoth     -> Rebin(kNErecoBins1Rmu, "h_sk_1Rmu_numuncoth",     kErecoBinEdges1Rmu);
+     h_sk_1Rmu_oscnumuccqe      = (TH1D*) sk_1Rmu_oscnumuccqe      -> Rebin(kNErecoBins1Rmu, "h_sk_1Rmu_oscnumuccqe",      kErecoBinEdges1Rmu);
+     h_sk_1Rmu_oscnumucc1pi     = (TH1D*) sk_1Rmu_oscnumucc1pi     -> Rebin(kNErecoBins1Rmu, "h_sk_1Rmu_oscnumucc1pi",     kErecoBinEdges1Rmu);
+     h_sk_1Rmu_oscnumucccoh     = (TH1D*) sk_1Rmu_oscnumucccoh     -> Rebin(kNErecoBins1Rmu, "h_sk_1Rmu_oscnumucccoh",     kErecoBinEdges1Rmu);
+     h_sk_1Rmu_oscnumuccoth     = (TH1D*) sk_1Rmu_oscnumuccoth     -> Rebin(kNErecoBins1Rmu, "h_sk_1Rmu_oscnumuccoth",     kErecoBinEdges1Rmu);
      h_sk_1Rmu_numubarccqe   = (TH1D*) sk_1Rmu_numubarccqe   -> Rebin(kNErecoBins1Rmu, "h_sk_1Rmu_numubarccqe",   kErecoBinEdges1Rmu);
      h_sk_1Rmu_numubarcc1pi  = (TH1D*) sk_1Rmu_numubarcc1pi  -> Rebin(kNErecoBins1Rmu, "h_sk_1Rmu_numubarcc1pi",  kErecoBinEdges1Rmu);
      h_sk_1Rmu_numubarcccoh  = (TH1D*) sk_1Rmu_numubarcccoh  -> Rebin(kNErecoBins1Rmu, "h_sk_1Rmu_numubarcccoh",  kErecoBinEdges1Rmu);
@@ -146,6 +161,7 @@ void plot_1ringmu_spectrum_rebin_regroup
      h_sk_1Rmu_signueccqe    = (TH1D*) sk_1Rmu_signueccqe    -> Rebin(kNErecoBins1Rmu, "h_sk_1Rmu_signueccqe",    kErecoBinEdges1Rmu);
      h_sk_1Rmu_signuecc1pi   = (TH1D*) sk_1Rmu_signuecc1pi   -> Rebin(kNErecoBins1Rmu, "h_sk_1Rmu_signuecc1pi",   kErecoBinEdges1Rmu);
      h_sk_1Rmu_signuecccoh   = (TH1D*) sk_1Rmu_signuecccoh   -> Rebin(kNErecoBins1Rmu, "h_sk_1Rmu_signuecccoh",   kErecoBinEdges1Rmu);
+     h_sk_1Rmu_signueccoth   = (TH1D*) sk_1Rmu_signueccoth   -> Rebin(kNErecoBins1Rmu, "h_sk_1Rmu_signueccoth",   kErecoBinEdges1Rmu);
   } else {
      h_sk_1Rmu_total         = new TH1D(*sk_1Rmutotal);
      h_sk_1Rmu_numuccqe      = new TH1D(*sk_1Rmu_numuccqe);
@@ -154,6 +170,10 @@ void plot_1ringmu_spectrum_rebin_regroup
      h_sk_1Rmu_numuccoth     = new TH1D(*sk_1Rmu_numuccoth);
      h_sk_1Rmu_numunc1piC    = new TH1D(*sk_1Rmu_numunc1piC);
      h_sk_1Rmu_numuncoth     = new TH1D(*sk_1Rmu_numuncoth);
+     h_sk_1Rmu_oscnumuccqe      = new TH1D(*sk_1Rmu_oscnumuccqe);
+     h_sk_1Rmu_oscnumucc1pi     = new TH1D(*sk_1Rmu_oscnumucc1pi);
+     h_sk_1Rmu_oscnumucccoh     = new TH1D(*sk_1Rmu_oscnumucccoh);
+     h_sk_1Rmu_oscnumuccoth     = new TH1D(*sk_1Rmu_oscnumuccoth);
      h_sk_1Rmu_numubarccqe   = new TH1D(*sk_1Rmu_numubarccqe);
      h_sk_1Rmu_numubarcc1pi  = new TH1D(*sk_1Rmu_numubarcc1pi);
      h_sk_1Rmu_numubarcccoh  = new TH1D(*sk_1Rmu_numubarcccoh);
@@ -175,6 +195,7 @@ void plot_1ringmu_spectrum_rebin_regroup
      h_sk_1Rmu_signueccqe    = new TH1D(*sk_1Rmu_signueccqe);
      h_sk_1Rmu_signuecc1pi   = new TH1D(*sk_1Rmu_signuecc1pi);
      h_sk_1Rmu_signuecccoh   = new TH1D(*sk_1Rmu_signuecccoh);
+     h_sk_1Rmu_signueccoth   = new TH1D(*sk_1Rmu_signueccoth);
   }
 
 //  pdffile->Close();
@@ -193,10 +214,14 @@ void plot_1ringmu_spectrum_rebin_regroup
   h_mc_all = new TH1D(*h_sk_1Rmu_total);
 
   h_mc_numuccqe = new TH1D(*h_sk_1Rmu_numuccqe);
+  h_mc_numuccqe -> Add (h_sk_1Rmu_oscnumuccqe);
 
   h_mc_numuccnonqe = new TH1D(*h_sk_1Rmu_numucc1pi);
   h_mc_numuccnonqe -> Add (h_sk_1Rmu_numucccoh);
   h_mc_numuccnonqe -> Add (h_sk_1Rmu_numuccoth);
+  h_mc_numuccnonqe -> Add (h_sk_1Rmu_oscnumucc1pi);
+  h_mc_numuccnonqe -> Add (h_sk_1Rmu_oscnumucccoh);
+  h_mc_numuccnonqe -> Add (h_sk_1Rmu_oscnumuccoth);
 
   h_mc_numubarcc   = new TH1D(*h_sk_1Rmu_numubarccqe);
   h_mc_numubarcc  -> Add (h_sk_1Rmu_numubarcc1pi);
@@ -214,8 +239,8 @@ void plot_1ringmu_spectrum_rebin_regroup
   h_mc_nuenuebarcc -> Add (h_sk_1Rmu_signueccqe);
   h_mc_nuenuebarcc -> Add (h_sk_1Rmu_signuecc1pi);
   h_mc_nuenuebarcc -> Add (h_sk_1Rmu_signuecccoh);
-  h_mc_nuenuebarcc -> Add (h_sk_1Rmu_signueccoth);
-
+  //h_mc_nuenuebarcc -> Add (h_sk_1Rmu_signueccoth);
+  
   h_mc_nc = new TH1D(*h_sk_1Rmu_numunc1piC);
   h_mc_nc     -> Add (h_sk_1Rmu_numuncoth);
   h_mc_nc     -> Add (h_sk_1Rmu_numubarnc1piC);
@@ -329,7 +354,8 @@ void plot_1ringmu_spectrum_rebin_regroup
   TLegend * legend = new TLegend(0.35,0.6,0.85,0.9);
   legend->SetFillColor(0);
   legend->SetBorderSize(0);
-  legend->SetHeader("1 #mu-like ring");
+  if(print_header)
+    legend->SetHeader("1 #mu-like ring");
   if(h_data) {
      legend->AddEntry(h_data,     Form("%s",datalabel),            "LP");
   }
