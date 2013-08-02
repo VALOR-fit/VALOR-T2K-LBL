@@ -108,7 +108,7 @@ while($irun < $nruns) {
 
   print "Submitting $tag run: $irun \n";
 
-  $command  = "root2k -l -b -q \'$macro_dir/macros/contour/fc/numu/feldman_cousins_fitting_job.C(\"$tag\",$irun,$nexpts,$min_dm23sq_bin,$max_dm23sq_bin,$min_sinsq2theta23_bin,$max_sinsq2theta23_bin,\"$bin_list\",\"$config_file\",$stat_fluct,$twk_systematics,$twk_non23osc,\"$fitparamlist\",\"$fitoption\",$store_toy_expts,$store_bestfit_spectra,\"$dmsqscheme\",\"$masshierarchy\",\"$mixparamchoice\",\"$mixparamoctant\")\'";
+  $command  = "root2k -l -b -q \'$macro_dir/macros/contour/fc/numu/feldman_cousins_fitting_job_new.C(\"$tag\",$irun,$nexpts,$min_dm23sq_bin,$max_dm23sq_bin,$min_sinsq2theta23_bin,$max_sinsq2theta23_bin,\"$bin_list\",\"$config_file\",$stat_fluct,$twk_systematics,$twk_non23osc,\"$fitparamlist\",\"$fitoption\",$store_toy_expts,$store_bestfit_spectra,\"$dmsqscheme\",\"$masshierarchy\",\"$mixparamchoice\",\"$mixparamoctant\")\'";
   print "$command \n";
 
   #
