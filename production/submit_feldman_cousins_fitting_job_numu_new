@@ -239,10 +239,11 @@ if($resource eq "Grid") {
   print SH0 "echo \"*** Submitting jobs to the GRID...\" \n";
   $irun = 0;
   while($irun < $nruns) {
-    print SH0 "glite-wms-job-submit -a -c $softw_dir/production/grid/$autowms_file -o $tag.jid $tag-$irun.jdl\n";
+    #print SH0 "glite-wms-job-submit -a -c $softw_dir/production/grid/$autowms_file -o $tag.jid $tag-$irun.jdl\n";
+    print SH0 "glite-wms-job-submit -d \$USERG -c $softw_dir/production/grid/$autowms_file -o $tag.jid $tag-$irun.jdl\n";
     $irun++;
   }
   `chmod +x $tag.sh`;
   #`./$tag.sh`;
 }
-myproxy-init -s lcgrbp01.gridpp.rl.ac.uk -d -n
+
