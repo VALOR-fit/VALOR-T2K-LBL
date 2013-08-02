@@ -12,10 +12,10 @@ void feldman_cousins_fitting_job_new
   const char * tag                     = "fc",                                /* tag for output file */
   int          run                     = 0,                                   /* run number */
   int          nexperiments            = 1,                                   /* number of toy MC experiment fits */
-  int          min_dm23sq_bin          =  21,                                 /* generate toy MC with this range of Dm^2_{23} */
-  int          max_dm23sq_bin          =  41,                                 /* -//- */
-  int          min_mixing23_bin        =  81,                                 /* generate toy MC with this range of 23 mixing (expressed in terms of either sinsq2theta, sinsqtheta, ...) */
-  int          max_mixing23_bin        = 121,                                 /* -//- */
+  int          min_dm23sq_bin          =  25,                                 /* generate toy MC with this range of Dm^2_{23} */
+  int          max_dm23sq_bin          =  36,                                 /* -//- */
+  int          min_mixing23_bin        =  82,                                 /* generate toy MC with this range of 23 mixing (expressed in terms of either sinsq2theta, sinsqtheta, ...) */
+  int          max_mixing23_bin        = 126,                                 /* -//- */
   const char * bin_list                = "",                                  /* if specified, run toy-MC expts only in the bins specified as long as they are in the range given above */
   const char * config_file             = "analysis_configuration.xml",        /* analysis configuration file */
   bool         stat_fluctuations       = true,                                /* include statistical fluctuation in toy MC expts? */

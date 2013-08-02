@@ -65,10 +65,11 @@ foreach (@ARGV) {
   #if($_ eq '--allow-2nu-unphysical'  ) { $apply_2nu_boundary    = 0;              }
   $iarg++;
 }
+
 $min_dm23sq_bin         = 21                            unless defined $min_dm23sq_bin;
 $max_dm23sq_bin         = 41                            unless defined $max_dm23sq_bin; 
 $min_sinsq2theta23_bin  = 81                            unless defined $min_sinsq2theta23_bin;
-$max_sinsq2theta23_bin  = 121                           unless defined $max_sinsq2theta23_bin;
+$max_sinsq2theta23_bin  = 141                           unless defined $max_sinsq2theta23_bin;
 $bin_list               = ""                            unless defined $bin_list;
 $resource               = "interactive"                 unless defined $resource;
 $tag                    = "fc"                          unless defined $tag;
