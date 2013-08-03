@@ -482,6 +482,11 @@ void analyse_output_new
   save_canvas(cpull,"values",tag);
   delete cpull;
 
+  TFile fout_pull(Form("%s_pulls.root",tag),"RECREATE");
+  fout_pull.cd();
+  pulls->Write("pulls");
+  values->Write("values");
+  fout_pull.Close();
 
   //////////////////////////////////////////////////////////////////////
   //CHISQ & DCHISQ

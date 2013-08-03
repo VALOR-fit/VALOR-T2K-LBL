@@ -33,16 +33,16 @@ void test_nsk_twk_osc
   const char * config = Form("%s/config/%s", gSystem->Getenv("T2KOSCANA"), config_file);
   cout << "Reading analysis configuration from: " << config << endl;
 
-  double mixing23_min  =  0.0;
-  double mixing23_max  =  1.0;
+  double mixing23_min  =  0.00;
+  double mixing23_max  =  1.00;
   double mixing23_step =  0.005;
   double dm23sq_min    =  1.0E-3;
   double dm23sq_max    =  4.0E-3;
   double dm23sq_step   =  5E-5;
 
  // make sure that min and max are at the bin centre
- int mixing23_nbins = 1 + TMath::CeilNint ((mixing23_max - mixing23_min) / mixing23_step);
- int dm23sq_nbins        = 1 + TMath::CeilNint ((dm23sq_max        - dm23sq_min       ) / dm23sq_step       );
+  int mixing23_nbins = 1 + TMath::CeilNint ((mixing23_max - mixing23_min) / mixing23_step);
+  int dm23sq_nbins   = 1 + TMath::CeilNint ((dm23sq_max   - dm23sq_min  ) / dm23sq_step  );
 
  TH2D * nsk_vs_osc_params = 
    new TH2D("nsk_vs_osc_params", "",
@@ -68,8 +68,14 @@ void test_nsk_twk_osc
        ph.SetCurrValue(t2kana::conv::kPhypMixing23, mixing23);
        ph.SetCurrValue(t2kana::conv::kPhypDm23sq,   dm23sq);
        if(ph.Hypothesis() == conv::kHypOsc3F) {
-	 ph.SetCurrValue(conv::kPhypMixing12,  conv::kGlobFitSinsq2Theta12);
-	 ph.SetCurrValue(conv::kPhypMixing13,  conv::kGlobFitSinsq2Theta13);
+	 if(Opt::Instance()->gOscMixingParamChoice == conv::kNuMixSinsq2Theta) {
+	   ph.SetCurrValue(conv::kPhypMixing12,  conv::kGlobFitSinsq2Theta12);
+	   ph.SetCurrValue(conv::kPhypMixing13,  conv::kGlobFitSinsq2Theta13);
+	 }
+	 else {
+	   ph.SetCurrValue(conv::kPhypMixing12,  conv::kGlobFitSinsqTheta12);
+	   ph.SetCurrValue(conv::kPhypMixing13,  conv::kGlobFitSinsqTheta13);
+	 }
 	 ph.SetCurrValue(conv::kPhypDeltaCP,   conv::kGlobFitDeltaCP);
 	 ph.SetCurrValue(conv::kPhypDm12sq,    conv::kGlobFitDm12sq);
        }
