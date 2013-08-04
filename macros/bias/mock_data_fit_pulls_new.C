@@ -524,7 +524,7 @@ void mock_data_fit_pulls_new
   //
   // loop over params in the fit
   TF1 *fit = 0;
-  for(int ip = 0, int ipp = 0; ip < nparams; ip++) {
+  for(int ip = 0, ipp = 0; ip < nparams; ip++) {
     PhysParamId_t p = params[ip];
     if(p == conv::kPhypDm23sq || p == conv::kPhypMixing23 || p == conv::kNuisXSecSpecFunc)
       continue;
