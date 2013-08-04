@@ -482,11 +482,22 @@ void analyse_output_new
   save_canvas(cpull,"values",tag);
   delete cpull;
 
+  //save the pull plot
   TFile fout_pull(Form("%s_pulls.root",tag),"RECREATE");
   fout_pull.cd();
   pulls->Write("pulls");
   values->Write("values");
   fout_pull.Close();
+
+  //count number of parameters with |pull| > 0.1
+  int nbigpull = 0;
+  for(int i = 1; i <= pulls->GetNbinsX(); i++) {
+    if(TMath::Abs(pulls->GetBinContent(i)) > 0.1) {
+      cout << pulls->GetXaxis()->GetBinLabel(i) << " has a large pull: " << pulls->GetBinContent(i) << endl;
+      nbigpull++;
+    }
+  }
+  cout << endl << nbigpull << " parameters have |pull| > 0.1" << endl << endl;
 
   //////////////////////////////////////////////////////////////////////
   //CHISQ & DCHISQ

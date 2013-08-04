@@ -15,7 +15,10 @@ void comp_bestfit_spectra
   const char * nooscfile = 0,          /* if set, superimpose no oscillation prediction	 */
   bool rebin = false,
   double emax = 6,
-  double nmax = 20
+  double nmax = 20,
+  double maxdiff  = 0.05,              /* set y-axis of middle canvas to [0-maxdiff, 0+maxdiff] */
+  double maxratio = 0.05,              /* set y-axis of bottom canvas to [1-maxratio,1+maxratio] */
+  const char * tag = ""                /* tag for the output file */
 )
 
 {
@@ -33,18 +36,18 @@ void comp_bestfit_spectra
 
   TFile * f1 = new TFile(file1,"read");
   f1->cd();
-  TH1D * hfit1 = (TH1D *) f1->Get("sk_1Rmutotal");
+  TH1D * hfit1 = (TH1D *) f1->Get("pdf_1Rmu");
   assert(hfit1);
 
   TFile * f2 = new TFile(file2,"read");
   f2->cd();
-  TH1D * hfit2 = (TH1D *) f2->Get("sk_1Rmutotal");
+  TH1D * hfit2 = (TH1D *) f2->Get("pdf_1Rmu");
   assert(hfit2);
 
   TH1D * hdata = 0;
   if(datafile){
     TFile * fd = new TFile(datafile,"read");
-    TH1D * hdata = (TH1D *) fd->Get("obs_spectrum");
+    TH1D * hdata = (TH1D *) fd->Get("obs_1Rmu");
     assert(hdata);
   }
 
@@ -87,8 +90,8 @@ void comp_bestfit_spectra
   TPad * upp  = new TPad("upp", "",0.05,0.40,0.95,0.97);
   TPad * low1 = new TPad("low1","",0.05,0.20,0.95,0.38);
   TPad * low2 = new TPad("low2","",0.05,0.02,0.95,0.18);
-  low1->SetBottomMargin(.2);
-  low2->SetBottomMargin(.2);
+  low1->SetBottomMargin(.3);
+  low2->SetBottomMargin(.3);
   upp->Draw();
   low1->Draw();
   low2->Draw();
@@ -115,8 +118,8 @@ void comp_bestfit_spectra
   histo_data->SetLineStyle(kDashed);
 
   histo_null->Draw("same");
-  histo_fit1->Draw("same");
   histo_fit2->Draw("same");
+  histo_fit1->Draw("same");
   histo_data->Draw("PE03X0 same");
 
   TLegend * legend = new TLegend(0.5, 0.6, 0.9, 0.9);
@@ -132,9 +135,9 @@ void comp_bestfit_spectra
   legend->Draw();
 
   low1->cd();
-  TH1F * hframelow1 = (TH1F*)low1->DrawFrame(emin,-0.2,emax,0.2);
+  TH1F * hframelow1 = (TH1F*)low1->DrawFrame(emin,-maxdiff,emax,maxdiff);
   hframelow1->GetXaxis()->SetTitle("E_{reco} (GeV)");
-  hframelow1->GetYaxis()->SetTitle("\'2+N\'-\'2+8\' (Events per bin)");
+  hframelow1->GetYaxis()->SetTitle("#splitline{Normal-Inverted}{(Events per bin)}");
   hframelow1->GetYaxis()->SetLabelSize(0.09);
   hframelow1->GetYaxis()->SetTitleSize(0.11);
   hframelow1->GetYaxis()->SetTitleOffset(0.62);
@@ -145,9 +148,9 @@ void comp_bestfit_spectra
   diff->Draw("same");
 
   low2->cd();
-  TH1F * hframelow2 = (TH1F*)low2->DrawFrame(emin,0,emax,2);
+  TH1F * hframelow2 = (TH1F*)low2->DrawFrame(emin,1-maxratio,emax,1+maxratio);
   hframelow2->GetXaxis()->SetTitle("E_{reco} (GeV)");
-  hframelow2->GetYaxis()->SetTitle("\'2+N\' / \'2+8\'");
+  hframelow2->GetYaxis()->SetTitle("Normal / Inverted");
   hframelow2->GetYaxis()->SetLabelSize(0.09);
   hframelow2->GetYaxis()->SetTitleSize(0.11);
   hframelow2->GetYaxis()->SetTitleOffset(0.62);
@@ -157,5 +160,5 @@ void comp_bestfit_spectra
   low2->SetGridy();
   ratio->Draw("same");
 
-//  c1->SaveAs("marg_dchisq_comp.eps");
+  c1->SaveAs(Form("spectrum_comparison_%s.eps",tag));
 }
