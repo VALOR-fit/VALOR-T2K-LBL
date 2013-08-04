@@ -18,6 +18,13 @@ Run this by /path/to/test_sk_ereco_spectrum_twk_sys_runAll.py (you may need to c
 It will then create the .root, *.pdf, in the current working directory
 """
 
+optionParser = optparse.OptionParser(usage ="""\
+usage: %prog [options]
+    Run test_sk_ereco_spectrum_twk_sys_throw.C many times""")
+#names of things
+optionParser.add_option("-o","--osc", action="store_true", dest="osc", default=False, help="If set, will run with oscillations turned on. If not set, all osc params set to 0")
+(opt, args) = optionParser.parse_args()
+
 conffile = "analysis_configuration.xml"
 emax = 7
 
@@ -26,15 +33,18 @@ modes2 = range(100,126) #banff
 modes3 = [200,201,202,203,204,209,210,212,213,214,215] #unconstranied xsec
 modes4 = [300]#sk energy scale #range(300,308) #sk detector
 modes5 = range(600,606) #skdetfsi #modes5 = range(400,449) #fsi
-modes6 = range(500,504) #special comparison tweaks
+modes6 = range(700,705) #non-23 osc params
+modes7 = range(500,504) #special comparison tweaks
 
-modes = modes2 + modes3 + modes4 + modes5
+modes = modes2 + modes3 + modes4 + modes5 + modes6
 #modes = modes + modes1
-#modes = modes + modes6
+#modes = modes + modes7
 
 oscparams = [] #fill with oscillation parameters, in order mixing12, theta13, theta23, deltacp, dmsq12, dmsq23hypothesis
-oscparams.append([  0,   0,   0,   0,   0,   0]) #no oscillations!
-oscparams.append([-99, -99, -99, -99, -99, -99]) #use global best fits!
+if opt.osc:
+    oscparams.append([-99, -99, -99, -99, -99, -99]) #use global best fits!
+else:
+    oscparams.append([  0,   0,   0,   0,   0,   0]) #no oscillations!
 #oscparams.append([0.86, 0.1,  1,  0,  7.58E-5,  2.32E-3])
 #oscparams.append([0.86, 0,    1,  0,  7.58E-5,  2.32E-3])
 

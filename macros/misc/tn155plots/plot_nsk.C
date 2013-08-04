@@ -99,15 +99,17 @@
   double nmax = 0;
   double btunmin = 9999, btunmax = -9999; //banff tuned min/max ratios
   double ftunmin = 9999, ftunmax = -9999; //flux tuned min/max ratios
+  double non23min = 9999,non23max = -9999; //non23 min/max ratios
   for(int ix = 1; ix <= hext->GetNbinsX(); ix++) {
     for(int iy = 1; iy <= hext->GetNbinsX(); iy++) {
       double dchisq = hext->GetBinContent(ix,iy);
       if(dchisq <= 4.61 && dchisq > 0) {
 	double mix = hext->GetXaxis()->GetBinCenter(ix);
 	double dm2 = hext->GetYaxis()->GetBinCenter(iy);
-	double ncurr = h_tun->GetBinContent(h_tun->FindBin(mix,dm2));
-	double btuncurr = h_ratio_tunflux->GetBinContent(h_ratio_tunflux->FindBin(mix,dm2));
-	double ftuncurr = h_ratio_nomflux->GetBinContent(h_ratio_nomflux->FindBin(mix,dm2));
+	double ncurr     = h_tun->GetBinContent(h_tun->FindBin(mix,dm2));
+	double btuncurr  = h_ratio_tunflux->GetBinContent(h_ratio_tunflux->FindBin(mix,dm2));
+	double ftuncurr  = h_ratio_nomflux->GetBinContent(h_ratio_nomflux->FindBin(mix,dm2));
+	double non23curr = h_ratio_t23tun->GetBinContent(h_ratio_t23tun->FindBin(mix,dm2));
 	if(ncurr > nmax) {
 	  nmax = ncurr;
 	  cout << "Banff tuned events        \t" << mix << "\t" << dm2 << "\t" << nmax << endl;
@@ -128,14 +130,24 @@
 	  ftunmax = ftuncurr;
 	  cout << "Maximum nom->flux ratio   \t" << mix << "\t" << dm2 << "\t" << ftunmax << endl;
 	}
+	if(non23curr < non23min) {
+	  non23min = non23curr;
+	  cout << "Minimum non-23 ratio      \t" << mix << "\t" << dm2 << "\t" << non23min << endl;
+	}
+	if(non23curr > non23max) {
+	  non23max = non23curr;
+	  cout << "Maximum non-23 ratio      \t" << mix << "\t" << dm2 << "\t" << non23max << endl;
+	}
       }
     }//iy
   }//ix
-  cout << "Banff tuned events        \t" << nmax << endl;
-  cout << "Minimum flux->Banff ratio \t" << btunmin << endl;
-  cout << "Maximum flux->Banff ratio \t" << btunmax << endl;
-  cout << "Minimum nom->flux ratio   \t" << ftunmin << endl;
-  cout << "Maximum nom->flux ratio   \t" << ftunmax << endl;
+  cout << "Banff tuned events        \t" << nmax     << endl;
+  cout << "Minimum flux->Banff ratio \t" << btunmin  << endl;
+  cout << "Maximum flux->Banff ratio \t" << btunmax  << endl;
+  cout << "Minimum nom->flux ratio   \t" << ftunmin  << endl;
+  cout << "Maximum nom->flux ratio   \t" << ftunmax  << endl;
+  cout << "Minimum non-23 ratio      \t" << non23min << endl;
+  cout << "Maximum non-23 ratio      \t" << non23max << endl;
 
 }
 

@@ -56,6 +56,11 @@
 // 503 all ring counting + other
 // 504 tweak xsec_pilessdelta, put name it fsiabs
 //
+// 600 tweak skdetfsi00
+// 601 tweak skdetfsi01
+// ...
+// 600+kNumOfSKDetFSIParams tweak last skdetfsi parameter
+//
 //
 // Tom Dealtry
 // ------------------------------------------------------------------------------------------------
@@ -63,7 +68,7 @@
 #define NTWEAKS 4 //2 or 4 or 6!
 void test_sk_ereco_spectrum_twk_sys
 (
-  int          mode,                                                /* options: see above */
+  int          mode=700,                                                /* options: see above */
   bool         update_rootfile    = true,                           /* "update" ROOT output file? If false, will "recreate" */
   const char * hypothesis         = "3f_osc",                       /* options: "2f_numu_disap", "3f_osc" */
   double       input_mixing12     = -99,                            /* */
@@ -79,6 +84,10 @@ void test_sk_ereco_spectrum_twk_sys
 {
   using namespace std;
   using namespace t2kana;
+
+  // Global options
+  Opt::Instance()->gOscMixingParamChoice = conv::kNuMixSinsqTheta;
+  Opt::Instance()->gMassHierarchyAssumed = conv::kNmhNormal;
 
   conv::SuperkSample_t s = conv::kSKsFCFV1RingMuLike;
   int is = (int)s;
@@ -171,6 +180,15 @@ void test_sk_ereco_spectrum_twk_sys
       modetitle = "sk_1Rmu_ccqe_ring_counting_eff_all+other"; break;
     case 504:
       modetitle = "xsec_fsiabs"; break;
+
+    case 700:
+      modetitle = "mixing13"; break;
+    case 701:
+      modetitle = "mixing12"; break;
+    case 702:
+      modetitle = "dm12sq"; break;
+    case 703:
+      modetitle = "deltacp"; break;
 
     default:
       if(mode >= 100 && mode < 100+conv::kNumOfParamsInBANFFfit) {
@@ -475,6 +493,29 @@ void test_sk_ereco_spectrum_twk_sys
 	  skexp.TweakSystematic("sk_1Rmu_ccqe_ring_counting_eff_2",tweak); break;
         case 504:
 	  skexp.TweakSystematic("xsec_pilessdelta",tweak); break;
+
+        case 700:
+	  if(Opt::Instance()->gOscMixingParamChoice == conv::kNuMixSinsq2Theta)
+	    ph.SetCurrValue(conv::kPhypMixing13,  input_mixing13 * (1 + (tweak * conv::kGlobFitErrSinsq2Theta13)));
+	  else
+	    ph.SetCurrValue(conv::kPhypMixing13,  input_mixing13 * (1 + (tweak * conv::kGlobFitErrSinsqTheta13)));
+	  cout << ph << endl;
+	  break;
+        case 701:
+	  if(Opt::Instance()->gOscMixingParamChoice == conv::kNuMixSinsq2Theta)
+	    ph.SetCurrValue(conv::kPhypMixing12,  input_mixing12 * (1 + (tweak * conv::kGlobFitErrSinsq2Theta12)));
+	  else
+	    ph.SetCurrValue(conv::kPhypMixing12,  input_mixing12 * (1 + (tweak * conv::kGlobFitErrSinsqTheta12)));
+	  cout << ph << endl;
+	  break;
+        case 702:
+	  ph.SetCurrValue(conv::kPhypDm12sq,    input_dm12sq * (1 + (tweak * conv::kGlobFitDm12sq)));
+	  cout << ph << endl;
+	  break;
+        case 703:
+	  ph.SetCurrValue(conv::kPhypDeltaCP,   input_deltacp + (tweak * conv::kpi/2));
+	  cout << ph << endl;
+	  break;
 
         default:
 	  if(mode >= 100 && mode < 100+conv::kNumOfParamsInBANFFfit) {
