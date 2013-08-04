@@ -90,7 +90,7 @@ void test_bestfit_point_shift_due_to_syst_twk
   const char * config  = Form("%s/config/%s", gSystem->Getenv("T2KOSCANA"), config_file);
     
   // Global options
-  Opt::Instance()->gOscMixingParamChoice = conv::kNuMixSinsq2Theta;
+  Opt::Instance()->gOscMixingParamChoice = conv::kNuMixSinsqTheta;
   Opt::Instance()->gMassHierarchyAssumed = conv::kNmhNormal;
 
   // Get requested sample

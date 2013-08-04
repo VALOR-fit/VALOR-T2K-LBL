@@ -198,6 +198,8 @@ void contour_plots_nfits(
   leg->Draw();
 
   c->SaveAs(Form("contours_%s.pdf",output_tag));
+  c->SaveAs(Form("contours_%s.eps",output_tag));
+  c->SaveAs(Form("contours_%s.C",  output_tag));
 
   if(mixingparam == "sinsq2theta") {
     double linewidth_ext = 2;

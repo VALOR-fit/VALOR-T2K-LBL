@@ -364,6 +364,18 @@ void analyse_output_new
   l->Draw();
   save_canvas(c,"spectrum_components",tag);
 
+  //print out the ratios below, at, above the osc peak
+  double nobs_below = spectrum_obs  ->Integral(1,                                          spectrum_obs->FindBin(0.5-conv::kOneMeV));
+  double nobs_at    = spectrum_obs  ->Integral(spectrum_obs  ->FindBin(0.5+conv::kOneMeV), spectrum_obs->FindBin(1.0-conv::kOneMeV));
+  double nobs_above = spectrum_obs  ->Integral(spectrum_obs  ->FindBin(1.0+conv::kOneMeV), spectrum_obs->GetNbinsX());
+  double nexp_below = spectrum_noosc->Integral(1,                                          spectrum_noosc->FindBin(0.5-conv::kOneMeV));
+  double nexp_at    = spectrum_noosc->Integral(spectrum_noosc->FindBin(0.5+conv::kOneMeV), spectrum_noosc->FindBin(1.0-conv::kOneMeV));
+  double nexp_above = spectrum_noosc->Integral(spectrum_noosc->FindBin(1.0+conv::kOneMeV), spectrum_noosc->GetNbinsX());
+
+  cout << "nobs"     << "\t" << "nexp(noosc)" << "\t"   << "ratio%" << endl;
+  cout << nobs_below << "\t" << nexp_below    << "\t\t" << (nobs_below / nexp_below) * 100 << endl;
+  cout << nobs_at    << "\t" << nexp_at       << "\t\t" << (nobs_at    / nexp_at   ) * 100 << endl;
+  cout << nobs_above << "\t" << nexp_above    << "\t\t" << (nobs_above / nexp_above) * 100 << endl;
 
   //////////////////////////////////////////////////////////////////////
   //PULL PLOT
@@ -528,6 +540,9 @@ void analyse_output_new
   cchisq->cd();
   hdchisq->Draw("colz");
   save_canvas(cchisq,"dchisq",tag);
+  hdchisq->GetZaxis()->SetRangeUser(0,60);
+  hdchisq->Draw("colz");
+  save_canvas(cchisq,"dchisq_maxz60",tag);
 
 
   //////////////////////////////////////////////////////////////////////

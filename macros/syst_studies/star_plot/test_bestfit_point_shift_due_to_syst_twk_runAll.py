@@ -25,7 +25,7 @@ optionParser = optparse.OptionParser(usage ="""\
 usage: %prog [options]
     Run test_bestfit_point_shift_due_to_syst_twk.C""")
 optionParser.add_option("--syst", action="store_true", dest="do_syst", default=False, help="If set, will produce .data files for each systematic")
-optionParser.add_option("--stat", action="store_true", dest="do_stat", default=False, help="Stat is not implemented in this macro. Please run the production script, and use the code snippet at the bottom of $T2KOSCANA/macros/syst_studies/star_plot/test_bestfit_point_shift_due_to_syst_twk.C to get stat errors, then replace the numbers instat.data: $T2KOSCANA/production/submit_toyexpt_fitting_job_fitsyst --resource Oxford --softw-dir $T2KOSCANA --job-dir $PWD --cpu-time 01:59:00 --tweak-systematics 1 --nruns 100 --nexpts 100 --dm23sq 0.0024 --sinsq2theta23 1. --stat-fluctuations --fit-param-list nuosc3f_numudisapp_fix4")
+optionParser.add_option("--stat", action="store_true", dest="do_stat", default=False, help="If set, will submit lots of 2+0 fitting jobs with no systematic fluctuations, to get the stat error at every point")
 optionParser.add_option("--draw", action="store_true", dest="do_draw", default=False, help="If set, will draw all the plots")
 optionParser.add_option("--table", action="store_true", dest="do_table", default=False, help="If set, will make the max deviation table")
 optionParser.add_option("--interactive", action="store_true", dest="interactive", default=False, help="If set, will run +- 1 sigma jobs interactively; otherwise, throw 1000 toys")
@@ -33,10 +33,6 @@ optionParser.add_option("--interactive", action="store_true", dest="interactive"
 
 if not (opt.do_syst or opt.do_stat or opt.do_draw or opt.do_table):
    optionParser.print_usage()
-   sys.exit(1)
-
-if opt.do_stat:
-   print "Stat is not implemented in this macro. Please run the production script, and use the code snippet at the bottom of $T2KOSCANA/macros/syst_studies/star_plot/test_bestfit_point_shift_due_to_syst_twk.C to get stat errors, then replace the numbers in stat.data: $T2KOSCANA/production/submit_toyexpt_fitting_job_fitsyst --resource Oxford --softw-dir $T2KOSCANA --job-dir $PWD --cpu-time 01:59:00 --tweak-systematics 1 --nruns 100 --nexpts 100 --dm23sq 0.0024 --sinsq2theta23 1. --stat-fluctuations --fit-param-list nuosc3f_numudisapp_fix4"
    sys.exit(1)
    
 if (opt.do_syst and opt.do_stat):
@@ -121,10 +117,20 @@ oscparams.append([-99, -99, 0.8, -99, -99, 0.0030])
 oscparams.append([-99, -99, 0.8, -99, -99, 0.0024])
 oscparams.append([-99, -99, 1.0, -99, -99, 0.0020])
 oscparams.append([-99, -99, 1.0, -99, -99, 0.0030])
-"""
 #some experimental best fits
 oscparams.append([0.857, 0.098, 1.000, 0, 7.5E-5, 0.00244]) #t2k run1-3 best fit
 oscparams.append([0.857, 0.098, 0.957, 0, 7.5E-5, 0.00239]) #minos neutrino2012 best fit
+"""
+#using sinsqtheta
+oscparams.append([-99, -99, 0.50, -99, -99, 0.0025])   #use global best fits!
+oscparams.append([-99, -99, 0.37, -99, -99, 0.0025])   #mixing23=0.37 & global best fits
+oscparams.append([-99, -99, 0.65, -99, -99, 0.0025])   #mixing23=0.65 & global best fits
+oscparams.append([-99, -99, 0.50, -99, -99, 0.0028])   #dm32sq=0.0028 & global best fits!
+oscparams.append([-99, -99, 0.37, -99, -99, 0.0028])   #dm32sq=0.0028 & mixing23=0.37 & global best fits
+oscparams.append([-99, -99, 0.65, -99, -99, 0.0028])   #dm32sq=0.0028 & mixing23=0.65 & global best fits
+oscparams.append([-99, -99, 0.50, -99, -99, 0.0022])   #dm32sq=0.0022 & global best fits!
+oscparams.append([-99, -99, 0.37, -99, -99, 0.0022])   #dm32sq=0.0022 & mixing23=0.37 & global best fits
+oscparams.append([-99, -99, 0.65, -99, -99, 0.0022])   #dm32sq=0.0022 & mixing23=0.65 & global best fits
 
 for osc in oscparams:
 
@@ -138,6 +144,12 @@ for osc in oscparams:
             sys.exit("Could not make installation directory")
 
       os.chdir(dirname)
+
+      if opt.do_stat:
+          command = '$T2KOSCANA/production/submit_toyexpt_fitting_job --resource Oxford --dm12sq 7.5E-5 --mix12 0.306 --mix13 0.0251 --deltacp -999 --cpu-time 70:00:00 --fit-param-list nuosc3f_numudisapp_fix4 --fit-option minuit --job-dir $PWD --softw-dir $T2KOSCANA --nexpts 100 --nruns 100 --dmsq-scheme abs23 --hierarchy normal --mix-param-choice sinsqtheta --stat-fluctuations --tag stat_mix'+str(osc[2])+'_dm'+str(osc[5])+' --dm23sq '+str(osc[5])+' --mix23 '+str(osc[2])
+          print command
+          continue
+
 
       for syst in systematics:
 
