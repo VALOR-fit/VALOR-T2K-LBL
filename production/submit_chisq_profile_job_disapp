@@ -116,34 +116,34 @@ if($do_mixing23) {
     # RAL
     #
     if($resource eq "RAL") {
-     open(PBS, ">$job_dir/$tag-$nexpt-$mix23_bin.pbs") or die("Can not create the PBS batch script");
+     open(PBS, ">$job_dir/$tag-$expt-mix-$mix23_bin.pbs") or die("Can not create the PBS batch script");
      print PBS "#!/bin/bash \n";
-     print PBS "#PBS -N $tag-$nexpt-$mix23_bin \n";
+     print PBS "#PBS -N $tag-$expt-mix-$mix23_bin \n";
      print PBS "#PBS -l walltime=$cput \n";
      print PBS "#PBS -l cput=$cput \n";
-     print PBS "#PBS -o $job_dir/$tag-$nexpt-$mix23_bin.pbs.out \n";
-     print PBS "#PBS -e $job_dir/$tag-$nexpt-$mix23_bin.pbs.err \n";
+     print PBS "#PBS -o $job_dir/$tag-$expt-mix-$mix23_bin.pbs.out \n";
+     print PBS "#PBS -e $job_dir/$tag-$expt-mix-$mix23_bin.pbs.err \n";
      print PBS "cd $job_dir/ \n";
      print PBS "source $softw_dir/setup/setup_at_ral.sh $softw_dir\n";
      print PBS "$command \n";
      close(PBS);
-     `qsub -q prod $job_dir/$tag-$nexpt-$mix23_bin.pbs`;
+     `qsub -q prod $job_dir/$tag-$expt-mix-$mix23_bin.pbs`;
    }
     #
     # Oxford
     #
     if($resource eq "Oxford") {
-      open(PBS, ">$job_dir/$tag-$nexpt-$mix23_bin.pbs") or die("Can not create the PBS batch script");
+      open(PBS, ">$job_dir/$tag-$expt-mix-$mix23_bin.pbs") or die("Can not create the PBS batch script");
       print PBS "#!/bin/bash \n";
-      print PBS "#PBS -N $tag-$nexpt-$mix23_bin \n";
+      print PBS "#PBS -N $tag-$expt-mix-$mix23_bin \n";
       print PBS "#PBS -l cput=$cput \n";
-      print PBS "#PBS -o $job_dir/$tag-$nexpt-$mix23_bin.pbs.out \n";
-      print PBS "#PBS -e $job_dir/$tag-$nexpt-$mix23_bin.pbs.err \n";
+      print PBS "#PBS -o $job_dir/$tag-$expt-mix-$mix23_bin.pbs.out \n";
+      print PBS "#PBS -e $job_dir/$tag-$expt-mix-$mix23_bin.pbs.err \n";
       print PBS "cd $job_dir/ \n";
       print PBS "source $softw_dir/setup/setup_at_oxford.sh $softw_dir\n";
       print PBS "$command \n";
       close(PBS);
-     `qsub $job_dir/$tag-$nexpt-$mix23_bin.pbs`;
+     `qsub $job_dir/$tag-$expt-mix-$mix23_bin.pbs`;
     }
 
 
@@ -170,34 +170,34 @@ if($do_dm32sq) {
     # RAL
     #
     if($resource eq "RAL") {
-     open(PBS, ">$job_dir/$tag-$nexpt-$dm32sq_bin.pbs") or die("Can not create the PBS batch script");
+     open(PBS, ">$job_dir/$tag-$expt-dm-$dm32sq_bin.pbs") or die("Can not create the PBS batch script");
      print PBS "#!/bin/bash \n";
-     print PBS "#PBS -N $tag-$nexpt-$dm32sq_bin \n";
+     print PBS "#PBS -N $tag-$expt-dm-$dm32sq_bin \n";
      print PBS "#PBS -l walltime=$cput \n";
      print PBS "#PBS -l cput=$cput \n";
-     print PBS "#PBS -o $job_dir/$tag-$nexpt-$dm32sq_bin.pbs.out \n";
-     print PBS "#PBS -e $job_dir/$tag-$nexpt-$dm32sq_bin.pbs.err \n";
+     print PBS "#PBS -o $job_dir/$tag-$expt-dm-$dm32sq_bin.pbs.out \n";
+     print PBS "#PBS -e $job_dir/$tag-$expt-dm-$dm32sq_bin.pbs.err \n";
      print PBS "cd $job_dir/ \n";
      print PBS "source $softw_dir/setup/setup_at_ral.sh $softw_dir\n";
      print PBS "$command \n";
      close(PBS);
-     `qsub -q prod $job_dir/$tag-$nexpt-$dm32sq_bin.pbs`;
+     `qsub -q prod $job_dir/$tag-$expt-dm-$dm32sq_bin.pbs`;
    }
     #
     # Oxford
     #
     if($resource eq "Oxford") {
-      open(PBS, ">$job_dir/$tag-$nexpt-$dm32sq_bin.pbs") or die("Can not create the PBS batch script");
+      open(PBS, ">$job_dir/$tag-$expt-dm-$dm32sq_bin.pbs") or die("Can not create the PBS batch script");
       print PBS "#!/bin/bash \n";
-      print PBS "#PBS -N $tag-$nexpt-$dm32sq_bin \n";
+      print PBS "#PBS -N $tag-$expt-dm-$dm32sq_bin \n";
       print PBS "#PBS -l cput=$cput \n";
-      print PBS "#PBS -o $job_dir/$tag-$nexpt-$dm32sq_bin.pbs.out \n";
-      print PBS "#PBS -e $job_dir/$tag-$nexpt-$dm32sq_bin.pbs.err \n";
+      print PBS "#PBS -o $job_dir/$tag-$expt-dm-$dm32sq_bin.pbs.out \n";
+      print PBS "#PBS -e $job_dir/$tag-$expt-dm-$dm32sq_bin.pbs.err \n";
       print PBS "cd $job_dir/ \n";
       print PBS "source $softw_dir/setup/setup_at_oxford.sh $softw_dir\n";
       print PBS "$command \n";
       close(PBS);
-     `qsub $job_dir/$tag-$nexpt-$dm32sq_bin.pbs`;
+     `qsub $job_dir/$tag-$expt-dm-$dm32sq_bin.pbs`;
     }
 
 
