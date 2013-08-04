@@ -144,8 +144,7 @@ void mock_data_fit_pulls_new
   TMatrixD * skfsicov_ptr = util::XML2TMatrixD(xml,root_node, "skdetfsi/covariance_matrix");
   const TMatrixD & skfsicov = *skfsicov_ptr;
 
-  double escale_err = util::XML2Dbl(xml,root_node,
-    "detector_systematics/superk/energy_scale_relative_error/one_mu_ring");
+  double escale_err = 1;//util::XML2Dbl(xml,root_node,"detector_systematics/superk/energy_scale_relative_error/one_mu_ring");
 
   double mix23_err   = 0;
   double mix12_err   = 0;
@@ -317,7 +316,8 @@ void mock_data_fit_pulls_new
   TH1D * h_chisqbf        = new TH1D("h_chisqbf",       "best-fit chisq",             615, -5,  200);
   TH1D * h_nsk_nom        = new TH1D("h_nsk_nom",       "nsk(1Rmu) nom",              500,  0,  500);
   TH1D * h_nsk_bf         = new TH1D("h_nsk_bf",        "nsk(1Rmu) best-fit",         500,  0,  500);
-  TH1D * h_summary_nuis   = new TH1D("h_summary_nuis",  "summary of nuisance parameters", nparams, 0, nparams);
+  // -3 is for mixing23, dm32sq, spectral function
+  TH1D * h_summary_nuis   = new TH1D("h_summary_nuis",  "summary of nuisance parameters", nparams-3, 0, nparams-3);
 
   TH1D * h_bestfit    [nparams] = { 0 }; // best-fit param distributions
   TH1D * h_residuals  [nparams] = { 0 }; // residuals
@@ -526,13 +526,15 @@ void mock_data_fit_pulls_new
   TF1 *fit = 0;
   for(int ip = 0; ip < nparams; ip++) {
     PhysParamId_t p = params[ip];
+    if(p == conv::kPhypDm23sq || p == conv::kPhypMixing23 || p == conv::kNuisXSecSpecFunc)
+      continue;
     TString label;
     if(ip%2)
       label = Form("%s                         ",util::AsStringPaperRooTex(p).c_str());
     else
       label = Form("%s",util::AsStringPaperRooTex(p).c_str());
     h_summary_nuis->GetXaxis()->SetBinLabel(ip+1, label.Data());
-    if(!do_gaus_fits || p == conv::kPhypMixing23 || p == conv::kNuisXSecSpecFunc) {
+    if(!do_gaus_fits) {
       h_summary_nuis->SetBinContent(ip+1, h_pull_1[ip]->GetMean());
       h_summary_nuis->SetBinError(  ip+1, h_pull_1[ip]->GetRMS());
     }
