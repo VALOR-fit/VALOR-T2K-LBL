@@ -730,10 +730,10 @@ string t2kana::util::AsString(t2kana::conv::NuOscDmsqScheme_t dmsqs)
 {
   switch(dmsqs) {
   case(kNuDmsq12andAbs23) :
-    return "dm^2 = Dm^2_{12}, Dm^2 = |Dm^2_{23}|";
+    return "dm^2 = Dm^2_{21}, Dm^2 = |Dm^2_{32}|";
     break;
   case(kNuDmsqFogliLisi ) :
-    return "dm^2 = Dm^2_{12}, Dm^2 = |m^2_{3} - (m^2_{1} + m^2_{1})/2|";
+    return "dm^2 = Dm^2_{21}, Dm^2 = |m^2_{3} - (m^2_{1} + m^2_{1})/2|";
     break;
   default :
     return "Undefined";
@@ -1099,9 +1099,9 @@ string t2kana::util::AsStringTex(PhysParamId_t p)
     }
     break;
 
-    case ( kPhypDeltaCP               ) : return "$\\delta_{cp}$";                   break;
-    case ( kPhypDm23sq                ) : return "$|\\Deltam^2_{32}|$";                  break;
-    case ( kPhypDm12sq                ) : return "$\\Deltam^2_{12}$";                    break;
+    case ( kPhypDeltaCP               ) : return "$\\delta_{CP}$";                   break;
+    case ( kPhypDm23sq                ) : return "$|\\Delta m^2_{32}|$";                  break;
+    case ( kPhypDm12sq                ) : return "$\\Delta m^2_{21}$";                    break;
 
     case ( kPhypAlphaDecay            ) : return "$\\alpha_{decay}$";                break;
     case ( kPhypSinsq2ThetaDecay      ) : return "$\\sin^2(2\\theta_{decay})$";       break;
@@ -1393,7 +1393,7 @@ string t2kana::util::AsStringPaperTex(PhysParamId_t p)
     }
     break;
     
-  case ( kPhypDeltaCP               ) : return "$\\delta_{cp}$";                   break;
+  case ( kPhypDeltaCP               ) : return "$\\delta_{CP}$";                   break;
   case ( kPhypDm23sq                ) : 
     {
       NuOscDmsqScheme_t omp = Opt::Instance()->gOscDmsqScheme;
@@ -1407,8 +1407,8 @@ string t2kana::util::AsStringPaperTex(PhysParamId_t p)
     {
       NuOscDmsqScheme_t omp = Opt::Instance()->gOscDmsqScheme;
       switch(omp) {
-      case(kNuDmsqFogliLisi):  return "$\\deltam^2 = \\Deltam^2_{12}$";                    break;
-      case(kNuDmsq12andAbs23):  return "$\\Deltam^2_{12}$";                    break;
+      case(kNuDmsqFogliLisi):  return "$\\deltam^2 = \\Delta m^2_{21}$";                    break;
+      case(kNuDmsq12andAbs23):  return "$\\Delta m^2_{21}$";                    break;
       default                 : return "--";                 break;
       }
     }
@@ -1539,7 +1539,7 @@ string t2kana::util::AsStringPaperTex(PhysParamId_t p)
 #endif
     {
       int ip = (int)p - (int)kNuisFSI000;
-      return Form("$f_{%d; t, r}^{FSI}$", ip);
+      return Form("$f_{%d; r}^{FSI}$", ip);
       break;
     }//FSI                
   case ( kNuisSKDetFSI000 ) :
@@ -1564,7 +1564,7 @@ string t2kana::util::AsStringPaperTex(PhysParamId_t p)
 #endif
     {
       int ip = (int)p - (int)kNuisSKDetFSI000;
-      return Form("$f_{%d; t, r}^{SK+FSI}$", ip);
+      return Form("$f_{%d; r}^{SK+FSI}$", ip);
       break;
     }//FSI                
   default :
@@ -1608,7 +1608,7 @@ string t2kana::util::AsStringPaperRooTex(PhysParamId_t p)
     }
     break;
 
-  case ( kPhypDeltaCP               ) : return "#delta_{cp}";                   break;
+  case ( kPhypDeltaCP               ) : return "#delta_{CP}";                   break;
   case ( kPhypDm23sq                ) : 
     {
       NuOscDmsqScheme_t omp = Opt::Instance()->gOscDmsqScheme;
@@ -1622,8 +1622,8 @@ string t2kana::util::AsStringPaperRooTex(PhysParamId_t p)
     {
       NuOscDmsqScheme_t omp = Opt::Instance()->gOscDmsqScheme;
       switch(omp) {
-      case(kNuDmsqFogliLisi):   return "#deltam^{2} = #Deltam^{2}_{12}";                    break;
-      case(kNuDmsq12andAbs23):  return "#Deltam^{2}_{12}";                    break;
+      case(kNuDmsqFogliLisi):   return "#deltam^{2} = #Deltam^{2}_{21}";                    break;
+      case(kNuDmsq12andAbs23):  return "#Delta m^{2}_{21}";                    break;
       default                 : return "--";                 break;
       }
     }
@@ -1754,7 +1754,7 @@ string t2kana::util::AsStringPaperRooTex(PhysParamId_t p)
 #endif
     {
       int ip = (int)p - (int)kNuisFSI000;
-      return Form("f_{%d; t, r}^{FSI}", ip);
+      return Form("f_{%d; r}^{FSI}", ip);
       break;
     }//FSI      
   case ( kNuisSKDetFSI000 ) :
@@ -1779,7 +1779,7 @@ string t2kana::util::AsStringPaperRooTex(PhysParamId_t p)
 #endif
     {
       int ip = (int)p - (int)kNuisSKDetFSI000;
-      return Form("f_{%d; t, r}^{SK+FSI}", ip);
+      return Form("f_{%d; r}^{SK+FSI}", ip);
       break;
     }//FSI      
   default :
