@@ -524,29 +524,30 @@ void mock_data_fit_pulls_new
   //
   // loop over params in the fit
   TF1 *fit = 0;
-  for(int ip = 0; ip < nparams; ip++) {
+  for(int ip = 0, int ipp = 0; ip < nparams; ip++) {
     PhysParamId_t p = params[ip];
     if(p == conv::kPhypDm23sq || p == conv::kPhypMixing23 || p == conv::kNuisXSecSpecFunc)
       continue;
     TString label;
-    if(ip%2)
+    if(ipp%2)
       label = Form("%s                         ",util::AsStringPaperRooTex(p).c_str());
     else
       label = Form("%s",util::AsStringPaperRooTex(p).c_str());
-    h_summary_nuis->GetXaxis()->SetBinLabel(ip+1, label.Data());
+    h_summary_nuis->GetXaxis()->SetBinLabel(ipp+1, label.Data());
     if(!do_gaus_fits) {
-      h_summary_nuis->SetBinContent(ip+1, h_pull_1[ip]->GetMean());
-      h_summary_nuis->SetBinError(  ip+1, h_pull_1[ip]->GetRMS());
+      h_summary_nuis->SetBinContent(ipp+1, h_pull_1[ipp]->GetMean());
+      h_summary_nuis->SetBinError(  ipp+1, h_pull_1[ipp]->GetRMS());
     }
     else {
-      h_pull_1[ip]->Draw();
-      h_pull_1[ip]->Fit("gaus");
-      fit = h_pull_1[ip]->GetFunction("gaus");
+      h_pull_1[ipp]->Draw();
+      h_pull_1[ipp]->Fit("gaus");
+      fit = h_pull_1[ipp]->GetFunction("gaus");
       if(fit) {
-	h_summary_nuis->SetBinContent(ip+1, fit->GetParameter(1));
-	h_summary_nuis->SetBinError(  ip+1, fit->GetParameter(2));
-    }
+	h_summary_nuis->SetBinContent(ipp+1, fit->GetParameter(1));
+	h_summary_nuis->SetBinError(  ipp+1, fit->GetParameter(2));
+      }
     }//do_gaus_fits
+    ipp++;
   }
 
   //
@@ -672,7 +673,7 @@ void mock_data_fit_pulls_new
   // >> Plot pulls, same logic as before
 
   //plot summary at the end, because need to turn stat box off & also increase margin
-  c = new TCanvas(); c->SetBottomMargin(0.30);
+  c = new TCanvas(); c->SetBottomMargin(0.35);
   gStyle->SetOptStat(0);
   h_summary_nuis->GetXaxis()->LabelsOption("v");
   h_summary_nuis->Draw();
