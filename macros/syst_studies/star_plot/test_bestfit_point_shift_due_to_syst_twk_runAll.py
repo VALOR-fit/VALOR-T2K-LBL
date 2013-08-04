@@ -148,6 +148,8 @@ for osc in oscparams:
       if opt.do_stat:
           command = '$T2KOSCANA/production/submit_toyexpt_fitting_job --resource Oxford --dm12sq 7.5E-5 --mix12 0.306 --mix13 0.0251 --deltacp -999 --cpu-time 70:00:00 --fit-param-list nuosc3f_numudisapp_fix4 --fit-option minuit --job-dir $PWD --softw-dir $T2KOSCANA --nexpts 100 --nruns 100 --dmsq-scheme abs23 --hierarchy normal --mix-param-choice sinsqtheta --stat-fluctuations --tag stat_mix'+str(osc[2])+'_dm'+str(osc[5])+' --dm23sq '+str(osc[5])+' --mix23 '+str(osc[2])
           print command
+          os.system(command)
+          os.chdir(basedir)
           continue
 
 
