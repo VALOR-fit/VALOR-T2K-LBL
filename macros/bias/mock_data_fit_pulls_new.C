@@ -535,13 +535,13 @@ void mock_data_fit_pulls_new
       label = Form("%s",util::AsStringPaperRooTex(p).c_str());
     h_summary_nuis->GetXaxis()->SetBinLabel(ipp+1, label.Data());
     if(!do_gaus_fits) {
-      h_summary_nuis->SetBinContent(ipp+1, h_pull_1[ipp]->GetMean());
-      h_summary_nuis->SetBinError(  ipp+1, h_pull_1[ipp]->GetRMS());
+      h_summary_nuis->SetBinContent(ipp+1, h_pull_1[ip]->GetMean());
+      h_summary_nuis->SetBinError(  ipp+1, h_pull_1[ip]->GetRMS());
     }
     else {
-      h_pull_1[ipp]->Draw();
-      h_pull_1[ipp]->Fit("gaus");
-      fit = h_pull_1[ipp]->GetFunction("gaus");
+      h_pull_1[ip]->Draw();
+      h_pull_1[ip]->Fit("gaus");
+      fit = h_pull_1[ip]->GetFunction("gaus");
       if(fit) {
 	h_summary_nuis->SetBinContent(ipp+1, fit->GetParameter(1));
 	h_summary_nuis->SetBinError(  ipp+1, fit->GetParameter(2));
