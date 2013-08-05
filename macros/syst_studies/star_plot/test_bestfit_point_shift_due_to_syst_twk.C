@@ -260,14 +260,22 @@ void test_bestfit_point_shift_due_to_syst_twk
       skexp->GetFSI()->Tweak(true,&twkv);
     }
     else if(sys.find("osc_mixing12") == 0) {
-      double tweak_mixing12 = input_mixing12 * (1 + conv::kGlobFitErrSinsq2Theta12);
+      double tweak_mixing12 = 0;
+      if(Opt::Instance()->gOscMixingParamChoice == conv::kNuMixSinsq2Theta)
+	tweak_mixing12 = input_mixing12 * (1 + conv::kGlobFitErrSinsq2Theta12);
+      else
+	tweak_mixing12 = input_mixing12 * (1 + conv::kGlobFitErrSinsqTheta12);
       if(tweak_mixing12 >  fparm->MaxValue(conv::kPhypMixing12)) tweak_mixing12 = fparm->MaxValue(conv::kPhypMixing12);
       if(tweak_mixing12 <  fparm->MinValue(conv::kPhypMixing12)) tweak_mixing12 = fparm->MinValue(conv::kPhypMixing12);
       fparm->Update(conv::kPhypMixing12, tweak_mixing12);
       fparm->SetInitValue(conv::kPhypMixing12, tweak_mixing12);
     }
     else if(sys.find("osc_mixing13") == 0) {
-      double tweak_mixing13 = input_mixing13 * (1 + conv::kGlobFitErrSinsq2Theta13);
+      double tweak_mixing13 = 0;
+      if(Opt::Instance()->gOscMixingParamChoice == conv::kNuMixSinsq2Theta)
+	tweak_mixing13 = input_mixing13 * (1 + conv::kGlobFitErrSinsq2Theta13);
+      else
+	tweak_mixing13 = input_mixing13 * (1 + conv::kGlobFitErrSinsqTheta13);
       if(tweak_mixing13 >  fparm->MaxValue(conv::kPhypMixing13)) tweak_mixing13 = fparm->MaxValue(conv::kPhypMixing13);
       if(tweak_mixing13 <  fparm->MinValue(conv::kPhypMixing13)) tweak_mixing13 = fparm->MinValue(conv::kPhypMixing13);
       fparm->Update(conv::kPhypMixing13, tweak_mixing13);
@@ -425,14 +433,22 @@ void test_bestfit_point_shift_due_to_syst_twk
       skexp->GetFSI()->Tweak(true,&twkv);
     }
     else if(sys.find("osc_mixing12") == 0) {
-      double tweak_mixing12 = input_mixing12 * (1 - conv::kGlobFitErrSinsq2Theta12);
+      double tweak_mixing12 = 0;
+      if(Opt::Instance()->gOscMixingParamChoice == conv::kNuMixSinsq2Theta)
+	tweak_mixing12 = input_mixing12 * (1 - conv::kGlobFitErrSinsq2Theta12);
+      else
+	tweak_mixing12 = input_mixing12 * (1 - conv::kGlobFitErrSinsqTheta12);
       if(tweak_mixing12 >  fparm->MaxValue(conv::kPhypMixing12)) tweak_mixing12 = fparm->MaxValue(conv::kPhypMixing12);
       if(tweak_mixing12 <  fparm->MinValue(conv::kPhypMixing12)) tweak_mixing12 = fparm->MinValue(conv::kPhypMixing12);
       fparm->Update(conv::kPhypMixing12, tweak_mixing12);
       fparm->SetInitValue(conv::kPhypMixing12, tweak_mixing12);
     }
     else if(sys.find("osc_mixing13") == 0) {
-      double tweak_mixing13 = input_mixing13 * (1 - conv::kGlobFitErrSinsq2Theta13);
+      double tweak_mixing13 = 0;
+      if(Opt::Instance()->gOscMixingParamChoice == conv::kNuMixSinsq2Theta)
+	tweak_mixing13 = input_mixing13 * (1 - conv::kGlobFitErrSinsq2Theta13);
+      else
+	tweak_mixing13 = input_mixing13 * (1 - conv::kGlobFitErrSinsqTheta13);
       if(tweak_mixing13 >  fparm->MaxValue(conv::kPhypMixing13)) tweak_mixing13 = fparm->MaxValue(conv::kPhypMixing13);
       if(tweak_mixing13 <  fparm->MinValue(conv::kPhypMixing13)) tweak_mixing13 = fparm->MinValue(conv::kPhypMixing13);
       fparm->Update(conv::kPhypMixing13, tweak_mixing13);
@@ -464,7 +480,7 @@ void test_bestfit_point_shift_due_to_syst_twk
     cout << "p.d.f parameters: " << endl;
     skexp->PrintSystematicVariations();
     skobs = new SuperkObservation;
-    skobs->CreateMockData(*skexp, *fparm, fluctuate_stat);
+    skobs->CreateMockData(*skexp, PhysHypothesis(*fparm), fluctuate_stat);
 
     // Reset systematic variation
     skexp->ResetSystematicVariations();
@@ -651,7 +667,7 @@ void test_bestfit_point_shift_due_to_syst_twk
       cout << "p.d.f parameters: " << endl;
       skexp->PrintSystematicVariations();
       skobs = new SuperkObservation;
-      skobs->CreateMockData(*skexp, *fparm, fluctuate_stat);
+      skobs->CreateMockData(*skexp, PhysHypothesis(*fparm), fluctuate_stat);
 
       // Reset systematic variation
       skexp->ResetSystematicVariations();

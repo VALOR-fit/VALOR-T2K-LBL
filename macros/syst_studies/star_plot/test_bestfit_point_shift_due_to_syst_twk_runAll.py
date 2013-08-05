@@ -26,12 +26,13 @@ usage: %prog [options]
     Run test_bestfit_point_shift_due_to_syst_twk.C""")
 optionParser.add_option("--syst", action="store_true", dest="do_syst", default=False, help="If set, will produce .data files for each systematic")
 optionParser.add_option("--stat", action="store_true", dest="do_stat", default=False, help="If set, will submit lots of 2+0 fitting jobs with no systematic fluctuations, to get the stat error at every point")
+optionParser.add_option("--staterr", action="store_true", dest="do_staterr", default=False, help="If set, will calculate the stat error at every point")
 optionParser.add_option("--draw", action="store_true", dest="do_draw", default=False, help="If set, will draw all the plots")
 optionParser.add_option("--table", action="store_true", dest="do_table", default=False, help="If set, will make the max deviation table")
 optionParser.add_option("--interactive", action="store_true", dest="interactive", default=False, help="If set, will run +- 1 sigma jobs interactively; otherwise, throw 1000 toys")
 (opt, args) = optionParser.parse_args()
 
-if not (opt.do_syst or opt.do_stat or opt.do_draw or opt.do_table):
+if not (opt.do_syst or opt.do_stat or opt.do_draw or opt.do_table or opt.do_staterr):
    optionParser.print_usage()
    sys.exit(1)
    
@@ -95,6 +96,15 @@ systematics.append("xsec_norm_antinutonu")
 #MEC
 systematics.append("mec")
 
+
+systematics = []
+#oscillations
+systematics.append("osc_mixing12");
+systematics.append("osc_mixing13");
+systematics.append("osc_dm12sq");
+systematics.append("osc_deltacp");
+
+
 samples = []
 samples.append("1Rmu")
 #samples.append("1Re")
@@ -143,6 +153,12 @@ for osc in oscparams:
          except:
             sys.exit("Could not make installation directory")
 
+      if opt.do_staterr:
+          command = 'root2k -l -b -q \'$T2KOSCANA/macros/syst_studies/star_plot/get_starplot_staterror.C("'+dirname+'")\''
+          print command
+          os.system(command)
+          continue
+
       os.chdir(dirname)
 
       if opt.do_stat:
@@ -151,7 +167,6 @@ for osc in oscparams:
           os.system(command)
           os.chdir(basedir)
           continue
-
 
       for syst in systematics:
 
@@ -294,10 +309,8 @@ for osc in oscparams:
          errmixing23 = file.readline().strip('\n')
          errdm23sq   = file.readline().strip('\n')
          file.close()
-         if(osc[2] == -99):
-            osc[2] = 1
-         if(osc[5] == -99):
-            osc[5] = 0.0024
+         if osc[2] == 0.5:
+             continue
          command = 'root2k -l -b -q \'$T2KOSCANA/macros/syst_studies/star_plot/text_to_root.C('+str(osc[2])+','+str(osc[5])+','+errmixing23+','+errdm23sq+',"'+dirname+'/combined-all.data")\''
          print command
          os.system(command)

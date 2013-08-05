@@ -36,7 +36,11 @@ void max_deviation_table(const char * filename = "readfile.root")
   cout.precision(4);
 
   vector<string> systematics;
-  systematics.push_back("nominal");
+  //systematics.push_back("nominal");
+  systematics.push_back("osc_mixing12");
+  systematics.push_back("osc_mixing13");
+  systematics.push_back("osc_dm12sq");
+  systematics.push_back("osc_deltacp");
   systematics.push_back("sk_energy_scale");
   /*
   systematics.push_back("sk_1Rmu_ccqe_other_eff");
@@ -116,21 +120,43 @@ void max_deviation_table(const char * filename = "readfile.root")
       tree.GetEntry(ie);
       if(var_name != name) continue;
       
-      maxmix = TMath::Max(maxmix, TMath::Max( TMath::Abs((var_mix23P-var_inmix23)/var_stmix23), TMath::Abs((var_mix23M-var_inmix23)/var_stmix23) ));
       maxdm = TMath::Max(maxdm, TMath::Max( TMath::Abs((var_dm23P-var_indm23)/var_stdm23), TMath::Abs((var_dm23M-var_indm23)/var_stdm23) ));
 
+      //need to be more careful with sinsqtheta23 - it has a mirror point
+      double centre    = 1 / (2 * (1 - conv::kGlobFitSinsqTheta13));
+      double in_mirror = var_inmix23;
+      if     (var_inmix23 < centre)
+	in_mirror = centre + TMath::Abs(centre - var_inmix23);
+      else if(var_inmix23 > centre)
+	in_mirror = centre - TMath::Abs(centre - var_inmix23);
+      double devP = TMath::Min( TMath::Abs((var_mix23P-var_inmix23)/var_stmix23), TMath::Abs((var_mix23P-in_mirror)/var_stmix23) );
+      double devM = TMath::Min( TMath::Abs((var_mix23M-var_inmix23)/var_stmix23), TMath::Abs((var_mix23M-in_mirror)/var_stmix23) );
+      maxmix = TMath::Max( maxmix, TMath::Max(devP, devM) );
     }
-    if(maxmix > 0.25 || maxdm > 0.25) cout << "{\\color{red}";
+    cout << setw(15) << setfill(' ');
+    if(maxmix > 0.25 || maxdm > 0.25)
+      cout << "{\\color{red}";
+    else
+      cout << "";
 
+    cout << setw(30)  << setfill(' ');
     if(name == "nominal" || name == "mec")
       cout << name;
+    else if(name == "osc_mixing12")
+      cout << "$\\sin^2(\\theta_{12})$";
+    else if(name == "osc_mixing13")
+      cout << "$\\sin^2(\\theta_{13})$";
+    else if(name == "osc_dm12sq")
+      cout << "$\\Delta m^2_{21}$";
+    else if(name == "osc_deltacp")
+      cout << "$\\delta_{CP}$";
     else 
       //cout << util::AsStringTex(util::PhysParamIdFromString(name));
       cout << util::AsStringPaperTex(util::PhysParamIdFromString(name));
     if(maxmix > 0.25 || maxdm > 0.25)
       cout << "}";
 
-    std::cout.precision(8);
+    std::cout.precision(4);
 
     cout << "\t & " << maxmix << "\t & " << maxdm << " \\\\" << endl;
 

@@ -285,12 +285,12 @@ FigA. Need to calculate a measure of how we compare with sensitivity. Suggest to
 
 Extra tables:
 TabA. Need to calculate a measure of which systematics are dominant. Suggest to create a 'star plot table', like we showed last time. Need to:
-	1 pick some points to study
-	2 use $T2KOSCANA/macros/syst_studies/star_plot/test_bestfit_point_shift_due_to_syst_twk_runAll.py --syst to get the effect of the systematics
-	3 use $T2KOSCANA/production/submit_toyexpt_fitting_job --tweak-systematics 0 --stat-fluctuations --fit-param-list nuosc3f_numudisapp_fix4 to get stat error at those points
-	4 get stat error: root2k -b -q $T2KOSCANA/macros/syst_studies/star_plot/get_starplot_staterror.C;
-	5 put stat error into SYST folder: mv stat.data bestfit__________
-	6 draw the star plots (if you're interested) $T2KOSCANA/macros/syst_studies/star_plot/test_bestfit_point_shift_due_to_syst_twk_runAll.py --draw
-	7 Convert the text files to ROOT files. root2k -l -b -q '$T2KOSCANA/macros/syst_studies/star_plot/text_to_root.C(0.95,2.44E-3,0.0340877,0.000154913,"bestfit_point_shift_1Rmu_-99_-99_0.95_-99_-99_0.00244/star_plot_line-all.data")'
-	8 Make the table root2k -l -b -q '$T2KOSCANA/macros/syst_studies/star_plot/max_deviation_table.C("readfile*.root")'
+	1 pick some points to study & put them in the list in $T2KOSCANA/macros/syst_studies/star_plot/test_bestfit_point_shift_due_to_syst_twk_runAll.py 
+	2 use $T2KOSCANA/macros/syst_studies/star_plot/test_bestfit_point_shift_due_to_syst_twk_runAll.py --syst to get the effect of the systematics (BATCH - ~50x1000 2+0 fits per point)
+	   (alternatively, use $T2KOSCANA/macros/syst_studies/star_plot/test_bestfit_point_shift_due_to_syst_twk_runAll.py --syst (INTERACTIVE - ~50x2 2+0 fits per point))
+	3 use $T2KOSCANA/macros/syst_studies/star_plot/test_bestfit_point_shift_due_to_syst_twk_runAll.py --stat to get the effect of the statistics (BATCH - 100x100 2+0 fits per point)
+	4 WAIT for jobs to finish...
+	5 use $T2KOSCANA/macros/syst_studies/star_plot/test_bestfit_point_shift_due_to_syst_twk_runAll.py --staterr to get the stat error
+	6 $T2KOSCANA/macros/syst_studies/star_plot/test_bestfit_point_shift_due_to_syst_twk_runAll.py --draw to draw the star plots (if you're interested) 
+	7 $T2KOSCANA/macros/syst_studies/star_plot/test_bestfit_point_shift_due_to_syst_twk_runAll.py --table to convert the text files to ROOT files, and then make the table
 
