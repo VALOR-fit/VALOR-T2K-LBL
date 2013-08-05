@@ -30,6 +30,7 @@ optionParser.add_option("--staterr", action="store_true", dest="do_staterr", def
 optionParser.add_option("--draw", action="store_true", dest="do_draw", default=False, help="If set, will draw all the plots")
 optionParser.add_option("--table", action="store_true", dest="do_table", default=False, help="If set, will make the max deviation table")
 optionParser.add_option("--interactive", action="store_true", dest="interactive", default=False, help="If set, will run +- 1 sigma jobs interactively; otherwise, throw 1000 toys")
+optionParser.add_option("--batch-is-oxford", action="store_true", dest="isoxford", default=False, help="If set, will use Oxford setup for BATCH scripts. Otherwise, use RAL")
 (opt, args) = optionParser.parse_args()
 
 if not (opt.do_syst or opt.do_stat or opt.do_draw or opt.do_table or opt.do_staterr):
@@ -97,14 +98,6 @@ systematics.append("xsec_norm_antinutonu")
 systematics.append("mec")
 
 
-systematics = []
-#oscillations
-systematics.append("osc_mixing12");
-systematics.append("osc_mixing13");
-systematics.append("osc_dm12sq");
-systematics.append("osc_deltacp");
-
-
 samples = []
 samples.append("1Rmu")
 #samples.append("1Re")
@@ -132,15 +125,15 @@ oscparams.append([0.857, 0.098, 1.000, 0, 7.5E-5, 0.00244]) #t2k run1-3 best fit
 oscparams.append([0.857, 0.098, 0.957, 0, 7.5E-5, 0.00239]) #minos neutrino2012 best fit
 """
 #using sinsqtheta
-oscparams.append([-99, -99, 0.50, -99, -99, 0.0025])   #use global best fits!
-oscparams.append([-99, -99, 0.37, -99, -99, 0.0025])   #mixing23=0.37 & global best fits
-oscparams.append([-99, -99, 0.65, -99, -99, 0.0025])   #mixing23=0.65 & global best fits
-oscparams.append([-99, -99, 0.50, -99, -99, 0.0028])   #dm32sq=0.0028 & global best fits!
-oscparams.append([-99, -99, 0.37, -99, -99, 0.0028])   #dm32sq=0.0028 & mixing23=0.37 & global best fits
-oscparams.append([-99, -99, 0.65, -99, -99, 0.0028])   #dm32sq=0.0028 & mixing23=0.65 & global best fits
-oscparams.append([-99, -99, 0.50, -99, -99, 0.0022])   #dm32sq=0.0022 & global best fits!
-oscparams.append([-99, -99, 0.37, -99, -99, 0.0022])   #dm32sq=0.0022 & mixing23=0.37 & global best fits
-oscparams.append([-99, -99, 0.65, -99, -99, 0.0022])   #dm32sq=0.0022 & mixing23=0.65 & global best fits
+oscparams.append([-99, -99, 0.513, -99, -99, 0.0025])   #use global best fits!
+oscparams.append([-99, -99, 0.37,  -99, -99, 0.0025])   #mixing23=0.37 & global best fits
+oscparams.append([-99, -99, 0.65,  -99, -99, 0.0025])   #mixing23=0.65 & global best fits
+oscparams.append([-99, -99, 0.513, -99, -99, 0.0028])   #dm32sq=0.0028 & global best fits!
+oscparams.append([-99, -99, 0.37,  -99, -99, 0.0028])   #dm32sq=0.0028 & mixing23=0.37 & global best fits
+oscparams.append([-99, -99, 0.65,  -99, -99, 0.0028])   #dm32sq=0.0028 & mixing23=0.65 & global best fits
+oscparams.append([-99, -99, 0.513, -99, -99, 0.0022])   #dm32sq=0.0022 & global best fits!
+oscparams.append([-99, -99, 0.37,  -99, -99, 0.0022])   #dm32sq=0.0022 & mixing23=0.37 & global best fits
+oscparams.append([-99, -99, 0.65,  -99, -99, 0.0022])   #dm32sq=0.0022 & mixing23=0.65 & global best fits
 
 for osc in oscparams:
 
@@ -162,7 +155,10 @@ for osc in oscparams:
       os.chdir(dirname)
 
       if opt.do_stat:
-          command = '$T2KOSCANA/production/submit_toyexpt_fitting_job --resource Oxford --dm12sq 7.5E-5 --mix12 0.306 --mix13 0.0251 --deltacp -999 --cpu-time 70:00:00 --fit-param-list nuosc3f_numudisapp_fix4 --fit-option minuit --job-dir $PWD --softw-dir $T2KOSCANA --nexpts 100 --nruns 100 --dmsq-scheme abs23 --hierarchy normal --mix-param-choice sinsqtheta --stat-fluctuations --tag stat_mix'+str(osc[2])+'_dm'+str(osc[5])+' --dm23sq '+str(osc[5])+' --mix23 '+str(osc[2])
+          farmname = "RAL"
+          if isoxford:
+              farmname = "Oxford"
+          command = '$T2KOSCANA/production/submit_toyexpt_fitting_job --resource '+farmname+' --dm12sq 7.5E-5 --mix12 0.306 --mix13 0.0251 --deltacp -999 --cpu-time 10:00:00 --fit-param-list nuosc3f_numudisapp_fix4 --fit-option minuit --job-dir $PWD --softw-dir $T2KOSCANA --nexpts 100 --nruns 100 --dmsq-scheme abs23 --hierarchy normal --mix-param-choice sinsqtheta --stat-fluctuations --tag stat_mix'+str(osc[2])+'_dm'+str(osc[5])+' --dm23sq '+str(osc[5])+' --mix23 '+str(osc[2])
           print command
           os.system(command)
           os.chdir(basedir)
@@ -188,7 +184,10 @@ for osc in oscparams:
                f.write("#PBS -o "+os.getcwd()+"/"+jobname+".out \n")
                f.write("#PBS -e "+os.getcwd()+"/"+jobname+".err \n")
                f.write("cd "+os.getcwd() +"  \n")
-               f.write("source "+os.environ['T2KOSCANA']+"/setup/setup_at_ral.sh "+os.environ['T2KOSCANA']+" \n")
+               if isoxford:
+                   f.write("source "+os.environ['T2KOSCANA']+"/setup/setup_at_oxford.sh "+os.environ['T2KOSCANA']+" \n")
+               else:
+                   f.write("source "+os.environ['T2KOSCANA']+"/setup/setup_at_ral.sh "+os.environ['T2KOSCANA']+" \n")
                f.write(command+"\n")
                f.close()
                submit = "qsub "+jobname+".pbs"
@@ -213,7 +212,10 @@ for osc in oscparams:
                   f.write("#PBS -o "+os.getcwd()+"/"+jobname+".out \n")
                   f.write("#PBS -e "+os.getcwd()+"/"+jobname+".err \n")
                   f.write("cd "+os.getcwd() +"  \n")
-                  f.write("source "+os.environ['T2KOSCANA']+"/setup/setup_at_ral.sh "+os.environ['T2KOSCANA']+" \n")
+                  if isoxford:
+                      f.write("source "+os.environ['T2KOSCANA']+"/setup/setup_at_oxford.sh "+os.environ['T2KOSCANA']+" \n")
+                  else:
+                      f.write("source "+os.environ['T2KOSCANA']+"/setup/setup_at_ral.sh "+os.environ['T2KOSCANA']+" \n")
                   f.write(command+"\n")
                   f.close()
                   submit = "qsub "+jobname+".pbs"
@@ -309,8 +311,6 @@ for osc in oscparams:
          errmixing23 = file.readline().strip('\n')
          errdm23sq   = file.readline().strip('\n')
          file.close()
-         if osc[2] == 0.5:
-             continue
          command = 'root2k -l -b -q \'$T2KOSCANA/macros/syst_studies/star_plot/text_to_root.C('+str(osc[2])+','+str(osc[5])+','+errmixing23+','+errdm23sq+',"'+dirname+'/combined-all.data")\''
          print command
          os.system(command)
