@@ -108,7 +108,7 @@ if($do_mixing23) {
 
     print "Submitting $tag job for mix23 bin: $mix23_bin\n";
 
-    $command  = "root2k -l -b -q \'$macro_dir/macros/chisq/build_chisq_profiles_disapp.C(\"${tag}_mix23only\",\"$exptfile\",$expt,\"$config_file\",\"$fitparamlist\",\"$fitoption\",$mix23_min,$mix23_max,$mix23_step,$dm32sq_min,$dm32sq_max,$dm32sq_step,1,0,$mix23_bin,1,\"$dmsqscheme\",\"$masshierarchy\",\"$mixparamchoice\",\"$mixparamoctant\")\'";
+    $command  = "root2k -l -b -q \'$macro_dir/macros/chisq/build_chisq_profiles_disapp.C(\"${tag}_mix23only_${mix23_bin}\",\"$exptfile\",$expt,\"$config_file\",\"$fitparamlist\",\"$fitoption\",$mix23_min,$mix23_max,$mix23_step,$dm32sq_min,$dm32sq_max,$dm32sq_step,1,0,$mix23_bin,1,\"$dmsqscheme\",\"$masshierarchy\",\"$mixparamchoice\",\"$mixparamoctant\")\'";
     print "$command \n";
 
 
@@ -162,7 +162,7 @@ if($do_dm32sq) {
 
     print "Submitting $tag job for dm32sq bin: $dm32sq_bin\n";
 
-    $command  = "root2k -l -b -q \'$macro_dir/macros/chisq/build_chisq_profiles_disapp.C(\"${tag}_dm32only\",\"$exptfile\",$expt,\"$config_file\",\"$fitparamlist\",\"$fitoption\",$mix23_min,$mix23_max,$mix23_step,$dm32sq_min,$dm32sq_max,$dm32sq_step,0,1,1,$dm32sq_bin,\"$dmsqscheme\",\"$masshierarchy\",\"$mixparamchoice\",\"$mixparamoctant\")\'";
+    $command  = "root2k -l -b -q \'$macro_dir/macros/chisq/build_chisq_profiles_disapp.C(\"${tag}_dm32only_${dm32sq_bin}\",\"$exptfile\",$expt,\"$config_file\",\"$fitparamlist\",\"$fitoption\",$mix23_min,$mix23_max,$mix23_step,$dm32sq_min,$dm32sq_max,$dm32sq_step,0,1,1,$dm32sq_bin,\"$dmsqscheme\",\"$masshierarchy\",\"$mixparamchoice\",\"$mixparamoctant\")\'";
     print "$command \n";
 
 
