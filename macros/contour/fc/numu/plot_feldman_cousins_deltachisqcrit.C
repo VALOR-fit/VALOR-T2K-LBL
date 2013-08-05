@@ -21,10 +21,18 @@ void plot_feldman_cousins_deltachisqcrit(
   const char * delta_chisq_critical_file_mc_statsyst,
   int nsmoothings=0)
 {
-  const double sinsq2theta_min = 0.925;
-  const double sinsq2theta_max = 1.00;
-  const double dmsq_min        = 2.0E-3;
-  const double dmsq_max        = 3.0E-3;
+  using namespace t2kana;
+
+  bool just_one_input = false;
+  if(delta_chisq_critical_file_mc_statonly == delta_chisq_critical_file_mc_statsyst)
+    just_one_input = true;
+
+  Opt::Instance()->gOscMixingParamChoice = conv::kNuMixSinsqTheta;
+
+  const double sinsq2theta_min = 0.40;
+  const double sinsq2theta_max = 0.62;
+  const double dmsq_min        = 2.2E-3;
+  const double dmsq_max        = 2.7E-3;
   const double dchisq_2p_68    = 2.30; /// canonical 68% CL \delta\chi^{2} for 2 parameters
   const double dchisq_2p_90    = 4.61; /// canonical 90% CL \delta\chi^{2} for 2 parameters
 
@@ -45,24 +53,58 @@ void plot_feldman_cousins_deltachisqcrit(
     hdchisq90_statsyst -> Smooth();
   }
 
+  //get rid of the values close to canonical
+  for(int ix = 1; ix <= hdchisq68_statonly->GetNbinsX(); ix++)
+    for(int iy = 1; iy <= hdchisq68_statonly->GetNbinsY(); iy++)
+      if(TMath::Abs( hdchisq68_statonly->GetBinContent(ix,iy) - dchisq_2p_68 ) < conv::kASmallNum)
+	hdchisq68_statonly->SetBinContent(ix,iy,0);
+  for(int ix = 1; ix <= hdchisq90_statonly->GetNbinsX(); ix++)
+    for(int iy = 1; iy <= hdchisq90_statonly->GetNbinsY(); iy++)
+      if(TMath::Abs( hdchisq90_statonly->GetBinContent(ix,iy) - dchisq_2p_90 ) < conv::kASmallNum)
+	hdchisq90_statonly->SetBinContent(ix,iy,0);
+  for(int ix = 1; ix <= hdchisq68_statsyst->GetNbinsX(); ix++)
+    for(int iy = 1; iy <= hdchisq68_statsyst->GetNbinsY(); iy++)
+      if(TMath::Abs( hdchisq68_statsyst->GetBinContent(ix,iy) - dchisq_2p_68 ) < conv::kASmallNum)
+	hdchisq68_statsyst->SetBinContent(ix,iy,0);
+  for(int ix = 1; ix <= hdchisq90_statsyst->GetNbinsX(); ix++)
+    for(int iy = 1; iy <= hdchisq90_statsyst->GetNbinsY(); iy++)
+      if(TMath::Abs( hdchisq90_statsyst->GetBinContent(ix,iy) - dchisq_2p_90 ) < conv::kASmallNum)
+	hdchisq90_statsyst->SetBinContent(ix,iy,0);
+
+
   gStyle->SetOptStat(0);
 
   //
   // Plot critical \delta\chi^{2}_{68} and \delta\chi^{2}_{90} both for 'stat' and 'stat+syst' cases.
   //
-
-  hdchisq68_statonly  -> GetXaxis() -> SetTitle("sin^{2}2#theta_{23}");
-  hdchisq90_statonly  -> GetXaxis() -> SetTitle("sin^{2}2#theta_{23}");
-  hdchisq68_statsyst  -> GetXaxis() -> SetTitle("sin^{2}2#theta_{23}");
-  hdchisq90_statsyst  -> GetXaxis() -> SetTitle("sin^{2}2#theta_{23}");
+  if(Opt::Instance()->gOscMixingParamChoice == conv::kNuMixSinsq2Theta) {
+    hdchisq68_statonly  -> GetXaxis() -> SetTitle("sin^{2}2#theta_{23}");
+    hdchisq90_statonly  -> GetXaxis() -> SetTitle("sin^{2}2#theta_{23}");
+    hdchisq68_statsyst  -> GetXaxis() -> SetTitle("sin^{2}2#theta_{23}");
+    hdchisq90_statsyst  -> GetXaxis() -> SetTitle("sin^{2}2#theta_{23}");
+  }
+  else {
+    hdchisq68_statonly  -> GetXaxis() -> SetTitle("sin^{2}#theta_{23}");
+    hdchisq90_statonly  -> GetXaxis() -> SetTitle("sin^{2}#theta_{23}");
+    hdchisq68_statsyst  -> GetXaxis() -> SetTitle("sin^{2}#theta_{23}");
+    hdchisq90_statsyst  -> GetXaxis() -> SetTitle("sin^{2}#theta_{23}");
+  }
   hdchisq68_statonly  -> GetYaxis() -> SetTitle("|#Deltam^{2}_{32}| (eV^{2}/c^{4})");
   hdchisq90_statonly  -> GetYaxis() -> SetTitle("|#Deltam^{2}_{32}| (eV^{2}/c^{4})");
   hdchisq68_statsyst  -> GetYaxis() -> SetTitle("|#Deltam^{2}_{32}| (eV^{2}/c^{4})");
   hdchisq90_statsyst  -> GetYaxis() -> SetTitle("|#Deltam^{2}_{32}| (eV^{2}/c^{4})");
-  hdchisq68_statonly  -> GetYaxis() -> SetTitleOffset(2.0);
-  hdchisq90_statonly  -> GetYaxis() -> SetTitleOffset(2.0);
-  hdchisq68_statsyst  -> GetYaxis() -> SetTitleOffset(2.0);
-  hdchisq90_statsyst  -> GetYaxis() -> SetTitleOffset(2.0);
+  if(!just_one_input) {
+    hdchisq68_statonly  -> GetYaxis() -> SetTitleOffset(2.0);
+    hdchisq90_statonly  -> GetYaxis() -> SetTitleOffset(2.0);
+    hdchisq68_statsyst  -> GetYaxis() -> SetTitleOffset(2.0);
+    hdchisq90_statsyst  -> GetYaxis() -> SetTitleOffset(2.0);
+  }
+  else {
+    hdchisq68_statonly  -> GetYaxis() -> SetTitleOffset(1.0);
+    hdchisq90_statonly  -> GetYaxis() -> SetTitleOffset(1.0);
+    hdchisq68_statsyst  -> GetYaxis() -> SetTitleOffset(1.0);
+    hdchisq90_statsyst  -> GetYaxis() -> SetTitleOffset(1.0);
+  }
 
   //equalise z axes
   hdchisq68_statonly->GetZaxis()->SetRangeUser(1.4,2.5);
@@ -71,33 +113,47 @@ void plot_feldman_cousins_deltachisqcrit(
   hdchisq90_statsyst->GetZaxis()->SetRangeUser(3.3,5.0);
 
   TCanvas * c1 = new TCanvas("c1","",10,20,700,500);
-  c1->Divide(2,2);
+  if(just_one_input)
+    c1->Divide(1,2);
+  else
+    c1->Divide(2,2);
   c1->cd(1);
-  c1->GetPad(1)->SetLeftMargin(0.3);
-  c1->GetPad(1)->SetRightMargin(0.15);
+  if(!just_one_input) {
+    c1->GetPad(1)->SetLeftMargin(0.3);
+    c1->GetPad(1)->SetRightMargin(0.15);
+  }
+  else {
+    c1->GetPad(1)->SetRightMargin(0.1);
+  }
   hdchisq68_statonly->Draw("colz");
   hdchisq68_statonly->GetXaxis()->SetRangeUser(sinsq2theta_min,sinsq2theta_max);
   hdchisq68_statonly->GetYaxis()->SetRangeUser(dmsq_min,dmsq_max);
   c1->cd(2);
-  c1->GetPad(2)->SetLeftMargin(0.15);
-  c1->GetPad(2)->SetRightMargin(0.3);
+  if(!just_one_input) {
+    c1->GetPad(2)->SetLeftMargin(0.3);
+    c1->GetPad(2)->SetRightMargin(0.15);
+  }
+  else {
+    c1->GetPad(2)->SetRightMargin(0.1);
+  }
   hdchisq90_statonly->Draw("colz");
   hdchisq90_statonly->GetXaxis()->SetRangeUser(sinsq2theta_min,sinsq2theta_max);
   hdchisq90_statonly->GetYaxis()->SetRangeUser(dmsq_min,dmsq_max);
-  c1->cd(3);
-  c1->GetPad(3)->SetLeftMargin(0.3);
-  c1->GetPad(3)->SetRightMargin(0.15);
-  hdchisq68_statsyst->Draw("colz");
-  hdchisq68_statsyst->GetXaxis()->SetRangeUser(sinsq2theta_min,sinsq2theta_max);
-  hdchisq68_statsyst->GetYaxis()->SetRangeUser(dmsq_min,dmsq_max);
-  c1->cd(4);
-  c1->GetPad(4)->SetLeftMargin(0.15);
-  c1->GetPad(4)->SetRightMargin(0.3);
-  hdchisq90_statsyst->Draw("colz");
-  hdchisq90_statsyst->GetXaxis()->SetRangeUser(sinsq2theta_min,sinsq2theta_max);
-  hdchisq90_statsyst->GetYaxis()->SetRangeUser(dmsq_min,dmsq_max);
-  c1->Update();
-
+  if(!just_one_input) {
+    c1->cd(3);
+    c1->GetPad(3)->SetLeftMargin(0.3);
+    c1->GetPad(3)->SetRightMargin(0.15);
+    hdchisq68_statsyst->Draw("colz");
+    hdchisq68_statsyst->GetXaxis()->SetRangeUser(sinsq2theta_min,sinsq2theta_max);
+    hdchisq68_statsyst->GetYaxis()->SetRangeUser(dmsq_min,dmsq_max);
+    c1->cd(4);
+    c1->GetPad(4)->SetLeftMargin(0.15);
+    c1->GetPad(4)->SetRightMargin(0.3);
+    hdchisq90_statsyst->Draw("colz");
+    hdchisq90_statsyst->GetXaxis()->SetRangeUser(sinsq2theta_min,sinsq2theta_max);
+    hdchisq90_statsyst->GetYaxis()->SetRangeUser(dmsq_min,dmsq_max);
+    c1->Update();
+  }
 
   //
   // Plot critical \delta\chi^{2}_{68} and \delta\chi^{2}_{90} vs sinsq2theta for 3 dmsq.
@@ -105,7 +161,7 @@ void plot_feldman_cousins_deltachisqcrit(
 
   double dmsq1 = 2.7E-3;
   double dmsq2 = 2.4E-3;
-  double dmsq3 = 2.1E-3;
+  double dmsq3 = 2.2E-3;
 
   int n = hdchisq90_statonly->GetXaxis()->GetNbins();
 
@@ -145,11 +201,15 @@ void plot_feldman_cousins_deltachisqcrit(
   gr2_68->SetLineColor(kGreen);
   gr3_68->SetLineColor(kRed);
   TH1F * hframe_68 = (TH1F*)c2->GetPad(1)->DrawFrame(sinsq2theta_min, 0., sinsq2theta_max, 4.);
-  hframe_68->GetXaxis()->SetTitle("sin^{2}2#theta_{23}");
+  if(Opt::Instance()->gOscMixingParamChoice == conv::kNuMixSinsq2Theta)
+    hframe_68->GetXaxis()->SetTitle("sin^{2}2#theta_{23}");
+  else
+    hframe_68->GetXaxis()->SetTitle("sin^{2}#theta_{23}");
   hframe_68->GetYaxis()->SetTitle("#Delta#chi^{2}_{68}");
-  gr1_68->Draw("c");
-  gr2_68->Draw("c");
-  gr3_68->Draw("c");
+  hframe_68->GetXaxis()->SetNdivisions(507,true); //fix so not too many axis labels
+  gr1_68->Draw();
+  gr2_68->Draw();
+  gr3_68->Draw();
   TLegend * legend_68 = new TLegend(0.4, 0.65, 0.9, 0.9);
   legend_68->SetFillStyle(0);
   legend_68->SetBorderSize(0);
@@ -167,11 +227,15 @@ void plot_feldman_cousins_deltachisqcrit(
   gr2_90->SetLineColor(kGreen);
   gr3_90->SetLineColor(kRed);
   TH1F * hframe_90 = (TH1F*)c2->GetPad(2)->DrawFrame(sinsq2theta_min, 0., sinsq2theta_max, 8.);
-  hframe_90->GetXaxis()->SetTitle("sin^{2}2#theta_{23}");
+  if(Opt::Instance()->gOscMixingParamChoice == conv::kNuMixSinsq2Theta)
+    hframe_90->GetXaxis()->SetTitle("sin^{2}2#theta_{23}");
+  else
+    hframe_90->GetXaxis()->SetTitle("sin^{2}#theta_{23}");
   hframe_90->GetYaxis()->SetTitle("#Delta#chi^{2}_{90}");
-  gr1_90->Draw("c");
-  gr2_90->Draw("c");
-  gr3_90->Draw("c");
+  hframe_90->GetXaxis()->SetNdivisions(507,true); //fix so not too many axis labels
+  gr1_90->Draw();
+  gr2_90->Draw();
+  gr3_90->Draw();
   TLegend * legend_90 = new TLegend(0.4, 0.65, 0.9, 0.9);
   legend_90->SetFillStyle(0);
   legend_90->SetBorderSize(0);
@@ -187,9 +251,9 @@ void plot_feldman_cousins_deltachisqcrit(
   // Plot critical \delta\chi^{2}_{68} and \delta\chi^{2}_{90} vs dmsq for 3 sinsq2theta.
   //
 
-  double sinsq2theta1 = 1.00;
-  double sinsq2theta2 = 0.975;
-  double sinsq2theta3 = 0.95;
+  double sinsq2theta1 = 0.4;
+  double sinsq2theta2 = 0.5;
+  double sinsq2theta3 = 0.6;
 
   int n2 = hdchisq90_statonly->GetYaxis()->GetNbins();
 
@@ -232,15 +296,22 @@ void plot_feldman_cousins_deltachisqcrit(
   hframe_dmsq_68->GetXaxis()->SetTitle("|#Deltam^{2}_{32}| (eV^{2}/c^{4})");
   hframe_dmsq_68->GetYaxis()->SetTitle("#Delta#chi^{2}_{68}");
   hframe_dmsq_68->GetXaxis()->SetNdivisions(507,true); //fix so not too many axis labels
-  gr1_dmsq_68->Draw("c");
-  gr2_dmsq_68->Draw("c");
-  gr3_dmsq_68->Draw("c");
+  gr1_dmsq_68->Draw();
+  gr2_dmsq_68->Draw();
+  gr3_dmsq_68->Draw();
   TLegend * legend_dmsq_68 = new TLegend(0.5, 0.65, 0.9, 0.9);
   legend_dmsq_68->SetFillStyle(0);
   legend_dmsq_68->SetBorderSize(0);
-  legend_dmsq_68->AddEntry(gr1_68, Form("#Delta#chi^{2}_{68}, sin^{2}#theta_{23} = %.3f", sinsq2theta1), "L");
-  legend_dmsq_68->AddEntry(gr2_68, Form("#Delta#chi^{2}_{68}, sin^{2}#theta_{23} = %.3f", sinsq2theta2), "L");
-  legend_dmsq_68->AddEntry(gr3_68, Form("#Delta#chi^{2}_{68}, sin^{2}#theta_{23} = %.3f", sinsq2theta3), "L");
+  if(Opt::Instance()->gOscMixingParamChoice == conv::kNuMixSinsq2Theta) {
+    legend_dmsq_68->AddEntry(gr1_68, Form("#Delta#chi^{2}_{68}, sin^{2}2#theta_{23} = %.3f", sinsq2theta1), "L");
+    legend_dmsq_68->AddEntry(gr2_68, Form("#Delta#chi^{2}_{68}, sin^{2}2#theta_{23} = %.3f", sinsq2theta2), "L");
+    legend_dmsq_68->AddEntry(gr3_68, Form("#Delta#chi^{2}_{68}, sin^{2}2#theta_{23} = %.3f", sinsq2theta3), "L");
+  }
+  else {
+    legend_dmsq_68->AddEntry(gr1_68, Form("#Delta#chi^{2}_{68}, sin^{2}#theta_{23} = %.3f", sinsq2theta1), "L");
+    legend_dmsq_68->AddEntry(gr2_68, Form("#Delta#chi^{2}_{68}, sin^{2}#theta_{23} = %.3f", sinsq2theta2), "L");
+    legend_dmsq_68->AddEntry(gr3_68, Form("#Delta#chi^{2}_{68}, sin^{2}#theta_{23} = %.3f", sinsq2theta3), "L");
+  }
   legend_dmsq_68->Draw();
   TLine * lc_dmsq_68 = new TLine(dmsq_min, dchisq_2p_68, dmsq_max, dchisq_2p_68); /// canonical \delta\chi^{2}
   lc_dmsq_68->Draw();
@@ -255,23 +326,33 @@ void plot_feldman_cousins_deltachisqcrit(
   hframe_dmsq_90->GetXaxis()->SetTitle("|#Deltam^{2}_{32}| (eV^{2}/c^{4})");
   hframe_dmsq_90->GetYaxis()->SetTitle("#Delta#chi^{2}_{90}");
   hframe_dmsq_90->GetXaxis()->SetNdivisions(507,true); //fix so not too many axis labels
-  gr1_dmsq_90->Draw("c");
-  gr2_dmsq_90->Draw("c");
-  gr3_dmsq_90->Draw("c");
+  gr1_dmsq_90->Draw();
+  gr2_dmsq_90->Draw();
+  gr3_dmsq_90->Draw();
   TLegend * legend_dmsq_90 = new TLegend(0.5, 0.65, 0.9, 0.9);
   legend_dmsq_90->SetFillStyle(0);
   legend_dmsq_90->SetBorderSize(0);
-  legend_dmsq_90->AddEntry(gr1_dmsq_90, Form("#Delta#chi^{2}_{90}, sin^{2}#theta_{23} = %.3f", sinsq2theta1), "L");
-  legend_dmsq_90->AddEntry(gr2_dmsq_90, Form("#Delta#chi^{2}_{90}, sin^{2}#theta_{23} = %.3f", sinsq2theta2), "L");
-  legend_dmsq_90->AddEntry(gr3_dmsq_90, Form("#Delta#chi^{2}_{90}, sin^{2}#theta_{23} = %.3f", sinsq2theta3), "L");
+  if(Opt::Instance()->gOscMixingParamChoice == conv::kNuMixSinsq2Theta) {
+    legend_dmsq_90->AddEntry(gr1_dmsq_90, Form("#Delta#chi^{2}_{90}, sin^{2}2#theta_{23} = %.3f", sinsq2theta1), "L");
+    legend_dmsq_90->AddEntry(gr2_dmsq_90, Form("#Delta#chi^{2}_{90}, sin^{2}2#theta_{23} = %.3f", sinsq2theta2), "L");
+    legend_dmsq_90->AddEntry(gr3_dmsq_90, Form("#Delta#chi^{2}_{90}, sin^{2}2#theta_{23} = %.3f", sinsq2theta3), "L");
+  }
+  else {
+    legend_dmsq_90->AddEntry(gr1_dmsq_90, Form("#Delta#chi^{2}_{90}, sin^{2}#theta_{23} = %.3f", sinsq2theta1), "L");
+    legend_dmsq_90->AddEntry(gr2_dmsq_90, Form("#Delta#chi^{2}_{90}, sin^{2}#theta_{23} = %.3f", sinsq2theta2), "L");
+    legend_dmsq_90->AddEntry(gr3_dmsq_90, Form("#Delta#chi^{2}_{90}, sin^{2}#theta_{23} = %.3f", sinsq2theta3), "L");
+  }
   legend_dmsq_90->Draw();
   TLine * lc_dmsq_90 = new TLine(dmsq_min, dchisq_2p_90, dmsq_max, dchisq_2p_90); /// canonical \delta\chi^{2}
   lc_dmsq_90->Draw();
 
 
   //save images
-  c1->SaveAs("FC_surfaces_28_2N.eps");
-  c2->SaveAs("FC_slice_mixing_28.eps");
-  c3->SaveAs("FC_slice_dmsq_28.eps");
+  c1->SaveAs("FC_surfaces.eps");
+  c2->SaveAs("FC_slice_mixing.eps");
+  c3->SaveAs("FC_slice_dmsq.eps");
+  c1->SaveAs("FC_surfaces.pdf");
+  c2->SaveAs("FC_slice_mixing.pdf");
+  c3->SaveAs("FC_slice_dmsq.pdf");
 }
 

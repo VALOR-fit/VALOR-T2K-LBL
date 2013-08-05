@@ -2,7 +2,8 @@ void convert_sinsqtheta_to_sinsq2theta
 (
  const char * outfilename = "nuis3fixdcp_normal_sinsq2theta.root",
  const char * infilename  = "2013results/DATA/run1-4_nuis3fixdcp_sintheta_normal/combination/run1-4_nuis3fixdcp_sintheta_normal-run_0-expt_6.root",
- const char * incontour   = "dchisq"
+ const char * incontour   = "dchisq",
+ bool         is_constdchisq = true // if set, will apply the 2.30,4.61 values to output contourlevel. otherwise, apply 0 (the FC value)
  )
 {
   TFile fin(infilename);
@@ -38,10 +39,16 @@ void convert_sinsqtheta_to_sinsq2theta
   TH2D * hsinsq2theta_68 = new TH2D("hdchisq_68","", nsinsq2thetabins, axis, nbinsy, binminy, binmaxy);
   TH2D * hsinsq2theta_90 = new TH2D("hdchisq_90","", nsinsq2thetabins, axis, nbinsy, binminy, binmaxy);
   hsinsq2theta_68->SetContour(1);
-  hsinsq2theta_68->SetContourLevel(0,2.30);
+  if(is_constdchisq)
+    hsinsq2theta_68->SetContourLevel(0,2.30);
+  else
+    hsinsq2theta_68->SetContourLevel(0,0.00);
   hsinsq2theta_68->SetLineStyle(3);
   hsinsq2theta_90->SetContour(1);
-  hsinsq2theta_90->SetContourLevel(0,4.61);
+  if(is_constdchisq)
+    hsinsq2theta_90->SetContourLevel(0,4.61);
+  else
+    hsinsq2theta_90->SetContourLevel(0,0.00);
   hsinsq2theta_90->SetLineStyle(1);
   hsinsq2theta_68->SetLineColor(kBlack);
   hsinsq2theta_90->SetLineColor(kBlack);

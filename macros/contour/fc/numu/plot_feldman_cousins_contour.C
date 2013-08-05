@@ -70,7 +70,7 @@ void plot_feldman_cousins_contour(
   double dmsq_frac_syst_err_bestfit=-1.,
   double sinsq2theta_frac_syst_err_bestfit=-1.,
   const char * outfile = "fc_contours.root",
-  double dm23sq_step = 5.0E-5;
+  double dm23sq_step = 5.0E-5,
   bool hack_away_the_high_dm32sq = true, /* FC surface is too small in dm32sq. use this to get rid of the awful border along the top */
   bool save_plots = true
 )
@@ -80,13 +80,13 @@ void plot_feldman_cousins_contour(
   //
   // Define dm23sq, mixing23 range and step  
   //
-  double mixing23_min   = 0.9;
+  double mixing23_min   = 0.0;
 //double mixing23_min   = 0.0;
   double mixing23_max   = 1.0;
   double mixing23_step  = 0.005;
-  double dm23sq_min     = 2.00E-3;
+  double dm23sq_min     = 1.00E-3;
 //double dm23sq_min     = 1.0E-3;
-  double dm23sq_max     = 3.00E-3;
+  double dm23sq_max     = 6.00E-3;
 //double dm23sq_max     = 6.0E-3;
 //  double dm23sq_step    = 5.0E-5; // now an argument
 
@@ -419,12 +419,15 @@ void plot_feldman_cousins_contour(
 
   if(save_plots) {
     ConfidenceContour->SaveAs("FCcontour.eps");
+    ConfidenceContour->SaveAs("FCcontour.pdf");
     hframe->Draw();
     hDeltaChisqCrit68StatSyst->Draw("colzsame");
     ConfidenceContour->SaveAs("FCsurface68.eps");
+    ConfidenceContour->SaveAs("FCsurface68.pdf");
     hframe->Draw();
     hDeltaChisqCrit90StatSyst->Draw("colzsame");
     ConfidenceContour->SaveAs("FCsurface90.eps");
+    ConfidenceContour->SaveAs("FCsurface90.pdf");
   }
 
   TFile fout(outfile,"RECREATE");

@@ -15,7 +15,8 @@ void contour_plots_nfits(
 	   double       dm32sq_min   = 0.002,
 	   double       dm32sq_max   = 0.003,
 	   const char * mixingparam  = "sinsq2theta", /* for the x-axis */
-	   double       leg_font_size = 0.05
+	   double       leg_font_size = 0.05,
+	   bool         cl_and_bf_in_leg = false
 )
 {
   using namespace std;
@@ -60,8 +61,14 @@ void contour_plots_nfits(
   leg->SetFillColor(0);
   leg->SetFillStyle(0);
   leg->SetBorderSize(0);
-  leg->SetTextFont(42);
+  leg->SetTextFont(132);
   leg->SetTextSize(leg_font_size);
+  TLegend * legbf = new TLegend(0.17,0.18,0.53,0.3);
+  legbf->SetFillColor(0);
+  legbf->SetFillStyle(0);
+  legbf->SetBorderSize(0);
+  legbf->SetTextFont(132);
+  legbf->SetTextSize(leg_font_size);
 
   // Read in contours
   ifstream fitinp(contour_filelist, ios::in);
@@ -137,7 +144,22 @@ void contour_plots_nfits(
 
     //style
     input_point  [ifit]->SetMarkerSize(0.5);
-    bestfit_point[ifit]->SetMarkerSize(0.5);
+    if(ncontours <= 3) {
+      if(ifit == 0) {
+	bestfit_point[ifit]->SetMarkerSize(1.8);
+	bestfit_point[ifit]->SetMarkerStyle(29);
+      }
+      else if(ifit == 1) {
+	bestfit_point[ifit]->SetMarkerSize(1.8);
+	bestfit_point[ifit]->SetMarkerStyle(24);
+      }
+      else if(ifit == 2) {
+	bestfit_point[ifit]->SetMarkerSize(1.8);
+	bestfit_point[ifit]->SetMarkerStyle(25);
+      }
+    }
+    else
+      bestfit_point[ifit]->SetMarkerSize(0.5);
     h68[ifit]->SetLineWidth(2);
     h90[ifit]->SetLineWidth(2);
     h68[ifit]->SetLineStyle(2);
@@ -170,7 +192,14 @@ void contour_plots_nfits(
     input_point  [ifit]->SetMarkerColor(icolor);
     h68          [ifit]->SetLineColor(icolor);
     h90          [ifit]->SetLineColor(icolor);
-    leg->AddEntry(h90[ifit], tag.c_str(), "L");
+    const char * percent = "%";
+    if(cl_and_bf_in_leg) {
+      leg->AddEntry(h68[ifit], Form("%s 68%s CL",tag.c_str(),percent), "L");
+      leg->AddEntry(h90[ifit], Form("%s 90%s CL",tag.c_str(),percent), "L");
+      legbf->AddEntry(bestfit_point[ifit], Form("%s best fit",tag.c_str()), "P");
+    }
+    else
+      leg->AddEntry(h90[ifit], tag.c_str(), "L");
   }//ifit
 
   //Plot
@@ -196,6 +225,9 @@ void contour_plots_nfits(
       input_point[ifit]->Draw();
   }
   leg->Draw();
+  if(cl_and_bf_in_leg) {
+    legbf->Draw();
+  }
 
   c->SaveAs(Form("contours_%s.pdf",output_tag));
   c->SaveAs(Form("contours_%s.eps",output_tag));
@@ -262,7 +294,7 @@ void contour_plots_nfits(
     legext->SetFillColor(0);
     legext->SetFillStyle(0);
     legext->SetBorderSize(0);
-    legext->SetTextFont(42);
+    legext->SetTextFont(132);
     legext->SetTextSize(leg_font_size);
     legext->AddEntry(ll_minos, "MINOS 2013 2#nu", "l");
     legext->AddEntry(g_skle, "SuperK L/E 2012 2#nu", "l");
