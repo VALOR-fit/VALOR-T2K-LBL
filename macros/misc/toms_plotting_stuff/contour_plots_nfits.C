@@ -16,7 +16,8 @@ void contour_plots_nfits(
 	   double       dm32sq_max   = 0.003,
 	   const char * mixingparam  = "sinsq2theta", /* for the x-axis */
 	   double       leg_font_size = 0.05,
-	   bool         cl_and_bf_in_leg = false
+	   bool         cl_in_leg = false,
+	   bool         bf_in_leg = false
 )
 {
   using namespace std;
@@ -193,13 +194,15 @@ void contour_plots_nfits(
     h68          [ifit]->SetLineColor(icolor);
     h90          [ifit]->SetLineColor(icolor);
     const char * percent = "%";
-    if(cl_and_bf_in_leg) {
-      leg->AddEntry(h68[ifit], Form("%s 68%s CL",tag.c_str(),percent), "L");
-      leg->AddEntry(h90[ifit], Form("%s 90%s CL",tag.c_str(),percent), "L");
-      legbf->AddEntry(bestfit_point[ifit], Form("%s best fit",tag.c_str()), "P");
+    if(cl_in_leg) {
+      if(plot_68)
+	leg->AddEntry(h68[ifit], Form("%s 68%s CL",tag.c_str(),percent), "L");
+      if(plot_90)
+	leg->AddEntry(h90[ifit], Form("%s 90%s CL",tag.c_str(),percent), "L");
     }
     else
       leg->AddEntry(h90[ifit], tag.c_str(), "L");
+    legbf->AddEntry(bestfit_point[ifit], Form("%s best fit",tag.c_str()), "P");
   }//ifit
 
   //Plot
@@ -225,7 +228,7 @@ void contour_plots_nfits(
       input_point[ifit]->Draw();
   }
   leg->Draw();
-  if(cl_and_bf_in_leg) {
+  if(bf_in_leg) {
     legbf->Draw();
   }
 
