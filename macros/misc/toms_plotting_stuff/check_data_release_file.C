@@ -26,18 +26,26 @@
 
   //Get the graphs from the copy
   TFile f("t2k_2013paper_likelihoodratio_contour_and_deltachisq.root");
-  g_contour_68_o1->SetLineColor(kBlue);
+  g_contour_68_o1->SetLineColor(kRed);
   g_contour_68_o1->SetLineStyle(2);
   g_contour_68_o1->SetLineWidth(1);
-  g_contour_90_o1->SetLineColor(kBlue);
+  g_contour_90_o1->SetLineColor(kRed);
   g_contour_90_o1->SetLineStyle(2);
   g_contour_90_o1->SetLineWidth(1);
-  g_contour_68_o2->SetLineColor(kBlue);
+  g_contour_68_o2->SetLineColor(kRed);
   g_contour_68_o2->SetLineStyle(2);
   g_contour_68_o2->SetLineWidth(1);
-  g_contour_90_o2->SetLineColor(kBlue);
+  g_contour_90_o2->SetLineColor(kRed);
   g_contour_90_o2->SetLineStyle(2);
   g_contour_90_o2->SetLineWidth(1);
+  //get the dchisq from the copy
+  TH2D * hdchisqo1 = 0;
+  f.GetObject("h_deltachisq_o1",hdchisqo1);
+  TH2D * hdchisqo2 = 0;
+  f.GetObject("h_deltachisq_o2",hdchisqo2);
+  //get the bf graph from the copy
+  g_bestfit_o1.Print();
+  g_bestfit_o2.Print();
 
   //param space
   TH2D * osc_param_space = new TH2D("osc_param_space", "",
@@ -53,6 +61,8 @@
 
   //draw
   TCanvas * c = new TCanvas();
+  c->Divide(1,3);
+  c->cd(1);
   osc_param_space->Draw();
   ho1_90->Draw("cont3same");
   ho1_68->Draw("cont3same");
@@ -62,7 +72,15 @@
   g_contour_90_o1->Draw();
   g_contour_68_o2->Draw();
   g_contour_90_o2->Draw();
+  c->cd(2);
+  osc_param_space->Draw();
+  hdchisqo1->Draw("colz");
+  c->cd(3);
+  osc_param_space->Draw();
+  hdchisqo2->Draw("colz");
 
   c->SaveAs("test_contour_graphs.pdf");
+
+
 
 }

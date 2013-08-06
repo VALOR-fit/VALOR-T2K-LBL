@@ -69,7 +69,7 @@ void make_data_release_file()
   ho1_colz->SetName("h_deltachisq_o1");
   //best fit point as graph
   double bfo1_x[1] = {1.000};
-  double bfo1_y[1] = {0.002443};
+  double bfo1_y[1] = {0.00244};
   TGraph * bfo1 = new TGraph(1, bfo1_x, bfo1_y);
   bfo1->SetTitle("best fit point for #theta_{23} #leq #pi/4, NH (2013 numu paper)");
   bfo1->SetName("g_bestfit_o1");
@@ -77,7 +77,7 @@ void make_data_release_file()
   bfo1->SetMarkerColor(kBlack);
   bfo1->SetMarkerStyle(29);
   //best fit point as marker
-  TMarker * mo1 = new TMarker(1.000,0.002443,29);
+  TMarker * mo1 = new TMarker(1.000,0.00244,29);
   mo1->SetMarkerSize(1.8);
   mo1->SetMarkerColor(kBlack);
   cout << mo1->GetTitle() << endl;
@@ -131,7 +131,7 @@ void make_data_release_file()
   ho2_colz->SetName("h_deltachisq_o2");
   //best fit point as graph
   double bfo2_x[1] = {0.999};
-  double bfo2_y[1] = {0.002441};
+  double bfo2_y[1] = {0.00244};
   TGraph * bfo2 = new TGraph(1, bfo2_x, bfo2_y);
   bfo2->SetTitle("best fit point for #theta_{23} #leq #pi/4, NH (2013 numu paper)");
   bfo2->SetName("g_bestfit_o2");
@@ -139,7 +139,7 @@ void make_data_release_file()
   bfo2->SetMarkerColor(kBlack);
   bfo2->SetMarkerStyle(29);
   //best fit point as marker
-  TMarker * mo2 = new TMarker(0.999,0.002441,29);
+  TMarker * mo2 = new TMarker(0.999,0.00244,29);
   mo2->SetMarkerSize(1.8);
   mo2->SetMarkerColor(kBlack);
   cout << mo2->GetTitle() << endl;

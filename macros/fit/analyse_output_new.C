@@ -279,7 +279,6 @@ void analyse_output_new
   TH1D * spectrum_modes_numubarcc  = new TH1D("","", n_ereco_bins, ereco_bin_edges);
   TH1D * spectrum_modes_nuecc      = new TH1D("","", n_ereco_bins, ereco_bin_edges);
   TH1D * spectrum_modes_nc         = new TH1D("","", n_ereco_bins, ereco_bin_edges);
-  TH1D * spectrum_modes_oscnumucc  = new TH1D("","", n_ereco_bins, ereco_bin_edges);
   double total_integral = 0;
   for(int im = 0; im < conv::knm; im++) {
     conv::SuperkMode_t m = conv::kSKReactionModes[is][im];
@@ -289,23 +288,21 @@ void analyse_output_new
       continue;
     }
     for(int ir = 1; ir <= n_ereco_bins; ir++) {
-      if(m == conv::kSKmNuMuCCQE)
+      if(m == conv::kSKmNuMuCCQE || m == conv::kSKmOscNuMuCCQE)
 	spectrum_modes_numuccqe->SetBinContent (ir, spectrum_modes_numuccqe->GetBinContent(ir)  + spectrum_modes[im]->GetBinContent(ir));
-      else if(util::IsNuMu(m) && util::IsCC(m))
+      else if((util::IsNuMu(m) || util::IsOscNuMu(m)) && util::IsCC(m))
 	spectrum_modes_numuccnqe->SetBinContent(ir, spectrum_modes_numuccnqe->GetBinContent(ir) + spectrum_modes[im]->GetBinContent(ir));
       else if(util::IsNC(m))
 	spectrum_modes_nc->SetBinContent       (ir, spectrum_modes_nc->GetBinContent(ir)        + spectrum_modes[im]->GetBinContent(ir));
       else if(util::IsNuMuBar(m))
 	spectrum_modes_numubarcc->SetBinContent(ir, spectrum_modes_numubarcc->GetBinContent(ir) + spectrum_modes[im]->GetBinContent(ir));
-      else if(util::IsOscNuMu(m))
-	spectrum_modes_oscnumucc->SetBinContent(ir, spectrum_modes_oscnumucc->GetBinContent(ir) + spectrum_modes[im]->GetBinContent(ir));
       else //it's nue/nuebar/oscnue & CC
 	spectrum_modes_nuecc->SetBinContent    (ir, spectrum_modes_nuecc->GetBinContent(ir)     + spectrum_modes[im]->GetBinContent(ir));
     }//ir
     total_integral += spectrum_modes[im]->Integral();
   }//im
 
-  cout << endl << spectrum_modes_nc->Integral() + spectrum_modes_nuecc->Integral() + spectrum_modes_oscnumucc->Integral() 
+  cout << endl << spectrum_modes_nc->Integral() + spectrum_modes_nuecc->Integral()
     + spectrum_modes_numubarcc->Integral() + spectrum_modes_numuccnqe->Integral() + spectrum_modes_numuccqe->Integral()
        << endl << spectrum_bf->Integral() 
        << endl << total_integral << endl << endl;
@@ -314,13 +311,11 @@ void analyse_output_new
   set_line_style  (spectrum_bf,    kBlack, 2,   1);
   set_line_style  (spectrum_obs,   kBlack, 1.0, 1);
   set_marker_style(spectrum_obs,   kBlack, 1.0, 8);
-  set_line_style(spectrum_modes_oscnumucc, kBlack, 1, 1);
   set_line_style(spectrum_modes_numubarcc, kBlack, 1, 1);
   set_line_style(spectrum_modes_numuccnqe, kBlack, 1, 1);
   set_line_style(spectrum_modes_numuccqe,  kBlack, 1, 1);
   set_line_style(spectrum_modes_nuecc,     kBlack, 1, 1);
   set_line_style(spectrum_modes_nc,        kBlack, 1, 1);
-  set_fill_style(spectrum_modes_oscnumucc, kOrange, 1001);
   set_fill_style(spectrum_modes_numubarcc, kGreen,  1001);
   set_fill_style(spectrum_modes_numuccnqe, kBlack,  3004);
   set_fill_style(spectrum_modes_numuccqe,  kWhite,  1001);
@@ -329,11 +324,10 @@ void analyse_output_new
   //make stack
   THStack * stack = new THStack("","");
   stack->Add(spectrum_modes_nc);
-  //stack->Add(spectrum_modes_nuecc);
-  stack->Add(spectrum_modes_oscnumucc);
+  stack->Add(spectrum_modes_nuecc);
   stack->Add(spectrum_modes_numubarcc);
   stack->Add(spectrum_modes_numuccnqe);
-  stack->Add(spectrum_modes_numuccqe);
+  //stack->Add(spectrum_modes_numuccqe);
   //prelim draw
   stack->Draw();
   //axis range
@@ -353,7 +347,6 @@ void analyse_output_new
   l->AddEntry(spectrum_modes_numuccqe,  "Best fit (#nu_{#mu} CCQE)", "f");
   l->AddEntry(spectrum_modes_numuccnqe, "Best fit (#nu_{#mu} CCnonQE)", "f");
   l->AddEntry(spectrum_modes_numubarcc, "Best fit (#bar{#nu_{#mu}} CC)", "f");
-  l->AddEntry(spectrum_modes_oscnumucc, "Best fit (Osc #nu_{#mu} CC)", "f");
   l->AddEntry(spectrum_modes_nuecc,     "Best fit (#nu_{e}, #bar{#nu_{e}} CC)", "f");
   l->AddEntry(spectrum_modes_nc,        "Best fit (NC)", "f");
   //draw
@@ -483,6 +476,7 @@ void analyse_output_new
   values->GetYaxis()->SetTitle("Pull = (bestfit - input) / #sigma_{input}");
   //draw
   TCanvas * cpull = new TCanvas();
+  cpull->SetGridx(1);
   cpull->SetBottomMargin(0.4);
   cpull->cd();
   pulls->Draw("P");
@@ -494,7 +488,7 @@ void analyse_output_new
   save_canvas(cpull,"values",tag);
   delete cpull;
 
-  //save the pull plot
+  //save the pull histogram
   TFile fout_pull(Form("%s_pulls.root",tag),"RECREATE");
   fout_pull.cd();
   pulls->Write("pulls");
