@@ -48,16 +48,8 @@
   g_bestfit_o2.Print();
 
   //param space
-  TH2D * osc_param_space = new TH2D("osc_param_space", "",
-       210, 
-       0.9 - 0.5*0.005, 
-       1.0 + 0.5*0.005,
-       250, 
-       0.0021 - 0.5*0.00005, 
-       0.0033 + 0.5*0.00005);
-  osc_param_space->GetXaxis()->SetTitle("sin^{2}(2#theta_{23})"); // adjust if mixing param is sinsqtheta rather than sinsq2theta...
-  osc_param_space->GetYaxis()->SetTitle("|#Deltam_{32}^{2}| (eV^{2}/c^{4})");
-  osc_param_space->GetYaxis()->SetTitleOffset(1.4);
+  TH2D * osc_param_space = 0;
+  f.GetObject("h_osc_param_space",osc_param_space);
 
   //draw
   TCanvas * c = new TCanvas();

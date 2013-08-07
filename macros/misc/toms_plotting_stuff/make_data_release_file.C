@@ -19,8 +19,20 @@ void make_data_release_file()
   TFile fo2("2012results/DATA/octant2_23only/combination/fitresults_3.root");
 
   double yoffset = 1.4; //y axis title offset
-  double xmin = 0.8975,   xmax = 1.0025,   nxbins = 21;
-  double ymin = 0.001975, ymax = 0.003025, nybins = 21;
+
+  //limits for osc param space
+  double xmin = 0.7975,   xmax = 1.0025,   nxbins = 41;
+  double ymin = 0.000975, ymax = 0.004025, nybins = 61;
+
+  //make an osc param space
+  TH2D * h_osc_param_space = new TH2D("h_osc_param_space", "Paramater space to facilitate drawing", nxbins, xmin, xmax, nybins, ymin, ymax);
+  h_osc_param_space->GetXaxis()->SetTitle("sin^{2}(2#theta_{23})");
+  h_osc_param_space->GetYaxis()->SetTitle("|#Deltam_{32}^{2}| (eV^{2}/c^{4})");
+  h_osc_param_space->GetYaxis()->SetTitleOffset(yoffset);
+
+  //limits for chisq surfaces
+  xmin = 0.8975,   xmax = 1.0025,   nxbins = 21;
+  ymin = 0.001975, ymax = 0.003025, nybins = 21;
 
   //get the octant one contour
   TH2D * ho1 = 0;
@@ -76,6 +88,9 @@ void make_data_release_file()
   bfo1->SetMarkerSize(1.8);
   bfo1->SetMarkerColor(kBlack);
   bfo1->SetMarkerStyle(29);
+  bfo1->GetXaxis()->SetTitle("sin^{2}(2#theta_{23})");
+  bfo1->GetYaxis()->SetTitle("|#Deltam_{32}^{2}| (eV^{2}/c^{4})");
+  bfo1->GetYaxis()->SetTitleOffset(yoffset);
   //best fit point as marker
   TMarker * mo1 = new TMarker(1.000,0.00244,29);
   mo1->SetMarkerSize(1.8);
@@ -138,6 +153,9 @@ void make_data_release_file()
   bfo2->SetMarkerSize(1.8);
   bfo2->SetMarkerColor(kBlack);
   bfo2->SetMarkerStyle(29);
+  bfo2->GetXaxis()->SetTitle("sin^{2}(2#theta_{23})");
+  bfo2->GetYaxis()->SetTitle("|#Deltam_{32}^{2}| (eV^{2}/c^{4})");
+  bfo2->GetYaxis()->SetTitleOffset(yoffset);
   //best fit point as marker
   TMarker * mo2 = new TMarker(0.999,0.00244,29);
   mo2->SetMarkerSize(1.8);
@@ -160,5 +178,7 @@ void make_data_release_file()
   go2_90->Write();
   //mo2->Write("m_bestfit_o2");
   ho2_colz->Write();
+  //param space
+  h_osc_param_space->Write();
   fout.Close();
 }
