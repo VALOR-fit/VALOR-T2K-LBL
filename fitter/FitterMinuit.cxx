@@ -8,7 +8,7 @@
 
 //#define __show_fit_init_info__ 
 #define __show_fit_result__ 
-//#define __show_fit_steps__ 
+#define __show_fit_steps__ 
 #define __show_fit_cpu_time__
 
 #include <cassert> 
@@ -198,21 +198,31 @@ bool FitterMinuit::DoTheFit(void)
   // Run the fitter once - we have the option here to check the status code
   // and if the fitter failed, re-seed the fitter and try again
   bool ok = this->RunOnce(false);
-  
+
   // 4: migrad not converged
   int ntries = 0;
-  while(fMigradMinStatusCode == 4 && ntries < 25) {
+  int maxntries = 10;
+  OscAnaType_t ana = Opt::Instance()->gOscAnaTypeChoice;
+  if(ana != kAnaNuMuDisappOnly)
+    maxntries = 25;
+  while(fMigradMinStatusCode == 4 && ntries < maxntries) {
     cout << "Original fit failed; reseeding & trying again. Attempt: " << ntries << endl;
     NuOscMixParam_t omp = Opt::Instance()->gOscMixingParamChoice;
     switch(omp) {
     case(conv::kNuMixSinsq2Theta):
-      fFitInputs->FitParams().SetInitValue(conv::kPhypMixing23, Rnd::Instance()->RndFitter().Uniform(0.80,0.98));
-      fFitInputs->FitParams().SetInitValue(conv::kPhypMixing13, Rnd::Instance()->RndFitter().Uniform(0.05,0.15));
+      if(ana == kAnaNuMuDisappOnly || ana == kAnaCombined)
+	fFitInputs->FitParams().SetInitValue(conv::kPhypMixing23, Rnd::Instance()->RndFitter().Uniform(0.80,0.98));
+      if(ana == kAnaNuEAppOnly     || ana == kAnaCombined)
+	fFitInputs->FitParams().SetInitValue(conv::kPhypMixing13, Rnd::Instance()->RndFitter().Uniform(0.05,0.15));
       break;
     case(conv::kNuMixSinsqTheta):
-      if (fFitInputs->FitParams().InitValue(conv::kPhypMixing23)< 0.515) fFitInputs->FitParams().SetInitValue(conv::kPhypMixing23, Rnd::Instance()->RndFitter().Uniform(0.35,0.5));
-      else fFitInputs->FitParams().SetInitValue(conv::kPhypMixing23, Rnd::Instance()->RndFitter().Uniform(0.5,0.65));
-      fFitInputs->FitParams().SetInitValue(conv::kPhypMixing13, Rnd::Instance()->RndFitter().Uniform(0.015,0.035));
+      if(ana == kAnaNuMuDisappOnly || ana == kAnaCombined)
+	if (fFitInputs->FitParams().InitValue(conv::kPhypMixing23)< 0.515)
+	  fFitInputs->FitParams().SetInitValue(conv::kPhypMixing23, Rnd::Instance()->RndFitter().Uniform(0.35,0.5));
+	else
+	  fFitInputs->FitParams().SetInitValue(conv::kPhypMixing23, Rnd::Instance()->RndFitter().Uniform(0.5,0.65));
+      if(ana == kAnaNuEAppOnly || ana == kAnaCombined)
+	fFitInputs->FitParams().SetInitValue(conv::kPhypMixing13, Rnd::Instance()->RndFitter().Uniform(0.015,0.035));
       break;
     case(conv::kNuMixUndefined):
       cerr << "Mixing parameter type undefinded. Exiting..." << endl;
@@ -309,15 +319,15 @@ bool FitterMinuit::RunOnce(bool use_simplex)
   fitter->PrintResults(3,aminn);
 #endif
 
+  // Found best fit! Copy current --> best-fit values
+  fFitInputs->FitParams().CopyCurrToBestFitValues();
+
   // Get the error matrix status
   double ha(0.0);     // dummy vars
   double edm, errdef; // dummy vars
   int nvpar, nparx;   // dummy vars
   int errMatrixStatus = fitter->GetStats(ha, edm, errdef, nvpar, nparx);
   fMigradErrStatusCode = errMatrixStatus;
-
-  // Found best fit! Copy current --> best-fit values
-  fFitInputs->FitParams().CopyCurrToBestFitValues();
 
   // Calculate HESSE or MINOS errors
   if(fCalcHesseErrors) {
@@ -349,11 +359,11 @@ bool FitterMinuit::RunOnce(bool use_simplex)
   fFitInputs->FitParams().SetErrors(errplus, errminus, errpara);
 
   // Print fit result
+  if(fCalcHesseErrors) {
 #ifdef __show_fit_result__
 #ifdef __show_fit_steps__
-  cout << "FitterMinuit/RunOnce >> Printing HESSE fit results..." << endl;
+    cout << "FitterMinuit/RunOnce >> Printing HESSE fit results..." << endl;
 #endif
-  if(fCalcHesseErrors) {
     Double_t amin = 0;
     fitter->PrintResults(3,amin);
   //fitter->PrintResults(1,amin); // prints limits
@@ -365,6 +375,9 @@ bool FitterMinuit::RunOnce(bool use_simplex)
 #ifdef __show_fit_steps__
   cout << "FitterMinuit/RunOnce >> Done" << endl;
 #endif
+
+  for(int i = 0; i <= 47; i++)
+    cout << i << "\t" << fitter->GetParameter(i) << endl;
 
   return (fMigradErrStatusCode == 3);
 }

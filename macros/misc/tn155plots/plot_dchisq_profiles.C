@@ -59,7 +59,7 @@ void plot_dchisq_profiles
   }
 
   //constdchisq lines
-  double c68 = 1.00, c90 = 2.31;
+  double c68 = 1.00, c90 = 2.71;
   TLine * l68 = new TLine(h1->GetXaxis()->GetXmin(), c68, h1->GetXaxis()->GetXmax(), c68);
   l68->SetLineStyle(3);
   TLine * l90 = new TLine(h1->GetXaxis()->GetXmin(), c90, h1->GetXaxis()->GetXmax(), c90);
@@ -71,6 +71,7 @@ void plot_dchisq_profiles
   leg->SetFillStyle(0);
   leg->SetBorderSize(0);
   leg->SetTextFont(132);
+  leg->SetTextSize(0.06);
   leg->AddEntry(h1,tag1,"l");
   leg->AddEntry(h2,tag2,"l");
 
