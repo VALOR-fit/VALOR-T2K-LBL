@@ -18,11 +18,12 @@ void run_fit_xml
   const char * fit_option       = "minuit",                            /* fitter option */
   bool         store_toy_expts         = true,                         /* disable this if you don't want to store the toy MC expts     */
   bool         store_bestfit_spectrum  = true,                         /* disable this if you don't want to store the best-fit spectra */
-  const char * dmsqscheme          = "abs23",                               /* abs23==kNuDmsq12andAbs23 fogli==kNuDmsqFogliLisi */
+  const char * dmsqscheme          = "abs23",                               /* abs23==kNuDmsq12andAbs23 abs31==kNuDmsq12andAbs31 fogli==kNuDmsqFogliLisi */
   const char * hierarchy           = "normal",                              /* normal or inverted */
   const char * mixparamchoice      = "sinsqtheta",                          /* sinsq2theta or sinsqtheta */
-  const char * mixparamoctant      = "one"                                  /* one==kNuOctantOne two==kNuOctantTwo */
+  const char * mixparamoctant      = "one",                                 /* one==kNuOctantOne two==kNuOctantTwo */
   //bool         apply_2nu_boundary  = true                                   /* if using the 2nu flavour osc prob, apply the physical boundary? */
+  double       dcp_value           = 0                                      /* value of deltacp (in units of PI) to assume (when deltacp is not a free parameter) */
 )
 {
   using namespace std;
@@ -63,6 +64,13 @@ void run_fit_xml
 
   conv::PhysHypothesis_t hyp = fparm1->PhysicsHypothesis();
   cout << "- The following physics hypothesis is used in the fit: " << util::AsString(hyp) << endl;
+
+  //make an assumption for deltacp
+  if(fparm->IsFixed(conv::kPhypDeltaCP)) {
+    fparm ->SetInitValue(conv::kPhypDeltaCP, dcp_value * conv::kpi);
+    fparm1->SetInitValue(conv::kPhypDeltaCP, dcp_value * conv::kpi);
+    fparm2->SetInitValue(conv::kPhypDeltaCP, dcp_value * conv::kpi);
+  }
 
   // Get superk spectrum predictor & configure
   SuperkExpectation * skexp = new SuperkExpectation;

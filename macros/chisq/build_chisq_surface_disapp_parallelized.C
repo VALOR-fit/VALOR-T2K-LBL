@@ -28,7 +28,7 @@ void build_chisq_surface_disapp_parallelized
   double       dm32sq_step         = 0.00001,
   int          input_mixing23_bin  = -1,                                    /* if !=-1, will run only for the specified bin */
   int          input_dm32sq_bin    = -1,                                    /* if !=-1, will run only for the specified bin */
-  const char * dmsqscheme          = "abs23",                               /* abs23==kNuDmsq12andAbs23 fogli==kNuDmsqFogliLisi */
+  const char * dmsqscheme          = "abs23",                               /* abs23==kNuDmsq12andAbs23 abs31==kNuDmsq12andAbs31 fogli==kNuDmsqFogliLisi */
   const char * hierarchy           = "normal",                              /* normal or inverted */
   const char * mixparamchoice      = "sinsq2theta",                         /* sinsq2theta or sinsqtheta */
   const char * mixparamoctant      = "one",                                 /* one==kNuOctantOne two==kNuOctantTwo */
@@ -179,7 +179,7 @@ void build_chisq_surface_disapp_parallelized
            cout << "Computing chisq for bin centered at mix23 = " << mixing23 << ", Dm^2 = " << dm32sq << " eV^2" << endl;
            cout << "Fit has " << fparm->GetNumberFreeParameters() << " free parameters" << endl;
            fitter->DoTheFit();
-           double chisq = fit_inputs->Chisquare();
+           double chisq = fit_inputs->BestFitChisquare();
            delete fitter;
            delete fit_inputs;               
            // store best-fit results in tree

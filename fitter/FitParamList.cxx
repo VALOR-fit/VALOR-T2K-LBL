@@ -1032,6 +1032,12 @@ void FitParamList::Append3FlavourOscillation(FitParamList * fparm, int start)
   case(kNuDmsq12andAbs23):
     fparm->AddParam( ip++, kPhypDm23sq,    kInitFitDm23sq,   kMinFitDm23sq, kMaxFitDm23sq, kStepDm23sq,  false, false);
     break;
+  case(kNuDmsq12andAbs31):
+    if(Opt::Instance()->gMassHierarchyAssumed == kNmhNormal)
+      fparm->AddParam( ip++, kPhypDm23sq,    kInitFitDm23sq + kInitFitDm12sq,   kMinFitDm23sq, kMaxFitDm23sq, kStepDm23sq,  false, false);
+    else if(Opt::Instance()->gMassHierarchyAssumed == kNmhInverted)
+      fparm->AddParam( ip++, kPhypDm23sq,    kInitFitDm23sq - kInitFitDm12sq,   kMinFitDm23sq, kMaxFitDm23sq, kStepDm23sq,  false, false);
+    break;
   default:
     delete fparm;
     return;

@@ -25,7 +25,7 @@ void build_chisq_profiles_disapp
  bool         do_dm32sq           = false,
  int          input_mixing23_bin  = -1,                                    /* if !=-1, will run only for the specified bin */
  int          input_dm32sq_bin    = -1,                                    /* if !=-1, will run only for the specified bin */
- const char * dmsqscheme          = "abs23",                               /* abs23==kNuDmsq12andAbs23 fogli==kNuDmsqFogliLisi */
+ const char * dmsqscheme          = "abs23",                               /* abs23==kNuDmsq12andAbs23 abs31==kNuDmsq12andAbs31 fogli==kNuDmsqFogliLisi */
  const char * hierarchy           = "normal",                              /* normal or inverted */
  const char * mixparamchoice      = "sinsqtheta",                          /* sinsq2theta or sinsqtheta */
  const char * mixparamoctant      = "one"                                  /* one==kNuOctantOne two==kNuOctantTwo */
@@ -132,7 +132,7 @@ void build_chisq_profiles_disapp
       cout << "Computing chisq for bin centered at mix23 = " << mixing23 << endl;
       cout << "Fit has " << fparm->GetNumberFreeParameters() << " free parameters" << endl;
       fitter->DoTheFit();
-      double chisq = fit_inputs->Chisquare();
+      double chisq = fit_inputs->BestFitChisquare();
       delete fitter;
       delete fit_inputs;
       chisq_mixing23->SetBinContent(i,chisq+chisq_mixing23->GetBinContent(i));
@@ -163,7 +163,7 @@ void build_chisq_profiles_disapp
       cout << "Computing chisq for bin centered at Dm^2 = " << dm32sq << " eV^2" << endl;
       cout << "Fit has " << fparm->GetNumberFreeParameters() << " free parameters" << endl;
       fitter->DoTheFit();
-      double chisq = fit_inputs->Chisquare();
+      double chisq = fit_inputs->BestFitChisquare();
       delete fitter;
       delete fit_inputs;
       chisq_dm32sq->SetBinContent(i,chisq+chisq_dm32sq->GetBinContent(i));

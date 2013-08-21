@@ -21,15 +21,16 @@ void run_fit
   const char * config_file             = "analysis_configuration.xml",        /* analysis configuration file */
   bool         stat_fluctuations       = true,                                /* include statistical fluctuation in toy MC expts? */
   bool         tweak_systematics       = true,                                /* generate toy MC with randomized systematics? */
-  const char * fit_param_list          = "nuosc3f_numudisapp_fix4+nuisance",  /* fit parameter list for the given physics hypothesis (see FitParamList.h) */
+  const char * fit_param_list          = "nuosc3f_numudisapp_nuis3fixdcp+nuisance",  /* fit parameter list for the given physics hypothesis (see FitParamList.h) */
   const char * fit_option              = "minuit",                            /* fitter option */
   bool         store_toy_expts         = true,                                /* disable this if you don't want to store the toy MC expts     */
   bool         store_bestfit_spectrum  = true,                                /* disable this if you don't want to store the best-fit spectra */
-  const char * dmsqscheme              = "abs23",                             /* abs23==kNuDmsq12andAbs23 fogli==kNuDmsqFogliLisi */
+  const char * dmsqscheme              = "abs23",                             /* abs23==kNuDmsq12andAbs23 abs31==kNuDmsq12andAbs31 fogli==kNuDmsqFogliLisi */
   const char * hierarchy               = "normal",                            /* normal or inverted */
   const char * mixparamchoice          = "sinsqtheta",                        /* sinsq2theta or sinsqtheta */
-  const char * mixparamoctant          = "one"                                /* one==kNuOctantOne two==kNuOctantTwo */
+  const char * mixparamoctant          = "one",                               /* one==kNuOctantOne two==kNuOctantTwo */
   //bool         apply_2nu_boundary      = true                                 /* if using the 2nu flavour osc prob, apply the physical boundary? */
+  double       dcp_value               = 0                                    /* value of deltacp (in units of PI) to assume (when deltacp is not a free parameter) */
 )
 {
   using namespace std;
@@ -87,6 +88,13 @@ void run_fit
   FitParamList * fparm2 = FitParamList::NamedParameterList(fit_param_list);
   PhysHypothesis_t hyp = fparm1->PhysicsHypothesis();
   cout << "- The following physics hypothesis is used in the fit: " << util::AsString(hyp) << endl;
+
+  //make an assumption for deltacp
+  if(fparm->IsFixed(conv::kPhypDeltaCP)) {
+    fparm ->SetInitValue(conv::kPhypDeltaCP, dcp_value * conv::kpi);
+    fparm1->SetInitValue(conv::kPhypDeltaCP, dcp_value * conv::kpi);
+    fparm2->SetInitValue(conv::kPhypDeltaCP, dcp_value * conv::kpi);
+  }
 
   // Get superk spectrum predictor & configure
   SuperkExpectation * skexp = new SuperkExpectation;
@@ -163,38 +171,44 @@ void run_fit
      // get toy MC with/without systematics
      //
      SuperkObservation * skobs = new SuperkObservation;
-     if(tweak_systematics) 
-     {
-        // tweak all sources of systematic error
-        cout << "- Randomizing all systematic params in pdf..." << endl;
-        skexp->TweakAllSystematics();     
-        skexp->PrintSystematicVariations();
-        // keep track of all nuisance params set so as to add in output tree
-        PhysParamList true_nuisance_params = skexp->Tweaks();
-        iparm->Append(true_nuisance_params);
-        // generate mock data using the current PDF (incl. systematic variations) 
-        // + statistical fluctuations if requested (Poisson fluctuation in each bin)
-        cout << "- Generating toy-MC..." << endl;
-	//note that fparm does not contain the tweaks, so use only the PhysHyp here
-        skobs->CreateMockData(*skexp, PhysHypothesis(*fparm1), stat_fluctuations);
-        // reset all systematics so that the PDF used in the fitter is the nominal one
-        cout << "- Reseting all systematic params in pdf..." << endl;
-        skexp->ResetSystematicVariations();
-        //skexp->PrintSystematicVariations();
-     } else {
-        //make sure systematics are reset
-	skexp->ResetSystematicVariations();
-        // generate mock data using the current PDF (without systematic variations) 
-        // with statistical fluctuations if requested (Poisson fluctuation in each bin)
-        cout << "- Generating toy-MC..." << endl;
-        skobs->CreateMockData(*skexp, PhysHypothesis(*fparm1), stat_fluctuations); 
-     }
-     
+     bool applied_negevents_condition = true;
+     while(applied_negevents_condition) {
+       if(tweak_systematics) {
+	 // tweak all sources of systematic error
+	 cout << "- Randomizing all systematic params in pdf..." << endl;
+	 skexp->TweakAllSystematics();     
+	 skexp->PrintSystematicVariations();
+	 // generate mock data using the current PDF (incl. systematic variations) 
+	 // + statistical fluctuations if requested (Poisson fluctuation in each bin)
+	 cout << "- Generating toy-MC..." << endl;
+	 //note that fparm does not contain the tweaks, so use only the PhysHyp here
+	 applied_negevents_condition = skobs->CreateMockData(*skexp, PhysHypothesis(*fparm1), stat_fluctuations);
+	 if(!applied_negevents_condition) {
+	   // keep track of all nuisance params set so as to add in output tree
+	   PhysParamList true_nuisance_params = skexp->Tweaks();
+	   iparm->Append(true_nuisance_params);
+	 }
+	 // reset all systematics so that the PDF used in the fitter is the nominal one
+	 cout << "- Reseting all systematic params in pdf..." << endl;
+	 skexp->ResetSystematicVariations();
+	 //skexp->PrintSystematicVariations();
+       }
+       else {
+	 //make sure systematics are reset
+	 skexp->ResetSystematicVariations();
+	 // generate mock data using the current PDF (without systematic variations) 
+	 // with statistical fluctuations if requested (Poisson fluctuation in each bin)
+	 cout << "- Generating toy-MC..." << endl;
+	 applied_negevents_condition = skobs->CreateMockData(*skexp, PhysHypothesis(*fparm1), stat_fluctuations); 
+       }
+     }//applied_negevents_condition
+
      // Get fitter
      FitInputs * fit_inputs = new FitInputs(skobs,skexp,fparm1);
      FitterABC * fitter = util::GetFitter(fit_inputs,fit_option);
 
      // Chisq for true (input) params
+     fparm1->Update(conv::kNuisXSecSpecFunc, 0); //init value of SpecFunc is 0.5
      double true_chisq = fit_inputs->Chisquare();
 
      // Print-out true params

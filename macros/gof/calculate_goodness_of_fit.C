@@ -21,7 +21,7 @@ void calculate_goodness_of_fit
   const char * fit_option              = "minuit",                              /* fitter option */
   bool         store_toy_expts         = true,                                  /* disable this if you don't want to store the toy MC expts     */
   bool         store_bestfit_spectrum  = true,                                  /* disable this if you don't want to store the best-fit spectra */
-  const char * dmsqscheme              = "abs23",                               /* abs23==kNuDmsq12andAbs23 fogli==kNuDmsqFogliLisi */
+  const char * dmsqscheme              = "abs23",                               /* abs23==kNuDmsq12andAbs23 abs31==kNuDmsq12andAbs31 fogli==kNuDmsqFogliLisi */
   const char * hierarchy               = "normal",                              /* normal or inverted */
   const char * mixparamchoice          = "sinsqtheta",                          /* sinsq2theta or sinsqtheta */
   const char * mixparamoctant          = "one"                                  /* one==kNuOctantOne two==kNuOctantTwo */
@@ -152,23 +152,28 @@ void calculate_goodness_of_fit
 
      // Get superk spectrum observation (toy experiment)
      SuperkObservation * skobs = new SuperkObservation;
-     // tweak all sources of systematic error
-     cout << "- Randomizing all systematic params in pdf..." << endl;
-     skexp->TweakAllSystematics();     
-     skexp->PrintSystematicVariations();
+
+     bool applied_negevents_condition = true;
+     while(applied_negevents_condition) {
+       // tweak all sources of systematic error
+       cout << "- Randomizing all systematic params in pdf..." << endl;
+       skexp->TweakAllSystematics();     
+       skexp->PrintSystematicVariations();
+       // generate mock data using the current PDF (incl. systematic variations) 
+       // + statistical fluctuations if requested (Poisson fluctuation in each bin)
+       cout << "- Generating toy-MC..." << endl;
+       //note that fparm does not contain the tweaks, so use only the PhysHyp here
+       bool stat_fluctuations = true;
+       applied_negevents_condition = skobs->CreateMockData(*skexp, PhysHypothesis(*fparm1), stat_fluctuations);
+     }//applied_negevents_condition
+
      // keep track of all nuisance params set so as to add in output tree
      PhysParamList true_nuisance_params = skexp->Tweaks();
      iparm->Append(true_nuisance_params);
-     // generate mock data using the current PDF (incl. systematic variations) 
-     // + statistical fluctuations if requested (Poisson fluctuation in each bin)
-     cout << "- Generating toy-MC..." << endl;
-     //note that fparm does not contain the tweaks, so use only the PhysHyp here
-     bool stat_fluctuations = true;
-     skobs->CreateMockData(*skexp, PhysHypothesis(*fparm1), stat_fluctuations);
+
      // reset all systematics so that the PDF used in the fitter is the nominal one
      cout << "- Reseting all systematic params in pdf..." << endl;
      skexp->ResetSystematicVariations();
-     //skexp->PrintSystematicVariations();
 
      // Get fitter
      FitInputs * fit_inputs = new FitInputs(skobs,skexp,fparm1);

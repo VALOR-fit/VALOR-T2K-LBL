@@ -378,10 +378,15 @@ double FitInputs::ChisquarePenaltyTerm(void) const
       case(kNuDmsq12andAbs23):
 	nom  = kGlobFitDm23sq;
 	break;
+      case(kNuDmsq12andAbs31):
+        if(Opt::Instance()->gMassHierarchyAssumed == kNmhNormal)
+          nom  = kGlobFitDm23sq + kGlobFitDm12sq; 
+        else if(Opt::Instance()->gMassHierarchyAssumed == kNmhInverted)
+          nom  = kGlobFitDm23sq - kGlobFitDm12sq; 
+        break;
       default:
 	nom  = kGlobFitDm23sq;
       }
-      //      double nom  = kGlobFitDm23sq;
       double err  = nom * kGlobFitErrDm23sq;
       double twk  = (dmsq - nom) / err;
       double dchisq_penalty = twk*twk;

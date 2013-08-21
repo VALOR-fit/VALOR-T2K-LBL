@@ -54,6 +54,7 @@ foreach (@ARGV) {
   if($_ eq '--mix-param-choice'       ) { $mixparamchoice        = $ARGV[$iarg+1]; }
   if($_ eq '--mix-param-octant'       ) { $mixparamoctant        = $ARGV[$iarg+1]; }
   if($_ eq '--allow-2nu-unphysical'   ) { $apply_2nu_boundary    = 0;              }
+  if($_ eq '--dcp-value'              ) { $dcp_value             = $ARGV[$iarg+1]; }
   $iarg++;
 }
 
@@ -77,6 +78,7 @@ $masshierarchy          = "normal"                             unless defined $m
 $mixparamchoice         = "sinsqtheta"                         unless defined $mixparamchoice;
 $mixparamoctant         = "one"                                unless defined $mixparamoctant;
 $apply_2nu_boundary     = 1                                    unless defined $apply_2nu_boundary;
+$dcp_value              = 0                                    unless defined $dcp_value;
 
 if( !defined $cput) {
   if($resource eq "RAL"   ) { $cput = "6:00:00";  }
@@ -92,7 +94,7 @@ $job_name      = "$tag-$irun";
 
 $macro_dir = $softw_dir;
 
-$command = "root2k -l -b -q \'$macro_dir/macros/fit/run_fit_xml_seeded.C(\"$chisq_file\",$nfits,\"$tag\",$irun,\"$toyexptsfile\",$expt,\"$config_file\",\"$fitparamlist\",\"$fitoption\",\"$dmsqscheme\",\"$masshierarchy\",\"$mixparamchoice\",\"$mixparamoctant\",$apply_2nu_boundary)\'";
+$command = "root2k -l -b -q \'$macro_dir/macros/fit/run_fit_xml_seeded.C(\"$chisq_file\",$nfits,\"$tag\",$irun,\"$toyexptsfile\",$expt,\"$config_file\",\"$fitparamlist\",\"$fitoption\",\"$dmsqscheme\",\"$masshierarchy\",\"$mixparamchoice\",\"$mixparamoctant\",$apply_2nu_boundary,$dcp_value)\'";
 print "$command \n";
 
 

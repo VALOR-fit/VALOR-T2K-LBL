@@ -26,6 +26,7 @@
 #  --hierarchy              : normal or inverted
 #  --mix-param-choice       : sinsq2theta or sinsqtheta
 #  --mix-param-octant       : one or two
+#  --dcp-value              : Number of pi to use as value of deltacp (when deltacp is not fit for). Default 0.
 #
 # C.Andreopoulos
 #---------------------------------------------------------------------------------------------------------------------------- 
@@ -57,6 +58,7 @@ foreach (@ARGV) {
   if($_ eq '--mix-param-choice'       ) { $mixparamchoice        = $ARGV[$iarg+1]; }
   if($_ eq '--mix-param-octant'       ) { $mixparamoctant        = $ARGV[$iarg+1]; }
   #if($_ eq '--allow-2nu-unphysical'   ) { $apply_2nu_boundary    = 0;              }
+  if($_ eq '--dcp-value'              ) { $dcp_value             = $ARGV[$iarg+1]; }
   $iarg++;
 }
 
@@ -81,6 +83,7 @@ $masshierarchy          = "normal"                             unless defined $m
 $mixparamchoice         = "sinsqtheta"                         unless defined $mixparamchoice;
 $mixparamoctant         = "one"                                unless defined $mixparamoctant;
 #$apply_2nu_boundary     = 1                                    unless defined $apply_2nu_boundary;
+$dcp_value              = 0                                    unless defined $dcp_value;
 
 if( !defined $cput) {
   if($resource eq "RAL"   ) { $cput = "6:00:00";  }
@@ -105,7 +108,7 @@ while($irun < $nruns) {
   if( $resource eq "Grid") { $macro_dir = "\$T2KOSCANA"; }
   else                     { $macro_dir = $softw_dir;    }
 
-  $command = "root2k -l -b -q \'$macro_dir/macros/fit/run_fit_xml.C(\"$tag\",$irun,\"$toyexptsfile\",$first,$last,\"$config_file\",\"$fitparamlist\",\"$fitoption\",$store_toy_expts,$store_bestfit_spectra,\"$dmsqscheme\",\"$masshierarchy\",\"$mixparamchoice\",\"$mixparamoctant\")\'";
+  $command = "root2k -l -b -q \'$macro_dir/macros/fit/run_fit_xml.C(\"$tag\",$irun,\"$toyexptsfile\",$first,$last,\"$config_file\",\"$fitparamlist\",\"$fitoption\",$store_toy_expts,$store_bestfit_spectra,\"$dmsqscheme\",\"$masshierarchy\",\"$mixparamchoice\",\"$mixparamoctant\",$dcp_value)\'";
   print "$command \n";
 
   $first = $last  + 1;

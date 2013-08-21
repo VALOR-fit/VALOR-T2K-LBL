@@ -485,9 +485,15 @@ double t2kana::util::RandomizeDm23sq(void)
   switch (odmsq) {                                                                                                                                                                                        
   case(kNuDmsqFogliLisi):                                                                                                                                                                         
     mean  =  kGlobFitDmsqFL;
-    break;                                                                                                                                                                                                
+    break;
   case(kNuDmsq12andAbs23):
     mean  = kGlobFitDm23sq; 
+    break;                                                                                                                                                                                                
+  case(kNuDmsq12andAbs31):
+    if(Opt::Instance()->gMassHierarchyAssumed == kNmhNormal)
+      mean  = kGlobFitDm23sq + kGlobFitDm12sq; 
+    else if(Opt::Instance()->gMassHierarchyAssumed == kNmhInverted)
+      mean  = kGlobFitDm23sq - kGlobFitDm12sq; 
     break;                                                                                                                                                                                                
   default:                                                                                                                                                                                                
     mean  = kGlobFitDm23sq;  
@@ -732,6 +738,9 @@ string t2kana::util::AsString(t2kana::conv::NuOscDmsqScheme_t dmsqs)
   case(kNuDmsq12andAbs23) :
     return "dm^2 = Dm^2_{21}, Dm^2 = |Dm^2_{32}|";
     break;
+  case(kNuDmsq12andAbs31) :
+    return "dm^2 = Dm^2_{21}, Dm^2 = |Dm^2_{31}|";
+    break;
   case(kNuDmsqFogliLisi ) :
     return "dm^2 = Dm^2_{21}, Dm^2 = |m^2_{3} - (m^2_{1} + m^2_{1})/2|";
     break;
@@ -799,7 +808,18 @@ string t2kana::util::AsString(PhysParamId_t p)
     break;
 
     case ( kPhypDeltaCP               ) : return "delta_cp";                   break;
-    case ( kPhypDm23sq                ) : return "|Dm^2_32|";                  break;
+    case ( kPhypDm23sq                ) :
+      {
+	NuOscDmsqScheme_t dmscheme = Opt::Instance()->gOscDmsqScheme;
+	switch(dmscheme) {
+	  case(kNuDmsq12andAbs23) : return "|Dm^2_32|";                  break;
+	  case(kNuDmsq12andAbs31) : return "|Dm^2_31|";                  break;
+	  case(kNuDmsqFogliLisi ) : return "|Dm^2|";                     break;
+  	  default                 : return "--";                         break;
+	}
+      } 
+    break;
+
     case ( kPhypDm12sq                ) : return "Dm^2_12";                    break;
 
     case ( kPhypAlphaDecay            ) : return "alpha_decay";                break;
@@ -1101,7 +1121,16 @@ string t2kana::util::AsStringTex(PhysParamId_t p)
 
     case ( kPhypDeltaCP               ) : return "$\\delta_{CP}$";                   break;
     case ( kPhypDm23sq                ) : return "$|\\Delta m^2_{32}|$";                  break;
-    case ( kPhypDm12sq                ) : return "$\\Delta m^2_{21}$";                    break;
+      {
+	NuOscDmsqScheme_t dmscheme = Opt::Instance()->gOscDmsqScheme;
+	switch(dmscheme) {
+	  case(kNuDmsq12andAbs23) : return "|\\Delta m^2_{32}|";                  break;
+	  case(kNuDmsq12andAbs31) : return "|\\Delta m^2_{31}|";                  break;
+	  case(kNuDmsqFogliLisi ) : return "|\\Delta m^2|";                       break;
+  	  default                 : return "--";                                  break;
+	}
+      }
+    break;
 
     case ( kPhypAlphaDecay            ) : return "$\\alpha_{decay}$";                break;
     case ( kPhypSinsq2ThetaDecay      ) : return "$\\sin^2(2\\theta_{decay})$";       break;
@@ -1398,18 +1427,25 @@ string t2kana::util::AsStringPaperTex(PhysParamId_t p)
     {
       NuOscDmsqScheme_t omp = Opt::Instance()->gOscDmsqScheme;
       switch(omp) {
-      case(kNuDmsqFogliLisi) :	return "$|\\Deltam^2| = |m^2_{3} - (m^2_{1} + m^2_{1})/2|$";                  break;
-      case(kNuDmsq12andAbs23):	return "$|\\Deltam^2_{32}|$";                  break;
-      default                 : return "--";                 break;
+        case(kNuDmsqFogliLisi) :	return "$|\\Deltam^2| = |m^2_{3} - (m^2_{1} + m^2_{1})/2|$";                  break;
+        case(kNuDmsq12andAbs23):	return "$|\\Deltam^2_{32}|$";                  break;
+        case(kNuDmsq12andAbs31):	return "$|\\Deltam^2_{31}|$";                  break;
+        default                :        return "--";                                   break;
       }
     }
+    break;
+
   case ( kPhypDm12sq                ) : 
     {
       NuOscDmsqScheme_t omp = Opt::Instance()->gOscDmsqScheme;
       switch(omp) {
-      case(kNuDmsqFogliLisi):  return "$\\deltam^2 = \\Delta m^2_{21}$";                    break;
-      case(kNuDmsq12andAbs23):  return "$\\Delta m^2_{21}$";                    break;
-      default                 : return "--";                 break;
+      case(kNuDmsqFogliLisi):
+	return "$\\deltam^2 = \\Delta m^2_{21}$";      break;
+      case(kNuDmsq12andAbs23):
+      case(kNuDmsq12andAbs31):
+	return "$\\Delta m^2_{21}$";                   break;
+      default:
+	return "--";                                   break;
       }
     }
     
@@ -1613,18 +1649,25 @@ string t2kana::util::AsStringPaperRooTex(PhysParamId_t p)
     {
       NuOscDmsqScheme_t omp = Opt::Instance()->gOscDmsqScheme;
       switch(omp) {
-      case(kNuDmsqFogliLisi):	return "|#Deltam^{2}| = |m^{2}_{3} - (m^{2}_{1} + m^{2}_{1})/2|";                  break;
-      case(kNuDmsq12andAbs23):	return "|#Deltam^{2}_{32}|";                  break;
-      default                 : return "--";                 break;
+        case(kNuDmsqFogliLisi ):	return "|#Deltam^{2}| = |m^{2}_{3} - (m^{2}_{1} + m^{2}_{1})/2|";                  break;
+        case(kNuDmsq12andAbs23):	return "|#Deltam^{2}_{32}|";                  break;
+        case(kNuDmsq12andAbs31):	return "|#Deltam^{2}_{31}|";                  break;
+        default                :        return "--";                                  break;
       }
     }
+    break;
+
   case ( kPhypDm12sq                ) : 
     {
       NuOscDmsqScheme_t omp = Opt::Instance()->gOscDmsqScheme;
       switch(omp) {
-      case(kNuDmsqFogliLisi):   return "#deltam^{2} = #Deltam^{2}_{21}";                    break;
-      case(kNuDmsq12andAbs23):  return "#Delta m^{2}_{21}";                    break;
-      default                 : return "--";                 break;
+      case(kNuDmsqFogliLisi):
+	return "#deltam^{2} = #Deltam^{2}_{21}";     break;
+      case(kNuDmsq12andAbs23):
+      case(kNuDmsq12andAbs31):
+	return "#Delta m^{2}_{21}";                  break;
+      default                 :
+	return "--";                                 break;
       }
     }
 
@@ -1825,7 +1868,16 @@ string t2kana::util::AsStringCompact(PhysParamId_t p)
 
     case ( kPhypDeltaCP               ) : return "delta_cp";                    break;
     case ( kPhypDm23sq                ) : return "|dm32sq|";                    break;
-    case ( kPhypDm12sq                ) : return "dm12sq";                      break;
+      {
+	NuOscDmsqScheme_t dmscheme = Opt::Instance()->gOscDmsqScheme;
+	switch(dmscheme) {
+	  case(kNuDmsq12andAbs23) : return "|dm32sq|";                  break;
+	  case(kNuDmsq12andAbs31) : return "|dm31sq|";                  break;
+	  case(kNuDmsqFogliLisi ) : return "|Dmsq|";                    break;
+   	  default                 : return "--";                        break;  
+	}
+      }
+    break;
 
     case ( kPhypAlphaDecay            ) : return "alpha_decay";                 break;
     case ( kPhypSinsq2ThetaDecay      ) : return "sinsq2theta_decay";           break;
@@ -2494,6 +2546,7 @@ t2kana::conv::NuOscDmsqScheme_t
   t2kana::util::DmsqSchemeFromString(string sh) 
 {
   if(sh == "abs23"    ) return kNuDmsq12andAbs23;
+  if(sh == "abs31"    ) return kNuDmsq12andAbs31;
   if(sh == "fogli"    ) return kNuDmsqFogliLisi;
   
   return kNuDmsqUndefined;
@@ -2534,6 +2587,11 @@ t2kana::conv::PhysParamId_t
   if(sh == "mixing12") return kPhypMixing12;
   if(sh == "deltacp") return kPhypDeltaCP;
   if(sh == "dm23sq") return kPhypDm23sq;
+  if(sh == "dm31sq") return kPhypDm23sq;
+  if(sh == "Dmsq")   return kPhypDm23sq;
+  if(sh == "|dm23sq|") return kPhypDm23sq;
+  if(sh == "|dm31sq|") return kPhypDm23sq;
+  if(sh == "|Dmsq|")   return kPhypDm23sq;
   if(sh == "dm12sq") return kPhypDm12sq;
   if(sh == "alpha_decay") return kPhypAlphaDecay;
   if(sh == "sinsq2theta_decay") return kPhypSinsq2ThetaDecay;
@@ -2700,6 +2758,8 @@ t2kana::conv::PhysParamId_t t2kana::util::PhysParamIdFromLongString(string sh)
   if(sh == "sin^2(theta_12)"     ) return kPhypMixing12;
   if(sh == "delta_cp"            ) return kPhypDeltaCP;
   if(sh == "|Dm^2_32|"           ) return kPhypDm23sq;
+  if(sh == "|Dm^2_31|"           ) return kPhypDm23sq;
+  if(sh == "|Dm^2|"              ) return kPhypDm23sq;
   if(sh == "Dm^2_12"             ) return kPhypDm12sq;
   if(sh == "alpha_decay"         ) return kPhypAlphaDecay;
   if(sh == "sin^2(2*theta_decay)") return kPhypSinsq2ThetaDecay;

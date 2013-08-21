@@ -136,73 +136,77 @@ void generate_toymc_ensemble
 
      cout << "\n\n*** Pseudo-experiment = " << iexperiment << endl;
 
-     // Randomize specified osc params for current toy MC expt
-     if (randomize_mixing12) { input_mixing12 = util::RandomizeMixing12(); }
-     if (randomize_mixing13) { input_mixing13 = util::RandomizeMixing13(); }
-     if (randomize_deltacp ) { input_deltacp  = util::RandomizeDeltaCP();       }
-     if (randomize_dm12sq  ) { input_dm12sq   = util::RandomizeDm12sq();        }
-
-     // Set physics hypothesis
-     PhysHypothesis ph(hypothesis);
-     if(ph.Hypothesis() == kHypNuMuDisapp2F) {
-       ph.SetCurrValue(kPhypMixing23,  input_mixing23);
-       ph.SetCurrValue(kPhypDm23sq,    input_dm23sq);
-     } else
-     if(ph.Hypothesis() == kHypOsc3F) {  
-       ph.SetCurrValue(kPhypMixing12,  input_mixing12);
-       ph.SetCurrValue(kPhypMixing13,  input_mixing13);
-       ph.SetCurrValue(kPhypMixing23,  input_mixing23);
-       ph.SetCurrValue(kPhypDeltaCP,   input_deltacp);
-       ph.SetCurrValue(kPhypDm12sq,    input_dm12sq);
-       ph.SetCurrValue(kPhypDm23sq,    input_dm23sq);
-     }
-     //cout << "- Physics hypothesis set: " << ph << endl;
-
-     if(tweak_systematics == 1) {
-        // tweak all sources of systematic err (gaussian err)
-        cout << "- Randomizing all systematic params in pdf..." << endl;
-        skexp->TweakAllSystematics();
-        skexp->PrintSystematicVariations();
-     }
-     else if(tweak_systematics == 2) {
-        // special tweak, increasing numu flux parameters <700MeV by 5%
-        cout << "- Increasing numu flux parameters <700MeV by 5% in pdf..." << endl;
-	TVectorD twkv(skexp->GetBANFF()->BestFitValues());
-	twkv[0] += 0.05;
-	twkv[1] += 0.05;
-	twkv[2] += 0.05;
-	twkv[3] += 0.05;
-        skexp->GetBANFF()->Tweak(true,&twkv);
-        skexp->PrintSystematicVariations();
-     }
-     else if(tweak_systematics == 3) {
-       skexp->TweakAllBANFFSystematics();
-       skexp->TweakAllUncorrelatedXSecSystematics();
-       skexp->PrintSystematicVariations();
-     }
-     else if(tweak_systematics == 4) {
-       skexp->TweakSystematic("xsec_norm_nc1piC",-0.5);
-       skexp->PrintSystematicVariations();
-     }
-     else if(tweak_systematics == 5) {
-       cout << "- Increasing flux parameters >1500MeV by 15% in pdf..." << endl;
-       TVectorD twkv(skexp->GetBANFF()->BestFitValues());
-       twkv[6]  += 0.15;
-       twkv[7]  += 0.15;
-       twkv[8]  += 0.15;
-       twkv[9]  += 0.15;
-       twkv[10] += 0.15;
-       twkv[14] += 0.15;
-       twkv[15] += 0.15;
-       skexp->GetBANFF()->Tweak(true,&twkv);
-       skexp->PrintSystematicVariations();
-     }
-
-
      // Generate mock data
      cout << "- Generating toy-MC..." << endl;
      SuperkObservation * skobs = new SuperkObservation;
-     skobs->CreateMockData(*skexp, ph, stat_fluctuations);
+     PhysHypothesis ph(hypothesis);
+
+     bool applied_negevents_condition = true;
+     while(applied_negevents_condition) {
+
+       // Randomize specified osc params for current toy MC expt
+       if (randomize_mixing12) { input_mixing12 = util::RandomizeMixing12(); }
+       if (randomize_mixing13) { input_mixing13 = util::RandomizeMixing13(); }
+       if (randomize_deltacp ) { input_deltacp  = util::RandomizeDeltaCP();       }
+       if (randomize_dm12sq  ) { input_dm12sq   = util::RandomizeDm12sq();        }
+
+       // Set physics hypothesis
+       if(ph.Hypothesis() == kHypNuMuDisapp2F) {
+	 ph.SetCurrValue(kPhypMixing23,  input_mixing23);
+	 ph.SetCurrValue(kPhypDm23sq,    input_dm23sq);
+       }
+       else if(ph.Hypothesis() == kHypOsc3F) {  
+	 ph.SetCurrValue(kPhypMixing12,  input_mixing12);
+	 ph.SetCurrValue(kPhypMixing13,  input_mixing13);
+	 ph.SetCurrValue(kPhypMixing23,  input_mixing23);
+	 ph.SetCurrValue(kPhypDeltaCP,   input_deltacp);
+	 ph.SetCurrValue(kPhypDm12sq,    input_dm12sq);
+	 ph.SetCurrValue(kPhypDm23sq,    input_dm23sq);
+       }
+       //cout << "- Physics hypothesis set: " << ph << endl;
+
+       if(tweak_systematics == 1) {
+	 // tweak all sources of systematic err (gaussian err)
+	 cout << "- Randomizing all systematic params in pdf..." << endl;
+	 skexp->TweakAllSystematics();
+	 skexp->PrintSystematicVariations();
+       }
+       else if(tweak_systematics == 2) {
+	 // special tweak, increasing numu flux parameters <700MeV by 5%
+	 cout << "- Increasing numu flux parameters <700MeV by 5% in pdf..." << endl;
+	 TVectorD twkv(skexp->GetBANFF()->BestFitValues());
+	 twkv[0] += 0.05;
+	 twkv[1] += 0.05;
+	 twkv[2] += 0.05;
+	 twkv[3] += 0.05;
+	 skexp->GetBANFF()->Tweak(true,&twkv);
+	 skexp->PrintSystematicVariations();
+       }
+       else if(tweak_systematics == 3) {
+	 skexp->TweakAllBANFFSystematics();
+	 skexp->TweakAllUncorrelatedXSecSystematics();
+	 skexp->PrintSystematicVariations();
+       }
+       else if(tweak_systematics == 4) {
+	 skexp->TweakSystematic("xsec_norm_nc1piC",-0.5);
+	 skexp->PrintSystematicVariations();
+       }
+       else if(tweak_systematics == 5) {
+	 cout << "- Increasing flux parameters >1500MeV by 15% in pdf..." << endl;
+	 TVectorD twkv(skexp->GetBANFF()->BestFitValues());
+	 twkv[6]  += 0.15;
+	 twkv[7]  += 0.15;
+	 twkv[8]  += 0.15;
+	 twkv[9]  += 0.15;
+	 twkv[10] += 0.15;
+	 twkv[14] += 0.15;
+	 twkv[15] += 0.15;
+	 skexp->GetBANFF()->Tweak(true,&twkv);
+	 skexp->PrintSystematicVariations();
+       }
+       applied_negevents_condition = skobs->CreateMockData(*skexp, ph, stat_fluctuations);
+     }//applied_negevents_condition
+
 
      // Get 1-ring mu-like Ereco spectrum
      TH1D* mock_data = new TH1D("","", util::NumErecoBins(kSKsFCFV1RingMuLike), util::ErecoBinEdges(kSKsFCFV1RingMuLike));

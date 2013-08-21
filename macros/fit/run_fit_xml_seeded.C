@@ -18,11 +18,12 @@ void run_fit_xml_seeded
   const char * config_file         = "analysis_configuration.xml",          /* analysis configuration file */
   const char * fit_param_list      = "nuosc3f_numudisapp_nuis4+nuisance",   /* fit parameter list for the given physics hypothesis (see FitParamList.h) */
   const char * fit_option          = "minuit",                              /* fitter option */
-  const char * dmsqscheme          = "abs23",                               /* abs23==kNuDmsq12andAbs23 fogli==kNuDmsqFogliLisi */
+  const char * dmsqscheme          = "abs23",                               /* abs23==kNuDmsq12andAbs23 abs31==kNuDmsq12andAbs31 fogli==kNuDmsqFogliLisi */
   const char * hierarchy           = "normal",                              /* normal or inverted */
   const char * mixparamchoice      = "sinsq2theta",                         /* sinsq2theta or sinsqtheta */
   const char * mixparamoctant      = "one",                                 /* one==kNuOctantOne two==kNuOctantTwo */
-  bool         apply_2nu_boundary  = true                                   /* if using the 2nu flavour osc prob, apply the physical boundary? */
+  bool         apply_2nu_boundary  = true,                                  /* if using the 2nu flavour osc prob, apply the physical boundary? */
+  double       dcp_value           = 0                                      /* value of deltacp (in units of PI) to assume (when deltacp is not a free parameter) */
 )
 {
   using namespace std;
@@ -61,6 +62,10 @@ void run_fit_xml_seeded
 
   conv::PhysHypothesis_t hyp = fparm->PhysicsHypothesis();
   cout << "- The following physics hypothesis is used in the fit: " << util::AsString(hyp) << endl;
+
+  //make an assumption for deltacp
+  if(fparm->IsFixed(conv::kPhypDeltaCP))
+    fparm->SetInitValue(conv::kPhypDeltaCP, dcp_value * conv::kpi);
 
   // Get superk spectrum predictor & configure
   SuperkExpectation * skexp = new SuperkExpectation;
@@ -130,10 +135,14 @@ void run_fit_xml_seeded
       fparm->FromPhysParamList(skexp->Tweaks(),"initial", true);
 
       //randomise nuisance osc param seeds
-      fparm->SetInitValue(conv::kPhypMixing12, util::RandomizeMixing12());
-      fparm->SetInitValue(conv::kPhypMixing13, util::RandomizeMixing13());
-      fparm->SetInitValue(conv::kPhypDm12sq,   util::RandomizeDm12sq());
-      fparm->SetInitValue(conv::kPhypDeltaCP,  util::RandomizeDeltaCP());
+      if(!fparm->IsFixed(conv::kPhypMixing12))
+	fparm->SetInitValue(conv::kPhypMixing12, util::RandomizeMixing12());
+      if(!fparm->IsFixed(conv::kPhypMixing13))
+	fparm->SetInitValue(conv::kPhypMixing13, util::RandomizeMixing13());
+      if(!fparm->IsFixed(conv::kPhypDm12sq))
+	fparm->SetInitValue(conv::kPhypDm12sq,   util::RandomizeDm12sq());
+      if(!fparm->IsFixed(conv::kPhypDeltaCP))
+	fparm->SetInitValue(conv::kPhypDeltaCP,  util::RandomizeDeltaCP());
 
       // Set the osc params seed to be within 3 bins of the chisq surfaces' best fit
       if(Opt::Instance()->gOscMixingParamChoice == conv::kNuMixSinsqTheta)
