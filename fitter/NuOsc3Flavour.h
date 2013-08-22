@@ -50,8 +50,7 @@ public:
                                   double dmsq12,       /*  Dm^2_{12} in eV^2/c^4 */
                                   double dmsq23,       /* |Dm^2_{23}| (always positive) in eV^2/c^4 */
                                   double deltaCP       /* delta_{CP} phase in radians */
-                                  );
-                       
+                                  );                    
   void SetOscParametersSSq2TDmAtmSol (double sinsq2theta12, /* sin^2(2*theta_{12}) */
                                  double sinsq2theta13, /* sin^2(2*theta_{13}) */
                                  double sinsq2theta23,  /* sin^2(theta_{23}) */
@@ -66,6 +65,18 @@ public:
                                  double dmsqAtm,       /* |m_3^2 - [(m_1^2+m_2^2)/2]| (always positive) in eV^2/c^4 */
                                  double deltaCP        /* delta_{CP} phase in radians */
                                  );
+  void SetOscParametersSSq2TDmsq13(double sinsq2theta12, /* sin^2(2*theta_{12}) */
+                                   double sinsq2theta13, /* sin^2(2*theta_{13}) */
+                                   double sinsq2theta23, /* sin^2(2*theta_{23}) */
+                                   double dmsq12,        /*  Dm^2_{12} in eV^2/c^4 */
+                                   double dmsq13,        /*  Dm^2_{13} (always positiive) in eV^2/c^4 */
+                                   double deltaCP);      /* delta_{CP} phase in radians */
+  void SetOscParametersDmsq13(double sinsqtheta12,  /* sin^2(theta_{12}) */ 
+                              double sinsqtheta13,  /* sin^2(theta_{13}) */
+                              double sinsqtheta23,  /* sin^2(theta_{23}) */
+			      double dmsq12,        /*  Dm^2_{12} in eV^2/c^4 */
+                              double dmsq13,        /*  Dm^2_{13} (always positiive) in eV^2/c^4 */ 
+			      double deltaCP);      /* delta_{CP} phase in radians */
 
  //         
  // Calculate 3-flavour oscillation probabilities in vacuum and in matter.
