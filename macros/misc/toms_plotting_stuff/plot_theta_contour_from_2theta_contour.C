@@ -310,4 +310,46 @@ void plot_theta_contour_from_2theta_contour
   leg1->Draw();
   c->SaveAs("contour_compare_octants_sinsqtheta.pdf");
   c->SaveAs("contour_compare_octants_sinsqtheta.eps");
+
+
+  //draw only conversion contours
+  osc_param_space->Draw();
+  hsinsqtheta3_90->SetLineColor(kBlack);
+  hsinsqtheta3_68->SetLineColor(kBlack);
+  hsinsqtheta1o1_90->SetLineColor(kBlack);
+  hsinsqtheta1o1_68->SetLineColor(kBlack);
+  hsinsqtheta2o2_90->SetLineColor(kBlack);
+  hsinsqtheta2o2_68->SetLineColor(kBlack);
+  bftheta.SetMarkerColor(kBlack);
+  hsinsqtheta1o1_90->Draw("cont3same");
+  hsinsqtheta2o2_90->Draw("cont3same");
+  hsinsqtheta1o1_68->Draw("cont3same");
+  hsinsqtheta2o2_68->Draw("cont3same");
+  bftheta.Draw();
+  delete leg1;
+  leg1 = new TLegend(0.25,0.75,0.55,0.9);
+  leg1->SetFillStyle(0);
+  leg1->SetBorderSize(0);
+  leg1->SetTextSize(0.06);
+  leg1->AddEntry(hsinsqtheta3_68, "T2K Run 1-3 68% C.L.", "l");
+  leg1->AddEntry(hsinsqtheta3_90, "T2K Run 1-3 90% C.L.", "l");
+  leg1->AddEntry(&bftheta, "T2K Run 1-3 best fit", "p");
+  leg1->Draw();
+  c->SaveAs("contour_2012_run123_sinsqtheta_conversion.pdf");
+
+  //draw only special fit contour
+  osc_param_space->Draw();
+  hsinsqtheta3_90->Draw("cont3same");
+  hsinsqtheta3_68->Draw("cont3same");
+  bftheta.Draw();
+  delete leg1;
+  leg1 = new TLegend(0.25,0.75,0.55,0.9);
+  leg1->SetFillStyle(0);
+  leg1->SetBorderSize(0);
+  leg1->SetTextSize(0.06);
+  leg1->AddEntry(hsinsqtheta3_68, "T2K Run 1-3 68% C.L.", "l");
+  leg1->AddEntry(hsinsqtheta3_90, "T2K Run 1-3 90% C.L.", "l");
+  leg1->AddEntry(&bftheta, "T2K Run 1-3 best fit", "p");
+  leg1->Draw();
+  c->SaveAs("contour_2012_run123_sinsqtheta_fit.pdf");
 }
