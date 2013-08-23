@@ -1120,7 +1120,8 @@ string t2kana::util::AsStringTex(PhysParamId_t p)
     break;
 
     case ( kPhypDeltaCP               ) : return "$\\delta_{CP}$";                   break;
-    case ( kPhypDm23sq                ) : return "$|\\Delta m^2_{32}|$";                  break;
+    case ( kPhypDm12sq                ) : return "$|\\Delta m^2_{21}|$";                  break;
+    case ( kPhypDm23sq                ) :
       {
 	NuOscDmsqScheme_t dmscheme = Opt::Instance()->gOscDmsqScheme;
 	switch(dmscheme) {
@@ -1867,7 +1868,7 @@ string t2kana::util::AsStringCompact(PhysParamId_t p)
     break;
 
     case ( kPhypDeltaCP               ) : return "delta_cp";                    break;
-    case ( kPhypDm23sq                ) : return "|dm32sq|";                    break;
+    case ( kPhypDm23sq                ) :
       {
 	NuOscDmsqScheme_t dmscheme = Opt::Instance()->gOscDmsqScheme;
 	switch(dmscheme) {
@@ -1875,6 +1876,20 @@ string t2kana::util::AsStringCompact(PhysParamId_t p)
 	  case(kNuDmsq12andAbs31) : return "|dm31sq|";                  break;
 	  case(kNuDmsqFogliLisi ) : return "|Dmsq|";                    break;
    	  default                 : return "--";                        break;  
+	}
+      }
+    break;
+    case ( kPhypDm12sq                ) :
+      {
+	NuOscDmsqScheme_t dmscheme = Opt::Instance()->gOscDmsqScheme;
+	switch(dmscheme) {
+	  case(kNuDmsq12andAbs23) :
+	  case(kNuDmsq12andAbs31) :
+	    return "dm12sq";                  break;
+	  case(kNuDmsqFogliLisi ) :
+	    return "dmsq";                    break;
+   	  default                 :
+	    return "--";                        break;  
 	}
       }
     break;

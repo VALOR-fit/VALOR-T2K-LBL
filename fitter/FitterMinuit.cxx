@@ -376,9 +376,6 @@ bool FitterMinuit::RunOnce(bool use_simplex)
   cout << "FitterMinuit/RunOnce >> Done" << endl;
 #endif
 
-  for(int i = 0; i <= 47; i++)
-    cout << i << "\t" << fitter->GetParameter(i) << endl;
-
   return (fMigradErrStatusCode == 3);
 }
 //____________________________________________________________________________ 

@@ -1828,7 +1828,6 @@ void SuperkMC::ApplyPhysHypothesisToTemplates(void)
 #endif
     NuOscMixParam_t omp = Opt::Instance()->gOscMixingParamChoice;
     NuOscDmsqScheme_t  dmsqscheme = Opt::Instance()->gOscDmsqScheme;
-    NuMassHierarchy_t hier = Opt::Instance()->gMassHierarchyAssumed;
 
     // mixing params are: sin^2(2*theta)
     // independent squared mass splittings are: dm^2 = Dm^2_{12}, Dm^2 = |Dm^2_{23}|                                                                                             
@@ -1856,31 +1855,15 @@ void SuperkMC::ApplyPhysHypothesisToTemplates(void)
       }
     // mixing paras are: sin^2(2*theta)
     // independent squared mass splittings are: dm^2 = Dm^2_{12}, Dm^2 = |Dm^2_{31}|
-    // normal hierarchy
-    else if(dmsqscheme == kNuDmsq12andAbs31 && omp == kNuMixSinsq2Theta && hier == kNmhNormal)
+    else if(dmsqscheme == kNuDmsq12andAbs31 && omp == kNuMixSinsq2Theta)
       {
-	fNuOsc3Flavour.SetOscParameters(mixing12,mixing13,mixing23,dmsq,Dmsq+dmsq,delta_cp);
-      }
-    // mixing paras are: sin^2(2*theta)
-    // independent squared mass splittings are: dm^2 = Dm^2_{12}, Dm^2 = |Dm^2_{31}|
-    // inverted hierarchy
-    else if(dmsqscheme == kNuDmsq12andAbs31 && omp == kNuMixSinsq2Theta && hier == kNmhInverted)
-      {
-	fNuOsc3Flavour.SetOscParameters(mixing12,mixing13,mixing23,dmsq,Dmsq-dmsq,delta_cp);
+	fNuOsc3Flavour.SetOscParametersSSq2TDmsq13(mixing12,mixing13,mixing23,dmsq,Dmsq,delta_cp);
       }
     // mixing paras are: sin^2(theta)
     // independent squared mass splittings are: dm^2 = Dm^2_{12}, Dm^2 = |Dm^2_{31}|
-    // normal hierarchy
-    else if(dmsqscheme == kNuDmsq12andAbs31 && omp == kNuMixSinsqTheta && hier == kNmhNormal)
+    else if(dmsqscheme == kNuDmsq12andAbs31 && omp == kNuMixSinsqTheta)
       {
-	fNuOsc3Flavour.SetOscParametersSinSqTAll(mixing12,mixing13,mixing23,dmsq,Dmsq+dmsq,delta_cp);
-      }
-    // mixing paras are: sin^2(theta)
-    // independent squared mass splittings are: dm^2 = Dm^2_{12}, Dm^2 = |Dm^2_{31}|
-    // inverted hierarchy
-    else if(dmsqscheme == kNuDmsq12andAbs31 && omp == kNuMixSinsqTheta && hier == kNmhInverted)
-      {
-	fNuOsc3Flavour.SetOscParametersSinSqTAll(mixing12,mixing13,mixing23,dmsq,Dmsq-dmsq,delta_cp);
+	fNuOsc3Flavour.SetOscParametersDmsq13(mixing12,mixing13,mixing23,dmsq,Dmsq,delta_cp);
       }
     //unknown
     else {
