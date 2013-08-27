@@ -12,6 +12,7 @@ void plot_theta_contour_from_2theta_contour
  const char * filename2 = "2012results/DATA/octant2_23only/combination/fitresults_3.root",
  const char * filename_thetafit = "2012results/DATA/sintheta23/combine/combination/fitresults_3.root",
  const char * filename_thetafit_DM = "2012results/DATA/sintheta23_DM/contours_disap.root",
+ const char * filename_kit = "2012results/DATA/KIT/output.plot_oscmap.run1to3.root",
  bool draw_DM = false
 )
 {
@@ -61,6 +62,13 @@ void plot_theta_contour_from_2theta_contour
   hsinsqtheta4_DM_90->SetLineStyle(1);
   hsinsqtheta4_DM_68->SetLineColor(kYellow+1);
   hsinsqtheta4_DM_90->SetLineColor(kYellow+1);
+
+  TFile f5(filename_kit);
+  TGraph * kit68 = 0, * kit90 = 0;
+  TMarker * kitbf = 0;
+  f5.GetObject("kdimap_run1to3_68cl",kit68);
+  f5.GetObject("kdimap_run1to3_90cl",kit90);
+  f5.GetObject("kdimap_run1to3_bestfit_point",kitbf);
 
   //convert from DMsq to dm32sq
   // get y axis array
@@ -352,4 +360,29 @@ void plot_theta_contour_from_2theta_contour
   leg1->AddEntry(&bftheta, "T2K Run 1-3 best fit", "p");
   leg1->Draw();
   c->SaveAs("contour_2012_run123_sinsqtheta_fit.pdf");
+
+  //draw only special fit contour & kit
+  kit68->SetLineColor(kRed);
+  kit90->SetLineColor(kRed);
+  kitbf->SetMarkerColor(kRed);
+  osc_param_space->Draw();
+  kit68->Draw();
+  kit90->Draw();
+  hsinsqtheta3_90->Draw("cont3same");
+  hsinsqtheta3_68->Draw("cont3same");
+  kitbf->Draw();
+  bftheta.Draw();
+  delete leg1;
+  leg1 = new TLegend(0.25,0.7,0.85,0.95);
+  leg1->SetFillStyle(0);
+  leg1->SetBorderSize(0);
+  leg1->SetTextSize(0.04);
+  leg1->AddEntry(hsinsqtheta3_68, "Likelihood ratio 68% C.L.", "l");
+  leg1->AddEntry(hsinsqtheta3_90, "Likelihood ratio 90% C.L.", "l");
+  leg1->AddEntry(&bftheta, "Likelihood ratio best fit", "p");
+  leg1->AddEntry(kit68, "Max likelihood 68% C.L.", "l");
+  leg1->AddEntry(kit90, "Max likelihood 90% C.L.", "l");
+  leg1->AddEntry(kitbf, "Max likelihood best fit", "p");
+  leg1->Draw();
+  c->SaveAs("contour_2012_run123_sinsqtheta_fit_kit.pdf");
 }
