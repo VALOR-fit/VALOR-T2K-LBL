@@ -25,6 +25,7 @@ usage: %prog [options]
     Run test_sk_ereco_spectrum_twk_sys_throw.C many times""")
 #names of things
 optionParser.add_option("-a","--all", action="store_true", dest="do_all", default=False, help="If set, will run indiviudal systematics, as well as the categories")
+optionParser.add_option("-i","--important", action="store_true", dest="do_imp", default=False, help="If set, will run the spline/osc param indiviudal systematics, as well as the categories")
 optionParser.add_option("-n","--nexp", action="store", dest="nexp", type="int", default=-1, help="How many experiments to generate at each point. Required")
 (opt, args) = optionParser.parse_args()
 
@@ -41,12 +42,15 @@ modes2 = range(100,126) #banff
 modes3 = range(200,216) #unconstranied xsec
 modes4 = range(300,309) #sk detector
 modes5 = range(400,406) #fsi
-modes6 = [7,8] #banff flux / banff xsec individually
+modes6 = range(700,705) #osc param
+modes7 = [7,8] #banff flux / banff xsec individually
 
 modes = modes1
-if opt.do_all:
-    modes = modes + modes2 + modes3 + modes4 + modes5 + modes6
-
+if opt.do_all: #combinations + everything
+    modes = modes + modes2 + modes3 + modes4 + modes5 + modes6 + modes7
+elif opt.do_imp #combinations + splines + oscparams
+    modes = modes + modes6 + [200,201,202,203,204,215]
+    
 oscparams = [] #fill with oscillation parameters, in order mixing12, theta13, theta23, deltacp, dmsq12, dmsq23hypothesis
 oscparams.append([  0,   0,   0,   0,   0,   0]) #no oscillations!
 oscparams.append([-99, -99, -99, -99, -99, -99]) #use global best fits!
@@ -70,10 +74,9 @@ for osc in oscparams:
         if update == "false":
             update = "true"
 
-        #don't forget the banff prefit
-        if mode == 1:# or mode == 0 or (mode >= 100 and mode < 200):
-            command = 'root2k -l -b -q \'$T2KOSCANA/macros/spectra/test_sk_ereco_spectrum_twk_sys_throw.C('+str(mode)+','+update+',"3f_osc",'+str(osc[0])+','+str(osc[1])+','+str(osc[2])+','+str(osc[3])+','+str(osc[4])+','+str(osc[5])+','+save_toy_expts+',"2013a_numu_run1+2+3+4a_flux11bv3.2_neut13a_banff13v4prefit_sk+fsi.xml",'+str(nexp)+')\''
-            print command
-            if os.system(command) == 1:
-                sys.exit(1)
+        #repeat for the banff prefit (its a different spectrum, so erros have different effects)
+        command = 'root2k -l -b -q \'$T2KOSCANA/macros/spectra/test_sk_ereco_spectrum_twk_sys_throw.C('+str(mode)+','+update+',"3f_osc",'+str(osc[0])+','+str(osc[1])+','+str(osc[2])+','+str(osc[3])+','+str(osc[4])+','+str(osc[5])+','+save_toy_expts+',"2013a_numu_run1+2+3+4a_flux11bv3.2_neut13a_banff13v4prefit_sk+fsi.xml",'+str(nexp)+')\''
+        print command
+        if os.system(command) == 1:
+            sys.exit(1)
             

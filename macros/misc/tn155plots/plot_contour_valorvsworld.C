@@ -1,6 +1,5 @@
 void plot_contour_valorvsworld
 (
-
 )
 {
   using std::cout;
@@ -16,6 +15,8 @@ void plot_contour_valorvsworld
   TFile f_bf_normal("2013results/DATA/run1-4_nuis3fixdcp_sintheta_normal/combination/run1-4_nuis3fixdcp_sintheta_normal-run_0-expt_6.root");
   TFile f_fc_normal68("2013results/FC/run1-4_nuis3fixdcp_sintheta_normal_fc68_sinsq2theta.root");
   TFile f_fc_normal90("2013results/FC/run1-4_nuis3fixdcp_sintheta_normal_fc90_sinsq2theta.root");
+  TFile f_dc_normalo1("2013results/DATA/run1-4_nuis3fixdcp_sintheta_normal/combination/run1-4_nuis3fixdcp_sintheta_normal_sinsq2theta_octant1.root");
+  TFile f_dc_normalo2("2013results/DATA/run1-4_nuis3fixdcp_sintheta_normal/combination/run1-4_nuis3fixdcp_sintheta_normal_sinsq2theta_octant2.root");
 
   //Fill in TMarker's with the best fit points
   FitParamList * fparm_normal = 0;
@@ -34,6 +35,22 @@ void plot_contour_valorvsworld
   h_dc_normal_68->SetLineWidth(linewidth_val);
   h_dc_normal_90->SetLineWidth(linewidth_val);
   h_dc_normal_68->SetLineStyle(2);
+
+  //normal const dchisq octant 1
+  TH2D * h_dc_normalo1_90 = 0, * h_dc_normalo1_68 = 0;
+  f_dc_normalo1.GetObject("hdchisq_90",h_dc_normalo1_90);
+  f_dc_normalo1.GetObject("hdchisq_68",h_dc_normalo1_68);
+  h_dc_normalo1_68->SetLineWidth(linewidth_val);
+  h_dc_normalo1_90->SetLineWidth(linewidth_val);
+  h_dc_normalo1_68->SetLineStyle(2);
+
+  //normal const dchisq octant 2
+  TH2D * h_dc_normalo2_90 = 0, * h_dc_normalo2_68 = 0;
+  f_dc_normalo2.GetObject("hdchisq_90",h_dc_normalo2_90);
+  f_dc_normalo2.GetObject("hdchisq_68",h_dc_normalo2_68);
+  h_dc_normalo2_68->SetLineWidth(linewidth_val);
+  h_dc_normalo2_90->SetLineWidth(linewidth_val);
+  h_dc_normalo2_68->SetLineStyle(2);
 
   //normal FC
   TH2D * h_fc_normal_90 = 0, * h_fc_normal_68 = 0;
@@ -289,6 +306,61 @@ void plot_contour_valorvsworld
   c->SaveAs("contour_compare_constdchisqfc_external_sinsq2theta23.pdf");
   c->SaveAs("contour_compare_constdchisqfc_external_sinsq2theta23.png");
   c->SaveAs("contour_compare_constdchisqfc_external_sinsq2theta23.eps");
+  //reset
+  h_dc_normal_90->SetLineColor(kBlack);
+
+  //Draw Run 1-4 constant dchisq & FC with externals + old t2k
+  //style
+  g_run123_90_o1->SetLineColor(kRed);
+  g_run123_90_o2->SetLineColor(kRed);
+  g_run123_90_o1->SetLineStyle(2);
+  g_run123_90_o2->SetLineStyle(1);
+  h_dc_normalo1_90->SetLineStyle(2);
+  h_dc_normalo2_90->SetLineStyle(1);
+  //do the actual drawing
+  c->SetRightMargin(0.01);
+  c->SetTopMargin(0.01);
+  c->SetBottomMargin(0.14);
+  osc_param_space->GetXaxis()->SetRangeUser(0.82,1.0);
+  osc_param_space->GetYaxis()->SetRangeUser(0.0018,0.0042);
+  cout <<   osc_param_space->GetXaxis()->GetTitleFont() << endl;
+  osc_param_space->GetXaxis()->SetTitleFont(132);
+  osc_param_space->Draw(); 
+  g_skzen->Draw("l");
+  g_skle->Draw("l");
+  h_minos->Draw("cont3same");
+  g_run123_90_o1->Draw("l");
+  g_run123_90_o2->Draw("l");
+  h_dc_normalo1_90->Draw("cont3same");
+  h_dc_normalo2_90->Draw("cont3same");
+  bf_normal.Draw();
+  TLegend * leg2 = new TLegend(0.185,0.5,0.45,0.95);
+  leg2->SetFillColor(0);
+  leg2->SetFillStyle(0);
+  leg2->SetBorderSize(0);
+  leg2->SetTextFont(132);
+  leg2->AddEntry(h_dc_normalo1_90, "T2K Run1-4a 3#nu (#theta_{23} #leq #pi/4) 90% CL","l");
+  leg2->AddEntry(h_dc_normalo2_90, "T2K Run1-4a 3#nu (#theta_{23} #geq #pi/4) 90% CL","l");
+  leg2->AddEntry("g_run123_90_o1", "T2K Run1-3 3#nu (#theta_{23} #leq #pi/4) 90% CL", "l");
+  leg2->AddEntry("g_run123_90_o2", "T2K Run1-3 3#nu (#theta_{23} #geq #pi/4) 90% CL", "l");
+  leg2->AddEntry(h_minos, "MINOS 2013 2#nu 90% CL", "l");
+  leg2->AddEntry("g_skzen", "SK zenith 2012 3#nu 90% CL", "l");
+  leg2->AddEntry("g_skle", "SK L/E 2012 2#nu 90% CL", "l");
+  leg2->SetX2NDC(0.6);
+  leg2->SetTextSize(legend_text_size);
+  leg2->Draw();
+  TLegend * legbf = new TLegend(0.185, 0.17, 0.45, 0.30);
+  legbf->SetFillColor(0);
+  legbf->SetFillStyle(0);
+  legbf->SetBorderSize(0);
+  legbf->SetTextFont(132);
+  legbf->AddEntry(&bf_normal, "T2K 3#nu (#Deltam^{2}_{32}>0) best fit","p");
+  legbf->SetX2NDC(0.6);
+  legbf->SetTextSize(legend_text_size);
+  legbf->Draw();
+  c->SaveAs("contour_compare_constdchisqoctants_external_sinsq2theta23.pdf");
+  c->SaveAs("contour_compare_constdchisqoctants_external_sinsq2theta23.png");
+  c->SaveAs("contour_compare_constdchisqoctants_external_sinsq2theta23.eps");
   //reset
   h_dc_normal_90->SetLineColor(kBlack);
 

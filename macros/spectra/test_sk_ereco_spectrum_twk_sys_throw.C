@@ -141,6 +141,14 @@ void test_sk_ereco_spectrum_twk_sys_throw
     case 308:
       modetitle = "sk_1Rmu_ccqe_ring_counting_eff_2"; break;
 
+    case 700:
+      modetitle = "mixing13"; break;
+    case 701:
+      modetitle = "mixing12"; break;
+    case 702:
+      modetitle = "dm12sq"; break;
+    case 703:
+      modetitle = "deltacp"; break;
 
     default:
       if(mode >= 100 && mode < 100+conv::kNumOfParamsInBANFFfit) {
@@ -191,6 +199,16 @@ void test_sk_ereco_spectrum_twk_sys_throw
     ph.SetCurrValue(conv::kPhypDm12sq,    input_dm12sq);
     ph.SetCurrValue(conv::kPhypDm23sq,    input_dm23sq);
   }
+
+  //return if tweaking osc params & there are no oscillations
+  if(mode >= 700 && mode <= 799)
+     input_mixing23    < conv::kASmallNum 
+     && input_mixing13 < conv::kASmallNum
+     && input_mixing12 < conv::kASmallNum
+     && input_deltacp  < conv::kASmallNum
+     && input_dm12sq   < conv::kASmallNum
+     && input_dm23sq   < conv::kASmallNum)
+    return;
 
   // Print options
   cout << "\n[Job inputs]" << endl;
@@ -427,6 +445,14 @@ void test_sk_ereco_spectrum_twk_sys_throw
         case 308:
 	  skexp.TweakSystematic("sk_1Rmu_ccqe_ring_counting_eff_2",tweak); break;
 
+        case 700:
+	  ph.SetCurrValue(conv::kPhypMixing13,  util::RandomizeMixing13()); break;
+        case 701:
+	  ph.SetCurrValue(conv::kPhypMixing12,  util::RandomizeMixing12()); break;
+        case 702:
+	  ph.SetCurrValue(conv::kPhypDm12sq,    util::RandomizeDm12sq()); break;
+        case 703:
+	  ph.SetCurrValue(conv::kPhypDeltaCP,   util::RandomizeDeltaCP()); break;
 
         default:
 	  if(mode >= 100 && mode < 100+conv::kNumOfParamsInBANFFfit) {

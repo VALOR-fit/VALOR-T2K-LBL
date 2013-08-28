@@ -3,7 +3,8 @@ void convert_sinsqtheta_to_sinsq2theta
  const char * outfilename = "nuis3fixdcp_normal_sinsq2theta.root",
  const char * infilename  = "2013results/DATA/run1-4_nuis3fixdcp_sintheta_normal/combination/run1-4_nuis3fixdcp_sintheta_normal-run_0-expt_6.root",
  const char * incontour   = "dchisq",
- bool         is_constdchisq = true // if set, will apply the 2.30,4.61 values to output contourlevel. otherwise, apply 0 (the FC value)
+ bool         is_constdchisq = true, // if set, will apply the 2.30,4.61 values to output contourlevel. otherwise, apply 0 (the FC value)
+ int          force_octant   = 0     // if 0 will marginalise, otherwise it's 1 or 2
  )
 {
   TFile fin(infilename);
@@ -53,24 +54,57 @@ void convert_sinsqtheta_to_sinsq2theta
   hsinsq2theta_68->SetLineColor(kBlack);
   hsinsq2theta_90->SetLineColor(kBlack);
 
-  for(int ix = 1; ix <= nbinsx; ix++) {
-    double s23sq_curr = hsinsqtheta->GetXaxis()->GetBinCenter(ix);
-    double s23sq_mirr = 0.5;
-    if(s23sq_curr < 0.5)
-      s23sq_mirr = 0.5 + (TMath::Abs(0.5 - s23sq_curr));
-    else
-      s23sq_mirr = 0.5 - (TMath::Abs(0.5 - s23sq_curr));
-    int ix_alt = hsinsqtheta->GetXaxis()->FindBin(s23sq_mirr);
-    //cout << ix << "\t" << ix_alt << endl; continue;
-    for(int iy = 1; iy <= nbinsy; iy++) {
-      double dchisq     = hsinsqtheta->GetBinContent(ix,    iy);
-      double dchisq_alt = hsinsqtheta->GetBinContent(ix_alt,iy);
-      //cout << dchisq << "\t" << dchisq_alt << endl;
-      double dchisq_min = TMath::Min(dchisq, dchisq_alt);
-      hsinsq2theta_68->SetBinContent(ix,iy, dchisq_min);
-      hsinsq2theta_90->SetBinContent(ix,iy, dchisq_min);
-    }//iy
-  }//ix
+  if(force_octant == 0) {
+    for(int ix = 1; ix <= nbinsx; ix++) {
+      double s23sq_curr = hsinsqtheta->GetXaxis()->GetBinCenter(ix);
+      double s23sq_mirr = 0.5;
+      if(s23sq_curr < 0.5)
+	s23sq_mirr = 0.5 + (TMath::Abs(0.5 - s23sq_curr));
+      else
+	s23sq_mirr = 0.5 - (TMath::Abs(0.5 - s23sq_curr));
+      int ix_alt = hsinsqtheta->GetXaxis()->FindBin(s23sq_mirr);
+      //cout << ix << "\t" << ix_alt << endl; continue;
+      for(int iy = 1; iy <= nbinsy; iy++) {
+	double dchisq     = hsinsqtheta->GetBinContent(ix,    iy);
+	double dchisq_alt = hsinsqtheta->GetBinContent(ix_alt,iy);
+	//cout << dchisq << "\t" << dchisq_alt << endl;
+	double dchisq_min = TMath::Min(dchisq, dchisq_alt);
+	hsinsq2theta_68->SetBinContent(ix,iy, dchisq_min);
+	hsinsq2theta_90->SetBinContent(ix,iy, dchisq_min);
+      }//iy
+    }//ix
+  }//force_octant == 0
+  else if(force_octant == 1) {
+    for(int ix = 1; ix <= nbinsx; ix++) {
+      double s23sq_curr = hsinsqtheta->GetXaxis()->GetBinCenter(ix);
+      if(s23sq_curr > 0.5)
+	continue;
+      //cout << ix << "\t" << ix_alt << endl; continue;
+      for(int iy = 1; iy <= nbinsy; iy++) {
+	double dchisq     = hsinsqtheta->GetBinContent(ix,    iy);
+	hsinsq2theta_68->SetBinContent(ix,iy, dchisq);
+	hsinsq2theta_90->SetBinContent(ix,iy, dchisq);
+      }//iy
+    }//ix
+  }//force_octant == 1
+  else if(force_octant == 2) {
+    for(int ix = 1; ix <= nbinsx; ix++) {
+      double s23sq_curr = hsinsqtheta->GetXaxis()->GetBinCenter(ix);
+      if(s23sq_curr < 0.5)
+	continue;
+      //cout << ix << "\t" << ix_alt << endl; continue;
+      for(int iy = 1; iy <= nbinsy; iy++) {
+	double dchisq     = hsinsqtheta->GetBinContent(ix,    iy);
+	hsinsq2theta_68->SetBinContent(TMath::Abs(ix-nbinsx)+1,iy, dchisq);
+	hsinsq2theta_90->SetBinContent(TMath::Abs(ix-nbinsx)+1,iy, dchisq);
+      }//iy
+      cout << TMath::Abs(ix-nbinsx)+1 << "\t" << s23sq_curr << endl;
+    }//ix
+  }//force_octant == 2
+  else {
+    cerr << "Unknown force_octant value: " << force_octant << endl;
+    exit(1);
+  }
 
   TFile fout(outfilename,"RECREATE");
   fout.cd();

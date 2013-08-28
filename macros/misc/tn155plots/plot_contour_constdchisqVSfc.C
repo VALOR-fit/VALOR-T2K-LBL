@@ -43,6 +43,30 @@ void plot_contour_constdchisqVSfc
   bf.SetMarkerSize(marker_size);
   bf.SetMarkerColor(kBlack);
 
+  //get externals
+  TFile fext("inputs/contours/contours_nont2k.root");
+  TGraph * g_minos = 0;
+  fext.GetObject("minos2013_combined_90CL_normal_sinsqtheta",g_minos);
+  g_minos->SetLineStyle(1);
+  g_minos->SetName("g_minos");
+  TGraph * g_sk = 0;
+  fext.GetObject("sk2012_zenith3nu_90CL_normal_sinsqtheta",g_sk);
+  g_sk->SetLineStyle(1);
+  g_sk->SetName("g_sk");
+
+  //get old t2k
+  TFile fold("2012results/DATA/sintheta23/combine/combination/fitresults_3.root");
+  TH2D * h_t2k123 = 0;
+  fold.GetObject("hdchisq",h_t2k123);
+  TH2D * h_t2k123_68 = new TH2D(*h_t2k123);
+  TH2D * h_t2k123_90 = new TH2D(*h_t2k123);
+  h_t2k123_68->SetContour(1);
+  h_t2k123_68->SetContourLevel(0,2.30);
+  h_t2k123_68->SetLineStyle(3);
+  h_t2k123_90->SetContour(1);
+  h_t2k123_90->SetContourLevel(0,4.61);
+  h_t2k123_90->SetLineStyle(2);
+
   // param space
   TCanvas * c = new TCanvas();
   c->SetRightMargin(0.05);
@@ -74,6 +98,10 @@ void plot_contour_constdchisqVSfc
   hdc90->SetLineColor(kRed);
   hfc68->SetLineColor(kBlack);
   hfc90->SetLineColor(kBlack);
+  h_t2k123_68->SetLineColor(kBlack);
+  h_t2k123_90->SetLineColor(kBlack);
+  g_minos->SetLineColor(kBlue);
+  g_sk->SetLineColor(kGreen+2);
 
   //Draw constdchisq vs FC
   c->SetRightMargin(0.01);
@@ -113,6 +141,51 @@ void plot_contour_constdchisqVSfc
   c->SaveAs(Form("contour_compare_%s_dcvsfc.pdf",tag));
   c->SaveAs(Form("contour_compare_%s_dcvsfc.png",tag));
   c->SaveAs(Form("contour_compare_%s_dcvsfc.eps",tag));
+
+  //Draw constdchisq vs FC + externals
+  c->SetRightMargin(0.01);
+  c->SetTopMargin(0.01);
+  c->SetBottomMargin(0.14);
+  osc_param_space->GetXaxis()->SetRangeUser(0.3,0.7);
+  osc_param_space->GetYaxis()->SetRangeUser(0.0017,0.0045);
+  cout <<   osc_param_space->GetXaxis()->GetTitleFont() << endl;
+  osc_param_space->GetXaxis()->SetTitleFont(132);
+  osc_param_space->Draw(); 
+  g_sk->Draw("l");
+  g_minos->Draw("l");
+  h_t2k123_90->Draw("cont3same");
+  //hdc68->Draw("cont3same");
+  hdc90->Draw("cont3same");
+  //hfc68->Draw("cont3same");
+  hfc90->Draw("cont3same");
+  bf.Draw();
+  TLegend * leg2 = new TLegend(0.185,0.64,0.45,0.96);
+  leg2->SetFillColor(0);
+  leg2->SetFillStyle(0);
+  leg2->SetBorderSize(0);
+  leg2->SetTextFont(132);
+  //leg2->AddEntry(hfc68, "T2K FC Run1-4a 3#nu (#Deltam^{2}_{32}>0) 68% CL","l");
+  leg2->AddEntry(hfc90, "T2K FC Run1-4a 3#nu (#Deltam^{2}_{32}>0) 90% CL","l");
+  //leg2->AddEntry(hdc68, "T2K const-#Delta#chi^{2} Run1-4a 3#nu (#Deltam^{2}_{32}>0) 68% CL","l");
+  leg2->AddEntry(hdc90, "T2K const-#Delta#chi^{2} Run1-4a 3#nu (#Deltam^{2}_{32}>0) 90% CL","l");
+  leg2->AddEntry(h_t2k123_90, "T2K Run 1-3 3#nu (#Deltam^{2}_{32}>0) 90% CL","l");
+  leg2->AddEntry(g_minos, "MINOS 2013 2#nu (#Deltam^{2}_{32}>0) 90% CL","l");
+  leg2->AddEntry(g_sk, "SK 2012 3#nu (#Deltam^{2}_{32}>0) 90% CL","l");
+  leg2->SetX2NDC(0.6);
+  leg2->SetTextSize(legend_text_size);
+  leg2->Draw();
+  TLegend * legbf = new TLegend(0.185, 0.14, 0.45, 0.27);
+  legbf->SetFillColor(0);
+  legbf->SetFillStyle(0);
+  legbf->SetBorderSize(0);
+  legbf->SetTextFont(132);
+  legbf->AddEntry(&bf, "T2K 3#nu (#Deltam^{2}_{32}>0) best fit","p");
+  legbf->SetX2NDC(0.6);
+  legbf->SetTextSize(legend_text_size);
+  legbf->Draw();
+  c->SaveAs(Form("contour_compare_%s_dcvsfc_ext.pdf",tag));
+  c->SaveAs(Form("contour_compare_%s_dcvsfc_ext.png",tag));
+  c->SaveAs(Form("contour_compare_%s_dcvsfc_ext.eps",tag));
 
   //Draw FC contour only
   c->SetRightMargin(0.01);

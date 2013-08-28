@@ -223,6 +223,7 @@ void test_sk_ereco_spectrum_nominal
 
   //combine modes
   double nccqe = 0, nccnqe = 0, nnuecc = 0, nnc = 0, nmec = 0;
+  double nnc1pic = 0, n1pi;
   for(int im = 0; im < conv::knm; im++) {
     conv::SuperkMode_t m = conv::kSKReactionModes[is][im];
     if(m == conv::kSKmUndefined) continue;
@@ -238,6 +239,28 @@ void test_sk_ereco_spectrum_nominal
       nccqe += nmode;
     else
       nccnqe += nmode;
+    if(m == conv::kSKmNuMuNC1piC
+       || m == conv::kSKmNuMuBarNC1piC
+       || m == conv::kSKmNuENC1piC
+       || m == conv::kSKmNuEBarNC1piC
+       )
+      nnc1pic += nmode;
+    if(m == conv::kSKmNuMuNCoth_mu
+       || m == conv::kSKmNuMuBarNCoth_mu
+       || m == conv::kSKmNuENCoth_mu
+       || m == conv::kSKmNuEBarNCoth_mu
+       || m == conv::kSKmNuMuNC1piC
+       || m == conv::kSKmNuMuBarNC1piC
+       || m == conv::kSKmNuENC1piC
+       || m == conv::kSKmNuEBarNC1piC
+       || m == conv::kSKmNuMuCC1pi
+       || m == conv::kSKmNuMuBarCC1pi
+       || m == conv::kSKmNuECC1pi
+       || m == conv::kSKmNuEBarCC1pi
+       || m == conv::kSKmOscNuMuCC1pi
+       || m == conv::kSKmSigNuECC1pi
+       )
+      n1pi += nmode;
   }
   streamer << endl;
   streamer << "Contrib from modes: " 
@@ -272,6 +295,15 @@ void test_sk_ereco_spectrum_nominal
 	   << setw(10) << setfill(' ') << setprecision(6) << 100*(nnuecc+nccnqe+nccqe)/ntot << " %)" << endl;
   streamer << nnuecc+nnc+nccnqe+nccqe+nmec << endl;
 
+  streamer << endl;
+  streamer << "Contrib from modes: " 
+	   << setw(40) << setfill(' ') << "NC1piC" << " : " 
+	   << setw(15) << setfill(' ') << setprecision(6) << nnc1pic << " events ("
+	   << setw(10) << setfill(' ') << setprecision(6) << 100*nnc1pic/ntot << " %)" << endl;
+  streamer << "Contrib from modes: " 
+	   << setw(40) << setfill(' ') << "1pi" << " : " 
+	   << setw(15) << setfill(' ') << setprecision(6) << n1pi << " events ("
+	   << setw(10) << setfill(' ') << setprecision(6) << 100*n1pi/ntot << " %)" << endl;
 
   // get tweaks
   PhysParamList nuisance_params = skexp.Tweaks();
