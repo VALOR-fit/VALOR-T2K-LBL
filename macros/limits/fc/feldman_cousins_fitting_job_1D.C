@@ -12,12 +12,14 @@
 // Oscillation parameter min and max values are read from a 2D delta chisq surface
 // since make_feldman_cousins_coverage_1D.C uses numbers of jobs in each bin that 
 // are proportional to exp(-chisq/2).
-// 4 fits are made of each experiment:
+// 5 fits are made of each experiment:
 // 1. 1+N fit where the 1 is sinsqtheta23 and |dm32sq| is fixed to the true input value
 // 2. 1+N fit where the 1 is sinsqtheta23 with initial value at the mirror point in the other 
 //    octant and |dm32sq| is fixed to the true input value
 // 3. 1+N fit where the 1 is |dm32sq| and sinsqtheta23 is fixed to the true input value
-// 4. 0+N fit to find chisq for the true input oscillation parameters
+// 4. 2+N fit to find best-fit chisq with sinsqtheta23 and |dm32sq| as free parameters
+// 5. 2+N fit to find best-fit chisq with sinsqtheta23 and |dm32sq| as free parameters, with 
+//    initial value of sinsqtheta23 being at the mirror point in the other octant 
 // Added extra branches to output ROOT tree for the chisq and status of these fits
 // 
 // ------------------------------------------------------------------------------------------------
@@ -27,7 +29,7 @@ void feldman_cousins_fitting_job_1D
 (
   const char * tag                     = "fc",                                /* tag for output file */
   int          run                     = 0,                                   /* run number */
-  int          nexperiments            = 2,                                   /* number of toy MC experiment fits */
+  int          nexperiments            = 20,                                   /* number of toy MC experiment fits */
   int          min_dm23sq_bin          =  1,                                 /* generate toy MC with this range of Dm^2_{23} */
   int          max_dm23sq_bin          =  21,                                 /* -//- */
   int          min_mixing23_bin        =  1,                                 /* generate toy MC with this range of 23 mixing (expressed in terms of either sinsq2theta, sinsqtheta, ...) */
@@ -40,7 +42,7 @@ void feldman_cousins_fitting_job_1D
   const char * fit_option              = "minuit",                            /* fitter option */
   bool         store_toy_expts         = false,                                /* disable this if you don't want to store the toy MC expts     */
   bool         store_bestfit_spectrum  = false,                                /* disable this if you don't want to store the best-fit spectra */
-  const char * dmsqscheme              = "abs23",                             /* abs23==kNuDmsq12andAbs23 abs31==kNuDmsq12andAbs31 fogli==kNuDmsqFogliLisi */
+  const char * dmsqscheme              = "abs23",                             /* abs23==kNuDmsq12andAbs23 fogli==kNuDmsqFogliLisi */
   const char * hierarchy               = "normal",                            /* normal or inverted */
   const char * mixparamchoice          = "sinsqtheta",                        /* sinsq2theta or sinsqtheta */
   const char * mixparamoctant          = "one",                                /* one==kNuOctantOne two==kNuOctantTwo */
@@ -138,10 +140,11 @@ void feldman_cousins_fitting_job_1D
 
   // Fit parameter list
   FitParamList * fparm      = FitParamList::NamedParameterList(fit_param_list); //only used to initialise branch
-  FitParamList * fparm1     = FitParamList::NamedParameterList(fit_param_list); // for fit of mixing23 using the first seed
-  FitParamList * fparm2     = FitParamList::NamedParameterList(fit_param_list); // for fit of mixing23 using the mirror of best fit seed
-  FitParamList * fparm3     = FitParamList::NamedParameterList(fit_param_list); // for fit of |dm32sq| 
-  FitParamList * fparm_true = FitParamList::NamedParameterList(fit_param_list); // for fit using the true 23 osc params (the 0+N)
+  FitParamList * fparm1     = FitParamList::NamedParameterList(fit_param_list); // for 1+N fit of mixing23 using the first seed
+  FitParamList * fparm2     = FitParamList::NamedParameterList(fit_param_list); // for 1+N fit of mixing23 using the mirror of best fit seed
+  FitParamList * fparm3     = FitParamList::NamedParameterList(fit_param_list); // for 1+N fit of |dm32sq| 
+  FitParamList * fparm4     = FitParamList::NamedParameterList(fit_param_list); // for 2+N fit using the first seed of mixing23
+  FitParamList * fparm5     = FitParamList::NamedParameterList(fit_param_list); // for 2+N fit using the mirror of best fit seed of mixing23
   PhysHypothesis_t hyp = fparm1->PhysicsHypothesis();
   cout << "- The following physics hypothesis is used in the fit: " << util::AsString(hyp) << endl;
 
@@ -163,45 +166,55 @@ void feldman_cousins_fitting_job_1D
   pdf_array2->SetOwner(false);
   TObjArray * pdf_array3 = new TObjArray;
   pdf_array3->SetOwner(false);
-  TObjArray * pdf_array_true = new TObjArray;
-  pdf_array_true->SetOwner(false);
+  TObjArray * pdf_array4 = new TObjArray;
+  pdf_array4->SetOwner(false);
+  TObjArray * pdf_array5 = new TObjArray;
+  pdf_array5->SetOwner(false);
 
   // Create file to store results
   TFile f(Form("%s-run_%d.root",tag, run), "recreate"); 
 
   //numbers to store results in
-  int iexperiment, status_0N, status_1N_mixing23, status_1N_dm23sq, input_mixing23_bin, input_dm23sq_bin;
+  int iexperiment, input_mixing23_bin, input_dm23sq_bin, status_1N_mixing23, status_1N_dm23sq, status_2N;
+  int fitstatus1, fitstatus2, fitstatus3, fitstatus4, fitstatus5; 
   double input_mixing23, input_dm23sq;
-  double chisq_for_input_params, bestfit_mixing23, bestfit_dm23sq, bestfit_chisq_mixing23, bestfit_chisq_dm23sq;
+  double bestfit_chisq_seed1, bestfit_chisq_seed2;
+  double sinsqtheta23_bestfit, sinsqtheta13_bestfit, centre, reseed;
+  double bestfit_mixing23_1N, bestfit_dm23sq_1N, bestfit_chisq_mixing23_1N, bestfit_chisq_dm23sq_1N;
+  double bestfit_mixing23_2N, bestfit_dm23sq_2N, bestfit_chisq_2N;
 
   // Create tree to store outputs
   TTree * fitnt = new TTree("fitnt","Results of VaLOR data and/or toy-MC experiment fits");
-  fitnt->Branch("best_fit_params",        "t2kana::FitParamList",  &fparm,          1280000,0);
-  fitnt->Branch("best_fit_params_fit1",   "t2kana::FitParamList",  &fparm1,         1280000,0);
-  fitnt->Branch("best_fit_params_fit2",   "t2kana::FitParamList",  &fparm2,         1280000,0);
-  fitnt->Branch("best_fit_params_fit3",   "t2kana::FitParamList",  &fparm3,         1280000,0);
-  fitnt->Branch("best_fit_params_true",   "t2kana::FitParamList",  &fparm_true,     1280000,0);
-  fitnt->Branch("input_params",           "t2kana::PhysParamList", &iparm,          1280000,0);
-  fitnt->Branch("data",                   "TObjArray",             &dat_array,      1280000,0);
-  fitnt->Branch("best_fit_pdf",           "TObjArray",             &pdf_array,      1280000,0);
-  fitnt->Branch("best_fit_pdf_fit1",      "TObjArray",             &pdf_array1,     1280000,0);
-  fitnt->Branch("best_fit_pdf_fit2",      "TObjArray",             &pdf_array2,     1280000,0);
-  fitnt->Branch("best_fit_pdf_fit3",      "TObjArray",             &pdf_array3,     1280000,0);
-  fitnt->Branch("best_fit_pdf_true",      "TObjArray",             &pdf_array_true, 1280000,0);
-  fitnt->Branch("iexp",                   &iexperiment);
-  fitnt->Branch("irun",                   &run);
-  fitnt->Branch("input_mixing23_bin",     &input_mixing23_bin);
-  fitnt->Branch("input_dm23sq_bin",       &input_dm23sq_bin);
-  fitnt->Branch("input_mixing23",         &input_mixing23);
-  fitnt->Branch("input_dm23sq",           &input_dm23sq);
-  fitnt->Branch("chisq_for_input_params", &chisq_for_input_params);
-  fitnt->Branch("status_0N",              &status_0N);
-  fitnt->Branch("bestfit_mixing23",       &bestfit_mixing23);
-  fitnt->Branch("bestfit_dm23sq",         &bestfit_dm23sq);
-  fitnt->Branch("bestfit_chisq_mixing23", &bestfit_chisq_mixing23);
-  fitnt->Branch("bestfit_chisq_dm23sq",   &bestfit_chisq_dm23sq);
-  fitnt->Branch("status_1N_mixing23",     &status_1N_mixing23);
-  fitnt->Branch("status_1N_dm23sq",       &status_1N_dm23sq);
+  fitnt->Branch("best_fit_params",           "t2kana::FitParamList",  &fparm,          1280000,0);
+  fitnt->Branch("best_fit_params_fit1",      "t2kana::FitParamList",  &fparm1,         1280000,0);
+  fitnt->Branch("best_fit_params_fit2",      "t2kana::FitParamList",  &fparm2,         1280000,0);
+  fitnt->Branch("best_fit_params_fit3",      "t2kana::FitParamList",  &fparm3,         1280000,0);
+  fitnt->Branch("best_fit_params_fit4",      "t2kana::FitParamList",  &fparm4,         1280000,0);
+  fitnt->Branch("best_fit_params_fit5",      "t2kana::FitParamList",  &fparm5,         1280000,0);
+  fitnt->Branch("input_params",              "t2kana::PhysParamList", &iparm,          1280000,0);
+  fitnt->Branch("data",                      "TObjArray",             &dat_array,      1280000,0);
+  fitnt->Branch("best_fit_pdf",              "TObjArray",             &pdf_array,      1280000,0);
+  fitnt->Branch("best_fit_pdf_fit1",         "TObjArray",             &pdf_array1,     1280000,0);
+  fitnt->Branch("best_fit_pdf_fit2",         "TObjArray",             &pdf_array2,     1280000,0);
+  fitnt->Branch("best_fit_pdf_fit3",         "TObjArray",             &pdf_array3,     1280000,0);
+  fitnt->Branch("best_fit_pdf_fit4",         "TObjArray",             &pdf_array4,     1280000,0);
+  fitnt->Branch("best_fit_pdf_fit5",         "TObjArray",             &pdf_array5,     1280000,0);
+  fitnt->Branch("iexp",                      &iexperiment);
+  fitnt->Branch("irun",                      &run);
+  fitnt->Branch("input_mixing23_bin",        &input_mixing23_bin);
+  fitnt->Branch("input_dm23sq_bin",          &input_dm23sq_bin);
+  fitnt->Branch("input_mixing23",            &input_mixing23);
+  fitnt->Branch("input_dm23sq",              &input_dm23sq);
+  fitnt->Branch("bestfit_mixing23_1N",       &bestfit_mixing23_1N);
+  fitnt->Branch("bestfit_dm23sq_1N",         &bestfit_dm23sq_1N);
+  fitnt->Branch("bestfit_chisq_mixing23_1N", &bestfit_chisq_mixing23_1N);
+  fitnt->Branch("bestfit_chisq_dm23sq_1N",   &bestfit_chisq_dm23sq_1N);
+  fitnt->Branch("status_1N_mixing23",        &status_1N_mixing23);
+  fitnt->Branch("status_1N_dm23sq",          &status_1N_dm23sq);
+  fitnt->Branch("bestfit_mixing23_2N",       &bestfit_mixing23_2N);
+  fitnt->Branch("bestfit_dm23sq_2N",         &bestfit_dm23sq_2N);
+  fitnt->Branch("bestfit_chisq_2N",          &bestfit_chisq_2N);
+  fitnt->Branch("status_2N",                 &status_2N);
   TBranch * br_fparm     = fitnt->GetBranch("best_fit_params");
   TBranch * br_bf_array  = fitnt->GetBranch("best_fit_pdf");
 
@@ -296,7 +309,8 @@ void feldman_cousins_fitting_job_1D
      pdf_array1    ->Clear();
      pdf_array2    ->Clear();
      pdf_array3    ->Clear();
-     pdf_array_true->Clear();
+     pdf_array4    ->Clear();
+     pdf_array5    ->Clear();
 
      // Reset input true params and add true oscillation params
      iparm->Clear();
@@ -352,9 +366,9 @@ void feldman_cousins_fitting_job_1D
 
      fitter->DoTheFit();
      fparm1->ResetCurrToInitValues();
-     int fitstatus1 = fitter->FitStatusCode("migrad_min");
-     bestfit_chisq_mixing23  = fit_inputs->BestFitChisquare();
-     double bestfit_chisq_mixing23_2 = 0;
+     fitstatus1 = fitter->FitStatusCode("migrad_min");
+     bestfit_chisq_seed1  = fit_inputs->BestFitChisquare();
+     bestfit_chisq_seed2 = 0;
 
      // Save spectra (data and best-fit prediction)
      if(store_toy_expts) {
@@ -365,15 +379,15 @@ void feldman_cousins_fitting_job_1D
      }
 
      //Do the fit again at the mirror point
-     int fitstatus2 = -1;
+     fitstatus2 = -1;
      if(Opt::Instance()->gOscMixingParamChoice == conv::kNuMixSinsqTheta) {
-       //get the correct intial values (best fit points from first fit)
+       //get the correct initial values (best fit points from first fit)
        fparm2->CopyBestFitToInitValues(*fparm1);
        //set the mixing23 seed to be the mirror point of the initial best fit
-       double sinsqtheta23_bestfit = fparm1->BestFitValue(conv::kPhypMixing23);
-       double sinsqtheta13_bestfit = fparm1->BestFitValue(conv::kPhypMixing13);
-       double centre = 1 / (2 * (1 - sinsqtheta13_bestfit));
-       double reseed = sinsqtheta23_bestfit;
+       sinsqtheta23_bestfit = fparm1->BestFitValue(conv::kPhypMixing23);
+       sinsqtheta13_bestfit = fparm1->BestFitValue(conv::kPhypMixing13);
+       centre = 1 / (2 * (1 - sinsqtheta13_bestfit));
+       reseed = sinsqtheta23_bestfit;
        if     (reseed < centre)
 	 reseed = centre + TMath::Abs(centre - sinsqtheta23_bestfit);
        else if(reseed > centre)
@@ -387,7 +401,7 @@ void feldman_cousins_fitting_job_1D
        FitterABC * fitter2 = util::GetFitter(fit_inputs2,fit_option);
        fparm2->ResetCurrToInitValues(); // reset osc params
        fitter2->DoTheFit();
-       bestfit_chisq_mixing23_2 = fit_inputs2->BestFitChisquare();
+       bestfit_chisq_seed2 = fit_inputs2->BestFitChisquare();
        fitstatus2 = fitter2->FitStatusCode("migrad_min");
        // Save spectra (best-fit prediction)
        if(store_bestfit_spectrum) {
@@ -398,11 +412,10 @@ void feldman_cousins_fitting_job_1D
      // Print-out best-fit params, and set the "best of the two fits" branches correctly
      cout << "- Best-fit mixing23 (below) yields chisq = ";
      if(Opt::Instance()->gOscMixingParamChoice == conv::kNuMixSinsqTheta) {
-       if(bestfit_chisq_mixing23_2 < bestfit_chisq_mixing23) {
-	 cout << bestfit_chisq_mixing23_2 << " from the second seed fit" << endl;
-	 bestfit_chisq_mixing23    = bestfit_chisq_mixing23_2;
-	 bestfit_mixing23 = fparm2->BestFitValue(conv::kPhypMixing23);
-	 //bestfit_dm23sq   = input_dm23sq;
+       if(bestfit_chisq_seed2 < bestfit_chisq_seed1) {
+	 cout << bestfit_chisq_seed2 << " from the second seed fit" << endl;
+	 bestfit_chisq_mixing23_1N    = bestfit_chisq_seed2;
+	 bestfit_mixing23_1N = fparm2->BestFitValue(conv::kPhypMixing23);
 	 status_1N_mixing23        = fitstatus2;
 	 fparm2->ShowOnlyBestFitValuesInNextPrint();
 	 cout << *fparm2;
@@ -410,9 +423,9 @@ void feldman_cousins_fitting_job_1D
 	 br_bf_array->SetAddress(&pdf_array2);
        }
        else {
-	 cout << bestfit_chisq_mixing23 << " from the first seed fit" << endl;
-	 bestfit_mixing23 = fparm1->BestFitValue(conv::kPhypMixing23);
-	 //bestfit_dm23sq   = input_dm23sq;
+	 cout << bestfit_chisq_seed1 << " from the first seed fit" << endl;
+         bestfit_chisq_mixing23_1N    = bestfit_chisq_seed1;
+	 bestfit_mixing23_1N = fparm1->BestFitValue(conv::kPhypMixing23);
 	 status_1N_mixing23        = fitstatus1;
 	 fparm1->ShowOnlyBestFitValuesInNextPrint();
 	 cout << *fparm1;
@@ -421,9 +434,9 @@ void feldman_cousins_fitting_job_1D
        }
      }
      else {
-       cout << bestfit_chisq_mixing23 << endl;
-       bestfit_mixing23 = fparm1->BestFitValue(conv::kPhypMixing23);
-       bestfit_dm23sq   = input_dm23sq;
+       cout << bestfit_chisq_seed1 << endl;
+       bestfit_chisq_mixing23_1N    = bestfit_chisq_seed1;
+       bestfit_mixing23_1N = fparm1->BestFitValue(conv::kPhypMixing23);
        status_1N_mixing23        = fitstatus1;
        fparm1->ShowOnlyBestFitValuesInNextPrint();
        cout << *fparm1;
@@ -445,8 +458,8 @@ void feldman_cousins_fitting_job_1D
      fparm3->ResetCurrToInitValues(); // reset osc params     
      fitter3->DoTheFit();
      fparm3->ResetCurrToInitValues();
-     int fitstatus3 = fitter3->FitStatusCode("migrad_min");
-     bestfit_chisq_dm23sq  = fit_inputs3->BestFitChisquare();
+     fitstatus3 = fitter3->FitStatusCode("migrad_min");
+     bestfit_chisq_dm23sq_1N  = fit_inputs3->BestFitChisquare();
 
      if(store_bestfit_spectrum) {
        skexp->Write(pdf_array3, "pdf");
@@ -454,12 +467,106 @@ void feldman_cousins_fitting_job_1D
 
      // Print-out best-fit params
      cout << "- Best-fit dm23sq (below) yields chisq = ";
-     cout << bestfit_chisq_dm23sq<<endl;
-     bestfit_dm23sq = fparm3->BestFitValue(conv::kPhypDm23sq);
+     cout << bestfit_chisq_dm23sq_1N<<endl;
+     bestfit_dm23sq_1N = fparm3->BestFitValue(conv::kPhypDm23sq);
      status_1N_dm23sq        = fitstatus3;
      fparm3->ShowOnlyBestFitValuesInNextPrint();
      cout << *fparm3;
+
+     //
+     // Get the 2+N fit results
+     //
+
+     fparm4->SetInitValue(conv::kPhypMixing23, input_mixing23);
+     fparm4->SetInitValue(conv::kPhypDm23sq,   input_dm23sq);
+
+     // Get fitter
+     FitInputs * fit_inputs4 = new FitInputs(skobs,skexp,fparm4);
+     FitterABC * fitter4 = util::GetFitter(fit_inputs4,fit_option);
+
+     // do the fit using the true osc param as a seed
+     fparm4->ResetCurrToInitValues(); // reset osc params
+     fitter4->DoTheFit();
+     fparm4->ResetCurrToInitValues();
+     fitstatus4 = fitter4->FitStatusCode("migrad_min");
+     bestfit_chisq_seed1  = fit_inputs4->BestFitChisquare();
+     bestfit_chisq_seed2 = 0;
+
+     // Save spectra (data and best-fit prediction)
+     if(store_toy_expts) {
+       skobs->Write(dat_array4, "obs");
+     }
+     if(store_bestfit_spectrum) {
+       skexp->Write(pdf_array4, "pdf");
+     }
+
+     //Do the fit again at the mirror point
+     int fitstatus5 = -1;
+     if(Opt::Instance()->gOscMixingParamChoice == conv::kNuMixSinsqTheta) {
+       //get the correct intial values (best fit points from first fit)
+       fparm5->CopyBestFitToInitValues(*fparm4);
+       //set the mixing23 seed to be the mirror point of the initial best fit
+       sinsqtheta23_bestfit = fparm4->BestFitValue(conv::kPhypMixing23);
+       sinsqtheta13_bestfit = fparm4->BestFitValue(conv::kPhypMixing13);
+       centre = 1 / (2 * (1 - sinsqtheta13_bestfit));
+       reseed = sinsqtheta23_bestfit;
+       if     (reseed < centre)
+         reseed = centre + TMath::Abs(centre - sinsqtheta23_bestfit);
+       else if(reseed > centre)
+         reseed = centre - TMath::Abs(centre - sinsqtheta23_bestfit);
+       fparm5->SetInitValue(conv::kPhypMixing23, reseed);
+       // Get fitter
+       FitInputs * fit_inputs5 = new FitInputs(skobs,skexp,fparm5);
+       FitterABC * fitter5 = util::GetFitter(fit_inputs5,fit_option);
+       fparm5->ResetCurrToInitValues(); // reset osc params
+       fitter5->DoTheFit();
+       bestfit_chisq_seed2 = fit_inputs5->BestFitChisquare();
+       fitstatus5 = fitter5->FitStatusCode("migrad_min");
+       // Save spectra (best-fit prediction)
+       if(store_bestfit_spectrum) {
+         skexp->Write(pdf_array5, "pdf");
+       }
+     }
         
+       // Print-out best-fit params, and set the "best of the two fits" branches correctly
+       cout << "- Best-fit oscillation params (below) yield chisq = ";
+       if(Opt::Instance()->gOscMixingParamChoice == conv::kNuMixSinsqTheta) {
+	 if(bestfit_chisq_seed2 < bestfit_chisq_seed1) {
+	   cout << bestfit_chisq_seed2 << " from the second seed fit" << endl;
+	   bestfit_chisq_2N    = bestfit_chisq_seed2;
+	   bestfit_mixing23_2N = fparm5->BestFitValue(conv::kPhypMixing23);
+	   bestfit_dm23sq_2N   = fparm5->BestFitValue(conv::kPhypDm23sq);
+	   status_2N        = fitstatus5;
+	   fparm5->ShowOnlyBestFitValuesInNextPrint();
+	   cout << *fparm5;
+	   br_fparm->SetAddress(&fparm5);
+	   br_bf_array->SetAddress(&pdf_array5);
+	 }
+	 else {
+	   cout << bestfit_chisq_seed1 << " from the first seed fit" << endl;
+           bestfit_chisq_2N    = bestfit_chisq_seed1;
+	   bestfit_mixing23_2N = fparm4->BestFitValue(conv::kPhypMixing23);
+	   bestfit_dm23sq_2N   = fparm4->BestFitValue(conv::kPhypDm23sq);
+	   status_2N        = fitstatus4;
+	   fparm4->ShowOnlyBestFitValuesInNextPrint();
+	   cout << *fparm4;
+	   br_fparm->SetAddress(&fparm4);
+	   br_bf_array->SetAddress(&pdf_array4);
+	 }
+       }
+       else {
+	 cout << bestfit_chisq_seed1 << endl;
+	 bestfit_chisq_2N    = bestfit_chisq_seed1;
+	 bestfit_mixing23_2N = fparm4->BestFitValue(conv::kPhypMixing23);
+	 bestfit_dm23sq_2N   = fparm4->BestFitValue(conv::kPhypDm23sq);
+	 status_2N        = fitstatus4;
+	 fparm4->ShowOnlyBestFitValuesInNextPrint();
+	 cout << *fparm4;
+	 br_fparm->SetAddress(&fparm4);
+	 br_bf_array->SetAddress(&pdf_array4);
+       }
+     
+       /*
      //
      // Get the 0+N fit results
      //
@@ -483,20 +590,23 @@ void feldman_cousins_fitting_job_1D
 	  << chisq_for_input_params << endl;
      fparm_true->ShowOnlyBestFitValuesInNextPrint();
      cout << *fparm_true;
+       */
 
+       
      cout<<endl;
 
      //  Print out result
      cout<<"Overall results"<<endl;
-     cout << "- Chisq (True) = " << chisq_for_input_params << endl;
-     cout << "- Chisq for mixing23 (Best-fit param:" 
-	  << util::AsString(conv::kPhypMixing23) << " = " << bestfit_mixing23
-	  << ") = " << bestfit_chisq_mixing23 << endl;
-     cout << "- DeltaChisq for mixing23 = " << chisq_for_input_params - bestfit_chisq_mixing23 << endl;
-     cout << "- Chisq for dm23sq (Best-fit param:"
-          << util::AsString(conv::kPhypDm23sq)   << " = " << bestfit_dm23sq   << " eV^2"
-          << ") = " << bestfit_chisq_dm23sq << endl;
-     cout << "- DeltaChisq for dm23sq = " << chisq_for_input_params - bestfit_chisq_dm23sq << endl;
+     cout << "- Chisq (2+N fit) = " << bestfit_chisq_2N << endl;
+     cout << "- Chisq for mixing23 (Best-fit param in 1+N fit:" 
+	  << util::AsString(conv::kPhypMixing23) << " = " << bestfit_mixing23_1N
+	  << ") = " << bestfit_chisq_mixing23_1N << endl;
+     cout << "- DeltaChisq for mixing23 = " << bestfit_chisq_mixing23_1N - bestfit_chisq_2N << endl;
+     cout << "- Chisq for dm23sq (Best-fit param in 1+N fit:"
+          << util::AsString(conv::kPhypDm23sq)   << " = " << bestfit_dm23sq_1N   << " eV^2"
+          << ") = " << bestfit_chisq_dm23sq_1N << endl;
+     cout << "- DeltaChisq for dm23sq = " << bestfit_chisq_dm23sq_1N - bestfit_chisq_2N << endl;
+       
 
      // Add all results in the tree
      fitnt->Fill();
@@ -505,14 +615,18 @@ void feldman_cousins_fitting_job_1D
      delete skobs;
      delete fit_inputs;
      delete fitter;
+     delete fit_inputs3;
+     delete fitter3;
+     delete fit_inputs4;
+     delete fitter4;
      if(Opt::Instance()->gOscMixingParamChoice == conv::kNuMixSinsqTheta) {
        delete fit_inputs2;
        delete fitter2;
+       delete fit_inputs5;
+       delete fitter5;
      }
-     delete fit_inputs_true;
-     delete fitter_true;
 
-  }//iexperiment
+     }//iexperiment
 
   // Store ntuple with best-fit results
   f.cd();

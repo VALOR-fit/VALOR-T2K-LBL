@@ -33,10 +33,16 @@
 //    the position of percentile effects the contour
 // @ 16/08/2013  Nick
 //   Modified to make 1D delta chisq plots for sinsqtheta23 and |dm32sq| separately.
-//   Use output of feldman_cousins_fitting_job_1D.C. 
-//   Number of experimemts used from each bin in 2D oscillation parameter space is proportional to 
-//   exp(-chisq/2) where chisq is the 2D delta chisq.
-//   Bin range is taken from the 2D delta chisq plot.
+//   For each of these plots, the number of experimemts used from each bin in 2D oscillation parameter 
+//   space is proportional to exp(-chisq/2) where chisq is the 2D delta chisq. For the 1D plot in mixing23, 
+//   this is normalised to the maximum value of exp(-chisq/2) from all values of |dm32sq| for a given value 
+//   of mixing23. For the 1D plot in |dm32sq|, the number of experiments used is normalised to the maximum 
+//   value of exp(-chisq/2) from all values of mixing23 for a given value of |dm32sq|. 
+//   The bin ranges and widths in mixing23 and |dm32sq| are the same as those for the 2D delta chisq plot.
+//   Inputs
+//   - TChain of ROOT trees produced by feldman_cousins_fitting_job_1D.C. Set input_data_directory 
+//   to be the directory containing these ROOT trees.
+//   - 2D delta chisq surface
 //-----------------------------------------------------------------------------------------------------
 //
 
@@ -51,7 +57,7 @@
 using namespace std;
 
 void make_feldman_cousins_deltachisqcrit_1D(
-  const char * input_data_directory = "/opt/ppd/t2k/users/nick/t2kanaFC1D/macros/limits/nick", 
+  const char * input_data_directory = "/opt/ppd/t2k/users/nick/t2kanaFC1D/production", 
   const char * dchisqsurf_file         = "/opt/ppd/t2k/dealtry/2013results/DATA/run1-4_nuis3fixdcp_sintheta_normal/combination/run1-4_nuis3fixdcp_sintheta_normal-run_0-expt_6.root",
   const char * output_data_file="delta_chisq_critical_1D.root",
   int sinsq2theta_min_bin=-1, 
@@ -112,70 +118,153 @@ void make_feldman_cousins_deltachisqcrit_1D(
   chain->Add(Form("%s/fc-run*.root", input_data_directory));
   cout << chain->GetEntries() << endl;
 
-  int input_mixing23_bin, input_dm23sq_bin, status_0N, status_1N_mixing23, status_1N_dm23sq;
-  double chisq_for_input_params, bestfit_chisq_mixing23, bestfit_chisq_dm23sq;
+  int input_mixing23_bin, input_dm23sq_bin, status_1N_mixing23, status_1N_dm23sq, status_2N;
+  double input_mixing23, input_dm23sq;
+  double bestfit_mixing23_1N, bestfit_dm23sq_1N, bestfit_mixing23_2N, bestfit_dm23sq_2N;
+  double bestfit_chisq_mixing23_1N, bestfit_chisq_dm23sq_1N, bestfit_chisq_2N;
 
   chain->SetBranchAddress("input_mixing23_bin",&input_mixing23_bin);
   chain->SetBranchAddress("input_dm23sq_bin",&input_dm23sq_bin);
-  chain->SetBranchAddress("status_0N",&status_0N);
+  chain->SetBranchAddress("input_mixing23",&input_mixing23);
+  chain->SetBranchAddress("input_dm23sq",&input_dm23sq);
   chain->SetBranchAddress("status_1N_mixing23",&status_1N_mixing23);
   chain->SetBranchAddress("status_1N_dm23sq",&status_1N_dm23sq);
-  chain->SetBranchAddress("chisq_for_input_params",&chisq_for_input_params);
-  chain->SetBranchAddress("bestfit_chisq_mixing23",&bestfit_chisq_mixing23);
-  chain->SetBranchAddress("bestfit_chisq_dm23sq",&bestfit_chisq_dm23sq);
+  chain->SetBranchAddress("status_2N",&status_2N);
+  chain->SetBranchAddress("bestfit_mixing23_1N",&bestfit_mixing23_1N);
+  chain->SetBranchAddress("bestfit_dm23sq_1N",&bestfit_dm23sq_1N);
+  chain->SetBranchAddress("bestfit_mixing23_2N",&bestfit_mixing23_2N);
+  chain->SetBranchAddress("bestfit_dm23sq_2N",&bestfit_dm23sq_2N);
+  chain->SetBranchAddress("bestfit_chisq_mixing23_1N",&bestfit_chisq_mixing23_1N);
+  chain->SetBranchAddress("bestfit_chisq_dm23sq_1N",&bestfit_chisq_dm23sq_1N);
+  chain->SetBranchAddress("bestfit_chisq_2N",&bestfit_chisq_2N);
 
   int nExperiments[mixing23_nbins][dm23sq_nbins] = {0}; 
-  int nExperimentsTotal = 0;
-  float nExperimentsMean;
 
   for(Long64_t j = 0; j < chain->GetEntries(); j++)
     {
     chain->GetEntry(j);
-    if(status_0N == 0 && status_1N_mixing23 == 0 && status_1N_dm23sq == 0)
-      {
+    if(status_1N_mixing23 == 0 && status_1N_dm23sq == 0 && status_2N == 0)
       nExperiments[input_mixing23_bin-1][input_dm23sq_bin-1]++;
-      nExperimentsTotal++;
-      }
+
     }//end of loop over entries
 
-  nExperimentsMean = (float)(nExperimentsTotal / (mixing23_nbins * dm23sq_nbins));
+  double maxLikelihoodMix23[mixing23_nbins];
+  double maxLikelihoodDm23sq[dm23sq_nbins];
+  int maxExperimentsMix23[mixing23_nbins];
+  int maxExperimentsDm23sq[dm23sq_nbins];
+  int nExperimentsMix23[mixing23_nbins][dm23sq_nbins];
+  int nExperimentsDm23sq[mixing23_nbins][dm23sq_nbins];
+  float maxRatioMix23[mixing23_nbins];
+  float maxRatioDm23sq[mixing23_nbins];
+  int nExperimentsUsed[mixing23_nbins][dm23sq_nbins] = {0};
 
-  double likelihood[mixing23_nbins][dm23sq_nbins];
-  double maxLikeTimesN = -9999.9;
-
-  for(int mixing23_bin=1; mixing23_bin<mixing23_nbins; mixing23_bin++)
+  //find maximum value of exp(-chisq/2) from all values of |dm32sq| for a given value of mixing23
+  //and the number of experiments in the TChain for that bin 
+  for(int mixing23_bin=1; mixing23_bin<=mixing23_nbins; mixing23_bin++)
     {
-    for(int dm23sq_bin=1; dm23sq_bin<dm23sq_nbins; dm23sq_bin++)
+    maxLikelihoodMix23[mixing23_bin-1] = -9999.9;
+    for(int dm23sq_bin=1; dm23sq_bin<=dm23sq_nbins; dm23sq_bin++)
       {
-      likelihood[mixing23_bin-1][dm23sq_bin-1] = exp(-0.5 * dchisqsurf->GetBinContent(mixing23_bin, dm23sq_bin));
-      if(nExperiments[mixing23_bin-1][dm23sq_bin-1] > 0)
-        {
-        if(likelihood[mixing23_bin-1][dm23sq_bin-1] * nExperimentsMean / nExperiments[mixing23_bin-1][dm23sq_bin-1] > maxLikeTimesN)
-	  maxLikeTimesN = likelihood[mixing23_bin-1][dm23sq_bin-1] * nExperimentsMean / nExperiments[mixing23_bin-1][dm23sq_bin-1];
+      if(exp(-0.5 * dchisqsurf->GetBinContent(mixing23_bin, dm23sq_bin)) > maxLikelihoodMix23[mixing23_bin-1])
+	{
+        maxLikelihoodMix23[mixing23_bin-1] = exp(-0.5 * dchisqsurf->GetBinContent(mixing23_bin, dm23sq_bin));
+        maxExperimentsMix23[mixing23_bin-1] = nExperiments[mixing23_bin-1][dm23sq_bin-1];
         }
+      }
+    }
+
+  //for a given value of mixing23, set the number of experiments taken from each value of |dm32sq| to be 
+  //proportional to exp(-chisq/2) for that bin
+  for(int mixing23_bin=1; mixing23_bin<=mixing23_nbins; mixing23_bin++)
+    {
+    maxRatioMix23[mixing23_bin-1] = 1.0;
+    for(int dm23sq_bin=1; dm23sq_bin<=dm23sq_nbins; dm23sq_bin++)
+      {
+      nExperimentsMix23[mixing23_bin-1][dm23sq_bin-1] = maxExperimentsMix23[mixing23_bin-1] 
+         * exp(-0.5 * dchisqsurf->GetBinContent(mixing23_bin, dm23sq_bin)) / maxLikelihoodMix23[mixing23_bin-1];
+      if(nExperiments[mixing23_bin-1][dm23sq_bin-1] == 0)
+	continue;
+      //check that the number of experiments to be used from a given bin is not greater than the number 
+      //of experiments in the TChain for that bin
+      if((float)(nExperimentsMix23[mixing23_bin-1][dm23sq_bin-1] / nExperiments[mixing23_bin-1][dm23sq_bin-1]) > maxRatioMix23[mixing23_bin-1])
+	maxRatioMix23[mixing23_bin-1] = (float)(nExperimentsMix23[mixing23_bin-1][dm23sq_bin-1] / nExperiments[mixing23_bin-1][dm23sq_bin-1]);
+      }
+    }
+
+  //make a correction to the number of experiments to be used from each bin in case it was found that there were
+  //not enough in the TChain for some bins
+  //do this in a way that keeps the numbers of events proportional to exp(-chisq/2)
+  //maxRatioMix23[mixing23_bin-1] = 1.0 if there were enough events in all bins for a given value of mixing23
+  //maxRatioMix23[mixing23_bin-1] > 1.0 if there were not enough events in some bins for a given value of mixing23
+  for(int mixing23_bin=1; mixing23_bin<=mixing23_nbins; mixing23_bin++)
+    {
+    for(int dm23sq_bin=1; dm23sq_bin<=dm23sq_nbins; dm23sq_bin++)
+      {
+      nExperimentsMix23[mixing23_bin-1][dm23sq_bin-1] = (int)(nExperimentsMix23[mixing23_bin-1][dm23sq_bin-1] / maxRatioMix23[mixing23_bin-1]);
+      }
+    }
+
+  //find maximum value of exp(-chisq/2) from all values of mixing23 for a given value of |dm32sq|
+  //and the number of experiments in the TChain for that bin
+  for(int dm23sq_bin=1; dm23sq_bin<=dm23sq_nbins; dm23sq_bin++)
+    {
+    maxLikelihoodDm23sq[dm23sq_bin-1] = -9999.9;
+    for(int mixing23_bin=1; mixing23_bin<=mixing23_nbins; mixing23_bin++)
+      {
+      if(exp(-0.5 * dchisqsurf->GetBinContent(mixing23_bin, dm23sq_bin)) > maxLikelihoodDm23sq[dm23sq_bin-1])
+        {
+	maxLikelihoodDm23sq[dm23sq_bin-1] = exp(-0.5 * dchisqsurf->GetBinContent(mixing23_bin, dm23sq_bin));
+	maxExperimentsDm23sq[dm23sq_bin-1] = nExperiments[mixing23_bin-1][dm23sq_bin-1];
+        }
+      }
+    }
+  
+  //for a given value of |dm32sq|, set the number of experiments taken from each value of mixing23 to be
+  //proportional to exp(-chisq/2) for that bin
+  for(int dm23sq_bin=1; dm23sq_bin<=dm23sq_nbins; dm23sq_bin++)
+    {
+    maxRatioDm23sq[dm23sq_bin-1] = 1.0;
+    for(int mixing23_bin=1; mixing23_bin<=mixing23_nbins; mixing23_bin++)
+      {
+      nExperimentsDm23sq[mixing23_bin-1][dm23sq_bin-1] = maxExperimentsDm23sq[dm23sq_bin-1] 
+         * exp(-0.5 * dchisqsurf->GetBinContent(mixing23_bin, dm23sq_bin)) / maxLikelihoodDm23sq[dm23sq_bin-1];
+      if(nExperiments[mixing23_bin-1][dm23sq_bin-1]== 0)
+        continue;
+      if((float)(nExperimentsDm23sq[mixing23_bin-1][dm23sq_bin-1] / nExperiments[mixing23_bin-1][dm23sq_bin-1]) > maxRatioDm23sq[dm23sq_bin-1])
+        maxRatioDm23sq[dm23sq_bin-1] = (float)(nExperimentsDm23sq[mixing23_bin-1][dm23sq_bin-1] / nExperiments[mixing23_bin-1][dm23sq_bin-1]);
+      }
+    }
+
+  //make a correction to the number of experiments to be used from each bin in case it was found that there were
+  //not enough in the TChain for some bins
+  //do this in a way that keeps the numbers of events proportional to exp(-chisq/2)
+  //maxRatioDm23sq[dm23sq_bin-1] = 1.0 if there were enough events in all bins for a given value of |dm32sq|
+  //maxRatioDm23sq[dm23sq_bin-1] > 1.0 if there were not enough events in some bins for a given value of |dm32sq|
+  for(int dm23sq_bin=1; dm23sq_bin<=dm23sq_nbins; dm23sq_bin++)
+    {
+    for(int mixing23_bin=1; mixing23_bin<=mixing23_nbins; mixing23_bin++)
+      {
+      nExperimentsDm23sq[mixing23_bin-1][dm23sq_bin-1] = (int)(nExperimentsDm23sq[mixing23_bin-1][dm23sq_bin-1] / maxRatioDm23sq[dm23sq_bin-1]);
       }
     }
 
   vector<double> deltaChi2Mix23[mixing23_nbins];
   vector<double> deltaChi2Dm23sq[dm23sq_nbins];  
 
-  TRandom3 rand(0);
-  double uniformRand;
-
   for(Long64_t j = 0; j < chain->GetEntries(); j++)
     {
     chain->GetEntry(j);
 
-    uniformRand = rand.Uniform(0.,1.);
-
-    if(uniformRand > (likelihood[mixing23_bin-1][dm23sq_bin-1] * (nExperimentsMean / nExperiments[input_mixing23_bin-1][input_dm23sq_bin-1])) / maxLikeTimesN)
+    if(nExperimentsUsed[input_mixing23_bin-1][input_dm23sq_bin-1] > nExperiments[input_mixing23_bin-1][input_dm23sq_bin-1])
       continue;
 
-    if(status_0N == 0 && status_1N_mixing23 == 0)
-      deltaChi2Mix23[input_mixing23_bin-1].push_back(chisq_for_input_params - bestfit_chisq_mixing23);
+    if(nExperimentsUsed[input_mixing23_bin-1][input_dm23sq_bin-1] <= nExperimentsMix23[input_mixing23_bin-1][input_dm23sq_bin-1] && status_1N_mixing23 == 0 && status_2N == 0)
+      deltaChi2Mix23[input_mixing23_bin-1].push_back(bestfit_chisq_mixing23_1N - bestfit_chisq_2N);
 
-    if(status_0N == 0 && status_1N_dm23sq == 0)
-      deltaChi2Dm23sq[input_dm23sq_bin-1].push_back(chisq_for_input_params - bestfit_chisq_dm23sq);
+    if(nExperimentsUsed[input_mixing23_bin-1][input_dm23sq_bin-1] <= nExperimentsDm23sq[input_mixing23_bin-1][input_dm23sq_bin-1] && status_1N_dm23sq == 0 && status_2N == 0)
+      deltaChi2Dm23sq[input_dm23sq_bin-1].push_back(bestfit_chisq_dm23sq_1N - bestfit_chisq_2N);
+
+    nExperimentsUsed[input_mixing23_bin-1][input_dm23sq_bin-1]++;
 
     }//end of loop over entries
 
