@@ -308,7 +308,7 @@ void analyse_output
 
   //get comparison hists
   TH1D * spectrum_other = 0;//, *spectrum_other_rebin = 0;
-  TFile f_other_spectra(other_spectrum_file);
+  TFile f_other_spectra(other_spectrum_file); 
   f_other_spectra.GetObject(other_spectrum_histname, spectrum_other);
   if(!spectrum_other) {
     f_other_spectra.ls();
@@ -688,7 +688,6 @@ void analyse_output
     for(int ix = 1; ix <= per_ratio_bf->GetNbinsX(); ix++) {
       cout << per_ratio_bf->GetBinContent(ix) << "\t" << per_ratio_other->GetBinContent(ix) << endl;
     }
-    return;
   }//spectrum_other_rebin
 
   //pulls

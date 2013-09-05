@@ -328,7 +328,7 @@ void plot_theta_contour_from_2theta_contour
   hsinsqtheta1o1_68->SetLineColor(kBlack);
   hsinsqtheta2o2_90->SetLineColor(kBlack);
   hsinsqtheta2o2_68->SetLineColor(kBlack);
-  bftheta.SetMarkerColor(kBlack);
+  bf2o2.SetMarkerColor(kBlack);
   hsinsqtheta1o1_90->Draw("cont3same");
   hsinsqtheta2o2_90->Draw("cont3same");
   hsinsqtheta1o1_68->Draw("cont3same");

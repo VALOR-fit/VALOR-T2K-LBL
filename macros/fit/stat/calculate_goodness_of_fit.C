@@ -17,7 +17,9 @@ void calculate_goodness_of_fit
   const char * config_file         = "analysis_configuration.xml", /* analysis configuration file */
   const char * fit_param_list      = "nuosc3f_numudisapp_fix4+nuisanceselection",    /* fit parameter list for the given physics hypothesis (see run_fitter.C) */
   const char * fit_option          = "minuit",                     /* fitter option (see run_fitter.C) */
-  const int    ntoys               = 10                          /* number of toys to create to put into the histogram */
+  const int    ntoys               = 10,                           /* number of toys to create to put into the histogram */
+  const char * mixparamchoice      = "sinsq2theta",
+  const char * hierarchy           = "normal"
 )
 {
   using namespace std;
@@ -27,8 +29,8 @@ void calculate_goodness_of_fit
   const char * config = Form("%s/config/%s", gSystem->Getenv("T2KOSCANA"), config_file);
 
   // Global options
-  Opt::Instance()->gOscMixingParamChoice = conv::kNuMixSinsq2Theta;
-  Opt::Instance()->gMassHierarchyAssumed = conv::kNmhNormal;
+  Opt::Instance()->gMassHierarchyAssumed = util::HierarchyFromString(hierarchy);
+  Opt::Instance()->gOscMixingParamChoice = util::MixingTypeFromString(mixparamchoice);
 
   // Print settings
   cout << "\n[Job inputs]" << endl;

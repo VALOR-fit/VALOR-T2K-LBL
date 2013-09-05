@@ -15,7 +15,11 @@ void comp_bestfit_spectra
   const char * nooscfile = 0,          /* if set, superimpose no oscillation prediction	 */
   bool rebin = false,
   double emax = 6,
-  double nmax = 20
+  double nmax = 20,
+  const char * bf_hist_name1  = "sk_1Rmutotal",
+  const char * bf_hist_name2  = "sk_1Rmutotal",
+  const char * yaxis_subtract = "#splitline{\'Octant 1\' - \'Octant 2\'}{(Events per bin)}",
+  const char * yaxis_ratio    = "\'Octant 1\' / \'Octant 2\'"
 )
 
 {
@@ -33,12 +37,12 @@ void comp_bestfit_spectra
 
   TFile * f1 = new TFile(file1,"read");
   f1->cd();
-  TH1D * hfit1 = (TH1D *) f1->Get("sk_1Rmutotal");
+  TH1D * hfit1 = (TH1D *) f1->Get(bf_hist_name1);
   assert(hfit1);
 
   TFile * f2 = new TFile(file2,"read");
   f2->cd();
-  TH1D * hfit2 = (TH1D *) f2->Get("sk_1Rmutotal");
+  TH1D * hfit2 = (TH1D *) f2->Get(bf_hist_name2);
   assert(hfit2);
 
   TH1D * hdata = 0;
@@ -142,11 +146,10 @@ void comp_bestfit_spectra
   low1->cd();
   TH1F * hframelow1 = (TH1F*)low1->DrawFrame(emin,-0.03,emax,0.03);
   hframelow1->GetXaxis()->SetTitle("E_{reco} (GeV)");
-  //hframelow1->GetYaxis()->SetTitle("\'2+N\'-\'2+8\' (Events per bin)");
-  hframelow1->GetYaxis()->SetTitle("#splitline{\'Octant 1\' - \'Octant 2\'}{(Events per bin)}");
+  hframelow1->GetYaxis()->SetTitle(yaxis_subtract);
   hframelow1->GetYaxis()->SetLabelSize(0.09);
   hframelow1->GetYaxis()->SetTitleSize(0.11);
-  hframelow1->GetYaxis()->SetTitleOffset(0.62);
+  hframelow1->GetYaxis()->SetTitleOffset(0.57);
   hframelow1->GetYaxis()->SetNdivisions(505);
   hframelow1->GetXaxis()->SetLabelSize(0.11);
   hframelow1->GetXaxis()->SetTitleSize(0.11);
@@ -159,8 +162,7 @@ void comp_bestfit_spectra
   low2->cd();
   TH1F * hframelow2 = (TH1F*)low2->DrawFrame(emin,0.98,emax,1.02);
   hframelow2->GetXaxis()->SetTitle("E_{reco} (GeV)");
-  //hframelow2->GetYaxis()->SetTitle("\'2+N\' / \'2+8\'");
-  hframelow2->GetYaxis()->SetTitle("\'Octant 1\' / \'Octant 2\'");
+  hframelow2->GetYaxis()->SetTitle(yaxis_ratio);
   hframelow2->GetYaxis()->SetLabelSize(0.09);
   hframelow2->GetYaxis()->SetTitleSize(0.11);
   hframelow2->GetYaxis()->SetTitleOffset(0.62);

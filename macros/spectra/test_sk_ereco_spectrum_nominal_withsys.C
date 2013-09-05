@@ -313,6 +313,56 @@ double * create_syst_array(int mode = 0)
     sys[47] =        1.00174 ;
   }//mode == 7
 
+  else if(mode == 8) { //2+all run1-3 best fit for sinsqtheta
+    sys[0] =    -1.23446e-05     ; //sk escale
+    sys[2] =      0.0133159       ; //sk ccqe rc ...
+    sys[3] =      0.00542347       ;
+    sys[4] =      0.121166        ;
+    sys[1] =      0.000613943    ; //sk ccqe other
+    sys[5] =        -0.0479978       ; //sk ccnqe
+    sys[6] =   0.250777        ; //sk nc
+    sys[7] =        -0.00231493     ; //sk nue cc
+    sys[8] =      0.991613        ; //banff ...
+    sys[9] =      1.00103 ;
+    sys[10] =      0.995631        ;
+    sys[11] =      0.957844        ;
+    sys[12] =      0.896238        ;
+    sys[13] =      0.910379        ;
+    sys[14] =      0.938265        ;
+    sys[15] =      0.968748        ;
+    sys[16] =      0.988027        ;
+    sys[17] =      0.995229        ;
+    sys[18] =     1.00106	 ;
+    sys[19] =     0.97962       ;
+    sys[20] =     0.958024        ;
+    sys[21] =     0.947954        ;
+    sys[22] =     0.955464        ;
+    sys[23] =     0.984801        ;
+    sys[24] =     1.07351 ;
+    sys[25] =     1.01057 ;
+    sys[26] =     0.945421        ;
+    sys[27] =     0.642812        ;
+    sys[28] =     1.38331 ;
+    sys[29] =     1.37192 ;
+    sys[30] =     1.01324 ;
+    sys[31] =     -0.0143919      ; //pf
+    sys[32] =     6.11723e-07     ; //sf
+    sys[36] =  0.0632484       ; //bindE
+    sys[33] =         -0.0482414      ; //wshape
+    sys[34] =     -0.0112547       ; //ccoth shape
+    sys[35] =         -0.163483       ; //pdd
+    sys[37] =     0.00481022      ; //cccoh
+    sys[38] =         0.0338681       ; //nc1pic
+    sys[39] =     0.0515436       ;//ncoth
+    sys[40] =    -6.9191e-05      ;//nuetonumu
+    sys[41] =       0.0303501       ;//nutonubar
+    sys[42] =        1       ; //fsi ...
+    sys[43] =        0.99999 ;
+    sys[44] =        0.999953        ;
+    sys[45] =        0.998393        ;
+    sys[46] =        1.00003 ;
+    sys[47] =        1.00179 ;
+  }//mode == 8
 
   return sys;
 }
@@ -331,7 +381,9 @@ void test_sk_ereco_spectrum_nominal_withsys
   const char * sk_sample            = "1Rmu",                         /* options: "1Rmu", "1Re" */
   //bool         disable_banff_tuning = false,                          /* */
   const char * config_file          = "analysis_configuration.xml",   /* */
-  bool         print_spectrum       = false                           /* */
+  bool         print_spectrum       = false,                          /* */
+  const char * mixparamchoice       = "sinsq2theta",
+  const char * hierarchy            = "normal"
   /*
   //sk
   double       input_sk_escale = 0,
@@ -396,8 +448,8 @@ void test_sk_ereco_spectrum_nominal_withsys
   const char * config  = Form("%s/config/%s", gSystem->Getenv("T2KOSCANA"), config_file);
 
   // Global options
-  Opt::Instance()->gOscMixingParamChoice = conv::kNuMixSinsq2Theta;
-  Opt::Instance()->gMassHierarchyAssumed = conv::kNmhNormal;
+  Opt::Instance()->gMassHierarchyAssumed = util::HierarchyFromString(hierarchy);
+  Opt::Instance()->gOscMixingParamChoice = util::MixingTypeFromString(mixparamchoice);
 
   // Set physics hypothesis
   if(Opt::Instance()->gOscMixingParamChoice == conv::kNuMixSinsq2Theta) {
