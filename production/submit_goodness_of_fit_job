@@ -49,7 +49,7 @@ $resource               = "interactive"                 unless defined $resource
 $tag                    = "goodness"                    unless defined $tag;
 $run                    = 0                             unless defined $run;
 $ntoys                  = 50                            unless defined $ntoys;
-$nruns                  = 20                            unless defined $ntoys;
+$nruns                  = 20                            unless defined $nruns;
 $fitparamlist           = "nuosc3f_numudisapp_fix4+nuisanceselection"     unless defined $fitparamlist;
 $fitoption              = "minuit"                      unless defined $fitoption;
 $job_dir                = `pwd`                         unless defined $job_dir;
@@ -67,11 +67,11 @@ if( !defined $cput) {
 mkpath ($job_dir, {verbose => 1, mode=>0777}); 
 die("$job_dir doesn't exist") unless -d $job_dir;
 
-$batch_script  = "$tag-$irun-$run.pbs";
-$job_name      = "$tag-$irun-$run";
-
 $irun = 0;
 while($irun < $nruns) {
+  $batch_script  = "$tag-$irun-$run.pbs";
+  $job_name      = "$tag-$irun-$run";
+
   $command = "root2k -l -b -q \'$softw_dir/macros/fit/stat/calculate_goodness_of_fit.C(\"$tag-$irun\",$run,\"$fitresultsfile\",\"$config_file\",\"$fitparamlist\",\"$fitoption\",$ntoys,\"$mixparamchoice\",\"$masshierarchy\")\'";
 
   print "$command \n";
