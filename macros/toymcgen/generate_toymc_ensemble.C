@@ -40,6 +40,7 @@ void generate_toymc_ensemble
   // Global options
   Opt::Instance()->gOscMixingParamChoice = kNuMixSinsq2Theta;
   Opt::Instance()->gMassHierarchyAssumed = kNmhNormal;
+  Opt::Instance()->gOscOctantChoice      = kNuOctantOne;
 
   // Check whether some osc. params need to be randomized
   bool randomize_mixing12      = (TMath::Abs(input_mixing12 + 999) < kASmallNum);

@@ -8,8 +8,8 @@
 TMatrixD * TH2D2TMatrixD(TH2D * h);
 
 void make_skdet_fsi(
-		    const char * fsifilename = "inputs/official/2013/skdetfsi/FSIandSIErrors2013.root",
-		    const char * skdfilename = "inputs/official/2013/skdetfsi/SKDetErrors2013.root",
+		    const char * fsifilename = "inputs/official/2013/skdetfsi/skdet_mat_numuoa_2013a.root",//"inputs/official/2013/skdetfsi/FSIandSIErrors2013.root",
+		    const char * skdfilename = "SKDetErrors2013.root",//"inputs/official/2013/skdetfsi/SKDetErrors2013.root",
 		    const char * outfilename = "SKDetFSISIErrors2013.root"
 ){
 
@@ -18,12 +18,20 @@ void make_skdet_fsi(
 
   //get fsi matrix
   TH2D * h_fsi = 0;
+  TMatrixDSym * mm_fsi = 0;
   f_fsi->GetObject("FSICovariance",h_fsi);
   if(!h_fsi) {
-    cerr << "FSI matrix not found" << endl;
-    exit(1);
+    f_fsi->GetObject("covmat_fsi",mm_fsi);
+    if(!mm_fsi) {
+      f_fsi.ls();
+      cerr << "FSI matrix not found" << endl;
+      exit(1);
+    }
   }
-  TMatrixD m_fsi = TH2D2TMatrixD(h_fsi);
+  if(h_fsi)
+    TMatrixD m_fsi = TH2D2TMatrixD(h_fsi);
+  else
+    TMatrixD m_fsi(*mm_fsi);
   cout << "FSI matrix:" << endl;
   m_fsi.Print();
 
@@ -31,8 +39,11 @@ void make_skdet_fsi(
   TH2D * h_skd = 0;
   f_skd->GetObject("SKDetCovariance",h_skd);
   if(!h_skd) {
-    cerr << "SKDet matrix not found" << endl;
-    exit(1);
+    f_skd->GetObject("covmat_fsi",mm_skd);
+    if(!mm_skd) {
+      cerr << "SKDet matrix not found" << endl;
+      exit(1);
+    }
   }
   TMatrixD m_skd = TH2D2TMatrixD(h_skd);
   cout << "SKDet matrix:" << endl;
@@ -50,7 +61,7 @@ void make_skdet_fsi(
 
   //save
   TFile * fout = new TFile(outfilename,"recreate");  
-  m_out.Write("skdet_fsi_cov");
+  m_out.Write("covmat_sk_fsi");
   fout->Close();
 
   //check inverse

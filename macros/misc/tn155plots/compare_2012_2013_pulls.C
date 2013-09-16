@@ -1,7 +1,6 @@
 void compare_2012_2013_pulls(
 			     const char * f2012 = "2012results/DATA/2all/fitresults_3.root",
-			     const char * f2013 = "2013results/DATA/run1-4_nuis3fixdcp_sintheta_normal/combination/run1-4_nuis3fixdcp_sintheta_normal_pulls.root")
-//const char * f2013 = "2013results/DATA/run1-3_nuis3fixdcp_sintheta_normal/combination/run1-3_nuis3fixdcp_sintheta_normal_pulls.root")
+			     const char * f2013 = "2013results/DATA/run1-3_nuis3fixdcp_sintheta_normal/combination/run1-3_nuis3fixdcp_sintheta_normal_2_pulls.root")
 {
   TFile f2(f2012);
   TH1D * h2 = 0;
