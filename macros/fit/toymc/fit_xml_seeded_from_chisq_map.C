@@ -271,18 +271,26 @@ void fit_xml_seeded_from_chisq_map
       bestfit_chisq5 = fit_inputs->BestFitChisquare();
       fit_inputs->SetChisqDefinition(false);
 
-      bestfit_mixing12 = fparm->BestFitValue(conv::kPhypMixing12);
-      bestfit_mixing13 = fparm->BestFitValue(conv::kPhypMixing13);
+      if(fparm->Exists(conv::kPhypMixing12))
+	 bestfit_mixing12 = fparm->BestFitValue(conv::kPhypMixing12);
+      if(fparm->Exists(conv::kPhypMixing13))
+	 bestfit_mixing13 = fparm->BestFitValue(conv::kPhypMixing13);
       bestfit_mixing23 = fparm->BestFitValue(conv::kPhypMixing23);
-      bestfit_deltacp  = fparm->BestFitValue(conv::kPhypDeltaCP);
-      bestfit_dm12sq   = fparm->BestFitValue(conv::kPhypDm12sq);
+      if(fparm->Exists(conv::kPhypDeltaCP))
+	bestfit_deltacp  = fparm->BestFitValue(conv::kPhypDeltaCP);
+      if(fparm->Exists(conv::kPhypDm12sq))
+	bestfit_dm12sq   = fparm->BestFitValue(conv::kPhypDm12sq);
       bestfit_dm23sq   = fparm->BestFitValue(conv::kPhypDm23sq);
 
-      err_mixing12 = fparm->MigradError(conv::kPhypMixing12);
-      err_mixing13 = fparm->MigradError(conv::kPhypMixing13);
+      if(fparm->Exists(conv::kPhypMixing12))
+	 err_mixing12 = fparm->MigradError(conv::kPhypMixing12);
+      if(fparm->Exists(conv::kPhypMixing13))
+	 err_mixing13 = fparm->MigradError(conv::kPhypMixing13);
       err_mixing23 = fparm->MigradError(conv::kPhypMixing23);
-      err_deltacp  = fparm->MigradError(conv::kPhypDeltaCP);
-      err_dm12sq   = fparm->MigradError(conv::kPhypDm12sq);
+      if(fparm->Exists(conv::kPhypDeltaCP))
+	err_deltacp  = fparm->MigradError(conv::kPhypDeltaCP);
+      if(fparm->Exists(conv::kPhypDm12sq))
+	err_dm12sq   = fparm->MigradError(conv::kPhypDm12sq);
       err_dm23sq   = fparm->MigradError(conv::kPhypDm23sq);
 
       if(fparm->Exists(conv::kNuisBANFF00)) bestfit_banff_00 = fparm->BestFitValue(conv::kNuisBANFF00);
@@ -395,11 +403,15 @@ void fit_xml_seeded_from_chisq_map
       streamer << "\\chi^2_{bf} \t" << bestfit_chisq << endl;
       streamer << "\\chi^2_{gof} \t" << bestfit_chisq5 << endl << endl;
 
-      streamer << util::AsStringPaperRooTex(conv::kPhypMixing12) << "\t" << bestfit_mixing12 << "\t" << err_mixing12 << endl;
-      streamer << util::AsStringPaperRooTex(conv::kPhypMixing13) << "\t" << bestfit_mixing13 << "\t" << err_mixing13 << endl;
+      if(fparm->Exists(conv::kPhypMixing12))
+	 streamer << util::AsStringPaperRooTex(conv::kPhypMixing12) << "\t" << bestfit_mixing12 << "\t" << err_mixing12 << endl;
+      if(fparm->Exists(conv::kPhypMixing13))
+	 streamer << util::AsStringPaperRooTex(conv::kPhypMixing13) << "\t" << bestfit_mixing13 << "\t" << err_mixing13 << endl;
       streamer << util::AsStringPaperRooTex(conv::kPhypMixing23) << "\t" << bestfit_mixing23 << "\t" << err_mixing23 << endl;
-      streamer << util::AsStringPaperRooTex(conv::kPhypDeltaCP) << "\t" << bestfit_deltacp  << "\t" << err_deltacp  << endl;
-      streamer << util::AsStringPaperRooTex(conv::kPhypDm12sq) << "\t" << bestfit_dm12sq   << "\t" << err_dm12sq   << endl;
+      if(fparm->Exists(conv::kPhypDeltaCP))
+	streamer << util::AsStringPaperRooTex(conv::kPhypDeltaCP) << "\t" << bestfit_deltacp  << "\t" << err_deltacp  << endl;
+      if(fparm->Exists(conv::kPhypDm12sq))
+	streamer << util::AsStringPaperRooTex(conv::kPhypDm12sq) << "\t" << bestfit_dm12sq   << "\t" << err_dm12sq   << endl;
       streamer << util::AsStringPaperRooTex(conv::kPhypDm23sq) << "\t" << bestfit_dm23sq   << "\t" << err_dm23sq   << endl;
 
       if(fparm->Exists(conv::kNuisSuperkEnergyScale)) streamer << util::AsStringPaperRooTex(conv::kNuisSuperkEnergyScale) << "\t" << bestfit_skdet_energyscale << "\t" << err_skdet_energyscale << endl;
@@ -493,8 +505,11 @@ void fit_xml_seeded_from_chisq_map
   c1->SaveAs(Form("contour_%d.pdf",dataset_id));
 
   // Also plot the pulls & fitted values of the systematics
-  TH1D * hsystpull = new TH1D("hsystpull","hsystpull",fparm->Size()-6,0,fparm->Size()-6);
-  TH1D * hsystfit = new TH1D("hsystfit","hsystfit",fparm->Size()-6,0,fparm->Size()-6);
+  int noscparams = 6;
+  if(!fparm->Exists(conv::kPhypMixing12))
+     noscparams = 2;
+  TH1D * hsystpull = new TH1D("hsystpull","hsystpull",fparm->Size()-noscparams,0,fparm->Size()-noscparams);
+  TH1D * hsystfit = new TH1D("hsystfit","hsystfit",fparm->Size()-noscparams,0,fparm->Size()-noscparams);
   if(fit_param_list == "nuosc3f_numudisapp_fix4+nuisanceselection") {
     hsystpull->GetXaxis()->SetBinLabel(1, "SF");
     hsystpull->GetXaxis()->SetBinLabel(2, "Piless-Delta");
@@ -529,7 +544,7 @@ void fit_xml_seeded_from_chisq_map
     hsystfit->SetBinContent(7, (bestfit_banff_ccqeE0 - bf_banff_ccqeE0)  / err_banff_ccqeE0);
     hsystfit->SetBinContent(8 ,bestfit_skdet_energyscale      / err_skdet_energyscale);
   }
-  else if(fit_param_list == "nuosc3f_numudisapp_fix4+nuisance") {
+  else if(fit_param_list == "nuosc3f_numudisapp_fix4+nuisance" || fit_param_list == "numudisapp2f+nuisance") {
     int ip = 1;
     hsystpull->GetXaxis()->SetBinLabel(ip, util::AsStringPaperRooTex(conv::kNuisSuperkEnergyScale).c_str());
     hsystpull->SetBinContent(ip, (bestfit_skdet_energyscale - 0) / err_skdet_energyscale);
