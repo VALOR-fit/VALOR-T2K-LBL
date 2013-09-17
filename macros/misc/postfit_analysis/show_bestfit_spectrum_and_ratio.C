@@ -12,7 +12,8 @@ void show_bestfit_spectrum_and_ratio
   const char * nooscfile,         /* contains the no-oscillation prediction */
   bool rebin = false,             /* rebin? */
   double emax = 6,                /* max energy plotted */
-  double nmax = 20                /* max oy y axis in spectrum plots */
+  double nmax = 20,               /* max oy y axis in spectrum plots */
+  const char * bestfitname = "sk_1Rmutotal"
 )
 
 {
@@ -31,7 +32,7 @@ void show_bestfit_spectrum_and_ratio
 
   TFile * ffit = new TFile(bestfitfile,"read");
   ffit->cd();
-  TH1D * hfit = (TH1D *) ffit->Get("sk_1Rmutotal");
+  TH1D * hfit = (TH1D *) ffit->Get(bestfitname);
   assert(hfit);
   TFile * fd = new TFile(datafile,"read");
   TH1D * hdata = (TH1D *) fd->Get("obs_spectrum");

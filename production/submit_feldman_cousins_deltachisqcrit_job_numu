@@ -36,19 +36,25 @@ use File::Path;
 
 $iarg=0;
 foreach (@ARGV) {
-  if($_ eq '--resource'                      ) { $resource      = $ARGV[$iarg+1]; }
-  if($_ eq '--cpu-time'                      ) { $cput          = $ARGV[$iarg+1]; }
-  if($_ eq '--fit-results'                   ) { $inputdir      = $ARGV[$iarg+1]; }
-  if($_ eq '--tag'                           ) { $tag           = $ARGV[$iarg+1]; }
-  if($_ eq '--num-sinsq2theta23-bins-per-job') { $nbins_per_job = $ARGV[$iarg+1]; }
-  if($_ eq '--job-dir'                       ) { $job_dir       = $ARGV[$iarg+1]; }
-  if($_ eq '--softw-dir'                     ) { $softw_dir     = $ARGV[$iarg+1]; }
+  if($_ eq '--resource'                      ) { $resource         = $ARGV[$iarg+1]; }
+  if($_ eq '--cpu-time'                      ) { $cput             = $ARGV[$iarg+1]; }
+  if($_ eq '--fit-results'                   ) { $inputdir         = $ARGV[$iarg+1]; }
+  if($_ eq '--tag'                           ) { $tag              = $ARGV[$iarg+1]; }
+  if($_ eq '--num-sinsq2theta23-bins-per-job') { $nbins_per_job    = $ARGV[$iarg+1]; }
+  if($_ eq '--start-sinsq2theta23-bin'       ) { $curr_job_bin_min = $ARGV[$iarg+1]; }
+  if($_ eq '--start-dm23sq-bin'              ) { $dm23sq_min       = $ARGV[$iarg+1]; }
+  if($_ eq '--stop-dm23sq-bin'               ) { $dm23sq_max       = $ARGV[$iarg+1]; }
+  if($_ eq '--job-dir'                       ) { $job_dir          = $ARGV[$iarg+1]; }
+  if($_ eq '--softw-dir'                     ) { $softw_dir        = $ARGV[$iarg+1]; }
   $iarg++;
 }
-$resource       = "RAL" unless defined $resource;
-$nbins_per_job  = 5     unless defined $nbins_per_job;
-$job_dir        = `pwd` unless defined $job_dir;
-$softw_dir      = `pwd` unless defined $softw_dir;
+$resource         = "RAL" unless defined $resource;
+$nbins_per_job    = 5     unless defined $nbins_per_job;
+$job_dir          = `pwd` unless defined $job_dir;
+$softw_dir        = `pwd` unless defined $softw_dir;
+$curr_job_bin_min = 1     unless defined $curr_job_bin_min;
+$dm23sq_min       = 1     unless defined $dm23sq_min;
+$dm23sq_max       = 101   unless defined $dm23sq_max;
 
 if( !defined $cput) {
   if($resource eq "RAL"    )  { $cput = "6:00:00";  }
@@ -57,21 +63,20 @@ if( !defined $cput) {
   if($resource eq "Grid"   )  { $cput = "??";       }
 }
 
-$njobs            = 100 / $nbins_per_job;
+$njobs            = ((101-$curr_job_bin_min) / $nbins_per_job) + 1; #101 sinsq2theta23 bins
 $ijob             = 0;
-$curr_job_bin_min = 1;
-$curr_job_bin_max = $nbins_per_job;
+$curr_job_bin_max = $curr_job_bin_min - 1 + $nbins_per_job;
 
 mkpath ($job_dir, {verbose => 1, mode=>0777});
 die("$job_dir doesn't exist") unless -d $job_dir;
      
 while($ijob < $njobs) {
 
-  if($ijob == $njobs-1) {
-     $curr_job_bin_max++; #odd number of bins, last job has 1 more
-  }
+  #if($ijob == $njobs-1) {
+  #   $curr_job_bin_max++; #odd number of bins, last job has 1 more
+  #}
   $outputfile = "$tag$ijob.root";
-  $command    = "root2k -l -b -q \'$softw_dir/macros/contour/fc/make_feldman_cousins_deltachisqcrit_surface.C(\"$inputdir\",\"$outputfile\",$curr_job_bin_min,$curr_job_bin_max)\'"; 
+  $command    = "root2k -l -b -q \'$softw_dir/macros/contour/fc/make_feldman_cousins_deltachisqcrit_surface.C(\"$inputdir\",\"$outputfile\",$curr_job_bin_min,$curr_job_bin_max,$dm23sq_min,$dm23sq_max)\'"; 
 
   print "Submitting job... $ijob \n";
   print "  $command \n";

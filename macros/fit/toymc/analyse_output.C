@@ -243,8 +243,11 @@ void analyse_output
   //const int nbins = 16;
   //double binedges[nbins+1] = {0.0,0.3,0.4,0.5,0.6,0.7,0.8,0.9,1.0,1.1,1.25,1.5,2,3,4,6,30};
   //KIT binning
-  const int nbins = 20;
-  double binedges[nbins+1] = {0.0,0.1,0.2,0.3,0.4,0.5,0.6,0.7,0.8,0.9,1.0,1.2,1.4,1.6,2.0,2.5,3.0,4.0,6.0,10.0,30.0};
+  //const int nbins = 20;
+  //double binedges[nbins+1] = {0.0,0.1,0.2,0.3,0.4,0.5,0.6,0.7,0.8,0.9,1.0,1.2,1.4,1.6,2.0,2.5,3.0,4.0,6.0,10.0,30.0};
+  //PRL binning
+  const int nbins = 29;
+  double binedges[nbins+1] = {0.00,0.25,0.30,0.35,0.40,0.45,0.50,0.55,0.60,0.65,0.70,0.75,0.80,0.85,0.90,0.95,1.00,1.10,1.20,1.30,1.40,1.60,1.80,2.00,2.50,3.00,4.00,6.00,10.00,30.00};
   TH1D * spectrum_noosc_rebin = spectrum_noosc->Rebin(nbins,"spectrum_noosc_rebin",binedges);
   TH1D * spectrum_obs_rebin = spectrum_obs->Rebin(nbins,"spectrum_obs_rebin",binedges);
   TH1D * spectrum_bf_rebin = spectrum_bf->Rebin(nbins,"spectrum_bf_rebin",binedges);
@@ -308,12 +311,15 @@ void analyse_output
 
   //get comparison hists
   TH1D * spectrum_other = 0;//, *spectrum_other_rebin = 0;
-  TFile f_other_spectra(other_spectrum_file); 
-  f_other_spectra.GetObject(other_spectrum_histname, spectrum_other);
+  TFile * f_other_spectra = new TFile(other_spectrum_file); 
+  if(f_other_spectra)
+    f_other_spectra->GetObject(other_spectrum_histname, spectrum_other);
   if(!spectrum_other) {
-    f_other_spectra.ls();
+    if(f_other_spectra)
+      f_other_spectra->ls();
     cout << other_spectrum_histname << endl;
-    return;
+    spectrum_other = new TH1D(*spectrum_bf);
+    //return;
   }
   TH1D * spectrum_other_rebin = spectrum_other->Rebin(nbins,"spectrum_noosc_rebin",binedges);
   TH1D * spectrum_ratio_other = new TH1D("","", n_ereco_bins, ereco_bin_edges);
@@ -491,8 +497,8 @@ void analyse_output
   if(spectrum_other_rebin) {
     //PAPER
     double marksize = 0.8;
-    double top_plot_fraction = 0.6;
-    double ymax = 35;
+    double top_plot_fraction = 0.55;
+    double ymax = 37;
     gStyle->SetLineStyleString(11,"10 18");
 
     spectrum_noosc_rebin->SetLabelSize(0);
@@ -518,7 +524,10 @@ void analyse_output
 
     TCanvas *csaxis = new TCanvas();
     csaxis->cd(1);
+    csaxis->SetTopMargin(0.01);
     csaxis->SetBottomMargin(1-top_plot_fraction);
+    csaxis->SetRightMargin(0.01);
+    csaxis->SetLeftMargin(0.12);
     spectrum_noosc_rebin->GetYaxis()->SetRangeUser(0,ymax);
     spectrum_noosc_rebin->Draw("");
     spectrum_bf_rebin->Draw("same");
@@ -663,10 +672,15 @@ void analyse_output
     //draw ratio
     TPad * pad3 = new TPad("pad3","pad3",0,0,1,1);
     pad3->SetTopMargin(top_plot_fraction);
+    pad3->SetBottomMargin(0.11);
+    pad3->SetRightMargin(0.01);
+    pad3->SetLeftMargin(0.12);
     pad3->SetFillColor(0);
     pad3->SetFillStyle(0);
     pad3->Draw();
     pad3->cd(0);
+    per_ratio_bf->GetXaxis()->SetTitleOffset(0.8);
+    per_ratio_bf->GetYaxis()->SetTitleOffset(0.9);
     per_ratio_bf->Draw("");
     //per_ratio_other->Draw("same");
     spectrum_line->Draw("same");
@@ -675,6 +689,9 @@ void analyse_output
     per_obs->Draw("PE0same");
     csaxis->SaveAs("sk_spectrum_and_ratio_per100mev.eps");
     csaxis->SaveAs("sk_spectrum_and_ratio_per100mev.pdf");
+    cout << per_noosc->Integral() << endl;
+    cout << per_bf   ->Integral() << endl;
+    cout << per_obs  ->Integral() << endl;
 
     for(int ix = 1; ix <= per_ratio_bf->GetNbinsX(); ix++) {
       if(spectrum_obs_rebin->GetBinContent(ix) != per_obs->GetBinContent(ix))
