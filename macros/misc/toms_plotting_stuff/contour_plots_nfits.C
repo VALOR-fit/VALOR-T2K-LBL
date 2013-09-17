@@ -17,7 +17,8 @@ void contour_plots_nfits(
 	   const char * mixingparam  = "sinsq2theta", /* for the x-axis */
 	   double       leg_font_size = 0.05,
 	   bool         cl_in_leg = false,
-	   bool         bf_in_leg = false
+	   bool         bf_in_leg = false,
+	   double       line_width = 2
 )
 {
   using namespace std;
@@ -161,9 +162,9 @@ void contour_plots_nfits(
     }
     else
       bestfit_point[ifit]->SetMarkerSize(0.5);
-    h68[ifit]->SetLineWidth(2);
-    h90[ifit]->SetLineWidth(2);
-    h68[ifit]->SetLineStyle(2);
+    h68[ifit]->SetLineWidth(line_width);
+    h90[ifit]->SetLineWidth(line_width);
+    h68[ifit]->SetLineStyle(line_width);
     h90[ifit]->SetLineStyle(1);
     //color
     Color_t icolor = kBlack;

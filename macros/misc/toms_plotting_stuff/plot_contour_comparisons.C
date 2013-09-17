@@ -60,6 +60,12 @@ void plot_contour_comparisons
   TMarker bestfit_2all_octant2(0.999,0.002441,29);
   bestfit_2all.SetMarkerSize(1.8);
   bestfit_2all.SetMarkerColor(kBlack);
+  TMarker bestfit_2all_from_sinsqtheta(0.999,0.00244,29);
+  bestfit_2all_from_sinsqtheta.SetMarkerSize(1.8);
+  bestfit_2all_from_sinsqtheta.SetMarkerColor(kBlack);
+  TMarker bestfit_2all_2nu(1.000,0.002475,29);
+  bestfit_2all_2nu.SetMarkerSize(1.8);
+  bestfit_2all_2nu.SetMarkerColor(kBlack);
 
   double linewidth_val = 3;
 
@@ -2033,6 +2039,110 @@ void plot_contour_comparisons
   c->SaveAs("contour_compare_constdchisq_external_thick.eps");
 
 
+
+
+  //PAPER 2nd submission. Using sinsqtheta-marginalised contour PRL ARXIV
+  TFile fsinsq("2012results/DATA/sintheta23/combine/combination/sinsq2theta_contour_conversion.root");
+  TH2D * hsinsq68 = 0, * hsinsq90 = 0;
+  fsinsq.GetObject("hdchisq_68",hsinsq68);
+  fsinsq.GetObject("hdchisq_68",hsinsq90);
+  hsinsq68->SetContourLevel(0,2.30);
+  hsinsq90->SetContourLevel(0,4.61);
+  hsinsq68->SetLineWidth(3);
+  hsinsq90->SetLineWidth(3);
+
+  //Run 1-3 const dchisq only with externals + old t2k
+  c->SetRightMargin(0.01);
+  c->SetTopMargin(0.01);
+  c->SetBottomMargin(0.14);
+  osc_param_space->GetXaxis()->SetRangeUser(0.82,1.0);
+  osc_param_space->GetYaxis()->SetRangeUser(0.0018,0.0042);
+  cout <<   osc_param_space->GetXaxis()->GetTitleFont() << endl;
+  osc_param_space->GetXaxis()->SetTitleFont(132);
+  osc_param_space->Draw(); 
+  //h_dcall_123_68->Draw("cont3same");
+  g_run12_90_statsyst->SetLineStyle(3);
+  g_run12_90_statsyst->SetLineColor(kBlack);
+  ll_minos->SetLineColor(kRed);
+  g_skle->SetLineColor(kGreen+2);
+  g_skzen->SetLineColor(kBlue);
+  hsinsq90->SetLineStyle(1);
+  hsinsq90->SetLineColor(kBlack);
+  g_skzen->Draw("l");
+  g_skle->Draw("l");
+  ll_minos->Draw("cont3same");
+  g_run12_90_statsyst->Draw("l");
+  hsinsq90->Draw("cont3same");
+  bestfit_2all_from_sinsqtheta.SetMarkerStyle(23);
+  bestfit_2all_from_sinsqtheta.Draw();
+  leg2->Clear();
+  delete leg2;
+  leg2 = new TLegend(0.185,0.58,0.45,0.95);
+  leg2->SetFillColor(0);
+  leg2->SetFillStyle(0);
+  leg2->SetBorderSize(0);
+  cout << leg2->GetTextFont() << endl;
+  leg2->SetTextFont(132);
+  cout << leg2->GetTextFont() << endl;
+  //leg2->AddEntry(h_dcall_123_68, "T2K 3#nu 68% CL","l");
+  //leg2->AddEntry(h_dcall_123_90, "T2K 3#nu (#theta_{23} #leq #pi/4) 90% CL","l");
+  //leg2->AddEntry(h_dcall_octant2only23_90, "T2K 3#nu (#theta_{23} #geq #pi/4) 90% CL","l");
+  leg2->AddEntry(hsinsq90, "T2K 3#nu 90% CL","l");
+  leg2->AddEntry("g_run12_90_statsyst", "T2K 2011 2#nu 90% CL", "l");
+  leg2->AddEntry(ll_minos, "MINOS 2013 2#nu 90% CL", "l");
+  leg2->AddEntry("g_skzen", "SK zenith 2012 3#nu 90% CL", "l");
+  leg2->AddEntry("g_skle", "SK L/E 2012 2#nu 90% CL", "l");
+  leg2->SetX2NDC(0.6);
+  leg2->SetTextSize(0.06);
+  leg2->Draw();
+  TLegend * legbf = new TLegend(0.185, 0.17, 0.45, 0.30);
+  legbf->SetFillColor(0);
+  legbf->SetFillStyle(0);
+  legbf->SetBorderSize(0);
+  legbf->SetTextFont(132);
+  //legbf->AddEntry(&bestfit_2all, "T2K 3#nu (#theta_{23} #leq #pi/4) best fit","p");
+  //legbf->AddEntry(&bestfit_2all_octant2, "T2K 3#nu (#theta_{23} #geq #pi/4) best fit","p");
+  legbf->AddEntry(&bestfit_2all_from_sinsqtheta, "T2K 3#nu best fit","p");
+  legbf->SetX2NDC(0.6);
+  legbf->SetTextSize(0.06);
+  legbf->Draw();
+  cout << "text size " << leg2->GetTextSize() << endl;
+  c->SaveAs("contour_compare_constdchisq_external_sinsqtheta.pdf");
+  c->SaveAs("contour_compare_constdchisq_external_sinsqtheta.png");
+  c->SaveAs("contour_compare_constdchisq_external_sinsqtheta.eps");
+
+  //add external best-fit points
+  TMarker m_minos(0.950,0.00241,24);
+  m_minos.SetMarkerColor(kRed);
+  m_minos.SetMarkerSize(1.8);
+  TMarker m_skle(1.000,0.0025,24);
+  m_skle.SetMarkerColor(kGreen+2);
+  m_skle.SetMarkerSize(1.8);
+  TMarker m_skzen(0.9775,0.00266,24);
+  m_skzen.SetMarkerColor(kBlue);
+  m_skzen.SetMarkerSize(1.8);
+  m_minos->Draw();
+  m_skle->Draw();
+  m_skzen->Draw();
+  g_skzen->Draw("l");
+  g_skle->Draw("l");
+  ll_minos->Draw("cont3same");
+  g_run12_90_statsyst->Draw("l");
+  hsinsq90->Draw("cont3same");
+  bestfit_2all_from_sinsqtheta.SetMarkerStyle(23);
+  bestfit_2all_from_sinsqtheta.Draw();
+  c->SaveAs("contour_compare_constdchisq_external_sinsqtheta_markers.pdf");
+  c->SaveAs("contour_compare_constdchisq_external_sinsqtheta_markers.png");
+  c->SaveAs("contour_compare_constdchisq_external_sinsqtheta_markers.eps");
+
+  //also draw the sinsq2theta contours, to check the difference between the
+  //margninalised & 2nd octant contour
+  h_dcall_octant2only23_90->SetLineStyle(2);
+  h_dcall_octant2only23_90->SetLineColor(kBlack);
+  h_dcall_123_90->Draw("cont3same");
+  h_dcall_octant2only23_90->Draw("cont3same");
+  c->SaveAs("contour_compare_constdchisq_external_sinsqtheta_check.pdf");
+
   //LEPTON PHOTON
   //Run 1-3 FC only with externals (including icecube)
   osc_param_space->GetXaxis()->SetRangeUser(0.72,1.0);
@@ -2102,6 +2212,100 @@ void plot_contour_comparisons
   c->SaveAs("contour_compare_external_icecube_thick.png");
   c->SaveAs("contour_compare_external_icecube_thick.eps");
 
+  //compare octant 1, octant 2, 2 flavour
+  TFile f2nu("2012results/DATA/2nu/combination/fitresults_3.root");
+  TH2D * h_dcall_2nu = 0;
+  f2nu.GetObject("hdchisq", h_dcall_2nu);
+  TH2D * h_dcall_2nu_68 = new TH2D(*h_dcall_2nu);
+  TH2D * h_dcall_2nu_90 = new TH2D(*h_dcall_2nu);
+  h_dcall_2nu_68->SetContour(1);
+  h_dcall_2nu_68->SetContourLevel(0,2.30);
+  h_dcall_2nu_68->SetLineStyle(2);
+  h_dcall_2nu_68->SetLineWidth(linewidth_val);
+  h_dcall_2nu_90->SetContour(1);
+  h_dcall_2nu_90->SetContourLevel(0,4.61);
+  h_dcall_2nu_90->SetLineStyle(1);
+  h_dcall_2nu_90->SetLineWidth(linewidth_val);
+  //style1
+  h_dcall_123_90->SetLineWidth(linewidth_val);
+  h_dcall_123_90->SetLineStyle(1);
+  h_dcall_123_90->SetLineColor(kBlack);
+  h_dcall_123_68->SetLineWidth(linewidth_val);
+  h_dcall_123_68->SetLineStyle(2);
+  h_dcall_123_68->SetLineColor(kBlack);
+  bestfit_2all->SetMarkerColor(kBlack);
+  bestfit_2all->SetMarkerStyle(25);
+  bestfit_2all->SetMarkerSize(1.8);
+  //style2
+  h_dcall_octant2only23_90->SetLineWidth(linewidth_val);
+  h_dcall_octant2only23_90->SetLineStyle(1);
+  h_dcall_octant2only23_90->SetLineColor(kRed);
+  h_dcall_octant2only23_68->SetLineWidth(linewidth_val);
+  h_dcall_octant2only23_68->SetLineStyle(2);
+  h_dcall_octant2only23_68->SetLineColor(kRed);
+  bestfit_2all_2nu->SetMarkerColor(kRed);
+  bestfit_2all_2nu->SetMarkerStyle(24);
+  bestfit_2all_2nu->SetMarkerSize(1.8);
+  //style3
+  h_dcall_2nu_90->SetLineWidth(linewidth_val);
+  h_dcall_2nu_90->SetLineStyle(1);
+  h_dcall_2nu_90->SetLineColor(kBlue);
+  h_dcall_2nu_68->SetLineWidth(linewidth_val);
+  h_dcall_2nu_68->SetLineStyle(2);
+  h_dcall_2nu_68->SetLineColor(kBlue);
+  bestfit_2all_octant2->SetMarkerColor(kBlue);
+  bestfit_2all_octant2->SetMarkerStyle(26);
+  bestfit_2all_octant2->SetMarkerSize(1.8);
+  //draw
+  c->SetRightMargin(0.01);
+  c->SetTopMargin(0.01);
+  c->SetBottomMargin(0.14);
+  osc_param_space->GetXaxis()->SetRangeUser(0.9,1.0);
+  osc_param_space->GetYaxis()->SetRangeUser(0.0018,0.0032);
+  cout <<   osc_param_space->GetXaxis()->GetTitleFont() << endl;
+  osc_param_space->GetXaxis()->SetTitleFont(132);
+  osc_param_space->Draw(); 
+  h_dcall_123_68->Draw("cont3same");
+  h_dcall_123_90->Draw("cont3same");
+  h_dcall_octant2only23_68->Draw("cont3same");
+  h_dcall_octant2only23_90->Draw("cont3same");
+  h_dcall_2nu_68->Draw("cont3same");
+  h_dcall_2nu_90->Draw("cont3same");
+  bestfit_2all->Draw("P");
+  bestfit_2all_2nu->Draw("P");
+  bestfit_2all_octant2->Draw("P");
+  leg2->Clear();
+  delete leg2;
+  leg2 = new TLegend(0.185,0.78,0.45,0.95);
+  leg2->SetFillColor(0);
+  leg2->SetFillStyle(0);
+  leg2->SetBorderSize(0);
+  cout << leg2->GetTextFont() << endl;
+  leg2->SetTextFont(132);
+  cout << leg2->GetTextFont() << endl;
+  //leg2->AddEntry(h_dcall_123_68, "T2K 3#nu 68% CL","l");
+  leg2->AddEntry(h_dcall_123_90,           "T2K #theta_{23} #leq #pi/4 90% CL","l");
+  leg2->AddEntry(h_dcall_octant2only23_90, "T2K #theta_{23} #geq #pi/4 90% CL","l");
+  leg2->AddEntry(h_dcall_2nu_90,           "T2K 2-flavour 90% CL",             "l");
+  leg2->SetX2NDC(0.6);
+  leg2->SetTextSize(0.05);
+  leg2->Draw();
+  TLegend * legbf = new TLegend(0.185, 0.17, 0.45, 0.30);
+  legbf->SetFillColor(0);
+  legbf->SetFillStyle(0);
+  legbf->SetBorderSize(0);
+  legbf->SetTextFont(132);
+  legbf->AddEntry(&bestfit_2all,         "T2K #theta_{23} #leq #pi/4 best fit","p");
+  legbf->AddEntry(&bestfit_2all_octant2, "T2K #theta_{23} #geq #pi/4 best fit","p");
+  legbf->AddEntry(&bestfit_2all_2nu,     "T2K 2-flavour best fit","p");
+  legbf->SetX2NDC(0.6);
+  legbf->SetTextSize(0.05);
+  legbf->Draw();
+  c->SaveAs("contour_compare_octants_2nu.pdf");
+  c->SaveAs("contour_compare_octants_2nu.png");
+  c->SaveAs("contour_compare_octants_2nu.eps");
+
+
 
 
   ///checking contour changes
@@ -2121,5 +2325,9 @@ void plot_contour_comparisons
   h_fcall_123_68->Draw("cont3same");
   h_fcall_123_90->Draw("cont3same");
   c->SaveAs("contour_check.pdf");
+
+
+
+
 
 }

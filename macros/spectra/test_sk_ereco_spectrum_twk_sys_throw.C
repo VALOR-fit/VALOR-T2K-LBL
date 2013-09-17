@@ -54,6 +54,8 @@
 
 void test_sk_ereco_spectrum_twk_sys_throw
 (
+ //double       mean13             = 0.0251,  /* mean value of theta13 */
+ // double       sigma13            = 0.131,    /* fractional error */
   int          mode,                                                /* options: see above */
   bool         update_rootfile    = true,                           /* "update" ROOT output file? If false, will "recreate" */
   const char * hypothesis         = "3f_osc",                       /* options: "2f_numu_disap", "3f_osc" */
@@ -65,13 +67,24 @@ void test_sk_ereco_spectrum_twk_sys_throw
   double       input_dm23sq       = -99,                            /* */
   bool         save_toy_expts     = false,                          /* save the ereco spectra? */
   const char * config_file        = "analysis_configuration.xml",   /* */
-  const int    nexp               = 20000                           /* number of experiments to make */
+  const int    nexp               = 20000,                          /* number of experiments to make */
+  const char * mixparamchoice     = "sinsqtheta",
+  const char * hierarchy          = "normal"
 )
 {
   using namespace std;
   using namespace t2kana;
 
   conv::SuperkSample_t s = conv::kSKsFCFV1RingMuLike;
+  
+  // Global options
+  Opt::Instance()->gMassHierarchyAssumed = util::HierarchyFromString(hierarchy);
+  Opt::Instance()->gOscMixingParamChoice = util::MixingTypeFromString(mixparamchoice);
+  if(Opt::Instance()->Undefined()) {
+    cerr << "Global options not defined correctly. Exiting..." << endl;
+    cerr << *Opt::Instance() << endl;
+    exit(1);
+  }
 
   //Check if the mode is valid
   string modetitle = "";
@@ -447,6 +460,10 @@ void test_sk_ereco_spectrum_twk_sys_throw
 
         case 700:
 	  ph.SetCurrValue(conv::kPhypMixing13,  util::RandomizeMixing13()); break;
+	  //ph.SetCurrValue(conv::kPhypMixing13, -1);
+	  //while(ph.CurrValue(conv::kPhypMixing13) < 0 || ph.CurrValue(conv::kPhypMixing13) > 1)
+	  //  ph.SetCurrValue(conv::kPhypMixing13, Rnd::Instance()->RndToyMCosc().Gaus(mean13,sigma13*sigma13));
+	  //break;
         case 701:
 	  ph.SetCurrValue(conv::kPhypMixing12,  util::RandomizeMixing12()); break;
         case 702:
