@@ -40,11 +40,18 @@ void test_feldman_cousins_nfits(const char * directory)
   // Load results of toy-experiment fits
   //          
 
-  TChain chain("fcnt");
+  TChain chain("fitnt");
   chain.Add(Form("%s/*root",directory));
+
+  chain.SetBranchStatus("*",0);
+  chain.SetBranchStatus("input_dm23sq",1);
+  chain.SetBranchStatus("input_mixing23",1);
 
   chain.Draw("input_dm23sq:input_mixing23>>hNFitsVsOscPar","","goff");
 
   TCanvas * c = new TCanvas("c", "", 20, 20, 600, 600);
   hNFitsVsOscPar->Draw("colz");  
+
+  cout << chain.GetEntries() << " entries" << endl;
+  cout << hNFitsVsOscPar->GetMaximum() << " maximum bin content" << endl;
 }

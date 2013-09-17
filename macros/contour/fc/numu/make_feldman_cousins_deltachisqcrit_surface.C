@@ -65,12 +65,12 @@ void make_feldman_cousins_deltachisqcrit_surface(
   //
 
   // dm23sq, mixing23 range and step
-  double mixing23_min   = 0.5;
+  double mixing23_min   = 0.0;
   double mixing23_max   = 1.0;
   double mixing23_step  = 0.005;
   double dm23sq_min     = 1E-3;
   double dm23sq_max     = 6E-3;
-  double dm23sq_step    = 1E-4;
+  double dm23sq_step    = 1E-4;//5E-5;
   // make sure that min and max are at the bin centre and not at the low/high edge of the first/last bin
   int mixing23_nbins = 1 + TMath::CeilNint((mixing23_max - mixing23_min) / mixing23_step);
   int dm23sq_nbins   = 1 + TMath::CeilNint((dm23sq_max   - dm23sq_min  ) / dm23sq_step  );
@@ -119,8 +119,16 @@ void make_feldman_cousins_deltachisqcrit_surface(
   // Load results of toy-experiment fits
   //          
 
-  TChain chain("fcnt");
+  TChain chain("fitnt");
   chain.Add(Form("%s/*root", input_data_directory));
+ 
+  //should make it faster
+  chain.SetBranchStatus("*",0);
+  chain.SetBranchStatus("input_dm23sq",1);
+  chain.SetBranchStatus("input_mixing23",1);
+  chain.SetBranchStatus("chisq_for_input_params",1);
+  chain.SetBranchStatus("chisq",1);
+
   cout << chain.GetEntries() << endl;
 
   int nx1 = TMath::Max(1,              sinsq2theta_min_bin);
@@ -159,6 +167,11 @@ void make_feldman_cousins_deltachisqcrit_surface(
       double dm23sq_low          = hDeltaChi2Surface[0]->GetYaxis()->GetBinLowEdge(idm23sq_bin);
       double mixing23_high  = hDeltaChi2Surface[0]->GetXaxis()->GetBinUpEdge(imixing23_bin);
       double dm23sq_high         = hDeltaChi2Surface[0]->GetYaxis()->GetBinUpEdge(idm23sq_bin);
+
+      if(dm23sq_low    < 1.9E-3) continue;
+      if(dm23sq_high   > 3.1E-3) continue;
+      if(mixing23_low  < 0.3)    continue;
+      if(mixing23_high > 0.7)    continue;
 
       const char * cut = Form(
           "input_mixing23 >= %f && input_mixing23 <= %f && input_dm23sq >= %f && input_dm23sq <= %f",

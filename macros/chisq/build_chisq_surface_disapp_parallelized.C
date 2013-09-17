@@ -106,7 +106,7 @@ void build_chisq_surface_disapp_parallelized
   if(first_experiment == last_experiment) {
     filename << "expt_" << first_experiment;
   } else {
-    filename = "expt_" << first_experiment << "_" << last_experiment;
+    filename << "expt_" << first_experiment << "_" << last_experiment;
   }
   if(input_mixing23_bin == -1 && input_dm32sq_bin == -1) {
     filename << "-all_bins";
