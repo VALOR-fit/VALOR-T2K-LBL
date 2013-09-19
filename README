@@ -116,7 +116,13 @@ deprecated macros etc) that will be removed from a near-future "streamlined" rev
 
 2012_v1.1.0
 ............................................................................................................................
-2012_v1.0.0 revision with small bugs fixed while writing the 2012 analysis PRL and resolving final differences with KIT
+Revision with small bugs fixed while writing the 2012 analysis PRL and resolving final differences with KIT
+
+
+2012_v1.2.0
+............................................................................................................................
+Revision with all changes needed during the PRL review process. Single most important change was moving from
+sin^2(2*theta23) fit to sin^2(theta23) fit.
 
 
 2012_v2.0.0
@@ -131,14 +137,14 @@ Simulated annealing, Levemberg-Marquardt, Fletcher-Reeves conjugate gradient, Po
 Vector Broyden-Fletcher-Goldfarb-Shanno (BFGS), Steepest Descent.
 Significant fit CPU-efficiency improvement as the jont analysis considers ~90 systematics.
 
-Current trunk
-............................................................................................................................
-2013 6E+20 POT muon-neutrino disappearance development code.
-
-
-Future releases:
-
 
 2013_v1.0.0
 ............................................................................................................................
-This is the code used for the official 2013 6+E_20 POT 3-flavour muon-neutrino disappearance analysis.
+This is the code used for the official 2013 Run 1-4a 3-flavour muon-neutrino disappearance analysis,
+documented in T2K-TN-155v1.
+
+
+Current trunk
+............................................................................................................................
+2013 Run 1-4 muon-neutrino disappearance development code.
+
