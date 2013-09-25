@@ -47,6 +47,8 @@
 #define INCLUDEEVENTSOVERTHIRTYGEV // include Ereco overflow events in the last bin?
 //#define RENORMALISE_MEC // NEEDS CHECKING renormalise non-MEC templates so that MEC isn't an arbitary addition of events, but respects the total normalisation
 
+//#define __INCLUDE_MC_STAT_FLUCTUATIONS__ // fluctuate bin contents in final MC templates based on MC stat error in each bin
+
 #include <cassert>
 #include <cstdlib>
 #include <fstream>
@@ -67,6 +69,7 @@
 #include "NuFlux.h"
 #include "Utilities.h"
 #include "Opt.h"
+#include "Rnd.h"
 
 using std::cout;
 using std::cerr;
@@ -341,6 +344,9 @@ bool SuperkMC::Read(TXMLEngine* xml, XMLNodePointer_t root_node)
   //this->NevDebug(kSKMCtNom, "mcnorm");
 #endif
 
+
+  this->CalculateMCStatError();
+
   // need to read in the xsec splines, before applying any BANFF tweaks
   fNuXSec -> BuildXsBinningMCTemplates(fMCTemplOri);
   if( !fNuXSec -> ReadSplines(xml,root_node) ) return false;
@@ -609,6 +615,7 @@ void SuperkMC::FillTemplate(SuperkSample_t s, SuperkMode_t m)
        << "Number of template entries = " 
        << this -> Template(s,m,kSKMCtNom) -> GetEntries() << endl;
 #endif
+
 }
 //________________________________________________________________________________________
 void SuperkMC::FillSpecialTemplates(void)
@@ -732,6 +739,116 @@ void SuperkMC::FillSpecialTemplates(void)
   }//i
 
 #endif// __USE_OSC_NUMU_MC_TEMPLATES__
+
+}
+//________________________________________________________________________________________
+void SuperkMC::CalculateMCStatError(void)
+{
+  // init
+  for(int im=0; im < knm; im++) 
+  {
+     for(int it = 0; it < conv::kNEtrueBins1Rmu; it++) {
+         for(int ir = 0; ir < conv::kNErecoBins1Rmu; ir++) {
+              fMCStatFracErr1Rmu[im][it][ir] = 0;
+         }
+     }
+     for(int it = 0; it < conv::kNEtrueBins1Re; it++) {
+         for(int ir = 0; ir < conv::kNErecoBins1Re; ir++) {
+              fMCStatFracErr1Re[im][it][ir] = 0;
+         }
+     }
+  }
+
+  // set MC frac err in each bin
+  for(int is = 0; is < kns; is++) 
+  {
+     SuperkSample_t s = kSKSamples[is];
+     if(s == kSKsUndefined) continue;
+     for(int im=0; im < knm; im++) 
+     {
+       SuperkMode_t m = kSKReactionModes[is][im];
+       if(m == kSKmUndefined) continue;
+
+       // loop over Etrue
+       for(int it = 1; it <= this->Template(s,m,kSKMCtOri)->GetYaxis()->GetNbins(); it++) {
+          // loop over Ereco
+          for(int ir = 1; ir <= this->Template(s,m,kSKMCtOri)->GetXaxis()->GetNbins(); ir++) {
+             double nev  = (double) this->Template(s,m,kSKMCtOri)->GetBinContent(ir,it);
+             nev = TMath::Max(0.,nev);
+             double dnev = TMath::Sqrt(nev);
+             double fracerr = (nev > 0) ? dnev/nev : 0;
+             if(s == kSKsFCFV1RingMuLike)  { fMCStatFracErr1Rmu[im][it-1][ir-1] = fracerr; }
+             else                          { fMCStatFracErr1Re [im][it-1][ir-1] = fracerr; }
+          }//ir
+       }//it
+
+     }//m
+  }//s
+
+}
+//________________________________________________________________________________________
+void SuperkMC::ApplyMCStatFluctationToTemplates(bool shape_only)
+{
+  TRandom3 & rndgen = Rnd::Instance()->RndToyMCstat();
+
+  for(int is = 0; is < kns; is++) 
+  {
+     SuperkSample_t s = kSKSamples[is];
+     if(s == kSKsUndefined) continue;
+     for(int im=0; im < knm; im++) 
+     {
+       SuperkMode_t m = kSKReactionModes[is][im];
+       if(m == kSKmUndefined) continue;
+       bool skip = this->SkipTemplate(m);
+       if(skip) continue;
+       double nev_old = 0;
+       double nev_new = 0;
+
+       // fluctuate bin contents
+       for(int ir = 1; ir <= util::NumErecoBins(s); ir++) {
+          for(int it = 1; it <= util::NumEtrueBins(s); it++) {
+            if (s==kSKsFCFV1RingMuLike)  
+            { 
+               double nev_old_bin  = fMCTemplArrayFin1Rmu[im][it-1][ir-1]; 
+               double frac_error   = fMCStatFracErr1Rmu  [im][it-1][ir-1];
+               double error        = frac_error * nev_old_bin;
+               double nev_new_bin  = rndgen.Gaus(nev_old_bin, error);
+               nev_new_bin = TMath::Max(0.,nev_new_bin);
+               nev_old += nev_old_bin;
+               nev_new += nev_new_bin;
+               fMCTemplArrayFin1Rmu[im][it-1][ir-1] = nev_new_bin;
+            }
+            else {
+               double nev_old_bin  = fMCTemplArrayFin1Re[im][it-1][ir-1]; 
+               double frac_error   = fMCStatFracErr1Re  [im][it-1][ir-1];
+               double error        = frac_error * nev_old_bin;
+               double nev_new_bin  = rndgen.Gaus(nev_old_bin, error);
+               nev_new_bin = TMath::Max(0.,nev_new_bin);
+               nev_old += nev_old_bin;
+               nev_new += nev_new_bin;
+               fMCTemplArrayFin1Re[im][it-1][ir-1] = nev_new_bin;
+            }
+          }//it
+       }//ir
+
+       if(shape_only) {
+          double scale = (nev_new > 0.) ? nev_old/nev_new : 0.;
+          for(int ir = 1; ir <= util::NumErecoBins(s); ir++) {
+             for(int it = 1; it <= util::NumEtrueBins(s); it++) {
+               if (s==kSKsFCFV1RingMuLike) { 
+                  double nev  = fMCTemplArrayFin1Rmu[im][it-1][ir-1]; 
+                  fMCTemplArrayFin1Rmu[im][it-1][ir-1] = nev*scale;
+               }
+               else {
+                  double nev  = fMCTemplArrayFin1Re[im][it-1][ir-1]; 
+                  fMCTemplArrayFin1Re[im][it-1][ir-1] = nev*scale;
+               }
+             }//it
+          }//ir
+       }//shape_only?
+
+     }//m
+  }//s
 
 }
 //________________________________________________________________________________________
@@ -1081,6 +1198,13 @@ void SuperkMC::UpdateTemplates(void)
 
   this->ApplySystematicsToTemplates   ();
   this->ApplyPhysHypothesisToTemplates();
+
+#ifdef __INCLUDE_MC_STAT_FLUCTUATIONS__
+#ifdef __show_update_mesg_info__
+  cout << "Exp/SKMC >> ** Note ** Fluctuating templates to take into account the effect of finite MC statistics...." << endl;
+#endif
+  this->ApplyMCStatFluctationToTemplates(true);
+#endif
 }
 //________________________________________________________________________________________
 void SuperkMC::ApplySystematicsToTemplates(void) 

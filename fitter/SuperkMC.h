@@ -80,6 +80,10 @@ public:
   void TellMeAboutTheDetector   (SuperkDetector * skdet) { fSKDet  = skdet; }
   void TellMeAboutTheDetectorFSI(SuperkDetectorFSI * skdetfsi) { fSKDetFSI  = skdetfsi; }
 
+  // Calculate error in each 2D template bin due to finite MC statistics & fluctuate to study effect of MC stat err
+  void CalculateMCStatError(void); // called at init, using the original templates
+  void ApplyMCStatFluctationToTemplates(bool shape_only=true); // fluctuate contents of MC templates using MC stat error
+
   // Draw inputs:
   // ...
   void Draw(TVirtualPad * c, Option_t * opt = "") const;
@@ -159,6 +163,8 @@ private:
   //double     fMCTemplArraySys[kns][knm][conv::kNEtrueBins][conv::kNErecoBins1Rmu];
   double     fMCTemplArrayFin1Rmu[knm][conv::kNEtrueBins1Rmu][conv::kNErecoBins1Rmu];
   double     fMCTemplArrayFin1Re [knm][conv::kNEtrueBins1Re][conv::kNErecoBins1Re];
+  double     fMCStatFracErr1Rmu[knm][conv::kNEtrueBins1Rmu][conv::kNErecoBins1Rmu];
+  double     fMCStatFracErr1Re [knm][conv::kNEtrueBins1Re][conv::kNErecoBins1Re];
 
   TH1D *     fMCErecoSpectrum[kns][knm];   ///< Ereco MC spectrum (sample,mode)     : nominal + ext/tuning + nd280/tuning + systematics + physics hypothesis
   TH1D *     fMCErecoSpectrumTot[kns];     ///< Ereco MC spectrum (sample)          : nominal + ext/tuning + nd280/tuning + systematics + physics hypothesis
