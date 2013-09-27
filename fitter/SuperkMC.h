@@ -126,6 +126,7 @@ private:
 
   // Debug method, prints out some number of events, and also saves templates & spectra
   void NevDebug(conv::SKMCTemplateType_t t, string name);
+  void MCStatErrDebug(void);
 
   // Looks to see if there are any events for the given Etrue in the sample
   bool IsThereAnEvent(conv::SuperkSample_t s, double Etrue) const;

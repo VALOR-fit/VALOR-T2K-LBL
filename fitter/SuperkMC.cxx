@@ -346,6 +346,9 @@ bool SuperkMC::Read(TXMLEngine* xml, XMLNodePointer_t root_node)
 
 
   this->CalculateMCStatError();
+#ifdef __save_templates_debug__
+  this->MCStatErrDebug();
+#endif
 
   // need to read in the xsec splines, before applying any BANFF tweaks
   fNuXSec -> BuildXsBinningMCTemplates(fMCTemplOri);
@@ -2723,4 +2726,79 @@ void SuperkMC::NevDebug(SKMCTemplateType_t t, string name)
   }//sample
   out.Close();
 }
+//________________________________________________________________________________________
+void SuperkMC::MCStatErrDebug()
+{
+  TFile out("Template_mcstaterr.root","RECREATE");
+  for(int is = 0; is < kns; is++) {
+    SuperkSample_t s = kSKSamples[is];
+    if(s == kSKsUndefined) continue;
+    if(s == kSKsFCFV1RingELike) continue;
 
+    TH1D * spectrum           = new TH1D("spe",          "spe",          util::NumErecoBins(kSKsFCFV1RingMuLike), util::ErecoBinEdges(kSKsFCFV1RingMuLike));
+    TH1D * spectrum_with2derr = new TH1D("spe_with2derr","spe_with2derr",util::NumErecoBins(kSKsFCFV1RingMuLike), util::ErecoBinEdges(kSKsFCFV1RingMuLike));
+    TH1D * spectrum_fracerr   = new TH1D("spe_fracerr",  "spe_fracerr",  util::NumErecoBins(kSKsFCFV1RingMuLike), util::ErecoBinEdges(kSKsFCFV1RingMuLike));
+    TH1D * spectrum_err = new TH1D("spe_err","spe_err",util::NumErecoBins(kSKsFCFV1RingMuLike), util::ErecoBinEdges(kSKsFCFV1RingMuLike));
+    for(int im = 0; im < knm; im++) {
+      SuperkMode_t m = kSKReactionModes[is][im];
+      if(m == kSKmUndefined) continue;
+      TH2D * mctempl = this -> Template(s,m,kSKMCtOri);
+
+      //first write the 2d template, and cout the mode integral
+      mctempl->Write();
+
+      //also write the 2d MC stat frac error template
+      TH2D * mctemplfracerr = new TH2D(*mctempl);
+      TH2D * mctemplerr     = new TH2D(*mctempl);
+      for(int ix = 1; ix <= mctempl->GetNbinsX(); ix++) {
+	for(int iy = 1; iy <= mctempl->GetNbinsY(); iy++) {
+	  double nev = mctempl->GetBinContent(ix, iy);
+	  nev = TMath::Max(0.,nev);
+	  double dnev = TMath::Sqrt(nev);
+	  double fracerr = (nev > 0) ? 1/dnev : 0;
+	  mctemplfracerr->SetBinContent(ix, iy, fracerr);
+	  mctemplerr    ->SetBinContent(ix, iy, (1 + fracerr) * nev);
+	}//iy
+      }//ix
+      mctemplfracerr->Write(Form("%s_fracerr",mctempl->GetName()));
+      mctemplerr    ->Write(Form("%s_err",    mctempl->GetName()));
+
+      //and the 1d spectrum
+      for(int ix = 1; ix <= mctempl->GetNbinsX(); ix++) {
+	for(int iy = 1; iy <= mctempl->GetNbinsY(); iy++) {
+	  double nev_new = mctempl->GetBinContent(ix, iy);
+	  double nev_old = spectrum->GetBinContent(ix);
+	  spectrum->SetBinContent(ix, nev_new + nev_old);
+	}
+      }
+
+      //and the 1d spectrum
+      for(int ix = 1; ix <= mctempl->GetNbinsX(); ix++) {
+	for(int iy = 1; iy <= mctempl->GetNbinsY(); iy++) {
+	  double nev_new = mctemplerr->GetBinContent(ix, iy);
+	  if(mctempl->GetBinContent(ix,iy) > kASmallNum)
+	    if(mctempl->GetBinContent(ix,iy) > mctemplerr->GetBinContent(ix,iy))
+	      cout << mctempl->GetBinContent(ix,iy) << "\t" << mctemplerr->GetBinContent(ix,iy) << endl;
+	  double nev_old = spectrum_with2derr->GetBinContent(ix);
+	  spectrum_with2derr->SetBinContent(ix, nev_new + nev_old);
+	}
+      }
+    }//im
+    //look at what the error would of been on the spectrum, if the 1d bins didn't exist
+    for(int ix = 1; ix <= spectrum->GetNbinsX(); ix++) {
+      double nev = spectrum->GetBinContent(ix);
+      nev = TMath::Max(0.,nev);
+      double dnev = TMath::Sqrt(nev);
+      double fracerr = (nev > 0) ? 1/dnev : 0;
+      spectrum_fracerr->SetBinContent(ix, fracerr);
+      spectrum_err    ->SetBinContent(ix, (1 + fracerr) * nev);
+    }
+      
+
+    spectrum->Write();
+    spectrum_with2derr->Write();
+    spectrum_fracerr->Write();
+    spectrum_err->Write();
+  }//is
+  out.Close();
+}
