@@ -32,7 +32,8 @@ void build_chisq_surface_disapp_parallelized
   const char * hierarchy           = "normal",                              /* normal or inverted */
   const char * mixparamchoice      = "sinsq2theta",                         /* sinsq2theta or sinsqtheta */
   const char * mixparamoctant      = "one",                                 /* one==kNuOctantOne two==kNuOctantTwo */
-  bool         apply_2nu_boundary  = true                                   /* if using the 2nu flavour osc prob, apply the physical boundary? */
+  bool         apply_2nu_boundary  = true,                                  /* if using the 2nu flavour osc prob, apply the physical boundary? */
+  bool         using_xml_file      = true                                   /* if false, skobs reads xmlfile as a root file */
 )
 {
   using namespace std;
@@ -145,7 +146,7 @@ void build_chisq_surface_disapp_parallelized
 
      // Read SuperK spectrum (toy MC or data)
      SuperkObservation * skobs = new SuperkObservation;
-     skobs->Read(xmlfile2.Data(), iexperiment);
+     skobs->Read(xmlfile2.Data(), iexperiment, using_xml_file);
 
      // Loop over bins and calc the chisq fixing osc params to the true ones at the centre
      // of the bin and minimize with respect to all systematics (and, potentially, all other osc params).

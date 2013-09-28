@@ -79,98 +79,127 @@ void SuperkObservation::CleanUp(void)
   }
 }
 //________________________________________________________________________________________
-bool SuperkObservation::Read(string config_file, int data_set_id)
+bool SuperkObservation::Read(string config_file, int data_set_id, bool is_xml)
 {
   cout << "Obs >> " << "Reading config file: " << config_file << endl;
- 
-  // Parse the input configuration file
-  TXMLEngine* xml = new TXMLEngine;
-  XMLDocPointer_t xmldoc = xml->ParseFile(config_file.c_str());
-  if (xmldoc==0) {
-    cerr << "Obs >> " << "Can not parse input: " << config_file << endl;
+
+  if(is_xml) { 
+    // Parse the input configuration file
+    TXMLEngine* xml = new TXMLEngine;
+    XMLDocPointer_t xmldoc = xml->ParseFile(config_file.c_str());
+    if (xmldoc==0) {
+      cerr << "Obs >> " << "Can not parse input: " << config_file << endl;
+      delete xml;
+      exit(1);
+    }
+    XMLNodePointer_t root_node = xml->DocGetRootElement(xmldoc);
+
+    //  if(util::NodeExists(xml,root_node,"superk/observation/one_mu_ring/ereco")) {
+    //     // Get observed recosntructed energy distribution
+    //     fErDistr[kSKsFCFV1RingMuLike] = 
+    //        util::XML2TH1D(xml,root_node,"superk/observation/one_mu_ring/ereco");
+    //  }
+    //  else
+
+    ostringstream datanode1Rmu;
+    datanode1Rmu << "superk/observation/one_mu_ring/ereco_values" << "/data_set_" << data_set_id;
+
+    if(util::NodeExists(xml,root_node,datanode1Rmu.str())) {
+      int idx = util::ArrIdx::Instance()->SuperkSampleIdx(kSKsFCFV1RingMuLike);
+      fErDistr[idx] = new TH1D("", "", kNErecoBins1Rmu,kErecoBinEdges1Rmu);
+      fErDistr[idx]->SetDirectory(0);
+      vector<double> values = util::XML2DblArray(xml,root_node,datanode1Rmu.str());
+      vector<double>::const_iterator value_iter = values.begin();
+      for( ; value_iter != values.end(); ++value_iter) {
+	double Ereco = *value_iter;
+	fErDistr[idx]->Fill(Ereco);
+      }
+      cout << "Obs >> Read: " << fErDistr[idx]->Integral() 
+	   << " " << util::AsString(kSKsFCFV1RingMuLike) << " events." << endl;
+      for(int ibin = 1; ibin <= kNErecoBins1Rmu; ibin++) {
+	double nobs = fErDistr[idx]->GetBinContent(ibin);
+	fErDistrArray1Rmu[ibin-1] = nobs;
+      }
+    }
+    else {
+      cerr << "Obs >> Node " << datanode1Rmu.str() << " does not exist!" << endl;
+    }
+
+    ostringstream datanode1Re;
+    //Ereco spectrum
+    datanode1Re << "superk/observation/one_e_ring/ereco_values" << "/data_set_" << data_set_id;
+    if(util::NodeExists(xml,root_node,datanode1Re.str())) {
+      int idx = util::ArrIdx::Instance()->SuperkSampleIdx(kSKsFCFV1RingELike);
+      fErDistr[idx] = new TH1D("", "", kNErecoBins1Re,kErecoBinEdges1Re);
+      fErDistr[idx]->SetDirectory(0);
+      vector<double> values = util::XML2DblArray(xml,root_node,datanode1Re.str());
+      vector<double>::const_iterator value_iter = values.begin();
+      for( ; value_iter != values.end(); ++value_iter) {
+	double Ereco = *value_iter;
+	fErDistr[idx]->Fill(Ereco);
+      }
+      cout << "Obs >> Read: " << fErDistr[idx]->Integral() 
+	   << " " << util::AsString(kSKsFCFV1RingELike) << " events." << endl;
+      for(int ibin = 1; ibin <= kNErecoBins1Re; ibin++) {
+	double nobs = fErDistr[idx]->GetBinContent(ibin);
+	fErDistrArray1Re[ibin-1] = nobs;
+      }
+    }
+
+    else {
+      cerr << "Obs >> Node " << datanode1Re.str() << " does not exist!" << endl;
+    }
+
+
+    //Treat as counting experiment
+    /*
+      datanode1Re << "superk/observation/one_e_ring/event_count" << "/data_set_" << data_set_id;
+      if(util::NodeExists(xml,root_node,datanode1Re.str())) {
+      int idx = util::ArrIdx::Instance()->SuperkSampleIdx(kSKsFCFV1RingELike);
+      fErDistr[idx] = new TH1D("", "", kNErecoBins1Re,kErecoBinEdges1Re);
+      fErDistr[idx]->SetDirectory(0);
+      double nev = util::XML2Dbl (xml,root_node,datanode1Re.str());
+      fErDistr[idx]->SetBinContent(1,nev); ///// just put the number in the 1st bin
+      cout << "Obs >> Read: " << fErDistr[idx]->Integral() 
+      << " " << util::AsString(kSKsFCFV1RingELike) << " events." << endl;
+      for(int ibin = 1; ibin <= kNErecoBins1Re; ibin++) {
+      double nobs = fErDistr[idx]->GetBinContent(ibin);
+      fErDistrArray1Re[ibin-1] = nobs;
+      }
+      }
+    */
+
+    // Release memory
+    xml->FreeDoc(xmldoc);
     delete xml;
-    exit(1);
-  }
-  XMLNodePointer_t root_node = xml->DocGetRootElement(xmldoc);
+  }//is_xml
 
-//  if(util::NodeExists(xml,root_node,"superk/observation/one_mu_ring/ereco")) {
-//     // Get observed recosntructed energy distribution
-//     fErDistr[kSKsFCFV1RingMuLike] = 
-//        util::XML2TH1D(xml,root_node,"superk/observation/one_mu_ring/ereco");
-//  }
-//  else
-
-  ostringstream datanode1Rmu;
-  datanode1Rmu << "superk/observation/one_mu_ring/ereco_values" << "/data_set_" << data_set_id;
-
-  if(util::NodeExists(xml,root_node,datanode1Rmu.str())) {
-     int idx = util::ArrIdx::Instance()->SuperkSampleIdx(kSKsFCFV1RingMuLike);
-     fErDistr[idx] = new TH1D("", "", kNErecoBins1Rmu,kErecoBinEdges1Rmu);
-     fErDistr[idx]->SetDirectory(0);
-     vector<double> values = util::XML2DblArray(xml,root_node,datanode1Rmu.str());
-     vector<double>::const_iterator value_iter = values.begin();
-     for( ; value_iter != values.end(); ++value_iter) {
-       double Ereco = *value_iter;
-       fErDistr[idx]->Fill(Ereco);
-     }
-     cout << "Obs >> Read: " << fErDistr[idx]->Integral() 
-       << " " << util::AsString(kSKsFCFV1RingMuLike) << " events." << endl;
-     for(int ibin = 1; ibin <= kNErecoBins1Rmu; ibin++) {
-       double nobs = fErDistr[idx]->GetBinContent(ibin);
-       fErDistrArray1Rmu[ibin-1] = nobs;
-     }
-  }
-  else {
-     cerr << "Obs >> Node " << datanode1Rmu.str() << " does not exist!" << endl;
-  }
-
-  ostringstream datanode1Re;
-  //Ereco spectrum
-  datanode1Re << "superk/observation/one_e_ring/ereco_values" << "/data_set_" << data_set_id;
-  if(util::NodeExists(xml,root_node,datanode1Re.str())) {
-     int idx = util::ArrIdx::Instance()->SuperkSampleIdx(kSKsFCFV1RingELike);
-     fErDistr[idx] = new TH1D("", "", kNErecoBins1Re,kErecoBinEdges1Re);
-     fErDistr[idx]->SetDirectory(0);
-     vector<double> values = util::XML2DblArray(xml,root_node,datanode1Re.str());
-     vector<double>::const_iterator value_iter = values.begin();
-     for( ; value_iter != values.end(); ++value_iter) {
-       double Ereco = *value_iter;
-       fErDistr[idx]->Fill(Ereco);
-     }
-     cout << "Obs >> Read: " << fErDistr[idx]->Integral() 
-       << " " << util::AsString(kSKsFCFV1RingELike) << " events." << endl;
-     for(int ibin = 1; ibin <= kNErecoBins1Re; ibin++) {
-       double nobs = fErDistr[idx]->GetBinContent(ibin);
-       fErDistrArray1Re[ibin-1] = nobs;
-     }
-  }
-
-  else {
-     cerr << "Obs >> Node " << datanode1Re.str() << " does not exist!" << endl;
-  }
+  else{
+    TFile f(config_file.c_str());
+    TH1D * hist = 0;
+    f.GetObject(Form("mock_data_%d",data_set_id),hist);
+    if(!hist) {
+      cerr << "Obs >> Histogram for 1Rmu does not exist!" << endl;
+    }
+    else {
+      int idx = util::ArrIdx::Instance()->SuperkSampleIdx(kSKsFCFV1RingMuLike);
+      fErDistr[idx] = new TH1D("", "", kNErecoBins1Rmu,kErecoBinEdges1Rmu);
+      fErDistr[idx]->SetDirectory(0);
+      for(int ix = 1; ix <= hist->GetNbinsX(); ix++) {
+	double Ereco = hist->GetBinCenter(ix);
+	double nev   = hist->GetBinContent(ix);
+	fErDistr[idx]->Fill(Ereco, nev);
+      }
+      cout << "Obs >> Read: " << fErDistr[idx]->Integral() 
+	   << " " << util::AsString(kSKsFCFV1RingMuLike) << " events." << endl;
+      for(int ibin = 1; ibin <= kNErecoBins1Rmu; ibin++) {
+	double nobs = fErDistr[idx]->GetBinContent(ibin);
+	fErDistrArray1Rmu[ibin-1] = nobs;
+      }
+    }
+  }//!is_xml
 
 
-  //Treat as counting experiment
-  /*
-  datanode1Re << "superk/observation/one_e_ring/event_count" << "/data_set_" << data_set_id;
-  if(util::NodeExists(xml,root_node,datanode1Re.str())) {
-     int idx = util::ArrIdx::Instance()->SuperkSampleIdx(kSKsFCFV1RingELike);
-     fErDistr[idx] = new TH1D("", "", kNErecoBins1Re,kErecoBinEdges1Re);
-     fErDistr[idx]->SetDirectory(0);
-     double nev = util::XML2Dbl (xml,root_node,datanode1Re.str());
-     fErDistr[idx]->SetBinContent(1,nev); ///// just put the number in the 1st bin
-     cout << "Obs >> Read: " << fErDistr[idx]->Integral() 
-       << " " << util::AsString(kSKsFCFV1RingELike) << " events." << endl;
-     for(int ibin = 1; ibin <= kNErecoBins1Re; ibin++) {
-       double nobs = fErDistr[idx]->GetBinContent(ibin);
-       fErDistrArray1Re[ibin-1] = nobs;
-     }
-  }
-  */
-
-  // Release memory
-  xml->FreeDoc(xmldoc);
-  delete xml;
 
   return true;
 }

@@ -37,7 +37,7 @@ public:
  ~SuperkObservation();
 
   // Read data
-  bool Read(string config_file, int data_set_id=0);
+  bool Read(string config_file, int data_set_id=0, bool is_xml = true);
 
   // Create mock data
   bool CreateMockData(SuperkExpectation & exp, const FitParamList & fp,   bool fluctuate=true);

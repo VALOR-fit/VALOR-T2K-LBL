@@ -67,6 +67,8 @@ Changes since 2011_v0.9.0:
 #ifndef ETRUE_BINS_1RMU
 //#define ETRUE_BINS_1RMU 1 // 50 MeV binning 0-30 GeV (600 bins)
 #define ETRUE_BINS_1RMU 2 // DEFAULT 50 MeV 0-0.3 GeV, 25 MeV 0.3-1 GeV, 50 MeV 1-3 GeV, 100 MeV 3-3.5 GeV, 3.5-4 GeV, 4-5 GeV, 5-7 GeV, 7-10 GeV, 10-30 GeV (84 bins)
+//#define ETRUE_BINS_1RMU 3 // same binning as BANFF numu flux binning (11 bins)
+//#define ETRUE_BINS_1RMU 4 // 1 bin
 #endif
 
 #ifndef ETRUE_BINS_1RE
@@ -3075,6 +3077,20 @@ static const double kEtrueBinEdges1Rmu[kNEtrueBins1Rmu+1] =
    3.000,  3.100,  3.200,  3.300,  3.400, 
    3.500,  4.000,  5.000,  7.000, 10.000,
    30.000
+};
+#elif ETRUE_BINS_1RMU == 3
+// 11 bins, same as BANFF numu flux binning
+static const int kNEtrueBins1Rmu = 11;
+static const double kEtrueBinEdges1Rmu[kNEtrueBins1Rmu+1] = 
+{
+  0.000,  0.400,  0.500,  0.600,  0.700,  1.000,  1.500,  2.500,  3.500,  5.000,  7.000, 30.000
+};
+#elif ETRUE_BINS_1RMU == 4
+// just 1 bin
+static const int kNEtrueBins1Rmu = 1;
+static const double kEtrueBinEdges1Rmu[kNEtrueBins1Rmu+1] = 
+{
+  0.000, 30.000
 };
 #endif
 
