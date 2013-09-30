@@ -1,6 +1,6 @@
 <?xml version="1.0"?>
 
-<analysis_inputs analysis="T2K/VaLOR13a/numu" data="run1234a" flux="11b/v3.2" mc="neut/13a" ndfit="banff/13v0" oth="sk+fsi">
+<analysis_inputs analysis="T2K/VaLOR13a/numu" data="run1234" flux="11b/v3.2" mc="neut/13a" ndfit="banff/13v4" oth="sk+fsi">
 
   <!--
   ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -10,7 +10,7 @@
 
   <data_pot>
      <superk> 
-        6.3933E+20 
+        6.5700e+20
      </superk> 
   </data_pot>
 
@@ -221,7 +221,7 @@
           <filename>   inputs/official/2013/banff/postfit_banff_2013_disappearance_v4.root  </filename>
           <objname>    postfit_params   </objname>
           <objtype>    TVectorD         </objtype>
-        </best_fit_values>
+       </best_fit_values>
        <!--
         Covariance of fit parameters
        -->
@@ -229,7 +229,13 @@
           <filename>   inputs/official/2013/banff/postfit_banff_2013_disappearance_v4.root  </filename>
           <objname>    postfit_cov      </objname>
           <objtype>    TMatrixD         </objtype>
-        </covariance_matrix>
+       </covariance_matrix>
+       <x_mec>
+          -1.0
+       </x_mec>
+       <x_pdd_mec>
+          0.0
+       </x_pdd_mec>
   </banff>
 
   <!--
@@ -268,7 +274,7 @@
 	       0.03
 	  </numu_to_nue>
 	  <nu_to_antinu>
-	       0.40
+	       0.20
 	  </nu_to_antinu>
       </normalisations>
   </xsec>
