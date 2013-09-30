@@ -369,9 +369,31 @@ void plot_contours_with_profiles_sinsqtheta
     c->SaveAs("contour_compare_methods2_constdchisq_sinsqtheta.pdf");
     c->SaveAs("contour_compare_methods2_constdchisq_sinsqtheta.eps");
   }
-  leg2->Clear();
-  delete leg2;
 
   
+
+  //again, just the contour
+  TCanvas * conly = new TCanvas();
+  conly->SetLeftMargin(left_fraction);
+  osc_param_space2->GetYaxis()->SetRangeUser(0.002,0.003);
+  osc_param_space2->Draw();  
+  h_fcall_68->SetLineColor(kBlack);;
+  h_fcall_90->SetLineColor(kBlack);;
+  h_fcall_68->Draw("cont3same");
+  h_fcall_90->Draw("cont3same");
+  bestfit_2all.SetMarkerStyle(23);
+  bestfit_2all.Draw();
+  leg2->SetY1NDC(0.8);
+  leg2->SetY1NDC(0.9);
+  leg2->Draw();
+  leg3->Draw();
+  conly->SaveAs("contour_sinsqtheta.pdf");
+  conly->SaveAs("contour_sinsqtheta.eps");
+  
+
+  leg2->Clear();
+  delete leg2;
+  leg3->Clear();
+  delete leg3;
 
 }
