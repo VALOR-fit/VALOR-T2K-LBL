@@ -1248,7 +1248,7 @@ void SuperkExpectation::SetNuisanceParams(const FitParamList & fp, bool all_banf
    //
    for(int ip = 0; ip < kNumOfXSecSyst; ip++) {
      PhysParamId_t p = kListOfXSecSyst[ip];          
-     if(fp.Exists(p)) {
+     if( fp.Exists(p) && util::IsXSec(p) ) {
        double twk = fp.CurrValue(p);
        this->GetNuXSec()->Tweak(p,twk);
      }
