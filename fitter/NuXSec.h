@@ -63,6 +63,8 @@ public:
   void TweakNormNCoth     (double twkdial) { fNormNCothTwkDial     = twkdial; }
   void TweakNormNuEToNuMu (double twkdial) { fNormNuEToNuMuTwkDial = twkdial; }
   void TweakNormAntiNuToNu(double twkdial) { fNormAntiNuToNuTwkDial= twkdial; }
+  
+  void Tweak(conv::PhysParamId_t p , double twkdial);
 
   // Get current value of systematic params handled by this class
   double CurrentValue        (conv::PhysParamId_t p) const;

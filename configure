@@ -24,15 +24,19 @@ foreach (@ARGV) {
      print BLD "#define __GSL_ENABLED__ \n\n";
   }
 
-  if($_ eq '--production-mode') { 
+  elsif($_ eq '--production-mode') { 
      print BLD "// If turned on, code is made faster by not filling (or even initialising) histograms. \n";
      print BLD "// This causes some macros to fail (mostly those in spectra). \n";
      print BLD "#define PRODUCTIONMODE \n\n";
   }
 
-  if($_ eq '--numudisap-only') { 
+  elsif($_ eq '--numudisap-only') { 
      print BLD "// Sets BANFF_BINS, FSI_BINS, and kSKSamples appropriately. \n";
      print BLD "#define __NUMUONLY__ \n\n";
+  }
+  
+  else {
+     print "Unrecognised option: ",$_,"\n";
   }
 
 }

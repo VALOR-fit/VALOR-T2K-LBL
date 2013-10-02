@@ -1162,3 +1162,19 @@ double NuXSec::ChisqPenalty(bool all_syst) const
   return chisq_penalty;
 }
 //________________________________________________________________________________________
+void NuXSec::Tweak(conv::PhysParamId_t p , double twkdial)
+{
+  if      (p==kNuisXSecFermiMom      ) fFermiMomTwkDial      = twkdial;
+  else if (p==kNuisXSecSpecFunc      ) fSpecFuncTwkDial      = twkdial;
+  else if (p==kNuisXSecWshape        ) fWshapeTwkDial        = twkdial;
+  else if (p==kNuisXSecShapeCCoth    ) fShapeCCothTwkDial    = twkdial;
+  else if (p==kNuisXSecPiLessDelta   ) fPiLessDeltaTwkDial   = twkdial;
+  else if (p==kNuisXSecBindE         ) fBindETwkDial         = twkdial;
+  else if (p==kNuisXSecNormCCcoh     ) fNormCCcohTwkDial     = twkdial;
+  else if (p==kNuisXSecNormNC1piC    ) fNormNC1piCTwkDial    = twkdial;
+  else if (p==kNuisXSecNormNCcoh     ) fNormNCcohTwkDial     = twkdial;
+  else if (p==kNuisXSecNormNCoth     ) fNormNCothTwkDial     = twkdial;
+  else if (p==kNuisXSecNormNuEToNuMu ) fNormNuEToNuMuTwkDial = twkdial;
+  else if (p==kNuisXSecNormAntiNuToNu) fNormAntiNuToNuTwkDial= twkdial;
+  else cerr<<"NuXSec/Tweak >> Failed to tweak parameter "<<util::AsString(p)<<endl;
+}

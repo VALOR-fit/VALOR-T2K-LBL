@@ -435,18 +435,18 @@ void SuperkExpectation::ResetSystematicVariations(void)
   this->GetBANFF()->Tweak(true,0);
 
   // X Section
-  this->GetNuXSec()->TweakFermiMom      (0.);
-  this->GetNuXSec()->TweakSpecFunc      (0.);
-  this->GetNuXSec()->TweakWshape        (0.);
-  this->GetNuXSec()->TweakShapeCCoth    (0.);
-  this->GetNuXSec()->TweakPiLessDelta   (0.);
-  this->GetNuXSec()->TweakBindE         (0.);
-  this->GetNuXSec()->TweakNormCCcoh     (0.);
-  this->GetNuXSec()->TweakNormNCcoh     (0.);
-  this->GetNuXSec()->TweakNormNC1piC    (0.);
-  this->GetNuXSec()->TweakNormNCoth     (0.);
-  this->GetNuXSec()->TweakNormNuEToNuMu (0.);
-  this->GetNuXSec()->TweakNormAntiNuToNu(0.);
+  this->GetNuXSec()->Tweak(kNuisXSecFermiMom      , 0.);
+  this->GetNuXSec()->Tweak(kNuisXSecSpecFunc      , 0.);
+  this->GetNuXSec()->Tweak(kNuisXSecWshape        , 0.);
+  this->GetNuXSec()->Tweak(kNuisXSecShapeCCoth    , 0.);
+  this->GetNuXSec()->Tweak(kNuisXSecPiLessDelta   , 0.);
+  this->GetNuXSec()->Tweak(kNuisXSecBindE         , 0.);
+  this->GetNuXSec()->Tweak(kNuisXSecNormCCcoh     , 0.);
+  this->GetNuXSec()->Tweak(kNuisXSecNormNC1piC    , 0.);
+  this->GetNuXSec()->Tweak(kNuisXSecNormNCcoh     , 0.);
+  this->GetNuXSec()->Tweak(kNuisXSecNormNCoth     , 0.);
+  this->GetNuXSec()->Tweak(kNuisXSecNormNuEToNuMu , 0.);
+  this->GetNuXSec()->Tweak(kNuisXSecNormAntiNuToNu, 0.);
 }
 //________________________________________________________________________________________
 void SuperkExpectation::TweakSystematic(string systematic, double twkdial, bool best_banff)
@@ -709,29 +709,29 @@ void SuperkExpectation::TweakSystematic(string systematic, double twkdial, bool 
   //
   
   else if(systematic == "xsec_pf")
-    this->GetNuXSec()->TweakFermiMom      (twkdial);
+    this->GetNuXSec()->Tweak(kNuisXSecFermiMom      , twkdial);
   else if(systematic == "xsec_sf")
-    this->GetNuXSec()->TweakSpecFunc      (twkdial);
+    this->GetNuXSec()->Tweak(kNuisXSecSpecFunc      , twkdial);
   else if(systematic == "xsec_wshape")
-    this->GetNuXSec()->TweakWshape        (twkdial);
+    this->GetNuXSec()->Tweak(kNuisXSecWshape        , twkdial);
   else if(systematic == "xsec_shape_ccoth")
-    this->GetNuXSec()->TweakShapeCCoth    (twkdial);
+    this->GetNuXSec()->Tweak(kNuisXSecShapeCCoth    , twkdial);
   else if(systematic == "xsec_pilessdelta")
-    this->GetNuXSec()->TweakPiLessDelta   (twkdial);
+    this->GetNuXSec()->Tweak(kNuisXSecPiLessDelta   , twkdial);
   else if(systematic == "xsec_bindE")
-    this->GetNuXSec()->TweakBindE         (twkdial);
+    this->GetNuXSec()->Tweak(kNuisXSecBindE         , twkdial);
   else if(systematic == "xsec_norm_cccoh")
-    this->GetNuXSec()->TweakNormCCcoh     (twkdial);
-  else if(systematic == "xsec_norm_nccoh")
-    this->GetNuXSec()->TweakNormNCcoh     (twkdial);
+    this->GetNuXSec()->Tweak(kNuisXSecNormCCcoh     , twkdial);
   else if(systematic == "xsec_norm_nc1piC")
-    this->GetNuXSec()->TweakNormNC1piC    (twkdial);
+    this->GetNuXSec()->Tweak(kNuisXSecNormNC1piC    , twkdial);
+  else if(systematic == "xsec_norm_nccoh")
+    this->GetNuXSec()->Tweak(kNuisXSecNormNCcoh     , twkdial);
   else if(systematic == "xsec_norm_ncoth")
-    this->GetNuXSec()->TweakNormNCoth     (twkdial);
+    this->GetNuXSec()->Tweak(kNuisXSecNormNCoth     , twkdial);
   else if(systematic == "xsec_norm_nuetonumu")
-    this->GetNuXSec()->TweakNormNuEToNuMu (twkdial);
+    this->GetNuXSec()->Tweak(kNuisXSecNormNuEToNuMu , twkdial);
   else if(systematic == "xsec_norm_antinutonu")
-    this->GetNuXSec()->TweakNormAntiNuToNu(twkdial);
+    this->GetNuXSec()->Tweak(kNuisXSecNormAntiNuToNu, twkdial);
 
 
   else {
@@ -795,18 +795,18 @@ void SuperkExpectation::TweakAllUncorrelatedXSecSystematics(void)
 #endif
 
   // XSec
-  this->GetNuXSec()->TweakFermiMom      (Rnd::Instance()->RndToyMCsyst().Gaus(0.,1.));
-  this->GetNuXSec()->TweakSpecFunc      (Rnd::Instance()->RndToyMCsyst().Uniform(0.,1.));
-  this->GetNuXSec()->TweakWshape        (Rnd::Instance()->RndToyMCsyst().Gaus(0.,1.));
-  this->GetNuXSec()->TweakShapeCCoth    (Rnd::Instance()->RndToyMCsyst().Gaus(0.,1.));
-  this->GetNuXSec()->TweakPiLessDelta   (Rnd::Instance()->RndToyMCsyst().Gaus(0.,1.));
-  this->GetNuXSec()->TweakBindE         (Rnd::Instance()->RndToyMCsyst().Gaus(0.,1.));
-  this->GetNuXSec()->TweakNormCCcoh     (Rnd::Instance()->RndToyMCsyst().Gaus(0.,1.));
-  this->GetNuXSec()->TweakNormNCcoh     (Rnd::Instance()->RndToyMCsyst().Gaus(0.,1.));
-  this->GetNuXSec()->TweakNormNC1piC    (Rnd::Instance()->RndToyMCsyst().Gaus(0.,1.));
-  this->GetNuXSec()->TweakNormNCoth     (Rnd::Instance()->RndToyMCsyst().Gaus(0.,1.));
-  this->GetNuXSec()->TweakNormNuEToNuMu (Rnd::Instance()->RndToyMCsyst().Gaus(0.,1.));
-  this->GetNuXSec()->TweakNormAntiNuToNu(Rnd::Instance()->RndToyMCsyst().Gaus(0.,1.));
+  this->GetNuXSec()->Tweak(kNuisXSecFermiMom       , Rnd::Instance()->RndToyMCsyst().Gaus(0.,1.));
+  this->GetNuXSec()->Tweak(kNuisXSecSpecFunc       , Rnd::Instance()->RndToyMCsyst().Uniform(0.,1.));
+  this->GetNuXSec()->Tweak(kNuisXSecWshape         , Rnd::Instance()->RndToyMCsyst().Gaus(0.,1.));
+  this->GetNuXSec()->Tweak(kNuisXSecShapeCCoth     , Rnd::Instance()->RndToyMCsyst().Gaus(0.,1.));
+  this->GetNuXSec()->Tweak(kNuisXSecPiLessDelta    , Rnd::Instance()->RndToyMCsyst().Gaus(0.,1.));
+  this->GetNuXSec()->Tweak(kNuisXSecBindE          , Rnd::Instance()->RndToyMCsyst().Gaus(0.,1.));
+  this->GetNuXSec()->Tweak(kNuisXSecNormCCcoh      , Rnd::Instance()->RndToyMCsyst().Gaus(0.,1.));
+  this->GetNuXSec()->Tweak(kNuisXSecNormNC1piC     , Rnd::Instance()->RndToyMCsyst().Gaus(0.,1.));
+  this->GetNuXSec()->Tweak(kNuisXSecNormNCcoh      , Rnd::Instance()->RndToyMCsyst().Gaus(0.,1.));
+  this->GetNuXSec()->Tweak(kNuisXSecNormNCoth      , Rnd::Instance()->RndToyMCsyst().Gaus(0.,1.));
+  this->GetNuXSec()->Tweak(kNuisXSecNormNuEToNuMu  , Rnd::Instance()->RndToyMCsyst().Gaus(0.,1.));
+  this->GetNuXSec()->Tweak(kNuisXSecNormAntiNuToNu , Rnd::Instance()->RndToyMCsyst().Gaus(0.,1.));
 }
 //________________________________________________________________________________________
 void SuperkExpectation::TweakAllSKDetectorSystematics(void)
@@ -1246,53 +1246,12 @@ void SuperkExpectation::SetNuisanceParams(const FitParamList & fp, bool all_banf
    // 
    // Cross-section systematics (other than BANFF ones)
    //
-   if(fp.Exists(kNuisXSecFermiMom)) {
-     double twk = fp.CurrValue(kNuisXSecFermiMom);
-     this->GetNuXSec()->TweakFermiMom(twk);
-   }
-   if(fp.Exists(kNuisXSecSpecFunc)) {
-     double twk = fp.CurrValue(kNuisXSecSpecFunc);
-     this->GetNuXSec()->TweakSpecFunc(twk);
-   }
-   if(fp.Exists(kNuisXSecWshape)) {
-     double twk = fp.CurrValue(kNuisXSecWshape);
-     this->GetNuXSec()->TweakWshape(twk);
-   }
-   if(fp.Exists(kNuisXSecShapeCCoth)) {
-     double twk = fp.CurrValue(kNuisXSecShapeCCoth);
-     this->GetNuXSec()->TweakShapeCCoth(twk);
-   }
-   if(fp.Exists(kNuisXSecPiLessDelta)) {
-     double twk = fp.CurrValue(kNuisXSecPiLessDelta);
-     this->GetNuXSec()->TweakPiLessDelta(twk);
-   }
-   if(fp.Exists(kNuisXSecBindE)) {
-     double twk = fp.CurrValue(kNuisXSecBindE);
-     this->GetNuXSec()->TweakBindE(twk);
-   }
-   if(fp.Exists(kNuisXSecNormCCcoh)) {
-     double twk = fp.CurrValue(kNuisXSecNormCCcoh);
-     this->GetNuXSec()->TweakNormCCcoh(twk);
-   }
-   if(fp.Exists(kNuisXSecNormNCcoh)) {
-     double twk = fp.CurrValue(kNuisXSecNormNCcoh);
-     this->GetNuXSec()->TweakNormNCcoh(twk);
-   }
-   if(fp.Exists(kNuisXSecNormNC1piC)) {
-     double twk = fp.CurrValue(kNuisXSecNormNC1piC);
-     this->GetNuXSec()->TweakNormNC1piC(twk);
-   }
-   if(fp.Exists(kNuisXSecNormNCoth)) {
-     double twk = fp.CurrValue(kNuisXSecNormNCoth);
-     this->GetNuXSec()->TweakNormNCoth(twk);
-   }
-   if(fp.Exists(kNuisXSecNormNuEToNuMu)) {
-     double twk = fp.CurrValue(kNuisXSecNormNuEToNuMu);
-     this->GetNuXSec()->TweakNormNuEToNuMu(twk);
-   }
-   if(fp.Exists(kNuisXSecNormAntiNuToNu)) {
-     double twk = fp.CurrValue(kNuisXSecNormAntiNuToNu);
-     this->GetNuXSec()->TweakNormAntiNuToNu(twk);
+   for(int ip = 0; ip < kNumOfXSecSyst; ip++) {
+     PhysParamId_t p = kListOfXSecSyst[ip];          
+     if(fp.Exists(p)) {
+       double twk = fp.CurrValue(p);
+       this->GetNuXSec()->Tweak(p,twk);
+     }
    }
 
 }
