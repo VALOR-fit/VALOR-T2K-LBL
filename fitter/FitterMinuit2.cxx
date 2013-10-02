@@ -432,6 +432,10 @@ bool FitterMinuit2::RunOnce(void)
   fFitInputs->FitParams().SetMinosErrors(err_minosplus, err_minosminus);
 #endif
 
+  fFitInputs->FitParams().SetFitTime ( fFitTime );
+  fFitInputs->FitParams().SetBestFitChisq ( fFitInputs->BestFitChisquare());
+
+
   // Print fit result
 #ifdef __show_fit_result__
 #ifdef __show_fit_steps__
