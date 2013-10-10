@@ -67,9 +67,10 @@ void analyse_output_new
  double       mixing_max           = 1.0,
  double       dm_min               = 0.002,
  double       dm_max               = 0.003,
- const char * mixparamchoice      = "sinsq2theta",                   /* sinsq2theta or sinsqtheta, for the contour x-axis */
+ const char * mixparamchoice       = "sinsq2theta",                   /* sinsq2theta or sinsqtheta, for the contour x-axis */
  const char * other_spectrum_file  = "",
- const char * other_spectrum_name  = ""
+ const char * other_spectrum_name  = "",
+ bool         smooth               = false
 )
 {
   using namespace std;
@@ -512,6 +513,7 @@ void analyse_output_new
   TH2D * hchisq = 0, * hdchisq = 0;
   fin.GetObject("chisq",  hchisq);
   fin.GetObject("dchisq", hdchisq);
+  hdchisq->Smooth();
   //axis range
   hchisq-> GetXaxis()->SetRangeUser(mixing_min, mixing_max);
   hchisq-> GetYaxis()->SetRangeUser(dm_min,     dm_max);
@@ -567,6 +569,10 @@ void analyse_output_new
   TH2D * hcont68 = 0, * hcont90 = 0;
   fin.GetObject("dchisq_cont68", hcont68);
   fin.GetObject("dchisq_cont90", hcont90);
+  TH2D * hcont68smooth = new TH2D(*hcont68);
+  hcont68smooth->Smooth();
+  TH2D * hcont90smooth = new TH2D(*hcont90);
+  hcont90smooth->Smooth();
   //axis range
   osc_param_space->GetXaxis()->SetRangeUser(mixing_min, mixing_max);
   osc_param_space->GetYaxis()->SetRangeUser(dm_min,     dm_max);
@@ -588,8 +594,14 @@ void analyse_output_new
   ccontour->SetLeftMargin(0.15);
   ccontour->cd();
   osc_param_space->Draw();
-  hcont68->Draw("cont3same");
-  hcont90->Draw("cont3same");
+  if(!smooth) {
+    hcont68->Draw("cont3same");
+    hcont90->Draw("cont3same");
+  }
+  else {
+    hcont68smooth->Draw("cont3same");
+    hcont90smooth->Draw("cont3same");
+  }
   markbf->Draw();
   l->Draw();
   save_canvas(ccontour,"contour",tag);

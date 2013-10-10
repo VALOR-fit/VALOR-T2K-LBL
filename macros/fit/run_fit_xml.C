@@ -30,7 +30,7 @@ void run_fit_xml
   using namespace t2kana;
 
   // Analysis configuration
-  const char * config = Form("%s/config/%s", gSystem->Getenv("T2KOSCANA"), config_file);
+  TString config   = Form("%s/config/%s", gSystem->Getenv("T2KOSCANA"), config_file);
   TString xmlfile2 = Form("%s/inputs/%s", gSystem->Getenv("T2KOSCANA"), xmlfile);
 
   // Global options
@@ -74,7 +74,7 @@ void run_fit_xml
 
   // Get superk spectrum predictor & configure
   SuperkExpectation * skexp = new SuperkExpectation;
-  skexp->Read(config);
+  skexp->Read(config.Data());
 
   // Arrays for storing all pieces of fit data and the best-fit pdf (and its components) for each expt.
   TObjArray * dat_array = new TObjArray; //only used to initialise branch
