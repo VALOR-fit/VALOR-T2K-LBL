@@ -564,7 +564,8 @@ void FitParamList::Print(ostream & stream) const
     int code = sciter->second;
     stream << setw(20) << name << setw(10) << code << endl;  
   }
-  stream << "Fit time: " << fFitTime << " sec" << endl;
+  stream << "Fit time:  " << fFitTime  << " sec" << endl;
+  stream << "Fit tries: " << fFitTries << " tries" << endl;
   stream << "Best-fit chisq: " << fBestFitChisq << endl;  
 }
 //________________________________________________________________________________________
@@ -1796,6 +1797,7 @@ void FitParamList::Copy(const FitParamList & plst)
 
    this->fBestFitChisq = plst.fBestFitChisq;
    this->fFitTime      = plst.fFitTime;
+   this->fFitTries     = plst.fFitTries;
 
    this->fStatusCodes.insert(plst.fStatusCodes.begin(),  plst.fStatusCodes.end());
 
@@ -1850,7 +1852,8 @@ void FitParamList::Init(int nparams)
    fShowBestFitValuesOnly = false;
 
    fBestFitChisq = 0.;
-   fFitTime      = 0.;
+   fFitTime      = -1;
+   fFitTries     = 0.;
 
    fStatusCodes.clear();
 
@@ -1894,6 +1897,7 @@ void FitParamList::CleanUp(void)
 
    fBestFitChisq = 0.;
    fFitTime      = 0.;
+   fFitTries     = -1;
 
    fParListName = "";
    fSystMode = -1;

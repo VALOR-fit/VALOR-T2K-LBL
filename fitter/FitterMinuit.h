@@ -57,10 +57,12 @@ protected:
    int         fHesseErrStatusCode;  ///< HESSE err status code
    int         fMinosErrStatusCode;  ///< MINOS err status code
    double      fFitTime;             ///< time taken to do the fit
+   int         fFitTries;            ///< number of tries taken to do the fit
    int         fNFitBins;            ///< number of bins in fit
    int         fNFreeFitParams;      ///< number of free params in fit
    bool        fCalcHesseErrors;     ///< calculate HESSE errors?
    bool        fCalcMinosErrors;     ///< calculate MINOS errors?
+   bool        fCalcEScaleErrors;    ///< calculate MINOS errors for Energy scale paramter only
  //bool        fSimplex;             ///< 
    double      fTol;                 ///< set tolerance
    int         fStr;

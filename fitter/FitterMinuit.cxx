@@ -75,6 +75,7 @@ void FitterMinuit::Init(void)
   fNFitBins            = 0;
   fCalcHesseErrors     = false;
   fCalcMinosErrors     = false;
+  fCalcEScaleErrors    = false;
 //fSimplex             = false;
   fTol                 = 0.1;
   fStr                 = 1;
@@ -83,6 +84,7 @@ void FitterMinuit::Init(void)
   fHesseErrStatusCode  = -999; 
   fMinosErrStatusCode  = -999; 
   fFitTime             = 0;
+  fFitTime             = -1;
 }
 //____________________________________________________________________________ 
 int FitterMinuit::FitStatusCode (Option_t * option) 
@@ -124,8 +126,9 @@ void FitterMinuit::Init(FitInputs * fit_inputs, Option_t * option)
   fOption = option;
 
   // calc HESSE or MINOS errors after fit
-  fCalcHesseErrors = fOption.Contains("hesse");
-  fCalcMinosErrors = fOption.Contains("minos");
+  fCalcHesseErrors  = fOption.Contains("hesse");
+  fCalcMinosErrors  = fOption.Contains("minos");
+  fCalcEScaleErrors = (fCalcMinosErrors) ? false : fOption.Contains("escale"); //don't need to calculate minos errors twice for escale
 
   if(fOption.Contains("minuit")) {
     // get fitter
@@ -188,6 +191,7 @@ bool FitterMinuit::DoTheFit(void)
   w.Start();
 
   fFitTime = 0;
+  fFitTries = -1;
 
   // reset fit time, bestfit chisq and status codes in
   // persistable FitParamList obj
@@ -218,9 +222,9 @@ bool FitterMinuit::DoTheFit(void)
     case(conv::kNuMixSinsqTheta):
       if(ana == kAnaNuMuDisappOnly || ana == kAnaCombined)
 	if (fFitInputs->FitParams().InitValue(conv::kPhypMixing23)< 0.515)
-	  fFitInputs->FitParams().SetInitValue(conv::kPhypMixing23, Rnd::Instance()->RndFitter().Uniform(0.35,0.5));
+	  fFitInputs->FitParams().SetInitValue(conv::kPhypMixing23, Rnd::Instance()->RndFitter().Uniform(0.35,0.50));
 	else
-	  fFitInputs->FitParams().SetInitValue(conv::kPhypMixing23, Rnd::Instance()->RndFitter().Uniform(0.5,0.65));
+	  fFitInputs->FitParams().SetInitValue(conv::kPhypMixing23, Rnd::Instance()->RndFitter().Uniform(0.53,0.68));
       if(ana == kAnaNuEAppOnly || ana == kAnaCombined)
 	fFitInputs->FitParams().SetInitValue(conv::kPhypMixing13, Rnd::Instance()->RndFitter().Uniform(0.015,0.035));
       break;
@@ -233,10 +237,13 @@ bool FitterMinuit::DoTheFit(void)
     this->RunOnce(false);
     ntries++;
   }
+  fFitTries = ntries;
+
 
   if(fMigradMinStatusCode == 4) {
     cout << "Fits still failed; trying SIMPLEX" << endl;
     this->RunOnce(true);
+    fFitTries = 99;
   }  
 
   // stop clock
@@ -245,12 +252,15 @@ bool FitterMinuit::DoTheFit(void)
 #ifdef __show_fit_cpu_time__
   cout << "FitterMinuit/DoTheFit >> Fit performed in " 
        << fFitTime << " sec." << endl;
+  cout << "FitterMinuit/DoTheFit >> Fit performed in " 
+       << fFitTries << " attempts" << endl;
 #endif
 
   // copy fit time and bestfit chisq and status codes 
   // to persistable FitParamList obj
 
-  fFitInputs->FitParams().SetFitTime ( fFitTime );
+  fFitInputs->FitParams().SetFitTime ( fFitTime  );
+  fFitInputs->FitParams().SetFitTries( fFitTries );
   fFitInputs->FitParams().SetBestFitChisq ( fFitInputs->BestFitChisquare());
 
   fFitInputs->FitParams().SetStatusCode("migrad_min", fMigradMinStatusCode);
@@ -260,6 +270,9 @@ bool FitterMinuit::DoTheFit(void)
     fFitInputs->FitParams().SetStatusCode("hesse_err", fHesseErrStatusCode);
   }
   if(fCalcMinosErrors) {
+    fFitInputs->FitParams().SetStatusCode("minos_err", fMinosErrStatusCode);
+  }
+  else if(fCalcEScaleErrors) {
     fFitInputs->FitParams().SetStatusCode("minos_err", fMinosErrStatusCode);
   }
 
@@ -331,10 +344,26 @@ bool FitterMinuit::RunOnce(bool use_simplex)
 
   // Calculate HESSE or MINOS errors
   if(fCalcHesseErrors) {
+#ifdef __show_fit_steps__
+    cout << "FitterMinuit/RunOnce >> Running HESSE..." << endl;
+#endif
     fHesseErrStatusCode = fitter->ExecuteCommand("HESSE",arglist, 1);
   }
-  else if(fCalcMinosErrors) {
+  if(fCalcMinosErrors) {
+#ifdef __show_fit_steps__
+    cout << "FitterMinuit/RunOnce >> Running MINOS..." << endl;
+#endif
     fMinosErrStatusCode = fitter->ExecuteCommand("MINOS",arglist, 1);
+  }
+  //only run this if minos has not already been run
+  else if(fCalcEScaleErrors) {
+    int escale_slot = fFitInputs->FitParams().Id(conv::kNuisSuperkEnergyScale) + 1; //FitParamList Id runs from 0. MINUIT Id runs from 1.
+#ifdef __show_fit_steps__
+    cout << "FitterMinuit/RunOnce >> Running MINOS for energy scale (MINUIT parameter " << escale_slot << ") only..." << endl;
+#endif
+    arglist[1] = escale_slot;    //min parno
+    arglist[2] = escale_slot;    //max parno
+    fMinosErrStatusCode = fitter->ExecuteCommand("MINOS",arglist, 3);
   }
 
   // Get error matrix status
