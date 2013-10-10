@@ -5,6 +5,7 @@
 //________________________________________________________________________________________
 
 #include "Rnd.h"
+#include "Build.h"
 
 using std::endl;
 
@@ -47,15 +48,33 @@ void Rnd::SetSeeds(
 {
   fSeedToyMCstat = toymcstat;
   fSeedToyMCsyst = toymcsyst;
-  fSeedToyMCosc  = toymcosc;
-  fSeedFitter    = fitter;
-  fSeedOther     = other;
+  fSeedToyMCosc  = toymcosc ;
+  fSeedFitter    = fitter   ;
+  fSeedOther     = other    ;
+  
+#ifndef __SEED_TRANDOM_ZERO__
+  unsigned int randseeds[5] = {};
+  // If any seeds are zero, read from /dev/urandom to seed them.
+  // /dev/random might be slow on batch machines
+  if (! (toymcstat && toymcsyst && toymcosc && fitter && other) ) {
+    FILE * devrandom = fopen("/dev/urandom","r");
+    fread(randseeds, sizeof(unsigned int), 5, devrandom);
+    fclose(devrandom);
+  }
+    
+  fSeedToyMCstat = ( toymcstat ? toymcstat : randseeds[0] );
+  fSeedToyMCsyst = ( toymcsyst ? toymcsyst : randseeds[1] );
+  fSeedToyMCosc  = ( toymcosc  ? toymcosc  : randseeds[2] );
+  fSeedFitter    = ( fitter    ? fitter    : randseeds[3] );
+  fSeedOther     = ( other     ? other     : randseeds[4] );
+#endif
 
-  fRndToyMCstat . SetSeed(toymcstat);
-  fRndToyMCsyst . SetSeed(toymcsyst);
-  fRndToyMCosc  . SetSeed(toymcosc);
-  fRndFitter    . SetSeed(fitter);
-  fRndOther     . SetSeed(other);
+  fRndToyMCstat . SetSeed(fSeedToyMCstat);
+  fRndToyMCsyst . SetSeed(fSeedToyMCsyst);
+  fRndToyMCosc  . SetSeed(fSeedToyMCosc);
+  fRndFitter    . SetSeed(fSeedFitter);
+  fRndOther     . SetSeed(fSeedOther);
+  
 }
 //____________________________________________________________________________
 void Rnd::Print(ostream & stream) const

@@ -6,6 +6,7 @@
 #    --enable-gsl-fitter
 #    --production-mode
 #    --numudisap-only
+#    --seed-trandom-zero
 #
 
 $T2KOSCANA = $ENV{'T2KOSCANA'};
@@ -35,6 +36,11 @@ foreach (@ARGV) {
      print BLD "#define __NUMUONLY__ \n\n";
   }
   
+  elsif($_ eq '--seed-trandom-zero') {
+    print BLD "// Rnd constructs TRandom with zero seeds if requested, rather than reading /dev/urandom \n";
+    print BLD "#define __SEED_TRANDOM_ZERO__\n\n";
+  }
+ 
   else {
      print "Unrecognised option: ",$_,"\n";
   }
