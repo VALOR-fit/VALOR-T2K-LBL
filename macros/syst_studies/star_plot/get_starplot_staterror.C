@@ -1,4 +1,7 @@
-void get_starplot_staterror(const char * folder = "./") {
+void get_starplot_staterror(
+			    const char * folder    = "./"
+)
+{
   using namespace t2kana;
   Opt::Instance()->gOscMixingParamChoice == conv::kNuMixSinsqTheta;
 
@@ -15,6 +18,7 @@ void get_starplot_staterror(const char * folder = "./") {
 
   double sd_mixing23 = 0;
   double sd_dm32sq = 0;
+  TH1D * bfmix = new TH1D("","",100,0.2,0.8);
   for(int i=0; i<c.GetEntries(); i++) {
     c.GetEntry(i);
     double in_dm = iparm->Value(conv::kPhypDm23sq);
@@ -34,37 +38,46 @@ void get_starplot_staterror(const char * folder = "./") {
     double devsq_mirror = (bf_mix - in_mirror) * (bf_mix - in_mirror);
     //cout << in_mix << "\t" << in_mirror << endl;
     sd_mixing23 += TMath::Min(devsq_in,devsq_mirror);
+    //sd_mixing23 += devsq_in;
+    bfmix->Fill(bf_mix);
   }
   sd_mixing23 = sqrt(sd_mixing23 / (c.GetEntries() - 1));
   sd_dm32sq = sqrt(sd_dm32sq / (c.GetEntries() - 1));
 
   cout << sd_dm32sq << endl;
   cout << sd_mixing23 << endl;
+  cout << "lalalala\t" << bfmix->GetRMS() << "\t" << in_mix << endl;
+  bfmix->GetXaxis()->SetRangeUser(0.2,0.51);
+  cout << "lalala\t" << bfmix->GetRMS() << "\t" << in_mix << endl;
 
   ofstream stat;
   stat.open (Form("%s/stat.data",folder));
   stat << sd_mixing23 << endl;
   stat << sd_dm32sq << endl;
   stat.close();
+
+  TCanvas * can = new TCanvas();
+  bfmix->Draw();
+  can->SaveAs(Form("%s/bf_%f.pdf",folder,in_mix));
 }
 
 
 /*
-root -q '$T2KOSCANA/macros/fit/syst/star_plot/get_starplot_staterror.C("nuosc3f_numudisapp_fix4/pulls_-99_-99_-99_-99_-99_0.0022")'
-root -q '$T2KOSCANA/macros/fit/syst/star_plot/get_starplot_staterror.C("nuosc3f_numudisapp_fix4/pulls_-99_-99_-99_-99_-99_-99")'
-root -q '$T2KOSCANA/macros/fit/syst/star_plot/get_starplot_staterror.C("nuosc3f_numudisapp_fix4/pulls_-99_-99_-99_-99_-99_0.0026")'
-root -q '$T2KOSCANA/macros/fit/syst/star_plot/get_starplot_staterror.C("nuosc3f_numudisapp_fix4/pulls_-99_-99_0.95_-99_-99_0.0022")'
-root -q '$T2KOSCANA/macros/fit/syst/star_plot/get_starplot_staterror.C("nuosc3f_numudisapp_fix4/pulls_-99_-99_0.95_-99_-99_-99")'
-root -q '$T2KOSCANA/macros/fit/syst/star_plot/get_starplot_staterror.C("nuosc3f_numudisapp_fix4/pulls_-99_-99_0.95_-99_-99_0.0026")'
-root -q '$T2KOSCANA/macros/fit/syst/star_plot/get_starplot_staterror.C("nuosc3f_numudisapp_fix4/pulls_-99_-99_0.9_-99_-99_0.0022")'
-root -q '$T2KOSCANA/macros/fit/syst/star_plot/get_starplot_staterror.C("nuosc3f_numudisapp_fix4/pulls_-99_-99_0.9_-99_-99_-99")'
-root -q '$T2KOSCANA/macros/fit/syst/star_plot/get_starplot_staterror.C("nuosc3f_numudisapp_fix4/pulls_-99_-99_0.9_-99_-99_0.0026")'
+root2k -q '$T2KOSCANA/macros/syst_studies/star_plot/get_starplot_staterror.C("nuosc3f_numudisapp_fix4/pulls_-99_-99_-99_-99_-99_0.0022")'
+root2k -q '$T2KOSCANA/macros/syst_studies/star_plot/get_starplot_staterror.C("nuosc3f_numudisapp_fix4/pulls_-99_-99_-99_-99_-99_-99")'
+root2k -q '$T2KOSCANA/macros/syst_studies/star_plot/get_starplot_staterror.C("nuosc3f_numudisapp_fix4/pulls_-99_-99_-99_-99_-99_0.0026")'
+root2k -q '$T2KOSCANA/macros/syst_studies/star_plot/get_starplot_staterror.C("nuosc3f_numudisapp_fix4/pulls_-99_-99_0.95_-99_-99_0.0022")'
+root2k -q '$T2KOSCANA/macros/syst_studies/star_plot/get_starplot_staterror.C("nuosc3f_numudisapp_fix4/pulls_-99_-99_0.95_-99_-99_-99")'
+root2k -q '$T2KOSCANA/macros/syst_studies/star_plot/get_starplot_staterror.C("nuosc3f_numudisapp_fix4/pulls_-99_-99_0.95_-99_-99_0.0026")'
+root2k -q '$T2KOSCANA/macros/syst_studies/star_plot/get_starplot_staterror.C("nuosc3f_numudisapp_fix4/pulls_-99_-99_0.9_-99_-99_0.0022")'
+root2k -q '$T2KOSCANA/macros/syst_studies/star_plot/get_starplot_staterror.C("nuosc3f_numudisapp_fix4/pulls_-99_-99_0.9_-99_-99_-99")'
+root2k -q '$T2KOSCANA/macros/syst_studies/star_plot/get_starplot_staterror.C("nuosc3f_numudisapp_fix4/pulls_-99_-99_0.9_-99_-99_0.0026")'
 
-root -q '$T2KOSCANA/macros/fit/syst/star_plot/get_starplot_staterror.C("nuosc3f_numudisapp_fix4/pulls_-99_-99_0.8_-99_-99_0.002")'
-root -q '$T2KOSCANA/macros/fit/syst/star_plot/get_starplot_staterror.C("nuosc3f_numudisapp_fix4/pulls_-99_-99_0.8_-99_-99_0.003")'
-root -q '$T2KOSCANA/macros/fit/syst/star_plot/get_starplot_staterror.C("nuosc3f_numudisapp_fix4/pulls_-99_-99_0.8_-99_-99_0.0024")'
-root -q '$T2KOSCANA/macros/fit/syst/star_plot/get_starplot_staterror.C("nuosc3f_numudisapp_fix4/pulls_-99_-99_1.0_-99_-99_0.002")'
-root -q '$T2KOSCANA/macros/fit/syst/star_plot/get_starplot_staterror.C("nuosc3f_numudisapp_fix4/pulls_-99_-99_1.0_-99_-99_0.003")'
+root2k -q '$T2KOSCANA/macros/syst_studies/star_plot/get_starplot_staterror.C("nuosc3f_numudisapp_fix4/pulls_-99_-99_0.8_-99_-99_0.002")'
+root2k -q '$T2KOSCANA/macros/syst_studies/star_plot/get_starplot_staterror.C("nuosc3f_numudisapp_fix4/pulls_-99_-99_0.8_-99_-99_0.003")'
+root2k -q '$T2KOSCANA/macros/syst_studies/star_plot/get_starplot_staterror.C("nuosc3f_numudisapp_fix4/pulls_-99_-99_0.8_-99_-99_0.0024")'
+root2k -q '$T2KOSCANA/macros/syst_studies/star_plot/get_starplot_staterror.C("nuosc3f_numudisapp_fix4/pulls_-99_-99_1.0_-99_-99_0.002")'
+root2k -q '$T2KOSCANA/macros/syst_studies/star_plot/get_starplot_staterror.C("nuosc3f_numudisapp_fix4/pulls_-99_-99_1.0_-99_-99_0.003")'
 
 
 

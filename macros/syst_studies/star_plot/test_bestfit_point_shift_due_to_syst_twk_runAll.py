@@ -125,15 +125,23 @@ oscparams.append([0.857, 0.098, 1.000, 0, 7.5E-5, 0.00244]) #t2k run1-3 best fit
 oscparams.append([0.857, 0.098, 0.957, 0, 7.5E-5, 0.00239]) #minos neutrino2012 best fit
 """
 #using sinsqtheta
+"""
 oscparams.append([-99, -99, 0.513, -99, -99, 0.0025])   #use global best fits!
-oscparams.append([-99, -99, 0.37,  -99, -99, 0.0025])   #mixing23=0.37 & global best fits
-oscparams.append([-99, -99, 0.65,  -99, -99, 0.0025])   #mixing23=0.65 & global best fits
 oscparams.append([-99, -99, 0.513, -99, -99, 0.0028])   #dm32sq=0.0028 & global best fits!
-oscparams.append([-99, -99, 0.37,  -99, -99, 0.0028])   #dm32sq=0.0028 & mixing23=0.37 & global best fits
-oscparams.append([-99, -99, 0.65,  -99, -99, 0.0028])   #dm32sq=0.0028 & mixing23=0.65 & global best fits
 oscparams.append([-99, -99, 0.513, -99, -99, 0.0022])   #dm32sq=0.0022 & global best fits!
+
+oscparams.append([-99, -99, 0.5,  -99, -99, 0.0022])   #dm32sq=0.0022 & mixing23=0.5 & global best fits
+oscparams.append([-99, -99, 0.5,  -99, -99, 0.0025])   #dm32sq=0.0025 & mixing23=0.5 & global best fits
+oscparams.append([-99, -99, 0.5,  -99, -99, 0.0028])   #dm32sq=0.0028 & mixing23=0.5 & global best fits
+"""
+oscparams.append([-99, -99, 0.37,  -99, -99, 0.0025])   #mixing23=0.37 & global best fits
+oscparams.append([-99, -99, 0.37,  -99, -99, 0.0028])   #dm32sq=0.0028 & mixing23=0.37 & global best fits
 oscparams.append([-99, -99, 0.37,  -99, -99, 0.0022])   #dm32sq=0.0022 & mixing23=0.37 & global best fits
+
+oscparams.append([-99, -99, 0.65,  -99, -99, 0.0025])   #mixing23=0.65 & global best fits
+oscparams.append([-99, -99, 0.65,  -99, -99, 0.0028])   #dm32sq=0.0028 & mixing23=0.65 & global best fits
 oscparams.append([-99, -99, 0.65,  -99, -99, 0.0022])   #dm32sq=0.0022 & mixing23=0.65 & global best fits
+
 
 for osc in oscparams:
 
@@ -238,6 +246,18 @@ for osc in oscparams:
             command = 'root2k -l -b -q \'$T2KOSCANA/macros/syst_studies/star_plot/make_star_plot_for_disappearance_analysis.C("combined-all.data",'+str(osc[2])+','+str(osc[5])+','+errmixing23+','+errdm23sq+')\''
             print command
             os.system(command)
+            command = 'cat star_plot_line-[a-z]*.data > combined-alluncorrelated.data'
+            print command
+            os.system(command)
+            command = 'root2k -l -b -q \'$T2KOSCANA/macros/syst_studies/star_plot/make_star_plot_for_disappearance_analysis.C("combined-alluncorrelated.data",'+str(osc[2])+','+str(osc[5])+','+errmixing23+','+errdm23sq+')\''
+            print command
+            os.system(command)
+            command = 'cat star_plot_line-_correlated*.data star_plot_line-[n,x]*.data star_plot_line-sk_energy_scale.data > combined-allcorrelated.data'
+            print command
+            os.system(command)
+            command = 'root2k -l -b -q \'$T2KOSCANA/macros/syst_studies/star_plot/make_star_plot_for_disappearance_analysis.C("combined-allcorrelated.data",'+str(osc[2])+','+str(osc[5])+','+errmixing23+','+errdm23sq+')\''
+            print command
+            os.system(command)
             command = 'cat star_plot_line-osc*.data > combined-osc.data'
             print command
             os.system(command)
@@ -314,9 +334,21 @@ for osc in oscparams:
          command = 'root2k -l -b -q \'$T2KOSCANA/macros/syst_studies/star_plot/text_to_root.C('+str(osc[2])+','+str(osc[5])+','+errmixing23+','+errdm23sq+',"'+dirname+'/combined-all.data")\''
          print command
          os.system(command)
+         command = 'root2k -l -b -q \'$T2KOSCANA/macros/syst_studies/star_plot/text_to_root.C('+str(osc[2])+','+str(osc[5])+','+errmixing23+','+errdm23sq+',"'+dirname+'/combined-alluncorrelated.data","uncorr")\''
+         print command
+         os.system(command)
+         command = 'root2k -l -b -q \'$T2KOSCANA/macros/syst_studies/star_plot/text_to_root.C('+str(osc[2])+','+str(osc[5])+','+errmixing23+','+errdm23sq+',"'+dirname+'/combined-allcorrelated.data","corr")\''
+         print command
+         os.system(command)
 
 
 if opt.do_table:
    command = 'root2k -l -b -q \'$T2KOSCANA/macros/syst_studies/star_plot/max_deviation_table.C("readfile*.root")\''
+   print command
+   os.system(command)
+   command = 'root2k -l -b -q \'$T2KOSCANA/macros/syst_studies/star_plot/max_deviation_table.C("corr*.root")\''
+   print command
+   os.system(command)
+   command = 'root2k -l -b -q \'$T2KOSCANA/macros/syst_studies/star_plot/max_deviation_table.C("uncorr*.root")\''
    print command
    os.system(command)

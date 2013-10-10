@@ -62,7 +62,7 @@ void make_star_plot_for_disappearance_analysis
   //
 
   // dm23sq, mixing23 range and step
-  double mixing23_min   = 0.5;
+  double mixing23_min   = 0.0;
   double mixing23_max   = 1.;
   double mixing23_step  = 0.001;
   double dm23sq_min     = 1E-3;
@@ -79,7 +79,7 @@ void make_star_plot_for_disappearance_analysis
        dm23sq_nbins, 
        dm23sq_min - 0.5*dm23sq_step, 
        dm23sq_max + 0.5*dm23sq_step);
-  osc_param_space->GetXaxis()->SetTitle("sin^{2}2#theta_{23}"); // adjust if mixing param is sinsqtheta rather than sinsq2theta...
+  osc_param_space->GetXaxis()->SetTitle("sin^{2}#theta_{23}"); // adjust if mixing param is sinsqtheta rather than sinsq2theta...
   osc_param_space->GetYaxis()->SetTitle("|#Deltam_{32}^{2}| (eV^{2}/c^{4})");
   osc_param_space->GetXaxis()->SetTitleOffset(1.2);
   osc_param_space->GetYaxis()->SetTitleOffset(1.4);

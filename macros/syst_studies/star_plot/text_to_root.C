@@ -12,10 +12,11 @@ void text_to_root
  double indm23,  //input
  double stmix23, //stat error
  double stdm23,  //stat error
- const char * filename = "all.data"
+ const char * filename = "all.data",
+ const char * outtag   = "readfile"
  )
 {
-  TFile * f = new TFile(Form("readfile_%f_%f.root",inmix23,indm23),"RECREATE");
+  TFile * f = new TFile(Form("%s_%f_%f.root",outtag,inmix23,indm23),"RECREATE");
 
   TTree * tree = new TTree("tree","tree");
 

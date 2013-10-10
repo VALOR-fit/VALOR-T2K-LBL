@@ -131,11 +131,16 @@ void max_deviation_table(const char * filename = "readfile.root")
 	in_mirror = centre - TMath::Abs(centre - var_inmix23);
       double devP = TMath::Min( TMath::Abs((var_mix23P-var_inmix23)/var_stmix23), TMath::Abs((var_mix23P-in_mirror)/var_stmix23) );
       double devM = TMath::Min( TMath::Abs((var_mix23M-var_inmix23)/var_stmix23), TMath::Abs((var_mix23M-in_mirror)/var_stmix23) );
+      //double devP = TMath::Abs((var_mix23P-var_inmix23)/var_stmix23);
+      //double devM = TMath::Abs((var_mix23M-var_inmix23)/var_stmix23);
       maxmix = TMath::Max( maxmix, TMath::Max(devP, devM) );
     }
     cout << setw(15) << setfill(' ');
     if(maxmix > 0.25 || maxdm > 0.25)
       cout << "{\\color{red}";
+    //else if(maxmix > 0.25 || maxdm > 0.25)
+    //  cout << "{\\color{red}";
+    //if(maxdm > 0.25) cout << "{\\color{red}";
     else
       cout << "";
 
@@ -152,7 +157,8 @@ void max_deviation_table(const char * filename = "readfile.root")
       cout << "$\\delta_{CP}$";
     else 
       //cout << util::AsStringTex(util::PhysParamIdFromString(name));
-      cout << util::AsStringPaperTex(util::PhysParamIdFromString(name));
+      cout << util::AsStringPresentTex(util::PhysParamIdFromString(name));
+      //cout << util::AsStringPaperTex(util::PhysParamIdFromString(name));
     if(maxmix > 0.25 || maxdm > 0.25)
       cout << "}";
 
