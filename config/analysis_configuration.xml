@@ -85,12 +85,12 @@
         <nominal>     
            <numu>
              <pot> 
-	       <filename>    inputs/official/2013/superk/mc/neut/13a/smallnt_numu_sk13a_flx11bv32_run1-4mid_10acut.root </filename>
+	       <filename>    inputs/official/2013/superk/mc/neut/13a/smallnt_numu_sk13a_flx11bv32_run1-4_10acut.root </filename>
 	       <objname>     h_stat_snt_tnumu  </objname>
 	       <objtype>     TH1D                  </objtype>
              </pot>
              <one_mu_ring>
-                <filename>   inputs/official/2013/superk/mc/neut/13a/smallnt_numu_sk13a_flx11bv32_run1-4mid_10acut.root  </filename>
+                <filename>   inputs/official/2013/superk/mc/neut/13a/smallnt_numu_sk13a_flx11bv32_run1-4_10acut.root  </filename>
                 <objname>    tnumu   </objname>
                 <objtype>    TTree            </objtype>
              </one_mu_ring>
@@ -104,12 +104,12 @@
            </numu>
            <numubar>
              <pot> 
-	       <filename>    inputs/official/2013/superk/mc/neut/13a/smallnt_numu_sk13a_flx11bv32_run1-4mid_10acut.root </filename>
+	       <filename>    inputs/official/2013/superk/mc/neut/13a/smallnt_numu_sk13a_flx11bv32_run1-4_10acut.root </filename>
 	       <objname>     h_stat_snt_tnumubar  </objname>
 	       <objtype>     TH1D                  </objtype>
              </pot>
              <one_mu_ring>
-                <filename>   inputs/official/2013/superk/mc/neut/13a/smallnt_numu_sk13a_flx11bv32_run1-4mid_10acut.root  </filename>
+                <filename>   inputs/official/2013/superk/mc/neut/13a/smallnt_numu_sk13a_flx11bv32_run1-4_10acut.root  </filename>
                 <objname>    tnumubar   </objname>
                 <objtype>    TTree            </objtype>
              </one_mu_ring>
@@ -123,12 +123,12 @@
            </numubar>
            <nue>
              <pot> 
-	       <filename>    inputs/official/2013/superk/mc/neut/13a/smallnt_numu_sk13a_flx11bv32_run1-4mid_10acut.root </filename>
+	       <filename>    inputs/official/2013/superk/mc/neut/13a/smallnt_numu_sk13a_flx11bv32_run1-4_10acut.root </filename>
 	       <objname>     h_stat_snt_tnue  </objname>
 	       <objtype>     TH1D                  </objtype>
              </pot>
              <one_mu_ring>
-                <filename>   inputs/official/2013/superk/mc/neut/13a/smallnt_numu_sk13a_flx11bv32_run1-4mid_10acut.root  </filename>
+                <filename>   inputs/official/2013/superk/mc/neut/13a/smallnt_numu_sk13a_flx11bv32_run1-4_10acut.root  </filename>
                 <objname>    tnue   </objname>
                 <objtype>    TTree            </objtype>
              </one_mu_ring>
@@ -142,12 +142,12 @@
           </nue>
           <nuebar>
              <pot> 
-	       <filename>    inputs/official/2013/superk/mc/neut/13a/smallnt_numu_sk13a_flx11bv32_run1-4mid_10acut.root </filename>
+	       <filename>    inputs/official/2013/superk/mc/neut/13a/smallnt_numu_sk13a_flx11bv32_run1-4_10acut.root </filename>
 	       <objname>     h_stat_snt_tnuebar  </objname>
 	       <objtype>     TH1D                  </objtype>
              </pot>
              <one_mu_ring>
-                <filename>   inputs/official/2013/superk/mc/neut/13a/smallnt_numu_sk13a_flx11bv32_run1-4mid_10acut.root  </filename>
+                <filename>   inputs/official/2013/superk/mc/neut/13a/smallnt_numu_sk13a_flx11bv32_run1-4_10acut.root  </filename>
                 <objname>    tnuebar   </objname>
                 <objtype>    TTree            </objtype>
              </one_mu_ring>
@@ -161,12 +161,12 @@
           </nuebar>
           <signal_nue>
              <pot> 
-	       <filename>    inputs/official/2013/superk/mc/neut/13a/smallnt_numu_sk13a_flx11bv32_run1-4mid_10acut.root </filename>
+	       <filename>    inputs/official/2013/superk/mc/neut/13a/smallnt_numu_sk13a_flx11bv32_run1-4_10acut.root </filename>
 	       <objname>     h_stat_snt_tnuesig  </objname>
 	       <objtype>     TH1D                  </objtype>
              </pot>
              <one_mu_ring>
-                <filename>   inputs/official/2013/superk/mc/neut/13a/smallnt_numu_sk13a_flx11bv32_run1-4mid_10acut.root  </filename>
+                <filename>   inputs/official/2013/superk/mc/neut/13a/smallnt_numu_sk13a_flx11bv32_run1-4_10acut.root  </filename>
                 <objname>    tnuesig   </objname>
                 <objtype>    TTree            </objtype>
              </one_mu_ring>
@@ -248,7 +248,7 @@
       <weight_splines>
           <one_mu_ring>
                 <filename>
-                    inputs/official/2013/xsec/XSecSplinesCoarse2013_coarseEreco.root
+                    inputs/official/2013/xsec/XSecSplines2013Run1to4.root
                 </filename>
           </one_mu_ring>
           <one_e_ring>
