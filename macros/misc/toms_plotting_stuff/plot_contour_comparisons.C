@@ -63,6 +63,9 @@ void plot_contour_comparisons
   TMarker bestfit_2all_from_sinsqtheta(0.999,0.00244,29);
   bestfit_2all_from_sinsqtheta.SetMarkerSize(1.8);
   bestfit_2all_from_sinsqtheta.SetMarkerColor(kBlack);
+  TMarker xbestfit_2all_from_sinsqtheta(0.999,2.44,29);
+  xbestfit_2all_from_sinsqtheta.SetMarkerSize(1.8);
+  xbestfit_2all_from_sinsqtheta.SetMarkerColor(kBlack);
   TMarker bestfit_2all_2nu(1.000,0.002475,29);
   bestfit_2all_2nu.SetMarkerSize(1.8);
   bestfit_2all_2nu.SetMarkerColor(kBlack);
@@ -2177,6 +2180,155 @@ void plot_contour_comparisons
   h_dcall_123_90->Draw("cont3same");
   h_dcall_octant2only23_90->Draw("cont3same");
   c->SaveAs("contour_compare_constdchisq_external_sinsqtheta_check.pdf");
+
+  //return;
+
+  //THE PRL PLOT, converting y-axis
+  c->SetLeftMargin(0.11);
+  c->SetRightMargin(0.01);
+  c->SetTopMargin(0.01);
+  c->SetBottomMargin(0.14);
+  // dm23sq, mixing23 range and step
+  double xmixing23_min   = 0.6;
+  double xmixing23_max   = 1.5;
+  double xmixing23_step  = 0.005;
+  double xdm23sq_min     = 1;
+  double xdm23sq_max     = 6;
+  double xdm23sq_step    = 0.1;
+  // make sure that min and max are at the bin centre and not at the low/high edge of the first/last bin
+  int xmixing23_nbins = 1 + TMath::CeilNint ((xmixing23_max - xmixing23_min) / xmixing23_step);
+  int xdm23sq_nbins   = 1 + TMath::CeilNint ((xdm23sq_max   - xdm23sq_min  ) / xdm23sq_step  );
+  TH2D * osc_param_spacex = new TH2D("osc_param_space", "",
+       xmixing23_nbins, 
+       xmixing23_min - 0.5*xmixing23_step, 
+       xmixing23_max + 0.5*xmixing23_step,
+       xdm23sq_nbins, 
+       xdm23sq_min - 0.5*xdm23sq_step, 
+       xdm23sq_max + 0.5*xdm23sq_step);
+  osc_param_spacex->GetXaxis()->SetTitle("sin^{2}(2#theta_{23})"); // adjust if mixing param is sinsqtheta rather than sinsq2theta...
+  osc_param_spacex->GetYaxis()->SetTitle("|#Deltam_{32}^{2}| (10^{-3} eV^{2}/c^{4})");
+  //osc_param_spacex->GetXaxis()->SetTitleOffset(1.2);
+  osc_param_spacex->GetYaxis()->SetTitleOffset(0.85);
+  osc_param_spacex->GetXaxis()->SetRangeUser(0.82,1.0);
+  osc_param_spacex->GetYaxis()->SetRangeUser(1.8,4.2);
+  osc_param_spacex->GetXaxis()->SetTitleFont(132);
+  osc_param_spacex->GetYaxis()->SetTitle("|#Deltam_{32}^{2}| (10^{-3} eV^{2}/c^{4})");
+  osc_param_spacex->Draw();
+  TMarker xm_minos(0.950,2.41,24);
+  xm_minos.SetMarkerColor(kRed);
+  xm_minos.SetMarkerSize(1.7);
+  TH2D * xll_minos = new TH2D("","",
+			      ll_minos->GetNbinsX(), ll_minos->GetXaxis()->GetBinLowEdge(1),        ll_minos->GetXaxis()->GetBinUpEdge(ll_minos->GetNbinsX()),
+			      ll_minos->GetNbinsY(), ll_minos->GetYaxis()->GetBinLowEdge(1) * 1000, ll_minos->GetYaxis()->GetBinUpEdge(ll_minos->GetNbinsY()) * 1000);
+  for(int ix = 1; ix <=  ll_minos->GetNbinsX(); ix++) {
+    for(int iy = 1; iy <= ll_minos->GetNbinsY(); iy++) {
+      xll_minos->SetBinContent(ix,iy, ll_minos->GetBinContent(ix,iy));
+      xll_minos->SetBinContent(ix,iy, ll_minos->GetBinContent(ix,iy));
+    }//iy
+  }//ix
+  xll_minos->SetContour(1);
+  xll_minos->SetContourLevel(0,4.61/2);
+  xll_minos->SetLineStyle(1);
+  xll_minos->SetMarkerStyle(24);
+  xll_minos->SetMarkerColor(kRed);
+  xll_minos->SetMarkerSize(1.7);
+  xll_minos->SetLineColor(kRed);
+  xll_minos->SetLineWidth(ll_minos->GetLineWidth());
+  TMarker xm_skle(1.000,2.5,25);
+  xm_skle.SetMarkerColor(kGreen+2);
+  xm_skle.SetMarkerSize(1.7);
+  TGraph * xg_skle = new TGraph(*g_skle);
+  for(int i = 0; i < g_skle->GetN(); i++) {
+    double xx, yy;
+    g_skle ->GetPoint(i, xx, yy);
+    xg_skle->SetPoint(i, xx, yy*1000);
+  }
+  xg_skle->SetMarkerStyle(25);
+  xg_skle->SetMarkerColor(kGreen+2);
+  xg_skle->SetMarkerSize(1.7);
+  TMarker xm_skzen(0.9775,2.66,26);
+  xm_skzen.SetMarkerColor(kBlue);
+  xm_skzen.SetMarkerSize(1.7);
+  TGraph * xg_skzen = new TGraph(*g_skzen);
+  for(int i = 0; i < g_skzen->GetN(); i++) {
+    double xx, yy;
+    g_skzen ->GetPoint(i, xx, yy);
+    xg_skzen->SetPoint(i, xx, yy*1000);
+  }
+  xg_skzen->SetMarkerStyle(26);
+  xg_skzen->SetMarkerColor(kBlue);
+  xg_skzen->SetMarkerSize(1.7);
+  TMarker xm_t2k12(0.98,2.65,27);
+  xm_t2k12.SetMarkerColor(kBlack);
+  xm_t2k12.SetMarkerSize(1.7);
+  TGraph * xg_run12_90_statsyst = new TGraph(*g_run12_90_statsyst);
+  for(int i = 0; i < g_run12_90_statsyst->GetN(); i++) {
+    double xx, yy;
+    g_run12_90_statsyst ->GetPoint(i, xx, yy);
+    xg_run12_90_statsyst->SetPoint(i, xx, yy*1000);
+  }
+  xg_run12_90_statsyst->SetMarkerStyle(27);
+  xg_run12_90_statsyst->SetMarkerColor(kBlack);
+  xg_run12_90_statsyst->SetMarkerSize(1.7);
+#line 0
+  Double_t xaxis[1000];//[hsinsq90->GetNbinsY()+1];
+  for(int ix = 0; ix <= hsinsq90->GetNbinsX(); ix++) {
+    cout << hsinsq90->GetXaxis()->GetBinUpEdge(ix) << endl;
+    xaxis[ix] = hsinsq90->GetXaxis()->GetBinUpEdge(ix);
+    cout << xaxis[ix] << endl;
+  }
+  //yaxis[hsinsq90->GetNbinsY()+1] = 1000;
+  TH2D * xhsinsq90 = new TH2D("","",
+			      hsinsq90->GetNbinsX(), xaxis,//hsinsq90->GetXaxis()->GetBinLowEdge(1),        hsinsq90->GetXaxis()->GetBinUpEdge(hsinsq90->GetNbinsX()),
+			      hsinsq90->GetNbinsY(), hsinsq90->GetYaxis()->GetBinLowEdge(1) * 1000, hsinsq90->GetYaxis()->GetBinUpEdge(hsinsq90->GetNbinsY()) * 1000);
+  for(int ix = 1; ix <=  hsinsq90->GetNbinsX(); ix++) {
+    for(int iy = 1; iy <= hsinsq90->GetNbinsY(); iy++) {
+      xhsinsq90->SetBinContent(ix,iy, hsinsq90->GetBinContent(ix,iy));
+      xhsinsq90->SetBinContent(ix,iy, hsinsq90->GetBinContent(ix,iy));
+    }//iy
+  }//ix
+  xhsinsq90->SetMarkerStyle(23);
+  xhsinsq90->SetMarkerColor(kBlack);
+  xhsinsq90->SetMarkerSize(1.8);
+  xhsinsq90->SetContour(1);
+  xhsinsq90->SetContourLevel(0,4.61);
+  xhsinsq90->SetLineWidth(3);
+  //draw
+  osc_param_spacex->Draw();
+  xm_minos.Draw();
+  xm_skle.Draw();
+  xm_skzen.Draw();
+  xm_t2k12.Draw();
+  xg_skzen->Draw("l");
+  xg_skle->Draw("l");
+  xll_minos->Draw("cont3same");
+  xg_run12_90_statsyst->Draw("l");
+  xhsinsq90->Draw("cont3same");
+  //xhsinsq90->Draw("cont3colz");
+  xbestfit_2all_from_sinsqtheta.SetMarkerStyle(23);
+  xbestfit_2all_from_sinsqtheta.Draw();
+  delete leg2;
+  leg2 = new TLegend(0.13,0.59,0.4,0.96);
+  leg2->SetFillColor(0);
+  leg2->SetFillStyle(0);
+  leg2->SetBorderSize(0);
+  leg2->SetTextFont(132);
+  leg2->SetX2NDC(0.6);
+  leg2->SetTextSize(0.06);
+  leg2->AddEntry(xhsinsq90, "T2K 3#nu 90% C.L.","lp");
+  xg_run12_90_statsyst->SetName("xg_run12_90_statsyst");
+  leg2->AddEntry("xg_run12_90_statsyst", "T2K 2011 2#nu 90% C.L.", "lp");
+  leg2->AddEntry(xll_minos, "MINOS 2013 2#nu 90% C.L.", "lp");
+  xg_skzen->SetName("xg_skzen");
+  leg2->AddEntry("xg_skzen", "SK zenith 2012 3#nu 90% C.L.", "lp");
+  xg_skle->SetName("xg_skle");
+  leg2->AddEntry("xg_skle", "SK L/E 2012 2#nu 90% C.L.", "lp");
+  leg2->Draw();
+  c->SaveAs("contour_compare_constdchisq_external_sinsqtheta_markers.pdf");
+  c->SaveAs("contour_compare_constdchisq_external_sinsqtheta_markers.png");
+  c->SaveAs("contour_compare_constdchisq_external_sinsqtheta_markers.eps");
+
+
 
   //LEPTON PHOTON
   //Run 1-3 FC only with externals (including icecube)

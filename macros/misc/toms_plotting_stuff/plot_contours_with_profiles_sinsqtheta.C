@@ -3,7 +3,8 @@ void plot_contours_with_profiles_sinsqtheta
  bool plot_fc = false,
  bool plot_constdchisq_lines = true,
  bool plot_external = false,
- bool debug = false
+ bool debug = false,
+ bool convert_y_axis = true
 )
 {
   //FC
@@ -45,12 +46,6 @@ void plot_contours_with_profiles_sinsqtheta
   if(plot_fc) {
     f_val_cont.GetObject("hCL68StatSyst",h_fcall_68);
     f_val_cont.GetObject("hCL90StatSyst",h_fcall_90);
-    h_fcall_68->SetContour(1);
-    h_fcall_68->SetContourLevel(0,0.0);
-    h_fcall_68->SetLineStyle(2);
-    h_fcall_90->SetContour(1);
-    h_fcall_90->SetContourLevel(0,0.0);
-    h_fcall_90->SetLineStyle(1);
   }
   else {
     //VaLOR const dchisq
@@ -58,21 +53,13 @@ void plot_contours_with_profiles_sinsqtheta
     f_val_cont_dchi.GetObject("hdchisq",h_fcall);
     h_fcall_68 = new TH2D(*h_fcall);
     h_fcall_90 = new TH2D(*h_fcall);
-    h_fcall_68->SetContour(1);
-    h_fcall_68->SetContourLevel(0,2.30);
-    h_fcall_68->SetLineStyle(2);
-    h_fcall_90->SetContour(1);
-    h_fcall_90->SetContourLevel(0,4.61);
-    h_fcall_90->SetLineStyle(1);
   }
-
-  h_fcall_68->SetLineWidth(2);
-  h_fcall_90->SetLineWidth(2);
-  h_fcall_68->SetLineColor(kBlack);
-  h_fcall_90->SetLineColor(kBlack);
 
   //bestfits
   TMarker bestfit_2all(0.514,0.00244,29);
+  if(convert_y_axis) {
+    bestfit_2all.SetY(2.44);
+  }
   bestfit_2all.SetMarkerSize(1.8);
   bestfit_2all.SetMarkerColor(kBlack);
 
@@ -98,6 +85,8 @@ void plot_contours_with_profiles_sinsqtheta
   double top_fraction = 0.2;
   double right_fraction = 0.2;
   double left_fraction = 0.16;
+  if(convert_y_axis)
+    left_fraction = 0.105;
   TCanvas * c = new TCanvas();
   c->SetLeftMargin(left_fraction);
   c->cd(1);
@@ -111,10 +100,20 @@ void plot_contours_with_profiles_sinsqtheta
   double dm23sq_min     = 1.95E-3;
   double dm23sq_max     = 3.15E-3;
   double dm23sq_step    = 1E-4;
+  if(convert_y_axis) {
+    dm23sq_min  = 1.95;
+    dm23sq_max  = 3.15;
+    dm23sq_step = 0.10;
+  }
   if(plot_external) {
     dm23sq_min     = 1.60E-3;
     dm23sq_max     = 4.15E-3;
+    if(convert_y_axis) {
+      dm23sq_min = 1.60;
+      dm23sq_max = 4.15;
+    }
   }
+
   // make sure that min and max are at the bin centre and not at the low/high edge of the first/last bin
   int mixing23_nbins = 1 + TMath::CeilNint ((mixing23_max - mixing23_min) / mixing23_step);
   int dm23sq_nbins   = 1 + TMath::CeilNint ((dm23sq_max   - dm23sq_min  ) / dm23sq_step  );
@@ -123,10 +122,14 @@ void plot_contours_with_profiles_sinsqtheta
 				     dm23sq_nbins, dm23sq_min, dm23sq_max);
   osc_param_space2->GetXaxis()->SetTitle("sin^{2}(#theta_{23})"); // adjust if mixing param is sinsqtheta rather than sinsq2theta...
   osc_param_space2->GetYaxis()->SetTitle("|#Deltam_{32}^{2}| (eV^{2}/c^{4})");
+  if(convert_y_axis)
+    osc_param_space2->GetYaxis()->SetTitle("|#Deltam_{32}^{2}| (10^{-3} eV^{2}/c^{4})");
   osc_param_space2->GetXaxis()->CenterTitle();
   osc_param_space2->GetYaxis()->CenterTitle();
   osc_param_space2->GetXaxis()->SetTitleOffset(1.25);
   osc_param_space2->GetYaxis()->SetTitleOffset(1.4);
+  if(convert_y_axis)
+    osc_param_space2->GetYaxis()->SetTitleOffset(0.8);
   osc_param_space2->Draw();  
 
   //draw contour
@@ -135,8 +138,43 @@ void plot_contours_with_profiles_sinsqtheta
     g_sk68->Draw("l");
     g_skbf->Draw("p");
   }
-  h_fcall_68->SetLineColor(kBlack);;
-  h_fcall_90->SetLineColor(kBlack);;
+  TH2D * h_fcall_68_convert = new TH2D("","",
+				      h_fcall_68->GetNbinsX(), h_fcall_68->GetXaxis()->GetBinLowEdge(1),        h_fcall_68->GetXaxis()->GetBinUpEdge(h_fcall_68->GetNbinsX()),
+				      h_fcall_68->GetNbinsY(), h_fcall_68->GetYaxis()->GetBinLowEdge(1) * 1000, h_fcall_68->GetYaxis()->GetBinUpEdge(h_fcall_68->GetNbinsY()) * 1000);
+  TH2D * h_fcall_90_convert = new TH2D("","",
+				      h_fcall_68->GetNbinsX(), h_fcall_68->GetXaxis()->GetBinLowEdge(1),        h_fcall_68->GetXaxis()->GetBinUpEdge(h_fcall_68->GetNbinsX()),
+				      h_fcall_68->GetNbinsY(), h_fcall_68->GetYaxis()->GetBinLowEdge(1) * 1000, h_fcall_68->GetYaxis()->GetBinUpEdge(h_fcall_68->GetNbinsY()) * 1000);
+  if(convert_y_axis) {
+    for(int ix = 1; ix <=  h_fcall_68->GetNbinsX(); ix++) {
+      for(int iy = 1; iy <= h_fcall_68->GetNbinsY(); iy++) {
+	h_fcall_68_convert->SetBinContent(ix,iy, h_fcall_68->GetBinContent(ix,iy));
+	h_fcall_90_convert->SetBinContent(ix,iy, h_fcall_90->GetBinContent(ix,iy));
+      }//iy
+    }//ix
+    h_fcall_90 = h_fcall_90_convert;
+    h_fcall_68 = h_fcall_68_convert;
+  }
+  if(plot_fc) {
+    h_fcall_68->SetContour(1);
+    h_fcall_68->SetContourLevel(0,0.0);
+    h_fcall_68->SetLineStyle(2);
+    h_fcall_90->SetContour(1);
+    h_fcall_90->SetContourLevel(0,0.0);
+    h_fcall_90->SetLineStyle(1);
+  }
+  else {
+    h_fcall_68->SetContour(1);
+    h_fcall_68->SetContourLevel(0,2.30);
+    h_fcall_68->SetLineStyle(2);
+    h_fcall_90->SetContour(1);
+    h_fcall_90->SetContourLevel(0,4.61);
+    h_fcall_90->SetLineStyle(1);
+  }
+
+  h_fcall_68->SetLineWidth(2);
+  h_fcall_90->SetLineWidth(2);
+  h_fcall_68->SetLineColor(kBlack);
+  h_fcall_90->SetLineColor(kBlack);
   h_fcall_68->Draw("cont3same");
   h_fcall_90->Draw("cont3same");
   bestfit_2all.SetMarkerStyle(23);
@@ -145,9 +183,15 @@ void plot_contours_with_profiles_sinsqtheta
   //legend
   TLegend * leg2;
   if(!plot_external)
-    leg2 = new TLegend(0.18,0.63,0.41,0.80);
+    if(convert_y_axis)
+      leg2 = new TLegend(0.125,0.63,0.355,0.80);
+    else
+      leg2 = new TLegend(0.18,0.63,0.41,0.80);
   else
-    leg2 = new TLegend(0.18,0.6,0.41,0.77);
+    if(convert_y_axis)
+      leg2 = new TLegend(0.125,0.6,0.355,0.77);
+    else
+      leg2 = new TLegend(0.18,0.6,0.41,0.77);
   leg2->SetFillColor(0);
   leg2->SetFillStyle(0);
   leg2->SetBorderSize(0);
@@ -204,6 +248,8 @@ void plot_contours_with_profiles_sinsqtheta
   mix_frame->GetYaxis()->SetTitleOffset(osc_param_space2->GetYaxis()->GetTitleOffset());
   mix_frame->GetYaxis()->CenterTitle();
   mix_frame->GetYaxis()->SetLabelOffset(0.077);
+  if(convert_y_axis)
+    mix_frame->GetYaxis()->SetLabelOffset(0.03);
   mix_frame->GetYaxis()->SetTickLength(0.12);
   mix_frame->Draw();
 
@@ -321,13 +367,21 @@ void plot_contours_with_profiles_sinsqtheta
     Float_t xbinmax = h_val_dm->GetBinContent(i);
     Float_t xbinmax_previous = h_val_dm->GetBinContent(i-1);
     Float_t ybin = h_val_dm->GetBinCenter(i);
-    Float_t ybinmin = ybin -width*h_val_dm->GetBinWidth(i);
-    Float_t ybinmax = ybin +width*h_val_dm->GetBinWidth(i);
+    Float_t ybinmin = ybin - width*h_val_dm->GetBinWidth(i);
+    Float_t ybinmax = ybin + width*h_val_dm->GetBinWidth(i);
+    if(convert_y_axis) {
+      ybin = h_val_dm->GetBinCenter(i)*1000;
+      ybinmin = ybin - width*h_val_dm->GetBinWidth(i)*1000;
+      ybinmax = ybin + width*h_val_dm->GetBinWidth(i)*1000;
+    }
     if(ybinmin < ymin && ybinmax < ymin) continue;
     if(ybinmin < ymin) ybinmin = ymin;
     l1 = new TLine(xbinmax,ybinmin,xbinmax,ybinmax);
     if(xbinmax > xmax && i > 20) {
-      l2 = new TLine(xbinmax_previous-extra,ybinmin,xmax,ybinmin);
+      if(convert_y_axis)
+	l2 = new TLine(xbinmax_previous-extra,ybinmin,xmax,ybinmin);
+      else
+	l2 = new TLine(xbinmax_previous-extra,ybinmin,xmax,ybinmin);
       l2->Draw();
       break;
     }

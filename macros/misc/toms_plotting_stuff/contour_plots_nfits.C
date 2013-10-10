@@ -18,7 +18,8 @@ void contour_plots_nfits(
 	   double       leg_font_size = 0.05,
 	   bool         cl_in_leg = false,
 	   bool         bf_in_leg = false,
-	   double       line_width = 2
+	   double       line_width = 2,
+	   bool         smooth = false
 )
 {
   using namespace std;
@@ -47,7 +48,10 @@ void contour_plots_nfits(
     osc_param_space->GetXaxis()->SetTitle("sin^{2}(2#theta_{23})");
   else if(mixingparam == "sinsqtheta")
     osc_param_space->GetXaxis()->SetTitle("sin^{2}(#theta_{23})");
-  osc_param_space->GetYaxis()->SetTitle("|#Deltam_{32}^{2}| (eV^{2}/c^{4})");
+  if(is_dm32sq)
+    osc_param_space->GetYaxis()->SetTitle("|#Deltam_{32}^{2}| (eV^{2}/c^{4})");
+  else
+    osc_param_space->GetYaxis()->SetTitle("|#Deltam^{2}| = |#Deltam_{32}^{2}|(NH), |#Deltam_{31}^{2}|(IH) (eV^{2}/c^{4})");
   //osc_param_space->GetXaxis()->SetTitleOffset(1.2);
   osc_param_space->GetYaxis()->SetTitleOffset(1.4);
 
@@ -105,6 +109,10 @@ void contour_plots_nfits(
     if(!h68[ifit] || !h90[ifit]) {
       skip.push_back(ifit);
       continue;
+    }
+    if(smooth) {
+      h68[ifit]->Smooth();
+      h90[ifit]->Smooth();
     }
 
     //swap '$' with ' ' in tag
