@@ -95,6 +95,7 @@ namespace util {
   string AsStringTex        (conv::SuperkSample_t     s);
   string AsStringTex        (conv::SuperkMode_t       m);
   string AsStringTex        (conv::PhysParamId_t      p);
+  string AsStringPresentTex (conv::PhysParamId_t      p);
   string AsStringPaperTex   (conv::PhysParamId_t      p);
   string AsStringPaperRooTex(conv::PhysParamId_t      p);
   string AsStringRooTex     (conv::SuperkSample_t s, conv::SuperkMode_t m, string append_begin="", string append_end="");
@@ -107,6 +108,7 @@ namespace util {
   string AsStringCompact    (conv::PhysParamId_t      p);
   string AsStringCompact_KDI(conv::PhysParamId_t p);
   string Pdg2String         (int pdg_code);
+  string Pdg2StringTex      (int pdg_code);
 
   conv::PhysHypothesis_t   PhysHypFromString         (string h);
   conv::SuperkSample_t     SKSampleFromString        (string h);
