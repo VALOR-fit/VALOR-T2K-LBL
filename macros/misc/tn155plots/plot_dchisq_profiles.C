@@ -144,19 +144,44 @@ void plot_dchisq_profiles
       break;
     h2_90_hi = h2->GetBinCenter(ix);
   }
+  double bfpoint1, bfpoint2;
+  if(is_mix23) {
+    bfpoint1 = fparm1->BestFitValue(conv::kPhypMixing23);
+    bfpoint2 = fparm2->BestFitValue(conv::kPhypMixing23);
+  }
+  else {
+    bfpoint1 = fparm1->BestFitValue(conv::kPhypDm23sq);
+    bfpoint2 = fparm2->BestFitValue(conv::kPhypDm23sq);
+  }
   cout << endl << endl << "LIMITS" << endl
        << tag1 << " 68%:" << endl
        << h1_68_lo << "\t"
-       << h1_68_hi << endl
+       << h1_68_hi << "\t"
+       << "\t" << bfpoint1 << "\t"
+       << h1_68_lo - bfpoint1 << "\t" 
+       << h1_68_hi - bfpoint1 << "\t" 
+       << endl
        << tag1 << " 90%:" << endl
        << h1_90_lo << "\t"
-       << h1_90_hi << endl
+       << h1_90_hi << "\t"
+       << "\t" << bfpoint1 << "\t"
+       << h1_90_lo - bfpoint1 << "\t" 
+       << h1_90_hi - bfpoint1 << "\t" 
+       << endl
        << tag2 << " 68%:" << endl
        << h2_68_lo << "\t"
-       << h2_68_hi << endl
+       << h2_68_hi << "\t"
+       << "\t" << bfpoint2 << "\t"
+       << h2_68_lo - bfpoint2 << "\t" 
+       << h2_68_hi - bfpoint2 << "\t" 
+       << endl
        << tag2 << " 90%:" << endl
        << h2_90_lo << "\t"
-       << h2_90_hi << endl
+       << h2_90_hi << "\t"
+       << "\t" << bfpoint2 << "\t"
+       << h2_90_lo - bfpoint2 << "\t" 
+       << h2_90_hi - bfpoint2 << "\t" 
+       << endl
        << endl;
 }
 

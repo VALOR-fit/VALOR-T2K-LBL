@@ -1,5 +1,7 @@
 void plot_sensitivity_sinsqtheta(
-		      const char * filename  = "2013results/SENSITIVITY/sinsqtheta/run1-4abf/combination/final.root",
+				 //const char * filename  = "2013results/SENSITIVITY/sinsqtheta/run1-4abf_again/combination/final_hist.root",
+				 //const char * filename  = "2013results/SENSITIVITY/sinsqtheta/run1-4abf/combination/final.root",
+				 const char * filename  = "2013results/SENSITIVITY/sinsqtheta/run1-4abf_numuMCpot/combination/final.root",
 		      double       in_mix    = 0.514,
 		      double       in_dm     = 0.002463
 )

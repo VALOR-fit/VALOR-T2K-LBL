@@ -3,8 +3,9 @@
 void plot_contour_constdchisqVSfc
 (
  const char * tag        = "normal",
- const char * dcfilename = "2013results/DATA/run1-4_nuis3fixdcp_sintheta_normal/combination/run1-4_nuis3fixdcp_sintheta_normal-run_0-expt_6.root",
- const char * fcfilename = "2013results/FC/fc_contour_normal_nuis3fixdcp.root"
+ const char * dcfilename = "2013results/DATA/run1-4full_skdetmathfix_run1-4abanff_nuis4_sintheta_normal/combination/run1-4full_skdetmathfix_run1-4abanff_nuis4_sintheta_normal-run_0-expt_8.root", //"2013results/DATA/run1-4_nuis3fixdcp_sintheta_normal/combination/run1-4_nuis3fixdcp_sintheta_normal-run_0-expt_6.root",
+ const char * fcfilename = "2013results/FC/fc_contour_normal_nuis3fixdcp.root",
+ bool draw_fc            = false
  )
 {
   using namespace t2kana;
@@ -21,6 +22,8 @@ void plot_contour_constdchisqVSfc
   hdc68->SetLineWidth(2);
   hdc90->SetLineWidth(2);
   hdc68->SetLineStyle(2);
+  hdc90->Smooth();
+  hdc68->Smooth();
 
   //get fc contour
   TFile ffc(fcfilename);
@@ -157,20 +160,25 @@ void plot_contour_constdchisqVSfc
   //hdc68->Draw("cont3same");
   hdc90->Draw("cont3same");
   //hfc68->Draw("cont3same");
-  hfc90->Draw("cont3same");
+  if(draw_fc)
+    hfc90->Draw("cont3same");
   bf.Draw();
   TLegend * leg2 = new TLegend(0.185,0.64,0.45,0.96);
   leg2->SetFillColor(0);
   leg2->SetFillStyle(0);
   leg2->SetBorderSize(0);
   leg2->SetTextFont(132);
-  //leg2->AddEntry(hfc68, "T2K FC Run1-4a 3#nu (#Deltam^{2}_{32}>0) 68% CL","l");
-  leg2->AddEntry(hfc90, "T2K FC Run1-4a 3#nu (#Deltam^{2}_{32}>0) 90% CL","l");
-  //leg2->AddEntry(hdc68, "T2K const-#Delta#chi^{2} Run1-4a 3#nu (#Deltam^{2}_{32}>0) 68% CL","l");
-  leg2->AddEntry(hdc90, "T2K const-#Delta#chi^{2} Run1-4a 3#nu (#Deltam^{2}_{32}>0) 90% CL","l");
-  leg2->AddEntry(h_t2k123_90, "T2K Run 1-3 3#nu (#Deltam^{2}_{32}>0) 90% CL","l");
-  leg2->AddEntry(g_minos, "MINOS 2013 2#nu (#Deltam^{2}_{32}>0) 90% CL","l");
-  leg2->AddEntry(g_sk, "SK 2012 3#nu (#Deltam^{2}_{32}>0) 90% CL","l");
+  //leg2->AddEntry(hfc68, "T2K FC Run 1-4 (#Deltam^{2}_{32}>0) 68% CL","l");
+  if(draw_fc)
+    leg2->AddEntry(hfc90, "T2K FC Run 1-4 (#Deltam^{2}_{32}>0) 90% CL","l");
+  //leg2->AddEntry(hdc68, "T2K const-#Delta#chi^{2} Run1-4 (#Deltam^{2}_{32}>0) 68% CL","l");
+  if(draw_fc)
+    leg2->AddEntry(hdc90, "T2K const-#Delta#chi^{2} Run1-4 (#Deltam^{2}_{32}>0) 90% CL","l");
+  else
+    leg2->AddEntry(hdc90, "T2K Run1-4 (#Deltam^{2}_{32}>0) 90% CL","l");
+  leg2->AddEntry(h_t2k123_90, "T2K Run 1-3 (#Deltam^{2}_{32}>0) 90% CL","l");
+  leg2->AddEntry(g_minos, "MINOS 2013 (#Deltam^{2}_{32}>0) 90% CL","l");
+  leg2->AddEntry(g_sk, "SK 2012 (#Deltam^{2}_{32}>0) 90% CL","l");
   leg2->SetX2NDC(0.6);
   leg2->SetTextSize(legend_text_size);
   leg2->Draw();
