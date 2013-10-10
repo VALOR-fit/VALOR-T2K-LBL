@@ -39,6 +39,7 @@
 //#define NO_EVENTS_CAN_BE_NEGATIVE // if defined, will stop events being negative at all stages (not just building the Ereco spectra)
 
 #define APPLY_ESCALE_AT_SPECTRUM_STAGE
+//#define POTWEIGHTSAREONE
 //#define FLUXWEIGHTSAREONE
 //#define BANFFWEIGHTSAREONE
 //#define SYSTWEIGHTSAREONE
@@ -503,6 +504,9 @@ void SuperkMC::FillTemplate(SuperkSample_t s, SuperkMode_t m)
   }
 
   double pot_wght = this->AnalyzedSamplePOT() / mcpot;
+#ifdef POTWEIGHTSAREONE
+  pot_wght = 1;
+#endif
 
 #ifdef __show_init_mesg_debug__        
   cout << "Exp/SKMC/CreateTemplate >>      "
@@ -1782,10 +1786,12 @@ bool SuperkMC::ApplyEnergyScaleSystematicToTotalSpectrum(void)
     SuperkSample_t s = kSKSamples[is];
     if(s == kSKsUndefined) continue;
     //get corresponding spectrum
+#ifndef PRODUCTIONMODE
     TH1D * reco_spectrum_tot = this->CurrErecoSpectrum(s);
     if(!reco_spectrum_tot) continue;
+#endif
     //clone
-    TH1D * reco_spectrum_tot_no_ereco_scale = new TH1D(*reco_spectrum_tot);
+    //TH1D * reco_spectrum_tot_no_ereco_scale = new TH1D(*reco_spectrum_tot);
     double reco_spectrum_tot_arry_no_ereco_scale[kns][util::NumErecoBins(s)];
     if (s==kSKsFCFV1RingMuLike) memcpy(reco_spectrum_tot_arry_no_ereco_scale[is], fMCErecoSpectrumTotArray1Rmu, sizeof (fMCErecoSpectrumTotArray1Rmu)) ;
     else memcpy(reco_spectrum_tot_arry_no_ereco_scale[is], fMCErecoSpectrumTotArray1Re, sizeof (fMCErecoSpectrumTotArray1Re)) ;
@@ -1804,16 +1810,20 @@ bool SuperkMC::ApplyEnergyScaleSystematicToTotalSpectrum(void)
       // loop over Ereco
       for(int ir = 1; ir <= util::NumErecoBins(s); ir++) {
 	// nominal reco bin edges
-	double bin_max = reco_spectrum_tot->GetXaxis()->GetBinUpEdge (ir);
-	double bin_min = reco_spectrum_tot->GetXaxis()->GetBinLowEdge(ir);
+	//double bin_max = reco_spectrum_tot->GetXaxis()->GetBinUpEdge (ir);
+	//double bin_min = reco_spectrum_tot->GetXaxis()->GetBinLowEdge(ir);
+	double bin_max = util::ErecoBinEdges(s, ir);
+	double bin_min = util::ErecoBinEdges(s, ir-1);
 	// scaled reco bin edges
 	bin_max *= escale;
 	bin_min *= escale;
 	// loop over Ereco' (> Ereco)
 	for(int irp = ir+1; irp <= util::NumErecoBins(s); irp++) {
 	  // bin edges for reco bin ir'
-	  double bin_max_p = reco_spectrum_tot->GetXaxis()->GetBinUpEdge (irp);
-	  double bin_min_p = reco_spectrum_tot->GetXaxis()->GetBinLowEdge(irp);
+	  //double bin_max_p = reco_spectrum_tot->GetXaxis()->GetBinUpEdge (irp);
+	  //double bin_min_p = reco_spectrum_tot->GetXaxis()->GetBinLowEdge(irp);
+	  double bin_max_p = util::ErecoBinEdges(s, irp);
+	  double bin_min_p = util::ErecoBinEdges(s, irp-1);
 	  // do bins ir and ir' overlap?
 	  if(bin_max <= bin_min_p || bin_min >= bin_max_p) continue; // no overlap
 	  // calculate overlap
@@ -1849,16 +1859,20 @@ bool SuperkMC::ApplyEnergyScaleSystematicToTotalSpectrum(void)
       // loop over Ereco
       for(int ir = 1; ir <= util::NumErecoBins(s); ir++) {
 	// nominal reco bin edges
-	double bin_max = reco_spectrum_tot->GetXaxis()->GetBinUpEdge (ir);
-	double bin_min = reco_spectrum_tot->GetXaxis()->GetBinLowEdge(ir);
+	//double bin_max = reco_spectrum_tot->GetXaxis()->GetBinUpEdge (ir);
+	//double bin_min = reco_spectrum_tot->GetXaxis()->GetBinLowEdge(ir);
+	double bin_max = util::ErecoBinEdges(s, ir);
+	double bin_min = util::ErecoBinEdges(s, ir-1);
 	// scaled reco bin edges
 	bin_max *= escale;
 	bin_min *= escale;
 	// loop over Ereco' (< Ereco)
 	for(int irp = 1; irp <= ir-1; irp++) {
 	  // bin edges for reco bin ir'
-	  double bin_max_p = reco_spectrum_tot->GetXaxis()->GetBinUpEdge (irp);
-	  double bin_min_p = reco_spectrum_tot->GetXaxis()->GetBinLowEdge(irp);
+	  //double bin_max_p = reco_spectrum_tot->GetXaxis()->GetBinUpEdge (irp);
+	  //double bin_min_p = reco_spectrum_tot->GetXaxis()->GetBinLowEdge(irp);
+	  double bin_max_p = util::ErecoBinEdges(s, irp);
+	  double bin_min_p = util::ErecoBinEdges(s, irp-1);
 	  // do bins ir and ir' overlap?
 	  if(bin_max <= bin_min_p || bin_min >= bin_max_p) continue; // no overlap
 	  // calculate overlap
@@ -1886,7 +1900,7 @@ bool SuperkMC::ApplyEnergyScaleSystematicToTotalSpectrum(void)
 	}//irp
       }//ir
     }// scale < 1
-    delete reco_spectrum_tot_no_ereco_scale;
+    //delete reco_spectrum_tot_no_ereco_scale;
 
     // loop at the end, to get rid of any negatives
     // loop over Ereco
@@ -2729,16 +2743,35 @@ void SuperkMC::NevDebug(SKMCTemplateType_t t, string name)
 //________________________________________________________________________________________
 void SuperkMC::MCStatErrDebug()
 {
+
+  const int ntoys  = 10000;
+
   TFile out("Template_mcstaterr.root","RECREATE");
   for(int is = 0; is < kns; is++) {
     SuperkSample_t s = kSKSamples[is];
     if(s == kSKsUndefined) continue;
     if(s == kSKsFCFV1RingELike) continue;
 
+    //fill the nominal spectrum
     TH1D * spectrum           = new TH1D("spe",          "spe",          util::NumErecoBins(kSKsFCFV1RingMuLike), util::ErecoBinEdges(kSKsFCFV1RingMuLike));
+    for(int im = 0; im < knm; im++) {
+      SuperkMode_t m = kSKReactionModes[is][im];
+      if(m == kSKmUndefined) continue;
+      TH2D * mctempl = this -> Template(s,m,kSKMCtOri);
+      //and the 1d spectrum
+      for(int ix = 1; ix <= mctempl->GetNbinsX(); ix++) {
+	for(int iy = 1; iy <= mctempl->GetNbinsY(); iy++) {
+	  double nev_new = mctempl->GetBinContent(ix, iy);
+	  double nev_old = spectrum->GetBinContent(ix);
+	  spectrum->SetBinContent(ix, nev_new + nev_old);
+	}//iy
+      }//ix
+    }//im
+
     TH1D * spectrum_with2derr = new TH1D("spe_with2derr","spe_with2derr",util::NumErecoBins(kSKsFCFV1RingMuLike), util::ErecoBinEdges(kSKsFCFV1RingMuLike));
     TH1D * spectrum_fracerr   = new TH1D("spe_fracerr",  "spe_fracerr",  util::NumErecoBins(kSKsFCFV1RingMuLike), util::ErecoBinEdges(kSKsFCFV1RingMuLike));
-    TH1D * spectrum_err = new TH1D("spe_err","spe_err",util::NumErecoBins(kSKsFCFV1RingMuLike), util::ErecoBinEdges(kSKsFCFV1RingMuLike));
+    TH1D * spectrum_err       = new TH1D("spe_err",      "spe_err",      util::NumErecoBins(kSKsFCFV1RingMuLike), util::ErecoBinEdges(kSKsFCFV1RingMuLike));
+    TH1D * spectrum_rms       = new TH1D("spe_rms",      "spe_rms",      util::NumErecoBins(kSKsFCFV1RingMuLike), util::ErecoBinEdges(kSKsFCFV1RingMuLike));
     for(int im = 0; im < knm; im++) {
       SuperkMode_t m = kSKReactionModes[is][im];
       if(m == kSKmUndefined) continue;
@@ -2763,14 +2796,6 @@ void SuperkMC::MCStatErrDebug()
       mctemplfracerr->Write(Form("%s_fracerr",mctempl->GetName()));
       mctemplerr    ->Write(Form("%s_err",    mctempl->GetName()));
 
-      //and the 1d spectrum
-      for(int ix = 1; ix <= mctempl->GetNbinsX(); ix++) {
-	for(int iy = 1; iy <= mctempl->GetNbinsY(); iy++) {
-	  double nev_new = mctempl->GetBinContent(ix, iy);
-	  double nev_old = spectrum->GetBinContent(ix);
-	  spectrum->SetBinContent(ix, nev_new + nev_old);
-	}
-      }
 
       //and the 1d spectrum
       for(int ix = 1; ix <= mctempl->GetNbinsX(); ix++) {
@@ -2781,9 +2806,21 @@ void SuperkMC::MCStatErrDebug()
 	      cout << mctempl->GetBinContent(ix,iy) << "\t" << mctemplerr->GetBinContent(ix,iy) << endl;
 	  double nev_old = spectrum_with2derr->GetBinContent(ix);
 	  spectrum_with2derr->SetBinContent(ix, nev_new + nev_old);
-	}
-      }
+	  for(int ie = 1; ie < ntoys; ie++) {
+	    int nev_fluct = Rnd::Instance()->RndToyMCstat().Poisson((int)nev_new);
+	    double current = spectrum_rms->GetBinContent(ix);
+	    spectrum_rms->SetBinContent(ix, current + TMath::Power(nev_fluct-nev_new,2));
+	  }//ie
+	}//iy
+      }//ix
     }//im
+
+    //go from sum squares to RMS
+    for(int ix = 1; ix <= spectrum_rms->GetNbinsX(); ix++) {
+      double sumsq = spectrum_rms->GetBinContent(ix);
+      spectrum_rms->SetBinContent(ix, TMath::Sqrt(sumsq/ntoys) + spectrum->GetBinContent(ix));
+    }
+
     //look at what the error would of been on the spectrum, if the 1d bins didn't exist
     for(int ix = 1; ix <= spectrum->GetNbinsX(); ix++) {
       double nev = spectrum->GetBinContent(ix);
@@ -2796,9 +2833,10 @@ void SuperkMC::MCStatErrDebug()
       
 
     spectrum->Write();
-    spectrum_with2derr->Write();
+    //spectrum_with2derr->Write();
     spectrum_fracerr->Write();
     spectrum_err->Write();
+    spectrum_rms->Write("spe_with2derr");
   }//is
   out.Close();
 }
