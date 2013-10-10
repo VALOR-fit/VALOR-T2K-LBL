@@ -16,6 +16,8 @@
 //  10 tweak BANFF + unconstrained xsec
 //  11 oscillation parameters
 //
+// 999 MC stat only (turn it on in SuperMC.cxx #define __INCLUDE_MC_STAT_FLUCTUATIONS__)
+//
 // 100 tweak banff00
 // 101 tweak banff01
 // ...
@@ -54,8 +56,6 @@
 
 void test_sk_ereco_spectrum_twk_sys_throw
 (
- //double       mean13             = 0.0251,  /* mean value of theta13 */
- // double       sigma13            = 0.131,    /* fractional error */
   int          mode,                                                /* options: see above */
   bool         update_rootfile    = true,                           /* "update" ROOT output file? If false, will "recreate" */
   const char * hypothesis         = "3f_osc",                       /* options: "2f_numu_disap", "3f_osc" */
@@ -162,6 +162,9 @@ void test_sk_ereco_spectrum_twk_sys_throw
       modetitle = "dm12sq"; break;
     case 703:
       modetitle = "deltacp"; break;
+
+    case 999:
+      modetitle = "mcstatonly"; break;
 
     default:
       if(mode >= 100 && mode < 100+conv::kNumOfParamsInBANFFfit) {
@@ -335,7 +338,8 @@ void test_sk_ereco_spectrum_twk_sys_throw
   int iskip = 0;
   for(int iexp = 0; iexp < nexp; iexp++) {
 
-    cout << endl << "Experiment " << iexp << " for systematics: " << modetitle << endl;
+    if((iexp % 1000) == 0)
+      cout << endl << "Experiment " << iexp << " for systematics: " << modetitle << endl;
 
     if(mode < 100) {
 
@@ -410,7 +414,7 @@ void test_sk_ereco_spectrum_twk_sys_throw
 
     }//mode<100
 
-    else {
+    else if(mode < 999) {//everything else but the MC stat
       
       TRandom3 rand(0);
       double tweak = rand.Gaus(0.,1.);
@@ -460,10 +464,6 @@ void test_sk_ereco_spectrum_twk_sys_throw
 
         case 700:
 	  ph.SetCurrValue(conv::kPhypMixing13,  util::RandomizeMixing13()); break;
-	  //ph.SetCurrValue(conv::kPhypMixing13, -1);
-	  //while(ph.CurrValue(conv::kPhypMixing13) < 0 || ph.CurrValue(conv::kPhypMixing13) > 1)
-	  //  ph.SetCurrValue(conv::kPhypMixing13, Rnd::Instance()->RndToyMCosc().Gaus(mean13,sigma13*sigma13));
-	  //break;
         case 701:
 	  ph.SetCurrValue(conv::kPhypMixing12,  util::RandomizeMixing12()); break;
         case 702:
