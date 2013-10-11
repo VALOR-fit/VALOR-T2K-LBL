@@ -87,8 +87,8 @@ void make_feldman_cousins_deltachisqcrit_1D(
   double dm23sq_max     = dchisqsurf->GetYaxis()->GetBinCenter(dchisqsurf->GetNbinsY());
   double dm23sq_step    = dchisqsurf->GetYaxis()->GetBinCenter(2) - dchisqsurf->GetYaxis()->GetBinCenter(1);
   // make sure that min and max are at the bin centre and not at the low/high edge of the first/last bin
-  int nbins_mixing23 = 1 + TMath::CeilNint((mixing23_max - mixing23_min) / mixing23_step);
-  int nbins_dm23sq   = 1 + TMath::CeilNint((dm23sq_max   - dm23sq_min  ) / dm23sq_step  );
+  int nbins_mixing23 = 1 + (int)(((mixing23_max - mixing23_min) / mixing23_step) + 0.01);
+  int nbins_dm23sq   = 1 + (int)(((dm23sq_max   - dm23sq_min  ) / dm23sq_step  ) + 0.01);
 
   const int mixing23_nbins = nbins_mixing23;
   const int dm23sq_nbins = nbins_dm23sq;

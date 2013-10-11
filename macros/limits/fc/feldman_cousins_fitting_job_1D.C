@@ -85,8 +85,8 @@ void feldman_cousins_fitting_job_1D
   double dm23sq_max     = dchisqsurf->GetYaxis()->GetBinCenter(dchisqsurf->GetNbinsY());
   double dm23sq_step    = dchisqsurf->GetYaxis()->GetBinCenter(2) - dchisqsurf->GetYaxis()->GetBinCenter(1);
   // make sure that min and max are at the bin centre and not at the low/high edge of the first/last bin
-  int mixing23_nbins = 1 + TMath::CeilNint((mixing23_max - mixing23_min) / mixing23_step);
-  int dm23sq_nbins   = 1 + TMath::CeilNint((dm23sq_max   - dm23sq_min  ) / dm23sq_step  );
+  int mixing23_nbins = 1 + (int)(((mixing23_max - mixing23_min) / mixing23_step) + 0.01);
+  int dm23sq_nbins   = 1 + (int)(((dm23sq_max   - dm23sq_min  ) / dm23sq_step  ) + 0.01);
   // param space
   TH2D * osc_param_space = new TH2D("osc_param_space", "",
        mixing23_nbins, 
