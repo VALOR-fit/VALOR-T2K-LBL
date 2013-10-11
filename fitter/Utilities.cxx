@@ -1625,7 +1625,6 @@ string t2kana::util::AsStringPresentTex(PhysParamId_t p)
     case ( kNuisSKDetFSI005 ) :
     {
       string nutypes = "";
-      int ip = (int)p - (int)kNuisSKDetFSI000;
       switch(p) {
         case (kNuisSKDetFSI000) :
 	  nutypes = "SK+FSI $\\nu_\\mu$/$\\bar{\\nu_\\mu}$CCQE $<$0.4 GeV"; break;

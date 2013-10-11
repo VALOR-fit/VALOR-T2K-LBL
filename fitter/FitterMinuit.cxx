@@ -220,11 +220,12 @@ bool FitterMinuit::DoTheFit(void)
 	fFitInputs->FitParams().SetInitValue(conv::kPhypMixing13, Rnd::Instance()->RndFitter().Uniform(0.05,0.15));
       break;
     case(conv::kNuMixSinsqTheta):
-      if(ana == kAnaNuMuDisappOnly || ana == kAnaCombined)
+      if(ana == kAnaNuMuDisappOnly || ana == kAnaCombined) {
 	if (fFitInputs->FitParams().InitValue(conv::kPhypMixing23)< 0.515)
 	  fFitInputs->FitParams().SetInitValue(conv::kPhypMixing23, Rnd::Instance()->RndFitter().Uniform(0.35,0.50));
 	else
 	  fFitInputs->FitParams().SetInitValue(conv::kPhypMixing23, Rnd::Instance()->RndFitter().Uniform(0.53,0.68));
+      }
       if(ana == kAnaNuEAppOnly || ana == kAnaCombined)
 	fFitInputs->FitParams().SetInitValue(conv::kPhypMixing13, Rnd::Instance()->RndFitter().Uniform(0.015,0.035));
       break;
