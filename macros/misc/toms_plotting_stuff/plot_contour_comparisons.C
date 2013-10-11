@@ -434,8 +434,8 @@ void plot_contour_comparisons
   double dm23sq_max     = 6E-3;
   double dm23sq_step    = 1E-4;
   // make sure that min and max are at the bin centre and not at the low/high edge of the first/last bin
-  int mixing23_nbins = 1 + TMath::CeilNint ((mixing23_max - mixing23_min) / mixing23_step);
-  int dm23sq_nbins   = 1 + TMath::CeilNint ((dm23sq_max   - dm23sq_min  ) / dm23sq_step  );
+  int mixing23_nbins = 1 + (int)( ((mixing23_max - mixing23_min) / mixing23_step) + 0.01);
+  int dm23sq_nbins   = 1 + (int)( ((dm23sq_max   - dm23sq_min  ) / dm23sq_step  ) + 0.01);
   TH2D * osc_param_space = new TH2D("osc_param_space", "",
        mixing23_nbins, 
        mixing23_min - 0.5*mixing23_step, 
@@ -2196,8 +2196,8 @@ void plot_contour_comparisons
   double xdm23sq_max     = 6;
   double xdm23sq_step    = 0.1;
   // make sure that min and max are at the bin centre and not at the low/high edge of the first/last bin
-  int xmixing23_nbins = 1 + TMath::CeilNint ((xmixing23_max - xmixing23_min) / xmixing23_step);
-  int xdm23sq_nbins   = 1 + TMath::CeilNint ((xdm23sq_max   - xdm23sq_min  ) / xdm23sq_step  );
+  int xmixing23_nbins = 1 + (int)( ((xmixing23_max - xmixing23_min) / xmixing23_step) + 0.01);
+  int xdm23sq_nbins   = 1 + (int)( ((xdm23sq_max   - xdm23sq_min  ) / xdm23sq_step  ) + 0.01);
   TH2D * osc_param_spacex = new TH2D("osc_param_space", "",
        xmixing23_nbins, 
        xmixing23_min - 0.5*xmixing23_step, 

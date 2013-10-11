@@ -152,8 +152,8 @@ void plot_contours_with_profiles
   double dm23sq_max     = 3.15E-3;
   double dm23sq_step    = 1E-4;
   // make sure that min and max are at the bin centre and not at the low/high edge of the first/last bin
-  int mixing23_nbins = 1 + TMath::CeilNint ((mixing23_max - mixing23_min) / mixing23_step);
-  int dm23sq_nbins   = 1 + TMath::CeilNint ((dm23sq_max   - dm23sq_min  ) / dm23sq_step  );
+  int mixing23_nbins = 1 + (int)( ((mixing23_max - mixing23_min) / mixing23_step) + 0.01);
+  int dm23sq_nbins   = 1 + (int)( ((dm23sq_max   - dm23sq_min  ) / dm23sq_step  ) + 0.01);
   TH2D * osc_param_space2 = new TH2D("osc_param_space2", "",
 				     mixing23_nbins, mixing23_min, mixing23_max,
 				     dm23sq_nbins, dm23sq_min, dm23sq_max);
