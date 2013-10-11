@@ -39,8 +39,8 @@ void test_nsk_twk_osc_mixing12_dm12sq
   double dm12sq_step   = (dm12sq_max-dm12sq_min)/50.;
 
   // make sure that min and max are at the bin centre
-  int mixing12_nbins = 1 + TMath::CeilNint ((mixing12_max - mixing12_min) / mixing12_step);
-  int dm12sq_nbins   = 1 + TMath::CeilNint ((dm12sq_max   - dm12sq_min  ) / dm12sq_step  );
+  int mixing12_nbins = 1 + (int)( ((mixing12_max - mixing12_min) / mixing12_step) + 0.01);
+  int dm12sq_nbins   = 1 + (int)( ((dm12sq_max   - dm12sq_min  ) / dm12sq_step  ) + 0.01);
 
   TH2D * nsk_vs_osc_params = 
    new TH2D("nsk_vs_osc_params", "number of 1-ring mu-like events",

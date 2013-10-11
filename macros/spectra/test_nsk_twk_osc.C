@@ -41,8 +41,8 @@ void test_nsk_twk_osc
   double dm23sq_step   =  5E-5;
 
  // make sure that min and max are at the bin centre
-  int mixing23_nbins = 1 + TMath::CeilNint ((mixing23_max - mixing23_min) / mixing23_step);
-  int dm23sq_nbins   = 1 + TMath::CeilNint ((dm23sq_max   - dm23sq_min  ) / dm23sq_step  );
+  int mixing23_nbins = 1 + (int)( ((mixing23_max - mixing23_min) / mixing23_step) + 0.01);
+  int dm23sq_nbins   = 1 + (int)( ((dm23sq_max   - dm23sq_min  ) / dm23sq_step  ) + 0.01);
 
  TH2D * nsk_vs_osc_params = 
    new TH2D("nsk_vs_osc_params", "",
