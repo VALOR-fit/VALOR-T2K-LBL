@@ -18,6 +18,7 @@
 #include <iomanip>
 #include <cstdlib>
 
+#include "PhysParamList.h"
 #include "PhysHypothesis.h"
 #include "Utilities.h"
 
@@ -180,6 +181,19 @@ void PhysHypothesis::Print(ostream & stream) const
             << endl;
   }
   stream << "................................................................." << endl;
+}
+//________________________________________________________________________________________
+PhysParamList PhysHypothesis::AsPhysParamList(void) const
+{
+  PhysParamList pl;
+  map<int, double>::const_iterator iter = fParams.begin();
+  for( ; iter != fParams.end(); ++iter)
+  {
+    PhysParamId_t p = (PhysParamId_t)iter->first;
+    double v = iter->second;
+    pl.SetValue(p,v);
+  }
+  return pl;
 }
 //________________________________________________________________________________________
 

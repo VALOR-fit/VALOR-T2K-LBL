@@ -49,6 +49,9 @@ public:
    void Print (ostream & stream) const;
    friend ostream & operator << (ostream & stream, const PhysHypothesis & ph);
 
+   // copy values to a PhysParamList 
+   t2kana::PhysParamList AsPhysParamList(void) const;
+
 private:
 
    conv::PhysHypothesis_t fHypothesis;
