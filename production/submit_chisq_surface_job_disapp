@@ -99,8 +99,8 @@ die("$job_dir doesn't exist") unless -d $job_dir;
 if( $resource eq "Grid") { $macro_dir = "./";       }
 else                     { $macro_dir = $softw_dir; }
 
-$mix23_nbins  = 1 + ceil(($mix23_max  - $mix23_min ) / $mix23_step );
-$dm32sq_nbins = 1 + ceil(($dm32sq_max - $dm32sq_min) / $dm32sq_step);
+$mix23_nbins  = 1 + ceil((($mix23_max  - $mix23_min ) / $mix23_step ) - 0.01);
+$dm32sq_nbins = 1 + ceil((($dm32sq_max - $dm32sq_min) / $dm32sq_step) - 0.01);
 
 print "mix23_nbins = $mix23_nbins, dm32sq_nbins = $dm32sq_nbins\n";
 
