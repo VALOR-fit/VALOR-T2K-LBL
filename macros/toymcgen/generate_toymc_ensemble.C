@@ -25,7 +25,11 @@ void generate_toymc_ensemble
   bool         save_in_xml_format      = true,                           /* also save in txt format */
   bool         save_in_root_format     = true,                           /* */
   const char * points_to_add           = 0,                              /* comma separated-list of data-points to add, eg when creating hybrid data/toy-MC experiments */
-  bool         save_fluct_in_xml       = false                           /* save the values of the variations in the xml file? */
+  bool         save_fluct_in_xml       = false,                          /* save the values of the variations in the xml file? */
+  const char * dmsqscheme              = "abs23",                        /* abs23==kNuDmsq12andAbs23 abs31==kNuDmsq12andAbs31 fogli==kNuDmsqFogliLisi */
+  const char * hierarchy               = "normal",                       /* normal or inverted */
+  const char * mixparamchoice          = "sinsqtheta",                   /* sinsq2theta or sinsqtheta */
+  const char * mixparamoctant          = "one"                           /* one==kNuOctantOne two==kNuOctantTwo */
 )
 {
   using namespace std;
@@ -38,9 +42,15 @@ void generate_toymc_ensemble
   const char * config = Form("%s/config/%s", gSystem->Getenv("T2KOSCANA"), config_file);
 
   // Global options
-  Opt::Instance()->gOscMixingParamChoice = kNuMixSinsq2Theta;
-  Opt::Instance()->gMassHierarchyAssumed = kNmhNormal;
-  Opt::Instance()->gOscOctantChoice      = kNuOctantOne;
+  Opt::Instance()->gMassHierarchyAssumed = util::HierarchyFromString(hierarchy);
+  Opt::Instance()->gOscDmsqScheme        = util::DmsqSchemeFromString(dmsqscheme);
+  Opt::Instance()->gOscMixingParamChoice = util::MixingTypeFromString(mixparamchoice);
+  Opt::Instance()->gOscOctantChoice      = util::OctantFromString(mixparamoctant);
+  if(Opt::Instance()->Undefined()) {
+    cerr << "Global options not defined correctly. Exiting..." << endl;
+    cerr << *Opt::Instance() << endl;
+    exit(1);
+  }
 
   // Check whether some osc. params need to be randomized
   bool randomize_mixing12      = (TMath::Abs(input_mixing12 + 999) < kASmallNum);
@@ -268,6 +278,17 @@ void generate_toymc_ensemble
        }
        f->cd();
        mock_data->Write(Form("mock_data_%d",iexperiment));
+       // Object for storing input oscillation and nuisance params in each toy-MC
+       PhysParamList * iparm = new PhysParamList;
+       iparm->Clear();
+       // keep track of oscillation parameters
+       PhysParamList true_oscillation_params = ph.AsPhysParamList();
+       iparm->Append(true_oscillation_params);
+       // keep track of all systematic params
+       PhysParamList true_nuisance_params = skexp->Tweaks();
+       iparm->Append(true_nuisance_params);
+       iparm->Write(Form("iparm_%d",iexperiment));
+       delete iparm;
      }
 
   }//iexperiment

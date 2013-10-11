@@ -50,17 +50,11 @@ dm32sq, and dm23sq vars in scripts need to be replaced with dmsq_atm and then
 lookup conv::NuOscDmsqScheme_t from Opt to interpret what mass spltting exactly that is.
 Similarly with dm12sq -> dmsq_sol.
 --
-In macros/toymcgen/generate_toymc_ensemble.C, ideally the true params for the expts needs to be saved.
-In ROOT format, one can just write out a tree with the recently added PhysParamList obj returned by SuperkExpectation. 
-For XML format, the params could also be added. Trivial. But PhysParamList could be adjusted so that it can read itself from XML.
---
-The MINUIT2 and GSL fitter need to save fit time and best-fit chisq in FitParamsList
+The MINUIT2 and GSL fitter need to save fit time and best-fit chisq in FitParamsList (also fit tries)
 
 Work needed in macros and production scripts:
 +--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+
 
-macros/fit/pulls/mock_data_fit_pulls.C requires a major rewrite 
-__
 macros/contour/fc/numu/feldman_cousins_fitting_job.C should save tweak value, best fit, and error of all systematics
 __
 macros/spectra/test_sk_ereco_spectrum_twk_sys_throw.C should save tweak value of all systematics
