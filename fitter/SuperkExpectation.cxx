@@ -7,7 +7,7 @@
 //________________________________________________________________________________________
 
 #define __show_syst_reset_mesg__
-#define __show_syst_tweak_mesg__
+//#define __show_syst_tweak_mesg__
 //#define __show_syst_tweak_debug__
 
 #include <cassert>
@@ -931,10 +931,83 @@ PhysParamList SuperkExpectation::Tweaks(void)
   return pl;
 }
 //________________________________________________________________________________________
-void SuperkExpectation::SetNuisanceParams(const FitParamList & fp, bool all_banff_fit, bool all_1Re_eff)
+void SuperkExpectation::SetNuisanceParams(const FitParamList & fp, bool /*all_banff_fit*/, bool /*all_1Re_eff*/)
 {
-   //this->ResetSystematicVariations();
+  //this->ResetSystematicVariations();
   
+
+  //below is what it used to do - check that every single systematic parameter exists in the fit,
+  // and only then tweak
+  //FitParamList has a 'SystMode', which tells you which parameters are being fit - use this instead!
+
+  if(fp.GetSystMode() == 1) {
+    //energy scale
+    if(fp.Exists(kNuisSuperkEnergyScale)) {
+      double twk = fp.CurrValue(kNuisSuperkEnergyScale);
+      this->GetSuperkDetectorFSI()->TweakEnergyScale(twk);
+    }
+
+#ifndef SKFSITOGETHER
+    cerr << "SKDet and FSI separate systematics not implemented in SuperkExpectation::SetNuisanceParams(). Exiting..." << endl;
+    exit(1);
+#endif
+
+    // use current values stored in fit param list
+    // to tweak the SKDET + FSI object
+    const int nskdetfsi = conv::kNumOfSKDetFSIParams;
+    const int nskdetfsi_1Rmu = conv::kNumOfSKDetFSIParams1Rmu;
+    const int nskdetfsi_1Re = conv::kNumOfSKDetFSIParams1Re;
+    if (Opt::Instance()->gOscAnaTypeChoice == conv::kAnaNuMuDisappOnly){
+      TVectorD twkv(nskdetfsi_1Rmu);
+      for(int ip = 0; ip < nskdetfsi_1Rmu; ip++) {
+	PhysParamId_t p = PhysParamId_t ((int) kNuisSKDetFSI000 + ip);
+	twkv[ip] = fp.CurrValue(p);
+      }
+      this->GetSuperkDetectorFSI()->TweakOnly1Rmu(true,&twkv);
+    }
+    else if (Opt::Instance()->gOscAnaTypeChoice == conv::kAnaNuEAppOnly){
+      TVectorD twkv(nskdetfsi_1Re);
+      for(int ip = 0; ip < nskdetfsi_1Re; ip++) {
+	PhysParamId_t p = PhysParamId_t ((int) kNuisSKDetFSI000 + ip + nskdetfsi_1Rmu);
+	twkv[ip] = fp.CurrValue(p);
+      }
+      this->GetSuperkDetectorFSI()->TweakOnly1Re(true,&twkv);
+    }
+    else {
+      TVectorD twkv(nskdetfsi);
+      for(int ip = 0; ip < nskdetfsi; ip++) {
+	PhysParamId_t p = PhysParamId_t ((int) kNuisSKDetFSI000 + ip);
+	twkv[ip] = fp.CurrValue(p);
+      }
+      this->GetSuperkDetectorFSI()->Tweak(true,&twkv);    
+    }
+   
+    // use current values stored in fit param list
+    // to tweak the BANFF object
+    for(int ip = 0; ip < nbanff; ip++) {
+      PhysParamId_t p = PhysParamId_t ((int) kNuisBANFF00 + ip);
+      twkv[ip] = fp.CurrValue(p);
+    }
+    this->GetBANFF()->Tweak(true,&twkv);
+
+    // Cross-section systematics (other than BANFF ones)
+    for(int ip = 0; ip < kNumOfXSecSyst; ip++) {
+      PhysParamId_t p = kListOfXSecSyst[ip];
+      double twk = fp.CurrValue(p);
+      this->GetNuXSec()->Tweak(p,twk);
+    }
+
+  }//systmode == 1
+
+  else if(fp.GetSystMode() == 2) {
+    cerr << "selected systematics not implemented in SuperkExpectation::SetNuisanceParams(). Exiting..." << endl;
+    exit(1);
+  }
+
+
+
+
+  /*
 #ifndef SKFSITOGETHER
   // 
   // SuperK detector systematics
@@ -972,7 +1045,8 @@ void SuperkExpectation::SetNuisanceParams(const FitParamList & fp, bool all_banf
 #if FSI_BINS == 1
    const int neff1Re = conv::kNumOfSKDetParams1Re;
    TVectorD twkv1Re(neff1Re); 
-   // 1Re eff params included in the fit param list?                                                                                                                             
+   // 1Re eff params included in the fit param list?            
+   */                                                                                                                 
    /*                       
    bool incl_eff1Re = true;
    for(int ip = 0; ip < neff1Re; ip++) {
@@ -991,6 +1065,7 @@ void SuperkExpectation::SetNuisanceParams(const FitParamList & fp, bool all_banf
      this->GetSuperkDetector()->TweakEfficiencies1Re(true,&twkv);
    }
    */
+  /*
    if(all_1Re_eff){
      for(int ip = 0; ip < neff1Re; ip++) {
        PhysParamId_t p = PhysParamId_t ((int) kNuisSuperkEff1ReNueSigCC0 + ip);
@@ -1253,7 +1328,7 @@ void SuperkExpectation::SetNuisanceParams(const FitParamList & fp, bool all_banf
        this->GetNuXSec()->Tweak(p,twk);
      }
    }
-
+   */
 }
 //________________________________________________________________________________________
 

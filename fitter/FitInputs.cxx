@@ -407,160 +407,63 @@ double FitInputs::ChisquarePenaltyTerm(void) const
 
   //
   // Add penalty term for BANFF params 
-  // First, make sure that all BANFF params were included in the fit param
-  // list and were marked as nuisance parameters.
   //
-  bool incl_banff_penalty = true;
-  /* this check is unnecessary, as long as the fitparamlist is correctly implemented
-  if(all_syst) {
-    const int np_banff = conv::kNumOfParamsInBANFFfit;
-    for(int ip = 0; ip < np_banff; ip++) {
-      PhysParamId_t p = PhysParamId_t ( (int) kNuisBANFF00 + ip );
-      incl_banff_penalty = incl_banff_penalty && 
-	(fFitParams->Exists(p) && fFitParams->IsNuisance(p));
-      if(!incl_banff_penalty) break;
-    }
-  }
-  else {
-    PhysParamId_t p = kNuisBANFFMAQE;
-    incl_banff_penalty = incl_banff_penalty && 
-      (fFitParams->Exists(p) && fFitParams->IsNuisance(p));
-    p = kNuisBANFFCCQEE0;
-    incl_banff_penalty = incl_banff_penalty && 
-      (fFitParams->Exists(p) && fFitParams->IsNuisance(p));
-  }
-  */
-  if(incl_banff_penalty) {
 #ifdef __include_all_systematics_in_banff_penalty_term__
-    double dchisq_penalty = fExp->GetBANFF()->ChisqPenalty();
+  double dchisq_penalty_banff = fExp->GetBANFF()->ChisqPenalty();
 #else
-    double dchisq_penalty = fExp->GetBANFF()->ChisqPenalty(all_syst);
+  double dchisq_penalty_banff = fExp->GetBANFF()->ChisqPenalty(all_syst);
 #endif
-    chisq_penalty += dchisq_penalty;
+  chisq_penalty += dchisq_penalty_banff;
 #ifdef __show_contributions_to_penalty_term__
-      cout << "FitInputs::ChisquarePenaltyTerm >> Current BANFF param variation"
-           << " => \\delta\\chi^2_{penalty} = " << dchisq_penalty << endl;
+  cout << "FitInputs::ChisquarePenaltyTerm >> Current BANFF param variation"
+       << " => \\delta\\chi^2_{penalty} = " << dchisq_penalty_banff << endl;
 #endif
-  }
-
-  //
-  // Add penalty term for SuperkDetector params
-  // First check all the parms considered by SuperkDetector are included in the fit
-  // param list and set as nuisance
-  //
-
-  bool incl_skdet_penalty = false;
-  bool incl_fsi_penalty = false;
-  bool incl_skdetfsi_penalty = false;
-#ifndef SKFSITOGETHER
-  incl_skdet_penalty = true;
-  incl_fsi_penalty = true;
-#endif
-#ifdef SKFSITOGETHER
-  incl_skdetfsi_penalty = true;
-#endif
-
-  /* this check is unnecessary, as long as the fitparamlist is correctly implemented
-  if(all_syst) {
-    int np_skdet = 8; // 7 eff + energy scale
-    for(int ip = 0; ip < np_skdet; ip++) {
-      PhysParamId_t p = PhysParamId_t ( (int) kNuisSuperkEnergyScale  + ip );
-      incl_skdet_penalty = incl_skdet_penalty &&
-	(fFitParams->Exists(p) && fFitParams->IsNuisance(p));
-      if(!incl_skdet_penalty) break;
-    }
-  }
-  else {
-    PhysParamId_t p = kNuisSuperkEff1RmuCCnonQE;
-    incl_skdet_penalty = incl_skdet_penalty &&
-      (fFitParams->Exists(p) && fFitParams->IsNuisance(p));
-    p = kNuisSuperkEff1RmuNC;
-    incl_skdet_penalty = incl_skdet_penalty &&
-      (fFitParams->Exists(p) && fFitParams->IsNuisance(p));
-    p = kNuisSuperkEnergyScale;
-    incl_skdet_penalty = incl_skdet_penalty &&
-      (fFitParams->Exists(p) && fFitParams->IsNuisance(p));
-  }
-  */
-  if(incl_skdet_penalty) {
-    double dchisq_penalty = fExp->GetSuperkDetector()->ChisqPenalty(all_syst);
-    chisq_penalty += dchisq_penalty;
-#ifdef __show_contributions_to_penalty_term__
-    cout << "FitInputs::ChisquarePenaltyTerm >> Current variation of params considered by SuperkDetector"
-         << " => \\delta\\chi^2_{penalty} = " << dchisq_penalty << endl;
-#endif
-  }
 
   //
   // Add penalty term for NuXSec params (other than the ones incl. in BANFF)
   //
-  bool incl_xsec_penalty = true;
-  /* this check is unnecessary, as long as the fitparamlist is correctly implemented
-  if(all_syst) {
-    int np_xsec = 11;
-    for(int ip = 0; ip < np_xsec; ip++) {
-      PhysParamId_t p = PhysParamId_t ( (int) kNuisXSecFermiMom  + ip );
-      incl_xsec_penalty = incl_xsec_penalty &&
-	(fFitParams->Exists(p) && fFitParams->IsNuisance(p));
-      if(!incl_xsec_penalty) break;
-    }
-  }
-  else {
-    PhysParamId_t p = kNuisXSecPiLessDelta;
-    incl_xsec_penalty = incl_xsec_penalty &&
-      (fFitParams->Exists(p) && fFitParams->IsNuisance(p));
-    p = kNuisXSecSpecFunc;
-    incl_xsec_penalty = incl_xsec_penalty &&
-      (fFitParams->Exists(p) && fFitParams->IsNuisance(p));
-    p = kNuisXSecBindE;
-    incl_xsec_penalty = incl_xsec_penalty &&
-      (fFitParams->Exists(p) && fFitParams->IsNuisance(p));
-  }
-  */
-  if(incl_xsec_penalty) {
-    double dchisq_penalty = fExp->GetNuXSec()->ChisqPenalty(all_syst);
-    chisq_penalty += dchisq_penalty;
+  double dchisq_penalty_xsec = fExp->GetNuXSec()->ChisqPenalty(all_syst);
+  chisq_penalty += dchisq_penalty_xsec;
 #ifdef __show_contributions_to_penalty_term__
-    cout << "FitInputs::ChisquarePenaltyTerm >> Current variation of params considered by NuXSec"
-         << " => \\delta\\chi^2_{penalty} = " << dchisq_penalty << endl;
+  cout << "FitInputs::ChisquarePenaltyTerm >> Current variation of params considered by NuXSec"
+       << " => \\delta\\chi^2_{penalty} = " << dchisq_penalty_xsec << endl;
 #endif
-  }
 
+  //
+  // Add penalty term for SuperkDetector params
+  //
+#ifndef SKFSITOGETHER
+  double dchisq_penalty_skdet = fExp->GetSuperkDetector()->ChisqPenalty(all_syst);
+  chisq_penalty += dchisq_penalty_skdet;
+#ifdef __show_contributions_to_penalty_term__
+  cout << "FitInputs::ChisquarePenaltyTerm >> Current variation of params considered by SuperkDetector"
+       << " => \\delta\\chi^2_{penalty} = " << dchisq_penalty_skdet << endl;
+#endif
+#endif
 
   //
   // Add penalty term for FSI params 
   //
-  if(all_syst) {
-    //bool incl_fsi_penalty = true;
-    /* this check is unnecessary, as long as the fitparamlist is correctly implemented
-    const int np_fsi = conv::kNumOfFSIParams;
-    for(int ip = 0; ip < np_fsi; ip++) {
-      PhysParamId_t p = PhysParamId_t ( (int) kNuisFSI000 + ip );
-      incl_fsi_penalty = incl_fsi_penalty && 
-	(fFitParams->Exists(p) && fFitParams->IsNuisance(p));
-      if(!incl_fsi_penalty) break;
-    }
-    */
-    if(incl_fsi_penalty) {
-      double dchisq_penalty = fExp->GetFSI()->ChisqPenalty();
-      chisq_penalty += dchisq_penalty;
+#ifndef SKFSITOGETHER
+  double dchisq_penalty_fsi = fExp->GetFSI()->ChisqPenalty();
+  chisq_penalty += dchisq_penalty_fsi;
 #ifdef __show_contributions_to_penalty_term__
-      cout << "FitInputs::ChisquarePenaltyTerm >> Current FSI param variation"
-           << " => \\delta\\chi^2_{penalty} = " << dchisq_penalty << endl;
+  cout << "FitInputs::ChisquarePenaltyTerm >> Current FSI param variation"
+       << " => \\delta\\chi^2_{penalty} = " << dchisq_penalty_fsi << endl;
 #endif
-    }
+#endif
     
-    if(incl_skdetfsi_penalty) {
-      double dchisq_penalty = fExp->GetSuperkDetectorFSI()->ChisqPenalty();
-      chisq_penalty += dchisq_penalty;
+  //
+  // Add penalty term for SuperkDetector + FSI params
+  //
+#ifdef SKFSITOGETHER
+  double dchisq_penalty_skdetfsi = fExp->GetSuperkDetectorFSI()->ChisqPenalty();
+  chisq_penalty_skdetfsi += dchisq_penalty_skdetfsi;
 #ifdef __show_contributions_to_penalty_term__
-      cout << "FitInputs::ChisquarePenaltyTerm >> Current SK+FSI param variation"
-           << " => \\delta\\chi^2_{penalty} = " << dchisq_penalty << endl;
+  cout << "FitInputs::ChisquarePenaltyTerm >> Current SK+FSI param variation"
+       << " => \\delta\\chi^2_{penalty} = " << dchisq_penalty_skdetfsi << endl;
 #endif
-    }
-
-
-  }
+#endif
 
   return chisq_penalty;
 }

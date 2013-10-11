@@ -1133,7 +1133,9 @@ void SuperkMC::ApplyBANFFTuningToTemplates(void)
 	     for(int it = EtrueMinBin; it <= EtrueMaxBin; it++) {
 	       //check for empty bins
 	       if (s==kSKsFCFV1RingMuLike) {
+#if BANFF_BINS == 3
 		 if(!util::IsMEC(m))
+#endif
 		   if(fMCTemplArrayOri1Rmu[im][it-1][ir-1] <= 0) continue;
 	       }
 	       else{
@@ -1143,6 +1145,7 @@ void SuperkMC::ApplyBANFFTuningToTemplates(void)
    
 	       // get number of events in current bin of source MC template
 	       double nev = 0;
+#if BANFF_BINS == 3
 	       if(util::IsMEC(m)) {
 		 double nev_martini = fMCTemplArrayMECMartini[it-1][ir-1];
 		 double nev_nieves  = fMCTemplArrayMECNieves [it-1][ir-1];
@@ -1156,6 +1159,7 @@ void SuperkMC::ApplyBANFFTuningToTemplates(void)
 		   nev += nev_nieves * (1 - x_mec);
 		 }
 	       }//MEC
+#endif
 	       else if (s==kSKsFCFV1RingMuLike)
 		 nev = fMCTemplArrayNom1Rmu[im][it-1][ir-1];
 	       else
@@ -1330,7 +1334,9 @@ void SuperkMC::ApplySystematicsToTemplates_Multiplicative(void)
 	     for(int it = EtrueMinBin; it <= EtrueMaxBin; it++) {
 	       //check for empty bins
 	       if (s==kSKsFCFV1RingMuLike){
+#if BANFF_BINS == 3
 		 if(!util::IsMEC(m))
+#endif
 		   if(fMCTemplArrayOri1Rmu[im][it-1][ir-1] <= 0) continue;
 	       }
 	       else{
@@ -1340,6 +1346,7 @@ void SuperkMC::ApplySystematicsToTemplates_Multiplicative(void)
    
 	       // get number of events in current bin of source MC template
 	       double nev = 0;
+#if BANFF_BINS == 3
 	       if(util::IsMEC(m)) {
 		 double nev_martini = fMCTemplArrayMECMartini[it-1][ir-1];
 		 double nev_nieves  = fMCTemplArrayMECNieves [it-1][ir-1];
@@ -1353,6 +1360,7 @@ void SuperkMC::ApplySystematicsToTemplates_Multiplicative(void)
 		   nev += nev_nieves * (1 - x_mec);
 		 }
 	       }//MEC
+#endif
 	       else if (s==kSKsFCFV1RingMuLike)
 		 nev = fMCTemplArrayTun1Rmu[im][it-1][ir-1];
 	       else
