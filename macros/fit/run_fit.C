@@ -20,7 +20,7 @@ void run_fit
   double       input_dm23sq            = 2.32E-3,                             /* |Dm^2_{23}| */
   const char * config_file             = "analysis_configuration.xml",        /* analysis configuration file */
   bool         stat_fluctuations       = true,                                /* include statistical fluctuation in toy MC expts? */
-  bool         tweak_systematics       = true,                                /* generate toy MC with randomized systematics? */
+  int          tweak_systematics       = 1,                                /* generate toy MC with randomized systematics? */
   const char * fit_param_list          = "nuosc3f_numudisapp_nuis3fixdcp+nuisance",  /* fit parameter list for the given physics hypothesis (see FitParamList.h) */
   const char * fit_option              = "minuit",                            /* fitter option */
   bool         store_toy_expts         = true,                                /* disable this if you don't want to store the toy MC expts     */
@@ -175,8 +175,22 @@ void run_fit
      while(applied_negevents_condition) {
        if(tweak_systematics) {
 	 // tweak all sources of systematic error
-	 cout << "- Randomizing all systematic params in pdf..." << endl;
-	 skexp->TweakAllSystematics();     
+	 if(tweak_systematics == 1) {
+	   cout << "- Randomizing all systematic params in pdf..." << endl;
+	   skexp->TweakAllSystematics(); 
+	 }
+	 else if(tweak_systematics == 2) {
+	   cout << "- Randomizing BANFF systematic params in pdf..." << endl;
+	   skexp->TweakAllBANFFSystematics();
+	 }
+	 else if(tweak_systematics == 3) {
+	   cout << "- Randomizing uncorrelated-xsec systematic params in pdf..." << endl;
+	   skexp->TweakAllUncorrelatedXSecSystematics();
+	 }
+	 else if(tweak_systematics == 4) {
+	   cout << "- Randomizing SKDetFSI systematic params in pdf..." << endl;
+	   skexp->TweakAllSKDetectorFSISystematics();
+	 }
 	 skexp->PrintSystematicVariations();
 	 // generate mock data using the current PDF (incl. systematic variations) 
 	 // + statistical fluctuations if requested (Poisson fluctuation in each bin)
@@ -208,7 +222,8 @@ void run_fit
      FitterABC * fitter = util::GetFitter(fit_inputs,fit_option);
 
      // Chisq for true (input) params
-     fparm1->Update(conv::kNuisXSecSpecFunc, 0); //init value of SpecFunc is 0.5
+     if(fparm1->Exists(conv::kNuisXSecSpecFunc))
+	fparm1->Update(conv::kNuisXSecSpecFunc, 0); //init value of SpecFunc is 0.5
      double true_chisq = fit_inputs->Chisquare();
 
      // Print-out true params
