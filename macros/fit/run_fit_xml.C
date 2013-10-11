@@ -23,7 +23,8 @@ void run_fit_xml
   const char * mixparamchoice      = "sinsqtheta",                          /* sinsq2theta or sinsqtheta */
   const char * mixparamoctant      = "one",                                 /* one==kNuOctantOne two==kNuOctantTwo */
   //bool         apply_2nu_boundary  = true                                   /* if using the 2nu flavour osc prob, apply the physical boundary? */
-  double       dcp_value           = 0                                      /* value of deltacp (in units of PI) to assume (when deltacp is not a free parameter) */
+  double       dcp_value           = 0,                                      /* value of deltacp (in units of PI) to assume (when deltacp is not a free parameter) */
+  bool         using_xml_file      = true                                   /* if false, skobs reads xmlfile as a root file */
 )
 {
   using namespace std;
@@ -102,6 +103,16 @@ void run_fit_xml
   TBranch * br_fparm     = fitnt->GetBranch("best_fit_params");
   TBranch * br_bf_array  = fitnt->GetBranch("best_fit_pdf");
 
+  //Open the ROOT file that has the input PhysParamList (if applicable)
+  TFile * f_sysparm = 0;
+  if(!using_xml_file) {
+    f_sysparm = new TFile(xmlfile2.Data(),"READ");
+    if(f_sysparm->IsZombie()) {
+      cerr << "ROOT file not found. Exiting..." << endl;
+      exit(1);
+    }
+  }
+
   // Loop over toy-MC experiments
   for(int iexperiment = first_experiment; iexperiment <= last_experiment; iexperiment++) {
 
@@ -118,7 +129,15 @@ void run_fit_xml
 
      // Get superk spectrum observation (toy experiment)
      SuperkObservation * skobs = new SuperkObservation;
-     skobs->Read(xmlfile2.Data(),iexperiment);
+     skobs->Read(xmlfile2.Data(),iexperiment,using_xml_file);
+     //Update the fitter initial values (osc & systematic)
+     PhysParamList * iparm = 0;
+     if(!using_xml_file) {
+       f_sysparm->GetObject(Form("iparm_%d",iexperiment),iparm);
+     }
+     fparm1->FromPhysParamList(*iparm, "initial", false);
+     cout << *iparm << endl;
+     cout << *fparm1 << endl;
 
      // Get fitter
      FitInputs * fit_inputs = new FitInputs(skobs,skexp,fparm1);
@@ -203,6 +222,11 @@ void run_fit_xml
      }
 
   }//iexperiment
+  if(f_sysparm) {
+    if(f_sysparm->IsOpen())
+      f_sysparm->Close();
+    delete f_sysparm;
+  }
 
   // Store ntuple with best-fit results
   f.cd();
