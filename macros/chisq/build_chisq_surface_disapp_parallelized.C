@@ -20,8 +20,8 @@ void build_chisq_surface_disapp_parallelized
   const char * config_file         = "analysis_configuration.xml",          /* analysis configuration file */
   const char * fit_param_list      = "nuosc3f_numudisapp_fix4+nuisance",    /* fit parameter list for the given physics hypothesis (see FitParamList.h) */
   const char * fit_option          = "minuit",                              /* fitter option */
-  double       mixing23_min        = 0.9,
-  double       mixing23_max        = 1.0,
+  double       mixing23_min        = 0.35,
+  double       mixing23_max        = 0.70,
   double       mixing23_step       = 0.001,
   double       dm32sq_min          = 0.002,
   double       dm32sq_max          = 0.003,
@@ -30,7 +30,7 @@ void build_chisq_surface_disapp_parallelized
   int          input_dm32sq_bin    = -1,                                    /* if !=-1, will run only for the specified bin */
   const char * dmsqscheme          = "abs23",                               /* abs23==kNuDmsq12andAbs23 abs31==kNuDmsq12andAbs31 fogli==kNuDmsqFogliLisi */
   const char * hierarchy           = "normal",                              /* normal or inverted */
-  const char * mixparamchoice      = "sinsq2theta",                         /* sinsq2theta or sinsqtheta */
+  const char * mixparamchoice      = "sinsqtheta",                         /* sinsq2theta or sinsqtheta */
   const char * mixparamoctant      = "one",                                 /* one==kNuOctantOne two==kNuOctantTwo */
   bool         apply_2nu_boundary  = true,                                  /* if using the 2nu flavour osc prob, apply the physical boundary? */
   bool         using_xml_file      = true                                   /* if false, skobs reads xmlfile as a root file */
@@ -55,8 +55,8 @@ void build_chisq_surface_disapp_parallelized
   }
 
   // Calc number of bins & make sure input bin numbers are within range
-  int mixing23_nbins = 1 + TMath::CeilNint((mixing23_max - mixing23_min) / mixing23_step);
-  int dm32sq_nbins   = 1 + TMath::CeilNint((dm32sq_max -   dm32sq_min )  / dm32sq_step );
+  int mixing23_nbins = 1 + (int)(((mixing23_max - mixing23_min) / mixing23_step) + 0.01);
+  int dm32sq_nbins   = 1 + (int)(((dm32sq_max -   dm32sq_min )  / dm32sq_step ) + 0.01);
   if(input_mixing23_bin != -1) {
     assert(input_mixing23_bin >= 1 && input_mixing23_bin <= mixing23_nbins);
   }
@@ -136,6 +136,16 @@ void build_chisq_surface_disapp_parallelized
   chisq_surface->GetXaxis()->SetRangeUser(0.,1.);
   chisq_surface->Reset();
 
+  //Open the ROOT file that has the input PhysParamList (if applicable)
+  TFile * f_sysparm = 0;
+  if(!using_xml_file) {
+    f_sysparm = new TFile(xmlfile2.Data(),"READ");
+    if(f_sysparm->IsZombie()) {
+      cerr << "ROOT file not found. Exiting..." << endl;
+      exit(1);
+    }
+  }
+
   // Loop over experiments
   int nexperiments = 0;
   for(int iexperiment = first_experiment; iexperiment <= last_experiment; iexperiment++) {
@@ -147,6 +157,10 @@ void build_chisq_surface_disapp_parallelized
      // Read SuperK spectrum (toy MC or data)
      SuperkObservation * skobs = new SuperkObservation;
      skobs->Read(xmlfile2.Data(), iexperiment, using_xml_file);
+     PhysParamList * iparm = 0;
+     if(!using_xml_file) {
+       f_sysparm->GetObject(Form("iparm_%d",iexperiment),iparm);
+     }
 
      // Loop over bins and calc the chisq fixing osc params to the true ones at the centre
      // of the bin and minimize with respect to all systematics (and, potentially, all other osc params).
@@ -172,6 +186,11 @@ void build_chisq_surface_disapp_parallelized
            fparm->SetInitValue( conv::kPhypDm23sq,   dm32sq   );
            fparm->FixParameter(conv::kPhypMixing23);
            fparm->FixParameter(conv::kPhypDm23sq);
+	   //if we know the true values of the systematic params, use them to seed the fit
+	   if(!using_xml_file) {
+	     //cout << *iparm << endl;
+	     fparm->FromPhysParamList(*iparm, "initial", true);
+	   }
            cout << *fparm;
            // do the fit
            FitInputs * fit_inputs = new FitInputs(skobs,skexp,fparm);
@@ -195,7 +214,11 @@ void build_chisq_surface_disapp_parallelized
      nexperiments++;
      delete skobs;
   }//iexperiment
-
+  if(f_sysparm) {
+    if(f_sysparm->IsOpen())
+      f_sysparm->Close();
+    delete f_sysparm;
+  }
   // For sensitivity studies, chisq is averaged over N experiments.
   // For the chisq surface of a single dataset, the following has no effect.
   double scale_factor = 1./((double)nexperiments);
