@@ -81,8 +81,8 @@ void build_chisq_profiles_disapp
   TFile f(filename.str().c_str(), "recreate");
 
   // Define osc param space, making sure that min and max are at the bin centre
-  int mixing23_nbins = 1 + TMath::CeilNint((mixing23_max - mixing23_min) / mixing23_step);
-  int dm32sq_nbins   = 1 + TMath::CeilNint((dm32sq_max -   dm32sq_min )  / dm32sq_step );
+  int mixing23_nbins = 1 + (int)(((mixing23_max - mixing23_min) / mixing23_step) + 0.01);
+  int dm32sq_nbins   = 1 + (int)(((dm32sq_max -   dm32sq_min )  / dm32sq_step ) + 0.01);
   if(input_mixing23_bin != -1) {
     assert(input_mixing23_bin >= 1 && input_mixing23_bin <= mixing23_nbins);
   }
