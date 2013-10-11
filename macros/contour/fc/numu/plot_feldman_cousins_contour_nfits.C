@@ -64,8 +64,8 @@ void plot_feldman_cousins_contour_nfits
   // Define grid so that min and max are at the bin centre 
   // and not at the low/high edge of the first/last bin                                                                                                                               
   //
-  const int mixing23_nbins = 1 + TMath::CeilNint((mixing23_max - mixing23_min) / mixing23_step);
-  const int dm23sq_nbins   = 1 + TMath::CeilNint((dm23sq_max   - dm23sq_min  ) / dm23sq_step  );
+  const int mixing23_nbins = 1 + (int)(((mixing23_max - mixing23_min) / mixing23_step) + 0.01);
+  const int dm23sq_nbins   = 1 + (int)(((dm23sq_max   - dm23sq_min  ) / dm23sq_step  ) + 0.01);
   
   double mixing23_grid_min = mixing23_min - 0.5*mixing23_step;
   double mixing23_grid_max = mixing23_max + 0.5*mixing23_step;

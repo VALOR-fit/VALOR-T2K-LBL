@@ -92,8 +92,8 @@ void write_contour_bins_to_textfile
   double dm23sq_max     = 6E-3;
   double dm23sq_step    = 1E-4;
   // make sure that min and max are at the bin centre and not at the low/high edge of the first/last bin
-  int mixing23_nbins = 1 + TMath::CeilNint((mixing23_max - mixing23_min) / mixing23_step);
-  int dm23sq_nbins   = 1 + TMath::CeilNint((dm23sq_max   - dm23sq_min  ) / dm23sq_step  );
+  int mixing23_nbins = 1 + (int)(((mixing23_max - mixing23_min) / mixing23_step) + 0.01);
+  int dm23sq_nbins   = 1 + (int)(((dm23sq_max   - dm23sq_min  ) / dm23sq_step  ) + 0.01);
 
   TString outfilename;
 
@@ -160,7 +160,7 @@ void write_contour_bins_to_textfile
       if(TMath::Abs(xstep - mixing23_step) > 1E-8)
 	cout << "Cannot convert xaxis to fc axis. Different step size" << endl;
       else {
-	nbinx_addon_statonly = TMath::CeilNint((hContStatOnly[0]->GetXaxis()->GetXmin() - mixing23_min) / mixing23_step);
+	nbinx_addon_statonly = (int)(((hContStatOnly[0]->GetXaxis()->GetXmin() - mixing23_min) / mixing23_step) + 0.01);
 	cout << "Adding " << nbinx_addon_statonly << " to the x axis bins" << endl;
       }
 
@@ -170,7 +170,7 @@ void write_contour_bins_to_textfile
       if(TMath::Abs(ystep - dm23sq_step) > 1E-8)
 	cout << "Cannot convert yaxis to fc axis. Different step size" << endl;
       else {
-	nbiny_addon_statonly = TMath::CeilNint((hContStatOnly[0]->GetYaxis()->GetXmin() - dm23sq_min) / dm23sq_step);
+	nbiny_addon_statonly = (int)(((hContStatOnly[0]->GetYaxis()->GetXmin() - dm23sq_min) / dm23sq_step) + 0.01);
 	cout << "Adding " << nbiny_addon_statonly << " to the y axis bins" << endl;
       }
     }
@@ -205,7 +205,7 @@ void write_contour_bins_to_textfile
       if(TMath::Abs(xstep - mixing23_step) > 1E-8)
 	cout << "Cannot convert xaxis to fc axis. Different step size" << endl;
       else {
-	nbinx_addon_statsyst = TMath::CeilNint((hContStatSyst[0]->GetXaxis()->GetXmin() - mixing23_min) / mixing23_step);
+	nbinx_addon_statsyst = (int)(((hContStatSyst[0]->GetXaxis()->GetXmin() - mixing23_min) / mixing23_step) + 0.01);
 	cout << "Adding " << nbinx_addon_statsyst << " to the x axis bins" << endl;
       }
 
@@ -215,7 +215,7 @@ void write_contour_bins_to_textfile
       if(TMath::Abs(ystep - dm23sq_step) > 1E-8)
 	cout << "Cannot convert yaxis to fc axis. Different step size" << endl;
       else {
-	nbiny_addon_statsyst = TMath::CeilNint((hContStatSyst[0]->GetYaxis()->GetXmin() - dm23sq_min) / dm23sq_step);
+	nbiny_addon_statsyst = (int)(((hContStatSyst[0]->GetYaxis()->GetXmin() - dm23sq_min) / dm23sq_step) + 0.01);
 	cout << "Adding " << nbiny_addon_statsyst << " to the y axis bins" << endl;
       }
     }

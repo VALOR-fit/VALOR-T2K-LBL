@@ -80,8 +80,8 @@ void make_feldman_cousins_deltachisqcrit_line(
   double dm23sq_max     = h_chisq_prob_temp->GetYaxis()->GetBinCenter(h_chisq_prob_temp->GetNbinsY());
   double dm23sq_step    = 1E-4;
   // make sure that min and max are at the bin centre and not at the low/high edge of the first/last bin
-  int mixing23_nbins = 1 + TMath::CeilNint((mixing23_max - mixing23_min) / mixing23_step);
-  int dm23sq_nbins   = 1 + TMath::CeilNint((dm23sq_max   - dm23sq_min  ) / dm23sq_step  );
+  int mixing23_nbins = 1 + (int)(((mixing23_max - mixing23_min) / mixing23_step) + 0.01);
+  int dm23sq_nbins   = 1 + (int)(((dm23sq_max   - dm23sq_min  ) / dm23sq_step  ) + 0.01);
 
   //make a 2D chisq surface & prob surface with the new binning
   TH2D * h_chisq = new TH2D("hchisq","hchisq",
