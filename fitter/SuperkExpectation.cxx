@@ -984,11 +984,13 @@ void SuperkExpectation::SetNuisanceParams(const FitParamList & fp, bool /*all_ba
    
     // use current values stored in fit param list
     // to tweak the BANFF object
+    const int nbanff = conv::kNumOfParamsInBANFFfit;
+    TVectorD twkvBANFF(nbanff);
     for(int ip = 0; ip < nbanff; ip++) {
       PhysParamId_t p = PhysParamId_t ((int) kNuisBANFF00 + ip);
-      twkv[ip] = fp.CurrValue(p);
+      twkvBANFF[ip] = fp.CurrValue(p);
     }
-    this->GetBANFF()->Tweak(true,&twkv);
+    this->GetBANFF()->Tweak(true,&twkvBANFF);
 
     // Cross-section systematics (other than BANFF ones)
     for(int ip = 0; ip < kNumOfXSecSyst; ip++) {

@@ -1078,8 +1078,8 @@ void SuperkMC::ApplyBANFFTuningToTemplates(void)
        if(!mctempl_tgt) continue; 
 #endif
 
-       double x_mec = fXMEC;
 #if BANFF_BINS == 3
+       double x_mec = fXMEC;
        if(util::IsMEC(m))
 	 x_mec = fNuXSec->MECBestFitValue();
 #endif
@@ -1159,8 +1159,9 @@ void SuperkMC::ApplyBANFFTuningToTemplates(void)
 		   nev += nev_nieves * (1 - x_mec);
 		 }
 	       }//MEC
+	       else
 #endif
-	       else if (s==kSKsFCFV1RingMuLike)
+		 if (s==kSKsFCFV1RingMuLike)
 		 nev = fMCTemplArrayNom1Rmu[im][it-1][ir-1];
 	       else
 		 nev = fMCTemplArrayNom1Re[im][it-1][ir-1];
@@ -1256,8 +1257,8 @@ void SuperkMC::ApplySystematicsToTemplates_Multiplicative(void)
        if(!mctempl_tgt) continue;
 #endif
 
-       double x_mec = fXMEC;
 #if BANFF_BINS == 3
+       double x_mec = fXMEC;
        if(util::IsMEC(m))
 	 x_mec = fNuXSec->CurrentValue(kNuisBANFFMECNorm);
 #endif
@@ -1360,8 +1361,9 @@ void SuperkMC::ApplySystematicsToTemplates_Multiplicative(void)
 		   nev += nev_nieves * (1 - x_mec);
 		 }
 	       }//MEC
+	       else
 #endif
-	       else if (s==kSKsFCFV1RingMuLike)
+		 if (s==kSKsFCFV1RingMuLike)
 		 nev = fMCTemplArrayTun1Rmu[im][it-1][ir-1];
 	       else
 		 nev = fMCTemplArrayTun1Re[im][it-1][ir-1];

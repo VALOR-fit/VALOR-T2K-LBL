@@ -458,7 +458,7 @@ double FitInputs::ChisquarePenaltyTerm(void) const
   //
 #ifdef SKFSITOGETHER
   double dchisq_penalty_skdetfsi = fExp->GetSuperkDetectorFSI()->ChisqPenalty();
-  chisq_penalty_skdetfsi += dchisq_penalty_skdetfsi;
+  chisq_penalty += dchisq_penalty_skdetfsi;
 #ifdef __show_contributions_to_penalty_term__
   cout << "FitInputs::ChisquarePenaltyTerm >> Current SK+FSI param variation"
        << " => \\delta\\chi^2_{penalty} = " << dchisq_penalty_skdetfsi << endl;
