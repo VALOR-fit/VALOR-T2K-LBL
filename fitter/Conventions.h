@@ -1099,8 +1099,8 @@ static const double kXSecSystEtrueCut[kNumOfXSecSyst][2] =
 // ONLY USE FOR: macros/misc/test_fitter_inputs/test_valor_kdi_splines.C
 static const double kXSecSystFracErr[kNumOfXSecSyst] =
 {
-  0.0595,          // BANFF, M_{A}QE
-  0.0523,          // BANFF, M_{A}RES
+  0.0716,          // BANFF, M_{A}QE
+  0.0675,          // BANFF, M_{A}RES
   0.09,           // BANFF, CCQE   normalization, 0 - 1.5 GeV
   0.3,            // BANFF, CCQE   normalization, 1.5 - 3.5 GeV
   0.3,            // BANFF, CCQE   normalization, 3.5 - 30.0 GeV
