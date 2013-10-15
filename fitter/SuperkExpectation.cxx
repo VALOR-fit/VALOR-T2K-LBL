@@ -995,8 +995,10 @@ void SuperkExpectation::SetNuisanceParams(const FitParamList & fp, bool /*all_ba
     // Cross-section systematics (other than BANFF ones)
     for(int ip = 0; ip < kNumOfXSecSyst; ip++) {
       PhysParamId_t p = kListOfXSecSyst[ip];
-      double twk = fp.CurrValue(p);
-      this->GetNuXSec()->Tweak(p,twk);
+      if( fp.Exists(p) && util::IsXSec(p) ) {
+        double twk = fp.CurrValue(p);
+        this->GetNuXSec()->Tweak(p,twk);
+      }
     }
 
   }//systmode == 1
