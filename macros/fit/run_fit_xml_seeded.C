@@ -23,7 +23,8 @@ void run_fit_xml_seeded
   const char * mixparamchoice      = "sinsq2theta",                         /* sinsq2theta or sinsqtheta */
   const char * mixparamoctant      = "one",                                 /* one==kNuOctantOne two==kNuOctantTwo */
   bool         apply_2nu_boundary  = true,                                  /* if using the 2nu flavour osc prob, apply the physical boundary? */
-  double       dcp_value           = 0                                      /* value of deltacp (in units of PI) to assume (when deltacp is not a free parameter) */
+  double       dcp_value           = 0,                                     /* value of deltacp (in units of PI) to assume (when deltacp is not a free parameter) */
+  double       tolerance           = 0.01                                   /* value of the fitter tolerance */
 )
 {
   using namespace std;
@@ -157,6 +158,7 @@ void run_fit_xml_seeded
     // Get fitter
     FitInputs * fit_inputs = new FitInputs(skobs,skexp,fparm);
     FitterABC * fitter = util::GetFitter(fit_inputs,fit_option);
+    fitter->SetTol(tolerance);
 
     // Do the fit
     //skexp->PrintSystematicVariations();
