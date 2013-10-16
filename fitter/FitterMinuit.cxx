@@ -211,22 +211,23 @@ bool FitterMinuit::DoTheFit(void)
     maxntries = 25;
   while(fMigradMinStatusCode == 4 && ntries < maxntries) {
     cout << "Original fit failed; reseeding & trying again. Attempt: " << ntries << endl;
+    //randomise oscillation parameters
     NuOscMixParam_t omp = Opt::Instance()->gOscMixingParamChoice;
     switch(omp) {
     case(conv::kNuMixSinsq2Theta):
-      if(ana == kAnaNuMuDisappOnly || ana == kAnaCombined)
+      if((ana == kAnaNuMuDisappOnly || ana == kAnaCombined) && fFitInputs->FitParams().Exists(conv::kPhypMixing23) && !fFitInputs->FitParams().IsFixed(conv::kPhypMixing23))
 	fFitInputs->FitParams().SetInitValue(conv::kPhypMixing23, Rnd::Instance()->RndFitter().Uniform(0.80,0.98));
-      if(ana == kAnaNuEAppOnly     || ana == kAnaCombined)
+      if((ana == kAnaNuEAppOnly     || ana == kAnaCombined) && fFitInputs->FitParams().Exists(conv::kPhypMixing13) && !fFitInputs->FitParams().IsFixed(conv::kPhypMixing13))
 	fFitInputs->FitParams().SetInitValue(conv::kPhypMixing13, Rnd::Instance()->RndFitter().Uniform(0.05,0.15));
       break;
     case(conv::kNuMixSinsqTheta):
-      if(ana == kAnaNuMuDisappOnly || ana == kAnaCombined) {
+      if((ana == kAnaNuMuDisappOnly || ana == kAnaCombined) && fFitInputs->FitParams().Exists(conv::kPhypMixing23) && !fFitInputs->FitParams().IsFixed(conv::kPhypMixing23)) {
 	if (fFitInputs->FitParams().InitValue(conv::kPhypMixing23)< 0.515)
 	  fFitInputs->FitParams().SetInitValue(conv::kPhypMixing23, Rnd::Instance()->RndFitter().Uniform(0.35,0.50));
 	else
 	  fFitInputs->FitParams().SetInitValue(conv::kPhypMixing23, Rnd::Instance()->RndFitter().Uniform(0.53,0.68));
       }
-      if(ana == kAnaNuEAppOnly || ana == kAnaCombined)
+      if((ana == kAnaNuEAppOnly || ana == kAnaCombined) && fFitInputs->FitParams().Exists(conv::kPhypMixing13) && !fFitInputs->FitParams().IsFixed(conv::kPhypMixing13))
 	fFitInputs->FitParams().SetInitValue(conv::kPhypMixing13, Rnd::Instance()->RndFitter().Uniform(0.015,0.035));
       break;
     case(conv::kNuMixUndefined):
@@ -234,7 +235,25 @@ bool FitterMinuit::DoTheFit(void)
       exit(1);
       break;
     }
-    fFitInputs->FitParams().SetInitValue(conv::kPhypDm23sq, Rnd::Instance()->RndFitter().Uniform(0.0020,0.0030));
+    if(fFitInputs->FitParams().Exists(conv::kPhypDm23sq) && !fFitInputs->FitParams().IsFixed(conv::kPhypDm23sq))
+      fFitInputs->FitParams().SetInitValue(conv::kPhypDm23sq, Rnd::Instance()->RndFitter().Uniform(0.0020,0.0030));
+    if(fFitInputs->FitParams().Exists(conv::kPhypDm12sq) && !fFitInputs->FitParams().IsFixed(conv::kPhypDm12sq))
+      fFitInputs->FitParams().SetInitValue(conv::kPhypDm12sq, util::RandomizeDm12sq());
+    if(fFitInputs->FitParams().Exists(conv::kPhypMixing12) && !fFitInputs->FitParams().IsFixed(conv::kPhypMixing12))
+      fFitInputs->FitParams().SetInitValue(conv::kPhypMixing12, util::RandomizeMixing12());
+    if(fFitInputs->FitParams().Exists(conv::kPhypDeltaCP) && !fFitInputs->FitParams().IsFixed(conv::kPhypDeltaCP))
+      fFitInputs->FitParams().SetInitValue(conv::kPhypDeltaCP, util::RandomizeDeltaCP());
+    //randomise systematics
+    //first check if there is a floating systematic in the fit (only need to look at one, since we're only ever fitting either 0 or all systematics)
+    if(fFitInputs->FitParams().Exists(conv::kNuisXSecNormNuEToNuMu) && !fFitInputs->FitParams().IsFixed(conv::kNuisXSecNormNuEToNuMu)) {
+      //tweak everything
+      fFitInputs->Expectation().TweakAllSystematics();
+      //get the tweaks
+      PhysParamList tweaks = fFitInputs->Expectation().Tweaks();
+      //initialise the FitParamList with these random tweaks
+      fFitInputs->FitParams().FromPhysParamList(tweaks,"initial",true);
+      fFitInputs->FitParams().FromPhysParamList(tweaks,"current",true);
+    }//systematics exist in fit
     this->RunOnce(false);
     ntries++;
   }
