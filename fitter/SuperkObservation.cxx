@@ -125,6 +125,7 @@ bool SuperkObservation::Read(string config_file, int data_set_id, bool is_xml)
       cerr << "Obs >> Node " << datanode1Rmu.str() << " does not exist!" << endl;
     }
 
+#ifndef __NUMUONLY__ 
     ostringstream datanode1Re;
     //Ereco spectrum
     datanode1Re << "superk/observation/one_e_ring/ereco_values" << "/data_set_" << data_set_id;
@@ -149,7 +150,7 @@ bool SuperkObservation::Read(string config_file, int data_set_id, bool is_xml)
     else {
       cerr << "Obs >> Node " << datanode1Re.str() << " does not exist!" << endl;
     }
-
+#endif
 
     //Treat as counting experiment
     /*
