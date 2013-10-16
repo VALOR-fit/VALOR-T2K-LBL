@@ -77,7 +77,7 @@ void FitterMinuit::Init(void)
   fCalcMinosErrors     = false;
   fCalcEScaleErrors    = false;
 //fSimplex             = false;
-  fTol                 = 0.1;
+  fTol                 = 0.01;
   fStr                 = 1;
   fMigradMinStatusCode = -999;
   fMigradErrStatusCode = -999;      
