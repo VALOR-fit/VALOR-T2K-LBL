@@ -1853,7 +1853,7 @@ void FitParamList::Init(int nparams)
 
    fBestFitChisq = 0.;
    fFitTime      = -1;
-   fFitTries     = 0.;
+   fFitTries     = 0;
 
    fStatusCodes.clear();
 
