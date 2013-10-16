@@ -136,8 +136,8 @@ public:
    double GetBestFitChisq  (void) const      { return fBestFitChisq;     }
    void   SetFitTime       (double fit_time) { fFitTime      = fit_time; }
    double GetFitTime       (void) const      { return fFitTime;          }
-   void   SetFitTries      (double fit_tries){ fFitTries     = fit_tries;}
-   double GetFitTries      (void) const      { return fFitTries;         }
+   void   SetFitTries      (int   fit_tries) { fFitTries     = fit_tries;}
+   int    GetFitTries      (void) const      { return fFitTries;         }
 
    // Print
    void Print (ostream & stream) const;
