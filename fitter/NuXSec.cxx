@@ -588,7 +588,13 @@ double NuXSec::SystWght_1p(
   // BANFF param, NC1pi0 normalization
   // 
   else
-  if(p == kNuisBANFFCCQEE0
+  if(p >= kNuisBANFFCCQEE0
+#if BANFF_BINS != 1
+     && p <= kNuisBANFFCC1piE1
+#else
+     && p <= kNuisBANFFNC1pi0
+#endif
+    /*  if(p == kNuisBANFFCCQEE0
      || p == kNuisBANFFCCQEE1
      || p == kNuisBANFFCCQEE2
      || p == kNuisBANFFCC1piE0
@@ -596,6 +602,7 @@ double NuXSec::SystWght_1p(
 #if BANFF_BINS == 1
      || p == kNuisBANFFNC1pi0
 #endif
+    */
      )
   {
      wght = fBANFF->CurrentValue(p) / fBANFF->BestFitValue(p);
@@ -628,10 +635,13 @@ double NuXSec::SystWght_1p(
   // spectral function on/off
   // W-shape
   // CC other shape
+  // Binding energy
   //
   else
-  if(p == kNuisXSecFermiMom || p == kNuisXSecSpecFunc || p == kNuisXSecWshape || p == kNuisXSecShapeCCoth ||
-     p == kNuisXSecPiLessDelta || p == kNuisXSecBindE)
+  if((p >= kNuisXSecFermiMom && p <= kNuisXSecShapeCCoth) ||
+     p == kNuisXSecBindE)
+    /*  if(p == kNuisXSecFermiMom || p == kNuisXSecSpecFunc || p == kNuisXSecWshape || p == kNuisXSecShapeCCoth ||
+	|| p == kNuisXSecBindE)*/
   {
 #if SPLINE_TYPE == -1
     return wght;
@@ -641,7 +651,7 @@ double NuXSec::SystWght_1p(
       TSpline3 * wght_spl = this->FindWghtSpline(p,s,m,Ereco,Etrue);
       assert(wght_spl);
       double tc = this->CurrentValue(p);
-      wght = wght_spl->Eval(tc) / 1.; //wght_spl->Eval(0); 
+      wght = wght_spl->Eval(tc); //wght_spl->Eval(0); 
       //}
   }
 
@@ -657,12 +667,30 @@ double NuXSec::SystWght_1p(
   //
   else
   if(
-     p == kNuisXSecNormCCcoh || p == kNuisXSecNormNC1piC || p == kNuisXSecNormNCcoh ||
-     p == kNuisXSecNormNCoth || p == kNuisXSecNormNuEToNuMu || p == kNuisXSecNormAntiNuToNu)
+     p >= kNuisXSecNormCCcoh && p <= kNuisXSecNormAntiNuToNu)
+    /*     p == kNuisXSecNormCCcoh || p == kNuisXSecNormNC1piC || p == kNuisXSecNormNCcoh ||
+	   p == kNuisXSecNormNCoth || p == kNuisXSecNormNuEToNuMu || p == kNuisXSecNormAntiNuToNu)*/
   {
     wght = 1 + (this->CurrentValue(p) * this->RelativeError(p));
   }
 
+  //
+  // pion-less delta-decay
+  //
+  else
+  if(p == kNuisXSecPiLessDelta)
+  {
+#if SPLINE_TYPE == -1
+    return wght;
+#endif
+    //    bool ev = this->IsThereAnEvent(s, m, Ereco, Etrue);//already done in SKMC
+    //if(ev) {
+      TSpline3 * wght_spl = this->FindWghtSpline(p,s,m,Ereco,Etrue);
+      assert(wght_spl);
+      double tc = TMath::Max(this->CurrentValue(p), -1.);
+      wght = wght_spl->Eval(tc); //wght_spl->Eval(0); 
+      //}
+  }
 
 #ifdef __show_syst_var_wght_mesg_debug__
   if (wght != 1.)
@@ -1129,12 +1157,13 @@ TH2D * NuXSec::Template(SuperkSample_t s, SuperkMode_t m) const
   return h;
 }
 //________________________________________________________________________________________
-double NuXSec::ChisqPenalty(bool all_syst) const
+double NuXSec::ChisqPenalty(bool /*all_syst*/) const
 {
   //only contains the contributions from the non-BANFF xsec parameters
 
   double chisq_penalty = 0;
 
+  /*
   // when only fitting for most important systematics
   if(!all_syst) {
     if (fPiLessDeltaTwkDial)  chisq_penalty += fPiLessDeltaTwkDial*fPiLessDeltaTwkDial;
@@ -1143,6 +1172,7 @@ double NuXSec::ChisqPenalty(bool all_syst) const
     if (fWshapeTwkDial)       chisq_penalty += fWshapeTwkDial*fWshapeTwkDial;
     return chisq_penalty;
   }
+  */
 
   if (fFermiMomTwkDial)       chisq_penalty += fFermiMomTwkDial*fFermiMomTwkDial;
   //if (fSpecFuncTwkDial)       chisq_penalty += fSpecFuncTwkDial*fSpecFuncTwkDial;

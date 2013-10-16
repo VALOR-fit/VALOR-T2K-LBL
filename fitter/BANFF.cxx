@@ -376,7 +376,7 @@ void BANFF::RestoreNominalMC(void)
   }
 }
 //________________________________________________________________________________________
-double BANFF::ChisqPenalty(bool all_syst) const
+double BANFF::ChisqPenalty(bool /*all_syst*/) const
 {
   //Vector of current values & best fit values
   const TVectorD & bestfit_values   = *fBestFitValues;
@@ -389,7 +389,7 @@ double BANFF::ChisqPenalty(bool all_syst) const
   //covariance matrix
   const TMatrixD cov    (this->CovMatrix());
   const TMatrixD covInv (this->CovMatrixInv());
-
+  /*
   if(!all_syst) {
     if (Opt::Instance()->gOscAnaTypeChoice == conv::kAnaCombined){
       //Vector with deviations of current values from  best fit values
@@ -494,6 +494,7 @@ double BANFF::ChisqPenalty(bool all_syst) const
     }
   }//!all_syst
   else {
+  */
     //Vector with deviations of current values from  best fit values
     const int np = conv::kNumOfParamsInBANFFfit;
     TMatrixD dev  (1,np); //vector of one column in matrix form for multiplication
@@ -530,7 +531,7 @@ double BANFF::ChisqPenalty(bool all_syst) const
 #endif
 
     if(chisq_penalty) return chisq_penalty;
-  }//all_syst
+    //}//all_syst
 
   return 0;
 }
