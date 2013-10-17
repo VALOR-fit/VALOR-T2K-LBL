@@ -35,6 +35,9 @@
 // 5 number of events, weighted by pot & mc normalisation, flux tuning, banff tuning, multiplicative systematic variations
 // 6 number of events, weighted by pot & mc normalisation, flux tuning, banff tuning, multiplicative systematic variations, nonmultiplicative systematic variations
 // 7 number of events, weighted by pot & mc normalisation, flux tuning, banff tuning, multiplicative systematic variations, nonmultiplicative systematic variations, physics hypothesis
+#ifdef __save_templates_debug__
+//#define __save_templates_debug_mcstat__ //do the extra MCStatErrDebug
+#endif
 //#define __apply_minevents_to_individual_modes__ //special debug mode that applies kSetNegEventsTo to all modes. Used for comparisons with the KDI 1 sigma spectra
 //#define NO_EVENTS_CAN_BE_NEGATIVE // if defined, will stop events being negative at all stages (not just building the Ereco spectra)
 
@@ -347,7 +350,7 @@ bool SuperkMC::Read(TXMLEngine* xml, XMLNodePointer_t root_node)
 
 
   this->CalculateMCStatError();
-#ifdef __save_templates_debug__
+#ifdef __save_templates_debug_mcstat__
   this->MCStatErrDebug();
 #endif
 
@@ -2664,8 +2667,9 @@ bool SuperkMC::SkipTemplate(SuperkMode_t m)
 void SuperkMC::NevDebug(SKMCTemplateType_t t, string name)
 {
   TFile out(Form("Template_%s.root", name.c_str()),"RECREATE");
-  static const int erecobins = 70;
-  static const double erecobinedges[erecobins+1] = {
+  static const int erecobins = kNErecoBins1Rmu;//70;
+  static const double * erecobinedges = kErecoBinEdges1Rmu;
+  /*static const double erecobinedges[erecobins+1] = {
       0.000,  0.050,  0.100,  0.150,  0.200,  0.250,  0.300,  0.350,  0.400,  0.450, 
       0.500,  0.550,  0.600,  0.650,  0.700,  0.750,  0.800,  0.850,  0.900,  0.950, 
       1.000,  1.050,  1.100,  1.150,  1.200,  1.250,  1.300,  1.350,  1.400,  1.450, 
@@ -2674,7 +2678,7 @@ void SuperkMC::NevDebug(SKMCTemplateType_t t, string name)
       2.500,  2.550,  2.600,  2.650,  2.700,  2.750,  2.800,  2.850,  2.900,  2.950, 
       3.000,  3.100,  3.200,  3.300,  3.400,  3.500,  4.000,  5.000,  7.000, 10.000,
       30.000
-  };
+      };*/
   for(int is = 0; is < kns; is++) {
     SuperkSample_t s = kSKSamples[is];
     if(s == kSKsUndefined) continue;
