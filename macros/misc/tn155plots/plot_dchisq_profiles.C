@@ -31,8 +31,15 @@ void plot_dchisq_profiles
   FitParamList * fparm1 = 0, * fparm2 = 0;
   fbf1.GetObject("fparm",fparm1);
   fbf2.GetObject("fparm",fparm2);
-  double bf1 = fparm1->GetBestFitChisq();
-  double bf2 = fparm2->GetBestFitChisq();
+  double bf1, bf2;
+  if(fparm1)
+    bf1 = fparm1->GetBestFitChisq();
+  else
+    bf1 = h1->GetMinimum();
+  if(fparm2)
+    bf2 = fparm2->GetBestFitChisq();
+  else
+    bf2 = h2->GetMinimum();
   for(int ix = 1; ix <= h1->GetNbinsX(); ix++) {
     double dchisq = h1->GetBinContent(ix) - bf1;
     if(dchisq < 0)
@@ -52,6 +59,8 @@ void plot_dchisq_profiles
   h2->SetLineStyle(2);
   h1->GetYaxis()->SetTitle("#Delta#chi^{2}");
   h2->GetYaxis()->SetTitle("#Delta#chi^{2}");
+  if(!is_mix23)
+    h1->GetXaxis()->SetTitle("|#Deltam^{2}| = #Deltam^{2}_{32}(NH) #Deltam^{2}_{31}(IH)");
   h1->GetYaxis()->SetRangeUser(0,h1->GetMaximum()*1.05);
   if(!is_mix23) { // hide the dodgy peaks at ~ 0.00295)
     h1->GetXaxis()->SetRangeUser(0.0020,0.0029);
