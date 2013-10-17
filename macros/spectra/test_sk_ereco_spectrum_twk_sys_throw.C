@@ -16,7 +16,7 @@
 //  10 tweak BANFF + unconstrained xsec
 //  11 oscillation parameters
 //
-// 999 MC stat only (turn it on in SuperMC.cxx #define __INCLUDE_MC_STAT_FLUCTUATIONS__)
+// 999 stat only
 //
 // 100 tweak banff00
 // 101 tweak banff01
@@ -164,7 +164,7 @@ void test_sk_ereco_spectrum_twk_sys_throw
       modetitle = "deltacp"; break;
 
     case 999:
-      modetitle = "mcstatonly"; break;
+      modetitle = "statonly"; break;
 
     default:
       if(mode >= 100 && mode < 100+conv::kNumOfParamsInBANFFfit) {
@@ -206,8 +206,8 @@ void test_sk_ereco_spectrum_twk_sys_throw
   if(ph.Hypothesis() == conv::kHypNuMuDisapp2F) {
     ph.SetCurrValue(conv::kPhypMixing23,  input_mixing23);
     ph.SetCurrValue(conv::kPhypDm23sq,    input_dm23sq);
-  } else
-  if(ph.Hypothesis() == conv::kHypOsc3F) {
+  }
+  else if(ph.Hypothesis() == conv::kHypOsc3F) {
     ph.SetCurrValue(conv::kPhypMixing12,  input_mixing12);
     ph.SetCurrValue(conv::kPhypMixing13,  input_mixing13);
     ph.SetCurrValue(conv::kPhypMixing23,  input_mixing23);
@@ -217,8 +217,8 @@ void test_sk_ereco_spectrum_twk_sys_throw
   }
 
   //return if tweaking osc params & there are no oscillations
-  if(mode >= 700 && mode <= 799)
-     input_mixing23    < conv::kASmallNum 
+  if(mode >= 700 && mode <= 799
+     && input_mixing23 < conv::kASmallNum 
      && input_mixing13 < conv::kASmallNum
      && input_mixing12 < conv::kASmallNum
      && input_deltacp  < conv::kASmallNum
@@ -235,6 +235,8 @@ void test_sk_ereco_spectrum_twk_sys_throw
   // Create & config superk spectrum predictor
   SuperkExpectation skexp;
   skexp.Read(config);
+  //
+  SuperkObservation skobs;
   
   // Output histograms
   TH1D * hErecoNominal = 0;
@@ -414,7 +416,7 @@ void test_sk_ereco_spectrum_twk_sys_throw
 
     }//mode<100
 
-    else if(mode < 999) {//everything else but the MC stat
+    else if(mode < 999) {//everything else but the stat
       
       TRandom3 rand(0);
       double tweak = rand.Gaus(0.,1.);
@@ -502,11 +504,20 @@ void test_sk_ereco_spectrum_twk_sys_throw
       continue;
     }
 
+    if(mode == 999) {
+      bool fluctuate = true;
+      skobs.CreateMockData(skexp,ph,fluctuate);
+    }
+
     //store spectrum
     hEreco[iexp] = new TH1D(*skexp.CurrPredictedErecoSpectrum(s));
     for(int ir = 1; ir <= hEreco[iexp]->GetNbinsX(); ir++) {
-      hEreco[iexp]->SetBinContent(ir, skexp.CurrPredictedErecoSpectrumArray(s)[ir-1]);
+      if(mode != 999)
+	hEreco[iexp]->SetBinContent(ir, skexp.CurrPredictedErecoSpectrumArray(s)[ir-1]);
+      else
+	hEreco[iexp]->SetBinContent(ir, skobs.ErecoSpectrumArray(s)[ir-1]);
     }
+
     hEreco[iexp]->SetDirectory(0);
     hEreco[iexp]->SetTitle(Form("%s_exp%d",modetitle.c_str(),iexp));
     if(save_toy_expts)
@@ -515,7 +526,10 @@ void test_sk_ereco_spectrum_twk_sys_throw
     //store Nsk
     double nskint = 0;
     for(int ir = 1; ir <= conv::kNErecoBins1Rmu; ir++)
-      nskint += skexp.CurrPredictedErecoSpectrumArray(s)[ir-1];
+      if(mode != 999)
+	nskint += skexp.CurrPredictedErecoSpectrumArray(s)[ir-1];
+      else
+	nskint += skobs.ErecoSpectrumArray(s)[ir-1];
     hNsk->Fill(nskint);
 
     //store thrown parameter values
