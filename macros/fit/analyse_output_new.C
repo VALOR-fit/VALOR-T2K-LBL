@@ -10,19 +10,19 @@
 // This macro has been used to make plots for TN155
 //
 
-void set_line_style(TGraph *contour, Int_t color, Int_t width, Int_t style)
+void set_line_style(TGraph *contour, Int_t color, Double_t width, Int_t style)
 {
   contour->SetLineWidth(width);
   contour->SetLineColor(color);
   contour->SetLineStyle(style);
 }
-void set_line_style(TH1 *hist, Int_t color, Int_t width, Int_t style)
+void set_line_style(TH1 *hist, Int_t color, Double_t width, Int_t style)
 {
   hist->SetLineWidth(width);
   hist->SetLineColor(color);
   hist->SetLineStyle(style);
 }
-void set_line_style(TLine *line, Int_t color, Int_t width, Int_t style)
+void set_line_style(TLine *line, Int_t color, Double_t width, Int_t style)
 {
   line->SetLineWidth(width);
   line->SetLineColor(color);
@@ -33,13 +33,13 @@ void set_fill_style(TH1 *hist, Int_t color, Int_t style)
   hist->SetFillColor(color);
   hist->SetFillStyle(style);
 }
-void set_marker_style(TH1 *hist, Int_t color, Int_t size, Int_t style)
+void set_marker_style(TH1 *hist, Int_t color, Double_t size, Int_t style)
 {
   hist->SetMarkerSize(size);
   hist->SetMarkerColor(color);
   hist->SetMarkerStyle(style);
 }
-void set_marker_style(TMarker *marker, Int_t color, Int_t size, Int_t style)
+void set_marker_style(TMarker *marker, Int_t color, Double_t size, Int_t style)
 {
   marker->SetMarkerSize(size);
   marker->SetMarkerColor(color);
@@ -50,9 +50,9 @@ void save_canvas(TCanvas * c, const char * name, const char * tag) {
   c->SaveAs(Form("%s_%s.eps",tag,name));
   c->SaveAs(Form("%s_%s.C",  tag,name));
 }
-void set_legend_style(TLegend *leg, Int_t size = 0.06) {
+void set_legend_style(TLegend *leg, Double_t size = 0.05, Int_t style = 0) {
   leg->SetFillColor(0);
-  leg->SetFillStyle(0);
+  leg->SetFillStyle(style);
   leg->SetBorderSize(0);
   leg->SetTextSize(size);
 }
@@ -138,7 +138,7 @@ void analyse_output_new
   spectrum_obs->SetLineStyle(1);
   //legend
   delete l;
-  l = new TLegend(0.5,0.8,0.9,0.9);
+  l = new TLegend(0.43,0.7,0.9,0.9);
   set_legend_style(l);
   l->AddEntry(spectrum_obs,  "Run 1-4 data","P");
   l->AddEntry(spectrum_noosc,"No oscillation expectation","l");
@@ -174,11 +174,11 @@ void analyse_output_new
   //styles
   set_line_style  (spectrum_bf_ratio,    kRed,   2,   1);
   set_line_style  (spectrum_obs_ratio,   kBlack, 1.0, 1);
-  set_marker_style(spectrum_obs_ratio,   kBlack, 1.0, 8);
+  set_marker_style(spectrum_obs_ratio,   kBlack, 0.5, 8);
   set_line_style  (spectrum_line,        kBlack, 2,   2);
   //legend
   delete l;
-  l = new TLegend(0.7,0.8,0.9,0.9);
+  l = new TLegend(0.65,0.8,0.9,0.9);
   set_legend_style(l);
   l->AddEntry(spectrum_obs_ratio,  "Run 1-4 data","P");
   l->AddEntry(spectrum_bf_ratio,   "Best fit","l");
@@ -192,7 +192,8 @@ void analyse_output_new
 
   // 3 rebinned spectrum only
   const int nbins = 20;
-  double binedges[nbins+1] = {0.0,0.1,0.2,0.3,0.4,0.5,0.6,0.7,0.8,0.9,1.0,1.2,1.4,1.6,2.0,2.5,3.0,4.0,6.0,10.0,30.0};
+  //double binedges[nbins+1] = {0.0,0.1,0.2,0.3,0.4,0.5,0.6,0.7,0.8,0.9,1.0,1.2,1.4,1.6,2.0,2.5,3.0,4.0,6.0,10.0,30.0};
+  double binedges[nbins+1] = {0.0,0.1,0.2,0.3,0.4,0.5,0.6,0.7,0.8,0.9,1.0,1.2,1.4,1.6,2.0,2.5,3.0,4.0,7.0,10.0,30.0};
   TH1D * spectrum_noosc_rebin = spectrum_noosc->Rebin(nbins,"spectrum_noosc_rebin",binedges);
   TH1D * spectrum_obs_rebin   = spectrum_obs->  Rebin(nbins,"spectrum_obs_rebin",  binedges);
   TH1D * spectrum_bf_rebin    = spectrum_bf->   Rebin(nbins,"spectrum_bf_rebin",   binedges);
@@ -213,7 +214,7 @@ void analyse_output_new
   set_line_style  (spectrum_obs_rebin,   kBlack, 1.0, 1);
   set_marker_style(spectrum_obs_rebin,   kBlack, 1.0, 8);
   //legend
-  l = new TLegend(0.5,0.8,0.9,0.9);
+  l = new TLegend(0.43,0.7,0.9,0.9);
   set_legend_style(l);
   l->AddEntry(spectrum_obs_rebin,  "Run 1-4 data","P");
   l->AddEntry(spectrum_noosc_rebin,"No oscillation expectation","l");
@@ -249,11 +250,11 @@ void analyse_output_new
   //styles
   set_line_style  (spectrum_bf_ratio_rebin,    kRed,   2,   1);
   set_line_style  (spectrum_obs_ratio_rebin,   kBlack, 1.0, 1);
-  set_marker_style(spectrum_obs_ratio_rebin,   kBlack, 1.0, 8);
+  set_marker_style(spectrum_obs_ratio_rebin,   kBlack, 0.5, 8);
   set_line_style  (spectrum_line_rebin,        kBlack, 2,   2);
   //legend
   delete l;
-  l = new TLegend(0.7,0.8,0.9,0.9);
+  l = new TLegend(0.65,0.8,0.9,0.9);
   set_legend_style(l);
   l->AddEntry(spectrum_obs_ratio_rebin,  "Run 1-4 data","P");
   l->AddEntry(spectrum_bf_ratio_rebin,   "Best fit","l");
@@ -487,7 +488,6 @@ void analyse_output_new
   values->Draw("P");
   lpull->Draw();
   save_canvas(cpull,"values",tag);
-  delete cpull;
 
   //save the pull histogram
   TFile fout_pull(Form("%s_pulls.root",tag),"RECREATE");
@@ -506,6 +506,34 @@ void analyse_output_new
   }
   cout << endl << nbigpull << " parameters have |pull| > 0.1" << endl << endl;
 
+  for(int i = 1; i <= values->GetNbinsX(); i++) {
+    if(TMath::Abs(values->GetBinContent(i)) > 0.1) {
+      cout << values->GetXaxis()->GetBinLabel(i) << " has a large value: " << values->GetBinContent(i) << endl;
+      nbigpull++;
+    }
+  }
+
+  //draw again
+  pulls-> GetYaxis()->SetTitle("Pull = (bestfit - input) / #sigma");
+  pulls-> GetYaxis()->SetRangeUser(-1.1,1.1);
+  set_marker_style(values, kRed, values->GetMarkerSize(),25);
+  //set_marker_style(values,   kRed, 1.0, 8);
+  cpull->cd();
+  pulls->Draw("P");
+  values->Draw("Psame");
+  lpull->Draw();
+  delete l;
+  l = new TLegend(0.3,0.03,0.5,0.13);
+  //l->SetFillColor(kWhite);
+  //l->SetTextSize(0.05);
+  set_legend_style(l);
+  l->AddEntry(pulls,  "#sigma = #sigma_{fit}",  "P");
+  l->AddEntry(values, "#sigma = #sigma_{input}","P");
+  l->Draw();
+  save_canvas(cpull,"pulls_and_values",tag);
+
+  delete cpull;
+
   //////////////////////////////////////////////////////////////////////
   //CHISQ & DCHISQ
 
@@ -513,7 +541,8 @@ void analyse_output_new
   TH2D * hchisq = 0, * hdchisq = 0;
   fin.GetObject("chisq",  hchisq);
   fin.GetObject("dchisq", hdchisq);
-  hdchisq->Smooth();
+  if(smooth)
+    hdchisq->Smooth();
   //axis range
   hchisq-> GetXaxis()->SetRangeUser(mixing_min, mixing_max);
   hchisq-> GetYaxis()->SetRangeUser(dm_min,     dm_max);
@@ -689,6 +718,7 @@ void analyse_output_new
 
   cout << endl << endl;
   cout << "Best fit chisq:    " << fparm->GetBestFitChisq() << endl;
+  cout << "Chisq surface min: " << hchisq->GetMinimum() << endl;
   cout << "Best fit mixing23: " << fparm->BestFitValue(conv::kPhypMixing23) << endl;
   cout << "Best fit dm32sq:   " << fparm->BestFitValue(conv::kPhypDm23sq)   << endl;
   cout << "Minimum of the dchisq surface: " << hdchisq->GetMinimum() << endl;
