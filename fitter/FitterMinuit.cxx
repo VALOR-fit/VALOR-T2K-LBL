@@ -425,6 +425,6 @@ bool FitterMinuit::RunOnce(bool use_simplex)
   cout << "FitterMinuit/RunOnce >> Done" << endl;
 #endif
 
-  return (fMigradErrStatusCode == 3);
+  return true;//(fMigradErrStatusCode == 3);
 }
 //____________________________________________________________________________ 
