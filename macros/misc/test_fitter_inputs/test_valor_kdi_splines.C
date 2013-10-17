@@ -4,23 +4,31 @@ using namespace t2kana::util;
 
 void test_valor_kdi_splines
 (
-   bool   compare_with_old_valor = false,
-   double check                  = -1
+ const char * splinename_valor   = "$T2KOSCANA/inputs/official/2013/xsec/XSecSplines2013Run1to4.root",
+ const char * splinedir_kdi      = "./",
+ const char * splinename_numu    = "spl_numuoa_sk13a_flx11bv32_numu.bothpdd.run1-4full.root",
+ const char * splinename_numubar = "spl_numuoa_sk13a_flx11bv32_numubar.bothpdd.run1-4full.root",
+ const char * splinename_nue     = "spl_numuoa_sk13a_flx11bv32_nue.bothpdd.run1-4full.root",
+ const char * splinename_nuebar  = "spl_numuoa_sk13a_flx11bv32_nuebar.bothpdd.run1-4full.root",
+ const char * splinename_signue  = "spl_numuoa_sk13a_flx11bv32_signalnue.bothpdd.run1-4full.root",
+ bool   compare_with_old_valor   = false,
+ double check                    = -1, //if absolute differences in y at the x position knots is greater than this, will save it
+ bool   draw_valor_first         = true
 ) 
 {
   // compare response funcs here:
-  TFile * fval = new TFile("/opt/ppd/t2k/users/nick/t2kana2010v300/macros/nick/XSecSplinesNewPDD2013.root");
+  TFile * fval = new TFile(splinename_valor);
 
   // with reference response funcs here:
   TFile * fref = 0;
 
   // locations of reference response funcs (old VaLOR, or KDI)
   TFile * fval_old     = new TFile("$T2KOSCANA/inputs/official/2012/xsec/XSecSplinesCoarse2012_coarseEreco.root");
-  TFile * fkdi_numu    = new TFile("/opt/ppd/t2k/users/nick/t2kanalatest/macros/misc/test_fitter_inputs/spl_numuoa_sk13a_flx11bv32_numu.bothpdd.root");
-  TFile * fkdi_numubar = new TFile("/opt/ppd/t2k/users/nick/t2kanalatest/macros/misc/test_fitter_inputs/spl_numuoa_sk13a_flx11bv32_numubar.bothpdd.root");
-  TFile * fkdi_nue     = new TFile("/opt/ppd/t2k/users/nick/t2kanalatest/macros/misc/test_fitter_inputs/spl_numuoa_sk13a_flx11bv32_nue.bothpdd.root");
-  TFile * fkdi_nuebar  = new TFile("/opt/ppd/t2k/users/nick/t2kanalatest/macros/misc/test_fitter_inputs/spl_numuoa_sk13a_flx11bv32_nuebar.bothpdd.root");
-  TFile * fkdi_signue  = new TFile("/opt/ppd/t2k/users/nick/t2kanalatest/macros/misc/test_fitter_inputs/spl_numuoa_sk13a_flx11bv32_signalnue.bothpdd.root");
+  TFile * fkdi_numu    = new TFile(Form("%s/%s",splinedir_kdi,splinename_numu));
+  TFile * fkdi_numubar = new TFile(Form("%s/%s",splinedir_kdi,splinename_numubar));
+  TFile * fkdi_nue     = new TFile(Form("%s/%s",splinedir_kdi,splinename_nue));
+  TFile * fkdi_nuebar  = new TFile(Form("%s/%s",splinedir_kdi,splinename_nuebar));
+  TFile * fkdi_signue  = new TFile(Form("%s/%s",splinedir_kdi,splinename_signue));
 
   TCanvas * can = new TCanvas("can");
   can->SetTopMargin(0.13);
@@ -190,8 +198,14 @@ void test_valor_kdi_splines
 	      ref_spl->SetMarkerStyle(8); 
 	      val_spl->SetMarkerSize(1);
 	      val_spl->SetMarkerStyle(8);
-	      val_spl->Draw("LP");
-	      ref_spl->Draw("LPsame");
+	      if(draw_valor_first) {
+		val_spl->Draw("LP");
+		ref_spl->Draw("LPsame");
+	      }
+	      else {
+		ref_spl->Draw("LP");
+		val_spl->Draw("LPsame");
+	      }
 	      TPaveText * leg1 = new TPaveText (0,0.94,1.,1.,"NDC");
 	      leg1->SetBorderSize(0);
 	      leg1->SetFillStyle(0);

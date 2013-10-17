@@ -6,8 +6,8 @@
 //#define DEBUG_MATRIX
 
 void take_row_from_tmatrixdsym(
-			       const char * kdifilename = "inputs/official/2013/skdetfsi/skdet_mat_numuoa_2013a.root",
-			       const char * outfilename = "inputs/official/2013/skdetfsi/skdet_mat_numuoa_2013a_valor.root")
+			       const char * kdifilename = "inputs/official/2013/skdetfsi/skdet_mat_numuoa_2013a_v5_final_run1-4full.root",
+			       const char * outfilename = "inputs/official/2013/skdetfsi/skdet_mat_numuoa_2013a_v5_final_run1-4full_valor.root")
 {
 
   TFile * f_kdi = new TFile(kdifilename,"read");
