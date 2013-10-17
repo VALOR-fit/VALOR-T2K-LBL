@@ -19,7 +19,8 @@ void contour_plots_nfits(
 	   bool         cl_in_leg = false,
 	   bool         bf_in_leg = false,
 	   double       line_width = 2,
-	   bool         smooth = false
+	   bool         smooth = false,
+	   int          dmsq_mode = 0 /*For y-axis. 0: dm32sq, 1: dm31sq, 2: dmsq=dm32sq(NH)dm31sq(IH)*/
 )
 {
   using namespace std;
@@ -48,10 +49,12 @@ void contour_plots_nfits(
     osc_param_space->GetXaxis()->SetTitle("sin^{2}(2#theta_{23})");
   else if(mixingparam == "sinsqtheta")
     osc_param_space->GetXaxis()->SetTitle("sin^{2}(#theta_{23})");
-  if(is_dm32sq)
-    osc_param_space->GetYaxis()->SetTitle("|#Deltam_{32}^{2}| (eV^{2}/c^{4})");
-  else
-    osc_param_space->GetYaxis()->SetTitle("|#Deltam^{2}| = |#Deltam_{32}^{2}|(NH), |#Deltam_{31}^{2}|(IH) (eV^{2}/c^{4})");
+  if(dmsq_mode == 0)
+    osc_param_space->GetYaxis()->SetTitle("#Deltam_{32}^{2} (eV^{2}/c^{4})");
+  else if(dmsq_mode == 1)
+    osc_param_space->GetYaxis()->SetTitle("#Deltam_{13}^{2} (eV^{2}/c^{4})");
+  else if(dmsq_mode == 2)
+    osc_param_space->GetYaxis()->SetTitle("#Deltam^{2} = #Deltam_{32}^{2}(NH), #Deltam_{13}^{2}(IH) (eV^{2}/c^{4})");
   //osc_param_space->GetXaxis()->SetTitleOffset(1.2);
   osc_param_space->GetYaxis()->SetTitleOffset(1.4);
 
@@ -114,6 +117,12 @@ void contour_plots_nfits(
       h68[ifit]->Smooth();
       h90[ifit]->Smooth();
     }
+
+    //set contours correctly, just in case
+    h68[ifit]->SetContour(1);
+    h68[ifit]->SetContourLevel(0,2.30);
+    h90[ifit]->SetContour(1);
+    h90[ifit]->SetContourLevel(0,4.61);
 
     //swap '$' with ' ' in tag
     for (int i = 0; i < tag.length(); ++i) {
