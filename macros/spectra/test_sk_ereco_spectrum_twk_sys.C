@@ -68,7 +68,7 @@
 #define NTWEAKS 4 //2 or 4 or 6!
 void test_sk_ereco_spectrum_twk_sys
 (
-  int          mode=700,                                                /* options: see above */
+  int          mode,                                                /* options: see above */
   bool         update_rootfile    = true,                           /* "update" ROOT output file? If false, will "recreate" */
   const char * hypothesis         = "3f_osc",                       /* options: "2f_numu_disap", "3f_osc" */
   double       input_mixing12     = -99,                            /* */
@@ -213,10 +213,6 @@ void test_sk_ereco_spectrum_twk_sys
   // Analysis configuration
   const char * config  = Form("%s/config/%s", gSystem->Getenv("T2KOSCANA"), config_file);
     
-  // Global options
-  Opt::Instance()->gOscMixingParamChoice = conv::kNuMixSinsq2Theta;
-  Opt::Instance()->gMassHierarchyAssumed = conv::kNmhNormal;
-
   // Set physics hypothesis
   if(Opt::Instance()->gOscMixingParamChoice == conv::kNuMixSinsq2Theta) {
     if(input_mixing13 < -1) input_mixing13 = conv::kGlobFitSinsq2Theta13;
@@ -264,7 +260,8 @@ void test_sk_ereco_spectrum_twk_sys
   int tweaks[ntweaks] = {+1, -1};
 #elif NTWEAKS == 6
   const int ntweaks = 6;
-  double tweaks[ntweaks] = {+1., +0.4545, +0.2273, -0.2273, -0.4545, -1.};
+  //  double tweaks[ntweaks] = {+1., +0.4545, +0.2273, -0.2273, -0.4545, -1.};
+  double tweaks[ntweaks] = {+3., +1, +0.5, -0.5, -1., -3.};
 #else
   cerr << "Unknown NTWEAKS" << endl;
   exit(1);
@@ -558,24 +555,42 @@ void test_sk_ereco_spectrum_twk_sys
     //store spectrum
     hEreco[itweak] = new TH1D(*skexp.CurrPredictedErecoSpectrum(s));
     hEreco[itweak]->SetDirectory(0);
-    hEreco[itweak]->SetTitle(Form("%s_%d_sigma",modetitle.c_str(),tweak));
+    if(ntweaks != 6)
+      hEreco[itweak]->SetTitle(Form("%s_%d_sigma",modetitle.c_str(),tweak));
+    else
+      hEreco[itweak]->SetTitle(Form("%s_%f_sigma",modetitle.c_str(),tweak));
     hEreco[itweak]->SetLineColor(histcolor);
-    hEreco[itweak]->Write(Form("%s_%d_sigma",modetitle.c_str(),tweak));		    
+    if(ntweaks != 6)
+      hEreco[itweak]->Write(Form("%s_%d_sigma",modetitle.c_str(),tweak));		    
+    else
+      hEreco[itweak]->Write(Form("%s_%f_sigma",modetitle.c_str(),tweak));		    
     hErecoRatio[itweak] = new TH1D(*hEreco[itweak]);
     hErecoRatio[itweak]->Divide(hErecoNominal);
-    hErecoRatio[itweak]->Write(Form("%s_%d_sigma_ratio",modetitle.c_str(),tweak));
+    if(ntweaks != 6)
+       hErecoRatio[itweak]->Write(Form("%s_%d_sigma_ratio",modetitle.c_str(),tweak));
+    else
+      hErecoRatio[itweak]->Write(Form("%s_%f_sigma_ratio",modetitle.c_str(),tweak));
     for(int im = 0; im < conv::knm; im++) {
       conv::SuperkMode_t m = conv::kSKReactionModes[is][im];
       if(m == conv::kSKmUndefined) continue;
       hErecoMode[im][itweak] = new TH1D(*skexp.CurrPredictedErecoSpectrum(s,m));
       hErecoMode[im][itweak]->SetDirectory(0);
-      hErecoMode[im][itweak]->SetTitle(Form("%s_%d_sigma_%s",modetitle.c_str(),tweak,util::AsStringCompact(m).c_str()));
+      if(ntweaks != 6)
+	hErecoMode[im][itweak]->SetTitle(Form("%s_%d_sigma_%s",modetitle.c_str(),tweak,util::AsStringCompact(m).c_str()));
+      else
+	hErecoMode[im][itweak]->SetTitle(Form("%s_%f_sigma_%s",modetitle.c_str(),tweak,util::AsStringCompact(m).c_str()));
       hErecoMode[im][itweak]->SetLineColor(histcolor);
       hErecoMode[im][itweak]->SetFillStyle(0);
-      hErecoMode[im][itweak]->Write(Form("%s_%d_sigma_%s",modetitle.c_str(),tweak,util::AsStringCompact(m).c_str()));
+      if(ntweaks != 6)
+	hErecoMode[im][itweak]->Write(Form("%s_%d_sigma_%s",modetitle.c_str(),tweak,util::AsStringCompact(m).c_str()));
+      else
+	hErecoMode[im][itweak]->Write(Form("%s_%f_sigma_%s",modetitle.c_str(),tweak,util::AsStringCompact(m).c_str()));
       hErecoModeRatio[im][itweak] = new TH1D(*hErecoMode[im][itweak]);
       hErecoModeRatio[im][itweak]->Divide(hErecoModeNominal[im]);
-      hErecoModeRatio[im][itweak]->Write(Form("%s_%d_sigma_ratio_%s",modetitle.c_str(),tweak,util::AsStringCompact(m).c_str()));
+      if(ntweaks != 6)
+	hErecoModeRatio[im][itweak]->Write(Form("%s_%d_sigma_ratio_%s",modetitle.c_str(),tweak,util::AsStringCompact(m).c_str()));
+      else
+	hErecoModeRatio[im][itweak]->Write(Form("%s_%f_sigma_ratio_%s",modetitle.c_str(),tweak,util::AsStringCompact(m).c_str()));
     }
   }//end loop over tweaks
 
@@ -599,7 +614,10 @@ void test_sk_ereco_spectrum_twk_sys
     if(mode == 201 && itweak != 1) continue; //SF is only +1 sigma!
     hEreco[itweak]->Draw("same");
     maxy = TMath::Max(maxy, hEreco[itweak]->GetMaximum());
-    legend->AddEntry(hEreco[itweak], Form("%d sigma",tweaks[itweak]), "L" );
+    if(ntweaks != 6)
+      legend->AddEntry(hEreco[itweak], Form("%d sigma",tweaks[itweak]), "L" );
+    else
+      legend->AddEntry(hEreco[itweak], Form("%f sigma",tweaks[itweak]), "L" );
   }
   maxy *= 1.1;
   hErecoNominal->GetYaxis()->SetRangeUser(0,maxy);
@@ -656,7 +674,10 @@ void test_sk_ereco_spectrum_twk_sys
     hErecoModeNominal[im]->Draw();
     for(int itweak = 0; itweak < ntweaks; itweak++) {
       hErecoMode[im][itweak]->Draw("same");
-      legend->AddEntry(hErecoMode[im][itweak], Form("%d sigma",tweaks[itweak]), "L" );
+      if(ntweaks != 6)
+	legend->AddEntry(hErecoMode[im][itweak], Form("%d sigma",tweaks[itweak]), "L" );
+      else
+	legend->AddEntry(hErecoMode[im][itweak], Form("%f sigma",tweaks[itweak]), "L" );
     }
     legend->Draw();
     cm->cd(2);
