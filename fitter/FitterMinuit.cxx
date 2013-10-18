@@ -84,7 +84,7 @@ void FitterMinuit::Init(void)
   fHesseErrStatusCode  = -999; 
   fMinosErrStatusCode  = -999; 
   fFitTime             = 0;
-  fFitTime             = -1;
+  fFitTries            = 0;
 }
 //____________________________________________________________________________ 
 int FitterMinuit::FitStatusCode (Option_t * option) 
@@ -204,13 +204,13 @@ bool FitterMinuit::DoTheFit(void)
   bool ok = this->RunOnce(false);
 
   // 4: migrad not converged
-  int ntries = 0;
   int maxntries = 10;
+  fFitTries = 1;
   OscAnaType_t ana = Opt::Instance()->gOscAnaTypeChoice;
   if(ana != kAnaNuMuDisappOnly)
     maxntries = 25;
-  while(fMigradMinStatusCode == 4 && ntries < maxntries) {
-    cout << "Original fit failed; reseeding & trying again. Attempt: " << ntries << endl;
+  while(fMigradMinStatusCode == 4 && fFitTries < maxntries) {
+    cout << "Original fit failed; reseeding & trying again. Attempt: " << fFitTries << endl;
     //randomise oscillation parameters
     NuOscMixParam_t omp = Opt::Instance()->gOscMixingParamChoice;
     switch(omp) {
@@ -254,11 +254,10 @@ bool FitterMinuit::DoTheFit(void)
       fFitInputs->FitParams().FromPhysParamList(tweaks,"initial",true);
       fFitInputs->FitParams().FromPhysParamList(tweaks,"current",true);
     }//systematics exist in fit
+    cout << fFitInputs->FitParams() << endl;
     this->RunOnce(false);
-    ntries++;
+    fFitTries++;
   }
-  fFitTries = ntries;
-
 
   if(fMigradMinStatusCode == 4) {
     cout << "Fits still failed; trying SIMPLEX" << endl;
@@ -302,6 +301,7 @@ bool FitterMinuit::DoTheFit(void)
 bool FitterMinuit::RunOnce(bool use_simplex) 
 {
   fHesseErrStatusCode = -1;
+  double fcntemp;
 
   // Get the fitter
 #ifdef __show_fit_steps__
@@ -326,8 +326,60 @@ bool FitterMinuit::RunOnce(bool use_simplex)
   Double_t arglist[100];
   arglist[0] = 50000; // num of func calls
   arglist[1] = fTol;  // tolerance
-  if(!use_simplex)
-    fMigradMinStatusCode = fitter->ExecuteCommand("MIGRAD",arglist, 2);
+  if(!use_simplex) {
+    //in disappearance mode, when fitting for deltacp, do two fits - fit everything but deltacp, then fit only deltacp
+    OscAnaType_t ana = Opt::Instance()->gOscAnaTypeChoice;
+    if(ana == kAnaNuMuDisappOnly && fFitInputs->FitParams().GetParListName() == "nuosc3f_numudisapp_nuis3fixdcp+nuisance") {
+#ifdef __show_fit_steps__
+      cout << "FitterMinuit/RunOnce >> Performing two step fit. Fit everything but dcp, fit only dcp..." << endl;
+#endif
+      //fix dcp
+      fFitInputs->FitParams().FixParameter(conv::kPhypDeltaCP);
+      double dcp_slot = (double)(fFitInputs->FitParams().Id(conv::kPhypDeltaCP) + 1); //FitParamList Id runs from 0. MINUIT Id runs from 1.
+      fitter->ExecuteCommand("FIX",&dcp_slot,1);
+      //fit
+      fMigradMinStatusCode = fitter->ExecuteCommand("MIGRAD",arglist, 2);
+      //return if the not-dcp fit failed
+      if(fMigradMinStatusCode == 4) {
+	fFitInputs->FitParams().FreeParameter(conv::kPhypDeltaCP);
+	fitter->ExecuteCommand("RELEASE",&dcp_slot,1);
+	cout << "FitterMinuit/RunOnce >> Fit did not converge when fixing dcp" << endl;
+	return false;
+      }
+      //print
+#ifdef __show_fit_result__
+#ifdef __show_fit_steps__
+      cout << "FitterMinuit/RunOnce >> Printing MIGRAD intermediate fit results..." << endl;
+#endif
+      fitter->ExecuteCommand("SHOW FCNVALUE",&fcntemp,0); //print the bestfit chisq
+      Double_t aminn = 0;
+      fitter->PrintResults(3,aminn);
+#endif
+      //fix everything else
+      double fixed_slot[100] = {0};
+      int nfix = 0;
+      for(int ip = 0; ip < fFitInputs->FitParams().Size(); ip++) {
+	PhysParamId_t p = fFitInputs->FitParams().WhichParam(ip);
+	if(!fFitInputs->FitParams().IsFixed(p)) {
+	  fFitInputs->FitParams().FixParameter(ip);
+ 	  fixed_slot[nfix] = ip+1; //FitParamList Id runs from 0. MINUIT Id runs from 1.
+	  nfix++;
+	}
+      }//ip
+      //free dcp
+      fFitInputs->FitParams().FreeParameter(conv::kPhypDeltaCP);
+      fitter->ExecuteCommand("RELEASE",&dcp_slot,1);
+      //fit
+      fMigradMinStatusCode = fitter->ExecuteCommand("MIGRAD",arglist, 2);
+      //free everything that I just fixed
+      for(int ip = 0; ip <= nfix; ip++) {
+	fFitInputs->FitParams().FreeParameter(ip);
+      }
+      fitter->ExecuteCommand("RELEASE",fixed_slot,nfix);
+    }//disapp & free dcp
+    else
+      fMigradMinStatusCode = fitter->ExecuteCommand("MIGRAD",arglist, 2);
+  }//!_use_simples
   //SIMPLEX
   else {
     arglist[1] = 0.1; // higher tolerance
@@ -343,17 +395,24 @@ bool FitterMinuit::RunOnce(bool use_simplex)
     return false;
   }
 
+  // Found best fit! Copy current --> best-fit values
+  for(int ip = 0; ip < fFitInputs->FitParams().Size(); ip++) {
+    double value, error;
+    gMinuit->GetParameter(ip, value, error);
+    PhysParamId_t p = fFitInputs->FitParams().WhichParam(ip);
+    fFitInputs->FitParams().Update(p, value);
+  }
+  fFitInputs->FitParams().CopyCurrToBestFitValues();
+
   // Print fit result
 #ifdef __show_fit_result__
 #ifdef __show_fit_steps__
   cout << "FitterMinuit/RunOnce >> Printing MIGRAD fit results..." << endl;
 #endif
+  fitter->ExecuteCommand("SHOW FCNVALUE",&fcntemp,0);
   Double_t aminn = 0;
   fitter->PrintResults(3,aminn);
 #endif
-
-  // Found best fit! Copy current --> best-fit values
-  fFitInputs->FitParams().CopyCurrToBestFitValues();
 
   // Get the error matrix status
   double ha(0.0);     // dummy vars
