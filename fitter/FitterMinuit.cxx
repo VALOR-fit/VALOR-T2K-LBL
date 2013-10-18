@@ -254,7 +254,7 @@ bool FitterMinuit::DoTheFit(void)
       fFitInputs->FitParams().FromPhysParamList(tweaks,"initial",true);
       fFitInputs->FitParams().FromPhysParamList(tweaks,"current",true);
     }//systematics exist in fit
-    cout << fFitInputs->FitParams() << endl;
+    //cout << fFitInputs->FitParams() << endl;
     this->RunOnce(false);
     fFitTries++;
   }
