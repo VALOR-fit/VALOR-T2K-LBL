@@ -63,6 +63,10 @@ void combine_chisq_surface_files(
       }
     }//verbosity
 
+    //if(/*fparm->GetFitTries() > 10 &&*/ fparm->GetStatusCode("migrad_err") != 3)   { hchisq ->SetBinContent(imix23,idm32sq, 0); continue; }
+    //if(  fparm->GetFitTries() > 10 &&   fparm->GetStatusCode("migrad_err") != 3)   { hchisq ->SetBinContent(imix23,idm32sq, 0); continue; }
+    if(  fparm->GetFitTries() > 10 /*&&   fparm->GetStatusCode("migrad_err") != 3*/) {cout << fparm->GetFitTries() << endl; cout << fparm->BestFitValue(conv::kPhypMixing23) << "\t" << fparm->BestFitValue(conv::kPhypDm23sq) << endl;  hchisq ->SetBinContent(imix23,idm32sq, 0); continue; }
+    
     double this_chisq = fparm->GetBestFitChisq();
     if(this_chisq > 200 || this_chisq < 0) {
       cout << this_chisq << endl;
@@ -76,7 +80,7 @@ void combine_chisq_surface_files(
     nevents->SetBinContent(imix23,idm32sq, current_ev + 1);
 
     if(iexp <= 10)
-    cout << iexp << "\t" << imix23 << "\t" << idm32sq << "\t" << this_chisq << endl;
+      //cout << iexp << "\t" << imix23 << "\t" << idm32sq << "\t" << this_chisq << endl;
     hchisqn[iexp]->SetBinContent(ix,iy, this_chisq);
   }//iev
 
@@ -121,7 +125,12 @@ void combine_chisq_surface_files(
   }
 
   TCanvas * c = new TCanvas();
+  c->SetRightMargin(0.2);
   hchisqn[10]->Draw("colz");
+  hchisq->Draw("colzcont3");
+  hchisq->GetZaxis()->SetRangeUser(hchisq->GetMinimum(),hchisq->GetMinimum()*1.2);
+  hchisq->Draw("colz");
+  //nevents->Draw("colz");
   c->SaveAs("test.pdf");
 }
 
@@ -130,6 +139,6 @@ void min_bin(TH2D * h) {
   int minbin = h->GetMinimumBin();
   int minx, miny, minz;
   h->GetBinXYZ(minbin, minx, miny, minz);
-  cout << "average chisq " << chisq_min << " at " << h->GetXaxis()->GetBinCenter(minx) << " " << h->GetYaxis()->GetBinCenter(miny) << endl;
+  //cout << "average chisq " << chisq_min << " at " << h->GetXaxis()->GetBinCenter(minx) << " " << h->GetYaxis()->GetBinCenter(miny) << endl;
 
 }

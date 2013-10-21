@@ -62,6 +62,7 @@ foreach (@ARGV) {
   if($_ eq '--mix-param-octant'      ) { $mixparamoctant        = $ARGV[$iarg+1]; }
   if($_ eq '--allow-2nu-unphysical'  ) { $apply_2nu_boundary    = 0;              }
   if($_ eq '--obs-in-root-format'    ) { $using_xml_file        = 0;              }
+  if($_ eq '--dcp-value'             ) { $dcp_value             = $ARGV[$iarg+1]; }
   $iarg++;
 }
 $nexpts                 = 1                                      unless defined $nexpts;
@@ -85,6 +86,7 @@ $mixparamchoice         = "sinsq2theta"                          unless defined 
 $mixparamoctant         = "one"                                  unless defined $mixparamoctant;
 $apply_2nu_boundary     = 1                                      unless defined $apply_2nu_boundary;
 $using_xml_file         = 1                                      unless defined $using_xml_file;
+$dcp_value              = 0                                      unless defined $dcp_value;
 
 die unless defined $exptfile;
 
@@ -118,7 +120,7 @@ for ($mix23_bin = 1; $mix23_bin <= $mix23_nbins; $mix23_bin++) {
 
   print "Submitting $tag job for mix23 bin: $mix23_bin and dm32sq bin: $dm32sq_bin \n";
 
-  $command  = "root2k -l -b -q \'$macro_dir/macros/chisq/build_chisq_surface_disapp_parallelized.C(\"$tag\",\"$exptfile\",$first,$last,\"$config_file\",\"$fitparamlist\",\"$fitoption\",$mix23_min,$mix23_max,$mix23_step,$dm32sq_min,$dm32sq_max,$dm32sq_step,$mix23_bin,$dm32sq_bin,\"$dmsqscheme\",\"$masshierarchy\",\"$mixparamchoice\",\"$mixparamoctant\",$apply_2nu_boundary,$using_xml_file)\'";
+  $command  = "root2k -l -b -q \'$macro_dir/macros/chisq/build_chisq_surface_disapp_parallelized.C(\"$tag\",\"$exptfile\",$first,$last,\"$config_file\",\"$fitparamlist\",\"$fitoption\",$mix23_min,$mix23_max,$mix23_step,$dm32sq_min,$dm32sq_max,$dm32sq_step,$mix23_bin,$dm32sq_bin,\"$dmsqscheme\",\"$masshierarchy\",\"$mixparamchoice\",\"$mixparamoctant\",$apply_2nu_boundary,$using_xml_file,$dcp_value)\'";
   print "$command \n";
 
   #

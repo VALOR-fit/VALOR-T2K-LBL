@@ -30,10 +30,11 @@ void build_chisq_surface_disapp_parallelized
   int          input_dm32sq_bin    = -1,                                    /* if !=-1, will run only for the specified bin */
   const char * dmsqscheme          = "abs23",                               /* abs23==kNuDmsq12andAbs23 abs31==kNuDmsq12andAbs31 fogli==kNuDmsqFogliLisi */
   const char * hierarchy           = "normal",                              /* normal or inverted */
-  const char * mixparamchoice      = "sinsqtheta",                         /* sinsq2theta or sinsqtheta */
+  const char * mixparamchoice      = "sinsqtheta",                          /* sinsq2theta or sinsqtheta */
   const char * mixparamoctant      = "one",                                 /* one==kNuOctantOne two==kNuOctantTwo */
   bool         apply_2nu_boundary  = true,                                  /* if using the 2nu flavour osc prob, apply the physical boundary? */
-  bool         using_xml_file      = true                                   /* if false, skobs reads xmlfile as a root file */
+  bool         using_xml_file      = true,                                  /* if false, skobs reads xmlfile as a root file */
+  double       dcp_value           = 0                                      /* value of deltacp (in units of PI) to assume (when deltacp is not a free parameter) */
 )
 {
   using namespace std;
@@ -90,6 +91,10 @@ void build_chisq_surface_disapp_parallelized
 
   conv::PhysHypothesis_t hyp = fparm->PhysicsHypothesis();
   cout << "- The following physics hypothesis is used in the fit: " << util::AsString(hyp) << endl;
+
+  //make an assumption for deltacp
+  if(fparm->IsFixed(conv::kPhypDeltaCP))
+    fparm->SetInitValue(conv::kPhypDeltaCP, dcp_value * conv::kpi);
 
   // Get superk spectrum predictor & configure
   SuperkExpectation * skexp = new SuperkExpectation;
@@ -190,6 +195,9 @@ void build_chisq_surface_disapp_parallelized
 	   if(!using_xml_file) {
 	     //cout << *iparm << endl;
 	     fparm->FromPhysParamList(*iparm, "initial", true);
+	     //make an assumption for deltacp
+	     if(fparm->IsFixed(conv::kPhypDeltaCP))
+	       fparm->SetInitValue(conv::kPhypDeltaCP, dcp_value * conv::kpi);
 	   }
            cout << *fparm;
            // do the fit

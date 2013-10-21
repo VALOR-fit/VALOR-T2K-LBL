@@ -12,8 +12,8 @@ void run_fit
   const char * tag                     = "toyexptfits",                       /* tag for output file */
   int          run                     = 0,                                   /* run number */
   int          nexperiments            = 1,                                   /* number of toy MC experiment fits */
-  double       input_mixing12          = 0.86,                                /* 12-mixing, sinq2theta or sinsqtheta depending on user choice, if -999 then randomize */
-  double       input_mixing13          = 0.10,                                /* 13-mixing, sinq2theta or sinsqtheta depending on user choice, if -999 then randomize */
+  double       input_mixing12          = 0.306,                                /* 12-mixing, sinq2theta or sinsqtheta depending on user choice, if -999 then randomize */
+  double       input_mixing13          = 0.0251,                                /* 13-mixing, sinq2theta or sinsqtheta depending on user choice, if -999 then randomize */
   double       input_mixing23          = 0.50,                                /* 23-mixing, sinq2theta or sinsqtheta depending on user choice */
   double       input_deltacp           = 0.00,                                /* deltacp, if -999 then randomize */
   double       input_dm12sq            = 7.58E-5,                             /* Dm^2_{12}, if -999 then randomize */
