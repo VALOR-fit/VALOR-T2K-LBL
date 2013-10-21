@@ -14,10 +14,15 @@
 void min_bin(TH2D * h);
 
 void dcp_fit_correlation_draw_scans(
-			 const char * filename_tree = "run1-4_nuis4_sintheta_normal_ox/combination/final.root",
-			 const char * filename_hist = "data_dcp_scan_normal_hierarchy.root",
-			 const char * filename_out  = "test2.root",
-			 int verbose                = 0
+				    //const char * filename_tree = "run1-4_nuis4_sintheta_normal_ox/combination/final.root",
+				    //const char * filename_tree = "run1-4_nuis4_sintheta_normal_ox_doubledcprange/combination/final.root",
+				    const char * filename_tree = "run1-4_nuis4_sintheta_normal_ox_again/combination/final.root",
+				    //const char * filename_hist = "data_dcp_scan_normal_hierarchy.root",
+				    const char * filename_hist = "test.root",
+				    const char * filename_out  = "test2.root",
+				    int verbose                = 0,
+				    bool scan_dcp = false,
+				    bool scan_energies = true
 )
 {
   using namespace t2kana;
@@ -33,6 +38,20 @@ void dcp_fit_correlation_draw_scans(
   fitnt->SetBranchAddress("idm32sq", &idm32sq);
   fitnt->SetBranchAddress("imix23",  &imix23);
   fitnt->SetBranchAddress("iexpt",   &iexp);
+
+  const char * config_file             = "analysis_configuration.xml";
+  TString config = Form("%s/config/%s", gSystem->Getenv("T2KOSCANA"), config_file);
+  SuperkExpectation * skexp = new SuperkExpectation;
+  if(scan_dcp)
+    skexp->Read(config.Data());
+
+  const char * xmlfile = "data.xml";
+  const int iexperiment = 8;
+  bool using_xml_file = true;
+  TString xmlfile2 = Form("%s/inputs/%s", gSystem->Getenv("T2KOSCANA"), xmlfile);
+  SuperkObservation * skobs = new SuperkObservation;
+  if(scan_dcp)
+    skobs->Read(xmlfile2.Data(),iexperiment,using_xml_file);
 
   TFile f(filename_hist,"READ");
 
@@ -51,10 +70,15 @@ void dcp_fit_correlation_draw_scans(
   const int nbins2 = nbinsmix + 1;
   TH1D * hdcp[nbins1][nbins2] = {0};
   TCanvas * c[nbins1][nbins2] = {0};
+  const int nmodes = 6; //numu->numu etc
+  const int nenergies = conv::kNErecoBins1Rmu;
   TCanvas * ctemp = new TCanvas();
   ctemp->SaveAs("dcp_profiles_draw.pdf[");
  
+  NuOsc3Flavour  fNuOsc3Flavour;
+
   cout << "Starting loop over " << fitnt->GetEntries() << " entries" << endl;
+  int i_energy_scans = 0;
   for(int iev=0; iev<fitnt->GetEntries(); iev++) {
     fitnt->GetEntry(iev);
     hdcp[idm32sq][imix23] = 0;
@@ -62,17 +86,95 @@ void dcp_fit_correlation_draw_scans(
     if(!hdcp[idm32sq][imix23])
       continue;
 
-    //if(TMath::Abs(hdcp[idm32sq][imix23]->GetMinimum() - fparm->GetBestFitChisq()) < 1E-3) continue;
+    if(TMath::Abs(hdcp[idm32sq][imix23]->GetMinimum() - fparm->GetBestFitChisq()) < 1E-3) continue;
 
     //if(fparm->GetFitTries() != 99) continue;
+
+    cout << endl << endl << endl << *fparm << endl;
+
+
+    double chisq = 0;
+    if(scan_dcp) {
+      if(TMath::Abs(fparm->BestFitValue(conv::kPhypDm23sq) - 2.6E-3) > 1E-6) continue;
+      fparm->CopyBestFitToCurrValues();
+      FitInputs * fit_inputs = new FitInputs(skobs,skexp,fparm);
+      chisq = fit_inputs->Chisquare();//("poisson",conv::kSKsFCFV1RingMuLike);
+    }//scan_dcp
+
+    if(scan_energies) {
+      double mixing12 = fparm->BestFitValue(conv::kPhypMixing12);
+      double mixing13 = fparm->BestFitValue(conv::kPhypMixing13);
+      double mixing23 = fparm->BestFitValue(conv::kPhypMixing23);
+      double dmsq     = fparm->BestFitValue(conv::kPhypDm12sq);
+      double Dmsq     = fparm->BestFitValue(conv::kPhypDm23sq);
+
+      TCanvas * cprob[nmodes][nenergies] = {0};
+      TH1D * hprob[nmodes][nenergies];
+      for(int im = 0; im < nmodes; im++) {
+	string modename;
+	switch(im) {
+	case 0: modename = "numu_to_numu"; break;
+	case 1: modename = "numubar_to_numubar"; break;
+	case 2: modename = "nue_to_nue"; break;
+	case 3: modename = "nuebar_to_nuebar"; break;
+	case 4: modename = "numu_to_nue"; break;
+	case 5: modename = "nue_to_numu"; break;
+	default: modename = ""; break;
+	}//switch im
+	ctemp->SaveAs(Form("dcp_profiles_probabilities_%s_%d.pdf[",modename.c_str(),i_energy_scans));
+	for(int ie = 0; ie < nenergies; ie++) {
+	  hprob[im][ie] = new TH1D("","",100,fparm->BestFitValue(conv::kPhypDeltaCP),fparm->BestFitValue(conv::kPhypDeltaCP)+conv::kpi);
+	  double Etrue = (util::EtrueBinEdges(conv::kSKsFCFV1RingMuLike,ie-1) + util::EtrueBinEdges(conv::kSKsFCFV1RingMuLike,ie) ) / 2;
+	  for(int ip = 1; ip <= hprob[im][ie]->GetNbinsX(); ip++) {
+	    double delta_cp = hprob[im][ie]->GetBinLowEdge(ip);      
+	    fNuOsc3Flavour.SetOscParametersSinSqTAll(mixing12,mixing13,mixing23,dmsq,Dmsq,delta_cp);
+	    double prob = -1;
+	    switch(im) {
+	    case 0:
+	      prob = fNuOsc3Flavour.CalcMatterOscProb(conv::kPdgNuMu,    conv::kPdgNuMu,    Etrue);
+	      break;
+	    case 1:
+	      prob = fNuOsc3Flavour.CalcMatterOscProb(conv::kPdgNuMuBar, conv::kPdgNuMuBar, Etrue);
+	      break;
+	    case 2:
+	      prob = fNuOsc3Flavour.CalcMatterOscProb(conv::kPdgNuE,     conv::kPdgNuE,     Etrue);
+	      break;
+	    case 3:
+	      prob = fNuOsc3Flavour.CalcMatterOscProb(conv::kPdgNuEBar,  conv::kPdgNuEBar,  Etrue);
+	      break;
+	    case 4:
+	      prob = fNuOsc3Flavour.CalcMatterOscProb(conv::kPdgNuMu,    conv::kPdgNuE,     Etrue);
+	      break;
+	    case 5:
+	      prob = fNuOsc3Flavour.CalcMatterOscProb(conv::kPdgNuE,     conv::kPdgNuMu,    Etrue);
+	      break;
+	    default:
+	      prob = -1;
+	      break;
+	    }
+	    hprob[im][ie]->SetBinContent(ip,prob);
+	  }//ip
+	  cprob[im][ie] = new TCanvas();
+	  hprob[im][ie]->Draw();
+	  TLegend * legg = new TLegend(0,0,0.3,0.1);
+	  legg->SetTextSize(0.03);
+	  legg->AddEntry(hprob[im][ie],Form("%f",Etrue),"l");
+	  legg->Draw();
+	  cprob[im][ie]->SaveAs(Form("dcp_profiles_probabilities_%s_%d.pdf",modename.c_str(),i_energy_scans));
+	}//ie
+	ctemp->SaveAs(Form("dcp_profiles_probabilities_%s_%d.pdf]",modename.c_str(),i_energy_scans));
+      }//im
+      i_energy_scans++;
+    }//scan energies?
+
 
     c[idm32sq][imix23] = new TCanvas();
     hdcp[idm32sq][imix23]->Draw();
     TLegend * l = new TLegend(0,0,0.3,0.1);
     l->AddEntry(hdcp[idm32sq][imix23], hdcp[idm32sq][imix23]->GetTitle(), "l");
     l->Draw();
-    TLegend * leg = new TLegend(0.3,0,0.8,0.1);
-    leg->AddEntry(hdcp[idm32sq][imix23], Form("#chi^{2}_{bf}=%f, tries=%d, #delta_{CP}=%f",fparm->GetBestFitChisq(),fparm->GetFitTries(),fparm->BestFitValue(conv::kPhypDeltaCP)), "l");
+    TLegend * leg = new TLegend(0.3,0,0.9,0.1);
+    leg->AddEntry(hdcp[idm32sq][imix23], Form("#chi^{2}_{bf}=%f, tries=%d, #delta_{CP}=%f [%d,%d], #chi^{2}=%f", fparm->GetBestFitChisq(), fparm->GetFitTries(), fparm->BestFitValue(conv::kPhypDeltaCP), imix23, idm32sq, chisq), "l");
     leg->SetTextSize(0.03);
     leg->Draw();
     TLine *l1 = new TLine(-conv::kpi,fparm->GetBestFitChisq(),+conv::kpi,fparm->GetBestFitChisq());
@@ -81,10 +183,11 @@ void dcp_fit_correlation_draw_scans(
     TLine *l2 = new TLine(fparm->BestFitValue(conv::kPhypDeltaCP),0,fparm->BestFitValue(conv::kPhypDeltaCP),100);
     l2->SetLineColor(kRed);
     l2->Draw();
+
   }//iev
 
-  //for(int idm32sq = 0; idm32sq < nbinsdm; idm32sq++)
-    idm32sq = 9;//this is the transition bin 2.5E-3 in the chisq surface i was studying
+  for(int idm32sq = 0; idm32sq < nbinsdm; idm32sq++)
+  //idm32sq = 9;//this is the transition bin 2.5E-3 in the chisq surface i was studying
     for(int imix23 = 0; imix23 < nbinsmix; imix23++)
       if(c[idm32sq][imix23])
 	c[idm32sq][imix23]->SaveAs("dcp_profiles_draw.pdf");
