@@ -79,252 +79,252 @@ void plot_osc_prob_deltacp(
 
  
   TH1D * numu_numu_prob1           = new TH1D("numu_numu_prob1", " P_{#nu_{#mu}->#nu_{#mu}} ",
-					      util::NumEtrueBins (conv::kSKsFCFV1RingMuLike), util::EtrueBinEdges(conv::kSKsFCFV1RingMuLike));
+					      util::NumErecoBins (conv::kSKsFCFV1RingMuLike), util::ErecoBinEdges(conv::kSKsFCFV1RingMuLike));
 
   TH1D * numu_numu_prob2           = new TH1D("numu_numu_prob2", " P_{#nu_{#mu}->#nu_{#mu}} ",
-					     util::NumEtrueBins (conv::kSKsFCFV1RingMuLike), util::EtrueBinEdges(conv::kSKsFCFV1RingMuLike));
+					     util::NumErecoBins (conv::kSKsFCFV1RingMuLike), util::ErecoBinEdges(conv::kSKsFCFV1RingMuLike));
 
   TH1D * numu_numu_prob3           = new TH1D("numu_numu_prob3", " P_{#nu_{#mu}->#nu_{#mu}} ",
-					      util::NumEtrueBins (conv::kSKsFCFV1RingMuLike), util::EtrueBinEdges(conv::kSKsFCFV1RingMuLike));
+					      util::NumErecoBins (conv::kSKsFCFV1RingMuLike), util::ErecoBinEdges(conv::kSKsFCFV1RingMuLike));
 
   TH1D * numu_numu_prob4           = new TH1D("numu_numu_prob4", " P_{#nu_{#mu}->#nu_{#mu}} ",
-					      util::NumEtrueBins (conv::kSKsFCFV1RingMuLike), util::EtrueBinEdges(conv::kSKsFCFV1RingMuLike));
+					      util::NumErecoBins (conv::kSKsFCFV1RingMuLike), util::ErecoBinEdges(conv::kSKsFCFV1RingMuLike));
 
   TH1D * numu_numu_prob5           = new TH1D("numu_numu_prob5", " P_{#nu_{#mu}->#nu_{#mu}} ",
-					      util::NumEtrueBins (conv::kSKsFCFV1RingMuLike), util::EtrueBinEdges(conv::kSKsFCFV1RingMuLike));
+					      util::NumErecoBins (conv::kSKsFCFV1RingMuLike), util::ErecoBinEdges(conv::kSKsFCFV1RingMuLike));
 
   TH1D * numu_numu_prob_vac1       = new TH1D("numu_numu_prob_vac1", " P_{#nu_{#mu}->#nu_{#mu}} ",
-					      util::NumEtrueBins (conv::kSKsFCFV1RingMuLike), util::EtrueBinEdges(conv::kSKsFCFV1RingMuLike));
+					      util::NumErecoBins (conv::kSKsFCFV1RingMuLike), util::ErecoBinEdges(conv::kSKsFCFV1RingMuLike));
 
   TH1D * numu_numu_prob_vac2       = new TH1D("numu_numu_prob_vac2", " P_{#nu_{#mu}->#nu_{#mu}} ",
-					      util::NumEtrueBins (conv::kSKsFCFV1RingMuLike), util::EtrueBinEdges(conv::kSKsFCFV1RingMuLike));
+					      util::NumErecoBins (conv::kSKsFCFV1RingMuLike), util::ErecoBinEdges(conv::kSKsFCFV1RingMuLike));
 
   TH1D * numu_numu_prob_vac3       = new TH1D("numu_numu_prob_vac3", " P_{#nu_{#mu}->#nu_{#mu}} ",
-					      util::NumEtrueBins (conv::kSKsFCFV1RingMuLike), util::EtrueBinEdges(conv::kSKsFCFV1RingMuLike));
+					      util::NumErecoBins (conv::kSKsFCFV1RingMuLike), util::ErecoBinEdges(conv::kSKsFCFV1RingMuLike));
 
   TH1D * numu_numu_prob_vac4       = new TH1D("numu_numu_prob_vac4", " P_{#nu_{#mu}->#nu_{#mu}} ",
-					      util::NumEtrueBins (conv::kSKsFCFV1RingMuLike), util::EtrueBinEdges(conv::kSKsFCFV1RingMuLike));
+					      util::NumErecoBins (conv::kSKsFCFV1RingMuLike), util::ErecoBinEdges(conv::kSKsFCFV1RingMuLike));
 
   TH1D * numu_numu_prob_vac5       = new TH1D("numu_numu_prob_vac5", " P_{#nu_{#mu}->#nu_{#mu}} ",
-					      util::NumEtrueBins (conv::kSKsFCFV1RingMuLike), util::EtrueBinEdges(conv::kSKsFCFV1RingMuLike));
+					      util::NumErecoBins (conv::kSKsFCFV1RingMuLike), util::ErecoBinEdges(conv::kSKsFCFV1RingMuLike));
 
 
   TH1D * numubar_numubar_prob1           = new TH1D("numubar_numubar_prob1", " P_{#bar{#nu_{#mu}}->#bar{#nu_{#mu}}} ",
-						    util::NumEtrueBins (conv::kSKsFCFV1RingMuLike), util::EtrueBinEdges(conv::kSKsFCFV1RingMuLike));
+						    util::NumErecoBins (conv::kSKsFCFV1RingMuLike), util::ErecoBinEdges(conv::kSKsFCFV1RingMuLike));
 
   TH1D * numubar_numubar_prob2           = new TH1D("numubar_numubar_prob2", " P_{#bar{#nu_{#mu}}->#bar{#nu_{#mu}}} ",
-						    util::NumEtrueBins (conv::kSKsFCFV1RingMuLike), util::EtrueBinEdges(conv::kSKsFCFV1RingMuLike));
+						    util::NumErecoBins (conv::kSKsFCFV1RingMuLike), util::ErecoBinEdges(conv::kSKsFCFV1RingMuLike));
 
   TH1D * numubar_numubar_prob3           = new TH1D("numubar_numubar_prob3", " P_{#bar{#nu_{#mu}}->#bar{#nu_{#mu}}} ",
-						    util::NumEtrueBins (conv::kSKsFCFV1RingMuLike), util::EtrueBinEdges(conv::kSKsFCFV1RingMuLike));
+						    util::NumErecoBins (conv::kSKsFCFV1RingMuLike), util::ErecoBinEdges(conv::kSKsFCFV1RingMuLike));
 
   TH1D * numubar_numubar_prob4           = new TH1D("numubar_numubar_prob4", " P_{#bar{#nu_{#mu}}->#bar{#nu_{#mu}}} ",
-						    util::NumEtrueBins (conv::kSKsFCFV1RingMuLike), util::EtrueBinEdges(conv::kSKsFCFV1RingMuLike));
+						    util::NumErecoBins (conv::kSKsFCFV1RingMuLike), util::ErecoBinEdges(conv::kSKsFCFV1RingMuLike));
 
   TH1D * numubar_numubar_prob5           = new TH1D("numubar_numubar_prob5", " P_{#bar{#nu_{#mu}}->#bar{#nu_{#mu}}} ",
-						    util::NumEtrueBins (conv::kSKsFCFV1RingMuLike), util::EtrueBinEdges(conv::kSKsFCFV1RingMuLike));
+						    util::NumErecoBins (conv::kSKsFCFV1RingMuLike), util::ErecoBinEdges(conv::kSKsFCFV1RingMuLike));
 
   TH1D * numubar_numubar_prob_vac1       = new TH1D("numubar_numubar_prob_vac1", " P_{#bar{#nu_{#mu}}->#bar{#nu_{#mu}}} ",
-						    util::NumEtrueBins (conv::kSKsFCFV1RingMuLike), util::EtrueBinEdges(conv::kSKsFCFV1RingMuLike));
+						    util::NumErecoBins (conv::kSKsFCFV1RingMuLike), util::ErecoBinEdges(conv::kSKsFCFV1RingMuLike));
 
   TH1D * numubar_numubar_prob_vac2       = new TH1D("numubar_numubar_prob_vac2", " P_{#bar{#nu_{#mu}}->#bar{#nu_{#mu}}} ",
-						    util::NumEtrueBins (conv::kSKsFCFV1RingMuLike), util::EtrueBinEdges(conv::kSKsFCFV1RingMuLike));
+						    util::NumErecoBins (conv::kSKsFCFV1RingMuLike), util::ErecoBinEdges(conv::kSKsFCFV1RingMuLike));
 
   TH1D * numubar_numubar_prob_vac3       = new TH1D("numubar_numubar_prob_vac3", " P_{#bar{#nu_{#mu}}->#bar{#nu_{#mu}}} ",
-						    util::NumEtrueBins (conv::kSKsFCFV1RingMuLike), util::EtrueBinEdges(conv::kSKsFCFV1RingMuLike));
+						    util::NumErecoBins (conv::kSKsFCFV1RingMuLike), util::ErecoBinEdges(conv::kSKsFCFV1RingMuLike));
 
   TH1D * numubar_numubar_prob_vac4       = new TH1D("numubar_numubar_prob_vac4", " P_{#bar{#nu_{#mu}}->#bar{#nu_{#mu}}} ",
-						    util::NumEtrueBins (conv::kSKsFCFV1RingMuLike), util::EtrueBinEdges(conv::kSKsFCFV1RingMuLike));
+						    util::NumErecoBins (conv::kSKsFCFV1RingMuLike), util::ErecoBinEdges(conv::kSKsFCFV1RingMuLike));
 
   TH1D * numubar_numubar_prob_vac5       = new TH1D("numubar_numubar_prob_vac5", " P_{#bar{#nu_{#mu}}->#bar{#nu_{#mu}}} ",
-						    util::NumEtrueBins (conv::kSKsFCFV1RingMuLike), util::EtrueBinEdges(conv::kSKsFCFV1RingMuLike));
+						    util::NumErecoBins (conv::kSKsFCFV1RingMuLike), util::ErecoBinEdges(conv::kSKsFCFV1RingMuLike));
 
 
   TH1D * nue_nue_prob1           = new TH1D("nue_nue_prob1", " P_{#nu_{e}->#nu_{e}} ",
-					      util::NumEtrueBins (conv::kSKsFCFV1RingMuLike), util::EtrueBinEdges(conv::kSKsFCFV1RingMuLike));
+					      util::NumErecoBins (conv::kSKsFCFV1RingMuLike), util::ErecoBinEdges(conv::kSKsFCFV1RingMuLike));
 
   TH1D * nue_nue_prob2           = new TH1D("nue_nue_prob2", " P_{#nu_{e}->#nu_{e}} ",
-					     util::NumEtrueBins (conv::kSKsFCFV1RingMuLike), util::EtrueBinEdges(conv::kSKsFCFV1RingMuLike));
+					     util::NumErecoBins (conv::kSKsFCFV1RingMuLike), util::ErecoBinEdges(conv::kSKsFCFV1RingMuLike));
 
   TH1D * nue_nue_prob3           = new TH1D("nue_nue_prob3", " P_{#nu_{e}->#nu_{e}} ",
-					      util::NumEtrueBins (conv::kSKsFCFV1RingMuLike), util::EtrueBinEdges(conv::kSKsFCFV1RingMuLike));
+					      util::NumErecoBins (conv::kSKsFCFV1RingMuLike), util::ErecoBinEdges(conv::kSKsFCFV1RingMuLike));
 
   TH1D * nue_nue_prob4           = new TH1D("nue_nue_prob4", " P_{#nu_{e}->#nu_{e}} ",
-					      util::NumEtrueBins (conv::kSKsFCFV1RingMuLike), util::EtrueBinEdges(conv::kSKsFCFV1RingMuLike));
+					      util::NumErecoBins (conv::kSKsFCFV1RingMuLike), util::ErecoBinEdges(conv::kSKsFCFV1RingMuLike));
 
   TH1D * nue_nue_prob5           = new TH1D("nue_nue_prob5", " P_{#nu_{e}->#nu_{e}} ",
-					      util::NumEtrueBins (conv::kSKsFCFV1RingMuLike), util::EtrueBinEdges(conv::kSKsFCFV1RingMuLike));
+					      util::NumErecoBins (conv::kSKsFCFV1RingMuLike), util::ErecoBinEdges(conv::kSKsFCFV1RingMuLike));
 
   TH1D * nue_nue_prob_vac1       = new TH1D("nue_nue_prob_vac1", " P_{#nu_{e}->#nu_{e}} ",
-					      util::NumEtrueBins (conv::kSKsFCFV1RingMuLike), util::EtrueBinEdges(conv::kSKsFCFV1RingMuLike));
+					      util::NumErecoBins (conv::kSKsFCFV1RingMuLike), util::ErecoBinEdges(conv::kSKsFCFV1RingMuLike));
 
   TH1D * nue_nue_prob_vac2       = new TH1D("nue_nue_prob_vac2", " P_{#nu_{e}->#nu_{e}} ",
-					      util::NumEtrueBins (conv::kSKsFCFV1RingMuLike), util::EtrueBinEdges(conv::kSKsFCFV1RingMuLike));
+					      util::NumErecoBins (conv::kSKsFCFV1RingMuLike), util::ErecoBinEdges(conv::kSKsFCFV1RingMuLike));
 
   TH1D * nue_nue_prob_vac3       = new TH1D("nue_nue_prob_vac3", " P_{#nu_{e}->#nu_{e}} ",
-					      util::NumEtrueBins (conv::kSKsFCFV1RingMuLike), util::EtrueBinEdges(conv::kSKsFCFV1RingMuLike));
+					      util::NumErecoBins (conv::kSKsFCFV1RingMuLike), util::ErecoBinEdges(conv::kSKsFCFV1RingMuLike));
 
   TH1D * nue_nue_prob_vac4       = new TH1D("nue_nue_prob_vac4", " P_{#nu_{e}->#nu_{e}} ",
-					      util::NumEtrueBins (conv::kSKsFCFV1RingMuLike), util::EtrueBinEdges(conv::kSKsFCFV1RingMuLike));
+					      util::NumErecoBins (conv::kSKsFCFV1RingMuLike), util::ErecoBinEdges(conv::kSKsFCFV1RingMuLike));
 
   TH1D * nue_nue_prob_vac5       = new TH1D("nue_nue_prob_vac5", " P_{#nu_{e}->#nu_{e}} ",
-					      util::NumEtrueBins (conv::kSKsFCFV1RingMuLike), util::EtrueBinEdges(conv::kSKsFCFV1RingMuLike));
+					      util::NumErecoBins (conv::kSKsFCFV1RingMuLike), util::ErecoBinEdges(conv::kSKsFCFV1RingMuLike));
 
 
   TH1D * nuebar_nuebar_prob1           = new TH1D("nuebar_nuebar_prob1", " P_{#bar{#nu_{e}}->#bar{#nu_{e}}} ",
-						    util::NumEtrueBins (conv::kSKsFCFV1RingMuLike), util::EtrueBinEdges(conv::kSKsFCFV1RingMuLike));
+						    util::NumErecoBins (conv::kSKsFCFV1RingMuLike), util::ErecoBinEdges(conv::kSKsFCFV1RingMuLike));
 
   TH1D * nuebar_nuebar_prob2           = new TH1D("nuebar_nuebar_prob2", " P_{#bar{#nu_{e}}->#bar{#nu_{e}}} ",
-						    util::NumEtrueBins (conv::kSKsFCFV1RingMuLike), util::EtrueBinEdges(conv::kSKsFCFV1RingMuLike));
+						    util::NumErecoBins (conv::kSKsFCFV1RingMuLike), util::ErecoBinEdges(conv::kSKsFCFV1RingMuLike));
 
   TH1D * nuebar_nuebar_prob3           = new TH1D("nuebar_nuebar_prob3", " P_{#bar{#nu_{e}}->#bar{#nu_{e}}} ",
-						    util::NumEtrueBins (conv::kSKsFCFV1RingMuLike), util::EtrueBinEdges(conv::kSKsFCFV1RingMuLike));
+						    util::NumErecoBins (conv::kSKsFCFV1RingMuLike), util::ErecoBinEdges(conv::kSKsFCFV1RingMuLike));
 
   TH1D * nuebar_nuebar_prob4           = new TH1D("nuebar_nuebar_prob4", " P_{#bar{#nu_{e}}->#bar{#nu_{e}}} ",
-						    util::NumEtrueBins (conv::kSKsFCFV1RingMuLike), util::EtrueBinEdges(conv::kSKsFCFV1RingMuLike));
+						    util::NumErecoBins (conv::kSKsFCFV1RingMuLike), util::ErecoBinEdges(conv::kSKsFCFV1RingMuLike));
 
   TH1D * nuebar_nuebar_prob5           = new TH1D("nuebar_nuebar_prob5", " P_{#bar{#nu_{e}}->#bar{#nu_{e}}} ",
-						    util::NumEtrueBins (conv::kSKsFCFV1RingMuLike), util::EtrueBinEdges(conv::kSKsFCFV1RingMuLike));
+						    util::NumErecoBins (conv::kSKsFCFV1RingMuLike), util::ErecoBinEdges(conv::kSKsFCFV1RingMuLike));
 
   TH1D * nuebar_nuebar_prob_vac1       = new TH1D("nuebar_nuebar_prob_vac1", " P_{#bar{#nu_{e}}->#bar{#nu_{e}}} ",
-						    util::NumEtrueBins (conv::kSKsFCFV1RingMuLike), util::EtrueBinEdges(conv::kSKsFCFV1RingMuLike));
+						    util::NumErecoBins (conv::kSKsFCFV1RingMuLike), util::ErecoBinEdges(conv::kSKsFCFV1RingMuLike));
 
   TH1D * nuebar_nuebar_prob_vac2       = new TH1D("nuebar_nuebar_prob_vac2", " P_{#bar{#nu_{e}}->#bar{#nu_{e}}} ",
-						    util::NumEtrueBins (conv::kSKsFCFV1RingMuLike), util::EtrueBinEdges(conv::kSKsFCFV1RingMuLike));
+						    util::NumErecoBins (conv::kSKsFCFV1RingMuLike), util::ErecoBinEdges(conv::kSKsFCFV1RingMuLike));
 
   TH1D * nuebar_nuebar_prob_vac3       = new TH1D("nuebar_nuebar_prob_vac3", " P_{#bar{#nu_{e}}->#bar{#nu_{e}}} ",
-						    util::NumEtrueBins (conv::kSKsFCFV1RingMuLike), util::EtrueBinEdges(conv::kSKsFCFV1RingMuLike));
+						    util::NumErecoBins (conv::kSKsFCFV1RingMuLike), util::ErecoBinEdges(conv::kSKsFCFV1RingMuLike));
 
   TH1D * nuebar_nuebar_prob_vac4       = new TH1D("nuebar_nuebar_prob_vac4", " P_{#bar{#nu_{e}}->#bar{#nu_{e}}} ",
-						    util::NumEtrueBins (conv::kSKsFCFV1RingMuLike), util::EtrueBinEdges(conv::kSKsFCFV1RingMuLike));
+						    util::NumErecoBins (conv::kSKsFCFV1RingMuLike), util::ErecoBinEdges(conv::kSKsFCFV1RingMuLike));
 
   TH1D * nuebar_nuebar_prob_vac5       = new TH1D("nuebar_nuebar_prob_vac5", " P_{#bar{#nu_{e}}->#bar{#nu_{e}}} ",
-						    util::NumEtrueBins (conv::kSKsFCFV1RingMuLike), util::EtrueBinEdges(conv::kSKsFCFV1RingMuLike));
+						    util::NumErecoBins (conv::kSKsFCFV1RingMuLike), util::ErecoBinEdges(conv::kSKsFCFV1RingMuLike));
 
 
 
   TH1D * numu_nue_prob1           = new TH1D("numu_nue_prob1", " P_{#nu_{#mu}->#nu_{e}} ",
-					      util::NumEtrueBins (conv::kSKsFCFV1RingMuLike), util::EtrueBinEdges(conv::kSKsFCFV1RingMuLike));
+					      util::NumErecoBins (conv::kSKsFCFV1RingMuLike), util::ErecoBinEdges(conv::kSKsFCFV1RingMuLike));
 
   TH1D * numu_nue_prob2           = new TH1D("numu_nue_prob2", " P_{#nu_{#mu}->#nu_{e}} ",
-					     util::NumEtrueBins (conv::kSKsFCFV1RingMuLike), util::EtrueBinEdges(conv::kSKsFCFV1RingMuLike));
+					     util::NumErecoBins (conv::kSKsFCFV1RingMuLike), util::ErecoBinEdges(conv::kSKsFCFV1RingMuLike));
 
   TH1D * numu_nue_prob3           = new TH1D("numu_nue_prob3", " P_{#nu_{#mu}->#nu_{e}} ",
-					      util::NumEtrueBins (conv::kSKsFCFV1RingMuLike), util::EtrueBinEdges(conv::kSKsFCFV1RingMuLike));
+					      util::NumErecoBins (conv::kSKsFCFV1RingMuLike), util::ErecoBinEdges(conv::kSKsFCFV1RingMuLike));
 
   TH1D * numu_nue_prob4           = new TH1D("numu_nue_prob4", " P_{#nu_{#mu}->#nu_{e}} ",
-					      util::NumEtrueBins (conv::kSKsFCFV1RingMuLike), util::EtrueBinEdges(conv::kSKsFCFV1RingMuLike));
+					      util::NumErecoBins (conv::kSKsFCFV1RingMuLike), util::ErecoBinEdges(conv::kSKsFCFV1RingMuLike));
 
   TH1D * numu_nue_prob5           = new TH1D("numu_nue_prob5", " P_{#nu_{#mu}->#nu_{e}} ",
-					      util::NumEtrueBins (conv::kSKsFCFV1RingMuLike), util::EtrueBinEdges(conv::kSKsFCFV1RingMuLike));
+					      util::NumErecoBins (conv::kSKsFCFV1RingMuLike), util::ErecoBinEdges(conv::kSKsFCFV1RingMuLike));
 
   TH1D * numu_nue_prob_vac1       = new TH1D("numu_nue_prob_vac1", " P_{#nu_{#mu}->#nu_{e}} ",
-					      util::NumEtrueBins (conv::kSKsFCFV1RingMuLike), util::EtrueBinEdges(conv::kSKsFCFV1RingMuLike));
+					      util::NumErecoBins (conv::kSKsFCFV1RingMuLike), util::ErecoBinEdges(conv::kSKsFCFV1RingMuLike));
 
   TH1D * numu_nue_prob_vac2       = new TH1D("numu_nue_prob_vac2", " P_{#nu_{#mu}->#nu_{e}} ",
-					      util::NumEtrueBins (conv::kSKsFCFV1RingMuLike), util::EtrueBinEdges(conv::kSKsFCFV1RingMuLike));
+					      util::NumErecoBins (conv::kSKsFCFV1RingMuLike), util::ErecoBinEdges(conv::kSKsFCFV1RingMuLike));
 
   TH1D * numu_nue_prob_vac3       = new TH1D("numu_nue_prob_vac3", " P_{#nu_{#mu}->#nu_{e}} ",
-					      util::NumEtrueBins (conv::kSKsFCFV1RingMuLike), util::EtrueBinEdges(conv::kSKsFCFV1RingMuLike));
+					      util::NumErecoBins (conv::kSKsFCFV1RingMuLike), util::ErecoBinEdges(conv::kSKsFCFV1RingMuLike));
 
   TH1D * numu_nue_prob_vac4       = new TH1D("numu_nue_prob_vac4", " P_{#nu_{#mu}->#nu_{e}} ",
-					      util::NumEtrueBins (conv::kSKsFCFV1RingMuLike), util::EtrueBinEdges(conv::kSKsFCFV1RingMuLike));
+					      util::NumErecoBins (conv::kSKsFCFV1RingMuLike), util::ErecoBinEdges(conv::kSKsFCFV1RingMuLike));
 
   TH1D * numu_nue_prob_vac5       = new TH1D("numu_nue_prob_vac5", " P_{#nu_{#mu}->#nu_{e}} ",
-					      util::NumEtrueBins (conv::kSKsFCFV1RingMuLike), util::EtrueBinEdges(conv::kSKsFCFV1RingMuLike));
+					      util::NumErecoBins (conv::kSKsFCFV1RingMuLike), util::ErecoBinEdges(conv::kSKsFCFV1RingMuLike));
 
 
   TH1D * numubar_nuebar_prob1           = new TH1D("numubar_nuebar_prob1", " P_{#bar{#nu_{#mu}}->#bar{#nu_{e}}} ",
-						    util::NumEtrueBins (conv::kSKsFCFV1RingMuLike), util::EtrueBinEdges(conv::kSKsFCFV1RingMuLike));
+						    util::NumErecoBins (conv::kSKsFCFV1RingMuLike), util::ErecoBinEdges(conv::kSKsFCFV1RingMuLike));
 
   TH1D * numubar_nuebar_prob2           = new TH1D("numubar_nuebar_prob2", " P_{#bar{#nu_{#mu}}->#bar{#nu_{e}}} ",
-						    util::NumEtrueBins (conv::kSKsFCFV1RingMuLike), util::EtrueBinEdges(conv::kSKsFCFV1RingMuLike));
+						    util::NumErecoBins (conv::kSKsFCFV1RingMuLike), util::ErecoBinEdges(conv::kSKsFCFV1RingMuLike));
 
   TH1D * numubar_nuebar_prob3           = new TH1D("numubar_nuebar_prob3", " P_{#bar{#nu_{#mu}}->#bar{#nu_{e}}} ",
-						    util::NumEtrueBins (conv::kSKsFCFV1RingMuLike), util::EtrueBinEdges(conv::kSKsFCFV1RingMuLike));
+						    util::NumErecoBins (conv::kSKsFCFV1RingMuLike), util::ErecoBinEdges(conv::kSKsFCFV1RingMuLike));
 
   TH1D * numubar_nuebar_prob4           = new TH1D("numubar_nuebar_prob4", " P_{#bar{#nu_{#mu}}->#bar{#nu_{e}}} ",
-						    util::NumEtrueBins (conv::kSKsFCFV1RingMuLike), util::EtrueBinEdges(conv::kSKsFCFV1RingMuLike));
+						    util::NumErecoBins (conv::kSKsFCFV1RingMuLike), util::ErecoBinEdges(conv::kSKsFCFV1RingMuLike));
 
   TH1D * numubar_nuebar_prob5           = new TH1D("numubar_nuebar_prob5", " P_{#bar{#nu_{#mu}}->#bar{#nu_{e}}} ",
-						    util::NumEtrueBins (conv::kSKsFCFV1RingMuLike), util::EtrueBinEdges(conv::kSKsFCFV1RingMuLike));
+						    util::NumErecoBins (conv::kSKsFCFV1RingMuLike), util::ErecoBinEdges(conv::kSKsFCFV1RingMuLike));
 
   TH1D * numubar_nuebar_prob_vac1       = new TH1D("numubar_nuebar_prob_vac1", " P_{#bar{#nu_{#mu}}->#bar{#nu_{e}}} ",
-						    util::NumEtrueBins (conv::kSKsFCFV1RingMuLike), util::EtrueBinEdges(conv::kSKsFCFV1RingMuLike));
+						    util::NumErecoBins (conv::kSKsFCFV1RingMuLike), util::ErecoBinEdges(conv::kSKsFCFV1RingMuLike));
 
   TH1D * numubar_nuebar_prob_vac2       = new TH1D("numubar_nuebar_prob_vac2", " P_{#bar{#nu_{#mu}}->#bar{#nu_{e}}} ",
-						    util::NumEtrueBins (conv::kSKsFCFV1RingMuLike), util::EtrueBinEdges(conv::kSKsFCFV1RingMuLike));
+						    util::NumErecoBins (conv::kSKsFCFV1RingMuLike), util::ErecoBinEdges(conv::kSKsFCFV1RingMuLike));
 
   TH1D * numubar_nuebar_prob_vac3       = new TH1D("numubar_nuebar_prob_vac3", " P_{#bar{#nu_{#mu}}->#bar{#nu_{e}}} ",
-						    util::NumEtrueBins (conv::kSKsFCFV1RingMuLike), util::EtrueBinEdges(conv::kSKsFCFV1RingMuLike));
+						    util::NumErecoBins (conv::kSKsFCFV1RingMuLike), util::ErecoBinEdges(conv::kSKsFCFV1RingMuLike));
 
   TH1D * numubar_nuebar_prob_vac4       = new TH1D("numubar_nuebar_prob_vac4", " P_{#bar{#nu_{#mu}}->#bar{#nu_{e}}} ",
-						    util::NumEtrueBins (conv::kSKsFCFV1RingMuLike), util::EtrueBinEdges(conv::kSKsFCFV1RingMuLike));
+						    util::NumErecoBins (conv::kSKsFCFV1RingMuLike), util::ErecoBinEdges(conv::kSKsFCFV1RingMuLike));
 
   TH1D * numubar_nuebar_prob_vac5       = new TH1D("numubar_nuebar_prob_vac5", " P_{#bar{#nu_{#mu}}->#bar{#nu_{e}}} ",
-						    util::NumEtrueBins (conv::kSKsFCFV1RingMuLike), util::EtrueBinEdges(conv::kSKsFCFV1RingMuLike));
+						    util::NumErecoBins (conv::kSKsFCFV1RingMuLike), util::ErecoBinEdges(conv::kSKsFCFV1RingMuLike));
 
 
  TH1D * nue_numu_prob1           = new TH1D("nue_numu_prob1", " P_{#nu_{e}->#nu_{#mu}} ",
-					      util::NumEtrueBins (conv::kSKsFCFV1RingMuLike), util::EtrueBinEdges(conv::kSKsFCFV1RingMuLike));
+					      util::NumErecoBins (conv::kSKsFCFV1RingMuLike), util::ErecoBinEdges(conv::kSKsFCFV1RingMuLike));
 
   TH1D * nue_numu_prob2           = new TH1D("nue_numu_prob2", " P_{#nu_{e}->#nu_{#mu}} ",
-					     util::NumEtrueBins (conv::kSKsFCFV1RingMuLike), util::EtrueBinEdges(conv::kSKsFCFV1RingMuLike));
+					     util::NumErecoBins (conv::kSKsFCFV1RingMuLike), util::ErecoBinEdges(conv::kSKsFCFV1RingMuLike));
 
   TH1D * nue_numu_prob3           = new TH1D("nue_numu_prob3", " P_{#nu_{e}->#nu_{#mu}} ",
-					      util::NumEtrueBins (conv::kSKsFCFV1RingMuLike), util::EtrueBinEdges(conv::kSKsFCFV1RingMuLike));
+					      util::NumErecoBins (conv::kSKsFCFV1RingMuLike), util::ErecoBinEdges(conv::kSKsFCFV1RingMuLike));
 
   TH1D * nue_numu_prob4           = new TH1D("nue_numu_prob4", " P_{#nu_{e}->#nu_{#mu}} ",
-					      util::NumEtrueBins (conv::kSKsFCFV1RingMuLike), util::EtrueBinEdges(conv::kSKsFCFV1RingMuLike));
+					      util::NumErecoBins (conv::kSKsFCFV1RingMuLike), util::ErecoBinEdges(conv::kSKsFCFV1RingMuLike));
 
   TH1D * nue_numu_prob5           = new TH1D("nue_numu_prob5", " P_{#nu_{e}->#nu_{#mu}} ",
-					      util::NumEtrueBins (conv::kSKsFCFV1RingMuLike), util::EtrueBinEdges(conv::kSKsFCFV1RingMuLike));
+					      util::NumErecoBins (conv::kSKsFCFV1RingMuLike), util::ErecoBinEdges(conv::kSKsFCFV1RingMuLike));
 
   TH1D * nue_numu_prob_vac1       = new TH1D("nue_numu_prob_vac1", " P_{#nu_{e}->#nu_{#mu}} ",
-					      util::NumEtrueBins (conv::kSKsFCFV1RingMuLike), util::EtrueBinEdges(conv::kSKsFCFV1RingMuLike));
+					      util::NumErecoBins (conv::kSKsFCFV1RingMuLike), util::ErecoBinEdges(conv::kSKsFCFV1RingMuLike));
 
   TH1D * nue_numu_prob_vac2       = new TH1D("nue_numu_prob_vac2", " P_{#nu_{e}->#nu_{#mu}} ",
-					      util::NumEtrueBins (conv::kSKsFCFV1RingMuLike), util::EtrueBinEdges(conv::kSKsFCFV1RingMuLike));
+					      util::NumErecoBins (conv::kSKsFCFV1RingMuLike), util::ErecoBinEdges(conv::kSKsFCFV1RingMuLike));
 
   TH1D * nue_numu_prob_vac3       = new TH1D("nue_numu_prob_vac3", " P_{#nu_{e}->#nu_{#mu}} ",
-					      util::NumEtrueBins (conv::kSKsFCFV1RingMuLike), util::EtrueBinEdges(conv::kSKsFCFV1RingMuLike));
+					      util::NumErecoBins (conv::kSKsFCFV1RingMuLike), util::ErecoBinEdges(conv::kSKsFCFV1RingMuLike));
 
   TH1D * nue_numu_prob_vac4       = new TH1D("nue_numu_prob_vac4", " P_{#nu_{e}->#nu_{#mu}} ",
-					      util::NumEtrueBins (conv::kSKsFCFV1RingMuLike), util::EtrueBinEdges(conv::kSKsFCFV1RingMuLike));
+					      util::NumErecoBins (conv::kSKsFCFV1RingMuLike), util::ErecoBinEdges(conv::kSKsFCFV1RingMuLike));
 
   TH1D * nue_numu_prob_vac5       = new TH1D("nue_numu_prob_vac5", " P_{#nu_{e}->#nu_{#mu}} ",
-					      util::NumEtrueBins (conv::kSKsFCFV1RingMuLike), util::EtrueBinEdges(conv::kSKsFCFV1RingMuLike));
+					      util::NumErecoBins (conv::kSKsFCFV1RingMuLike), util::ErecoBinEdges(conv::kSKsFCFV1RingMuLike));
 
 
   TH1D * nuebar_numubar_prob1           = new TH1D("nuebar_numubar_prob1", " P_{#bar{#nu_{e}}->#bar{#nu_{#mu}}} ",
-						    util::NumEtrueBins (conv::kSKsFCFV1RingMuLike), util::EtrueBinEdges(conv::kSKsFCFV1RingMuLike));
+						    util::NumErecoBins (conv::kSKsFCFV1RingMuLike), util::ErecoBinEdges(conv::kSKsFCFV1RingMuLike));
 
   TH1D * nuebar_numubar_prob2           = new TH1D("nuebar_numubar_prob2", " P_{#bar{#nu_{e}}->#bar{#nu_{#mu}}} ",
-						    util::NumEtrueBins (conv::kSKsFCFV1RingMuLike), util::EtrueBinEdges(conv::kSKsFCFV1RingMuLike));
+						    util::NumErecoBins (conv::kSKsFCFV1RingMuLike), util::ErecoBinEdges(conv::kSKsFCFV1RingMuLike));
 
   TH1D * nuebar_numubar_prob3           = new TH1D("nuebar_numubar_prob3", " P_{#bar{#nu_{e}}->#bar{#nu_{#mu}}} ",
-						    util::NumEtrueBins (conv::kSKsFCFV1RingMuLike), util::EtrueBinEdges(conv::kSKsFCFV1RingMuLike));
+						    util::NumErecoBins (conv::kSKsFCFV1RingMuLike), util::ErecoBinEdges(conv::kSKsFCFV1RingMuLike));
 
   TH1D * nuebar_numubar_prob4           = new TH1D("nuebar_numubar_prob4", " P_{#bar{#nu_{e}}->#bar{#nu_{#mu}}} ",
-						    util::NumEtrueBins (conv::kSKsFCFV1RingMuLike), util::EtrueBinEdges(conv::kSKsFCFV1RingMuLike));
+						    util::NumErecoBins (conv::kSKsFCFV1RingMuLike), util::ErecoBinEdges(conv::kSKsFCFV1RingMuLike));
 
   TH1D * nuebar_numubar_prob5           = new TH1D("nuebar_numubar_prob5", " P_{#bar{#nu_{e}}->#bar{#nu_{#mu}}} ",
-						    util::NumEtrueBins (conv::kSKsFCFV1RingMuLike), util::EtrueBinEdges(conv::kSKsFCFV1RingMuLike));
+						    util::NumErecoBins (conv::kSKsFCFV1RingMuLike), util::ErecoBinEdges(conv::kSKsFCFV1RingMuLike));
 
   TH1D * nuebar_numubar_prob_vac1       = new TH1D("nuebar_numubar_prob_vac1", " P_{#bar{#nu_{e}}->#bar{#nu_{#mu}}} ",
-						    util::NumEtrueBins (conv::kSKsFCFV1RingMuLike), util::EtrueBinEdges(conv::kSKsFCFV1RingMuLike));
+						    util::NumErecoBins (conv::kSKsFCFV1RingMuLike), util::ErecoBinEdges(conv::kSKsFCFV1RingMuLike));
 
   TH1D * nuebar_numubar_prob_vac2       = new TH1D("nuebar_numubar_prob_vac2", " P_{#bar{#nu_{e}}->#bar{#nu_{#mu}}} ",
-						    util::NumEtrueBins (conv::kSKsFCFV1RingMuLike), util::EtrueBinEdges(conv::kSKsFCFV1RingMuLike));
+						    util::NumErecoBins (conv::kSKsFCFV1RingMuLike), util::ErecoBinEdges(conv::kSKsFCFV1RingMuLike));
 
   TH1D * nuebar_numubar_prob_vac3       = new TH1D("nuebar_numubar_prob_vac3", " P_{#bar{#nu_{e}}->#bar{#nu_{#mu}}} ",
-						    util::NumEtrueBins (conv::kSKsFCFV1RingMuLike), util::EtrueBinEdges(conv::kSKsFCFV1RingMuLike));
+						    util::NumErecoBins (conv::kSKsFCFV1RingMuLike), util::ErecoBinEdges(conv::kSKsFCFV1RingMuLike));
 
   TH1D * nuebar_numubar_prob_vac4       = new TH1D("nuebar_numubar_prob_vac4", " P_{#bar{#nu_{e}}->#bar{#nu_{#mu}}} ",
-						    util::NumEtrueBins (conv::kSKsFCFV1RingMuLike), util::EtrueBinEdges(conv::kSKsFCFV1RingMuLike));
+						    util::NumErecoBins (conv::kSKsFCFV1RingMuLike), util::ErecoBinEdges(conv::kSKsFCFV1RingMuLike));
 
   TH1D * nuebar_numubar_prob_vac5       = new TH1D("nuebar_numubar_prob_vac5", " P_{#bar{#nu_{e}}->#bar{#nu_{#mu}}} ",
-						    util::NumEtrueBins (conv::kSKsFCFV1RingMuLike), util::EtrueBinEdges(conv::kSKsFCFV1RingMuLike));
+						    util::NumErecoBins (conv::kSKsFCFV1RingMuLike), util::ErecoBinEdges(conv::kSKsFCFV1RingMuLike));
 
 
   NuOsc3Flavour fNuOsc3Flavour;
@@ -500,7 +500,7 @@ void plot_osc_prob_deltacp(
 
   TCanvas * c_numu_numu = new TCanvas("c_numu_numu","",20,20,500,500);
   TH1F * h2 = (TH1F*) c_numu_numu->DrawFrame(util::ErecoBinEdges(conv::kSKsFCFV1RingMuLike,0),-0.5,util::ErecoBinEdges(conv::kSKsFCFV1RingMuLike,util::NumErecoBins(conv::kSKsFCFV1RingMuLike)+1),1.5);
-  //  h2->Draw("");
+  //  h2->Draw("c");
   c_numu_numu->SetFillColor(kWhite);
   numu_numu_prob1->SetTitle("P_{#nu_{#mu}->#nu_{#mu}}");
   numu_numu_prob1->GetYaxis()->SetTitle("P_{#nu_{#mu}->#nu_{#mu}}");
@@ -534,7 +534,7 @@ void plot_osc_prob_deltacp(
   legend->AddEntry(numu_numu_prob3,"#delta_{CP} = 0","L");
   legend->AddEntry(numu_numu_prob4,"#delta_{CP} = #pi/2","L");
   legend->AddEntry(numu_numu_prob5,"#delta_{CP} = #pi","L");
-  legend->Draw("same");
+  legend->Draw("csame");
 
   c_numu_numu->SaveAs("Osc_prob_dcp_numu_numu.eps");
 
@@ -566,7 +566,7 @@ void plot_osc_prob_deltacp(
   numubar_numubar_prob5->SetLineStyle(kDashed);
   numubar_numubar_prob5->Draw("csame");
 
-  legend->Draw("same");
+  legend->Draw("csame");
 
   c_numubar_numubar->SaveAs("Osc_prob_dcp_numubar_numubar.eps");
 
@@ -598,7 +598,7 @@ void plot_osc_prob_deltacp(
   nue_nue_prob5->SetLineStyle(kDashed);
   nue_nue_prob5->Draw("csame");
 
-  legend->Draw("same");
+  legend->Draw("csame");
 
   c_nue_nue->SaveAs("Osc_prob_dcp_nue_nue.eps");
 
@@ -631,7 +631,7 @@ void plot_osc_prob_deltacp(
   nuebar_nuebar_prob5->SetLineStyle(kDashed);
   nuebar_nuebar_prob5->Draw("csame");
 
-  legend->Draw("same");
+  legend->Draw("csame");
 
   c_nuebar_nuebar->SaveAs("Osc_prob_dcp_nuebar_nuebar.eps");
 
@@ -664,7 +664,7 @@ void plot_osc_prob_deltacp(
   numu_nue_prob5->SetLineStyle(kDashed);
   numu_nue_prob5->Draw("csame");
 
-  legend->Draw("same");
+  legend->Draw("csame");
 
   c_numu_nue->SaveAs("Osc_prob_dcp_numu_nue.eps");
 
@@ -696,7 +696,7 @@ void plot_osc_prob_deltacp(
   numubar_nuebar_prob5->SetLineStyle(kDashed);
   numubar_nuebar_prob5->Draw("csame");
 
-  legend->Draw("same");
+  legend->Draw("csame");
 
   c_numubar_nuebar->SaveAs("Osc_prob_dcp_numubar_nuebar.eps");
 
@@ -728,7 +728,7 @@ void plot_osc_prob_deltacp(
   nue_numu_prob5->SetLineStyle(kDashed);
   nue_numu_prob5->Draw("csame");
 
-  legend->Draw("same");
+  legend->Draw("csame");
 
   c_nue_numu->SaveAs("Osc_prob_dcp_nue_numu.eps");
 
@@ -760,8 +760,58 @@ void plot_osc_prob_deltacp(
   nuebar_numubar_prob5->SetLineStyle(kDashed);
   nuebar_numubar_prob5->Draw("csame");
 
-  legend->Draw("same");
+  legend->Draw("csame");
 
   c_nuebar_numubar->SaveAs("Osc_prob_dcp_nuebar_numubar.eps");
+
+  const char * filename_out = "file_osc_prob_deltacp.root";
+  TFile * f_out = new TFile(filename_out, "recreate");
+  numu_numu_prob1->Write();
+  numu_numu_prob2->Write();
+  numu_numu_prob3->Write();
+  numu_numu_prob4->Write();
+  numu_numu_prob5->Write();
+
+  numubar_numubar_prob1->Write();
+  numubar_numubar_prob2->Write();
+  numubar_numubar_prob3->Write();
+  numubar_numubar_prob4->Write();
+  numubar_numubar_prob5->Write();
+
+  nue_nue_prob1->Write();
+  nue_nue_prob2->Write();
+  nue_nue_prob3->Write();
+  nue_nue_prob4->Write();
+  nue_nue_prob5->Write();
+
+  nuebar_nuebar_prob1->Write();
+  nuebar_nuebar_prob2->Write();
+  nuebar_nuebar_prob3->Write();
+  nuebar_nuebar_prob4->Write();
+  nuebar_nuebar_prob5->Write();
+
+  numu_nue_prob1->Write();
+  numu_nue_prob2->Write();
+  numu_nue_prob3->Write();
+  numu_nue_prob4->Write();
+  numu_nue_prob5->Write();
+
+  numubar_nuebar_prob1->Write();
+  numubar_nuebar_prob2->Write();
+  numubar_nuebar_prob3->Write();
+  numubar_nuebar_prob4->Write();
+  numubar_nuebar_prob5->Write();
+
+  nue_numu_prob1->Write();
+  nue_numu_prob2->Write();
+  nue_numu_prob3->Write();
+  nue_numu_prob4->Write();
+  nue_numu_prob5->Write();
+
+  nuebar_numubar_prob1->Write();
+  nuebar_numubar_prob2->Write();
+  nuebar_numubar_prob3->Write();
+  nuebar_numubar_prob4->Write();
+  nuebar_numubar_prob5->Write();
 
 }
