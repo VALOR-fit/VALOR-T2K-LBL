@@ -329,7 +329,7 @@ bool FitterMinuit::RunOnce(bool use_simplex)
   if(!use_simplex) {
     //in disappearance mode, when fitting for deltacp, do two fits - fit everything but deltacp, then fit only deltacp
     OscAnaType_t ana = Opt::Instance()->gOscAnaTypeChoice;
-    if(ana == kAnaNuMuDisappOnly && fFitInputs->FitParams().GetParListName() == "nuosc3f_numudisapp_nuis3fixdcp+nuisance") {
+    if(ana == kAnaNuMuDisappOnly && fFitInputs->FitParams().GetParListName() == "nuosc3f_numudisapp_nuis4+nuisance") {
 #ifdef __show_fit_steps__
       cout << "FitterMinuit/RunOnce >> Performing two step fit. Fit everything but dcp, fit only dcp..." << endl;
 #endif
