@@ -20,6 +20,7 @@
 
 #include <string>
 #include <vector>
+#include <complex>
 
 #include <TXMLEngine.h>
 #include <TFile.h>
@@ -242,6 +243,9 @@ namespace util {
   //
 
   int Sign(double x);
+  
+  // 3x3 matrix diagonalisation
+  int DiagonaliseJacobi(std::complex<double> A[3][3],  std::complex<double> Q[3][3], double w[3]);
   
   void PrintCompact (const TVectorD & v, int w=15, int prec=9, Option_t * opt="", ostream & stream = std::cout);
   void PrintCompact (const TVectorD & current, const TVectorD & nominal, int w, int prec, Option_t * option, ostream & stream = std::cout);
