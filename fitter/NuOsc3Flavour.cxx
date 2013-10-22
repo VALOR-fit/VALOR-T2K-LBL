@@ -164,7 +164,7 @@ void NuOsc3Flavour::SetOscParameters(
   UMassUdaggerVacuum[2][2][im] = 0.0;
 
   useEquations12 = true;
-  if(fabs(deltaCP) > 3.10 && fabs(deltaCP) < 3.18 && sinsq2theta13 > 1.0e-8)
+  if(((fabs(deltaCP) > 3.10 && fabs(deltaCP) < 3.18) || fabs(deltaCP) < 0.01 || fabs(fabs(deltaCP) - 6.2832) < 0.01) && sinsq2theta13 > 1.0e-8)
     useEquations12 = false;
 
   //if 2 mixing angles are very small, treat it as a 2-flavour calculation 
@@ -264,7 +264,7 @@ void NuOsc3Flavour::SetOscParametersSinSqTAll(
   UMassUdaggerVacuum[2][2][im] = 0.0;
 
   useEquations12 = true;
-  if(fabs(deltaCP) > 3.10 && fabs(deltaCP) < 3.18 && sinsqtheta13 > 3.0e-9)
+  if(((fabs(deltaCP) > 3.10 && fabs(deltaCP) < 3.18) || fabs(deltaCP) < 0.01 || fabs(fabs(deltaCP) - 6.2832) < 0.01) && sinsqtheta13 > 3.0e-9)
     useEquations12 = false;
 
   //if 2 mixing angles are very small, treat it as a 2-flavour calculation                                                                                                                            
@@ -369,7 +369,7 @@ void NuOsc3Flavour::SetOscParametersSSq2TDmAtmSol(
   UMassUdaggerVacuum[2][2][im] = 0.0;
 
   useEquations12 = true;
-  if(fabs(deltaCP) > 3.10 && fabs(deltaCP) < 3.18 && sinsq2theta13 > 1.0e-8)
+  if(((fabs(deltaCP) > 3.10 && fabs(deltaCP) < 3.18) || fabs(deltaCP) < 0.01 || fabs(fabs(deltaCP) - 6.2832) < 0.01) && sinsq2theta13 > 1.0e-8)
     useEquations12 = false;
 
   //if 2 mixing angles are very small, treat it as a 2-flavour calculation                                                                                                         
@@ -468,7 +468,7 @@ void NuOsc3Flavour::SetOscParametersSSq2TDmAtmSol(
   UMassUdaggerVacuum[2][2][im] = 0.0;
 
   useEquations12 = true;
-  if(fabs(deltaCP) > 3.10 && fabs(deltaCP) < 3.18 && sinsqtheta13 > 3.0e-9)
+  if(((fabs(deltaCP) > 3.10 && fabs(deltaCP) < 3.18) || fabs(deltaCP) < 0.01 || fabs(fabs(deltaCP) - 6.2832) < 0.01) && sinsqtheta13 > 3.0e-9)
     useEquations12 = false;
 
   //if 2 mixing angles are very small, treat it as a 2-flavour calculation                                                                                                         
@@ -571,7 +571,7 @@ void NuOsc3Flavour::SetOscParametersSSq2TDmsq13(
   UMassUdaggerVacuum[2][2][im] = 0.0;
 
   useEquations12 = true;
-  if(fabs(deltaCP) > 3.10 && fabs(deltaCP) < 3.18 && sinsq2theta13 > 1.0e-8)
+  if(((fabs(deltaCP) > 3.10 && fabs(deltaCP) < 3.18) || fabs(deltaCP) < 0.01 || fabs(fabs(deltaCP) - 6.2832) < 0.01) && sinsq2theta13 > 1.0e-8)
     useEquations12 = false;
 
   //if 2 mixing angles are very small, treat it as a 2-flavour calculation                                                                                                                           
@@ -670,7 +670,7 @@ void NuOsc3Flavour::SetOscParametersDmsq13(
   UMassUdaggerVacuum[2][2][im] = 0.0;
 
   useEquations12 = true;
-  if(fabs(deltaCP) > 3.10 && fabs(deltaCP) < 3.18 && sinsqtheta13 > 3.0e-9)
+  if(((fabs(deltaCP) > 3.10 && fabs(deltaCP) < 3.18) || fabs(deltaCP) < 0.01 || fabs(fabs(deltaCP) - 6.2832) < 0.01) && sinsqtheta13 > 3.0e-9)
     useEquations12 = false;
 
   //if 2 mixing angles are very small, treat it as a 2-flavour calculation                                                                                                                           
