@@ -327,6 +327,7 @@ bool FitterMinuit::RunOnce(bool use_simplex)
   arglist[0] = 50000; // num of func calls
   arglist[1] = fTol;  // tolerance
   if(!use_simplex) {
+    /*
     //in disappearance mode, when fitting for deltacp, do two fits - fit everything but deltacp, then fit only deltacp
     OscAnaType_t ana = Opt::Instance()->gOscAnaTypeChoice;
     if(ana == kAnaNuMuDisappOnly && fFitInputs->FitParams().GetParListName() == "nuosc3f_numudisapp_nuis4+nuisance") {
@@ -378,6 +379,7 @@ bool FitterMinuit::RunOnce(bool use_simplex)
       fitter->ExecuteCommand("RELEASE",fixed_slot,nfix);
     }//disapp & free dcp
     else
+    */
       fMigradMinStatusCode = fitter->ExecuteCommand("MIGRAD",arglist, 2);
   }//!_use_simples
   //SIMPLEX
