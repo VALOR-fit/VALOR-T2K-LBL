@@ -1108,17 +1108,17 @@ double NuOsc3Flavour::CalcMatterOscProb(int nu_start, int nu_end, double energy)
       eigenvalues[2] = (sqrt(p) * 2.0 * cos(phi + 2.0*3.1415927/3.0)) / 3.0 - c2[re] / 3.0;
   }
 
+#ifdef __show_warning__
   // Check that the sum of the eigenvalues is equal to the trace of the matrix
   double eigenvalueSum = eigenvalues[0] + eigenvalues[1] + eigenvalues[2];
   double trace = UMassUdagger[0][0][re] + UMassUdagger[1][1][re] + UMassUdagger[2][2][re];
 
-#ifdef __show_warning__
   if(fabs((eigenvalueSum - trace) / trace) > 1.0e-4) 
   {
     cerr << "Warning in NuOsc3Flavour::CalcMatterOscProb() : fractional difference between sum of eigenvalues and trace of matrix = "
 	 << fabs((eigenvalueSum - trace) / trace) << "." << endl;
   }
-#endif
+#endif //__show_warning__
 
 
   double UMassUdaggerMinusEv[3][3][2];
@@ -1135,6 +1135,7 @@ double NuOsc3Flavour::CalcMatterOscProb(int nu_start, int nu_end, double energy)
 
   double UMatter[3][3][2];
   double normalisation;
+#ifdef __show_warning__
   double eigenvectorCheck[3][2];
   for(int i=0; i<3; i++)
   {
@@ -1143,6 +1144,7 @@ double NuOsc3Flavour::CalcMatterOscProb(int nu_start, int nu_end, double energy)
       eigenvectorCheck[i][j] = 0.0;
     }//j     
   }//i
+#endif //__show_warning__
 
   double numerator1[2];
   double numerator3[2];
@@ -1235,6 +1237,7 @@ double NuOsc3Flavour::CalcMatterOscProb(int nu_start, int nu_end, double energy)
        UMatter[k][i][im] = UMatter[k][i][im] / normalisation;
     }
   
+#ifdef __show_warning__
     // Check the eigenvector is correct.
     // Multiplying any row of UMassUdaggerMinusEv by the column eigenvector should give zero   
     for(int m=0; m<3; m++)
@@ -1244,8 +1247,10 @@ double NuOsc3Flavour::CalcMatterOscProb(int nu_start, int nu_end, double energy)
       eigenvectorCheck[i][im] += UMassUdaggerMinusEv[i][m][re] * UMatter[m][i][im]
                               + UMassUdaggerMinusEv[i][m][im] * UMatter[m][i][re];
     }
+#endif //__show_warning__
 
  }//end of for(int i=0; i<3; i++)
+
 
 #ifdef __show_warning__
  for(int i=0; i<3; i++) 
@@ -1261,9 +1266,10 @@ double NuOsc3Flavour::CalcMatterOscProb(int nu_start, int nu_end, double energy)
           << eigenvectorCheck[i][im] << "." << endl;
    }
  }//end of for(int i=0; i<3; i++)
-#endif
+#endif //__show_warning__
 
 
+#ifdef __show_warning__
  // Check that the complex eigenvectors are orthogonal  
  double scalarProduct[3][2];
  for(int i=0; i<3; i++)
@@ -1295,7 +1301,6 @@ double NuOsc3Flavour::CalcMatterOscProb(int nu_start, int nu_end, double energy)
                            + UMatter[j][0][im] * UMatter[j][2][re];
  }
 
-#ifdef __show_warning__
  for(int i=0; i<3; i++)
  {
    if(fabs(scalarProduct[i][re]) > 1.0e-4)
@@ -1309,7 +1314,7 @@ double NuOsc3Flavour::CalcMatterOscProb(int nu_start, int nu_end, double energy)
           << scalarProduct[i][im] << "." << endl;
    }
  }//end of for(int i=0; i<3; i++)
-#endif
+#endif //__show_warning__
 
  double UMatterDagger[3][3][2];
 
@@ -1322,6 +1327,7 @@ double NuOsc3Flavour::CalcMatterOscProb(int nu_start, int nu_end, double energy)
     }
  }
 
+#ifdef __show_warning__
  //check that the Hermitian conjugate of UMatter is equal to its inverse
  double inverseCheck[3][3][2];
  for(int i=0; i<3; i++)
@@ -1347,7 +1353,6 @@ double NuOsc3Flavour::CalcMatterOscProb(int nu_start, int nu_end, double energy)
      }
    }
 
-#ifdef __show_warning__
  for(int i=0; i<3; i++)
  {
    for(int j=0; j<3; j++)
@@ -1380,7 +1385,7 @@ double NuOsc3Flavour::CalcMatterOscProb(int nu_start, int nu_end, double energy)
      }  
    }//end of for(int j=0; j<3; j++)
  }//end of for(int i=0; i<3; i++)
-#endif
+#endif //__show_warning__
 
  double initialFlavourState[3][2];
  for(int i=0; i<3; i++)

@@ -70,6 +70,13 @@ fGoodnessOfFit(goodnessoffit)
     fAllBANFFFit = true;
     fAll1ReEff = true;
   }
+  TString option = opt.c_str();
+  if(option.Contains("poisson"))
+    fMode = 1;
+  else if(option.Contains("gauss"))
+    fMode = 2;
+  else
+    fMode = -1;
 }
 //________________________________________________________________________________________
 FitInputs::~FitInputs()  
@@ -99,17 +106,26 @@ FitParamList & FitInputs::FitParams(void)
 //________________________________________________________________________________________
 double FitInputs::Chisquare(Option_t * option, conv::SuperkSample_t s0, int point) const
 {
+  TString opt = option;
+  if(opt.Contains("poisson"))
+    return Chisquare(1,s0,point);
+  else if(opt.Contains("gauss"))
+    return Chisquare(2,s0,point);
+  return Chisquare(0,s0,point);
+}
+//________________________________________________________________________________________
+double FitInputs::Chisquare(int mode, conv::SuperkSample_t s0, int point) const
 // If input is s0 = kSKsUndefined then go ahead and calculate a chisq which is the sum of 
 // chisq for all SK samples included in the analysis.
 // If a s0 is specified, then calculate the chisq only for this sample.
 // Add penalty terms as appropriate given which nuisance parameters were included in the
 // fit and which oscillation parameters are marginalized.
-// The input option can be "poisson" or "gauss".
+// The input option can be 1 ("poisson") or 2 ("gauss").
 //
-
+{
   double chisq = 0; // total chisq to be returned
 
-  TString opt = option;
+  //TString opt = option;
 
   // Get the oscillation analysis type for chisquare computation
   OscAnaType_t oscana = Opt::Instance()->gOscAnaTypeChoice;
@@ -143,9 +159,11 @@ double FitInputs::Chisquare(Option_t * option, conv::SuperkSample_t s0, int poin
 	  double nexp = fExp->CurrPredictedErecoSpectrumArray(s)[ibin-1];
 	  
 	  double delta_chisq = 0.;
-	  if      (opt.Contains("poisson")) { delta_chisq = util::ChisqPoisson(nobs,nexp); }
-	  else if (opt.Contains("gauss")  ) { delta_chisq = util::ChisqGauss  (nobs,nexp); }
-	  
+	  //if      (opt.Contains("poisson")) { delta_chisq = util::ChisqPoisson(nobs,nexp); }
+	  //else if (opt.Contains("gauss")  ) { delta_chisq = util::ChisqGauss  (nobs,nexp); }
+	  if      (mode == 1) { delta_chisq = util::ChisqPoisson(nobs,nexp); }
+	  else if (mode == 2) { delta_chisq = util::ChisqGauss  (nobs,nexp); }
+
 	  if((point!=-1) && (point == ibin)) return delta_chisq;
 	  chisq += delta_chisq;
 	  
@@ -177,8 +195,11 @@ double FitInputs::Chisquare(Option_t * option, conv::SuperkSample_t s0, int poin
 	      nexp += fExp->CurrPredictedErecoSpectrumArray(s)[ir-1];
 	    }
 	    double delta_chisq = 0.;
-	    if      (opt.Contains("poisson")) { delta_chisq = util::ChisqPoisson(nobs,nexp); }
-	    else if (opt.Contains("gauss")  ) { delta_chisq = util::ChisqGauss  (nobs,nexp); }
+	    //if      (opt.Contains("poisson")) { delta_chisq = util::ChisqPoisson(nobs,nexp); }
+	    //else if (opt.Contains("gauss")  ) { delta_chisq = util::ChisqGauss  (nobs,nexp); }
+	    if      (mode == 1) { delta_chisq = util::ChisqPoisson(nobs,nexp); }
+	    else if (mode == 2) { delta_chisq = util::ChisqGauss  (nobs,nexp); }
+
 	    chisq += delta_chisq;
 	      
 #ifdef __show_bin_contributions_to_chisq__
@@ -203,8 +224,10 @@ double FitInputs::Chisquare(Option_t * option, conv::SuperkSample_t s0, int poin
 	    double nexp = fExp->CurrPredictedErecoSpectrum(s)->Integral();
 	    
 	    double delta_chisq = 0.;
-	    if      (opt.Contains("poisson")) { delta_chisq = util::ChisqPoisson(nobs,nexp); }
-	    else if (opt.Contains("gauss")  ) { delta_chisq = util::ChisqGauss  (nobs,nexp); }
+	    //if      (opt.Contains("poisson")) { delta_chisq = util::ChisqPoisson(nobs,nexp); }
+	    //else if (opt.Contains("gauss")  ) { delta_chisq = util::ChisqGauss  (nobs,nexp); }
+	    if      (mode == 1) { delta_chisq = util::ChisqPoisson(nobs,nexp); }
+	    else if (mode == 2) { delta_chisq = util::ChisqGauss  (nobs,nexp); }
 	    
 	    chisq += delta_chisq;
 
@@ -483,7 +506,8 @@ double FitInputs::operator() (const std::vector<double>& x) const
 
  fFitParams->Sync(x);
 
- return  this->Chisquare(fOpt.c_str());
+ //return  this->Chisquare(fOpt.c_str());
+ return  this->Chisquare(fMode);
 }
 //____________________________________________________________________________ 
 void t2kana::FitFunc (

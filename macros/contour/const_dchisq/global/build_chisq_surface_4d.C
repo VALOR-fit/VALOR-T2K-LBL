@@ -145,9 +145,9 @@ void build_chisq_surface_4d
 
              // Get fit inputs object (chisq is calculated there)
              FitInputs fit_inputs(skobs,skexp,fparm);
-             double chisq     = fit_inputs.Chisquare("poisson");
-             double chisq1Rmu = fit_inputs.Chisquare("poisson", conv::kSKsFCFV1RingMuLike);
-             double chisq1Re  = fit_inputs.Chisquare("poisson", conv::kSKsFCFV1RingELike);
+             double chisq     = fit_inputs.Chisquare(1);//"poisson");
+             double chisq1Rmu = fit_inputs.Chisquare(1, conv::kSKsFCFV1RingMuLike);
+             double chisq1Re  = fit_inputs.Chisquare(1, conv::kSKsFCFV1RingELike);
 
              // Report
              fparm->ShowOnlyCurrValuesInNextPrint();

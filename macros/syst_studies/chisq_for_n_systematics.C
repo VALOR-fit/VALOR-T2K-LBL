@@ -383,11 +383,11 @@ void chisq_for_n_systematics
       
       //get the chisqs
       fit_inputs = new FitInputs(skobs,skexp,fp);
-      double chisq73 = fit_inputs->Chisquare("poisson", s);
+      double chisq73 = fit_inputs->Chisquare(1,s);//"poisson", s);
       hChisq73[ip]->Fill(chisq73);
 
       fit_inputs->SetChisqDefinition(true);
-      double chisq = fit_inputs->Chisquare("poisson", s);
+      double chisq = fit_inputs->Chisquare(1,s);//"poisson", s);
       hChisq[ip]->Fill(chisq);
 
       if(verbose) {

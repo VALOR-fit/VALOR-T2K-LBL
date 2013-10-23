@@ -84,7 +84,8 @@ public :
   void SetChisqDefinition (bool goodnessoffit) { fGoodnessOfFit = goodnessoffit; }
   
   // judge the agreement between the input data and the current prediction
-  double Chisquare (Option_t * opt = "poisson", conv::SuperkSample_t s = conv::kSKsUndefined, int point = -1) const;
+  double Chisquare (Option_t * opt,      conv::SuperkSample_t s = conv::kSKsUndefined, int point = -1) const;
+  double Chisquare (int        mode = 1, conv::SuperkSample_t s = conv::kSKsUndefined, int point = -1) const; //mode 1 is poisson, mode 2 is gauss
   
   // get chisquare for the best fit prediction
   double BestFitChisquare (Option_t * opt = "poisson");
@@ -116,6 +117,7 @@ private:
   mutable SuperkExpectation * fExp;
   mutable FitParamList *      fFitParams;
   string              fOpt;
+  int                 fMode;
   double              fErrDef;
   bool                fAllBANFFFit;
   bool                fAll1ReEff;

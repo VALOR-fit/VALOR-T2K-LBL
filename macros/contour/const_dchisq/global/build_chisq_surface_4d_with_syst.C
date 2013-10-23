@@ -191,9 +191,9 @@ void build_chisq_surface_4d_with_syst
 
                               //get the "true chisq" - before the fit
                               FitInputs *fit_inputs = new FitInputs(skobs,skexp,fparm);
-                              double chisq     = fit_inputs->Chisquare("poisson");
-                              double chisq1Rmu = fit_inputs->Chisquare("poisson", conv::kSKsFCFV1RingMuLike);
-                              double chisq1Re  = fit_inputs->Chisquare("poisson", conv::kSKsFCFV1RingELike);
+                              double chisq     = fit_inputs->Chisquare(1);//"poisson");
+                              double chisq1Rmu = fit_inputs->Chisquare(1, conv::kSKsFCFV1RingMuLike);
+                              double chisq1Re  = fit_inputs->Chisquare(1, conv::kSKsFCFV1RingELike);
 
                               // Report
                               cout << "chisq        = " << chisq      << endl;
@@ -259,9 +259,9 @@ void build_chisq_surface_4d_with_syst
                               //do the fit
                               fitter2.DoTheFit();
 
-                              double chisq_f     = fit_inputs->Chisquare("poisson");
-                              double chisq1Rmu_f = fit_inputs->Chisquare("poisson", conv::kSKsFCFV1RingMuLike);
-                              double chisq1Re_f  = fit_inputs->Chisquare("poisson", conv::kSKsFCFV1RingELike);
+                              double chisq_f     = fit_inputs->Chisquare(1);//"poisson");
+                              double chisq1Rmu_f = fit_inputs->Chisquare(1, conv::kSKsFCFV1RingMuLike);
+                              double chisq1Re_f  = fit_inputs->Chisquare(1, conv::kSKsFCFV1RingELike);
 
                               cout << "chisq_f        = " << chisq_f      << endl;
                               cout << "chisq_f [1Rmu] = " << chisq1Rmu_f  << endl;
