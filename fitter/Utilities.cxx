@@ -3971,7 +3971,7 @@ bool t2kana::util::IsAntiNeutrino(int pdg_code)
   return false;
 }
 //___________________________________________________________________________
-const int t2kana::util::NumErecoBins(t2kana::conv::SuperkSample_t s)
+int t2kana::util::NumErecoBins(t2kana::conv::SuperkSample_t s)
 {
   switch(s) {
      case ( kSKsFCFV1RingMuLike ) : return kNErecoBins1Rmu; break;
@@ -3991,7 +3991,7 @@ const double * t2kana::util::ErecoBinEdges(t2kana::conv::SuperkSample_t s)
   return 0;
 }
 //___________________________________________________________________________
-const double t2kana::util::ErecoBinEdges(t2kana::conv::SuperkSample_t s, int i)
+double t2kana::util::ErecoBinEdges(t2kana::conv::SuperkSample_t s, int i)
 {
   switch(s) {
      case ( kSKsFCFV1RingMuLike ) : return kErecoBinEdges1Rmu[i]; break;
@@ -4001,7 +4001,7 @@ const double t2kana::util::ErecoBinEdges(t2kana::conv::SuperkSample_t s, int i)
   return 0;
 }
 //___________________________________________________________________________
-const int t2kana::util::NumXsecErecoBins(t2kana::conv::SuperkSample_t s)
+int t2kana::util::NumXsecErecoBins(t2kana::conv::SuperkSample_t s)
 {
   switch(s) {
      case ( kSKsFCFV1RingMuLike ) : return kXsNErecoBins1Rmu; break;
@@ -4021,7 +4021,7 @@ const double * t2kana::util::XsecErecoBinEdges(t2kana::conv::SuperkSample_t s)
   return 0;
 }
 //___________________________________________________________________________
-const double t2kana::util::XsecErecoBinEdges(t2kana::conv::SuperkSample_t s, int i)
+double t2kana::util::XsecErecoBinEdges(t2kana::conv::SuperkSample_t s, int i)
 {
   switch(s) {
      case ( kSKsFCFV1RingMuLike ) : return kXsErecoBinEdges1Rmu[i]; break;
@@ -4031,7 +4031,7 @@ const double t2kana::util::XsecErecoBinEdges(t2kana::conv::SuperkSample_t s, int
   return 0;
 }
 //___________________________________________________________________________
-const int t2kana::util::NumEtrueBins(t2kana::conv::SuperkSample_t s)
+int t2kana::util::NumEtrueBins(t2kana::conv::SuperkSample_t s)
 {
   switch(s) {
      case ( kSKsFCFV1RingMuLike ) : return kNEtrueBins1Rmu; break;
@@ -4051,7 +4051,7 @@ const double * t2kana::util::EtrueBinEdges(t2kana::conv::SuperkSample_t s)
   return 0;
 }
 //___________________________________________________________________________
-const double  t2kana::util::EtrueBinEdges(t2kana::conv::SuperkSample_t s, int i)
+double  t2kana::util::EtrueBinEdges(t2kana::conv::SuperkSample_t s, int i)
 {
   switch(s) {
      case ( kSKsFCFV1RingMuLike ) : return kEtrueBinEdges1Rmu[i]; break;
@@ -4061,8 +4061,8 @@ const double  t2kana::util::EtrueBinEdges(t2kana::conv::SuperkSample_t s, int i)
   return 0;
 }
 //___________________________________________________________________________
-const int t2kana::util::NumVariableXsEtrueBins(t2kana::conv::SuperkSample_t s,
-					       t2kana::conv::SuperkMode_t m)
+int t2kana::util::NumVariableXsEtrueBins(t2kana::conv::SuperkSample_t s,
+                                         t2kana::conv::SuperkMode_t m)
 {
   int is = util::ArrIdx::Instance()->SuperkSampleIdx(s);
   if(is == -1)
@@ -4082,7 +4082,7 @@ const int t2kana::util::NumVariableXsEtrueBins(t2kana::conv::SuperkSample_t s,
 }
 //___________________________________________________________________________
 const double * t2kana::util::VariableXsEtrueBinEdges(t2kana::conv::SuperkSample_t s,
-						      t2kana::conv::SuperkMode_t m)
+                                                     t2kana::conv::SuperkMode_t m)
 {
   int is = util::ArrIdx::Instance()->SuperkSampleIdx(s);
   if(is == -1)
@@ -4093,8 +4093,8 @@ const double * t2kana::util::VariableXsEtrueBinEdges(t2kana::conv::SuperkSample_
   return t2kana::conv::kXsEtrueBinEdges[is][im];
 }
 //___________________________________________________________________________
-const int t2kana::util::NumVariableMCEtrueBins(t2kana::conv::SuperkSample_t s,
-					       t2kana::conv::SuperkMode_t m)
+int t2kana::util::NumVariableMCEtrueBins(t2kana::conv::SuperkSample_t s,
+                                         t2kana::conv::SuperkMode_t m)
 {
   int is = util::ArrIdx::Instance()->SuperkSampleIdx(s);
   if(is == -1)
@@ -4114,7 +4114,7 @@ const int t2kana::util::NumVariableMCEtrueBins(t2kana::conv::SuperkSample_t s,
 }
 //___________________________________________________________________________
 const double * t2kana::util::VariableMCEtrueBinEdges(t2kana::conv::SuperkSample_t s,
-						      t2kana::conv::SuperkMode_t m)
+                                                     t2kana::conv::SuperkMode_t m)
 {
   int is = util::ArrIdx::Instance()->SuperkSampleIdx(s);
   if(is == -1)
