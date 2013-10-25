@@ -48,7 +48,7 @@ modes7 = [7,8] #banff flux / banff xsec individually
 modes = modes1
 if opt.do_all: #combinations + everything
     modes = modes + modes2 + modes3 + modes4 + modes5 + modes6 + modes7
-elif opt.do_imp #combinations + splines + oscparams
+elif opt.do_imp: #combinations + splines + oscparams
     modes = modes + modes6 + [200,201,202,203,204,215]
     
 oscparams = [] #fill with oscillation parameters, in order mixing12, theta13, theta23, deltacp, dmsq12, dmsq23hypothesis
