@@ -72,8 +72,8 @@ def main():
 
 def normalisation_errors(column):
   
-  if "with_osc"  in column : osc_params = [0]*6    # No osc
-  elif "no_osc"  in column : osc_params = [-99]*6  # Global fit
+  if "no_osc"      in column : osc_params = [0]*6    # No osc
+  elif "with_osc"  in column : osc_params = [-99]*6  # Global fit
   else: raise T2KAnaError("Could not determine whether to use oscillations")
   
   if "prefit"    in column : config = prefit_config
@@ -97,8 +97,8 @@ def normalisation_errors(column):
   os.chdir("..")
   
 def other_errors(column):
-  if "with_osc"  in column : osc_params = [0]*6    # No osc
-  elif "no_osc"  in column : osc_params = [-99]*6  # Global fit
+  if "no_osc"  in column : osc_params = [0]*6    # No osc
+  elif "with_osc"  in column : osc_params = [-99]*6  # Global fit
   else: raise T2KAnaError("Could not determine whether to use oscillations")
   
   if "prefit"    in column : config = prefit_config
@@ -189,7 +189,7 @@ def format_to2sf_decimal(value):
   return "{0:f}".format(to2sf).rstrip("0").rstrip(".")
   
 # Quotes strings, turns other variables into strings
-# Used for preparing arguments to be usedfas ROOT macro calls
+# Used for preparing arguments to be used as ROOT macro calls
 def macro_prep(args):
   formatted_args = []
   for arg in args:
