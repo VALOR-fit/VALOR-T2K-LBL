@@ -10,8 +10,8 @@ void contour_plots_nfits(
 	   bool         plot_90 = true,      // plot 90% contours?
 	   bool         plot_bf = true,      // plot best-fit markers?
 	   bool         plot_in = false,     // plot input-point markers?
-	   double       mixing23_min = 0.9,  // edges of the canvas
-	   double       mixing23_max = 1.0,
+	   double       mixing23_min = 0.3,  // edges of the canvas
+	   double       mixing23_max = 0.7,
 	   double       dm32sq_min   = 0.002,
 	   double       dm32sq_max   = 0.003,
 	   const char * mixingparam  = "sinsq2theta", /* for the x-axis */
@@ -20,7 +20,8 @@ void contour_plots_nfits(
 	   bool         bf_in_leg = false,
 	   double       line_width = 2,
 	   bool         smooth = false,
-	   int          dmsq_mode = 0 /*For y-axis. 0: dm32sq, 1: dm31sq, 2: dmsq=dm32sq(NH)dm31sq(IH)*/
+	   int          dmsq_mode = 0, /*For y-axis. 0: dm32sq, 1: dm31sq, 2: dmsq=dm32sq(NH)dm31sq(IH)*/
+	   double       chisq_input = false
 )
 {
   using namespace std;
@@ -119,10 +120,13 @@ void contour_plots_nfits(
     }
 
     //set contours correctly, just in case
-    h68[ifit]->SetContour(1);
-    h68[ifit]->SetContourLevel(0,2.30);
-    h90[ifit]->SetContour(1);
-    h90[ifit]->SetContourLevel(0,4.61);
+    if(chisq_input) {
+      double chisq_min = h68[ifit]->GetMinimum();
+      h68[ifit]->SetContour(1);
+      h68[ifit]->SetContourLevel(0,2.30 + chisq_min);
+      h90[ifit]->SetContour(1);
+      h90[ifit]->SetContourLevel(0,4.61 + chisq_min);
+    }
 
     //swap '$' with ' ' in tag
     for (int i = 0; i < tag.length(); ++i) {
