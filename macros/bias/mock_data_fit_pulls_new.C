@@ -6,8 +6,10 @@
 //
 
 //#define FITPARMLIST 0 // nuosc3f_numudisapp_fix4+nuisance
-#define FITPARMLIST 1 // nuosc3f_numudisapp_nuis3fixdcp+nuisance
+//#define FITPARMLIST 1 // nuosc3f_numudisapp_nuis3fixdcp+nuisance
 //#define FITPARMLIST 2 // nuosc3f_numudisapp_nuis4+nuisance
+//#define FITPARMLIST -3 // only want to look at sk escale minos errors
+#define FITPARMLIST -2 // mix23 & dm32sq only
 
 //#define VERBOSE //print out the best fit and input of every single parameter in every single event
 //#define VERYVERBOSE //print out parameter name too
@@ -49,6 +51,7 @@ void mock_data_fit_pulls_new
   //gStyle->SetStatStyle(0);      // make stat boxes see through
   gStyle->SetStatBorderSize(0); //
   gStyle->SetTextFont(42);      // less bold
+  gStyle->SetFitFormat("20.6g");//controls format of the fit parameters in the stat box
 
   //
   // Parameters in the fit
@@ -59,6 +62,10 @@ void mock_data_fit_pulls_new
   const int nparams = 46;
 #elif FITPARMLIST == 2
   const int nparams = 47;
+#elif FITPARMLIST == -3
+  const int nparams = 1;
+#elif FITPARMLIST == -2
+  const int nparams = 2;
 #endif
 
   const int nosc     = 2; // nu of osc params in list below (osc params are plotted on separate canvas)
@@ -66,16 +73,19 @@ void mock_data_fit_pulls_new
   const int nsystrow = 4; // number of rows    on canvases showing residual/pulls for systematics
 
   PhysParamId_t params[nparams] = {
+#if FITPARMLIST != -3
      kPhypMixing23,
      kPhypDm23sq,  
+#endif
 #if FITPARMLIST >= 1
      kPhypMixing13,  
      kPhypMixing12,   
      kPhypDm12sq,
 #if FITPARMLIST == 2
      kPhypDeltaCP,
-#endif
-#endif
+#endif //2
+#endif //>=1
+#if FITPARMLIST >= 0
      kNuisBANFF00,
      kNuisBANFF01,
      kNuisBANFF02,
@@ -113,13 +123,18 @@ void mock_data_fit_pulls_new
      kNuisXSecNormNCoth,         
      kNuisXSecNormNuEToNuMu,     
      kNuisXSecNormAntiNuToNu,    
-     kNuisSuperkEnergyScale, 
+#endif //>= 0
+#if FITPARMLIST != -2
+     kNuisSuperkEnergyScale,
+#endif
+#if FITPARMLIST >= 0
      kNuisSKDetFSI000,
      kNuisSKDetFSI001,
      kNuisSKDetFSI002,
      kNuisSKDetFSI003,
      kNuisSKDetFSI004,
      kNuisSKDetFSI005
+#endif
   };
 
   //
@@ -166,16 +181,19 @@ void mock_data_fit_pulls_new
 
   double prefit_err_array[nparams] = 
   {
+#if FITPARMLIST != -3
      mix23_err,                    // kPhypMixing23
      dm32sq_err,                   // kPhypDm23sq
+#endif
 #if FITPARMLIST >= 1
      mix13_err,                    // kPhypMixing13
      mix12_err,                    // kPhypMixing12
      dm21sq_err,                   // kPhypDm12sq
 #if FITPARAMLIST == 2
      deltacp_err,                  // kPhypDeltaCP
-#endif
-#endif
+#endif //==2
+#endif //>=1
+#if FITPARMLIST >= 0
      TMath::Sqrt(banffcov( 0, 0)), // kNuisBANFF00
      TMath::Sqrt(banffcov( 1, 1)), // kNuisBANFF01
      TMath::Sqrt(banffcov( 2, 2)), // kNuisBANFF02
@@ -213,13 +231,18 @@ void mock_data_fit_pulls_new
      1,                            // kNuisXSecNormNCoth         
      1,                            // kNuisXSecNormNuEToNuMu     
      1,                            // kNuisXSecNormAntiNuToNu
+#endif //>=0
+#if FITPARMLIST != -2
      escale_err,                   // kNuisSuperkEnergyScale
+#endif
+#if FITPARMLIST >= 0
      TMath::Sqrt(skfsicov(0,0)),   // kNuisSKDetFSI000
      TMath::Sqrt(skfsicov(1,1)),   // kNuisSKDetFSI001
      TMath::Sqrt(skfsicov(2,2)),   // kNuisSKDetFSI002
      TMath::Sqrt(skfsicov(3,3)),   // kNuisSKDetFSI003
      TMath::Sqrt(skfsicov(4,4)),   // kNuisSKDetFSI004
      TMath::Sqrt(skfsicov(5,5))    // kNuisSKDetFSI005
+#endif
   };
 
 
@@ -239,8 +262,10 @@ void mock_data_fit_pulls_new
 
   double nominal_array[nparams] = 
   {
+#if FITPARMLIST != -3
      global_bestfit_mix23,     // kPhypMixing23
      kGlobFitDm23sq,           // kPhypDm23sq
+#endif
 #if FITPARMLIST >= 1
      global_bestfit_mix13,     // kPhypMixing13
      global_bestfit_mix12,     // kPhypMixing12
@@ -249,6 +274,7 @@ void mock_data_fit_pulls_new
      kGlobFitDeltaCP,          // kPhypDeltaCP
 #endif
 #endif
+#if FITPARMLIST >= 0
      TMath::Sqrt(banffbf[ 0]), // kNuisBANFF00
      TMath::Sqrt(banffbf[ 1]), // kNuisBANFF01
      TMath::Sqrt(banffbf[ 2]), // kNuisBANFF02
@@ -286,13 +312,18 @@ void mock_data_fit_pulls_new
      0,                        // kNuisXSecNormNCoth         
      0,                        // kNuisXSecNormNuEToNuMu     
      0,                        // kNuisXSecNormAntiNuToNu
+#endif //>= 0
+#if FITPARMLIST != -2
      0,                        // kNuisSuperkEnergyScale
+#endif
+#if FITPARMLIST >= 0
      1,                        // kNuisSKDetFSI000
      1,                        // kNuisSKDetFSI001
      1,                        // kNuisSKDetFSI002
      1,                        // kNuisSKDetFSI003
      1,                        // kNuisSKDetFSI004
      1                         // kNuisSKDetFSI005
+#endif
   };
 
   // Release memory
@@ -327,11 +358,18 @@ void mock_data_fit_pulls_new
   TH1D * h_err_migrad [nparams] = { 0 }; // migrad err distribution
   TH1D * h_err_hesse  [nparams] = { 0 }; // hesse  err distribution
   TH1D * h_err_minos  [nparams] = { 0 }; // minos  err distribution
+  TH1D * h_err_minos_plus   [nparams] = { 0 }; // minos  plus err distribution
+  TH1D * h_err_minos_minus  [nparams] = { 0 }; // minos  minus err distribution
+  TH2D * h_corr_inputdcp_residual[nparams] = {0}; //residual correlation with input dcp
+  TH2D * h_corr_inputdcp_bestfit [nparams] = {0}; //best fit correlation with input dcp
+  TH2D * h_corr_fitmix23_residual[nparams] = {0}; //residual correlation with fitted mix23
+  TH2D * h_corr_fitmix23_bestfit [nparams] = {0}; //best fit correlation with fitted mix23
   for(int ip = 0; ip < nparams; ip++) 
   {
      PhysParamId_t p = params[ip];
 
      string name  = util::AsStringCompact(p); 
+
      // The name might contain unsuitable chars for ROOT obj name, such as `|'.
      // Fiter those chars.
      string name2 = name;
@@ -360,6 +398,26 @@ void mock_data_fit_pulls_new
          Form("h_residuals_%s",name2.c_str()), 
          Form("Residuals for %s", util::AsStringCompact(p).c_str()), 
          nbins_pull, residual_lo, residual_hi);
+     h_corr_inputdcp_residual[ip] = new TH2D( 
+         Form("h_corr_inputdcp_residual_%s",name2.c_str()), 
+         Form("Correlation with input #delta_{CP} for %s residual", util::AsStringCompact(p).c_str()),
+	 1000,-5,+5,
+         nbins_pull, residual_lo, residual_hi);
+     h_corr_inputdcp_bestfit[ip] = new TH2D( 
+         Form("h_corr_inputdcp_bestfit_%s",name2.c_str()), 
+         Form("Correlation with input #delta_{CP} for %s best fit", util::AsStringCompact(p).c_str()),
+	 1000,-5,+5,
+         nbins_pull, nominal_array[ip] - (2* prefit_err_array[ip]), nominal_array[ip] + (2 * prefit_err_array[ip]));
+     h_corr_fitmix23_residual[ip] = new TH2D( 
+         Form("h_corr_fitmix23_residual_%s",name2.c_str()), 
+         Form("Correlation with fitted sin^2#theta_{23} for %s residual", util::AsStringCompact(p).c_str()),
+	 1000,0,1,
+         nbins_pull, residual_lo, residual_hi);
+     h_corr_fitmix23_bestfit[ip] = new TH2D( 
+         Form("h_corr_fitmix23_bestfit_%s",name2.c_str()), 
+         Form("Correlation with fitted sin^2#theta_{23} for %s best fit", util::AsStringCompact(p).c_str()),
+	 1000,0,1,
+         nbins_pull, nominal_array[ip] - (2* prefit_err_array[ip]), nominal_array[ip] + (2 * prefit_err_array[ip]));
      h_pull_1[ip] = new TH1D( 
          Form("h_pull_1_%s",name2.c_str()), 
          Form("Pull_1 for %s", util::AsStringCompact(p).c_str()), 
@@ -384,6 +442,14 @@ void mock_data_fit_pulls_new
          Form("h_err_minos_%s",name2.c_str()), 
          Form("Minos error for %s", util::AsStringCompact(p).c_str()), 
          nbins_err, 0., 2*prefit_err_array[ip]);
+     h_err_minos_plus[ip] = new TH1D( 
+         Form("h_err_minos_plus_%s",name2.c_str()), 
+         Form("Minos plus error for %s", util::AsStringCompact(p).c_str()), 
+         2*nbins_err, -2*prefit_err_array[ip], 2*prefit_err_array[ip]);
+     h_err_minos_minus[ip] = new TH1D( 
+         Form("h_err_minos_minus_%s",name2.c_str()), 
+         Form("Minos minus error for %s", util::AsStringCompact(p).c_str()), 
+         2*nbins_err, -2*prefit_err_array[ip], 2*prefit_err_array[ip]);
      h_bestfit   [ip]->GetXaxis()->SetTitle(util::AsStringPaperRooTex(p).c_str());
      h_residuals [ip]->GetXaxis()->SetTitle(util::AsStringPaperRooTex(p).c_str());
      h_pull_1    [ip]->GetXaxis()->SetTitle(util::AsStringPaperRooTex(p).c_str());
@@ -392,8 +458,9 @@ void mock_data_fit_pulls_new
      h_err_migrad[ip]->GetXaxis()->SetTitle(util::AsStringPaperRooTex(p).c_str());
      h_err_hesse [ip]->GetXaxis()->SetTitle(util::AsStringPaperRooTex(p).c_str());
      h_err_minos [ip]->GetXaxis()->SetTitle(util::AsStringPaperRooTex(p).c_str());
+     h_err_minos_plus  [ip]->GetXaxis()->SetTitle(util::AsStringPaperRooTex(p).c_str());
+     h_err_minos_minus [ip]->GetXaxis()->SetTitle(util::AsStringPaperRooTex(p).c_str());
   }//p
-
 
   //
   // Set up chain
@@ -422,7 +489,7 @@ void mock_data_fit_pulls_new
 
   for(int i = 0; i < nentries; i++) 
   {
-    if(i%1 == 0) { cout << "Getting entry... " << i << endl; }
+    if(i%100 == 0) { cout << "Getting entry... " << i << endl; }
     ch.GetEntry(i);
 
     // 
@@ -437,7 +504,7 @@ void mock_data_fit_pulls_new
       h_migraderrstat -> Fill(migraderrstat);
       h_hesseerrstat  -> Fill(hesseerrstat);
       if (migradminstat == 4) continue; // migrad didn't converge
-      if (migraderrstat != 3) continue; // error matrix inaccurate
+      if (migraderrstat != 3 && err_mode != 3) continue; // error matrix inaccurate
     }
     // MINUIT2
     else 
@@ -485,8 +552,15 @@ void mock_data_fit_pulls_new
        double err_prefit = prefit_err_array[ip];
        double err_migrad = fparm->MigradError(p);
        double err_hesse  = fparm->HesseError(p);
-     //double err_minos  = TMath::Max(fparm->PlusError(p), fparm->MinusError(p));
-       double err_minos  = 0.5*(fparm->PlusError(p) + fparm->MinusError(p));
+       double err_minos_plus  = fparm->PlusError(p);
+       double err_minos_minus = fparm->MinusError(p);
+       double err_minos  = 0;
+       // err_minos  = TMath::Max(err_minos_plus, err_minos_plus);
+       // err_minos  = 0.5*(err_minos_plus + err_minos_minus);
+       if((bestfit - truevalue) < 0)
+	 err_minos = err_minos_plus;
+       else
+	 err_minos = TMath::Abs(err_minos_minus);
        double err_fit    = 0;
        if      (err_mode == 1) err_fit = err_migrad;
        else if (err_mode == 2) err_fit = err_hesse;
@@ -496,7 +570,7 @@ void mock_data_fit_pulls_new
          exit(1);
        }
 
-       if(err_fit <= 0) {
+       if(err_fit <= 0 && err_mode != 3) {
          cerr << "** err_fit[p = " << util::AsStringCompact(p) 
               << "; err_mode = " << err_mode << "] = " << err_fit << endl;
          exit(1);
@@ -508,6 +582,10 @@ void mock_data_fit_pulls_new
        double pull_3     = (bestfit-nominal)/err_fit;
 
        h_bestfit    [ip] -> Fill(bestfit);
+       h_corr_inputdcp_residual[ip] -> Fill(iparm->Value(conv::kPhypDeltaCP),         residuals);
+       h_corr_inputdcp_bestfit [ip] -> Fill(iparm->Value(conv::kPhypDeltaCP),         bestfit);
+       h_corr_fitmix23_residual[ip] -> Fill(fparm->BestFitValue(conv::kPhypMixing23), residuals);
+       h_corr_fitmix23_bestfit [ip] -> Fill(fparm->BestFitValue(conv::kPhypMixing23), bestfit);
        h_residuals  [ip] -> Fill(residuals);
        h_pull_1     [ip] -> Fill(pull_1);
        h_pull_2     [ip] -> Fill(pull_2);
@@ -515,6 +593,10 @@ void mock_data_fit_pulls_new
        h_err_migrad [ip] -> Fill(err_migrad);
        h_err_hesse  [ip] -> Fill(err_hesse);
        h_err_minos  [ip] -> Fill(err_minos);
+       h_err_minos_plus   [ip] -> Fill(err_minos_plus);
+       h_err_minos_minus  [ip] -> Fill(err_minos_minus);
+
+
     }//p
 
   }//end loop over chain
@@ -540,6 +622,7 @@ void mock_data_fit_pulls_new
     }
     else {
       h_pull_1[ip]->Draw();
+      cout << util::AsString(p) << endl;
       h_pull_1[ip]->Fit("gaus");
       fit = h_pull_1[ip]->GetFunction("gaus");
       if(fit) {
@@ -672,6 +755,13 @@ void mock_data_fit_pulls_new
   }//p
   // >> Plot pulls, same logic as before
 
+#if FITPARMLIST == -3
+  c = new TCanvas();
+  h_pull_1[0]->SetLineColor(kBlack);
+  h_pull_1[0]->Draw();
+  save_canvas(c,"pull_1_escale",tag);
+#endif
+
   //plot summary at the end, because need to turn stat box off & also increase margin
   c = new TCanvas(); c->SetBottomMargin(0.35);
   gStyle->SetOptStat(0);
@@ -691,17 +781,23 @@ void mock_data_fit_pulls_new
   h_nsk_nom       -> Write();
   h_nsk_bf        -> Write();
   h_summary_nuis  -> Write();
- for(int ip = 0; ip < nparams; ip++) 
-  {
-     h_bestfit    [ip] -> Write();
-     h_residuals  [ip] -> Write();
-     h_pull_1     [ip] -> Write();
-     h_pull_2     [ip] -> Write();
-     h_pull_3     [ip] -> Write();
-     h_err_migrad [ip] -> Write();
-     h_err_hesse  [ip] -> Write();
-     h_err_minos  [ip] -> Write();
-  }
+  for(int ip = 0; ip < nparams; ip++) 
+    {
+      h_bestfit    [ip] -> Write();
+      h_corr_inputdcp_residual[ip] -> Write();
+      h_corr_inputdcp_bestfit [ip] -> Write();
+      h_corr_fitmix23_residual[ip] -> Write();
+      h_corr_fitmix23_bestfit [ip] -> Write();
+      h_residuals  [ip] -> Write();
+      h_pull_1     [ip] -> Write();
+      h_pull_2     [ip] -> Write();
+      h_pull_3     [ip] -> Write();
+      h_err_migrad [ip] -> Write();
+      h_err_hesse  [ip] -> Write();
+      h_err_minos  [ip] -> Write();
+      h_err_minos_plus   [ip] -> Write();
+      h_err_minos_minus  [ip] -> Write();
+    }//ip
   foutput.Close();
 }
 
