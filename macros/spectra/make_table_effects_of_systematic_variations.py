@@ -4,7 +4,6 @@
 # Generates only body of table
 # Adding hlines is left as an exercise for the user
 # Takes a while to run (maybe 12 hours)
-# Still in testing
 
 #Steve Dennis, October 2013
 
@@ -62,14 +61,17 @@ util = ROOT.t2kana.util
 Opt = ROOT.t2kana.Opt.Instance()
 Rnd = ROOT.t2kana.Rnd.Instance()
 
+Opt.gOscMixingParamChoice = conv.kNuMixSinsqTheta
 
 def main():
   for column in columns:
     normalisation_errors(column)
-    #other_errors(column)
+    other_errors(column)
     
   make_table()
+  print "Done!"
 
+# Run the macro get normalisation errors
 def normalisation_errors(column):
   
   if "no_osc"      in column : osc_params = [0]*6    # No osc
@@ -95,7 +97,8 @@ def normalisation_errors(column):
   result = subprocess.call( fullcall , shell=True,)
 
   os.chdir("..")
-  
+
+# Run the macro to get osc/nuxsec errors
 def other_errors(column):
   if "no_osc"  in column : osc_params = [0]*6    # No osc
   elif "with_osc"  in column : osc_params = [-99]*6  # Global fit
@@ -123,7 +126,8 @@ def other_errors(column):
     result = subprocess.call( fullcall , shell=True,)
 
   os.chdir("..")
-    
+
+# Read the output of the other two macros and make a .tex file
 def make_table():
   col_dicts = []
   for column in columns:
@@ -146,30 +150,31 @@ def make_table():
     
     f.close()
     
-    #~ # Read others errors
-    #~ thrown = glob.glob("syst_"+column+"/*.txt")
-    #~ if not len(thrown)==1:
-      #~ raise T2KAnaError("Found "+`len(thrown)`+ "txt files for "+column+", expected 1")
-    #~ 
-    #~ # dict with key=name,mode by number in test_sk_ereo
-    #~ mode_dict = dict( map(reversed,other_modes ) )
-        #~ 
-    #~ f = open(thrown[0])
-    #~ for l in f:
-      #~ name,junk,val = l.split("&")
-      #~ name = name.strip()
-      #~ name = name.replace("prefit","") # the prefit params have 'prefit' appended, which we don't need
-      #~ val = val.strip().partition(" ")[0]
-      #~ 
-      #~ physparm_id = util.PhysParamIdFromString(name)
-      #~ key = util.AsStringPaperTex(physparm_id)
-      #~ if "no_osc" in column and not util.IsSystematic(physparm_id):
-        #~ val = "\mdash"
-      #~ else:
-        #~ val = format_to2sf_decimal(val)
-      #~ rows.append(key)
-      #~ d[key] = val
-    #~ f.close()
+    # Read others errors
+    thrown = glob.glob("syst_"+column+"/*.txt")
+    if not len(thrown)==1:
+      raise T2KAnaError("Found "+`len(thrown)`+ "txt files for "+column+", expected 1")
+    
+    # dict with key=name,mode by number in test_sk_ereo
+    mode_dict = dict( map(reversed,other_modes ) )
+        
+    f = open(thrown[0])
+    for l in f:
+      name,junk,val = l.split("&")
+      name = name.strip()
+      name = name.replace("prefit","") # the prefit params have 'prefit' appended, which we don't need
+      val = val.strip().partition(" ")[0]
+      
+      physparm_id = util.PhysParamIdFromString(name)
+      key = util.AsStringPaperTex(physparm_id)
+      if "no_osc" in column and not util.IsSystematic(physparm_id):
+        val = "0"
+      else:
+        val = float(val)*100 # The values from that macro are percentages
+        val = format_to2sf_decimal(val)
+      #rows.append(key)
+      d[key] = val
+    f.close()
   
   # Actually start writing it out
   f = open("efficiency_systematic_variations.tex","w")
@@ -182,11 +187,13 @@ def make_table():
   
   f.close()
 
-# This is ugly
+# Rounds to 2sf, and then writes out as a decimal with up to 5dp# Still in testing
+# This is ugly.
 def format_to2sf_decimal(value):
   to2sf = float("{0:.1e}".format(float(value)))
-  if abs(to2sf) < 1-6: to2sf = 0
-  return "{0:f}".format(to2sf).rstrip("0").rstrip(".")
+  form = "{0:.5f}".format(to2sf).rstrip("0").rstrip(".")
+  if "." not in form and form!="0": form+=".0"
+  return form
   
 # Quotes strings, turns other variables into strings
 # Used for preparing arguments to be used as ROOT macro calls
