@@ -13,16 +13,15 @@
 void min_bin(TH2D * h);
 
 void dcp_fit_correlation(
-			 const int    npibins       = 100,
+			 const int    npibins       = 50,
 			 //const char * filename_tree = "run1-4_nuis4_sintheta_normal/combination/final.root",
 			 const char * filename_tree = "run1-4_nuis4_sintheta_inverted31/combination/final.root",
-			 const char * filename_hist = "final.root",
 			 const char * filename_out  = "dcp_fit_correlation_temp.root",
 			 int verbose                = 0,
-			 bool scan_dcp              = false,
-			 bool scan_mix13            = false,
-			 bool scan_mix12            = false,
-			 bool scan_dm21sq           = false
+			 bool scan_dcp              = true,
+			 bool scan_mix13            = true,
+			 bool scan_mix12            = true,
+			 bool scan_dm21sq           = true
 )
 {
   using namespace t2kana;
@@ -43,16 +42,6 @@ void dcp_fit_correlation(
   fitnt->SetBranchAddress("iexpt",   &iexp);
 
   TCanvas * c = new TCanvas("c","",20,20,500,500);
-
-  /*
-  TFile f(filename_hist,"READ");
-  TH2D * chisq_surface = 0;
-  f.GetObject("chisq_surface",chisq_surface);
-  TH2D * hchisq  = new TH2D(*chisq_surface);
-  TH2I * nevents = new TH2I("nevents","nevents",
-			    chisq_surface->GetNbinsX(), chisq_surface->GetXaxis()->GetXbins()->GetArray(),
-			    chisq_surface->GetNbinsY(), chisq_surface->GetYaxis()->GetXbins()->GetArray());
-  */
 
   const char * config_file             = "analysis_configuration.xml";
   TString config = Form("%s/config/%s", gSystem->Getenv("T2KOSCANA"), config_file);
@@ -81,11 +70,14 @@ void dcp_fit_correlation(
   }
   const int nbins1 = nbinsdm + 1;
   const int nbins2 = nbinsmix + 1;
-  TH1D * hdcp[nbins1][nbins2] = {0};
-  TH2D * hdcpbf = new TH2D("hdcpbf","",nbinsmix,mixmin,mixmax,nbinsdm,dmmin,dmmax);
-  TH2D * hmix13bf = new TH2D("hmix13bf","",nbinsmix,mixmin,mixmax,nbinsdm,dmmin,dmmax);
-  TH2D * hmix12bf = new TH2D("hmix13bf","",nbinsmix,mixmin,mixmax,nbinsdm,dmmin,dmmax);
-  TH2D * hdm21sqbf = new TH2D("hmix13bf","",nbinsmix,mixmin,mixmax,nbinsdm,dmmin,dmmax);
+  TH1D * hdcp   [nbins1][nbins2] = {0};
+  TH1D * hmix13 [nbins1][nbins2] = {0};
+  TH1D * hmix12 [nbins1][nbins2] = {0};
+  TH1D * hdm21sq[nbins1][nbins2] = {0};
+  TH2D * hdcpbf    = new TH2D("hdcpbf",   "",nbinsmix,mixmin,mixmax,nbinsdm,dmmin,dmmax);
+  TH2D * hmix13bf  = new TH2D("hmix13bf", "",nbinsmix,mixmin,mixmax,nbinsdm,dmmin,dmmax);
+  TH2D * hmix12bf  = new TH2D("hmix12bf", "",nbinsmix,mixmin,mixmax,nbinsdm,dmmin,dmmax);
+  TH2D * hdm21sqbf = new TH2D("hdm21sqbf","",nbinsmix,mixmin,mixmax,nbinsdm,dmmin,dmmax);
 
   if(scan_dcp)
     c->SaveAs("dcp_profiles.pdf[");
@@ -113,15 +105,15 @@ void dcp_fit_correlation(
     if(!hmix13[idm32sq][imix23] && scan_mix13)
       hmix13[idm32sq][imix23] = new TH1D("",
 					 Form("mix %f, dm %f;sin^{2}#theta_{13}",fparm->BestFitValue(conv::kPhypMixing23),fparm->BestFitValue(conv::kPhypDm23sq)),
-					 npibins,kGlobFitSinsqTheta13*(1-(kGlobFitErrSinsqTheta13*7)),kGlobFitSinsqTheta13*(1+(kGlobFitErrSinsqTheta13*7))); 
+					 npibins,conv::kGlobFitSinsqTheta13*(1-(conv::kGlobFitErrSinsqTheta13*7)),conv::kGlobFitSinsqTheta13*(1+(conv::kGlobFitErrSinsqTheta13*7))); 
     if(!hmix12[idm32sq][imix23] && scan_mix12)
       hmix12[idm32sq][imix23] = new TH1D("",
 				       Form("mix %f, dm %f;sin^{2}#theta_{12}",fparm->BestFitValue(conv::kPhypMixing23),fparm->BestFitValue(conv::kPhypDm23sq)),
-				       npibins,kGlobFitSinsqTheta12*(1-(kGlobFitErrSinsqTheta12*7)),kGlobFitSinsqTheta12*(1+(kGlobFitErrSinsqTheta12*7))); 
+				       npibins,conv::kGlobFitSinsqTheta12*(1-(conv::kGlobFitErrSinsqTheta12*7)),conv::kGlobFitSinsqTheta12*(1+(conv::kGlobFitErrSinsqTheta12*7))); 
     if(!hdm21sq[idm32sq][imix23] && scan_dm21sq)
       hdm21sq[idm32sq][imix23] = new TH1D("",
 				       Form("mix %f, dm %f;#Deltam^{2}_{21}",fparm->BestFitValue(conv::kPhypMixing23),fparm->BestFitValue(conv::kPhypDm23sq)),
-				       npibins,kGlobFitDm23sq*(1-(kGlobFitErrDm23sq*7)),kGlobFitDm23sq*(1+(kGlobFitErrDm23sq*7))); 
+				       npibins,conv::kGlobFitDm12sq*(1-(conv::kGlobFitErrDm12sq*7)),conv::kGlobFitDm23sq*(1+(conv::kGlobFitErrDm12sq*7))); 
     if(verbose > 0 || (iev % 10000 == 0)) {
       cout << "*******************************************************" << endl;
       cout << "Entry: # " << iev << endl;
@@ -138,7 +130,7 @@ void dcp_fit_correlation(
     //if(TMath::Abs(fparm->BestFitValue(conv::kPhypDeltaCP)) > conv::kpi)
     //hdcpbf->SetBinContent(imix23,idm32sq,1);
     hdcpbf->SetBinContent(imix23,idm32sq,fparm->BestFitValue(conv::kPhypDeltaCP));
-    hmix13bf->SetBinContent(imix23,idm32sq,fparm->BestFitValue(conv::kPhypMixin13));
+    hmix13bf->SetBinContent(imix23,idm32sq,fparm->BestFitValue(conv::kPhypMixing13));
     hmix12bf->SetBinContent(imix23,idm32sq,fparm->BestFitValue(conv::kPhypMixing12));
     hdm21sqbf->SetBinContent(imix23,idm32sq,fparm->BestFitValue(conv::kPhypDm12sq));
 
@@ -158,16 +150,19 @@ void dcp_fit_correlation(
 
       if(scan_dcp) {
 	for(int ix = 1; ix <= hdcp[idm32sq][imix23]->GetNbinsX(); ix++) {
-	  double deltacp = hdcp[idm32sq][imix23]->GetBinCenter(ix);
-	  fparm->SetInitValue(conv::kPhypDeltaCP, deltacp);
+	  double dcp = hdcp[idm32sq][imix23]->GetBinCenter(ix);
+	  fparm->SetInitValue(conv::kPhypDeltaCP, dcp);
 	  skexp->Generate(*fparm);      
 	  double chisq = fit_inputs->Chisquare();//("poisson",conv::kSKsFCFV1RingMuLike);
-	  hdcp[idm32sq][imix23]->Fill(deltacp, chisq);
+	  hdcp[idm32sq][imix23]->Fill(dcp, chisq);
 	  cout << chisq << "\t";
 	}
 	cout << endl;
 	//save & draw
-	hdcp[idm32sq][imix23]->Write(Form("mix_%d_dm_%d",imix23,idm32sq));
+	hmix13[idm32sq][imix23]->GetYaxis()->SetTitle("#chi^{2}");
+#line 0
+	hmix13[idm32sq][imix23]->GetXaxis()->SetTitle(util::AsString(conv::kPhypDeltaCP).c_str());
+	hdcp[idm32sq][imix23]->Write(Form("dcp_mix_%d_dm_%d",imix23,idm32sq));
 	hdcp[idm32sq][imix23]->Draw();
 	TLegend * l = new TLegend(0,0,0.3,0.1);
 	l->AddEntry(hdcp[idm32sq][imix23], hdcp[idm32sq][imix23]->GetTitle(), "l");
@@ -175,11 +170,71 @@ void dcp_fit_correlation(
 	c->SaveAs("dcp_profiles.pdf");
       }//scan_dcp
 
+      fparm->CopyBestFitToCurrValues();
+      if(scan_mix13) {
+	for(int ix = 1; ix <= hmix13[idm32sq][imix23]->GetNbinsX(); ix++) {
+	  double mix13 = hmix13[idm32sq][imix23]->GetBinCenter(ix);
+	  fparm->SetInitValue(conv::kPhypMixing13, mix13);
+	  skexp->Generate(*fparm);      
+	  double chisq = fit_inputs->Chisquare();//("poisson",conv::kSKsFCFV1RingMuLike);
+	  hmix13[idm32sq][imix23]->Fill(mix13, chisq);
+	  cout << chisq << "\t";
+	}
+	cout << endl;
+	//save & draw
+	hmix13[idm32sq][imix23]->GetYaxis()->SetTitle("#chi^{2}");
+	hmix13[idm32sq][imix23]->GetXaxis()->SetTitle(util::AsString(conv::kPhypMixing13).c_str());
+	hmix13[idm32sq][imix23]->Write(Form("mix13_mix_%d_dm_%d",imix23,idm32sq));
+	hmix13[idm32sq][imix23]->Draw();
+	TLegend * l = new TLegend(0,0,0.3,0.1);
+	l->AddEntry(hmix13[idm32sq][imix23], hmix13[idm32sq][imix23]->GetTitle(), "l");
+	l->Draw();
+	c->SaveAs("mix13_profiles.pdf");
+      }//scan_mix13
 
-      ///need to copy above & remember to reset!
+      fparm->CopyBestFitToCurrValues();
+      if(scan_mix12) {
+	for(int ix = 1; ix <= hmix12[idm32sq][imix23]->GetNbinsX(); ix++) {
+	  double mix12 = hmix12[idm32sq][imix23]->GetBinCenter(ix);
+	  fparm->SetInitValue(conv::kPhypMixing12, mix12);
+	  skexp->Generate(*fparm);      
+	  double chisq = fit_inputs->Chisquare();//("poisson",conv::kSKsFCFV1RingMuLike);
+	  hmix12[idm32sq][imix23]->Fill(mix12, chisq);
+	  cout << chisq << "\t";
+	}
+	cout << endl;
+	//save & draw
+	hmix12[idm32sq][imix23]->GetYaxis()->SetTitle("#chi^{2}");
+	hmix12[idm32sq][imix23]->GetXaxis()->SetTitle(util::AsString(conv::kPhypMixing12).c_str());
+	hmix12[idm32sq][imix23]->Write(Form("mix12_mix_%d_dm_%d",imix23,idm32sq));
+	hmix12[idm32sq][imix23]->Draw();
+	TLegend * l = new TLegend(0,0,0.3,0.1);
+	l->AddEntry(hmix12[idm32sq][imix23], hmix12[idm32sq][imix23]->GetTitle(), "l");
+	l->Draw();
+	c->SaveAs("mix12_profiles.pdf");
+      }//scan_mix12
 
-
-
+      fparm->CopyBestFitToCurrValues();
+      if(scan_dm21sq) {
+	for(int ix = 1; ix <= hdm21sq[idm32sq][imix23]->GetNbinsX(); ix++) {
+	  double dm21sq = hdm21sq[idm32sq][imix23]->GetBinCenter(ix);
+	  fparm->SetInitValue(conv::kPhypDm12sq, dm21sq);
+	  skexp->Generate(*fparm);      
+	  double chisq = fit_inputs->Chisquare();//("poisson",conv::kSKsFCFV1RingMuLike);
+	  hdm21sq[idm32sq][imix23]->Fill(dm21sq, chisq);
+	  cout << chisq << "\t";
+	}
+	cout << endl;
+	//save & draw
+	hdm21sq[idm32sq][imix23]->GetYaxis()->SetTitle("#chi^{2}");
+	hdm21sq[idm32sq][imix23]->GetXaxis()->SetTitle(util::AsString(conv::kPhypDm12sq).c_str());
+	hdm21sq[idm32sq][imix23]->Write(Form("dm21sq_mix_%d_dm_%d",imix23,idm32sq));
+	hdm21sq[idm32sq][imix23]->Draw();
+	TLegend * l = new TLegend(0,0,0.3,0.1);
+	l->AddEntry(hdm21sq[idm32sq][imix23], hdm21sq[idm32sq][imix23]->GetTitle(), "l");
+	l->Draw();
+	c->SaveAs("dm21sq_profiles.pdf");
+      }//scan_dm21sq
 
       delete fit_inputs;
     }//scan_dcp
