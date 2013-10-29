@@ -85,15 +85,19 @@ void NuOsc3Flavour::SetOscParameters(
   dmsq12 = dmsq12_in;
   dmsq23 = dmsq23_in;
 
+  if(dmsq12 < 5.0e-6)
+    cerr<<"The input value of dm21sq is restricted to the range 5.0E-6 - 5.0E-3 eV^2/c^4, changing it to 5.0E-6 eV^2/c^4"<<endl;
+  if(dmsq12 > 5.0e-3)
+    cerr<<"The input value of dm21sq is restricted to the range 5.0E-6 - 5.0E-3 eV^2/c^4, changing it to 5.0E-3 eV^2/c^4"<<endl;
+  if(dmsq23 < 2.0e-4)
+    cerr<<"The input value of |dm32sq| is restricted to the range 2.0E-4 - 2.0E-2 eV^2/c^4, changing it to 2.0E-4 eV^2/c^4"<<endl;
+  if(dmsq23 > 2.0e-2)
+    cerr<<"The input value of |dm32sq| is restricted to the range 2.0E-4 - 2.0E-2 eV^2/c^4, changing it to 2.0E-2 eV^2/c^4"<<endl;
+
   dmsq12 = TMath::Min(dmsq12, 5.0e-3);
   dmsq12 = TMath::Max(dmsq12, 5.0e-6);
   dmsq23 = TMath::Min(dmsq23, 2.0e-2);
   dmsq23 = TMath::Max(dmsq23, 2.0e-4);
-
-  if(dmsq12 > 5.0e-3 || dmsq12 < 5.0e-6)
-    cerr<<"The input value of dm21sq is restricted to the range 5.0E-6 - 5.0E-3 eV^2/c^4"<<endl;
-  if(dmsq23 > 2.0e-2 || dmsq23 < 2.0e-4)
-    cerr<<"The input value of |dm32sq| is restricted to the range 2.0E-4 - 2.0E-2 eV^2/c^4"<<endl;
 
   // Note: The input value of dmsq23 is the absolute one. The sign of dmsq23 depends on 
   // the mass hierarchy. In the normal mass hierarchy, dmsq23 is positive. In the inverted
@@ -201,15 +205,19 @@ void NuOsc3Flavour::SetOscParametersSinSqTAll(
   dmsq12 = dmsq12_in;
   dmsq23 = dmsq23_in;
 
+  if(dmsq12 < 5.0e-6)
+    cerr<<"The input value of dm21sq is restricted to the range 5.0E-6 - 5.0E-3 eV^2/c^4, changing it to 5.0E-6 eV^2/c^4"<<endl;
+  if(dmsq12 > 5.0e-3)
+    cerr<<"The input value of dm21sq is restricted to the range 5.0E-6 - 5.0E-3 eV^2/c^4, changing it to 5.0E-3 eV^2/c^4"<<endl;
+  if(dmsq23 < 2.0e-4)
+    cerr<<"The input value of |dm32sq| is restricted to the range 2.0E-4 - 2.0E-2 eV^2/c^4, changing it to 2.0E-4 eV^2/c^4"<<endl;
+  if(dmsq23 > 2.0e-2)
+    cerr<<"The input value of |dm32sq| is restricted to the range 2.0E-4 - 2.0E-2 eV^2/c^4, changing it to 2.0E-2 eV^2/c^4"<<endl;
+
   dmsq12 = TMath::Min(dmsq12, 5.0e-3);
   dmsq12 = TMath::Max(dmsq12, 5.0e-6);
   dmsq23 = TMath::Min(dmsq23, 2.0e-2);
   dmsq23 = TMath::Max(dmsq23, 2.0e-4);
-
-  if(dmsq12 > 5.0e-3 || dmsq12 < 5.0e-6)
-    cerr<<"The input value of dm21sq is restricted to the range 5.0E-6 - 5.0E-3 eV^2/c^4"<<endl;
-  if(dmsq23 > 2.0e-2 || dmsq23 < 2.0e-4)
-    cerr<<"The input value of |dm32sq| is restricted to the range 2.0E-4 - 2.0E-2 eV^2/c^4"<<endl;
 
   // Note: The input value of dmsq23 is the absolute one. The sign of dmsq23 depends on                                                                                                                 
   // the mass hierarchy. In the normal mass hierarchy, dmsq23 is positive. In the inverted                                                                                                              
@@ -311,15 +319,19 @@ void NuOsc3Flavour::SetOscParametersSSq2TDmAtmSol(
   dmsq12 = dmsq12_in;
   dmsqAtm = dmsqAtm_in;
 
+  if(dmsq12 < 5.0e-6)
+    cerr<<"The input value of dm21sq is restricted to the range 5.0E-6 - 5.0E-3 eV^2/c^4, changing it to 5.0E-6 eV^2/c^4"<<endl;
+  if(dmsq12 > 5.0e-3)
+    cerr<<"The input value of dm21sq is restricted to the range 5.0E-6 - 5.0E-3 eV^2/c^4, changing it to 5.0E-3 eV^2/c^4"<<endl;
+  if(dmsqAtm < 2.0e-4)
+    cerr<<"The input value of the Fogli-Lisi |dmsq| is restricted to the range 2.0E-4 - 2.0E-2 eV^2/c^4, changing it to 2.0E-4 eV^2/c^4"<<endl;
+  if(dmsqAtm > 2.0e-2)
+    cerr<<"The input value of the Fogli-Lisi |dmsq| is restricted to the range 2.0E-4 - 2.0E-2 eV^2/c^4, changing it to 2.0E-2 eV^2/c^4"<<endl;
+
   dmsq12 = TMath::Min(dmsq12, 5.0e-3);
   dmsq12 = TMath::Max(dmsq12, 5.0e-6);
   dmsqAtm = TMath::Min(dmsqAtm, 2.0e-2);
   dmsqAtm = TMath::Max(dmsqAtm, 2.0e-4);
-
-  if(dmsq12 > 5.0e-3 || dmsq12 < 5.0e-6)
-    cerr<<"The input value of dm21sq is restricted to the range 5.0E-6 - 5.0E-3 eV^2/c^4"<<endl;
-  if(dmsqAtm > 2.0e-2 || dmsqAtm < 2.0e-4)
-    cerr<<"The input value of the Fogli-Lisi |dmsq| is restricted to the range 2.0E-4 - 2.0E-2 eV^2/c^4"<<endl;
 
   // Note: The input value of dmsqAtm is the absolute one. The sign of dmsqAtm depends on                                                                                                                
   // the mass hierarchy. In the normal mass hierarchy, dmsqAtm is positive. In the inverted                                                                                                              
@@ -425,15 +437,19 @@ void NuOsc3Flavour::SetOscParametersSSq2TDmAtmSol(
   dmsq12 = dmsq12_in;
   dmsqAtm = dmsqAtm_in;
 
+  if(dmsq12 < 5.0e-6)
+    cerr<<"The input value of dm21sq is restricted to the range 5.0E-6 - 5.0E-3 eV^2/c^4, changing it to 5.0E-6 eV^2/c^4"<<endl;
+  if(dmsq12 > 5.0e-3)
+    cerr<<"The input value of dm21sq is restricted to the range 5.0E-6 - 5.0E-3 eV^2/c^4, changing it to 5.0E-3 eV^2/c^4"<<endl;
+  if(dmsqAtm < 2.0e-4)
+    cerr<<"The input value of the Fogli-Lisi |dmsq| is restricted to the range 2.0E-4 - 2.0E-2 eV^2/c^4, changing it to 2.0E-4 eV^2/c^4"<<endl;
+  if(dmsqAtm > 2.0e-2)
+    cerr<<"The input value of the Fogli-Lisi |dmsq| is restricted to the range 2.0E-4 - 2.0E-2 eV^2/c^4, changing it to 2.0E-2 eV^2/c^4"<<endl;
+
   dmsq12 = TMath::Min(dmsq12, 5.0e-3);
   dmsq12 = TMath::Max(dmsq12, 5.0e-6);
   dmsqAtm = TMath::Min(dmsqAtm, 2.0e-2);
   dmsqAtm = TMath::Max(dmsqAtm, 2.0e-4);
-
-  if(dmsq12 > 5.0e-3 || dmsq12 < 5.0e-6)
-    cerr<<"The input value of dm21sq is restricted to the range 5.0E-6 - 5.0E-3 eV^2/c^4"<<endl;
-  if(dmsqAtm > 2.0e-2 || dmsqAtm < 2.0e-4)
-    cerr<<"The input value of the Fogli-Lisi |dmsq| is restricted to the range 2.0E-4 - 2.0E-2 eV^2/c^4"<<endl;
 
   // Note: The input value of dmsqAtm is the absolute one. The sign of dmsqAtm depends on                                                                                     
   // the mass hierarchy. In the normal mass hierarchy, dmsqAtm is positive. In the inverted                                                                                     
@@ -535,6 +551,15 @@ void NuOsc3Flavour::SetOscParametersSSq2TDmsq13(
 {
   dmsq12 = dmsq12_in;
   dmsq13 = dmsq13_in;
+
+  if(dmsq12 < 5.0e-6)
+    cerr<<"The input value of dm21sq is restricted to the range 5.0E-6 - 5.0E-3 eV^2/c^4, changing it to 5.0E-6 eV^2/c^4"<<endl;
+  if(dmsq12 > 5.0e-3)
+    cerr<<"The input value of dm21sq is restricted to the range 5.0E-6 - 5.0E-3 eV^2/c^4, changing it to 5.0E-3 eV^2/c^4"<<endl;
+  if(dmsq13 < 2.0e-4)
+    cerr<<"The input value of |dm31sq| is restricted to the range 2.0E-4 - 2.0E-2 eV^2/c^4, changing it to 2.0E-4 eV^2/c^4"<<endl;
+  if(dmsq13 > 2.0e-2)
+    cerr<<"The input value of |dm31sq| is restricted to the range 2.0E-4 - 2.0E-2 eV^2/c^4, changing it to 2.0E-2 eV^2/c^4"<<endl;
 
   dmsq12 = TMath::Min(dmsq12, 5.0e-3);
   dmsq12 = TMath::Max(dmsq12, 5.0e-6);
@@ -650,15 +675,19 @@ void NuOsc3Flavour::SetOscParametersDmsq13(
   dmsq12 = dmsq12_in;
   dmsq13 = dmsq13_in;
 
+  if(dmsq12 < 5.0e-6)
+    cerr<<"The input value of dm21sq is restricted to the range 5.0E-6 - 5.0E-3 eV^2/c^4, changing it to 5.0E-6 eV^2/c^4"<<endl;
+  if(dmsq12 > 5.0e-3)
+    cerr<<"The input value of dm21sq is restricted to the range 5.0E-6 - 5.0E-3 eV^2/c^4, changing it to 5.0E-3 eV^2/c^4"<<endl;
+  if(dmsq13 < 2.0e-4)
+    cerr<<"The input value of |dm31sq| is restricted to the range 2.0E-4 - 2.0E-2 eV^2/c^4, changing it to 2.0E-4 eV^2/c^4"<<endl;
+  if(dmsq13 > 2.0e-2)
+    cerr<<"The input value of |dm31sq| is restricted to the range 2.0E-4 - 2.0E-2 eV^2/c^4, changing it to 2.0E-2 eV^2/c^4"<<endl;
+
   dmsq12 = TMath::Min(dmsq12, 5.0e-3);
   dmsq12 = TMath::Max(dmsq12, 5.0e-6);
   dmsq13 = TMath::Min(dmsq13, 2.0e-2);
   dmsq13 = TMath::Max(dmsq13, 2.0e-4);
-
-  if(dmsq12 > 5.0e-3 || dmsq12 < 5.0e-6)
-    cerr<<"The input value of dm21sq is restricted to the range 5.0E-6 - 5.0E-3 eV^2/c^4"<<endl;
-  if(dmsq13 > 2.0e-2 || dmsq13 < 2.0e-4)
-    cerr<<"The input value of |dm31sq| is restricted to the range 2.0E-4 - 2.0E-2 eV^2/c^4"<<endl;
 
   // Note: The input value of dmsq13 is the absolute one. The sign of dmsq13 depends on                                                                                                             
   // the mass hierarchy. In the normal mass hierarchy, dmsq13 is positive. In the inverted                                                                                                          
