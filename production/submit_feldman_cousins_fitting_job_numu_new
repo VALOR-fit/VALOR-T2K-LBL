@@ -226,10 +226,12 @@ while($irun < $nruns) {
       print JDL "StdOutput = \"$tag-$irun.out\"; \n";
       print JDL "StdError = \"$tag-$irun.err\"; \n";
       print JDL "InputSandbox = {\"$tag-$irun.sh\",\"trunk_GRID.tar.gz\"}; \n";
-      print JDL "OutputSandbox = {\"$tag-$irun.out\",\"$tag-$irun.err\",\"$tag-run_$irun.root\"}; \n";
+      $grid_root_filename="$tag-run_$irun.root";
+      print JDL "OutputSandbox = {\"$tag-$irun.out\",\"$tag-$irun.err\",\"$grid_root_filename\"}; \n";
       print JDL "VirtualOrganisation = \"t2k.org\"; \n";
       #print JDL "Requirements = RegExp(\"ic.ac.uk\", other.GlueCEUniqueId); \n";
       print JDL "Requirements = Member(\"VO-t2k.org-ND280-v10r11p17\",other.GlueHostApplicationSoftwareRunTimeEnvironment) && other.GlueCEPolicyMaxCPUTime > 600; \n";
+
       # Then write the executable for the JDL file
       open(SH, ">$tag-$irun.sh") or die("Can not create the .sh batch script");
       print SH "#!/bin/bash \n";
@@ -271,6 +273,7 @@ while($irun < $nruns) {
       print SH "$command\n";
       print SH "# try to handle failure of the macro (exit \!= 0)\n";
       print SH "if \[ \"\$\?\" \= \"0\" \]; then\n";
+      print SH "       lcg-cr -v --vo t2k.org file:./$grid_root_filename -l lfn:/grid/t2k.org/nd280/contrib/dealtry/$gridpath/$grid_root_filename -d srm://srm-t2k.gridpp.rl.ac.uk/castor/ads.rl.ac.uk/prod/t2k.org/nd280/contrib/dealtry/$gridpath/$grid_root_filename \n";
       print SH "       cd ..\n";
       print SH "       mv trunk_GRID/*.root .\n";
       print SH "       echo \"*** Removing...\"\n";
@@ -336,6 +339,7 @@ if ($resource eq "gridhackinstall") {
   print SH0 "voms-proxy-init -valid 160:0 -voms t2k.org\n";
   print SH0 "export MYPROXY_SERVER=lcgrbp01.gridpp.rl.ac.uk\n";
   print SH0 "export LCG_GFAL_INFOSYS=lcg-bdii.gridpp.ac.uk:2170 \n";
+  print SH0 "export USERG='$grid_username' \n";
   print SH0 "glite-wms-job-delegate-proxy -d \$USERG -e https://wms01.grid.hep.ph.ic.ac.uk:7443/glite_wms_wmproxy_server \n";
   print SH0 "myproxy-init -v -d -n -s \$MYPROXY_SERVER --voms t2k.org:/t2k.org \n";
   print SH0 "echo \"*** Preparing the code...\" \n";
