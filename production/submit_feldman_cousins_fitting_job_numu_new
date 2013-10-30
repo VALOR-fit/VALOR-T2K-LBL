@@ -114,12 +114,14 @@ die("$job_dir doesn't exist") unless -d $job_dir;
 if( $resource eq "gridhackinstall") { $macro_dir = "./";       }
 else                                { $macro_dir = $softw_dir; }
 
+$bin_list_path = "$macro_dir/inputs/FCbinlist/$bin_list";
+
 $irun = 0;
 while($irun < $nruns) {
 
   print "Submitting $tag run: $irun \n";
 
-  $command  = "root2k -l -b -q \'$macro_dir/macros/contour/fc/numu/feldman_cousins_fitting_job_new.C(\"$tag\",$irun,$nexpts,$min_dm23sq_bin,$max_dm23sq_bin,$min_sinsq2theta23_bin,$max_sinsq2theta23_bin,\"$bin_list\",\"$config_file\",$stat_fluct,$twk_systematics,$twk_non23osc,\"$fitparamlist\",\"$fitoption\",$store_toy_expts,$store_bestfit_spectra,\"$dmsqscheme\",\"$masshierarchy\",\"$mixparamchoice\",\"$mixparamoctant\")\'";
+  $command  = "root2k -l -b -q \'$macro_dir/macros/contour/fc/numu/feldman_cousins_fitting_job_new.C(\"$tag\",$irun,$nexpts,$min_dm23sq_bin,$max_dm23sq_bin,$min_sinsq2theta23_bin,$max_sinsq2theta23_bin,\"$bin_list_path\",\"$config_file\",$stat_fluct,$twk_systematics,$twk_non23osc,\"$fitparamlist\",\"$fitoption\",$store_toy_expts,$store_bestfit_spectra,\"$dmsqscheme\",\"$masshierarchy\",\"$mixparamchoice\",\"$mixparamoctant\")\'";
   print "$command \n";
 
   #
@@ -215,6 +217,83 @@ while($irun < $nruns) {
     print SH "#echo Done!\n";
   }
   #
+  # Grid build-it-yourself
+  #
+  if($resource eq "gridhackinstall") {
+      # First write the JDL file
+      open(JDL, ">$tag-$irun.jdl") or die("Can not create the JDL script");
+      print JDL "Executable = \"$tag-$irun.sh\"; \n";
+      print JDL "StdOutput = \"$tag-$irun.out\"; \n";
+      print JDL "StdError = \"$tag-$irun.err\"; \n";
+      print JDL "InputSandbox = {\"$tag-$irun.sh\",\"trunk_GRID.tar.gz\"}; \n";
+      print JDL "OutputSandbox = {\"$tag-$irun.out\",\"$tag-$irun.err\",\"$tag-run_$irun.root\"}; \n";
+      print JDL "VirtualOrganisation = \"t2k.org\"; \n";
+      #print JDL "Requirements = RegExp(\"ic.ac.uk\", other.GlueCEUniqueId); \n";
+      print JDL "Requirements = Member(\"VO-t2k.org-ND280-v10r11p17\",other.GlueHostApplicationSoftwareRunTimeEnvironment) && other.GlueCEPolicyMaxCPUTime > 600; \n";
+      # Then write the executable for the JDL file
+      open(SH, ">$tag-$irun.sh") or die("Can not create the .sh batch script");
+      print SH "#!/bin/bash \n";
+      print SH "# time as a UNIX timestamp \n" ;                                                                                                                                  
+      print SH "T0=\"\$\(date +\%s)\"\n";
+      print SH "# setup env vars \n";                                                                                                                                                               
+      print SH "export LFC_HOST=lfc.gridpp.rl.ac.uk\n";
+      print SH "export GLOBUS_FTP_CLIENT_GRIDFTP2=true\n";
+      print SH "# trap error and remove code if error happens \n";
+      print SH "P=\$PWD \n";
+      print SH "#trap \'echo \"*** Error happened!!!\"; cd \$\{P\}; mv trunk_GRID/*.root .;echo \"*** Removing...\"; rm -fr trunk_GRID/; rm -fr trunk_GRID.tar.gz; ls -ltr; echo EXIT; exit\' ERR \n";
+      print SH "# create temporal directory \n" ;
+      print SH "echo \"*** Untaring code...\" \n";
+      print SH "ls -ltr \n";
+      print SH "tar xvfz trunk_GRID.tar.gz \n";
+      print SH "echo \"*** Copying input files from GRID...\" \n";
+      print SH "lcg-cp -v --vo t2k.org lfn:/grid/t2k.org/nd280/contrib/dealtry/2013/XSecSplines2013Run1to4.root file:./trunk_GRID/inputs/official/2013/xsec/XSecSplines2013Run1to4.root\n";
+      print SH "lcg-cp -v --vo t2k.org lfn:/grid/t2k.org/nd280/contrib/dealtry/2013/smallnt_numu_sk13a_flx11bv32_run1-4_10acut.root file:./trunk_GRID/inputs/official/2013/superk/mc/neut/13a/smallnt_numu_sk13a_flx11bv32_run1-4_10acut.root";
+      print SH "ls -ltr\n";
+      print SH "ls -ltr trunk_GRID/\n";
+      print SH "ls -ltrR trunk_GRID/inputs/\n";
+      print SH "T1=\"\$\(\(\$\(date +\%s\)-T0\)\)\"\n";
+      print SH "echo \"*** Time in seconds for copying input files: \$\{T1\}\" \n";
+      print SH "echo \"*** Setting up environmental variables...\" \n";
+      print SH "source trunk_GRID/setup_at_grid.sh\n";
+      print SH "echo \"*** Compiling the code...\"\n";
+      print SH "cd trunk_GRID/\n";
+      print SH "ls -ltr \$VO_T2K_ORG_SW_DIR/\n";
+      print SH "ls -ltr \$VO_T2K_ORG_SW_DIR/nd280v10r11p17/ROOT/\n";
+      print SH "ls -ltr \$VO_T2K_ORG_SW_DIR/nd280v10r11p17/ROOT/v5r30p02n01/\n";
+      print SH "ls -ltr \$VO_T2K_ORG_SW_DIR/nd280v10r11p17/ROOT/v5r30p02n01/amd64_linux26/\n";
+      print SH "pwd\n";
+      print SH "which root\n";
+      print SH "make clean\n";
+      print SH "make\n";
+      print SH "T=\"\$\(\(\$\(date + \%s\)-T0\)\)\"\n";
+      print SH "echo \"*** Time to compile in seconds: \$\{T\}\"\n";
+      print SH "echo \"*** Running the macro...\"\n";
+      print SH "$command\n";
+      print SH "# try to handle failure of the macro (exit \!= 0)\n";
+      print SH "if \[ \"\$\?\" \= \"0\" \]; then\n";
+      print SH "       cd ..\n";
+      print SH "       mv trunk_GRID/*.root .\n";
+      print SH "       echo \"*** Removing...\"\n";
+      print SH "       rm -fr trunk_GRID/\n";
+      print SH "       rm -fr trunk_GRID.tar.gz\n";
+      print SH "       ls -ltr\n";
+      print SH "       T=\"\$\(\(\$\(date +\%s\)-T0\)\)\"\n";
+      print SH "       echo \"*** Total time: \$\{T\}\"\n";
+      print SH "       echo Done!\n";
+      print SH "else\n";
+      print SH "       echo Error happened!!!\n";
+      print SH "       cd ..\n";
+      print SH "       mv trunk_GRID/*.root .\n";
+      print SH "       echo \"*** Removing...\"\n";
+      print SH "       rm -fr trunk_GRID/\n";
+      print SH "       rm -fr trunk_GRID.tar.gz\n";
+      print SH "       ls -ltr\n";
+      print SH "       T=\"\$\(\(\$\(date +\%s\)-T0\)\)\"\n";
+      print SH "       echo \"*** Total time: \$\{T\}\"\n";
+      print SH "       exit\n";
+      print SH "fi\n";
+  }
+  #
   # interactive
   #
   if($resource eq "interactive") {
@@ -239,6 +318,7 @@ if($resource eq "Grid") {
   print SH0 "echo \"*** Submitting jobs to the GRID...\" \n";
   $irun = 0;
   while($irun < $nruns) {
+    print SH0 "echo $irun\n";
     #print SH0 "glite-wms-job-submit -a -c $softw_dir/production/grid/$autowms_file -o $tag.jid $tag-$irun.jdl\n";
     print SH0 "glite-wms-job-submit -d \$USERG -c $softw_dir/production/grid/$autowms_file -o $tag.jid $tag-$irun.jdl\n";
     $irun++;
@@ -247,3 +327,66 @@ if($resource eq "Grid") {
   #`./$tag.sh`;
 }
 
+
+if ($resource eq "gridhackinstall") {
+  # Finally write the sh bash script to handle the job submission
+  open(SH0, ">$tag.sh") or die("Can not create the .sh batch script");
+  print SH0 "#!/bin/bash \n";
+  print SH0 "echo \"*** Creating proxy...\" \n";
+  print SH0 "voms-proxy-init -valid 160:0 -voms t2k.org\n";
+  print SH0 "export MYPROXY_SERVER=lcgrbp01.gridpp.rl.ac.uk\n";
+  print SH0 "export LCG_GFAL_INFOSYS=lcg-bdii.gridpp.ac.uk:2170 \n";
+  print SH0 "glite-wms-job-delegate-proxy -d \$USERG -e https://wms01.grid.hep.ph.ic.ac.uk:7443/glite_wms_wmproxy_server \n";
+  print SH0 "myproxy-init -v -d -n -s \$MYPROXY_SERVER --voms t2k.org:/t2k.org \n";
+  print SH0 "echo \"*** Preparing the code...\" \n";
+  #make the tar ball
+  print SH0 "rm -fr trunk_GRID \n";
+  print SH0 "mkdir trunk_GRID \n";
+  print SH0 "mkdir trunk_GRID/fitter \n";
+  print SH0 "cp $softw_dir/fitter/*.cxx trunk_GRID/fitter\n";
+  print SH0 "cp $softw_dir/fitter/*.h trunk_GRID/fitter\n";
+  print SH0 "cp $softw_dir/fitter/Make* trunk_GRID/fitter\n";
+  print SH0 "cp $softw_dir/fitter/VERSION trunk_GRID/fitter\n";
+  print SH0 "mkdir trunk_GRID/config \n";
+  print SH0 "cp $softw_dir/config/$config_file trunk_GRID/config\n";
+  print SH0 "mkdir trunk_GRID/root \n";
+  print SH0 "cp $softw_dir/root/* trunk_GRID/root\n";
+  print SH0 "cp $softw_dir/setup/setup_at_grid.sh trunk_GRID\n";
+  print SH0 "cp $softw_dir/Makefile trunk_GRID\n";
+  print SH0 "mkdir trunk_GRID/inputs\n";
+  print SH0 "cp $softw_dir/inputs/*.xml trunk_GRID/inputs\n";
+  print SH0 "mkdir trunk_GRID/inputs/FCbinlist\n";
+  print SH0 "cp $softw_dir/inputs/FCbinlist/*.data trunk_GRID/inputs/FCbinlist\n";
+  print SH0 "mkdir trunk_GRID/inputs/official\n";    
+  print SH0 "mkdir trunk_GRID/inputs/official/2013\n";
+  print SH0 "mkdir trunk_GRID/inputs/official/2013/banff\n";
+  print SH0 "cp $softw_dir/inputs/official/2013/banff/*root trunk_GRID/inputs/official/2013/banff/\n";
+  print SH0 "mkdir trunk_GRID/inputs/official/2013/flux\n";
+  print SH0 "mkdir trunk_GRID/inputs/official/2013/flux/11b_v3.2_run1-4a\n";
+  print SH0 "cp $softw_dir/inputs/official/2013/flux/11b_v3.2_run1-4a/*root trunk_GRID/inputs/official/2013/flux/11b_v3.2_run1-4a/\n";
+  print SH0 "mkdir trunk_GRID/inputs/official/2013/skdetfsi\n";
+  print SH0 "cp $softw_dir/inputs/official/2013/skdetfsi/*root trunk_GRID/inputs/official/2013/skdetfsi/\n";
+  #just make the directories for the large files (xsec splines & skmc)
+  print SH0 "mkdir trunk_GRID/inputs/official/2013/xsec\n";
+  print SH0 "mkdir trunk_GRID/inputs/official/2013/superk\n";
+  print SH0 "mkdir trunk_GRID/inputs/official/2013/superk/mc\n";
+  print SH0 "mkdir trunk_GRID/inputs/official/2013/superk/mc/neut\n";
+  print SH0 "mkdir trunk_GRID/inputs/official/2013/superk/mc/neut/13a\n";
+  #the macro required for this code
+  print SH0 "mkdir trunk_GRID/macros/\n";
+  print SH0 "mkdir trunk_GRID/macros/contour/\n";
+  print SH0 "mkdir trunk_GRID/macros/contour/fc/\n";
+  print SH0 "mkdir trunk_GRID/macros/contour/fc/numu/\n";
+  print SH0 "cp $softw_dir/macros/contour/fc/numu/*.C trunk_GRID/macros/contour/fc/numu\n";
+  print SH0 "tar -pczf trunk_GRID.tar.gz trunk_GRID\n";
+  print SH0 "echo \"*** Submitting jobs to the GRID...\" \n";
+  $irun = 0;
+  while ($irun < $nruns) {
+    print SH0 "echo $irun\n";
+    #print SH0 "glite-wms-job-submit -a -c $softw_dir/production/grid/$autowms_file -o $tag.jid $tag-$irun.jdl\n";
+    print SH0 "glite-wms-job-submit -d \$USERG -c $softw_dir/production/grid/$autowms_file -o $tag.jid $tag-$irun.jdl\n";
+    $irun++;
+  }
+  `chmod +x $tag.sh`;
+  #    `./$tag.sh`;
+}
