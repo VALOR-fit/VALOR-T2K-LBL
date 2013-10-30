@@ -111,8 +111,8 @@ if( !defined $cput) {
 mkpath ($job_dir, {verbose => 1, mode=>0777});
 die("$job_dir doesn't exist") unless -d $job_dir;
 
-if( $resource eq "Grid") { $macro_dir = "./";       }
-else                     { $macro_dir = $softw_dir; }
+if( $resource eq "gridhackinstall") { $macro_dir = "./";       }
+else                                { $macro_dir = $softw_dir; }
 
 $irun = 0;
 while($irun < $nruns) {
