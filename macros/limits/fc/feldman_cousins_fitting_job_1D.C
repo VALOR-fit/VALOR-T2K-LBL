@@ -29,16 +29,14 @@ void feldman_cousins_fitting_job_1D
 (
   const char * tag                     = "fc",                                /* tag for output file */
   int          run                     = 0,                                   /* run number */
-  int          nexperiments            = 20,                                   /* number of toy MC experiment fits */
-  int          min_dm23sq_bin          =  1,                                 /* generate toy MC with this range of Dm^2_{23} */
-  int          max_dm23sq_bin          =  21,                                 /* -//- */
-  int          min_mixing23_bin        =  1,                                 /* generate toy MC with this range of 23 mixing (expressed in terms of either sinsq2theta, sinsqtheta, ...) */
-  int          max_mixing23_bin        = 81,                                 /* -//- */
-  const char * config_file             = "analysis_configuration.xml",        /* analysis configuration file */
+  int          nexperiments            = 1,                                   /* number of toy MC experiment fits */
+  double       dm23sq_input            = 0.002125,                                 /* generate toy MC with this range of Dm^2_{23} */
+  double       mixing23_input          = -999.9,                                 /* generate toy MC with this range of 23 mixing (expressed in terms of either sinsq2theta, sinsqtheta, ...) */
+  const char * config_file             = "2013a_numu_run1+2+3+4_flux11bv3.2_neut13a_banff13v5_sk+fsi.xml",        /* analysis configuration file */
   bool         stat_fluctuations       = true,                                /* include statistical fluctuation in toy MC expts? */
   bool         tweak_systematics       = true,                                /* generate toy MC with randomized systematics? */
   bool         tweak_non23oscparams    = true,                                /* generate toy MC with randomized dmsq12,theta12,theta13,dcp / only in 3-flavour fmwk */
-  const char * fit_param_list          = "nuosc3f_numudisapp_fix4+nuisance",  /* fit parameter list for the given physics hypothesis (see FitParamList.h) */
+  const char * fit_param_list          = "nuosc3f_numudisapp_nuis4+nuisance",  /* fit parameter list for the given physics hypothesis (see FitParamList.h) */
   const char * fit_option              = "minuit",                            /* fitter option */
   bool         store_toy_expts         = false,                                /* disable this if you don't want to store the toy MC expts     */
   bool         store_bestfit_spectrum  = false,                                /* disable this if you don't want to store the best-fit spectra */
@@ -46,8 +44,8 @@ void feldman_cousins_fitting_job_1D
   const char * hierarchy               = "normal",                            /* normal or inverted */
   const char * mixparamchoice          = "sinsqtheta",                        /* sinsq2theta or sinsqtheta */
   const char * mixparamoctant          = "one",                                /* one==kNuOctantOne two==kNuOctantTwo */
-  const char * dchisqsurf_file         = "/opt/ppd/t2k/dealtry/2013results/DATA/run1-4_nuis3fixdcp_sintheta_normal/combination/run1-4_nuis3fixdcp_sintheta_normal-run_0-expt_6.root"
-  //bool         apply_2nu_boundary      = true                                 /* if using the 2nu flavour osc prob, apply the physical boundary? */
+  const char * dchisqsurf_file         = "/home/ppd/tdealtry/RAL_repoistory/t2k/t2kana/nuosc/trunk/2013results/DATA/FULLRUN1-4FIXSPLINE/run1-4_nuis4_sintheta_normal/combination/final.root"
+  //bool         apply_2nu_boundary    = true                                 /* if using the 2nu flavour osc prob, apply the physical boundary? */
 )
 {
   using namespace std;
@@ -68,25 +66,24 @@ void feldman_cousins_fitting_job_1D
     exit(1);
   }
 
-  //
-  // The oscillation contour will be constructed using a (dm23sq, mixing23) 
-  // 2-D histogram with the following binning.
-  // Look-up the bin centre values for the input_dm23sq_bin and input_mixing23_bin.
-  //
-
   TFile *dchisqfile = TFile::Open(dchisqsurf_file);
-  TH2D *dchisqsurf = (TH2D*)dchisqfile->Get("dchisq");
+  TH2D *dchisq2D = (TH2D*)dchisqfile->Get("chisq_surface");
 
   // dm23sq, mixing23 range and step
-  double mixing23_min   = dchisqsurf->GetXaxis()->GetBinCenter(1);
-  double mixing23_max   = dchisqsurf->GetXaxis()->GetBinCenter(dchisqsurf->GetNbinsX());
-  double mixing23_step  = dchisqsurf->GetXaxis()->GetBinCenter(2) - dchisqsurf->GetXaxis()->GetBinCenter(1);
-  double dm23sq_min     = dchisqsurf->GetYaxis()->GetBinCenter(1);
-  double dm23sq_max     = dchisqsurf->GetYaxis()->GetBinCenter(dchisqsurf->GetNbinsY());
-  double dm23sq_step    = dchisqsurf->GetYaxis()->GetBinCenter(2) - dchisqsurf->GetYaxis()->GetBinCenter(1);
+  double mixing23_min   = dchisq2D->GetXaxis()->GetBinCenter(1);
+  double mixing23_max   = dchisq2D->GetXaxis()->GetBinCenter(dchisq2D->GetNbinsX());
+  double mixing23_step  = dchisq2D->GetXaxis()->GetBinCenter(2) - dchisq2D->GetXaxis()->GetBinCenter(1);
+  double dm23sq_min     = dchisq2D->GetYaxis()->GetBinCenter(1);
+  double dm23sq_max     = dchisq2D->GetYaxis()->GetBinCenter(dchisq2D->GetNbinsY());
+  double dm23sq_step    = dchisq2D->GetYaxis()->GetBinCenter(2) - dchisq2D->GetYaxis()->GetBinCenter(1);
   // make sure that min and max are at the bin centre and not at the low/high edge of the first/last bin
-  int mixing23_nbins = 1 + (int)(((mixing23_max - mixing23_min) / mixing23_step) + 0.01);
-  int dm23sq_nbins   = 1 + (int)(((dm23sq_max   - dm23sq_min  ) / dm23sq_step  ) + 0.01);
+  //add 0.001 to avoid rounding error when finding (int)
+  int nbins_mixing23 = 1 + (int)(((mixing23_max - mixing23_min) / mixing23_step) + 0.001);
+  int nbins_dm23sq   = 1 + (int)(((dm23sq_max   - dm23sq_min  ) / dm23sq_step  ) + 0.001);
+
+  const int mixing23_nbins = nbins_mixing23;
+  const int dm23sq_nbins = nbins_dm23sq;
+
   // param space
   TH2D * osc_param_space = new TH2D("osc_param_space", "",
        mixing23_nbins, 
@@ -95,6 +92,91 @@ void feldman_cousins_fitting_job_1D
        dm23sq_nbins, 
        dm23sq_min - 0.5*dm23sq_step, 
        dm23sq_max + 0.5*dm23sq_step);
+
+  int input_mixing23_bin, input_dm23sq_bin;
+  double input_mixing23, input_dm23sq;
+
+  if(mixing23_input > 0 && dm23sq_input < 0)
+    {
+    input_mixing23 = mixing23_input;
+    input_mixing23_bin = dchisq2D->GetXaxis()->FindBin(input_mixing23);
+    cout<<"Input value of mixing23 = "<<input_mixing23<<" in bin "<<input_mixing23_bin<<endl;
+
+  double totalLikelihoodDm23sq = 0.0;
+
+  for(int dm23sq_bin=1; dm23sq_bin<=dm23sq_nbins; dm23sq_bin++)
+    totalLikelihoodDm23sq += exp(-0.5 * dchisq2D->GetBinContent(input_mixing23_bin, dm23sq_bin));
+
+  double cumulNormLikelihoodDm23sq[dm23sq_nbins+1];
+
+  cumulNormLikelihoodDm23sq[0] = 0.0;
+
+  for(int dm23sq_bin=1; dm23sq_bin<=dm23sq_nbins; dm23sq_bin++)  
+    {
+    cumulNormLikelihoodDm23sq[dm23sq_bin] = cumulNormLikelihoodDm23sq[dm23sq_bin-1] 
+                                           + (exp(-0.5 * dchisq2D->GetBinContent(input_mixing23_bin, dm23sq_bin)) / totalLikelihoodDm23sq);
+    //prevent cumulative normalised likelihood being > 1.0
+    cumulNormLikelihoodDm23sq[dm23sq_bin] = TMath::Min(1.0, cumulNormLikelihoodDm23sq[dm23sq_bin]);
+    }
+
+  cumulNormLikelihoodDm23sq[dm23sq_nbins] = 1.0;
+
+  cout<<endl;
+  cout<<"This table shows |dm32sq| bin number, value of |dm32sq| at centre of bin, likelihood, normalised likelihood and cumulative normalised likelihood from the 2D chisq surface for each bin."
+      <<endl;
+  cout<<endl;
+
+  for(int dm23sq_bin=1; dm23sq_bin<=dm23sq_nbins; dm23sq_bin++)
+    {
+    cout<<dm23sq_bin<<"    "<<dchisq2D->GetYaxis()->GetBinCenter(dm23sq_bin)
+	<<"    "<<exp(-0.5 * dchisq2D->GetBinContent(input_mixing23_bin, dm23sq_bin))
+        <<"    "<<"    "<<(exp(-0.5 * dchisq2D->GetBinContent(input_mixing23_bin, dm23sq_bin)) / totalLikelihoodDm23sq)
+	<<"    "<<cumulNormLikelihoodDm23sq[dm23sq_bin]<<endl;
+    }
+    }//end of if(mixing23_input > 0 && dm23sq_input < 0)
+  else if(mixing23_input < 0 && dm23sq_input > 0)
+    {
+      input_dm23sq = dm23sq_input;
+      input_dm23sq_bin = dchisq2D->GetYaxis()->FindBin(input_dm23sq);
+      cout<<"Input value of dm23sq = "<<input_dm23sq<<" in bin "<<input_dm23sq_bin<<endl;
+
+      double totalLikelihoodMixing23 = 0.0;
+
+      for(int mixing23_bin=1; mixing23_bin<=mixing23_nbins; mixing23_bin++)
+	totalLikelihoodMixing23 += exp(-0.5 * dchisq2D->GetBinContent(mixing23_bin, input_dm23sq_bin));
+
+      double cumulNormLikelihoodMixing23[mixing23_nbins+1];
+
+      cumulNormLikelihoodMixing23[0] = 0.0;
+
+      for(int mixing23_bin=1; mixing23_bin<=mixing23_nbins; mixing23_bin++)
+	{
+    cumulNormLikelihoodMixing23[mixing23_bin] = cumulNormLikelihoodMixing23[mixing23_bin-1]
+      + (exp(-0.5 * dchisq2D->GetBinContent(mixing23_bin, input_dm23sq_bin)) / totalLikelihoodMixing23);
+    //prevent cumulative normalised likelihood being > 1.0
+        cumulNormLikelihoodMixing23[mixing23_bin] = TMath::Min(1.0, cumulNormLikelihoodMixing23[mixing23_bin]);
+	}
+
+      cumulNormLikelihoodMixing23[mixing23_nbins] = 1.0;
+
+      cout<<endl;
+      cout<<"This table shows mixing23 bin number, value of mixing23 at centre of bin, likelihood, normalised likelihood and cumulative normalised likelihood from the 2D chisq surface for each bin."
+          <<endl;
+      cout<<endl;
+
+      for(int mixing23_bin=1; mixing23_bin<=mixing23_nbins; mixing23_bin++)
+	{
+	  cout<<mixing23_bin<<"    "<<dchisq2D->GetXaxis()->GetBinCenter(mixing23_bin)
+	      <<"    "<<exp(-0.5 * dchisq2D->GetBinContent(mixing23_bin, input_dm23sq_bin))
+	      <<"    "<<"    "<<(exp(-0.5 * dchisq2D->GetBinContent(mixing23_bin, input_dm23sq_bin)) / totalLikelihoodMixing23)
+	      <<"    "<<cumulNormLikelihoodMixing23[mixing23_bin]<<endl;
+	}
+    }//end of else if(mixing23_input < 0 && dm23sq_input > 0)
+  else
+    {
+      cerr<<"You must choose (mixing23_input > 0 and dm23sq_input < 0) or (mixing23_input < 0 and dm23sq_input > 0)"<<endl;
+      exit(1);
+    }
 
   // Print settings
   cout << "\n[Job inputs]" << endl;
@@ -119,14 +201,14 @@ void feldman_cousins_fitting_job_1D
        << osc_param_space->GetYaxis()->GetXmax() << ") eV^2/c^4" << endl;
   cout << "- Input bin range " << endl;
   cout << "   - " << util::AsString(conv::kPhypMixing23) 
-       << " : [" << min_mixing23_bin << ", " << max_mixing23_bin << "]"
-       << " : [" << osc_param_space->GetXaxis()->GetBinCenter(min_mixing23_bin)
-       << ", "   << osc_param_space->GetXaxis()->GetBinCenter(max_mixing23_bin)
+    //<< " : [" << min_mixing23_bin << ", " << max_mixing23_bin << "]"
+       << " : [" << osc_param_space->GetXaxis()->GetBinCenter(1)
+       << ", "   << osc_param_space->GetXaxis()->GetBinCenter(mixing23_nbins)
        << "]" << endl;
   cout << "   - " << util::AsString(conv::kPhypDm23sq) 
-       << " : [" << min_dm23sq_bin   << ", " << max_dm23sq_bin   << "]"
-       << " : [" << osc_param_space->GetYaxis()->GetBinCenter(min_dm23sq_bin)
-       << ", "   << osc_param_space->GetYaxis()->GetBinCenter(max_dm23sq_bin)
+    // << " : [" << min_dm23sq_bin   << ", " << max_dm23sq_bin   << "]"
+       << " : [" << osc_param_space->GetYaxis()->GetBinCenter(1)
+       << ", "   << osc_param_space->GetYaxis()->GetBinCenter(dm23sq_nbins)
        << "]" << endl;
   cout << "- Input (" << util::AsString(conv::kPhypMixing23) << ", " << util::AsString(conv::kPhypDm23sq) << ") bin list " << endl; 
   cout << "   - none" << endl;
@@ -137,7 +219,7 @@ void feldman_cousins_fitting_job_1D
   cout << endl;
   cout << *Opt::Instance() << endl;
   cout << *Rnd::Instance() << endl;
-
+  
   // Fit parameter list
   FitParamList * fparm      = FitParamList::NamedParameterList(fit_param_list); //only used to initialise branch
   FitParamList * fparm1     = FitParamList::NamedParameterList(fit_param_list); // for 1+N fit of mixing23 using the first seed
@@ -175,16 +257,22 @@ void feldman_cousins_fitting_job_1D
   TFile f(Form("%s-run_%d.root",tag, run), "recreate"); 
 
   //numbers to store results in
-  int iexperiment, input_mixing23_bin, input_dm23sq_bin, status_1N_mixing23, status_1N_dm23sq, status_2N;
-  int fitstatus1, fitstatus2, fitstatus3, fitstatus4, fitstatus5; 
-  double input_mixing23, input_dm23sq;
+  int iexperiment;
+  int fittries_mixing23_1N, fittries_mixing23_1N_alt, fittries_dm23sq_1N, fittries_2N, fittries_2N_alt;
+  double fittime_mixing23_1N, fittime_mixing23_1N_alt, fittime_dm23sq_1N, fittime_2N, fittime_2N_alt;
+  int migradmin_mixing23_1N, migradmin_mixing23_1N_alt, migradmin_dm23sq_1N, migradmin_2N, migradmin_2N_alt;
+  int migraderr_mixing23_1N, migraderr_mixing23_1N_alt, migraderr_dm23sq_1N, migraderr_2N, migraderr_2N_alt;
+  int migradmin1, migradmin2, migradmin3, migradmin4, migradmin5;
+  int migraderr1, migraderr2, migraderr3, migraderr4, migraderr5; 
   double bestfit_chisq_seed1, bestfit_chisq_seed2;
   double sinsqtheta23_bestfit, sinsqtheta13_bestfit, centre, reseed;
-  double bestfit_mixing23_1N, bestfit_dm23sq_1N, bestfit_chisq_mixing23_1N, bestfit_chisq_dm23sq_1N;
-  double bestfit_mixing23_2N, bestfit_dm23sq_2N, bestfit_chisq_2N;
+  double bestfit_mixing23_1N, bestfit_mixing23_1N_alt, bestfit_dm23sq_1N, bestfit_chisq_mixing23_1N, bestfit_chisq_mixing23_1N_alt,  bestfit_chisq_dm23sq_1N;
+  double bestfit_mixing23_2N, bestfit_mixing23_2N_alt, bestfit_dm23sq_2N, bestfit_dm23sq_2N_alt, bestfit_chisq_2N, bestfit_chisq_2N_alt;
+
 
   // Create tree to store outputs
   TTree * fitnt = new TTree("fitnt","Results of VaLOR data and/or toy-MC experiment fits");
+  /*
   fitnt->Branch("best_fit_params",           "t2kana::FitParamList",  &fparm,          1280000,0);
   fitnt->Branch("best_fit_params_fit1",      "t2kana::FitParamList",  &fparm1,         1280000,0);
   fitnt->Branch("best_fit_params_fit2",      "t2kana::FitParamList",  &fparm2,         1280000,0);
@@ -192,31 +280,68 @@ void feldman_cousins_fitting_job_1D
   fitnt->Branch("best_fit_params_fit4",      "t2kana::FitParamList",  &fparm4,         1280000,0);
   fitnt->Branch("best_fit_params_fit5",      "t2kana::FitParamList",  &fparm5,         1280000,0);
   fitnt->Branch("input_params",              "t2kana::PhysParamList", &iparm,          1280000,0);
-  fitnt->Branch("data",                      "TObjArray",             &dat_array,      1280000,0);
-  fitnt->Branch("best_fit_pdf",              "TObjArray",             &pdf_array,      1280000,0);
-  fitnt->Branch("best_fit_pdf_fit1",         "TObjArray",             &pdf_array1,     1280000,0);
-  fitnt->Branch("best_fit_pdf_fit2",         "TObjArray",             &pdf_array2,     1280000,0);
-  fitnt->Branch("best_fit_pdf_fit3",         "TObjArray",             &pdf_array3,     1280000,0);
-  fitnt->Branch("best_fit_pdf_fit4",         "TObjArray",             &pdf_array4,     1280000,0);
-  fitnt->Branch("best_fit_pdf_fit5",         "TObjArray",             &pdf_array5,     1280000,0);
+  */
+  if(store_toy_expts)
+    {
+    fitnt->Branch("data",                      "TObjArray",             &dat_array,      1280000,0);
+    }
+  if(store_bestfit_spectrum)
+    {
+    fitnt->Branch("best_fit_pdf",              "TObjArray",             &pdf_array,      1280000,0);
+    fitnt->Branch("best_fit_pdf_fit1",         "TObjArray",             &pdf_array1,     1280000,0);
+    fitnt->Branch("best_fit_pdf_fit2",         "TObjArray",             &pdf_array2,     1280000,0);
+    fitnt->Branch("best_fit_pdf_fit3",         "TObjArray",             &pdf_array3,     1280000,0);
+    fitnt->Branch("best_fit_pdf_fit4",         "TObjArray",             &pdf_array4,     1280000,0);
+    fitnt->Branch("best_fit_pdf_fit5",         "TObjArray",             &pdf_array5,     1280000,0);
+    }
+  
   fitnt->Branch("iexp",                      &iexperiment);
   fitnt->Branch("irun",                      &run);
   fitnt->Branch("input_mixing23_bin",        &input_mixing23_bin);
   fitnt->Branch("input_dm23sq_bin",          &input_dm23sq_bin);
   fitnt->Branch("input_mixing23",            &input_mixing23);
   fitnt->Branch("input_dm23sq",              &input_dm23sq);
+  fitnt->Branch("fittries_mixing23_1N",      &fittries_mixing23_1N);
+  fitnt->Branch("fittries_mixing23_1N_alt",  &fittries_mixing23_1N_alt);
+  fitnt->Branch("fittries_dm23sq_1N",        &fittries_dm23sq_1N);
+  fitnt->Branch("fittries_2N",               &fittries_2N);
+  fitnt->Branch("fittries_2N_alt",           &fittries_2N_alt);
+  fitnt->Branch("fittime_mixing23_1N",       &fittime_mixing23_1N);
+  fitnt->Branch("fittime_mixing23_1N_alt",   &fittime_mixing23_1N_alt);
+  fitnt->Branch("fittime_dm23sq_1N",         &fittime_dm23sq_1N);
+  fitnt->Branch("fittime_2N",                &fittime_2N);
+  fitnt->Branch("fittime_2N_alt",            &fittime_2N_alt);
   fitnt->Branch("bestfit_mixing23_1N",       &bestfit_mixing23_1N);
+  fitnt->Branch("bestfit_mixing23_1N_alt",   &bestfit_mixing23_1N_alt);
   fitnt->Branch("bestfit_dm23sq_1N",         &bestfit_dm23sq_1N);
   fitnt->Branch("bestfit_chisq_mixing23_1N", &bestfit_chisq_mixing23_1N);
+  fitnt->Branch("bestfit_chisq_mixing23_1N_alt", &bestfit_chisq_mixing23_1N_alt);
   fitnt->Branch("bestfit_chisq_dm23sq_1N",   &bestfit_chisq_dm23sq_1N);
-  fitnt->Branch("status_1N_mixing23",        &status_1N_mixing23);
-  fitnt->Branch("status_1N_dm23sq",          &status_1N_dm23sq);
+  fitnt->Branch("migradmin_mixing23_1N",     &migradmin_mixing23_1N);
+  fitnt->Branch("migradmin_mixing23_1N_alt", &migradmin_mixing23_1N_alt);
+  fitnt->Branch("migradmin_dm23sq_1N",       &migradmin_dm23sq_1N);
+  fitnt->Branch("migraderr_mixing23_1N",     &migraderr_mixing23_1N);
+  fitnt->Branch("migraderr_mixing23_1N_alt", &migraderr_mixing23_1N_alt);
+  fitnt->Branch("migraderr_dm23sq_1N",       &migraderr_dm23sq_1N);
   fitnt->Branch("bestfit_mixing23_2N",       &bestfit_mixing23_2N);
+  fitnt->Branch("bestfit_mixing23_2N_alt",   &bestfit_mixing23_2N_alt);
   fitnt->Branch("bestfit_dm23sq_2N",         &bestfit_dm23sq_2N);
+  fitnt->Branch("bestfit_dm23sq_2N_alt",     &bestfit_dm23sq_2N_alt);
   fitnt->Branch("bestfit_chisq_2N",          &bestfit_chisq_2N);
-  fitnt->Branch("status_2N",                 &status_2N);
-  TBranch * br_fparm     = fitnt->GetBranch("best_fit_params");
-  TBranch * br_bf_array  = fitnt->GetBranch("best_fit_pdf");
+  fitnt->Branch("bestfit_chisq_2N_alt",      &bestfit_chisq_2N_alt);
+  fitnt->Branch("migradmin_2N",              &migradmin_2N);
+  fitnt->Branch("migradmin_2N_alt",          &migradmin_2N_alt);
+  fitnt->Branch("migraderr_2N",              &migraderr_2N);
+  fitnt->Branch("migraderr_2N_alt",          &migraderr_2N_alt);
+
+
+  //TBranch * br_fparm     = fitnt->GetBranch("best_fit_params");
+  if(store_bestfit_spectrum)
+    TBranch * br_bf_array  = fitnt->GetBranch("best_fit_pdf");
+
+  double uniformRand;
+
+  TRandom3 rand(0);
 
   // Loop over toy-MC experiments
   for(iexperiment = 0; iexperiment < nexperiments; iexperiment++) {
@@ -224,14 +349,42 @@ void feldman_cousins_fitting_job_1D
      cout << "\n\n *** Pseudo-experiment = " << iexperiment << endl;
 
      //     
-     // Random selection of dm23sq and mixing23 bin
+     // Random selection of dm23sq bin if mixing23 is fixed or mixing23 bin if |dm32sq| is fixed
      //     
      
-     input_mixing23_bin = -1;
+     if(mixing23_input > 0 && dm23sq_input < 0)
+       {
      input_dm23sq_bin   = -1;
 
-     input_mixing23_bin = min_mixing23_bin + Rnd::Instance()->RndOther().Integer(1 + max_mixing23_bin - min_mixing23_bin);
-     input_dm23sq_bin   = min_dm23sq_bin   + Rnd::Instance()->RndOther().Integer(1 + max_dm23sq_bin   - min_dm23sq_bin  );
+     uniformRand = rand.Uniform(0.0, 1.0);
+
+     for(int dm23sq_bin=1; dm23sq_bin<=dm23sq_nbins; dm23sq_bin++)
+       {
+	 if(uniformRand >= cumulNormLikelihoodDm23sq[dm23sq_bin-1] && uniformRand <= cumulNormLikelihoodDm23sq[dm23sq_bin])
+	   input_dm23sq_bin = dm23sq_bin;
+       }
+
+     cout<<"Uniform random number thrown between 0 and 1 = "<<uniformRand<<" which means the input |dm32sq| bin is "<<input_dm23sq_bin<<endl;
+       }//end of if(mixing23_input > 0 && dm23sq_input < 0)
+     else if(mixing23_input < 0 && dm23sq_input > 0)
+       {
+	 input_mixing23_bin   = -1;
+
+	 uniformRand = rand.Uniform(0.0, 1.0);
+
+	 for(int mixing23_bin=1; mixing23_bin<=mixing23_nbins; mixing23_bin++)
+	   {
+	     if(uniformRand >= cumulNormLikelihoodMixing23[mixing23_bin-1] && uniformRand <= cumulNormLikelihoodMixing23[mixing23_bin])
+	       input_mixing23_bin = mixing23_bin;
+	   }
+
+	 cout<<"Uniform random number thrown between 0 and 1 = "<<uniformRand<<" which means the input mixing23 bin is "<<input_mixing23_bin<<endl;
+       }//end of else if(mixing23_input < 0 && dm23sq_input > 0)
+     else
+       {
+         cerr<<"You must choose (mixing23_input > 0 and dm23sq_input < 0) or (mixing23_input < 0 and dm23sq_input > 0)"<<endl;
+         exit(1);
+       }
 
      // Sanity check on bin range
      input_mixing23_bin = TMath::Max(1,              input_mixing23_bin);
@@ -244,9 +397,17 @@ void feldman_cousins_fitting_job_1D
           << util::AsString(conv::kPhypDm23sq)   << " bin # = " << input_dm23sq_bin
           << endl;
 
-     // Get dm23sq and mixing23 at the centre of the randomly selected bin
-     double input_mixing23 = osc_param_space->GetXaxis()->GetBinCenter(input_mixing23_bin);
-     double input_dm23sq   = osc_param_space->GetYaxis()->GetBinCenter(input_dm23sq_bin  );
+     // Get dm23sq or mixing23 at the centre of the randomly selected bin
+     if(mixing23_input > 0 && dm23sq_input < 0)
+       input_dm23sq   = dchisq2D->GetYaxis()->GetBinCenter(input_dm23sq_bin);
+     else if(mixing23_input < 0 && dm23sq_input > 0)
+       input_mixing23 = dchisq2D->GetXaxis()->GetBinCenter(input_mixing23_bin);
+     else
+       {
+	 cerr<<"You must choose (mixing23_input > 0 and dm23sq_input < 0) or (mixing23_input < 0 and dm23sq_input > 0)"<<endl;
+	 exit(1); 
+       }
+
      input_mixing23 = TMath::Max(0.,input_mixing23); // protection from rnd-err
      input_mixing23 = TMath::Min(1.,input_mixing23); // protection from rnd-err
 
@@ -304,13 +465,17 @@ void feldman_cousins_fitting_job_1D
      }
 
      // Reset all output spectra
-     dat_array     ->Clear();
-     pdf_array     ->Clear();
-     pdf_array1    ->Clear();
-     pdf_array2    ->Clear();
-     pdf_array3    ->Clear();
-     pdf_array4    ->Clear();
-     pdf_array5    ->Clear();
+     if(store_toy_expts)
+       dat_array     ->Clear();
+     if(store_bestfit_spectrum)
+       {
+       pdf_array     ->Clear();
+       pdf_array1    ->Clear();
+       pdf_array2    ->Clear();
+       pdf_array3    ->Clear();
+       pdf_array4    ->Clear();
+       pdf_array5    ->Clear();
+       }
 
      // Reset input true params and add true oscillation params
      iparm->Clear();
@@ -366,7 +531,9 @@ void feldman_cousins_fitting_job_1D
 
      fitter->DoTheFit();
      fparm1->ResetCurrToInitValues();
-     fitstatus1 = fitter->FitStatusCode("migrad_min");
+     migradmin1 = fitter->FitStatusCode("migrad_min");
+     migraderr1 = fitter->FitStatusCode("migrad_err");
+     cout<<"Migrad min and err codes for fit 1:   "<<migradmin1<<"    "<<migraderr1<<endl;
      bestfit_chisq_seed1  = fit_inputs->BestFitChisquare();
      bestfit_chisq_seed2 = 0;
 
@@ -379,7 +546,7 @@ void feldman_cousins_fitting_job_1D
      }
 
      //Do the fit again at the mirror point
-     fitstatus2 = -1;
+     migradmin2 = -1;
      if(Opt::Instance()->gOscMixingParamChoice == conv::kNuMixSinsqTheta) {
        //get the correct initial values (best fit points from first fit)
        fparm2->CopyBestFitToInitValues(*fparm1);
@@ -402,7 +569,9 @@ void feldman_cousins_fitting_job_1D
        fparm2->ResetCurrToInitValues(); // reset osc params
        fitter2->DoTheFit();
        bestfit_chisq_seed2 = fit_inputs2->BestFitChisquare();
-       fitstatus2 = fitter2->FitStatusCode("migrad_min");
+       migradmin2 = fitter2->FitStatusCode("migrad_min");
+       migraderr2 = fitter2->FitStatusCode("migrad_err");
+       cout<<"Migrad min and err codes for fit 2:   "<<migradmin2<<"    "<<migraderr2<<endl;
        // Save spectra (best-fit prediction)
        if(store_bestfit_spectrum) {
 	 skexp->Write(pdf_array2, "pdf");
@@ -414,34 +583,58 @@ void feldman_cousins_fitting_job_1D
      if(Opt::Instance()->gOscMixingParamChoice == conv::kNuMixSinsqTheta) {
        if(bestfit_chisq_seed2 < bestfit_chisq_seed1) {
 	 cout << bestfit_chisq_seed2 << " from the second seed fit" << endl;
+         fittries_mixing23_1N = fparm2->GetFitTries();
+         fittries_mixing23_1N_alt = fparm1->GetFitTries();
+         fittime_mixing23_1N = fparm2->GetFitTime();
+	 fittime_mixing23_1N_alt = fparm1->GetFitTime();
 	 bestfit_chisq_mixing23_1N    = bestfit_chisq_seed2;
+	 bestfit_chisq_mixing23_1N_alt    = bestfit_chisq_seed1;
 	 bestfit_mixing23_1N = fparm2->BestFitValue(conv::kPhypMixing23);
-	 status_1N_mixing23        = fitstatus2;
+	 bestfit_mixing23_1N_alt = fparm1->BestFitValue(conv::kPhypMixing23);
+	 migradmin_mixing23_1N        = migradmin2;
+	 migradmin_mixing23_1N_alt        = migradmin1;
+         migraderr_mixing23_1N        = migraderr2;
+         migraderr_mixing23_1N_alt        = migraderr1;
 	 fparm2->ShowOnlyBestFitValuesInNextPrint();
 	 cout << *fparm2;
-	 br_fparm->SetAddress(&fparm2);
-	 br_bf_array->SetAddress(&pdf_array2);
+	 //br_fparm->SetAddress(&fparm2);
+	 if(store_bestfit_spectrum)
+	   br_bf_array->SetAddress(&pdf_array2);
        }
        else {
 	 cout << bestfit_chisq_seed1 << " from the first seed fit" << endl;
+         fittries_mixing23_1N = fparm1->GetFitTries();
+	 fittries_mixing23_1N_alt = fparm2->GetFitTries();
+	 fittime_mixing23_1N = fparm1->GetFitTime();
+         fittime_mixing23_1N_alt = fparm2->GetFitTime();
          bestfit_chisq_mixing23_1N    = bestfit_chisq_seed1;
+         bestfit_chisq_mixing23_1N_alt    = bestfit_chisq_seed2;
 	 bestfit_mixing23_1N = fparm1->BestFitValue(conv::kPhypMixing23);
-	 status_1N_mixing23        = fitstatus1;
+	 bestfit_mixing23_1N_alt = fparm2->BestFitValue(conv::kPhypMixing23);
+	 migradmin_mixing23_1N        = migradmin1;
+         migradmin_mixing23_1N_alt        = migradmin2;
+         migraderr_mixing23_1N        = migraderr1;
+         migraderr_mixing23_1N_alt        = migraderr2;
 	 fparm1->ShowOnlyBestFitValuesInNextPrint();
 	 cout << *fparm1;
-	 br_fparm->SetAddress(&fparm1);
-	 br_bf_array->SetAddress(&pdf_array1);
+	 //br_fparm->SetAddress(&fparm1);
+	 if(store_bestfit_spectrum)
+	   br_bf_array->SetAddress(&pdf_array1);
        }
      }
      else {
        cout << bestfit_chisq_seed1 << endl;
+       fittries_mixing23_1N = fparm1->GetFitTries();
+       fittime_mixing23_1N = fparm1->GetFitTime();
        bestfit_chisq_mixing23_1N    = bestfit_chisq_seed1;
        bestfit_mixing23_1N = fparm1->BestFitValue(conv::kPhypMixing23);
-       status_1N_mixing23        = fitstatus1;
+       migradmin_mixing23_1N        = migradmin1;
+       migraderr_mixing23_1N        = migraderr1;
        fparm1->ShowOnlyBestFitValuesInNextPrint();
        cout << *fparm1;
-       br_fparm->SetAddress(&fparm1);
-       br_bf_array->SetAddress(&pdf_array1);
+       //br_fparm->SetAddress(&fparm1);
+       if(store_bestfit_spectrum)
+         br_bf_array->SetAddress(&pdf_array1);
      }
      
      //
@@ -458,7 +651,9 @@ void feldman_cousins_fitting_job_1D
      fparm3->ResetCurrToInitValues(); // reset osc params     
      fitter3->DoTheFit();
      fparm3->ResetCurrToInitValues();
-     fitstatus3 = fitter3->FitStatusCode("migrad_min");
+     migradmin3 = fitter3->FitStatusCode("migrad_min");
+     migraderr3 = fitter3->FitStatusCode("migrad_err");
+     cout<<"Migrad min and err codes for fit 3:   "<<migradmin3<<"    "<<migraderr3<<endl;
      bestfit_chisq_dm23sq_1N  = fit_inputs3->BestFitChisquare();
 
      if(store_bestfit_spectrum) {
@@ -468,8 +663,11 @@ void feldman_cousins_fitting_job_1D
      // Print-out best-fit params
      cout << "- Best-fit dm23sq (below) yields chisq = ";
      cout << bestfit_chisq_dm23sq_1N<<endl;
+     fittries_dm23sq_1N = fparm3->GetFitTries();
+     fittime_dm23sq_1N = fparm3->GetFitTime();
      bestfit_dm23sq_1N = fparm3->BestFitValue(conv::kPhypDm23sq);
-     status_1N_dm23sq        = fitstatus3;
+     migradmin_dm23sq_1N        = migradmin3;
+     migraderr_dm23sq_1N        = migraderr3;
      fparm3->ShowOnlyBestFitValuesInNextPrint();
      cout << *fparm3;
 
@@ -488,7 +686,9 @@ void feldman_cousins_fitting_job_1D
      fparm4->ResetCurrToInitValues(); // reset osc params
      fitter4->DoTheFit();
      fparm4->ResetCurrToInitValues();
-     fitstatus4 = fitter4->FitStatusCode("migrad_min");
+     migradmin4 = fitter4->FitStatusCode("migrad_min");
+     migraderr4 = fitter4->FitStatusCode("migrad_err");
+     cout<<"Migrad min and err codes for fit 4:   "<<migradmin4<<"    "<<migraderr4<<endl;
      bestfit_chisq_seed1  = fit_inputs4->BestFitChisquare();
      bestfit_chisq_seed2 = 0;
 
@@ -501,7 +701,7 @@ void feldman_cousins_fitting_job_1D
      }
 
      //Do the fit again at the mirror point
-     int fitstatus5 = -1;
+     migradmin5 = -1;
      if(Opt::Instance()->gOscMixingParamChoice == conv::kNuMixSinsqTheta) {
        //get the correct intial values (best fit points from first fit)
        fparm5->CopyBestFitToInitValues(*fparm4);
@@ -521,7 +721,9 @@ void feldman_cousins_fitting_job_1D
        fparm5->ResetCurrToInitValues(); // reset osc params
        fitter5->DoTheFit();
        bestfit_chisq_seed2 = fit_inputs5->BestFitChisquare();
-       fitstatus5 = fitter5->FitStatusCode("migrad_min");
+       migradmin5 = fitter5->FitStatusCode("migrad_min");
+       migraderr5 = fitter5->FitStatusCode("migrad_err");
+       cout<<"Migrad min and err codes for fit 5:   "<<migradmin5<<"    "<<migraderr5<<endl;
        // Save spectra (best-fit prediction)
        if(store_bestfit_spectrum) {
          skexp->Write(pdf_array5, "pdf");
@@ -533,66 +735,65 @@ void feldman_cousins_fitting_job_1D
        if(Opt::Instance()->gOscMixingParamChoice == conv::kNuMixSinsqTheta) {
 	 if(bestfit_chisq_seed2 < bestfit_chisq_seed1) {
 	   cout << bestfit_chisq_seed2 << " from the second seed fit" << endl;
+	   fittries_2N = fparm5->GetFitTries();
+	   fittries_2N_alt = fparm4->GetFitTries();
+	   fittime_2N = fparm5->GetFitTime();
+	   fittime_2N_alt = fparm4->GetFitTime();
 	   bestfit_chisq_2N    = bestfit_chisq_seed2;
+	   bestfit_chisq_2N_alt    = bestfit_chisq_seed1;
 	   bestfit_mixing23_2N = fparm5->BestFitValue(conv::kPhypMixing23);
+           bestfit_mixing23_2N_alt = fparm4->BestFitValue(conv::kPhypMixing23);
 	   bestfit_dm23sq_2N   = fparm5->BestFitValue(conv::kPhypDm23sq);
-	   status_2N        = fitstatus5;
+	   bestfit_dm23sq_2N_alt   = fparm4->BestFitValue(conv::kPhypDm23sq);
+	   migradmin_2N        = migradmin5;
+	   migradmin_2N_alt        = migradmin4;
+           migraderr_2N        = migraderr5;
+           migraderr_2N_alt        = migraderr4;
 	   fparm5->ShowOnlyBestFitValuesInNextPrint();
 	   cout << *fparm5;
-	   br_fparm->SetAddress(&fparm5);
-	   br_bf_array->SetAddress(&pdf_array5);
+	   //br_fparm->SetAddress(&fparm5);
+	   if(store_bestfit_spectrum)
+	     br_bf_array->SetAddress(&pdf_array5);
 	 }
 	 else {
 	   cout << bestfit_chisq_seed1 << " from the first seed fit" << endl;
+	   fittries_2N = fparm4->GetFitTries();
+           fittries_2N_alt = fparm5->GetFitTries();
+           fittime_2N = fparm4->GetFitTime();
+           fittime_2N_alt = fparm5->GetFitTime();
            bestfit_chisq_2N    = bestfit_chisq_seed1;
+	   bestfit_chisq_2N_alt    = bestfit_chisq_seed2;
 	   bestfit_mixing23_2N = fparm4->BestFitValue(conv::kPhypMixing23);
+	   bestfit_mixing23_2N_alt = fparm5->BestFitValue(conv::kPhypMixing23);
 	   bestfit_dm23sq_2N   = fparm4->BestFitValue(conv::kPhypDm23sq);
-	   status_2N        = fitstatus4;
+	   bestfit_dm23sq_2N_alt   = fparm5->BestFitValue(conv::kPhypDm23sq);
+	   migradmin_2N        = migradmin4;
+	   migradmin_2N_alt        = migradmin5;
+	   migraderr_2N        = migraderr4;
+           migraderr_2N_alt        = migraderr5;
 	   fparm4->ShowOnlyBestFitValuesInNextPrint();
 	   cout << *fparm4;
-	   br_fparm->SetAddress(&fparm4);
-	   br_bf_array->SetAddress(&pdf_array4);
+	   //br_fparm->SetAddress(&fparm4);
+	   if(store_bestfit_spectrum)
+	     br_bf_array->SetAddress(&pdf_array4);
 	 }
        }
        else {
 	 cout << bestfit_chisq_seed1 << endl;
+         fittries_2N = fparm4->GetFitTries();
+	 fittime_2N = fparm4->GetFitTime();
 	 bestfit_chisq_2N    = bestfit_chisq_seed1;
 	 bestfit_mixing23_2N = fparm4->BestFitValue(conv::kPhypMixing23);
 	 bestfit_dm23sq_2N   = fparm4->BestFitValue(conv::kPhypDm23sq);
-	 status_2N        = fitstatus4;
+	 migradmin_2N        = migradmin4;
+         migraderr_2N        = migraderr4;
 	 fparm4->ShowOnlyBestFitValuesInNextPrint();
 	 cout << *fparm4;
-	 br_fparm->SetAddress(&fparm4);
-	 br_bf_array->SetAddress(&pdf_array4);
+	 //br_fparm->SetAddress(&fparm4);
+	 if(store_bestfit_spectrum)
+	   br_bf_array->SetAddress(&pdf_array4);
        }
      
-       /*
-     //
-     // Get the 0+N fit results
-     //
-     fparm_true->SetInitValue(conv::kPhypMixing23, input_mixing23);
-     fparm_true->SetInitValue(conv::kPhypDm23sq,   input_dm23sq);
-     fparm_true->FixParameter(conv::kPhypMixing23);
-     fparm_true->FixParameter(conv::kPhypDm23sq);
-
-     // Need to make a new FitInputs & fitter
-     FitInputs * fit_inputs_true = new FitInputs(skobs,skexp,fparm_true);
-     FitterABC * fitter_true = util::GetFitter(fit_inputs_true,fit_option);
-     fparm_true->ResetCurrToInitValues(); // reset osc params
-     fitter_true->DoTheFit();
-     status_0N = fitter_true->FitStatusCode("migrad_min");
-     chisq_for_input_params = fit_inputs_true->BestFitChisquare();
-     // Save spectra (best-fit prediction)
-     if(store_bestfit_spectrum) {
-       skexp->Write(pdf_array_true, "pdf");
-     }
-     cout << "- True oscillation params (below) yield chisq = "
-	  << chisq_for_input_params << endl;
-     fparm_true->ShowOnlyBestFitValuesInNextPrint();
-     cout << *fparm_true;
-       */
-
-       
      cout<<endl;
 
      //  Print out result

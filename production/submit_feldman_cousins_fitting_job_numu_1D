@@ -51,10 +51,8 @@ foreach (@ARGV) {
   if($_ eq '--stat-fluctuations'     ) { $stat_fluct            = 1;              }
   if($_ eq '--tweak-systematics'     ) { $twk_systematics       = 1;              }
   if($_ eq '--tweak-non23oscparams'  ) { $twk_non23osc          = 1;              }
-  if($_ eq '--min-dm23sq-bin'        ) { $min_dm23sq_bin        = $ARGV[$iarg+1]; }
-  if($_ eq '--max-dm23sq-bin'        ) { $max_dm23sq_bin        = $ARGV[$iarg+1]; }
-  if($_ eq '--min-sinsq2theta23-bin' ) { $min_sinsq2theta23_bin = $ARGV[$iarg+1]; }
-  if($_ eq '--max-sinsq2theta23-bin' ) { $max_sinsq2theta23_bin = $ARGV[$iarg+1]; }
+  if($_ eq '--input-dm23sq'          ) { $input_dm23sq          = $ARGV[$iarg+1]; }
+  if($_ eq '--input-sinsq2theta23'   ) { $input_sinsq2theta23   = $ARGV[$iarg+1]; }
   if($_ eq '--fit-param-list'        ) { $fitparamlist          = $ARGV[$iarg+1]; }
   if($_ eq '--fit-option'            ) { $fitoption             = $ARGV[$iarg+1]; }
   if($_ eq '--job-dir'               ) { $job_dir               = $ARGV[$iarg+1]; }
@@ -75,35 +73,33 @@ foreach (@ARGV) {
   $iarg++;
 }
 
-$min_dm23sq_bin         = 1                            unless defined $min_dm23sq_bin;
-$max_dm23sq_bin         = 21                            unless defined $max_dm23sq_bin; 
-$min_sinsq2theta23_bin  = 1                            unless defined $min_sinsq2theta23_bin;
-$max_sinsq2theta23_bin  = 81                           unless defined $max_sinsq2theta23_bin;
+$input_dm23sq           = 0.002125                        unless defined $input_dm23sq;
+$input_sinsq2theta23    = -999.9                         unless defined $input_sinsq2theta23;
 $resource               = "RAL"                         unless defined $resource;
 $tag                    = "fc"                          unless defined $tag;
-$nruns                  = 1                             unless defined $nruns;
-$nexpts                 = 100                          unless defined $nexpts;
+$nruns                  = 100                            unless defined $nruns;
+$nexpts                 = 50                          unless defined $nexpts;
 $stat_fluct             = 1                             unless defined $stat_fluct;
 $twk_systematics        = 1                             unless defined $twk_systematics;
 $twk_non23osc           = 1                             unless defined $twk_non23osc;
-$fitparamlist           = "nuosc3f_numudisapp_fix4"     unless defined $fitparamlist;
+$fitparamlist           = "nuosc3f_numudisapp_nuis4+nuisance"     unless defined $fitparamlist;
 $fitoption              = "minuit"                      unless defined $fitoption;
-$job_dir                = `pwd`                         unless defined $job_dir;
-$softw_dir              = `pwd`                         unless defined $softw_dir;
-$config_file            = "analysis_configuration.xml"  unless defined $config_file;
+$job_dir                = "/opt/ppd/t2k/users/nick/t2kana1DFCRun1to4/production"                         unless defined $job_dir;
+$softw_dir              = "/opt/ppd/t2k/users/nick/t2kana1DFCRun1to4"                         unless defined $softw_dir;
+$config_file            = "2013a_numu_run1+2+3+4_flux11bv3.2_neut13a_banff13v5_sk+fsi.xml"  unless defined $config_file;
 $store_toy_expts        = 0                             unless defined $store_toy_expts;
 $store_bestfit_spectra  = 0                             unless defined $store_bestfit_spectra;
 $dmsqscheme             = "abs23"                       unless defined $dmsqscheme;
 $masshierarchy          = "normal"                      unless defined $masshierarchy;
 $mixparamchoice         = "sinsqtheta"                  unless defined $mixparamchoice;
 $mixparamoctant         = "one"                         unless defined $mixparamoctant;
-$dchisq_file            = "/opt/ppd/t2k/dealtry/2013results/DATA/run1-4_nuis3fixdcp_sintheta_normal/combination/run1-4_nuis3fixdcp_sintheta_normal-run_0-expt_6.root"  unless defined $dchisq_file;
+$dchisq_file  = "/home/ppd/tdealtry/RAL_repoistory/t2k/t2kana/nuosc/trunk/2013results/DATA/FULLRUN1-4FIXSPLINE/run1-4_nuis4_sintheta_normal/combination/final.root"   unless defined $dchisq_file;
 #$apply_2nu_boundary     = 1                             unless defined $apply_2nu_boundary;
 $grid_local_dir         = `pwd`                         unless defined $grid_local_dir;
 $autowms_file           = "autowms.conf"                unless defined $autowms_file;
 
 if( !defined $cput) {
-  if($resource eq "RAL"   ) { $cput = "6:00:00";  }
+  if($resource eq "RAL"   ) { $cput = "18:00:00";  }
   if($resource eq "IN2P3" ) { $cput = 1500000;    }
   if($resource eq "Oxford") { $cput = "11:50:00"; }
 }
@@ -119,7 +115,7 @@ while($irun < $nruns) {
 
   print "Submitting $tag run: $irun \n";
 
-  $command  = "root2k -l -b -q \'$macro_dir/macros/limits/fc/feldman_cousins_fitting_job_1D.C(\"$tag\",$irun,$nexpts,$min_dm23sq_bin,$max_dm23sq_bin,$min_sinsq2theta23_bin,$max_sinsq2theta23_bin,\"$config_file\",$stat_fluct,$twk_systematics,$twk_non23osc,\"$fitparamlist\",\"$fitoption\",$store_toy_expts,$store_bestfit_spectra,\"$dmsqscheme\",\"$masshierarchy\",\"$mixparamchoice\",\"$mixparamoctant\",\"$dchisq_file\")\'";
+  $command  = "root2k -l -b -q \'$macro_dir/macros/limits/fc/feldman_cousins_fitting_job_1D.C(\"$tag\",$irun,$nexpts,$input_dm23sq,$input_sinsq2theta23,\"$config_file\",$stat_fluct,$twk_systematics,$twk_non23osc,\"$fitparamlist\",\"$fitoption\",$store_toy_expts,$store_bestfit_spectra,\"$dmsqscheme\",\"$masshierarchy\",\"$mixparamchoice\",\"$mixparamoctant\",\"$dchisq_file\")\'";
   print "$command \n";
 
   #
