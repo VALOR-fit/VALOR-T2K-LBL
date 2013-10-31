@@ -249,7 +249,7 @@ while($irun < $nruns) {
       print SH "tar xvfz trunk_GRID.tar.gz \n";
       print SH "echo \"*** Copying input files from GRID...\" \n";
       print SH "lcg-cp -v --vo t2k.org lfn:/grid/t2k.org/nd280/contrib/dealtry/2013/XSecSplines2013Run1to4.root file:./trunk_GRID/inputs/official/2013/xsec/XSecSplines2013Run1to4.root\n";
-      print SH "lcg-cp -v --vo t2k.org lfn:/grid/t2k.org/nd280/contrib/dealtry/2013/smallnt_numu_sk13a_flx11bv32_run1-4_10acut.root file:./trunk_GRID/inputs/official/2013/superk/mc/neut/13a/smallnt_numu_sk13a_flx11bv32_run1-4_10acut.root";
+      print SH "lcg-cp -v --vo t2k.org lfn:/grid/t2k.org/nd280/contrib/dealtry/2013/smallnt_numu_sk13a_flx11bv32_run1-4_10acut.root file:./trunk_GRID/inputs/official/2013/superk/mc/neut/13a/smallnt_numu_sk13a_flx11bv32_run1-4_10acut.root\n";
       print SH "ls -ltr\n";
       print SH "ls -ltr trunk_GRID/\n";
       print SH "ls -ltrR trunk_GRID/inputs/\n";
@@ -260,9 +260,9 @@ while($irun < $nruns) {
       print SH "echo \"*** Compiling the code...\"\n";
       print SH "cd trunk_GRID/\n";
       print SH "ls -ltr \$VO_T2K_ORG_SW_DIR/\n";
-      print SH "ls -ltr \$VO_T2K_ORG_SW_DIR/nd280v10r11p17/ROOT/\n";
-      print SH "ls -ltr \$VO_T2K_ORG_SW_DIR/nd280v10r11p17/ROOT/v5r30p02n01/\n";
-      print SH "ls -ltr \$VO_T2K_ORG_SW_DIR/nd280v10r11p17/ROOT/v5r30p02n01/amd64_linux26/\n";
+      print SH "ls -ltr \$VO_T2K_ORG_SW_DIR/*/ROOT/\n";
+      print SH "ls -ltr \$VO_T2K_ORG_SW_DIR/*/ROOT/v5r30p02n01/\n";
+      print SH "ls -ltr \$VO_T2K_ORG_SW_DIR/*/ROOT/v5r30p02n01/amd64_linux26/\n";
       print SH "pwd\n";
       print SH "which root\n";
       print SH "make clean\n";
