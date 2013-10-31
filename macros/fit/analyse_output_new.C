@@ -57,6 +57,17 @@ void set_legend_style(TLegend *leg, Double_t size = 0.05, Int_t style = 0) {
   leg->SetTextSize(size);
 }
 
+TH1D * spectrum_to_per_50mev(TH1D * h) {
+  TH1D * hout = new TH1D(*h);
+  for(int ix = 1; ix <= hout->GetNbinsX(); ix++) {
+    hout->SetBinContent(ix, 0.05 * h->GetBinContent(ix) / h->GetBinWidth(ix));
+  }
+  hout->GetYaxis()->SetTitle("Events per 0.050 GeV");
+  return hout;
+}
+
+
+
 void analyse_output_new
 (
  const char * infile,
@@ -150,6 +161,17 @@ void analyse_output_new
   spectrum_bf->   Draw("same");
   l->Draw();
   save_canvas(c,"spectrum",tag);
+  //make per 50 mev
+  TH1D * spectrumper50_noosc = spectrum_to_per_50mev(spectrum_noosc);
+  TH1D * spectrumper50_obs   = spectrum_to_per_50mev(spectrum_obs);
+  TH1D * spectrumper50_bf    = spectrum_to_per_50mev(spectrum_bf);
+  //draw
+  c->cd(1);
+  spectrumper50_noosc->Draw();
+  spectrumper50_obs->  Draw("PE0same");
+  spectrumper50_bf->   Draw("same");
+  l->Draw();
+  save_canvas(c,"spectrumper50",tag);
 
   // 2 ratio only
   // get ratio
@@ -168,9 +190,9 @@ void analyse_output_new
   spectrum_bf_ratio-> GetXaxis()->SetRangeUser(0, spectrum_max_xaxis - conv::kOneMeV);
   //axis title
   spectrum_obs_ratio->GetXaxis()->SetTitle("E_{reco} / GeV");
-  spectrum_obs_ratio->GetYaxis()->SetTitle("Events per bin");
+  spectrum_obs_ratio->GetYaxis()->SetTitle("Ratio to no oscillations");
   spectrum_bf_ratio-> GetXaxis()->SetTitle("E_{reco} / GeV");
-  spectrum_bf_ratio-> GetYaxis()->SetTitle("Events per bin");
+  spectrum_bf_ratio-> GetYaxis()->SetTitle("Ratio to no oscillations");
   //styles
   set_line_style  (spectrum_bf_ratio,    kRed,   2,   1);
   set_line_style  (spectrum_obs_ratio,   kBlack, 1.0, 1);
@@ -226,6 +248,17 @@ void analyse_output_new
   spectrum_bf_rebin->   Draw("same");
   l->Draw();
   save_canvas(c,"spectrum_rebin",tag);
+  //make per 50 mev
+  TH1D * spectrumper50_noosc_rebin = spectrum_to_per_50mev(spectrum_noosc_rebin);
+  TH1D * spectrumper50_obs_rebin = spectrum_to_per_50mev(spectrum_obs_rebin);
+  TH1D * spectrumper50_bf_rebin = spectrum_to_per_50mev(spectrum_bf_rebin);
+  //draw
+  c->cd(1);
+  spectrumper50_noosc_rebin->Draw();
+  spectrumper50_obs_rebin->  Draw("PE0same");
+  spectrumper50_bf_rebin->   Draw("same");
+  l->Draw();
+  save_canvas(c,"spectrumper50_rebin",tag);
 
   // 4 rebinned ratio only
   // get ratio
@@ -244,9 +277,9 @@ void analyse_output_new
   spectrum_bf_ratio_rebin-> GetXaxis()->SetRangeUser(0, spectrum_max_xaxis - conv::kOneMeV);
   //axis title
   spectrum_obs_ratio_rebin->GetXaxis()->SetTitle("E_{reco} / GeV");
-  spectrum_obs_ratio_rebin->GetYaxis()->SetTitle("Events per bin");
+  spectrum_obs_ratio_rebin->GetYaxis()->SetTitle("Ratio to no oscillations");
   spectrum_bf_ratio_rebin-> GetXaxis()->SetTitle("E_{reco} / GeV");
-  spectrum_bf_ratio_rebin-> GetYaxis()->SetTitle("Events per bin");
+  spectrum_bf_ratio_rebin-> GetYaxis()->SetTitle("Ratio to no oscillations");
   //styles
   set_line_style  (spectrum_bf_ratio_rebin,    kRed,   2,   1);
   set_line_style  (spectrum_obs_ratio_rebin,   kBlack, 1.0, 1);
@@ -342,7 +375,7 @@ void analyse_output_new
   spectrum_obs->GetYaxis()->SetTitle("Events per bin");
   //legend
   delete l;
-  l = new TLegend(0.7,0.5,0.9,0.9);
+  l = new TLegend(0.5,0.58,0.9,0.93);
   set_legend_style(l);
   l->AddEntry(spectrum_obs,  "Run 1-4 data","P");
   l->AddEntry(spectrum_bf,   "Best fit (total)","l");
@@ -358,19 +391,49 @@ void analyse_output_new
   spectrum_obs->Draw("PE0same");
   l->Draw();
   save_canvas(c,"spectrum_components",tag);
+  //make per 50 mev
+  TH1D * spectrumper50_modes_nc = spectrum_to_per_50mev(spectrum_modes_nc);
+  TH1D * spectrumper50_modes_nuecc = spectrum_to_per_50mev(spectrum_modes_nuecc);
+  TH1D * spectrumper50_modes_numubarcc = spectrum_to_per_50mev(spectrum_modes_numubarcc);
+  TH1D * spectrumper50_modes_numuccnqe = spectrum_to_per_50mev(spectrum_modes_numuccnqe);
+  TH1D * spectrumper50_modes_numuccqe = spectrum_to_per_50mev(spectrum_modes_numuccqe);
+  THStack * stackper50 = new THStack("","");
+  stackper50->Add(spectrumper50_modes_nc);
+  stackper50->Add(spectrumper50_modes_nuecc);
+  stackper50->Add(spectrumper50_modes_numubarcc);
+  stackper50->Add(spectrumper50_modes_numuccnqe);
+  //stackper50->Add(spectrumper50_modes_numuccqe);
+  //draw
+  stackper50->Draw();
+  stackper50->       GetXaxis()->SetRangeUser(0, spectrum_max_xaxis - conv::kOneMeV);
+  stackper50->       GetXaxis()->SetTitle("E_{reco} / GeV");
+  stackper50->       GetYaxis()->SetTitle("Events per 0.050 GeV");
+  set_line_style  (spectrumper50_bf,    kBlack, 2,   1);
+  set_line_style  (spectrumper50_obs,   kBlack, 1.0, 1);
+  set_marker_style(spectrumper50_obs,   kBlack, 1.0, 8);
+  spectrumper50_obs->Draw("PE0");
+  stackper50->       Draw("same");
+  spectrumper50_bf-> Draw("same"); //to make sure the total & indivual modes disagree (stupid e scale)
+  spectrumper50_obs->Draw("PE0same");
+  l->Draw();
+  save_canvas(c,"spectrumper50_components",tag);
+
 
   //print out the ratios below, at, above the osc peak
   double nobs_below = spectrum_obs  ->Integral(1,                                          spectrum_obs->FindBin(0.5-conv::kOneMeV));
   double nobs_at    = spectrum_obs  ->Integral(spectrum_obs  ->FindBin(0.5+conv::kOneMeV), spectrum_obs->FindBin(1.0-conv::kOneMeV));
   double nobs_above = spectrum_obs  ->Integral(spectrum_obs  ->FindBin(1.0+conv::kOneMeV), spectrum_obs->GetNbinsX());
+  double nobs_total = spectrum_obs  ->Integral(1,                                          spectrum_obs->GetNbinsX());
   double nexp_below = spectrum_noosc->Integral(1,                                          spectrum_noosc->FindBin(0.5-conv::kOneMeV));
   double nexp_at    = spectrum_noosc->Integral(spectrum_noosc->FindBin(0.5+conv::kOneMeV), spectrum_noosc->FindBin(1.0-conv::kOneMeV));
   double nexp_above = spectrum_noosc->Integral(spectrum_noosc->FindBin(1.0+conv::kOneMeV), spectrum_noosc->GetNbinsX());
+  double nexp_total = spectrum_noosc->Integral(1,                                          spectrum_noosc->GetNbinsX());
 
-  cout << "nobs"     << "\t" << "nexp(noosc)" << "\t"   << "ratio%" << endl;
-  cout << nobs_below << "\t" << nexp_below    << "\t\t" << (nobs_below / nexp_below) * 100 << endl;
-  cout << nobs_at    << "\t" << nexp_at       << "\t\t" << (nobs_at    / nexp_at   ) * 100 << endl;
-  cout << nobs_above << "\t" << nexp_above    << "\t\t" << (nobs_above / nexp_above) * 100 << endl;
+  cout << "      \t" << "nobs"     << "\t" << "nexp(noosc)" << "\t"   << "ratio%" << endl;
+  cout << "below \t" << nobs_below << "\t" << nexp_below    << "\t\t" << (nobs_below / nexp_below) * 100 << endl;
+  cout << "at    \t" << nobs_at    << "\t" << nexp_at       << "\t\t" << (nobs_at    / nexp_at   ) * 100 << endl;
+  cout << "above \t" << nobs_above << "\t" << nexp_above    << "\t\t" << (nobs_above / nexp_above) * 100 << endl;
+  cout << "total \t" << nobs_total << "\t" << nexp_total    << "\t\t" << (nobs_total / nexp_total) * 100 << endl;
 
   //////////////////////////////////////////////////////////////////////
   //PULL PLOT
@@ -719,8 +782,10 @@ void analyse_output_new
   cout << endl << endl;
   cout << "Best fit chisq:    " << fparm->GetBestFitChisq() << endl;
   cout << "Chisq surface min: " << hchisq->GetMinimum() << endl;
+  cout << "Dchisq min:        " << hchisq->GetMinimum() - fparm->GetBestFitChisq() << endl;
   cout << "Best fit mixing23: " << fparm->BestFitValue(conv::kPhypMixing23) << endl;
   cout << "Best fit dm32sq:   " << fparm->BestFitValue(conv::kPhypDm23sq)   << endl;
+  hdchisq->GetZaxis()->UnZoom();
   cout << "Minimum of the dchisq surface: " << hdchisq->GetMinimum() << endl;
   int tempx, tempy, tempz;
   hdchisq->GetMinimumBin(tempx,tempy,tempz);

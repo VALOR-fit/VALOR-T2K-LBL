@@ -5,6 +5,15 @@
 // C.Andreopoulos
 //------------------------------------------------------------------------------------------------
 
+TH1D * spectrum_to_per_50mev(TH1D * h) {
+  TH1D * hout = new TH1D(*h);
+  for(int ix = 1; ix <= hout->GetNbinsX(); ix++) {
+    hout->SetBinContent(ix, 0.05 * h->GetBinContent(ix) / h->GetBinWidth(ix));
+  }
+  hout->GetYaxis()->SetTitle("Events per 0.050 GeV");
+  return hout;
+}
+
 void comp_bestfit_spectra
 (
   const char * file1,                  /* 1st best-fit spectrum */
@@ -21,7 +30,7 @@ void comp_bestfit_spectra
   const char * tag = "",               /* tag for the output file */
   const char * label1short = "A",      /* label for the y-axis of ratio & subtraction canvases */
   const char * label2short = "B",      /* label for the y-axis of ratio & subtraction canvases */
-  const char * labeldata   = "Run 1-4" /* label the data in the legend */
+  const char * labeldata   = "Run 1-4",/* label the data in the legend */
   bool different_pot = false,          /* if set, will rescale hist2 to hist1 pot */
   double pot_scale = 6.5700/6.3933
 )
@@ -98,11 +107,11 @@ void comp_bestfit_spectra
   }
 
   TCanvas * c1 = new TCanvas("c1","",10,10,600,700);
-  TPad * upp  = new TPad("upp", "",0.05,0.40,0.95,0.97);
-  TPad * low1 = new TPad("low1","",0.05,0.20,0.95,0.38);
-  TPad * low2 = new TPad("low2","",0.05,0.02,0.95,0.18);
-  low1->SetBottomMargin(.3);
-  low2->SetBottomMargin(.3);
+  TPad * upp  = new TPad("upp", "",0.02,0.40,1.00,0.97);
+  TPad * low1 = new TPad("low1","",0.02,0.20,1.00,0.40);
+  TPad * low2 = new TPad("low2","",0.02,0.00,1.00,0.20);
+  low1->SetBottomMargin(.25);
+  low2->SetBottomMargin(.25);
   upp->Draw();
   low1->Draw();
   low2->Draw();
@@ -110,7 +119,7 @@ void comp_bestfit_spectra
 
   TH1F * hframe = (TH1F*)upp->DrawFrame(emin,0,emax,nmax);
   hframe->GetXaxis()->SetTitle("E_{reco} (GeV)");
-  hframe->GetYaxis()->SetTitle("Events per bin");
+  hframe->GetYaxis()->SetTitle("Events per 0.050 GeV");
 
   if(nooscfile) {
     histo_null->SetLineWidth(1);
@@ -127,26 +136,33 @@ void comp_bestfit_spectra
   histo_fit2->SetLineStyle(kSolid);
 
   if(datafile) {
-    histo_data->SetMarkerSize(1);
+    histo_data->SetMarkerSize(0.5);
     histo_data->SetMarkerStyle(8);
     histo_data->SetLineStyle(kDashed);
   }
 
-  if(nooscfile) 
-    histo_null->Draw("same");
-  histo_fit2->Draw("same");
-  histo_fit1->Draw("same");
-  if(datafile)
-    histo_data->Draw("PE03X0 same");
+  if(nooscfile) {
+    TH1D * histoper50_null = spectrum_to_per_50mev(histo_null);
+    histoper50_null->Draw("same");
+  }
+  TH1D * histoper50_fit2 = spectrum_to_per_50mev(histo_fit2);
+  TH1D * histoper50_fit1 = spectrum_to_per_50mev(histo_fit1);
+  histoper50_fit2->Draw("same");
+  histoper50_fit1->Draw("same");
+  if(datafile) {
+    TH1D * histoper50_data = spectrum_to_per_50mev(histo_data);
+    histoper50_data->Draw("PE03X0 same");
+  }
 
-  TLegend * legend = new TLegend(0.5, 0.6, 0.9, 0.9);
+  TLegend * legend = new TLegend(0.4, 0.6, 0.9, 0.9);
   legend->SetBorderSize(0);
   legend->SetFillColor(0);
   legend->SetFillStyle(0);
   legend->SetTextFont(42);
+  legend->SetTextSize(0.05);
   legend->SetHeader("1 #mu-like ring spectrum");
   if(datafile)
-    legend->AddEntry(histo_data, Form("%s dataset",labeldata).Data(), "P");
+    legend->AddEntry(histo_data, Form("%s dataset",labeldata), "P");
   if(nooscfile)
     legend->AddEntry(histo_null, "No oscillation expectation", "L");
   legend->AddEntry(histo_fit1, label1, "L");
@@ -156,7 +172,7 @@ void comp_bestfit_spectra
   low1->cd();
   TH1F * hframelow1 = (TH1F*)low1->DrawFrame(emin,-maxdiff,emax,maxdiff);
   hframelow1->GetXaxis()->SetTitle("E_{reco} (GeV)");
-  hframelow1->GetYaxis()->SetTitle(Form("#splitline{%s-%s}{(Events per bin)}",label1short,label2short).Data());
+  hframelow1->GetYaxis()->SetTitle(Form("#splitline{%s-%s}{(Events per bin)}",label1short,label2short));
   hframelow1->GetYaxis()->SetLabelSize(0.09);
   hframelow1->GetYaxis()->SetTitleSize(0.11);
   hframelow1->GetYaxis()->SetTitleOffset(0.62);
@@ -169,7 +185,7 @@ void comp_bestfit_spectra
   low2->cd();
   TH1F * hframelow2 = (TH1F*)low2->DrawFrame(emin,1-maxratio,emax,1+maxratio);
   hframelow2->GetXaxis()->SetTitle("E_{reco} (GeV)");
-  hframelow2->GetYaxis()->SetTitle(Form("%s / %s", label1short, label2short).Data());
+  hframelow2->GetYaxis()->SetTitle(Form("%s / %s", label1short, label2short));
   hframelow2->GetYaxis()->SetLabelSize(0.09);
   hframelow2->GetYaxis()->SetTitleSize(0.11);
   hframelow2->GetYaxis()->SetTitleOffset(0.62);

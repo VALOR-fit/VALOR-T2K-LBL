@@ -21,7 +21,8 @@ void contour_plots_nfits(
 	   double       line_width = 2,
 	   bool         smooth = false,
 	   int          dmsq_mode = 0, /*For y-axis. 0: dm32sq, 1: dm31sq, 2: dmsq=dm32sq(NH)dm31sq(IH)*/
-	   double       chisq_input = false
+	   bool         chisq_input = false,
+	   bool         fancy_bestfitmarkers = false
 )
 {
   using namespace std;
@@ -167,7 +168,7 @@ void contour_plots_nfits(
 
     //style
     input_point  [ifit]->SetMarkerSize(0.5);
-    if(ncontours <= 3) {
+    if(ncontours <= 3 && fancy_bestfitmarkers) {
       if(ifit == 0) {
 	bestfit_point[ifit]->SetMarkerSize(1.8);
 	bestfit_point[ifit]->SetMarkerStyle(29);
@@ -187,6 +188,7 @@ void contour_plots_nfits(
     h90[ifit]->SetLineWidth(line_width);
     h68[ifit]->SetLineStyle(line_width);
     h90[ifit]->SetLineStyle(1);
+    h68[ifit]->SetLineStyle(2);
     //color
     Color_t icolor = kBlack;
     switch(ifit%10) {
@@ -199,9 +201,9 @@ void contour_plots_nfits(
     case 3:
       icolor = kGreen+2; break;
     case 4:
-      icolor = kOrange+7; break;
-    case 5:
       icolor = kYellow+2; break;
+    case 5:
+      icolor = kOrange+7; break;
     case 6:
       icolor = kMagenta+1; break;
     case 7:

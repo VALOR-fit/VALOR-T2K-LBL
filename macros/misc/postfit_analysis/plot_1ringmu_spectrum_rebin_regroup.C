@@ -318,6 +318,19 @@ void plot_1ringmu_spectrum_rebin_regroup
      h_data -> SetLineWidth(1);
   }
 
+  // turn into events per 50 MeV
+  for(int ix = 1; ix <= h_mc_all->GetNbinsX(); ix++) {
+    h_mc_all->SetBinContent(ix, (h_mc_all->GetBinContent(ix) / h_mc_all->GetBinWidth(ix)) * 0.05);
+    h_mc_numuccqe->SetBinContent(ix, (h_mc_numuccqe->GetBinContent(ix) / h_mc_numuccqe->GetBinWidth(ix)) * 0.05);
+    h_mc_numuccnonqe->SetBinContent(ix, (h_mc_numuccnonqe->GetBinContent(ix) / h_mc_numuccnonqe->GetBinWidth(ix)) * 0.05);
+    h_mc_numubarcc->SetBinContent(ix, (h_mc_numubarcc->GetBinContent(ix) / h_mc_numubarcc->GetBinWidth(ix)) * 0.05);
+    h_mc_nuenuebarcc->SetBinContent(ix, (h_mc_nuenuebarcc->GetBinContent(ix) / h_mc_nuenuebarcc->GetBinWidth(ix)) * 0.05);
+    if(h_mc_all_alt)
+      h_mc_all_alt->SetBinContent(ix, (h_mc_all_alt->GetBinContent(ix) / h_mc_all_alt->GetBinWidth(ix)) * 0.05);
+    if(h_data)
+      h_data->SetBinContent(ix, (h_data->GetBinContent(ix) / h_data->GetBinWidth(ix)) * 0.05);
+  }//ix
+
   // stack together components of the first pdf
   THStack * stack = new THStack("stack","spectrum contributions");
   stack->Add(h_mc_nc);
@@ -333,7 +346,7 @@ void plot_1ringmu_spectrum_rebin_regroup
   TCanvas * c = new TCanvas("c","",20,20,500,500);
   TH1F * hframe = (TH1F*)c->DrawFrame(0,0,emax,nmax);
   hframe->GetXaxis()->SetTitle("E_{reco} (GeV)");
-  hframe->GetYaxis()->SetTitle("Events per bin");
+  hframe->GetYaxis()->SetTitle("Events per 0.050 GeV");
 
   h_mc_all->Draw("same");
   if(show_components) {
@@ -351,9 +364,11 @@ void plot_1ringmu_spectrum_rebin_regroup
   // 
   // Add legend
   // 
-  TLegend * legend = new TLegend(0.35,0.6,0.85,0.9);
+  TLegend * legend = new TLegend(0.25,0.6,0.85,0.9);
   legend->SetFillColor(0);
   legend->SetBorderSize(0);
+  legend->SetTextSize(0.05);
+  legend->SetTextFont(132);
   if(print_header)
     legend->SetHeader("1 #mu-like ring");
   if(h_data) {
