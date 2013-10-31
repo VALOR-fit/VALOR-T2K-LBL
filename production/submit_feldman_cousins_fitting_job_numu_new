@@ -259,6 +259,9 @@ while($irun < $nruns) {
       print SH "source trunk_GRID/setup_at_grid.sh\n";
       print SH "echo \"*** Compiling the code...\"\n";
       print SH "cd trunk_GRID/\n";
+      print SH "printenv\n";
+      print SH "echo \"VO_T2K_ORG_SW_DIR\"\n";
+      print SH "echo \$VO_T2K_ORG_SW_DIR\n";
       print SH "ls -ltr \$VO_T2K_ORG_SW_DIR/\n";
       print SH "ls -ltr \$VO_T2K_ORG_SW_DIR/*/ROOT/\n";
       print SH "ls -ltr \$VO_T2K_ORG_SW_DIR/*/ROOT/v5r30p02n01/\n";
