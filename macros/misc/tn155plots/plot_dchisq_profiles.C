@@ -53,6 +53,10 @@ void plot_dchisq_profiles
       cout << h2->GetBinCenter(ix) << " has a negative dchisq " << dchisq << " for histogram " << tag2 << endl;
     h2->SetBinContent(ix, dchisq);
   }
+  //print min
+  cout << endl << "CHISQ MINIMUM" << endl
+       << "min for file 1: \t" << h1->GetMinimum() << endl
+       << "min for file 2: \t" << h2->GetMinimum() << endl;
 
   //format
   h2->SetLineColor(kRed);
@@ -63,7 +67,7 @@ void plot_dchisq_profiles
     h1->GetXaxis()->SetTitle("|#Deltam^{2}| = #Deltam^{2}_{32}(NH) #Deltam^{2}_{31}(IH)");
   h1->GetYaxis()->SetRangeUser(0,h1->GetMaximum()*1.05);
   if(!is_mix23) { // hide the dodgy peaks at ~ 0.00295)
-    h1->GetXaxis()->SetRangeUser(0.0020,0.0029);
+    //h1->GetXaxis()->SetRangeUser(0.0020,0.0029);
     h1->SetNdivisions(509);
   }
 
@@ -192,5 +196,45 @@ void plot_dchisq_profiles
        << h2_90_hi - bfpoint2 << "\t" 
        << endl
        << endl;
+
+  string macroname = "Mixing";
+  if(!is_mix23) {
+    macroname = "Dmsq";
+    bfpoint1 *= 1000;
+    h1_68_lo *= 1000;
+    h1_90_lo *= 1000;
+    h1_68_hi *= 1000;
+    h1_90_hi *= 1000;
+    bfpoint2 *= 1000;
+    h2_68_lo *= 1000;
+    h2_90_lo *= 1000;
+    h2_68_hi *= 1000;
+    h2_90_hi *= 1000;
+  }
+  cout << endl << endl << "LATEX MACROS" << endl;
+  std::cout.precision(3);
+  if(!is_mix23)
+    std::cout.precision(2);
+  std::cout.setf(std::ios::fixed, std::ios::floatfield);
+  cout << "%1-sigma (use the change relative to best-fit value)" << endl
+       << "\\def\\resultNormal" << macroname << "RelOneSigmaHi{" << TMath::Abs(h1_68_hi - bfpoint1) << "}" << endl
+       << "\\def\\resultNormal" << macroname << "RelOneSigmaLo{" << TMath::Abs(h1_68_lo - bfpoint1) << "}" << endl
+       << "%1-sigma (use the actual value of parameter)" << endl
+       << "\\def\\resultNormal" << macroname << "OneSigmaHi{" << h1_68_hi << "}" << endl
+       << "\\def\\resultNormal" << macroname << "OneSigmaLo{" << h1_68_lo << "}" << endl
+       << "%2-sigma (use the actual value of parameter)" << endl
+       << "\\def\\resultNormal" << macroname << "TwoSigmaHi{" << h1_90_hi << "}" << endl
+       << "\\def\\resultNormal" << macroname << "TwoSigmaLo{" << h1_90_lo << "}" << endl;
+
+  cout << endl
+       << "%1-sigma (use the change relative to best-fit value)" << endl
+       << "\\def\\resultInverted" << macroname << "RelOneSigmaHi{" << TMath::Abs(h2_68_hi - bfpoint1) << "}" << endl
+       << "\\def\\resultInverted" << macroname << "RelOneSigmaLo{" << TMath::Abs(h2_68_lo - bfpoint1) << "}" << endl
+       << "%1-sigma (use the actual value of parameter)" << endl
+       << "\\def\\resultInverted" << macroname << "OneSigmaHi{" << h2_68_hi << "}" << endl
+       << "\\def\\resultInverted" << macroname << "OneSigmaLo{" << h2_68_lo << "}" << endl
+       << "%2-sigma (use the actual value of parameter)" << endl
+       << "\\def\\resultInverted" << macroname << "TwoSigmaHi{" << h2_90_hi << "}" << endl
+       << "\\def\\resultInverted" << macroname << "TwoSigmaLo{" << h2_90_lo << "}" << endl;
 }
 
