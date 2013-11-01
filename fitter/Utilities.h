@@ -98,6 +98,7 @@ namespace util {
   string AsStringTex        (conv::PhysParamId_t      p);
   string AsStringPresentTex (conv::PhysParamId_t      p);
   string AsStringPaperTex   (conv::PhysParamId_t      p);
+  string AsStringPaperTexNoDollar   (conv::PhysParamId_t      p);
   string AsStringPaperRooTex(conv::PhysParamId_t      p);
   string AsStringRooTex     (conv::SuperkSample_t s, conv::SuperkMode_t m, string append_begin="", string append_end="");
   string AsStringRooTex     (conv::SuperkSample_t     s);
@@ -111,6 +112,7 @@ namespace util {
   string Pdg2String         (int pdg_code);
   string Pdg2StringTex      (int pdg_code);
 
+  conv::SuperkMode_t       SuperkModeFromString      (string h);
   conv::PhysHypothesis_t   PhysHypFromString         (string h);
   conv::SuperkSample_t     SKSampleFromString        (string h);
   conv::OscAnaType_t       OscAnaFromString          (string h);
@@ -250,6 +252,7 @@ namespace util {
   void PrintCompact (const TVectorD & v, int w=15, int prec=9, Option_t * opt="", ostream & stream = std::cout);
   void PrintCompact (const TVectorD & current, const TVectorD & nominal, int w, int prec, Option_t * option, ostream & stream = std::cout);
   void PrintCompact (const TMatrixD & m, int w=15, int prec=9, ostream & stream = std::cout);
+  void PrintCompactTex (const TMatrixD & m, int w=20, int prec=9, ostream & stream = std::cout, TString opt = "");
 
   //
   //

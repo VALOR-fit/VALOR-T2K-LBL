@@ -11,7 +11,7 @@
 void test_analysis_inputs
 (
   TString      opt         = "Flux SuperK BANFF NuXSec", //The information to test. Can be combinations of:  SuperK Flux nd280
-  const char * config_file = "analysis_configuration.xml"
+  const char * config_file = "analysis_configuration.xml"//"2013a_numu_run1+2+3+4_flux11bv3.2_neut13a_banff13v5prefit_sk+fsi.xml"
 )
 {
   using namespace std;
@@ -57,9 +57,15 @@ void test_analysis_inputs
     util::PrintCompact(skexp->GetBANFF()->BestFitValues(),15,9,"BANFF fit params");
     skexp->GetBANFF()->CovMatrix().Print("f=%8.4f");
     TMatrixDDiag diag(skexp->GetBANFF()->CovMatrix());
+    ofstream banfftable;
+    banfftable.open("banff_cov_matrix.tex", ofstream::out | ofstream::trunc);
+    util::PrintCompactTex(skexp->GetBANFF()->CovMatrix(), 10, 3, banfftable, "banff");
+    cout << endl << "SQRT DIAG" << endl;
     for(int i = 0; i < diag.GetNdiags(); i++) {
       cout << std::fixed << std::setprecision(3) << TMath::Sqrt(diag(i)) << endl;
     }
+    cout << endl << "Best fit values" << endl;
+    util::PrintCompact(skexp->GetBANFF()->BestFitValues(),10,3,"BANFF fit params");
   }//BANFF
 
   if(opt.Contains("NuXSec")) {
@@ -76,6 +82,10 @@ void test_analysis_inputs
   if(opt.Contains("SKDetFSI")) {
    skexp->GetSuperkDetectorFSI()->CovMatrix().Print("f=%8.4f");
    TMatrixDDiag diag(skexp->GetSuperkDetectorFSI()->CovMatrix());
+   ofstream skdetfsitable;
+   skdetfsitable.open("skdetfsi_cov_matrix.tex", ofstream::out | ofstream::trunc);
+   util::PrintCompactTex(skexp->GetSuperkDetectorFSI()->CovMatrix(), 20, 5, skdetfsitable, "skdetfsi");
+   cout << fixed << setprecision(3);
    for(int i = 0; i < diag.GetNdiags(); i++) {
      cout << TMath::Sqrt(diag(i)) << endl;
    }
