@@ -80,14 +80,11 @@ void plot_feldman_cousins_contour(
   //
   // Define dm23sq, mixing23 range and step  
   //
-  double mixing23_min   = 0.0;
-//double mixing23_min   = 0.0;
-  double mixing23_max   = 1.0;
+  double mixing23_min   = 0.25;
+  double mixing23_max   = 0.75;
   double mixing23_step  = 0.005;
-  double dm23sq_min     = 1.00E-3;
-//double dm23sq_min     = 1.0E-3;
-  double dm23sq_max     = 6.00E-3;
-//double dm23sq_max     = 6.0E-3;
+  double dm23sq_min     = 1.5E-3;
+  double dm23sq_max     = 3.5E-3;
 //  double dm23sq_step    = 5.0E-5; // now an argument
 
   //
