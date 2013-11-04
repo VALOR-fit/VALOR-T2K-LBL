@@ -15,6 +15,11 @@ unset ROOTSYS
 source ${VO_T2K_ORG_SW_DIR}/nd280v10r11p17/ROOT/v5r30p02n01/cmt/setup.sh
 if [ ! -n "$ROOTSYS" ]
     then
+      #queen mary hack
+      source ${VO_T2K_ORG_SW_DIR}/../../sl5/t2k.org/nd280v10r11p17/ROOT/v5r30p02n01/cmt/setup.sh
+fi
+if [ ! -n "$ROOTSYS" ]
+    then
       source ${VO_T2K_ORG_SW_DIR}/nd280v10r11p21/ROOT/v5r30p02n01/cmt/setup.sh;
 fi
 if [ ! -n "$ROOTSYS" ]

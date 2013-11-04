@@ -231,6 +231,8 @@ while($irun < $nruns) {
       print JDL "VirtualOrganisation = \"t2k.org\"; \n";
       #print JDL "Requirements = RegExp(\"ic.ac.uk\", other.GlueCEUniqueId); \n";
       print JDL "Requirements = Member(\"VO-t2k.org-ND280-v10r11p17\",other.GlueHostApplicationSoftwareRunTimeEnvironment) && other.GlueCEPolicyMaxCPUTime > 600; \n";
+      #print JDL "Requirements = Member(\"VO-t2k.org-ND280-v10r11p17\",other.GlueHostApplicationSoftwareRunTimeEnvironment) && other.GlueCEPolicyMaxCPUTime > 600 && other.GlueCEInfoHostName != \"ce06.esc.qmul.ac.uk\"; \n";
+      print JDL "MyProxyServer = \"lcgrbp01.gridpp.rl.ac.uk\"; \n";
 
       # Then write the executable for the JDL file
       open(SH, ">$tag-$irun.sh") or die("Can not create the .sh batch script");
@@ -249,6 +251,7 @@ while($irun < $nruns) {
       print SH "tar xvfz trunk_GRID.tar.gz \n";
       print SH "echo \"*** Copying input files from GRID...\" \n";
       print SH "lcg-cp -v --vo t2k.org lfn:/grid/t2k.org/nd280/contrib/dealtry/2013/XSecSplines2013Run1to4.root file:./trunk_GRID/inputs/official/2013/xsec/XSecSplines2013Run1to4.root\n";
+      print SH "lcg-cp -v --vo t2k.org lfn:/grid/t2k.org/nd280/contrib/dealtry/2013/XSecSplines1Re2012.root file:./trunk_GRID/inputs/official/2012/xsec/XSecSplines1Re2012.root\n";
       print SH "lcg-cp -v --vo t2k.org lfn:/grid/t2k.org/nd280/contrib/dealtry/2013/smallnt_numu_sk13a_flx11bv32_run1-4_10acut.root file:./trunk_GRID/inputs/official/2013/superk/mc/neut/13a/smallnt_numu_sk13a_flx11bv32_run1-4_10acut.root\n";
       print SH "ls -ltr\n";
       print SH "ls -ltr trunk_GRID/\n";
@@ -262,6 +265,7 @@ while($irun < $nruns) {
       print SH "printenv\n";
       print SH "echo \"VO_T2K_ORG_SW_DIR\"\n";
       print SH "echo \$VO_T2K_ORG_SW_DIR\n";
+      #print SH "ls -ltrR \$VO_T2K_ORG_SW_DIR/../../\n"; #only do this on a handful of jobs, if $VO_T2K_ORG_SW_DIR is empty. Otherwise you'll break the GRID...
       print SH "ls -ltr \$VO_T2K_ORG_SW_DIR/\n";
       print SH "ls -ltr \$VO_T2K_ORG_SW_DIR/*/ROOT/\n";
       print SH "ls -ltr \$VO_T2K_ORG_SW_DIR/*/ROOT/v5r30p02n01/\n";
@@ -326,7 +330,7 @@ if($resource eq "Grid") {
   while($irun < $nruns) {
     print SH0 "echo $irun\n";
     #print SH0 "glite-wms-job-submit -a -c $softw_dir/production/grid/$autowms_file -o $tag.jid $tag-$irun.jdl\n";
-    print SH0 "glite-wms-job-submit -d \$USERG -c $softw_dir/production/grid/$autowms_file -o $tag.jid $tag-$irun.jdl\n";
+    print SH0 "glite-wms-job-submit -d \$USERG -c /data/t2k/dealtry/RAL_repoisitory/t2k/t2kana/nuosc/trunk/production/grid/$autowms_file -o $tag.jid $tag-$irun.jdl\n";
     $irun++;
   }
   `chmod +x $tag.sh`;
@@ -373,8 +377,11 @@ if ($resource eq "gridhackinstall") {
   print SH0 "cp $softw_dir/inputs/official/2013/flux/11b_v3.2_run1-4a/*root trunk_GRID/inputs/official/2013/flux/11b_v3.2_run1-4a/\n";
   print SH0 "mkdir trunk_GRID/inputs/official/2013/skdetfsi\n";
   print SH0 "cp $softw_dir/inputs/official/2013/skdetfsi/*root trunk_GRID/inputs/official/2013/skdetfsi/\n";
-  #just make the directories for the large files (xsec splines & skmc)
   print SH0 "mkdir trunk_GRID/inputs/official/2013/xsec\n";
+  print SH0 "cp $softw_dir/inputs/official/2013/xsec/sk_mec_erec_etrue_run1to4.root trunk_GRID/inputs/official/2013/xsec/\n";
+  #just make the directories for the large files (xsec splines & skmc)
+  print SH0 "mkdir trunk_GRID/inputs/official/2012\n";
+  print SH0 "mkdir trunk_GRID/inputs/official/2012/xsec\n";
   print SH0 "mkdir trunk_GRID/inputs/official/2013/superk\n";
   print SH0 "mkdir trunk_GRID/inputs/official/2013/superk/mc\n";
   print SH0 "mkdir trunk_GRID/inputs/official/2013/superk/mc/neut\n";
