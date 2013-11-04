@@ -19,7 +19,11 @@
 void plot_feldman_cousins_deltachisqcrit(
   const char * delta_chisq_critical_file_mc_statonly,
   const char * delta_chisq_critical_file_mc_statsyst,
-  int nsmoothings=0)
+  int nsmoothings=0,
+  double zrange68 = 2,
+  double zrange90 = 2,
+  const char * tag = "normal"
+)
 {
   using namespace t2kana;
 
@@ -29,12 +33,22 @@ void plot_feldman_cousins_deltachisqcrit(
 
   Opt::Instance()->gOscMixingParamChoice = conv::kNuMixSinsqTheta;
 
-  const double sinsq2theta_min = 0.40;
-  const double sinsq2theta_max = 0.62;
+  const double sinsq2theta_min = 0.405;
+  const double sinsq2theta_max = 0.625;
   const double dmsq_min        = 2.2E-3;
-  const double dmsq_max        = 2.7E-3;
+  const double dmsq_max        = 2.8E-3;
   const double dchisq_2p_68    = 2.30; /// canonical 68% CL \delta\chi^{2} for 2 parameters
   const double dchisq_2p_90    = 4.61; /// canonical 90% CL \delta\chi^{2} for 2 parameters
+
+  //color pallete with white in the middle
+  const int ncols = 7;
+  //red, orange, yellow, white, cyan, light blue, blue
+  Double_t red  [ncols] = {1.00,  1.00,  1.00,  1.00,  0.00,  0.00,  0.00};
+  Double_t green[ncols] = {0.00,  0.50,  1.00,  1.00,  1.00,  0.50,  0.00};
+  Double_t blue [ncols] = {0.00,  0.00,  0.00,  1.00,  1.00,  1.00,  1.00};
+  Double_t stops[ncols] = {0.00,  0.168, 0.333, 0.50,  0.568, 0.833, 1.00};
+  const int ncolours = 255;
+  TColor::CreateGradientColorTable(ncols,stops,red,green,blue,ncolours);
 
   // Input files & histograms
 
@@ -52,25 +66,6 @@ void plot_feldman_cousins_deltachisqcrit(
     hdchisq68_statsyst -> Smooth();
     hdchisq90_statsyst -> Smooth();
   }
-
-  //get rid of the values close to canonical
-  for(int ix = 1; ix <= hdchisq68_statonly->GetNbinsX(); ix++)
-    for(int iy = 1; iy <= hdchisq68_statonly->GetNbinsY(); iy++)
-      if(TMath::Abs( hdchisq68_statonly->GetBinContent(ix,iy) - dchisq_2p_68 ) < conv::kASmallNum)
-	hdchisq68_statonly->SetBinContent(ix,iy,0);
-  for(int ix = 1; ix <= hdchisq90_statonly->GetNbinsX(); ix++)
-    for(int iy = 1; iy <= hdchisq90_statonly->GetNbinsY(); iy++)
-      if(TMath::Abs( hdchisq90_statonly->GetBinContent(ix,iy) - dchisq_2p_90 ) < conv::kASmallNum)
-	hdchisq90_statonly->SetBinContent(ix,iy,0);
-  for(int ix = 1; ix <= hdchisq68_statsyst->GetNbinsX(); ix++)
-    for(int iy = 1; iy <= hdchisq68_statsyst->GetNbinsY(); iy++)
-      if(TMath::Abs( hdchisq68_statsyst->GetBinContent(ix,iy) - dchisq_2p_68 ) < conv::kASmallNum)
-	hdchisq68_statsyst->SetBinContent(ix,iy,0);
-  for(int ix = 1; ix <= hdchisq90_statsyst->GetNbinsX(); ix++)
-    for(int iy = 1; iy <= hdchisq90_statsyst->GetNbinsY(); iy++)
-      if(TMath::Abs( hdchisq90_statsyst->GetBinContent(ix,iy) - dchisq_2p_90 ) < conv::kASmallNum)
-	hdchisq90_statsyst->SetBinContent(ix,iy,0);
-
 
   gStyle->SetOptStat(0);
 
@@ -100,17 +95,39 @@ void plot_feldman_cousins_deltachisqcrit(
     hdchisq90_statsyst  -> GetYaxis() -> SetTitleOffset(2.0);
   }
   else {
-    hdchisq68_statonly  -> GetYaxis() -> SetTitleOffset(1.0);
-    hdchisq90_statonly  -> GetYaxis() -> SetTitleOffset(1.0);
-    hdchisq68_statsyst  -> GetYaxis() -> SetTitleOffset(1.0);
-    hdchisq90_statsyst  -> GetYaxis() -> SetTitleOffset(1.0);
+    hdchisq68_statonly  -> GetYaxis() -> SetTitleOffset(0.8);
+    hdchisq90_statonly  -> GetYaxis() -> SetTitleOffset(0.8);
+    hdchisq68_statsyst  -> GetYaxis() -> SetTitleOffset(0.8);
+    hdchisq90_statsyst  -> GetYaxis() -> SetTitleOffset(0.8);
   }
 
   //equalise z axes
-  hdchisq68_statonly->GetZaxis()->SetRangeUser(1.4,2.5);
-  hdchisq68_statsyst->GetZaxis()->SetRangeUser(1.4,2.5);
-  hdchisq90_statonly->GetZaxis()->SetRangeUser(3.3,5.0);
-  hdchisq90_statsyst->GetZaxis()->SetRangeUser(3.3,5.0);
+  hdchisq68_statonly->GetZaxis()->SetRangeUser(-zrange68,+zrange68);
+  hdchisq68_statsyst->GetZaxis()->SetRangeUser(-zrange68,+zrange68);
+  hdchisq90_statonly->GetZaxis()->SetRangeUser(-zrange90,+zrange90);
+  hdchisq90_statsyst->GetZaxis()->SetRangeUser(-zrange90,+zrange90);
+
+  //make copies of the axes & calculate 'canonical - FC'
+  TH2D * hdchisq68_statonly_subtract = new TH2D(*hdchisq68_statonly);
+  TH2D * hdchisq90_statonly_subtract = new TH2D(*hdchisq90_statonly);
+  TH2D * hdchisq68_statsyst_subtract = new TH2D(*hdchisq68_statsyst);
+  TH2D * hdchisq90_statsyst_subtract = new TH2D(*hdchisq90_statsyst);
+  for(int ix = 1; ix <= hdchisq68_statonly_subtract->GetNbinsX(); ix++)
+    for(int iy = 1; iy <= hdchisq68_statonly_subtract->GetNbinsY(); iy++)
+      if(hdchisq68_statonly_subtract->GetBinContent(ix,iy) > 0.00001)
+	hdchisq68_statonly_subtract->SetBinContent(ix,iy, 2.30 - hdchisq68_statonly_subtract->GetBinContent(ix,iy));
+  for(int ix = 1; ix <= hdchisq90_statonly_subtract->GetNbinsX(); ix++)
+    for(int iy = 1; iy <= hdchisq90_statonly_subtract->GetNbinsY(); iy++)
+      if(hdchisq90_statonly_subtract->GetBinContent(ix,iy) > 0.00001)
+	hdchisq90_statonly_subtract->SetBinContent(ix,iy, 4.61 - hdchisq90_statonly_subtract->GetBinContent(ix,iy));
+  for(int ix = 1; ix <= hdchisq68_statsyst_subtract->GetNbinsX(); ix++)
+    for(int iy = 1; iy <= hdchisq68_statsyst_subtract->GetNbinsY(); iy++)
+      if(hdchisq68_statsyst_subtract->GetBinContent(ix,iy) > 0.00001)
+	hdchisq68_statsyst_subtract->SetBinContent(ix,iy, 2.30 - hdchisq68_statsyst_subtract->GetBinContent(ix,iy));
+  for(int ix = 1; ix <= hdchisq90_statsyst_subtract->GetNbinsX(); ix++)
+    for(int iy = 1; iy <= hdchisq90_statsyst_subtract->GetNbinsY(); iy++)
+      if(hdchisq90_statsyst_subtract->GetBinContent(ix,iy) > 0.00001)
+	hdchisq90_statsyst_subtract->SetBinContent(ix,iy, 4.61 - hdchisq90_statsyst_subtract->GetBinContent(ix,iy));
 
   TCanvas * c1 = new TCanvas("c1","",10,20,700,500);
   if(just_one_input)
@@ -124,10 +141,13 @@ void plot_feldman_cousins_deltachisqcrit(
   }
   else {
     c1->GetPad(1)->SetRightMargin(0.1);
+    c1->GetPad(1)->SetLeftMargin(0.09);
+    c1->GetPad(1)->SetBottomMargin(0.14);
+    c1->GetPad(1)->SetTopMargin(0.025);
   }
-  hdchisq68_statonly->Draw("colz");
-  hdchisq68_statonly->GetXaxis()->SetRangeUser(sinsq2theta_min,sinsq2theta_max);
-  hdchisq68_statonly->GetYaxis()->SetRangeUser(dmsq_min,dmsq_max);
+  hdchisq68_statonly_subtract->Draw("colz");
+  hdchisq68_statonly_subtract->GetXaxis()->SetRangeUser(sinsq2theta_min,sinsq2theta_max);
+  hdchisq68_statonly_subtract->GetYaxis()->SetRangeUser(dmsq_min,dmsq_max);
   c1->cd(2);
   if(!just_one_input) {
     c1->GetPad(2)->SetLeftMargin(0.3);
@@ -135,23 +155,26 @@ void plot_feldman_cousins_deltachisqcrit(
   }
   else {
     c1->GetPad(2)->SetRightMargin(0.1);
+    c1->GetPad(2)->SetLeftMargin(0.09);
+    c1->GetPad(2)->SetBottomMargin(0.14);
+    c1->GetPad(2)->SetTopMargin(0.025);
   }
-  hdchisq90_statonly->Draw("colz");
-  hdchisq90_statonly->GetXaxis()->SetRangeUser(sinsq2theta_min,sinsq2theta_max);
-  hdchisq90_statonly->GetYaxis()->SetRangeUser(dmsq_min,dmsq_max);
+  hdchisq90_statonly_subtract->Draw("colz");
+  hdchisq90_statonly_subtract->GetXaxis()->SetRangeUser(sinsq2theta_min,sinsq2theta_max);
+  hdchisq90_statonly_subtract->GetYaxis()->SetRangeUser(dmsq_min,dmsq_max);
   if(!just_one_input) {
     c1->cd(3);
     c1->GetPad(3)->SetLeftMargin(0.3);
     c1->GetPad(3)->SetRightMargin(0.15);
-    hdchisq68_statsyst->Draw("colz");
-    hdchisq68_statsyst->GetXaxis()->SetRangeUser(sinsq2theta_min,sinsq2theta_max);
-    hdchisq68_statsyst->GetYaxis()->SetRangeUser(dmsq_min,dmsq_max);
+    hdchisq68_statsyst_subtract->Draw("colz");
+    hdchisq68_statsyst_subtract->GetXaxis()->SetRangeUser(sinsq2theta_min,sinsq2theta_max);
+    hdchisq68_statsyst_subtract->GetYaxis()->SetRangeUser(dmsq_min,dmsq_max);
     c1->cd(4);
     c1->GetPad(4)->SetLeftMargin(0.15);
     c1->GetPad(4)->SetRightMargin(0.3);
-    hdchisq90_statsyst->Draw("colz");
-    hdchisq90_statsyst->GetXaxis()->SetRangeUser(sinsq2theta_min,sinsq2theta_max);
-    hdchisq90_statsyst->GetYaxis()->SetRangeUser(dmsq_min,dmsq_max);
+    hdchisq90_statsyst_subtract->Draw("colz");
+    hdchisq90_statsyst_subtract->GetXaxis()->SetRangeUser(sinsq2theta_min,sinsq2theta_max);
+    hdchisq90_statsyst_subtract->GetYaxis()->SetRangeUser(dmsq_min,dmsq_max);
     c1->Update();
   }
 
@@ -161,11 +184,13 @@ void plot_feldman_cousins_deltachisqcrit(
 
   double dmsq1 = 2.7E-3;
   double dmsq2 = 2.4E-3;
-  double dmsq3 = 2.2E-3;
+  double dmsq3 = 2.25E-3;
 
   int n = hdchisq90_statonly->GetXaxis()->GetNbins();
 
-  double * sinsq      = new double[n];
+  double * sinsq1     = new double[n];
+  double * sinsq2     = new double[n];
+  double * sinsq3     = new double[n];
   double * dchisq1_90 = new double[n];
   double * dchisq2_90 = new double[n];
   double * dchisq3_90 = new double[n];
@@ -174,29 +199,52 @@ void plot_feldman_cousins_deltachisqcrit(
   double * dchisq3_68 = new double[n];
 
   int idmsq1 = hdchisq90_statonly->GetYaxis()->FindBin(dmsq1);
+  int nsinsq1 = 0;
   for(int i=0; i<n; i++) {
-    dchisq1_90[i] = hdchisq90_statonly->GetBinContent(i+1,idmsq1);
-    dchisq1_68[i] = hdchisq68_statonly->GetBinContent(i+1,idmsq1);
-    sinsq[i]      = hdchisq90_statonly->GetXaxis()->GetBinCenter(i+1);
+    if(hdchisq90_statonly->GetBinContent(i+1,idmsq1) == 4.61) continue;
+    if(hdchisq90_statonly->GetBinContent(i+1,idmsq1) == 0.00) continue;
+    dchisq1_90[nsinsq1] = hdchisq90_statonly->GetBinContent(i+1,idmsq1);
+    dchisq1_68[nsinsq1] = hdchisq68_statonly->GetBinContent(i+1,idmsq1);
+    sinsq1[nsinsq1]     = hdchisq90_statonly->GetXaxis()->GetBinCenter(i+1);
+    //cout << i << "\t" << sinsq1[nsinsq1] << "\t" << dchisq1_90[nsinsq1] << "\t" << dchisq1_68[nsinsq1] << endl;
+    nsinsq1++;
   }
   int idmsq2 = hdchisq90_statonly->GetYaxis()->FindBin(dmsq2);
+  int nsinsq2 = 0;
   for(int i=0; i<n; i++) {
-    dchisq2_90[i] = hdchisq90_statonly->GetBinContent(i+1,idmsq2);
-    dchisq2_68[i] = hdchisq68_statonly->GetBinContent(i+1,idmsq2);
+    if(hdchisq90_statonly->GetBinContent(i+1,idmsq2) == 4.61) continue;
+    if(hdchisq90_statonly->GetBinContent(i+1,idmsq2) == 0.00) continue;
+    dchisq2_90[nsinsq2] = hdchisq90_statonly->GetBinContent(i+1,idmsq2);
+    dchisq2_68[nsinsq2] = hdchisq68_statonly->GetBinContent(i+1,idmsq2);
+    sinsq2[nsinsq2]     = hdchisq90_statonly->GetXaxis()->GetBinCenter(i+1);
+    nsinsq2++;
   }
   int idmsq3 = hdchisq90_statonly->GetYaxis()->FindBin(dmsq3);
+  int nsinsq3 = 0;
   for(int i=0; i<n; i++) {
-    dchisq3_90[i] = hdchisq90_statonly->GetBinContent(i+1,idmsq3);
-    dchisq3_68[i] = hdchisq68_statonly->GetBinContent(i+1,idmsq3);
+    if(hdchisq90_statonly->GetBinContent(i+1,idmsq3) == 4.61) continue;
+    //    if(TMath::Abs(hdchisq90_statonly->GetBinContent(i+1,idmsq3) - 4.61) < 1E-1) continue;
+    if(hdchisq90_statonly->GetBinContent(i+1,idmsq3) == 0.00) continue;
+    dchisq3_90[nsinsq3] = hdchisq90_statonly->GetBinContent(i+1,idmsq3);
+    dchisq3_68[nsinsq3] = hdchisq68_statonly->GetBinContent(i+1,idmsq3);
+    sinsq3[nsinsq3]     = hdchisq90_statonly->GetXaxis()->GetBinCenter(i+1);
+    nsinsq3++;
   }
-
 
   TCanvas * c2 = new TCanvas("c2","",10,20,700,500);
   c2->Divide(2,1);
+  c2->GetPad(1)->SetTopMargin(0.025);
+  c2->GetPad(1)->SetBottomMargin(0.13);
+  c2->GetPad(1)->SetLeftMargin(0.14);
+  c2->GetPad(1)->SetRightMargin(0.01);
+  c2->GetPad(2)->SetTopMargin(0.025);
+  c2->GetPad(2)->SetBottomMargin(0.13);
+  c2->GetPad(2)->SetLeftMargin(0.14);
+  c2->GetPad(2)->SetRightMargin(0.01);
   c2->cd(1);
-  TGraph * gr1_68 = new TGraph(n,sinsq,dchisq1_68);
-  TGraph * gr2_68 = new TGraph(n,sinsq,dchisq2_68);
-  TGraph * gr3_68 = new TGraph(n,sinsq,dchisq3_68);
+  TGraph * gr1_68 = new TGraph(nsinsq1,sinsq1,dchisq1_68);
+  TGraph * gr2_68 = new TGraph(nsinsq2,sinsq2,dchisq2_68);
+  TGraph * gr3_68 = new TGraph(nsinsq3,sinsq3,dchisq3_68);
   gr1_68->SetLineColor(kBlue);
   gr2_68->SetLineColor(kGreen);
   gr3_68->SetLineColor(kRed);
@@ -207,9 +255,9 @@ void plot_feldman_cousins_deltachisqcrit(
     hframe_68->GetXaxis()->SetTitle("sin^{2}#theta_{23}");
   hframe_68->GetYaxis()->SetTitle("#Delta#chi^{2}_{68}");
   hframe_68->GetXaxis()->SetNdivisions(507,true); //fix so not too many axis labels
-  gr1_68->Draw();
-  gr2_68->Draw();
-  gr3_68->Draw();
+  gr1_68->Draw("c");
+  gr2_68->Draw("c");
+  gr3_68->Draw("c");
   TLegend * legend_68 = new TLegend(0.4, 0.65, 0.9, 0.9);
   legend_68->SetFillStyle(0);
   legend_68->SetBorderSize(0);
@@ -220,9 +268,9 @@ void plot_feldman_cousins_deltachisqcrit(
   TLine * lc_68 = new TLine(sinsq2theta_min, dchisq_2p_68, sinsq2theta_max, dchisq_2p_68); /// canonical \delta\chi^{2}
   lc_68->Draw();
   c2->cd(2);
-  TGraph * gr1_90 = new TGraph(n,sinsq,dchisq1_90);
-  TGraph * gr2_90 = new TGraph(n,sinsq,dchisq2_90);
-  TGraph * gr3_90 = new TGraph(n,sinsq,dchisq3_90);
+  TGraph * gr1_90 = new TGraph(nsinsq1,sinsq1,dchisq1_90);
+  TGraph * gr2_90 = new TGraph(nsinsq2,sinsq2,dchisq2_90);
+  TGraph * gr3_90 = new TGraph(nsinsq3,sinsq3,dchisq3_90);
   gr1_90->SetLineColor(kBlue);
   gr2_90->SetLineColor(kGreen);
   gr3_90->SetLineColor(kRed);
@@ -233,9 +281,9 @@ void plot_feldman_cousins_deltachisqcrit(
     hframe_90->GetXaxis()->SetTitle("sin^{2}#theta_{23}");
   hframe_90->GetYaxis()->SetTitle("#Delta#chi^{2}_{90}");
   hframe_90->GetXaxis()->SetNdivisions(507,true); //fix so not too many axis labels
-  gr1_90->Draw();
-  gr2_90->Draw();
-  gr3_90->Draw();
+  gr1_90->Draw("c");
+  gr2_90->Draw("c");
+  gr3_90->Draw("c");
   TLegend * legend_90 = new TLegend(0.4, 0.65, 0.9, 0.9);
   legend_90->SetFillStyle(0);
   legend_90->SetBorderSize(0);
@@ -246,59 +294,107 @@ void plot_feldman_cousins_deltachisqcrit(
   TLine * lc_90 = new TLine(sinsq2theta_min, dchisq_2p_90, sinsq2theta_max, dchisq_2p_90); /// canonical \delta\chi^{2}
   lc_90->Draw();
 
-
   //
   // Plot critical \delta\chi^{2}_{68} and \delta\chi^{2}_{90} vs dmsq for 3 sinsq2theta.
   //
 
-  double sinsq2theta1 = 0.4;
+  double sinsq2theta1 = 0.44;
   double sinsq2theta2 = 0.5;
   double sinsq2theta3 = 0.6;
 
   int n2 = hdchisq90_statonly->GetYaxis()->GetNbins();
 
-  double * dmsq            = new double[n2];
-  double * dchisq1_dmsq_90 = new double[n2];
-  double * dchisq2_dmsq_90 = new double[n2];
-  double * dchisq3_dmsq_90 = new double[n2];
-  double * dchisq1_dmsq_68 = new double[n2];
-  double * dchisq2_dmsq_68 = new double[n2];
-  double * dchisq3_dmsq_68 = new double[n2];
+  double * dm21             = new double[n2];
+  double * dm22a            = new double[n2];
+  double * dm22b            = new double[n2];
+  double * dm23             = new double[n2];
+  double * dchisq1_dmsq_90  = new double[n2];
+  double * dchisq2a_dmsq_90 = new double[n2];
+  double * dchisq2b_dmsq_90 = new double[n2];
+  double * dchisq3_dmsq_90  = new double[n2];
+  double * dchisq1_dmsq_68  = new double[n2];
+  double * dchisq2a_dmsq_68  = new double[n2];
+  double * dchisq2b_dmsq_68  = new double[n2];
+  double * dchisq3_dmsq_68  = new double[n2];
 
   int isinsq2theta1 = hdchisq90_statonly->GetXaxis()->FindBin(sinsq2theta1);
+  int ndm21 = 0;
   for(int i=0; i<n2; i++) {
-    dchisq1_dmsq_90[i] = hdchisq90_statonly->GetBinContent(isinsq2theta1,i+1);
-    dchisq1_dmsq_68[i] = hdchisq68_statonly->GetBinContent(isinsq2theta1,i+1);
-    dmsq[i]            = hdchisq90_statonly->GetYaxis()->GetBinCenter(i+1);
+    if(hdchisq90_statonly->GetBinContent(isinsq2theta1, i+1) == 4.61) continue;
+    if(hdchisq90_statonly->GetBinContent(isinsq2theta1, i+1) == 0.00) continue;
+    dchisq1_dmsq_90[ndm21] = hdchisq90_statonly->GetBinContent(isinsq2theta1,i+1);
+    dchisq1_dmsq_68[ndm21] = hdchisq68_statonly->GetBinContent(isinsq2theta1,i+1);
+    dm21[ndm21]            = hdchisq90_statonly->GetYaxis()->GetBinCenter(i+1);
+    ndm21++;
   }
+  //special - it normally has a hole in it
   int isinsq2theta2 = hdchisq90_statonly->GetXaxis()->FindBin(sinsq2theta2);
+  int ndm22a = 0;
+  bool foundhole = false;
   for(int i=0; i<n2; i++) {
-    dchisq2_dmsq_90[i] = hdchisq90_statonly->GetBinContent(isinsq2theta2,i+1);
-    dchisq2_dmsq_68[i] = hdchisq68_statonly->GetBinContent(isinsq2theta2,i+1);
+    if(hdchisq90_statonly->GetBinContent(isinsq2theta2, i+1) == 4.61 || hdchisq90_statonly->GetBinContent(isinsq2theta2, i+1) == 0.00) {
+      if(!foundhole)  continue;
+      else        break;
+    }
+    dchisq2a_dmsq_90[ndm22a] = hdchisq90_statonly->GetBinContent(isinsq2theta2,i+1);
+    dchisq2a_dmsq_68[ndm22a] = hdchisq68_statonly->GetBinContent(isinsq2theta2,i+1);
+    dm22a[ndm22a]            = hdchisq90_statonly->GetYaxis()->GetBinCenter(i+1);
+    //cout << i << "\t" << dm22a[ndm22a] << "\t" << dchisq2a_dmsq_90[ndm22a] << "\t" << dchisq2a_dmsq_68[ndm22a] << endl;
+    ndm22a++;
+    foundhole = true;
+  }
+  int ndm22b = 0;
+  foundhole = false;
+  for(int i=n2-1; i>=0; i--) {
+    if(hdchisq90_statonly->GetBinContent(isinsq2theta2, i+1) == 4.61 || hdchisq90_statonly->GetBinContent(isinsq2theta2, i+1) == 0.00) {
+      if(!foundhole)  continue;
+      else        break;
+    }
+    dchisq2b_dmsq_90[ndm22b] = hdchisq90_statonly->GetBinContent(isinsq2theta2,i+1);
+    dchisq2b_dmsq_68[ndm22b] = hdchisq68_statonly->GetBinContent(isinsq2theta2,i+1);
+    dm22b[ndm22b]            = hdchisq90_statonly->GetYaxis()->GetBinCenter(i+1);
+    //cout << i << "\t" << dm22b[ndm22b] << "\t" << dchisq2b_dmsq_90[ndm22b] << "\t" << dchisq2b_dmsq_68[ndm22b] << endl;
+    ndm22b++;
+    foundhole = true;
   }
   int isinsq2theta3 = hdchisq90_statonly->GetXaxis()->FindBin(sinsq2theta3);
+  int ndm23 = 0;
   for(int i=0; i<n2; i++) {
-    dchisq3_dmsq_90[i] = hdchisq90_statonly->GetBinContent(isinsq2theta3,i+1);
-    dchisq3_dmsq_68[i] = hdchisq68_statonly->GetBinContent(isinsq2theta3,i+1);
+    if(hdchisq90_statonly->GetBinContent(isinsq2theta3, i+1) == 4.61) continue;
+    if(hdchisq90_statonly->GetBinContent(isinsq2theta3, i+1) == 0.00) continue;
+    dchisq3_dmsq_90[ndm23] = hdchisq90_statonly->GetBinContent(isinsq2theta3,i+1);
+    dchisq3_dmsq_68[ndm23] = hdchisq68_statonly->GetBinContent(isinsq2theta3,i+1);
+    dm23[ndm23]            = hdchisq90_statonly->GetYaxis()->GetBinCenter(i+1);
+    ndm23++;
   }
-
 
   TCanvas * c3 = new TCanvas("c3","",10,20,700,500);
   c3->Divide(2,1);
+  c3->GetPad(1)->SetTopMargin(0.025);
+  c3->GetPad(1)->SetBottomMargin(0.13);
+  c3->GetPad(1)->SetLeftMargin(0.14);
+  c3->GetPad(1)->SetRightMargin(0.01);
+  c3->GetPad(2)->SetTopMargin(0.025);
+  c3->GetPad(2)->SetBottomMargin(0.13);
+  c3->GetPad(2)->SetLeftMargin(0.14);
+  c3->GetPad(2)->SetRightMargin(0.01);
   c3->cd(1);
-  TGraph * gr1_dmsq_68 = new TGraph(n2,dmsq,dchisq1_dmsq_68);
-  TGraph * gr2_dmsq_68 = new TGraph(n2,dmsq,dchisq2_dmsq_68);
-  TGraph * gr3_dmsq_68 = new TGraph(n2,dmsq,dchisq3_dmsq_68);
+  TGraph * gr1_dmsq_68 = new TGraph(ndm21,dm21,dchisq1_dmsq_68);
+  TGraph * gr2a_dmsq_68 = new TGraph(ndm22a,dm22a,dchisq2a_dmsq_68);
+  TGraph * gr2b_dmsq_68 = new TGraph(ndm22b,dm22b,dchisq2b_dmsq_68);
+  TGraph * gr3_dmsq_68 = new TGraph(ndm23,dm23,dchisq3_dmsq_68);
   gr1_dmsq_68->SetLineColor(kBlue);
-  gr2_dmsq_68->SetLineColor(kGreen);
+  gr2a_dmsq_68->SetLineColor(kGreen);
+  gr2b_dmsq_68->SetLineColor(kGreen);
   gr3_dmsq_68->SetLineColor(kRed);
   TH1F * hframe_dmsq_68 = (TH1F*)c3->GetPad(1)->DrawFrame(dmsq_min, 0., dmsq_max, 4.);
   hframe_dmsq_68->GetXaxis()->SetTitle("|#Deltam^{2}_{32}| (eV^{2}/c^{4})");
   hframe_dmsq_68->GetYaxis()->SetTitle("#Delta#chi^{2}_{68}");
   hframe_dmsq_68->GetXaxis()->SetNdivisions(507,true); //fix so not too many axis labels
-  gr1_dmsq_68->Draw();
-  gr2_dmsq_68->Draw();
-  gr3_dmsq_68->Draw();
+  gr1_dmsq_68->Draw("c");
+  gr2a_dmsq_68->Draw("c");
+  gr2b_dmsq_68->Draw("c");
+  gr3_dmsq_68->Draw("c");
   TLegend * legend_dmsq_68 = new TLegend(0.5, 0.65, 0.9, 0.9);
   legend_dmsq_68->SetFillStyle(0);
   legend_dmsq_68->SetBorderSize(0);
@@ -316,30 +412,33 @@ void plot_feldman_cousins_deltachisqcrit(
   TLine * lc_dmsq_68 = new TLine(dmsq_min, dchisq_2p_68, dmsq_max, dchisq_2p_68); /// canonical \delta\chi^{2}
   lc_dmsq_68->Draw();
   c3->cd(2);
-  TGraph * gr1_dmsq_90 = new TGraph(n2,dmsq,dchisq1_dmsq_90);
-  TGraph * gr2_dmsq_90 = new TGraph(n2,dmsq,dchisq2_dmsq_90);
-  TGraph * gr3_dmsq_90 = new TGraph(n2,dmsq,dchisq3_dmsq_90);
+  TGraph * gr1_dmsq_90 = new TGraph(ndm21,dm21,dchisq1_dmsq_90);
+  TGraph * gr2a_dmsq_90 = new TGraph(ndm22a,dm22a,dchisq2a_dmsq_90);
+  TGraph * gr2b_dmsq_90 = new TGraph(ndm22b,dm22b,dchisq2b_dmsq_90);
+  TGraph * gr3_dmsq_90 = new TGraph(ndm23,dm23,dchisq3_dmsq_90);
   gr1_dmsq_90->SetLineColor(kBlue);
-  gr2_dmsq_90->SetLineColor(kGreen);
+  gr2a_dmsq_90->SetLineColor(kGreen);
+  gr2b_dmsq_90->SetLineColor(kGreen);
   gr3_dmsq_90->SetLineColor(kRed);
   TH1F * hframe_dmsq_90 = (TH1F*)c3->GetPad(2)->DrawFrame(dmsq_min, 0., dmsq_max, 8.);
   hframe_dmsq_90->GetXaxis()->SetTitle("|#Deltam^{2}_{32}| (eV^{2}/c^{4})");
   hframe_dmsq_90->GetYaxis()->SetTitle("#Delta#chi^{2}_{90}");
   hframe_dmsq_90->GetXaxis()->SetNdivisions(507,true); //fix so not too many axis labels
-  gr1_dmsq_90->Draw();
-  gr2_dmsq_90->Draw();
-  gr3_dmsq_90->Draw();
+  gr1_dmsq_90->Draw("c");
+  gr2a_dmsq_90->Draw("c");
+  gr2b_dmsq_90->Draw("c");
+  gr3_dmsq_90->Draw("c");
   TLegend * legend_dmsq_90 = new TLegend(0.5, 0.65, 0.9, 0.9);
   legend_dmsq_90->SetFillStyle(0);
   legend_dmsq_90->SetBorderSize(0);
   if(Opt::Instance()->gOscMixingParamChoice == conv::kNuMixSinsq2Theta) {
     legend_dmsq_90->AddEntry(gr1_dmsq_90, Form("#Delta#chi^{2}_{90}, sin^{2}2#theta_{23} = %.3f", sinsq2theta1), "L");
-    legend_dmsq_90->AddEntry(gr2_dmsq_90, Form("#Delta#chi^{2}_{90}, sin^{2}2#theta_{23} = %.3f", sinsq2theta2), "L");
+    legend_dmsq_90->AddEntry(gr2a_dmsq_90, Form("#Delta#chi^{2}_{90}, sin^{2}2#theta_{23} = %.3f", sinsq2theta2), "L");
     legend_dmsq_90->AddEntry(gr3_dmsq_90, Form("#Delta#chi^{2}_{90}, sin^{2}2#theta_{23} = %.3f", sinsq2theta3), "L");
   }
   else {
     legend_dmsq_90->AddEntry(gr1_dmsq_90, Form("#Delta#chi^{2}_{90}, sin^{2}#theta_{23} = %.3f", sinsq2theta1), "L");
-    legend_dmsq_90->AddEntry(gr2_dmsq_90, Form("#Delta#chi^{2}_{90}, sin^{2}#theta_{23} = %.3f", sinsq2theta2), "L");
+    legend_dmsq_90->AddEntry(gr2b_dmsq_90, Form("#Delta#chi^{2}_{90}, sin^{2}#theta_{23} = %.3f", sinsq2theta2), "L");
     legend_dmsq_90->AddEntry(gr3_dmsq_90, Form("#Delta#chi^{2}_{90}, sin^{2}#theta_{23} = %.3f", sinsq2theta3), "L");
   }
   legend_dmsq_90->Draw();
@@ -348,11 +447,11 @@ void plot_feldman_cousins_deltachisqcrit(
 
 
   //save images
-  c1->SaveAs("FC_surfaces.eps");
-  c2->SaveAs("FC_slice_mixing.eps");
-  c3->SaveAs("FC_slice_dmsq.eps");
-  c1->SaveAs("FC_surfaces.pdf");
-  c2->SaveAs("FC_slice_mixing.pdf");
-  c3->SaveAs("FC_slice_dmsq.pdf");
+  c1->SaveAs(Form("FC_surfaces_%s.eps",tag));
+  c2->SaveAs(Form("FC_slice_mixing_%s.eps",tag));
+  c3->SaveAs(Form("FC_slice_dmsq_%s.eps",tag));
+  c1->SaveAs(Form("FC_surfaces_%s.pdf",tag));
+  c2->SaveAs(Form("FC_slice_mixing_%s.pdf",tag));
+  c3->SaveAs(Form("FC_slice_dmsq_%s.pdf",tag));
 }
 

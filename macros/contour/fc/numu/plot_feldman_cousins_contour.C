@@ -264,7 +264,7 @@ void plot_feldman_cousins_contour(
 
   TH2D * hframe = (TH2D*) gPad->DrawFrame(mixing23_min, dm23sq_min, mixing23_max, dm23sq_max);
   hframe->GetXaxis()->SetTitle("sin^{2}2#theta_{23}");
-  hframe->GetYaxis()->SetTitle("|#Deltam_{23}^{2}| (eV^{2}/c^{4})");
+  hframe->GetYaxis()->SetTitle("|#Deltam_{32}^{2}| (eV^{2}/c^{4})");
 //hframe->GetXaxis()->SetLimits(0.,1.002);
 //hframe->GetYaxis()->SetLimits(0.001,0.004);
   hframe->GetXaxis()->SetTitleOffset(1.2);

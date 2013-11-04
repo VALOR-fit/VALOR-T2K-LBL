@@ -85,12 +85,12 @@ void write_contour_bins_to_textfile
 
   // The 'default' FC surface binning
   // dm23sq, mixing23 range and step
-  double mixing23_min   = 0.5;
-  double mixing23_max   = 1.0;
+  double mixing23_min   = 0.25;//475;
+  double mixing23_max   = 0.75;//25;
   double mixing23_step  = 0.005;
-  double dm23sq_min     = 1E-3;
-  double dm23sq_max     = 6E-3;
-  double dm23sq_step    = 1E-4;
+  double dm23sq_min     = 1.5E-3;//475E-3;
+  double dm23sq_max     = 3.5E-3;//25E-3;
+  double dm23sq_step    = 5E-5;
   // make sure that min and max are at the bin centre and not at the low/high edge of the first/last bin
   int mixing23_nbins = 1 + (int)(((mixing23_max - mixing23_min) / mixing23_step) + 0.01);
   int dm23sq_nbins   = 1 + (int)(((dm23sq_max   - dm23sq_min  ) / dm23sq_step  ) + 0.01);
@@ -181,8 +181,8 @@ void write_contour_bins_to_textfile
   TH2D * visualise_output_statsyst = 0;
   TRandom3 rand(0);
   if(convert_to_fc_surface_range) {
-    visualise_output_statonly = new TH2D("","",mixing23_nbins+1,mixing23_min,mixing23_max+mixing23_step,dm23sq_nbins+1,dm23sq_min,dm23sq_max+mixing23_step);
-    visualise_output_statsyst = new TH2D("","",mixing23_nbins+1,mixing23_min,mixing23_max+mixing23_step,dm23sq_nbins+1,dm23sq_min,dm23sq_max+mixing23_step);
+    visualise_output_statonly = new TH2D("","",mixing23_nbins,mixing23_min,mixing23_max+mixing23_step,dm23sq_nbins,dm23sq_min,dm23sq_max+dm23sq_step);
+    visualise_output_statsyst = new TH2D("","",mixing23_nbins,mixing23_min,mixing23_max+mixing23_step,dm23sq_nbins,dm23sq_min,dm23sq_max+dm23sq_step);
   }
   else {
     visualise_output_statonly = new TH2D("","",hContStatOnly[0]->GetNbinsX(),hContStatOnly[0]->GetXaxis()->GetXmin(),hContStatOnly[0]->GetXaxis()->GetXmax(),hContStatOnly[0]->GetNbinsY(),hContStatOnly[0]->GetYaxis()->GetXmin(),hContStatOnly[0]->GetYaxis()->GetXmax());
