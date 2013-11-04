@@ -107,7 +107,7 @@ void plot_contour_constdchisqVSfc
   g_sk->SetLineColor(kGreen+2);
 
   //Draw constdchisq vs FC
-  c->SetRightMargin(0.01);
+  c->SetRightMargin(0.03);
   c->SetTopMargin(0.01);
   c->SetBottomMargin(0.14);
   osc_param_space->GetXaxis()->SetRangeUser(0.4,0.65);
@@ -146,7 +146,7 @@ void plot_contour_constdchisqVSfc
   c->SaveAs(Form("contour_compare_%s_dcvsfc.eps",tag));
 
   //Draw constdchisq vs FC + externals
-  c->SetRightMargin(0.01);
+  c->SetRightMargin(0.03);
   c->SetTopMargin(0.01);
   c->SetBottomMargin(0.14);
   osc_param_space->GetXaxis()->SetRangeUser(0.3,0.7);
@@ -196,7 +196,7 @@ void plot_contour_constdchisqVSfc
   c->SaveAs(Form("contour_compare_%s_dcvsfc_ext.eps",tag));
 
   //Draw FC contour only
-  c->SetRightMargin(0.01);
+  c->SetRightMargin(0.03);
   c->SetTopMargin(0.01);
   c->SetBottomMargin(0.14);
   osc_param_space->GetXaxis()->SetRangeUser(0.4,0.65);

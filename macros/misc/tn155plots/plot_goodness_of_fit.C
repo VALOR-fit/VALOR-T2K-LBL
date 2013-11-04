@@ -7,6 +7,7 @@ void plot_goodness_of_fit
 )
 {
   TFile f(filename);
+  f.ls();
   TH1D * h = 0;
   f.GetObject("gof",h);
   TLine * l = 0;
@@ -20,7 +21,8 @@ void plot_goodness_of_fit
   l->SetY2(h->GetMaximum()*1.05);
 
   const TVectorD & vec = *v;
-  TPaveText pt(13,10,19,16,"tr");
+  TPaveText pt(13,10,19,18,"tr");
+  pt.SetTextSize(0.06);
   pt.AddText(Form("#chi^{2}_{data} = %.2f", vec[1]));
   if(overrule_pvalue < 0)
     pt.AddText(Form("p-value = %.2f", vec[0]));

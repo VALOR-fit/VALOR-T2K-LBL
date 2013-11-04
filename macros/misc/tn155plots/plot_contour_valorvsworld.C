@@ -11,12 +11,12 @@ void plot_contour_valorvsworld
   double legend_text_size = 0.05;
 
   //VaLOR data results
-  TFile f_dc_normal("2013results/DATA/run1-4_nuis3fixdcp_sintheta_normal/combination/run1-4_nuis3fixdcp_sintheta_normal_sinsq2theta.root");
-  TFile f_bf_normal("2013results/DATA/run1-4_nuis3fixdcp_sintheta_normal/combination/run1-4_nuis3fixdcp_sintheta_normal-run_0-expt_6.root");
-  TFile f_fc_normal68("2013results/FC/run1-4_nuis3fixdcp_sintheta_normal_fc68_sinsq2theta.root");
-  TFile f_fc_normal90("2013results/FC/run1-4_nuis3fixdcp_sintheta_normal_fc90_sinsq2theta.root");
-  TFile f_dc_normalo1("2013results/DATA/run1-4_nuis3fixdcp_sintheta_normal/combination/run1-4_nuis3fixdcp_sintheta_normal_sinsq2theta_octant1.root");
-  TFile f_dc_normalo2("2013results/DATA/run1-4_nuis3fixdcp_sintheta_normal/combination/run1-4_nuis3fixdcp_sintheta_normal_sinsq2theta_octant2.root");
+  TFile f_dc_normal("2013results/DATA/FULLRUN1-4FIXSPLINE/run1-4_nuis4_sintheta_normal/combination/run1-4_nuis4_sintheta_normal-run_0-expt_8_sinsq2theta.root");//the sinsq2theta file
+  TFile f_bf_normal("2013results/DATA/FULLRUN1-4FIXSPLINE/run1-4_nuis4_sintheta_normal/combination/run1-4_nuis4_sintheta_normal-run_0-expt_8.root");//use the sinsqtheta file just to get the best fit
+  TFile f_fc_normal68("2013results/FC/FULLRUN1-4FIXSPLINE/fc_contour_run1-4_normal_sinsq2theta68.root");
+  TFile f_fc_normal90("2013results/FC/FULLRUN1-4FIXSPLINE/fc_contour_run1-4_normal_sinsq2theta90.root");
+  TFile f_dc_normalo1("2013results/DATA/FULLRUN1-4FIXSPLINE/run1-4_nuis4_sintheta_normal/combination/run1-4_nuis4_sintheta_normal-run_0-expt_8_sinsq2thetaoctant1.root");
+  TFile f_dc_normalo2("2013results/DATA/FULLRUN1-4FIXSPLINE/run1-4_nuis4_sintheta_normal/combination/run1-4_nuis4_sintheta_normal-run_0-expt_8_sinsq2thetaoctant2.root");
 
   //Fill in TMarker's with the best fit points
   FitParamList * fparm_normal = 0;

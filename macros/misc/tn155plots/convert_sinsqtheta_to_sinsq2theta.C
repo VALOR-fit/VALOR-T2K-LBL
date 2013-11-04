@@ -4,7 +4,7 @@ void convert_sinsqtheta_to_sinsq2theta
  const char * infilename  = "2013results/DATA/run1-4_nuis3fixdcp_sintheta_normal/combination/run1-4_nuis3fixdcp_sintheta_normal-run_0-expt_6.root",
  const char * incontour   = "dchisq",
  bool         is_constdchisq = true, // if set, will apply the 2.30,4.61 values to output contourlevel. otherwise, apply 0 (the FC value)
- int          force_octant   = 0     // if 0 will marginalise, otherwise it's 1 or 2
+ int          force_octant   = 0     // if 0 will profile, otherwise it's 1 or 2
  )
 {
   TFile fin(infilename);

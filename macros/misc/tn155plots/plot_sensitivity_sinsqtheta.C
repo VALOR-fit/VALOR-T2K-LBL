@@ -12,22 +12,25 @@ void plot_sensitivity_sinsqtheta(
 
   //make the combined chisq surface a an average chisq surface (average)
   TH2D * h_avchisq = new TH2D(*h_combchisq);
-  for(int ix = 1; ix <= h_combchisq->GetNbinsX(); ix++) {
+  /*
+    for(int ix = 1; ix <= h_combchisq->GetNbinsX(); ix++) {
     for(int iy = 1; iy <= h_combchisq->GetNbinsX(); iy++) {
-      double chisq_combine = h_combchisq->GetBinContent(ix,iy);
-      double chisq_average = (chisq_combine < 700) ? chisq_combine / (double)5 : 75;
-      /*
-      //hack for a missing job
-      if(chisq_combine < 1)
-	chisq_average = 80;
-      else if(chisq_combine < 100)
-	chisq_average = chisq_combine / (double)1;
-      else if(chisq_combine < 200)
-	chisq_average = chisq_combine / (double)2;
-      */
-      h_avchisq->SetBinContent(ix,iy, chisq_average);
+    double chisq_combine = h_combchisq->GetBinContent(ix,iy);
+    double chisq_average = (chisq_combine < 700) ? chisq_combine / (double)5 : 75;
+    /*
+    //hack for a missing job
+    if(chisq_combine < 1)
+    chisq_average = 80;
+    else if(chisq_combine < 100)
+    chisq_average = chisq_combine / (double)1;
+    else if(chisq_combine < 200)
+    chisq_average = chisq_combine / (double)2;
+  */
+  /*
+    h_avchisq->SetBinContent(ix,iy, chisq_average);
     }//iy
-  }//ix
+    }//ix
+  */
 
   //find the minimum
   double chisq_min = h_avchisq->GetMinimum();
@@ -106,6 +109,10 @@ void plot_sensitivity_sinsqtheta(
   h_data1234a_68->SetLineStyle(2);
   h_data1234a_68->SetLineWidth(2);
 
+  //hack a missing point in the sensitivity surface
+  h_sens_90->GetYaxis()->SetRangeUser(0,0.0028);
+  h_sens_68->GetYaxis()->SetRangeUser(0,0.0028);
+
   //draw
   osc_param_space->GetXaxis()->SetRangeUser(0.35,0.65);
   osc_param_space->GetYaxis()->SetRangeUser(0.0022,0.0033);
@@ -122,8 +129,8 @@ void plot_sensitivity_sinsqtheta(
   leg->SetBorderSize(0);
   leg->SetTextFont(132);
   leg->SetTextSize(0.05);
-  leg->AddEntry(h_sens_68,  "Run 1-4a 68% C.L. sensitivity","l");
-  leg->AddEntry(h_sens_90,  "Run 1-4a 90% C.L. sensitivity","l");
+  leg->AddEntry(h_sens_68,  "Run 1-4a 68% C.L. sensitivity (stat only)","l");
+  leg->AddEntry(h_sens_90,  "Run 1-4a 90% C.L. sensitivity (stat only)","l");
   leg->AddEntry(h_data1234a_68,  "Run 1-4a 68% C.L. result","l");
   leg->AddEntry(h_data1234a_90,  "Run 1-4a 90% C.L. result","l");
   leg->AddEntry(m_input,   "Run 1-4a best fit","p");
@@ -134,5 +141,6 @@ void plot_sensitivity_sinsqtheta(
   leg2->SetFillColor(0);
   leg2->Draw();
   c->SaveAs("sensitivity.pdf");
+  c->SaveAs("sensitivity.eps");
 
 }
