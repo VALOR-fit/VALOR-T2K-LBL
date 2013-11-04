@@ -22,12 +22,12 @@ Run this by /path/to/test_sk_ereco_spectrum_twk_sys_throw_runAll.py [--all] (you
 [if the --all option is set, will run systematics individually also, on top of the normal 5 groups]
 It will then create the .root in the current working directory
 """
-
-make_summary = True
     
 postfit_config = "2013a_numu_run1+2+3+4_flux11bv3.2_neut13a_banff13v5_sk+fsi.xml"
 prefit_config  = "2013a_numu_run1+2+3+4_flux11bv3.2_neut13a_banff13v5prefit_sk+fsi.xml"
 
+
+class T2KAnaError(Exception): pass
 
 optionParser = optparse.OptionParser(usage ="""\
 usage: %prog [options]
@@ -36,8 +36,10 @@ usage: %prog [options]
 optionParser.add_option("-a","--all", action="store_true", dest="do_all", default=False, help="If set, will run indiviudal systematics, as well as the categories")
 optionParser.add_option("-i","--important", action="store_true", dest="do_imp", default=False, help="If set, will run the spline/osc param indiviudal systematics, as well as the categories")
 optionParser.add_option("-n","--nexp", action="store", dest="nexp", type="int", default=-1, help="How many experiments to generate at each point. Required")
+optionParser.add_option("--no-table", action="store_true", dest="notable", default=False, help="Don't make a table summarising the results for a tech note")
 (opt, args) = optionParser.parse_args()
 
+make_summary = not opt.notable
 nexp = opt.nexp
 if nexp <= 0:
     sys.exit("specify number of events")
@@ -59,7 +61,7 @@ elif opt.do_imp: #combinations + splines + oscparams
     modes = modes + modes6 + [200,201,202,203,204,215]
     
 oscparams = [] #fill with oscillation parameters, in order mixing12, theta13, theta23, deltacp, dmsq12, dmsq23hypothesis
-oscparams.append([  0,   0,   0,   0,   0,   0]) #no oscillations!
+oscparams.append([  0,   0,   0,   0,   -99,   -99]) #no oscillations!
 oscparams.append([-99, -99, -99, -99, -99, -99]) #use global best fits!
 #oscparams.append([0.86, 0.1,  1,  0,  7.58E-5,  2.32E-3])
 #oscparams.append([0.86, 0,    1,  0,  7.58E-5,  2.32E-3])
@@ -92,17 +94,19 @@ if make_summary:
   # Eg table 6 in TN-155
   # Uses outputs from previous macro runs, but calculates 'all' values using quadrature.
   files = glob.glob("sk_ereco_spectrum-twk_sys_throw_*txt")
-  l = [x for x in files if "23_0.000000" in x]
+  l = [x for x in files if "12_0.000,13_0.000,23_0.000" in x]
   if not len(l)==1:
     raise T2KAnaError("Found "+`len(l)`+ "txt files for no oscillation, expected 1")
   no_osc_info = l[0]
-  l = [x for x in files if "23_0.000000" not in x]
+  l = [x for x in files if "12_0.000,13_0.000,23_0.000" not in x]
   if not len(l)==1:
     raise T2KAnaError("Found "+`len(l)`+ "txt files for oscillation, expected 1")
   osc_info = l[0]
 
   col_titles = ["(no oscillations)","(oscillations with typical parameter values)"]
   col_files = [no_osc_info,osc_info]
+  
+  
   out_cols = []
   
   for title,infile in zip(col_titles,col_files):
@@ -114,7 +118,7 @@ if make_summary:
         row_id = row_id.strip()
         val = val.strip().partition(" ")[0]
         input_rows[row_id] = val
-      except:
+      except ValueError:
         pass
     f.close()
     d = dict()
@@ -126,13 +130,17 @@ if make_summary:
     d["xsec"]       = float(input_rows["unconstrained_xsec"])
     
     all_postfit = ["SKDet_FSI","BANFF","unconstrained_xsec"]
+    all_with_banff_prefit = ["SKDet_FSI","BANFFprefit","unconstrained_xsec"]
     if "no oscillations" not in title:
       all_postfit.append("Osc_param")
+      all_with_banff_prefit.append("Osc_param")
       
     all_prefit = [x+"prefit" for x in all_postfit]
     
-    d["total_prefit"]  = math.sqrt(sum([float(input_rows[x])**2 for x in all_prefit ])) #quadrature
-    d["total_postfit"] = math.sqrt(sum([float(input_rows[x])**2 for x in all_postfit])) #quadrature
+    # All from quadrature
+    #~ d["total_prefit"]  = math.sqrt(sum([float(input_rows[x])**2 for x in all_prefit ])) # all using the 'prefit' figures
+    d["total_prefit"]  = math.sqrt(sum([float(input_rows[x])**2 for x in all_with_banff_prefit ])) # Only BANFF prefit figures used
+    d["total_postfit"] = math.sqrt(sum([float(input_rows[x])**2 for x in all_postfit]))
     
     try:
       d["osc"] = float(input_rows["Osc_param"])
@@ -145,10 +153,12 @@ if make_summary:
 \\begin{tabular}{| c | D{.}{.}{-1} | D{.}{.}{-1} |}
 \\hline\n""")
 
+  # Takes a list of column contents (as strings), makes it into a latex table row, roughly fixed width
   def make_row(list_of_columns,indent=2,width=30):
     fields = [x.ljust(width) for x in list_of_columns]
     return (" "*indent) + (" & ".join(fields))
-    
+
+  # Formats a decimal into a percentage, to 2dp, for latex
   def percent_2dp(v):
     return "{0:.2f}".format(100*v)+"\\%"
     
@@ -181,7 +191,7 @@ if make_summary:
   f.write("""\\end{tabular}
 %caption goes here
 \\label{tab:nsk_systematic_table_summary}
-\\end{table}""")
+\\end{table}\n""")
 
 
   f.close()

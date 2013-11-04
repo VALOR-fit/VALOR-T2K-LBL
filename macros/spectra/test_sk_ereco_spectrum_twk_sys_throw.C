@@ -54,6 +54,15 @@
 // ------------------------------------------------------------------------------------------------
 //
 
+TH1D * spectrum_to_per_50mev(TH1D * h) {
+  TH1D * hout = new TH1D(*h);
+  for(int ix = 1; ix <= hout->GetNbinsX(); ix++) {
+    hout->SetBinContent(ix, 0.05 * h->GetBinContent(ix) / h->GetBinWidth(ix));
+  }
+  hout->GetYaxis()->SetTitle("Events per 0.050 GeV");
+  return hout;
+}
+
 void test_sk_ereco_spectrum_twk_sys_throw
 (
   int          mode,                                                /* options: see above */
@@ -332,6 +341,9 @@ void test_sk_ereco_spectrum_twk_sys_throw
   hErecoNominal->SetLineWidth(2);
   if(!update_rootfile)
     hErecoNominal->Write("nominal");
+    
+  TH1D * hErecoNominal_per50MeV = spectrum_to_per_50mev(hErecoNominal);
+  hErecoNominal_per50MeV->Write("nominal_per_50MeV");
 
   TStopwatch w;
   w.Start();
@@ -578,6 +590,8 @@ void test_sk_ereco_spectrum_twk_sys_throw
   hErecoMin = new TH1D(*hErecoNominal);
   hErecoMax->SetDirectory(0);
   hErecoMin->SetDirectory(0);
+  hErecoMax->GetYaxis()->SetTitle("Ratio of events at 1 #sigma to nominal");
+  hErecoMin->GetYaxis()->SetTitle("Ratio of events at 1 #sigma to nominal");
   hErecoMaxEnv = new TH1D(*hErecoNominal);
   hErecoMinEnv = new TH1D(*hErecoNominal);
   hErecoMaxEnv->SetDirectory(0);
@@ -623,6 +637,16 @@ void test_sk_ereco_spectrum_twk_sys_throw
   hErecoMinEnv->Draw("same");
   hErecoNominal->Draw("same");
   c->SaveAs(Form("%s_envelope_%s.eps",modetitle.c_str(),oscparams.c_str()));
+  
+  TH1D * hErecoMaxEnv_per50MeV = spectrum_to_per_50mev(hErecoMaxEnv);
+  TH1D * hErecoMinEnv_per50MeV = spectrum_to_per_50mev(hErecoMinEnv);
+  
+  TCanvas * c = new TCanvas();
+  hErecoMaxEnv_per50MeV->Draw();
+  hErecoMinEnv_per50MeV->Draw("same");
+  hErecoNominal_per50MeV->Draw("same");
+  c->SaveAs(Form("%s_envelope_per_50MeV_%s.eps",modetitle.c_str(),oscparams.c_str()));
+  
 
   TCanvas * csys = new TCanvas();
   csys->Divide(ceil(sqrt(nsys)),ceil(sqrt(nsys)));
