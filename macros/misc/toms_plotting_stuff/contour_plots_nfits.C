@@ -20,7 +20,7 @@ void contour_plots_nfits(
 	   bool         bf_in_leg = false,
 	   double       line_width = 2,
 	   bool         smooth = false,
-	   int          dmsq_mode = 0, /*For y-axis. 0: dm32sq, 1: dm31sq, 2: dmsq=dm32sq(NH)dm31sq(IH)*/
+	   int          dmsq_mode = 0, /*For y-axis. 0: |dm32sq|, 1: |dm31sq|, 2: |dmsq|=|dm32sq|(NH) |dm31sq|(IH)*/
 	   bool         chisq_input = false,
 	   bool         fancy_bestfitmarkers = false
 )
@@ -52,11 +52,11 @@ void contour_plots_nfits(
   else if(mixingparam == "sinsqtheta")
     osc_param_space->GetXaxis()->SetTitle("sin^{2}(#theta_{23})");
   if(dmsq_mode == 0)
-    osc_param_space->GetYaxis()->SetTitle("#Deltam_{32}^{2} (eV^{2}/c^{4})");
+    osc_param_space->GetYaxis()->SetTitle("|#Deltam_{32}^{2}| (eV^{2}/c^{4})");
   else if(dmsq_mode == 1)
-    osc_param_space->GetYaxis()->SetTitle("#Deltam_{13}^{2} (eV^{2}/c^{4})");
+    osc_param_space->GetYaxis()->SetTitle("|#Deltam_{31}^{2}| (eV^{2}/c^{4})");
   else if(dmsq_mode == 2)
-    osc_param_space->GetYaxis()->SetTitle("#Deltam^{2} = #Deltam_{32}^{2}(NH), #Deltam_{13}^{2}(IH) (eV^{2}/c^{4})");
+    osc_param_space->GetYaxis()->SetTitle("|#Deltam^{2}| = |#Deltam_{32}^{2}|(NH), |#Deltam_{13}^{2}|(IH) (eV^{2}/c^{4})");
   //osc_param_space->GetXaxis()->SetTitleOffset(1.2);
   osc_param_space->GetYaxis()->SetTitleOffset(1.4);
 

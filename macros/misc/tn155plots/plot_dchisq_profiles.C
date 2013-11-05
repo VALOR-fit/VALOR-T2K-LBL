@@ -64,7 +64,7 @@ void plot_dchisq_profiles
   h1->GetYaxis()->SetTitle("#Delta#chi^{2}");
   h2->GetYaxis()->SetTitle("#Delta#chi^{2}");
   if(!is_mix23)
-    h1->GetXaxis()->SetTitle("|#Deltam^{2}| = #Deltam^{2}_{32}(NH) #Deltam^{2}_{31}(IH)");
+    h1->GetXaxis()->SetTitle("|#Deltam^{2}| = |#Deltam^{2}_{32}|(NH), |#Deltam^{2}_{31}|(IH) (eV^{2}/c^{4})");
   h1->GetYaxis()->SetRangeUser(0,h1->GetMaximum()*1.05);
   if(!is_mix23) { // hide the dodgy peaks at ~ 0.00295)
     //h1->GetXaxis()->SetRangeUser(0.0020,0.0029);
@@ -228,8 +228,8 @@ void plot_dchisq_profiles
 
   cout << endl
        << "%1-sigma (use the change relative to best-fit value)" << endl
-       << "\\def\\resultInverted" << macroname << "RelOneSigmaHi{" << TMath::Abs(h2_68_hi - bfpoint1) << "}" << endl
-       << "\\def\\resultInverted" << macroname << "RelOneSigmaLo{" << TMath::Abs(h2_68_lo - bfpoint1) << "}" << endl
+       << "\\def\\resultInverted" << macroname << "RelOneSigmaHi{" << TMath::Abs(h2_68_hi - bfpoint2) << "}" << endl
+       << "\\def\\resultInverted" << macroname << "RelOneSigmaLo{" << TMath::Abs(h2_68_lo - bfpoint2) << "}" << endl
        << "%1-sigma (use the actual value of parameter)" << endl
        << "\\def\\resultInverted" << macroname << "OneSigmaHi{" << h2_68_hi << "}" << endl
        << "\\def\\resultInverted" << macroname << "OneSigmaLo{" << h2_68_lo << "}" << endl

@@ -81,7 +81,8 @@ void analyse_output_new
  const char * mixparamchoice       = "sinsq2theta",                   /* sinsq2theta or sinsqtheta, for the contour x-axis */
  const char * other_spectrum_file  = "",
  const char * other_spectrum_name  = "",
- bool         smooth               = false
+ bool         smooth               = false,
+ int          dmsqmode             = 0 //0 = |dm32sq|, 1 = |dm31sq|
 )
 {
   using namespace std;
@@ -452,8 +453,9 @@ void analyse_output_new
   }
   cout << npfree << " free parameters (" << np << " total)" << endl;
   //make the histogram
-  TH1D * pulls  = new TH1D("","",npfree,0,npfree);
-  TH1D * values = new TH1D("","",npfree,0,npfree);
+  TH1D * pulls    = new TH1D("","",npfree,0,npfree);
+  TH1D * values   = new TH1D("","",npfree,0,npfree);
+  TH1D * errratio = new TH1D("","",npfree,0,npfree); // postfit/prefit error
   //get deviation from best fit (in sigma)
   for(int ip = 0, ipfree = 1; ip < np; ip++) {
     conv::PhysParamId_t p = fparm->WhichParam(ip);
@@ -463,8 +465,9 @@ void analyse_output_new
       label = Form("%s                         ",util::AsStringPaperRooTex(p).c_str());
     else
       label = Form("%s",util::AsStringPaperRooTex(p).c_str());
-    pulls-> GetXaxis()->SetBinLabel(ipfree, label.Data());
-    values->GetXaxis()->SetBinLabel(ipfree, label.Data());
+    pulls->   GetXaxis()->SetBinLabel(ipfree, label.Data());
+    values->  GetXaxis()->SetBinLabel(ipfree, label.Data());
+    errratio->GetXaxis()->SetBinLabel(ipfree, label.Data());
     //get best fit info
     double best = fparm->BestFitValue(p);
     double error = 0;
@@ -476,69 +479,87 @@ void analyse_output_new
     if(p == conv::kPhypMixing13) {
       if(Opt::Instance()->gOscMixingParamChoice == conv::kNuMixSinsq2Theta) {
 	pulls-> SetBinContent(ipfree, (best - conv::kGlobFitSinsq2Theta13) / error);
-	values->SetBinContent(ipfree, (best - conv::kGlobFitSinsq2Theta13) / conv::kGlobFitErrSinsq2Theta13);
+	values->SetBinContent(ipfree, (best - conv::kGlobFitSinsq2Theta13) / (conv::kGlobFitErrSinsq2Theta13 * conv::kGlobFitSinsq2Theta13));
+	errratio->SetBinContent(ipfree, error / (conv::kGlobFitErrSinsq2Theta13 * conv::kGlobFitSinsq2Theta13));
       }
       else if(Opt::Instance()->gOscMixingParamChoice == conv::kNuMixSinsqTheta) {
 	pulls-> SetBinContent(ipfree, (best - conv::kGlobFitSinsqTheta13) / error);
-	values->SetBinContent(ipfree, (best - conv::kGlobFitSinsqTheta13) / conv::kGlobFitErrSinsqTheta13);
+	values->SetBinContent(ipfree, (best - conv::kGlobFitSinsqTheta13) / (conv::kGlobFitErrSinsqTheta13 * conv::kGlobFitSinsqTheta13));
+	errratio->SetBinContent(ipfree, error / (conv::kGlobFitErrSinsqTheta13 * conv::kGlobFitSinsqTheta13));
+	cout << util::AsString(p) << "\t" << error << "\t" << conv::kGlobFitErrSinsqTheta13 << "\t" << error / conv::kGlobFitErrSinsqTheta13 << endl;
       }
     }
     else if(p == conv::kPhypMixing12) {
       if(Opt::Instance()->gOscMixingParamChoice == conv::kNuMixSinsq2Theta) {
 	pulls-> SetBinContent(ipfree, (best - conv::kGlobFitSinsq2Theta12) / error);
-	values->SetBinContent(ipfree, (best - conv::kGlobFitSinsq2Theta12) / conv::kGlobFitErrSinsq2Theta12);
+	values->SetBinContent(ipfree, (best - conv::kGlobFitSinsq2Theta12) / (conv::kGlobFitErrSinsq2Theta12 * conv::kGlobFitSinsq2Theta12));
+	errratio->SetBinContent(ipfree, error / (conv::kGlobFitErrSinsq2Theta12 * conv::kGlobFitSinsq2Theta12));
       }
       else if(Opt::Instance()->gOscMixingParamChoice == conv::kNuMixSinsqTheta) {
 	pulls-> SetBinContent(ipfree, (best - conv::kGlobFitSinsqTheta12) / error);
-	values->SetBinContent(ipfree, (best - conv::kGlobFitSinsqTheta12) / conv::kGlobFitErrSinsqTheta12);
+	values->SetBinContent(ipfree, (best - conv::kGlobFitSinsqTheta12) / (conv::kGlobFitErrSinsqTheta12 * conv::kGlobFitSinsqTheta12));
+	errratio->SetBinContent(ipfree, error / (conv::kGlobFitErrSinsqTheta12 * conv::kGlobFitSinsqTheta12));
+	cout << util::AsString(p) << "\t" << error << "\t" << conv::kGlobFitErrSinsqTheta12 << "\t" << error / conv::kGlobFitErrSinsqTheta12 << endl;
       }
     }
     else if(p == conv::kPhypDeltaCP) {
       pulls-> SetBinContent(ipfree, (best - conv::kGlobFitDeltaCP) / error);
       values->SetBinContent(ipfree, (best - conv::kGlobFitDeltaCP) / conv::kpi);//conv::kGlobFitErrDeltaCP);
+      errratio->SetBinContent(ipfree, error / conv::kpi);
       cout << best << endl;
       cout << error << endl;
       cout << 2*conv::kpi << endl;
     }
     else if(p == conv::kPhypDm12sq) {
       pulls-> SetBinContent(ipfree, (best - conv::kGlobFitDm12sq) / error);
-      values->SetBinContent(ipfree, (best - conv::kGlobFitDm12sq) / conv::kGlobFitErrDm12sq);
+      values->SetBinContent(ipfree, (best - conv::kGlobFitDm12sq) / (conv::kGlobFitErrDm12sq * conv::kGlobFitDm12sq));
+      errratio->SetBinContent(ipfree, error / (conv::kGlobFitErrDm12sq * conv::kGlobFitDm12sq));
+	cout << util::AsString(p) << "\t" << error << "\t" << conv::kGlobFitErrDm12sq << "\t" << error / conv::kGlobFitErrDm12sq << endl;
     }
     else if(util::IsBANFF(p)) {
       pulls-> SetBinContent(ipfree, (best - skexp->GetBANFF()->BestFitValue(p)) / error);
       values->SetBinContent(ipfree, (best - skexp->GetBANFF()->BestFitValue(p)) / skexp->GetBANFF()->OneSigmaError(p));
+      errratio->SetBinContent(ipfree, error / skexp->GetBANFF()->OneSigmaError(p));
     }
     else if(util::IsXSec(p)) {
       //"nominal best fit" is 0
       //"1 sigma error" is 1
       pulls-> SetBinContent(ipfree, (best - 0) / error);
       values->SetBinContent(ipfree, (best - 0) / 1);
+      errratio->SetBinContent(ipfree, error / 1);
     }
     else if(p == conv::kNuisSuperkEnergyScale) {
       //"nominal best fit" is 0
       //"1 sigma error" is 1
       pulls-> SetBinContent(ipfree, (best - 0) / error);
       values->SetBinContent(ipfree, (best - 0) / 1);
+      errratio->SetBinContent(ipfree, error / 1);
     }
     else if(util::IsSKDetFSI(p)) {
       //"nominal best fit" is 1
       pulls-> SetBinContent(ipfree, (best - 1) / error);
       values->SetBinContent(ipfree, (best - 1) / skexp->GetSuperkDetectorFSI()->OneSigmaError(p));
+      errratio->SetBinContent(ipfree, error / skexp->GetSuperkDetectorFSI()->OneSigmaError(p));
     }
     else {
       cerr << "Unknown pull for parameter " << util::AsStringCompact(p) << endl;
     }
+    cout << util::AsString(p) << "\t" << errratio->GetBinContent(ipfree) << endl;
     ipfree++;
   }//ip
   //style
-  pulls-> GetYaxis()->SetRangeUser(-1,1);
-  pulls-> GetXaxis()->LabelsOption("v");
-  values->GetYaxis()->SetRangeUser(-1,1);
-  values->GetXaxis()->LabelsOption("v");
+  pulls->   GetYaxis()->SetRangeUser(-1,1);
+  pulls->   GetXaxis()->LabelsOption("v");
+  values->  GetYaxis()->SetRangeUser(-1,1);
+  values->  GetXaxis()->LabelsOption("v");
+  errratio->GetYaxis()->SetRangeUser( 0,2);
+  errratio->GetXaxis()->LabelsOption("v");
   TLine * lpull = new TLine(0,0,pulls->GetXaxis()->GetLast(),0);
+  TLine * lerr  = new TLine(0,1,pulls->GetXaxis()->GetLast(),1);
   //title
   pulls-> GetYaxis()->SetTitle("Pull = (bestfit - input) / #sigma_{fit}");
   values->GetYaxis()->SetTitle("Pull = (bestfit - input) / #sigma_{input}");
+  errratio->GetYaxis()->SetTitle("#sigma_{fit} / #sigma_{input}");
   //draw
   TCanvas * cpull = new TCanvas();
   cpull->SetGridx(1);
@@ -551,12 +572,17 @@ void analyse_output_new
   values->Draw("P");
   lpull->Draw();
   save_canvas(cpull,"values",tag);
+  cpull->cd();
+  errratio->Draw("P");
+  lerr->Draw();
+  save_canvas(cpull,"err_ratio",tag);
 
   //save the pull histogram
   TFile fout_pull(Form("%s_pulls.root",tag),"RECREATE");
   fout_pull.cd();
   pulls->Write("pulls");
   values->Write("values");
+  errratio->Write("pulls");
   fout_pull.Close();
 
   //count number of parameters with |pull| > 0.1
@@ -613,11 +639,26 @@ void analyse_output_new
   hdchisq->GetYaxis()->SetRangeUser(dm_min,     dm_max);
   //axis title
   hchisq-> GetXaxis()->SetTitle(util::AsStringPaperRooTex(conv::kPhypMixing23).c_str());
-  hchisq-> GetYaxis()->SetTitle(util::AsStringPaperRooTex(conv::kPhypDm23sq).c_str());
+  //hchisq-> GetYaxis()->SetTitle(util::AsStringPaperRooTex(conv::kPhypDm23sq).c_str());
   hchisq-> GetYaxis()->SetTitleOffset(1.50);
   hdchisq->GetXaxis()->SetTitle(util::AsStringPaperRooTex(conv::kPhypMixing23).c_str());
-  hdchisq->GetYaxis()->SetTitle(util::AsStringPaperRooTex(conv::kPhypDm23sq).c_str());
+  //hdchisq->GetYaxis()->SetTitle(util::AsStringPaperRooTex(conv::kPhypDm23sq).c_str());
   hdchisq->GetYaxis()->SetTitleOffset(1.50);
+  switch(dmsqmode) {
+  case 0:
+    hchisq ->GetYaxis()->SetTitle("|#Deltam^{2}_{32}| (eV^{2}/c^{4})");
+    hdchisq->GetYaxis()->SetTitle("|#Deltam^{2}_{32}| (eV^{2}/c^{4})");
+    break;
+  case 1:
+    hchisq ->GetYaxis()->SetTitle("|#Deltam^{2}_{31}| (eV^{2}/c^{4})");
+    hdchisq->GetYaxis()->SetTitle("|#Deltam^{2}_{31}| (eV^{2}/c^{4})");
+    break;
+  default:
+    hchisq ->GetYaxis()->SetTitle("");
+    hdchisq->GetYaxis()->SetTitle("");
+    break;
+  }
+
   //draw
   TCanvas * cchisq = new TCanvas();
   cchisq->SetRightMargin(0.12);
@@ -654,7 +695,18 @@ void analyse_output_new
        dm23sq_min - 0.5*dm23sq_step, 
        dm23sq_max + 0.5*dm23sq_step);
   osc_param_space->GetXaxis()->SetTitle(util::AsStringPaperRooTex(conv::kPhypMixing23).c_str());
-  osc_param_space->GetYaxis()->SetTitle(util::AsStringPaperRooTex(conv::kPhypDm23sq).c_str());
+  //osc_param_space->GetYaxis()->SetTitle(util::AsStringPaperRooTex(conv::kPhypDm23sq).c_str());
+  switch(dmsqmode) {
+  case 0:
+    osc_param_space->GetYaxis()->SetTitle("|#Deltam^{2}_{32}| (eV^{2}/c^{4})");
+    break;
+  case 1:
+    osc_param_space->GetYaxis()->SetTitle("|#Deltam^{2}_{31}| (eV^{2}/c^{4})");
+    break;
+  default:
+    osc_param_space->GetYaxis()->SetTitle("");
+    break;
+  }
   osc_param_space->GetYaxis()->SetTitleOffset(1.30);
 
   //get the histograms
