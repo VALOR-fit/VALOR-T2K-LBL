@@ -7,12 +7,19 @@
 
 //#define FITPARMLIST 0 // nuosc3f_numudisapp_fix4+nuisance
 //#define FITPARMLIST 1 // nuosc3f_numudisapp_nuis3fixdcp+nuisance
-//#define FITPARMLIST 2 // nuosc3f_numudisapp_nuis4+nuisance
+#define FITPARMLIST 2 // nuosc3f_numudisapp_nuis4+nuisance
 //#define FITPARMLIST -3 // only want to look at sk escale minos errors
-#define FITPARMLIST -2 // mix23 & dm32sq only
+//#define FITPARMLIST -2 // mix23 & dm32sq only
 
 //#define VERBOSE //print out the best fit and input of every single parameter in every single event
 //#define VERYVERBOSE //print out parameter name too
+
+void set_marker_style(TH1 *hist, Int_t color, Double_t size, Int_t style)
+{
+  hist->SetMarkerSize(size);
+  hist->SetMarkerColor(color);
+  hist->SetMarkerStyle(style);
+}
 
 void save_canvas(TCanvas * c, const char * name, const char * tag) {
   string name2(name); //don't ask me why I need to do this. I have no idea...
@@ -189,7 +196,7 @@ void mock_data_fit_pulls_new
      mix13_err,                    // kPhypMixing13
      mix12_err,                    // kPhypMixing12
      dm21sq_err,                   // kPhypDm12sq
-#if FITPARAMLIST == 2
+#if FITPARMLIST == 2
      deltacp_err,                  // kPhypDeltaCP
 #endif //==2
 #endif //>=1
@@ -244,7 +251,6 @@ void mock_data_fit_pulls_new
      TMath::Sqrt(skfsicov(5,5))    // kNuisSKDetFSI005
 #endif
   };
-
 
   double global_bestfit_mix23 = 0;
   double global_bestfit_mix13 = 0;
@@ -326,6 +332,14 @@ void mock_data_fit_pulls_new
 #endif
   };
 
+  /*
+  //debug array order
+  for(int i = 0; i < nparams; i++) {
+    cout << util::AsStringCompact(params[i]) << "\t" << prefit_err_array[i] << "\t" << nominal_array[i] << endl;
+  }
+  exit(1);
+  */
+
   // Release memory
   xml->FreeDoc(xmldoc);
   delete xml;
@@ -336,6 +350,7 @@ void mock_data_fit_pulls_new
   //
 
   const int    nbins_pull = 100;
+  const int    nbins_pull_test = 10000;
   const double min_pull   = -5;
   const double max_pull   =  5;
   const int    nbins_err  = 100;
@@ -347,14 +362,25 @@ void mock_data_fit_pulls_new
   TH1D * h_chisqbf        = new TH1D("h_chisqbf",       "best-fit chisq",             615, -5,  200);
   TH1D * h_nsk_nom        = new TH1D("h_nsk_nom",       "nsk(1Rmu) nom",              500,  0,  500);
   TH1D * h_nsk_bf         = new TH1D("h_nsk_bf",        "nsk(1Rmu) best-fit",         500,  0,  500);
-  // -3 is for mixing23, dm32sq, spectral function
-  TH1D * h_summary_nuis   = new TH1D("h_summary_nuis",  "summary of nuisance parameters", nparams-3, 0, nparams-3);
+  TH1D * h_summary_nuis   = new TH1D("h_summary_nuis",  "summary of nuisance parameters",          nparams-2, 0, nparams-2);//not mix23, dm32sq
+  TH1D * h_summary_mean   = new TH1D("h_summary_mean",  "summary of nuisance parameters mean",     nparams-2, 0, nparams-2);//not mix23, dm32sq
+  TH1D * h_summary_rms    = new TH1D("h_summary_rms",   "summary of nuisance parameters rms",      nparams-2, 0, nparams-2);//not mix23, dm32sq
+  TH1D * h_summary_ks     = new TH1D("h_summary_ks",    "summary of nuisance parameters KS test",  nparams-2, 0, nparams-2);//not mix23, dm32sq
+  TH1D * h_summary_kurt   = new TH1D("h_summary_kurt",  "summary of nuisance parameters kurtosis", nparams-2, 0, nparams-2);//not mix23, dm32sq
+  TH1D * h_summary_skew   = new TH1D("h_summary_skew",  "summary of nuisance parameters skewness", nparams-2, 0, nparams-2);//not mix23, dm32sq
+  //color size style
+  set_marker_style(h_summary_mean,kBlack,   1.0,24);
+  set_marker_style(h_summary_rms, kBlack,   1.0,25);
+  set_marker_style(h_summary_ks,  kGreen+2, 1.0,26);
+  set_marker_style(h_summary_kurt,kBlue,    1.0,27);
+  set_marker_style(h_summary_skew,kRed,     1.0,28);
 
   TH1D * h_bestfit    [nparams] = { 0 }; // best-fit param distributions
   TH1D * h_residuals  [nparams] = { 0 }; // residuals
   TH1D * h_pull_1     [nparams] = { 0 }; // pulls - 1st definition (as in T2K-TN-141v6, p.320)
   TH1D * h_pull_2     [nparams] = { 0 }; //  ...    2nd     ...          ...
   TH1D * h_pull_3     [nparams] = { 0 }; //  ...    3rd     ...          ...
+  TH1D * h_pull_1_test[nparams] = { 0 }; // pulls - 1st definition (as in T2K-TN-141v6, p.320) with finer binning for calculating KS, kurtosis, skewness
   TH1D * h_err_migrad [nparams] = { 0 }; // migrad err distribution
   TH1D * h_err_hesse  [nparams] = { 0 }; // hesse  err distribution
   TH1D * h_err_minos  [nparams] = { 0 }; // minos  err distribution
@@ -430,6 +456,10 @@ void mock_data_fit_pulls_new
          Form("h_pull_3_%s",name2.c_str()), 
          Form("Pull_3 for %s", util::AsStringCompact(p).c_str()), 
          nbins_pull, min_pull, max_pull);
+     h_pull_1_test[ip] = new TH1D( 
+         Form("h_pull_1_test_%s",name2.c_str()), 
+         Form("Pull_1 for %s (fine binning)", util::AsStringCompact(p).c_str()), 
+         nbins_pull_test, min_pull, max_pull);
      h_err_migrad[ip] = new TH1D( 
          Form("h_err_migrad_%s",name2.c_str()), 
          Form("Migrad error for %s", util::AsStringCompact(p).c_str()), 
@@ -450,16 +480,29 @@ void mock_data_fit_pulls_new
          Form("h_err_minos_minus_%s",name2.c_str()), 
          Form("Minos minus error for %s", util::AsStringCompact(p).c_str()), 
          2*nbins_err, -2*prefit_err_array[ip], 2*prefit_err_array[ip]);
-     h_bestfit   [ip]->GetXaxis()->SetTitle(util::AsStringPaperRooTex(p).c_str());
-     h_residuals [ip]->GetXaxis()->SetTitle(util::AsStringPaperRooTex(p).c_str());
-     h_pull_1    [ip]->GetXaxis()->SetTitle(util::AsStringPaperRooTex(p).c_str());
-     h_pull_2    [ip]->GetXaxis()->SetTitle(util::AsStringPaperRooTex(p).c_str());
-     h_pull_3    [ip]->GetXaxis()->SetTitle(util::AsStringPaperRooTex(p).c_str());
-     h_err_migrad[ip]->GetXaxis()->SetTitle(util::AsStringPaperRooTex(p).c_str());
-     h_err_hesse [ip]->GetXaxis()->SetTitle(util::AsStringPaperRooTex(p).c_str());
-     h_err_minos [ip]->GetXaxis()->SetTitle(util::AsStringPaperRooTex(p).c_str());
+     h_bestfit    [ip]->GetXaxis()->SetTitle(util::AsStringPaperRooTex(p).c_str());
+     h_residuals  [ip]->GetXaxis()->SetTitle(util::AsStringPaperRooTex(p).c_str());
+     h_pull_1     [ip]->GetXaxis()->SetTitle(util::AsStringPaperRooTex(p).c_str());
+     h_pull_2     [ip]->GetXaxis()->SetTitle(util::AsStringPaperRooTex(p).c_str());
+     h_pull_3     [ip]->GetXaxis()->SetTitle(util::AsStringPaperRooTex(p).c_str());
+     h_pull_1_test[ip]->GetXaxis()->SetTitle(util::AsStringPaperRooTex(p).c_str());
+     h_err_migrad [ip]->GetXaxis()->SetTitle(util::AsStringPaperRooTex(p).c_str());
+     h_err_hesse  [ip]->GetXaxis()->SetTitle(util::AsStringPaperRooTex(p).c_str());
+     h_err_minos  [ip]->GetXaxis()->SetTitle(util::AsStringPaperRooTex(p).c_str());
      h_err_minos_plus  [ip]->GetXaxis()->SetTitle(util::AsStringPaperRooTex(p).c_str());
      h_err_minos_minus [ip]->GetXaxis()->SetTitle(util::AsStringPaperRooTex(p).c_str());
+     if(p == conv::kPhypDm23sq[ip] || p == conv::kPhypDm12sq[ip]) {
+       h_bestfit   [ip]->GetXaxis()->SetTitle(Form("%s (eV^{2}/c^{4})", util::AsStringPaperRooTex(p).c_str()));
+       h_residuals [ip]->GetXaxis()->SetTitle(Form("%s (eV^{2}/c^{4})", util::AsStringPaperRooTex(p).c_str()));
+       //h_pull_1    [ip]->GetXaxis()->SetTitle(Form("%s (eV^{2}/c^{4})", util::AsStringPaperRooTex(p).c_str()));
+       //h_pull_2    [ip]->GetXaxis()->SetTitle(Form("%s (eV^{2}/c^{4})", util::AsStringPaperRooTex(p).c_str()));
+       //h_pull_3    [ip]->GetXaxis()->SetTitle(Form("%s (eV^{2}/c^{4})", util::AsStringPaperRooTex(p).c_str()));
+       h_err_migrad[ip]->GetXaxis()->SetTitle(Form("%s (eV^{2}/c^{4})", util::AsStringPaperRooTex(p).c_str()));
+       h_err_hesse [ip]->GetXaxis()->SetTitle(Form("%s (eV^{2}/c^{4})", util::AsStringPaperRooTex(p).c_str()));
+       h_err_minos [ip]->GetXaxis()->SetTitle(Form("%s (eV^{2}/c^{4})", util::AsStringPaperRooTex(p).c_str()));
+       h_err_minos_plus  [ip]->GetXaxis()->SetTitle(Form("%s (eV^{2}/c^{4})", util::AsStringPaperRooTex(p).c_str()));
+       h_err_minos_minus [ip]->GetXaxis()->SetTitle(Form("%s (eV^{2}/c^{4})", util::AsStringPaperRooTex(p).c_str()));
+     }
   }//p
 
   //
@@ -565,6 +608,11 @@ void mock_data_fit_pulls_new
        if      (err_mode == 1) err_fit = err_migrad;
        else if (err_mode == 2) err_fit = err_hesse;
        else if (err_mode == 3) err_fit = err_minos;
+       else if (err_mode == 4) 
+	 if(p == conv::kNuisSuperkEnergyScale)
+	   err_fit = (err_minos <= 0) ? err_migrad : err_minos;
+	 else
+	   err_fit = err_migrad;
        else {
          cerr << "** Unknown err_mode = " << err_mode << endl;
          exit(1);
@@ -590,6 +638,7 @@ void mock_data_fit_pulls_new
        h_pull_1     [ip] -> Fill(pull_1);
        h_pull_2     [ip] -> Fill(pull_2);
        h_pull_3     [ip] -> Fill(pull_3);
+       h_pull_1_test[ip] -> Fill(pull_1);
        h_err_migrad [ip] -> Fill(err_migrad);
        h_err_hesse  [ip] -> Fill(err_hesse);
        h_err_minos  [ip] -> Fill(err_minos);
@@ -601,14 +650,43 @@ void mock_data_fit_pulls_new
 
   }//end loop over chain
 
+  // scale pulls
+  /*  double nevents = 5100;
+  for(int ip = 0; ip < nparams; ip++) {
+    h_pull_1_test[ip]->Scale(nevents / h_pull_1_test[ip]->Integral());
+    h_pull_1     [ip]->Scale(nevents / h_pull_1     [ip]->Integral());
+    }*/
+
   //
   // Summarise & fit
   //
   // loop over params in the fit
-  TF1 *fit = 0;
+  TCanvas * ctest = new TCanvas();
+  ctest->SaveAs("test.pdf[");
+  //Histogram for a KS test
+  TH1D * h_normal = new TH1D("h_normal","h_normal",nbins_pull, min_pull, max_pull);
+  h_normal->SetLineColor(kRed);
+  for(int ix = 1; ix <= h_normal->GetNbinsX(); ix++) {
+    double center = h_normal->GetBinCenter(ix);
+    double value = TMath::Exp(-(center*center)/2) * TMath::Sqrt(2 * TMath::Pi());
+    h_normal->SetBinContent(ix, value);
+    h_normal->SetBinError(ix, 0);
+  }
+  cout << h_normal->Integral() << "\t" << h_normal->GetMean() << "\t" << h_normal->GetRMS() << "\t" << h_normal->GetSkewness() << "\t" << h_normal->GetKurtosis() << endl;
+  //h_normal->FillRandom("gaus",100000);
+  TH1D * h_normal_test = new TH1D("h_normal_test","h_normal_test",nbins_pull, min_pull, max_pull);
+  h_normal_test->SetLineColor(kRed);
+  for(int ix = 1; ix <= h_normal_test->GetNbinsX(); ix++) {
+    double center = h_normal_test->GetBinCenter(ix);
+    double value = TMath::Exp(-(center*center)/2) * TMath::Sqrt(2 * TMath::Pi());
+    h_normal_test->SetBinContent(ix, value);
+    h_normal_test->SetBinError(ix, 0);
+  }
+  cout << h_normal_test->Integral() << "\t" << h_normal_test->GetMean() << "\t" << h_normal_test->GetRMS() << "\t" << h_normal_test->GetSkewness() << "\t" << h_normal_test->GetKurtosis() << endl;
+  //h_normal_test->FillRandom("gaus",100000);
   for(int ip = 0, ipp = 0; ip < nparams; ip++) {
     PhysParamId_t p = params[ip];
-    if(p == conv::kPhypDm23sq || p == conv::kPhypMixing23 || p == conv::kNuisXSecSpecFunc)
+    if(p == conv::kPhypDm23sq || p == conv::kPhypMixing23)// || p == conv::kNuisXSecSpecFunc || p == conv::kPhypDeltaCP)
       continue;
     TString label;
     if(ipp%2)
@@ -616,9 +694,20 @@ void mock_data_fit_pulls_new
     else
       label = Form("%s",util::AsStringPaperRooTex(p).c_str());
     h_summary_nuis->GetXaxis()->SetBinLabel(ipp+1, label.Data());
+    h_summary_mean->GetXaxis()->SetBinLabel(ipp+1, label.Data());
+    h_summary_rms ->GetXaxis()->SetBinLabel(ipp+1, label.Data());
+    h_summary_ks  ->GetXaxis()->SetBinLabel(ipp+1, label.Data());
+    h_summary_kurt->GetXaxis()->SetBinLabel(ipp+1, label.Data());
+    h_summary_skew->GetXaxis()->SetBinLabel(ipp+1, label.Data());
+
+    do_gaus_fits = false;
+
+
     if(!do_gaus_fits) {
       h_summary_nuis->SetBinContent(ipp+1, h_pull_1[ip]->GetMean());
       h_summary_nuis->SetBinError(  ipp+1, h_pull_1[ip]->GetRMS());
+      h_summary_mean->SetBinContent(ipp+1, h_pull_1[ip]->GetMean());
+      h_summary_rms ->SetBinContent(ipp+1, h_pull_1[ip]->GetRMS());
     }
     else {
       h_pull_1[ip]->Draw();
@@ -628,10 +717,44 @@ void mock_data_fit_pulls_new
       if(fit) {
 	h_summary_nuis->SetBinContent(ipp+1, fit->GetParameter(1));
 	h_summary_nuis->SetBinError(  ipp+1, fit->GetParameter(2));
+	h_summary_mean->SetBinContent(ipp+1, fit->GetParameter(1));
+	h_summary_rms ->SetBinContent(ipp+1, fit->GetParameter(2));
       }
     }//do_gaus_fits
+    h_summary_kurt->SetBinContent(ipp+1, h_pull_1_test[ip]->GetKurtosis());
+    h_summary_skew->SetBinContent(ipp+1, h_pull_1_test[ip]->GetSkewness());
+    //calculate the chisq relative to a gaussian, mean 0, width 1
+    h_normal     ->Scale(h_pull_1     [ip]->Integral() / h_normal->Integral());
+    h_normal_test->Scale(h_pull_1_test[ip]->Integral() / h_normal_test->Integral());
+    double ks = 0;
+    int firstbin = h_pull_1[ip]->FindBin(-2.999);
+    int lastbin  = h_pull_1[ip]->FindBin(+2.999);
+    lastbin = h_pull_1[ip]->GetNbinsX(); firstbin = 1;
+    int nbinsused = 0;
+    for(int ix = firstbin; ix <= lastbin; ix++) {
+      double center = h_pull_1[ip]->GetBinCenter(ix);
+      double gauss  = h_normal->GetBinContent(ix);
+      double pull   = h_pull_1[ip]->GetBinContent(ix);
+      double chisq  = util::ChisqGauss(pull, gauss);
+      double chisqp = util::ChisqPoisson(pull, gauss);
+      ks += chisqp;
+      if(p == conv::kNuisSuperkEnergyScale || p == conv::kNuisBANFFMARES)
+	cout << "\t" << gauss << "\t" << pull << "\t" << chisq << "\t" << chisqp << endl;
+      nbinsused++;
+    }
+    ks /= nbinsused; //divde by ndf
+    ks = h_pull_1     [ip]->KolmogorovTest(h_normal);
+    //ks = h_pull_1_test[ip]->KolmogorovTest(h_normal_test);
+    h_summary_ks->SetBinContent(ipp+1, ks);
+    //do KS test
+    cout << ks << "\t" << h_pull_1[ip]->KolmogorovTest(h_normal,"D") << "\t" << h_pull_1[ip]->KolmogorovTest(h_normal,"M") << endl;
+    cout << ks << "\t" << firstbin << "\t" << lastbin << endl;
+    h_pull_1[ip]->Draw();
+    h_normal->Draw("same");
+    ctest->SaveAs("test.pdf");
     ipp++;
   }
+  ctest->SaveAs("test.pdf]");
 
   //
   // Draw
@@ -763,11 +886,39 @@ void mock_data_fit_pulls_new
 #endif
 
   //plot summary at the end, because need to turn stat box off & also increase margin
-  c = new TCanvas(); c->SetBottomMargin(0.35);
+  c = new TCanvas();
+  c->SetBottomMargin(0.35);
+  c->SetGridx();
   gStyle->SetOptStat(0);
   h_summary_nuis->GetXaxis()->LabelsOption("v");
   h_summary_nuis->Draw();
   save_canvas(c, "summary", tag);
+  h_summary_mean->GetYaxis()->SetRangeUser(-0.5,+2);
+  h_summary_mean->GetXaxis()->LabelsOption("v");
+  h_summary_mean->Draw("P");
+  h_summary_rms ->Draw("Psame");
+  h_summary_ks  ->Draw("Psame");
+  h_summary_kurt->Draw("Psame");
+  h_summary_skew->Draw("Psame");
+  TLine * l0 = new TLine(0., 0., h_summary_mean->GetNbinsX(), 0.);
+  //l0->SetLineStyle(2);
+  l0->Draw();
+  TLine * l1 = new TLine(0., 1., h_summary_mean->GetNbinsX(), 1.);
+  //l1->SetLineStyle(2);
+  l1->Draw();
+  TLegend * legend = new TLegend(0.0, 0.0, 0.2, 0.26);
+  legend->SetFillColor(0);
+  legend->SetFillStyle(0);
+  legend->SetBorderSize(0);
+  legend->SetTextSize(0.04);
+  legend->SetTextFont(132);
+  legend->AddEntry(h_summary_mean, "Mean",     "P");
+  legend->AddEntry(h_summary_rms,  "RMS",      "P");
+  legend->AddEntry(h_summary_ks,   "KS",       "P");
+  legend->AddEntry(h_summary_kurt, "Kurtosis", "P");
+  legend->AddEntry(h_summary_skew, "Skewness", "P");
+  legend->Draw();
+  save_canvas(c, "bigsummary", tag);
 
   //
   // Store
@@ -781,6 +932,11 @@ void mock_data_fit_pulls_new
   h_nsk_nom       -> Write();
   h_nsk_bf        -> Write();
   h_summary_nuis  -> Write();
+  h_summary_mean  -> Write();
+  h_summary_rms   -> Write();
+  h_summary_ks    -> Write();
+  h_summary_kurt  -> Write();
+  h_summary_skew  -> Write();
   for(int ip = 0; ip < nparams; ip++) 
     {
       h_bestfit    [ip] -> Write();
@@ -792,6 +948,7 @@ void mock_data_fit_pulls_new
       h_pull_1     [ip] -> Write();
       h_pull_2     [ip] -> Write();
       h_pull_3     [ip] -> Write();
+      h_pull_1_test[ip] -> Write();
       h_err_migrad [ip] -> Write();
       h_err_hesse  [ip] -> Write();
       h_err_minos  [ip] -> Write();

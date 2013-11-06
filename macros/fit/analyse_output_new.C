@@ -557,9 +557,9 @@ void analyse_output_new
   TLine * lpull = new TLine(0,0,pulls->GetXaxis()->GetLast(),0);
   TLine * lerr  = new TLine(0,1,pulls->GetXaxis()->GetLast(),1);
   //title
-  pulls-> GetYaxis()->SetTitle("Pull = (bestfit - input) / #sigma_{fit}");
+  pulls-> GetYaxis()->SetTitle("Pull = (bestfit - input) / #sigma_{bf}");
   values->GetYaxis()->SetTitle("Pull = (bestfit - input) / #sigma_{input}");
-  errratio->GetYaxis()->SetTitle("#sigma_{fit} / #sigma_{input}");
+  errratio->GetYaxis()->SetTitle("#sigma_{bf} / #sigma_{input}");
   //draw
   TCanvas * cpull = new TCanvas();
   cpull->SetGridx(1);
@@ -616,7 +616,7 @@ void analyse_output_new
   //l->SetFillColor(kWhite);
   //l->SetTextSize(0.05);
   set_legend_style(l);
-  l->AddEntry(pulls,  "#sigma = #sigma_{fit}",  "P");
+  l->AddEntry(pulls,  "#sigma = #sigma_{bf}",  "P");
   l->AddEntry(values, "#sigma = #sigma_{input}","P");
   l->Draw();
   save_canvas(cpull,"pulls_and_values",tag);
