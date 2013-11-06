@@ -21,6 +21,20 @@ void set_marker_style(TH1 *hist, Int_t color, Double_t size, Int_t style)
   hist->SetMarkerStyle(style);
 }
 
+void set_line_style(TH1 *hist, Int_t color, Double_t width, Int_t style)
+{
+  hist->SetLineWidth(width);
+  hist->SetLineColor(color);
+  hist->SetLineStyle(style);
+}
+
+void set_line_style(TF1 *func, Int_t color, Double_t width, Int_t style)
+{
+  func->SetLineWidth(width);
+  func->SetLineColor(color);
+  func->SetLineStyle(style);
+}
+
 void save_canvas(TCanvas * c, const char * name, const char * tag) {
   string name2(name); //don't ask me why I need to do this. I have no idea...
   c->SaveAs(Form("%s_%s.pdf",tag,name));
@@ -331,6 +345,40 @@ void mock_data_fit_pulls_new
      1                         // kNuisSKDetFSI005
 #endif
   };
+
+  const int nstyles = 5;
+  double style[nstyles] = 
+  {
+    1,
+    2,
+    3,
+    4,
+    5
+  };
+
+  const int ncols = 12;
+  double color[ncols] = {1,2,3,4,kYellow+2,6,7,8,9,11,kOrange-3,kViolet+5};
+  /*
+  const int ncols = 14;
+  double color[ncols] = 
+  {
+    1,2,3,4,5,6,7,8,9,11
+     kBlack,
+     kGray,
+     kBlue,
+     kAzure,
+     kCyan,
+     kTeal,
+     kGreen,
+     kSpring,
+     kYellow+2,
+     kOrange,
+     kRed,
+     kPink,
+     kMagenta,
+     kViolet
+  };
+  */
 
   /*
   //debug array order
@@ -661,6 +709,7 @@ void mock_data_fit_pulls_new
   // Summarise & fit
   //
   // loop over params in the fit
+  TF1 * fit = 0;
   TCanvas * ctest = new TCanvas();
   ctest->SaveAs("test.pdf[");
   //Histogram for a KS test
@@ -699,10 +748,6 @@ void mock_data_fit_pulls_new
     h_summary_ks  ->GetXaxis()->SetBinLabel(ipp+1, label.Data());
     h_summary_kurt->GetXaxis()->SetBinLabel(ipp+1, label.Data());
     h_summary_skew->GetXaxis()->SetBinLabel(ipp+1, label.Data());
-
-    do_gaus_fits = false;
-
-
     if(!do_gaus_fits) {
       h_summary_nuis->SetBinContent(ipp+1, h_pull_1[ip]->GetMean());
       h_summary_nuis->SetBinError(  ipp+1, h_pull_1[ip]->GetRMS());
@@ -956,5 +1001,58 @@ void mock_data_fit_pulls_new
       h_err_minos_minus  [ip] -> Write();
     }//ip
   foutput.Close();
+
+  //draw all pulls on 1 page at the very end 
+  //(to be able to kill the fit & stats in the drawing (we want to save these in the output file))
+  c = new TCanvas();
+  c->SetLeftMargin(0.4);
+  bool drawnfirst = false;
+  double ymax = 0;
+  int firstpull = -1;
+  int istyle = 0, icol = 0;
+  legend = new TLegend(0.0, 0.02, 0.35, 0.98);
+  legend->SetFillColor(0);
+  legend->SetFillStyle(0);
+  legend->SetBorderSize(0);
+  legend->SetTextSize(0.03);
+  legend->SetTextFont(132);
+  legend->SetNColumns(2);
+  for(int ip = 0; ip < nparams; ip++) {
+    PhysParamId_t p = params[ip];
+    if(p == conv::kPhypDm23sq || p == conv::kPhypMixing23)
+      continue;
+    set_line_style(h_pull_1[ip], color[icol % ncols], 0.5, style[istyle % nstyles]);
+    fit = h_pull_1[ip]->GetFunction("gaus");
+    delete fit;
+    //set_line_style(fit, color[icol % ncols], 0.5, style[ip]);
+    h_pull_1[ip]->SetStats(0);
+    h_pull_1[ip]->Scale(1/h_pull_1[ip]->Integral());
+    if(!drawnfirst) {
+      h_normal->Scale(1/h_normal->Integral());
+      set_line_style(h_normal,kBlack,2,1);
+      h_normal->Draw("C");
+      h_pull_1[ip]->Draw("C SAME");
+      h_pull_1[ip]->GetXaxis()->SetTitle("pull");
+      h_normal->GetXaxis()->SetTitle("pull");
+      h_pull_1[ip]->GetYaxis()->SetTitle("Fraction of fits");
+      h_normal->GetYaxis()->SetTitle("Fraction of fits");
+      firstpull = ip;
+      drawnfirst = true;
+    }
+    else
+      h_pull_1[ip]->Draw("SAME C");
+    if(p != conv::kPhypDeltaCP && p != conv::kNuisXSecSpecFunc)
+      ymax = TMath::Max(ymax, h_pull_1[ip]->GetMaximum());
+    if(icol % ncols == (ncols - 1))
+      istyle++;
+    icol++;
+    legend->AddEntry(h_pull_1[ip], util::AsStringPaperRooTex(p).c_str(), "l");
+  }//ip
+  legend->Draw();
+  h_pull_1[firstpull]->GetYaxis()->SetRangeUser(0, ymax*1.05);
+  h_normal->GetYaxis()->SetRangeUser(0, ymax*1.05);
+  save_canvas(c, "allpulls", tag);
+
+
 }
 

@@ -38,8 +38,8 @@ void plot_fit_bias
   //title
   hm1->GetXaxis()->SetTitle("sin^{2}(#theta_{23})");
   hd1->GetXaxis()->SetTitle("|#Deltam^{2}_{32}|");
-  hm1->GetYaxis()->SetTitle("% of fits");
-  hd1->GetYaxis()->SetTitle("% of fits");
+  hm1->GetYaxis()->SetTitle("Fraction of fits");
+  hd1->GetYaxis()->SetTitle("Fraction of fits");
   hm1->GetYaxis()->SetTitleOffset(0.55);
   hd1->GetYaxis()->SetTitleOffset(0.55);
   //"stat box"
@@ -88,8 +88,8 @@ void plot_fit_bias
   //title
   hm2->GetXaxis()->SetTitle("sin^{2}(#theta_{23})");
   hd2->GetXaxis()->SetTitle("|#Deltam^{2}_{32}|");
-  hm2->GetYaxis()->SetTitle("% of fits");
-  hd2->GetYaxis()->SetTitle("% of fits");
+  hm2->GetYaxis()->SetTitle("Fraction of fits");
+  hd2->GetYaxis()->SetTitle("Fraction of fits");
   hm2->GetYaxis()->SetTitleOffset(0.55);
   hd2->GetYaxis()->SetTitleOffset(0.55);
   //"stat box"

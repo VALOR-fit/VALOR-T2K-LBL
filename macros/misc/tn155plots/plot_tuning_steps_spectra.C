@@ -44,6 +44,14 @@ void plot_tuning_steps_spectra
   h_ereco_nom_noosc->SetLineColor(kBlue);
   h_ereco_nom_osc->SetLineColor(kBlue);
 
+  //width
+  h_ereco_tun_noosc->SetLineWidth(1);
+  h_ereco_tun_osc->SetLineWidth(1);
+  h_ereco_flux_noosc->SetLineWidth(1);
+  h_ereco_flux_osc->SetLineWidth(1);
+  h_ereco_nom_noosc->SetLineWidth(1);
+  h_ereco_nom_osc->SetLineWidth(1);
+
   //range
   h_ereco_tun_noosc->GetXaxis()->SetRangeUser(0,erecomax-conv::kOneMeV);
   h_ereco_tun_osc->GetXaxis()->SetRangeUser(0,erecomax-conv::kOneMeV);
@@ -67,7 +75,7 @@ void plot_tuning_steps_spectra
   h_ereco_nom_osc->GetYaxis()->SetTitle("Events per 0.050 GeV");
 
   TCanvas * c = new TCanvas();
-  c->Divide(2,1);
+  c->Divide(2,2);
   TLegend * leg = new TLegend(0.25,0.9,0.88,0.7);
   leg->SetFillColor(0);
   leg->SetLineColor(0);
@@ -88,7 +96,22 @@ void plot_tuning_steps_spectra
   h_ereco_flux_osc->Draw();
   h_ereco_nom_osc->Draw("same");
   leg->Draw();
+  c->cd(3);
+  TH1D * h_ereco_nomflux_noosc_ratio = new TH1D(*h_ereco_flux_noosc);
+  h_ereco_nomflux_noosc_ratio->Divide(h_ereco_flux_noosc,h_ereco_nom_noosc);
+  h_ereco_nomflux_noosc_ratio->SetLineColor(kBlack);
+  h_ereco_nomflux_noosc_ratio->GetYaxis()->SetTitle("Flux tuned / Nominal");
+  h_ereco_nomflux_noosc_ratio->GetYaxis()->SetRangeUser(0.9,1.4);
+  h_ereco_nomflux_noosc_ratio->Draw();
+  c->cd(4);
+  TH1D * h_ereco_nomflux_osc_ratio = new TH1D(*h_ereco_flux_osc);
+  h_ereco_nomflux_osc_ratio->Divide(h_ereco_flux_osc,h_ereco_nom_osc);
+  h_ereco_nomflux_osc_ratio->SetLineColor(kBlack);
+  h_ereco_nomflux_osc_ratio->GetYaxis()->SetTitle("Flux tuned / Nominal");
+  h_ereco_nomflux_osc_ratio->GetYaxis()->SetRangeUser(0.9,1.4);
+  h_ereco_nomflux_osc_ratio->Draw();
   c->SaveAs("spectra_nom_fluxtuned.eps");
+  c->SaveAs("spectra_nom_fluxtuned.pdf");
 
   //flux tuned vs banff
   leg->Clear();
@@ -102,6 +125,21 @@ void plot_tuning_steps_spectra
   h_ereco_flux_osc->Draw();
   h_ereco_tun_osc->Draw("same");
   leg->Draw();
+  c->cd(3);
+  TH1D * h_ereco_fluxbanff_noosc_ratio = new TH1D(*h_ereco_tun_noosc);
+  h_ereco_fluxbanff_noosc_ratio->Divide(h_ereco_tun_noosc,h_ereco_flux_noosc);
+  h_ereco_fluxbanff_noosc_ratio->SetLineColor(kBlack);
+  h_ereco_fluxbanff_noosc_ratio->GetYaxis()->SetTitle("Banff tuned / Flux tuned");
+  h_ereco_fluxbanff_noosc_ratio->GetYaxis()->SetRangeUser(0.7,1.1);
+  h_ereco_fluxbanff_noosc_ratio->Draw();
+  c->cd(4);
+  TH1D * h_ereco_fluxbanff_osc_ratio = new TH1D(*h_ereco_tun_osc);
+  h_ereco_fluxbanff_osc_ratio->Divide(h_ereco_tun_osc,h_ereco_flux_osc);
+  h_ereco_fluxbanff_osc_ratio->SetLineColor(kBlack);
+  h_ereco_fluxbanff_osc_ratio->GetYaxis()->SetTitle("Banff tuned / Flux tuned");
+  h_ereco_fluxbanff_osc_ratio->GetYaxis()->SetRangeUser(0.7,1.1);
+  h_ereco_fluxbanff_osc_ratio->Draw();
   c->SaveAs("spectra_tun_banfftuned.eps");
+  c->SaveAs("spectra_tun_banfftuned.pdf");
 
 }
