@@ -6,7 +6,7 @@ void get_starplot_staterror(
   Opt::Instance()->gOscMixingParamChoice == conv::kNuMixSinsqTheta;
 
   TChain c("fitnt");
-  c.Add(Form("%s/stat*",folder));
+  c.Add(Form("%s/stat*root",folder));
   cout << c.GetEntries() << " entries in trees, from location " << Form("%s/stat*",folder) << endl;
   c.SetBranchStatus("*",0);
   c.SetBranchStatus("best_fit_params",1);

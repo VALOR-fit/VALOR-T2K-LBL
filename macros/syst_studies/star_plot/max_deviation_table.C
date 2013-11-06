@@ -135,16 +135,16 @@ void max_deviation_table(const char * filename = "readfile.root")
       //double devM = TMath::Abs((var_mix23M-var_inmix23)/var_stmix23);
       maxmix = TMath::Max( maxmix, TMath::Max(devP, devM) );
     }
-    cout << setw(15) << setfill(' ');
-    if(maxmix > 0.25 || maxdm > 0.25)
-      cout << "{\\color{red}";
+    //cout << setw(15) << setfill(' ');
+    //if(maxmix > 0.25 || maxdm > 0.25)
+    //  cout << "{\\color{red}";
     //else if(maxmix > 0.25 || maxdm > 0.25)
     //  cout << "{\\color{red}";
     //if(maxdm > 0.25) cout << "{\\color{red}";
-    else
-      cout << "";
+    //else
+    //  cout << "";
 
-    cout << setw(30)  << setfill(' ');
+    cout << setw(50)  << setfill(' ');
     if(name == "nominal" || name == "mec")
       cout << name;
     else if(name == "osc_mixing12")
@@ -159,8 +159,9 @@ void max_deviation_table(const char * filename = "readfile.root")
       //cout << util::AsStringTex(util::PhysParamIdFromString(name));
       cout << util::AsStringPresentTex(util::PhysParamIdFromString(name));
       //cout << util::AsStringPaperTex(util::PhysParamIdFromString(name));
-    if(maxmix > 0.25 || maxdm > 0.25)
-      cout << "}";
+      
+    //if(maxmix > 0.25 || maxdm > 0.25)
+    //  cout << "}";
 
     std::cout.precision(4);
 
