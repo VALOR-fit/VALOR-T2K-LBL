@@ -125,22 +125,22 @@ oscparams.append([0.857, 0.098, 1.000, 0, 7.5E-5, 0.00244]) #t2k run1-3 best fit
 oscparams.append([0.857, 0.098, 0.957, 0, 7.5E-5, 0.00239]) #minos neutrino2012 best fit
 """
 #using sinsqtheta
-"""
+
+oscparams.append([-99, -99, 0.513, -99, -99, 0.0022])   #dm32sq=0.0022 & global best fits!
 oscparams.append([-99, -99, 0.513, -99, -99, 0.0025])   #use global best fits!
 oscparams.append([-99, -99, 0.513, -99, -99, 0.0028])   #dm32sq=0.0028 & global best fits!
-oscparams.append([-99, -99, 0.513, -99, -99, 0.0022])   #dm32sq=0.0022 & global best fits!
 
 oscparams.append([-99, -99, 0.5,  -99, -99, 0.0022])   #dm32sq=0.0022 & mixing23=0.5 & global best fits
 oscparams.append([-99, -99, 0.5,  -99, -99, 0.0025])   #dm32sq=0.0025 & mixing23=0.5 & global best fits
 oscparams.append([-99, -99, 0.5,  -99, -99, 0.0028])   #dm32sq=0.0028 & mixing23=0.5 & global best fits
-"""
+
+oscparams.append([-99, -99, 0.37,  -99, -99, 0.0022])   #dm32sq=0.0022 & mixing23=0.37 & global best fits
 oscparams.append([-99, -99, 0.37,  -99, -99, 0.0025])   #mixing23=0.37 & global best fits
 oscparams.append([-99, -99, 0.37,  -99, -99, 0.0028])   #dm32sq=0.0028 & mixing23=0.37 & global best fits
-oscparams.append([-99, -99, 0.37,  -99, -99, 0.0022])   #dm32sq=0.0022 & mixing23=0.37 & global best fits
 
+oscparams.append([-99, -99, 0.65,  -99, -99, 0.0022])   #dm32sq=0.0022 & mixing23=0.65 & global best fits
 oscparams.append([-99, -99, 0.65,  -99, -99, 0.0025])   #mixing23=0.65 & global best fits
 oscparams.append([-99, -99, 0.65,  -99, -99, 0.0028])   #dm32sq=0.0028 & mixing23=0.65 & global best fits
-oscparams.append([-99, -99, 0.65,  -99, -99, 0.0022])   #dm32sq=0.0022 & mixing23=0.65 & global best fits
 
 
 for osc in oscparams:
