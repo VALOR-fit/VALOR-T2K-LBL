@@ -748,24 +748,6 @@ void mock_data_fit_pulls_new
     h_summary_ks  ->GetXaxis()->SetBinLabel(ipp+1, label.Data());
     h_summary_kurt->GetXaxis()->SetBinLabel(ipp+1, label.Data());
     h_summary_skew->GetXaxis()->SetBinLabel(ipp+1, label.Data());
-    if(!do_gaus_fits) {
-      h_summary_nuis->SetBinContent(ipp+1, h_pull_1[ip]->GetMean());
-      h_summary_nuis->SetBinError(  ipp+1, h_pull_1[ip]->GetRMS());
-      h_summary_mean->SetBinContent(ipp+1, h_pull_1[ip]->GetMean());
-      h_summary_rms ->SetBinContent(ipp+1, h_pull_1[ip]->GetRMS());
-    }
-    else {
-      h_pull_1[ip]->Draw();
-      cout << util::AsString(p) << endl;
-      h_pull_1[ip]->Fit("gaus");
-      fit = h_pull_1[ip]->GetFunction("gaus");
-      if(fit) {
-	h_summary_nuis->SetBinContent(ipp+1, fit->GetParameter(1));
-	h_summary_nuis->SetBinError(  ipp+1, fit->GetParameter(2));
-	h_summary_mean->SetBinContent(ipp+1, fit->GetParameter(1));
-	h_summary_rms ->SetBinContent(ipp+1, fit->GetParameter(2));
-      }
-    }//do_gaus_fits
     h_summary_kurt->SetBinContent(ipp+1, h_pull_1_test[ip]->GetKurtosis());
     h_summary_skew->SetBinContent(ipp+1, h_pull_1_test[ip]->GetSkewness());
     //calculate the chisq relative to a gaussian, mean 0, width 1
@@ -797,6 +779,25 @@ void mock_data_fit_pulls_new
     h_pull_1[ip]->Draw();
     h_normal->Draw("same");
     ctest->SaveAs("test.pdf");
+    h_pull_1[ip]->Scale(1 / h_pull_1[ip]->Integral());
+    if(!do_gaus_fits || p == conv::kNuisXSecSpecFunc || p == conv::kPhypDeltaCP) {
+      h_summary_nuis->SetBinContent(ipp+1, h_pull_1[ip]->GetMean());
+      h_summary_nuis->SetBinError(  ipp+1, h_pull_1[ip]->GetRMS());
+      h_summary_mean->SetBinContent(ipp+1, h_pull_1[ip]->GetMean());
+      h_summary_rms ->SetBinContent(ipp+1, h_pull_1[ip]->GetRMS());
+    }
+    else {
+      h_pull_1[ip]->Draw();
+      cout << util::AsString(p) << endl;
+      h_pull_1[ip]->Fit("gaus");
+      fit = h_pull_1[ip]->GetFunction("gaus");
+      if(fit) {
+	h_summary_nuis->SetBinContent(ipp+1, fit->GetParameter(1));
+	h_summary_nuis->SetBinError(  ipp+1, fit->GetParameter(2));
+	h_summary_mean->SetBinContent(ipp+1, fit->GetParameter(1));
+	h_summary_rms ->SetBinContent(ipp+1, fit->GetParameter(2));
+      }
+    }//do_gaus_fits
     ipp++;
   }
   ctest->SaveAs("test.pdf]");
@@ -893,7 +894,7 @@ void mock_data_fit_pulls_new
        icanvas++;
      }
   }//p
-  // >> Plot pulls, same logic as before
+
   // >> Plot pulls (only pull 1), same logic as before
   ipc=0;//plot nu in curr canvas
   ipcmax=0;//max nu of plot in curr canvas
@@ -913,6 +914,7 @@ void mock_data_fit_pulls_new
      }
      c->cd(ipc+1);
      h_pull_1[ip]->SetLineColor(kBlack);
+     h_pull_1[ip]->Scale(1 / h_pull_1[ip]->Integral());
      h_pull_1[ip]->Draw();
      ipc++;
      if(ipc >= ipcmax || ip == nparams-1) { 
@@ -922,6 +924,22 @@ void mock_data_fit_pulls_new
      }
   }//p
   // >> Plot pulls, same logic as before
+
+  // >> Plot pulls (only pull 1) only the most important 5
+  c = new TCanvas();
+  c->Divide(2,3);
+  ipc = 0;
+  for(int ip = 0; ip < nparams; ip++) {
+    PhysParamId_t p = params[ip];
+    if(!(p == conv::kPhypDeltaCP || p == conv::kNuisXSecSpecFunc
+	 || p == conv::kNuisXSecPiLessDelta || p == conv::kNuisSuperkEnergyScale
+	 || p == conv::kNuisSKDetFSI005))
+      continue;
+    c->cd(ipc+1);
+    h_pull_1[ip]->Draw();
+    ipc++;
+  }//ip
+  save_canvas(c,Form("importpull_1_%d",icanvas),tag);
 
 #if FITPARMLIST == -3
   c = new TCanvas();
