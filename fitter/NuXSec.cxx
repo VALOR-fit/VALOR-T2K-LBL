@@ -1167,7 +1167,7 @@ double NuXSec::ChisqPenalty(bool /*all_syst*/) const
   // when only fitting for most important systematics
   if(!all_syst) {
     if (fPiLessDeltaTwkDial)  chisq_penalty += fPiLessDeltaTwkDial*fPiLessDeltaTwkDial;
-    //if (fSpecFuncTwkDial)     chisq_penalty += fSpecFuncTwkDial*fSpecFuncTwkDial;
+    if (fSpecFuncTwkDial)     chisq_penalty += fSpecFuncTwkDial*fSpecFuncTwkDial;
     if (fBindETwkDial)        chisq_penalty += fBindETwkDial*fBindETwkDial;
     if (fWshapeTwkDial)       chisq_penalty += fWshapeTwkDial*fWshapeTwkDial;
     return chisq_penalty;
@@ -1175,7 +1175,7 @@ double NuXSec::ChisqPenalty(bool /*all_syst*/) const
   */
 
   if (fFermiMomTwkDial)       chisq_penalty += fFermiMomTwkDial*fFermiMomTwkDial;
-  //if (fSpecFuncTwkDial)       chisq_penalty += fSpecFuncTwkDial*fSpecFuncTwkDial;
+  if (fSpecFuncTwkDial)       chisq_penalty += fSpecFuncTwkDial*fSpecFuncTwkDial;
   if (fWshapeTwkDial)         chisq_penalty += fWshapeTwkDial*fWshapeTwkDial;
   if (fShapeCCothTwkDial)     chisq_penalty += fShapeCCothTwkDial*fShapeCCothTwkDial;
   if (fPiLessDeltaTwkDial)    chisq_penalty += fPiLessDeltaTwkDial*fPiLessDeltaTwkDial;

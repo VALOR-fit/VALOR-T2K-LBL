@@ -796,7 +796,11 @@ void SuperkExpectation::TweakAllUncorrelatedXSecSystematics(void)
 
   // XSec
   this->GetNuXSec()->Tweak(kNuisXSecFermiMom       , Rnd::Instance()->RndToyMCsyst().Gaus(0.,1.));
-  this->GetNuXSec()->Tweak(kNuisXSecSpecFunc       , Rnd::Instance()->RndToyMCsyst().Uniform(0.,1.));
+  double tweak = 2;
+  while(tweak > 1 && tweak < 0)
+    tweak = Rnd::Instance()->RndToyMCsyst().Gaus(0.,1.);
+  this->GetNuXSec()->Tweak(kNuisXSecSpecFunc       , tweak);
+  //this->GetNuXSec()->Tweak(kNuisXSecSpecFunc       , Rnd::Instance()->RndToyMCsyst().Uniform(0.,1.));
   this->GetNuXSec()->Tweak(kNuisXSecWshape         , Rnd::Instance()->RndToyMCsyst().Gaus(0.,1.));
   this->GetNuXSec()->Tweak(kNuisXSecShapeCCoth     , Rnd::Instance()->RndToyMCsyst().Gaus(0.,1.));
   this->GetNuXSec()->Tweak(kNuisXSecPiLessDelta    , Rnd::Instance()->RndToyMCsyst().Gaus(0.,1.));
