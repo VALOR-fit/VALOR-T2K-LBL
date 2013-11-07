@@ -29,9 +29,9 @@ void feldman_cousins_fitting_job_1D
 (
   const char * tag                     = "fc",                                /* tag for output file */
   int          run                     = 0,                                   /* run number */
-  int          nexperiments            = 1,                                   /* number of toy MC experiment fits */
-  double       dm23sq_input            = 0.002125,                                 /* generate toy MC with this range of Dm^2_{23} */
-  double       mixing23_input          = -999.9,                                 /* generate toy MC with this range of 23 mixing (expressed in terms of either sinsq2theta, sinsqtheta, ...) */
+  int          nexperiments            = 3,                                   /* number of toy MC experiment fits */
+  double       dm23sq_input            = -999.9,                                 /* generate toy MC with this range of Dm^2_{23} */
+  double       mixing23_input          = 0.375,                                 /* generate toy MC with this range of 23 mixing (expressed in terms of either sinsq2theta, sinsqtheta, ...) */
   const char * config_file             = "2013a_numu_run1+2+3+4_flux11bv3.2_neut13a_banff13v5_sk+fsi.xml",        /* analysis configuration file */
   bool         stat_fluctuations       = true,                                /* include statistical fluctuation in toy MC expts? */
   bool         tweak_systematics       = true,                                /* generate toy MC with randomized systematics? */
@@ -44,7 +44,7 @@ void feldman_cousins_fitting_job_1D
   const char * hierarchy               = "normal",                            /* normal or inverted */
   const char * mixparamchoice          = "sinsqtheta",                        /* sinsq2theta or sinsqtheta */
   const char * mixparamoctant          = "one",                                /* one==kNuOctantOne two==kNuOctantTwo */
-  const char * dchisqsurf_file         = "/home/ppd/tdealtry/RAL_repoistory/t2k/t2kana/nuosc/trunk/2013results/DATA/FULLRUN1-4FIXSPLINE/run1-4_nuis4_sintheta_normal/combination/final.root"
+  const char * dchisqsurf_file         = "/home/ppd/tdealtry/RAL_repoistory/t2k/t2kana/nuosc/trunk/2013results/DATA/FULLRUN1-4FIXSPLINE/run1-4_nuis4_sintheta_normalfine/combination/final.root"
   //bool         apply_2nu_boundary    = true                                 /* if using the 2nu flavour osc prob, apply the physical boundary? */
 )
 {
@@ -258,6 +258,7 @@ void feldman_cousins_fitting_job_1D
 
   //numbers to store results in
   int iexperiment;
+  int nsk;
   int fittries_mixing23_1N, fittries_mixing23_1N_alt, fittries_dm23sq_1N, fittries_2N, fittries_2N_alt;
   double fittime_mixing23_1N, fittime_mixing23_1N_alt, fittime_dm23sq_1N, fittime_2N, fittime_2N_alt;
   int migradmin_mixing23_1N, migradmin_mixing23_1N_alt, migradmin_dm23sq_1N, migradmin_2N, migradmin_2N_alt;
@@ -297,6 +298,7 @@ void feldman_cousins_fitting_job_1D
   
   fitnt->Branch("iexp",                      &iexperiment);
   fitnt->Branch("irun",                      &run);
+  fitnt->Branch("nsk",                       &nsk);
   fitnt->Branch("input_mixing23_bin",        &input_mixing23_bin);
   fitnt->Branch("input_dm23sq_bin",          &input_dm23sq_bin);
   fitnt->Branch("input_mixing23",            &input_mixing23);
@@ -515,6 +517,18 @@ void feldman_cousins_fitting_job_1D
 	 applied_negevents_condition = skobs->CreateMockData(*skexp, PhysHypothesis(*fparm1), stat_fluctuations); 
        }
      }//applied_negevents_condition
+
+     nsk = skobs->NumOfEvents(conv::kSKsFCFV1RingMuLike);
+
+     cout<<endl;
+     cout<<endl;
+     cout<<endl;
+     cout<<endl;
+     cout<<"NSK = "<<skobs->NumOfEvents(conv::kSKsFCFV1RingMuLike)<<endl;
+     cout<<endl;
+     cout<<endl;
+     cout<<endl;
+     cout<<endl;
 
      //
      // Get the 1+N fit results for mixing23 (with |dm32sq| fixed to true input value)

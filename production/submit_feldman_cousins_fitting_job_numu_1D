@@ -73,8 +73,8 @@ foreach (@ARGV) {
   $iarg++;
 }
 
-$input_dm23sq           = 0.002125                        unless defined $input_dm23sq;
-$input_sinsq2theta23    = -999.9                         unless defined $input_sinsq2theta23;
+$input_dm23sq           = -999.9                        unless defined $input_dm23sq;
+$input_sinsq2theta23    = 0.375                         unless defined $input_sinsq2theta23;
 $resource               = "RAL"                         unless defined $resource;
 $tag                    = "fc"                          unless defined $tag;
 $nruns                  = 100                            unless defined $nruns;
@@ -93,7 +93,7 @@ $dmsqscheme             = "abs23"                       unless defined $dmsqsche
 $masshierarchy          = "normal"                      unless defined $masshierarchy;
 $mixparamchoice         = "sinsqtheta"                  unless defined $mixparamchoice;
 $mixparamoctant         = "one"                         unless defined $mixparamoctant;
-$dchisq_file  = "/home/ppd/tdealtry/RAL_repoistory/t2k/t2kana/nuosc/trunk/2013results/DATA/FULLRUN1-4FIXSPLINE/run1-4_nuis4_sintheta_normal/combination/final.root"   unless defined $dchisq_file;
+$dchisq_file  = "/home/ppd/tdealtry/RAL_repoistory/t2k/t2kana/nuosc/trunk/2013results/DATA/FULLRUN1-4FIXSPLINE/run1-4_nuis4_sintheta_normalfine/combination/final.root"   unless defined $dchisq_file;
 #$apply_2nu_boundary     = 1                             unless defined $apply_2nu_boundary;
 $grid_local_dir         = `pwd`                         unless defined $grid_local_dir;
 $autowms_file           = "autowms.conf"                unless defined $autowms_file;
