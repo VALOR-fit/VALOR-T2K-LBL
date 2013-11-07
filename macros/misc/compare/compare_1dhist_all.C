@@ -140,6 +140,10 @@ void compare_1dhist_all(
       i = atoi(s);
       if(i>0)
 	cout << "skipping " << i << " histograms" << endl;
+      //cleanup
+      delete c;
+      delete leg;
+      delete ratio;
     } // i<=0
     else
       i-=1;

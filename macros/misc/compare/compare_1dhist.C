@@ -3,19 +3,24 @@
 // Ratio shown is: histogram in 2nd file / histogram in 1st file
 //
 
-void compare_1dhist(
-  const char * filename1,           /* name of 1st file */
-  const char * filename2,           /* name of 2nd file */
-  const char * histoname,           /* histogram name   */
-  bool zeroOverZeroIsZero = false,  /* use the built in divide where 0/0=0, or use 0/0=1 */
-  bool draw_only_ratio = true       /* draw only the ratio? or also plot the 2 histograms overlaid */
-)
+void compare_1dhist
+(
+ const char * filename1,           /* name of 1st file */
+ const char * filename2,           /* name of 2nd file */
+ string histoname1,                /* histogram name   */
+ string histoname2 = "",           /* histogram name (if "", assume same as 1st)  */
+ bool zeroOverZeroIsZero = false,  /* use the built in divide where 0/0=0, or use 0/0=1 */
+ bool draw_only_ratio = false,     /* draw only the ratio? or also plot the 2 histograms overlaid */
+ string tag                        /*if not "", will save in tag.pdf*/
+ )
 {
   TFile * f1 = new TFile(filename1,"read");
   TFile * f2 = new TFile(filename2,"read");
 
-  TH1D * h1 = (TH1D*) f1->Get(histoname);
-  TH1D * h2 = (TH1D*) f2->Get(histoname);
+  if(histoname2 == "")
+    histoname2 = histoname1;
+  TH1D * h1 = (TH1D*) f1->Get(histoname1.c_str());
+  TH1D * h2 = (TH1D*) f2->Get(histoname2.c_str());
 
   h1->SetMarkerStyle(20);
   h1->SetMarkerSize(1);
@@ -46,4 +51,6 @@ void compare_1dhist(
   }
   ratio->Draw();
   c->Update();
+  if(tag != "")
+    c->SaveAs(Form("%s.pdf",tag.c_str()));
 }
