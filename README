@@ -143,8 +143,13 @@ Significant fit CPU-efficiency improvement as the jont analysis considers ~90 sy
 This is the code used for the official 2013 Run 1-4a 3-flavour muon-neutrino disappearance analysis,
 documented in T2K-TN-155v1.
 
+2013_v2.0.0
+............................................................................................................................
+This is the code used for the official 2013 Run 1-4 3-flavour muon-neutrino disappearance analysis,
+documented in T2K-TN-183v1.
+
 
 Current trunk
 ............................................................................................................................
-2013 Run 1-4 muon-neutrino disappearance development code.
+2013 Run 1-4 joint analysis development code.
 
