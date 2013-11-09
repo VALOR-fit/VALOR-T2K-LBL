@@ -353,7 +353,7 @@
         Covariance matrix of SKDet FSI parameters
       -->
     <covariance_matrix>
-      <filename>   inputs/official/2013/skdetfsi/skdet_mat_numuoa_2013a_v5_final_run1-4full_valor.root  </filename>
+      <filename>   inputs/official/2013/skdetfsi/skdet_mat_numuoa_2013a_direct_v5_run1to4_final_valor.root  </filename>
       <objname>    covmat_sk_fsi         </objname>
       <objtype>    TMatrixD              </objtype>
     </covariance_matrix>
