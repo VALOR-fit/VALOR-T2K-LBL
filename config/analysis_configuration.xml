@@ -94,13 +94,11 @@
                 <objname>    tnumu   </objname>
                 <objtype>    TTree            </objtype>
              </one_mu_ring>
-<!--
              <one_e_ring>
-                <filename>   inputs/official/2012/superk/mc/neut/11c/sk11c_1ReT_flx11bv32fine_10acuts_final.root  </filename>
+                <filename>   inputs/official/2013/superk/mc/neut/13a/small_ntuple_1ReT_Run1to4_2013_fitqun.root  </filename>
                 <objname>    tnumu   </objname>
                 <objtype>    TTree            </objtype>
              </one_e_ring>
--->
            </numu>
            <numubar>
              <pot> 
@@ -113,13 +111,11 @@
                 <objname>    tnumubar   </objname>
                 <objtype>    TTree            </objtype>
              </one_mu_ring>
-<!--
              <one_e_ring>
-                <filename>   inputs/official/2012/superk/mc/neut/11c/sk11c_1ReT_flx11bv32fine_10acuts_final.root  </filename>
+                <filename>   inputs/official/2013/superk/mc/neut/13a/small_ntuple_1ReT_Run1to4_2013_fitqun.root  </filename>
                 <objname>    tnumubar   </objname>
                 <objtype>    TTree            </objtype>
              </one_e_ring>
--->
            </numubar>
            <nue>
              <pot> 
@@ -132,13 +128,11 @@
                 <objname>    tnue   </objname>
                 <objtype>    TTree            </objtype>
              </one_mu_ring>
-<!--
              <one_e_ring>
-                <filename>   inputs/official/2012/superk/mc/neut/11c/sk11c_1ReT_flx11bv32fine_10acuts_final.root  </filename>
+                <filename>   inputs/official/2013/superk/mc/neut/13a/small_ntuple_1ReT_Run1to4_2013_fitqun.root  </filename>
                 <objname>    tnue   </objname>
                 <objtype>    TTree            </objtype>
              </one_e_ring>
--->
           </nue>
           <nuebar>
              <pot> 
@@ -151,13 +145,11 @@
                 <objname>    tnuebar   </objname>
                 <objtype>    TTree            </objtype>
              </one_mu_ring>
-<!--
              <one_e_ring>
-                <filename>   inputs/official/2012/superk/mc/neut/11c/sk11c_1ReT_flx11bv32fine_10acuts_final.root  </filename>
+                <filename>   inputs/official/2013/superk/mc/neut/13a/small_ntuple_1ReT_Run1to4_2013_fitqun.root  </filename>
                 <objname>    tnuebar   </objname>
                 <objtype>    TTree            </objtype>
              </one_e_ring>
--->
           </nuebar>
           <signal_nue>
              <pot> 
@@ -170,13 +162,11 @@
                 <objname>    tnuesig   </objname>
                 <objtype>    TTree            </objtype>
              </one_mu_ring>
-<!--
              <one_e_ring>
-                <filename>   inputs/official/2012/superk/mc/neut/11c/sk11c_1ReT_flx11bv32fine_10acuts_final.root  </filename>
+                <filename>   inputs/official/2013/superk/mc/neut/13a/small_ntuple_1ReT_Run1to4_2013_fitqun.root  </filename>
                 <objname>    tnuesig   </objname>
                 <objtype>    TTree            </objtype>
              </one_e_ring>
--->
           </signal_nue>
        </nominal>
      </superk>
@@ -214,30 +204,62 @@
   -->
 
  <banff>
-       <!--
-        Central values from BANFF fit
+   <!--                                                                                                                                                                       
+    Central values from BANFF fit                                                                                                                                                  
+     -->
+   <best_fit_values>
+     <filename>   inputs/official/2013/banff/postfit_banff_2013_joint_v5.root  </filename>
+     <objname>    postfit_params   </objname>
+     <objtype>    TVectorD         </objtype>
+   </best_fit_values>
+   <!--                                                                                                                                                                         
+    Covariance of fit parameters                                                                                                                                                   
+     -->
+   <covariance_matrix>
+     <filename>   inputs/official/2013/banff/postfit_banff_2013_joint_v5.root  </filename>
+     <objname>    postfit_cov      </objname>
+     <objtype>    TMatrixD         </objtype>
+   </covariance_matrix>
+   
+   <disap>
+     <best_fit_values>
+       <filename>   inputs/official/2013/banff/postfit_banff_2013_disappearance_v5.root  </filename>
+       <objname>    postfit_params   </objname>
+       <objtype>    TVectorD         </objtype>
+     </best_fit_values>
+     <!--
+         Covariance of fit parameters
        -->
-       <best_fit_values>
-          <filename>   inputs/official/2013/banff/postfit_banff_2013_disappearance_v5.root  </filename>
-          <objname>    postfit_params   </objname>
-          <objtype>    TVectorD         </objtype>
-       </best_fit_values>
-       <!--
-        Covariance of fit parameters
+     <covariance_matrix>
+       <filename>   inputs/official/2013/banff/postfit_banff_2013_disappearance_v5.root  </filename>
+       <objname>    postfit_cov      </objname>
+       <objtype>    TMatrixD         </objtype>
+     </covariance_matrix>
+   </disap>
+   
+   <app>
+     <best_fit_values>
+       <filename>   inputs/official/2013/banff/postfit_banff_2013_appearance_v5.root  </filename>
+       <objname>    postfit_params   </objname>
+       <objtype>    TVectorD         </objtype>
+     </best_fit_values>
+     <!--                                                                                                                                                                          
+      Covariance of fit parameters                                                                                                                                              
        -->
-       <covariance_matrix>
-          <filename>   inputs/official/2013/banff/postfit_banff_2013_disappearance_v5.root  </filename>
-          <objname>    postfit_cov      </objname>
-          <objtype>    TMatrixD         </objtype>
-       </covariance_matrix>
-       <x_mec>
-          -1.0
-       </x_mec>
-       <x_pdd_mec>
-          0.0
-       </x_pdd_mec>
-  </banff>
-
+     <covariance_matrix>
+       <filename>   inputs/official/2013/banff/postfit_banff_2013_appearance_v5.root  </filename>
+       <objname>    postfit_cov      </objname>
+       <objtype>    TMatrixD         </objtype>
+     </covariance_matrix>
+   </app>
+   <x_mec>
+     -1.0
+   </x_mec>
+   <x_pdd_mec>
+     0.0
+   </x_pdd_mec>
+ </banff>
+ 
   <!--
   ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
   Neutrino cross section weight splines
@@ -253,7 +275,7 @@
           </one_mu_ring>
           <one_e_ring>
                 <filename>
-                    inputs/official/2012/xsec/XSecSplines1Re2012.root
+		  inputs/official/2013/xsec/XSecSplines1Re2013v5.root
                 </filename>
           </one_e_ring>
       </weight_splines>
@@ -347,18 +369,34 @@
   ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
   SKDET+FSI
   ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-  -->
+    -->
   <skdetfsi>
     <!--
         Covariance matrix of SKDet FSI parameters
       -->
     <covariance_matrix>
-      <filename>   inputs/official/2013/skdetfsi/skdet_mat_numuoa_2013a_direct_v5_run1to4_final_valor.root  </filename>
-      <objname>    covmat_sk_fsi         </objname>
+      <filename>   inputs/official/2013/skdetfsi/skfsipn_2013_joint_Run4.root  </filename>
+      <objname>    skfsipn_cov             </objname>
       <objtype>    TMatrixD              </objtype>
     </covariance_matrix>
+    
+    <disap>
+      <covariance_matrix>
+	<filename>   inputs/official/2013/skdetfsi/skdet_mat_numuoa_2013a_direct_v5_run1to4_final_valor.root  </filename>
+	<objname>    covmat_sk_fsi         </objname>
+	<objtype>    TMatrixD              </objtype>
+      </covariance_matrix>
+    </disap>
+    
+    <app>
+      <covariance_matrix>
+	<filename>   inputs/official/2013/skdetfsi/covariance_matrices_2013full_appearance.root  </filename>
+	<objname>    cov_total             </objname>
+	<objtype>    TMatrixD              </objtype>
+      </covariance_matrix>
+    </app>
+    
   </skdetfsi>
-
-
-
+  
+  
 </analysis_inputs>
