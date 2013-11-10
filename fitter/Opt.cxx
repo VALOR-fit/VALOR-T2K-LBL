@@ -63,6 +63,7 @@ void Opt::SetDefaults(void)
   gMassHierarchyAssumed = kNmhNormal;
   gOscMixingParamChoice = kNuMixSinsq2Theta;
   gOscDmsqScheme        = kNuDmsq12andAbs23;
+  gOscDeltaCP           = kNuDeltaCPPhase;
   gOscOctantChoice      = kNuOctantOne;
 
   bool fit_1Rmu = false;
@@ -73,6 +74,13 @@ void Opt::SetDefaults(void)
     if(s == kSKsFCFV1RingMuLike) fit_1Rmu = true;
     if(s == kSKsFCFV1RingELike ) fit_1Re  = true;
   }
+
+#ifdef __NUMUONLY__
+  fit_1Re  = false;
+#endif
+#ifdef __NUEONLY__
+  fit_1Rmu  = false;
+#endif
 
   if(fit_1Rmu && fit_1Re) {
     gOscAnaTypeChoice = kAnaCombined;
@@ -99,6 +107,8 @@ bool Opt::Undefined(void)
     return true;
   if(gOscDmsqScheme        == kNuDmsqUndefined)
     return true;
+  if(gOscDeltaCP           == kNuDeltaCPUndefined)
+    return true;
   if(gOscOctantChoice      == kNuOctantUndefined)
     return true;
 
@@ -120,6 +130,9 @@ void Opt::Print(ostream & stream) const
 	 << endl;
   stream << " - Independent squared mass splittings: "
          << util::AsString(gOscDmsqScheme)
+         << endl;
+  stream << " - Choice for Delta CP phase: "
+         << util::AsString(gOscDeltaCP)
          << endl;
   stream << " - Oscillation analysis choice: " 
          << util::AsString(gOscAnaTypeChoice) 

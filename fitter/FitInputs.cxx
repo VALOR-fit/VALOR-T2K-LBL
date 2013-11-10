@@ -276,7 +276,7 @@ double FitInputs::ChisquarePenaltyTerm(void) const
   bool osc_only = false;
   if(systmode == 3)
     osc_only = true;
-
+  
   //
   // Add penalty term for marginalised oscillation parameters.
   // Penalize deviations from global analysis best-fit value.

@@ -87,6 +87,7 @@ void FitterMinuit2::Init(void)
   fNFreeFitParams = 0;
   fNFitBins       = 0;
   fStatusCode     = -999;
+  fFitTries       = 0;
 }
 //____________________________________________________________________________ 
 void FitterMinuit2::Init(FitInputs * fit_inputs, Option_t * /*option*/) 
@@ -158,12 +159,15 @@ void FitterMinuit2::ConstructCovMatrix(void)
       }
     }
     //SKDet
+#if FSI_BINS != 3
     else if(p == kNuisSuperkEff1RmuCCQErc0u) {
       const TMatrixD & sub_cov = fFitInputs->Expectation().GetSuperkDetector()->Eff1RmuCCQERCCovarRelErr();
       total_covariance.SetSub(ipf, ipf, sub_cov);
     }
+#endif
     else if(p == kNuisSuperkEnergyScale)
       total_covariance(ipf, ipf) = 1;
+#if FSI_BINS !=3
     else if(p == kNuisSuperkEff1RmuCCQEoth)
       total_covariance(ipf, ipf) = 1;
     else if(p == kNuisSuperkEff1RmuCCnonQE)
@@ -172,6 +176,7 @@ void FitterMinuit2::ConstructCovMatrix(void)
       total_covariance(ipf, ipf) = 1;
     else if(p == kNuisSuperkEff1RmuNueCC)
       total_covariance(ipf, ipf) = 1;
+#endif
     //XSec
     else if(p == kNuisXSecFermiMom)
       total_covariance(ipf, ipf) = 1;

@@ -86,6 +86,7 @@ namespace util {
   string AsString           (conv::NuOscMixParam_t    o);
   string AsString           (conv::NuOscOctant_t      p);
   string AsString           (t2kana::conv::NuOscDmsqScheme_t dmsqs);
+  string AsString           (t2kana::conv::NuOscDeltaCP_t deltaCP);
   string AsString           (conv::PhysHypothesis_t   h);
   string AsString           (conv::PhysParamId_t      p);
   string AsString           (conv::SuperkSample_t     s);
@@ -132,8 +133,10 @@ namespace util {
   bool IsNuMu         (conv::SuperkMode_t  m);
   bool IsOscNuMu      (conv::SuperkMode_t  m);
   bool IsNuMuBar      (conv::SuperkMode_t  m);
+  bool IsOscNuMuBar   (conv::SuperkMode_t  m);
   bool IsNuE          (conv::SuperkMode_t  m);
   bool IsNuEBar       (conv::SuperkMode_t  m);
+  bool IsOscNuEBar    (conv::SuperkMode_t  m);
   bool IsSignalNuE    (conv::SuperkMode_t  m);
   bool IsCC           (conv::SuperkMode_t  m);
   bool IsNC           (conv::SuperkMode_t  m);
@@ -197,6 +200,7 @@ namespace util {
   TMatrixD *       XML2TMatrixD    (TXMLEngine * xmleng, XMLNodePointer_t topnode, string path);
   TMatrixD *       XML2TH2D2TMatrixD (TXMLEngine * xmleng, XMLNodePointer_t topnode, string path);
   TSpline3 *       XML2TSpline3    (TXMLEngine * xmleng, XMLNodePointer_t topnode, string path);
+  TAxis *          XML2BinInfo     (TXMLEngine * xmleng, XMLNodePointer_t topnode, string path);
   
   //
   // Reaction mode utilities etc
@@ -208,8 +212,8 @@ namespace util {
   bool IsCC1pi    (int neut_reaction_mode);
   bool IsCCcoh    (int neut_reaction_mode); 
   bool IsCCoth    (int neut_reaction_mode); // this is a catch all. if new categories are added, please alter this method too 
-  bool IsCCoth_e  (int neut_reaction_mode); 
-  bool IsCCoth_mu (int neut_reaction_mode);
+  //  bool IsCCoth_e  (int neut_reaction_mode); 
+  //bool IsCCoth_mu (int neut_reaction_mode);
   bool IsNC1pi0   (int neut_reaction_mode);
   bool IsNC1piC   (int neut_reaction_mode);
   bool IsNCcoh    (int neut_reaction_mode); 

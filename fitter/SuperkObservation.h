@@ -54,14 +54,15 @@ public:
   bool Write(TObjArray * data_collection, const char * tag = "data");
   bool Write(const char * filename, const char * tag = "data", const char * option_file="update");
 
+  double  fErDistrArray1Rmu[conv::kNErecoBins1Rmu];
+  double  fErDistrArray1Re[conv::kNErecoBins1Re];
+
 private:
 
   void Init    (void);
   void CleanUp (void);
 
   TH1D *  fErDistr[kns];  ///< Reconstructed energy spectrum for each sample
-  double  fErDistrArray1Rmu[conv::kNErecoBins1Rmu];
-  double  fErDistrArray1Re[conv::kNErecoBins1Re];
 
 ClassDef(SuperkObservation, 3)
 };

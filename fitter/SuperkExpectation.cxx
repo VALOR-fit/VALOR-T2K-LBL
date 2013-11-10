@@ -415,14 +415,16 @@ void SuperkExpectation::ResetSystematicVariations(void)
 #ifndef SKFSITOGETHER
   // SuperK detector systematics
   this->GetSuperkDetector()->TweakEnergyScale                    (0.);
+#if FSI_BINS != 3
   this->GetSuperkDetector()->TweakEfficiency1RmuCCQEOther        (0.);
   this->GetSuperkDetector()->TweakEfficiency1RmuCCQERingCounting (true,0.,0.,0.); 
   this->GetSuperkDetector()->TweakEfficiency1RmuCCnonQE          (0.);
   this->GetSuperkDetector()->TweakEfficiency1RmuNC               (0.);     
   this->GetSuperkDetector()->TweakEfficiency1RmuNuECC            (0.);
-
+#endif
+#if FSI_BINS != 2
   this->GetSuperkDetector()->TweakEfficiencies1Re                (true,0);
-
+#endif
   // FSI
   this->GetFSI()->Tweak(true,0);
 #endif
@@ -440,13 +442,21 @@ void SuperkExpectation::ResetSystematicVariations(void)
   this->GetNuXSec()->Tweak(kNuisXSecWshape        , 0.);
   this->GetNuXSec()->Tweak(kNuisXSecShapeCCoth    , 0.);
   this->GetNuXSec()->Tweak(kNuisXSecPiLessDelta   , 0.);
+#ifndef __NUEONLY__
   this->GetNuXSec()->Tweak(kNuisXSecBindE         , 0.);
+#endif
   this->GetNuXSec()->Tweak(kNuisXSecNormCCcoh     , 0.);
+#ifndef __NUEONLY__
   this->GetNuXSec()->Tweak(kNuisXSecNormNC1piC    , 0.);
+#endif
+#ifndef __NUMUONLY__
   this->GetNuXSec()->Tweak(kNuisXSecNormNCcoh     , 0.);
+#endif
   this->GetNuXSec()->Tweak(kNuisXSecNormNCoth     , 0.);
   this->GetNuXSec()->Tweak(kNuisXSecNormNuEToNuMu , 0.);
+#ifndef __NUEONLY__
   this->GetNuXSec()->Tweak(kNuisXSecNormAntiNuToNu, 0.);
+#endif
 }
 //________________________________________________________________________________________
 void SuperkExpectation::TweakSystematic(string systematic, double twkdial, bool best_banff)
@@ -527,6 +537,7 @@ void SuperkExpectation::TweakSystematic(string systematic, double twkdial, bool 
   }
 
 #ifndef SKFSITOGETHER
+#if FSI_BINS != 3
   else
   if(systematic == "sk_1Rmu_ccqe_other_eff") {
      this->GetSuperkDetector()->TweakEfficiency1RmuCCQEOther(twkdial);
@@ -573,8 +584,10 @@ void SuperkExpectation::TweakSystematic(string systematic, double twkdial, bool 
   if(systematic == "sk_1Rmu_nuecc_eff") {
      this->GetSuperkDetector()->TweakEfficiency1RmuNuECC(twkdial);
   }
+#endif
   // tweak 1Re efficiency generating random
   // efficiency tweaks and taking into account bin-to-bin correlations
+#if FSI_BINS !=2
   else
   if(systematic == "sk_1Re_eff") {
     this->GetSuperkDetector()->TweakEfficiencies1Re();
@@ -595,6 +608,7 @@ void SuperkExpectation::TweakSystematic(string systematic, double twkdial, bool 
 	break;
       }
     }//ib                                                                                                                                                                                                    
+#endif
     if(!found) {
       cerr << "Exp >> Unknown systematic parameter (" << systematic << ")" << endl;
       exit(1);
@@ -665,8 +679,7 @@ void SuperkExpectation::TweakSystematic(string systematic, double twkdial, bool 
        exit(1);
      }   
   }
-  
-  
+    
 #endif
 
   //
@@ -703,7 +716,6 @@ void SuperkExpectation::TweakSystematic(string systematic, double twkdial, bool 
     this->GetBANFF()->Tweak(true,&twkv);
   }
 
-
   //
   // XSec
   //
@@ -718,21 +730,28 @@ void SuperkExpectation::TweakSystematic(string systematic, double twkdial, bool 
     this->GetNuXSec()->Tweak(kNuisXSecShapeCCoth    , twkdial);
   else if(systematic == "xsec_pilessdelta")
     this->GetNuXSec()->Tweak(kNuisXSecPiLessDelta   , twkdial);
+#ifndef __NUEONLY__
   else if(systematic == "xsec_bindE")
     this->GetNuXSec()->Tweak(kNuisXSecBindE         , twkdial);
+#endif
   else if(systematic == "xsec_norm_cccoh")
     this->GetNuXSec()->Tweak(kNuisXSecNormCCcoh     , twkdial);
-  else if(systematic == "xsec_norm_nc1piC")
-    this->GetNuXSec()->Tweak(kNuisXSecNormNC1piC    , twkdial);
+#ifndef __NUMUONLY__
   else if(systematic == "xsec_norm_nccoh")
     this->GetNuXSec()->Tweak(kNuisXSecNormNCcoh     , twkdial);
+#endif
+#ifndef __NUEONLY__
+  else if(systematic == "xsec_norm_nc1piC")
+    this->GetNuXSec()->Tweak(kNuisXSecNormNC1piC    , twkdial);
+#endif
   else if(systematic == "xsec_norm_ncoth")
     this->GetNuXSec()->Tweak(kNuisXSecNormNCoth     , twkdial);
   else if(systematic == "xsec_norm_nuetonumu")
     this->GetNuXSec()->Tweak(kNuisXSecNormNuEToNuMu , twkdial);
+#ifndef __NUEONLY__
   else if(systematic == "xsec_norm_antinutonu")
     this->GetNuXSec()->Tweak(kNuisXSecNormAntiNuToNu, twkdial);
-
+#endif
 
   else {
      cerr << "Exp >> Unknown systematic parameter (" << systematic << ")" << endl;
@@ -801,16 +820,25 @@ void SuperkExpectation::TweakAllUncorrelatedXSecSystematics(void)
     tweak = Rnd::Instance()->RndToyMCsyst().Gaus(0.,1.);
   this->GetNuXSec()->Tweak(kNuisXSecSpecFunc       , tweak);
   //this->GetNuXSec()->Tweak(kNuisXSecSpecFunc       , Rnd::Instance()->RndToyMCsyst().Uniform(0.,1.));
+  //  this->GetNuXSec()->Tweak(kNuisXSecSpecFunc       , Rnd::Instance()->RndToyMCsyst().Gaus(0.,1.));
   this->GetNuXSec()->Tweak(kNuisXSecWshape         , Rnd::Instance()->RndToyMCsyst().Gaus(0.,1.));
   this->GetNuXSec()->Tweak(kNuisXSecShapeCCoth     , Rnd::Instance()->RndToyMCsyst().Gaus(0.,1.));
   this->GetNuXSec()->Tweak(kNuisXSecPiLessDelta    , Rnd::Instance()->RndToyMCsyst().Gaus(0.,1.));
+#ifndef __NUEONLY__
   this->GetNuXSec()->Tweak(kNuisXSecBindE          , Rnd::Instance()->RndToyMCsyst().Gaus(0.,1.));
+#endif
   this->GetNuXSec()->Tweak(kNuisXSecNormCCcoh      , Rnd::Instance()->RndToyMCsyst().Gaus(0.,1.));
+#ifndef __NUEONLY__
   this->GetNuXSec()->Tweak(kNuisXSecNormNC1piC     , Rnd::Instance()->RndToyMCsyst().Gaus(0.,1.));
+#endif
+#ifndef __NUMUONLY__
   this->GetNuXSec()->Tweak(kNuisXSecNormNCcoh      , Rnd::Instance()->RndToyMCsyst().Gaus(0.,1.));
+#endif
   this->GetNuXSec()->Tweak(kNuisXSecNormNCoth      , Rnd::Instance()->RndToyMCsyst().Gaus(0.,1.));
   this->GetNuXSec()->Tweak(kNuisXSecNormNuEToNuMu  , Rnd::Instance()->RndToyMCsyst().Gaus(0.,1.));
+#ifndef __NUEONLY__
   this->GetNuXSec()->Tweak(kNuisXSecNormAntiNuToNu , Rnd::Instance()->RndToyMCsyst().Gaus(0.,1.));
+#endif
 }
 //________________________________________________________________________________________
 void SuperkExpectation::TweakAllSKDetectorSystematics(void)
@@ -822,12 +850,16 @@ void SuperkExpectation::TweakAllSKDetectorSystematics(void)
 
   // SuperK detector systematics
   this->GetSuperkDetector()->TweakEnergyScale              (Rnd::Instance()->RndToyMCsyst().Gaus(0.,1.));
+#if FSI_BINS != 3
   this->GetSuperkDetector()->TweakEfficiency1RmuCCQEOther  (Rnd::Instance()->RndToyMCsyst().Gaus(0.,1.));
   this->GetSuperkDetector()->TweakEfficiency1RmuCCQERingCounting  (); // <-- Cholesky method
   this->GetSuperkDetector()->TweakEfficiency1RmuCCnonQE    (Rnd::Instance()->RndToyMCsyst().Gaus(0.,1.));
   this->GetSuperkDetector()->TweakEfficiency1RmuNC         (Rnd::Instance()->RndToyMCsyst().Gaus(0.,1.));
   this->GetSuperkDetector()->TweakEfficiency1RmuNuECC      (Rnd::Instance()->RndToyMCsyst().Gaus(0.,1.));
+#endif 
+#if FSI_BINS != 2
   this->GetSuperkDetector()->TweakEfficiencies1Re          (); // <-- Cholesky method
+#endif
 }
 //________________________________________________________________________________________
 PhysParamList SuperkExpectation::Tweaks(void) 
@@ -852,13 +884,21 @@ PhysParamList SuperkExpectation::Tweaks(void)
   pl.SetValue( kNuisXSecWshape,          this->GetNuXSec()->CurrentValue(kNuisXSecWshape)         );
   pl.SetValue( kNuisXSecShapeCCoth,      this->GetNuXSec()->CurrentValue(kNuisXSecShapeCCoth)     );
   pl.SetValue( kNuisXSecPiLessDelta,     this->GetNuXSec()->CurrentValue(kNuisXSecPiLessDelta)    );
+#ifndef __NUEONLY__
   pl.SetValue( kNuisXSecBindE,           this->GetNuXSec()->CurrentValue(kNuisXSecBindE)          );
+#endif
   pl.SetValue( kNuisXSecNormCCcoh,       this->GetNuXSec()->CurrentValue(kNuisXSecNormCCcoh)      );
+#ifndef __NUEONLY__
   pl.SetValue( kNuisXSecNormNC1piC,      this->GetNuXSec()->CurrentValue(kNuisXSecNormNC1piC)     );
+#endif
+#ifndef __NUMUONLY__
   pl.SetValue( kNuisXSecNormNCcoh,       this->GetNuXSec()->CurrentValue(kNuisXSecNormNCcoh)      );
+#endif
   pl.SetValue( kNuisXSecNormNCoth,       this->GetNuXSec()->CurrentValue(kNuisXSecNormNCoth)      );
   pl.SetValue( kNuisXSecNormNuEToNuMu,   this->GetNuXSec()->CurrentValue(kNuisXSecNormNuEToNuMu)  );
+#ifndef __NUEONLY__
   pl.SetValue( kNuisXSecNormAntiNuToNu,  this->GetNuXSec()->CurrentValue(kNuisXSecNormAntiNuToNu) );
+#endif
 
   // 
   // SuperK detector + FSI systematics
@@ -866,6 +906,8 @@ PhysParamList SuperkExpectation::Tweaks(void)
 
 #ifndef SKFSITOGETHER
   pl.SetValue( kNuisSuperkEnergyScale,      this->GetSuperkDetector()->CurrentValue(kNuisSuperkEnergyScale)     );
+
+#if FSI_BINS != 3
   pl.SetValue( kNuisSuperkEff1RmuCCQEoth,   this->GetSuperkDetector()->CurrentValue(kNuisSuperkEff1RmuCCQEoth)  );
   pl.SetValue( kNuisSuperkEff1RmuCCQErc0u,  this->GetSuperkDetector()->CurrentValue(kNuisSuperkEff1RmuCCQErc0u) );
   pl.SetValue( kNuisSuperkEff1RmuCCQErc1u,  this->GetSuperkDetector()->CurrentValue(kNuisSuperkEff1RmuCCQErc1u) );
@@ -873,7 +915,8 @@ PhysParamList SuperkExpectation::Tweaks(void)
   pl.SetValue( kNuisSuperkEff1RmuCCnonQE,   this->GetSuperkDetector()->CurrentValue(kNuisSuperkEff1RmuCCnonQE)  );
   pl.SetValue( kNuisSuperkEff1RmuNC,        this->GetSuperkDetector()->CurrentValue(kNuisSuperkEff1RmuNC)       );
   pl.SetValue( kNuisSuperkEff1RmuNueCC,     this->GetSuperkDetector()->CurrentValue(kNuisSuperkEff1RmuNueCC)    );
-#if FSI_BINS == 1
+#endif
+#if FSI_BINS != 2
   pl.SetValue( kNuisSuperkEff1ReNueSigCC0,  this->GetSuperkDetector()->CurrentValue(kNuisSuperkEff1ReNueSigCC0) ); 
   pl.SetValue( kNuisSuperkEff1ReNueSigCC1,  this->GetSuperkDetector()->CurrentValue(kNuisSuperkEff1ReNueSigCC1) ); 
   pl.SetValue( kNuisSuperkEff1ReNueSigCC2,  this->GetSuperkDetector()->CurrentValue(kNuisSuperkEff1ReNueSigCC2) ); 
@@ -886,37 +929,41 @@ PhysParamList SuperkExpectation::Tweaks(void)
   pl.SetValue( kNuisSuperkEff1ReNC0,        this->GetSuperkDetector()->CurrentValue(kNuisSuperkEff1ReNC0)       );  
   pl.SetValue( kNuisSuperkEff1ReNC1,        this->GetSuperkDetector()->CurrentValue(kNuisSuperkEff1ReNC1)       );  
   pl.SetValue( kNuisSuperkEff1ReNC2,        this->GetSuperkDetector()->CurrentValue(kNuisSuperkEff1ReNC2)       );  
-#endif // FSI_BINS=1
+#endif 
+#if FSI_BINS != 3
   pl.SetValue( kNuisFSI000,  this->GetFSI()->CurrentValue(kNuisFSI000) );
   pl.SetValue( kNuisFSI001,  this->GetFSI()->CurrentValue(kNuisFSI001) );
   pl.SetValue( kNuisFSI002,  this->GetFSI()->CurrentValue(kNuisFSI002) );
   pl.SetValue( kNuisFSI003,  this->GetFSI()->CurrentValue(kNuisFSI003) );
   pl.SetValue( kNuisFSI004,  this->GetFSI()->CurrentValue(kNuisFSI004) );
   pl.SetValue( kNuisFSI005,  this->GetFSI()->CurrentValue(kNuisFSI005) );
-#if FSI_BINS == 1
-  pl.SetValue( kNuisFSI1Re000,  this->GetFSI()->CurrentValue(kNuisFSI1Re000) );
-  pl.SetValue( kNuisFSI1Re001,  this->GetFSI()->CurrentValue(kNuisFSI1Re001) );
-  pl.SetValue( kNuisFSI1Re002,  this->GetFSI()->CurrentValue(kNuisFSI1Re002) );
-  pl.SetValue( kNuisFSI1Re003,  this->GetFSI()->CurrentValue(kNuisFSI1Re003) );
-  pl.SetValue( kNuisFSI1Re004,  this->GetFSI()->CurrentValue(kNuisFSI1Re004) );
-  pl.SetValue( kNuisFSI1Re005,  this->GetFSI()->CurrentValue(kNuisFSI1Re005) );
-  pl.SetValue( kNuisFSI1Re006,  this->GetFSI()->CurrentValue(kNuisFSI1Re006) );
-  pl.SetValue( kNuisFSI1Re007,  this->GetFSI()->CurrentValue(kNuisFSI1Re007) );
-  pl.SetValue( kNuisFSI1Re008,  this->GetFSI()->CurrentValue(kNuisFSI1Re008) );
-  pl.SetValue( kNuisFSI1Re009,  this->GetFSI()->CurrentValue(kNuisFSI1Re009) );
-  pl.SetValue( kNuisFSI1Re010,  this->GetFSI()->CurrentValue(kNuisFSI1Re010) );
-  pl.SetValue( kNuisFSI1Re011,  this->GetFSI()->CurrentValue(kNuisFSI1Re011) );
+#endif
+#if FSI_BINS != 2
+  pl.SetValue( kNuisFSI006,  this->GetFSI()->CurrentValue(kNuisFSI006) );
+  pl.SetValue( kNuisFSI007,  this->GetFSI()->CurrentValue(kNuisFSI007) );
+  pl.SetValue( kNuisFSI008,  this->GetFSI()->CurrentValue(kNuisFSI008) );
+  pl.SetValue( kNuisFSI009,  this->GetFSI()->CurrentValue(kNuisFSI009) );
+  pl.SetValue( kNuisFSI010,  this->GetFSI()->CurrentValue(kNuisFSI010) );
+  pl.SetValue( kNuisFSI011,  this->GetFSI()->CurrentValue(kNuisFSI011) );
+  pl.SetValue( kNuisFSI012,  this->GetFSI()->CurrentValue(kNuisFSI012) );
+  pl.SetValue( kNuisFSI013,  this->GetFSI()->CurrentValue(kNuisFSI013) );
+  pl.SetValue( kNuisFSI014,  this->GetFSI()->CurrentValue(kNuisFSI014) );
+  pl.SetValue( kNuisFSI015,  this->GetFSI()->CurrentValue(kNuisFSI015) );
+  pl.SetValue( kNuisFSI016,  this->GetFSI()->CurrentValue(kNuisFSI016) );
+  pl.SetValue( kNuisFSI017,  this->GetFSI()->CurrentValue(kNuisFSI017) );
 #endif // FSI_BINS=1
 
 #else // SKFSITOGETHER
   pl.SetValue( kNuisSuperkEnergyScale,  this->GetSuperkDetectorFSI()->CurrentValue(kNuisSuperkEnergyScale) );
+#if FSI_BINS != 3
   pl.SetValue( kNuisSKDetFSI000,  this->GetSuperkDetectorFSI()->CurrentValue(kNuisSKDetFSI000) );
   pl.SetValue( kNuisSKDetFSI001,  this->GetSuperkDetectorFSI()->CurrentValue(kNuisSKDetFSI001) );
   pl.SetValue( kNuisSKDetFSI002,  this->GetSuperkDetectorFSI()->CurrentValue(kNuisSKDetFSI002) );
   pl.SetValue( kNuisSKDetFSI003,  this->GetSuperkDetectorFSI()->CurrentValue(kNuisSKDetFSI003) );
   pl.SetValue( kNuisSKDetFSI004,  this->GetSuperkDetectorFSI()->CurrentValue(kNuisSKDetFSI004) );
   pl.SetValue( kNuisSKDetFSI005,  this->GetSuperkDetectorFSI()->CurrentValue(kNuisSKDetFSI005) );
-#if FSI_BINS == 1 
+#endif
+#if FSI_BINS != 2
   pl.SetValue( kNuisSKDetFSI006,  this->GetSuperkDetectorFSI()->CurrentValue(kNuisSKDetFSI006) );
   pl.SetValue( kNuisSKDetFSI007,  this->GetSuperkDetectorFSI()->CurrentValue(kNuisSKDetFSI007) );
   pl.SetValue( kNuisSKDetFSI008,  this->GetSuperkDetectorFSI()->CurrentValue(kNuisSKDetFSI008) );
@@ -958,33 +1005,40 @@ void SuperkExpectation::SetNuisanceParams(const FitParamList & fp, bool /*all_ba
 
     // use current values stored in fit param list
     // to tweak the SKDET + FSI object
-    const int nskdetfsi = conv::kNumOfSKDetFSIParams;
+#if FSI_BINS == 2
     const int nskdetfsi_1Rmu = conv::kNumOfSKDetFSIParams1Rmu;
-    const int nskdetfsi_1Re = conv::kNumOfSKDetFSIParams1Re;
-    if (Opt::Instance()->gOscAnaTypeChoice == conv::kAnaNuMuDisappOnly){
-      TVectorD twkv(nskdetfsi_1Rmu);
-      for(int ip = 0; ip < nskdetfsi_1Rmu; ip++) {
-	PhysParamId_t p = PhysParamId_t ((int) kNuisSKDetFSI000 + ip);
-	twkv[ip] = fp.CurrValue(p);
-      }
-      this->GetSuperkDetectorFSI()->TweakOnly1Rmu(true,&twkv);
+    //    if (Opt::Instance()->gOscAnaTypeChoice == conv::kAnaNuMuDisappOnly){
+    TVectorD twkv(nskdetfsi_1Rmu);
+    for(int ip = 0; ip < nskdetfsi_1Rmu; ip++) {
+      PhysParamId_t p = PhysParamId_t ((int) kNuisSKDetFSI000 + ip);
+      twkv[ip] = fp.CurrValue(p);
     }
-    else if (Opt::Instance()->gOscAnaTypeChoice == conv::kAnaNuEAppOnly){
+    this->GetSuperkDetectorFSI()->TweakOnly1Rmu(true,&twkv);
+    //}
+#else
+#if FSI_BINS == 3
+    const int nskdetfsi_1Re = conv::kNumOfSKDetFSIParams1Re;
+      //    else if (Opt::Instance()->gOscAnaTypeChoice == conv::kAnaNuEAppOnly){
       TVectorD twkv(nskdetfsi_1Re);
       for(int ip = 0; ip < nskdetfsi_1Re; ip++) {
-	PhysParamId_t p = PhysParamId_t ((int) kNuisSKDetFSI000 + ip + nskdetfsi_1Rmu);
+	//	PhysParamId_t p = PhysParamId_t ((int) kNuisSKDetFSI000 + ip + nskdetfsi_1Rmu);
+	PhysParamId_t p = PhysParamId_t ((int) kNuisSKDetFSI006 + ip);
 	twkv[ip] = fp.CurrValue(p);
       }
       this->GetSuperkDetectorFSI()->TweakOnly1Re(true,&twkv);
-    }
-    else {
+      //}
+#else
+      //    else {
+      const int nskdetfsi = conv::kNumOfSKDetFSIParams;
       TVectorD twkv(nskdetfsi);
       for(int ip = 0; ip < nskdetfsi; ip++) {
 	PhysParamId_t p = PhysParamId_t ((int) kNuisSKDetFSI000 + ip);
 	twkv[ip] = fp.CurrValue(p);
       }
       this->GetSuperkDetectorFSI()->Tweak(true,&twkv);    
-    }
+      //}
+#endif
+#endif
    
     // use current values stored in fit param list
     // to tweak the BANFF object
@@ -1020,7 +1074,7 @@ void SuperkExpectation::SetNuisanceParams(const FitParamList & fp, bool /*all_ba
   // 
   // SuperK detector systematics
   //
-  
+#if FSI_BINS != 3  
   if(fp.Exists(kNuisSuperkEff1RmuCCQEoth)) {
     double twk = fp.CurrValue(kNuisSuperkEff1RmuCCQEoth);
     this->GetSuperkDetector()->TweakEfficiency1RmuCCQEOther(twk);
@@ -1049,8 +1103,8 @@ void SuperkExpectation::SetNuisanceParams(const FitParamList & fp, bool /*all_ba
      double twk = fp.CurrValue(kNuisSuperkEnergyScale);
      this->GetSuperkDetector()->TweakEnergyScale(twk);
    }
-
-#if FSI_BINS == 1
+#endif
+#if FSI_BINS != 2
    const int neff1Re = conv::kNumOfSKDetParams1Re;
    TVectorD twkv1Re(neff1Re); 
    // 1Re eff params included in the fit param list?            
@@ -1135,6 +1189,17 @@ void SuperkExpectation::SetNuisanceParams(const FitParamList & fp, bool /*all_ba
    // FSI params included in the fit param list?
    bool incl_fsi = true;
 
+   for(int ip = 0; ip < nfsi; ip++) {
+#if FSI_BINS != 3
+     PhysParamId_t p = PhysParamId_t ((int) kNuisFSI000 + ip); 
+#else                                                                                                                      
+     PhysParamId_t p = PhysParamId_t ((int) kNuisFSI006 + ip); 
+#endif
+     incl_fsi = incl_fsi && fp.Exists(p);                                                                                                                                            
+     if(!incl_fsi) break;   
+   }
+
+   
    if (Opt::Instance()->gOscAnaTypeChoice == conv::kAnaNuMuDisappOnly){
      for(int ip = 0; ip < nfsi_1Rmu; ip++) {
        PhysParamId_t p = PhysParamId_t ((int) kNuisFSI000 + ip);
@@ -1156,9 +1221,23 @@ void SuperkExpectation::SetNuisanceParams(const FitParamList & fp, bool /*all_ba
        if(!incl_fsi) break;
      }
    }
+  */
+  /*
    // If FSI params included, use current values stored in fit param list
    // to tweak the FSI object
    if(incl_fsi) {
+     TVectorD twkv(nfsi);
+     for(int ip = 0; ip < nfsi; ip++) {
+#if FSI_BINS != 3
+       PhysParamId_t p = PhysParamId_t ((int) kNuisFSI000 + ip);
+#else
+       PhysParamId_t p = PhysParamId_t ((int) kNuisFSI006 + ip);
+#endif
+       twkv[ip] = fp.CurrValue(p);
+     }
+     this->GetFSI()->Tweak(true,&twkv);
+
+     
      if (Opt::Instance()->gOscAnaTypeChoice == conv::kAnaNuMuDisappOnly){
        TVectorD twkv(nfsi_1Rmu);
        for(int ip = 0; ip < nfsi_1Rmu; ip++) {
@@ -1170,7 +1249,7 @@ void SuperkExpectation::SetNuisanceParams(const FitParamList & fp, bool /*all_ba
      else if (Opt::Instance()->gOscAnaTypeChoice == conv::kAnaNuEAppOnly){
        TVectorD twkv(nfsi_1Re);
        for(int ip = 0; ip < nfsi_1Re; ip++) {
-         PhysParamId_t p = PhysParamId_t ((int) kNuisFSI000 + ip + nfsi_1Rmu);
+         PhysParamId_t p = PhysParamId_t ((int) kNuisFSI006 + ip );
          twkv[ip] = fp.CurrValue(p);
        }
        this->GetFSI()->TweakOnly1Re(true,&twkv);
@@ -1183,9 +1262,10 @@ void SuperkExpectation::SetNuisanceParams(const FitParamList & fp, bool /*all_ba
        }
        this->GetFSI()->Tweak(true,&twkv);    
      }
-   }
-
-#endif
+  */
+  /* }
+     
+#endif // if not SKFSITOGETHER
 
 #ifdef SKFSITOGETHER
 
@@ -1203,6 +1283,18 @@ void SuperkExpectation::SetNuisanceParams(const FitParamList & fp, bool /*all_ba
    const int nskdetfsi_1Re = conv::kNumOfSKDetFSIParams1Re;
    // SKDET + FSI params included in the fit param list?
    bool incl_skdetfsi = true;
+
+   for(int ip = 0; ip < nskdetfsi; ip++) {
+#if FSI_BINS != 3
+     PhysParamId_t p = PhysParamId_t ((int) kNuisSKDetFSI000 + ip);
+#else
+     PhysParamId_t p = PhysParamId_t ((int) kNuisSKDetFSI006 + ip);
+#endif
+     incl_skdetfsi = incl_skdetfsi && fp.Exists(p);
+     if(!incl_skdetfsi) break;
+   }
+
+   
 
    if (Opt::Instance()->gOscAnaTypeChoice == conv::kAnaNuMuDisappOnly){
      for(int ip = 0; ip < nskdetfsi_1Rmu; ip++) {
@@ -1225,9 +1317,24 @@ void SuperkExpectation::SetNuisanceParams(const FitParamList & fp, bool /*all_ba
        if(!incl_skdetfsi) break;
      }
    }
+   */
+
+/*
    // If SKDET + FSI params included, use current values stored in fit param list
    // to tweak the SKDET + FSI object
    if(incl_skdetfsi) {
+     
+     TVectorD twkv(nskdetfsi);
+     for(int ip = 0; ip < nskdetfsi; ip++) {
+#if FSI_BINS != 3
+       PhysParamId_t p = PhysParamId_t ((int) kNuisSKDetFSI000 + ip);
+#else
+       PhysParamId_t p = PhysParamId_t ((int) kNuisSKDetFSI006 + ip);
+#endif
+       twkv[ip] = fp.CurrValue(p);
+     }
+     this->GetSuperkDetectorFSI()->Tweak(true,&twkv);
+     
      if (Opt::Instance()->gOscAnaTypeChoice == conv::kAnaNuMuDisappOnly){
        TVectorD twkv(nskdetfsi_1Rmu);
        for(int ip = 0; ip < nskdetfsi_1Rmu; ip++) {
@@ -1252,7 +1359,8 @@ void SuperkExpectation::SetNuisanceParams(const FitParamList & fp, bool /*all_ba
        }
        this->GetSuperkDetectorFSI()->Tweak(true,&twkv);    
      }
-   }
+     */
+/*   }
 
 #endif
 
@@ -1336,7 +1444,61 @@ void SuperkExpectation::SetNuisanceParams(const FitParamList & fp, bool /*all_ba
        this->GetNuXSec()->Tweak(p,twk);
      }
    }
-   */
+*/
+/*
+   if(fp.Exists(kNuisXSecSpecFunc)) {
+     double twk = fp.CurrValue(kNuisXSecSpecFunc);
+     this->GetNuXSec()->TweakSpecFunc(twk);
+   }
+   if(fp.Exists(kNuisXSecWshape)) {
+     double twk = fp.CurrValue(kNuisXSecWshape);
+     this->GetNuXSec()->TweakWshape(twk);
+   }
+   if(fp.Exists(kNuisXSecShapeCCoth)) {
+     double twk = fp.CurrValue(kNuisXSecShapeCCoth);
+     this->GetNuXSec()->TweakShapeCCoth(twk);
+   }
+   if(fp.Exists(kNuisXSecPiLessDelta)) {
+     double twk = fp.CurrValue(kNuisXSecPiLessDelta);
+     this->GetNuXSec()->TweakPiLessDelta(twk);
+   }
+#ifndef __NUEONLY__
+   if(fp.Exists(kNuisXSecBindE)) {
+     double twk = fp.CurrValue(kNuisXSecBindE);
+     this->GetNuXSec()->TweakBindE(twk);
+   }
+#endif
+   if(fp.Exists(kNuisXSecNormCCcoh)) {
+     double twk = fp.CurrValue(kNuisXSecNormCCcoh);
+     this->GetNuXSec()->TweakNormCCcoh(twk);
+   }
+#ifndef __NUMUONLY__
+   if(fp.Exists(kNuisXSecNormNCcoh)) {
+     double twk = fp.CurrValue(kNuisXSecNormNCcoh);
+     this->GetNuXSec()->TweakNormNCcoh(twk);
+   }
+#endif
+#ifndef __NUEONLY__
+   if(fp.Exists(kNuisXSecNormNC1piC)) {
+     double twk = fp.CurrValue(kNuisXSecNormNC1piC);
+     this->GetNuXSec()->TweakNormNC1piC(twk);
+   }
+#endif
+   if(fp.Exists(kNuisXSecNormNCoth)) {
+     double twk = fp.CurrValue(kNuisXSecNormNCoth);
+     this->GetNuXSec()->TweakNormNCoth(twk);
+   }
+   if(fp.Exists(kNuisXSecNormNuEToNuMu)) {
+     double twk = fp.CurrValue(kNuisXSecNormNuEToNuMu);
+     this->GetNuXSec()->TweakNormNuEToNuMu(twk);
+   }
+#ifndef __NUEONLY__
+   if(fp.Exists(kNuisXSecNormAntiNuToNu)) {
+     double twk = fp.CurrValue(kNuisXSecNormAntiNuToNu);
+     this->GetNuXSec()->TweakNormAntiNuToNu(twk);
+   }
+#endif
+*/
 }
 //________________________________________________________________________________________
 

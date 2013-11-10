@@ -57,6 +57,7 @@ public:
    virtual bool       DoTheFit      (void);
    virtual int        FitStatusCode (Option_t *)  { return fStatusCode;                 }
    virtual double     FitTime       (void)        { return fFitTime;                    }
+   virtual int        FitNTries     (void)        { return fFitTries;               }
    virtual int        NDOF          (void)        { return fNFitBins - fNFreeFitParams; }
    virtual int        NBinsInFit    (void)        { return fNFitBins;                   }
    virtual int        NFitParams    (void)        { return fNFreeFitParams;             }
@@ -72,6 +73,7 @@ protected:
    TString     fOption;           ///< fit option
    int         fStatusCode;       ///< fit status code
    double      fFitTime;          ///< fit time
+   int         fFitTries;          ///< fit time
    int         fNFitBins;         ///< number of bins in fit
    int         fNFreeFitParams;   ///< number of free params in fit
 

@@ -6,7 +6,7 @@
 */ 
 //____________________________________________________________________________
 
-//#define __show_fit_init_info__ 
+#define __show_fit_init_info__ 
 #define __show_fit_result__ 
 #define __show_fit_steps__ 
 #define __show_fit_cpu_time__
@@ -40,6 +40,7 @@
 #include "Conventions.h"
 #include "Opt.h"
 #include "Rnd.h"
+
 
 using std::cerr; 
 using std::cout; 
@@ -300,6 +301,7 @@ bool FitterMinuit::DoTheFit(void)
 //____________________________________________________________________________ 
 bool FitterMinuit::RunOnce(bool use_simplex) 
 {
+
   fHesseErrStatusCode = -1;
   double fcntemp;
 
@@ -430,6 +432,7 @@ bool FitterMinuit::RunOnce(bool use_simplex)
 #endif
     fHesseErrStatusCode = fitter->ExecuteCommand("HESSE",arglist, 1);
   }
+  //else 
   if(fCalcMinosErrors) {
 #ifdef __show_fit_steps__
     cout << "FitterMinuit/RunOnce >> Running MINOS..." << endl;
@@ -464,9 +467,13 @@ bool FitterMinuit::RunOnce(bool use_simplex)
   double errpara [nparamsmax] = {0.};
   for(int ip = 0; ip < nparamsmax; ip++) {
     double glob_corr; // dummy vars
-    fitter->GetErrors(ip,errplus[ip],errminus[ip],errpara[ip],glob_corr);
+    if(fCalcMinosErrors)
+      fitter->GetErrors(ip,errplus[ip],errminus[ip],errpara[ip],glob_corr);
+    else
+      errpara[ip] = fitter->GetParError(ip);
   }
   fFitInputs->FitParams().SetErrors(errplus, errminus, errpara);
+
 
   // Print fit result
   if(fCalcHesseErrors) {

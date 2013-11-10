@@ -526,6 +526,7 @@ double SuperkDetector::EfficiencyWeight(
   // 1-ring mu-like sample
   //
   if(s == kSKsFCFV1RingMuLike) {
+#if FSI_BINS != 3
     switch(m) {
 
        // numu CCQE, numubar CCQE:
@@ -560,10 +561,10 @@ double SuperkDetector::EfficiencyWeight(
        //
        case (kSKmNuMuCC1pi)       :
        case (kSKmNuMuCCcoh)       :
-       case (kSKmNuMuCCoth_mu)    : 
+       case (kSKmNuMuCCoth)    : 
        case (kSKmNuMuBarCC1pi)    : 
        case (kSKmNuMuBarCCcoh)    : 
-       case (kSKmNuMuBarCCoth_mu) : 
+       case (kSKmNuMuBarCCoth) : 
        {
           double relerr  = fEff1RmuCCnonQERelErr;
           double twkdial = fEff1RmuCCnonQETwkDial;
@@ -600,15 +601,15 @@ double SuperkDetector::EfficiencyWeight(
        case (kSKmNuECCQE)        : 
        case (kSKmNuECC1pi)       : 
        case (kSKmNuECCcoh)       : 
-       case (kSKmNuECCoth_mu)    : 
+       case (kSKmNuECCoth)    : 
        case (kSKmNuEBarCCQE)     : 
        case (kSKmNuEBarCC1pi)    : 
        case (kSKmNuEBarCCcoh)    : 
-       case (kSKmNuEBarCCoth_mu) : 
+       case (kSKmNuEBarCCoth) : 
        case (kSKmSigNuECCQE)     : 
        case (kSKmSigNuECC1pi)    : 
        case (kSKmSigNuECCcoh)    : 
-       case (kSKmSigNuECCoth_mu) : 
+       case (kSKmSigNuECCoth) : 
        {
           double relerr  = fEff1RmuNuECCRelErr;
           double twkdial = fEff1RmuNuECCTwkDial;
@@ -625,12 +626,13 @@ double SuperkDetector::EfficiencyWeight(
        return 0;
 
     }//mode
+#endif
   }//1-ring mu-like sample
   //
   // 1-ring e-like sample
   //
   else if ( s == kSKsFCFV1RingELike ) {
-#if FSI_BINS == 1
+#if FSI_BINS != 2
     // find which sk det param we have to apply
     int iparam = -1;
     for(int ip = 0; ip < conv::kNumOfSKDetParams1Re; ip++) {
@@ -718,6 +720,7 @@ double SuperkDetector::CurrentValue(PhysParamId_t p) const
     case kNuisSuperkEnergyScale:
       return fEnergyScaleTwkDial;
       break;
+#if FSI_BINS != 3
     case kNuisSuperkEff1RmuCCQEoth:
       return fEff1RmuCCQEOthTwkDial;
       break;
@@ -739,7 +742,8 @@ double SuperkDetector::CurrentValue(PhysParamId_t p) const
     case kNuisSuperkEff1RmuNueCC:
       return fEff1RmuNuECCTwkDial;
       break;
-#if FSI_BINS == 1
+#endif
+#if FSI_BINS != 2
     case kNuisSuperkEff1ReNueSigCC0:
     case kNuisSuperkEff1ReNueSigCC1:
     case kNuisSuperkEff1ReNueSigCC2:
@@ -765,7 +769,7 @@ double SuperkDetector::CurrentValue(PhysParamId_t p) const
   return 0;
 }
 //________________________________________________________________________________________
-#if FSI_BINS == 1
+#if FSI_BINS != 2
 bool SuperkDetector::ApplySyst1Re(
 		    conv::PhysParamId_t p, conv::SuperkSample_t s, conv::SuperkMode_t m, double Ereco) const
 {
@@ -774,6 +778,7 @@ bool SuperkDetector::ApplySyst1Re(
   bool apply = apply2mode && apply2bin;
   return apply;
 }
+//#endif
 //________________________________________________________________________________________                                                                                                               
 bool SuperkDetector::ApplySystToSKMode(conv::PhysParamId_t p, conv::SuperkSample_t s, conv::SuperkMode_t m) const
 {

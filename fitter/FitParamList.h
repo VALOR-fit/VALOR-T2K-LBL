@@ -195,6 +195,9 @@ private:
    // Various functions called by NamedParameterList(name)
    static FitParamList * NuOsc3FlavourFit                 (void);
    static FitParamList * NuOsc3FlavourFitWithAllSyst      (void);
+   static FitParamList * NuOsc3FlavourFitWithXSec         (void);
+   static FitParamList * NuOsc3FlavourFitWithEScale       (void);
+   static FitParamList * NuOsc3FlavourFitWithAllSystButSKDetFSI      (void);
    static FitParamList * NuOsc3FlavourFitWithAllSystDisap (void);
    static FitParamList * NuOsc3FlavourFitWithAllSystApp   (void);
    static FitParamList * NuOsc3FlavourFitWithSelectedSyst (void);
@@ -221,6 +224,7 @@ private:
    static void           AppendFSISystematicsApp                    (FitParamList * fp, int start);
    static void           AppendAllCorrelatedBANFFSystematics        (FitParamList * fp, int start);
    static void           AppendCorrelatedBANFFSystematicsDisap      (FitParamList * fp, int start);
+   static void           AppendCorrelatedBANFFSystematicsApp        (FitParamList * fp, int start);
    static void           AppendAllUncorrelatedBANFFSystematics      (FitParamList * fp, int start);
    static void           AppendSelectedNonBANFFSystematics          (FitParamList * fp, int start);
    static void           AppendSelectedCorrelatedBANFFSystematics   (FitParamList * fp, int start);

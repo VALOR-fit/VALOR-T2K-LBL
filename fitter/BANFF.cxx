@@ -83,7 +83,15 @@ bool BANFF::Read(TXMLEngine* xml, XMLNodePointer_t root_node)
   // Get BANFF fit central values
 
 #ifndef __BANFF_BESTFIT_IS_ONE__
+#if BANFF_BINS == 1
   fBestFitValues = util::XML2TVectorD(xml,root_node,"banff/best_fit_values");
+#elif BANFF_BINS == 2
+  fBestFitValues = util::XML2TVectorD(xml,root_node,"banff/disap/best_fit_values");
+#elif BANFF_BINS == 3
+  fBestFitValues = util::XML2TVectorD(xml,root_node,"banff/app/best_fit_values");
+#elif BANFF_BINS == 4
+  fBestFitValues = util::XML2TVectorD(xml,root_node,"banff/disapmec/best_fit_values");
+#endif
   if(!fBestFitValues) {
     cerr << "Exp/BANFF >> No BANFF best-fit parameter vector was found." << endl;
     exit(1);
@@ -113,7 +121,15 @@ bool BANFF::Read(TXMLEngine* xml, XMLNodePointer_t root_node)
   fCurrentValues = new TVectorD(bestfit);
 
   // Get BANFF fit covariance matrix
+#if BANFF_BINS == 1
   fCovMtrx = util::XML2TMatrixD(xml,root_node,"banff/covariance_matrix");
+#elif BANFF_BINS == 2
+  fCovMtrx = util::XML2TMatrixD(xml,root_node,"banff/disap/covariance_matrix");
+#elif BANFF_BINS == 3
+  fCovMtrx = util::XML2TMatrixD(xml,root_node,"banff/app/covariance_matrix");
+#elif BANFF_BINS == 4
+  fCovMtrx = util::XML2TMatrixD(xml,root_node,"banff/disapmec/covariance_matrix");
+#endif
   if(!fCovMtrx) {
     cerr << "Exp/BANFF >> No BANFF covariance matrix was found." << endl;
     exit(1);
@@ -551,11 +567,11 @@ int BANFF::Param2Idx(PhysParamId_t p) const
 {
   int iparam = (int) p;
   int first  = (int) kNuisBANFF00;
-#if BANFF_BINS == 1
+#if (BANFF_BINS != 2) && (BANFF_BINS != 4)
   int last   = (int) kNuisBANFFNC1pi0;
 #elif BANFF_BINS == 2
   int last   = (int) kNuisBANFFCC1piE1;
-#elif BANFF_BINS == 3
+#elif BANFF_BINS == 4
   int last   = (int) kNuisBANFFPDDDoubleCount;
 #endif
 

@@ -196,7 +196,7 @@ void NuOsc3Flavour::SetOscParameters(
 
 }
 
-//________________________________________________________________________________________                                                                                                             
+//________________________________________________________________________________________   
 void NuOsc3Flavour::SetOscParametersSinSqTAll(
 				     double sinsqtheta12, double sinsqtheta13, double sinsqtheta23,
 				     double dmsq12_in, double dmsq23_in,
@@ -219,18 +219,18 @@ void NuOsc3Flavour::SetOscParametersSinSqTAll(
   dmsq23 = TMath::Min(dmsq23, 2.0e-2);
   dmsq23 = TMath::Max(dmsq23, 2.0e-4);
 
-  // Note: The input value of dmsq23 is the absolute one. The sign of dmsq23 depends on                                                                                                                 
-  // the mass hierarchy. In the normal mass hierarchy, dmsq23 is positive. In the inverted                                                                                                              
-  // mass hierarchy, dmsq23 is NEGATIVE. Set the appropriate sign.                                                                                                                                      
+  // Note: The input value of dmsq23 is the absolute one. The sign of dmsq23 depends on  
+  // the mass hierarchy. In the normal mass hierarchy, dmsq23 is positive. In the inverted 
+  // mass hierarchy, dmsq23 is NEGATIVE. Set the appropriate sign.  
   if(fMassHierarchy == kNmhInverted) {
     dmsq23 = -dmsq23;
   }
 
-  // The input values of dmsq23 and dmsq12  uniquely define the value of dmsq13                                                                                                                       
+  // The input values of dmsq23 and dmsq12  uniquely define the value of dmsq13 
   dmsq13 = dmsq12 + dmsq23;
 
-  // Code returns NaN if sin^2(mixing angle) is unphysical.                                                                                                                                            
-  // Don't let sin^2(mixing angle) be below 0 or above 1.                                                                                                                                              
+  // Code returns NaN if sin^2(mixing angle) is unphysical. 
+  // Don't let sin^2(mixing angle) be below 0 or above 1. 
   sinsqtheta12 = TMath::Min(1.,sinsqtheta12);
   sinsqtheta12 = TMath::Max(0.,sinsqtheta12);
   sinsqtheta13 = TMath::Min(1.,sinsqtheta13);
@@ -238,11 +238,11 @@ void NuOsc3Flavour::SetOscParametersSinSqTAll(
   sinsqtheta23 = TMath::Min(1.,sinsqtheta23);
   sinsqtheta23 = TMath::Max(0.,sinsqtheta23);
 
-  // Calculate sin(mixingAngle) from sin^2(mixingAngle)                                                                                                                                              
+  // Calculate sin(mixingAngle) from sin^2(mixingAngle) 
   double s12 = sqrt(sinsqtheta12);
   double s13 = sqrt(sinsqtheta13);
   double s23 = sqrt(sinsqtheta23);
-  // Calculate cos(mixingAngle) from sin(mixingAngle)                                                                                                                                                  
+  // Calculate cos(mixingAngle) from sin(mixingAngle) 
   double c12 = sqrt(1 - s12 * s12);
   double c13 = sqrt(1 - s13 * s13);
   double c23 = sqrt(1 - s23 * s23);
@@ -295,7 +295,7 @@ void NuOsc3Flavour::SetOscParametersSinSqTAll(
   if(((fabs(deltaCP) > 3.10 && fabs(deltaCP) < 3.18) || fabs(deltaCP) < 0.01 || fabs(fabs(deltaCP) - 6.2832) < 0.01) && sinsqtheta13 > 3.0e-9)
     useEquations12 = false;
 
-  //if 2 mixing angles are very small, treat it as a 2-flavour calculation                                                                                                                            
+  //if 2 mixing angles are very small, treat it as a 2-flavour calculation 
   if(sinsqtheta13 < 3.0e-6 && sinsqtheta23 < 3.0e-6 && sinsqtheta12 >= 3.0e-7)
     nFlavourIndex = 12;
   else if(sinsqtheta12 < 3.0e-5 && sinsqtheta23 < 3.0e-7 && sinsqtheta13 >= 3.0e-7)
@@ -304,13 +304,115 @@ void NuOsc3Flavour::SetOscParametersSinSqTAll(
     nFlavourIndex = 23;
   else
     nFlavourIndex = -1;
-  //if all 3 mixing angles are very small, take it that there are no oscillations                                                                                                                     
+  //if all 3 mixing angles are very small, take it that there are no oscillations 
+  if(sinsqtheta12 < 3.0e-7 && sinsqtheta13 < 3.0e-7 && sinsqtheta23 < 3.0e-7)
+    nFlavourIndex = 0;
+
+}
+//________________________________________________________________________________________  
+void NuOsc3Flavour::SetOscParametersSinSqTAllSinDeltaCP(
+				     double sinsqtheta12, double sinsqtheta13, double sinsqtheta23,
+				     double dmsq12_in, double dmsq23_in,
+				     double sindeltaCP)
+{
+  dmsq12 = dmsq12_in;
+  dmsq23 = dmsq23_in;
+
+  // Note: The input value of dmsq23 is the absolute one. The sign of dmsq23 depends on
+  // the mass hierarchy. In the normal mass hierarchy, dmsq23 is positive. In the inverted
+  // mass hierarchy, dmsq23 is NEGATIVE. Set the appropriate sign. 
+  if(fMassHierarchy == kNmhInverted) {
+    dmsq23 = -dmsq23;
+  }
+
+  // The input values of dmsq23 and dmsq12  uniquely define the value of dmsq13 
+  dmsq13 = dmsq12 + dmsq23;
+
+  // Code returns NaN if sin^2(mixing angle) is unphysical.
+  // Don't let sin^2(mixing angle) be below 0 or above 1. 
+  sinsqtheta12 = TMath::Min(1.,sinsqtheta12);
+  sinsqtheta12 = TMath::Max(0.,sinsqtheta12);
+  sinsqtheta13 = TMath::Min(1.,sinsqtheta13);
+  sinsqtheta13 = TMath::Max(0.,sinsqtheta13);
+  sinsqtheta23 = TMath::Min(1.,sinsqtheta23);
+  sinsqtheta23 = TMath::Max(0.,sinsqtheta23);
+
+  // Calculate sin(mixingAngle) from sin^2(mixingAngle) 
+  double s12 = sqrt(sinsqtheta12);
+  double s13 = sqrt(sinsqtheta13);
+  double s23 = sqrt(sinsqtheta23);
+  // Calculate cos(mixingAngle) from sin(mixingAngle) 
+  double c12 = sqrt(1 - s12 * s12);
+  double c13 = sqrt(1 - s13 * s13);
+  double c23 = sqrt(1 - s23 * s23);
+  // WARNING: only positive solution for cosdeltaCP is now taken into account
+  double cosdeltaCP = sqrt(1-sindeltaCP*sindeltaCP);
+
+  modUe1sq = c12*c12*c13*c13;
+  modUe2sq = c13*c13*s12*s12;
+  modUe3sq = s13*s13;
+  modUmu1sq = s12*s12*c23*c23 + 2*s12*c23*c12*s23*s13*cosdeltaCP + c12*c12*s23*s23*s13*s13;
+  modUmu2sq = c12*c12*c23*c23 - 2*c12*c23*s12*s23*s13*cosdeltaCP + s12*s12*s23*s23*s13*s13;
+  modUmu3sq = s23*s23*c13*c13;
+  modUtau1sq = s12*s12*s23*s23 - 2*s12*s23*s13*c12*c23*cosdeltaCP + s13*s13*c12*c12*c23*c23;
+  modUtau2sq = s23*s23*c12*c12 + 2*s23*c12*s12*c23*s13*cosdeltaCP + s12*s12*c23*c23*s13*s13;
+  modUtau3sq = c13*c13*c23*c23;
+
+  Re12 = c13*c13*s12*c12*(-c12*c23*c23*s12 + s12*s13*s13*s23*s23*c12 + (s12*s12*s13*s23*c23 - c12*c23*s13*s23*c12) * cosdeltaCP);
+  Im12 = -c13*c13*s12*c12*c23*s13*s23*sindeltaCP;
+  arg12 = atan2(Im12, Re12);
+  Re13 = -s13*c13*c13*s23*s23*c12*s13*c12 - s13*c13*c13*s23*c23*s12*c12*cosdeltaCP;
+  Im13 = s13*c13*c13*s23*c23*s12*c12*sindeltaCP;
+  arg13 = atan2(Im13, Re13);
+  Re23 = -s13*s13*c13*c13*s23*s23*s12*s12 + s13*c13*c13*s23*s12*c12*c23*cosdeltaCP;
+  Im23 = -s13*c13*c13*s23*s12*c12*c23*sindeltaCP;
+  arg23 = atan2(Im23, Re23);
+
+  UMassUdaggerVacuum[0][0][re] = c13*c13*s12*s12*dmsq12 + s13*s13*dmsq13;
+  UMassUdaggerVacuum[0][0][im] = 0.0;
+  UMassUdaggerVacuum[0][1][re] = c13*s12*(c12*c23 - s12*s13*s23*cosdeltaCP)*dmsq12 + s13*c13*s23*cosdeltaCP*dmsq13;
+  UMassUdaggerVacuum[0][1][im] = c13*s12*s12*s13*s23*sindeltaCP*dmsq12 - s13*c13*s23*sindeltaCP*dmsq13;
+  UMassUdaggerVacuum[0][2][re] = c13*s12*(-s23*c12 - s12*c23*s13*cosdeltaCP)*dmsq12 + s13*c13*c23*cosdeltaCP*dmsq13;
+  UMassUdaggerVacuum[0][2][im] = c13*s12*s12*c23*s13*sindeltaCP*dmsq12 - s13*c13*c23*sindeltaCP*dmsq13;
+  UMassUdaggerVacuum[1][0][re] = c13*s12*(c12*c23 - s12*s13*s23*cosdeltaCP)*dmsq12 + s13*c13*s23*cosdeltaCP*dmsq13;
+  UMassUdaggerVacuum[1][0][im] = -c13*s12*s12*s13*s23*sindeltaCP*dmsq12 + s13*c13*s23*sindeltaCP*dmsq13;
+  UMassUdaggerVacuum[1][1][re] = (c12*c12*c23*c23 + s12*s12*s13*s13*s23*s23 - 2.0*c12*c23*s12*s13*s23*cosdeltaCP)*dmsq12
+    + c13*c13*s23*s23*dmsq13;
+  UMassUdaggerVacuum[1][1][im] = 0.0;
+  UMassUdaggerVacuum[1][2][re] = (-c12*c23*s23*c12 + s12*s12*c23*s13*s13*s23 + s23*c12*s12*s13*s23*cosdeltaCP
+				  -c12*c23*s12*c23*s13*cosdeltaCP) * dmsq12 + c13*c13*s23*c23*dmsq13;
+  UMassUdaggerVacuum[1][2][im] = (s23*c12*s12*s13*s23*sindeltaCP + c12*c23*s12*c23*s13*sindeltaCP) * dmsq12;
+  UMassUdaggerVacuum[2][0][re] = c13*s12*(-s23*c12 - s12*c23*s13*cosdeltaCP)*dmsq12
+    + s13*c13*c23*cosdeltaCP*dmsq13;
+  UMassUdaggerVacuum[2][0][im] = -c13*s12*s12*c23*s13*sindeltaCP*dmsq12 + s13*c13*c23*sindeltaCP*dmsq13;
+  UMassUdaggerVacuum[2][1][re] = (-c12*c23*s23*c12 + s12*s12*s13*s13*s23*c23 - c12*c23*s12*c23*s13*cosdeltaCP
+				  +s23*s23*c12*s12*s13*cosdeltaCP) * dmsq12 + c13*c13*s23*c23*dmsq13;
+  UMassUdaggerVacuum[2][1][im] = (-c12*c23*s12*c23*s13*sindeltaCP - s23*s23*c12*s12*s13*sindeltaCP) * dmsq12;
+  UMassUdaggerVacuum[2][2][re] = (s23*s23*c12*c12 + s12*s12*c23*c23*s13*s13 + 2.0*s23*c12*s12*c23*s13*cosdeltaCP) * dmsq12
+    + c13*c13*c23*c23*dmsq13;
+  UMassUdaggerVacuum[2][2][im] = 0.0;
+
+  useEquations12 = true;
+  //  if(((fabsdeltaCP > 3.10 && fabsdeltaCP < 3.18) || fabsdeltaCP < 0.01 || fabs(fabsdeltaCP - 6.2832) < 0.01) && sinsqtheta13 > 3.0e-9)
+  //useEquations12 = false;
+
+  //if 2 mixing angles are very small, treat it as a 2-flavour calculation   
+  if(sinsqtheta13 < 3.0e-6 && sinsqtheta23 < 3.0e-6 && sinsqtheta12 >= 3.0e-7)
+    nFlavourIndex = 12;
+  else if(sinsqtheta12 < 3.0e-5 && sinsqtheta23 < 3.0e-7 && sinsqtheta13 >= 3.0e-7)
+    nFlavourIndex = 13;
+  else if(sinsqtheta12 < 3.0e-5 && sinsqtheta13 < 3.0e-5 && sinsqtheta23 >= 3.0e-7)
+    nFlavourIndex = 23;
+  else
+    nFlavourIndex = -1;
+  //if all 3 mixing angles are very small, take it that there are no oscillations 
   if(sinsqtheta12 < 3.0e-7 && sinsqtheta13 < 3.0e-7 && sinsqtheta23 < 3.0e-7)
     nFlavourIndex = 0;
 
 }
 
-//________________________________________________________________________________________                                                                                                           
+
+//________________________________________________________________________________________   
 void NuOsc3Flavour::SetOscParametersSSq2TDmAtmSol(
 						  double sinsq2theta12, double sinsq2theta13, double sinsq2theta23,
 						  double dmsq12_in, double dmsqAtm_in,
@@ -333,20 +435,19 @@ void NuOsc3Flavour::SetOscParametersSSq2TDmAtmSol(
   dmsqAtm = TMath::Min(dmsqAtm, 2.0e-2);
   dmsqAtm = TMath::Max(dmsqAtm, 2.0e-4);
 
-  // Note: The input value of dmsqAtm is the absolute one. The sign of dmsqAtm depends on                                                                                                                
-  // the mass hierarchy. In the normal mass hierarchy, dmsqAtm is positive. In the inverted                                                                                                              
-  // mass hierarchy, dmsqAtm is NEGATIVE. Set the appropriate sign.                                                                                                                                   
+  // Note: The input value of dmsqAtm is the absolute one. The sign of dmsqAtm depends on 
+  // the mass hierarchy. In the normal mass hierarchy, dmsqAtm is positive. In the inverted 
+  // mass hierarchy, dmsqAtm is NEGATIVE. Set the appropriate sign. 
   if(fMassHierarchy == kNmhInverted) {
     dmsqAtm = -dmsqAtm;
   }
 
-  // The input values of dmsqAtm and dmsq12  uniquely define the value of dmsq23 and dmsq13                                                                                                            
+  // The input values of dmsqAtm and dmsq12  uniquely define the value of dmsq23 and dmsq13  
   dmsq23 = dmsqAtm - 0.5*dmsq12;
   dmsq13 = dmsqAtm + 0.5*dmsq12;
 
-  //  cout << "dmsqAtm=" <<dmsqAtm << "  dmsq12=" << dmsq12 << "  dmsq23=" << dmsq23 << " and dmsq13=" << dmsq13 << endl;
-  // Code returns NaN if sin^2(mixing angle) is unphysical.                                                                                                                                           
-  // Don't let sin^2(mixing angle) be below 0 or above 1.                                                                                                                                           
+  // Code returns NaN if sin^2(mixing angle) is unphysical. 
+  // Don't let sin^2(mixing angle) be below 0 or above 1. 
   sinsq2theta12 = TMath::Min(1.,sinsq2theta12);
   sinsq2theta12 = TMath::Max(0.,sinsq2theta12);
   sinsq2theta13 = TMath::Min(1.,sinsq2theta13);
@@ -354,7 +455,7 @@ void NuOsc3Flavour::SetOscParametersSSq2TDmAtmSol(
   sinsq2theta23 = TMath::Min(1.,sinsq2theta23);
   sinsq2theta23 = TMath::Max(0.,sinsq2theta23);
 
-  // Calculate sin(mixingAngle) from sin^2(2*mixingAngle)                                                                                                                                             
+  // Calculate sin(mixingAngle) from sin^2(2*mixingAngle) 
   double s12 = sqrt(0.5 * (1 - sqrt(1 - sinsq2theta12)));
   double s13 = sqrt(0.5 * (1 - sqrt(1 - sinsq2theta13)));
   double s23 = 0;
@@ -362,7 +463,7 @@ void NuOsc3Flavour::SetOscParametersSSq2TDmAtmSol(
     s23 = sqrt(0.5 * (1 - sqrt(1 - sinsq2theta23)));
   else if(Opt::Instance()->gOscOctantChoice == conv::kNuOctantTwo)
     s23 = sqrt(1 - (0.5 * (1 - sqrt(1 - sinsq2theta23))));
-  // Calculate cos(mixingAngle) from sin(mixingAngle)                                                                                                                                                 
+  // Calculate cos(mixingAngle) from sin(mixingAngle) 
   double c12 = sqrt(1 - s12 * s12);
   double c13 = sqrt(1 - s13 * s13);
   double c23 = sqrt(1 - s23 * s23);
@@ -415,7 +516,7 @@ void NuOsc3Flavour::SetOscParametersSSq2TDmAtmSol(
   if(((fabs(deltaCP) > 3.10 && fabs(deltaCP) < 3.18) || fabs(deltaCP) < 0.01 || fabs(fabs(deltaCP) - 6.2832) < 0.01) && sinsq2theta13 > 1.0e-8)
     useEquations12 = false;
 
-  //if 2 mixing angles are very small, treat it as a 2-flavour calculation                                                                                                         
+  //if 2 mixing angles are very small, treat it as a 2-flavour calculation 
   if(sinsq2theta13 < 1.0e-5 && sinsq2theta23 < 1.0e-5 && sinsq2theta12 >= 1.0e-6)
     nFlavourIndex = 12;
   else if(sinsq2theta12 < 1.0e-4 && sinsq2theta23 < 1.0e-6 && sinsq2theta13 >= 1.0e-6)
@@ -424,11 +525,11 @@ void NuOsc3Flavour::SetOscParametersSSq2TDmAtmSol(
     nFlavourIndex = 23;
   else
     nFlavourIndex = -1;
-  //if all 3 mixing angles are very small, take it that there are no oscillations                                                                                                 
+  //if all 3 mixing angles are very small, take it that there are no oscillations 
   if(sinsq2theta12 < 1.0e-6 && sinsq2theta13 < 1.0e-6 && sinsq2theta23 < 1.0e-6)
     nFlavourIndex = 0;
 }
-//________________________________________________________________________________________                                                                                         
+//________________________________________________________________________________________   
   void NuOsc3Flavour::SetOscParametersDmsqAtmSol(
 					      double sinsqtheta12, double sinsqtheta13, double sinsqtheta23,
 					      double dmsq12_in, double dmsqAtm_in,
@@ -451,20 +552,19 @@ void NuOsc3Flavour::SetOscParametersSSq2TDmAtmSol(
   dmsqAtm = TMath::Min(dmsqAtm, 2.0e-2);
   dmsqAtm = TMath::Max(dmsqAtm, 2.0e-4);
 
-  // Note: The input value of dmsqAtm is the absolute one. The sign of dmsqAtm depends on                                                                                     
-  // the mass hierarchy. In the normal mass hierarchy, dmsqAtm is positive. In the inverted                                                                                     
-  // mass hierarchy, dmsqAtm is NEGATIVE. Set the appropriate sign.                                                                                                             
+  // Note: The input value of dmsqAtm is the absolute one. The sign of dmsqAtm depends on  
+  // the mass hierarchy. In the normal mass hierarchy, dmsqAtm is positive. In the inverted  
+  // mass hierarchy, dmsqAtm is NEGATIVE. Set the appropriate sign.  
   if(fMassHierarchy == kNmhInverted) {
     dmsqAtm = -dmsqAtm;
   }
 
-  // The input values of dmsqAtm and dmsq12  uniquely define the value of dmsq23 and dmsq13                                                                                      
+  // The input values of dmsqAtm and dmsq12  uniquely define the value of dmsq23 and dmsq13 
   dmsq23 = dmsqAtm - 0.5*dmsq12;
   dmsq13 = dmsqAtm + 0.5*dmsq12;
-  //  cout << "dmsqAtm=" <<dmsqAtm << "  dmsq12=" << dmsq12 << "  dmsq23=" << dmsq23 << " and dmsq13=" << dmsq13 << endl;
 
-  // Code returns NaN if sin^2(mixing angle) is unphysical.                                                                                                                      
-  // Don't let sin^2(mixing angle) be below 0 or above 1.                                                                                                                          
+  // Code returns NaN if sin^2(mixing angle) is unphysical. 
+  // Don't let sin^2(mixing angle) be below 0 or above 1. 
   sinsqtheta12 = TMath::Min(1.,sinsqtheta12);
   sinsqtheta12 = TMath::Max(0.,sinsqtheta12);
   sinsqtheta13 = TMath::Min(1.,sinsqtheta13);
@@ -472,11 +572,11 @@ void NuOsc3Flavour::SetOscParametersSSq2TDmAtmSol(
   sinsqtheta23 = TMath::Min(1.,sinsqtheta23);
   sinsqtheta23 = TMath::Max(0.,sinsqtheta23);
 
-  // Calculate sin(mixingAngle) from sin^2(mixingAngle)                                                                                                                             
+  // Calculate sin(mixingAngle) from sin^2(mixingAngle) 
   double s12 = sqrt(sinsqtheta12);
   double s13 = sqrt(sinsqtheta13);
   double s23 = sqrt(sinsqtheta23);
-  // Calculate cos(mixingAngle) from sin(mixingAngle)                                                                                                                              
+  // Calculate cos(mixingAngle) from sin(mixingAngle) 
   double c12 = sqrt(1 - s12 * s12);
   double c13 = sqrt(1 - s13 * s13);
   double c23 = sqrt(1 - s23 * s23);
@@ -529,7 +629,7 @@ void NuOsc3Flavour::SetOscParametersSSq2TDmAtmSol(
   if(((fabs(deltaCP) > 3.10 && fabs(deltaCP) < 3.18) || fabs(deltaCP) < 0.01 || fabs(fabs(deltaCP) - 6.2832) < 0.01) && sinsqtheta13 > 3.0e-9)
     useEquations12 = false;
 
-  //if 2 mixing angles are very small, treat it as a 2-flavour calculation                                                                                                         
+  //if 2 mixing angles are very small, treat it as a 2-flavour calculation 
   if(sinsqtheta13 < 3.0e-6 && sinsqtheta23 < 3.0e-6 && sinsqtheta12 >= 3.0e-7)
     nFlavourIndex = 12;
   else if(sinsqtheta12 < 3.0e-5 && sinsqtheta23 < 3.0e-7 && sinsqtheta13 >= 3.0e-7)
@@ -538,10 +638,124 @@ void NuOsc3Flavour::SetOscParametersSSq2TDmAtmSol(
     nFlavourIndex = 23;
   else
     nFlavourIndex = -1;
-  //if all 3 mixing angles are very small, take it that there are no oscillations                                                                                               
+  //if all 3 mixing angles are very small, take it that there are no oscillations 
   if(sinsqtheta12 < 3.0e-7 && sinsqtheta13 < 3.0e-7 && sinsqtheta23 < 3.0e-7)
     nFlavourIndex = 0;
 }
+
+//________________________________________________________________________________________   
+void NuOsc3Flavour::SetOscParametersDmsqAtmSolSinDeltaCP(
+					      double sinsqtheta12, double sinsqtheta13, double sinsqtheta23,
+					      double dmsq12_in, double dmsqAtm_in,
+					      double sindeltaCP)
+{
+  dmsq12 = dmsq12_in;
+  dmsqAtm = dmsqAtm_in;
+
+  dmsq12 = TMath::Min(dmsq12, 5.0e-3);
+  dmsq12 = TMath::Max(dmsq12, 5.0e-6);
+  dmsqAtm = TMath::Min(dmsqAtm, 2.0e-2);
+  dmsqAtm = TMath::Max(dmsqAtm, 2.0e-4);
+
+  if(dmsq12 > 5.0e-3 || dmsq12 < 5.0e-6)
+    cerr<<"The input value of dm21sq is restricted to the range 5.0E-6 - 5.0E-3 eV^2/c^4"<<endl;
+  if(dmsqAtm > 2.0e-2 || dmsqAtm < 2.0e-4)
+    cerr<<"The input value of the Fogli-Lisi |dmsq| is restricted to the range 2.0E-4 - 2.0E-2 eV^2/c^4"<<endl;
+
+  // Note: The input value of dmsqAtm is the absolute one. The sign of dmsqAtm depends on 
+  // the mass hierarchy. In the normal mass hierarchy, dmsqAtm is positive. In the inverted
+  // mass hierarchy, dmsqAtm is NEGATIVE. Set the appropriate sign.  
+  if(fMassHierarchy == kNmhInverted) {
+    dmsqAtm = -dmsqAtm;
+  }
+
+  // The input values of dmsqAtm and dmsq12  uniquely define the value of dmsq23 and dmsq13 
+  dmsq23 = dmsqAtm - 0.5*dmsq12;
+  dmsq13 = dmsqAtm + 0.5*dmsq12;
+
+  // Code returns NaN if sin^2(mixing angle) is unphysical. 
+  // Don't let sin^2(mixing angle) be below 0 or above 1. 
+  sinsqtheta12 = TMath::Min(1.,sinsqtheta12);
+  sinsqtheta12 = TMath::Max(0.,sinsqtheta12);
+  sinsqtheta13 = TMath::Min(1.,sinsqtheta13);
+  sinsqtheta13 = TMath::Max(0.,sinsqtheta13);
+  sinsqtheta23 = TMath::Min(1.,sinsqtheta23);
+  sinsqtheta23 = TMath::Max(0.,sinsqtheta23);
+
+  // Calculate sin(mixingAngle) from sin^2(mixingAngle) 
+  double s12 = sqrt(sinsqtheta12);
+  double s13 = sqrt(sinsqtheta13);
+  double s23 = sqrt(sinsqtheta23);
+  // Calculate cos(mixingAngle) from sin(mixingAngle) 
+  double c12 = sqrt(1 - s12 * s12);
+  double c13 = sqrt(1 - s13 * s13);
+  double c23 = sqrt(1 - s23 * s23);
+
+  // WARNING: only positive solution for cosdeltaCP is now taken into account
+  double cosdeltaCP = sqrt(1-sindeltaCP*sindeltaCP);
+
+  modUe1sq = c12*c12*c13*c13;
+  modUe2sq = c13*c13*s12*s12;
+  modUe3sq = s13*s13;
+  modUmu1sq = s12*s12*c23*c23 + 2*s12*c23*c12*s23*s13*cosdeltaCP + c12*c12*s23*s23*s13*s13;
+  modUmu2sq = c12*c12*c23*c23 - 2*c12*c23*s12*s23*s13*cosdeltaCP + s12*s12*s23*s23*s13*s13;
+  modUmu3sq = s23*s23*c13*c13;
+  modUtau1sq = s12*s12*s23*s23 - 2*s12*s23*s13*c12*c23*cosdeltaCP + s13*s13*c12*c12*c23*c23;
+  modUtau2sq = s23*s23*c12*c12 + 2*s23*c12*s12*c23*s13*cosdeltaCP + s12*s12*c23*c23*s13*s13;
+  modUtau3sq = c13*c13*c23*c23;
+
+  Re12 = c13*c13*s12*c12*(-c12*c23*c23*s12 + s12*s13*s13*s23*s23*c12 + (s12*s12*s13*s23*c23 - c12*c23*s13*s23*c12) * cosdeltaCP);
+  Im12 = -c13*c13*s12*c12*c23*s13*s23*sindeltaCP;
+  arg12 = atan2(Im12, Re12);
+  Re13 = -s13*c13*c13*s23*s23*c12*s13*c12 - s13*c13*c13*s23*c23*s12*c12*cosdeltaCP;
+  Im13 = s13*c13*c13*s23*c23*s12*c12*sindeltaCP;
+  arg13 = atan2(Im13, Re13);
+  Re23 = -s13*s13*c13*c13*s23*s23*s12*s12 + s13*c13*c13*s23*s12*c12*c23*cosdeltaCP;
+  Im23 = -s13*c13*c13*s23*s12*c12*c23*sindeltaCP;
+  arg23 = atan2(Im23, Re23);
+
+  UMassUdaggerVacuum[0][0][re] = c13*c13*s12*s12*dmsq12 + s13*s13*dmsq13;
+  UMassUdaggerVacuum[0][0][im] = 0.0;
+  UMassUdaggerVacuum[0][1][re] = c13*s12*(c12*c23 - s12*s13*s23*cosdeltaCP)*dmsq12 + s13*c13*s23*cosdeltaCP*dmsq13;
+  UMassUdaggerVacuum[0][1][im] = c13*s12*s12*s13*s23*sindeltaCP*dmsq12 - s13*c13*s23*sindeltaCP*dmsq13;
+  UMassUdaggerVacuum[0][2][re] = c13*s12*(-s23*c12 - s12*c23*s13*cosdeltaCP)*dmsq12 + s13*c13*c23*cosdeltaCP*dmsq13;
+  UMassUdaggerVacuum[0][2][im] = c13*s12*s12*c23*s13*sindeltaCP*dmsq12 - s13*c13*c23*sindeltaCP*dmsq13;
+  UMassUdaggerVacuum[1][0][re] = c13*s12*(c12*c23 - s12*s13*s23*cosdeltaCP)*dmsq12 + s13*c13*s23*cosdeltaCP*dmsq13;
+  UMassUdaggerVacuum[1][0][im] = -c13*s12*s12*s13*s23*sindeltaCP*dmsq12 + s13*c13*s23*sindeltaCP*dmsq13;
+  UMassUdaggerVacuum[1][1][re] = (c12*c12*c23*c23 + s12*s12*s13*s13*s23*s23 - 2.0*c12*c23*s12*s13*s23*cosdeltaCP)*dmsq12
+    + c13*c13*s23*s23*dmsq13;
+  UMassUdaggerVacuum[1][1][im] = 0.0;
+  UMassUdaggerVacuum[1][2][re] = (-c12*c23*s23*c12 + s12*s12*c23*s13*s13*s23 + s23*c12*s12*s13*s23*cosdeltaCP
+                                  -c12*c23*s12*c23*s13*cosdeltaCP) * dmsq12 + c13*c13*s23*c23*dmsq13;
+  UMassUdaggerVacuum[1][2][im] = (s23*c12*s12*s13*s23*sindeltaCP + c12*c23*s12*c23*s13*sindeltaCP) * dmsq12;
+  UMassUdaggerVacuum[2][0][re] = c13*s12*(-s23*c12 - s12*c23*s13*cosdeltaCP)*dmsq12
+    + s13*c13*c23*cosdeltaCP*dmsq13;
+  UMassUdaggerVacuum[2][0][im] = -c13*s12*s12*c23*s13*sindeltaCP*dmsq12 + s13*c13*c23*sindeltaCP*dmsq13;
+  UMassUdaggerVacuum[2][1][re] = (-c12*c23*s23*c12 + s12*s12*s13*s13*s23*c23 - c12*c23*s12*c23*s13*cosdeltaCP
+                                  +s23*s23*c12*s12*s13*cosdeltaCP) * dmsq12 + c13*c13*s23*c23*dmsq13;
+  UMassUdaggerVacuum[2][1][im] = (-c12*c23*s12*c23*s13*sindeltaCP - s23*s23*c12*s12*s13*sindeltaCP) * dmsq12;
+  UMassUdaggerVacuum[2][2][re] = (s23*s23*c12*c12 + s12*s12*c23*c23*s13*s13 + 2.0*s23*c12*s12*c23*s13*cosdeltaCP) * dmsq12
+    + c13*c13*c23*c23*dmsq13;
+  UMassUdaggerVacuum[2][2][im] = 0.0;
+
+  useEquations12 = true;
+  //  if(((fabsdeltaCP > 3.10 && fabsdeltaCP < 3.18) || fabsdeltaCP < 0.01 || fabs(fabsdeltaCP - 6.2832) < 0.01) && sinsqtheta13 > 3.0e-9)
+  //useEquations12 = false;
+
+  //if 2 mixing angles are very small, treat it as a 2-flavour calculation   
+  if(sinsqtheta13 < 3.0e-6 && sinsqtheta23 < 3.0e-6 && sinsqtheta12 >= 3.0e-7)
+    nFlavourIndex = 12;
+  else if(sinsqtheta12 < 3.0e-5 && sinsqtheta23 < 3.0e-7 && sinsqtheta13 >= 3.0e-7)
+    nFlavourIndex = 13;
+  else if(sinsqtheta12 < 3.0e-5 && sinsqtheta13 < 3.0e-5 && sinsqtheta23 >= 3.0e-7)
+    nFlavourIndex = 23;
+  else
+    nFlavourIndex = -1;
+  //if all 3 mixing angles are very small, take it that there are no oscillations 
+  if(sinsqtheta12 < 3.0e-7 && sinsqtheta13 < 3.0e-7 && sinsqtheta23 < 3.0e-7)
+    nFlavourIndex = 0;
+}
+
 
 //_______________________________________________________________________________________
 void NuOsc3Flavour::SetOscParametersSSq2TDmsq13(
@@ -571,19 +785,18 @@ void NuOsc3Flavour::SetOscParametersSSq2TDmsq13(
   if(dmsq13 > 2.0e-2 || dmsq13 < 2.0e-4)
     cerr<<"The input value of |dm31sq| is restricted to the range 2.0E-4 - 2.0E-2 eV^2/c^4"<<endl;
 
-  // Note: The input value of dmsq13 is the absolute one. The sign of dmsq13 depends on                                                                                                                
-  // the mass hierarchy. In the normal mass hierarchy, dmsq13 is positive. In the inverted                                                                                                              
-  // mass hierarchy, dmsq13 is NEGATIVE. Set the appropriate sign.                                                                                                                                  
+  // Note: The input value of dmsq13 is the absolute one. The sign of dmsq13 depends on  
+  // the mass hierarchy. In the normal mass hierarchy, dmsq13 is positive. In the inverted 
+  // mass hierarchy, dmsq13 is NEGATIVE. Set the appropriate sign.  
   if(fMassHierarchy == kNmhInverted) {
     dmsq13 = -dmsq13;
   }
 
-  // The input values of dmsq13 and dmsq12 uniquely define the value of dmsq23                                                                                                         
+  // The input values of dmsq13 and dmsq12 uniquely define the value of dmsq23 
   dmsq23 = dmsq13 - dmsq12;
 
-  //  cout << "dmsqAtm=" <<dmsqAtm << "  dmsq12=" << dmsq12 << "  dmsq23=" << dmsq23 << " and dmsq13=" << dmsq13 << endl;                                                                              
-  // Code returns NaN if sin^2(mixing angle) is unphysical.                                                                                                                                          
-  // Don't let sin^2(mixing angle) be below 0 or above 1.                                                                                                                                             
+  // Code returns NaN if sin^2(mixing angle) is unphysical. 
+  // Don't let sin^2(mixing angle) be below 0 or above 1. 
   sinsq2theta12 = TMath::Min(1.,sinsq2theta12);
   sinsq2theta12 = TMath::Max(0.,sinsq2theta12);
   sinsq2theta13 = TMath::Min(1.,sinsq2theta13);
@@ -591,7 +804,7 @@ void NuOsc3Flavour::SetOscParametersSSq2TDmsq13(
   sinsq2theta23 = TMath::Min(1.,sinsq2theta23);
   sinsq2theta23 = TMath::Max(0.,sinsq2theta23);
 
-  // Calculate sin(mixingAngle) from sin^2(2*mixingAngle)                                                                                                                                             
+  // Calculate sin(mixingAngle) from sin^2(2*mixingAngle) 
   double s12 = sqrt(0.5 * (1 - sqrt(1 - sinsq2theta12)));
   double s13 = sqrt(0.5 * (1 - sqrt(1 - sinsq2theta13)));
   double s23 = 0;
@@ -599,7 +812,7 @@ void NuOsc3Flavour::SetOscParametersSSq2TDmsq13(
     s23 = sqrt(0.5 * (1 - sqrt(1 - sinsq2theta23)));
   else if(Opt::Instance()->gOscOctantChoice == conv::kNuOctantTwo)
     s23 = sqrt(1 - (0.5 * (1 - sqrt(1 - sinsq2theta23))));
-  // Calculate cos(mixingAngle) from sin(mixingAngle)                                                                                                                                                  
+  // Calculate cos(mixingAngle) from sin(mixingAngle) 
   double c12 = sqrt(1 - s12 * s12);
   double c13 = sqrt(1 - s13 * s13);
   double c23 = sqrt(1 - s23 * s23);
@@ -652,7 +865,7 @@ void NuOsc3Flavour::SetOscParametersSSq2TDmsq13(
   if(((fabs(deltaCP) > 3.10 && fabs(deltaCP) < 3.18) || fabs(deltaCP) < 0.01 || fabs(fabs(deltaCP) - 6.2832) < 0.01) && sinsq2theta13 > 1.0e-8)
     useEquations12 = false;
 
-  //if 2 mixing angles are very small, treat it as a 2-flavour calculation                                                                                                                           
+  //if 2 mixing angles are very small, treat it as a 2-flavour calculation 
   if(sinsq2theta13 < 1.0e-5 && sinsq2theta23 < 1.0e-5 && sinsq2theta12 >= 1.0e-6)
     nFlavourIndex = 12;
   else if(sinsq2theta12 < 1.0e-4 && sinsq2theta23 < 1.0e-6 && sinsq2theta13 >= 1.0e-6)
@@ -661,7 +874,7 @@ void NuOsc3Flavour::SetOscParametersSSq2TDmsq13(
     nFlavourIndex = 23;
   else
     nFlavourIndex = -1;
-  //if all 3 mixing angles are very small, take it that there are no oscillations                                                                                                                 
+  //if all 3 mixing angles are very small, take it that there are no oscillations 
   if(sinsq2theta12 < 1.0e-6 && sinsq2theta13 < 1.0e-6 && sinsq2theta23 < 1.0e-6)
     nFlavourIndex = 0;
 }
@@ -689,19 +902,18 @@ void NuOsc3Flavour::SetOscParametersDmsq13(
   dmsq13 = TMath::Min(dmsq13, 2.0e-2);
   dmsq13 = TMath::Max(dmsq13, 2.0e-4);
 
-  // Note: The input value of dmsq13 is the absolute one. The sign of dmsq13 depends on                                                                                                             
-  // the mass hierarchy. In the normal mass hierarchy, dmsq13 is positive. In the inverted                                                                                                          
-  // mass hierarchy, dmsq13 is NEGATIVE. Set the appropriate sign.                                                                                                                                 
+  // Note: The input value of dmsq13 is the absolute one. The sign of dmsq13 depends on  
+  // the mass hierarchy. In the normal mass hierarchy, dmsq13 is positive. In the inverted 
+  // mass hierarchy, dmsq13 is NEGATIVE. Set the appropriate sign.  
   if(fMassHierarchy == kNmhInverted) {
     dmsq13 = -dmsq13;
   }
 
-  // The input values of dmsq13 and dmsq12 uniquely define the value of dmsq23                                                                                                            
+  // The input values of dmsq13 and dmsq12 uniquely define the value of dmsq23 
   dmsq23 = dmsq13 - dmsq12;
 
-  //  cout << "dmsqAtm=" <<dmsqAtm << "  dmsq12=" << dmsq12 << "  dmsq23=" << dmsq23 << " and dmsq13=" << dmsq13 << endl;                                                                            
-  // Code returns NaN if sin^2(mixing angle) is unphysical.                                                                                                                                           
-  // Don't let sin^2(mixing angle) be below 0 or above 1.                                                                                                                                             
+  // Code returns NaN if sin^2(mixing angle) is unphysical.  
+  // Don't let sin^2(mixing angle) be below 0 or above 1.  
   sinsqtheta12 = TMath::Min(1.,sinsqtheta12);
   sinsqtheta12 = TMath::Max(0.,sinsqtheta12);
   sinsqtheta13 = TMath::Min(1.,sinsqtheta13);
@@ -709,11 +921,11 @@ void NuOsc3Flavour::SetOscParametersDmsq13(
   sinsqtheta23 = TMath::Min(1.,sinsqtheta23);
   sinsqtheta23 = TMath::Max(0.,sinsqtheta23);
 
-  // Calculate sin(mixingAngle) from sin^2(mixingAngle)                                                                                                                                              
+  // Calculate sin(mixingAngle) from sin^2(mixingAngle) 
   double s12 = sqrt(sinsqtheta12);
   double s13 = sqrt(sinsqtheta13);
   double s23 = sqrt(sinsqtheta23);
-  // Calculate cos(mixingAngle) from sin(mixingAngle)                                                                                                                                                
+  // Calculate cos(mixingAngle) from sin(mixingAngle) 
   double c12 = sqrt(1 - s12 * s12);
   double c13 = sqrt(1 - s13 * s13);
   double c23 = sqrt(1 - s23 * s23);
@@ -766,7 +978,7 @@ void NuOsc3Flavour::SetOscParametersDmsq13(
   if(((fabs(deltaCP) > 3.10 && fabs(deltaCP) < 3.18) || fabs(deltaCP) < 0.01 || fabs(fabs(deltaCP) - 6.2832) < 0.01) && sinsqtheta13 > 3.0e-9)
     useEquations12 = false;
 
-  //if 2 mixing angles are very small, treat it as a 2-flavour calculation                                                                                                                           
+  //if 2 mixing angles are very small, treat it as a 2-flavour calculation 
   if(sinsqtheta13 < 3.0e-6 && sinsqtheta23 < 3.0e-6 && sinsqtheta12 >= 3.0e-7)
     nFlavourIndex = 12;
   else if(sinsqtheta12 < 3.0e-5 && sinsqtheta23 < 3.0e-7 && sinsqtheta13 >= 3.0e-7)
@@ -775,7 +987,119 @@ void NuOsc3Flavour::SetOscParametersDmsq13(
     nFlavourIndex = 23;
   else
     nFlavourIndex = -1;
-  //if all 3 mixing angles are very small, take it that there are no oscillations                                                                                                                    
+  //if all 3 mixing angles are very small, take it that there are no oscillations 
+  if(sinsqtheta12 < 3.0e-7 && sinsqtheta13 < 3.0e-7 && sinsqtheta23 < 3.0e-7)
+    nFlavourIndex = 0;
+}
+
+//_______________________________________________________________________________________
+void NuOsc3Flavour::SetOscParametersDmsq13SinDeltaCP(
+					       double sinsqtheta12, double sinsqtheta13, double sinsqtheta23,
+					       double dmsq12_in, double dmsq13_in,
+					       double sindeltaCP)
+{
+  dmsq12 = dmsq12_in;
+  dmsq13 = dmsq13_in;
+
+  dmsq12 = TMath::Min(dmsq12, 5.0e-3);
+  dmsq12 = TMath::Max(dmsq12, 5.0e-6);
+  dmsq13 = TMath::Min(dmsq13, 2.0e-2);
+  dmsq13 = TMath::Max(dmsq13, 2.0e-4);
+
+  if(dmsq12 > 5.0e-3 || dmsq12 < 5.0e-6)
+    cerr<<"The input value of dm21sq is restricted to the range 5.0E-6 - 5.0E-3 eV^2/c^4"<<endl;
+  if(dmsq13 > 2.0e-2 || dmsq13 < 2.0e-4)
+    cerr<<"The input value of |dm31sq| is restricted to the range 2.0E-4 - 2.0E-2 eV^2/c^4"<<endl;
+
+  // Note: The input value of dmsq13 is the absolute one. The sign of dmsq13 depends on 
+  // the mass hierarchy. In the normal mass hierarchy, dmsq13 is positive. In the inverted 
+  // mass hierarchy, dmsq13 is NEGATIVE. Set the appropriate sign.  
+  if(fMassHierarchy == kNmhInverted) {
+    dmsq13 = -dmsq13;
+  }
+
+  // The input values of dmsq13 and dmsq12 uniquely define the value of dmsq23 
+  dmsq23 = dmsq13 - dmsq12;
+
+  // Code returns NaN if sin^2(mixing angle) is unphysical. 
+  // Don't let sin^2(mixing angle) be below 0 or above 1. 
+  sinsqtheta12 = TMath::Min(1.,sinsqtheta12);
+  sinsqtheta12 = TMath::Max(0.,sinsqtheta12);
+  sinsqtheta13 = TMath::Min(1.,sinsqtheta13);
+  sinsqtheta13 = TMath::Max(0.,sinsqtheta13);
+  sinsqtheta23 = TMath::Min(1.,sinsqtheta23);
+  sinsqtheta23 = TMath::Max(0.,sinsqtheta23);
+
+  // Calculate sin(mixingAngle) from sin^2(mixingAngle) 
+  double s12 = sqrt(sinsqtheta12);
+  double s13 = sqrt(sinsqtheta13);
+  double s23 = sqrt(sinsqtheta23);
+  // Calculate cos(mixingAngle) from sin(mixingAngle) 
+  double c12 = sqrt(1 - s12 * s12);
+  double c13 = sqrt(1 - s13 * s13);
+  double c23 = sqrt(1 - s23 * s23);
+
+  // WARNING: only positive solution for cosdeltaCP is now taken into account
+  double cosdeltaCP = sqrt(1-sindeltaCP*sindeltaCP);
+
+  modUe1sq = c12*c12*c13*c13;
+  modUe2sq = c13*c13*s12*s12;
+  modUe3sq = s13*s13;
+  modUmu1sq = s12*s12*c23*c23 + 2*s12*c23*c12*s23*s13*cosdeltaCP + c12*c12*s23*s23*s13*s13;
+  modUmu2sq = c12*c12*c23*c23 - 2*c12*c23*s12*s23*s13*cosdeltaCP + s12*s12*s23*s23*s13*s13;
+  modUmu3sq = s23*s23*c13*c13;
+  modUtau1sq = s12*s12*s23*s23 - 2*s12*s23*s13*c12*c23*cosdeltaCP + s13*s13*c12*c12*c23*c23;
+  modUtau2sq = s23*s23*c12*c12 + 2*s23*c12*s12*c23*s13*cosdeltaCP + s12*s12*c23*c23*s13*s13;
+  modUtau3sq = c13*c13*c23*c23;
+
+  Re12 = c13*c13*s12*c12*(-c12*c23*c23*s12 + s12*s13*s13*s23*s23*c12 + (s12*s12*s13*s23*c23 - c12*c23*s13*s23*c12) * cosdeltaCP);
+  Im12 = -c13*c13*s12*c12*c23*s13*s23*sindeltaCP;
+  arg12 = atan2(Im12, Re12);
+  Re13 = -s13*c13*c13*s23*s23*c12*s13*c12 - s13*c13*c13*s23*c23*s12*c12*cosdeltaCP;
+  Im13 = s13*c13*c13*s23*c23*s12*c12*sindeltaCP;
+  arg13 = atan2(Im13, Re13);
+  Re23 = -s13*s13*c13*c13*s23*s23*s12*s12 + s13*c13*c13*s23*s12*c12*c23*cosdeltaCP;
+  Im23 = -s13*c13*c13*s23*s12*c12*c23*sindeltaCP;
+  arg23 = atan2(Im23, Re23);
+
+  UMassUdaggerVacuum[0][0][re] = c13*c13*s12*s12*dmsq12 + s13*s13*dmsq13;
+  UMassUdaggerVacuum[0][0][im] = 0.0;
+  UMassUdaggerVacuum[0][1][re] = c13*s12*(c12*c23 - s12*s13*s23*cosdeltaCP)*dmsq12 + s13*c13*s23*cosdeltaCP*dmsq13;
+  UMassUdaggerVacuum[0][1][im] = c13*s12*s12*s13*s23*sindeltaCP*dmsq12 - s13*c13*s23*sindeltaCP*dmsq13;
+  UMassUdaggerVacuum[0][2][re] = c13*s12*(-s23*c12 - s12*c23*s13*cosdeltaCP)*dmsq12 + s13*c13*c23*cosdeltaCP*dmsq13;
+  UMassUdaggerVacuum[0][2][im] = c13*s12*s12*c23*s13*sindeltaCP*dmsq12 - s13*c13*c23*sindeltaCP*dmsq13;
+  UMassUdaggerVacuum[1][0][re] = c13*s12*(c12*c23 - s12*s13*s23*cosdeltaCP)*dmsq12 + s13*c13*s23*cosdeltaCP*dmsq13;
+  UMassUdaggerVacuum[1][0][im] = -c13*s12*s12*s13*s23*sindeltaCP*dmsq12 + s13*c13*s23*sindeltaCP*dmsq13;
+  UMassUdaggerVacuum[1][1][re] = (c12*c12*c23*c23 + s12*s12*s13*s13*s23*s23 - 2.0*c12*c23*s12*s13*s23*cosdeltaCP)*dmsq12
+    + c13*c13*s23*s23*dmsq13;
+  UMassUdaggerVacuum[1][1][im] = 0.0;
+  UMassUdaggerVacuum[1][2][re] = (-c12*c23*s23*c12 + s12*s12*c23*s13*s13*s23 + s23*c12*s12*s13*s23*cosdeltaCP
+                                  -c12*c23*s12*c23*s13*cosdeltaCP) * dmsq12 + c13*c13*s23*c23*dmsq13;
+  UMassUdaggerVacuum[1][2][im] = (s23*c12*s12*s13*s23*sindeltaCP + c12*c23*s12*c23*s13*sindeltaCP) * dmsq12;
+  UMassUdaggerVacuum[2][0][re] = c13*s12*(-s23*c12 - s12*c23*s13*cosdeltaCP)*dmsq12
+    + s13*c13*c23*cosdeltaCP*dmsq13;
+  UMassUdaggerVacuum[2][0][im] = -c13*s12*s12*c23*s13*sindeltaCP*dmsq12 + s13*c13*c23*sindeltaCP*dmsq13;
+  UMassUdaggerVacuum[2][1][re] = (-c12*c23*s23*c12 + s12*s12*s13*s13*s23*c23 - c12*c23*s12*c23*s13*cosdeltaCP
+                                  +s23*s23*c12*s12*s13*cosdeltaCP) * dmsq12 + c13*c13*s23*c23*dmsq13;
+  UMassUdaggerVacuum[2][1][im] = (-c12*c23*s12*c23*s13*sindeltaCP - s23*s23*c12*s12*s13*sindeltaCP) * dmsq12;
+  UMassUdaggerVacuum[2][2][re] = (s23*s23*c12*c12 + s12*s12*c23*c23*s13*s13 + 2.0*s23*c12*s12*c23*s13*cosdeltaCP) * dmsq12
+    + c13*c13*c23*c23*dmsq13;
+  UMassUdaggerVacuum[2][2][im] = 0.0;
+
+  useEquations12 = true;
+  //  if(((fabsdeltaCP > 3.10 && fabsdeltaCP < 3.18) || fabsdeltaCP < 0.01 || fabs(fabsdeltaCP - 6.2832) < 0.01) && sinsqtheta13 > 3.0e-9)
+  //useEquations12 = false;
+
+  //if 2 mixing angles are very small, treat it as a 2-flavour calculation 
+  if(sinsqtheta13 < 3.0e-6 && sinsqtheta23 < 3.0e-6 && sinsqtheta12 >= 3.0e-7)
+    nFlavourIndex = 12;
+  else if(sinsqtheta12 < 3.0e-5 && sinsqtheta23 < 3.0e-7 && sinsqtheta13 >= 3.0e-7)
+    nFlavourIndex = 13;
+  else if(sinsqtheta12 < 3.0e-5 && sinsqtheta13 < 3.0e-5 && sinsqtheta23 >= 3.0e-7)
+    nFlavourIndex = 23;
+  else
+    nFlavourIndex = -1;
+  //if all 3 mixing angles are very small, take it that there are no oscillations 
   if(sinsqtheta12 < 3.0e-7 && sinsqtheta13 < 3.0e-7 && sinsqtheta23 < 3.0e-7)
     nFlavourIndex = 0;
 }
@@ -1587,11 +1911,9 @@ double NuOsc3Flavour::CalcMatterOscProb(int nu_start, int nu_end, double energy)
 //________________________________________________________________________________________
 double NuOsc3Flavour::Calc2FlavMatterOscProb(int nu_start, int nu_end, double energy, int index)
 {
-  //this method calculates the oscillation probabilities in constant density matter                                                                                                        
+  //this method calculates the oscillation probabilities in constant density matter
   //when the input oscillation parameters mean it is effectively a 2-flavour calculation
- 
   //index gives the 2 flavours that are used in the calculation (12, 13 or 23)
-
   //energy is in GeV
 
   OscChannelId_t osch = util::GetOscChannel(nu_start, nu_end);
@@ -1629,8 +1951,8 @@ double NuOsc3Flavour::Calc2FlavMatterOscProb(int nu_start, int nu_end, double en
   
   double oscProb;
 
-  //the mass squared matrix has diagonal elements 0, dmsq12, dmsq13; all off-diagonal elements are zero                                                                                               
-  //UMassUdagger is the product of the PMNS matrix, the mass squared matrix, and the dagger of the PMNS matrix                                                                                         
+  //the mass squared matrix has diagonal elements 0, dmsq12, dmsq13; all off-diagonal elements are zero
+  //UMassUdagger is the product of the PMNS matrix, the mass squared matrix, and the dagger of the PMNS matrix 
   double UMassUdagger[2][2][2];
   if(index == 12)
     {
@@ -1682,7 +2004,7 @@ double NuOsc3Flavour::Calc2FlavMatterOscProb(int nu_start, int nu_end, double en
       }
     }//end of else if(index == 23)
 
-  //add potential due to constant density matter to first diagonal element of UMassUdagger                                                                                                           
+  //add potential due to constant density matter to first diagonal element of UMassUdagger 
   //the factor of 1.0e9 is to convert the energy from GeV to eV 
   if(index == 12 || index == 13)
     {                                                                                                                                     
@@ -1791,8 +2113,8 @@ double NuOsc3Flavour::Calc2FlavMatterOscProb(int nu_start, int nu_end, double en
   //now propagate the mass eigenstates to the far detector 
 
   double finalMassState[2][2];
-  //for the first mass eigenstate, the difference in the squared masses is zero                                                                                                                       
-  //therefore only retain terms multiplied by cos(0), and drop those multiplied by sin(0)                                                                                                             
+  //for the first mass eigenstate, the difference in the squared masses is zero
+  //therefore only retain terms multiplied by cos(0), and drop those multiplied by sin(0) 
   finalMassState[0][re] = initialMassState[0][re];
   finalMassState[0][im] = initialMassState[0][im];
   finalMassState[1][re] = initialMassState[1][re] * cos((2.0 * kOscDimensFactor * (eigenvalues[1] - eigenvalues[0]) * fBaseline) / energy)
@@ -1809,7 +2131,7 @@ double NuOsc3Flavour::Calc2FlavMatterOscProb(int nu_start, int nu_end, double en
       }
     }
 
-  //convert final mass states to flavour states by multiplying by UMatter                                                                                                                            
+  //convert final mass states to flavour states by multiplying by UMatter 
 
   for(int i=0; i<2; i++)
     {
@@ -1822,7 +2144,7 @@ double NuOsc3Flavour::Calc2FlavMatterOscProb(int nu_start, int nu_end, double en
       }
     }
 
-  //each component of finalFlavourState is the amplitude for the neutrino to interact in the far detector as that flavour                                                                           
+  //each component of finalFlavourState is the amplitude for the neutrino to interact in the far detector as that flavour 
   //the oscillation probabilities are the moduli squared of the amplitudes
   if(index == 12)
     {

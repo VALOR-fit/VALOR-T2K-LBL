@@ -70,6 +70,7 @@ void FitterGSL::Init(void)
   fOption         = "";
   fNFreeFitParams = 0;
   fNFitBins       = 0;
+  fFitTries       = 0;
 #ifdef __GSL_ENABLED__
   fFunc           = 0;
   fMinimizer      = 0;

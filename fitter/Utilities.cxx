@@ -749,6 +749,21 @@ string t2kana::util::AsString(t2kana::conv::NuOscDmsqScheme_t dmsqs)
     break;
   }
 }
+//____________________________________________________________________________                                                                                                                            
+string t2kana::util::AsString(t2kana::conv::NuOscDeltaCP_t deltaCP)
+{
+  switch(deltaCP) {
+  case(kNuDeltaCPPhase) :
+    return "d_{CP}";
+    break;
+  case(kNuDeltaCPSin) :
+    return "sin(d_{CP})";
+    break;
+  default :
+    return "Undefined";
+    break;
+  }
+}
 //____________________________________________________________________________
 string t2kana::util::AsString(t2kana::conv::PhysHypothesis_t h)
 {
@@ -835,6 +850,8 @@ string t2kana::util::AsString(PhysParamId_t p)
     // SK detector
     //
     case ( kNuisSuperkEnergyScale     ) : return "SK energy scale";                 break;    
+#ifndef SKFSITOGETHER
+#if FSI_BINS != 3
     case ( kNuisSuperkEff1RmuCCQEoth  ) : return "SK efficiency; 1Rmu; CCQE/Other"; break;
     case ( kNuisSuperkEff1RmuCCQErc0u ) : return "SK efficiency; 1Rmu; CCQE/RC0";   break;
     case ( kNuisSuperkEff1RmuCCQErc1u ) : return "SK efficiency; 1Rmu; CCQE/RC1";   break;
@@ -842,8 +859,8 @@ string t2kana::util::AsString(PhysParamId_t p)
     case ( kNuisSuperkEff1RmuCCnonQE  ) : return "SK efficiency; 1Rmu; CCnonQE";    break;
     case ( kNuisSuperkEff1RmuNC       ) : return "SK efficiency; 1Rmu; NC";         break;
     case ( kNuisSuperkEff1RmuNueCC    ) : return "SK efficiency; 1Rmu; nue CC";     break;
-
-#if FSI_BINS == 1
+#endif
+#if FSI_BINS != 2
     case ( kNuisSuperkEff1ReNueSigCC0    ) : return "SK efficiency; 1Re; osc. nue CC E0";     break;
     case ( kNuisSuperkEff1ReNueSigCC1    ) : return "SK efficiency; 1Re; osc. nue CC E1";     break;
     case ( kNuisSuperkEff1ReNueSigCC2    ) : return "SK efficiency; 1Re; osc. nue CC E2";     break;
@@ -857,10 +874,11 @@ string t2kana::util::AsString(PhysParamId_t p)
     case ( kNuisSuperkEff1ReNC1        )   : return "SK efficiency; 1Re; NC E1";     break;
     case ( kNuisSuperkEff1ReNC2        )   : return "SK efficiency; 1Re; NC E2";     break;
 #endif
-
+#endif // SuperK Detector FSI separated
     //
     // BANFF flux and cross-section params
     //
+
     case ( kNuisBANFF00 ) :
     case ( kNuisBANFF01 ) :
     case ( kNuisBANFF02 ) :
@@ -877,13 +895,15 @@ string t2kana::util::AsString(PhysParamId_t p)
     case ( kNuisBANFF13 ) :
     case ( kNuisBANFF14 ) :
     case ( kNuisBANFF15 ) :
-#if BANFF_BINS == 1
+#if (BANFF_BINS != 2) && (BANFF_BINS != 4)
     case ( kNuisBANFF16 ) :
     case ( kNuisBANFF17 ) :
     case ( kNuisBANFF18 ) :
     case ( kNuisBANFF19 ) :
     case ( kNuisBANFF20 ) :
     case ( kNuisBANFF21 ) :
+#endif
+#if BANFF_BINS == 1
     case ( kNuisBANFF22 ) :
     case ( kNuisBANFF23 ) :
     case ( kNuisBANFF24 ) :
@@ -903,14 +923,18 @@ string t2kana::util::AsString(PhysParamId_t p)
 #endif
     case ( kNuisBANFFMARES   ) : return "BANFF; Ma RES";                          break;
     case ( kNuisBANFFCCQEE0  ) : return "BANFF; Norm; CC QE; 0.0 - 1.5 GeV";      break;
+#if BANFF_BINS != 3
     case ( kNuisBANFFCCQEE1  ) : return "BANFF; Norm; CC QE; 1.5 - 3.5 GeV";      break;
     case ( kNuisBANFFCCQEE2  ) : return "BANFF; Norm; CC QE; 3.5 - 30.0 GeV";     break;
+#endif
     case ( kNuisBANFFCC1piE0 ) : return "BANFF; Norm; CC 1pi; 0.0 - 2.5 GeV";     break;
+#if BANFF_BINS != 3
     case ( kNuisBANFFCC1piE1 ) : return "BANFF; Norm; CC 1pi; 2.5 - 30.0 GeV";    break;
-#if BANFF_BINS == 1
+#endif
+#if (BANFF_BINS != 2) && (BANFF_BINS != 4)
     case ( kNuisBANFFNC1pi0  ) : return "BANFF; Norm; NC 1pi0; 0.0 - 30.0 GeV";   break;
 #endif
-#if BANFF_BINS == 3
+#if BANFF_BINS == 4
     case ( kNuisBANFFMECNorm ) : return "BANFF; Norm; MEC";                       break;
     case ( kNuisBANFFPDDDoubleCount ) : return "BANFF; PDD double counting";      break;
 #endif
@@ -924,19 +948,26 @@ string t2kana::util::AsString(PhysParamId_t p)
     case ( kNuisXSecWshape     ) : return "W-shape";                         break;
     case ( kNuisXSecShapeCCoth ) : return "Shape; CC Oth";                   break;
     case ( kNuisXSecPiLessDelta) : return "Pi-less delta decay";             break;
+#ifndef __NUEONLY__
     case ( kNuisXSecBindE      ) : return "Binding energy";                  break;
-
+#endif
     case ( kNuisXSecNormCCcoh  ) : return "Norm; CC Coh";                    break;
+#ifndef __NUEONLY__
     case ( kNuisXSecNormNC1piC ) : return "Norm; NC 1piC";                   break;
+#endif
+#ifndef __NUMUONLY__
     case ( kNuisXSecNormNCcoh  ) : return "Norm; NC Coh";                    break;
+#endif
     case ( kNuisXSecNormNCoth  ) : return "Norm; NC Oth";                    break;
     case ( kNuisXSecNormNuEToNuMu  ) : return "Norm; NuE To NuMu";           break;
+#ifndef __NUEONLY__
     case ( kNuisXSecNormAntiNuToNu ) : return "Norm; AntiNu To Nu";          break;
-
+#endif
     //
     // FSI
     //
-
+#ifndef SKFSITOGETHER
+#if FSI_BINS != 3
     case ( kNuisFSI000 ) :
     case ( kNuisFSI001 ) :
     case ( kNuisFSI002 ) :
@@ -963,39 +994,43 @@ string t2kana::util::AsString(PhysParamId_t p)
 		  kFSIParamsErecoCut[ip][0],kFSIParamsErecoCut[ip][1],nutypes.c_str());     
       break;
     }//FSI for 1Rmu
-
-#if FSI_BINS == 1
-    case ( kNuisFSI1Re000 ) :
-    case ( kNuisFSI1Re001 ) :
-    case ( kNuisFSI1Re002 ) :
-    case ( kNuisFSI1Re003 ) :
-    case ( kNuisFSI1Re004 ) :
-    case ( kNuisFSI1Re005 ) :
-    case ( kNuisFSI1Re006 ) :
-    case ( kNuisFSI1Re007 ) :
-    case ( kNuisFSI1Re008 ) :
-    case ( kNuisFSI1Re009 ) :
-    case ( kNuisFSI1Re010 ) :
-    case ( kNuisFSI1Re011 ) :
+#endif
+#if FSI_BINS != 2
+    case ( kNuisFSI006 ) :
+    case ( kNuisFSI007 ) :
+    case ( kNuisFSI008 ) :
+    case ( kNuisFSI009 ) :
+    case ( kNuisFSI010 ) :
+    case ( kNuisFSI011 ) :
+    case ( kNuisFSI012 ) :
+    case ( kNuisFSI013 ) :
+    case ( kNuisFSI014 ) :
+    case ( kNuisFSI015 ) :
+    case ( kNuisFSI016 ) :
+    case ( kNuisFSI017 ) :
       {   
+#if FSI_BINS != 3
       int ip = (int)p - (int)kNuisFSI000;
+#else
+      int ip = (int)p - (int)kNuisFSI006;
+#endif
       string nutypes = "";
 	switch(p) {
-        case (kNuisFSI1Re000) :
-        case (kNuisFSI1Re001) :
-        case (kNuisFSI1Re002) :
+        case (kNuisFSI006) :
+        case (kNuisFSI007) :
+        case (kNuisFSI008) :
 	  nutypes = "oscillated nue CC (1Re)"; break;
-        case (kNuisFSI1Re003) :
-        case (kNuisFSI1Re004) :
-        case (kNuisFSI1Re005) :
+        case (kNuisFSI009) :
+        case (kNuisFSI010) :
+        case (kNuisFSI011) :
 	  nutypes = "numu/numubar CC (1Re)"; break;
-        case (kNuisFSI1Re006) :
-        case (kNuisFSI1Re007) :
-        case (kNuisFSI1Re008) :
+        case (kNuisFSI012) :
+        case (kNuisFSI013) :
+        case (kNuisFSI014) :
 	  nutypes = "nue/nuebar CC (1Re)"; break;
-        case (kNuisFSI1Re009) :
-        case (kNuisFSI1Re010) :
-        case (kNuisFSI1Re011) :
+        case (kNuisFSI015) :
+        case (kNuisFSI016) :
+        case (kNuisFSI017) :
 	  nutypes = "all NC (1Re)"; break;
         default : nutypes = "--";
 	}
@@ -1004,11 +1039,12 @@ string t2kana::util::AsString(PhysParamId_t p)
       break;
       }
 #endif
-
+#endif // SKDet / FSI separated
     //
     // SKDET+FSI
     //
-
+#ifdef SKFSITOGETHER
+#if FSI_BINS != 3
     case ( kNuisSKDetFSI000 ) :
     case ( kNuisSKDetFSI001 ) :
     case ( kNuisSKDetFSI002 ) :
@@ -1031,12 +1067,12 @@ string t2kana::util::AsString(PhysParamId_t p)
 	  nutypes = "all NC (1Rmu)"; break;
         default : nutypes = "--";
       }
-      return Form("SKDet + FSI/SI %2d; Ereco range %.1f - %.1f GeV; %s",ip,
+      return Form("SKDet + FSI/SI %2d; Ereco range %.2f - %.2f GeV; %s",ip,
 		  kSKDetFSIParamsErecoCut[ip][0],kSKDetFSIParamsErecoCut[ip][1],nutypes.c_str());     
       break;
     }//FSI for 1Rmu
-
-#if FSI_BINS == 1
+#endif
+#if FSI_BINS != 2
     case ( kNuisSKDetFSI006 ) :
     case ( kNuisSKDetFSI007 ) :
     case ( kNuisSKDetFSI008 ) :
@@ -1050,7 +1086,11 @@ string t2kana::util::AsString(PhysParamId_t p)
     case ( kNuisSKDetFSI016 ) :
     case ( kNuisSKDetFSI017 ) :
       {   
+#if FSI_BINS == 3
+      int ip = (int)p - (int)kNuisSKDetFSI006;
+#elif FSI_BINS ==1
       int ip = (int)p - (int)kNuisSKDetFSI000;
+#endif
       string nutypes = "";
 	switch(p) {
         case (kNuisSKDetFSI006) :
@@ -1071,12 +1111,12 @@ string t2kana::util::AsString(PhysParamId_t p)
 	  nutypes = "all NC (1Re)"; break;
         default : nutypes = "--";
 	}
-      return Form("SKDet + FSI/SI %2d; Ereco range %.1f - %.1f GeV; %s",ip,
+      return Form("SKDet + FSI/SI %2d; Ereco range %.2f - %.2f GeV; %s",ip,
 		  kSKDetFSIParamsErecoCut[ip][0],kSKDetFSIParamsErecoCut[ip][1],nutypes.c_str());     
       break;
       }
 #endif
-  
+#endif //SKDETFSI  
   
     default : 
       return "--";
@@ -1146,6 +1186,8 @@ string t2kana::util::AsStringTex(PhysParamId_t p)
     // SK detector
     //
     case ( kNuisSuperkEnergyScale     ) : return "SK energy scale";                 break;    
+#ifndef SKFSITOGETHER
+#if FSI_BINS != 3
     case ( kNuisSuperkEff1RmuCCQEoth  ) : return "SK efficiency, 1Rmu, CCQE//Other"; break;
     case ( kNuisSuperkEff1RmuCCQErc0u ) : return "SK efficiency, 1Rmu, CCQE//RC0";   break;
     case ( kNuisSuperkEff1RmuCCQErc1u ) : return "SK efficiency, 1Rmu, CCQE//RC1";   break;
@@ -1153,8 +1195,8 @@ string t2kana::util::AsStringTex(PhysParamId_t p)
     case ( kNuisSuperkEff1RmuCCnonQE  ) : return "SK efficiency, 1Rmu, CCnonQE";    break;
     case ( kNuisSuperkEff1RmuNC       ) : return "SK efficiency, 1Rmu, NC";         break;
     case ( kNuisSuperkEff1RmuNueCC    ) : return "SK efficiency, 1Rmu, nue CC";     break;
-
-#if FSI_BINS == 1
+#endif
+#if FSI_BINS != 2
     case ( kNuisSuperkEff1ReNueSigCC0 ) : return "SK efficiency, 1Re, Osc. $\\nu_{e}$ CC E0"; break;
     case ( kNuisSuperkEff1ReNueSigCC1 ) : return "SK efficiency, 1Re, Osc. $\\nu_{e}$ CC E1"; break;
     case ( kNuisSuperkEff1ReNueSigCC2 ) : return "SK efficiency, 1Re, Osc. $\\nu_{e}$ CC E2"; break;
@@ -1168,7 +1210,7 @@ string t2kana::util::AsStringTex(PhysParamId_t p)
     case ( kNuisSuperkEff1ReNC1 )    : return "SK efficiency, 1Re, NC E1"; break;
     case ( kNuisSuperkEff1ReNC2 )    : return "SK efficiency, 1Re, NC E2"; break;
 #endif
-
+#endif
     //
     // BANFF flux and cross-section params
     //
@@ -1188,13 +1230,15 @@ string t2kana::util::AsStringTex(PhysParamId_t p)
     case ( kNuisBANFF13 ) :
     case ( kNuisBANFF14 ) :
     case ( kNuisBANFF15 ) :
-#if BANFF_BINS == 1
+#if (BANFF_BINS != 2) && (BANFF_BINS != 4)
     case ( kNuisBANFF16 ) :
     case ( kNuisBANFF17 ) :
     case ( kNuisBANFF18 ) :
     case ( kNuisBANFF19 ) :
     case ( kNuisBANFF20 ) :
     case ( kNuisBANFF21 ) :
+#endif
+#if BANFF_BINS == 1
     case ( kNuisBANFF22 ) :
     case ( kNuisBANFF23 ) :
     case ( kNuisBANFF24 ) :
@@ -1214,14 +1258,18 @@ string t2kana::util::AsStringTex(PhysParamId_t p)
 #endif
     case ( kNuisBANFFMARES   ) : return "BANFF, Ma RES";                          break;
     case ( kNuisBANFFCCQEE0  ) : return "BANFF; Norm; CC QE; 0.0 - 1.5 GeV";      break;
+#if BANFF_BINS != 3
     case ( kNuisBANFFCCQEE1  ) : return "BANFF; Norm; CC QE; 1.5 - 3.5 GeV";      break;
     case ( kNuisBANFFCCQEE2  ) : return "BANFF; Norm; CC QE; 3.5 - 30.0 GeV";     break;
+#endif
     case ( kNuisBANFFCC1piE0 ) : return "BANFF; Norm; CC 1pi; 0.0 - 2.5 GeV";     break;
+#if BANFF_BINS != 3
     case ( kNuisBANFFCC1piE1 ) : return "BANFF; Norm; CC 1pi; 2.5 - 30.0 GeV";    break;
-#if BANFF_BINS == 1
+#endif
+#if (BANFF_BINS != 2) && (BANFF_BINS != 4)
     case ( kNuisBANFFNC1pi0  ) : return "BANFF; Norm; NC 1pi0; 2.5 - 30.0 GeV";    break;
 #endif
-#if BANFF_BINS == 3
+#if BANFF_BINS == 4
     case ( kNuisBANFFMECNorm ) : return "BANFF; Norm; MEC";                       break;
     case ( kNuisBANFFPDDDoubleCount ) : return "BANFF; PDD double counting";      break;
 #endif
@@ -1235,15 +1283,23 @@ string t2kana::util::AsStringTex(PhysParamId_t p)
     case ( kNuisXSecWshape     ) : return "W-shape";                         break;
     case ( kNuisXSecShapeCCoth ) : return "Shape; CC Oth";                   break;
     case ( kNuisXSecPiLessDelta) : return "Pi-less delta decay";             break;
+#ifndef __NUEONLY__
     case ( kNuisXSecBindE      ) : return "Binding energy";                  break;
-
+#endif
     case ( kNuisXSecNormCCcoh  ) : return "Norm, CC Coh";                    break;
+#ifndef __NUEONLY__
     case ( kNuisXSecNormNC1piC ) : return "Norm, NC 1piC";                   break;
+#endif
+#ifndef __NUMUONLY__
     case ( kNuisXSecNormNCcoh  ) : return "Norm, NC Coh";                    break;
+#endif
     case ( kNuisXSecNormNCoth  ) : return "Norm, NC Oth";                    break;
     case ( kNuisXSecNormNuEToNuMu  ) : return "Norm, $\\nu_e$ To $\\nu_\\mu$";  break;
+#ifndef __NUEONLY__
     case ( kNuisXSecNormAntiNuToNu ) : return "Norm, $\\bar{\\nu}$ To $\\nu$";  break;
-
+#endif
+#ifndef SKFSITOGETHER
+#if FSI_BINS != 3
     case ( kNuisFSI000 ) :
     case ( kNuisFSI001 ) :
     case ( kNuisFSI002 ) :
@@ -1270,40 +1326,44 @@ string t2kana::util::AsStringTex(PhysParamId_t p)
 		  kFSIParamsErecoCut[ip][0],kFSIParamsErecoCut[ip][1],nutypes.c_str());     
       break;
     }//FSI for 1Rmu
-
-#if FSI_BINS == 1
-    case ( kNuisFSI1Re000 ) :
-    case ( kNuisFSI1Re001 ) :
-    case ( kNuisFSI1Re002 ) :
-    case ( kNuisFSI1Re003 ) :
-    case ( kNuisFSI1Re004 ) :
-    case ( kNuisFSI1Re005 ) :
-    case ( kNuisFSI1Re006 ) :
-    case ( kNuisFSI1Re007 ) :
-    case ( kNuisFSI1Re008 ) :
-    case ( kNuisFSI1Re009 ) :
-    case ( kNuisFSI1Re010 ) :
-    case ( kNuisFSI1Re011 ) :
+#endif
+#if FSI_BINS != 2
+    case ( kNuisFSI006 ) :
+    case ( kNuisFSI007 ) :
+    case ( kNuisFSI008 ) :
+    case ( kNuisFSI009 ) :
+    case ( kNuisFSI010 ) :
+    case ( kNuisFSI011 ) :
+    case ( kNuisFSI012 ) :
+    case ( kNuisFSI013 ) :
+    case ( kNuisFSI014 ) :
+    case ( kNuisFSI015 ) :
+    case ( kNuisFSI016 ) :
+    case ( kNuisFSI017 ) :
 
     {
       string nutypes = "";
+#if FSI_BINS != 3
       int ip = (int)p - (int)kNuisFSI000;
+#else
+      int ip = (int)p - (int)kNuisFSI006;
+#endif
       switch(p) {
-        case (kNuisFSI1Re000) :
-        case (kNuisFSI1Re001) :
-        case (kNuisFSI1Re002) :
+        case (kNuisFSI006) :
+        case (kNuisFSI007) :
+        case (kNuisFSI008) :
 	  nutypes = "Osc. $\\nu_e$ CC ($1R_{e}$)"; break;
-        case (kNuisFSI1Re003) :
-        case (kNuisFSI1Re004) :
-        case (kNuisFSI1Re005) :
+        case (kNuisFSI009) :
+        case (kNuisFSI010) :
+        case (kNuisFSI011) :
 	  nutypes = "$\\nu_\\mu$/$\\bar{\\nu_\\mu}$ CC ($1R_{e}$)"; break;
-        case (kNuisFSI1Re006) :
-        case (kNuisFSI1Re007) :
-        case (kNuisFSI1Re008) :
+        case (kNuisFSI012) :
+        case (kNuisFSI013) :
+        case (kNuisFSI014) :
 	  nutypes = "$\\nu_e$/$\\bar{\\nu_e}$ CC ($1R_{e}$)"; break;
-        case (kNuisFSI1Re009) :
-        case (kNuisFSI1Re010) :
-        case (kNuisFSI1Re011) :
+        case (kNuisFSI015) :
+        case (kNuisFSI016) :
+        case (kNuisFSI017) :
 	  nutypes = "all NC ($1R_{e}$)"; break;
         default : nutypes = "--";
       }
@@ -1312,7 +1372,9 @@ string t2kana::util::AsStringTex(PhysParamId_t p)
       break;
     }//FSI for 1Re
 #endif
-
+#endif
+#ifdef SKFSITOGETHER
+#if FSI_BINS != 3
     case ( kNuisSKDetFSI000 ) :
     case ( kNuisSKDetFSI001 ) :
     case ( kNuisSKDetFSI002 ) :
@@ -1335,12 +1397,12 @@ string t2kana::util::AsStringTex(PhysParamId_t p)
 	  nutypes = "all NC ($1R_{\\mu}$)"; break;
         default : nutypes = "--";
       }
-      return Form("SKDet + FSI/SI %2d; Ereco range %.1f - %.1f GeV; %s",ip,
+      return Form("SKDet + FSI/SI %2d; Ereco range %.2f - %.2f GeV; %s",ip,
 		  kSKDetFSIParamsErecoCut[ip][0],kSKDetFSIParamsErecoCut[ip][1],nutypes.c_str());     
       break;
     }//FSI for 1Rmu
-
-#if FSI_BINS == 1
+#endif
+#if FSI_BINS != 2
     case ( kNuisSKDetFSI006 ) :
     case ( kNuisSKDetFSI007 ) :
     case ( kNuisSKDetFSI008 ) :
@@ -1356,7 +1418,11 @@ string t2kana::util::AsStringTex(PhysParamId_t p)
 
     {
       string nutypes = "";
+#if FSI_BINS != 3
       int ip = (int)p - (int)kNuisSKDetFSI000;
+#else
+      int ip = (int)p - (int)kNuisSKDetFSI006;
+#endif
       switch(p) {
         case (kNuisSKDetFSI006) :
         case (kNuisSKDetFSI007) :
@@ -1376,12 +1442,12 @@ string t2kana::util::AsStringTex(PhysParamId_t p)
 	  nutypes = "all NC ($1R_{e}$)"; break;
         default : nutypes = "--";
       }
-      return Form("SKDet + FSI/SI %2d; Ereco range %.1f - %.1f GeV; %s",ip,
+      return Form("SKDet + FSI/SI %2d; Ereco range %.2f - %.2f GeV; %s",ip,
 		  kSKDetFSIParamsErecoCut[ip][0],kSKDetFSIParamsErecoCut[ip][1],nutypes.c_str());     
       break;
     }//FSI for 1Re
 #endif
-
+#endif
     default : 
       return "--";
   }
@@ -1390,6 +1456,7 @@ string t2kana::util::AsStringTex(PhysParamId_t p)
 //____________________________________________________________________________
 string t2kana::util::AsStringPresentTex(PhysParamId_t p)
 {
+  
   switch(p) {
 
     case ( kPhypMixing23 ) : 
@@ -1442,13 +1509,15 @@ string t2kana::util::AsStringPresentTex(PhysParamId_t p)
     case ( kPhypMusqDecoh             ) : return "$\\mu^2_{decoh}$";                 break;
     case ( kPhypSinsq2ThetaDecoh      ) : return "$\\sin^2(2\\theta_{decoh})$";       break;
 
-    /*
-     * 2011-analysis nuisance parameters
-     */
-
     //
+    // 2011-analysis nuisance parameters
+    //
+  
+      //
     // SK detector
     //
+#ifndef SKFSITOGETHER
+#if FSI_BINS != 3
     case ( kNuisSuperkEnergyScale     ) : return "SK energy scale";                 break;    
     case ( kNuisSuperkEff1RmuCCQEoth  ) : return "SK efficiency, 1Rmu, CCQE//Other"; break;
     case ( kNuisSuperkEff1RmuCCQErc0u ) : return "SK efficiency, 1Rmu, CCQE//RC0";   break;
@@ -1457,8 +1526,8 @@ string t2kana::util::AsStringPresentTex(PhysParamId_t p)
     case ( kNuisSuperkEff1RmuCCnonQE  ) : return "SK efficiency, 1Rmu, CCnonQE";    break;
     case ( kNuisSuperkEff1RmuNC       ) : return "SK efficiency, 1Rmu, NC";         break;
     case ( kNuisSuperkEff1RmuNueCC    ) : return "SK efficiency, 1Rmu, nue CC";     break;
-
-#if FSI_BINS == 1
+#endif
+#if FSI_BINS != 2
     case ( kNuisSuperkEff1ReNueSigCC0 ) : return "SK efficiency, 1Re, Osc. $\\nu_{e}$ CC E0"; break;
     case ( kNuisSuperkEff1ReNueSigCC1 ) : return "SK efficiency, 1Re, Osc. $\\nu_{e}$ CC E1"; break;
     case ( kNuisSuperkEff1ReNueSigCC2 ) : return "SK efficiency, 1Re, Osc. $\\nu_{e}$ CC E2"; break;
@@ -1471,6 +1540,7 @@ string t2kana::util::AsStringPresentTex(PhysParamId_t p)
     case ( kNuisSuperkEff1ReNC0 )    : return "SK efficiency, 1Re, NC E0"; break;
     case ( kNuisSuperkEff1ReNC1 )    : return "SK efficiency, 1Re, NC E1"; break;
     case ( kNuisSuperkEff1ReNC2 )    : return "SK efficiency, 1Re, NC E2"; break;
+#endif
 #endif
 
     //
@@ -1492,13 +1562,15 @@ string t2kana::util::AsStringPresentTex(PhysParamId_t p)
     case ( kNuisBANFF13 ) :
     case ( kNuisBANFF14 ) :
     case ( kNuisBANFF15 ) :
-#if BANFF_BINS == 1
+#if (BANFF_BINS != 2) && (BANFF_BINS != 4)
     case ( kNuisBANFF16 ) :
     case ( kNuisBANFF17 ) :
     case ( kNuisBANFF18 ) :
     case ( kNuisBANFF19 ) :
     case ( kNuisBANFF20 ) :
     case ( kNuisBANFF21 ) :
+#endif
+#if BANFF_BINS == 1
     case ( kNuisBANFF22 ) :
     case ( kNuisBANFF23 ) :
     case ( kNuisBANFF24 ) :
@@ -1518,14 +1590,18 @@ string t2kana::util::AsStringPresentTex(PhysParamId_t p)
 #endif
     case ( kNuisBANFFMARES   ) : return "M$_{A}$RES";                          break;
     case ( kNuisBANFFCCQEE0  ) : return "CCQE 0.0-1.5 GeV";      break;
+#if BANFF_BINS != 3
     case ( kNuisBANFFCCQEE1  ) : return "CCQE 1.5-3.5 GeV";      break;
     case ( kNuisBANFFCCQEE2  ) : return "CCQE 3.5-30 GeV";     break;
+#endif
     case ( kNuisBANFFCC1piE0 ) : return "CC1$\\pi$ 0.0-2.5 GeV";     break;
+#if BANFF_BINS != 3
     case ( kNuisBANFFCC1piE1 ) : return "CC1$\\pi$ 2.5-30 GeV";    break;
-#if BANFF_BINS == 1
+#endif
+#if (BANFF_BINS != 2) && (BANFF_BINS != 4)
     case ( kNuisBANFFNC1pi0  ) : return "BANFF; Norm; NC 1pi0; 2.5 - 30.0 GeV";    break;
 #endif
-#if BANFF_BINS == 3
+#if BANFF_BINS == 4
     case ( kNuisBANFFMECNorm ) : return "BANFF; Norm; MEC";                       break;
     case ( kNuisBANFFPDDDoubleCount ) : return "BANFF; PDD double counting";      break;
 #endif
@@ -1539,15 +1615,23 @@ string t2kana::util::AsStringPresentTex(PhysParamId_t p)
     case ( kNuisXSecWshape     ) : return "W-shape";                         break;
     case ( kNuisXSecShapeCCoth ) : return "CC Other shape";                   break;
     case ( kNuisXSecPiLessDelta) : return "$\\pi$-less $\\Delta$-decay";             break;
+#ifndef __NUEONLY__
     case ( kNuisXSecBindE      ) : return "Binding energy";                  break;
-
+#endif
     case ( kNuisXSecNormCCcoh  ) : return "CC coherent norm";                    break;
+#ifndef __NUEONLY__
     case ( kNuisXSecNormNC1piC ) : return "NC 1$\\pi^\\pm$ norm";                   break;
+#endif
+#ifndef __NUMUONLY__
     case ( kNuisXSecNormNCcoh  ) : return "NC coherent norm";                    break;
+#endif
     case ( kNuisXSecNormNCoth  ) : return "NC other norm";                    break;
     case ( kNuisXSecNormNuEToNuMu  ) : return "CC $\\nu_e$/$\\nu_\\mu$ norm";  break;
+#ifndef __NUEONLY__
     case ( kNuisXSecNormAntiNuToNu ) : return "CC $\\bar{\\nu}$/$\\nu$ norm";  break;
-
+#endif
+#ifndef SKFSITOGETHER
+#if FSI_BINS != 3
     case ( kNuisFSI000 ) :
     case ( kNuisFSI001 ) :
     case ( kNuisFSI002 ) :
@@ -1574,40 +1658,44 @@ string t2kana::util::AsStringPresentTex(PhysParamId_t p)
 		  kFSIParamsErecoCut[ip][0],kFSIParamsErecoCut[ip][1],nutypes.c_str());     
       break;
     }//FSI for 1Rmu
-
-#if FSI_BINS == 1
-    case ( kNuisFSI1Re000 ) :
-    case ( kNuisFSI1Re001 ) :
-    case ( kNuisFSI1Re002 ) :
-    case ( kNuisFSI1Re003 ) :
-    case ( kNuisFSI1Re004 ) :
-    case ( kNuisFSI1Re005 ) :
-    case ( kNuisFSI1Re006 ) :
-    case ( kNuisFSI1Re007 ) :
-    case ( kNuisFSI1Re008 ) :
-    case ( kNuisFSI1Re009 ) :
-    case ( kNuisFSI1Re010 ) :
-    case ( kNuisFSI1Re011 ) :
+#endif
+#if FSI_BINS != 2
+    case ( kNuisFSI006 ) :
+    case ( kNuisFSI007 ) :
+    case ( kNuisFSI008 ) :
+    case ( kNuisFSI009 ) :
+    case ( kNuisFSI010 ) :
+    case ( kNuisFSI011 ) :
+    case ( kNuisFSI012 ) :
+    case ( kNuisFSI013 ) :
+    case ( kNuisFSI014 ) :
+    case ( kNuisFSI015 ) :
+    case ( kNuisFSI016 ) :
+    case ( kNuisFSI017 ) :
 
     {
       string nutypes = "";
+#if FSI_BINS != 3
       int ip = (int)p - (int)kNuisFSI000;
+#else
+      int ip = (int)p - (int)kNuisFSI006;
+#endif
       switch(p) {
-        case (kNuisFSI1Re000) :
-        case (kNuisFSI1Re001) :
-        case (kNuisFSI1Re002) :
+        case (kNuisFSI006) :
+        case (kNuisFSI007) :
+        case (kNuisFSI008) :
 	  nutypes = "Osc. $\\nu_e$ CC ($1R_{e}$)"; break;
-        case (kNuisFSI1Re003) :
-        case (kNuisFSI1Re004) :
-        case (kNuisFSI1Re005) :
+        case (kNuisFSI009) :
+        case (kNuisFSI010) :
+        case (kNuisFSI011) :
 	  nutypes = "$\\nu_\\mu$/$\\bar{\\nu_\\mu}$ CC ($1R_{e}$)"; break;
-        case (kNuisFSI1Re006) :
-        case (kNuisFSI1Re007) :
-        case (kNuisFSI1Re008) :
+        case (kNuisFSI012) :
+        case (kNuisFSI013) :
+        case (kNuisFSI014) :
 	  nutypes = "$\\nu_e$/$\\bar{\\nu_e}$ CC ($1R_{e}$)"; break;
-        case (kNuisFSI1Re009) :
-        case (kNuisFSI1Re010) :
-        case (kNuisFSI1Re011) :
+        case (kNuisFSI015) :
+        case (kNuisFSI016) :
+        case (kNuisFSI017) :
 	  nutypes = "all NC ($1R_{e}$)"; break;
         default : nutypes = "--";
       }
@@ -1616,7 +1704,9 @@ string t2kana::util::AsStringPresentTex(PhysParamId_t p)
       break;
     }//FSI for 1Re
 #endif
-
+#endif
+#ifdef SKFSITOGETHER
+#if FSI_BINS != 3
     case ( kNuisSKDetFSI000 ) :
     case ( kNuisSKDetFSI001 ) :
     case ( kNuisSKDetFSI002 ) :
@@ -1643,8 +1733,8 @@ string t2kana::util::AsStringPresentTex(PhysParamId_t p)
       return Form("%s",nutypes.c_str());     
       break;
     }//FSI for 1Rmu
-
-#if FSI_BINS == 1
+#endif
+#if FSI_BINS != 2
     case ( kNuisSKDetFSI006 ) :
     case ( kNuisSKDetFSI007 ) :
     case ( kNuisSKDetFSI008 ) :
@@ -1660,7 +1750,11 @@ string t2kana::util::AsStringPresentTex(PhysParamId_t p)
 
     {
       string nutypes = "";
+#if FSI_BINS != 3
       int ip = (int)p - (int)kNuisSKDetFSI000;
+#else
+      int ip = (int)p - (int)kNuisSKDetFSI006;
+#endif
       switch(p) {
         case (kNuisSKDetFSI006) :
         case (kNuisSKDetFSI007) :
@@ -1685,10 +1779,11 @@ string t2kana::util::AsStringPresentTex(PhysParamId_t p)
       break;
     }//FSI for 1Re
 #endif
-
+#endif
     default : 
       return "--";
   }
+  
   return "--";
 }
 //____________________________________________________________________________                                                                                                    
@@ -1767,6 +1862,8 @@ string t2kana::util::AsStringPaperTex(PhysParamId_t p)
     // SK detector  
     //                                                                                                                                                                                 
   case ( kNuisSuperkEnergyScale     ) : return "$f_{E; r}^{SK}$  ";                 break;
+#ifndef SKFSITOGETHER
+#if FSI_BINS != 3
   case ( kNuisSuperkEff1RmuCCQEoth  ) : return "$f_{1R_{\\mu}: CCQEoth; r}^{SK}$";             break;
   case ( kNuisSuperkEff1RmuCCQErc0u ) : return "$f_{1R_{\\mu}: CCQERC0; r}^{SK}$";             break;
   case ( kNuisSuperkEff1RmuCCQErc1u ) : return "$f_{1R_{\\mu}: CCQERC1; r}^{SK}$";             break;
@@ -1774,8 +1871,8 @@ string t2kana::util::AsStringPaperTex(PhysParamId_t p)
   case ( kNuisSuperkEff1RmuCCnonQE  ) : return "$f_{1R_{\\mu}: CCnQE; r}^{SK}$";               break;
   case ( kNuisSuperkEff1RmuNC       ) : return "$f_{1R_{\\mu}: NC; r}^{SK}$";                  break;
   case ( kNuisSuperkEff1RmuNueCC    ) : return "$f_{1R_{\\mu}: \\nu_e; r}^{SK}$";              break;
-
-#if FSI_BINS == 1
+#endif
+#if FSI_BINS != 2
   case ( kNuisSuperkEff1ReNueSigCC0  )   : return "$f_{1R_{e}: osc \\nu_e CC E0; r}^{SK}$";     break;
   case ( kNuisSuperkEff1ReNueSigCC1  )   : return "$f_{1R_{e}: osc \\nu_e CC E1; r}^{SK}$";     break;
   case ( kNuisSuperkEff1ReNueSigCC2  )   : return "$f_{1R_{e}: osc \\nu_e CC E2; r}^{SK}$";     break;
@@ -1789,7 +1886,7 @@ string t2kana::util::AsStringPaperTex(PhysParamId_t p)
   case ( kNuisSuperkEff1ReNC1        )   : return "$f_{1R_{e}: NC E1; r}^{SK}$";   break;
   case ( kNuisSuperkEff1ReNC2        )   : return "$f_{1R_{e}: NC E2; r}^{SK}$";   break;
 #endif
-
+#endif
     //                                                          
     // BANFF flux and cross-section params                                                                                                                                       
     //                                                                                                                                                                               
@@ -1809,13 +1906,15 @@ string t2kana::util::AsStringPaperTex(PhysParamId_t p)
   case ( kNuisBANFF13 ) :
   case ( kNuisBANFF14 ) :
   case ( kNuisBANFF15 ) :
-#if BANFF_BINS == 1
+#if (BANFF_BINS != 2) && (BANFF_BINS != 4)
   case ( kNuisBANFF16 ) :
   case ( kNuisBANFF17 ) :
   case ( kNuisBANFF18 ) :
   case ( kNuisBANFF19 ) :
   case ( kNuisBANFF20 ) :
   case ( kNuisBANFF21 ) :
+#endif
+#if BANFF_BINS == 1
   case ( kNuisBANFF22 ) :
   case ( kNuisBANFF23 ) :
   case ( kNuisBANFF24 ) :
@@ -1823,14 +1922,18 @@ string t2kana::util::AsStringPaperTex(PhysParamId_t p)
   case ( kNuisBANFFMAQE ) :
   case ( kNuisBANFFMARES ) :
   case ( kNuisBANFFCCQEE0 ) :
+#if BANFF_BINS != 3
   case ( kNuisBANFFCCQEE1 ) :
   case ( kNuisBANFFCCQEE2 ) :
+#endif
   case ( kNuisBANFFCC1piE0 ) :
+#if BANFF_BINS != 3
   case ( kNuisBANFFCC1piE1 ) :
-#if BANFF_BINS == 1
+#endif
+#if (BANFF_BINS != 2) && (BANFF_BINS != 4)
   case ( kNuisBANFFNC1pi0 ) :
 #endif
-#if BANFF_BINS == 3
+#if BANFF_BINS == 4
     case ( kNuisBANFFMECNorm ) :
     case ( kNuisBANFFPDDDoubleCount ) :
 #endif
@@ -1849,47 +1952,64 @@ string t2kana::util::AsStringPaperTex(PhysParamId_t p)
   case ( kNuisXSecWshape     ) : return "$f_{Wshape; t, r}$";              break;
   case ( kNuisXSecShapeCCoth ) : return "$f_{CCothShape; t, r}$";          break;
   case ( kNuisXSecPiLessDelta) : return "$f_{\\pi-less\\Delta; t, r}$";    break;
+#ifndef __NUEONLY__
   case ( kNuisXSecBindE      ) : return "$f_{bindE; t, r}$";               break;
-
+#endif
   case ( kNuisXSecNormCCcoh  ) : return "$f_{CCcoh; t}$";                  break;
+#ifndef __NUMUONLY__
   case ( kNuisXSecNormNCcoh  ) : return "$f_{NCcoh; t}$";                  break;
+#endif
+#ifndef __NUEONLY__
   case ( kNuisXSecNormNC1piC ) : return "$f_{NC1\\pi^\\pm; t}$";           break;
+#endif
   case ( kNuisXSecNormNCoth  ) : return "$f_{NCoth; t}$";                  break;
   case ( kNuisXSecNormNuEToNuMu  ) : return "$f_{CC\\nu_e; t}$";           break;
+#ifndef __NUEONLY__
   case ( kNuisXSecNormAntiNuToNu ) : return "$f_{CC\\bar{\\nu}; t}$";      break;
-
+#endif
+#ifndef SKFSITOGETHER
+#if FSI_BINS != 3
   case ( kNuisFSI000 ) :
   case ( kNuisFSI001 ) :
   case ( kNuisFSI002 ) :
   case ( kNuisFSI003 ) :
   case ( kNuisFSI004 ) :
   case ( kNuisFSI005 ) :
-#if FSI_BINS == 1
-  case ( kNuisFSI1Re000 ) :
-  case ( kNuisFSI1Re001 ) :
-  case ( kNuisFSI1Re002 ) :
-  case ( kNuisFSI1Re003 ) :
-  case ( kNuisFSI1Re004 ) :
-  case ( kNuisFSI1Re005 ) :
-  case ( kNuisFSI1Re006 ) :
-  case ( kNuisFSI1Re007 ) :
-  case ( kNuisFSI1Re008 ) :
-  case ( kNuisFSI1Re009 ) :
-  case ( kNuisFSI1Re010 ) :
-  case ( kNuisFSI1Re011 ) :
+#endif
+#if FSI_BINS != 2
+  case ( kNuisFSI006 ) :
+  case ( kNuisFSI007 ) :
+  case ( kNuisFSI008 ) :
+  case ( kNuisFSI009 ) :
+  case ( kNuisFSI010 ) :
+  case ( kNuisFSI011 ) :
+  case ( kNuisFSI012 ) :
+  case ( kNuisFSI013 ) :
+  case ( kNuisFSI014 ) :
+  case ( kNuisFSI015 ) :
+  case ( kNuisFSI016 ) :
+  case ( kNuisFSI017 ) :
+#endif
 #endif
     {
+#if FSI_BINS != 3
       int ip = (int)p - (int)kNuisFSI000;
-      return Form("$f_{%d; r}^{FSI}$", ip);
+#else
+      int ip = (int)p - (int)kNuisFSI006;
+#endif
+      return Form("$f_{%d; t, r}^{FSI}$", ip);
       break;
-    }//FSI                
+    }//FSI
+#ifndef SKFSITOGETHER
+#if FSI_BINS != 3                
   case ( kNuisSKDetFSI000 ) :
   case ( kNuisSKDetFSI001 ) :
   case ( kNuisSKDetFSI002 ) :
   case ( kNuisSKDetFSI003 ) :
   case ( kNuisSKDetFSI004 ) :
   case ( kNuisSKDetFSI005 ) :
-#if FSI_BINS == 1
+#endif
+#if FSI_BINS != 2
   case ( kNuisSKDetFSI006 ) :
   case ( kNuisSKDetFSI007 ) :
   case ( kNuisSKDetFSI008 ) :
@@ -1903,9 +2023,14 @@ string t2kana::util::AsStringPaperTex(PhysParamId_t p)
   case ( kNuisSKDetFSI016 ) :
   case ( kNuisSKDetFSI017 ) :
 #endif
+#endif
     {
+#if FSI_BINS != 3
       int ip = (int)p - (int)kNuisSKDetFSI000;
-      return Form("$f_{%d; r}^{SK+FSI}$", ip);
+#else
+      int ip = (int)p - (int)kNuisSKDetFSI006;
+#endif
+      return Form("$f_{%d; t, r}^{SK+FSI}$", ip);
       break;
     }//FSI                
   default :
@@ -1916,7 +2041,7 @@ string t2kana::util::AsStringPaperTex(PhysParamId_t p)
 //____________________________________________________________________________                                                                                                    
 string t2kana::util::AsStringPaperTexNoDollar(PhysParamId_t p)
 {
-  switch(p) {
+    switch(p) {
     
   case ( kPhypMixing23 ) :
     {
@@ -1981,13 +2106,15 @@ string t2kana::util::AsStringPaperTexNoDollar(PhysParamId_t p)
   case ( kPhypMusqDecoh             ) : return "\\mu^2_{decoh}";                 break;
   case ( kPhypSinsq2ThetaDecoh      ) : return "\\sin^2(2\\theta_{decoh})";       break;
   
-    /*                                                     
-     * 2011-analysis nuisance parameters                                                                                                                                            
-     */
+    //                                                    
+    // 2011-analysis nuisance parameters                                                                                                                                            
+    //
 
     // 
     // SK detector  
     //                                                                                                                                                                                 
+#ifndef SKFSITOGETHER
+#if FSI_BINS != 3  
   case ( kNuisSuperkEnergyScale     ) : return "f_{E; r}^{SK}  ";                 break;
   case ( kNuisSuperkEff1RmuCCQEoth  ) : return "f_{1R_{\\mu}: CCQEoth; r}^{SK}";             break;
   case ( kNuisSuperkEff1RmuCCQErc0u ) : return "f_{1R_{\\mu}: CCQERC0; r}^{SK}";             break;
@@ -1996,8 +2123,8 @@ string t2kana::util::AsStringPaperTexNoDollar(PhysParamId_t p)
   case ( kNuisSuperkEff1RmuCCnonQE  ) : return "f_{1R_{\\mu}: CCnQE; r}^{SK}";               break;
   case ( kNuisSuperkEff1RmuNC       ) : return "f_{1R_{\\mu}: NC; r}^{SK}";                  break;
   case ( kNuisSuperkEff1RmuNueCC    ) : return "f_{1R_{\\mu}: \\nu_e; r}^{SK}";              break;
-
-#if FSI_BINS == 1
+#endif
+#if FSI_BINS != 2
   case ( kNuisSuperkEff1ReNueSigCC0  )   : return "f_{1R_{e}: osc \\nu_e CC E0; r}^{SK}";     break;
   case ( kNuisSuperkEff1ReNueSigCC1  )   : return "f_{1R_{e}: osc \\nu_e CC E1; r}^{SK}";     break;
   case ( kNuisSuperkEff1ReNueSigCC2  )   : return "f_{1R_{e}: osc \\nu_e CC E2; r}^{SK}";     break;
@@ -2011,7 +2138,7 @@ string t2kana::util::AsStringPaperTexNoDollar(PhysParamId_t p)
   case ( kNuisSuperkEff1ReNC1        )   : return "f_{1R_{e}: NC E1; r}^{SK}";   break;
   case ( kNuisSuperkEff1ReNC2        )   : return "f_{1R_{e}: NC E2; r}^{SK}";   break;
 #endif
-
+#endif
     //                                                          
     // BANFF flux and cross-section params                                                                                                                                       
     //                                                                                                                                                                               
@@ -2031,13 +2158,15 @@ string t2kana::util::AsStringPaperTexNoDollar(PhysParamId_t p)
   case ( kNuisBANFF13 ) :
   case ( kNuisBANFF14 ) :
   case ( kNuisBANFF15 ) :
-#if BANFF_BINS == 1
+#if (BANFF_BINS != 2) && (BANFF_BINS != 4)
   case ( kNuisBANFF16 ) :
   case ( kNuisBANFF17 ) :
   case ( kNuisBANFF18 ) :
   case ( kNuisBANFF19 ) :
   case ( kNuisBANFF20 ) :
   case ( kNuisBANFF21 ) :
+#endif
+#if BANFF_BINS == 1
   case ( kNuisBANFF22 ) :
   case ( kNuisBANFF23 ) :
   case ( kNuisBANFF24 ) :
@@ -2045,14 +2174,18 @@ string t2kana::util::AsStringPaperTexNoDollar(PhysParamId_t p)
   case ( kNuisBANFFMAQE ) :
   case ( kNuisBANFFMARES ) :
   case ( kNuisBANFFCCQEE0 ) :
+#if BANFF_BINS != 3
   case ( kNuisBANFFCCQEE1 ) :
   case ( kNuisBANFFCCQEE2 ) :
+#endif
   case ( kNuisBANFFCC1piE0 ) :
+#if BANFF_BINS != 3
   case ( kNuisBANFFCC1piE1 ) :
-#if BANFF_BINS == 1
+#endif
+#if (BANFF_BINS != 2) && (BANFF_BINS != 4)
   case ( kNuisBANFFNC1pi0 ) :
 #endif
-#if BANFF_BINS == 3
+#if BANFF_BINS == 4
     case ( kNuisBANFFMECNorm ) :
     case ( kNuisBANFFPDDDoubleCount ) :
 #endif
@@ -2071,47 +2204,64 @@ string t2kana::util::AsStringPaperTexNoDollar(PhysParamId_t p)
   case ( kNuisXSecWshape     ) : return "f_{Wshape; t, r}";              break;
   case ( kNuisXSecShapeCCoth ) : return "f_{CCothShape; t, r}";          break;
   case ( kNuisXSecPiLessDelta) : return "f_{\\pi-less\\Delta; t, r}";    break;
+#ifndef __NUEONLY__
   case ( kNuisXSecBindE      ) : return "f_{bindE; t, r}";               break;
-
+#endif
   case ( kNuisXSecNormCCcoh  ) : return "f_{CCcoh; t}";                  break;
+#ifndef __NUMUONLY__
   case ( kNuisXSecNormNCcoh  ) : return "f_{NCcoh; t}";                  break;
+#endif
+#ifndef __NUEONLY__
   case ( kNuisXSecNormNC1piC ) : return "f_{NC1\\pi^\\pm; t}";           break;
+#endif
   case ( kNuisXSecNormNCoth  ) : return "f_{NCoth; t}";                  break;
   case ( kNuisXSecNormNuEToNuMu  ) : return "f_{CC\\nu_e; t}";           break;
+#ifndef __NUEONLY__
   case ( kNuisXSecNormAntiNuToNu ) : return "f_{CC\\bar{\\nu}; t}";      break;
-
+#endif
+#ifndef SKFSITOGETHER
+#if FSI_BINS != 3
   case ( kNuisFSI000 ) :
   case ( kNuisFSI001 ) :
   case ( kNuisFSI002 ) :
   case ( kNuisFSI003 ) :
   case ( kNuisFSI004 ) :
   case ( kNuisFSI005 ) :
-#if FSI_BINS == 1
-  case ( kNuisFSI1Re000 ) :
-  case ( kNuisFSI1Re001 ) :
-  case ( kNuisFSI1Re002 ) :
-  case ( kNuisFSI1Re003 ) :
-  case ( kNuisFSI1Re004 ) :
-  case ( kNuisFSI1Re005 ) :
-  case ( kNuisFSI1Re006 ) :
-  case ( kNuisFSI1Re007 ) :
-  case ( kNuisFSI1Re008 ) :
-  case ( kNuisFSI1Re009 ) :
-  case ( kNuisFSI1Re010 ) :
-  case ( kNuisFSI1Re011 ) :
+#endif
+#if FSI_BINS != 2
+  case ( kNuisFSI006 ) :
+  case ( kNuisFSI007 ) :
+  case ( kNuisFSI008 ) :
+  case ( kNuisFSI009 ) :
+  case ( kNuisFSI010 ) :
+  case ( kNuisFSI011 ) :
+  case ( kNuisFSI012 ) :
+  case ( kNuisFSI013 ) :
+  case ( kNuisFSI014 ) :
+  case ( kNuisFSI015 ) :
+  case ( kNuisFSI016 ) :
+  case ( kNuisFSI017 ) :
+#endif
 #endif
     {
+#if FSI_BINS != 3
       int ip = (int)p - (int)kNuisFSI000;
+#else
+      int ip = (int)p - (int)kNuisFSI006;
+#endif
       return Form("f_{%d; r}^{FSI}", ip);
       break;
     }//FSI                
+#ifndef SKFSITOGETHER
+#if FSI_BINS != 3
   case ( kNuisSKDetFSI000 ) :
   case ( kNuisSKDetFSI001 ) :
   case ( kNuisSKDetFSI002 ) :
   case ( kNuisSKDetFSI003 ) :
   case ( kNuisSKDetFSI004 ) :
   case ( kNuisSKDetFSI005 ) :
-#if FSI_BINS == 1
+#endif
+#if FSI_BINS != 2
   case ( kNuisSKDetFSI006 ) :
   case ( kNuisSKDetFSI007 ) :
   case ( kNuisSKDetFSI008 ) :
@@ -2125,8 +2275,13 @@ string t2kana::util::AsStringPaperTexNoDollar(PhysParamId_t p)
   case ( kNuisSKDetFSI016 ) :
   case ( kNuisSKDetFSI017 ) :
 #endif
+#endif
     {
+#if FSI_BINS != 3
       int ip = (int)p - (int)kNuisSKDetFSI000;
+#else
+      int ip = (int)p - (int)kNuisSKDetFSI006;
+#endif
       return Form("f_{%d; r}^{SK+FSI}", ip);
       break;
     }//FSI                
@@ -2211,6 +2366,8 @@ string t2kana::util::AsStringPaperRooTex(PhysParamId_t p)
     // SK detector 
     //                                                                                                                                                                                 
   case ( kNuisSuperkEnergyScale     ) : return "f_{E; r}^{SK}  ";                 break;
+#ifndef SKFSITOGETHER
+#if FSI_BINS != 3
   case ( kNuisSuperkEff1RmuCCQEoth  ) : return "f_{1R_{#mu}: CCQEoth; r}^{SK}";             break;
   case ( kNuisSuperkEff1RmuCCQErc0u ) : return "f_{1R_{#mu}: CCQERC0; r}^{SK}";             break;
   case ( kNuisSuperkEff1RmuCCQErc1u ) : return "f_{1R_{#mu}: CCQERC1; r}^{SK}";             break;
@@ -2218,8 +2375,8 @@ string t2kana::util::AsStringPaperRooTex(PhysParamId_t p)
   case ( kNuisSuperkEff1RmuCCnonQE  ) : return "f_{1R_{#mu}: CCnQE; r}^{SK}";               break;
   case ( kNuisSuperkEff1RmuNC       ) : return "f_{1R_{#mu}: NC; r}^{SK}";                  break;
   case ( kNuisSuperkEff1RmuNueCC    ) : return "f_{1R_{#mu}: #nu_e; r}^{SK}";              break;
-
-#if FSI_BINS == 1
+#endif
+#if FSI_BINS != 2
   case ( kNuisSuperkEff1ReNueSigCC0  )   : return "f_{1R_{e}: osc #nu_e CC E0; r}^{SK}";     break;
   case ( kNuisSuperkEff1ReNueSigCC1  )   : return "f_{1R_{e}: osc #nu_e CC E1; r}^{SK}";     break;
   case ( kNuisSuperkEff1ReNueSigCC2  )   : return "f_{1R_{e}: osc #nu_e CC E2; r}^{SK}";     break;
@@ -2233,7 +2390,7 @@ string t2kana::util::AsStringPaperRooTex(PhysParamId_t p)
   case ( kNuisSuperkEff1ReNC1        )   : return "f_{1R_{e}: NC E1; r}^{SK}";   break;
   case ( kNuisSuperkEff1ReNC2        )   : return "f_{1R_{e}: NC E2; r}^{SK}";   break;
 #endif
-   
+#endif
     //
     // BANFF flux and cross-section params 
     //                                                                                                                                                                                 
@@ -2253,13 +2410,15 @@ string t2kana::util::AsStringPaperRooTex(PhysParamId_t p)
   case ( kNuisBANFF13 ) :
   case ( kNuisBANFF14 ) :
   case ( kNuisBANFF15 ) :
-#if BANFF_BINS == 1
+#if (BANFF_BINS != 2) && (BANFF_BINS != 4)
   case ( kNuisBANFF16 ) :
   case ( kNuisBANFF17 ) :
   case ( kNuisBANFF18 ) :
   case ( kNuisBANFF19 ) :
   case ( kNuisBANFF20 ) :
   case ( kNuisBANFF21 ) :
+#endif
+#if BANFF_BINS == 1
   case ( kNuisBANFF22 ) :
   case ( kNuisBANFF23 ) :
   case ( kNuisBANFF24 ) :
@@ -2267,14 +2426,18 @@ string t2kana::util::AsStringPaperRooTex(PhysParamId_t p)
   case ( kNuisBANFFMAQE ) :
   case ( kNuisBANFFMARES ) :
   case ( kNuisBANFFCCQEE0 ) :
+#if BANFF_BINS != 3
   case ( kNuisBANFFCCQEE1 ) :
   case ( kNuisBANFFCCQEE2 ) :
+#endif
   case ( kNuisBANFFCC1piE0 ) :
+#if BANFF_BINS != 3
   case ( kNuisBANFFCC1piE1 ) :
-#if BANFF_BINS == 1
+#endif
+#if (BANFF_BINS != 2) && (BANFF_BINS != 4)
   case ( kNuisBANFFNC1pi0 ) :
 #endif
-#if BANFF_BINS == 3
+#if BANFF_BINS == 4
     case ( kNuisBANFFMECNorm ) :
     case ( kNuisBANFFPDDDoubleCount ) :
 #endif
@@ -2293,47 +2456,64 @@ string t2kana::util::AsStringPaperRooTex(PhysParamId_t p)
   case ( kNuisXSecWshape     ) : return "f_{Wshape; t, r}";              break;
   case ( kNuisXSecShapeCCoth ) : return "f_{CCothShape; t, r}";          break;
   case ( kNuisXSecPiLessDelta) : return "f_{#pi-less#Delta; t, r}";    break;
+#ifndef __NUEONLY__
   case ( kNuisXSecBindE      ) : return "f_{bindE; t, r}";               break;
-
+#endif
   case ( kNuisXSecNormCCcoh  ) : return "f_{CCcoh; t}";                  break;
+#ifndef __NUMUONLY__
   case ( kNuisXSecNormNCcoh  ) : return "Norm, NC Coh";                    break;
+#endif
+#ifndef __NUEONLY__
   case ( kNuisXSecNormNC1piC ) : return "f_{NC1#pi#pm; t}";           break;
+#endif
   case ( kNuisXSecNormNCoth  ) : return "f_{NCoth; t}";                  break;
   case ( kNuisXSecNormNuEToNuMu  ) : return "f_{CC#nue; t}";           break;
+#ifndef __NUEONLY__
   case ( kNuisXSecNormAntiNuToNu ) : return "f_{CC#bar{#nu}; t}";      break;
-
+#endif
+#ifndef SKFSITOGETHER
+#if FSI_BINS != 3
   case ( kNuisFSI000 ) :
   case ( kNuisFSI001 ) :
   case ( kNuisFSI002 ) :
   case ( kNuisFSI003 ) :
   case ( kNuisFSI004 ) :
   case ( kNuisFSI005 ) :
-#if FSI_BINS == 1
-  case ( kNuisFSI1Re000 ) :
-  case ( kNuisFSI1Re001 ) :
-  case ( kNuisFSI1Re002 ) :
-  case ( kNuisFSI1Re003 ) :
-  case ( kNuisFSI1Re004 ) :
-  case ( kNuisFSI1Re005 ) :
-  case ( kNuisFSI1Re006 ) :
-  case ( kNuisFSI1Re007 ) :
-  case ( kNuisFSI1Re008 ) :
-  case ( kNuisFSI1Re009 ) :
-  case ( kNuisFSI1Re010 ) :
-  case ( kNuisFSI1Re011 ) :
+#endif
+#if FSI_BINS != 2
+  case ( kNuisFSI006 ) :
+  case ( kNuisFSI007 ) :
+  case ( kNuisFSI008 ) :
+  case ( kNuisFSI009 ) :
+  case ( kNuisFSI010 ) :
+  case ( kNuisFSI011 ) :
+  case ( kNuisFSI012 ) :
+  case ( kNuisFSI013 ) :
+  case ( kNuisFSI014 ) :
+  case ( kNuisFSI015 ) :
+  case ( kNuisFSI016 ) :
+  case ( kNuisFSI017 ) :
+#endif
 #endif
     {
+#if FSI_BINS != 3
       int ip = (int)p - (int)kNuisFSI000;
-      return Form("f_{%d; r}^{FSI}", ip);
+#else
+      int ip = (int)p - (int)kNuisFSI006;
+#endif
+      return Form("f_{%d; t, r}^{FSI}", ip);
       break;
     }//FSI      
+#ifdef SKFSITOGETHER
+#if FSI_BINS != 3
   case ( kNuisSKDetFSI000 ) :
   case ( kNuisSKDetFSI001 ) :
   case ( kNuisSKDetFSI002 ) :
   case ( kNuisSKDetFSI003 ) :
   case ( kNuisSKDetFSI004 ) :
   case ( kNuisSKDetFSI005 ) :
-#if FSI_BINS == 1
+#endif
+#if FSI_BINS != 2
   case ( kNuisSKDetFSI006 ) :
   case ( kNuisSKDetFSI007 ) :
   case ( kNuisSKDetFSI008 ) :
@@ -2347,9 +2527,14 @@ string t2kana::util::AsStringPaperRooTex(PhysParamId_t p)
   case ( kNuisSKDetFSI016 ) :
   case ( kNuisSKDetFSI017 ) :
 #endif
+#endif
     {
+#if FSI_BINS != 3
       int ip = (int)p - (int)kNuisSKDetFSI000;
-      return Form("f_{%d; r}^{SK+FSI}", ip);
+#else
+      int ip = (int)p - (int)kNuisSKDetFSI006;
+#endif
+      return Form("f_{%d; t, r}^{SK+FSI}", ip);
       break;
     }//FSI      
   default :
@@ -2428,8 +2613,9 @@ string t2kana::util::AsStringCompact(PhysParamId_t p)
     /*
      * 2011-analysis nuisance parameters
      */
-
     case ( kNuisSuperkEnergyScale     ) : return "f_sk_e_scale";                   break;    
+#ifndef SKFSITOGETHER
+#if FSI_BINS != 3
     case ( kNuisSuperkEff1RmuCCQEoth  ) : return "f_sk_eff_1Rmu_ccqe_oth";         break;
     case ( kNuisSuperkEff1RmuCCQErc0u ) : return "f_sk_eff_1Rmu_ccqe_rc0";         break;
     case ( kNuisSuperkEff1RmuCCQErc1u ) : return "f_sk_eff_1Rmu_ccqe_rc1";         break;
@@ -2437,8 +2623,8 @@ string t2kana::util::AsStringCompact(PhysParamId_t p)
     case ( kNuisSuperkEff1RmuCCnonQE  ) : return "f_sk_eff_1Rmu_ccnonqe";          break;
     case ( kNuisSuperkEff1RmuNC       ) : return "f_sk_eff_1Rmu_nc";               break;
     case ( kNuisSuperkEff1RmuNueCC    ) : return "f_sk_eff_1Rmu_nuecc";            break;
-
-#if FSI_BINS == 1
+#endif
+#if FSI_BINS != 2
     case ( kNuisSuperkEff1ReNueSigCC0 ) : return "sk_1Re_eff_signue_0";            break;
     case ( kNuisSuperkEff1ReNueSigCC1 ) : return "sk_1Re_eff_signue_1";            break;
     case ( kNuisSuperkEff1ReNueSigCC2 ) : return "sk_1Re_eff_signue_2";            break;
@@ -2452,7 +2638,7 @@ string t2kana::util::AsStringCompact(PhysParamId_t p)
     case ( kNuisSuperkEff1ReNC1       ) : return "sk_1Re_eff_nc_1";                break;
     case ( kNuisSuperkEff1ReNC2       ) : return "sk_1Re_eff_nc_2";                break;
 #endif
-
+#endif
     case ( kNuisBANFF00               ) : return "f_banff00";      break;
     case ( kNuisBANFF01               ) : return "f_banff01";      break;
     case ( kNuisBANFF02               ) : return "f_banff02";      break;
@@ -2469,13 +2655,15 @@ string t2kana::util::AsStringCompact(PhysParamId_t p)
     case ( kNuisBANFF13               ) : return "f_banff13";      break;
     case ( kNuisBANFF14               ) : return "f_banff14";      break;
     case ( kNuisBANFF15               ) : return "f_banff15";      break;
-#if BANFF_BINS == 1
+#if (BANFF_BINS != 2) && (BANFF_BINS != 4)
     case ( kNuisBANFF16               ) : return "f_banff16";      break;
     case ( kNuisBANFF17               ) : return "f_banff17";      break;
     case ( kNuisBANFF18               ) : return "f_banff18";      break;
     case ( kNuisBANFF19               ) : return "f_banff19";      break;
     case ( kNuisBANFF20               ) : return "f_banff20";      break;
     case ( kNuisBANFF21               ) : return "f_banff21";      break;
+#endif
+#if BANFF_BINS == 1
     case ( kNuisBANFF22               ) : return "f_banff22";      break;
     case ( kNuisBANFF23               ) : return "f_banff23";      break;
     case ( kNuisBANFF24               ) : return "f_banff24";      break;
@@ -2488,14 +2676,18 @@ string t2kana::util::AsStringCompact(PhysParamId_t p)
 #endif
     case ( kNuisBANFFMARES            ) : return "f_banffmares";   break;
     case ( kNuisBANFFCCQEE0           ) : return "f_banffccqee0";  break;
+#if BANFF_BINS != 3
     case ( kNuisBANFFCCQEE1           ) : return "f_banffccqee1";  break;
     case ( kNuisBANFFCCQEE2           ) : return "f_banffccqee2";  break;
+#endif
     case ( kNuisBANFFCC1piE0          ) : return "f_banffcc1pie0"; break;
+#if BANFF_BINS != 3
     case ( kNuisBANFFCC1piE1          ) : return "f_banffcc1pie1"; break;
-#if BANFF_BINS == 1
+#endif
+#if (BANFF_BINS != 2) && (BANFF_BINS != 4)
     case ( kNuisBANFFNC1pi0           ) : return "f_banffNc1pi0";  break;
 #endif
-#if BANFF_BINS == 3
+#if BANFF_BINS == 4
     case ( kNuisBANFFMECNorm          ) : return "f_banffmec";     break;
     case ( kNuisBANFFPDDDoubleCount   ) : return "f_banffpdd";     break;
 #endif
@@ -2504,43 +2696,55 @@ string t2kana::util::AsStringCompact(PhysParamId_t p)
     case ( kNuisXSecWshape            ) : return "f_wshape";       break;
     case ( kNuisXSecShapeCCoth        ) : return "f_shapeCCoth";   break;
     case ( kNuisXSecPiLessDelta       ) : return "f_pilessdelta";  break;
+#ifndef __NUEONLY__
     case ( kNuisXSecBindE             ) : return "f_bindE";        break;
-
+#endif
     case ( kNuisXSecNormCCcoh         ) : return "f_norm_cccoh";   break;
+#ifndef __NUEONLY__
     case ( kNuisXSecNormNC1piC        ) : return "f_norm_nc1piC";  break;
+#endif
+#ifndef __NUMUONLY__
     case ( kNuisXSecNormNCcoh         ) : return "f_norm_nccoh";   break;
+#endif
     case ( kNuisXSecNormNCoth         ) : return "f_norm_ncoth";   break;
     case ( kNuisXSecNormNuEToNuMu     ) : return "f_norm_nuetonumu";  break;
+#ifndef __NUEONLY__
     case ( kNuisXSecNormAntiNuToNu    ) : return "f_norm_antinutonu"; break;
-
+#endif
+#ifndef SKFSITOGETHER
+#if FSI_BINS != 3
     case ( kNuisFSI000 ) : return "f_fsi000"; break;
     case ( kNuisFSI001 ) : return "f_fsi001"; break;
     case ( kNuisFSI002 ) : return "f_fsi002"; break;
     case ( kNuisFSI003 ) : return "f_fsi003"; break;
     case ( kNuisFSI004 ) : return "f_fsi004"; break;
     case ( kNuisFSI005 ) : return "f_fsi005"; break;
-#if FSI_BINS == 1
-    case ( kNuisFSI1Re000 ) : return "f_fsi1Re000"; break;
-    case ( kNuisFSI1Re001 ) : return "f_fsi1Re001"; break;
-    case ( kNuisFSI1Re002 ) : return "f_fsi1Re002"; break;
-    case ( kNuisFSI1Re003 ) : return "f_fsi1Re003"; break;
-    case ( kNuisFSI1Re004 ) : return "f_fsi1Re004"; break;
-    case ( kNuisFSI1Re005 ) : return "f_fsi1Re005"; break;
-    case ( kNuisFSI1Re006 ) : return "f_fsi1Re006"; break;
-    case ( kNuisFSI1Re007 ) : return "f_fsi1Re007"; break;
-    case ( kNuisFSI1Re008 ) : return "f_fsi1Re008"; break;
-    case ( kNuisFSI1Re009 ) : return "f_fsi1Re009"; break;
-    case ( kNuisFSI1Re010 ) : return "f_fsi1Re010"; break;
-    case ( kNuisFSI1Re011 ) : return "f_fsi1Re011"; break;
 #endif
-
+#if FSI_BINS != 2
+    case ( kNuisFSI006 ) : return "f_fsi1Re000"; break;
+    case ( kNuisFSI007 ) : return "f_fsi1Re001"; break;
+    case ( kNuisFSI008 ) : return "f_fsi1Re002"; break;
+    case ( kNuisFSI009 ) : return "f_fsi1Re003"; break;
+    case ( kNuisFSI010 ) : return "f_fsi1Re004"; break;
+    case ( kNuisFSI011 ) : return "f_fsi1Re005"; break;
+    case ( kNuisFSI012 ) : return "f_fsi1Re006"; break;
+    case ( kNuisFSI013 ) : return "f_fsi1Re007"; break;
+    case ( kNuisFSI014 ) : return "f_fsi1Re008"; break;
+    case ( kNuisFSI015 ) : return "f_fsi1Re009"; break;
+    case ( kNuisFSI016 ) : return "f_fsi1Re010"; break;
+    case ( kNuisFSI017 ) : return "f_fsi1Re011"; break;
+#endif
+#endif
+#ifdef SKFSITOGETHER
+#if FSI_BINS != 3
     case ( kNuisSKDetFSI000 ) : return "f_skdetfsi000"; break;
     case ( kNuisSKDetFSI001 ) : return "f_skdetfsi001"; break;
     case ( kNuisSKDetFSI002 ) : return "f_skdetfsi002"; break;
     case ( kNuisSKDetFSI003 ) : return "f_skdetfsi003"; break;
     case ( kNuisSKDetFSI004 ) : return "f_skdetfsi004"; break;
     case ( kNuisSKDetFSI005 ) : return "f_skdetfsi005"; break;
-#if FSI_BINS == 1
+#endif
+#if FSI_BINS != 2
     case ( kNuisSKDetFSI006 ) : return "f_skdetfsi006"; break;
     case ( kNuisSKDetFSI007 ) : return "f_skdetfsi007"; break;
     case ( kNuisSKDetFSI008 ) : return "f_skdetfsi008"; break;
@@ -2554,7 +2758,7 @@ string t2kana::util::AsStringCompact(PhysParamId_t p)
     case ( kNuisSKDetFSI016 ) : return "f_skdetfsi016"; break;
     case ( kNuisSKDetFSI017 ) : return "f_skdetfsi017"; break;
 #endif
-
+#endif
     default : 
       return "--";
   }
@@ -2575,7 +2779,7 @@ string t2kana::util::AsStringCompact_KDI(PhysParamId_t p)
     case ( kNuisXSecShapeCCoth        ) : return "ccothshp"; break;
     case ( kNuisXSecPiLessDelta       ) : return "pdd";      break;
     case ( kNuisXSecBindE             ) : return "eb";       break;
-#if BANFF_BINS == 3
+#if BANFF_BINS == 4
     case ( kNuisBANFFPDDDoubleCount   ) : return "pddonly";  break;
 #endif
 
@@ -2602,8 +2806,8 @@ string t2kana::util::AsString(t2kana::conv::SuperkMode_t m)
      case ( kSKmMEC             ) : return "numu CC MEC";                       break;
      case ( kSKmNuMuCC1pi       ) : return "numu CC 1pi";                       break;
      case ( kSKmNuMuCCcoh       ) : return "numu CC coh";                       break;
-     case ( kSKmNuMuCCoth_mu    ) : return "numu CC oth ";                      break;
-     case ( kSKmNuMuCCoth_e     ) : return "numu CC oth ";                      break;
+       //     case ( kSKmNuMuCCoth    ) : return "numu CC oth ";                      break;
+     case ( kSKmNuMuCCoth     ) : return "numu CC oth ";                      break;
      case ( kSKmNuMuNC1piC      ) : return "numu NC 1piC";                      break;
      case ( kSKmNuMuNC1pi0      ) : return "numu/nutau NC 1pi0";                break;
      case ( kSKmNuMuNCcoh       ) : return "numu/nutau NC coh";                 break;
@@ -2612,23 +2816,28 @@ string t2kana::util::AsString(t2kana::conv::SuperkMode_t m)
      case ( kSKmOscNuMuCCQE     ) : return "oscillated numu CC QE";             break;
      case ( kSKmOscNuMuCC1pi    ) : return "oscillated numu CC 1pi";            break;  
      case ( kSKmOscNuMuCCcoh    ) : return "oscillated numu CC coh";            break;
-     case ( kSKmOscNuMuCCoth_mu ) : return "oscillated numu CC oth ";           break;
-     case ( kSKmOscNuMuCCoth_e  ) : return "oscillated numu CC oth ";           break;
+       //     case ( kSKmOscNuMuCCoth ) : return "oscillated numu CC oth ";           break;
+     case ( kSKmOscNuMuCCoth  ) : return "oscillated numu CC oth ";           break;
      case ( kSKmNuMuBarCCQE     ) : return "numubar CC QE";                     break;
      case ( kSKmNuMuBarCC1pi    ) : return "numubar CC 1pi";                    break;
      case ( kSKmNuMuBarCCcoh    ) : return "numubar CC coh";                    break;
-     case ( kSKmNuMuBarCCoth_mu ) : return "numubar CC oth";                    break;
-     case ( kSKmNuMuBarCCoth_e  ) : return "numubar CC oth";                    break;
+       //     case ( kSKmNuMuBarCCoth ) : return "numubar CC oth";                    break;
+     case ( kSKmNuMuBarCCoth  ) : return "numubar CC oth";                    break;
      case ( kSKmNuMuBarNC1piC   ) : return "numubar/nutaubar NC 1piC";          break;
      case ( kSKmNuMuBarNC1pi0   ) : return "numubar/nutaubar NC 1pi0";          break;
      case ( kSKmNuMuBarNCcoh    ) : return "numubar/nutaubar NC coh";           break;
      case ( kSKmNuMuBarNCoth_e  ) : return "numubar/nutaubar NC oth";           break;
      case ( kSKmNuMuBarNCoth_mu ) : return "numubar/nutaubar NC oth";           break;
+     case ( kSKmOscNuMuBarCCQE  ) : return "oscillated numubar CC QE";          break;
+     case ( kSKmOscNuMuBarCC1pi ) : return "oscillated numubar CC 1pi";         break;  
+     case ( kSKmOscNuMuBarCCcoh ) : return "oscillated numubar CC coh";         break;
+       //     case ( kSKmOscNuMuCCoth ) : return "oscillated numu CC oth ";        break;
+     case ( kSKmOscNuMuBarCCoth ) : return "oscillated numubar CC oth ";        break;
      case ( kSKmNuECCQE         ) : return "nue CC QE";                         break;
      case ( kSKmNuECC1pi        ) : return "nue CC 1pi";                        break;
      case ( kSKmNuECCcoh        ) : return "nue CC coh";                        break;
-     case ( kSKmNuECCoth_mu     ) : return "nue CC oth";                        break;
-     case ( kSKmNuECCoth_e      ) : return "nue CC oth";                        break;
+       //     case ( kSKmNuECCoth     ) : return "nue CC oth";                        break;
+     case ( kSKmNuECCoth      ) : return "nue CC oth";                        break;
      case ( kSKmNuENC1piC       ) : return "nue NC 1piC";                       break;
      case ( kSKmNuENC1pi0       ) : return "nue NC 1pi0";                       break;
      case ( kSKmNuENCcoh        ) : return "nue NC coh";                        break;
@@ -2637,18 +2846,24 @@ string t2kana::util::AsString(t2kana::conv::SuperkMode_t m)
      case ( kSKmNuEBarCCQE      ) : return "nuebar CC QE";                      break;
      case ( kSKmNuEBarCC1pi     ) : return "nuebar CC 1pi";                     break;
      case ( kSKmNuEBarCCcoh     ) : return "nuebar CC coh";                     break;
-     case ( kSKmNuEBarCCoth_mu  ) : return "nuebar CC oth (numu disap)";        break;
-     case ( kSKmNuEBarCCoth_e   ) : return "nuebar CC oth (nue app)";           break;
+       //     case ( kSKmNuEBarCCoth  ) : return "nuebar CC oth (numu disap)";        break;
+     case ( kSKmNuEBarCCoth   ) : return "nuebar CC oth (nue app)";           break;
      case ( kSKmNuEBarNC1piC    ) : return "nuebar NC 1piC";                    break;
      case ( kSKmNuEBarNC1pi0    ) : return "nuebar NC 1pi0";                    break;
      case ( kSKmNuEBarNCcoh     ) : return "nuebar NC coh";                     break;
      case ( kSKmNuEBarNCoth_e   ) : return "nuebar NC oth (nue app)";           break;
      case ( kSKmNuEBarNCoth_mu  ) : return "nuebar NC oth (numu app)";          break;
+     case ( kSKmOscNuEBarCCQE   ) : return "oscillated nuebar CC QE";           break;
+     case ( kSKmOscNuEBarCC1pi  ) : return "oscillated nuebar CC 1pi";          break;  
+     case ( kSKmOscNuEBarCCcoh  ) : return "oscillated nuebar CC coh";          break;
+       //     case ( kSKmOscNuMuCCoth ) : return "oscillated numu CC oth ";        break;
+     case ( kSKmOscNuEBarCCoth  ) : return "oscillated nuebar CC oth ";         break;
+
      case ( kSKmSigNuECCQE      ) : return "oscillation nue CC QE";                  break;
      case ( kSKmSigNuECC1pi     ) : return "oscillation nue CC 1pi";                 break;
      case ( kSKmSigNuECCcoh     ) : return "oscillation nue CC coh";                 break;
-     case ( kSKmSigNuECCoth_mu  ) : return "oscillation nue CC oth (numu disap)";    break;
-     case ( kSKmSigNuECCoth_e   ) : return "oscillation nue CC oth (nue app)";       break;
+       //     case ( kSKmSigNuECCoth  ) : return "oscillation nue CC oth (numu disap)";    break;
+     case ( kSKmSigNuECCoth   ) : return "oscillation nue CC oth (nue app)";       break;
      default                      : return "--";
   }
   return "";
@@ -2731,8 +2946,8 @@ string t2kana::util::AsStringTex(t2kana::conv::SuperkMode_t m)
      case ( kSKmMEC             ) : return "$\\nu_\\mu$ CC MEC";                                             break;
      case ( kSKmNuMuCC1pi       ) : return "$\\nu_\\mu$ CC 1$\\pi$";                                         break;
      case ( kSKmNuMuCCcoh       ) : return "$\\nu_\\mu$ CC coherent";                                        break;
-     case ( kSKmNuMuCCoth_mu    ) : return "$\\nu_\\mu$ CC other ($\\nu_\\mu$ disap)";                       break;
-     case ( kSKmNuMuCCoth_e     ) : return "$\\nu_\\mu$ CC other";                                           break;
+       //   case ( kSKmNuMuCCoth    ) : return "$\\nu_\\mu$ CC other ($\\nu_\\mu$ disap)";                       break;
+     case ( kSKmNuMuCCoth     ) : return "$\\nu_\\mu$ CC other";                                           break;
      case ( kSKmNuMuNC1piC      ) : return "$\\nu_\\mu$/$\\nu_\\tau$ NC 1$\\pi^{+/-}$";                      break;
      case ( kSKmNuMuNC1pi0      ) : return "$\\nu_\\mu$/$\\nu_\\tau$ NC 1$\\pi^0$";                          break;
      case ( kSKmNuMuNCcoh       ) : return "$\\nu_\\mu$/$\\nu_\\tau$ NC coherent";                           break;
@@ -2741,23 +2956,28 @@ string t2kana::util::AsStringTex(t2kana::conv::SuperkMode_t m)
      case ( kSKmOscNuMuCCQE     ) : return "Osc. $\\nu_\\mu$ CCQE";                                          break;
      case ( kSKmOscNuMuCC1pi    ) : return "Osc. $\\nu_\\mu$ CC 1$\\pi$";                                    break;
      case ( kSKmOscNuMuCCcoh    ) : return "Osc. $\\nu_\\mu$ CC coherent";                                   break; 
-     case ( kSKmOscNuMuCCoth_mu ) : return "Osc. $\\nu_\\mu$ CC other ($\\nu_\\mu$ disap)";                  break;
-     case ( kSKmOscNuMuCCoth_e  ) : return "Osc. $\\nu_\\mu$ CC other";                                      break;
+       //     case ( kSKmOscNuMuCCoth ) : return "Osc. $\\nu_\\mu$ CC other ($\\nu_\\mu$ disap)";                  break;
+     case ( kSKmOscNuMuCCoth  ) : return "Osc. $\\nu_\\mu$ CC other";                                      break;
      case ( kSKmNuMuBarCCQE     ) : return "$\\bar{\\nu_\\mu}$ CCQE";                                        break;
      case ( kSKmNuMuBarCC1pi    ) : return "$\\bar{\\nu_\\mu}$ CC 1$\\pi$";                                  break;
      case ( kSKmNuMuBarCCcoh    ) : return "$\\bar{\\nu_\\mu}$ CC coherent";                                 break;
-     case ( kSKmNuMuBarCCoth_mu ) : return "$\\bar{\\nu_\\mu}$ CC other ($\\nu_\\mu$ disap)";                break;
-     case ( kSKmNuMuBarCCoth_e  ) : return "$\\bar{\\nu_\\mu}$ CC other";                     break;
+       //     case ( kSKmNuMuBarCCoth ) : return "$\\bar{\\nu_\\mu}$ CC other ($\\nu_\\mu$ disap)";                break;
+     case ( kSKmNuMuBarCCoth  ) : return "$\\bar{\\nu_\\mu}$ CC other";                     break;
      case ( kSKmNuMuBarNC1piC   ) : return "$\\bar{\\nu_\\mu}$/$\\bar{\\nu_\\tau}$ NC 1$\\pi^{+/-}$";        break;
      case ( kSKmNuMuBarNC1pi0   ) : return "$\\bar{\\nu_\\mu}$/$\\bar{\\nu_\\tau}$ NC 1$\\pi^0$";            break;
      case ( kSKmNuMuBarNCcoh    ) : return "$\\bar{\\nu_\\mu}$/$\\bar{\\nu_\\tau}$ NC coherent";             break;
      case ( kSKmNuMuBarNCoth_e  ) : return "$\\bar{\\nu_\\mu}$/$\\bar{\\nu_\\tau}$ NC other"; break;
      case ( kSKmNuMuBarNCoth_mu ) : return "$\\bar{\\nu_\\mu}$/$\\bar{\\nu_\\tau}$ NC other ($\\nu_\\mu$ disap)"; break;
+     case ( kSKmOscNuMuBarCCQE  ) : return "Osc. $\\bar{\\nu_\\mu$} CCQE";                                   break;
+     case ( kSKmOscNuMuBarCC1pi ) : return "Osc. $\\bar{\\nu_\\mu$} CC 1$\\pi$";                             break;
+     case ( kSKmOscNuMuBarCCcoh ) : return "Osc. $\\bar{\\nu_\\mu$} CC coherent";                            break; 
+       //     case ( kSKmOscNuMuCCoth ) : return "Osc. $\\nu_\\mu$ CC other ($\\nu_\\mu$ disap)";                  break;
+     case ( kSKmOscNuMuBarCCoth ) : return "Osc. $\\bar{\\nu_\\mu$} CC other";                               break;
      case ( kSKmNuECCQE         ) : return "$\\nu_e$ CCQE";                                                  break;
      case ( kSKmNuECC1pi        ) : return "$\\nu_e$ CC 1$\\pi$";                                            break;
      case ( kSKmNuECCcoh        ) : return "$\\nu_e$ CC coherent";                                           break;
-     case ( kSKmNuECCoth_mu     ) : return "$\\nu_e$ CC other ($\\nu_\\mu$ disap)";                          break;
-     case ( kSKmNuECCoth_e      ) : return "$\\nu_e$ CC other";                               break;
+       //     case ( kSKmNuECCoth     ) : return "$\\nu_e$ CC other ($\\nu_\\mu$ disap)";                          break;
+     case ( kSKmNuECCoth      ) : return "$\\nu_e$ CC other";                               break;
      case ( kSKmNuENC1piC       ) : return "$\\nu_e$ NC 1$\\pi^{+/-}$";                                      break;
      case ( kSKmNuENC1pi0       ) : return "$\\nu_e$ NC 1$\\pi^0$";                                          break;
      case ( kSKmNuENCcoh        ) : return "$\\nu_e$ NC coherent";                                           break;
@@ -2766,18 +2986,23 @@ string t2kana::util::AsStringTex(t2kana::conv::SuperkMode_t m)
      case ( kSKmNuEBarCCQE      ) : return "$\\bar{\\nu_e}$ CCQE";                                           break;
      case ( kSKmNuEBarCC1pi     ) : return "$\\bar{\\nu_e}$ CC 1$\\pi$";                                     break;
      case ( kSKmNuEBarCCcoh     ) : return "$\\bar{\\nu_e}$ CC coherent";                                    break;
-     case ( kSKmNuEBarCCoth_mu  ) : return "$\\bar{\\nu_e}$ CC other ($\\nu_\\mu$ disap)";                   break;
-     case ( kSKmNuEBarCCoth_e   ) : return "$\\bar{\\nu_e}$ CC other";                        break;
+       //     case ( kSKmNuEBarCCoth  ) : return "$\\bar{\\nu_e}$ CC other ($\\nu_\\mu$ disap)";                   break;
+     case ( kSKmNuEBarCCoth   ) : return "$\\bar{\\nu_e}$ CC other";                        break;
      case ( kSKmNuEBarNC1piC    ) : return "$\\bar{\\nu_e}$ NC 1$\\pi^{+/-}$";                               break;
      case ( kSKmNuEBarNC1pi0    ) : return "$\\bar{\\nu_e}$ NC 1$\\pi^0$";                                   break;
      case ( kSKmNuEBarNCcoh     ) : return "$\\bar{\\nu_e}$ NC coherent";                                    break;
      case ( kSKmNuEBarNCoth_e   ) : return "$\\bar{\\nu_e}$ NC other";                        break;
      case ( kSKmNuEBarNCoth_mu  ) : return "$\\bar{\\nu_e}$ NC other ($\\nu_\\mu$ disap)";                     break;
+     case ( kSKmOscNuEBarCCQE   ) : return "Osc. $\\bar{\\nu_e$} CCQE";                                      break;
+     case ( kSKmOscNuEBarCC1pi  ) : return "Osc. $\\bar{\\nu_e$} CC 1$\\pi$";                                break;
+     case ( kSKmOscNuEBarCCcoh  ) : return "Osc. $\\bar{\\nu_e$} CC coherent";                               break; 
+       //     case ( kSKmOscNuMuCCoth ) : return "Osc. $\\nu_\\mu$ CC other ($\\nu_\\mu$ disap)";                  break;
+     case ( kSKmOscNuEBarCCoth  ) : return "Osc. $\\bar{\\nu_e$} CC other";                                  break;
      case ( kSKmSigNuECCQE      ) : return "Osc. $\\nu_e$ CCQE";                                           break;
      case ( kSKmSigNuECC1pi     ) : return "Osc. $\\nu_e$ CC 1$\\pi$";                                     break;
      case ( kSKmSigNuECCcoh     ) : return "Osc. $\\nu_e$ CC coherent";                                    break;
-     case ( kSKmSigNuECCoth_mu  ) : return "Osc. $\\nu_e$ CC other ($\\nu_\\mu$ disap)";                     break;
-     case ( kSKmSigNuECCoth_e   ) : return "Osc. $\\nu_e$ CC other";                        break;
+       //     case ( kSKmSigNuECCoth  ) : return "Osc. $\\nu_e$ CC other ($\\nu_\\mu$ disap)";                     break;
+     case ( kSKmSigNuECCoth   ) : return "Osc. $\\nu_e$ CC other";                        break;
      default                      : return "--";
   }
   return "";
@@ -2803,8 +3028,8 @@ string t2kana::util::AsStringRooTex(t2kana::conv::SuperkMode_t m)
      case ( kSKmMEC             ) : return "#nu_{#mu} CC MEC";                              break;
      case ( kSKmNuMuCC1pi       ) : return "#nu_{#mu} CC 1#pi";                             break;
      case ( kSKmNuMuCCcoh       ) : return "#nu_{#mu} CC coherent";                         break;
-     case ( kSKmNuMuCCoth_mu    ) : return "#nu_{#mu} CC other";                            break;
-     case ( kSKmNuMuCCoth_e     ) : return "#nu_{#mu} CC other";                            break;
+       //     case ( kSKmNuMuCCoth    ) : return "#nu_{#mu} CC other";                            break;
+     case ( kSKmNuMuCCoth     ) : return "#nu_{#mu} CC other";                            break;
      case ( kSKmNuMuNC1piC      ) : return "#nu_{#mu}/#nu_{#tau} NC 1#pi^{+/-}";            break;
      case ( kSKmNuMuNC1pi0      ) : return "#nu_{#mu}/#nu_{#tau} NC 1#pi^{0}";              break;
      case ( kSKmNuMuNCcoh       ) : return "#nu_{#mu}/#nu_{#tau} NC coherent";              break;
@@ -2813,23 +3038,28 @@ string t2kana::util::AsStringRooTex(t2kana::conv::SuperkMode_t m)
      case ( kSKmOscNuMuCCQE     ) : return "Osc. #nu_{#mu} CCQE";                           break;
      case ( kSKmOscNuMuCC1pi    ) : return "Osc. #nu_{#mu} CC 1#pi";                        break;
      case ( kSKmOscNuMuCCcoh    ) : return "Osc. #nu_{#mu} CC coherent";                    break;
-     case ( kSKmOscNuMuCCoth_mu ) : return "Osc. #nu_{#mu} CC other";                       break;
-     case ( kSKmOscNuMuCCoth_e  ) : return "Osc. #nu_{#mu} CC other";                       break;
+       //     case ( kSKmOscNuMuCCoth ) : return "Osc. #nu_{#mu} CC other";                       break;
+     case ( kSKmOscNuMuCCoth  ) : return "Osc. #nu_{#mu} CC other";                       break;
      case ( kSKmNuMuBarCCQE     ) : return "#bar{#nu_{#mu}} CCQE";                          break;
      case ( kSKmNuMuBarCC1pi    ) : return "#bar{#nu_{#mu}} CC 1#pi";                       break;
      case ( kSKmNuMuBarCCcoh    ) : return "#bar{#nu_{#mu}} CC coherent";                   break;
-     case ( kSKmNuMuBarCCoth_mu ) : return "#bar{#nu_{#mu}} CC other";                      break;
-     case ( kSKmNuMuBarCCoth_e  ) : return "#bar{#nu_{#mu}} CC other";                      break;
+       //     case ( kSKmNuMuBarCCoth ) : return "#bar{#nu_{#mu}} CC other";                      break;
+     case ( kSKmNuMuBarCCoth  ) : return "#bar{#nu_{#mu}} CC other";                      break;
      case ( kSKmNuMuBarNC1piC   ) : return "#bar{#nu_{#mu}}/#bar{#nu_{#tau}} NC 1#pi^{+/-}";break;
      case ( kSKmNuMuBarNC1pi0   ) : return "#bar{#nu_{#mu}}/#bar{#nu_{#tau}} NC 1#pi^{0}";  break;
      case ( kSKmNuMuBarNCcoh    ) : return "#bar{#nu_{#mu}}/#bar{#nu_{#tau}} NC coherent";  break;
      case ( kSKmNuMuBarNCoth_e  ) : return "#bar{#nu_{#mu}}/#bar{#nu_{#tau}} NC other";     break;
      case ( kSKmNuMuBarNCoth_mu ) : return "#bar{#nu_{#mu}}/#bar{#nu_{#tau}} NC other";     break;
+     case ( kSKmOscNuMuBarCCQE  ) : return "Osc. #bar{#nu_{#mu}} CCQE";                     break;
+     case ( kSKmOscNuMuBarCC1pi ) : return "Osc. #bar{#nu_{#mu}} CC 1#pi";                  break;
+     case ( kSKmOscNuMuBarCCcoh ) : return "Osc. #bar{#nu_{#mu}} CC coherent";              break;
+       //     case ( kSKmOscNuMuCCoth ) : return "Osc. #nu_{#mu} CC other";                       break;
+     case ( kSKmOscNuMuBarCCoth ) : return "Osc. #bar{#nu_{#mu}} CC other";                 break;
      case ( kSKmNuECCQE         ) : return "#nu_{e} CCQE";                                  break;
      case ( kSKmNuECC1pi        ) : return "#nu_{e} CC 1#pi";                               break;
      case ( kSKmNuECCcoh        ) : return "#nu_{e} CC coherent";                           break;
-     case ( kSKmNuECCoth_mu     ) : return "#nu_{e} CC other";                              break;
-     case ( kSKmNuECCoth_e      ) : return "#nu_{e} CC other";                              break;
+       //     case ( kSKmNuECCoth     ) : return "#nu_{e} CC other";                              break;
+     case ( kSKmNuECCoth      ) : return "#nu_{e} CC other";                              break;
      case ( kSKmNuENC1piC       ) : return "#nu_{e} NC 1#pi^{+/-}";                         break;
      case ( kSKmNuENC1pi0       ) : return "#nu_{e} NC 1#pi^{0}";                           break;
      case ( kSKmNuENCcoh        ) : return "#nu_{e} NC coherent";                           break;
@@ -2838,18 +3068,23 @@ string t2kana::util::AsStringRooTex(t2kana::conv::SuperkMode_t m)
      case ( kSKmNuEBarCCQE      ) : return "#bar{#nu_{e}} CCQE";                            break;
      case ( kSKmNuEBarCC1pi     ) : return "#bar{#nu_{e}} CC 1#pi";                         break;
      case ( kSKmNuEBarCCcoh     ) : return "#bar{#nu_{e}} CC coherent";                     break;
-     case ( kSKmNuEBarCCoth_mu  ) : return "#bar{#nu_{e}} CC other";                        break;
-     case ( kSKmNuEBarCCoth_e   ) : return "#bar{#nu_{e}} CC other";                        break;
+       //     case ( kSKmNuEBarCCoth  ) : return "#bar{#nu_{e}} CC other";                        break;
+     case ( kSKmNuEBarCCoth   ) : return "#bar{#nu_{e}} CC other";                        break;
      case ( kSKmNuEBarNC1piC    ) : return "#bar{#nu_{e}} NC 1#pi^{+/-}";                   break;
      case ( kSKmNuEBarNC1pi0    ) : return "#bar{#nu_{e}} NC 1#pi^{0}";                     break;
      case ( kSKmNuEBarNCcoh     ) : return "#bar{#nu_{e}} NC coherent";                     break;
      case ( kSKmNuEBarNCoth_e   ) : return "#bar{#nu_{e}} NC other";                        break;
      case ( kSKmNuEBarNCoth_mu  ) : return "#bar{#nu_{e}} NC other";                        break;
+     case ( kSKmOscNuEBarCCQE   ) : return "Osc. #bar{#nu_{e}} CCQE";                       break;
+     case ( kSKmOscNuEBarCC1pi  ) : return "Osc. #bar{#nu_{e}} CC 1#pi";                    break;
+     case ( kSKmOscNuEBarCCcoh  ) : return "Osc. #bar{#nu_{e}} CC coherent";                break;
+       //     case ( kSKmOscNuMuCCoth ) : return "Osc. #nu_{#mu} CC other";                       break;
+     case ( kSKmOscNuEBarCCoth  ) : return "Osc. #bar{#nu_{e}} CC other";                   break;
      case ( kSKmSigNuECCQE      ) : return "Osc. #nu_{e} CCQE";                             break;
      case ( kSKmSigNuECC1pi     ) : return "Osc. #nu_{e} CC 1#pi";                          break;
      case ( kSKmSigNuECCcoh     ) : return "Osc. #nu_{e} CC coherent";                      break;
-     case ( kSKmSigNuECCoth_mu  ) : return "Osc. #nu_{e} CC other";                         break;
-     case ( kSKmSigNuECCoth_e   ) : return "Osc. #nu_{e} CC other";                         break;
+       //     case ( kSKmSigNuECCoth  ) : return "Osc. #nu_{e} CC other";                         break;
+     case ( kSKmSigNuECCoth   ) : return "Osc. #nu_{e} CC other";                         break;
      default                      : return "";
   }
   return "";
@@ -2927,8 +3162,8 @@ string t2kana::util::AsStringCompact (t2kana::conv::SuperkMode_t m)
      case ( kSKmMEC             ) : return "mec";            break;
      case ( kSKmNuMuCC1pi       ) : return "numucc1pi";      break;
      case ( kSKmNuMuCCcoh       ) : return "numucccoh";      break;
-     case ( kSKmNuMuCCoth_mu    ) : return "numuccoth";      break;
-     case ( kSKmNuMuCCoth_e     ) : return "numuccoth";      break;
+       //     case ( kSKmNuMuCCoth    ) : return "numuccoth";      break;
+     case ( kSKmNuMuCCoth     ) : return "numuccoth";      break;
      case ( kSKmNuMuNC1piC      ) : return "numunc1piC";     break;
      case ( kSKmNuMuNC1pi0      ) : return "numunc1pi0";     break;
      case ( kSKmNuMuNCcoh       ) : return "numunccoh";      break;
@@ -2937,23 +3172,28 @@ string t2kana::util::AsStringCompact (t2kana::conv::SuperkMode_t m)
      case ( kSKmOscNuMuCCQE     ) : return "oscnumuccqe";    break;
      case ( kSKmOscNuMuCC1pi    ) : return "oscnumucc1pi";   break;
      case ( kSKmOscNuMuCCcoh    ) : return "oscnumucccoh";   break;
-     case ( kSKmOscNuMuCCoth_mu ) : return "oscnumuccoth";   break;
-     case ( kSKmOscNuMuCCoth_e  ) : return "oscnumuccoth";   break;
+       //     case ( kSKmOscNuMuCCoth ) : return "oscnumuccoth";   break;
+     case ( kSKmOscNuMuCCoth  ) : return "oscnumuccoth";   break;
      case ( kSKmNuMuBarCCQE     ) : return "numubarccqe";    break;
      case ( kSKmNuMuBarCC1pi    ) : return "numubarcc1pi";   break;
      case ( kSKmNuMuBarCCcoh    ) : return "numubarcccoh";   break;
-     case ( kSKmNuMuBarCCoth_mu ) : return "numubarccoth";   break;
-     case ( kSKmNuMuBarCCoth_e  ) : return "numubarccoth";   break;
+       //     case ( kSKmNuMuBarCCoth ) : return "numubarccoth";   break;
+     case ( kSKmNuMuBarCCoth  ) : return "numubarccoth";   break;
      case ( kSKmNuMuBarNC1piC   ) : return "numubarnc1piC";  break;
      case ( kSKmNuMuBarNC1pi0   ) : return "numubarnc1pi0";  break;
      case ( kSKmNuMuBarNCcoh    ) : return "numubarnccoh";   break;
      case ( kSKmNuMuBarNCoth_e  ) : return "numubarncoth";   break;
      case ( kSKmNuMuBarNCoth_mu ) : return "numubarncoth";   break;
+     case ( kSKmOscNuMuBarCCQE  ) : return "oscnumubarccqe";    break;
+     case ( kSKmOscNuMuBarCC1pi ) : return "oscnumubarcc1pi";   break;
+     case ( kSKmOscNuMuBarCCcoh ) : return "oscnumubarcccoh";   break;
+       //     case ( kSKmOscNuMuCCoth ) : return "oscnumuccoth";   break;
+     case ( kSKmOscNuMuBarCCoth ) : return "oscnumubarccoth";   break;
      case ( kSKmNuECCQE         ) : return "nueccqe";        break;
      case ( kSKmNuECC1pi        ) : return "nuecc1pi";       break;
      case ( kSKmNuECCcoh        ) : return "nuecccoh";       break;
-     case ( kSKmNuECCoth_mu     ) : return "nueccoth";       break;
-     case ( kSKmNuECCoth_e      ) : return "nueccoth";       break;
+       //     case ( kSKmNuECCoth     ) : return "nueccoth";       break;
+     case ( kSKmNuECCoth      ) : return "nueccoth";       break;
      case ( kSKmNuENC1piC       ) : return "nuenc1piC";      break;
      case ( kSKmNuENC1pi0       ) : return "nuenc1pi0";      break;
      case ( kSKmNuENCcoh        ) : return "nuenccoh";       break;
@@ -2962,18 +3202,23 @@ string t2kana::util::AsStringCompact (t2kana::conv::SuperkMode_t m)
      case ( kSKmNuEBarCCQE      ) : return "nuebarccqe";     break;
      case ( kSKmNuEBarCC1pi     ) : return "nuebarcc1pi";    break;
      case ( kSKmNuEBarCCcoh     ) : return "nuebarcccoh";    break;
-     case ( kSKmNuEBarCCoth_mu  ) : return "nuebarccoth";    break;
-     case ( kSKmNuEBarCCoth_e   ) : return "nuebarccoth";    break;
+       //     case ( kSKmNuEBarCCoth  ) : return "nuebarccoth";    break;
+     case ( kSKmNuEBarCCoth   ) : return "nuebarccoth";    break;
      case ( kSKmNuEBarNC1piC    ) : return "nuebarnc1piC";   break;
      case ( kSKmNuEBarNC1pi0    ) : return "nuebarnc1pi0";   break;
      case ( kSKmNuEBarNCcoh     ) : return "nuebarnccoh";    break;
      case ( kSKmNuEBarNCoth_e   ) : return "nuebarncoth";    break;
      case ( kSKmNuEBarNCoth_mu  ) : return "nuebarncoth";    break;
+     case ( kSKmOscNuEBarCCQE   ) : return "oscnuebarccqe";    break;
+     case ( kSKmOscNuEBarCC1pi  ) : return "oscnuebarcc1pi";   break;
+     case ( kSKmOscNuEBarCCcoh  ) : return "oscnuebarcccoh";   break;
+       //     case ( kSKmOscNuMuCCoth ) : return "oscnumuccoth";   break;
+     case ( kSKmOscNuEBarCCoth  ) : return "oscnuebarccoth";   break;
      case ( kSKmSigNuECCQE      ) : return "signueccqe";     break;
      case ( kSKmSigNuECC1pi     ) : return "signuecc1pi";    break;
      case ( kSKmSigNuECCcoh     ) : return "signuecccoh";    break;
-     case ( kSKmSigNuECCoth_mu  ) : return "signueccoth";    break;
-     case ( kSKmSigNuECCoth_e   ) : return "signueccoth";    break;
+       //     case ( kSKmSigNuECCoth  ) : return "signueccoth";    break;
+     case ( kSKmSigNuECCoth   ) : return "signueccoth";    break;
      default                      : return "";
   }
   return "";
@@ -2989,8 +3234,8 @@ string t2kana::util::AsStringCompact_KDI (t2kana::conv::SuperkMode_t m)
      case ( kSKmMEC             ) : return "mec";             break;
      case ( kSKmNuMuCC1pi       ) : return "numu_ccpi";       break;
      case ( kSKmNuMuCCcoh       ) : return "numu_cccoh";      break;
-     case ( kSKmNuMuCCoth_mu    ) : return "numu_ccoth";      break;
-     case ( kSKmNuMuCCoth_e     ) : return "numu_ccoth";      break;
+       //     case ( kSKmNuMuCCoth    ) : return "numu_ccoth";      break;
+     case ( kSKmNuMuCCoth     ) : return "numu_ccoth";      break;
      case ( kSKmNuMuNC1piC      ) : return "numu_ncpi";       break;
      case ( kSKmNuMuNC1pi0      ) : return "numu_nc1pi0";     break;
      case ( kSKmNuMuNCcoh       ) : return "numu_nccoh";      break;
@@ -2999,13 +3244,13 @@ string t2kana::util::AsStringCompact_KDI (t2kana::conv::SuperkMode_t m)
      case ( kSKmOscNuMuCCQE     ) : return "do_not_know_kdi_name_numu_ccqe";       break;
      case ( kSKmOscNuMuCC1pi    ) : return "do_not_know_kdi_name_numu_ccpi";       break;
      case ( kSKmOscNuMuCCcoh    ) : return "do_not_know_kdi_name_numu_cccoh";      break;
-     case ( kSKmOscNuMuCCoth_mu ) : return "do_not_know_kdi_name_numu_ccoth";      break;
-     case ( kSKmOscNuMuCCoth_e  ) : return "do_not_know_kdi_name_numu_ccoth";      break;
+       //     case ( kSKmOscNuMuCCoth ) : return "do_not_know_kdi_name_numu_ccoth";      break;
+     case ( kSKmOscNuMuCCoth  ) : return "do_not_know_kdi_name_numu_ccoth";      break;
      case ( kSKmNuMuBarCCQE     ) : return "numb_ccqe";    break;
      case ( kSKmNuMuBarCC1pi    ) : return "numb_ccpi";    break;
      case ( kSKmNuMuBarCCcoh    ) : return "numb_cccoh";   break;
-     case ( kSKmNuMuBarCCoth_mu ) : return "numb_ccoth";   break;
-     case ( kSKmNuMuBarCCoth_e  ) : return "numb_ccoth";   break;
+       //     case ( kSKmNuMuBarCCoth ) : return "numb_ccoth";   break;
+     case ( kSKmNuMuBarCCoth  ) : return "numb_ccoth";   break;
      case ( kSKmNuMuBarNC1piC   ) : return "numb_ncpi";    break;
      case ( kSKmNuMuBarNC1pi0   ) : return "numb_nc1pi0";  break;
      case ( kSKmNuMuBarNCcoh    ) : return "numb_nccoh";   break;
@@ -3014,8 +3259,8 @@ string t2kana::util::AsStringCompact_KDI (t2kana::conv::SuperkMode_t m)
      case ( kSKmNuECCQE         ) : return "nue_ccqe";        break;
      case ( kSKmNuECC1pi        ) : return "nue_ccpi";        break;
      case ( kSKmNuECCcoh        ) : return "nue_cccoh";       break;
-     case ( kSKmNuECCoth_mu     ) : return "nue_ccoth";       break;
-     case ( kSKmNuECCoth_e      ) : return "nue_ccoth";       break;
+       //     case ( kSKmNuECCoth     ) : return "nue_ccoth";       break;
+     case ( kSKmNuECCoth      ) : return "nue_ccoth";       break;
      case ( kSKmNuENC1piC       ) : return "nue_ncpi";        break;
      case ( kSKmNuENC1pi0       ) : return "nue_nc1pi0";      break;
      case ( kSKmNuENCcoh        ) : return "nue_nccoh";       break;
@@ -3024,8 +3269,8 @@ string t2kana::util::AsStringCompact_KDI (t2kana::conv::SuperkMode_t m)
      case ( kSKmNuEBarCCQE      ) : return "nueb_ccqe";     break;
      case ( kSKmNuEBarCC1pi     ) : return "nueb_ccpi";     break;
      case ( kSKmNuEBarCCcoh     ) : return "nueb_cccoh";    break;
-     case ( kSKmNuEBarCCoth_mu  ) : return "nueb_ccoth";    break;
-     case ( kSKmNuEBarCCoth_e   ) : return "nueb_ccoth";    break;
+       //     case ( kSKmNuEBarCCoth  ) : return "nueb_ccoth";    break;
+     case ( kSKmNuEBarCCoth   ) : return "nueb_ccoth";    break;
      case ( kSKmNuEBarNC1piC    ) : return "nueb_ncpi";     break;
      case ( kSKmNuEBarNC1pi0    ) : return "nueb_nc1pi0";   break;
      case ( kSKmNuEBarNCcoh     ) : return "nueb_nccoh";    break;
@@ -3034,8 +3279,8 @@ string t2kana::util::AsStringCompact_KDI (t2kana::conv::SuperkMode_t m)
      case ( kSKmSigNuECCQE      ) : return "signue_ccqe";     break;
      case ( kSKmSigNuECC1pi     ) : return "signue_ccpi";     break;
      case ( kSKmSigNuECCcoh     ) : return "signue_cccoh";    break;
-     case ( kSKmSigNuECCoth_mu  ) : return "signue_ccoth";    break;
-     case ( kSKmSigNuECCoth_e   ) : return "signue_ccoth";    break;
+       //     case ( kSKmSigNuECCoth  ) : return "signue_ccoth";    break;
+     case ( kSKmSigNuECCoth   ) : return "signue_ccoth";    break;
      default                      : return "";
   }
   return "";
@@ -3075,10 +3320,10 @@ t2kana::conv::SuperkMode_t t2kana::util::SuperkModeFromString(string sh)
   if(sh == "numu CC MEC") return kSKmMEC;
   if(sh == "numu CC 1pi") return kSKmNuMuCC1pi;
   if(sh == "numu CC coh") return kSKmNuMuCCcoh;
-  if(sh == "numu CC oth") return kSKmNuMuCCoth_mu;
-  if(sh == "numu CC oth") return kSKmNuMuCCoth_mu;
-  if(sh == "numu CC oth (numu disap)") return kSKmNuMuCCoth_mu;
-  if(sh == "numu CC oth (nue app)") return kSKmNuMuCCoth_e;
+  //  if(sh == "numu CC oth") return kSKmNuMuCCoth_mu;
+  if(sh == "numu CC oth") return kSKmNuMuCCoth;
+  //  if(sh == "numu CC oth (numu disap)") return kSKmNuMuCCoth_mu;
+  //if(sh == "numu CC oth (nue app)") return kSKmNuMuCCoth_e;
   if(sh == "numu NC 1piC") return kSKmNuMuNC1piC;
   if(sh == "numu/nutau NC 1pi0") return kSKmNuMuNC1pi0;
   if(sh == "numu/nutau NC coh") return kSKmNuMuNCcoh;
@@ -3088,15 +3333,17 @@ t2kana::conv::SuperkMode_t t2kana::util::SuperkModeFromString(string sh)
   if(sh == "oscillated numu CC QE") return kSKmOscNuMuCCQE;
   if(sh == "oscillated numu CC 1pi") return kSKmOscNuMuCC1pi;
   if(sh == "oscillated numu CC coh") return kSKmOscNuMuCCcoh;
-  if(sh == "oscillated numu CC oth") return kSKmOscNuMuCCoth_mu;
-  if(sh == "oscillated numu CC oth (numu disap)") return kSKmOscNuMuCCoth_mu;
-  if(sh == "oscillated numu CC oth (nue app)") return kSKmOscNuMuCCoth_e;
+  //  if(sh == "oscillated numu CC oth") return kSKmOscNuMuCCoth_mu;
+  if(sh == "oscillated numu CC oth") return kSKmOscNuMuCCoth;
+  //  if(sh == "oscillated numu CC oth (numu disap)") return kSKmOscNuMuCCoth_mu;
+  //  if(sh == "oscillated numu CC oth (nue app)") return kSKmOscNuMuCCoth_e;
   if(sh == "numubar CC QE") return kSKmNuMuBarCCQE;
   if(sh == "numubar CC 1pi") return kSKmNuMuBarCC1pi;
   if(sh == "numubar CC coh") return kSKmNuMuBarCCcoh;
-  if(sh == "numubar CC oth") return kSKmNuMuBarCCoth_mu;
-  if(sh == "numubar CC oth (numu disap)") return kSKmNuMuBarCCoth_mu;
-  if(sh == "numubar CC oth (nue app)") return kSKmNuMuBarCCoth_e;
+  //  if(sh == "numubar CC oth") return kSKmNuMuBarCCoth_mu;
+  if(sh == "numubar CC oth") return kSKmNuMuBarCCoth;
+  //  if(sh == "numubar CC oth (numu disap)") return kSKmNuMuBarCCoth_mu;
+  //  if(sh == "numubar CC oth (nue app)") return kSKmNuMuBarCCoth_e;
   if(sh == "numubar/nutaubar NC 1piC") return kSKmNuMuBarNC1piC;
   if(sh == "numubar/nutaubar NC 1pi0") return kSKmNuMuBarNC1pi0;
   if(sh == "numubar/nutaubar NC coh") return kSKmNuMuBarNCcoh;
@@ -3106,9 +3353,10 @@ t2kana::conv::SuperkMode_t t2kana::util::SuperkModeFromString(string sh)
   if(sh == "nue CC QE") return kSKmNuECCQE;
   if(sh == "nue CC 1pi") return kSKmNuECC1pi;
   if(sh == "nue CC coh") return kSKmNuECCcoh;
-  if(sh == "nue CC oth") return kSKmNuECCoth_mu;
-  if(sh == "nue CC oth (numu disap)") return kSKmNuECCoth_mu;
-  if(sh == "nue CC oth (nue app)") return kSKmNuECCoth_e;
+  //  if(sh == "nue CC oth") return kSKmNuECCoth_mu;
+  if(sh == "nue CC oth") return kSKmNuECCoth;
+  //  if(sh == "nue CC oth (numu disap)") return kSKmNuECCoth_mu;
+  //if(sh == "nue CC oth (nue app)") return kSKmNuECCoth_e;
   if(sh == "nue NC 1piC") return kSKmNuENC1piC;
   if(sh == "nue NC 1pi0") return kSKmNuENC1pi0;
   if(sh == "nue NC coh") return kSKmNuENCcoh;
@@ -3118,9 +3366,10 @@ t2kana::conv::SuperkMode_t t2kana::util::SuperkModeFromString(string sh)
   if(sh == "nuebar CC QE") return kSKmNuEBarCCQE;
   if(sh == "nuebar CC 1pi") return kSKmNuEBarCC1pi;
   if(sh == "nuebar CC coh") return kSKmNuEBarCCcoh;
-  if(sh == "nuebar CC oth") return kSKmNuEBarCCoth_mu;
-  if(sh == "nuebar CC oth (numu disap)") return kSKmNuEBarCCoth_mu;
-  if(sh == "nuebar CC oth (nue app)") return kSKmNuEBarCCoth_e;
+  //  if(sh == "nuebar CC oth") return kSKmNuEBarCCoth_mu;
+  if(sh == "nuebar CC oth") return kSKmNuEBarCCoth;
+  //  if(sh == "nuebar CC oth (numu disap)") return kSKmNuEBarCCoth_mu;
+  //if(sh == "nuebar CC oth (nue app)") return kSKmNuEBarCCoth_e;
   if(sh == "nuebar NC 1piC") return kSKmNuEBarNC1piC;
   if(sh == "nuebar NC 1pi0") return kSKmNuEBarNC1pi0;
   if(sh == "nuebar NC coh") return kSKmNuEBarNCcoh;
@@ -3130,9 +3379,10 @@ t2kana::conv::SuperkMode_t t2kana::util::SuperkModeFromString(string sh)
   if(sh == "oscillation nue CC QE") return kSKmSigNuECCQE;
   if(sh == "oscillation nue CC 1pi") return kSKmSigNuECC1pi;
   if(sh == "oscillation nue CC coh") return kSKmSigNuECCcoh;
-  if(sh == "oscillation nue CC oth") return kSKmSigNuECCoth_mu;
-  if(sh == "oscillation nue CC oth (numu disap)") return kSKmSigNuECCoth_mu;
-  if(sh == "oscillation nue CC oth (nue app)") return kSKmSigNuECCoth_e;
+  //  if(sh == "oscillation nue CC oth") return kSKmSigNuECCoth_mu;
+  if(sh == "oscillation nue CC oth") return kSKmSigNuECCoth;
+  //  if(sh == "oscillation nue CC oth (numu disap)") return kSKmSigNuECCoth_mu;
+  //if(sh == "oscillation nue CC oth (nue app)") return kSKmSigNuECCoth_e;
 
   return kSKmUndefined;
 }
@@ -3222,14 +3472,17 @@ t2kana::conv::PhysParamId_t
   if(sh == "sinsq2theta_decoh") return kPhypSinsq2ThetaDecoh;
 
   if(sh == "sk_energy_scale") return kNuisSuperkEnergyScale;
+#ifndef SKFSITOGETHER
+#if FSI_BINS != 3
   if(sh == "sk_1Rmu_ccqe_other_eff") return kNuisSuperkEff1RmuCCQEoth;
   if(sh == "sk_1Rmu_ccqe_ring_counting_eff_0") return kNuisSuperkEff1RmuCCQErc0u;
   if(sh == "sk_1Rmu_ccqe_ring_counting_eff_1") return kNuisSuperkEff1RmuCCQErc1u;
   if(sh == "sk_1Rmu_ccqe_ring_counting_eff_2") return kNuisSuperkEff1RmuCCQErc2u;
   if(sh == "sk_1Rmu_ccnonqe_eff") return kNuisSuperkEff1RmuCCnonQE;
   if(sh == "sk_1Rmu_nc_eff") return kNuisSuperkEff1RmuNC;
-#if FSI_BINS == 1
   if(sh == "sk_1Rmu_nuecc_eff") return kNuisSuperkEff1RmuNueCC;
+#endif
+#if FSI_BINS != 2
   if(sh == "sk_1Re_eff_signue_0") return kNuisSuperkEff1ReNueSigCC0;
   if(sh == "sk_1Re_eff_signue_1") return kNuisSuperkEff1ReNueSigCC1;
   if(sh == "sk_1Re_eff_signue_2") return kNuisSuperkEff1ReNueSigCC2;
@@ -3243,7 +3496,7 @@ t2kana::conv::PhysParamId_t
   if(sh == "sk_1Re_eff_nc_1") return kNuisSuperkEff1ReNC1;
   if(sh == "sk_1Re_eff_nc_2") return kNuisSuperkEff1ReNC2;
 #endif
-
+#endif
   if(sh == "banff_00") return kNuisBANFF00;
   if(sh == "banff_01") return kNuisBANFF01;
   if(sh == "banff_02") return kNuisBANFF02;
@@ -3260,13 +3513,15 @@ t2kana::conv::PhysParamId_t
   if(sh == "banff_13") return kNuisBANFF13;
   if(sh == "banff_14") return kNuisBANFF14;
   if(sh == "banff_15") return kNuisBANFF15;
-#if BANFF_BINS == 1
+#if (BANFF_BINS != 2) && (BANFF_BINS != 4)
   if(sh == "banff_16") return kNuisBANFF16;
   if(sh == "banff_17") return kNuisBANFF17;
   if(sh == "banff_18") return kNuisBANFF18;
   if(sh == "banff_19") return kNuisBANFF19;
   if(sh == "banff_20") return kNuisBANFF20;
   if(sh == "banff_21") return kNuisBANFF21;
+#endif
+#if BANFF_BINS == 1
   if(sh == "banff_22") return kNuisBANFF22;
   if(sh == "banff_23") return kNuisBANFF23;
   if(sh == "banff_24") return kNuisBANFF24;
@@ -3275,14 +3530,18 @@ t2kana::conv::PhysParamId_t
   if(sh == "banff_maqe")    return kNuisBANFFMAQE; 
   if(sh == "banff_mares")   return kNuisBANFFMARES;
   if(sh == "banff_ccqeE0")  return kNuisBANFFCCQEE0;
+#if BANFF_BINS != 3
   if(sh == "banff_ccqeE1")  return kNuisBANFFCCQEE1;
   if(sh == "banff_ccqeE2")  return kNuisBANFFCCQEE2;
+#endif
   if(sh == "banff_cc1piE0") return kNuisBANFFCC1piE0;
+#if BANFF_BINS != 3
   if(sh == "banff_cc1piE1") return kNuisBANFFCC1piE1;
-#if BANFF_BINS == 1
+#endif
+#if (BANFF_BINS != 2) && (BANFF_BINS != 4)
   if(sh == "banff_nc1pi0") return kNuisBANFFNC1pi0;
 #endif
-#if BANFF_BINS == 3
+#if BANFF_BINS == 4
   if(sh == "banff_mecnorm")  return kNuisBANFFMECNorm;
   if(sh == "banff_pdd")      return kNuisBANFFPDDDoubleCount;
 #endif
@@ -3297,7 +3556,7 @@ t2kana::conv::PhysParamId_t
   if(sh == "banff_30") return kNuisBANFFCC1piE0;
   if(sh == "banff_31") return kNuisBANFFCC1piE1;
   if(sh == "banff_32") return kNuisBANFFNC1pi0;
-#elif BANFF_BINS >= 2
+#elif BANFF_BINS != 3
   if(sh == "banff_16")    return kNuisBANFFMAQE; 
   if(sh == "banff_17")   return kNuisBANFFMARES;
   if(sh == "banff_18")  return kNuisBANFFCCQEE0;
@@ -3305,54 +3564,73 @@ t2kana::conv::PhysParamId_t
   if(sh == "banff_20")  return kNuisBANFFCCQEE2;
   if(sh == "banff_21") return kNuisBANFFCC1piE0;
   if(sh == "banff_22") return kNuisBANFFCC1piE1;
-#if BANFF_BINS == 3
+#elif BANFF_BINS == 3
+  if(sh == "banff_22")    return kNuisBANFFMAQE;
+  if(sh == "banff_23")   return kNuisBANFFMARES;
+  if(sh == "banff_24")  return kNuisBANFFCCQEE0;
+  if(sh == "banff_25") return kNuisBANFFCC1piE0;
+  if(sh == "banff_26") return kNuisBANFFNC1pi0;
+#endif
+#if BANFF_BINS == 4
   if(sh == "banff_23")  return kNuisBANFFMECNorm;
   if(sh == "banff_24")  return kNuisBANFFPDDDoubleCount;
 #endif
-#endif
+
 
   if(sh == "xsec_pf")           return kNuisXSecFermiMom;
   if(sh == "xsec_sf")           return kNuisXSecSpecFunc;
   if(sh == "xsec_wshape")       return kNuisXSecWshape;
   if(sh == "xsec_shape_ccoth")  return kNuisXSecShapeCCoth;
   if(sh == "xsec_pilessdelta")  return kNuisXSecPiLessDelta;
+#ifndef __NUEONLY__
   if(sh == "xsec_bindE")        return kNuisXSecBindE;
-
+#endif
   if(sh == "xsec_norm_cccoh")   return kNuisXSecNormCCcoh;
+#ifndef __NUEONLY__
   if(sh == "xsec_norm_nc1piC")  return kNuisXSecNormNC1piC;
+#endif
+#ifndef __NUMUONLY__
   if(sh == "xsec_norm_nccoh")   return kNuisXSecNormNCcoh;
+#endif
   if(sh == "xsec_norm_ncoth")   return kNuisXSecNormNCoth;
   if(sh == "xsec_norm_nuetonumu") return kNuisXSecNormNuEToNuMu;
+#ifndef __NUEONLY__
   if(sh == "xsec_norm_antinutonu") return kNuisXSecNormAntiNuToNu;
-
+#endif
+#ifndef SKFSITOGETHER
+#if FSI_BINS != 3
   if(sh == "fsi_000") return kNuisFSI000;
   if(sh == "fsi_001") return kNuisFSI001;
   if(sh == "fsi_002") return kNuisFSI002;
   if(sh == "fsi_003") return kNuisFSI003;
   if(sh == "fsi_004") return kNuisFSI004;
   if(sh == "fsi_005") return kNuisFSI005;
-#if FSI_BINS == 1
-  if(sh == "fsi_1Re000") return kNuisFSI1Re000;
-  if(sh == "fsi_1Re001") return kNuisFSI1Re001;
-  if(sh == "fsi_1Re002") return kNuisFSI1Re002;
-  if(sh == "fsi_1Re003") return kNuisFSI1Re003;
-  if(sh == "fsi_1Re004") return kNuisFSI1Re004;
-  if(sh == "fsi_1Re005") return kNuisFSI1Re005;
-  if(sh == "fsi_1Re006") return kNuisFSI1Re006;
-  if(sh == "fsi_1Re007") return kNuisFSI1Re007;
-  if(sh == "fsi_1Re008") return kNuisFSI1Re008;
-  if(sh == "fsi_1Re009") return kNuisFSI1Re009;
-  if(sh == "fsi_1Re010") return kNuisFSI1Re010;
-  if(sh == "fsi_1Re011") return kNuisFSI1Re011;
 #endif
-
+#if FSI_BINS != 2
+  if(sh == "fsi_006") return kNuisFSI006;
+  if(sh == "fsi_007") return kNuisFSI007;
+  if(sh == "fsi_008") return kNuisFSI008;
+  if(sh == "fsi_009") return kNuisFSI009;
+  if(sh == "fsi_010") return kNuisFSI010;
+  if(sh == "fsi_011") return kNuisFSI011;
+  if(sh == "fsi_012") return kNuisFSI012;
+  if(sh == "fsi_013") return kNuisFSI013;
+  if(sh == "fsi_014") return kNuisFSI014;
+  if(sh == "fsi_015") return kNuisFSI015;
+  if(sh == "fsi_016") return kNuisFSI016;
+  if(sh == "fsi_017") return kNuisFSI017;
+#endif
+#endif
+#ifdef SKFSITOGETHER
+#if FSI_BINS != 3
   if(sh == "skdetfsi_000") return kNuisSKDetFSI000;
   if(sh == "skdetfsi_001") return kNuisSKDetFSI001;
   if(sh == "skdetfsi_002") return kNuisSKDetFSI002;
   if(sh == "skdetfsi_003") return kNuisSKDetFSI003;
   if(sh == "skdetfsi_004") return kNuisSKDetFSI004;
   if(sh == "skdetfsi_005") return kNuisSKDetFSI005;
-#if FSI_BINS == 1
+#endif
+#if FSI_BINS != 2
   if(sh == "skdetfsi_006") return kNuisSKDetFSI006;
   if(sh == "skdetfsi_007") return kNuisSKDetFSI007;
   if(sh == "skdetfsi_008") return kNuisSKDetFSI008;
@@ -3366,7 +3644,7 @@ t2kana::conv::PhysParamId_t
   if(sh == "skdetfsi_016") return kNuisSKDetFSI016;
   if(sh == "skdetfsi_017") return kNuisSKDetFSI017;
 #endif
-
+#endif
   cout << sh << " not yet supported in util::PhysParamIdFromString()" << endl;
   return kPhypUndefined;
 }
@@ -3390,6 +3668,8 @@ t2kana::conv::PhysParamId_t t2kana::util::PhysParamIdFromLongString(string sh)
   if(sh == "sin^2(2*theta_decoh)") return kPhypSinsq2ThetaDecoh;
 
   if(sh == "SK energy scale"                ) return kNuisSuperkEnergyScale;
+#ifndef SKFSITOGETHER
+#if FSI_BINS != 3
   if(sh == "SK efficiency; 1Rmu; CCQE/Other") return kNuisSuperkEff1RmuCCQEoth;
   if(sh == "SK efficiency; 1Rmu; CCQE/RC0"  ) return kNuisSuperkEff1RmuCCQErc0u;
   if(sh == "SK efficiency; 1Rmu; CCQE/RC1"  ) return kNuisSuperkEff1RmuCCQErc1u;
@@ -3397,7 +3677,8 @@ t2kana::conv::PhysParamId_t t2kana::util::PhysParamIdFromLongString(string sh)
   if(sh == "SK efficiency; 1Rmu; CCnonQE"   ) return kNuisSuperkEff1RmuCCnonQE;
   if(sh == "SK efficiency; 1Rmu; NC"        ) return kNuisSuperkEff1RmuNC;
   if(sh == "SK efficiency; 1Rmu; nue CC"    ) return kNuisSuperkEff1RmuNueCC;
-#if FSI_BINS == 1
+#endif
+#if FSI_BINS != 2
   if(sh == "SK efficiency; 1Re; osc. nue CC E0") return kNuisSuperkEff1ReNueSigCC0;
   if(sh == "SK efficiency; 1Re; osc. nue CC E1") return kNuisSuperkEff1ReNueSigCC1;
   if(sh == "SK efficiency; 1Re; osc. nue CC E2") return kNuisSuperkEff1ReNueSigCC2;
@@ -3411,7 +3692,7 @@ t2kana::conv::PhysParamId_t t2kana::util::PhysParamIdFromLongString(string sh)
   if(sh == "SK efficiency; 1Re; NC E1") return kNuisSuperkEff1ReNC1;
   if(sh == "SK efficiency; 1Re; NC E2") return kNuisSuperkEff1ReNC2;
 #endif
-
+#endif
   for(int ip = 0; ip < kNumOfFluxParamsInBANFFfit; ip++) {
     string comp = Form("BANFF %2d; SK %s flux; %.1f - %.1f GeV",
 		ip, util::Pdg2String(kNuPdgCodeOfFluxParamInBANFFfit[ip]).c_str(), 
@@ -3427,14 +3708,18 @@ t2kana::conv::PhysParamId_t t2kana::util::PhysParamIdFromLongString(string sh)
 #endif
   if(sh == "BANFF; Ma RES"                      ) return kNuisBANFFMARES;
   if(sh == "BANFF; Norm; CC QE; 0.0 - 1.5 GeV"  ) return kNuisBANFFCCQEE0;
+#if BANFF_BINS != 3
   if(sh == "BANFF; Norm; CC QE; 1.5 - 3.5 GeV"  ) return kNuisBANFFCCQEE1;
   if(sh == "BANFF; Norm; CC QE; 3.5 - 30.0 GeV" ) return kNuisBANFFCCQEE2;
+#endif
   if(sh == "BANFF; Norm; CC 1pi; 0.0 - 2.5 GeV" ) return kNuisBANFFCC1piE0;
+#if BANFF_BINS != 3
   if(sh == "BANFF; Norm; CC 1pi; 2.5 - 30.0 GeV") return kNuisBANFFCC1piE1;
-#if BANFF_BINS == 1
+#endif
+#if (BANFF_BINS != 2) && (BANFF_BINS != 4)
   if(sh == "BANFF; Norm; NC 1pi0; 0.0 - 30.0 GeV") return kNuisBANFFNC1pi0;
 #endif
-#if BANFF_BINS == 3
+#if BANFF_BINS == 4
   if(sh == "BANFF; Norm; MEC")                     return kNuisBANFFMECNorm;
   if(sh == "BANFF; PDD double counting")           return kNuisBANFFPDDDoubleCount;
 #endif
@@ -3449,15 +3734,22 @@ t2kana::conv::PhysParamId_t t2kana::util::PhysParamIdFromLongString(string sh)
  if(sh == "W-shape"            ) return kNuisXSecWshape;
  if(sh == "Shape; CC Oth"      ) return kNuisXSecShapeCCoth;
  if(sh == "Pi-less delta decay") return kNuisXSecPiLessDelta;
+#ifndef __NUEONLY__
  if(sh == "Binding energy"     ) return kNuisXSecBindE;
-
+#endif
  if(sh == "Norm; CC Coh"      ) return kNuisXSecNormCCcoh;
+#ifndef __NUEONLY__
  if(sh == "Norm; NC 1piC"     ) return kNuisXSecNormNC1piC;
+#endif
+#ifndef __NUMUONLY__
  if(sh == "Norm; NC Coh"      ) return kNuisXSecNormNCcoh;
+#endif
  if(sh == "Norm; NC Oth"      ) return kNuisXSecNormNCoth;
  if(sh == "Norm; NuE To NuMu" ) return kNuisXSecNormNuEToNuMu;
+#ifndef __NUEONLY__
  if(sh == "Norm; AntiNu To Nu") return kNuisXSecNormAntiNuToNu;
-
+#endif
+#ifndef SKFSITOGETHER
  for(int ip = 0; ip < kNumOfFSIParams; ip++) {
    string nutypes = "";
    if(ip < 3)
@@ -3478,9 +3770,14 @@ t2kana::conv::PhysParamId_t t2kana::util::PhysParamIdFromLongString(string sh)
      nutypes = "all NC (1Re)";
    string comp = Form("FSI/SI %2d; Ereco range %.1f - %.1f GeV; %s",ip,
 		      kFSIParamsErecoCut[ip][0],kFSIParamsErecoCut[ip][1],nutypes.c_str());     
+#if FSI_BINS != 3
    if(sh == comp) return (PhysParamId_t)((int)kNuisFSI000+ip);
+#else
+   if(sh == comp) return (PhysParamId_t)((int)kNuisFSI006+ip);
+#endif
  }
-
+#endif
+#ifdef SKFSITOGETHER
  for(int ip = 0; ip < kNumOfSKDetFSIParams; ip++) {
    string nutypes = "";
    if(ip < 3)
@@ -3499,11 +3796,15 @@ t2kana::conv::PhysParamId_t t2kana::util::PhysParamIdFromLongString(string sh)
      nutypes = "nue/nuebar CC (1Re)";
    else if(ip < 18)
      nutypes = "all NC (1Re)";
-   string comp = Form("SKDet + FSI/SI %2d; Ereco range %.1f - %.1f GeV; %s",ip,
+   string comp = Form("SKDet + FSI/SI %2d; Ereco range %.2f - %.2f GeV; %s",ip,
 		      kSKDetFSIParamsErecoCut[ip][0],kSKDetFSIParamsErecoCut[ip][1],nutypes.c_str());     
+#if FSI_BINS != 3
    if(sh == comp) return (PhysParamId_t)((int)kNuisSKDetFSI000+ip);
+#else
+   if(sh == comp) return (PhysParamId_t)((int)kNuisSKDetFSI006+ip);
+#endif
  }
-
+#endif
 
   cout << sh << " not yet supported in util::PhysParamIdFromLongString()" << endl;
   return kPhypUndefined;
@@ -3552,8 +3853,10 @@ int t2kana::util::SuperkMode2FluxNuPdg(t2kana::conv::SuperkMode_t m)
   if ( util::IsNuMu      (m) ) return kPdgNuMu;
   if ( util::IsOscNuMu   (m) ) return kPdgNuE; /// nue -> numu
   if ( util::IsNuMuBar   (m) ) return kPdgNuMuBar;
+  if ( util::IsOscNuMuBar(m) ) return kPdgNuEBar; /// nue -> numu
   if ( util::IsNuE       (m) ) return kPdgNuE;
   if ( util::IsNuEBar    (m) ) return kPdgNuEBar;
+  if ( util::IsOscNuEBar (m) ) return kPdgNuMuBar; /// nue -> numu
   if ( util::IsSignalNuE (m) ) return kPdgNuMu; /// numu -> nue
    
   // NOTE: Beam NuEBars not handled
@@ -3566,8 +3869,10 @@ int t2kana::util::SuperkMode2SKMCPdg(t2kana::conv::SuperkMode_t m)
   if ( util::IsNuMu      (m) ) return kPdgNuMu;
   if ( util::IsOscNuMu   (m) ) return kPdgNuMu;
   if ( util::IsNuMuBar   (m) ) return kPdgNuMuBar;
+  if ( util::IsOscNuMuBar(m) ) return kPdgNuMuBar;
   if ( util::IsNuE       (m) ) return kPdgNuE;
   if ( util::IsNuEBar    (m) ) return kPdgNuEBar;
+  if ( util::IsOscNuEBar (m) ) return kPdgNuEBar;
   if ( util::IsSignalNuE (m) ) return kPdgNuE;
    
   // NOTE: Beam NuEBars not handled
@@ -3586,8 +3891,8 @@ bool t2kana::util::IsNuMu(t2kana::conv::SuperkMode_t  m)
      case ( kSKmMEC             ) : 
      case ( kSKmNuMuCC1pi       ) :
      case ( kSKmNuMuCCcoh       ) :
-     case ( kSKmNuMuCCoth_mu    ) :
-     case ( kSKmNuMuCCoth_e     ) :
+     case ( kSKmNuMuCCoth    ) :
+       //     case ( kSKmNuMuCCoth     ) :
      case ( kSKmNuMuNC1piC      ) :
      case ( kSKmNuMuNC1pi0      ) :
      case ( kSKmNuMuNCcoh       ) :
@@ -3605,15 +3910,17 @@ bool t2kana::util::IsNuMu(t2kana::conv::SuperkMode_t  m)
 //____________________________________________________________________________
 bool t2kana::util::IsOscNuMu(t2kana::conv::SuperkMode_t  m)
 {
-  if(m >= kSKmOscNuMuCCQE && m <= kSKmOscNuMuCCoth_e)
+#ifdef __USE_OSC_NUMU_MC_TEMPLATES__
+  if(m >= kSKmOscNuMuCCQE && m <= kSKmOscNuMuCCoth)
     return true;
+#endif
   /*
   switch(m) {
      case ( kSKmOscNuMuCCQE     ) : 
      case ( kSKmOscNuMuCC1pi    ) :
      case ( kSKmOscNuMuCCcoh    ) :
-     case ( kSKmOscNuMuCCoth_mu ) :
-     case ( kSKmOscNuMuCCoth_e  ) :
+       //     case ( kSKmOscNuMuCCoth ) :
+     case ( kSKmOscNuMuCCoth  ) :
        return true;
        break;
      default :                
@@ -3621,6 +3928,49 @@ bool t2kana::util::IsOscNuMu(t2kana::conv::SuperkMode_t  m)
        break;
   }
   */
+  return false;
+}
+//____________________________________________________________________________
+bool t2kana::util::IsOscNuMuBar(t2kana::conv::SuperkMode_t  m)
+{
+#ifdef __USE_OSC_NUMUBAR_MC_TEMPLATES__
+  if(m >= kSKmOscNuMuBarCCQE && m <= kSKmOscNuMuBarCCoth)
+    return true;
+#endif
+  /*
+  switch(m) {
+     case ( kSKmOscNuMuBarCCQE     ) : 
+     case ( kSKmOscNuMuBarCC1pi    ) :
+     case ( kSKmOscNuMuBarCCcoh    ) :
+       //     case ( kSKmOscNuMuCCoth ) :
+     case ( kSKmOscNuMuBarCCoth  ) :
+       return true;
+       break;
+     default :                
+       return false;
+       break;
+       }*/
+  return false;
+}
+//____________________________________________________________________________
+bool t2kana::util::IsOscNuEBar(t2kana::conv::SuperkMode_t  m)
+{
+#ifdef __USE_OSC_NUEBAR_MC_TEMPLATES__
+  if(m >= kSKmOscNuEBarCCQE && m <= kSKmOscNuEBarCCoth)
+    return true;
+#endif
+  /*switch(m) {
+     case ( kSKmOscNuEBarCCQE     ) : 
+     case ( kSKmOscNuEBarCC1pi    ) :
+     case ( kSKmOscNuEBarCCcoh    ) :
+       //     case ( kSKmOscNuMuCCoth ) :
+     case ( kSKmOscNuEBarCCoth  ) :
+       return true;
+       break;
+     default :                
+       return false;
+       break;
+       }*/
   return false;
 }
 //____________________________________________________________________________
@@ -3633,8 +3983,8 @@ bool t2kana::util::IsNuMuBar(t2kana::conv::SuperkMode_t m)
      case (kSKmNuMuBarCCQE    ):
      case (kSKmNuMuBarCC1pi   ):
      case (kSKmNuMuBarCCcoh   ):
-     case (kSKmNuMuBarCCoth_mu):
-     case (kSKmNuMuBarCCoth_e ):
+       //     case (kSKmNuMuBarCCoth):
+     case (kSKmNuMuBarCCoth ):
      case (kSKmNuMuBarNC1piC  ):
      case (kSKmNuMuBarNC1pi0  ):
      case (kSKmNuMuBarNCcoh   ):
@@ -3659,8 +4009,8 @@ bool t2kana::util::IsNuE(t2kana::conv::SuperkMode_t m)
      case (kSKmNuECCQE    ):
      case (kSKmNuECC1pi   ):
      case (kSKmNuECCcoh   ):
-     case (kSKmNuECCoth_mu):
-     case (kSKmNuECCoth_e ):
+       //     case (kSKmNuECCoth):
+     case (kSKmNuECCoth ):
      case (kSKmNuENC1piC  ):
      case (kSKmNuENC1pi0  ):
      case (kSKmNuENCcoh   ):
@@ -3685,8 +4035,8 @@ bool t2kana::util::IsNuEBar(t2kana::conv::SuperkMode_t m)
      case (kSKmNuEBarCCQE    ):
      case (kSKmNuEBarCC1pi   ):
      case (kSKmNuEBarCCcoh   ):
-     case (kSKmNuEBarCCoth_mu):
-     case (kSKmNuEBarCCoth_e ):
+       //     case (kSKmNuEBarCCoth):
+     case (kSKmNuEBarCCoth ):
      case (kSKmNuEBarNC1piC  ):
      case (kSKmNuEBarNC1pi0  ):
      case (kSKmNuEBarNCcoh   ):
@@ -3704,15 +4054,15 @@ bool t2kana::util::IsNuEBar(t2kana::conv::SuperkMode_t m)
 //____________________________________________________________________________
 bool t2kana::util::IsSignalNuE(t2kana::conv::SuperkMode_t m)
 {
-  if(m >= kSKmSigNuECCQE && m <= kSKmSigNuECCoth_e)
+  if(m >= kSKmSigNuECCQE && m <= kSKmSigNuECCoth)
     return true;
   /*
   switch(m) {
      case ( kSKmSigNuECCQE     ) :
      case ( kSKmSigNuECC1pi    ) :
      case ( kSKmSigNuECCcoh    ) :
-     case ( kSKmSigNuECCoth_e  ) :
-     case ( kSKmSigNuECCoth_mu ) :
+       //     case ( kSKmSigNuECCoth  ) :
+     case ( kSKmSigNuECCoth ) :
        return true;
        break;
      default :                
@@ -3731,33 +4081,43 @@ bool t2kana::util::IsCC(t2kana::conv::SuperkMode_t m)
      case ( kSKmNuMuCCQE        ) : 
      case ( kSKmNuMuCC1pi       ) : 
      case ( kSKmNuMuCCcoh       ) : 
-     case ( kSKmNuMuCCoth_mu    ) : 
-     case ( kSKmNuMuCCoth_e     ) : 
+       //     case ( kSKmNuMuCCoth    ) : 
+     case ( kSKmNuMuCCoth     ) : 
      case ( kSKmOscNuMuCCQE     ) : 
      case ( kSKmOscNuMuCC1pi    ) :
      case ( kSKmOscNuMuCCcoh    ) :
-     case ( kSKmOscNuMuCCoth_mu ) :
-     case ( kSKmOscNuMuCCoth_e  ) :
+       //     case ( kSKmOscNuMuCCoth ) :
+     case ( kSKmOscNuMuCCoth  ) :
      case ( kSKmNuMuBarCCQE     ) : 
      case ( kSKmNuMuBarCC1pi    ) : 
      case ( kSKmNuMuBarCCcoh    ) : 
-     case ( kSKmNuMuBarCCoth_mu ) : 
-     case ( kSKmNuMuBarCCoth_e  ) : 
+       //     case ( kSKmNuMuBarCCoth ) : 
+     case ( kSKmNuMuBarCCoth  ) :
+     case ( kSKmOscNuMuBarCCQE     ) : 
+     case ( kSKmOscNuMuBarCC1pi    ) :
+     case ( kSKmOscNuMuBarCCcoh    ) :
+       //     case ( kSKmOscNuMuCCoth ) :
+     case ( kSKmOscNuMuBarCCoth  ) : 
      case ( kSKmNuECCQE         ) : 
      case ( kSKmNuECC1pi        ) : 
      case ( kSKmNuECCcoh        ) : 
-     case ( kSKmNuECCoth_mu     ) : 
-     case ( kSKmNuECCoth_e      ) : 
+       //     case ( kSKmNuECCoth     ) : 
+     case ( kSKmNuECCoth      ) : 
      case ( kSKmNuEBarCCQE      ) : 
      case ( kSKmNuEBarCC1pi     ) : 
      case ( kSKmNuEBarCCcoh     ) : 
-     case ( kSKmNuEBarCCoth_mu  ) : 
-     case ( kSKmNuEBarCCoth_e   ) : 
+       //     case ( kSKmNuEBarCCoth  ) : 
+     case ( kSKmNuEBarCCoth   ) : 
+     case ( kSKmOscNuEBarCCQE      ) : 
+     case ( kSKmOscNuEBarCC1pi     ) : 
+     case ( kSKmOscNuEBarCCcoh     ) : 
+       //     case ( kSKmNuEBarCCoth  ) : 
+     case ( kSKmOscNuEBarCCoth   ) : 
      case ( kSKmSigNuECCQE      ) : 
      case ( kSKmSigNuECC1pi     ) : 
      case ( kSKmSigNuECCcoh     ) : 
-     case ( kSKmSigNuECCoth_mu  ) : 
-     case ( kSKmSigNuECCoth_e   ) : 
+       //     case ( kSKmSigNuECCoth  ) : 
+     case ( kSKmSigNuECCoth   ) : 
      case ( kSKmMEC             ) :
 	return true;
 	break;
@@ -3817,9 +4177,9 @@ bool t2kana::util::IsMEC(t2kana::conv::SuperkMode_t m)
 bool t2kana::util::IsBANFF(PhysParamId_t p)
 {
   if(p >= kNuisBANFF00
-#if BANFF_BINS == 1
+#if ((BANFF_BINS != 2)&&(BANFF_BINS != 4))
      && p <= kNuisBANFFNC1pi0
-#elif BANFF_BINS == 3
+#elif BANFF_BINS == 4
      && p <= kNuisBANFFPDDDoubleCount
 #else
      && p <= kNuisBANFFCC1piE1
@@ -3844,13 +4204,15 @@ bool t2kana::util::IsBANFF(PhysParamId_t p)
     case ( kNuisBANFF13               ) : return true;  break;
     case ( kNuisBANFF14               ) : return true;  break;
     case ( kNuisBANFF15               ) : return true;  break;
-#if BANFF_BINS == 1
+#if (BANFF_BINS != 2) && (BANFF_BINS != 4)
     case ( kNuisBANFF16               ) : return true;  break;
     case ( kNuisBANFF17               ) : return true;  break;
     case ( kNuisBANFF18               ) : return true;  break;
     case ( kNuisBANFF19               ) : return true;  break;
     case ( kNuisBANFF20               ) : return true;  break;
     case ( kNuisBANFF21               ) : return true;  break;
+#endif
+#if BANFF_BINS == 1
     case ( kNuisBANFF22               ) : return true;  break;
     case ( kNuisBANFF23               ) : return true;  break;
     case ( kNuisBANFF24               ) : return true;  break;
@@ -3858,14 +4220,18 @@ bool t2kana::util::IsBANFF(PhysParamId_t p)
     case ( kNuisBANFFMAQE             ) : return true;  break;
     case ( kNuisBANFFMARES            ) : return true;  break;
     case ( kNuisBANFFCCQEE0           ) : return true;  break;
+#if BANFF_BINS != 3
     case ( kNuisBANFFCCQEE1           ) : return true;  break;
     case ( kNuisBANFFCCQEE2           ) : return true;  break;
+#endif
     case ( kNuisBANFFCC1piE0          ) : return true;  break;
+#if BANFF_BINS != 3
     case ( kNuisBANFFCC1piE1          ) : return true;  break;
-#if BANFF_BINS == 1
+#endif
+#if (BANFF_BINS != 2) && (BANFF_BINS != 4)
     case ( kNuisBANFFNC1pi0           ) : return true;  break;
 #endif
-#if BANFF_BINS == 3
+#if BANFF_BINS == 4
     case ( kNuisBANFFMECNorm          ) : return true;  break;
     case ( kNuisBANFFPDDDoubleCount   ) : return true;  break;
 #endif
@@ -3889,15 +4255,21 @@ bool t2kana::util::IsXSec(PhysParamId_t p)
     case ( kNuisXSecWshape            ) : return true;  break;
     case ( kNuisXSecShapeCCoth        ) : return true;  break;
     case ( kNuisXSecPiLessDelta       ) : return true;  break;
+#ifndef __NUEONLY__
     case ( kNuisXSecBindE             ) : return true;  break;
-
+#endif
     case ( kNuisXSecNormCCcoh         ) : return true;  break;
+#ifndef __NUEONLY__
     case ( kNuisXSecNormNC1piC        ) : return true;  break;
+#endif
+#ifndef __NUMUONLY__
     case ( kNuisXSecNormNCcoh         ) : return true;  break;
+#endif
     case ( kNuisXSecNormNCoth         ) : return true;  break;
     case ( kNuisXSecNormNuEToNuMu     ) : return true;  break;
+#ifndef __NUEONLY__
     case ( kNuisXSecNormAntiNuToNu    ) : return true;  break;
-    
+#endif
   default : 
     return false;
   }
@@ -3911,7 +4283,7 @@ bool t2kana::util::IsUsingSplines(PhysParamId_t p)
     return true;
   if(p == kNuisBANFFMAQE || p == kNuisBANFFMAQE)
     return true;
-#if BANFF_BINS == 3
+#if BANFF_BINS == 4
   if(p == kNuisBANFFMECNorm || p == kNuisBANFFPDDDoubleCount)
     return true;
 #endif
@@ -3925,7 +4297,7 @@ bool t2kana::util::IsUsingSplines(PhysParamId_t p)
   case ( kNuisXSecBindE             ) : return true;  break;
   case ( kNuisBANFFMAQE             ) : return true;  break;
   case ( kNuisBANFFMARES            ) : return true;  break;
-#if BANFF_BINS == 3
+#if BANFF_BINS == 4
   case ( kNuisBANFFMECNorm          ) : return true;  break;
   case ( kNuisBANFFPDDDoubleCount   ) : return true;  break;
 #endif
@@ -3940,6 +4312,8 @@ bool t2kana::util::IsUsingSplines(PhysParamId_t p)
 bool t2kana::util::IsEff1Rmu(PhysParamId_t p)
 {
   switch(p) {
+#ifndef SKFSITOGETHER
+#if FSI_BINS != 3
   case ( kNuisSuperkEnergyScale     ) : return true;  break;
   case ( kNuisSuperkEff1RmuCCQEoth  ) : return true;  break;
   case ( kNuisSuperkEff1RmuCCQErc0u ) : return true;  break;
@@ -3948,6 +4322,8 @@ bool t2kana::util::IsEff1Rmu(PhysParamId_t p)
   case ( kNuisSuperkEff1RmuCCnonQE  ) : return true;  break;
   case ( kNuisSuperkEff1RmuNC       ) : return true;  break;
   case ( kNuisSuperkEff1RmuNueCC    ) : return true;  break;
+#endif
+#endif
   default :
     return false;
   }
@@ -3957,7 +4333,8 @@ bool t2kana::util::IsEff1Rmu(PhysParamId_t p)
 bool t2kana::util::IsEff1Re(PhysParamId_t p)
 {
   switch(p) {
-#if FSI_BINS == 1
+#if FSI_BINS != 2
+#ifndef SKFSITOGETHER
   case ( kNuisSuperkEnergyScale     ) : return true;  break;
   case ( kNuisSuperkEff1ReNueSigCC0 ) : return true;  break;
   case ( kNuisSuperkEff1ReNueSigCC1 ) : return true;  break;
@@ -3971,6 +4348,7 @@ bool t2kana::util::IsEff1Re(PhysParamId_t p)
   case ( kNuisSuperkEff1ReNC0       ) : return true;  break;
   case ( kNuisSuperkEff1ReNC1       ) : return true;  break;
   case ( kNuisSuperkEff1ReNC2       ) : return true;  break;
+#endif
 #endif
   default :
     return false;
@@ -3982,6 +4360,8 @@ bool t2kana::util::IsEff(PhysParamId_t p)
 {
   switch(p) {
   case ( kNuisSuperkEnergyScale     ) : return true;  break;
+#ifndef SKFSITOGETHER
+#if FSI_BINS != 3
   case ( kNuisSuperkEff1RmuCCQEoth  ) : return true;  break;
   case ( kNuisSuperkEff1RmuCCQErc0u ) : return true;  break;
   case ( kNuisSuperkEff1RmuCCQErc1u ) : return true;  break;
@@ -3989,7 +4369,8 @@ bool t2kana::util::IsEff(PhysParamId_t p)
   case ( kNuisSuperkEff1RmuCCnonQE  ) : return true;  break;
   case ( kNuisSuperkEff1RmuNC       ) : return true;  break;
   case ( kNuisSuperkEff1RmuNueCC    ) : return true;  break;
-#if FSI_BINS == 1
+#endif
+#if FSI_BINS != 2
   case ( kNuisSuperkEff1ReNueSigCC0 ) : return true;  break;
   case ( kNuisSuperkEff1ReNueSigCC1 ) : return true;  break;
   case ( kNuisSuperkEff1ReNueSigCC2 ) : return true;  break;
@@ -4003,6 +4384,7 @@ bool t2kana::util::IsEff(PhysParamId_t p)
   case ( kNuisSuperkEff1ReNC1       ) : return true;  break;
   case ( kNuisSuperkEff1ReNC2       ) : return true;  break;
 #endif
+#endif
   default :
     return false;
   }
@@ -4012,25 +4394,29 @@ bool t2kana::util::IsEff(PhysParamId_t p)
 bool t2kana::util::IsFSI(PhysParamId_t p)
 {
   switch(p) {
+#ifndef SKFSITOGETHER
+#if FSI_BINS != 3
     case ( kNuisFSI000                ) : return true;  break;
     case ( kNuisFSI001                ) : return true;  break;
     case ( kNuisFSI002                ) : return true;  break;
     case ( kNuisFSI003                ) : return true;  break;
     case ( kNuisFSI004                ) : return true;  break;
     case ( kNuisFSI005                ) : return true;  break;
-#if FSI_BINS == 1
-    case ( kNuisFSI1Re000             ) : return true;  break;
-    case ( kNuisFSI1Re001             ) : return true;  break;
-    case ( kNuisFSI1Re002             ) : return true;  break;
-    case ( kNuisFSI1Re003             ) : return true;  break;
-    case ( kNuisFSI1Re004             ) : return true;  break;
-    case ( kNuisFSI1Re005             ) : return true;  break;
-    case ( kNuisFSI1Re006             ) : return true;  break;
-    case ( kNuisFSI1Re007             ) : return true;  break;
-    case ( kNuisFSI1Re008             ) : return true;  break;
-    case ( kNuisFSI1Re009             ) : return true;  break;
-    case ( kNuisFSI1Re010             ) : return true;  break;
-    case ( kNuisFSI1Re011             ) : return true;  break;
+#endif
+#if FSI_BINS != 2
+    case ( kNuisFSI006             ) : return true;  break;
+    case ( kNuisFSI007             ) : return true;  break;
+    case ( kNuisFSI008             ) : return true;  break;
+    case ( kNuisFSI009             ) : return true;  break;
+    case ( kNuisFSI010             ) : return true;  break;
+    case ( kNuisFSI011             ) : return true;  break;
+    case ( kNuisFSI012             ) : return true;  break;
+    case ( kNuisFSI013             ) : return true;  break;
+    case ( kNuisFSI014             ) : return true;  break;
+    case ( kNuisFSI015             ) : return true;  break;
+    case ( kNuisFSI016             ) : return true;  break;
+    case ( kNuisFSI017             ) : return true;  break;
+#endif
 #endif
   default :
     return false;
@@ -4040,10 +4426,12 @@ bool t2kana::util::IsFSI(PhysParamId_t p)
 //____________________________________________________________________________                                                                                   
 bool t2kana::util::IsSKDetFSI(PhysParamId_t p)
 {
+#if FSI_BINS != 3
   if(p >= kNuisSKDetFSI000 && p <= kNuisSKDetFSI005)
     return true;
-#if FSI_BINS == 1
-  if(p >= kNuisSKDetFSI1Re000 && p <= kNuisSKDetFSI1Re011)
+#endif
+#if FSI_BINS != 2
+  if(p >= kNuisSKDetFSI006 && p <= kNuisSKDetFSI017)
     return true;
 #endif
   if(p == kNuisSuperkEnergyScale)
@@ -4051,25 +4439,29 @@ bool t2kana::util::IsSKDetFSI(PhysParamId_t p)
   /*
   switch(p) {
     case ( kNuisSuperkEnergyScale          ) : return true;  break;
+#ifdef SKFSITOGETHER
+#if FSI_BINS != 3
     case ( kNuisSKDetFSI000                ) : return true;  break;
     case ( kNuisSKDetFSI001                ) : return true;  break;
     case ( kNuisSKDetFSI002                ) : return true;  break;
     case ( kNuisSKDetFSI003                ) : return true;  break;
     case ( kNuisSKDetFSI004                ) : return true;  break;
     case ( kNuisSKDetFSI005                ) : return true;  break;
-#if FSI_BINS == 1
-    case ( kNuisSKDetFSI1Re000             ) : return true;  break;
-    case ( kNuisSKDetFSI1Re001             ) : return true;  break;
-    case ( kNuisSKDetFSI1Re002             ) : return true;  break;
-    case ( kNuisSKDetFSI1Re003             ) : return true;  break;
-    case ( kNuisSKDetFSI1Re004             ) : return true;  break;
-    case ( kNuisSKDetFSI1Re005             ) : return true;  break;
-    case ( kNuisSKDetFSI1Re006             ) : return true;  break;
-    case ( kNuisSKDetFSI1Re007             ) : return true;  break;
-    case ( kNuisSKDetFSI1Re008             ) : return true;  break;
-    case ( kNuisSKDetFSI1Re009             ) : return true;  break;
-    case ( kNuisSKDetFSI1Re010             ) : return true;  break;
-    case ( kNuisSKDetFSI1Re011             ) : return true;  break;
+#endif
+#if FSI_BINS != 2
+    case ( kNuisSKDetFSI006             ) : return true;  break;
+    case ( kNuisSKDetFSI007             ) : return true;  break;
+    case ( kNuisSKDetFSI008             ) : return true;  break;
+    case ( kNuisSKDetFSI009             ) : return true;  break;
+    case ( kNuisSKDetFSI010             ) : return true;  break;
+    case ( kNuisSKDetFSI011             ) : return true;  break;
+    case ( kNuisSKDetFSI012             ) : return true;  break;
+    case ( kNuisSKDetFSI013             ) : return true;  break;
+    case ( kNuisSKDetFSI014             ) : return true;  break;
+    case ( kNuisSKDetFSI015             ) : return true;  break;
+    case ( kNuisSKDetFSI016             ) : return true;  break;
+    case ( kNuisSKDetFSI017             ) : return true;  break;
+#endif
 #endif
   default :
     return false;
@@ -4096,6 +4488,8 @@ bool t2kana::util::IsSystematic(PhysParamId_t p)
     case ( kPhypMusqDecoh             ) : return false; break;
     case ( kPhypSinsq2ThetaDecoh      ) : return false; break;
     case ( kNuisSuperkEnergyScale     ) : return true;  break;
+#ifndef SKFSITOGETHER
+#if FSI_BINS != 3
     case ( kNuisSuperkEff1RmuCCQEoth  ) : return true;  break;
     case ( kNuisSuperkEff1RmuCCQErc0u ) : return true;  break;
     case ( kNuisSuperkEff1RmuCCQErc1u ) : return true;  break;
@@ -4103,7 +4497,8 @@ bool t2kana::util::IsSystematic(PhysParamId_t p)
     case ( kNuisSuperkEff1RmuCCnonQE  ) : return true;  break;
     case ( kNuisSuperkEff1RmuNC       ) : return true;  break;
     case ( kNuisSuperkEff1RmuNueCC    ) : return true;  break;
-#if FSI_BINS == 1
+#endif
+#if FSI_BINS != 2
     case ( kNuisSuperkEff1ReNueSigCC0 ) : return true;  break;
     case ( kNuisSuperkEff1ReNueSigCC1 ) : return true;  break;
     case ( kNuisSuperkEff1ReNueSigCC2 ) : return true;  break;
@@ -4116,6 +4511,7 @@ bool t2kana::util::IsSystematic(PhysParamId_t p)
     case ( kNuisSuperkEff1ReNC0       ) : return true;  break;
     case ( kNuisSuperkEff1ReNC1       ) : return true;  break;
     case ( kNuisSuperkEff1ReNC2       ) : return true;  break;
+#endif
 #endif
     case ( kNuisBANFF00               ) : return true;  break;
     case ( kNuisBANFF01               ) : return true;  break;
@@ -4148,14 +4544,18 @@ bool t2kana::util::IsSystematic(PhysParamId_t p)
     case ( kNuisBANFFMAQE             ) : return true;  break;
     case ( kNuisBANFFMARES            ) : return true;  break;
     case ( kNuisBANFFCCQEE0           ) : return true;  break;
+#if BANFF_BINS != 3
     case ( kNuisBANFFCCQEE1           ) : return true;  break;
     case ( kNuisBANFFCCQEE2           ) : return true;  break;
+#endif
     case ( kNuisBANFFCC1piE0          ) : return true;  break;
+#if BANFF_BINS != 3
     case ( kNuisBANFFCC1piE1          ) : return true;  break;
+#endif
 #if BANFF_BINS == 1
     case ( kNuisBANFFNC1pi0           ) : return true;  break;
 #endif
-#if BANFF_BINS == 3
+#if BANFF_BINS == 4
     case ( kNuisBANFFMECNorm          ) : return true;  break;
     case ( kNuisBANFFPDDDoubleCount   ) : return true;  break;
 #endif
@@ -4165,43 +4565,55 @@ bool t2kana::util::IsSystematic(PhysParamId_t p)
     case ( kNuisXSecWshape            ) : return true;  break;
     case ( kNuisXSecShapeCCoth        ) : return true;  break;
     case ( kNuisXSecPiLessDelta       ) : return true;  break;
+#ifndef __NUEONLY__
     case ( kNuisXSecBindE             ) : return true;  break;
-
+#endif
     case ( kNuisXSecNormCCcoh         ) : return true;  break;
+#ifndef __NUEONLY__
     case ( kNuisXSecNormNC1piC        ) : return true;  break;
+#endif
+#ifndef __NUMUONLY__
     case ( kNuisXSecNormNCcoh         ) : return true;  break;
+#endif
     case ( kNuisXSecNormNCoth         ) : return true;  break;
     case ( kNuisXSecNormNuEToNuMu     ) : return true;  break;
+#ifndef __NUEONLY__
     case ( kNuisXSecNormAntiNuToNu    ) : return true;  break;
-
+#endif
+#ifndef SKFSITOGETHER
+#if FSI_BINS != 3
     case ( kNuisFSI000                ) : return true;  break;
     case ( kNuisFSI001                ) : return true;  break;
     case ( kNuisFSI002                ) : return true;  break;
     case ( kNuisFSI003                ) : return true;  break;
     case ( kNuisFSI004                ) : return true;  break;
     case ( kNuisFSI005                ) : return true;  break;
-#if FSI_BINS == 1
-    case ( kNuisFSI1Re000             ) : return true;  break;
-    case ( kNuisFSI1Re001             ) : return true;  break;
-    case ( kNuisFSI1Re002             ) : return true;  break;
-    case ( kNuisFSI1Re003             ) : return true;  break;
-    case ( kNuisFSI1Re004             ) : return true;  break;
-    case ( kNuisFSI1Re005             ) : return true;  break;
-    case ( kNuisFSI1Re006             ) : return true;  break;
-    case ( kNuisFSI1Re007             ) : return true;  break;
-    case ( kNuisFSI1Re008             ) : return true;  break;
-    case ( kNuisFSI1Re009             ) : return true;  break;
-    case ( kNuisFSI1Re010             ) : return true;  break;
-    case ( kNuisFSI1Re011             ) : return true;  break;
 #endif
-
+#if FSI_BINS != 2
+    case ( kNuisFSI006             ) : return true;  break;
+    case ( kNuisFSI007             ) : return true;  break;
+    case ( kNuisFSI008             ) : return true;  break;
+    case ( kNuisFSI009             ) : return true;  break;
+    case ( kNuisFSI010             ) : return true;  break;
+    case ( kNuisFSI011             ) : return true;  break;
+    case ( kNuisFSI012             ) : return true;  break;
+    case ( kNuisFSI013             ) : return true;  break;
+    case ( kNuisFSI014             ) : return true;  break;
+    case ( kNuisFSI015             ) : return true;  break;
+    case ( kNuisFSI016             ) : return true;  break;
+    case ( kNuisFSI017             ) : return true;  break;
+#endif
+#endif
+#ifdef SKFSITOGETHER
+#if FSI_BINS != 3
     case ( kNuisSKDetFSI000           ) : return true;  break;
     case ( kNuisSKDetFSI001           ) : return true;  break;
     case ( kNuisSKDetFSI002           ) : return true;  break;
     case ( kNuisSKDetFSI003           ) : return true;  break;
     case ( kNuisSKDetFSI004           ) : return true;  break;
     case ( kNuisSKDetFSI005           ) : return true;  break;
-#if FSI_BINS == 1
+#endif
+#if FSI_BINS != 2
     case ( kNuisSKDetFSI006           ) : return true;  break;
     case ( kNuisSKDetFSI007           ) : return true;  break;
     case ( kNuisSKDetFSI008           ) : return true;  break;
@@ -4215,7 +4627,7 @@ bool t2kana::util::IsSystematic(PhysParamId_t p)
     case ( kNuisSKDetFSI016           ) : return true;  break;
     case ( kNuisSKDetFSI017           ) : return true;  break;
 #endif
-
+#endif
     default : 
       return false;
   }
@@ -4627,7 +5039,11 @@ void t2kana::util::PrintCompact(
      }
      if(printing_fsi_params) {
          stream << " [ ";
+#if FSI_BINS != 3
          PhysParamId_t p = PhysParamId_t ( (int)kNuisFSI000 + ip );
+#else
+	 PhysParamId_t p = PhysParamId_t ( (int)kNuisFSI006 + ip );
+#endif
          stream << setw(30) << util::AsString(p);
          stream << " ]";
      }
@@ -4670,7 +5086,11 @@ void t2kana::util::PrintCompact(
      }
      if(printing_fsi_params) {
          stream << " [ ";
+#if FSI_BINS != 3
          PhysParamId_t p = PhysParamId_t ( (int)kNuisFSI000 + ip );
+#else
+	 PhysParamId_t p = PhysParamId_t ( (int)kNuisFSI006 + ip );
+#endif
          stream << setw(30) << util::AsString(p);
          stream << " ]";
      }
@@ -5265,8 +5685,6 @@ TSpline3 * t2kana::util::XML2TSpline3(
   return spl_copy;
 }
 //___________________________________________________________________________
-
-/*
 TAxis *  t2kana::util::XML2BinInfo(
   TXMLEngine * xmleng, XMLNodePointer_t topnode, string path)
 {
@@ -5318,7 +5736,7 @@ TAxis *  t2kana::util::XML2BinInfo(
   }
 
   return 0;
-}*/
+}
 //___________________________________________________________________________
 
 // A few helper functions for use in UseEventToFillInTemplate
@@ -5354,15 +5772,15 @@ bool t2kana::util::IsCCoth(int neut_reaction_mode)
   return is_ccoth;
 }
 //___________________________________________________________________________
-bool t2kana::util::IsCCoth_mu(int neut_reaction_mode) 
-{
-  return IsCCoth(neut_reaction_mode);
-}
+//bool t2kana::util::IsCCoth(int neut_reaction_mode) 
+//{
+//return IsCCoth(neut_reaction_mode);
+//}
 //___________________________________________________________________________
-bool t2kana::util::IsCCoth_e(int neut_reaction_mode) 
-{
-  return IsCCoth(neut_reaction_mode);
-}
+//bool t2kana::util::IsCCoth(int neut_reaction_mode) 
+//{
+//return IsCCoth(neut_reaction_mode);
+//}
 //___________________________________________________________________________
 bool t2kana::util::IsNC1pi0(int neut_reaction_mode) 
 {
@@ -5443,17 +5861,17 @@ bool t2kana::util::UseEventToFillInTemplate(
   }
 
   else
-  if(m == kSKmNuMuCCoth_mu) 
+  if(m == kSKmNuMuCCoth) 
   {
      bool is_numu     = (nu_pdg_code == kPdgNuMu);
-     use_it = is_numu && IsCCoth_mu(neut_reaction_mode);
+     use_it = is_numu && IsCCoth(neut_reaction_mode);
   } 
 
   else
-  if(m == kSKmNuMuCCoth_e)
+  if(m == kSKmNuMuCCoth)
   {
     bool is_numu    = (nu_pdg_code == kPdgNuMu);
-    use_it = is_numu && IsCCoth_e(neut_reaction_mode);
+    use_it = is_numu && IsCCoth(neut_reaction_mode);
   }
 
   else
@@ -5514,17 +5932,17 @@ bool t2kana::util::UseEventToFillInTemplate(
   } 
 
   else
-  if(m == kSKmNuMuBarCCoth_mu) 
+  if(m == kSKmNuMuBarCCoth) 
   {
      bool is_numubar  = (nu_pdg_code == kPdgNuMuBar);
-     use_it = is_numubar && IsCCoth_mu(-neut_reaction_mode);
+     use_it = is_numubar && IsCCoth(-neut_reaction_mode);
   } 
 
   else
-  if(m == kSKmNuMuBarCCoth_e) 
+  if(m == kSKmNuMuBarCCoth) 
   {
      bool is_numubar = (nu_pdg_code == kPdgNuMuBar);
-     use_it = is_numubar && IsCCoth_e(-neut_reaction_mode);
+     use_it = is_numubar && IsCCoth(-neut_reaction_mode);
   } 
 
   else
@@ -5585,26 +6003,26 @@ bool t2kana::util::UseEventToFillInTemplate(
   } 
 
   else
-  if(m == kSKmNuECCoth_mu || m == kSKmSigNuECCoth_mu) 
+  if(m == kSKmNuECCoth || m == kSKmSigNuECCoth) 
   {
      bool is_nue      = (nu_pdg_code == kPdgNuE); 
-     use_it = is_nue && IsCCoth_mu(neut_reaction_mode);
+     use_it = is_nue && IsCCoth(neut_reaction_mode);
   }
 
   else
-  if(m == kSKmNuECCoth_e || m == kSKmSigNuECCoth_e) 
+  if(m == kSKmNuECCoth || m == kSKmSigNuECCoth) 
   {
      bool is_nue     = (nu_pdg_code == kPdgNuE); 
-     use_it = is_nue && IsCCoth_e(neut_reaction_mode);
+     use_it = is_nue && IsCCoth(neut_reaction_mode);
   }
 
   //this is a little different. nuesig has no CCcoh in 1Re sample, whereas CCcoh is included
   // for the other species
   //  else
-  //if(m == kSKmSigNuECCoth_e) 
+  //if(m == kSKmSigNuECCoth) 
   //{
   // bool is_nue     = (nu_pdg_code == kPdgNuE); 
-  // use_it = is_nue && (IsCCoth_e(neut_reaction_mode) || IsCCcoh(neut_reaction_mode));
+  // use_it = is_nue && (IsCCoth(neut_reaction_mode) || IsCCcoh(neut_reaction_mode));
   //}
 
   else
@@ -5666,17 +6084,17 @@ bool t2kana::util::UseEventToFillInTemplate(
 
 
   else
-  if(m == kSKmNuEBarCCoth_mu) 
+  if(m == kSKmNuEBarCCoth) 
   {
      bool is_nue      = (nu_pdg_code == kPdgNuEBar); 
-     use_it = is_nue && IsCCoth_mu(-neut_reaction_mode);
+     use_it = is_nue && IsCCoth(-neut_reaction_mode);
   }
 
   else
-  if(m == kSKmNuEBarCCoth_e) 
+  if(m == kSKmNuEBarCCoth) 
   {
      bool is_nue     = (nu_pdg_code == kPdgNuEBar); 
-     use_it = is_nue && IsCCoth_e(-neut_reaction_mode);
+     use_it = is_nue && IsCCoth(-neut_reaction_mode);
   }
 
   else
@@ -5770,8 +6188,8 @@ double t2kana::util::NuMuSurvProbOsc2Flavour(
      m == kSKmNuECCQE         ||
      m == kSKmNuECC1pi        ||
      m == kSKmNuECCcoh        ||
-     m == kSKmNuECCoth_mu     ||
-     m == kSKmNuECCoth_e      ||
+     m == kSKmNuECCoth     ||
+     //     m == kSKmNuECCoth      ||
      m == kSKmNuENC1piC       ||
      m == kSKmNuENC1pi0       ||
      m == kSKmNuENCcoh        ||
@@ -5780,8 +6198,8 @@ double t2kana::util::NuMuSurvProbOsc2Flavour(
      m == kSKmNuEBarCCQE      ||
      m == kSKmNuEBarCC1pi     ||
      m == kSKmNuEBarCCcoh     ||
-     m == kSKmNuEBarCCoth_mu  ||
-     m == kSKmNuEBarCCoth_e   ||
+     //     m == kSKmNuEBarCCoth  ||
+     m == kSKmNuEBarCCoth   ||
      m == kSKmNuEBarNC1piC    ||
      m == kSKmNuEBarNC1pi0    ||
      m == kSKmNuEBarNCcoh     ||
@@ -5794,23 +6212,35 @@ double t2kana::util::NuMuSurvProbOsc2Flavour(
   if(m == kSKmNuMuCCQE        || 
      m == kSKmNuMuCC1pi       || 
      m == kSKmNuMuCCcoh       || 
-     m == kSKmNuMuCCoth_mu    ||
-     m == kSKmNuMuCCoth_e     ||
+     //     m == kSKmNuMuCCoth    ||
+     m == kSKmNuMuCCoth     ||
      m == kSKmNuMuBarCCQE     ||
      m == kSKmNuMuBarCC1pi    ||
      m == kSKmNuMuBarCCcoh    ||
-     m == kSKmNuMuBarCCoth_mu || 
-     m == kSKmNuMuBarCCoth_e  ||
+     //     m == kSKmNuMuBarCCoth || 
+     m == kSKmNuMuBarCCoth  ||
      m == kSKmMEC             )
   {
     return NuMuSurvProbOsc2Flavour(mixing23, dm23sq, Et, unphysical_osc_prob);
   }
   else 
-  if(m == kSKmOscNuMuCCQE     ||
+  if(
+     m == kSKmOscNuMuCCQE     ||
      m == kSKmOscNuMuCC1pi    ||
      m == kSKmOscNuMuCCcoh    ||
-     m == kSKmOscNuMuCCoth_mu ||
-     m == kSKmOscNuMuCCoth_e  )
+     //     m == kSKmOscNuMuCCoth ||
+     m == kSKmOscNuMuCCoth  ||
+     m == kSKmOscNuMuBarCCQE     ||
+     m == kSKmOscNuMuBarCC1pi    ||
+     m == kSKmOscNuMuBarCCcoh    ||
+     //     m == kSKmOscNuMuCCoth ||
+     m == kSKmOscNuMuBarCCoth  ||
+     m == kSKmOscNuEBarCCQE     ||
+     m == kSKmOscNuEBarCC1pi    ||
+     m == kSKmOscNuEBarCCcoh    ||
+     //     m == kSKmOscNuMuCCoth ||
+     m == kSKmOscNuEBarCCoth 
+)
   {
     return 0;
   }
@@ -5850,13 +6280,13 @@ double t2kana::util::NuMuSurvProbDecay (
   if(m == kSKmNuECCQE        ||
      m == kSKmNuECC1pi       ||
      m == kSKmNuECCcoh       ||
-     m == kSKmNuECCoth_mu    ||
+     m == kSKmNuECCoth    ||
      m == kSKmNuENC1piC      ||
      m == kSKmNuENCoth_mu    ||
      m == kSKmNuEBarCCQE     ||
      m == kSKmNuEBarCC1pi    ||
      m == kSKmNuEBarCCcoh    ||
-     m == kSKmNuEBarCCoth_mu ||
+     m == kSKmNuEBarCCoth ||
      m == kSKmNuEBarNC1piC   ||
      m == kSKmNuEBarNCoth_mu )
   {
@@ -5866,13 +6296,13 @@ double t2kana::util::NuMuSurvProbDecay (
   if(m == kSKmNuMuCCQE        || 
      m == kSKmNuMuCC1pi       || 
      m == kSKmNuMuCCcoh       || 
-     m == kSKmNuMuCCoth_mu    ||
+     m == kSKmNuMuCCoth    ||
      m == kSKmNuMuNC1piC      ||
      m == kSKmNuMuNCoth_mu    ||
      m == kSKmNuMuBarCCQE     ||
      m == kSKmNuMuBarCC1pi    ||
      m == kSKmNuMuBarCCcoh    ||
-     m == kSKmNuMuBarCCoth_mu ||
+     m == kSKmNuMuBarCCoth ||
      m == kSKmNuMuBarNC1piC   ||
      m == kSKmNuMuBarNCoth_mu ||
      m == kSKmMEC             )
@@ -5880,11 +6310,23 @@ double t2kana::util::NuMuSurvProbDecay (
     return NuMuSurvProbDecay(sinsq2theta, alpha, Et);
   }
   else 
-  if(m == kSKmOscNuMuCCQE     ||
+  if(
+m == kSKmOscNuMuCCQE     ||
      m == kSKmOscNuMuCC1pi    ||
      m == kSKmOscNuMuCCcoh    ||
-     m == kSKmOscNuMuCCoth_mu ||
-     m == kSKmOscNuMuCCoth_e  )
+//     m == kSKmOscNuMuCCoth ||                                                                                                                                 
+     m == kSKmOscNuMuCCoth  ||
+     m == kSKmOscNuMuBarCCQE     ||
+     m == kSKmOscNuMuBarCC1pi    ||
+     m == kSKmOscNuMuBarCCcoh    ||
+//     m == kSKmOscNuMuCCoth ||                                                                                                                                 
+     m == kSKmOscNuMuBarCCoth  ||
+     m == kSKmOscNuEBarCCQE     ||
+     m == kSKmOscNuEBarCC1pi    ||
+     m == kSKmOscNuEBarCCcoh    ||
+//     m == kSKmOscNuMuCCoth ||                                                                                                                                 
+     m == kSKmOscNuEBarCCoth
+     )
   {
     return 0;
   }
@@ -5920,13 +6362,13 @@ double t2kana::util::NuMuSurvProbDecoh (
   if(m == kSKmNuECCQE        ||
      m == kSKmNuECC1pi       ||
      m == kSKmNuECCcoh       ||
-     m == kSKmNuECCoth_mu    ||
+     m == kSKmNuECCoth    ||
      m == kSKmNuENC1piC      ||
      m == kSKmNuENCoth_mu    ||
      m == kSKmNuEBarCCQE     ||
      m == kSKmNuEBarCC1pi    ||
      m == kSKmNuEBarCCcoh    ||
-     m == kSKmNuEBarCCoth_mu ||
+     m == kSKmNuEBarCCoth ||
      m == kSKmNuEBarNC1piC   ||
      m == kSKmNuEBarNCoth_mu )
   {
@@ -5936,13 +6378,13 @@ double t2kana::util::NuMuSurvProbDecoh (
   if(m == kSKmNuMuCCQE        || 
      m == kSKmNuMuCC1pi       || 
      m == kSKmNuMuCCcoh       || 
-     m == kSKmNuMuCCoth_mu    ||
+     m == kSKmNuMuCCoth    ||
      m == kSKmNuMuNC1piC      ||
      m == kSKmNuMuNCoth_mu    ||
      m == kSKmNuMuBarCCQE     ||
      m == kSKmNuMuBarCC1pi    ||
      m == kSKmNuMuBarCCcoh    ||
-     m == kSKmNuMuBarCCoth_mu ||
+     m == kSKmNuMuBarCCoth ||
      m == kSKmNuMuBarNC1piC   ||
      m == kSKmNuMuBarNCoth_mu ||
      m == kSKmMEC             )
@@ -5950,11 +6392,23 @@ double t2kana::util::NuMuSurvProbDecoh (
     return NuMuSurvProbDecoh(sinsq2theta, musq, Et);
   }
   else 
-  if(m == kSKmOscNuMuCCQE     ||
+  if(
+     m == kSKmOscNuMuCCQE     ||
      m == kSKmOscNuMuCC1pi    ||
      m == kSKmOscNuMuCCcoh    ||
-     m == kSKmOscNuMuCCoth_mu ||
-     m == kSKmOscNuMuCCoth_e  )
+//     m == kSKmOscNuMuCCoth ||                                                                                                                                 
+     m == kSKmOscNuMuCCoth  ||
+     m == kSKmOscNuMuBarCCQE     ||
+     m == kSKmOscNuMuBarCC1pi    ||
+     m == kSKmOscNuMuBarCCcoh    ||
+//     m == kSKmOscNuMuCCoth ||                                                                                                                                 
+     m == kSKmOscNuMuBarCCoth  ||
+     m == kSKmOscNuEBarCCQE     ||
+     m == kSKmOscNuEBarCC1pi    ||
+     m == kSKmOscNuEBarCCcoh    ||
+//     m == kSKmOscNuMuCCoth ||                                                                                                                                 
+     m == kSKmOscNuEBarCCoth
+     )
   {
     return 0;
   }
@@ -6039,13 +6493,17 @@ void t2kana::util::ArrIdx::Init(void)
           << " is at slot: " << fBANFFSystIdx [p] << endl;
 #endif
   }
-
+#ifndef SKFSITOGETHER
   //FSI
   for(int i = 0; i < knppmax; i++) {
     fFSISystIdx[i] = -1;
   }
   for(int ip = 0; ip < kNumOfFSIParams; ip++) {
+#if FSI_BINS != 3
     PhysParamId_t p = PhysParamId_t ((int) kNuisFSI000 + ip);
+#else
+    PhysParamId_t p = PhysParamId_t ((int) kNuisFSI006 + ip);
+#endif
     if(p == kPhypUndefined) continue;
     fFSISystIdx[p] = ip;
 #ifdef __show_arr_idx_mesg_debug__
@@ -6054,13 +6512,18 @@ void t2kana::util::ArrIdx::Init(void)
           << " is at slot: " << fFSISystIdx [p] << endl;
 #endif
   }
-
+#endif
+#ifdef SKFSITOGETHER
   //SKDET + FSI
   for(int i = 0; i < knppmax; i++) {
     fSKDetFSISystIdx[i] = -1;
   }
   for(int ip = 0; ip < kNumOfSKDetFSIParams; ip++) {
+#if FSI_BINS != 3
     PhysParamId_t p = PhysParamId_t ((int) kNuisSKDetFSI000 + ip);
+#else
+    PhysParamId_t p = PhysParamId_t ((int) kNuisSKDetFSI006 + ip);
+#endif
     if(p == kPhypUndefined) continue;
     fSKDetFSISystIdx[p] = ip;
 #ifdef __show_arr_idx_mesg_debug__
@@ -6069,8 +6532,10 @@ void t2kana::util::ArrIdx::Init(void)
           << " is at slot: " << fSKDetFSISystIdx [p] << endl;
 #endif
   }
+#endif
 
-#if FSI_BINS == 1
+#ifndef SKFSITOGETHER
+#if FSI_BINS != 2
   //1Re SK eff
   for(int i = 0; i < knppmax; i++) {
     fSKDet1ReSystIdx[i] = -1;
@@ -6085,6 +6550,7 @@ void t2kana::util::ArrIdx::Init(void)
           << " is at slot: " << fSKDet1ReSystIdx [p] << endl;
 #endif
   }
+#endif
 #endif
 
   //PhysParam

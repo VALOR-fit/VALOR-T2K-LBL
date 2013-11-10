@@ -77,7 +77,13 @@ bool FSI::Read(TXMLEngine* xml, XMLNodePointer_t root_node)
   const int np = conv::kNumOfFSIParams;
 
   // Get FSI covariance matrix
+#if FSI_BINS == 1
   fCovMtrx = util::XML2TMatrixD(xml,root_node,"fsi/covariance_matrix");
+#elif FSI_BINS == 2
+  fCovMtrx = util::XML2TMatrixD(xml,root_node,"fsi/disap/covariance_matrix");
+#elif FSI_BINS == 3
+  fCovMtrx = util::XML2TMatrixD(xml,root_node,"fsi/app/covariance_matrix");
+#endif
   if(!fCovMtrx) {
     cerr << "Exp/FSI >> No FSI covariance matrix was found." << endl;
     exit(1);
@@ -132,7 +138,11 @@ double FSI::SystWght(
      if(iparam != -1) {
        cerr << "Exp/FSI/SystWght >> Found multiple FSI bins for sample, mode, Ereco combination!" << endl
 	    << util::AsString(s) << "\t" << util::AsString(m) << "\t" << Ereco << endl
+#if FSI_BINS != 3
 	    << util::AsString((conv::PhysParamId_t)(iparam+conv::kNuisFSI000)) << "\t" <<  util::AsString(p) << endl;
+#else
+	    << util::AsString((conv::PhysParamId_t)(iparam+conv::kNuisFSI006)) << "\t" <<  util::AsString(p) << endl;
+#endif
        exit(1);
      }
      iparam = util::ArrIdx::Instance()->FSISystIdx(p);

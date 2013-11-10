@@ -109,10 +109,10 @@ public :
   int GetNDim(void) const {return fNDim;}
   int GetNPoints (void) const {return fNPoints;}
 
-private:
-  
   double ChisquarePenaltyTerm(void) const;
 
+private:
+  
   SuperkObservation *         fObs;
   mutable SuperkExpectation * fExp;
   mutable FitParamList *      fFitParams;

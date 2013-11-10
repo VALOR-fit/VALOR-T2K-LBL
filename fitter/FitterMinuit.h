@@ -38,6 +38,7 @@ public:
    virtual bool       DoTheFit      (void);
    virtual int        FitStatusCode (Option_t * option = ""); // option: "migrad_min", "migrad_err", "hesse_err", "minos_err"
    virtual double     FitTime       (void)              { return fFitTime;                    }
+   virtual int        FitNTries     (void)              { return fFitTries;                   }
    virtual int        NDOF          (void)              { return fNFitBins - fNFreeFitParams; }
    virtual int        NBinsInFit    (void)              { return fNFitBins;                   }
    virtual int        NFitParams    (void)              { return fNFreeFitParams;             }

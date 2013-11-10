@@ -28,6 +28,7 @@ public:
    virtual bool       DoTheFit      (void)                   = 0; 
    virtual int        FitStatusCode (Option_t * option = "") = 0; 
    virtual double     FitTime       (void)                   = 0;
+   virtual int        FitNTries     (void)                   = 0;
    virtual int        NDOF          (void)                   = 0;
    virtual int        NBinsInFit    (void)                   = 0;
    virtual int        NFitParams    (void)                   = 0;

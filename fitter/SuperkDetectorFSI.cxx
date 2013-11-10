@@ -91,7 +91,13 @@ bool SuperkDetectorFSI::Read(TXMLEngine* xml, XMLNodePointer_t root_node)
   const int np = conv::kNumOfSKDetFSIParams;
 
   // Get SuperkDetectorFSI covariance matrix
+#if FSI_BINS == 1
   fCovMtrx= util::XML2TMatrixD(xml,root_node,"skdetfsi/covariance_matrix");
+#elif FSI_BINS == 2
+  fCovMtrx= util::XML2TMatrixD(xml,root_node,"skdetfsi/disap/covariance_matrix");
+#elif FSI_BINS == 3
+  fCovMtrx= util::XML2TMatrixD(xml,root_node,"skdetfsi/app/covariance_matrix");
+#endif
   if(!fCovMtrx) {
     cerr << "Exp/SuperkDetectorFSI >> No SuperkDetector+FSI covariance matrix was found." << endl;
     exit(1);
@@ -118,6 +124,7 @@ bool SuperkDetectorFSI::Read(TXMLEngine* xml, XMLNodePointer_t root_node)
   cout << "Exp/SuperkDetectorFSI >> " << "Error {EnergyScale;1Rmu}    : " << fEnergyScale1RmuRelErr  << endl;
   cout << "Exp/SuperkDetectorFSI >> " << "Error {EnergyScale;1Re}    : " << fEnergyScale1ReRelErr  << endl;
   cout << "Exp/SuperkDetectorFSI >> Input SuperkDetector+FSI covariance matrix: " << endl; 
+  //cov.Print();
   util::PrintCompact(cov,7,4);
   cout << "Exp/SuperkDetectorFSI >> Inverse SuperkDetector+FSI covariance matrix: " << endl;
   util::PrintCompact(*fCovMtrxInv,7,4);
@@ -160,7 +167,11 @@ double SuperkDetectorFSI::SystWght(
      if(iparam != -1) {
        cerr << "Exp/SuperkDetectorFSI/SystWght >> Found multiple SuperkDetector+FSI bins for sample, mode, Ereco combination!" << endl
 	    << util::AsString(s) << "\t" << util::AsString(m) << "\t" << Ereco << endl
+#if FSI_BINS != 3
 	    << util::AsString((conv::PhysParamId_t)(iparam+conv::kNuisSKDetFSI000)) << "\t" <<  util::AsString(p) << endl;
+#else
+	    << util::AsString((conv::PhysParamId_t)(iparam+conv::kNuisSKDetFSI006)) << "\t" <<  util::AsString(p) << endl;
+#endif
        exit(1);
      }
      iparam = util::ArrIdx::Instance()->SKDetFSISystIdx(p);
@@ -523,7 +534,8 @@ double SuperkDetectorFSI::ChisqPenalty(void) const
   cout << "Exp/SuperkDetectorFSI/ChisqPenalty >> ChisqPenalty = " << chisq_penalty << endl;
 #endif
 
-  if(chisq_penalty < 0) cout << "Exp/SuperkDetectorFSI/ChisqPenalty >> ChisqPenalty = " << chisq_penalty << endl;
+  if(chisq_penalty < 0) 
+    cout << "Exp/SuperkDetectorFSI/ChisqPenalty >> ChisqPenalty = " << chisq_penalty << endl;
 
   if(chisq_penalty) return chisq_penalty;
   

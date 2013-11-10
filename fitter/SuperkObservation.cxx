@@ -100,7 +100,7 @@ bool SuperkObservation::Read(string config_file, int data_set_id, bool is_xml)
     //        util::XML2TH1D(xml,root_node,"superk/observation/one_mu_ring/ereco");
     //  }
     //  else
-
+#ifndef __NUEONLY__ 
     ostringstream datanode1Rmu;
     datanode1Rmu << "superk/observation/one_mu_ring/ereco_values" << "/data_set_" << data_set_id;
 
@@ -124,7 +124,7 @@ bool SuperkObservation::Read(string config_file, int data_set_id, bool is_xml)
     else {
       cerr << "Obs >> Node " << datanode1Rmu.str() << " does not exist!" << endl;
     }
-
+#endif
 #ifndef __NUMUONLY__ 
     ostringstream datanode1Re;
     //Ereco spectrum
@@ -176,6 +176,7 @@ bool SuperkObservation::Read(string config_file, int data_set_id, bool is_xml)
   }//is_xml
 
   else{
+#ifndef __NUEONLY__ 
     TFile f(config_file.c_str());
     TH1D * hist = 0;
     f.GetObject(Form("mock_data_%d",data_set_id),hist);
@@ -198,6 +199,7 @@ bool SuperkObservation::Read(string config_file, int data_set_id, bool is_xml)
 	fErDistrArray1Rmu[ibin-1] = nobs;
       }
     }
+#endif
   }//!is_xml
 
 

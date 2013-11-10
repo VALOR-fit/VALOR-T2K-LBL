@@ -46,6 +46,9 @@ public:
   // - dm^2 = Dm^2_{12} and Dm^2 = |m^2_{3} - (m^2_{1} + m^2_{1})/2| (Fogli,Lisi)                                                                                                  
   conv::NuOscDmsqScheme_t gOscDmsqScheme;
 
+  // Choice of deltaCP, use it as purely phase or its sin
+  conv::NuOscDeltaCP_t gOscDeltaCP;
+
 
   // Choice of oscillation analysis type (combined, numu disapp only, nue app only)
   conv::OscAnaType_t gOscAnaTypeChoice;
