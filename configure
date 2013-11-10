@@ -6,7 +6,11 @@
 #    --enable-gsl-fitter
 #    --production-mode
 #    --numudisap-only
+#    --nueapp-only
 #    --seed-trandom-zero
+#    --use_osc_numu
+#    --use_osc_numubar
+#    --use_osc_nuebar
 #
 
 $T2KOSCANA = $ENV{'T2KOSCANA'};
@@ -35,12 +39,32 @@ foreach (@ARGV) {
      print BLD "// Sets BANFF_BINS, FSI_BINS, and kSKSamples appropriately. \n";
      print BLD "#define __NUMUONLY__ \n\n";
   }
-  
+
+  elsif($_ eq '--nueapp-only') {
+      print BLD "// Sets BANFF_BINS, FSI_BINS, and kSKSamples appropriately. \n";
+      print BLD "#define __NUEONLY__ \n\n";
+  }
+
   elsif($_ eq '--seed-trandom-zero') {
-    print BLD "// Rnd constructs TRandom with zero seeds if requested, rather than reading /dev/urandom \n";
-    print BLD "#define __SEED_TRANDOM_ZERO__\n\n";
+      print BLD "// Rnd constructs TRandom with zero seeds if requested, rather than reading /dev/urandom \n";
+      print BLD "#define __SEED_TRANDOM_ZERO__\n\n";
+  }
+  
+  elsif($_ eq '--use_osc_numu') {
+      print BLD " // Use osc numu mc templates \n";
+      print BLD "#define __USE_OSC_NUMU_MC_TEMPLATES__\n\n";
+  }
+
+  elsif($_ eq '--use_osc_numubar') {
+      print BLD " // Use osc numubar mc templates \n";
+      print BLD "#define __USE_OSC_NUMUBAR_MC_TEMPLATES__\n\n";
   }
  
+  elsif($_ eq '--use_osc_nuebar') {
+      print BLD " // Use osc nuebar mc templates \n";
+      print BLD "#define __USE_OSC_NUEBAR_MC_TEMPLATES__\n\n";
+  }
+
   else {
      print "Unrecognised option: ",$_,"\n";
   }
