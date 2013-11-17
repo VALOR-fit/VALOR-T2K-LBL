@@ -275,7 +275,7 @@
           </one_mu_ring>
           <one_e_ring>
                 <filename>
-		  inputs/official/2013/xsec/XSecSplines1Re2013v5.root
+		  inputs/official/2013/xsec/XSecSplines1Re2013v5_rebin.root
                 </filename>
           </one_e_ring>
       </weight_splines>
