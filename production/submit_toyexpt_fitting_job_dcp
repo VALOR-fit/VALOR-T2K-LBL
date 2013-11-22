@@ -100,11 +100,14 @@ $deltacp_min = -pi;
 $deltacp_max =  pi;
 $deltacp_bin_size = ($deltacp_max - $deltacp_min) / ($ndeltacp - 1 - $a_small_num);
 
+print "This script uses $ndeltacp delta_cp bins from $deltacp_min to $deltacp_max\n";
+
 $irun = 0;
 while($irun < $nruns) {
 
-  $deptacpbin = 1 + rand($ndeltacp-1); # rand(x) returns value between 0 and x
-  $deptacp = $deltacp_min + ($deptacpbin-1)*$deltacp_bin_size;
+  $deltacpbin = 1 + int(rand($ndeltacp)); # NoteL rand(20) returns values in [0.,20.) range, so int(rand(20)) returns values in [0,19] range
+  $deltacp = $deltacp_min + ($deltacpbin-1)*$deltacp_bin_size;
+  print "Randomized delta_CP bin = $deltacpbin -> deltacp = $deltacp \n";
 
   print "Submitting run: $irun \n";
   $command = "root2k -l -b -q \'$softw_dir/macros/fit/run_fit_dcp.C(\"$tag\",$irun,$nexpts,$mix12,$mix13,$mix23,$deltacp,$dm12sq,$dm23sq,\"$config_file\",$stat_fluct,$twk_systematics,\"$fitparamlist\",\"$fitoption\",$store_toy_expts,$store_bestfit_spectra,\"$dmsqscheme\",\"$masshierarchy\",\"$mixparamchoice\")\'";
