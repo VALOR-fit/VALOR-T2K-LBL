@@ -110,7 +110,7 @@ while($irun < $nruns) {
   print "Randomized delta_CP bin = $deltacpbin -> deltacp = $deltacp \n";
 
   print "Submitting run: $irun \n";
-  $command = "root2k -l -b -q \'$softw_dir/macros/fit/run_fit_dcp.C(\"$tag\",$irun,$nexpts,$mix12,$mix13,$mix23,$deltacp,$dm12sq,$dm23sq,\"$config_file\",$stat_fluct,$twk_systematics,\"$fitparamlist\",\"$fitoption\",$store_toy_expts,$store_bestfit_spectra,\"$dmsqscheme\",\"$masshierarchy\",\"$mixparamchoice\")\'";
+  $command = "root2k -l -b -q \'$softw_dir/macros/fit/run_fit_dcp.C(\"$tag\",$irun,$nexpts,$deltacp,$mix12,$mix13,$mix23,$dm12sq,$dm23sq,\"$config_file\",$stat_fluct,$twk_systematics,\"$fitparamlist\",\"$fitoption\",$store_toy_expts,$store_bestfit_spectra,\"$dmsqscheme\",\"$masshierarchy\",\"$mixparamchoice\")\'";
   print "$command \n";
 
   #
