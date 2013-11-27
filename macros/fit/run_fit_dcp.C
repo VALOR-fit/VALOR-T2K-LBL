@@ -56,6 +56,13 @@ void run_fit_dcp
   bool randomize_dm12sq   = (TMath::Abs(input_dm12sq   + 999) < kASmallNum);
   bool randomize_dm23sq   = (TMath::Abs(input_dm23sq   + 999) < kASmallNum);
 
+  // Check whether some osc. params need to be randomized
+  bool randomize_future_mixing23 = (TMath::Abs(input_mixing23 + 9999) < kASmallNum);
+  bool randomize_future_mixing12 = (TMath::Abs(input_mixing12 + 9999) < kASmallNum);
+  bool randomize_future_mixing13 = (TMath::Abs(input_mixing13 + 9999) < kASmallNum);
+  bool randomize_future_dm12sq   = (TMath::Abs(input_dm12sq   + 9999) < kASmallNum);
+  bool randomize_future_dm23sq   = (TMath::Abs(input_dm23sq   + 9999) < kASmallNum);
+
   // Check whether some osc. params need to take best fit from Conventions.h
   if(Opt::Instance()->gOscMixingParamChoice == conv::kNuMixSinsq2Theta) {
     if(TMath::Abs(input_mixing13 + 99) < kASmallNum) input_mixing13 = conv::kGlobFitSinsq2Theta13;
@@ -164,9 +171,51 @@ void run_fit_dcp
      // randomize specified osc params for current toy MC expt
      if (randomize_mixing12) { input_mixing12 = util::RandomizeMixing12(); }
      if (randomize_mixing13) { input_mixing13 = util::RandomizeMixing13(); }
-     if (randomize_mixing13) { input_mixing13 = util::RandomizeMixing23(); }
+     if (randomize_mixing23) { input_mixing23 = util::RandomizeMixing23(); }
      if (randomize_dm12sq  ) { input_dm12sq   = util::RandomizeDm12sq();   }
-     if (randomize_dm12sq  ) { input_dm12sq   = util::RandomizeDm23sq();   }
+     if (randomize_dm23sq  ) { input_dm23sq   = util::RandomizeDm23sq();   }
+
+     // randomize specified osc params for current toy MC expt (future error case)
+     if (randomize_future_mixing12) {
+       cerr << "No future error on mixing12 defined, using current best fit value" << endl;
+       if(Opt::Instance()->gOscMixingParamChoice == conv::kNuMixSinsq2Theta)
+	 input_mixing12 = conv::kGlobFitSinsq2Theta12;
+       else
+	 input_mixing12 = conv::kGlobFitSinsqTheta12;
+     }
+     if (randomize_future_mixing13) {
+       cerr << "No future error on mixing13 defined, using current best fit value" << endl;
+       if(Opt::Instance()->gOscMixingParamChoice == conv::kNuMixSinsq2Theta)
+	 input_mixing13 = conv::kGlobFitSinsq2Theta13;
+       else
+	 input_mixing13 = conv::kGlobFitSinsqTheta13;
+     }
+     if (randomize_future_dm12sq) {
+       cerr << "No future error on dm21sq defined, using current best fit value" << endl;
+       input_mixing12 = conv::kGlobFitSinsqTheta12;
+     }
+     if (randomize_future_mixing23) {
+       input_mixing23 = -1;
+       while(input_mixing23 < 0 || input_mixing23 > 1) {
+	 if(Opt::Instance()->gOscMixingParamChoice == conv::kNuMixSinsq2Theta) {
+	   double mean  = conv::kGlobFitSinsq2Theta23;
+	   double sigma = 0.172;
+	 }
+	 else {
+	   double mean  = conv::kGlobFitSinsqTheta23;
+	   double sigma = 0.045;
+	 }
+	 input_mixing23 = Rnd::Instance()->RndToyMCosc().Gaus(mean,sigma);
+       }//while
+     }
+     if (randomize_future_dm23sq) {
+       input_dm23sq = -1;
+       while(input_dm23sq < 0 || input_dm23sq > 1) {
+	 double mean  = conv::kGlobFitDm23sq;
+	 double sigma = 0.045;
+	 input_dm23sq = Rnd::Instance()->RndToyMCosc().Gaus(mean,sigma);
+       }//while
+     }
 
      // set oscillation parameter inputs as necessary (used to generate toy-MC expt)
      if(hyp == kHypOsc3F) {

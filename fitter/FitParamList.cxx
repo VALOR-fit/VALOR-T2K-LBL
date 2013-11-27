@@ -789,6 +789,16 @@ FitParamList * FitParamList::NamedParameterList(string name)
     return fp;
   }
 
+  if(name == "nuosc3f_dcpsensitivity_fix3") {
+    FitParamList * fp = FitParamList::NuOsc3FlavourFit();
+    fp -> FixParameter (kPhypMixing13);
+    fp -> FixParameter (kPhypMixing12);
+    fp -> FixParameter (kPhypDm12sq);
+    fp -> SetParListName(name);
+    fp -> SetSystMode(0);
+    return fp;
+  }
+
   //
   // 2-flavour numu-disappearance oscillation fit with/without systematics included 
   //
