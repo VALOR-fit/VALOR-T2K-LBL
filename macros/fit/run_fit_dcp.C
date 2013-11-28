@@ -192,7 +192,7 @@ void run_fit_dcp
      }
      if (randomize_future_dm12sq) {
        cerr << "No future error on dm21sq defined, using current best fit value" << endl;
-       input_mixing12 = conv::kGlobFitSinsqTheta12;
+       input_dm12sq = conv::kGlobFitDm12sq;
      }
      if (randomize_future_mixing23) {
        input_mixing23 = -1;
