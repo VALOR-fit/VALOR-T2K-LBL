@@ -795,7 +795,31 @@ FitParamList * FitParamList::NamedParameterList(string name)
     fp -> FixParameter (kPhypMixing12);
     fp -> FixParameter (kPhypDm12sq);
     fp -> SetParListName(name);
-    fp -> SetSystMode(0);
+    fp -> SetSystMode(4);//use future osc errors
+    return fp;
+  }
+
+  if(name == "nuosc3f_dcpsensitivity") {
+    FitParamList * fp = FitParamList::NuOsc3FlavourFit();
+    fp -> SetParListName(name);
+    fp -> SetSystMode(3);//use current osc errors
+    return fp;
+  }
+
+  if(name == "nuosc3f_dcpsensitivity_fix3+nuisance") {
+    FitParamList * fp = FitParamList::NuOsc3FlavourFitWithAllSyst();
+    fp -> FixParameter (kPhypMixing13);
+    fp -> FixParameter (kPhypMixing12);
+    fp -> FixParameter (kPhypDm12sq);
+    fp -> SetParListName(name);
+    fp -> SetSystMode(5);//use future osc errors
+    return fp;
+  }
+
+  if(name == "nuosc3f_dcpsensitivity+nuisance") {
+    FitParamList * fp = FitParamList::NuOsc3FlavourFitWithAllSyst();
+    fp -> SetParListName(name);
+    fp -> SetSystMode(1);//use current osc errors
     return fp;
   }
 

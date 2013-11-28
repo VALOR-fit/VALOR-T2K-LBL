@@ -197,6 +197,20 @@ static const double kGlobFitErrSinsqTheta12 = 0.059;  // ~5.9% fogli2011
 //static const double kGlobFitErrSinsqTheta12 = 0.053;  // ~5.3% pdg2012
 static const double kGlobFitErrSinsqTheta13 = 0.139;  // ~13.9%
 
+// projected future errors
+//atmos params unknown
+static const double kFutureAbsErrSinsqTheta23  = 0.05;//red line, page 36, PAC report final
+static const double kFutureAbsErrSinsq2Theta23 = 0.19;//conversion of above (seems huge!)
+static const double kFutureAbsErrDm23sq        = 0.045E-3;//red line, page 36, PAC report final
+//solar & mix13 are known
+static const double kFutureAbsErrSinsqTheta13  = 0.0;
+static const double kFutureAbsErrSinsq2Theta13 = 0.0;
+static const double kFutureAbsErrSinsqTheta12  = 0.0;
+static const double kFutureAbsErrSinsq2Theta12 = 0.0;
+static const double kFutureAbsErrDm12sq        = 0.0;
+
+
+
 // Dm^2 fitter init values and range and step
 static const double kInitFitDm23sq           = kGlobFitDm23sq;
 static const double kMinFitDm23sq            = 1.0E-3;

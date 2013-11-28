@@ -199,11 +199,11 @@ void run_fit_dcp
        while(input_mixing23 < 0 || input_mixing23 > 1) {
 	 if(Opt::Instance()->gOscMixingParamChoice == conv::kNuMixSinsq2Theta) {
 	   double mean  = conv::kGlobFitSinsq2Theta23;
-	   double sigma = 0.172;
+	   double sigma = conv::kFutureAbsErrSinsq2Theta23;
 	 }
 	 else {
 	   double mean  = conv::kGlobFitSinsqTheta23;
-	   double sigma = 0.045;
+	   double sigma = conv::kFutureAbsErrSinsqTheta23;
 	 }
 	 input_mixing23 = Rnd::Instance()->RndToyMCosc().Gaus(mean,sigma);
        }//while
@@ -212,7 +212,7 @@ void run_fit_dcp
        input_dm23sq = -1;
        while(input_dm23sq < 0 || input_dm23sq > 1) {
 	 double mean  = conv::kGlobFitDm23sq;
-	 double sigma = 0.045;
+	 double sigma = conv::kFutureAbsErrDm23sq;
 	 input_dm23sq = Rnd::Instance()->RndToyMCosc().Gaus(mean,sigma);
        }//while
      }
