@@ -195,6 +195,7 @@ private:
    // Various functions called by NamedParameterList(name)
    static FitParamList * NuOsc3FlavourFit                 (void);
    static FitParamList * NuOsc3FlavourFitWithAllSyst      (void);
+   static FitParamList * NuOsc3FlavourFitWithHackSyst     (void);
    static FitParamList * NuOsc3FlavourFitWithXSec         (void);
    static FitParamList * NuOsc3FlavourFitWithEScale       (void);
    static FitParamList * NuOsc3FlavourFitWithAllSystButSKDetFSI      (void);

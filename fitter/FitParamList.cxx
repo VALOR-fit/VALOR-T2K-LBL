@@ -814,26 +814,33 @@ FitParamList * FitParamList::NamedParameterList(string name)
   }
 
   if(name == "nuosc3f_dcpsensitivity_fix3+nuisance") {
-    FitParamList * fp = FitParamList::NuOsc3FlavourFitWithAllSyst();
+    //FitParamList * fp = FitParamList::NuOsc3FlavourFitWithAllSyst();
+    FitParamList * fp = FitParamList::NuOsc3FlavourFitWithHackSyst();
     fp -> SetNuisance  (kPhypMixing23, true);
     fp -> SetNuisance  (kPhypDm23sq,   true);
     fp -> FixParameter (kPhypMixing13);
     fp -> FixParameter (kPhypMixing12);
     fp -> FixParameter (kPhypDm12sq);
+    /*
+    fp -> FixParameter (kNuisXSecFermiMom);
+    fp -> FixParameter (kNuisXSecSpecFunc);
+    fp -> FixParameter (kNuisXSecBindE);
+    */
     fp -> SetParListName(name);
     fp -> SetSystMode(5);//use future osc errors
     return fp;
   }
 
   if(name == "nuosc3f_dcpsensitivity+nuisance") {
-    FitParamList * fp = FitParamList::NuOsc3FlavourFitWithAllSyst();
+    //FitParamList * fp = FitParamList::NuOsc3FlavourFitWithAllSyst();
+    FitParamList * fp = FitParamList::NuOsc3FlavourFitWithHackSyst();
     fp -> SetNuisance  (kPhypMixing23, true);
     fp -> SetNuisance  (kPhypDm23sq,   true);
     fp -> SetNuisance  (kPhypMixing13, true);
     fp -> SetNuisance  (kPhypMixing12, true);
     fp -> SetNuisance  (kPhypDm12sq,   true);
     fp -> SetParListName(name);
-    fp -> SetSystMode(1);//use current osc errors
+    fp -> SetSystMode(6);//use current osc errors
     return fp;
   }
 
@@ -910,6 +917,24 @@ FitParamList * FitParamList::NuOsc3FlavourFitWithAllSyst(void)
   FitParamList::AppendAllSuperkDetectorFSISystematics  (fparm, 6+kNumOfParamsInBANFFfit);
   FitParamList::AppendAllUncorrelatedXSecSystematics(fparm, 6+kNumOfParamsInBANFFfit+1+kNumOfSKDetFSIParams);
 #endif
+  return fparm;
+}
+//________________________________________________________________________________________
+FitParamList * FitParamList::NuOsc3FlavourFitWithHackSyst(void)
+{
+  FitParamList * fparm = new FitParamList(6+4);
+
+  FitParamList::Append3FlavourOscillation(fparm, 0);
+
+  //
+  // add nuisance params
+  //
+  int ip = 6;
+  fparm->AddParam( ip++, kNuisXSecNormCCcoh,     0.0, -1.0*SYST_NSIGMA, 1.0*SYST_NSIGMA, SYST_STEP,  false, true);
+  fparm->AddParam( ip++, kNuisXSecNormNC1piC,    0.0, -1.0*SYST_NSIGMA, 1.0*SYST_NSIGMA, SYST_STEP,  false, true);
+  fparm->AddParam( ip++, kNuisXSecNormNCcoh,     0.0, -1.0*SYST_NSIGMA, 1.0*SYST_NSIGMA, SYST_STEP,  false, true);
+  fparm->AddParam( ip++, kNuisXSecNormNCoth,     0.0, -1.0*SYST_NSIGMA, 1.0*SYST_NSIGMA, SYST_STEP,  false, true);
+
   return fparm;
 }
 //________________________________________________________________________________________

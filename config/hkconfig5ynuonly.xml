@@ -281,16 +281,16 @@
       </weight_splines>
       <normalisations>
 	  <cccoh>
-	       1.0
+	       0.08
 	  </cccoh>
 	  <nc1piC>
-	       0.3
+	       0.08
 	  </nc1piC>
 	  <nccoh>
-	       0.3
+	       0.088
 	  </nccoh>
 	  <ncoth>
-	       0.3
+	       0.088
 	  </ncoth>
 	  <numu_to_nue>
 	       0.03

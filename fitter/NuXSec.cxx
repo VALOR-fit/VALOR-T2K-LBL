@@ -1191,22 +1191,20 @@ TH2D * NuXSec::Template(SuperkSample_t s, SuperkMode_t m) const
   return h;
 }
 //________________________________________________________________________________________
-double NuXSec::ChisqPenalty(bool /*all_syst*/) const
+double NuXSec::ChisqPenalty(bool /*all_syst*/, bool hk_syst) const
 {
   //only contains the contributions from the non-BANFF xsec parameters
 
   double chisq_penalty = 0;
 
-  /*
-  // when only fitting for most important systematics
-  if(!all_syst) {
-    if (fPiLessDeltaTwkDial)  chisq_penalty += fPiLessDeltaTwkDial*fPiLessDeltaTwkDial;
-    if (fSpecFuncTwkDial)     chisq_penalty += fSpecFuncTwkDial*fSpecFuncTwkDial;
-    if (fBindETwkDial)        chisq_penalty += fBindETwkDial*fBindETwkDial;
-    if (fWshapeTwkDial)       chisq_penalty += fWshapeTwkDial*fWshapeTwkDial;
+  // hack for hk
+  if(hk_syst) {
+    if (fNormCCcohTwkDial)      chisq_penalty += fNormCCcohTwkDial*fNormCCcohTwkDial;
+    if (fNormNC1piCTwkDial)     chisq_penalty += fNormNC1piCTwkDial*fNormNC1piCTwkDial;
+    if (fNormNCcohTwkDial)      chisq_penalty += fNormNCcohTwkDial*fNormNCcohTwkDial;
+    if (fNormNCothTwkDial)      chisq_penalty += fNormNCothTwkDial*fNormNCothTwkDial;
     return chisq_penalty;
   }
-  */
 
   if (fFermiMomTwkDial)       chisq_penalty += fFermiMomTwkDial*fFermiMomTwkDial;
   if (fSpecFuncTwkDial)       chisq_penalty += fSpecFuncTwkDial*fSpecFuncTwkDial;

@@ -276,12 +276,15 @@ double FitInputs::ChisquarePenaltyTerm(void) const
   bool osc_only = false;
   if(systmode == 3 || systmode == 4)
     osc_only = true;
+  bool hk_hack = false;
+  if(systmode == 5 || systmode == 6)
+    hk_hack = true;
   
   //
   // Add penalty term for marginalised oscillation parameters.
   // Penalize deviations from global analysis best-fit value.
   // ...
-  if(systmode <= 3) {
+  if(systmode <= 3 || systmode == 6) {
     /*
       if( fFitParams->Exists    (kPhypMixing23) && 
       fFitParams->IsNuisance(kPhypMixing23) )
@@ -492,6 +495,15 @@ double FitInputs::ChisquarePenaltyTerm(void) const
   if(osc_only)
     return chisq_penalty;
 
+  if(hk_hack) {
+    double dchisq_penalty_xsec = fExp->GetNuXSec()->ChisqPenalty(all_syst,true);
+    chisq_penalty += dchisq_penalty_xsec;
+#ifdef __show_contributions_to_penalty_term__
+    cout << "FitInputs::ChisquarePenaltyTerm >> Current variation of params considered by NuXSec"
+	 << " => \\delta\\chi^2_{penalty} = " << dchisq_penalty_xsec << endl;
+#endif
+    return chisq_penalty;
+  }
 
   //
   // Add penalty term for BANFF params 
