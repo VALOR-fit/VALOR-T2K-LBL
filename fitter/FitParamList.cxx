@@ -791,6 +791,8 @@ FitParamList * FitParamList::NamedParameterList(string name)
 
   if(name == "nuosc3f_dcpsensitivity_fix3") {
     FitParamList * fp = FitParamList::NuOsc3FlavourFit();
+    fp -> SetNuisance  (kPhypMixing23, true);
+    fp -> SetNuisance  (kPhypDm23sq,   true);
     fp -> FixParameter (kPhypMixing13);
     fp -> FixParameter (kPhypMixing12);
     fp -> FixParameter (kPhypDm12sq);
@@ -801,6 +803,11 @@ FitParamList * FitParamList::NamedParameterList(string name)
 
   if(name == "nuosc3f_dcpsensitivity") {
     FitParamList * fp = FitParamList::NuOsc3FlavourFit();
+    fp -> SetNuisance  (kPhypMixing23, true);
+    fp -> SetNuisance  (kPhypDm23sq,   true);
+    fp -> SetNuisance  (kPhypMixing13, true);
+    fp -> SetNuisance  (kPhypMixing12, true);
+    fp -> SetNuisance  (kPhypDm12sq,   true);
     fp -> SetParListName(name);
     fp -> SetSystMode(3);//use current osc errors
     return fp;
@@ -808,6 +815,8 @@ FitParamList * FitParamList::NamedParameterList(string name)
 
   if(name == "nuosc3f_dcpsensitivity_fix3+nuisance") {
     FitParamList * fp = FitParamList::NuOsc3FlavourFitWithAllSyst();
+    fp -> SetNuisance  (kPhypMixing23, true);
+    fp -> SetNuisance  (kPhypDm23sq,   true);
     fp -> FixParameter (kPhypMixing13);
     fp -> FixParameter (kPhypMixing12);
     fp -> FixParameter (kPhypDm12sq);
@@ -818,6 +827,11 @@ FitParamList * FitParamList::NamedParameterList(string name)
 
   if(name == "nuosc3f_dcpsensitivity+nuisance") {
     FitParamList * fp = FitParamList::NuOsc3FlavourFitWithAllSyst();
+    fp -> SetNuisance  (kPhypMixing23, true);
+    fp -> SetNuisance  (kPhypDm23sq,   true);
+    fp -> SetNuisance  (kPhypMixing13, true);
+    fp -> SetNuisance  (kPhypMixing12, true);
+    fp -> SetNuisance  (kPhypDm12sq,   true);
     fp -> SetParListName(name);
     fp -> SetSystMode(1);//use current osc errors
     return fp;
