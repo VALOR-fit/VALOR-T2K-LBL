@@ -285,36 +285,36 @@ double FitInputs::ChisquarePenaltyTerm(void) const
   // Penalize deviations from global analysis best-fit value.
   // ...
   if(systmode <= 3 || systmode == 6) {
-    /*
-      if( fFitParams->Exists    (kPhypMixing23) && 
-      fFitParams->IsNuisance(kPhypMixing23) )
+#ifdef HK
+    if( fFitParams->Exists    (kPhypMixing23) && 
+	fFitParams->IsNuisance(kPhypMixing23) )
       {
-      double mix = fFitParams->CurrValue(kPhypMixing23);
-      double nom = 0;
-      double err = 0;
-      NuOscMixParam_t omp = Opt::Instance()->gOscMixingParamChoice;
-      switch(omp) {
-      case(kNuMixSinsq2Theta):
-      nom = kGlobFitSinsq2Theta23;
-      err = kGlobFitSinsq2Theta23 * kGlobFitErrSinsq2Theta23;
-      break;
-      case(kNuMixSinsqTheta):
-      nom = kGlobFitSinsqTheta23;
-      err = kGlobFitSinsqTheta23 * kGlobFitErrSinsqTheta23;
-      break;
-      default:
-      exit(1);
-      }
-      double twk = (mix - nom) / err;
-      double dchisq_penalty = twk*twk;
-      chisq_penalty += dchisq_penalty;
-      #ifdef __show_contributions_to_penalty_term__
-      cout << "FitInputs::ChisquarePenaltyTerm >> mixing23 = " << mix
-      << " (nominal = " << nom << ", error = " << err << ", twk = " << twk << ")"
-      << " => \\delta\\chi^2_{penalty} = " << dchisq_penalty << endl;
-      #endif
+	double mix = fFitParams->CurrValue(kPhypMixing23);
+	double nom = 0;
+	double err = 0;
+	NuOscMixParam_t omp = Opt::Instance()->gOscMixingParamChoice;
+	switch(omp) {
+	case(kNuMixSinsq2Theta):
+	  nom = kGlobFitSinsq2Theta23;
+	  err = kGlobFitSinsq2Theta23 * kGlobFitErrSinsq2Theta23;
+	  break;
+	case(kNuMixSinsqTheta):
+	  nom = kGlobFitSinsqTheta23;
+	  err = kGlobFitSinsqTheta23 * kGlobFitErrSinsqTheta23;
+	  break;
+	default:
+	  exit(1);
+	}
+	double twk = (mix - nom) / err;
+	double dchisq_penalty = twk*twk;
+	chisq_penalty += dchisq_penalty;
+#ifdef __show_contributions_to_penalty_term__
+	cout << "FitInputs::ChisquarePenaltyTerm >> mixing23 = " << mix
+	     << " (nominal = " << nom << ", error = " << err << ", twk = " << twk << ")"
+	     << " => \\delta\\chi^2_{penalty} = " << dchisq_penalty << endl;
+#endif
       }//mix23
-    */
+#endif//HK
 
     if( fFitParams->Exists    (kPhypMixing13) && 
 	fFitParams->IsNuisance(kPhypMixing13) )
@@ -392,42 +392,42 @@ double FitInputs::ChisquarePenaltyTerm(void) const
       }//dm12sq
   
 
-    /*  if( fFitParams->Exists    (kPhypDm23sq) && 
+#ifdef HK
+    if( fFitParams->Exists    (kPhypDm23sq) && 
 	fFitParams->IsNuisance(kPhypDm23sq) )
-	{
+      {
 	double dmsq = fFitParams->CurrValue(kPhypDm23sq);
 	double nom = 0.;
 	NuOscDmsqScheme_t odmsq = Opt::Instance()->gOscDmsqScheme;
 	switch (odmsq) {
 	case(kNuDmsqFogliLisi):
-	nom  =  kGlobFitDmsqFL;
-	break;
+	  nom  =  kGlobFitDmsqFL;
+	  break;
 	case(kNuDmsq12andAbs23):
-	nom  = kGlobFitDm23sq;
-	break;
+	  nom  = kGlobFitDm23sq;
+	  break;
 	case(kNuDmsq12andAbs31):
-        if(Opt::Instance()->gMassHierarchyAssumed == kNmhNormal)
-	nom  = kGlobFitDm23sq + kGlobFitDm12sq; 
-        else if(Opt::Instance()->gMassHierarchyAssumed == kNmhInverted)
-	nom  = kGlobFitDm23sq - kGlobFitDm12sq; 
-        break;
+	  if(Opt::Instance()->gMassHierarchyAssumed == kNmhNormal)
+	    nom  = kGlobFitDm23sq + kGlobFitDm12sq; 
+	  else if(Opt::Instance()->gMassHierarchyAssumed == kNmhInverted)
+	    nom  = kGlobFitDm23sq - kGlobFitDm12sq; 
+	  break;
 	default:
-	nom  = kGlobFitDm23sq;
+	  nom  = kGlobFitDm23sq;
 	}
 	double err  = nom * kGlobFitErrDm23sq;
 	double twk  = (dmsq - nom) / err;
 	double dchisq_penalty = twk*twk;
 	chisq_penalty += dchisq_penalty;
-	#ifdef __show_contributions_to_penalty_term__
+#ifdef __show_contributions_to_penalty_term__
 	cout << "FitInputs::ChisquarePenaltyTerm >> |dm23sq| = " << dmsq
-	<< " (nominal = " << nom << ", error = " << err << ", twk = " << twk << ")"
-	<< " => \\delta\\chi^2_{penalty} = " << dchisq_penalty << endl;
-	#endif
-	}//dm23sq
-  
-    */
-  }
-  else {
+	     << " (nominal = " << nom << ", error = " << err << ", twk = " << twk << ")"
+	     << " => \\delta\\chi^2_{penalty} = " << dchisq_penalty << endl;
+#endif
+      }//dm23sq
+#endif//HK
+  }//CURRENT osc params
+  else {//FUTURE osc params
     if( fFitParams->Exists    (kPhypMixing23) && 
 	fFitParams->IsNuisance(kPhypMixing23) )
       {

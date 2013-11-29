@@ -31,6 +31,13 @@ Changes since 2011_v0.9.0:
 // fits are faster in this way. 
 #endif
 
+#ifndef HKHACK
+//#define HKHACK //use signal/background only systematics
+#endif
+
+#ifndef HK
+//#define HK //allow mix23 & dm32sq to be nuisance for current osc params
+#endif
 
 #ifndef BANFF_BINS
 #ifdef __NUMUONLY__
@@ -1472,6 +1479,7 @@ static const double kXSecSystFracErr[kNumOfXSecSyst] =
 // weights as a result of tweaking any of the above systematic parameters.
 // The order of systematic parameters should match the one in kListOfXSecSyst.
 #if BANFF_BINS == 1
+#ifndef HKHACK
 static const bool kXsApplyXSecSystToSKMode[kns][knm][kNumOfXSecSyst] = {
   // > 1 muon-like ring 
   {
@@ -1649,11 +1657,10 @@ static const bool kXsApplyXSecSystToSKMode[kns][knm][kNumOfXSecSyst] = {
   }
   
 };
-/*
+#else//HKHACK
 ///////////////////////////
 ///////HACK
 ///////////////////////////
-#error A C++ compiler is required!
 static const bool kXsApplyXSecSystToSKMode[kns][knm][kNumOfXSecSyst] = {
   // > 1 muon-like ring 
   {
@@ -1831,7 +1838,7 @@ static const bool kXsApplyXSecSystToSKMode[kns][knm][kNumOfXSecSyst] = {
 //////////////////
 ///END HACK
 //////////////////
-*/
+#endif//HKHACK
 #elif BANFF_BINS == 2
 static const bool kXsApplyXSecSystToSKMode[kns][knm][kNumOfXSecSyst] = {
   // > 1 muon-like ring 

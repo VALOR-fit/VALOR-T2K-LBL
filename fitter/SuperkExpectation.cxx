@@ -766,6 +766,13 @@ void SuperkExpectation::TweakAllSystematics(void)
   cout << "Exp >> Generating random variations of all systematic params." << endl;
 #endif
 
+#ifdef HKHACK
+  this->GetNuXSec()->Tweak(kNuisXSecNormCCcoh      , Rnd::Instance()->RndToyMCsyst().Gaus(0.,1.));
+  this->GetNuXSec()->Tweak(kNuisXSecNormNC1piC     , Rnd::Instance()->RndToyMCsyst().Gaus(0.,1.));
+  this->GetNuXSec()->Tweak(kNuisXSecNormNCcoh      , Rnd::Instance()->RndToyMCsyst().Gaus(0.,1.));
+  this->GetNuXSec()->Tweak(kNuisXSecNormNCoth      , Rnd::Instance()->RndToyMCsyst().Gaus(0.,1.));
+#else
+
   this->TweakAllBANFFSystematics();
   this->TweakAllUncorrelatedXSecSystematics();
 #ifndef SKFSITOGETHER
@@ -775,6 +782,8 @@ void SuperkExpectation::TweakAllSystematics(void)
 #ifdef SKFSITOGETHER
   this->TweakAllSKDetectorFSISystematics();
 #endif
+
+#endif//HKHACK
 }
 //________________________________________________________________________________________
 void SuperkExpectation::TweakAllBANFFSystematics(void)
