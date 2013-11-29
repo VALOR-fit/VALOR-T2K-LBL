@@ -1838,7 +1838,7 @@ static const bool kXsApplyXSecSystToSKMode[kns][knm][kNumOfXSecSyst] = {
 //////////////////
 ///END HACK
 //////////////////
-#endif//HKHACK
+#endif //HKHACK
 #elif BANFF_BINS == 2
 static const bool kXsApplyXSecSystToSKMode[kns][knm][kNumOfXSecSyst] = {
   // > 1 muon-like ring 
