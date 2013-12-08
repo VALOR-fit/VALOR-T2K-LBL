@@ -125,6 +125,7 @@ print SH "lcg-cp -v --vo t2k.org lfn:/grid/t2k.org/contrib/lorena/inputs/officia
       print SH "lcg-cp -v --vo t2k.org lfn:/grid/t2k.org/contrib/lorena/inputs/official/2013/superk/mc/neut/13a/small_ntuple_1ReT_Run1to4_2013_fitqun.root file:./trunk_GRID/inputs/official/2013/superk/mc/neut/13a/small_ntuple_1ReT_Run1to4_2013_fitqun.root\n";
       print SH "lcg-cp -v --vo t2k.org lfn:/grid/t2k.org/contrib/lorena/inputs/official/2013/xsec/sk_mec_erec_etrue_run1to4.root file:./trunk_GRID/inputs/official/2013/xsec/sk_mec_erec_etrue_run1to4.root\n";
       print SH "lcg-cp -v --vo t2k.org lfn:/grid/t2k.org/contrib/lorena/inputs/official/2013/skdetfsi/skfsipn_2013_joint_Run4_pre.root file:./trunk_GRID/inputs/official/2013/skdetfsi/skfsipn_2013_joint_Run4_pre.root\n";
+      print SH "lcg-cp -v --vo t2k.org lfn:/grid/t2k.org/contrib/lorena/inputs/official/2013/skdetfsi/skfsipn_2013_joint_Run4_final.root file:./trunk_GRID/inputs/official/2013/skdetfsi/skfsipn_2013_joint_Run4_final.root\n";
       print SH "lcg-cp -v --vo t2k.org lfn:/grid/t2k.org/contrib/lorena/inputs/official/2013/skdetfsi/skfsipn_2013_joint_Run4.root file:./trunk_GRID/inputs/official/2013/skdetfsi/skfsipn_2013_joint_Run4.root\n";
       print SH "ls -ltr\n";
       print SH "ls -ltr trunk_GRID/\n";
@@ -243,6 +244,7 @@ print SH "lcg-cp -v --vo t2k.org lfn:/grid/t2k.org/contrib/lorena/inputs/officia
       print SH "lcg-cp -v --vo t2k.org lfn:/grid/t2k.org/contrib/lorena/inputs/official/2013/superk/mc/neut/13a/small_ntuple_1ReT_Run1to4_2013_fitqun.root file:./trunk_GRID/inputs/official/2013/superk/mc/neut/13a/small_ntuple_1ReT_Run1to4_2013_fitqun.root\n";
       print SH "lcg-cp -v --vo t2k.org lfn:/grid/t2k.org/contrib/lorena/inputs/official/2013/xsec/sk_mec_erec_etrue_run1to4.root file:./trunk_GRID/inputs/official/2013/xsec/sk_mec_erec_etrue_run1to4.root\n";
       print SH "lcg-cp -v --vo t2k.org lfn:/grid/t2k.org/contrib/lorena/inputs/official/2013/skdetfsi/skfsipn_2013_joint_Run4_pre.root file:./trunk_GRID/inputs/official/2013/skdetfsi/skfsipn_2013_joint_Run4_pre.root\n";
+      print SH "lcg-cp -v --vo t2k.org lfn:/grid/t2k.org/contrib/lorena/inputs/official/2013/skdetfsi/skfsipn_2013_joint_Run4_final.root file:./trunk_GRID/inputs/official/2013/skdetfsi/skfsipn_2013_joint_Run4_final.root\n";
       print SH "lcg-cp -v --vo t2k.org lfn:/grid/t2k.org/contrib/lorena/inputs/official/2013/skdetfsi/skfsipn_2013_joint_Run4.root file:./trunk_GRID/inputs/official/2013/skdetfsi/skfsipn_2013_joint_Run4.root\n";
       print SH "ls -ltr\n";
       print SH "ls -ltr trunk_GRID/\n";
@@ -358,6 +360,7 @@ print SH "lcg-cp -v --vo t2k.org lfn:/grid/t2k.org/contrib/lorena/inputs/officia
       print SH "lcg-cp -v --vo t2k.org lfn:/grid/t2k.org/contrib/lorena/inputs/official/2013/superk/mc/neut/13a/small_ntuple_1ReT_Run1to4_2013_fitqun.root file:./trunk_GRID/inputs/official/2013/superk/mc/neut/13a/small_ntuple_1ReT_Run1to4_2013_fitqun.root\n";
       print SH "lcg-cp -v --vo t2k.org lfn:/grid/t2k.org/contrib/lorena/inputs/official/2013/xsec/sk_mec_erec_etrue_run1to4.root file:./trunk_GRID/inputs/official/2013/xsec/sk_mec_erec_etrue_run1to4.root\n";
       print SH "lcg-cp -v --vo t2k.org lfn:/grid/t2k.org/contrib/lorena/inputs/official/2013/skdetfsi/skfsipn_2013_joint_Run4_pre.root file:./trunk_GRID/inputs/official/2013/skdetfsi/skfsipn_2013_joint_Run4_pre.root\n";
+      print SH "lcg-cp -v --vo t2k.org lfn:/grid/t2k.org/contrib/lorena/inputs/official/2013/skdetfsi/skfsipn_2013_joint_Run4_final.root file:./trunk_GRID/inputs/official/2013/skdetfsi/skfsipn_2013_joint_Run4_final.root\n";
       print SH "lcg-cp -v --vo t2k.org lfn:/grid/t2k.org/contrib/lorena/inputs/official/2013/skdetfsi/skfsipn_2013_joint_Run4.root file:./trunk_GRID/inputs/official/2013/skdetfsi/skfsipn_2013_joint_Run4.root\n";
       print SH "ls -ltr\n";
       print SH "ls -ltr trunk_GRID/\n";
@@ -472,6 +475,7 @@ print SH "lcg-cp -v --vo t2k.org lfn:/grid/t2k.org/contrib/lorena/inputs/officia
       print SH "lcg-cp -v --vo t2k.org lfn:/grid/t2k.org/contrib/lorena/inputs/official/2013/superk/mc/neut/13a/small_ntuple_1ReT_Run1to4_2013_fitqun.root file:./trunk_GRID/inputs/official/2013/superk/mc/neut/13a/small_ntuple_1ReT_Run1to4_2013_fitqun.root\n";
       print SH "lcg-cp -v --vo t2k.org lfn:/grid/t2k.org/contrib/lorena/inputs/official/2013/xsec/sk_mec_erec_etrue_run1to4.root file:./trunk_GRID/inputs/official/2013/xsec/sk_mec_erec_etrue_run1to4.root\n";
       print SH "lcg-cp -v --vo t2k.org lfn:/grid/t2k.org/contrib/lorena/inputs/official/2013/skdetfsi/skfsipn_2013_joint_Run4_pre.root file:./trunk_GRID/inputs/official/2013/skdetfsi/skfsipn_2013_joint_Run4_pre.root\n";
+      print SH "lcg-cp -v --vo t2k.org lfn:/grid/t2k.org/contrib/lorena/inputs/official/2013/skdetfsi/skfsipn_2013_joint_Run4_final.root file:./trunk_GRID/inputs/official/2013/skdetfsi/skfsipn_2013_joint_Run4_final.root\n";
       print SH "lcg-cp -v --vo t2k.org lfn:/grid/t2k.org/contrib/lorena/inputs/official/2013/skdetfsi/skfsipn_2013_joint_Run4.root file:./trunk_GRID/inputs/official/2013/skdetfsi/skfsipn_2013_joint_Run4.root\n";
       print SH "ls -ltr\n";
       print SH "ls -ltr trunk_GRID/\n";
@@ -588,6 +592,7 @@ print SH "lcg-cp -v --vo t2k.org lfn:/grid/t2k.org/contrib/lorena/inputs/officia
       print SH "lcg-cp -v --vo t2k.org lfn:/grid/t2k.org/contrib/lorena/inputs/official/2013/superk/mc/neut/13a/small_ntuple_1ReT_Run1to4_2013_fitqun.root file:./trunk_GRID/inputs/official/2013/superk/mc/neut/13a/small_ntuple_1ReT_Run1to4_2013_fitqun.root\n";
       print SH "lcg-cp -v --vo t2k.org lfn:/grid/t2k.org/contrib/lorena/inputs/official/2013/xsec/sk_mec_erec_etrue_run1to4.root file:./trunk_GRID/inputs/official/2013/xsec/sk_mec_erec_etrue_run1to4.root\n";
       print SH "lcg-cp -v --vo t2k.org lfn:/grid/t2k.org/contrib/lorena/inputs/official/2013/skdetfsi/skfsipn_2013_joint_Run4_pre.root file:./trunk_GRID/inputs/official/2013/skdetfsi/skfsipn_2013_joint_Run4_pre.root\n";
+      print SH "lcg-cp -v --vo t2k.org lfn:/grid/t2k.org/contrib/lorena/inputs/official/2013/skdetfsi/skfsipn_2013_joint_Run4_final.root file:./trunk_GRID/inputs/official/2013/skdetfsi/skfsipn_2013_joint_Run4_final.root\n";
       print SH "lcg-cp -v --vo t2k.org lfn:/grid/t2k.org/contrib/lorena/inputs/official/2013/skdetfsi/skfsipn_2013_joint_Run4.root file:./trunk_GRID/inputs/official/2013/skdetfsi/skfsipn_2013_joint_Run4.root\n";
       print SH "ls -ltr\n";
       print SH "ls -ltr trunk_GRID/\n";
@@ -703,6 +708,7 @@ print SH "lcg-cp -v --vo t2k.org lfn:/grid/t2k.org/contrib/lorena/inputs/officia
       print SH "lcg-cp -v --vo t2k.org lfn:/grid/t2k.org/contrib/lorena/inputs/official/2013/superk/mc/neut/13a/small_ntuple_1ReT_Run1to4_2013_fitqun.root file:./trunk_GRID/inputs/official/2013/superk/mc/neut/13a/small_ntuple_1ReT_Run1to4_2013_fitqun.root\n";
       print SH "lcg-cp -v --vo t2k.org lfn:/grid/t2k.org/contrib/lorena/inputs/official/2013/xsec/sk_mec_erec_etrue_run1to4.root file:./trunk_GRID/inputs/official/2013/xsec/sk_mec_erec_etrue_run1to4.root\n";
       print SH "lcg-cp -v --vo t2k.org lfn:/grid/t2k.org/contrib/lorena/inputs/official/2013/skdetfsi/skfsipn_2013_joint_Run4_pre.root file:./trunk_GRID/inputs/official/2013/skdetfsi/skfsipn_2013_joint_Run4_pre.root\n";
+      print SH "lcg-cp -v --vo t2k.org lfn:/grid/t2k.org/contrib/lorena/inputs/official/2013/skdetfsi/skfsipn_2013_joint_Run4_final.root file:./trunk_GRID/inputs/official/2013/skdetfsi/skfsipn_2013_joint_Run4_final.root\n";
       print SH "lcg-cp -v --vo t2k.org lfn:/grid/t2k.org/contrib/lorena/inputs/official/2013/skdetfsi/skfsipn_2013_joint_Run4.root file:./trunk_GRID/inputs/official/2013/skdetfsi/skfsipn_2013_joint_Run4.root\n";
       print SH "ls -ltr\n";
       print SH "ls -ltr trunk_GRID/\n";
@@ -819,6 +825,7 @@ print SH "lcg-cp -v --vo t2k.org lfn:/grid/t2k.org/contrib/lorena/inputs/officia
       print SH "lcg-cp -v --vo t2k.org lfn:/grid/t2k.org/contrib/lorena/inputs/official/2013/superk/mc/neut/13a/small_ntuple_1ReT_Run1to4_2013_fitqun.root file:./trunk_GRID/inputs/official/2013/superk/mc/neut/13a/small_ntuple_1ReT_Run1to4_2013_fitqun.root\n";
       print SH "lcg-cp -v --vo t2k.org lfn:/grid/t2k.org/contrib/lorena/inputs/official/2013/xsec/sk_mec_erec_etrue_run1to4.root file:./trunk_GRID/inputs/official/2013/xsec/sk_mec_erec_etrue_run1to4.root\n";
       print SH "lcg-cp -v --vo t2k.org lfn:/grid/t2k.org/contrib/lorena/inputs/official/2013/skdetfsi/skfsipn_2013_joint_Run4_pre.root file:./trunk_GRID/inputs/official/2013/skdetfsi/skfsipn_2013_joint_Run4_pre.root\n";
+      print SH "lcg-cp -v --vo t2k.org lfn:/grid/t2k.org/contrib/lorena/inputs/official/2013/skdetfsi/skfsipn_2013_joint_Run4_final.root file:./trunk_GRID/inputs/official/2013/skdetfsi/skfsipn_2013_joint_Run4_final.root\n";
       print SH "lcg-cp -v --vo t2k.org lfn:/grid/t2k.org/contrib/lorena/inputs/official/2013/skdetfsi/skfsipn_2013_joint_Run4.root file:./trunk_GRID/inputs/official/2013/skdetfsi/skfsipn_2013_joint_Run4.root\n";
       print SH "ls -ltr\n";
       print SH "ls -ltr trunk_GRID/\n";
@@ -940,6 +947,7 @@ print SH "lcg-cp -v --vo t2k.org lfn:/grid/t2k.org/contrib/lorena/inputs/officia
       print SH "lcg-cp -v --vo t2k.org lfn:/grid/t2k.org/contrib/lorena/inputs/official/2013/superk/mc/neut/13a/small_ntuple_1ReT_Run1to4_2013_fitqun.root file:./trunk_GRID/inputs/official/2013/superk/mc/neut/13a/small_ntuple_1ReT_Run1to4_2013_fitqun.root\n";
       print SH "lcg-cp -v --vo t2k.org lfn:/grid/t2k.org/contrib/lorena/inputs/official/2013/xsec/sk_mec_erec_etrue_run1to4.root file:./trunk_GRID/inputs/official/2013/xsec/sk_mec_erec_etrue_run1to4.root\n";
       print SH "lcg-cp -v --vo t2k.org lfn:/grid/t2k.org/contrib/lorena/inputs/official/2013/skdetfsi/skfsipn_2013_joint_Run4_pre.root file:./trunk_GRID/inputs/official/2013/skdetfsi/skfsipn_2013_joint_Run4_pre.root\n";
+      print SH "lcg-cp -v --vo t2k.org lfn:/grid/t2k.org/contrib/lorena/inputs/official/2013/skdetfsi/skfsipn_2013_joint_Run4_final.root file:./trunk_GRID/inputs/official/2013/skdetfsi/skfsipn_2013_joint_Run4_final.root\n";
       print SH "lcg-cp -v --vo t2k.org lfn:/grid/t2k.org/contrib/lorena/inputs/official/2013/skdetfsi/skfsipn_2013_joint_Run4.root file:./trunk_GRID/inputs/official/2013/skdetfsi/skfsipn_2013_joint_Run4.root\n";
       print SH "ls -ltr\n";
       print SH "ls -ltr trunk_GRID/\n";
@@ -1061,6 +1069,7 @@ print SH "lcg-cp -v --vo t2k.org lfn:/grid/t2k.org/contrib/lorena/inputs/officia
       print SH "lcg-cp -v --vo t2k.org lfn:/grid/t2k.org/contrib/lorena/inputs/official/2013/superk/mc/neut/13a/small_ntuple_1ReT_Run1to4_2013_fitqun.root file:./trunk_GRID/inputs/official/2013/superk/mc/neut/13a/small_ntuple_1ReT_Run1to4_2013_fitqun.root\n";
       print SH "lcg-cp -v --vo t2k.org lfn:/grid/t2k.org/contrib/lorena/inputs/official/2013/xsec/sk_mec_erec_etrue_run1to4.root file:./trunk_GRID/inputs/official/2013/xsec/sk_mec_erec_etrue_run1to4.root\n";
       print SH "lcg-cp -v --vo t2k.org lfn:/grid/t2k.org/contrib/lorena/inputs/official/2013/skdetfsi/skfsipn_2013_joint_Run4_pre.root file:./trunk_GRID/inputs/official/2013/skdetfsi/skfsipn_2013_joint_Run4_pre.root\n";
+      print SH "lcg-cp -v --vo t2k.org lfn:/grid/t2k.org/contrib/lorena/inputs/official/2013/skdetfsi/skfsipn_2013_joint_Run4_final.root file:./trunk_GRID/inputs/official/2013/skdetfsi/skfsipn_2013_joint_Run4_final.root\n";
       print SH "lcg-cp -v --vo t2k.org lfn:/grid/t2k.org/contrib/lorena/inputs/official/2013/skdetfsi/skfsipn_2013_joint_Run4.root file:./trunk_GRID/inputs/official/2013/skdetfsi/skfsipn_2013_joint_Run4.root\n";
       print SH "ls -ltr\n";
       print SH "ls -ltr trunk_GRID/\n";
@@ -1183,6 +1192,7 @@ print SH "lcg-cp -v --vo t2k.org lfn:/grid/t2k.org/contrib/lorena/inputs/officia
       print SH "lcg-cp -v --vo t2k.org lfn:/grid/t2k.org/contrib/lorena/inputs/official/2013/superk/mc/neut/13a/small_ntuple_1ReT_Run1to4_2013_fitqun.root file:./trunk_GRID/inputs/official/2013/superk/mc/neut/13a/small_ntuple_1ReT_Run1to4_2013_fitqun.root\n";
       print SH "lcg-cp -v --vo t2k.org lfn:/grid/t2k.org/contrib/lorena/inputs/official/2013/xsec/sk_mec_erec_etrue_run1to4.root file:./trunk_GRID/inputs/official/2013/xsec/sk_mec_erec_etrue_run1to4.root\n";
       print SH "lcg-cp -v --vo t2k.org lfn:/grid/t2k.org/contrib/lorena/inputs/official/2013/skdetfsi/skfsipn_2013_joint_Run4_pre.root file:./trunk_GRID/inputs/official/2013/skdetfsi/skfsipn_2013_joint_Run4_pre.root\n";
+      print SH "lcg-cp -v --vo t2k.org lfn:/grid/t2k.org/contrib/lorena/inputs/official/2013/skdetfsi/skfsipn_2013_joint_Run4_final.root file:./trunk_GRID/inputs/official/2013/skdetfsi/skfsipn_2013_joint_Run4_final.root\n";
       print SH "lcg-cp -v --vo t2k.org lfn:/grid/t2k.org/contrib/lorena/inputs/official/2013/skdetfsi/skfsipn_2013_joint_Run4.root file:./trunk_GRID/inputs/official/2013/skdetfsi/skfsipn_2013_joint_Run4.root\n";
       print SH "ls -ltr\n";
       print SH "ls -ltr trunk_GRID/\n";
@@ -1305,6 +1315,7 @@ print SH "lcg-cp -v --vo t2k.org lfn:/grid/t2k.org/contrib/lorena/inputs/officia
       print SH "lcg-cp -v --vo t2k.org lfn:/grid/t2k.org/contrib/lorena/inputs/official/2013/superk/mc/neut/13a/small_ntuple_1ReT_Run1to4_2013_fitqun.root file:./trunk_GRID/inputs/official/2013/superk/mc/neut/13a/small_ntuple_1ReT_Run1to4_2013_fitqun.root\n";
       print SH "lcg-cp -v --vo t2k.org lfn:/grid/t2k.org/contrib/lorena/inputs/official/2013/xsec/sk_mec_erec_etrue_run1to4.root file:./trunk_GRID/inputs/official/2013/xsec/sk_mec_erec_etrue_run1to4.root\n";
       print SH "lcg-cp -v --vo t2k.org lfn:/grid/t2k.org/contrib/lorena/inputs/official/2013/skdetfsi/skfsipn_2013_joint_Run4_pre.root file:./trunk_GRID/inputs/official/2013/skdetfsi/skfsipn_2013_joint_Run4_pre.root\n";
+      print SH "lcg-cp -v --vo t2k.org lfn:/grid/t2k.org/contrib/lorena/inputs/official/2013/skdetfsi/skfsipn_2013_joint_Run4_final.root file:./trunk_GRID/inputs/official/2013/skdetfsi/skfsipn_2013_joint_Run4_final.root\n";
       print SH "lcg-cp -v --vo t2k.org lfn:/grid/t2k.org/contrib/lorena/inputs/official/2013/skdetfsi/skfsipn_2013_joint_Run4.root file:./trunk_GRID/inputs/official/2013/skdetfsi/skfsipn_2013_joint_Run4.root\n";
       print SH "ls -ltr\n";
       print SH "ls -ltr trunk_GRID/\n";
@@ -1426,6 +1437,7 @@ print SH "lcg-cp -v --vo t2k.org lfn:/grid/t2k.org/contrib/lorena/inputs/officia
       print SH "lcg-cp -v --vo t2k.org lfn:/grid/t2k.org/contrib/lorena/inputs/official/2013/superk/mc/neut/13a/small_ntuple_1ReT_Run1to4_2013_fitqun.root file:./trunk_GRID/inputs/official/2013/superk/mc/neut/13a/small_ntuple_1ReT_Run1to4_2013_fitqun.root\n";
       print SH "lcg-cp -v --vo t2k.org lfn:/grid/t2k.org/contrib/lorena/inputs/official/2013/xsec/sk_mec_erec_etrue_run1to4.root file:./trunk_GRID/inputs/official/2013/xsec/sk_mec_erec_etrue_run1to4.root\n";
       print SH "lcg-cp -v --vo t2k.org lfn:/grid/t2k.org/contrib/lorena/inputs/official/2013/skdetfsi/skfsipn_2013_joint_Run4_pre.root file:./trunk_GRID/inputs/official/2013/skdetfsi/skfsipn_2013_joint_Run4_pre.root\n";
+      print SH "lcg-cp -v --vo t2k.org lfn:/grid/t2k.org/contrib/lorena/inputs/official/2013/skdetfsi/skfsipn_2013_joint_Run4_final.root file:./trunk_GRID/inputs/official/2013/skdetfsi/skfsipn_2013_joint_Run4_final.root\n";
       print SH "lcg-cp -v --vo t2k.org lfn:/grid/t2k.org/contrib/lorena/inputs/official/2013/skdetfsi/skfsipn_2013_joint_Run4.root file:./trunk_GRID/inputs/official/2013/skdetfsi/skfsipn_2013_joint_Run4.root\n";
       print SH "ls -ltr\n";
       print SH "ls -ltr trunk_GRID/\n";
@@ -1547,6 +1559,7 @@ print SH "lcg-cp -v --vo t2k.org lfn:/grid/t2k.org/contrib/lorena/inputs/officia
       print SH "lcg-cp -v --vo t2k.org lfn:/grid/t2k.org/contrib/lorena/inputs/official/2013/superk/mc/neut/13a/small_ntuple_1ReT_Run1to4_2013_fitqun.root file:./trunk_GRID/inputs/official/2013/superk/mc/neut/13a/small_ntuple_1ReT_Run1to4_2013_fitqun.root\n";
       print SH "lcg-cp -v --vo t2k.org lfn:/grid/t2k.org/contrib/lorena/inputs/official/2013/xsec/sk_mec_erec_etrue_run1to4.root file:./trunk_GRID/inputs/official/2013/xsec/sk_mec_erec_etrue_run1to4.root\n";
       print SH "lcg-cp -v --vo t2k.org lfn:/grid/t2k.org/contrib/lorena/inputs/official/2013/skdetfsi/skfsipn_2013_joint_Run4_pre.root file:./trunk_GRID/inputs/official/2013/skdetfsi/skfsipn_2013_joint_Run4_pre.root\n";
+      print SH "lcg-cp -v --vo t2k.org lfn:/grid/t2k.org/contrib/lorena/inputs/official/2013/skdetfsi/skfsipn_2013_joint_Run4_final.root file:./trunk_GRID/inputs/official/2013/skdetfsi/skfsipn_2013_joint_Run4_final.root\n";
       print SH "lcg-cp -v --vo t2k.org lfn:/grid/t2k.org/contrib/lorena/inputs/official/2013/skdetfsi/skfsipn_2013_joint_Run4.root file:./trunk_GRID/inputs/official/2013/skdetfsi/skfsipn_2013_joint_Run4.root\n";
       print SH "ls -ltr\n";
       print SH "ls -ltr trunk_GRID/\n";
@@ -1668,6 +1681,7 @@ print SH "lcg-cp -v --vo t2k.org lfn:/grid/t2k.org/contrib/lorena/inputs/officia
       print SH "lcg-cp -v --vo t2k.org lfn:/grid/t2k.org/contrib/lorena/inputs/official/2013/superk/mc/neut/13a/small_ntuple_1ReT_Run1to4_2013_fitqun.root file:./trunk_GRID/inputs/official/2013/superk/mc/neut/13a/small_ntuple_1ReT_Run1to4_2013_fitqun.root\n";
       print SH "lcg-cp -v --vo t2k.org lfn:/grid/t2k.org/contrib/lorena/inputs/official/2013/xsec/sk_mec_erec_etrue_run1to4.root file:./trunk_GRID/inputs/official/2013/xsec/sk_mec_erec_etrue_run1to4.root\n";
       print SH "lcg-cp -v --vo t2k.org lfn:/grid/t2k.org/contrib/lorena/inputs/official/2013/skdetfsi/skfsipn_2013_joint_Run4_pre.root file:./trunk_GRID/inputs/official/2013/skdetfsi/skfsipn_2013_joint_Run4_pre.root\n";
+      print SH "lcg-cp -v --vo t2k.org lfn:/grid/t2k.org/contrib/lorena/inputs/official/2013/skdetfsi/skfsipn_2013_joint_Run4_final.root file:./trunk_GRID/inputs/official/2013/skdetfsi/skfsipn_2013_joint_Run4_final.root\n";
       print SH "lcg-cp -v --vo t2k.org lfn:/grid/t2k.org/contrib/lorena/inputs/official/2013/skdetfsi/skfsipn_2013_joint_Run4.root file:./trunk_GRID/inputs/official/2013/skdetfsi/skfsipn_2013_joint_Run4.root\n";
       print SH "ls -ltr\n";
       print SH "ls -ltr trunk_GRID/\n";
