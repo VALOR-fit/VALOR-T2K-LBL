@@ -95,8 +95,7 @@ print "$command \n";
       print SH "export GLOBUS_FTP_CLIENT_GRIDFTP2=true\n";
       print SH "# trap error and remove code if error happens \n";
       print SH "P=\$PWD \n";
-      print SH "#trap \'echo \"*** Error happened!!!\"; cd \$\{P\}; mv trunk_GRID/*.root .;echo \"*** Removing...\"; rm -fr trunk_GRID/; rm -fr trunk_GRID.tar.gz; l\
-s -ltr; echo EXIT; exit\' ERR \n";
+      print SH "#trap \'echo \"*** Error happened!!!\"; cd \$\{P\}; mv trunk_GRID/*.root .;echo \"*** Removing...\"; rm -fr trunk_GRID/; rm -fr trunk_GRID.tar.gz; ls -ltr; echo EXIT; exit\' ERR \n";
       print SH "# create temporal directory \n" ;
       print SH "echo \"*** Untaring code...\" \n";
       print SH "ls -ltr \n";
@@ -149,8 +148,7 @@ print SH "lcg-cp -v --vo t2k.org lfn:/grid/t2k.org/contrib/lorena/inputs/officia
       print SH "if \[ \"\$\?\" \= \"0\" \]; then\n";
       print SH "       cd ..\n";
       print SH "       mv trunk_GRID/*.root .\n";
-      print SH "       lcg-cr -v --vo t2k.org file:./$tag.root -l lfn:/grid/t2k.org/contrib/lorena/outputs/sensitivity/$tag.root -d srm://srm-t2k.gridpp.rl.ac.uk/ca\
-stor/ads.rl.ac.uk/prod/t2k.org/contrib/lorena/outputs/sensitivity/$tag.root \n";
+      print SH "       lcg-cr -v --vo t2k.org file:./$tag.root -l lfn:/grid/t2k.org/contrib/lorena/outputs/sensitivity/$tag.root -d srm://srm-t2k.gridpp.rl.ac.uk/castor/ads.rl.ac.uk/prod/t2k.org/contrib/lorena/outputs/sensitivity/$tag.root \n";
       print SH "       echo \"*** Removing...\"\n";
       print SH "       rm -fr trunk_GRID/\n";
       print SH "       rm -fr trunk_GRID.tar.gz\n";
@@ -214,8 +212,7 @@ print "$command \n";
       print SH "export GLOBUS_FTP_CLIENT_GRIDFTP2=true\n";
       print SH "# trap error and remove code if error happens \n";
       print SH "P=\$PWD \n";
-      print SH "#trap \'echo \"*** Error happened!!!\"; cd \$\{P\}; mv trunk_GRID/*.root .;echo \"*** Removing...\"; rm -fr trunk_GRID/; rm -fr trunk_GRID.tar.gz; l\
-s -ltr; echo EXIT; exit\' ERR \n";
+      print SH "#trap \'echo \"*** Error happened!!!\"; cd \$\{P\}; mv trunk_GRID/*.root .;echo \"*** Removing...\"; rm -fr trunk_GRID/; rm -fr trunk_GRID.tar.gz; ls -ltr; echo EXIT; exit\' ERR \n";
       print SH "# create temporal directory \n" ;
       print SH "echo \"*** Untaring code...\" \n";
       print SH "ls -ltr \n";
@@ -268,8 +265,7 @@ print SH "lcg-cp -v --vo t2k.org lfn:/grid/t2k.org/contrib/lorena/inputs/officia
       print SH "if \[ \"\$\?\" \= \"0\" \]; then\n";
       print SH "       cd ..\n";
       print SH "       mv trunk_GRID/*.root .\n";
-      print SH "       lcg-cr -v --vo t2k.org file:./$tag.root -l lfn:/grid/t2k.org/contrib/lorena/outputs/sensitivity/$tag.root -d srm://srm-t2k.gridpp.rl.ac.uk/ca\
-stor/ads.rl.ac.uk/prod/t2k.org/contrib/lorena/outputs/sensitivity/$tag.root \n";
+      print SH "       lcg-cr -v --vo t2k.org file:./$tag.root -l lfn:/grid/t2k.org/contrib/lorena/outputs/sensitivity/$tag.root -d srm://srm-t2k.gridpp.rl.ac.uk/castor/ads.rl.ac.uk/prod/t2k.org/contrib/lorena/outputs/sensitivity/$tag.root \n";
       print SH "       echo \"*** Removing...\"\n";
       print SH "       rm -fr trunk_GRID/\n";
       print SH "       rm -fr trunk_GRID.tar.gz\n";
@@ -330,8 +326,7 @@ print "$command \n";
       print SH "export GLOBUS_FTP_CLIENT_GRIDFTP2=true\n";
       print SH "# trap error and remove code if error happens \n";
       print SH "P=\$PWD \n";
-      print SH "#trap \'echo \"*** Error happened!!!\"; cd \$\{P\}; mv trunk_GRID/*.root .;echo \"*** Removing...\"; rm -fr trunk_GRID/; rm -fr trunk_GRID.tar.gz; l\
-s -ltr; echo EXIT; exit\' ERR \n";
+      print SH "#trap \'echo \"*** Error happened!!!\"; cd \$\{P\}; mv trunk_GRID/*.root .;echo \"*** Removing...\"; rm -fr trunk_GRID/; rm -fr trunk_GRID.tar.gz; ls -ltr; echo EXIT; exit\' ERR \n";
       print SH "# create temporal directory \n" ;
       print SH "echo \"*** Untaring code...\" \n";
       print SH "ls -ltr \n";
@@ -384,8 +379,7 @@ print SH "lcg-cp -v --vo t2k.org lfn:/grid/t2k.org/contrib/lorena/inputs/officia
       print SH "if \[ \"\$\?\" \= \"0\" \]; then\n";
       print SH "       cd ..\n";
       print SH "       mv trunk_GRID/*.root .\n";
-      print SH "       lcg-cr -v --vo t2k.org file:./$tag.root -l lfn:/grid/t2k.org/contrib/lorena/outputs/sensitivity/$tag.root -d srm://srm-t2k.gridpp.rl.ac.uk/ca\
-stor/ads.rl.ac.uk/prod/t2k.org/contrib/lorena/outputs/sensitivity/$tag.root \n";
+      print SH "       lcg-cr -v --vo t2k.org file:./$tag.root -l lfn:/grid/t2k.org/contrib/lorena/outputs/sensitivity/$tag.root -d srm://srm-t2k.gridpp.rl.ac.uk/castor/ads.rl.ac.uk/prod/t2k.org/contrib/lorena/outputs/sensitivity/$tag.root \n";
       print SH "       echo \"*** Removing...\"\n";
       print SH "       rm -fr trunk_GRID/\n";
       print SH "       rm -fr trunk_GRID.tar.gz\n";
@@ -445,8 +439,7 @@ print "$command \n";
       print SH "export GLOBUS_FTP_CLIENT_GRIDFTP2=true\n";
       print SH "# trap error and remove code if error happens \n";
       print SH "P=\$PWD \n";
-      print SH "#trap \'echo \"*** Error happened!!!\"; cd \$\{P\}; mv trunk_GRID/*.root .;echo \"*** Removing...\"; rm -fr trunk_GRID/; rm -fr trunk_GRID.tar.gz; l\
-s -ltr; echo EXIT; exit\' ERR \n";
+      print SH "#trap \'echo \"*** Error happened!!!\"; cd \$\{P\}; mv trunk_GRID/*.root .;echo \"*** Removing...\"; rm -fr trunk_GRID/; rm -fr trunk_GRID.tar.gz; ls -ltr; echo EXIT; exit\' ERR \n";
       print SH "# create temporal directory \n" ;
       print SH "echo \"*** Untaring code...\" \n";
       print SH "ls -ltr \n";
@@ -499,8 +492,7 @@ print SH "lcg-cp -v --vo t2k.org lfn:/grid/t2k.org/contrib/lorena/inputs/officia
       print SH "if \[ \"\$\?\" \= \"0\" \]; then\n";
       print SH "       cd ..\n";
       print SH "       mv trunk_GRID/*.root .\n";
-      print SH "       lcg-cr -v --vo t2k.org file:./$tag.root -l lfn:/grid/t2k.org/contrib/lorena/outputs/sensitivity/$tag.root -d srm://srm-t2k.gridpp.rl.ac.uk/ca\
-stor/ads.rl.ac.uk/prod/t2k.org/contrib/lorena/outputs/sensitivity/$tag.root \n";
+      print SH "       lcg-cr -v --vo t2k.org file:./$tag.root -l lfn:/grid/t2k.org/contrib/lorena/outputs/sensitivity/$tag.root -d srm://srm-t2k.gridpp.rl.ac.uk/castor/ads.rl.ac.uk/prod/t2k.org/contrib/lorena/outputs/sensitivity/$tag.root \n";
       print SH "       echo \"*** Removing...\"\n";
       print SH "       rm -fr trunk_GRID/\n";
       print SH "       rm -fr trunk_GRID.tar.gz\n";
@@ -562,8 +554,7 @@ print "$command \n";
       print SH "export GLOBUS_FTP_CLIENT_GRIDFTP2=true\n";
       print SH "# trap error and remove code if error happens \n";
       print SH "P=\$PWD \n";
-      print SH "#trap \'echo \"*** Error happened!!!\"; cd \$\{P\}; mv trunk_GRID/*.root .;echo \"*** Removing...\"; rm -fr trunk_GRID/; rm -fr trunk_GRID.tar.gz; l\
-s -ltr; echo EXIT; exit\' ERR \n";
+      print SH "#trap \'echo \"*** Error happened!!!\"; cd \$\{P\}; mv trunk_GRID/*.root .;echo \"*** Removing...\"; rm -fr trunk_GRID/; rm -fr trunk_GRID.tar.gz; ls -ltr; echo EXIT; exit\' ERR \n";
       print SH "# create temporal directory \n" ;
       print SH "echo \"*** Untaring code...\" \n";
       print SH "ls -ltr \n";
@@ -616,8 +607,7 @@ print SH "lcg-cp -v --vo t2k.org lfn:/grid/t2k.org/contrib/lorena/inputs/officia
       print SH "if \[ \"\$\?\" \= \"0\" \]; then\n";
       print SH "       cd ..\n";
       print SH "       mv trunk_GRID/*.root .\n";
-      print SH "       lcg-cr -v --vo t2k.org file:./$tag.root -l lfn:/grid/t2k.org/contrib/lorena/outputs/sensitivity/$tag.root -d srm://srm-t2k.gridpp.rl.ac.uk/ca\
-stor/ads.rl.ac.uk/prod/t2k.org/contrib/lorena/outputs/sensitivity/$tag.root \n";
+      print SH "       lcg-cr -v --vo t2k.org file:./$tag.root -l lfn:/grid/t2k.org/contrib/lorena/outputs/sensitivity/$tag.root -d srm://srm-t2k.gridpp.rl.ac.uk/castor/ads.rl.ac.uk/prod/t2k.org/contrib/lorena/outputs/sensitivity/$tag.root \n";
       print SH "       echo \"*** Removing...\"\n";
       print SH "       rm -fr trunk_GRID/\n";
       print SH "       rm -fr trunk_GRID.tar.gz\n";
@@ -678,8 +668,7 @@ print "$command \n";
       print SH "export GLOBUS_FTP_CLIENT_GRIDFTP2=true\n";
       print SH "# trap error and remove code if error happens \n";
       print SH "P=\$PWD \n";
-      print SH "#trap \'echo \"*** Error happened!!!\"; cd \$\{P\}; mv trunk_GRID/*.root .;echo \"*** Removing...\"; rm -fr trunk_GRID/; rm -fr trunk_GRID.tar.gz; l\
-s -ltr; echo EXIT; exit\' ERR \n";
+      print SH "#trap \'echo \"*** Error happened!!!\"; cd \$\{P\}; mv trunk_GRID/*.root .;echo \"*** Removing...\"; rm -fr trunk_GRID/; rm -fr trunk_GRID.tar.gz; ls -ltr; echo EXIT; exit\' ERR \n";
       print SH "# create temporal directory \n" ;
       print SH "echo \"*** Untaring code...\" \n";
       print SH "ls -ltr \n";
@@ -732,8 +721,7 @@ print SH "lcg-cp -v --vo t2k.org lfn:/grid/t2k.org/contrib/lorena/inputs/officia
       print SH "if \[ \"\$\?\" \= \"0\" \]; then\n";
       print SH "       cd ..\n";
       print SH "       mv trunk_GRID/*.root .\n";
-      print SH "       lcg-cr -v --vo t2k.org file:./$tag.root -l lfn:/grid/t2k.org/contrib/lorena/outputs/sensitivity/$tag.root -d srm://srm-t2k.gridpp.rl.ac.uk/ca\
-stor/ads.rl.ac.uk/prod/t2k.org/contrib/lorena/outputs/sensitivity/$tag.root \n";
+      print SH "       lcg-cr -v --vo t2k.org file:./$tag.root -l lfn:/grid/t2k.org/contrib/lorena/outputs/sensitivity/$tag.root -d srm://srm-t2k.gridpp.rl.ac.uk/castor/ads.rl.ac.uk/prod/t2k.org/contrib/lorena/outputs/sensitivity/$tag.root \n";
       print SH "       echo \"*** Removing...\"\n";
       print SH "       rm -fr trunk_GRID/\n";
       print SH "       rm -fr trunk_GRID.tar.gz\n";
@@ -795,8 +783,7 @@ print "$command \n";
       print SH "export GLOBUS_FTP_CLIENT_GRIDFTP2=true\n";
       print SH "# trap error and remove code if error happens \n";
       print SH "P=\$PWD \n";
-      print SH "#trap \'echo \"*** Error happened!!!\"; cd \$\{P\}; mv trunk_GRID/*.root .;echo \"*** Removing...\"; rm -fr trunk_GRID/; rm -fr trunk_GRID.tar.gz; l\
-s -ltr; echo EXIT; exit\' ERR \n";
+      print SH "#trap \'echo \"*** Error happened!!!\"; cd \$\{P\}; mv trunk_GRID/*.root .;echo \"*** Removing...\"; rm -fr trunk_GRID/; rm -fr trunk_GRID.tar.gz; ls -ltr; echo EXIT; exit\' ERR \n";
       print SH "# create temporal directory \n" ;
       print SH "echo \"*** Untaring code...\" \n";
       print SH "ls -ltr \n";
@@ -849,8 +836,7 @@ print SH "lcg-cp -v --vo t2k.org lfn:/grid/t2k.org/contrib/lorena/inputs/officia
       print SH "if \[ \"\$\?\" \= \"0\" \]; then\n";
       print SH "       cd ..\n";
       print SH "       mv trunk_GRID/*.root .\n";
-      print SH "       lcg-cr -v --vo t2k.org file:./$tag.root -l lfn:/grid/t2k.org/contrib/lorena/outputs/sensitivity/$tag.root -d srm://srm-t2k.gridpp.rl.ac.uk/ca\
-stor/ads.rl.ac.uk/prod/t2k.org/contrib/lorena/outputs/sensitivity/$tag.root \n";
+      print SH "       lcg-cr -v --vo t2k.org file:./$tag.root -l lfn:/grid/t2k.org/contrib/lorena/outputs/sensitivity/$tag.root -d srm://srm-t2k.gridpp.rl.ac.uk/castor/ads.rl.ac.uk/prod/t2k.org/contrib/lorena/outputs/sensitivity/$tag.root \n";
       print SH "       echo \"*** Removing...\"\n";
       print SH "       rm -fr trunk_GRID/\n";
       print SH "       rm -fr trunk_GRID.tar.gz\n";
@@ -917,8 +903,7 @@ print "$command \n";
       print SH "export GLOBUS_FTP_CLIENT_GRIDFTP2=true\n";
       print SH "# trap error and remove code if error happens \n";
       print SH "P=\$PWD \n";
-      print SH "#trap \'echo \"*** Error happened!!!\"; cd \$\{P\}; mv trunk_GRID/*.root .;echo \"*** Removing...\"; rm -fr trunk_GRID/; rm -fr trunk_GRID.tar.gz; l\
-s -ltr; echo EXIT; exit\' ERR \n";
+      print SH "#trap \'echo \"*** Error happened!!!\"; cd \$\{P\}; mv trunk_GRID/*.root .;echo \"*** Removing...\"; rm -fr trunk_GRID/; rm -fr trunk_GRID.tar.gz; ls -ltr; echo EXIT; exit\' ERR \n";
       print SH "# create temporal directory \n" ;
       print SH "echo \"*** Untaring code...\" \n";
       print SH "ls -ltr \n";
@@ -971,8 +956,7 @@ print SH "lcg-cp -v --vo t2k.org lfn:/grid/t2k.org/contrib/lorena/inputs/officia
       print SH "if \[ \"\$\?\" \= \"0\" \]; then\n";
       print SH "       cd ..\n";
       print SH "       mv trunk_GRID/*.root .\n";
-      print SH "       lcg-cr -v --vo t2k.org file:./$tag.root -l lfn:/grid/t2k.org/contrib/lorena/outputs/sensitivity/$tag.root -d srm://srm-t2k.gridpp.rl.ac.uk/ca\
-stor/ads.rl.ac.uk/prod/t2k.org/contrib/lorena/outputs/sensitivity/$tag.root \n";
+      print SH "       lcg-cr -v --vo t2k.org file:./$tag.root -l lfn:/grid/t2k.org/contrib/lorena/outputs/sensitivity/$tag.root -d srm://srm-t2k.gridpp.rl.ac.uk/castor/ads.rl.ac.uk/prod/t2k.org/contrib/lorena/outputs/sensitivity/$tag.root \n";
       print SH "       echo \"*** Removing...\"\n";
       print SH "       rm -fr trunk_GRID/\n";
       print SH "       rm -fr trunk_GRID.tar.gz\n";
@@ -1039,8 +1023,7 @@ print "$command \n";
       print SH "export GLOBUS_FTP_CLIENT_GRIDFTP2=true\n";
       print SH "# trap error and remove code if error happens \n";
       print SH "P=\$PWD \n";
-      print SH "#trap \'echo \"*** Error happened!!!\"; cd \$\{P\}; mv trunk_GRID/*.root .;echo \"*** Removing...\"; rm -fr trunk_GRID/; rm -fr trunk_GRID.tar.gz; l\
-s -ltr; echo EXIT; exit\' ERR \n";
+      print SH "#trap \'echo \"*** Error happened!!!\"; cd \$\{P\}; mv trunk_GRID/*.root .;echo \"*** Removing...\"; rm -fr trunk_GRID/; rm -fr trunk_GRID.tar.gz; ls -ltr; echo EXIT; exit\' ERR \n";
       print SH "# create temporal directory \n" ;
       print SH "echo \"*** Untaring code...\" \n";
       print SH "ls -ltr \n";
@@ -1093,8 +1076,7 @@ print SH "lcg-cp -v --vo t2k.org lfn:/grid/t2k.org/contrib/lorena/inputs/officia
       print SH "if \[ \"\$\?\" \= \"0\" \]; then\n";
       print SH "       cd ..\n";
       print SH "       mv trunk_GRID/*.root .\n";
-      print SH "       lcg-cr -v --vo t2k.org file:./$tag.root -l lfn:/grid/t2k.org/contrib/lorena/outputs/sensitivity/$tag.root -d srm://srm-t2k.gridpp.rl.ac.uk/ca\
-stor/ads.rl.ac.uk/prod/t2k.org/contrib/lorena/outputs/sensitivity/$tag.root \n";
+      print SH "       lcg-cr -v --vo t2k.org file:./$tag.root -l lfn:/grid/t2k.org/contrib/lorena/outputs/sensitivity/$tag.root -d srm://srm-t2k.gridpp.rl.ac.uk/castor/ads.rl.ac.uk/prod/t2k.org/contrib/lorena/outputs/sensitivity/$tag.root \n";
       print SH "       echo \"*** Removing...\"\n";
       print SH "       rm -fr trunk_GRID/\n";
       print SH "       rm -fr trunk_GRID.tar.gz\n";
@@ -1162,8 +1144,7 @@ print "$command \n";
       print SH "export GLOBUS_FTP_CLIENT_GRIDFTP2=true\n";
       print SH "# trap error and remove code if error happens \n";
       print SH "P=\$PWD \n";
-      print SH "#trap \'echo \"*** Error happened!!!\"; cd \$\{P\}; mv trunk_GRID/*.root .;echo \"*** Removing...\"; rm -fr trunk_GRID/; rm -fr trunk_GRID.tar.gz; l\
-s -ltr; echo EXIT; exit\' ERR \n";
+      print SH "#trap \'echo \"*** Error happened!!!\"; cd \$\{P\}; mv trunk_GRID/*.root .;echo \"*** Removing...\"; rm -fr trunk_GRID/; rm -fr trunk_GRID.tar.gz; ls -ltr; echo EXIT; exit\' ERR \n";
       print SH "# create temporal directory \n" ;
       print SH "echo \"*** Untaring code...\" \n";
       print SH "ls -ltr \n";
@@ -1216,8 +1197,7 @@ print SH "lcg-cp -v --vo t2k.org lfn:/grid/t2k.org/contrib/lorena/inputs/officia
       print SH "if \[ \"\$\?\" \= \"0\" \]; then\n";
       print SH "       cd ..\n";
       print SH "       mv trunk_GRID/*.root .\n";
-      print SH "       lcg-cr -v --vo t2k.org file:./$tag.root -l lfn:/grid/t2k.org/contrib/lorena/outputs/sensitivity/$tag.root -d srm://srm-t2k.gridpp.rl.ac.uk/ca\
-stor/ads.rl.ac.uk/prod/t2k.org/contrib/lorena/outputs/sensitivity/$tag.root \n";
+      print SH "       lcg-cr -v --vo t2k.org file:./$tag.root -l lfn:/grid/t2k.org/contrib/lorena/outputs/sensitivity/$tag.root -d srm://srm-t2k.gridpp.rl.ac.uk/castor/ads.rl.ac.uk/prod/t2k.org/contrib/lorena/outputs/sensitivity/$tag.root \n";
       print SH "       echo \"*** Removing...\"\n";
       print SH "       rm -fr trunk_GRID/\n";
       print SH "       rm -fr trunk_GRID.tar.gz\n";
@@ -1285,8 +1265,7 @@ print "$command \n";
       print SH "export GLOBUS_FTP_CLIENT_GRIDFTP2=true\n";
       print SH "# trap error and remove code if error happens \n";
       print SH "P=\$PWD \n";
-      print SH "#trap \'echo \"*** Error happened!!!\"; cd \$\{P\}; mv trunk_GRID/*.root .;echo \"*** Removing...\"; rm -fr trunk_GRID/; rm -fr trunk_GRID.tar.gz; l\
-s -ltr; echo EXIT; exit\' ERR \n";
+      print SH "#trap \'echo \"*** Error happened!!!\"; cd \$\{P\}; mv trunk_GRID/*.root .;echo \"*** Removing...\"; rm -fr trunk_GRID/; rm -fr trunk_GRID.tar.gz; ls -ltr; echo EXIT; exit\' ERR \n";
       print SH "# create temporal directory \n" ;
       print SH "echo \"*** Untaring code...\" \n";
       print SH "ls -ltr \n";
@@ -1339,8 +1318,7 @@ print SH "lcg-cp -v --vo t2k.org lfn:/grid/t2k.org/contrib/lorena/inputs/officia
       print SH "if \[ \"\$\?\" \= \"0\" \]; then\n";
       print SH "       cd ..\n";
       print SH "       mv trunk_GRID/*.root .\n";
-      print SH "       lcg-cr -v --vo t2k.org file:./$tag.root -l lfn:/grid/t2k.org/contrib/lorena/outputs/sensitivity/$tag.root -d srm://srm-t2k.gridpp.rl.ac.uk/ca\
-stor/ads.rl.ac.uk/prod/t2k.org/contrib/lorena/outputs/sensitivity/$tag.root \n";
+      print SH "       lcg-cr -v --vo t2k.org file:./$tag.root -l lfn:/grid/t2k.org/contrib/lorena/outputs/sensitivity/$tag.root -d srm://srm-t2k.gridpp.rl.ac.uk/castor/ads.rl.ac.uk/prod/t2k.org/contrib/lorena/outputs/sensitivity/$tag.root \n";
       print SH "       echo \"*** Removing...\"\n";
       print SH "       rm -fr trunk_GRID/\n";
       print SH "       rm -fr trunk_GRID.tar.gz\n";
@@ -1407,8 +1385,7 @@ print "$command \n";
       print SH "export GLOBUS_FTP_CLIENT_GRIDFTP2=true\n";
       print SH "# trap error and remove code if error happens \n";
       print SH "P=\$PWD \n";
-      print SH "#trap \'echo \"*** Error happened!!!\"; cd \$\{P\}; mv trunk_GRID/*.root .;echo \"*** Removing...\"; rm -fr trunk_GRID/; rm -fr trunk_GRID.tar.gz; l\
-s -ltr; echo EXIT; exit\' ERR \n";
+      print SH "#trap \'echo \"*** Error happened!!!\"; cd \$\{P\}; mv trunk_GRID/*.root .;echo \"*** Removing...\"; rm -fr trunk_GRID/; rm -fr trunk_GRID.tar.gz; ls -ltr; echo EXIT; exit\' ERR \n";
       print SH "# create temporal directory \n" ;
       print SH "echo \"*** Untaring code...\" \n";
       print SH "ls -ltr \n";
@@ -1461,8 +1438,7 @@ print SH "lcg-cp -v --vo t2k.org lfn:/grid/t2k.org/contrib/lorena/inputs/officia
       print SH "if \[ \"\$\?\" \= \"0\" \]; then\n";
       print SH "       cd ..\n";
       print SH "       mv trunk_GRID/*.root .\n";
-      print SH "       lcg-cr -v --vo t2k.org file:./$tag.root -l lfn:/grid/t2k.org/contrib/lorena/outputs/sensitivity/$tag.root -d srm://srm-t2k.gridpp.rl.ac.uk/ca\
-stor/ads.rl.ac.uk/prod/t2k.org/contrib/lorena/outputs/sensitivity/$tag.root \n";
+      print SH "       lcg-cr -v --vo t2k.org file:./$tag.root -l lfn:/grid/t2k.org/contrib/lorena/outputs/sensitivity/$tag.root -d srm://srm-t2k.gridpp.rl.ac.uk/castor/ads.rl.ac.uk/prod/t2k.org/contrib/lorena/outputs/sensitivity/$tag.root \n";
       print SH "       echo \"*** Removing...\"\n";
       print SH "       rm -fr trunk_GRID/\n";
       print SH "       rm -fr trunk_GRID.tar.gz\n";
@@ -1529,8 +1505,7 @@ print "$command \n";
       print SH "export GLOBUS_FTP_CLIENT_GRIDFTP2=true\n";
       print SH "# trap error and remove code if error happens \n";
       print SH "P=\$PWD \n";
-      print SH "#trap \'echo \"*** Error happened!!!\"; cd \$\{P\}; mv trunk_GRID/*.root .;echo \"*** Removing...\"; rm -fr trunk_GRID/; rm -fr trunk_GRID.tar.gz; l\
-s -ltr; echo EXIT; exit\' ERR \n";
+      print SH "#trap \'echo \"*** Error happened!!!\"; cd \$\{P\}; mv trunk_GRID/*.root .;echo \"*** Removing...\"; rm -fr trunk_GRID/; rm -fr trunk_GRID.tar.gz; ls -ltr; echo EXIT; exit\' ERR \n";
       print SH "# create temporal directory \n" ;
       print SH "echo \"*** Untaring code...\" \n";
       print SH "ls -ltr \n";
@@ -1583,8 +1558,7 @@ print SH "lcg-cp -v --vo t2k.org lfn:/grid/t2k.org/contrib/lorena/inputs/officia
       print SH "if \[ \"\$\?\" \= \"0\" \]; then\n";
       print SH "       cd ..\n";
       print SH "       mv trunk_GRID/*.root .\n";
-      print SH "       lcg-cr -v --vo t2k.org file:./$tag.root -l lfn:/grid/t2k.org/contrib/lorena/outputs/sensitivity/$tag.root -d srm://srm-t2k.gridpp.rl.ac.uk/ca\
-stor/ads.rl.ac.uk/prod/t2k.org/contrib/lorena/outputs/sensitivity/$tag.root \n";
+      print SH "       lcg-cr -v --vo t2k.org file:./$tag.root -l lfn:/grid/t2k.org/contrib/lorena/outputs/sensitivity/$tag.root -d srm://srm-t2k.gridpp.rl.ac.uk/castor/ads.rl.ac.uk/prod/t2k.org/contrib/lorena/outputs/sensitivity/$tag.root \n";
       print SH "       echo \"*** Removing...\"\n";
       print SH "       rm -fr trunk_GRID/\n";
       print SH "       rm -fr trunk_GRID.tar.gz\n";
@@ -1651,8 +1625,7 @@ print "$command \n";
       print SH "export GLOBUS_FTP_CLIENT_GRIDFTP2=true\n";
       print SH "# trap error and remove code if error happens \n";
       print SH "P=\$PWD \n";
-      print SH "#trap \'echo \"*** Error happened!!!\"; cd \$\{P\}; mv trunk_GRID/*.root .;echo \"*** Removing...\"; rm -fr trunk_GRID/; rm -fr trunk_GRID.tar.gz; l\
-s -ltr; echo EXIT; exit\' ERR \n";
+      print SH "#trap \'echo \"*** Error happened!!!\"; cd \$\{P\}; mv trunk_GRID/*.root .;echo \"*** Removing...\"; rm -fr trunk_GRID/; rm -fr trunk_GRID.tar.gz; ls -ltr; echo EXIT; exit\' ERR \n";
       print SH "# create temporal directory \n" ;
       print SH "echo \"*** Untaring code...\" \n";
       print SH "ls -ltr \n";
@@ -1705,8 +1678,7 @@ print SH "lcg-cp -v --vo t2k.org lfn:/grid/t2k.org/contrib/lorena/inputs/officia
       print SH "if \[ \"\$\?\" \= \"0\" \]; then\n";
       print SH "       cd ..\n";
       print SH "       mv trunk_GRID/*.root .\n";
-      print SH "       lcg-cr -v --vo t2k.org file:./$tag.root -l lfn:/grid/t2k.org/contrib/lorena/outputs/sensitivity/$tag.root -d srm://srm-t2k.gridpp.rl.ac.uk/ca\
-stor/ads.rl.ac.uk/prod/t2k.org/contrib/lorena/outputs/sensitivity/$tag.root \n";
+      print SH "       lcg-cr -v --vo t2k.org file:./$tag.root -l lfn:/grid/t2k.org/contrib/lorena/outputs/sensitivity/$tag.root -d srm://srm-t2k.gridpp.rl.ac.uk/castor/ads.rl.ac.uk/prod/t2k.org/contrib/lorena/outputs/sensitivity/$tag.root \n";
       print SH "       echo \"*** Removing...\"\n";
       print SH "       rm -fr trunk_GRID/\n";
       print SH "       rm -fr trunk_GRID.tar.gz\n";
