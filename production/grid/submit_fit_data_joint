@@ -59,6 +59,8 @@ print SH0 "cp -r root/ trunk_GRID\n";
 print SH0 "cp setup_at_grid.sh trunk_GRID\n";
 print SH0 "cp Makefile trunk_GRID\n";
 print SH0 "cp $softw_dir/macros/fit/run_fit_data_joint.C trunk_GRID\n";
+print SH0 "cp $softw_dir/inputs/fake_data_joint.xml trunk_GRID\n";
+print SH0 "cp $softw_dir/inputs/data.xml trunk_GRID\n";
 print SH0 "tar -pczf trunk_GRID.tar.gz trunk_GRID\n";
 print SH0 "echo \"*** Creating proxy...\" \n";
 #print SH0 "export LFC_HOST=lfc.gridpp.rl.ac.uk \n";    
@@ -878,7 +880,7 @@ print SH0 "glite-wms-job-submit -a -c autowms.conf -o $tag0.jid $tag.jdl\n";
 # Now the 2D fits
 
 $irun = 1;
-    while($irun < 22) {
+    while($irun < 42) {
 
 $tag                = "data_fit_joint_nh_chisq_vs_theta23_dmsq_$irun"  ;
 $command = "root2k -l -b -q \'run_fit_data_joint.C(\"$tag\",\"$data_file\",$data_id,\"$config_file\",\"$fit_param_list\",\"$fit_option\",true,false,\"$dmsqscheme\",\"$hierarchy\",\"$mixparamchoice\",tolerance,mixing23,dmsq,$irun,$irun,1,21)\'";
