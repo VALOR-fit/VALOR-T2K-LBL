@@ -1044,6 +1044,7 @@ string t2kana::util::AsString(PhysParamId_t p)
     // SKDET+FSI
     //
 #ifdef SKFSITOGETHER
+#ifndef SKCORRELATIONS
 #if FSI_BINS != 3
     case ( kNuisSKDetFSI000 ) :
     case ( kNuisSKDetFSI001 ) :
@@ -1108,6 +1109,100 @@ string t2kana::util::AsString(PhysParamId_t p)
         case (kNuisSKDetFSI015) :
         case (kNuisSKDetFSI016) :
         case (kNuisSKDetFSI017) :
+	  nutypes = "all NC (1Re)"; break;
+        default : nutypes = "--";
+	}
+      return Form("SKDet + FSI/SI %2d; Ereco range %.2f - %.2f GeV; %s",ip,
+		  kSKDetFSIParamsErecoCut[ip][0],kSKDetFSIParamsErecoCut[ip][1],nutypes.c_str());     
+      break;
+      }
+#endif
+#else
+    case ( kNuisSKDetFSI000 ) :
+    case ( kNuisSKDetFSI001 ) :
+    case ( kNuisSKDetFSI002 ) :
+    case ( kNuisSKDetFSI003 ) :
+    case ( kNuisSKDetFSI004 ) :
+    case ( kNuisSKDetFSI005 ) :
+    case ( kNuisSKDetFSI006 ) :
+    case ( kNuisSKDetFSI007 ) :
+    case ( kNuisSKDetFSI008 ) :
+    case ( kNuisSKDetFSI009 ) :
+    case ( kNuisSKDetFSI010 ) :
+    case ( kNuisSKDetFSI011 ) :
+    case ( kNuisSKDetFSI012 ) :
+    case ( kNuisSKDetFSI013 ) :
+    case ( kNuisSKDetFSI014 ) :
+    case ( kNuisSKDetFSI015 ) :
+    case ( kNuisSKDetFSI016 ) :
+    case ( kNuisSKDetFSI017 ) :
+    case ( kNuisSKDetFSI018 ) :
+    case ( kNuisSKDetFSI019 ) :
+    {
+      int ip = (int)p - (int)kNuisSKDetFSI000;
+      string nutypes = "";
+      switch(p) {
+        case (kNuisSKDetFSI000) :
+        case (kNuisSKDetFSI001) :
+        case (kNuisSKDetFSI002) :
+        case (kNuisSKDetFSI003) :
+        case (kNuisSKDetFSI004) :
+	  nutypes = "signal nue CC (1Rmu)"; break;
+        case (kNuisSKDetFSI005) :
+        case (kNuisSKDetFSI006) :
+        case (kNuisSKDetFSI007) :
+        case (kNuisSKDetFSI008) :
+        case (kNuisSKDetFSI009) :
+	  nutypes = "numu/numubar CC (1Rmu)"; break;
+        case (kNuisSKDetFSI010) :
+        case (kNuisSKDetFSI011) :
+        case (kNuisSKDetFSI012) :
+        case (kNuisSKDetFSI013) :
+        case (kNuisSKDetFSI014) :
+	  nutypes = "nue/nuebar  CC (1Rmu)"; break;
+        case (kNuisSKDetFSI015) :
+        case (kNuisSKDetFSI016) :
+        case (kNuisSKDetFSI017) :
+        case (kNuisSKDetFSI018) :
+        case (kNuisSKDetFSI019) :
+	  nutypes = "all NC (1Rmu)"; break;
+        default : nutypes = "--";
+      }
+      return Form("SKDet + FSI/SI %2d; Ereco range %.2f - %.2f GeV; %s",ip,
+		  kSKDetFSIParamsErecoCut[ip][0],kSKDetFSIParamsErecoCut[ip][1],nutypes.c_str());     
+      break;
+    }//FSI for 1Rmu
+    case ( kNuisSKDetFSI020 ) :
+    case ( kNuisSKDetFSI021 ) :
+    case ( kNuisSKDetFSI022 ) :
+    case ( kNuisSKDetFSI023 ) :
+    case ( kNuisSKDetFSI024 ) :
+    case ( kNuisSKDetFSI025 ) :
+    case ( kNuisSKDetFSI026 ) :
+    case ( kNuisSKDetFSI027 ) :
+    case ( kNuisSKDetFSI028 ) :
+    case ( kNuisSKDetFSI029 ) :
+    case ( kNuisSKDetFSI030 ) :
+    case ( kNuisSKDetFSI031 ) :
+      {   
+      int ip = (int)p - (int)kNuisSKDetFSI000;
+      string nutypes = "";
+	switch(p) {
+        case (kNuisSKDetFSI020) :
+        case (kNuisSKDetFSI021) :
+        case (kNuisSKDetFSI022) :
+	  nutypes = "oscillated nue CC (1Re)"; break;
+        case (kNuisSKDetFSI023) :
+        case (kNuisSKDetFSI024) :
+        case (kNuisSKDetFSI025) :
+	  nutypes = "numu/numubar CC (1Re)"; break;
+        case (kNuisSKDetFSI026) :
+        case (kNuisSKDetFSI027) :
+        case (kNuisSKDetFSI028) :
+	  nutypes = "nue/nuebar CC (1Re)"; break;
+        case (kNuisSKDetFSI029) :
+        case (kNuisSKDetFSI030) :
+        case (kNuisSKDetFSI031) :
 	  nutypes = "all NC (1Re)"; break;
         default : nutypes = "--";
 	}
@@ -1374,6 +1469,7 @@ string t2kana::util::AsStringTex(PhysParamId_t p)
 #endif
 #endif
 #ifdef SKFSITOGETHER
+#ifndef SKCORRELATIONS
 #if FSI_BINS != 3
     case ( kNuisSKDetFSI000 ) :
     case ( kNuisSKDetFSI001 ) :
@@ -1446,6 +1542,100 @@ string t2kana::util::AsStringTex(PhysParamId_t p)
 		  kSKDetFSIParamsErecoCut[ip][0],kSKDetFSIParamsErecoCut[ip][1],nutypes.c_str());     
       break;
     }//FSI for 1Re
+#endif
+#else
+    case ( kNuisSKDetFSI000 ) :
+    case ( kNuisSKDetFSI001 ) :
+    case ( kNuisSKDetFSI002 ) :
+    case ( kNuisSKDetFSI003 ) :
+    case ( kNuisSKDetFSI004 ) :
+    case ( kNuisSKDetFSI005 ) :
+    case ( kNuisSKDetFSI006 ) :
+    case ( kNuisSKDetFSI007 ) :
+    case ( kNuisSKDetFSI008 ) :
+    case ( kNuisSKDetFSI009 ) :
+    case ( kNuisSKDetFSI010 ) :
+    case ( kNuisSKDetFSI011 ) :
+    case ( kNuisSKDetFSI012 ) :
+    case ( kNuisSKDetFSI013 ) :
+    case ( kNuisSKDetFSI014 ) :
+    case ( kNuisSKDetFSI015 ) :
+    case ( kNuisSKDetFSI016 ) :
+    case ( kNuisSKDetFSI017 ) :
+    case ( kNuisSKDetFSI018 ) :
+    case ( kNuisSKDetFSI019 ) :
+    {
+      int ip = (int)p - (int)kNuisSKDetFSI000;
+      string nutypes = "";
+      switch(p) {
+        case (kNuisSKDetFSI000) :
+        case (kNuisSKDetFSI001) :
+        case (kNuisSKDetFSI002) :
+        case (kNuisSKDetFSI003) :
+        case (kNuisSKDetFSI004) :
+	  nutypes = "Osc. $\\nu_e$ CC ($1R_{\\mu}$)"; break;
+        case (kNuisSKDetFSI005) :
+        case (kNuisSKDetFSI006) :
+        case (kNuisSKDetFSI007) :
+        case (kNuisSKDetFSI008) :
+        case (kNuisSKDetFSI009) :
+	  nutypes = "$\\nu_\\mu$/$\\bar{\\nu_\\mu}$ CC ($1R_{\\mu}$)"; break;
+        case (kNuisSKDetFSI010) :
+        case (kNuisSKDetFSI011) :
+        case (kNuisSKDetFSI012) :
+        case (kNuisSKDetFSI013) :
+        case (kNuisSKDetFSI014) :
+	  nutypes = "$\\nu_e$/$\\bar{\\nu_e}$ CC ($1R_{\\mu}$)"; break;
+        case (kNuisSKDetFSI015) :
+        case (kNuisSKDetFSI016) :
+        case (kNuisSKDetFSI017) :
+        case (kNuisSKDetFSI018) :
+        case (kNuisSKDetFSI019) :
+	  nutypes = "all NC ($1R_{\\mu}$)"; break;
+        default : nutypes = "--";
+      }
+      return Form("SKDet + FSI/SI %2d; Ereco range %.2f - %.2f GeV; %s",ip,
+		  kSKDetFSIParamsErecoCut[ip][0],kSKDetFSIParamsErecoCut[ip][1],nutypes.c_str());     
+      break;
+    }//FSI for 1Rmu
+    case ( kNuisSKDetFSI020 ) :
+    case ( kNuisSKDetFSI021 ) :
+    case ( kNuisSKDetFSI022 ) :
+    case ( kNuisSKDetFSI023 ) :
+    case ( kNuisSKDetFSI024 ) :
+    case ( kNuisSKDetFSI025 ) :
+    case ( kNuisSKDetFSI026 ) :
+    case ( kNuisSKDetFSI027 ) :
+    case ( kNuisSKDetFSI028 ) :
+    case ( kNuisSKDetFSI029 ) :
+    case ( kNuisSKDetFSI030 ) :
+    case ( kNuisSKDetFSI031 ) :
+      {   
+      int ip = (int)p - (int)kNuisSKDetFSI000;
+      string nutypes = "";
+	switch(p) {
+        case (kNuisSKDetFSI020) :
+        case (kNuisSKDetFSI021) :
+        case (kNuisSKDetFSI022) :
+	  nutypes = "Osc. $\\nu_e$ CC ($1R_{e}$)"; break;
+        case (kNuisSKDetFSI023) :
+        case (kNuisSKDetFSI024) :
+        case (kNuisSKDetFSI025) :
+	  nutypes = "$\\nu_\\mu$/$\\bar{\\nu_\\mu}$ CC ($1R_{e}$)"; break;
+        case (kNuisSKDetFSI026) :
+        case (kNuisSKDetFSI027) :
+        case (kNuisSKDetFSI028) :
+	  nutypes = "$\\nu_e$/$\\bar{\\nu_e}$ CC ($1R_{e}$)"; break;
+        case (kNuisSKDetFSI029) :
+        case (kNuisSKDetFSI030) :
+        case (kNuisSKDetFSI031) :
+	  nutypes = "all NC ($1R_{e}$)"; break;
+        default : nutypes = "--";
+	}
+      return Form("SKDet + FSI/SI %2d; Ereco range %.2f - %.2f GeV; %s",ip,
+		  kSKDetFSIParamsErecoCut[ip][0],kSKDetFSIParamsErecoCut[ip][1],nutypes.c_str());     
+      break;
+      }
 #endif
 #endif
     default : 
@@ -1706,6 +1896,7 @@ string t2kana::util::AsStringPresentTex(PhysParamId_t p)
 #endif
 #endif
 #ifdef SKFSITOGETHER
+#ifndef SKCORRELATIONS
 #if FSI_BINS != 3
     case ( kNuisSKDetFSI000 ) :
     case ( kNuisSKDetFSI001 ) :
@@ -1778,6 +1969,100 @@ string t2kana::util::AsStringPresentTex(PhysParamId_t p)
 		  kSKDetFSIParamsErecoCut[ip][0],kSKDetFSIParamsErecoCut[ip][1],nutypes.c_str());     
       break;
     }//FSI for 1Re
+#endif
+#else
+    case ( kNuisSKDetFSI000 ) :
+    case ( kNuisSKDetFSI001 ) :
+    case ( kNuisSKDetFSI002 ) :
+    case ( kNuisSKDetFSI003 ) :
+    case ( kNuisSKDetFSI004 ) :
+    case ( kNuisSKDetFSI005 ) :
+    case ( kNuisSKDetFSI006 ) :
+    case ( kNuisSKDetFSI007 ) :
+    case ( kNuisSKDetFSI008 ) :
+    case ( kNuisSKDetFSI009 ) :
+    case ( kNuisSKDetFSI010 ) :
+    case ( kNuisSKDetFSI011 ) :
+    case ( kNuisSKDetFSI012 ) :
+    case ( kNuisSKDetFSI013 ) :
+    case ( kNuisSKDetFSI014 ) :
+    case ( kNuisSKDetFSI015 ) :
+    case ( kNuisSKDetFSI016 ) :
+    case ( kNuisSKDetFSI017 ) :
+    case ( kNuisSKDetFSI018 ) :
+    case ( kNuisSKDetFSI019 ) :
+    {
+      int ip = (int)p - (int)kNuisSKDetFSI000;
+      string nutypes = "";
+      switch(p) {
+        case (kNuisSKDetFSI000) :
+        case (kNuisSKDetFSI001) :
+        case (kNuisSKDetFSI002) :
+        case (kNuisSKDetFSI003) :
+        case (kNuisSKDetFSI004) :
+	  nutypes = "Osc. $\\nu_e$ CC ($1R_{\\mu}$)"; break;
+        case (kNuisSKDetFSI005) :
+        case (kNuisSKDetFSI006) :
+        case (kNuisSKDetFSI007) :
+        case (kNuisSKDetFSI008) :
+        case (kNuisSKDetFSI009) :
+	  nutypes = "$\\nu_\\mu$/$\\bar{\\nu_\\mu}$ CC ($1R_{\\mu}$)"; break;
+        case (kNuisSKDetFSI010) :
+        case (kNuisSKDetFSI011) :
+        case (kNuisSKDetFSI012) :
+        case (kNuisSKDetFSI013) :
+        case (kNuisSKDetFSI014) :
+	  nutypes = "$\\nu_e$/$\\bar{\\nu_e}$ CC ($1R_{\\mu}$)"; break;
+        case (kNuisSKDetFSI015) :
+        case (kNuisSKDetFSI016) :
+        case (kNuisSKDetFSI017) :
+        case (kNuisSKDetFSI018) :
+        case (kNuisSKDetFSI019) :
+	  nutypes = "all NC ($1R_{\\mu}$)"; break;
+        default : nutypes = "--";
+      }
+      return Form("SKDet + FSI/SI %2d; Ereco range %.2f - %.2f GeV; %s",ip,
+		  kSKDetFSIParamsErecoCut[ip][0],kSKDetFSIParamsErecoCut[ip][1],nutypes.c_str());     
+      break;
+    }//FSI for 1Rmu
+    case ( kNuisSKDetFSI020 ) :
+    case ( kNuisSKDetFSI021 ) :
+    case ( kNuisSKDetFSI022 ) :
+    case ( kNuisSKDetFSI023 ) :
+    case ( kNuisSKDetFSI024 ) :
+    case ( kNuisSKDetFSI025 ) :
+    case ( kNuisSKDetFSI026 ) :
+    case ( kNuisSKDetFSI027 ) :
+    case ( kNuisSKDetFSI028 ) :
+    case ( kNuisSKDetFSI029 ) :
+    case ( kNuisSKDetFSI030 ) :
+    case ( kNuisSKDetFSI031 ) :
+      {   
+      int ip = (int)p - (int)kNuisSKDetFSI000;
+      string nutypes = "";
+	switch(p) {
+        case (kNuisSKDetFSI020) :
+        case (kNuisSKDetFSI021) :
+        case (kNuisSKDetFSI022) :
+	  nutypes = "Osc. $\\nu_e$ CC ($1R_{e}$)"; break;
+        case (kNuisSKDetFSI023) :
+        case (kNuisSKDetFSI024) :
+        case (kNuisSKDetFSI025) :
+	  nutypes = "$\\nu_\\mu$/$\\bar{\\nu_\\mu}$ CC ($1R_{e}$)"; break;
+        case (kNuisSKDetFSI026) :
+        case (kNuisSKDetFSI027) :
+        case (kNuisSKDetFSI028) :
+	  nutypes = "$\\nu_e$/$\\bar{\\nu_e}$ CC ($1R_{e}$)"; break;
+        case (kNuisSKDetFSI029) :
+        case (kNuisSKDetFSI030) :
+        case (kNuisSKDetFSI031) :
+	  nutypes = "all NC ($1R_{e}$)"; break;
+        default : nutypes = "--";
+	}
+      return Form("SKDet + FSI/SI %2d; Ereco range %.2f - %.2f GeV; %s",ip,
+		  kSKDetFSIParamsErecoCut[ip][0],kSKDetFSIParamsErecoCut[ip][1],nutypes.c_str());     
+      break;
+      }
 #endif
 #endif
     default : 
@@ -2000,7 +2285,7 @@ string t2kana::util::AsStringPaperTex(PhysParamId_t p)
       return Form("$f_{%d; t, r}^{FSI}$", ip);
       break;
     }//FSI
-#ifndef SKFSITOGETHER
+#ifdef SKFSITOGETHER
 #if FSI_BINS != 3                
   case ( kNuisSKDetFSI000 ) :
   case ( kNuisSKDetFSI001 ) :
@@ -2022,6 +2307,22 @@ string t2kana::util::AsStringPaperTex(PhysParamId_t p)
   case ( kNuisSKDetFSI015 ) :
   case ( kNuisSKDetFSI016 ) :
   case ( kNuisSKDetFSI017 ) :
+#endif
+#ifdef SKCORRELATIONS
+  case ( kNuisSKDetFSI018 ) :
+  case ( kNuisSKDetFSI019 ) :
+  case ( kNuisSKDetFSI020 ) :
+  case ( kNuisSKDetFSI021 ) :
+  case ( kNuisSKDetFSI022 ) :
+  case ( kNuisSKDetFSI023 ) :
+  case ( kNuisSKDetFSI024 ) :
+  case ( kNuisSKDetFSI025 ) :
+  case ( kNuisSKDetFSI026 ) :
+  case ( kNuisSKDetFSI027 ) :
+  case ( kNuisSKDetFSI028 ) :
+  case ( kNuisSKDetFSI029 ) :
+  case ( kNuisSKDetFSI030 ) :
+  case ( kNuisSKDetFSI031 ) :
 #endif
 #endif
     {
@@ -2252,7 +2553,7 @@ string t2kana::util::AsStringPaperTexNoDollar(PhysParamId_t p)
       return Form("f_{%d; r}^{FSI}", ip);
       break;
     }//FSI                
-#ifndef SKFSITOGETHER
+#ifdef SKFSITOGETHER
 #if FSI_BINS != 3
   case ( kNuisSKDetFSI000 ) :
   case ( kNuisSKDetFSI001 ) :
@@ -2274,6 +2575,22 @@ string t2kana::util::AsStringPaperTexNoDollar(PhysParamId_t p)
   case ( kNuisSKDetFSI015 ) :
   case ( kNuisSKDetFSI016 ) :
   case ( kNuisSKDetFSI017 ) :
+#endif
+#ifdef SKCORRELATIONS
+    case ( kNuisSKDetFSI018 ) :
+    case ( kNuisSKDetFSI019 ) :
+    case ( kNuisSKDetFSI020 ) :
+    case ( kNuisSKDetFSI021 ) :
+    case ( kNuisSKDetFSI022 ) :
+    case ( kNuisSKDetFSI023 ) :
+    case ( kNuisSKDetFSI024 ) :
+    case ( kNuisSKDetFSI025 ) :
+    case ( kNuisSKDetFSI026 ) :
+    case ( kNuisSKDetFSI027 ) :
+    case ( kNuisSKDetFSI028 ) :
+    case ( kNuisSKDetFSI029 ) :
+    case ( kNuisSKDetFSI030 ) :
+    case ( kNuisSKDetFSI031 ) :
 #endif
 #endif
     {
@@ -2461,7 +2778,7 @@ string t2kana::util::AsStringPaperRooTex(PhysParamId_t p)
 #endif
   case ( kNuisXSecNormCCcoh  ) : return "f_{CCcoh; t}";                  break;
 #ifndef __NUMUONLY__
-  case ( kNuisXSecNormNCcoh  ) : return "Norm, NC Coh";                    break;
+  case ( kNuisXSecNormNCcoh  ) : return "f_{NCcoh; t}";                    break;
 #endif
 #ifndef __NUEONLY__
   case ( kNuisXSecNormNC1piC ) : return "f_{NC1#pi#pm; t}";           break;
@@ -2526,6 +2843,22 @@ string t2kana::util::AsStringPaperRooTex(PhysParamId_t p)
   case ( kNuisSKDetFSI015 ) :
   case ( kNuisSKDetFSI016 ) :
   case ( kNuisSKDetFSI017 ) :
+#endif
+#ifdef SKCORRELATIONS
+  case ( kNuisSKDetFSI018 ) :
+  case ( kNuisSKDetFSI019 ) :
+  case ( kNuisSKDetFSI020 ) :
+  case ( kNuisSKDetFSI021 ) :
+  case ( kNuisSKDetFSI022 ) :
+  case ( kNuisSKDetFSI023 ) :
+  case ( kNuisSKDetFSI024 ) :
+  case ( kNuisSKDetFSI025 ) :
+  case ( kNuisSKDetFSI026 ) :
+  case ( kNuisSKDetFSI027 ) :
+  case ( kNuisSKDetFSI028 ) :
+  case ( kNuisSKDetFSI029 ) :
+  case ( kNuisSKDetFSI030 ) :
+  case ( kNuisSKDetFSI031 ) :
 #endif
 #endif
     {
@@ -2757,6 +3090,22 @@ string t2kana::util::AsStringCompact(PhysParamId_t p)
     case ( kNuisSKDetFSI015 ) : return "f_skdetfsi015"; break;
     case ( kNuisSKDetFSI016 ) : return "f_skdetfsi016"; break;
     case ( kNuisSKDetFSI017 ) : return "f_skdetfsi017"; break;
+#endif
+#ifdef SKCORRELATIONS
+  case ( kNuisSKDetFSI018 ) : return "f_skdetfsi018"; break;
+  case ( kNuisSKDetFSI019 ) : return "f_skdetfsi019"; break;
+  case ( kNuisSKDetFSI020 ) : return "f_skdetfsi020"; break;
+  case ( kNuisSKDetFSI021 ) : return "f_skdetfsi021"; break;
+  case ( kNuisSKDetFSI022 ) : return "f_skdetfsi022"; break;
+  case ( kNuisSKDetFSI023 ) : return "f_skdetfsi023"; break;
+  case ( kNuisSKDetFSI024 ) : return "f_skdetfsi024"; break;
+  case ( kNuisSKDetFSI025 ) : return "f_skdetfsi025"; break;
+  case ( kNuisSKDetFSI026 ) : return "f_skdetfsi026"; break;
+  case ( kNuisSKDetFSI027 ) : return "f_skdetfsi027"; break;
+  case ( kNuisSKDetFSI028 ) : return "f_skdetfsi028"; break;
+  case ( kNuisSKDetFSI029 ) : return "f_skdetfsi029"; break;
+  case ( kNuisSKDetFSI030 ) : return "f_skdetfsi030"; break;
+  case ( kNuisSKDetFSI031 ) : return "f_skdetfsi031"; break;
 #endif
 #endif
     default : 
@@ -3644,6 +3993,22 @@ t2kana::conv::PhysParamId_t
   if(sh == "skdetfsi_016") return kNuisSKDetFSI016;
   if(sh == "skdetfsi_017") return kNuisSKDetFSI017;
 #endif
+#ifdef SKCORRELATIONS
+  if(sh == "skdetfsi_018") return kNuisSKDetFSI018;
+  if(sh == "skdetfsi_019") return kNuisSKDetFSI019;
+  if(sh == "skdetfsi_020") return kNuisSKDetFSI020;
+  if(sh == "skdetfsi_021") return kNuisSKDetFSI021;
+  if(sh == "skdetfsi_022") return kNuisSKDetFSI022;
+  if(sh == "skdetfsi_023") return kNuisSKDetFSI023;
+  if(sh == "skdetfsi_024") return kNuisSKDetFSI024;
+  if(sh == "skdetfsi_025") return kNuisSKDetFSI025;
+  if(sh == "skdetfsi_026") return kNuisSKDetFSI026;
+  if(sh == "skdetfsi_027") return kNuisSKDetFSI027;
+  if(sh == "skdetfsi_028") return kNuisSKDetFSI028;
+  if(sh == "skdetfsi_029") return kNuisSKDetFSI029;
+  if(sh == "skdetfsi_030") return kNuisSKDetFSI030;
+  if(sh == "skdetfsi_031") return kNuisSKDetFSI031;
+#endif
 #endif
   cout << sh << " not yet supported in util::PhysParamIdFromString()" << endl;
   return kPhypUndefined;
@@ -3778,6 +4143,7 @@ t2kana::conv::PhysParamId_t t2kana::util::PhysParamIdFromLongString(string sh)
  }
 #endif
 #ifdef SKFSITOGETHER
+#ifndef SKCORRELATIONS
  for(int ip = 0; ip < kNumOfSKDetFSIParams; ip++) {
    string nutypes = "";
    if(ip < 3)
@@ -3804,6 +4170,30 @@ t2kana::conv::PhysParamId_t t2kana::util::PhysParamIdFromLongString(string sh)
    if(sh == comp) return (PhysParamId_t)((int)kNuisSKDetFSI006+ip);
 #endif
  }
+#else
+ for(int ip = 0; ip < kNumOfSKDetFSIParams; ip++) {
+   string nutypes = "";
+   if(ip < 5)
+     nutypes = "Osc. nue CC (1Rmu)";
+   else if(ip < 10)
+     nutypes = "numu/numubar CC (1Rmu)";
+   else if(ip < 15)
+     nutypes = "nue/nuebar CC (1Rmu)";
+   else if(ip < 20)
+     nutypes = "all NC (1Rmu)";
+   else if(ip < 23)
+     nutypes = "Osc. nue CC (1Re)";
+   else if(ip < 26)
+     nutypes = "numu/numubar CC (1Re)";
+   else if(ip < 29)
+     nutypes = "nue/nuebar CC (1Re)";
+   else if(ip < 32)
+     nutypes = "all NC (1Re)";
+   string comp = Form("SKDet + FSI/SI %2d; Ereco range %.2f - %.2f GeV; %s",ip,
+		      kSKDetFSIParamsErecoCut[ip][0],kSKDetFSIParamsErecoCut[ip][1],nutypes.c_str());     
+   if(sh == comp) return (PhysParamId_t)((int)kNuisSKDetFSI000+ip);
+ }
+#endif
 #endif
 
   cout << sh << " not yet supported in util::PhysParamIdFromLongString()" << endl;
@@ -4426,6 +4816,10 @@ bool t2kana::util::IsFSI(PhysParamId_t p)
 //____________________________________________________________________________                                                                                   
 bool t2kana::util::IsSKDetFSI(PhysParamId_t p)
 {
+#ifdef SKCORRELATIONS
+  if(p >= kNuisSKDetFSI000 && p <= kNuisSKDetFSI031)
+    return true;
+#else
 #if FSI_BINS != 3
   if(p >= kNuisSKDetFSI000 && p <= kNuisSKDetFSI005)
     return true;
@@ -4433,6 +4827,7 @@ bool t2kana::util::IsSKDetFSI(PhysParamId_t p)
 #if FSI_BINS != 2
   if(p >= kNuisSKDetFSI006 && p <= kNuisSKDetFSI017)
     return true;
+#endif
 #endif
   if(p == kNuisSuperkEnergyScale)
     return true;
@@ -6526,11 +6921,11 @@ void t2kana::util::ArrIdx::Init(void)
 #endif
     if(p == kPhypUndefined) continue;
     fSKDetFSISystIdx[p] = ip;
-#ifdef __show_arr_idx_mesg_debug__
+    //#ifdef __show_arr_idx_mesg_debug__
      cout << "Util/ArrIdx >> SKDet+FSI: " 
           << util::AsString(p)
           << " is at slot: " << fSKDetFSISystIdx [p] << endl;
-#endif
+     //#endif
   }
 #endif
 
