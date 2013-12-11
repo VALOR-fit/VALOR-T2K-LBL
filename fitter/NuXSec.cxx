@@ -462,7 +462,7 @@ relerr = fSplineMARESRelErr;
       //if(ev) {
       TSpline3 * wght_spl = this->FindWghtSpline(p,s,m,Ereco,Etrue);
       assert(wght_spl);
-      double tb = TMath::Abs(fBANFF->BestFitValue(p));
+      double tb = fabs(fBANFF->BestFitValue(p));
 #warning Need to check PDD spline evaluation is correct
       wght = wght_spl->Eval(tb);
       //}
@@ -480,7 +480,7 @@ relerr = fSplineMARESRelErr;
   }
 #endif
 
-  if(TMath::Abs(wght) > conv::kMaxAllowedWght) {
+  if(fabs(wght) > conv::kMaxAllowedWght) {
     //get the ereco & etrue bin indexes (to be used to check whether the spline is sensible)
     int ireco = -1; 
     for (int i = 0; i < util::NumXsecErecoBins(s); i++) {
@@ -527,9 +527,9 @@ double NuXSec::SystWght(
      // Was tweaked?
      double dt = 0.;
      if(kXSecSystIncludedInBANFF[isyst])
-       dt = TMath::Abs(fBANFF->CurrentValue(p) - fBANFF->BestFitValue(p)); // banff parameters
+       dt = fabs(fBANFF->CurrentValue(p) - fBANFF->BestFitValue(p)); // banff parameters
      else
-       dt = TMath::Abs(this->CurrentValue(p)); // non-banff normalisations
+       dt = fabs(this->CurrentValue(p)); // non-banff normalisations
      if(dt < kASmallNum) continue;
      
      // Is the current systematic parameter applied to current sample/mode end energy bin?
@@ -722,7 +722,7 @@ double NuXSec::SystWght_1p(
   }
 #endif
 
-  if(TMath::Abs(wght) > conv::kMaxAllowedWght) {
+  if(fabs(wght) > conv::kMaxAllowedWght) {
     //get the ereco & etrue bin indexes (to be used to check whether the spline is sensible)
     int ireco = -1; 
     for (int i = 0; i < util::NumXsecErecoBins(s); i++) {
