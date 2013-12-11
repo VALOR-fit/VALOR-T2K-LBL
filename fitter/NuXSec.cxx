@@ -890,22 +890,22 @@ TSpline3 * NuXSec::FindWghtSpline(
 {
   SuperkMode_t m = mp; // default
   // HACK: for `osc numu' templates, use `numu' response functions
-  if ( mp == kSKmOscNuMuCCQE     ) { m = kSKmNuMuCCQE;     }
-  if ( mp == kSKmOscNuMuCC1pi    ) { m = kSKmNuMuCC1pi;    }
-  if ( mp == kSKmOscNuMuCCcoh    ) { m = kSKmNuMuCCcoh;    }
-  //  if ( mp == kSKmOscNuMuCCoth_mu ) { m = kSKmNuMuCCoth_mu; }
-  //  if ( mp == kSKmOscNuMuCCoth_e  ) { m = kSKmNuMuCCoth_e;  }
-  if ( mp == kSKmOscNuMuCCoth  ) { m = kSKmNuMuCCoth;  }
+  if      ( mp == kSKmOscNuMuCCQE     ) { m = kSKmNuMuCCQE;     }
+  else if ( mp == kSKmOscNuMuCC1pi    ) { m = kSKmNuMuCC1pi;    }
+  else if ( mp == kSKmOscNuMuCCcoh    ) { m = kSKmNuMuCCcoh;    }
+  //  else if ( mp == kSKmOscNuMuCCoth_mu ) { m = kSKmNuMuCCoth_mu; }
+  //  else if ( mp == kSKmOscNuMuCCoth_e  ) { m = kSKmNuMuCCoth_e;  }
+  else if ( mp == kSKmOscNuMuCCoth    ) { m = kSKmNuMuCCoth;  }
 
-  if ( mp == kSKmOscNuMuBarCCQE     ) { m = kSKmNuMuBarCCQE;     }
-  if ( mp == kSKmOscNuMuBarCC1pi    ) { m = kSKmNuMuBarCC1pi;    }
-  if ( mp == kSKmOscNuMuBarCCcoh    ) { m = kSKmNuMuBarCCcoh;    }
-  if ( mp == kSKmOscNuMuBarCCoth  ) { m = kSKmNuMuBarCCoth;  }
+  else if ( mp == kSKmOscNuMuBarCCQE     ) { m = kSKmNuMuBarCCQE;     }
+  else if ( mp == kSKmOscNuMuBarCC1pi    ) { m = kSKmNuMuBarCC1pi;    }
+  else if ( mp == kSKmOscNuMuBarCCcoh    ) { m = kSKmNuMuBarCCcoh;    }
+  else if ( mp == kSKmOscNuMuBarCCoth    ) { m = kSKmNuMuBarCCoth;  }
 
-  if ( mp == kSKmOscNuEBarCCQE     ) { m = kSKmNuEBarCCQE;     }
-  if ( mp == kSKmOscNuEBarCC1pi    ) { m = kSKmNuEBarCC1pi;    }
-  if ( mp == kSKmOscNuEBarCCcoh    ) { m = kSKmNuEBarCCcoh;    }
-  if ( mp == kSKmOscNuEBarCCoth  ) { m = kSKmNuEBarCCoth;  }
+  else if ( mp == kSKmOscNuEBarCCQE     ) { m = kSKmNuEBarCCQE;     }
+  else if ( mp == kSKmOscNuEBarCC1pi    ) { m = kSKmNuEBarCC1pi;    }
+  else if ( mp == kSKmOscNuEBarCCcoh    ) { m = kSKmNuEBarCCcoh;    }
+  else if ( mp == kSKmOscNuEBarCCoth    ) { m = kSKmNuEBarCCoth;  }
 
 
   int idx = this->WghtSplineIdx(p,s,m,Ereco,Etrue);
@@ -974,9 +974,11 @@ int NuXSec::WghtSplineIdx(
     return -1;
   }
   int ireco = -1; 
-  for (int i = 0; i < util::NumXsecErecoBins(s); i++) {
-    if(util::XsecErecoBinEdges(s,i)   <= Ereco && 
-       util::XsecErecoBinEdges(s,i+1) >  Ereco) 
+  int nErecoBins = util::NumXsecErecoBins(s);
+  const double * ErecoBinEdges = util::XsecErecoBinEdges(s);
+  for (int i = 0; i < nErecoBins ; i++) {
+    if(ErecoBinEdges[i]   <= Ereco && 
+       ErecoBinEdges[i+1] >  Ereco) 
       {
         ireco = i;
         break;
@@ -1014,8 +1016,8 @@ int NuXSec::WghtSplineIdx(
   
   int idx = itrue 
     + ireco * kXsNEtrueBins 
-    + ip    * kXsNEtrueBins * util::NumXsecErecoBins(s)
-    + im    * kXsNEtrueBins * util::NumXsecErecoBins(s) * kNumOfXSecSyst;
+    + ip    * kXsNEtrueBins * nErecoBins
+    + im    * kXsNEtrueBins * nErecoBins * kNumOfXSecSyst;
     //    + is    * kXsNEtrueBins * util::NumXsecErecoBins(s) * kNumOfXSecSyst * kNSuperkModes;
   
   return idx;
@@ -1025,9 +1027,9 @@ bool NuXSec::ApplySyst(
   PhysParamId_t p, SuperkSample_t s, SuperkMode_t m, double Ereco, double Etrue) const
 {
   bool apply2mode = this->ApplySystToSKMode(p,s,m);
+  if (not apply2mode) return false;
   bool apply2bin  = this->ApplySystToEnergyBin(p,Ereco,Etrue);
-  bool apply = apply2mode && apply2bin;
-  return apply;
+  return apply2bin;
 }
 //________________________________________________________________________________________
 bool NuXSec::ApplySystToSKMode(PhysParamId_t p, SuperkSample_t s, SuperkMode_t m) const
