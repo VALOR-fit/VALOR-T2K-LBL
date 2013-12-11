@@ -23,6 +23,7 @@
 #include "Conventions.h"
 #include "PhysHypothesis.h"
 #include "NuOsc3Flavour.h"
+#include "Utilities.h"
 
 class TVirtualPad;
 class TTree;
@@ -221,6 +222,8 @@ private:
   double fXMEC; //hack x_mec until we have a parameter we can use
 
   bool fUnphysicalOscProb; // Allow unphysical region (probs not in range [0,1]) in 2 flavour case
+  
+  util::ArrIdx * arr_index; //! Pointer to singleton, do not save in TObject
 
 ClassDef(SuperkMC, 5);
 };

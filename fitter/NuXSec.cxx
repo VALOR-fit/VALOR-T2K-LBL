@@ -82,6 +82,8 @@ void NuXSec::Init(void)
   fNormNCothTwkDial      = 0;
   fNormNuEToNuMuTwkDial  = 0;
   fNormAntiNuToNuTwkDial = 0;
+  
+  arr_index = util::ArrIdx::Instance();
 
 }
 //________________________________________________________________________________________
@@ -492,8 +494,8 @@ relerr = fSplineMARESRelErr;
 	}
     }
     int itrue = -1; 
-    int is = util::ArrIdx::Instance()->SuperkSampleIdx(s);
-    int im = util::ArrIdx::Instance()->SuperkModeIdx(s, m);
+    int is = arr_index->SuperkSampleIdx(s);
+    int im = arr_index->SuperkModeIdx(s, m);
     for (int i = 0; i < kXsNEtrueBins; i++) {
       if(kXsEtrueBinEdges[is][im][i]   <= Etrue && 
 	 kXsEtrueBinEdges[is][im][i+1] >  Etrue) 
@@ -734,8 +736,8 @@ double NuXSec::SystWght_1p(
 	}
     }
     int itrue = -1; 
-    int is = util::ArrIdx::Instance()->SuperkSampleIdx(s);
-    int im = util::ArrIdx::Instance()->SuperkModeIdx(s, m);
+    int is = arr_index->SuperkSampleIdx(s);
+    int im = arr_index->SuperkModeIdx(s, m);
     for (int i = 0; i < kXsNEtrueBins; i++) {
       if(kXsEtrueBinEdges[is][im][i]   <= Etrue && 
 	 kXsEtrueBinEdges[is][im][i+1] >  Etrue) 
@@ -938,18 +940,18 @@ int NuXSec::WghtSplineIdx(
 //  4:  0 --> kXsNEtrueBins
 //
 
-  int is = util::ArrIdx::Instance()->SuperkSampleIdx(s);
+  int is = arr_index->SuperkSampleIdx(s);
   if(is == -1) {
 #ifdef __show_wght_spline_idx_mesg_debug__
     cout << "Exp/NuXSec/WghtSplineIdx >> Didn't find Idx for sample "
 	 << util::AsString(s)
 	 << ". util::ArrIdx returned "
-	 << util::ArrIdx::Instance()->SuperkSampleIdx(s)
+	 << arr_index->SuperkSampleIdx(s)
 	 << endl;
 #endif //__show_wght_spline_idx_mesg_debug__
     return -1;
   }
-  int im = util::ArrIdx::Instance()->SuperkModeIdx(s,m);
+  int im = arr_index->SuperkModeIdx(s,m);
   if(im == -1) {
 #ifdef __show_wght_spline_idx_mesg_debug__
     cout << "Exp/NuXSec/WghtSplineIdx >> Didn't find Idx for mode "
@@ -957,18 +959,18 @@ int NuXSec::WghtSplineIdx(
 	 << " in sample "
 	 << util::AsString(s)
 	 << ". util::ArrIdx returned "
-	 << util::ArrIdx::Instance()->SuperkModeIdx(s,m)
+	 << arr_index->SuperkModeIdx(s,m)
 	 << endl;
 #endif //__show_wght_spline_idx_mesg_debug__
     return -1;
   }
-  int ip = util::ArrIdx::Instance()->XSecSystIdx(p);
+  int ip = arr_index->XSecSystIdx(p);
   if(ip == -1) {
 #ifdef __show_wght_spline_idx_mesg_debug__
     cout << "Exp/NuXSec/WghtSplineIdx >> Didn't find Idx for xsec sysy "
 	 << util::AsString(p)
 	 << ". util::ArrIdx returned "
-	 << util::ArrIdx::Instance()->XSecSystIdx(p)
+	 << arr_index->XSecSystIdx(p)
 	 << endl;
 #endif//__show_wght_spline_idx_mesg_debug__
     return -1;
@@ -1034,11 +1036,11 @@ bool NuXSec::ApplySyst(
 //________________________________________________________________________________________
 bool NuXSec::ApplySystToSKMode(PhysParamId_t p, SuperkSample_t s, SuperkMode_t m) const
 {
-  int isyst = util::ArrIdx::Instance()->XSecSystIdx(p);
+  int isyst = arr_index->XSecSystIdx(p);
   if (isyst == -1) return false;
-  int is = util::ArrIdx::Instance()->SuperkSampleIdx(s);
+  int is = arr_index->SuperkSampleIdx(s);
   if (is == -1) return false;
-  int im = util::ArrIdx::Instance()->SuperkModeIdx(s,m);
+  int im = arr_index->SuperkModeIdx(s,m);
   if (im == -1) return false;
 
   bool apply = kXsApplyXSecSystToSKMode[is][im][isyst];
@@ -1048,7 +1050,7 @@ bool NuXSec::ApplySystToSKMode(PhysParamId_t p, SuperkSample_t s, SuperkMode_t m
 //________________________________________________________________________________________
 bool NuXSec::ApplySystToEnergyBin(PhysParamId_t p, double Ereco, double Etrue) const
 {
-  int isyst = util::ArrIdx::Instance()->XSecSystIdx(p);
+  int isyst = arr_index->XSecSystIdx(p);
   if (isyst == -1) return false;
 
   bool apply = 
@@ -1124,8 +1126,8 @@ void NuXSec::BuildXsBinningMCTemplates(
 //________________________________________________________________________________________
 bool NuXSec::IsThereAnEvent(SuperkSample_t s, SuperkMode_t m, double Ereco, double Etrue) const
 {
-  int is = util::ArrIdx::Instance()->SuperkSampleIdx(s);
-  int im = util::ArrIdx::Instance()->SuperkModeIdx(s,m);
+  int is = arr_index->SuperkSampleIdx(s);
+  int im = arr_index->SuperkModeIdx(s,m);
   assert(is != -1 && im != -1);
 
   TH2D * mctempl_xsbinning = fXsBinningTempl[is][im];
@@ -1150,8 +1152,8 @@ bool NuXSec::IsThereAnEvent(SuperkSample_t s, SuperkMode_t m, double Ereco, doub
 //________________________________________________________________________________________
 int NuXSec::HowManyEvents(SuperkSample_t s, SuperkMode_t m, double Ereco, double Etrue) const
 {
-  int is = util::ArrIdx::Instance()->SuperkSampleIdx(s);
-  int im = util::ArrIdx::Instance()->SuperkModeIdx(s,m);
+  int is = arr_index->SuperkSampleIdx(s);
+  int im = arr_index->SuperkModeIdx(s,m);
   assert(is != -1 && im != -1);
 
   TH2D * mctempl_xsbinning = fXsBinningTempl[is][im];
@@ -1177,11 +1179,11 @@ int NuXSec::HowManyEvents(SuperkSample_t s, SuperkMode_t m, double Ereco, double
 //________________________________________________________________________________________
 TH2D * NuXSec::Template(SuperkSample_t s, SuperkMode_t m) const
 {
-  int sidx = util::ArrIdx::Instance()->SuperkSampleIdx(s);
+  int sidx = arr_index->SuperkSampleIdx(s);
   if(sidx == -1) {
     return 0;
   }
-  int midx = util::ArrIdx::Instance()->SuperkModeIdx(s,m);
+  int midx = arr_index->SuperkModeIdx(s,m);
   if(midx == -1) {
     return 0;
   }

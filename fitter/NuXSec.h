@@ -24,6 +24,7 @@
 #include <TSpline.h>
 
 #include "Conventions.h"
+#include "Utilities.h"
 
 using t2kana::conv::kns;
 using t2kana::conv::knm;
@@ -172,6 +173,8 @@ private:
   double fSplineMAQERelErr;
   double fSpline1overMAQE2RelErr;
   double fSplineMARESRelErr;
+  
+  util::ArrIdx * arr_index; //! Pointer to singleton, do not save in TObject
 
 ClassDef(NuXSec, 4);
 };

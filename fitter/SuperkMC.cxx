@@ -186,12 +186,14 @@ void SuperkMC::Init(void)
   fBrEreco             = 0;
   fBrEtrue             = 0;
   fBrGenCode           = 0;
-         
+  
   fNuFlux              = 0;
   fNuXSec              = 0;  
   fFSI                 = 0;  
   fSKDet               = 0;
   fSKDetFSI            = 0;
+  
+  arr_index = util::ArrIdx::Instance();
 
   cout << "init complete" << endl;
 
@@ -497,8 +499,8 @@ void SuperkMC::FillTemplate(SuperkSample_t s, SuperkMode_t m)
   if(util::IsMEC(m) || util::IsOscNuMu(m) || util::IsOscNuMuBar(m) || util::IsOscNuEBar(m))
     return;
 
-  int sidx = util::ArrIdx::Instance()->SuperkSampleIdx(s);
-  int midx = util::ArrIdx::Instance()->SuperkModeIdx(s,m);
+  int sidx = arr_index->SuperkSampleIdx(s);
+  int midx = arr_index->SuperkModeIdx(s,m);
 
   TTree * mctree = this->MCTree(s,m);
   double  mcpot  = this->MCPOT (s,m);
@@ -645,7 +647,7 @@ void SuperkMC::FillSpecialTemplates(void)
   for(int is = 0; is < kns; is++) {
     SuperkSample_t s = kSKSamples[is];
     if(s == kSKsUndefined) continue;
-    int sidx = util::ArrIdx::Instance()->SuperkSampleIdx(s);
+    int sidx = arr_index->SuperkSampleIdx(s);
     
     //
     // Add MEC template, if included in the list of modes
@@ -655,7 +657,7 @@ void SuperkMC::FillSpecialTemplates(void)
     // Here, just put the histogram in arrays (for quicker access)
     // and also fill the variable binning array (for skipping calls to find weights)
     //
-    int midx = util::ArrIdx::Instance()->SuperkModeIdx(s,kSKmMEC);
+    int midx = arr_index->SuperkModeIdx(s,kSKmMEC);
     bool incl_mec = ( midx != -1 );
     if(incl_mec)
       {
@@ -704,8 +706,8 @@ void SuperkMC::FillSpecialTemplates(void)
     
     for(int i=0; i<n; i++) {
       
-      int tgt_midx = util::ArrIdx::Instance()->SuperkModeIdx(s,tgt_modes[i]);
-      int src_midx = util::ArrIdx::Instance()->SuperkModeIdx(s,src_modes[i]);
+      int tgt_midx = arr_index->SuperkModeIdx(s,tgt_modes[i]);
+      int src_midx = arr_index->SuperkModeIdx(s,src_modes[i]);
       
       TH2D * src_ori = this->Template(s,src_modes[i],kSKMCtOri);
       TH2D * tgt_ori = this->Template(s,tgt_modes[i],kSKMCtOri);
@@ -791,8 +793,8 @@ void SuperkMC::FillSpecialTemplates(void)
     
     for(int i=0; i<n; i++) {
       
-      int tgt_midx = util::ArrIdx::Instance()->SuperkModeIdx(s,tgt_modes_numubar[i]);
-      int src_midx = util::ArrIdx::Instance()->SuperkModeIdx(s,src_modes_numubar[i]);
+      int tgt_midx = arr_index->SuperkModeIdx(s,tgt_modes_numubar[i]);
+      int src_midx = arr_index->SuperkModeIdx(s,src_modes_numubar[i]);
       
       TH2D * src_ori = this->Template(s,src_modes_numubar[i],kSKMCtOri);
       TH2D * tgt_ori = this->Template(s,tgt_modes_numubar[i],kSKMCtOri);
@@ -870,8 +872,8 @@ void SuperkMC::FillSpecialTemplates(void)
     
     for(int i=0; i<n; i++) {
       
-      int tgt_midx = util::ArrIdx::Instance()->SuperkModeIdx(s,tgt_modes_nuebar[i]);
-      int src_midx = util::ArrIdx::Instance()->SuperkModeIdx(s,src_modes_nuebar[i]);
+      int tgt_midx = arr_index->SuperkModeIdx(s,tgt_modes_nuebar[i]);
+      int src_midx = arr_index->SuperkModeIdx(s,src_modes_nuebar[i]);
       
       TH2D * src_ori = this->Template(s,src_modes_nuebar[i],kSKMCtOri);
       TH2D * tgt_ori = this->Template(s,tgt_modes_nuebar[i],kSKMCtOri);
@@ -1058,7 +1060,7 @@ void SuperkMC::ApplyMCStatFluctationToTemplates(bool shape_only)
 //________________________________________________________________________________________
 TH1D* SuperkMC::CurrErecoSpectrum(SuperkSample_t s) const                               
 { 
-  int sidx = util::ArrIdx::Instance()->SuperkSampleIdx(s);
+  int sidx = arr_index->SuperkSampleIdx(s);
   if(sidx == -1) {
     return 0;
   }
@@ -1067,11 +1069,11 @@ TH1D* SuperkMC::CurrErecoSpectrum(SuperkSample_t s) const
 //________________________________________________________________________________________
 TH1D* SuperkMC::CurrErecoSpectrum(SuperkSample_t s, SuperkMode_t m) const 
 { 
-  int sidx = util::ArrIdx::Instance()->SuperkSampleIdx(s);
+  int sidx = arr_index->SuperkSampleIdx(s);
   if(sidx == -1) {
     return 0;
   }
-  int midx = util::ArrIdx::Instance()->SuperkModeIdx(s,m);
+  int midx = arr_index->SuperkModeIdx(s,m);
   if(midx == -1) {
     return 0;
   }            
@@ -1080,7 +1082,7 @@ TH1D* SuperkMC::CurrErecoSpectrum(SuperkSample_t s, SuperkMode_t m) const
 //________________________________________________________________________________________
 double* SuperkMC::CurrErecoSpectrumArray(SuperkSample_t s)                               
 { 
-  int sidx = util::ArrIdx::Instance()->SuperkSampleIdx(s);
+  int sidx = arr_index->SuperkSampleIdx(s);
   if(sidx == -1) {
     return 0;
   }
@@ -1090,11 +1092,11 @@ double* SuperkMC::CurrErecoSpectrumArray(SuperkSample_t s)
 //________________________________________________________________________________________
 double* SuperkMC::CurrErecoSpectrumArray(SuperkSample_t s, SuperkMode_t m)                               
 { 
-  int sidx = util::ArrIdx::Instance()->SuperkSampleIdx(s);
+  int sidx = arr_index->SuperkSampleIdx(s);
   if(sidx == -1) {
     return 0;
   }
-  int midx = util::ArrIdx::Instance()->SuperkModeIdx(s,m);
+  int midx = arr_index->SuperkModeIdx(s,m);
   if(midx == -1) {
     return 0;
   }
@@ -1106,11 +1108,11 @@ double* SuperkMC::CurrErecoSpectrumArray(SuperkSample_t s, SuperkMode_t m)
 //________________________________________________________________________________________
 TH2D * SuperkMC::Template(SuperkSample_t s, SuperkMode_t m, SKMCTemplateType_t type) const
 {
-  int sidx = util::ArrIdx::Instance()->SuperkSampleIdx(s);
+  int sidx = arr_index->SuperkSampleIdx(s);
   if(sidx == -1) {
     return 0;
   }
-  int midx = util::ArrIdx::Instance()->SuperkModeIdx(s,m);
+  int midx = arr_index->SuperkModeIdx(s,m);
   if(midx == -1) {
     return 0;
   }            
@@ -1145,11 +1147,11 @@ TH2D * SuperkMC::Template(SuperkSample_t s, SuperkMode_t m, SKMCTemplateType_t t
 //________________________________________________________________________________________
 TH2D * SuperkMC::VarTemplate(SuperkSample_t s, SuperkMode_t m) const
 {
-  int sidx = util::ArrIdx::Instance()->SuperkSampleIdx(s);
+  int sidx = arr_index->SuperkSampleIdx(s);
   if(sidx == -1) {
     return 0;
   }
-  int midx = util::ArrIdx::Instance()->SuperkModeIdx(s,m);
+  int midx = arr_index->SuperkModeIdx(s,m);
   if(midx == -1) {
     return 0;
   }            
@@ -2551,7 +2553,7 @@ void SuperkMC::FillEtrueSpectra(void)
 //________________________________________________________________________________________
 bool SuperkMC::IsThereAnEvent(SuperkSample_t s, double Etrue) const
 {
-  int is = util::ArrIdx::Instance()->SuperkSampleIdx(s);
+  int is = arr_index->SuperkSampleIdx(s);
   assert(is != -1);
 
   TH1D * true_spectrum_tot = fMCEtrueSpectrumTot[is];
