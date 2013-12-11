@@ -63,6 +63,8 @@ void SuperkDetectorFSI::Init(void)
   fEnergyScale1RmuRelErr      = 0.;
   fEnergyScale1ReRelErr       = 0.;
   fEnergyScaleTwkDial         = 0.;
+  
+  arr_index = util::ArrIdx::Instance();
 }
 //________________________________________________________________________________________
 void SuperkDetectorFSI::CleanUp(void)

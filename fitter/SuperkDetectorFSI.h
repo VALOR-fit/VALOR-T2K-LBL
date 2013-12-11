@@ -26,6 +26,7 @@
 #include <iostream>
 
 #include "Conventions.h"
+#include "Utilities.h"
 
 using t2kana::conv::kns;
 using t2kana::conv::knm;
@@ -93,6 +94,8 @@ private:
   double     fEnergyScale1ReRelErr;        ///< 1Re energy scale relative error    
   // > 1Rmu + 1Re 
   double     fEnergyScaleTwkDial;          ///< 1Rmu/1Re Energy scale tweaking dial         
+  
+  util::ArrIdx * arr_index; //! Pointer to singleton, do not save in TObject
 
 ClassDef(SuperkDetectorFSI, 1);
 };
