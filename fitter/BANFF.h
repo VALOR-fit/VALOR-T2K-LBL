@@ -90,6 +90,9 @@ private:
   TMatrixD *  fCovMtrxChoL;       ///< Triangular matrix obtained from Cholesky decomposition of BANFF covariance matrix
   bool        fIsTweaked;         ///< Were BANF params tweaked?
   bool        fIsFluxWghtUpdated; ///< Were Flux weights updated as a result of the last BANFF param variation
+  
+  double * fBestFitArray; //! ///< Pointer to the actual memory location of the best fit values
+  double * fCurrentArray; //! ///< Pointer to the actual memory location of the current values
 
 ClassDef(BANFF, 1)
 };
