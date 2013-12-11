@@ -156,34 +156,32 @@ bool BANFF::Read(TXMLEngine* xml, XMLNodePointer_t root_node)
 #ifdef __show_init_mesg_info__
   cout << "Exp/BANFF >> Done reading BANFF inputs!" << endl;
 #endif
-
+  
+  fBestFitArray = fBestFitValues->GetMatrixArray();
+  fCurrentArray = fCurrentValues->GetMatrixArray();
   return true;
 }
 //________________________________________________________________________________________
 double BANFF::BestFitValue(PhysParamId_t p) const
 {
-  const TVectorD & bestfit = this->BestFitValues();
   int idx = this->Param2Idx(p);
-  return bestfit[idx];
+  return fBestFitArray[idx];
 }
 //________________________________________________________________________________________
 double BANFF::BestFitValue(int idx) const
 {
-  const TVectorD & bestfit = this->BestFitValues();
-  return bestfit[idx];
+  return fBestFitArray[idx];
 }
 //________________________________________________________________________________________
 double BANFF::CurrentValue(int idx) const
 {
-  const TVectorD & current_values = *fCurrentValues;
-  return current_values[idx];
+  return fCurrentArray[idx];
 }
 //________________________________________________________________________________________
 double BANFF::CurrentValue(PhysParamId_t p) const
 {
-  const TVectorD & current_values = *fCurrentValues;
   int idx = this->Param2Idx(p);
-  return current_values[idx];
+  return fCurrentArray[idx];
 }
 //________________________________________________________________________________________
 double BANFF::OneSigmaError(PhysParamId_t p) const
