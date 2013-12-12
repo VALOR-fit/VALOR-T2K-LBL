@@ -1658,7 +1658,7 @@ static const bool kXsApplyXSecSystToSKMode[kns][knm][kNumOfXSecSyst] = {
   }
   
 };
-#else//HKHACK
+#else //HKHACK
 ///////////////////////////
 ///////HACK
 ///////////////////////////

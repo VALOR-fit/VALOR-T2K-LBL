@@ -93,8 +93,8 @@ void run_fit_dcp
   cout << "       > " << util::AsString(kPhypMixing12) << " = " << ((randomize_mixing12) ? "* randomized *" : input_mixing12) << endl;
   cout << "       > " << util::AsString(kPhypMixing13) << " = " << ((randomize_mixing13) ? "* randomized *" : input_mixing13) << endl;
   cout << "       > " << util::AsString(kPhypMixing23) << " = " << ((randomize_mixing23) ? "* randomized *" : input_mixing23) << endl;
-  cout << "       > " << util::AsString(kPhypDm12sq)   << " = " << ((randomize_dm12sq)  ? "* randomized *" : input_dm12sq ) << " eV^2/c^4" << endl;
-  cout << "       > " << util::AsString(kPhypDm23sq)   << " = " << ((randomize_dm23sq)  ? "* randomized *" : input_dm23sq ) << " eV^2/c^4" << endl;
+  cout << "       > " << util::AsString(kPhypDm12sq)   << " = " << ((randomize_dm12sq)   ? "* randomized *" : input_dm12sq ) << " eV^2/c^4" << endl;
+  cout << "       > " << util::AsString(kPhypDm23sq)   << " = " << ((randomize_dm23sq)   ? "* randomized *" : input_dm23sq ) << " eV^2/c^4" << endl;
   cout << "- Fit" << endl;
   cout << "   - Fit Parameter List: " << fit_param_list << endl;
   cout << "   - Fitter option: " << fit_option << endl;
@@ -109,9 +109,18 @@ void run_fit_dcp
   FitParamList * fparm  = FitParamList::NamedParameterList(fit_param_list); //only used to initialise branch
   FitParamList * fparm1 = FitParamList::NamedParameterList(fit_param_list);
   FitParamList * fparm2 = FitParamList::NamedParameterList(fit_param_list);
-  FitParamList * fparm_dcp0 = FitParamList::NamedParameterList(fit_param_list); //only used to initialise branch
-  FitParamList * fparm1_dcp0 = FitParamList::NamedParameterList(fit_param_list);
-  FitParamList * fparm2_dcp0 = FitParamList::NamedParameterList(fit_param_list);
+  FitParamList * fparm_dcp0_nh = FitParamList::NamedParameterList(fit_param_list); //only used to initialise branch
+  FitParamList * fparm1_dcp0_nh = FitParamList::NamedParameterList(fit_param_list);
+  FitParamList * fparm2_dcp0_nh = FitParamList::NamedParameterList(fit_param_list);
+  FitParamList * fparm_dcppi_nh = FitParamList::NamedParameterList(fit_param_list); //only used to initialise branch
+  FitParamList * fparm1_dcppi_nh = FitParamList::NamedParameterList(fit_param_list);
+  FitParamList * fparm2_dcppi_nh = FitParamList::NamedParameterList(fit_param_list);
+  FitParamList * fparm_dcp0_ih = FitParamList::NamedParameterList(fit_param_list); //only used to initialise branch
+  FitParamList * fparm1_dcp0_ih = FitParamList::NamedParameterList(fit_param_list);
+  FitParamList * fparm2_dcp0_ih = FitParamList::NamedParameterList(fit_param_list);
+  FitParamList * fparm_dcppi_ih = FitParamList::NamedParameterList(fit_param_list); //only used to initialise branch
+  FitParamList * fparm1_dcppi_ih = FitParamList::NamedParameterList(fit_param_list);
+  FitParamList * fparm2_dcppi_ih = FitParamList::NamedParameterList(fit_param_list);
   PhysHypothesis_t hyp = fparm1->PhysicsHypothesis();
   cout << "- The following physics hypothesis is used in the fit: " << util::AsString(hyp) << endl;
 
@@ -131,12 +140,30 @@ void run_fit_dcp
   pdf_array1->SetOwner(false);
   TObjArray * pdf_array2 = new TObjArray;
   pdf_array2->SetOwner(false);
-  TObjArray * pdf_array_dcp0 = new TObjArray; //only used to initialise branch
-  pdf_array_dcp0->SetOwner(false);
-  TObjArray * pdf_array1_dcp0 = new TObjArray;
-  pdf_array1_dcp0->SetOwner(false);
-  TObjArray * pdf_array2_dcp0 = new TObjArray;
-  pdf_array2_dcp0->SetOwner(false);
+  TObjArray * pdf_array_dcp0_nh = new TObjArray; //only used to initialise branch
+  pdf_array_dcp0_nh->SetOwner(false);
+  TObjArray * pdf_array1_dcp0_nh = new TObjArray;
+  pdf_array1_dcp0_nh->SetOwner(false);
+  TObjArray * pdf_array2_dcp0_nh = new TObjArray;
+  pdf_array2_dcp0_nh->SetOwner(false);
+  TObjArray * pdf_array_dcppi_nh = new TObjArray; //only used to initialise branch
+  pdf_array_dcppi_nh->SetOwner(false);
+  TObjArray * pdf_array1_dcppi_nh = new TObjArray;
+  pdf_array1_dcppi_nh->SetOwner(false);
+  TObjArray * pdf_array2_dcppi_nh = new TObjArray;
+  pdf_array2_dcppi_nh->SetOwner(false);
+  TObjArray * pdf_array_dcp0_ih = new TObjArray; //only used to initialise branch
+  pdf_array_dcp0_ih->SetOwner(false);
+  TObjArray * pdf_array1_dcp0_ih = new TObjArray;
+  pdf_array1_dcp0_ih->SetOwner(false);
+  TObjArray * pdf_array2_dcp0_ih = new TObjArray;
+  pdf_array2_dcp0_ih->SetOwner(false);
+  TObjArray * pdf_array_dcppi_ih = new TObjArray; //only used to initialise branch
+  pdf_array_dcppi_ih->SetOwner(false);
+  TObjArray * pdf_array1_dcppi_ih = new TObjArray;
+  pdf_array1_dcppi_ih->SetOwner(false);
+  TObjArray * pdf_array2_dcppi_ih = new TObjArray;
+  pdf_array2_dcppi_ih->SetOwner(false);
 
   // Create file to store results
   string oscstr = util::AsString(hyp,input_mixing12,input_mixing13,input_mixing23,input_deltacp,input_dm12sq,input_dm23sq);
@@ -144,24 +171,48 @@ void run_fit_dcp
 
   // Create tree to store outputs
   TTree * fitnt = new TTree("fitnt","Results of VaLOR data and/or toy-MC experiment fits");
-  fitnt->Branch("best_fit_params",           "t2kana::FitParamList",  &fparm,      1280000,0);
-  fitnt->Branch("best_fit_params_fit1",      "t2kana::FitParamList",  &fparm1,     1280000,0);
-  fitnt->Branch("best_fit_params_fit2",      "t2kana::FitParamList",  &fparm2,     1280000,0);
-  fitnt->Branch("best_fit_params_dcp0",      "t2kana::FitParamList",  &fparm_dcp0, 1280000,0);
-  fitnt->Branch("best_fit_params_dcp0_fit1", "t2kana::FitParamList",  &fparm1_dcp0,1280000,0);
-  fitnt->Branch("best_fit_params_dcp0_fit2", "t2kana::FitParamList",  &fparm2_dcp0,1280000,0);
-  fitnt->Branch("input_params",              "t2kana::PhysParamList", &iparm,      1280000,0);
-  fitnt->Branch("data",                      "TObjArray",             &dat_array,  1280000,0);
-  fitnt->Branch("best_fit_pdf",              "TObjArray",             &pdf_array,  1280000,0);
-  fitnt->Branch("best_fit_pdf_fit1",         "TObjArray",             &pdf_array1, 1280000,0);
-  fitnt->Branch("best_fit_pdf_fit2",         "TObjArray",             &pdf_array2, 1280000,0);
-  fitnt->Branch("best_fit_pdf_dcp0",         "TObjArray",             &pdf_array_dcp0,  1280000,0);
-  fitnt->Branch("best_fit_pdf_dcp0_fit1",    "TObjArray",             &pdf_array1_dcp0, 1280000,0);
-  fitnt->Branch("best_fit_pdf_dcp0_fit2",    "TObjArray",             &pdf_array2_dcp0, 1280000,0);
+  fitnt->Branch("best_fit_params",               "t2kana::FitParamList",  &fparm,      1280000,0);
+  fitnt->Branch("best_fit_params_fit1",          "t2kana::FitParamList",  &fparm1,     1280000,0);
+  fitnt->Branch("best_fit_params_fit2",          "t2kana::FitParamList",  &fparm2,     1280000,0);
+  fitnt->Branch("best_fit_params_dcp0_nh",       "t2kana::FitParamList",  &fparm_dcp0_nh, 1280000,0);
+  fitnt->Branch("best_fit_params_dcp0_nh_fit1",  "t2kana::FitParamList",  &fparm1_dcp0_nh,1280000,0);
+  fitnt->Branch("best_fit_params_dcp0_nh_fit2",  "t2kana::FitParamList",  &fparm2_dcp0_nh,1280000,0);
+  fitnt->Branch("best_fit_params_dcppi_nh",      "t2kana::FitParamList",  &fparm_dcppi_nh, 1280000,0);
+  fitnt->Branch("best_fit_params_dcppi_nh_fit1", "t2kana::FitParamList",  &fparm1_dcppi_nh,1280000,0);
+  fitnt->Branch("best_fit_params_dcppi_nh_fit2", "t2kana::FitParamList",  &fparm2_dcppi_nh,1280000,0);
+  fitnt->Branch("best_fit_params_dcp0_ih",       "t2kana::FitParamList",  &fparm_dcp0_ih, 1280000,0);
+  fitnt->Branch("best_fit_params_dcp0_ih_fit1",  "t2kana::FitParamList",  &fparm1_dcp0_ih,1280000,0);
+  fitnt->Branch("best_fit_params_dcp0_ih_fit2",  "t2kana::FitParamList",  &fparm2_dcp0_ih,1280000,0);
+  fitnt->Branch("best_fit_params_dcppi_ih",      "t2kana::FitParamList",  &fparm_dcppi_ih, 1280000,0);
+  fitnt->Branch("best_fit_params_dcppi_ih_fit1", "t2kana::FitParamList",  &fparm1_dcppi_ih,1280000,0);
+  fitnt->Branch("best_fit_params_dcppi_ih_fit2", "t2kana::FitParamList",  &fparm2_dcppi_ih,1280000,0);
+  fitnt->Branch("input_params",                   "t2kana::PhysParamList", &iparm,      1280000,0);
+  fitnt->Branch("data",                           "TObjArray",             &dat_array,  1280000,0);
+  fitnt->Branch("best_fit_pdf",                   "TObjArray",             &pdf_array,  1280000,0);
+  fitnt->Branch("best_fit_pdf_fit1",              "TObjArray",             &pdf_array1, 1280000,0);
+  fitnt->Branch("best_fit_pdf_fit2",              "TObjArray",             &pdf_array2, 1280000,0);
+  fitnt->Branch("best_fit_pdf_dcp0_nh",           "TObjArray",             &pdf_array_dcp0_nh,  1280000,0);
+  fitnt->Branch("best_fit_pdf_dcp0_nh_fit1",      "TObjArray",             &pdf_array1_dcp0_nh, 1280000,0);
+  fitnt->Branch("best_fit_pdf_dcp0_nh_fit2",      "TObjArray",             &pdf_array2_dcp0_nh, 1280000,0);
+  fitnt->Branch("best_fit_pdf_dcppi_nh",          "TObjArray",             &pdf_array_dcppi_nh,  1280000,0);
+  fitnt->Branch("best_fit_pdf_dcppi_nh_fit1",     "TObjArray",             &pdf_array1_dcppi_nh, 1280000,0);
+  fitnt->Branch("best_fit_pdf_dcppi_nh_fit2",     "TObjArray",             &pdf_array2_dcppi_nh, 1280000,0);
+  fitnt->Branch("best_fit_pdf_dcp0_ih",           "TObjArray",             &pdf_array_dcp0_ih,  1280000,0);
+  fitnt->Branch("best_fit_pdf_dcp0_ih_fit1",      "TObjArray",             &pdf_array1_dcp0_ih, 1280000,0);
+  fitnt->Branch("best_fit_pdf_dcp0_ih_fit2",      "TObjArray",             &pdf_array2_dcp0_ih, 1280000,0);
+  fitnt->Branch("best_fit_pdf_dcppi_ih",          "TObjArray",             &pdf_array_dcppi_ih,  1280000,0);
+  fitnt->Branch("best_fit_pdf_dcppi_ih_fit1",     "TObjArray",             &pdf_array1_dcppi_ih, 1280000,0);
+  fitnt->Branch("best_fit_pdf_dcppi_ih_fit2",     "TObjArray",             &pdf_array2_dcppi_ih, 1280000,0);
   TBranch * br_fparm          = fitnt->GetBranch("best_fit_params");
   TBranch * br_bf_array       = fitnt->GetBranch("best_fit_pdf");
-  TBranch * br_fparm_dcp0     = fitnt->GetBranch("best_fit_params_dcp0");
-  TBranch * br_bf_array_dcp0  = fitnt->GetBranch("best_fit_pdf_dcp0");
+  TBranch * br_fparm_dcp0_nh      = fitnt->GetBranch("best_fit_params_dcp0_nh");
+  TBranch * br_bf_array_dcp0_nh   = fitnt->GetBranch("best_fit_pdf_dcp0_nh");
+  TBranch * br_fparm_dcppi_nh     = fitnt->GetBranch("best_fit_params_dcppi_nh");
+  TBranch * br_bf_array_dcppi_nh  = fitnt->GetBranch("best_fit_pdf_dcppi_nh");
+  TBranch * br_fparm_dcp0_ih      = fitnt->GetBranch("best_fit_params_dcp0_ih");
+  TBranch * br_bf_array_dcp0_ih   = fitnt->GetBranch("best_fit_pdf_dcp0_ih");
+  TBranch * br_fparm_dcppi_ih     = fitnt->GetBranch("best_fit_params_dcppi_ih");
+  TBranch * br_bf_array_dcppi_ih  = fitnt->GetBranch("best_fit_pdf_dcppi_ih");
 
   // Loop over toy-MC experiments
   for(int iexperiment = 0; iexperiment < nexperiments; iexperiment++) {
@@ -177,21 +228,21 @@ void run_fit_dcp
 
      // randomize specified osc params for current toy MC expt (future error case)
      if (randomize_future_mixing12) {
-       cerr << "No future error on mixing12 defined, using current best fit value" << endl;
+       cout << "No future error on mixing12 defined, using current best fit value" << endl;
        if(Opt::Instance()->gOscMixingParamChoice == conv::kNuMixSinsq2Theta)
 	 input_mixing12 = conv::kGlobFitSinsq2Theta12;
        else
 	 input_mixing12 = conv::kGlobFitSinsqTheta12;
      }
      if (randomize_future_mixing13) {
-       cerr << "No future error on mixing13 defined, using current best fit value" << endl;
+       cout << "No future error on mixing13 defined, using current best fit value" << endl;
        if(Opt::Instance()->gOscMixingParamChoice == conv::kNuMixSinsq2Theta)
 	 input_mixing13 = conv::kGlobFitSinsq2Theta13;
        else
 	 input_mixing13 = conv::kGlobFitSinsqTheta13;
      }
      if (randomize_future_dm12sq) {
-       cerr << "No future error on dm21sq defined, using current best fit value" << endl;
+       cout << "No future error on dm21sq defined, using current best fit value" << endl;
        input_dm12sq = conv::kGlobFitDm12sq;
      }
      if (randomize_future_mixing23) {
@@ -225,19 +276,43 @@ void run_fit_dcp
        fparm1->SetInitValue(kPhypDeltaCP,  input_deltacp);
        fparm1->SetInitValue(kPhypDm12sq,   input_dm12sq);
        fparm1->SetInitValue(kPhypDm23sq,   input_dm23sq);
-       fparm1_dcp0->SetInitValue(kPhypMixing12, input_mixing12);
-       fparm1_dcp0->SetInitValue(kPhypMixing13, input_mixing13);
-       fparm1_dcp0->SetInitValue(kPhypMixing23, input_mixing23);
-       fparm1_dcp0->SetInitValue(kPhypDeltaCP,  input_deltacp);
-       fparm1_dcp0->SetInitValue(kPhypDm12sq,   input_dm12sq);
-       fparm1_dcp0->SetInitValue(kPhypDm23sq,   input_dm23sq);
+       fparm1_dcp0_nh->SetInitValue(kPhypMixing12, input_mixing12);
+       fparm1_dcp0_nh->SetInitValue(kPhypMixing13, input_mixing13);
+       fparm1_dcp0_nh->SetInitValue(kPhypMixing23, input_mixing23);
+       fparm1_dcp0_nh->SetInitValue(kPhypDeltaCP,  input_deltacp);
+       fparm1_dcp0_nh->SetInitValue(kPhypDm12sq,   input_dm12sq);
+       fparm1_dcp0_nh->SetInitValue(kPhypDm23sq,   input_dm23sq);
+       fparm1_dcppi_nh->SetInitValue(kPhypMixing12, input_mixing12);
+       fparm1_dcppi_nh->SetInitValue(kPhypMixing13, input_mixing13);
+       fparm1_dcppi_nh->SetInitValue(kPhypMixing23, input_mixing23);
+       fparm1_dcppi_nh->SetInitValue(kPhypDeltaCP,  input_deltacp);
+       fparm1_dcppi_nh->SetInitValue(kPhypDm12sq,   input_dm12sq);
+       fparm1_dcppi_nh->SetInitValue(kPhypDm23sq,   input_dm23sq);
+       fparm1_dcp0_ih->SetInitValue(kPhypMixing12, input_mixing12);
+       fparm1_dcp0_ih->SetInitValue(kPhypMixing13, input_mixing13);
+       fparm1_dcp0_ih->SetInitValue(kPhypMixing23, input_mixing23);
+       fparm1_dcp0_ih->SetInitValue(kPhypDeltaCP,  input_deltacp);
+       fparm1_dcp0_ih->SetInitValue(kPhypDm12sq,   input_dm12sq);
+       fparm1_dcp0_ih->SetInitValue(kPhypDm23sq,   input_dm23sq);
+       fparm1_dcppi_ih->SetInitValue(kPhypMixing12, input_mixing12);
+       fparm1_dcppi_ih->SetInitValue(kPhypMixing13, input_mixing13);
+       fparm1_dcppi_ih->SetInitValue(kPhypMixing23, input_mixing23);
+       fparm1_dcppi_ih->SetInitValue(kPhypDeltaCP,  input_deltacp);
+       fparm1_dcppi_ih->SetInitValue(kPhypDm12sq,   input_dm12sq);
+       fparm1_dcppi_ih->SetInitValue(kPhypDm23sq,   input_dm23sq);
      }
      else
      if(hyp == kHypNuMuDisapp2F) {
        fparm1->SetInitValue(kPhypMixing23, input_mixing23);
        fparm1->SetInitValue(kPhypDm23sq,   input_dm23sq);
-       fparm1_dcp0->SetInitValue(kPhypMixing23, input_mixing23);
-       fparm1_dcp0->SetInitValue(kPhypDm23sq,   input_dm23sq);
+       fparm1_dcp0_nh->SetInitValue(kPhypMixing23, input_mixing23);
+       fparm1_dcp0_nh->SetInitValue(kPhypDm23sq,   input_dm23sq);
+       fparm1_dcppi_nh->SetInitValue(kPhypMixing23, input_mixing23);
+       fparm1_dcppi_nh->SetInitValue(kPhypDm23sq,   input_dm23sq);
+       fparm1_dcp0_ih->SetInitValue(kPhypMixing23, input_mixing23);
+       fparm1_dcp0_ih->SetInitValue(kPhypDm23sq,   input_dm23sq);
+       fparm1_dcppi_ih->SetInitValue(kPhypMixing23, input_mixing23);
+       fparm1_dcppi_ih->SetInitValue(kPhypDm23sq,   input_dm23sq);
      }
 
      // Reset all output spectra
@@ -245,9 +320,18 @@ void run_fit_dcp
      pdf_array ->Clear();
      pdf_array1->Clear();
      pdf_array2->Clear();
-     pdf_array_dcp0 ->Clear();
-     pdf_array1_dcp0->Clear();
-     pdf_array2_dcp0->Clear();
+     pdf_array_dcp0_nh ->Clear();
+     pdf_array1_dcp0_nh->Clear();
+     pdf_array2_dcp0_nh->Clear();
+     pdf_array_dcppi_nh ->Clear();
+     pdf_array1_dcppi_nh->Clear();
+     pdf_array2_dcppi_nh->Clear();
+     pdf_array_dcp0_ih ->Clear();
+     pdf_array1_dcp0_ih->Clear();
+     pdf_array2_dcp0_ih->Clear();
+     pdf_array_dcppi_ih ->Clear();
+     pdf_array1_dcppi_ih->Clear();
+     pdf_array2_dcppi_ih->Clear();
 
      // Reset input true params and add true oscillation params
      iparm->Clear();
@@ -359,54 +443,111 @@ void run_fit_dcp
        }
      }
 
+     //
+     /////NORMAL HIERARCHY
+     //
+     Opt::Instance()->gMassHierarchyAssumed = conv::kNmhNormal;
+     Opt::Instance()->gOscDmsqScheme        = conv::kNuDmsq12andAbs23;
+
      //Fit again, fixing deltacp to 0. Start from nominal (not previous best fits) for other parameters
-     fparm1_dcp0->SetInitValue(kPhypDeltaCP,  0);
-     fparm1_dcp0->FixParameter(kPhypDeltaCP);
+     fparm1_dcp0_nh->SetInitValue(kPhypDeltaCP,  0);
+     fparm1_dcp0_nh->FixParameter(kPhypDeltaCP);
      // Get fitter
-     FitInputs * fit_inputs_dcp0 = new FitInputs(skobs,skexp,fparm1_dcp0);
-     FitterABC * fitter_dcp0 = util::GetFitter(fit_inputs_dcp0,fit_option);
+     FitInputs * fit_inputs_dcp0_nh = new FitInputs(skobs,skexp,fparm1_dcp0_nh);
+     FitterABC * fitter_dcp0_nh = util::GetFitter(fit_inputs_dcp0_nh,fit_option);
      // Chisq for true (input) params
-     double true_chisq_dcp0 = fit_inputs_dcp0->Chisquare();
+     double true_chisq_dcp0_nh = fit_inputs_dcp0_nh->Chisquare();
      // Print-out true params
-     fparm1_dcp0->ShowOnlyCurrValuesInNextPrint();
-     cout << "- True oscillation params (with dcp=0) (below) yield chisq = " << true_chisq_dcp0
-          << *fparm1_dcp0;
+     fparm1_dcp0_nh->ShowOnlyCurrValuesInNextPrint();
+     cout << "- True oscillation params (with dcp=0) (below) yield chisq = " << true_chisq_dcp0_nh
+          << *fparm1_dcp0_nh;
      // Do the fit
-	 cout << *fparm1_dcp0;
-     fparm1_dcp0->ResetCurrToInitValues(); // reset osc params
-     double bestfit_chisq_dcp0 = 0;
-     fitter_dcp0->DoTheFit();
-     int fitstatus_dcp0 = fitter_dcp0->FitStatusCode();
-     bestfit_chisq_dcp0  = fit_inputs_dcp0->BestFitChisquare();
-     double bestfit_chisq2_dcp0 = 999999;
+	 cout << *fparm1_dcp0_nh;
+     fparm1_dcp0_nh->ResetCurrToInitValues(); // reset osc params
+     double bestfit_chisq_dcp0_nh = 0;
+     fitter_dcp0_nh->DoTheFit();
+     int fitstatus_dcp0_nh = fitter_dcp0_nh->FitStatusCode();
+     bestfit_chisq_dcp0_nh  = fit_inputs_dcp0_nh->BestFitChisquare();
+     double bestfit_chisq2_dcp0_nh = 999999;
      // Save spectra (data and best-fit prediction)
      if(store_bestfit_spectrum) {
-        skexp->Write(pdf_array1_dcp0, "pdf");
+        skexp->Write(pdf_array1_dcp0_nh, "pdf");
      }
 
      //Do the fit again at the mirror point
-     if(Opt::Instance()->gOscMixingParamChoice == conv::kNuMixSinsqTheta && fparm1_dcp0->GetNumberFreeParameters() > 1) {
+     if(Opt::Instance()->gOscMixingParamChoice == conv::kNuMixSinsqTheta && fparm1_dcp0_nh->GetNumberFreeParameters() > 1) {
        //get the correct intial values (best fit points from first fit)
-       fparm2_dcp0->CopyBestFitToInitValues(*fparm1_dcp0);
+       fparm2_dcp0_nh->CopyBestFitToInitValues(*fparm1_dcp0_nh);
        //set the mixing23 seed to be the mirror point of the initial best fit
-       double sinsqtheta23_bestfit = fparm1_dcp0->BestFitValue(conv::kPhypMixing23);
-       double sinsqtheta13_bestfit = fparm1_dcp0->BestFitValue(conv::kPhypMixing13);
+       double sinsqtheta23_bestfit = fparm1_dcp0_nh->BestFitValue(conv::kPhypMixing23);
+       double sinsqtheta13_bestfit = fparm1_dcp0_nh->BestFitValue(conv::kPhypMixing13);
        double centre = 1 / (2 * (1 - sinsqtheta13_bestfit));
        double reseed = sinsqtheta23_bestfit;
        if     (reseed < centre)
 	 reseed = centre + TMath::Abs(centre - sinsqtheta23_bestfit);
        else if(reseed > centre)
 	 reseed = centre - TMath::Abs(centre - sinsqtheta23_bestfit);
-       fparm2_dcp0->SetInitValue(conv::kPhypMixing23, reseed);
+       fparm2_dcp0_nh->SetInitValue(conv::kPhypMixing23, reseed);
        // Get fitter
-       FitInputs * fit_inputs2_dcp0 = new FitInputs(skobs,skexp,fparm2_dcp0);
-       FitterABC * fitter2_dcp0 = util::GetFitter(fit_inputs2_dcp0,fit_option);
-       fparm2_dcp0->ResetCurrToInitValues(); // reset osc params
-       fitter2_dcp0->DoTheFit();
-       bestfit_chisq2_dcp0 = fit_inputs2_dcp0->BestFitChisquare();
+       FitInputs * fit_inputs2_dcp0_nh = new FitInputs(skobs,skexp,fparm2_dcp0_nh);
+       FitterABC * fitter2_dcp0_nh = util::GetFitter(fit_inputs2_dcp0_nh,fit_option);
+       fparm2_dcp0_nh->ResetCurrToInitValues(); // reset osc params
+       fitter2_dcp0_nh->DoTheFit();
+       bestfit_chisq2_dcp0_nh = fit_inputs2_dcp0_nh->BestFitChisquare();
        // Save spectra (best-fit prediction)
        if(store_bestfit_spectrum) {
-	 skexp->Write(pdf_array2_dcp0, "pdf");
+	 skexp->Write(pdf_array2_dcp0_nh, "pdf");
+       }
+     }
+
+     //Fit again, fixing deltacp to +pi. Start from nominal (not previous best fits) for other parameters
+     fparm1_dcppi_nh->SetInitValue(kPhypDeltaCP,  +conv::kpi);
+     fparm1_dcppi_nh->FixParameter(kPhypDeltaCP);
+     // Get fitter
+     FitInputs * fit_inputs_dcppi_nh = new FitInputs(skobs,skexp,fparm1_dcppi_nh);
+     FitterABC * fitter_dcppi_nh = util::GetFitter(fit_inputs_dcppi_nh,fit_option);
+     // Chisq for true (input) params
+     double true_chisq_dcppi_nh = fit_inputs_dcppi_nh->Chisquare();
+     // Print-out true params
+     fparm1_dcppi_nh->ShowOnlyCurrValuesInNextPrint();
+     cout << "- True oscillation params (with dcp=0) (below) yield chisq = " << true_chisq_dcppi_nh
+          << *fparm1_dcppi_nh;
+     // Do the fit
+	 cout << *fparm1_dcppi_nh;
+     fparm1_dcppi_nh->ResetCurrToInitValues(); // reset osc params
+     double bestfit_chisq_dcppi_nh = 0;
+     fitter_dcppi_nh->DoTheFit();
+     int fitstatus_dcppi_nh = fitter_dcppi_nh->FitStatusCode();
+     bestfit_chisq_dcppi_nh  = fit_inputs_dcppi_nh->BestFitChisquare();
+     double bestfit_chisq2_dcppi_nh = 999999;
+     // Save spectra (data and best-fit prediction)
+     if(store_bestfit_spectrum) {
+        skexp->Write(pdf_array1_dcppi_nh, "pdf");
+     }
+
+     //Do the fit again at the mirror point
+     if(Opt::Instance()->gOscMixingParamChoice == conv::kNuMixSinsqTheta && fparm1_dcppi_nh->GetNumberFreeParameters() > 1) {
+       //get the correct intial values (best fit points from first fit)
+       fparm2_dcppi_nh->CopyBestFitToInitValues(*fparm1_dcppi_nh);
+       //set the mixing23 seed to be the mirror point of the initial best fit
+       double sinsqtheta23_bestfit = fparm1_dcppi_nh->BestFitValue(conv::kPhypMixing23);
+       double sinsqtheta13_bestfit = fparm1_dcppi_nh->BestFitValue(conv::kPhypMixing13);
+       double centre = 1 / (2 * (1 - sinsqtheta13_bestfit));
+       double reseed = sinsqtheta23_bestfit;
+       if     (reseed < centre)
+	 reseed = centre + TMath::Abs(centre - sinsqtheta23_bestfit);
+       else if(reseed > centre)
+	 reseed = centre - TMath::Abs(centre - sinsqtheta23_bestfit);
+       fparm2_dcppi_nh->SetInitValue(conv::kPhypMixing23, reseed);
+       // Get fitter
+       FitInputs * fit_inputs2_dcppi_nh = new FitInputs(skobs,skexp,fparm2_dcppi_nh);
+       FitterABC * fitter2_dcppi_nh = util::GetFitter(fit_inputs2_dcppi_nh,fit_option);
+       fparm2_dcppi_nh->ResetCurrToInitValues(); // reset osc params
+       fitter2_dcppi_nh->DoTheFit();
+       bestfit_chisq2_dcppi_nh = fit_inputs2_dcppi_nh->BestFitChisquare();
+       // Save spectra (best-fit prediction)
+       if(store_bestfit_spectrum) {
+	 skexp->Write(pdf_array2_dcppi_nh, "pdf");
        }
      }
 
@@ -439,28 +580,247 @@ void run_fit_dcp
      // Print-out best-fit params, assuming dcp=0, and set the "best of the two fits" branches correctly
      cout << "- Best-fit oscillation params with dcp=0 (below) yield chisq = ";
      if(Opt::Instance()->gOscMixingParamChoice == conv::kNuMixSinsqTheta) {
-       if(bestfit_chisq2_dcp0 < bestfit_chisq_dcp0) {
-	 cout << bestfit_chisq2_dcp0 << " from the second seed fit" << endl;
-	 fparm2_dcp0->ShowOnlyBestFitValuesInNextPrint();
-	 cout << *fparm2_dcp0;
-	 br_fparm_dcp0->SetAddress(&fparm2_dcp0);
-	 br_bf_array_dcp0->SetAddress(&pdf_array2_dcp0);
+       if(bestfit_chisq2_dcp0_nh < bestfit_chisq_dcp0_nh) {
+	 cout << bestfit_chisq2_dcp0_nh << " from the second seed fit" << endl;
+	 fparm2_dcp0_nh->ShowOnlyBestFitValuesInNextPrint();
+	 cout << *fparm2_dcp0_nh;
+	 br_fparm_dcp0_nh->SetAddress(&fparm2_dcp0_nh);
+	 br_bf_array_dcp0_nh->SetAddress(&pdf_array2_dcp0_nh);
        }
        else {
-	 cout << bestfit_chisq_dcp0 << " from the first seed fit" << endl;
-	 fparm1_dcp0->ShowOnlyBestFitValuesInNextPrint();
-	 cout << *fparm1_dcp0;
-	 br_fparm_dcp0->SetAddress(&fparm1_dcp0);
-	 br_bf_array_dcp0->SetAddress(&pdf_array1_dcp0);
+	 cout << bestfit_chisq_dcp0_nh << " from the first seed fit" << endl;
+	 fparm1_dcp0_nh->ShowOnlyBestFitValuesInNextPrint();
+	 cout << *fparm1_dcp0_nh;
+	 br_fparm_dcp0_nh->SetAddress(&fparm1_dcp0_nh);
+	 br_bf_array_dcp0_nh->SetAddress(&pdf_array1_dcp0_nh);
        }
      }
      else {
-       cout << bestfit_chisq_dcp0 << endl;
-       fparm1_dcp0->ShowOnlyBestFitValuesInNextPrint();
-       cout << *fparm1_dcp0;
-       br_fparm_dcp0->SetAddress(&fparm1_dcp0);
-       br_bf_array_dcp0->SetAddress(&pdf_array1_dcp0);
+       cout << bestfit_chisq_dcp0_nh << endl;
+       fparm1_dcp0_nh->ShowOnlyBestFitValuesInNextPrint();
+       cout << *fparm1_dcp0_nh;
+       br_fparm_dcp0_nh->SetAddress(&fparm1_dcp0_nh);
+       br_bf_array_dcp0_nh->SetAddress(&pdf_array1_dcp0_nh);
      }
+
+     // Print-out best-fit params, assuming dcp=+pi, and set the "best of the two fits" branches correctly
+     cout << "- Best-fit oscillation params with dcp=+pi (below) yield chisq = ";
+     if(Opt::Instance()->gOscMixingParamChoice == conv::kNuMixSinsqTheta) {
+       if(bestfit_chisq2_dcppi_nh < bestfit_chisq_dcppi_nh) {
+	 cout << bestfit_chisq2_dcppi_nh << " from the second seed fit" << endl;
+	 fparm2_dcppi_nh->ShowOnlyBestFitValuesInNextPrint();
+	 cout << *fparm2_dcppi_nh;
+	 br_fparm_dcppi_nh->SetAddress(&fparm2_dcppi_nh);
+	 br_bf_array_dcppi_nh->SetAddress(&pdf_array2_dcppi_nh);
+       }
+       else {
+	 cout << bestfit_chisq_dcppi_nh << " from the first seed fit" << endl;
+	 fparm1_dcppi_nh->ShowOnlyBestFitValuesInNextPrint();
+	 cout << *fparm1_dcppi_nh;
+	 br_fparm_dcppi_nh->SetAddress(&fparm1_dcppi_nh);
+	 br_bf_array_dcppi_nh->SetAddress(&pdf_array1_dcppi_nh);
+       }
+     }
+     else {
+       cout << bestfit_chisq_dcppi_nh << endl;
+       fparm1_dcppi_nh->ShowOnlyBestFitValuesInNextPrint();
+       cout << *fparm1_dcppi_nh;
+       br_fparm_dcppi_nh->SetAddress(&fparm1_dcppi_nh);
+       br_bf_array_dcppi_nh->SetAddress(&pdf_array1_dcppi_nh);
+     }
+
+
+
+
+     //
+     /////INVERTED HIERARCHY
+     //
+     Opt::Instance()->gMassHierarchyAssumed = conv::kNmhNormal;
+     Opt::Instance()->gOscDmsqScheme        = conv::kNuDmsq12andAbs23;
+
+     //Fit again, fixing deltacp to 0. Start from nominal (not previous best fits) for other parameters
+     fparm1_dcp0_ih->SetInitValue(kPhypDeltaCP,  0);
+     fparm1_dcp0_ih->FixParameter(kPhypDeltaCP);
+     // Get fitter
+     FitInputs * fit_inputs_dcp0_ih = new FitInputs(skobs,skexp,fparm1_dcp0_ih);
+     FitterABC * fitter_dcp0_ih = util::GetFitter(fit_inputs_dcp0_ih,fit_option);
+     // Chisq for true (input) params
+     double true_chisq_dcp0_ih = fit_inputs_dcp0_ih->Chisquare();
+     // Print-out true params
+     fparm1_dcp0_ih->ShowOnlyCurrValuesInNextPrint();
+     cout << "- True oscillation params (with dcp=0) (below) yield chisq = " << true_chisq_dcp0_ih
+          << *fparm1_dcp0_ih;
+     // Do the fit
+	 cout << *fparm1_dcp0_ih;
+     fparm1_dcp0_ih->ResetCurrToInitValues(); // reset osc params
+     double bestfit_chisq_dcp0_ih = 0;
+     fitter_dcp0_ih->DoTheFit();
+     int fitstatus_dcp0_ih = fitter_dcp0_ih->FitStatusCode();
+     bestfit_chisq_dcp0_ih  = fit_inputs_dcp0_ih->BestFitChisquare();
+     double bestfit_chisq2_dcp0_ih = 999999;
+     // Save spectra (data and best-fit prediction)
+     if(store_bestfit_spectrum) {
+        skexp->Write(pdf_array1_dcp0_ih, "pdf");
+     }
+
+     //Do the fit again at the mirror point
+     if(Opt::Instance()->gOscMixingParamChoice == conv::kNuMixSinsqTheta && fparm1_dcp0_ih->GetNumberFreeParameters() > 1) {
+       //get the correct intial values (best fit points from first fit)
+       fparm2_dcp0_ih->CopyBestFitToInitValues(*fparm1_dcp0_ih);
+       //set the mixing23 seed to be the mirror point of the initial best fit
+       double sinsqtheta23_bestfit = fparm1_dcp0_ih->BestFitValue(conv::kPhypMixing23);
+       double sinsqtheta13_bestfit = fparm1_dcp0_ih->BestFitValue(conv::kPhypMixing13);
+       double centre = 1 / (2 * (1 - sinsqtheta13_bestfit));
+       double reseed = sinsqtheta23_bestfit;
+       if     (reseed < centre)
+	 reseed = centre + TMath::Abs(centre - sinsqtheta23_bestfit);
+       else if(reseed > centre)
+	 reseed = centre - TMath::Abs(centre - sinsqtheta23_bestfit);
+       fparm2_dcp0_ih->SetInitValue(conv::kPhypMixing23, reseed);
+       // Get fitter
+       FitInputs * fit_inputs2_dcp0_ih = new FitInputs(skobs,skexp,fparm2_dcp0_ih);
+       FitterABC * fitter2_dcp0_ih = util::GetFitter(fit_inputs2_dcp0_ih,fit_option);
+       fparm2_dcp0_ih->ResetCurrToInitValues(); // reset osc params
+       fitter2_dcp0_ih->DoTheFit();
+       bestfit_chisq2_dcp0_ih = fit_inputs2_dcp0_ih->BestFitChisquare();
+       // Save spectra (best-fit prediction)
+       if(store_bestfit_spectrum) {
+	 skexp->Write(pdf_array2_dcp0_ih, "pdf");
+       }
+     }
+
+     //Fit again, fixing deltacp to +pi. Start from nominal (not previous best fits) for other parameters
+     fparm1_dcppi_ih->SetInitValue(kPhypDeltaCP,  +conv::kpi);
+     fparm1_dcppi_ih->FixParameter(kPhypDeltaCP);
+     // Get fitter
+     FitInputs * fit_inputs_dcppi_ih = new FitInputs(skobs,skexp,fparm1_dcppi_ih);
+     FitterABC * fitter_dcppi_ih = util::GetFitter(fit_inputs_dcppi_ih,fit_option);
+     // Chisq for true (input) params
+     double true_chisq_dcppi_ih = fit_inputs_dcppi_ih->Chisquare();
+     // Print-out true params
+     fparm1_dcppi_ih->ShowOnlyCurrValuesInNextPrint();
+     cout << "- True oscillation params (with dcp=0) (below) yield chisq = " << true_chisq_dcppi_ih
+          << *fparm1_dcppi_ih;
+     // Do the fit
+	 cout << *fparm1_dcppi_ih;
+     fparm1_dcppi_ih->ResetCurrToInitValues(); // reset osc params
+     double bestfit_chisq_dcppi_ih = 0;
+     fitter_dcppi_ih->DoTheFit();
+     int fitstatus_dcppi_ih = fitter_dcppi_ih->FitStatusCode();
+     bestfit_chisq_dcppi_ih  = fit_inputs_dcppi_ih->BestFitChisquare();
+     double bestfit_chisq2_dcppi_ih = 999999;
+     // Save spectra (data and best-fit prediction)
+     if(store_bestfit_spectrum) {
+        skexp->Write(pdf_array1_dcppi_ih, "pdf");
+     }
+
+     //Do the fit again at the mirror point
+     if(Opt::Instance()->gOscMixingParamChoice == conv::kNuMixSinsqTheta && fparm1_dcppi_ih->GetNumberFreeParameters() > 1) {
+       //get the correct intial values (best fit points from first fit)
+       fparm2_dcppi_ih->CopyBestFitToInitValues(*fparm1_dcppi_ih);
+       //set the mixing23 seed to be the mirror point of the initial best fit
+       double sinsqtheta23_bestfit = fparm1_dcppi_ih->BestFitValue(conv::kPhypMixing23);
+       double sinsqtheta13_bestfit = fparm1_dcppi_ih->BestFitValue(conv::kPhypMixing13);
+       double centre = 1 / (2 * (1 - sinsqtheta13_bestfit));
+       double reseed = sinsqtheta23_bestfit;
+       if     (reseed < centre)
+	 reseed = centre + TMath::Abs(centre - sinsqtheta23_bestfit);
+       else if(reseed > centre)
+	 reseed = centre - TMath::Abs(centre - sinsqtheta23_bestfit);
+       fparm2_dcppi_ih->SetInitValue(conv::kPhypMixing23, reseed);
+       // Get fitter
+       FitInputs * fit_inputs2_dcppi_ih = new FitInputs(skobs,skexp,fparm2_dcppi_ih);
+       FitterABC * fitter2_dcppi_ih = util::GetFitter(fit_inputs2_dcppi_ih,fit_option);
+       fparm2_dcppi_ih->ResetCurrToInitValues(); // reset osc params
+       fitter2_dcppi_ih->DoTheFit();
+       bestfit_chisq2_dcppi_ih = fit_inputs2_dcppi_ih->BestFitChisquare();
+       // Save spectra (best-fit prediction)
+       if(store_bestfit_spectrum) {
+	 skexp->Write(pdf_array2_dcppi_ih, "pdf");
+       }
+     }
+
+     // Print-out best-fit params, and set the "best of the two fits" branches correctly
+     cout << "- Best-fit oscillation params (below) yield chisq = ";
+     if(Opt::Instance()->gOscMixingParamChoice == conv::kNuMixSinsqTheta) {
+       if(bestfit_chisq2 < bestfit_chisq) {
+	 cout << bestfit_chisq2 << " from the second seed fit" << endl;
+	 fparm2->ShowOnlyBestFitValuesInNextPrint();
+	 cout << *fparm2;
+	 br_fparm->SetAddress(&fparm2);
+	 br_bf_array->SetAddress(&pdf_array2);
+       }
+       else {
+	 cout << bestfit_chisq << " from the first seed fit" << endl;
+	 fparm1->ShowOnlyBestFitValuesInNextPrint();
+	 cout << *fparm1;
+	 br_fparm->SetAddress(&fparm1);
+	 br_bf_array->SetAddress(&pdf_array1);
+       }
+     }
+     else {
+       cout << bestfit_chisq << endl;
+       fparm1->ShowOnlyBestFitValuesInNextPrint();
+       cout << *fparm1;
+       br_fparm->SetAddress(&fparm1);
+       br_bf_array->SetAddress(&pdf_array1);
+     }
+
+     // Print-out best-fit params, assuming dcp=0, and set the "best of the two fits" branches correctly
+     cout << "- Best-fit oscillation params with dcp=0 (below) yield chisq = ";
+     if(Opt::Instance()->gOscMixingParamChoice == conv::kNuMixSinsqTheta) {
+       if(bestfit_chisq2_dcp0_ih < bestfit_chisq_dcp0_ih) {
+	 cout << bestfit_chisq2_dcp0_ih << " from the second seed fit" << endl;
+	 fparm2_dcp0_ih->ShowOnlyBestFitValuesInNextPrint();
+	 cout << *fparm2_dcp0_ih;
+	 br_fparm_dcp0_ih->SetAddress(&fparm2_dcp0_ih);
+	 br_bf_array_dcp0_ih->SetAddress(&pdf_array2_dcp0_ih);
+       }
+       else {
+	 cout << bestfit_chisq_dcp0_ih << " from the first seed fit" << endl;
+	 fparm1_dcp0_ih->ShowOnlyBestFitValuesInNextPrint();
+	 cout << *fparm1_dcp0_ih;
+	 br_fparm_dcp0_ih->SetAddress(&fparm1_dcp0_ih);
+	 br_bf_array_dcp0_ih->SetAddress(&pdf_array1_dcp0_ih);
+       }
+     }
+     else {
+       cout << bestfit_chisq_dcp0_ih << endl;
+       fparm1_dcp0_ih->ShowOnlyBestFitValuesInNextPrint();
+       cout << *fparm1_dcp0_ih;
+       br_fparm_dcp0_ih->SetAddress(&fparm1_dcp0_ih);
+       br_bf_array_dcp0_ih->SetAddress(&pdf_array1_dcp0_ih);
+     }
+
+     // Print-out best-fit params, assuming dcp=+pi, and set the "best of the two fits" branches correctly
+     cout << "- Best-fit oscillation params with dcp=+pi (below) yield chisq = ";
+     if(Opt::Instance()->gOscMixingParamChoice == conv::kNuMixSinsqTheta) {
+       if(bestfit_chisq2_dcppi_ih < bestfit_chisq_dcppi_ih) {
+	 cout << bestfit_chisq2_dcppi_ih << " from the second seed fit" << endl;
+	 fparm2_dcppi_ih->ShowOnlyBestFitValuesInNextPrint();
+	 cout << *fparm2_dcppi_ih;
+	 br_fparm_dcppi_ih->SetAddress(&fparm2_dcppi_ih);
+	 br_bf_array_dcppi_ih->SetAddress(&pdf_array2_dcppi_ih);
+       }
+       else {
+	 cout << bestfit_chisq_dcppi_ih << " from the first seed fit" << endl;
+	 fparm1_dcppi_ih->ShowOnlyBestFitValuesInNextPrint();
+	 cout << *fparm1_dcppi_ih;
+	 br_fparm_dcppi_ih->SetAddress(&fparm1_dcppi_ih);
+	 br_bf_array_dcppi_ih->SetAddress(&pdf_array1_dcppi_ih);
+       }
+     }
+     else {
+       cout << bestfit_chisq_dcppi_ih << endl;
+       fparm1_dcppi_ih->ShowOnlyBestFitValuesInNextPrint();
+       cout << *fparm1_dcppi_ih;
+       br_fparm_dcppi_ih->SetAddress(&fparm1_dcppi_ih);
+       br_bf_array_dcppi_ih->SetAddress(&pdf_array1_dcppi_ih);
+     }
+
+
+
+
 
      // Add all results in the tree
      fitnt->Fill();
@@ -469,15 +829,33 @@ void run_fit_dcp
      delete skobs;
      delete fit_inputs;
      delete fitter;
-     delete fit_inputs_dcp0;
-     delete fitter_dcp0;
+     delete fit_inputs_dcp0_nh;
+     delete fitter_dcp0_nh;
+     delete fit_inputs_dcppi_nh;
+     delete fitter_dcppi_nh;
+     delete fit_inputs_dcp0_ih;
+     delete fitter_dcp0_ih;
+     delete fit_inputs_dcppi_ih;
+     delete fitter_dcppi_ih;
      if(Opt::Instance()->gOscMixingParamChoice == conv::kNuMixSinsqTheta && fparm1->GetNumberFreeParameters() > 1) {
        delete fit_inputs2;
        delete fitter2;
      }
-     if(Opt::Instance()->gOscMixingParamChoice == conv::kNuMixSinsqTheta && fparm1_dcp0->GetNumberFreeParameters() > 1) {
-       delete fit_inputs2_dcp0;
-       delete fitter2_dcp0;
+     if(Opt::Instance()->gOscMixingParamChoice == conv::kNuMixSinsqTheta && fparm1_dcp0_nh->GetNumberFreeParameters() > 1) {
+       delete fit_inputs2_dcp0_nh;
+       delete fitter2_dcp0_nh;
+     }
+     if(Opt::Instance()->gOscMixingParamChoice == conv::kNuMixSinsqTheta && fparm1_dcppi_nh->GetNumberFreeParameters() > 1) {
+       delete fit_inputs2_dcppi_nh;
+       delete fitter2_dcppi_nh;
+     }
+     if(Opt::Instance()->gOscMixingParamChoice == conv::kNuMixSinsqTheta && fparm1_dcp0_ih->GetNumberFreeParameters() > 1) {
+       delete fit_inputs2_dcp0_ih;
+       delete fitter2_dcp0_ih;
+     }
+     if(Opt::Instance()->gOscMixingParamChoice == conv::kNuMixSinsqTheta && fparm1_dcppi_ih->GetNumberFreeParameters() > 1) {
+       delete fit_inputs2_dcppi_ih;
+       delete fitter2_dcppi_ih;
      }
 
   }//iexperiment
