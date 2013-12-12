@@ -428,6 +428,35 @@ double FitInputs::ChisquarePenaltyTerm(void) const
 #endif//HK
   }//CURRENT osc params
   else {//FUTURE osc params
+    if( fFitParams->Exists    (kPhypMixing13) && 
+	fFitParams->IsNuisance(kPhypMixing13) )
+      {
+	double mix = fFitParams->CurrValue(kPhypMixing13);
+	double nom = 0;
+	double err = 0;
+	NuOscMixParam_t omp = Opt::Instance()->gOscMixingParamChoice;
+	switch(omp) {
+	case(kNuMixSinsq2Theta):
+	  nom = kGlobFitSinsq2Theta13;
+	  err = kFutureAbsErrSinsq2Theta13;
+	  break;
+	case(kNuMixSinsqTheta):
+	  nom = kGlobFitSinsqTheta13;
+	  err = kFutureAbsErrSinsqTheta13;
+	  break;
+	default:
+	  exit(1);
+	}
+	double twk = (mix - nom) / err;
+	double dchisq_penalty = twk*twk;
+	chisq_penalty += dchisq_penalty;
+#ifdef __show_contributions_to_penalty_term__
+	cout << "FitInputs::ChisquarePenaltyTerm >> mixing13 = " << mix
+	     << " (nominal = " << nom << ", error = " << err << ", twk = " << twk << ")"
+	     << " => \\delta\\chi^2_{penalty} = " << dchisq_penalty << endl;
+#endif
+      }//mix13
+
     if( fFitParams->Exists    (kPhypMixing23) && 
 	fFitParams->IsNuisance(kPhypMixing23) )
       {
