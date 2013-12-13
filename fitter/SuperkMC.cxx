@@ -125,6 +125,14 @@ void SuperkMC::Init(void)
 #endif
       fMCErecoSpectrum [is][im] = 0;
       fMCVariableTempl [is][im] = 0;
+      
+      fNNonEmptyVariableBins [is][im] = 0;
+      for (int ivb = 0; ivb < kMaxVarBins; ivb++) {
+	fNNonEmptyFixedBins    [is][im][ivb] = 0;
+	fNonEmptyFixedBins     [is][im][ivb] = NULL;
+	fNonEmptyVariableBins  [is][im][ivb] = 0;
+      }
+      
       for(int it=0; it<util::NumEtrueBins(s); it++) {
 	for(int ir=0; ir<util::NumErecoBins(s); ir++) {
 	  if (s==kSKsFCFV1RingMuLike){
@@ -219,20 +227,24 @@ void SuperkMC::CleanUp(void)
   if(fMCTemplMECMartini) delete fMCTemplMECMartini;
   if(fMCTemplMECNieves ) delete fMCTemplMECNieves;
   for(int is = 0; is < kns; is++) {
-     for(int im = 0; im < knm; im++) {
-       //already deleted Ori & Nom (the if doesn't work!)
-       //if( fMCTemplOri     [is][im] ) delete fMCTemplOri     [is][im];
-       //if( fMCTemplNom     [is][im] ) delete fMCTemplNom     [is][im];
+    for(int im = 0; im < knm; im++) {
+      //already deleted Ori & Nom (the if doesn't work!)
+      //if( fMCTemplOri     [is][im] ) delete fMCTemplOri     [is][im];
+      //if( fMCTemplNom     [is][im] ) delete fMCTemplNom     [is][im];
 #ifndef PRODUCTIONMODE
-       if( fMCTemplTun     [is][im] ) delete fMCTemplTun     [is][im];
-       if( fMCTemplSys     [is][im] ) delete fMCTemplSys     [is][im];
-       if( fMCTemplFin     [is][im] ) delete fMCTemplFin     [is][im];
+      if( fMCTemplTun     [is][im] ) delete fMCTemplTun     [is][im];
+      if( fMCTemplSys     [is][im] ) delete fMCTemplSys     [is][im];
+      if( fMCTemplFin     [is][im] ) delete fMCTemplFin     [is][im];
 #endif
-       if( fMCErecoSpectrum[is][im] ) delete fMCErecoSpectrum[is][im];
-       if( fMCVariableTempl[is][im] ) delete fMCVariableTempl[is][im];
-     }
-     if( fMCErecoSpectrumTot [is] ) delete fMCErecoSpectrumTot [is];
-     if( fMCEtrueSpectrumTot [is] ) delete fMCEtrueSpectrumTot [is];
+      if( fMCErecoSpectrum[is][im] ) delete fMCErecoSpectrum[is][im];
+      if( fMCVariableTempl[is][im] ) delete fMCVariableTempl[is][im];
+      
+      for (int ivb = 0; ivb < fNNonEmptyVariableBins[is][im] ; ivb++) {
+        if (fNonEmptyFixedBins[is][im][ivb]) delete fNonEmptyFixedBins[is][im][ivb];
+      }
+    } //im
+    if( fMCErecoSpectrumTot [is] ) delete fMCErecoSpectrumTot [is];
+    if( fMCEtrueSpectrumTot [is] ) delete fMCEtrueSpectrumTot [is];
   }
 }
 //________________________________________________________________________________________
@@ -616,17 +628,69 @@ void SuperkMC::FillTemplate(SuperkSample_t s, SuperkMode_t m)
 	}
       }//ir
     }//it
+    
+    int i_ne_var = 0;
     //now loop over the variable binning scheme (used to calculate weights only as many times as we need to)
+    // This loop also keeps a record of which bins are non-empty
     //loop over variable Etrue
     for(int itv = 1; itv <= fMCVariableTempl[sidx][midx]->GetYaxis()->GetNbins(); itv++) {
+      double EtrueVarMin = util::VariableMCEtrueBinEdges(s,m)[itv-1] + kOneMeV;
+      double EtrueVarMax = util::VariableMCEtrueBinEdges(s,m)[itv]   - kOneMeV;
+      int EtrueMinBin = 1 + TMath::BinarySearch(util::NumEtrueBins(s),util::EtrueBinEdges(s),EtrueVarMin);
+      int EtrueMaxBin = 1 + TMath::BinarySearch(util::NumEtrueBins(s),util::EtrueBinEdges(s),EtrueVarMax);
+      
       // loop over variable Ereco
       for(int irv = 1; irv <= fMCVariableTempl[sidx][midx]->GetXaxis()->GetNbins(); irv++) {
 	int nev = (int)fMCVariableTempl[sidx][midx]->GetBinContent(irv,itv);
 	if (s==kSKsFCFV1RingMuLike) fMCVariableTemplArray1Rmu[sidx][midx][itv-1][irv-1] = nev;
 	else fMCVariableTemplArray1Re[sidx][midx][itv-1][irv-1] = nev;
+      
+	// Fill nonempty bin numbers.
+	if (nev < conv::kASmallNum) {
+	  continue;
+	}
+	
+	fNonEmptyVariableBins[sidx][midx][i_ne_var] = conv::kBigIndex * irv + itv;
+	
+	double ErecoVarMin = util::XsecErecoBinEdges(s,irv-1) + kOneMeV;
+	double ErecoVarMax = util::XsecErecoBinEdges(s,irv)   - kOneMeV;
+	int ErecoMinBin = 1 + TMath::BinarySearch(util::NumErecoBins(s),util::ErecoBinEdges(s),ErecoVarMin);
+	int ErecoMaxBin = 1 + TMath::BinarySearch(util::NumErecoBins(s),util::ErecoBinEdges(s),ErecoVarMax);
+	
+	int i_ne_fixed = 0;
+	// loop over fixed Etrue to count n nonempty
+	for(int it = EtrueMinBin; it <= EtrueMaxBin; it++) {
+	  // loop over fixed Ereco to count
+	  for(int ir = ErecoMinBin; ir <= ErecoMaxBin; ir++) {
+	    double nevf = this->Template(s,m,kSKMCtOri)->GetBinContent(ir,it);
+	    if (nevf < conv::kASmallNum) {
+	      continue;
+	    }
+	    i_ne_fixed++;
+	  }//ir
+	}//it
+	fNNonEmptyFixedBins[sidx][midx][i_ne_var] = i_ne_fixed;
+	fNonEmptyFixedBins[sidx][midx][i_ne_var] = new int[i_ne_fixed];
+	
+	i_ne_fixed = 0;
+	// loop over fixed Etrue to count n nonempty
+	for(int it = EtrueMinBin; it <= EtrueMaxBin; it++) {
+	  // loop over fixed Ereco to count
+	  for(int ir = ErecoMinBin; ir <= ErecoMaxBin; ir++) {
+	    double nevf = this->Template(s,m,kSKMCtOri)->GetBinContent(ir,it);
+	    if (nevf < conv::kASmallNum) {
+	      continue;
+	    }
+	    fNonEmptyFixedBins[sidx][midx][i_ne_var][i_ne_fixed] = conv::kBigIndex * ir + it;
+	    i_ne_fixed++;
+	  }//ir
+	}//it
+	i_ne_var++;
       }//irv
     }//itv
-  }
+    fNNonEmptyVariableBins[sidx][midx] = i_ne_var;
+    
+  } //if valid index
 
 #ifdef __show_init_mesg_debug__        
   cout << "Exp/SKMC/CreateTemplate >>      "
@@ -657,6 +721,7 @@ void SuperkMC::FillSpecialTemplates(void)
     // Here, just put the histogram in arrays (for quicker access)
     // and also fill the variable binning array (for skipping calls to find weights)
     //
+    SuperkMode_t m = kSKmMEC;
     int midx = arr_index->SuperkModeIdx(s,kSKmMEC);
     bool incl_mec = ( midx != -1 );
     if(incl_mec)
@@ -680,15 +745,66 @@ void SuperkMC::FillSpecialTemplates(void)
 	  }//ir
 	}//it
 	
+	int i_ne_var = 0;
 	//now loop over the variable binning scheme (used to calculate weights only as many times as we need to)
+	// This loop also keeps a record of which bins are non-empty
 	//loop over variable Etrue
 	for(int itv = 1; itv <= fMCVariableTempl[sidx][midx]->GetYaxis()->GetNbins(); itv++) {
+	  double EtrueVarMin = util::VariableMCEtrueBinEdges(s,m)[itv-1] + kOneMeV;
+	  double EtrueVarMax = util::VariableMCEtrueBinEdges(s,m)[itv]   - kOneMeV;
+	  int EtrueMinBin = 1 + TMath::BinarySearch(util::NumEtrueBins(s),util::EtrueBinEdges(s),EtrueVarMin);
+	  int EtrueMaxBin = 1 + TMath::BinarySearch(util::NumEtrueBins(s),util::EtrueBinEdges(s),EtrueVarMax);
+	  
 	  // loop over variable Ereco
 	  for(int irv = 1; irv <= fMCVariableTempl[sidx][midx]->GetXaxis()->GetNbins(); irv++) {
 	    int nev = TMath::CeilNint(fMCVariableTempl[sidx][midx]->GetBinContent(irv,itv));
-	    fMCVariableTemplArray1Rmu[sidx][midx][itv-1][irv-1] = nev;
+	    if (s==kSKsFCFV1RingMuLike) fMCVariableTemplArray1Rmu[sidx][midx][itv-1][irv-1] = nev;
+	    else fMCVariableTemplArray1Re[sidx][midx][itv-1][irv-1] = nev;
+	  
+	    // Fill nonempty bin numbers.
+	    if (nev < conv::kASmallNum) {
+	      continue;
+	    }
+	    
+	    fNonEmptyVariableBins[sidx][midx][i_ne_var] = conv::kBigIndex * irv + itv;
+	    
+	    double ErecoVarMin = util::XsecErecoBinEdges(s,irv-1) + kOneMeV;
+	    double ErecoVarMax = util::XsecErecoBinEdges(s,irv)   - kOneMeV;
+	    int ErecoMinBin = 1 + TMath::BinarySearch(util::NumErecoBins(s),util::ErecoBinEdges(s),ErecoVarMin);
+	    int ErecoMaxBin = 1 + TMath::BinarySearch(util::NumErecoBins(s),util::ErecoBinEdges(s),ErecoVarMax);
+	    
+	    int i_ne_fixed = 0;
+	    // loop over fixed Etrue to count n nonempty
+	    for(int it = EtrueMinBin; it <= EtrueMaxBin; it++) {
+	      // loop over fixed Ereco to count
+	      for(int ir = ErecoMinBin; ir <= ErecoMaxBin; ir++) {
+		double nevf = fMCVariableTempl[sidx][midx]->GetBinContent(ir,it);
+		if (nevf < conv::kASmallNum) {
+		  continue;
+		}
+		i_ne_fixed++;
+	      }//ir
+	    }//it
+	    fNNonEmptyFixedBins[sidx][midx][i_ne_var] = i_ne_fixed;
+	    fNonEmptyFixedBins[sidx][midx][i_ne_var] = new int[i_ne_fixed];
+	    
+	    i_ne_fixed = 0;
+	    // loop over fixed Etrue to count n nonempty
+	    for(int it = EtrueMinBin; it <= EtrueMaxBin; it++) {
+	      // loop over fixed Ereco to count
+	      for(int ir = ErecoMinBin; ir <= ErecoMaxBin; ir++) {
+		double nevf = fMCVariableTempl[sidx][midx]->GetBinContent(ir,it);
+		if (nevf < conv::kASmallNum) {
+		  continue;
+		}
+		fNonEmptyFixedBins[sidx][midx][i_ne_var][i_ne_fixed] = conv::kBigIndex * ir + it;
+		i_ne_fixed++;
+	      }//ir
+	    }//it
+	    i_ne_var++;
 	  }//irv
 	}//itv
+	fNNonEmptyVariableBins[sidx][midx] = i_ne_var;
       }//incl_mec
     
     
@@ -706,6 +822,7 @@ void SuperkMC::FillSpecialTemplates(void)
     
     for(int i=0; i<n; i++) {
       
+      SuperkMode_t tgt_m = tgt_modes[i];
       int tgt_midx = arr_index->SuperkModeIdx(s,tgt_modes[i]);
       int src_midx = arr_index->SuperkModeIdx(s,src_modes[i]);
       
@@ -761,9 +878,14 @@ void SuperkMC::FillSpecialTemplates(void)
       //one more loop, for the variable binning scheme.
       //just set the OscNuMu equal to the NuMu
       //loop over variable Etrue
-      for(int itv = 1; itv <= fMCVariableTempl[sidx][tgt_midx]->GetYaxis()->GetNbins(); itv++) {
+      for(int itv = 1; itv <= fMCVariableTempl[sidx][midx]->GetYaxis()->GetNbins(); itv++) {
+	double EtrueVarMin = util::VariableMCEtrueBinEdges(s,tgt_m)[itv-1] + kOneMeV;
+	double EtrueVarMax = util::VariableMCEtrueBinEdges(s,tgt_m)[itv]   - kOneMeV;
+	int EtrueMinBin = 1 + TMath::BinarySearch(util::NumEtrueBins(s),util::EtrueBinEdges(s),EtrueVarMin);
+	int EtrueMaxBin = 1 + TMath::BinarySearch(util::NumEtrueBins(s),util::EtrueBinEdges(s),EtrueVarMax);
+	
 	// loop over variable Ereco
-	for(int irv = 1; irv <= fMCVariableTempl[sidx][tgt_midx]->GetXaxis()->GetNbins(); irv++) {
+	for(int irv = 1; irv <= fMCVariableTempl[sidx][midx]->GetXaxis()->GetNbins(); irv++) {
 	  if(s==kSKsFCFV1RingMuLike){
 	    int nev = fMCVariableTemplArray1Rmu[sidx][src_midx][itv-1][irv-1];
 	    fMCVariableTemplArray1Rmu[sidx][tgt_midx][itv-1][irv-1] = nev;
@@ -772,8 +894,52 @@ void SuperkMC::FillSpecialTemplates(void)
 	    int nev = fMCVariableTemplArray1Re[sidx][src_midx][itv-1][irv-1];
 	    fMCVariableTemplArray1Re[sidx][tgt_midx][itv-1][irv-1] = nev;
 	  }
+	
+	  // Fill nonempty bin numbers.
+	  if (nev < conv::kASmallNum) {
+	    continue;
+	  }
+	  
+	  fNonEmptyVariableBins[sidx][tgt_midx][i_ne_var] = conv::kBigIndex * irv + itv;
+	  
+	  double ErecoVarMin = util::XsecErecoBinEdges(s,irv-1) + kOneMeV;
+	  double ErecoVarMax = util::XsecErecoBinEdges(s,irv)   - kOneMeV;
+	  int ErecoMinBin = 1 + TMath::BinarySearch(util::NumErecoBins(s),util::ErecoBinEdges(s),ErecoVarMin);
+	  int ErecoMaxBin = 1 + TMath::BinarySearch(util::NumErecoBins(s),util::ErecoBinEdges(s),ErecoVarMax);
+	  
+	  int i_ne_fixed = 0;
+	  // loop over fixed Etrue to count n nonempty
+	  for(int it = EtrueMinBin; it <= EtrueMaxBin; it++) {
+	    // loop over fixed Ereco to count
+	    for(int ir = ErecoMinBin; ir <= ErecoMaxBin; ir++) {
+	      double nevf = this->Template(s,m,kSKMCtOri)->GetBinContent(ir,it);
+	      if (nevf < conv::kASmallNum) {
+		continue;
+	      }
+	      i_ne_fixed++;
+	    }//ir
+	  }//it
+	  fNNonEmptyFixedBins[sidx][tgt_midx][i_ne_var] = i_ne_fixed;
+	  fNonEmptyFixedBins[sidx][tgt_midx][i_ne_var] = new int[i_ne_fixed];
+	  
+	  i_ne_fixed = 0;
+	  // loop over fixed Etrue to count n nonempty
+	  for(int it = EtrueMinBin; it <= EtrueMaxBin; it++) {
+	    // loop over fixed Ereco to count
+	    for(int ir = ErecoMinBin; ir <= ErecoMaxBin; ir++) {
+	      double nevf = this->Template(s,m,kSKMCtOri)->GetBinContent(ir,it);
+	      if (nevf < conv::kASmallNum) {
+		continue;
+	      }
+	      fNonEmptyFixedBins[sidx][tgt_midx][i_ne_var][i_ne_fixed] = conv::kBigIndex * ir + it;
+	      i_ne_fixed++;
+	    }//ir
+	  }//it
+	  i_ne_var++;
 	}//irv
       }//itv
+      fNNonEmptyVariableBins[sidx][tgt_midx] = i_ne_var;
+
     }//i
     
 #endif// __USE_OSC_NUMU_MC_TEMPLATES__
@@ -793,6 +959,7 @@ void SuperkMC::FillSpecialTemplates(void)
     
     for(int i=0; i<n; i++) {
       
+      SuperkMode_t tgt_m = tgt_modes_numubar[i];
       int tgt_midx = arr_index->SuperkModeIdx(s,tgt_modes_numubar[i]);
       int src_midx = arr_index->SuperkModeIdx(s,src_modes_numubar[i]);
       
@@ -848,9 +1015,14 @@ void SuperkMC::FillSpecialTemplates(void)
       //one more loop, for the variable binning scheme.
       //just set the OscNuMu equal to the NuMu
       //loop over variable Etrue
-      for(int itv = 1; itv <= fMCVariableTempl[sidx][tgt_midx]->GetYaxis()->GetNbins(); itv++) {
+      for(int itv = 1; itv <= fMCVariableTempl[sidx][midx]->GetYaxis()->GetNbins(); itv++) {
+	double EtrueVarMin = util::VariableMCEtrueBinEdges(s,tgt_m)[itv-1] + kOneMeV;
+	double EtrueVarMax = util::VariableMCEtrueBinEdges(s,tgt_m)[itv]   - kOneMeV;
+	int EtrueMinBin = 1 + TMath::BinarySearch(util::NumEtrueBins(s),util::EtrueBinEdges(s),EtrueVarMin);
+	int EtrueMaxBin = 1 + TMath::BinarySearch(util::NumEtrueBins(s),util::EtrueBinEdges(s),EtrueVarMax);
+	
 	// loop over variable Ereco
-	for(int irv = 1; irv <= fMCVariableTempl[sidx][tgt_midx]->GetXaxis()->GetNbins(); irv++) {
+	for(int irv = 1; irv <= fMCVariableTempl[sidx][midx]->GetXaxis()->GetNbins(); irv++) {
 	  if(s==kSKsFCFV1RingMuLike){
 	    int nev = fMCVariableTemplArray1Rmu[sidx][src_midx][itv-1][irv-1];
 	    fMCVariableTemplArray1Rmu[sidx][tgt_midx][itv-1][irv-1] = nev;
@@ -859,8 +1031,51 @@ void SuperkMC::FillSpecialTemplates(void)
 	    int nev = fMCVariableTemplArray1Re[sidx][src_midx][itv-1][irv-1];
 	    fMCVariableTemplArray1Re[sidx][tgt_midx][itv-1][irv-1] = nev;
 	  }
+	
+	  // Fill nonempty bin numbers.
+	  if (nev < conv::kASmallNum) {
+	    continue;
+	  }
+	  
+	  fNonEmptyVariableBins[sidx][tgt_midx][i_ne_var] = conv::kBigIndex * irv + itv;
+	  
+	  double ErecoVarMin = util::XsecErecoBinEdges(s,irv-1) + kOneMeV;
+	  double ErecoVarMax = util::XsecErecoBinEdges(s,irv)   - kOneMeV;
+	  int ErecoMinBin = 1 + TMath::BinarySearch(util::NumErecoBins(s),util::ErecoBinEdges(s),ErecoVarMin);
+	  int ErecoMaxBin = 1 + TMath::BinarySearch(util::NumErecoBins(s),util::ErecoBinEdges(s),ErecoVarMax);
+	  
+	  int i_ne_fixed = 0;
+	  // loop over fixed Etrue to count n nonempty
+	  for(int it = EtrueMinBin; it <= EtrueMaxBin; it++) {
+	    // loop over fixed Ereco to count
+	    for(int ir = ErecoMinBin; ir <= ErecoMaxBin; ir++) {
+	      double nevf = this->Template(s,m,kSKMCtOri)->GetBinContent(ir,it);
+	      if (nevf < conv::kASmallNum) {
+		continue;
+	      }
+	      i_ne_fixed++;
+	    }//ir
+	  }//it
+	  fNNonEmptyFixedBins[sidx][tgt_midx][i_ne_var] = i_ne_fixed;
+	  fNonEmptyFixedBins[sidx][tgt_midx][i_ne_var] = new int[i_ne_fixed];
+	  
+	  i_ne_fixed = 0;
+	  // loop over fixed Etrue to count n nonempty
+	  for(int it = EtrueMinBin; it <= EtrueMaxBin; it++) {
+	    // loop over fixed Ereco to count
+	    for(int ir = ErecoMinBin; ir <= ErecoMaxBin; ir++) {
+	      double nevf = this->Template(s,m,kSKMCtOri)->GetBinContent(ir,it);
+	      if (nevf < conv::kASmallNum) {
+		continue;
+	      }
+	      fNonEmptyFixedBins[sidx][tgt_midx][i_ne_var][i_ne_fixed] = conv::kBigIndex * ir + it;
+	      i_ne_fixed++;
+	    }//ir
+	  }//it
+	  i_ne_var++;
 	}//irv
       }//itv
+      fNNonEmptyVariableBins[sidx][tgt_midx] = i_ne_var;
     }//i
 #endif
 
@@ -872,6 +1087,7 @@ void SuperkMC::FillSpecialTemplates(void)
     
     for(int i=0; i<n; i++) {
       
+      SuperkMode_t tgt_m = tgt_modes_nuebar[i];
       int tgt_midx = arr_index->SuperkModeIdx(s,tgt_modes_nuebar[i]);
       int src_midx = arr_index->SuperkModeIdx(s,src_modes_nuebar[i]);
       
@@ -927,9 +1143,14 @@ void SuperkMC::FillSpecialTemplates(void)
       //one more loop, for the variable binning scheme.
       //just set the OscNuMu equal to the NuMu
       //loop over variable Etrue
-      for(int itv = 1; itv <= fMCVariableTempl[sidx][tgt_midx]->GetYaxis()->GetNbins(); itv++) {
+      for(int itv = 1; itv <= fMCVariableTempl[sidx][midx]->GetYaxis()->GetNbins(); itv++) {
+	double EtrueVarMin = util::VariableMCEtrueBinEdges(s,tgt_m)[itv-1] + kOneMeV;
+	double EtrueVarMax = util::VariableMCEtrueBinEdges(s,tgt_m)[itv]   - kOneMeV;
+	int EtrueMinBin = 1 + TMath::BinarySearch(util::NumEtrueBins(s),util::EtrueBinEdges(s),EtrueVarMin);
+	int EtrueMaxBin = 1 + TMath::BinarySearch(util::NumEtrueBins(s),util::EtrueBinEdges(s),EtrueVarMax);
+	
 	// loop over variable Ereco
-	for(int irv = 1; irv <= fMCVariableTempl[sidx][tgt_midx]->GetXaxis()->GetNbins(); irv++) {
+	for(int irv = 1; irv <= fMCVariableTempl[sidx][midx]->GetXaxis()->GetNbins(); irv++) {
 	  if(s==kSKsFCFV1RingMuLike){
 	    int nev = fMCVariableTemplArray1Rmu[sidx][src_midx][itv-1][irv-1];
 	    fMCVariableTemplArray1Rmu[sidx][tgt_midx][itv-1][irv-1] = nev;
@@ -938,8 +1159,52 @@ void SuperkMC::FillSpecialTemplates(void)
 	    int nev = fMCVariableTemplArray1Re[sidx][src_midx][itv-1][irv-1];
 	    fMCVariableTemplArray1Re[sidx][tgt_midx][itv-1][irv-1] = nev;
 	  }
+	
+	  // Fill nonempty bin numbers.
+	  if (nev < conv::kASmallNum) {
+	    continue;
+	  }
+	  
+	  fNonEmptyVariableBins[sidx][tgt_midx][i_ne_var] = conv::kBigIndex * irv + itv;
+	  
+	  double ErecoVarMin = util::XsecErecoBinEdges(s,irv-1) + kOneMeV;
+	  double ErecoVarMax = util::XsecErecoBinEdges(s,irv)   - kOneMeV;
+	  int ErecoMinBin = 1 + TMath::BinarySearch(util::NumErecoBins(s),util::ErecoBinEdges(s),ErecoVarMin);
+	  int ErecoMaxBin = 1 + TMath::BinarySearch(util::NumErecoBins(s),util::ErecoBinEdges(s),ErecoVarMax);
+	  
+	  int i_ne_fixed = 0;
+	  // loop over fixed Etrue to count n nonempty
+	  for(int it = EtrueMinBin; it <= EtrueMaxBin; it++) {
+	    // loop over fixed Ereco to count
+	    for(int ir = ErecoMinBin; ir <= ErecoMaxBin; ir++) {
+	      double nevf = this->Template(s,m,kSKMCtOri)->GetBinContent(ir,it);
+	      if (nevf < conv::kASmallNum) {
+		continue;
+	      }
+	      i_ne_fixed++;
+	    }//ir
+	  }//it
+	  fNNonEmptyFixedBins[sidx][tgt_midx][i_ne_var] = i_ne_fixed;
+	  fNonEmptyFixedBins[sidx][tgt_midx][i_ne_var] = new int[i_ne_fixed];
+	  
+	  i_ne_fixed = 0;
+	  // loop over fixed Etrue to count n nonempty
+	  for(int it = EtrueMinBin; it <= EtrueMaxBin; it++) {
+	    // loop over fixed Ereco to count
+	    for(int ir = ErecoMinBin; ir <= ErecoMaxBin; ir++) {
+	      double nevf = this->Template(s,m,kSKMCtOri)->GetBinContent(ir,it);
+	      if (nevf < conv::kASmallNum) {
+		continue;
+	      }
+	      fNonEmptyFixedBins[sidx][tgt_midx][i_ne_var][i_ne_fixed] = conv::kBigIndex * ir + it;
+	      i_ne_fixed++;
+	    }//ir
+	  }//it
+	  i_ne_var++;
 	}//irv
       }//itv
+      fNNonEmptyVariableBins[sidx][tgt_midx] = i_ne_var;
+      
     }//i
     
 #endif// __USE_OSC_NUMU_MC_TEMPLATES__
@@ -1266,136 +1531,124 @@ void SuperkMC::ApplyBANFFTuningToTemplates(void)
     if(s == kSKsUndefined) continue;
     // loop over sample modes
     for(int im = 0; im < knm; im++) { 
-       SuperkMode_t m = kSKReactionModes[is][im];
-       if(m == kSKmUndefined) continue;
-       // consider template?
-       bool skip = this->SkipTemplate(m);
-       if(skip) continue;
+      SuperkMode_t m = kSKReactionModes[is][im];
+      if(m == kSKmUndefined) continue;
+      // consider template?
+      bool skip = this->SkipTemplate(m);
+      if(skip) continue;
 #ifndef PRODUCTIONMODE
-       // get corresponding template
-       TH2D * mctempl_tgt = this -> Template(s,m,kSKMCtTun);
-       if(!mctempl_tgt) continue; 
+      // get corresponding template
+      TH2D * mctempl_tgt = this -> Template(s,m,kSKMCtTun);
+      if(!mctempl_tgt) continue; 
 #endif
 
 #if BANFF_BINS == 4
-       double x_mec = fXMEC;
-       if(util::IsMEC(m))
-	 x_mec = fNuXSec->MECBestFitValue();
+      double x_mec = fXMEC;
+      if(util::IsMEC(m))
+	x_mec = fNuXSec->MECBestFitValue();
 #endif
 
-       //
-       // There are 600 50MeV Etrue energy bins in the templates, but
-       // the flux/xsec systematics only have up to ~10 Etrue bins (same as flux binning), so
-       // we can call NuXSec::FinTuningWght() and NuFlux::SuperkFluxFinTuningWght()  
-       // a factor of 10 less often by looping over the kXsEtrueBinEdges.
-       // Note that the Ereco binning is identical between XSec and SuperkMC templates
-       //
-       // Loop over variable flux Etrue bins
-       for(int itv = 1; itv <= util::NumVariableMCEtrueBins(s,m); itv ++) {
+      //
+      // There are 600 50MeV Etrue energy bins in the templates, but
+      // the flux/xsec systematics only have up to ~10 Etrue bins (same as flux binning), so
+      // we can call NuXSec::FinTuningWght() and NuFlux::SuperkFluxFinTuningWght()  
+      // a factor of 10 less often by looping over the kXsEtrueBinEdges.
+      // Note that the Ereco binning is identical between XSec and SuperkMC templates
+      //
+      for (int ivb = 0 ; ivb < fNNonEmptyVariableBins[is][im] ; ivb++ ) {
+	int itv =  fNonEmptyVariableBins[is][im][ivb] % conv::kBigIndex;
+	int irv = (fNonEmptyVariableBins[is][im][ivb] - itv)/conv::kBigIndex;
 
-	 // Get the min/max energy of the current variable flux Etrue bin
-	 double EtrueVarMin = util::VariableMCEtrueBinEdges(s,m)[itv-1] + kOneMeV;
-	 double EtrueVarMax = util::VariableMCEtrueBinEdges(s,m)[itv]   - kOneMeV;
+	// Get the min/max energy of the current variable flux Etrue bin
+	double EtrueVarMin = util::VariableMCEtrueBinEdges(s,m)[itv-1] + kOneMeV;
 
-	 // Plug-in BANFF flux systematics
-	 double flux_wght = fNuFlux->SuperkFluxFinTuningWght(s,m,EtrueVarMin);
-	 //loop over variable Ereco
+	// Plug-in BANFF flux systematics
+	double flux_wght = fNuFlux->SuperkFluxFinTuningWght(s,m,EtrueVarMin);
 
-	 for(int irv = 1; irv <= util::NumXsecErecoBins(s); irv++) {
-	   //skip if the big bin is empty
-	   if(s == kSKsFCFV1RingMuLike ) {
-	     if(fMCVariableTemplArray1Rmu[is][im][itv-1][irv-1] <= 0) continue;
-	   }
-	   else {
-	     if(fMCVariableTemplArray1Re[is][im][itv-1][irv-1] <= 0) continue;
-	   }
-	   double ErecoVarMin = util::XsecErecoBinEdges(s,irv-1) + kOneMeV;
-	   double ErecoVarMax = util::XsecErecoBinEdges(s,irv)   - kOneMeV;
+	//skip if the big bin is empty
+	if(s == kSKsFCFV1RingMuLike ) {
+	  if(fMCVariableTemplArray1Rmu[is][im][itv-1][irv-1] <= 0) continue;
+	}
+	else {
+	  if(fMCVariableTemplArray1Re[is][im][itv-1][irv-1] <= 0) continue;
+	}
+	double ErecoVarMin = util::XsecErecoBinEdges(s,irv-1) + kOneMeV;
+	
+	// Plug-in BANFF & other xsec systematics 
+	double xsec_wght = fNuXSec->FinTuningWght(s,m,ErecoVarMin,EtrueVarMin); 
 
-	   // Plug-in BANFF & other xsec systematics 
-	   double xsec_wght = fNuXSec->FinTuningWght(s,m,ErecoVarMin,EtrueVarMin); 
+	// Combined weight
+	double wght = flux_wght * xsec_wght;
 
-	   // Combined weight
-	   double wght = flux_wght * xsec_wght;
-	   	
 #ifdef BANFFWEIGHTSAREONE
-           wght = 1;
+	wght = 1;
 #endif
-	   // loop over 50MeV Ereco
-	   int ErecoMinBin = 1 + TMath::BinarySearch(util::NumErecoBins(s),util::ErecoBinEdges(s),ErecoVarMin);
-	   int ErecoMaxBin = 1 + TMath::BinarySearch(util::NumErecoBins(s),util::ErecoBinEdges(s),ErecoVarMax);
-	   for(int ir = ErecoMinBin; ir <= ErecoMaxBin; ir++) {
-	     //double Ereco = util::ErecoBinEdges(s,ir-1) + kOneMeV;
+	for (int ifb = 0 ; ifb < fNNonEmptyFixedBins[is][im][ivb] ; ifb++ ) {
+	  int it =  fNonEmptyFixedBins[is][im][ivb][ifb] % conv::kBigIndex;
+	  int ir = (fNonEmptyFixedBins[is][im][ivb][ifb] - it)/conv::kBigIndex;
+	  //check for empty bins
+	  if (s==kSKsFCFV1RingMuLike) {
+#if BANFF_BINS == 4
+	    if(!util::IsMEC(m))
+#endif
+	      if(fMCTemplArrayOri1Rmu[im][it-1][ir-1] <= 0) continue;
+	  }
+	  else{
+	    if(fMCTemplArrayOri1Re[im][it-1][ir-1] <= 0) continue;
+	  }
+	  //double Etrue = util::EtrueBinEdges(s,it-1) + kOneMeV;
 
-	     // loop over 50MeV Etrue
-	     int EtrueMinBin = 1 + TMath::BinarySearch(util::NumEtrueBins(s),util::EtrueBinEdges(s),EtrueVarMin);
-	     int EtrueMaxBin = 1 + TMath::BinarySearch(util::NumEtrueBins(s),util::EtrueBinEdges(s),EtrueVarMax);
-	     for(int it = EtrueMinBin; it <= EtrueMaxBin; it++) {
-	       //check for empty bins
-	       if (s==kSKsFCFV1RingMuLike) {
+	  // get number of events in current bin of source MC template
+	  double nev = 0;
 #if BANFF_BINS == 4
-		 if(!util::IsMEC(m))
+	  if(util::IsMEC(m)) {
+	    double nev_martini = fMCTemplArrayMECMartini[it-1][ir-1];
+	    double nev_nieves  = fMCTemplArrayMECNieves [it-1][ir-1];
+	    //-1 nominal -> 0 nieves
+	    if(x_mec < 0) {
+	      nev  = nev_nieves * (1 + x_mec);
+	    }
+	    // 0 nieves -> +1 martini
+	    else {
+	      nev += TMath::Min(nev_martini, nev_martini * x_mec);
+	      nev += nev_nieves * (1 - x_mec);
+	    }
+	  }//MEC
+	  else
 #endif
-		   if(fMCTemplArrayOri1Rmu[im][it-1][ir-1] <= 0) continue;
-	       }
-	       else{
-		 if(fMCTemplArrayOri1Re[im][it-1][ir-1] <= 0) continue;
-	       }
-	       //double Etrue = util::EtrueBinEdges(s,it-1) + kOneMeV;
-   
-	       // get number of events in current bin of source MC template
-	       double nev = 0;
-#if BANFF_BINS == 4
-	       if(util::IsMEC(m)) {
-		 double nev_martini = fMCTemplArrayMECMartini[it-1][ir-1];
-		 double nev_nieves  = fMCTemplArrayMECNieves [it-1][ir-1];
-		 //-1 nominal -> 0 nieves
-		 if(x_mec < 0) {
-		   nev  = nev_nieves * (1 + x_mec);
-		 }
-		 // 0 nieves -> +1 martini
-		 else {
-		   nev += TMath::Min(nev_martini, nev_martini * x_mec);
-		   nev += nev_nieves * (1 - x_mec);
-		 }
-	       }//MEC
-	       else
-#endif
-		 if (s==kSKsFCFV1RingMuLike)
-		 nev = fMCTemplArrayNom1Rmu[im][it-1][ir-1];
-	       else
-		 nev = fMCTemplArrayNom1Re[im][it-1][ir-1];
-	       nev = TMath::Max(0.,nev);
-	       double nev_tuned = nev * wght;
+	    if (s==kSKsFCFV1RingMuLike)
+	      nev = fMCTemplArrayNom1Rmu[im][it-1][ir-1];
+	    else
+	      nev = fMCTemplArrayNom1Re[im][it-1][ir-1];
+	  nev = TMath::Max(0.,nev);
+	  double nev_tuned = nev * wght;
 
 #ifdef NO_EVENTS_CAN_BE_NEGATIVE
-	       if(nev_tuned < 0) {
+	  if(nev_tuned < 0) {
 #ifdef __show_negative_events_mesg_debug__
-		 cout << "Exp/SKMC/ApplyBANFFTuningToTemplates >> set negative number of events " << nev_tuned
-		      << " to " << 0 << "\t" << " Ereco: " << Ereco << " Etrue: " << util::EtrueBinEdges(s,it-1) + kOneMeV << endl;
+	    cout << "Exp/SKMC/ApplyBANFFTuningToTemplates >> set negative number of events " << nev_tuned
+	      << " to " << 0 << "\t" << " Ereco: " << Ereco << " Etrue: " << util::EtrueBinEdges(s,it-1) + kOneMeV << endl;
 #endif
-		 nev_tuned = 0;
-	       }
+	    nev_tuned = 0;
+	  }
 #endif //NO_EVENTS_CAN_BE_NEGATIVE
 
 #ifndef PRODUCTIONMODE
-	       mctempl_tgt->SetBinContent(ir,it,nev_tuned);
-	       // initialize "sys" & "fin" templates to "tun" values
-	       this->Template(s,m,kSKMCtSys)->SetBinContent(ir,it,nev_tuned);
-	       this->Template(s,m,kSKMCtFin)->SetBinContent(ir,it,nev_tuned);
+	  mctempl_tgt->SetBinContent(ir,it,nev_tuned);
+	  // initialize "sys" & "fin" templates to "tun" values
+	  this->Template(s,m,kSKMCtSys)->SetBinContent(ir,it,nev_tuned);
+	  this->Template(s,m,kSKMCtFin)->SetBinContent(ir,it,nev_tuned);
 #endif
-	       if (s==kSKsFCFV1RingMuLike) {
-		 fMCTemplArrayTun1Rmu[im][it-1][ir-1] = nev_tuned;
-		 fMCTemplArrayFin1Rmu[im][it-1][ir-1] = nev_tuned;
-	       }
-	       else {
-		 fMCTemplArrayTun1Re[im][it-1][ir-1] = nev_tuned;
-		 fMCTemplArrayFin1Re[im][it-1][ir-1] = nev_tuned;
-	       }
-	     }//it
-	   }//ir
-	 }//irv
-       }//itv
+	  if (s==kSKsFCFV1RingMuLike) {
+	    fMCTemplArrayTun1Rmu[im][it-1][ir-1] = nev_tuned;
+	    fMCTemplArrayFin1Rmu[im][it-1][ir-1] = nev_tuned;
+	  }
+	  else {
+	    fMCTemplArrayTun1Re[im][it-1][ir-1] = nev_tuned;
+	    fMCTemplArrayFin1Re[im][it-1][ir-1] = nev_tuned;
+	  }
+	}//ifb
+      }//ivb
     }//im
   }//is
 
@@ -1434,8 +1687,8 @@ void SuperkMC::ApplySystematicsToTemplates(void)
 //________________________________________________________________________________________
 void SuperkMC::ApplySystematicsToTemplates_Multiplicative(void) 
 {
-// All multiplicative systematics are handled in the following loop.
-//
+  // All multiplicative systematics are handled in the following loop.
+  //
 #ifdef __show_update_mesg_info__
   cout << "Exp/SKMC >> Applying multiplicative systematics" << endl;
 #endif
@@ -1446,191 +1699,185 @@ void SuperkMC::ApplySystematicsToTemplates_Multiplicative(void)
     if(s == kSKsUndefined) continue;
     // Loop over sample modes
     for(int im = 0; im < knm; im++) { 
-       SuperkMode_t m = kSKReactionModes[is][im];
-       if(m == kSKmUndefined) continue;
-       // Consider template?
-       bool skip = this->SkipTemplate(m);
-       if(skip) continue;
+      SuperkMode_t m = kSKReactionModes[is][im];
+      if(m == kSKmUndefined) continue;
+      // Consider template?
+      bool skip = this->SkipTemplate(m);
+      if(skip) continue;
 #ifndef PRODUCTIONMODE
-       // Get corresponding templates
-       TH2D * mctempl_tgt = this -> Template(s,m,kSKMCtSys);
-       if(!mctempl_tgt) continue;
+      // Get corresponding templates
+      TH2D * mctempl_tgt = this -> Template(s,m,kSKMCtSys);
+      if(!mctempl_tgt) continue;
 #endif
 
 #if BANFF_BINS == 4
-       double x_mec = fXMEC;
-       if(util::IsMEC(m))
-	 x_mec = fNuXSec->CurrentValue(kNuisBANFFMECNorm);
+      double x_mec = fXMEC;
+      if(util::IsMEC(m))
+	x_mec = fNuXSec->CurrentValue(kNuisBANFFMECNorm);
 #endif
+      const double * variableMCEtrueBinEdges = util::VariableMCEtrueBinEdges(s,m);
 
-       //
-       // There are 600 50MeV Etrue energy bins in the templates, but
-       // the flux/xsec systematics only have up to ~10 Etrue bins (same as flux binning), so
-       // we can call NuXSec::FinTuningWght() and NuFlux::SuperkFluxFinTuningWght()  
-       // a factor of 10 less often by looping over the kXsEtrueBinEdges.
-       // Note that the Ereco binning is identical between XSec and SuperkMC templates
-       //
-       // Loop over variable flux Etrue bins
-       for(int itv = 1; itv <= util::NumVariableMCEtrueBins(s,m); itv ++) {
+      //
+      // There are 600 50MeV Etrue energy bins in the templates, but
+      // the flux/xsec systematics only have up to ~10 Etrue bins (same as flux binning), so
+      // we can call NuXSec::FinTuningWght() and NuFlux::SuperkFluxFinTuningWght()  
+      // a factor of 10 less often by looping over the kXsEtrueBinEdges.
+      // Note that the Ereco binning is identical between XSec and SuperkMC templates
+      //
+      // Loop over variable flux Etrue bins
+      int last_itv = -1;
+      double flux_wght = -1;
+      for (int ivb = 0 ; ivb < fNNonEmptyVariableBins[is][im] ; ivb++ ) {
+	int itv =  fNonEmptyVariableBins[is][im][ivb] % conv::kBigIndex;
+	int irv = (fNonEmptyVariableBins[is][im][ivb] - itv)/conv::kBigIndex;
 
-	 // Get the min/max energy of the current variable flux Etrue bin
-	 double EtrueVarMin = util::VariableMCEtrueBinEdges(s,m)[itv-1] + kOneMeV;
-	 double EtrueVarMax = util::VariableMCEtrueBinEdges(s,m)[itv]   - kOneMeV;
+	double EtrueVarMin = variableMCEtrueBinEdges[itv-1] + kOneMeV;
 
-	 // Plug-in BANFF flux systematics
-	 double flux_wght = fNuFlux->SuperkFluxSystWght(s,m,EtrueVarMin);
+	// Plug-in BANFF flux systematics
+	if (itv!=last_itv) {
+	  flux_wght = fNuFlux->SuperkFluxSystWght(s,m,EtrueVarMin);
+	  last_itv = itv;
+	}
 
-	 //loop over variable Ereco
-	 for(int irv = 1; irv <= util::NumXsecErecoBins(s); irv++) {
-	   //skip if the big bin is empty
-	   if(s == kSKsFCFV1RingMuLike){
-	     if(fMCVariableTemplArray1Rmu[is][im][itv-1][irv-1] <= 0) continue;
-	   }
-	   else{
-	     if(fMCVariableTemplArray1Re[is][im][itv-1][irv-1] <= 0) continue;
-	   }
-	   double ErecoVarMin = util::XsecErecoBinEdges(s,irv-1) + kOneMeV;
-	   double ErecoVarMax = util::XsecErecoBinEdges(s,irv)   - kOneMeV;
+	//skip if the big bin is empty
+	if(s == kSKsFCFV1RingMuLike){
+	  assert(fMCVariableTemplArray1Rmu[is][im][itv-1][irv-1] > 0);
+	}
+	else{
+	  assert(fMCVariableTemplArray1Re[is][im][itv-1][irv-1] > 0);
+	}
+	double ErecoVarMin = util::XsecErecoBinEdges(s,irv-1) + kOneMeV;
 
+	// Plug-in BANFF & other xsec systematics 
+	double xsec_wght = fNuXSec->SystWght(s,m,ErecoVarMin,EtrueVarMin); 
 
-           // Plug-in BANFF & other xsec systematics 
-           double xsec_wght = fNuXSec->SystWght(s,m,ErecoVarMin,EtrueVarMin); 
-
-	   double wght = 1;
+	double wght = 1;
 
 #ifdef SKFSITOGETHER
-	   // Plug-in SK efficiency + FSI uncertainties
-	   double skfsi_wght = fSKDetFSI->SystWght(s,m,ErecoVarMin,EtrueVarMin);
-	   // Combined weight                                          
-           wght = skfsi_wght * flux_wght * xsec_wght;
+	// Plug-in SK efficiency + FSI uncertainties
+	double skfsi_wght = fSKDetFSI->SystWght(s,m,ErecoVarMin,EtrueVarMin);
+	// Combined weight					  
+	wght = skfsi_wght * flux_wght * xsec_wght;
 #else
-	   // Plug-in SK efficiency uncertainty due to fiducial volume, reduction chain, OD cut,
-	   // ring-counting, PID, momentum cut and decay e- cut.
-	   // The ring-counting error for CCQE has Ereco-dependence.
-	   double skeff_wght = fSKDet->EfficiencyWeight(s,m,ErecoVarMin);
+	// Plug-in SK efficiency uncertainty due to fiducial volume, reduction chain, OD cut,
+	// ring-counting, PID, momentum cut and decay e- cut.
+	// The ring-counting error for CCQE has Ereco-dependence.
+	double skeff_wght = fSKDet->EfficiencyWeight(s,m,ErecoVarMin);
 
-           // Plug-in FSI weights
-           double fsi_wght = fFSI->SystWght(s,m,ErecoVarMin,EtrueVarMin); 
+	// Plug-in FSI weights
+	double fsi_wght = fFSI->SystWght(s,m,ErecoVarMin,EtrueVarMin); 
 
-           // Combined weight
-           wght = skeff_wght * flux_wght * xsec_wght * fsi_wght;
+	// Combined weight
+	wght = skeff_wght * flux_wght * xsec_wght * fsi_wght;
 #endif//!SKFSITOGETHER
 
 #ifdef SYSTWEIGHTSAREONE
-           wght = 1;
+	wght = 1;
 #endif
-/*
+	/*
 	   if(util::IsMEC(m))
-	     cout << "SK: " << skfsi_wght << "\tFlux: " << flux_wght << "\tXSec: " << xsec_wght << "\tTotal: " << wght << endl;
-*/
-	   // loop over 50MeV Ereco
-	   int ErecoMinBin = 1 + TMath::BinarySearch(util::NumErecoBins(s),util::ErecoBinEdges(s),ErecoVarMin);
-	   int ErecoMaxBin = 1 + TMath::BinarySearch(util::NumErecoBins(s),util::ErecoBinEdges(s),ErecoVarMax);
-	   for(int ir = ErecoMinBin; ir <= ErecoMaxBin; ir++) {
-	     //	     double Ereco = util::ErecoBinEdges(s,ir-1) + kOneMeV;
+	   cout << "SK: " << skfsi_wght << "\tFlux: " << flux_wght << "\tXSec: " << xsec_wght << "\tTotal: " << wght << endl;
+	 */
+	// loop over 50MeV Ereco
+	for (int ifb = 0 ; ifb < fNNonEmptyFixedBins[is][im][ivb] ; ifb++ ) {
+	  int it =  fNonEmptyFixedBins[is][im][ivb][ifb] % conv::kBigIndex;
+	  int ir = (fNonEmptyFixedBins[is][im][ivb][ifb] - it)/conv::kBigIndex;
+	  //check for empty bins
+	  if (s==kSKsFCFV1RingMuLike){
+#if BANFF_BINS == 4
+	    if(!util::IsMEC(m))
+#endif
+	      assert(fMCTemplArrayOri1Rmu[im][it-1][ir-1] > 0);
+	  }
+	  else{
+	    assert(fMCTemplArrayOri1Re[im][it-1][ir-1] > 0);
+	  }
+	  //double Etrue = util::ErecoBinEdges(s)(s,it-1) + kOneMeV;
 
-	     // loop over 50MeV Etrue
-	     int EtrueMinBin = 1 + TMath::BinarySearch(util::NumEtrueBins(s),util::EtrueBinEdges(s),EtrueVarMin);
-	     int EtrueMaxBin = 1 + TMath::BinarySearch(util::NumEtrueBins(s),util::EtrueBinEdges(s),EtrueVarMax);
-	     for(int it = EtrueMinBin; it <= EtrueMaxBin; it++) {
-	       //check for empty bins
-	       if (s==kSKsFCFV1RingMuLike){
+	  // get number of events in current bin of source MC template
+	  double nev = 0;
 #if BANFF_BINS == 4
-		 if(!util::IsMEC(m))
+	  if(util::IsMEC(m)) {
+	    double nev_martini = fMCTemplArrayMECMartini[it-1][ir-1];
+	    double nev_nieves  = fMCTemplArrayMECNieves [it-1][ir-1];
+	    //-1 nominal -> 0 nieves
+	    if(x_mec < 0) {
+	      nev  = nev_nieves * (1 + x_mec);
+	    }
+	    // 0 nieves -> +1 martini
+	    else {
+	      nev += TMath::Min(nev_martini, nev_martini * x_mec);
+	      nev += nev_nieves * (1 - x_mec);
+	    }
+	  }//MEC
+	  else
 #endif
-		   if(fMCTemplArrayOri1Rmu[im][it-1][ir-1] <= 0) continue;
-	       }
-	       else{
-		 if(fMCTemplArrayOri1Re[im][it-1][ir-1] <= 0) continue;
-	       }
-	       //double Etrue = util::ErecoBinEdges(s)(s,it-1) + kOneMeV;
-   
-	       // get number of events in current bin of source MC template
-	       double nev = 0;
-#if BANFF_BINS == 4
-	       if(util::IsMEC(m)) {
-		 double nev_martini = fMCTemplArrayMECMartini[it-1][ir-1];
-		 double nev_nieves  = fMCTemplArrayMECNieves [it-1][ir-1];
-		 //-1 nominal -> 0 nieves
-		 if(x_mec < 0) {
-		   nev  = nev_nieves * (1 + x_mec);
-		 }
-		 // 0 nieves -> +1 martini
-		 else {
-		   nev += TMath::Min(nev_martini, nev_martini * x_mec);
-		   nev += nev_nieves * (1 - x_mec);
-		 }
-	       }//MEC
-	       else
-#endif
-		 if (s==kSKsFCFV1RingMuLike)
-		 nev = fMCTemplArrayTun1Rmu[im][it-1][ir-1];
-	       else
-		 nev = fMCTemplArrayTun1Re[im][it-1][ir-1];
-	       nev = TMath::Max(0.,nev);
-	       double nev_systm = nev * wght;
+	    if (s==kSKsFCFV1RingMuLike)
+	      nev = fMCTemplArrayTun1Rmu[im][it-1][ir-1];
+	    else
+	      nev = fMCTemplArrayTun1Re[im][it-1][ir-1];
+	  nev = TMath::Max(0.,nev);
+	  double nev_systm = nev * wght;
 
 #ifdef __show_syst_var_wght_mesg_debug__ 
 #ifndef SKFSITOGETHER	       
-	       if( skeff_wght != 1. || 
-		   flux_wght  != 1. || 
-		   xsec_wght  != 1. ||
-		   fsi_wght   != 1. )
-		 {
-		   // Get the energy of the current 50MeV Etrue bin
-		   double Etrue = util::EtrueBinEdges(s,it-1) + kOneMeV;
-		   cout << "Exp/SKMC/SystVarWght >> "
-			<< "Sample = " << util::AsString(s) << " / Mode = " << util::AsString(m) 
-			<< ", Ereco = " << Ereco << " GeV" 
-			<< ", Etrue = " << Etrue << " GeV => Weights: " 
-			<< "SK eff = "  << skeff_wght
-			<< ", Flux = "  << flux_wght
-			<< ", XSec = "  << xsec_wght
-			<< ", FSI  = "  << fsi_wght
-			<< " (total = " << wght << ")"
-			<< endl;
-		 }
+	  if( skeff_wght != 1. || 
+	      flux_wght  != 1. || 
+	      xsec_wght  != 1. ||
+	      fsi_wght   != 1. )
+	  {
+	    // Get the energy of the current 50MeV Etrue bin
+	    double Etrue = util::EtrueBinEdges(s,it-1) + kOneMeV;
+	    cout << "Exp/SKMC/SystVarWght >> "
+	      << "Sample = " << util::AsString(s) << " / Mode = " << util::AsString(m) 
+	      << ", Ereco = " << Ereco << " GeV" 
+	      << ", Etrue = " << Etrue << " GeV => Weights: " 
+	      << "SK eff = "  << skeff_wght
+	      << ", Flux = "  << flux_wght
+	      << ", XSec = "  << xsec_wght
+	      << ", FSI  = "  << fsi_wght
+	      << " (total = " << wght << ")"
+	      << endl;
+	  }
 #else
-	       if( skfsi_wght != 1. ||
-		   flux_wght  != 1. ||
-		   xsec_wght  != 1. )
-		 {
-		   // Get the energy of the current 50MeV Etrue bin
-		   double Etrue = util::EtrueBinEdges(s,it-1) + kOneMeV;
-		   cout << "Exp/SKMC/SystVarWght >> "
-			<< "Sample = " << util::AsString(s) << " / Mode = " << util::AsString(m)
-			<< ", Ereco = " << Ereco << " GeV"
-			<< ", Etrue = " << Etrue << " GeV => Weights: "
-			<< "SK+FSI = "  << skfsi_wght
-			<< ", Flux = "  << flux_wght
-			<< ", XSec = "  << xsec_wght
-			<< " (total = " << wght << ")"
-			<< endl;
-		 }
+	  if( skfsi_wght != 1. ||
+	      flux_wght  != 1. ||
+	      xsec_wght  != 1. )
+	  {
+	    // Get the energy of the current 50MeV Etrue bin
+	    double Etrue = util::EtrueBinEdges(s,it-1) + kOneMeV;
+	    cout << "Exp/SKMC/SystVarWght >> "
+	      << "Sample = " << util::AsString(s) << " / Mode = " << util::AsString(m)
+	      << ", Ereco = " << Ereco << " GeV"
+	      << ", Etrue = " << Etrue << " GeV => Weights: "
+	      << "SK+FSI = "  << skfsi_wght
+	      << ", Flux = "  << flux_wght
+	      << ", XSec = "  << xsec_wght
+	      << " (total = " << wght << ")"
+	      << endl;
+	  }
 #endif//SKFSITOGETHER
 #endif//__show_syst_var_wght_mesg_debug__ 
 
 #ifdef NO_EVENTS_CAN_BE_NEGATIVE
-	       if(nev_systm < 0) {
+	  if(nev_systm < 0) {
 #ifdef __show_negative_events_mesg_debug__
-		 cout << "Exp/SKMC/ApplySystematicsToTemplates_Multiplicative >> set negative number of events " << nev_systm
-		      << " to " << 0 << "\t" << " Ereco: " << Ereco << endl;
+	    cout << "Exp/SKMC/ApplySystematicsToTemplates_Multiplicative >> set negative number of events " << nev_systm
+	      << " to " << 0 << "\t" << " Ereco: " << Ereco << endl;
 #endif//__show_negative_events_mesg_debug__
-		 nev_systm = 0;
-	       }
+	    nev_systm = 0;
+	  }
 #endif// NO_EVENTS_CAN_BE_NEGATIVE
-	       // Update target MC template
+	  // Update target MC template
 #ifndef PRODUCTIONMODE
-	       mctempl_tgt->SetBinContent(ir,it,nev_systm);
+	  mctempl_tgt->SetBinContent(ir,it,nev_systm);
 #endif
-	       if (s==kSKsFCFV1RingMuLike)
-		 fMCTemplArrayFin1Rmu[im][it-1][ir-1] = nev_systm;
-	       else
-		 fMCTemplArrayFin1Re[im][it-1][ir-1] = nev_systm;
-	     }//it
-	   }//ir
-	 }//irv
-       }//itv
+	  if (s==kSKsFCFV1RingMuLike)
+	    fMCTemplArrayFin1Rmu[im][it-1][ir-1] = nev_systm;
+	  else
+	    fMCTemplArrayFin1Re[im][it-1][ir-1] = nev_systm;
+	}//ifb
+      }//ivb
     }//im
   }//is
 
@@ -2231,13 +2478,15 @@ void SuperkMC::ApplyPhysHypothesisToTemplates(void)
     for(int is = 0; is < kns; is++) {
      SuperkSample_t s = kSKSamples[is];
      if(s == kSKsUndefined) continue;
-
+      
+     int nErecoBins = util::NumErecoBins(s);
+     int nEtrueBins = util::NumEtrueBins(s);
      //assert(this -> Template(s,kSKmNuMuCCQE,kSKMCtSys));
      //TAxis * ereco_axis = this->Template(s,kSKmNuMuCCQE,kSKMCtSys)->GetXaxis(); 
      //TAxis * etrue_axis = this->Template(s,kSKmNuMuCCQE,kSKMCtSys)->GetYaxis(); 
 
      // loop over Etrue
-     for(int it = 1; it <= util::NumEtrueBins(s); it++) {
+     for(int it = 1; it <= nEtrueBins; it++) {
 
         // calculate oscillation probabilities (incl. matter effects) for the current Etrue value
        double Etrue = (util::EtrueBinEdges(s,it-1) + util::EtrueBinEdges(s,it) ) / 2;
@@ -2284,7 +2533,7 @@ void SuperkMC::ApplyPhysHypothesisToTemplates(void)
 	    else if( util::IsOscNuEBar(m) ) { posc = p_numubar_nuebar;  }
 	  }
 	  // loop over Ereco
-	  for(int ir = 1; ir <= util::NumErecoBins(s); ir++) {
+	  for(int ir = 1; ir <= nErecoBins ; ir++) {
 	    // number of events in (Ereco,Etrue) bin (systematics applied)
 	    double nev = 0;
 	    if (s==kSKsFCFV1RingMuLike) nev = fMCTemplArrayFin1Rmu[im][it-1][ir-1];
@@ -2445,9 +2694,10 @@ bool SuperkMC::UpdateErecoSpectra(void)
 #ifndef PRODUCTIONMODE
     TH1D * reco_spectrum_tot = this->CurrErecoSpectrum(s);
 #endif
-
+    int nErecoBins =  util::NumErecoBins(s);
+    int nEtrueBins =  util::NumEtrueBins(s);
     // loop over Ereco
-    for(int ir = 1; ir <= util::NumErecoBins(s); ir++) {
+    for(int ir = 1; ir <= nErecoBins; ir++) {
        double nev_tot = 0;
        // loop over modes
        for(int im = 0; im < knm; im++) { 
@@ -2464,7 +2714,7 @@ bool SuperkMC::UpdateErecoSpectra(void)
 
           // loop over Etrue
           double nev = 0;
-          for(int it = 1; it <= util::NumEtrueBins(s); it++) {
+          for(int it = 1; it <= nEtrueBins; it++) {
 	    if (s==kSKsFCFV1RingMuLike)	    nev += fMCTemplArrayFin1Rmu[im][it-1][ir-1];
 	    else nev += fMCTemplArrayFin1Re[im][it-1][ir-1];
           }//it

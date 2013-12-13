@@ -4885,6 +4885,12 @@ static const int kNumOfNuisanceParams = kNumOfParamsInBANFFfit + kNumOfSKDetFSIP
 static const int kNumOfNuisanceParams = kNumOfParamsInBANFFfit + kNumOfFSIParams + kNumOfSKDetParams + kNumOfUncXSecSyst ;
 #endif
 
+// A big number, higher than any number of 1d bins. Used to store two bin numbers in one variable. Eg,
+// mask = kBigIndex * xbin + ybin
+// ybin = mask % kBigIndex;
+// xbin = (mask-ybin)/kBigIndex;
+static const int kBigIndex = 1000000;
+
 } // conv
 } // t2kana
   

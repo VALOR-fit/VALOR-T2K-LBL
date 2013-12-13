@@ -207,6 +207,15 @@ private:
   double     fBrWght;                      ///< branch var for reading input MC mini-DST
   float      fBrWght1Re;                      ///< branch var for reading input MC mini-DST
   int        fBrEvFlag;                      ///< branch var for reading input MC mini-DST
+  
+  static const int kMaxVarBins = 1000;
+  
+  // Arrays for remembering which big bins have events, and which little bins for those big bigs have events.
+  int fNNonEmptyVariableBins[kns][knm];               //!
+  int fNNonEmptyFixedBins   [kns][knm][kMaxVarBins];  //!
+  
+  int fNonEmptyVariableBins [kns][knm][kMaxVarBins];  //! These contain both the reco and true bin numbers, masked with conv::kBigIndex;
+  int * fNonEmptyFixedBins  [kns][knm][kMaxVarBins];  //! These contain both the reco and true bin numbers, masked with conv::kBigIndex;
 
   // utility objects for computing cross-section and flux weights
   NuFlux *         fNuFlux;                ///< Neutrino flux inputs
