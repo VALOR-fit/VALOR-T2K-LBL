@@ -647,6 +647,14 @@ FitParamList * FitParamList::NamedParameterList(string name)
     fp -> SetSystMode(1);
     return fp;
   }
+  if(name == "nuosc3f_12constrain+nuisance") {
+    FitParamList * fp = FitParamList::NuOsc3FlavourFitWithAllSyst();
+    fp -> SetNuisance (kPhypMixing12, true);
+    fp -> SetNuisance (kPhypDm12sq,   true);
+    fp -> SetParListName(name);
+    fp -> SetSystMode(1);
+    return fp;
+  }
   if(name == "nuosc3f_12fix+nuisance_woskdetfsi") {
     FitParamList * fp = FitParamList::NuOsc3FlavourFitWithAllSystButSKDetFSI();
     fp -> FixParameter (kPhypMixing12);

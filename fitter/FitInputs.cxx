@@ -59,7 +59,7 @@ fOpt(opt),
 fErrDef(errdef),
 fGoodnessOfFit(goodnessoffit)
 { 
-  fNPoints = util::NumErecoBins(conv::kSKsFCFV1RingELike)+ util::NumErecoBins(conv::kSKsFCFV1RingMuLike);
+  fNPoints = kNErecoBins[0]+kNErecoBins[1];
   fNDim = (*fFitParams).GetNumberParameters();
   if(fFitParams->GetSystMode() == 2)
     {
@@ -145,15 +145,16 @@ double FitInputs::Chisquare(int mode, conv::SuperkSample_t s0, int point) const
       if ((s == conv::kSKsFCFV1RingMuLike) && (oscana == conv::kAnaNuEAppOnly))    continue;
       // If we only want the numu disappearance analysis and sample is 1Re, then skip
       if ((s == conv::kSKsFCFV1RingELike)  && (oscana == conv::kAnaNuMuDisappOnly))continue;
-      
+
+      int n_ereco_bins = kNErecoBins[is];
+
       applied_negevents_condition = fExp->Generate(*fFitParams, fAllBANFFFit, fAll1ReEff) || applied_negevents_condition;
       if(!fGoodnessOfFit) {
-	int nbins = util::NumErecoBins(s);
 #ifdef __show_bin_contributions_to_chisq__
 	cout << "FitInputs::Chisquare()> nbins = " << nbins << endl;
 #endif
 	//loop over Ereco bins
-	for(int ibin = 1; ibin <= nbins; ibin++) {
+	for(int ibin = 1; ibin <= n_ereco_bins; ibin++) {
 	  if((point!=-1) && (point != ibin)) continue;
 	  double nobs = fObs->ErecoSpectrumArray             (s)[ibin-1];
 	  double nexp = fExp->CurrPredictedErecoSpectrumArray(s)[ibin-1];
@@ -187,8 +188,9 @@ double FitInputs::Chisquare(int mode, conv::SuperkSample_t s0, int point) const
 	
 	  //loop over Ereco bins
 	  for(int ibin = 1; ibin <= nbins; ibin++) {
-	    int ErecoMinBin = 1 + TMath::BinarySearch(util::NumErecoBins(s),util::ErecoBinEdges(s),binedges[ibin-1]);
-	    int ErecoMaxBin = 1 + TMath::BinarySearch(util::NumErecoBins(s),util::ErecoBinEdges(s),binedges[ibin]);
+
+	    int ErecoMinBin = 1 + TMath::BinarySearch(n_ereco_bins,util::ErecoBinEdges(s),binedges[ibin-1]);
+	    int ErecoMaxBin = 1 + TMath::BinarySearch(n_ereco_bins,util::ErecoBinEdges(s),binedges[ibin]);
 	    double nobs = 0, nexp = 0;
 	    for(int ir = ErecoMinBin; ir <= ErecoMaxBin; ir++) {
 	      nobs += fObs->ErecoSpectrumArray             (s)[ir-1];

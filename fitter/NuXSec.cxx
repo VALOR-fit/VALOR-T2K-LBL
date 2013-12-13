@@ -156,7 +156,7 @@ bool NuXSec::ReadSplines(TXMLEngine* xml, XMLNodePointer_t root_node)
           bool is_applied = kXsApplyXSecSystToSKMode[is][im][ip];
           if(!is_applied) continue;
           // loop over the var.-size  Ereco and Etrue bins for which weight splines were pre-computed
-          for(int ir = 0; ir < util::NumXsecErecoBins(s); ir++) {
+          for(int ir = 0; ir < kNXsErecoBins[is]; ir++) {
 	    double Ereco     = util::XsecErecoBinEdges(s,ir) + kOneMeV;
 	    double Ereco_min = util::XsecErecoBinEdges(s,ir);
 	    double Ereco_max = util::XsecErecoBinEdges(s,ir+1);
@@ -308,7 +308,7 @@ bool NuXSec::Read(TXMLEngine* xml, XMLNodePointer_t root_node)
   for(int is = 0; is < kns; is++) {
      SuperkSample_t s = kSKSamples[is];
      if(s == kSKsUndefined) continue;
-     const int      n_ereco_bins    = util::NumXsecErecoBins(s);
+     const int      n_ereco_bins    = kNXsErecoBins[is];
      const double * ereco_bin_edges = util::XsecErecoBinEdges(s);
      for(int im = 0; im < knm; im++) {
        SuperkMode_t m = kSKReactionModes[is][im];
@@ -485,7 +485,7 @@ relerr = fSplineMARESRelErr;
   if(fabs(wght) > conv::kMaxAllowedWght) {
     //get the ereco & etrue bin indexes (to be used to check whether the spline is sensible)
     int ireco = -1; 
-    for (int i = 0; i < util::NumXsecErecoBins(s); i++) {
+    for (int i = 0; i < kNXsErecoBins[s]; i++) {
       if(util::XsecErecoBinEdges(s,i)   <= Ereco && 
 	 util::XsecErecoBinEdges(s,i+1) >  Ereco) 
 	{
@@ -590,7 +590,8 @@ double NuXSec::SystWght_1p(
 	 wght = wght_spl->Eval(numerator) / wght_spl->Eval(denominator);
        }
        else*/
-	 wght = wght_spl->Eval(tc) / wght_spl->Eval(tb);
+       wght = wght_spl->Eval(tc) / wght_spl->Eval(tb);
+       
        //}
   }
 
@@ -727,7 +728,7 @@ double NuXSec::SystWght_1p(
   if(fabs(wght) > conv::kMaxAllowedWght) {
     //get the ereco & etrue bin indexes (to be used to check whether the spline is sensible)
     int ireco = -1; 
-    for (int i = 0; i < util::NumXsecErecoBins(s); i++) {
+    for (int i = 0; i < kNXsErecoBins[s]; i++) {
       if(util::XsecErecoBinEdges(s,i)   <= Ereco && 
 	 util::XsecErecoBinEdges(s,i+1) >  Ereco) 
 	{
@@ -923,6 +924,7 @@ TSpline3 * NuXSec::FindWghtSpline(
 	 << endl;
     exit(1);
   }
+
   if (s == kSKsFCFV1RingMuLike) return fXSecWghtSpl1Rmu[idx];
   else return fXSecWghtSpl1Re[idx];
 }
@@ -976,7 +978,7 @@ int NuXSec::WghtSplineIdx(
     return -1;
   }
   int ireco = -1; 
-  int nErecoBins = util::NumXsecErecoBins(s);
+  int nErecoBins = kNXsErecoBins[is];
   const double * ErecoBinEdges = util::XsecErecoBinEdges(s);
   for (int i = 0; i < nErecoBins ; i++) {
     if(ErecoBinEdges[i]   <= Ereco && 

@@ -74,7 +74,7 @@ void SuperkExpectation::Init(void)
     for(int im=0; im<knm; im++) {
       fPredictErecoSpectrum[is][im] = 0;
     }//im
-    for(int ir=0; ir<util::NumErecoBins(s); ir++) {
+    for(int ir=0; ir<kNErecoBins[is]; ir++) {
       if (s==kSKsFCFV1RingMuLike)
 	fPredictErecoSpectrumArrayTot1Rmu[ir] = 0;
       else
@@ -94,7 +94,7 @@ void SuperkExpectation::Book(void)
   for(int is = 0; is < kns; is++) {
      SuperkSample_t s = kSKSamples[is];
      if(s == kSKsUndefined) continue;
-     const int      n_ereco_bins    = util::NumErecoBins (s);
+     const int      n_ereco_bins    = kNErecoBins[is];
      const double * ereco_bin_edges = util::ErecoBinEdges(s);
      fPredictErecoSpectrumTot[is] = new TH1D("","", n_ereco_bins, ereco_bin_edges);
      fPredictErecoSpectrumTot[is]->SetDirectory(0);
@@ -225,7 +225,7 @@ bool SuperkExpectation::Generate(const PhysHypothesis & ph)
   for(int is = 0; is < kns; is++) {
     SuperkSample_t s = kSKSamples[is];
     if(s == kSKsUndefined) continue;
-    const int nbins = util::NumErecoBins(s);
+    const int nbins = kNErecoBins[is];
     for(int ibin = 1; ibin <= nbins; ibin++) {
       double ns = fSuperkMC->CurrErecoSpectrumArray(s)[ibin-1];
       this->CurrPredictedErecoSpectrumArray(s)[ibin-1] = ns;
@@ -985,6 +985,22 @@ PhysParamList SuperkExpectation::Tweaks(void)
   pl.SetValue( kNuisSKDetFSI015,  this->GetSuperkDetectorFSI()->CurrentValue(kNuisSKDetFSI015) );
   pl.SetValue( kNuisSKDetFSI016,  this->GetSuperkDetectorFSI()->CurrentValue(kNuisSKDetFSI016) );
   pl.SetValue( kNuisSKDetFSI017,  this->GetSuperkDetectorFSI()->CurrentValue(kNuisSKDetFSI017) );
+#ifdef SKCORRELATIONS
+  pl.SetValue( kNuisSKDetFSI018,  this->GetSuperkDetectorFSI()->CurrentValue(kNuisSKDetFSI018) );
+  pl.SetValue( kNuisSKDetFSI019,  this->GetSuperkDetectorFSI()->CurrentValue(kNuisSKDetFSI019) );
+  pl.SetValue( kNuisSKDetFSI020,  this->GetSuperkDetectorFSI()->CurrentValue(kNuisSKDetFSI020) );
+  pl.SetValue( kNuisSKDetFSI021,  this->GetSuperkDetectorFSI()->CurrentValue(kNuisSKDetFSI021) );
+  pl.SetValue( kNuisSKDetFSI022,  this->GetSuperkDetectorFSI()->CurrentValue(kNuisSKDetFSI022) );
+  pl.SetValue( kNuisSKDetFSI023,  this->GetSuperkDetectorFSI()->CurrentValue(kNuisSKDetFSI023) );
+  pl.SetValue( kNuisSKDetFSI024,  this->GetSuperkDetectorFSI()->CurrentValue(kNuisSKDetFSI024) );
+  pl.SetValue( kNuisSKDetFSI025,  this->GetSuperkDetectorFSI()->CurrentValue(kNuisSKDetFSI025) );
+  pl.SetValue( kNuisSKDetFSI026,  this->GetSuperkDetectorFSI()->CurrentValue(kNuisSKDetFSI026) );
+  pl.SetValue( kNuisSKDetFSI027,  this->GetSuperkDetectorFSI()->CurrentValue(kNuisSKDetFSI027) );
+  pl.SetValue( kNuisSKDetFSI028,  this->GetSuperkDetectorFSI()->CurrentValue(kNuisSKDetFSI028) );
+  pl.SetValue( kNuisSKDetFSI029,  this->GetSuperkDetectorFSI()->CurrentValue(kNuisSKDetFSI029) );
+  pl.SetValue( kNuisSKDetFSI030,  this->GetSuperkDetectorFSI()->CurrentValue(kNuisSKDetFSI030) );
+  pl.SetValue( kNuisSKDetFSI031,  this->GetSuperkDetectorFSI()->CurrentValue(kNuisSKDetFSI031) );
+#endif
 #endif // FSI_BINS=1
 #endif // SKFSITOGETHER
 

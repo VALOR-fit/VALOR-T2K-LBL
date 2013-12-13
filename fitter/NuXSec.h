@@ -22,6 +22,7 @@
 #include <TXMLEngine.h>
 #include <TH2.h>
 #include <TSpline.h>
+#include <TFile.h>
 
 #include "Conventions.h"
 #include "Utilities.h"

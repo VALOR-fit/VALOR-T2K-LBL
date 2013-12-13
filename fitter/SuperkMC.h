@@ -154,8 +154,8 @@ private:
   double     fMCTemplArrayMECMartini[conv::kNEtrueBins1Rmu][conv::kNErecoBins1Rmu]; ///< Martini MEC template
   double     fMCTemplArrayMECNieves [conv::kNEtrueBins1Rmu][conv::kNErecoBins1Rmu]; ///< Nieves MEC template
   TH2D *     fMCVariableTempl[kns][knm];
-  int        fMCVariableTemplArray1Rmu[kns][knm][conv::kMCNEtrueBins][conv::kXsNErecoBins1Rmu];
-  int        fMCVariableTemplArray1Re [kns][knm][conv::kMCNEtrueBins][conv::kXsNErecoBins1Re];
+  int        fMCVariableTemplArray1Rmu[knm][conv::kMCNEtrueBins][conv::kXsNErecoBins1Rmu];
+  int        fMCVariableTemplArray1Re [knm][conv::kMCNEtrueBins][conv::kXsNErecoBins1Re];
   int        fMCTemplArrayOri1Rmu[knm][conv::kNEtrueBins1Rmu][conv::kNErecoBins1Rmu];
   int        fMCTemplArrayOri1Re [knm][conv::kNEtrueBins1Re][conv::kNErecoBins1Re];
   double     fMCTemplArrayNom1Rmu[knm][conv::kNEtrueBins1Rmu][conv::kNErecoBins1Rmu];

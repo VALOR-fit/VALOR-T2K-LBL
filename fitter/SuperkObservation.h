@@ -63,6 +63,7 @@ private:
   void CleanUp (void);
 
   TH1D *  fErDistr[kns];  ///< Reconstructed energy spectrum for each sample
+  util::ArrIdx * arr_index; //! Pointer to singleton, do not save in TObject
 
 ClassDef(SuperkObservation, 3)
 };

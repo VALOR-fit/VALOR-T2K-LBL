@@ -917,6 +917,181 @@ static const SuperkMode_t kSKReactionModes[kns][knm] = {
   
 };
 
+
+//
+// -----------------------------------------------------------------------
+//
+// Info on flavours and CC/NC modes
+//
+// -----------------------------------------------------------------------
+//
+
+ static const bool kIsCC[kns][knm]= {
+   // > 1 muon-like ring
+   { 1,
+     1,
+     1,
+     1,
+     0,
+     0,
+#ifdef __USE_OSC_NUMU_MC_TEMPLATES__
+     1,
+     1,
+     1,
+     1,
+#endif
+     1,
+     1,
+     1,
+     1,
+     0,
+     0,
+#ifdef __USE_OSC_NUMUBAR_MC_TEMPLATES__
+     1,
+     1,
+     1,
+     1,
+#endif
+     1,
+     1,
+     1,
+     1,
+     0,
+     0,
+     1,
+     1,
+     1,
+     1,
+     0,
+     0,
+#ifdef __USE_OSC_NUEBAR_MC_TEMPLATES__
+     1,
+     1,
+     1,
+     1,
+#endif
+     1,
+     1,
+     1,
+     1,
+#ifdef USE_MEC
+     1,
+#else
+     -1,
+#endif
+#ifndef __USE_OSC_NUMU_MC_TEMPLATES__
+     -1,
+     -1,
+     -1,
+     -1,
+#endif
+#ifndef __USE_OSC_NUMUBAR_MC_TEMPLATES__
+     -1,
+     -1,
+     -1,
+     -1,
+#endif
+#ifndef __USE_OSC_NUEBAR_MC_TEMPLATES__
+     -1,
+     -1,
+     -1,
+     -1,
+#endif
+     -1,
+     -1,
+     -1,
+     -1,
+     -1,
+     -1,
+     -1,
+     -1,
+     -1,
+    -1
+   }
+   ,
+   // > 1 e-like ring
+   {
+     1,
+     1,
+     1,
+     1,
+     0,
+     0,
+     0,
+#ifdef __USE_OSC_NUMU_MC_TEMPLATES__
+     1,
+     1,
+     1,
+     1,
+#endif
+     1,
+     1,
+     1,
+     1,
+     0,
+     0,
+     0,
+#ifdef __USE_OSC_NUMUBAR_MC_TEMPLATES__
+     1,
+     1,
+     1,
+     1,
+#endif
+     1,
+     1,
+     1,
+     1,
+     0,
+     0,
+     0,
+     1,
+     1,
+     1,
+     1,
+     0,
+     0,
+     0,
+#ifdef __USE_OSC_NUEBAR_MC_TEMPLATES__
+     1,
+     1,
+     1,
+     1,
+#endif
+     1,
+     1,
+     1,
+     1,
+#ifndef __USE_OSC_NUMU_MC_TEMPLATES__
+     -1,
+     -1,
+     -1,
+     -1,
+#endif
+#ifndef __USE_OSC_NUMUBAR_MC_TEMPLATES__
+     -1,
+     -1,
+     -1,
+     -1,
+#endif
+#ifndef __USE_OSC_NUEBAR_MC_TEMPLATES__
+     -1,
+     -1,
+     -1,
+     -1,
+#endif
+     -1,
+     -1,
+     -1,
+     -1,
+     -1,
+     -1,
+    -1
+
+   }
+ };
+
+
+
 //
 // ------------------------------------------------------------------------
 //
@@ -4884,6 +5059,11 @@ static const int kNumOfNuisanceParams = kNumOfParamsInBANFFfit + kNumOfSKDetFSIP
 //static const int kNumOfNuisanceParamsJoint = kNumOfParamsInBANFFfit + kNumOfFSIParams     + kNumOfXSecSyst - (kNumOfParamsInBANFFfit - kNumOfFluxParamsInBANFFfit) + kNumOfSKDetParams;
 static const int kNumOfNuisanceParams = kNumOfParamsInBANFFfit + kNumOfFSIParams + kNumOfSKDetParams + kNumOfUncXSecSyst ;
 #endif
+
+static const int kNErecoBins[2] = { kNErecoBins1Rmu, kNErecoBins1Re };
+static const int kNEtrueBins[2] = { kNEtrueBins1Rmu, kNEtrueBins1Re };
+static const int kNXsErecoBins[2] = { kXsNErecoBins1Rmu, kXsNErecoBins1Re };
+
 
 // A big number, higher than any number of 1d bins. Used to store two bin numbers in one variable. Eg,
 // mask = kBigIndex * xbin + ybin
