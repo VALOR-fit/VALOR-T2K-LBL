@@ -689,6 +689,7 @@ void SuperkMC::FillTemplate(SuperkSample_t s, SuperkMode_t m)
       }//irv
     }//itv
     fNNonEmptyVariableBins[sidx][midx] = i_ne_var;
+    assert(i_ne_var<kMaxVarBins);
     
   } //if valid index
 
@@ -805,6 +806,7 @@ void SuperkMC::FillSpecialTemplates(void)
 	  }//irv
 	}//itv
 	fNNonEmptyVariableBins[sidx][midx] = i_ne_var;
+	assert(i_ne_var<kMaxVarBins);
       }//incl_mec
     
     
@@ -939,6 +941,7 @@ void SuperkMC::FillSpecialTemplates(void)
 	}//irv
       }//itv
       fNNonEmptyVariableBins[sidx][tgt_midx] = i_ne_var;
+      assert(i_ne_var<kMaxVarBins);
 
     }//i
     
@@ -1076,6 +1079,7 @@ void SuperkMC::FillSpecialTemplates(void)
 	}//irv
       }//itv
       fNNonEmptyVariableBins[sidx][tgt_midx] = i_ne_var;
+      assert(i_ne_var<kMaxVarBins);
     }//i
 #endif
 
@@ -1204,6 +1208,7 @@ void SuperkMC::FillSpecialTemplates(void)
 	}//irv
       }//itv
       fNNonEmptyVariableBins[sidx][tgt_midx] = i_ne_var;
+      assert(i_ne_var<kMaxVarBins);
       
     }//i
     
@@ -1252,7 +1257,6 @@ void SuperkMC::CalculateMCStatError(void)
              else                          { fMCStatFracErr1Re [im][it-1][ir-1] = fracerr; }
           }//ir
        }//it
-
      }//m
   }//s
 
