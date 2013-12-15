@@ -1035,12 +1035,13 @@ void SuperkMC::FillSpecialTemplates(void)
 	
 	// loop over variable Ereco
 	for(int irv = 1; irv <= fMCVariableTempl[sidx][tgt_midx]->GetXaxis()->GetNbins(); irv++) {
+	  int nev = 0;
 	  if(s==kSKsFCFV1RingMuLike){
-	    int nev = fMCVariableTemplArray1Rmu[src_midx][itv-1][irv-1];
+	    nev = fMCVariableTemplArray1Rmu[src_midx][itv-1][irv-1];
 	    fMCVariableTemplArray1Rmu[tgt_midx][itv-1][irv-1] = nev;
 	  }
 	  else{
-	    int nev = fMCVariableTemplArray1Re[src_midx][itv-1][irv-1];
+	    nev = fMCVariableTemplArray1Re[src_midx][itv-1][irv-1];
 	    fMCVariableTemplArray1Re[tgt_midx][itv-1][irv-1] = nev;
 	  }
 	
