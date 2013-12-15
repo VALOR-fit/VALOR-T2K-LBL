@@ -47,7 +47,7 @@ void plot_nue_app_osc_prob(
 			   double       input_mixing12     = 0.306,                                        
 			   double       input_mixing13     = 0.025658,
 			   double       input_mixing23     = 0.5,                                        
-			   double       input_dcp          = 0.78539816,
+			   double       input_dcp          = 0.0,//0.78539816,
 			   double       input_dm12sq       = 7.5E-5,                                       
 			   double       input_dm23sq       = 2.4E-3,   
 			   bool         normal = true,
@@ -126,7 +126,7 @@ void plot_nue_app_osc_prob(
 
     double P_leading = 4*c13*c13*s13*s13*s23*s23*sin(phi13)*sin(phi13); //- 8.*c13*c13*s12*s13*s23*(s12*s13*s23)*cos(phi23)*sin(phi13)*sin(phi12);
     double P_matter_1 = (P_leading * 2*a*(1-2*s13*s13))/input_dm13sq;
-    double P_matter_2 = (-8*c13*c13*s13*s13*s23*(1-2*s13*s13)*cos(phi23)*sin(phi13)*1.27*a*baseline)/(Energy);
+    double P_matter_2 = (-8*c13*c13*s13*s13*s23*s23*(1-2*s13*s13)*cos(phi23)*sin(phi13)*1.27*a*baseline)/(Energy);
     double P_cpc = 8.*c13*c13*s12*s13*s23*(c12*c23*cos(input_dcp)-s12*s13*s23)*cos(phi23)*sin(phi13)*sin(phi12);
       //double P_cpc = 8.*c13*c13*s12*s13*s23*(c12*c23*cos(input_dcp))*cos(phi23)*sin(phi13)*sin(phi12);
     //-8.*s12*s12*c13*c13**c12*c23*s12*s23*s13*cos(input_dcp)*sin(phi12)*sin(phi12);
