@@ -176,7 +176,7 @@ double SuperkDetectorFSI::SystWght(
 #endif
        exit(1);
      }
-     iparam = util::ArrIdx::Instance()->SKDetFSISystIdx(p);
+     iparam = arr_index->SKDetFSISystIdx(p);
   }
   const int np = conv::kNumOfSKDetFSIParams;
   if(iparam < 0 || iparam >= np) {
@@ -203,7 +203,7 @@ double SuperkDetectorFSI::CurrentValue(conv::PhysParamId_t p) const
   if(p == kNuisSuperkEnergyScale)
     return fEnergyScaleTwkDial;
   const TVectorD & current_values = *fCurrentValues;
-  int idx = util::ArrIdx::Instance()->SKDetFSISystIdx(p);
+  int idx = arr_index->SKDetFSISystIdx(p);
   return current_values[idx];
 }
 //________________________________________________________________________________________
@@ -212,7 +212,7 @@ double SuperkDetectorFSI::OneSigmaError(PhysParamId_t p) const
   if(p == kNuisSuperkEnergyScale)
     return 1;
   const TMatrixD & cov = *fCovMtrx;
-  int idx = util::ArrIdx::Instance()->SKDetFSISystIdx(p);
+  int idx = arr_index->SKDetFSISystIdx(p);
   return TMath::Sqrt(cov[idx][idx]);
 }//________________________________________________________________________________________
 void SuperkDetectorFSI::Tweak(
@@ -564,11 +564,11 @@ bool SuperkDetectorFSI::ApplySyst(
 //________________________________________________________________________________________
 bool SuperkDetectorFSI::ApplySystToSKMode(conv::PhysParamId_t p, conv::SuperkSample_t s, conv::SuperkMode_t m) const
 {
-  int idx = util::ArrIdx::Instance()->SKDetFSISystIdx(p);
+  int idx = arr_index->SKDetFSISystIdx(p);
   if (idx == -1) return false;
-  int is = util::ArrIdx::Instance()->SuperkSampleIdx(s);
+  int is = arr_index->SuperkSampleIdx(s);
   if (is == -1) return false;
-  int im = util::ArrIdx::Instance()->SuperkModeIdx(s,m);
+  int im = arr_index->SuperkModeIdx(s,m);
   if (im == -1) return false;
 
   bool apply = conv::kSKDetFSIApplySKDetFSIParamToSKMode[is][im][idx];
@@ -582,7 +582,7 @@ bool SuperkDetectorFSI::ApplySystToSKMode(conv::PhysParamId_t p, conv::SuperkSam
 //________________________________________________________________________________________
 bool SuperkDetectorFSI::ApplySystToEnergyBin(conv::PhysParamId_t p, double Ereco) const
 {
-  int idx = util::ArrIdx::Instance()->SKDetFSISystIdx(p);
+  int idx = arr_index->SKDetFSISystIdx(p);
   if (idx == -1) return false;
 
   bool apply = Ereco >= conv::kSKDetFSIParamsErecoCut[idx][0] &&
