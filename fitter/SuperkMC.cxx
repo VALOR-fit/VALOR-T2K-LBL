@@ -2545,19 +2545,18 @@ void SuperkMC::ApplyPhysHypothesisToTemplates(void)
 	for(int im=0; im < knm; im++) {
 	  SuperkMode_t m = kSKReactionModes[is][im];
 	  if(m == kSKmUndefined) continue;
+	  if(not kIsCC[is][im]) continue;
 	  // osc. probability
 	  double posc = 1.;
-	  if(kIsCC[is][im])
-	  {
-	    if     ( util::IsNuMu(m)      ) { posc = p_numu_numu;       }
-	    else if( util::IsNuMuBar(m)   ) { posc = p_numubar_numubar; }
-	    else if( util::IsNuE(m)       ) { posc = p_nue_nue;         } 
-	    else if( util::IsNuEBar(m)    ) { posc = p_nuebar_nuebar;   }
-	    else if( util::IsOscNuMu(m)   ) { posc = p_nue_numu;        }
-	    else if( util::IsOscNuMuBar(m)) { posc = p_nuebar_numubar;  }
-	    else if( util::IsSignalNuE(m) ) { posc = p_numu_nue;        }
-	    else if( util::IsOscNuEBar(m) ) { posc = p_numubar_nuebar;  }
-	  }
+	  if     ( util::IsNuMu(m)      ) { posc = p_numu_numu;       }
+	  else if( util::IsNuMuBar(m)   ) { posc = p_numubar_numubar; }
+	  else if( util::IsNuE(m)       ) { posc = p_nue_nue;         } 
+	  else if( util::IsNuEBar(m)    ) { posc = p_nuebar_nuebar;   }
+	  else if( util::IsOscNuMu(m)   ) { posc = p_nue_numu;        }
+	  else if( util::IsOscNuMuBar(m)) { posc = p_nuebar_numubar;  }
+	  else if( util::IsSignalNuE(m) ) { posc = p_numu_nue;        }
+	  else if( util::IsOscNuEBar(m) ) { posc = p_numubar_nuebar;  }
+	  
 	  // loop over Ereco
 	  for(int ir = 1; ir <= n_ereco_bins ; ir++) {
 	    // number of events in (Ereco,Etrue) bin (systematics applied)

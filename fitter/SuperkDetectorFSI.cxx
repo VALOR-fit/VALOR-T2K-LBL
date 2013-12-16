@@ -557,9 +557,9 @@ bool SuperkDetectorFSI::ApplySyst(
   conv::PhysParamId_t p, conv::SuperkSample_t s, conv::SuperkMode_t m, double Ereco) const
 {
   bool apply2mode = this->ApplySystToSKMode(p,s,m);
+  if (not apply2mode) return false;
   bool apply2bin  = this->ApplySystToEnergyBin(p,Ereco);
-  bool apply = apply2mode && apply2bin;
-  return apply;
+  return apply2bin;
 }
 //________________________________________________________________________________________
 bool SuperkDetectorFSI::ApplySystToSKMode(conv::PhysParamId_t p, conv::SuperkSample_t s, conv::SuperkMode_t m) const
