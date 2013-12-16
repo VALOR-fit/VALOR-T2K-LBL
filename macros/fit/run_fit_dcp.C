@@ -21,7 +21,7 @@ void run_fit_dcp
   const char * config_file             = "analysis_configuration.xml",        /* analysis configuration file */
   bool         stat_fluctuations       = true,                                /* include statistical fluctuation in toy MC expts? */
   int          tweak_systematics       = 1,                                   /* generate toy MC with randomized systematics? */
-  const char * fit_param_list          = "nuosc3f_dcpsensitivity_fix5",       /* fit parameter list for the given physics hypothesis (see FitParamList.h) */
+  const char * fit_param_list          = "nuosc3f_dcpsensitivity_13error",       /* fit parameter list for the given physics hypothesis (see FitParamList.h) */
   const char * fit_option              = "minuit",                            /* fitter option */
   bool         store_toy_expts         = true,                                /* disable this if you don't want to store the toy MC expts     */
   bool         store_bestfit_spectrum  = true,                                /* disable this if you don't want to store the best-fit spectra */
@@ -635,7 +635,7 @@ void run_fit_dcp
      //
      /////INVERTED HIERARCHY
      //
-     Opt::Instance()->gMassHierarchyAssumed = conv::kNmhNormal;
+     Opt::Instance()->gMassHierarchyAssumed = conv::kNmhInverted;
      Opt::Instance()->gOscDmsqScheme        = conv::kNuDmsq12andAbs23;
 
      //Fit again, fixing deltacp to 0. Start from nominal (not previous best fits) for other parameters
