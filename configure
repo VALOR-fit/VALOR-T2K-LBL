@@ -5,6 +5,8 @@
 # Options: 
 #    --enable-gsl-fitter
 #    --production-mode
+#    --fhc-running
+#    --rhc-running
 #    --numudisap-only
 #    --nueapp-only
 #    --seed-trandom-zero
@@ -33,6 +35,16 @@ foreach (@ARGV) {
      print BLD "// If turned on, code is made faster by not filling (or even initialising) histograms. \n";
      print BLD "// This causes some macros to fail (mostly those in spectra). \n";
      print BLD "#define PRODUCTIONMODE \n\n";
+  }
+
+  elsif($_ eq '--fhc-running') {
+      print BLD "// For forward horn current running. \n";
+      print BLD "#define __FHC_RUNNING__ \n\n";
+  }
+
+  elsif($_ eq '--rhc-running') {
+      print BLD "// For reverse horn current running. \n";
+      print BLD "#define __RHC_RUNNING__ \n\n";
   }
 
   elsif($_ eq '--numudisap-only') { 
