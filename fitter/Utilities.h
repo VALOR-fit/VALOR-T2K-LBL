@@ -37,7 +37,8 @@ class TH1D;
 class TH2D;
 class TAxis;
 
-#include "Conventions.h"
+//#include "Conventions.h"
+#include "Formatting.h"
 
 using std::string;
 using std::vector;

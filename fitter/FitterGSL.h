@@ -41,7 +41,8 @@
 #include <Math/IFunction.h>
 #endif
 
-#include "Conventions.h"
+//#include "Conventions.h"
+#include "Formatting.h"
 #include "FitterABC.h"
 #include "FitInputs.h"
 

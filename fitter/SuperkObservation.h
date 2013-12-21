@@ -21,7 +21,8 @@
 class TH1D;
 class TObjArray;
 
-#include "Conventions.h"
+//#include "Conventions.h"
+#include "Formatting.h"
 #include "SuperkExpectation.h"
 #include "FitParamList.h"
 

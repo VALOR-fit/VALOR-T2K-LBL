@@ -24,7 +24,8 @@
 #include <TSpline.h>
 #include <TFile.h>
 
-#include "Conventions.h"
+//#include "Conventions.h"
+#include "Formatting.h"
 #include "Utilities.h"
 
 using t2kana::conv::kns;

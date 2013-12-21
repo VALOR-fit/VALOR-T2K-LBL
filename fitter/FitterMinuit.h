@@ -21,7 +21,8 @@
 #include <TMinuit.h>
 #include <TString.h>
 
-#include "Conventions.h"
+//#include "Conventions.h"
+#include "Formatting.h"
 #include "FitterABC.h"
 
 namespace t2kana {

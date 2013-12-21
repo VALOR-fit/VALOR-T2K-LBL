@@ -30,7 +30,8 @@
 #include <Math/Minimizer.h>
 #include <Fit/Fitter.h>
 
-#include "Conventions.h"
+//#include "Conventions.h"
+#include "Formatting.h"
 
 using std::string;
 using std::map;

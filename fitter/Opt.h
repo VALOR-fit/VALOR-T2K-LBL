@@ -18,7 +18,8 @@
 
 #include <iostream>
 
-#include "Conventions.h"
+//#include "Conventions.h"
+#include "Formatting.h"
 
 using std::ostream;
 

@@ -33,7 +33,8 @@
 #include "FitParamList.h"
 #include "PhysParamList.h"
 #include "PhysHypothesis.h"
-#include "Conventions.h"
+//#include "Conventions.h"
+#include "Formatting.h"
 #include "Utilities.h"
 
 using std::string;
