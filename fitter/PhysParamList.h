@@ -24,8 +24,7 @@
 
 #include <TObject.h>
 
-//#include "Conventions.h"
-#include "Formatting.h"
+#include "Conventions.h"
 #include "FitParamList.h"
 
 using std::ostream;

@@ -22,8 +22,7 @@
 #include <TXMLEngine.h>
 #include <TH1D.h>
 
-//#include "Conventions.h"
-#include "Formatting.h"
+#include "Conventions.h"
 
 class TVirtualPad;
 

@@ -27,8 +27,7 @@
 
 #include <iostream>
 
-//#include "Conventions.h"
-#include "Formatting.h"
+#include "Conventions.h"
 
 class TH1D;
 class TH2D;

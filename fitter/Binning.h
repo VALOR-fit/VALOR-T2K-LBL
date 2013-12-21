@@ -20,7 +20,8 @@ Changes since 2011_v0.9.0:
 #ifndef binning_h
 #define binning_h
 
-#include "SKFSISystConv.h"
+#include "AnalysisOptions.h"
+#include "SamplesAndModes.h"
 
 namespace t2kana {
 namespace conv   {

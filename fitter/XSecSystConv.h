@@ -20,7 +20,9 @@ Changes since 2011_v0.9.0:
 #ifndef xsec_syst_conv_h
 #define xsec_syst_conv_h
 
-#include "BANFFSystConv.h"
+#include "AnalysisOptions.h"
+#include "Enumerations.h"
+#include "SamplesAndModes.h"
 
 namespace t2kana {
 namespace conv   {

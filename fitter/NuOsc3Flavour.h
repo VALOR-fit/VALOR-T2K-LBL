@@ -19,8 +19,7 @@
 #include <iostream>
 #include <math.h>
 
-//#include "Conventions.h"
-#include "Formatting.h"
+#include "Conventions.h"
 
 namespace t2kana {
 

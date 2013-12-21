@@ -24,8 +24,7 @@
 #include "HFitInterface.h"
 
 #include "FitParamList.h"
-//#include "Conventions.h"
-#include "Formatting.h"
+#include "Conventions.h"
 
 namespace t2kana {
   

@@ -21,6 +21,7 @@ Changes since 2011_v0.9.0:
 #define samples_modes_h
 
 #include "Enumerations.h"
+#include "AnalysisOptions.h"
 
 namespace t2kana {
 namespace conv   {

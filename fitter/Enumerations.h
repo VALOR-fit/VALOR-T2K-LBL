@@ -20,7 +20,7 @@ Changes since 2011_v0.9.0:
 #ifndef enumerations_h
 #define enumerations_h
 
-#include "ParameterValues.h"
+#include "AnalysisOptions.h"
 
 namespace t2kana {
 namespace conv   {

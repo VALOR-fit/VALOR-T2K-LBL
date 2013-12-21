@@ -20,7 +20,8 @@ Changes since 2011_v0.9.0:
 #ifndef formatting_h
 #define formatting_h
 
-#include "Binning.h"
+#include "AnalysisOptions.h"
+#include "SamplesAndModes.h"
 
 namespace t2kana {
 namespace conv   {

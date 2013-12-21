@@ -20,8 +20,7 @@
 #include <TMath.h>
 
 #include "NuOsc3Flavour.h"
-//#include "Conventions.h"
-#include "Formatting.h"
+#include "Conventions.h"
 #include "Utilities.h"
 #include "Opt.h"
 

@@ -19,8 +19,6 @@ Changes since 2011_v0.9.0:
 #ifndef parameter_values_h
 #define parameter_values_h
 
-#include "AnalysisOptions.h"
-
 namespace t2kana {
 namespace conv   {
 

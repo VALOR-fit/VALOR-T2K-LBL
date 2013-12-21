@@ -37,8 +37,7 @@
 #include "FitInputs.h" 
 #include "FitParamList.h" 
 #include "Utilities.h"
-//#include "Conventions.h"
-#include "Formatting.h"
+#include "Conventions.h"
 #include "Opt.h"
 #include "Rnd.h"
 

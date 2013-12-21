@@ -29,8 +29,7 @@
 #include "Math/FitMethodFunction.h"
 #include "HFitInterface.h"
 
-//#include "Conventions.h"
-#include "Formatting.h"
+#include "Conventions.h"
 #include "SuperkObservation.h"
 #include "SuperkExpectation.h"
 #include "SuperkDetector.h"

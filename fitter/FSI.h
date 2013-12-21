@@ -25,8 +25,7 @@
 
 #include <iostream>
 
-//#include "Conventions.h"
-#include "Formatting.h"
+#include "Conventions.h"
 
 using t2kana::conv::kns;
 using t2kana::conv::knm;

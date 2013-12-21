@@ -24,8 +24,7 @@
 #include <Minuit2/MnUserCovariance.h>
 #include <Minuit2/FunctionMinimum.h>
 
-//#include "Conventions.h"
-#include "Formatting.h"
+#include "Conventions.h"
 #include "FitterABC.h"
 #include "FitInputs.h"
 
