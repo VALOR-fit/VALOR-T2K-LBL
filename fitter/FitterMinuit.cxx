@@ -171,8 +171,14 @@ void FitterMinuit::Init(FitInputs * fit_inputs, Option_t * option)
   fNFitBins = 0;  
   for(int is = 0; is < kns; is++) {
     SuperkSample_t s = kSKSamples[is];
+#ifdef __FHC_RUNNING__
     if(s == kSKsFCFV1RingMuLike) fNFitBins += kNErecoBins1Rmu;
     if(s == kSKsFCFV1RingELike ) fNFitBins += kNErecoBins1Re;
+#endif
+#ifdef __RHC_RUNNING__
+    if(s == kSKsRHCFCFV1RingMuLike) fNFitBins += kRHCNErecoBins1Rmu;
+    if(s == kSKsRHCFCFV1RingELike ) fNFitBins += kRHCNErecoBins1Re;
+#endif
   }  
   fNFreeFitParams = fit_params.GetNumberFreeParameters();
   

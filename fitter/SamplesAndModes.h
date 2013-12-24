@@ -44,6 +44,8 @@ namespace conv   {
 //
 
 static const SuperkSample_t kSKSamples[kns] = {
+
+#ifdef __FHC_RUNNING__
 #ifdef __NUMUONLY__
   kSKsFCFV1RingMuLike,
   kSKsUndefined
@@ -56,6 +58,21 @@ static const SuperkSample_t kSKSamples[kns] = {
   kSKsFCFV1RingELike
 #endif
 #endif
+#ifdef __RHC_RUNNING__
+#ifdef __NUMUONLY__
+  kSKsRHCFCFV1RingMuLike,
+  kSKsUndefined
+#else
+#ifdef __NUEONLY__
+  kSKsUndefined,
+  kSKsRHCFCFV1RingELike
+#else
+  kSKsRHCFCFV1RingMuLike,
+  kSKsRHCFCFV1RingELike
+#endif
+#endif
+#endif
+#endif
 };
 
 //
@@ -63,7 +80,7 @@ static const SuperkSample_t kSKSamples[kns] = {
 //
 
 static const SuperkMode_t kSKReactionModes[kns][knm] = {
-
+#ifdef __FHC_RUNNING__
   // > 1 muon-like ring (numu disappearance)
   {
     kSKmNuMuCCQE,         
@@ -243,8 +260,157 @@ static const SuperkMode_t kSKReactionModes[kns][knm] = {
     kSKmUndefined,
     kSKmUndefined
   }
+
+    ,
+
+#endif
   
+#ifdef __RHC_RUNNING__
+  // 1 muon-like ring (numubar disappearance) with reverse horn current                                                                                                                         
+  {
+    kSKmRHCNuMuCCQE,
+    kSKmRHCNuMuCC1pi,
+    kSKmRHCNuMuCCcoh,
+    kSKmRHCNuMuCCoth,
+    kSKmRHCNuMuNC1piC,
+    kSKmRHCNuMuNCoth_mu,
+#ifdef __USE_OSC_NUMU_MC_TEMPLATES__
+    kSKmRHCOscNuMuCCQE,
+    kSKmRHCOscNuMuCC1pi,
+    kSKmRHCOscNuMuCCcoh,
+    kSKmRHCOscNuMuCCoth,
+#endif
+    kSKmRHCNuMuBarCCQE,
+    kSKmRHCNuMuBarCC1pi,
+    kSKmRHCNuMuBarCCcoh,
+    kSKmRHCNuMuBarCCoth,
+    kSKmRHCNuMuBarNC1piC,
+    kSKmRHCNuMuBarNCoth_mu,
+#ifdef __USE_OSC_NUMUBAR_MC_TEMPLATES__
+    kSKmRHCOscNuMuBarCCQE,
+    kSKmRHCOscNuMuBarCC1pi,
+    kSKmRHCOscNuMuBarCCcoh,
+    kSKmRHCOscNuMuBarCCoth,
+#endif
+    kSKmRHCNuECCQE,
+    kSKmRHCNuECC1pi,
+    kSKmRHCNuECCcoh,
+    kSKmRHCNuECCoth,
+    kSKmRHCNuENC1piC,
+    kSKmRHCNuENCoth_mu,
+    kSKmRHCNuEBarCCQE,
+    kSKmRHCNuEBarCC1pi,
+    kSKmRHCNuEBarCCcoh,
+    kSKmRHCNuEBarCCoth,
+    kSKmRHCNuEBarNC1piC,
+    kSKmRHCNuEBarNCoth_mu,
+#ifdef __USE_OSC_NUEBAR_MC_TEMPLATES__
+    kSKmRHCOscNuECCQE,
+    kSKmRHCOscNuECC1pi,
+    kSKmRHCOscNuECCcoh,
+    kSKmRHCOscNuECCoth,
+#endif
+    kSKmRHCSigNuEBarCCQE,
+    kSKmRHCSigNuEBarCC1pi,
+    kSKmRHCSigNuEBarCCcoh,
+    kSKmRHCSigNuEBarCCoth,
+#ifdef USE_MEC
+    kSKmRHCMEC,
+#else
+    kSKmUndefined,
+#endif
+#ifndef __USE_OSC_NUMU_MC_TEMPLATES__
+    kSKmUndefined,
+    kSKmUndefined,
+    kSKmUndefined,
+    kSKmUndefined,
+#endif
+#ifndef __USE_OSC_NUMUBAR_MC_TEMPLATES__
+    kSKmUndefined,
+    kSKmUndefined,
+    kSKmUndefined,
+    kSKmUndefined,
+#endif
+#ifndef __USE_OSC_NUEBAR_MC_TEMPLATES__
+    kSKmUndefined,
+    kSKmUndefined,
+    kSKmUndefined,
+    kSKmUndefined,
+#endif
+    kSKmUndefined,
+    kSKmUndefined,
+    kSKmUndefined,
+    kSKmUndefined,
+    kSKmUndefined,
+    kSKmUndefined,
+    kSKmUndefined,
+    kSKmUndefined,
+    kSKmUndefined,
+    kSKmUndefined
+  }
+
+  ,
+
+  // 1 electron-like ring (nuebar appearance) with reverse horn current                                                                                                                         
+  {
+    kSKmRHCNuMuCCQE,
+    kSKmRHCNuMuCC1pi,
+    kSKmRHCNuMuCCcoh,
+    kSKmRHCNuMuCCoth,
+    kSKmRHCNuMuNC1pi0,
+    kSKmRHCNuMuNCcoh,
+    kSKmRHCNuMuNCoth_e,
+#ifdef __USE_OSC_NUMU_MC_TEMPLATES__
+    kSKmRHCOscNuMuCCQE,
+    kSKmRHCOscNuMuCC1pi,
+    kSKmRHCOscNuMuCCcoh,
+    kSKmRHCOscNuMuCCoth,
+#endif
+    kSKmRHCNuMuBarCCQE,
+    kSKmRHCNuMuBarCC1pi,
+    kSKmRHCNuMuBarCCcoh,
+    kSKmRHCNuMuBarCCoth,
+    kSKmRHCNuMuBarNC1pi0,
+    kSKmRHCNuMuBarNCcoh,
+    kSKmRHCNuMuBarNCoth_e,
+#ifdef __USE_OSC_NUMUBAR_MC_TEMPLATES__
+    kSKmRHCOscNuMuBarCCQE,
+    kSKmRHCOscNuMuBarCC1pi,
+    kSKmRHCOscNuMuBarCCcoh,
+    kSKmRHCOscNuMuBarCCoth,
+#endif
+    kSKmRHCNuECCQE,
+    kSKmRHCNuECC1pi,
+    kSKmRHCNuECCcoh,
+    kSKmRHCNuECCoth,
+    kSKmRHCNuENC1pi0,
+    kSKmRHCNuENCcoh,
+    kSKmRHCNuENCoth_e,
+    kSKmRHCNuEBarCCQE,
+    kSKmRHCNuEBarCC1pi,
+    kSKmRHCNuEBarCCcoh,
+    kSKmRHCNuEBarCCoth,
+    kSKmRHCNuEBarNC1pi0,
+    kSKmRHCNuEBarNCcoh,
+    kSKmRHCNuEBarNCoth_e,
+#ifdef __USE_OSC_NUEBAR_MC_TEMPLATES__
+    kSKmUndefined,
+    kSKmUndefined,
+    kSKmUndefined,
+    kSKmUndefined,
+#endif
+    kSKmUndefined,
+    kSKmUndefined,
+    kSKmUndefined,
+    kSKmUndefined,
+    kSKmUndefined,
+    kSKmUndefined,
+    kSKmUndefined
+  }
+  
+#endif  
 };
+
 
 
 //
@@ -256,6 +422,9 @@ static const SuperkMode_t kSKReactionModes[kns][knm] = {
 //
 
  static const bool kIsCC[kns][knm]= {
+
+#ifdef __FHC_RUNNING__
+
    // > 1 muon-like ring
    { 1,
      1,
@@ -417,7 +586,179 @@ static const SuperkMode_t kSKReactionModes[kns][knm] = {
     -1
 
    }
- };
+
+   ,
+
+#endif
+
+#ifdef __RHC_RUNNING__
+
+   // > 1 muon-like ring
+   { 1,
+     1,
+     1,
+     1,
+     0,
+     0,
+#ifdef __USE_OSC_NUMU_MC_TEMPLATES__
+     1,
+     1,
+     1,
+     1,
+#endif
+     1,
+     1,
+     1,
+     1,
+     0,
+     0,
+#ifdef __USE_OSC_NUMUBAR_MC_TEMPLATES__
+     1,
+     1,
+     1,
+     1,
+#endif
+     1,
+     1,
+     1,
+     1,
+     0,
+     0,
+     1,
+     1,
+     1,
+     1,
+     0,
+     0,
+#ifdef __USE_OSC_NUEBAR_MC_TEMPLATES__
+     1,
+     1,
+     1,
+     1,
+#endif
+     1,
+     1,
+     1,
+     1,
+#ifdef USE_MEC
+     1,
+#else
+     -1,
+#endif
+#ifndef __USE_OSC_NUMU_MC_TEMPLATES__
+     -1,
+     -1,
+     -1,
+     -1,
+#endif
+#ifndef __USE_OSC_NUMUBAR_MC_TEMPLATES__
+     -1,
+     -1,
+     -1,
+     -1,
+#endif
+#ifndef __USE_OSC_NUEBAR_MC_TEMPLATES__
+     -1,
+     -1,
+     -1,
+     -1,
+#endif
+     -1,
+     -1,
+     -1,
+     -1,
+     -1,
+     -1,
+     -1,
+     -1,
+     -1,
+    -1
+   }
+   ,
+   // > 1 e-like ring
+   {
+     1,
+     1,
+     1,
+     1,
+     0,
+     0,
+     0,
+#ifdef __USE_OSC_NUMU_MC_TEMPLATES__
+     1,
+     1,
+     1,
+     1,
+#endif
+     1,
+     1,
+     1,
+     1,
+     0,
+     0,
+     0,
+#ifdef __USE_OSC_NUMUBAR_MC_TEMPLATES__
+     1,
+     1,
+     1,
+     1,
+#endif
+     1,
+     1,
+     1,
+     1,
+     0,
+     0,
+     0,
+     1,
+     1,
+     1,
+     1,
+     0,
+     0,
+     0,
+#ifdef __USE_OSC_NUEBAR_MC_TEMPLATES__
+     1,
+     1,
+     1,
+     1,
+#endif
+     1,
+     1,
+     1,
+     1,
+#ifndef __USE_OSC_NUMU_MC_TEMPLATES__
+     -1,
+     -1,
+     -1,
+     -1,
+#endif
+#ifndef __USE_OSC_NUMUBAR_MC_TEMPLATES__
+     -1,
+     -1,
+     -1,
+     -1,
+#endif
+#ifndef __USE_OSC_NUEBAR_MC_TEMPLATES__
+     -1,
+     -1,
+     -1,
+     -1,
+#endif
+     -1,
+     -1,
+     -1,
+     -1,
+     -1,
+     -1,
+    -1
+   }
+
+#endif
+ 
+};
+
+
 
 } // conv
 } // t2kana

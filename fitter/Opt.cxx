@@ -68,34 +68,77 @@ void Opt::SetDefaults(void)
 
   bool fit_1Rmu = false;
   bool fit_1Re  = false;
+  bool fit_RHC_1Rmu = false;
+  bool fit_RHC_1Re  = false;
 
   for(int is = 0; is < kns; is++) {
     SuperkSample_t s = kSKSamples[is];
+#ifdef __FHC_RUNNING__
     if(s == kSKsFCFV1RingMuLike) fit_1Rmu = true;
     if(s == kSKsFCFV1RingELike ) fit_1Re  = true;
+#endif
+#ifdef __RHC_RUNNING__
+    if(s == kSKsRHCFCFV1RingMuLike) fit_RHC_1Rmu = true;
+    if(s == kSKsRHCFCFV1RingELike ) fit_RHC_1Re  = true;
+#endif
   }
 
+#if defined __FHC_RUNNING__ && defined __RHC_RUNNING__
 #ifdef __NUMUONLY__
   fit_1Re  = false;
+  fit_RHC_1Re  = false;
 #endif
 #ifdef __NUEONLY__
-  fit_1Rmu  = false;
+  fit_1Rmu = false;
+  fit_RHC_1Rmu = false;
+#endif
+#else
+#ifdef __FHC_RUNNING__
+#ifdef __NUMUONLY__
+  fit_1Re  = false;
+  fit_RHC_1Re  = false;
+  fit_RHC_1Rmu = false;
+#endif
+#ifdef __NUEONLY__
+  fit_1Rmu = false;
+  fit_RHC_1Rmu = false;
+  fit_1Re  = false;
+#endif
+#endif
+#ifdef __RHC_RUNNING__
+#ifdef __NUMUONLY__
+  fit_1Re  = false;
+  fit_RHC_1Re  = false;
+  fit_1Rmu = false;
+#endif
+#ifdef __NUEONLY__
+  fit_1Rmu = false;
+  fit_RHC_1Rmu = false;
+  fit_1Re  = false;
+#endif
+#endif
 #endif
 
-  if(fit_1Rmu && fit_1Re) {
+  if(fit_1Rmu && fit_1Re && fit_RHC_1Rmu && fit_RHC_1Re)
+    gOscAnaTypeChoice = kAnaFHCAndRHCCombined;
+  else if(fit_1Rmu && !fit_1Re && fit_RHC_1Rmu && !fit_RHC_1Re) 
+    gOscAnaTypeChoice = kAnaFHCAndRHCNuMuDisappOnly;
+  else if(!fit_1Rmu && fit_1Re && !fit_RHC_1Rmu && fit_RHC_1Re)
+    gOscAnaTypeChoice = kAnaFHCAndRHCNuEAppOnly;
+  else if(fit_1Rmu && fit_1Re && !fit_RHC_1Rmu && !fit_RHC_1Re)
     gOscAnaTypeChoice = kAnaCombined;
-  }
-  else
-  if(fit_1Rmu && !fit_1Re) {
+  else if(fit_1Rmu && !fit_1Re && !fit_RHC_1Rmu && !fit_RHC_1Re)
     gOscAnaTypeChoice = kAnaNuMuDisappOnly;
-  }
-  else
-  if(!fit_1Rmu && fit_1Re) {
+  else if(!fit_1Rmu && fit_1Re && !fit_RHC_1Rmu && !fit_RHC_1Re)
     gOscAnaTypeChoice = kAnaNuEAppOnly;
-  }
-  else {
+  else if(!fit_1Rmu && !fit_1Re && fit_RHC_1Rmu && fit_RHC_1Re)
+    gOscAnaTypeChoice = kAnaRHCCombined;
+  else if(!fit_1Rmu && !fit_1Re && fit_RHC_1Rmu && !fit_RHC_1Re)
+    gOscAnaTypeChoice = kAnaRHCNuMuDisappOnly;
+  else if(!fit_1Rmu && !fit_1Re && !fit_RHC_1Rmu && fit_RHC_1Re)
+    gOscAnaTypeChoice = kAnaRHCNuEAppOnly;
+  else
     gOscAnaTypeChoice = kAnaUndefined;
-  }
 
 }
 //____________________________________________________________________________

@@ -59,6 +59,7 @@ class FitMethodFunc : public ROOT::Math::FitMethodFunction
   ROOT::Math::IMultiGenFunction * Clone(void) const{
     return new FitMethodFunc(*this);
   }
+  
   double DataElement(const double* x, unsigned int i, double* g = 0) const;
   
   virtual  ROOT::Math::BasicFitMethodFunction<ROOT::Math::IBaseFunctionMultiDim>::Type_t Type(void) const ;

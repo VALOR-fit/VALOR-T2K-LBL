@@ -31,6 +31,8 @@ using t2kana::conv::kns;
 using t2kana::conv::knm;
 using t2kana::conv::knwspl1Rmu;
 using t2kana::conv::knwspl1Re;
+using t2kana::conv::kRHCnwspl1Rmu;
+using t2kana::conv::kRHCnwspl1Re;
 
 namespace t2kana {
 
@@ -148,6 +150,8 @@ private:
   BANFF *     fBANFF;               ///< BANFF fit info
   TSpline3 *  fXSecWghtSpl1Rmu[knwspl1Rmu]; ///< Weight splines. Index is function of sample, mode, systematic param, Ereco bin, Etrue bin
   TSpline3 *  fXSecWghtSpl1Re[knwspl1Re]; ///< Weight splines. Index is function of sample, mode, systematic param, Ereco bin, Etrue bin
+  TSpline3 *  fRHCXSecWghtSpl1Rmu[kRHCnwspl1Rmu]; ///< Weight splines. Index is function of sample, mode, systematic param, Ereco bin, Etrue bin
+  TSpline3 *  fRHCXSecWghtSpl1Re[kRHCnwspl1Re]; ///< Weight splines. Index is function of sample, mode, systematic param, Ereco bin, Etrue bin
   TH2D *      fXsBinningTempl[kns][knm]; ///< Ereco-Etrue templates in XSec binning scheme
 
   // tweaking dials

@@ -127,6 +127,10 @@ private:
    double  fPredictErecoSpectrumArrayTot1Re [conv::kNErecoBins1Re];
    double  fPredictErecoSpectrumArray1Rmu   [conv::knm][conv::kNErecoBins1Rmu];
    double  fPredictErecoSpectrumArray1Re    [conv::knm][conv::kNErecoBins1Re];
+   double  fPredictRHCErecoSpectrumArrayTot1Rmu[conv::kRHCNErecoBins1Rmu];
+   double  fPredictRHCErecoSpectrumArrayTot1Re [conv::kRHCNErecoBins1Re];
+   double  fPredictRHCErecoSpectrumArray1Rmu   [conv::knm][conv::kRHCNErecoBins1Rmu];
+   double  fPredictRHCErecoSpectrumArray1Re    [conv::knm][conv::kRHCNErecoBins1Re];
 
 ClassDef(SuperkExpectation, 5)
 };

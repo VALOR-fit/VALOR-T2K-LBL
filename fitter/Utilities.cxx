@@ -3141,8 +3141,14 @@ string t2kana::util::AsStringCompact_KDI(PhysParamId_t p)
 string t2kana::util::AsString(t2kana::conv::SuperkSample_t s)
 {
   switch(s) {
+#ifdef __FHC_RUNNING__
      case ( kSKsFCFV1RingMuLike ) : return "FCFV 1-ring mu-like"; break;
      case ( kSKsFCFV1RingELike  ) : return "FCFV 1-ring e-like";  break;
+#endif
+#ifdef __RHC_RUNNING__
+  case ( kSKsRHCFCFV1RingMuLike ) : return "FCFV 1-ring mu-like (RHC running)"; break;
+  case ( kSKsRHCFCFV1RingELike  ) : return "FCFV 1-ring e-like (RHC running)";  break;
+#endif
      default                      : return "--";
   }
   return "";
@@ -3281,8 +3287,14 @@ string t2kana::util::AsString(t2kana::conv::OscChannelId_t osch)
 string t2kana::util::AsStringTex(t2kana::conv::SuperkSample_t s)
 {
   switch(s) {
+#ifdef __FHC_RUNNING__
      case ( kSKsFCFV1RingMuLike ) : return "1 $\\mu$-like ring"; break;
      case ( kSKsFCFV1RingELike  ) : return "1 e-like ring";      break;
+#endif
+#ifdef __RHC_RUNNING__
+     case ( kSKsRHCFCFV1RingMuLike ) : return "1 $\\mu$-like (RHC running)"; break;
+     case ( kSKsRHCFCFV1RingELike  ) : return "1 e-like ring (RHC running)";      break;
+#endif
      default                      : return "--";
   }
   return "";
@@ -3363,8 +3375,14 @@ string t2kana::util::AsStringRooTex(t2kana::conv::SuperkSample_t s)
 // idiosyncracies (this method can be used for building TLegends etc).
 //
   switch(s) {
+#ifdef __FHC_RUNNING__
      case ( kSKsFCFV1RingMuLike ) : return "1 #mu-like ring"; break;
      case ( kSKsFCFV1RingELike  ) : return "1 e-like ring";   break;
+#endif
+#ifdef __RHC_RUNNING__
+     case ( kSKsRHCFCFV1RingMuLike ) : return "1 #mu-like ring (RHC running)"; break;
+     case ( kSKsRHCFCFV1RingELike  ) : return "1 e-like ring (RHC running)";   break;
+#endif
      default                      : return "";
   }
   return "";
@@ -3495,8 +3513,14 @@ string t2kana::util::AsStringCompact (t2kana::conv::SuperkSample_t s)
 // Compact string used for naming output histograms stored ROOT files
 //
   switch(s) {
+#ifdef __FHC_RUNNING__
      case ( kSKsFCFV1RingMuLike ) : return "1Rmu"; break;
      case ( kSKsFCFV1RingELike  ) : return "1Re";  break;
+#endif
+#ifdef __RHC_RUNNING__
+     case ( kSKsRHCFCFV1RingMuLike ) : return "RHC1Rmu"; break;
+     case ( kSKsRHCFCFV1RingELike  ) : return "RHC1Re";  break;
+#endif
      default                      : return "";
   }
   return "";
@@ -3748,9 +3772,14 @@ t2kana::conv::PhysHypothesis_t t2kana::util::PhysHypFromString(string sh)
 //____________________________________________________________________________
 t2kana::conv::SuperkSample_t t2kana::util::SKSampleFromString(string sh)
 {
+#ifdef __FHC_RUNNING__
   if(sh == "1Rmu") return kSKsFCFV1RingMuLike;
   if(sh == "1Re" ) return kSKsFCFV1RingELike;
-
+#endif
+#ifdef __RHC_RUNNING__
+  if(sh == "RHC1Rmu") return kSKsRHCFCFV1RingMuLike;
+  if(sh == "RHC1Re" ) return kSKsRHCFCFV1RingELike;
+#endif
   return kSKsUndefined;
 }
 //____________________________________________________________________________
@@ -5071,8 +5100,14 @@ bool t2kana::util::IsAntiNeutrino(int pdg_code)
 int t2kana::util::NumErecoBins(t2kana::conv::SuperkSample_t s)
 {
   switch(s) {
+#ifdef __FHC_RUNNING__
      case ( kSKsFCFV1RingMuLike ) : return kNErecoBins1Rmu; break;
      case ( kSKsFCFV1RingELike  ) : return kNErecoBins1Re;  break;
+#endif
+#ifdef __RHC_RUNNING__
+     case ( kSKsRHCFCFV1RingMuLike ) : return kRHCNErecoBins1Rmu; break;
+     case ( kSKsRHCFCFV1RingELike  ) : return kRHCNErecoBins1Re;  break;
+#endif
      default                      : return 0;
   }
   return 0;
@@ -5081,8 +5116,14 @@ int t2kana::util::NumErecoBins(t2kana::conv::SuperkSample_t s)
 const double * t2kana::util::ErecoBinEdges(t2kana::conv::SuperkSample_t s)
 {
   switch(s) {
+#ifdef __FHC_RUNNING__
      case ( kSKsFCFV1RingMuLike ) : return kErecoBinEdges1Rmu; break;
      case ( kSKsFCFV1RingELike  ) : return kErecoBinEdges1Re;  break;
+#endif
+#ifdef __RHC_RUNNING__
+     case ( kSKsRHCFCFV1RingMuLike ) : return kRHCErecoBinEdges1Rmu; break;
+     case ( kSKsRHCFCFV1RingELike  ) : return kRHCErecoBinEdges1Re;  break;
+#endif
      default                      : return 0;
   }
   return 0;
@@ -5091,8 +5132,14 @@ const double * t2kana::util::ErecoBinEdges(t2kana::conv::SuperkSample_t s)
 double t2kana::util::ErecoBinEdges(t2kana::conv::SuperkSample_t s, int i)
 {
   switch(s) {
+#ifdef __FHC_RUNNING__
      case ( kSKsFCFV1RingMuLike ) : return kErecoBinEdges1Rmu[i]; break;
      case ( kSKsFCFV1RingELike  ) : return kErecoBinEdges1Re[i];  break;
+#endif
+#ifdef __RHC_RUNNING__
+     case ( kSKsRHCFCFV1RingMuLike ) : return kRHCErecoBinEdges1Rmu[i]; break;
+     case ( kSKsRHCFCFV1RingELike  ) : return kRHCErecoBinEdges1Re[i];  break;
+#endif
      default                      : return 0;
   }
   return 0;
@@ -5101,8 +5148,14 @@ double t2kana::util::ErecoBinEdges(t2kana::conv::SuperkSample_t s, int i)
 int t2kana::util::NumXsecErecoBins(t2kana::conv::SuperkSample_t s)
 {
   switch(s) {
+#ifdef __FHC_RUNNING__
      case ( kSKsFCFV1RingMuLike ) : return kXsNErecoBins1Rmu; break;
      case ( kSKsFCFV1RingELike  ) : return kXsNErecoBins1Re;  break;
+#endif
+#ifdef __RHC_RUNNING__
+     case ( kSKsRHCFCFV1RingMuLike ) : return kRHCXsNErecoBins1Rmu; break;
+     case ( kSKsRHCFCFV1RingELike  ) : return kRHCXsNErecoBins1Re;  break;
+#endif
      default                      : return 0;
   }
   return 0;
@@ -5111,8 +5164,14 @@ int t2kana::util::NumXsecErecoBins(t2kana::conv::SuperkSample_t s)
 const double * t2kana::util::XsecErecoBinEdges(t2kana::conv::SuperkSample_t s)
 {
   switch(s) {
+#ifdef __FHC_RUNNING__
      case ( kSKsFCFV1RingMuLike ) : return kXsErecoBinEdges1Rmu; break;
      case ( kSKsFCFV1RingELike  ) : return kXsErecoBinEdges1Re;  break;
+#endif
+#ifdef __RHC_RUNNING__
+     case ( kSKsRHCFCFV1RingMuLike ) : return kRHCXsErecoBinEdges1Rmu; break;
+     case ( kSKsRHCFCFV1RingELike  ) : return kRHCXsErecoBinEdges1Re;  break;
+#endif
      default                      : return 0;
   }
   return 0;
@@ -5121,8 +5180,14 @@ const double * t2kana::util::XsecErecoBinEdges(t2kana::conv::SuperkSample_t s)
 double t2kana::util::XsecErecoBinEdges(t2kana::conv::SuperkSample_t s, int i)
 {
   switch(s) {
+#ifdef __FHC_RUNNING__
      case ( kSKsFCFV1RingMuLike ) : return kXsErecoBinEdges1Rmu[i]; break;
      case ( kSKsFCFV1RingELike  ) : return kXsErecoBinEdges1Re[i];  break;
+#endif
+#ifdef __RHC_RUNNING__
+     case ( kSKsRHCFCFV1RingMuLike ) : return kRHCXsErecoBinEdges1Rmu[i]; break;
+     case ( kSKsRHCFCFV1RingELike  ) : return kRHCXsErecoBinEdges1Re[i];  break;
+#endif
      default                      : return 0;
   }
   return 0;
@@ -5131,8 +5196,14 @@ double t2kana::util::XsecErecoBinEdges(t2kana::conv::SuperkSample_t s, int i)
 int t2kana::util::NumEtrueBins(t2kana::conv::SuperkSample_t s)
 {
   switch(s) {
+#ifdef __FHC_RUNNING__
      case ( kSKsFCFV1RingMuLike ) : return kNEtrueBins1Rmu; break;
      case ( kSKsFCFV1RingELike  ) : return kNEtrueBins1Re;  break;
+#endif
+#ifdef __RHC_RUNNING__
+     case ( kSKsRHCFCFV1RingMuLike ) : return kRHCNEtrueBins1Rmu; break;
+     case ( kSKsRHCFCFV1RingELike  ) : return kRHCNEtrueBins1Re;  break;
+#endif
      default                      : return 0;
   }
   return 0;
@@ -5141,8 +5212,14 @@ int t2kana::util::NumEtrueBins(t2kana::conv::SuperkSample_t s)
 const double * t2kana::util::EtrueBinEdges(t2kana::conv::SuperkSample_t s)
 {
   switch(s) {
+#ifdef __FHC_RUNNING__
      case ( kSKsFCFV1RingMuLike ) : return kEtrueBinEdges1Rmu; break;
      case ( kSKsFCFV1RingELike  ) : return kEtrueBinEdges1Re;  break;
+#endif
+#ifdef __RHC_RUNNING__
+     case ( kSKsRHCFCFV1RingMuLike ) : return kRHCEtrueBinEdges1Rmu; break;
+     case ( kSKsRHCFCFV1RingELike  ) : return kRHCEtrueBinEdges1Re;  break;
+#endif
      default                      : return 0;
   }
   return 0;
@@ -5151,8 +5228,14 @@ const double * t2kana::util::EtrueBinEdges(t2kana::conv::SuperkSample_t s)
 double  t2kana::util::EtrueBinEdges(t2kana::conv::SuperkSample_t s, int i)
 {
   switch(s) {
+#ifdef __FHC_RUNNING__
      case ( kSKsFCFV1RingMuLike ) : return kEtrueBinEdges1Rmu[i]; break;
      case ( kSKsFCFV1RingELike  ) : return kEtrueBinEdges1Re[i];  break;
+#endif
+#ifdef __RHC_RUNNING__
+     case ( kSKsRHCFCFV1RingMuLike ) : return kRHCEtrueBinEdges1Rmu[i]; break;
+     case ( kSKsRHCFCFV1RingELike  ) : return kRHCEtrueBinEdges1Re[i];  break;
+#endif
      default                      : return 0;
   }
   return 0;

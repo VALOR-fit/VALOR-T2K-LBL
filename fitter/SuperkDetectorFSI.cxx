@@ -598,6 +598,8 @@ bool SuperkDetectorFSI::ApplySystToEnergyBin(conv::PhysParamId_t p, double Ereco
 double SuperkDetectorFSI::EnergyScaleRelErr(SuperkSample_t s, SuperkMode_t /* m */) const
 {
   // energy scale relative error
+  //Todo: add separate energy scale error for RHC running if necessary
+#ifdef __FHC_RUNNING__
   if(s == kSKsFCFV1RingMuLike)
     {
       return fEnergyScale1RmuRelErr;
@@ -605,7 +607,17 @@ double SuperkDetectorFSI::EnergyScaleRelErr(SuperkSample_t s, SuperkMode_t /* m 
   else
     if (s == kSKsFCFV1RingELike) {
       return fEnergyScale1RmuRelErr;
-      
+#endif
+#ifdef __RHC_RUNNING__
+      if(s == kSKsRHCFCFV1RingMuLike)
+	{
+	  return fEnergyScale1RmuRelErr;
+	}
+      else
+	if (s == kSKsRHCFCFV1RingELike) {
+	  return fEnergyScale1RmuRelErr;
+#endif
+
       //lorena - so far never seen different energy scale for signal/background                                                                                                  
       //    if( util::IsSignalNuE(m)) {                                                                                                                                          
       /////////      return fEnergyScale1ReSigRelErr;                                                                                                                             
