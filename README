@@ -148,8 +148,10 @@ documented in T2K-TN-155v1.
 This is the code used for the official 2013 Run 1-4 3-flavour muon-neutrino disappearance analysis,
 documented in T2K-TN-183v1.
 
+2013_v3.0.0
+............................................................................................................................
+First version of the 2013 Run 1-4 joint 3-flavour oscillation analysis
 
 Current trunk
 ............................................................................................................................
-2013 Run 1-4 joint analysis development code.
-
+Devel for Run 1-5 analysis and HyperK sensitivity studies
