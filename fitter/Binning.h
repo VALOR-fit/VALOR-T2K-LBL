@@ -41,7 +41,7 @@ static const double kXsErecoBinEdges1Rmu[kXsNErecoBins1Rmu+1] =
    10.000, 30.000
 };
 static const int kRHCXsNErecoBins1Rmu = 41;
-static const double kRHCXsErecoBinEdges1Rmu[kXsNErecoBins1Rmu+1] =
+static const double kRHCXsErecoBinEdges1Rmu[kRHCXsNErecoBins1Rmu+1] =
   {
     0.000,  0.300,  0.350,  0.400,  0.450,  0.500,  0.550,  0.600,  0.650,  0.700,
     0.750,  0.800,  0.850,  0.900,  0.950,  1.000,  1.100,  1.200,  1.300,  1.400,
@@ -118,7 +118,7 @@ static const double kXsErecoBinEdges1Rmu[kXsNErecoBins1Rmu+1] =
   30.000
 };
 static const int kRHCXsNErecoBins1Rmu = 600;
-static const double kRHCXsErecoBinEdges1Rmu[kXsNErecoBins1Rmu+1] =
+static const double kRHCXsErecoBinEdges1Rmu[kRHCXsNErecoBins1Rmu+1] =
   {
     0.000,  0.050,  0.100,  0.150,  0.200,  0.250,  0.300,  0.350,  0.400,  0.450,
     0.500,  0.550,  0.600,  0.650,  0.700,  0.750,  0.800,  0.850,  0.900,  0.950,
@@ -192,7 +192,7 @@ static const double kXsErecoBinEdges1Re[kXsNErecoBins1Re+1] =
    1.250
 };
 static const int kRHCXsNErecoBins1Re = 20;
-static const double kRHCXsErecoBinEdges1Re[kXsNErecoBins1Re+1] =
+static const double kRHCXsErecoBinEdges1Re[kRHCXsNErecoBins1Re+1] =
   {
     0.000,  0.300,  0.350,  0.400,  0.450,  0.500,  0.550,  0.600,  0.650,  0.700,
     0.750,  0.800,  0.850,  0.900,  0.950,  1.000,  1.050,  1.100,  1.150,  1.200,
@@ -210,7 +210,7 @@ static const double kXsErecoBinEdges1Re[kXsNErecoBins1Re+1] =
     1.200,  1.250
   };
 static const int kRHCXsNErecoBins1Re = 25;
-static const double kRHCXsErecoBinEdges1Re[kXsNErecoBins1Re+1] =
+static const double kRHCXsErecoBinEdges1Re[kRHCXsNErecoBins1Re+1] =
   {
     0.000,  0.050,  0.100,  0.150,  0.200,  0.250,
     0.300,  0.350,  0.400,  0.450,  0.500,  0.550,
@@ -398,7 +398,7 @@ static const double kXsEtrueBinEdges[kns][knm][kXsNEtrueBins+1] = {
   
 };  
  static const int kRHCXsNEtrueBins = 11;
- static const double kRHCXsEtrueBinEdges[kns][knm][kXsNEtrueBins+1] = {
+ static const double kRHCXsEtrueBinEdges[kns][knm][kRHCXsNEtrueBins+1] = {
    // > 1 muon-like ring 
    {
      {  0.000,  0.400,  0.500,  0.600,  0.700,  1.000,  1.500,  2.500,  3.500,  5.000,  7.000, 30.000 }, // kSKmNuMuCCQE         
@@ -646,7 +646,7 @@ static const double kXsEtrueBinEdgesForOffApp[knm][kXsNEtrueBins+1] = {
   { -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000 }, // kSKmUndefined
   { -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000, -1.000 }  // kSKmUndefined
 };
-static const double kRHCXsEtrueBinEdgesForOffApp[knm][kXsNEtrueBins+1] = {
+static const double kRHCXsEtrueBinEdgesForOffApp[knm][kRHCXsNEtrueBins+1] = {
    {  0.000,  0.400,  0.500,  0.600,  0.700,  1.000,  1.500,  2.500,  3.500,  5.000,  7.000, 30.000 }, // kSKmNuMuCCQE 
    {  0.000,  0.400,  0.500,  0.600,  0.700,  1.000,  1.500,  2.500,  3.500,  5.000,  7.000, 30.000 }, // kSKmNuMuCC1pi 
    {  0.000,  0.400,  0.500,  0.600,  0.700,  1.000,  1.500,  2.500,  3.500,  5.000,  7.000, 30.000 }, // kSKmNuMuCCcoh 
@@ -902,7 +902,7 @@ static const double kMCEtrueBinEdges[kns][knm][kMCNEtrueBins+1] = {
   
 };
  static const int kRHCMCNEtrueBins = 11;
- static const double kRHCMCEtrueBinEdges[kns][knm][kMCNEtrueBins+1] = {
+ static const double kRHCMCEtrueBinEdges[kns][knm][kRHCMCNEtrueBins+1] = {
    // > 1 muon-like ring 
    {
      {  0.000,  0.400,  0.500,  0.600,  0.700,  1.000,  1.500,  2.500,  3.500,  5.000,  7.000, 30.000 }, // kSKmNuMuCCQE         
@@ -1149,7 +1149,7 @@ static const double kEtrueBinEdges1Rmu[kNEtrueBins1Rmu+1] =
   30.000
 };
 static const int kRHCNEtrueBins1Rmu = 600;
-static const double kRHCEtrueBinEdges1Rmu[kNEtrueBins1Rmu+1] = 
+static const double kRHCEtrueBinEdges1Rmu[kRHCNEtrueBins1Rmu+1] = 
   {
     0.000,  0.050,  0.100,  0.150,  0.200,  0.250,  0.300,  0.350,  0.400,  0.450, 
     0.500,  0.550,  0.600,  0.650,  0.700,  0.750,  0.800,  0.850,  0.900,  0.950, 
@@ -1236,7 +1236,7 @@ static const double kEtrueBinEdges1Rmu[kNEtrueBins1Rmu+1] =
    30.000
 };
 static const int kRHCNEtrueBins1Rmu = 84;
-static const double kRHCEtrueBinEdges1Rmu[kNEtrueBins1Rmu+1] =
+static const double kRHCEtrueBinEdges1Rmu[kRHCNEtrueBins1Rmu+1] =
   {
     0.000,  0.050,  0.100,  0.150,  0.200,  0.250,
     0.300,  0.325,  0.350,  0.375,  0.400,  0.425,  0.450,  0.475,  0.500,  0.525,
@@ -1258,7 +1258,7 @@ static const double kEtrueBinEdges1Rmu[kNEtrueBins1Rmu+1] =
   0.000,  0.400,  0.500,  0.600,  0.700,  1.000,  1.500,  2.500,  3.500,  5.000,  7.000, 30.000
 };
 static const int kRHCNEtrueBins1Rmu = 11;
-static const double kRHCEtrueBinEdges1Rmu[kNEtrueBins1Rmu+1] =
+static const double kRHCEtrueBinEdges1Rmu[kRHCNEtrueBins1Rmu+1] =
   {
     0.000,  0.400,  0.500,  0.600,  0.700,  1.000,  1.500,  2.500,  3.500,  5.000,  7.000, 30.000
   };
@@ -1270,7 +1270,7 @@ static const double kEtrueBinEdges1Rmu[kNEtrueBins1Rmu+1] =
   0.000, 30.000
 };
 static const int kRHCNEtrueBins1Rmu = 1;
-static const double kRHCEtrueBinEdges1Rmu[kNEtrueBins1Rmu+1] =
+static const double kRHCEtrueBinEdges1Rmu[kRHCNEtrueBins1Rmu+1] =
   {
     0.000, 30.000
   };
@@ -1296,7 +1296,7 @@ static const double kEtrueBinEdges1Re[kNEtrueBins1Re+1] =
     9.000,  10.00,  30.00
   };
 static const int kRHCNEtrueBins1Re = 68;
-static const double kRHCEtrueBinEdges1Re[kNEtrueBins1Re+1] =
+static const double kRHCEtrueBinEdges1Re[kRHCNEtrueBins1Re+1] =
   {
     0.000,  0.050,  0.100,  0.150,  0.200,  0.250,
     0.300,  0.350,  0.400,  0.450,  0.500,  0.550,
@@ -1335,7 +1335,7 @@ static const double kEtrueBinEdges1Re[kNEtrueBins1Re+1] =
    30.000
 };
 static const int kRHCNEtrueBins1Re = 84;
-static const double kRHCEtrueBinEdges1Re[kNEtrueBins1Re+1] =
+static const double kRHCEtrueBinEdges1Re[kRHCNEtrueBins1Re+1] =
   {
     0.000,  0.050,  0.100,  0.150,  0.200,  0.250,
     0.300,  0.325,  0.350,  0.375,  0.400,  0.425,  0.450,  0.475,  0.500,  0.525,
@@ -1437,7 +1437,7 @@ static const double kEtrueBinEdges1Re[kNEtrueBins1Re+1] =
     30.000
   };
 static const int kRHCNEtrueBins1Re = 780;
-static const double kRHCEtrueBinEdges1Re[kNEtrueBins1Re+1] =
+static const double kRHCEtrueBinEdges1Re[kRHCNEtrueBins1Re+1] =
   {
     0.000,  0.005,  0.010,  0.015,  0.020,  0.025,  0.030,  0.035,  0.040,  0.045,
     0.050,  0.055,  0.060,  0.065,  0.070,  0.075,  0.080,  0.085,  0.090,  0.095,
@@ -1529,7 +1529,7 @@ static const double kEtrueBinEdges1Re[kNEtrueBins1Re+1] =
     2.500, 3.500, 5.000, 7.000, 30.000
   };
 static const int kRHCNEtrueBins1Re = 11;
-static const double kRHCEtrueBinEdges1Re[kNEtrueBins1Re+1] =
+static const double kRHCEtrueBinEdges1Re[kRHCNEtrueBins1Re+1] =
   {
     0.000, 0.400, 0.500, 0.600, 0.700, 1.000, 1.500,
     2.500, 3.500, 5.000, 7.000, 30.000
@@ -1607,7 +1607,7 @@ static const double kErecoBinEdges1Rmu[kNErecoBins1Rmu+1] =
   30.000
 };
 static const int kRHCNErecoBins1Rmu = 600;
-static const double kRHCErecoBinEdges1Rmu[kNErecoBins1Rmu+1] =
+static const double kRHCErecoBinEdges1Rmu[kRHCNErecoBins1Rmu+1] =
   {
     0.000,  0.050,  0.100,  0.150,  0.200,  0.250,  0.300,  0.350,  0.400,  0.450,
     0.500,  0.550,  0.600,  0.650,  0.700,  0.750,  0.800,  0.850,  0.900,  0.950,
@@ -1693,7 +1693,7 @@ static const double kErecoBinEdges1Rmu[kNErecoBins1Rmu+1] =
    6.000,  7.000,  8.000,  9.000, 10.000, 30.000
 };
 static const int kRHCNErecoBins1Rmu = 73;
-static const double kRHCErecoBinEdges1Rmu[kNErecoBins1Rmu+1] =
+static const double kRHCErecoBinEdges1Rmu[kRHCNErecoBins1Rmu+1] =
   {
     0.000,  0.050,  0.100,  0.150,  0.200,  0.250,  0.300,  0.350,  0.400,  0.450,
     0.500,  0.550,  0.600,  0.650,  0.700,  0.750,  0.800,  0.850,  0.900,  0.950,
@@ -1717,7 +1717,7 @@ static const double kErecoBinEdges1Rmu[kNErecoBins1Rmu+1] =
    10.000, 30.000
 };
 static const int kRHCNErecoBins1Rmu = 41;
-static const double kRHCErecoBinEdges1Rmu[kNErecoBins1Rmu+1] =
+static const double kRHCErecoBinEdges1Rmu[kRHCNErecoBins1Rmu+1] =
   {
     0.000,  0.300,  0.350,  0.400,  0.450,  0.500,  0.550,  0.600,  0.650,  0.700,
     0.750,  0.800,  0.850,  0.900,  0.950,  1.000,  1.100,  1.200,  1.300,  1.400,
@@ -1740,7 +1740,7 @@ static const double kErecoBinEdges1Re[kNErecoBins1Re+1] =
   0.000,  0.200,  0.400, 0.600, 0.800,  1.000,  1.250
 };
 static const int kRHCNErecoBins1Re = 6;
-static const double kRHCErecoBinEdges1Re[kNErecoBins1Re+1] =
+static const double kRHCErecoBinEdges1Re[kRHCNErecoBins1Re+1] =
   {
     0.000,  0.200,  0.400, 0.600, 0.800,  1.000,  1.250
   };
@@ -1753,7 +1753,7 @@ static const double kErecoBinEdges1Re[kNErecoBins1Re+1] =
    0., 1.250 
 };
 static const int kRHCNErecoBins1Re = 1;
-static const double kRHCErecoBinEdges1Re[kNErecoBins1Re+1] =
+static const double kRHCErecoBinEdges1Re[kRHCNErecoBins1Re+1] =
   {
     0., 1.250
   };
@@ -1767,7 +1767,7 @@ static const double kErecoBinEdges1Re[kNErecoBins1Re+1] =
    1.000,  1.050,  1.100,  1.150,  1.200,  1.250
 };
 static const int kRHCNErecoBins1Re = 25;
-static const double kRHCErecoBinEdges1Re[kNErecoBins1Re+1] =
+static const double kRHCErecoBinEdges1Re[kRHCNErecoBins1Re+1] =
   {
     0.000,  0.050,  0.100,  0.150,  0.200,  0.250,  0.300,  0.350,  0.400,  0.450,
     0.500,  0.550,  0.600,  0.650,  0.700,  0.750,  0.800,  0.850,  0.900,  0.950,
