@@ -5253,11 +5253,26 @@ int t2kana::util::NumVariableXsEtrueBins(t2kana::conv::SuperkSample_t s,
 
   //need to start counter at zero. Want nbins. Looping over bin edges.
   int nbins = -1;
-  for(int it = 0; it <= t2kana::conv::kXsNEtrueBins; it++) {
-    if(t2kana::conv::kXsEtrueBinEdges[is][im][it] < 0)
-      break;
-    nbins++;
-  }
+#ifdef __FHC_RUNNING__
+  if (s == kSKsFCFV1RingMuLike || s == kSKsFCFV1RingELike)  
+    {
+    for(int it = 0; it <= t2kana::conv::kXsNEtrueBins; it++) {
+      if(t2kana::conv::kXsEtrueBinEdges[is][im][it] < 0)
+        break;
+      nbins++;
+      }
+    }
+#endif
+#ifdef __RHC_RUNNING__
+  if (s == kSKsRHCFCFV1RingMuLike || s == kSKsRHCFCFV1RingELike)
+    {
+      for(int it = 0; it <= t2kana::conv::kRHCXsNEtrueBins; it++) {
+	if(t2kana::conv::kRHCXsEtrueBinEdges[is][im][it] < 0)
+	  break;
+	nbins++;
+      }
+    }
+#endif
   return nbins;
 }
 //___________________________________________________________________________
@@ -5270,7 +5285,25 @@ const double * t2kana::util::VariableXsEtrueBinEdges(t2kana::conv::SuperkSample_
   int im = util::ArrIdx::Instance()->SuperkModeIdx(s,m);
   if(im == -1)
     return 0;
-  return t2kana::conv::kXsEtrueBinEdges[is][im];
+
+  bool is_fhc = false;
+  //bool is_rhc = false;
+
+#ifdef __FHC_RUNNING__
+  if (s == kSKsFCFV1RingMuLike || s == kSKsFCFV1RingELike)
+    is_fhc = true;
+#endif
+
+#ifdef __RHC_RUNNING__
+    if (s == kSKsRHCFCFV1RingMuLike || s == kSKsRHCFCFV1RingELike)
+    //is_rhc = true;
+#endif
+  
+  //Todo: make this work when both __FHC_RUNNING__ and __RHC_RUNNING__ are defined.
+  if(is_fhc)
+    return t2kana::conv::kXsEtrueBinEdges[is][im];
+  else
+    return t2kana::conv::kRHCXsEtrueBinEdges[is][im];
 }
 //___________________________________________________________________________
 int t2kana::util::NumVariableMCEtrueBins(t2kana::conv::SuperkSample_t s,
@@ -5285,11 +5318,29 @@ int t2kana::util::NumVariableMCEtrueBins(t2kana::conv::SuperkSample_t s,
 
   //need to start counter at zero. Want nbins. Looping over bin edges.
   int nbins = -1;
-  for(int it = 0; it <= t2kana::conv::kMCNEtrueBins; it++) {
-    if(t2kana::conv::kMCEtrueBinEdges[is][im][it] < 0)
-      break;
-    nbins++;
-  }
+
+#ifdef __FHC_RUNNING__
+  if (s == kSKsFCFV1RingMuLike || s == kSKsFCFV1RingELike)
+    {
+      for(int it = 0; it <= t2kana::conv::kMCNEtrueBins; it++) {
+	if(t2kana::conv::kMCEtrueBinEdges[is][im][it] < 0)
+	  break;
+	nbins++;
+      }
+    }
+#endif
+
+#ifdef __RHC_RUNNING__
+  if (s == kSKsRHCFCFV1RingMuLike || s == kSKsRHCFCFV1RingELike)
+    {
+    for(int it = 0; it <= t2kana::conv::kRHCMCNEtrueBins; it++) {
+      if(t2kana::conv::kRHCMCEtrueBinEdges[is][im][it] < 0)
+        break;
+      nbins++;
+      }
+    }
+#endif
+
   return nbins;
 }
 //___________________________________________________________________________
@@ -5303,7 +5354,23 @@ const double * t2kana::util::VariableMCEtrueBinEdges(t2kana::conv::SuperkSample_
   if(im == -1)
     return 0;
 
-  return t2kana::conv::kMCEtrueBinEdges[is][im];
+  bool is_fhc = false;
+  //bool is_rhc = false;
+
+#ifdef __FHC_RUNNING__
+  if (s == kSKsFCFV1RingMuLike || s == kSKsFCFV1RingELike)
+    is_fhc = true;
+#endif
+
+#ifdef __RHC_RUNNING__
+  if (s == kSKsRHCFCFV1RingMuLike || s == kSKsRHCFCFV1RingELike)
+    //is_rhc = true;
+#endif
+
+  if(is_fhc)
+    return t2kana::conv::kMCEtrueBinEdges[is][im];
+  else
+    return t2kana::conv::kRHCMCEtrueBinEdges[is][im];
 }
 //___________________________________________________________________________
 void t2kana::util::SetDefaultStyle(bool black_n_white)
