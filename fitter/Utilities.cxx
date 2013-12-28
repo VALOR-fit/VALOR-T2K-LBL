@@ -3157,6 +3157,7 @@ string t2kana::util::AsString(t2kana::conv::SuperkSample_t s)
 string t2kana::util::AsString(t2kana::conv::SuperkMode_t m)
 {
   switch(m) {
+#ifdef __FHC_RUNNING__
      case ( kSKmNuMuCCQE        ) : return "numu CC QE";                        break;
      case ( kSKmMEC             ) : return "numu CC MEC";                       break;
      case ( kSKmNuMuCC1pi       ) : return "numu CC 1pi";                       break;
@@ -3197,7 +3198,7 @@ string t2kana::util::AsString(t2kana::conv::SuperkMode_t m)
      case ( kSKmNuENC1pi0       ) : return "nue NC 1pi0";                       break;
      case ( kSKmNuENCcoh        ) : return "nue NC coh";                        break;
      case ( kSKmNuENCoth_e      ) : return "nue NC oth (nue app)";              break;
-     case ( kSKmNuENCoth_mu     ) : return "nue NC oth (numu app)";             break;
+     case ( kSKmNuENCoth_mu     ) : return "nue NC oth (numu disapp)";             break;
      case ( kSKmNuEBarCCQE      ) : return "nuebar CC QE";                      break;
      case ( kSKmNuEBarCC1pi     ) : return "nuebar CC 1pi";                     break;
      case ( kSKmNuEBarCCcoh     ) : return "nuebar CC coh";                     break;
@@ -3219,6 +3220,73 @@ string t2kana::util::AsString(t2kana::conv::SuperkMode_t m)
      case ( kSKmSigNuECCcoh     ) : return "oscillation nue CC coh";                 break;
        //     case ( kSKmSigNuECCoth  ) : return "oscillation nue CC oth (numu disap)";    break;
      case ( kSKmSigNuECCoth   ) : return "oscillation nue CC oth (nue app)";       break;
+#endif
+
+#ifdef __RHC_RUNNING__
+     case ( kSKmRHCNuMuCCQE        ) : return "numu CC QE (RHC running)";                        break;
+     case ( kSKmRHCMEC             ) : return "numu CC MEC (RHC running)";                       break;
+     case ( kSKmRHCNuMuCC1pi       ) : return "numu CC 1pi (RHC running)";                       break;
+     case ( kSKmRHCNuMuCCcoh       ) : return "numu CC coh (RHC running)";                       break;
+     //     case ( kSKmRHCNuMuCCoth    ) : return "numu CC oth (RHC running)";                      break;
+     case ( kSKmRHCNuMuCCoth     ) : return "numu CC oth (RHC running)";                      break;
+     case ( kSKmRHCNuMuNC1piC      ) : return "numu NC 1piC (RHC running)";                      break;
+     case ( kSKmRHCNuMuNC1pi0      ) : return "numu/nutau NC 1pi0 (RHC running)";                break;
+     case ( kSKmRHCNuMuNCcoh       ) : return "numu/nutau NC coh (RHC running)";                 break;
+     case ( kSKmRHCNuMuNCoth_e     ) : return "numu/nutau NC oth (RHC running)";                 break;
+     case ( kSKmRHCNuMuNCoth_mu    ) : return "numu/nutau NC oth (RHC running)";                 break;
+     case ( kSKmRHCOscNuMuCCQE     ) : return "oscillated numu CC QE (RHC running)";             break;
+     case ( kSKmRHCOscNuMuCC1pi    ) : return "oscillated numu CC 1pi (RHC running)";            break;  
+     case ( kSKmRHCOscNuMuCCcoh    ) : return "oscillated numu CC coh (RHC running)";            break;
+     //     case ( kSKmRHCOscNuMuCCoth ) : return "oscillated numu CC oth (RHC running)";           break;
+     case ( kSKmRHCOscNuMuCCoth  ) : return "oscillated numu CC oth (RHC running)";           break;
+     case ( kSKmRHCNuMuBarCCQE     ) : return "numubar CC QE (RHC running)";                     break;
+     case ( kSKmRHCNuMuBarCC1pi    ) : return "numubar CC 1pi (RHC running)";                    break;
+     case ( kSKmRHCNuMuBarCCcoh    ) : return "numubar CC coh (RHC running)";                    break;
+     //     case ( kSKmRHCNuMuBarCCoth ) : return "numubar CC oth (RHC running)";                    break;
+     case ( kSKmRHCNuMuBarCCoth  ) : return "numubar CC oth (RHC running)";                    break;
+     case ( kSKmRHCNuMuBarNC1piC   ) : return "numubar/nutaubar NC 1piC (RHC running)";          break;
+     case ( kSKmRHCNuMuBarNC1pi0   ) : return "numubar/nutaubar NC 1pi0 (RHC running)";          break;
+     case ( kSKmRHCNuMuBarNCcoh    ) : return "numubar/nutaubar NC coh (RHC running)";           break;
+     case ( kSKmRHCNuMuBarNCoth_e  ) : return "numubar/nutaubar NC oth (RHC running)";           break;
+     case ( kSKmRHCNuMuBarNCoth_mu ) : return "numubar/nutaubar NC oth (RHC running)";           break;
+     case ( kSKmRHCOscNuMuBarCCQE  ) : return "oscillated numubar CC QE (RHC running)";          break;
+     case ( kSKmRHCOscNuMuBarCC1pi ) : return "oscillated numubar CC 1pi (RHC running)";         break;  
+     case ( kSKmRHCOscNuMuBarCCcoh ) : return "oscillated numubar CC coh (RHC running)";         break;
+     //     case ( kSKmRHCOscNuMuCCoth ) : return "oscillated numu CC oth (RHC running)";        break;
+     case ( kSKmRHCOscNuMuBarCCoth ) : return "oscillated numubar CC oth (RHC running)";        break;
+     case ( kSKmRHCNuECCQE         ) : return "nue CC QE (RHC running)";                         break;
+     case ( kSKmRHCNuECC1pi        ) : return "nue CC 1pi (RHC running)";                        break;
+     case ( kSKmRHCNuECCcoh        ) : return "nue CC coh (RHC running)";                        break;
+     //     case ( kSKmRHCNuECCoth     ) : return "nue CC oth (RHC running)";                        break;
+     case ( kSKmRHCNuECCoth      ) : return "nue CC oth (RHC running)";                        break;
+     case ( kSKmRHCNuENC1piC       ) : return "nue NC 1piC (RHC running)";                       break;
+     case ( kSKmRHCNuENC1pi0       ) : return "nue NC 1pi0 (RHC running)";                       break;
+     case ( kSKmRHCNuENCcoh        ) : return "nue NC coh (RHC running)";                        break;
+     case ( kSKmRHCNuENCoth_e      ) : return "nue NC oth (nue app, RHC running)";              break;
+     case ( kSKmRHCNuENCoth_mu     ) : return "nue NC oth (numu disapp, RHC running)";             break;
+     case ( kSKmRHCNuEBarCCQE      ) : return "nuebar CC QE (RHC running)";                      break;
+     case ( kSKmRHCNuEBarCC1pi     ) : return "nuebar CC 1pi (RHC running)";                     break;
+     case ( kSKmRHCNuEBarCCcoh     ) : return "nuebar CC coh (RHC running)";                     break;
+     //     case ( kSKmRHCNuEBarCCoth  ) : return "nuebar CC oth (numu disapp, RHC running)";        break;
+     case ( kSKmRHCNuEBarCCoth   ) : return "nuebar CC oth (nue app, RHC running)";           break;
+     case ( kSKmRHCNuEBarNC1piC    ) : return "nuebar NC 1piC (RHC running)";                    break;
+     case ( kSKmRHCNuEBarNC1pi0    ) : return "nuebar NC 1pi0 (RHC running)";                    break;
+     case ( kSKmRHCNuEBarNCcoh     ) : return "nuebar NC coh (RHC running)";                     break;
+     case ( kSKmRHCNuEBarNCoth_e   ) : return "nuebar NC oth (nue app, RHC running)";           break;
+     case ( kSKmRHCNuEBarNCoth_mu  ) : return "nuebar NC oth (numu disapp, RHC running)";          break;
+     case ( kSKmRHCOscNuECCQE   ) : return "oscillated nue CC QE (RHC running)";           break;
+     case ( kSKmRHCOscNuECC1pi  ) : return "oscillated nue CC 1pi (RHC running)";          break;  
+     case ( kSKmRHCOscNuECCcoh  ) : return "oscillated nue CC coh (RHC running)";          break;
+     //     case ( kSKmRHCOscNueCCoth ) : return "oscillated nue CC oth (RHC running)";        break;
+     case ( kSKmRHCOscNuECCoth  ) : return "oscillated nue CC oth (RHC running)";         break;
+
+     case ( kSKmRHCSigNuEBarCCQE      ) : return "oscillation nuebar CC QE (RHC running)";                  break;
+     case ( kSKmRHCSigNuEBarCC1pi     ) : return "oscillation nuebar CC 1pi (RHC running)";                 break;
+     case ( kSKmRHCSigNuEBarCCcoh     ) : return "oscillation nuebar CC coh (RHC running)";                 break;
+     //     case ( kSKmRHCSigNuEBarCCoth  ) : return "oscillation nuebar CC oth (numu disapp, RHC running)";    break;
+     case ( kSKmRHCSigNuEBarCCoth   ) : return "oscillation nuebar CC oth (nue app, RHC running)";       break;
+#endif
+
      default                      : return "--";
   }
   return "";
@@ -3292,7 +3360,7 @@ string t2kana::util::AsStringTex(t2kana::conv::SuperkSample_t s)
      case ( kSKsFCFV1RingELike  ) : return "1 e-like ring";      break;
 #endif
 #ifdef __RHC_RUNNING__
-     case ( kSKsRHCFCFV1RingMuLike ) : return "1 $\\mu$-like (RHC running)"; break;
+     case ( kSKsRHCFCFV1RingMuLike ) : return "1 $\\mu$-like ring (RHC running)"; break;
      case ( kSKsRHCFCFV1RingELike  ) : return "1 e-like ring (RHC running)";      break;
 #endif
      default                      : return "--";
@@ -3303,6 +3371,7 @@ string t2kana::util::AsStringTex(t2kana::conv::SuperkSample_t s)
 string t2kana::util::AsStringTex(t2kana::conv::SuperkMode_t m)
 {
   switch(m) {
+#ifdef __FHC_RUNNING__
      case ( kSKmNuMuCCQE        ) : return "$\\nu_\\mu$ CCQE";                                               break;
      case ( kSKmMEC             ) : return "$\\nu_\\mu$ CC MEC";                                             break;
      case ( kSKmNuMuCC1pi       ) : return "$\\nu_\\mu$ CC 1$\\pi$";                                         break;
@@ -3364,6 +3433,72 @@ string t2kana::util::AsStringTex(t2kana::conv::SuperkMode_t m)
      case ( kSKmSigNuECCcoh     ) : return "Osc. $\\nu_e$ CC coherent";                                    break;
        //     case ( kSKmSigNuECCoth  ) : return "Osc. $\\nu_e$ CC other ($\\nu_\\mu$ disap)";                     break;
      case ( kSKmSigNuECCoth   ) : return "Osc. $\\nu_e$ CC other";                        break;
+#endif
+
+#ifdef __RHC_RUNNING__
+  case ( kSKmRHCNuMuCCQE        ) : return "$\\nu_\\mu$ CCQE (RHC)";                                               break;
+  case ( kSKmRHCMEC             ) : return "$\\nu_\\mu$ CC MEC (RHC)";                                             break;
+  case ( kSKmRHCNuMuCC1pi       ) : return "$\\nu_\\mu$ CC 1$\\pi$ (RHC)";                                         break;
+  case ( kSKmRHCNuMuCCcoh       ) : return "$\\nu_\\mu$ CC coherent (RHC)";                                        break;
+    //   case ( kSKmRHCNuMuCCoth    ) : return "$\\nu_\\mu$ CC other ($\\nu_\\mu$ disapp, RHC)";                       break;
+  case ( kSKmRHCNuMuCCoth     ) : return "$\\nu_\\mu$ CC other";                                           break;
+  case ( kSKmRHCNuMuNC1piC      ) : return "$\\nu_\\mu$/$\\nu_\\tau$ NC 1$\\pi^{+/-}$ (RHC)";                      break;
+  case ( kSKmRHCNuMuNC1pi0      ) : return "$\\nu_\\mu$/$\\nu_\\tau$ NC 1$\\pi^0$ (RHC)";                          break;
+  case ( kSKmRHCNuMuNCcoh       ) : return "$\\nu_\\mu$/$\\nu_\\tau$ NC coherent (RHC)";                           break;
+  case ( kSKmRHCNuMuNCoth_e     ) : return "$\\nu_\\mu$/$\\nu_\\tau$ NC other (RHC)";                              break;
+  case ( kSKmRHCNuMuNCoth_mu    ) : return "$\\nu_\\mu$/$\\nu_\\tau$ NC other ($\\nu_\\mu$ disapp, RHC)";          break;
+  case ( kSKmRHCOscNuMuCCQE     ) : return "Osc. $\\nu_\\mu$ CCQE (RHC)";                                          break;
+  case ( kSKmRHCOscNuMuCC1pi    ) : return "Osc. $\\nu_\\mu$ CC 1$\\pi$ (RHC)";                                    break;
+  case ( kSKmRHCOscNuMuCCcoh    ) : return "Osc. $\\nu_\\mu$ CC coherent (RHC)";                                   break; 
+    //     case ( kSKmRHCOscNuMuCCoth ) : return "Osc. $\\nu_\\mu$ CC other ($\\nu_\\mu$ disapp, RHC)";                  break;
+  case ( kSKmRHCOscNuMuCCoth  ) : return "Osc. $\\nu_\\mu$ CC other (RHC)";                                      break;
+  case ( kSKmRHCNuMuBarCCQE     ) : return "$\\bar{\\nu_\\mu}$ CCQE (RHC)";                                        break;
+  case ( kSKmRHCNuMuBarCC1pi    ) : return "$\\bar{\\nu_\\mu}$ CC 1$\\pi$ (RHC)";                                  break;
+  case ( kSKmRHCNuMuBarCCcoh    ) : return "$\\bar{\\nu_\\mu}$ CC coherent (RHC)";                                 break;
+    //     case ( kSKmRHCNuMuBarCCoth ) : return "$\\bar{\\nu_\\mu}$ CC other ($\\nu_\\mu$ disapp, RHC)";                break;
+  case ( kSKmRHCNuMuBarCCoth  ) : return "$\\bar{\\nu_\\mu}$ CC other (RHC)";                     break;
+  case ( kSKmRHCNuMuBarNC1piC   ) : return "$\\bar{\\nu_\\mu}$/$\\bar{\\nu_\\tau}$ NC 1$\\pi^{+/-}$ (RHC)";        break;
+  case ( kSKmRHCNuMuBarNC1pi0   ) : return "$\\bar{\\nu_\\mu}$/$\\bar{\\nu_\\tau}$ NC 1$\\pi^0$ (RHC)";            break;
+  case ( kSKmRHCNuMuBarNCcoh    ) : return "$\\bar{\\nu_\\mu}$/$\\bar{\\nu_\\tau}$ NC coherent (RHC)";             break;
+  case ( kSKmRHCNuMuBarNCoth_e  ) : return "$\\bar{\\nu_\\mu}$/$\\bar{\\nu_\\tau}$ NC other (RHC)"; break;
+  case ( kSKmRHCNuMuBarNCoth_mu ) : return "$\\bar{\\nu_\\mu}$/$\\bar{\\nu_\\tau}$ NC other ($\\nu_\\mu$ disapp, RHC)"; break;
+  case ( kSKmRHCOscNuMuBarCCQE  ) : return "Osc. $\\bar{\\nu_\\mu$} CCQE (RHC)";                                   break;
+  case ( kSKmRHCOscNuMuBarCC1pi ) : return "Osc. $\\bar{\\nu_\\mu$} CC 1$\\pi$ (RHC)";                             break;
+  case ( kSKmRHCOscNuMuBarCCcoh ) : return "Osc. $\\bar{\\nu_\\mu$} CC coherent (RHC)";                            break; 
+    //     case ( kSKmRHCOscNuMuCCoth ) : return "Osc. $\\nu_\\mu$ CC other ($\\nu_\\mu$ disapp, RHC)";                  break;
+  case ( kSKmRHCOscNuMuBarCCoth ) : return "Osc. $\\bar{\\nu_\\mu$} CC other (RHC)";                               break;
+  case ( kSKmRHCNuECCQE         ) : return "$\\nu_e$ CCQE (RHC)";                                                  break;
+  case ( kSKmRHCNuECC1pi        ) : return "$\\nu_e$ CC 1$\\pi$ (RHC)";                                            break;
+  case ( kSKmRHCNuECCcoh        ) : return "$\\nu_e$ CC coherent (RHC)";                                           break;
+    //     case ( kSKmRHCNuECCoth     ) : return "$\\nu_e$ CC other ($\\nu_\\mu$ disapp, RHC)";                          break;
+  case ( kSKmRHCNuECCoth      ) : return "$\\nu_e$ CC other (RHC)";                               break;
+  case ( kSKmRHCNuENC1piC       ) : return "$\\nu_e$ NC 1$\\pi^{+/-}$ (RHC)";                                      break;
+  case ( kSKmRHCNuENC1pi0       ) : return "$\\nu_e$ NC 1$\\pi^0$ (RHC)";                                          break;
+  case ( kSKmRHCNuENCcoh        ) : return "$\\nu_e$ NC coherent (RHC)";                                           break;
+  case ( kSKmRHCNuENCoth_e      ) : return "$\\nu_e$ NC other (RHC)";                               break;
+  case ( kSKmRHCNuENCoth_mu     ) : return "$\\nu_e$ NC other ($\\nu_\\mu$ disapp, RHC)";                            break;
+  case ( kSKmRHCNuEBarCCQE      ) : return "$\\bar{\\nu_e}$ CCQE (RHC)";                                           break;
+  case ( kSKmRHCNuEBarCC1pi     ) : return "$\\bar{\\nu_e}$ CC 1$\\pi$ (RHC)";                                     break;
+  case ( kSKmRHCNuEBarCCcoh     ) : return "$\\bar{\\nu_e}$ CC coherent (RHC)";                                    break;
+    //     case ( kSKmRHCNuEBarCCoth  ) : return "$\\bar{\\nu_e}$ CC other ($\\nu_\\mu$ disapp, RHC)";                   break;
+  case ( kSKmRHCNuEBarCCoth   ) : return "$\\bar{\\nu_e}$ CC other (RHC)";                        break;
+  case ( kSKmRHCNuEBarNC1piC    ) : return "$\\bar{\\nu_e}$ NC 1$\\pi^{+/-}$ (RHC)";                               break;
+  case ( kSKmRHCNuEBarNC1pi0    ) : return "$\\bar{\\nu_e}$ NC 1$\\pi^0$ (RHC)";                                   break;
+  case ( kSKmRHCNuEBarNCcoh     ) : return "$\\bar{\\nu_e}$ NC coherent (RHC)";                                    break;
+  case ( kSKmRHCNuEBarNCoth_e   ) : return "$\\bar{\\nu_e}$ NC other (RHC)";                        break;
+  case ( kSKmRHCNuEBarNCoth_mu  ) : return "$\\bar{\\nu_e}$ NC other ($\\nu_\\mu$ disapp, RHC)";                     break;
+  case ( kSKmRHCOscNuECCQE   ) : return "Osc. $\\nu_e$ CCQE (RHC)";                                      break;
+  case ( kSKmRHCOscNuECC1pi  ) : return "Osc. $\\nu_e$ CC 1$\\pi$ (RHC)";                                break;
+  case ( kSKmRHCOscNuECCcoh  ) : return "Osc. $\\nu_e$ CC coherent (RHC)";                               break; 
+    //     case ( kSKmRHCOscNuECCoth ) : return "\\nu_e$ CC other ($\\nu_\\mu$ disapp, RHC)";                  break;
+  case ( kSKmRHCOscNuECCoth  ) : return "Osc. $\\nu_e$ CC other (RHC)";                                  break;
+  case ( kSKmRHCSigNuEBarCCQE      ) : return "Osc. $\\bar{\\nu}_e$ CCQE (RHC)";                                           break;
+  case ( kSKmRHCSigNuEBarCC1pi     ) : return "Osc. $\\bar{\\nu}_e$ CC 1$\\pi$ (RHC)";                                     break;
+  case ( kSKmRHCSigNuEBarCCcoh     ) : return "Osc. $\\bar{\\nu}_e$ CC coherent (RHC)";                                    break;
+    //     case ( kSKmRHCSigNuEBarCCoth  ) : return "Osc. $\\bar{\\nu}_e$ CC other ($\\nu_\\mu$ disapp RHC)";                     break;
+  case ( kSKmRHCSigNuEBarCCoth   ) : return "Osc. $\\bar{\\nu}_e$ CC other (RHC)";                        break;
+#endif
+
      default                      : return "--";
   }
   return "";
