@@ -930,6 +930,7 @@ TSpline3 * NuXSec::FindWghtSpline(
 {
   SuperkMode_t m = mp; // default
   // HACK: for `osc numu' templates, use `numu' response functions
+#ifdef __FHC_RUNNING__
   if      ( mp == kSKmOscNuMuCCQE     ) { m = kSKmNuMuCCQE;     }
   else if ( mp == kSKmOscNuMuCC1pi    ) { m = kSKmNuMuCC1pi;    }
   else if ( mp == kSKmOscNuMuCCcoh    ) { m = kSKmNuMuCCcoh;    }
@@ -946,7 +947,25 @@ TSpline3 * NuXSec::FindWghtSpline(
   else if ( mp == kSKmOscNuEBarCC1pi    ) { m = kSKmNuEBarCC1pi;    }
   else if ( mp == kSKmOscNuEBarCCcoh    ) { m = kSKmNuEBarCCcoh;    }
   else if ( mp == kSKmOscNuEBarCCoth    ) { m = kSKmNuEBarCCoth;  }
+#endif
 
+#ifdef __RHC_RUNNING__
+
+  if      ( mp == kSKmRHCOscNuMuCCQE     ) { m = kSKmRHCNuMuCCQE; }
+  else if ( mp == kSKmRHCOscNuMuCC1pi    ) { m = kSKmRHCNuMuCC1pi; }
+  else if ( mp == kSKmRHCOscNuMuCCcoh    ) { m = kSKmRHCNuMuCCcoh; }
+  else if ( mp == kSKmRHCOscNuMuCCoth    ) { m = kSKmRHCNuMuCCoth; }
+
+  else if ( mp == kSKmRHCOscNuMuBarCCQE     ) { m = kSKmRHCNuMuBarCCQE; }
+  else if ( mp == kSKmRHCOscNuMuBarCC1pi    ) { m = kSKmRHCNuMuBarCC1pi; }
+  else if ( mp == kSKmRHCOscNuMuBarCCcoh    ) { m = kSKmRHCNuMuBarCCcoh; }
+  else if ( mp == kSKmRHCOscNuMuBarCCoth    ) { m = kSKmRHCNuMuBarCCoth; }
+
+  else if ( mp == kSKmRHCOscNuEBarCCQE     ) { m = kSKmRHCNuEBarCCQE; }
+  else if ( mp == kSKmRHCOscNuEBarCC1pi    ) { m = kSKmRHCNuEBarCC1pi; }
+  else if ( mp == kSKmRHCOscNuEBarCCcoh    ) { m = kSKmRHCNuEBarCCcoh; }
+  else if ( mp == kSKmRHCOscNuEBarCCoth    ) { m = kSKmRHCNuEBarCCoth; }
+#endif
 
   int idx = this->WghtSplineIdx(p,s,m,Ereco,Etrue);
   if(idx == -1 || idx == -2) 
