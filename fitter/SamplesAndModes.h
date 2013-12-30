@@ -344,17 +344,17 @@ static const SuperkMode_t kSKReactionModes[kns][knm] = {
     kSKmNuEBarNC1piC,
     kSKmNuEBarNCoth_mu,
 #ifdef __USE_OSC_NUEBAR_MC_TEMPLATES__
-    kSKmOscNuEBarCCQE,
-    kSKmOscNuEBarCC1pi,
-    kSKmOscNuEBarCCcoh,
-    //    kSKmOscNuMuCCoth_mu,
-    kSKmOscNuEBarCCoth,
+    kSKmRHCOscNuECCQE,
+    kSKmRHCOscNuECC1pi,
+    kSKmRHCOscNuECCcoh,
+    //    kSKmRHCOscNuECCoth_mu,
+    kSKmRHCOscNuECCoth,
 #endif
-    kSKmSigNuECCQE,
-    kSKmSigNuECC1pi,
-    kSKmSigNuECCcoh,
+    kSKmRHCSigNuEBarCCQE,
+    kSKmRHCSigNuEBarCC1pi,
+    kSKmRHCSigNuEBarCCcoh,
     //    kSKmSigNuECCoth_mu,
-    kSKmSigNuECCoth,
+    kSKmRHCSigNuEBarCCoth,
 #ifdef USE_MEC
     kSKmMEC,
 #else
@@ -441,17 +441,17 @@ static const SuperkMode_t kSKReactionModes[kns][knm] = {
     kSKmNuEBarNCcoh,
     kSKmNuEBarNCoth_e,
 #ifdef __USE_OSC_NUEBAR_MC_TEMPLATES__
-    kSKmOscNuEBarCCQE,
-    kSKmOscNuEBarCC1pi,
-    kSKmOscNuEBarCCcoh,
-    //    kSKmOscNuMuCCoth_e,                            
-    kSKmOscNuEBarCCoth,               
+    kSKmRHCOscNuEBCCQE,
+    kSKmRHCOscNuECC1pi,
+    kSKmRHCOscNuECCcoh,
+    //    kSKmRHCOscNuECCoth_e,                            
+    kSKmRHCOscNuECCoth,               
 #endif     
-    kSKmSigNuECCQE,  
-    kSKmSigNuECC1pi,  
-    kSKmSigNuECCcoh,
-    //    kSKmSigNuECCoth_e,
-    kSKmSigNuECCoth,
+    kSKmRHCSigNuEBarCCQE,  
+    kSKmRHCSigNuEBarCC1pi,  
+    kSKmRHCSigNuEBarCCcoh,
+    //    kSKmRHCSigNuEBarCCoth_e,
+    kSKmRHCSigNuEBarCCoth,
 #ifndef __USE_OSC_NUMU_MC_TEMPLATES__
     kSKmUndefined,
     kSKmUndefined,
@@ -1031,42 +1031,42 @@ static const SuperkMode_t kSKReactionModes[kns][knm] = {
 
   // 1 muon-like ring (numubar disappearance) with reverse horn current                                                                                                                         
   {
-    kSKmRHCNuMuCCQE,
-    kSKmRHCNuMuCC1pi,
-    kSKmRHCNuMuCCcoh,
-    kSKmRHCNuMuCCoth,
-    kSKmRHCNuMuNC1piC,
-    kSKmRHCNuMuNCoth_mu,
+    kSKmNuMuCCQE,
+    kSKmNuMuCC1pi,
+    kSKmNuMuCCcoh,
+    kSKmNuMuCCoth,
+    kSKmNuMuNC1piC,
+    kSKmNuMuNCoth_mu,
 #ifdef __USE_OSC_NUMU_MC_TEMPLATES__
-    kSKmRHCOscNuMuCCQE,
-    kSKmRHCOscNuMuCC1pi,
-    kSKmRHCOscNuMuCCcoh,
-    kSKmRHCOscNuMuCCoth,
+    kSKmOscNuMuCCQE,
+    kSKmOscNuMuCC1pi,
+    kSKmOscNuMuCCcoh,
+    kSKmOscNuMuCCoth,
 #endif
-    kSKmRHCNuMuBarCCQE,
-    kSKmRHCNuMuBarCC1pi,
-    kSKmRHCNuMuBarCCcoh,
-    kSKmRHCNuMuBarCCoth,
-    kSKmRHCNuMuBarNC1piC,
-    kSKmRHCNuMuBarNCoth_mu,
+    kSKmNuMuBarCCQE,
+    kSKmNuMuBarCC1pi,
+    kSKmNuMuBarCCcoh,
+    kSKmNuMuBarCCoth,
+    kSKmNuMuBarNC1piC,
+    kSKmNuMuBarNCoth_mu,
 #ifdef __USE_OSC_NUMUBAR_MC_TEMPLATES__
-    kSKmRHCOscNuMuBarCCQE,
-    kSKmRHCOscNuMuBarCC1pi,
-    kSKmRHCOscNuMuBarCCcoh,
-    kSKmRHCOscNuMuBarCCoth,
+    kSKmOscNuMuBarCCQE,
+    kSKmOscNuMuBarCC1pi,
+    kSKmOscNuMuBarCCcoh,
+    kSKmOscNuMuBarCCoth,
 #endif
-    kSKmRHCNuECCQE,
-    kSKmRHCNuECC1pi,
-    kSKmRHCNuECCcoh,
-    kSKmRHCNuECCoth,
-    kSKmRHCNuENC1piC,
-    kSKmRHCNuENCoth_mu,
-    kSKmRHCNuEBarCCQE,
-    kSKmRHCNuEBarCC1pi,
-    kSKmRHCNuEBarCCcoh,
-    kSKmRHCNuEBarCCoth,
-    kSKmRHCNuEBarNC1piC,
-    kSKmRHCNuEBarNCoth_mu,
+    kSKmNuECCQE,
+    kSKmNuECC1pi,
+    kSKmNuECCcoh,
+    kSKmNuECCoth,
+    kSKmNuENC1piC,
+    kSKmNuENCoth_mu,
+    kSKmNuEBarCCQE,
+    kSKmNuEBarCC1pi,
+    kSKmNuEBarCCcoh,
+    kSKmNuEBarCCoth,
+    kSKmNuEBarNC1piC,
+    kSKmNuEBarNCoth_mu,
 #ifdef __USE_OSC_NUEBAR_MC_TEMPLATES__
     kSKmRHCOscNuECCQE,
     kSKmRHCOscNuECC1pi,
@@ -1116,47 +1116,77 @@ static const SuperkMode_t kSKReactionModes[kns][knm] = {
 
   // 1 electron-like ring (nuebar appearance) with reverse horn current                                                                                                                         
   {
-    kSKmRHCNuMuCCQE,
-    kSKmRHCNuMuCC1pi,
-    kSKmRHCNuMuCCcoh,
-    kSKmRHCNuMuCCoth,
-    kSKmRHCNuMuNC1pi0,
-    kSKmRHCNuMuNCcoh,
-    kSKmRHCNuMuNCoth_e,
-#ifdef __USE_OSC_NUMU_MC_TEMPLATES__
-    kSKmRHCOscNuMuCCQE,
-    kSKmRHCOscNuMuCC1pi,
-    kSKmRHCOscNuMuCCcoh,
-    kSKmRHCOscNuMuCCoth,
-#endif
-    kSKmRHCNuMuBarCCQE,
-    kSKmRHCNuMuBarCC1pi,
-    kSKmRHCNuMuBarCCcoh,
-    kSKmRHCNuMuBarCCoth,
-    kSKmRHCNuMuBarNC1pi0,
-    kSKmRHCNuMuBarNCcoh,
-    kSKmRHCNuMuBarNCoth_e,
+    kSKmNuMuCCQE,
+    kSKmNuMuCC1pi,
+    kSKmNuMuCCcoh,
+    //    kSKmNuMuCCoth_e, 
+    kSKmNuMuCCoth,
+    kSKmNuMuNC1pi0, 
+    kSKmNuMuNCcoh, 
+    kSKmNuMuNCoth_e, 
+#ifdef __USE_OSC_NUMU_MC_TEMPLATES__    
+    kSKmOscNuMuCCQE,
+    kSKmOscNuMuCC1pi,
+    kSKmOscNuMuCCcoh,
+    //    kSKmOscNuMuCCoth_e,                            
+    kSKmOscNuMuCCoth,               
+#endif             
+    kSKmNuMuBarCCQE, 
+    kSKmNuMuBarCC1pi, 
+    kSKmNuMuBarCCcoh, 
+    //    kSKmNuMuBarCCoth_e,  
+    kSKmNuMuBarCCoth,  
+    kSKmNuMuBarNC1pi0, 
+    kSKmNuMuBarNCcoh, 
+    kSKmNuMuBarNCoth_e,
 #ifdef __USE_OSC_NUMUBAR_MC_TEMPLATES__
-    kSKmRHCOscNuMuBarCCQE,
-    kSKmRHCOscNuMuBarCC1pi,
-    kSKmRHCOscNuMuBarCCcoh,
-    kSKmRHCOscNuMuBarCCoth,
-#endif
-    kSKmRHCNuECCQE,
-    kSKmRHCNuECC1pi,
-    kSKmRHCNuECCcoh,
-    kSKmRHCNuECCoth,
-    kSKmRHCNuENC1pi0,
-    kSKmRHCNuENCcoh,
-    kSKmRHCNuENCoth_e,
-    kSKmRHCNuEBarCCQE,
-    kSKmRHCNuEBarCC1pi,
-    kSKmRHCNuEBarCCcoh,
-    kSKmRHCNuEBarCCoth,
-    kSKmRHCNuEBarNC1pi0,
-    kSKmRHCNuEBarNCcoh,
-    kSKmRHCNuEBarNCoth_e,
+    kSKmOscNuMuBarCCQE,
+    kSKmOscNuMuBarCC1pi,
+    kSKmOscNuMuBarCCcoh,
+    //    kSKmOscNuMuCCoth_e,                            
+    kSKmOscNuMuBarCCoth,               
+#endif             
+    kSKmNuECCQE, 
+    kSKmNuECC1pi, 
+    kSKmNuECCcoh, 
+    //    kSKmNuECCoth_e,
+    kSKmNuECCoth,
+    kSKmNuENC1pi0,  
+    kSKmNuENCcoh, 
+    kSKmNuENCoth_e,
+    kSKmNuEBarCCQE,
+    kSKmNuEBarCC1pi,
+    kSKmNuEBarCCcoh,
+    //    kSKmNuEBarCCoth_e,
+    kSKmNuEBarCCoth,
+    kSKmNuEBarNC1pi0,
+    kSKmNuEBarNCcoh,
+    kSKmNuEBarNCoth_e,
 #ifdef __USE_OSC_NUEBAR_MC_TEMPLATES__
+    kSKmRHCOscNuEBCCQE,
+    kSKmRHCOscNuECC1pi,
+    kSKmRHCOscNuECCcoh,
+    //    kSKmRHCOscNuECCoth_e,                            
+    kSKmRHCOscNuECCoth,               
+#endif    
+    kSKmRHCSigNuEBarCCQE,  
+    kSKmRHCSigNuEBarCC1pi,  
+    kSKmRHCSigNuEBarCCcoh,
+    //    kSKmRHCSigNuEBarCCoth_e,
+    kSKmRHCSigNuEBarCCoth,
+#ifndef __USE_OSC_NUMU_MC_TEMPLATES__
+    kSKmUndefined,
+    kSKmUndefined,
+    kSKmUndefined,
+    kSKmUndefined,
+#endif
+#ifndef __USE_OSC_NUMUBAR_MC_TEMPLATES__
+    kSKmUndefined,
+    kSKmUndefined,
+    kSKmUndefined,
+    kSKmUndefined,
+#endif
+#ifndef __USE_OSC_NUEBAR_MC_TEMPLATES__
     kSKmUndefined,
     kSKmUndefined,
     kSKmUndefined,
@@ -1170,6 +1200,16 @@ static const SuperkMode_t kSKReactionModes[kns][knm] = {
     kSKmUndefined,
     kSKmUndefined
   }
+
+
+
+
+
+
+
+
+
+
   
 #endif  
 #endif
