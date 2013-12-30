@@ -1516,7 +1516,6 @@ static const SuperkMode_t kSKReactionModes[kns][knm] = {
 
 #else
 
-
 #ifdef __FHC_RUNNING__
 
    // > 1 muon-like ring
@@ -1845,7 +1844,7 @@ static const SuperkMode_t kSKReactionModes[kns][knm] = {
 
    }
 
-#endif
+#else
 
 #ifdef __RHC_RUNNING__
 
@@ -2172,6 +2171,7 @@ static const SuperkMode_t kSKReactionModes[kns][knm] = {
     -1
    }
 
+#endif
 #endif
 #endif 
 };

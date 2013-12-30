@@ -141,28 +141,18 @@ double FitInputs::Chisquare(int mode, conv::SuperkSample_t s0, int point) const
       if(s0 != conv::kSKsUndefined && s != s0) continue;      
 
       // Add chisq for each sample
-#if defined __FHC_RUNNING__ && defined __RHC_RUNNING__
-      //If we only want the nue appearance analysis and sample is 1Rmu, then skip 
-      if ((s == conv::kSKsFCFV1RingMuLike) && (oscana == conv::kAnaFHCAndRHCNuEAppOnly))    continue;
-      if ((s == conv::kSKsRHCFCFV1RingMuLike) && (oscana == conv::kAnaFHCAndRHCNuEAppOnly))    continue;
-      //If we only want the numu disappearance analysis and sample is 1Re, then skip 
-      if ((s == conv::kSKsFCFV1RingELike) && (oscana == conv::kAnaFHCAndRHCNuMuDisappOnly))    continue;
-      if ((s == conv::kSKsRHCFCFV1RingELike) && (oscana == conv::kAnaFHCAndRHCNuMuDisappOnly))    continue;
-#else
-#ifdef __FHC_RUNNING__
-      // If we only want the nue appearance analysis and sample is 1Rmu, then skip
-      if ((s == conv::kSKsFCFV1RingMuLike) && (oscana == conv::kAnaNuEAppOnly))    continue;
-      // If we only want the numu disappearance analysis and sample is 1Re, then skip
-      if ((s == conv::kSKsFCFV1RingELike)  && (oscana == conv::kAnaNuMuDisappOnly))  continue;
-#endif
-
-#ifdef __RHC_RUNNING__
-      //If we only want the nue appearance analysis and sample is 1Rmu, then skip
-      if ((s == conv::kSKsRHCFCFV1RingMuLike) && (oscana == conv::kAnaRHCNuEAppOnly))    continue;
-      //If we only want the numu disappearance analysis and sample is 1Re, then skip 
-      if ((s == conv::kSKsRHCFCFV1RingELike)  && (oscana == conv::kAnaRHCNuMuDisappOnly))  continue;
-#endif
-#endif
+      if ((s == conv::kSKsFCFV1RingMuLike) && (oscana == conv::kAnaNuEAppOnly || oscana == conv:: kAnaRHCCombined
+	   || oscana == conv::kAnaRHCNuMuDisappOnly || oscana == conv::kAnaRHCNuEAppOnly || oscana == conv::kAnaFHCAndRHCNuEAppOnly))
+	continue;
+      if ((s == conv::kSKsRHCFCFV1RingMuLike) && (oscana == conv:: kAnaCombined || oscana == conv::kAnaNuMuDisappOnly 
+           || oscana == conv::kAnaNuEAppOnly || oscana == conv::kAnaRHCNuEAppOnly || oscana == conv::kAnaFHCAndRHCNuEAppOnly))
+	continue;
+      if ((s == conv::kSKsFCFV1RingELike) && (oscana == conv::kAnaNuMuDisappOnly || oscana == conv:: kAnaRHCCombined 
+           || oscana == conv::kAnaRHCNuMuDisappOnly || oscana == conv::kAnaRHCNuEAppOnly || oscana == conv::kAnaFHCAndRHCNuMuDisappOnly))
+	continue;
+      if ((s == conv::kSKsRHCFCFV1RingELike) && (oscana == conv:: kAnaCombined || oscana == conv::kAnaNuMuDisappOnly 
+           || oscana == conv::kAnaNuEAppOnly || oscana == conv::kAnaRHCNuMuDisappOnly || oscana == conv::kAnaFHCAndRHCNuMuDisappOnly))
+	continue;
 
       int n_ereco_bins = kNErecoBins[is];
 
@@ -719,8 +709,8 @@ double  FitMethodFunc::DataElement(const double *par, unsigned int ipoint, doubl
   else chisqbin = fFitInputs->Chisquare("poisson",conv::kSKsFCFV1RingELike,ipoint-conv::kNErecoBins1Rmu); 
 #endif
 #ifdef __RHC_RUNNING__
-  if (ipoint < (unsigned int) conv::kNErecoBins1Rmu) chisqbin = fFitInputs->Chisquare("poisson",conv::kSKsRHCFCFV1RingMuLike,ipoint);
-  else chisqbin = fFitInputs->Chisquare("poisson",conv::kSKsRHCFCFV1RingELike,ipoint-conv::kNErecoBins1Rmu);
+  if (ipoint < (unsigned int) conv::kRHCNErecoBins1Rmu) chisqbin = fFitInputs->Chisquare("poisson",conv::kSKsRHCFCFV1RingMuLike,ipoint);
+  else chisqbin = fFitInputs->Chisquare("poisson",conv::kSKsRHCFCFV1RingELike,ipoint-conv::kRHCNErecoBins1Rmu);
 #endif
   //  if (g!=0) ;
   //  cout << "DataElement: chisqbin = " << chisqbin << " for point = " << ipoint << endl;
