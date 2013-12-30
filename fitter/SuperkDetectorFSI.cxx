@@ -599,24 +599,14 @@ double SuperkDetectorFSI::EnergyScaleRelErr(SuperkSample_t s, SuperkMode_t /* m 
 {
   // energy scale relative error
   //Todo: add separate energy scale error for RHC running if necessary
-#ifdef __FHC_RUNNING__
   if(s == kSKsFCFV1RingMuLike)
-    {
-      return fEnergyScale1RmuRelErr;
-    }
-  else
-    if (s == kSKsFCFV1RingELike) {
-      return fEnergyScale1RmuRelErr;
-#endif
-#ifdef __RHC_RUNNING__
-      if(s == kSKsRHCFCFV1RingMuLike)
-	{
-	  return fEnergyScale1RmuRelErr;
-	}
-      else
-	if (s == kSKsRHCFCFV1RingELike) {
-	  return fEnergyScale1RmuRelErr;
-#endif
+    return fEnergyScale1RmuRelErr;
+  else if (s == kSKsFCFV1RingELike) 
+    return fEnergyScale1RmuRelErr;
+  else if(s == kSKsRHCFCFV1RingMuLike)
+    return fEnergyScale1RmuRelErr;
+  else if (s == kSKsRHCFCFV1RingELike)
+    return fEnergyScale1RmuRelErr;
 
       //lorena - so far never seen different energy scale for signal/background                                                                                                  
       //    if( util::IsSignalNuE(m)) {                                                                                                                                          
@@ -625,7 +615,7 @@ double SuperkDetectorFSI::EnergyScaleRelErr(SuperkSample_t s, SuperkMode_t /* m 
       //else {                                                                                                                                                                   
       /////////      return fEnergyScale1ReBkgRelErr;                                                                                                                            
       //}                                                                                                                                                                         
-    }
+    
   return 0;
 }
 //________________________________________________________________________________________                                                                                       

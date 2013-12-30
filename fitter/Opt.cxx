@@ -73,14 +73,10 @@ void Opt::SetDefaults(void)
 
   for(int is = 0; is < kns; is++) {
     SuperkSample_t s = kSKSamples[is];
-#ifdef __FHC_RUNNING__
     if(s == kSKsFCFV1RingMuLike) fit_1Rmu = true;
     if(s == kSKsFCFV1RingELike ) fit_1Re  = true;
-#endif
-#ifdef __RHC_RUNNING__
     if(s == kSKsRHCFCFV1RingMuLike) fit_RHC_1Rmu = true;
     if(s == kSKsRHCFCFV1RingELike ) fit_RHC_1Re  = true;
-#endif
   }
 
 #if defined __FHC_RUNNING__ && defined __RHC_RUNNING__
@@ -102,9 +98,9 @@ void Opt::SetDefaults(void)
 #ifdef __NUEONLY__
   fit_1Rmu = false;
   fit_RHC_1Rmu = false;
-  fit_1Re  = false;
+  fit_RHC_1Re  = false;
 #endif
-#endif
+#else
 #ifdef __RHC_RUNNING__
 #ifdef __NUMUONLY__
   fit_1Re  = false;
@@ -115,6 +111,7 @@ void Opt::SetDefaults(void)
   fit_1Rmu = false;
   fit_RHC_1Rmu = false;
   fit_1Re  = false;
+#endif
 #endif
 #endif
 #endif
