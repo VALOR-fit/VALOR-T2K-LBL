@@ -203,14 +203,11 @@ bool NuXSec::ReadSplines(TXMLEngine* xml, XMLNodePointer_t root_node)
                 // Copy spline from input file
 		TSpline3 * spl;
 		//Todo: add separate splines for RHC running if necessary
-#ifdef __FHC_RUNNING__
 		if (s==kSKsFCFV1RingMuLike)      spl = (TSpline3 *) spline_file_1Rmu->Get(splname.str().c_str());
 		else if(s==kSKsFCFV1RingELike)   spl = (TSpline3 *) spline_file_1Re ->Get(splname.str().c_str()); 
-#endif
-#ifdef __RHC_RUNNING__
-                if (s==kSKsRHCFCFV1RingMuLike)      spl = (TSpline3 *) spline_file_1Rmu->Get(splname.str().c_str());
+                else if (s==kSKsRHCFCFV1RingMuLike)      spl = (TSpline3 *) spline_file_1Rmu->Get(splname.str().c_str());
                 else if(s==kSKsRHCFCFV1RingELike)   spl = (TSpline3 *) spline_file_1Re ->Get(splname.str().c_str());
-#endif
+
 		if(!spl) {
 		  if(!bin_is_not_empty) {
 #ifdef __show_init_mesg_debug__
@@ -279,19 +276,14 @@ bool NuXSec::ReadSplines(TXMLEngine* xml, XMLNodePointer_t root_node)
 		     << spl->GetTitle() << endl;
 #endif
 
-#ifdef __FHC_RUNNING__
                 if (s == kSKsFCFV1RingMuLike)      fXSecWghtSpl1Rmu[idx] = new TSpline3(*spl);
 		else if(s == kSKsFCFV1RingELike)   fXSecWghtSpl1Re[idx] = new TSpline3(*spl);
-#endif
-#ifdef __RHC_RUNNING__
-                if (s == kSKsRHCFCFV1RingMuLike)      fRHCXSecWghtSpl1Rmu[idx] = new TSpline3(*spl);
+                else if (s == kSKsRHCFCFV1RingMuLike)      fRHCXSecWghtSpl1Rmu[idx] = new TSpline3(*spl);
                 else if(s == kSKsRHCFCFV1RingELike)   fRHCXSecWghtSpl1Re[idx] = new TSpline3(*spl);
-#endif
 
 #ifdef __show_init_mesg_debug2__
 		//check that the spline is not flat
 		cout << "Exp/NuXSec >> Spline weights at -1,0,+1 are: " ;
-#ifdef __FHC_RUNNING__
 		  if (s == kSKsFCFV1RingMuLike){
 		    cout << fXSecWghtSpl1Rmu[idx]->Eval(-1) << "\t"
 			 << fXSecWghtSpl1Rmu[idx]->Eval(0) << "\t"
@@ -302,9 +294,7 @@ bool NuXSec::ReadSplines(TXMLEngine* xml, XMLNodePointer_t root_node)
 			 << fXSecWghtSpl1Re[idx]->Eval(0) << "\t"
 			 << fXSecWghtSpl1Re[idx]->Eval(+1) << endl;
 		  }
-#endif
-#ifdef __RHC_RUNNING__
-                  if (s == kSKsRHCFCFV1RingMuLike){
+                  else if (s == kSKsRHCFCFV1RingMuLike){
                     cout << fRHCXSecWghtSpl1Rmu[idx]->Eval(-1) << "\t"
                          << fRHCXSecWghtSpl1Rmu[idx]->Eval(0) << "\t"
 			 << fRHCXSecWghtSpl1Rmu[idx]->Eval(+1) << endl;
@@ -314,8 +304,6 @@ bool NuXSec::ReadSplines(TXMLEngine* xml, XMLNodePointer_t root_node)
                          << fRHCXSecWghtSpl1Re[idx]->Eval(0) << "\t"
                          << fRHCXSecWghtSpl1Re[idx]->Eval(+1) << endl;
                   }
-#endif
-
 #endif
              }//Etrue
           }//Ereco
@@ -930,7 +918,6 @@ TSpline3 * NuXSec::FindWghtSpline(
 {
   SuperkMode_t m = mp; // default
   // HACK: for `osc numu' templates, use `numu' response functions
-#ifdef __FHC_RUNNING__
   if      ( mp == kSKmOscNuMuCCQE     ) { m = kSKmNuMuCCQE;     }
   else if ( mp == kSKmOscNuMuCC1pi    ) { m = kSKmNuMuCC1pi;    }
   else if ( mp == kSKmOscNuMuCCcoh    ) { m = kSKmNuMuCCcoh;    }
@@ -947,25 +934,11 @@ TSpline3 * NuXSec::FindWghtSpline(
   else if ( mp == kSKmOscNuEBarCC1pi    ) { m = kSKmNuEBarCC1pi;    }
   else if ( mp == kSKmOscNuEBarCCcoh    ) { m = kSKmNuEBarCCcoh;    }
   else if ( mp == kSKmOscNuEBarCCoth    ) { m = kSKmNuEBarCCoth;  }
-#endif
 
-#ifdef __RHC_RUNNING__
-
-  if      ( mp == kSKmRHCOscNuMuCCQE     ) { m = kSKmRHCNuMuCCQE; }
-  else if ( mp == kSKmRHCOscNuMuCC1pi    ) { m = kSKmRHCNuMuCC1pi; }
-  else if ( mp == kSKmRHCOscNuMuCCcoh    ) { m = kSKmRHCNuMuCCcoh; }
-  else if ( mp == kSKmRHCOscNuMuCCoth    ) { m = kSKmRHCNuMuCCoth; }
-
-  else if ( mp == kSKmRHCOscNuMuBarCCQE     ) { m = kSKmRHCNuMuBarCCQE; }
-  else if ( mp == kSKmRHCOscNuMuBarCC1pi    ) { m = kSKmRHCNuMuBarCC1pi; }
-  else if ( mp == kSKmRHCOscNuMuBarCCcoh    ) { m = kSKmRHCNuMuBarCCcoh; }
-  else if ( mp == kSKmRHCOscNuMuBarCCoth    ) { m = kSKmRHCNuMuBarCCoth; }
-
-  else if ( mp == kSKmRHCOscNuEBarCCQE     ) { m = kSKmRHCNuEBarCCQE; }
-  else if ( mp == kSKmRHCOscNuEBarCC1pi    ) { m = kSKmRHCNuEBarCC1pi; }
-  else if ( mp == kSKmRHCOscNuEBarCCcoh    ) { m = kSKmRHCNuEBarCCcoh; }
-  else if ( mp == kSKmRHCOscNuEBarCCoth    ) { m = kSKmRHCNuEBarCCoth; }
-#endif
+  else if ( mp == kSKmRHCOscNuECCQE     ) { m = kSKmNuEBarCCQE; }
+  else if ( mp == kSKmRHCOscNuECC1pi    ) { m = kSKmNuEBarCC1pi; }
+  else if ( mp == kSKmRHCOscNuECCcoh    ) { m = kSKmNuEBarCCcoh; }
+  else if ( mp == kSKmRHCOscNuECCoth    ) { m = kSKmNuEBarCCoth; }
 
   int idx = this->WghtSplineIdx(p,s,m,Ereco,Etrue);
   if(idx == -1 || idx == -2) 
@@ -981,35 +954,17 @@ TSpline3 * NuXSec::FindWghtSpline(
     exit(1);
   }
 
-  //bool is_FHC_1Rmu = false;
-  bool is_FHC_1Re = false;
-  bool is_RHC_1Rmu = false;
-  bool is_RHC_1Re = false;
-
-#ifdef __FHC_RUNNING__
-  //if (s == kSKsFCFV1RingMuLike)
-  //is_FHC_1Rmu = true;
-  //else if(s == kSKsFCFV1RingELike)
-  if(s == kSKsFCFV1RingELike)
-    is_FHC_1Re = true;
-#endif
-#ifdef __RHC_RUNNING__
-  if (s == kSKsRHCFCFV1RingMuLike)
-    is_RHC_1Rmu = true;
-  else if(s == kSKsRHCFCFV1RingELike)
-    is_RHC_1Re = true;
-#endif
-
   //Todo: need to cover case when sample is none of kSKsFCFV1RingMuLike, 
   //kSKsFCFV1RingELike, kSKsRHCFCFV1RingMuLike or kSKsRHCFCFV1RingELike
-  if(is_RHC_1Rmu)
+  if(s == kSKsRHCFCFV1RingMuLike)
     return fRHCXSecWghtSpl1Rmu[idx];
-  else if(is_RHC_1Re)
+  else if(s == kSKsRHCFCFV1RingELike)
     return fRHCXSecWghtSpl1Re[idx];
-  else if(is_FHC_1Re)
+  else if(s == kSKsFCFV1RingELike)
     return fXSecWghtSpl1Re[idx];
   else
     return fXSecWghtSpl1Rmu[idx];
+
 
 }
 //________________________________________________________________________________________
