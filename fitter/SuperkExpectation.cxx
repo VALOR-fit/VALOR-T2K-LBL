@@ -74,34 +74,30 @@ void SuperkExpectation::Init(void)
     for(int im=0; im<knm; im++) {
       fPredictErecoSpectrum[is][im] = 0;
     }//im
-#ifdef __FHC_RUNNING__
     for(int ir=0; ir<kNErecoBins[is]; ir++) {
       if (s==kSKsFCFV1RingMuLike)
 	fPredictErecoSpectrumArrayTot1Rmu[ir] = 0;
-      else
+      else if(s==kSKsFCFV1RingELike)
 	fPredictErecoSpectrumArrayTot1Re[ir] = 0;
       for(int im=0; im<knm; im++) {
 	if (s==kSKsFCFV1RingMuLike)
 	  fPredictErecoSpectrumArray1Rmu[im][ir] = 0;
-	else
+	else if(s==kSKsFCFV1RingELike)
 	  fPredictErecoSpectrumArray1Re[im][ir] = 0;
       }//im
     }//ir
-#endif
-#ifdef __RHC_RUNNING__
-    for(int ir=0; ir<kNErecoBins[is]; ir++) {
+    for(int ir=0; ir<kRHCNErecoBins[is]; ir++) {
       if (s==kSKsRHCFCFV1RingMuLike)
         fPredictRHCErecoSpectrumArrayTot1Rmu[ir] = 0;
-      else
+      else if(s==kSKsRHCFCFV1RingELike)
         fPredictRHCErecoSpectrumArrayTot1Re[ir] = 0;
       for(int im=0; im<knm; im++) {
         if (s==kSKsRHCFCFV1RingMuLike)
           fPredictRHCErecoSpectrumArray1Rmu[im][ir] = 0;
-        else
+        else if(s==kSKsRHCFCFV1RingELike)
           fPredictRHCErecoSpectrumArray1Re[im][ir] = 0;
       }//im                                                                                                                                           
     }//ir                                                                                                                                              
-#endif
   }//is
 }
 //________________________________________________________________________________________
@@ -313,32 +309,13 @@ double* SuperkExpectation::CurrPredictedErecoSpectrumArray(t2kana::conv::SuperkS
     return 0;
   }
 
-  //bool is_FHC_1Rmu = false;
-  bool is_FHC_1Re = false;
-  bool is_RHC_1Rmu = false;
-  bool is_RHC_1Re = false;
-
-#ifdef __FHC_RUNNING__
-  //if (s == kSKsFCFV1RingMuLike)
-  //is_FHC_1Rmu = true;
-  //else if(s == kSKsFCFV1RingELike)
-  if(s == kSKsFCFV1RingELike)
-    is_FHC_1Re = true;
-#endif
-#ifdef __RHC_RUNNING__
-  if (s == kSKsRHCFCFV1RingMuLike)
-    is_RHC_1Rmu = true;
-  else if(s == kSKsRHCFCFV1RingELike)
-    is_RHC_1Re = true;
-#endif
-
   //Todo: need to cover case when sample is none of kSKsFCFV1RingMuLike, 
   //kSKsFCFV1RingELike, kSKsRHCFCFV1RingMuLike or kSKsRHCFCFV1RingELike
-  if(is_RHC_1Rmu)
+  if(s == kSKsRHCFCFV1RingMuLike)
     return fPredictRHCErecoSpectrumArrayTot1Rmu;
-  else if(is_RHC_1Re)
+  else if(s == kSKsRHCFCFV1RingELike)
     return fPredictRHCErecoSpectrumArrayTot1Re;
-  else if(is_FHC_1Re)
+  else if(s == kSKsFCFV1RingELike)
     return fPredictErecoSpectrumArrayTot1Re;
   else
     return fPredictErecoSpectrumArrayTot1Rmu;
@@ -357,32 +334,13 @@ double* SuperkExpectation::CurrPredictedErecoSpectrumArrayMode(
     return 0;
   }
 
-  //bool is_FHC_1Rmu = false;
-  bool is_FHC_1Re = false;
-  bool is_RHC_1Rmu = false;
-  bool is_RHC_1Re = false;
-
-#ifdef __FHC_RUNNING__
-  //if (s == kSKsFCFV1RingMuLike)
-  //is_FHC_1Rmu = true;
-  //else if(s == kSKsFCFV1RingELike)
-  if(s == kSKsFCFV1RingELike)
-    is_FHC_1Re = true;
-#endif
-#ifdef __RHC_RUNNING__
-  if (s == kSKsRHCFCFV1RingMuLike)
-    is_RHC_1Rmu = true;
-  else if(s == kSKsRHCFCFV1RingELike)
-    is_RHC_1Re = true;
-#endif
-
   //Todo: need to cover case when sample is none of kSKsFCFV1RingMuLike, 
   //kSKsFCFV1RingELike, kSKsRHCFCFV1RingMuLike or kSKsRHCFCFV1RingELike
-  if(is_RHC_1Rmu)
+  if(s == kSKsRHCFCFV1RingMuLike)
     return fPredictRHCErecoSpectrumArray1Rmu[midx];
-  else if(is_RHC_1Re)
+  else if(s == kSKsRHCFCFV1RingELike)
     return fPredictRHCErecoSpectrumArray1Re[midx];
-  else if(is_FHC_1Re)
+  else if(s == kSKsFCFV1RingELike)
     return fPredictErecoSpectrumArray1Re[midx];
   else
     return fPredictErecoSpectrumArray1Rmu[midx];
@@ -396,32 +354,13 @@ double  SuperkExpectation::CurrPredictedErecoSpectrumArray(t2kana::conv::SuperkS
     return 0;
   }
 
-  //bool is_FHC_1Rmu = false;
-  bool is_FHC_1Re = false;
-  bool is_RHC_1Rmu = false;
-  bool is_RHC_1Re = false;
-
-#ifdef __FHC_RUNNING__
-  //if (s == kSKsFCFV1RingMuLike)
-  //is_FHC_1Rmu = true;
-  //else if(s == kSKsFCFV1RingELike)
-  if(s == kSKsFCFV1RingELike)
-    is_FHC_1Re = true;
-#endif
-#ifdef __RHC_RUNNING__
-  if (s == kSKsRHCFCFV1RingMuLike)
-    is_RHC_1Rmu = true;
-  else if(s == kSKsRHCFCFV1RingELike)
-    is_RHC_1Re = true;
-#endif
-
   //Todo: need to cover case when sample is none of kSKsFCFV1RingMuLike, 
   //kSKsFCFV1RingELike, kSKsRHCFCFV1RingMuLike or kSKsRHCFCFV1RingELike
-  if(is_RHC_1Rmu)
+  if(s == kSKsRHCFCFV1RingMuLike)
     return fPredictRHCErecoSpectrumArrayTot1Rmu[i];
-  else if(is_RHC_1Re)
+  else if(s == kSKsRHCFCFV1RingELike)
     return fPredictRHCErecoSpectrumArrayTot1Re[i];
-  else if(is_FHC_1Re)
+  else if(s == kSKsFCFV1RingELike)
     return fPredictErecoSpectrumArrayTot1Re[i];
   else
     return fPredictErecoSpectrumArrayTot1Rmu[i];
