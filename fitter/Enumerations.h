@@ -141,41 +141,25 @@ OscChannelId_t;
 
 // Enumeration of event samples that may be included in the analysis
 // Actual choice for current analysis is given in `Configuration' section.
-#if defined __FHC_RUNNING__ && defined __RHC_RUNNING__
 static const int kNSuperkSamples  = 4;  // number of samples 
-#else
-static const int kNSuperkSamples  = 2;  // number of samples
-#endif
 static const int kns = kNSuperkSamples; // as above - shorter name
 typedef enum ESuperkSample 
 {
    kSKsUndefined = -1, 
-#ifdef __FHC_RUNNING__
    kSKsFCFV1RingMuLike, // fully-contained fiducial-volume single-ring mu-like
    kSKsFCFV1RingELike,  // fully-contained fiducial-volume single-ring e-like
-#endif   
-#ifdef __RHC_RUNNING__
    kSKsRHCFCFV1RingMuLike, //fully-contained fiducial-volume single-ring mu-like with reverse horn current 
    kSKsRHCFCFV1RingELike  //fully-contained fiducial-volume single-ring e-like with reverse horn current 
-#endif
-   
 } 
 SuperkSample_t; 
 
 // Enumeration of (true) reaction modes that may be considered separately within each SuperK sample
 // Actual choice for current analysis is given in `Configuration' section.
-static const int kNSuperkModes = 51;  // number of reaction modes kept track of within each sample
+static const int kNSuperkModes = 59;  // number of reaction modes kept track of within each sample
 static const int knm = kNSuperkModes; // as above - shorter name
 typedef enum ESuperkMode 
 {
-
-  //Todo: make this work when both __FHC_RUNNING__ and __RHC_RUNNING__ are defined
-
    kSKmUndefined = -1, 
-
-   //********* FORWARD HORN CURRENT ************************  
-
-#ifdef __FHC_RUNNING__
    kSKmNuMuCCQE,         // numu CC QE
    kSKmMEC,              // numu CC MEC
    kSKmNuMuCC1pi,        // numu CC 1pi
@@ -246,55 +230,7 @@ typedef enum ESuperkMode
    //   kSKmSigNuECCoth_e     // oscillated nue other, nu_e appearance analysis definition
    kSKmSigNuECCoth,       // it is actually the same definition for CC!
 
-   #else
-
-   //********* REVERSE HORN CURRENT ("RHC" in name) *********************                                                                                                                              
-
-#ifdef __RHC_RUNNING__   
-   kSKmRHCNuMuCCQE,         // numu CC QE                                                                                                                                                            
-   kSKmRHCNuMuCC1pi,        // numu CC 1pi                                                                                                                                                             
-   kSKmRHCNuMuCCcoh,        // numu CC coherent                                                                                                                                                       
-   kSKmRHCNuMuCCoth,        // numu CC other                                                                                                                                                         
-   kSKmRHCNuMuNC1piC,       // numu NC 1 charged pi                                                                                                                                                    
-   kSKmRHCNuMuNC1pi0,       // numu NC 1pi0                                                                                                                                                           
-   kSKmRHCNuMuNCcoh,        // numu NC coherent                                                                                                                                                       
-   kSKmRHCNuMuNCoth_mu,     // numu NC other, numu disappearance analysis definition                                                                                                                 
-   kSKmRHCNuMuNCoth_e,      // numu NC other, nue appearance analysis definition                                                                                                                      
-   kSKmRHCOscNuMuCCQE,      // oscillated numu CCQE                                                                                                                                                 
-   kSKmRHCOscNuMuCC1pi,     // oscillated numu CC 1pi                                                                                                                                                 
-   kSKmRHCOscNuMuCCcoh,     // oscillated numu coh                                                                                                                                                    
-   kSKmRHCOscNuMuCCoth,     // oscillated numu CC other                                                                                                                                               
-   kSKmRHCNuMuBarCCQE,      // numubar CC QE                                                                                                                                                           
-   kSKmRHCMEC,              // numubar CC MEC                                                                                                                                                         
-   kSKmRHCNuMuBarCC1pi,     // numubar CC 1pi                                                                                                                                                         
-   kSKmRHCNuMuBarCCcoh,     // numubar CC coherent                                                                                                                                                    
-   kSKmRHCNuMuBarCCoth,     // numubar CC other                                                                                                                                                       
-   kSKmRHCNuMuBarNC1piC,    // numubar NC 1 charged pi                                                                                                                                                 
-   kSKmRHCNuMuBarNC1pi0,    // numubar NC 1pi0                                                                                                                                                        
-   kSKmRHCNuMuBarNCoth_mu,  // numubar NC other, numu disappearance analysis definition                                                                                                               
-   kSKmRHCNuMuBarNCoth_e,   // numubar NC other, nue appearance analysis definition                                                                                                                 
-   kSKmRHCOscNuMuBarCCQE,   // oscillated numubar CCQE                                                                                                                                                
-   kSKmRHCOscNuMuBarCC1pi,  // oscillated numubar CC 1pi                                                                                                                                             
-   kSKmRHCOscNuMuBarCCcoh,  // oscillated numubar coh                                                                                                                                                 
-   kSKmRHCOscNuMuBarCCoth,  // oscillated numubar CC other                                                                                                                                             
-   kSKmRHCNuECCQE,          // nue CC QE                                                                                                                                                              
-   kSKmRHCNuECC1pi,         // nue CC 1pi                                                                                                                                                             
-   kSKmRHCNuECCcoh,         // nue CC coherent                                                                                                                                                        
-   kSKmRHCNuECCoth,         // nue CC other                                                                                                                                                          
-   kSKmRHCNuENC1piC,        // nue NC 1 charged pi                                                                                                                                                   
-   kSKmRHCNuENC1pi0,        // nue NC 1pi0                                                                                                                                                            
-   kSKmRHCNuENCcoh,         // nue NC coherent                                                                                                                                                      
-   kSKmRHCNuENCoth_mu,      // nue NC other, numu disappearance analysis definition                                                                                                                   
-   kSKmRHCNuENCoth_e,       // nue NC other, nue appearance analysis definition                                                                                                                       
-   kSKmRHCNuEBarCCQE,       // nuebar CC QE                                                                                                                                                          
-   kSKmRHCNuEBarCC1pi,      // nuebar CC 1pi                                                                                                                                                         
-   kSKmRHCNuEBarCCcoh,      // nuebar CC coherent                                                                                                                                                     
-   kSKmRHCNuEBarCCoth,      // nuebar CC other                                                                                                                                                      
-   kSKmRHCNuEBarNC1piC,     // nuebar NC 1 charged pi                                                                                                                                                
-   kSKmRHCNuEBarNC1pi0,     // nuebar NC 1pi0
-   kSKmRHCNuEBarNCcoh,      // nuebar NC coherent                                                                                                                                                      
-   kSKmRHCNuEBarNCoth_mu,   // nuebar NC other, numu disappearance analysis definition                                                                                                                 
-   kSKmRHCNuEBarNCoth_e,    // nuebar NC other, nue appearance analysis definition                                                                                                                      
+   //******** ADDITIONAL MODES FOR REVERSE HORN CURRENT (RHC) RUNNING ************
    kSKmRHCOscNuECCQE,       // oscillated nue CCQE                                                                                                                                                    
    kSKmRHCOscNuECC1pi,      // oscillated nue CC 1pi                                                                                                                                                  
    kSKmRHCOscNuECCcoh,      // oscillated nue coh                                                                                                                                                    
@@ -303,8 +239,6 @@ typedef enum ESuperkMode
    kSKmRHCSigNuEBarCC1pi,   // signal nuebar CC 1pi                                                                                                                                                   
    kSKmRHCSigNuEBarCCcoh,   // signal nuebar CC coherent                                                                                                                                             
    kSKmRHCSigNuEBarCCoth    // signal nuebar CC other                                                                                                                                              
-#endif
-#endif
 } 
 SuperkMode_t; 
 
