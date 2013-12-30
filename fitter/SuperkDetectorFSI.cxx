@@ -632,13 +632,7 @@ double SuperkDetectorFSI::EnergyScale(SuperkSample_t s) const
 {
   // energy scale       
   double twkdial = fEnergyScaleTwkDial;
-  //Todo: make this work when both __FHC_RUNNING__ and __RHC_RUNNING__ are defined.
-#ifdef __FHC_RUNNING__
   double err     = this->EnergyScaleRelErr(s,kSKmNuMuCCQE);
-#endif
-#ifdef __RHC_RUNNING__
-  double err     = this->EnergyScaleRelErr(s,kSKmRHCNuMuCCQE);
-#endif
   double scale   = 1. + twkdial * err;
   return scale;
 }
