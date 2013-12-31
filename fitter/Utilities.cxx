@@ -3,6 +3,8 @@
 
 \copyright (c) 2010-2013, VaLOR group.
 
+30-12-2013  Nick
+Added samples and modes for reverse horn current running
 
 */
 //____________________________________________________________________________

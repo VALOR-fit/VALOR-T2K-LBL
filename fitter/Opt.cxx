@@ -11,6 +11,9 @@
  @ 18/2/13 - LE                                                                                                                               
  Added back the selection of dmsq schema,from branch 2010_v3: choice between usual Dm12sq + Dm23sq and Fogli&Lisi schema
 
+ 30-12-2013  Nick
+ Added samples for reverse horn current running
+
 */
 //________________________________________________________________________________________
 

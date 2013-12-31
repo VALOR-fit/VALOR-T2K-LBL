@@ -8,7 +8,8 @@
 
  Changes since 2011_v0.9.0:
 
- @
+ 30-12-2013  Nick
+ Added samples for reverse horn current running
 
 */
 //________________________________________________________________________________________

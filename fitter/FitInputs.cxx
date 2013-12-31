@@ -11,6 +11,9 @@
  @ 18/2/13 LE
  Added back Fogli and Lisi schema in the penalty term.
 
+ 30-12-2013 Nick
+ Added samples for reverse horn current running
+
 */
 //________________________________________________________________________________________
 

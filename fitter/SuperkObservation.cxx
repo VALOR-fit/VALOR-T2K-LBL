@@ -12,6 +12,9 @@
  Read Ereco spectrum for 1Re.
  Doubled arrays (independent ones for 1Rmu and 1Re)
 
+ 31-12-2013  Nick
+ Added samples for reverse horn current running
+
 */
 //________________________________________________________________________________________
 

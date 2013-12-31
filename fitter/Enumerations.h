@@ -12,7 +12,11 @@
 
 Changes since 2011_v0.9.0:
 
-17-12-2013  Nick  Split t2kana::conv namespace into several smaller files
+17-12-2013  Nick  
+Split t2kana::conv namespace into several smaller files
+
+31-12-2013  Nick
+Add samples, modes and systematic parameters for reverse horn current running
 
 */
 //____________________________________________________________________________
