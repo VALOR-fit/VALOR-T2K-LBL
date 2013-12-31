@@ -309,8 +309,6 @@ double* SuperkExpectation::CurrPredictedErecoSpectrumArray(t2kana::conv::SuperkS
     return 0;
   }
 
-  //Todo: need to cover case when sample is none of kSKsFCFV1RingMuLike, 
-  //kSKsFCFV1RingELike, kSKsRHCFCFV1RingMuLike or kSKsRHCFCFV1RingELike
   if(s == kSKsRHCFCFV1RingMuLike)
     return fPredictRHCErecoSpectrumArrayTot1Rmu;
   else if(s == kSKsRHCFCFV1RingELike)
@@ -334,8 +332,6 @@ double* SuperkExpectation::CurrPredictedErecoSpectrumArrayMode(
     return 0;
   }
 
-  //Todo: need to cover case when sample is none of kSKsFCFV1RingMuLike, 
-  //kSKsFCFV1RingELike, kSKsRHCFCFV1RingMuLike or kSKsRHCFCFV1RingELike
   if(s == kSKsRHCFCFV1RingMuLike)
     return fPredictRHCErecoSpectrumArray1Rmu[midx];
   else if(s == kSKsRHCFCFV1RingELike)
@@ -354,8 +350,6 @@ double  SuperkExpectation::CurrPredictedErecoSpectrumArray(t2kana::conv::SuperkS
     return 0;
   }
 
-  //Todo: need to cover case when sample is none of kSKsFCFV1RingMuLike, 
-  //kSKsFCFV1RingELike, kSKsRHCFCFV1RingMuLike or kSKsRHCFCFV1RingELike
   if(s == kSKsRHCFCFV1RingMuLike)
     return fPredictRHCErecoSpectrumArrayTot1Rmu[i];
   else if(s == kSKsRHCFCFV1RingELike)

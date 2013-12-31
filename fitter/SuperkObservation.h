@@ -56,6 +56,8 @@ public:
 
   double  fErDistrArray1Rmu[conv::kNErecoBins1Rmu];
   double  fErDistrArray1Re[conv::kNErecoBins1Re];
+  double  fRHCErDistrArray1Rmu[conv::kRHCNErecoBins1Rmu];
+  double  fRHCErDistrArray1Re[conv::kRHCNErecoBins1Re];
 
 private:
 
