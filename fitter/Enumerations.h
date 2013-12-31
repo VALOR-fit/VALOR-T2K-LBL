@@ -289,7 +289,6 @@ typedef enum EPhysParamId
 
    //********* FORWARD HORN CURRENT ************************ 
 
-   //#ifdef __FHC_RUNNING__
    /*
     * SuperK detector errors (energy scale and efficiencies)
    */   
@@ -445,15 +444,12 @@ typedef enum EPhysParamId
    kNuisSKDetFSI017
 #endif
 
-   //#endif
-
    //********* REVERSE HORN CURRENT **************************
 
-   //#ifdef __RHC_RUNNING__   
    /*                                                                                                                                                                                                  
     * SuperK detector errors (energy scale and efficiencies)                                                                                                                                         
     */
-   /*
+   
    kRHCNuisSuperkEnergyScale,     // SK energy scale                                                                                                                                                  
 #if FSI_BINS != 3
    kRHCNuisSuperkEff1RmuCCQEoth,  // SK 1Rmu CCQE efficiency (other)                                                                                                                                     
@@ -479,11 +475,11 @@ typedef enum EPhysParamId
    kRHCNuisSuperkEff1ReNC1,          // SK 1Re NC eff Ereco bin 1                                                                                                                                        
    kRHCNuisSuperkEff1ReNC2,          // SK 1Re NC eff Ereco bin 2                                                                                                                                      
 #endif
-   */
+   
    /*                                                                                                                                                                                                 
     * (flux and cross-section) correlated parameters used in the BANFF fit                                                                                                                              
     */
-   /*
+   
    kRHCNuisBANFF00,               // # 00, SK     numu    flux,  E =  0.0 -  0.4 GeV                                                                                                                     
    kRHCNuisBANFF01,               // # 01, SK     numu    flux,  E =  0.4 -  0.5 GeV                                                                                                               
    kRHCNuisBANFF02,               // # 02, SK     numu    flux,  E =  0.5 -  0.6 GeV                                                                                                          
@@ -531,12 +527,12 @@ typedef enum EPhysParamId
    kRHCNuisBANFFMECNorm,          // MEC template normalisation                                                                                                                                          
    kRHCNuisBANFFPDDDoubleCount,   // PDD double counting                                                                                                                                               
 #endif
-   */
+   
    /*                                                                                                                                                                                                  
     * Cross-section parameters (excluding cross-section params which were included in BANFF fit and are correlated with the flux params)                                                              
     * These other paramers are taken to be uncorrelated and are applied to SK only.                                                                                                                    
     */
-   /*
+   
    //systematics which use splines                                                                                                                                                                    
    kRHCNuisXSecFermiMom,          // Fermi momentum                                                                                                                                                      
    kRHCNuisXSecSpecFunc,          // spectral function on/off                                                                                                                              
@@ -552,14 +548,14 @@ typedef enum EPhysParamId
    kRHCNuisXSecNormNCoth,         // NC other norm                                                                                                                                            
    kRHCNuisXSecNormNuEToNuMu,     // nue / numu cross section                                                                                                                                       
    kRHCNuisXSecNormAntiNuToNu,    // antinu / nu cross section                                                                                                                             
-   */
+   
    /*                                                                                                                                                                                               
     * FSI parameters.                                                                                                                                                                                 
     * Assuming here a 10x10 covariance matrix will be made available.                                                                                                                                 
     * Each parameter is a scaling factor to apply at some Ereco range (to be defined) for some                                                                                                          
     * SK reaction mode (or the total? to be defined)                                                                                                                                                   
     */
-   /*
+   
    // FSI matrix 6x6 for 1Rmu                                                                                                                                                                       
 #if FSI_BINS != 3
    kRHCNuisFSI000,
@@ -609,9 +605,7 @@ typedef enum EPhysParamId
    kRHCNuisSKDetFSI016,
    kRHCNuisSKDetFSI017
 #endif
-   */
-   //#endif
-
+   
 } 
 PhysParamId_t;
 

@@ -4430,6 +4430,15 @@ bool t2kana::util::IsOscNuEBar(t2kana::conv::SuperkMode_t  m)
   return false;
 }
 //____________________________________________________________________________
+bool t2kana::util::IsRHCOscNuE(t2kana::conv::SuperkMode_t  m)
+{
+#ifdef __USE_OSC_NUEBAR_MC_TEMPLATES__
+  if(m >= kSKmRHCOscNuECCQE && m <=  kSKmRHCOscNuECCoth)
+    return true;
+#endif
+  return false;
+}
+//____________________________________________________________________________
 bool t2kana::util::IsNuMuBar(t2kana::conv::SuperkMode_t m)
 {
   if(m >= kSKmNuMuBarCCQE && m <= kSKmNuMuBarNCoth_e)
@@ -4526,6 +4535,13 @@ bool t2kana::util::IsSignalNuE(t2kana::conv::SuperkMode_t m)
        break;
   }
   */
+  return false;
+}
+//____________________________________________________________________________
+bool t2kana::util::IsRHCSignalNuEBar(t2kana::conv::SuperkMode_t m)
+{
+  if(m >= kSKmRHCSigNuEBarCCQE && m <= kSKmRHCSigNuEBarCCoth)
+    return true;
   return false;
 }
 //____________________________________________________________________________
