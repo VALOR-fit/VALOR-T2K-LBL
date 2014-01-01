@@ -5311,7 +5311,6 @@ const double * t2kana::util::VariableXsEtrueBinEdges(t2kana::conv::SuperkSample_
   if(im == -1)
     return 0;
 
-  //Todo: make this work when both __FHC_RUNNING__ and __RHC_RUNNING__ are defined.
   if(s == kSKsRHCFCFV1RingMuLike || s == kSKsRHCFCFV1RingELike)
     return t2kana::conv::kRHCXsEtrueBinEdges[is][im];
   else
@@ -5361,7 +5360,6 @@ const double * t2kana::util::VariableMCEtrueBinEdges(t2kana::conv::SuperkSample_
   if(im == -1)
     return 0;
 
-  //Todo: make this work when both __FHC_RUNNING__ and __RHC_RUNNING__ are defined.
   if(s == kSKsRHCFCFV1RingMuLike || s == kSKsRHCFCFV1RingELike)
     return t2kana::conv::kRHCMCEtrueBinEdges[is][im];
   else
