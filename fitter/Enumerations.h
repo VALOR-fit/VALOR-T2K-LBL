@@ -445,7 +445,7 @@ typedef enum EPhysParamId
    kNuisSKDetFSI014,
    kNuisSKDetFSI015,
    kNuisSKDetFSI016,
-   kNuisSKDetFSI017
+   kNuisSKDetFSI017,
 #endif
 
    //********* REVERSE HORN CURRENT **************************
