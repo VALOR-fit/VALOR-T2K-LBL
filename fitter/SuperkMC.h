@@ -138,8 +138,9 @@ private:
   //
   // Private data members
   //
-
-  double fPOT;  ///< POT for actual data-set (MC is scaled to that exposure)
+ 
+  double fPOT;     ///< POT for actual data-set (MC is scaled to that exposure)
+  double fPOTRHC;  ///< POT for actual data-set in RHC sample (MC is scaled to that exposure)
 
   // input MC templates (nominal, nominal + systematics, nominal + systematics + physics hypothesis) and Ereco spectra
   TH2D *     fMCTemplOri[kns][knm];        ///< Ereco-Etrue MC template(sample,mode): nominal (doesn't even have pot weighting applied)
@@ -150,33 +151,70 @@ private:
   TH2D *     fMCTemplFin[kns][knm];        ///< Ereco-Etrue MC template(sample,mode): nominal + ext/tuning + nd280/tuning + systematics + physics hypothesis
 #endif
   TH2D *     fMCTemplMECMartini;           ///< Martini MEC template
+  TH2D *     fMCTemplRHCMECMartini;           ///< Martini MEC template    // ANTINU
+
   TH2D *     fMCTemplMECNieves;            ///< Nieves MEC template
+  TH2D *     fMCTemplRHCMECNieves;            ///< Nieves MEC template     // ANTINU
+
   double     fMCTemplArrayMECMartini[conv::kNEtrueBins1Rmu][conv::kNErecoBins1Rmu]; ///< Martini MEC template
+  double     fMCTemplArrayRHCMECMartini[conv::kRHCNEtrueBins1Rmu][conv::kRHCNErecoBins1Rmu]; ///< Martini MEC template     // ANTINU
+
   double     fMCTemplArrayMECNieves [conv::kNEtrueBins1Rmu][conv::kNErecoBins1Rmu]; ///< Nieves MEC template
+  double     fMCTemplArrayRHCMECNieves [conv::kRHCNEtrueBins1Rmu][conv::kRHCNErecoBins1Rmu]; ///< Nieves MEC template     // ANTINU
+
   TH2D *     fMCVariableTempl[kns][knm];
+  
   int        fMCVariableTemplArray1Rmu[knm][conv::kMCNEtrueBins][conv::kXsNErecoBins1Rmu];
   int        fMCVariableTemplArray1Re [knm][conv::kMCNEtrueBins][conv::kXsNErecoBins1Re];
+  int        fMCVariableTemplArrayRHC1Rmu[knm][conv::kRHCMCNEtrueBins][conv::kRHCXsNErecoBins1Rmu];     // ANTINU
+  int        fMCVariableTemplArrayRHC1Re [knm][conv::kRHCMCNEtrueBins][conv::kRHCXsNErecoBins1Re];      // ANTINU
+
   int        fMCTemplArrayOri1Rmu[knm][conv::kNEtrueBins1Rmu][conv::kNErecoBins1Rmu];
   int        fMCTemplArrayOri1Re [knm][conv::kNEtrueBins1Re][conv::kNErecoBins1Re];
+  int        fMCTemplArrayRHCOri1Rmu[knm][conv::kRHCNEtrueBins1Rmu][conv::kRHCNErecoBins1Rmu];    // ANTINU
+  int        fMCTemplArrayRHCOri1Re [knm][conv::kRHCNEtrueBins1Re][conv::kRHCNErecoBins1Re];     // ANTINU
+
   double     fMCTemplArrayNom1Rmu[knm][conv::kNEtrueBins1Rmu][conv::kNErecoBins1Rmu];
   double     fMCTemplArrayNom1Re [knm][conv::kNEtrueBins1Re][conv::kNErecoBins1Re];
+  double     fMCTemplArrayRHCNom1Rmu[knm][conv::kRHCNEtrueBins1Rmu][conv::kRHCNErecoBins1Rmu];   // ANTINU
+  double     fMCTemplArrayRHCNom1Re [knm][conv::kRHCNEtrueBins1Re][conv::kRHCNErecoBins1Re];    // ANTINU
+
   double     fMCTemplArrayTun1Rmu[knm][conv::kNEtrueBins1Rmu][conv::kNErecoBins1Rmu];
   double     fMCTemplArrayTun1Re [knm][conv::kNEtrueBins1Re][conv::kNErecoBins1Re];
-  //double     fMCTemplArraySys[kns][knm][conv::kNEtrueBins][conv::kNErecoBins1Rmu];
+  double     fMCTemplArrayRHCTun1Rmu[knm][conv::kRHCNEtrueBins1Rmu][conv::kRHCNErecoBins1Rmu];  // ANTINU
+  double     fMCTemplArrayRHCTun1Re [knm][conv::kRHCNEtrueBins1Re][conv::kRHCNErecoBins1Re];    // ANTINU
+
+  //double     fMCTemplArraySys[kns][knm][conv::kNEtrueBins][conv::kNErecoBins1Rmu]; 
+  //double     fMCTemplArrayRHCSys[kns][knm][conv::kRHCNEtrueBins][conv::kRHCNErecoBins1Rmu];   // ANTINU
+
   double     fMCTemplArrayFin1Rmu[knm][conv::kNEtrueBins1Rmu][conv::kNErecoBins1Rmu];
   double     fMCTemplArrayFin1Re [knm][conv::kNEtrueBins1Re][conv::kNErecoBins1Re];
+  double     fMCTemplArrayRHCFin1Rmu[knm][conv::kRHCNEtrueBins1Rmu][conv::kRHCNErecoBins1Rmu];  // ANTINU
+  double     fMCTemplArrayRHCFin1Re [knm][conv::kRHCNEtrueBins1Re][conv::kRHCNErecoBins1Re];    // ANTINU
+
   double     fMCStatFracErr1Rmu[knm][conv::kNEtrueBins1Rmu][conv::kNErecoBins1Rmu];
   double     fMCStatFracErr1Re [knm][conv::kNEtrueBins1Re][conv::kNErecoBins1Re];
+  double     fMCStatFracErrRHC1Rmu[knm][conv::kRHCNEtrueBins1Rmu][conv::kRHCNErecoBins1Rmu];    // ANTINU
+  double     fMCStatFracErrRHC1Re [knm][conv::kRHCNEtrueBins1Re][conv::kRHCNErecoBins1Re];      // ANTINU
 
   TH1D *     fMCErecoSpectrum[kns][knm];   ///< Ereco MC spectrum (sample,mode)     : nominal + ext/tuning + nd280/tuning + systematics + physics hypothesis
   TH1D *     fMCErecoSpectrumTot[kns];     ///< Ereco MC spectrum (sample)          : nominal + ext/tuning + nd280/tuning + systematics + physics hypothesis
   TH1D *     fMCEtrueSpectrumTot[kns];     ///< Etrue MC spectrum (sample)          : nominal
+
   double     fMCEtrueSpectrumTotArray1Rmu[conv::kNEtrueBins1Rmu];
   double     fMCEtrueSpectrumTotArray1Re[conv::kNEtrueBins1Re];
+  double     fMCEtrueSpectrumTotArrayRHC1Rmu[conv::kRHCNEtrueBins1Rmu];     // ANTINU
+  double     fMCEtrueSpectrumTotArrayRHC1Re[conv::kRHCNEtrueBins1Re];       // ANTINU
+
   double     fMCErecoSpectrumTotArray1Rmu[conv::kNErecoBins1Rmu];
   double     fMCErecoSpectrumTotArray1Re[conv::kNErecoBins1Re];
+  double     fMCErecoSpectrumTotArrayRHC1Rmu[conv::kRHCNErecoBins1Rmu];    // ANTINU
+  double     fMCErecoSpectrumTotArrayRHC1Re[conv::kRHCNErecoBins1Re];      // ANTINU 
+
   double     fMCErecoSpectrumArray1Rmu[conv::knm][conv::kNErecoBins1Rmu];
   double     fMCErecoSpectrumArray1Re [conv::knm][conv::kNErecoBins1Re];
+  double     fMCErecoSpectrumArrayRHC1Rmu[conv::knm][conv::kRHCNErecoBins1Rmu];    // ANTINU
+  double     fMCErecoSpectrumArrayRHC1Re [conv::knm][conv::kRHCNErecoBins1Re];     // ANTINU
 
   // input event trees and normalisation factors
   TTree*     fMCTreeNuMu1Rmu;              ///< input MC event tree /  sample: numu                         / cuts: 1-ring mu-like 
@@ -190,7 +228,19 @@ private:
   TTree*     fMCTreeNuE1Re;                ///< input MC event tree /  sample: nue (intrinsic)              / cuts: 1-ring e-like 
   TTree*     fMCTreeNuEBar1Re;             ///< input MC event tree /  sample: nuebar (intrinsic)           / cuts: 1-ring e-like 
   TTree*     fMCTreeSigNuE1Re;             ///< input MC event tree /  sample: nue (signal, 100% numu->nue) / cuts: 1-ring e-like 
+ 
+  TTree*     fMCTreeNuMuRHC1Rmu;              ///< input MC event tree /  sample: numu                         / cuts: 1-ring mu-like    // ANTINU
+  TTree*     fMCTreeNuMuBarRHC1Rmu;           ///< input MC event tree /  sample: numubar                      / cuts: 1-ring mu-like    // ANTINU
+  TTree*     fMCTreeNuERHC1Rmu;               ///< input MC event tree /  sample: nue (intrinsic)              / cuts: 1-ring mu-like    // ANTINU
+  TTree*     fMCTreeNuEBarRHC1Rmu;            ///< input MC event tree /  sample: nuebar (intrinsic)           / cuts: 1-ring mu-like    // ANTINU
+  TTree*     fMCTreeSigNuEBarRHC1Rmu;            ///< input MC event tree /  sample: nue (signal, 100% numu->nue) / cuts: 1-ring mu-like    // ANTINU
   
+  TTree*     fMCTreeNuMuRHC1Re;               ///< input MC event tree /  sample: numu                         / cuts: 1-ring e-like    // ANTINU
+  TTree*     fMCTreeNuMuBarRHC1Re;            ///< input MC event tree /  sample: numubar                      / cuts: 1-ring e-like    // ANTINU
+  TTree*     fMCTreeNuERHC1Re;                ///< input MC event tree /  sample: nue (intrinsic)              / cuts: 1-ring e-like    // ANTINU
+  TTree*     fMCTreeNuEBarRHC1Re;             ///< input MC event tree /  sample: nuebar (intrinsic)           / cuts: 1-ring e-like    // ANTINU
+  TTree*     fMCTreeSigNuEBarRHC1Re;             ///< input MC event tree /  sample: nue (signal, 100% numu->nue) / cuts: 1-ring e-like    // ANTINU
+ 
   TH1D*      fMCPOTHistNuMu;               ///< input MC event sample POT histogram : numu
   TH1D*      fMCPOTHistNuMuBar;            ///< input MC event sample POT histogram : numubar
   TH1D*      fMCPOTHistNuE;                ///< input MC event sample POT histogram : nue 
@@ -201,6 +251,20 @@ private:
   double     fMCPOTNuE;                    ///< MC event sample POT : nue 
   double     fMCPOTNuEBar;                 ///< MC event sample POT : nuebar
   double     fMCPOTSigNuE;                 ///< MC event sample POT : nue (signal)
+
+  // ANTINU
+  TH1D*      fMCPOTHistRHCNuMu;            ///< input MC event sample POT histogram : numu
+  TH1D*      fMCPOTHistRHCNuMuBar;         ///< input MC event sample POT histogram : numubar
+  TH1D*      fMCPOTHistRHCNuE;             ///< input MC event sample POT histogram : nue 
+  TH1D*      fMCPOTHistRHCNuEBar;             ///< input MC event sample POT histogram : nue
+  TH1D*      fMCPOTHistRHCSigNuEBar;       ///< input MC event sample POT histogram : nuebar (signal)
+  double     fMCPOTRHCNuMu;                ///< MC event sample POT : numu
+  double     fMCPOTRHCNuMuBar;             ///< MC event sample POT : numubar
+  double     fMCPOTRHCNuE;                 ///< MC event sample POT : nue 
+  double     fMCPOTRHCNuEBar;                 ///< MC event sample POT : nue
+  double     fMCPOTRHCSigNuEBar;           ///< MC event sample POT : nuebar (signal)
+  ////
+
   float      fBrEreco;                     ///< branch var for reading input MC mini-DST
   float      fBrEtrue;                     ///< branch var for reading input MC mini-DST
   int        fBrGenCode;                   ///< branch var for reading input MC mini-DST
