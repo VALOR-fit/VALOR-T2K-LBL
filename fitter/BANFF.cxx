@@ -563,15 +563,31 @@ void BANFF::PrintSystematicVariations(ostream & stream) const
 //________________________________________________________________________________________
 int BANFF::Param2Idx(PhysParamId_t p) const
 {
+  int first, last;
   int iparam = (int) p;
-  int first  = (int) kNuisBANFF00;
+  TString param_name = util::AsString(p);
+  if(param_name.Contains("RHC"))
+    {
+    first  = (int) kRHCNuisBANFF00;
 #if (BANFF_BINS != 2) && (BANFF_BINS != 4)
-  int last   = (int) kNuisBANFFNC1pi0;
+    last   = (int) kRHCNuisBANFFNC1pi0;
 #elif BANFF_BINS == 2
-  int last   = (int) kNuisBANFFCC1piE1;
+    last   = (int) kRHCNuisBANFFCC1piE1;
 #elif BANFF_BINS == 4
-  int last   = (int) kNuisBANFFPDDDoubleCount;
+    last   = (int) kRHCNuisBANFFPDDDoubleCount;
 #endif
+    }
+  else
+    {
+    first  = (int) kNuisBANFF00;
+#if (BANFF_BINS != 2) && (BANFF_BINS != 4)
+    last   = (int) kNuisBANFFNC1pi0;
+#elif BANFF_BINS == 2
+    last   = (int) kNuisBANFFCC1piE1;
+#elif BANFF_BINS == 4
+    last   = (int) kNuisBANFFPDDDoubleCount;
+#endif
+    }
 
   if(! (iparam >= first && iparam <= last) )
     cout << AsString(p) << endl;
