@@ -455,30 +455,6 @@ typedef enum EPhysParamId
     */
    
    kRHCNuisSuperkEnergyScale,     // SK energy scale                                                                                                                                                  
-#if FSI_BINS != 3
-   kRHCNuisSuperkEff1RmuCCQEoth,  // SK 1Rmu CCQE efficiency (other)                                                                                                                                     
-   kRHCNuisSuperkEff1RmuCCQErc0u, // SK 1Rmu CCQE efficiency (ring counting, Ereco bin 1)                                                                                                                
-   kRHCNuisSuperkEff1RmuCCQErc1u, // SK 1Rmu CCQE efficiency (ring counting, Ereco bin 2)                                                                                                              
-   kRHCNuisSuperkEff1RmuCCQErc2u, // SK 1Rmu CCQE efficiency (ring counting, Ereco bin 3)                                                                                                                
-   kRHCNuisSuperkEff1RmuCCnonQE,  // SK 1Rmu CCnonQE efficiency                                                                                                                                          
-   kRHCNuisSuperkEff1RmuNC,       // SK 1Rmu NC efficiency                                                                                                                                              
-   kRHCNuisSuperkEff1RmuNueCC,    // SK 1Rmu nue CC efficiency                                                                                                                                       
-#endif
-
-#if FSI_BINS != 2
-   kRHCNuisSuperkEff1ReNueSigCC0,    // SK 1Re CC eff for osc nue Ereco bin 0                                                                                                                        
-   kRHCNuisSuperkEff1ReNueSigCC1,    // SK 1Re CC eff for osc nue Ereco bin 1                                                                                                                 
-   kRHCNuisSuperkEff1ReNueSigCC2,    // SK 1Re CC eff for osc nue Ereco bin 2                                                                                                                            
-   kRHCNuisSuperkEff1ReNumuCC0,      // SK 1Re CC eff for numu Ereco bin 0                                                                                                                               
-   kRHCNuisSuperkEff1ReNumuCC1,      // SK 1Re CC eff for numu Ereco bin 1                                                                                                                               
-   kRHCNuisSuperkEff1ReNumuCC2,      // SK 1Re CC eff for numu Ereco bin 2                                                                                                                               
-   kRHCNuisSuperkEff1ReNueCC0,       // SK 1Re CC eff for nue Ereco bin 0                                                                                                                          
-   kRHCNuisSuperkEff1ReNueCC1,       // SK 1Re CC eff for nue Ereco bin 1                                                                                                                                
-   kRHCNuisSuperkEff1ReNueCC2,       // SK 1Re CC eff for nue Ereco bin 2                                                                                                                                
-   kRHCNuisSuperkEff1ReNC0,          // SK 1Re NC eff Ereco bin 0                                                                                                                                       
-   kRHCNuisSuperkEff1ReNC1,          // SK 1Re NC eff Ereco bin 1                                                                                                                                        
-   kRHCNuisSuperkEff1ReNC2,          // SK 1Re NC eff Ereco bin 2                                                                                                                                      
-#endif
    
    /*                                                                                                                                                                                                 
     * (flux and cross-section) correlated parameters used in the BANFF fit                                                                                                                              
@@ -554,38 +530,12 @@ typedef enum EPhysParamId
    kRHCNuisXSecNormAntiNuToNu,    // antinu / nu cross section                                                                                                                             
    
    /*                                                                                                                                                                                               
-    * FSI parameters.                                                                                                                                                                                 
+    * SK and FSI parameters.                                                                                                                                                      
     * Assuming here a 10x10 covariance matrix will be made available.                                                                                                                                 
     * Each parameter is a scaling factor to apply at some Ereco range (to be defined) for some                                                                                                          
     * SK reaction mode (or the total? to be defined)                                                                                                                                                   
     */
    
-   // FSI matrix 6x6 for 1Rmu                                                                                                                                                                       
-#if FSI_BINS != 3
-   kRHCNuisFSI000,
-   kRHCNuisFSI001,
-   kRHCNuisFSI002,
-   kRHCNuisFSI003,
-   kRHCNuisFSI004,
-   kRHCNuisFSI005,
-#endif
- 
-   // FSI matrix 12x12 for 1Re                                                                                                                                                                      
-#if FSI_BINS != 2
-   kRHCNuisFSI006,
-   kRHCNuisFSI007,
-   kRHCNuisFSI008,
-   kRHCNuisFSI009,
-   kRHCNuisFSI010,
-   kRHCNuisFSI011,
-   kRHCNuisFSI012,
-   kRHCNuisFSI013,
-   kRHCNuisFSI014,
-   kRHCNuisFSI015,
-   kRHCNuisFSI016,
-   kRHCNuisFSI017,
-#endif
-
    // SKDET+FSI matrix 18x18                                                                                                                                                                       
 #if FSI_BINS != 3
    kRHCNuisSKDetFSI000,

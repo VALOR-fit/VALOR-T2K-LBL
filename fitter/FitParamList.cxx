@@ -1727,6 +1727,7 @@ void FitParamList::AppendFSISystematicsDisap(FitParamList * fparm, int start)
   }
 }
 #endif
+
 #ifdef __NUEONLY__
 //________________________________________________________________________________________
 void FitParamList::AppendFSISystematicsApp(FitParamList * fparm, int start)
@@ -1769,6 +1770,7 @@ void FitParamList::AppendFSISystematicsApp(FitParamList * fparm, int start)
   }
 
 }
+
 #endif
 //________________________________________________________________________________________
 void FitParamList::AppendAllCorrelatedBANFFSystematics(FitParamList * fparm, int start)

@@ -848,6 +848,8 @@ string t2kana::util::AsString(PhysParamId_t p)
      * 2011-analysis nuisance parameters
      */
 
+    //***************************** FORWARD HORN CURRENT **********************************
+
     //
     // SK detector
     //
@@ -1214,7 +1216,274 @@ string t2kana::util::AsString(PhysParamId_t p)
       }
 #endif
 #endif //SKDETFSI  
+
+      //************************** REVERSE HORN CURRENT *****************************
+
+    case ( kRHCNuisSuperkEnergyScale     ) : return "SK energy scale; RHC";                 break;
   
+      //
+      // BANFF flux and cross-section params
+      //
+
+  case ( kRHCNuisBANFF00 ) :
+  case ( kRHCNuisBANFF01 ) :
+  case ( kRHCNuisBANFF02 ) :
+  case ( kRHCNuisBANFF03 ) :
+  case ( kRHCNuisBANFF04 ) :
+  case ( kRHCNuisBANFF05 ) :
+  case ( kRHCNuisBANFF06 ) :
+  case ( kRHCNuisBANFF07 ) :
+  case ( kRHCNuisBANFF08 ) :
+  case ( kRHCNuisBANFF09 ) :
+  case ( kRHCNuisBANFF10 ) :
+  case ( kRHCNuisBANFF11 ) :
+  case ( kRHCNuisBANFF12 ) :
+  case ( kRHCNuisBANFF13 ) :
+  case ( kRHCNuisBANFF14 ) :
+  case ( kRHCNuisBANFF15 ) :
+#if (BANFF_BINS != 2) && (BANFF_BINS != 4)
+  case ( kRHCNuisBANFF16 ) :
+  case ( kRHCNuisBANFF17 ) :
+  case ( kRHCNuisBANFF18 ) :
+  case ( kRHCNuisBANFF19 ) :
+  case ( kRHCNuisBANFF20 ) :
+  case ( kRHCNuisBANFF21 ) :
+#endif
+#if BANFF_BINS == 1
+  case ( kRHCNuisBANFF22 ) :
+  case ( kRHCNuisBANFF23 ) :
+  case ( kRHCNuisBANFF24 ) :
+#endif
+    {
+      int ip = (int)p - (int)kRHCNuisBANFF00;
+      return Form("BANFF %2d; SK %s flux; %.1f - %.1f GeV; RHC",
+		  ip, util::Pdg2String(kNuPdgCodeOfRHCFluxParamInBANFFfit[ip]).c_str(), 
+		  kEtrueRangeOfRHCFluxParamInBANFFfit[ip][0],
+		  kEtrueRangeOfRHCFluxParamInBANFFfit[ip][1]);     
+      break;
+    }
+#ifndef ONEOVERMAQE
+  case ( kRHCNuisBANFFMAQE    ) : return "BANFF; Ma QE; RHC";                           break;
+#else
+  case ( kRHCNuisBANFFMAQE    ) : return "BANFF; 1 / (Ma QE)^2; RHC";                   break;
+#endif
+  case ( kRHCNuisBANFFMARES   ) : return "BANFF; Ma RES; RHC";                          break;
+  case ( kRHCNuisBANFFCCQEE0  ) : return "BANFF; Norm; CC QE; 0.0 - 1.5 GeV; RHC";      break;
+#if BANFF_BINS != 3
+  case ( kRHCNuisBANFFCCQEE1  ) : return "BANFF; Norm; CC QE; 1.5 - 3.5 GeV; RHC";      break;
+  case ( kRHCNuisBANFFCCQEE2  ) : return "BANFF; Norm; CC QE; 3.5 - 30.0 GeV; RHC";     break;
+#endif
+  case ( kRHCNuisBANFFCC1piE0 ) : return "BANFF; Norm; CC 1pi; 0.0 - 2.5 GeV; RHC";     break;
+#if BANFF_BINS != 3
+  case ( kRHCNuisBANFFCC1piE1 ) : return "BANFF; Norm; CC 1pi; 2.5 - 30.0 GeV; RHC";    break;
+#endif
+#if (BANFF_BINS != 2) && (BANFF_BINS != 4)
+  case ( kRHCNuisBANFFNC1pi0  ) : return "BANFF; Norm; NC 1pi0; 0.0 - 30.0 GeV; RHC";   break;
+#endif
+#if BANFF_BINS == 4
+  case ( kRHCNuisBANFFMECNorm ) : return "BANFF; Norm; MEC; RHC";                       break;
+  case ( kRHCNuisBANFFPDDDoubleCount ) : return "BANFF; PDD double counting; RHC";      break;
+#endif
+
+    //
+    // XSec params not correlated with flux
+    //
+
+  case ( kRHCNuisXSecFermiMom   ) : return "Fermi Momentum; RHC";                  break;
+  case ( kRHCNuisXSecSpecFunc   ) : return "Spectral Func; RHC";                   break; 
+  case ( kRHCNuisXSecWshape     ) : return "W-shape; RHC";                         break;
+  case ( kRHCNuisXSecShapeCCoth ) : return "Shape; CC Oth; RHC";                   break;
+  case ( kRHCNuisXSecPiLessDelta) : return "Pi-less delta decay; RHC";             break;
+#ifndef __NUEONLY__
+  case ( kRHCNuisXSecBindE      ) : return "Binding energy; RHC";                  break;
+#endif
+  case ( kRHCNuisXSecNormCCcoh  ) : return "Norm; CC Coh; RHC";                    break;
+#ifndef __NUEONLY__
+  case ( kRHCNuisXSecNormNC1piC ) : return "Norm; NC 1piC; RHC";                   break;
+#endif
+#ifndef __NUMUONLY__
+  case ( kRHCNuisXSecNormNCcoh  ) : return "Norm; NC Coh; RHC";                    break;
+#endif
+  case ( kRHCNuisXSecNormNCoth  ) : return "Norm; NC Oth; RHC";                    break;
+  case ( kRHCNuisXSecNormNuEToNuMu  ) : return "Norm; NuE To NuMu; RHC";           break;
+#ifndef __NUEONLY__
+  case ( kRHCNuisXSecNormAntiNuToNu ) : return "Norm; AntiNu To Nu; RHC";          break;
+#endif
+
+    //
+    // SKDET+FSI
+    //
+#ifdef SKFSITOGETHER
+#ifndef SKCORRELATIONS
+#if FSI_BINS != 3
+  case ( kRHCNuisSKDetFSI000 ) :
+  case ( kRHCNuisSKDetFSI001 ) :
+  case ( kRHCNuisSKDetFSI002 ) :
+  case ( kRHCNuisSKDetFSI003 ) :
+  case ( kRHCNuisSKDetFSI004 ) :
+  case ( kRHCNuisSKDetFSI005 ) :
+    {
+      int ip = (int)p - (int)kRHCNuisSKDetFSI000;
+      string nutypes = "";
+      switch(p) {
+      case (kRHCNuisSKDetFSI000) :
+      case (kRHCNuisSKDetFSI001) :
+      case (kRHCNuisSKDetFSI002) :
+	nutypes = "numu/numubar CCQE (1Rmu)"; break;
+      case (kRHCNuisSKDetFSI003) :
+	nutypes = "numu/numubar CCnQE (1Rmu)"; break;
+      case (kRHCNuisSKDetFSI004) :
+	nutypes = "nue/nuebar/signue CC (1Rmu)"; break;
+      case (kRHCNuisSKDetFSI005) :
+	nutypes = "all NC (1Rmu)"; break;
+      default : nutypes = "--";
+      }
+      return Form("SKDet + FSI/SI %2d; Ereco range %.2f - %.2f GeV; %s; RHC",ip,
+                  kRHCSKDetFSIParamsErecoCut[ip][0],kRHCSKDetFSIParamsErecoCut[ip][1],nutypes.c_str());     
+      break;
+    }//FSI for 1Rmu
+#endif
+#if FSI_BINS != 2
+  case ( kRHCNuisSKDetFSI006 ) :
+  case ( kRHCNuisSKDetFSI007 ) :
+  case ( kRHCNuisSKDetFSI008 ) :
+  case ( kRHCNuisSKDetFSI009 ) :
+  case ( kRHCNuisSKDetFSI010 ) :
+  case ( kRHCNuisSKDetFSI011 ) :
+  case ( kRHCNuisSKDetFSI012 ) :
+  case ( kRHCNuisSKDetFSI013 ) :
+  case ( kRHCNuisSKDetFSI014 ) :
+  case ( kRHCNuisSKDetFSI015 ) :
+  case ( kRHCNuisSKDetFSI016 ) :
+  case ( kRHCNuisSKDetFSI017 ) :
+    {
+#if FSI_BINS == 3
+      int ip = (int)p - (int)kRHCNuisSKDetFSI006;
+#elif FSI_BINS ==1
+      int ip = (int)p - (int)kRHCNuisSKDetFSI000;
+#endif
+      string nutypes = "";
+      switch(p) {
+      case (kRHCNuisSKDetFSI006) :
+      case (kRHCNuisSKDetFSI007) :
+      case (kRHCNuisSKDetFSI008) :
+	nutypes = "oscillated nue CC (1Re)"; break;
+      case (kRHCNuisSKDetFSI009) :
+      case (kRHCNuisSKDetFSI010) :
+      case (kRHCNuisSKDetFSI011) :
+	nutypes = "numu/numubar CC (1Re)"; break;
+      case (kRHCNuisSKDetFSI012) :
+      case (kRHCNuisSKDetFSI013) :
+      case (kRHCNuisSKDetFSI014) :
+	nutypes = "nue/nuebar CC (1Re)"; break;
+      case (kRHCNuisSKDetFSI015) :
+      case (kRHCNuisSKDetFSI016) :
+      case (kRHCNuisSKDetFSI017) :
+	nutypes = "all NC (1Re)"; break;
+      default : nutypes = "--";
+      }
+      return Form("SKDet + FSI/SI %2d; Ereco range %.2f - %.2f GeV; %s; RHC",ip,
+                  kRHCSKDetFSIParamsErecoCut[ip][0],kRHCSKDetFSIParamsErecoCut[ip][1],nutypes.c_str());     
+      break;
+    }
+#endif
+#else
+  case ( kRHCNuisSKDetFSI000 ) :
+  case ( kRHCNuisSKDetFSI001 ) :
+  case ( kRHCNuisSKDetFSI002 ) :
+  case ( kRHCNuisSKDetFSI003 ) :
+  case ( kRHCNuisSKDetFSI004 ) :
+  case ( kRHCNuisSKDetFSI005 ) :
+  case ( kRHCNuisSKDetFSI006 ) :
+  case ( kRHCNuisSKDetFSI007 ) :
+  case ( kRHCNuisSKDetFSI008 ) :
+  case ( kRHCNuisSKDetFSI009 ) :
+  case ( kRHCNuisSKDetFSI010 ) :
+  case ( kRHCNuisSKDetFSI011 ) :
+  case ( kRHCNuisSKDetFSI012 ) :
+  case ( kRHCNuisSKDetFSI013 ) :
+  case ( kRHCNuisSKDetFSI014 ) :
+  case ( kRHCNuisSKDetFSI015 ) :
+  case ( kRHCNuisSKDetFSI016 ) :
+  case ( kRHCNuisSKDetFSI017 ) :
+  case ( kRHCNuisSKDetFSI018 ) :
+  case ( kRHCNuisSKDetFSI019 ) :
+    {
+      {
+	int ip = (int)p - (int)kRHCNuisSKDetFSI000;
+	string nutypes = "";
+	switch(p) {
+        case (kRHCNuisSKDetFSI000) :
+        case (kRHCNuisSKDetFSI001) :
+        case (kRHCNuisSKDetFSI002) :
+        case (kRHCNuisSKDetFSI003) :
+        case (kRHCNuisSKDetFSI004) :
+          nutypes = "signal nue CC (1Rmu)"; break;
+        case (kRHCNuisSKDetFSI005) :
+        case (kRHCNuisSKDetFSI006) :
+        case (kRHCNuisSKDetFSI007) :
+        case (kRHCNuisSKDetFSI008) :
+        case (kRHCNuisSKDetFSI009) :
+          nutypes = "numu/numubar CC (1Rmu)"; break;
+        case (kRHCNuisSKDetFSI010) :
+        case (kRHCNuisSKDetFSI011) :
+        case (kRHCNuisSKDetFSI012) :
+        case (kRHCNuisSKDetFSI013) :
+        case (kRHCNuisSKDetFSI014) :
+          nutypes = "nue/nuebar  CC (1Rmu)"; break;
+        case (kRHCNuisSKDetFSI015) :
+        case (kRHCNuisSKDetFSI016) :
+        case (kRHCNuisSKDetFSI017) :
+        case (kRHCNuisSKDetFSI018) :
+        case (kRHCNuisSKDetFSI019) :
+          nutypes = "all NC (1Rmu)"; break;
+        default : nutypes = "--";
+	}
+	return Form("SKDet + FSI/SI %2d; Ereco range %.2f - %.2f GeV; %s; RHC",ip,
+		    kRHCSKDetFSIParamsErecoCut[ip][0],kRHCSKDetFSIParamsErecoCut[ip][1],nutypes.c_str());     
+	break;
+      }//FSI for 1Rmu
+    case ( kRHCNuisSKDetFSI020 ) :
+    case ( kRHCNuisSKDetFSI021 ) :
+    case ( kRHCNuisSKDetFSI022 ) :
+    case ( kRHCNuisSKDetFSI023 ) :
+    case ( kRHCNuisSKDetFSI024 ) :
+    case ( kRHCNuisSKDetFSI025 ) :
+    case ( kRHCNuisSKDetFSI026 ) :
+    case ( kRHCNuisSKDetFSI027 ) :
+    case ( kRHCNuisSKDetFSI028 ) :
+    case ( kRHCNuisSKDetFSI029 ) :
+    case ( kRHCNuisSKDetFSI030 ) :
+    case ( kRHCNuisSKDetFSI031 ) :
+      { 
+	int ip = (int)p - (int)kRHCNuisSKDetFSI000;
+	string nutypes = "";
+        switch(p) {
+        case (kRHCNuisSKDetFSI020) :
+        case (kRHCNuisSKDetFSI021) :
+        case (kRHCNuisSKDetFSI022) :
+          nutypes = "oscillated nue CC (1Re)"; break;
+        case (kRHCNuisSKDetFSI023) :
+        case (kRHCNuisSKDetFSI024) :
+        case (kRHCNuisSKDetFSI025) :
+          nutypes = "numu/numubar CC (1Re)"; break;
+        case (kRHCNuisSKDetFSI026) :
+        case (kRHCNuisSKDetFSI027) :
+        case (kRHCNuisSKDetFSI028) :
+          nutypes = "nue/nuebar CC (1Re)"; break;
+        case (kRHCNuisSKDetFSI029) :
+        case (kRHCNuisSKDetFSI030) :
+        case (kRHCNuisSKDetFSI031) :
+          nutypes = "all NC (1Re)"; break;
+        default : nutypes = "--";
+        }
+	return Form("SKDet + FSI/SI %2d; Ereco range %.2f - %.2f GeV; %s; RHC",ip,
+		    kRHCSKDetFSIParamsErecoCut[ip][0],kRHCSKDetFSIParamsErecoCut[ip][1],nutypes.c_str());     
+	break;
+      }
+#endif
+#endif //SKDETFSI
+
     default : 
       return "--";
   }
@@ -2948,6 +3217,9 @@ string t2kana::util::AsStringCompact(PhysParamId_t p)
     /*
      * 2011-analysis nuisance parameters
      */
+
+    //**************************** FORWARD HORN CURRENT *******************************
+
     case ( kNuisSuperkEnergyScale     ) : return "f_sk_e_scale";                   break;    
 #ifndef SKFSITOGETHER
 #if FSI_BINS != 3
@@ -3110,6 +3382,124 @@ string t2kana::util::AsStringCompact(PhysParamId_t p)
   case ( kNuisSKDetFSI031 ) : return "f_skdetfsi031"; break;
 #endif
 #endif
+
+  //***************************** REVERSE HORN CURRENT *************************
+
+  case ( kRHCNuisSuperkEnergyScale     ) : return "f_sk_e_scale_rhc";                   break;
+
+  case ( kRHCNuisBANFF00               ) : return "f_banff00_rhc";      break;
+  case ( kRHCNuisBANFF01               ) : return "f_banff01_rhc";      break;
+  case ( kRHCNuisBANFF02               ) : return "f_banff02_rhc";      break;
+  case ( kRHCNuisBANFF03               ) : return "f_banff03_rhc";      break;
+  case ( kRHCNuisBANFF04               ) : return "f_banff04_rhc";      break;
+  case ( kRHCNuisBANFF05               ) : return "f_banff05_rhc";      break;
+  case ( kRHCNuisBANFF06               ) : return "f_banff06_rhc";      break;
+  case ( kRHCNuisBANFF07               ) : return "f_banff07_rhc";      break;
+  case ( kRHCNuisBANFF08               ) : return "f_banff08_rhc";      break;
+  case ( kRHCNuisBANFF09               ) : return "f_banff09_rhc";      break;
+  case ( kRHCNuisBANFF10               ) : return "f_banff10_rhc";      break;
+  case ( kRHCNuisBANFF11               ) : return "f_banff11_rhc";      break;
+  case ( kRHCNuisBANFF12               ) : return "f_banff12_rhc";      break;
+  case ( kRHCNuisBANFF13               ) : return "f_banff13_rhc";      break;
+  case ( kRHCNuisBANFF14               ) : return "f_banff14_rhc";      break;
+  case ( kRHCNuisBANFF15               ) : return "f_banff15_rhc";      break;
+#if (BANFF_BINS != 2) && (BANFF_BINS != 4)
+  case ( kRHCNuisBANFF16               ) : return "f_banff16_rhc";      break;
+  case ( kRHCNuisBANFF17               ) : return "f_banff17_rhc";      break;
+  case ( kRHCNuisBANFF18               ) : return "f_banff18_rhc";      break;
+  case ( kRHCNuisBANFF19               ) : return "f_banff19_rhc";      break;
+  case ( kRHCNuisBANFF20               ) : return "f_banff20_rhc";      break;
+  case ( kRHCNuisBANFF21               ) : return "f_banff21_rhc";      break;
+#endif
+#if BANFF_BINS == 1
+  case ( kRHCNuisBANFF22               ) : return "f_banff22_rhc";      break;
+  case ( kRHCNuisBANFF23               ) : return "f_banff23_rhc";      break;
+  case ( kRHCNuisBANFF24               ) : return "f_banff24_rhc";      break;
+#endif
+
+#ifndef ONEOVERMAQE
+  case ( kRHCNuisBANFFMAQE             ) : return "f_banffmaqe_rhc";    break;
+#else
+  case ( kRHCNuisBANFFMAQE             ) : return "f_banff1overmaqe2_rhc";  break;
+#endif
+  case ( kRHCNuisBANFFMARES            ) : return "f_banffmares_rhc";   break;
+  case ( kRHCNuisBANFFCCQEE0           ) : return "f_banffccqee0_rhc";  break;
+#if BANFF_BINS != 3
+  case ( kRHCNuisBANFFCCQEE1           ) : return "f_banffccqee1_rhc";  break;
+  case ( kRHCNuisBANFFCCQEE2           ) : return "f_banffccqee2_rhc";  break;
+#endif
+  case ( kRHCNuisBANFFCC1piE0          ) : return "f_banffcc1pie0_rhc"; break;
+#if BANFF_BINS != 3
+  case ( kRHCNuisBANFFCC1piE1          ) : return "f_banffcc1pie1_rhc"; break;
+#endif
+#if (BANFF_BINS != 2) && (BANFF_BINS != 4)
+  case ( kRHCNuisBANFFNC1pi0           ) : return "f_banffNc1pi0_rhc";  break;
+#endif
+#if BANFF_BINS == 4
+  case ( kRHCNuisBANFFMECNorm          ) : return "f_banffmec_rhc";     break;
+  case ( kRHCNuisBANFFPDDDoubleCount   ) : return "f_banffpdd_rhc";     break;
+#endif
+  case ( kRHCNuisXSecFermiMom          ) : return "f_pfermi_rhc";       break;
+  case ( kRHCNuisXSecSpecFunc          ) : return "f_specfunc_rhc";     break;
+  case ( kRHCNuisXSecWshape            ) : return "f_wshape_rhc";       break;
+  case ( kRHCNuisXSecShapeCCoth        ) : return "f_shapeCCoth_rhc";   break;
+  case ( kRHCNuisXSecPiLessDelta       ) : return "f_pilessdelta_rhc";  break;
+#ifndef __NUEONLY__
+  case ( kRHCNuisXSecBindE             ) : return "f_bindE_rhc";        break;
+#endif
+  case ( kRHCNuisXSecNormCCcoh         ) : return "f_norm_cccoh_rhc";   break;
+#ifndef __NUEONLY__
+  case ( kRHCNuisXSecNormNC1piC        ) : return "f_norm_nc1piC_rhc";  break;
+#endif
+#ifndef __NUMUONLY__
+  case ( kRHCNuisXSecNormNCcoh         ) : return "f_norm_nccoh_rhc";   break;
+#endif
+  case ( kRHCNuisXSecNormNCoth         ) : return "f_norm_ncoth_rhc";   break;
+  case ( kRHCNuisXSecNormNuEToNuMu     ) : return "f_norm_nuetonumu_rhc";  break;
+#ifndef __NUEONLY__
+  case ( kRHCNuisXSecNormAntiNuToNu    ) : return "f_norm_antinutonu_rhc"; break;
+#endif
+#ifdef SKFSITOGETHER
+#if FSI_BINS != 3
+  case ( kRHCNuisSKDetFSI000 ) : return "f_skdetfsi000_rhc"; break;
+  case ( kRHCNuisSKDetFSI001 ) : return "f_skdetfsi001_rhc"; break;
+  case ( kRHCNuisSKDetFSI002 ) : return "f_skdetfsi002_rhc"; break;
+  case ( kRHCNuisSKDetFSI003 ) : return "f_skdetfsi003_rhc"; break;
+  case ( kRHCNuisSKDetFSI004 ) : return "f_skdetfsi004_rhc"; break;
+  case ( kRHCNuisSKDetFSI005 ) : return "f_skdetfsi005_rhc"; break;
+#endif
+#if FSI_BINS != 2
+  case ( kRHCNuisSKDetFSI006 ) : return "f_skdetfsi006_rhc"; break;
+  case ( kRHCNuisSKDetFSI007 ) : return "f_skdetfsi007_rhc"; break;
+  case ( kRHCNuisSKDetFSI008 ) : return "f_skdetfsi008_rhc"; break;
+  case ( kRHCNuisSKDetFSI009 ) : return "f_skdetfsi009_rhc"; break;
+  case ( kRHCNuisSKDetFSI010 ) : return "f_skdetfsi010_rhc"; break;
+  case ( kRHCNuisSKDetFSI011 ) : return "f_skdetfsi011_rhc"; break;
+  case ( kRHCNuisSKDetFSI012 ) : return "f_skdetfsi012_rhc"; break;
+  case ( kRHCNuisSKDetFSI013 ) : return "f_skdetfsi013_rhc"; break;
+  case ( kRHCNuisSKDetFSI014 ) : return "f_skdetfsi014_rhc"; break;
+  case ( kRHCNuisSKDetFSI015 ) : return "f_skdetfsi015_rhc"; break;
+  case ( kRHCNuisSKDetFSI016 ) : return "f_skdetfsi016_rhc"; break;
+  case ( kRHCNuisSKDetFSI017 ) : return "f_skdetfsi017_rhc"; break;
+#endif
+#ifdef SKCORRELATIONS
+  case ( kRHCNuisSKDetFSI018 ) : return "f_skdetfsi018_rhc"; break;
+  case ( kRHCNuisSKDetFSI019 ) : return "f_skdetfsi019_rhc"; break;
+  case ( kRHCNuisSKDetFSI020 ) : return "f_skdetfsi020_rhc"; break;
+  case ( kRHCNuisSKDetFSI021 ) : return "f_skdetfsi021_rhc"; break;
+  case ( kRHCNuisSKDetFSI022 ) : return "f_skdetfsi022_rhc"; break;
+  case ( kRHCNuisSKDetFSI023 ) : return "f_skdetfsi023_rhc"; break;
+  case ( kRHCNuisSKDetFSI024 ) : return "f_skdetfsi024_rhc"; break;
+  case ( kRHCNuisSKDetFSI025 ) : return "f_skdetfsi025_rhc"; break;
+  case ( kRHCNuisSKDetFSI026 ) : return "f_skdetfsi026_rhc"; break;
+  case ( kRHCNuisSKDetFSI027 ) : return "f_skdetfsi027_rhc"; break;
+  case ( kRHCNuisSKDetFSI028 ) : return "f_skdetfsi028_rhc"; break;
+  case ( kRHCNuisSKDetFSI029 ) : return "f_skdetfsi029_rhc"; break;
+  case ( kRHCNuisSKDetFSI030 ) : return "f_skdetfsi030_rhc"; break;
+  case ( kRHCNuisSKDetFSI031 ) : return "f_skdetfsi031_rhc"; break;
+#endif
+#endif
+
     default : 
       return "--";
   }
