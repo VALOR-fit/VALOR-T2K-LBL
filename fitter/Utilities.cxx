@@ -4262,6 +4262,9 @@ t2kana::conv::NuOscMixParam_t
 t2kana::conv::PhysParamId_t
   t2kana::util::PhysParamIdFromString(string sh) 
 {
+
+  //************************* FORWARD HORN CURRENT ***************************
+
   if(sh == "mixing23") return kPhypMixing23;
   if(sh == "mixing13") return kPhypMixing13;
   if(sh == "mixing12") return kPhypMixing12;
@@ -4353,7 +4356,6 @@ t2kana::conv::PhysParamId_t
   if(sh == "banff_pdd")      return kNuisBANFFPDDDoubleCount;
 #endif
 
-
 #if BANFF_BINS == 1
   if(sh == "banff_25")    return kNuisBANFFMAQE; 
   if(sh == "banff_26")   return kNuisBANFFMARES;
@@ -4382,7 +4384,6 @@ t2kana::conv::PhysParamId_t
   if(sh == "banff_23")  return kNuisBANFFMECNorm;
   if(sh == "banff_24")  return kNuisBANFFPDDDoubleCount;
 #endif
-
 
   if(sh == "xsec_pf")           return kNuisXSecFermiMom;
   if(sh == "xsec_sf")           return kNuisXSecSpecFunc;
@@ -4468,12 +4469,159 @@ t2kana::conv::PhysParamId_t
   if(sh == "skdetfsi_031") return kNuisSKDetFSI031;
 #endif
 #endif
+
+  //************************ REVERSE HORN CURRENT *****************************
+
+  if(sh == "sk_energy_scale_rhc") return kRHCNuisSuperkEnergyScale;
+
+  if(sh == "banff_00_rhc") return kRHCNuisBANFF00;
+  if(sh == "banff_01_rhc") return kRHCNuisBANFF01;
+  if(sh == "banff_02_rhc") return kRHCNuisBANFF02;
+  if(sh == "banff_03_rhc") return kRHCNuisBANFF03;
+  if(sh == "banff_04_rhc") return kRHCNuisBANFF04;
+  if(sh == "banff_05_rhc") return kRHCNuisBANFF05;
+  if(sh == "banff_06_rhc") return kRHCNuisBANFF06;
+  if(sh == "banff_07_rhc") return kRHCNuisBANFF07;
+  if(sh == "banff_08_rhc") return kRHCNuisBANFF08;
+  if(sh == "banff_09_rhc") return kRHCNuisBANFF09;
+  if(sh == "banff_10_rhc") return kRHCNuisBANFF10;
+  if(sh == "banff_11_rhc") return kRHCNuisBANFF11;
+  if(sh == "banff_12_rhc") return kRHCNuisBANFF12;
+  if(sh == "banff_13_rhc") return kRHCNuisBANFF13;
+  if(sh == "banff_14_rhc") return kRHCNuisBANFF14;
+  if(sh == "banff_15_rhc") return kRHCNuisBANFF15;
+#if (BANFF_BINS != 2) && (BANFF_BINS != 4)
+  if(sh == "banff_16_rhc") return kRHCNuisBANFF16;
+  if(sh == "banff_17_rhc") return kRHCNuisBANFF17;
+  if(sh == "banff_18_rhc") return kRHCNuisBANFF18;
+  if(sh == "banff_19_rhc") return kRHCNuisBANFF19;
+  if(sh == "banff_20_rhc") return kRHCNuisBANFF20;
+  if(sh == "banff_21_rhc") return kRHCNuisBANFF21;
+#endif
+#if BANFF_BINS == 1
+  if(sh == "banff_22_rhc") return kRHCNuisBANFF22;
+  if(sh == "banff_23_rhc") return kRHCNuisBANFF23;
+  if(sh == "banff_24_rhc") return kRHCNuisBANFF24;
+#endif
+
+  if(sh == "banff_maqe_rhc")    return kRHCNuisBANFFMAQE;
+  if(sh == "banff_mares_rhc")   return kRHCNuisBANFFMARES;
+  if(sh == "banff_ccqeE0_rhc")  return kRHCNuisBANFFCCQEE0;
+#if BANFF_BINS != 3
+  if(sh == "banff_ccqeE1_rhc")  return kRHCNuisBANFFCCQEE1;
+  if(sh == "banff_ccqeE2_rhc")  return kRHCNuisBANFFCCQEE2;
+#endif
+  if(sh == "banff_cc1piE0_rhc") return kRHCNuisBANFFCC1piE0;
+#if BANFF_BINS != 3
+  if(sh == "banff_cc1piE1_rhc") return kRHCNuisBANFFCC1piE1;
+#endif
+#if (BANFF_BINS != 2) && (BANFF_BINS != 4)
+  if(sh == "banff_nc1pi0_rhc") return kRHCNuisBANFFNC1pi0;
+#endif
+#if BANFF_BINS == 4
+  if(sh == "banff_mecnorm_rhc")  return kRHCNuisBANFFMECNorm;
+  if(sh == "banff_pdd_rhc")      return kRHCNuisBANFFPDDDoubleCount;
+#endif
+
+#if BANFF_BINS == 1
+  if(sh == "banff_25_rhc")    return kRHCNuisBANFFMAQE;
+  if(sh == "banff_26_rhc")   return kRHCNuisBANFFMARES;
+  if(sh == "banff_27_rhc")  return kRHCNuisBANFFCCQEE0;
+  if(sh == "banff_28_rhc")  return kRHCNuisBANFFCCQEE1;
+  if(sh == "banff_29_rhc")  return kRHCNuisBANFFCCQEE2;
+  if(sh == "banff_30_rhc") return kRHCNuisBANFFCC1piE0;
+  if(sh == "banff_31_rhc") return kRHCNuisBANFFCC1piE1;
+  if(sh == "banff_32_rhc") return kRHCNuisBANFFNC1pi0;
+#elif BANFF_BINS != 3
+  if(sh == "banff_16_rhc")    return kRHCNuisBANFFMAQE;
+  if(sh == "banff_17_rhc")   return kRHCNuisBANFFMARES;
+  if(sh == "banff_18_rhc")  return kRHCNuisBANFFCCQEE0;
+  if(sh == "banff_19_rhc")  return kRHCNuisBANFFCCQEE1;
+  if(sh == "banff_20_rhc")  return kRHCNuisBANFFCCQEE2;
+  if(sh == "banff_21_rhc") return kRHCNuisBANFFCC1piE0;
+  if(sh == "banff_22_rhc") return kRHCNuisBANFFCC1piE1;
+#elif BANFF_BINS == 3
+  if(sh == "banff_22_rhc")    return kRHCNuisBANFFMAQE;
+  if(sh == "banff_23_rhc")   return kRHCNuisBANFFMARES;
+  if(sh == "banff_24_rhc")  return kRHCNuisBANFFCCQEE0;
+  if(sh == "banff_25_rhc") return kRHCNuisBANFFCC1piE0;
+  if(sh == "banff_26_rhc") return kRHCNuisBANFFNC1pi0;
+#endif
+#if BANFF_BINS == 4
+  if(sh == "banff_23_rhc")  return kRHCNuisBANFFMECNorm;
+  if(sh == "banff_24_rhc")  return kRHCNuisBANFFPDDDoubleCount;
+#endif
+
+  if(sh == "xsec_pf_rhc")           return kRHCNuisXSecFermiMom;
+  if(sh == "xsec_sf_rhc")           return kRHCNuisXSecSpecFunc;
+  if(sh == "xsec_wshape_rhc")       return kRHCNuisXSecWshape;
+  if(sh == "xsec_shape_ccoth_rhc")  return kRHCNuisXSecShapeCCoth;
+  if(sh == "xsec_pilessdelta_rhc")  return kRHCNuisXSecPiLessDelta;
+#ifndef __NUEONLY__
+  if(sh == "xsec_bindE_rhc")        return kRHCNuisXSecBindE;
+#endif
+  if(sh == "xsec_norm_cccoh_rhc")   return kRHCNuisXSecNormCCcoh;
+#ifndef __NUEONLY__
+  if(sh == "xsec_norm_nc1piC_rhc")  return kRHCNuisXSecNormNC1piC;
+#endif
+#ifndef __NUMUONLY__
+  if(sh == "xsec_norm_nccoh_rhc")   return kRHCNuisXSecNormNCcoh;
+#endif
+  if(sh == "xsec_norm_ncoth_rhc")   return kRHCNuisXSecNormNCoth;
+  if(sh == "xsec_norm_nuetonumu_rhc") return kRHCNuisXSecNormNuEToNuMu;
+#ifndef __NUEONLY__
+  if(sh == "xsec_norm_antinutonu_rhc") return kRHCNuisXSecNormAntiNuToNu;
+#endif
+#ifdef SKFSITOGETHER
+#if FSI_BINS != 3
+  if(sh == "skdetfsi_000_rhc") return kRHCNuisSKDetFSI000;
+  if(sh == "skdetfsi_001_rhc") return kRHCNuisSKDetFSI001;
+  if(sh == "skdetfsi_002_rhc") return kRHCNuisSKDetFSI002;
+  if(sh == "skdetfsi_003_rhc") return kRHCNuisSKDetFSI003;
+  if(sh == "skdetfsi_004_rhc") return kRHCNuisSKDetFSI004;
+  if(sh == "skdetfsi_005_rhc") return kRHCNuisSKDetFSI005;
+#endif
+#if FSI_BINS != 2
+  if(sh == "skdetfsi_006_rhc") return kRHCNuisSKDetFSI006;
+  if(sh == "skdetfsi_007_rhc") return kRHCNuisSKDetFSI007;
+  if(sh == "skdetfsi_008_rhc") return kRHCNuisSKDetFSI008;
+  if(sh == "skdetfsi_009_rhc") return kRHCNuisSKDetFSI009;
+  if(sh == "skdetfsi_010_rhc") return kRHCNuisSKDetFSI010;
+  if(sh == "skdetfsi_011_rhc") return kRHCNuisSKDetFSI011;
+  if(sh == "skdetfsi_012_rhc") return kRHCNuisSKDetFSI012;
+  if(sh == "skdetfsi_013_rhc") return kRHCNuisSKDetFSI013;
+  if(sh == "skdetfsi_014_rhc") return kRHCNuisSKDetFSI014;
+  if(sh == "skdetfsi_015_rhc") return kRHCNuisSKDetFSI015;
+  if(sh == "skdetfsi_016_rhc") return kRHCNuisSKDetFSI016;
+  if(sh == "skdetfsi_017_rhc") return kRHCNuisSKDetFSI017;
+#endif
+#ifdef SKCORRELATIONS
+  if(sh == "skdetfsi_018_rhc") return kRHCNuisSKDetFSI018;
+  if(sh == "skdetfsi_019_rhc") return kRHCNuisSKDetFSI019;
+  if(sh == "skdetfsi_020_rhc") return kRHCNuisSKDetFSI020;
+  if(sh == "skdetfsi_021_rhc") return kRHCNuisSKDetFSI021;
+  if(sh == "skdetfsi_022_rhc") return kRHCNuisSKDetFSI022;
+  if(sh == "skdetfsi_023_rhc") return kRHCNuisSKDetFSI023;
+  if(sh == "skdetfsi_024_rhc") return kRHCNuisSKDetFSI024;
+  if(sh == "skdetfsi_025_rhc") return kRHCNuisSKDetFSI025;
+  if(sh == "skdetfsi_026_rhc") return kRHCNuisSKDetFSI026;
+  if(sh == "skdetfsi_027_rhc") return kRHCNuisSKDetFSI027;
+  if(sh == "skdetfsi_028_rhc") return kRHCNuisSKDetFSI028;
+  if(sh == "skdetfsi_029_rhc") return kRHCNuisSKDetFSI029;
+  if(sh == "skdetfsi_030_rhc") return kRHCNuisSKDetFSI030;
+  if(sh == "skdetfsi_031_rhc") return kRHCNuisSKDetFSI031;
+#endif
+#endif
+
   cout << sh << " not yet supported in util::PhysParamIdFromString()" << endl;
   return kPhypUndefined;
 }
 //____________________________________________________________________________
 t2kana::conv::PhysParamId_t t2kana::util::PhysParamIdFromLongString(string sh)
 {
+
+  //************************ FORWARD HORN CURRENT ****************************
+
   if(sh == "sin^2(2*theta_23)"   ) return kPhypMixing23;
   if(sh == "sin^2(theta_23)"     ) return kPhypMixing23;
   if(sh == "sin^2(2*theta_13)"   ) return kPhypMixing13;
@@ -4650,6 +4798,119 @@ t2kana::conv::PhysParamId_t t2kana::util::PhysParamIdFromLongString(string sh)
    string comp = Form("SKDet + FSI/SI %2d; Ereco range %.2f - %.2f GeV; %s",ip,
 		      kSKDetFSIParamsErecoCut[ip][0],kSKDetFSIParamsErecoCut[ip][1],nutypes.c_str());     
    if(sh == comp) return (PhysParamId_t)((int)kNuisSKDetFSI000+ip);
+ }
+#endif
+#endif
+
+ //************************* REVERSE HORN CURRENT ***************************
+
+ if(sh == "SK energy scale; RHC"                ) return kRHCNuisSuperkEnergyScale;
+
+ for(int ip = 0; ip < kNumOfRHCFluxParamsInBANFFfit; ip++) {
+   string comp = Form("BANFF %2d; SK %s flux; %.1f - %.1f GeV; RHC",
+		      ip, util::Pdg2String(kNuPdgCodeOfRHCFluxParamInBANFFfit[ip]).c_str(),
+		      kEtrueRangeOfRHCFluxParamInBANFFfit[ip][0],
+		      kEtrueRangeOfRHCFluxParamInBANFFfit[ip][1]);
+   if(sh == comp) return (PhysParamId_t)((int)kRHCNuisBANFF00+ip);
+ }
+
+#ifndef ONEOVERMAQE
+ if(sh == "BANFF; Ma QE; RHC"                       ) return kRHCNuisBANFFMAQE;
+#else
+ if(sh == "BANFF; 1 / (Ma QE)^2; RHC"               ) return kRHCNuisBANFFMAQE;
+#endif
+ if(sh == "BANFF; Ma RES; RHC"                      ) return kRHCNuisBANFFMARES;
+ if(sh == "BANFF; Norm; CC QE; 0.0 - 1.5 GeV; RHC"  ) return kRHCNuisBANFFCCQEE0;
+#if BANFF_BINS != 3
+ if(sh == "BANFF; Norm; CC QE; 1.5 - 3.5 GeV; RHC"  ) return kRHCNuisBANFFCCQEE1;
+ if(sh == "BANFF; Norm; CC QE; 3.5 - 30.0 GeV; RHC" ) return kRHCNuisBANFFCCQEE2;
+#endif
+ if(sh == "BANFF; Norm; CC 1pi; 0.0 - 2.5 GeV; RHC" ) return kRHCNuisBANFFCC1piE0;
+#if BANFF_BINS != 3
+ if(sh == "BANFF; Norm; CC 1pi; 2.5 - 30.0 GeV; RHC") return kRHCNuisBANFFCC1piE1;
+#endif
+#if (BANFF_BINS != 2) && (BANFF_BINS != 4)
+ if(sh == "BANFF; Norm; NC 1pi0; 0.0 - 30.0 GeV; RHC") return kRHCNuisBANFFNC1pi0;
+#endif
+#if BANFF_BINS == 4
+ if(sh == "BANFF; Norm; MEC; RHC")                     return kRHCNuisBANFFMECNorm;
+ if(sh == "BANFF; PDD double counting; RHC")           return kRHCNuisBANFFPDDDoubleCount;
+#endif
+
+ //
+ // XSec params not correlated with flux
+ //
+
+ if(sh == "Fermi Momentum; RHC"     ) return kRHCNuisXSecFermiMom;
+ if(sh == "Spectral Func; RHC"      ) return kRHCNuisXSecSpecFunc;
+ if(sh == "W-shape; RHC"            ) return kRHCNuisXSecWshape;
+ if(sh == "Shape; CC Oth; RHC"      ) return kRHCNuisXSecShapeCCoth;
+ if(sh == "Pi-less delta decay; RHC") return kRHCNuisXSecPiLessDelta;
+#ifndef __NUEONLY__
+ if(sh == "Binding energy; RHC"     ) return kRHCNuisXSecBindE;
+#endif
+ if(sh == "Norm; CC Coh; RHC"      ) return kRHCNuisXSecNormCCcoh;
+#ifndef __NUEONLY__
+ if(sh == "Norm; NC 1piC; RHC"     ) return kRHCNuisXSecNormNC1piC;
+#endif
+#ifndef __NUMUONLY__
+ if(sh == "Norm; NC Coh; RHC"      ) return kRHCNuisXSecNormNCcoh;
+#endif
+ if(sh == "Norm; NC Oth; RHC"      ) return kRHCNuisXSecNormNCoth;
+ if(sh == "Norm; NuE To NuMu; RHC" ) return kRHCNuisXSecNormNuEToNuMu;
+#ifndef __NUEONLY__
+ if(sh == "Norm; AntiNu To Nu; RHC") return kRHCNuisXSecNormAntiNuToNu;
+#endif
+#ifdef SKFSITOGETHER
+#ifndef SKCORRELATIONS
+ for(int ip = 0; ip < kNumOfRHCSKDetFSIParams; ip++) {
+   string nutypes = "";
+   if(ip < 3)
+     nutypes = "numu/numubar CCQE (1Rmu)";
+   else if(ip < 4)
+     nutypes = "numu/numubar CCnQE (1Rmu)";
+   else if(ip < 5)
+     nutypes = "nue/nuebar/signue CC (1Rmu)";
+   else if(ip < 6)
+     nutypes = "all NC (1Rmu)";
+   else if(ip < 9)
+     nutypes = "Osc. nue CC (1Re)";
+   else if(ip < 12)
+     nutypes = "numu/numubar CC (1Re)";
+   else if(ip < 15)
+     nutypes = "nue/nuebar CC (1Re)";
+   else if(ip < 18)
+     nutypes = "all NC (1Re)";
+   string comp = Form("SKDet + FSI/SI %2d; Ereco range %.2f - %.2f GeV; %s; RHC",ip,
+                      kRHCSKDetFSIParamsErecoCut[ip][0],kRHCSKDetFSIParamsErecoCut[ip][1],nutypes.c_str());
+#if FSI_BINS != 3
+   if(sh == comp) return (PhysParamId_t)((int)kRHCNuisSKDetFSI000+ip);
+#else
+   if(sh == comp) return (PhysParamId_t)((int)kRHCNuisSKDetFSI006+ip);
+#endif
+ }
+#else
+ for(int ip = 0; ip < kNumOfRHCSKDetFSIParams; ip++) {
+   string nutypes = "";
+   if(ip < 5)
+     nutypes = "Osc. nue CC (1Rmu)";
+   else if(ip < 10)
+     nutypes = "numu/numubar CC (1Rmu)";
+   else if(ip < 15)
+     nutypes = "nue/nuebar CC (1Rmu)";
+   else if(ip < 20)
+     nutypes = "all NC (1Rmu)";
+   else if(ip < 23)
+     nutypes = "Osc. nue CC (1Re)";
+   else if(ip < 26)
+     nutypes = "numu/numubar CC (1Re)";
+   else if(ip < 29)
+     nutypes = "nue/nuebar CC (1Re)";
+   else if(ip < 32)
+     nutypes = "all NC (1Re)";
+   string comp = Form("SKDet + FSI/SI %2d; Ereco range %.2f - %.2f GeV; %s; RHC",ip,
+                      kRHCSKDetFSIParamsErecoCut[ip][0],kRHCSKDetFSIParamsErecoCut[ip][1],nutypes.c_str());
+   if(sh == comp) return (PhysParamId_t)((int)kRHCNuisSKDetFSI000+ip);
  }
 #endif
 #endif
