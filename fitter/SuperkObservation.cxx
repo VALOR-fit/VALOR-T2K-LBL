@@ -277,9 +277,9 @@ bool SuperkObservation::Read(string config_file, int data_set_id, bool is_xml)
       int idx = arr_index->SuperkSampleIdx(kSKsRHCFCFV1RingMuLike);
       fErDistr[idx] = new TH1D("", "", kRHCNErecoBins1Rmu,kRHCErecoBinEdges1Rmu);
       fErDistr[idx]->SetDirectory(0);
-      for(int ix = 1; ix <= hist->GetNbinsX(); ix++) {
-        double Ereco = hist->GetBinCenter(ix);
-        double nev   = hist->GetBinContent(ix);
+      for(int ix = 1; ix <= histRHC->GetNbinsX(); ix++) {
+        double Ereco = histRHC->GetBinCenter(ix);
+        double nev   = histRHC->GetBinContent(ix);
         fErDistr[idx]->Fill(Ereco, nev);
       }
       cout << "Obs >> Read: " << fErDistr[idx]->Integral()
@@ -292,8 +292,6 @@ bool SuperkObservation::Read(string config_file, int data_set_id, bool is_xml)
 #endif
 #endif
   }//!is_xml
-
-
 
   return true;
 }

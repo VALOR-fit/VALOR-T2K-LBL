@@ -113,44 +113,44 @@ static const PhysParamId_t kListOfXSecSyst[kNumOfXSecSyst] =
 
 static const PhysParamId_t kListOfRHCXSecSyst[kNumOfRHCXSecSyst] = 
   {
-    kNuisBANFFMAQE,             // BANFF, M_{A}  QE
-    kNuisBANFFMARES,            // BANFF, M_{A}  RES
-    kNuisBANFFCCQEE0,           // BANFF, CCQE   normalization, 0 - 1.5 GeV
+    kRHCNuisBANFFMAQE,             // BANFF, M_{A}  QE
+    kRHCNuisBANFFMARES,            // BANFF, M_{A}  RES
+    kRHCNuisBANFFCCQEE0,           // BANFF, CCQE   normalization, 0 - 1.5 GeV
 #if BANFF_BINS != 3
-    kNuisBANFFCCQEE1,           // BANFF, CCQE   normalization, 1.5 - 3.5 GeV
-    kNuisBANFFCCQEE2,           // BANFF, CCQE   normalization, 3.5 - 30.0 GeV
+    kRHCNuisBANFFCCQEE1,           // BANFF, CCQE   normalization, 1.5 - 3.5 GeV
+    kRHCNuisBANFFCCQEE2,           // BANFF, CCQE   normalization, 3.5 - 30.0 GeV
 #endif
-    kNuisBANFFCC1piE0,          // BANFF, CC1pi  normalization, 0 - 2.5 GeV
+    kRHCNuisBANFFCC1piE0,          // BANFF, CC1pi  normalization, 0 - 2.5 GeV
 #if BANFF_BINS != 3
-    kNuisBANFFCC1piE1,          // BANFF, CC1pi  normalization, 2.5 - 30.0 GeV
+    kRHCNuisBANFFCC1piE1,          // BANFF, CC1pi  normalization, 2.5 - 30.0 GeV
 #endif
 #if (BANFF_BINS != 2) && (BANFF_BINS != 4)
-    kNuisBANFFNC1pi0,           // BANFF, NC1pi0 normalization, 0.0 - 30.0 GeV
+    kRHCNuisBANFFNC1pi0,           // BANFF, NC1pi0 normalization, 0.0 - 30.0 GeV
 #endif
 #if BANFF_BINS == 4
-    kNuisBANFFMECNorm,          // BANFF, MEC template normalisation
-    kNuisBANFFPDDDoubleCount,   // BANFF, PDD double counting systematic
+    kRHCNuisBANFFMECNorm,          // BANFF, MEC template normalisation
+    kRHCNuisBANFFPDDDoubleCount,   // BANFF, PDD double counting systematic
 #endif
-    kNuisXSecFermiMom,          // Fermi momentum
-    kNuisXSecSpecFunc,          // spectral function on/off
-    kNuisXSecWshape,            // W-shape
-    kNuisXSecShapeCCoth,        // CC other shape
-    kNuisXSecPiLessDelta,       // Pion-less delta decay
+    kRHCNuisXSecFermiMom,          // Fermi momentum
+    kRHCNuisXSecSpecFunc,          // spectral function on/off
+    kRHCNuisXSecWshape,            // W-shape
+    kRHCNuisXSecShapeCCoth,        // CC other shape
+    kRHCNuisXSecPiLessDelta,       // Pion-less delta decay
 #ifndef __NUEONLY__
-    kNuisXSecBindE,             // Binding energy
+    kRHCNuisXSecBindE,             // Binding energy
 #endif
-    kNuisXSecNormCCcoh,         // CC coherent norm
+    kRHCNuisXSecNormCCcoh,         // CC coherent norm
 #ifndef __NUEONLY__
-    kNuisXSecNormNC1piC,        // NC 1piC norm
+    kRHCNuisXSecNormNC1piC,        // NC 1piC norm
 #endif
 #ifndef __NUMUONLY__
-    kNuisXSecNormNCcoh,         // NC coh norm
+    kRHCNuisXSecNormNCcoh,         // NC coh norm
 #endif
-    kNuisXSecNormNCoth,         // NC other norm
+    kRHCNuisXSecNormNCoth,         // NC other norm
 #ifndef __NUEONLY__
-    kNuisXSecNormAntiNuToNu,     // antinu / nu cross section
+    kRHCNuisXSecNormAntiNuToNu,     // antinu / nu cross section
 #endif
-    kNuisXSecNormNuEToNuMu     // nue / numu cross section
+    kRHCNuisXSecNormNuEToNuMu     // nue / numu cross section
   };
 
 

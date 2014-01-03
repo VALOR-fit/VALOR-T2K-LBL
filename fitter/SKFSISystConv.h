@@ -90,26 +90,26 @@ static const PhysParamId_t kListOfSKDetFSIParams[kNumOfSKDetFSIParams] =
 static const PhysParamId_t kListOfRHCSKDetFSIParams[kNumOfRHCSKDetFSIParams] = 
   {
 #if FSI_BINS != 3
-    kNuisSKDetFSI000,
-    kNuisSKDetFSI001,
-    kNuisSKDetFSI002,
-    kNuisSKDetFSI003,
-    kNuisSKDetFSI004,
-    kNuisSKDetFSI005,
+    kRHCNuisSKDetFSI000,
+    kRHCNuisSKDetFSI001,
+    kRHCNuisSKDetFSI002,
+    kRHCNuisSKDetFSI003,
+    kRHCNuisSKDetFSI004,
+    kRHCNuisSKDetFSI005,
 #endif
 #if FSI_BINS != 2
-    kNuisSKDetFSI006,
-    kNuisSKDetFSI007,
-    kNuisSKDetFSI008,
-    kNuisSKDetFSI009,
-    kNuisSKDetFSI010,
-    kNuisSKDetFSI011,
-    kNuisSKDetFSI012,
-    kNuisSKDetFSI013,
-    kNuisSKDetFSI014,
-    kNuisSKDetFSI015,
-    kNuisSKDetFSI016,
-    kNuisSKDetFSI017
+    kRHCNuisSKDetFSI006,
+    kRHCNuisSKDetFSI007,
+    kRHCNuisSKDetFSI008,
+    kRHCNuisSKDetFSI009,
+    kRHCNuisSKDetFSI010,
+    kRHCNuisSKDetFSI011,
+    kRHCNuisSKDetFSI012,
+    kRHCNuisSKDetFSI013,
+    kRHCNuisSKDetFSI014,
+    kRHCNuisSKDetFSI015,
+    kRHCNuisSKDetFSI016,
+    kRHCNuisSKDetFSI017
 #endif
   };
 
