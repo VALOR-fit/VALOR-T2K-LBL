@@ -267,10 +267,10 @@ bool SuperkObservation::Read(string config_file, int data_set_id, bool is_xml)
     }
 #endif
 #ifdef __RHC_RUNNING__
-    TFile f(config_file.c_str());
-    TH1D * hist = 0;
-    f.GetObject(Form("mock_data_%d",data_set_id),hist);
-    if(!hist) {
+    TFile fRHC(config_file.c_str());
+    TH1D * histRHC = 0;
+    fRHC.GetObject(Form("mock_data_%d",data_set_id),histRHC);
+    if(!histRHC) {
       cerr << "Obs >> Histogram for RHC 1Rmu does not exist!" << endl;
     }
     else {
