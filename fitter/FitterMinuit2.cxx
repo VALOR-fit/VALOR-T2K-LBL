@@ -119,7 +119,14 @@ void FitterMinuit2::Init(FitInputs * fit_inputs, Option_t * /*option*/)
 #endif
 
   // calculate degrees of freedom
-  fNFitBins       = kNErecoBins1Rmu; // HERE, FIX
+  fNFitBins = 0;
+  for(int is = 0; is < kns; is++) {
+    SuperkSample_t s = kSKSamples[is];
+    if(s == kSKsFCFV1RingMuLike) fNFitBins += kNErecoBins1Rmu;
+    if(s == kSKsFCFV1RingELike ) fNFitBins += kNErecoBins1Re;
+    if(s == kSKsRHCFCFV1RingMuLike) fNFitBins += kRHCNErecoBins1Rmu;
+    if(s == kSKsRHCFCFV1RingELike ) fNFitBins += kRHCNErecoBins1Re;
+  }
   fNFreeFitParams = fit_params.GetNumberFreeParameters();
 
 #ifdef __show_fit_init_info__
