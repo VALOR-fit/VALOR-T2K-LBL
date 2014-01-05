@@ -265,7 +265,11 @@ typedef enum EFluxType
    kFlxNominal        =  0,  // flux used for MC production
    kFlxExtTuning      =  1,  // flux used for MC production + tuning wghts based on external data (NA61,...)
    kFlxFinalTuning    =  2,  // flux used for MC production + tuning wghts based on external data (NA61,...) + tuning wghts based on T2K data (ND280 data fit by BANFF,...)
-   kFlxCurrent        =  3   // current flux from systematic param variation of kFlxFinalTuning flux
+   kFlxCurrent        =  3,  // current flux from systematic param variation of kFlxFinalTuning flux
+   kRHCFlxNominal     =  4,  // RHC flux used for MC production
+   kRHCFlxExtTuning   =  5,  // RHC flux used for MC production + tuning wghts based on external data (NA61,...)
+   kRHCFlxFinalTuning =  6,  // RHC flux used for MC production + tuning wghts based on external data (NA61,...) + tuning wghts based on T2K data (ND280 data fit by BANFF,...)
+   kRHCFlxCurrent     =  7   // RHC current flux from systematic param variation of kFlxFinalTuning flux
 } 
 FluxType_t;
 

@@ -4967,6 +4967,8 @@ int t2kana::util::SuperkMode2FluxNuPdg(t2kana::conv::SuperkMode_t m)
   if ( util::IsNuEBar    (m) ) return kPdgNuEBar;
   if ( util::IsOscNuEBar (m) ) return kPdgNuMuBar; /// nue -> numu
   if ( util::IsSignalNuE (m) ) return kPdgNuMu; /// numu -> nue
+  if ( util::IsRHCOscNuE (m) ) return kPdgNuMu; /// nue -> numu
+  if ( util::IsRHCSignalNuEBar (m) ) return kPdgNuMuBar; /// numu -> nue 
    
   // NOTE: Beam NuEBars not handled
 
@@ -4983,6 +4985,8 @@ int t2kana::util::SuperkMode2SKMCPdg(t2kana::conv::SuperkMode_t m)
   if ( util::IsNuEBar    (m) ) return kPdgNuEBar;
   if ( util::IsOscNuEBar (m) ) return kPdgNuEBar;
   if ( util::IsSignalNuE (m) ) return kPdgNuE;
+  if ( util::IsRHCOscNuE (m) ) return kPdgNuE;
+  if ( util::IsRHCSignalNuEBar (m) ) return kPdgNuEBar;
    
   // NOTE: Beam NuEBars not handled
 

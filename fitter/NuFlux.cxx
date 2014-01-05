@@ -74,6 +74,27 @@ void NuFlux::Init(void)
   fSKNuEFluxExtTuningWght     = 0;
   fSKNuEBarFluxExtTuningWght  = 0;
   fBANFF                      = 0;
+  fSKRHCNuMuFluxNominal          = 0; 
+  fSKRHCNuMuBarFluxNominal       = 0; 
+  fSKRHCNuEFluxNominal           = 0; 
+  fSKRHCNuEBarFluxNominal        = 0; 
+  fSKRHCNuMuFluxTunedExt         = 0; 
+  fSKRHCNuMuBarFluxTunedExt      = 0; 
+  fSKRHCNuEFluxTunedExt          = 0; 
+  fSKRHCNuEBarFluxTunedExt       = 0; 
+  fSKRHCNuMuFluxTunedFinal       = 0; 
+  fSKRHCNuMuBarFluxTunedFinal    = 0; 
+  fSKRHCNuEFluxTunedFinal        = 0; 
+  fSKRHCNuEBarFluxTunedFinal     = 0; 
+  fSKRHCNuMuFluxCurrent          = 0; 
+  fSKRHCNuMuBarFluxCurrent       = 0; 
+  fSKRHCNuEFluxCurrent           = 0; 
+  fSKRHCNuEBarFluxCurrent        = 0; 
+  fSKRHCNuMuFluxExtTuningWght    = 0;
+  fSKRHCNuMuBarFluxExtTuningWght = 0;
+  fSKRHCNuEFluxExtTuningWght     = 0;
+  fSKRHCNuEBarFluxExtTuningWght  = 0;
+  fRHCBANFF                      = 0;
 }
 //________________________________________________________________________________________
 void NuFlux::CleanUp(void)
@@ -98,6 +119,26 @@ void NuFlux::CleanUp(void)
   if ( fSKNuMuBarFluxExtTuningWght ) delete fSKNuMuBarFluxExtTuningWght;
   if ( fSKNuEFluxExtTuningWght     ) delete fSKNuEFluxExtTuningWght;
   if ( fSKNuEBarFluxExtTuningWght  ) delete fSKNuEBarFluxExtTuningWght;
+  if ( fSKRHCNuMuFluxNominal          ) delete fSKRHCNuMuFluxNominal;
+  if ( fSKRHCNuMuBarFluxNominal       ) delete fSKRHCNuMuBarFluxNominal;
+  if ( fSKRHCNuEFluxNominal           ) delete fSKRHCNuEFluxNominal;
+  if ( fSKRHCNuEBarFluxNominal        ) delete fSKRHCNuEBarFluxNominal;
+  if ( fSKRHCNuMuFluxTunedExt         ) delete fSKRHCNuMuFluxTunedExt;
+  if ( fSKRHCNuMuBarFluxTunedExt      ) delete fSKRHCNuMuBarFluxTunedExt;
+  if ( fSKRHCNuEFluxTunedExt          ) delete fSKRHCNuEFluxTunedExt;
+  if ( fSKRHCNuEBarFluxTunedExt       ) delete fSKRHCNuEBarFluxTunedExt;
+  if ( fSKRHCNuMuFluxTunedFinal       ) delete fSKRHCNuMuFluxTunedFinal;
+  if ( fSKRHCNuMuBarFluxTunedFinal    ) delete fSKRHCNuMuBarFluxTunedFinal;
+  if ( fSKRHCNuEFluxTunedFinal        ) delete fSKRHCNuEFluxTunedFinal;
+  if ( fSKRHCNuEBarFluxTunedFinal     ) delete fSKRHCNuEBarFluxTunedFinal;
+  if ( fSKRHCNuMuFluxCurrent          ) delete fSKRHCNuMuFluxCurrent;
+  if ( fSKRHCNuMuBarFluxCurrent       ) delete fSKRHCNuMuBarFluxCurrent;
+  if ( fSKRHCNuEFluxCurrent           ) delete fSKRHCNuEFluxCurrent;
+  if ( fSKRHCNuEBarFluxCurrent        ) delete fSKRHCNuEBarFluxCurrent;
+  if ( fSKRHCNuMuFluxExtTuningWght    ) delete fSKRHCNuMuFluxExtTuningWght;
+  if ( fSKRHCNuMuBarFluxExtTuningWght ) delete fSKRHCNuMuBarFluxExtTuningWght;
+  if ( fSKRHCNuEFluxExtTuningWght     ) delete fSKRHCNuEFluxExtTuningWght;
+  if ( fSKRHCNuEBarFluxExtTuningWght  ) delete fSKRHCNuEBarFluxExtTuningWght;
 }
 //________________________________________________________________________________________
 bool NuFlux::Read(TXMLEngine* xml, XMLNodePointer_t root_node)
@@ -137,6 +178,31 @@ bool NuFlux::Read(TXMLEngine* xml, XMLNodePointer_t root_node)
     exit(1);
   }
 
+  // SuperK numu flux (reverse horn current)
+  fSKRHCNuMuFluxTunedExt = util::XML2TH1D(xml,root_node,"flux/superk/tuned/numu");
+  if(!fSKRHCNuMuFluxTunedExt) {
+    cerr << "Exp/Flux >> No input SuperK numu ext/tuned flux histogram!" << endl;
+    exit(1);
+  }
+  // SuperK numubar flux (reverse horn current)
+  fSKRHCNuMuBarFluxTunedExt = util::XML2TH1D(xml,root_node,"flux/superk/tuned/numubar");
+  if(!fSKRHCNuMuBarFluxTunedExt) {
+    cerr << "Exp/Flux >> No input SuperK numubar ext/tuned flux histogram!" << endl;
+    exit(1);
+  }
+  // SuperK nue flux (reverse horn current)
+  fSKRHCNuEFluxTunedExt = util::XML2TH1D(xml,root_node,"flux/superk/tuned/nue");
+  if(!fSKRHCNuEFluxTunedExt) {
+    cerr << "Exp/Flux >> No input SuperK nue ext/tuned flux histogram!" << endl;
+    exit(1);
+  }
+  // SuperK nuebar flux (reverse horn current)
+  fSKRHCNuEBarFluxTunedExt = util::XML2TH1D(xml,root_node,"flux/superk/tuned/nuebar");
+  if(!fSKRHCNuEBarFluxTunedExt) {
+    cerr << "Exp/Flux >> No input SuperK nuebar ext/tuned flux histogram!" << endl;
+    exit(1);
+  }
+
 #ifdef __show_init_mesg_info__
   cout << "Exp/Flux >> Done loading ext/tuned flux histograms" << endl;
 #endif
@@ -171,6 +237,35 @@ bool NuFlux::Read(TXMLEngine* xml, XMLNodePointer_t root_node)
      util::XML2TH1D(xml,root_node,"flux/superk/tuning_weights/nuebar");
   if(!fSKNuEBarFluxExtTuningWght) {
     cerr << "Exp/Flux >> No input SuperK nuebar flux ext/tuning weights!" << endl;
+    exit(1);
+  }
+
+  // SuperK numu flux tuning weights (reverse horn current) 
+  fSKRHCNuMuFluxExtTuningWght = 
+    util::XML2TH1D(xml,root_node,"flux/superk/tuning_weights/numu");
+  if(!fSKRHCNuMuFluxExtTuningWght) {
+    cerr << "Exp/Flux >> No input SuperK RHC numu flux ext/tuning weights!" << endl;
+    exit(1);
+  }
+  // SuperK numubar flux tuning weights (reverse horn current) 
+  fSKRHCNuMuBarFluxExtTuningWght = 
+    util::XML2TH1D(xml,root_node,"flux/superk/tuning_weights/numubar");
+  if(!fSKRHCNuMuBarFluxExtTuningWght) {
+    cerr << "Exp/Flux >> No input SuperK RHC numubar flux ext/tuning weights!" << endl;
+    exit(1);
+  }
+  // SuperK nue flux tuning weights (reverse horn current) 
+  fSKRHCNuEFluxExtTuningWght = 
+    util::XML2TH1D(xml,root_node,"flux/superk/tuning_weights/nue");
+  if(!fSKRHCNuEFluxExtTuningWght) {
+    cerr << "Exp/Flux >> No input SuperK RHC nue flux ext/tuning weights!" << endl;
+    exit(1);
+  }
+  // SuperK nuebar flux tuning weights (reverse horn current) 
+  fSKRHCNuEBarFluxExtTuningWght = 
+    util::XML2TH1D(xml,root_node,"flux/superk/tuning_weights/nuebar");
+  if(!fSKRHCNuEBarFluxExtTuningWght) {
+    cerr << "Exp/Flux >> No input SuperK RHC nuebar flux ext/tuning weights!" << endl;
     exit(1);
   }
 
@@ -214,8 +309,19 @@ void NuFlux::BookAndInitAuxSpectra(void)
   fSKNuEFluxNominal     -> SetDirectory(0);
   fSKNuEBarFluxNominal  -> SetDirectory(0);
 
+  fSKRHCNuMuFluxNominal    = new TH1D(*fSKRHCNuMuFluxTunedExt   );
+  fSKRHCNuMuBarFluxNominal = new TH1D(*fSKRHCNuMuBarFluxTunedExt);
+  fSKRHCNuEFluxNominal     = new TH1D(*fSKRHCNuEFluxTunedExt    );
+  fSKRHCNuEBarFluxNominal  = new TH1D(*fSKRHCNuEBarFluxTunedExt );
+
+  fSKRHCNuMuFluxNominal    -> SetDirectory(0);
+  fSKRHCNuMuBarFluxNominal -> SetDirectory(0);
+  fSKRHCNuEFluxNominal     -> SetDirectory(0);
+  fSKRHCNuEBarFluxNominal  -> SetDirectory(0);
+
   const int n_nu = 4;
   int nu_pdg[n_nu] = { conv::kPdgNuE, conv::kPdgNuMu, conv::kPdgNuEBar, conv::kPdgNuMuBar };
+  
   for(int inu = 0; inu < n_nu; inu++) {
      TH1D * hnom = this->SuperkFluxSpectrum(nu_pdg[inu], conv::kFlxNominal  );
      for(int ie = 1; ie <= hnom->GetNbinsX(); ie++) {
@@ -225,6 +331,17 @@ void NuFlux::BookAndInitAuxSpectra(void)
         if(w >=0) { f /= w; }
         hnom->SetBinContent(ie,f);
      }//ie
+  }//inu
+
+  for(int inu = 0; inu < n_nu; inu++) {
+    TH1D * hnomrhc = this->SuperkRHCFluxSpectrum(nu_pdg[inu], conv::kRHCFlxNominal  );
+    for(int ie = 1; ie <= hnomrhc->GetNbinsX(); ie++) {
+      double E = hnomrhc->GetBinCenter (ie);
+      double f = hnomrhc->GetBinContent(ie);
+      double w = this->SuperkRHCFluxExtTuningWght(nu_pdg[inu],E);
+      if(w >=0) { f /= w; }
+      hnomrhc->SetBinContent(ie,f);
+    }//ie
   }//inu
 
   //
@@ -240,6 +357,16 @@ void NuFlux::BookAndInitAuxSpectra(void)
   fSKNuMuBarFluxTunedFinal -> SetDirectory(0);
   fSKNuEFluxTunedFinal     -> SetDirectory(0);
   fSKNuEBarFluxTunedFinal  -> SetDirectory(0);
+
+  fSKRHCNuMuFluxTunedFinal    = new TH1D(*fSKRHCNuMuFluxTunedExt   );
+  fSKRHCNuMuBarFluxTunedFinal = new TH1D(*fSKRHCNuMuBarFluxTunedExt);
+  fSKRHCNuEFluxTunedFinal     = new TH1D(*fSKRHCNuEFluxTunedExt    );
+  fSKRHCNuEBarFluxTunedFinal  = new TH1D(*fSKRHCNuEBarFluxTunedExt );
+
+  fSKRHCNuMuFluxTunedFinal    -> SetDirectory(0);
+  fSKRHCNuMuBarFluxTunedFinal -> SetDirectory(0);
+  fSKRHCNuEFluxTunedFinal     -> SetDirectory(0);
+  fSKRHCNuEBarFluxTunedFinal  -> SetDirectory(0);
 
   this->ApplyBANFFWeights(false); // reweight ext/tuned to fin/tuned flux (corresponds to BANFF best-fit)
 
@@ -408,12 +535,43 @@ double NuFlux::SuperkFluxExtTuningWght(int nu_pdg, double Etrue) const
   return wght;
 }
 //________________________________________________________________________________________
+double NuFlux::SuperkRHCFluxExtTuningWght(int nu_pdg, double Etrue) const
+{
+  // Weights required to re-weight nominal flux to ext/tuned flux
+  //
+  //  if(Etrue > conv::kEtrueMaxForFluxTuneWeights) 
+  //  {
+  //    return 1;
+  //  }
+
+  TH1D * wght_spectrum = this->SuperkRHCFluxExtTuningWghts(nu_pdg);
+  assert(wght_spectrum);
+
+  int bin = wght_spectrum->FindBin(Etrue);
+  double wght = wght_spectrum->GetBinContent(bin);
+  return wght;
+}
+//________________________________________________________________________________________
 double NuFlux::SuperkFluxFinTuningWght(int nu_pdg, double Etrue) const
 {
 // Weights required to re-weight ext/tuned flux to fin/tuned flux
 //
   double flux_ext = this->SuperkFlux(nu_pdg, Etrue, conv::kFlxExtTuning  );
   double flux_fin = this->SuperkFlux(nu_pdg, Etrue, conv::kFlxFinalTuning);
+
+  double wght = 1.0;
+  if(flux_ext >= 0) {
+    wght = flux_fin / flux_ext;
+  }
+  return wght;
+}
+//________________________________________________________________________________________
+double NuFlux::SuperkRHCFluxFinTuningWght(int nu_pdg, double Etrue) const
+{
+  // Weights required to re-weight ext/tuned flux to fin/tuned flux
+  //
+  double flux_ext = this->SuperkFlux(nu_pdg, Etrue, conv::kRHCFlxExtTuning  );
+  double flux_fin = this->SuperkFlux(nu_pdg, Etrue, conv::kRHCFlxFinalTuning);
 
   double wght = 1.0;
   if(flux_ext >= 0) {
@@ -437,6 +595,21 @@ double NuFlux::SuperkFluxSystWght(int nu_pdg, double Etrue) const
   return wght;
 }
 //________________________________________________________________________________________
+double NuFlux::SuperkRHCFluxSystWght(int nu_pdg, double Etrue) const
+{
+  // Weights required to re-weight fin/tuned flux to current (fin/tuned + systematic
+  // variarions) flux
+  //
+  double flux_twk = this->SuperkFlux(nu_pdg, Etrue, conv::kRHCFlxCurrent    );
+  double flux     = this->SuperkFlux(nu_pdg, Etrue, conv::kRHCFlxFinalTuning);
+
+  double wght = 1.0;
+  if(flux >= 0) {
+    wght = flux_twk / flux;
+  }
+  return wght;
+}
+//________________________________________________________________________________________
 double NuFlux::SuperkFluxMECSystWght(int nu_pdg, double Etrue) const
 {
 // Weights required to re-weight ext/tuned flux to current (fin/tuned + systematic
@@ -452,28 +625,59 @@ double NuFlux::SuperkFluxMECSystWght(int nu_pdg, double Etrue) const
   return wght;
 }
 //________________________________________________________________________________________
+double NuFlux::SuperkRHCFluxMECSystWght(int nu_pdg, double Etrue) const
+{
+  // Weights required to re-weight ext/tuned flux to current (fin/tuned + systematic
+  // variarions) flux
+  //
+  double flux_twk = this->SuperkFlux(nu_pdg, Etrue, conv::kRHCFlxCurrent    );
+  double flux     = this->SuperkFlux(nu_pdg, Etrue, conv::kRHCFlxExtTuning  );
+
+  double wght = 1.0;
+  if(flux >= 0) {
+    wght = flux_twk / flux;
+  }
+  return wght;
+}
+//________________________________________________________________________________________
 double NuFlux::SuperkFluxExtTuningWght(
-  conv::SuperkSample_t /*s*/, conv::SuperkMode_t m, double Etrue) const
+  conv::SuperkSample_t s, conv::SuperkMode_t m, double Etrue) const
 {
   int flux_nu_pdg = util::SuperkMode2FluxNuPdg(m);
-  return this->SuperkFluxExtTuningWght(flux_nu_pdg,Etrue);
+  if(s == conv::kSKsRHCFCFV1RingMuLike || s == conv::kSKsRHCFCFV1RingELike) 
+    return this->SuperkRHCFluxExtTuningWght(flux_nu_pdg,Etrue);
+  else
+    return this->SuperkFluxExtTuningWght(flux_nu_pdg,Etrue);
 }
 //________________________________________________________________________________________
 double NuFlux::SuperkFluxFinTuningWght(
-  conv::SuperkSample_t /*s*/, conv::SuperkMode_t m, double Etrue) const
+  conv::SuperkSample_t s, conv::SuperkMode_t m, double Etrue) const
 {
   int flux_nu_pdg = util::SuperkMode2FluxNuPdg(m);
-  return this->SuperkFluxFinTuningWght(flux_nu_pdg,Etrue);
+  if(s == conv::kSKsRHCFCFV1RingMuLike || s == conv::kSKsRHCFCFV1RingELike)
+    return this->SuperkRHCFluxFinTuningWght(flux_nu_pdg,Etrue);
+  else
+    return this->SuperkFluxFinTuningWght(flux_nu_pdg,Etrue);
 }
 //________________________________________________________________________________________
 double NuFlux::SuperkFluxSystWght(
-  conv::SuperkSample_t /*s*/, conv::SuperkMode_t m, double Etrue) const
+  conv::SuperkSample_t s, conv::SuperkMode_t m, double Etrue) const
 {
   int flux_nu_pdg = util::SuperkMode2FluxNuPdg(m);
-  if(util::IsMEC(m))
-    return this->SuperkFluxMECSystWght(flux_nu_pdg,Etrue);
+  if(s == conv::kSKsRHCFCFV1RingMuLike || s == conv::kSKsRHCFCFV1RingELike)
+    {
+    if(util::IsMEC(m))
+      return this->SuperkRHCFluxMECSystWght(flux_nu_pdg,Etrue);
+    else
+      return this->SuperkRHCFluxSystWght(flux_nu_pdg,Etrue);
+    }
   else
-    return this->SuperkFluxSystWght(flux_nu_pdg,Etrue);
+    {
+    if(util::IsMEC(m))
+      return this->SuperkFluxMECSystWght(flux_nu_pdg,Etrue);
+    else
+      return this->SuperkFluxSystWght(flux_nu_pdg,Etrue);
+    }
 }
 //________________________________________________________________________________________
 TH1D * NuFlux::SuperkFluxSpectrum(int nu_pdg, conv::FluxType_t flxtype) const
@@ -543,6 +747,70 @@ TH1D * NuFlux::SuperkFluxSpectrum(int nu_pdg, conv::FluxType_t flxtype) const
         }
         break;
      }
+  
+  //
+  case (conv::kRHCFlxNominal) :
+    {
+      if      ( nu_pdg == conv::kPdgNuE     ) return fSKRHCNuEFluxNominal;
+      else if ( nu_pdg == conv::kPdgNuEBar  ) return fSKRHCNuEBarFluxNominal;
+      else if ( nu_pdg == conv::kPdgNuMu    ) return fSKRHCNuMuFluxNominal;
+      else if ( nu_pdg == conv::kPdgNuMuBar ) return fSKRHCNuMuBarFluxNominal;
+      else
+        {
+	  cerr << "Exp/Flux >> No RHC nominal flux spectrum for particle with PDG = " 
+	       << nu_pdg << endl;
+	  exit(1);
+        }
+      break;
+    }
+
+    //
+  case (conv::kRHCFlxExtTuning) : 
+    {
+      if      ( nu_pdg == conv::kPdgNuE     ) return fSKRHCNuEFluxTunedExt;
+      else if ( nu_pdg == conv::kPdgNuEBar  ) return fSKRHCNuEBarFluxTunedExt;
+      else if ( nu_pdg == conv::kPdgNuMu    ) return fSKRHCNuMuFluxTunedExt;
+      else if ( nu_pdg == conv::kPdgNuMuBar ) return fSKRHCNuMuBarFluxTunedExt;
+      else
+        {
+	  cerr << "Exp/Flux >> No RHC ext/tuned flux spectrum for particle with PDG = " 
+	       << nu_pdg << endl;
+	  exit(1);
+        }
+      break;
+    }
+
+    //
+  case (conv::kRHCFlxFinalTuning) :
+    {
+      if      ( nu_pdg == conv::kPdgNuE     ) return fSKRHCNuEFluxTunedFinal;
+      else if ( nu_pdg == conv::kPdgNuEBar  ) return fSKRHCNuEBarFluxTunedFinal;
+      else if ( nu_pdg == conv::kPdgNuMu    ) return fSKRHCNuMuFluxTunedFinal;
+      else if ( nu_pdg == conv::kPdgNuMuBar ) return fSKRHCNuMuBarFluxTunedFinal;
+      else
+        {
+	  cerr << "Exp/Flux >> No RHC fin/tuned flux spectrum for particle with PDG = " 
+	       << nu_pdg << endl;
+	  exit(1);
+        }
+      break;
+    }
+
+    //
+  case (conv::kRHCFlxCurrent) :
+    {
+      if      ( nu_pdg == conv::kPdgNuE     ) return fSKRHCNuEFluxCurrent;
+      else if ( nu_pdg == conv::kPdgNuEBar  ) return fSKRHCNuEBarFluxCurrent;
+      else if ( nu_pdg == conv::kPdgNuMu    ) return fSKRHCNuMuFluxCurrent;
+      else if ( nu_pdg == conv::kPdgNuMuBar ) return fSKRHCNuMuBarFluxCurrent;
+      else
+        {
+	  cerr << "Exp/Flux >> No RHC current flux spectrum for particle with PDG = "
+	       << nu_pdg << endl;
+	  exit(1);
+        }
+      break;
+    }
 
      //
      default:
@@ -562,6 +830,19 @@ TH1D * NuFlux::SuperkFluxExtTuningWghts(int nu_pdg) const
   {
     exit(1);
   }
+  return 0;
+}
+//________________________________________________________________________________________
+TH1D * NuFlux::SuperkRHCFluxExtTuningWghts(int nu_pdg) const
+{
+  if      ( nu_pdg == conv::kPdgNuE     ) return fSKRHCNuEFluxExtTuningWght;
+  else if ( nu_pdg == conv::kPdgNuEBar  ) return fSKRHCNuEBarFluxExtTuningWght;
+  else if ( nu_pdg == conv::kPdgNuMu    ) return fSKRHCNuMuFluxExtTuningWght;
+  else if ( nu_pdg == conv::kPdgNuMuBar ) return fSKRHCNuMuBarFluxExtTuningWght;
+  else
+    {
+      exit(1);
+    }
   return 0;
 }
 //________________________________________________________________________________________
