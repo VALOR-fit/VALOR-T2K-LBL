@@ -67,6 +67,18 @@ public:
   void TweakNormNCoth     (double twkdial) { fNormNCothTwkDial     = twkdial; }
   void TweakNormNuEToNuMu (double twkdial) { fNormNuEToNuMuTwkDial = twkdial; }
   void TweakNormAntiNuToNu(double twkdial) { fNormAntiNuToNuTwkDial= twkdial; }
+  void TweakRHCFermiMom      (double twkdial) { fRHCFermiMomTwkDial      = twkdial; }
+  void TweakRHCSpecFunc      (double twkdial) { fRHCSpecFuncTwkDial      = twkdial; }
+  void TweakRHCWshape        (double twkdial) { fRHCWshapeTwkDial        = twkdial; }
+  void TweakRHCShapeCCoth    (double twkdial) { fRHCShapeCCothTwkDial    = twkdial; }
+  void TweakRHCPiLessDelta   (double twkdial) { fRHCPiLessDeltaTwkDial   = twkdial; }
+  void TweakRHCBindE         (double twkdial) { fRHCBindETwkDial         = twkdial; }
+  void TweakRHCNormCCcoh     (double twkdial) { fRHCNormCCcohTwkDial     = twkdial; }
+  void TweakRHCNormNC1piC    (double twkdial) { fRHCNormNC1piCTwkDial    = twkdial; }
+  void TweakRHCNormNCcoh     (double twkdial) { fRHCNormNCcohTwkDial     = twkdial; }
+  void TweakRHCNormNCoth     (double twkdial) { fRHCNormNCothTwkDial     = twkdial; }
+  void TweakRHCNormNuEToNuMu (double twkdial) { fRHCNormNuEToNuMuTwkDial = twkdial; }
+  void TweakRHCNormAntiNuToNu(double twkdial) { fRHCNormAntiNuToNuTwkDial= twkdial; }
   
   void Tweak(conv::PhysParamId_t p , double twkdial);
 
@@ -74,6 +86,7 @@ public:
   double CurrentValue        (conv::PhysParamId_t p) const;
   // Used by SuperkMC to get hold of the BANFF best fit value for MEC norm parameter
   double MECBestFitValue     () const;
+  double RHCMECBestFitValue     () const;
 
   // Get the relative error of systematic params handled by this class
   double RelativeError (conv::PhysParamId_t p) const;
@@ -148,6 +161,7 @@ private:
   //
 
   BANFF *     fBANFF;               ///< BANFF fit info
+  BANFF *     fRHCBANFF;            ///< BANFF fit info
   TSpline3 *  fXSecWghtSpl1Rmu[knwspl1Rmu]; ///< Weight splines. Index is function of sample, mode, systematic param, Ereco bin, Etrue bin
   TSpline3 *  fXSecWghtSpl1Re[knwspl1Re]; ///< Weight splines. Index is function of sample, mode, systematic param, Ereco bin, Etrue bin
   TSpline3 *  fRHCXSecWghtSpl1Rmu[kRHCnwspl1Rmu]; ///< Weight splines. Index is function of sample, mode, systematic param, Ereco bin, Etrue bin
@@ -167,6 +181,18 @@ private:
   double fNormNCothTwkDial;
   double fNormNuEToNuMuTwkDial;
   double fNormAntiNuToNuTwkDial;
+  double fRHCFermiMomTwkDial;
+  double fRHCSpecFuncTwkDial;
+  double fRHCWshapeTwkDial;
+  double fRHCShapeCCothTwkDial;
+  double fRHCPiLessDeltaTwkDial;
+  double fRHCBindETwkDial;
+  double fRHCNormCCcohTwkDial;
+  double fRHCNormNC1piCTwkDial;
+  double fRHCNormNCcohTwkDial;
+  double fRHCNormNCothTwkDial;
+  double fRHCNormNuEToNuMuTwkDial;
+  double fRHCNormAntiNuToNuTwkDial;
 
   // relative errors
   double fNormCCcohRelErr;
@@ -178,6 +204,15 @@ private:
   double fSplineMAQERelErr;
   double fSpline1overMAQE2RelErr;
   double fSplineMARESRelErr;
+  double fRHCNormCCcohRelErr;
+  double fRHCNormNC1piCRelErr;
+  double fRHCNormNCcohRelErr;
+  double fRHCNormNCothRelErr;
+  double fRHCNormNuEToNuMuRelErr;
+  double fRHCNormAntiNuToNuRelErr;
+  double fRHCSplineMAQERelErr;
+  double fRHCSpline1overMAQE2RelErr;
+  double fRHCSplineMARESRelErr;
   
   util::ArrIdx * arr_index; //! Pointer to singleton, do not save in TObject
 

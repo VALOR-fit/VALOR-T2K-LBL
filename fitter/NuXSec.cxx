@@ -4,7 +4,7 @@
  \copyright (c) 2010-2013, VaLOR group.
 
 30-12-2013  Nick
-Added samples and modes for reverse horn current running
+Added samples, modes and systematics for reverse horn current running
 
 */
 //________________________________________________________________________________________
@@ -91,6 +91,18 @@ void NuXSec::Init(void)
   fNormNCothTwkDial      = 0;
   fNormNuEToNuMuTwkDial  = 0;
   fNormAntiNuToNuTwkDial = 0;
+  fRHCFermiMomTwkDial       = 0;
+  fRHCSpecFuncTwkDial       = 0;
+  fRHCWshapeTwkDial         = 0;
+  fRHCShapeCCothTwkDial     = 0;
+  fRHCPiLessDeltaTwkDial    = 0;
+  fRHCBindETwkDial          = 0;
+  fRHCNormCCcohTwkDial      = 0;
+  fRHCNormNC1piCTwkDial     = 0;
+  fRHCNormNCcohTwkDial      = 0;
+  fRHCNormNCothTwkDial      = 0;
+  fRHCNormNuEToNuMuTwkDial  = 0;
+  fRHCNormAntiNuToNuTwkDial = 0;
   
   arr_index = util::ArrIdx::Instance();
 
@@ -333,10 +345,15 @@ bool NuXSec::Read(TXMLEngine* xml, XMLNodePointer_t root_node)
   //
 
   //book the bool templ histograms
+  int ereco_n_bins;
   for(int is = 0; is < kns; is++) {
      SuperkSample_t s = kSKSamples[is];
      if(s == kSKsUndefined) continue;
-     const int      n_ereco_bins    = kNXsErecoBins[is];
+     if(s == kSKsRHCFCFV1RingMuLike || s == kSKsRHCFCFV1RingELike)
+       ereco_n_bins    = kRHCNXsErecoBins[is];
+     else
+       ereco_n_bins    = kNXsErecoBins[is];
+     const int      n_ereco_bins = ereco_n_bins;
      const double * ereco_bin_edges = util::XsecErecoBinEdges(s);
      for(int im = 0; im < knm; im++) {
        SuperkMode_t m = kSKReactionModes[is][im];
@@ -364,7 +381,18 @@ bool NuXSec::Read(TXMLEngine* xml, XMLNodePointer_t root_node)
     util::XML2Dbl(xml,root_node,"xsec/normalisations/numu_to_nue");
   fNormAntiNuToNuRelErr =
     util::XML2Dbl(xml,root_node,"xsec/normalisations/nu_to_antinu");
-
+  fRHCNormCCcohRelErr =
+    util::XML2Dbl(xml,root_node,"xsec/normalisations/cccoh");
+  fRHCNormNC1piCRelErr =
+    util::XML2Dbl(xml,root_node,"xsec/normalisations/nc1piC");
+  fRHCNormNCcohRelErr =
+    util::XML2Dbl(xml,root_node,"xsec/normalisations/nccoh");
+  fRHCNormNCothRelErr =
+    util::XML2Dbl(xml,root_node,"xsec/normalisations/ncoth");
+  fRHCNormNuEToNuMuRelErr =
+    util::XML2Dbl(xml,root_node,"xsec/normalisations/numu_to_nue");
+  fRHCNormAntiNuToNuRelErr =
+    util::XML2Dbl(xml,root_node,"xsec/normalisations/nu_to_antinu");
 #ifdef __show_init_mesg_info__
   cout << "Exp/NuXSec >> Done reading neutrino cross-section inputs (not splines)!" << endl;
 #endif
@@ -828,6 +856,42 @@ double NuXSec::CurrentValue(PhysParamId_t p) const
     case kNuisXSecNormAntiNuToNu:
       return fNormAntiNuToNuTwkDial;
       break;
+    case kRHCNuisXSecFermiMom:
+      return fRHCFermiMomTwkDial;
+      break;
+    case kRHCNuisXSecSpecFunc:
+      return fRHCSpecFuncTwkDial;
+      break;
+    case kRHCNuisXSecWshape:
+      return fRHCWshapeTwkDial;
+      break;
+    case kRHCNuisXSecShapeCCoth:
+      return fRHCShapeCCothTwkDial;
+      break;
+    case kRHCNuisXSecPiLessDelta:
+      return fRHCPiLessDeltaTwkDial;
+      break;
+    case kRHCNuisXSecBindE:
+      return fRHCBindETwkDial;
+      break;
+    case kRHCNuisXSecNormCCcoh:
+      return fRHCNormCCcohTwkDial;
+      break;
+    case kRHCNuisXSecNormNC1piC:
+      return fRHCNormNC1piCTwkDial;
+      break;
+    case kRHCNuisXSecNormNCoth:
+      return fRHCNormNCothTwkDial;
+      break;
+    case kRHCNuisXSecNormNCcoh:
+      return fRHCNormNCcohTwkDial;
+      break;
+    case kRHCNuisXSecNormNuEToNuMu:
+      return fRHCNormNuEToNuMuTwkDial;
+      break;
+    case kRHCNuisXSecNormAntiNuToNu:
+      return fRHCNormAntiNuToNuTwkDial;
+      break;
     case kNuisBANFFMAQE:
     case kNuisBANFFMARES:
     case kNuisBANFFCCQEE0:
@@ -848,6 +912,27 @@ double NuXSec::CurrentValue(PhysParamId_t p) const
 #endif
       return fBANFF->CurrentValue(p);
       break;
+    case kRHCNuisBANFFMAQE:
+    case kRHCNuisBANFFMARES:
+    case kRHCNuisBANFFCCQEE0:
+#if BANFF_BINS != 3
+    case kRHCNuisBANFFCCQEE1:
+    case kRHCNuisBANFFCCQEE2:
+#endif
+    case kRHCNuisBANFFCC1piE0:
+#if BANFF_BINS != 3
+    case kRHCNuisBANFFCC1piE1:
+#endif
+#if (BANFF_BINS != 2) && (BANFF_BINS != 4)
+    case kRHCNuisBANFFNC1pi0:
+#endif
+#if BANFF_BINS == 4
+    case kRHCNuisBANFFMECNorm:
+    case kRHCNuisBANFFPDDDoubleCount:
+#endif
+      return fRHCBANFF->CurrentValue(p);
+      break;
+
     default:
       return 0;
   }
@@ -859,6 +944,15 @@ double NuXSec::MECBestFitValue() const
   double value = -1;
 #if BANFF_BINS == 4
   value = fBANFF->BestFitValue(kNuisBANFFMECNorm);
+#endif
+  return value;
+}
+//________________________________________________________________________________________
+double NuXSec::RHCMECBestFitValue() const
+{
+  double value = -1;
+#if BANFF_BINS == 4
+  value = fRHCBANFF->BestFitValue(kRHCNuisBANFFMECNorm);
 #endif
   return value;
 }
@@ -884,6 +978,24 @@ double NuXSec::RelativeError(PhysParamId_t p) const
     case kNuisXSecNormAntiNuToNu:
       return fNormAntiNuToNuRelErr;
       break;
+    case kRHCNuisXSecNormCCcoh:
+      return fRHCNormCCcohRelErr;
+      break;
+    case kRHCNuisXSecNormNC1piC:
+      return fRHCNormNC1piCRelErr;
+      break;
+    case kRHCNuisXSecNormNCcoh:
+      return fRHCNormNCcohRelErr;
+      break;
+    case kRHCNuisXSecNormNCoth:
+      return fRHCNormNCothRelErr;
+      break;
+    case kRHCNuisXSecNormNuEToNuMu:
+      return fRHCNormNuEToNuMuRelErr;
+      break;
+    case kRHCNuisXSecNormAntiNuToNu:
+      return fRHCNormAntiNuToNuRelErr;
+      break;
     default:
       cout << "Relative error is not defined for xsec parameter: " << AsString(p) << endl;
       return 0;
@@ -893,6 +1005,7 @@ double NuXSec::RelativeError(PhysParamId_t p) const
 //________________________________________________________________________________________
 void NuXSec::PrintSystematicVariations(ostream & stream) const
 {
+#ifdef __FHC_RUNNING__
   stream << "Exp/XSec >> XSec parameters:"                              << endl; 
   stream << "         >> Fermi momentum      " << fFermiMomTwkDial      << endl;
   stream << "         >> Spectral function   " << fSpecFuncTwkDial      << endl;
@@ -908,6 +1021,24 @@ void NuXSec::PrintSystematicVariations(ostream & stream) const
   stream << "         >> NC-oth norm         " << fNormNCothTwkDial     << endl;
   stream << "         >> NuE to NuMu norm    " << fNormNuEToNuMuTwkDial << endl;
   stream << "         >> AntiNu to Nu norm   " << fNormAntiNuToNuTwkDial<< endl;
+#endif
+#ifdef __RHC_RUNNING__
+  stream << "Exp/XSec >> RHC XSec parameters:"                              << endl;
+  stream << "         >> RHC Fermi momentum      " << fRHCFermiMomTwkDial      << endl;
+  stream << "         >> RHC spectral function   " << fRHCSpecFuncTwkDial      << endl;
+  stream << "         >> RHC W-shape             " << fRHCWshapeTwkDial        << endl;
+  stream << "         >> RHC CC-oth shape        " << fRHCShapeCCothTwkDial    << endl;
+  stream << "         >> RHC pi-less delta decay " << fRHCPiLessDeltaTwkDial   << endl;
+  stream << "         >> RHC binding energy      " << fRHCBindETwkDial         << endl;
+  stream << "         >> RHC CC-coh norm         " << fRHCNormCCcohTwkDial     << endl;
+  stream << "         >> RHC NC-1piC norm        " << fRHCNormNC1piCTwkDial    << endl;
+#ifndef __NUMUONLY__
+  stream << "         >> RHC NC-coh norm         " << fRHCNormNCcohTwkDial     << endl;
+#endif
+  stream << "         >> RHC NC-oth norm         " << fRHCNormNCothTwkDial     << endl;
+  stream << "         >> RHC NuE to NuMu norm    " << fRHCNormNuEToNuMuTwkDial << endl;
+  stream << "         >> RHC antiNu to Nu norm   " << fRHCNormAntiNuToNuTwkDial<< endl;
+#endif
 }
 //________________________________________________________________________________________
 
@@ -1247,12 +1378,22 @@ double NuXSec::ChisqPenalty(bool /*all_syst*/, bool hk_syst) const
 
   // hack for hk
   if(hk_syst) {
+#ifdef __FHC_RUNNING__
     if (fNormCCcohTwkDial)      chisq_penalty += fNormCCcohTwkDial*fNormCCcohTwkDial;
     if (fNormNC1piCTwkDial)     chisq_penalty += fNormNC1piCTwkDial*fNormNC1piCTwkDial;
     if (fNormNCcohTwkDial)      chisq_penalty += fNormNCcohTwkDial*fNormNCcohTwkDial;
     if (fNormNCothTwkDial)      chisq_penalty += fNormNCothTwkDial*fNormNCothTwkDial;
+#endif
+#ifdef __RHC_RUNNING__
+    if (fRHCNormCCcohTwkDial)      chisq_penalty += fRHCNormCCcohTwkDial*fRHCNormCCcohTwkDial;
+    if (fRHCNormNC1piCTwkDial)     chisq_penalty += fRHCNormNC1piCTwkDial*fRHCNormNC1piCTwkDial;
+    if (fRHCNormNCcohTwkDial)      chisq_penalty += fRHCNormNCcohTwkDial*fRHCNormNCcohTwkDial;
+    if (fRHCNormNCothTwkDial)      chisq_penalty += fRHCNormNCothTwkDial*fRHCNormNCothTwkDial;
+#endif
     return chisq_penalty;
   }
+
+#ifdef __FHC_RUNNING__
 
   if (fFermiMomTwkDial)       chisq_penalty += fFermiMomTwkDial*fFermiMomTwkDial;
   if (fSpecFuncTwkDial)       chisq_penalty += fSpecFuncTwkDial*fSpecFuncTwkDial;
@@ -1275,6 +1416,33 @@ double NuXSec::ChisqPenalty(bool /*all_syst*/, bool hk_syst) const
   if (fNormAntiNuToNuTwkDial) chisq_penalty += fNormAntiNuToNuTwkDial*fNormAntiNuToNuTwkDial;
 #endif
 
+#endif
+
+#ifdef __RHC_RUNNING__
+
+    if (fRHCFermiMomTwkDial)       chisq_penalty += fRHCFermiMomTwkDial*fRHCFermiMomTwkDial;
+    if (fRHCSpecFuncTwkDial)       chisq_penalty += fRHCSpecFuncTwkDial*fRHCSpecFuncTwkDial;
+    if (fRHCWshapeTwkDial)         chisq_penalty += fRHCWshapeTwkDial*fRHCWshapeTwkDial;
+    if (fRHCShapeCCothTwkDial)     chisq_penalty += fRHCShapeCCothTwkDial*fRHCShapeCCothTwkDial;
+    if (fRHCPiLessDeltaTwkDial)    chisq_penalty += fRHCPiLessDeltaTwkDial*fRHCPiLessDeltaTwkDial;
+#ifndef __NUEONLY__
+    if (fRHCBindETwkDial)          chisq_penalty += fRHCBindETwkDial*fRHCBindETwkDial;
+#endif
+    if (fRHCNormCCcohTwkDial)      chisq_penalty += fRHCNormCCcohTwkDial*fRHCNormCCcohTwkDial;
+#ifndef __NUEONLY__
+    if (fRHCNormNC1piCTwkDial)     chisq_penalty += fRHCNormNC1piCTwkDial*fRHCNormNC1piCTwkDial;
+#endif
+#ifndef __NUMUONLY__
+    if (fRHCNormNCcohTwkDial)      chisq_penalty += fRHCNormNCcohTwkDial*fRHCNormNCcohTwkDial;
+#endif
+    if (fRHCNormNCothTwkDial)      chisq_penalty += fRHCNormNCothTwkDial*fRHCNormNCothTwkDial;
+    if (fRHCNormNuEToNuMuTwkDial)  chisq_penalty += fRHCNormNuEToNuMuTwkDial*fRHCNormNuEToNuMuTwkDial;
+#ifndef __NUEONLY__
+    if (fRHCNormAntiNuToNuTwkDial) chisq_penalty += fRHCNormAntiNuToNuTwkDial*fRHCNormAntiNuToNuTwkDial;
+#endif
+
+#endif
+
   return chisq_penalty;
 }
 //________________________________________________________________________________________
@@ -1292,5 +1460,17 @@ void NuXSec::Tweak(conv::PhysParamId_t p , double twkdial)
   else if (p==kNuisXSecNormNCoth     ) fNormNCothTwkDial     = twkdial;
   else if (p==kNuisXSecNormNuEToNuMu ) fNormNuEToNuMuTwkDial = twkdial;
   else if (p==kNuisXSecNormAntiNuToNu) fNormAntiNuToNuTwkDial= twkdial;
+  else if (p==kRHCNuisXSecFermiMom      ) fRHCFermiMomTwkDial      = twkdial;
+  else if (p==kRHCNuisXSecSpecFunc      ) fRHCSpecFuncTwkDial      = twkdial;
+  else if (p==kRHCNuisXSecWshape        ) fRHCWshapeTwkDial        = twkdial;
+  else if (p==kRHCNuisXSecShapeCCoth    ) fRHCShapeCCothTwkDial    = twkdial;
+  else if (p==kRHCNuisXSecPiLessDelta   ) fRHCPiLessDeltaTwkDial   = twkdial;
+  else if (p==kRHCNuisXSecBindE         ) fRHCBindETwkDial         = twkdial;
+  else if (p==kRHCNuisXSecNormCCcoh     ) fRHCNormCCcohTwkDial     = twkdial;
+  else if (p==kRHCNuisXSecNormNC1piC    ) fRHCNormNC1piCTwkDial    = twkdial;
+  else if (p==kRHCNuisXSecNormNCcoh     ) fRHCNormNCcohTwkDial     = twkdial;
+  else if (p==kRHCNuisXSecNormNCoth     ) fRHCNormNCothTwkDial     = twkdial;
+  else if (p==kRHCNuisXSecNormNuEToNuMu ) fRHCNormNuEToNuMuTwkDial = twkdial;
+  else if (p==kRHCNuisXSecNormAntiNuToNu) fRHCNormAntiNuToNuTwkDial= twkdial;
   else cerr<<"NuXSec/Tweak >> Failed to tweak parameter "<<util::AsString(p)<<endl;
 }
