@@ -103,6 +103,7 @@ public:
 
   // Set BANFF fit info
   void TellMeAboutTheBANFFfit(BANFF * banff);
+  void TellMeAboutTheRHCBANFFfit(BANFF * banff);
 
   //
   void BuildXsBinningMCTemplates(TH2D* input_mctempl_array[kns][knm]);

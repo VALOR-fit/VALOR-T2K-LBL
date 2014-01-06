@@ -82,25 +82,21 @@ void SuperkExpectation::Init(void)
 	fPredictErecoSpectrumArrayTot1Rmu[ir] = 0;
       else if(s==kSKsFCFV1RingELike)
 	fPredictErecoSpectrumArrayTot1Re[ir] = 0;
+      else if (s==kSKsRHCFCFV1RingMuLike)
+        fPredictRHCErecoSpectrumArrayTot1Rmu[ir] = 0;
+      else if(s==kSKsRHCFCFV1RingELike)
+        fPredictRHCErecoSpectrumArrayTot1Re[ir] = 0;
       for(int im=0; im<knm; im++) {
 	if (s==kSKsFCFV1RingMuLike)
 	  fPredictErecoSpectrumArray1Rmu[im][ir] = 0;
 	else if(s==kSKsFCFV1RingELike)
 	  fPredictErecoSpectrumArray1Re[im][ir] = 0;
-      }//im
-    }//ir
-    for(int ir=0; ir<kRHCNErecoBins[is]; ir++) {
-      if (s==kSKsRHCFCFV1RingMuLike)
-        fPredictRHCErecoSpectrumArrayTot1Rmu[ir] = 0;
-      else if(s==kSKsRHCFCFV1RingELike)
-        fPredictRHCErecoSpectrumArrayTot1Re[ir] = 0;
-      for(int im=0; im<knm; im++) {
-        if (s==kSKsRHCFCFV1RingMuLike)
+        else if (s==kSKsRHCFCFV1RingMuLike)
           fPredictRHCErecoSpectrumArray1Rmu[im][ir] = 0;
         else if(s==kSKsRHCFCFV1RingELike)
           fPredictRHCErecoSpectrumArray1Re[im][ir] = 0;
-      }//im                                                                                                                                           
-    }//ir                                                                                                                                              
+      }//im
+    }//ir
   }//is
 }
 //________________________________________________________________________________________

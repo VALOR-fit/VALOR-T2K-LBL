@@ -345,15 +345,10 @@ bool NuXSec::Read(TXMLEngine* xml, XMLNodePointer_t root_node)
   //
 
   //book the bool templ histograms
-  int ereco_n_bins;
   for(int is = 0; is < kns; is++) {
      SuperkSample_t s = kSKSamples[is];
      if(s == kSKsUndefined) continue;
-     if(s == kSKsRHCFCFV1RingMuLike || s == kSKsRHCFCFV1RingELike)
-       ereco_n_bins    = kRHCNXsErecoBins[is];
-     else
-       ereco_n_bins    = kNXsErecoBins[is];
-     const int      n_ereco_bins = ereco_n_bins;
+     const int      n_ereco_bins = kNXsErecoBins[is];
      const double * ereco_bin_edges = util::XsecErecoBinEdges(s);
      for(int im = 0; im < knm; im++) {
        SuperkMode_t m = kSKReactionModes[is][im];
@@ -405,6 +400,11 @@ void NuXSec::TellMeAboutTheBANFFfit(BANFF * banff)
   fBANFF = banff;
 }
 //________________________________________________________________________________________
+void NuXSec::TellMeAboutTheRHCBANFFfit(BANFF * banff)
+{
+  fRHCBANFF = banff;
+}
+//________________________________________________________________________________________
 double NuXSec::FinTuningWght(
   SuperkSample_t s, SuperkMode_t m, double Ereco, double Etrue) const
 {
@@ -446,6 +446,7 @@ double NuXSec::FinTuningWght_1p(
   // if( ! this->ApplySyst(p,s,m,Ereco,Etrue) ) return 1.; // check already made in function that calls this one
 
   double wght = 1.;
+  double tb;
 
   //
   // BANFF param, M_{A} QE
@@ -460,7 +461,10 @@ double NuXSec::FinTuningWght_1p(
     //if(ev) {
       TSpline3 * wght_spl = this->FindWghtSpline(p,s,m,Ereco,Etrue);
       assert(wght_spl);
-      double tb = fBANFF->BestFitValue(p);
+      if(s == kSKsRHCFCFV1RingMuLike || s == kSKsRHCFCFV1RingELike)
+	tb = fRHCBANFF->BestFitValue(p);
+      else
+        tb = fBANFF->BestFitValue(p);
       /*
       if(s == kSKsFCFV1RingELike){
 	//SPLINES now in terms of x_MA, rather than sigma
@@ -504,7 +508,10 @@ relerr = fSplineMARESRelErr;
 #endif
      )
   {
-    wght = fBANFF->BestFitValue(p);
+    if(s == kSKsRHCFCFV1RingMuLike || s == kSKsRHCFCFV1RingELike)
+      wght = fRHCBANFF->BestFitValue(p);
+    else
+      wght = fBANFF->BestFitValue(p);
   }
 
   //
@@ -520,7 +527,10 @@ relerr = fSplineMARESRelErr;
       //if(ev) {
       TSpline3 * wght_spl = this->FindWghtSpline(p,s,m,Ereco,Etrue);
       assert(wght_spl);
-      double tb = fabs(fBANFF->BestFitValue(p));
+      if(s == kSKsRHCFCFV1RingMuLike || s == kSKsRHCFCFV1RingELike)
+	tb = fabs(fRHCBANFF->BestFitValue(p));
+      else
+        tb = fabs(fBANFF->BestFitValue(p));
 #warning Need to check PDD spline evaluation is correct
       wght = wght_spl->Eval(tb);
       //}

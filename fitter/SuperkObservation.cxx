@@ -67,12 +67,10 @@ void SuperkObservation::Init(void)
     SuperkSample_t s = kSKSamples[is];    
     fErDistr[is] = 0;
     for(int ir=0; ir<kNErecoBins[is]; ir++) {
-      if (s== kSKsFCFV1RingMuLike) fErDistrArray1Rmu[ir] = 0;
-      else fErDistrArray1Re[ir] = 0;
-    }
-    for(int ir=0; ir<kRHCNErecoBins[is]; ir++) {
       if (s== kSKsRHCFCFV1RingMuLike) fRHCErDistrArray1Rmu[ir] = 0;
-      else fRHCErDistrArray1Re[ir] = 0;
+      else if(s == kSKsRHCFCFV1RingELike) fRHCErDistrArray1Re[ir] = 0;
+      else if(s == kSKsFCFV1RingELike) fErDistrArray1Re[ir] = 0;
+      else fErDistrArray1Rmu[ir] = 0;
     }
   }
   arr_index = util::ArrIdx::Instance();
@@ -306,13 +304,12 @@ double SuperkObservation::NumOfEvents(SuperkSample_t s) const
 
   int is = arr_index->SuperkSampleIdx(s);
   for(int ir = 0; ir < kNErecoBins[is]; ir++){
-    if (s== kSKsFCFV1RingMuLike) nev += fErDistrArray1Rmu[ir];
-    else nev += fErDistrArray1Re[ir];
-  }
-  for(int ir = 0; ir < kRHCNErecoBins[is]; ir++){
     if (s== kSKsRHCFCFV1RingMuLike) nev += fRHCErDistrArray1Rmu[ir];
-    else nev += fRHCErDistrArray1Re[ir];
+    else if (s == kSKsRHCFCFV1RingELike) nev += fRHCErDistrArray1Re[ir];
+    else if (s == kSKsFCFV1RingELike) nev += fErDistrArray1Re[ir];
+    else nev += fErDistrArray1Rmu[ir];    
   }
+
 #ifdef __show_num_of_events_mesg_debug__
   cout << "Obs >> NEvents(" 
        << util::AsString(s) << ") = " << nev << endl;

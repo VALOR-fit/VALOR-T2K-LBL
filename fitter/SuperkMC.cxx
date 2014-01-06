@@ -126,25 +126,10 @@ void SuperkMC::Init(void)
   ////
 
   for(int is=0; is<kns; is++) {
-    int n_etrue_bins;
-    int n_ereco_bins;
-    int n_xs_ereco_bins;
     SuperkSample_t s = kSKSamples[is];
-
-    // MODIFIED
-    if(s==kSKsFCFV1RingMuLike || s==kSKsFCFV1RingELike){
-      n_etrue_bins = kNEtrueBins[is];
-      n_ereco_bins = kNErecoBins[is];
-      n_xs_ereco_bins = kNXsErecoBins[is];
-    }
-    //// 
-    // ANTINU
-    else if(s==kSKsRHCFCFV1RingMuLike || s==kSKsRHCFCFV1RingELike){
-      n_etrue_bins = kRHCNEtrueBins[is];
-      n_ereco_bins = kRHCNErecoBins[is];
-      n_xs_ereco_bins = kRHCNXsErecoBins[is];
-    }
-    ////
+    int n_etrue_bins = kNEtrueBins[is];
+    int n_ereco_bins = kNErecoBins[is];
+    int n_xs_ereco_bins = kNXsErecoBins[is];
 
     fMCErecoSpectrumTot[is] = 0;
     fMCEtrueSpectrumTot[is] = 0;
@@ -616,32 +601,15 @@ void SuperkMC::Book(void)
      SuperkSample_t s = kSKSamples[is];
      if(s == kSKsUndefined) continue;
 
-
-     //const int      n_ereco_bins    = kNErecoBins[is];
-     // MODIFIED
-     int n_ereco_bins;
-     int n_etrue_bins;
-     if(s==kSKsFCFV1RingMuLike || s==kSKsFCFV1RingELike){
-       n_ereco_bins = kNErecoBins[is];
-       n_etrue_bins = kNEtrueBins[is];
-     }
-     //
-     // ANTINU
-     else if(s==kSKsRHCFCFV1RingMuLike || s==kSKsRHCFCFV1RingELike){
-       n_ereco_bins = kRHCNErecoBins[is];
-       n_etrue_bins = kRHCNEtrueBins[is];
-     }
-     ////
-     
-     
+     const int      n_ereco_bins    = kNErecoBins[is];
      const double * ereco_bin_edges = util::ErecoBinEdges(s);
+
      fMCErecoSpectrumTot[is] = new TH1D("","", n_ereco_bins, ereco_bin_edges);
      fMCErecoSpectrumTot[is] -> SetDirectory(0);
      fMCErecoSpectrumTot[is]->SetLineWidth(2);
      fMCErecoSpectrumTot[is]->SetLineColor(kBlack);
      
-     //fMCEtrueSpectrumTot[is] = new TH1D("","", kNEtrueBins[is], util::EtrueBinEdges(s));
-     fMCEtrueSpectrumTot[is] = new TH1D("","", n_etrue_bins, util::EtrueBinEdges(s));     // MODIFIED
+     fMCEtrueSpectrumTot[is] = new TH1D("","", kNEtrueBins[is], util::EtrueBinEdges(s));
      
      fMCEtrueSpectrumTot[is] -> SetDirectory(0);
      fMCEtrueSpectrumTot[is]->SetLineWidth(2);
@@ -665,47 +633,12 @@ void SuperkMC::Book(void)
      SuperkSample_t s = kSKSamples[is];
      if(s == kSKsUndefined) continue;
 
-
-
-     //const int      n_ereco_bins    = kNErecoBins[is];
-     //const int      n_etrue_bins    = kNEtrueBins[is];
-     // MODIFIED
-     int n_ereco_bins;
-     int n_etrue_bins;
-     if(s==kSKsFCFV1RingMuLike || s==kSKsFCFV1RingELike){
-       n_ereco_bins = kNErecoBins[is];
-       n_etrue_bins = kNEtrueBins[is];
-     }
-     //
-     // ANTINU
-     else if(s==kSKsRHCFCFV1RingMuLike || s==kSKsRHCFCFV1RingELike){
-       n_ereco_bins = kRHCNErecoBins[is];
-       n_etrue_bins = kRHCNEtrueBins[is];
-     }
-     ////
-     
-
-    
+     const int      n_ereco_bins    = kNErecoBins[is];
+     const int      n_etrue_bins    = kNEtrueBins[is];
      const double * ereco_bin_edges = util::ErecoBinEdges(s);
-    
-     
-
-     //const int      var_n_ereco_bins    = kNXsErecoBins[is];
-     // MODIFIED
-     int var_n_ereco_bins;
-     if(s==kSKsFCFV1RingMuLike || s==kSKsFCFV1RingELike){
-       var_n_ereco_bins = kNXsErecoBins[is];
-     }
-     //
-     // ANTINU
-     else if(s==kSKsRHCFCFV1RingMuLike || s==kSKsRHCFCFV1RingELike){
-       var_n_ereco_bins = kRHCNXsErecoBins[is];
-     }
-     ////
-     
-
-
+     const int      var_n_ereco_bins    = kNXsErecoBins[is];
      const double * var_ereco_bin_edges = util::XsecErecoBinEdges(s);
+
      for(int im = 0; im < knm; im++) {
        SuperkMode_t m = kSKReactionModes[is][im];
        if(m == kSKmUndefined) continue;
@@ -917,41 +850,8 @@ void SuperkMC::FillTemplate(SuperkSample_t s, SuperkMode_t m)
       double EtrueVarMin = util::VariableMCEtrueBinEdges(s,m)[itv-1] + kOneMeV;
       double EtrueVarMax = util::VariableMCEtrueBinEdges(s,m)[itv]   - kOneMeV;
 
-      
-      
-
-
-
-
-
-      //int EtrueMinBin = 1 + TMath::BinarySearch(kNEtrueBins[sidx],util::EtrueBinEdges(s),EtrueVarMin);
-      //int EtrueMaxBin = 1 + TMath::BinarySearch(kNEtrueBins[sidx],util::EtrueBinEdges(s),EtrueVarMax);      
-      // MODIFIED
-      int EtrueMinBin;
-      int EtrueMaxBin;
-      int n_ereco_bins;
-      int n_etrue_bins;
-      if(s==kSKsFCFV1RingMuLike || s==kSKsFCFV1RingELike){
-	n_ereco_bins = kNErecoBins[sidx];
-	n_etrue_bins = kNEtrueBins[sidx];
-      }
-      //
-      // ANTINU
-      else if(s==kSKsRHCFCFV1RingMuLike || s==kSKsRHCFCFV1RingELike){
-	n_ereco_bins = kRHCNErecoBins[sidx];
-	n_etrue_bins = kRHCNEtrueBins[sidx];
-      }
-      ////
-      EtrueMinBin = 1 + TMath::BinarySearch(n_etrue_bins,util::EtrueBinEdges(s),EtrueVarMin); // MODIFIED
-      EtrueMaxBin = 1 + TMath::BinarySearch(n_etrue_bins,util::EtrueBinEdges(s),EtrueVarMax); // MODIFIED
-
-
-
-
-	
-
-
-
+      int EtrueMinBin = 1 + TMath::BinarySearch(kNEtrueBins[sidx],util::EtrueBinEdges(s),EtrueVarMin);
+      int EtrueMaxBin = 1 + TMath::BinarySearch(kNEtrueBins[sidx],util::EtrueBinEdges(s),EtrueVarMax);      
       
       // loop over variable Ereco
       for(int irv = 1; irv <= fMCVariableTempl[sidx][midx]->GetXaxis()->GetNbins(); irv++) {
@@ -971,33 +871,9 @@ void SuperkMC::FillTemplate(SuperkSample_t s, SuperkMode_t m)
 	
 	double ErecoVarMin = util::XsecErecoBinEdges(s,irv-1) + kOneMeV;
 	double ErecoVarMax = util::XsecErecoBinEdges(s,irv)   - kOneMeV;
-	
-      
 
-	//int ErecoMinBin = 1 + TMath::BinarySearch(kNErecoBins[sidx],util::ErecoBinEdges(s),ErecoVarMin);
-	//int ErecoMaxBin = 1 + TMath::BinarySearch(kNErecoBins[sidx],util::ErecoBinEdges(s),ErecoVarMax);
-	// MODIFIED
-	int ErecoMinBin;
-	int ErecoMaxBin;
-	int n_ereco_bins;
-	int n_etrue_bins;
-	if(s==kSKsFCFV1RingMuLike || s==kSKsFCFV1RingELike){
-	  n_ereco_bins = kNErecoBins[sidx];
-	  n_etrue_bins = kNEtrueBins[sidx];
-	}
-	//
-	// ANTINU
-	else if(s==kSKsRHCFCFV1RingMuLike || s==kSKsRHCFCFV1RingELike){
-	  n_ereco_bins = kRHCNErecoBins[sidx];
-	  n_etrue_bins = kRHCNEtrueBins[sidx];
-	}
-	////
-	ErecoMinBin = 1 + TMath::BinarySearch(n_ereco_bins,util::ErecoBinEdges(s),ErecoVarMin); // MODIFIED
-	ErecoMaxBin = 1 + TMath::BinarySearch(n_ereco_bins,util::ErecoBinEdges(s),ErecoVarMax); // MODIFIED
-
-
-      
-
+	int ErecoMinBin = 1 + TMath::BinarySearch(kNErecoBins[sidx],util::ErecoBinEdges(s),ErecoVarMin);
+	int ErecoMaxBin = 1 + TMath::BinarySearch(kNErecoBins[sidx],util::ErecoBinEdges(s),ErecoVarMax);
 
 	int i_ne_fixed = 0;
 	// loop over fixed Etrue to count n nonempty
@@ -1136,39 +1012,12 @@ void SuperkMC::FillSpecialTemplates(void)
 	  double EtrueVarMin = util::VariableMCEtrueBinEdges(s,m)[itv-1] + kOneMeV;
 	  double EtrueVarMax = util::VariableMCEtrueBinEdges(s,m)[itv]   - kOneMeV;
 	  
-	  
-
-	  
-	  //int EtrueMinBin = 1 + TMath::BinarySearch(kNEtrueBins[sidx],util::EtrueBinEdges(s),EtrueVarMin);
-	  //int EtrueMaxBin = 1 + TMath::BinarySearch(kNEtrueBins[sidx],util::EtrueBinEdges(s),EtrueVarMax);
-	  // MODIFIED
-	  int EtrueMinBin;
-	  int EtrueMaxBin;
-	  int n_ereco_bins;
-	  int n_etrue_bins;
-	  if(s==kSKsFCFV1RingMuLike || s==kSKsFCFV1RingELike){
-	    n_ereco_bins = kNErecoBins[sidx];
-	    n_etrue_bins = kNEtrueBins[sidx];
-	  }
-	  //
-	  // ANTINU
-	  else if(s==kSKsRHCFCFV1RingMuLike || s==kSKsRHCFCFV1RingELike){
-	    n_ereco_bins = kRHCNErecoBins[sidx];
-	    n_etrue_bins = kRHCNEtrueBins[sidx];
-	  }
-	  ////
-	  EtrueMinBin = 1 + TMath::BinarySearch(n_etrue_bins,util::EtrueBinEdges(s),EtrueVarMin); // MODIFIED
-	  EtrueMaxBin = 1 + TMath::BinarySearch(n_etrue_bins,util::EtrueBinEdges(s),EtrueVarMax); // MODIFIED
-	  
-	  
-	  
-
+	  int EtrueMinBin = 1 + TMath::BinarySearch(kNEtrueBins[sidx],util::EtrueBinEdges(s),EtrueVarMin);
+	  int EtrueMaxBin = 1 + TMath::BinarySearch(kNEtrueBins[sidx],util::EtrueBinEdges(s),EtrueVarMax);
 	  
 	  // loop over variable Ereco
 	  for(int irv = 1; irv <= fMCVariableTempl[sidx][midx]->GetXaxis()->GetNbins(); irv++) {
 	    int nev = TMath::CeilNint(fMCVariableTempl[sidx][midx]->GetBinContent(irv,itv));
-
-
 
 	    if (s==kSKsFCFV1RingMuLike) fMCVariableTemplArray1Rmu[midx][itv-1][irv-1] = nev;
 	    else if (s==kSKsFCFV1RingELike) fMCVariableTemplArray1Re[midx][itv-1][irv-1] = nev;   // MODIFIED
@@ -1188,36 +1037,8 @@ void SuperkMC::FillSpecialTemplates(void)
 	    double ErecoVarMin = util::XsecErecoBinEdges(s,irv-1) + kOneMeV;
 	    double ErecoVarMax = util::XsecErecoBinEdges(s,irv)   - kOneMeV;
 	    
-
-
-
-
-	    
-	    //int ErecoMinBin = 1 + TMath::BinarySearch(kNErecoBins[sidx],util::ErecoBinEdges(s),ErecoVarMin);
-	    //int ErecoMaxBin = 1 + TMath::BinarySearch(kNErecoBins[sidx],util::ErecoBinEdges(s),ErecoVarMax);
-	    // MODIFIED
-	    int ErecoMinBin;
-	    int ErecoMaxBin;
-	    int n_ereco_bins;
-	    int n_etrue_bins;
-	    if(s==kSKsFCFV1RingMuLike || s==kSKsFCFV1RingELike){
-	      n_ereco_bins = kNErecoBins[sidx];
-	      n_etrue_bins = kNEtrueBins[sidx];
-	    }
-	    //
-	    // ANTINU
-	    else if(s==kSKsRHCFCFV1RingMuLike || s==kSKsRHCFCFV1RingELike){
-	      n_ereco_bins = kRHCNErecoBins[sidx];
-	      n_etrue_bins = kRHCNEtrueBins[sidx];
-	    }
-	    ////
-	    ErecoMinBin = 1 + TMath::BinarySearch(n_ereco_bins,util::ErecoBinEdges(s),ErecoVarMin); // MODIFIED
-	    ErecoMaxBin = 1 + TMath::BinarySearch(n_ereco_bins,util::ErecoBinEdges(s),ErecoVarMax); // MODIFIED
-
-
-
-
-
+	    int ErecoMinBin = 1 + TMath::BinarySearch(kNErecoBins[sidx],util::ErecoBinEdges(s),ErecoVarMin);
+	    int ErecoMaxBin = 1 + TMath::BinarySearch(kNErecoBins[sidx],util::ErecoBinEdges(s),ErecoVarMax);
 
 	    int i_ne_fixed = 0;
 	    // loop over fixed Etrue to count n nonempty
@@ -1349,32 +1170,8 @@ void SuperkMC::FillSpecialTemplates(void)
 	double EtrueVarMin = util::VariableMCEtrueBinEdges(s,tgt_m)[itv-1] + kOneMeV;
 	double EtrueVarMax = util::VariableMCEtrueBinEdges(s,tgt_m)[itv]   - kOneMeV;
 
-      
-
-
-	//int EtrueMinBin = 1 + TMath::BinarySearch(kNEtrueBins[sidx],util::EtrueBinEdges(s),EtrueVarMin);
-	//int EtrueMaxBin = 1 + TMath::BinarySearch(kNEtrueBins[sidx],util::EtrueBinEdges(s),EtrueVarMax);
-	// MODIFIED
-	int EtrueMinBin;
-	int EtrueMaxBin;
-	int n_ereco_bins;
-	int n_etrue_bins;
-	if(s==kSKsFCFV1RingMuLike || s==kSKsFCFV1RingELike){
-	  n_ereco_bins = kNErecoBins[sidx];
-	  n_etrue_bins = kNEtrueBins[sidx];
-	}
-	//
-	// ANTINU
-	else if(s==kSKsRHCFCFV1RingMuLike || s==kSKsRHCFCFV1RingELike){
-	  n_ereco_bins = kRHCNErecoBins[sidx];
-	  n_etrue_bins = kRHCNEtrueBins[sidx];
-	}
-	////
-	EtrueMinBin = 1 + TMath::BinarySearch(n_etrue_bins,util::EtrueBinEdges(s),EtrueVarMin); // MODIFIED
-	EtrueMaxBin = 1 + TMath::BinarySearch(n_etrue_bins,util::EtrueBinEdges(s),EtrueVarMax); // MODIFIED
-
-
-
+	int EtrueMinBin = 1 + TMath::BinarySearch(kNEtrueBins[sidx],util::EtrueBinEdges(s),EtrueVarMin);
+	int EtrueMaxBin = 1 + TMath::BinarySearch(kNEtrueBins[sidx],util::EtrueBinEdges(s),EtrueVarMax);
 	
 	// loop over variable Ereco
 	int nev = 0;
@@ -1403,7 +1200,6 @@ void SuperkMC::FillSpecialTemplates(void)
 	  ////
 
 
-
 	  // Fill nonempty bin numbers.
 	  if (nev < conv::kASmallNum) {
 	    continue;
@@ -1414,34 +1210,8 @@ void SuperkMC::FillSpecialTemplates(void)
 	  double ErecoVarMin = util::XsecErecoBinEdges(s,irv-1) + kOneMeV;
 	  double ErecoVarMax = util::XsecErecoBinEdges(s,irv)   - kOneMeV;
 	  
-
-
-
-	  
-	  //int ErecoMinBin = 1 + TMath::BinarySearch(kNErecoBins[sidx],util::ErecoBinEdges(s),ErecoVarMin);
-	  //int ErecoMaxBin = 1 + TMath::BinarySearch(kNErecoBins[sidx],util::ErecoBinEdges(s),ErecoVarMax);
-	  // MODIFIED
-	  int ErecoMinBin;
-	  int ErecoMaxBin;
-	  int n_ereco_bins;
-	  int n_etrue_bins;
-	  if(s==kSKsFCFV1RingMuLike || s==kSKsFCFV1RingELike){
-	    n_ereco_bins = kNErecoBins[sidx];
-	    n_etrue_bins = kNEtrueBins[sidx];
-	  }
-	  //
-	  // ANTINU
-	  else if(s==kSKsRHCFCFV1RingMuLike || s==kSKsRHCFCFV1RingELike){
-	    n_ereco_bins = kRHCNErecoBins[sidx];
-	    n_etrue_bins = kRHCNEtrueBins[sidx];
-	  }
-	  ////
-	  ErecoMinBin = 1 + TMath::BinarySearch(n_ereco_bins,util::ErecoBinEdges(s),ErecoVarMin); // MODIFIED
-	  ErecoMaxBin = 1 + TMath::BinarySearch(n_ereco_bins,util::ErecoBinEdges(s),ErecoVarMax); // MODIFIED
-	  
-
-
-
+	  int ErecoMinBin = 1 + TMath::BinarySearch(kNErecoBins[sidx],util::ErecoBinEdges(s),ErecoVarMin);
+	  int ErecoMaxBin = 1 + TMath::BinarySearch(kNErecoBins[sidx],util::ErecoBinEdges(s),ErecoVarMax);
 
 	  int i_ne_fixed = 0;
 	  // loop over fixed Etrue to count n nonempty
@@ -1578,36 +1348,8 @@ void SuperkMC::FillSpecialTemplates(void)
 	double EtrueVarMin = util::VariableMCEtrueBinEdges(s,tgt_m)[itv-1] + kOneMeV;
 	double EtrueVarMax = util::VariableMCEtrueBinEdges(s,tgt_m)[itv]   - kOneMeV;
 	
-	
-	
-
-
-	//int EtrueMinBin = 1 + TMath::BinarySearch(kNEtrueBins[sidx],util::EtrueBinEdges(s),EtrueVarMin);
-	//int EtrueMaxBin = 1 + TMath::BinarySearch(kNEtrueBins[sidx],util::EtrueBinEdges(s),EtrueVarMax);
-	// MODIFIED
-	int EtrueMinBin;
-	int EtrueMaxBin;
-	int n_ereco_bins;
-	int n_etrue_bins;
-	if(s==kSKsFCFV1RingMuLike || s==kSKsFCFV1RingELike){
-	  n_ereco_bins = kNErecoBins[sidx];
-	  n_etrue_bins = kNEtrueBins[sidx];
-	}
-	//
-	// ANTINU
-	else if(s==kSKsRHCFCFV1RingMuLike || s==kSKsRHCFCFV1RingELike){
-	  n_ereco_bins = kRHCNErecoBins[sidx];
-	  n_etrue_bins = kRHCNEtrueBins[sidx];
-	}
-	////
-	EtrueMinBin = 1 + TMath::BinarySearch(n_etrue_bins,util::EtrueBinEdges(s),EtrueVarMin); // MODIFIED
-	EtrueMaxBin = 1 + TMath::BinarySearch(n_etrue_bins,util::EtrueBinEdges(s),EtrueVarMax); // MODIFIED
-	
-
-
-
-
-
+	int EtrueMinBin = 1 + TMath::BinarySearch(kNEtrueBins[sidx],util::EtrueBinEdges(s),EtrueVarMin);
+	int EtrueMaxBin = 1 + TMath::BinarySearch(kNEtrueBins[sidx],util::EtrueBinEdges(s),EtrueVarMax);
 	
 	// loop over variable Ereco
 	for(int irv = 1; irv <= fMCVariableTempl[sidx][tgt_midx]->GetXaxis()->GetNbins(); irv++) {
@@ -1646,36 +1388,8 @@ void SuperkMC::FillSpecialTemplates(void)
 	  double ErecoVarMin = util::XsecErecoBinEdges(s,irv-1) + kOneMeV;
 	  double ErecoVarMax = util::XsecErecoBinEdges(s,irv)   - kOneMeV;
 	  
-
-
-	  
-
-
-
-	  //int ErecoMinBin = 1 + TMath::BinarySearch(kNErecoBins[sidx],util::ErecoBinEdges(s),ErecoVarMin);
-	  //int ErecoMaxBin = 1 + TMath::BinarySearch(kNErecoBins[sidx],util::ErecoBinEdges(s),ErecoVarMax);
-	  // MODIFIED
-	  int ErecoMinBin;
-	  int ErecoMaxBin;
-	  int n_ereco_bins;
-	  int n_etrue_bins;
-	  if(s==kSKsFCFV1RingMuLike || s==kSKsFCFV1RingELike){
-	    n_ereco_bins = kNErecoBins[sidx];
-	    n_etrue_bins = kNEtrueBins[sidx];
-	  }
-	  //
-	  // ANTINU
-	  else if(s==kSKsRHCFCFV1RingMuLike || s==kSKsRHCFCFV1RingELike){
-	    n_ereco_bins = kRHCNErecoBins[sidx];
-	    n_etrue_bins = kRHCNEtrueBins[sidx];
-	  }
-	  ////
-	  ErecoMinBin = 1 + TMath::BinarySearch(n_ereco_bins,util::ErecoBinEdges(s),ErecoVarMin); // MODIFIED
-	  ErecoMaxBin = 1 + TMath::BinarySearch(n_ereco_bins,util::ErecoBinEdges(s),ErecoVarMax); // MODIFIED
-	  
-
-
-
+	  int ErecoMinBin = 1 + TMath::BinarySearch(kNErecoBins[sidx],util::ErecoBinEdges(s),ErecoVarMin);
+	  int ErecoMaxBin = 1 + TMath::BinarySearch(kNErecoBins[sidx],util::ErecoBinEdges(s),ErecoVarMax);
 
 	  int i_ne_fixed = 0;
 	  // loop over fixed Etrue to count n nonempty
@@ -1831,40 +1545,13 @@ void SuperkMC::FillSpecialTemplates(void)
 	double EtrueVarMin = util::VariableMCEtrueBinEdges(s,tgt_m)[itv-1] + kOneMeV;
 	double EtrueVarMax = util::VariableMCEtrueBinEdges(s,tgt_m)[itv]   - kOneMeV;
 
-
-
-
-	
-	//int EtrueMinBin = 1 + TMath::BinarySearch(kNEtrueBins[sidx],util::EtrueBinEdges(s),EtrueVarMin);
-	//int EtrueMaxBin = 1 + TMath::BinarySearch(kNEtrueBins[sidx],util::EtrueBinEdges(s),EtrueVarMax);
-	// MODIFIED
-	int EtrueMinBin;
-	int EtrueMaxBin;
-	int n_ereco_bins;
-	int n_etrue_bins;
-	if(s==kSKsFCFV1RingMuLike || s==kSKsFCFV1RingELike){
-	  n_ereco_bins = kNErecoBins[sidx];
-	  n_etrue_bins = kNEtrueBins[sidx];
-	}
-	//
-	// ANTINU
-	else if(s==kSKsRHCFCFV1RingMuLike || s==kSKsRHCFCFV1RingELike){
-	  n_ereco_bins = kRHCNErecoBins[sidx];
-	  n_etrue_bins = kRHCNEtrueBins[sidx];
-	}
-	////
-	EtrueMinBin = 1 + TMath::BinarySearch(n_etrue_bins,util::EtrueBinEdges(s),EtrueVarMin); // MODIFIED
-	EtrueMaxBin = 1 + TMath::BinarySearch(n_etrue_bins,util::EtrueBinEdges(s),EtrueVarMax); // MODIFIED
-
-
-
-	
+	int EtrueMinBin = 1 + TMath::BinarySearch(kNEtrueBins[sidx],util::EtrueBinEdges(s),EtrueVarMin);
+	int EtrueMaxBin = 1 + TMath::BinarySearch(kNEtrueBins[sidx],util::EtrueBinEdges(s),EtrueVarMax);
 	
 	// loop over variable Ereco
 	for(int irv = 1; irv <= fMCVariableTempl[sidx][tgt_midx]->GetXaxis()->GetNbins(); irv++) {
 	  int nev = 0;
 
-	  
 	  if(s==kSKsFCFV1RingMuLike){
 	    nev = fMCVariableTemplArray1Rmu[src_midx][itv-1][irv-1];
 	    fMCVariableTemplArray1Rmu[tgt_midx][itv-1][irv-1] = nev;
@@ -1897,35 +1584,8 @@ void SuperkMC::FillSpecialTemplates(void)
 	  double ErecoVarMin = util::XsecErecoBinEdges(s,irv-1) + kOneMeV;
 	  double ErecoVarMax = util::XsecErecoBinEdges(s,irv)   - kOneMeV;
 	  
-
-
-
-	  
-	  //int ErecoMinBin = 1 + TMath::BinarySearch(kNErecoBins[sidx],util::ErecoBinEdges(s),ErecoVarMin);
-	  //int ErecoMaxBin = 1 + TMath::BinarySearch(kNErecoBins[sidx],util::ErecoBinEdges(s),ErecoVarMax);
-	  // MODIFIED
-	  int ErecoMinBin;
-	  int ErecoMaxBin;
-	  int n_ereco_bins;
-	  int n_etrue_bins;
-	  if(s==kSKsFCFV1RingMuLike || s==kSKsFCFV1RingELike){
-	    n_ereco_bins = kNErecoBins[sidx];
-	    n_etrue_bins = kNEtrueBins[sidx];
-	  }
-	  //
-	  // ANTINU
-	  else if(s==kSKsRHCFCFV1RingMuLike || s==kSKsRHCFCFV1RingELike){
-	    n_ereco_bins = kRHCNErecoBins[sidx];
-	    n_etrue_bins = kRHCNEtrueBins[sidx];
-	  }
-	  ////
-	  ErecoMinBin = 1 + TMath::BinarySearch(n_ereco_bins,util::ErecoBinEdges(s),ErecoVarMin); // MODIFIED
-	  ErecoMaxBin = 1 + TMath::BinarySearch(n_ereco_bins,util::ErecoBinEdges(s),ErecoVarMax); // MODIFIED
-
-
-
-
-	  
+	  int ErecoMinBin = 1 + TMath::BinarySearch(kNErecoBins[sidx],util::ErecoBinEdges(s),ErecoVarMin);
+	  int ErecoMaxBin = 1 + TMath::BinarySearch(kNErecoBins[sidx],util::ErecoBinEdges(s),ErecoVarMax);
 
 	  int i_ne_fixed = 0;
 	  // loop over fixed Etrue to count n nonempty
@@ -2049,18 +1709,8 @@ void SuperkMC::ApplyMCStatFluctationToTemplates(bool shape_only)
        // fluctuate bin contents
 
        // MODIFIED
-       int n_ereco_bins;
-       int n_etrue_bins;       
-       if(s==kSKsFCFV1RingMuLike || s==kSKsFCFV1RingELike){
-	 n_ereco_bins = kNErecoBins[is];
-	 n_etrue_bins = kNEtrueBins[is];
-       }
-       // ANTINU
-       else if(s==kSKsRHCFCFV1RingMuLike || s==kSKsRHCFCFV1RingELike){
-	 n_ereco_bins = kRHCNErecoBins[is];
-	 n_etrue_bins = kRHCNEtrueBins[is];
-       }
-       ////
+       int n_ereco_bins = kNErecoBins[is];
+       int n_etrue_bins = kNEtrueBins[is];
 
        for(int ir = 1; ir <= n_ereco_bins; ir++) {
           for(int it = 1; it <= n_etrue_bins; it++) {
@@ -2292,22 +1942,8 @@ void SuperkMC::ApplyFluxExtTuningToTemplates(void)
        if(!mctempl) continue; 
 #endif
 
-
-       // MODIFIED
-       int n_ereco_bins;
-       int n_etrue_bins;
-       if(s==kSKsFCFV1RingMuLike || s==kSKsFCFV1RingELike){
-	 n_ereco_bins = kNErecoBins[is];
-	 n_etrue_bins = kNEtrueBins[is];
-       }
-       ////
-       // ANTINU
-       else if(s==kSKsRHCFCFV1RingMuLike || s==kSKsRHCFCFV1RingELike){
-	 n_ereco_bins = kRHCNErecoBins[is];
-	 n_etrue_bins = kRHCNEtrueBins[is];
-       }
-       ////
-
+       int n_ereco_bins = kNErecoBins[is];
+       int n_etrue_bins = kNEtrueBins[is];
        
        // loop over Ereco
        for(int ir = 1; ir <= n_ereco_bins; ir++) {
@@ -3084,8 +2720,8 @@ void SuperkMC::ApplyMECRenormalisationToTemplates(void)
   
   //MEC only included in 1Rmu sample
   s = kSKsRHCFCFV1RingMuLike;
-  n_ereco_bins = kRHCNErecoBins[0];
-  n_etrue_bins = kRHCNEtrueBins[0];
+  n_ereco_bins = kNErecoBins[2];
+  n_etrue_bins = kNEtrueBins[2];
   
   //define which modes we're interested in normalising to.
   // to turn off, swap a mode with kSKmUndefined
@@ -3252,26 +2888,8 @@ void SuperkMC::ApplySystematicsToTemplates_NonMultiplicative(void)
     SuperkSample_t s = kSKSamples[is];
     if(s == kSKsUndefined) continue;
 
-
-
-
-    // MODIFIED
-    int n_ereco_bins;
-    int n_etrue_bins;
-    if(s==kSKsFCFV1RingMuLike || s==kSKsFCFV1RingELike){
-      n_ereco_bins = kNErecoBins[is];
-      n_etrue_bins = kNEtrueBins[is];
-    }
-    ////
-    // ANTINU
-    else if(s==kSKsRHCFCFV1RingMuLike || s==kSKsRHCFCFV1RingELike){
-      n_ereco_bins = kRHCNErecoBins[is];
-      n_etrue_bins = kRHCNEtrueBins[is];
-    }
-    ////
-
-
-
+    int n_ereco_bins = kNErecoBins[is];
+    int n_etrue_bins = kNEtrueBins[is];
     
     // loop over sample modes
     for(int im = 0; im < knm; im++) { 
@@ -3288,11 +2906,6 @@ void SuperkMC::ApplySystematicsToTemplates_NonMultiplicative(void)
       TH2D * mctempl_no_ereco_scale = new TH2D(*mctempl);
 #endif
       double mctemplarry_no_ereco_scale[kns][knm][n_etrue_bins][n_ereco_bins];
-
-
-
-
-
 
       if (s==kSKsFCFV1RingMuLike)
 	memcpy (mctemplarry_no_ereco_scale, fMCTemplArrayFin1Rmu[im], sizeof (fMCTemplArrayFin1Rmu[im])) ;
@@ -3599,22 +3212,7 @@ bool SuperkMC::ApplyEnergyScaleSystematicToTotalSpectrum(void)
     SuperkSample_t s = kSKSamples[is];
     if(s == kSKsUndefined) continue;
 
-    //int n_ereco_bins = kNErecoBins[is];
-    // MODIFIED
-    int n_ereco_bins;
-    int n_etrue_bins;
-    if(s==kSKsFCFV1RingMuLike || s==kSKsFCFV1RingELike){
-      n_ereco_bins = kNErecoBins[is];
-      n_etrue_bins = kNEtrueBins[is];
-    }
-    ////
-    // ANTINU
-    else if(s==kSKsRHCFCFV1RingMuLike || s==kSKsRHCFCFV1RingELike){
-      n_ereco_bins = kRHCNErecoBins[is];
-      n_etrue_bins = kRHCNEtrueBins[is];
-    }
-    ////
-     
+    int n_ereco_bins = kNErecoBins[is];
 
     //get corresponding spectrum
 #ifndef PRODUCTIONMODE
@@ -3624,9 +3222,6 @@ bool SuperkMC::ApplyEnergyScaleSystematicToTotalSpectrum(void)
     //clone
     //TH1D * reco_spectrum_tot_no_ereco_scale = new TH1D(*reco_spectrum_tot);
     double reco_spectrum_tot_arry_no_ereco_scale[kns][n_ereco_bins];
-
-
-
 
     if (s==kSKsFCFV1RingMuLike) 
       memcpy(reco_spectrum_tot_arry_no_ereco_scale[is], fMCErecoSpectrumTotArray1Rmu, sizeof (fMCErecoSpectrumTotArray1Rmu)) ;
@@ -3640,8 +3235,6 @@ bool SuperkMC::ApplyEnergyScaleSystematicToTotalSpectrum(void)
     else if (s==kSKsRHCFCFV1RingELike)
       memcpy(reco_spectrum_tot_arry_no_ereco_scale[is], fMCErecoSpectrumTotArrayRHC1Re, sizeof (fMCErecoSpectrumTotArrayRHC1Re)) ;
     ////
-
-
 
      // get energy scale
      double escale = 1;
@@ -3973,24 +3566,8 @@ void SuperkMC::ApplyPhysHypothesisToTemplates(void)
      SuperkSample_t s = kSKSamples[is];
      if(s == kSKsUndefined) continue;
 
-
-
-     // MODIFIED
-     int n_ereco_bins;
-     int n_etrue_bins;
-     if(s==kSKsFCFV1RingMuLike || s==kSKsFCFV1RingELike){
-       n_ereco_bins = kNErecoBins[is];
-       n_etrue_bins = kNEtrueBins[is];
-     }
-     ////
-     // ANTINU
-     else if(s==kSKsRHCFCFV1RingMuLike || s==kSKsRHCFCFV1RingELike){
-       n_ereco_bins = kRHCNErecoBins[is];
-       n_etrue_bins = kRHCNEtrueBins[is];
-     }
-     ////
-    
-
+     int n_ereco_bins = kNErecoBins[is];
+     int n_etrue_bins = kNEtrueBins[is];
 
      //assert(this -> Template(s,kSKmNuMuCCQE,kSKMCtSys));
      //TAxis * ereco_axis = this->Template(s,kSKmNuMuCCQE,kSKMCtSys)->GetXaxis(); 
@@ -4103,29 +3680,10 @@ void SuperkMC::ApplyPhysHypothesisToTemplates(void)
     for(int is = 0; is < kns; is++) {
       SuperkSample_t s = kSKSamples[is];
 
-
       if(s!=kSKsFCFV1RingMuLike || s!=kSKsRHCFCFV1RingMuLike) continue; // MODIFIED ANTINU
 
-      
-
-      //int n_ereco_bins = kNErecoBins[is];
-      //int n_etrue_bins = kNEtrueBins[is];
-      // MODIFIED
-      int n_ereco_bins;
-      int n_etrue_bins;
-      if(s==kSKsFCFV1RingMuLike || s==kSKsFCFV1RingELike){
-	n_ereco_bins = kNErecoBins[is];
-	n_etrue_bins = kNEtrueBins[is];
-      }
-      //
-      // ANTINU
-      else if(s==kSKsRHCFCFV1RingMuLike || s==kSKsRHCFCFV1RingELike){
-	n_ereco_bins = kRHCNErecoBins[is];
-	n_etrue_bins = kRHCNEtrueBins[is];
-      }
-      ////
-
-
+      int n_ereco_bins = kNErecoBins[is];
+      int n_etrue_bins = kNEtrueBins[is];
 
       // loop over sample modes
       for(int im = 0; im < knm; im++) { 
@@ -4146,16 +3704,10 @@ void SuperkMC::ApplyPhysHypothesisToTemplates(void)
            // loop over Ereco
 	   for(int ir = 1; ir <= n_ereco_bins; ir++) {
 
-	     
-
-
 	     double nev;
 	     if(s==kSKsFCFV1RingMuLike) nev =  fMCTemplArrayFin1Rmu[im][it-1][ir-1];            // MODIFIED
 	     else if(s==kSKsRHCFCFV1RingMuLike) nev =  fMCTemplArrayRHCFin1Rmu[im][it-1][ir-1]; // ANTINU
 	     
-	     
-	     
-
 	     nev *= psurv;
 #ifndef PRODUCTIONMODE
 	     mctempl_tgt->SetBinContent(ir,it,nev);
@@ -4182,29 +3734,10 @@ void SuperkMC::ApplyPhysHypothesisToTemplates(void)
     for(int is = 0; is < kns; is++) {
       SuperkSample_t s = kSKSamples[is];
      
-
       if(s!=kSKsFCFV1RingMuLike || s!=kSKsRHCFCFV1RingMuLike) continue;  // MODIFIED ANTINU
-
       
-      
-      //int n_ereco_bins = kNErecoBins[is];
-      //int n_etrue_bins = kNEtrueBins[is];
-      // MODIFIED
-      int n_ereco_bins;
-      int n_etrue_bins;
-      if(s==kSKsFCFV1RingMuLike || s==kSKsFCFV1RingELike){
-	n_ereco_bins = kNErecoBins[is];
-	n_etrue_bins = kNEtrueBins[is];
-      }
-      //
-      // ANTINU
-      else if(s==kSKsRHCFCFV1RingMuLike || s==kSKsRHCFCFV1RingELike){
-	n_ereco_bins = kRHCNErecoBins[is];
-	n_etrue_bins = kRHCNEtrueBins[is];
-      }
-      ////
-
-
+      int n_ereco_bins = kNErecoBins[is];
+      int n_etrue_bins = kNEtrueBins[is];
 
       // loop over sample modes
       for(int im = 0; im < knm; im++) { 
@@ -4225,11 +3758,9 @@ void SuperkMC::ApplyPhysHypothesisToTemplates(void)
            // loop over Ereco
            for(int ir = 1; ir <= n_ereco_bins; ir++) {
 
-
 	     double nev;
 	     if(s==kSKsFCFV1RingMuLike) nev = fMCTemplArrayFin1Rmu[im][it-1][ir-1]; // MODIFIED
 	     else if(s==kSKsRHCFCFV1RingMuLike) nev =  fMCTemplArrayRHCFin1Rmu[im][it-1][ir-1]; // ANTINU
-
 	     
 	     nev *= psurv;
 #ifndef PRODUCTIONMODE
@@ -4258,28 +3789,11 @@ void SuperkMC::ApplyPhysHypothesisToTemplates(void)
     // loop over samples
     for(int is = 0; is < kns; is++) {
       SuperkSample_t s = kSKSamples[is];
-
       
       if(s!=kSKsFCFV1RingMuLike || s!=kSKsRHCFCFV1RingMuLike) continue;  // MODIFIED ANTINU
       
-      //int n_ereco_bins = kNErecoBins[is];
-      //int n_etrue_bins = kNEtrueBins[is];
-      // MODIFIED
-      int n_ereco_bins;
-      int n_etrue_bins;
-      if(s==kSKsFCFV1RingMuLike || s==kSKsFCFV1RingELike){
-	n_ereco_bins = kNErecoBins[is];
-	n_etrue_bins = kNEtrueBins[is];
-      }
-      //
-      // ANTINU
-      else if(s==kSKsRHCFCFV1RingMuLike || s==kSKsRHCFCFV1RingELike){
-	n_ereco_bins = kRHCNErecoBins[is];
-	n_etrue_bins = kRHCNEtrueBins[is];
-      }
-      ////
-
-
+      int n_ereco_bins = kNErecoBins[is];
+      int n_etrue_bins = kNEtrueBins[is];
 
       // loop over sample modes
       for(int im = 0; im < knm; im++) { 
@@ -4297,7 +3811,6 @@ void SuperkMC::ApplyPhysHypothesisToTemplates(void)
            double psurv = util::NuMuSurvProbDecoh(sinsq2theta, musq, Etrue, m);
            // loop over Ereco
            for(int ir = 1; ir <= n_ereco_bins; ir++) {
-
 	     
 	     double nev;
 	     if(s==kSKsFCFV1RingMuLike) nev = fMCTemplArrayFin1Rmu[im][it-1][ir-1];  // MODIFIED
@@ -4334,25 +3847,8 @@ bool SuperkMC::UpdateErecoSpectra(void)
     TH1D * reco_spectrum_tot = this->CurrErecoSpectrum(s);
 #endif
 
-
-
-    
-    // MODIFIED
-    int n_ereco_bins;
-    int n_etrue_bins;
-    if(s==kSKsFCFV1RingMuLike || s==kSKsFCFV1RingELike){
-      n_ereco_bins = kNErecoBins[is];
-      n_etrue_bins = kNEtrueBins[is];
-    }
-    ////
-    // ANTINU
-    else if(s==kSKsRHCFCFV1RingMuLike || s==kSKsRHCFCFV1RingELike){
-      n_ereco_bins = kRHCNErecoBins[is];
-      n_etrue_bins = kRHCNEtrueBins[is];
-    }
-    ////
-
-
+    int n_ereco_bins = kNErecoBins[is];
+    int n_etrue_bins = kNEtrueBins[is];
 
     // loop over Ereco
     for(int ir = 1; ir <= n_ereco_bins; ir++) {
@@ -4373,14 +3869,10 @@ bool SuperkMC::UpdateErecoSpectra(void)
           // loop over Etrue
           double nev = 0;
           for(int it = 1; it <= n_etrue_bins; it++) {
-
-
 	    if (s==kSKsFCFV1RingMuLike)	nev += fMCTemplArrayFin1Rmu[im][it-1][ir-1];
 	    else if (s==kSKsFCFV1RingELike) nev += fMCTemplArrayFin1Re[im][it-1][ir-1]; // MODIFIED
 	    else if (s==kSKsRHCFCFV1RingMuLike)	nev += fMCTemplArrayRHCFin1Rmu[im][it-1][ir-1]; // ANTINU
 	    else if (s==kSKsRHCFCFV1RingELike) nev += fMCTemplArrayRHCFin1Re[im][it-1][ir-1]; // ANTINU
-	    
-
           }//it
           nev_tot += nev;
 #ifdef __apply_minevents_to_individual_modes__
@@ -4456,25 +3948,8 @@ void SuperkMC::FillEtrueSpectra(void)
     SuperkSample_t s = kSKSamples[is];
     if(s == kSKsUndefined) continue;
     TH1D * true_spectrum_tot = fMCEtrueSpectrumTot[is];
-    
-    
-    //int n_ereco_bins = kNErecoBins[is];
-    // MODIFIED
-    int n_ereco_bins;
-    int n_etrue_bins;
-    if(s==kSKsFCFV1RingMuLike || s==kSKsFCFV1RingELike){
-      n_ereco_bins = kNErecoBins[is];
-      n_etrue_bins = kNEtrueBins[is];
-    }
-    ////
-    // ANTINU
-    else if(s==kSKsRHCFCFV1RingMuLike || s==kSKsRHCFCFV1RingELike){
-      n_ereco_bins = kRHCNErecoBins[is];
-      n_etrue_bins = kRHCNEtrueBins[is];
-    }
-    ////
 
-
+    int n_ereco_bins = kNErecoBins[is];
 
     // loop over Etrue
     for(int it = 1; it <= true_spectrum_tot->GetNbinsX(); it++) {
@@ -4502,14 +3977,10 @@ void SuperkMC::FillEtrueSpectra(void)
        true_spectrum_tot->SetBinContent(it,nev_tot);
 #endif
 
-
-
        if (s==kSKsFCFV1RingMuLike) fMCEtrueSpectrumTotArray1Rmu[it-1] = nev_tot;
        else if (s==kSKsFCFV1RingELike) fMCEtrueSpectrumTotArray1Re[it-1] = nev_tot;  // MODIFIED
        else if (s==kSKsRHCFCFV1RingMuLike) fMCEtrueSpectrumTotArrayRHC1Rmu[it-1] = nev_tot; // ANTINU
        else if (s==kSKsRHCFCFV1RingELike) fMCEtrueSpectrumTotArrayRHC1Re[it-1] = nev_tot;  // ANTINU
-
-
 
     }//it
   }//is
