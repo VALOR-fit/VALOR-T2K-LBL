@@ -361,14 +361,14 @@ bool SuperkMC::Read(TXMLEngine* xml, XMLNodePointer_t root_node)
   // 
   fPOT = util::XML2Dbl(xml,root_node,"data_pot/superk/fhc");
 #ifdef __show_init_mesg_info__
-  cout << "Exp/SKMC >> " << "POT_{data} = " << fPOT << endl;
+  cout << "Exp/SKMC >> " << "POT_{data} (FHC) = " << fPOT << endl;
 #endif
   //
   // Get data POT RHC
   // 
   fPOTRHC = util::XML2Dbl(xml,root_node,"data_pot/superk/rhc");
 #ifdef __show_init_mesg_info__
-  cout << "RHC: Exp/SKMC >> " << "POT_{data} = " << fPOTRHC << endl;
+  cout << "Exp/SKMC >> " << "POT_{data} (RHC) = " << fPOTRHC << endl;
 #endif
   
   //
