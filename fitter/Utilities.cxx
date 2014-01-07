@@ -5819,22 +5819,12 @@ int t2kana::util::NumVariableXsEtrueBins(t2kana::conv::SuperkSample_t s,
 
   //need to start counter at zero. Want nbins. Looping over bin edges.
   int nbins = -1;
-  //if (s == kSKsFCFV1RingMuLike || s == kSKsFCFV1RingELike)  
-  //{
-    for(int it = 0; it <= t2kana::conv::kXsNEtrueBins; it++) {
-      if(t2kana::conv::kXsEtrueBinEdges[is][im][it] < 0)
-        break;
-      nbins++;
-      }
-    /*}
-    else if (s == kSKsRHCFCFV1RingMuLike || s == kSKsRHCFCFV1RingELike)
-    {
-      for(int it = 0; it <= t2kana::conv::kRHCXsNEtrueBins; it++) {
-	if(t2kana::conv::kRHCXsEtrueBinEdges[is][im][it] < 0)
-	  break;
-	nbins++;
-      }
-      }*/
+
+  for(int it = 0; it <= t2kana::conv::kXsNEtrueBins; it++) {
+    if(t2kana::conv::kXsEtrueBinEdges[is][im][it] < 0)
+      break;
+    nbins++;
+    }
 
   return nbins;
 }
@@ -5849,10 +5839,7 @@ const double * t2kana::util::VariableXsEtrueBinEdges(t2kana::conv::SuperkSample_
   if(im == -1)
     return 0;
 
-  //if(s == kSKsRHCFCFV1RingMuLike || s == kSKsRHCFCFV1RingELike)
-  //return t2kana::conv::kRHCXsEtrueBinEdges[is][im];
-  //else
-    return t2kana::conv::kXsEtrueBinEdges[is][im];
+  return t2kana::conv::kXsEtrueBinEdges[is][im];
 }
 //___________________________________________________________________________
 int t2kana::util::NumVariableMCEtrueBins(t2kana::conv::SuperkSample_t s,
@@ -5868,22 +5855,11 @@ int t2kana::util::NumVariableMCEtrueBins(t2kana::conv::SuperkSample_t s,
   //need to start counter at zero. Want nbins. Looping over bin edges.
   int nbins = -1;
 
-  //if (s == kSKsFCFV1RingMuLike || s == kSKsFCFV1RingELike)
-  //{
-      for(int it = 0; it <= t2kana::conv::kMCNEtrueBins; it++) {
-	if(t2kana::conv::kMCEtrueBinEdges[is][im][it] < 0)
-	  break;
-	nbins++;
-      }
-      /*}
-  else if (s == kSKsRHCFCFV1RingMuLike || s == kSKsRHCFCFV1RingELike)
-    {
-    for(int it = 0; it <= t2kana::conv::kRHCMCNEtrueBins; it++) {
-      if(t2kana::conv::kRHCMCEtrueBinEdges[is][im][it] < 0)
-        break;
-      nbins++;
-      }
-      }*/
+  for(int it = 0; it <= t2kana::conv::kMCNEtrueBins; it++) {
+    if(t2kana::conv::kMCEtrueBinEdges[is][im][it] < 0)
+      break;
+    nbins++;
+    }
 
   return nbins;
 }
@@ -5898,10 +5874,7 @@ const double * t2kana::util::VariableMCEtrueBinEdges(t2kana::conv::SuperkSample_
   if(im == -1)
     return 0;
 
-  //if(s == kSKsRHCFCFV1RingMuLike || s == kSKsRHCFCFV1RingELike)
-  //return t2kana::conv::kRHCMCEtrueBinEdges[is][im];
-  //else
-    return t2kana::conv::kMCEtrueBinEdges[is][im];
+  return t2kana::conv::kMCEtrueBinEdges[is][im];
 }
 //___________________________________________________________________________
 void t2kana::util::SetDefaultStyle(bool black_n_white)

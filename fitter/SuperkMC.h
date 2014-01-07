@@ -169,8 +169,8 @@ private:
   
   int        fMCVariableTemplArray1Rmu[knm][conv::kMCNEtrueBins][conv::kXsNErecoBins1Rmu];
   int        fMCVariableTemplArray1Re [knm][conv::kMCNEtrueBins][conv::kXsNErecoBins1Re];
-  int        fMCVariableTemplArrayRHC1Rmu[knm][conv::kRHCMCNEtrueBins][conv::kRHCXsNErecoBins1Rmu];     // ANTINU
-  int        fMCVariableTemplArrayRHC1Re [knm][conv::kRHCMCNEtrueBins][conv::kRHCXsNErecoBins1Re];      // ANTINU
+  int        fMCVariableTemplArrayRHC1Rmu[knm][conv::kMCNEtrueBins][conv::kRHCXsNErecoBins1Rmu];     // ANTINU
+  int        fMCVariableTemplArrayRHC1Re [knm][conv::kMCNEtrueBins][conv::kRHCXsNErecoBins1Re];      // ANTINU
 
   int        fMCTemplArrayOri1Rmu[knm][conv::kNEtrueBins1Rmu][conv::kNErecoBins1Rmu];
   int        fMCTemplArrayOri1Re [knm][conv::kNEtrueBins1Re][conv::kNErecoBins1Re];

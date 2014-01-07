@@ -187,13 +187,7 @@ void SuperkMC::Init(void)
 	}//ir
       }//it
       
-      int n_mc_etrue_bins;
-      // MODIFIED
-      if(s==kSKsFCFV1RingMuLike || s==kSKsFCFV1RingELike) n_mc_etrue_bins = kMCNEtrueBins;
-      ////
-      // ANTINU
-      else if(s==kSKsRHCFCFV1RingMuLike || s==kSKsRHCFCFV1RingELike) n_mc_etrue_bins = kRHCMCNEtrueBins;
-      ////
+      int n_mc_etrue_bins = kMCNEtrueBins;
 
       for(int itv=0; itv<n_mc_etrue_bins; itv++) {   // MODIFIED
 	for(int irv=0; irv<n_xs_ereco_bins; irv++) {
