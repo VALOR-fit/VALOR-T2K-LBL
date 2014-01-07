@@ -61,8 +61,8 @@ void t2k_style()
   t2kStyle->SetErrorX(0.001);
 
   // do not display any of the standard histogram decorations
-  t2kStyle->SetOptTitle(1);
-  t2kStyle->SetOptStat(1);
+  t2kStyle->SetOptTitle(0);
+  t2kStyle->SetOptStat(0);
   t2kStyle->SetOptFit(0);
 
   // put tick marks on top and RHS of plots
